@@ -14,6 +14,7 @@ import numpy as np
 from pathlib import Path
 
 from . import checks, render, shapes
+from . import world as world_mod
 from .finding import BLOCKER
 
 # Views written by default; the first is the one used in the README.
@@ -157,6 +158,14 @@ def write_all(slug: str, spec, out_dir, opts=None, step=True, width=1100):
             except Exception as e:  # noqa: BLE001
                 step_ok = False
                 rep.not_checked.append(f"STEP assembly export failed: {type(e).__name__}: {e}")
+    # Flat patterns of cut/bent sheet parts; a part that cannot be flattened is a blocker (it is not 2D).
+    from .checks import process as process_check
+
+    dxf_files, dxf_fails = process_check.export_dxf(world_mod.resolve(spec, fast=True), root)
+    files += dxf_files
+    if dxf_fails:
+        rep.findings += process_check.export_findings(dxf_fails)
+        rep.finish()
     for v in VIEWS:
         view = render.named(v, width)
         put(f"renders/{v}.png", render.render_png(world, view, None, []))

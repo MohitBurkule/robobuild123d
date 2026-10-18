@@ -371,3 +371,62 @@ PRINTED_Z_FACTOR = 0.5  # strength across layer lines relative to in-plane
 def mech(mid):
     """(yield MPa, shear MPa, E GPa) of a material, or None when unknown."""
     return MECH.get(mid) if mid else None
+
+
+# ---- Process-aware manufacturability (checks/process.py) ----
+# Process names in specs -> canonical process. Kerf (mm) for 2D-cut processes = minimum internal corner radius.
+PROCESS_ALIASES = {
+    "fdm": "fdm", "fff": "fdm", "resin": "sla", "sla": "sla", "msla": "sla",
+    "sheet_cut": "sheet_cut", "laser": "sheet_cut", "waterjet": "sheet_cut", "plasma": "sheet_cut",
+    "wire_edm": "sheet_cut", "router_sheet": "sheet_cut",
+    "sheet_bent": "sheet_bent", "bent": "sheet_bent", "brake": "sheet_bent", "line_bent": "sheet_bent",
+    "turned": "turned", "lathe": "turned", "milled": "milled", "cnc": "milled",
+    "cots": "cots", "bought": "cots", "molded": "molded", "moulded": "molded", "cast": "cast",
+}
+KERF_MM = {"laser": 0.1, "waterjet": 0.5, "plasma": 1.0, "wire_edm": 0.15, "router_sheet": 1.5, "sheet_cut": 0.5}
+MILL_MIN_TOOL_RADIUS_MM = 1.0
+
+# Common sheet stock thicknesses (mm) per material family.
+SHEET_STOCK_MM = {
+    "steel": [0.5, 0.8, 1.0, 1.2, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0],
+    "spring_steel": [0.3, 0.5, 0.8, 1.0, 1.2, 1.5, 2.0],
+    "hardox": [3.0, 4.0, 5.0, 6.0, 8.0, 10.0],
+    "titanium": [0.5, 0.8, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0],
+    "aluminium": [0.5, 0.8, 1.0, 1.2, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0, 12.0],
+    "cf_plate": [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 6.0],
+    "polycarbonate": [0.5, 0.75, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0, 6.0],
+    "hdpe": [1.0, 1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0],
+    "uhmw": [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0],
+    "g10": [0.5, 0.8, 1.0, 1.5, 1.6, 2.0, 3.0],
+}
+SHEET_FAMILY = {
+    "steel": "steel", "304": "steel", "stainless": "steel", "mild_steel": "steel", "spring_steel": "spring_steel",
+    "hardox": "hardox", "ar400": "hardox", "ar500": "hardox", "titanium": "titanium", "ti6al4v": "titanium",
+    "aluminium": "aluminium", "aluminum": "aluminium", "cf_plate": "cf_plate", "carbon_fibre": "cf_plate",
+    "pc": "polycarbonate", "polycarbonate": "polycarbonate", "hdpe": "hdpe", "uhmw": "uhmw", "fr4": "g10", "g10": "g10",
+}
+# Metals where a cut hole must be >= 1x thickness (others 0.5x).
+HARD_SHEET = {"steel", "spring_steel", "hardox", "titanium"}
+# Minimum inside bend radius as a multiple of thickness (default 1.0).
+BEND_MIN_R_OVER_T = {"spring_steel": 2.0, "hardox": 3.0, "titanium": 2.5, "polycarbonate": 1.0}
+# Round bar / dowel stock diameters (mm) for bought pins and shafts.
+ROD_STOCK_MM = {
+    "steel": [1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0, 12.0],
+    "titanium": [2.0, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0],
+    "aluminium": [2.0, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0, 12.0],
+}
+# Ball bearings: designation -> (bore, OD, width) mm.
+BEARINGS = {
+    "684": (4.0, 9.0, 4.0), "mr84": (4.0, 8.0, 3.0), "mr104": (4.0, 10.0, 4.0), "694": (4.0, 11.0, 4.0),
+    "604": (4.0, 12.0, 4.0), "683": (3.0, 7.0, 3.0), "mr63": (3.0, 6.0, 2.5), "623": (3.0, 10.0, 4.0),
+    "685": (5.0, 11.0, 5.0), "mr105": (5.0, 10.0, 4.0), "625": (5.0, 16.0, 5.0), "686": (6.0, 13.0, 5.0),
+    "688": (8.0, 16.0, 5.0), "608": (8.0, 22.0, 7.0),
+}
+
+
+def process_canon(p):
+    return PROCESS_ALIASES.get(str(p).lower()) if p else None
+
+
+def sheet_family(mid):
+    return SHEET_FAMILY.get(str(mid).lower()) if mid else None

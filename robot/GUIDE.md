@@ -101,3 +101,25 @@ robot's own motion or when inverted.
 - A check group that is missing or crashes is never a silent pass: it shows as `checks.missing` (warning) or `checks.crashed` (blocker) and in NOT CHECKED.
 - Geometry is cached under `~/.cache/robot` (override with `ROBOT_CACHE`); delete it if a model file's imports changed.
 - The report ends with NOT CHECKED: those items were not judged, a pass says nothing about them.
+
+## Process (how each made part is manufactured)
+Every non-catalog part declares `process`; the `process` group checks the exact B-rep against it.
+- `laser` / `waterjet` / `sheet_cut` / `wire_edm`: one 2D profile extruded to one thickness (two parallel faces, every
+  other face perpendicular). Thickness must be a stock gauge for the material (`catalog.SHEET_STOCK_MM`), holes
+  dia >= t (steel, spring steel, Hardox, Ti) or 0.5 t, internal corner radius >= kerf (laser 0.1, waterjet 0.5 mm; a
+  sharp internal corner fails), web between cut features >= t. Pockets, chamfers and countersinks need
+  `secondary_ops: ["pocket"|"chamfer"|"countersink"]`. Spinner teeth are part of the outline, never a block on top.
+- `sheet_bent`: planar + cylindrical faces only, bends as cylindrical folds with inside radius >= k t (k = 1, spring
+  steel 2, Ti 2.5, Hardox 3), flange >= 3 t + r, holes >= 2 t from a bend. Sharp folds fail.
+- `turned` / `lathe`: surfaces of revolution about one axis; flats, keyways, cross holes and off-axis drillings need
+  `secondary_ops: ["flat"|"keyway"|"cross_hole"|"drilled"]`.
+- `milled` / `cnc`: internal corner radius >= 1 mm, no sharp internal corner a tool cannot reach along a face normal,
+  every face reachable along +-X/Y/Z (no undercuts).
+- `fdm` / `resin`: geometry is judged by `mfg` and `printability`; `print_orientation` (+x/-x/+y/-y/+z/-z, the
+  part-frame axis pointing up off the bed) is required. Printed parts carrying the weapon axle must be printed with the
+  spin axis as build direction (`mfg.layer_load`). A printed spinner weapon without metal teeth is a blocker.
+- `bought` / `cots` with free geometry: must match a stock rod diameter, a bearing named in `label`/`stock`
+  (684, MR84, ...) or an O-ring belt; otherwise use a catalog part (`mfg.stock`).
+- `molded` / `cast`: accepted, geometry listed under NOT CHECKED.
+Missing `process` is `process.undeclared` (blocker). `export` writes `dxf/<part>.dxf` for every cut part; a part that
+cannot be flattened (including bent parts, unfold not yet implemented) is an `mfg.export` blocker.
