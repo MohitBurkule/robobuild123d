@@ -190,8 +190,6 @@ def test_wedge1_fused_across_materials_is_blocked():
     assert failed(run(d, ["interference", "connections"]), "connection.fused_mismatch")
 
 
-@pytest.mark.xfail(strict=True, reason="wedge#1: `fused_with` between same-material parts that only touch faces is "
-                                       "accepted; no shared-volume check (Rust behaves the same)")
 def test_wedge1_fused_face_touch_only_is_blocked():
     d = {"name": "w", "parts": [_box("chassis", (0, 0, 0), (40, 40, 10)),
                                 _box("wedge", (0, 22.5, 0), (40, 5, 2), kind="wedge", fused_with="chassis")]}
@@ -207,8 +205,6 @@ def test_wedge4_not_invertible(rv1):
     assert failed(rv1, "spinner.invert")
 
 
-@pytest.mark.xfail(strict=True, reason="wedge#5 / iter2 I: no >=1 mm running clearance check for wheels in pockets "
-                                       "(only spinning weapons get interference.spin_clearance)")
 def test_wedge5_wheel_running_clearance():
     wheel = {"id": "wheel", "kind": "wheel", "at": [0, 0, 0], "material": "tpu", "process": "fdm",
              "shape": {"type": "place", "rot": [0, 90, 0], "shape": {"type": "cylinder", "radius": 14, "height": 8}},
@@ -273,14 +269,10 @@ def test_iter2_wires_outside_armour_are_flagged(rv1):  # F, revron flaw 7 / D
 
 # ---- review flaws: iter3.md ----------------------------------------------------------------------------------------
 
-@pytest.mark.xfail(strict=True, reason="iter3 A: `mechanical_key: true` is a self-declared bool that lifts the glue "
-                                       "ban with no geometric evidence (same in Rust)")
 def test_iter3_mechanical_key_needs_evidence():
     assert failed(run(_pair("glue", mechanical_key=True), ["connections"]), "connection.glue_low_energy")
 
 
-@pytest.mark.xfail(strict=True, reason="iter3 B: `retained: tape` links any part of any mass to structure within "
-                                       "0.5 mm; no mass or contact-area limit")
 def test_iter3_tape_on_heavy_part_is_rejected():
     d = {"name": "t", "parts": [_box("chassis", (0, 0, 0), (60, 60, 4)),
                                 _box("lump", (0, 0, 12), (50, 50, 20), kind="other", material="steel", retained="tape")]}
@@ -288,8 +280,58 @@ def test_iter3_tape_on_heavy_part_is_rejected():
     assert failed(run(d, ["interference", "connections"]), "connection.floating")
 
 
-def test_iter3_press_fit_interference_out_of_range():  # C (range only; per-material table not implemented)
+def test_iter3_press_fit_interference_out_of_range():  # C
     assert failed(run(_pair("press_fit", interference_mm=0.8), ["connections"]), "connection.press_fit_interference")
+
+
+def test_iter3_press_fit_range_is_per_material_pair():  # C: 0.35 is fine into a printed bore from metal, not printed/printed
+    d = _pair("press_fit", interference_mm=0.35)
+    assert failed(run(d, ["connections"]), "connection.press_fit_interference")
+    d["parts"][1]["material"], d["parts"][1]["process"] = "steel", "machined"
+    assert not failed(run(d, ["connections"]), "connection.press_fit_interference")
+    d["connections"][0]["interference_mm"] = 0.03  # too little for metal into plastic
+    assert failed(run(d, ["connections"]), "connection.press_fit_interference")
+
+
+def test_wedge1_fused_with_real_overlap_is_joined():
+    d = {"name": "w", "parts": [_box("chassis", (0, 0, 0), (40, 40, 10)),
+                                _box("wedge", (0, 21.0, 0), (40, 5, 2), kind="wedge", fused_with="chassis")]}
+    rep = run(d, ["interference", "connections"])
+    assert not failed(rep, "connection.fused_mismatch") and not failed(rep, "connection.floating")
+
+
+def test_iter3_mechanical_key_backed_by_geometry_passes():
+    # `b` sits in a closed pocket in the chassis: held in 5 of 6 directions, so the key is real.
+    pocket = {"type": "subtract", "base": {"type": "box", "size": [40, 40, 8]},
+              "cut": [{"type": "place", "shape": {"type": "box", "size": [20, 20, 4]}, "at": [0, 0, 2]}]}
+    d = {"name": "c", "parts": [{"id": "chassis", "kind": "structure", "shape": pocket, "at": [0, 0, 0],
+                                 "material": "nylon", "process": "fdm"},
+                                _box("b", (0, 0, 2), (20, 20, 4), kind="other", material="petg")],
+         "connections": [{"a": "chassis", "b": "b", "method": "glue", "reason": REASON, "mechanical_key": True}]}
+    rep = run(d, ["connections"])
+    assert not failed(rep, "connection.glue_low_energy") and not failed(rep, "connection.key_unproven")
+
+
+def test_iter3_tape_on_light_part_is_accepted():
+    d = {"name": "t", "parts": [_box("chassis", (0, 0, 0), (60, 60, 4)),
+                                _box("rx", (0, 0, 5), (20, 15, 6), kind="other", material=None, retained="tape")]}
+    d["parts"][1].pop("material"), d["parts"][1].pop("process")
+    d["parts"][1]["mass_g"] = 3
+    rep = run(d, ["interference", "connections"])
+    assert not failed(rep, "connection.tape_overload") and not failed(rep, "connection.floating")
+
+
+def test_wedge5_wheel_with_1mm_clearance_passes():
+    wheel = {"id": "wheel", "kind": "wheel", "at": [0, 0, 0], "material": "tpu", "process": "fdm",
+             "shape": {"type": "place", "rot": [0, 90, 0], "shape": {"type": "cylinder", "radius": 14, "height": 8}},
+             "joint": {"kind": "revolute", "axis": [1, 0, 0], "min": 0, "max": 360}, "parent": "chassis"}
+    pocket = {"type": "subtract", "base": {"type": "box", "size": [20, 40, 40]},
+              "cut": [{"type": "box", "size": [10.5, 30.5, 30.5]}]}
+    d = {"name": "w", "parts": [{"id": "chassis", "kind": "structure", "shape": pocket, "at": [0, 0, 0],
+                                 "material": "nylon", "process": "fdm"}, wheel]}
+    rep = run(d, ["interference"])
+    assert not any(not f.passed and "clearance" in f.id for f in rep.findings)
+    assert found(rep, "interference.wheel_clearance")[0].passed
 
 
 def test_iter3_fastener_engagement(rv1):  # E
@@ -322,3 +364,45 @@ def test_iter4_trapped_part_and_tool_access_exist():  # assembly sweep + fastene
     rep = verify(_robot(False), Options(fast=True, only=["interference", "assembly"]))
     assert failed(rep, "assembly.blocked")
 
+
+
+def test_unknown_motor_current_is_not_a_low_default():  # reviewer: missing current data must warn + NOT CHECKED
+    d = {"name": "p", "parts": [_box("chassis", (0, 0, 0), (60, 60, 4)),
+                                {"id": "battery", "kind": "battery", "catalog": "lipo_2s_180", "at": [0, 0, 10]},
+                                {"id": "motor_l", "kind": "motor", "at": [20, 0, 10], "mass_g": 8,
+                                 "shape": {"type": "box", "size": [20, 10, 10]}}]}
+    rep = run(d, ["power"])
+    assert failed(rep, "power.current_unknown")
+    assert not any(f.id == "power.battery" and f.passed for f in rep.findings)
+    assert any("motor_l" in s and "current" in s for s in rep.not_checked)
+
+
+def test_high_disc_fails_reach():  # reviewer (e): a disc whose sweep rides high must fail, not pass
+    d = revron_dict()
+    for p in d["parts"]:
+        if p.get("weapon") or p["kind"] == "weapon_motor":
+            p["at"][2] += 25.0
+    rep = run(d, ["mass", "power", "spinner"])
+    f = [x for x in found(rep, "spinner.reach") if "high" in x.title]
+    assert f and not f[0].passed and f[0].severity == "blocker"
+
+
+def test_rv1_disc_reach_not_passed(rv1):
+    assert not any(f.passed for f in found(rv1, "spinner.reach"))
+
+
+def test_exposed_wheel_is_flagged():  # reviewer (f)
+    wheel = {"id": "wheel_l", "kind": "wheel", "catalog": "wheel_28x10", "at": [30, 0, 14]}
+    d = {"name": "x", "parts": [_box("chassis", (0, 0, 8), (40, 60, 10)), wheel]}
+    rep = run(d, ["ground"])
+    assert failed(rep, "ground.wheel_exposed")
+
+
+def test_targets_are_checked():  # reviewer (g)
+    d = {"name": "t", "parts": [_box("chassis", (0, 0, 0), (40, 60, 4))],
+         "targets": {"length": 60, "width": 40, "tol_mm": 1}}
+    assert any(f.id == "targets.match" and f.passed for f in run(d, ["targets"]).findings)
+    d["targets"]["length"] = 80
+    assert failed(run(d, ["targets"]), "targets.mismatch")
+    d["targets"]["bogus"] = 1
+    assert failed(run(d, ["targets"]), "targets.unknown")

@@ -127,4 +127,61 @@ def run(ctx):
     cz = ctx.metrics.get("com_z", 0.0) - floor
     if m > 0.0 and cz > 0.1:
         ctx.metrics["tip_angle_deg"] = math.degrees(math.atan(m / cz))
+    out.extend(wheel_exposure(ctx))
+    return out
+
+
+WHEEL_EXPOSED_FRAC = 0.05  # share of a wheel's side and upward rays (above the belly line) that may reach open air
+
+
+def wheel_exposure(ctx):
+    """Wheels that stick out of the body: rays from the wheel above the belly line, sideways and upward, that reach open
+    air. An exposed wheel is the first thing a spinner or a wall hits (tyre torn off, axle bent)."""
+    import numpy as np
+
+    w = ctx.world
+    out = []
+    wheels = [b for b in w.bodies if b.kind == "wheel" and not b.fastener]
+    if not wheels:
+        return out
+    solid = [b for b in w.bodies if not b.is_wire]
+    rest = [b for b in solid if b.kind not in ("wheel", "tyre") and not b.fastener]
+    if not rest:
+        ctx.not_checked.append("Wheel exposure: no body to shield the wheels")
+        return out
+    belly = min(float(b.aabb[0][2]) for b in rest)
+    dirs = []
+    for k in range(8):
+        a = k * math.pi / 4
+        for z in (0.0, 0.7):
+            v = np.array([math.cos(a), math.sin(a), z])
+            dirs.append(v / np.linalg.norm(v))
+    dirs = np.array(dirs)
+    bad = 0
+    for b in wheels:
+        pts = b.surface(1.5)[0]
+        pts = pts[pts[:, 2] >= belly + 0.5]
+        if not len(pts):
+            continue
+        pts = pts[:: max(len(pts) // 60, 1)]
+        O = (pts[:, None, :] + dirs[None] * 0.6).reshape(-1, 3)
+        D = np.tile(dirs, (len(pts), 1))
+        leave = ~b.inside(O)
+        if not leave.any():
+            continue
+        O, D = O[leave], D[leave]
+        dist, _ = measure.Scene([o for o in solid if o is not b]).first_hit(O, D, 400.0)
+        open_ = ~np.isfinite(dist)
+        frac = float(open_.sum()) / len(O)
+        ctx.metrics[f"wheel_exposed_frac.{b.id}"] = frac
+        if frac > WHEEL_EXPOSED_FRAC:
+            bad += 1
+            out.append(fail("ground.wheel_exposed", G, WARNING, "Wheel sticks out of the body",
+                            f"`{b.id}` reaches open air from {frac * 100:.0f}% of its side and upward rays above the belly line "
+                            f"(allowed {WHEEL_EXPOSED_FRAC * 100:.0f}%); a spinner or a wall hits the tyre first.")
+                       .on(b.id).here(O[np.nonzero(open_)[0][0]])
+                       .fix("Pull the wheel inside the outline, or add a side wall or guard over the exposed tread."))
+    if bad == 0:
+        out.append(ok("ground.wheel_exposed", G, "Wheels are shielded",
+                      f"{len(wheels)} wheels sit inside the body outline above the belly line."))
     return out

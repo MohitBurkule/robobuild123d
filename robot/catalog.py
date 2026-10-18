@@ -111,9 +111,9 @@ def hexagon(r):
 def builtin() -> list[CatalogEntry]:
     v = [
         gearmotor("n10_300rpm_6v", "N10 micro gearmotor 6 V 300 rpm", 12, 12, 10, 9.1, 12, 9, 7.5,
-                  {"nominal_v": 6.0, "rpm_nominal": 300.0, "stall_current_a": 0.65, "no_load_current_a": 0.06, "stall_torque_gcm": 900.0}),
+                  {"nominal_v": 6.0, "rpm_nominal": 300.0, "stall_current_a": 1.0, "no_load_current_a": 0.06, "stall_torque_gcm": 900.0}),
         gearmotor("n10_2200rpm_6v", "N10 micro gearmotor 6 V 2200 rpm", 12, 12, 10, 9.1, 12, 9, 7.5,
-                  {"nominal_v": 6.0, "rpm_nominal": 2200.0, "stall_current_a": 0.8, "no_load_current_a": 0.08, "stall_torque_gcm": 150.0}),
+                  {"nominal_v": 6.0, "rpm_nominal": 2200.0, "stall_current_a": 1.0, "no_load_current_a": 0.08, "stall_torque_gcm": 150.0}),
         gearmotor("n20_1000rpm_6v", "N20 gearmotor 6 V 1000 rpm", 15, 12, 10, 9, 12, 10, 10.5,
                   {"nominal_v": 6.0, "rpm_nominal": 1000.0, "stall_current_a": 0.8, "no_load_current_a": 0.07, "stall_torque_gcm": 600.0}),
         outrunner("bl_1806_2300kv", "1806 2300 kV outrunner", 21, 14, 8, 17.5, 2300, {"max_current_a": 15.0, "typ_current_a": 8.0}),
@@ -303,3 +303,71 @@ def parse_designation(s):
     except ValueError:
         return None
     return (d, l) if 0 < d < 12 and 0 < l < 100 else None
+
+
+# Diametral press-fit interference (mm) by the material class of the two parts, (min, max). A printed bore creeps and
+# splits above ~0.3 mm; metal-in-metal needs a few hundredths; an elastomer takes far more.
+PRESS_FIT_MM = {
+    ("printed", "printed"): (0.05, 0.3),
+    ("metal", "printed"): (0.05, 0.4),  # shaft, pin or insert into a printed bore
+    ("metal", "metal"): (0.005, 0.05),
+    ("metal", "sheet"): (0.01, 0.1),
+    ("printed", "sheet"): (0.05, 0.3),
+    ("sheet", "sheet"): (0.02, 0.15),
+    ("elastomer", "elastomer"): (0.2, 1.5),
+}
+PRESS_FIT_ELASTOMER_MM = (0.1, 1.0)  # an elastomer against anything rigid
+PRESS_FIT_DEFAULT_MM = (0.05, 0.4)  # a side with unknown material (catalog motor shaft into a catalog hub)
+
+
+def press_fit_range(mat_a, mat_b) -> tuple:
+    """(min, max) interference for a press fit between two materials, and a short label of the pair."""
+    ca = material(mat_a).cls if material(mat_a) else None
+    cb = material(mat_b).cls if material(mat_b) else None
+    if ca is None or cb is None:
+        return PRESS_FIT_DEFAULT_MM, "unknown material"
+    key = tuple(sorted((ca, cb)))
+    if key in PRESS_FIT_MM:
+        return PRESS_FIT_MM[key], f"{key[0]}/{key[1]}"
+    if "elastomer" in key:
+        return PRESS_FIT_ELASTOMER_MM, f"{key[0]}/{key[1]}"
+    return PRESS_FIT_DEFAULT_MM, f"{key[0]}/{key[1]}"
+
+
+# Tape and hook-and-loop: grams of part per cm2 of contact they can hold through a 50 g-class hit (conservative).
+TAPE_MAX_G_PER_CM2 = 2.0
+TAPE_LIKE = {"tape", "double_sided_tape", "foam_tape", "velcro", "hook_and_loop"}
+TAPE_CONTACT_GAP_MM = 0.5
+
+
+# Mechanical properties for the strength checks: (yield or tensile strength MPa, shear strength MPa, Young's modulus GPa).
+# Printed values are in-plane (XY) strengths of typical FDM parts; across layers use PRINTED_Z_FACTOR. Conservative
+# handbook values, not datasheets: a blend or grade that matters should be measured.
+_MECH = [
+    (("pla", "pla_st"), (50.0, 30.0, 3.5)),
+    (("petg",), (45.0, 28.0, 2.0)),
+    (("abs", "asa"), (38.0, 24.0, 2.2)),
+    (("nylon", "taulman910", "pa12"), (45.0, 30.0, 1.6)),
+    (("pla_cf", "petg_cf", "pa_cf", "cf_filament"), (55.0, 32.0, 5.0)),
+    (("pc", "polycarbonate"), (60.0, 40.0, 2.4)),
+    (("resin",), (40.0, 25.0, 2.0)),
+    (("tpu", "tpu_95a", "tpu_85a"), (8.0, 6.0, 0.03)),
+    (("hdpe",), (25.0, 15.0, 0.9)),
+    (("pp", "polypropylene"), (30.0, 18.0, 1.4)),
+    (("uhmw",), (20.0, 14.0, 0.7)),
+    (("cf_plate", "carbon_fibre"), (500.0, 60.0, 60.0)),
+    (("fr4", "g10"), (250.0, 100.0, 20.0)),
+    (("aluminium", "aluminum"), (240.0, 150.0, 69.0)),
+    (("steel", "304", "stainless"), (350.0, 210.0, 200.0)),
+    (("hardox",), (1000.0, 600.0, 200.0)),
+    (("titanium",), (830.0, 550.0, 114.0)),
+    (("brass",), (200.0, 140.0, 100.0)),
+    (("copper",), (70.0, 50.0, 117.0)),
+]
+MECH = {name: v for names, v in _MECH for name in names}
+PRINTED_Z_FACTOR = 0.5  # strength across layer lines relative to in-plane
+
+
+def mech(mid):
+    """(yield MPa, shear MPa, E GPa) of a material, or None when unknown."""
+    return MECH.get(mid) if mid else None

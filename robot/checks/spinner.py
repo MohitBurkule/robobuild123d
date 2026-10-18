@@ -13,6 +13,8 @@ G = "spinner"
 SPINS = ("spinner", "drum", "disc", "bar")
 SUPPORT = ("structure", "plate", "fork", "armor")
 MIN_HOLD_MM = 3.0
+MAX_SWEEP_HEIGHT_VERTICAL_MM = 5.0  # lowest point of a vertical disc/drum's swept rim above the floor
+MAX_SWEEP_HEIGHT_HORIZONTAL_MM = 25.0  # a horizontal blade must still hit at bumper height
 
 
 def hold_mm(w, shaft, weapon, origin, axis, half, sign) -> float:
@@ -91,10 +93,32 @@ def run(ctx):
                 worst, worst_deg = wr - orr, float(deg)
         if np.isfinite(worst):
             ctx.metrics["weapon_reach_lead_mm"] = worst
-        if vertical and worst < 3.0:
-            out.append(fail("spinner.reach", G, WARNING, "Weapon does not lead the front",
+        if worst < 3.0:
+            behind = worst < 0.0
+            out.append(fail("spinner.reach", G, BLOCKER if behind else WARNING, "Weapon does not lead the front",
                             f"Looking {worst_deg:.0f} degrees off straight ahead the chassis or wedge is {-worst:.1f} mm ahead of `{pid}`; the opponent meets it first.")
-                       .on(pid).fix("Cut the wedge back or move the weapon forward until it leads by 5-10 mm across plus or minus 30 degrees."))
+                       .on(pid).expect(">= 3 mm lead across +/-30 degrees", f"{worst:.1f} mm")
+                       .fix("Cut the wedge back or move the weapon forward until it leads by 5-10 mm across plus or minus 30 degrees."))
+        # Reach toward the floor: the swept rim must come down to where opponents are (a disc that rides high misses
+        # wedges and low robots entirely).
+        floor = min(float(b.aabb[0][2]) for b in w.bodies if not b.fastener and not b.is_wire)
+        if r.spec.ground_z is not None:
+            floor = float(r.spec.ground_z)
+        rmax_w = rim(pts, origin, axis)
+        az = abs(float(axis[2]))
+        swept_low = float(origin[2]) - rmax_w * float(np.sqrt(max(0.0, 1.0 - az * az))) - half * az
+        high = swept_low - floor
+        ctx.metrics["weapon_sweep_floor_gap_mm"] = high
+        lim = MAX_SWEEP_HEIGHT_VERTICAL_MM if vertical else MAX_SWEEP_HEIGHT_HORIZONTAL_MM
+        if high > lim:
+            out.append(fail("spinner.reach", G, BLOCKER, "Weapon sits too high",
+                            f"The lowest point of `{pid}`'s swept rim is {high:.1f} mm above the floor (allowed {lim:.0f} mm); "
+                            f"it passes over wedges and low robots.")
+                       .on(pid).expect(f"<= {lim:.0f} mm above the floor", f"{high:.1f} mm")
+                       .fix("Lower the weapon axle or enlarge the weapon so its rim comes down to the floor plane."))
+        elif worst >= 3.0:
+            out.append(ok("spinner.reach", G, "Weapon leads and reaches low",
+                          f"`{pid}` leads the body by {worst:.1f} mm across +/-30 degrees and its rim comes within {high:.1f} mm of the floor."))
 
         # Mass share and stored energy.
         wm = ctx.metrics.get(f"part_mass_g.{pid}", 0.0)

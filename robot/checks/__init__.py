@@ -17,13 +17,14 @@ from .. import world as world_mod
 from ..finding import BLOCKER, WARNING, Report, fail
 from ..spec import Spec
 
-# Bumped whenever a check is added or changed. 7 = the Rust crate's revision; 8 adds belt/fork tension (python port).
-CHECKS_REVISION = 8
+# Bumped whenever a check is added or changed. 7 = the Rust crate's revision; 8 adds belt/fork tension (python port); 9 adds
+# wheel running clearance, wheel exposure, targets, fused/key/tape/press-fit evidence, stall-current battery peak.
+CHECKS_REVISION = 9
 
 # (module, deep_only) in run order; same order as the Rust crate, plus `tension` before `assembly`.
 GROUPS = [
     ("wiring", True), ("mass", False), ("interference", False), ("connections", False), ("ground", False),
-    ("legal", False), ("fasteners", False), ("power", False), ("mfg", False), ("spinner", False), ("tension", False),
+    ("legal", False), ("fasteners", False), ("power", False), ("mfg", False), ("spinner", False), ("tension", False), ("targets", False),
     ("assembly", True),
 ]
 

@@ -39,6 +39,7 @@ def run(ctx):
                       and rp.cat.props.get("cells") is not None), None)
     cells = float(cells if cells is not None else 2.0)
     weapon_current = 0.0
+    missing_current = []  # motors whose current draw is unknown: the peak is then a lower bound, never a pass
     for rp in r.parts:
         if rp.part.kind != "weapon" or rp.part.weapon is None:
             continue
@@ -54,7 +55,11 @@ def run(ctx):
                             f"`{pid}` names motor {wd.motor!r}; it must be a catalog brushless motor so speed can be computed.")
                        .on(pid).fix("Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV."))
             continue
-        weapon_current += float(motor.cat.props.get("max_current_a", 0.0) or 0.0)
+        mc = motor.cat.props.get("max_current_a")
+        if mc is None:
+            missing_current.append(motor.part.id)
+        else:
+            weapon_current += float(mc)
         ratio = max(float(wd.reduction if wd.reduction is not None else 1.0), 0.01)
         wcells = float(wd.cells if wd.cells is not None else cells)
         rpm = r.profile.max_cell_v * wcells * float(kv) / ratio  # AWS 5e: no-load speed
@@ -97,17 +102,32 @@ def run(ctx):
         bp = bat_rp.cat.props
         mah, c = float(bp.get("capacity_mah", 0.0) or 0.0), float(bp.get("c_rating", 0.0) or 0.0)
         max_a = mah / 1000.0 * c
-        drive = sum(float(rp.cat.props["stall_current_a"]) for rp in r.parts
-                    if rp.part.kind == "motor" and rp.cat is not None and rp.cat.props.get("stall_current_a") is not None)
-        peak = drive * 0.5 + weapon_current
+        # Peak = every drive motor stalled (pushing match, wheels blocked) plus the weapon at its rated maximum.
+        drive = 0.0
+        for rp in r.parts:
+            if rp.part.kind != "motor":
+                continue
+            sc = rp.cat.props.get("stall_current_a") if rp.cat is not None else None
+            if sc is None:
+                missing_current.append(rp.part.id)
+            else:
+                drive += float(sc)
+        peak = drive + weapon_current
         ctx.metrics["peak_current_a"] = peak
+        if missing_current:
+            ids = ", ".join(f"`{x}`" for x in missing_current)
+            out.append(fail("power.current_unknown", G, WARNING, "Motor current draw unknown",
+                            f"{ids} {'has' if len(missing_current) == 1 else 'have'} no stall or maximum current in the catalog; "
+                            f"the {peak:.1f} A peak leaves {'it' if len(missing_current) == 1 else 'them'} out.")
+                       .on(*missing_current).fix("Use catalog motors with a stall current (drive) or max current (weapon)."))
+            ctx.not_checked.append(f"Battery peak current: no current data for {', '.join(missing_current)}")
         if max_a > 0 and peak > max_a:
             out.append(fail("power.battery", G, WARNING, "Battery may sag under peak load",
                             f"Estimated peak {peak:.1f} A against a {max_a:.1f} A rating ({_n(mah)} mAh x {_n(c)} C); the voltage will collapse in a hit.")
                        .fix("Use a bigger or higher-C pack, or a motor that draws less."))
-        elif max_a > 0:
+        elif max_a > 0 and not missing_current:
             out.append(ok("power.battery", G, "Battery covers peak current", f"Peak {peak:.1f} A within the {max_a:.1f} A rating."))
-        else:
+        elif max_a <= 0:
             ctx.not_checked.append(f"Battery `{bat_rp.part.id}` current rating: catalog has no capacity or C rating")
     for esc in r.parts:
         if esc.part.kind != "esc" or esc.cat is None:

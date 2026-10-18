@@ -10,6 +10,7 @@ from scipy import ndimage
 from .. import catalog, geom, measure
 from .. import world as world_mod
 from ..finding import BLOCKER, WARNING, fail, note, ok
+from .power import spin_axis  # one shared helper (also used by spinner)
 
 G = "interference"
 INF = math.inf
@@ -76,7 +77,119 @@ def run(ctx):
         out.extend(spin_sweeps(ctx))
     else:
         ctx.not_checked.append("Joint range sweeps and spinning-weapon sweep (fast mode skipped them)")
+    out.extend(wheel_clearance(ctx))
     out.extend(captive(ctx))
+    return out
+
+
+WHEEL_CLEARANCE_MM = 1.0  # running clearance between a wheel or tyre and anything that does not turn with it
+HUB_METHODS = {"press_fit", "shaft", "pin", "screw", "glue", "interlock", "snap", "tape", "velcro"}
+
+
+def wheel_axis(r, w, i):
+    """(origin, unit axis) a wheel turns about: its revolute joint, else its catalog axle, else its thinnest local axis."""
+    b = w.bodies[i]
+    rp = r.parts[b.part_idx]
+    j = rp.part.joint
+    if j is not None and j.kind == "revolute":
+        pb = w.body(rp.part.parent) if rp.part.parent else None
+        PM = pb.M if pb is not None else np.eye(4)
+        ax = PM[:3, :3] @ np.asarray(j.axis, float)
+        if np.linalg.norm(ax) > 1e-9:
+            return (PM @ np.append(np.asarray(j.pivot, float), 1.0))[:3], ax / np.linalg.norm(ax)
+    if rp.cat is not None and rp.cat.shaft is not None:
+        sh = rp.cat.shaft
+        ax = b.M[:3, :3] @ np.asarray(sh.get("dir", [1, 0, 0]), float)
+        return (b.M @ np.append(np.asarray(sh.get("at", [0, 0, 0]), float), 1.0))[:3], ax / np.linalg.norm(ax)
+    lo, hi = b.geom.bounds
+    k = int(np.argmin(hi - lo))
+    ax = b.M[:3, :3] @ np.eye(3)[k]
+    return (b.M @ np.append((lo + hi) / 2, 1.0))[:3], ax / np.linalg.norm(ax)
+
+
+def wheel_clearance(ctx):
+    """Running clearance of wheels and tyres: the wheel revolved about its axle must keep WHEEL_CLEARANCE_MM from every
+    part that does not turn with it (pocket walls, wedge, armour). Distances are measured in the (radius, axial) plane, so
+    a surface of revolution is handled exactly up to the 0.5 mm surface sampling."""
+    from scipy.spatial import cKDTree
+
+    r, w = ctx.r, ctx.world
+    out = []
+    clr = WHEEL_CLEARANCE_MM
+    turning = {}
+    for i, b in enumerate(w.bodies):
+        if b.part_idx is None:
+            continue
+        p = r.parts[b.part_idx].part
+        if p.kind == "wheel" or p.tyre_of:
+            turning[b.id] = i
+    if not turning:
+        return out
+    hub = {}
+    for c in r.spec.connections:
+        if c.method in HUB_METHODS:
+            hub.setdefault(c.a, set()).add(c.b)
+            hub.setdefault(c.b, set()).add(c.a)
+    for f in r.spec.fasteners:
+        ids = set(f.through or []) | ({f.threads_into} if f.threads_into else set())
+        for x in ids:
+            hub.setdefault(x, set()).update(ids - {x})
+    bad = 0
+    for wid, i in sorted(turning.items()):
+        b = w.bodies[i]
+        p = r.parts[b.part_idx].part
+        origin, axis = wheel_axis(r, w, i)
+        skip = set(hub.get(wid, ())) | descendants(r, wid) | set(turning)
+        if p.tyre_of:
+            skip.add(p.tyre_of)
+        skip |= {q.id for q in r.spec.parts if q.tyre_of == wid}
+
+        def ra(P):
+            q = np.atleast_2d(P) - origin
+            a = q @ axis
+            return np.linalg.norm(q - np.outer(a, axis), axis=1), a
+
+        pts, _ = b.surface(0.5)
+        wr, wa = ra(pts)
+        tree = cKDTree(np.c_[wr, wa])
+        rmax, amin, amax = float(wr.max()), float(wa.min()), float(wa.max())
+        nb = max(int(math.ceil((amax - amin) / 0.5)), 1)
+        rbin = np.zeros(nb)
+        np.maximum.at(rbin, np.clip(((wa - amin) / 0.5).astype(int), 0, nb - 1), wr)
+        worst = {}
+        for o in w.bodies:
+            if o is b or o.is_wire or o.fastener or o.id in skip:
+                continue
+            ad = allowed_depth(r, b, o)
+            if math.isinf(ad) or ad >= 1.0e3:
+                continue
+            cr, ca = ra(_corners(o.aabb))
+            if ca.max() < amin - clr or ca.min() > amax + clr:
+                continue
+            if not measure.aabb_overlap(b.aabb, o.aabb, rmax + clr):
+                continue
+            P, _ = o.surface(0.5)
+            pr, pa = ra(P)
+            m = (pr <= rmax + clr) & (pa >= amin - clr) & (pa <= amax + clr)
+            if not m.any():
+                continue
+            P, pr, pa = P[m], pr[m], pa[m]
+            d, _ = tree.query(np.c_[pr, pa])
+            inside = (pa >= amin) & (pa <= amax) & (pr < rbin[np.clip(((pa - amin) / 0.5).astype(int), 0, nb - 1)])
+            d = np.where(inside, 0.0, d)
+            k = int(np.argmin(d))
+            if d[k] < clr:
+                worst[o.id] = (float(d[k]), P[k])
+        for oid, (g, at) in sorted(worst.items()):
+            bad += 1
+            out.append(fail("interference.wheel_clearance", G, WARNING, "Wheel has no running clearance",
+                            f"`{wid}` turning about its axle comes within {g:.2f} mm of `{oid}`; it needs {clr:.1f} mm so tyre "
+                            f"squash, flex and debris do not make it rub.")
+                       .on(wid, oid).here(at).expect(f">= {clr:.1f} mm", f"{g:.2f} mm")
+                       .fix("Open the wheel pocket so it clears the wheel by 1 mm on every side (radius and both faces)."))
+    if bad == 0:
+        out.append(ok("interference.wheel_clearance", G, "Wheels run clear",
+                      f"{len(turning)} wheels and tyres keep at least {clr:.1f} mm from every part that does not turn with them."))
     return out
 
 
@@ -194,18 +307,6 @@ class Revolved:
         return out
 
 
-def spin_axis(w, r, i):
-    b = w.bodies[i]
-    if b.part_idx is None:
-        return None
-    wd = r.parts[b.part_idx].part.weapon
-    if wd is None:
-        return None
-    local = np.asarray(wd.spin_axis if wd.spin_axis is not None else [0.0, 0.0, 1.0], float)
-    d = b.M[:3, :3] @ local
-    return b.M[:3, 3].copy(), d / np.linalg.norm(d)
-
-
 def spin_sweeps(ctx):
     r, w = ctx.r, ctx.world
     out = []
@@ -269,6 +370,7 @@ def spin_sweeps(ctx):
     return out
 
 
+CAPTIVE_MAX_PLAY_MM = 0.5  # a part is captive only if it cannot move more than this in any of the 6 axis directions
 SKIP_KINDS = {"structure", "wedge", "armor", "plate", "fork"}
 MUST = {"battery", "motor", "weapon_motor", "servo"}
 SHOULD = {"esc", "receiver", "switch", "insert", "nut", "bearing", "shaft", "pin"}
@@ -278,7 +380,7 @@ DIRS = [("+x", (1, 0, 0)), ("-x", (-1, 0, 0)), ("+y", (0, 1, 0)), ("-y", (0, -1,
 def captive(ctx):
     r, w = ctx.r, ctx.world
     out = []
-    slop = r.profile.capture_slop_mm
+    slop = min(r.profile.capture_slop_mm, CAPTIVE_MAX_PLAY_MM)
     checked = loose_ok = 0
     cmap = {}
     for i, b in enumerate(w.bodies):
@@ -315,14 +417,22 @@ def captive(ctx):
         if any(f.threads_into == p.id or p.id in (f.through or []) for f in r.spec.fasteners):
             continue
         checked += 1
-        if p.retained is not None:
+        if p.kind == "battery" and p.retained is None:
+            out.append(fail("retention.battery_undeclared", G, BLOCKER, "Battery retention is not declared",
+                            f"`{p.id}` has no screw through it and no `retained`; the battery is the heaviest loose part and "
+                            f"must say how it is held (`retained: pocket` if the pocket alone holds it, which is then measured).")
+                       .on(p.id).here(b.aabb.mean(axis=0))
+                       .fix("Set `retained` (pocket, velcro, strap, press_fit, tape) or screw a retaining plate over it."))
+            continue
+        if p.retained is not None and p.retained != "pocket":  # `pocket` claims captive: the geometry must prove it
             loose_ok += 1
             out.append(note("retention.declared", G, "Held by declared method", f"`{p.id}` is held by {p.retained}.").on(p.id))
             continue
         if not free:
             continue
         out.append(fail("retention.loose", G, BLOCKER if must else WARNING, "Nothing holds this part in place",
-                        f"`{p.id}` can move more than {slop:.1f} mm toward {', '.join(free)} without touching anything; in a hit it will fall out or rattle.")
+                        f"`{p.id}` can move more than {slop:.1f} mm toward {', '.join(free)} without touching anything (captive means at most "
+                        f"{CAPTIVE_MAX_PLAY_MM:.1f} mm of play in every direction); in a hit it will fall out or rattle.")
                    .on(p.id).here(b.aabb.mean(axis=0))
                    .fix("Make the pocket snug on that side (0.2 to 0.5 mm gap), add a retaining rib or strap, or declare how it is held in `retained` (tape, adhesive, velcro, press_fit)."))
     ctx.captive = cmap

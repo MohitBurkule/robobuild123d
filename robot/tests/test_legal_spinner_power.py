@@ -57,7 +57,7 @@ def test_wedge_matches_rust(wedge_rep):
     assert {"legal.switch", "switch.recess", "legal.failsafe", "legal.footprint", "power.battery"} <= ids(rep, True)
     assert not any(f.group in ("legal", "power", "spinner") and not f.passed for f in rep.findings)
     assert abs(rep.metrics["footprint_mm"] - 122.48) < 0.1
-    assert abs(rep.metrics["peak_current_a"] - 0.65) < 1e-9
+    assert abs(rep.metrics["peak_current_a"] - 2.0) < 1e-9  # two N10s stalled at ~1 A each (was 0.65 = half of one in Rust)
     assert "legal.weapon_disable" not in ids(rep)
 
 

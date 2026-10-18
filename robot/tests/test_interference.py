@@ -56,7 +56,7 @@ def test_spin_sweep_hit_and_clear():
 def test_loose_battery_and_captive_map():
     walls = [box("floor", (0, 0, -6), (30, 30, 2)), box("w1", (-8, 0, 0), (2, 30, 10)), box("w2", (8, 0, 0), (2, 30, 10)),
              box("w3", (0, -8, 0), (30, 2, 10)), box("w4", (0, 8, 0), (30, 2, 10)), box("lid", (0, 0, 6), (30, 30, 2))]
-    batt = box("bat", (0, 0, 0), (14, 14, 10), kind="battery")
+    batt = box("bat", (0, 0, 0), (14, 14, 10), kind="battery", retained="pocket")
     c = _ctx(walls + [batt])
     fs = interference.run(c)
     assert not ids(fs, "retention.loose") and ids(fs, "retention.captive")[0].passed
@@ -64,3 +64,11 @@ def test_loose_battery_and_captive_map():
     c = _ctx(walls[:-1] + [batt])  # no lid: free to +z
     f = ids(interference.run(c), "retention.loose")
     assert f and f[0].severity == "blocker" and "+z" in f[0].message
+
+
+def test_battery_retention_must_be_declared():
+    walls = [box("floor", (0, 0, -6), (30, 30, 2)), box("w1", (-8, 0, 0), (2, 30, 10)), box("w2", (8, 0, 0), (2, 30, 10)),
+             box("w3", (0, -8, 0), (30, 2, 10)), box("w4", (0, 8, 0), (30, 2, 10)), box("lid", (0, 0, 6), (30, 30, 2))]
+    fs = interference.run(_ctx(walls + [box("bat", (0, 0, 0), (14, 14, 10), kind="battery")]))
+    f = ids(fs, "retention.battery_undeclared")
+    assert f and f[0].severity == "blocker"
