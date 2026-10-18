@@ -457,10 +457,8 @@ def _supports(a):
 
     def hits(b, m):
         h = b.inside(P[m])
-        if b.kind != "bearing":
-            n = sum(b.inside(R[m]).astype(int) for R in ring)
-            h = h | (n >= 5)
-        return h
+        n = sum(b.inside(R[m]).astype(int) for R in ring)
+        return h | (n >= 5)  # a bearing / upright bore around the shaft: the axis itself is in the hole
 
     for s in (1.0, -1.0):
         m = ts * s > 0
@@ -483,7 +481,38 @@ def _supports(a):
             od = 2 * float(ph.perp_radius(b.mesh.vertices, origin, axis).max())
             host = _host(a.ctx, b, origin, axis, t, od)
         a._sup[s] = (t, b, host)
+    for s in (1.0, -1.0):
+        if s not in a._sup:
+            hub = _hub_support(a, p, sh, origin, axis, s)
+            if hub is not None:
+                a._sup[s] = hub
     return a._sup
+
+
+def _hub_support(a, p, sh, origin, axis, s):
+    """Motor-as-hub: the weapon motor's own bearings carry side `s` when `sh` is its own extended shaft and its stator is
+    screwed to a static upright on that side (no shaft passes through the stator). (t, motor body, static host) or None."""
+    mid = p.weapon.motor if p.weapon else None
+    mb = a.body(mid) if mid else None
+    if mb is None:
+        return None
+    try:
+        from .kinematics import BOUNDARY, motor_hub
+
+        own, static, k, _ = motor_hub(a.ctx, sh.id, mid)
+    except Exception:  # noqa: BLE001
+        return None
+    if not (own and static):
+        return None
+    mt = (mb.mesh.vertices - origin) @ axis
+    t = float(mt.mean())
+    if t * s <= 0:
+        return None
+    held = [o for mm, o, _ in k.stator_links if mm == mid] + [o for mm, o, *_ in k.rotor_links if mm == mid]
+    hosts = [a.body(o) for o in held if k.rot(o) is None and k.kind(o) not in BOUNDARY and a.body(o) is not None]
+    if not hosts:
+        return None
+    return (t, mb, hosts[0])
 
 
 def weapon(a):

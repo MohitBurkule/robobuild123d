@@ -584,8 +584,13 @@ def facts(ctx) -> dict:
         v = np.cross(axis, u)
         ring = np.array([rr * (math.cos(t) * u + math.sin(t) * v) for rr in (0.0, 3.5, 5.0) for t in np.linspace(0, 2 * math.pi, 8, endpoint=False)])
         sides = []
+        # reach per side from the rotor's own face: a shaft tail (e.g. the motor shaft running on into the far bearing) is
+        # not rotor face and would push the sampling past the upright
+        nsh = [b for b in rbodies if b.kind not in ("shaft", "pin")] or rbodies
+        tq = np.concatenate([(b.mesh.vertices - origin) @ axis for b in nsh])
+        reach = {1.0: max(0.0, float(tq.max())), -1.0: max(0.0, float(-tq.min()))}
         for s in (1.0, -1.0):
-            d = rhalf + np.arange(1, 61) * 0.5
+            d = reach[s] + np.arange(1, 61) * 0.5
             P = (origin + np.outer(s * d, axis))[:, None, :] + ring[None]
             sides.append(bool(measure.inside_any(sup, P.reshape(-1, 3)).any()))
         F["supports"] = tuple(sides)
