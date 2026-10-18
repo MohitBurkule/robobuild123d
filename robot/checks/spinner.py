@@ -14,12 +14,15 @@ G = "spinner"
 SPINS = ("spinner", "drum", "disc", "bar")
 SUPPORT = ("structure", "plate", "fork", "armor")
 MIN_HOLD_MM = 3.0
+# A side carried by a rolling bearing needs only the bearing's own width (a 2.5 mm MF85ZZ is rated for its width);
+# 3 mm is for a shaft in a printed or plain bore.
+MIN_BEARING_HOLD_MM = 2.0
 LEAD_KINDS = ("wedge", "structure", "plate", "armor", "fork")  # must sit behind the weapon unless ground game
 MAX_SWEEP_HEIGHT_VERTICAL_MM = 5.0  # lowest point of a vertical disc/drum's swept rim above the floor
 MAX_SWEEP_HEIGHT_HORIZONTAL_MM = 25.0  # a horizontal blade must still hit at bumper height
 
 
-def hold_mm(w, shaft, weapon, origin, axis, half, sign, extra=(), ring=None) -> float:
+def hold_mm(w, shaft, weapon, origin, axis, half, sign, extra=(), ring=None, bearing_only=False) -> float:
     """Millimetres of shaft inside a support body on one side of the weapon (0.25 mm steps). `extra`: body indices that also
     count as support (a weapon motor whose stator is bolted to structure, carrying its own extended shaft). `ring`: shaft
     radius; a support around the shaft (a bore, a bearing race) is found just outside it, not only on the axis."""
@@ -35,6 +38,12 @@ def hold_mm(w, shaft, weapon, origin, axis, half, sign, extra=(), ring=None) -> 
         v = np.cross(axis, u)
         for e in (u, -u, v, -v):
             held |= measure.inside_any(sup, P + (ring + 0.3) * e)
+    if bearing_only:
+        held = measure.inside_any([b for b in sup if b.kind == "bearing"], P) if not ring else np.zeros(len(P), bool)
+        if ring:
+            for e in (u, -u, v, -v):
+                held |= measure.inside_any([b for b in sup if b.kind == "bearing"], P + (ring + 0.3) * e)
+        return float(held[in_shaft].sum()) * 0.25
     length = 0.0
     for s, h in zip(in_shaft, held):
         if s:
@@ -94,7 +103,15 @@ def run(ctx):
             a, c = (hold_mm(w, j, i, origin, axis, half, 1.0, extra, ring), hold_mm(w, j, i, origin, axis, half, -1.0, extra, ring))
             if min(a, c) >= min(best[0], best[1]):
                 best = (a, c, b.id)
-        if best[0] >= MIN_HOLD_MM and best[1] >= MIN_HOLD_MM:
+        need = [MIN_HOLD_MM, MIN_HOLD_MM]
+        jb = w.index(best[2]) if best[2] else None
+        if jb is not None:
+            q = w.bodies[jb].mesh.vertices - origin
+            rg = float(np.linalg.norm(q - np.outer(q @ axis, axis), axis=1).max())
+            for k, sg in enumerate((1.0, -1.0)):
+                if hold_mm(w, jb, i, origin, axis, half, sg, (), rg, bearing_only=True) >= MIN_BEARING_HOLD_MM:
+                    need[k] = min(need[k], MIN_BEARING_HOLD_MM)
+        if best[0] >= need[0] and best[1] >= need[1]:
             ctx.metrics["weapon_shaft_hold_mm"] = min(best[0], best[1])
             out.append(ok("spinner.bearing", G, "Weapon on a shaft gripped on both sides",
                           f"`{pid}` turns on `{best[2]}`, which sits {best[0]:.1f} mm and {best[1]:.1f} mm in structure or bearings either side (need {MIN_HOLD_MM:.0f})."))
@@ -117,10 +134,15 @@ def run(ctx):
         others = [b for b in cands if b not in gg]
         ov = np.vstack([b.mesh.vertices for b in others]) if others else np.zeros((0, 3))
         worst, worst_deg = np.inf, 0.0
+        # the whole blade stack meets the opponent (a drisk's second disc, a stacked bar), not only the named part
+        from .archetype import rotor_set
+        stack = [pts] + [w.body(x).mesh.vertices for x in sorted(rotor_set(r.spec, pid) - {pid})
+                         if w.body(x) is not None and not w.body(x).fastener and _is_blade(r.spec.part(x))]
+        spts = np.vstack(stack)
         for deg in range(-30, 31, 10):
             a = np.radians(deg)
             dvec = np.array([np.sin(a), np.cos(a), 0.0])
-            wr = float((pts @ dvec).max())
+            wr = float((spts @ dvec).max())
             orr = float((ov @ dvec).max()) if len(ov) else -np.inf
             if wr - orr < worst:
                 worst, worst_deg = wr - orr, float(deg)
@@ -161,11 +183,14 @@ def run(ctx):
 
         # Mass share and stored energy.
         wm = ctx.metrics.get(f"part_mass_g.{pid}", 0.0)
+        rm = ph.rotor_mass(ctx, pid)  # the whole rotating stack (discs, spacer, hub, bell share), not just the named weapon part
+        if rm is not None:
+            wm = rm[0]
         ctx.metrics["weapon_mass_g"] = wm
         ctx.metrics["weapon_mass_fraction"] = wm / total
         if wm / total < 0.20:
             out.append(fail("spinner.mass_share", G, WARNING, "Weapon is a small share of the robot",
-                            f"`{pid}` is {wm:.1f} g, {100 * wm / total:.0f}% of {total:.0f} g; spinners that win put 25-40% of the mass into the weapon (warns below 20%).").on(pid))
+                            f"`{pid}`'s rotor is {wm:.1f} g, {100 * wm / total:.0f}% of {total:.0f} g; spinners that win put 25-40% of the mass into the weapon (warns below 20%).").on(pid))
         if energy is not None:
             per_g = energy / total
             ctx.metrics["weapon_energy_per_robot_g"] = per_g
@@ -280,3 +305,8 @@ def exposure(ctx):
                                 f"Wire `{rt.id}` has a clear line to open air at this point; a hit or the weapon can cut it.")
                            .on(rt.id).here(P[opened[0]]).fix("Route it through the chassis interior or add a wall on the open side."))
     return out
+
+
+def _is_blade(p):
+    return p is not None and (p.kind == "weapon" or (getattr(p, "_extra", {}).get("role") or "") == "blade")
+

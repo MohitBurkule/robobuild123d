@@ -16,6 +16,10 @@ LOW_ENERGY = {"hdpe", "pp", "polypropylene", "pe", "uhmwpe", "nylon", "pa12", "t
 IMPACT = {"wedge", "weapon", "armor", "fork", "locking_bar"}
 
 
+# A revolute part may be carried on its axis by a holder this far from the pivot (bearing plate beside a disc stack).
+JOINT_AXIS_REACH_MM = 25.0
+
+
 def impact_part(p) -> bool:
     return p.kind in IMPACT
 
@@ -133,11 +137,35 @@ def run(ctx):
             pb = w.body(par)
             pivot = xform.apply(pb.M, np.asarray(p.joint.pivot, float)) if pb is not None else None
 
-            def near(bid):
-                b = w.body(bid)
-                return pivot is not None and b is not None and float(b.sdf(pivot)[0]) <= 1.0
+            jax = xform.apply_dir(pb.M, np.asarray(p.joint.axis, float)) if pb is not None else np.asarray(p.joint.axis, float)
+            jax = jax / (np.linalg.norm(jax) or 1.0)
 
-            if near(p.id) and near(par):
+            def near(bid, along=0.0):
+                """Material within 1 mm of the pivot, or a bore round it: a part whose hole encircles the joint axis at the
+                pivot (a hub on a shaft, a disc on a spigot, a tube on a pin) holds the pivot as surely as solid material.
+                `along` > 0 also accepts the same test at points up to that far along a revolute joint's axis: a holder that
+                carries the axle in its own bore (a bearing plate beside a disc stack) holds the axis, not one point."""
+                b = w.body(bid)
+                if pivot is None or b is None:
+                    return False
+                if along > 0:
+                    return any(_near_at(b, pivot + t * jax) for t in np.arange(-along, along + 0.01, 0.5))
+                return _near_at(b, pivot)
+
+            def _near_at(b, pivot):
+                d0 = float(b.sdf(pivot)[0])
+                if d0 <= 1.0:
+                    return True
+                if d0 > 6.0:
+                    return False
+                u = np.cross(jax, [1.0, 0.0, 0.0] if abs(jax[0]) < 0.9 else [0.0, 1.0, 0.0])
+                u /= np.linalg.norm(u)
+                v = np.cross(jax, u)
+                ring = np.array([pivot + (d0 + 0.3) * (np.cos(t) * u + np.sin(t) * v) for t in np.linspace(0, 2 * np.pi, 12, endpoint=False)])
+                return float(np.mean(b.inside(ring))) >= 0.75
+
+            rev = (getattr(p.joint, "kind", "") or "") == "revolute"
+            if near(p.id) and near(par, JOINT_AXIS_REACH_MM if rev else 0.0):
                 _link(edges, p.id, par)
             else:
                 out.append(fail("connection.joint_pivot", G, BLOCKER, "Joint pivot is not on the parts",

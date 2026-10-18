@@ -98,7 +98,7 @@ def weapons(ctx):
         bar = r.spec.part(wd.locking_bar) if wd.locking_bar else None
         lock = (getattr(r.spec, "raw", None) or {}).get("weapon_lock")
         if bar is None and isinstance(lock, dict) and lock.get("type") == "removable_pin":
-            out += pin_lock(r, w, p, lock)
+            out += tooth_stop_lock(r, w, p, lock) if lock.get("mode") == "tooth_stop" else pin_lock(r, w, p, lock)
             continue
         if bar is None:
             out.append(fail("legal.locking_bar", G, BLOCKER, "No locking bar",
@@ -199,6 +199,80 @@ def pin_lock(r, w, p, lock):
     c = C[int(np.argmax(ok_))]
     return [ok("legal.locking_bar", G, "Removable weapon pin declared",
                f"`{p.id}`: a pin hole lines up through {', '.join(f'`{x}`' for x in ids)} at {np.round(c, 1).tolist()}.")]
+
+
+def tooth_stop_lock(r, w, p, lock):
+    """Rule 5f via a declared removable pin that stops the TEETH (`weapon_lock: {type: removable_pin, mode: tooth_stop,
+    holes: [static ids], at: [x, y, z]}`): the pin runs parallel to the spin axis through aligned holes in static parts on
+    both sides of the weapon, inside the tips' circle but clear of the weapon body in the modelled pose, so the first tooth
+    to come round hits it. Used where the rotor is a closed stack (drisk round a motor can) with no room for a through-pin."""
+    from .power import spin_axis
+
+    ids = [x for x in (lock.get("holes") or []) if isinstance(x, str)]
+    i = w.index(p.id)
+    sa = spin_axis(w, r, i) if i is not None else None
+    bodies = {x: w.body(x) for x in ids}
+    rot = {p.id} | {q.id for q in r.spec.parts if getattr(q, "parent", None) == p.id}
+    at = lock.get("at")
+    bad = ([f"unknown part(s) {', '.join(f'`{x}`' for x in ids if bodies[x] is None)}"] if any(b is None for b in bodies.values()) else []) + \
+          (["no spin axis for the weapon"] if sa is None else []) + (["`holes` must name static parts only"] if any(x in rot for x in ids) else []) + \
+          (["`at` (a point on the pin axis) is missing"] if not (isinstance(at, (list, tuple)) and len(at) == 3) else []) + \
+          (["`holes` is empty"] if not ids else [])
+    if bad:
+        return [fail("legal.locking_bar", G, BLOCKER, "Weapon lock declaration is incomplete", f"`{p.id}`: {'; '.join(bad)}.").on(p.id, *ids)]
+    origin, axis = sa
+    c0 = np.asarray(at, float)
+    rad = (c0 - origin) - ((c0 - origin) @ axis) * axis
+    rp = float(np.linalg.norm(rad))
+    wb = w.body(p.id)
+    q = wb.mesh.vertices - origin
+    t_w = q @ axis
+    R = float(np.linalg.norm(q - np.outer(t_w, axis), axis=1).max())
+    u = np.cross(axis, [1.0, 0.0, 0.0] if abs(axis[0]) < 0.9 else [0.0, 1.0, 0.0])
+    u /= np.linalg.norm(u)
+    v = np.cross(axis, u)
+    ang = np.linspace(0.0, 2 * np.pi, 16, endpoint=False)
+    probs = []
+    if rp + PIN_R >= R - 0.5:
+        probs.append(f"the pin sits {rp:.1f} mm from the axis, outside the tips' reach ({R:.1f} mm)")
+    span, held = [], []
+    for x, b in bodies.items():
+        t = (b.mesh.vertices - origin) @ axis
+        span += [float(t.min()), float(t.max())]
+        for tt in np.linspace(float(t.min()) + 0.15, float(t.max()) - 0.15, 5):
+            cc = origin + rad + tt * axis
+            ring = np.array([cc + PIN_R * (np.cos(a) * u + np.sin(a) * v) for a in ang] + [cc])
+            if b.inside(ring).any():
+                probs.append(f"`{x}` has no {2 * PIN_R:.0f} mm hole on the pin line")
+                break
+        else:
+            # where along the pin line is it held? a ring just outside the pin, all in material, means a closed bore
+            for tt in np.arange(float(t.min()) + 0.2, float(t.max()) - 0.19, 0.4):
+                cc = origin + rad + tt * axis
+                for rr in np.arange(PIN_R + 0.4, PIN_R + 3.01, 0.3):  # a closed ring of material round the bore
+                    ring = np.array([cc + rr * (np.cos(a) * u + np.sin(a) * v) for a in ang])
+                    if b.inside(ring).all():
+                        held.append(float(tt))
+                        break
+    if not held:
+        probs.append(f"{', '.join(f'`{x}`' for x in ids)} do not surround the pin line (open slot or outside the part)")
+    elif not (min(held) < float(t_w.min()) and max(held) > float(t_w.max())):
+        probs.append("the pin is not held in a closed bore on both sides of the weapon")
+    # the pin line must be clear of every rotor body in the modelled pose (the pin goes in), and a tooth must cross its circle
+    for b in [w.body(x) for x in rot if w.body(x) is not None]:
+        qb = (b.mesh.vertices - origin) @ axis
+        line = np.array([origin + rad + tt * axis for tt in np.linspace(float(qb.min()), float(qb.max()), 9)])
+        ring = np.vstack([line + PIN_R * (np.cos(a) * u + np.sin(a) * v) for a in ang])
+        if b.inside(np.vstack([line, ring])).any():
+            probs.append(f"the pin line runs into `{b.id}` in the modelled pose")
+    circle = np.array([origin + rp * (np.cos(a) * u + np.sin(a) * v) + float(np.mean(t_w)) * axis for a in np.linspace(0, 2 * np.pi, 180, endpoint=False)])
+    if not wb.inside(circle).any():
+        probs.append(f"no part of `{p.id}` crosses the pin's {rp:.1f} mm circle, so nothing hits the pin")
+    if probs:
+        return [fail("legal.locking_bar", G, BLOCKER, "Tooth-stop weapon pin does not work", f"`{p.id}`: {'; '.join(probs)}.").on(p.id, *ids)
+                .fix("Put the pin on a line through holes in static parts either side of the rotor, inside the tip circle and clear of the rotor body.")]
+    return [ok("legal.locking_bar", G, "Removable tooth-stop pin declared",
+               f"`{p.id}`: a {2 * PIN_R:.0f} mm pin through {', '.join(f'`{x}`' for x in ids)} at {rp:.1f} mm from the axis (tips reach {R:.1f} mm) stops the first tooth.")]
 
 
 def switch_safety(ctx):

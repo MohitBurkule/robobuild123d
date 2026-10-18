@@ -229,3 +229,28 @@ Whoever gets under the other wins. Full rules with rationale, thresholds and app
 11. **Inserts only where screws come out often.** RVRN uses 5 (base panel); the rest are standoffs and press-fit nuts.
 12. **Keep paired supports matched** and plates loaded in their own plane (4 mm uprights printed flat).
 13. **Centre the rotor between its supports**, so both bearings and the chassis see symmetric loads.
+
+## Bought-in sizes, fit, containment, disassembly and coverage (`cots.*`, `fit.*`, `contain.*`, `disasm.*`, `coverage.*`)
+
+- **No unlisted sizes** (`cots.unlisted`, BLOCKER): every motor, ESC, battery, RX, switch, servo, bearing, insert, nut and
+  tyre (or any part with `cots: true`) uses a catalog id; a bearing may instead carry a standard designation (e.g.
+  `MF85ZZ`) in `designation` or `label`. `cots.dims_mismatch` (BLOCKER): a declared `dims` or own shape/bearing model
+  differs from the listed size by > 0.3 mm. `cots.fastener_size` (BLOCKER): screws are M1.6/2/2.5/3/4/5/6 in stocked lengths.
+- **Snug fit** (`fit.*`): a component with walls within 3 mm on two or more faces is in a pocket; gaps are ray-measured on
+  all six faces. Per axis with walls on both sides the clearance must be in the wall process's band (printed 0.1-0.5 mm
+  per side, machined 0.05-0.3; override with `fit: {min_mm, max_mm}`, opt out with `fit: "none"`). `fit.loose` and
+  `fit.tight` warn, `fit.interference` blocks; `clearance_mm` declared on the part must match the model (`fit.declared_mismatch`).
+- **Containment by role** (`contain.*`): electronics inside the convex envelope of chassis/armour parts (a shaft inside its
+  own wheel/hub/weapon is fine; deliberately exposed parts declare `exposed: true`); wheels protrude below the body and,
+  when `can_run_inverted`, above it; routed wires stay inside unless the wire has `external: true`; the power switch has a
+  clear straight tool line from outside (`contain.switch_access`).
+- **Disassembly graph** (`disasm.*`, shared builder `robot/analysis/disassembly.py`): nodes are parts and screws; an edge
+  X -> Y means X must come off first (X in Y's driver line, a screw clamping a part, a part trapped by another; mutually
+  trapped clamped stacks come off as one). The graph must be acyclic (`disasm.cycle`), every screw reachable
+  (`disasm.unreachable`), and battery, weapon, wheels, armour (or `serviceable: true`) reachable within
+  `service.max_removals` (default 8, `disasm.service_depth`). O-rings/elastic belts are not "trapped" when they can be
+  stretched over the largest flange within the material limit (nitrile 50 %, viton 30 %; `disasm.elastic_stretch`);
+  installed tension is `tension.belt_stretch`.
+- **Coverage** (`coverage.uncovered`, WARNING): lists any part kind only generic checks touch, made parts with no
+  material/process, rotating parts of a kind no balance/clearance check knows, and part pairs within 0.5 mm with no
+  declared relation (screw, connection, allow_overlap, parent/fused/cover, captive pocket, belt/pulley, tyre/rotating group).

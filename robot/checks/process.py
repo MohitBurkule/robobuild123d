@@ -134,6 +134,14 @@ def _normals_perp(f, n, k=6):
     return True
 
 
+# A concave edge whose faces turn by less than this is one facet of a polygon-approximated fillet, not a sharp corner.
+FACET_DEG = 25.0
+# Laser-cut hard plate (Hardox, spring steel, Ti): thinnest web between cut loops as a fraction of thickness. Calibrated
+# on the RVRN 3 mm Hardox drisk (2.3 mm between the 8.3 lightening holes and the 6 mm bore, cut cleanly); 1 t is the
+# rule of thumb for mild steel / plastics where heat and kerf taper matter more.
+WEB_HARD_T = 0.75
+
+
 def _concave_edge(solid, e, f1, f2, eps=0.02):
     mid = e.position_at(0.5)
     n1, n2 = _unit(_v(f1.normal_at(mid))), _unit(_v(f2.normal_at(mid)))
@@ -235,7 +243,10 @@ def analyse_sheet_cut(solid, material, kerf, secondary):
     holes, corners = _hole_groups(infos)
     hmin = t if fam in catalog.HARD_SHEET else 0.5 * t
     small = [g[0]["r"] * 2 for g in holes if g[0]["r"] * 2 < hmin - TOL]
-    if small:
+    drilled = bool({"drilled", "reamed"} & set(secondary))
+    if small and drilled:
+        info["drilled_holes"] = len(small)  # cut undersize / spotted, then drilled to size: the declared secondary op
+    elif small:
         probs.append((BLOCKER, "process.geometry", f"{len(small)} hole(s) of dia {min(small):.2f} mm < {hmin:.2f} mm "
                       f"({'1' if fam in catalog.HARD_SHEET else '0.5'} x thickness): cut holes that small distort or "
                       "do not pierce; drill/ream them as a secondary op or enlarge"))
@@ -251,7 +262,7 @@ def analyse_sheet_cut(solid, material, kerf, secondary):
         if abs(abs(dirn @ n) - 1) > ANG:
             continue
         r = _concave_edge(solid, e, fl[0], fl[1])
-        if r and r[0]:
+        if r and r[0] and math.degrees(math.acos(max(-1.0, min(1.0, float(r[1] @ r[2]))))) > FACET_DEG:
             sharp += 1
     if sharp:
         probs.append((BLOCKER, "process.geometry", f"{sharp} sharp internal corner(s): radius 0 < kerf {kerf:g} mm "
@@ -259,12 +270,18 @@ def analyse_sheet_cut(solid, material, kerf, secondary):
     # Web between features (between distinct profile loops of one cap).
     top = max((d for d in caps if abs(float(d["c"] @ n) - lv[-1]) < TOL), key=lambda d: d["area"])
     wires = top["f"].wires()
+    if drilled:  # holes drilled after cutting do not heat-distort the web beside them
+        def _small_circle(wi):
+            es = wi.edges()
+            return len(es) == 1 and es[0].geom_type.name == "CIRCLE" and 2 * es[0].radius < hmin - TOL
+        wires = [wi for wi in wires if not _small_circle(wi)]
     if len(wires) > 1:
         web = min(wires[i].distance_to(wires[j]) for i in range(len(wires)) for j in range(i + 1, len(wires)))
         info["web"] = web
-        if web < t - TOL:
+        wmin = (WEB_HARD_T if fam in catalog.HARD_SHEET else 1.0) * t
+        if web < wmin - TOL:
             probs.append((BLOCKER, "process.geometry", f"thinnest web between cut features is {web:.2f} mm < "
-                          f"thickness {t:.2f} mm"))
+                          f"{wmin:.2f} mm ({wmin / t:.2f} x thickness {t:.2f} mm)"))
     info["holes"] = len(holes)
     return probs, info
 
@@ -475,10 +492,16 @@ def check_cots(p, g):
         txt = f"{p.label or ''} {p._extra.get('stock') or ''}".lower()
         for des, (bore, od, w) in catalog.BEARINGS.items():
             if des in txt.replace("zz", " ").replace("2rs", " ").split() or f"{des}zz" in txt or f"{des} " in txt + " ":
+                fl = catalog.BEARING_FLANGE_OD.get(des) if hasattr(catalog, "BEARING_FLANGE_OD") else None
                 if abs(s[1] - od) < 0.1 and abs(s[2] - od) < 0.1 and abs(s[0] - w) < 0.1:
                     return True, f"bearing {des.upper()} {bore:g}x{od:g}x{w:g}"
+                if fl and abs(s[1] - fl) < 0.1 and abs(s[2] - fl) < 0.1 and abs(s[0] - w) < 0.1:  # drawn with its flange
+                    return True, f"flanged bearing {des.upper()} {bore:g}x{od:g}x{w:g} (flange {fl:g})"
                 return False, f"drawn {s[1]:.1f} x {s[0]:.1f} mm does not match bearing {des.upper()} ({od:g} x {w:g})"
         return False, "bearing with no known designation (684, MR84, ...) in its label or `stock`"
+    if p.kind in ("wheel", "tyre") and str(p._extra.get("stock") or "").strip():
+        # A bought tyre (Scalextric, Lego, ...) is a moulded product named by its SKU, not a stock rod or bearing.
+        return True, f"bought tyre `{p._extra.get('stock')}` {s[2]:.1f} x {s[0]:.1f} mm"
     if p.kind == "belt" and p.belt is not None and p.belt.kind == "o_ring" and p.belt.length_mm and p.belt.width_mm:
         return True, f"O-ring {p.belt.width_mm:g} x {p.belt.length_mm:g} mm"
     fam = catalog.sheet_family(p.material)
@@ -498,6 +521,14 @@ def _check_part(rp, process_raw, canon, ctx):
     if solid is None:
         ctx.not_checked.append(f"Process geometry of `{p.id}` ({process_raw}): no B-rep")
         return []
+    from .. import cache
+
+    key = ("process_part", cache.source_hash(__file__), g.key, str(process_raw), canon, p.material, repr(sec),
+           repr(sorted(catalog.KERF_MM.items())))
+    return cache.memo("part_check", key, lambda: _analyse(solid, g, p, process_raw, canon, sec))
+
+
+def _analyse(solid, g, p, process_raw, canon, sec):
     if canon == "sheet_cut":
         kerf = catalog.KERF_MM.get(str(process_raw).lower(), 0.5)
         return analyse_sheet_cut(solid, p.material, kerf, sec)

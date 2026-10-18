@@ -87,6 +87,17 @@ def run(ctx):
             continue
         b = w.bodies[i]
         iner = geom.axial_inertia(b.geom, b.M, origin, axis) * dens * 1e-3 * 1e-9  # kg m2
+        # the rest of the rotating stack (second disc, spacer, hub, shaft, rotor nuts) stores energy too
+        from .archetype import rotor_set
+        for oid in sorted(rotor_set(r.spec, pid) - {pid}):
+            ob, orp = w.body(oid), next((q for q in r.parts if q.part.id == oid), None)
+            if ob is None or orp is None or ob.fastener:
+                continue
+            od = catalog.density(orp.part.material) if orp.part.material else None
+            if od is None:
+                continue
+            sf = float(orp.part.solid_fraction) if orp.part.solid_fraction else 1.0
+            iner += geom.axial_inertia(ob.geom, ob.M, origin, axis) * od * sf * 1e-3 * 1e-9
         omega = rpm * 0.85 * 2.0 * math.pi / 60.0
         energy = 0.5 * iner * omega * omega
         ctx.metrics["weapon_energy_j"] = energy
