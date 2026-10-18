@@ -277,6 +277,23 @@ class World:
                 elif "top" in b.id:
                     d = [0, 0, 30]
                 out.append(b.moved(np.asarray(d, float) * amount))
+            # Enclosed parts travel with their enclosure: a side pod moves outward and takes its wheels, tyres,
+            # hubs, pulleys, belts and axles with it so they stay inside it in the exploded view.
+            orig = {b.id: b for b in w.bodies}
+            pods = [b for b in w.bodies if "pod" in b.id and not b.fastener and not b.is_wire]
+            ride = ("wheel", "tyre", "pulley", "belt", "pin", "wheel_hub", "hub")
+            for i, b in enumerate(out):
+                src = orig[b.id]
+                if src in pods:
+                    out[i] = src.moved(np.array([16.0 if src.center[0] >= 0 else -16.0, 0, 0]) * amount)
+                    continue
+                if src.kind not in ride or src.fastener:
+                    continue
+                for pb in pods:
+                    lo, hi = pb.aabb
+                    if np.all(src.center >= lo) and np.all(src.center <= hi):
+                        out[i] = src.moved(np.array([16.0 if pb.center[0] >= 0 else -16.0, 0, 0]) * amount)
+                        break
             w.bodies = out
         w._idx = {b.id: i for i, b in enumerate(w.bodies)}
         return w

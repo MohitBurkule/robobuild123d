@@ -119,7 +119,10 @@ def write_all(slug: str, spec, out_dir, opts=None, step=True, width=1100):
     root = Path(out_dir) / slug
     for d in ("renders", "stl", "step"):
         (root / d).mkdir(parents=True, exist_ok=True)
-    world, rep, _ = render.world_for(spec, opts or checks.Options())
+    import dataclasses
+
+    # Renders are always full: the deep sweeps run so wire routes and the assembly plan are drawn.
+    world, rep, resolved = render.world_for(spec, dataclasses.replace(opts or checks.Options(), deep=True))
     files = []
 
     def put(rel, data):
@@ -172,6 +175,8 @@ def write_all(slug: str, spec, out_dir, opts=None, step=True, width=1100):
     for v in VIEWS:
         view = render.named(v, width)
         put(f"renders/{v}.png", render.render_png(world, view, None, []))
+    for view in render.axle_sections(world, resolved, width):
+        put(f"renders/{view.name}.png", render.render_png(world, view, None, []))
     from .checks import reference as ref_check
 
     compares = []

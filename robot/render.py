@@ -243,6 +243,26 @@ def failure_markers(rep) -> list:
     return out
 
 
+def axle_sections(world, r, width: int = 1100) -> list:
+    """Section views through each spinning weapon's axle: `section_axle_x` (cut across the axle, at the weapon centre)
+    and `section_axle_y` (cut along the axle, front-back through it). Empty when there is no spinning weapon."""
+    from .checks.power import spin_axis
+
+    out = []
+    for i, b in enumerate(world.bodies):
+        if b.part_idx is None or r.parts[b.part_idx].part.kind != "weapon":
+            continue
+        sa = spin_axis(world, r, i)
+        if sa is None:
+            continue
+        o = sa[0]
+        sfx = "" if not out else f"_{b.id}"
+        z = np.array([0.0, 0, 1.0])
+        out.append(View(f"section_axle_x{sfx}", np.array([-1.0, 0, 0]), z, (np.array([1.0, 0, 0]), float(o[0])), width, 0.0))
+        out.append(View(f"section_axle_y{sfx}", np.array([0.0, -1.0, 0]), z, (np.array([0.0, 1.0, 0]), float(o[1])), width, 0.0))
+    return out
+
+
 def world_for(spec, opts=None):
     """Verify, then build the start-pose world with wire routes and the assembly plan. Returns (world, report, resolved)."""
     from . import checks, world as world_mod
