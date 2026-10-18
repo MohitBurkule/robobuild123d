@@ -631,9 +631,11 @@ def facts(ctx) -> dict:
         if mat is not None:
             F["disc_material"] = (mat.cls, rp.part.process, rp.part.material)
         tot = ctx.metrics.get("mass_total_g")
-        masses = [ctx.metrics.get(f"part_mass_g.{x}") for x in rotor]
-        if tot and all(m is not None for m in masses):
-            F["weapon_mass_fraction"] = sum(masses) / tot
+        rm = ph.rotor_mass(ctx, wid)  # rotor parts + the outrunner bell when the bell carries the rotor
+        if tot and rm is not None:
+            F["weapon_mass_fraction"] = rm[0] / tot
+            ctx.metrics["rotor_mass_g"] = rm[0]
+            ctx.metrics["rotor_bell_mass_g"] = rm[2]
         e = ctx.metrics.get("weapon_energy_j")
         if e is not None and tot:
             F["energy_j_per_kg"] = e / (tot / 1000.0)

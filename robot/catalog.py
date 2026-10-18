@@ -136,6 +136,29 @@ def builtin() -> list[CatalogEntry]:
         wheel("wheel_28x10", 28, 10, 19, 3.4),
         wheel("wheel_30x8", 30, 8, 19, 3.0),
         wheel("wheel_20x8", 20, 8, 12, 1.8),
+        # RVRN reference-CAD envelopes (Revron audit 2026-10): vendor/reference envelopes, not memory.
+        CatalogEntry("n10_2200rpm_spicy", "motor", "Turnabot Spicy N10 2200 rpm (micro-metal 10 x 12, 33.8 incl. 9.5 mm shaft)", 9.5, "datasheet",
+                     union([at({"type": "intersect", "items": [cyl_x(6.3, 13.0), box(15.0, 10.0, 12.0)]}, -6.4, 0, 0),
+                            at(cyl_x(2.4, 3.0), -14.4, 0, 0)]
+                           + [at(box(0.9, 10.0, 12.0), x, 0, 0) for x in (0.6, 3.35, 7.15)]
+                           + [at(cyl_x(1.1, 7.6), 3.9, 0, z) for z in (-3.5, 3.5)]
+                           + [at(cyl_x(1.5, 10.0), 12.9, 0, 0)]),
+                     {"terminals": [-16.2, 0, 0]}, {"at": [7.9, 0, 0], "dir": [1, 0, 0], "len": 10.0, "dia": 3.0},
+                     {"nominal_v": 6.0, "rpm_nominal": 2200.0, "stall_current_a": 1.6, "no_load_current_a": 0.1, "stall_torque_gcm": 150.0}, "#9aa0a6"),
+        CatalogEntry("be1806_bbb", "weapon_motor", "BBB BE1806 2300 kV outrunner (23 mm bell, 20.5 incl. base and shaft collar, 5 mm shaft bore)", 18.5, "datasheet",
+                     minus(union([at(cyl_x(11.5, 16.0), 1.25, 0, 0), at(cyl_x(9.5, 3.5), -8.5, 0, 0), at(cyl_x(2.95, 1.0), 9.75, 0, 0),
+                                  at(box(1.5, 5.0, 6.5), -7.6, 0, -14.75)]), [cyl_x(2.55, 22.0)]),
+                     {"phases": [-7.5, 0, -15.0]}, {"at": [9.25, 0, 0], "dir": [1, 0, 0], "len": 1.0, "dia": 5.0},
+                     {"kv": 2300, "max_current_a": 15.0, "typ_current_a": 8.0, "bell_mass_frac": 0.5}, "#3a3d42"),
+        lipo("lipo_2s_180_turnabot", "Turnabot 2S 180 mAh LiPo (36 x 18 x 11)", 36, 18, 11, 12.5, 2, 180, 40),
+        flat("malenki_nano", "Malenki Nano (Rx + 2 brushed drive ESC), kapton wrapped", "esc", 23, 16, 5, 3.5,
+             {"bat": [-11.5, -4, 0], "m1": [11.5, 4, 0], "m2": [-11.5, 4, 0], "wpn": [11.5, -4, 0]},
+             {"cont_current_a": 3.0, "burst_current_a": 6.0, "channels": 2.0}, "#e76f51"),
+        flat("bbb_ant_esc", "BBB brushless ant ESC (heat-shrunk)", "esc", 22, 11, 4, 3.0,
+             {"bat": [-11, -3, 0], "motor": [11, 0, 0], "rx": [-11, 3, 0]},
+             {"cont_current_a": 12.0, "burst_current_a": 18.0, "channels": 1.0}, "#d4af37"),
+        CatalogEntry("nut_m3_alu", "nut", "M3 aluminium hex nut (5.5 AF)", 0.1, "datasheet",
+                     minus({"type": "prism", "points": hexagon(2.75), "height": 2.4}, [cyl(1.5, 3.0)]), {}, None, {"thread_d_mm": 3.0}, "#c0c4c8"),
         CatalogEntry("heatset_m2", "insert", "M2 brass heat-set insert 3.0 mm", 0.12, "estimate", minus(cyl(1.6, 3.0), [cyl(1.0, 4.0)]),
                      {}, None, {"thread_d_mm": 2.0}, "#d4af37"),
         CatalogEntry("nut_m2", "nut", "M2 hex nut", 0.1, "datasheet",
@@ -419,9 +442,11 @@ ROD_STOCK_MM = {
 BEARINGS = {
     "684": (4.0, 9.0, 4.0), "mr84": (4.0, 8.0, 3.0), "mr104": (4.0, 10.0, 4.0), "694": (4.0, 11.0, 4.0),
     "604": (4.0, 12.0, 4.0), "683": (3.0, 7.0, 3.0), "mr63": (3.0, 6.0, 2.5), "623": (3.0, 10.0, 4.0),
-    "685": (5.0, 11.0, 5.0), "mr105": (5.0, 10.0, 4.0), "625": (5.0, 16.0, 5.0), "686": (6.0, 13.0, 5.0),
+    "mf85": (5.0, 8.0, 2.5), "685": (5.0, 11.0, 5.0), "mr105": (5.0, 10.0, 4.0), "625": (5.0, 16.0, 5.0), "686": (6.0, 13.0, 5.0),
     "688": (8.0, 16.0, 5.0), "608": (8.0, 22.0, 7.0),
 }
+# Flange OD of flanged bearings (the drawn envelope includes the flange).
+BEARING_FLANGE_OD = {"mf85": 9.2, "mf63": 7.2, "mf84": 9.2, "f683": 8.1, "f684": 10.3}
 
 
 def process_canon(p):
@@ -436,4 +461,5 @@ def sheet_family(mid):
 # "-x"/"+x" in the catalog frame (shaft stub along +X). Everything else of an outrunner's can is the rotating bell.
 MOTOR_FACES = {
     "bl_1806_2300kv": {"stator_face": "-x", "depth_mm": 2.0},
+    "be1806_bbb": {"stator_face": "-x", "depth_mm": 3.5},
 }

@@ -305,6 +305,14 @@ def run(ctx):
 
 # --------------------------------------------------------------------------------------------------------------- materials
 
+SKIN_KINDS = ("armor", "fork", "wedge")
+
+
+def _carries(spec, pid):
+    """True when another part is parented to `pid` or a screw threads into it: it is in some part's load path."""
+    return any(q.parent == pid for q in spec.parts) or any(f.threads_into == pid for f in spec.fasteners)
+
+
 def materials(a):
     out = []
     bad = 0
@@ -312,6 +320,12 @@ def materials(a):
     for b in a.solids:
         p = a.part(b.id)
         if p is None or a.cls(b) != "elastomer":
+            continue
+        if p.kind in SKIN_KINDS and b.id != a.chassis.id and not _carries(a.spec, p.id):
+            # TPU armour / wedgelets / side panels that carry nothing (no child part, nothing threads into them) are a
+            # skin that soaks hits and springs back (RVRN: TPU hood and wedglets on a PLA tub); the load path is elsewhere.
+            out.append(ok("arch.tpu_skin", G, "Elastomer skin carries nothing",
+                          f"`{b.id}` ({p.kind}) is {p.material} but holds no other part; it is a hit-absorbing skin."))
             continue
         if p.kind in struct_kinds or b.id == a.chassis.id:
             bad += 1
@@ -1853,7 +1867,8 @@ def holders(a):
             judged += 1
             g1, g2 = a.group_of(p.id), a.group_of(h)
             elec_on_weapon = p.kind in ELEC and (g2 not in (None, "fixed") or hp.kind == "weapon")
-            cross = g1 is not None and g2 is not None and g1 != g2
+            # a jointed part held by its parent moves relative to it by design (that is what the joint is)
+            cross = g1 is not None and g2 is not None and g1 != g2 and not (how == "parent" and p.joint is not None)
             weak_holder = hp.kind in ELEC and p.kind in STRUCT
             if cross or elec_on_weapon or weak_holder:
                 bad += 1

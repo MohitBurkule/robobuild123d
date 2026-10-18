@@ -7,7 +7,18 @@ from dataclasses import dataclass
 import numpy as np
 import trimesh
 
-from . import geom
+from . import cache, geom
+
+_QSRC = None
+
+
+def _qv():
+    global _QSRC
+    if _QSRC is None:
+        from pathlib import Path
+        d = Path(__file__).parent
+        _QSRC = cache.source_hash(d / 'measure.py', d / 'geom.py')
+    return _QSRC
 
 
 @dataclass
@@ -27,6 +38,11 @@ def overlap(a, b, shift=None, cap=None) -> Overlap | None:
     abox = a.aabb + shift
     if not aabb_overlap(abox, b.aabb):
         return None
+    return cache.memo("overlap", ("ov", _qv(), cache.body_sig(a), cache.body_sig(b), shift, cap),
+                      lambda: _overlap(a, b, shift, abox, cap))
+
+
+def _overlap(a, b, shift, abox, cap):
     ma = a.manifold.translate(tuple(float(x) for x in shift)) if np.any(shift) else a.manifold
     inter = ma ^ b.manifold
     vol = float(inter.volume())
@@ -47,7 +63,8 @@ def min_gap(a, b, search: float = 5.0) -> float:
     """Smallest distance between the surfaces (0 when touching or overlapping), capped at `search`."""
     if not aabb_overlap(a.aabb, b.aabb, search):
         return float("inf")
-    g = float(a.manifold.min_gap(b.manifold, search))
+    g = cache.memo("min_gap", ("gap", _qv(), cache.body_sig(a), cache.body_sig(b), float(search)),
+                   lambda: float(a.manifold.min_gap(b.manifold, search)))
     return g if g < search else float("inf")
 
 
@@ -82,30 +99,69 @@ class Scene:
 
     def __init__(self, bodies):
         self.bodies = list(bodies)
-        meshes = [b.mesh for b in self.bodies]
-        self.mesh = trimesh.util.concatenate(meshes) if meshes else None
-        self.owner = np.concatenate([np.full(len(m.faces), i) for i, m in enumerate(meshes)]) if meshes else np.zeros(0, int)
+        self._mesh = None
+
+    @property
+    def mesh(self):
+        if self._mesh is None and self.bodies:
+            self._mesh = trimesh.util.concatenate([b.mesh for b in self.bodies])
+        return self._mesh
 
     def first_hit(self, origins, dirs, max_dist=np.inf):
-        """Distance to the first surface hit along each ray (inf when none) and the body index hit (-1)."""
+        """Distance to the first surface hit along each ray (inf when none) and the body index hit (-1).
+
+        Computed body by body (each memoised on that body's geometry and placement), so a changed part only re-casts
+        its own rays; the nearest hit over bodies equals a cast against the concatenated scene."""
         origins = np.atleast_2d(np.asarray(origins, float))
         dirs = np.atleast_2d(np.asarray(dirs, float))
         n = len(origins)
         dist = np.full(n, np.inf)
         who = np.full(n, -1)
-        if self.mesh is None or n == 0:
+        if not self.bodies or n == 0:
             return dist, who
-        locs, ray_i, tri_i = self.mesh.ray.intersects_location(origins, dirs, multiple_hits=True)
+        for i, b in enumerate(self.bodies):
+            d = _body_hits(b, origins, dirs)
+            better = d < dist
+            dist[better] = d[better]
+            who[better] = i
+        dist[dist > max_dist] = np.inf
+        return dist, who
+
+
+def _rays_touch_box(lo, hi, O, D) -> np.ndarray:
+    with np.errstate(divide="ignore", invalid="ignore"):
+        inv = 1.0 / D
+        t1, t2 = (lo - 1e-6 - O) * inv, (hi + 1e-6 - O) * inv
+        t1 = np.where(np.isnan(t1), -np.inf, t1)
+        t2 = np.where(np.isnan(t2), np.inf, t2)
+    tmin = np.minimum(t1, t2).max(axis=1)
+    tmax = np.maximum(t1, t2).min(axis=1)
+    return (tmax >= np.maximum(tmin, 0.0))
+
+
+def _body_hits(b, origins, dirs):
+    lo, hi = b.aabb
+    m = _rays_touch_box(lo, hi, origins, dirs)
+    out = np.full(len(origins), np.inf)
+    if not m.any():
+        return out
+    if not m.all():
+        out[m] = _body_hits_all(b, origins[m], dirs[m])
+        return out
+    return _body_hits_all(b, origins, dirs)
+
+
+def _body_hits_all(b, origins, dirs):
+    def compute():
+        out = np.full(len(origins), np.inf)
+        locs, ray_i, _ = b.mesh.ray.intersects_location(origins, dirs, multiple_hits=True)
         if len(ray_i):
             d = np.einsum("ij,ij->i", locs - origins[ray_i], dirs[ray_i])
             ok = d > 1e-7
-            for k in np.nonzero(ok)[0]:
-                ri = ray_i[k]
-                if d[k] < dist[ri]:
-                    dist[ri] = d[k]
-                    who[ri] = self.owner[tri_i[k]]
-        dist[dist > max_dist] = np.inf
-        return dist, who
+            np.minimum.at(out, ray_i[ok], d[ok])
+        return out
+
+    return cache.memo("ray", ("ray", _qv(), cache.body_sig(b), origins, dirs), compute)
 
 
 def footprint_mm(points: np.ndarray) -> float:

@@ -28,6 +28,13 @@ def min_wall_for(prof, process, mat_id) -> float:
 
 
 def wall_samples(body, min_wall):
+    from .. import cache
+
+    return cache.memo("part_check", ("wall", cache.source_hash(__file__), cache.body_sig(body), float(min_wall)),
+                      lambda: _wall_samples(body, min_wall))
+
+
+def _wall_samples(body, min_wall):
     """Local wall thickness at sampled surface points: inward ray from each point to where it leaves the solid.
 
     Returns (thickness, points) for samples whose ray left the solid within the search depth.

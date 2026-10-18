@@ -18,7 +18,10 @@ def run(ctx):
         if b.is_wire:
             continue
         if b.fastener:
-            grams, tol, source, kind = b.geom.volume * 7.85e-3, 0.05, "fastener", "fastener"
+            fs = next((f for f in r.spec.fasteners if f.id == b.id), None)
+            fm = (getattr(fs, "material", None) or getattr(fs, "_extra", {}).get("material")) if fs is not None else None
+            fd = catalog.density(fm) if fm else None  # alu / titanium / nylon screws weigh what they are made of
+            grams, tol, source, kind = b.geom.volume * (fd or 7.85) * 1e-3, 0.05, "fastener", "fastener"
         else:
             if b.part_idx is None:
                 continue

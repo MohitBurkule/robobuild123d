@@ -14,11 +14,12 @@ API used by the checks (all coordinates world mm, numpy arrays):
 from __future__ import annotations
 
 import copy
+import os
 
 import numpy as np
 import trimesh
 
-from . import catalog, geom, profile, shapes, xform
+from . import cache, catalog, geom, profile, shapes, xform
 from .spec import Spec
 
 DEFAULT_COLORS = {
@@ -62,6 +63,7 @@ def resolve(spec: Spec, fast: bool = False) -> Resolved:
     tess = geom.FAST if fast else geom.FINE
     prof = profile.named(spec.profile)
     parts, errors = [], []
+    _prebuild(spec, tess)
     for p in spec.parts:
         cat = None
         if p.catalog:
@@ -90,6 +92,76 @@ def resolve(spec: Spec, fast: bool = False) -> Resolved:
             g = geom.geom_for(shape, spec.base_dir, tess)
         parts.append(RPart(p, shape, cat, g))
     return Resolved(spec, prof, parts, errors, fast)
+
+
+BUILD_TIMEOUT_S = float(os.environ.get("ROBOT_BUILD_TIMEOUT") or 600)
+JOBS = int(os.environ.get("ROBOT_JOBS") or 0) or (os.cpu_count() or 1)
+
+
+def _part_shape(p):
+    if p.catalog:
+        cat = catalog.find(p.catalog)
+        return cat.shape if cat else None
+    if p.model:
+        return {"type": "model", "file": p.model, "params": p.params or {}}
+    return p.shape
+
+
+def _build_one(args):
+    shape, base_dir, tess = args
+    try:
+        geom.geom_for(shape, base_dir, tess)
+        return None
+    except Exception as e:  # noqa: BLE001 - the serial pass reports it as a finding
+        return f"{type(e).__name__}: {e}"
+
+
+def _prebuild(spec, tess):
+    """Build every uncached part solid concurrently (one process per part); results land in the geometry cache."""
+    if JOBS <= 1 or not cache.enabled():
+        return
+    todo, seen = [], set()
+    for p in spec.parts:
+        sh = _part_shape(p)
+        if sh is None:
+            continue
+        try:
+            shapes.validate(sh)
+        except shapes.ShapeError:
+            continue
+        k = geom.key_for(sh, spec.base_dir, tess)
+        if k in seen or geom.cached(k):
+            continue
+        seen.add(k)
+        todo.append((sh, spec.base_dir, tess))
+    if len(todo) < 2:
+        return
+    import multiprocessing as mp
+    from concurrent.futures import ProcessPoolExecutor
+
+    n = min(JOBS, len(todo))
+    print(f"building {len(todo)} changed part solids on {n} processes", flush=True)
+    # spawn, not fork: forking a process that holds OCP / BLAS threads can deadlock the children.
+    ex = ProcessPoolExecutor(n, mp_context=mp.get_context("spawn"))
+    try:
+        list(ex.map(_build_one, todo, timeout=BUILD_TIMEOUT_S))
+        ex.shutdown(wait=True)
+    except Exception as e:  # noqa: BLE001 - timeout or worker crash: the serial pass builds what is missing
+        print(f"parallel build failed ({type(e).__name__}); building the rest serially", flush=True)
+        for pr in list((getattr(ex, "_processes", None) or {}).values()):
+            pr.terminate()
+        ex.shutdown(wait=False, cancel_futures=True)
+
+
+def _contains(mesh, Q):
+    """mesh.contains with a fixed seed: trimesh re-casts ambiguous rays along *random* directions (global RNG), so
+    without this the answer depends on whatever ran before and cached and uncached runs could differ."""
+    st = np.random.get_state()
+    np.random.seed(12345)
+    try:
+        return mesh.contains(Q)
+    finally:
+        np.random.set_state(st)
 
 
 def fastener_shape(d, length):
@@ -144,13 +216,14 @@ class Body:
         lo, hi = self.aabb
         m = np.all((P >= lo - 1e-9) & (P <= hi + 1e-9), axis=1)
         if m.any():
-            out[m] = self.mesh.contains(P[m])
+            Q = P[m]
+            out[m] = cache.memo("inside", ("in", cache.body_sig(self), Q), lambda: _contains(self.mesh, Q))
         return out
 
     def distance(self, P) -> np.ndarray:
         P = np.atleast_2d(np.asarray(P, float))
-        _, d, _ = trimesh.proximity.closest_point(self.mesh, P)
-        return d
+        return cache.memo("distance", ("dist", cache.body_sig(self), P),
+                          lambda: trimesh.proximity.closest_point(self.mesh, P)[1])
 
     def sdf(self, P) -> np.ndarray:
         d = self.distance(P)

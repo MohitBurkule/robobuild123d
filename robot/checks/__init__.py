@@ -13,7 +13,11 @@ import time
 import traceback
 from dataclasses import dataclass, field
 
-from .. import world as world_mod
+import json
+import pickle
+import sys
+
+from .. import cache, world as world_mod
 from ..finding import BLOCKER, WARNING, Report, fail
 from ..spec import Spec
 
@@ -26,7 +30,8 @@ GROUPS = [
     ("wiring", True), ("mass", False), ("interference", False), ("connections", False), ("internal", False), ("ground", False),
     ("legal", False), ("fasteners", False), ("power", False), ("mfg", False), ("spinner", False), ("kinematics", False), ("tension", False), ("targets", False),
     ("shape", False), ("dynamics", False), ("strength", False), ("printability", False), ("process", False),
-    ("reference", False), ("archetype", False), ("architecture", False), ("electrical", False), ("combat", False), ("assembly", True), ("joints", False), ("material", False),
+    ("reference", False), ("archetype", False), ("architecture", False), ("electrical", False), ("combat", False), ("assembly", True), ("joints", False), ("material", False), ("plausibility", False), ("reference_ratios", False), ("reference_cad", False),
+    ("cots", False), ("fit", False), ("contain", False), ("disasm", False), ("coverage", False),
 ]
 
 
@@ -66,6 +71,7 @@ def verify_resolved(r, opts: Options) -> Report:
     valid = validity.run(r, findings)
     rep.timings_s["validity"] = round(time.time() - t0, 3)
     ctx = None
+    base_key = _base_key(r, opts) if cache.enabled() else None
     if valid:
         ctx = Ctx(r, world_mod.World.start(r), opts)
         for name, deep_only in GROUPS:
@@ -81,8 +87,28 @@ def verify_resolved(r, opts: Options) -> Report:
                                      f"The `{name}` checks are not in this build; nothing in that group was judged."))
                 ctx.not_checked.append(f"Check group `{name}` is not available in this build")
                 continue
+            gkey = _group_key(name, r, opts, base_key)
+            hit = cache.get("group", gkey) if gkey else None
+            if hit is not None and not cache.is_missing(hit):
+                found, delta = hit
+                findings.extend(found)
+                for k, v in delta.items():
+                    setattr(ctx, k, v)
+                rep.timings_s[name] = round(time.time() - t0, 3)
+                _progress(name, t0, "cached")
+                continue
+            before = _snapshot(ctx) if gkey else None
             try:
-                findings.extend(mod.run(ctx))
+                found = mod.run(ctx)
+                findings.extend(found)
+                if gkey:
+                    after = _snapshot(ctx)
+                    delta = {k: getattr(ctx, k) for k, v in after.items() if before.get(k) != v}
+                    bad = [k for k in delta if isinstance(after[k], tuple)]
+                    if bad:
+                        print(f"  [not cached] {name}: writes unpicklable {', '.join(bad)}", flush=True)
+                    else:
+                        cache.put("group", gkey, (found, delta))
             except Exception as e:  # noqa: BLE001 - fail closed, never crash the report
                 findings.append(fail("checks.crashed", "checks", BLOCKER, "A check crashed",
                                      f"`{name}` raised {type(e).__name__}: {e}. Its verdicts are unknown.")
@@ -91,8 +117,7 @@ def verify_resolved(r, opts: Options) -> Report:
                 if os.environ.get("ROBOT_DEBUG"):
                     traceback.print_exc()
             rep.timings_s[name] = round(time.time() - t0, 3)
-            if os.environ.get("ROBOT_TIMING"):
-                print(f"{name} {time.time() - t0:.2f}s")
+            _progress(name, t0, "ran")
         findings.extend(validity.claims(ctx))
         rep.routes = ctx.routes
         rep.assembly = ctx.assembly
@@ -104,6 +129,38 @@ def verify_resolved(r, opts: Options) -> Report:
     rep.bench_checklist = []
     rep.finish()
     return rep
+
+
+_SKIP = ("r", "world", "opts", "_hub_kin")  # _hub_kin: lazy kinematics cache, rebuilt on demand
+
+
+def _snapshot(ctx) -> dict:
+    """Pickled bytes of every context field a group may write (None when a field cannot be pickled)."""
+    out = {}
+    for k, v in vars(ctx).items():
+        if k in _SKIP:
+            continue
+        try:
+            out[k] = pickle.dumps(v, protocol=pickle.HIGHEST_PROTOCOL)
+        except Exception:  # noqa: BLE001 - tracked by identity; a group that replaces it is not cached
+            out[k] = ("unpicklable", id(v))
+    return out
+
+
+def _base_key(r, opts) -> str:
+    """Everything every group can read: all sources, the spec, every part's geometry key, options."""
+    o = dict(vars(opts))  # includes `only`: a group's verdicts depend on which groups ran before it
+    return cache.h(cache.code_hash(), json.dumps(r.spec.raw, sort_keys=True, default=str), str(r.spec.base_dir),
+                   [p.geom.key for p in r.parts], r.load_errors, json.dumps(o, sort_keys=True, default=str), r.fast)
+
+
+def _group_key(name, r, opts, base_key):
+    return cache.h("group", name, base_key) if base_key else None
+
+
+def _progress(name, t0, how):
+    if os.environ.get("ROBOT_TIMING") or os.environ.get("ROBOT_PROGRESS") == "1":
+        print(f"  [{how}] {name} {time.time() - t0:.2f}s", file=sys.stdout, flush=True)
 
 
 def not_checked(r, opts) -> list:

@@ -288,10 +288,18 @@ class Kin:
         v = b.geom.mesh.vertices
         local_dir = unit(sh["dir"])
         xs = v @ local_dir
+        can_end = float(np.asarray(sh["at"]) @ local_dir)
+        rr = np.linalg.norm(v - np.outer(xs, local_dir), axis=1)
+        # Bell radius over the bell only: the stator base (and a wire exit or mount tab on it) is static and may stand
+        # proud of the bell without being "inside the bell".
+        dep = float(getattr(catalog, "MOTOR_FACES", {}).get(rp.cat.id, {}).get("depth_mm", 2.0))
+        bell = (xs > float(xs.min()) + dep - 1e-6) & (xs <= can_end + 1e-6)
+        if not bell.any():
+            bell = xs <= can_end + 1e-6
         return {"o": o, "d": d, "len": float(sh.get("len", 0)), "dia": float(sh.get("dia", 3.0)),
                 "outrunner": rp.cat.kind == "weapon_motor" or "outrunner" in rp.cat.name.lower(),
-                "back": float(xs.min()), "can_end": float(np.asarray(sh["at"]) @ local_dir), "local_dir": local_dir,
-                "R": float(np.linalg.norm(v - np.outer(xs, local_dir), axis=1)[xs <= float(np.asarray(sh["at"]) @ local_dir) + 1e-6].max())}
+                "back": float(xs.min()), "can_end": can_end, "local_dir": local_dir, "face_depth": dep,
+                "R": float(rr[bell].max())}
 
     def motor_side(self, mpid, entry_world):
         """'stator' or 'bell' for a point where something lands on a motor. Gearmotor cans are static everywhere."""
@@ -1438,7 +1446,7 @@ def bell_rub(k, g, ex):
             if b.part_idx is not None and float(rr.max()) <= mi["dia"] / 2 + HUB_COAX_MM:
                 # Dead shaft: a static part coaxial with the motor and inside its shaft bore; the bell turns around it.
                 continue
-            zone = (x > mi["back"] + 2.0) & (x < mi["can_end"] - 0.2)
+            zone = (x > mi["back"] + mi.get("face_depth", 2.0)) & (x < mi["can_end"] - 0.2)
             near = zone & (rr < mi["R"] + 0.5)
             if near.any():
                 inside = zone & (rr < mi["R"] - 0.2)
@@ -1556,7 +1564,10 @@ def belts(k):
             if ang > 0.5:
                 k.bad("kin.belt_axes_parallel", BLOCKER if ang > 2 else WARNING, "Belt pulleys are not parallel",
                       f"`{p0}` and `{p1}` axes differ by {ang:.1f} deg; the belt walks off.", (b, p0, p1))
-            off = abs(float((c1 - c0) @ a0))
+            bb = k.body(b)
+            ref = float(bb.center @ a0) if bb is not None else None
+            g0, g1 = groove_plane(k.body(p0), c0, a0, ref), groove_plane(k.body(p1), c1, a0, ref)
+            off = abs(g1 - g0)
             if off > 0.5:
                 k.bad("kin.belt_coplanar", BLOCKER if off > 1.5 else WARNING, "Belt grooves do not line up",
                       f"`{p0}` and `{p1}` grooves are {off:.2f} mm apart along the axle; the belt runs crooked and jumps off.",
@@ -1640,3 +1651,39 @@ def bore_fit(k):
                     k.bad("kin.bore_fit", WARNING, "Part is loose on its shaft",
                           f"`{m}` bore radius {bore:.2f} mm on `{sid}` radius {rs:.2f} mm ({bore - rs:.2f} mm radial play); it rattles and fretts.",
                           (m, sid), expect=("<= 0.15 mm play", f"{bore - rs:.2f} mm"), fix="Size the bore to the shaft (ream, or 0-0.05 mm press fit).")
+
+
+def groove_plane(pb, c, ax, ref=None):
+    """Axial position (along unit `ax`) of a pulley's belt groove: a band whose outer radius dips below material on both
+    sides (the flanges). A hub that is also a wheel or carries a tyre seat has its groove off its centroid, so lining up
+    centroids is wrong. Picks the groove nearest `ref` (the belt's own plane); falls back to the centroid."""
+    if pb is None:
+        return float(c @ ax)
+    v = pb.mesh.vertices
+    t = (v - c) @ ax
+    rmax = float(np.linalg.norm((v - c) - np.outer(t, ax), axis=1).max())
+    u = np.cross(ax, [1.0, 0.0, 0.0] if abs(ax[0]) < 0.9 else [0.0, 1.0, 0.0])
+    u /= np.linalg.norm(u)
+    keys = np.arange(float(t.min()) + 0.05, float(t.max()), 0.1)
+    rs = np.arange(0.1, rmax + 0.1, 0.1)
+    P = c + np.outer(np.repeat(keys, len(rs)), ax) + np.outer(np.tile(rs, len(keys)), u)
+    ins = pb.inside(P).reshape(len(keys), len(rs))
+    prof = np.array([rs[row].max() if row.any() else 0.0 for row in ins])
+    q = []
+    for i in range(len(keys)):
+        lo, hi = prof[(keys >= keys[i] - 2.5) & (keys < keys[i] - 0.05)], prof[(keys > keys[i] + 0.05) & (keys <= keys[i] + 2.5)]
+        q.append(bool(len(lo) and len(hi) and lo.max() > prof[i] + 0.4 and hi.max() > prof[i] + 0.4 and prof[i] > 0))
+    best, i = None, 0
+    while i < len(keys):
+        if not q[i]:
+            i += 1
+            continue
+        j = i
+        while j + 1 < len(keys) and q[j + 1]:
+            j += 1
+        mid = float(c @ ax) + 0.5 * (keys[i] + keys[j])
+        if best is None or (ref is not None and abs(mid - ref) < abs(best - ref)):
+            best = mid
+        i = j + 1
+    return best if best is not None else float(c @ ax)
+

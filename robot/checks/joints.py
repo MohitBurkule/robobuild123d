@@ -291,6 +291,12 @@ def run(ctx):
         bad = []
         for f, dl, dr, _, _ in fs:
             ang = _angle(dr, mate_n)
+            if ang > AXIS_LIMIT_DEG and _coaxial_bore(Pm[mate_m], f, dr):
+                # the main contact is a bore round a spigot / standoff on the screw's own axis: it locates the part
+                # radially, the screw clamps it axially (wedglet slid over a standoff and screwed into its end)
+                out.append(note("joint.spigot_bore", G, "Part located on a coaxial spigot",
+                                f"`{a}` meets `{b}` round a bore coaxial with `{f.id}`; the bore takes the shear, the screw clamps the end face.").on(f.id, a, b))
+                continue
             if ang > AXIS_LIMIT_DEG:
                 if _reason(f):
                     out.append(note("joint.axis_reason", G, "Off-axis screw accepted by reason",
@@ -533,3 +539,15 @@ def run(ctx):
         out.append(ok("joint.ok", G, "Screwed joints follow engineering defaults",
                       f"{len(joints)} joints: screws normal to the mating faces, through the contact patch, located, patterned and serviceable."))
     return out
+
+
+def _coaxial_bore(P, f, dr, tol=0.35, rmax=6.0):
+    """True when most (>= 60 %) of the mating points `P` lie on one cylinder (radius <= rmax) round the screw's axis."""
+    if len(P) < 6:
+        return False
+    d = _unit(np.asarray(dr, float))
+    q = np.asarray(P, float) - np.asarray(f.at, float)
+    rr = np.linalg.norm(q - np.outer(q @ d, d), axis=1)
+    r0 = float(np.percentile(rr, 5))
+    return bool(r0 <= rmax and float(np.mean(rr <= r0 + tol)) >= 0.6)
+
