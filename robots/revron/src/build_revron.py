@@ -135,7 +135,7 @@ BAT_Y = -14.0
 INS_B_Z = BP_Z0 + BP_T + 1.5                      # base inserts 2..5
 INS_T_Z = CH - 1.5                         # top inserts 12.8..15.8
 INS_U_Z = TAB_Z0 - 1.5
-INS_P_X = CX - WALL - 3.1                         # pod inserts (axis x) 25.9..28.9
+INS_P_X = CX - 1.5                         # pod inserts (axis x) 25.9..28.9
 FORK_X = (5.0, 9.5)
 FORK_HX = 3.5                                     # fork root screws at x = +-2.5
 FORK_TIP = YW + DISC_R + 4.0
@@ -167,10 +167,11 @@ def chassis():
     cut = []
     for s in (1, -1):
         cut.append(cylx(2.1, *sorted((s * (CX - WALL - 0.5), s * (CX + 0.5))), YF, AXZ))              # gearbox-boss keyhole
+        cut.append(boxr(*sorted((s * (CX - WALL - 0.5), s * (CX + 0.5))), YF - 2.1, YF + 2.1, -1.0, AXZ))   # open below: the motor drops in from underneath
         cut.append(cylx(1.5, *sorted((s * (CX - WALL - 2.5), s * (CX + 0.5))), YR, AXZ))              # rear axle press hole
         for y in POD_Y:
             cut.append(cylx(1.0, *sorted((s * (CX - WALL - 5.2), s * (CX + 0.5))), y, POD_Z))         # M2 pilot (through)
-            cut.append(cylx(1.6, *sorted((s * (CX - WALL - 4.7), s * (INS_P_X + 1.5))), y, POD_Z))   # insert bore, pressed in from inside
+            cut.append(cylx(1.6, *sorted((s * (INS_P_X - 1.55), s * (CX + 0.5))), y, POD_Z))   # insert bore, pressed in from outside through the wall
             cut.append(cylx(1.15, *sorted((s * (CX - WALL - 0.1), s * (CX + 0.5))), y, POD_Z))        # wall clearance
     for x, y in POSTS:
         cut.append(cylz(1.6, INS_B_Z - 1.5 - 0.01, INS_B_Z + 1.5, x, y)); cut.append(cylz(1.0, INS_B_Z, INS_B_Z + 3.0, x, y))
@@ -188,7 +189,7 @@ def chassis():
     cut.append(boxr(-CX - 0.5, -CX + WALL + 0.5, SW_Y - 6.0, SW_Y + 6.0, SW_Z - 2.1, SW_Z + 2.1))   # switch slot, left wall
     cut.append(boxr(-21.5, 21.5, -14, 14, CH - DECK - 0.5, CH + 0.5))
     cut.append(yz(rrect(-14.0, 14.0, 5.0, 12.0, 2.0), -0.0, 0.0) if False else boxr(-14.0, 14.0, CY0 - 0.5, CY0 + WALL + 0.5, 6.0, 12.0))   # rear-wall window (charge lead / LED view)          # deck window under the Ti plate
-    cut.append(boxr(WX0 - 4.5, WX0 + 3.5, CY1 - FWALL - 0.5, CY1 + 0.5, 4.5, 9.0))   # weapon phase-wire grommet hole
+    cut.append(boxr(-7.5, -1.0, CY1 - FWALL - 0.5, CY1 + 0.5, 4.5, 9.0))   # weapon phase-wire grommet hole, between the drive gearmotors
     return S(body, *cut)
 
 
@@ -341,6 +342,16 @@ def upright(side):
     return S(body, *cut)
 
 
+def chaikin_open(p, n):
+    """Chaikin smoothing of an open polyline, end points kept."""
+    for _ in range(n):
+        q = [p[0]]
+        for (x0, y0), (x1, y1) in zip(p, p[1:]):
+            q += [(0.75 * x0 + 0.25 * x1, 0.75 * y0 + 0.25 * y1), (0.25 * x0 + 0.75 * x1, 0.25 * y0 + 0.75 * y1)]
+        q.append(p[-1]); p = q
+    return p
+
+
 def chaikin(p, n):
     """Corner-cutting (quadratic B-spline) smoothing of a closed outline."""
     for _ in range(n):
@@ -373,7 +384,11 @@ def forks():
 def pod(s):
     x0, x1 = sorted((s * POD_X0, s * POD_X1))
     tip = pv("side_panel_front_wedge_tip_y", 70.2)
-    prof = [(CY0 - 0.3, 2.0), (CY0 + 3, -1.25), (YF + 14, -1.25), (tip, -1.75), (tip, -0.5), (46.0, 16.0), (40.0, 18.8), (CY0 + 4, 18.8), (CY0 - 0.3, 15.5)]
+    # B-spline (Chaikin) side profile: fenders swell over both wheels, waist dips between them, long ramp to the wedge tip
+    top = [(46.0, 16.0), (38.0, 19.0), (YF + 6.0, 21.0), (YF - 3.0, 21.0), (YF - 12.0, 16.0), (0.0, 14.5), (YR + 12.0, 16.0),
+           (YR + 3.0, 21.0), (YR - 6.0, 21.0), (CY0 - 1.0, 15.0)]
+    bot = [(CY0 - 1.0, 4.0), (CY0 + 3.0, -1.0), (YF + 14, -1.25)]
+    prof = bot + [(tip, -1.75)] + chaikin_open([(tip, -0.5)] + top, 3)
     outer = yz(prof, x0, x1)
     wx0, wx1 = sorted((s * CX, s * (CX + 2.0)))
     inner = boxr(wx0, wx1, POD_WY[0], POD_WY[1], 3.0, 13.5)
@@ -438,10 +453,11 @@ for s, n in ((1, "l"), (-1, "r")):
       shape=pod(s), label="red TPU side panel (bumper): wedge-nosed outer wall over both wheels, boxed web screwed to the chassis wall by 2 M2")
 P(id="forks", kind="skirt", material="tpu", process="fdm", print_orientation="+z", rotates_with="fixed", color="#c8102e",
   shape=forks(), label="TPU sprung forks: two tines either side of the blades, tips 0.25 mm off the floor, screwed under the chassis chin")
-for n in "lr":
+for n in "rl":   # quick-change weapon module: both uprights, motor and rotor lift out together once the 4 boss screws are out
     P(id=f"upright_{n}", kind="structure", material="nylon", process="fdm", print_orientation="+x", rotates_with="fixed", solid_fraction=0.9, color="#2a2c30",
-      shape=upright(n), label="5 mm printed nylon weapon upright (spin axis = build direction), tab over a square chassis boss, 2 M2 into inserts; 683ZZ seat")
-P(id="weapon_motor", kind="weapon_motor", catalog="bl_1806_2300kv", at=[WX0, YW, ZW], rot=[0, 0, 0], rotates_with="fixed", motor_shaft_extended=True,
+      **({"parent": "upright_r"} if n == "l" else {}),
+      shape=upright(n), label="5 mm printed nylon weapon upright (spin axis = build direction), foot slides down over a square chassis boss, 2 M2 through the boss into inserts" + ("; F683 seat" if n == "l" else "; motor mount"))
+P(id="weapon_motor", kind="weapon_motor", catalog="bl_1806_2300kv", parent="upright_r", at=[WX0, YW, ZW], rot=[0, 0, 0], rotates_with="fixed", motor_shaft_extended=True,
   ports={"phases": [-6.5, 0, -9.0]}, label="BE1806 2300 kV outrunner = weapon hub: stator bolted to the right upright, its own (lengthened) 3 mm shaft runs on into an F683 in the left upright")
 MF_AT, MF_ROT = [0, 0, -sum(BLC) / 2], [0, -90, 0]   # children of blade_c drawn in the motor frame
 P(id="blade_c", kind="weapon", material="steel", process="laser", organic=True, rotates_with="weapon", shape=tooth_blade(BAL), at=[sum(BLC) / 2, 0, 0], rot=[0, 90, 0],
@@ -464,7 +480,7 @@ for i, a in enumerate(BOLT_A):
       label="M2.5x8 ISO7380 button-head screw (drawn as a part so it turns with the rotor), Loctite 243")
     P(id=f"wnut{i}", kind="nut", material="steel", process="turned", rotates_with="weapon", parent="blade_c", at=MF_AT, rot=MF_ROT, color="#aaaaaa",
       shape=S(cylx(2.35, NUT0, BLO[0], y, z), cylx(1.25, NUT0 - 1, BLO[0] + 1, y, z)), label="M2.5 round (barrel) nut 4.7 x 1.8, turned steel")
-P(id="wbearing", kind="bearing", material="steel", process="cots", rotates_with="fixed", color="#555555", stock="683ZZ",
+P(id="wbearing", kind="bearing", parent="upright_l", material="steel", process="cots", rotates_with="fixed", color="#555555", stock="683ZZ",
   shape=cylx(3.5, UL0, UL0 + 3.0, YW, ZW), label="F683ZZ 3x7x3 flanged bearing in the left upright, flange on the inner face (flange not drawn)")
 
 for s, n in ((1, "l"), (-1, "r")):
@@ -506,7 +522,7 @@ for i, (x, y) in enumerate(TOP_POSTS):
     P(id=f"insert_t{i}", kind="insert", catalog="heatset_m2", at=[x, y, INS_T_Z])
 for n, xi in (("r", UR0 + 1.5), ("l", UL1 - 1.5)):
     for k, y in enumerate(UB_Y):
-        P(id=f"insert_u{n}{k}", kind="insert", catalog="heatset_m2", at=[xi, y, UB_Z], rot=[0, 90, 0])
+        P(id=f"insert_u{n}{k}", kind="insert", parent=f"upright_{n}", catalog="heatset_m2", at=[xi, y, UB_Z], rot=[0, 90, 0])
 for k, s in enumerate((1, -1)):
     P(id=f"insert_f{k}", kind="insert", catalog="heatset_m2", at=[s * FORK_HX, 37.7, 2.15])
 for s, n in ((1, "l"), (-1, "r")):
@@ -585,7 +601,6 @@ ov = [dict(a="weapon_motor", b="spider", max_depth_mm=6.5, reason="spider bore o
       dict(a="blade_c", b="weapon_motor", max_depth_mm=4.0, reason="tooth-plate hub bore on the bell boss / shaft stub (drawn solid)"),
       dict(a="blade_c", b="wshaft", max_depth_mm=1.0e3, reason="the shaft is part of the rotor (child of blade_c): it turns with the disc"),
       *[dict(a="blade_c", b=f"wpin{i}", max_depth_mm=1.0e3, reason="blade screw is part of the rotor: it turns with the disc") for i in range(4)],
-      *[dict(a=f"insert_u{n}{k}", b="tub", max_depth_mm=1.0e3, reason="heat-set into the upright before the upright is bolted to the boss; leaves with the upright") for n in "rl" for k in range(2)],
       dict(a="wshaft", b="wbearing", max_depth_mm=3.5, reason="bearing drawn solid: the 3 mm shaft fills the inner race bore")]
 for i in range(4):
     ov.append(dict(a=f"wpin{i}", b="spider", max_depth_mm=0.3, reason="screw shank in its hole"))
