@@ -136,3 +136,50 @@ third (front/middle/rear) plus outline Hausdorff (mm). `reference.silhouette`: I
 (model red, photo blue) goes to `$ROBOT_REFERENCE_OUT` (default `<tmp>/robot_reference/`, path in metrics `reference`) and
 `export` writes `renders/compare_<view>.png`, linked from README. A missing/unreadable mask is `reference.unusable` + NOT CHECKED.
 Typical catches: fork/disc on the wrong end (front third fails), boxy pods (rear/middle), wrong height/length ratio.
+
+## Engineering defaults (screwed joints; checked by `joints.*`)
+Decide each joint like a mechanical engineer before placing screws. Off-default choices need `"reason"` on the fastener.
+- **Screw direction = how the two parts meet.** Find the face where part A sits on part B; screws run along that face's
+  normal, head on the part being attached, insert/nut in the base. Example: a side pod meeting the tub on its side wall is
+  bolted sideways through that wall, not down through small tabs. >30 deg off the mating face normal is a blocker
+  (`joint.axis_vs_interface`) unless `reason` (e.g. "shear pin"). Screws parallel to the contact faces clamp nothing
+  (`joint.parallel_interface`); the screw must pass through the faces it clamps (`joint.through_contact`).
+- **Top screws need a reason.** Drive screws along the direction the part slides on during assembly (`joint.assembly_dir`)
+  and keep the driver line clear without removing other parts (`joint.service_access`); a removable cover is fine.
+- **Locate, then clamp.** Add a lip, step, spigot or dowel so parts register; screws are not locators (`joint.no_locator`).
+- **Pattern:** >= 2 screws per joint unless keyed (`joint.single_fastener`), spread >= 3d (`joint.bolt_spread`),
+  centred on the interface (`joint.bolt_symmetry`).
+- **Stack:** clearance hole >= d+0.2 in every head-side part (`joint.clearance_hole`); counterbore >= head dia+0.4 and
+  head height deep (`joint.counterbore`); edge/boss: insert boss OD >= 2x insert OD (`joint.insert_boss`), insert length
+  >= 1.5d (`joint.insert_length`); tapped plastic >= 2d engagement (`joint.plastic_engagement`) and >= 3d boss
+  (`joint.thin_wall`).
+- **Printed parts:** removable joints use heat-set inserts, not self-tapping (`joint.selftap_removable`); never self-tap
+  along the print Z axis (`joint.layer_tension`); spread head load on plastic with a washer / flange head (`"washer": true`,
+  `joint.head_bearing`).
+- **Nuts** sit in hex traps (captive) or are replaced by inserts (`joint.loose_nut`).
+- **Outside surfaces:** no proud heads on armour or exterior (`joint.head_proud`), never on the ground plane
+  (`joint.head_ground`): counterbore flush or countersink.
+- **Kit:** <= 3 thread sizes (`joint.screw_sizes`), <= 5 distinct screws (`joint.screw_variety`), stock ISO lengths
+  (`joint.standard_length`).
+
+## Combat design rules (ground game; checked by `combat.R*`)
+Whoever gets under the other wins. Full rules with rationale, thresholds and applicability: `robot/rules/combat_rules.md`
+(112 rules, 83 measured as `combat.Rnnn`, the rest listed under NOT CHECKED). Family from `archetype`, else `robot_type`.
+- **Skirt every edge.** Something within 1-1.5 mm of the floor across >= 80% of the front (R001-R002), within 3 mm on
+  >= 60% of each side (R003-R004) and >= 50% of the rear (R005); corners <= 5 mm (R006-R009); no open arc > 45 deg
+  (R011), no 8 mm gap in the front edge for forks (R015). A wheel at the outline counts as open.
+- **Lip:** 0.2-1.0 mm off the floor (R020-R021; hinged skirts rest <= 0.5 mm with >= 10 deg travel, R035-R036), ramp
+  10-35 deg with a <= 25 deg entry (R022-R023), <= 1.2 mm thick 1 mm back and no vertical nose (R024-R026), metal or
+  laminate (R027), the front-most part (R029), lowest at the tip (R030), level (R031), bends <= 1 mm under 50 N
+  (R032-R034), clear of the wheels (R037), >= 2 screws (R038).
+- **Forks:** >= 2 tines, gaps <= 25 mm unless the weapon/skirt closes them, tips level and leading (R040-R043).
+- **Weapon vs floor:** vertical sweep 0.8-6 mm (R050), never through the floor (R051, blocker), horizontal blade 1-15 mm
+  (R052), no open door under the weapon (R053), lip leads the disc by 0-12 mm (R054).
+- **Weight and drive:** >= 70% on driven wheels, <= 15% on the lip (R060-R061); CoG/track <= 0.5, CoG/wheelbase <= 0.6,
+  lower half of the body, centred (R062-R066); grippy tyres >= 20 mm dia, >= 6 mm wide (R067-R069); traction-limited
+  drive, 1.5-8 m/s (R073-R074).
+- **Floor contact:** only wheels touch (R080-R081); belly >= 1 mm, interior >= 1.5 mm, no flat drag area, screw heads and
+  switch off the floor (R082-R086).
+- **Inverted:** drive upside down or self-right (R090); keep a lip on the top side too (R091-R094).
+- **Wheels hidden:** none at the front edge, <= 25% of sides/rear, <= 10% overall (R110-R113); body ahead of and outboard
+  of the wheels (R114-R115). Battery >= 10 mm from the front, >= 5 mm from the sides (R120-R121).
