@@ -72,7 +72,7 @@ def run(ctx):
     est = sum(l.tol_g for l in lines if l.source in ("catalog", "declared"))
     msg = (f"{total:.1f} g (range {lo:.1f} to {hi:.1f} g) against the {limit:.0f} g limit; {est:.1f} g of the uncertainty is catalog "
            "estimates, weigh the real parts and set `scale_mass_g`.")
-    if lo > limit:
+    if lo > limit or total > limit:
         out.append(fail("mass.over", G, BLOCKER, "Over the weight limit", msg).expect(f"<= {limit:.0f} g", f"{total:.1f} g")
                    .fix("Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report."))
     elif hi > limit:
