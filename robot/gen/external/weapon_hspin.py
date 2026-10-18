@@ -22,7 +22,7 @@ ROOF_CLEAR = 1.8  # bar underside above the roof
 COLUMN_R = 11.0
 CAVITY_R = 11.2  # bell clearance (can r 10.5)
 PIN_R = 15.0
-LOCK_T = 0.8
+LOCK_T = 0.8  # 0.3 sunk in the roof recess
 
 
 @module("hspin_bar")
@@ -40,7 +40,7 @@ class HSpin:
     def prepare(cls, plan, h, g):
         plan.extra["weapon_motor"] = "weapon_motor"
         plan.robot_type = "horizontal_spinner"
-        plan.extra["wedge_len"] = 36.0
+        plan.extra["wedge_len"] = 30.0
         plan.extra["battery_side_mm"] = 7.5  # the long pack leaves a wire lane past it on both sides
         plan.archetype = "horizontal_spinner"
         ya, zc, z_col, _ = cls.geometry(plan)
@@ -103,17 +103,19 @@ class HSpin:
         spinner.rotor_connections(plan, "weapon", "weapon_motor", "wshaft", "wbearing", "top_bridge", hub_depth=2.6)
         # lock pin: through the bar's pin hole into a steel lock plate bonded on the roof under the bar
         yl = ya - PIN_R
-        lp = sh.S(sh.boxr(-5.0, 5.0, yl - 5.0, yl + 5.0, f.zt, f.zt + LOCK_T), sh.cyl_axis(1.6, f.zt - 0.5, f.zt + LOCK_T + 0.5, "z", 0.0, yl))
+        plan.late_cuts["top"].append(sh.boxr(-3.2, 3.2, yl - 3.2, yl + 3.2, f.zt - 0.3, f.zt + 0.1))  # recess
+        lp = sh.S(sh.boxr(-3.0, 3.0, yl - 3.0, yl + 3.0, f.zt - 0.3, f.zt - 0.3 + LOCK_T), sh.cyl_axis(1.6, f.zt - 0.5, f.zt + LOCK_T + 0.5, "z", 0.0, yl))
         plan.part(id="lock_plate", kind="plate", material="steel", process="laser", shape=lp, rotates_with="fixed",
                   color="#c9ccd1", label="0.8 mm steel lock plate bonded to the roof: the weapon pin's lower seat")
-        plan.connect("lock_plate", "chassis_top", "glue", "Epoxied into a 0.2 mm recess on the roof")
+        plan.connect("lock_plate", "chassis_top", "glue", "Epoxied into a 0.3 mm recess in the roof (the recess takes the pin's side load)",
+                     mechanical_key=True)
         plan.extra["weapon_lock"] = {"type": "removable_pin", "dia_mm": 3.0, "axis": [0, 0, 1],
                                      "at": [0.0, round(yl, 3), round(z_bar0, 3)],
                                      "holes": ["weapon", "lock_plate"],
                                      "note": "red 3 mm REMOVE-BEFORE-FIGHT pin through the bar into the lock plate"}
 
 
-BRIDGE_T, BRIDGE_W, POST_T = 5.0, 8.0, 3.0
+BRIDGE_T, BRIDGE_W, POST_T = 5.0, 8.0, 6.0
 BRIDGE_ZS = (3.0, 7.0)  # post screws, both into the top half (clear of the electronics on the floor)
 
 
@@ -125,7 +127,7 @@ def add_bridge(plan, ya, zbb):
     xo = W + 0.02 + POST_T
     y0, y1 = ya - BRIDGE_W / 2, ya + BRIDGE_W / 2
     zt = zbb + BRIDGE_T
-    beam = sh.boxr(-xo, xo, y0, y1, zbb, zt)
+    beam = sh.U(sh.boxr(-xo, xo, y0, y1, zbb, zt), sh.cyl_axis(6.0, zbb, zt, "z", 0.0, ya))  # round boss round the bearing
     posts = [sh.boxr(W + 0.02, xo, y0, y1, BRIDGE_ZS[0] - 3.5, zt), sh.boxr(-xo, -W - 0.02, y0, y1, BRIDGE_ZS[0] - 3.5, zt)]
     bw = spinner.BEARING["w"]
     cuts = [sh.cyl_axis(spinner.BEARING["r_out"], zbb - 0.5, zbb + bw, "z", 0.0, ya),
@@ -134,7 +136,7 @@ def add_bridge(plan, ya, zbb):
         xw = sgn * W
         for k, z in enumerate(BRIDGE_ZS):
             half = "bottom" if z < 0 else "top"
-            cuts.append(sh.cyl_axis(1.1, W + 0.2, xo + 0.5, "x", ya, z) if sgn > 0 else sh.cyl_axis(1.1, -xo - 0.5, -W - 0.2, "x", ya, z))
+            cuts.append(sh.cyl_axis(1.1, W - 0.5, xo + 0.5, "x", ya, z) if sgn > 0 else sh.cyl_axis(1.1, -xo - 0.5, -W + 0.5, "x", ya, z))
             boss = sh.cyl_axis(3.0, xw - sgn * 6.0, xw, "x", ya, z) if sgn > 0 else sh.cyl_axis(3.0, xw, xw + 6.0, "x", ya, z)
             plan.add(half, boss)
             bore = (xw - sgn * 4.6, xw + sgn * 0.2)
@@ -142,7 +144,7 @@ def add_bridge(plan, ya, zbb):
             iid = f"insert_b{side}{k}"
             plan.part(id=iid, kind="insert", catalog="heatset_m2", at=[xw - sgn * 1.7, ya, z], rot=[0.0, 90.0, 0.0],
                       retained="press_fit")
-            plan.screw(id=f"bolt_b{side}{k}", designation="M2x8", at=[sgn * xo, ya, z], dir=[-sgn, 0.0, 0.0],
+            plan.screw(id=f"bolt_b{side}{k}", designation="M2x10", at=[sgn * xo, ya, z], dir=[-sgn, 0.0, 0.0],
                        through=["top_bridge"], threads_into=iid)
     plan.part(id="top_bridge", kind="structure", material="nylon", process="fdm", print_orientation="-z",
               shape=sh.S(sh.U(beam, *posts), *cuts), rotates_with="fixed", color="#2a2c30", solid_fraction=0.9,

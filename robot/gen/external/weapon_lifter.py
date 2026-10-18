@@ -77,9 +77,7 @@ class Lifter:
         # hole for the hub through the right wall, boss + insert for the pivot screw in the left wall
         plan.cut("bottom", sh.cyl_axis(HUB_R + 0.4, x_face - 0.5, W + 0.5, "x", yp, zp))
         plan.add("bottom", sh.cyl_axis(3.0, -W, -W + 6.0, "x", yp, zp))
-        plan.late_cuts["bottom"].append(sh.cyl_axis(1.6, -W - 0.2, -W + 4.6, "x", yp, zp))
-        plan.part(id="insert_pivot", kind="insert", catalog="heatset_m2", at=[-W + 1.7, yp, zp], rot=[0.0, 90.0, 0.0],
-                  retained="press_fit")
+        plan.late_cuts["bottom"].append(sh.cyl_axis(1.0, -W - 0.2, -W + 4.6, "x", yp, zp))
         # the scoop: two cheeks outside the side walls + the plate in front of the chassis
         xo = W + 0.4 + CHEEK_T
         # the plate's back edge clears the front wall over the whole lift (it swings up about the pivot)
@@ -94,29 +92,22 @@ class Lifter:
                                                           (y_back, top_back[1] - SCOOP_T - 2.0)]).convex_hull.exterior.coords)[:-1]
         body = sh.U(sh.side_prism(plate, -xo, xo), sh.side_prism(cheek, W + 0.4, xo), sh.side_prism(cheek, -xo, -W - 0.4),
                     sh.cyl_axis(HUB_R, x_face + 0.05, W + 0.4, "x", yp, zp))
-        cuts = [sh.cyl_axis(1.15, -xo - 0.5, -W - 0.3, "x", yp, zp)]
+        cuts = [sh.cyl_axis(1.1, -xo - 0.5, -W - 0.3, "x", yp, zp)]
         # arm frame: origin on the pivot so the joint is a plain rotation about x
         arm = sh.place(sh.S(body, *cuts), (0.0, -yp, -zp))
         # the arm hangs on the servo (parent); the servo's frame is rotated, so give its pose relative to it
-        plan.part(id="lifter", kind="weapon", material="nylon", process="fdm", print_orientation="+y",
+        plan.part(id="lifter", kind="wedge", material="nylon", process="fdm", print_orientation="+y",
                   shape=arm, parent="servo", at=[0.0, 0.0, -xc], rot=[-90.0, -90.0, 0.0],
                   joint={"kind": "revolute", "axis": [0, 0, 1], "pivot": [0.0, 0.0, x_face - xc],
                          "min": 0, "max": RANGE_DEG, "default": 0},
                   actuated_by="servo", rotates_with="lifter", color="#c0392b",
                   label="printed lifting scoop: cheeks outside the side walls, lip on the floor, servo-driven")
-        # laser-cut steel lip on the scoop's leading edge (the part that meets the opponent)
-        ang = math.atan2(top_back[1] - top_tip[1], top_tip[0] - top_back[0])
-        L = 9.0
-        p0 = (y_tip - L * math.cos(ang), top_tip[1] + L * math.sin(ang))
-        nz = (math.sin(ang) * LIP_T, math.cos(ang) * LIP_T)
-        lip_prof = [p0, (y_tip + 1.0, z_tip + 0.4), (y_tip + 1.0 + nz[0], z_tip + 0.4 + nz[1]), (p0[0] + nz[0], p0[1] + nz[1])]
-        lip_prof = [(y + 0.0, z + 0.02) for y, z in lip_prof]
-        lip = sh.place(sh.side_prism(lip_prof, -xo + 4.0, xo - 4.0), (0.0, -yp, -zp))
-        plan.part(id="lifter_lip", kind="weapon", material="steel", process="laser", shape=lip, parent="lifter",
-                  at=[0.0, 0.0, 0.0], rot=[0.0, 0.0, 0.0], rotates_with="lifter", color="#c9ccd1",
-                  label=f"{LIP_T:g} mm hardened steel lip bonded and riveted on the scoop edge")
-        plan.connect("lifter_lip", "lifter", "glue", "Epoxied on the scoop's top face, 3 rivets through the plate")
-        plan.screw(id="bolt_pivot", designation="M2x8", at=[-xo, yp, zp], dir=[1.0, 0.0, 0.0],
-                   through=["lifter"], threads_into="insert_pivot")
-        plan.connect("lifter", "servo", "interlock", "Hub keyed on the servo's 25T spline, M2 horn screw on the axis",
+        # pivot pin on the left: a 2 mm steel dowel pressed into the wall boss, the cheek turns on it
+        plan.part(id="pivot_pin", kind="pin", material="steel", process="cots", stock="2 mm hardened dowel",
+                  shape=sh.cyl_axis(1.0, -xo - 0.3, -W + 4.4, "x", yp, zp), rotates_with="fixed", color="#777777",
+                  label="2 mm steel dowel: the scoop's left pivot")
+        plan.connect("pivot_pin", "chassis_bottom", "press_fit", "Pressed into the left wall boss", interference_mm=0.03,
+                     mechanical_key=True)
+        plan.connect("lifter", "pivot_pin", "shaft", "Left cheek turns on the dowel, e-clip outboard")
+        plan.connect("lifter", "servo", "shaft", "Hub keyed on the servo's 25T spline, M2 horn screw on the axis",
                      mechanical_key=True)

@@ -254,3 +254,28 @@ Whoever gets under the other wins. Full rules with rationale, thresholds and app
 - **Coverage** (`coverage.uncovered`, WARNING): lists any part kind only generic checks touch, made parts with no
   material/process, rotating parts of a kind no balance/clearance check knows, and part pairs within 0.5 mm with no
   declared relation (screw, connection, allow_overlap, parent/fused/cover, captive pocket, belt/pulley, tyre/rotating group).
+
+## Template engine (`robot gen`)
+
+`robot/gen` turns a design hypothesis into a complete spec that passes `robot verify` with zero blockers.
+
+- **Hypothesis space** (`robot/gen/hypothesis.py`): axes weapon, mount, orientation, attachment, front, drive layout,
+  drive motor, wheel size, transmission, guards, invertible, battery, ESCs, receiver. Values follow
+  `research/antweight_taxonomy.json` (copied to `robot/gen/data/`). `robot/gen/rules.py` prunes the space with small
+  named rules (one function each, each tested), including a mass and size lower bound (`budget.py`).
+- **Layout CSP** (`robot/gen/layout/`): places battery, ESCs, receiver and switch inside the outline around fixed
+  keep-outs (drive, weapon, screw bosses). It uses forward-checking DFS and returns the top-K distinct layouts, scored on
+  wire length, centre-of-mass offset and compactness.
+- **Generators** (`robot/gen/external/`): clamshell shell halves, housings and snug pockets with port notches, drive
+  pods, clamshell screws with heat-set inserts, A*-routed wire channels, power switch, wedge, and weapon modules
+  (`vspin_drisk`, `hspin_bar`, `lifter`).
+- **Assembler + gate** (`build.py`, `gate.py`): `gate()` builds, verifies, and on blockers retries other layouts and
+  seeds. It never returns a spec that has a blocker; if no variant passes it raises `Rejected`.
+
+```
+python3 -m robot gen list-hypotheses --fix weapon=vspin_drisk --limit 5
+python3 -m robot gen build --hypothesis vspin_drisk --out out/ --fast   # gated: 0 blockers or exit 2
+python3 -m robot gen build --hypothesis "weapon=wedge,wheel_dia=25" --out out/
+python3 -m robot gen layouts spec_inputs.json -k 5    # LayoutInputs JSON (outline, components, keepouts, ...)
+python3 -m robot gen layouts hspin_bar -k 3           # or the layout problem of a hypothesis
+```

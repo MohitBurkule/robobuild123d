@@ -49,7 +49,7 @@ def run(a):
             if k not in H.AXES:
                 print(f"unknown axis {k}; axes: {', '.join(H.AXIS_ORDER)}", file=sys.stderr)
                 return 1
-            fixed[k] = H.coerce(k, v)
+            fixed[k] = H.Hypothesis.from_dict({**H.Hypothesis().to_dict(), k: v}).to_dict()[k]
         n = H.count_hypotheses(fixed)
         print(f"{n} valid hypotheses" + (f" with {fixed}" if fixed else ""))
         if not fixed:
