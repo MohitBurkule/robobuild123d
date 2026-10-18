@@ -1,376 +1,601 @@
-"""Revron generator v12: live weapon shaft on 684 bearings in both uprights, belt from an 1806 in the tub."""
-import json, math, sys
-sys.path.insert(0,'/home/user/robobuild123d')
-OUT = "/home/user/robobuild123d/robot/templates/revron.json"
-def place(s,at,rot=(0,0,0)): return {"type":"place","shape":s,"at":list(at),"rot":list(rot)}
-def box(sx,sy,sz,at=(0,0,0),rot=(0,0,0)): return place({"type":"box","size":[sx,sy,sz]},at,rot)
-def boxr(x0,x1,y0,y1,z0,z1): return box(x1-x0,y1-y0,z1-z0,((x0+x1)/2,(y0+y1)/2,(z0+z1)/2))
-def cyl(r,h,at=(0,0,0),rot=(0,0,0)): return place({"type":"cylinder","radius":r,"height":h},at,rot)
-def cylx(r,x0,x1,y,z): return cyl(r,x1-x0,((x0+x1)/2,y,z),(0,90,0))
-def cylz(r,z0,z1,x,y): return cyl(r,z1-z0,(x,y,(z0+z1)/2))
-def cyly(r,y0,y1,x,z): return cyl(r,y1-y0,(x,(y0+y1)/2,z),(90,0,0))
-def intersect(*a): return {'type':'intersect','items':list(a)}
-def U(*a): return {"type":"union","items":list(a)}
-def S(b,*c): return {"type":"subtract","base":b,"cut":list(c)}
-def fillet(s,r): return {"type":"fillet","shape":s,"radius":r}
-def yz(pts,x0,x1,spline=False):
-    loc=[[-z,y] for y,z in pts]
-    return place({"type":"spline_prism" if spline else "prism","points":loc,"height":x1-x0},((x0+x1)/2,0,0),(0,90,0))
-def xs_(s,a,b): return sorted([s*a,s*b])
+"""Revron 2.1 generator (rebuild from scratch, 2026-10-18).
+
+Every measured number comes from robots/revron/params.json (SVRN STEP files, the builder's forum diary and the photos);
+the derived layout follows from those numbers. Frame: X right, Y forward, Z up, chassis underside at Z = 0.
+
+Architecture (forum diary): BE1806 outrunner is the weapon hub. Its stator is bolted to the right upright; an aluminium
+spider is clamped on the motor shaft stub and carries three 2 mm Hardox plates (one hooked, balanced tooth plate between
+two plain rings) with 4 countersunk M3 bolts and nuts. A 3 mm spigot on the spider runs in an F683ZZ flanged bearing in
+the left upright, so the rotor is supported both sides. Uprights sit on square printed bosses on the chassis nose.
+Drive: two N10 gearmotors at the front axle, O-ring belts to rear stub-axle wheels. TPU side panels, TPU sprung forks,
+Ti top plate, printed base panel on heat-set inserts.
+"""
+import json, math, os, sys
+ROOT = "/home/user/robobuild123d"
+sys.path.insert(0, ROOT)
+HERE = os.path.dirname(os.path.abspath(__file__))
+PRM = json.load(open(os.path.join(HERE, "..", "params.json")))
+OUT = os.path.join(ROOT, "robot/templates/revron.json")
+
+
+def pv(k, default=None):
+    v = PRM.get(k, {})
+    v = v.get("value") if isinstance(v, dict) else v
+    return float(v) if isinstance(v, (int, float)) else default
+
+
+# ---------------------------------------------------------------- shape helpers
+def place(s, at, rot=(0, 0, 0)): return {"type": "place", "shape": s, "at": [round(a, 4) for a in at], "rot": list(rot)}
+def box(sx, sy, sz, at=(0, 0, 0)): return place({"type": "box", "size": [sx, sy, sz]}, at)
+def boxr(x0, x1, y0, y1, z0, z1): return box(x1 - x0, y1 - y0, z1 - z0, ((x0 + x1) / 2, (y0 + y1) / 2, (z0 + z1) / 2))
+def cyl(r, h, at=(0, 0, 0), rot=(0, 0, 0)): return place({"type": "cylinder", "radius": r, "height": h}, at, rot)
+def cylx(r, x0, x1, y, z): return cyl(r, x1 - x0, ((x0 + x1) / 2, y, z), (0, 90, 0))
+def cylz(r, z0, z1, x, y): return cyl(r, z1 - z0, (x, y, (z0 + z1) / 2))
+def U(*a): return {"type": "union", "items": list(a)}
+def S(b, *c): return {"type": "subtract", "base": b, "cut": list(c)}
+def fillet(s, r): return {"type": "fillet", "shape": s, "radius": r}
+def r4(p): return [[round(a, 4), round(b, 4)] for a, b in p]
+
+
+def yz(pts, x0, x1, spline=False):
+    """Prism of a (y, z) outline extruded over x0..x1."""
+    x0, x1 = min(x0, x1), max(x0, x1)
+    loc = [[-z, y] for y, z in pts]
+    return place({"type": "spline_prism" if spline else "prism", "points": r4(loc), "height": x1 - x0}, ((x0 + x1) / 2, 0, 0), (0, 90, 0))
+
+
 def hull(pts):
-    pts=sorted(set(pts))
-    def cr(o,a,b): return (a[0]-o[0])*(b[1]-o[1])-(a[1]-o[1])*(b[0]-o[0])
-    lo=[];up=[]
+    pts = sorted(set((round(a, 4), round(b, 4)) for a, b in pts))
+    def cr(o, a, b): return (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0])
+    lo, up = [], []
     for p in pts:
-        while len(lo)>=2 and cr(lo[-2],lo[-1],p)<=0: lo.pop()
+        while len(lo) >= 2 and cr(lo[-2], lo[-1], p) <= 0: lo.pop()
         lo.append(p)
     for p in reversed(pts):
-        while len(up)>=2 and cr(up[-2],up[-1],p)<=0: up.pop()
+        while len(up) >= 2 and cr(up[-2], up[-1], p) <= 0: up.pop()
         up.append(p)
-    return lo[:-1]+up[:-1]
-def circ_pts(c,r,n=36): return [(round(c[0]+r*math.cos(2*math.pi*i/n),4),round(c[1]+r*math.sin(2*math.pi*i/n),4)) for i in range(n)]
+    return lo[:-1] + up[:-1]
 
-# ------------------------------------------------------------------ layout
-FLOOR=-15.0
-YC, ZC = 55.0, 15.0                 # live weapon shaft
-YF, YRW = 16.0, -34.0               # front (motor) and rear wheel axles
-WX = 47.0; MX = 28.0; RW = 15.0
-TX, TY0, TY1, TZ0, TZ1 = 39.5, -42.0, 30.0, -13.0, 9.5
-W = 0.9; WF = 2.0; FL = 0.9; RIB = 1.4
-UX0, UX1 = 16.0, 23.0               # uprights |x|, 7 mm printed plates
-UXC = (UX0+UX1)/2
-DX0, DX1 = -1.5, 1.5                # disc (3 mm Ti) centred
-WPX = 8.0                           # weapon belt plane x
-YM, ZM, XM = 17.0, -1.4, -1.0       # weapon motor (body x -8..6, stub +x)
-WPR_M, WPR_S = 5.0, 6.0             # motor / shaft pulley groove radii
-BOSS = [(35.5,-38.5),(-35.5,-38.5),(35.5,1.0),(-35.5,1.0)]
-SW = (20.0,-36.0)
+
+def circ_pts(c, r, n=40): return [(c[0] + r * math.cos(2 * math.pi * i / n), c[1] + r * math.sin(2 * math.pi * i / n)) for i in range(n)]
+def rrect(y0, y1, z0, z1, r, n=6):
+    pts = []
+    for cy, cz, a0 in ((y1 - r, z1 - r, 0), (y0 + r, z1 - r, 90), (y0 + r, z0 + r, 180), (y1 - r, z0 + r, 270)):
+        for k in range(n + 1):
+            a = math.radians(a0 + 90 * k / n); pts.append((cy + r * math.cos(a), cz + r * math.sin(a)))
+    return pts
+def hexp(af, t, at, axis="x"):
+    pts = [[af / 2 / math.cos(math.radians(30)) * math.cos(math.radians(60 * i + 30)), af / 2 / math.cos(math.radians(30)) * math.sin(math.radians(60 * i + 30))] for i in range(6)]
+    rot = {"x": (0, 90, 0), "y": (90, 0, 0), "z": (0, 0, 0)}[axis]
+    return place({"type": "prism", "points": r4(pts), "height": t}, at, rot)
+
+
+
+
+# ---------------------------------------------------------------- layout (params.json)
+TYRE_OD = pv("tyre_od", 21.5); RT = TYRE_OD / 2
+TYRE_W = pv("tyre_width", 9.5)
+HUB_R = pv("hub_od_belted", 16.0) / 2 - 0.5      # tyre seat radius under the 16 mm pulley rim
+AXZ = pv("axle_z", 8.5)                           # wheel axle above chassis underside
+WB = pv("wheelbase", 52.4); YF, YR = WB / 2, -WB / 2
+FLOOR = AXZ - RT                                  # tyre contact plane (= -2.25)
+CH = pv("chassis_height", 17.0)
+DECK = 1.0                                        # params chassis_top_deck_t 1.2; 1.0 under the Ti plate to make weight
+WALL = 1.0                                        # 2.0 in SVRN; 1.6 to make weight with the bigger weapon
+CX = 30.5                                         # chassis half width (SVRN 65 -> 61 so the belted hubs clear the wall)
+CY0, CY1 = -33.0, 33.5
+FWALL = 2.1                                       # front wall (gearbox stop)
+BP_T = pv("base_panel_t", 2.5); BP_Z0 = pv("base_panel_z", -0.5)
+TP_T = 0.5                                        # Ti top plate (0.8-1.0 in SVRN; 0.5 Ti grade 5 for weight)
+TP_X, TP_Y = 27.5, 18.5
+PUL_W = 3.5                                       # pulley width (1.5 mm O-ring groove + 1 mm walls)
+HUB_X0 = CX + 1.15                                # inner face of every hub (1.15 running gap to the wall)
+TYRE_X0 = HUB_X0 + PUL_W + 0.25
+HUB_L = PUL_W + 0.25 + TYRE_W                     # hub length
+HUB_X1 = HUB_X0 + HUB_L
+POD_T = 1.6
+POD_X0, POD_X1 = HUB_X1 + 1.1, HUB_X1 + 1.1 + POD_T   # TPU side panel outer wall
+MOT_L = 21.1; MOT_SH = 9.0                        # n10 catalog: body 21.1, shaft 9
+MOT_CX = CX - WALL - MOT_L / 2                    # gearbox face against the side wall
+# weapon (motor-local x: stator face -7, bell to +7, stub 6..14)
+DISC_R = pv("weapon_disc_dia", 40.0) / 2
+ZW = FLOOR + pv("weapon_axle_z", 23.0)            # axle 23 above the floor
+YW = 53.8
+BT_C, BT_O = pv("weapon_blade_t", 2.0), 1.0       # tooth plate 2 mm, outer rings 1.0 mm
+BLO = (8.2, 8.2 + BT_O)                           # blade stack, motor-local x
+BLC = (BLO[1], BLO[1] + BT_C)
+BLI = (BLC[1], BLC[1] + BT_O)
+SP_H0, SP_F0 = 7.5, BLI[1]                        # spider hub start, flange inner face
+SP_H1 = SP_F0 + 1.5                               # flange outer face
+HEAD_T = 1.4                                      # ISO7380 M2.5 head
+NUT0 = BLO[0] - 1.8                               # round nut on the outer ring
+WX0 = -(BLO[0] + BLI[1]) / 2                      # motor centre x: blade stack centred on x = 0
+RING_I, RING_O, BOLT_R = 11.4, 18.6, 14.75
+SH0 = -8.0                                        # motor shaft extended out of the stator back (local)
+UL0L = SP_H1 + HEAD_T + 2.15                      # left upright inner face (local)
+SH0, SH1 = 0.5, UL0L + 3.0   # tail runs through the stator into a clearance bore in the right upright                       # motor's own shaft, extended into the F683 in the left upright
+# uprights / bosses (world)
+UR0, UR1 = WX0 - 12.0, WX0 - 7.0                  # right upright (stator side)
+UL0 = round(WX0 + UL0L, 2); UL1 = UL0 + 4.95             # left upright (bearing side)
+BOSS_R = (UR0 - 6.5, UR0); BOSS_L = (UL1, UL1 + 6.5)
+TAB_R = (BOSS_R[0], UR0); TAB_L = (UL1, BOSS_L[1])
+BY0, BY1 = 34.3, 46.0
+CHIN_Y1, CHIN_Z1 = 41.0, 4.0
+NOSE_Z = 15.0
+TAB_Z0, TAB_Z1 = 14.0, 17.0
+
+parts = []
+def P(**k): parts.append(k)
+
+POSTS = [(25.0, 16.0), (-25.0, 16.0), (25.0, -16.0), (-25.0, -16.0), (0.0, -27.5)]
+TOP_POSTS = POSTS[:4]
+POD_Y = (4.0, 10.0); POD_Z = 8.25; POD_WY = (1.0, 13.0)
+SW_Y, SW_Z = -6.6, 8.5
 BAT_Y = -14.0
-WESC = (-20.0,-35.0)
-PULX = 41.0; PR = 7.0
-BOT = TZ0+FL+RIB
-SL0, SL1 = 21.0, 30.0
-DROP = round(math.tan(math.radians(22))*(SL1-SL0),3)
-ALPHA = 7.0; TIPY = 64.0; TA = math.tan(math.radians(ALPHA))
-def bl_bot(y): return FLOOR+0.5+(TIPY-y)*TA
-def bl_top(y): return bl_bot(y)+1.0/math.cos(math.radians(ALPHA))
-PLAT = (29.5,40.0,TZ0,-2.0)         # crossbar platform tying both uprights
-PB_Y = (32.5,37.5); PB_Z = -6.0     # upright->platform bolts
-POD_MID = [(-13.0,0.0),(-8.5,4.0)]  # pod mid screws (y,z), sideways
-POD_REAR = (-52.0,-2.0)
+INS_B_Z = BP_Z0 + BP_T + 1.5                      # base inserts 2..5
+INS_T_Z = CH - 1.5                         # top inserts 12.8..15.8
+INS_U_Z = TAB_Z0 - 1.5
+INS_P_X = CX - WALL - 3.1                         # pod inserts (axis x) 25.9..28.9
+FORK_X = (5.0, 9.5)
+FORK_HX = 3.5                                     # fork root screws at x = +-2.5
+FORK_TIP = YW + DISC_R + 4.0
 
-# ------------------------------------------------------------------ tub
-TUB=[(TY0,TZ0),(TY1,TZ0),(TY1,TZ1-DROP),(TY1-1.6,TZ1-DROP),(SL0,TZ1),(TY0,TZ1)]
-TIN=[(TY0+W,TZ0+FL),(TY1-WF,TZ0+FL),(TY1-WF,TZ1+6),(TY0+W,TZ1+6)]
-items=[S(fillet(yz(TUB,-TX,TX),0.7), yz(TIN,-TX+W,TX-W))]
-ribs=[]
-for a in (42,-42):
-    ribs.append(S(place({"type":"box","size":[2.4,104,RIB]},(0,-10,TZ0+FL+RIB/2),(0,0,a)), S(boxr(-60,60,-80,80,-20,20), boxr(-TX+0.5,TX-0.5,TY0+0.5,TY1-0.5,-20,20))))
-items.append(S(U(*ribs), boxr(XM-8.5,XM+7.5,YM-11,YM+11,-20,20)))          # no ribs under the weapon motor
-POSTS=[(YF-11.5,YF-5.5),(YF+5.5,YF+11.5)]
-for s in (1,-1):
-    xa=xs_(s,15.4,TX-W+0.2)
-    items.append(boxr(*xa,YF-6.6,YF-5.2,TZ0+0.5,6.0)); items.append(boxr(*xa,YF+5.2,YF+6.6,TZ0+0.5,6.0))
-    items.append(boxr(*xs_(s,15.4,17.4),YF-5.2,YF+5.2,TZ0+0.5,-2.0))                   # inner end stop for the gearmotor
-    for y0,y1 in POSTS: items.append(boxr(*xs_(s,29.3,35.7),y0,y1,TZ0+0.5,6.0))       # strap posts
-    items.append(boxr(*xs_(s,33.0,TX-0.6),YRW-3.5,YRW+3.5,-4.0,4.0))                   # rear axle boss
-    items.append(boxr(*xs_(s,TX-0.5,PX0-1 if False else 52.0),-17,-4,TZ0,-9.0))       # mid pod tab (locating ledge)
-    items.append(boxr(*xs_(s,TX-3.6,TX-W+0.1),-15.5,-6.0,-4.0,7.0))                    # inner bosses for the sideways pod screws
-    items.append(boxr(*xs_(s,TX-4.0,TX),-55.0,TY0+0.5,-8.5,4.0))                       # rear ear for the pod rear screw
-items.append(boxr(-24,24,BAT_Y-7.4,BAT_Y-6.2,TZ0+0.5,-5.5)); items.append(boxr(-24,24,BAT_Y+6.2,BAT_Y+7.4,TZ0+0.5,-5.5))
-items.append(boxr(WESC[0]-12,WESC[0]+12,WESC[1]-7.3,WESC[1]-6.1,TZ0+0.5,-7.5)); items.append(boxr(WESC[0]-12,WESC[0]+12,WESC[1]+6.1,WESC[1]+7.3,TZ0+0.5,-7.5))
-items.append(boxr(XM-9.3,XM-7.0,YM-9.5,YM+9.5,TZ0+0.5,ZM+4.0))                         # stator mount wall
-for x,y in BOSS: items.append(cylz(3.2,2.0,TZ1,x,y))
-items.append(boxr(SW[0]-7.4,SW[0]+7.4,SW[1]-3.6,SW[1]+3.6,2.5,TZ1-0.3)); items.append(boxr(SW[0]-1,SW[0]+1,SW[1]-3.6,SW[1]+3.6,TZ0+0.5,2.6))
-items.append(boxr(-UX0,UX0,PLAT[0],PLAT[1],PLAT[2],-9.5))
-for s in (1,-1): items.append(boxr(*xs_(s,UX0-5.0,UX0),PLAT[0],PLAT[1],PLAT[2],PLAT[3]))
-tub=U(*items)
-cuts=[]
-for s in (1,-1):
-    cuts.append(boxr(*xs_(s,17.45,TX-W+0.05),YF-5.15,YF+5.15,-6.15,7.0))
-    cuts.append(cylx(1.9,*xs_(s,36,TX+1),YF,0)); cuts.append(boxr(*xs_(s,36,TX+1),YF-1.9,YF+1.9,0,TZ1+1))
-    cuts.append(cylx(1.5,*xs_(s,32,TX+1),YRW,0))
-    for y0,y1 in POSTS:
-        yc=(y0+y1)/2; cuts.append(cylz(1.6,2.8,6.1,s*32.5,yc)); cuts.append(cylz(1.0,-1.0,6.1,s*32.5,yc))
-    for y,z in POD_MID:
-        cuts.append(cylx(1.6,*xs_(s,TX-3.3,TX+0.1),y,z)); cuts.append(cylx(1.0,*xs_(s,TX-3.7,TX),y,z))
-    cuts.append(cylx(1.6,*xs_(s,TX-3.3,TX+0.1),*POD_REAR)); cuts.append(cylx(1.0,*xs_(s,TX-3.9,TX),*POD_REAR))
-    for y in PB_Y:
-        cuts.append(cylx(1.6,*xs_(s,UX0-3.3,UX0+0.1),y,PB_Z)); cuts.append(cylx(1.0,*xs_(s,UX0-5,UX0),y,PB_Z))
-for x,y in BOSS:
-    cuts.append(cylz(1.6,TZ1-3.0,TZ1+1,x,y)); cuts.append(cylz(1.0,TZ1-8,TZ1,x,y))
-cuts.append(boxr(SW[0]-6.05,SW[0]+6.05,SW[1]-2.05,SW[1]+2.05,2.4,TZ1+1))
-cuts.append(cylx(30.2,DX0-1.2,DX1+1.2,YC,ZC))                                           # disc running slot
-cuts.append(boxr(WPX-3.2,WPX+3.2,TY1-WF-1,PLAT[1]+1,TZ0+FL+0.01,TZ1+2))                  # weapon belt slot
-for dy in (-7.5,7.5):
-    cuts.append(cylx(1.1,XM-10,XM-6.5,YM+dy,ZM))                                          # stator screws
-cuts.append(boxr(XM-10,XM-6.9,YM-3,YM+3,ZM-2,ZM+2.0))                                   # phase lead pass in the mount wall
-tub=S(tub,*cuts)
 
-# ------------------------------------------------------------------ uprights (forks), printed flat
-UP=[(30.2,bl_top(34.0)),(34.0,bl_top(34.0)),(46.0,bl_top(46.0)),(62.0,bl_top(62.0)),(64.6,-11.6),(65.2,-4),(63.8,8),(61.3,19),(57,23.4),(53,23.6),(48.5,21),(43,14.5),(36,7),(30.2,5.0)]
-BHOLES=[-29.0,-21.5,-14.0]
-def bhole_xy(s,ly): return (s*UXC, TIPY+ly*math.cos(math.radians(ALPHA)))
-def upright(s):
-    x0,x1=xs_(s,UX0,UX1)
-    f=fillet(yz(UP,x0,x1),1.2)
-    xo = x1 if s>0 else x0
-    cuts=[cylx(2.4,x0-1,x1+1,YC,ZC),
-          cylx(4.5,*sorted([xo-s*4.0,xo+s*0.1]),YC,ZC),                                    # 684 bearing pocket, open to the outer face
-          yz([(38.5,-6),(44.5,-6),(44.5,0.5),(38.5,0.5)],x0-1,x1+1),                        # window (ref3)
-          cylx(1.15,x0-1,x1+1,YC,ZC-14.6)]                                                  # locking-pin hole
-    for ly in BHOLES:
-        x,y=bhole_xy(s,ly); zt=bl_top(y)
-        cuts.append(cylz(1.6,zt-0.3,zt+3.2,x,y)); cuts.append(cylz(1.0,zt-0.3,zt+6.0,x,y))
-    for y in PB_Y: cuts.append(cylx(1.1,x0-1,x1+1,y,PB_Z))
-    return S(f,*cuts)
+# ---------------------------------------------------------------- chassis (printed nylon tub, open bottom)
+def chassis():
+    prof = [(CY0, 0), (CY1, 0), (CY1, NOSE_Z), (CY1 - (CH - NOSE_Z), CH), (CY0, CH)]
+    inner = [(CY0 + WALL, -1), (CY1 - FWALL, -1), (CY1 - FWALL, CH - DECK - 0.2), (CY0 + WALL, CH - DECK)]
+    shell = S(yz(prof, -CX, CX), yz(inner, -(CX - WALL), CX - WALL))
+    add = []
+    for x, y in POSTS:
+        add.append(cylz(2.75, BP_Z0 + BP_T, CH - DECK + 0.1, x, y))
+        if abs(x) > 1:   # web from the post to the side wall
+            s = 1 if x > 0 else -1
+            add.append(boxr(*sorted((s * (abs(x) + 1.5), s * (CX - WALL + 0.1))), y - 0.8, y + 0.8, BP_Z0 + BP_T, CH - DECK + 0.1))
+        else:
+            add.append(boxr(-0.8, 0.8, CY0 + WALL - 0.1, y - 1.5, BP_Z0 + BP_T, CH - DECK + 0.1))
+    for s in (1, -1):
+        add.append(boxr(*sorted((s * (CX - WALL - 4.6), s * (CX - WALL + 0.1))), POD_Y[0] - 3.0, POD_Y[1] + 3.0, POD_Z - 3.2, POD_Z + 3.2))   # insert boss
+        add.append(cylx(3.0, *sorted((s * (CX - WALL - 2.4), s * (CX - WALL + 0.1))), YR, AXZ))     # rear axle boss
+        # motor clamp ribs from the deck down to the gearbox top
+        add.append(boxr(*sorted((s * (MOT_CX - 8.0), s * (MOT_CX + 8.0))), YF - 6.0, YF - 5.0, AXZ + 6.0, CH - DECK + 0.1))
+        add.append(boxr(*sorted((s * (MOT_CX - 6.0), s * (MOT_CX + 6.0))), YF - 4.0, YF + 4.0, AXZ + 6.0, CH - DECK + 0.1))   # top clamp pad
+    add.append(boxr(BOSS_R[0], BOSS_L[1], CY1 - 0.1, CHIN_Y1, 0.0, CHIN_Z1))       # chin
+    for b0, b1 in (BOSS_R, BOSS_L):
+        add.append(boxr(b0, b1, CY1 - 0.1, BY1, 0.0, TAB_Z0))                       # square upright bosses
+    body = U(shell, *add)
+    cut = []
+    for s in (1, -1):
+        cut.append(cylx(2.1, *sorted((s * (CX - WALL - 0.5), s * (CX + 0.5))), YF, AXZ))              # gearbox-boss keyhole
+        cut.append(cylx(1.5, *sorted((s * (CX - WALL - 2.5), s * (CX + 0.5))), YR, AXZ))              # rear axle press hole
+        for y in POD_Y:
+            cut.append(cylx(1.0, *sorted((s * (CX - WALL - 5.2), s * (CX + 0.5))), y, POD_Z))         # M2 pilot (through)
+            cut.append(cylx(1.6, *sorted((s * (CX - WALL - 4.7), s * (INS_P_X + 1.5))), y, POD_Z))   # insert bore, pressed in from inside
+            cut.append(cylx(1.15, *sorted((s * (CX - WALL - 0.1), s * (CX + 0.5))), y, POD_Z))        # wall clearance
+    for x, y in POSTS:
+        cut.append(cylz(1.6, INS_B_Z - 1.5 - 0.01, INS_B_Z + 1.5, x, y)); cut.append(cylz(1.0, INS_B_Z, INS_B_Z + 3.0, x, y))
+    for x, y in TOP_POSTS:
+        cut.append(cylz(1.6, INS_T_Z - 1.5, CH + 0.5, x, y)); cut.append(cylz(1.0, INS_T_Z - 5.0, INS_T_Z, x, y))
+        cut.append(cylz(1.15, CH - DECK - 0.1, CH + 0.5, x, y))
+    for (b0, b1) in (BOSS_R, BOSS_L):
+        bx = (b0 + b1) / 2
+        cut.append(boxr(b0 + 1.4, b1 - 1.4, BY0 + 1.4, BY1 - 1.4, -0.5, UB_Z - 2.5))          # hollow boss, open below
+        for y in UB_Y:
+            cut.append(cylx(1.1, b0 - 0.5, b1 + 0.5, y, UB_Z))
+    cut.append(boxr(-FORK_X[1] - 0.05, FORK_X[1] + 0.05, BY0 - 0.05, CHIN_Y1 + 0.5, -0.5, 0.6))   # fork-root pocket (locates the fork)
+    for s in (1, -1):
+        cut.append(cylz(1.6, 0.6, CHIN_Z1 + 0.5, s * FORK_HX, 37.7))   # insert pressed in from the top
+    cut.append(boxr(-CX - 0.5, -CX + WALL + 0.5, SW_Y - 6.0, SW_Y + 6.0, SW_Z - 2.1, SW_Z + 2.1))   # switch slot, left wall
+    cut.append(boxr(-21.5, 21.5, -14, 14, CH - DECK - 0.5, CH + 0.5))
+    cut.append(yz(rrect(-14.0, 14.0, 5.0, 12.0, 2.0), -0.0, 0.0) if False else boxr(-14.0, 14.0, CY0 - 0.5, CY0 + WALL + 0.5, 6.0, 12.0))   # rear-wall window (charge lead / LED view)          # deck window under the Ti plate
+    cut.append(boxr(WX0 - 4.5, WX0 + 3.5, CY1 - FWALL - 0.5, CY1 + 0.5, 4.5, 9.0))   # weapon phase-wire grommet hole
+    return S(body, *cut)
 
-# ------------------------------------------------------------------ pods
-def pod(s):
-    xs=lambda a,b: xs_(s,a,b)
-    ys=[-55+i*5.0 for i in range(21)]
-    def xo(y): return 52.9+1.8*(1-((y+4)/50.0)**2)
-    out=[(xo(y),y) for y in ys]; inn=[(xo(y)-1.3,y) for y in reversed(ys)]
-    band=place({"type":"spline_prism","points":[[s*x,y] for x,y in out+inn],"height":40.0},(0,0,0))
-    side=yz([(-56,-4),(-52,-12),(-30,-12),(-10,-12),(10,-12),(30,-12),(39,-12),(44,-6),(44,0),(41,6),(34,10.5),(26,12.5),(16,9),(4,2),(-12,2),(-22,9),(-34,13),(-46,11.5),(-54,5)],*xs(40,60),spline=True)
-    skin=intersect(band,side)
-    front = fillet(yz([(37.5,-12),(43,-9),(44,-3),(42.5,3),(37.5,3)],*xs(42.0,xo(41)-0.8)),0.8)
-    mid=S(boxr(*xs(TX+0.05,xo(-11)-0.5),-17,-4,-9.0,6.5), boxr(*xs(PULX-1.6,PULX+1.6),-18,-3,-9,-6.0))
-    rear=boxr(*xs(TX+0.05,xo(-52)-0.6),-55.0,-49.6,-8.5,4.0)
-    p=U(skin,front,mid,rear)
-    cut=[cylx(1.4,*xs(41,54),42.0,-5.5), cylx(1.4,*xs(41,54),42.0,-0.5)]                  # 2 round lightening holes (ref2)
-    for y,z in POD_MID+[POD_REAR]:
-        cut.append(cylx(1.1,*xs(TX-1,50.0),y,z)); cut.append(cylx(2.2,*xs(48.0,56),y,z))   # screw + head/driver access through the band
-    for y in (-30,-24,6,12):
-        cut.append(boxr(s*xo(y)-3,s*xo(y)+3,y-1.2,y+1.2,-8,-2))
-    return S(p,*cut)
 
-# ------------------------------------------------------------------ disc (3 mm Ti sheet)
-DISC_T=3.0; RB=22.0; RT=29.0; TOOTH_A=90.0
-# ramp up to the tip, rounded tip, near-radial leading face (5 deg rake), root fillet
-TOOTH=[(-30,22.4),(-22,23.4),(-15,24.6),(-9,26.0),(-4.5,27.4),(-1.5,28.5),(0.0,28.95),(1.2,28.8),(1.6,28.0),(1.4,26.6),(1.3,25.2),(1.6,24.0),(3.2,22.9),(6.0,22.4)]
-def disc_outline(o):
-    cx,cy=o
+UB_Y = (38.6, 42.6)
+UB_Z = 11.2
+
+
+# ---------------------------------------------------------------- base panel (printed, X-ribbed, 5 x M2 CSK)
+def base_panel():
+    x1, y0, y1 = CX - WALL - 0.2, CY0 + WALL + 0.2, CY1 - FWALL - 0.2
+    skin = boxr(-x1, x1, y0, y1, BP_Z0, BP_Z0 + 0.8)
+    ribs = []
+    L = math.hypot(2 * x1, y1 - y0); ang = math.degrees(math.atan2(y1 - y0, 2 * x1))
+    for a in (ang, -ang):
+        ribs.append(place({"type": "box", "size": [L - 4, 1.6, 1.5]}, (0, (y0 + y1) / 2, BP_Z0 + 1.75), (0, 0, a)))
+    rim = S(boxr(-x1, x1, y0, y1, BP_Z0, BP_Z0 + BP_T), boxr(-x1 + 1.4, x1 - 1.4, y0 + 1.4, y1 - 1.4, BP_Z0 - 1, BP_Z0 + BP_T + 1))
+    pads = [cylz(3.0, BP_Z0, BP_Z0 + BP_T, x, y) for x, y in POSTS]
+    rails = []
+    for s in (1, -1):   # gearbox rails: the motor sits on them, the deck ribs clamp it from above
+        for ya, yb in ((YF - 6.2, YF - 5.0),):
+            rails.append(boxr(*sorted((s * (MOT_CX - 8.0), s * (MOT_CX + 8.0))), ya, yb, BP_Z0 + 1.0, AXZ - 6.0 + 2.0))
+    for s in (1, -1):
+        rails.append(boxr(*sorted((s * (MOT_CX - 8.0), s * (MOT_CX + 8.0))), YF - 4.0, YF + 4.0, BP_Z0 + 1.0, AXZ - 6.0))   # saddle
+        rails.append(boxr(*sorted((s * (MOT_CX - MOT_L / 2 - 1.4), s * (MOT_CX - MOT_L / 2))), YF - 4.0, YF + 4.0, BP_Z0 + 1.0, AXZ - 1.0))   # end stop
+    fence = [boxr(-15.0, 15.0, BAT_Y - 9.0 - 1.2, BAT_Y - 9.0, BP_Z0 + 1.0, BP_Z0 + BP_T + 2.0),
+             boxr(-15.0, 15.0, BAT_Y + 9.0, BAT_Y + 9.0 + 1.2, BP_Z0 + 1.0, BP_Z0 + BP_T + 2.0)]
+    body = U(skin, rim, *ribs, *pads, *rails, *fence)
+    cut = [cylz(1.1, BP_Z0 - 1, BP_Z0 + BP_T + 1, x, y) for x, y in POSTS]
+    cut += [cylz(2.0, BP_Z0 - 0.1, BP_Z0 + 1.0, x, y) for x, y in POSTS]   # countersink seats
+    return S(body, *cut)
+
+
+# ---------------------------------------------------------------- weapon
+TOOTH_A = 90.0
+TOOTH = [(-40, RING_O + 0.05), (-28, 18.85), (-18, 19.2), (-10, 19.55), (-5, 19.8), (-2, 19.95), (0.0, 20.0), (0.9, 19.92), (1.3, 19.4), (2.0, 18.8), (4.0, RING_O + 0.02)]
+BOLT_A = (45, 135, 225, 315)
+LOCK_A = 292.5                                    # removable lock-pin hole (blade-local angle)
+LOCK_R = 1.6
+LIGHT_A = (0, 90, 180, 270)
+
+
+def blade_outline(o):
+    cx, cy = o
     def circ(a):
-        t=math.radians(a); ux,uy=math.cos(t),math.sin(t)
-        b=-2*(cx*ux+cy*uy); c=cx*cx+cy*cy-RB*RB; r=(-b+math.sqrt(b*b-4*c))/2
-        return (r*ux,r*uy)
-    pts=[]; a=TOOTH_A+15.0
-    while a<TOOTH_A+15.0+300-0.1:
-        pts.append(circ(a)); a+=10.0
-    for da,r in TOOTH:
-        t=math.radians(TOOTH_A+da); pts.append((r*math.cos(t),r*math.sin(t)))
-    return [[round(x,4),round(y,4)] for x,y in pts]
-def kidney(ac):
-    pts=[]
+        t = math.radians(a); ux, uy = math.cos(t), math.sin(t)
+        b = -2 * (cx * ux + cy * uy); c = cx * cx + cy * cy - RING_O * RING_O
+        r = (-b + math.sqrt(b * b - 4 * c)) / 2
+        return (r * ux, r * uy)
+    pts = []; a = TOOTH_A + 8.0
+    while a < TOOTH_A + 8.0 + 308 - 0.1:
+        pts.append(circ(a)); a += 8.0
+    for da, r in TOOTH:
+        t = math.radians(TOOTH_A + da); pts.append((r * math.cos(t), r * math.sin(t)))
+    return r4(pts)
+
+
+def lock_hole(t):
+    return cyl(LOCK_R, t + 2, (BOLT_R * math.cos(math.radians(LOCK_A)), BOLT_R * math.sin(math.radians(LOCK_A)), 0))
+
+
+def blade_holes(t):
+    h = [cyl(1.4, t + 2, (BOLT_R * math.cos(math.radians(a)), BOLT_R * math.sin(math.radians(a)), 0)) for a in BOLT_A]
+    h += [cyl(1.8, t + 2, (BOLT_R * math.cos(math.radians(a)), BOLT_R * math.sin(math.radians(a)), 0)) for a in LIGHT_A]
+    h.append(lock_hole(t))
+    return h
+
+
+def kidney(ac, t):
+    pts = []
     for k in range(9):
-        a=math.radians(ac-40+80*k/8); pts.append((17.5*math.cos(a),17.5*math.sin(a)))
+        a = math.radians(ac - 32 + 64 * k / 8); pts.append((10.2 * math.cos(a), 10.2 * math.sin(a)))
     for k in range(9):
-        a=math.radians(ac+40-80*k/8); pts.append((9.5*math.cos(a),9.5*math.sin(a)))
-    return {"type":"spline_prism","points":[[round(x,4),round(y,4)] for x,y in pts],"height":DISC_T+2}
-def disc_local(o):
-    plate={"type":"spline_prism","points":disc_outline(o),"height":DISC_T}
-    return S(plate, cyl(2.0,DISC_T+2), *[kidney(a) for a in (0,120,240)])
+        a = math.radians(ac + 22 - 44 * k / 8); pts.append((5.2 * math.cos(a), 5.2 * math.sin(a)))
+    return {"type": "spline_prism", "points": r4(pts), "height": t + 2}
+
+
+def tooth_blade(o):
+    """2 mm tooth plate: rim + 4 spokes + hub drawn solid over the motor shaft (pivot of the weapon joint)."""
+    return S({"type": "spline_prism", "points": blade_outline(o), "height": BT_C}, *[kidney(a, BT_C) for a in (0, 90, 180, 270)],
+             *[cyl(1.4, BT_C + 2, (BOLT_R * math.cos(math.radians(a)), BOLT_R * math.sin(math.radians(a)), 0)) for a in BOLT_A], lock_hole(BT_C))
+
+
+def ring_blade():
+    return S(cyl(RING_O, BT_O), cyl(RING_I, BT_O + 2), *blade_holes(BT_O))
+
+
 def solve_balance():
     from robot import shapes
     import numpy as np
     def c(o):
-        q=shapes.to_solid(disc_local(tuple(o))).center(); return np.array([q.X,q.Y])
-    o=np.array([0.0,-0.5]); h=0.05
-    for _ in range(6):
-        f=c(o)
-        if np.abs(f).max()<2e-4: break
-        J=np.column_stack([(c(o+[h,0])-f)/h,(c(o+[0,h])-f)/h]); o=o-np.linalg.solve(J,f)
-    f=c(o); print("disc balance o=(%.4f,%.4f) centroid %.5f %.5f"%(o[0],o[1],f[0],f[1]))
-    return (float(o[0]),float(o[1]))
-DBAL=solve_balance()
+        q = shapes.to_solid(tooth_blade(tuple(o))).center(); return np.array([q.X, q.Y])
+    o = np.array([0.0, -0.05]); h = 0.02
+    for _ in range(8):
+        f = c(o)
+        if np.abs(f).max() < 1e-4: break
+        J = np.column_stack([(c(o + [h, 0]) - f) / h, (c(o + [0, h]) - f) / h]); o = o - np.linalg.solve(J, f)
+    f = c(o); print("blade balance o=(%.4f,%.4f) centroid %.5f %.5f" % (o[0], o[1], f[0], f[1]))
+    return (float(o[0]), float(o[1]))
 
-# ------------------------------------------------------------------ blades: flat 1 mm steel needles, tilted 7 deg
-def blade_shape():
-    pts=[(-0.3,0),(0.3,0),(3.5,-16),(3.5,-31.5),(-3.5,-31.5),(-3.5,-16)]
-    return S(place({"type":"prism","points":[list(p) for p in pts],"height":1.0},(0,0,0.5)),
-             *[place(cyl(1.15,3),(0,y,0.5),(ALPHA,0,0)) for y in BHOLES])
 
-def pulley(): return S(cylx(PR,-0.8,0.8,0,0), cylx(4.6,-1,1,0,0))
-def wpulley(r,bore): return S(U(cylx(r+1.2,-1.6,-0.8,0,0),cylx(r,-0.8,0.8,0,0),cylx(r+1.2,0.8,1.6,0,0)), cylx(bore,-3,3,0,0))
-def band(c1,r1,c2,r2,w):
-    outer=hull(circ_pts(c1,r1+w)+circ_pts(c2,r2+w)); inner=hull(circ_pts(c1,r1)+circ_pts(c2,r2))
-    return outer, inner
+BAL = solve_balance()
+
+
+def yzr(a):
+    """Blade-local angle -> (y, z) offset from the spin axis (blades are placed with rot [0, 90, 0])."""
+    return BOLT_R * math.sin(math.radians(a)), -BOLT_R * math.cos(math.radians(a))
+
+
+def spider():
+    hub = cylx(4.5, SP_F0, SP_H1 + 1.0, 0, 0)
+    flange = cylx(17.75, SP_F0, SP_H1, 0, 0)
+    cut = []
+    for a in BOLT_A:
+        y, z = yzr(a); cut.append(cylx(1.4, SP_F0 - 1, SP_H1 + 1, y, z))
+    y, z = yzr(LOCK_A); cut.append(cylx(LOCK_R, SP_F0 - 1, SP_H1 + 1, y, z))
+    for a in LIGHT_A:
+        y, z = 9.8 * math.sin(math.radians(a)), -9.8 * math.cos(math.radians(a))
+        cut.append(cylx(4.2, SP_F0 - 1, SP_H1 + 1, y, z))
+    return S(U(hub, flange), *cut)
+
+
+# ---------------------------------------------------------------- uprights
+def upright(side):
+    if side == "r":
+        x0, x1, tab = UR0, UR1, TAB_R
+        extra = circ_pts((YW, ZW), 6.0) + circ_pts((YW, ZW + 8.0), 3.2) + circ_pts((YW, ZW - 8.0), 3.2)
+    else:
+        x0, x1, tab = UL0, UL1, TAB_L
+        extra = circ_pts((YW, ZW), 6.0)
+    extra += circ_pts((YW + yzr(LOCK_A)[0], ZW + yzr(LOCK_A)[1]), 3.4)   # material ring round the lock-pin hole
+    prof = hull([(BY0, CHIN_Z1), (BY1, CHIN_Z1), (BY1, TAB_Z1), (BY0, TAB_Z1), (BY0 + 3.0, 20.5)] + extra)
+    body = yz(prof, x0, x1)
+    cut = []
+    bx = (tab[0] + tab[1]) / 2 if side == "l" else (BOSS_R[0] + BOSS_R[1]) / 2
+    if side == "l":
+        bx = (BOSS_L[0] + BOSS_L[1]) / 2
+    for y in UB_Y:   # heat-set insert bores (screws come in through the boss, normal to the contact face)
+        cut.append(cylx(1.6, *((x0 - 0.01, x0 + 3.0) if side == 'r' else (x1 - 3.0, x1 + 0.01)), y, UB_Z))
+        cut.append(cylx(1.0, x0 - 0.1, x1 + 0.1, y, UB_Z))
+    ly, lz = yzr(LOCK_A)
+    cut.append(cylx(LOCK_R, x0 - 1, x1 + 1, YW + ly, ZW + lz))   # lock-pin hole
+    if side == "r":
+        for dz in (-8.0, 8.0):
+            cut.append(cylx(1.1, x0 - 1, x1 + 1, YW, ZW + dz))
+        cut.append(boxr(x1 - 2.2, x1 + 0.1, YW - 5.1, YW - 2.3, CHIN_Z1 - 0.1, ZW + 2.5))   # phase-wire channel down the motor-side face
+        pass
+    else:
+        cut.append(cylx(3.5, x0 - 0.1, x0 + 3.0, YW, ZW))       # F683 seat on the inner face
+        cut.append(cylx(2.6, x0 + 2.9, x1 + 1, YW, ZW))         # push-out hole
+    return S(body, *cut)
+
+
+# ---------------------------------------------------------------- forks (TPU, sprung)
+def forks():
+    root = boxr(-FORK_X[1], FORK_X[1], BY0, CHIN_Y1, -2.0, 0.6)   # thick root, sunk 0.6 into a chin pocket
+    tines = []
+    for s in (1, -1):
+        prof = [(BY0, -1.2), (CHIN_Y1 + 4, -1.2), (FORK_TIP - 6, -1.95), (FORK_TIP, -1.95), (FORK_TIP, 0.0), (FORK_TIP - 8, 0.3),
+                (CHIN_Y1 + 3, 0.6), (CHIN_Y1 + 0.5, 0.0), (BY0, 0.0)]
+        tines.append(yz(prof, s * FORK_X[0], s * FORK_X[1]))
+    cut = [cylz(1.1, -3, 1, s * FORK_HX, 37.7) for s in (1, -1)]
+    cut += [cylz(2.0, -2.1, -0.6, s * FORK_HX, 37.7) for s in (1, -1)]
+    return S(U(root, *tines), *cut)
+
+
+# ---------------------------------------------------------------- side pods (TPU)
+def pod(s):
+    x0, x1 = sorted((s * POD_X0, s * POD_X1))
+    tip = pv("side_panel_front_wedge_tip_y", 70.2)
+    prof = [(CY0 - 0.3, 2.0), (CY0 + 3, -1.25), (YF + 14, -1.25), (tip, -1.75), (tip, -0.5), (46.0, 16.0), (40.0, 18.8), (CY0 + 4, 18.8), (CY0 - 0.3, 15.5)]
+    outer = yz(prof, x0, x1)
+    wx0, wx1 = sorted((s * CX, s * (CX + 2.0)))
+    inner = boxr(wx0, wx1, POD_WY[0], POD_WY[1], 3.0, 13.5)
+    fx0, fx1 = sorted((s * (CX + 2.0), s * POD_X0 + s * 0.1))
+    fl = [boxr(fx0, fx1, POD_WY[0], POD_WY[1], 3.0, 5.0), boxr(fx0, fx1, POD_WY[0], POD_WY[1], 11.5, 13.5)]
+    body = U(outer, inner, *fl)
+    cut = []
+    for y in POD_Y:
+        cut.append(cylx(1.1, wx0 - 1, wx1 + 1, y, POD_Z))
+    cut.append(yz(rrect(POD_Y[0] - 2.8, POD_Y[1] + 2.8, POD_Z - 2.8, POD_Z + 2.8, 2.7), x0 - 1, x1 + 1))   # driver access slot
+    for y0, y1 in ((-30.0, -16.5), (16.5, 30.0)):              # wheel-arch windows
+        cut.append(yz(rrect(y0, y1, 3.0, 14.0, 2.5), x0 - 1, x1 + 1))
+    cut.append(yz(rrect(34.0, 44.0, 3.0, 12.5, 2.5), x0 - 1, x1 + 1))
+    cut.append(yz(rrect(-3.0, 3.0, 14.8, 17.3, 1.0), x0 - 1, x1 + 1))
+    if s < 0:
+        cut.append(cylx(3.0, x0 - 1, x1 + 1, SW_Y, SW_Z))     # switch access
+    return S(body, *cut)
+
+
+# ---------------------------------------------------------------- drive
+def hub_front():   # hub-local: x 0 = inner face
+    spig = cylx(4.5, 0.0, PUL_W, 0, 0)
+    body = cylx(HUB_R, PUL_W, HUB_L, 0, 0)
+    lip = cylx(HUB_R + 0.6, HUB_L - 1.0, HUB_L, 0, 0)
+    return S(U(spig, body, lip), S(cylx(HUB_R - 1.2, PUL_W + 1.5, HUB_L - 1.0, 0, 0), cylx(2.6, 0, HUB_L + 1, 0, 0)))
+
+
+def hub_rear():
+    spig = cylx(4.5, 0.0, PUL_W, 0, 0)
+    body = cylx(HUB_R, PUL_W, HUB_L, 0, 0)
+    lip = cylx(HUB_R + 0.6, HUB_L - 1.0, HUB_L, 0, 0)
+    cut = [cylx(3.0, -0.1, 2.5, 0, 0), cylx(3.0, HUB_L - 2.5, HUB_L + 0.1, 0, 0), cylx(2.6, 2.4, HUB_L - 2.4, 0, 0),
+           S(cylx(HUB_R - 1.2, PUL_W + 1.0, HUB_L - 1.0, 0, 0), cylx(4.4, 0, HUB_L + 1, 0, 0))]
+    return S(U(spig, body, lip), *cut)
+
+
+def tyre():   # printed TPU tyre with 10 axial cells (softer, lighter)
+    rc = (RT + HUB_R) / 2
+    cells = [cylx(0.8, PUL_W - 1, HUB_L + 1, rc * math.cos(2 * math.pi * k / 10), rc * math.sin(2 * math.pi * k / 10)) for k in range(10)]
+    return S(cylx(RT, PUL_W + 0.25, HUB_L, 0, 0), cylx(HUB_R, 0, HUB_L + 1, 0, 0))
+def pulley(): return S(cylx(8.0, 0.0, PUL_W, 0, 0), cylx(4.5, -1, PUL_W + 1, 0, 0), S(cylx(8.2, 1.0, 2.5, 0, 0), cylx(7.5, 0.9, 2.6, 0, 0)))
+
+
 def belt(s):
-    xs=xs_(s,PULX-0.6,PULX+0.6)
-    def stad(r): return U(boxr(*xs,YRW,YF,-r,r), cylx(r,*xs,YF,0), cylx(r,*xs,YRW,0))
-    return S(stad(PR+1.2), stad(PR))
-LOOP=2*(YF-YRW)+2*math.pi*(PR+0.6)
-BELT_L=round(LOOP*0.95,1)
-def wbelt():
-    o,i=band((YM,ZM),WPR_M,(YC,ZC),WPR_S,1.2)
-    return S(yz(o,WPX-0.6,WPX+0.6), yz(i,WPX-1,WPX+1))
-d=math.hypot(YC-YM,ZC-ZM)
-WLOOP=2*math.sqrt(d*d-(WPR_S-WPR_M)**2)+math.pi*(WPR_S+WPR_M+1.2)+2*(WPR_S-WPR_M)*math.asin((WPR_S-WPR_M)/d)
-WBELT_L=round(WLOOP*0.95,1)
+    xa, xb = sorted((s * (HUB_X0 + 1.0), s * (HUB_X0 + 2.5)))
+    o = hull(circ_pts((YF, AXZ), 9.0) + circ_pts((YR, AXZ), 9.0)); i = hull(circ_pts((YF, AXZ), 7.5) + circ_pts((YR, AXZ), 7.5))
+    return S(yz(o, xa, xb), yz(i, xa - 1, xb + 1))
 
-# ------------------------------------------------------------------ top plate (0.5 mm PC, routed + cold bent)
-T=0.5; RBEND=1.0; Z0=TZ1+0.2; PE=25.5
-th=math.atan2(DROP,SL1-SL0)
-def plate_profile():
-    ri, ro = RBEND, RBEND+T
-    yb = SL0 - (ri+T)*math.tan(th/2)
-    cy, cz = yb, Z0 - ri
-    top=[(TY0,Z0+T)]; bot=[(TY0,Z0)]
-    for i in range(9):
-        a=th*i/8
-        top.append((cy+ro*math.sin(a), cz+ro*math.cos(a))); bot.append((cy+ri*math.sin(a), cz+ri*math.cos(a)))
-    dy=math.cos(th); dz=-math.sin(th)
-    yt,zt2=top[-1]; Lt=(PE-yt)/dy
-    pt=(PE,zt2+dz*Lt); top.append(pt); bot.append((PE-T*math.sin(th), pt[1]-T*math.cos(th)))
-    return top+list(reversed(bot))
-def rslot(x0,x1,y0,y1,r,z0,z1):
-    return U(boxr(x0+r,x1-r,y0,y1,z0,z1),boxr(x0,x1,y0+r,y1-r,z0,z1),*[cylz(r,z0,z1,x,y) for x in (x0+r,x1-r) for y in (y0+r,y1-r)])
-top=S(yz(plate_profile(),-TX,TX), rslot(SW[0]-6.6,SW[0]+6.6,SW[1]-2.6,SW[1]+2.6,1.0,TZ1-1,TZ1+4), *[cylz(1.1,TZ1-1,TZ1+4,x,y) for x,y in BOSS])
 
-# ------------------------------------------------------------------ parts
-parts=[]
-def P(**k): parts.append(k)
-P(id="tub",kind="structure",material="nylon",process="fdm",print_orientation="+z",organic=True,rotates_with="fixed",shape=tub,solid_fraction=0.7,color="#2a2c30",
-  label="printed nylon tub: X-rib floor, 2 mm front wall, crossbar platform, weapon-motor mount wall, strap posts, pod tabs")
-for s,n in ((1,"l"),(-1,"r")):
-    P(id=f"pod_{n}",kind="structure",material="nylon",process="fdm",print_orientation="+z",organic=True,rotates_with="fixed",shape=pod(s),color="#c8102e",
-      label="red printed boomerang side pod: fenders over both wheels, 3 sideways screws into the tub, sits on the tub ledge")
-for s,n in ((1,"l"),(-1,"r")):
-    P(id=f"upright_{n}",kind="fork",material="nylon",process="fdm",print_orientation="+x",organic=True,rotates_with="fixed",shape=upright(s),solid_fraction=0.85,color="#2a2c30",
-      label="7 mm printed nylon upright, printed flat (spin axis = build direction); 684 bearing seat, blade root, 2 bolts into the crossbar")
-P(id="top_armour",kind="armor",material="pc",process="sheet_bent",rotates_with="fixed",shape=top,color="#c9ccd1",label="0.5 mm polycarbonate, CNC-routed, cold line-bent 22 deg over a 1 mm inside radius")
-for s,n in ((1,"l"),(-1,"r")):
-    P(id=f"blade_{n}",kind="wedge",material="steel",process="laser",rotates_with="fixed",shape=blade_shape(),at=[s*UXC,TIPY,FLOOR+0.5],rot=[-ALPHA,0,0],color="#d0d3d8",
-      label="1 mm hardened spring-steel needle wedgelet, flat laser-cut, pointing forward; root clamped under the upright by 3 bolts 15 mm apart")
-for s,n in ((1,"l"),(-1,"r")):
-    P(id=f"motor_{n}",kind="motor",catalog="n10_300rpm_6v",at=[s*MX,YF,0],rot=[0,0,0 if s>0 else 180],rotates_with="fixed")
-    P(id=f"strap_{n}",kind="structure",material="nylon",process="fdm",print_orientation="+z",rotates_with="fixed",
-      shape=S(boxr(*xs_(s,29.0,36.0),POSTS[0][0],POSTS[1][1],6.1,7.5),*[cylz(1.1,5,9,s*32.5,(a+b)/2) for a,b in POSTS]),color="#2a2c30",label="printed motor strap over the N10 gearbox, 2 M2 screws")
-    for yy,k in ((YF,"f"),(YRW,"r")):
-        rb = 1.5 if k=="f" else 3.0
-        hubshape=S(U(S(cylx(12.5,-4,4,0,0),cylx(11.3,-5,5,0,0)), cylx(11.3,-1,1,0,0), cylx(4.5,-4,4,0,0)), cylx(rb,-5,5,0,0))
-        if k=="f":
-            par=f"motor_{n}"; at=[WX-MX,0,0]; piv=[WX-MX,0,0]
-        else:
-            par=f"axle_{n}"; at=[s*WX,yy,0]; piv=[s*WX,yy,0]
-        P(id=f"whub_{k}{n}",kind="other",material="nylon",process="fdm",print_orientation="+x",rotates_with=f"wheel_{k}{n}",shape=hubshape,at=at,parent=par,
-          joint={"kind":"revolute","axis":[1,0,0],"pivot":piv,"min":0,"max":360,"default":0},color="#333333",label="printed nylon wheel hub, 25 mm")
-        P(id=f"wheel_{k}{n}",kind="wheel",material="tpu",process="fdm",print_orientation="+x",tyre_of=f"whub_{k}{n}",rotates_with=f"wheel_{k}{n}",shape=S(cylx(RW,-4,4,0,0),cylx(12.5,-5,5,0,0)),at=[0,0,0],parent=f"whub_{k}{n}",color="#1b1b1b",label="printed TPU 95A tyre, 30 x 8 mm")
-        P(id=f"pulley_{k}{n}",kind="pulley",material="nylon",process="fdm",print_orientation="+x",rotates_with=f"wheel_{k}{n}",shape=pulley(),at=[(PULX-WX),0,0] if k=="f" else [s*(PULX-WX),0,0],parent=f"whub_{k}{n}",color="#444444")
-    for j,(a,b) in enumerate(((WX-4.0,WX-1.5),(WX+1.5,WX+4.0))):
-        P(id=f"wbrg_{n}{j}",kind="bearing",process="cots",mass_g=0.3,rotates_with=f"wheel_r{n}",shape=cylx(3.0,*xs_(s,a,b),YRW,0),color="#555555",label="MR63ZZ 3x6x2.5 rear wheel bearing (drawn solid)",stock="MR63ZZ")
-    P(id=f"axle_{n}",kind="pin",material="steel",process="cots",rotates_with="fixed",shape=cylx(1.5,*xs_(s,33.0,51.5),YRW,0),color="#777777",label="3 mm silver-steel rod cut to 18.5 mm (rear dead axle)",stock="3 mm silver steel rod")
-    P(id=f"belt_{n}",kind="belt",material="rubber",process="cots",shape=belt(s),color="#111111",
-      belt={"pulleys":[f"pulley_f{n}",f"pulley_r{n}"],"kind":"o_ring","length_mm":BELT_L,"width_mm":1.2},label=f"1.2 mm nitrile O-ring, {BELT_L} mm")
-P(id="battery",kind="battery",catalog="c_typical_2s_300mah_lipo_lihv_betafpv_tbs_",at=[0,BAT_Y,BOT+6.05],retained="press_fit")
-P(id="rxesc",kind="esc",catalog="c_malenki_nano_antweight_esc_receiver",at=[0,BAT_Y,BOT+12.1+1.3],retained="velcro",
-  ports={"bat":[-16,-4,0],"m1":[16,4,0],"m2":[-16,4,0],"wpn":[16,-4,0]},label="Malenki-Nano drive ESC + receiver")
-P(id="wesc",kind="esc",catalog="c_bbb_antweight_spinner_brushless_esc",at=[WESC[0],WESC[1],BOT+2.05],retained="press_fit",ports={"bat":[11.5,-3,0],"motor":[11.5,3,0],"rx":[-11.5,0,0]})
-P(id="power_switch",kind="switch",catalog="switch_slide_12x4",at=[SW[0],SW[1],TZ1-3.0],retained="press_fit",label="ON/OFF",marked=True,tool_free=True)
-# weapon: static bearings, live shaft (joint), disc + shaft pulley on the shaft
-for i,(x0,x1) in enumerate(((-UX1,-UX1+4.0),(UX1-4.0,UX1))):
-    P(id=f"bearing_{i+1}",kind="bearing",process="cots",mass_g=1.0,rotates_with="fixed",shape=cylx(4.5,x0,x1,YC,ZC),color="#555555",label="684ZZ 4x9x4 (drawn solid)",stock="684ZZ")
-P(id="shaft",kind="shaft",material="titanium",process="cots",rotates_with="disc",shape=cylx(2.0,-UX1-0.6,UX1+0.6,YC,ZC),color="#777777",parent="bearing_1",
-  joint={"kind":"revolute","axis":[1,0,0],"pivot":[-UX1+2.0,YC,ZC],"min":0,"max":360,"default":0},
-  label="4 mm Ti-6Al-4V live shaft with a D-flat, 47 mm, e-clips outside both bearings",stock="4 mm Ti rod")
-P(id="disc",kind="weapon",material="titanium",process="laser",organic=True,rotates_with="disc",shape=disc_local(DBAL),at=[(DX0+DX1)/2,YC,ZC],rot=[0,90,0],color="#8d9199",
-  parent="shaft",
-  weapon={"kind":"disc","motor":"weapon_motor","cells":2,"reduction":round(WPR_S/WPR_M,3),"spin_axis":[0,0,1],"spin_dir":"ccw","locking_bar":"lock_pin","supported_both_ends":True,"teeth":1},
-  label="3 mm Ti-6Al-4V disc: one hooked tooth (5 deg rake, 0.5 mm tip radius) in the 2D outline, 3 kidney cut-outs, D-bore; laser-cut")
-P(id="wpulley_s",kind="pulley",material="aluminium",process="turned",secondary_ops=["drilled","flat"],rotates_with="disc",shape=wpulley(WPR_S,2.0),at=[WPX,YC,ZC],parent="shaft",color="#b0b4ba",
-  label="turned 6061 flanged O-ring pulley, D-bore on the weapon shaft")
-P(id="weapon_motor",kind="weapon_motor",catalog="bl_1806_2300kv",at=[XM,YM,ZM],rot=[0,0,0],rotates_with="fixed",ports={"phases":[-7.0,0,0]},
-  label="1806 outrunner in the tub; stator face bolted to the printed mount wall, bell + stub drive the O-ring")
-P(id="wpulley_m",kind="pulley",material="aluminium",process="turned",secondary_ops=["drilled","flat"],rotates_with="weapon_motor",shape=wpulley(WPR_M,2.5),at=[WPX-XM,0,0],parent="weapon_motor",
-  joint={"kind":"revolute","axis":[1,0,0],"pivot":[WPX-XM,0,0],"min":0,"max":360,"default":0},color="#b0b4ba",label="turned 6061 flanged pulley on the motor shaft (grub screw on the flat)")
-P(id="wbelt",kind="belt",material="rubber",process="cots",shape=wbelt(),color="#111111",
-  belt={"pulleys":["wpulley_m","wpulley_s"],"kind":"o_ring","length_mm":WBELT_L,"width_mm":1.2},label=f"1.2 mm nitrile O-ring weapon belt, {WBELT_L} mm")
-P(id="lock_pin",kind="locking_bar",material="titanium",process="cots",color="#ff0000",tethered=True,rotates_with="fixed",
-  shape=cylx(1.0,-UX1-4.0,UX1+0.5,YC,ZC-14.6),label="REMOVE BEFORE FIGHT: 2 mm Ti rod through both uprights and a disc kidney, pulled out sideways; lanyard",stock="2 mm Ti rod")
-for i,(x,y) in enumerate(BOSS):
-    P(id=f"insert_t{i}",kind="insert",catalog="heatset_m2",at=[x,y,TZ1-1.5])
-for s,n in ((1,"l"),(-1,"r")):
-    for k,ly in enumerate(BHOLES):
-        x,y=bhole_xy(s,ly)
-        P(id=f"insert_b{n}{k}",kind="insert",catalog="heatset_m2",at=[x,y,bl_top(y)+1.5])
-    for k,y in enumerate(PB_Y):
-        P(id=f"insert_x{n}{k}",kind="insert",catalog="heatset_m2",at=[s*(UX0-1.5),y,PB_Z],rot=[0,90,0])
-    for k,(a,b) in enumerate(POSTS):
-        P(id=f"insert_s{n}{k}",kind="insert",catalog="heatset_m2",at=[s*32.5,(a+b)/2,4.5])
-    for k,(y,z) in enumerate(POD_MID+[POD_REAR]):
-        P(id=f"insert_p{n}{k}",kind="insert",catalog="heatset_m2",at=[s*(TX-1.5),y,z],rot=[0,90,0])
+BELT_L = round((2 * WB + 2 * math.pi * 8.25) * 0.95, 1)
 
-fast=[]
+# ---------------------------------------------------------------- parts
+P(id="tub", kind="structure", material="nylon", process="fdm", print_orientation="-z", rotates_with="fixed", solid_fraction=0.85, color="#2a2c30",
+  shape=chassis(), label="printed nylon chassis: 1.6 mm walls, open bottom, sloped nose, square upright bosses, insert posts")
+P(id="base_panel", kind="structure", material="nylon", process="fdm", print_orientation="+z", rotates_with="fixed", color="#2a2c30",
+  shape=base_panel(), label="printed X-ribbed base panel, 5 countersunk M2 into heat-set inserts; gearbox rails and battery fence")
+P(id="top_armour", kind="armor", material="titanium", process="laser", rotates_with="fixed", color="#c9ccd1",
+  shape=S(boxr(-TP_X, TP_X, -TP_Y, TP_Y, CH, CH + TP_T), *[cylz(1.1, CH - 1, CH + 2, x, y) for x, y in TOP_POSTS]),
+  label=f"{TP_T} mm Ti-6Al-4V top plate 55 x 37, laser-cut, 4 M2", stock=f"{TP_T} mm Ti sheet")
+for s, n in ((1, "l"), (-1, "r")):
+    P(id=f"pod_{n}", kind="skirt", material="tpu", process="fdm", print_orientation="+x" if s > 0 else "-x", rotates_with="fixed", color="#c8102e",
+      shape=pod(s), label="red TPU side panel (bumper): wedge-nosed outer wall over both wheels, boxed web screwed to the chassis wall by 2 M2")
+P(id="forks", kind="skirt", material="tpu", process="fdm", print_orientation="+z", rotates_with="fixed", color="#c8102e",
+  shape=forks(), label="TPU sprung forks: two tines either side of the blades, tips 0.25 mm off the floor, screwed under the chassis chin")
+for n in "lr":
+    P(id=f"upright_{n}", kind="structure", material="nylon", process="fdm", print_orientation="+x", rotates_with="fixed", solid_fraction=0.9, color="#2a2c30",
+      shape=upright(n), label="5 mm printed nylon weapon upright (spin axis = build direction), tab over a square chassis boss, 2 M2 into inserts; 683ZZ seat")
+P(id="weapon_motor", kind="weapon_motor", catalog="bl_1806_2300kv", at=[WX0, YW, ZW], rot=[0, 0, 0], rotates_with="fixed", motor_shaft_extended=True,
+  ports={"phases": [-6.5, 0, -9.0]}, label="BE1806 2300 kV outrunner = weapon hub: stator bolted to the right upright, its own (lengthened) 3 mm shaft runs on into an F683 in the left upright")
+MF_AT, MF_ROT = [0, 0, -sum(BLC) / 2], [0, -90, 0]   # children of blade_c drawn in the motor frame
+P(id="blade_c", kind="weapon", material="steel", process="laser", organic=True, rotates_with="weapon", shape=tooth_blade(BAL), at=[sum(BLC) / 2, 0, 0], rot=[0, 90, 0],
+  parent="weapon_motor", joint={"kind": "revolute", "axis": [1, 0, 0], "pivot": [sum(BLC) / 2, 0, 0], "min": 0, "max": 360, "default": 0}, color="#8d9199",
+  weapon={"kind": "disc", "motor": "weapon_motor", "cells": 2, "reduction": 1.0, "spin_axis": [0, 0, 1], "spin_dir": "ccw", "supported_both_ends": True, "teeth": 1},
+  label="2 mm Hardox 450 (cold-rolled) tooth plate: one hooked tooth (R 20, ~5 deg rake), 4 spokes, hub bored to the bell boss; ring offset balances the tooth")
+P(id="wshaft", kind="shaft", material="titanium", process="cots", rotates_with="weapon", shaft_of="weapon_motor", stock="3 mm Ti-6Al-4V rod",
+  shape=cylx(1.5, SH0, SH1, 0, 0), parent="blade_c", at=MF_AT, rot=MF_ROT, color="#777777",
+  label="BE1806 rotor shaft replaced by a 3 mm Ti-6Al-4V shaft, lengthened through the blade stack into the F683 (circlip at the stator)")
+P(id="spider", kind="other", role="spider", material="aluminium", process="milled", secondary_ops=["turned", "drilled"], rotates_with="weapon",
+  shape=spider(), parent="blade_c", at=MF_AT, rot=MF_ROT, color="#b0b4ba",
+  label="6061 spider: hub on the bell/shaft (2 M3 grub screws on the flat), 1.5 mm flange with 4 M2.5 holes on a 29.5 mm circle, 4 lightening holes")
+for bid, (a, b) in (("blade_o", BLO), ("blade_i", BLI)):
+    P(id=bid, kind="other", role="blade", material="steel", process="laser", rotates_with="weapon", shape=ring_blade(),
+      at=[0, 0, (a + b) / 2 - sum(BLC) / 2], parent="blade_c", color="#8d9199", label="1.0 mm Hardox 450 (cold-rolled) outer ring plate")
+for i, a in enumerate(BOLT_A):
+    y, z = yzr(a)
+    P(id=f"wpin{i}", kind="other", role="bolt", material="steel", process="turned", rotates_with="weapon", parent="blade_c", at=MF_AT, rot=MF_ROT, color="#9a9a9a",
+      shape=U(cylx(1.25, NUT0, SP_H1, y, z), cylx(2.35, SP_H1, SP_H1 + HEAD_T, y, z)),
+      label="M2.5x8 ISO7380 button-head screw (drawn as a part so it turns with the rotor), Loctite 243")
+    P(id=f"wnut{i}", kind="nut", material="steel", process="turned", rotates_with="weapon", parent="blade_c", at=MF_AT, rot=MF_ROT, color="#aaaaaa",
+      shape=S(cylx(2.35, NUT0, BLO[0], y, z), cylx(1.25, NUT0 - 1, BLO[0] + 1, y, z)), label="M2.5 round (barrel) nut 4.7 x 1.8, turned steel")
+P(id="wbearing", kind="bearing", material="steel", process="cots", rotates_with="fixed", color="#555555", stock="683ZZ",
+  shape=cylx(3.5, UL0, UL0 + 3.0, YW, ZW), label="F683ZZ 3x7x3 flanged bearing in the left upright, flange on the inner face (flange not drawn)")
+
+for s, n in ((1, "l"), (-1, "r")):
+    rot = [0, 0, 0] if s > 0 else [0, 0, 180]
+    P(id=f"motor_{n}", kind="motor", catalog="n10_2200rpm_6v", at=[s * MOT_CX, YF, AXZ], rot=rot, rotates_with="fixed")
+    hub_local = HUB_X0 - MOT_CX
+    P(id=f"whub_f{n}", kind="other", material="nylon", process="fdm", print_orientation="+x", rotates_with=f"wheel_f{n}", shape=hub_front(), at=[hub_local, 0, 0],
+      parent=f"motor_{n}", joint={"kind": "revolute", "axis": [1, 0, 0], "pivot": [hub_local + 2.0, 0, 0], "min": 0, "max": 360, "default": 0},
+      color="#333333", label="printed nylon hub on the N10 D-shaft")
+    P(id=f"wheel_f{n}", kind="wheel", material="tpu", process="fdm", print_orientation="+x", tyre_of=f"whub_f{n}", rotates_with=f"wheel_f{n}", shape=tyre(),
+      parent=f"whub_f{n}", color="#1b1b1b", label="printed TPU 85A tyre, Scalextric F1 profile 21.5 x 9.5")
+    P(id=f"pulley_f{n}", kind="pulley", material="nylon", process="fdm", print_orientation="+x", rotates_with=f"wheel_f{n}", shape=pulley(), parent=f"whub_f{n}", color="#444444")
+    P(id=f"axle_{n}", kind="pin", material="steel", process="cots", rotates_with="fixed", color="#777777", stock="3 mm silver steel rod",
+      shape=cylx(1.5, *sorted((s * (CX - WALL - 2.4), s * (HUB_X1 + 0.5))), YR, AXZ), label="3 mm silver-steel stub axle pressed into the wall boss, e-clip outboard")
+    P(id=f"wbrg_{n}0", kind="bearing", material="steel", process="cots", rotates_with=f"wheel_r{n}", color="#555555", stock="MR63ZZ",
+      shape=cylx(3.0, 0.0, 2.5, 0, 0), at=[s * HUB_X0, YR, AXZ], rot=rot, parent=f"axle_{n}",
+      joint={"kind": "revolute", "axis": [s, 0, 0], "pivot": [s * (HUB_X0 + 1.2), YR, AXZ], "min": 0, "max": 360, "default": 0},
+      label="MR63ZZ 3x6x2.5 (drawn solid)")
+    P(id=f"whub_r{n}", kind="other", material="nylon", process="fdm", print_orientation="+x", rotates_with=f"wheel_r{n}", shape=hub_rear(), at=[0, 0, 0],
+      parent=f"wbrg_{n}0", color="#333333", label="printed nylon rear hub on two MR63ZZ")
+    P(id=f"wbrg_{n}1", kind="bearing", material="steel", process="cots", rotates_with=f"wheel_r{n}", color="#555555", stock="MR63ZZ",
+      shape=cylx(3.0, HUB_L - 2.5, HUB_L, 0, 0), parent=f"whub_r{n}", label="MR63ZZ 3x6x2.5 (drawn solid)")
+    P(id=f"wheel_r{n}", kind="wheel", material="tpu", process="fdm", print_orientation="+x", tyre_of=f"whub_r{n}", rotates_with=f"wheel_r{n}", shape=tyre(),
+      parent=f"whub_r{n}", color="#1b1b1b", label="printed TPU 85A tyre, Scalextric F1 profile 21.5 x 9.5")
+    P(id=f"pulley_r{n}", kind="pulley", material="nylon", process="fdm", print_orientation="+x", rotates_with=f"wheel_r{n}", shape=pulley(), parent=f"whub_r{n}", color="#444444")
+    P(id=f"belt_{n}", kind="belt", material="rubber", process="cots", shape=belt(s), color="#111111",
+      belt={"pulleys": [f"pulley_f{n}", f"pulley_r{n}"], "kind": "o_ring", "length_mm": BELT_L, "width_mm": 1.5}, label=f"1.5 mm nitrile O-ring, {BELT_L} mm")
+
+P(id="battery", kind="battery", catalog="lipo_2s_180", at=[0, BAT_Y, BP_Z0 + BP_T + 5.0], retained="press_fit")
+P(id="rxesc", kind="esc", catalog="c_malenki_nano_antweight_esc_receiver", at=[0, BAT_Y, BP_Z0 + BP_T + 10.0 + 1.25], retained="velcro",
+  ports={"bat": [-16, -4, 0], "m1": [16, 4, 0], "m2": [-16, 4, 0], "wpn": [16, -4, 0]}, label="Malenki-Nano drive ESC + receiver")
+P(id="wesc", kind="esc", catalog="c_bbb_antweight_spinner_brushless_esc", at=[0, 7.0, BP_Z0 + BP_T + 2.0], retained="press_fit",
+  ports={"bat": [11.5, -3, 0], "motor": [11.5, 3, 0], "rx": [-11.5, 0, 0]})
+P(id="power_switch", kind="switch", catalog="switch_slide_12x4", at=[-CX + 2.0, SW_Y, SW_Z], rot=[0, 0, 90], retained="press_fit", label="ON/OFF", marked=True, tool_free=True)
+
+for i, (x, y) in enumerate(POSTS):
+    P(id=f"insert_b{i}", kind="insert", catalog="heatset_m2", at=[x, y, INS_B_Z])
+for i, (x, y) in enumerate(TOP_POSTS):
+    P(id=f"insert_t{i}", kind="insert", catalog="heatset_m2", at=[x, y, INS_T_Z])
+for n, xi in (("r", UR0 + 1.5), ("l", UL1 - 1.5)):
+    for k, y in enumerate(UB_Y):
+        P(id=f"insert_u{n}{k}", kind="insert", catalog="heatset_m2", at=[xi, y, UB_Z], rot=[0, 90, 0])
+for k, s in enumerate((1, -1)):
+    P(id=f"insert_f{k}", kind="insert", catalog="heatset_m2", at=[s * FORK_HX, 37.7, 2.15])
+for s, n in ((1, "l"), (-1, "r")):
+    for k, y in enumerate(POD_Y):
+        P(id=f"insert_p{n}{k}", kind="insert", catalog="heatset_m2", at=[s * INS_P_X, y, POD_Z], rot=[0, 90, 0])
+
+fast = []
 def F(**k):
-    k.setdefault("head","socket"); k.setdefault("tool","hex1.5"); k.setdefault("removable",True); fast.append(k)
-for i,(x,y) in enumerate(BOSS):
-    F(id=f"bolt_t{i}",designation="M2x5",at=[x,y,round(Z0+T,3)],dir=[0,0,-1],through=["top_armour"],threads_into=f"insert_t{i}")
-for k,dy in enumerate((-7.5,7.5)):
-    F(id=f"bolt_wm{k}",designation="M2x5",at=[XM-9.3,YM+dy,ZM],dir=[1,0,0],through=["tub"],threads_into="weapon_motor")
-for s,n in ((1,"l"),(-1,"r")):
-    for k,ly in enumerate(BHOLES):
-        x,y=bhole_xy(s,ly)
-        F(id=f"bolt_b{n}{k}",designation="M2x6",at=[x,y,round(bl_bot(y)-0.15,3)],dir=[0,0,1],through=[f"blade_{n}"],threads_into=f"insert_b{n}{k}",head="button")
-    for k,y in enumerate(PB_Y):
-        F(id=f"bolt_x{n}{k}",designation="M2x10",at=[s*UX1,y,PB_Z],dir=[-s,0,0],through=[f"upright_{n}","tub"],threads_into=f"insert_x{n}{k}")
-    for k,(a,b) in enumerate(POSTS):
-        F(id=f"bolt_s{n}{k}",designation="M2x6",at=[s*32.5,(a+b)/2,7.5],dir=[0,0,-1],through=[f"strap_{n}","tub"],threads_into=f"insert_s{n}{k}")
-    for k,(y,z) in enumerate(POD_MID+[POD_REAR]):
-        F(id=f"bolt_p{n}{k}",designation="M2x14",at=[s*50.0,y,z],dir=[-s,0,0],through=[f"pod_{n}","tub"],threads_into=f"insert_p{n}{k}")
+    k.setdefault("head", "socket"); k.setdefault("tool", "hex1.5"); k.setdefault("removable", True); fast.append(k)
+for i, (x, y) in enumerate(POSTS):
+    F(id=f"bolt_b{i}", designation="M2x6", at=[x, y, BP_Z0], dir=[0, 0, 1], through=["base_panel", "tub"], threads_into=f"insert_b{i}", head="countersunk",
+      reason="Panel drops into the wall rim (sides only locate it, 0.2 mm clear); the screws clamp it up against the post end faces, which are normal to them")
+for i, (x, y) in enumerate(TOP_POSTS):
+    F(id=f"bolt_t{i}", designation="M2x6", at=[x, y, CH + TP_T], dir=[0, 0, -1], through=["top_armour", "tub"], threads_into=f"insert_t{i}")
+for n, x0, d in (("r", BOSS_R[0], 1), ("l", BOSS_L[1], -1)):
+    for k, y in enumerate(UB_Y):
+        F(id=f"bolt_u{n}{k}", designation="M2x10", at=[x0, y, UB_Z], dir=[d, 0, 0], through=["tub", f"upright_{n}"], threads_into=f"insert_u{n}{k}")
+for k, s in enumerate((1, -1)):
+    F(id=f"bolt_f{k}", designation="M2x6", at=[s * FORK_HX, 37.7, -2.0], dir=[0, 0, 1], through=["forks", "tub"], threads_into=f"insert_f{k}", head="countersunk")
+for k, dz in enumerate((-8.0, 8.0)):
+    F(id=f"bolt_wm{k}", designation="M2x8", at=[UR0, YW, ZW + dz], dir=[1, 0, 0], through=["upright_r"], threads_into="weapon_motor")
+for s, n in ((1, "l"), (-1, "r")):
+    for k, y in enumerate(POD_Y):
+        F(id=f"bolt_p{n}{k}", designation="M2x8", at=[s * (CX + 2.0), y, POD_Z], dir=[-s, 0, 0], through=[f"pod_{n}", "tub"], threads_into=f"insert_p{n}{k}")
 
-def Wr(i,a,b,awg,kind,sl): return {"id":i,"from":a,"to":b,"awg":awg,"kind":kind,"slack_mm":sl}
-wires=[Wr("w_bat_sw","battery.xt30","power_switch.in",22,"power",8),Wr("w_sw_wesc","power_switch.out","wesc.bat",22,"power",8),
-       Wr("w_sw_rx","power_switch.out","rxesc.bat",26,"power",8),Wr("w_wesc_m","wesc.motor","weapon_motor.phases",24,"motor",10),
-       Wr("w_rx_wesc","rxesc.wpn","wesc.rx",30,"signal",6),Wr("w_m_l","rxesc.m1","motor_l.terminals",28,"motor",6),Wr("w_m_r","rxesc.m2","motor_r.terminals",28,"motor",6)]
-conn=[]
-def C(a,b,m,r,**k): conn.append(dict(a=a,b=b,method=m,reason=r,**k))
+
+def Wr(i, a, b, awg, kind, sl): return {"id": i, "from": a, "to": b, "awg": awg, "kind": kind, "slack_mm": sl}
+wires = [Wr("w_bat_sw", "battery.xt30", "power_switch.in", 22, "power", 8), Wr("w_sw_wesc", "power_switch.out", "wesc.bat", 22, "power", 8),
+         Wr("w_sw_rx", "power_switch.out", "rxesc.bat", 26, "power", 8), Wr("w_wesc_m", "wesc.motor", "weapon_motor.phases", 24, "motor", 12),
+         Wr("w_rx_wesc", "rxesc.wpn", "wesc.rx", 30, "signal", 6), Wr("w_m_l", "rxesc.m1", "motor_l.terminals", 28, "motor", 6),
+         Wr("w_m_r", "rxesc.m2", "motor_r.terminals", 28, "motor", 6)]
+conn = []
+def C(a, b, m, r, **k): conn.append(dict(a=a, b=b, method=m, reason=r, **k))
 for n in "lr":
-    C(f"motor_{n}",f"whub_f{n}","press_fit","Printed wheel hub pressed onto the 3 mm D-shaft of the N10 gearmotor; the D flat carries the drive torque",interference_mm=0.1,mechanical_key=True)
-    C(f"motor_{n}",f"strap_{n}","interlock","Gearbox clamped from above by the screwed strap, boxed in by the cradle ribs and the end stop; the flats stop it rotating")
-    C(f"motor_{n}","tub","interlock","Gearmotor sits between the cradle ribs, the inner end stop and the side wall; the strap holds it down")
-    C(f"strap_{n}","tub","screw","Strap screwed down onto two printed posts either side of the gearbox with M2 bolts into heat-set inserts")
-    for j in "01":
-        C(f"whub_r{n}",f"wbrg_{n}{j}","press_fit","MR63 bearing pressed into the rear hub bore; carries the rear corner load",interference_mm=0.02,mechanical_key=True)
-        C(f"wbrg_{n}{j}",f"axle_{n}","shaft","Bearing inner race on the 3 mm dead axle; e-clip outside")
-    C(f"axle_{n}","tub","press_fit","Dead axle pressed through the side wall into a printed boss 6 mm deep; carries the rear wheel load",interference_mm=0.05,mechanical_key=True)
+    C(f"motor_{n}", f"whub_f{n}", "press_fit", "Printed hub pressed onto the 3 mm D-shaft of the N10; the flat carries the torque", interference_mm=0.1, mechanical_key=True)
+    C(f"motor_{n}", "tub", "interlock", "Gearbox boss sits in the keyhole in the side wall; gearbox clamped between the deck ribs and the base-panel rails, the flats stop it turning")
+    C(f"motor_{n}", "base_panel", "interlock", "Base-panel rails either side of the gearbox; the 5 base screws clamp the motor against the deck ribs")
+    C(f"axle_{n}", "tub", "press_fit", "Stub axle pressed through the wall into a 4 mm deep printed boss", interference_mm=0.05, mechanical_key=True)
+    C(f"wbrg_{n}0", f"axle_{n}", "shaft", "Bearing inner race on the 3 mm stub axle; e-clip outboard")
+    C(f"whub_r{n}", f"wbrg_{n}0", "press_fit", "MR63 pressed into the hub bore", interference_mm=0.05, mechanical_key=True)
+    C(f"wbrg_{n}1", f"whub_r{n}", "press_fit", "MR63 pressed into the hub bore", interference_mm=0.05, mechanical_key=True)
+    C(f"wbrg_{n}1", f"axle_{n}", "shaft", "Bearing inner race on the 3 mm stub axle")
     for k in "fr":
-        C(f"pulley_{k}{n}",f"whub_{k}{n}","press_fit","Printed O-ring pulley pressed onto the wheel hub boss with three keying pegs; transmits drive torque front to rear",interference_mm=0.1,mechanical_key=True)
-        C(f"wheel_{k}{n}",f"whub_{k}{n}","press_fit","TPU tyre printed 0.3 mm undersize and stretched over the 25 mm hub rim between two lips",interference_mm=0.3,mechanical_key=True)
-    C(f"belt_{n}",f"pulley_f{n}","interlock","O-ring sits in the pulley grooves under 5 % stretch; couples the rear wheel to the driven front wheel")
-    C(f"upright_{n}","tub","screw","Upright bolted sideways to the crossbar platform end face (2x M2 normal to the contact face); its rear edge bears on the tub front wall")
-    C(f"blade_{n}",f"upright_{n}","screw","Blade root clamped flat under the upright bottom face by 3 M2 button-head screws 15 mm apart into heat-set inserts")
-    C(f"pod_{n}","tub","screw","Pod sits on the tub ledge (locating lip) and is pulled against the side wall by 3 sideways M2 screws normal to the contact face")
-for i,n in ((1,"r"),(2,"l")):
-    C(f"bearing_{i}",f"upright_{n}","press_fit","684ZZ pressed into a 9 mm seat in the outer face of the upright; carries the shaft radial impact load into the upright and the crossbar",interference_mm=0.05,mechanical_key=True)
-    C(f"bearing_{i}","shaft","shaft","Inner race on the 4 mm live shaft; e-clips outside each bearing locate it axially")
-C("disc","shaft","press_fit","Disc D-bore on the shaft D-flat (torque) between two e-clips (axial)",interference_mm=0.02,mechanical_key=True)
-C("wpulley_s","shaft","press_fit","Pulley D-bore on the shaft D-flat plus a grub screw",interference_mm=0.02,mechanical_key=True)
-C("wpulley_m","weapon_motor","press_fit","Pulley on the 5 mm motor shaft stub, grub screw on its flat",interference_mm=0.02,mechanical_key=True)
-C("wbelt","wpulley_m","interlock","O-ring in the flanged pulley grooves under 5 % stretch: drives the weapon and slips on a hard hit, protecting the motor")
-C("weapon_motor","tub","screw","Stator face bolted to the printed mount wall with 2 M2 screws along the motor axis")
-C("lock_pin","upright_l","pin","Locking pin through both uprights and a disc kidney; slides out sideways, tethered by a lanyard",mechanical_key=True)
-C("battery","tub","press_fit","Pack is a snug fit in the floor bay between two printed ribs and trapped from above by a 2 mm EVA foam pad under the bolted top plate",interference_mm=0.1,mechanical_key=True)
-C("wesc","tub","press_fit","Weapon ESC is a snug fit in a ribbed floor bay at the rear, closed above by the top plate",interference_mm=0.1,mechanical_key=True)
-C("rxesc","battery","velcro","Malenki board stuck flat on the top face of the pack with hook-and-loop, under the top plate")
-C("power_switch","tub","press_fit","Switch pressed into a snug printed pocket in a pillar under a slot in the top plate; slider moves across the robot",interference_mm=0.1)
+        C(f"pulley_{k}{n}", f"whub_{k}{n}", "press_fit", "Printed O-ring pulley pressed on the hub spigot", interference_mm=0.1, mechanical_key=True)
+        C(f"wheel_{k}{n}", f"whub_{k}{n}", "press_fit", "TPU tyre stretched over the hub between the pulley and the lip", interference_mm=0.3, mechanical_key=True)
+    C(f"belt_{n}", f"pulley_f{n}", "interlock", "O-ring in the pulley grooves under 5 % stretch; drives the rear wheel")
+    C(f"upright_{n}", "tub", "screw", "Upright plate flat against the square boss side; 2 M2 through the boss, normal to that face, into inserts in the upright")
+    C(f"upright_{n}", "tub", "interlock", "Upright foot drops over the square boss (slides on, located on three faces) so hits load the boss, not the screws",
+      mechanical_key=True)
+    C(f"pod_{n}", "tub", "screw", "Side panel web flat on the chassis wall, 2 M2 normal to the wall into heat-set inserts")
+C("weapon_motor", "upright_r", "screw", "Stator face bolted to the right upright with 2 M2 along the motor axis")
+C("spider", "blade_c", "pin", "Spider flange clamps the blade stack through the 4 M2.5 screws", mechanical_key=True)
+C("blade_c", "weapon_motor", "press_fit", "Spider and tooth-plate hub keyed to the bell by 2 M3 grub screws on the shaft flat; the bell drives the stack",
+  interference_mm=0.05, mechanical_key=True)
+C("wshaft", "weapon_motor", "press_fit", "The motor's own rotor shaft (lengthened), pressed in the bell and held by its circlip", interference_mm=0.05, mechanical_key=True)
+C("wshaft", "blade_c", "press_fit", "Tooth-plate hub on the shaft, keyed by the grub screws", interference_mm=0.05, mechanical_key=True)
+C("wbearing", "upright_l", "press_fit", "F683ZZ pressed into the left upright, flange against the inner face", interference_mm=0.05, mechanical_key=True)
+C("wbearing", "wshaft", "shaft", "F683ZZ inner race on the shaft end: the second support of the rotor")
+for b in ("blade_o", "blade_c", "blade_i"):
+    C(b, "spider", "pin", "Blade stack clamped to the spider flange by 4 M2.5 button-head screws and round nuts", mechanical_key=True)
+for i in range(4):
+    C(f"wpin{i}", "spider", "pin", "M2.5 screw through the spider flange and the blade stack", mechanical_key=True)
+    C(f"wnut{i}", f"wpin{i}", "interlock", "Round nut on the screw thread, Loctite 243")
+C("forks", "tub", "screw", "Fork root under the chassis chin, 2 CSK M2 into inserts")
+C("base_panel", "tub", "screw", "Base panel inside the wall rim, 5 CSK M2 into the post inserts")
+C("top_armour", "tub", "screw", "Ti plate on the deck, 4 M2 into the post inserts")
+C("battery", "base_panel", "press_fit", "Pack boxed by the base-panel fence and the insert posts, trapped from above by the Malenki and the deck", interference_mm=0.1, mechanical_key=True)
+C("wesc", "base_panel", "press_fit", "ESC between the gearbox rails and the battery fence, deck above", interference_mm=0.1, mechanical_key=True)
+C("rxesc", "battery", "velcro", "Malenki board on the top of the pack with hook-and-loop")
+C("power_switch", "tub", "press_fit", "Switch pressed into a slot in the left wall", interference_mm=0.1)
 
-ov=[dict(a="shaft",b="bearing_1",max_depth_mm=4.5,reason="bearing drawn solid: the 4 mm shaft fills the inner race bore"),
-    dict(a="shaft",b="bearing_2",max_depth_mm=4.5,reason="bearing drawn solid: the 4 mm shaft fills the inner race bore"),
-    dict(a="weapon_motor",b="wpulley_m",max_depth_mm=5.5,reason="pulley bore on the motor shaft stub")]
+ov = [dict(a="weapon_motor", b="spider", max_depth_mm=6.5, reason="spider bore on the bell boss / shaft stub (drawn solid)"),
+      dict(a="weapon_motor", b="wshaft", max_depth_mm=4.0, reason="the motor's own shaft runs through its stator (drawn solid motor)"),
+      dict(a="spider", b="wshaft", max_depth_mm=4.0, reason="spider bore on the shaft (drawn solid)"),
+      dict(a="blade_c", b="wshaft", max_depth_mm=4.0, reason="tooth-plate hub on the shaft (drawn solid)"),
+      dict(a="blade_c", b="weapon_motor", max_depth_mm=4.0, reason="tooth-plate hub bore on the bell boss / shaft stub (drawn solid)"),
+      dict(a="blade_c", b="wshaft", max_depth_mm=1.0e3, reason="the shaft is part of the rotor (child of blade_c): it turns with the disc"),
+      *[dict(a="blade_c", b=f"wpin{i}", max_depth_mm=1.0e3, reason="blade screw is part of the rotor: it turns with the disc") for i in range(4)],
+      *[dict(a=f"insert_u{n}{k}", b="tub", max_depth_mm=1.0e3, reason="heat-set into the upright before the upright is bolted to the boss; leaves with the upright") for n in "rl" for k in range(2)],
+      dict(a="wshaft", b="wbearing", max_depth_mm=3.5, reason="bearing drawn solid: the 3 mm shaft fills the inner race bore")]
+for i in range(4):
+    ov.append(dict(a=f"wpin{i}", b="spider", max_depth_mm=0.3, reason="screw shank in its hole"))
 for n in "lr":
-    for j in "01": ov.append(dict(a=f"axle_{n}",b=f"wbrg_{n}{j}",max_depth_mm=3.5,reason="bearing drawn solid: the 3 mm axle fills the inner race bore"))
-spec=dict(name="Revron",profile="aws2025",robot_type="vertical_spinner",locomotion="roller",
-  archetype="vertical_spinner_forks",
-  archetype_params={"blade_lead_mm":[5,15],"axle_height_mm":[28,32],"disc_thickness_mm":[15,18],"disc_dia_mm":[50,56],"teeth":[1,1],"tub_height_mm":[20,24],
-                    "wheels":[4,4],"wheel_dia_mm":[28,30],"weapon_mass_fraction":[0.25,0.5],"top_slope_deg":[20,25]},
-  targets={"length_mm":140,"width_mm":115,"disc_dia_mm":51,"wheel_dia_mm":30,"tol_mm":8,"source":"robots/revron/REFERENCE.md (photo estimates, +-15 %)",
-           "note":"axle 30 mm above floor, 25 mm ahead of tub; single hooked tooth; tub 22.5 mm tall; 4 driven wheels"},
-  reference=[{"image":"../../robots/revron/photos/ref3.png","view":"side","mask":"../../robots/revron/reference/side_mask.png","scale_hint":0.21},
-             {"image":"../../robots/revron/photos/ref2.jpg","view":"iso","mask":"../../robots/revron/reference/iso_mask.png","approximate":True}],
-  parts=parts,fasteners=fast,wires=wires,
-  electronics=dict(failsafe=True,weapon_remote_disable=True,radio="2.4 GHz",cells=2),can_run_inverted=False,
-  allow_overlap=ov,connections=conn,
-  claims=[dict(id="c_mass",text="weighs 150 g or less",metric="mass_total_g",op="<=",value=150),
-          dict(id="c_fit",text="fits the 150 mm square",metric="footprint_mm",op="<=",value=150)])
-json.dump(spec,open(OUT,"w"),indent=1)
+    ov.append(dict(a=f"motor_{n}", b=f"whub_f{n}", max_depth_mm=3.5, reason="hub drawn solid over the 3 mm D-shaft"))
+    for j in "01":
+        ov.append(dict(a=f"axle_{n}", b=f"wbrg_{n}{j}", max_depth_mm=3.5, reason="bearing drawn solid: the 3 mm axle fills the inner race bore"))
+
+spec = dict(name="Revron", profile="aws2025", robot_type="vertical_spinner", locomotion="roller",
+            archetype="vertical_spinner_forks",
+            archetype_params={"blade_lead_mm": [5, 15], "axle_height_mm": [21, 25], "disc_thickness_mm": [4.5, 7], "disc_dia_mm": [37, 43], "teeth": [1, 1],
+                              "tub_height_mm": [16, 19], "wheels": [4, 4], "wheel_dia_mm": [20, 23], "weapon_mass_fraction": [0.20, 0.5], "top_slope_deg": [0, 25]},
+            targets={"length_mm": 110, "width_mm": round(2 * POD_X1), "disc_dia_mm": 40, "wheel_dia_mm": TYRE_OD, "tol_mm": 6,
+                     "source": "robots/revron/params.json", "note": "axle 23 above floor; 2 mm + 2 x 1.0 mm Hardox blade stack on a BE1806 hub; belted 4WD"},
+            reference=[{"image": "../../robots/revron/photos/ref3.png", "view": "side", "mask": "../../robots/revron/reference/side_mask.png", "scale_hint": 0.162},
+                       {"image": "../../robots/revron/photos/ref2.jpg", "view": "iso", "mask": "../../robots/revron/reference/iso_mask.png", "approximate": True}],
+            weapon_lock={"type": "removable_pin", "dia_mm": 3.0, "axis": [1, 0, 0],
+                         "at": [0.0, round(YW + yzr(LOCK_A)[0], 3), round(ZW + yzr(LOCK_A)[1], 3)],
+                         "holes": ["upright_r", "blade_o", "blade_c", "blade_i", "upright_l"],
+                         "note": "red 3 mm REMOVE-BEFORE-FIGHT pin (not modelled): slides in from the right through both uprights, the blade stack and the spider flange"},
+            parts=parts, fasteners=fast, wires=wires,
+            electronics=dict(failsafe=True, weapon_remote_disable=True, radio="2.4 GHz", cells=2), can_run_inverted=False,
+            allow_overlap=ov, connections=conn,
+            claims=[dict(id="c_mass", text="weighs 147 g or less", metric="mass_total_g", op="<=", value=147),
+                    dict(id="c_fit", text="fits the 150 mm square", metric="footprint_mm", op="<=", value=150)])
+json.dump(spec, open(OUT, "w"), indent=1)
+json.dump(spec, open(os.path.join(HERE, "..", "spec.json"), "w"), indent=1)
+print("wrote", OUT, len(parts), "parts", len(fast), "fasteners; belt", BELT_L, "front", FORK_TIP, "WX0", WX0, "UL0", UL0)
