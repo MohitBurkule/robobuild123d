@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import numpy as np
-import shapely
 
 from .. import catalog, measure, xform
 from ..finding import BLOCKER, WARNING, fail, ok
@@ -132,27 +131,6 @@ def weapons(ctx):
 PIN_R = 1.0  # smallest pin radius a hole must pass (2 mm pin)
 
 
-def _section(b, at, axis, u, v):
-    """Cross-section of body `b` on the plane through `at` normal to `axis`, in (u, v): (material, material with holes filled)."""
-    from trimesh.intersections import mesh_plane
-
-    seg = mesh_plane(b.mesh, axis, at)
-    if seg is None or not len(seg):
-        return None, None
-    seg = np.round(np.stack([(seg - at) @ u, (seg - at) @ v], axis=-1), 5)
-    lines = [shapely.union_all(shapely.linestrings(seg))]
-    polys = list(shapely.get_parts(shapely.polygonize(lines)))
-    if not polys:
-        return None, None
-    rp = np.array([q.representative_point().coords[0] for q in polys])
-    solid = b.inside(at + np.outer(rp[:, 0], u) + np.outer(rp[:, 1], v))  # faces of the partition that are material
-    if not solid.any():
-        return None, None
-    mat = shapely.union_all([q for q, k in zip(polys, solid) if k])
-    filled = shapely.union_all(polys)
-    return mat, filled
-
-
 def pin_lock(r, w, p, lock):
     """Rule 5f via a declared removable pin (`weapon_lock: {type: removable_pin, holes: [ids]}`): the pin itself is not
     modelled, but the named parts must have one through-hole, parallel to the spin axis, that lines up across the static
@@ -181,20 +159,38 @@ def pin_lock(r, w, p, lock):
     g = np.arange(-R, R + 0.01, 0.25)
     G2 = np.array([(x, y) for x in g for y in g])
     ok_ = np.hypot(G2[:, 0], G2[:, 1]) >= 2 * PIN_R + 1.0  # off the spin axis, or the pin does not stop it turning
+    # Point queries (inside-test plus in-plane rays) rather than polygonising a mesh/plane section: polygonize silently
+    # drops loops whose segment ends do not snap, which made the result depend on exactly where a slice landed
+    # (a 5.0 mm upright failed, 4.95 mm passed).
+    ang = np.linspace(0.0, 2 * np.pi, 16, endpoint=False)
+    ring = np.stack([np.cos(ang), np.sin(ang)], axis=1)
+    rays = np.outer(ring[:, 0], u) + np.outer(ring[:, 1], v)
+    ok_ &= np.hypot(G2[:, 0], G2[:, 1]) <= R  # inside the weapon's reach
+    for b in bodies.values():  # a hole through a part lies inside that part's outline, so inside its projected box
+        q = b.mesh.vertices - origin
+        pu, pv = q @ u, q @ v
+        ok_ &= (G2[:, 0] > pu.min()) & (G2[:, 0] < pu.max()) & (G2[:, 1] > pv.min()) & (G2[:, 1] < pv.max())
+    slices = []
     for x, b in bodies.items():
         t = (b.mesh.vertices - origin) @ axis
-        for tt in np.linspace(float(t.min()) + 0.15, float(t.max()) - 0.15, 3):  # a hole all the way through
-            mat, filled = _section(b, origin + tt * axis, axis, u, v)
-            if mat is None:
-                ok_[:] = False
-                break
+        slices += [(b, origin + tt * axis) for tt in np.linspace(float(t.min()) + 0.15, float(t.max()) - 0.15, 5)]
+
+    def pts(base, idx, du=0.0, dv=0.0):
+        return base + np.outer(G2[idx, 0] + du, u) + np.outer(G2[idx, 1] + dv, v)
+
+    # cheapest test first, each pass only on the survivors of the previous one
+    for b, base in slices:  # 1. the pin centre is not in material
+        idx = np.nonzero(ok_)[0]
+        if len(idx):
+            ok_[idx[b.inside(pts(base, idx))]] = False
+    for b, base in slices:  # 2. surrounded by material yet a pin's width clear: every in-plane ray hits the part, none closer than PIN_R
+        scene = measure.Scene([b])
+        for d in rays:
             idx = np.nonzero(ok_)[0]
-            P = G2[idx]
-            inside = shapely.contains_xy(filled, P[:, 0], P[:, 1])  # surrounded by material ...
-            near = shapely.dwithin(mat, shapely.points(P), PIN_R)  # ... yet a pin's width of clear space
-            ok_[idx[~inside | near]] = False
-        if not ok_.any():
-            break
+            if not len(idx):
+                break
+            dist, _ = scene.first_hit(pts(base, idx), np.tile(d, (len(idx), 1)), max_dist=4 * R + 1.0)
+            ok_[idx[~(np.isfinite(dist) & (dist >= PIN_R))]] = False
     C = origin + np.outer(G2[:, 0], u) + np.outer(G2[:, 1], v)
     if not ok_.any():
         return [fail("legal.locking_bar", G, BLOCKER, "Weapon lock holes do not line up",
