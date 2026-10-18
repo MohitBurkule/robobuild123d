@@ -9,6 +9,8 @@ Layout of `<dir>/<slug>/`:
 from __future__ import annotations
 
 import json
+
+import numpy as np
 from pathlib import Path
 
 from . import checks, render, shapes
@@ -20,6 +22,43 @@ VIEWS = ["iso", "top", "exploded", "section_z", "back"]
 
 def safe_name(bid: str) -> str:
     return bid.replace(":", "_").replace("/", "_").replace("\\", "_")
+
+
+def wire_solid(rt):
+    """Exact B-rep of a routed wire: a circle of the gauge OD swept along the route polyline (round transitions).
+    Falls back to a fused chain of cylinders and joint spheres if the sweep fails. Returned in world frame."""
+    import build123d as bd
+
+    pts = []
+    for p in np.asarray(rt.points, float):
+        if not pts or np.linalg.norm(p - pts[-1]) > 1e-3:
+            pts.append(p)
+    if len(pts) < 2:
+        raise ValueError("route has fewer than 2 distinct points")
+    r = rt.od_mm / 2
+    vs = [bd.Vector(*map(float, p)) for p in pts]
+    try:
+        path = bd.Polyline(*vs)
+        e0 = path.edges()[0]
+        prof = bd.Face(bd.Wire.make_circle(r, bd.Plane(origin=e0.position_at(0), z_dir=e0.tangent_at(0))))
+        s = bd.sweep(prof, path=path, transition=bd.Transition.ROUND)
+        sol = s.solids()
+        if len(sol) == 1 and sol[0].is_valid and sol[0].volume > 0:
+            return sol[0]
+    except Exception:  # noqa: BLE001 - fall through to the robust construction
+        pass
+    acc = None
+    for a, b in zip(vs, vs[1:]):
+        d = b - a
+        c = bd.Solid.make_cylinder(r, d.length, bd.Plane(origin=a, z_dir=d))
+        acc = c if acc is None else acc.fuse(c)
+    for v in vs[1:-1]:
+        acc = acc.fuse(bd.Solid.make_sphere(r).moved(bd.Location(v)))
+    acc = acc.clean()
+    sol = acc.solids()
+    if len(sol) != 1 or not sol[0].is_valid:
+        raise ValueError(f"wire B-rep invalid ({len(sol)} solids)")
+    return sol[0]
 
 
 def report_markdown(spec, rep) -> str:
@@ -96,17 +135,19 @@ def write_all(slug: str, spec, out_dir, opts=None, step=True, width=1100):
         for b in world.bodies:
             name = safe_name(b.id)
             try:
-                solid = b.geom.solid
-                if solid is None:
-                    raise ValueError("no B-rep (tessellated-only body)")
-                p = solid.moved(shapes.location(b.M))
+                if b.is_wire and getattr(b.geom, "route", None) is not None:
+                    p = wire_solid(b.geom.route).moved(shapes.location(b.M))  # route points are world frame; M = I
+                else:
+                    solid = b.geom.solid
+                    if solid is None:
+                        raise ValueError("no B-rep (tessellated-only body)")
+                    p = solid.moved(shapes.location(b.M))
                 p.label = b.id
                 bd.export_step(p, str(root / "step" / f"{name}.step"))
                 files.append(f"step/{name}.step")
                 placed.append(p)
             except Exception as e:  # noqa: BLE001 - one bad body must not lose the others
-                if not b.is_wire:
-                    step_ok = False
+                step_ok = False
                 rep.not_checked.append(f"STEP export of `{b.id}`: {type(e).__name__}: {e} (STL only)")
         if placed:
             try:

@@ -50,7 +50,10 @@ def test_bed():
 
 def test_wedge_template_finds_real_sliver():
     # chassis_bottom: battery pocket ends at y=17.4, wire channel starts at y=17.5 -> 0.1 mm wall (Rust's grid missed it).
-    rep = verify(spec.load(ROOT / "templates" / "wedge_2wd.json"), Options(only=["mfg"], deep=False))
+    s = spec.load(ROOT / "tests" / "fixtures_wedge_rust.json")
+    cut = s.part("chassis_bottom").shape["base"]["cut"][1]  # the template has since been fixed; re-create the sliver
+    cut["at"] = [0.0, 19.2, -2.25]
+    rep = verify(s, Options(only=["mfg"], deep=False))
     thin = [f for f in rep.findings if f.id == "mfg.thin_wall"]
     assert any(f.parts == ["chassis_bottom"] for f in thin)
     assert rep.metrics["min_wall_mm"] < 0.2

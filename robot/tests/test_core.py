@@ -24,7 +24,7 @@ def test_new_shape_types_build():
 
 
 def test_wedge_world_and_measures():
-    r = world.resolve(spec.load(ROOT / "templates" / "wedge_2wd.json"))
+    r = world.resolve(spec.load(ROOT / "tests" / "fixtures_wedge_rust.json"))
     w = world.World.start(r)
     assert abs(r.parts[2].geom.volume - 12160) < 5  # wedge B-rep volume, Rust sampling gives ~12154
     pts = np.vstack([b.mesh.vertices for b in w.bodies])
@@ -35,5 +35,5 @@ def test_wedge_world_and_measures():
 
 
 def test_mass_matches_rust_within_one_percent():
-    rep = verify(spec.load(ROOT / "templates" / "wedge_2wd.json"), Options(only=["mass"]))
+    rep = verify(spec.load(ROOT / "tests" / "fixtures_wedge_rust.json"), Options(only=["mass"]))
     assert abs(rep.metrics["mass_total_g"] - 105.97) / 105.97 < 0.01
