@@ -121,7 +121,12 @@ BOSS_R = (UR0 - 6.5, UR0); BOSS_L = (UL1, UL1 + 6.5)
 TAB_R = (BOSS_R[0], UR0); TAB_L = (UL1, BOSS_L[1])
 BY0, BY1 = 34.3, 46.0
 CHIN_Y1, CHIN_Z1 = 41.0, 4.0
-NOSE_Z = 15.0
+NOSE_Z = 15.3                                     # front of the long sloped deck (TPU wedge cover sits on it)
+SL0 = 20.0                                        # deck slope starts just ahead of the Ti plate
+
+
+def zdeck(y):
+    return CH if y <= SL0 else CH - (CH - NOSE_Z) * (y - SL0) / (CY1 - SL0)
 TAB_Z0, TAB_Z1 = 14.0, 17.0
 
 parts = []
@@ -139,12 +144,13 @@ INS_P_X = CX - 1.5                         # pod inserts (axis x) 25.9..28.9
 FORK_X = (5.0, 9.5)
 FORK_HX = 3.5                                     # fork root screws at x = +-2.5
 FORK_TIP = YW + DISC_R + 4.0
+SPK_Y = (57.0,); SPK_Z = 1.5                       # spike-fork bolt through the pod front corner                 # spike-fork bolts through the pod front corner
 
 
 # ---------------------------------------------------------------- chassis (printed nylon tub, open bottom)
 def chassis():
-    prof = [(CY0, 0), (CY1, 0), (CY1, NOSE_Z), (CY1 - (CH - NOSE_Z), CH), (CY0, CH)]
-    inner = [(CY0 + WALL, -1), (CY1 - FWALL, -1), (CY1 - FWALL, CH - DECK - 0.2), (CY0 + WALL, CH - DECK)]
+    prof = [(CY0, 0), (CY1, 0), (CY1, NOSE_Z), (SL0, CH), (CY0, CH)]
+    inner = [(CY0 + WALL, -1), (CY1 - FWALL, -1), (CY1 - FWALL, zdeck(CY1 - FWALL) - DECK), (SL0, CH - DECK), (CY0 + WALL, CH - DECK)]
     shell = S(yz(prof, -CX, CX), yz(inner, -(CX - WALL), CX - WALL))
     add = []
     for x, y in POSTS:
@@ -158,14 +164,14 @@ def chassis():
         add.append(boxr(*sorted((s * (CX - WALL - 4.6), s * (CX - WALL + 0.1))), POD_Y[0] - 3.0, POD_Y[1] + 3.0, POD_Z - 3.2, POD_Z + 3.2))   # insert boss
         add.append(cylx(3.0, *sorted((s * (CX - WALL - 2.4), s * (CX - WALL + 0.1))), YR, AXZ))     # rear axle boss
         # motor clamp ribs from the deck down to the gearbox top
-        add.append(boxr(*sorted((s * (MOT_CX - 8.0), s * (MOT_CX + 8.0))), YF - 6.0, YF - 5.0, AXZ + 6.0, CH - DECK + 0.1))
-        add.append(boxr(*sorted((s * (MOT_CX - 6.0), s * (MOT_CX + 6.0))), YF - 4.0, YF + 4.0, AXZ + 6.0, CH - DECK + 0.1))   # top clamp pad
+        add.append(yz([(YF - 6.0, AXZ + 6.0), (YF - 5.0, AXZ + 6.0), (YF - 5.0, zdeck(YF - 5.0) - DECK + 0.1), (YF - 6.0, zdeck(YF - 6.0) - DECK + 0.1)], *sorted((s * (MOT_CX - 8.0), s * (MOT_CX + 8.0)))))
+        add.append(yz([(YF - 4.0, AXZ + 6.0), (YF + 4.0, AXZ + 6.0), (YF + 4.0, zdeck(YF + 4.0) - DECK + 0.1), (YF - 4.0, zdeck(YF - 4.0) - DECK + 0.1)], *sorted((s * (MOT_CX - 6.0), s * (MOT_CX + 6.0)))))   # top clamp pad, follows the sloped deck
     add.append(boxr(BOSS_R[0], BOSS_L[1], CY1 - 0.1, CHIN_Y1, 0.0, CHIN_Z1))       # chin
     for b0, b1 in (BOSS_R, BOSS_L):
         add.append(boxr(b0, b1, CY1 - 0.1, BY1, 0.0, TAB_Z0))                       # square upright bosses
     for s_ in (1, -1):   # inner corner fillets behind the top facets
         tri = [(s_ * (CX - WALL + 0.05), CH - DECK + 0.05), (s_ * (CX - WALL - 1.6), CH - DECK + 0.05), (s_ * (CX - WALL + 0.05), CH - DECK - 1.6)]
-        add.append(place({"type": "prism", "points": r4(tri if s_ < 0 else list(reversed(tri))), "height": CY1 - CY0 - 2}, (0, (CY0 + CY1) / 2, 0), (90, 0, 0)))
+        add.append(place({"type": "prism", "points": r4(tri if s_ < 0 else list(reversed(tri))), "height": SL0 - CY0 - 1}, (0, (CY0 + 1 + SL0) / 2, 0), (90, 0, 0)))
     add.append(yz([(CY0 + WALL - 0.05, CH - DECK + 0.05), (CY0 + WALL - 0.05, CH - DECK - 1.6), (CY0 + WALL + 1.6, CH - DECK + 0.05)], -CX + 1, CX - 1))
     body = U(shell, *add)
     cut = []
@@ -187,14 +193,11 @@ def chassis():
         cut.append(boxr(b0 + 1.4, b1 - 1.4, BY0 + 1.4, BY1 - 1.4, -0.5, UB_Z - 2.5))          # hollow boss, open below
         for y in UB_Y:
             cut.append(cylx(1.1, b0 - 0.5, b1 + 0.5, y, UB_Z))
-    cut.append(boxr(-12.05, 12.05, BY0 - 0.05, CHIN_Y1 + 0.5, -0.5, 0.6))   # fork-root pocket (locates the fork)
-    for s in (1, -1):
-        cut.append(cylz(1.6, 0.6, CHIN_Z1 + 0.5, s * FORK_HX, 37.7))   # insert pressed in from the top
     cut.append(boxr(-CX - 0.5, -CX + WALL + 0.5, SW_Y - 6.0, SW_Y + 6.0, SW_Z - 2.1, SW_Z + 2.1))   # switch slot, left wall
     cut.append(boxr(-21.5, 21.5, -14, 14, CH - DECK - 0.5, CH + 0.5))
     for s_ in (1, -1):   # chamfered top side edges: printed facets either side of the inset Ti plate
         tri = [(s_ * (CX - CHAMF[0]), CH + 0.01), (s_ * (CX + 0.01), CH + 0.01), (s_ * (CX + 0.01), CH - CHAMF[1])]
-        cut.append(place({"type": "prism", "points": r4(tri if s_ > 0 else list(reversed(tri))), "height": CY1 - CY0 + 2}, (0, (CY0 + CY1) / 2, 0), (90, 0, 0)))
+        cut.append(place({"type": "prism", "points": r4(tri if s_ > 0 else list(reversed(tri))), "height": TP_Y - CY0 + 1}, (0, (CY0 + TP_Y - 1) / 2, 0), (90, 0, 0)))
     cut.append(yz([(CY0 - 0.01, CH + 0.01), (CY0 + CHAMF[0], CH + 0.01), (CY0 - 0.01, CH - CHAMF[1])], -CX - 1, CX + 1))   # rear facet
     for s_ in (1, -1):   # side-wall lightening windows, hidden behind the pods
         cut.append(boxr(*sorted((s_ * (CX - WALL - 0.5), s_ * (CX + 0.5))), -12.0, -1.0, 4.5, 13.5))
@@ -389,15 +392,18 @@ def top_armour():
     return S(U(flat, *fac), *[cylz(1.1, CH - 3, CH + 2, x, y) for x, y in TOP_POSTS])
 
 
+COV_Y1 = 30.47
+
+
 def top_cover():
-    fr = [(TP_Y + 0.1, CH), (CY1 - (CH - NOSE_Z), CH), (CY1 + 0.05, NOSE_Z - 0.05), (CY1 + 0.85, NOSE_Z - 0.05), (CY1 - (CH - NOSE_Z) + 0.5, CH + 0.9), (TP_Y + 0.1, CH + 1.3)]
-    front = yz(fr, -CX, CX)
-    rails = []
-    for s_ in (1, -1):
-        xa, xb = s_ * (TP_X + 0.1), s_ * CX
-        tri = [(xa, CH), (xb, CH), (xb, CH + 0.3), (xa, CH + 1.3)]
-        rails.append(place({"type": "prism", "points": r4([(x, z) for x, z in tri]), "height": TP_Y + 0.1 - CY0}, (0, (TP_Y + 0.1 + CY0) / 2, 0), (90, 0, 0)))
-    return U(front, *rails)
+    """Printed TPU wedge: 1.2 mm skin on the sloped deck from the Ti plate's front edge to just short of the nose,
+    top surface tapering forward; a rear step stands 0.4 proud of the inset Ti plate, side wings wrap the chamfers."""
+    n = 8
+    th = math.atan((CH - NOSE_Z) / (CY1 - SL0)); t = 1.23
+    bot = [(TP_Y + 0.13, CH), (SL0, CH), (COV_Y1, zdeck(COV_Y1))]
+    top = [(TP_Y + 0.13, CH + t), (SL0 + t * math.tan(th / 2), CH + t), (COV_Y1 + t * math.sin(th), zdeck(COV_Y1) + t * math.cos(th))]
+    return yz(bot + list(reversed(top)), -(CX - CHAMF[0]), CX - CHAMF[0])
+
 
 
 # ---------------------------------------------------------------- forks (TPU, sprung)
@@ -431,20 +437,26 @@ def pod(s):
     inner = boxr(wx0, wx1, POD_WY[0], POD_WY[1], 3.0, 13.5)
     fx0, fx1 = sorted((s * (CX + 2.0), s * POD_X0 + s * 0.1))
     fl = [boxr(fx0, fx1, POD_WY[0], POD_WY[1], 3.0, 5.0), boxr(fx0, fx1, POD_WY[0], POD_WY[1], 11.5, 13.5)]
-    tc = [p for p in chaikin_open([(tip, -0.5)] + top, 3) if YR - 1.0 <= p[0] <= 29.0]
+    tcf = chaikin_open([(tip, -0.5)] + top, 3)
+    yr_ = max((p for p in tcf if p[0] < 0), key=lambda p: p[1])[0]; yf_ = max((p for p in tcf if p[0] > 0), key=lambda p: p[1])[0]
+    tc = [p for p in tcf if yr_ <= p[0] <= yf_]   # lip runs crest to crest
     # one prism 6.5 mm wider than the wall, carved back so only a 1.4 mm lip follows the top edge over the wheels
     ix0, ix1 = sorted((s * (POD_X0 - 6.5), s * POD_X0))
     outer = yz(prof, *sorted((s * (POD_X0 - 6.5), s * POD_X1)))
     under = [(y, z - 2.0) for y, z in tc] + [(tc[-1][0], -10.0), (tc[0][0], -10.0)]
     carve = [yz(under, ix0 - 0.01 * s, ix1), boxr(ix0 - 0.01, ix1, tc[0][0] - 0.01, 200.0, -10.0, 40.0), boxr(ix0 - 0.01, ix1, -200.0, tc[-1][0] + 0.01, -10.0, 40.0)]
-    body = U(S(outer, *carve), inner, *fl)
+    lx = sorted((s * (POD_X0 - 1.6), s * POD_X0 + s * 0.05))
+    ledge = yz([(53.07, 4.85), (65.93, 1.73), (66.21, 2.9), (53.35, 6.02)], *lx)   # keys the spike's top edge
+    body = U(S(outer, *carve), inner, *fl, ledge)
     cut = []
     for y in POD_Y:
         cut.append(cylx(1.1, wx0 - 1, wx1 + 1, y, POD_Z))
     cut.append(yz(rrect(POD_Y[0] - 2.8, POD_Y[1] + 2.8, POD_Z - 2.8, POD_Z + 2.8, 2.7), x0 - 1, x1 + 1))   # driver access slot
-    for y0, y1 in ((-30.0, -16.5), (16.5, 30.0)):              # wheel-arch windows
-        cut.append(yz(rrect(y0, y1, 3.0, 14.0, 2.5), x0 - 1, x1 + 1))
-    cut.append(yz(rrect(34.0, 44.0, 3.0, 12.5, 2.5), x0 - 1, x1 + 1))
+    for y in SPK_Y:
+        cut.append(cylx(1.1, x0 - 1, x1 + 1, y, SPK_Z))
+    for y0 in (-29.0, -24.0, -19.0, 17.0, 22.0, 27.0, 34.5, 39.5):   # angled slash vents (raked back 25 deg)
+        ztop = 13.0 if y0 < 33 else 11.0
+        cut.append(yz(chaikin([(y0, 3.5), (y0 + 2.4, 3.5), (y0 + 2.4 + 0.47 * (ztop - 3.5), ztop), (y0 + 0.47 * (ztop - 3.5), ztop)], 2), x0 - 1, x1 + 1))
     cut.append(yz(rrect(-3.0, 3.0, 14.8, 17.3, 1.0), x0 - 1, x1 + 1))
     if s < 0:
         cut.append(cylx(3.0, x0 - 1, x1 + 1, SW_Y, SW_Z))     # switch access
@@ -488,14 +500,23 @@ P(id="tub", kind="structure", material="nylon", process="fdm", print_orientation
   shape=chassis(), label="printed nylon chassis: 1.6 mm walls, open bottom, sloped nose, square upright bosses, insert posts")
 P(id="base_panel", kind="structure", material="nylon", process="fdm", print_orientation="+z", rotates_with="fixed", color="#2a2c30",
   shape=base_panel(), label="printed X-ribbed base panel, 5 countersunk M2 into heat-set inserts; gearbox rails and battery fence")
+SPK = [(53.0, -1.95), (FORK_TIP + 1.0, -1.95), (FORK_TIP + 1.0, -1.45), (53.0, 4.8)]
+for s, n in ((1, "l"), (-1, "r")):
+    xa, xb = sorted((s * (POD_X0 - 1.0), s * POD_X0))
+    P(id=f"spike_{n}", kind="fork", material="steel", process="laser", rotates_with="fixed", color="#3a3d42", stock="1.0 mm spring steel",
+      shape=S(yz(SPK, xa, xb), *[cylx(1.1, xa - 1, xb + 1, y, SPK_Z) for y in SPK_Y]),
+      label="1 mm hardened spring-steel spike fork bolted inside the pod's front corner, tip 0.3 mm off the floor")
+    for k, y in enumerate(SPK_Y):
+        P(id=f"nut_s{n}{k}", kind="nut", material="steel", process="turned", secondary_ops=["flat"], rotates_with="fixed", color="#aaaaaa", stock="M2 x 3 hex coupling nut",
+          shape=S(hexp(4.0, 3.0, (s * (POD_X0 - 2.5), y, SPK_Z)), cylx(1.0, *sorted((s * (POD_X0 - 4.5), s * (POD_X0 - 0.5))), y, SPK_Z)), label="M2 x 3 long hex nut inside the spike, Loctite 243")
+P(id="top_cover", kind="skirt", material="tpu", process="fdm", print_orientation="+z", rotates_with="fixed", color="#2a2c30",
+  shape=top_cover(), label="printed TPU wedge cover on the sloped deck: tapers forward from 1.9 mm proud at the Ti plate edge to 1.2 mm; the Ti plate sits inset behind its step")
 P(id="top_armour", kind="armor", material="titanium", process="laser", rotates_with="fixed", color="#c9ccd1",
   shape=S(boxr(-TP_X, TP_X, -TP_Y, TP_Y, CH, CH + TP_T), *[cylz(1.1, CH - 1, CH + 2, x, y) for x, y in TOP_POSTS]),
   label=f"{TP_T} mm Ti-6Al-4V top plate 55 x 37, laser-cut, inset between the tub's chamfered top facets, 4 M2", stock=f"{TP_T} mm Ti sheet")
 for s, n in ((1, "l"), (-1, "r")):
     P(id=f"pod_{n}", kind="skirt", material="tpu", process="fdm", print_orientation="+x" if s > 0 else "-x", rotates_with="fixed", color="#c8102e",
       shape=pod(s), label="red TPU side panel (bumper): wedge-nosed outer wall over both wheels, boxed web screwed to the chassis wall by 2 M2")
-P(id="forks", kind="skirt", material="tpu", process="fdm", print_orientation="+z", rotates_with="fixed", color="#c8102e",
-  shape=forks(), label="TPU sprung forks: two tines either side of the blades, tips 0.25 mm off the floor, screwed under the chassis chin")
 for n in "rl":   # quick-change weapon module: both uprights, motor and rotor lift out together once the 4 boss screws are out
     P(id=f"upright_{n}", kind="structure", material="nylon", process="fdm", print_orientation="+x", rotates_with="fixed", solid_fraction=0.9, color="#2a2c30",
       **({"parent": "upright_r"} if n == "l" else {}),
@@ -566,8 +587,6 @@ for i, (x, y) in enumerate(TOP_POSTS):
 for n, xi in (("r", UR0 + 1.5), ("l", UL1 - 1.5)):
     for k, y in enumerate(UB_Y):
         P(id=f"insert_u{n}{k}", kind="insert", parent=f"upright_{n}", catalog="heatset_m2", at=[xi, y, UB_Z], rot=[0, 90, 0])
-for k, s in enumerate((1, -1)):
-    P(id=f"insert_f{k}", kind="insert", catalog="heatset_m2", at=[s * FORK_HX, 37.7, 2.15])
 for s, n in ((1, "l"), (-1, "r")):
     for k, y in enumerate(POD_Y):
         P(id=f"insert_p{n}{k}", kind="insert", catalog="heatset_m2", at=[s * INS_P_X, y, POD_Z], rot=[0, 90, 0])
@@ -583,13 +602,14 @@ for i, (x, y) in enumerate(TOP_POSTS):
 for n, x0, d in (("r", BOSS_R[0], 1), ("l", BOSS_L[1], -1)):
     for k, y in enumerate(UB_Y):
         F(id=f"bolt_u{n}{k}", designation="M2x10", at=[x0, y, UB_Z], dir=[d, 0, 0], through=["tub", f"upright_{n}"], threads_into=f"insert_u{n}{k}")
-for k, s in enumerate((1, -1)):
-    F(id=f"bolt_f{k}", designation="M2x6", at=[s * FORK_HX, 37.7, -2.0], dir=[0, 0, 1], through=["forks", "tub"], threads_into=f"insert_f{k}", head="countersunk")
 for k, dz in enumerate((-8.0, 8.0)):
     F(id=f"bolt_wm{k}", designation="M2x8", at=[UR0, YW, ZW + dz], dir=[1, 0, 0], through=["upright_r"], threads_into="weapon_motor")
 for s, n in ((1, "l"), (-1, "r")):
     for k, y in enumerate(POD_Y):
         F(id=f"bolt_p{n}{k}", designation="M2x8", at=[s * (CX + 2.0), y, POD_Z], dir=[-s, 0, 0], through=[f"pod_{n}", "tub"], threads_into=f"insert_p{n}{k}")
+for s, n in ((1, "l"), (-1, "r")):
+    for k, y in enumerate(SPK_Y):
+        F(id=f"bolt_s{n}{k}", designation="M2x6", at=[s * POD_X1, y, SPK_Z], dir=[-s, 0, 0], through=[f"pod_{n}", f"spike_{n}"], threads_into=f"nut_s{n}{k}")
 
 
 def Wr(i, a, b, awg, kind, sl): return {"id": i, "from": a, "to": b, "awg": awg, "kind": kind, "slack_mm": sl}
@@ -629,8 +649,13 @@ for b in ("blade_o", "blade_c", "blade_i"):
 for i in range(4):
     C(f"wpin{i}", "spider", "pin", "M2.5 screw through the spider flange and the blade stack", mechanical_key=True)
     C(f"wnut{i}", f"wpin{i}", "interlock", "Round nut on the screw thread, Loctite 243")
-C("forks", "tub", "screw", "Fork root under the chassis chin, 2 CSK M2 into inserts")
 C("base_panel", "tub", "screw", "Base panel inside the wall rim, 5 CSK M2 into the post inserts")
+for s, n in ((1, "l"), (-1, "r")):
+    C(f"spike_{n}", f"pod_{n}", "screw", "Spike fork bolted flat inside the pod's front corner, M2 into a long nut")
+    C(f"spike_{n}", f"pod_{n}", "interlock", "Spike top edge tucked under a moulded TPU ledge on the pod's inner face: keys it against turning about the bolt", mechanical_key=True)
+    for k in range(1):
+        C(f"nut_s{n}{k}", f"pod_{n}", "interlock", "Nut seated on the pod's outer face, Loctite 243")
+C("top_cover", "tub", "snap", "TPU wedge clips over the deck: its rear step is trapped by the Ti plate front edge and its side lips grip the chamfered deck edges")
 C("top_armour", "tub", "screw", "Ti plate on the deck, 4 M2 into the post inserts")
 C("battery", "base_panel", "press_fit", "Pack boxed by the base-panel fence and the insert posts, trapped from above by the Malenki and the deck", interference_mm=0.1, mechanical_key=True)
 C("wesc", "base_panel", "press_fit", "ESC between the gearbox rails and the battery fence, deck above", interference_mm=0.1, mechanical_key=True)
