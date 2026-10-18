@@ -147,3 +147,100 @@ def reactions(F, sides):
     s = next(iter(sides))
     a = abs(sides[s][0])
     return F * a, {s: F}, a, 0.0, False
+
+
+# ------------------------------------------------------------------ front lead of a spinner (shared by spinner, shape, archetype)
+# Real vertical spinners run low forks / wedgelets / skirts AHEAD of the disc for the ground game. Such a part may lead the
+# weapon's swept front by up to the archetype's `blade_lead_mm` maximum; chassis, body and other parts may not lead it at all.
+GROUND_GAME_KINDS = ("fork", "wedgelet", "skirt", "wedge")
+GROUND_LOW_TOP_MM = 6.0  # leading edge (or whole part) top at most this far above the floor
+GROUND_THIN_MM = 3.0  # or a plate at most this thick (vertically) that sits on/near the floor
+GROUND_EDGE_DEPTH_MM = 2.0  # the "leading edge" is the part's material within this distance of its front-most point
+DEFAULT_GROUND_LEAD_MM = {"vertical_spinner": 15.0, "drum": 15.0}  # = vertical_spinner_forks blade_lead_mm max
+FALLBACK_GROUND_LEAD_MM = 3.0  # other spinners without an archetype blade_lead (the former wedgelet tolerance)
+
+
+def ground_lead_max(ctx):
+    """Max mm a ground-game part may lead the weapon: the archetype's `blade_lead_mm` upper bound when it has one."""
+    spec = ctx.r.spec
+    name = spec.raw.get("archetype") if isinstance(spec.raw, dict) else None
+    try:
+        from .archetype import ARCHETYPES, params_for
+        if name in ARCHETYPES:
+            over = spec.raw.get("archetype_params") or {}
+            _, P = params_for(name, over if isinstance(over, dict) else None)
+            bl = P.get("blade_lead_mm")
+            if bl and bl[1] is not None:
+                return float(bl[1])
+    except Exception:  # noqa: BLE001 - fall back to the robot-type default
+        pass
+    return DEFAULT_GROUND_LEAD_MM.get(spec.robot_type, FALLBACK_GROUND_LEAD_MM)
+
+
+def is_ground_game(ctx, b, floor):
+    """(bool, why): a low fork/wedgelet/skirt (or a part declaring `ground_game: true`) whose front works at floor level."""
+    p = part(ctx, b)
+    declared = bool(p is not None and getattr(p, "_extra", {}).get("ground_game"))
+    if not (declared or b.kind in GROUND_GAME_KINDS):
+        return False, f"`{b.id}` is a {b.kind} part"
+    if floor is None:
+        return False, "floor unknown"
+    v = b.mesh.vertices
+    if not len(v):
+        return False, "no geometry"
+    lo, hi = float(v[:, 2].min()) - floor, float(v[:, 2].max()) - floor
+    edge = v[v[:, 1] >= float(v[:, 1].max()) - GROUND_EDGE_DEPTH_MM]
+    edge_top = float(edge[:, 2].max()) - floor
+    if hi <= GROUND_LOW_TOP_MM or edge_top <= GROUND_LOW_TOP_MM:
+        return True, f"`{b.id}` front edge top {edge_top:.1f} mm above the floor"
+    if hi - lo <= GROUND_THIN_MM and lo <= GROUND_LOW_TOP_MM:
+        return True, f"`{b.id}` is a {hi - lo:.1f} mm plate on the floor"
+    return False, f"`{b.id}` front edge top is {edge_top:.1f} mm above the floor (ground game needs <= {GROUND_LOW_TOP_MM:.0f})"
+
+
+def swept_front_y(wb, origin, axis):
+    """Front-most Y of the weapon's swept volume (the full rim circle, not the current tooth position)."""
+    v = wb.mesh.vertices
+    R = float(perp_radius(v, origin, axis).max()) if len(v) else 0.0
+    half = float(np.abs((v - origin) @ axis).max()) if len(v) else 0.0
+    a = np.asarray(axis, float)
+    fwd = FRONT - (FRONT @ a) * a
+    return float(origin[1] + R * np.linalg.norm(fwd) + half * abs(float(a[1])))
+
+
+def front_intrusions(ctx, tip, bodies, floor, tol=0.5):
+    """Parts reaching ahead of the weapon front `tip` (Y) by more than they may. Returns (bad, ground) where
+    bad = [(body, lead_mm, allowed_mm, why)] and ground = [(body, lead_mm)] for ground-game parts (any lead, for reporting)."""
+    mx = ground_lead_max(ctx)
+    bad, ground = [], []
+    for b in bodies:
+        if b.fastener or b.is_wire:
+            continue
+        lead = float(b.mesh.vertices[:, 1].max()) - tip
+        gg, why = is_ground_game(ctx, b, floor)
+        if gg:
+            ground.append((b, lead))
+        allowed = mx if gg else tol
+        if lead > allowed:
+            bad.append((b, lead, allowed, why))
+    return bad, ground
+
+
+def blade_stack(ctx, rotor_ids, origin, axis):
+    """Axial thickness (mm) of the weapon blade stack: rotor parts of kind `weapon` (or `role: blade`), excluding the motor,
+    spider, hub and shaft. None when no blade body is found."""
+    w = ctx.world
+    ts = []
+    for pid in rotor_ids:
+        b = w.body(pid)
+        if b is None or b.fastener:
+            continue
+        p = part(ctx, b)
+        role = (getattr(p, "_extra", {}).get("role") or "") if p is not None else ""
+        if role in ("spider", "hub", "spacer") or (b.kind != "weapon" and role != "blade"):
+            continue
+        ts.append((b.mesh.vertices - origin) @ axis)
+    if not ts:
+        return None
+    t = np.concatenate(ts)
+    return float(t.max() - t.min())

@@ -16,6 +16,7 @@ import numpy as np
 
 from .. import catalog, measure, xform
 from ..finding import BLOCKER, WARNING, fail, note, ok
+from . import _physics as ph
 from .power import rim_radius, spin_axis
 
 G = "archetype"
@@ -93,10 +94,13 @@ def r_wedgelets_flank(F, P):
 
 
 def r_blade_lead(F, P):
+    bad = F.get("blade_lead_bad")
+    if bad:
+        return False, f"Non-ground-game parts ahead of the disc's swept front ({', '.join(bad[:4])}); only low forks/wedgelets/skirts may lead it."
     v = F.get("blade_lead_mm")
     if v is None:
-        return None, "needs both a disc and wedge/blade parts"
-    return _rng(v, P["blade_lead_mm"], "mm", "Blade tips lead the disc's swept front by")
+        return None, "needs both a disc and low fork/wedgelet parts"
+    return _rng(v, P["blade_lead_mm"], "mm", "Low forks/wedgelets lead the disc's swept front by")
 
 
 def r_disc_floor_gap(F, P):
@@ -110,7 +114,8 @@ def r_weapon_drive(F, P):
     d = F.get("weapon_drive")
     if d is None:
         return None, "no weapon motor named in `weapon.motor`"
-    good = d in P["weapon_drive"]
+    acc = tuple(P["weapon_drive"])
+    good = d in acc or (d == "motor_is_hub" and "inside_hub" in acc)  # the bell carrying the blades is a hub drive
     return good, f"Weapon drive is `{d}` (accepted: {', '.join(P['weapon_drive'])})."
 
 
@@ -457,6 +462,20 @@ def _teeth(pts, origin, axis):
     return runs
 
 
+def _bell_carries(spec, mid, rotor):
+    """True when a rotor part (blade or spider) is bolted/pinned/pressed straight onto the motor (its bell): motor-as-hub."""
+    if any(getattr(p, "_extra", {}).get("shaft_of") == mid or getattr(p, "_extra", {}).get("drive") == "motor_is_hub"
+           for p in spec.parts if p.id in rotor):
+        return True
+    for c in spec.connections:
+        pair = {c.a, c.b}
+        if mid in pair and (pair - {mid}) & rotor and c.method not in ("shaft", "bearing", "belt"):
+            reason = (getattr(c, "reason", None) or "").lower()
+            if not any(w in reason for w in ("oldham", "flexible coupl", "jaw coupl")):
+                return True
+    return False
+
+
 def _part(r, pid):
     return next((rp for rp in r.parts if rp.part.id == pid), None)
 
@@ -516,7 +535,10 @@ def facts(ctx) -> dict:
         half = float(np.abs((wb.mesh.vertices - origin) @ axis).max())
         rhalf = float(np.abs((pts - origin) @ axis).max())  # whole rotor (disc + hub) half width
         F["disc_dia_mm"] = 2 * R
-        F["disc_thickness_mm"] = 2 * rhalf
+        # Disc thickness = the blade stack (e.g. 3 x 2-3 mm Hardox plates) only: the motor, spider, hub and shaft that ride
+        # with the rotor are not "disc". Falls back to the weapon body alone.
+        bs = ph.blade_stack(ctx, rotor, origin, axis)
+        F["disc_thickness_mm"] = bs if bs is not None else 2 * half
         # spinning joint on the weapon or a rotor part, about the spin axis
         jgood, jwhy = False, f"`{wid}` and its rotor parts ({', '.join(sorted(rotor))}) have no revolute joint; the disc is rigidly part of `{anc[0] if anc else 'the chassis'}`."
         for pid in rotor:
@@ -567,11 +589,13 @@ def facts(ctx) -> dict:
             P = (origin + np.outer(s * d, axis))[:, None, :] + ring[None]
             sides.append(bool(measure.inside_any(sup, P.reshape(-1, 3)).any()))
         F["supports"] = tuple(sides)
-        # wedges / blades
-        wedges = [b for b in w.bodies if b.kind == "wedge" and not b.fastener]
-        fwd = Y - (Y @ axis) * axis
-        nf = np.linalg.norm(fwd)
-        front = float(origin[1] + R * nf) if nf > 1e-6 else float(pts[:, 1].max())
+        # wedges / blades: forks, wedgelets and skirts working at floor level ahead of the disc (ground game). The lead
+        # rule is shared with spinner.reach and shape.weapon_leads (_physics.front_intrusions).
+        front = ph.swept_front_y(wb, origin, axis)
+        floor_g = floor if floor is not None else ph.floor_z(ctx)
+        cand = [b for b in w.bodies if not b.fastener and not b.is_wire and b.id not in rotor
+                and (b.kind in ph.GROUND_GAME_KINDS or ph.is_ground_game(ctx, b, floor_g)[0])]
+        wedges = [b for b in cand if ph.is_ground_game(ctx, b, floor_g)[0]]
         if wedges:
             xl, xr = float(origin[0]) - half, float(origin[0]) + half
             left = any(b.aabb[1][0] <= xl + 0.5 and b.aabb[1][1] > origin[1] for b in wedges)
@@ -580,9 +604,15 @@ def facts(ctx) -> dict:
             F["blade_lead_mm"] = max(float(b.aabb[1][1]) for b in wedges) - front
         else:
             F["wedgelets"] = (False, False)
-        others = [b for b in solid if not b.fastener and b.id not in rotor and b.kind in CHASSIS + ("fork",)]
+        # tall forks/wedges ahead of the disc are not ground game: they fail blade_lead whatever the low parts do
+        F["blade_lead_bad"] = [f"`{b.id}` {float(b.aabb[1][1]) - front:.1f} mm" for b in cand if b not in wedges and float(b.aabb[1][1]) - front > 0.5]
+        others = [b for b in solid if not b.fastener and b.id not in rotor and b.kind in CHASSIS + ("fork",) and b not in wedges]
         if others:
             F["weapon_lead_mm"] = front - max(float(b.aabb[1][1]) for b in others)
+        mx = ph.ground_lead_max(ctx)
+        over = [float(b.aabb[1][1]) - front - mx for b in wedges if float(b.aabb[1][1]) - front > mx]
+        if over:  # a ground-game part past its allowance counts against the weapon lead too
+            F["weapon_lead_mm"] = min(F.get("weapon_lead_mm", np.inf), -max(over))
         if floor is not None:
             az = abs(float(axis[2]))
             low = float(origin[2]) - R * math.sqrt(max(0.0, 1 - az * az)) - half * az
@@ -615,6 +645,8 @@ def facts(ctx) -> dict:
                 F["weapon_drive"] = "belt_tensioned" if t is not None and t.kind != "none" else "belt_untensioned"
             elif abs(ax) <= half + 1.0 and rad < 0.6 * R:
                 F["weapon_drive"] = "inside_hub"
+            elif rad < 1.5 and _bell_carries(spec, mid, rotor):
+                F["weapon_drive"] = "motor_is_hub"
             elif rad < 1.5:
                 F["weapon_drive"] = "direct"
             else:

@@ -788,6 +788,38 @@ def chain(k, a, b):
     return list(reversed(out))
 
 
+HUB_COAX_MM = 0.05  # motor-as-hub: the extra bearing / extended shaft must be this coaxial with the motor shaft
+
+
+def motor_own_shaft(k, sid, m):
+    """(bool, why): `sid` is motor `m`'s own shaft (motor-as-hub, the shaft extended through the bell), not a separate shaft
+    pushed through the stator. Declared by `shaft_of: <motor>` on the shaft or `motor_shaft_extended: true` on the motor,
+    or inferred when the shaft is coaxial with the motor (<0.05 mm) and no fatter than the catalog shaft."""
+    mi = k.motor_info(m)
+    sb = k.body(sid)
+    if mi is None or sb is None:
+        return False, f"`{m}` has no catalog shaft"
+    ra = round_axis(sb)
+    if ra is None:
+        return False, f"`{sid}` is not round"
+    ang, dist = coax(mi["o"], mi["d"], ra[0], ra[1])
+    rad = float(np.max(radial(sb.mesh.vertices, ra[0], ra[1])[1]))
+    sp, mp = k.parts[sid].part, k.parts[m].part
+    declared = getattr(sp, "_extra", {}).get("shaft_of") == m or bool(getattr(mp, "_extra", {}).get("motor_shaft_extended"))
+    fits = rad <= mi["dia"] / 2 + HUB_COAX_MM
+    if declared and ang <= COAX_DEG and dist <= COAX_MM and fits:
+        return True, f"`{sid}` is declared the motor's own shaft"
+    gid = k.group_of(sid)
+    rigid = any(mm == m and k.group_of(o) == gid and not any(w in rs for w in FLEX_WORDS) for mm, o, how, q, e, rs in k.rotor_links)
+    if not rigid:
+        return False, f"`{sid}` is not rigidly coupled to `{m}`'s rotor (a separate shaft)"
+    if ang <= COAX_DEG and dist <= HUB_COAX_MM and fits:
+        return True, f"`{sid}` is coaxial with `{m}` and inside its {mi['dia']:.1f} mm shaft envelope"
+    if not fits:
+        return False, f"`{sid}` is {2 * rad:.1f} mm, fatter than `{m}`'s {mi['dia']:.1f} mm shaft"
+    return False, f"`{sid}` is {dist:.2f} mm / {ang:.2f} deg off `{m}`'s axis"
+
+
 def motors_checks(k):
     k.check("kin.motor_mount", "Motor stators are fixed to the structure", "Every motor's stator is held by a static part.")
     k.check("kin.joint_axis_motor", "Motor shafts are coaxial with what they drive",
@@ -836,6 +868,24 @@ def motors_checks(k):
             own = [x for x in g.bearings]
             stator_static = bool(held)
             flex = any(any(w in rs for w in FLEX_WORDS) for mm2, how, o, q, e, rs in g.rotors if mm2 == m)
+            hub = [x for x in g.members if k.kind(x) in ("shaft", "pin") and motor_own_shaft(k, x, m)[0]]
+            if hub and not flex and stator_static:
+                # Motor-as-hub: the motor's own bearings carry the rotor; ONE extra bearing on the far side is fine when it
+                # is coaxial with the motor shaft (<0.05 mm). More, or an off-axis one, fights the motor bearings.
+                offs = []
+                for bp in own:
+                    ra = round_axis(k.body(bp)) if k.body(bp) is not None else None
+                    a2, d2 = coax(mi["o"], mi["d"], ra[0], ra[1]) if ra is not None else (90.0, 99.0)
+                    if a2 > COAX_DEG or d2 > HUB_COAX_MM:
+                        offs.append(f"`{bp}` {d2:.2f} mm / {a2:.2f} deg")
+                if len(own) >= 2 or offs:
+                    k.bad("kin.double_bearing", BLOCKER, "Extra bearing fights the motor's bearings",
+                          f"{label(g)} runs on `{m}`'s own shaft ({', '.join(hub)}) and bearings, plus {len(own)} extra bearing(s) "
+                          + (f"off the motor axis ({', '.join(offs)}; allowed {HUB_COAX_MM} mm)" if offs else "(only one coaxial extra bearing is allowed)")
+                          + ": two bearing systems that are not one line load each other.",
+                          (m, *own), at=mi["o"], expect=(f"1 bearing <= {HUB_COAX_MM} mm off the motor axis", f"{len(own)} bearing(s)"),
+                          fix="Keep one flanged bearing in the opposite upright, bored on the motor axis, or drive a separate shaft through a flexible coupling.")
+                continue
             if len(own) >= 2 and stator_static and ang < 2 and dist < 1 and not flex:
                 k.bad("kin.double_bearing", BLOCKER, "Two coaxial bearing systems fight each other",
                       f"{label(g)} runs in its own bearings ({', '.join(own)}) and is rigidly coupled to the bell of `{m}`, whose stator is fixed "
@@ -851,6 +901,10 @@ def motors_checks(k):
                 continue
             o = measure.overlap(sb, mb, cap=0.1)
             if o is not None and o.depth > 0.1:
+                own_, why = motor_own_shaft(k, sb.id, m)
+                if own_:
+                    k.info("kin.shaft_through_stator", "Motor's own shaft extended (motor-as-hub)", f"{why}; it runs in the motor's bearings.", (sb.id, m))
+                    continue
                 k.bad("kin.shaft_through_stator", BLOCKER, "Shaft passes through a motor",
                       f"`{sb.id}` intersects `{m}` ({o.depth:.2f} mm deep, {o.volume:.1f} mm3): a separate shaft cannot pass through the stator "
                       "where the motor's own bearing tube sits.", (sb.id, m), at=o.at,

@@ -7,12 +7,14 @@ import numpy as np
 
 from .. import measure
 from ..finding import BLOCKER, WARNING, fail, note, ok
+from . import _physics as ph
 from .power import spin_axis
 
 G = "spinner"
 SPINS = ("spinner", "drum", "disc", "bar")
 SUPPORT = ("structure", "plate", "fork", "armor")
 MIN_HOLD_MM = 3.0
+LEAD_KINDS = ("wedge", "structure", "plate", "armor", "fork")  # must sit behind the weapon unless ground game
 MAX_SWEEP_HEIGHT_VERTICAL_MM = 5.0  # lowest point of a vertical disc/drum's swept rim above the floor
 MAX_SWEEP_HEIGHT_HORIZONTAL_MM = 25.0  # a horizontal blade must still hit at bumper height
 
@@ -80,8 +82,15 @@ def run(ctx):
                             f"`{pid}`: {why}. A hit's side load goes into a hobby motor bearing or a loose shaft.")
                        .on(pid).fix("Run one `shaft` part through the weapon bore and into a hole or bearing seat in structure on both sides (3 mm or more each), forks thick enough to stay stiff (5-6 mm)."))
 
-        # Reach within 30 degrees of straight ahead.
-        others = [b for j, b in enumerate(w.bodies) if j != i and not b.fastener and b.kind in ("wedge", "structure", "plate", "armor", "fork")]
+        # Reach within 30 degrees of straight ahead. Low forks / wedgelets / skirts (ground game) may lead the weapon's
+        # swept front by up to the archetype's blade_lead max (one rule shared with shape.weapon_leads and
+        # archetype.blade_lead, see _physics.front_intrusions); every other part must stay behind the weapon.
+        floor0 = ph.floor_z(ctx)
+        cands = [b for j, b in enumerate(w.bodies) if j != i and not b.fastener and not b.is_wire
+                 and (b.kind in LEAD_KINDS or ph.is_ground_game(ctx, b, floor0)[0])]
+        gg = [b for b in cands if ph.is_ground_game(ctx, b, floor0)[0]]
+        gbad, _ = ph.front_intrusions(ctx, ph.swept_front_y(wb, origin, axis), gg, floor0)
+        others = [b for b in cands if b not in gg]
         ov = np.vstack([b.mesh.vertices for b in others]) if others else np.zeros((0, 3))
         worst, worst_deg = np.inf, 0.0
         for deg in range(-30, 31, 10):
@@ -96,9 +105,15 @@ def run(ctx):
         if worst < 3.0:
             behind = worst < 0.0
             out.append(fail("spinner.reach", G, BLOCKER if behind else WARNING, "Weapon does not lead the front",
-                            f"Looking {worst_deg:.0f} degrees off straight ahead the chassis or wedge is {-worst:.1f} mm ahead of `{pid}`; the opponent meets it first.")
+                            f"Looking {worst_deg:.0f} degrees off straight ahead the chassis or a non-ground-game part is {-worst:.1f} mm ahead of `{pid}`; the opponent meets it first.")
                        .on(pid).expect(">= 3 mm lead across +/-30 degrees", f"{worst:.1f} mm")
                        .fix("Cut the wedge back or move the weapon forward until it leads by 5-10 mm across plus or minus 30 degrees."))
+        for b, lead, allowed, _ in gbad[:1]:
+            out.append(fail("spinner.reach", G, WARNING, "Ground-game part leads the weapon too far",
+                            f"`{b.id}` is a low fork/wedgelet but reaches {lead:.1f} mm ahead of `{pid}`'s swept front (allowed {allowed:.0f} mm); "
+                            "an opponent rides it without ever meeting the weapon.")
+                       .on(b.id, pid).expect(f"<= {allowed:.0f} mm ahead", f"{lead:.1f} mm")
+                       .fix("Shorten the fork/wedgelet so it leads the disc by 5-15 mm."))
         # Reach toward the floor: the swept rim must come down to where opponents are (a disc that rides high misses
         # wedges and low robots entirely).
         floor = min(float(b.aabb[0][2]) for b in w.bodies if not b.fastener and not b.is_wire)
@@ -116,7 +131,7 @@ def run(ctx):
                             f"it passes over wedges and low robots.")
                        .on(pid).expect(f"<= {lim:.0f} mm above the floor", f"{high:.1f} mm")
                        .fix("Lower the weapon axle or enlarge the weapon so its rim comes down to the floor plane."))
-        elif worst >= 3.0:
+        elif worst >= 3.0 and not gbad:
             out.append(ok("spinner.reach", G, "Weapon leads and reaches low",
                           f"`{pid}` leads the body by {worst:.1f} mm across +/-30 degrees and its rim comes within {high:.1f} mm of the floor."))
 

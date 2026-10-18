@@ -15,7 +15,7 @@ STRUCTURAL = {"structure", "armor", "wedge", "plate"}
 PART_KINDS = {
     "structure", "armor", "wedge", "motor", "weapon_motor", "wheel", "battery", "esc", "receiver", "servo", "switch",
     "connector", "weapon", "locking_bar", "insert", "nut", "bearing", "plate", "fork", "tyre", "pulley", "belt",
-    "shaft", "pin", "spring", "other",
+    "shaft", "pin", "spring", "other", "wedgelet", "skirt",
 }
 ROBOT_TYPES = {"wedge", "horizontal_spinner", "vertical_spinner", "drum", "lifter", "flipper", "other"}
 SPINNER_TYPES = {"horizontal_spinner", "vertical_spinner", "drum"}

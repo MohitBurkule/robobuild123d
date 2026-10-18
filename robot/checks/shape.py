@@ -12,7 +12,6 @@ from . import _physics as ph
 G = "shape"
 MAX_H_OVER_W = 0.7  # taller than this against the track width: tips on a shove, big target
 LW_RANGE = (0.45, 2.2)  # length over width outside this turns badly or spins out
-LEAD_TOL_MM = 3.0  # a declared wedgelet or fork may sit this far ahead of the weapon tip
 FLOOR_REACH_MM = 4.0  # a vertical spinner's sweep must come this close to the floor to hit wedges and low robots
 PROTECTIVE = ("armor", "structure", "plate", "wedge", "fork", "weapon", "shaft", "bearing", "locking_bar", "wheel", "tyre", "other")
 INTERNAL = ("battery", "esc", "receiver", "motor", "weapon_motor", "servo", "pcb", "wire")
@@ -75,12 +74,32 @@ def weapon_leads(ctx, S):
         if not ws:
             ctx.not_checked.append("Weapon lead: spinner with no weapon body or spin axis")
             return out
-        tip = max(front(wb) for _, wb, _, _ in ws)
+        # Swept front of the weapon; low forks / wedgelets / skirts may lead it by up to the archetype's blade_lead max
+        # (shared rule, _physics.front_intrusions), everything else must stay behind it.
+        tip = max(ph.swept_front_y(wb, o, a) for _, wb, o, a in ws)
         lead_ids = {wb.id for _, wb, _, _ in ws}
-        allowed = ("wedge", "fork")
-        tol = LEAD_TOL_MM
-        what = "weapon tip"
-    elif spec.robot_type == "wedge":
+        ctx.metrics["front_tip_y_mm"] = tip
+        floor = ph.floor_z(ctx)
+        bad, ground = ph.front_intrusions(ctx, tip, [b for b in S if b.id not in lead_ids], floor)
+        if ground:
+            ctx.metrics["ground_game_lead_mm"] = max(d for _, d in ground)
+        mx = ph.ground_lead_max(ctx)
+        if bad:
+            bad.sort(key=lambda x: -(x[1] - x[2]))
+            b, d, allowed, why = bad[0]
+            p = b.mesh.vertices[np.argmax(b.mesh.vertices[:, 1])]
+            out.append(fail("shape.weapon_leads", G, WARNING, "Something sits ahead of the weapon tip",
+                            f"{', '.join(f'`{x.id}` ({dd:.1f} mm, allowed {al:.1f})' for x, dd, al, _ in bad[:5])} reach further forward "
+                            f"than the weapon's swept front; an opponent meets that first instead of the weapon ({why}).")
+                       .on(*[x.id for x, *_ in bad[:5]]).here(p)
+                       .expect(f"nothing ahead (low forks/wedgelets/skirts up to {mx:.1f} mm)", f"`{b.id}` {d:.1f} mm ahead")
+                       .fix("Pull the part back behind the weapon line, lower it to a floor-level fork/wedgelet, or move the weapon forward."))
+        else:
+            out.append(ok("shape.weapon_leads", G, "The weapon tip leads",
+                          "Nothing but low forks/wedgelets reaches further forward than the weapon's swept front"
+                          + (f" (ground game leads by {max(d for _, d in ground):.1f} mm, allowed {mx:.0f})." if ground else ".")))
+        return out
+    if spec.robot_type == "wedge":
         wedges = [b for b in S if b.kind in ("wedge", "fork")]
         if not wedges:
             out.append(fail("shape.weapon_leads", G, WARNING, "Wedge robot has no wedge",
