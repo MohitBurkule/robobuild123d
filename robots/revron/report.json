@@ -1,12 +1,12 @@
 {
   "name": "Revron",
   "profile": "aws2025",
-  "ok": false,
+  "ok": true,
   "summary": {
-    "blockers": 16,
-    "warnings": 147,
-    "passed": 247,
-    "total": 410
+    "blockers": 0,
+    "warnings": 148,
+    "passed": 248,
+    "total": 396
   },
   "findings": [
     {
@@ -40,24 +40,21 @@
       "fix": "Widen the channel at the corner or route it in a straighter line."
     },
     {
-      "id": "wiring.route",
+      "id": "wiring.bend",
       "group": "wiring",
-      "severity": "blocker",
+      "severity": "warning",
       "pass": false,
-      "title": "No room for this wire",
-      "message": "Wire `w_wesc_m` (24 AWG, 1.6 mm thick) from `wesc.motor` to `weapon_motor.phases` has no clear path; it gets within 24.0 mm of the end at (-12.1, 30.4, 14.1) and `tub` blocks it.",
+      "title": "Wire bends too tightly",
+      "message": "Wire `w_wesc_m` turns 55 degrees with less than 3.2 mm bend radius; it will kink or pull off its solder joint.",
       "expected": null,
       "actual": null,
-      "parts": [
-        "wesc.motor",
-        "weapon_motor.phases"
-      ],
+      "parts": [],
       "at": [
-        -12.099999999999994,
-        30.35334129349122,
-        14.099999999999998
+        -15.099999999999994,
+        51.95334129349121,
+        9.299999999999999
       ],
-      "fix": "Cut a wire channel (at least 2.5 mm wide) through the walls between those parts, or move the parts closer."
+      "fix": "Widen the channel at the corner or route it in a straighter line."
     },
     {
       "id": "mass.may_be_over",
@@ -65,9 +62,9 @@
       "severity": "warning",
       "pass": false,
       "title": "May be over the weight limit",
-      "message": "145.4 g (range 126.0 to 164.8 g) against the 150 g limit; 8.9 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.",
+      "message": "145.5 g (range 126.0 to 164.9 g) against the 150 g limit; 8.9 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.",
       "expected": "<= 150 g",
-      "actual": "145.4 g (up to 164.8)",
+      "actual": "145.5 g (up to 164.9)",
       "parts": [],
       "at": null,
       "fix": "Weigh real parts and set `scale_mass_g`, or remove mass until the upper bound fits."
@@ -78,7 +75,7 @@
       "severity": "info",
       "pass": true,
       "title": "No parts collide",
-      "message": "236 touching or overlapping pairs checked; touching is allowed, overlap deeper than 0.08 mm is not.",
+      "message": "240 touching or overlapping pairs checked; touching is allowed, overlap deeper than 0.08 mm is not.",
       "expected": null,
       "actual": null,
       "parts": [],
@@ -716,7 +713,7 @@
       "severity": "info",
       "pass": true,
       "title": "Wires stay in free space",
-      "message": "6 routed wires sampled every 0.5 mm stay out of every solid away from their ports.",
+      "message": "7 routed wires sampled every 0.5 mm stay out of every solid away from their ports.",
       "expected": null,
       "actual": null,
       "parts": [],
@@ -789,7 +786,7 @@
       "severity": "warning",
       "pass": false,
       "title": "Wheel sticks out of the body",
-      "message": "`wheel_rl` reaches open air from 37% of its side and upward rays above the belly line (allowed 5%); a spinner or a wall hits the tyre first.",
+      "message": "`wheel_rl` reaches open air from 35% of its side and upward rays above the belly line (allowed 5%); a spinner or a wall hits the tyre first.",
       "expected": null,
       "actual": null,
       "parts": [
@@ -808,7 +805,7 @@
       "severity": "warning",
       "pass": false,
       "title": "Wheel sticks out of the body",
-      "message": "`wheel_fr` reaches open air from 26% of its side and upward rays above the belly line (allowed 5%); a spinner or a wall hits the tyre first.",
+      "message": "`wheel_fr` reaches open air from 25% of its side and upward rays above the belly line (allowed 5%); a spinner or a wall hits the tyre first.",
       "expected": null,
       "actual": null,
       "parts": [
@@ -827,7 +824,7 @@
       "severity": "warning",
       "pass": false,
       "title": "Wheel sticks out of the body",
-      "message": "`wheel_rr` reaches open air from 34% of its side and upward rays above the belly line (allowed 5%); a spinner or a wall hits the tyre first.",
+      "message": "`wheel_rr` reaches open air from 32% of its side and upward rays above the belly line (allowed 5%); a spinner or a wall hits the tyre first.",
       "expected": null,
       "actual": null,
       "parts": [
@@ -1136,25 +1133,6 @@
       "severity": "warning",
       "pass": false,
       "title": "Wall too thin to make",
-      "message": "`upright_l` has walls down to 0.80 mm near (9.2, 41.0, 11.2); fdm nylon needs at least 0.9 mm.",
-      "expected": ">= 0.9 mm",
-      "actual": "0.80 mm",
-      "parts": [
-        "upright_l"
-      ],
-      "at": [
-        9.170508377474079,
-        41.00049730879869,
-        11.213871365150169
-      ],
-      "fix": "Thicken that wall to a multiple of the nozzle width (0.8, 1.2, 1.6 mm) or merge it into a thicker feature."
-    },
-    {
-      "id": "mfg.thin_wall",
-      "group": "mfg",
-      "severity": "warning",
-      "pass": false,
-      "title": "Wall too thin to make",
       "message": "`upright_r` has walls down to 0.80 mm near (-20.0, 40.2, 11.2); fdm nylon needs at least 0.9 mm.",
       "expected": ">= 0.9 mm",
       "actual": "0.80 mm",
@@ -1165,6 +1143,25 @@
         -19.96655734083724,
         40.19950269120131,
         11.182573307514014
+      ],
+      "fix": "Thicken that wall to a multiple of the nozzle width (0.8, 1.2, 1.6 mm) or merge it into a thicker feature."
+    },
+    {
+      "id": "mfg.thin_wall",
+      "group": "mfg",
+      "severity": "warning",
+      "pass": false,
+      "title": "Wall too thin to make",
+      "message": "`upright_l` has walls down to 0.80 mm near (9.2, 41.0, 11.2); fdm nylon needs at least 0.9 mm.",
+      "expected": ">= 0.9 mm",
+      "actual": "0.80 mm",
+      "parts": [
+        "upright_l"
+      ],
+      "at": [
+        9.170508377474079,
+        41.00049730879869,
+        11.213871365150169
       ],
       "fix": "Thicken that wall to a multiple of the nozzle width (0.8, 1.2, 1.6 mm) or merge it into a thicker feature."
     },
@@ -1279,16 +1276,16 @@
       "severity": "warning",
       "pass": false,
       "title": "Wire runs outside the armour",
-      "message": "Wire `w_m_r` has a clear line to open air at this point; a hit or the weapon can cut it.",
+      "message": "Wire `w_wesc_m` has a clear line to open air at this point; a hit or the weapon can cut it.",
       "expected": null,
       "actual": null,
       "parts": [
-        "w_m_r"
+        "w_wesc_m"
       ],
       "at": [
-        -8.099999999999998,
-        26.2,
-        8.5
+        -15.099999999999994,
+        51.95334129349121,
+        9.299999999999999
       ],
       "fix": "Route it through the chassis interior or add a wall on the open side."
     },
@@ -1406,7 +1403,7 @@
         "wshaft"
       ],
       "at": [
-        0.3253545186361238,
+        0.3253545186361239,
         53.867837030811074,
         20.77807953059346
       ],
@@ -2232,12 +2229,13 @@
       "severity": "warning",
       "pass": false,
       "title": "Internals exposed from the front",
-      "message": "Only 85% of the front view is covered (need 90%); exposed: `weapon_motor` 13%, `motor_r` 2%, `motor_l` 0%.",
+      "message": "Only 85% of the front view is covered (need 90%); exposed: `weapon_motor` 13%, `wesc` 1%, `battery` 1%, `motor_l` 0%.",
       "expected": ">= 90%",
       "actual": "85%",
       "parts": [
         "weapon_motor",
-        "motor_r",
+        "wesc",
+        "battery",
         "motor_l"
       ],
       "at": null,
@@ -2291,15 +2289,15 @@
       "severity": "warning",
       "pass": false,
       "title": "Cannot drive upside down",
-      "message": "Inverted, `wheel_fl` is 19.3 mm short, `wheel_rl` is 19.3 mm short, `wheel_fr` is 19.3 mm short, `wheel_rr` is 19.3 mm short of the floor; `blade_c`, `blade_i`, `blade_o`, `spider`, `upright_l` stick out above the wheels. Once flipped it is stuck unless it can self-right.",
+      "message": "Inverted, `wheel_fl` is 19.3 mm short, `wheel_rl` is 19.3 mm short, `wheel_fr` is 19.3 mm short, `wheel_rr` is 19.3 mm short of the floor; `blade_c`, `blade_i`, `blade_o`, `pod_l`, `pod_r` stick out above the wheels. Once flipped it is stuck unless it can self-right.",
       "expected": null,
       "actual": null,
       "parts": [
         "blade_c",
         "blade_i",
         "blade_o",
-        "spider",
-        "upright_l"
+        "pod_l",
+        "pod_r"
       ],
       "at": null,
       "fix": "Make the wheels stand proud of the top, or add a self-righting feature."
@@ -2383,9 +2381,9 @@
       "severity": "warning",
       "pass": false,
       "title": "Needs support to print",
-      "message": "`tub`: best print orientation is build-up -z, which still leaves 285 mm\u00b2 of overhang steeper than 45\u00b0 or bridge longer than 15 mm.",
+      "message": "`tub`: best print orientation is build-up -z, which still leaves 278 mm\u00b2 of overhang steeper than 45\u00b0 or bridge longer than 15 mm.",
       "expected": "<= 60 mm\u00b2",
-      "actual": "285 mm\u00b2",
+      "actual": "278 mm\u00b2",
       "parts": [
         "tub"
       ],
@@ -2472,7 +2470,7 @@
       "severity": "info",
       "pass": true,
       "title": "Weapon support layers carry the hit",
-      "message": "`upright_l` is printed along the spin axis.",
+      "message": "`upright_r` is printed along the spin axis.",
       "expected": null,
       "actual": null,
       "parts": [],
@@ -2485,7 +2483,7 @@
       "severity": "info",
       "pass": true,
       "title": "Weapon support layers carry the hit",
-      "message": "`upright_r` is printed along the spin axis.",
+      "message": "`upright_l` is printed along the spin axis.",
       "expected": null,
       "actual": null,
       "parts": [],
@@ -2526,7 +2524,7 @@
       "severity": "info",
       "pass": true,
       "title": "Wheel sits in its pod",
-      "message": "`wheel_fl`: 90% of the wheel (side view) lies inside the pod envelope.",
+      "message": "`wheel_fl`: 95% of the wheel (side view) lies inside the pod envelope.",
       "expected": null,
       "actual": null,
       "parts": [
@@ -2541,7 +2539,7 @@
       "severity": "info",
       "pass": true,
       "title": "Wheel sits in its pod",
-      "message": "`wheel_rl`: 71% of the wheel (side view) lies inside the pod envelope.",
+      "message": "`wheel_rl`: 83% of the wheel (side view) lies inside the pod envelope.",
       "expected": null,
       "actual": null,
       "parts": [
@@ -2556,7 +2554,7 @@
       "severity": "info",
       "pass": true,
       "title": "Wheel sits in its pod",
-      "message": "`wheel_fr`: 90% of the wheel (side view) lies inside the pod envelope.",
+      "message": "`wheel_fr`: 95% of the wheel (side view) lies inside the pod envelope.",
       "expected": null,
       "actual": null,
       "parts": [
@@ -2571,7 +2569,7 @@
       "severity": "info",
       "pass": true,
       "title": "Wheel sits in its pod",
-      "message": "`wheel_rr`: 71% of the wheel (side view) lies inside the pod envelope.",
+      "message": "`wheel_rr`: 83% of the wheel (side view) lies inside the pod envelope.",
       "expected": null,
       "actual": null,
       "parts": [
@@ -2586,7 +2584,7 @@
       "severity": "warning",
       "pass": false,
       "title": "Does not look like the reference photo",
-      "message": "side view: silhouette IoU 0.82 with `../../robots/revron/photos/ref3.png` (front 0.78, middle 0.81, rear 0.87); outlines differ by up to 6 mm. Worst region: front. Height/length 0.37 model vs 0.37 photo. Overlay (model red, photo blue): /tmp/robot_reference/Revron_compare_side.png",
+      "message": "side view: silhouette IoU 0.82 with `../../robots/revron/photos/ref3.png` (front 0.78, middle 0.83, rear 0.87); outlines differ by up to 6 mm. Worst region: front. Height/length 0.37 model vs 0.37 photo. Overlay (model red, photo blue): /tmp/robot_reference/Revron_compare_side.png",
       "expected": null,
       "actual": null,
       "parts": [],
@@ -2599,7 +2597,7 @@
       "severity": "warning",
       "pass": false,
       "title": "Does not look like the reference photo",
-      "message": "iso view: silhouette IoU 0.77 with `../../robots/revron/photos/ref2.jpg` (front 0.62, middle 0.82, rear 0.83); outlines differ by up to 17 mm. Worst region: front. Height/length 0.60 model vs 0.65 photo. Overlay (model red, photo blue): /tmp/robot_reference/Revron_compare_iso.png",
+      "message": "iso view: silhouette IoU 0.77 with `../../robots/revron/photos/ref2.jpg` (front 0.61, middle 0.81, rear 0.84); outlines differ by up to 18 mm. Worst region: front. Height/length 0.61 model vs 0.65 photo. Overlay (model red, photo blue): /tmp/robot_reference/Revron_compare_iso.png",
       "expected": null,
       "actual": null,
       "parts": [],
@@ -2729,7 +2727,7 @@
       "severity": "warning",
       "pass": false,
       "title": "Weapon energy for its size",
-      "message": "Stored energy per robot mass is 23.7 J/kg (wanted 40..600 J/kg).",
+      "message": "Stored energy per robot mass is 23.6 J/kg (wanted 40..600 J/kg).",
       "expected": null,
       "actual": null,
       "parts": [],
@@ -2817,15 +2815,15 @@
     {
       "id": "archetype.invertible",
       "group": "archetype",
-      "severity": "warning",
-      "pass": false,
+      "severity": "info",
+      "pass": true,
       "title": "Drives upside down",
-      "message": "Wheel tops stand -12.7 mm relative to the top of the chassis (need >= 0.5 mm to drive inverted).",
+      "message": "Wheel tops stand +1.8 mm relative to the top of the chassis (need >= 0.5 mm to drive inverted).",
       "expected": null,
       "actual": null,
       "parts": [],
       "at": null,
-      "fix": "Make the wheels stand proud of the top (or declare and prove `can_run_inverted`)."
+      "fix": null
     },
     {
       "id": "archetype.pods_enclose_wheels",
@@ -3051,15 +3049,18 @@
     {
       "id": "arch.support_parent",
       "group": "architecture",
-      "severity": "info",
-      "pass": true,
-      "title": "Support parented sensibly",
-      "message": "`upright_l` parent: `world`.",
+      "severity": "warning",
+      "pass": false,
+      "title": "Weapon support hangs on the other support",
+      "message": "`upright_l` is parented to `upright_r`, the opposite weapon support; moving one drags the other and the tree no longer says both bolt to the chassis.",
       "expected": null,
       "actual": null,
-      "parts": [],
+      "parts": [
+        "upright_l",
+        "upright_r"
+      ],
       "at": null,
-      "fix": null
+      "fix": "Parent `upright_l` to `tub`."
     },
     {
       "id": "arch.support_parent",
@@ -3669,23 +3670,6 @@
       "severity": "warning",
       "pass": false,
       "title": "Holes too close together",
-      "message": "`bolt_ul0` and `bolt_ul1` in `upright_l` are 4.0 mm apart (need \u2265 3d = 6.0).",
-      "expected": ">= 6.0 mm",
-      "actual": "4.0 mm",
-      "parts": [
-        "bolt_ul0",
-        "bolt_ul1",
-        "upright_l"
-      ],
-      "at": null,
-      "fix": null
-    },
-    {
-      "id": "arch.hole_spacing",
-      "group": "architecture",
-      "severity": "warning",
-      "pass": false,
-      "title": "Holes too close together",
       "message": "`bolt_ur0` and `bolt_ur1` in `tub` are 4.0 mm apart (need \u2265 3d = 6.0).",
       "expected": ">= 6.0 mm",
       "actual": "4.0 mm",
@@ -3727,6 +3711,23 @@
         "bolt_ur0",
         "bolt_ur1",
         "upright_r"
+      ],
+      "at": null,
+      "fix": null
+    },
+    {
+      "id": "arch.hole_spacing",
+      "group": "architecture",
+      "severity": "warning",
+      "pass": false,
+      "title": "Holes too close together",
+      "message": "`bolt_ul0` and `bolt_ul1` in `upright_l` are 4.0 mm apart (need \u2265 3d = 6.0).",
+      "expected": ">= 6.0 mm",
+      "actual": "4.0 mm",
+      "parts": [
+        "bolt_ul0",
+        "bolt_ul1",
+        "upright_l"
       ],
       "at": null,
       "fix": null
@@ -3804,7 +3805,7 @@
       "severity": "info",
       "pass": true,
       "title": "Parts held by matching structure",
-      "message": "29 parent/retainer links checked.",
+      "message": "36 parent/retainer links checked.",
       "expected": null,
       "actual": null,
       "parts": [],
@@ -4395,7 +4396,7 @@
       "severity": "info",
       "pass": true,
       "title": "Right side has a low skirt",
-      "message": "Share of the right (-X) side edge within 3 mm of the floor is 100% (needs 60%).",
+      "message": "Share of the right (-X) side edge within 3 mm of the floor is 98% (needs 60%).",
       "expected": null,
       "actual": null,
       "parts": [],
@@ -4421,7 +4422,7 @@
       "severity": "info",
       "pass": true,
       "title": "Front-left corner closed",
-      "message": "Highest edge gap at the FL corner is 3.19 mm (limit 5 mm).",
+      "message": "Highest edge gap at the FL corner is 2.88 mm (limit 5 mm).",
       "expected": null,
       "actual": null,
       "parts": [],
@@ -4525,7 +4526,7 @@
       "severity": "info",
       "pass": true,
       "title": "Sides resist a T-bone",
-      "message": "Median side edge gap (worse side) when T-boned by a wedge is 1.00 mm (limit 2 mm).",
+      "message": "Median side edge gap (worse side) when T-boned by a wedge is 1.09 mm (limit 2 mm).",
       "expected": null,
       "actual": null,
       "parts": [],
@@ -4681,9 +4682,9 @@
       "severity": "warning",
       "pass": false,
       "title": "Centre of mass inside the wheelbase",
-      "message": "Centre of mass inside the wheelbase (share of wheelbase from the nearer end) is 7% (needs 10%).",
+      "message": "Centre of mass inside the wheelbase (share of wheelbase from the nearer end) is 6% (needs 10%).",
       "expected": ">= 10%",
-      "actual": "7%",
+      "actual": "6%",
       "parts": [],
       "at": null,
       "fix": "Keep the centre of mass >= 10% of the wheelbase from either contact line."
@@ -5040,289 +5041,17 @@
       "fix": null
     },
     {
-      "id": "assembly.blocked",
+      "id": "assembly.order",
       "group": "assembly",
-      "severity": "blocker",
-      "pass": false,
-      "title": "Part cannot be assembled",
-      "message": "`upright_l` is trapped: its best way out is along (0, 0, 1), which gets 0.7 mm before it hits `wbearing`.",
+      "severity": "info",
+      "pass": true,
+      "title": "Everything can be assembled",
+      "message": "Every part slides in along a clear straight path. Assembly order: pulley_fr, wheel_fr, whub_fr, motor_r, pulley_fl, wheel_fl, whub_fl, motor_l, insert_ul1, insert_ul0, insert_ur1, insert_ur0, wbearing, wnut3, wpin3, wnut2, wpin2, wnut1, wpin1, wnut0, wpin0, blade_i, blade_o, spider, wshaft, blade_c, weapon_motor, upright_l, upright_r, bolt_ul1, bolt_ul0, bolt_ur1, bolt_ur0, insert_pr1, insert_pr0, insert_pl1, insert_pl0, insert_f1, insert_f0, insert_t3, insert_t2, insert_t1, insert_t0, insert_b4, insert_b3, insert_b2, insert_b1, insert_b0, power_switch, wesc, rxesc, battery, belt_r, pulley_rr, wheel_rr, wbrg_r1, whub_rr, wbrg_r0, axle_r, pulley_fr, wheel_fr, whub_fr, belt_l, pulley_rl, wheel_rl, wbrg_l1, whub_rl, wbrg_l0, axle_l, pulley_fl, wheel_fl, whub_fl, wnut2, wpin2, wnut1, wpin1, wnut0, wpin0, wshaft, forks, pod_r, pod_l, top_armour, base_panel, bolt_pr1, bolt_pr0, bolt_pl1, bolt_pl0, bolt_wm1, bolt_wm0, bolt_f1, bolt_f0, bolt_t3, bolt_t2, bolt_t1, bolt_t0, bolt_b4, bolt_b3, bolt_b2, bolt_b1, bolt_b0.",
       "expected": null,
       "actual": null,
-      "parts": [
-        "upright_l"
-      ],
-      "at": [
-        9.524999999999999,
-        47.05,
-        16.075
-      ],
-      "fix": "Open the pocket on the side it enters from (a U-slot instead of a hole for a shaft, a bore open to the mating face for an insert, an open wall for a wheel), or split the housing so the part can drop in."
-    },
-    {
-      "id": "assembly.blocked",
-      "group": "assembly",
-      "severity": "blocker",
-      "pass": false,
-      "title": "Part cannot be assembled",
-      "message": "`weapon_motor` is trapped: its best way out is along (-1, 0, 0), which gets 18.9 mm before it hits `tub`.",
-      "expected": null,
-      "actual": null,
-      "parts": [
-        "weapon_motor"
-      ],
-      "at": [
-        -18.349999999999998,
-        44.536899999999996,
-        11.486899999999999
-      ],
-      "fix": "Open the pocket on the side it enters from (a U-slot instead of a hole for a shaft, a bore open to the mating face for an insert, an open wall for a wheel), or split the housing so the part can drop in."
-    },
-    {
-      "id": "assembly.blocked",
-      "group": "assembly",
-      "severity": "blocker",
-      "pass": false,
-      "title": "Part cannot be assembled",
-      "message": "`blade_c` is trapped: its best way out is along (1, 0, 0), which gets 2.8 mm before it hits `upright_l`.",
-      "expected": null,
-      "actual": null,
-      "parts": [
-        "blade_c"
-      ],
-      "at": [
-        6.049999999999999,
-        53.8,
-        20.75
-      ],
-      "fix": "Open the pocket on the side it enters from (a U-slot instead of a hole for a shaft, a bore open to the mating face for an insert, an open wall for a wheel), or split the housing so the part can drop in."
-    },
-    {
-      "id": "assembly.blocked",
-      "group": "assembly",
-      "severity": "blocker",
-      "pass": false,
-      "title": "Part cannot be assembled",
-      "message": "`spider` is trapped: its best way out is along (0, 0, 1), which gets 1.4 mm before it hits `wpin3`.",
-      "expected": null,
-      "actual": null,
-      "parts": [
-        "spider"
-      ],
-      "at": [
-        3.249999999999999,
-        53.8,
-        22.15
-      ],
-      "fix": "Open the pocket on the side it enters from (a U-slot instead of a hole for a shaft, a bore open to the mating face for an insert, an open wall for a wheel), or split the housing so the part can drop in."
-    },
-    {
-      "id": "assembly.blocked",
-      "group": "assembly",
-      "severity": "blocker",
-      "pass": false,
-      "title": "Part cannot be assembled",
-      "message": "`blade_o` is trapped: its best way out is along (0, 0, 1), which gets 0.7 mm before it hits `wpin3`.",
-      "expected": null,
-      "actual": null,
-      "parts": [
-        "blade_o"
-      ],
-      "at": [
-        -1.5,
-        53.8,
-        21.45
-      ],
-      "fix": "Open the pocket on the side it enters from (a U-slot instead of a hole for a shaft, a bore open to the mating face for an insert, an open wall for a wheel), or split the housing so the part can drop in."
-    },
-    {
-      "id": "assembly.blocked",
-      "group": "assembly",
-      "severity": "blocker",
-      "pass": false,
-      "title": "Part cannot be assembled",
-      "message": "`blade_i` is trapped: its best way out is along (0, 0, 1), which gets 0.7 mm before it hits `wpin3`.",
-      "expected": null,
-      "actual": null,
-      "parts": [
-        "blade_i"
-      ],
-      "at": [
-        1.5,
-        53.8,
-        21.45
-      ],
-      "fix": "Open the pocket on the side it enters from (a U-slot instead of a hole for a shaft, a bore open to the mating face for an insert, an open wall for a wheel), or split the housing so the part can drop in."
-    },
-    {
-      "id": "assembly.blocked",
-      "group": "assembly",
-      "severity": "blocker",
-      "pass": false,
-      "title": "Part cannot be assembled",
-      "message": "`wpin3` is trapped: its best way out is along (1, 0, 0), which gets 2.8 mm before it hits `upright_l`.",
-      "expected": null,
-      "actual": null,
-      "parts": [
-        "wpin3"
-      ],
-      "at": [
-        3.3500000000000005,
-        44.536899999999996,
-        11.486899999999999
-      ],
-      "fix": "Open the pocket on the side it enters from (a U-slot instead of a hole for a shaft, a bore open to the mating face for an insert, an open wall for a wheel), or split the housing so the part can drop in."
-    },
-    {
-      "id": "assembly.blocked",
-      "group": "assembly",
-      "severity": "blocker",
-      "pass": false,
-      "title": "Part cannot be assembled",
-      "message": "`wnut3` is trapped: its best way out is along (-1, 0, 0), which gets 18.9 mm before it hits `tub`.",
-      "expected": null,
-      "actual": null,
-      "parts": [
-        "wnut3"
-      ],
-      "at": [
-        -21.799999999999997,
-        44.536899999999996,
-        11.4869
-      ],
-      "fix": "Open the pocket on the side it enters from (a U-slot instead of a hole for a shaft, a bore open to the mating face for an insert, an open wall for a wheel), or split the housing so the part can drop in."
-    },
-    {
-      "id": "assembly.blocked",
-      "group": "assembly",
-      "severity": "blocker",
-      "pass": false,
-      "title": "Part cannot be assembled",
-      "message": "`wbearing` is trapped: its best way out is along (-1, 0, 0), which gets 2.8 mm before it hits `spider`.",
-      "expected": null,
-      "actual": null,
-      "parts": [
-        "wbearing"
-      ],
-      "at": [
-        5.750000000000001,
-        53.8,
-        20.75
-      ],
-      "fix": "Open the pocket on the side it enters from (a U-slot instead of a hole for a shaft, a bore open to the mating face for an insert, an open wall for a wheel), or split the housing so the part can drop in."
-    },
-    {
-      "id": "assembly.blocked",
-      "group": "assembly",
-      "severity": "blocker",
-      "pass": false,
-      "title": "Part cannot be assembled",
-      "message": "`motor_l` is trapped: its best way out is along (0, 0, -1), which gets 1.4 mm before it hits `tub`.",
-      "expected": null,
-      "actual": null,
-      "parts": [
-        "motor_l"
-      ],
-      "at": [
-        23.45,
-        26.2,
-        7.1
-      ],
-      "fix": "Open the pocket on the side it enters from (a U-slot instead of a hole for a shaft, a bore open to the mating face for an insert, an open wall for a wheel), or split the housing so the part can drop in."
-    },
-    {
-      "id": "assembly.blocked",
-      "group": "assembly",
-      "severity": "blocker",
-      "pass": false,
-      "title": "Part cannot be assembled",
-      "message": "`motor_r` is trapped: its best way out is along (0, 0, -1), which gets 1.4 mm before it hits `tub`.",
-      "expected": null,
-      "actual": null,
-      "parts": [
-        "motor_r"
-      ],
-      "at": [
-        -23.45,
-        26.2,
-        7.1
-      ],
-      "fix": "Open the pocket on the side it enters from (a U-slot instead of a hole for a shaft, a bore open to the mating face for an insert, an open wall for a wheel), or split the housing so the part can drop in."
-    },
-    {
-      "id": "assembly.blocked",
-      "group": "assembly",
-      "severity": "blocker",
-      "pass": false,
-      "title": "Part cannot be assembled",
-      "message": "`insert_pl0` is trapped: its best way out is along (-1, 0, 0), which gets 50.4 mm before it hits `insert_pr0`.",
-      "expected": null,
-      "actual": null,
-      "parts": [
-        "insert_pl0"
-      ],
-      "at": [
-        -24.0,
-        4.0,
-        8.25
-      ],
-      "fix": "Open the pocket on the side it enters from (a U-slot instead of a hole for a shaft, a bore open to the mating face for an insert, an open wall for a wheel), or split the housing so the part can drop in."
-    },
-    {
-      "id": "assembly.blocked",
-      "group": "assembly",
-      "severity": "blocker",
-      "pass": false,
-      "title": "Part cannot be assembled",
-      "message": "`insert_pl1` is trapped: its best way out is along (-1, 0, 0), which gets 50.4 mm before it hits `insert_pr1`.",
-      "expected": null,
-      "actual": null,
-      "parts": [
-        "insert_pl1"
-      ],
-      "at": [
-        -24.0,
-        10.0,
-        8.25
-      ],
-      "fix": "Open the pocket on the side it enters from (a U-slot instead of a hole for a shaft, a bore open to the mating face for an insert, an open wall for a wheel), or split the housing so the part can drop in."
-    },
-    {
-      "id": "assembly.blocked",
-      "group": "assembly",
-      "severity": "blocker",
-      "pass": false,
-      "title": "Part cannot be assembled",
-      "message": "`insert_pr0` is trapped: its best way out is along (1, 0, 0), which gets 50.4 mm before it hits `insert_pl0`.",
-      "expected": null,
-      "actual": null,
-      "parts": [
-        "insert_pr0"
-      ],
-      "at": [
-        24.0,
-        4.0,
-        8.25
-      ],
-      "fix": "Open the pocket on the side it enters from (a U-slot instead of a hole for a shaft, a bore open to the mating face for an insert, an open wall for a wheel), or split the housing so the part can drop in."
-    },
-    {
-      "id": "assembly.blocked",
-      "group": "assembly",
-      "severity": "blocker",
-      "pass": false,
-      "title": "Part cannot be assembled",
-      "message": "`insert_pr1` is trapped: its best way out is along (1, 0, 0), which gets 50.4 mm before it hits `insert_pl1`.",
-      "expected": null,
-      "actual": null,
-      "parts": [
-        "insert_pr1"
-      ],
-      "at": [
-        24.0,
-        10.0,
-        8.25
-      ],
-      "fix": "Open the pocket on the side it enters from (a U-slot instead of a hole for a shaft, a bore open to the mating face for an insert, an open wall for a wheel), or split the housing so the part can drop in."
+      "parts": [],
+      "at": null,
+      "fix": null
     },
     {
       "id": "joint.no_locator",
@@ -6062,7 +5791,7 @@
       "title": "Claim matches the model",
       "message": "\"weighs 147 g or less\" (mass_total_g <= 147)",
       "expected": "mass_total_g <= 147",
-      "actual": "145.44",
+      "actual": "145.47",
       "parts": [],
       "at": null,
       "fix": null
@@ -6090,23 +5819,23 @@
     "arch_bolt_shear_sf.bolt_b4": 211.06201561165332,
     "arch_bolt_shear_sf.bolt_f0": 704.8069894896456,
     "arch_bolt_shear_sf.bolt_f1": 704.8069894896456,
-    "arch_bolt_shear_sf.bolt_pl0": 327.213944920853,
-    "arch_bolt_shear_sf.bolt_pl1": 327.213944920853,
-    "arch_bolt_shear_sf.bolt_pr0": 332.15784506142785,
-    "arch_bolt_shear_sf.bolt_pr1": 332.15784506142785,
-    "arch_bolt_shear_sf.bolt_t0": 6.9750310216895155,
-    "arch_bolt_shear_sf.bolt_t1": 6.9750310216895155,
-    "arch_bolt_shear_sf.bolt_t2": 6.9750310216895155,
-    "arch_bolt_shear_sf.bolt_t3": 6.9750310216895155,
-    "arch_bolt_shear_sf.bolt_ul0": 6.9750310216895155,
-    "arch_bolt_shear_sf.bolt_ul1": 6.9750310216895155,
-    "arch_bolt_shear_sf.bolt_ur0": 6.9750310216895155,
-    "arch_bolt_shear_sf.bolt_ur1": 6.9750310216895155,
-    "arch_bolt_shear_sf.bolt_wm0": 3.977537827482557,
+    "arch_bolt_shear_sf.bolt_pl0": 335.2158687847222,
+    "arch_bolt_shear_sf.bolt_pl1": 335.2158687847222,
+    "arch_bolt_shear_sf.bolt_pr0": 340.40644673897276,
+    "arch_bolt_shear_sf.bolt_pr1": 340.40644673897276,
+    "arch_bolt_shear_sf.bolt_t0": 6.973253036995393,
+    "arch_bolt_shear_sf.bolt_t1": 6.973253036995393,
+    "arch_bolt_shear_sf.bolt_t2": 6.973253036995393,
+    "arch_bolt_shear_sf.bolt_t3": 6.973253036995393,
+    "arch_bolt_shear_sf.bolt_ul0": 6.973253036995393,
+    "arch_bolt_shear_sf.bolt_ul1": 6.973253036995393,
+    "arch_bolt_shear_sf.bolt_ur0": 6.973253036995393,
+    "arch_bolt_shear_sf.bolt_ur1": 6.973253036995393,
+    "arch_bolt_shear_sf.bolt_wm0": 3.976523924984408,
     "arch_chassis": "tub",
-    "arch_com_margin_mm": 44.67065183188762,
-    "arch_fork_deflection_mm.upright_l": 0.06863204121117074,
-    "arch_fork_deflection_mm.upright_r": 0.02652022991796474,
+    "arch_com_margin_mm": 44.665323331933486,
+    "arch_fork_deflection_mm.upright_l": 0.06864954046412376,
+    "arch_fork_deflection_mm.upright_r": 0.026526991835627636,
     "arch_shaft_span_over_d": 4.5333333333333234,
     "arch_weapon_lateral_offset_mm": -1.8500000000000005,
     "archetype.axle_height_mm": 23.0,
@@ -6115,57 +5844,57 @@
     "archetype.disc_floor_gap_mm": 2.942316783027085,
     "archetype.disc_thickness_mm": 4.000000000000001,
     "archetype.drum_width_frac": 0.21113445378151263,
-    "archetype.energy_j_per_kg": 23.65427103450925,
+    "archetype.energy_j_per_kg": 23.64824139367766,
     "archetype.teeth": 1.0,
     "archetype.top_slope_deg": 9.325773834537602e-14,
     "archetype.tub_height_mm": 17.000000000000007,
     "archetype.weapon_lead_mm": 14.057683216972919,
-    "archetype.weapon_mass_fraction": 0.19592267481362377,
+    "archetype.weapon_mass_fraction": 0.19587273273939257,
     "archetype.wheel_count": 4.0,
     "archetype.wheel_dia_mm": 21.5,
     "archetype.width": 95.19999999999999,
-    "armour_cover_back": 0.8481012658227848,
-    "armour_cover_front": 0.8499095840867993,
-    "armour_cover_left": 0.9624624624624625,
-    "armour_cover_right": 0.990990990990991,
-    "armour_cover_top": 0.9549202858713579,
-    "bearing_load_n.wbearing": 142.67307724511724,
+    "armour_cover_back": 0.8486486486486486,
+    "armour_cover_front": 0.854054054054054,
+    "armour_cover_left": 0.9624060150375939,
+    "armour_cover_right": 0.9909774436090225,
+    "armour_cover_top": 0.9549697968149369,
+    "bearing_load_n.wbearing": 142.70945489357763,
     "belt_centres_mm.belt_l": 52.400000000000006,
     "belt_centres_mm.belt_r": 52.400000000000006,
     "belt_loop_mm.belt_l": 155.057670749094,
     "belt_loop_mm.belt_r": 155.057670749094,
     "belt_stretch.belt_l": 0.042054238905201435,
     "belt_stretch.belt_r": 0.042054238905201435,
-    "bolt_pullout_margin.bolt_b0": 15.854054277518326,
-    "bolt_pullout_margin.bolt_b1": 15.854054277518326,
-    "bolt_pullout_margin.bolt_b2": 15.85405427751833,
-    "bolt_pullout_margin.bolt_b3": 15.85405427751833,
-    "bolt_pullout_margin.bolt_b4": 15.854054277518326,
-    "bolt_pullout_margin.bolt_f0": 6.3416217110073365,
-    "bolt_pullout_margin.bolt_f1": 6.3416217110073365,
-    "bolt_pullout_margin.bolt_pl0": 6.341621711007327,
-    "bolt_pullout_margin.bolt_pl1": 6.3416217110073285,
-    "bolt_pullout_margin.bolt_pr0": 6.341621711007327,
-    "bolt_pullout_margin.bolt_pr1": 6.3416217110073285,
-    "bolt_pullout_margin.bolt_t0": 12.68324342201466,
-    "bolt_pullout_margin.bolt_t1": 12.68324342201466,
-    "bolt_pullout_margin.bolt_t2": 12.683243422014664,
-    "bolt_pullout_margin.bolt_t3": 12.683243422014664,
-    "bolt_pullout_margin.bolt_ul0": 6.341621711007339,
-    "bolt_pullout_margin.bolt_ul1": 6.341621711007339,
-    "bolt_pullout_margin.bolt_ur0": 6.341621711007339,
-    "bolt_pullout_margin.bolt_ur1": 6.341621711007339,
-    "cog_height_mm": 14.79562592468237,
-    "com_x": -1.6270620667555522,
-    "com_y": 22.78080430341463,
-    "com_z": 12.54562592468237,
-    "combat.cover_3.all": 0.8444444444444444,
+    "bolt_pullout_margin.bolt_b0": 15.850012967055685,
+    "bolt_pullout_margin.bolt_b1": 15.850012967055685,
+    "bolt_pullout_margin.bolt_b2": 15.850012967055688,
+    "bolt_pullout_margin.bolt_b3": 15.850012967055688,
+    "bolt_pullout_margin.bolt_b4": 15.850012967055685,
+    "bolt_pullout_margin.bolt_f0": 6.34000518682228,
+    "bolt_pullout_margin.bolt_f1": 6.34000518682228,
+    "bolt_pullout_margin.bolt_pl0": 6.340005186822269,
+    "bolt_pullout_margin.bolt_pl1": 6.340005186822271,
+    "bolt_pullout_margin.bolt_pr0": 6.340005186822269,
+    "bolt_pullout_margin.bolt_pr1": 6.340005186822271,
+    "bolt_pullout_margin.bolt_t0": 12.680010373644548,
+    "bolt_pullout_margin.bolt_t1": 12.680010373644548,
+    "bolt_pullout_margin.bolt_t2": 12.68001037364455,
+    "bolt_pullout_margin.bolt_t3": 12.68001037364455,
+    "bolt_pullout_margin.bolt_ul0": 6.340005186822283,
+    "bolt_pullout_margin.bolt_ul1": 6.340005186822283,
+    "bolt_pullout_margin.bolt_ur0": 6.340005186822283,
+    "bolt_pullout_margin.bolt_ur1": 6.340005186822283,
+    "cog_height_mm": 14.799386021785297,
+    "com_x": -1.6328110838298213,
+    "com_y": 22.796239591969197,
+    "com_z": 12.549386021785297,
+    "combat.cover_3.all": 0.8416666666666667,
     "combat.driven_share": 1.0,
     "combat.family": "vspin",
     "combat.front_open_mm": 10.157670175400057,
     "combat.gap_med.front": 0.25000000000000044,
     "combat.open_arc_deg": 24.0,
-    "design_impact_n": 142.67307724511724,
+    "design_impact_n": 142.70945489357763,
     "driven_weight_share": 1.0,
     "electrical.battery_weapon_gap_mm": 39.39537373566709,
     "electrical.runtime_min": 1.8382978723404257,
@@ -6181,12 +5910,12 @@
     "kin_unbalance_mm.pulley_fr": 4.187754421896766e-15,
     "kin_unbalance_mm.pulley_rl": 3.552713678800501e-15,
     "kin_unbalance_mm.pulley_rr": 3.618910115239549e-15,
-    "kin_weapon_principal_tilt_deg": 0.011727390881069175,
+    "kin_weapon_principal_tilt_deg": 0.0117273908499911,
     "l_over_w": 1.2053220452364368,
-    "mass_hi_g": 164.83338885907455,
+    "mass_hi_g": 164.90019439896128,
     "mass_limit_g": 150.0,
-    "mass_lo_g": 126.03934762434487,
-    "mass_total_g": 145.43636824170972,
+    "mass_lo_g": 126.0467065053764,
+    "mass_total_g": 145.47345045216883,
     "material.deep_frac.base_panel": 0.0,
     "material.deep_frac.pulley_fl": 0.0,
     "material.deep_frac.pulley_fr": 0.0,
@@ -6290,8 +6019,8 @@
     "part_mass_g.insert_ur1": 0.12,
     "part_mass_g.motor_l": 7.5,
     "part_mass_g.motor_r": 7.5,
-    "part_mass_g.pod_l": 3.100183216253681,
-    "part_mass_g.pod_r": 3.054039503357755,
+    "part_mass_g.pod_l": 3.0261788734687087,
+    "part_mass_g.pod_r": 2.980035160572783,
     "part_mass_g.power_switch": 0.5,
     "part_mass_g.pulley_fl": 0.4231976631797738,
     "part_mass_g.pulley_fr": 0.4231976631797738,
@@ -6300,7 +6029,7 @@
     "part_mass_g.rxesc": 2.3,
     "part_mass_g.spider": 2.88949555110248,
     "part_mass_g.top_armour": 4.4738452417979255,
-    "part_mass_g.tub": 12.101331125643528,
+    "part_mass_g.tub": 12.063353148314976,
     "part_mass_g.upright_l": 1.7390572278579635,
     "part_mass_g.upright_r": 2.2585801305837347,
     "part_mass_g.wbearing": 0.9120828871534566,
@@ -6355,7 +6084,7 @@
     "print_overhang_mm2.pulley_fr": 0.0,
     "print_overhang_mm2.pulley_rl": 0.0,
     "print_overhang_mm2.pulley_rr": 0.0,
-    "print_overhang_mm2.tub": 284.8837685145306,
+    "print_overhang_mm2.tub": 278.26616569957645,
     "print_overhang_mm2.upright_l": 0.0,
     "print_overhang_mm2.upright_r": 0.0,
     "print_overhang_mm2.wheel_fl": 0.0,
@@ -6388,58 +6117,58 @@
     "profile_height_mm": 40.6,
     "reference": {
       "side": {
-        "iou": 0.816,
+        "iou": 0.821,
         "regions": {
-          "front": 0.782,
-          "middle": 0.811,
-          "rear": 0.873
+          "front": 0.781,
+          "middle": 0.827,
+          "rear": 0.874
         },
-        "hausdorff_frac": 0.055,
+        "hausdorff_frac": 0.053,
         "aspect_model": 0.373,
         "aspect_ref": 0.366,
-        "hausdorff_mm": 6.3,
+        "hausdorff_mm": 6.1,
         "view": "side",
         "overlay": "/tmp/robot_reference/Revron_compare_side.png"
       },
       "iso": {
-        "iou": 0.77,
+        "iou": 0.767,
         "regions": {
-          "front": 0.623,
-          "middle": 0.819,
-          "rear": 0.828
+          "front": 0.615,
+          "middle": 0.812,
+          "rear": 0.837
         },
-        "hausdorff_frac": 0.125,
-        "aspect_model": 0.6,
+        "hausdorff_frac": 0.126,
+        "aspect_model": 0.615,
         "aspect_ref": 0.65,
-        "hausdorff_mm": 17.4,
+        "hausdorff_mm": 17.6,
         "view": "iso",
         "overlay": "/tmp/robot_reference/Revron_compare_iso.png"
       }
     },
-    "shaft_deflection_mm.wshaft": 0.06500461160506867,
-    "shaft_stress_mpa.wshaft": 458.8521358213332,
+    "shaft_deflection_mm.wshaft": 0.06502118596482129,
+    "shaft_stress_mpa.wshaft": 458.9691302957955,
     "shape_height_mm": 40.75727728364636,
     "shape_length_mm": 114.74665870650878,
     "shape_width_mm": 95.19999999999999,
-    "stance_margin_mm": 3.419195696585369,
-    "tip_angle_back_deg": 74.9527642492818,
-    "tip_angle_deg": 13.012338906941405,
-    "tip_angle_front_deg": 74.94824772935817,
-    "tip_angle_left_deg": 72.16009173884525,
-    "tip_angle_right_deg": 73.2713878296763,
+    "stance_margin_mm": 3.403760408030802,
+    "tip_angle_back_deg": 74.95314222335321,
+    "tip_angle_deg": 12.952402782212598,
+    "tip_angle_front_deg": 74.94056318092905,
+    "tip_angle_left_deg": 72.15375531037172,
+    "tip_angle_right_deg": 73.26921880275667,
     "tip_speed_mph": 90.77580806226035,
-    "upright_stress_mpa.upright_l": 27.131162639265384,
+    "upright_stress_mpa.upright_l": 27.138080327702966,
     "weapon_axle_height_mm.blade_c": 23.0,
     "weapon_balance_grade.blade_c": 0.13344238458397026,
     "weapon_energy_j": 3.4401912726640953,
-    "weapon_energy_per_robot_g": 0.02365427103450925,
+    "weapon_energy_per_robot_g": 0.02364824139367766,
     "weapon_floor_gap_inverted_mm": -0.1572772836463585,
     "weapon_floor_gap_upright_mm": 5.563881823241978,
     "weapon_gyro_torque_nm.blade_c": 0.3580912233036954,
     "weapon_imbalance_mm.blade_c": 6.595656870965403e-05,
     "weapon_imbalance_n.blade_c": 0.0035438639681639426,
-    "weapon_imbalance_x_weight.blade_c": 0.0024839051884157953,
-    "weapon_mass_fraction": 0.09025566862423658,
+    "weapon_imbalance_x_weight.blade_c": 0.002483272023431594,
+    "weapon_mass_fraction": 0.09023266181654314,
     "weapon_mass_g": 13.126456657936195,
     "weapon_reach_lead_mm": 1.5700001240310755,
     "weapon_rpm": 19320.0,
@@ -6450,24 +6179,24 @@
       "blade_c": 1
     },
     "wheel_enclosure": {
-      "wheel_fl": 0.9,
-      "wheel_rl": 0.71,
-      "wheel_fr": 0.9,
-      "wheel_rr": 0.71
+      "wheel_fl": 0.95,
+      "wheel_rl": 0.83,
+      "wheel_fr": 0.95,
+      "wheel_rr": 0.83
     },
-    "wheel_exposed_frac.wheel_fl": 0.2647058823529412,
-    "wheel_exposed_frac.wheel_fr": 0.2552594670406732,
-    "wheel_exposed_frac.wheel_rl": 0.36834733893557425,
-    "wheel_exposed_frac.wheel_rr": 0.3380084151472651,
-    "wire_length_mm": 261.20175774526206,
-    "wire_mass_g": 0.6905474622383246
+    "wheel_exposed_frac.wheel_fl": 0.26227208976157085,
+    "wheel_exposed_frac.wheel_fr": 0.2496493688639551,
+    "wheel_exposed_frac.wheel_rl": 0.3492286115007013,
+    "wheel_exposed_frac.wheel_rr": 0.3225806451612903,
+    "wire_length_mm": 328.22966440319954,
+    "wire_mass_g": 0.9136163355959404
   },
   "mass": [
     {
       "id": "tub",
       "kind": "structure",
-      "grams": 12.101331125643528,
-      "tol_g": 2.4202662251287057,
+      "grams": 12.063353148314976,
+      "tol_g": 2.4126706296629954,
       "source": "computed"
     },
     {
@@ -6487,15 +6216,15 @@
     {
       "id": "pod_l",
       "kind": "skirt",
-      "grams": 3.100183216253681,
-      "tol_g": 0.6200366432507363,
+      "grams": 3.0261788734687087,
+      "tol_g": 0.6052357746937418,
       "source": "computed"
     },
     {
       "id": "pod_r",
       "kind": "skirt",
-      "grams": 3.054039503357755,
-      "tol_g": 0.610807900671551,
+      "grams": 2.980035160572783,
+      "tol_g": 0.5960070321145566,
       "source": "computed"
     },
     {
@@ -6506,17 +6235,17 @@
       "source": "computed"
     },
     {
-      "id": "upright_l",
-      "kind": "structure",
-      "grams": 1.7390572278579635,
-      "tol_g": 0.3478114455715927,
-      "source": "computed"
-    },
-    {
       "id": "upright_r",
       "kind": "structure",
       "grams": 2.2585801305837347,
       "tol_g": 0.451716026116747,
+      "source": "computed"
+    },
+    {
+      "id": "upright_l",
+      "kind": "structure",
+      "grams": 1.7390572278579635,
+      "tol_g": 0.3478114455715927,
       "source": "computed"
     },
     {
@@ -7089,8 +6818,8 @@
     {
       "id": "wires",
       "kind": "wire",
-      "grams": 0.6905474622383246,
-      "tol_g": 0.20716423867149739,
+      "grams": 0.9136163355959404,
+      "tol_g": 0.2740849006787821,
       "source": "wire"
     },
     {
@@ -7163,6 +6892,50 @@
           11.5,
           4.0,
           4.0
+        ]
+      ]
+    },
+    {
+      "id": "w_wesc_m",
+      "awg": 24.0,
+      "kind": "motor",
+      "od_mm": 1.6,
+      "length_mm": 67.0279066579374,
+      "points": [
+        [
+          11.5,
+          10.0,
+          4.0
+        ],
+        [
+          11.300000000000004,
+          11.153341293491223,
+          6.299999999999999
+        ],
+        [
+          10.700000000000003,
+          11.753341293491218,
+          6.9
+        ],
+        [
+          -15.099999999999994,
+          51.35334129349122,
+          9.299999999999999
+        ],
+        [
+          -15.099999999999994,
+          51.95334129349121,
+          9.299999999999999
+        ],
+        [
+          -15.699999999999996,
+          52.55334129349122,
+          9.899999999999999
+        ],
+        [
+          -16.7,
+          53.8,
+          11.75
         ]
       ]
     },
@@ -7436,6 +7209,16 @@
     },
     {
       "order": 12,
+      "id": "bolt_wm0",
+      "dir": [
+        -1.0,
+        -0.0,
+        -0.0
+      ],
+      "travel_mm": 35.9
+    },
+    {
+      "order": 13,
       "id": "bolt_wm1",
       "dir": [
         -1.0,
@@ -7445,7 +7228,7 @@
       "travel_mm": 10.7
     },
     {
-      "order": 13,
+      "order": 14,
       "id": "bolt_pl0",
       "dir": [
         1.0,
@@ -7455,7 +7238,7 @@
       "travel_mm": 26.099999999999998
     },
     {
-      "order": 14,
+      "order": 15,
       "id": "bolt_pl1",
       "dir": [
         1.0,
@@ -7465,7 +7248,7 @@
       "travel_mm": 26.099999999999998
     },
     {
-      "order": 15,
+      "order": 16,
       "id": "bolt_pr0",
       "dir": [
         -1.0,
@@ -7475,7 +7258,7 @@
       "travel_mm": 26.099999999999998
     },
     {
-      "order": 16,
+      "order": 17,
       "id": "bolt_pr1",
       "dir": [
         -1.0,
@@ -7485,7 +7268,7 @@
       "travel_mm": 26.099999999999998
     },
     {
-      "order": 17,
+      "order": 18,
       "id": "base_panel",
       "dir": [
         0.0,
@@ -7495,7 +7278,7 @@
       "travel_mm": 10.0
     },
     {
-      "order": 18,
+      "order": 19,
       "id": "top_armour",
       "dir": [
         0.0,
@@ -7505,7 +7288,7 @@
       "travel_mm": 3.0
     },
     {
-      "order": 19,
+      "order": 20,
       "id": "pod_l",
       "dir": [
         1.0,
@@ -7515,7 +7298,7 @@
       "travel_mm": 17.7
     },
     {
-      "order": 20,
+      "order": 21,
       "id": "pod_r",
       "dir": [
         -1.0,
@@ -7525,7 +7308,7 @@
       "travel_mm": 17.7
     },
     {
-      "order": 21,
+      "order": 22,
       "id": "forks",
       "dir": [
         0.0,
@@ -7535,7 +7318,7 @@
       "travel_mm": 3.0
     },
     {
-      "order": 22,
+      "order": 23,
       "id": "wshaft",
       "dir": [
         1.0,
@@ -7545,7 +7328,7 @@
       "travel_mm": 24.7
     },
     {
-      "order": 23,
+      "order": 24,
       "id": "wpin0",
       "dir": [
         1.0,
@@ -7555,7 +7338,7 @@
       "travel_mm": 10.7
     },
     {
-      "order": 24,
+      "order": 25,
       "id": "wnut0",
       "dir": [
         0.0,
@@ -7565,7 +7348,7 @@
       "travel_mm": 13.5
     },
     {
-      "order": 25,
+      "order": 26,
       "id": "wpin1",
       "dir": [
         1.0,
@@ -7575,7 +7358,7 @@
       "travel_mm": 10.7
     },
     {
-      "order": 26,
+      "order": 27,
       "id": "wnut1",
       "dir": [
         0.0,
@@ -7585,7 +7368,7 @@
       "travel_mm": 13.5
     },
     {
-      "order": 27,
+      "order": 28,
       "id": "wpin2",
       "dir": [
         1.0,
@@ -7595,7 +7378,7 @@
       "travel_mm": 10.7
     },
     {
-      "order": 28,
+      "order": 29,
       "id": "wnut2",
       "dir": [
         0.0,
@@ -7605,7 +7388,7 @@
       "travel_mm": 13.5
     },
     {
-      "order": 29,
+      "order": 30,
       "id": "whub_fl",
       "dir": [
         1.0,
@@ -7615,7 +7398,7 @@
       "travel_mm": 9.3
     },
     {
-      "order": 30,
+      "order": 31,
       "id": "wheel_fl",
       "dir": [
         1.0,
@@ -7625,7 +7408,7 @@
       "travel_mm": 9.3
     },
     {
-      "order": 31,
+      "order": 32,
       "id": "pulley_fl",
       "dir": [
         1.0,
@@ -7635,7 +7418,7 @@
       "travel_mm": 9.3
     },
     {
-      "order": 32,
+      "order": 33,
       "id": "axle_l",
       "dir": [
         1.0,
@@ -7645,7 +7428,7 @@
       "travel_mm": 10.0
     },
     {
-      "order": 33,
+      "order": 34,
       "id": "wbrg_l0",
       "dir": [
         1.0,
@@ -7655,7 +7438,7 @@
       "travel_mm": 10.0
     },
     {
-      "order": 34,
+      "order": 35,
       "id": "whub_rl",
       "dir": [
         1.0,
@@ -7665,7 +7448,7 @@
       "travel_mm": 10.0
     },
     {
-      "order": 35,
+      "order": 36,
       "id": "wbrg_l1",
       "dir": [
         1.0,
@@ -7675,7 +7458,7 @@
       "travel_mm": 10.0
     },
     {
-      "order": 36,
+      "order": 37,
       "id": "wheel_rl",
       "dir": [
         1.0,
@@ -7685,7 +7468,7 @@
       "travel_mm": 10.0
     },
     {
-      "order": 37,
+      "order": 38,
       "id": "pulley_rl",
       "dir": [
         1.0,
@@ -7695,7 +7478,7 @@
       "travel_mm": 10.0
     },
     {
-      "order": 38,
+      "order": 39,
       "id": "belt_l",
       "dir": [
         1.0,
@@ -7705,7 +7488,7 @@
       "travel_mm": 8.6
     },
     {
-      "order": 39,
+      "order": 40,
       "id": "whub_fr",
       "dir": [
         -1.0,
@@ -7715,7 +7498,7 @@
       "travel_mm": 9.3
     },
     {
-      "order": 40,
+      "order": 41,
       "id": "wheel_fr",
       "dir": [
         -1.0,
@@ -7725,7 +7508,7 @@
       "travel_mm": 9.3
     },
     {
-      "order": 41,
+      "order": 42,
       "id": "pulley_fr",
       "dir": [
         -1.0,
@@ -7735,7 +7518,7 @@
       "travel_mm": 9.3
     },
     {
-      "order": 42,
+      "order": 43,
       "id": "axle_r",
       "dir": [
         -1.0,
@@ -7745,7 +7528,7 @@
       "travel_mm": 10.0
     },
     {
-      "order": 43,
+      "order": 44,
       "id": "wbrg_r0",
       "dir": [
         -1.0,
@@ -7755,7 +7538,7 @@
       "travel_mm": 10.0
     },
     {
-      "order": 44,
+      "order": 45,
       "id": "whub_rr",
       "dir": [
         -1.0,
@@ -7765,7 +7548,7 @@
       "travel_mm": 10.0
     },
     {
-      "order": 45,
+      "order": 46,
       "id": "wbrg_r1",
       "dir": [
         -1.0,
@@ -7775,7 +7558,7 @@
       "travel_mm": 10.0
     },
     {
-      "order": 46,
+      "order": 47,
       "id": "wheel_rr",
       "dir": [
         -1.0,
@@ -7785,7 +7568,7 @@
       "travel_mm": 10.0
     },
     {
-      "order": 47,
+      "order": 48,
       "id": "pulley_rr",
       "dir": [
         -1.0,
@@ -7795,7 +7578,7 @@
       "travel_mm": 10.0
     },
     {
-      "order": 48,
+      "order": 49,
       "id": "belt_r",
       "dir": [
         -1.0,
@@ -7805,7 +7588,7 @@
       "travel_mm": 8.6
     },
     {
-      "order": 49,
+      "order": 50,
       "id": "battery",
       "dir": [
         0.0,
@@ -7815,7 +7598,7 @@
       "travel_mm": 14.899999999999999
     },
     {
-      "order": 50,
+      "order": 51,
       "id": "rxesc",
       "dir": [
         0.0,
@@ -7825,7 +7608,7 @@
       "travel_mm": 17.0
     },
     {
-      "order": 51,
+      "order": 52,
       "id": "wesc",
       "dir": [
         0.0,
@@ -7835,7 +7618,7 @@
       "travel_mm": 17.7
     },
     {
-      "order": 52,
+      "order": 53,
       "id": "power_switch",
       "dir": [
         -1.0,
@@ -7845,7 +7628,7 @@
       "travel_mm": 6.5
     },
     {
-      "order": 53,
+      "order": 54,
       "id": "insert_b0",
       "dir": [
         0.0,
@@ -7855,7 +7638,7 @@
       "travel_mm": 7.8999999999999995
     },
     {
-      "order": 54,
+      "order": 55,
       "id": "insert_b1",
       "dir": [
         0.0,
@@ -7865,7 +7648,7 @@
       "travel_mm": 7.8999999999999995
     },
     {
-      "order": 55,
+      "order": 56,
       "id": "insert_b2",
       "dir": [
         0.0,
@@ -7875,7 +7658,7 @@
       "travel_mm": 7.8999999999999995
     },
     {
-      "order": 56,
+      "order": 57,
       "id": "insert_b3",
       "dir": [
         0.0,
@@ -7885,7 +7668,7 @@
       "travel_mm": 7.8999999999999995
     },
     {
-      "order": 57,
+      "order": 58,
       "id": "insert_b4",
       "dir": [
         0.0,
@@ -7895,7 +7678,7 @@
       "travel_mm": 7.8999999999999995
     },
     {
-      "order": 58,
+      "order": 59,
       "id": "insert_t0",
       "dir": [
         0.0,
@@ -7905,7 +7688,7 @@
       "travel_mm": 5.8
     },
     {
-      "order": 59,
+      "order": 60,
       "id": "insert_t1",
       "dir": [
         0.0,
@@ -7915,7 +7698,7 @@
       "travel_mm": 5.8
     },
     {
-      "order": 60,
+      "order": 61,
       "id": "insert_t2",
       "dir": [
         0.0,
@@ -7925,7 +7708,7 @@
       "travel_mm": 5.8
     },
     {
-      "order": 61,
+      "order": 62,
       "id": "insert_t3",
       "dir": [
         0.0,
@@ -7935,47 +7718,7 @@
       "travel_mm": 5.8
     },
     {
-      "order": 62,
-      "id": "insert_ur0",
-      "dir": [
-        -1.0,
-        0.0,
-        0.0
-      ],
-      "travel_mm": 14.2
-    },
-    {
       "order": 63,
-      "id": "insert_ur1",
-      "dir": [
-        -1.0,
-        0.0,
-        0.0
-      ],
-      "travel_mm": 14.2
-    },
-    {
-      "order": 64,
-      "id": "insert_ul0",
-      "dir": [
-        1.0,
-        0.0,
-        0.0
-      ],
-      "travel_mm": 24.0
-    },
-    {
-      "order": 65,
-      "id": "insert_ul1",
-      "dir": [
-        1.0,
-        0.0,
-        0.0
-      ],
-      "travel_mm": 24.0
-    },
-    {
-      "order": 66,
       "id": "insert_f0",
       "dir": [
         0.0,
@@ -7985,7 +7728,7 @@
       "travel_mm": 6.5
     },
     {
-      "order": 67,
+      "order": 64,
       "id": "insert_f1",
       "dir": [
         0.0,
@@ -7995,7 +7738,47 @@
       "travel_mm": 40.099999999999994
     },
     {
+      "order": 65,
+      "id": "insert_pl0",
+      "dir": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "travel_mm": 5.8
+    },
+    {
+      "order": 66,
+      "id": "insert_pl1",
+      "dir": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "travel_mm": 5.8
+    },
+    {
+      "order": 67,
+      "id": "insert_pr0",
+      "dir": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "travel_mm": 5.8
+    },
+    {
       "order": 68,
+      "id": "insert_pr1",
+      "dir": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "travel_mm": 5.8
+    },
+    {
+      "order": 69,
       "id": "bolt_ur0",
       "dir": [
         -1.0,
@@ -8005,7 +7788,7 @@
       "travel_mm": 14.2
     },
     {
-      "order": 69,
+      "order": 70,
       "id": "bolt_ur1",
       "dir": [
         -1.0,
@@ -8015,7 +7798,7 @@
       "travel_mm": 14.2
     },
     {
-      "order": 70,
+      "order": 71,
       "id": "bolt_ul0",
       "dir": [
         1.0,
@@ -8025,7 +7808,7 @@
       "travel_mm": 24.7
     },
     {
-      "order": 71,
+      "order": 72,
       "id": "bolt_ul1",
       "dir": [
         1.0,
@@ -8035,16 +7818,6 @@
       "travel_mm": 24.7
     },
     {
-      "order": 72,
-      "id": "bolt_wm0",
-      "dir": [
-        -1.0,
-        -0.0,
-        -0.0
-      ],
-      "travel_mm": 10.7
-    },
-    {
       "order": 73,
       "id": "upright_r",
       "dir": [
@@ -8052,7 +7825,287 @@
         0.0,
         1.0
       ],
-      "travel_mm": 29.599999999999998
+      "travel_mm": 16.299999999999997
+    },
+    {
+      "order": 74,
+      "id": "upright_l",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 16.299999999999997
+    },
+    {
+      "order": 75,
+      "id": "weapon_motor",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 16.299999999999997
+    },
+    {
+      "order": 76,
+      "id": "blade_c",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 16.299999999999997
+    },
+    {
+      "order": 77,
+      "id": "wshaft",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 16.299999999999997
+    },
+    {
+      "order": 78,
+      "id": "spider",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 16.299999999999997
+    },
+    {
+      "order": 79,
+      "id": "blade_o",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 16.299999999999997
+    },
+    {
+      "order": 80,
+      "id": "blade_i",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 16.299999999999997
+    },
+    {
+      "order": 81,
+      "id": "wpin0",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 16.299999999999997
+    },
+    {
+      "order": 82,
+      "id": "wnut0",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 16.299999999999997
+    },
+    {
+      "order": 83,
+      "id": "wpin1",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 16.299999999999997
+    },
+    {
+      "order": 84,
+      "id": "wnut1",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 16.299999999999997
+    },
+    {
+      "order": 85,
+      "id": "wpin2",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 16.299999999999997
+    },
+    {
+      "order": 86,
+      "id": "wnut2",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 16.299999999999997
+    },
+    {
+      "order": 87,
+      "id": "wpin3",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 16.299999999999997
+    },
+    {
+      "order": 88,
+      "id": "wnut3",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 16.299999999999997
+    },
+    {
+      "order": 89,
+      "id": "wbearing",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 16.299999999999997
+    },
+    {
+      "order": 90,
+      "id": "insert_ur0",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 16.299999999999997
+    },
+    {
+      "order": 91,
+      "id": "insert_ur1",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 16.299999999999997
+    },
+    {
+      "order": 92,
+      "id": "insert_ul0",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 16.299999999999997
+    },
+    {
+      "order": 93,
+      "id": "insert_ul1",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 16.299999999999997
+    },
+    {
+      "order": 94,
+      "id": "motor_l",
+      "dir": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "travel_mm": 17.0
+    },
+    {
+      "order": 95,
+      "id": "whub_fl",
+      "dir": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "travel_mm": 17.0
+    },
+    {
+      "order": 96,
+      "id": "wheel_fl",
+      "dir": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "travel_mm": 17.0
+    },
+    {
+      "order": 97,
+      "id": "pulley_fl",
+      "dir": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "travel_mm": 17.0
+    },
+    {
+      "order": 98,
+      "id": "motor_r",
+      "dir": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "travel_mm": 17.0
+    },
+    {
+      "order": 99,
+      "id": "whub_fr",
+      "dir": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "travel_mm": 17.0
+    },
+    {
+      "order": 100,
+      "id": "wheel_fr",
+      "dir": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "travel_mm": 17.0
+    },
+    {
+      "order": 101,
+      "id": "pulley_fr",
+      "dir": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "travel_mm": 17.0
     }
   ],
   "not_checked": [
@@ -8108,32 +8161,32 @@
   "engine": "build123d",
   "timings_s": {
     "validity": 0.003,
-    "wiring": 8.997,
-    "mass": 0.002,
-    "interference": 53.249,
-    "connections": 0.038,
-    "internal": 3.544,
-    "ground": 28.976,
-    "legal": 1.279,
-    "fasteners": 0.476,
+    "wiring": 5.786,
+    "mass": 0.001,
+    "interference": 54.08,
+    "connections": 0.141,
+    "internal": 3.752,
+    "ground": 28.129,
+    "legal": 1.603,
+    "fasteners": 0.495,
     "power": 0.001,
-    "mfg": 35.664,
-    "spinner": 18.549,
-    "kinematics": 1.301,
+    "mfg": 33.58,
+    "spinner": 17.536,
+    "kinematics": 1.427,
     "tension": 0.001,
     "targets": 0.002,
-    "shape": 1.507,
+    "shape": 1.51,
     "dynamics": 0.028,
-    "strength": 0.931,
-    "printability": 4.33,
-    "process": 3.24,
-    "reference": 0.954,
-    "archetype": 4.735,
-    "architecture": 13.998,
-    "electrical": 0.391,
-    "combat": 0.145,
-    "assembly": 78.712,
-    "joints": 8.775,
-    "material": 2.612
+    "strength": 1.084,
+    "printability": 2.921,
+    "process": 2.75,
+    "reference": 0.642,
+    "archetype": 4.588,
+    "architecture": 15.009,
+    "electrical": 0.378,
+    "combat": 0.178,
+    "assembly": 34.742,
+    "joints": 8.597,
+    "material": 2.247
   }
 }

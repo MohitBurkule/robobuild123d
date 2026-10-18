@@ -93,7 +93,7 @@ HUB_X0 = CX + 1.15                                # inner face of every hub (1.1
 TYRE_X0 = HUB_X0 + PUL_W + 0.25
 HUB_L = PUL_W + 0.25 + TYRE_W                     # hub length
 HUB_X1 = HUB_X0 + HUB_L
-POD_T = 1.6
+POD_T = 1.2
 POD_X0, POD_X1 = HUB_X1 + 1.1, HUB_X1 + 1.1 + POD_T   # TPU side panel outer wall
 MOT_L = 21.1; MOT_SH = 9.0                        # n10 catalog: body 21.1, shaft 9
 MOT_CX = CX - WALL - MOT_L / 2                    # gearbox face against the side wall
@@ -163,6 +163,10 @@ def chassis():
     add.append(boxr(BOSS_R[0], BOSS_L[1], CY1 - 0.1, CHIN_Y1, 0.0, CHIN_Z1))       # chin
     for b0, b1 in (BOSS_R, BOSS_L):
         add.append(boxr(b0, b1, CY1 - 0.1, BY1, 0.0, TAB_Z0))                       # square upright bosses
+    for s_ in (1, -1):   # inner corner fillets behind the top facets
+        tri = [(s_ * (CX - WALL + 0.05), CH - DECK + 0.05), (s_ * (CX - WALL - 1.6), CH - DECK + 0.05), (s_ * (CX - WALL + 0.05), CH - DECK - 1.6)]
+        add.append(place({"type": "prism", "points": r4(tri if s_ < 0 else list(reversed(tri))), "height": CY1 - CY0 - 2}, (0, (CY0 + CY1) / 2, 0), (90, 0, 0)))
+    add.append(yz([(CY0 + WALL - 0.05, CH - DECK + 0.05), (CY0 + WALL - 0.05, CH - DECK - 1.6), (CY0 + WALL + 1.6, CH - DECK + 0.05)], -CX + 1, CX - 1))
     body = U(shell, *add)
     cut = []
     for s in (1, -1):
@@ -188,6 +192,12 @@ def chassis():
         cut.append(cylz(1.6, 0.6, CHIN_Z1 + 0.5, s * FORK_HX, 37.7))   # insert pressed in from the top
     cut.append(boxr(-CX - 0.5, -CX + WALL + 0.5, SW_Y - 6.0, SW_Y + 6.0, SW_Z - 2.1, SW_Z + 2.1))   # switch slot, left wall
     cut.append(boxr(-21.5, 21.5, -14, 14, CH - DECK - 0.5, CH + 0.5))
+    for s_ in (1, -1):   # chamfered top side edges: printed facets either side of the inset Ti plate
+        tri = [(s_ * (CX - CHAMF[0]), CH + 0.01), (s_ * (CX + 0.01), CH + 0.01), (s_ * (CX + 0.01), CH - CHAMF[1])]
+        cut.append(place({"type": "prism", "points": r4(tri if s_ > 0 else list(reversed(tri))), "height": CY1 - CY0 + 2}, (0, (CY0 + CY1) / 2, 0), (90, 0, 0)))
+    cut.append(yz([(CY0 - 0.01, CH + 0.01), (CY0 + CHAMF[0], CH + 0.01), (CY0 - 0.01, CH - CHAMF[1])], -CX - 1, CX + 1))   # rear facet
+    for s_ in (1, -1):   # side-wall lightening windows, hidden behind the pods
+        cut.append(boxr(*sorted((s_ * (CX - WALL - 0.5), s_ * (CX + 0.5))), -12.0, -1.0, 4.5, 13.5))
     cut.append(yz(rrect(-14.0, 14.0, 5.0, 12.0, 2.0), -0.0, 0.0) if False else boxr(-14.0, 14.0, CY0 - 0.5, CY0 + WALL + 0.5, 6.0, 12.0))   # rear-wall window (charge lead / LED view)          # deck window under the Ti plate
     cut.append(boxr(-7.5, -1.0, CY1 - FWALL - 0.5, CY1 + 0.5, 4.5, 9.0))   # weapon phase-wire grommet hole, between the drive gearmotors
     return S(body, *cut)
@@ -300,11 +310,11 @@ def yzr(a):
 
 def spider():
     hub = cylx(4.5, SP_F0, SP_H1 + 1.0, 0, 0)
-    flange = cylx(15.6, SP_F0, SP_H1, 0, 0)
+    # 8-lobe flange: a 15.9 disc with 8 R4 scallops milled between the lobes (bolts and lightening holes on the lobes)
+    flange = S(cylx(15.9, SP_F0, SP_H1, 0, 0), *[cylx(4.0, SP_F0 - 1, SP_H1 + 1, 16.6 * math.sin(math.radians(22.5 + 45 * k)), -16.6 * math.cos(math.radians(22.5 + 45 * k))) for k in range(8)])
     cut = []
     for a in BOLT_A:
         y, z = yzr(a); cut.append(cylx(1.4, SP_F0 - 1, SP_H1 + 1, y, z))
-    y, z = yzr(LOCK_A); cut.append(cylx(LOCK_R, SP_F0 - 1, SP_H1 + 1, y, z))
     for a in LIGHT_A:
         y, z = 9.0 * math.sin(math.radians(a)), -9.0 * math.cos(math.radians(a))
         cut.append(cylx(2.2, SP_F0 - 1, SP_H1 + 1, y, z))
@@ -363,6 +373,33 @@ def chaikin(p, n):
     return p
 
 
+CHAMF = (2.6, 0.9)                                 # tub top-edge chamfer (x, z) under the bent Ti facets
+
+
+def top_armour():
+    """0.4 mm Ti: flat centre panel, side and rear facets bent down over the tub's chamfered top edges."""
+    flat = boxr(-TP_X, TP_X, -TP_Y, TP_Y, CH, CH + TP_T)
+    fac = []
+    for s_ in (1, -1):
+        xa, xb = s_ * TP_X, s_ * CX
+        poly = [(xa, CH), (xb, CH - CHAMF[1]), (xb, CH - CHAMF[1] + TP_T + 0.1), (xa, CH + TP_T)]
+        fac.append(place({"type": "prism", "points": r4(poly if s_ > 0 else list(reversed(poly))), "height": 2 * TP_Y}, (0, 0, 0), (90, 0, 0)))
+    rear = [(-TP_Y, CH), (-TP_Y, CH + TP_T), (CY0, CH - CHAMF[1] + TP_T + 0.1), (CY0, CH - CHAMF[1])]
+    fac.append(yz(rear, -TP_X, TP_X))
+    return S(U(flat, *fac), *[cylz(1.1, CH - 3, CH + 2, x, y) for x, y in TOP_POSTS])
+
+
+def top_cover():
+    fr = [(TP_Y + 0.1, CH), (CY1 - (CH - NOSE_Z), CH), (CY1 + 0.05, NOSE_Z - 0.05), (CY1 + 0.85, NOSE_Z - 0.05), (CY1 - (CH - NOSE_Z) + 0.5, CH + 0.9), (TP_Y + 0.1, CH + 1.3)]
+    front = yz(fr, -CX, CX)
+    rails = []
+    for s_ in (1, -1):
+        xa, xb = s_ * (TP_X + 0.1), s_ * CX
+        tri = [(xa, CH), (xb, CH), (xb, CH + 0.3), (xa, CH + 1.3)]
+        rails.append(place({"type": "prism", "points": r4([(x, z) for x, z in tri]), "height": TP_Y + 0.1 - CY0}, (0, (TP_Y + 0.1 + CY0) / 2, 0), (90, 0, 0)))
+    return U(front, *rails)
+
+
 # ---------------------------------------------------------------- forks (TPU, sprung)
 def forks():
     root = boxr(-12.0, 12.0, BY0, CHIN_Y1, -2.0, 0.6)   # thick root, sunk 0.6 into a chin pocket
@@ -385,8 +422,8 @@ def pod(s):
     x0, x1 = sorted((s * POD_X0, s * POD_X1))
     tip = pv("side_panel_front_wedge_tip_y", 70.2)
     # B-spline (Chaikin) side profile: fenders swell over both wheels, waist dips between them, long ramp to the wedge tip
-    top = [(46.0, 16.0), (38.0, 19.0), (YF + 6.0, 21.0), (YF - 3.0, 21.0), (YF - 12.0, 16.0), (0.0, 14.5), (YR + 12.0, 16.0),
-           (YR + 3.0, 21.0), (YR - 6.0, 21.0), (CY0 - 1.0, 15.0)]
+    top = [(46.0, 16.0), (38.0, 19.0), (YF + 6.0, 22.5), (YF - 3.0, 22.5), (YF - 12.0, 16.0), (0.0, 14.5), (YR + 12.0, 16.0),
+           (YR + 3.0, 22.5), (YR - 6.0, 22.5), (CY0 - 1.0, 15.0)]
     bot = [(CY0 - 1.0, 4.0), (CY0 + 3.0, -1.0), (YF + 14, -1.25)]
     prof = bot + [(tip, -1.75)] + chaikin_open([(tip, -0.5)] + top, 3)
     outer = yz(prof, x0, x1)
@@ -394,7 +431,13 @@ def pod(s):
     inner = boxr(wx0, wx1, POD_WY[0], POD_WY[1], 3.0, 13.5)
     fx0, fx1 = sorted((s * (CX + 2.0), s * POD_X0 + s * 0.1))
     fl = [boxr(fx0, fx1, POD_WY[0], POD_WY[1], 3.0, 5.0), boxr(fx0, fx1, POD_WY[0], POD_WY[1], 11.5, 13.5)]
-    body = U(outer, inner, *fl)
+    tc = [p for p in chaikin_open([(tip, -0.5)] + top, 3) if YR - 1.0 <= p[0] <= 29.0]
+    # one prism 6.5 mm wider than the wall, carved back so only a 1.4 mm lip follows the top edge over the wheels
+    ix0, ix1 = sorted((s * (POD_X0 - 6.5), s * POD_X0))
+    outer = yz(prof, *sorted((s * (POD_X0 - 6.5), s * POD_X1)))
+    under = [(y, z - 2.0) for y, z in tc] + [(tc[-1][0], -10.0), (tc[0][0], -10.0)]
+    carve = [yz(under, ix0 - 0.01 * s, ix1), boxr(ix0 - 0.01, ix1, tc[0][0] - 0.01, 200.0, -10.0, 40.0), boxr(ix0 - 0.01, ix1, -200.0, tc[-1][0] + 0.01, -10.0, 40.0)]
+    body = U(S(outer, *carve), inner, *fl)
     cut = []
     for y in POD_Y:
         cut.append(cylx(1.1, wx0 - 1, wx1 + 1, y, POD_Z))
@@ -447,7 +490,7 @@ P(id="base_panel", kind="structure", material="nylon", process="fdm", print_orie
   shape=base_panel(), label="printed X-ribbed base panel, 5 countersunk M2 into heat-set inserts; gearbox rails and battery fence")
 P(id="top_armour", kind="armor", material="titanium", process="laser", rotates_with="fixed", color="#c9ccd1",
   shape=S(boxr(-TP_X, TP_X, -TP_Y, TP_Y, CH, CH + TP_T), *[cylz(1.1, CH - 1, CH + 2, x, y) for x, y in TOP_POSTS]),
-  label=f"{TP_T} mm Ti-6Al-4V top plate 55 x 37, laser-cut, 4 M2", stock=f"{TP_T} mm Ti sheet")
+  label=f"{TP_T} mm Ti-6Al-4V top plate 55 x 37, laser-cut, inset between the tub's chamfered top facets, 4 M2", stock=f"{TP_T} mm Ti sheet")
 for s, n in ((1, "l"), (-1, "r")):
     P(id=f"pod_{n}", kind="skirt", material="tpu", process="fdm", print_orientation="+x" if s > 0 else "-x", rotates_with="fixed", color="#c8102e",
       shape=pod(s), label="red TPU side panel (bumper): wedge-nosed outer wall over both wheels, boxed web screwed to the chassis wall by 2 M2")
@@ -461,14 +504,14 @@ P(id="weapon_motor", kind="weapon_motor", catalog="bl_1806_2300kv", parent="upri
   ports={"phases": [-6.5, 0, -9.0]}, label="BE1806 2300 kV outrunner = weapon hub: stator bolted to the right upright, its own (lengthened) 3 mm shaft runs on into an F683 in the left upright")
 MF_AT, MF_ROT = [0, 0, -sum(BLC) / 2], [0, -90, 0]   # children of blade_c drawn in the motor frame
 P(id="blade_c", kind="weapon", material="steel", process="laser", organic=True, rotates_with="weapon", shape=tooth_blade(BAL), at=[sum(BLC) / 2, 0, 0], rot=[0, 90, 0],
-  parent="weapon_motor", joint={"kind": "revolute", "axis": [1, 0, 0], "pivot": [sum(BLC) / 2, 0, 0], "min": 0, "max": 360, "default": 0}, color="#8d9199",
+  parent="weapon_motor", joint={"kind": "revolute", "axis": [1, 0, 0], "pivot": [sum(BLC) / 2, 0, 0], "min": 0, "max": 360, "default": 0}, color="#d9dde2",
   weapon={"kind": "disc", "motor": "weapon_motor", "cells": 2, "reduction": 1.0, "spin_axis": [0, 0, 1], "spin_dir": "ccw", "supported_both_ends": True, "teeth": 1},
   label="2 mm Hardox 450 (cold-rolled) tooth plate: one hooked tooth (R 20, ~5 deg rake), 4 spokes, hub bored to the bell boss; ring offset balances the tooth")
 P(id="wshaft", kind="shaft", material="titanium", process="cots", rotates_with="weapon", shaft_of="weapon_motor", stock="3 mm Ti-6Al-4V rod",
   shape=cylx(1.5, SH0, SH1, 0, 0), parent="blade_c", at=MF_AT, rot=MF_ROT, color="#777777",
   label="BE1806 rotor shaft replaced by a 3 mm Ti-6Al-4V shaft, lengthened through the blade stack into the F683 (circlip at the stator)")
 P(id="spider", kind="other", role="spider", material="aluminium", process="milled", secondary_ops=["turned", "drilled"], rotates_with="weapon",
-  shape=spider(), parent="blade_c", at=MF_AT, rot=MF_ROT, color="#b0b4ba",
+  shape=spider(), parent="blade_c", at=MF_AT, rot=MF_ROT, color="#3a3d42",
   label="6061 spider: hub on the bell/shaft (2 M3 grub screws on the flat), 1.5 mm flange with 4 M2.5 holes on a 29.5 mm circle, 4 lightening holes")
 for bid, (a, b) in (("blade_o", BLO), ("blade_i", BLI)):
     P(id=bid, kind="other", role="blade", material="steel", process="laser", rotates_with="weapon", shape=ring_blade(),
