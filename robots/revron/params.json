@@ -98,8 +98,8 @@
  "tyre_width": {
   "value": 9.5,
   "unit": "mm",
-  "source": "SVRN4.0 STEP",
-  "tolerance": "±0.3 (nominal 11 per forum? verify)"
+  "source": "SVRN4.0 STEP; Quick Slicks SC130XF for Scalextric F1 (modern) lists 20.70 OD x 11.50 W (aftermarket)",
+  "tolerance": "±0.3 stock; 11.5 for SC130 silicone"
  },
  "hub_od_direct": {
   "value": 14.0,
@@ -188,8 +188,8 @@
  "rx_esc": {
   "value": "Malenki Nano 32 x 20 x 4.4",
   "unit": "mm",
-  "source": "SVRN4.0 STEP",
-  "tolerance": ""
+  "source": "SVRN4.0 STEP; no vendor datasheet found online",
+  "tolerance": "±0.5"
  },
  "rx_esc_z": {
   "value": 10.6,
@@ -204,10 +204,10 @@
   "tolerance": ""
  },
  "battery_revron": {
-  "value": "2S ~350 mAh",
-  "unit": "-",
-  "source": "forum diary",
-  "tolerance": "size TBD (~50x30x15 photo est.)"
+  "value": "2S 350 mAh: 56 x 28 x 13, 24 g (Spektrum SPMX3502S30); alt 42 x 21 x 15, 22 g (Hacker TopFuel ECO RX)",
+  "unit": "mm",
+  "source": "horizonhobby/axialadventure SPMX3502S30; lindinger.at Hacker 9775267",
+  "tolerance": "±1 per pack; pick pack before design"
  },
  "switch": {
   "value": "BBB antweight switch 20 x 5.8 x 7.2",
@@ -306,39 +306,135 @@
   "tolerance": "±3"
  },
  "weapon_disc_dia": {
-  "value": 53,
+  "value": 40,
   "unit": "mm",
-  "source": "photo est.",
-  "tolerance": "±5"
- },
- "weapon_axle_z": {
-  "value": 30,
-  "unit": "mm",
-  "source": "photo est.",
+  "source": "photo ref3.png, scale 0.162 mm/px from tyre OD 21.5 (133 px) and battery 36 mm (230 px) (tooth tip swing); body ring ≈34",
   "tolerance": "±3"
  },
+ "weapon_axle_z": {
+  "value": 23,
+  "unit": "mm",
+  "source": "photo ref3.png, scale 0.162 mm/px from tyre OD 21.5 (133 px) and battery 36 mm (230 px) (hub centre 140 px above ground)",
+  "tolerance": "±2"
+ },
  "weapon_upright_mount": {
-  "value": "square bosses + 4x M3 quick-change",
-  "unit": "-",
-  "source": "forum diary",
-  "tolerance": "boss size TBD"
+  "value": "square bosses ≈12 x 12, 4x M3 on ≈8 square (est.)",
+  "unit": "mm",
+  "source": "forum diary + revron21_top.jpg (relative to M3 heads)",
+  "tolerance": "±2 estimate"
  },
  "overall_len_target": {
-  "value": 145,
+  "value": 110,
   "unit": "mm",
-  "source": "photo est.",
-  "tolerance": "≤150 box"
+  "source": "photo ref3.png, scale 0.162 mm/px from tyre OD 21.5 (133 px) and battery 36 mm (230 px) (wedge tip to rear tyre, 680 px)",
+  "tolerance": "±6; earlier 145 assumed scale"
  },
  "overall_width": {
   "value": 99.5,
   "unit": "mm",
-  "source": "SVRN4.0 STEP",
-  "tolerance": "Revron est 115-130"
+  "source": "SVRN4.0 STEP; revron21_top.jpg same side panels",
+  "tolerance": "±3"
  },
  "mass_limit": {
   "value": 150,
   "unit": "g",
   "source": "UK antweight",
   "tolerance": "hard"
+ },
+ "weapon_motor_bell_od": {
+  "value": 23.0,
+  "unit": "mm",
+  "source": "DYS BE1806 seller specs (oscarliang.com/dys-be1806-motor-mini-quadcopter, flyingtech.co.uk, vxb.com)",
+  "tolerance": "±0.3"
+ },
+ "weapon_motor_height": {
+  "value": 21.5,
+  "unit": "mm",
+  "source": "DYS BE1806 seller specs (oscarliang.com/dys-be1806-motor-mini-quadcopter, flyingtech.co.uk, vxb.com)",
+  "tolerance": "±0.5 body incl. base; VXB lists 18.5 without base, verify"
+ },
+ "weapon_motor_mount_pattern": {
+  "value": "4x M2 staggered, 2 holes on 12 mm + 2 on 16 mm (crossed)",
+  "unit": "mm",
+  "source": "DYS BE1806 seller specs (oscarliang.com/dys-be1806-motor-mini-quadcopter, flyingtech.co.uk, vxb.com)",
+  "tolerance": "±0.1"
+ },
+ "weapon_motor_shaft": {
+  "value": "3.0 inner shaft, 2.0 stub; prop adapter M5",
+  "unit": "mm",
+  "source": "DYS BE1806 seller specs (oscarliang.com/dys-be1806-motor-mini-quadcopter, flyingtech.co.uk, vxb.com); vxb.com",
+  "tolerance": "±0.05"
+ },
+ "weapon_motor_mass": {
+  "value": 18,
+  "unit": "g",
+  "source": "DYS BE1806 seller specs (oscarliang.com/dys-be1806-motor-mini-quadcopter, flyingtech.co.uk, vxb.com)",
+  "tolerance": "±1"
+ },
+ "weapon_bearing": {
+  "value": "F683ZZ flanged 3x7x3, flange 8.1 x 0.8",
+  "unit": "mm",
+  "source": "minibearings.com.au F683A-ZZ; Albeco F683HZZ datasheet (matches 3 mm shaft)",
+  "tolerance": "ISO 492 normal class"
+ },
+ "belt_oring_cs": {
+  "value": 1.5,
+  "unit": "mm",
+  "source": "estimate: SVRN Belted hub OD 16 with a groove; common nitrile O-ring CS 1.5 (BS/ISO 3601 metric)",
+  "tolerance": "±0.5, not measured"
+ },
+ "pulley_groove": {
+  "value": "radius 0.8, depth 0.5 (≈0.3-0.5 x CS)",
+  "unit": "mm",
+  "source": "Firgelli round-belt groove guide (depth ≈0.3 CS); parallax forum (50% retention)",
+  "tolerance": "±0.2, design rule"
+ },
+ "drive_motor_section": {
+  "value": "10 x 12, gearbox D-shaft 3 dia x 9-10 L, body L 24-26 (+ shaft)",
+  "unit": "mm",
+  "source": "Pololu micro metal gearmotor 3037/3048 specs; E-S Motor 10:1 HP",
+  "tolerance": "±0.2"
+ },
+ "drive_motor_keyhole": {
+  "value": "round 4.2 (gearbox boss) + 3.2 slot, est.",
+  "unit": "mm",
+  "source": "chassis17_cad.jpg render (relative to 10 mm motor width)",
+  "tolerance": "±0.5 estimate"
+ },
+ "hardox_stock": {
+  "value": "cold-rolled sheet 0.8-2.1; hot-rolled sheet 2.0-8.0",
+  "unit": "mm",
+  "source": "SSAB Hardox 450 product program and wear-sheet datasheet",
+  "tolerance": "hardness not guaranteed below 2.5"
+ },
+ "weapon_blade_t": {
+  "value": 2.0,
+  "unit": "mm",
+  "source": "single_tooth_parts.jpg edge vs 3 mm holes; mass check 31 g -> 2.0-2.5; Hardox sheet stock",
+  "tolerance": "±0.5"
+ },
+ "weapon_blade_layers": {
+  "value": 3,
+  "unit": "-",
+  "source": "single_tooth_parts.jpg / weapon_assembly.jpg",
+  "tolerance": "exact"
+ },
+ "weapon_blade_profile": {
+  "value": "ring OD ≈34, ID ≈25, one hooked tooth to R≈20 (tip dia ≈40), 4 M3 holes + triangular lightening hole at tooth root",
+  "unit": "mm",
+  "source": "single_tooth_parts.jpg, weapon_assembly.jpg, scaled to 23 mm bell; photo ref3.png, scale 0.162 mm/px from tyre OD 21.5 (133 px) and battery 36 mm (230 px)",
+  "tolerance": "±2"
+ },
+ "weapon_spider": {
+  "value": "alu, ≈26 OD with 4 radial lugs at 90° each taking an M3 grub screw, centre bore ≈5, 4 holes on BE1806 12/16 pattern, 4 kidney cut-outs",
+  "unit": "mm",
+  "source": "weapon_assembly.jpg scaled to 23 mm bell",
+  "tolerance": "±1.5"
+ },
+ "weapon_upright": {
+  "value": "printed plate ≈7 thick, bore ≈7.3 round boss, 6.5 square window, 2 bolts low",
+  "unit": "mm",
+  "source": "photo ref3.png, scale 0.162 mm/px from tyre OD 21.5 (133 px) and battery 36 mm (230 px); template label 7 mm",
+  "tolerance": "±1"
  }
 }

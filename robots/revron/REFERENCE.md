@@ -12,7 +12,7 @@ Our model is parametric and written from scratch. SVRN and the forum diary give 
   - `tpu_forks_top_armour.jpg`: TPU forks, top armour and fin
   - `chassis17_cad.jpg`: 1.7 chassis tub
   - `old_vs_new.jpg`
-  - `ride_height.jpg`
+  - `chassis_underside_roller_forks.jpg` (was `ride_height.jpg`)
   - `quickchange_weapon_cutaway.png`: same image as ref3
   - `svrn_printables_1-3`
   - `ref1-3`, `forum_*`
@@ -51,7 +51,7 @@ Also available as `params.json` (same keys).
 | top_panel_z | 17.0 | mm | SVRN4.0 STEP | sits on chassis top |
 | ground_clearance | 1.75 | mm | SVRN4.0 STEP | ±0.5 (base underside -0.5 vs tyre bottom -2.25) |
 | tyre_od | 21.5 | mm | SVRN4.0 STEP (Scalextric F1 front) | ±0.3 |
-| tyre_width | 9.5 | mm | SVRN4.0 STEP | ±0.3 (nominal 11 per forum? verify) |
+| tyre_width | 9.5 | mm | SVRN4.0 STEP; Quick Slicks SC130XF for Scalextric F1 (modern) lists 20.70 OD x 11.50 W (aftermarket) | ±0.3 stock; 11.5 for SC130 silicone |
 | hub_od_direct | 14.0 | mm | SVRN4.0 STEP SV06 | ±0.2 |
 | hub_width_direct | 10.4 | mm | SVRN4.0 STEP | ±0.2 |
 | hub_od_belted | 16.0 | mm | SVRN Belted STEP mw2/mod_wheel | ±0.2 |
@@ -66,10 +66,10 @@ Also available as `params.json` (same keys).
 | drive_motor_y_front | 21.2..31.2 | mm | SVRN4.0 STEP | front pair; rear pair -31.2..-21.2 (direct 4WD) |
 | drive_layout_belted | 2 motors at front axle; rear wheels on stub axles (M3 spacer 10 mm + ISO7380 M3x6) belted from front | - | SVRN Belted STEP | O-ring belts |
 | stub_axle_plates | backing 3x10x12.8, front 1.9x11.4 dia | mm | SVRN Belted STEP | ±0.2 |
-| rx_esc | Malenki Nano 32 x 20 x 4.4 | mm | SVRN4.0 STEP |  |
+| rx_esc | Malenki Nano 32 x 20 x 4.4 | mm | SVRN4.0 STEP; no vendor datasheet found online | ±0.5 |
 | rx_esc_z | 10.6 | mm | SVRN4.0 STEP | under top deck |
 | battery_svrn | 120-180 mAh 2S, 36 x 18 x 11 | mm | SVRN4.0 STEP |  |
-| battery_revron | 2S ~350 mAh | - | forum diary | size TBD (~50x30x15 photo est.) |
+| battery_revron | 2S 350 mAh: 56 x 28 x 13, 24 g (Spektrum SPMX3502S30); alt 42 x 21 x 15, 22 g (Hacker TopFuel ECO RX) | mm | horizonhobby/axialadventure SPMX3502S30; lindinger.at Hacker 9775267 | ±1 per pack; pick pack before design |
 | switch | BBB antweight switch 20 x 5.8 x 7.2 | mm | SVRN Belted STEP | in side wall at X≈+22, Y -10..10 |
 | insert | M2 heat-set, OD 3.5 x 4 L | mm | SVRN4.0 STEP | hole 3.2 |
 | insert_xy | (±25,-16),(±25,+16),(0,-29),(0,+29) | mm | SVRN4.0 STEP | centres; ±0.2 |
@@ -86,20 +86,37 @@ Also available as `params.json` (same keys).
 | weapon_motor | BE1806 outrunner | - | forum diary |  |
 | weapon_blades | single long tooth + 2 outer Hardox blades, bolted to bell via alu spider | - | forum diary/photo |  |
 | weapon_blade_stack_mass | 31 | g | photo est. (scale photo) | ±3 |
-| weapon_disc_dia | 53 | mm | photo est. | ±5 |
-| weapon_axle_z | 30 | mm | photo est. | ±3 |
-| weapon_upright_mount | square bosses + 4x M3 quick-change | - | forum diary | boss size TBD |
-| overall_len_target | 145 | mm | photo est. | ≤150 box |
-| overall_width | 99.5 | mm | SVRN4.0 STEP | Revron est 115-130 |
+| weapon_disc_dia | 40 | mm | photo ref3.png, scale 0.162 mm/px from tyre OD 21.5 (133 px) and battery 36 mm (230 px) (tooth tip swing); body ring ≈34 | ±3 |
+| weapon_axle_z | 23 | mm | photo ref3.png, scale 0.162 mm/px from tyre OD 21.5 (133 px) and battery 36 mm (230 px) (hub centre 140 px above ground) | ±2 |
+| weapon_upright_mount | square bosses ≈12 x 12, 4x M3 on ≈8 square (est.) | mm | forum diary + revron21_top.jpg (relative to M3 heads) | ±2 estimate |
+| overall_len_target | 110 | mm | photo ref3.png, scale 0.162 mm/px from tyre OD 21.5 (133 px) and battery 36 mm (230 px) (wedge tip to rear tyre, 680 px) | ±6; earlier 145 assumed scale |
+| overall_width | 99.5 | mm | SVRN4.0 STEP; revron21_top.jpg same side panels | ±3 |
 | mass_limit | 150 | g | UK antweight | hard |
+| weapon_motor_bell_od | 23.0 | mm | DYS BE1806 seller specs (oscarliang.com/dys-be1806-motor-mini-quadcopter, flyingtech.co.uk, vxb.com) | ±0.3 |
+| weapon_motor_height | 21.5 | mm | DYS BE1806 seller specs (oscarliang.com/dys-be1806-motor-mini-quadcopter, flyingtech.co.uk, vxb.com) | ±0.5 body incl. base; VXB lists 18.5 without base, verify |
+| weapon_motor_mount_pattern | 4x M2 staggered, 2 holes on 12 mm + 2 on 16 mm (crossed) | mm | DYS BE1806 seller specs (oscarliang.com/dys-be1806-motor-mini-quadcopter, flyingtech.co.uk, vxb.com) | ±0.1 |
+| weapon_motor_shaft | 3.0 inner shaft, 2.0 stub; prop adapter M5 | mm | DYS BE1806 seller specs (oscarliang.com/dys-be1806-motor-mini-quadcopter, flyingtech.co.uk, vxb.com); vxb.com | ±0.05 |
+| weapon_motor_mass | 18 | g | DYS BE1806 seller specs (oscarliang.com/dys-be1806-motor-mini-quadcopter, flyingtech.co.uk, vxb.com) | ±1 |
+| weapon_bearing | F683ZZ flanged 3x7x3, flange 8.1 x 0.8 | mm | minibearings.com.au F683A-ZZ; Albeco F683HZZ datasheet (matches 3 mm shaft) | ISO 492 normal class |
+| belt_oring_cs | 1.5 | mm | estimate: SVRN Belted hub OD 16 with a groove; common nitrile O-ring CS 1.5 (BS/ISO 3601 metric) | ±0.5, not measured |
+| pulley_groove | radius 0.8, depth 0.5 (≈0.3-0.5 x CS) | mm | Firgelli round-belt groove guide (depth ≈0.3 CS); parallax forum (50% retention) | ±0.2, design rule |
+| drive_motor_section | 10 x 12, gearbox D-shaft 3 dia x 9-10 L, body L 24-26 (+ shaft) | mm | Pololu micro metal gearmotor 3037/3048 specs; E-S Motor 10:1 HP | ±0.2 |
+| drive_motor_keyhole | round 4.2 (gearbox boss) + 3.2 slot, est. | mm | chassis17_cad.jpg render (relative to 10 mm motor width) | ±0.5 estimate |
+| hardox_stock | cold-rolled sheet 0.8-2.1; hot-rolled sheet 2.0-8.0 | mm | SSAB Hardox 450 product program and wear-sheet datasheet | hardness not guaranteed below 2.5 |
+| weapon_blade_t | 2.0 | mm | single_tooth_parts.jpg edge vs 3 mm holes; mass check 31 g -> 2.0-2.5; Hardox sheet stock | ±0.5 |
+| weapon_blade_layers | 3 | - | single_tooth_parts.jpg / weapon_assembly.jpg | exact |
+| weapon_blade_profile | ring OD ≈34, ID ≈25, one hooked tooth to R≈20 (tip dia ≈40), 4 M3 holes + triangular lightening hole at tooth root | mm | single_tooth_parts.jpg, weapon_assembly.jpg, scaled to 23 mm bell; photo ref3.png, scale 0.162 mm/px from tyre OD 21.5 (133 px) and battery 36 mm (230 px) | ±2 |
+| weapon_spider | alu, ≈26 OD with 4 radial lugs at 90° each taking an M3 grub screw, centre bore ≈5, 4 holes on BE1806 12/16 pattern, 4 kidney cut-outs | mm | weapon_assembly.jpg scaled to 23 mm bell | ±1.5 |
+| weapon_upright | printed plate ≈7 thick, bore ≈7.3 round boss, 6.5 square window, 2 bolts low | mm | photo ref3.png, scale 0.162 mm/px from tyre OD 21.5 (133 px) and battery 36 mm (230 px); template label 7 mm | ±1 |
 
 ## Still unknown or to measure
-- BE1806 bell dimensions and mounting PCD (take from the datasheet: ≈23 mm bell, M2 holes on a 12/16 PCD, 5 mm shaft).
-- Spider and blade profile, blade thickness and layer count. Bearing size (flanged, e.g. MF85/F695?).
-- Square boss size, M3 spacing on the quick-change uprights, upright thickness and height.
-- Revron chassis length/width if it differs from SVRN (Revron is longer because of the weapon). Keyhole slot dimensions. Battery bay size for 350 mAh.
-- O-ring belt cross-section and pulley groove diameters (only the 16 mm hub OD is known).
-- TPU top cover thickness and Ti plate size (SVRN top plate: 55×37×0.9).
+Filled 2026-10-18 from datasheets and photos (see table). Still estimates, to confirm on hardware: keyhole slot size, O-ring cross-section, upright square boss and M3 spacing, blade thickness (2.0 vs 2.5), Malenki Nano size (no vendor datasheet found), which 350 mAh pack is fitted.
+
+## Photo notes (re-checked)
+- `chassis_underside_roller_forks.jpg` (was `ride_height.jpg`): underside of a printed chassis with roller-wheel fork arms on red standoffs; it does not show ride height.
+- `chassis17_cad.jpg`: CAD render of the tub with X-ribbed floor, inserts and keyhole slots; name is correct.
+- `forum_83241.jpg` (orange-fork 1306 disc robot) and `forum_83369/83370.jpg` (red servo lifter) are other robots from the forum thread, not Revron. `forum_83244.jpg` is a CAD close-up of a TPU side panel/fork.
+- ref3 scale is 0.162 mm/px (tyre 21.5 = 133 px, battery 36 = 230 px), not 0.21; so ref3 robot length is ≈110 mm.
 
 ## Appendix: v1 photo analysis (kept)
 
