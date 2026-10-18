@@ -26,7 +26,7 @@ GROUPS = [
     ("wiring", True), ("mass", False), ("interference", False), ("connections", False), ("ground", False),
     ("legal", False), ("fasteners", False), ("power", False), ("mfg", False), ("spinner", False), ("tension", False), ("targets", False),
     ("shape", False), ("dynamics", False), ("strength", False), ("printability", False), ("process", False),
-    ("assembly", True),
+    ("reference", False), ("assembly", True),
 ]
 
 

@@ -123,3 +123,16 @@ Every non-catalog part declares `process`; the `process` group checks the exact 
 - `molded` / `cast`: accepted, geometry listed under NOT CHECKED.
 Missing `process` is `process.undeclared` (blocker). `export` writes `dxf/<part>.dxf` for every cut part; a part that
 cannot be flattened (including bent parts, unfold not yet implemented) is an `mfg.export` blocker.
+
+## Reference photos (does it look like the real robot?)
+
+Optional `reference: [{image, view, mask, scale_hint?, dir?, approximate?}]`. `view` is `side` (looking along +x, front on
+the LEFT), `front`, `top` (front left), `iso` (front-left from above) or `iso_back`; `dir` overrides the camera direction.
+`mask` is a binary PNG traced from the photo (white = robot, holes filled), path relative to the spec; e.g.
+`robots/revron/reference/side_mask.png` from `photos/ref3.png`. The model's orthographic silhouette and the mask are cropped to
+their bounding boxes, scaled to the same length and aligned at ground line + front tip, then compared: IoU overall and per
+third (front/middle/rear) plus outline Hausdorff (mm). `reference.silhouette`: IoU < 0.80 blocker, 0.80-0.88 warning
+(`approximate: true`, for perspective renders, caps at warning). The message names the worst third; the overlay PNG
+(model red, photo blue) goes to `$ROBOT_REFERENCE_OUT` (default `<tmp>/robot_reference/`, path in metrics `reference`) and
+`export` writes `renders/compare_<view>.png`, linked from README. A missing/unreadable mask is `reference.unusable` + NOT CHECKED.
+Typical catches: fork/disc on the wrong end (front third fails), boxy pods (rear/middle), wrong height/length ratio.

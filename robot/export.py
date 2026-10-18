@@ -91,7 +91,7 @@ def report_markdown(spec, rep) -> str:
     return "\n".join(s) + "\n"
 
 
-def readme(slug: str, spec, rep, step_ok: bool) -> str:
+def readme(slug: str, spec, rep, step_ok: bool, compares=()) -> str:
     status = "passes" if rep.ok else "has blockers"
     m = rep.metrics
     s = [f"# {spec.name}\n\n![{spec.name}](renders/iso.png)\n",
@@ -101,6 +101,9 @@ def readme(slug: str, spec, rep, step_ok: bool) -> str:
         s.append(f"Mass {m['mass_total_g']:.1f} g (range {m['mass_lo_g']:.1f} to {m['mass_hi_g']:.1f} g).\n")
     s.append("| Top | Exploded | Section |\n|---|---|---|\n"
              "| ![top](renders/top.png) | ![exploded](renders/exploded.png) | ![section](renders/section_z.png) |\n")
+    if compares:
+        s.append("## Reference photo overlays (model red, photo blue)\n\n"
+                 + "\n".join(f"![compare {v}](renders/compare_{v}.png)" for v in compares) + "\n")
     s.append("## Files\n\n- `spec.json`: the full editable design. Load it back with the robot tools to change and re-verify.\n"
              "- `report.json`, `REPORT.md`: verifier output (REPORT.md ends with what was NOT CHECKED).\n"
              "- `stl/`: one STL per part (mm, start pose, so they assemble when imported together; wires included).\n"
@@ -169,10 +172,22 @@ def write_all(slug: str, spec, out_dir, opts=None, step=True, width=1100):
     for v in VIEWS:
         view = render.named(v, width)
         put(f"renders/{v}.png", render.render_png(world, view, None, []))
+    from .checks import reference as ref_check
+
+    compares = []
+    for e in ref_check.entries(spec):
+        try:
+            _, png = ref_check.evaluate(world, spec, e)
+        except Exception as ex:  # noqa: BLE001 - the check already reports unusable references
+            rep.not_checked.append(f"Reference overlay ({e.get('view') or 'side'}): {type(ex).__name__}: {ex}")
+            continue
+        v = e.get("view") or "side"
+        put(f"renders/compare_{v}.png", png)
+        compares.append(v)
     put("spec.json", json.dumps(spec.to_dict(), indent=2))
     put("report.json", json.dumps(rep.to_dict(), indent=2))
     put("REPORT.md", report_markdown(spec, rep))
-    put("README.md", readme(slug, spec, rep, step_ok))
+    put("README.md", readme(slug, spec, rep, step_ok, compares))
     return rep, files
 
 
