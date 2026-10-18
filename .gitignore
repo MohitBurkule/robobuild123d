@@ -61,3 +61,9 @@ prof/
 
 # MacOS cruft
 .DS_Store
+
+# robot exports are deliverables
+!robots/**/*.png
+!robots/**/*.jpg
+!robots/**/*.stl
+!robots/**/*.step

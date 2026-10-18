@@ -1,0 +1,195 @@
+# Antweight robot builder guide
+
+You design a 150 g UK antweight combat robot as a JSON file (`spec.json`). The verifier (`robot verify`) measures the solid model
+and fails anything unbuildable. Work in a loop: edit the spec, run `python3 -m robot verify spec.json`, read each failure (it names the parts,
+a position and a fix), repeat until there are no blockers. Then `robot render` and `robot export`.
+Every solid is an exact build123d (OpenCascade) B-rep; the checks run on its tessellation and the export writes real STEP.
+`robot` below means `python3 -m robot`.
+
+Start from a working design: `robot template wedge_2wd > spec.json` (run `robot templates` to list). Change it, do not guess the
+format from scratch. Units are mm and degrees. X is lateral (left +x), Y is forward, Z is up. Wheel centres are at z = 0 and the floor
+is the lowest wheel point.
+
+## Commands
+- `robot guide` this text.  `robot catalog` bought parts with sizes and ports.  `robot materials` materials and densities.
+- `robot template <name>` prints a spec.  `robot verify spec.json [--full]` checks it (default shows failures only).
+- `--fast` coarse tessellation for quick iteration (verdicts near limits may move); `--quick` skips the slow sweeps (wiring, assembly);
+  `--json report.json` also writes the report.
+- `robot render spec.json <view> out.png [--markers]` views: iso, iso_back, top, bottom, front, back, side, exploded, section_z,
+  section_x. `--markers` draws numbered red rings on every failure that has a position (the numbers are printed).
+- `robot export spec.json <slug> <dir>` writes `<dir>/<slug>/`: spec.json, report.json, REPORT.md (with NOT CHECKED), README.md
+  (iso render on top), renders/, stl/ per part, step/ per part plus step/assembly.step (exact B-rep, start pose).
+
+## Spec layout (all keys optional except parts)
+`name, profile ("aws2025"), robot_type (wedge|horizontal_spinner|vertical_spinner|drum|lifter|flipper), locomotion (roller),
+parts[], fasteners[], wires[], connections[], allow_overlap[], electronics{failsafe, weapon_remote_disable, radio, cells}, claims[]`.
+
+### parts[]
+`{id, kind, catalog?, shape?, material?, process?, at:[x,y,z], rot:[rx,ry,rz], retained?, fused_with?, ...}`
+- `kind`: structure, armor, wedge, motor, weapon_motor, wheel, battery, esc, receiver, servo, switch, weapon, locking_bar, insert, nut,
+  bearing, plate, fork, tyre, pulley, belt, shaft, pin, spring, other. The first `structure` part is the chassis root.
+- Bought parts use `catalog` (id from `robot catalog`): size, mass and ports come from there, give only `at` and `rot`.
+- Made parts need `shape`, `material` (`robot materials`) and `process` (fdm, resin, cnc, laser, waterjet, cast, bought).
+  Printed parts get mass = volume x density x `solid_fraction` (default 0.85 for printed parts, 1.0 otherwise; shells with 20-45% infill need it set explicitly; per-part mass shows as `part_mass_g.<id>` in metrics).
+  Give `slicer_mass_g` or `scale_mass_g` when you have a real number; they narrow the mass uncertainty.
+- `retained`: how a part with no screw stays put (`tape`, `adhesive`, `press_fit`, `velcro`). Otherwise it must be captive in a pocket.
+- `fused_with`: printed as one piece with that part (same material, both printed). A wedge in PETG on a nylon shell is NOT fused.
+- Spinners: `weapon: {kind, motor, cells, reduction, spin_axis (3-element local axis array such as [0,0,1], not a letter), locking_bar}` on the weapon part; the weapon motor,
+  the weapon and a `locking_bar` part must exist. Tip speed is limited to 600 mph.
+- Moving parts: `parent` plus `joint: {kind (revolute|prismatic), axis, pivot (parent frame), min, max, default}`; the verifier sweeps it.
+
+### shape (build123d solids)
+JSON with `"type"`; everything is centred on its own origin, use `place` to move it inside a shape:
+- `box {size:[x,y,z]}`, `cylinder {radius,height}` (axis z), `sphere {radius}`.
+- `prism {points:[[x,y]..],height}`: straight-edged outline extruded along z (centred). Must not self-intersect.
+- `spline_prism {points:[[x,y]..],height}`: the points are threaded by a closed smooth B-spline, then extruded. Use it for
+  rounded shells and organic outlines (8 to 30 points is plenty).
+- `loft {sections:[{points:[[x,y]..], z, spline (default true)}], ruled (default false)}`: skin through 2+ planar outlines at
+  increasing z. Give every section the same number of points in the same winding. Good for tapered wedges and domes.
+- `revolve {profile:[[r,z]..], angle (default 360)}`: profile in the r-z half plane (r >= 0) turned about z (wheels, hubs, discs).
+- `tube {points:[[x,y,z]..],radius}`: swept round bar through the points.
+- `union {items}`, `intersect {items}`, `subtract {base, cut:[..]}`, `place {shape, at, rot}`, `offset {shape, d}` (d in +-50 mm).
+- `fillet {shape, radius}`, `chamfer {shape, length}`: round or bevel every edge of the child (keep radius below half the thinnest
+  wall or the kernel fails, which becomes a `geometry failed` blocker).
+- `mirror {shape, axis:"x"|"y"|"z"}`: reflect across the plane normal to that axis.
+- `model {file, params}` (or `"model": "file.py", "params": {...}` on the part): a Python file next to the spec defining
+  `build(**params)` that returns a build123d solid (or a BuildPart). Use it when JSON gets awkward; it is cached by file content.
+Build pockets by subtracting boxes from the housing. A part at `at` is that shape moved to that position.
+
+### fasteners[]
+`{id, designation "M2x16", at (underside of the head), dir (direction the shank points), through [part ids with clearance holes],
+threads_into (insert, nut or structure part id), tool "hex1.5", removable, head "socket"}`. Heat-set inserts are parts of kind `insert`
+(catalog `heatset_m2`) in a bore that is OPEN to a face so they can be pushed in. The verifier slides every part out along a straight
+path; closed cavities, shafts through solid walls and screws under overhangs fail.
+
+### wires[]
+`{id, from:"part.port", to:"part.port", awg, kind (power|motor|signal), slack_mm}`. Ports come from the catalog or from `ports`
+on the part. Wires are routed as tubes of real thickness through free space inside the chassis: you must cut channels (about 2.5 mm
+wide, 3+ mm tall) between pockets.
+
+### connections[]
+Every part must be attached to the chassis. Screws, a shared print (`fused_with`), a pocket that captures it on all sides, a joint or
+a `connections` entry `{a, b, method, reason}` counts. Methods: screw, shaft, pin, press_fit (add `interference_mm` 0.05 to 0.4),
+glue, tape, snap, interlock, velcro, none (loose on purpose). The reason must be real engineering (30+ characters, say what load it carries).
+Glue and tape are rejected on wedges, weapons, armour, forks and on HDPE, PP, nylon (unless `mechanical_key`). Bolt impact parts.
+
+### claims[]
+`{id, text, metric, op, value}` e.g. `{"id":"c_mass","text":"150 g or less","metric":"mass_total_g","op":"<=","value":150}`.
+Metrics include mass_total_g, mass_hi_g, footprint_mm. An unknown metric is a blocker.
+
+## Rules checked (AWS 2025)
+150 g (roller), fits a 150 mm square at any height, tool-free marked power switch, failsafe, weapon remote disable, locking bar on spinners,
+sharp edges covered, tip speed <= 600 mph, no entanglement/flame/etc. Mass is reported as a range: the heaviest realistic value must not
+exceed the limit by a lot, and the lightest must be under it.
+
+## Common mistakes the verifier catches
+Wedge not attached; glue on nylon/HDPE; parts floating next to each other; motor shaft through a closed wall; inserts in closed cavities;
+screw heads under overhangs; wires with no channel; wheel not touching the floor; wedge tip too high or low; centre of mass outside the
+wheels; parts too thin to print (min wall about 0.9 mm FDM); brittle material for weapons; no locking bar; switch can be knocked by the
+robot's own motion or when inverted.
+
+## Tips
+- Keep a 0.2 to 0.5 mm gap around pockets (printing tolerance) but snug enough to capture parts.
+- Moving parts need at least 1 mm of running clearance. Wheels need walls cut away to slide on from outside.
+- Fix blockers first, then warnings. Re-run verify after every change; it takes a few seconds.
+
+## Rules the tool enforces that are easy to miss
+- Wires only route through `structure` parts. A port outside that volume gives "got within N mm" errors; make the holding part `structure`.
+- Catalog part ports and axes: `robot catalog <id>` lists port names; the weapon motor's `phases` port is on its local +z face and its shaft runs along local z.
+- Spinners: the disc must sit on a `shaft` part running through structure on BOTH sides (`spinner.bearing`); declaring `supported_both_ends` is checked, not trusted.
+- `robot verify` prints `check set revision N`; compare it with `CHECKS_REVISION` in robot/checks/__init__.py.
+- A check group that is missing or crashes is never a silent pass: it shows as `checks.missing` (warning) or `checks.crashed` (blocker) and in NOT CHECKED.
+- Geometry is cached under `~/.cache/robot` (override with `ROBOT_CACHE`); delete it if a model file's imports changed.
+- The report ends with NOT CHECKED: those items were not judged, a pass says nothing about them.
+
+## Process (how each made part is manufactured)
+Every non-catalog part declares `process`; the `process` group checks the exact B-rep against it.
+- `laser` / `waterjet` / `sheet_cut` / `wire_edm`: one 2D profile extruded to one thickness (two parallel faces, every
+  other face perpendicular). Thickness must be a stock gauge for the material (`catalog.SHEET_STOCK_MM`), holes
+  dia >= t (steel, spring steel, Hardox, Ti) or 0.5 t, internal corner radius >= kerf (laser 0.1, waterjet 0.5 mm; a
+  sharp internal corner fails), web between cut features >= t. Pockets, chamfers and countersinks need
+  `secondary_ops: ["pocket"|"chamfer"|"countersink"]`. Spinner teeth are part of the outline, never a block on top.
+- `sheet_bent`: planar + cylindrical faces only, bends as cylindrical folds with inside radius >= k t (k = 1, spring
+  steel 2, Ti 2.5, Hardox 3), flange >= 3 t + r, holes >= 2 t from a bend. Sharp folds fail.
+- `turned` / `lathe`: surfaces of revolution about one axis; flats, keyways, cross holes and off-axis drillings need
+  `secondary_ops: ["flat"|"keyway"|"cross_hole"|"drilled"]`.
+- `milled` / `cnc`: internal corner radius >= 1 mm, no sharp internal corner a tool cannot reach along a face normal,
+  every face reachable along +-X/Y/Z (no undercuts).
+- `fdm` / `resin`: geometry is judged by `mfg` and `printability`; `print_orientation` (+x/-x/+y/-y/+z/-z, the
+  part-frame axis pointing up off the bed) is required. Printed parts carrying the weapon axle must be printed with the
+  spin axis as build direction (`mfg.layer_load`). A printed spinner weapon without metal teeth is a blocker.
+- `bought` / `cots` with free geometry: must match a stock rod diameter, a bearing named in `label`/`stock`
+  (684, MR84, ...) or an O-ring belt; otherwise use a catalog part (`mfg.stock`).
+- `molded` / `cast`: accepted, geometry listed under NOT CHECKED.
+Missing `process` is `process.undeclared` (blocker). `export` writes `dxf/<part>.dxf` for every cut part; a part that
+cannot be flattened (including bent parts, unfold not yet implemented) is an `mfg.export` blocker.
+
+## Reference photos (does it look like the real robot?)
+
+Optional `reference: [{image, view, mask, scale_hint?, dir?, approximate?}]`. `view` is `side` (looking along +x, front on
+the LEFT), `front`, `top` (front left), `iso` (front-left from above) or `iso_back`; `dir` overrides the camera direction.
+`mask` is a binary PNG traced from the photo (white = robot, holes filled), path relative to the spec; e.g.
+`robots/revron/reference/side_mask.png` from `photos/ref3.png`. The model's orthographic silhouette and the mask are cropped to
+their bounding boxes, scaled to the same length and aligned at ground line + front tip, then compared: IoU overall and per
+third (front/middle/rear) plus outline Hausdorff (mm). `reference.silhouette`: IoU < 0.80 blocker, 0.80-0.88 warning
+(`approximate: true`, for perspective renders, caps at warning). The message names the worst third; the overlay PNG
+(model red, photo blue) goes to `$ROBOT_REFERENCE_OUT` (default `<tmp>/robot_reference/`, path in metrics `reference`) and
+`export` writes `renders/compare_<view>.png`, linked from README. A missing/unreadable mask is `reference.unusable` + NOT CHECKED.
+Typical catches: fork/disc on the wrong end (front third fails), boxy pods (rear/middle), wrong height/length ratio.
+
+## Engineering defaults (screwed joints; checked by `joints.*`)
+Decide each joint like a mechanical engineer before placing screws. Off-default choices need `"reason"` on the fastener.
+- **Screw direction = how the two parts meet.** Find the face where part A sits on part B; screws run along that face's
+  normal, head on the part being attached, insert/nut in the base. Example: a side pod meeting the tub on its side wall is
+  bolted sideways through that wall, not down through small tabs. >30 deg off the mating face normal is a blocker
+  (`joint.axis_vs_interface`) unless `reason` (e.g. "shear pin"). Screws parallel to the contact faces clamp nothing
+  (`joint.parallel_interface`); the screw must pass through the faces it clamps (`joint.through_contact`).
+- **Top screws need a reason.** Drive screws along the direction the part slides on during assembly (`joint.assembly_dir`)
+  and keep the driver line clear without removing other parts (`joint.service_access`); a removable cover is fine.
+- **Locate, then clamp.** Add a lip, step, spigot or dowel so parts register; screws are not locators (`joint.no_locator`).
+- **Pattern:** >= 2 screws per joint unless keyed (`joint.single_fastener`), spread >= 3d (`joint.bolt_spread`),
+  centred on the interface (`joint.bolt_symmetry`).
+- **Stack:** clearance hole >= d+0.2 in every head-side part (`joint.clearance_hole`); counterbore >= head dia+0.4 and
+  head height deep (`joint.counterbore`); edge/boss: insert boss OD >= 2x insert OD (`joint.insert_boss`), insert length
+  >= 1.5d (`joint.insert_length`); tapped plastic >= 2d engagement (`joint.plastic_engagement`) and >= 3d boss
+  (`joint.thin_wall`).
+- **Printed parts:** removable joints use heat-set inserts, not self-tapping (`joint.selftap_removable`); never self-tap
+  along the print Z axis (`joint.layer_tension`); spread head load on plastic with a washer / flange head (`"washer": true`,
+  `joint.head_bearing`).
+- **Nuts** sit in hex traps (captive) or are replaced by inserts (`joint.loose_nut`).
+- **Outside surfaces:** no proud heads on armour or exterior (`joint.head_proud`), never on the ground plane
+  (`joint.head_ground`): counterbore flush or countersink.
+- **Kit:** <= 3 thread sizes (`joint.screw_sizes`), <= 5 distinct screws (`joint.screw_variety`), stock ISO lengths
+  (`joint.standard_length`).
+
+## Material placement (checked by `material.*`)
+- **Shape material to loads in all axes; no chunky bosses.** A screw into a part (even sideways into the tub) needs only
+  its boss: insert boss OD 2x insert OD, tapped plastic 3d, clearance hole d/2 + one wall. The ring 2 walls outside it
+  must not be solid for more than 3 walls (6 mm) along the screw, nor > 35% thicker than 2 walls (`material.boss_excess`).
+- Printed parts are shells at the design wall (2 mm, `"design_wall_mm"` to override): <= 10% of volume deeper than 2 walls
+  (`material.solid_core`), p99 wall away from fasteners <= 3 walls (`material.thick_wall`), <= 0.3 g of thick material
+  more than 10 mm from every fastener/insert/contact face (`material.load_free`). Grams saveable per part and in total
+  are reported (`material.saving`, metric `material.saveable_g`).
+- Intentional mass is exempt: kind armor/weapon/wedge/wedgelet/skirt, elastomers, or `"solid_reason": "..."`.
+
+## Combat design rules (ground game; checked by `combat.R*`)
+Whoever gets under the other wins. Full rules with rationale, thresholds and applicability: `robot/rules/combat_rules.md`
+(112 rules, 83 measured as `combat.Rnnn`, the rest listed under NOT CHECKED). Family from `archetype`, else `robot_type`.
+- **Skirt every edge.** Something within 1-1.5 mm of the floor across >= 80% of the front (R001-R002), within 3 mm on
+  >= 60% of each side (R003-R004) and >= 50% of the rear (R005); corners <= 5 mm (R006-R009); no open arc > 45 deg
+  (R011), no 8 mm gap in the front edge for forks (R015). A wheel at the outline counts as open.
+- **Lip:** 0.2-1.0 mm off the floor (R020-R021; hinged skirts rest <= 0.5 mm with >= 10 deg travel, R035-R036), ramp
+  10-35 deg with a <= 25 deg entry (R022-R023), <= 1.2 mm thick 1 mm back and no vertical nose (R024-R026), metal or
+  laminate (R027), the front-most part (R029), lowest at the tip (R030), level (R031), bends <= 1 mm under 50 N
+  (R032-R034), clear of the wheels (R037), >= 2 screws (R038).
+- **Forks:** >= 2 tines, gaps <= 25 mm unless the weapon/skirt closes them, tips level and leading (R040-R043).
+- **Weapon vs floor:** vertical sweep 0.8-6 mm (R050), never through the floor (R051, blocker), horizontal blade 1-15 mm
+  (R052), no open door under the weapon (R053), lip leads the disc by 0-12 mm (R054).
+- **Weight and drive:** >= 70% on driven wheels, <= 15% on the lip (R060-R061); CoG/track <= 0.5, CoG/wheelbase <= 0.6,
+  lower half of the body, centred (R062-R066); grippy tyres >= 20 mm dia, >= 6 mm wide (R067-R069); traction-limited
+  drive, 1.5-8 m/s (R073-R074).
+- **Floor contact:** only wheels touch (R080-R081); belly >= 1 mm, interior >= 1.5 mm, no flat drag area, screw heads and
+  switch off the floor (R082-R086).
+- **Inverted:** drive upside down or self-right (R090); keep a lip on the top side too (R091-R094).
+- **Wheels hidden:** none at the front edge, <= 25% of sides/rear, <= 10% overall (R110-R113); body ahead of and outboard
+  of the wheels (R114-R115). Battery >= 10 mm from the front, >= 5 mm from the sides (R120-R121).
