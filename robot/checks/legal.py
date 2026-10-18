@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import numpy as np
+import shapely
 
 from .. import catalog, measure, xform
 from ..finding import BLOCKER, WARNING, fail, ok
@@ -96,6 +97,10 @@ def weapons(ctx):
         if not (r.profile.require_locking_bar and wd.kind in SPINS):
             continue
         bar = r.spec.part(wd.locking_bar) if wd.locking_bar else None
+        lock = (getattr(r.spec, "raw", None) or {}).get("weapon_lock")
+        if bar is None and isinstance(lock, dict) and lock.get("type") == "removable_pin":
+            out += pin_lock(r, w, p, lock)
+            continue
         if bar is None:
             out.append(fail("legal.locking_bar", G, BLOCKER, "No locking bar",
                             "Rule 5f: every spinner needs a locking bar that physically stops the weapon from turning.")
@@ -122,6 +127,82 @@ def weapons(ctx):
                             f"`{bar.id}` does not reach `{p.id}`, so it cannot hold it still.")
                        .on(bar.id, p.id).fix("Move the pin so it passes through a hole in the weapon or sits against a tooth."))
     return out
+
+
+PIN_R = 1.0  # smallest pin radius a hole must pass (2 mm pin)
+
+
+def _section(b, at, axis, u, v):
+    """Cross-section of body `b` on the plane through `at` normal to `axis`, in (u, v): (material, material with holes filled)."""
+    from trimesh.intersections import mesh_plane
+
+    seg = mesh_plane(b.mesh, axis, at)
+    if seg is None or not len(seg):
+        return None, None
+    seg = np.round(np.stack([(seg - at) @ u, (seg - at) @ v], axis=-1), 5)
+    lines = [shapely.union_all(shapely.linestrings(seg))]
+    polys = list(shapely.get_parts(shapely.polygonize(lines)))
+    if not polys:
+        return None, None
+    rp = np.array([q.representative_point().coords[0] for q in polys])
+    solid = b.inside(at + np.outer(rp[:, 0], u) + np.outer(rp[:, 1], v))  # faces of the partition that are material
+    if not solid.any():
+        return None, None
+    mat = shapely.union_all([q for q, k in zip(polys, solid) if k])
+    filled = shapely.union_all(polys)
+    return mat, filled
+
+
+def pin_lock(r, w, p, lock):
+    """Rule 5f via a declared removable pin (`weapon_lock: {type: removable_pin, holes: [ids]}`): the pin itself is not
+    modelled, but the named parts must have one through-hole, parallel to the spin axis, that lines up across the static
+    parts and the weapon in the modelled pose."""
+    from .power import spin_axis
+
+    ids = [x for x in (lock.get("holes") or []) if isinstance(x, str)]
+    i = w.index(p.id)
+    sa = spin_axis(w, r, i) if i is not None else None
+    bodies = {x: w.body(x) for x in ids}
+    rot = {p.id} | {q.id for q in r.spec.parts if getattr(q, "parent", None) == p.id}
+    missing = [x for x, b in bodies.items() if b is None]
+    if sa is None or missing or not any(x in rot for x in ids) or all(x in rot for x in ids):
+        why = (f"unknown part(s) {', '.join(f'`{x}`' for x in missing)}" if missing else
+               "no spin axis for the weapon" if sa is None else
+               "`holes` must name the weapon (or a part on it) and at least one static part")
+        return [fail("legal.locking_bar", G, BLOCKER, "Weapon lock declaration is incomplete", f"`{p.id}`: {why}.")
+                .on(p.id, *ids).fix("Set `weapon_lock: {type: removable_pin, holes: [<weapon>, <upright>, ...]}` naming parts that the pin passes through.")]
+    origin, axis = sa
+    u = np.cross(axis, [1.0, 0.0, 0.0] if abs(axis[0]) < 0.9 else [0.0, 1.0, 0.0])
+    u /= np.linalg.norm(u)
+    v = np.cross(axis, u)
+    wb = w.body(p.id)
+    q = wb.mesh.vertices - origin
+    R = float(np.linalg.norm(q - np.outer(q @ axis, axis), axis=1).max())
+    g = np.arange(-R, R + 0.01, 0.25)
+    G2 = np.array([(x, y) for x in g for y in g])
+    ok_ = np.hypot(G2[:, 0], G2[:, 1]) >= 2 * PIN_R + 1.0  # off the spin axis, or the pin does not stop it turning
+    for x, b in bodies.items():
+        t = (b.mesh.vertices - origin) @ axis
+        for tt in np.linspace(float(t.min()) + 0.15, float(t.max()) - 0.15, 3):  # a hole all the way through
+            mat, filled = _section(b, origin + tt * axis, axis, u, v)
+            if mat is None:
+                ok_[:] = False
+                break
+            idx = np.nonzero(ok_)[0]
+            P = G2[idx]
+            inside = shapely.contains_xy(filled, P[:, 0], P[:, 1])  # surrounded by material ...
+            near = shapely.dwithin(mat, shapely.points(P), PIN_R)  # ... yet a pin's width of clear space
+            ok_[idx[~inside | near]] = False
+        if not ok_.any():
+            break
+    C = origin + np.outer(G2[:, 0], u) + np.outer(G2[:, 1], v)
+    if not ok_.any():
+        return [fail("legal.locking_bar", G, BLOCKER, "Weapon lock holes do not line up",
+                     f"No {2 * PIN_R:.0f} mm through-hole parallel to the spin axis passes through all of {', '.join(f'`{x}`' for x in ids)} in the modelled pose.")
+                .on(p.id, *ids).fix("Drill one hole on a common line through the weapon and the uprights (pin parallel to the spin axis).")]
+    c = C[int(np.argmax(ok_))]
+    return [ok("legal.locking_bar", G, "Removable weapon pin declared",
+               f"`{p.id}`: a pin hole lines up through {', '.join(f'`{x}`' for x in ids)} at {np.round(c, 1).tolist()}.")]
 
 
 def switch_safety(ctx):

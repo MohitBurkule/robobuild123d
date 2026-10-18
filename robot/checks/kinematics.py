@@ -820,6 +820,36 @@ def motor_own_shaft(k, sid, m):
     return False, f"`{sid}` is {dist:.2f} mm / {ang:.2f} deg off `{m}`'s axis"
 
 
+def hub_model(ctx):
+    """A grouped Kin model for other check groups (architecture, spinner) to ask motor-as-hub questions; cached on ctx.
+    Returns None when the model cannot be built (callers then fall back to their stricter rule)."""
+    k = getattr(ctx, "_hub_kin", False)
+    if k is False:
+        nc = list(ctx.not_checked)
+        try:
+            k = Kin(ctx)
+            k.finalize_groups()
+            fasteners_checks(k)
+            k.finalize_groups()
+            motor_links_from_fasteners(k)
+        except Exception:  # noqa: BLE001
+            k = None
+        ctx.not_checked[:] = nc  # the kinematics group reports its own gaps
+        ctx._hub_kin = k
+    return k
+
+
+def motor_hub(ctx, sid, m):
+    """(own, stator_static, kin, why): `sid` is motor `m`'s own extended shaft and `m`'s stator is held by static structure."""
+    k = hub_model(ctx)
+    if k is None or sid not in k.parts or m not in k.parts:
+        return False, False, k, "kinematic model unavailable"
+    own, why = motor_own_shaft(k, sid, m)
+    held = [o for mm, o, _ in k.stator_links if mm == m] + [o for mm, o, *_ in k.rotor_links if mm == m]  # as kin.motor_mount
+    static = any(k.rot(o) is None and k.kind(o) not in BOUNDARY for o in held)
+    return own, static, k, why
+
+
 def motors_checks(k):
     k.check("kin.motor_mount", "Motor stators are fixed to the structure", "Every motor's stator is held by a static part.")
     k.check("kin.joint_axis_motor", "Motor shafts are coaxial with what they drive",
@@ -1405,6 +1435,9 @@ def bell_rub(k, g, ex):
             Q = xform.apply(Minv, b.surface(0.5)[0])
             x = Q @ mi["local_dir"]
             rr = np.linalg.norm(Q - np.outer(x, mi["local_dir"]), axis=1)
+            if b.part_idx is not None and float(rr.max()) <= mi["dia"] / 2 + HUB_COAX_MM:
+                # Dead shaft: a static part coaxial with the motor and inside its shaft bore; the bell turns around it.
+                continue
             zone = (x > mi["back"] + 2.0) & (x < mi["can_end"] - 0.2)
             near = zone & (rr < mi["R"] + 0.5)
             if near.any():

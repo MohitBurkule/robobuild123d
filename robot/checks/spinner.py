@@ -19,13 +19,22 @@ MAX_SWEEP_HEIGHT_VERTICAL_MM = 5.0  # lowest point of a vertical disc/drum's swe
 MAX_SWEEP_HEIGHT_HORIZONTAL_MM = 25.0  # a horizontal blade must still hit at bumper height
 
 
-def hold_mm(w, shaft, weapon, origin, axis, half, sign) -> float:
-    """Millimetres of shaft inside a support body on one side of the weapon (0.25 mm steps)."""
+def hold_mm(w, shaft, weapon, origin, axis, half, sign, extra=(), ring=None) -> float:
+    """Millimetres of shaft inside a support body on one side of the weapon (0.25 mm steps). `extra`: body indices that also
+    count as support (a weapon motor whose stator is bolted to structure, carrying its own extended shaft). `ring`: shaft
+    radius; a support around the shaft (a bore, a bearing race) is found just outside it, not only on the axis."""
     d = half + np.arange(0, 160) * 0.25
     P = origin + np.outer(sign * d, axis)
     in_shaft = w.bodies[shaft].inside(P)
-    sup = [b for j, b in enumerate(w.bodies) if j not in (weapon, shaft) and not b.fastener and (b.kind in SUPPORT or b.kind == "bearing")]
+    sup = [b for j, b in enumerate(w.bodies) if j not in (weapon, shaft) and not b.fastener
+           and (b.kind in SUPPORT or b.kind == "bearing" or j in extra)]
     held = measure.inside_any(sup, P)
+    if ring:
+        u = np.cross(axis, [1.0, 0.0, 0.0] if abs(axis[0]) < 0.9 else [0.0, 1.0, 0.0])
+        u /= np.linalg.norm(u)
+        v = np.cross(axis, u)
+        for e in (u, -u, v, -v):
+            held |= measure.inside_any(sup, P + (ring + 0.3) * e)
     length = 0.0
     for s, h in zip(in_shaft, held):
         if s:
@@ -34,6 +43,18 @@ def hold_mm(w, shaft, weapon, origin, axis, half, sign) -> float:
         elif length > 0:
             break
     return length
+
+
+def _hub_motor(ctx, wd, sid):
+    """Body index of the weapon motor when `sid` is its own extended shaft and its stator is bolted to static structure
+    (motor-as-hub): the motor's bearings then support that side of the shaft."""
+    if not wd.motor:
+        return ()
+    from .kinematics import motor_hub
+
+    own, static, _, _ = motor_hub(ctx, sid, wd.motor)
+    j = ctx.world.index(wd.motor)
+    return (j,) if own and static and j is not None else ()
 
 
 def rim(pts, origin, axis) -> float:
@@ -67,7 +88,10 @@ def run(ctx):
         for j, b in enumerate(w.bodies):
             if b.fastener or b.kind != "shaft" or not b.inside(origin)[0]:
                 continue
-            a, c = hold_mm(w, j, i, origin, axis, half, 1.0), hold_mm(w, j, i, origin, axis, half, -1.0)
+            extra = _hub_motor(ctx, wd, b.id)
+            q = b.mesh.vertices - origin
+            ring = float(np.linalg.norm(q - np.outer(q @ axis, axis), axis=1).max())
+            a, c = (hold_mm(w, j, i, origin, axis, half, 1.0, extra, ring), hold_mm(w, j, i, origin, axis, half, -1.0, extra, ring))
             if min(a, c) >= min(best[0], best[1]):
                 best = (a, c, b.id)
         if best[0] >= MIN_HOLD_MM and best[1] >= MIN_HOLD_MM:

@@ -671,6 +671,8 @@ def double_bearing(a, p, wb, origin, axis, sh):
     if hits and not coax:
         out.append(fail("arch.double_bearing", G, BLOCKER, "Weapon shaft runs through the motor off its axis",
                         f"`{sh.id}` passes through `{mid}` but the motor shaft is not coaxial with the weapon axis.").on(sh.id, mid))
+    elif hits and coax and not (flexible or declared) and _hub_ok(a, p, mid, sh, out):
+        pass
     elif hits and coax and not (flexible or declared):
         out.append(fail("arch.double_bearing", G, BLOCKER, "Rotor on two bearing systems",
                         f"`{p.id}` runs on external bearings on `{sh.id}` and `{sh.id}` also runs through `{mid}`, which has its own "
@@ -680,6 +682,38 @@ def double_bearing(a, p, wb, origin, axis, sh):
         out.append(ok("arch.double_bearing", G, "One bearing system on the rotor",
                       f"`{mid}` {'is a declared hub-motor conversion' if declared else 'does not share the weapon shaft'}."))
     return out
+
+
+def _hub_ok(a, p, mid, sh, out):
+    """Motor-as-hub (same rule as kin.double_bearing): the weapon shaft is the motor's own extended shaft, the stator is
+    bolted to structure, and exactly ONE extra bearing carries the far end, coaxial with the motor shaft. Appends the
+    verdict and returns True when the motor-as-hub reading applies (pass or fail), False to fall back to the plain rule."""
+    from .kinematics import COAX_DEG, HUB_COAX_MM, coax, motor_hub, round_axis
+
+    own, static, k, why = motor_hub(a.ctx, sh.id, mid)
+    if not own or not static:
+        return False
+    mi = k.motor_info(mid)
+    rotor = set(a.rotor.get(p.id, {p.id})) | {sh.id}
+    brgs = sorted({x.id for x in a.spec.parts if x.kind == "bearing"
+                   for c in a.conns(x.id) if (c.b if c.a == x.id else c.a) in rotor})
+    offs = []
+    for bp in brgs:
+        bb = a.body(bp)
+        ra = round_axis(bb) if bb is not None else None
+        ang, d = coax(mi["o"], mi["d"], ra[0], ra[1]) if ra is not None else (90.0, 99.0)
+        if ang > COAX_DEG or d > HUB_COAX_MM:
+            offs.append(f"`{bp}` {d:.2f} mm / {ang:.2f} deg")
+    if len(brgs) == 1 and not offs:
+        out.append(ok("arch.double_bearing", G, "Motor-as-hub on one extra bearing",
+                      f"{why}; its stator is bolted to structure and one coaxial bearing `{brgs[0]}` carries the far end."))
+    else:
+        out.append(fail("arch.double_bearing", G, BLOCKER, "Extra bearing fights the motor's bearings",
+                        f"`{p.id}` runs on `{mid}`'s own shaft `{sh.id}` plus {len(brgs)} extra bearing(s) "
+                        + (f"off the motor axis ({', '.join(offs)}; allowed {HUB_COAX_MM} mm)" if offs else "(exactly one coaxial extra bearing is allowed)")
+                        + ": two bearing systems that are not one line load each other.").on(p.id, sh.id, mid, *brgs)
+                   .fix("Keep one flanged bearing in the opposite upright, bored on the motor axis."))
+    return True
 
 
 def motor_in_hub(a, p, wb, origin, axis):
