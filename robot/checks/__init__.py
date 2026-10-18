@@ -19,14 +19,14 @@ from ..spec import Spec
 
 # Bumped whenever a check is added or changed. 7 = the Rust crate's revision; 8 adds belt/fork tension (python port); 9 adds
 # wheel running clearance, wheel exposure, targets, fused/key/tape/press-fit evidence, stall-current battery peak.
-CHECKS_REVISION = 9
+CHECKS_REVISION = 10  # 10 adds internal (no_contact, fastener_void, wire_in_solid)
 
 # (module, deep_only) in run order; same order as the Rust crate, plus `tension` before `assembly`.
 GROUPS = [
-    ("wiring", True), ("mass", False), ("interference", False), ("connections", False), ("ground", False),
+    ("wiring", True), ("mass", False), ("interference", False), ("connections", False), ("internal", False), ("ground", False),
     ("legal", False), ("fasteners", False), ("power", False), ("mfg", False), ("spinner", False), ("kinematics", False), ("tension", False), ("targets", False),
     ("shape", False), ("dynamics", False), ("strength", False), ("printability", False), ("process", False),
-    ("reference", False), ("archetype", False), ("architecture", False), ("electrical", False), ("combat", False), ("assembly", True), ("joints", False),
+    ("reference", False), ("archetype", False), ("architecture", False), ("electrical", False), ("combat", False), ("assembly", True), ("joints", False), ("material", False),
 ]
 
 

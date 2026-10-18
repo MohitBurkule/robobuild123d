@@ -162,6 +162,16 @@ Decide each joint like a mechanical engineer before placing screws. Off-default 
 - **Kit:** <= 3 thread sizes (`joint.screw_sizes`), <= 5 distinct screws (`joint.screw_variety`), stock ISO lengths
   (`joint.standard_length`).
 
+## Material placement (checked by `material.*`)
+- **Shape material to loads in all axes; no chunky bosses.** A screw into a part (even sideways into the tub) needs only
+  its boss: insert boss OD 2x insert OD, tapped plastic 3d, clearance hole d/2 + one wall. The ring 2 walls outside it
+  must not be solid for more than 3 walls (6 mm) along the screw, nor > 35% thicker than 2 walls (`material.boss_excess`).
+- Printed parts are shells at the design wall (2 mm, `"design_wall_mm"` to override): <= 10% of volume deeper than 2 walls
+  (`material.solid_core`), p99 wall away from fasteners <= 3 walls (`material.thick_wall`), <= 0.3 g of thick material
+  more than 10 mm from every fastener/insert/contact face (`material.load_free`). Grams saveable per part and in total
+  are reported (`material.saving`, metric `material.saveable_g`).
+- Intentional mass is exempt: kind armor/weapon/wedge/wedgelet/skirt, elastomers, or `"solid_reason": "..."`.
+
 ## Combat design rules (ground game; checked by `combat.R*`)
 Whoever gets under the other wins. Full rules with rationale, thresholds and applicability: `robot/rules/combat_rules.md`
 (112 rules, 83 measured as `combat.Rnnn`, the rest listed under NOT CHECKED). Family from `archetype`, else `robot_type`.
