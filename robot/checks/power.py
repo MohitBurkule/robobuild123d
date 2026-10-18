@@ -39,6 +39,7 @@ def run(ctx):
                       and rp.cat.props.get("cells") is not None), None)
     cells = float(cells if cells is not None else 2.0)
     weapon_current = 0.0
+    spinups = []  # (part id, stored energy J at fighting speed, typical current A) per weapon, for the runtime estimate
     missing_current = []  # motors whose current draw is unknown: the peak is then a lower bound, never a pass
     for rp in r.parts:
         if rp.part.kind != "weapon" or rp.part.weapon is None:
@@ -89,6 +90,7 @@ def run(ctx):
         omega = rpm * 0.85 * 2.0 * math.pi / 60.0
         energy = 0.5 * iner * omega * omega
         ctx.metrics["weapon_energy_j"] = energy
+        spinups.append((pid, energy, motor.cat.props.get("typ_current_a", mc)))
         if energy < 3.0:
             out.append(fail("power.weapon_energy", G, WARNING, "Weapon stores very little energy",
                             f"About {energy:.1f} J at 85% of no-load speed; competitive ant spinners store 10 to 50 J. It will bounce off armour.")
@@ -129,6 +131,7 @@ def run(ctx):
             out.append(ok("power.battery", G, "Battery covers peak current", f"Peak {peak:.1f} A within the {max_a:.1f} A rating."))
         elif max_a <= 0:
             ctx.not_checked.append(f"Battery `{bat_rp.part.id}` current rating: catalog has no capacity or C rating")
+    out += runtime(ctx, bat_rp, cells, spinups)
     for esc in r.parts:
         if esc.part.kind != "esc" or esc.cat is None:
             continue
@@ -138,6 +141,74 @@ def run(ctx):
                             f"`{esc.part.id}` is rated {cont:.0f} A continuous but the weapon motor can draw {weapon_current:.0f} A.")
                        .on(esc.part.id).fix("Use a bigger ESC or a weaker motor."))
     return out
+
+
+# Match duty cycle (per motor) for the runtime estimate. Drive: pushing or stalled 15% of the time, cruising at about a
+# third of stall current 50%, idle the rest. Weapon: one full spin-up from rest every SPINUP_EVERY_S (each big hit or
+# flip dumps most of the stored energy), held at speed against windage and bearing drag at HOLD_FRAC of its typical
+# current while powered, coasting with the throttle off WEAPON_COAST of the match. Spin-up charge comes from the stored
+# energy, not a current guess: Q = E / (eta * V).
+DRIVE_PUSH, DRIVE_CRUISE, DRIVE_CRUISE_FRAC = 0.15, 0.50, 0.35
+SPINUP_EVERY_S, SPINUP_EFF, HOLD_FRAC, WEAPON_COAST = 10.0, 0.6, 0.4, 0.2
+ELEC_A = 0.1  # receiver, ESC logic, LED
+USABLE = 0.8  # never run a LiPo below about 20% left
+
+
+def runtime(ctx, bat_rp, cells, spinups):
+    r = ctx.r
+    fight = float(r.profile.fight_s)
+    need = fight * float(r.profile.runtime_margin)
+    if bat_rp is None:
+        ctx.not_checked.append("Battery runtime: no battery part")
+        return []
+    mah = float((bat_rp.cat.props.get("capacity_mah") if bat_rp.cat is not None else None) or 0.0)
+    if mah <= 0:
+        ctx.not_checked.append(f"Battery runtime: `{bat_rp.part.id}` has no catalog capacity")
+        return [fail("power.runtime", G, WARNING, "Not checked: battery runtime", f"`{bat_rp.part.id}` has no capacity (mAh) in the catalog.")
+                .on(bat_rp.part.id).fix("Use a catalog battery with `capacity_mah`.")]
+    v = 3.7 * cells
+    unknown = []
+    drive_a = 0.0
+    for rp in r.parts:
+        if rp.part.kind != "motor":
+            continue
+        pr = rp.cat.props if rp.cat is not None else {}
+        sc = pr.get("stall_current_a")
+        if sc is None:
+            unknown.append(rp.part.id)
+            continue
+        nl = float(pr.get("no_load_current_a") or 0.0)
+        drive_a += DRIVE_PUSH * float(sc) + DRIVE_CRUISE * max(DRIVE_CRUISE_FRAC * float(sc), nl)
+    weapon_c = 0.0  # coulombs per fight
+    for pid, energy, typ in spinups:
+        if typ is None:
+            unknown.append(pid)
+            continue
+        weapon_c += (fight / SPINUP_EVERY_S) * energy / (SPINUP_EFF * v)
+        weapon_c += HOLD_FRAC * float(typ) * fight * (1.0 - WEAPON_COAST)
+    for rp in r.parts:  # a weapon whose energy could not be computed is not in spinups
+        if rp.part.kind == "weapon" and rp.part.weapon is not None and rp.part.weapon.kind in ("spinner", "drum", "disc", "bar") \
+                and rp.part.id not in {s[0] for s in spinups} and rp.part.id not in unknown:
+            unknown.append(rp.part.id)
+    if unknown:
+        ctx.not_checked.append(f"Battery runtime: no current or energy data for {', '.join(unknown)}")
+        return [fail("power.runtime", G, WARNING, "Not checked: battery runtime",
+                     f"No current or stored-energy figure for {', '.join(f'`{x}`' for x in unknown)}, so the match draw is unknown.")
+                .on(bat_rp.part.id, *unknown).fix("Use catalog motors with stall/typical current and give the weapon a material.")]
+    used_c = drive_a * fight + weapon_c + ELEC_A * fight
+    usable_c = mah / 1000.0 * 3600.0 * USABLE
+    run_s = usable_c / used_c * fight
+    ctx.metrics["runtime_min"] = run_s / 60.0
+    used_mah = used_c / 3.6
+    detail = (f"{_n(mah)} mAh x {USABLE:.0%} usable lasts about {run_s / 60:.1f} min of fighting "
+              f"(per {fight / 60:g} min fight: drive {drive_a * fight / 3.6:.0f} mAh, weapon spin-ups and hold {weapon_c / 3.6:.0f} mAh, "
+              f"electronics {ELEC_A * fight / 3.6:.0f} mAh = {used_mah:.0f} mAh).")
+    if run_s < need:
+        return [fail("power.runtime", G, BLOCKER, "Battery does not last the fight",
+                     detail + f" A fight is {fight / 60:g} min and the pack must cover it with {r.profile.runtime_margin - 1:.0%} margin.")
+                .on(bat_rp.part.id).expect(f">= {need / 60:.2f} min", f"{run_s / 60:.2f} min")
+                .fix(f"Fit a pack of at least {used_mah * r.profile.runtime_margin / USABLE:.0f} mAh, or lower the load (smaller weapon, lower kV).")]
+    return [ok("power.runtime", G, "Battery lasts the fight", detail)]
 
 
 def _n(x):

@@ -6,11 +6,11 @@ import numpy as np
 
 from .. import catalog
 from ..finding import BLOCKER, WARNING, fail, ok
-from ..measure import Scene
 from ..spec import ELECTRONIC
 
 G = "mfg"
 MAX_SAMPLES = 8000
+GRAZE_COS = 0.5  # exit face within 60 degrees of facing the ray
 
 
 def min_wall_for(prof, process, mat_id) -> float:
@@ -39,7 +39,26 @@ def wall_samples(body, min_wall):
     keep = ln > 0.5
     pts, nrm = pts[keep], nrm[keep] / ln[keep, None]
     eps = 1e-3
-    d, _ = Scene([body]).first_hit(pts - nrm * eps, -nrm, max_dist=min_wall * 2.5 + 0.2)
+    o, dirs = pts - nrm * eps, -nrm
+    d = np.full(len(o), np.inf)
+    cos = np.zeros(len(o))
+    if len(o):
+        locs, ri, ti = body.mesh.ray.intersects_location(o, dirs, multiple_hits=True)
+        if len(ri):
+            dk = np.einsum("ij,ij->i", locs - o[ri], dirs[ri])
+            ck = np.abs(np.einsum("ij,ij->i", body.mesh.face_normals[ti], dirs[ri]))
+            k = dk > 1e-7
+            ri, dk, ck = ri[k], dk[k], ck[k]
+            order = np.lexsort((dk, ri))  # nearest hit per ray
+            ri, dk, ck = ri[order], dk[order], ck[order]
+            first = np.r_[True, ri[1:] != ri[:-1]]
+            d[ri[first]], cos[ri[first]] = dk[first], ck[first]
+    d[d > min_wall * 2.5 + 0.2] = np.inf
+    # A wall is measured between two faces that face each other. When the ray leaves through a face it runs nearly
+    # parallel to (grazing), the distance is not a wall thickness: that is how the rim of a curved (spline / polygon)
+    # extrusion end reads, because the tessellated cap and side strips do not share vertices and their chords cross by
+    # tens of microns. Real thin walls, including tapered ones and knife edges, exit through a facing surface.
+    d[cos < GRAZE_COS] = np.inf
     t = d + eps
     m = np.isfinite(d)
     return t[m], pts[m]

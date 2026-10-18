@@ -45,9 +45,50 @@ def allowed_depth(r, a, b) -> float:
     return allow
 
 
+BLANKET_ALLOW_MM = 2.0  # an allow_overlap deeper than this is not a fit tolerance any more
+
+
+def rotor_ids(r, weapon_part) -> set:
+    """Part ids that turn with a spinning weapon: parts in its `rotates_with` group, plus its descendants along the
+    `parent` chain that do not declare a different motion group. They cannot be hit by their own sweep."""
+    wp = weapon_part
+    group = wp.rotates_with if wp.rotates_with not in (None, "fixed") else None
+    parts = {q.id: q for q in r.spec.parts}
+    out = {wp.id}
+    for q in r.spec.parts:
+        if group is not None and q.rotates_with == group:
+            out.add(q.id)
+            continue
+        if q.rotates_with not in (None, group):
+            continue  # e.g. a bearing outer race or a `fixed` part hung off the rotor in the tree
+        seen, cur = set(), q
+        while cur is not None and cur.parent and cur.parent not in seen:
+            seen.add(cur.parent)
+            if cur.parent == wp.id:
+                out.add(q.id)
+                break
+            cur = parts.get(cur.parent)
+            if cur is not None and cur.rotates_with not in (None, group):
+                break
+    return out
+
+
+def blanket_allowances(r):
+    out = []
+    for ao in r.spec.allow_overlap:
+        dep = ao.max_depth_mm if ao.max_depth_mm is not None else 0.5
+        if dep > BLANKET_ALLOW_MM:
+            out.append(fail("interference.blanket_allow", G, WARNING, "Blanket overlap allowance hides real collisions",
+                            f"`allow_overlap` lets `{ao.a}` and `{ao.b}` overlap by up to {dep:g} mm ({ao.reason or 'no reason given'}); "
+                            f"anything up to that depth between them is never reported.")
+                       .on(ao.a, ao.b).expect(f"<= {BLANKET_ALLOW_MM:g} mm", f"{dep:g} mm")
+                       .fix("Model the real fit (bore, pocket, clearance hole) so the parts only touch, or keep the allowance to a press-fit depth."))
+    return out
+
+
 def run(ctx):
     r, w = ctx.r, ctx.world
-    out = []
+    out = blanket_allowances(r)
     bad = checked = 0
     n = len(w.bodies)
     for i in range(n):
@@ -321,52 +362,67 @@ def spin_sweeps(ctx):
         if sa is None:
             continue
         origin, axis = sa
-        rev = Revolved.build(b, origin, axis, 0.5)
-        if rev is None:
-            out.append(fail("interference.spin", G, WARNING, "Weapon sweep not checked", "The weapon is too large to rasterise.").on(b.id))
-            ctx.not_checked.append(f"Spinning sweep of `{b.id}`: weapon too large to rasterise")
+        # The whole rotor turns: the weapon plus the parts that rotate with it (shaft, hub, screws, nuts). Rotor parts are
+        # swept too, and never tested against each other.
+        rotor = rotor_ids(r, r.parts[b.part_idx].part)
+        members = [b] + [w.bodies[k] for k in range(len(w.bodies)) if k != i and w.bodies[k].id in rotor and not w.bodies[k].is_wire]
+        revs = []
+        for m in members:
+            rv = Revolved.build(m, origin, axis, 0.5)
+            if rv is None:
+                break
+            revs.append((m, rv))
+        if len(revs) < len(members):
+            bad = members[len(revs)].id
+            out.append(fail("interference.spin", G, WARNING, "Weapon sweep not checked", f"`{bad}` is too large to rasterise.").on(b.id))
+            ctx.not_checked.append(f"Spinning sweep of `{b.id}`: `{bad}` too large to rasterise")
             continue
-        rmax = rev.nr * rev.cell
-        reach = rmax + 1.0
+        reach = max(rv.nr * rv.cell for _, rv in revs) + 1.0
+        tol = r.profile.contact_tol_mm
         hits = {}
         for j, o in enumerate(w.bodies):
-            if j == i or o.is_wire:
+            if j == i or o.is_wire or o.id in rotor:
                 continue
             ad = allowed_depth(r, b, o)
-            if math.isinf(ad) or ad >= 1.0e3:
+            if math.isinf(ad) or ad >= 1.0e3:  # the weapon's own motor, its locking bar, fused/threaded parts
                 continue
             q = _corners(o.aabb) - origin
             rad = np.linalg.norm(q - np.outer(q @ axis, axis), axis=1)
             size = float(np.linalg.norm(o.aabb[1] - o.aabb[0]))
             if not np.any(rad < reach + size):
                 continue
-            occ, glo, h = geom.voxelize(o.mesh, 0.5, o.aabb[0], o.aabb[1])
-            idx = np.argwhere(occ)
-            if not len(idx):
-                continue
-            P = glo + (idx + 0.5) * h
-            pr, _ = rev._ra(P)
-            P = P[pr <= reach]
-            if not len(P):
-                continue
-            hit = rev.near(P, 0)
-            close = ~hit & rev.near(P, pad_close)
-            if hit.any():
-                hits[o.id] = (True, P[np.argmax(hit)])
-            elif close.any():
-                hits[o.id] = (False, P[np.argmax(close)])
-        for oid, (hit, at) in sorted(hits.items()):
+            P = None
+            for m, rv in revs:
+                if m is not b and allowed_depth(r, m, o) > tol:
+                    continue  # a declared running fit (shaft in its bearing, hub on the motor bell)
+                if P is None:
+                    occ, glo, h = geom.voxelize(o.mesh, 0.5, o.aabb[0], o.aabb[1])
+                    idx = np.argwhere(occ)
+                    P = glo + (idx + 0.5) * h if len(idx) else np.zeros((0, 3))
+                    pr, _ = rv._ra(P)
+                    P = P[pr <= reach]
+                if not len(P):
+                    break
+                hit = rv.near(P, 0)
+                close = ~hit & rv.near(P, pad_close)
+                if hit.any():
+                    hits[o.id] = (True, P[np.argmax(hit)], m.id)
+                    break
+                if close.any() and o.id not in hits:
+                    hits[o.id] = (False, P[np.argmax(close)], m.id)
+        for oid, (hit, at, mid) in sorted(hits.items()):
+            via = "" if mid == b.id else f" (its rotor part `{mid}`)"
             if hit:
                 out.append(fail("interference.spin", G, BLOCKER, "Spinning weapon hits the robot",
-                                f"`{b.id}` spinning sweeps through `{oid}`.").on(b.id, oid).here(at)
+                                f"`{b.id}`{via} spinning sweeps through `{oid}`.").on(b.id, oid).here(at)
                            .fix("Move the part out of the swept disc, shrink the weapon, or add an explicit gap of at least 1 mm."))
             else:
                 out.append(fail("interference.spin_clearance", G, WARNING, "Spinning weapon has almost no clearance",
-                                f"`{oid}` is within {r.profile.min_clearance_moving_mm:.1f} mm of the sweep of `{b.id}`; bearings, flex and hits will make them touch.")
+                                f"`{oid}` is within {r.profile.min_clearance_moving_mm:.1f} mm of the sweep of `{b.id}`{via}; bearings, flex and hits will make them touch.")
                            .on(b.id, oid).here(at)
                            .fix("Leave at least 1 mm between a spinning weapon and anything fixed."))
         if not hits:
-            out.append(ok("interference.spin", G, "Weapon sweep is clear", f"`{b.id}` swept a full turn without touching another part."))
+            out.append(ok("interference.spin", G, "Weapon sweep is clear", f"`{b.id}` and {len(members) - 1} rotor part(s) swept a full turn without touching another part."))
     return out
 
 

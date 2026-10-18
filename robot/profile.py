@@ -31,7 +31,8 @@ class Profile:
     capture_slop_mm: float = 1.2
     min_ground_clearance_mm: float = 1.0
     bed_mm: tuple = (180.0, 180.0, 180.0)
-    fight_s: float = 120.0
+    fight_s: float = 180.0  # AWS: 3 minute fights
+    runtime_margin: float = 1.25  # the pack must last this many fights' worth of the duty cycle
     cell_full_v: float = 4.2
 
     def mass_limit(self, roller: bool) -> float:
