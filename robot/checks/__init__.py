@@ -24,9 +24,9 @@ CHECKS_REVISION = 9
 # (module, deep_only) in run order; same order as the Rust crate, plus `tension` before `assembly`.
 GROUPS = [
     ("wiring", True), ("mass", False), ("interference", False), ("connections", False), ("ground", False),
-    ("legal", False), ("fasteners", False), ("power", False), ("mfg", False), ("spinner", False), ("tension", False), ("targets", False),
+    ("legal", False), ("fasteners", False), ("power", False), ("mfg", False), ("spinner", False), ("kinematics", False), ("tension", False), ("targets", False),
     ("shape", False), ("dynamics", False), ("strength", False), ("printability", False), ("process", False),
-    ("reference", False), ("assembly", True),
+    ("reference", False), ("archetype", False), ("architecture", False), ("electrical", False), ("assembly", True),
 ]
 
 

@@ -430,3 +430,10 @@ def process_canon(p):
 
 def sheet_family(mid):
     return SHEET_FAMILY.get(str(mid).lower()) if mid else None
+
+
+# Outrunner faces (kinematics checks): which end of the motor is the static stator mount and how deep that face zone is.
+# "-x"/"+x" in the catalog frame (shaft stub along +X). Everything else of an outrunner's can is the rotating bell.
+MOTOR_FACES = {
+    "bl_1806_2300kv": {"stator_face": "-x", "depth_mm": 2.0},
+}

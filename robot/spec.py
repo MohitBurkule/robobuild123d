@@ -63,6 +63,7 @@ Belt = _obj({"pulleys": list, "kind": "o_ring", "length_mm": None, "width_mm": 0
 Weapon = _obj({
     "kind": "none", "motor": None, "cells": None, "reduction": None, "spin_axis": None,
     "supported_both_ends": False, "locking_bar": None,
+    "spin_dir": None,  # "cw"/"ccw" (or -1/+1) about spin_axis by the right-hand rule: ccw/+1 = positive rotation
 })
 
 PART_DEFAULTS = {
@@ -74,6 +75,9 @@ PART_DEFAULTS = {
     "marked": False, "tool_free": False, "sharp": False, "cover": None, "retained": None, "fused_with": None,
     "weapon": None, "tensioner": None, "belt": None, "tyre_of": None, "no_tyre_reason": None, "actuation": None,
     "tethered": False, "actuated_by": None, "ports": dict,
+    # Motion group (kinematics checks): `rotates_with` names a rotating group (any label, usually the jointed part id);
+    # `fixed: true` declares the part static. Both inferred when absent.
+    "rotates_with": None, "fixed": None,
 }
 
 
