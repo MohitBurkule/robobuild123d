@@ -115,4 +115,5 @@ def add_drive(plan, g: DriveGeom):
     # a transverse wire lane in front of the motors: every pocket can reach the motor terminals through it
     hy = (g.m["flats"] + 4.5) / 2
     plan.keepouts.append(("lane_drive", -plan.frame.x1, plan.frame.x1, g.axle_y + hy, g.axle_y + hy + 3.0))
+    plan.keepouts.append(("lane_rear", -plan.frame.x1, plan.frame.x1, g.axle_y - hy - 3.0, g.axle_y - hy))
     plan.keepouts.append(("drive_mid", -MOTOR_INNER_X, MOTOR_INNER_X, g.axle_y - 3.0, g.axle_y + 3.0))

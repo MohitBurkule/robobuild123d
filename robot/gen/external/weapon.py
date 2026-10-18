@@ -23,3 +23,6 @@ def add(plan, h, g):
     m = MODULES.get(h.weapon)
     if m:
         m.add(plan, h, g)
+
+
+from . import weapon_drisk  # noqa: E402,F401  (registers its module)

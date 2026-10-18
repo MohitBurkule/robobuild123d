@@ -223,7 +223,8 @@ PRESETS = {
                       weapon_esc="c_bbb_antweight_spinner_brushless_esc", battery="lipo_2s_350"),
     "vspin_drisk": dict(weapon="vspin_drisk", mount="front", orientation="vertical", attachment="drisk", front="forks",
                         drive_layout="2WD", wheel_dia=22, weapon_esc="c_bbb_antweight_spinner_brushless_esc",
-                        battery="lipo_2s_350", invertible=True),
+                        battery="lipo_2s_180", invertible=False, drive_esc="c_malenki_nano_antweight_esc_receiver",
+                        rx="integrated"),
 }
 
 

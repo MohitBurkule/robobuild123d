@@ -88,6 +88,7 @@ def solve(inp: LayoutInputs | dict, k: int = 5, weights=None) -> list[Layout]:
         return [Layout({}, 0.0, {})]
     found = []
     budget = [inp.max_nodes]
+    widths = [BRANCH_TOP, BRANCH]
 
     def dfs(placed, doms, depth):
         """Forward-checking DFS: branch on the most constrained component (fewest values left)."""
@@ -97,7 +98,7 @@ def solve(inp: LayoutInputs | dict, k: int = 5, weights=None) -> list[Layout]:
             found.append(Layout(pls, score, terms))
             return
         cid = min(doms, key=lambda k: (len(doms[k]), k))
-        for pl in _thin(doms[cid], BRANCH_TOP if depth == 0 else BRANCH):
+        for pl in _thin(doms[cid], widths[0] if depth == 0 else widths[1]):
             budget[0] -= 1
             if budget[0] <= 0:
                 return
@@ -113,7 +114,13 @@ def solve(inp: LayoutInputs | dict, k: int = 5, weights=None) -> list[Layout]:
                 dfs(placed, rest, depth + 1)
                 placed.pop()
 
-    dfs([], domains, 0)
+    # widen the branching until something fits (thinned search first: fast and diverse; then exhaustive)
+    for top, br in ((BRANCH_TOP, BRANCH), (64, 16), (10 ** 6, 10 ** 6)):
+        widths[:] = [top, br]
+        budget[0] = inp.max_nodes
+        dfs([], domains, 0)
+        if found:
+            break
     if not found:
         raise ValueError("components do not fit together inside the outline (no layout satisfies every constraint)")
     found.sort(key=lambda l: l.score)

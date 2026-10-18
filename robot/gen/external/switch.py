@@ -18,5 +18,6 @@ def add_switch(plan, x, y, rot_z=0.0, cid="power_switch"):
     pk = Pocket(cid, x - sx / 2 - 0.3, x + sx / 2 + 0.3, y - sy / 2 - 0.3, y + sy / 2 + 0.3,
                 f.zb + f.floor, f.zt + 0.5, housing=1.4, wire_through=True)
     pk.notches.append((pk.x0, pk.x1, pk.y0, pk.y1, pk.z0, pk.z1))  # the slot under the switch carries its wires
+    pk.notches.append((pk.x0 - 1.5, pk.x1 + 1.5, pk.y0 - 1.5, pk.y1 + 1.5, pk.z0, z - SIZE[2] / 2 - 0.6))  # wire room below
     plan.pockets.append(pk)
     return z

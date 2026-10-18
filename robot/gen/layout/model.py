@@ -79,7 +79,7 @@ class LayoutInputs:
     holes: list = field(default_factory=list)  # [(x, y, r)] screw holes / bosses the cavities must clear
     cog_target: tuple = (0.0, 0.0)
     fixed_mass: list = field(default_factory=list)  # [(mass_g, x, y)] for parts not placed by the solver
-    grid: float = 2.0
+    grid: float = 1.0
     seed: int = 0
     max_nodes: int = 20000
 

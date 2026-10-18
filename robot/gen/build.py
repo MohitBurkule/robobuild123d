@@ -35,12 +35,12 @@ def frame_params(h, user: dict | None = None) -> dict:
     if h.weapon == "hspin_bar":
         p.update(axle_y=-6.0, y0=-30.0, y1=34.0)
     if h.weapon == "vspin_drisk":
-        p.update(axle_y=-14.0, y0=-36.0, y1=26.0)
+        p.update(axle_y=-14.0, y0=-36.0, y1=44.0)
     if h.weapon == "lifter":
         p.update(axle_y=-18.0, y0=-42.0, y1=30.0)
     p.update({k: v for k, v in user.items() if k in p})
     if "y0" not in user:  # room behind the wheels for the rear clamshell screws
-        p["y0"] = min(p["y0"], p["axle_y"] - R - 12.5)
+        p["y0"] = min(p["y0"], p["axle_y"] - R - 16.5)
     return p
 
 
@@ -141,24 +141,20 @@ def to_spec(plan, h) -> dict:
     }
     if plan.archetype:
         spec["archetype"] = plan.archetype
-    spec.update({k: v for k, v in plan.extra.items() if not k.startswith("_") and k in ("start_pose",)})
+    spec.update({k: v for k, v in plan.extra.items() if k in ("start_pose", "weapon_lock")})
     return spec
 
 
-def build(h, user: dict | None = None, layout_index: int = 0, k: int = 5) -> dict:
-    """Spec dict for hypothesis `h` using the `layout_index`-th best of the top-k layouts."""
-    if isinstance(h, dict):
-        h = hyp_mod.Hypothesis.from_dict(h)
-    if not hyp_mod.buildable(h):
-        raise BuildError(f"no assembler for {h.slug} yet (buildable: {sorted(hyp_mod.BUILDABLE)})")
+def _base(h, user):
     plan, g = make_plan(h, user)
     plan.extra["axle_y"] = g.axle_y
     drive.add_drive(plan, g)
     weapon.prepare(plan, h, g)
-    sites = fasteners.clamshell_sites(plan)
-    fasteners.add_clamshell_screws(plan, sites)
-    lays = solve(layout_inputs(plan, h, user), k=k)
-    lay = lays[min(layout_index, len(lays) - 1)]
+    fasteners.add_clamshell_screws(plan, fasteners.clamshell_sites(plan))
+    return plan, g
+
+
+def _finish(plan, g, h, lay):
     place_components(plan, h, lay)
     add_front(plan, h)
     weapon.add(plan, h, g)
@@ -167,9 +163,38 @@ def build(h, user: dict | None = None, layout_index: int = 0, k: int = 5) -> dic
     return to_spec(plan, h)
 
 
+def layouts(h, user=None, k=5):
+    plan, _ = _base(h, user)
+    return solve(layout_inputs(plan, h, user), k=k)
+
+
+def build(h, user: dict | None = None, layout_index: int = 0, k: int = 5) -> dict:
+    """Spec dict for hypothesis `h`: the `layout_index`-th best layout whose wires can all be channelled
+    (layouts that cannot be wired are skipped)."""
+    if isinstance(h, dict):
+        h = hyp_mod.Hypothesis.from_dict(h)
+    if not hyp_mod.buildable(h):
+        raise BuildError(f"no assembler for {h.slug} yet (buildable: {sorted(hyp_mod.BUILDABLE)})")
+    lays = layouts(h, user, k=max(k, layout_index + 1) * 2)
+    errors, usable = [], 0
+    for lay in lays:
+        plan, g = _base(h, user)
+        try:
+            spec = _finish(plan, g, h, lay)
+        except ValueError as e:
+            errors.append(str(e))
+            continue
+        if usable == layout_index:
+            return spec
+        usable += 1
+    raise BuildError(f"{h.slug}: no wireable layout ({'; '.join(errors[:3])})")
+
+
 def add_front(plan, h):
     if h.front == "wedge":
         front.add_wedge(plan, length=plan.extra.get("wedge_len", 46.0))
+    elif h.front in ("forks", "wedgelets") and h.weapon == "vspin_drisk":
+        pass  # the drisk module adds its own fork tines
     elif h.front in ("forks", "wedgelets", "skirt", "plow"):
         front.add_front(plan, h.front)
 
