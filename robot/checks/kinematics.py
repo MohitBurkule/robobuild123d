@@ -200,6 +200,7 @@ class Kin:
         self.out = []
         self.ran = {}
         self.h = 2.0 if self.r.fast else 1.0
+        self._pairs_done = {}
         self.edges = {}  # pid -> list of (other pid, label, quality) ; quality: key / friction / rigid
         self.build()
 
@@ -464,6 +465,7 @@ def run(ctx):
     bearings_checks(k)
     motors_checks(k)
     torque_path(k)
+    bore_fit(k)
     retention(k)
     weapon_checks(k)
     balance(k)
@@ -1108,14 +1110,16 @@ def weapon_checks(k):
 
 
 def tooth_check(k, g, wb, o, a, s):
-    P = np.vstack([wb.surface(0.5 if not k.r.fast else 1.0)[0], wb.mesh.vertices])
+    P = np.vstack([wb.surface(0.5)[0], wb.mesh.vertices])
     ax, rad = radial(P, o, a)
     u, v = basis(a)
     q = P - o
     th = np.degrees(np.arctan2(q @ v, q @ u)) % 360
-    nb = 360
+    nb = 120  # 3 degree bins
     r = np.full(nb, 0.0)
-    np.maximum.at(r, (th.astype(int)) % nb, rad)
+    np.maximum.at(r, (th / 3).astype(int) % nb, rad)
+    for i in np.nonzero(r == 0)[0]:
+        r[i] = max(r[(i - 1) % nb], r[(i + 1) % nb])
     med = float(np.median(r))
     if r.max() - med < 1.0:
         return  # round disc, no teeth
@@ -1125,12 +1129,12 @@ def tooth_check(k, g, wb, o, a, s):
         half = r[i] - 0.5 * (r[i] - med)
 
         def run_(step):
-            for n in range(1, 120):
+            for n in range(1, nb // 2):
                 if r[(i + step * n) % nb] < half:
                     return n
-            return 120
+            return nb // 2
         lead, trail = run_(1 if s > 0 else -1), run_(-1 if s > 0 else 1)
-        if lead > trail * 1.5 and lead - trail >= 3:
+        if lead > trail * 1.5 and lead - trail >= 2:
             backwards += 1
     if peaks and backwards > len(peaks) / 2:
         k.bad("kin.tooth_leading", WARNING, "Teeth face backwards",
@@ -1278,6 +1282,29 @@ def sweeps(k):
                 j = int(np.argmin(gap))
                 if gap[j] < gapmin - 0.01:
                     worst[b.id] = ("near", float(gap[j]), Q[j], b.fastener)
+        k.check("kin.sweep_rotating", "Rotating groups clear each other", "No rotating group reaches into another's swept volume.")
+        for h in k.rgroups.values():
+            if h is g or h.gid in k._pairs_done.get(g.gid, set()):
+                continue
+            k._pairs_done.setdefault(h.gid, set()).add(g.gid)
+            for m in sorted(set(h.members) | set(h.fasteners)):
+                b = k.body(m)
+                if b is None or m in ex or not measure.aabb_overlap(box, b.aabb, 0.4):
+                    continue
+                Q = b.surface(0.5 if not k.r.fast else 1.0)[0]
+                depth, gap = sw.classify(Q, 0.4)
+                i = int(np.argmax(depth))
+                if depth[i] > 0.2:
+                    k.bad("kin.sweep_rotating", BLOCKER, "Two rotating groups collide",
+                          f"`{m}` (turning with {label(h)}) reaches {depth[i]:.1f} mm into the volume {label(g)} sweeps.",
+                          (m, *sorted(g.members)), at=Q[i], fix="Separate them axially or radially (0.3 mm or more).")
+                    break
+                j = int(np.argmin(gap))
+                if gap[j] < 0.3:
+                    k.bad("kin.sweep_rotating", WARNING, "Two rotating groups run very close",
+                          f"`{m}` (turning with {label(h)}) passes {gap[j]:.2f} mm from the volume {label(g)} sweeps (need 0.3 mm).",
+                          (m, *sorted(g.members)), at=Q[j])
+                    break
         for bid, (what, val, at, isf) in sorted(worst.items()):
             if what == "in":
                 cid = "kin.sweep_fastener" if isf else "kin.sweep_static"
@@ -1494,3 +1521,35 @@ def wires(k):
                 k.bad("kin.wire_to_rotor", BLOCKER, "Wire ends on a rotating part",
                       f"Wire `{wr.id}` ends on `{end}`, which turns with {label(g)}; it wraps and tears on the first turn.",
                       (wr.id, pid), fix="Move the device to the static structure or use a slip ring.")
+
+
+def bore_fit(k):
+    k.check("kin.bore_fit", "Bores fit their shafts", "Parts on a shaft have bores within 0.15 mm of the shaft (press/key fit) or run on bearings.")
+    for g in k.rgroups.values():
+        for sid in sorted(g.members):
+            if k.kind(sid) not in ("shaft", "pin"):
+                continue
+            sb = k.body(sid)
+            ra = round_axis(sb)
+            if ra is None:
+                k.skip("kin.bore_fit", f"`{sid}` is not round")
+                continue
+            o, a = ra
+            ax, rad = radial(sb.surface(0.3)[0], o, a)
+            rs = float(np.median(rad[np.abs(ax) < 0.4 * (ax.max() - ax.min())]))
+            for m in sorted(g.members):
+                if m == sid or k.kind(m) in ("shaft", "pin"):
+                    continue
+                b = k.body(m)
+                if b is None or not measure.aabb_overlap(sb.aabb, b.aabb):
+                    continue
+                Q = b.surface(0.3)[0]
+                qa, qr = radial(Q, o, a)
+                sel = (qa > ax.min()) & (qa < ax.max()) & (qr < rs + 1.5)
+                if sel.sum() < 8:
+                    continue
+                bore = float(np.percentile(qr[sel], 5))
+                if bore > rs + 0.15:
+                    k.bad("kin.bore_fit", WARNING, "Part is loose on its shaft",
+                          f"`{m}` bore radius {bore:.2f} mm on `{sid}` radius {rs:.2f} mm ({bore - rs:.2f} mm radial play); it rattles and fretts.",
+                          (m, sid), expect=("<= 0.15 mm play", f"{bore - rs:.2f} mm"), fix="Size the bore to the shaft (ream, or 0-0.05 mm press fit).")

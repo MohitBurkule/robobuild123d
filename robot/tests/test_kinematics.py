@@ -295,3 +295,193 @@ def test_belt_misaligned():
     rep, bad = run(d)
     assert "kin.belt_coplanar" in bad
     assert "drive.coverage" not in bad
+
+
+# ---------------------------------------------------------------- more ids (one bad mutation each; good = the bases above)
+import math as _m
+
+
+def saw(mirror=False):
+    pts = []
+    for t in range(3):
+        for i in range(24):
+            f = i / 24
+            th = 2 * _m.pi * (t + f) / 3
+            r = 16 + 4 * f
+            pts.append([r * _m.cos(th), r * _m.sin(th)])
+    if mirror:
+        pts = [[x, -y] for x, y in reversed(pts)]
+    return {"type": "prism", "height": 3, "points": pts}
+
+
+def m2_sweep_fastener(d):
+    d["fasteners"] = [{"id": "f1", "designation": "M2x10", "at": [3, 10, 12], "dir": [0, 0, -1], "through": ["base"], "tool": "hex1.5"}]
+    d["parts"].append({"id": "pad", "kind": "structure", **PLA, "at": [3, 10, 12.5], "shape": {"type": "box", "size": [5, 5, 1]}})
+
+
+def m2_bell_rub(d):
+    d["parts"].append({"id": "lug", "kind": "structure", **PLA, "at": [40, 0, 35.3], "shape": {"type": "box", "size": [4, 4, 1]}})
+
+
+def m2_motor_face(d):
+    d["fasteners"] = [{"id": "f2", "designation": "M2x8", "at": [38, 0, 40], "dir": [0, 0, -1], "through": ["base"],
+                       "threads_into": "wm", "tool": "hex1.5"}]
+
+
+def m2_bearing_seat(d):
+    for c in d["connections"]:
+        if c["a"] == "brg_l" and c["b"] == "upl":
+            c["b"] = "post_l"
+
+
+def m2_shaft_short(d):
+    part(d, "shaft")["shape"] = cyl(2, 10)
+
+
+def m2_shaft_off(d):
+    part(d, "shaft")["at"] = [0, 0.5, 0]
+
+
+def m2_straddle(d):
+    part(d, "brg_r")["at"] = [5, 0, 25]
+
+
+def m2_parent(d):
+    s = part(d, "shaft")
+    s.update(parent=None, at=[0, 0, 25], rot=CYLX)
+
+
+def m2_axes_conflict(d):
+    part(d, "shaft")["joint"] = {"kind": "revolute", "axis": [0, 1, 0], "pivot": [0, 0, 0]}
+
+
+def m2_axis_zero(d):
+    part(d, "disc")["joint"]["axis"] = [0, 0, 0]
+
+
+def m2_elec(d):
+    d["parts"].append({"id": "esc2", "kind": "esc", **PLA, "at": [3, 0, 25], "shape": {"type": "box", "size": [3, 3, 3]}})
+    d["connections"].append({"a": "esc2", "b": "disc", "method": "glue", "reason": "glued to the disc face"})
+
+
+def m2_tilt(d):
+    part(d, "disc")["rot"] = [0, 84, 0]
+
+
+def m2_drum(d):
+    part(d, "disc")["shape"] = cyl(5, 14)
+
+
+def m2_screw_imb(d):
+    d["fasteners"] = [{"id": "f3", "designation": "M3x3", "at": [-1.5, 0, 43], "dir": [1, 0, 0], "through": ["disc"], "tool": "hex2.5"}]
+
+
+def m2_bore(d):
+    part(d, "disc")["shape"] = {"type": "subtract", "base": cyl(20, 3), "cut": [cyl(2.6, 6)]}
+
+
+CASES2 = [
+    (m2_sweep_fastener, "kin.sweep_fastener"), (m2_bell_rub, "kin.outrunner_bell_rub"), (m2_motor_face, "kin.motor_face"),
+    (m2_bearing_seat, "kin.bearing_seat"), (m2_shaft_short, "kin.shaft_through_bearings"), (m2_shaft_off, "kin.joint_axis_shaft"),
+    (m2_straddle, "kin.bearing_straddle"), (m2_parent, "kin.parent_mismatch"), (m2_axes_conflict, "kin.group_axes_conflict"),
+    (m2_axis_zero, "kin.joint_axis_zero"), (m2_elec, "kin.rotating_electronics"), (m2_tilt, "kin.balance_dynamic"),
+    (m2_drum, "kin.spin_stability"), (m2_screw_imb, "kin.fastener_imbalance"), (m2_bore, "kin.bore_fit"),
+]
+
+
+@pytest.mark.parametrize("mut,cid", CASES2, ids=[f"{m.__name__}-{c}" for m, c in CASES2])
+def test_spinner_mutation2_fails(mut, cid):
+    d = copy.deepcopy(spinner())
+    mut(d)
+    rep, bad = run(d)
+    assert cid in bad, [(f.id, f.message) for f in rep.findings if not f.passed]
+
+
+def test_tooth_direction():
+    res = []
+    for mirror in (False, True):
+        d = spinner()
+        part(d, "disc")["shape"] = saw(mirror)
+        res.append("kin.tooth_leading" in run(d)[1])
+    assert sorted(res) == [False, True]
+
+
+def belt_base():
+    d = wheels()
+    d["parts"] += [
+        {"id": "pul_a", "kind": "pulley", **PLA, "at": [38.5, 0, 14], "rot": CYLX, "shape": cyl(5, 2)},
+        {"id": "wheel_b", "kind": "wheel", "catalog": "wheel_28x10", "at": [30, -40, 14],
+         "joint": {"kind": "revolute", "axis": [1, 0, 0], "pivot": [30, -40, 14]}},
+        {"id": "pul_b", "kind": "pulley", **PLA, "parent": "wheel_b", "at": [8.5, 0, 0], "rot": CYLX, "shape": cyl(5, 2)},
+        {"id": "belt", "kind": "belt", **PLA, "at": [38.5, -20, 30], "shape": {"type": "box", "size": [1, 1, 1]},
+         "belt": {"pulleys": ["pul_a", "pul_b"], "kind": "o_ring", "length_mm": 100}},
+        {"id": "tyre", "kind": "tyre", **PLA, "at": [-30, 0, 14], "rot": CYLX, "tyre_of": "wheel_r",
+         "shape": {"type": "subtract", "base": cyl(16, 8), "cut": [cyl(14, 10)]}},
+    ]
+    d["connections"] += [{"a": "pul_a", "b": "wheel_l", "method": "glue", "reason": "pulley glued to wheel"},
+                         {"a": "pul_b", "b": "wheel_b", "method": "glue", "reason": "pulley glued to wheel"}]
+    return d
+
+
+def test_good_belt_and_tyre_pass():
+    rep, bad = run(belt_base())
+    ids = {f.id for f in rep.findings if f.group == "kinematics" and f.passed}
+    for cid in ("kin.belt_coplanar", "kin.belt_axes_parallel", "kin.belt_pulleys_joint", "kin.belt_same_group",
+                "kin.pulley_coaxial", "kin.tyre_retained", "kin.wheel_track", "kin.sweep_rotating", "drive.coverage"):
+        assert cid in ids and cid not in bad, (cid, [(f.id, f.message) for f in rep.findings if not f.passed])
+
+
+def b_axes(d):
+    part(d, "wheel_b")["joint"]["axis"] = [1, 0.1, 0]
+
+
+def b_static(d):
+    part(d, "belt")["belt"]["pulleys"] = ["pul_a", "base"]
+
+
+def b_same(d):
+    for c in d["connections"]:
+        if c["a"] == "pul_b":
+            c["b"] = "wheel_l"
+    part(d, "pul_b").update(parent=None, at=[38.5, 0, 14])
+
+
+def b_coax(d):
+    part(d, "pul_a")["at"] = [38.5, 1, 14]
+
+
+def b_tyre(d):
+    part(d, "tyre")["at"] = [-30, 0, 50]
+
+
+def b_track(d):
+    part(d, "wheel_b")["at"] = [36, -40, 14]
+    part(d, "wheel_b")["joint"]["pivot"] = [36, -40, 14]
+
+
+def b_collide(d):
+    part(d, "wheel_b")["at"] = [30, -20, 14]
+    part(d, "wheel_b")["joint"]["pivot"] = [30, -20, 14]
+
+
+def b_camber(d):
+    part(d, "wheel_l")["rot"] = [0, 3, 0]
+    part(d, "motor_l")["rot"] = [0, 3, 0]
+
+
+def b_engage(d):
+    part(d, "wheel_l")["at"] = [38.5, 0, 14]
+    part(d, "pul_a")["at"] = [45, 0, 14]
+
+
+BCASES = [(b_axes, "kin.belt_axes_parallel"), (b_static, "kin.belt_pulleys_joint"), (b_same, "kin.belt_same_group"),
+          (b_coax, "kin.pulley_coaxial"), (b_tyre, "kin.tyre_retained"), (b_track, "kin.wheel_track"),
+          (b_collide, "kin.sweep_rotating"), (b_camber, "kin.wheel_camber"), (b_engage, "kin.shaft_engagement")]
+
+
+@pytest.mark.parametrize("mut,cid", BCASES, ids=[f"{m.__name__}-{c}" for m, c in BCASES])
+def test_belt_wheel_mutation_fails(mut, cid):
+    d = copy.deepcopy(belt_base())
+    mut(d)
+    rep, bad = run(d)
+    assert cid in bad, [(f.id, f.message) for f in rep.findings if not f.passed]
