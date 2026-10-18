@@ -1,0 +1,1044 @@
+{
+  "name": "Reference 2WD wedge",
+  "profile": "aws2025",
+  "ok": true,
+  "summary": {
+    "blockers": 0,
+    "warnings": 0,
+    "passed": 24,
+    "total": 24
+  },
+  "findings": [
+    {
+      "id": "validity.ok",
+      "group": "validity",
+      "severity": "info",
+      "pass": true,
+      "title": "Spec is well formed",
+      "message": "17 parts, 6 fasteners, 5 wires.",
+      "expected": null,
+      "actual": null,
+      "parts": [],
+      "at": null,
+      "fix": null
+    },
+    {
+      "id": "wiring.route",
+      "group": "wiring",
+      "severity": "info",
+      "pass": true,
+      "title": "Every wire has a route",
+      "message": "5 wires routed as real-thickness tubes through free space, 257 mm in total, no collisions.",
+      "expected": null,
+      "actual": null,
+      "parts": [],
+      "at": null,
+      "fix": null
+    },
+    {
+      "id": "mass.ok",
+      "group": "mass",
+      "severity": "info",
+      "pass": true,
+      "title": "Within the weight limit",
+      "message": "105.8 g (range 86.8 to 124.8 g) against the 150 g limit; 7.1 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.",
+      "expected": "<= 150 g",
+      "actual": "105.8 g",
+      "parts": [],
+      "at": null,
+      "fix": null
+    },
+    {
+      "id": "interference.overlap",
+      "group": "interference",
+      "severity": "info",
+      "pass": true,
+      "title": "No parts collide",
+      "message": "38 touching or overlapping pairs checked; touching is allowed, overlap deeper than 0.08 mm is not.",
+      "expected": null,
+      "actual": null,
+      "parts": [],
+      "at": null,
+      "fix": null
+    },
+    {
+      "id": "interference.sweep",
+      "group": "interference",
+      "severity": "info",
+      "pass": true,
+      "title": "No joints to sweep",
+      "message": "No part has a joint.",
+      "expected": null,
+      "actual": null,
+      "parts": [],
+      "at": null,
+      "fix": null
+    },
+    {
+      "id": "retention.declared",
+      "group": "interference",
+      "severity": "info",
+      "pass": true,
+      "title": "Held by declared method",
+      "message": "`esc` is held by tape.",
+      "expected": null,
+      "actual": null,
+      "parts": [
+        "esc"
+      ],
+      "at": null,
+      "fix": null
+    },
+    {
+      "id": "retention.declared",
+      "group": "interference",
+      "severity": "info",
+      "pass": true,
+      "title": "Held by declared method",
+      "message": "`rx` is held by tape.",
+      "expected": null,
+      "actual": null,
+      "parts": [
+        "rx"
+      ],
+      "at": null,
+      "fix": null
+    },
+    {
+      "id": "retention.declared",
+      "group": "interference",
+      "severity": "info",
+      "pass": true,
+      "title": "Held by declared method",
+      "message": "`power_switch` is held by adhesive.",
+      "expected": null,
+      "actual": null,
+      "parts": [
+        "power_switch"
+      ],
+      "at": null,
+      "fix": null
+    },
+    {
+      "id": "retention.captive",
+      "group": "interference",
+      "severity": "info",
+      "pass": true,
+      "title": "Every loose part is held",
+      "message": "6 parts checked, 3 held by a declared method, the rest captive in their pockets.",
+      "expected": null,
+      "actual": null,
+      "parts": [],
+      "at": null,
+      "fix": null
+    },
+    {
+      "id": "connection.joined",
+      "group": "connections",
+      "severity": "info",
+      "pass": true,
+      "title": "Every part is attached",
+      "message": "All 17 parts lead back to the chassis through screws, shared prints, captive pockets, joints or declared connections.",
+      "expected": null,
+      "actual": null,
+      "parts": [],
+      "at": null,
+      "fix": null
+    },
+    {
+      "id": "ground.wheels_touch",
+      "group": "ground",
+      "severity": "info",
+      "pass": true,
+      "title": "Wheels touch the floor",
+      "message": "All 2 wheels reach the floor plane (z = -14.00 mm).",
+      "expected": null,
+      "actual": null,
+      "parts": [],
+      "at": null,
+      "fix": null
+    },
+    {
+      "id": "ground.clearance",
+      "group": "ground",
+      "severity": "info",
+      "pass": true,
+      "title": "Body clears the floor",
+      "message": "Lowest body part is 4.0 mm above the floor.",
+      "expected": null,
+      "actual": null,
+      "parts": [],
+      "at": null,
+      "fix": null
+    },
+    {
+      "id": "ground.wedge_gap",
+      "group": "ground",
+      "severity": "info",
+      "pass": true,
+      "title": "Wedge tip height is right",
+      "message": "`wedge` tip is 0.60 mm above the floor.",
+      "expected": null,
+      "actual": null,
+      "parts": [],
+      "at": null,
+      "fix": null
+    },
+    {
+      "id": "ground.stance",
+      "group": "ground",
+      "severity": "info",
+      "pass": true,
+      "title": "Stable on the floor",
+      "message": "Centre of mass is 20.0 mm inside the support polygon of wheels and wedge.",
+      "expected": null,
+      "actual": null,
+      "parts": [],
+      "at": null,
+      "fix": null
+    },
+    {
+      "id": "legal.switch",
+      "group": "legal",
+      "severity": "info",
+      "pass": true,
+      "title": "Marked tool-free power switch",
+      "message": "`power_switch` is a marked, tool-free power switch.",
+      "expected": null,
+      "actual": null,
+      "parts": [],
+      "at": null,
+      "fix": null
+    },
+    {
+      "id": "switch.recess",
+      "group": "legal",
+      "severity": "info",
+      "pass": true,
+      "title": "Switch is recessed",
+      "message": "`power_switch` sits 1.2 mm below the surrounding surface and slides across the robot.",
+      "expected": null,
+      "actual": null,
+      "parts": [],
+      "at": null,
+      "fix": null
+    },
+    {
+      "id": "legal.failsafe",
+      "group": "legal",
+      "severity": "info",
+      "pass": true,
+      "title": "Failsafe declared",
+      "message": "The robot stops when the transmitter is switched off.",
+      "expected": null,
+      "actual": null,
+      "parts": [],
+      "at": null,
+      "fix": null
+    },
+    {
+      "id": "legal.footprint",
+      "group": "legal",
+      "severity": "info",
+      "pass": true,
+      "title": "Fits the square",
+      "message": "Fits a 122.5 mm square (limit 150 mm).",
+      "expected": null,
+      "actual": null,
+      "parts": [],
+      "at": null,
+      "fix": null
+    },
+    {
+      "id": "fastener.ok",
+      "group": "fasteners",
+      "severity": "info",
+      "pass": true,
+      "title": "Screws are reachable and bite",
+      "message": "6 screws: driver path clear, thread engagement enough, heads seated.",
+      "expected": null,
+      "actual": null,
+      "parts": [],
+      "at": null,
+      "fix": null
+    },
+    {
+      "id": "power.battery",
+      "group": "power",
+      "severity": "info",
+      "pass": true,
+      "title": "Battery covers peak current",
+      "message": "Peak 0.7 A within the 7.2 A rating.",
+      "expected": null,
+      "actual": null,
+      "parts": [],
+      "at": null,
+      "fix": null
+    },
+    {
+      "id": "mfg.walls",
+      "group": "mfg",
+      "severity": "info",
+      "pass": true,
+      "title": "Walls are thick enough to make",
+      "message": "3 made parts checked for minimum wall and bed size.",
+      "expected": null,
+      "actual": null,
+      "parts": [],
+      "at": null,
+      "fix": null
+    },
+    {
+      "id": "assembly.order",
+      "group": "assembly",
+      "severity": "info",
+      "pass": true,
+      "title": "Everything can be assembled",
+      "message": "Every part slides in along a clear straight path. Assembly order: insert_rr, insert_rl, insert_fr, insert_fl, rx, esc, battery, motor_r, motor_l, chassis_top, insert_wr, insert_wl, power_switch, wheel_r, wheel_l, wedge, bolt_rr, bolt_rl, bolt_fr, bolt_fl, bolt_wr, bolt_wl.",
+      "expected": null,
+      "actual": null,
+      "parts": [],
+      "at": null,
+      "fix": null
+    },
+    {
+      "id": "claim.holds",
+      "group": "claims",
+      "severity": "info",
+      "pass": true,
+      "title": "Claim matches the model",
+      "message": "\"weighs 150 g or less\" (mass_total_g <= 150)",
+      "expected": "mass_total_g <= 150",
+      "actual": "105.81",
+      "parts": [],
+      "at": null,
+      "fix": null
+    },
+    {
+      "id": "claim.holds",
+      "group": "claims",
+      "severity": "info",
+      "pass": true,
+      "title": "Claim matches the model",
+      "message": "\"fits the 150 mm square\" (footprint_mm <= 150)",
+      "expected": "footprint_mm <= 150",
+      "actual": "122.48",
+      "parts": [],
+      "at": null,
+      "fix": null
+    }
+  ],
+  "metrics": {
+    "com_x": -0.3035251897165702,
+    "com_y": 3.9898308935081315,
+    "com_z": -0.6056983551390034,
+    "footprint_mm": 122.48384379119933,
+    "ground_z": -14.0,
+    "mass_hi_g": 124.79392525680521,
+    "mass_limit_g": 150.0,
+    "mass_lo_g": 86.822504762194,
+    "mass_total_g": 105.8082150094996,
+    "min_ground_clearance_mm": 4.0,
+    "part_mass_g.battery": 12.5,
+    "part_mass_g.bolt_fl": 0.5726400841183866,
+    "part_mass_g.bolt_fr": 0.5726400841183866,
+    "part_mass_g.bolt_rl": 0.5726400841183866,
+    "part_mass_g.bolt_rr": 0.5726400841183866,
+    "part_mass_g.bolt_wl": 0.3260250608115879,
+    "part_mass_g.bolt_wr": 0.3260250608115879,
+    "part_mass_g.chassis_bottom": 22.52925217355811,
+    "part_mass_g.chassis_top": 22.114898476784017,
+    "part_mass_g.esc": 3.0,
+    "part_mass_g.insert_fl": 0.12,
+    "part_mass_g.insert_fr": 0.12,
+    "part_mass_g.insert_rl": 0.12,
+    "part_mass_g.insert_rr": 0.12,
+    "part_mass_g.insert_wl": 0.12,
+    "part_mass_g.insert_wr": 0.12,
+    "part_mass_g.motor_l": 7.5,
+    "part_mass_g.motor_r": 7.5,
+    "part_mass_g.power_switch": 0.5,
+    "part_mass_g.rx": 4.5,
+    "part_mass_g.wedge": 13.436865759858753,
+    "part_mass_g.wheel_l": 3.4,
+    "part_mass_g.wheel_r": 3.4,
+    "peak_current_a": 0.65,
+    "stance_margin_mm": 19.989830893508135,
+    "tip_angle_deg": 56.175709227901905,
+    "wedge_load_frac": 0.20397786626028708,
+    "wire_length_mm": 256.9814024587864,
+    "wire_mass_g": 0.5645881412019537
+  },
+  "mass": [
+    {
+      "id": "chassis_bottom",
+      "kind": "structure",
+      "grams": 22.52925217355811,
+      "tol_g": 4.505850434711622,
+      "source": "computed"
+    },
+    {
+      "id": "chassis_top",
+      "kind": "structure",
+      "grams": 22.114898476784017,
+      "tol_g": 4.422979695356804,
+      "source": "computed"
+    },
+    {
+      "id": "wedge",
+      "kind": "wedge",
+      "grams": 13.436865759858753,
+      "tol_g": 2.6873731519717508,
+      "source": "computed"
+    },
+    {
+      "id": "motor_l",
+      "kind": "motor",
+      "grams": 7.5,
+      "tol_g": 1.125,
+      "source": "catalog"
+    },
+    {
+      "id": "motor_r",
+      "kind": "motor",
+      "grams": 7.5,
+      "tol_g": 1.125,
+      "source": "catalog"
+    },
+    {
+      "id": "wheel_l",
+      "kind": "wheel",
+      "grams": 3.4,
+      "tol_g": 0.51,
+      "source": "catalog"
+    },
+    {
+      "id": "wheel_r",
+      "kind": "wheel",
+      "grams": 3.4,
+      "tol_g": 0.51,
+      "source": "catalog"
+    },
+    {
+      "id": "battery",
+      "kind": "battery",
+      "grams": 12.5,
+      "tol_g": 1.875,
+      "source": "catalog"
+    },
+    {
+      "id": "esc",
+      "kind": "esc",
+      "grams": 3.0,
+      "tol_g": 0.44999999999999996,
+      "source": "catalog"
+    },
+    {
+      "id": "rx",
+      "kind": "receiver",
+      "grams": 4.5,
+      "tol_g": 0.6749999999999999,
+      "source": "catalog"
+    },
+    {
+      "id": "power_switch",
+      "kind": "switch",
+      "grams": 0.5,
+      "tol_g": 0.075,
+      "source": "catalog"
+    },
+    {
+      "id": "insert_wl",
+      "kind": "insert",
+      "grams": 0.12,
+      "tol_g": 0.018,
+      "source": "catalog"
+    },
+    {
+      "id": "insert_wr",
+      "kind": "insert",
+      "grams": 0.12,
+      "tol_g": 0.018,
+      "source": "catalog"
+    },
+    {
+      "id": "insert_fl",
+      "kind": "insert",
+      "grams": 0.12,
+      "tol_g": 0.018,
+      "source": "catalog"
+    },
+    {
+      "id": "insert_fr",
+      "kind": "insert",
+      "grams": 0.12,
+      "tol_g": 0.018,
+      "source": "catalog"
+    },
+    {
+      "id": "insert_rl",
+      "kind": "insert",
+      "grams": 0.12,
+      "tol_g": 0.018,
+      "source": "catalog"
+    },
+    {
+      "id": "insert_rr",
+      "kind": "insert",
+      "grams": 0.12,
+      "tol_g": 0.018,
+      "source": "catalog"
+    },
+    {
+      "id": "bolt_wl",
+      "kind": "fastener",
+      "grams": 0.3260250608115879,
+      "tol_g": 0.016301253040579396,
+      "source": "fastener"
+    },
+    {
+      "id": "bolt_wr",
+      "kind": "fastener",
+      "grams": 0.3260250608115879,
+      "tol_g": 0.016301253040579396,
+      "source": "fastener"
+    },
+    {
+      "id": "bolt_fl",
+      "kind": "fastener",
+      "grams": 0.5726400841183866,
+      "tol_g": 0.028632004205919333,
+      "source": "fastener"
+    },
+    {
+      "id": "bolt_fr",
+      "kind": "fastener",
+      "grams": 0.5726400841183866,
+      "tol_g": 0.028632004205919333,
+      "source": "fastener"
+    },
+    {
+      "id": "bolt_rl",
+      "kind": "fastener",
+      "grams": 0.5726400841183866,
+      "tol_g": 0.028632004205919333,
+      "source": "fastener"
+    },
+    {
+      "id": "bolt_rr",
+      "kind": "fastener",
+      "grams": 0.5726400841183866,
+      "tol_g": 0.028632004205919333,
+      "source": "fastener"
+    },
+    {
+      "id": "wires",
+      "kind": "wire",
+      "grams": 0.5645881412019537,
+      "tol_g": 0.1693764423605861,
+      "source": "wire"
+    },
+    {
+      "id": "allowance",
+      "kind": "allowance",
+      "grams": 1.2,
+      "tol_g": 0.6,
+      "source": "declared"
+    }
+  ],
+  "bench_checklist": [],
+  "routes": [
+    {
+      "id": "w_bat_sw",
+      "awg": 26.0,
+      "kind": "power",
+      "od_mm": 1.3,
+      "length_mm": 100.82763318603226,
+      "points": [
+        [
+          0.0,
+          19.0,
+          0.0
+        ],
+        [
+          4.299999999999997,
+          18.299999999999997,
+          -0.10000000000000142
+        ],
+        [
+          15.699999999999996,
+          18.299999999999997,
+          -0.10000000000000142
+        ],
+        [
+          16.299999999999997,
+          17.699999999999996,
+          -0.10000000000000142
+        ],
+        [
+          16.299999999999997,
+          -1.5,
+          -0.10000000000000142
+        ],
+        [
+          9.100000000000001,
+          -7.5,
+          -0.10000000000000142
+        ],
+        [
+          3.6999999999999957,
+          -7.5,
+          -0.10000000000000142
+        ],
+        [
+          -2.3000000000000043,
+          -14.7,
+          0.5
+        ],
+        [
+          -2.3000000000000043,
+          -25.5,
+          0.5
+        ],
+        [
+          -2.8999999999999986,
+          -26.1,
+          1.0999999999999979
+        ],
+        [
+          -8.300000000000004,
+          -32.7,
+          3.5
+        ],
+        [
+          -8.899999999999999,
+          -33.3,
+          4.099999999999998
+        ],
+        [
+          -22.0,
+          -34.0,
+          4.3
+        ]
+      ]
+    },
+    {
+      "id": "w_sw_esc",
+      "awg": 26.0,
+      "kind": "power",
+      "od_mm": 1.3,
+      "length_mm": 21.31834507674891,
+      "points": [
+        [
+          -14.0,
+          -34.0,
+          4.3
+        ],
+        [
+          -11.300000000000004,
+          -34.5,
+          2.8999999999999986
+        ],
+        [
+          -4.700000000000003,
+          -35.1,
+          2.8999999999999986
+        ],
+        [
+          0.0,
+          -37.5,
+          1.0
+        ]
+      ]
+    },
+    {
+      "id": "w_esc_ml",
+      "awg": 26.0,
+      "kind": "motor",
+      "od_mm": 1.3,
+      "length_mm": 25.449409455514377,
+      "points": [
+        [
+          8.0,
+          -31.5,
+          1.0
+        ],
+        [
+          1.8999999999999986,
+          -25.5,
+          1.0999999999999979
+        ],
+        [
+          2.5,
+          -18.900000000000002,
+          0.5
+        ],
+        [
+          5.549999999999997,
+          -16.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": "w_esc_mr",
+      "awg": 26.0,
+      "kind": "motor",
+      "od_mm": 1.3,
+      "length_mm": 26.614769329883483,
+      "points": [
+        [
+          -8.0,
+          -31.5,
+          1.0
+        ],
+        [
+          -4.100000000000001,
+          -29.700000000000003,
+          1.0999999999999979
+        ],
+        [
+          -2.8999999999999986,
+          -28.5,
+          2.3000000000000007
+        ],
+        [
+          -2.3000000000000043,
+          -26.1,
+          2.3000000000000007
+        ],
+        [
+          -2.8999999999999986,
+          -18.3,
+          1.6999999999999993
+        ],
+        [
+          -4.700000000000003,
+          -16.5,
+          0.5
+        ],
+        [
+          -5.549999999999997,
+          -16.0,
+          0.0
+        ]
+      ]
+    },
+    {
+      "id": "w_rx_esc",
+      "awg": 26.0,
+      "kind": "signal",
+      "od_mm": 1.3,
+      "length_mm": 82.77124541060739,
+      "points": [
+        [
+          0.0,
+          32.8,
+          0.0
+        ],
+        [
+          0.6999999999999957,
+          32.099999999999994,
+          2.3000000000000007
+        ],
+        [
+          1.2999999999999972,
+          31.5,
+          2.8999999999999986
+        ],
+        [
+          12.699999999999996,
+          19.5,
+          2.8999999999999986
+        ],
+        [
+          15.699999999999996,
+          18.299999999999997,
+          2.8999999999999986
+        ],
+        [
+          16.299999999999997,
+          17.699999999999996,
+          2.8999999999999986
+        ],
+        [
+          16.299999999999997,
+          -1.5,
+          2.8999999999999986
+        ],
+        [
+          9.100000000000001,
+          -7.5,
+          2.8999999999999986
+        ],
+        [
+          3.6999999999999957,
+          -7.5,
+          2.8999999999999986
+        ],
+        [
+          3.1000000000000014,
+          -8.100000000000001,
+          2.8999999999999986
+        ],
+        [
+          0.0,
+          -25.5,
+          1.0
+        ]
+      ]
+    }
+  ],
+  "assembly": [
+    {
+      "order": 1,
+      "id": "bolt_wl",
+      "dir": [
+        -0.0,
+        1.0,
+        -0.0
+      ],
+      "travel_mm": 52.699999999999996
+    },
+    {
+      "order": 2,
+      "id": "bolt_wr",
+      "dir": [
+        -0.0,
+        1.0,
+        -0.0
+      ],
+      "travel_mm": 52.699999999999996
+    },
+    {
+      "order": 3,
+      "id": "bolt_fl",
+      "dir": [
+        -0.0,
+        -0.0,
+        1.0
+      ],
+      "travel_mm": 21.2
+    },
+    {
+      "order": 4,
+      "id": "bolt_fr",
+      "dir": [
+        -0.0,
+        -0.0,
+        1.0
+      ],
+      "travel_mm": 21.2
+    },
+    {
+      "order": 5,
+      "id": "bolt_rl",
+      "dir": [
+        -0.0,
+        -0.0,
+        1.0
+      ],
+      "travel_mm": 21.2
+    },
+    {
+      "order": 6,
+      "id": "bolt_rr",
+      "dir": [
+        -0.0,
+        -0.0,
+        1.0
+      ],
+      "travel_mm": 21.2
+    },
+    {
+      "order": 7,
+      "id": "wedge",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 26.099999999999998
+    },
+    {
+      "order": 8,
+      "id": "wheel_l",
+      "dir": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "travel_mm": 15.6
+    },
+    {
+      "order": 9,
+      "id": "wheel_r",
+      "dir": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "travel_mm": 15.6
+    },
+    {
+      "order": 10,
+      "id": "power_switch",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 7.8999999999999995
+    },
+    {
+      "order": 11,
+      "id": "insert_wl",
+      "dir": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "travel_mm": 5.8
+    },
+    {
+      "order": 12,
+      "id": "insert_wr",
+      "dir": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "travel_mm": 5.8
+    },
+    {
+      "order": 13,
+      "id": "chassis_top",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 8.6
+    },
+    {
+      "order": 14,
+      "id": "motor_l",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 8.6
+    },
+    {
+      "order": 15,
+      "id": "motor_r",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 8.6
+    },
+    {
+      "order": 16,
+      "id": "battery",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 7.8999999999999995
+    },
+    {
+      "order": 17,
+      "id": "esc",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 7.199999999999999
+    },
+    {
+      "order": 18,
+      "id": "rx",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 4.4
+    },
+    {
+      "order": 19,
+      "id": "insert_fl",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 10.7
+    },
+    {
+      "order": 20,
+      "id": "insert_fr",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 10.7
+    },
+    {
+      "order": 21,
+      "id": "insert_rl",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 10.7
+    },
+    {
+      "order": 22,
+      "id": "insert_rr",
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "travel_mm": 10.7
+    }
+  ],
+  "not_checked": [
+    "Strength: arm, fork and shell bending under impact (no stress or stiffness model; load path is not traced)",
+    "Battery access and field service: swap time, number of fasteners to reach the battery or change a wheel",
+    "Wire tether in assembly order: soldered wires between parts are not part of the disassembly sweep",
+    "Heat-set insert iron clearance and soldering-iron access",
+    "Gyro, spin-up time and ESC current limits of the weapon",
+    "Thermal limits and glue or tape strength (declared only)",
+    "STEP export of `wire:w_bat_sw`: ValueError: no B-rep (tessellated-only body) (STL only)",
+    "STEP export of `wire:w_sw_esc`: ValueError: no B-rep (tessellated-only body) (STL only)",
+    "STEP export of `wire:w_esc_ml`: ValueError: no B-rep (tessellated-only body) (STL only)",
+    "STEP export of `wire:w_esc_mr`: ValueError: no B-rep (tessellated-only body) (STL only)",
+    "STEP export of `wire:w_rx_esc`: ValueError: no B-rep (tessellated-only body) (STL only)"
+  ],
+  "checks_revision": 8,
+  "engine": "build123d",
+  "timings_s": {
+    "validity": 0.001,
+    "wiring": 4.002,
+    "mass": 0.001,
+    "interference": 7.947,
+    "connections": 0.066,
+    "ground": 0.001,
+    "legal": 0.109,
+    "fasteners": 0.196,
+    "power": 0.0,
+    "mfg": 2.659,
+    "spinner": 2.232,
+    "tension": 0.001,
+    "assembly": 15.772
+  }
+}
