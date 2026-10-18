@@ -39,7 +39,8 @@ def half_shape(plan, half: str) -> dict:
                 hz1 = p.z1 + p.housing
             if half == "bottom" and p.z0 - p.housing > z0 + f.floor + 1.0:
                 hz0 = p.z0 - p.housing
-            housings.append(sh.boxr(x0_, x1_, y0_, y1_, hz0, hz1))
+            if hz1 - hz0 > 0.5:
+                housings.append(sh.boxr(x0_, x1_, y0_, y1_, hz0, hz1))
     body = sh.U(tub, *housings, *plan.adds[half])
     cavities = [pk_mod.cavity(p) for p in plan.pockets]
     body = sh.S(body, *cavities, *plan.cuts[half])

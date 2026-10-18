@@ -82,6 +82,7 @@ class LayoutInputs:
     grid: float = 1.0
     seed: int = 0
     max_nodes: int = 20000
+    avoid: list = field(default_factory=list)  # [(component id, x, y, rot_z)] placements already found unusable
 
     @classmethod
     def from_dict(cls, d: dict) -> "LayoutInputs":

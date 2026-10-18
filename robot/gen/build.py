@@ -7,6 +7,8 @@ Pipeline (each step one small function writing into a `Plan`):
 
 from __future__ import annotations
 
+import re
+
 import copy
 import json
 from pathlib import Path
@@ -37,7 +39,7 @@ def frame_params(h, user: dict | None = None) -> dict:
     if h.weapon == "vspin_drisk":
         p.update(axle_y=-14.0, y0=-36.0, y1=44.0, floor=1.1)
     if h.weapon == "lifter":
-        p.update(axle_y=-18.0, y0=-42.0, y1=30.0)
+        p.update(axle_y=-18.0, y0=-42.0, y1=30.0, zb=-11.8)
     p.update({k: v for k, v in user.items() if k in p})
     if "y0" not in user:  # room behind the wheels for the rear clamshell screws
         p["y0"] = min(p["y0"], p["axle_y"] - R - 16.5)
@@ -69,7 +71,8 @@ def layout_inputs(plan, h, user=None) -> LayoutInputs:
         fixed = ((user or {}).get("fixed") or {}).get(c["id"])
         comps.append(Component(c["id"], c["kind"], size, electronics.mass_of(c["catalog"]), c["catalog"],
                                fixed_at=tuple(fixed) if fixed else None, ports=electronics.ports_of(c["catalog"]),
-                               min_front_mm=c.get("min_front_mm", 0.0), min_side_mm=c.get("min_side_mm", 0.0),
+                               min_front_mm=c.get("min_front_mm", 0.0),
+                               min_side_mm=max(c.get("min_side_mm", 0.0), plan.extra.get(f"{c['kind']}_side_mm", 0.0)),
                                port_room=pockets.PORT_ROOM + pockets.GAP,
                                rot_choices=(0.0, 90.0, 180.0, 270.0) if c["kind"] == "battery" else (0.0, 90.0)))
     comps.append(Component("power_switch", "switch", switch.SIZE, 0.5, "switch_slide_12x4", on_wall=True,
@@ -84,7 +87,7 @@ def layout_inputs(plan, h, user=None) -> LayoutInputs:
     return LayoutInputs(outline=f.outline, height=f.zt - f.zb, wall=f.wall + 0.2, components=comps, keepouts=keep,
                         links=links, anchors=anchors, fixed_mass=fixed_mass,
                         cog_target=(0.0, plan.extra.get("cog_y", plan.extra.get("axle_y", 0.0) + 6.0)),
-                        seed=(user or {}).get("seed", 0))
+                        seed=(user or {}).get("seed", 0), avoid=[tuple(a) for a in (user or {}).get("avoid", [])])
 
 
 def p_mass(p) -> float:
@@ -176,26 +179,37 @@ def build(h, user: dict | None = None, layout_index: int = 0, k: int = 5) -> dic
         h = hyp_mod.Hypothesis.from_dict(h)
     if not hyp_mod.buildable(h):
         raise BuildError(f"no assembler for {h.slug} yet (buildable: {sorted(hyp_mod.BUILDABLE)})")
-    lays = layouts(h, user, k=max(k, layout_index + 1) * 2)
-    errors, usable = [], 0
-    for lay in lays:
-        plan, g = _base(h, user)
+    errors, usable, avoid = [], 0, []
+    for _round in range(6):  # layouts whose wiring fails push the components at the failing wire ends elsewhere
+        u = dict(user or {}, avoid=list(avoid))
         try:
-            spec = _finish(plan, g, h, lay)
+            lays = layouts(h, u, k=max(k, layout_index + 1) * 2)
         except ValueError as e:
             errors.append(str(e))
-            continue
-        if usable == layout_index:
-            return spec
-        usable += 1
+            break
+        for lay in lays:
+            plan, g = _base(h, user)
+            try:
+                spec = _finish(plan, g, h, lay)
+            except ValueError as e:
+                errors.append(str(e))
+                for cid in re.findall(r"from (\w+)\.\w+ to (\w+)\.", str(e))[:1]:
+                    for c in cid:
+                        if c in lay.placements:
+                            q = lay.placements[c]
+                            avoid.append((c, q.x, q.y, q.rot_z))
+                continue
+            if usable == layout_index:
+                return spec
+            usable += 1
     raise BuildError(f"{h.slug}: no wireable layout ({'; '.join(errors[:3])})")
 
 
 def add_front(plan, h):
     if h.front == "wedge":
         front.add_wedge(plan, length=plan.extra.get("wedge_len", 46.0))
-    elif h.front in ("forks", "wedgelets") and h.weapon == "vspin_drisk":
-        pass  # the drisk module adds its own fork tines
+    elif h.front in ("forks", "wedgelets") and h.weapon in ("vspin_drisk", "lifter"):
+        pass  # the weapon module adds its own fork tines / lifting scoop
     elif h.front in ("forks", "wedgelets", "skirt", "plow"):
         front.add_front(plan, h.front)
 

@@ -127,7 +127,7 @@ WEAPON_CLASSES = {
 BUILDABLE = {
     "none_pusher": {"front": ("wedge", "skirt", "plow"), "drive_layout": ("2WD",)},
     "wedge": {"front": ("wedge",), "drive_layout": ("2WD",)},
-    "lifter": {"front": ("forks", "wedge"), "attachment": ("servo_horn",), "drive_layout": ("2WD",)},
+    "lifter": {"front": ("forks",), "attachment": ("servo_horn",), "drive_layout": ("2WD",)},
     "hspin_bar": {"front": ("wedgelets", "skirt", "wedge"), "mount": ("top",), "attachment": ("hub_motor",), "drive_layout": ("2WD",)},
     "vspin_drisk": {"front": ("forks", "wedgelets"), "mount": ("front",), "attachment": ("drisk",), "drive_layout": ("2WD", "4WD")},
 }

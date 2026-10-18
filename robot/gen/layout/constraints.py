@@ -77,7 +77,15 @@ def no_overlap(inp, pl, placed):
     return None
 
 
-UNARY = (inside_shell, clear_of_keepouts, clear_of_holes, edge_margins, wall_reachable, fixed_position)
+def not_avoided(inp, comp, pl):
+    """Placements a later stage (wiring) rejected: stay at least 4 mm away from them or turn."""
+    for cid, x, y, rz in inp.avoid:
+        if cid == comp.id and rz == pl.rot_z and abs(pl.x - x) + abs(pl.y - y) < 4.0:
+            return "rejected by a later stage"
+    return None
+
+
+UNARY = (inside_shell, clear_of_keepouts, clear_of_holes, edge_margins, wall_reachable, fixed_position, not_avoided)
 BINARY = (no_overlap,)
 
 

@@ -42,7 +42,7 @@ def bar_shape(length, width, t, bore_r, holes):
     hl, hw = length / 2, width / 2
     pts = [(-hl, -hw * 0.6), (-hl + 3, -hw), (hl - 6, -hw), (hl, -hw * 0.2), (hl, hw * 0.6), (hl - 3, hw), (-hl + 6, hw),
            (-hl, hw * 0.2)]
-    base = {"type": "spline_prism", "points": [[round(x, 3), round(y, 3)] for x, y in pts], "height": t}
+    base = {"type": "prism", "points": [[round(x, 3), round(y, 3)] for x, y in pts], "height": t}  # straight cut edges
     cuts = ([sh.cyl(bore_r, t + 2)] if bore_r > 0 else []) + [sh.cyl(r, t + 2, (x, y, 0)) for x, y, r in holes]
     return sh.S(base, *cuts)
 
