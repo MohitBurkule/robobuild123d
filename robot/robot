@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Antweight robot CLI: ./robot/robot verify spec.json
+here="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+PYTHONPATH="$here${PYTHONPATH:+:$PYTHONPATH}" exec python3 -W ignore -m robot "$@"

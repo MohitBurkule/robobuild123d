@@ -161,6 +161,42 @@ def _polygon_face(points, close=True):
     return b.Face(w)
 
 
+def self_intersecting(points) -> bool:
+    from shapely.geometry import Polygon
+
+    try:
+        return not Polygon([(float(p[0]), float(p[1])) for p in points]).is_valid
+    except Exception:  # noqa: BLE001
+        return True
+
+
+def _valid_faces(points, xz=False):
+    """Faces of a 2-D outline; a self-intersecting outline is repaired with even-odd parity (like the Rust SDF)."""
+    from shapely.geometry import Polygon
+    from shapely.validation import make_valid
+
+    b = _b()
+    poly = Polygon([(float(p[0]), float(p[1])) for p in points])
+    geoms = [poly] if poly.is_valid else [g for g in getattr(make_valid(poly), "geoms", [make_valid(poly)]) if g.geom_type == "Polygon"]
+    if not poly.is_valid:
+        g = make_valid(poly)
+        geoms = [x for x in (g.geoms if hasattr(g, "geoms") else [g]) if x.geom_type == "Polygon" and x.area > 1e-9]
+
+    def wire(coords):
+        cs = list(coords)[:-1]
+        vs = [b.Vector(x, 0.0, y) if xz else b.Vector(x, y, 0.0) for x, y in cs]
+        return b.Wire.make_polygon(vs, close=True)
+
+    faces = []
+    for g in geoms:
+        g = g.buffer(0) if not g.is_valid else g
+        f = b.Face(wire(g.exterior.coords), [wire(i.coords) for i in g.interiors])
+        faces.append(f)
+    if not faces:
+        raise ShapeError("outline has no area")
+    return faces
+
+
 def _area2(vs, xy=True):
     # Signed doubled area in XY (or XZ for revolve profiles, where the face must face -Y to sweep the right way).
     if xy:
@@ -192,16 +228,15 @@ def to_solid(s, base_dir: Path | None = None):
         return b.Solid.make_sphere(float(s["radius"]))
     if t == "prism":
         h = float(s["height"])
-        f = _polygon_face(s["points"])
-        return b.Solid.extrude(f, b.Vector(0, 0, h)).moved(b.Location((0, 0, -h / 2)))
+        sols = [b.Solid.extrude(f, b.Vector(0, 0, h)).moved(b.Location((0, 0, -h / 2))) for f in _valid_faces(s["points"])]
+        return sols[0] if len(sols) == 1 else _solid(sols[0].fuse(*sols[1:]).clean())
     if t == "spline_prism":
         h = float(s["height"])
         return b.Solid.extrude(_spline_face(s["points"]), b.Vector(0, 0, h)).moved(b.Location((0, 0, -h / 2)))
     if t == "revolve":
-        prof = [[float(p[0]), 0.0, float(p[1])] for p in s["profile"]]
-        f = _polygon_face(prof, close=False)
         ang = float(s.get("angle", 360.0))
-        return b.Solid.revolve(f, ang, b.Axis.Z)
+        sols = [b.Solid.revolve(f, ang, b.Axis.Z) for f in _valid_faces(s["profile"], xz=True)]
+        return sols[0] if len(sols) == 1 else _solid(sols[0].fuse(*sols[1:]).clean())
     if t == "loft":
         faces = []
         for sec in s["sections"]:
