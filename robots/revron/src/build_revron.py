@@ -110,7 +110,7 @@ SP_H1 = SP_F0 + 1.5                               # flange outer face
 HEAD_T = 1.4                                      # ISO7380 M2.5 head
 NUT0 = BLO[0] - 1.8                               # round nut on the outer ring
 WX0 = -(BLO[0] + BLI[1]) / 2                      # motor centre x: blade stack centred on x = 0
-RING_I, RING_O, BOLT_R = 11.4, 18.6, 14.75
+RING_I, RING_O, BOLT_R = 10.0, 17.6, 13.1
 SH0 = -8.0                                        # motor shaft extended out of the stator back (local)
 UL0L = SP_H1 + HEAD_T + 2.15                      # left upright inner face (local)
 SH0, SH1 = 0.5, UL0L + 3.0   # tail runs through the stator into a clearance bore in the right upright                       # motor's own shaft, extended into the F683 in the left upright
@@ -182,7 +182,7 @@ def chassis():
         cut.append(boxr(b0 + 1.4, b1 - 1.4, BY0 + 1.4, BY1 - 1.4, -0.5, UB_Z - 2.5))          # hollow boss, open below
         for y in UB_Y:
             cut.append(cylx(1.1, b0 - 0.5, b1 + 0.5, y, UB_Z))
-    cut.append(boxr(-FORK_X[1] - 0.05, FORK_X[1] + 0.05, BY0 - 0.05, CHIN_Y1 + 0.5, -0.5, 0.6))   # fork-root pocket (locates the fork)
+    cut.append(boxr(-12.05, 12.05, BY0 - 0.05, CHIN_Y1 + 0.5, -0.5, 0.6))   # fork-root pocket (locates the fork)
     for s in (1, -1):
         cut.append(cylz(1.6, 0.6, CHIN_Z1 + 0.5, s * FORK_HX, 37.7))   # insert pressed in from the top
     cut.append(boxr(-CX - 0.5, -CX + WALL + 0.5, SW_Y - 6.0, SW_Y + 6.0, SW_Z - 2.1, SW_Z + 2.1))   # switch slot, left wall
@@ -223,7 +223,7 @@ def base_panel():
 
 # ---------------------------------------------------------------- weapon
 TOOTH_A = 90.0
-TOOTH = [(-40, RING_O + 0.05), (-28, 18.85), (-18, 19.2), (-10, 19.55), (-5, 19.8), (-2, 19.95), (0.0, 20.0), (0.9, 19.92), (1.3, 19.4), (2.0, 18.8), (4.0, RING_O + 0.02)]
+TOOTH = [(-62, RING_O + 0.05), (-48, 17.9), (-34, 18.3), (-22, 18.7), (-12, 19.4), (-5, 19.85), (0.0, 20.0), (1.0, 19.85), (1.8, 18.9), (2.8, 17.6), (5.0, RING_O + 0.03)]   # one hooked tooth, 3.5 mm proud of the rim
 BOLT_A = (45, 135, 225, 315)
 LOCK_A = 292.5                                    # removable lock-pin hole (blade-local angle)
 LOCK_R = 1.6
@@ -238,7 +238,7 @@ def blade_outline(o):
         r = (-b + math.sqrt(b * b - 4 * c)) / 2
         return (r * ux, r * uy)
     pts = []; a = TOOTH_A + 8.0
-    while a < TOOTH_A + 8.0 + 308 - 0.1:
+    while a < TOOTH_A + 8.0 + 286 - 0.1:
         pts.append(circ(a)); a += 8.0
     for da, r in TOOTH:
         t = math.radians(TOOTH_A + da); pts.append((r * math.cos(t), r * math.sin(t)))
@@ -259,7 +259,7 @@ def blade_holes(t):
 def kidney(ac, t):
     pts = []
     for k in range(9):
-        a = math.radians(ac - 32 + 64 * k / 8); pts.append((10.2 * math.cos(a), 10.2 * math.sin(a)))
+        a = math.radians(ac - 32 + 64 * k / 8); pts.append((9.2 * math.cos(a), 9.2 * math.sin(a)))
     for k in range(9):
         a = math.radians(ac + 22 - 44 * k / 8); pts.append((5.2 * math.cos(a), 5.2 * math.sin(a)))
     return {"type": "spline_prism", "points": r4(pts), "height": t + 2}
@@ -299,14 +299,14 @@ def yzr(a):
 
 def spider():
     hub = cylx(4.5, SP_F0, SP_H1 + 1.0, 0, 0)
-    flange = cylx(17.75, SP_F0, SP_H1, 0, 0)
+    flange = cylx(15.6, SP_F0, SP_H1, 0, 0)
     cut = []
     for a in BOLT_A:
         y, z = yzr(a); cut.append(cylx(1.4, SP_F0 - 1, SP_H1 + 1, y, z))
     y, z = yzr(LOCK_A); cut.append(cylx(LOCK_R, SP_F0 - 1, SP_H1 + 1, y, z))
     for a in LIGHT_A:
-        y, z = 9.8 * math.sin(math.radians(a)), -9.8 * math.cos(math.radians(a))
-        cut.append(cylx(4.2, SP_F0 - 1, SP_H1 + 1, y, z))
+        y, z = 9.0 * math.sin(math.radians(a)), -9.0 * math.cos(math.radians(a))
+        cut.append(cylx(2.2, SP_F0 - 1, SP_H1 + 1, y, z))
     return S(U(hub, flange), *cut)
 
 
@@ -333,7 +333,7 @@ def upright(side):
     if side == "r":
         for dz in (-8.0, 8.0):
             cut.append(cylx(1.1, x0 - 1, x1 + 1, YW, ZW + dz))
-        cut.append(boxr(x1 - 2.2, x1 + 0.1, YW - 5.1, YW - 2.3, CHIN_Z1 - 0.1, ZW + 2.5))   # phase-wire channel down the motor-side face
+        cut.append(boxr(x1 - 2.2, x1 + 0.1, YW - 5.1, YW - 2.3, ZW - 10.5, ZW + 2.5))   # phase-wire channel down the motor-side face
         pass
     else:
         cut.append(cylx(3.5, x0 - 0.1, x0 + 3.0, YW, ZW))       # F683 seat on the inner face
@@ -341,14 +341,29 @@ def upright(side):
     return S(body, *cut)
 
 
+def chaikin(p, n):
+    """Corner-cutting (quadratic B-spline) smoothing of a closed outline."""
+    for _ in range(n):
+        q = []
+        for i in range(len(p)):
+            (x0, y0), (x1, y1) = p[i], p[(i + 1) % len(p)]
+            q += [(0.75 * x0 + 0.25 * x1, 0.75 * y0 + 0.25 * y1), (0.25 * x0 + 0.75 * x1, 0.25 * y0 + 0.75 * y1)]
+        p = q
+    return p
+
+
 # ---------------------------------------------------------------- forks (TPU, sprung)
 def forks():
-    root = boxr(-FORK_X[1], FORK_X[1], BY0, CHIN_Y1, -2.0, 0.6)   # thick root, sunk 0.6 into a chin pocket
+    root = boxr(-12.0, 12.0, BY0, CHIN_Y1, -2.0, 0.6)   # thick root, sunk 0.6 into a chin pocket
     tines = []
-    for s in (1, -1):
-        prof = [(BY0, -1.2), (CHIN_Y1 + 4, -1.2), (FORK_TIP - 6, -1.95), (FORK_TIP, -1.95), (FORK_TIP, 0.0), (FORK_TIP - 8, 0.3),
-                (CHIN_Y1 + 3, 0.6), (CHIN_Y1 + 0.5, 0.0), (BY0, 0.0)]
-        tines.append(yz(prof, s * FORK_X[0], s * FORK_X[1]))
+    for s in (1, -1):   # B-spline tines: wide sprung root tapering to a rounded scoop tip, thinning towards the tip
+        prof = [(BY0, -2.0), (CHIN_Y1 + 4, -2.0), (FORK_TIP - 6, -2.0), (FORK_TIP, -2.0), (FORK_TIP, -0.6), (FORK_TIP - 8, 0.2),
+                (CHIN_Y1 + 3, 0.6), (CHIN_Y1 + 0.5, 0.6), (BY0, 0.6)]
+        plan = [(3.0, BY0 + 0.3), (11.2, BY0), (11.2, CHIN_Y1 + 2), (11.0, CHIN_Y1 + 12), (10.2, FORK_TIP - 6), (9.6, FORK_TIP - 1.0), (8.9, FORK_TIP), (6.6, FORK_TIP),
+                (5.9, FORK_TIP - 1.0), (5.4, FORK_TIP - 6), (4.4, CHIN_Y1 + 12), (3.0, CHIN_Y1 + 2)]
+        plan = [(s * x, y) for x, y in plan] if s > 0 else [(s * x, y) for x, y in reversed(plan)]
+        tines.append({"type": "intersect", "items": [yz(prof, -13.0, 13.0, spline=False),
+                      place({"type": "prism", "points": r4(chaikin(plan, 3)), "height": 4.0}, (0, 0, -0.7))]})
     cut = [cylz(1.1, -3, 1, s * FORK_HX, 37.7) for s in (1, -1)]
     cut += [cylz(2.0, -2.1, -0.6, s * FORK_HX, 37.7) for s in (1, -1)]
     return S(U(root, *tines), *cut)
