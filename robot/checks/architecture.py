@@ -1947,8 +1947,10 @@ def cut_breakout(a):
         bb = b.placed(b.M)
         bb.geom = bg
         bb._mesh = None
-        wall = catalog.material(p.material).min_wall_mm if catalog.material(p.material) else 0.9
-        lim = max(1.0, 1.5 * wall)
+        mat = catalog.material(p.material)
+        wall = mat.min_wall_mm if mat else 0.9
+        # An elastomer (TPU) web stretches instead of cracking out: 1 mm holds a screw or a standoff bore (RVRN wedglet).
+        lim = 1.0 if (mat is not None and mat.cls == "elastomer") else max(1.0, 1.5 * wall)
         for Mc, r, hgt in cuts:
             W = b.M @ Mc
             c, ax = W[:3, 3], _unit(W[:3, 2])

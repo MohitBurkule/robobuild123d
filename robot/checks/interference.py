@@ -73,6 +73,20 @@ def rotor_ids(r, weapon_part) -> set:
     return out
 
 
+def riding_fasteners(r, moved) -> set:
+    """Fastener ids that move with a set of parts: a screw through, or threaded into, one of them turns with it
+    (drisk bolts, prop-mount screws). Fasteners have no `parent`, so without this they stay put while their parts move."""
+    out = set()
+    for f in r.spec.fasteners:
+        ids = set(f.through or []) | ({f.threads_into} if f.threads_into else set())
+        rw = (f._extra or {}).get("rotates_with") if hasattr(f, "_extra") else None
+        if rw == "fixed":
+            continue
+        if ids & moved:
+            out.add(f.id)
+    return out
+
+
 def blanket_allowances(r):
     out = []
     for ao in r.spec.allow_overlap:
@@ -254,6 +268,8 @@ def joint_sweeps(ctx):
             continue
         anyj = True
         moved = descendants(r, rp.part.id)
+        riders = riding_fasteners(r, moved)
+        i0 = w0.index(rp.part.id)
         lo, hi = min(j.min, j.max), max(j.min, j.max)
         step = 0.8 if j.kind == "prismatic" else 3.0
         n = int(min(max(math.ceil((hi - lo) / step), 1), 80))
@@ -265,11 +281,17 @@ def joint_sweeps(ctx):
             for idx, b in enumerate(w.bodies):
                 if b.id not in moved and idx < len(w0.bodies) and w0.bodies[idx].id == b.id:
                     w.bodies[idx] = w0.bodies[idx]
+            if riders:
+                dM = w.bodies[i0].M @ np.linalg.inv(w0.bodies[i0].M)
+                for idx, b in enumerate(w.bodies):
+                    if b.id in riders:
+                        w.bodies[idx] = b.placed(dM @ b.M)
+            moved_all = moved | riders
             for a in w.bodies:
-                if a.id not in moved:
+                if a.id not in moved_all:
                     continue
                 for b in w.bodies:
-                    if b.id in moved or not measure.aabb_overlap(a.aabb, b.aabb):
+                    if b.id in moved_all or not measure.aabb_overlap(a.aabb, b.aabb):
                         continue
                     allow = allowed_depth(r, a, b)
                     if math.isinf(allow):
@@ -365,6 +387,7 @@ def spin_sweeps(ctx):
         # The whole rotor turns: the weapon plus the parts that rotate with it (shaft, hub, screws, nuts). Rotor parts are
         # swept too, and never tested against each other.
         rotor = rotor_ids(r, r.parts[b.part_idx].part)
+        rotor |= riding_fasteners(r, rotor)
         members = [b] + [w.bodies[k] for k in range(len(w.bodies)) if k != i and w.bodies[k].id in rotor and not w.bodies[k].is_wire]
         revs = []
         for m in members:
