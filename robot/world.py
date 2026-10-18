@@ -94,6 +94,7 @@ def resolve(spec: Spec, fast: bool = False) -> Resolved:
     return Resolved(spec, prof, parts, errors, fast)
 
 
+BUILD_TIMEOUT_S = float(os.environ.get("ROBOT_BUILD_TIMEOUT") or 600)
 JOBS = int(os.environ.get("ROBOT_JOBS") or 0) or (os.cpu_count() or 1)
 
 
@@ -138,12 +139,29 @@ def _prebuild(spec, tess):
     import multiprocessing as mp
     from concurrent.futures import ProcessPoolExecutor
 
-    print(f"building {len(todo)} changed part solids on {min(JOBS, len(todo))} processes", flush=True)
+    n = min(JOBS, len(todo))
+    print(f"building {len(todo)} changed part solids on {n} processes", flush=True)
+    # spawn, not fork: forking a process that holds OCP / BLAS threads can deadlock the children.
+    ex = ProcessPoolExecutor(n, mp_context=mp.get_context("spawn"))
     try:
-        with ProcessPoolExecutor(min(JOBS, len(todo)), mp_context=mp.get_context("fork")) as ex:
-            list(ex.map(_build_one, todo))
-    except Exception as e:  # noqa: BLE001 - fall back to serial builds
-        print(f"parallel build failed ({type(e).__name__}); building serially", flush=True)
+        list(ex.map(_build_one, todo, timeout=BUILD_TIMEOUT_S))
+        ex.shutdown(wait=True)
+    except Exception as e:  # noqa: BLE001 - timeout or worker crash: the serial pass builds what is missing
+        print(f"parallel build failed ({type(e).__name__}); building the rest serially", flush=True)
+        for pr in list((getattr(ex, "_processes", None) or {}).values()):
+            pr.terminate()
+        ex.shutdown(wait=False, cancel_futures=True)
+
+
+def _contains(mesh, Q):
+    """mesh.contains with a fixed seed: trimesh re-casts ambiguous rays along *random* directions (global RNG), so
+    without this the answer depends on whatever ran before and cached and uncached runs could differ."""
+    st = np.random.get_state()
+    np.random.seed(12345)
+    try:
+        return mesh.contains(Q)
+    finally:
+        np.random.set_state(st)
 
 
 def fastener_shape(d, length):
@@ -199,7 +217,7 @@ class Body:
         m = np.all((P >= lo - 1e-9) & (P <= hi + 1e-9), axis=1)
         if m.any():
             Q = P[m]
-            out[m] = cache.memo("inside", ("in", cache.body_sig(self), Q), lambda: self.mesh.contains(Q))
+            out[m] = cache.memo("inside", ("in", cache.body_sig(self), Q), lambda: _contains(self.mesh, Q))
         return out
 
     def distance(self, P) -> np.ndarray:
