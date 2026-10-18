@@ -112,7 +112,7 @@ RULE_CASES = {
                           dict(weapon="wedge")),
     "mass_budget": (dict(weapon="full_body_spinner", drive_layout="8WD", wheel_dia=25, battery="lipo_2s_350",
                          weapon_esc="esc_brushless_12a", drive_esc="c_bbb_antweight_dual_esc_v3_1"), dict(weapon="wedge")),
-    "size_budget": (dict(drive_motor="n20", wheel_dia=40, wheel_guards=True, weapon="vspin_drisk", front="forks"),
+    "size_budget": (dict(drive_motor="n20", drive_layout="8WD", wheel_dia=40, weapon="vspin_drisk", front="forks"),
                     dict(weapon="wedge")),
 }
 

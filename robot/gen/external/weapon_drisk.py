@@ -21,13 +21,17 @@ FRONT_GAP = 2.5  # chassis front to the rim
 PIN_R_FROM_AXIS = 14.0
 PIN_ANGLE = 135.0  # degrees in the y-z plane, from +y towards +z (behind and above the axis)
 FOOT_LEN = 6.0  # foot block ahead of the front wall, screwed into it along -y
-ARM_LOW = 6.0  # the arm joins the foot only above this height so the foot screw below it has a clear driver path
-AXIS_BOSS_R = 6.0  # round boss at the axis (bearing seat r 3.5 + wall)
+ARM_LOW = 9.5  # the arm joins the foot only above this height so the foot screw below it has a clear driver path
+AXIS_BOSS_R = 5.0  # round boss at the axis (bearing seat r 3.5 + wall)
 STATOR_SCREW_R = 8.0
-TAB_LEN, TAB_T = 8.0, 3.0  # tab lying on the roof behind the front wall, screwed down into the top half
+# two adjacent holes of the 1806's 4-hole stator pattern: behind (clear of the foot screws' driver path below) and
+# above the axis, so nothing of the upright leads the disc
+STATOR_SCREWS = ((-STATOR_SCREW_R, 0.0), (0.0, STATOR_SCREW_R))
+Z_UPPER = 3.5  # upper foot screw (top half); the arm starts above its driver path
+TAB_LEN, TAB_T = 6.0, 2.0  # hook tab over the roof edge
 FORK_T = 1.5
 FORK_MAT = "titanium"
-HUB_BORE_R = 0.9  # disc hub drawn solid round the shaft (the joint pivot must lie in the disc)
+HUB_BORE_R = 0.0  # 3 mm bore reamed after cutting: not in the laser outline, hub drawn solid
 FORK_ROOT = 30.0  # fork tine length along the side wall (bolt spread against the lever of the tip)
 
 
@@ -39,12 +43,12 @@ def upright_profile(yf, zb, zt, axis_yz, pin_yz):
     """Outline (y, z) of an upright: foot block flat on the front wall (screws below ARM_LOW), and an arm = hull of
     the foot's top, the round boss at the axis and the lock-pin lobe. Not convex: the screws' driver path stays clear."""
     foot = Polygon([(yf, zb + 1.0), (yf + FOOT_LEN, zb + 1.0), (yf + FOOT_LEN, zt), (yf, zt)])
-    tab = Polygon([(yf - TAB_LEN, zt), (yf, zt), (yf, zt + TAB_T), (yf - TAB_LEN, zt + TAB_T)])
+    tab = Polygon([(yf - TAB_LEN, zt + 0.05), (yf, zt + 0.05), (yf, zt + TAB_T), (yf - TAB_LEN, zt + TAB_T)])
     ay, az = axis_yz
     arm = MultiPoint([(yf, ARM_LOW), (yf + FOOT_LEN, ARM_LOW), (yf, zt + TAB_T), (yf + FOOT_LEN, zt)]
                      + _circle(axis_yz, AXIS_BOSS_R) + _circle(pin_yz, 4.0)
-                     + _circle((ay, az + STATOR_SCREW_R), 3.5) + _circle((ay, az - STATOR_SCREW_R), 3.5)).convex_hull
-    shape = foot.union(tab).union(arm).simplify(0.01)
+                     + [q for dy, dz in STATOR_SCREWS for q in _circle((ay + dy, az + dz), 3.5)]).convex_hull
+    shape = foot.union(arm).union(tab).simplify(0.01)
     return [(round(x, 3), round(y, 3)) for x, y in list(shape.exterior.coords)[:-1]]
 
 
@@ -74,7 +78,6 @@ class Drisk:
         for side in ("upr", "upl"):
             xc = sum(xs[side]) / 2
             plan.keepouts.append((f"boss_u{side}", xc - 3.0, xc + 3.0, f.y1 - 6.0, f.y1))
-            plan.keepouts.append((f"boss_t{side}", xc - 3.0, xc + 3.0, f.y1 - TAB_LEN / 2 - 3.0, f.y1 - TAB_LEN / 2 + 3.0))
         # motor phase leads leave the chassis through a hole in the front wall under the right upright
         xm = sum(xs["motor"]) / 2
         for side, sgn, yy, z in fork_sites(plan):
@@ -102,18 +105,22 @@ class Drisk:
                       rot=[90.0, 0.0, 0.0], retained="press_fit")
             plan.screw(id=f"bolt_{side}0", designation="M2x10", at=[xc, f.y1 + FOOT_LEN, z_front], dir=[0.0, -1.0, 0.0],
                        through=[label], threads_into=f"insert_{side}0")
-            # roof screw: through the tab down into an insert in a boss under the roof (top half)
-            yt = f.y1 - TAB_LEN / 2
-            cuts.append(sh.cyl_axis(1.1, f.zt - 0.5, f.zt + TAB_T + 0.5, "z", xc, yt))
-            plan.add("top", sh.cyl_axis(3.0, f.zt - 6.0, f.zt, "z", xc, yt))
-            plan.late_cuts["top"].append(sh.cyl_axis(1.6, f.zt - 5.4, f.zt + 0.2, "z", xc, yt))
-            plan.part(id=f"insert_{side}1", kind="insert", catalog="heatset_m2", at=[xc, yt, f.zt - 1.6], retained="press_fit")
-            plan.screw(id=f"bolt_{side}1", designation="M2x8", at=[xc, yt, f.zt + TAB_T], dir=[0.0, 0.0, -1.0],
+            # upper front screw into an insert in the top half's front wall
+            z_up = Z_UPPER
+            cuts.append(sh.cyl_axis(1.1, f.y1 - 0.5, f.y1 + FOOT_LEN + 0.5, "y", xc, z_up))
+            plan.add("top", sh.cyl_axis(3.0, f.y1 - 6.0, f.y1, "y", xc, z_up))
+            plan.late_cuts["top"].append(sh.cyl_axis(1.6, f.y1 - 4.6, f.y1 + 0.2, "y", xc, z_up))
+            plan.part(id=f"insert_{side}1", kind="insert", catalog="heatset_m2", at=[xc, f.y1 - 1.7, z_up],
+                      rot=[90.0, 0.0, 0.0], retained="press_fit")
+            plan.screw(id=f"bolt_{side}1", designation="M2x10", at=[xc, f.y1 + FOOT_LEN, z_up], dir=[0.0, -1.0, 0.0],
                        through=[label], threads_into=f"insert_{side}1")
+            plan.connect(label, "chassis_top", "interlock",
+                         "Hook tab on the foot's top lies on the roof behind the front wall (takes the peel); "
+                         "2 M2 along -y into front-wall inserts", mechanical_key=True)
             if side == "upr":
-                for dz in (STATOR_SCREW_R, -STATOR_SCREW_R):
-                    cuts.append(sh.cyl_axis(1.1, x0 - 1, x1 + 1, "x", yw, zw + dz))
-                    plan.screw(id=f"bolt_wm{'a' if dz > 0 else 'b'}", designation="M2x8", at=[x0, yw, zw + dz],
+                for k, (dy, dz) in enumerate(STATOR_SCREWS):
+                    cuts.append(sh.cyl_axis(1.1, x0 - 1, x1 + 1, "x", yw + dy, zw + dz))
+                    plan.screw(id=f"bolt_wm{'ab'[k]}", designation="M2x8", at=[x0, yw + dy, zw + dz],
                                dir=[1.0, 0.0, 0.0], through=[label], threads_into="weapon_motor")
             else:
                 cuts.append(sh.cyl_axis(spinner.BEARING["r_out"], x0 - 0.1, x0 + spinner.BEARING["w"], "x", yw, zw))
@@ -135,7 +142,7 @@ class Drisk:
             holes.append((PIN_R_FROM_AXIS * math.cos(ang), PIN_R_FROM_AXIS * math.sin(ang), 1.6))
         for k in range(4):
             ang = a + math.pi / 4 + k * math.pi / 2
-            holes.append((9.0 * math.cos(ang), 9.0 * math.sin(ang), 3.2))
+            holes.append((10.0 * math.cos(ang), 10.0 * math.sin(ang), 4.0))
         # disc local (u, v) -> world (y, z): rot [0, 90, 0] maps local x -> -z, local y -> y; build in (z', y) order
         holes_local = [(-(v), u, r) for u, v, r in holes]
         disc = spinner.disc_shape(DISC_R, DISC_T, HUB_BORE_R, holes_local)

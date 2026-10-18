@@ -52,8 +52,9 @@ TAXONOMY_ALIASES = {
     "full_wedge": "wedge", "wedgelets": "wedgelets", "forks": "forks", "skirt_flexible": "skirt", "plow_scoop": "plow",
     "weapon_is_front": "weapon_is_front", "none": "none", "air_blower": "air_blower", "gyro_walker": "gyro_walker",
     "thagomiser_drone_arm": "drone_arm", "2WD+skid": "2WD_skid", "2WD_rear": "2WD", "2WD_centre": "2WD",
-    "melty_2wheel": "melty",
+    "melty_2wheel": "melty", "rotating_drive_pods": "rotating_pods",
 }
+MUST_INVERT = ("hspin_shell", "hspin_ring", "full_body_spinner", "meltybrain")
 # Friendly names accepted on the command line.
 WEAPON_ALIASES = {
     "none": "none_pusher", "pusher": "none_pusher", "grabber": "grabber_clamp", "horizontal_spinner": "hspin_bar",
@@ -219,11 +220,13 @@ PRESETS = {
     "wedge": dict(weapon="wedge", front="wedge"),
     "none_pusher": dict(weapon="none_pusher", front="skirt"),
     "lifter": dict(weapon="lifter", mount="front", orientation="vertical", attachment="servo_horn", front="forks"),
-    "hspin_bar": dict(weapon="hspin_bar", mount="top", orientation="flat", attachment="hub_motor", front="wedgelets",
-                      weapon_esc="c_bbb_antweight_spinner_brushless_esc", battery="lipo_2s_350"),
+    "hspin_bar": dict(weapon="hspin_bar", mount="top", orientation="flat", attachment="hub_motor", front="wedge",
+                      wheel_dia=22, weapon_esc="c_bbb_antweight_spinner_brushless_esc",
+                      battery="c_typical_2s_300mah_lipo_lihv_betafpv_tbs_",
+                      drive_esc="c_malenki_nano_antweight_esc_receiver", rx="integrated"),
     "vspin_drisk": dict(weapon="vspin_drisk", mount="front", orientation="vertical", attachment="drisk", front="forks",
                         drive_layout="2WD", wheel_dia=22, weapon_esc="c_bbb_antweight_spinner_brushless_esc",
-                        battery="lipo_2s_180", invertible=False, drive_esc="c_malenki_nano_antweight_esc_receiver",
+                        battery="c_typical_2s_300mah_lipo_lihv_betafpv_tbs_", invertible=False, drive_esc="c_malenki_nano_antweight_esc_receiver",
                         rx="integrated"),
 }
 
@@ -234,8 +237,17 @@ def preset(weapon: str) -> Hypothesis:
     if w in PRESETS:
         return Hypothesis(**PRESETS[w])
     wc = WEAPON_CLASSES[w]
-    return Hypothesis(weapon=w, mount=wc.mounts[0], orientation=wc.orientations[0], attachment=wc.attachments[0],
-                      front=wc.fronts[0], weapon_esc="c_bbb_antweight_spinner_brushless_esc" if wc.actuator == "brushless" else "none")
+    h = Hypothesis(weapon=w, mount=wc.mounts[0], orientation=wc.orientations[0], attachment=wc.attachments[0],
+                      front=wc.fronts[0], weapon_esc="c_bbb_antweight_spinner_brushless_esc" if wc.actuator == "brushless" else "none",
+                   invertible=w in MUST_INVERT or Hypothesis.invertible)
+    from .rules import violations
+    bad = {r for r, _ in violations(h)}
+    if bad:  # keep the defaults that are fine, let the search pick the axes the broken rules need
+        from .rules import RULES
+        free = {a for r in RULES if r.name in bad for a in r.needs} - {"weapon"}
+        fixed = {k: v for k, v in h.to_dict().items() if k not in free}
+        h = next(enumerate_hypotheses(fixed), None) or next(enumerate_hypotheses({"weapon": w}))
+    return h
 
 
 def _rules_by_depth(rules):

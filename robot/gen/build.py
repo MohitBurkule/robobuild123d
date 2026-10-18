@@ -33,9 +33,9 @@ def frame_params(h, user: dict | None = None) -> dict:
     zt = min(10.0, R - 1.5) if h.invertible else 10.0
     p = {"axle_y": -16.0, "y0": -40.0, "y1": 36.0, "zb": zb, "zt": zt, "floor_z": -R}
     if h.weapon == "hspin_bar":
-        p.update(axle_y=-6.0, y0=-30.0, y1=34.0)
+        p.update(axle_y=-14.0, y0=-48.0, y1=44.0, floor=1.1)
     if h.weapon == "vspin_drisk":
-        p.update(axle_y=-14.0, y0=-36.0, y1=44.0)
+        p.update(axle_y=-14.0, y0=-36.0, y1=44.0, floor=1.1)
     if h.weapon == "lifter":
         p.update(axle_y=-18.0, y0=-42.0, y1=30.0)
     p.update({k: v for k, v in user.items() if k in p})
@@ -54,7 +54,7 @@ def make_plan(h, user=None) -> tuple:
     g = drive.geom_for(h, fp["axle_y"])
     W = round(g.half_width, 2)
     outline = (user or {}).get("outline") or default_outline(W, fp["y0"], fp["y1"])
-    fr = Frame(outline=[list(map(float, p)) for p in outline], zb=fp["zb"], zt=fp["zt"], floor=1.5)
+    fr = Frame(outline=[list(map(float, p)) for p in outline], zb=fp["zb"], zt=fp["zt"], floor=fp.get("floor", 1.5))
     plan = Plan(hyp=h, frame=fr, name=(user or {}).get("name") or f"gen {h.weapon}",
                 robot_type=ROBOT_TYPE.get(h.weapon, "other"))
     plan.extra["_floor_z"] = fp["floor_z"]
@@ -70,7 +70,8 @@ def layout_inputs(plan, h, user=None) -> LayoutInputs:
         comps.append(Component(c["id"], c["kind"], size, electronics.mass_of(c["catalog"]), c["catalog"],
                                fixed_at=tuple(fixed) if fixed else None, ports=electronics.ports_of(c["catalog"]),
                                min_front_mm=c.get("min_front_mm", 0.0), min_side_mm=c.get("min_side_mm", 0.0),
-                               port_room=pockets.PORT_ROOM + pockets.GAP))
+                               port_room=pockets.PORT_ROOM + pockets.GAP,
+                               rot_choices=(0.0, 90.0, 180.0, 270.0) if c["kind"] == "battery" else (0.0, 90.0)))
     comps.append(Component("power_switch", "switch", switch.SIZE, 0.5, "switch_slide_12x4", on_wall=True,
                            rot_choices=(0.0, 90.0), ports={"in": (-4, 0, 0), "out": (4, 0, 0)}))
     links = [Link(a.split(".")[0] if a.split(".")[0] in {c.id for c in comps} else a,

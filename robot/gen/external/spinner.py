@@ -33,7 +33,7 @@ def tooth_outline(radius, teeth=2, depth=1.6, n=48):
 def disc_shape(radius, t, bore_r, holes, teeth=2):
     """Laser-cut toothed disc in its own XY plane (axis z), centred, with a bore and extra round holes [(x, y, r)]."""
     base = {"type": "spline_prism", "points": [list(p) for p in tooth_outline(radius, teeth)], "height": t}
-    cuts = [sh.cyl(bore_r, t + 2)] + [sh.cyl(r, t + 2, (x, y, 0)) for x, y, r in holes]
+    cuts = ([sh.cyl(bore_r, t + 2)] if bore_r > 0 else []) + [sh.cyl(r, t + 2, (x, y, 0)) for x, y, r in holes]
     return sh.S(base, *cuts)
 
 
@@ -43,7 +43,7 @@ def bar_shape(length, width, t, bore_r, holes):
     pts = [(-hl, -hw * 0.6), (-hl + 3, -hw), (hl - 6, -hw), (hl, -hw * 0.2), (hl, hw * 0.6), (hl - 3, hw), (-hl + 6, hw),
            (-hl, hw * 0.2)]
     base = {"type": "spline_prism", "points": [[round(x, 3), round(y, 3)] for x, y in pts], "height": t}
-    cuts = [sh.cyl(bore_r, t + 2)] + [sh.cyl(r, t + 2, (x, y, 0)) for x, y, r in holes]
+    cuts = ([sh.cyl(bore_r, t + 2)] if bore_r > 0 else []) + [sh.cyl(r, t + 2, (x, y, 0)) for x, y, r in holes]
     return sh.S(base, *cuts)
 
 
@@ -55,7 +55,7 @@ def bearing_shape(at, axis):
     return sh.place(sh.S(outer, inner), at)
 
 
-def rotor_connections(plan, weapon_id, motor_id, shaft_id, bearing_id, bearing_host):
+def rotor_connections(plan, weapon_id, motor_id, shaft_id, bearing_id, bearing_host, hub_depth=1.7):
     plan.connect(weapon_id, motor_id, "press_fit",
                  "Weapon hub bore pressed over the bell's shaft boss and keyed by 2 M3 grub screws on the shaft flat; "
                  "4 M2.5 screws clamp the plate to the bell face, circlip outboard", interference_mm=0.05, mechanical_key=True)
@@ -69,6 +69,6 @@ def rotor_connections(plan, weapon_id, motor_id, shaft_id, bearing_id, bearing_h
                  "683ZZ inner race on the shaft end: the second support of the rotor, located by a shoulder and circlip")
     plan.allow_overlap += [
         {"a": motor_id, "b": shaft_id, "max_depth_mm": 1.6, "reason": "the motor's own shaft inside its stator bore (catalog motor drawn solid)"},
-        {"a": weapon_id, "b": motor_id, "max_depth_mm": 1.7, "reason": "weapon hub drawn solid over the bell's shaft boss (catalog motor drawn with a solid boss)"},
-        {"a": weapon_id, "b": shaft_id, "max_depth_mm": 0.7, "reason": "weapon hub drawn solid over the 3 mm shaft (holds the joint pivot)"},
+        {"a": weapon_id, "b": motor_id, "max_depth_mm": hub_depth, "reason": "weapon hub drawn solid over the bell's shaft boss (catalog motor drawn with a solid boss)"},
+        {"a": weapon_id, "b": shaft_id, "max_depth_mm": 1.6, "reason": "3 mm shaft bore drilled and reamed after laser cutting (secondary op), so the hub is drawn solid"},
     ]

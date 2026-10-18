@@ -25,4 +25,4 @@ def add(plan, h, g):
         m.add(plan, h, g)
 
 
-from . import weapon_drisk  # noqa: E402,F401  (registers its module)
+from . import weapon_drisk, weapon_hspin  # noqa: E402,F401  (register their modules)

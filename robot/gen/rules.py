@@ -11,7 +11,7 @@ from types import SimpleNamespace
 from typing import Callable
 
 from . import budget
-from .hypothesis import WEAPON_CLASSES
+from .hypothesis import MUST_INVERT, WEAPON_CLASSES
 
 
 @dataclass(frozen=True)
@@ -146,7 +146,7 @@ def servo_on_2s(h):
 
 @rule("weapon", "invertible")
 def weapon_invertible(h):
-    if h.weapon in ("hspin_shell", "hspin_ring", "full_body_spinner", "meltybrain") and not h.invertible:
+    if h.weapon in MUST_INVERT and not h.invertible:
         return "full-body spinners are symmetric and must run inverted"
     return None
 
