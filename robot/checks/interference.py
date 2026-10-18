@@ -389,7 +389,7 @@ def captive(ctx):
         p = r.parts[b.part_idx].part
         if p.kind in SKIP_KINDS:
             continue
-        grown = np.array([b.aabb[0] - slop, b.aabb[1] + slop])
+        grown = np.array([b.aabb[0] - slop - 0.3, b.aabb[1] + slop + 0.3])
         near = []
         for j, o in enumerate(w.bodies):
             if j == i or o.is_wire or not measure.aabb_overlap(o.aabb, grown):
@@ -401,8 +401,10 @@ def captive(ctx):
         free, blockers = [], []
         for name, d in DIRS:
             blocked = False
-            shift = np.asarray(d, float) * slop
             for o, ad in near:
+                # overlap depth = half the slab thickness, so add twice the threshold:
+                # blocked exactly when the gap to `o` is smaller than `slop`.
+                shift = np.asarray(d, float) * (slop + 2 * (ad + 0.02))
                 if measure.overlap_exceeds(b, o, ad + 0.02, shift):
                     blocked = True
                     if not o.fastener and o.id not in blockers:
