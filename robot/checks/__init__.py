@@ -94,6 +94,7 @@ def verify_resolved(r, opts: Options) -> Report:
         findings.extend(validity.claims(ctx))
         rep.routes = ctx.routes
         rep.assembly = ctx.assembly
+        rep.mass = getattr(ctx, "mass_lines", [])
     rep.findings = findings
     rep.metrics = ctx.metrics if ctx else {}
     rep.checks_revision = CHECKS_REVISION
