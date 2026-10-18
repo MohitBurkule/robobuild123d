@@ -2,7 +2,7 @@
 
 ![Reference 2WD wedge](renders/iso.png)
 
-Verifier (`aws2025`): passes. 0 blockers, 3 warnings, 36 checks passed. 6 items NOT CHECKED (see REPORT.md).
+Verifier (`aws2025`): passes. 0 blockers, 2 warnings, 38 checks passed. 7 items NOT CHECKED (see REPORT.md).
 
 Mass 114.6 g (range 93.6 to 135.6 g).
 

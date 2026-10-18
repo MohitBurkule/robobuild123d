@@ -590,7 +590,7 @@ def run(ctx):
     out.extend(layer_load(ctx, by_id))
     if n_ok:
         out.append(ok("process.ok", G, "Geometry matches the process", f"{n_ok} part(s) are makeable as declared."))
-    ctx.not_checked.append("Process: single-profile neck width (web inside one outline), bent-part flat-pattern unfold "
+    ctx.not_checked.append("Process: single-profile neck width (web inside one outline) "
                            "and fdm overhangs per declared orientation are not checked here")
     return out
 
@@ -642,9 +642,132 @@ def layer_load(ctx, by_id):
     return out
 
 
+# ---------------------------------------------------------------- flat pattern
+K_FACTOR = 0.44  # neutral axis position for bend allowance: BA = angle * (r_in + K t)
+
+
+def _rot_about(a, d, phi):
+    """4x4 rigid rotation by phi about the line through a along unit d."""
+    d = _unit(np.asarray(d, float))
+    K = np.array([[0, -d[2], d[1]], [d[2], 0, -d[0]], [-d[1], d[0], 0]])
+    R = np.eye(3) + math.sin(phi) * K + (1 - math.cos(phi)) * K @ K
+    M = np.eye(4)
+    M[:3, :3] = R
+    M[:3, 3] = a - R @ a
+    return M
+
+
+def _xf(M, p):
+    return M[:3, :3] @ p + M[:3, 3]
+
+
+def unfold_sheet_bent(solid, t):
+    """Flat pattern of a constant-thickness sheet with straight cylindrical bends.
+
+    Walks one skin of the sheet (planar flange faces + bend cylinders, side walls and holes excluded) from its largest
+    flange; each bend unrolls its child flange about the bend axis by the bend angle and pushes it out by the bend
+    allowance angle * (r_in + K t), K = 0.44. Returns (flat bd.Face in the XY plane, [(p0, p1)] 2D bend centrelines).
+    Raises ValueError when the part is not a single unfoldable skin."""
+    import build123d as bd
+
+    infos = [face_info(f) for f in solid.faces()]
+    if any(d["kind"] not in ("plane", "cylinder") for d in infos):
+        raise ValueError("faces neither planar nor cylindrical")
+    planes = [d for d in infos if d["kind"] == "plane"]
+    for d in planes:  # a sheet face has an opposite face one thickness away
+        d["sheet"] = any(o["n"] @ d["n"] < -1 + ANG and abs(abs(float((o["c"] - d["c"]) @ d["n"])) - t) < 0.05
+                         for o in planes)
+    holes, _ = _hole_groups(infos)
+    hole_faces = [x["f"] for g in holes for x in g]
+    bends = [d for d in infos if d["kind"] == "cylinder" and d["len"] > 1.5 * t
+             and not any(d["f"].wrapped.IsSame(h.wrapped) for h in hole_faces)]
+    nodes = [d for d in planes if d["sheet"]] + bends
+    if not any(d["kind"] == "plane" for d in nodes):
+        raise ValueError("no flange faces")
+    idx = {id(d): i for i, d in enumerate(nodes)}
+
+    def node_of(f):
+        for d in nodes:
+            if d["f"].wrapped.IsSame(f.wrapped):
+                return d
+        return None
+
+    nbr = {i: [] for i in range(len(nodes))}  # i -> [(j, shared edge)]
+    for e, fl in edge_faces(solid):
+        ns = [node_of(f) for f in fl]
+        if len(ns) == 2 and all(n is not None for n in ns) and ns[0] is not ns[1]:
+            a, b = idx[id(ns[0])], idx[id(ns[1])]
+            nbr[a].append((b, e))
+            nbr[b].append((a, e))
+
+    base = max((d for d in nodes if d["kind"] == "plane"), key=lambda d: d["area"])
+    motion = {idx[id(base)]: np.eye(4)}
+    flat_faces, strips, lines = [base["f"]], set(), []
+    queue = [idx[id(base)]]
+    while queue:
+        i = queue.pop(0)
+        P, MP = nodes[i], motion[i]
+        if P["kind"] != "plane":
+            continue
+        for j, e in nbr[i]:
+            cy = nodes[j]
+            if cy["kind"] != "cylinder":
+                continue
+            r_in = cy["r"] if cy["concave"] else cy["r"] - t
+            theta = math.radians(cy["arc"])
+            ba = theta * (r_in + K_FACTOR * t)
+            a, d = cy["loc"], cy["dir"]
+            w = a - P["c"]
+            w = _unit(w - (w @ P["n"]) * P["n"] - (w @ d) * d)
+            for k, e2 in nbr[j]:
+                if k in motion or nodes[k]["kind"] != "plane":
+                    continue
+                Q = nodes[k]
+                best = None
+                for s in (1.0, -1.0):
+                    L = _rot_about(a, d, s * theta)
+                    L[:3, 3] += ba * w
+                    c2, n2 = _xf(L, Q["c"]), L[:3, :3] @ Q["n"]
+                    off = abs(float((c2 - P["c"]) @ P["n"]))
+                    if abs(abs(n2 @ P["n"]) - 1) < 1e-3 and off < 0.1 and (c2 - a) @ w > 0:
+                        best = L
+                if best is None:
+                    raise ValueError(f"bend at r {r_in:.2f} does not unroll into its parent flange")
+                motion[k] = MP @ best
+                flat_faces.append(Q["f"].transform_shape(bd.Matrix(motion[k].tolist())))
+                queue.append(k)
+            # the bend strip, swept from the parent's tangent edge
+            vs = [_v(x) for x in e.vertices()]
+            if len(vs) != 2:
+                continue
+            p0, p1 = (_xf(MP, v) for v in vs)
+            ww = MP[:3, :3] @ w
+            if j not in strips:  # each bend once (its far flange sees the same strip from the other side)
+                strips.add(j)
+                flat_faces.append(bd.Face(bd.Wire.make_polygon([tuple(p0), tuple(p1), tuple(p1 + ba * ww),
+                                                                tuple(p0 + ba * ww)], close=True)))
+                lines.append((p0 + 0.5 * ba * ww, p1 + 0.5 * ba * ww))
+    pl = bd.Plane(origin=tuple(base["c"]), z_dir=tuple(base["n"]))
+    # Union via thin extrusions: coplanar face fusion in OCC leaves seams; solid fusion + clean merges them.
+    slabs = [bd.extrude(pl.to_local_coords(f), amount=1.0, dir=(0, 0, 1)) for f in flat_faces]
+    body = slabs[0].fuse(*slabs[1:]).clean() if len(slabs) > 1 else slabs[0]
+    if len(body.solids()) != 1:
+        raise ValueError(f"flat pattern is {len(body.solids())} disjoint pieces")
+    fl = [f for f in body.faces() if abs(f.center().Z) < 1e-4 and abs(abs(f.normal_at().Z) - 1) < 1e-6]
+    if len(fl) != 1:
+        raise ValueError(f"flat pattern has {len(fl)} bottom faces")
+    flat = fl[0]
+    lines2d = []
+    for p0, p1 in lines:
+        q0, q1 = pl.to_local_coords(bd.Vector(*p0)), pl.to_local_coords(bd.Vector(*p1))
+        lines2d.append(((q0.X, q0.Y), (q1.X, q1.Y)))
+    return flat, lines2d
+
+
 # ---------------------------------------------------------------- DXF export
 def export_dxf(r, out_dir):
-    """Write dxf/<part>.dxf for every sheet_cut part (its profile in the plate plane). Returns (files, failures)."""
+    """Write dxf/<part>.dxf for every sheet_cut part (its profile in the plate plane) and every sheet_bent part (its
+    K-factor flat pattern on layer `cut`, bend centrelines on layer `bend`). Returns (files, failures)."""
     import build123d as bd
 
     files, fails = [], []
@@ -655,11 +778,25 @@ def export_dxf(r, out_dir):
         if p.catalog is not None or canon not in ("sheet_cut", "sheet_bent"):
             continue
         try:
-            if canon == "sheet_bent":
-                raise NotImplementedError("flat-pattern unfold of bent parts is not implemented; supply the DXF")
             solid = rp.geom.solid if rp.geom is not None else None
             if solid is None:
                 raise ValueError("no B-rep")
+            name = "".join(c if c.isalnum() or c in "-_" else "_" for c in p.id)
+            exp = bd.ExportDXF()
+            exp.add_layer("cut")
+            if canon == "sheet_bent":
+                probs, info = analyse_sheet_bent(solid, p.material, _secondary(p))
+                if "t" not in info:
+                    raise ValueError("thickness undefined: " + "; ".join(x[2] for x in probs))
+                flat, bend_lines = unfold_sheet_bent(solid, info["t"])
+                exp.add_layer("bend", color="red", line_type=bd.LineType.DASHED)
+                exp.add_shape(flat.wires(), layer="cut")
+                for q0, q1 in bend_lines:
+                    exp.add_shape(bd.Edge.make_line(q0, q1), layer="bend")
+                d.mkdir(parents=True, exist_ok=True)
+                exp.write(str(d / f"{name}.dxf"))
+                files.append(f"dxf/{name}.dxf")
+                continue
             probs, info = analyse_sheet_cut(solid, p.material, 0.0, _secondary(p))
             geo = [x for x in probs if x[1] == "process.geometry"]
             if geo:
@@ -670,10 +807,7 @@ def export_dxf(r, out_dir):
             pl = bd.Plane(origin=tuple(cap["c"]), z_dir=tuple(-cap["n"]))
             flat = pl.to_local_coords(cap["f"])
             d.mkdir(parents=True, exist_ok=True)
-            exp = bd.ExportDXF()
-            exp.add_layer("cut")
             exp.add_shape(flat.wires(), layer="cut")
-            name = "".join(c if c.isalnum() or c in "-_" else "_" for c in p.id)
             exp.write(str(d / f"{name}.dxf"))
             files.append(f"dxf/{name}.dxf")
         except Exception as e:  # noqa: BLE001

@@ -104,3 +104,56 @@ def test_dxf_export(tmp_path):
     files, fails = export_dxf(r, tmp_path)
     assert files == ["dxf/disc.dxf"] and (tmp_path / "dxf/disc.dxf").stat().st_size > 0
     assert [p for p, _ in fails] == ["bad"]
+
+
+def _flat(shape, tmp_path):
+    from robot import world
+    from robot.checks import process
+
+    r = world.resolve(spec.Spec({"name": "t", "parts": [
+        {"id": "b", "kind": "bracket", "material": "aluminium", "process": "sheet_bent", "shape": shape}]}), fast=True)
+    files, fails = process.export_dxf(r, tmp_path)
+    return r, files, fails
+
+
+def test_bent_plate_flat_pattern_dxf(tmp_path):
+    import math
+
+    import ezdxf
+
+    from robot.checks import process
+
+    shape = {"type": "subtract", "base": _bent(1.5), "cut": [_cyl(2, 5, (-8, 1, 10), (90, 0, 0))]}
+    r, files, fails = _flat(shape, tmp_path)
+    assert not fails and files == ["dxf/b.dxf"], fails
+    flat, bends = process.unfold_sheet_bent(r.parts[0].geom.solid, 1.0)
+    ba = math.pi / 2 * (1.5 + process.K_FACTOR * 1.0)
+    size = sorted([flat.bounding_box().size.X, flat.bounding_box().size.Y])
+    assert abs(size[0] - 20) < 1e-3 and abs(size[1] - (30 + ba)) < 1e-3
+    assert abs(flat.area - (20 * (30 + ba) - math.pi * 4)) < 0.05  # the flange hole survives
+    assert len(bends) == 1
+    doc = ezdxf.readfile(str(tmp_path / "dxf" / "b.dxf"))
+    layers = {e.dxf.layer for e in doc.modelspace()}
+    assert layers == {"cut", "bend"}
+    assert sum(1 for e in doc.modelspace() if e.dxf.layer == "bend") == 1
+
+
+def test_u_channel_two_bends(tmp_path):
+    import math
+
+    from robot.checks import process
+
+    t, ri, w = 1.0, 1.5, 20.0
+    tube = lambda ang, at: {"type": "place", "shape": {"type": "revolve", "angle": 90, "profile":
+                            [[ri, 0], [ri + t, 0], [ri + t, w], [ri, w]]}, "at": at, "rot": [0, 0, ang]}
+    # web along x at y = -(ri+t)..-ri, two 90 degree bends up into flanges along +y
+    shape = {"type": "union", "items": [
+        _box(20, t, w, (0, -(ri + t / 2), w / 2)),
+        tube(180, (-10, 0, 0)), tube(270, (10, 0, 0)),
+        _box(t, 12, w, (-10 - ri - t / 2, 6, w / 2)), _box(t, 12, w, (10 + ri + t / 2, 6, w / 2))]}
+    r, files, fails = _flat(shape, tmp_path)
+    assert not fails, fails
+    flat, bends = process.unfold_sheet_bent(r.parts[0].geom.solid, t)
+    ba = math.pi / 2 * (ri + process.K_FACTOR * t)
+    assert len(bends) == 2
+    assert abs(max(flat.bounding_box().size.X, flat.bounding_box().size.Y) - (20 + 24 + 2 * ba)) < 1e-3

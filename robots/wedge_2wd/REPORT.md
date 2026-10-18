@@ -1,6 +1,6 @@
 # Verifier report: Reference 2WD wedge
 
-Profile `aws2025`. 0 blockers, 3 warnings, 36 checks passed. Check set revision 9 (engine build123d).
+Profile `aws2025`. 0 blockers, 2 warnings, 38 checks passed. Check set revision 9 (engine build123d).
 
 Mass 114.6 g (range 93.6 to 135.6 g, limit 150 g).
 
@@ -37,14 +37,14 @@ Mass 114.6 g (range 93.6 to 135.6 g, limit 150 g).
 - **pass** `shape.aspect`: Length to width is reasonable L/W = 1.46.
 - **pass** `shape.weapon_leads`: The wedge edge leads Nothing reaches further forward than the wedge edge.
 - **pass** `shape.armour_coverage`: Internals are covered top 100%, front 100%, back 100%, left 100%, right 100% of the view is armour or structure.
-- **pass** `dynamics.tip_angle`: Stable against tipping Centre of mass 13.5 mm up; static tip angles back 60°, front 80°, left 71°, right 71°.
+- **pass** `dynamics.tip_angle`: Stable against tipping Centre of mass 13.5 mm up; static tip angles back 62°, front 80°, left 71°, right 71°.
 - **pass** `dynamics.traction`: Weight is on the driven wheels About 81% of the weight is on the driven wheels (rest on `wedge`).
 - **pass** `dynamics.invertible`: Drives upside down Every wheel stands proud of the top, so it drives inverted.
 - **pass** `strength.shaft`: No spinning weapon shaft No spinning weapon, so shaft and bearing loads are not computed.
 - **pass** `strength.bolt_pullout`: Bolts hold in the plastic 8 threaded joints each hold their share of the design impact 112 N (100 g on 115 g) with 1.5x margin.
-- **warning** `printability.overhang`: Needs support to print `chassis_top`: best print orientation is build-up -z, which still leaves 43 mm² of overhang steeper than 45° or bridge longer than 15 mm.
-  - Fix: Chamfer overhangs to 45°, split the part, or accept support material.
-- **pass** `printability.ok`: Printable without support 4 printed part(s) print support-free in their best orientation.
+- **pass** `printability.ok`: Printable without support 5 printed part(s) print support-free in their best orientation.
+- **pass** `process.ok`: Geometry matches the process 5 part(s) are makeable as declared.
+- **pass** `shape.feature_direction`: Blade points forward `wedge` tip at [-41.0, 82.5, -11.5] points [-0.65, 0.71, -0.27] (forward = +y, dot 0.71); tip 2.5 mm above the floor; robot front is y = 82.5.
 - **pass** `assembly.order`: Everything can be assembled Every part slides in along a clear straight path. Assembly order: insert_rr, insert_rl, insert_fr, insert_fl, rx, esc, battery, motor_r, motor_l, chassis_top, insert_wol, insert_wor, insert_wr, insert_wl, power_switch, wheel_r, wheel_l, wedge, bolt_rr, bolt_rl, bolt_fr, bolt_fl, bolt_wol, bolt_wor, bolt_wr, bolt_wl.
 - **pass** `claim.holds`: Claim matches the model "weighs 150 g or less" (mass_total_g <= 150)
 - **pass** `claim.holds`: Claim matches the model "fits the 150 mm square" (footprint_mm <= 150)
@@ -103,3 +103,4 @@ The verifier did not judge these. A clean report says nothing about them.
 - Heat-set insert iron clearance and soldering-iron access
 - Gyro, spin-up time and ESC current limits of the weapon
 - Thermal limits and glue or tape strength (declared only)
+- Process: single-profile neck width (web inside one outline) and fdm overhangs per declared orientation are not checked here

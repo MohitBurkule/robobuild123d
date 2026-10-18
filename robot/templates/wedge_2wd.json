@@ -10,6 +10,7 @@
       "catalog": null,
       "material": "nylon",
       "process": "fdm",
+      "print_orientation": "+z",
       "shape": {
         "type": "subtract",
         "base": {
@@ -991,6 +992,7 @@
       "catalog": null,
       "material": "nylon",
       "process": "fdm",
+      "print_orientation": "-z",
       "shape": {
         "type": "subtract",
         "base": {
@@ -2189,6 +2191,7 @@
       "catalog": null,
       "material": "petg_cf",
       "process": "fdm",
+      "print_orientation": "+y",
       "shape": {
         "type": "subtract",
         "base": {
@@ -2871,6 +2874,7 @@
       "catalog": null,
       "material": "pla",
       "process": "fdm",
+      "print_orientation": "+x",
       "shape": {
         "type": "union",
         "items": [
@@ -3024,6 +3028,7 @@
       "catalog": null,
       "material": "pla",
       "process": "fdm",
+      "print_orientation": "+x",
       "shape": {
         "type": "union",
         "items": [

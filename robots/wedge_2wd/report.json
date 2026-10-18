@@ -4,9 +4,9 @@
   "ok": true,
   "summary": {
     "blockers": 0,
-    "warnings": 3,
-    "passed": 36,
-    "total": 39
+    "warnings": 2,
+    "passed": 38,
+    "total": 40
   },
   "findings": [
     {
@@ -412,7 +412,7 @@
       "severity": "info",
       "pass": true,
       "title": "Stable against tipping",
-      "message": "Centre of mass 13.5 mm up; static tip angles back 60\u00b0, front 80\u00b0, left 71\u00b0, right 71\u00b0.",
+      "message": "Centre of mass 13.5 mm up; static tip angles back 62\u00b0, front 80\u00b0, left 71\u00b0, right 71\u00b0.",
       "expected": null,
       "actual": null,
       "parts": [],
@@ -472,34 +472,43 @@
       "fix": null
     },
     {
-      "id": "printability.overhang",
-      "group": "printability",
-      "severity": "warning",
-      "pass": false,
-      "title": "Needs support to print",
-      "message": "`chassis_top`: best print orientation is build-up -z, which still leaves 43 mm\u00b2 of overhang steeper than 45\u00b0 or bridge longer than 15 mm.",
-      "expected": "<= 40 mm\u00b2",
-      "actual": "43 mm\u00b2",
-      "parts": [
-        "chassis_top"
-      ],
-      "at": [
-        -30.000452108291807,
-        -35.000320338967974,
-        7.800000000000107
-      ],
-      "fix": "Chamfer overhangs to 45\u00b0, split the part, or accept support material."
-    },
-    {
       "id": "printability.ok",
       "group": "printability",
       "severity": "info",
       "pass": true,
       "title": "Printable without support",
-      "message": "4 printed part(s) print support-free in their best orientation.",
+      "message": "5 printed part(s) print support-free in their best orientation.",
       "expected": null,
       "actual": null,
       "parts": [],
+      "at": null,
+      "fix": null
+    },
+    {
+      "id": "process.ok",
+      "group": "process",
+      "severity": "info",
+      "pass": true,
+      "title": "Geometry matches the process",
+      "message": "5 part(s) are makeable as declared.",
+      "expected": null,
+      "actual": null,
+      "parts": [],
+      "at": null,
+      "fix": null
+    },
+    {
+      "id": "shape.feature_direction",
+      "group": "reference",
+      "severity": "info",
+      "pass": true,
+      "title": "Blade points forward",
+      "message": "`wedge` tip at [-41.0, 82.5, -11.5] points [-0.65, 0.71, -0.27] (forward = +y, dot 0.71); tip 2.5 mm above the floor; robot front is y = 82.5.",
+      "expected": null,
+      "actual": null,
+      "parts": [
+        "wedge"
+      ],
       "at": null,
       "fix": null
     },
@@ -563,6 +572,21 @@
     "com_z": -0.5079642124640285,
     "design_impact_n": 112.40437613717829,
     "driven_weight_share": 0.8084412246624839,
+    "feature_direction": {
+      "wedge": {
+        "tip": [
+          -41.0,
+          82.5,
+          -11.5
+        ],
+        "dir": [
+          -0.65,
+          0.71,
+          -0.27
+        ],
+        "tip_height_mm": 2.5
+      }
+    },
     "footprint_mm": 122.48384379119933,
     "front_tip_y_mm": 82.48384379119933,
     "ground_z": -14.0,
@@ -603,7 +627,7 @@
     "part_mass_g.wheel_r": 6.423686762993154,
     "peak_current_a": 2.0,
     "print_bridge_mm.chassis_bottom": 0.0,
-    "print_bridge_mm.chassis_top": 4.598570237203759,
+    "print_bridge_mm.chassis_top": 2.1968587762035248,
     "print_bridge_mm.wedge": 0.0,
     "print_bridge_mm.wheel_l": 0.0,
     "print_bridge_mm.wheel_r": 0.0,
@@ -622,11 +646,11 @@
     "shape_length_mm": 122.48384379119933,
     "shape_width_mm": 84.0,
     "stance_margin_mm": 18.772759983076654,
-    "tip_angle_back_deg": 60.202747201528474,
+    "tip_angle_back_deg": 62.08725063243938,
     "tip_angle_deg": 54.29509055509764,
     "tip_angle_front_deg": 80.33550482831482,
-    "tip_angle_left_deg": 71.13427106460063,
-    "tip_angle_right_deg": 71.3779552483462,
+    "tip_angle_left_deg": 71.14431680821696,
+    "tip_angle_right_deg": 71.38775340646245,
     "wedge_load_frac": 0.19155877533751686,
     "wheel_exposed_frac.wheel_l": 0.5344311377245509,
     "wheel_exposed_frac.wheel_r": 0.4535928143712575,
@@ -1364,28 +1388,31 @@
     "Wire tether in assembly order: soldered wires between parts are not part of the disassembly sweep",
     "Heat-set insert iron clearance and soldering-iron access",
     "Gyro, spin-up time and ESC current limits of the weapon",
-    "Thermal limits and glue or tape strength (declared only)"
+    "Thermal limits and glue or tape strength (declared only)",
+    "Process: single-profile neck width (web inside one outline) and fdm overhangs per declared orientation are not checked here"
   ],
   "checks_revision": 9,
   "engine": "build123d",
   "timings_s": {
     "validity": 0.001,
-    "wiring": 3.427,
+    "wiring": 3.902,
     "mass": 0.001,
-    "interference": 15.238,
-    "connections": 0.73,
-    "ground": 2.259,
-    "legal": 0.131,
-    "fasteners": 0.251,
+    "interference": 12.511,
+    "connections": 0.846,
+    "ground": 2.354,
+    "legal": 0.139,
+    "fasteners": 0.3,
     "power": 0.0,
-    "mfg": 5.368,
-    "spinner": 2.367,
+    "mfg": 5.968,
+    "spinner": 3.563,
     "tension": 0.001,
     "targets": 0.0,
-    "shape": 0.699,
+    "shape": 0.808,
     "dynamics": 0.003,
-    "strength": 0.106,
-    "printability": 1.158,
-    "assembly": 16.514
+    "strength": 0.138,
+    "printability": 2.571,
+    "process": 0.001,
+    "reference": 0.001,
+    "assembly": 17.958
   }
 }
