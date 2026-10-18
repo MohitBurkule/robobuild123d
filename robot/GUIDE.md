@@ -193,3 +193,39 @@ Whoever gets under the other wins. Full rules with rationale, thresholds and app
 - **Inverted:** drive upside down or self-right (R090); keep a lip on the top side too (R091-R094).
 - **Wheels hidden:** none at the front edge, <= 25% of sides/rear, <= 10% overall (R110-R113); body ahead of and outboard
   of the wheels (R114-R115). Battery >= 10 mm from the front, >= 5 mm from the sides (R120-R121).
+
+## Reference proportions and reference CAD (checked by `reference.feature_ratio`, `reference_cad.*`, `plausibility.density`)
+- `reference_ratios` (or `reference.ratios`): `[{name, num, den?, value, tol | tol_frac, severity?, source, lesson?, fix?}]`.
+  Terms: `overall.L|W|H`, `part:<glob>.<q>`, `kind:<glob>.<q>` (q = L W H cx cy cz mass vol count), `mass.total`,
+  `count.fasteners`, `metric:<report metric>` (any earlier group's metric), or a number; a list is summed. Ratios cancel
+  photo scale. Off by more than tol → warning (or `severity: blocker`); a term that cannot be measured → NOT CHECKED.
+- `reference_cad: {dir, parts: [{part, file, mode: shape|envelope, tol_mm, tol_vol_frac, hole_tol_mm, at?, at_tol?}]}`
+  compares our part with a reference STL by pose-independent fingerprint: oriented-box extents, volume, through-hole count,
+  and for plates the mid-plane holes (diameter, radius from centre: bores, bolt circles, pockets), plus optional placement.
+  Reference CAD is for MEASURING only: a model mesh that is triangle-for-triangle the reference (Hausdorff ≈ 0 after
+  alignment, same face count) is `reference_cad.copied` BLOCKER. Build every part from parametric code.
+- `plausibility.density`: bought-in parts (battery, motors, ESC, switch) must have mass / modelled volume in a physical range
+  (LiPo 1.0-2.6 g/cm3). A wrong envelope hides a packaging problem; a wrong mass hides a budget problem.
+
+## Design rules learned from reference matching (Revron/RVRN audit, 2026-10)
+1. **Budget the rotor first.** A spinner puts ≥20 % of the robot mass in the rotating stack; everything else gets what is
+   left. If the rotor fraction is low, look for mass in the drive, shell and fasteners, not in the weapon.
+2. **Wrap the rotor around the motor can (drisk).** Two discs on a spacer around an outrunner bell: the can becomes rotating
+   mass, the stack width becomes impact width, and two plates on a spacer form a stiff box section. Bolt the disc to the
+   can's own mount holes; no spider, no pins.
+3. **Support the weapon motor on both sides** on the strongest shaft available (the 5 mm prop mount), bearing on one
+   upright, clamp on the other.
+4. **Make one part do several jobs.** RVRN's 4 Al standoffs clamp the weapon module, are the front-wheel axles and carry
+   the wedglets and side panels. Count parts and fasteners against the reference; each joint costs flanges, screws and inserts.
+5. **Direct drive where possible.** Driven wheels sit straight on the gearmotor shafts; idler wheels run on a structural
+   standoff via a belt. Every axle, bearing and hub you delete is mass and a failure point gone.
+6. **Size the battery to the duty cycle, not "biggest that fits".** A 150 g drisk runs 3 min on 2S 180 mAh.
+7. **Calibrate verifier models on a robot that is known to work.** A check that fails a proven winner (the old runtime model
+   failed RVRN on 180 mAh) is wrong; anchor it with a test.
+8. **Use vendor/reference CAD envelopes for bought-in parts**, and sanity-check mass against volume.
+9. **Thin covers, ribs in the tub.** The base panel is a 1 mm plate; stiffness comes from the tub's X-rib and walls.
+10. **Compliant armour on hard nodes.** TPU wedglets and side panels hang on the standoffs and press-fit nuts, so hits go
+    straight into structure; forks sit inside the pods, just outside the disc.
+11. **Inserts only where screws come out often.** RVRN uses 5 (base panel); the rest are standoffs and press-fit nuts.
+12. **Keep paired supports matched** and plates loaded in their own plane (4 mm uprights printed flat).
+13. **Centre the rotor between its supports**, so both bearings and the chassis see symmetric loads.

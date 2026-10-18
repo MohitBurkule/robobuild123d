@@ -141,11 +141,27 @@ def _revron_with(cat):
     return verify(spec.Spec(d), Options(only=["power"], deep=False, fast=True))
 
 
-def test_runtime_small_pack_blocks():
+def test_runtime_real_revron_180mah_passes():
+    """Calibration anchor: the real Revron/RVRN fights 3 min on a 2S 180 mAh pack, so the duty model must pass it."""
     rep = _revron_with("lipo_2s_180")
     f = [f for f in rep.findings if f.id == "power.runtime"]
+    assert f and f[0].passed, [x.message for x in f]
+    assert rep.metrics["runtime_min"] >= 3.0 * 1.25
+
+
+def test_runtime_tiny_pack_blocks():
+    from robot import world as world_mod
+    from robot.checks import Ctx, power
+
+    d = json.loads((ROOT / "templates" / "revron.json").read_text())
+    r = world_mod.resolve(spec.Spec(d), fast=True)
+    bat = next(rp for rp in r.parts if rp.part.kind == "battery")
+    bat.cat = __import__("copy").deepcopy(bat.cat)
+    bat.cat.props["capacity_mah"] = 60  # a 60 mAh pack cannot cover the ~85 mAh match draw
+    ctx = Ctx(r, world_mod.World.start(r), Options(fast=True, deep=False))
+    f = [f for f in power.run(ctx) if f.id == "power.runtime"]
     assert f and not f[0].passed and f[0].severity == "blocker", [x.message for x in f]
-    assert rep.metrics["runtime_min"] < 3.0
+    assert ctx.metrics["runtime_min"] < 3.0
 
 
 def test_runtime_adequate_pack_passes():

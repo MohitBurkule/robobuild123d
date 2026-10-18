@@ -398,3 +398,110 @@ def feature_presence(ctx):
         out.append(fail("shape.feature_presence", G, BLOCKER, "Photo feature missing from the model", msg) if miss else
                    ok("shape.feature_presence", G, "Photo feature present", msg))
     return out
+
+
+# ---- design-proportion ratios measured on reference photos ------------------------------------------------------------
+# `reference.ratios` (dict form of `reference`) or top-level `reference_ratios`: a list of
+#   {"name", "num": term | [terms summed], "den": term | [terms] (optional, default 1), "value", "tol" (abs) or
+#    "tol_frac" (relative), "severity": "warning"|"blocker" (default warning), "source": "photo + how measured"}
+# Terms (all generic, no robot names in the code):
+#   overall.L | overall.W | overall.H        robot bounding box (y, x, z), wires excluded
+#   part:<glob>.<q>   kind:<glob>.<q>        q = L W H (union bbox along y x z), cx cy cz (bbox centre), mass, vol, count
+#   mass.total, count.fasteners, metric:<key> (any report metric from an earlier group), or a number
+def ratios(spec):
+    ref = (spec.raw or {}).get("reference")
+    rs = (ref.get("ratios") if isinstance(ref, dict) else None) or (spec.raw or {}).get("reference_ratios") or []
+    return list(rs)
+
+
+def _bodies_for(ctx, sel):
+    import fnmatch
+
+    how, pat = sel.split(":", 1)
+    out = []
+    for b in ctx.world.bodies:
+        if b.is_wire:
+            continue
+        if how == "part" and fnmatch.fnmatch(b.id, pat):
+            out.append(b)
+        elif how == "kind" and b.part_idx is not None and not b.fastener and fnmatch.fnmatch(ctx.r.parts[b.part_idx].part.kind, pat):
+            out.append(b)
+    return out
+
+
+def term_value(ctx, t):
+    """Model value of one ratio term. Raises KeyError/ValueError when it cannot be measured (-> NOT CHECKED)."""
+    if isinstance(t, (int, float)):
+        return float(t)
+    t = str(t).strip()
+    try:
+        return float(t)
+    except ValueError:
+        pass
+    if t.startswith("overall."):
+        lo, hi = ctx.world.bounds(skip_wires=True)
+        return float({"L": hi[1] - lo[1], "W": hi[0] - lo[0], "H": hi[2] - lo[2]}[t.split(".", 1)[1]])
+    if t == "mass.total":
+        if "mass_total_g" not in ctx.metrics:
+            raise KeyError("mass group has not run (no mass_total_g)")
+        return float(ctx.metrics["mass_total_g"])
+    if t.startswith("metric:"):
+        k = t.split(":", 1)[1]
+        if k not in ctx.metrics:
+            raise KeyError(f"metric `{k}` not computed (its group did not run or does not apply)")
+        return float(ctx.metrics[k])
+    if t == "count.fasteners":
+        return float(sum(1 for b in ctx.world.bodies if b.fastener))
+    if t.startswith(("part:", "kind:")):
+        sel, q = t.rsplit(".", 1)
+        bs = _bodies_for(ctx, sel)
+        if q == "count":
+            return float(len(bs))
+        if not bs:
+            raise KeyError(f"`{sel}` matches no body")
+        if q == "mass":
+            ms = [ctx.metrics.get(f"part_mass_g.{b.id}") for b in bs]
+            if any(m is None for m in ms):
+                raise KeyError(f"no mass for {[b.id for b, m in zip(bs, ms) if m is None]}")
+            return float(sum(ms))
+        if q == "vol":
+            return float(sum(b.geom.volume for b in bs)) / 1000.0
+        lo = np.min([b.aabb[0] for b in bs], axis=0)
+        hi = np.max([b.aabb[1] for b in bs], axis=0)
+        ax = {"L": 1, "W": 0, "H": 2, "cx": 0, "cy": 1, "cz": 2}[q]
+        return float(hi[ax] - lo[ax]) if q in ("L", "W", "H") else float((hi[ax] + lo[ax]) / 2)
+    raise ValueError(f"unknown term `{t}`")
+
+
+def _sum(ctx, ts):
+    return sum(term_value(ctx, x) for x in (ts if isinstance(ts, list) else [ts]))
+
+
+def feature_ratios(ctx):
+    """`reference.feature_ratio`: design proportions measured on the photos (ratios, so photo scale cancels) vs the model."""
+    out = []
+    for i, e in enumerate(ratios(ctx.r.spec)):
+        name = e.get("name") or f"#{i}"
+        try:
+            num = _sum(ctx, e["num"])
+            den = _sum(ctx, e.get("den", 1))
+            if abs(den) < 1e-9:
+                raise ValueError("denominator is zero")
+            want = float(e["value"])
+            tol = float(e["tol"]) if "tol" in e else abs(want) * float(e.get("tol_frac", 0.1))
+        except Exception as ex:  # noqa: BLE001 - fail closed
+            out.append(fail("reference.feature_ratio", G, WARNING, "Reference proportion could not be measured",
+                            f"`{name}`: {type(ex).__name__}: {ex}").fix("Fix the term (see GUIDE: reference ratios)."))
+            ctx.not_checked.append(f"Reference proportion `{name}`")
+            continue
+        got = num / den
+        ctx.metrics[f"reference_ratio.{name}"] = round(got, 4)
+        msg = (f"`{name}`: model {got:.3f} vs photo {want:.3f} ± {tol:.3f}" + (f" ({e['source']})" if e.get("source") else "")
+               + (f". {e['lesson']}" if e.get("lesson") else ""))
+        if abs(got - want) <= tol:
+            out.append(ok("reference.feature_ratio", G, "Proportion matches the reference", msg))
+        else:
+            sev = BLOCKER if str(e.get("severity", "warning")).lower() == "blocker" else WARNING
+            out.append(fail("reference.feature_ratio", G, sev, "Proportion differs from the reference", msg)
+                       .fix(e.get("fix") or f"Move `{name}` {'up' if got < want else 'down'} by {abs(got - want):.3f}."))
+    return out

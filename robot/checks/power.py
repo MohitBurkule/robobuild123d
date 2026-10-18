@@ -148,8 +148,14 @@ def run(ctx):
 # flip dumps most of the stored energy), held at speed against windage and bearing drag at HOLD_FRAC of its typical
 # current while powered, coasting with the throttle off WEAPON_COAST of the match. Spin-up charge comes from the stored
 # energy, not a current guess: Q = E / (eta * V).
+# Calibrated against a real fighting robot (2026-10 reference audit): RVRN/Revron, 150 g BE1806 drisk + 2x N10, wins
+# 3 min UK antweight fights on a 2S 180 mAh pack. The old weapon hold (40% of the motor's 8 A typical current, throttle on
+# 80% of the match) alone came to ~130 mAh, which said that robot cannot finish a fight. Measured antweight practice: a
+# 1806-class outrunner holding a ~30 g rotor at speed draws ~1.5 A (windage + bearings, = 20% of typical current), and
+# drivers have the weapon off or coasting about half the match (after self-hits, while repositioning, pinned, between
+# exchanges). Drive and spin-up terms were already in line with logged antweight packs and are kept.
 DRIVE_PUSH, DRIVE_CRUISE, DRIVE_CRUISE_FRAC = 0.15, 0.50, 0.35
-SPINUP_EVERY_S, SPINUP_EFF, HOLD_FRAC, WEAPON_COAST = 10.0, 0.6, 0.4, 0.2
+SPINUP_EVERY_S, SPINUP_EFF, HOLD_FRAC, WEAPON_COAST = 10.0, 0.6, 0.2, 0.5
 ELEC_A = 0.1  # receiver, ESC logic, LED
 USABLE = 0.8  # never run a LiPo below about 20% left
 
