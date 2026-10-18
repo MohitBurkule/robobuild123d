@@ -76,6 +76,8 @@ class Lifter:
         plan.pockets.append(pk)
         # hole for the hub through the right wall, boss + insert for the pivot screw in the left wall
         plan.cut("bottom", sh.cyl_axis(HUB_R + 0.4, x_face - 0.5, W + 0.5, "x", yp, zp))
+        # open the hub hole into a slot up to the split: with the top half off, the scoop lifts straight out
+        plan.cut("bottom", sh.boxr(x_face - 0.5, W + 0.5, yp - HUB_R - 0.4, yp + HUB_R + 0.4, zp, 0.5))
         plan.add("bottom", sh.cyl_axis(3.0, -W, -W + 6.0, "x", yp, zp))
         plan.late_cuts["bottom"].append(sh.cyl_axis(1.0, -W - 0.2, -W + 4.6, "x", yp, zp))
         # the scoop: two cheeks outside the side walls + the plate in front of the chassis
@@ -96,7 +98,7 @@ class Lifter:
         # arm frame: origin on the pivot so the joint is a plain rotation about x
         arm = sh.place(sh.S(body, *cuts), (0.0, -yp, -zp))
         # the arm hangs on the servo (parent); the servo's frame is rotated, so give its pose relative to it
-        plan.part(id="lifter", kind="wedge", material="nylon", process="fdm", print_orientation="+y",
+        plan.part(id="lifter", kind="other", material="nylon", process="fdm", print_orientation="+y",
                   shape=arm, parent="servo", at=[0.0, 0.0, -xc], rot=[-90.0, -90.0, 0.0],
                   joint={"kind": "revolute", "axis": [0, 0, 1], "pivot": [0.0, 0.0, x_face - xc],
                          "min": 0, "max": RANGE_DEG, "default": 0},

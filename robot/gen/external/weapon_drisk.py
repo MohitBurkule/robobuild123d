@@ -133,6 +133,7 @@ class Drisk:
         # motor, disc, shaft, bearing
         plan.part(id="weapon_motor", kind="weapon_motor", catalog=spinner.MOTOR, at=[xm, yw, zw], rot=[0.0, 0.0, 0.0],
                   rotates_with="fixed", motor_shaft_extended=True, ports={"phases": [-6.5, 0.0, -9.0]},
+                  exposed=True, exposed_reason="motor-as-hub: the bell is the disc's hub between the uprights, shielded by the disc",
                   label="1806 outrunner = weapon hub: stator on the right upright, own shaft lengthened into a 683 in the left")
         a = math.radians(PIN_ANGLE)
         # disc-local holes: lock pin hole and its balancing twin, four lightening holes between them
