@@ -286,6 +286,39 @@ def world_for(spec, opts=None):
     return w, rep, r
 
 
+LID_WORDS = ("lid", "cover", "top_panel", "top_plate")
+
+
+def _is_lid(p: dict) -> bool:
+    tags = p.get("tags") or []
+    tags = [tags] if isinstance(tags, str) else list(tags)
+    words = [str(p.get(k) or "").lower() for k in ("id", "name", "role")] + [str(t).lower() for t in tags]
+    return any(w in t for w in LID_WORDS for t in words)
+
+
+def lid_ids(spec) -> set:
+    """Ids of the lid/cover parts (id, name, role or tags naming a lid, cover or top panel) plus every fastener
+    that passes through or threads into one of them - what a lid-off view must leave out."""
+    raw = spec.raw if hasattr(spec, "raw") else spec
+    lids = {p["id"] for p in raw.get("parts") or [] if _is_lid(p)}
+    out = set(lids)
+    for f in raw.get("fasteners") or []:
+        touched = set(f.get("through") or []) | {f.get("threads_into")}
+        if touched & lids or _is_lid(f):
+            out.add(f.get("id"))
+    return out
+
+
+def without_lid(world, spec):
+    """The world with the lid/cover parts and their bolts removed (for `render --no-lid`)."""
+    from .world import World
+
+    drop = lid_ids(spec)
+    w = World([b for b in world.bodies if b.id not in drop], world.joints)
+    w.plan = getattr(world, "plan", {})
+    return w
+
+
 def _ground(spec, world):
     if spec.ground_z is not None:
         return float(spec.ground_z)
@@ -306,6 +339,8 @@ def cli(a):
         return 1
     s = spec_mod.load(a.spec)
     w, rep, _ = world_for(s, checks.Options(deep=not a.quick, fast=a.fast))
+    if a.no_lid:
+        w = without_lid(w, s)
     marks = failure_markers(rep) if a.markers else []
     if a.markers:
         for i, f in enumerate([f for f in rep.findings if not f.passed], 1):
@@ -324,4 +359,5 @@ def add_cli(sub):
     p.add_argument("--width", type=int, default=1100)
     p.add_argument("--fast", action="store_true")
     p.add_argument("--quick", action="store_true", help="skip slow sweeps (no wire routes drawn)")
+    p.add_argument("--no-lid", action="store_true", help="leave out lid/cover/top-panel parts and their bolts")
     p.set_defaults(func=cli)
