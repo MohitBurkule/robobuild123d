@@ -46,9 +46,17 @@ def frame_params(h, user: dict | None = None) -> dict:
     return p
 
 
-def default_outline(half_w, y0, y1, chamfer=4.0) -> list:
-    return [[-half_w, y1], [-half_w, y0 + chamfer], [-half_w + chamfer, y0], [half_w - chamfer, y0], [half_w, y0 + chamfer],
-            [half_w, y1]][::-1]
+def default_outline(half_w, y0, y1, chamfer=4.0, rear_r=7.0) -> list:
+    """Square front (the weapon/wedge mounts across it), rounded rear corners."""
+    import math
+    rr = max(rear_r, chamfer)
+    pts = [[-half_w, y1]]
+    for cx, a0 in ((-half_w + rr, 180.0), (half_w - rr, 270.0)):
+        for i in range(6):
+            a = math.radians(a0 + 90.0 * i / 5)
+            pts.append([round(cx + rr * math.cos(a), 3), round(y0 + rr + rr * math.sin(a), 3)])
+    pts.append([half_w, y1])
+    return pts[::-1]
 
 
 def make_plan(h, user=None) -> tuple:

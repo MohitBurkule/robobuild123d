@@ -15,6 +15,33 @@ def _outline_prism(points, z0, z1, spline):
     return sh.prism(points, z1 - z0, (0, 0, (z0 + z1) / 2), spline=spline)
 
 
+EDGE_CHAMFER = 1.0  # belly and roof perimeter bevel (wall 1.6 + floor >= 1.1 keeps >= 1 mm through the corner)
+
+
+def _ccw(poly) -> list:
+    pts = list(poly.exterior.coords)[:-1]
+    if poly.exterior.is_ccw is False:
+        pts.reverse()
+    return [(round(x, 3), round(y, 3)) for x, y in pts]
+
+
+def _outer_body(f, z0, z1, bevel_low: bool):
+    """The half's outer solid: the outline extruded, with the outside face (belly or roof) bevelled all round."""
+    c = EDGE_CHAMFER
+    if f.spline or c <= 0 or z1 - z0 < 3 * c:
+        return _outline_prism(f.outline, z0, z1, f.spline)
+    full = _ccw(geom.polygon(f.outline))
+    small = _ccw(geom.inset(f.outline, c))
+    if len(small) != len(full):
+        return _outline_prism(f.outline, z0, z1, f.spline)
+    i0 = min(range(len(small)), key=lambda i: (small[i][0] - full[0][0]) ** 2 + (small[i][1] - full[0][1]) ** 2)
+    small = small[i0:] + small[:i0]
+    if max((a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2 for a, b in zip(small, full)) > (3 * c) ** 2:
+        return _outline_prism(f.outline, z0, z1, f.spline)
+    zs = [(z0, small), (z0 + c, full), (z1, full)] if bevel_low else [(z0, full), (z1 - c, full), (z1, small)]
+    return sh.loft([{"z": sh.r(z), "points": [[x, y] for x, y in pts], "spline": False} for z, pts in zs], ruled=True)
+
+
 def inner_outline(frame) -> list:
     poly = geom.inset(frame.outline, frame.wall)
     pts = list(poly.exterior.coords)[:-1]
@@ -29,7 +56,7 @@ def half_shape(plan, half: str) -> dict:
         z0, z1, iz0, iz1 = f.zb, f.split, f.zb + f.floor, f.split + 0.5
     else:
         z0, z1, iz0, iz1 = f.split, f.zt, f.split - 0.5, f.zt - f.floor
-    tub = sh.S(_outline_prism(f.outline, z0, z1, f.spline), _outline_prism(inner_outline(f), iz0, iz1, f.spline))
+    tub = sh.S(_outer_body(f, z0, z1, half == "bottom"), _outline_prism(inner_outline(f), iz0, iz1, f.spline))
     housings = []
     for p in plan.pockets:
         if p.housing > 0 and half in p.halves:

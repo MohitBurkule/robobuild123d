@@ -1,7 +1,7 @@
 """Servo lifter: a printed U-shaped lifting scoop pivoting about a lateral axis near the front.
 
-The servo lies inside the chassis against the right side wall with its output along +x; the scoop's right cheek
-carries a hub that passes through a hole in the wall onto the servo spline (the joint is parented to the servo). The
+The servo lies against the right side wall with its output along +x, in a window through the wall so its output face
+sits just outside it; the scoop's right cheek fits straight onto the spline (joint declared in world coordinates). The
 left cheek turns on an M2 pivot screw on the same axis, into an insert in the left wall. The scoop plate sits in front
 of the chassis, its lip just off the floor; raising it turns the front edge up and away from the body.
 """
