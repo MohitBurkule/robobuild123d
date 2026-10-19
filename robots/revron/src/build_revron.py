@@ -471,7 +471,7 @@ def wedgelet(s):
             _cyl(2.6, -39.0, -17.0, SA), _cyl(1.6, -39.0, -17.0, SB), _cyl(2.5, -36.5, -17.0, SB), _ext(kid, "yz", -29.5, -21.0)]
     # TPU cannot print the ramp's knife toe: keep the 50.1 reach but stand the toe on a 0.85 mm land (2 perimeters),
     # the ramp face running parallel to the measured one from there
-    toe = P([(46.0, 1.0), (50.1, 1.0), (50.1, 1.0 + WEDGE_TOE_H), (46.0, 1.0 + WEDGE_TOE_H + 4.1 * 1.187)])
+    toe = P([(48.6, 1.0), (50.1, 1.0), (50.1, 1.0 + WEDGE_TOE_H), (48.6, 1.0 + 1.5 * 1.187)])
     body = _U(body, _I(_ext(toe, "yz", -38.5, -17.5), _ext(s1.union(cheek).union(tab).buffer(0.01), "yz", -38.5, -17.5)))
     sh = _S(body, *cuts)
     sh = sh if s < 0 else _mirror_x(sh)
@@ -481,7 +481,7 @@ def wedgelet(s):
 
 
 # ------------------------------------------------------------------------------------------------------------ side panel
-SP_IN = [(-43.5, -40.0), (-43.5, -21.3), (-43.0, -19.6), (-41.2, -17.9), (-37.2, -17.2), (-34.4, -15.7), (-32.3, -13.0), (-31.5, -9.9),
+SP_IN = [(-43.5, -41.0), (-43.5, -21.3), (-43.0, -19.6), (-41.2, -17.9), (-37.2, -17.2), (-34.4, -15.7), (-32.3, -13.0), (-31.5, -9.9),
          (-31.5, 11.1), (-31.9, 13.4), (-33.6, 17.5), (-35.5, 20.4), (-37.2, 21.9), (-41.2, 23.3), (-42.7, 26.6)]
 # the front swing round the front wheel (inner face X at Y 13, 14, 16, 18, 20, 22, 24, 26.6) at three heights: it leans
 # out towards the floor so wheel hits ride up it (STEP RV23: inner face at Y 22 is X -47.6 at the floor, -41.6 at Z 7)
@@ -553,7 +553,7 @@ def side_panel(s):
     foot = _ext(_poly([(-31.6, -12.0), (-42.0, -11.9), (-40.6, -2.1), (-40.8, 3.3), (-42.9, 13.3), (-31.6, 13.3)]), "xy", 1.0, 2.0)   # 1 mm wide foot under the chassis lobe
     wall = _I(wall, _ext(side, "yz", -60.0, -20.0))
     SIDE_WALL_DEBUG.append(wall)
-    nose_plan = _round(Polygon([(-51.6, 26.5), (-51.2, 39.7), (-50.0, 43.0), (-47.9, 45.7), (-45.1, 47.9), (-41.7, 49.3), (-38.5, 49.7),
+    nose_plan = _round(Polygon([(-51.6, 26.5), (-51.2, 39.7), (-50.0, 43.0), (-47.9, 45.7), (-45.1, 47.9), (-41.7, 49.6), (-40.0, 50.1), (-38.5, 50.1),
                                 (-38.5, 38.7), (-41.6, 38.7), (-42.4, 37.3), (-42.3, 34.9), (-40.5, 34.5), (-40.5, 26.5)]), r_out=0.5)
     batter = _ext(_poly([(-51.6, 1.0), (-51.6 + 0.79 * 15, 16.0), (0.0, 16.0), (0.0, 1.0), (-51.6, -5.0)]), "xz", 0.0, 60.0)   # outer face leans in 38 deg
     nose = _I(_I(_ext(nose_plan, "xy", 1.0, 10.0), _ext(side, "yz", -60.0, -20.0)), batter)
@@ -562,6 +562,9 @@ def side_panel(s):
     # the nose's front-outer corner is chamfered back (a plane leaning ~55 deg in and ~57 deg back) so a wedge or
     # spinner tooth coming in from the front quarter glances off instead of catching the corner
     nose = _one(nose).split(b.Plane(origin=(-120.0, 0.0, 0.0), z_dir=(1.0, -1.525, -1.4725)), keep=b.Keep.TOP)
+    # like the wedgelet, the ramp's knife toe stands on a 0.85 mm land at full reach (printable TPU)
+    toe = _poly([(47.0, 1.0), (50.1, 1.0), (50.1, 1.0 + WEDGE_TOE_H), (47.0, 1.0 + 3.1 * 1.187)])
+    nose = _U(nose, _I(_I(_ext(nose_plan, "xy", 1.0, 10.0), _ext(toe, "yz", -60.0, -20.0)), batter))
     nose = _S(nose, _box(-42.0, -38.4, 26.5, 39.0, 3.0, 10.5))                     # hollow behind the nose wall
     boss = _I(_cyl(3.0, -42.5, -39.5, SA), _ext(side, "yz", -60.0, -20.0))         # standoff end boss
     body = _U(wall, nose, foot, boss)
@@ -571,7 +574,7 @@ def side_panel(s):
             _csk(3.3, 6.7, (-35.26, NUT[0], NUT[1]), "x", 1, 8.0, 12.0),
             _cyl(2.55, -42.55, -38.0, SA),
             _box(-45.0, -43.4, -38.7, -24.8, 5.0, 15.0),                          # rear tyre relief on the inner face
-            _box(-32.6, -31.4, -13.1, 2.6, 3.7, 13.3)]                            # clears the chassis nut lobe
+            _box(-32.5, -31.4, -12.5, 0.5, 4.5, 13.3)]                            # clears the chassis nut lobe
     for y0 in (-11.0, -4.5, 2.0):     # diagonal vent slots (TPU wall flexes, keeps the ESC cool)
         sl = LineString([(y0, 5.0), (y0 + 5.0, 11.0)]).buffer(1.0, cap_style=1)
         cuts.append(_ext(sl, "yz", -50.0, -36.5))
