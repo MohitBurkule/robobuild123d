@@ -492,7 +492,18 @@
     "part": "mount_l",
     "file": "RV02_XALT_HD_left_hand_weapon_mount_1.stl",
     "mode": "shape",
-    "tol_mm": 0.5
+    "tol_mm": 0.5,
+    "deviations": [
+     {
+      "near": [
+       -17.4,
+       29.04,
+       21.85
+      ],
+      "r": 4.5,
+      "reason": "RV00 weapon-lock pin bore d4.2 through RV02 (Build Guide lock rule; the STEP models no lock)"
+     }
+    ]
    },
    {
     "part": "mount_r",
@@ -1867,7 +1878,7 @@
   },
   {
    "id": "weapon_lock",
-   "kind": "other",
+   "kind": "locking_bar",
    "role": "weapon_lock",
    "material": "tpu",
    "process": "fdm",
@@ -1875,6 +1886,17 @@
    "rotates_with": "fixed",
    "color": "#ff6a00",
    "tethered": true,
+   "parent": "mount_l",
+   "at": [
+    -5.5,
+    29.042633766233717,
+    21.851296290894776
+   ],
+   "rot": [
+    0,
+    90,
+    0
+   ],
    "marked": true,
    "tool_free": true,
    "shape": {
@@ -1884,7 +1906,7 @@
      "part": "weapon_lock"
     }
    },
-   "label": "RV00 TPU weapon lock (Build Guide rule; not in the STEP): sits on the deck under the tooth, on a lanyard"
+   "label": "RV00 TPU weapon lock pin (Build Guide rule; not in the STEP): d4 pin pushed through RV02 into a spider window, flag head + lanyard outside"
   },
   {
    "id": "belt_l",
@@ -6862,9 +6884,10 @@
   },
   {
    "a": "weapon_lock",
-   "b": "tub",
-   "method": "interlock",
-   "reason": "TPU lock rests on the deck front edge under the tooth, lanyard to the chassis"
+   "b": "mount_l",
+   "method": "pin",
+   "reason": "TPU lock pin slides in the RV02 4.2 bore (0.1 slip) into a spider window; the head stops it, the lanyard tethers it to the mount",
+   "mechanical_key": true
   },
   {
    "a": "battery",
@@ -7420,7 +7443,8 @@
     "nut_d0",
     "nut_d1",
     "nut_d2",
-    "nut_d3"
+    "nut_d3",
+    "weapon_lock"
    ]
   }
  ]

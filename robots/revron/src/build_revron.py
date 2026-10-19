@@ -49,6 +49,13 @@ BOLT_R, HUB_R = 14.0, 4.5
 MNT_IN, MNT_OUT = 13.4, 21.4         # weapon mount |X| span (8 mm): 4 mm slab + 4 mm battered boss
 MNT_SLAB = 17.4
 BSP_X = (11.9, 13.4)
+STAT_HOLE_R, CB_R, CB_CONE_X = 1.12, 2.25, (16.4, 17.15)   # RV03 stator screw clearance d2.24, d4.5 counterbore, its cone
+# RV00 weapon lock pin (Build Guide rule; not in the STEP): a d4 TPU pin pushed in from outside through RV02 into one of
+# the spider's quarter windows, parked against the window's outer arc. Drisk-local window centre angle 45 deg at r9.6:
+# the pin spans r7.6..11.6 (bolt_p heads end at r6.25, window arc r11.7, bolt_d heads start r12.25), its tip stops
+# 0.3 mm short of disc_a so only the spider bears on it.
+LOCK_R, LOCK_RC, LOCK_A = 2.0, 9.6, 45.0
+LOCK_TIP_X = DR_X["spider"][1] - 0.3
 
 
 # ---------------------------------------------------------------------------------------------------------------- 2D
@@ -268,11 +275,11 @@ def weapon_mount(side):
     r_top = 10.0 if side == "r" else 7.0
     prof = _mount_profile(r_top)
     xi, xm, xo = s * MNT_IN, s * MNT_SLAB, s * MNT_OUT
-    slab = _ext(prof, "yz", xi, xm)
+    slab = _ext(prof, "yz", xi, xm - s * 0.02)    # slab face 0.02 inside the boss start (no coplanar section face)
     # boss: the part of the profile above the line from the notch top to the nose, battered on its outer face
     line_lo = Polygon([(15.0, 19.5), (44.34, 6.34), (60, 6.34), (60, 60), (0, 60), (0, 19.5)])
     bp = prof.intersection(line_lo)
-    boss = _ext(bp, "yz", xm, xo + s * 0.01)
+    boss = _ext(bp, "yz", xm - s * 0.02, xo + s * 0.01)
     # outer battered face (STEP): one plane leaning in with height and towards the nose,
     # |X| = a - kz * Z - ky * Y  (RV02: a 23.48, kz 0.185, ky 0.0168; RV03: 23.88, 0.144, 0.0379)
     a_, kz, ky = (23.88, 0.144, 0.0379) if side == "r" else (23.48, 0.185, 0.0168)
@@ -282,12 +289,17 @@ def weapon_mount(side):
     cuts = []
     if side == "r":
         cuts.append(_cyl(2.47, -30, 30, (WY, WZ)))                                   # shaft / bearing boss clearance
-        for dy, dz in ((6, 0), (-6, 0), (0, 6), (0, -6)):                           # GR1507 stator M2 on 12 mm
-            cuts.append(_cyl(1.05, xi - s, xm + s, (WY + dy, WZ + dz)))
-            cuts.append(_cyl(2.22, xm - s * 0.01, xo + s, (WY + dy, WZ + dz)))      # head counterbores in the boss
+        bb_ = _b()
+        for dy, dz in ((6, 0), (-6, 0), (0, 6), (0, -6)):                           # GR1507 stator M2 on 12 mm (STEP d2.2 clearance)
+            cuts.append(_cyl(STAT_HOLE_R, xi - s, xm + s, (WY + dy, WZ + dz)))
+            # STEP: d4.5 head counterbore from X 17.15, reached by a cone from the d2.2 hole at X 16.4
+            x_c0, x_c1 = s * CB_CONE_X[0], s * CB_CONE_X[1]
+            cuts.append(bb_.Solid.make_cone(STAT_HOLE_R, CB_R, abs(x_c1 - x_c0), bb_.Plane(origin=(x_c0, WY + dy, WZ + dz), z_dir=(s, 0, 0))))
+            cuts.append(_cyl(CB_R, x_c1, xo + s, (WY + dy, WZ + dz)))
     else:
         cuts.append(_cyl(3.95, -30, 30, (WY, WZ)))                                   # outboard bearing seat (8 mm)
         cuts.append(_cyl(6.0, xm, xo + s, (WY, WZ)))                                 # shaft nut recess
+        cuts.append(_cyl(LOCK_R + 0.1, xi - s, xo + 3 * s, _lock_yz()))              # RV00 lock pin bore (0.1 radial slip)
     for (y, z) in (SA, SB):                                                          # M3 CSK into the standoffs, flush inside
         cuts.append(_csk(3.3, 6.2, (xi, y, z), "x", s, 6.0))
     return _S(body, *cuts)
@@ -334,11 +346,11 @@ def disc_outline():
     ta = math.radians(TOOTH_A)
     tip = (TOOTH_R * math.cos(ta), TOOTH_R * math.sin(ta))
     tooth = Polygon([tip, (-11.0, 11.6), (-8.0, 8.0), (-16.2, 0.0), (-16.25, 15.0)])
-    return _round(rim.union(tooth), r_out=0.0, r_in=0.7)
+    return _round(rim.union(tooth), r_out=0.2, r_in=0.7)   # r0.2 on the tooth tip: a 0.4 laser-cuttable land
 
 
 def floating_disc():
-    from shapely.geometry import Point, Polygon
+    from shapely.geometry import MultiPoint, Point, Polygon
     p = disc_outline()
     def r_bore(a):   # 12 mm bore with 4 ramped drive dogs (90 deg pitch): steep rise 5..18 deg, long ramp back to 55
         t = a % 90.0
@@ -349,7 +361,9 @@ def floating_disc():
     for k in range(4):
         a = math.radians(90 * k)
         p = p.difference(Point(BOLT_R * math.cos(a), BOLT_R * math.sin(a)).buffer(1.1, 32))
-    p = p.difference(_round(Polygon([(-13.08, 4.0), (-13.53, 9.7), (-11.15, 7.53)]), r_out=0.5))   # balance window by the tooth
+    # balance window by the tooth (STEP): a rounded triangle, the hull of three corner radii -- a straight radial-ish back
+    # edge at u -13.65, the lower corner at v 4.85, the upper at v 9.1, the inner corner at (-11.65, 7.65)
+    p = p.difference(MultiPoint([(-13.2, 4.85), (-13.2, 9.08), (-11.68, 7.65)]).buffer(0.44, 32).convex_hull)
     return p
 
 
@@ -723,10 +737,38 @@ def chassis():
 
 
 # ------------------------------------------------------------------------------------------------------------ misc
+def _lock_yz():
+    """World (Y, Z) of the RV00 lock pin axis: the spider window at LOCK_A, radius LOCK_RC, in the drisk's modelled phase."""
+    a = math.radians(LOCK_A)
+    return _disc_local(LOCK_RC * math.cos(a), LOCK_RC * math.sin(a))
+
+
+def lock_outer_x():
+    """|X| just clear of RV02's battered outer face over the pin's head footprint (face: |X| = 23.48 - 0.185 Z - 0.0168 Y)."""
+    y, z = _lock_yz()
+    return 23.48 - 0.185 * (z - LOCK_HEAD_R) - 0.0168 * (y - LOCK_HEAD_R) + 0.15
+
+
+LOCK_HEAD_R, LOCK_HEAD_T = 3.5, 1.6
+
+
 def weapon_lock():
-    """RV00 TPU lock (Build Guide safety rule, not in the STEP): a block on the chassis nose deck under the tooth;
-    with the tooth parked on it the drisk cannot turn."""
-    return _box(-4.0, 4.0, 15.4, 19.0, 19.5, 22.0)
+    """RV00 TPU weapon lock (Build Guide safety rule, not in the STEP), in its own frame: the pin axis is local +Z with
+    the tip at the origin (the spec places it at the tip, local Z -> world +X). A d4 shank runs back from the tip
+    through the spider window and the RV02 bore; outside RV02 a d7 head with a flag tab (pull grip, lanyard eye) stops
+    it going in too far. Pulled out along the axis before a fight; while it is in, the spider's window bears on the shank
+    and the drisk cannot turn."""
+    b = _b()
+    head0 = -(lock_outer_x() + LOCK_TIP_X)          # local z of the head's inner face (tip at local 0 = world LOCK_TIP_X)
+    shank = b.Solid.make_cylinder(LOCK_R, -head0, b.Plane(origin=(0, 0, head0), z_dir=(0, 0, 1)))
+    tipc = b.Solid.make_cone(LOCK_R - 0.5, LOCK_R, 0.5, b.Plane(origin=(0, 0, -0.5), z_dir=(0, 0, 1)))   # lead-in chamfer
+    shank = _S(shank, _cyl(LOCK_R + 1, -0.5, 0.5, (0, 0), "z")).fuse(tipc)
+    head = b.Solid.make_cylinder(LOCK_HEAD_R, LOCK_HEAD_T, b.Plane(origin=(0, 0, head0 - LOCK_HEAD_T), z_dir=(0, 0, 1)))
+    # flag tab: local -X is world +Z (up), so the grip stands above the head; 2 mm lanyard eye near its end
+    from shapely.geometry import Point
+    flag = Point(0, 0).buffer(2.5, 32).union(Point(-9.0, 0).buffer(2.5, 32)).convex_hull.difference(Point(-9.0, 0).buffer(1.0, 24))
+    tab = _ext(flag, "xy", head0 - LOCK_HEAD_T, head0 - LOCK_HEAD_T + 1.2)
+    return _U(shank, head, tab)
 
 
 PARTS = {
@@ -841,8 +883,10 @@ def make_spec(model_file):
     for k in range(4):
         dy, dz = _disc_local(BOLT_R * math.cos(math.radians(90 * k)), BOLT_R * math.sin(math.radians(90 * k)))
         P(id=f"nut_d{k}", kind="nut", catalog="nut_m2", at=[DR_X["disc_b"][1] + 0.8, dy - WY, dz - WZ], rot=[0, 90, 0], rotates_with="weapon", parent="spider")
-    P(id="weapon_lock", kind="other", role="weapon_lock", material="tpu", process="fdm", print_orientation="+z", rotates_with="fixed", color="#ff6a00", tethered=True,
-      marked=True, tool_free=True, shape=M("weapon_lock"), label="RV00 TPU weapon lock (Build Guide rule; not in the STEP): sits on the deck under the tooth, on a lanyard")
+    ly, lz = _lock_yz()
+    P(id="weapon_lock", kind="locking_bar", role="weapon_lock", material="tpu", process="fdm", print_orientation="+z", rotates_with="fixed", color="#ff6a00", tethered=True,
+      parent="mount_l", at=[LOCK_TIP_X, ly, lz], rot=[0, 90, 0],
+      marked=True, tool_free=True, shape=M("weapon_lock"), label="RV00 TPU weapon lock pin (Build Guide rule; not in the STEP): d4 pin pushed through RV02 into a spider window, flag head + lanyard outside")
 
     # ---------------------------------------------------------------- fasteners
     for i, (x, y) in enumerate(INS):
@@ -912,7 +956,7 @@ def make_spec(model_file):
     C("mount_l", "mount_r", "interlock", "Both mounts tied by the standoffs and the chassis tabs")
     C("base_panel", "tub", "screw", "Base panel under the open floor, 5 M2 CSK into heat-sets")
     C("top_panel", "tub", "screw", "Ti top panel held by 4 M2 flat-head thread-forming screws through its countersunk corner holes into the column-top pilots (the STEP has the holes, not the screws)")
-    C("weapon_lock", "tub", "interlock", "TPU lock rests on the deck front edge under the tooth, lanyard to the chassis")
+    C("weapon_lock", "mount_l", "pin", "TPU lock pin slides in the RV02 4.2 bore (0.1 slip) into a spider window; the head stops it, the lanyard tethers it to the mount", mechanical_key=True)
     C("battery", "tub", "press_fit", "Pack between the motor wall, the insert columns and the deck", interference_mm=0.1, mechanical_key=True)
     C("rxesc", "tub", "interlock", "Malenki under the deck beside the pack, kapton")
     C("wesc", "rxesc", "interlock", "ESC kapton-wrapped against the Malenki; both boxed in by the walls, the deck and the base panel")
@@ -1062,7 +1106,9 @@ def reference_cad():
         R("tub", "RV01_Chassis_1.stl", tol_mm=1.0, tol_vol_frac=0.25, note="RV01 chassis"),
         R("base_panel", "RV26_Base_Panel_1.stl", tol_mm=0.3, note="RV26 1 mm panel"),
         R("top_panel", "Top_Panel_1.stl", tol_mm=0.3, note="0.9 mm top panel"),
-        R("mount_l", "RV02_XALT_HD_left_hand_weapon_mount_1.stl", tol_mm=0.5),
+        R("mount_l", "RV02_XALT_HD_left_hand_weapon_mount_1.stl", tol_mm=0.5,
+          deviations=[{"near": [-17.4, *[round(v, 2) for v in _lock_yz()]], "r": 4.5,
+                       "reason": "RV00 weapon-lock pin bore d4.2 through RV02 (Build Guide lock rule; the STEP models no lock)"}]),
         R("mount_r", "RV03_XALT__HD_Right_hand_weapon_mount_1.stl", tol_mm=0.5),
         R("motor_spacer", "Motor_back_spacer_1.stl", tol_mm=0.3),
         R("spider", "spider_1.stl", tol_mm=0.5, ref_to_world=dt),
