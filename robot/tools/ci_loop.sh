@@ -3,6 +3,7 @@
 #   fetch origin; merge every fix-* head (local or origin/, whichever is newer) into rvrn2-ci
 #   (conflicts aborted and logged as `[ci] conflict fix-X`); push rvrn2-ci:rvrn2 with retries;
 #   regenerate the spec, full verify through /tmp/heavy.sh streaming blockers, write a [ci] summary line.
+# Renders (robot/tools/ci_render.sh) run in the background in the shared slots after each verify.
 # Stops early on 0 blockers or when $CI_STOP exists. Run from a worktree checked out on rvrn2-ci.
 MAX_ITERS=${MAX_ITERS:-20}
 P=${PROGRESS_DIR:-/mnt/project-files/robot-cad/b123d/progress}
@@ -17,7 +18,13 @@ heads() { # newest of local fix-X and origin/fix-X per branch
       if git merge-base --is-ancestor $l $r; then echo origin/$n; else echo $n; git merge-base --is-ancestor $r $l || echo origin/$n; fi
     elif git rev-parse -q --verify $l >/dev/null; then echo $n; else echo origin/$n; fi
   done; }
-[ "${RENDER_FIRST:-0}" = 1 ] && bash robot/tools/ci_render.sh
+render() { # async, one at a time, from a snapshot worktree of the verified sha so merges do not move it
+  pgrep -f "robot/tools/ci_render.sh" >/dev/null && { log "renders still running, skipping renders for $(git rev-parse --short HEAD)"; return; }
+  rd=${RENDER_WT:-/tmp/claude-0/-home-user/6d647ed2-7427-59f3-8ab5-ba663cdaf3d4/scratchpad/ci_render_wt}
+  [ -d "$rd" ] || git worktree add -q --detach "$rd" HEAD
+  git -C "$rd" checkout -q --detach "$(git rev-parse HEAD)" && (cd "$rd" && nohup setsid bash robot/tools/ci_render.sh >/dev/null 2>&1 < /dev/null &)
+}
+[ "${RENDER_FIRST:-0}" = 1 ] && render
 for i in $(seq "${START_ITER:-1}" "$MAX_ITERS"); do
   git fetch -q origin 2>>"$P/ci_push.err" || log "fetch failed"
   for b in $(heads); do
@@ -44,7 +51,7 @@ for i in $(seq "${START_ITER:-1}" "$MAX_ITERS"); do
   groups=$(grep '^\[BLOCKER\]' "$out" | awk '{print $2}' | cut -d. -f1 | sort | uniq -c | awk '{printf "%s %s, ",$2,$1}')
   log "iter $i sha $sha: $n blockers (${groups%, })"
   echo "$i $sha" > "$P/ci_iter_done"
-  [ "${CI_RENDER:-1}" = 1 ] && bash robot/tools/ci_render.sh
+  [ "${CI_RENDER:-1}" = 1 ] && render
   [ "$n" -eq 0 ] && { log "0 blockers at $sha, stopping"; exit 0; }
   [ -f "${CI_STOP:-/tmp/ci_loop.stop}" ] && { log "stop file seen, exiting"; exit 0; }
 done
