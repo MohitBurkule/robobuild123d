@@ -60,8 +60,8 @@
   "note": "GR1507 drisk (single tooth, 3+6+3 on a 3 mm spider) on 8 mm XALT mounts; N10 direct to 21.5 rear tyres, O-rings to 11 mm fronts"
  },
  "weapon_lock": {
-  "require_part": true,
-  "note": "RV00 TPU tooth stop (weapon.locking_bar = weapon_lock), fitted whenever the battery is in"
+  "type": "external_pin",
+  "note": "pit safety pin handled outside the robot and pulled before a fight: not part of the build, no bore in RV02/RV03 (the STEP has none; user 2026-10-19)"
  },
  "reference_bom": [
   {
@@ -112,7 +112,7 @@
     "bolt_t*"
    ],
    "count": 4,
-   "designation": "M2x4",
+   "designation": "M2x5",
    "threads_into": "tub",
    "deviation": "the STEP top panel has 4 countersunk corner holes but no screws; 4 M2x4 CSK thread-forming screws added so the Ti panel cannot peel off"
   },
@@ -265,14 +265,14 @@
    "catalog": "n10_2200rpm_spicy"
   },
   {
-   "role": "drisk stack: 4 x M2 + nuts (not in the STEP, holes are)",
+   "role": "drisk stack: 4 x M2 into the spider (not in the STEP, holes are)",
    "match": [
     "bolt_d*"
    ],
    "count": 4,
    "designation": "M2",
-   "threads_into": "nut",
-   "deviation": "the STEP leaves the r14 stack holes empty; 4 M2x18 + nuts added so the stack is held (18 mm: the nut is fully engaged)"
+   "threads_into": "spider",
+   "deviation": "the STEP leaves the r14 stack holes empty; 4 M2x14 added from the back, tapped into the spider (r0.8 tap holes there, the STEP r1.1 clearance elsewhere): no nuts, nothing invented beyond the screws"
   },
   {
    "role": "spider to bell: 4 x M2 (not in the STEP)",
@@ -304,28 +304,11 @@
    "deviation": "the STEP has the two 1.7 pilot holes but no screws"
   },
   {
-   "role": "weapon lock RV00 (TPU, Build Guide)",
-   "kind": "part",
-   "match": [
-    "weapon_lock"
-   ],
-   "count": 1,
-   "material": "tpu"
-  },
-  {
    "role": "nitrile O-ring belts (not in the STEP; hub grooves are)",
    "kind": "part",
    "match": [
     "belt_l",
     "belt_r"
-   ],
-   "count": 2
-  },
-  {
-   "role": "PLA belt guards over the O-ring slots (not in the STEP)",
-   "kind": "part",
-   "match": [
-    "belt_guard_*"
    ],
    "count": 2
   },
@@ -372,6 +355,18 @@
  },
  "can_run_inverted": false,
  "allow_overlap": [
+  {
+   "a": "belt_l",
+   "b": "side_l",
+   "max_depth_mm": 0.3,
+   "reason": "O-ring is rubber: it squashes 0.16 mm against the plain inner face of the STEP side panel (the STEP has no belt channel)"
+  },
+  {
+   "a": "belt_r",
+   "b": "side_r",
+   "max_depth_mm": 0.3,
+   "reason": "O-ring is rubber: it squashes 0.16 mm against the plain inner face of the STEP side panel (the STEP has no belt channel)"
+  },
   {
    "a": "wshaft",
    "b": "wbearing",
@@ -439,12 +434,6 @@
    "reason": "thin M3 nut pressed into a hex pocket 0.05 under its flats (captive)"
   },
   {
-   "a": "weapon_lock",
-   "b": "mount_l",
-   "max_depth_mm": 0.15,
-   "reason": "RV00 TPU lock pin d4 pressed into the RV02 3.9 bore (0.05 radial grip) so it cannot rattle out"
-  },
-  {
    "a": "wbearing",
    "b": "mount_l",
    "max_depth_mm": 0.1,
@@ -465,6 +454,18 @@
    "metric": "footprint_mm",
    "op": "<=",
    "value": 150
+  }
+ ],
+ "sharp_ok": [
+  {
+   "part": "base_panel",
+   "near": [
+    27.9,
+    -21.5,
+    4.5
+   ],
+   "r_mm": 3.0,
+   "reason": "screw boss is 0.3 mm tall (any taller breaks the reference silhouette), so its base fillet is capped at R0.25; the STEP pad base is R0.5"
   }
  ],
  "teardown": [
@@ -538,6 +539,19 @@
   },
   {
    "parts": [
+    "mount_r"
+   ],
+   "dir": [
+    0,
+    1,
+    0
+   ],
+   "reason": "RV02/RV03 with the motor and drisk slide forward off the chassis tabs as one quick-change module"
+  }
+ ],
+ "module_teardown": [
+  {
+   "parts": [
     "mount_l",
     "bolt_ula",
     "bolt_ulb"
@@ -547,7 +561,7 @@
     0,
     0
    ],
-   "reason": "RV02 slides outboard off the lug and the shaft end, its CSK screws captive"
+   "reason": "RV02 slides outboard off the shaft end, its CSK screws captive"
   },
   {
    "parts": [
@@ -570,19 +584,6 @@
     0
    ],
    "reason": "GR1507 leaves inboard-left once the 4 stator screws are out"
-  },
-  {
-   "parts": [
-    "mount_r",
-    "bolt_ura",
-    "bolt_urb"
-   ],
-   "dir": [
-    1,
-    0,
-    0
-   ],
-   "reason": "RV03 slides outboard off its lug with the back spacer, CSK screws captive"
   }
  ],
  "reference_cad": {
@@ -940,12 +941,12 @@
     "deviations": [
      {
       "near": [
-       -17.4,
-       29.04,
-       21.85
+       -15.4,
+       44.0,
+       3.5
       ],
-      "r": 4.5,
-      "reason": "RV00 weapon-lock pin bore d3.9 through RV02 (Build Guide lock rule; the STEP models no lock)"
+      "r": 4.0,
+      "reason": "nose pad R4.4 round the nose CSK: the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); 1.15 mm of added material at the nose underside"
      }
     ]
    },
@@ -955,6 +956,15 @@
     "mode": "shape",
     "tol_mm": 0.5,
     "deviations": [
+     {
+      "near": [
+       15.4,
+       44.0,
+       3.5
+      ],
+      "r": 4.0,
+      "reason": "nose pad R4.4 round the nose CSK: the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); 1.15 mm of added material at the nose underside"
+     },
      {
       "near": [
        16.8,
@@ -1029,6 +1039,44 @@
       0.0,
       1.0
      ]
+    ],
+    "deviations": [
+     {
+      "near": [
+       -6.699999999999999,
+       30.44772759118839,
+       12.047449670300885
+      ],
+      "r": 2.0,
+      "reason": "r14 stack hole is the M2 tap drill (1.6) where the stack screws thread into the spider; the STEP shows the 2.2 clearance and no screw or nut"
+     },
+     {
+      "near": [
+       -6.699999999999999,
+       27.047449670300885,
+       31.55227240881161
+      ],
+      "r": 2.0,
+      "reason": "r14 stack hole is the M2 tap drill (1.6) where the stack screws thread into the spider; the STEP shows the 2.2 clearance and no screw or nut"
+     },
+     {
+      "near": [
+       -6.699999999999999,
+       46.55227240881161,
+       34.952550329699115
+      ],
+      "r": 2.0,
+      "reason": "r14 stack hole is the M2 tap drill (1.6) where the stack screws thread into the spider; the STEP shows the 2.2 clearance and no screw or nut"
+     },
+     {
+      "near": [
+       -6.699999999999999,
+       49.952550329699115,
+       15.447727591188393
+      ],
+      "r": 2.0,
+      "reason": "r14 stack hole is the M2 tap drill (1.6) where the stack screws thread into the spider; the STEP shows the 2.2 clearance and no screw or nut"
+     }
     ]
    },
    {
@@ -1739,6 +1787,7 @@
    "rotates_with": "fixed",
    "stock": "MR85ZZ 5 x 8 x 2.5",
    "color": "#555555",
+   "deviation": "bought part left out of the STEP (INDEX.txt lists no bearing): RV02 carries the 7.9 mm printed seat for it and the guide BOM lists an MR85ZZ; added for the shaft support",
    "shape": {
     "type": "subtract",
     "base": {
@@ -1791,6 +1840,7 @@
    "rotates_with": "weapon",
    "shaft_of": "weapon_motor",
    "parent": "weapon_motor",
+   "deviation": "the GR1507 shaft is part of the bought motor, which the STEP draws as one body (INDEX.txt lists no shaft); drawn separately here for the MR85 support and the spider collar",
    "shape": {
     "type": "place",
     "shape": {
@@ -1869,8 +1919,7 @@
     ],
     "spin_dir": "ccw",
     "supported_both_ends": true,
-    "teeth": 1,
-    "locking_bar": "weapon_lock"
+    "teeth": 1
    },
    "label": "3 mm aluminium spider: bolted to the bell (4 M2 on r4.5), carries the disc stack on 4 M2 on r14"
   },
@@ -2011,6 +2060,7 @@
    "kind": "armor",
    "material": "tpu",
    "process": "fdm",
+   "thin_wall_deviation": "matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)",
    "solid_fraction": 0.9,
    "print_orientation": "-z",
    "parent": "so_al",
@@ -2031,6 +2081,7 @@
    "kind": "armor",
    "material": "tpu",
    "process": "fdm",
+   "thin_wall_deviation": "matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)",
    "solid_fraction": 0.9,
    "print_orientation": "+z",
    "parent": "so_al",
@@ -2044,23 +2095,6 @@
     }
    },
    "label": "RV23 TPU side panel: battered S-wall round the wheels, 3 M3x8 CSK (two standoff ends, one chassis nut)"
-  },
-  {
-   "id": "belt_guard_l",
-   "kind": "armor",
-   "material": "pla_st",
-   "process": "fdm",
-   "print_orientation": "-x",
-   "rotates_with": "fixed",
-   "color": "#2a2c30",
-   "shape": {
-    "type": "model",
-    "file": "src/build_revron.py",
-    "params": {
-     "part": "belt_guard_l"
-    }
-   },
-   "label": "PLA belt guard (not in the STEP): roof over the O-ring slot between tub wall and side panel, glued to the tub side wall"
   },
   {
    "id": "nut_cl",
@@ -2263,6 +2297,7 @@
    "kind": "armor",
    "material": "tpu",
    "process": "fdm",
+   "thin_wall_deviation": "matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)",
    "solid_fraction": 0.9,
    "print_orientation": "-z",
    "parent": "so_ar",
@@ -2283,6 +2318,7 @@
    "kind": "armor",
    "material": "tpu",
    "process": "fdm",
+   "thin_wall_deviation": "matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)",
    "solid_fraction": 0.9,
    "print_orientation": "+z",
    "parent": "so_ar",
@@ -2296,23 +2332,6 @@
     }
    },
    "label": "RV24 TPU side panel: battered S-wall round the wheels, 3 M3x8 CSK (two standoff ends, one chassis nut)"
-  },
-  {
-   "id": "belt_guard_r",
-   "kind": "armor",
-   "material": "pla_st",
-   "process": "fdm",
-   "print_orientation": "+x",
-   "rotates_with": "fixed",
-   "color": "#2a2c30",
-   "shape": {
-    "type": "model",
-    "file": "src/build_revron.py",
-    "params": {
-     "part": "belt_guard_r"
-    }
-   },
-   "label": "PLA belt guard (not in the STEP): roof over the O-ring slot between tub wall and side panel, glued to the tub side wall"
   },
   {
    "id": "nut_cr",
@@ -2577,74 +2596,6 @@
    ]
   },
   {
-   "id": "nut_d0",
-   "kind": "nut",
-   "catalog": "nut_m2",
-   "at": [
-    7.6,
-    -8.05227240881161,
-    -11.452550329699115
-   ],
-   "rot": [
-    0,
-    90,
-    0
-   ],
-   "rotates_with": "weapon",
-   "parent": "spider"
-  },
-  {
-   "id": "nut_d1",
-   "kind": "nut",
-   "catalog": "nut_m2",
-   "at": [
-    7.6,
-    -11.452550329699115,
-    8.05227240881161
-   ],
-   "rot": [
-    0,
-    90,
-    0
-   ],
-   "rotates_with": "weapon",
-   "parent": "spider"
-  },
-  {
-   "id": "nut_d2",
-   "kind": "nut",
-   "catalog": "nut_m2",
-   "at": [
-    7.6,
-    8.052272408811604,
-    11.452550329699115
-   ],
-   "rot": [
-    0,
-    90,
-    0
-   ],
-   "rotates_with": "weapon",
-   "parent": "spider"
-  },
-  {
-   "id": "nut_d3",
-   "kind": "nut",
-   "catalog": "nut_m2",
-   "at": [
-    7.6,
-    11.452550329699115,
-    -8.052272408811607
-   ],
-   "rot": [
-    0,
-    90,
-    0
-   ],
-   "rotates_with": "weapon",
-   "parent": "spider"
-  },
-  {
    "id": "esc_tray",
    "kind": "other",
    "material": "tpu",
@@ -2661,42 +2612,11 @@
    "label": "TPU weapon-ESC tray (not in the STEP): glued to the base panel, lips hold the ESC when inverted"
   },
   {
-   "id": "weapon_lock",
-   "kind": "locking_bar",
-   "role": "weapon_lock",
-   "material": "tpu",
-   "process": "fdm",
-   "print_orientation": "+z",
-   "rotates_with": "fixed",
-   "color": "#ff6a00",
-   "tethered": true,
-   "parent": "mount_l",
-   "at": [
-    -5.5,
-    29.042633766233717,
-    21.851296290894776
-   ],
-   "rot": [
-    0,
-    90,
-    0
-   ],
-   "marked": true,
-   "tool_free": true,
-   "shape": {
-    "type": "model",
-    "file": "src/build_revron.py",
-    "params": {
-     "part": "weapon_lock"
-    }
-   },
-   "label": "RV00 TPU weapon lock pin (Build Guide rule; not in the STEP): d4 pin pushed through RV02 into a spider window, flag head + lanyard outside"
-  },
-  {
    "id": "belt_l",
    "kind": "belt",
    "material": "rubber",
    "process": "cots",
+   "deviation": "O-rings are bought parts and are not modelled in the RVRN 2.0 STEP (the original CAD shows the groove and hub only); modelled here as a stretched loop for fit and clearance checks",
    "shape": {
     "type": "subtract",
     "base": {
@@ -4577,6 +4497,7 @@
    "kind": "belt",
    "material": "rubber",
    "process": "cots",
+   "deviation": "O-rings are bought parts and are not modelled in the RVRN 2.0 STEP (the original CAD shows the groove and hub only); modelled here as a stretched loop for fit and clearance checks",
    "shape": {
     "type": "subtract",
     "base": {
@@ -6671,15 +6592,15 @@
     "d": 3.0,
     "length": 12.0,
     "head": "csk",
-    "head_std": "ISO 10642",
-    "head_dk": 6.72,
+    "head_std": "DIN 7991",
+    "head_dk": 6.0,
     "head_k": 1.86,
     "clearance_d": 3.4,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 7.02,
-    "csk_depth": 1.81,
+    "csk_d": 6.2,
+    "csk_depth": 1.4,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -6712,15 +6633,15 @@
     "d": 3.0,
     "length": 14.0,
     "head": "csk",
-    "head_std": "ISO 10642",
-    "head_dk": 6.72,
+    "head_std": "DIN 7991",
+    "head_dk": 6.0,
     "head_k": 1.86,
     "clearance_d": 3.4,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 7.02,
-    "csk_depth": 1.81,
+    "csk_d": 6.2,
+    "csk_depth": 1.4,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -6821,15 +6742,15 @@
     "d": 3.0,
     "length": 12.0,
     "head": "csk",
-    "head_std": "ISO 10642",
-    "head_dk": 6.72,
+    "head_std": "DIN 7991",
+    "head_dk": 6.0,
     "head_k": 1.86,
     "clearance_d": 3.4,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 7.02,
-    "csk_depth": 1.81,
+    "csk_d": 6.2,
+    "csk_depth": 1.4,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -6862,15 +6783,15 @@
     "d": 3.0,
     "length": 14.0,
     "head": "csk",
-    "head_std": "ISO 10642",
-    "head_dk": 6.72,
+    "head_std": "DIN 7991",
+    "head_dk": 6.0,
     "head_k": 1.86,
     "clearance_d": 3.4,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 7.02,
-    "csk_depth": 1.81,
+    "csk_d": 6.2,
+    "csk_depth": 1.4,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -7121,8 +7042,23 @@
     "spider"
    ],
    "threads_into": "weapon_motor",
+   "hole": {
+    "d": 2.0,
+    "length": 4.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.2,
+    "into": "tapped",
+    "side": "both",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 3.0,
+    "tap_d": 1.6,
+    "thread_depth": 1.5
+   },
    "access_before": [
-    "weapon_lock",
     "mount_l",
     "wbearing"
    ],
@@ -7131,41 +7067,48 @@
   },
   {
    "id": "bolt_d0",
-   "designation": "M2x18",
+   "designation": "M2x16",
    "head": "button",
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    -8.2,
+    6.800000000000001,
     30.44772759118839,
     12.047449670300885
    ],
    "dir": [
-    1,
+    -1,
     0,
     0
    ],
    "through": [
-    "spider",
-    "disc_a",
+    "disc_b",
     "dspacer",
-    "disc_b"
+    "disc_a"
    ],
-   "threads_into": "nut_d0",
+   "threads_into": "spider",
+   "hole": {
+    "d": 2.0,
+    "length": 16.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.2,
+    "into": "tapped",
+    "side": "both",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 12.0,
+    "tap_d": 1.6,
+    "thread_depth": 4.5
+   },
    "access_before": [
-    "weapon_lock",
-    "mount_l",
-    "wbearing",
-    "weapon_motor",
-    "mount_r",
-    "motor_spacer",
     "tub",
-    "so_al",
-    "so_bl",
-    "so_ar",
-    "so_br"
+    "mount_r",
+    "motor_spacer"
    ],
-   "reason": "stack bolted up on the bench before it goes on the motor (inferred: the STEP has the 2.2 holes but no screws)",
+   "reason": "stack screwed into the spider from the back (heads on disc_b, 2 mm of thread in the 3 mm alu spider tapped M2): no nuts, since the STEP has none (inferred: it has the 2.2 holes but no screws)",
    "removable": true
   },
   {
@@ -7188,8 +7131,23 @@
     "spider"
    ],
    "threads_into": "weapon_motor",
+   "hole": {
+    "d": 2.0,
+    "length": 4.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.2,
+    "into": "tapped",
+    "side": "both",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 3.0,
+    "tap_d": 1.6,
+    "thread_depth": 1.5
+   },
    "access_before": [
-    "weapon_lock",
     "mount_l",
     "wbearing"
    ],
@@ -7198,41 +7156,48 @@
   },
   {
    "id": "bolt_d1",
-   "designation": "M2x18",
+   "designation": "M2x16",
    "head": "button",
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    -8.2,
+    6.800000000000001,
     27.047449670300885,
     31.55227240881161
    ],
    "dir": [
-    1,
+    -1,
     0,
     0
    ],
    "through": [
-    "spider",
-    "disc_a",
+    "disc_b",
     "dspacer",
-    "disc_b"
+    "disc_a"
    ],
-   "threads_into": "nut_d1",
+   "threads_into": "spider",
+   "hole": {
+    "d": 2.0,
+    "length": 16.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.2,
+    "into": "tapped",
+    "side": "both",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 12.0,
+    "tap_d": 1.6,
+    "thread_depth": 4.5
+   },
    "access_before": [
-    "weapon_lock",
-    "mount_l",
-    "wbearing",
-    "weapon_motor",
-    "mount_r",
-    "motor_spacer",
     "tub",
-    "so_al",
-    "so_bl",
-    "so_ar",
-    "so_br"
+    "mount_r",
+    "motor_spacer"
    ],
-   "reason": "stack bolted up on the bench before it goes on the motor (inferred: the STEP has the 2.2 holes but no screws)",
+   "reason": "stack screwed into the spider from the back (heads on disc_b, 2 mm of thread in the 3 mm alu spider tapped M2): no nuts, since the STEP has none (inferred: it has the 2.2 holes but no screws)",
    "removable": true
   },
   {
@@ -7255,8 +7220,23 @@
     "spider"
    ],
    "threads_into": "weapon_motor",
+   "hole": {
+    "d": 2.0,
+    "length": 4.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.2,
+    "into": "tapped",
+    "side": "both",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 3.0,
+    "tap_d": 1.6,
+    "thread_depth": 1.5
+   },
    "access_before": [
-    "weapon_lock",
     "mount_l",
     "wbearing"
    ],
@@ -7265,41 +7245,48 @@
   },
   {
    "id": "bolt_d2",
-   "designation": "M2x18",
+   "designation": "M2x16",
    "head": "button",
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    -8.2,
+    6.800000000000001,
     46.552272408811604,
     34.952550329699115
    ],
    "dir": [
-    1,
+    -1,
     0,
     0
    ],
    "through": [
-    "spider",
-    "disc_a",
+    "disc_b",
     "dspacer",
-    "disc_b"
+    "disc_a"
    ],
-   "threads_into": "nut_d2",
+   "threads_into": "spider",
+   "hole": {
+    "d": 2.0,
+    "length": 16.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.2,
+    "into": "tapped",
+    "side": "both",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 12.0,
+    "tap_d": 1.6,
+    "thread_depth": 4.5
+   },
    "access_before": [
-    "weapon_lock",
-    "mount_l",
-    "wbearing",
-    "weapon_motor",
-    "mount_r",
-    "motor_spacer",
     "tub",
-    "so_al",
-    "so_bl",
-    "so_ar",
-    "so_br"
+    "mount_r",
+    "motor_spacer"
    ],
-   "reason": "stack bolted up on the bench before it goes on the motor (inferred: the STEP has the 2.2 holes but no screws)",
+   "reason": "stack screwed into the spider from the back (heads on disc_b, 2 mm of thread in the 3 mm alu spider tapped M2): no nuts, since the STEP has none (inferred: it has the 2.2 holes but no screws)",
    "removable": true
   },
   {
@@ -7322,8 +7309,23 @@
     "spider"
    ],
    "threads_into": "weapon_motor",
+   "hole": {
+    "d": 2.0,
+    "length": 4.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.2,
+    "into": "tapped",
+    "side": "both",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 3.0,
+    "tap_d": 1.6,
+    "thread_depth": 1.5
+   },
    "access_before": [
-    "weapon_lock",
     "mount_l",
     "wbearing"
    ],
@@ -7332,47 +7334,54 @@
   },
   {
    "id": "bolt_d3",
-   "designation": "M2x18",
+   "designation": "M2x16",
    "head": "button",
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    -8.2,
+    6.800000000000001,
     49.952550329699115,
     15.447727591188393
    ],
    "dir": [
-    1,
+    -1,
     0,
     0
    ],
    "through": [
-    "spider",
-    "disc_a",
+    "disc_b",
     "dspacer",
-    "disc_b"
+    "disc_a"
    ],
-   "threads_into": "nut_d3",
+   "threads_into": "spider",
+   "hole": {
+    "d": 2.0,
+    "length": 16.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.2,
+    "into": "tapped",
+    "side": "both",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 12.0,
+    "tap_d": 1.6,
+    "thread_depth": 4.5
+   },
    "access_before": [
-    "weapon_lock",
-    "mount_l",
-    "wbearing",
-    "weapon_motor",
-    "mount_r",
-    "motor_spacer",
     "tub",
-    "so_al",
-    "so_bl",
-    "so_ar",
-    "so_br"
+    "mount_r",
+    "motor_spacer"
    ],
-   "reason": "stack bolted up on the bench before it goes on the motor (inferred: the STEP has the 2.2 holes but no screws)",
+   "reason": "stack screwed into the spider from the back (heads on disc_b, 2 mm of thread in the 3 mm alu spider tapped M2): no nuts, since the STEP has none (inferred: it has the 2.2 holes but no screws)",
    "removable": true
   },
   {
    "id": "bolt_t0",
-   "designation": "M2x4",
-   "head": "countersunk",
+   "designation": "M2x5",
+   "head": "button",
    "tool": "hex1.3",
    "at": [
     25.0,
@@ -7391,26 +7400,24 @@
    "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
    "hole": {
     "d": 2.0,
-    "length": 4.0,
-    "head": "csk",
-    "head_std": "ISO 14581",
-    "head_dk": 3.8,
-    "head_k": 1.2,
+    "length": 5.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
     "clearance_d": 2.4,
     "into": "through",
     "side": "head",
-    "csk_angle": 90.0,
-    "csk_d": 4.5,
-    "csk_depth": 1.05,
-    "sink": 0.0,
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
     "grip": 0.9
    },
    "removable": true
   },
   {
    "id": "bolt_t1",
-   "designation": "M2x4",
-   "head": "countersunk",
+   "designation": "M2x5",
+   "head": "button",
    "tool": "hex1.3",
    "at": [
     -25.0,
@@ -7429,26 +7436,24 @@
    "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
    "hole": {
     "d": 2.0,
-    "length": 4.0,
-    "head": "csk",
-    "head_std": "ISO 14581",
-    "head_dk": 3.8,
-    "head_k": 1.2,
+    "length": 5.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
     "clearance_d": 2.4,
     "into": "through",
     "side": "head",
-    "csk_angle": 90.0,
-    "csk_d": 4.5,
-    "csk_depth": 1.05,
-    "sink": 0.0,
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
     "grip": 0.9
    },
    "removable": true
   },
   {
    "id": "bolt_t2",
-   "designation": "M2x4",
-   "head": "countersunk",
+   "designation": "M2x5",
+   "head": "button",
    "tool": "hex1.3",
    "at": [
     25.0,
@@ -7467,26 +7472,24 @@
    "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
    "hole": {
     "d": 2.0,
-    "length": 4.0,
-    "head": "csk",
-    "head_std": "ISO 14581",
-    "head_dk": 3.8,
-    "head_k": 1.2,
+    "length": 5.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
     "clearance_d": 2.4,
     "into": "through",
     "side": "head",
-    "csk_angle": 90.0,
-    "csk_d": 4.5,
-    "csk_depth": 1.05,
-    "sink": 0.0,
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
     "grip": 0.9
    },
    "removable": true
   },
   {
    "id": "bolt_t3",
-   "designation": "M2x4",
-   "head": "countersunk",
+   "designation": "M2x5",
+   "head": "button",
    "tool": "hex1.3",
    "at": [
     -25.0,
@@ -7505,18 +7508,16 @@
    "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
    "hole": {
     "d": 2.0,
-    "length": 4.0,
-    "head": "csk",
-    "head_std": "ISO 14581",
-    "head_dk": 3.8,
-    "head_k": 1.2,
+    "length": 5.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
     "clearance_d": 2.4,
     "into": "through",
     "side": "head",
-    "csk_angle": 90.0,
-    "csk_d": 4.5,
-    "csk_depth": 1.05,
-    "sink": 0.0,
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
     "grip": 0.9
    },
    "removable": true
@@ -7543,6 +7544,20 @@
    "access_before": [
     "base_panel"
    ],
+   "hole": {
+    "d": 2.0,
+    "length": 3.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "tapped",
+    "side": "thread",
+    "grip": 0.0,
+    "tap_d": 1.6,
+    "thread_depth": 3.5
+   },
    "reason": "thread-forming into the 1.7 pilot holes either side of the switch flange; heads clamp the flange to the deck underside (inferred)",
    "removable": true
   },
@@ -7568,23 +7583,25 @@
    "access_before": [
     "base_panel"
    ],
+   "hole": {
+    "d": 2.0,
+    "length": 3.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "tapped",
+    "side": "thread",
+    "grip": 0.0,
+    "tap_d": 1.6,
+    "thread_depth": 3.5
+   },
    "reason": "thread-forming into the 1.7 pilot holes either side of the switch flange; heads clamp the flange to the deck underside (inferred)",
    "removable": true
   }
  ],
  "connections": [
-  {
-   "a": "belt_guard_l",
-   "b": "tub",
-   "method": "glue",
-   "reason": "PLA guard web/foot CA-glued along the tub side wall and deck chamfer"
-  },
-  {
-   "a": "belt_guard_r",
-   "b": "tub",
-   "method": "glue",
-   "reason": "PLA guard web/foot CA-glued along the tub side wall and deck chamfer"
-  },
   {
    "a": "motor_l",
    "b": "tub",
@@ -7959,14 +7976,6 @@
    "reason": "Ti top panel held by 4 M2 flat-head thread-forming screws through its countersunk corner holes into the column-top pilots (the STEP has the holes, not the screws)"
   },
   {
-   "a": "weapon_lock",
-   "b": "mount_l",
-   "method": "press_fit",
-   "reason": "TPU lock pin pressed into the RV02 3.9 bore (0.05 radial grip, pulled by its flag) into a spider window; the head stops it, the lanyard tethers it to the mount",
-   "interference_mm": 0.05,
-   "mechanical_key": true
-  },
-  {
    "a": "battery",
    "b": "tub",
    "method": "press_fit",
@@ -8040,6 +8049,16 @@
      11.1,
      14.5,
      16.0
+    ],
+    [
+     11.1,
+     15.5,
+     18.2
+    ],
+    [
+     11.1,
+     27.0,
+     18.2
     ],
     [
      11.1,
@@ -8391,12 +8410,6 @@
    "up": "+x"
   },
   {
-   "rule": "support_free",
-   "why": "every printed part prints without supports in its declared orientation",
-   "part": "weapon_lock",
-   "up": "+z"
-  },
-  {
    "rule": "min_wall",
    "why": "2 mm walls are 4+ perimeters: the box takes wheel-side and clamp loads without delaminating",
    "part": "tub",
@@ -8507,11 +8520,7 @@
     "spider",
     "disc_a",
     "disc_b",
-    "dspacer",
-    "nut_d0",
-    "nut_d1",
-    "nut_d2",
-    "nut_d3"
+    "dspacer"
    ],
    "axis": [
     1,
@@ -8530,6 +8539,16 @@
       11.1,
       14.5,
       16.0
+     ],
+     [
+      11.1,
+      15.5,
+      18.2
+     ],
+     [
+      11.1,
+      27.0,
+      18.2
      ],
      [
       11.1,
@@ -8554,12 +8573,7 @@
     "spider",
     "disc_a",
     "disc_b",
-    "dspacer",
-    "nut_d0",
-    "nut_d1",
-    "nut_d2",
-    "nut_d3",
-    "weapon_lock"
+    "dspacer"
    ]
   }
  ]

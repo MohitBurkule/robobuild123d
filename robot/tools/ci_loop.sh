@@ -49,23 +49,23 @@ for i in $(seq "${START_ITER:-1}" "$MAX_ITERS"); do
   fi
   [ -f "$P/blockers_live.jsonl" ] && mv "$P/blockers_live.jsonl" "$P/blockers_live.prev.jsonl"
   out="$P/ci_verify_${i}_$sha.log"
-  # full verify in fresh processes per chunk (one process for all groups grew past 11 GB at `threat` and was OOM-killed)
-  all=$(python3 -m robot verify --list-groups 2>/dev/null | grep -E '^[a-z_]+$' | grep -v -x -e threat -e fastener_seat | paste -sd,)
-  : > "$out"; rc=0; done_n=0
+  # full verify, one fresh process per group: an OOM in one group skips only that group, not the round
+  all=$(python3 -m robot verify --list-groups 2>/dev/null | grep -E '^[a-z_]+$' | grep -v -x -e threat -e fastener_seat | paste -sd' ')
+  : > "$out"; rc=0; done_n=0; failed=
   chunks="$all fastener_seat"; [ -f "${SKIP_THREAT_FILE:-/tmp/ci_skip_threat}" ] || chunks="$all threat fastener_seat"
   need=$(echo $chunks | wc -w)
   for chunk in $chunks; do
     ROBOT_RUN_SHA=$sha ROBOT_PROGRESS_LOG="$P/verify.log" HEAVY_CI=1 /tmp/heavy.sh timeout 6000 python3 -m robot verify "$SPEC" --full --only "$chunk" --jobs "${JOBS:-2}" > "$out.part" 2>&1
-    r=$?; cat "$out.part" >> "$out"; grep -q 'blockers,' "$out.part" && done_n=$((done_n+1)) || rc=$r
+    r=$?; cat "$out.part" >> "$out"; grep -q 'blockers,' "$out.part" && done_n=$((done_n+1)) || { rc=$r; failed="$failed $chunk"; }
   done
   rm -f "$out.part"
-  if [ "$done_n" -lt "$need" ]; then
+  if [ "$done_n" -eq 0 ]; then
     log "iter $i sha $sha: verify did not finish (rc $rc: $(grep -m1 -e Killed -e Traceback -e Error "$out" | cut -c1-120)); not counted"
     continue
   fi
   n=$(grep -c '^\[BLOCKER\]' "$out")
   groups=$(grep '^\[BLOCKER\]' "$out" | awk '{print $2}' | cut -d. -f1 | sort | uniq -c | awk '{printf "%s %s, ",$2,$1}')
-  note=""; [ "$need" -lt 3 ] && note=" (threat not run)"
+  note=""; [ -n "$failed" ] && note=" (did not finish:$failed)"
   log "iter $i sha $sha: $n blockers$note (${groups%, })"
   echo "$i $sha" > "$P/ci_iter_done"; echo "$sha" > "$P/ci_last_verified"
   [ "${CI_RENDER:-1}" = 1 ] && render

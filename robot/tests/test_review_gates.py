@@ -55,11 +55,12 @@ def test_unmapped_part_reference_row_or_deviation_passes(tmp_path):
 
 
 # ------------------------------------------------------------------------------------------------- cots.fidelity
-def test_cots_fidelity_catalog_gr1507_without_bolt_circle_fails():
+def test_cots_fidelity_catalog_gr1507_has_its_bolt_circle():
+    """The catalog GR1507 now carries the real base cross with the 4 M2 holes on 12 mm."""
     d = chassis()
     d["parts"].append({"id": "wm", "kind": "weapon_motor", "catalog": "gr1507", "at": [0, 0, 30]})
     f = [f for f in run(d, "cots_fidelity").findings if f.id == "cots.fidelity" and not f.passed]
-    assert f and "bolt circle" in f[0].message
+    assert not any("bolt circle" in x.message for x in f)
 
 
 def test_cots_fidelity_real_outrunner_passes():
@@ -98,6 +99,14 @@ def test_wire_clear_of_rotating_nut_passes():
     rep = run(_spinner([[20, 0, 6]]), "wire_review")
     f = rep.get("wire.rotating_clearance")
     assert f is not None and f.passed, [x.message for x in rep.findings]
+
+
+def test_wire_clearance_is_to_the_swept_band_of_the_nut():
+    # the nut sweeps t 2.2..3.8 x rho ~8..12 about the disc axis: a lead 2.0 mm behind its back face passes the 1 mm default,
+    # one 1.0 mm behind it does not (the 0.4 mm bundle radius counts)
+    ok_ = run(_spinner([[5.8, -30, 40], [5.8, 30, 40]]), "wire_review").get("wire.rotating_clearance")
+    assert ok_ is not None and ok_.passed, ok_ and ok_.message
+    assert run(_spinner([[4.8, -30, 40], [4.8, 30, 40]]), "wire_review").failed("wire.rotating_clearance")
 
 
 # -------------------------------------------------------------------------------------------- wire.render_present

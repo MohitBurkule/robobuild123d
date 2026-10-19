@@ -4,7 +4,7 @@
   python robots/revron/tools/geom_equal.py check DIR    # rebuild, compare against DIR (exit 1 on mismatch)
 
 Solids: volume, bounding box, and surface deviation (points sampled on every face of each version, distance to the
-other version's tessellation at 2 um; max < 0.01 mm). 2-D helpers: shapely symmetric-difference area and point-list max deviation.
+other version's tessellation at 3 um; max < 0.01 mm). 2-D helpers: shapely symmetric-difference area and point-list max deviation.
 """
 import os, pickle, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -26,12 +26,12 @@ def helpers():
 
 def _mesh(shape):
     import trimesh
-    v, t = shape.tessellate(0.002, 0.1)
+    v, t = shape.tessellate(0.003, 0.3)
     return trimesh.Trimesh([tuple(p) for p in v], t, process=False)
 
 
 def _dev(a, c, n=20000):
-    """Max distance from n points sampled on a's surface to c's surface (tessellated at 2 um chordal tolerance)."""
+    """Max distance from n points sampled on a's surface to c's surface (tessellated at 3 um chordal tolerance)."""
     import trimesh
     ma, mc = _mesh(a), _mesh(c)
     pts, _ = trimesh.sample.sample_surface(ma, n, seed=0)

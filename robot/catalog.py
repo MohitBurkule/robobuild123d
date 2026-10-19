@@ -47,6 +47,28 @@ def minus(base, cuts):
     return {"type": "subtract", "base": base, "cut": cuts} if cuts else base
 
 
+def _gr1507_base():
+    """GR1507 stator base as in the RVRN 2.0 STEP: a 2 mm cross (4 arms 3.5 wide, round tips to R9.8) round a R3.9 hub,
+    one d1.6 tap-drill hole per arm at R6 (the M2 stator screws; the STEP shows d2.0). Measured sections, not a plate: a solid disc was 3.5 mm too much."""
+    arm = [box(2.0, 16.1, 3.5), box(2.0, 3.5, 16.1)] + [at(rot(cyl(1.75, 2.0), [0.0, 90.0, 0.0]), 0, sy * 8.05, sz * 8.05)
+                                                       for sy, sz in ((1, 0), (-1, 0), (0, 1), (0, -1))]
+    holes = [at(cyl_x(0.8, 3.0), 0, 6.0 * sy, 6.0 * sz) for sy, sz in ((1, 0), (-1, 0), (0, 1), (0, -1))]
+    return minus(union(arm + [cyl_x(3.9, 2.0)]), holes)
+
+
+BELL_SCREW_R, BELL_SCREW_PHASE = 4.5, -54.889  # spider screw circle on the bell top and its phase about the axis (STEP; local frame)
+
+
+def _gr1507_bell():
+    """GR1507 bell as in the RVRN 2.0 STEP (sections, local X = -world X): a hub r3 through (-4.5..6.5), an open wall r8..9.8
+    over -4.5..4.0, and a vented top: a r6.2 disc (4.5..6.0) joined to the wall by 8 ribs (two per quadrant at world
+    34 and 62 deg), the 4 big vents between them. The stator inside is not modelled (the STEP leaves it out)."""
+    ribs = [rot(at(box(1.5, 4.6, 1.4), 4.75, 7.5, 0), [ang, 0.0, 0.0]) for ang in (146, 118, 236, 208, 326, 298, 56, 28)]
+    wall = minus(cyl_x(9.8, 8.5), [cyl_x(8.0, 9.0)])
+    top = minus(cyl_x(6.2, 1.5), [rot(at(cyl_x(0.8, 1.7), 0, BELL_SCREW_R, 0), [BELL_SCREW_PHASE + 90.0 * k, 0.0, 0.0]) for k in range(4)])   # M2 tap holes (ISO 2306 r0.8) for the spider screws
+    return union([at(cyl_x(3.0, 11.0), 1.0, 0, 0), at(wall, -0.25, 0, 0), at(top, 5.25, 0, 0)] + ribs)
+
+
 @dataclass
 class CatalogEntry:
     id: str
@@ -234,11 +256,11 @@ def builtin() -> list[CatalogEntry]:
         CatalogEntry("heatset_m2", "insert", "M2 brass heat-set insert 3.0 mm", 0.12, "estimate", heatset(3.2, 3.0, 2.0),
                      {}, None, {"thread_d_mm": 2.0}, "#d4af37"),
         # RVRN 2.0 STEP envelopes (Revron rebuild 2026-10): measured outline of the vendor models, not memory.
-        CatalogEntry("gr1507", "weapon_motor", "GR1507 outrunner (19.6 bell, stator base 19.6 x 2 with 4 M2 on 12 mm, threaded 5 mm shaft out of the bell)", 15.5, "estimate",
-                     union([at(cyl_x(9.8, 2.0), -9.4, 0, 0), at(cyl_x(4.0, 4.1), -6.35, 0, 0), at(cyl_x(9.8, 8.6), 0.0, 0, 0),
-                            at(cyl_x(7.0, 2.2), 5.4, 0, 0), at(cyl_x(2.5, 3.0), 8.0, 0, 0), at(cyl_x(2.26, 9.2), 14.1, 0, 0),
+        CatalogEntry("gr1507", "weapon_motor", "GR1507 outrunner (19.6 bell: open 1.8 wall, 8-rib vented top; 4-arm cross stator base with 4 M2 on 12 mm; threaded 5 mm shaft out of the bell face)", 15.5, "estimate",
+                     union([at(_gr1507_base(), -9.4, 0, 0), at(cyl_x(0.75, 4.1), -6.35, 0, 0), at(_gr1507_bell(), 0.0, 0, 0),
+                            at(cyl_x(2.5, 3.0), 8.0, 0, 0), at(cyl_x(2.26, 9.2), 14.1, 0, 0),
                             at(cyl_x(0.75, 1.4), -11.1, 0, 0)]),
-                     {"phases": [-11.0, 0, -9.0]}, {"at": [6.5, 0, 0], "dir": [1, 0, 0], "len": 12.2, "dia": 5.0},
+                     {"phases": [-11.0, 0, -9.0]}, {"at": [4.1, 0, 0], "dir": [1, 0, 0], "len": 14.6, "dia": 5.0},   # shaft leaves the bell face at 4.1 (the vented top to 6.0 is not bell wall)
                      {"kv": 2850, "max_current_a": 18.0, "typ_current_a": 8.0, "bell_mass_frac": 0.45}, "#3a3d42"),
         flat("malenki_nano_rvrn2", "Malenki Nano (Rx + 2 brushed ESC), kapton wrapped with its leads (RVRN 2.0 RV13 envelope)", "esc", 32, 20, 4.4, 4.0,
              {"bat": [-16, -6, -1.0], "m1": [16, 6, -1.0], "m2": [-16, 6, -1.0], "wpn": [16, -6, -1.0]},

@@ -54,23 +54,39 @@ N10_TOP = 17.0                       # top face of the N10 gearbox plates
 SWX = 24.55   # power switch X: body side 0.05 clear of the 27.5 inner wall face (was 25.0, 0.4 into it)
 CH = dict(x=29.5, y0=-37.6, y1=15.0, z0=2.5, z1=19.5, wall=2.0, deck=17.5, cham=2.0)
 # drisk
-DR_X = dict(spider=(-8.2, -5.2), disc_a=(-5.2, -2.2), spacer=(-2.2, 3.8), disc_b=(3.8, 6.8))
+# master parameters of the stack: plate thicknesses and where the first plate starts; every X span below is chained from them
+SPIDER_T, DISC_T, SPACER_T, STACK_X0 = 3.0, 3.0, 6.0, -8.2
+DR_X, _x = {}, STACK_X0
+for _n, _t in (("spider", SPIDER_T), ("disc_a", DISC_T), ("spacer", SPACER_T), ("disc_b", DISC_T)):
+    DR_X[_n] = (_x, _x + _t)       # spider | disc_a | spacer | disc_b, each flush on the previous one
+    _x += _t
 DR_ROT = -54.889                     # drisk phase about the axis (STEP Drisk_V4 placement)
 DISC_R, DISC_ECC, DISC_ECC_A = 16.5, 0.5, -40.0   # eccentric rim: R16.5 centred 0.5 mm towards -40 deg (balances the tooth)
 TOOTH_R, TOOTH_A = 23.0, 134.8
-BOLT_R, HUB_R = 14.0, 4.5
+BOLT_R, HUB_R = 14.0, 4.5            # stack-bolt circle and bell-screw circle (radii about the weapon axis)
+N_STACK = 4                          # bolts / lobes / windows per stack, 90 deg apart
+
+
+def _polar(r, n=N_STACK, phase=0.0):
+    """Points of a polar pattern (build123d PolarLocations in the 2D shapely profiles): n points on radius r."""
+    return [(r * math.cos(math.radians(phase + 360.0 * k / n)), r * math.sin(math.radians(phase + 360.0 * k / n))) for k in range(n)]
+
+
+def _m2():
+    """ISO 273 / ISO 2306 M2 hole radii from the fastener catalog: (tap drill r, close clearance r, normal clearance r)."""
+    _repo = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
+    if _repo not in sys.path:
+        sys.path.insert(0, _repo)
+    from robot.cad import fastener_catalog as fc
+    return fc.tap_drill(2.0) / 2, fc.clearance(2.0, "close") / 2, fc.clearance(2.0, "normal") / 2
 # motor GR1507: axis X, stator base X 8.4..10.4 on the right mount via the back spacer X 11.9..13.4
-MNT_IN, MNT_OUT = 13.4, 21.4         # weapon mount |X| span (8 mm): 4 mm slab + 4 mm battered boss
-MNT_SLAB = 17.4
+MNT_IN, MNT_T, MNT_SLAB_T = 13.4, 8.0, 4.0   # weapon mount: inner face |X|, total thickness, slab thickness (rest = battered boss)
+MNT_OUT, MNT_SLAB = MNT_IN + MNT_T, MNT_IN + MNT_SLAB_T
 WEAPON_CLEAR_R = 16.0                # chassis material stays outside this radius about the weapon axis (rotor + 1 mm)
-BSP_X = (11.9, 13.4)
+BSP_T = 1.5                          # printed spacer between the stator base and the right mount
+BSP_X = (MNT_IN - BSP_T, MNT_IN)
 STAT_HOLE_R, CB_R, CB_CONE_X = 1.12, 2.25, (16.4, 17.15)   # RV03 stator screw clearance d2.24, d4.5 counterbore, its cone
-# RV00 weapon lock pin (Build Guide rule; not in the STEP): a d4 TPU pin pushed in from outside through RV02 into one of
-# the spider's quarter windows, parked against the window's outer arc. Drisk-local window centre angle 45 deg at r9.6:
-# the pin spans r7.6..11.6 (bolt_p heads end at r6.25, window arc r11.7, bolt_d heads start r12.25), its tip stops
-# 0.3 mm short of disc_a so only the spider bears on it.
-LOCK_R, LOCK_RC, LOCK_A = 2.0, 9.6, 45.0
-LOCK_TIP_X = DR_X["spider"][1] - 0.3
+PHASE_VIA = [[11.1, 14.5, 16.0], [11.1, 15.5, 18.2], [11.1, 27.0, 18.2], [11.1, 30.0, 14.5]]   # weapon phase leads: the lug (|X| >= 10.4, up to the deck) closes z 14.5 at y 15..26
 
 
 # ---------------------------------------------------------------------------------------------------------------- 2D
@@ -238,7 +254,7 @@ def _panel_seat(which, i):
         x, y = INS[i]
         return hole_tool((x, y, BASE_Z0), (0, 0, 1), "M2x6", head="csk", into="through", side="head", grip=BASE_T + BOSS_H, csk_clear=CSK_CLEAR)
     x, y = TOP_XY[i]
-    return hole_tool((x, y, TOP_Z0 + TOP_T), (0, 0, -1), "M2x4", head="csk", into="through", side="head", grip=TOP_T, csk_clear=CSK_CLEAR)
+    return hole_tool((x, y, TOP_Z0 + TOP_T), (0, 0, -1), "M2x5", head="button", into="through", side="head", grip=TOP_T, cbore=0)   # 0.9 Ti is too thin for an M2 flat-head seat (1.2 tall): a button head bears flat on the face, plain 2.2 clearance hole
 
 
 def _panel_outline(grow):
@@ -259,13 +275,23 @@ def base_panel():
     N10 gearboxes preload the motors up into their keyhole pockets."""
     z0, t = 3.5, 1.0
     out = _panel_outline(0.0)
-    body = _ext(out, "xy", z0, z0 + t)
-    for s in (1, -1):
-        pad = _round(_poly([(s * 17.95, -34.85), (s * 27.05, -34.85), (s * 27.05, -25.75), (s * 17.95, -25.75)]), r_out=0.6)
-        body = _U(body, _ext(pad, "xy", z0 + t - 0.01, z0 + t + 0.45))   # [fix-D] 0.45: top 4.95, 0.05 under the N10
-    # the 1 mm skin is thinner than the 1.2 mm M2 flat head: a 0.4 mm ring boss over each screw gives the seat 1.4 mm of
+    b = _b()
+    body = _solid(_ext(out, "xy", z0, z0 + t))
+    for s in (1, -1):   # [fix-D] 0.45: top 4.95, 0.05 under the N10; plain boxes (not shapely polylines) so the base can take a fillet
+        pad = b.Pos(s * 22.5, -30.3, z0 + t - 0.01 + 0.2325) * b.Box(9.1, 9.1, 0.465)
+        body = body + b.fillet(pad.edges().filter_by(b.Axis.Z), 0.6)
+    # the 1 mm skin is thinner than the 1.2 mm M2 flat head: a 0.3 mm ring boss over each screw gives the seat 1.3 mm of
     # material (no knife edge under the head) and keys the panel into the column feet, so side hits shear the bosses, not the screws
-    body = _U(body, *[_cyl(BOSS_R, z0 + t - 0.01, z0 + t + BOSS_H, (x, y), "z") for x, y in INS])
+    for x, y in INS:
+        body = body + b.Pos(x, y, z0 + t - 0.01 + (BOSS_H + 0.01) / 2) * b.Cylinder(BOSS_R, BOSS_H + 0.01)
+    # R0.25 where pads and bosses meet the skin: no sharp internal corner in the print (the STEP has r 0.5 at the pads)
+    skin_top = z0 + t
+    def _base_edge(e):
+        if abs(e.center().Z - skin_top) > 0.02 or abs(e.bounding_box().max.Z - e.bounding_box().min.Z) > 1e-3:
+            return False
+        fs = [f for f in body.faces() if any(e.is_same(x) for x in f.edges())]
+        return len(fs) == 2 and any(f.bounding_box().max.Z > skin_top + 0.1 and f.bounding_box().min.Z < skin_top + 0.01 for f in fs)
+    body = b.fillet([e for e in body.edges() if _base_edge(e)], 0.25)
     cuts = [_panel_seat("base", i)[0] for i in range(len(INS))] + [_cyl(BASE_HOLE / 2, z0 - 1, z0 + 3, (x, y), "z") for x, y in INS]   # 4.5 countersink (STEP RV26 has 3.2 x 0.5; an ISO 10642 M2 head is 4.4 x 1.2, so a smaller seat leaves it proud and binding) then the 2.2 hole
     return _S(body, *cuts)
 
@@ -301,7 +327,7 @@ def top_panel():
     body = _ext(p, "xy", z0, z0 + t)
     # 2.2 holes countersunk (90 deg, 4.5 at the top face; STEP 3.65) for M2 flat heads into the column-top pilots: the 1.2 head is
     # deeper than the 0.9 plate, so its tip sinks into the chamfer at the column top
-    return _S(body, *[_panel_seat("top", i)[0] for i in range(len(TOP_XY))], *[_cyl(TOP_HOLE / 2, z0 - 1, z0 + 2, (x, y), "z") for x, y in TOP_XY])
+    return _S(body, *[_panel_seat("top", i)[0] for i in range(len(TOP_XY))])
 
 
 def _fork_outline(s):
@@ -350,7 +376,11 @@ def _mount_profile(r_top):
     pts = rim + [(43.6, 3.6)] + _arc(SB, 3.25, -16.0, -90.0, 12)[1:] + [(15.4, 1.25), (13.2, 2.5), (13.2, 4.5), (15.0, 4.5), (15.0, 5.35), (25.5, 5.35), (26.5, 6.35),   # notch front face on the lug (0 gap): the lug bears a hit before the screws
                  (26.5, 12.55), (25.5, 13.55), (15.0, 13.55), (15.0, 17.5), (13.0, 19.5), ((10.17 if r_top > 8 else 9.0), 19.5)]
     p = _poly(pts)
-    return _round(p, r_out=0.0, r_in=0.0)
+    # the nose CSK (ISO 10642 d7 cone) is wider than the STEP's R3.25 nose arc and left a 0 mm knife edge there: a local
+    # R4.4 pad (CSK radius 3.5 + 0.9 mm printed wall), kept above the nose underside, wraps the countersink
+    from shapely.geometry import Point, box as _sbox
+    p = p.union(Point(SB).buffer(4.4, 64).intersection(_sbox(0, 1.25, 80, 40)))
+    return _round(p, r_out=0.0, r_in=1.0)   # relieve the concave notch corners (tub deck fillet, mfg corner relief)
 
 
 def weapon_mount(side):
@@ -386,21 +416,20 @@ def weapon_mount(side):
     else:
         cuts.append(_cyl(3.95, -30, 30, (WY, WZ)))                                   # outboard bearing seat (8 mm)
         cuts.append(_cyl(6.0, xm, xo + s, (WY, WZ)))                                 # shaft nut recess
-        cuts.append(_cyl(LOCK_R - 0.05, xi - s, xo + 3 * s, _lock_yz()))             # RV00 lock pin bore: 0.05 radial TPU press (held, pulls by hand)
     for (y, z) in (SA, SB):                                                          # M3 CSK into the standoffs, flush inside
         cuts.append(_mount_csk(s, y, z, "M3x12" if (y, z) == SA else "M3x14")[0])   # catalog CSK hole (robot.cad.holes)
     return _S(body, *cuts)
 
 
 def _mount_csk(s, y, z, fastener):
-    """robot.cad.holes cutter + record for a mount-to-standoff M3 CSK (bolt_u*): head flush in the inner face, ISO 10642
-    countersink (d7.0 vs the STEP's 6.2 for a DIN 7991 head: the catalog head must sit in it) and ISO 273 normal 3.4
+    """robot.cad.holes cutter + record for a mount-to-standoff M3 CSK (bolt_u*): head flush in the inner face, DIN 7991
+    countersink (dk 6.0 head in the STEP's 6.2 mm cone) and ISO 273 normal 3.4
     clearance through the 4 mm slab, so the notch, not the shank, takes fore/aft load."""
     _repo = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
     if _repo not in sys.path:
         sys.path.insert(0, _repo)
     from robot.cad.holes import hole_tool
-    return hole_tool((s * MNT_IN, y, z), (s, 0, 0), fastener, head="csk", into="through", side="head", grip=MNT_SLAB - MNT_IN, fit="normal")
+    return hole_tool((s * MNT_IN, y, z), (s, 0, 0), fastener, head="csk", into="through", side="head", grip=MNT_SLAB - MNT_IN, fit="normal", csk_clear=0.2)
 
 
 def _stator_hole(s, dy, dz):
@@ -419,16 +448,32 @@ def _stator_hole(s, dy, dz):
     return _one(cut.solids()[0] if hasattr(cut, "solids") and len(cut.solids()) == 1 else cut), rec
 
 
+def _switch_hole(yy):
+    """robot.cad.holes record for a switch screw: M2x3 button thread-forming up into the 1.7 pilot of the deck pad (3.0 mm of pad above its 16.0 head seat)."""
+    _repo = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
+    if _repo not in sys.path:
+        sys.path.insert(0, _repo)
+    from robot.cad.holes import hole_tool
+    return hole_tool((SWX, yy, 16.0), (0, 0, 1), "M2x3", head="button", into="tapped", side="thread", engage=3.0)
+
+
+def _stack_hole(fastener, x, y, z, sx, grip):
+    """robot.cad.holes record of an M2 button screw on the weapon axis direction sx: clearance through `grip` mm, tapped beyond."""
+    _m2()   # puts the repo on sys.path
+    from robot.cad.holes import hole_tool
+    return hole_tool((x, y, z), (sx, 0, 0), fastener, head="button", into="tapped", side="both", grip=grip, fit="close")[1]
+
+
 def motor_back_spacer():
     """1.5 mm printed spacer between the GR1507 stator base and RV03: clears the motor's rear bearing boss and wires."""
     from shapely.geometry import Point
-    p = Point(WY, WZ).buffer(10.0, 64).difference(Point(WY, WZ).buffer(3.95, 48))
+    p = Point(WY, WZ).buffer(10.0, 64).difference(Point(WY, WZ).buffer(4.0, 48))
     from shapely.geometry import Polygon
-    ring = Point(WY, WZ).buffer(8.45, 96).difference(Point(WY, WZ).buffer(5.05, 64))
-    for sy in (1, -1):   # 4 wire / lightening windows between the screw webs: annular sectors, r0.5 corners
-        for sz in (1, -1):
-            q = Polygon([(WY + sy * 2.45, WZ + sz * 2.45), (WY + sy * 12, WZ + sz * 2.45), (WY + sy * 12, WZ + sz * 12), (WY + sy * 2.45, WZ + sz * 12)])
-            p = p.difference(_round(ring.intersection(q), r_out=0.75))
+    for k in range(4):   # STEP windows (measured): R5.5..8.5 sectors, 20..70 deg in each quadrant, corners ~r1.5
+        a0 = 45.0 + 90 * k
+        wedge = Polygon([(WY, WZ)] + [(WY + 30 * math.cos(math.radians(a0 + d)), WZ + 30 * math.sin(math.radians(a0 + d))) for d in [-25.0 + 50.0 * i / 25 for i in range(26)]])
+        q = Point(WY, WZ).buffer(8.5, 128).difference(Point(WY, WZ).buffer(5.5, 96)).intersection(wedge)
+        p = p.difference(_round(q, r_out=1.5))
     for dy, dz in ((6, 0), (-6, 0), (0, 6), (0, -6)):
         p = p.difference(Point(WY + dy, WZ + dz).buffer(1.05, 24))
     return _ext(p, "yz", *BSP_X)
@@ -472,9 +517,8 @@ def floating_disc():
     bore = Polygon([(r_bore(a / 4) * math.cos(math.radians(a / 4)), r_bore(a / 4) * math.sin(math.radians(a / 4))) for a in range(1440)])
     bore = _round(bore, r_out=0.5, r_in=0.5)
     p = p.difference(bore)
-    for k in range(4):
-        a = math.radians(90 * k)
-        p = p.difference(Point(BOLT_R * math.cos(a), BOLT_R * math.sin(a)).buffer(1.1, 32))
+    for c in _polar(BOLT_R):
+        p = p.difference(Point(*c).buffer(_m2()[1], 32))
     # balance window by the tooth (STEP): a rounded triangle, the hull of three corner radii -- a straight radial-ish back
     # edge at u -13.65, the lower corner at v 4.85, the upper at v 9.1, the inner corner at (-11.65, 7.65)
     p = p.difference(MultiPoint([(-13.2, 4.85), (-13.2, 9.08), (-11.68, 7.65)]).buffer(0.44, 32).convex_hull)
@@ -491,9 +535,8 @@ def spider():
     with the r14 stack bolts, 4 quarter windows."""
     from shapely.geometry import Point, Polygon
     p = Point(0, 0).buffer(14.2, 128)
-    for k in range(4):
-        a = math.radians(90 * k)
-        p = p.union(Point(BOLT_R * math.cos(a), BOLT_R * math.sin(a)).buffer(2.3, 48))
+    for c in _polar(BOLT_R):
+        p = p.union(Point(*c).buffer(2.3, 48))
     p = _round(p, r_in=0.8)
     for sx in (1, -1):
         for sy in (1, -1):
@@ -502,10 +545,10 @@ def spider():
             q = q.difference(hub)
             p = p.difference(_round(q, r_out=0.6))
     p = p.difference(Point(0, 0).buffer(2.6, 48))
-    for k in range(4):
-        a = math.radians(90 * k)
-        for r in (HUB_R, BOLT_R):
-            p = p.difference(Point(r * math.cos(a), r * math.sin(a)).buffer(1.1, 32))
+    tap_r, clr_r, _ = _m2()
+    for r, hr in ((HUB_R, clr_r), (BOLT_R, tap_r)):   # r14: M2 tap drill (the stack screws thread in), r4.5: clearance
+        for c in _polar(r):
+            p = p.difference(Point(*c).buffer(hr, 32))
     return _ext(_to_world_poly(p), "yz", *DR_X["spider"])
 
 
@@ -513,14 +556,13 @@ def drisk_spacer():
     """6 mm printed spacer between the discs: bore 19.8 round the bell, 4 r14 bolt holes, 4 arc windows."""
     from shapely.geometry import Point, Polygon
     p = Point(0, 0).buffer(16.0, 128).difference(Point(0, 0).buffer(9.9, 96))
-    for sx in (1, -1):
-        for sy in (1, -1):
-            q = Point(0, 0).buffer(14.4, 96).difference(Point(0, 0).buffer(11.5, 96)).intersection(
-                Polygon([(sx * 2.0, sy * 2.0), (sx * 20, sy * 2.0), (sx * 20, sy * 20), (sx * 2.0, sy * 20)]))
-            p = p.difference(_round(q, r_out=0.5))
-    for k in range(4):
-        a = math.radians(90 * k)
-        p = p.difference(Point(BOLT_R * math.cos(a), BOLT_R * math.sin(a)).buffer(1.1, 32))
+    for k in range(4):   # STEP windows (measured): R11.4..14.5 sectors, 9..81 deg in each quadrant, corners ~r1.0
+        a0 = 45.0 + 90 * k
+        wedge = Polygon([(0, 0)] + [(30 * math.cos(math.radians(a0 + d)), 30 * math.sin(math.radians(a0 + d))) for d in [-36.0 + 72.0 * i / 36 for i in range(37)]])
+        q = Point(0, 0).buffer(14.5, 128).difference(Point(0, 0).buffer(11.4, 128)).intersection(wedge)
+        p = p.difference(_round(q, r_out=1.0))
+    for c in _polar(BOLT_R):
+        p = p.difference(Point(*c).buffer(_m2()[1], 32))
     return _ext(_to_world_poly(p), "yz", *DR_X["spacer"])
 
 
@@ -568,9 +610,9 @@ def front_hub(s):
     """RV19 micro hub (9 x 9) running on the 25 mm standoff: 6 mm tyre seat between two 9 mm flanges, an O-ring
     groove inboard."""
     # STEP RV19, except all three flanges 0.7 thick (STEP 0.5): the groove flanges grow into the groove (1.1 wide, centre
-    # unchanged) and the outer flange grows 0.2 outboard so the 6 mm tyre seat keeps its width
+    # unchanged) and the outer flange stays inside the STEP's X 39.0 (seat 0.2 shorter, parity with the reference gap to the side panel)
     prof = [(0.0, 2.7), (0.0, 4.5), (0.7, 4.5), (0.75, 3.96), (0.93, 3.7), (1.57, 3.7), (1.75, 3.96), (1.8, 4.5), (2.5, 4.5), (2.5, 4.1), (2.9, 3.7),
-            (8.1, 3.7), (8.5, 4.1), (8.5, 4.5), (9.2, 4.5), (9.2, 2.7)]
+            (7.9, 3.7), (8.3, 4.1), (8.3, 4.5), (9.0, 4.5), (9.0, 2.7)]
     if s < 0:
         prof = [(-x, r) for x, r in prof]
     return _revolve_x(prof, s * 30.0, SA)
@@ -612,7 +654,7 @@ def wedgelet(s):
     # the nose tab bears on the weapon mount's nose: take the mount's boss outline (its side profile above the
     # notch-to-nose line) out of the tab in 2D and drop any sliver thinner than a TPU wall, so no film is left
     mprof = _mount_profile(7.0 if s < 0 else 10.0).intersection(P([(15.0, 19.5), (44.34, 6.34), (60, 6.34), (60, 60), (0, 60), (0, 19.5)]))
-    tab = tab.difference(mprof.buffer(0.4, 32)).buffer(-0.6, join_style=2).buffer(0.6, join_style=2)
+    tab = tab.difference(mprof.buffer(0.1, 32)).buffer(-0.6, join_style=2).buffer(0.6, join_style=2)
     bb = _b()
     sk = _one(_ext(skin, "yz", -35.5, -29.0)).split(bb.Plane(origin=(-34.0, 41.66, 11.06), z_dir=(-1.24, -0.75, 1.0)), keep=bb.Keep.BOTTOM)
     body = _U(_ext(s1, "yz", -38.5, -36.5), _ext(s2, "yz", -36.5, -35.5), sk, _ext(cheek, "yz", -29.0, -21.5), _ext(tab, "yz", -21.5, -17.5) if not tab.is_empty else None)
@@ -645,7 +687,7 @@ SW_X = {1.0: (-32.4, -33.4, -36.6, -44.0, -46.3, -47.6, -48.3, -48.6),
 SP_W_Z = (1.0, 3.0, 6.0, 9.0, 12.0, 16.0)
 SP_FOOT_LAND = 0.85
 SP_W_REAR = (5.2, 4.9, 4.3, 3.6, 3.0, 2.1)
-SP_W_MID = (5.0, 4.8, 3.4, 3.0, 2.5, 2.1)
+SP_W_MID = (5.0, 4.7, 3.5, 2.7, 2.3, 2.0)
 SP_W_SWING = (3.3, 3.3, 3.0, 2.6, 2.4, 2.1)
 
 
@@ -667,7 +709,9 @@ def _sp_path(z):
 
 def _sp_w(y, z):
     r, m, w = (_interp(z, SP_W_Z, t) for t in (SP_W_REAR, SP_W_MID, SP_W_SWING))
-    return _interp(y, (-16.0, -12.0, 11.0, 15.0), (r, m, m, w))
+    # STEP RV23: the outer face swells 0.7 mm round the nut lobe (Y -11..1) at Z 4..12 (outer X -35.3 at Y -5 vs -34.5 at Y 5, Z 7.5)
+    bump = 0.7 * max(0.0, 1.0 - abs(y + 5.0) / 6.0) * max(0.0, 1.0 - abs(z - 7.5) / 5.0)
+    return _interp(y, (-16.0, -12.0, 11.0, 15.0), (r, m, m, w)) + bump
 
 
 SIDE_WALL_DEBUG = []
@@ -686,7 +730,7 @@ def side_panel(s):
     # the floor section is repeated SP_FOOT_LAND higher: the wall rises straight for that height before it leans, so
     # the leaning outer face meets the floor in a printable 0.85 mm land, not a knife edge
     for zw, z in [(SP_W_Z[0], SP_W_Z[0]), (SP_W_Z[0], SP_W_Z[0] + SP_FOOT_LAND)] + [(q, q) for q in SP_W_Z[1:]]:
-        path = _resample(_chaikin_open(_sp_path(zw), 3), 240)
+        path = _resample(_pchip_open(_sp_path(zw), 400), 240)
         out = _offset_var(path, [_sp_w(y, zw) for _, y in path])
         ring = path + _end_cap(path[-1], out[-1], path[-2]) + out[::-1] + _end_cap(out[0], path[0], path[1])
         # drop the little loops a variable offset makes inside tight bends, round what is left (r 0.6), then
@@ -702,14 +746,14 @@ def side_panel(s):
         # (dense polygon sections: one ruling per matched point pair, adjacent facets meet at a fraction of a degree)
         secs.append(b.Wire.make_polygon([b.Vector(x, y, z) for x, y in pts], close=True))
     wall = _U(b.Solid.make_loft(secs[:2], ruled=True), b.Solid.make_loft(secs[1:], ruled=False))
-    side = _round(Polygon([(-32.9, 1.0), (-32.9, 16.0), (-4.3, 16.0), (17.0, 12.0), (25.0, 10.0), (42.0, 10.0), (50.1, 1.0)]), r_out=1.5)
-    side = side.union(Point(-32.9, 8.5).buffer(7.5, 64))                           # rear end a full round over the wheel
+    side = _round(Polygon([(-32.9, 1.0), (-32.9, 16.0), (-6.7, 16.0), (14.6, 12.0), (19.3, 11.0), (24.0, 10.0), (42.0, 10.0), (50.1, 1.0)]), r_out=1.5)
+    side = side.union(Point(-32.2, 9.7).buffer(8.2, 64))                           # rear end a full round over the wheel
     foot = _ext(_poly([(-31.6, -12.0), (-42.0, -11.9), (-40.6, -2.1), (-40.8, 3.3), (-42.9, 13.3), (-31.6, 13.3)]), "xy", 1.0, 2.0)   # 1 mm wide foot under the chassis lobe
     wall = _I(wall, _ext(side, "yz", -60.0, -20.0))
     SIDE_WALL_DEBUG.append(wall)
-    nose_plan = _round(Polygon([(-51.6, 26.5), (-51.2, 39.7), (-50.0, 43.0), (-47.9, 45.7), (-45.1, 47.9), (-41.7, 49.6), (-40.0, 50.1), (-38.5, 50.1),
-                                (-38.5, 38.7), (-41.6, 38.7), (-42.4, 37.3), (-42.3, 34.9), (-40.5, 34.5), (-40.5, 26.5)]), r_out=0.5)
-    batter = _ext(_poly([(-51.6, 1.0), (-51.6 + 0.79 * 15, 16.0), (0.0, 16.0), (0.0, 1.0), (-51.6, -5.0)]), "xz", 0.0, 60.0)   # outer face leans in 38 deg
+    nose_plan = _round(Polygon([(-52.1, 26.5), (-51.7, 39.7), (-50.5, 43.0), (-48.4, 45.7), (-45.6, 47.9), (-42.0, 49.6), (-40.0, 50.1), (-38.5, 50.1),
+                                (-38.5, 37.6), (-41.6, 37.6), (-42.4, 37.3), (-42.3, 34.9), (-40.5, 34.5), (-40.5, 26.5)]), r_out=0.5)
+    batter = _ext(_poly([(-52.06, 1.0), (-52.06 + 0.84 * 15, 16.0), (0.0, 16.0), (0.0, 1.0), (-52.06, -5.0)]), "xz", 0.0, 60.0)   # outer face leans in 38 deg
     nose = _I(_I(_ext(nose_plan, "xy", 1.0, 10.0), _ext(side, "yz", -60.0, -20.0)), batter)
     # the nose top continues the wedgelet's 50 deg ramp (Z = 1 + 1.187 (50.1 - Y)) so a wedge rides up both as one face
     nose = _one(nose).split(b.Plane(origin=(0.0, 50.1, 1.0), z_dir=(0.0, 1.187, 1.0)), keep=b.Keep.BOTTOM)
@@ -719,7 +763,7 @@ def side_panel(s):
     # the nose's front-outer corner is chamfered back (a plane leaning ~55 deg in and ~57 deg back) so a wedge or
     # spinner tooth coming in from the front quarter glances off instead of catching the corner
     nose = _one(nose).split(b.Plane(origin=(-120.0, 0.0, 0.0), z_dir=(1.0, -1.525, -1.4725)), keep=b.Keep.TOP)
-    nose = _S(nose, _box(-42.0, -38.4, 26.5, 39.0, 3.0, 10.5))                     # hollow behind the nose wall
+    nose = _S(nose, _ext(_poly([(26.5, 3.0), (37.0, 3.0), (37.7, 6.6), (39.0, 10.5), (26.5, 10.5)]), "yz", -42.0, -38.4))   # hollow behind the nose wall (its front face leans back with the wall)
     boss = _I(_cyl(3.0, -42.5, -39.5, SA), _ext(side, "yz", -60.0, -20.0))         # standoff end boss
     body = _U(wall, nose, foot, boss)
     # M3 CSK seats (ISO 10642 head 6.6, +0.1 clearance) with a 12 mm head bore out through the battered outer face, so a
@@ -727,18 +771,15 @@ def side_panel(s):
     cuts = [_csk(3.3, 6.7, (-46.26, SA[0], SA[1]), "x", 1, 8.0, 12.0), _csk(3.3, 6.7, (-41.76, SB[0], SB[1]), "x", 1, 8.0, 12.0),
             _csk(3.3, 6.7, (-35.26, NUT[0], NUT[1]), "x", 1, 8.0, 12.0),
             _cyl(2.55, -42.55, -38.0, SA),
-            _box(-45.0, -43.4, -38.7, -24.8, 5.0, 15.0),                          # rear tyre relief on the inner face
-            _box(-32.5, -31.4, -16.5, 3.0, 3.9, 13.3)]                           # clears the whole chassis nut lobe (STEP: Y -16..2.5, Z 4..13): the panel does not shave it or leave a 0.25 mm shelf under it
+            _box(-45.0, -43.4, -38.7, -24.8, 5.5, 14.5),                          # rear tyre relief on the inner face
+            _ext(_poly([(-11.7, 3.8), (0.5, 4.7), (2.3, 5.7), (2.3, 8.3), (0.5, 9.3), (-3.5, 11.0), (-9.5, 13.0), (-11.7, 13.8)]), "yz", -32.5, -31.4)]    # 1 mm relief round the chassis nut lobe: STEP RV23 diamond (Y -11.7..2.3, Z 3.8..13.8, sloping top-right edge)
     for y0 in (-11.0, -4.5, 2.0):     # diagonal vent slots (TPU wall flexes, keeps the ESC cool)
         sl = LineString([(y0, 5.0), (y0 + 5.0, 11.0)]).buffer(1.0, cap_style=1)
         cuts.append(_ext(sl, "yz", -50.0, -36.5))
     sh = _S(body, *cuts)
     sh = sh if s < 0 else _mirror_x(sh)
-    # belt channel on the inner face: the O-ring runs inside the panel, covered from outside (W8)
-    from shapely.geometry import Point
-    band = Point(RY, RZ).buffer(7.5 + 1.25, 64).union(Point(*SA).buffer(3.7 + 1.25, 48)).convex_hull
-    band = band.buffer(2.0, 64).difference(band.buffer(-2.6, 64))   # the ring the O-ring runs in (+2 mm so no film is left at the panel top), not the whole hull
-    return _S(sh, _ext(band, "yz", *sorted((s * 30.5, s * 32.0))))
+    # RVRN 2.0 parity: the STEP side panel has a plain inner face (no belt channel); the O-ring grazes it
+    return sh
 
 
 def _end_cap(p, q, prev, n=5):
@@ -773,6 +814,17 @@ def _offset_open(line, d):
     return out
 
 
+def _pchip_open(p, n):
+    """Open path through the points p (monotone cubic in chord length: passes through every measured point, no
+    overshoot); Chaikin corner cutting pulled the front swing 0.8 mm off the STEP inner face."""
+    import numpy as np
+    from scipy.interpolate import PchipInterpolator
+    P = np.asarray(p, float)
+    t = np.r_[0.0, np.cumsum(np.hypot(*np.diff(P, axis=0).T))]
+    u = np.linspace(0.0, t[-1], n)
+    return [(float(x), float(y)) for x, y in zip(PchipInterpolator(t, P[:, 0])(u), PchipInterpolator(t, P[:, 1])(u))]
+
+
 def _chaikin_open(p, n):
     k = CHAIKIN_Q
     c = 1 - k
@@ -798,6 +850,13 @@ def _band(path, w):
 def _loft_yz(pa, xa, pb, xb, n=160):
     """Ruled loft between two shapely outlines in YZ planes at X xa and xb (both resampled to n points from the point
     nearest +Y, so the rulings do not twist)."""
+    return _loft_yz_n([(pa, xa), (pb, xb)], n)
+
+
+def _loft_yz_n(sections, n=160):
+    """One ruled loft through several (shapely outline, X) sections: the same faces as a chain of two-section _loft_yz
+    slices, but one solid, so the chain is not handed to a fuse slice by slice (24 touching slices in one fuse ran OCC
+    out of memory on a cold build)."""
     b = _b()
     def wire(p, x):
         ring = list(p.exterior.coords)[:-1]
@@ -808,7 +867,7 @@ def _loft_yz(pa, xa, pb, xb, n=160):
         pts = _resample(ring, n + 1)[:-1]
         return b.Wire.make_polygon([b.Vector(x, u, v) for u, v in pts], close=True)
     from shapely.geometry import Polygon
-    return b.Solid.make_loft([wire(pa, xa), wire(pb, xb)], ruled=True)
+    return b.Solid.make_loft([wire(p, x) for p, x in sections], ruled=True)
 
 
 def _resample(line, n):
@@ -831,6 +890,29 @@ def _band_wire(path, w, z, n=160):
 
 
 # ------------------------------------------------------------------------------------------------------------ chassis
+def _wall_pocket(x0, x1, z0, z1, y0, y1, r_vert=0.5, r_floor=0.8):
+    """Rectangular front-wall pocket cutter (X x Z, floor at y1): R0.5 corners and an R0.8 floor, as in the STEP."""
+    b = _b()
+    s = _box(x0, x1, y0, y1, z0, z1)
+    s = b.fillet(s.edges().filter_by(b.Axis.Y), r_vert)
+    return b.fillet(s.faces().sort_by(b.Axis.Y)[-1].edges(), r_floor)
+
+
+LAT_GROW = 0.35   # mm, measured from RV01 y=-36 sections (pocket area 38.1 vs 28.2)
+
+
+def _lattice_pocket(pts, y0=-36.5, y1=-35.5, r_vert=0.5, r_floor=0.25):
+    """Cutter of one triangular rear-wall pocket (X, Z outline `pts`): R0.45 corners and an R0.95 floor (the STEP's R0.98),
+    so the pocket has no sharp internal corner in the print."""
+    b = _b()
+    with b.BuildPart() as bp:
+        with b.BuildSketch(b.Plane.XZ.offset(-y1)):
+            b.Polygon(*pts, align=None)
+        b.extrude(amount=y1 - y0)
+    s = b.fillet(bp.part.edges().filter_by(b.Axis.Y), r_vert)
+    return b.fillet(s.faces().sort_by(b.Axis.Y)[0].edges(), r_floor)
+
+
 def chassis():
     """RV01 printed chassis: a closed-top box printed deck-down (no supports: the deck is the first layer), open
     underneath for the base panel. X-ribbed deck pockets; 5 insert columns floor to deck; N10 keyhole pockets in the
@@ -882,7 +964,9 @@ def chassis():
         # side lobe with the thin M3 nut (Y -16.3..2.8)
         lobe = Point(NUT[0], NUT[1]).buffer(4.55, 64).union(Point(1.35, 6.9).buffer(1.2, 32)).convex_hull
         add.append(_ext(lobe, "yz", sg * (x - 0.1), sg * 32.5))
-        add.append(_loft_yz(lobe.buffer(1.2, join_style=1), sg * (x - 0.1), lobe, sg * (x + 1.2)))   # R1.2 root fillet (as a 45 deg blend)
+        R_ = 1.95   # root fillet where the lobe leaves the wall (STEP R1.95): one ruled loft, 12 bands of the quarter round
+        add.append(_loft_yz_n([(lobe.buffer(R_ - math.sqrt(R_ * R_ - (R_ - h) ** 2), join_style=1), sg * (x - 0.1 + h))
+                               for h in (R_ * k / 12 for k in range(13))]))
         # front tabs (key into the weapon-mount notches) and inner tab walls
         add.append(_ext(_poly([(18.5, 6.4), (19.5, 5.4), (25.5, 5.4), (26.5, 6.4), (26.5, 12.5), (25.5, 13.5), (19.5, 13.5), (18.5, 12.5)]), "yz", sg * 13.2, sg * 17.6))
         # inner tab wall, its top-front corner cut back on a R15.9 about the weapon axis: the drisk (swept R ~14.8 at the wall)
@@ -895,8 +979,8 @@ def chassis():
         if sg > 0:
             add.append(_ext(_round(Polygon([(22.0, -15.6), (27.5, -15.6), (27.5, 4.4), (22.0, 4.4)]), r_out=1.0), "xy", 16.5, c["deck"] + 0.1))
         # lugs carrying the standoffs (sloped top so they sit under the mount)
-        lug = Polygon([(13.0, z0), (26.0, z0), (30.4, 1.0)] + _arc(SA, 4.5, 250, 300, 6) + [(36.6, 2.5)] + _arc(SB, 3.3, 250, 400, 16) + [(15.0, z1), (13.0, z1)])
-        lug = _round(lug.convex_hull.difference(Polygon([(26.0, 0.0), (26.0, 2.5), (30.0, 1.0), (40.0, 1.3), (60, 0)])), r_in=0.0)
+        lug = Polygon([(13.0, z0), (26.0, z0), (30.4, 1.0)] + _arc(SA, 4.5, 250, 300, 6) + [(36.6, 2.5)] + _arc(SB, 3.25, 250, 400, 24) + [(15.0, z1), (13.0, z1)])
+        lug = _round(lug.convex_hull.difference(Polygon([(26.0, 0.0), (26.0, 2.5), (30.0, 1.0), (40.0, 0.9), (60, 0)])), r_in=0.0)
         add.append(_ext(lug, "yz", sg * 17.5, sg * 21.5))
     for sg in (1, -1):
         # front corner flanges (STEP): a bottom flange that blends from the side wall into the lug, and a top flange
@@ -919,7 +1003,10 @@ def chassis():
     for sg in (1, -1):
         # lug underside: flat to Y 26, then the ramp; a scallop between the two standoffs (STEP)
         cuts.append(_ext(_poly([(10.0, -5.0), (10.0, 2.5), (26.0, 2.5), (30.4, 1.0), (30.4, -5.0)]), "yz", sg * 17.4, sg * 21.6))
-        cuts.append(_ext(Point(36.34, -1.67).buffer(4.12, 64), "yz", sg * 17.4, sg * 21.6))
+        cuts.append(_ext(Point(36.70, -0.66).buffer(3.16, 96), "yz", sg * 17.4, sg * 21.6))   # R3.16 scallop tangent to the lug arc round the nose standoff (STEP section at X 18.8)
+        # under the nose standoff the lug follows its R3.25 arc (STEP): no hull chord below it where the scallop meets it
+        under = Polygon([(36.7, 0.0), (40.5, 0.0), (40.5, 2.5), (36.7, 2.5)]).difference(Point(SB).buffer(3.25, 96))   # the cusp between the scallop circle and the standoff arc
+        cuts.append(_ext(under, "yz", sg * 17.4, sg * 21.6))
         cuts.append(_box(sg * 13.3, sg * 17.5, 12.0, 15.1, z0 - 0.1, 4.5))   # front wall stops at the rabbet under the tab (STEP)
         # motor stop wall: lower inner edge rounded R4.5 (STEP)
         fil = Polygon([(17.6, 4.4), (22.2, 4.4), (22.2, 9.0), (17.6, 9.0)]).difference(Point(22.2, 9.0).buffer(4.5, 64))
@@ -951,7 +1038,7 @@ def chassis():
             cuts.append(_cyl(0.85, z1 - 4.1, z1 + 1, (px, py), "z"))
             cuts.append(bb.Solid.make_cone(2.1, 1.5, 0.6, bb.Plane(origin=(px, py, z1 + 0.001), z_dir=(0, 0, -1))))
     # switch slot in the deck beside the top panel, 2 M2 pilot holes
-    cuts.append(_ext(_round(Polygon([(23.0, -11.6), (27.0, -11.6), (27.0, 0.4), (23.0, 0.4)]), r_out=0.45), "xy", 16.0, z1 + 1))
+    cuts.append(_ext(_round(Polygon([(23.0, -11.6), (26.6, -11.6), (26.6, 0.4), (23.0, 0.4)]), r_out=0.45), "xy", 16.0, z1 + 1))
     for yy in (1.9, -13.1):
         cuts.append(_cyl(0.85, c["deck"] - 3, z1 + 1, (SWX, yy), "z"))
     for sg in (1, -1):
@@ -963,6 +1050,7 @@ def chassis():
         cuts.append(_ext(kh, "yz", sg * (x - w - 0.5), sg * (x + 0.5)))
         # nut: M3 clearance through lobe + wall, hex pocket on the inside
         cuts.append(_cyl(1.6, sg * 26.0, sg * 33.0, NUT))
+        cuts.append(_box(sg * 29.0, sg * 34.0, -20.0, 6.0, z0 - 3.0, z0))   # the lobe root fillet must not hang below the floor plane
         # hex pocket 0.05 under the nut's 5.5 AF / 6.35 corners: the nut is pressed in and cannot shake loose into the bay
         hexp = Polygon([(NUT[0] + 3.12 * math.cos(math.radians(60 * i + 30)), NUT[1] + 3.13 * math.sin(math.radians(60 * i + 30))) for i in range(6)])
         cuts.append(_ext(hexp, "yz", sg * 27.0, sg * 29.5))
@@ -976,20 +1064,20 @@ def chassis():
     for sg in (1, -1):
         lat += [Polygon([(sg * 4.84, 7.0), (sg * 4.84, 15.0), (sg * 12.4, 11.0)]), Polygon([(sg * 26.42, 7.0), (sg * 26.42, 15.0), (sg * 18.85, 11.0)]),
                 Polygon([(sg * 10.6, 5.58), (sg * 20.65, 5.58), (sg * 15.6, 9.7)]), Polygon([(sg * 10.6, 16.42), (sg * 20.65, 16.42), (sg * 15.6, 12.3)])]
-    for t in lat:
-        cuts.append(_ext(_round(t.buffer(0), r_out=0.45), "xz", -36.6, -35.5))
+    for t in lat:   # STEP rib is 0.35 thinner than the nominal triangle edges: grow each pocket by LAT_GROW
+        cuts.append(_lattice_pocket(list(t.buffer(LAT_GROW, join_style=2).exterior.coords)[:-1]))
     # weapon phase wire hole in the front wall
     cuts.append(_ext(_round(Polygon([(7.25, 5.0), (10.25, 5.0), (10.25, 17.0), (7.25, 17.0)]), r_out=1.45), "xz", 12.0, 16.0))
     for xa, xb in ((-18.25, 4.25), (13.25, 18.2)):
-        cuts.append(_ext(_round(Polygon([(xa, 6.55), (xb, 6.55), (xb, 15.55), (xa, 15.55)]), r_out=0.5), "xz", 12.0, 13.85))
+        cuts.append(_wall_pocket(xa, xb, 6.55, 15.55, 12.0, 13.85))
     # rabbet for the base panel (recessed flush with the wall bottom lip) and the mating faces of the mounts and side
     # panels: the parts seat on the chassis, they do not share material with it
     pan = _panel_outline(0.05)
     cuts.append(_ext(pan, "xy", z0 - 1.0, 4.5))
     for px, py in INS:   # recess in each column foot for the base-panel ring boss
-        cuts.append(_cyl(BOSS_R + 0.05, 4.4, 4.5 + BOSS_H + 0.05, (px, py), "z"))
+        cuts.append(_cyl(BOSS_R + 0.3, 4.4, 4.5 + BOSS_H + 0.05, (px, py), "z"))   # 0.25 base fillet round the boss
     for sg in (1, -1):
-        cuts.append(_box(sg * 17.95, sg * 27.05, -34.85, -25.75, 4.4, 4.8))   # motor preload pads
+        cuts.append(_box(sg * 17.65, sg * 27.35, -35.15, -25.45, 4.4, 4.8))   # pad + 0.25 base fillet   # motor preload pads
         # square the R1 inner rear corner where the N10 gearbox plates sit (their corner would bite 0.14 into the round)
         cuts.append(_box(sg * 25.5, sg * (x - w + 0.05), y0 + w - 0.05, y0 + w + 2.0, z0 + 2.0, c["deck"]))
     cuts += [weapon_mount("l"), weapon_mount("r"), side_panel(1), side_panel(-1)]
@@ -1002,57 +1090,6 @@ def chassis():
             _box(ex1 + G_, ex1 + G_ + 1.2, -12.0, 8.0, ez0, c["deck"] + 1.1),           # +x
             _box(0.0, 14.6, ey0 - G_ - 1.0, ey0 - G_, WE_Z[0] + 0.9, c["deck"] + 1.1)]   # -y, down over the ESC's end
     return _U(body, *ribs)
-
-
-# belt guard (not in the STEP: the RVRN 2.0 O-rings run open in the slot between tub wall and side panel; shielded here
-# so a spinner tooth or debris cannot reach them from above or through that slot)
-BG = dict(clear=0.6,        # roof underside above the O-ring's top run
-          t=1.3,            # roof thickness
-          x_in=CH["x"],     # inner face glued on the tub side wall
-          x_out=32.0,       # outer edge: covers the 30.8..31.8 O-ring; 1.2 mm over the front tyre top
-          x_out_rear=31.5,  # beside the rear tyre (inner face |X| 32.5): 1 mm running clearance
-          x_foot=27.9,      # rear foot reaches in over the deck chamfer, 0.2 off the top panel (|X| 27.7)
-          z_min=12.0,       # front: 1 mm over the front tyre top (Z 11)
-          z_max=20.1,       # rear: over the rear pulley wrap (O-ring top Z 19.5)
-          y0=-40.0, y1=36.2)
-
-
-def _belt_top(y):
-    """Z of the O-ring's top at Y (outer belt hull: rear hub R 8.5, front hub R 4.7)."""
-    from shapely.geometry import LineString, Point
-    hull = Point(RY, RZ).buffer(8.5, 64).union(Point(*SA).buffer(4.7, 48)).convex_hull
-    yy = min(max(y, hull.bounds[0] + 0.05), hull.bounds[2] - 0.05)
-    seg = hull.intersection(LineString([(yy, -50.0), (yy, 50.0)]))
-    return seg.bounds[3]
-
-
-def belt_guard(s):
-    """PLA roof over the O-ring: follows its top run at BG clear, clamped between the front-tyre and rear-pulley
-    heights; glued along the tub side wall (and, at the rear, on the deck chamfer). Clears the side panel by 0.2."""
-    from shapely.geometry import Polygon
-    ys = [BG["y0"] + i * 0.5 for i in range(int((BG["y1"] - BG["y0"]) / 0.5) + 1)]
-    zb = [BG["z_max"] if y <= RY else min(max(_belt_top(y) + BG["clear"], BG["z_min"]), BG["z_max"]) for y in ys]   # flat over the rear wrap
-    prof = Polygon([(y, z) for y, z in zip(ys, zb)] + [(y, z + BG["t"]) for y, z in reversed(list(zip(ys, zb)))])
-    roof = _ext(prof, "yz", BG["x_foot"], BG["x_out"])
-    c = CH
-    x, y0, y1, z0, z1 = c["x"], c["y0"], c["y1"], c["z0"], c["z1"]
-    # glue web/foot under the roof's inner edge: down the tub wall face, and onto the deck chamfer at the rear
-    fy = [(y, z) for y, z in zip(ys, zb) if y0 + 3.0 <= y <= y1 - 4.0]
-    foot = _ext(Polygon([(y, min(z1 - 2.5, z - 3.0)) for y, z in fy] + [(y, z + 0.5) for y, z in reversed(fy)]), "yz", BG["x_foot"], x + 0.5)
-    roof = _U(roof, foot)
-    # tub envelope (box + 2 mm top chamfer, as chassis()) and the side panel moved 0.2 inboard come out of it
-    b = _b()
-    plan = _round(Polygon([(-x, y0), (x, y0), (x, y1), (-x, y1)]), r_out=2.0)
-    top = _round(Polygon([(-x + 2, y0 + 2), (x - 2, y0 + 2), (x - 2, y1 - 2), (-x + 2, y1 - 2)]), r_out=0.5)
-    lo = _face(plan, "xy")[0].outer_wire().moved(b.Location((0, 0, z1 - 2.0)))
-    hi = _face(top, "xy")[0].outer_wire().moved(b.Location((0, 0, z1)))
-    tub = _U(_ext(plan, "xy", z0 - 2.0, z1 - 2.0), b.Solid.make_loft([lo, hi], ruled=True))
-    sp = side_panel(1).moved(_b().Location((-0.2, 0.0, 0.0)))
-    rt = 10.75 + 1.0   # rear tyre radius + running clearance
-    g = _S(roof, tub, sp, _box(BG["x_foot"] - 1, x, -22.0, 60.0, 0.0, 30.0),   # inboard foot only where the roof is above the deck
-           _box(BG["x_out_rear"], BG["x_out"] + 1, RY - rt, RY + rt, 0.0, 30.0),
-           _cyl(8.6, x - 0.1, BG["x_out"] + 1, (RY, RZ)))      # rear hub flange (R 8.0): web stops short of it   # foot only over the tub
-    return g if s > 0 else _mirror_x(g)
 
 
 def esc_tray():
@@ -1072,41 +1109,6 @@ def esc_tray():
 
 
 # ------------------------------------------------------------------------------------------------------------ misc
-def _lock_yz():
-    """World (Y, Z) of the RV00 lock pin axis: the spider window at LOCK_A, radius LOCK_RC, in the drisk's modelled phase."""
-    a = math.radians(LOCK_A)
-    return _disc_local(LOCK_RC * math.cos(a), LOCK_RC * math.sin(a))
-
-
-def lock_outer_x():
-    """|X| just clear of RV02's battered outer face over the pin's head footprint (face: |X| = 23.48 - 0.185 Z - 0.0168 Y)."""
-    y, z = _lock_yz()
-    return 23.48 - 0.185 * (z - LOCK_HEAD_R) - 0.0168 * (y - LOCK_HEAD_R) + 0.15
-
-
-LOCK_HEAD_R, LOCK_HEAD_T = 3.5, 1.6
-
-
-def weapon_lock():
-    """RV00 TPU weapon lock (Build Guide safety rule, not in the STEP), in its own frame: the pin axis is local +Z with
-    the tip at the origin (the spec places it at the tip, local Z -> world +X). A d4 shank runs back from the tip
-    through the spider window and the RV02 bore; outside RV02 a d7 head with a flag tab (pull grip, lanyard eye) stops
-    it going in too far. Pulled out along the axis before a fight; while it is in, the spider's window bears on the shank
-    and the drisk cannot turn."""
-    b = _b()
-    head0 = -(lock_outer_x() + LOCK_TIP_X)          # local z of the head's inner face (tip at local 0 = world LOCK_TIP_X)
-    shank = b.Solid.make_cylinder(LOCK_R, -head0, b.Plane(origin=(0, 0, head0), z_dir=(0, 0, 1)))
-    # lead-in chamfer: full d4 at local -0.5, d3 at the tip (local 0); the cone's wide end meets the shank flush
-    tipc = b.Solid.make_cone(LOCK_R, LOCK_R - 0.5, 0.5, b.Plane(origin=(0, 0, -0.5), z_dir=(0, 0, 1)))
-    shank = _S(shank, _cyl(LOCK_R + 1, -0.5, 0.5, (0, 0), "z")).fuse(tipc)
-    head = b.Solid.make_cylinder(LOCK_HEAD_R, LOCK_HEAD_T, b.Plane(origin=(0, 0, head0 - LOCK_HEAD_T), z_dir=(0, 0, 1)))
-    # flag tab: local -X is world +Z (up), so the grip stands above the head; 2 mm lanyard eye near its end
-    from shapely.geometry import Point
-    flag = Point(0, 0).buffer(2.5, 32).union(Point(-9.0, 0).buffer(2.5, 32)).convex_hull.difference(Point(-9.0, 0).buffer(1.0, 24))
-    tab = _ext(flag, "xy", head0 - LOCK_HEAD_T, head0 - LOCK_HEAD_T + 1.2)
-    return _U(shank, head, tab)
-
-
 PARTS = {
     "base_panel": base_panel, "top_panel": top_panel, "chassis": chassis, "motor_back_spacer": motor_back_spacer,
     "mount_l": lambda: weapon_mount("l"), "mount_r": lambda: weapon_mount("r"),
@@ -1120,8 +1122,7 @@ PARTS = {
     "front_tyre_l": lambda: tyre(11.0, 7.0, -38.5, -32.5, SA, 0.6), "front_tyre_r": lambda: tyre(11.0, 7.0, 32.5, 38.5, SA, 0.6),
     "so_a_l": lambda: standoff((-SA_X[1], -SA_X[0]), SA), "so_a_r": lambda: standoff(SA_X, SA),
     "so_b_l": lambda: standoff((-SB_X[1], -SB_X[0]), SB), "so_b_r": lambda: standoff(SB_X, SB),
-    "weapon_lock": weapon_lock, "esc_tray": esc_tray,
-    "belt_guard_l": lambda: belt_guard(-1), "belt_guard_r": lambda: belt_guard(1),
+    "esc_tray": esc_tray,
 }
 
 
@@ -1168,15 +1169,16 @@ def make_spec(model_file):
       exposed_reason="Drisk: the GR1507 bell is the hub of the weapon, inside the spacer bore between the two Hardox discs; the discs shield it radially",
       label="GR1507 outrunner: stator on RV03, bell drives the spider")
     P(id="wbearing", kind="bearing", parent="mount_l", material="steel", process="cots", rotates_with="fixed", stock="MR85ZZ 5 x 8 x 2.5", color="#555555",
+      deviation="bought part left out of the STEP (INDEX.txt lists no bearing): RV02 carries the 7.9 mm printed seat for it and the guide BOM lists an MR85ZZ; added for the shaft support",
       shape=_spec_bearing(), label="MR85ZZ in the RV02 8 mm seat: outboard support of the threaded shaft end (inferred: the STEP shows the 7.9 seat but no bearing)")
     P(id="wshaft", kind="shaft", material="steel", process="cots", stock="GR1507 5 mm shaft (part of the motor): modelled whole, MR85 end X -18.7 through the bell and the rear bearing to its circlip end X 11.4", rotates_with="weapon", shaft_of="weapon_motor", parent="weapon_motor",
+      deviation="the GR1507 shaft is part of the bought motor, which the STEP draws as one body (INDEX.txt lists no shaft); drawn separately here for the MR85 support and the spider collar",
       shape={"type": "place", "shape": {"type": "cylinder", "radius": 2.5, "height": 30.1}, "at": [3.65, 0, 0], "rot": [0, 90, 0]}, color="#777777", solid_fraction=0.05,
       label="threaded end of the GR1507 shaft through the MR85 (its mass is in the motor)")
     P(id="spider", kind="weapon", material="aluminium", process="waterjet", stock="3 mm 7075 plate (one 2D profile: water-jet, no milling needed)",
       min_web_mm=0.8, min_web_reason="0.8 mm webs between the dog pockets and the rim are the designer's own (RVRN 2.0 STEP spider_1 measures 0.8 at the same four places)", rotates_with="weapon", parent="mount_r", at=list(WO), shape=M("spider", WO),
       joint={"kind": "revolute", "axis": [1, 0, 0], "pivot": [-6.7, WY, WZ], "min": 0, "max": 360, "default": 0}, color="#b8bcc2",
-      weapon={"kind": "disc", "motor": "weapon_motor", "cells": 2, "reduction": 1.0, "spin_axis": [1, 0, 0], "spin_dir": "ccw", "supported_both_ends": True, "teeth": 1,
-              "locking_bar": "weapon_lock"},
+      weapon={"kind": "disc", "motor": "weapon_motor", "cells": 2, "reduction": 1.0, "spin_axis": [1, 0, 0], "spin_dir": "ccw", "supported_both_ends": True, "teeth": 1},
       label="3 mm aluminium spider: bolted to the bell (4 M2 on r4.5), carries the disc stack on 4 M2 on r14")
     for nm, lab in (("disc_a", "inner"), ("disc_b", "outer")):
         P(id=nm, kind="other", role="blade", material="hardox", process="laser", stock="3 mm Hardox 450", parent="spider",
@@ -1192,15 +1194,11 @@ def make_spec(model_file):
           shape=M(f"so_b_{n}"), label="RV10 15 mm alu standoff: nose, through the chassis lug, the fork and the wedgelet cheeks")
         P(id=f"fork_{n}", kind="fork", material="titanium", process="laser", stock="1.5 mm Ti Gr5 sheet", min_web_mm=1.05, min_web_reason="1.1 mm web under the 5.3 standoff hole is the designer's own (RVRN 2.0 STEP fork_5 measures 1.1)", parent=f"so_b{n}", rotates_with="fixed", color="#9aa0a6", shape=M(f"fork_{n}"),
           label="fork_5: 1.5 mm Ti fork on the 15 mm standoff, tail pinned in the wedgelet cheek slot")
-        P(id=f"wedgelet_{n}", kind="armor", material="tpu", process="fdm", solid_fraction=0.9, print_orientation="-z", parent=f"so_a{n}", rotates_with="fixed", color="#3c4048",
+        P(id=f"wedgelet_{n}", kind="armor", material="tpu", process="fdm", thin_wall_deviation="matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)", solid_fraction=0.9, print_orientation="-z", parent=f"so_a{n}", rotates_with="fixed", color="#3c4048",
           shape=M(f"wedgelet_{n}"), cover_fasteners_deviation="RVRN 2.0 STEP: the wedgelet is clamped between the side panel nose and the 15 mm standoff end by bolt_s?b (listed in its `through`), and located on both standoffs; bolt_s?a seats the side panel directly on the 25 mm standoff end (the STEP wedgelet stops at |X| 38.5 and never enters that stack). Kept as designed; no extra screw (coordinator decision).",
           label=f"RV1{7 if s < 0 else 8} TPU wedgelet: 50 deg ramp over the nose, cheeks round both standoffs and the fork tail")
-        P(id=f"side_{n}", kind="armor", material="tpu", process="fdm", solid_fraction=0.9, print_orientation="+z", parent=f"so_a{n}", rotates_with="fixed", color="#3c4048", shape=M(f"side_panel_{n}"),
+        P(id=f"side_{n}", kind="armor", material="tpu", process="fdm", thin_wall_deviation="matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)", solid_fraction=0.9, print_orientation="+z", parent=f"so_a{n}", rotates_with="fixed", color="#3c4048", shape=M(f"side_panel_{n}"),
           label=f"RV2{3 if s < 0 else 4} TPU side panel: battered S-wall round the wheels, 3 M3x8 CSK (two standoff ends, one chassis nut)")
-        P(id=f"belt_guard_{n}", kind="armor", material="pla_st", process="fdm", print_orientation="-x" if s < 0 else "+x", rotates_with="fixed", color="#2a2c30",
-          shape=M(f"belt_guard_{n}"),
-          label="PLA belt guard (not in the STEP): roof over the O-ring slot between tub wall and side panel, glued to the tub side wall")
-        C(f"belt_guard_{n}", "tub", "glue", "PLA guard web/foot CA-glued along the tub side wall and deck chamfer")
         P(id=f"nut_c{n}", kind="nut", catalog="nut_m3_thin", at=[s * 28.6, NUT[0], NUT[1]], rot=[0, 90, 0], rotates_with="fixed")
         # drive
         rot = [0, 0, 0] if s > 0 else [0, 0, 180]
@@ -1222,15 +1220,8 @@ def make_spec(model_file):
       off_dir=[0, -1, 0], label="BBB ant switch hung under the deck beside the top panel: lever flush in the deck slot, 2 M2 into the deck")
     for i, (x, y) in enumerate(INS):
         P(id=f"insert_b{i}", kind="insert", catalog="heatset_m2_4", at=[x, y, (INS_Z[0] + INS_Z[1]) / 2])
-    for k in range(4):
-        dy, dz = _disc_local(BOLT_R * math.cos(math.radians(90 * k)), BOLT_R * math.sin(math.radians(90 * k)))
-        P(id=f"nut_d{k}", kind="nut", catalog="nut_m2", at=[DR_X["disc_b"][1] + 0.8, dy - WY, dz - WZ], rot=[0, 90, 0], rotates_with="weapon", parent="spider")
     P(id="esc_tray", kind="other", material="tpu", process="fdm", print_orientation="+z", rotates_with="fixed", shape=M("esc_tray"),
       label="TPU weapon-ESC tray (not in the STEP): glued to the base panel, lips hold the ESC when inverted")
-    ly, lz = _lock_yz()
-    P(id="weapon_lock", kind="locking_bar", role="weapon_lock", material="tpu", process="fdm", print_orientation="+z", rotates_with="fixed", color="#ff6a00", tethered=True,
-      parent="mount_l", at=[LOCK_TIP_X, ly, lz], rot=[0, 90, 0],
-      marked=True, tool_free=True, shape=M("weapon_lock"), label="RV00 TPU weapon lock pin (Build Guide rule; not in the STEP): d4 pin pushed through RV02 into a spider window, flag head + lanyard outside")
 
     # ---------------------------------------------------------------- fasteners
     for i, (x, y) in enumerate(INS):
@@ -1250,19 +1241,19 @@ def make_spec(model_file):
     for k in range(4):
         a = math.radians(90 * k)
         dy, dz = _disc_local(HUB_R * math.cos(a), HUB_R * math.sin(a))
-        F(id=f"bolt_p{k}", designation="M2x4", head="button", tool="hex1.3", material="titanium", at=[DR_X["spider"][0], dy, dz], dir=[1, 0, 0], through=["spider"], threads_into="weapon_motor",
-          access_before=["weapon_lock", "mount_l", "wbearing"], reason="spider to bell, fitted before the left mount goes on (inferred)")
+        F(id=f"bolt_p{k}", designation="M2x4", head="button", tool="hex1.3", material="titanium", at=[DR_X["spider"][0], dy, dz], dir=[1, 0, 0], through=["spider"], threads_into="weapon_motor", hole=_stack_hole("M2x4", DR_X["spider"][0], dy, dz, 1, SPIDER_T).hole,
+          access_before=["mount_l", "wbearing"], reason="spider to bell, fitted before the left mount goes on (inferred)")
         dy, dz = _disc_local(BOLT_R * math.cos(a), BOLT_R * math.sin(a))
-        F(id=f"bolt_d{k}", designation="M2x18", head="button", tool="hex1.3", material="titanium", at=[DR_X["spider"][0], dy, dz], dir=[1, 0, 0],
-          through=["spider", "disc_a", "dspacer", "disc_b"], threads_into=f"nut_d{k}",
-          access_before=["weapon_lock", "mount_l", "wbearing", "weapon_motor", "mount_r", "motor_spacer", "tub", "so_al", "so_bl", "so_ar", "so_br"],
-          reason="stack bolted up on the bench before it goes on the motor (inferred: the STEP has the 2.2 holes but no screws)")
+        F(id=f"bolt_d{k}", designation="M2x16", head="button", tool="hex1.3", material="titanium", at=[DR_X["disc_b"][1], dy, dz], dir=[-1, 0, 0],
+          through=["disc_b", "dspacer", "disc_a"], threads_into="spider", hole=_stack_hole("M2x16", DR_X["disc_b"][1], dy, dz, -1, DISC_T * 2 + SPACER_T).hole,
+          access_before=["tub", "mount_r", "motor_spacer"],
+          reason="stack screwed into the spider from the back (heads on disc_b, 2 mm of thread in the 3 mm alu spider tapped M2): no nuts, since the STEP has none (inferred: it has the 2.2 holes but no screws)")
     for i, (x, y) in enumerate(((25.0, 10.4), (-25.0, 10.4), (25.0, -21.6), (-25.0, -21.6))):
-        F(id=f"bolt_t{i}", designation="M2x4", head="countersunk", tool="hex1.3", at=[x, y, 20.4], dir=[0, 0, -1], through=["top_panel"], threads_into="tub",
+        F(id=f"bolt_t{i}", designation="M2x5", head="button", tool="hex1.3", at=[x, y, 20.4], dir=[0, 0, -1], through=["top_panel"], threads_into="tub",
           reason="M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
           hole=_panel_seat("top", i)[1].hole)
     for i, yy in enumerate((1.9, -13.1)):
-        F(id=f"bolt_sw{i}", designation="M2x3", head="button", tool="hex1.3", at=[SWX, yy, 16.0], dir=[0, 0, 1], through=["power_switch"], threads_into="tub", access_before=["base_panel"],
+        F(id=f"bolt_sw{i}", designation="M2x3", head="button", tool="hex1.3", at=[SWX, yy, 16.0], dir=[0, 0, 1], through=["power_switch"], threads_into="tub", access_before=["base_panel"], hole=_switch_hole(yy)[1].hole,
           reason="thread-forming into the 1.7 pilot holes either side of the switch flange; heads clamp the flange to the deck underside (inferred)")
 
     # ---------------------------------------------------------------- connections
@@ -1301,7 +1292,6 @@ def make_spec(model_file):
     C("mount_l", "mount_r", "interlock", "Both mounts tied by the standoffs and the chassis tabs")
     C("base_panel", "tub", "screw", "Base panel under the open floor, 5 M2 CSK into heat-sets")
     C("top_panel", "tub", "screw", "Ti top panel held by 4 M2 flat-head thread-forming screws through its countersunk corner holes into the column-top pilots (the STEP has the holes, not the screws)")
-    C("weapon_lock", "mount_l", "press_fit", "TPU lock pin pressed into the RV02 3.9 bore (0.05 radial grip, pulled by its flag) into a spider window; the head stops it, the lanyard tethers it to the mount", interference_mm=0.05, mechanical_key=True)
     C("battery", "tub", "press_fit", "Pack between the motor wall, the insert columns and the deck", interference_mm=0.1, mechanical_key=True)
     C("rxesc", "tub", "interlock", "Malenki boxed by the deck cage ribs (0.1 mm), the front wall and the deck; the weapon ESC under it")
     C("wesc", "esc_tray", "interlock", "weapon ESC in the TPU tray lips (0.1 mm); the cage rib holds -y, the Malenki +z")
@@ -1319,13 +1309,13 @@ def make_spec(model_file):
     ORING = (45, 1.0)
     BELT_L = round(math.pi * ORING[0], 1)
     for s, n in SIDES:
-        P(id=f"belt_{n}", kind="belt", material="rubber", process="cots", shape=belt_shape(s), color="#3f7fbf",
+        P(id=f"belt_{n}", kind="belt", material="rubber", process="cots", deviation="O-rings are bought parts and are not modelled in the RVRN 2.0 STEP (the original CAD shows the groove and hub only); modelled here as a stretched loop for fit and clearance checks", shape=belt_shape(s), color="#3f7fbf",
           belt={"pulleys": [f"whub_r{n}", f"whub_f{n}"], "kind": "o_ring", "length_mm": BELT_L, "width_mm": ORING[1], "stock": {"id_mm": ORING[0], "cs_mm": ORING[1]}},
           label=f"stock {ORING[0]} x {ORING[1]} nitrile O-ring ({100 * (loop / BELT_L - 1):.0f} % stretch on the 61 mm centres): front wheel drive (not in the STEP; the hub grooves are)")
 
     wires = [dict(_Wr("w_bat_sw", "battery.jst_rcy", "power_switch.in", 24, "power", 8), connector="jst_rcy"), _Wr("w_sw_wesc", "power_switch.out", "wesc.bat", 24, "power", 8),
              _Wr("w_sw_rx", "power_switch.out", "rxesc.bat", 26, "power", 8), dict(_Wr("w_wesc_m", "wesc.motor", "weapon_motor.phases", 24, "motor", 15), connector="bullet2", count=3,
-                 via=[[11.1, 14.5, 16.0], [11.1, 30.0, 14.5]]),   # phases run rearward in the gap behind the drisk (4 mm axial from the stack), into the tub at the deck front
+                 via=PHASE_VIA),   # phases run rearward in the gap behind the drisk (4 mm axial from the stack), over the front lug (its top is the deck, z 17.5) and down into the tub at the deck front
              _Wr("w_rx_wesc", "rxesc.wpn", "wesc.rx", 30, "signal", 6), _Wr("w_m_l", "rxesc.m2", "motor_l.terminals", 28, "motor", 6),
              _Wr("w_m_r", "rxesc.m1", "motor_r.terminals", 28, "motor", 6)]
     return dict(parts=parts, fasteners=fast, connections=conn, wires=wires, intent=intent_checks())
@@ -1353,7 +1343,7 @@ def intent_checks():
         A("notch_bears", "a hit drives the mount back; the notch on the chassis tab bears it in compression, the bolts only clamp",
           part=f"mount_{n}" if n == "l" else "mount_r", lug="tub", bolts=[f"bolt_u{n}a", f"bolt_u{n}b"], dir=[0, -1, 0])
     for pid, up in (("tub", "-z"), ("mount_r", "+x"), ("mount_l", "-x"), ("whub_rr", "+x"), ("whub_rl", "-x"), ("whub_fr", "+x"), ("whub_fl", "-x"),
-                    ("wedgelet_r", "-z"), ("wedgelet_l", "-z"), ("side_r", "+z"), ("side_l", "+z"), ("motor_spacer", "+x"), ("weapon_lock", "+z")):
+                    ("wedgelet_r", "-z"), ("wedgelet_l", "-z"), ("side_r", "+z"), ("side_l", "+z"), ("motor_spacer", "+x")):
         A("support_free", "every printed part prints without supports in its declared orientation", part=pid, up=up)
     # exceptions (STEP RV01, by design): the rear wall is a triangulated truss - 2 mm ribs round 1 mm deep pockets, the ribs carry
     # the load and the 1 mm web only closes the box; the 1 mm lip below the base-panel rabbet only locates the panel edge
@@ -1366,9 +1356,9 @@ def intent_checks():
       at=[[-x + w, CH["y0"] + w], [x - w, CH["y0"] + w], [x - w, CH["y1"] - w], [-x + w, CH["y1"] - w]])
     A("tool_count", "pit kit: one hex key per screw size (1.3 for M2, 2 for M3); the weapon swap needs only the 2 mm key", max=2, module_max=1,
       module=["bolt_ula", "bolt_ulb", "bolt_ura", "bolt_urb"])
-    rot = ["spider", "disc_a", "disc_b", "dspacer"] + [f"nut_d{k}" for k in range(4)]
+    rot = ["spider", "disc_a", "disc_b", "dspacer"]
     A("wire_clear_rotor", "phases and power leads stay out of the drisk's swept volume", rotor=rot, axis=[1, 0, 0], at=[0, WY, WZ], min=2.0,
-      via={"w_wesc_m": [[11.1, 14.5, 16.0], [11.1, 30.0, 14.5]]})
+      via={"w_wesc_m": PHASE_VIA})
     return out
 
 
@@ -1392,7 +1382,7 @@ REF_BOM = [   # RVRN 2.0 STEP part list (research/rvrn_step/INDEX.txt); one row 
     dict(role="FS9: mount to standoff 2 x M3x12 CSK alu (axle standoff)", match=["bolt_u?a"], count=2, designation="M3x12", head="countersunk", threads_into="standoff", material="aluminium"),
     dict(role="FS9: mount to nose standoff 2 x M3 CSK alu", match=["bolt_u?b"], count=2, designation="M3x14", head="countersunk", threads_into="standoff", material="aluminium",
          deviation="M3x14 instead of the STEP's M3x12: through mount and lug, 12 mm engages 3.9 mm of the 15 mm standoff (< 1.5 d)"),
-    dict(role="top panel: 4 x M2 CSK thread-forming (not in the STEP; its countersunk holes are)", match=["bolt_t*"], count=4, designation="M2x4", threads_into="tub",
+    dict(role="top panel: 4 x M2 CSK thread-forming (not in the STEP; its countersunk holes are)", match=["bolt_t*"], count=4, designation="M2x5", threads_into="tub",
          deviation="the STEP top panel has 4 countersunk corner holes but no screws; 4 M2x4 CSK thread-forming screws added so the Ti panel cannot peel off"),
     dict(role="side panel to standoff ends: 4 x M3 CSK (STEP M3x8)", match=["bolt_s?a", "bolt_s?b"], count=4, designation="M3x10", head="countersunk", threads_into="standoff",
          deviation="M3x10 instead of the STEP's M3x8: 8 mm engages 4.2 / 2.7 mm of standoff thread, under 1.5 d in aluminium"),
@@ -1411,17 +1401,15 @@ REF_BOM = [   # RVRN 2.0 STEP part list (research/rvrn_step/INDEX.txt); one row 
     dict(role="RV13 Malenki nano", kind="part", match=["rxesc"], count=1, catalog="malenki_nano_rvrn2"),
     dict(role="RV14 brushless ESC", kind="part", match=["wesc"], count=1, catalog="bbb_ant_esc_rvrn2"),
     dict(role="RV12 N10 2200 rpm x 2", kind="part", match=["motor_l", "motor_r"], count=2, catalog="n10_2200rpm_spicy"),
-    dict(role="drisk stack: 4 x M2 + nuts (not in the STEP, holes are)", match=["bolt_d*"], count=4, designation="M2", threads_into="nut",
-         deviation="the STEP leaves the r14 stack holes empty; 4 M2x18 + nuts added so the stack is held (18 mm: the nut is fully engaged)"),
+    dict(role="drisk stack: 4 x M2 into the spider (not in the STEP, holes are)", match=["bolt_d*"], count=4, designation="M2", threads_into="spider",
+         deviation="the STEP leaves the r14 stack holes empty; 4 M2x14 added from the back, tapped into the spider (r0.8 tap holes there, the STEP r1.1 clearance elsewhere): no nuts, nothing invented beyond the screws"),
     dict(role="spider to bell: 4 x M2 (not in the STEP)", match=["bolt_p*"], count=4, designation="M2", threads_into="motor",
          deviation="the STEP shows the r4.5 holes only"),
     dict(role="stator: 4 x M2 (not in the STEP)", match=["bolt_wm*"], count=4, designation="M2", threads_into="motor",
          deviation="the STEP shows the RV03 counterbores only"),
     dict(role="switch: 2 x M2 into the deck pilot holes (not in the STEP)", match=["bolt_sw*"], count=2, designation="M2",
          deviation="the STEP has the two 1.7 pilot holes but no screws"),
-    dict(role="weapon lock RV00 (TPU, Build Guide)", kind="part", match=["weapon_lock"], count=1, material="tpu"),
     dict(role="nitrile O-ring belts (not in the STEP; hub grooves are)", kind="part", match=["belt_l", "belt_r"], count=2),
-    dict(role="PLA belt guards over the O-ring slots (not in the STEP)", kind="part", match=["belt_guard_*"], count=2),
     dict(role="battery lead: JST RCY", kind="wire", match=["w_bat_sw"], count=1, connector="jst_rcy"),
     dict(role="weapon phases: 3 x 2 mm bullets", kind="wire", match=["w_wesc_m"], count=1, connector="bullet2"),
 ]
@@ -1496,14 +1484,18 @@ def reference_cad():
           deviations=[dict(near=[x, y, 19.95], r=3.0, reason="4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it")
                       for x, y in INS[:4]]),
         R("mount_l", "RV02_XALT_HD_left_hand_weapon_mount_1.stl", tol_mm=0.5,
-          deviations=[{"near": [-17.4, *[round(v, 2) for v in _lock_yz()]], "r": 4.5,
-                       "reason": "RV00 weapon-lock pin bore d3.9 through RV02 (Build Guide lock rule; the STEP models no lock)"}]),
+          deviations=[{"near": [-15.4, 44.0, 3.5], "r": 4.0,
+                       "reason": "nose pad R4.4 round the nose CSK: the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); 1.15 mm of added material at the nose underside"}]),
         R("mount_r", "RV03_XALT__HD_Right_hand_weapon_mount_1.stl", tol_mm=0.5,
-          deviations=[{"near": [16.8, WY + dy, WZ + dz], "r": 2.0,
+          deviations=[{"near": [15.4, 44.0, 3.5], "r": 4.0,
+                       "reason": "nose pad R4.4 round the nose CSK: the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); 1.15 mm of added material at the nose underside"}] + [{"near": [16.8, WY + dy, WZ + dz], "r": 2.0,
                        "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"}
                       for dy, dz in ((6, 0), (-6, 0), (0, 6), (0, -6))]),
         R("motor_spacer", "Motor_back_spacer_1.stl", tol_mm=0.3),
-        R("spider", "spider_1.stl", tol_mm=0.5, ref_to_world=dt),
+        R("spider", "spider_1.stl", tol_mm=0.5, ref_to_world=dt,
+          deviations=[dict(near=[sum(DR_X["spider"]) / 2, *_disc_local(BOLT_R * math.cos(math.radians(90 * k)), BOLT_R * math.cos(math.radians(90 * k - 90)))], r=2.0,
+                           reason="r14 stack hole is the M2 tap drill (1.6) where the stack screws thread into the spider; the STEP shows the 2.2 clearance and no screw or nut")
+                      for k in range(4)]),
         R("disc_a", "Drisk_floating_3_1.stl", tol_mm=0.5, ref_to_world=dt),
         R("disc_b", "Drisk_floating_3_2.stl", tol_mm=0.5, ref_to_world=dt),
         R("dspacer", "Drisk_spacer_alt_x_1.stl", tol_mm=0.5, ref_to_world=dt),
@@ -1544,22 +1536,25 @@ def main():
                     targets={"length_mm": 107, "width_mm": 104.1, "disc_dia_mm": 46, "wheel_dia_mm": 21.5, "tol_mm": 3,
                              "source": "RVRN 2.0 STEP (research/rvrn_step) measured in its assembly frame",
                              "note": "GR1507 drisk (single tooth, 3+6+3 on a 3 mm spider) on 8 mm XALT mounts; N10 direct to 21.5 rear tyres, O-rings to 11 mm fronts"},
-                    weapon_lock={"require_part": True, "note": "RV00 TPU tooth stop (weapon.locking_bar = weapon_lock), fitted whenever the battery is in"},
+                    weapon_lock={"type": "external_pin", "note": "pit safety pin handled outside the robot and pulled before a fight: not part of the build, no bore in RV02/RV03 (the STEP has none; user 2026-10-19)"},
                     reference_bom=REF_BOM,
                     reference_doc={"path": "REFERENCE.md", "must_mention": ["GR1507", "180 mAh", "Hardox", "JST RCY", "RV00", "XALT", "0.9 mm"],
                                    "must_not_mention": ["through an aluminium spider", "2S ≈350 mAh LiPo"]},
                     electronics=dict(failsafe=True, weapon_remote_disable=True, radio="2.4 GHz", cells=2), can_run_inverted=False,
-                    allow_overlap=[dict(a="wshaft", b="wbearing", max_depth_mm=0.3, reason="shaft in the MR85 inner race (bearing modelled as one solid)"),
+                    allow_overlap=[dict(a="belt_l", b="side_l", max_depth_mm=0.3, reason="O-ring is rubber: it squashes 0.16 mm against the plain inner face of the STEP side panel (the STEP has no belt channel)"),
+                                   dict(a="belt_r", b="side_r", max_depth_mm=0.3, reason="O-ring is rubber: it squashes 0.16 mm against the plain inner face of the STEP side panel (the STEP has no belt channel)"),
+                                   dict(a="wshaft", b="wbearing", max_depth_mm=0.3, reason="shaft in the MR85 inner race (bearing modelled as one solid)"),
                                    dict(a="wshaft", b="weapon_motor", max_depth_mm=2.6, reason="wshaft is the GR1507's own shaft, already drawn inside the catalog motor envelope"),
                                    dict(a="motor_l", b="whub_rl", max_depth_mm=0.4, reason="the catalog N10 shaft is drawn round; the hub's D-flat sits on its flat"),
                                    dict(a="motor_r", b="whub_rr", max_depth_mm=0.4, reason="the catalog N10 shaft is drawn round; the hub's D-flat sits on its flat"),
                                    *[dict(a=f"insert_b{i}", b="tub", max_depth_mm=0.2, reason="heat-set insert: 3.5 OD melted into a 3.4 bore (interference by design)") for i in range(5)],
                                    *[dict(a=f"nut_c{n}", b="tub", max_depth_mm=0.1, reason="thin M3 nut pressed into a hex pocket 0.05 under its flats (captive)") for n in "lr"],
-                                   dict(a="weapon_lock", b="mount_l", max_depth_mm=0.15, reason="RV00 TPU lock pin d4 pressed into the RV02 3.9 bore (0.05 radial grip) so it cannot rattle out"),
                                    dict(a="wbearing", b="mount_l", max_depth_mm=0.1, reason="MR85 8.0 OD pressed into the RV02 7.9 printed seat (0.05 radial interference, the STEP seat size)")],
                     claims=[dict(id="c_mass", text="weighs 150 g or less", metric="mass_total_g", op="<=", value=150),
                             dict(id="c_fit", text="fits the 150 mm square", metric="footprint_mm", op="<=", value=150)],
-                    teardown=TEARDOWN, reference_cad=reference_cad(), **body)
+                    sharp_ok=[dict(part="base_panel", near=[27.9, -21.5, 4.5], r_mm=3.0,
+                                   reason="screw boss is 0.3 mm tall (any taller breaks the reference silhouette), so its base fillet is capped at R0.25; the STEP pad base is R0.5")],
+                    teardown=TEARDOWN, module_teardown=MODULE_TEARDOWN, reference_cad=reference_cad(), **body)
         spec["modules"] = [{"id": "weapon_module", "root": "mount_r", "note": "RVRN quick change: 4 M3 out, both mounts with the drisk lift off the chassis tabs",
                             "parts": [p["id"] for p in spec["parts"] if _root(spec["parts"], p) == "mount_r" and p["id"] != "mount_r"]}]
         json.dump(spec, open(out, "w"), indent=1)
@@ -1572,13 +1567,15 @@ TEARDOWN = [t for s, n in ((-1, "l"), (1, "r")) for t in (
     dict(parts=[f"wedgelet_{n}", f"fork_{n}"], dir=[s, 0, 0], reason="fork tail is pinned in the wedgelet cheek slot: they slide off the standoffs as one"),
     dict(parts=[f"so_b{n}"], dir=[s, 0, 0], reason="nose standoff slides out of the chassis lug once the mount screw is out"),
     dict(parts=[f"so_a{n}"], dir=[s, 0, 0], reason="axle standoff slides out of the lug with the front hub and wheel on it"))] + [
-    # weapon module (fix-B): with both standoff pairs out, RV02 slides off the shaft end and its lug (MR85 and lock with it,
-    # the two CSK screws captive in it); the spider bolts are then reachable, the drisk slides off the shaft; the motor
-    # comes out after its 4 stator screws; RV03 last.
-    dict(parts=["mount_l", "bolt_ula", "bolt_ulb"], dir=[-1, 0, 0], reason="RV02 slides outboard off the lug and the shaft end, its CSK screws captive"),
+    # weapon module (fix-B): with both standoff pairs and the front end out, the module (both mounts, motor, drisk, lock)
+    # slides forward off the chassis tabs as one unit (the tub's side lugs close the other five ways)
+    dict(parts=["mount_r"], dir=[0, 1, 0], reason="RV02/RV03 with the motor and drisk slide forward off the chassis tabs as one quick-change module")]
+
+# bench teardown of the module with RV03 held: RV02 off the shaft end, drisk off the shaft, motor off its 4 stator screws
+MODULE_TEARDOWN = [
+    dict(parts=["mount_l", "bolt_ula", "bolt_ulb"], dir=[-1, 0, 0], reason="RV02 slides outboard off the shaft end, its CSK screws captive"),
     dict(parts=["spider"], dir=[-1, 0, 0], reason="drisk (spider, discs, spacer, stack bolts) slides off the GR1507 shaft once the 4 bell screws are out"),
-    dict(parts=["weapon_motor"], dir=[-1, 0, 0], reason="GR1507 leaves inboard-left once the 4 stator screws are out"),
-    dict(parts=["mount_r", "bolt_ura", "bolt_urb"], dir=[1, 0, 0], reason="RV03 slides outboard off its lug with the back spacer, CSK screws captive")]
+    dict(parts=["weapon_motor"], dir=[-1, 0, 0], reason="GR1507 leaves inboard-left once the 4 stator screws are out")]
 
 
 def _root(parts, q):

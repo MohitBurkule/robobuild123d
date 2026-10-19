@@ -2,7 +2,7 @@
 
 - wire.rotating_clearance: every fastener and nut that turns with the weapon sweeps a ring about the spin axis; each
   wire run (port -> via -> port, as a bundle of `count` strands) and the weapon motor's phase-wire exit must keep at
-  least `review.wire.rotating_clearance_mm` (default 3) from that swept ring.
+  least `review.wire.rotating_clearance_mm` (default 1) from the swept band (see `swept_bands`).
 - wire.render_present: every declared wire must appear in the latest renders. `render` writes a sidecar
   `<png>.json` (spec path, wire endpoints); renders in `renders.dir` (spec key, relative to the spec) with no sidecar,
   with no wires, older than the spec, or whose wire endpoints sit more than `endpoint_tol_mm` (3) from the port's
@@ -24,7 +24,7 @@ from ._review import fastener_rotates, params, polyline_dist, rotating, x
 from .wiring import _from, default_awg, wire_od
 
 G = "wire_review"
-DEFAULTS = {"rotating_clearance_mm": 3.0, "endpoint_tol_mm": 3.0}
+DEFAULTS = {"rotating_clearance_mm": 1.0, "endpoint_tol_mm": 3.0}
 
 
 def wire_path(world, r, w):
@@ -40,22 +40,27 @@ def bundle_radius(w):
     return 0.5 * (n * (wire_od(awg) + 0.3) if n > 1 else wire_od(awg))
 
 
-def swept_rings(bodies, origin, axis, n=600):
-    """(t, rho) of surface samples of rotating bodies about the spin axis: each sweeps a circle."""
-    P = np.vstack([np.vstack([b.mesh.vertices, b.mesh.sample(n)]) for b in bodies])
-    q = P - origin
-    t = q @ axis
-    rho = np.linalg.norm(q - np.outer(t, axis), axis=1)
-    return t, rho
+def swept_bands(bodies, origin, axis, n=600):
+    """One (t0, t1, rho0, rho1) per rotating body: the axial span and radial band it sweeps about the spin axis. A band
+    is the solid of revolution of the body's (t, rho) extent, so the gap to it does not depend on how densely the body's
+    surface was sampled (a point cloud of samples leaves gaps and reads a lead as clear between two vertices)."""
+    out = []
+    for b in bodies:
+        q = np.vstack([b.mesh.vertices, b.mesh.sample(n)]) - origin
+        t = q @ axis
+        rho = np.linalg.norm(q - np.outer(t, axis), axis=1)
+        out.append((float(t.min()), float(t.max()), float(rho.min()), float(rho.max())))
+    return np.array(out)
 
 
-def ring_dist(Q, origin, axis, t, rho):
-    """Distance from points Q to the nearest swept circle (t, rho)."""
+def band_dist(Q, origin, axis, bands):
+    """Distance from points Q to the nearest swept band (t0, t1, rho0, rho1), measured in the (t, rho) half plane."""
     q = np.atleast_2d(Q) - origin
     tq = q @ axis
     rq = np.linalg.norm(q - np.outer(tq, axis), axis=1)
-    d = np.sqrt((tq[:, None] - t[None]) ** 2 + (rq[:, None] - rho[None]) ** 2)
-    return d.min(axis=1)
+    dt = np.maximum(np.maximum(bands[None, :, 0] - tq[:, None], tq[:, None] - bands[None, :, 1]), 0.0)
+    dr = np.maximum(np.maximum(bands[None, :, 2] - rq[:, None], rq[:, None] - bands[None, :, 3]), 0.0)
+    return np.sqrt(dt ** 2 + dr ** 2).min(axis=1)
 
 
 def _samples(path, step=0.5):
@@ -80,7 +85,7 @@ def rotating_clearance(ctx):
     bodies = [b for b in (w.body(i) for i in ids) if b is not None]
     if not bodies:
         return [ok("wire.rotating_clearance", G, "No rotating hardware", "No fastener or nut turns with the weapon.")]
-    t, rho = swept_rings(bodies, origin, axis)
+    bands = swept_bands(bodies, origin, axis)
     out, worst = [], None
     targets = []
     for wr in spec.wires:
@@ -93,13 +98,13 @@ def rotating_clearance(ctx):
             if ph is not None:
                 targets.append((f"phase-wire exit of `{rp.part.id}`", np.atleast_2d(ph), 0.0, rp.part.id))
     for name, Q, rad, pid in targets:
-        d = ring_dist(Q, origin, axis, t, rho) - rad
+        d = band_dist(Q, origin, axis, bands) - rad
         k = int(np.argmin(d))
         gap = float(d[k])
         worst = gap if worst is None else min(worst, gap)
         if gap < need:
             out.append(fail("wire.rotating_clearance", G, BLOCKER, "Wire too close to rotating hardware",
-                            f"{name} passes {gap:.1f} mm from the circle swept by the weapon's own fasteners/nuts "
+                            f"{name} passes {gap:.1f} mm from the band swept by the weapon's own fasteners/nuts "
                             f"({', '.join(ids[:4])}{'...' if len(ids) > 4 else ''}); a nut that grazes a lead cuts it.")
                        .on(pid, *ids[:4]).here(Q[k]).expect(f">= {need:.1f} mm", f"{gap:.1f} mm")
                        .fix("Reroute the run (via points) away from the weapon, or remove / recess the rotating hardware."))
