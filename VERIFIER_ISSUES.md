@@ -30,7 +30,7 @@ I = 11 mm⁴, reported deflection 26.7 mm. The real upright section is above 100
 
 Suggested fix: count every structure part rigidly joined to the chassis (the clamshell halves) as root.
 
-## 3. `SectorSweep` fills the radial band between a part's inner and outer radius in each (axial, angle) bin
+## 3. [RESOLVED upstream: band hits confirmed against posed meshes] `SectorSweep` fills the radial band between a part's inner and outer radius in each (axial, angle) bin
 
 `SectorSweep` keeps one `[rmin, rmax]` band per axial bin and angle bin. When a part has material near the axis and
 far from it in the same axial slice, the band covers everything in between. Here, a lifter hub on the axis
@@ -46,9 +46,9 @@ part of the scoop shares an axial slice with the chassis.
 Suggested fix: keep a list of radial intervals per bin, or confirm hits with a posed-mesh test, as
 `interference.sweep` does.
 
-## 4. `joint.pivot`/`axis` are taken in the parent's *body* frame (`body(parent).M`), not its declared `at`/`rot` pose
+## 4. [NOT A BUG, withdrawn] joint frame
 
-For a catalog servo, `body.M` includes the model's own placement, so a joint written in the parent's declared frame
-lands somewhere else. In the lifter, axis z in the servo frame came out as world y, 1.9 mm off. The generator now
-declares the scoop joint with no parent, in world coordinates. If this is intended, GUIDE.md's "pivot (parent frame)"
-should say so.
+The verifier correctly reads a joint's pivot and axis in the parent's declared `at`/`rot` frame. My diagnosis was
+wrong: I took the measurement from a spec where I had already rewritten the joint as world `[1,0,0]` under the
+rotated servo parent. The lifter scoop is a servo-parented joint again, with axis `[0,0,1]` in the servo frame, and it
+passes.

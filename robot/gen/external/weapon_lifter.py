@@ -1,7 +1,7 @@
 """Servo lifter: a printed U-shaped lifting scoop pivoting about a lateral axis near the front.
 
 The servo lies against the right side wall with its output along +x, in a window through the wall so its output face
-sits just outside it; the scoop's right cheek fits straight onto the spline (joint declared in world coordinates). The
+sits just outside it; the scoop's right cheek fits straight onto the spline (joint declared in the servo's frame). The
 left cheek turns on an M2 pivot screw on the same axis, into an insert in the left wall. The scoop plate sits in front
 of the chassis, its lip just off the floor; raising it turns the front edge up and away from the body.
 """
@@ -99,8 +99,9 @@ class Lifter:
         arm = sh.place(sh.S(body, *cuts), (0.0, -yp, -zp))
         # the arm hangs on the servo (parent); the servo's frame is rotated, so give its pose relative to it
         plan.part(id="lifter", kind="other", material="nylon", process="fdm", print_orientation="+y",
-                  shape=arm, at=[0.0, yp, zp], rot=[0.0, 0.0, 0.0],
-                  joint={"kind": "revolute", "axis": [1, 0, 0], "pivot": [x_face, yp, zp],
+                  shape=arm, parent="servo", at=[0.0, 0.0, -xc], rot=[-90.0, -90.0, 0.0],
+                  # joint in the servo's frame: its local z is world +x, the output face is at local z = sz / 2
+                  joint={"kind": "revolute", "axis": [0, 0, 1], "pivot": [0.0, 0.0, x_face - xc],
                          "min": 0, "max": RANGE_DEG, "default": 0},
                   actuated_by="servo", rotates_with="lifter", color="#c0392b",
                   label="printed lifting scoop: cheeks outside the side walls, lip on the floor, servo-driven")

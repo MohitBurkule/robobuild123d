@@ -131,6 +131,9 @@ def add_drive(plan, g: DriveGeom):
             plan.cut("top", {"type": "intersect", "items": [
                 sh.cyl_axis(r_in, xa, xb, "x", g.axle_y, 0.0),
                 sh.boxr(xa, xb, g.axle_y - half_roof, g.axle_y + half_roof, z_roof - 0.1, zt + r_out)]})
+            # keep the hood clear of the side wall's slide-on opening (it would trim the hood into a sliver)
+            lim = W - 0.35 - 1.85  # flush with the opening face: no sliver between them
+            xa, xb = max(xa, -lim), min(xb, lim)
             arch = sh.S(sh.cyl_axis(r_out, xa, xb, "x", g.axle_y, 0.0), sh.cyl_axis(r_in, xa - 0.5, xb + 0.5, "x", g.axle_y, 0.0))
             plan.add("top", {"type": "intersect", "items": [arch, sh.boxr(xa, xb, g.axle_y - r_out, g.axle_y + r_out, z_roof, zt + r_out)]})
         else:
