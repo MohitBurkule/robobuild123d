@@ -650,6 +650,33 @@
      },
      {
       "near": [
+       -10.97,
+       -9.03,
+       14.13
+      ],
+      "r": 3.0,
+      "reason": "centroid of one connected extra blob (bbox x -27..-0.4) made of the left cage rib, the left column-foot flares and the left flange gusset, each reasoned above"
+     },
+     {
+      "near": [
+       -22.5,
+       20.0,
+       5.8
+      ],
+      "r": 8.0,
+      "reason": "2 x 2.6 gusset under the front-corner flange: printed deck-down the flange top is an unsupported ceiling"
+     },
+     {
+      "near": [
+       22.5,
+       20.0,
+       5.8
+      ],
+      "r": 8.0,
+      "reason": "2 x 2.6 gusset under the front-corner flange: printed deck-down the flange top is an unsupported ceiling"
+     },
+     {
+      "near": [
        -2.0,
        -2.0,
        15.4
@@ -745,7 +772,7 @@
        4.5
       ],
       "r": 3.0,
-      "reason": "0.6 mm ring boss + 4.5 countersink on a 3.0 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
+      "reason": "0.4 mm ring boss, R3 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
      },
      {
       "near": [
@@ -754,7 +781,7 @@
        4.5
       ],
       "r": 3.0,
-      "reason": "0.6 mm ring boss + 4.5 countersink on a 3.0 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
+      "reason": "0.4 mm ring boss, R3 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
      },
      {
       "near": [
@@ -763,7 +790,7 @@
        4.5
       ],
       "r": 3.0,
-      "reason": "0.6 mm ring boss + 4.5 countersink on a 3.0 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
+      "reason": "0.4 mm ring boss, R3 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
      },
      {
       "near": [
@@ -772,7 +799,7 @@
        4.5
       ],
       "r": 3.0,
-      "reason": "0.6 mm ring boss + 4.5 countersink on a 3.0 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
+      "reason": "0.4 mm ring boss, R3 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
      },
      {
       "near": [
@@ -781,7 +808,7 @@
        4.5
       ],
       "r": 3.0,
-      "reason": "0.6 mm ring boss + 4.5 countersink on a 3.0 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
+      "reason": "0.4 mm ring boss, R3 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
      }
     ]
    },
@@ -2507,6 +2534,22 @@
    ],
    "rotates_with": "weapon",
    "parent": "spider"
+  },
+  {
+   "id": "esc_tray",
+   "kind": "other",
+   "material": "tpu",
+   "process": "fdm",
+   "print_orientation": "+z",
+   "rotates_with": "fixed",
+   "shape": {
+    "type": "model",
+    "file": "../../robots/revron/src/build_revron.py",
+    "params": {
+     "part": "esc_tray"
+    }
+   },
+   "label": "TPU weapon-ESC tray (not in the STEP): glued to the base panel, lips hold the ESC when inverted"
   },
   {
    "id": "weapon_lock",
@@ -6336,7 +6379,7 @@
     "csk_d": 4.5,
     "csk_depth": 1.05,
     "sink": 0.0,
-    "grip": 1.6
+    "grip": 1.4
    },
    "head": "countersunk",
    "removable": true
@@ -6375,7 +6418,7 @@
     "csk_d": 4.5,
     "csk_depth": 1.05,
     "sink": 0.0,
-    "grip": 1.6
+    "grip": 1.4
    },
    "head": "countersunk",
    "removable": true
@@ -6414,7 +6457,7 @@
     "csk_d": 4.5,
     "csk_depth": 1.05,
     "sink": 0.0,
-    "grip": 1.6
+    "grip": 1.4
    },
    "head": "countersunk",
    "removable": true
@@ -6453,7 +6496,7 @@
     "csk_d": 4.5,
     "csk_depth": 1.05,
     "sink": 0.0,
-    "grip": 1.6
+    "grip": 1.4
    },
    "head": "countersunk",
    "removable": true
@@ -6492,7 +6535,7 @@
     "csk_d": 4.5,
     "csk_depth": 1.05,
     "sink": 0.0,
-    "grip": 1.6
+    "grip": 1.4
    },
    "head": "countersunk",
    "removable": true
@@ -7744,19 +7787,19 @@
    "a": "rxesc",
    "b": "tub",
    "method": "interlock",
-   "reason": "Malenki under the deck beside the pack, kapton"
+   "reason": "Malenki boxed by the deck cage ribs (0.1 mm), the front wall and the deck; the weapon ESC under it"
   },
   {
    "a": "wesc",
-   "b": "rxesc",
+   "b": "esc_tray",
    "method": "interlock",
-   "reason": "ESC kapton-wrapped against the Malenki; both boxed in by the walls, the deck and the base panel"
+   "reason": "weapon ESC in the TPU tray lips (0.1 mm); the cage rib holds -y, the Malenki +z"
   },
   {
-   "a": "wesc",
-   "b": "tub",
-   "method": "interlock",
-   "reason": "ESC boxed by the walls, the deck and the base panel"
+   "a": "esc_tray",
+   "b": "base_panel",
+   "method": "glue",
+   "reason": "TPU tray contact-glued to the base panel top"
   },
   {
    "a": "power_switch",
