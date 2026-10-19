@@ -26,11 +26,11 @@ MADE_EXEMPT = {"motor", "weapon_motor", "esc", "receiver", "battery", "switch", 
 
 @lru_cache(maxsize=1)
 def kind_map():
-    from . import GROUPS
+    from . import GROUPS, MODULE
     here = Path(__file__).parent
     m = {}
     for name, _ in GROUPS:
-        f = here / f"{name}.py"
+        f = here / f"{MODULE.get(name, name)}.py"
         if name in ("coverage",) or not f.exists():
             continue
         m[name] = set(re.findall(r'"([a-z_]+)"', f.read_text()))
