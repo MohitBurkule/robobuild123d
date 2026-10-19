@@ -4,6 +4,9 @@
 * `disasm.unreachable` (BLOCKER): a fastener cannot be freed (its dependency set contains a cycle).
 * `disasm.service_depth` (WARNING): a serviceable part (battery, weapon, wheels, armour, plus any `serviceable: true`)
   needs more than N removals; N is `service.max_removals` in the spec (default 8).
+  A part inside a declared swap module (`modules: [{"id", "root", "parts": [...]}]` in the spec, e.g. a quick-change
+  weapon module built on the bench) counts the removals that free the module's root; screws and parts that live
+  entirely inside the module come off on the bench and are not counted.
 * `disasm.elastic_stretch` (BLOCKER): an O-ring / elastic belt must stretch past its material limit to come off over the
   largest flange on its path. Elastic parts with a stretch path are not treated as trapped.
 """
@@ -84,11 +87,20 @@ def run(ctx):
             out.append(fail("disasm.unreachable", G, BLOCKER, "Screw can never be reached",
                             f"`{f.id}` depends on parts locked in a disassembly cycle.").on(f.id))
     nmax = int((r.spec.raw.get("service") or {}).get("max_removals", DEFAULT_MAX_REMOVALS))
+    modules = []
+    for m in r.spec.raw.get("modules") or []:
+        if isinstance(m, dict) and m.get("root") in g.nodes and m.get("parts"):
+            modules.append({"id": m.get("id", m["root"]), "root": m["root"], "parts": list(m["parts"]) + [m["root"]]})
+    fclamp = {f.id: set(f.through or []) | ({f.threads_into} if f.threads_into else set()) for f in r.spec.fasteners}
     ctx.metrics["disasm.removals"] = {}
     for p in r.spec.parts:
         if not (p.kind in SERVICE_KINDS or p._extra.get("serviceable")) or p.id in on_cycle:
             continue
-        seq = g.order(p.id)
+        mod = next((m for m in modules if p.id in m["parts"]), None)
+        seq = g.order(mod["root"] if mod else p.id)
+        if seq is not None and mod:
+            inside = set(mod["parts"])
+            seq = [x for x in seq if x not in inside and not (x in fclamp and fclamp[x] and fclamp[x] <= inside)] + [f"module `{mod['id']}`"]
         if seq is None:
             out.append(fail("disasm.unreachable", G, BLOCKER, "Serviceable part can never be removed", f"`{p.id}` sits behind a disassembly cycle.").on(p.id))
             continue

@@ -110,12 +110,15 @@ DT = 3.0                              # Hardox disc thickness
 BL_X = (CAN_TOP - DT, CAN_TOP)        # blade_c (motor side disc) -8..-5
 SP_X = (CAN_TOP, CAN_TOP + 8.0)       # printed spacer -5..3
 DF_X = (SP_X[1], SP_X[1] + DT)        # floating disc 3..6
-PM_X = (BL_X[0] - 2.0, BL_X[0])       # prop-mount clamp flange -9.1..-7.1
-SH_X = (UR_OUT - 2.0, UL_IN + STATOR_RECESS)   # 5 mm rotor shaft -19.5..15.4
-BR_X = (UR_IN - 1.9, UR_IN + 0.6)     # MF85ZZ: body in the plate, 0.6 flange proud of the inner face
+PM_X = (BL_X[0] - 3.0, BL_X[0])       # prop-mount clamp flange -11..-8 (RVRN C4: 15 OD x 3)
+PM_SP = -22.0                          # prop-mount 5 mm spigot runs out to -22 through the MF85ZZ
+SH_X = (PM_SP, UL_IN + STATOR_RECESS)   # BE1806 3 mm rotor shaft -22..13.5: stator bearings, bell, prop-mount collet
+BR_X = (UR_OUT - 0.6, UR_OUT + 1.9)   # MF85ZZ -18.1..-15.6: pressed in from the outer (countersunk) face, flange outside
+PM_CB = 1.0                           # M2 heads sunk 1 mm into the prop-mount flange
+BS_X = (BR_X[1], PM_X[0] + PM_CB - 2.1)   # RV09 bearing spacer on the spigot: inner race to the 4 M2 heads
 DISC_R, TIP_R = 16.5, 21.5
 BOLT_R, CAN_R, LIGHT_R = 14.0, 4.5, 9.46
-A0 = 73.6                             # bolt-circle phase relative to the tooth tip direction (measured)
+A0 = 106.4                            # disc-local angle of tip 1, the bolt circles (on the tip radii) and, 45 deg on, the pockets
 # standoffs (front pair) and the front wheel
 SA = (33.15, 4.35)                    # 15 mm standoff (wedglet / side panel)
 SB = (23.15, 5.5)                     # 25 mm standoff = front axle
@@ -143,8 +146,11 @@ NUT_Y, NUT_Z = -18.85, 8.37           # RVRN CAD: wedglet rear M3 clearance hole
 NUT_X0, NUT_XC = 23.3, 25.65          # nut boss inner face, nut centre (2.4 thick, 2.1 mm wall outboard)
 SW_Z = 11.5                           # switch on the rear insert boss, slide along Y (pull rearward = off)
 HOOD_Z = 23.37
+LOCK = (15.5, 11.39)                  # weapon-lock pin (Y, Z): r 19.1 from the axle at 215 deg, between the tooth tip and the rim
 WG_OUT = 51.8                         # wedglet outer face (|X|)
 WM_CB = 0.0                           # motor screw head counterbore depth
+UB_CB = 2.0                           # upright-to-standoff screw heads sunk 2 mm into the inner faces (rotor rub gap)
+SLC_X = 35.3                          # head seat of the wedglet-to-chassis screw
 
 parts = []
 def P(**k): parts.append(k)
@@ -180,8 +186,12 @@ def upright(side):
     x0, x1 = (UL_IN, UL_OUT) if side == "l" else (UR_OUT, UR_IN)
     body = yz(upright_poly(R), x0, x1)
     cut = [cylx(3.99, x0 - 1, x1 + 1, WY, WZ)]                                  # 7.98: motor base spigot (l) / MF85ZZ seat (r)
+    xin = x0 if side == "l" else x1                                             # inner face (towards the drisk)
     for (y, z) in (SA, SB):
         cut.append(cylx(1.6, x0 - 1, x1 + 1, y, z))                             # 3.2 M3 clearance into the standoffs
+        cut.append(cylx(3.0, *sorted((xin - (1 if side == "l" else -1), xin + (UB_CB if side == "l" else -UB_CB))), y, z))   # head counterbore
+    if side == "r":
+        cut.append(cylx(4.6, BR_X[1], x1 + 1, WY, WZ))                          # clearance round the bearing spacer, inboard of the seat
     cut.append(yz(slot2((24.0, 9.75), (29.4, 5.75), 2.0), x0 - 1, x1 + 1))       # lightening slot over the standoffs
     if side == "l":
         cut.append(yz(chaikin([(20.6, 16.5), (25.9, 16.5), (23.85, 20.1)], 3), x0 - 1, x1 + 1))
@@ -193,18 +203,33 @@ def upright(side):
 
 
 # ---------------------------------------------------------------- drisk
-def disc_outline(phase):
-    """Disc R16.5 with two tips at R21.5, 180 deg apart (RVRN drisk). Each tip is reached by a flank tangent to the disc
-    (leaving it acos(16.5/21.5) ahead of the tip) and drops back by a short hook, filleted into the rim (>= kerf)."""
-    pts = []
+def disc_outline(tip_a):
+    """RVRN drisk disc (PT_10): R16.5 with two tips at R21.5, 180 deg apart. The leading flank is tangent to the disc
+    (it leaves the rim acos(16.5/21.5) = 39.9 deg ahead of the tip), the back of each tip drops radially to R17.7 and
+    is filleted into the rim. Disc-local polar angles, counter-clockwise."""
     g = math.degrees(math.acos(DISC_R / TIP_R))
     P_ = lambda r, a: (r * math.cos(math.radians(a)), r * math.sin(math.radians(a)))  # noqa: E731
+    pts = []
     for k in (0, 1):
-        aT = phase + 180.0 * k
-        hook = chaikin_open([P_(TIP_R, aT), P_(19.9, aT - 2.0), P_(DISC_R, aT - 7.0), P_(DISC_R, aT - 9.0)], 6)
-        pts += hook[:-1]
-        pts += arc((0, 0), DISC_R, aT - 9.0, aT - 180.0 + g, 36)
-    return r4(pts[::-1])
+        aT = tip_a + 180.0 * k
+        pts += chaikin_open([P_(TIP_R, aT), P_(17.7, aT + 0.1), P_(16.5, aT + 3.9), P_(DISC_R, aT + 6.0)], 3)[:-1]   # back edge, filleted (> kerf)
+        pts += arc((0, 0), DISC_R, aT + 6.0, aT + 180.0 - g, 40)
+    return r4(pts)
+
+
+# RVRN lightening pocket: a three-lobed window symmetric about its radius (u radial, v tangential, mm), centroid on r9.46
+BLOB_HALF = [(4.03, 0.0), (3.86, 0.71), (2.59, 1.8), (1.36, 5.03), (0.76, 5.44), (0.03, 5.52), (-0.83, 5.1), (-3.15, 2.57), (-3.22, 1.9), (-2.96, 0.0)]
+
+
+def blob(at_a):
+    c, sn = math.cos(math.radians(at_a)), math.sin(math.radians(at_a))
+    half = BLOB_HALF + [(u, -v) for u, v in reversed(BLOB_HALF[1:-1])]
+    half = chaikin(half, 3)   # every corner filleted (> 0.1 kerf)
+    pts = [(LIGHT_R * c + u * c - v * sn, LIGHT_R * sn + u * sn + v * c) for u, v in half]
+    return r4(pts[::-1] if Polygon_area(pts) < 0 else pts)
+
+
+def Polygon_area(p): return 0.5 * sum(x0 * y1 - x1 * y0 for (x0, y0), (x1, y1) in zip(p, p[1:] + p[:1]))
 
 
 def disc_cuts(t, full=True):
@@ -214,21 +239,23 @@ def disc_cuts(t, full=True):
         c.append(cyl(1.095, t + 2, (BOLT_R * math.cos(a), BOLT_R * math.sin(a), 0)))
         if full:
             c.append(cyl(1.095, t + 2, (CAN_R * math.cos(a), CAN_R * math.sin(a), 0)))
-            b = math.radians(A0 - 45 + 90 * k)
-            c.append(cyl(4.13, t + 2, (LIGHT_R * math.cos(b), LIGHT_R * math.sin(b), 0)))
+            c.append(place({"type": "prism", "points": blob(A0 - 45 + 90 * k), "height": t + 2}, (0, 0, 0)))
     c.append(cyl(2.99 if full else 11.75, t + 2))
     return c
 
 
 def spacer_shape():
+    """RVRN drisk spacer (PT_9): ring R13.15 round the bell (bore 23.27), a lobe R2.45 round each long M2, blended into
+    the ring over +-17 deg."""
     lobes = []
     for k in range(4):
-        a = math.radians(A0 + 90 * k)
-        lobes.append(cyl(2.4, 8.0, (BOLT_R * math.cos(a), BOLT_R * math.sin(a), 0)))
-        lobes.append(place({"type": "box", "size": [3.6, 4.8, 8.0]}, (12.5 * math.cos(a), 12.5 * math.sin(a), 0), (0, 0, math.degrees(a))))
-    ring = cyl(13.13, 8.0)
+        a = A0 + 90 * k
+        c = (BOLT_R * math.cos(math.radians(a)), BOLT_R * math.sin(math.radians(a)))
+        q = circ_pts(c, 2.45, 24) + [(13.0 * math.cos(math.radians(a + d)), 13.0 * math.sin(math.radians(a + d))) for d in (-17, -9, 9, 17)]
+        lobes.append(place({"type": "prism", "points": r4(hull(q)), "height": 8.0}, (0, 0, 0)))
+    ring = cyl(13.15, 8.0)
     holes = [cyl(1.095, 10.0, (BOLT_R * math.cos(math.radians(A0 + 90 * k)), BOLT_R * math.sin(math.radians(A0 + 90 * k)), 0)) for k in range(4)]
-    return S(U(ring, *lobes), cyl(11.635, 10.0), *holes)
+    return S(U(ring, *lobes), cyl(11.70, 10.0), *holes)   # 23.4 bore: 0.2 a side round the 23 bell (printed fit band)
 
 
 PHASE = 90.0           # tips straight up/down in disc-local -> with rot [0,90,0] they point fore/aft
@@ -269,6 +296,13 @@ def base_panel():
     return S(body, *cut)
 
 
+def shrink_yz(pts, d):
+    """Inset an axis-aligned-ish (y, z) outline by d (shapely buffer, mitred)."""
+    from shapely.geometry import Polygon
+    q = Polygon(pts).buffer(-d, join_style=2)
+    return [(round(a, 4), round(b, 4)) for a, b in list(q.exterior.coords)[:-1]]
+
+
 def hexagon_pts(af):
     r = af / math.sqrt(3)
     return r4([(r * math.cos(math.radians(60 * i)), r * math.sin(math.radians(60 * i))) for i in range(6)])
@@ -294,12 +328,19 @@ def chassis():
         xi, xo = (UL_IN, UL_OUT) if s > 0 else (-UR_IN, -UR_OUT)
         add.append(yz([(CY1 - 0.1, 5.3), (18.2, 5.3), (19.15, 6.25), (19.15, 12.4), (18.2, 13.35), (CY1 - 0.1, 13.35)], *sorted((s * (xi - 0.05), s * (xo + 0.05)))))   # tab (in the notch)
         add.append(boxr(*sorted((s * (xi - 3.0), s * (xi - 0.05))), CY1 - 0.1, 18.0, 3.4, 15.0))        # inner cheek
-        add.append(boxr(*sorted((s * (xi - 3.0), s * (xi - 0.05))), 9.6, 16.4, 14.9, 19.5))             # lock-pin ear
-        add.append(boxr(*sorted((s * (xo + 0.05), s * (xo + 2.5))), CY1 - 0.1, 18.0, 3.4, 15.0))       # outer cheek
+        # box section (RV01 front): a hollow rectangular tube outboard of the upright, the two standoffs pass through its
+        # 5 mm holes; open at the back into the tub (phase wires run through it), the wedglet clip bears on its outer face
+        bx = S(box_section(0.0, s), yz([(y, z) for y, z in shrink_yz(BOX_YZ, 1.2)], *sorted((s * (BOX_X[0] + 1.2), s * (BOX_X[1] - 1.2)))),
+               boxr(*sorted((s * (BOX_X[0] + 1.2), s * (BOX_X[1] - 1.2))), CY1 - CW - 0.5, CY1 + 0.5, WG_Z0 + 1.2, 11.8))
+        add.append(bx)
+        for (y, z) in (SA, SB):
+            add.append(S(cylx(3.75, *sorted((s * BOX_X[0], s * BOX_X[1])), y, z), cylx(2.0, *sorted((s * (BOX_X[0] - 1), s * (BOX_X[1] + 1))), y, z)))   # boss round each standoff hole
+        pad = boxr(*sorted((s * (CX - 0.1), s * 33.5)), NUT_Y - 3.4, NUT_Y + 3.4, NUT_Z - 3.4, NUT_Z + 3.4)   # clamp pad: takes the wedglet's inner face
+        add.append(S(pad, wedglet(s)))
     # motor pockets (rear): front and rear stop walls either side of each N10
     for s in (1, -1):
         add.append(boxr(*sorted((s * 3.0, s * (CX - CW + 0.1))), RY + 5.25, RY + 6.45, FLOOR_Z1 - 0.1, RZ + 6.0))
-        add.append(boxr(*sorted((s * 2.6, s * 3.6)), CY0 + CW - 0.1, RY + 6.4, FLOOR_Z1 - 0.1, RZ + 6.0))   # inner end stop
+        add.append(boxr(*sorted((s * 2.6, s * 3.6)), CY0 + CW - 0.1, RY + 6.4, FLOOR_Z1 - 0.1, RZ + 2.0))   # inner end stop (low: wires pass over it)
     # X rib + insert bosses
     L = math.hypot(2 * (CX - CW), RY + 6.4 - (CY1 - CW)); ang = math.degrees(math.atan2(RY + 6.4 - (CY1 - CW), 2 * (CX - CW)))
     for a in (ang, -ang):
@@ -309,7 +350,7 @@ def chassis():
     for s in (1, -1):   # alu nut pockets
         add.append(boxr(*sorted((s * NUT_X0, s * (CX - CW + 0.1))), NUT_Y - 4.0, NUT_Y + 4.0, NUT_Z - 4.0, NUT_Z + 4.0))
     body = U(body, *add)
-    body = S(body, cylx(1.6, -CX, CX, 13.0, 16.3))   # weapon-lock pin bore through both ears
+    body = S(body, cylx(1.6, -CX, CX, LOCK[0], LOCK[1]))   # weapon-lock pin bore through both lugs
     cut = []
     # floor: triangular pockets between the X ribs
     yc = (RY + 5 + CY1 - CW) / 2
@@ -320,7 +361,9 @@ def chassis():
         cut.append(boxr(*sorted((s * 3.6, s * (CX - CW + 0.05))), CY0 + CW - 0.05, RY + 5.0, FLOOR_Z0 - 2, FLOOR_Z1 + 0.05))   # motor bays open to the panel
         cut.append(cylx(1.7, *sorted((s * (CX - CW - 0.5), s * (CX + 0.5))), RY, RZ))                     # N10 shaft bushing hole
         cut.append(boxr(*sorted((s * (CX - CW - 0.5), s * (CX + 0.5))), RY - 1.7, RY + 1.7, FLOOR_Z0 - 2, RZ))   # keyhole slot down to the base panel
-        cut.append(cylx(1.6, *sorted((s * (NUT_X0 - 0.5), s * (CX + 0.5))), NUT_Y, NUT_Z))               # M3 clearance
+        cut.append(cylx(1.6, *sorted((s * (NUT_X0 - 0.5), s * 34.0)), NUT_Y, NUT_Z))                     # M3 clearance (wall and pad)
+        for (y, z) in (SA, SB):
+            cut.append(cylx(2.55, *sorted((s * (BOX_X[0] - 0.5), s * (BOX_X[1] + 0.5))), y, z))          # 5.1 standoff holes
         cut.append(boxr(*sorted((s * (NUT_XC - 1.3), s * (NUT_XC + 1.3))), NUT_Y - 2.8, NUT_Y + 2.8, NUT_Z, NUT_Z + 4.5))   # nut drops in from above
         cut.append(place({"type": "prism", "points": hexagon_pts(5.6), "height": NUT_XC + 1.25 - NUT_X0 + 0.5}, (s * (NUT_XC + 1.25 + NUT_X0 - 0.5) / 2, NUT_Y, NUT_Z), (0, 90, 0)))   # alu nut pocket (5.5 AF + 0.1), open to the inside
     for px, py in INS:
@@ -333,74 +376,135 @@ def chassis():
 
 # ---------------------------------------------------------------- hood (raised TPU, triangle cut-outs)
 def hood():
-    t = 1.2
-    top = boxr(-CX, CX, CY0, CY1, HOOD_Z - t, HOOD_Z)
-    posts = [boxr(-CX, CX, y - 1.5, y + 1.5, CZ1, HOOD_Z - t + 0.01) for y in (CY0 + 0.75, CY1 - 0.75)]
+    """Raised TPU hood (RVRN / revron21 photos): a shallow truncated pyramid over the tub, 1.2 mm skin, sides battered
+    inwards 30 deg so hits glance off; a lip drops inside the tub rim and snaps under it. Two vent slots over the ESC."""
+    t, rise, inset = 1.2, HOOD_Z - CZ1, 5.0
+    def frustum(d):   # d = inward offset of the whole shell
+        x0, y0, y1 = CX - d, CY0 + d, CY1 - d
+        lo = r4(rrect_xy(-x0, x0, y0, y1, 3.0))
+        hi = r4(rrect_xy(-(x0 - inset), x0 - inset, y0 + inset, y1 - inset, 3.0))
+        return {"type": "loft", "ruled": True, "sections": [{"z": CZ1, "spline": False, "points": lo}, {"z": HOOD_Z - (t if d else 0.0), "spline": False, "points": hi}]}
+    shell = S(frustum(0.0), frustum(t))
     li = CX - CW - 0.1
-    skirt = S(boxr(-li, li, CY0 + CW + 0.1, CY1 - CW - 0.1, CZ1 - 1.3, HOOD_Z - t + 0.01),
-              boxr(-li + 1.2, li - 1.2, CY0 + CW + 1.3, CY1 - CW - 1.3, CZ1 - 3.0, HOOD_Z))
-    body = U(top, skirt, *posts)
+    lip = S(boxr(-li, li, CY0 + CW + 0.1, CY1 - CW - 0.1, CZ1 - 2.0, CZ1 + 0.01),
+            boxr(-li + 1.2, li - 1.2, CY0 + CW + 1.3, CY1 - CW - 1.3, CZ1 - 3.0, CZ1 + 1.0))
+    body = U(shell, lip)
     cut = []
-    for s in (1, -1):
-        for tri in ([(4, -6), (22, -6), (4, -24)], [(22, -10), (22, -28), (6, -28)], [(4, 2), (22, 2), (22, -3)]):
-            q = [(s * a, b) for a, b in tri]
-            q = q if s > 0 else q[::-1]
-            cut.append(place({"type": "prism", "points": r4(chaikin(q, 2)), "height": 4.0}, (0, 0, HOOD_Z - t / 2)))
+    for s_ in (1, -1):
+        cut.append(xy(slot2((s_ * 14.0, -26.0), (s_ * 14.0, -10.0), 3.0), HOOD_Z - 3.0, HOOD_Z + 1.0))   # vents over the ESC / battery
     return S(body, *cut)
 
 
 # ---------------------------------------------------------------- wedglet + side panel (TPU, one piece per side)
+def xz(pts, y0, y1):
+    """Prism of an (x, z) outline extruded over y0..y1."""
+    y0, y1 = min(y0, y1), max(y0, y1)
+    return place({"type": "prism", "points": r4(pts), "height": y1 - y0}, (0, (y0 + y1) / 2, 0), (90, 0, 0))
+
+
+def xy(pts, z0, z1):
+    """Prism of an (x, y) outline extruded over z0..z1."""
+    return place({"type": "prism", "points": r4(pts), "height": z1 - z0}, (0, 0, (z0 + z1) / 2))
+
+
+def offset_open(line, d):
+    """Offset of an open (x, y) polyline by d to its right (miter at the vertices, same point count)."""
+    out = []
+    for i, (x, y) in enumerate(line):
+        a, b = line[max(i - 1, 0)], line[min(i + 1, len(line) - 1)]
+        tx, ty = b[0] - a[0], b[1] - a[1]
+        L = math.hypot(tx, ty); tx, ty = tx / L, ty / L
+        out.append((x + d * ty, y - d * tx))
+    return out
+
+
+# RVRN low-profile wedglet + side panel (TPU, one per side, mirrored). Measured from the RVRN CAD, never imported.
+WG_Z0, WG_Z1 = 0.72, 15.87          # RVRN 0.87; 0.15 lower so the nose-standoff bore keeps a 1 mm floor (ORIGINAL_ISSUES)
+WG_INNER = [(43.5, -47.7), (43.5, -28.8), (43.0, -26.8), (40.9, -25.1), (37.4, -24.6), (34.9, -23.4), (32.9, -21.3), (31.6, -17.8),
+            (31.5, 3.2), (31.6, 6.0)]                                   # inner (chassis-side) face of the wall
+WG_SIDE = [(-47.7, 10.3), (-47.2, 12.3), (-46.1, 13.9), (-43.7, 15.5), (-41.7, 15.87), (-14.7, 15.87), (-1.7, 13.3), (7.1, 12.4),
+           (16.2, 9.9), (23.8, 9.9), (29.3, 14.0), (29.8, 12.6), (31.2, 12.6), (30.4, 15.0), (30.7, 15.2), (42.8, WG_Z0),
+           (-39.5, WG_Z0), (-42.6, 2.1), (-45.2, 4.1), (-47.0, 6.8), (-47.5, 8.4)]  # side elevation (y, z): high rear rail, nose ramp
+WG_FRONT = [(17.5, WG_Z0), (24.5, WG_Z0), (24.5, 1.9), (27.0, 1.9), (27.0, WG_Z0), (52.0, WG_Z0), (44.5, 9.9), (38.5, 9.9), (36.7, 10.2),
+            (34.9, 11.4), (33.6, 12.7), (31.7, 12.7), (30.6, 15.2), (21.0, 15.2), (20.2, 14.9), (17.9, 13.2), (17.5, 12.3)]   # nose, seen from the front (x, z)
+WG_NOSE = [(17.5, 42.8), (17.5, 31.2), (18.0, 30.8), (21.5, 30.4), (21.5, 19.2),
+           (29.0, 19.2), (29.0, 30.4), (30.6, 30.4), (31.3, 31.3), (33.3, 32.2), (35.5, 32.2), (35.5, 30.7), (36.5, 29.7), (41.5, 29.6),
+           (41.5, 27.1), (40.5, 27.1), (40.0, 26.4), (39.5, 26.4), (39.5, 19.9), (40.0, 19.9), (40.5, 19.2), (41.5, 19.2), (41.3, 18.2),
+           (40.0, 16.6), (36.6, 15.6), (34.5, 13.4), (32.6, 9.3), (31.6, 5.0), (42.6, 5.0), (43.5, 6.4), (46.5, 8.2), (49.5, 11.2),
+           (50.6, 13.0), (51.9, 17.1), (51.9, 31.3), (51.4, 33.4), (49.5, 37.2), (46.5, 40.2), (44.6, 41.3), (40.6, 42.6), (38.5, 42.8),
+           (27.0, 42.8), (27.0, 37.2), (24.5, 37.2), (24.5, 42.8)]                     # nose plan (x, y): bay for the front wheel
+WG_FLANGE = [(31.5, -19.0), (42.1, -19.5), (40.6, -8.0), (41.0, -2.9), (42.9, 6.0), (31.6, 5.0)]
+
+
+def belt_env(grow):
+    rr, rf = 7.0, 3.5
+    return hull(circ_pts((RY, RZ), rr + 1.2 + grow) + circ_pts(SB, rf + 1.2 + grow))
+
+
+BOX_X = (17.55, 21.5)                  # chassis box section (|X|): outboard of the upright, inboard of the wedglet clip
+BOX_YZ = [(CY1 - 0.1, WG_Z0), (36.3, WG_Z0), (36.3, 8.2), (33.0, 8.6), (30.5, 13.0), (CY1 - 0.1, 13.0)]
+
+
+def box_section(grow=0.0, s=1):
+    """Envelope of one chassis box section (+X side), grown by `grow` (clearance cut for the wedglet)."""
+    pts = BOX_YZ if not grow else [(y + (grow if y > 30 else -grow), z + (grow if z > 1 else -grow)) for y, z in BOX_YZ]
+    return yz(pts, s * (BOX_X[0] - grow), s * (BOX_X[1] + grow))
+
+
 def wedglet(s):
-    """RVRN low-profile TPU wedglet (one piece per side, 90 long): a full-width nose ramp, a split block that slides over
-    both front standoffs, an open bay for the front wheel, an outer block that takes the axle-standoff screw, a tall side
-    rail beside the chassis with a low skirt, a transverse wall ahead of the rear wheel and a rear rail outboard of it
-    with a window. Outline and heights measured from the RVRN CAD (never imported). Built for the left side, mirrored."""
-    Z0 = 0.87
-    def bx(x0, x1, y0, y1, z1, z0=Z0): return boxr(x0, x1, y0, y1, z0, z1)
-    parts_ = [
-        yz([(30.4, Z0), (42.75, Z0), (42.75, 1.5), (31.0, 14.5), (30.4, 14.5)], 17.5, 33.5),           # nose, inner (tall) half
-        yz([(29.65, Z0), (42.75, Z0), (42.75, 1.5), (36.0, 9.87), (29.65, 9.87)], 33.5, 44.5),         # nose, outer half
-        bx(44.5, 51.5, 12.0, 30.0, 2.4),                                                                # outer lip
-        yz([(19.2, Z0), (30.5, Z0), (30.5, 15.2), (19.2, 8.0)], 21.0, 24.5),                            # standoff block, inner cheek
-        yz([(19.2, Z0), (30.5, Z0), (30.5, 15.2), (19.2, 8.0)], 25.5, 29.0),                            # standoff block, outer cheek
-        bx(24.4, 25.6, 19.2, 30.5, 3.0),                                                                # web under the split
-        bx(42.0, 47.5, 6.5, 29.65, 9.87),                                                               # outer block (axle screw)
-        cylx(4.0, 40.0, 42.1, SB[0], SB[1]),                                                            # boss bearing on the axle-standoff end
-        bx(36.0, 42.1, 6.5, 15.0, 9.87),                                                                # rail-to-outer-block knee
-        yz([(-21.5, Z0), (10.4, Z0), (10.4, 12.0), (-21.5, 15.87)], 33.0, 36.0),                        # side rail (beside the chassis)
-        bx(36.0, 44.0, -21.0, 6.5, 2.4),                                                                # skirt
-        bx(33.0, 48.0, -25.0, -22.0, 15.87),                                                            # transverse wall ahead of the rear wheel
-        bx(44.5, 47.0, -47.7, -25.0, 15.87),                                                            # rear rail
-        bx(47.0, 50.5, -47.7, -25.0, 8.86),                                                             # rear rail step
+    """RVRN low-profile TPU wedglet / side panel, one piece per side (built for the left, mirrored for the right).
+    Side wall: its inner face follows the chassis and S-bends out round the rear wheel; the outer face is battered
+    from 5 mm at the floor to 2 mm at the top (a ramp against side hits). Nose: a wedge ramp, a block that slides over
+    both front standoffs, an open bay for the front wheel. A 1 mm skirt under the mid wall. Side elevation trims the
+    top (high rail at the rear, dropping to the nose ramp)."""
+    zb, zt = WG_Z0, WG_Z1
+    inner = chaikin_open(WG_INNER, 2)
+    bot = inner + offset_open(inner, 5.0)[::-1]
+    top = inner + offset_open(inner, 2.0)[::-1]
+    wall = {"type": "loft", "ruled": True, "sections": [{"z": zb, "spline": False, "points": r4(bot)}, {"z": zt, "spline": False, "points": r4(top)}]}
+    side = yz(WG_SIDE, 16.0, 54.0)
+    nose = {"type": "intersect", "items": [xy(WG_NOSE, zb, zt), xz(WG_FRONT, 4.9, 43.0), side]}
+    body = U({"type": "intersect", "items": [wall, side]}, nose, xy(WG_FLANGE, zb, zb + 1.0))
+    cut = [
+        cylx(2.6, 17.0, SA_END, SA[0], SA[1]),            # bore over the nose standoff (0.1 a side)
+        cylx(1.6, SA_END - 0.5, 53.0, SA[0], SA[1]),       # M3 clearance
+        cylx(2.6, 17.0, SB_END, SB[0], SB[1]),            # bore over the axle standoff
+        cylx(1.6, SB_END - 0.5, 53.0, SB[0], SB[1]),
+        cylx(1.6, 30.0, 50.0, NUT_Y, NUT_Z),               # chassis screw into the alu nut
+        yz(rrect(-44.0, -32.0, 4.9, 14.9, 1.5), 43.3, 45.0),   # rear-wheel relief on the inner face
+        boxr(24.5, 27.0, 27.0, 29.3, 0.0, 16.0),           # slot between the clip cheeks
+        boxr(23.0, 27.5, 27.0, 29.3, 7.0, 16.0),           # H clip: two cheeks joined by a web
+        boxr(23.0, 27.5, 27.0, 29.3, 0.0, 5.0),
+        cylx(3.1, 44.5, 56.0, SA[0], SA[1]),               # M3 head seats on the nose block
+        cylx(3.1, SB_END + 1.5, 56.0, SB[0], SB[1]),
+        cylx(3.1, SLC_X, 50.0, NUT_Y, NUT_Z),              # head seat of the chassis screw in the battered wall
+        yz(belt_env(0.7), 30.4, 32.6),                     # belt channel on the inner face
+        box_section(0.1),                                  # clears the chassis box section (the nose clip sits on its outer face)
+        S(boxr(29.5, 44.0, 30.5, 36.5, 0.0, 6.5), cylx(3.8, 29.0, 45.0, SA[0], SA[1])),   # hollow under the nose plate, a 1.2 tube kept round the nose standoff
+        boxr(28.0, 35.0, 36.4, 40.0, 0.0, 3.0),
+        xz([(29.0, 0.0), (29.0, 9.6), (37.0, 9.6), (48.4, 0.4)], 12.5, 19.1),   # hollow under the wedge ramp
+        xz([(29.0, 0.0), (29.0, 11.0), (32.5, 11.5), (35.6, 4.2), (38.0, 2.3), (43.0, 0.5), (43.0, 0.0)], 6.2, 12.5),
+        xz([(35.3, 16.0), (35.3, 11.3), (38.0, 6.2), (44.0, 4.2), (49.0, 1.2), (55.0, 1.2), (55.0, 16.0)], 4.9, 12.5),   # ramp top face
+        boxr(29.0, 34.5, 12.5, 19.1, 9.6, 16.0),
     ]
-    body = U(*parts_)
-    cut = []
-    cut.append(cylx(2.6, 17.0, SA_END, SA[0], SA[1]))                       # bore over the nose standoff (0.1 a side)
-    cut.append(cylx(1.6, SA_END - 0.5, 45.0, SA[0], SA[1]))                  # M3 clearance (head on the nose's outer face)
-    cut.append(cylx(2.6, 17.0, SB_END, SB[0], SB[1]))                       # bore over the axle standoff
-    cut.append(cylx(1.6, SB_END - 0.5, 48.0, SB[0], SB[1]))
-    cut.append(cylx(3.1, SB_END + 1.5, 48.0, SB[0], SB[1]))                  # head seat in the outer block
-    cut.append(yz(rrect(27.72, 30.71, 4.15, 8.26, 1.0), 20.0, 30.0))         # lightening hole between the bores
-    cut.append(cylx(1.6, 32.0, 37.0, NUT_Y, NUT_Z))                          # rear screw into the chassis nut
-    cut.append(yz(rrect(-46.6, -31.8, 4.95, 14.78, 2.5), 44.0, 48.0))        # window over the rear wheel
     sh = S(body, *cut)
     return sh if s > 0 else {"type": "mirror", "shape": sh, "axis": "x"}
 
 
 # ---------------------------------------------------------------- wheels
 def rear_hub():   # RV21, local x 0 = inner face: O-ring groove (1.0 flanges), then the 12 mm F1 tyre seat with a retaining ridge
-    prof = [(1.5, 0.0), (8.0, 0.0), (8.0, 1.0), (7.0, 1.0), (7.0, 2.2), (8.0, 2.2), (8.0, 3.2), (6.0, 3.2), (6.0, 6.2), (6.15, 6.5), (6.15, 9.2),
-            (6.0, 9.5), (6.0, 12.7), (1.5, 12.7)]
+    prof = [(1.5, 0.0), (8.0, 0.0), (8.0, 0.6), (7.0, 0.6), (7.0, 1.8), (8.0, 1.8), (8.0, 2.5), (6.0, 2.5), (6.0, 5.5), (6.15, 5.8), (6.15, 9.0),
+            (6.0, 9.3), (6.0, 12.0), (1.5, 12.0)]
     sh = place({"type": "revolve", "profile": r4(prof)}, (0, 0, 0), (0, 90, 0))
     return S(sh, place({"type": "cylinder", "radius": 1.0, "height": 10.0}, (7.5, 0, 3.5), (0, 0, 0)))   # M2 grub-screw hole
 
 
 RH_TYRE = 2.5     # tyre inner face (hub-local)
-FH_TYRE = 3.2
+FH_TYRE = 2.5
 
 
 def front_hub():  # RV19 9 mm micro hub on the 5 mm standoff: O-ring groove inboard, 7 mm tyre seat
-    prof = [(2.6, 0.0), (4.5, 0.0), (4.5, 1.0), (3.5, 1.0), (3.5, 2.2), (4.5, 2.2), (4.5, 3.2), (3.6, 3.2), (3.6, 9.2), (2.6, 9.2)]
+    prof = [(2.6, 0.0), (4.5, 0.0), (4.5, 0.6), (3.5, 0.6), (3.5, 1.8), (4.5, 1.8), (4.5, 2.5), (3.6, 2.5), (3.6, 9.0), (2.6, 9.0)]
     return place({"type": "revolve", "profile": r4(prof)}, (0, 0, 0), (0, 90, 0))
 
 
@@ -420,10 +524,11 @@ P(id="tub", kind="structure", print_orientation="-z", rotates_with="fixed", soli
   label="RV01 printed PLA-ST open box: X-ribbed floor, rear N10 pockets, front lugs that seat the weapon uprights, 2 alu-nut pockets, 5 insert bosses")
 P(id="base_panel", kind="structure", print_orientation="+z", rotates_with="fixed", color="#2a2c30", shape=base_panel(), **PLA,
   label="RV26 1 mm printed base panel 47.4 x 54.4, 5 M2 CSK into the floor inserts, 6 lightening holes")
-P(id="top_armour", kind="armor", material="tpu", process="fdm", print_orientation="+z", rotates_with="fixed", color="#c8ccd2", shape=hood(),
-  label="raised TPU hood with triangle cut-outs, snaps over the tub rim")
+P(id="top_armour", kind="armor", material="tpu", process="fdm", print_orientation="+z", rotates_with="fixed", color="#5a5f68", shape=hood(),
+  label="raised TPU hood: shallow battered pyramid, two vent slots, lip snaps under the tub rim")
 
-# weapon module: both uprights, the 4 standoffs, motor and drisk lift out together once the 2 wedglet screws per side are out
+# weapon module (guide: quick change = unbolt 4 M3): both uprights, motor, bearing and drisk lift forward off the chassis
+# lugs once the 4 upright-to-standoff screws are out; the standoffs stay in the chassis box sections with the wedglets
 P(id="upright_l", kind="structure", print_orientation="+x", rotates_with="fixed", solid_fraction=1.0, color="#2a2c30", shape=upright("l"), **PLA,
   label="RV02 4 mm printed plate: BE1806 stator bolted to it (4 M2, 12/16 pattern), notch seats on the chassis lug, 2 M3 into the standoffs")
 P(id="upright_r", kind="structure", parent="upright_l", print_orientation="+x", rotates_with="fixed", solid_fraction=1.0, color="#2a2c30", shape=upright("r"), **PLA,
@@ -431,34 +536,38 @@ P(id="upright_r", kind="structure", parent="upright_l", print_orientation="+x", 
 for s, n in ((1, "l"), (-1, "r")):
     xi = UL_OUT if s > 0 else UR_OUT
     for nm, (y, z), L in (("a", SA, SA_LEN), ("b", SB, SB_LEN)):
-        P(id=f"so_{nm}{n}", kind="pin", role="standoff", material="aluminium", process="cots", parent="upright_l", rotates_with="fixed", color="#b8bcc2",
+        P(id=f"so_{nm}{n}", kind="pin", role="standoff", material="aluminium", process="cots", rotates_with="fixed", color="#b8bcc2",
           stock=f"M3 x {L:g} mm aluminium standoff, 5 mm OD", shape=S(cylx(SO_R, *sorted((xi, s * (abs(xi) + L))), y, z), cylx(1.25, *sorted((s * (abs(xi) - 1), s * (abs(xi) + L + 1))), y, z)),
           label=f"{L:g} mm M3 alu standoff (5 OD): clamps the upright" + (" and is the greased front axle" if nm == "b" else "") + "; the wedglet slides over it")
 P(id="weapon_motor", kind="weapon_motor", catalog="be1806_bbb", exposed=True,
   exposed_reason="Drisk: the BE1806 bell is the hub of the weapon and turns inside the spacer between the two Hardox discs, as on the real RVRN; the discs (R16.5-21.5) shield it radially", parent="upright_l", at=[MOT_X, WY, WZ], rot=[90, 0, 180], rotates_with="fixed",
   label="BBB BE1806 2300 kV: stator bolted to the left upright, the bell turns with the drisk")
 P(id="blade_c", kind="weapon", material="hardox", process="laser", stock="3 mm Hardox 450", secondary_ops=["drilled"], organic=True, rotates_with="weapon",
-  shape=S(place({"type": "prism", "points": disc_outline(PHASE), "height": DT}, (0, 0, 0)), *disc_cuts(DT)),
+  shape=S(place({"type": "prism", "points": disc_outline(A0), "height": DT}, (0, 0, 0)), *disc_cuts(DT)),
   at=[BLM, WY, WZ], rot=[0, 90, 0], parent="upright_l",
   joint={"kind": "revolute", "axis": [1, 0, 0], "pivot": [CAN_TOP - 0.5, WY, WZ], "min": 0, "max": 360, "default": 0}, color="#d9dde2",
   weapon={"kind": "disc", "motor": "weapon_motor", "cells": 2, "reduction": 1.0, "spin_axis": [0, 0, 1], "spin_dir": "ccw", "supported_both_ends": True, "teeth": 2},
   label="RV10 drisk disc, motor side: 3 mm Hardox, R16.5 with two tips at R21.5, 6 mm bore, 4 M2 on r4.5 (bell), 4 M2 on r14 (stack), 4 x 8.3 lightening")
 P(id="disc_f", kind="other", role="blade", material="hardox", process="laser", stock="3 mm Hardox 450", secondary_ops=["drilled"], rotates_with="weapon",
-  shape=S(place({"type": "prism", "points": disc_outline(PHASE), "height": DT}, (0, 0, 0)), *disc_cuts(DT, full=False)),
+  shape=S(place({"type": "prism", "points": disc_outline(A0), "height": DT}, (0, 0, 0)), *disc_cuts(DT, full=False)),
   parent="blade_c", at=[0, 0, (DF_X[0] + DF_X[1]) / 2 - BLM], rot=[0, 0, 0], color="#d9dde2",
   label="RV11 floating drisk disc: same 3 mm Hardox profile, 23.5 bore clears the bell, held by the 4 long M2")
 P(id="spacer", kind="other", role="spacer", rotates_with="weapon", print_orientation="+z", parent="blade_c", at=[0, 0, (SP_X[0] + SP_X[1]) / 2 - BLM], rot=[0, 0, 0],
   shape=spacer_shape(), color="#2a2c30", **PLA, label="RV04 8 mm printed drisk spacer round the bell (ID 23.27), 4 lobes for the long M2")
 P(id="prop_mount", kind="other", role="hub", material="aluminium", process="turned", rotates_with="weapon", parent="blade_c", at=MF_AT, rot=MF_ROT,
-  shape=S(cylx(7.5, PM_X[0], PM_X[1], WY, WZ), cylx(2.5, PM_X[0] - 1, PM_X[1] + 1, WY, WZ),
-          *[cylx(1.095, PM_X[0] - 1, PM_X[1] + 1, *wyz(A0 + 90 * k, CAN_R)) for k in range(4)]),
+  shape=S(U(cylx(7.5, PM_X[0], PM_X[1], WY, WZ), cylx(2.5, PM_SP, PM_X[0] + 0.5, WY, WZ)), cylx(2.5, PM_X[0] - 0.01, PM_X[1] + 1, WY, WZ),
+          cylx(2.05, PM_SP - 1, PM_X[0] + 0.01, WY, WZ), *[cylx(1.095, PM_X[0] - 1, PM_X[1] + 1, *wyz(A0 + 90 * k, CAN_R)) for k in range(4)],
+          *[cylx(1.95, PM_X[0] - 1, PM_X[0] + PM_CB, *wyz(A0 + 90 * k, CAN_R)) for k in range(4)]),
   secondary_ops=["drilled"], color="#9aa0a6", label="RV07 BE1806 prop-mount flange (15 mm): clamps the motor-side disc to the bell with 4 M2, collet on the 5 mm shaft")
-P(id="wshaft", kind="shaft", material="steel", process="cots", stock="5 mm silver steel rod", rotates_with="weapon", shaft_of="weapon_motor", parent="blade_c",
-  at=MF_AT, rot=MF_ROT, shape=cylx(2.49, SH_X[0], SH_X[1], WY, WZ), color="#777777",
-  label="BE1806 5 mm rotor shaft, run through the bell into the MF85ZZ in the right upright (circlip at the stator back)")
+P(id="wshaft", kind="shaft", material="steel", process="cots", stock="BE1806 rotor shaft (part of the motor)", rotates_with="weapon", shaft_of="weapon_motor", parent="blade_c",
+  at=MF_AT, rot=MF_ROT, shape=cylx(1.5, SH_X[0], SH_X[1], WY, WZ), color="#777777", mass_g=0.0,
+  label="BE1806 3 mm rotor shaft (its mass is in the 18.5 g motor): stator bearings, bell, prop-mount collet; circlip at the stator back")
 P(id="wbearing", kind="bearing", parent="upright_r", material="steel", process="cots", rotates_with="fixed", stock="MF85ZZ", color="#555555",
-  shape=S(U(cylx(4.0, BR_X[0], UR_IN, WY, WZ), cylx(4.6, UR_IN, BR_X[1], WY, WZ)), cylx(2.5, BR_X[0] - 1, BR_X[1] + 1, WY, WZ)),
-  label="MF85ZZ 5 x 8 x 2.5 flanged, pressed into the right upright from the inside")
+  shape=S(U(cylx(4.6, BR_X[0], UR_OUT, WY, WZ), cylx(4.0, UR_OUT, BR_X[1], WY, WZ)), cylx(2.5, BR_X[0] - 1, BR_X[1] + 1, WY, WZ)),
+  label="MF85ZZ 5 x 8 x 2.5 flanged, pressed into the right upright from the outer face, flange outside")
+P(id="bspacer", kind="other", role="spacer", parent="blade_c", rotates_with="weapon", print_orientation="+x", at=MF_AT, rot=MF_ROT, color="#2a2c30",
+  shape=S(cylx(3.4, BS_X[0], BS_X[1], WY, WZ), cylx(2.55, BS_X[0] - 1, BS_X[1] + 1, WY, WZ)), **PLA,
+  label="RV09 printed bearing spacer on the prop-mount spigot: clamps the MF85ZZ inner race against the flange, clears the upright bore")
 for k in range(4):
     dy, dz = yz_of(A0 + 90 * k, BOLT_R)
     px = BL_X[0] - 0.8
@@ -480,7 +589,7 @@ for s, n in ((1, "l"), (-1, "r")):
       label="RV19 printed front hub 9 x 9 with O-ring groove, runs greased on the 5 mm standoff (no bearing)")
     P(id=f"wheel_f{n}", kind="wheel", material="rubber", process="cots", tyre_of=f"whub_f{n}", rotates_with=f"wheel_f{n}", parent=f"whub_f{n}", at=[FH_TYRE, 0, 0],
       shape=tyre(FW_OD, FW_ID, FW_W), color="#1b1b1b", stock="Scalextric Micro SLX tyre 11 x 7 x 6", label="Scalextric micro tyre 11 x 7 x 6")
-    P(id=f"spike_{n}", kind="fork", parent=f"so_a{n}", material="tpu", process="fdm", print_orientation="+z", rotates_with="fixed", color="#c8102e", shape=wedglet(s),
+    P(id=f"wedglet_{n}", kind="fork", parent=f"so_a{n}", material="tpu", process="fdm", print_orientation="+z", rotates_with="fixed", color="#3c4048", shape=wedglet(s),
       label="RV17/18 + RV23/24 low-profile TPU wedglet / side panel: slides over both front standoffs, 3 M3 (two standoff ends, one chassis nut)")
     P(id=f"nut_c{n}", kind="nut", catalog="nut_m3_alu", at=[s * NUT_XC, NUT_Y, NUT_Z], rot=[0, 90, 0], rotates_with="fixed")
 
@@ -498,27 +607,27 @@ def F(**k):
 for i, (x, y) in enumerate(INS):
     F(id=f"bolt_b{i}", designation="M2x6", at=[x, y, BP["z0"]], dir=[0, 0, 1], through=["base_panel", "tub"], threads_into=f"insert_b{i}", head="countersunk")
 for k, (dy, dz) in enumerate(((8, 0), (-8, 0), (0, 6), (0, -6))):
-    F(id=f"bolt_wm{k}", designation="M2x6", at=[UL_OUT - WM_CB, WY + dy, WZ + dz], dir=[-1, 0, 0], through=["upright_l"], threads_into="weapon_motor")
+    F(id=f"bolt_wm{k}", designation="M2x8", at=[UL_OUT - WM_CB, WY + dy, WZ + dz], dir=[-1, 0, 0], through=["upright_l"], threads_into="weapon_motor")
 for s, n in ((1, "l"), (-1, "r")):
     xi = UL_IN if s > 0 else UR_IN
     up = "upright_l" if s > 0 else "upright_r"
     for nm, (y, z), e in (("a", SA, SA_END), ("b", SB, SB_END)):
-        F(id=f"bolt_u{n}{nm}", designation="M3x10", material="aluminium", at=[xi, y, z], dir=[s, 0, 0], through=[up], threads_into=f"so_{nm}{n}", tool="hex2.5",
-          **({} if s > 0 else dict(access_before=["blade_c", "disc_f", "spacer"], reason="Right upright and its two standoffs are screwed together on the bench before the plate goes onto the shaft")))
-        F(id=f"bolt_s{n}{nm}", designation="M3x10" if nm == "a" else "M3x8", material="aluminium", at=[s * (44.5 if nm == "a" else e + 1.5), y, z], dir=[-s, 0, 0], through=[f"spike_{n}"], threads_into=f"so_{nm}{n}", tool="hex2.5",
+        F(id=f"bolt_u{n}{nm}", designation="M3x10", material="aluminium", at=[xi + s * UB_CB, y, z], dir=[s, 0, 0], through=[up], threads_into=f"so_{nm}{n}", tool="hex2.5",
+          reason="Quick-change: the hex key reaches past the drisk rim (the heads sit off the tooth sectors) to release the weapon module")
+        F(id=f"bolt_s{n}{nm}", designation="M3x12" if nm == "a" else "M3x8", material="aluminium", at=[s * (44.5 if nm == "a" else e + 1.5), y, z], dir=[-s, 0, 0], through=[f"wedglet_{n}"], threads_into=f"so_{nm}{n}", tool="hex2.5",
           reason="Wedglet bore slides over the standoff (takes the shear); the CSK screw along the standoff axis clamps it to the end face")
-    F(id=f"bolt_s{n}c", designation="M3x12", material="aluminium", at=[s * 36.0, NUT_Y, NUT_Z], dir=[-s, 0, 0], through=[f"spike_{n}", "tub"], threads_into=f"nut_c{n}", tool="hex2.5")
+    F(id=f"bolt_s{n}c", designation="M3x12", material="aluminium", at=[s * SLC_X, NUT_Y, NUT_Z], dir=[-s, 0, 0], through=[f"wedglet_{n}", "tub"], threads_into=f"nut_c{n}", tool="hex2.5")
 for k in range(4):
     dy, dz = yz_of(A0 + 90 * k, BOLT_R)
     F(id=f"bolt_d{k}", designation="M2x16", at=[DF_X[1], WY + dy, WZ + dz], dir=[-1, 0, 0], through=["disc_f", "spacer", "blade_c"], threads_into=f"nut_w{k}",
-      access_before=["upright_l", "weapon_motor", "spike_l", "so_al", "so_bl"], reason="The drisk stack is bolted up on the bench before it goes onto the motor bell (guide step 1)")
+      access_before=["upright_l", "weapon_motor", "wedglet_l", "so_al", "so_bl"], reason="The drisk stack is bolted up on the bench before it goes onto the motor bell (guide step 1)")
     dy, dz = yz_of(A0 + 90 * k, CAN_R)
-    F(id=f"bolt_p{k}", designation="M2x8", at=[PM_X[0], WY + dy, WZ + dz], dir=[1, 0, 0], through=["prop_mount", "blade_c"], threads_into="weapon_motor",
-      access_before=["upright_r", "wbearing"],
+    F(id=f"bolt_p{k}", designation="M2x8", at=[PM_X[0] + PM_CB, WY + dy, WZ + dz], dir=[1, 0, 0], through=["prop_mount", "blade_c"], threads_into="weapon_motor",
+      access_before=["upright_r", "wbearing", "bspacer"],
       reason="Driven on the bench when the drisk is built onto the motor (guide step 2), before the right upright and its bearing go on")
 
 # O-ring belts: rear hub groove -> front hub groove, one per side
-BX = (31.0, 32.2)
+BX = (RH_X[0] + 0.6, RH_X[0] + 1.8)   # O-ring in the inboard hub grooves
 def belt_shape(s):
     rr, rf = 7.0, 3.5
     o = hull(circ_pts((RY, RZ), rr + 1.2) + circ_pts(SB, rf + 1.2)); i = hull(circ_pts((RY, RZ), rr) + circ_pts(SB, rf))
@@ -530,6 +639,13 @@ for s, n in ((1, "l"), (-1, "r")):
     P(id=f"belt_{n}", kind="belt", material="rubber", process="cots", shape=belt_shape(s), color="#111111",
       belt={"pulleys": [f"whub_r{n}", f"whub_f{n}"], "kind": "o_ring", "length_mm": BELT_L, "width_mm": 1.2},
       label=f"1.2 mm nitrile O-ring, {BELT_L} mm inside circumference, 10 % stretch: drives the front wheel off the rear hub")
+
+
+def chain_root(q):
+    by = {x["id"]: x for x in parts}
+    while q.get("parent"):
+        q = by[q["parent"]]
+    return q["id"]
 
 
 def Wr(i, a, b, awg, kind, sl): return {"id": i, "from": a, "to": b, "awg": awg, "kind": kind, "slack_mm": sl}
@@ -548,16 +664,18 @@ for s, n in ((1, "l"), (-1, "r")):
     C(f"wheel_f{n}", f"whub_f{n}", "press_fit", "Micro tyre stretched into the 7 mm hub seat between the flanges", interference_mm=0.2, mechanical_key=True)
     for nm in "ab":
         C(f"so_{nm}{n}", up, "screw", "M3 CSK alu screw through the upright into the standoff end; standoff end face clamps the plate")
-        C(f"so_{nm}{n}", f"spike_{n}", "screw", "Wedglet slides over the standoff and is screwed to its outer end (M3 CSK alu)", mechanical_key=True)
+        C(f"so_{nm}{n}", "tub", "pin", "Standoff passes through the 5 mm hole in the chassis box section", mechanical_key=True)
+        C(f"so_{nm}{n}", f"wedglet_{n}", "screw", "Wedglet slides over the standoff and is screwed to its outer end (M3 CSK alu)", mechanical_key=True)
     C(f"belt_{n}", f"whub_r{n}", "interlock", "O-ring in the rear hub groove under 10 % stretch")
     C(f"belt_{n}", f"whub_f{n}", "interlock", "O-ring in the front hub groove; drives the front wheel")
-    C(f"spike_{n}", "tub", "screw", "Wedglet / side panel screwed to the chassis side wall into a press-fit alu M3 nut")
+    C(f"wedglet_{n}", "tub", "screw", "Wedglet / side panel screwed to the chassis side wall into a press-fit alu M3 nut")
     C(f"nut_c{n}", "tub", "press_fit", "Alu M3 nut pressed into the hex pocket inside the side wall", interference_mm=0.1, mechanical_key=True)
     C(up, "tub", "interlock", "Upright notch seats over the chassis lug between two cheeks; the standoffs and wedglet screws lock it", mechanical_key=True)
 C("weapon_motor", "upright_l", "screw", "Stator base bolted to the left upright with 4 M2 (12 / 16 mm pattern)")
 C("blade_c", "weapon_motor", "screw", "Motor-side disc clamped to the bell by the prop-mount flange and 4 M2 into the bell: the bell drives the drisk", mechanical_key=True)
 C("prop_mount", "blade_c", "screw", "Prop-mount flange clamps the disc to the bell, 4 M2", mechanical_key=True)
-C("wshaft", "wbearing", "shaft", "5 mm shaft in the MF85ZZ inner race: the second support of the drisk")
+C("prop_mount", "wbearing", "shaft", "Prop-mount 5 mm spigot in the MF85ZZ inner race: the second support of the drisk")
+C("bspacer", "prop_mount", "pin", "RV09 spacer slid on the spigot, clamped between the flange and the inner race", mechanical_key=True)
 C("wshaft", "weapon_motor", "press_fit", "The motor's own rotor shaft, pressed in the bell and held by its circlip behind the stator", interference_mm=0.02, mechanical_key=True)
 C("prop_mount", "wshaft", "press_fit", "Prop-mount collet clamped on the 5 mm shaft", interference_mm=0.02, mechanical_key=True)
 C("wbearing", "upright_r", "press_fit", "MF85ZZ pressed into the 7.98 seat, flange on the inner face", interference_mm=0.02, mechanical_key=True)
@@ -573,20 +691,22 @@ C("wesc", "rxesc", "interlock", "BBB ESC kapton-wrapped onto the Malenki as one 
 C("wesc", "tub", "interlock", "ESC brick boxed in by the tub side wall, the battery, the front wall and the hood lip above")
 C("power_switch", "tub", "press_fit", "Switch pressed into the rear-wall slot, 2 M2 on the housing", interference_mm=0.1)
 
-ov = [dict(a="wshaft", b="wbearing", max_depth_mm=0.3, reason="5 mm shaft runs in the MF85ZZ inner race (bearing modelled as one solid)")]
+ov = [dict(a="prop_mount", b="wbearing", max_depth_mm=0.3, reason="5 mm prop-mount spigot runs in the MF85ZZ inner race (bearing modelled as one solid)")]
 spec = dict(name="Revron", profile="aws2025", robot_type="vertical_spinner", locomotion="roller", archetype="vertical_spinner_forks",
             archetype_params={"blade_lead_mm": [-12, -5], "axle_height_mm": [21, 24], "disc_thickness_mm": [13, 15], "disc_dia_mm": [41, 45], "teeth": [2, 2],
                               "tub_height_mm": [13, 17], "wheels": [4, 4], "wheel_dia_mm": [10, 23], "weapon_mass_fraction": [0.18, 0.5], "top_slope_deg": [-5, 25]},
             targets={"length_mm": 101, "width_mm": 104, "disc_dia_mm": 43, "wheel_dia_mm": 21.5, "tol_mm": 4,
                      "source": "RVRN reference CAD (research/rvrn_drive) measured in its assembly frame", "note": "drisk 3+8+3 on a BE1806; N10 direct to 21.5 rear wheels, O-rings to 11 mm fronts"},
-            weapon_lock={"type": "removable_pin", "mode": "tooth_stop", "dia_mm": 3.0, "axis": [1, 0, 0], "holes": ["tub"], "at": [0.0, 13.0, 16.3],
-                         "note": "M3 pin through both tub cheeks inside the tip circle; stops the teeth (RVRN has no lock model)"},
+            weapon_lock={"type": "removable_pin", "mode": "tooth_stop", "dia_mm": 3.0, "axis": [1, 0, 0], "holes": ["tub"], "at": [0.0, LOCK[0], LOCK[1]],
+                         "note": "M3 pin through both chassis lugs at r19.1, inside the tip circle and outside the R16.5 rim: stops the teeth (RVRN has no lock model)"},
             parts=parts, fasteners=fast, wires=wires,
+            modules=[{"id": "weapon_module", "root": "upright_l", "note": "RVRN quick-change weapon module: 4 M3 out, lifts forward off the chassis lugs",
+                      "parts": [q["id"] for q in parts if chain_root(q) == "upright_l" and q["id"] != "upright_l"]}],
             electronics=dict(failsafe=True, weapon_remote_disable=True, radio="2.4 GHz", cells=2), can_run_inverted=False,
             allow_overlap=ov, connections=conn,
             claims=[dict(id="c_mass", text="weighs 150 g or less", metric="mass_total_g", op="<=", value=150),
                     dict(id="c_fit", text="fits the 150 mm square", metric="footprint_mm", op="<=", value=150)])
-for k in ("reference_ratios", "reference_cad"):
+for k in ("reference_ratios",):
     spec[k] = json.load(open(f"/mnt/project-files/robot-cad/b123d/audit/revron_{k}.json"))
 # Corrections from the reference CAD assembly frame (coordinator-approved 2026-10-18): the 21.5 mm F1 tyre is on the
 # N10 shaft at the REAR (x_ref 97.85), the 11 mm micro tyre on the front standoff (x_ref 36.85); Scalextric "micro rear"
@@ -597,14 +717,38 @@ CAD_FIX = {
     "axle_z_over_disc_dia": dict(value=0.52, tol=0.04, source="RVRN CAD: axle y_ref 26.6 - floor 4.25 = 22.35 / 43"),
     "rear_over_front_wheel_dia": dict(value=1.95, tol=0.1, source="RVRN CAD: F1 21.5 on the N10 at the rear, micro 11 on the front standoff"),
     "rotor_mass_fraction": dict(value=0.28, tol=0.03, source="RVRN CAD + BOM: 2 x 14.7 g Hardox discs, 1.7 g spacer, prop mount, 4 long M2 + nuts and half the 18.5 g BE1806 (its bell turns with the drisk) of 150 g; the 31 g photo figure counted the plates only"),
-    "pod_h_over_tub_h": dict(num="part:spike_l.H", value=1.0, tol=0.15, source="RVRN CAD: low-profile wedglet / side panel 15 tall, chassis ~15"),
+    "pod_h_over_tub_h": dict(num="part:wedglet_l.H", value=1.0, tol=0.15, source="RVRN CAD: low-profile wedglet / side panel 15 tall, chassis ~15"),
+    "fork_span_over_width": dict(num="part:wedglet_*.W", value=1.0, tol=0.05, source="RVRN CAD: the two low-profile wedglets are the outermost parts (outer faces z_ref 0.52 and its mirror)"),
+    "upright_symmetry": dict(value=1.106, tol=0.05, source="RVRN CAD: fl 31.23 tall vs fr 28.24 (the bearing-side plate is smaller)"),
 }
 for e in spec["reference_ratios"]:
     if e["name"] in CAD_FIX:
         e.update(CAD_FIX[e["name"]])
-for e in spec["reference_cad"]["parts"]:
-    if e["part"] == "wheel_fl": e["file"] = "Micro_slx_v1.0-2_11OD_7ID_6W_Micro_slx-1.STL"
-    elif e["part"] == "wheel_rl": e["file"] = "RVRN_1.7_C5_Scalextric_F1_Front_tyre-1.STL"
+# Reference CAD comparison. All RVRN STLs share the RVRN assembly frame; REF_TO_WORLD maps it to ours, so each part is
+# compared in place (silhouette IoU along X, Y and Z) as well as by its pose-free fingerprint. mirror_x: opposite hand.
+REF_TO_WORLD = [[0, 0, -1, 52.57], [-1, 0, 0, 60.0], [0, 1, 0, -4.25], [0, 0, 0, 1]]
+def RCE(part, file, mode="shape", **k): return dict(part=part, file=file, mode=mode, **k)
+spec["reference_cad"] = {"dir": "/mnt/project-files/robot-cad/research/rvrn_drive", "ref_to_world": REF_TO_WORLD, "iou_min": 0.9, "parts": [
+    RCE("blade_c", "RVRN_1.7_PT_10_Drisk_Blade_Motor_Side-1.STL", tol_mm=0.5, tol_vol_frac=0.1, note="motor-side drisk disc 41.25 x 33 x 3"),
+    RCE("disc_f", "RVRN_1.7_PT_10_Drisk_Blade_Motor_Side-1.STL", mode="envelope", tol_mm=0.5, tol_vol_frac=0.35, ref_shift=[DF_X[0] - BL_X[0], 0, 0],
+        outline_only=True, note="floating disc: the PT_10 outline one spacer along the axle, 23.5 bore clears the bell (no can-mount holes or pockets)"),
+    RCE("spacer", "RVRN_1.7_PT_9_Drisk_Spacer-1.STL", tol_mm=0.5, note="printed drisk spacer 31.85 x 8"),
+    RCE("upright_l", "fl-1.STL", tol_mm=0.8, tol_vol_frac=0.15, note="LH upright, 4 mm plate"),
+    RCE("upright_r", "fr-1.STL", tol_mm=0.8, tol_vol_frac=0.15, note="RH upright, 4 mm plate"),
+    RCE("base_panel", "RVRN_1.7_PT_8_Bottom_Panel-1.STL", tol_mm=0.8, tol_vol_frac=0.15, note="47.4 x 54.4 x 1 panel, 5 M2 CSK"),
+    RCE("wedglet_l", "MirrorLow_profile_wedglet-2.STL", tol_mm=1.0, tol_vol_frac=0.15, note="TPU low-profile wedglet, left hand"),
+    RCE("wedglet_r", "MirrorLow_profile_wedglet-2.STL", tol_mm=1.0, tol_vol_frac=0.15, mirror_x=True, note="TPU low-profile wedglet, right hand (mirror)"),
+    RCE("whub_rl", "RVRN_1.7_PT_13_Rear_Wheel-2.STL", tol_mm=0.8, tol_vol_frac=0.25, note="printed rear wheel hub 16 x 12"),
+    RCE("whub_fl", "Micro_slx_v1.0-2_Hub_Micro-1.STL", tol_mm=0.8, tol_vol_frac=0.3, note="micro hub 9 x 9"),
+    RCE("prop_mount", "RVRN_1.7_C4_BE1806_Prop_Mount_Unmodified-1.STL", mode="envelope", tol_mm=0.5, tol_vol_frac=0.3,
+        note="bought-in BE1806 prop mount: 15 x 3 flange and the 5 mm spigot through the MF85ZZ"),
+    RCE("battery", "RVRN_1.7_C7_Turnabot_180mah_2s-1.STL", mode="envelope", tol_mm=1.0, tol_vol_frac=0.15),
+    RCE("wheel_fl", "Micro_slx_v1.0-2_11OD_7ID_6W_Micro_slx-1.STL", mode="envelope", tol_mm=0.5, tol_vol_frac=0.25),
+    RCE("wheel_rr", "RVRN_1.7_C5_Scalextric_F1_Front_tyre-1.STL", mode="envelope", tol_mm=0.5, tol_vol_frac=0.25),
+    RCE("motor_r", "RVRN_1.7_C1_Turnabot_Spicy_N10_2200_RPM-1.STL", mode="envelope", tol_mm=0.5, tol_vol_frac=0.3),
+    RCE("weapon_motor", "RVRN_1.7_C2_BBB_BE1806_Rough_Motor_Model-1.STL", mode="envelope", tol_mm=1.0, tol_vol_frac=0.3),
+    RCE("wbearing", "MF85ZZ_Budget_Metal_Shielded_Flanged_Deep_Groove_Ball_Bearing_5x8x2.5mm-1.STL", mode="envelope", tol_mm=0.3, tol_vol_frac=0.3),
+]}
 json.dump(spec, open(OUT, "w"), indent=1)
 json.dump(spec, open(os.path.join(HERE, "..", "spec.json"), "w"), indent=1)
 print("wrote", OUT, len(parts), "parts", len(fast), "fasteners")

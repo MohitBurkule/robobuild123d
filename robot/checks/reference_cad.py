@@ -8,6 +8,11 @@ Shape-intrinsic fingerprints (independent of pose): oriented-box extents (sorted
 plate-like parts, the holes cut through the mid-plane as (diameter, distance from the outline centroid): bores, bolt
 circles and pockets. Findings:
   reference_cad.dims / .volume / .holes / .placement   each within tolerance (WARNING when off)
+  reference_cad.silhouette (BLOCKER)  for "shape" parts when a `ref_to_world` 4x4 is given (config or entry; plus
+                                  `mirror_x` for the opposite hand, `ref_shift` for a second copy, `outline_only` to
+                                  fill holes first): the reference is placed in our world frame and the
+                                  silhouettes along X, Y and Z must each reach IoU >= `iou_min` (default 0.9). This
+                                  catches a wrong outline, missing cut-outs, wrong heights and wrong placement.
   reference_cad.copied (BLOCKER)  the model mesh is near-identical to the reference mesh (same triangle structure and
                                   ~0 Hausdorff after alignment): geometry must come from our parametric code, not an import.
   reference_cad.unusable          file missing/unreadable or part missing -> NOT CHECKED, never a pass.
@@ -74,6 +79,55 @@ def plate_holes(m, obb=None):
     return sorted(out)
 
 
+def _raster(meshes, ax, lo, res, shape):
+    """Silhouette of meshes projected along world axis `ax` on a grid (origin lo, pixel res mm)."""
+    from PIL import Image, ImageDraw
+
+    a, b = [i for i in range(3) if i != ax]
+    img = Image.new("1", shape, 0)
+    d = ImageDraw.Draw(img)
+    for m in meshes:
+        T = np.asarray(m.vertices, float)[np.asarray(m.faces)][:, :, [a, b]]
+        T = (T - np.asarray(lo)[[a, b]]) / res
+        for t in T:
+            d.polygon([tuple(p) for p in t], fill=1, outline=1)
+    return np.asarray(img, bool)
+
+
+def silhouette_iou(ma, mb, res=0.1, fill_holes=False):
+    """IoU of the silhouettes of two meshes (already in one frame) projected along X, Y and Z: [iou_x, iou_y, iou_z].
+    fill_holes: compare outlines only (holes inside a silhouette filled), for a part that shares the reference's outline
+    but not its cut-outs."""
+    lo = np.minimum(ma.bounds[0], mb.bounds[0]) - 1.0
+    hi = np.maximum(ma.bounds[1], mb.bounds[1]) + 1.0
+    out = []
+    for ax in range(3):
+        a, b = [i for i in range(3) if i != ax]
+        shape = (int(np.ceil((hi[a] - lo[a]) / res)) + 1, int(np.ceil((hi[b] - lo[b]) / res)) + 1)
+        A, B = _raster([ma], ax, lo, res, shape), _raster([mb], ax, lo, res, shape)
+        if fill_holes:
+            from scipy.ndimage import binary_fill_holes
+            A, B = binary_fill_holes(A), binary_fill_holes(B)
+        u = np.logical_or(A, B).sum()
+        out.append(float(np.logical_and(A, B).sum() / u) if u else 1.0)
+    return out
+
+
+def ref_in_world(ref, e, cfg):
+    """Reference mesh moved into the model's world frame: the entry's (or the config's) `ref_to_world` 4x4, then an
+    optional mirror across X = 0 (`mirror_x`, for the opposite-hand copy of a handed part) and shift (`ref_shift`,
+    for a second copy of the same part elsewhere)."""
+    T = e.get("ref_to_world", cfg.get("ref_to_world"))
+    m = ref.copy()
+    if T is not None:
+        m.apply_transform(np.asarray(T, float))
+    if e.get("mirror_x"):
+        m.apply_transform(np.diag([-1.0, 1, 1, 1]))
+    if e.get("ref_shift") is not None:
+        m.apply_translation(np.asarray(e["ref_shift"], float))
+    return m
+
+
 def match_holes(a, b, tol):
     """Greedy match of (d, r) lists. Returns (unmatched in a, unmatched in b)."""
     b = list(b)
@@ -113,6 +167,10 @@ def is_copy(ma, mb, rel=0.002):
                 h = max(tb.query(As)[0].max(), cKDTree(As).query(B)[0].max())
                 best = h if best is None else min(best, h)
     return best < rel * diag, best
+
+
+def _cfg_has_frame(e, cfg):
+    return e.get("ref_to_world", cfg.get("ref_to_world")) is not None
 
 
 def run(ctx):
@@ -179,6 +237,22 @@ def run(ctx):
                                 f"`{pid}` has {fm['genus']} through-holes, `{fn}` has {fr['genus']}.").on(pid))
             else:
                 out.append(ok("reference_cad.holes", G, "Through-hole count matches", f"`{pid}`: {fm['genus']} through-holes.").on(pid))
+        if (e.get("mode", "shape") == "shape" or e.get("outline_only")) and _cfg_has_frame(e, cfg):
+            need = float(e.get("iou_min", cfg.get("iou_min", 0.9)))
+            try:
+                ious = silhouette_iou(mod, ref_in_world(ref, e, cfg), float(cfg.get("iou_res_mm", 0.1)), bool(e.get("outline_only")))
+            except Exception as ex:  # noqa: BLE001 - fail closed
+                ious = None
+                out.append(fail("reference_cad.silhouette", G, BLOCKER, "Silhouette comparison crashed", f"`{pid}` vs `{fn}`: {ex}").on(pid))
+                ctx.not_checked.append(f"Silhouette of `{pid}` vs `{fn}`")
+            if ious is not None:
+                ctx.metrics.setdefault(f"reference_cad.{pid}", {})["iou"] = ious
+                smsg = (f"`{pid}` vs `{fn}` {'outline' if e.get('outline_only') else 'silhouette'} IoU along X/Y/Z "
+                        f"{[round(v, 3) for v in ious]} (need >= {need} on every axis, reference placed in our world frame)")
+                out.append(ok("reference_cad.silhouette", G, "Part shape matches the reference in all three views", smsg).on(pid)
+                           if min(ious) >= need else
+                           fail("reference_cad.silhouette", G, BLOCKER, "Part shape differs from the reference CAD", smsg).on(pid)
+                           .fix("Match the outline seen along the worst axis: outline, cut-outs, heights and placement."))
         if e.get("at") is not None:
             lo, hi = b.aabb
             c = (np.asarray(lo) + np.asarray(hi)) / 2
