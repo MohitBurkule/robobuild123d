@@ -62,7 +62,7 @@ def main(argv=None):
     v.add_argument("--fast", action="store_true", help="coarse tessellation for quick iteration")
     v.add_argument("--quick", action="store_true", help="skip the slow sweeps (wiring, assembly)")
     v.add_argument("--json", help="also write report.json here")
-    for name in ("render", "export"):
+    for name in ("render", "export", "gen.cli"):
         try:
             mod = __import__(f"robot.{name}", fromlist=["add_cli"])
             mod.add_cli(sub)

@@ -1,0 +1,1042 @@
+{
+ "meta": {
+  "date": "2026-10-18",
+  "extends": [
+   "robot_types.json",
+   "components.json",
+   "revron_deconstruction.md"
+  ],
+  "research_quality": "Web access to UK forums/wikis was blocked in prior pass; this file is a taxonomy built from community knowledge plus prior verified sources. Named robots mostly archetypes or low-confidence; only RVRN verified. Treat 'confidence' fields seriously. Pass 2 (2026-10-18): BBB forum pages fetched (verified); AWS fandom 402-blocked so AWS robots are 'likely'.",
+  "sources": [
+   "https://shop.bristolbotbuilders.com/",
+   "https://aws.fandom.com/wiki/Buzzant",
+   "https://hackaday.io/project/203090-spinfu",
+   "https://philipmcgaw.com/projects/antweight-robots/",
+   "https://wiki.nottinghack.org.uk/wiki/Combat_Robotics",
+   "https://www.kitbots.co.uk/",
+   "https://repeatrobotics.com/",
+   "https://www.printables.com/search/models?q=antweight",
+   "https://www.thingiverse.com/search?q=antweight",
+   "https://forum.bristolbotbuilders.com/t/gentle-way-robotics-antweights/299",
+   "https://forum.bristolbotbuilders.com/t/harrys-ant-farm/40",
+   "https://forum.bristolbotbuilders.com/t/patricks-antweights/417",
+   "https://forum.bristolbotbuilders.com/t/irregularantweights/801",
+   "https://forum.bristolbotbuilders.com/t/team-for-crab-long-overdue-antweight-thread/211",
+   "https://aws.fandom.com/wiki/Expandabot",
+   "https://forum.bristolbotbuilders.com/t/dill-with-it-my-first-spinner/699",
+   "https://forum.bristolbotbuilders.com/t/advice-please-antweight-monster-horizontal-spinner/494",
+   "https://bristolbotbuilders.com/guides/",
+   "https://www.rampagebots.co.uk/events"
+  ]
+ },
+ "axes": {
+  "weapon_type": [
+   "none_pusher",
+   "wedge",
+   "lifter",
+   "lifting_wedge",
+   "flipper",
+   "grabber_clamp",
+   "crusher",
+   "hspin_bar",
+   "hspin_disc",
+   "hspin_shell",
+   "hspin_ring",
+   "undercutter",
+   "vspin_disc",
+   "vspin_drum",
+   "vspin_eggbeater",
+   "vspin_drisk",
+   "hammer_axe",
+   "overhead_saw",
+   "full_body_spinner",
+   "meltybrain",
+   "expandabot",
+   "walker_shuffler",
+   "flail_or_other",
+   "air_blower(EDF)",
+   "pneumatic_flipper",
+   "passive_scoop_loader",
+   "gyro_walker_blades",
+   "counter_gyro_vspin",
+   "thagomiser_drone_arm"
+  ],
+  "weapon_actuator": [
+   "none",
+   "servo_9g_analog",
+   "servo_9g_MG_HV_2S",
+   "servo_micro_digital_MG(EMAX ES08MD/ES3352 class)",
+   "servo_hacked_continuous",
+   "N20_gearmotor",
+   "N10_gearmotor",
+   "BE1806_outrunner",
+   "2204/2205_outrunner",
+   "1306/1404_outrunner",
+   "2004/2006_outrunner(Repeat)",
+   "1103/1104_outrunner",
+   "drive_motors_as_weapon(fbs/melty)",
+   "1806_1400-1700kv",
+   "1104_4300kv_meltybrain",
+   "blower_15500kv",
+   "servo_wing_high_power"
+  ],
+  "weapon_mount_position": [
+   "front",
+   "top",
+   "centre",
+   "rear",
+   "under",
+   "side",
+   "full_body"
+  ],
+  "weapon_orientation": [
+   "flat_horizontal",
+   "slanted_tilted(5-20deg)",
+   "vertical"
+  ],
+  "weapon_attachment": [
+   "hub_motor(outrunner can = weapon)",
+   "drisk(motor inside weapon, stator fixed both sides)",
+   "shaft_on_bearings_direct",
+   "belt_drive(O-ring/GT2)",
+   "direct_on_motor_shaft",
+   "servo_horn_direct",
+   "servo_linkage(4-bar)",
+   "gearmotor_gear_train"
+  ],
+  "front_interface": [
+   "none",
+   "full_wedge",
+   "wedgelets_hinged",
+   "wedgelets_fixed",
+   "forks",
+   "skirt_flexible(TPU/spring steel)",
+   "plow_scoop",
+   "weapon_is_front"
+  ],
+  "drive_layout": [
+   "2WD_rear",
+   "2WD_centre",
+   "4WD",
+   "4WD_skid",
+   "2WD+skid/caster",
+   "shuffle",
+   "melty_2wheel",
+   "6WD",
+   "8WD",
+   "oring_track",
+   "rotating_drive_pods",
+   "gyro_walker"
+  ],
+  "wheel_exposure": [
+   "exposed_outboard",
+   "guarded_inboard",
+   "partially_guarded(side panels)",
+   "tall_wheels_invertible(stick out top+bottom)",
+   "wheel_hoods_removed(gear-drive floor contact)"
+  ],
+  "wheel_diameter_mm": [
+   11,
+   16,
+   20,
+   22,
+   25,
+   28,
+   30,
+   34,
+   40
+  ],
+  "drive_motor": [
+   "N20_6V(100-1000rpm)",
+   "N20_high_power",
+   "N10",
+   "Pololu_micro_metal_HP",
+   "16mm_gearmotor(rare, heavy)",
+   "brushless_drive(1103/1104 + gearbox, rare)",
+   "Turnabot_N10_700-1000rpm"
+  ],
+  "battery": [
+   "2S_150mAh",
+   "2S_180mAh",
+   "2S_250mAh",
+   "2S_300mAh",
+   "2S_350mAh(heavy)",
+   "1S_300mAh(servo/pusher budget)",
+   "2S_LiHV",
+   "3S_150-200mAh(rare)",
+   "3x150mAh_for_8WD"
+  ],
+  "esc_drive": [
+   "DasMikro (dual brushed)",
+   "Malenki-Nano (rx+2 brushed ESC)",
+   "Malenki-HV",
+   "BBB Dual ESC",
+   "Turnabot ESC (small brushed)",
+   "motor-mounted 'Red' ESC",
+   "DIY Arduino/ESP32 + DRV8833"
+  ],
+  "esc_weapon": [
+   "AM32 small (e.g. 6-10A)",
+   "BLHeli_S/BLHeli_32 whoop/12A",
+   "BBB Spinner Brushless ESC",
+   "servo_direct_from_rx/Malenki",
+   "N20 via spare Malenki channel"
+  ],
+  "receiver": [
+   "FlySky FS-A8S/iA6B",
+   "FrSky",
+   "ExpressLRS nano",
+   "integrated (Malenki/DasMikro)"
+  ],
+  "invertibility": [
+   "fully_invertible",
+   "invertible_drive_only(weapon one-side)",
+   "self_righting_via_weapon",
+   "self_righting_via_shape(rollcage/shell)",
+   "not_invertible"
+  ],
+  "chassis_construction": [
+   "printed_tub(PETG/PA/TPU)",
+   "printed_unibody_TPU",
+   "plate_sandwich(CF/Ti/Al)",
+   "printed_tub+metal_armour",
+   "bent_sheet_Ti/Al"
+  ],
+  "armour_material": [
+   "PLA",
+   "PETG",
+   "Nylon",
+   "TPU95A",
+   "Ti_0.5-1mm",
+   "Al_1-2mm",
+   "CF_1-2mm",
+   "UHMWPE",
+   "Hardox/spring_steel_for_weapon"
+  ]
+ },
+ "types": {
+  "none_pusher": {
+   "actuator": [
+    "none"
+   ],
+   "position": [],
+   "orientation": [],
+   "attachment": [],
+   "front": [
+    "plow_scoop",
+    "skirt_flexible"
+   ],
+   "typical_drive": "4WD N20 exposed or tall invertible wheels 28-40mm",
+   "invertible": "usually fully_invertible",
+   "notes": "Box/rammer; relies on traction & control",
+   "confidence": "unverified (general UK ant community knowledge, not fetched this session)"
+  },
+  "wedge": {
+   "actuator": [
+    "none"
+   ],
+   "front": [
+    "full_wedge",
+    "wedgelets_hinged"
+   ],
+   "typical_drive": "2WD/4WD N20, guarded wheels 22-30mm",
+   "invertible": "double-sided wedge or hinged wedge",
+   "notes": "Ti/steel edge, TPU body; most common beginner type",
+   "confidence": "unverified (general UK ant community knowledge, not fetched this session)"
+  },
+  "lifter": {
+   "actuator": [
+    "servo_9g_MG_HV_2S",
+    "servo_micro_digital_MG"
+   ],
+   "position": [
+    "front"
+   ],
+   "orientation": [
+    "vertical"
+   ],
+   "attachment": [
+    "servo_horn_direct",
+    "servo_linkage(4-bar)"
+   ],
+   "front": [
+    "forks",
+    "weapon_is_front"
+   ],
+   "invertible": "self_righting_via_weapon",
+   "notes": "Slow powerful lift; judges' favourite for control",
+   "confidence": "unverified (general UK ant community knowledge, not fetched this session)"
+  },
+  "lifting_wedge": {
+   "actuator": [
+    "servo_9g_MG_HV_2S"
+   ],
+   "position": [
+    "front"
+   ],
+   "orientation": [
+    "slanted_tilted"
+   ],
+   "attachment": [
+    "servo_horn_direct"
+   ],
+   "front": [
+    "full_wedge",
+    "forks"
+   ],
+   "invertible": "self_righting_via_weapon",
+   "confidence": "unverified (general UK ant community knowledge, not fetched this session)"
+  },
+  "flipper": {
+   "actuator": [
+    "servo_micro_digital_MG (fast HV)",
+    "servo_hacked_continuous",
+    "N20/N10 geared (spring-assisted rare: springs restricted at some events)"
+   ],
+   "position": [
+    "front",
+    "rear"
+   ],
+   "orientation": [
+    "vertical"
+   ],
+   "attachment": [
+    "servo_linkage(4-bar)",
+    "servo_horn_direct"
+   ],
+   "front": [
+    "forks",
+    "wedgelets_hinged"
+   ],
+   "invertible": "self_righting_via_weapon",
+   "notes": "True pneumatic flippers essentially absent in UK ants; 'flipper' = fast servo flick",
+   "confidence": "unverified (general UK ant community knowledge, not fetched this session)"
+  },
+  "grabber_clamp": {
+   "actuator": [
+    "servo_9g_MG_HV_2S (x1 or x2)",
+    "N20_gearmotor + leadscrew/worm"
+   ],
+   "position": [
+    "front",
+    "top"
+   ],
+   "orientation": [
+    "vertical"
+   ],
+   "attachment": [
+    "servo_linkage",
+    "gearmotor_gear_train"
+   ],
+   "front": [
+    "forks",
+    "full_wedge"
+   ],
+   "invertible": "partial",
+   "confidence": "unverified (general UK ant community knowledge, not fetched this session)"
+  },
+  "hspin_bar": {
+   "actuator": [
+    "BE1806_outrunner",
+    "2204/2205_outrunner",
+    "2004/2006_outrunner(Repeat)"
+   ],
+   "position": [
+    "front",
+    "centre"
+   ],
+   "orientation": [
+    "flat_horizontal",
+    "slanted_tilted"
+   ],
+   "attachment": [
+    "shaft_on_bearings_direct",
+    "hub_motor",
+    "belt_drive"
+   ],
+   "front": [
+    "wedgelets_fixed",
+    "skirt_flexible"
+   ],
+   "invertible": "often invertible if weapon at mid-height",
+   "confidence": "unverified (general UK ant community knowledge, not fetched this session)"
+  },
+  "hspin_disc": {
+   "actuator": [
+    "BE1806_outrunner",
+    "2204"
+   ],
+   "position": [
+    "front",
+    "centre"
+   ],
+   "orientation": [
+    "flat_horizontal"
+   ],
+   "attachment": [
+    "hub_motor",
+    "shaft_on_bearings_direct"
+   ],
+   "front": [
+    "wedgelets_fixed"
+   ],
+   "confidence": "unverified (general UK ant community knowledge, not fetched this session)"
+  },
+  "hspin_shell": {
+   "actuator": [
+    "2204",
+    "BE1806",
+    "1306"
+   ],
+   "position": [
+    "full_body",
+    "top"
+   ],
+   "orientation": [
+    "flat_horizontal"
+   ],
+   "attachment": [
+    "hub_motor",
+    "belt_drive"
+   ],
+   "front": [
+    "none"
+   ],
+   "invertible": "often not; low shell",
+   "confidence": "unverified (general UK ant community knowledge, not fetched this session)"
+  },
+  "hspin_ring": {
+   "actuator": [
+    "BE1806 + belt/friction",
+    "1104"
+   ],
+   "position": [
+    "full_body"
+   ],
+   "orientation": [
+    "flat_horizontal"
+   ],
+   "attachment": [
+    "belt_drive",
+    "friction rollers"
+   ],
+   "front": [
+    "none"
+   ],
+   "notes": "Ring spinner; rare at 150g",
+   "confidence": "unverified (general UK ant community knowledge, not fetched this session)"
+  },
+  "undercutter": {
+   "actuator": [
+    "BE1806",
+    "2204"
+   ],
+   "position": [
+    "front",
+    "under"
+   ],
+   "orientation": [
+    "flat_horizontal",
+    "slanted_tilted"
+   ],
+   "attachment": [
+    "hub_motor",
+    "shaft_on_bearings_direct"
+   ],
+   "front": [
+    "weapon_is_front"
+   ],
+   "confidence": "unverified (general UK ant community knowledge, not fetched this session)"
+  },
+  "vspin_disc": {
+   "actuator": [
+    "BE1806_outrunner",
+    "2204"
+   ],
+   "position": [
+    "front",
+    "centre"
+   ],
+   "orientation": [
+    "vertical"
+   ],
+   "attachment": [
+    "shaft_on_bearings_direct",
+    "belt_drive"
+   ],
+   "front": [
+    "wedgelets_fixed",
+    "forks"
+   ],
+   "invertible": "invertible_drive_only; disc can self-right",
+   "confidence": "unverified (general UK ant community knowledge, not fetched this session)"
+  },
+  "vspin_drum": {
+   "actuator": [
+    "BE1806 hub",
+    "2204 hub",
+    "1306"
+   ],
+   "position": [
+    "front"
+   ],
+   "orientation": [
+    "vertical"
+   ],
+   "attachment": [
+    "hub_motor",
+    "belt_drive"
+   ],
+   "front": [
+    "wedgelets_hinged",
+    "forks"
+   ],
+   "invertible": "fully_invertible typical (drum mid-height)",
+   "confidence": "unverified (general UK ant community knowledge, not fetched this session)"
+  },
+  "vspin_eggbeater": {
+   "actuator": [
+    "BE1806",
+    "2204"
+   ],
+   "position": [
+    "front"
+   ],
+   "orientation": [
+    "vertical"
+   ],
+   "attachment": [
+    "belt_drive",
+    "shaft_on_bearings_direct"
+   ],
+   "front": [
+    "forks"
+   ],
+   "confidence": "unverified (general UK ant community knowledge, not fetched this session)"
+  },
+  "vspin_drisk": {
+   "actuator": [
+    "BE1806_outrunner"
+   ],
+   "position": [
+    "front"
+   ],
+   "orientation": [
+    "vertical"
+   ],
+   "attachment": [
+    "drisk"
+   ],
+   "front": [
+    "wedgelets_fixed",
+    "skirt_flexible"
+   ],
+   "invertible": "fully_invertible",
+   "notes": "RVRN/Revron pattern (see revron_deconstruction.md)",
+   "confidence": "unverified (general UK ant community knowledge, not fetched this session)"
+  },
+  "hammer_axe": {
+   "actuator": [
+    "servo_micro_digital_MG",
+    "servo_hacked_continuous",
+    "N20_gearmotor geared"
+   ],
+   "position": [
+    "top",
+    "centre"
+   ],
+   "orientation": [
+    "vertical"
+   ],
+   "attachment": [
+    "servo_horn_direct",
+    "gearmotor_gear_train"
+   ],
+   "front": [
+    "full_wedge",
+    "wedgelets_hinged"
+   ],
+   "invertible": "self_righting_via_weapon (axe pushes off floor)",
+   "confidence": "unverified (general UK ant community knowledge, not fetched this session)"
+  },
+  "overhead_saw": {
+   "actuator": [
+    "1104/1306 outrunner",
+    "N20 high rpm"
+   ],
+   "position": [
+    "top"
+   ],
+   "orientation": [
+    "vertical"
+   ],
+   "attachment": [
+    "servo-swung arm + direct saw"
+   ],
+   "front": [
+    "full_wedge"
+   ],
+   "notes": "Rare; some events ban circular saws (Nottinghack)",
+   "confidence": "unverified (general UK ant community knowledge, not fetched this session)"
+  },
+  "full_body_spinner": {
+   "actuator": [
+    "2204/BE1806 driving shell",
+    "meltybrain: drive motors"
+   ],
+   "position": [
+    "full_body"
+   ],
+   "orientation": [
+    "flat_horizontal"
+   ],
+   "attachment": [
+    "hub_motor",
+    "belt_drive",
+    "direct"
+   ],
+   "front": [
+    "none"
+   ],
+   "invertible": "shell design often symmetric",
+   "confidence": "unverified (general UK ant community knowledge, not fetched this session)"
+  },
+  "expandabot": {
+   "actuator": [
+    "servo",
+    "spring (often restricted)",
+    "N20"
+   ],
+   "position": [
+    "any"
+   ],
+   "notes": "AWS 4-inch cube applies at start only; robots unfold after start (UK specialty). Also tribots/clusterbots, walkers.",
+   "confidence": "unverified (general UK ant community knowledge, not fetched this session)"
+  }
+ },
+ "mass_budgets_g": {
+  "_note": "grams of 150; typical ranges, unverified (general UK ant community knowledge, not fetched this session)",
+  "pusher_wedge": {
+   "drive": "30-45",
+   "battery": "15-25",
+   "electronics": "8-15",
+   "chassis_armour": "60-90",
+   "weapon": "0-10 (wedge plate)"
+  },
+  "servo_lifter_flipper": {
+   "drive": "25-40",
+   "battery": "15-20",
+   "electronics": "8-12",
+   "weapon_servo+arm": "15-30",
+   "chassis": "50-75"
+  },
+  "grabber_clamp": {
+   "drive": "25-40",
+   "battery": "15-20",
+   "electronics": "10-15",
+   "weapon": "20-35",
+   "chassis": "45-70"
+  },
+  "horizontal_spinner": {
+   "drive": "20-30",
+   "battery": "18-25",
+   "electronics(2 ESC)": "10-15",
+   "weapon_motor": "18-25",
+   "weapon_bar/disc/shell": "25-45",
+   "chassis": "30-50"
+  },
+  "vertical_spinner": {
+   "drive": "20-35",
+   "battery": "18-25",
+   "electronics": "10-15",
+   "weapon_motor(BE1806)": "~19",
+   "weapon_disc/drum": "20-40",
+   "chassis+uprights": "35-55"
+  },
+  "hammer_axe": {
+   "drive": "25-35",
+   "battery": "18-25",
+   "electronics": "10-15",
+   "weapon_actuator+arm": "25-40",
+   "chassis": "40-60"
+  },
+  "full_body_spinner": {
+   "drive(often reused)": "15-25",
+   "battery": "18-25",
+   "electronics": "10-15",
+   "shell/ring": "50-75",
+   "base": "20-30"
+  }
+ },
+ "robots": [
+  {
+   "name": "RVRN / Revron",
+   "team": "SCAR Sheffield",
+   "weapon": "vspin_drisk",
+   "motor": "BE1806",
+   "drive": "4WD N10, Scalextric tyres 11/21.5mm",
+   "front": "TPU side panels + wedglets",
+   "invertible": true,
+   "source": "local revron_deconstruction.md",
+   "confidence": "verified from build guide"
+  },
+  {
+   "name": "Gentle Way unnamed first build",
+   "weapon": "flipper (pneumatic; Lego ram, servo-fired valve)",
+   "motor": "servo opens air valve",
+   "drive": null,
+   "invertible": true,
+   "tricks": "flips bots >1m, 4-5 flips/charge, backflips; self-rights",
+   "source": "https://forum.bristolbotbuilders.com/t/gentle-way-robotics-antweights/299",
+   "confidence": "verified (page fetched 2026-10-18)"
+  },
+  {
+   "name": "Spark",
+   "weapon": "vspin_disc (single tooth, welded to motor can)",
+   "motor": "outrunner (model n/s)",
+   "drive": null,
+   "invertible": null,
+   "tricks": "thick deflecting front; record 5-2",
+   "source": "https://forum.bristolbotbuilders.com/t/gentle-way-robotics-antweights/299",
+   "confidence": "verified (page fetched 2026-10-18)"
+  },
+  {
+   "name": "Flare",
+   "weapon": "hspin_disc (largest disc, welded to can)",
+   "motor": "outrunner (n/s)",
+   "drive": null,
+   "invertible": null,
+   "tricks": "CF frame; lost own wheels, hit arena roof",
+   "source": "https://forum.bristolbotbuilders.com/t/gentle-way-robotics-antweights/299",
+   "confidence": "verified (page fetched 2026-10-18)"
+  },
+  {
+   "name": "Fire Wall",
+   "weapon": "lifter (360deg TPU, anti-spinner)",
+   "motor": "2 lifter motors",
+   "drive": "4WD",
+   "invertible": null,
+   "tricks": "pushes/backflips bots that get under it",
+   "source": "https://forum.bristolbotbuilders.com/t/gentle-way-robotics-antweights/299",
+   "confidence": "verified (page fetched 2026-10-18)"
+  },
+  {
+   "name": "Punch Bag",
+   "weapon": "interchangeable axe/lifter/grabber",
+   "motor": null,
+   "drive": null,
+   "invertible": null,
+   "tricks": "armoured front, training dummy",
+   "source": "https://forum.bristolbotbuilders.com/t/gentle-way-robotics-antweights/299",
+   "confidence": "verified (page fetched 2026-10-18)"
+  },
+  {
+   "name": "Dumpy",
+   "weapon": "lifter (large TPU)",
+   "motor": null,
+   "drive": "6WD",
+   "invertible": null,
+   "tricks": "very reliable, by Harry",
+   "source": "https://forum.bristolbotbuilders.com/t/gentle-way-robotics-antweights/299",
+   "confidence": "verified (page fetched 2026-10-18)"
+  },
+  {
+   "name": "Hobgoblet v1-v3 (Harry)",
+   "weapon": "vspin_drum (bolt teeth, dead-shaft through bulkheads)",
+   "motor": "brushless (BBB ESC)",
+   "drive": "2WD rear, 2x Turnabot N10 700rpm; v3 spur-geared; Lego/foam/TPU/cast tyres",
+   "invertible": null,
+   "tricks": "death grips; bolt-on PLA-ST forks (Evil Twin for Team Croc)",
+   "source": "https://forum.bristolbotbuilders.com/t/harrys-ant-farm/40",
+   "confidence": "verified (page fetched 2026-10-18)"
+  },
+  {
+   "name": "FBS (Harry)",
+   "weapon": "full_body_spinner (shell + metal ring)",
+   "motor": "1806 via spur gear",
+   "drive": "2x Turnabot N10 direct on pulleys driving O-ring tracks",
+   "invertible": null,
+   "tricks": "O-ring track drive",
+   "source": "https://forum.bristolbotbuilders.com/t/harrys-ant-farm/40",
+   "confidence": "verified (page fetched 2026-10-18)"
+  },
+  {
+   "name": "Duck clone (Harry)",
+   "weapon": "pokey beak + 360 lifter",
+   "motor": "n/s",
+   "drive": "4WD 4x Turnabot N20 + Malenki Nano, Ranglebox tyres",
+   "invertible": null,
+   "tricks": "plough/fork/wedge slots",
+   "source": "https://forum.bristolbotbuilders.com/t/harrys-ant-farm/40",
+   "confidence": "verified (page fetched 2026-10-18)"
+  },
+  {
+   "name": "Pretty 8 Machine",
+   "weapon": "none (token wedge)",
+   "motor": null,
+   "drive": "8WD, 8x N20 on one Malenki HV, 3x150mAh",
+   "invertible": null,
+   "tricks": "8WD novelty",
+   "source": "https://forum.bristolbotbuilders.com/t/harrys-ant-farm/40",
+   "confidence": "verified (page fetched 2026-10-18)"
+  },
+  {
+   "name": "Unnamed 6WD drum (Harry, 2025)",
+   "weapon": "vspin_drum? (130mm Hardox drum, hung off motor)",
+   "motor": "1806 1400kv",
+   "drive": "6WD 5V N20 each, cast PU Lego-style tyres, 2x300mAh",
+   "invertible": null,
+   "tricks": "25mm bearing in frame stiffens mount",
+   "source": "https://forum.bristolbotbuilders.com/t/harrys-ant-farm/40",
+   "confidence": "verified; weapon orientation inferred"
+  },
+  {
+   "name": "Underhanded Tactics v1.4 (Patrick)",
+   "weapon": "bar/blade spinner",
+   "motor": "1806 1700kv",
+   "drive": "gear drive N10, 30mm foam/TPU-hub wheels",
+   "invertible": true,
+   "tricks": "gears touch floor either way up; hood-less wheels",
+   "source": "https://forum.bristolbotbuilders.com/t/patricks-antweights/417",
+   "confidence": "verified (page fetched 2026-10-18)"
+  },
+  {
+   "name": "Transvector",
+   "weapon": "tongue-shaped blade",
+   "motor": "2204",
+   "drive": "gear drive (Pololu wheel experiments)",
+   "invertible": null,
+   "tricks": "very thin, TPU walls, CF lids",
+   "source": "https://forum.bristolbotbuilders.com/t/patricks-antweights/417",
+   "confidence": "verified (page fetched 2026-10-18)"
+  },
+  {
+   "name": "Order Up! v2.2",
+   "weapon": "flipper (TPU spatula, flicks 50-60mm)",
+   "motor": "high-power wing servo",
+   "drive": "indirect drive, 72D TPU body",
+   "invertible": null,
+   "tricks": "servo doubles as chassis stiffener",
+   "source": "https://forum.bristolbotbuilders.com/t/patricks-antweights/417",
+   "confidence": "verified (page fetched 2026-10-18)"
+  },
+  {
+   "name": "Friday Night Special / Lunch Break",
+   "weapon": "thagomiser-style spinner on drone arm",
+   "motor": "n/s",
+   "drive": "paper-roller wheels",
+   "invertible": false,
+   "tricks": "sacrificial double-wall front, placed 1-3 at SCAR",
+   "source": "https://forum.bristolbotbuilders.com/t/patricks-antweights/417",
+   "confidence": "verified (page fetched 2026-10-18)"
+  },
+  {
+   "name": "Neko",
+   "weapon": "melty/sit-and-spin with 4mm stainless tooth",
+   "motor": "1806 drive motors",
+   "drive": "wheels",
+   "invertible": null,
+   "tricks": "transparent body, 6 RGB LEDs",
+   "source": "https://forum.bristolbotbuilders.com/t/patricks-antweights/417",
+   "confidence": "verified (page fetched 2026-10-18)"
+  },
+  {
+   "name": "Derivative",
+   "weapon": "twin 100mm blades",
+   "motor": "n/s",
+   "drive": "gyro walker",
+   "invertible": null,
+   "tricks": "200g class build",
+   "source": "https://forum.bristolbotbuilders.com/t/patricks-antweights/417",
+   "confidence": "verified; non-roller class"
+  },
+  {
+   "name": "Capybara",
+   "weapon": "hspin_bar (4x3mm Hardox)",
+   "motor": "n/s",
+   "drive": null,
+   "invertible": null,
+   "tricks": "124.5g glass cannon",
+   "source": "https://forum.bristolbotbuilders.com/t/patricks-antweights/417",
+   "confidence": "verified (page fetched 2026-10-18)"
+  },
+  {
+   "name": "Fatal Deviant",
+   "weapon": "flipper/lifter (belt-driven arm, barbed fork tip)",
+   "motor": "servo (coreless swap)",
+   "drive": "direct 2x Turnabot N10 (earlier 4x N20)",
+   "invertible": null,
+   "tricks": "~600mm flips; ORCS variant Feetal Deviant",
+   "source": "https://forum.bristolbotbuilders.com/t/irregularantweights/801",
+   "confidence": "verified (page fetched 2026-10-18)"
+  },
+  {
+   "name": "Room-ba",
+   "weapon": "meltybrain, Ti impactor",
+   "motor": "4300kv 1104 drive, Emax Bullet 12A Bluejay",
+   "drive": "melty pods",
+   "invertible": null,
+   "tricks": "fan-impeller wheel cooling, 'full send' button, ~10k rpm",
+   "source": "https://forum.bristolbotbuilders.com/t/irregularantweights/801",
+   "confidence": "verified (page fetched 2026-10-18)"
+  },
+  {
+   "name": "Fire Bird Starring Nicholas Cage",
+   "weapon": "air_blower (EDF, ~170g thrust)",
+   "motor": "15500kv blower 23A",
+   "drive": "shuffler",
+   "invertible": false,
+   "tricks": "cannot drive+blow simultaneously",
+   "source": "https://forum.bristolbotbuilders.com/t/irregularantweights/801",
+   "confidence": "verified (page fetched 2026-10-18)"
+  },
+  {
+   "name": "Time for Crab!",
+   "weapon": "grabber_clamp (TPU claws, turnbuckle hub)",
+   "motor": "N20 low-geared",
+   "drive": "n/s; larger cast wheels backup",
+   "invertible": null,
+   "tricks": "hatch for battery swap",
+   "source": "https://forum.bristolbotbuilders.com/t/team-for-crab-long-overdue-antweight-thread/211",
+   "confidence": "verified (page fetched 2026-10-18)"
+  },
+  {
+   "name": "Big Loader v2",
+   "weapon": "passive rotating scoop",
+   "motor": "N20 transverse",
+   "drive": "drive pods (v1 tracks, pods rotate 180deg)",
+   "invertible": null,
+   "tricks": "twists out of grasps",
+   "source": "https://forum.bristolbotbuilders.com/t/team-for-crab-long-overdue-antweight-thread/211",
+   "confidence": "verified (page fetched 2026-10-18)"
+  },
+  {
+   "name": "Mlemp",
+   "weapon": "none; tongue/scoop bolt-ons",
+   "motor": "none",
+   "drive": "4WD all-TPU chassis",
+   "invertible": null,
+   "tricks": "Hoop of Shame, Mylar scoop (ex-Cardinal)",
+   "source": "https://forum.bristolbotbuilders.com/t/team-for-crab-long-overdue-antweight-thread/211",
+   "confidence": "verified (page fetched 2026-10-18)"
+  },
+  {
+   "name": "Grump Truck",
+   "weapon": "none; rotating drive pods",
+   "motor": "n/s",
+   "drive": "rotating pods, soft PU wheels",
+   "invertible": null,
+   "tricks": "crab-walks",
+   "source": "https://forum.bristolbotbuilders.com/t/team-for-crab-long-overdue-antweight-thread/211",
+   "confidence": "verified (page fetched 2026-10-18)"
+  },
+  {
+   "name": "Tri-Tongue",
+   "weapon": "vspin (cast PU tongues on TPU core, belt)",
+   "motor": "brushless",
+   "drive": "n/s",
+   "invertible": null,
+   "tricks": "grips and launches bots",
+   "source": "https://forum.bristolbotbuilders.com/t/team-for-crab-long-overdue-antweight-thread/211",
+   "confidence": "verified (page fetched 2026-10-18)"
+  },
+  {
+   "name": "Dill With It (Hollis)",
+   "weapon": "hspin_disc (spinner)",
+   "motor": "BBB 1806",
+   "drive": "2 rear wheels N10 1000rpm, rubber band to front wheels",
+   "invertible": null,
+   "tricks": "sprung TPU forks, roof shots",
+   "source": "https://forum.bristolbotbuilders.com/t/dill-with-it-my-first-spinner/699",
+   "confidence": "verified (page fetched 2026-10-18)"
+  },
+  {
+   "name": "OS-1 (Ollie Wilson)",
+   "weapon": "hspin_bar (145mm asym 3mm #45 steel, ~50g)",
+   "motor": "BBB 1806",
+   "drive": "N10 + red ESCs, 25mm wheels",
+   "invertible": false,
+   "tricks": "planned cone inverter / weapon self-right",
+   "source": "https://forum.bristolbotbuilders.com/t/advice-please-antweight-monster-horizontal-spinner/494",
+   "confidence": "verified (page fetched 2026-10-18)"
+  },
+  {
+   "name": "Expandabot (robot, AWS)",
+   "weapon": "grabber_clamp + rear-hinged flipper",
+   "motor": "n/s",
+   "drive": "2-wheel",
+   "invertible": null,
+   "tricks": "AWS champion 64,67,69-72,74,76; NB name != expandabot type",
+   "source": "https://aws.fandom.com/wiki/Expandabot",
+   "confidence": "likely (search summary; page fetch 402)"
+  },
+  {
+   "name": "Th'UNDER'er",
+   "weapon": "spinning bar",
+   "motor": "n/s",
+   "drive": null,
+   "invertible": null,
+   "tricks": "AWS63 final four; sawed Expandabot",
+   "source": "https://aws.fandom.com/wiki/AWS_64",
+   "confidence": "likely (search summary)"
+  },
+  {
+   "name": "Iceberg",
+   "weapon": "claw/flipper",
+   "motor": "n/s",
+   "drive": null,
+   "invertible": null,
+   "tricks": "AWS 77 champion; won AWS67 GF? (conflicting)",
+   "source": "https://aws.fandom.com/wiki/Iceberg",
+   "confidence": "likely (search summary)"
+  },
+  {
+   "name": "Split",
+   "weapon": "vspin 4140 steel beater bar, direct-drive drone motor 33k rpm",
+   "motor": "drone outrunner",
+   "drive": "4WD",
+   "invertible": null,
+   "tricks": "PCBWay design",
+   "source": "https://www.pcbway.com/project/shareproject/Split_A_Combat_Robot_ef78de15.html",
+   "confidence": "likely (search summary)"
+  },
+  {
+   "name": "Project SVRN",
+   "weapon": "modular flipper/grabber",
+   "motor": "n/s",
+   "drive": "n/s",
+   "invertible": null,
+   "tricks": "printable modules",
+   "source": "https://www.printables.com/model/1272536-project-svrn-combat-robot-150g-uk-antweight-us-fai",
+   "confidence": "likely (search listing)"
+  },
+  {
+   "name": "Grabthar",
+   "weapon": "modular interchangeable weapons",
+   "motor": "n/s",
+   "drive": "n/s",
+   "invertible": null,
+   "tricks": "printable",
+   "source": "https://www.thingiverse.com/thing:4868890",
+   "confidence": "likely (search listing)"
+  },
+  {
+   "name": "Scrapper (Fryddog)",
+   "weapon": "none_pusher",
+   "motor": "n/s",
+   "drive": "n/s",
+   "invertible": null,
+   "tricks": "printable",
+   "source": "https://www.thingiverse.com/thing:4297430",
+   "confidence": "likely (search listing)"
+  }
+ ],
+ "compatibility_rules": [
+  "vertical weapon + drisk/hub => usually front-mounted, needs uprights either side",
+  "BE1806 weapon needs brushless ESC (AM32/BLHeli) + separate drive ESC => +6-10g electronics",
+  "servo weapons can run off Malenki/rx channel at 2S only if HV servo",
+  "horizontal shell/ring => weapon_mount full_body, wheels guarded inside shell",
+  "4-inch cube (AWS) caps wheel+weapon envelope ~100mm; expandabots unfold after start",
+  "weapon mass fraction: spinners 25-35%, servo weapons 10-20%, pushers ~0%"
+ ]
+}
