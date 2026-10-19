@@ -246,6 +246,12 @@ def lift_and_throw(spec: dict, w=None) -> dict:
     nr = (N * radial).sum(axis=1)
     h = P[:, 2] - floor
     outer = (r >= rout[ang] - BAND) & (K != "wheel") & (K != "rotor")
+    fasteners = [b for b in bodies if getattr(b, "fastener", None) is not None]
+    # an arch or guard directly over a tyre is reached only past the tyre (a rising tooth meets the tyre first)
+    over_tyre = np.zeros(len(P), bool)
+    for b in wheels:
+        (x0, y0, _), (x1, y1, z1) = b.aabb
+        over_tyre |= (P[:, 0] > x0 - 1.0) & (P[:, 0] < x1 + 1.0) & (P[:, 1] > y0 - 1.0) & (P[:, 1] < y1 + 1.0)
     out = {}
     for name, b0 in DIRS8.items():
         sec = ((np.arange(360) - b0 + 22.5) % 360) < 45.0
@@ -260,7 +266,13 @@ def lift_and_throw(spec: dict, w=None) -> dict:
         vis = np.zeros(len(P), bool)
         for e in (-0.5, -1.2):
             vis |= _visible(P, N, _n(math.cos(br), math.sin(br), e))
-        ledge = m & vis & (N[:, 2] < -0.6) & (h > med + 1.0) & (h < TOOTH_REACH)
+        ledge = m & vis & (N[:, 2] < -0.6) & (h > med + 1.0) & (h < TOOTH_REACH) & ~over_tyre
+        if ledge.any() and fasteners:  # a seat in contact with a flush screw head is covered by the head
+            idx = np.nonzero(ledge)[0]
+            near = np.zeros(len(idx), bool)
+            for fb in fasteners:
+                near |= np.abs(fb.distance(P[idx])) < 0.35
+            ledge[idx[near]] = False
         cnt = np.bincount(I[ledge], minlength=len(bodies)) * SPACING * SPACING
         bites = {bodies[i].id: round(float(cnt[i]), 1) for i in np.nonzero(cnt >= BITE_MIN_AREA)[0]}
         bite_h = float(h[ledge].min()) if ledge.any() and bites else None
@@ -514,8 +526,9 @@ ANSWERS = (
     ("kind:wheel", "guarded", "the tyre must touch the floor and stand proud of the side wall to drive and to self-right; "
      "the wells and skirts cover all but the tread arc, the hub is inside the well, and tyres are cheap press-on spares",
      ["CF-HS02", "CF-LD02", "CF-DB01", "CF-GD05"]),
-    ("kind:switch", None, "the switch must be reachable with a pin through the shell; it sits 1.2 mm below the "
-     "skin in the rear half, away from the weapon arcs, and a hit on it at worst flips it off (failsafe)",
+    ("kind:switch", None, "the switch must be reachable with a pin through the shell; it sits below the "
+     "roof 2 mm deep, sliding across the robot (square to a front-rear scrape); only a point dropped straight down "
+     "the slot reaches it, and that at worst turns it off (failsafe)",
      ["CF-GD06"]),
     ("upright", "sacrificial", "the uprights are the weapon module and stand outside the hull to carry the disc; they are "
      "bolted on, take hits in compression on the chassis, and are spares", ["CF-OW04", "CF-VS06", "CF-ST04"]),
@@ -539,8 +552,9 @@ FAST_ANSWERS = (
      "weapon", ["CF-ST04", "CF-OW04"]),
     (("bolt_br", "bolt_bl"), "the bridge screws ride on the top bridge of the bar module, above the bar's sweep; a "
      "head sheared there leaves the bar shaft held by the bottom bearing", ["CF-ST04", "CF-OW04"]),
-    (("bolt_f",), "button heads on the tine roots of the replaceable fork/wedgelet sheet (too thin to countersink); a "
-     "tooth that catches one bends a spare sheet, not the chassis", ["CF-AS04", "CF-VS03"]),
+    (("bolt_f",), "button head on a replaceable side tine or wedgelet whose plate cannot take a countersink (the 4WD "
+     "TPU wedgelet's M3 cone would meet the axle standoff's bore; a 1.5 mm Ti tine would keep 0.2 mm under the cone); "
+     "a tooth that catches it bends or tears a spare, not the chassis", ["CF-AS04", "CF-VS03"]),
 )
 
 

@@ -88,6 +88,7 @@ def make_plan(h, user=None) -> tuple:
                                 f"{(1.5 * SIDE_HIT_N / intent_mod.SIGMA_ALLOW['nylon']) ** 0.5:.2f} mm; print minimum "
                                 f"{intent_mod.MIN_WALL_FDM} mm (4 perimeters) -> {wall} mm")
     plan.extra["lighten"] = tuple((user or {}).get("lighten", ()))
+    plan.extra["thin_forks"] = bool((user or {}).get("thin_forks"))
     return plan, g
 
 
@@ -103,8 +104,9 @@ def layout_inputs(plan, h, user=None) -> LayoutInputs:
                                min_side_mm=max(c.get("min_side_mm", 0.0), plan.extra.get(f"{c['kind']}_side_mm", 0.0)),
                                port_room=pockets.PORT_ROOM + pockets.GAP,
                                rot_choices=(0.0, 90.0, 180.0, 270.0) if c["kind"] == "battery" else (0.0, 90.0)))
+    # the switch slides along x, across the robot: square to the front-rear scrape (CF-GD06)
     comps.append(Component("power_switch", "switch", switch.SIZE, 0.5, "switch_slide_12x4", on_wall=True,
-                           rot_choices=(0.0, 90.0), ports={"in": (-4, 0, 0), "out": (4, 0, 0)}))
+                           rot_choices=(0.0, 90.0) if (user or {}).get("switch_free") else (0.0,), ports={"in": (-4, 0, 0), "out": (4, 0, 0)}))
     links = [Link(a.split(".")[0] if a.split(".")[0] in {c.id for c in comps} else a,
                   b.split(".")[0] if b.split(".")[0] in {c.id for c in comps} else b)
              for _, a, b, _, _ in electronics.harness(h, plan.extra.get("weapon_motor"), plan.extra.get("servo"))]
@@ -171,12 +173,22 @@ def to_spec(plan, h) -> dict:
         + plan.claims,
         "generator": {"hypothesis": h.to_dict(), "slug": h.slug, "notes": plan.notes,
                       "layout": {k: list(v) for k, v in plan.placements.items()},
-                      "features": plan.features, "ground_game": hyp_mod.ground_game(h)},
+                      "features": plan.features, "ground_game": _ground_game(plan, h)},
     }
     if plan.archetype:
         spec["archetype"] = plan.archetype
     spec.update({k: v for k, v in plan.extra.items() if k in ("start_pose", "weapon_lock")})
     return spec
+
+
+def _ground_game(plan, h) -> dict:
+    gg = hyp_mod.ground_game(h)
+    if plan.extra.get("thin_forks"):
+        for d in ("left", "right"):
+            gg["accepted"][d + ".bite"] = ("mass trade: 1.5 mm Ti tines with M2 button heads (a countersink needs a 2 mm "
+                                           "plate, 1 g more than this robot has); a tooth that catches a head bends a "
+                                           "spare tine")
+    return gg
 
 
 def _base(h, user):
@@ -215,8 +227,8 @@ def build(h, user: dict | None = None, layout_index: int = 0, k: int = 5) -> dic
     if not hyp_mod.buildable(h, bool((user or {}).get("experimental"))):
         raise BuildError(f"no assembler for {h.slug} yet (buildable: {sorted(hyp_mod.BUILDABLE)})")
     errors = []
-    for tier in range(len(electronics.MARGIN_TIERS)):
-        u = dict(user or {}, margin_tier=tier)
+    for tier, free in [(t, False) for t in range(len(electronics.MARGIN_TIERS))] + [(len(electronics.MARGIN_TIERS) - 1, True)]:
+        u = dict(user or {}, margin_tier=tier, switch_free=free)
         try:
             spec = _build(h, u, layout_index, k)
         except BuildError as e:
@@ -224,7 +236,8 @@ def build(h, user: dict | None = None, layout_index: int = 0, k: int = 5) -> dic
             continue
         spec["generator"]["margins"] = {"tier": tier, "battery_front_side_mm": list(electronics.MARGIN_TIERS[tier][:2]),
                                         "electronics_front_side_mm": list(electronics.MARGIN_TIERS[tier][2:]),
-                                        "why": electronics.MARGIN_WHY[tier]}
+                                        "why": electronics.MARGIN_WHY[tier],
+                                        "switch_across": not free}  # False: the switch had to turn along the robot
         return spec
     raise BuildError(errors[-1] if errors else f"{h.slug}: no layout")
 

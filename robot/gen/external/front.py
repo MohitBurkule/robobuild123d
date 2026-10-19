@@ -14,6 +14,7 @@ from . import fasteners, sh
 
 LIP_GAP = 0.6
 WEDGE_T = 2.0
+CHEEK_T = 1.2  # closed ramp ends (front-quarter bite)
 WEB_T = 2.4
 
 
@@ -44,6 +45,12 @@ def add_wedge(plan, length=46.0, material="petg_cf", pid="wedge"):
     rib = rib_profile(yf, 0.13, y_tip, z_floor, f.zb)
     for x in _rib_xs(W):
         items.append(sh.place(sh.side_prism(rib, -0.6, 0.6), (x, 0, 0)))
+    # closed ends: a 1.2 mm cheek under each end of the ramp, down to lip height, so a tooth arriving from a front
+    # quarter meets a vertical face and a floor-level edge instead of the ramp's underside (it was a bite step)
+    cheek = [(yf, 0.13 - WEDGE_T + 0.2), (y_tip, z_floor + LIP_GAP), (yf, z_floor + LIP_GAP)]
+    for sgn in (1, -1):
+        xa, xb = sorted((sgn * width / 2, sgn * (width / 2 - CHEEK_T)))
+        items.append(sh.side_prism(cheek, xa, xb))
     xs = [round(s * W * k, 1) for k in (0.4, 0.8) for s in (1, -1)]
     z_ins = round(f.zt * 0.6, 2)
     holes = [sh.cyl_axis(1.1, yf, yf + WEB_T + 1.6, "y", x, z_ins) for x in xs]
