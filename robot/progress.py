@@ -42,7 +42,7 @@ def blockers(group: str, findings) -> None:
     try:
         with open(path, "a") as fh:
             for f in rows:
-                fh.write(json.dumps({"t": time.strftime("%Y-%m-%dT%H:%M:%S"), "pid": os.getpid(), "group": group, "id": f.id,
+                fh.write(json.dumps({"t": time.strftime("%Y-%m-%dT%H:%M:%S"), "pid": os.getpid(), "sha": os.environ.get("ROBOT_RUN_SHA"), "group": group, "id": f.id,
                                      "parts": list(getattr(f, "parts", []) or []), "message": f.message,
                                      "at": getattr(f, "at", None)}) + "\n")
     except OSError:
