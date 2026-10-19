@@ -55,3 +55,15 @@ def test_declared_teardown_move_frees_interlocked_pair():
     assert {s.id for s in c.assembly} == {"plate", "pin"}
     # the field survives Spec.copy() (to_dict keeps it)
     assert spec.Spec({"teardown": [{"parts": ["a"], "dir": [0, 0, 1]}]}).copy().teardown[0]["parts"] == ["a"]
+
+
+def test_small_part_with_two_leg_exit_assembles():
+    """A nut in a pocket whose open side faces a cavity wall: it slides in 3 mm, then drops out through the floor."""
+    shell = {"id": "shell", "kind": "structure", "material": "pla",
+             "shape": {"type": "subtract", "base": {"type": "box", "size": [20, 30, 30]},
+                       "cut": [{"type": "place", "shape": {"type": "box", "size": [4, 4, 4]}, "at": [5, 0, 0]},
+                               {"type": "place", "shape": {"type": "box", "size": [14, 30, 30]}, "at": [-3, 0, -2]}]}}
+    nut = box("nut", (5, 0, 0), (3.6, 3.6, 3.6), kind="nut")
+    fs, c = _run([shell, nut])
+    assert not [f for f in fs if f.id == "assembly.blocked"], [f.message for f in fs]
+    assert {s.id for s in c.assembly} == {"nut"}

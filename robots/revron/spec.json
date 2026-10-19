@@ -2600,6 +2600,7 @@
    "kind": "belt",
    "material": "rubber",
    "process": "cots",
+   "deviation": "O-rings are bought parts and are not modelled in the RVRN 2.0 STEP (the original CAD shows the groove and hub only); modelled here as a stretched loop for fit and clearance checks",
    "shape": {
     "type": "subtract",
     "base": {
@@ -4480,6 +4481,7 @@
    "kind": "belt",
    "material": "rubber",
    "process": "cots",
+   "deviation": "O-rings are bought parts and are not modelled in the RVRN 2.0 STEP (the original CAD shows the groove and hub only); modelled here as a stretched loop for fit and clearance checks",
    "shape": {
     "type": "subtract",
     "base": {
