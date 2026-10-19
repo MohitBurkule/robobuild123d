@@ -573,6 +573,15 @@
      },
      {
       "near": [
+       -10.97,
+       -9.03,
+       14.13
+      ],
+      "r": 3.0,
+      "reason": "centroid of one connected extra blob (bbox x -27..-0.4) made of the left cage rib, the left column-foot flares and the left flange gusset, each reasoned above"
+     },
+     {
+      "near": [
        -22.5,
        20.0,
        5.8

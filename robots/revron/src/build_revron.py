@@ -792,11 +792,11 @@ def esc_tray():
     the board 0.1 mm off, 1 mm lips 0.1 mm off its -x / +x / +y sides (leads leave above the lips at the board mid-plane).
     The deck cage holds -y and the Malenki above it +z, so the ESC cannot rattle inverted; base panel off, it lifts out."""
     (wx0, wx1), (wy0, wy1), wz0 = WE_X, WE_Y, WE_Z[0]
-    z0, top, g = 4.5, wz0 + 1.0, 0.1
-    parts = [_box(wx0 - g - 1.1, wx1 + g + 1.1, wy0, wy1 + g + 1.0, z0, z0 + 0.8)]
-    parts += [_box(xa, xa + 1.2, wy0 + 1.0, wy1 - 1.0, z0 + 0.79, wz0 - g) for xa in (wx0 + 1.4, wx1 - 2.6)]
-    parts += [_box(wx0 - g - 1.1, wx0 - g, wy0, wy1 + g + 1.0, z0 + 0.79, top), _box(wx1 + g, wx1 + g + 1.1, wy0, wy1 + g + 1.0, z0 + 0.79, top),
-              _box(wx0 - g - 1.1, wx1 + g + 1.1, wy1 + g, wy1 + g + 1.0, z0 + 0.79, top)]
+    z0, top, g, w = 4.5, wz0 + 1.0, 0.1, 1.25   # TPU walls >= 1.2
+    parts = [_box(wx0 - g - w, wx1 + g + w, wy0, wy1 + g + w, z0, z0 + w)]
+    parts += [_box(xa, xa + w, wy0 + 1.0, wy1 - 1.0, z0 + w - 0.01, wz0 - g) for xa in (wx0 + 1.4, wx1 - 2.6)]
+    parts += [_box(wx0 - g - w, wx0 - g, wy0, wy1 + g + w, z0 + w - 0.01, top), _box(wx1 + g, wx1 + g + w, wy0, wy1 + g + w, z0 + w - 0.01, top),
+              _box(wx0 - g - w, wx1 + g + w, wy1 + g, wy1 + g + w, z0 + w - 0.01, top)]
     return _U(*parts)
 
 
@@ -1149,6 +1149,7 @@ def reference_cad():
                       for x, y in INS[:4]]
           + [dict(near=[x, y, 5.0], r=4.0, reason="column foot flared to R3.7 with a recess for the base-panel ring boss (1.0 mm base skin cannot seat a 1.2 mm M2 flat head)")
              for x, y in INS]
+          + [dict(near=[-10.97, -9.03, 14.13], r=3.0, reason="centroid of one connected extra blob (bbox x -27..-0.4) made of the left cage rib, the left column-foot flares and the left flange gusset, each reasoned above")]
           + [dict(near=list(p_), r=8.0, reason="2 x 2.6 gusset under the front-corner flange: printed deck-down the flange top is an unsupported ceiling")
              for p_ in ((-22.5, 20.0, 5.8), (22.5, 20.0, 5.8))]
           + [dict(near=list(p_), r=6.0, reason="electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact")
