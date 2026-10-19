@@ -112,7 +112,7 @@
     "bolt_t*"
    ],
    "count": 4,
-   "designation": "M2x4",
+   "designation": "M2x5",
    "threads_into": "tub",
    "deviation": "the STEP top panel has 4 countersunk corner holes but no screws; 4 M2x4 CSK thread-forming screws added so the Ti panel cannot peel off"
   },
@@ -452,6 +452,18 @@
    "value": 150
   }
  ],
+ "sharp_ok": [
+  {
+   "part": "base_panel",
+   "near": [
+    27.9,
+    -21.5,
+    4.5
+   ],
+   "r_mm": 3.0,
+   "reason": "screw boss is 0.3 mm tall (any taller breaks the reference silhouette), so its base fillet is capped at R0.25; the STEP pad base is R0.5"
+  }
+ ],
  "teardown": [
   {
    "parts": [
@@ -644,6 +656,24 @@
       ],
       "r": 9.0,
       "reason": "corner column top: 1.7 thread-forming pilot for the top-panel M2 screw instead of the STEP 3.0 bore (the STEP top panel is bonded; screws make it removable)"
+     },
+     {
+      "near": [
+       28.6,
+       -30.6,
+       4.5
+      ],
+      "r": 4.5,
+      "reason": "N10 keyhole opened into a U-slot to the floor so the gearbox boss and shaft drop in from below with the base panel off (the STEP closes the keyhole, the shaft cannot be threaded through it)"
+     },
+     {
+      "near": [
+       -28.6,
+       -30.6,
+       4.5
+      ],
+      "r": 4.5,
+      "reason": "N10 keyhole opened into a U-slot to the floor so the gearbox boss and shaft drop in from below with the base panel off (the STEP closes the keyhole, the shaft cannot be threaded through it)"
      },
      {
       "near": [
@@ -6401,7 +6431,7 @@
     "csk_d": 4.5,
     "csk_depth": 1.05,
     "sink": 0.0,
-    "grip": 1.4
+    "grip": 1.3
    },
    "head": "countersunk",
    "removable": true
@@ -6440,7 +6470,7 @@
     "csk_d": 4.5,
     "csk_depth": 1.05,
     "sink": 0.0,
-    "grip": 1.4
+    "grip": 1.3
    },
    "head": "countersunk",
    "removable": true
@@ -6479,7 +6509,7 @@
     "csk_d": 4.5,
     "csk_depth": 1.05,
     "sink": 0.0,
-    "grip": 1.4
+    "grip": 1.3
    },
    "head": "countersunk",
    "removable": true
@@ -6518,7 +6548,7 @@
     "csk_d": 4.5,
     "csk_depth": 1.05,
     "sink": 0.0,
-    "grip": 1.4
+    "grip": 1.3
    },
    "head": "countersunk",
    "removable": true
@@ -6557,7 +6587,7 @@
     "csk_d": 4.5,
     "csk_depth": 1.05,
     "sink": 0.0,
-    "grip": 1.4
+    "grip": 1.3
    },
    "head": "countersunk",
    "removable": true
@@ -7244,8 +7274,8 @@
   },
   {
    "id": "bolt_t0",
-   "designation": "M2x4",
-   "head": "countersunk",
+   "designation": "M2x5",
+   "head": "button",
    "tool": "hex1.3",
    "at": [
     25.0,
@@ -7264,26 +7294,24 @@
    "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
    "hole": {
     "d": 2.0,
-    "length": 4.0,
-    "head": "csk",
-    "head_std": "ISO 14581",
-    "head_dk": 3.8,
-    "head_k": 1.2,
+    "length": 5.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
     "clearance_d": 2.4,
     "into": "through",
     "side": "head",
-    "csk_angle": 90.0,
-    "csk_d": 4.5,
-    "csk_depth": 1.05,
-    "sink": 0.0,
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
     "grip": 0.9
    },
    "removable": true
   },
   {
    "id": "bolt_t1",
-   "designation": "M2x4",
-   "head": "countersunk",
+   "designation": "M2x5",
+   "head": "button",
    "tool": "hex1.3",
    "at": [
     -25.0,
@@ -7302,26 +7330,24 @@
    "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
    "hole": {
     "d": 2.0,
-    "length": 4.0,
-    "head": "csk",
-    "head_std": "ISO 14581",
-    "head_dk": 3.8,
-    "head_k": 1.2,
+    "length": 5.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
     "clearance_d": 2.4,
     "into": "through",
     "side": "head",
-    "csk_angle": 90.0,
-    "csk_d": 4.5,
-    "csk_depth": 1.05,
-    "sink": 0.0,
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
     "grip": 0.9
    },
    "removable": true
   },
   {
    "id": "bolt_t2",
-   "designation": "M2x4",
-   "head": "countersunk",
+   "designation": "M2x5",
+   "head": "button",
    "tool": "hex1.3",
    "at": [
     25.0,
@@ -7340,26 +7366,24 @@
    "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
    "hole": {
     "d": 2.0,
-    "length": 4.0,
-    "head": "csk",
-    "head_std": "ISO 14581",
-    "head_dk": 3.8,
-    "head_k": 1.2,
+    "length": 5.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
     "clearance_d": 2.4,
     "into": "through",
     "side": "head",
-    "csk_angle": 90.0,
-    "csk_d": 4.5,
-    "csk_depth": 1.05,
-    "sink": 0.0,
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
     "grip": 0.9
    },
    "removable": true
   },
   {
    "id": "bolt_t3",
-   "designation": "M2x4",
-   "head": "countersunk",
+   "designation": "M2x5",
+   "head": "button",
    "tool": "hex1.3",
    "at": [
     -25.0,
@@ -7378,18 +7402,16 @@
    "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
    "hole": {
     "d": 2.0,
-    "length": 4.0,
-    "head": "csk",
-    "head_std": "ISO 14581",
-    "head_dk": 3.8,
-    "head_k": 1.2,
+    "length": 5.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
     "clearance_d": 2.4,
     "into": "through",
     "side": "head",
-    "csk_angle": 90.0,
-    "csk_d": 4.5,
-    "csk_depth": 1.05,
-    "sink": 0.0,
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
     "grip": 0.9
    },
    "removable": true
@@ -7413,6 +7435,23 @@
     "power_switch"
    ],
    "threads_into": "tub",
+   "access_before": [
+    "base_panel"
+   ],
+   "hole": {
+    "d": 2.0,
+    "length": 3.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "tapped",
+    "side": "thread",
+    "grip": 0.0,
+    "tap_d": 1.6,
+    "thread_depth": 3.5
+   },
    "reason": "thread-forming into the 1.7 pilot holes either side of the switch flange; heads clamp the flange to the deck underside (inferred)",
    "removable": true
   },
@@ -7435,6 +7474,23 @@
     "power_switch"
    ],
    "threads_into": "tub",
+   "access_before": [
+    "base_panel"
+   ],
+   "hole": {
+    "d": 2.0,
+    "length": 3.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "tapped",
+    "side": "thread",
+    "grip": 0.0,
+    "tap_d": 1.6,
+    "thread_depth": 3.5
+   },
    "reason": "thread-forming into the 1.7 pilot holes either side of the switch flange; heads clamp the flange to the deck underside (inferred)",
    "removable": true
   }
