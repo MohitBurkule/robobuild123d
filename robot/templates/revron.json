@@ -60,8 +60,8 @@
   "note": "GR1507 drisk (single tooth, 3+6+3 on a 3 mm spider) on 8 mm XALT mounts; N10 direct to 21.5 rear tyres, O-rings to 11 mm fronts"
  },
  "weapon_lock": {
-  "require_part": true,
-  "note": "RV00 TPU tooth stop (weapon.locking_bar = weapon_lock), fitted whenever the battery is in"
+  "type": "external_pin",
+  "note": "pit safety pin handled outside the robot and pulled before a fight: not part of the build, no bore in RV02/RV03 (the STEP has none; user 2026-10-19)"
  },
  "reference_bom": [
   {
@@ -272,7 +272,7 @@
    "count": 4,
    "designation": "M2",
    "threads_into": "nut",
-   "deviation": "the STEP leaves the r14 stack holes empty; 4 M2x18 + nuts added so the stack is held (18 mm: the nut is fully engaged)"
+   "deviation": "the STEP leaves the r14 stack holes empty; 4 M2x16 + nuts added so the stack is held (16 mm: stack 15 + 1 mm into the nut; M2x18 stuck out 1.4 mm past the nut, 0.6 mm from the tub lug while it spins)"
   },
   {
    "role": "spider to bell: 4 x M2 (not in the STEP)",
@@ -302,15 +302,6 @@
    "count": 2,
    "designation": "M2",
    "deviation": "the STEP has the two 1.7 pilot holes but no screws"
-  },
-  {
-   "role": "weapon lock RV00 (TPU, Build Guide)",
-   "kind": "part",
-   "match": [
-    "weapon_lock"
-   ],
-   "count": 1,
-   "material": "tpu"
   },
   {
    "role": "nitrile O-ring belts (not in the STEP; hub grooves are)",
@@ -439,12 +430,6 @@
    "reason": "thin M3 nut pressed into a hex pocket 0.05 under its flats (captive)"
   },
   {
-   "a": "weapon_lock",
-   "b": "mount_l",
-   "max_depth_mm": 0.15,
-   "reason": "RV00 TPU lock pin d4 pressed into the RV02 3.9 bore (0.05 radial grip) so it cannot rattle out"
-  },
-  {
    "a": "wbearing",
    "b": "mount_l",
    "max_depth_mm": 0.1,
@@ -538,6 +523,19 @@
   },
   {
    "parts": [
+    "mount_r"
+   ],
+   "dir": [
+    0,
+    1,
+    0
+   ],
+   "reason": "RV02/RV03 with the motor and drisk slide forward off the chassis tabs as one quick-change module"
+  }
+ ],
+ "module_teardown": [
+  {
+   "parts": [
     "mount_l",
     "bolt_ula",
     "bolt_ulb"
@@ -547,7 +545,7 @@
     0,
     0
    ],
-   "reason": "RV02 slides outboard off the lug and the shaft end, its CSK screws captive"
+   "reason": "RV02 slides outboard off the shaft end, its CSK screws captive"
   },
   {
    "parts": [
@@ -570,19 +568,6 @@
     0
    ],
    "reason": "GR1507 leaves inboard-left once the 4 stator screws are out"
-  },
-  {
-   "parts": [
-    "mount_r",
-    "bolt_ura",
-    "bolt_urb"
-   ],
-   "dir": [
-    1,
-    0,
-    0
-   ],
-   "reason": "RV03 slides outboard off its lug with the back spacer, CSK screws captive"
   }
  ],
  "reference_cad": {
@@ -936,18 +921,7 @@
     "part": "mount_l",
     "file": "RV02_XALT_HD_left_hand_weapon_mount_1.stl",
     "mode": "shape",
-    "tol_mm": 0.5,
-    "deviations": [
-     {
-      "near": [
-       -17.4,
-       29.04,
-       21.85
-      ],
-      "r": 4.5,
-      "reason": "RV00 weapon-lock pin bore d3.9 through RV02 (Build Guide lock rule; the STEP models no lock)"
-     }
-    ]
+    "tol_mm": 0.5
    },
    {
     "part": "mount_r",
@@ -1869,8 +1843,7 @@
     ],
     "spin_dir": "ccw",
     "supported_both_ends": true,
-    "teeth": 1,
-    "locking_bar": "weapon_lock"
+    "teeth": 1
    },
    "label": "3 mm aluminium spider: bolted to the bell (4 M2 on r4.5), carries the disc stack on 4 M2 on r14"
   },
@@ -2659,38 +2632,6 @@
     }
    },
    "label": "TPU weapon-ESC tray (not in the STEP): glued to the base panel, lips hold the ESC when inverted"
-  },
-  {
-   "id": "weapon_lock",
-   "kind": "locking_bar",
-   "role": "weapon_lock",
-   "material": "tpu",
-   "process": "fdm",
-   "print_orientation": "+z",
-   "rotates_with": "fixed",
-   "color": "#ff6a00",
-   "tethered": true,
-   "parent": "mount_l",
-   "at": [
-    -5.5,
-    29.042633766233717,
-    21.851296290894776
-   ],
-   "rot": [
-    0,
-    90,
-    0
-   ],
-   "marked": true,
-   "tool_free": true,
-   "shape": {
-    "type": "model",
-    "file": "../../robots/revron/src/build_revron.py",
-    "params": {
-     "part": "weapon_lock"
-    }
-   },
-   "label": "RV00 TPU weapon lock pin (Build Guide rule; not in the STEP): d4 pin pushed through RV02 into a spider window, flag head + lanyard outside"
   },
   {
    "id": "belt_l",
@@ -7122,7 +7063,6 @@
    ],
    "threads_into": "weapon_motor",
    "access_before": [
-    "weapon_lock",
     "mount_l",
     "wbearing"
    ],
@@ -7131,7 +7071,7 @@
   },
   {
    "id": "bolt_d0",
-   "designation": "M2x18",
+   "designation": "M2x16",
    "head": "button",
    "tool": "hex1.3",
    "material": "titanium",
@@ -7153,7 +7093,6 @@
    ],
    "threads_into": "nut_d0",
    "access_before": [
-    "weapon_lock",
     "mount_l",
     "wbearing",
     "weapon_motor",
@@ -7189,7 +7128,6 @@
    ],
    "threads_into": "weapon_motor",
    "access_before": [
-    "weapon_lock",
     "mount_l",
     "wbearing"
    ],
@@ -7198,7 +7136,7 @@
   },
   {
    "id": "bolt_d1",
-   "designation": "M2x18",
+   "designation": "M2x16",
    "head": "button",
    "tool": "hex1.3",
    "material": "titanium",
@@ -7220,7 +7158,6 @@
    ],
    "threads_into": "nut_d1",
    "access_before": [
-    "weapon_lock",
     "mount_l",
     "wbearing",
     "weapon_motor",
@@ -7256,7 +7193,6 @@
    ],
    "threads_into": "weapon_motor",
    "access_before": [
-    "weapon_lock",
     "mount_l",
     "wbearing"
    ],
@@ -7265,7 +7201,7 @@
   },
   {
    "id": "bolt_d2",
-   "designation": "M2x18",
+   "designation": "M2x16",
    "head": "button",
    "tool": "hex1.3",
    "material": "titanium",
@@ -7287,7 +7223,6 @@
    ],
    "threads_into": "nut_d2",
    "access_before": [
-    "weapon_lock",
     "mount_l",
     "wbearing",
     "weapon_motor",
@@ -7323,7 +7258,6 @@
    ],
    "threads_into": "weapon_motor",
    "access_before": [
-    "weapon_lock",
     "mount_l",
     "wbearing"
    ],
@@ -7332,7 +7266,7 @@
   },
   {
    "id": "bolt_d3",
-   "designation": "M2x18",
+   "designation": "M2x16",
    "head": "button",
    "tool": "hex1.3",
    "material": "titanium",
@@ -7354,7 +7288,6 @@
    ],
    "threads_into": "nut_d3",
    "access_before": [
-    "weapon_lock",
     "mount_l",
     "wbearing",
     "weapon_motor",
@@ -7979,14 +7912,6 @@
    "reason": "Ti top panel held by 4 M2 flat-head thread-forming screws through its countersunk corner holes into the column-top pilots (the STEP has the holes, not the screws)"
   },
   {
-   "a": "weapon_lock",
-   "b": "mount_l",
-   "method": "press_fit",
-   "reason": "TPU lock pin pressed into the RV02 3.9 bore (0.05 radial grip, pulled by its flag) into a spider window; the head stops it, the lanyard tethers it to the mount",
-   "interference_mm": 0.05,
-   "mechanical_key": true
-  },
-  {
    "a": "battery",
    "b": "tub",
    "method": "press_fit",
@@ -8060,6 +7985,16 @@
      11.1,
      14.5,
      16.0
+    ],
+    [
+     11.1,
+     15.5,
+     18.2
+    ],
+    [
+     11.1,
+     27.0,
+     18.2
     ],
     [
      11.1,
@@ -8411,12 +8346,6 @@
    "up": "+x"
   },
   {
-   "rule": "support_free",
-   "why": "every printed part prints without supports in its declared orientation",
-   "part": "weapon_lock",
-   "up": "+z"
-  },
-  {
    "rule": "min_wall",
    "why": "2 mm walls are 4+ perimeters: the box takes wheel-side and clamp loads without delaminating",
    "part": "tub",
@@ -8553,6 +8482,16 @@
      ],
      [
       11.1,
+      15.5,
+      18.2
+     ],
+     [
+      11.1,
+      27.0,
+      18.2
+     ],
+     [
+      11.1,
       30.0,
       14.5
      ]
@@ -8578,8 +8517,7 @@
     "nut_d0",
     "nut_d1",
     "nut_d2",
-    "nut_d3",
-    "weapon_lock"
+    "nut_d3"
    ]
   }
  ]
