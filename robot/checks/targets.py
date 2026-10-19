@@ -36,6 +36,12 @@ def measure_targets(ctx):
         sa = spin_axis(w, r, i) if b.part_idx is not None and b.kind == "weapon" else None
         if sa is not None:
             dias.append(2.0 * rim_radius(b, *sa))
+            # a spider / hub weapon carries its blades as separate parts riding the same rotor: the disc is the biggest
+            rw = getattr(r.parts[b.part_idx].part, "rotates_with", None)
+            for o in w.bodies:
+                if o is not b and o.part_idx is not None and not o.is_wire and rw and getattr(r.parts[o.part_idx].part, "rotates_with", None) == rw \
+                        and getattr(r.parts[o.part_idx].part, "role", None) == "blade":
+                    dias.append(2.0 * rim_radius(o, *sa))
     vals["disc_dia_mm"] = max(dias) if dias else None
     vals["mass_g"] = ctx.metrics.get("mass_total_g")
     return vals
