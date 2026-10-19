@@ -253,6 +253,41 @@ probe tests the function (robot/checks/intent.py has the keys). BLOCKER unless `
 13. **Wires clear the rotor** (`wire_clear_rotor`): every wire (straight proxy between ports) stays >= 2 mm outside the
     rotor's swept cylinder.
 
+## Adversarial survivability: what can the opponent hit? (`exposure.*`)
+Design intent is surviving an opponent, not only working on the bench. For every vulnerable part (belts, O-rings,
+motors, ESCs, receiver, battery, switch, bearings, connectors, pulleys, wires) the verifier casts rays from its surface
+toward three attackers: a horizontal spinner or arena wall (12 azimuths, any height), a vertical spinner or hammer from
+above (vertical and 30 deg off), and a wedge or lifter at floor level (points within 6 mm of the floor).
+1. **Shield the function parts.** A vulnerable part may be at most 35 % exposed to any one attack (a belt 60 %, since it
+   must wrap its pulleys). Put a side panel outboard of an O-ring, a wall or lid over the electronics, or move the part
+   inboard. Accept an exposure only with a written reason (`exposure.parts.<id>.reason`).
+2. **One hit must not stop the drive.** No single attack class may expose both the left and the right drive (motor or belt).
+3. **Wires run inside.** A routed wire stays more than 1 mm inside the robot's outer envelope.
+4. **Recess the switch.** The switch body stays inside the envelope; only the lever reaches the face.
+5. **Keep the ground game under tilt** (`exposure.tilt_gap`). Wedges and flippers try to get under you, lift you and
+   throw you. With the robot pitched or rolled 2 deg (tyre squash, a bump) and resting on the floor, every side's edge
+   gap stays <= 3 mm (the front is a blocker). `combat.R0xx` covers the level case.
+6. **Give a tooth nothing to bite** (`exposure.catch`, `exposure.screw_heads`, `exposure.rip_off`). A spinner only needs
+   to catch an edge to lift you or rip a part off. Exposed faces square to a horizontal attack in the 3-30 mm tooth band
+   are measured per side against the reference robot. No screw head stands proud. An exposed part needs >= 2 joints.
+
+**Why each Revron (RVRN 2.0) feature exists, in these terms (and the check that proves ours does it):**
+- **Ti forks (`fork_5`)**: light 1.5 mm tines that reach 0.75 mm off the floor in front of the wedgelets. They get under
+  an opponent's wedge before its lip gets under us, and as thin metal they do not chip. Checked by `combat.R040-R043`,
+  `exposure.tilt_gap` (front) and `reference_cad.*`.
+- **TPU wedgelets (RV17/18)**: a 50 deg ramp over the nose. A tooth or wedge that meets it is deflected up into the disc,
+  and TPU soaks the hit instead of cracking. The ramp face is battered, so it is not square to a tooth (`exposure.catch`).
+- **TPU side panels (RV23/24)**: skirts down each side, wide at the floor (foot) and thin higher up, battered outward.
+  They keep the side ground game (`exposure.tilt_gap` left/right). They cover the O-ring belts and tyre sides from a
+  horizontal spinner or wall (`exposure.part` on `belt_*`: ours 25-29 % horizontal, the same as the STEP's 27-30 %).
+  Their countersunk screws leave no head to catch (`intent.flush_head`, `exposure.screw_heads`).
+- **2 mm top chamfer on the chassis, no lid edge**: a vertical spinner tooth or a hammer coming over the top finds a
+  slope, not a lip (`exposure.catch` front/rear).
+- **Wires inside, switch in the deck slot**: nothing for a tooth to hook (`exposure.wire_outer`, `exposure.switch_recess`).
+- **Invertibility**: RVRN cannot self-right. It runs inverted on the disc top and the rear tyre tops (`combat.R090`,
+  `can_run_inverted`).
+
+
 ## Bought-in sizes, fit, containment, disassembly and coverage (`cots.*`, `fit.*`, `contain.*`, `disasm.*`, `coverage.*`)
 
 - **No unlisted sizes** (`cots.unlisted`, BLOCKER): every motor, ESC, battery, RX, switch, servo, bearing, insert, nut and

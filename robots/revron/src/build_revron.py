@@ -442,7 +442,7 @@ def wedgelet(s):
     ring = Point(*SA).buffer(3.5, 64)
     cheek = _round(ring.union(Polygon([(26.5, 1.0), (26.5, 5.5), (29.5, 9.0), (33.5, 10.6), (38.0, 15.36), (50.1, 1.0)])), r_in=1.5)
     parts = [_ext(cheek, "yz", -29.0, -21.5)]
-    blk = Point(*SB).buffer(3.6, 64).union(Polygon([(37.6, 2.5), (40.2, 8.0), (39.5, 10.0), (50.1, 10.0), (50.1, 1.0), (40.0, 1.0)]))
+    blk = Point(*SB).buffer(3.5, 64).union(Polygon([(37.6, 2.5), (40.2, 8.0), (39.5, 10.0), (50.1, 10.0), (50.1, 1.0), (40.0, 1.0)]))
     parts.append(_ext(blk, "yz", -38.5, -35.8))
     parts.append(_box(-35.8, -29.0, 46.1, 50.1, 1.0, 12.0))                           # nose lip
     parts.append(_box(-21.5, -17.5, 43.8, 50.1, 1.0, 7.5))                            # inner nose tab
@@ -1000,6 +1000,9 @@ def main():
                     allow_overlap=[dict(a="wshaft", b="wbearing", max_depth_mm=0.3, reason="shaft in the MR85 inner race (bearing modelled as one solid)")],
                     claims=[dict(id="c_mass", text="weighs 150 g or less", metric="mass_total_g", op="<=", value=150),
                             dict(id="c_fit", text="fits the 150 mm square", metric="footprint_mm", op="<=", value=150)],
+                    exposure={"max_frac": 0.35, "tilt_gap_mm": 3.0, "tilt_deg": 2,
+                              "catch_mm2": {"front": 1383, "rear": 2094, "left": 2845, "right": 2331},
+                              "catch_note": "limits = RVRN 2.0 STEP assembly measured by exposure.catch_area x 1.2 (tyre side walls dominate)"},
                     reference_cad=reference_cad(), **body)
         spec["modules"] = [{"id": "weapon_module", "root": "mount_r", "note": "RVRN quick change: 4 M3 out, both mounts with the drisk lift off the chassis tabs",
                             "parts": [p["id"] for p in spec["parts"] if _root(spec["parts"], p) == "mount_r" and p["id"] != "mount_r"]}]

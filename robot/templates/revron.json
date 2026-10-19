@@ -358,6 +358,18 @@
    "value": 150
   }
  ],
+ "exposure": {
+  "max_frac": 0.35,
+  "tilt_gap_mm": 3.0,
+  "tilt_deg": 2,
+  "catch_mm2": {
+   "front": 1383,
+   "rear": 2094,
+   "left": 2845,
+   "right": 2331
+  },
+  "catch_note": "limits = RVRN 2.0 STEP assembly measured by exposure.catch_area x 1.2 (tyre side walls dominate)"
+ },
  "reference_cad": {
   "dir": "/mnt/project-files/robot-cad/research/rvrn_step/parts",
   "ref_to_world": [

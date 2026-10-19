@@ -23,14 +23,14 @@ from ..spec import Spec
 
 # Bumped whenever a check is added or changed. 7 = the Rust crate's revision; 8 adds belt/fork tension (python port); 9 adds
 # wheel running clearance, wheel exposure, targets, fused/key/tape/press-fit evidence, stall-current battery peak.
-CHECKS_REVISION = 12  # 12 adds intent (functional design-intent probes); 10 adds internal (no_contact, fastener_void, wire_in_solid); 11 adds bom (reference BOM, lock part, O-ring stock, wire cut, switch dir, doc) and connection.cover_fasteners
+CHECKS_REVISION = 13  # 13 adds exposure (attack exposure of vulnerable parts); 12 adds intent; 10 adds internal (no_contact, fastener_void, wire_in_solid); 11 adds bom (reference BOM, lock part, O-ring stock, wire cut, switch dir, doc) and connection.cover_fasteners
 
 # (module, deep_only) in run order; same order as the Rust crate, plus `tension` before `assembly`.
 GROUPS = [
     ("wiring", True), ("mass", False), ("interference", False), ("connections", False), ("internal", False), ("ground", False),
     ("legal", False), ("fasteners", False), ("power", False), ("mfg", False), ("spinner", False), ("kinematics", False), ("tension", False), ("targets", False),
     ("shape", False), ("dynamics", False), ("strength", False), ("printability", False), ("process", False),
-    ("reference", False), ("archetype", False), ("architecture", False), ("electrical", False), ("combat", False), ("assembly", True), ("joints", False), ("material", False), ("plausibility", False), ("reference_ratios", False), ("reference_cad", False), ("intent", False),
+    ("reference", False), ("archetype", False), ("architecture", False), ("electrical", False), ("combat", False), ("assembly", True), ("joints", False), ("material", False), ("plausibility", False), ("reference_ratios", False), ("reference_cad", False), ("intent", False), ("exposure", False),
     ("cots", False), ("fit", False), ("contain", False), ("disasm", False), ("coverage", False), ("bom", False),
 ]
 
