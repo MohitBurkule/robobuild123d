@@ -399,3 +399,48 @@ Extended clusters (combat_failure_modes_ext.json, uncalibrated, all warnings): *
 side or dragging on the floor when inverted; **CFX-ANTENNA** modelled antenna on the outer skin; **CFX-FRICTION** pins/tyres
 held only by friction/press fit; **CFX-TAPE** electronics held only by tape/velcro; **CFX-STATE** no answer when inverted,
 one drive side dead, weapon dead, radio failsafe, or on its side.
+
+## CAD authoring tools (`robot/cad`): remove recurring modelling mistakes
+
+**Holes from the fastener catalog** (`robot.cad.holes.hole`). WHY: holes sized by eye gave countersinks too small
+(head proud or clashing), counterbores the wrong depth, tap holes at clearance size and nut pockets that fall out.
+`part, rec = hole(part, at, axis, "M2x6", head="csk"|"button"|"cap", into="through"|"tapped"|"insert"|"nut", grip=...)`
+cuts ISO 273 clearance, tap drill, heat-set insert bore, ISO 10642/14581 90 deg countersink, ISO 7380/4762
+counterbore (cap: flush by default) and ISO 4032/4035 hex pockets (`nut_fit="press"` +0.05 AF, `"drop"` +0.3).
+`at` is the surface point, `axis` points head -> tip; `side="head"|"thread"` cuts one part of a two-part joint.
+`rec.to_spec(id, through=[...], threads_into=..., M=part_to_world)` gives the `fasteners[]` entry, including a
+`hole` record. The `fastener_seat.*` group then probes the real geometry: csk flush (+-0.25 mm), counterbore floor
+depth, head clash with material, head bearing, thread bite / pilot open, insert bore, nut pocket. With a `hole`
+record a mismatch is a BLOCKER; without one, only head-type defaults are checked (WARNING).
+
+**Assembly mates** (`robot.cad.mates`, applied on spec load). WHY: hand-typed world coordinates drift when the part
+they sit on moves. A part with `"mate": {"to": "plate", "constraints": [{"type": "face", "a": "top", "b": "face",
+"offset": 0}, {"type": "coaxial", "a": "bore", "b": "shaft"}]}` gets its `at`/`rot` solved from the target's
+current pose (features in each part's own frame, by name from `"features"` or inline). Types: face, coaxial (+axial
+offset), point_on_plane, point, angle. Sequential rigid solve; mates chain, so moving a part moves its dependents.
+
+**Smooth parts** (`robot.cad.smooth`). WHY: stacked extrusions at measured heights leave stair steps (90 deg creases)
+that fail section/silhouette matching. `loft_stations([Station(z, profile), ...])` lofts exact B-spline / ellipse /
+rounded-rect sections; `sweep_profile`, `fillet_all`. `smoothness(solid)` reports max crease angle, section-radius
+curvature and step count; a loft scores ~0 steps, a stack scores one per tread. Test new organic parts with it.
+
+**Curve fitting** (`robot.cad.fit`, `measure-ref --fit`). WHY: organic outlines were copied as dense polylines (a copy
+and a stair source) or guessed. `fit_bspline(points)` finds the FEWEST control points (4..8, capped) meeting RMS
+<= 0.3 mm; `segments()` splits an outline into lines and arcs; `fillet_radii()`. The ctrl lists go straight into a
+`{"type": "bspline", "ctrl": [...]}` profile for `loft_stations`.
+
+**Reference measuring** `python3 -m robot measure-ref ref.stl|step [--part NAME] [--sections N] [--fit]
+[--stations "z:2,5;x:0"] [--md]`. WHY: params were guessed from renders. Prints numbers only: bbox, per-axis section
+sizes/areas/hole counts, holes (diameter, shape round/D/hex/slot, shapes along the axis, axis, through/depth, csk
+angle + dia, cbore dia + depth), wall thickness stats, fillet radii, and with --fit low-DOF sketches. A guard
+refuses to print any point list longer than 8 (no polygons/meshes): type the numbers into params.
+
+**Incremental verify** `python3 -m robot verify spec.json --changed`. WHY: full verifies take minutes, so people
+skipped them. Each check group's actual reads of part geometry are recorded; a group is reused only if the spec
+(minus geometry fields), code, options, earlier groups' outputs and every part it read are unchanged. Equivalence with
+a full run is tested. Plain `verify` is unchanged and remains the reference.
+
+**Done gate** `python3 -m robot gate spec.json [--renders DIR] [--views iso.png,top.png]`. WHY: "matches the
+reference" was claimed on partial evidence. Prints PASS/FAIL for: full verify 0 blockers, every
+`reference_cad.diff`/`.features` passing (and present), every `intent.support_free`/`printability.*` passing (and
+present), render PNGs present and newer than the spec. Exit 0 only when all pass. Run it before claiming a match.
