@@ -419,13 +419,13 @@ def _switch_hole(yy):
 def motor_back_spacer():
     """1.5 mm printed spacer between the GR1507 stator base and RV03: clears the motor's rear bearing boss and wires."""
     from shapely.geometry import Point
-    p = Point(WY, WZ).buffer(10.0, 64).difference(Point(WY, WZ).buffer(3.95, 48))
+    p = Point(WY, WZ).buffer(10.0, 64).difference(Point(WY, WZ).buffer(4.0, 48))
     from shapely.geometry import Polygon
-    ring = Point(WY, WZ).buffer(8.45, 96).difference(Point(WY, WZ).buffer(5.05, 64))
-    for sy in (1, -1):   # 4 wire / lightening windows between the screw webs: annular sectors, r0.5 corners
-        for sz in (1, -1):
-            q = Polygon([(WY + sy * 2.45, WZ + sz * 2.45), (WY + sy * 12, WZ + sz * 2.45), (WY + sy * 12, WZ + sz * 12), (WY + sy * 2.45, WZ + sz * 12)])
-            p = p.difference(_round(ring.intersection(q), r_out=0.75))
+    for k in range(4):   # STEP windows (measured): R5.5..8.5 sectors, 20..70 deg in each quadrant, corners ~r1.5
+        a0 = 45.0 + 90 * k
+        wedge = Polygon([(WY, WZ)] + [(WY + 30 * math.cos(math.radians(a0 + d)), WZ + 30 * math.sin(math.radians(a0 + d))) for d in [-25.0 + 50.0 * i / 25 for i in range(26)]])
+        q = Point(WY, WZ).buffer(8.5, 128).difference(Point(WY, WZ).buffer(5.5, 96)).intersection(wedge)
+        p = p.difference(_round(q, r_out=1.5))
     for dy, dz in ((6, 0), (-6, 0), (0, 6), (0, -6)):
         p = p.difference(Point(WY + dy, WZ + dz).buffer(1.05, 24))
     return _ext(p, "yz", *BSP_X)
@@ -501,8 +501,8 @@ def spider():
     p = p.difference(Point(0, 0).buffer(2.6, 48))
     for k in range(4):
         a = math.radians(90 * k)
-        for r in (HUB_R, BOLT_R):
-            p = p.difference(Point(r * math.cos(a), r * math.sin(a)).buffer(1.1, 32))
+        for r, hr in ((HUB_R, 1.1), (BOLT_R, 0.8)):   # r14: M2 tap drill (the stack screws thread in), r4.5: clearance
+            p = p.difference(Point(r * math.cos(a), r * math.sin(a)).buffer(hr, 32))
     return _ext(_to_world_poly(p), "yz", *DR_X["spider"])
 
 
@@ -510,11 +510,11 @@ def drisk_spacer():
     """6 mm printed spacer between the discs: bore 19.8 round the bell, 4 r14 bolt holes, 4 arc windows."""
     from shapely.geometry import Point, Polygon
     p = Point(0, 0).buffer(16.0, 128).difference(Point(0, 0).buffer(9.9, 96))
-    for sx in (1, -1):
-        for sy in (1, -1):
-            q = Point(0, 0).buffer(14.4, 96).difference(Point(0, 0).buffer(11.5, 96)).intersection(
-                Polygon([(sx * 2.0, sy * 2.0), (sx * 20, sy * 2.0), (sx * 20, sy * 20), (sx * 2.0, sy * 20)]))
-            p = p.difference(_round(q, r_out=0.5))
+    for k in range(4):   # STEP windows (measured): R11.4..14.5 sectors, 9..81 deg in each quadrant, corners ~r1.0
+        a0 = 45.0 + 90 * k
+        wedge = Polygon([(0, 0)] + [(30 * math.cos(math.radians(a0 + d)), 30 * math.sin(math.radians(a0 + d))) for d in [-36.0 + 72.0 * i / 36 for i in range(37)]])
+        q = Point(0, 0).buffer(14.5, 128).difference(Point(0, 0).buffer(11.4, 128)).intersection(wedge)
+        p = p.difference(_round(q, r_out=1.0))
     for k in range(4):
         a = math.radians(90 * k)
         p = p.difference(Point(BOLT_R * math.cos(a), BOLT_R * math.sin(a)).buffer(1.1, 32))
@@ -1128,9 +1128,6 @@ def make_spec(model_file):
       off_dir=[0, -1, 0], label="BBB ant switch hung under the deck beside the top panel: lever flush in the deck slot, 2 M2 into the deck")
     for i, (x, y) in enumerate(INS):
         P(id=f"insert_b{i}", kind="insert", catalog="heatset_m2_4", at=[x, y, (INS_Z[0] + INS_Z[1]) / 2])
-    for k in range(4):
-        dy, dz = _disc_local(BOLT_R * math.cos(math.radians(90 * k)), BOLT_R * math.sin(math.radians(90 * k)))
-        P(id=f"nut_d{k}", kind="nut", catalog="nut_m2", at=[DR_X["disc_b"][1] + 0.8, dy - WY, dz - WZ], rot=[0, 90, 0], rotates_with="weapon", parent="spider")
     P(id="esc_tray", kind="other", material="tpu", process="fdm", print_orientation="+z", rotates_with="fixed", shape=M("esc_tray"),
       label="TPU weapon-ESC tray (not in the STEP): glued to the base panel, lips hold the ESC when inverted")
 
@@ -1155,10 +1152,10 @@ def make_spec(model_file):
         F(id=f"bolt_p{k}", designation="M2x4", head="button", tool="hex1.3", material="titanium", at=[DR_X["spider"][0], dy, dz], dir=[1, 0, 0], through=["spider"], threads_into="weapon_motor",
           access_before=["mount_l", "wbearing"], reason="spider to bell, fitted before the left mount goes on (inferred)")
         dy, dz = _disc_local(BOLT_R * math.cos(a), BOLT_R * math.sin(a))
-        F(id=f"bolt_d{k}", designation="M2x16", head="button", tool="hex1.3", material="titanium", at=[DR_X["spider"][0], dy, dz], dir=[1, 0, 0],
-          through=["spider", "disc_a", "dspacer", "disc_b"], threads_into=f"nut_d{k}",
-          access_before=["mount_l", "wbearing", "weapon_motor", "mount_r", "motor_spacer", "tub", "so_al", "so_bl", "so_ar", "so_br"],
-          reason="stack bolted up on the bench before it goes on the motor (inferred: the STEP has the 2.2 holes but no screws)")
+        F(id=f"bolt_d{k}", designation="M2x14", head="button", tool="hex1.3", material="titanium", at=[DR_X["disc_b"][1], dy, dz], dir=[-1, 0, 0],
+          through=["disc_b", "dspacer", "disc_a"], threads_into="spider",
+          access_before=["tub", "mount_r", "motor_spacer"],
+          reason="stack screwed into the spider from the back (heads on disc_b, 2 mm of thread in the 3 mm alu spider tapped M2): no nuts, since the STEP has none (inferred: it has the 2.2 holes but no screws)")
     for i, (x, y) in enumerate(((25.0, 10.4), (-25.0, 10.4), (25.0, -21.6), (-25.0, -21.6))):
         F(id=f"bolt_t{i}", designation="M2x5", head="button", tool="hex1.3", at=[x, y, 20.4], dir=[0, 0, -1], through=["top_panel"], threads_into="tub",
           reason="M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
@@ -1267,7 +1264,7 @@ def intent_checks():
       at=[[-x + w, CH["y0"] + w], [x - w, CH["y0"] + w], [x - w, CH["y1"] - w], [-x + w, CH["y1"] - w]])
     A("tool_count", "pit kit: one hex key per screw size (1.3 for M2, 2 for M3); the weapon swap needs only the 2 mm key", max=2, module_max=1,
       module=["bolt_ula", "bolt_ulb", "bolt_ura", "bolt_urb"])
-    rot = ["spider", "disc_a", "disc_b", "dspacer"] + [f"nut_d{k}" for k in range(4)]
+    rot = ["spider", "disc_a", "disc_b", "dspacer"]
     A("wire_clear_rotor", "phases and power leads stay out of the drisk's swept volume", rotor=rot, axis=[1, 0, 0], at=[0, WY, WZ], min=2.0,
       via={"w_wesc_m": PHASE_VIA})
     return out
@@ -1312,8 +1309,8 @@ REF_BOM = [   # RVRN 2.0 STEP part list (research/rvrn_step/INDEX.txt); one row 
     dict(role="RV13 Malenki nano", kind="part", match=["rxesc"], count=1, catalog="malenki_nano_rvrn2"),
     dict(role="RV14 brushless ESC", kind="part", match=["wesc"], count=1, catalog="bbb_ant_esc_rvrn2"),
     dict(role="RV12 N10 2200 rpm x 2", kind="part", match=["motor_l", "motor_r"], count=2, catalog="n10_2200rpm_spicy"),
-    dict(role="drisk stack: 4 x M2 + nuts (not in the STEP, holes are)", match=["bolt_d*"], count=4, designation="M2", threads_into="nut",
-         deviation="the STEP leaves the r14 stack holes empty; 4 M2x16 + nuts added so the stack is held (16 mm: stack 15 + 1 mm into the nut; M2x18 stuck out 1.4 mm past the nut, 0.6 mm from the tub lug while it spins)"),
+    dict(role="drisk stack: 4 x M2 into the spider (not in the STEP, holes are)", match=["bolt_d*"], count=4, designation="M2", threads_into="spider",
+         deviation="the STEP leaves the r14 stack holes empty; 4 M2x14 added from the back, tapped into the spider (r0.8 tap holes there, the STEP r1.1 clearance elsewhere): no nuts, nothing invented beyond the screws"),
     dict(role="spider to bell: 4 x M2 (not in the STEP)", match=["bolt_p*"], count=4, designation="M2", threads_into="motor",
          deviation="the STEP shows the r4.5 holes only"),
     dict(role="stator: 4 x M2 (not in the STEP)", match=["bolt_wm*"], count=4, designation="M2", threads_into="motor",
@@ -1394,13 +1391,19 @@ def reference_cad():
         R("top_panel", "Top_Panel_1.stl", tol_mm=0.3, note="0.9 mm top panel",
           deviations=[dict(near=[x, y, 19.95], r=3.0, reason="4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it")
                       for x, y in INS[:4]]),
-        R("mount_l", "RV02_XALT_HD_left_hand_weapon_mount_1.stl", tol_mm=0.5),
+        R("mount_l", "RV02_XALT_HD_left_hand_weapon_mount_1.stl", tol_mm=0.5,
+          deviations=[{"near": [-15.4, 44.0, 3.5], "r": 4.0,
+                       "reason": "nose pad R4.4 round the nose CSK: the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); 1.15 mm of added material at the nose underside"}]),
         R("mount_r", "RV03_XALT__HD_Right_hand_weapon_mount_1.stl", tol_mm=0.5,
-          deviations=[{"near": [16.8, WY + dy, WZ + dz], "r": 2.0,
+          deviations=[{"near": [15.4, 44.0, 3.5], "r": 4.0,
+                       "reason": "nose pad R4.4 round the nose CSK: the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); 1.15 mm of added material at the nose underside"}] + [{"near": [16.8, WY + dy, WZ + dz], "r": 2.0,
                        "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"}
                       for dy, dz in ((6, 0), (-6, 0), (0, 6), (0, -6))]),
         R("motor_spacer", "Motor_back_spacer_1.stl", tol_mm=0.3),
-        R("spider", "spider_1.stl", tol_mm=0.5, ref_to_world=dt),
+        R("spider", "spider_1.stl", tol_mm=0.5, ref_to_world=dt,
+          deviations=[dict(near=[sum(DR_X["spider"]) / 2, *_disc_local(BOLT_R * math.cos(math.radians(90 * k)), BOLT_R * math.cos(math.radians(90 * k - 90)))], r=2.0,
+                           reason="r14 stack hole is the M2 tap drill (1.6) where the stack screws thread into the spider; the STEP shows the 2.2 clearance and no screw or nut")
+                      for k in range(4)]),
         R("disc_a", "Drisk_floating_3_1.stl", tol_mm=0.5, ref_to_world=dt),
         R("disc_b", "Drisk_floating_3_2.stl", tol_mm=0.5, ref_to_world=dt),
         R("dspacer", "Drisk_spacer_alt_x_1.stl", tol_mm=0.5, ref_to_world=dt),
