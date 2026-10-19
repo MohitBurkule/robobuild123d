@@ -7042,6 +7042,22 @@
     "spider"
    ],
    "threads_into": "weapon_motor",
+   "hole": {
+    "d": 2.0,
+    "length": 4.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.2,
+    "into": "tapped",
+    "side": "both",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 3.0,
+    "tap_d": 1.6,
+    "thread_depth": 1.5
+   },
    "access_before": [
     "mount_l",
     "wbearing"
@@ -7056,7 +7072,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    6.8,
+    6.800000000000001,
     30.44772759118839,
     12.047449670300885
    ],
@@ -7071,6 +7087,22 @@
     "disc_a"
    ],
    "threads_into": "spider",
+   "hole": {
+    "d": 2.0,
+    "length": 16.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.2,
+    "into": "tapped",
+    "side": "both",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 12.0,
+    "tap_d": 1.6,
+    "thread_depth": 4.5
+   },
    "access_before": [
     "tub",
     "mount_r",
@@ -7099,6 +7131,22 @@
     "spider"
    ],
    "threads_into": "weapon_motor",
+   "hole": {
+    "d": 2.0,
+    "length": 4.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.2,
+    "into": "tapped",
+    "side": "both",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 3.0,
+    "tap_d": 1.6,
+    "thread_depth": 1.5
+   },
    "access_before": [
     "mount_l",
     "wbearing"
@@ -7113,7 +7161,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    6.8,
+    6.800000000000001,
     27.047449670300885,
     31.55227240881161
    ],
@@ -7128,6 +7176,22 @@
     "disc_a"
    ],
    "threads_into": "spider",
+   "hole": {
+    "d": 2.0,
+    "length": 16.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.2,
+    "into": "tapped",
+    "side": "both",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 12.0,
+    "tap_d": 1.6,
+    "thread_depth": 4.5
+   },
    "access_before": [
     "tub",
     "mount_r",
@@ -7156,6 +7220,22 @@
     "spider"
    ],
    "threads_into": "weapon_motor",
+   "hole": {
+    "d": 2.0,
+    "length": 4.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.2,
+    "into": "tapped",
+    "side": "both",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 3.0,
+    "tap_d": 1.6,
+    "thread_depth": 1.5
+   },
    "access_before": [
     "mount_l",
     "wbearing"
@@ -7170,7 +7250,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    6.8,
+    6.800000000000001,
     46.552272408811604,
     34.952550329699115
    ],
@@ -7185,6 +7265,22 @@
     "disc_a"
    ],
    "threads_into": "spider",
+   "hole": {
+    "d": 2.0,
+    "length": 16.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.2,
+    "into": "tapped",
+    "side": "both",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 12.0,
+    "tap_d": 1.6,
+    "thread_depth": 4.5
+   },
    "access_before": [
     "tub",
     "mount_r",
@@ -7213,6 +7309,22 @@
     "spider"
    ],
    "threads_into": "weapon_motor",
+   "hole": {
+    "d": 2.0,
+    "length": 4.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.2,
+    "into": "tapped",
+    "side": "both",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 3.0,
+    "tap_d": 1.6,
+    "thread_depth": 1.5
+   },
    "access_before": [
     "mount_l",
     "wbearing"
@@ -7227,7 +7339,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    6.8,
+    6.800000000000001,
     49.952550329699115,
     15.447727591188393
    ],
@@ -7242,6 +7354,22 @@
     "disc_a"
    ],
    "threads_into": "spider",
+   "hole": {
+    "d": 2.0,
+    "length": 16.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.2,
+    "into": "tapped",
+    "side": "both",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 12.0,
+    "tap_d": 1.6,
+    "thread_depth": 4.5
+   },
    "access_before": [
     "tub",
     "mount_r",
