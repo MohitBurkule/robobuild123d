@@ -50,6 +50,7 @@ MNT_IN, MNT_OUT = 13.4, 21.4         # weapon mount |X| span (8 mm): 4 mm slab +
 MNT_SLAB = 17.4
 BSP_X = (11.9, 13.4)
 STAT_HOLE_R, CB_R, CB_CONE_X = 1.12, 2.25, (16.4, 17.15)   # RV03 stator screw clearance d2.24, d4.5 counterbore, its cone
+CB_CONE_R = 1.85   # the STEP lead-in cone stops at d3.7 so the d3.5 button head keeps a flat 17.15 seat (STEP cone runs to d4.5: <=0.33 mm off)
 # RV00 weapon lock pin (Build Guide rule; not in the STEP): a d4 TPU pin pushed in from outside through RV02 into one of
 # the spider's quarter windows, parked against the window's outer arc. Drisk-local window centre angle 45 deg at r9.6:
 # the pin spans r7.6..11.6 (bolt_p heads end at r6.25, window arc r11.7, bolt_d heads start r12.25), its tip stops
@@ -297,7 +298,7 @@ def weapon_mount(side):
             cut, _ = _stator_hole(s, dy, dz)
             cuts.append(cut)
             x_c0, x_c1 = s * CB_CONE_X[0], s * CB_CONE_X[1]
-            cuts.append(bb_.Solid.make_cone(STAT_HOLE_R, CB_R, abs(x_c1 - x_c0), bb_.Plane(origin=(x_c0, WY + dy, WZ + dz), z_dir=(s, 0, 0))))
+            cuts.append(bb_.Solid.make_cone(STAT_HOLE_R, CB_CONE_R, abs(x_c1 - x_c0), bb_.Plane(origin=(x_c0, WY + dy, WZ + dz), z_dir=(s, 0, 0))))
     else:
         cuts.append(_cyl(3.95, -30, 30, (WY, WZ)))                                   # outboard bearing seat (8 mm)
         cuts.append(_cyl(6.0, xm, xo + s, (WY, WZ)))                                 # shaft nut recess
