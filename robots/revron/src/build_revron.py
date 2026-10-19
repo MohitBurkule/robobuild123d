@@ -146,6 +146,12 @@ NUT_Y, NUT_Z = -18.85, 8.37           # RVRN CAD: wedglet rear M3 clearance hole
 NUT_X0, NUT_XC = 23.3, 25.65          # nut boss inner face, nut centre (2.4 thick, 2.1 mm wall outboard)
 SW_Z = 11.5                           # switch on the rear insert boss, slide along Y (pull rearward = off)
 HOOD_Z = 23.37
+LID = [(25.7, 3.3), (-25.7, 3.3), (25.7, -29.0), (-25.7, -29.0)]   # hood bolts: 4 M2 down through hood corner towers into rim-boss inserts
+LID_B0 = CZ1 - 4.0                    # rim boss bottom (hangs off the side wall above the pack; tub prints upside down)
+LID_CB = HOOD_Z - 1.4                 # hood counterbore floor (button head seat, flush with the hood top)
+SWS_Y = (CY0 + 5.0 + 12.1, CY0 + 5.0 + 18.1)
+SWS_X = -0.8                          # ear offset toward the pack: leaves a 3.6 mm wire lane between pedestal and ESC   # switch ear holes: 2 M2 down into heat-set inserts in pedestals ahead of the switch
+SWE_Z = SW_Z + 2.0                    # underside of the switch's mounting ear
 LOCK = (16.5, 10.7)                   # weapon-lock pin (Y, Z): r 18.7 from the axle, between the R16.5 rim and the R21.5 tips, through both chassis lugs
 WG_OUT = 51.8                         # wedglet outer face (|X|)
 WM_CB = 0.0                           # motor screw head counterbore depth
@@ -352,9 +358,14 @@ def chassis():
         add.append(place({"type": "box", "size": [L - 1.0, 1.6, 2.0]}, (0, (RY + 6.4 + CY1 - CW) / 2, FLOOR_Z1), (0, 0, a)))
     for px, py in INS:
         add.append(cylz(2.6, FLOOR_Z0, FLOOR_Z1 + 3.5, px, py))
+    for px, py in LID:   # hood rim bosses (heat-set M2 for the hood bolts)
+        add.append(cylz(3.2, LID_B0, CZ1, px, py))
+    cut_ear = boxr(-4.4, -2.9, RY + 5.1, RY + 6.6, SWE_Z - 0.15, RZ + 6.1)   # ear passes over the left N10 front stop wall
+    for y in SWS_Y:   # switch pedestals (insert bosses under the ear)
+        add.append(cylz(3.2, FLOOR_Z1 - 0.1, SWE_Z, SWS_X, y))
     for s in (1, -1):   # alu nut pockets
         add.append(boxr(*sorted((s * NUT_X0, s * (CX - CW + 0.1))), NUT_Y - 4.6, NUT_Y + 4.6, FLOOR_Z1 - 0.1, NUT_Z + 4.0))
-    body = U(body, *add)
+    body = S(U(body, *add), cut_ear)
     body = S(body, cylx(1.6, -CX, CX, LOCK[0], LOCK[1]))   # weapon-lock pin bore through both lugs
     cut = []
     # floor: triangular pockets between the X ribs
@@ -362,7 +373,8 @@ def chassis():
     for tri in ([(-22, CY1 - CW - 3), (22, CY1 - CW - 3), (0, yc + 3)], [(-22, RY + 8.0), (22, RY + 8.0), (0, yc - 3)],
                 [(-CX + CW + 2.5, CY1 - CW - 6), (-CX + CW + 2.5, RY + 11), (-4.0, yc)], [(CX - CW - 2.5, CY1 - CW - 6), (4.0, yc), (CX - CW - 2.5, RY + 11)]):
         cut.append(S(place({"type": "prism", "points": r4(chaikin(tri, 3)), "height": 3.0}, (0, 0, FLOOR_Z1 - 0.5)),
-                     *[boxr(*sorted((s_ * (NUT_X0 - 1.0), s_ * CX)), NUT_Y - 5.6, NUT_Y + 5.6, FLOOR_Z0 - 3, NUT_Z + 5) for s_ in (1, -1)]))   # pockets stop short of the nut bosses
+                     *[boxr(*sorted((s_ * (NUT_X0 - 1.0), s_ * CX)), NUT_Y - 5.6, NUT_Y + 5.6, FLOOR_Z0 - 3, NUT_Z + 5) for s_ in (1, -1)],
+                     *[cylz(4.2, FLOOR_Z0 - 3, FLOOR_Z1 + 1, SWS_X, y_) for y_ in SWS_Y]))   # pockets stop short of the nut bosses and switch pedestals
     for s in (1, -1):
         cut.append(boxr(*sorted((s * 3.6, s * (CX - CW + 0.05))), CY0 + CW - 0.05, RY + 5.0, FLOOR_Z0 - 2, FLOOR_Z1 + 0.05))   # motor bays open to the panel
         cut.append(cylx(1.7, *sorted((s * (CX - CW - 0.5), s * (CX + 0.5))), RY, RZ))                     # N10 shaft bushing hole
@@ -379,7 +391,13 @@ def chassis():
     for px, py in INS:
         cut.append(cylz(1.6, FLOOR_Z0 - 2, FLOOR_Z0 + 3.0, px, py))                                        # heat-set bore
         cut.append(cylz(1.05, FLOOR_Z0, FLOOR_Z1 + 3.6, px, py))                                             # screw run-out
-    cut.append(boxr(-2.1, 2.1, CY0 - 0.5, CY0 + CW + 0.5, SW_Z - 2.15, SW_Z + 2.15))                # switch slot (rear wall)
+    for px, py in LID:
+        cut.append(cylz(1.6, CZ1 - 3.0, CZ1 + 0.1, px, py))                                                # hood heat-set bore
+        cut.append(cylz(1.05, LID_B0 - 0.1, CZ1, px, py))                                                   # screw run-out
+    for y in SWS_Y:
+        cut.append(cylz(1.6, SWE_Z - 3.0, SWE_Z + 0.1, SWS_X, y))                                             # switch heat-set bore
+        cut.append(cylz(1.05, SWE_Z - 5.2, SWE_Z, SWS_X, y))                                                  # screw run-out
+    cut.append(boxr(-2.1, 2.1, CY0 - 0.5, CY0 + CW + 0.5, SW_Z - 2.15, CZ1 + 0.1))                  # switch slot (rear wall), open at the top so the screwed switch lifts out; the hood closes it
     cut.append(boxr(5.5, 10.0, CY1 - CW - 0.5, CY1 + 0.5, 6.0, 10.5))                                       # weapon phase-wire hole
     return S(body, *cut)
 
@@ -387,7 +405,7 @@ def chassis():
 # ---------------------------------------------------------------- hood (raised TPU, triangle cut-outs)
 def hood():
     """Raised TPU hood (RVRN / revron21 photos): a shallow truncated pyramid over the tub, 1.2 mm skin, sides battered
-    inwards 30 deg so hits glance off; a lip drops inside the tub rim and snaps under it. Two vent slots over the ESC."""
+    inwards 30 deg so hits glance off; a lip drops inside the tub rim to locate it; 4 M2 button heads in counterbored corner bosses clamp it to the tub. Two vent slots over the ESC."""
     t, rise, inset = 1.2, HOOD_Z - CZ1, 5.0
     def frustum(d):   # d = inward offset of the whole shell
         x0, y0, y1 = CX - d, CY0 + d, CY1 - d
@@ -402,12 +420,21 @@ def hood():
     inner = {"type": "intersect", "items": [{"type": "loft", "ruled": True, "sections": [dict(sec, z=sec["z"] - drop) for sec in outer["sections"]]},
                                             boxr(-CX - 1, CX + 1, CY0 - 1, CY1 + 1, CZ1 + 0.99, HOOD_Z + 1)]}
     shell = U(band, S(outer, inner))
-    lip = S(boxr(-li, li, CY0 + CW + 0.1, CY1 - CW - 0.1, CZ1 - 2.0, CZ1 + 0.01),
+    lip = S(boxr(-li, li, CY0 + CW + 0.1, CY1 - CW - 0.1, CZ1 - 1.2, CZ1 + 0.01),
             boxr(-li + 1.2, li - 1.2, CY0 + CW + 1.3, CY1 - CW - 1.3, CZ1 - 3.0, CZ1 + 1.0))
-    body = U(shell, lip)
+    towers = [cylz(3.2, CZ1, HOOD_Z, px, py) for px, py in LID]   # corner towers: flat seat for the screw heads on the battered skin
+    body = U(shell, lip, *towers)
     cut = []
+    for px, py in LID:
+        cut.append(boxr(px - 3.4, px + 3.4, py - 3.4, py + 3.4, CZ1 - 3.1, CZ1))   # lip notched round the tub rim bosses
+        cut.append(cylz(1.1, CZ1 - 1, HOOD_Z + 1, px, py))       # M2 clearance
+        cut.append(cylz(2.0, LID_CB, HOOD_Z + 1, px, py))        # button-head counterbore
+
     for s_ in (1, -1):
         cut.append(xy(slot2((s_ * 14.0, -26.0), (s_ * 14.0, -10.0), 3.0), HOOD_Z - 3.0, HOOD_Z + 1.0))   # vents over the ESC / battery
+        cut.append(xy([(s_ * 18.0, -4.0), (s_ * 22.0, -4.0), (s_ * 20.0, -34.0)], HOOD_Z - 3.0, HOOD_Z + 1.0))   # side triangle windows
+    for tri in ([(-10, -2.5), (10, -2.5), (0, -12.5)], [(-10, -37.5), (10, -37.5), (0, -27.5)], [(-8, -20), (0, -14.5), (8, -20), (0, -25.5)]):
+        cut.append(xy([p for p in tri], HOOD_Z - 3.0, HOOD_Z + 1.0))                                        # top triangle windows
     return S(body, *cut)
 
 
@@ -560,11 +587,11 @@ MF_AT, MF_ROT = [WZ, -WY, -BLM], [0, -90, 0]       # children of blade_c drawn i
 PLA = dict(material="pla_st", process="fdm")
 
 P(id="tub", kind="structure", print_orientation="-z", rotates_with="fixed", solid_fraction=0.9, color="#2a2c30", shape=chassis(), **PLA,
-  label="RV01 printed PLA-ST open box: X-ribbed floor, rear N10 pockets, front lugs that seat the weapon uprights, 2 alu-nut pockets, 5 insert bosses")
+  label="RV01 printed PLA-ST open box: X-ribbed floor, rear N10 pockets, front lugs that seat the weapon uprights, 2 alu-nut pockets, 5 floor + 4 rim insert bosses, switch cheek")
 P(id="base_panel", kind="structure", print_orientation="+z", rotates_with="fixed", color="#2a2c30", shape=base_panel(), **PLA,
   label="RV26 1 mm printed base panel 47.4 x 54.4, 5 M2 CSK into the floor inserts, 6 lightening holes")
 P(id="top_armour", kind="armor", material="tpu", process="fdm", print_orientation="+z", rotates_with="fixed", color="#5a5f68", shape=hood(),
-  label="raised TPU hood: shallow battered pyramid, two vent slots, lip snaps under the tub rim")
+  label="raised TPU hood: shallow battered pyramid, two vent slots, lip locates in the tub rim, 4 M2 into heat-set inserts in the rim bosses")
 
 # weapon module (guide: quick change = unbolt 4 M3): both uprights, motor, bearing and drisk lift forward off the chassis
 # lugs once the 4 upright-to-standoff screws are out; the standoffs stay in the chassis box sections with the wedglets
@@ -632,17 +659,28 @@ for s, n in ((1, "l"), (-1, "r")):
 P(id="battery", kind="battery", catalog="lipo_2s_180_turnabot", at=[-13.3, -12.75, FLOOR_Z1 + 1.0 + 5.5], rot=[0, 0, 90], retained="press_fit")
 P(id="rxesc", kind="esc", catalog="malenki_nano", at=[14.0, -12.0, FLOOR_Z1 + 1.0 + 2.5], rot=[0, 0, 90], retained="kapton")
 P(id="wesc", kind="esc", catalog="bbb_ant_esc", at=[14.0, -12.0, FLOOR_Z1 + 1.0 + 5.0 + 2.0], rot=[0, 0, 90], retained="kapton")
-P(id="power_switch", kind="switch", catalog="switch_slide_12x4", at=[0.0, CY0 + 5.0, SW_Z], rot=[0, 0, 90], retained="press_fit", label="BBB ant switch: pull rearward = off",
+P(id="power_switch", kind="switch", catalog="switch_slide_bbb_ant", at=[0.0, CY0 + 5.0, SW_Z], rot=[0, 0, 90], retained="screws", label="BBB ant switch: pull rearward = off, 2 M2 through the housing into the tub cheek",
   marked=True, tool_free=True)
 for i, (x, y) in enumerate(INS):
     P(id=f"insert_b{i}", kind="insert", catalog="heatset_m2", at=[x, y, FLOOR_Z0 + 1.5])
+
+for i, y in enumerate(SWS_Y):
+    P(id=f"insert_s{i}", kind="insert", catalog="heatset_m2", at=[SWS_X, y, SWE_Z - 1.5])
+for i, (x, y) in enumerate(LID):
+    P(id=f"insert_l{i}", kind="insert", catalog="heatset_m2", at=[x, y, CZ1 - 1.5])
 
 fast = []
 def F(**k):
     k.setdefault("head", "socket"); k.setdefault("tool", "hex1.5"); k.setdefault("removable", True); fast.append(k)
 for i, (x, y) in enumerate(INS):
-    F(id=f"bolt_b{i}", designation="M2x6", at=[x, y, BP["z0"]], dir=[0, 0, 1], through=["base_panel", "tub"], threads_into=f"insert_b{i}", head="button", tool="hex1.3",
+    F(id=f"bolt_b{i}", designation="M2x4" if i == 4 else "M2x6", material="aluminium", at=[x, y, BP["z0"]], dir=[0, 0, 1], through=["base_panel", "tub"], threads_into=f"insert_b{i}", head="button", tool="hex1.3",
       reason="ISO 7380 button heads under the 1 mm panel: an M2 countersink (1.2 deep) would knife-edge right through it")
+for i, (x, y) in enumerate(LID):
+    F(id=f"bolt_l{i}", designation="M2x6", material="aluminium", at=[x, y, LID_CB], dir=[0, 0, -1], through=["top_armour", "tub"], threads_into=f"insert_l{i}", head="button", tool="hex1.3",
+      reason="Hood bolted down at the corners like the real Revron: ISO 7380 heads sit in counterbores in the TPU corner bosses, flush under the skin")
+for i, y in enumerate(SWS_Y):
+    F(id=f"bolt_sw{i}", designation="M2x5", material="aluminium", at=[SWS_X, y, SWE_Z + 1.0], dir=[0, 0, -1], through=["power_switch", "tub"], threads_into=f"insert_s{i}", head="button", tool="hex1.3",
+      access_before=["top_armour"], reason="BBB switch ear has 2 M2 holes (Build Guide): driven down into pedestal inserts with the hood off; lever out through the rear slot")
 for k, (dy, dz) in enumerate(((8, 0), (-8, 0), (0, 6), (0, -6))):
     F(id=f"bolt_wm{k}", designation="M2x6", at=[UL_OUT - WM_CB, WY + dy, WZ + dz], dir=[-1, 0, 0], through=["upright_l"], threads_into="weapon_motor")
 for s, n in ((1, "l"), (-1, "r")):
@@ -719,12 +757,12 @@ C("wbearing", "upright_r", "press_fit", "MF85ZZ pressed into the 7.98 seat, flan
 C("spacer", "blade_c", "pin", "Spacer lobes ride on the 4 long M2 bolts and are clamped between both Hardox discs", mechanical_key=True)
 C("disc_f", "spacer", "pin", "Floating disc on the 4 long M2 through the spacer", mechanical_key=True)
 C("base_panel", "tub", "screw", "Base panel in the floor recess, 5 M2 CSK into heat-set inserts")
-C("top_armour", "tub", "snap", "TPU hood skirt snaps over the tub rim")
+C("top_armour", "tub", "screw", "TPU hood bolted to the tub rim bosses with 4 M2 button heads into heat-set inserts; the lip locates it", mechanical_key=True)
 C("battery", "tub", "press_fit", "Pack between the side wall, the motor-bay wall and the front wall, hood above", interference_mm=0.1, mechanical_key=True)
 C("rxesc", "tub", "interlock", "Malenki + BBB stack kapton-wrapped beside the pack, boxed by the walls and the hood")
 C("wesc", "rxesc", "interlock", "BBB ESC kapton-wrapped onto the Malenki as one stacked brick")
 C("wesc", "tub", "interlock", "ESC brick boxed in by the tub side wall, the battery, the front wall and the hood lip above")
-C("power_switch", "tub", "press_fit", "Switch pressed into the rear-wall slot, 2 M2 on the housing", interference_mm=0.1)
+C("power_switch", "tub", "screw", "Switch lever through the rear-wall slot, housing screwed to the tub cheek with 2 M2", mechanical_key=True)
 
 ov = [dict(a="wshaft", b="wbearing", max_depth_mm=0.3, reason="5 mm prop-mount spigot runs in the MF85ZZ inner race (bearing modelled as one solid)")]
 spec = dict(name="Revron", profile="aws2025", robot_type="vertical_spinner", locomotion="roller", archetype="vertical_spinner_forks",

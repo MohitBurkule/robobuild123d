@@ -156,6 +156,9 @@ Decide each joint like a mechanical engineer before placing screws. Off-default 
 - **Printed parts:** removable joints use heat-set inserts, not self-tapping (`joint.selftap_removable`); never self-tap
   along the print Z axis (`joint.layer_tension`); spread head load on plastic with a washer / flange head (`"washer": true`,
   `joint.head_bearing`).
+- **Armour and covers are bolted** (`connection.cover_fasteners`, blocker): every armour / cover / lid / panel part, and
+  every part declared `retained: screws` (e.g. a switch with M2 holes in its housing), needs >= 2 real fasteners through
+  or into it. A snap, press fit or tape alone peels off on the first hit.
 - **Nuts** sit in hex traps (captive) or are replaced by inserts (`joint.loose_nut`).
 - **Outside surfaces:** no proud heads on armour or exterior (`joint.head_proud`), never on the ground plane
   (`joint.head_ground`): counterbore flush or countersink.
