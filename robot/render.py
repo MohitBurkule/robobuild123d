@@ -420,6 +420,7 @@ def write_record(out, spec_path, w, routes):
     """Sidecar `<png>.json`: what the render shows (bodies, wire endpoints), read by wire.render_present."""
     import json
     import time
+    from pathlib import Path
 
     rec = {"spec": str(Path(spec_path).resolve()), "rendered_at": time.time(),
            "bodies": [b.id for b in w.bodies if not b.is_wire],
