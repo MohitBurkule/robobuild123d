@@ -308,8 +308,8 @@ def _mount_profile(r_top):
     t0 = _tangent_line_circle((10.17 if r_top > 8 else 9.0, 19.5), c, r_top, upper=True)
     a0 = math.degrees(math.atan2(t0[1] - c[1], t0[0] - c[0]))
     rim = _arc(c, r_top, a0, -14.5 if r_top > 8 else -5.0, 40)
-    pts = rim + [(43.6, 3.6)] + _arc(SB, 3.25, -16.0, -90.0, 12)[1:] + [(15.4, 1.25), (13.2, 2.5), (13.2, 4.5), (15.0, 4.5), (15.0, 5.35), (25.6, 5.35), (26.6, 6.35),
-                 (26.6, 12.55), (25.6, 13.55), (15.0, 13.55), (15.0, 17.5), (13.0, 19.5), ((10.17 if r_top > 8 else 9.0), 19.5)]
+    pts = rim + [(43.6, 3.6)] + _arc(SB, 3.25, -16.0, -90.0, 12)[1:] + [(15.4, 1.25), (13.2, 2.5), (13.2, 4.5), (15.0, 4.5), (15.0, 5.35), (25.5, 5.35), (26.5, 6.35),   # notch front face on the lug (0 gap): the lug bears a hit before the screws
+                 (26.5, 12.55), (25.5, 13.55), (15.0, 13.55), (15.0, 17.5), (13.0, 19.5), ((10.17 if r_top > 8 else 9.0), 19.5)]
     p = _poly(pts)
     return _round(p, r_out=0.0, r_in=0.0)
 
@@ -337,7 +337,7 @@ def weapon_mount(side):
     body = _U(slab, boss)
     cuts = []
     if side == "r":
-        cuts.append(_cyl(2.47, -30, 30, (WY, WZ)))                                   # shaft / bearing boss clearance
+        cuts.append(_cyl(2.6, -30, 30, (WY, WZ)))                                    # shaft end clearance (5 mm shaft + 0.1)
         bb_ = _b()
         for dy, dz in ((6, 0), (-6, 0), (0, 6), (0, -6)):                           # GR1507 stator M2 on 12 mm
             # catalog hole (robot.cad.holes): button-head M2, head seat on the STEP d4.5 counterbore floor at X 17.15,
@@ -349,8 +349,19 @@ def weapon_mount(side):
         cuts.append(_cyl(6.0, xm, xo + s, (WY, WZ)))                                 # shaft nut recess
         cuts.append(_cyl(LOCK_R - 0.05, xi - s, xo + 3 * s, _lock_yz()))             # RV00 lock pin bore: 0.05 radial TPU press (held, pulls by hand)
     for (y, z) in (SA, SB):                                                          # M3 CSK into the standoffs, flush inside
-        cuts.append(_csk(3.4, 6.2, (xi, y, z), "x", s, 6.0))   # ISO 273 normal 3.4: the lug bears fore/aft before the screw shanks touch
+        cuts.append(_mount_csk(s, y, z, "M3x12" if (y, z) == SA else "M3x14")[0])   # catalog CSK hole (robot.cad.holes)
     return _S(body, *cuts)
+
+
+def _mount_csk(s, y, z, fastener):
+    """robot.cad.holes cutter + record for a mount-to-standoff M3 CSK (bolt_u*): head flush in the inner face, ISO 10642
+    countersink (d7.0 vs the STEP's 6.2 for a DIN 7991 head: the catalog head must sit in it) and ISO 273 normal 3.4
+    clearance through the 4 mm slab, so the notch, not the shank, takes fore/aft load."""
+    _repo = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
+    if _repo not in sys.path:
+        sys.path.insert(0, _repo)
+    from robot.cad.holes import hole_tool
+    return hole_tool((s * MNT_IN, y, z), (s, 0, 0), fastener, head="csk", into="through", side="head", grip=MNT_SLAB - MNT_IN, fit="normal")
 
 
 def _stator_hole(s, dy, dz):
@@ -1057,8 +1068,8 @@ def make_spec(model_file):
       label="GR1507 outrunner: stator on RV03, bell drives the spider")
     P(id="wbearing", kind="bearing", parent="mount_l", material="steel", process="cots", rotates_with="fixed", stock="MR85ZZ 5 x 8 x 2.5", color="#555555",
       shape=_spec_bearing(), label="MR85ZZ in the RV02 8 mm seat: outboard support of the threaded shaft end (inferred: the STEP shows the 7.9 seat but no bearing)")
-    P(id="wshaft", kind="shaft", material="steel", process="cots", stock="GR1507 5 mm shaft (part of the motor): modelled whole, MR85 end X -18.7 through the bell to the stator base X 10.4", rotates_with="weapon", shaft_of="weapon_motor", parent="spider",
-      shape={"type": "place", "shape": {"type": "cylinder", "radius": 2.5, "height": 29.1}, "at": [-4.15, 0, 0], "rot": [0, 90, 0]}, color="#777777", solid_fraction=0.05,
+    P(id="wshaft", kind="shaft", material="steel", process="cots", stock="GR1507 5 mm shaft (part of the motor): modelled whole, MR85 end X -18.7 through the bell and the rear bearing to its circlip end X 11.4", rotates_with="weapon", shaft_of="weapon_motor", parent="spider",
+      shape={"type": "place", "shape": {"type": "cylinder", "radius": 2.5, "height": 30.1}, "at": [-3.65, 0, 0], "rot": [0, 90, 0]}, color="#777777", solid_fraction=0.05,
       label="threaded end of the GR1507 shaft through the MR85 (its mass is in the motor)")
     P(id="spider", kind="weapon", material="aluminium", process="waterjet", stock="3 mm 7075 plate (one 2D profile: water-jet, no milling needed)",
       min_web_mm=0.8, min_web_reason="0.8 mm webs between the dog pockets and the rim are the designer's own (RVRN 2.0 STEP spider_1 measures 0.8 at the same four places)", rotates_with="weapon", parent="mount_r", at=list(WO), shape=M("spider", WO),
@@ -1122,10 +1133,9 @@ def make_spec(model_file):
           hole=_panel_seat("base", i)[1].hole)
     for s, n in SIDES:
         mnt = f"mount_{n}"
-        F(id=f"bolt_u{n}a", designation="M3x12", material="aluminium", at=[s * MNT_IN, SA[0], SA[1]], dir=[s, 0, 0], through=[mnt], threads_into=f"so_a{n}",
+        F(id=f"bolt_u{n}a", designation="M3x12", material="aluminium", at=[s * MNT_IN, SA[0], SA[1]], dir=[s, 0, 0], through=[mnt], threads_into=f"so_a{n}", hole=_mount_csk(s, *SA, "M3x12")[1].hole,
           reason="FS9 M3x12 CSK alu, head flush in the mount's inner face")
-        F(id=f"bolt_u{n}b", designation="M3x14", reason="M3x14 CSK alu (STEP FS9 M3x12): through mount and lug, 12 mm bites only 3.9 mm of the 15 mm standoff", material="aluminium", at=[s * MNT_IN, SB[0], SB[1]], dir=[s, 0, 0], through=[mnt, "tub"], threads_into=f"so_b{n}",
-          )
+        F(id=f"bolt_u{n}b", designation="M3x14", reason="M3x14 CSK alu (STEP FS9 M3x12): through mount and lug, 12 mm bites only 3.9 mm of the 15 mm standoff", material="aluminium", at=[s * MNT_IN, SB[0], SB[1]], dir=[s, 0, 0], through=[mnt, "tub"], threads_into=f"so_b{n}", hole=_mount_csk(s, *SB, "M3x14")[1].hole)
         F(id=f"bolt_s{n}a", designation="M3x10", material="aluminium", reason="M3x10 CSK (STEP: M3x8): 8 mm bites only 4.2 mm of the standoff thread; 10 mm gives 6.2 (>= 1.5 d in aluminium)", at=[s * 46.26, SA[0], SA[1]], dir=[-s, 0, 0], through=[f"side_{n}"], threads_into=f"so_a{n}")
         F(id=f"bolt_s{n}b", designation="M3x10", material="aluminium", reason="M3x10 CSK (STEP: M3x8): the head sits 5.3 mm out from the 15 mm standoff end, so 8 mm bites 2.7 mm; 10 mm bites 4.7", at=[s * 41.76, SB[0], SB[1]], dir=[-s, 0, 0], through=[f"side_{n}", f"wedgelet_{n}"], threads_into=f"so_b{n}")
         F(id=f"bolt_s{n}c", designation="M3x8", material="aluminium", reason="alu M3 CSK (Build Guide: aluminium bolts for weight; the STEP draws stainless)", at=[s * 35.26, NUT[0], NUT[1]], dir=[-s, 0, 0], through=[f"side_{n}", "tub"], threads_into=f"nut_c{n}")
