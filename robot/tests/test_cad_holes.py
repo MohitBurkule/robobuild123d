@@ -21,7 +21,7 @@ def block():
 
 
 def test_catalog_values():
-    assert fc.head(3, "csk") == (6.72, 1.86)  # ISO 10642
+    assert fc.head(3, "csk") == (6.0, 1.86)  # DIN 7991 (the Revron STEP drills 6.2 mm for it)
     assert fc.head(3, "button") == (5.7, 1.65)  # ISO 7380
     assert fc.head(3, "cap") == (5.5, 3.0)  # ISO 4762
     assert fc.nut(3) == (5.5, 2.4) and fc.nut(3, "thin") == (5.5, 1.8)
