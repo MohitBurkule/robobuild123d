@@ -38,6 +38,7 @@ INS_Z = (5.1, 9.1)                   # FS1 M2 heat-set (3.5 OD x 4)
 RY, RZ = -30.5, 11.0                 # N10 shaft (rear axle)
 MOTX = 19.6                          # N10 catalog origin |X| (body 3.7..27.5, shaft to 37.5)
 # chassis RV01
+SWX = 24.55   # power switch X: body side 0.05 clear of the 27.5 inner wall face (was 25.0, 0.4 into it)
 CH = dict(x=29.5, y0=-37.6, y1=15.0, z0=2.5, z1=19.5, wall=2.0, deck=17.5, cham=2.0)
 # drisk
 DR_X = dict(spider=(-8.2, -5.2), disc_a=(-5.2, -2.2), spacer=(-2.2, 3.8), disc_b=(3.8, 6.8))
@@ -687,7 +688,7 @@ def chassis():
     # switch slot in the deck beside the top panel, 2 M2 pilot holes
     cuts.append(_ext(_round(Polygon([(23.0, -11.6), (27.0, -11.6), (27.0, 0.4), (23.0, 0.4)]), r_out=0.45), "xy", 16.0, z1 + 1))
     for yy in (1.9, -13.1):
-        cuts.append(_cyl(0.85, c["deck"] - 3, z1 + 1, (25.0, yy), "z"))
+        cuts.append(_cyl(0.85, c["deck"] - 3, z1 + 1, (SWX, yy), "z"))
     for sg in (1, -1):
         # N10 keyhole: round seat for the gearbox shaft boss, narrowing to the floor (motor tilts in)
         kh = Point(RY, RZ).buffer(2.5, 64).union(Point(RY, 5.85).buffer(0.85, 24)).convex_hull   # STEP keyhole
@@ -834,7 +835,7 @@ def make_spec(model_file):
     P(id="battery", kind="battery", catalog="lipo_2s_180_turnabot", at=[-11.81, -5.4, 12.0], rot=[0, 0, 90], retained="press_fit")
     P(id="rxesc", kind="esc", catalog="malenki_nano_rvrn2", at=[8.67, -3.0, 15.3], rot=[0, 0, 90], retained="kapton")
     P(id="wesc", kind="esc", catalog="bbb_ant_esc_rvrn2", at=[8.63, -7.25, 10.6], rot=[0, 0, 90], retained="kapton")
-    P(id="power_switch", kind="switch", catalog="switch_bbb_ant_rvrn2", at=[25.0, -5.6, 14.25], rot=[0, 0, 90], retained="screws", marked=True, tool_free=True,
+    P(id="power_switch", kind="switch", catalog="switch_bbb_ant_rvrn2", at=[SWX, -5.6, 14.25], rot=[0, 0, 90], retained="screws", marked=True, tool_free=True,
       off_dir=[0, -1, 0], label="BBB ant switch hung under the deck beside the top panel: lever flush in the deck slot, 2 M2 into the deck")
     for i, (x, y) in enumerate(INS):
         P(id=f"insert_b{i}", kind="insert", catalog="heatset_m2_4", at=[x, y, (INS_Z[0] + INS_Z[1]) / 2])
@@ -873,7 +874,7 @@ def make_spec(model_file):
         F(id=f"bolt_t{i}", designation="M2x4", head="countersunk", tool="hex1.3", at=[x, y, 20.4], dir=[0, 0, -1], through=["top_panel"], threads_into="tub",
           reason="M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)")
     for i, yy in enumerate((1.9, -13.1)):
-        F(id=f"bolt_sw{i}", designation="M2x3", head="button", tool="hex1.3", at=[25.0, yy, 16.0], dir=[0, 0, 1], through=["power_switch"], threads_into="tub",
+        F(id=f"bolt_sw{i}", designation="M2x3", head="button", tool="hex1.3", at=[SWX, yy, 16.0], dir=[0, 0, 1], through=["power_switch"], threads_into="tub",
           reason="thread-forming into the 1.7 pilot holes either side of the switch flange; heads clamp the flange to the deck underside (inferred)")
 
     # ---------------------------------------------------------------- connections
