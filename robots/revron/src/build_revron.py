@@ -803,6 +803,13 @@ def _band(path, w):
 def _loft_yz(pa, xa, pb, xb, n=160):
     """Ruled loft between two shapely outlines in YZ planes at X xa and xb (both resampled to n points from the point
     nearest +Y, so the rulings do not twist)."""
+    return _loft_yz_n([(pa, xa), (pb, xb)], n)
+
+
+def _loft_yz_n(sections, n=160):
+    """One ruled loft through several (shapely outline, X) sections: the same faces as a chain of two-section _loft_yz
+    slices, but one solid, so the chain is not handed to a fuse slice by slice (24 touching slices in one fuse ran OCC
+    out of memory on a cold build)."""
     b = _b()
     def wire(p, x):
         ring = list(p.exterior.coords)[:-1]
@@ -813,7 +820,7 @@ def _loft_yz(pa, xa, pb, xb, n=160):
         pts = _resample(ring, n + 1)[:-1]
         return b.Wire.make_polygon([b.Vector(x, u, v) for u, v in pts], close=True)
     from shapely.geometry import Polygon
-    return b.Solid.make_loft([wire(pa, xa), wire(pb, xb)], ruled=True)
+    return b.Solid.make_loft([wire(p, x) for p, x in sections], ruled=True)
 
 
 def _resample(line, n):
@@ -907,11 +914,9 @@ def chassis():
         # side lobe with the thin M3 nut (Y -16.3..2.8)
         lobe = Point(NUT[0], NUT[1]).buffer(4.55, 64).union(Point(1.35, 6.9).buffer(1.2, 32)).convex_hull
         add.append(_ext(lobe, "yz", sg * (x - 0.1), sg * 32.5))
-        R_ = 1.95   # root fillet where the lobe leaves the wall (STEP R1.95): 12 ruled slices of the quarter round
-        for k in range(12):
-            h0, h1 = R_ * k / 12, R_ * (k + 1) / 12
-            d0, d1 = (R_ - math.sqrt(R_ * R_ - (R_ - h) ** 2) for h in (h0, h1))
-            add.append(_loft_yz(lobe.buffer(d0, join_style=1), sg * (x - 0.1 + h0), lobe.buffer(d1, join_style=1), sg * (x - 0.1 + h1)))
+        R_ = 1.95   # root fillet where the lobe leaves the wall (STEP R1.95): one ruled loft, 12 bands of the quarter round
+        add.append(_loft_yz_n([(lobe.buffer(R_ - math.sqrt(R_ * R_ - (R_ - h) ** 2), join_style=1), sg * (x - 0.1 + h))
+                               for h in (R_ * k / 12 for k in range(13))]))
         # front tabs (key into the weapon-mount notches) and inner tab walls
         add.append(_ext(_poly([(18.5, 6.4), (19.5, 5.4), (25.5, 5.4), (26.5, 6.4), (26.5, 12.5), (25.5, 13.5), (19.5, 13.5), (18.5, 12.5)]), "yz", sg * 13.2, sg * 17.6))
         # inner tab wall, its top-front corner cut back on a R15.9 about the weapon axis: the drisk (swept R ~14.8 at the wall)
