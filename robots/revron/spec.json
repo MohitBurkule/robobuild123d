@@ -340,6 +340,12 @@
    "b": "wbearing",
    "max_depth_mm": 0.3,
    "reason": "shaft in the MR85 inner race (bearing modelled as one solid)"
+  },
+  {
+   "a": "wbearing",
+   "b": "mount_l",
+   "max_depth_mm": 0.1,
+   "reason": "MR85 8.0 OD pressed into the RV02 7.9 printed seat (0.05 radial interference, the STEP seat size)"
   }
  ],
  "claims": [
@@ -922,7 +928,7 @@
      "type": "place",
      "shape": {
       "type": "cylinder",
-      "radius": 3.95,
+      "radius": 4.0,
       "height": 2.5
      },
      "at": [
@@ -972,7 +978,7 @@
     "type": "place",
     "shape": {
      "type": "cylinder",
-     "radius": 2.26,
+     "radius": 2.5,
      "height": 9.4
     },
     "at": [
@@ -994,8 +1000,10 @@
    "id": "spider",
    "kind": "weapon",
    "material": "aluminium",
-   "process": "cnc",
-   "stock": "3 mm 7075 plate",
+   "process": "waterjet",
+   "stock": "3 mm 7075 plate (one 2D profile: water-jet, no milling needed)",
+   "min_web_mm": 0.8,
+   "min_web_reason": "0.8 mm webs between the dog pockets and the rim are the designer's own (RVRN 2.0 STEP spider_1 measures 0.8 at the same four places)",
    "rotates_with": "weapon",
    "parent": "mount_r",
    "shape": {
@@ -1047,6 +1055,8 @@
    "process": "laser",
    "stock": "3 mm Hardox 450",
    "parent": "spider",
+   "min_web_mm": 0.9,
+   "min_web_reason": "0.9 mm webs beside the balance window are the designer's own (RVRN 2.0 STEP Drisk_floating_3 measures 0.9 at the same four places)",
    "rotates_with": "weapon",
    "shape": {
     "type": "model",
@@ -1066,6 +1076,8 @@
    "process": "laser",
    "stock": "3 mm Hardox 450",
    "parent": "spider",
+   "min_web_mm": 0.9,
+   "min_web_reason": "0.9 mm webs beside the balance window are the designer's own (RVRN 2.0 STEP Drisk_floating_3 measures 0.9 at the same four places)",
    "rotates_with": "weapon",
    "shape": {
     "type": "model",
@@ -1138,6 +1150,8 @@
    "material": "titanium",
    "process": "laser",
    "stock": "1.5 mm Ti Gr5 sheet",
+   "min_web_mm": 1.05,
+   "min_web_reason": "1.1 mm web under the 5.3 standoff hole is the designer's own (RVRN 2.0 STEP fork_5 measures 1.1)",
    "parent": "so_bl",
    "rotates_with": "fixed",
    "color": "#9aa0a6",
@@ -1366,6 +1380,8 @@
    "material": "titanium",
    "process": "laser",
    "stock": "1.5 mm Ti Gr5 sheet",
+   "min_web_mm": 1.05,
+   "min_web_reason": "1.1 mm web under the 5.3 standoff hole is the designer's own (RVRN 2.0 STEP fork_5 measures 1.1)",
    "parent": "so_br",
    "rotates_with": "fixed",
    "color": "#9aa0a6",

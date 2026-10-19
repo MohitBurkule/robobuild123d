@@ -223,8 +223,8 @@ def fork(s):
     in its tail stops it rotating; a triangular window lightens the blade, which tapers to a 1.5 mm tip."""
     from shapely.geometry import Point, Polygon
     x0, x1 = (24.5, 26.0) if s > 0 else (-26.5, -25.0)
-    outline = Point(36.3, 6.3).buffer(1.95, 48).union(Polygon([(35.0, 4.9), (36.1, 8.2), (41.0, 8.25), (66.68, 1.49), (51.75, 0.75), (40.5, 0.75), (38.3, 1.5)]))
-    outline = _round(outline, r_out=0.3, r_in=0.5).union(Polygon([(60.0, 1.27), (66.68, 1.49), (60.0, 2.5)]))   # sharp tip
+    outline = Point(36.3, 6.3).buffer(1.95, 48).union(Polygon([(35.0, 4.9), (36.1, 8.2), (41.0, 8.25), (66.68, 1.49), (51.75, 0.75), (39.0, 0.75), (38.0, 1.5)]))
+    outline = _round(outline, r_out=0.3, r_in=0.5).union(Polygon([(60.0, 1.27), (66.68, 1.49), (60.0, 2.5)])).buffer(0.15, 8).buffer(-0.15, 8)   # sharp tip, r0.15 (> kerf) where it joins
     p = outline.difference(Point(SB[0], SB[1]).buffer(2.65, 48)).difference(Point(36.3, 6.3).buffer(0.8, 24))
     p = p.difference(_round(Polygon([(44.2, 2.75), (52.6, 2.85), (44.4, 5.3)]), r_out=0.25))
     if s < 0:   # the STEP hangs the left fork 1.1 deg nose-down about its standoff (pin-hole play in the cheek)
@@ -689,15 +689,17 @@ def make_spec(model_file):
     P(id="wbearing", kind="bearing", parent="mount_l", material="steel", process="cots", rotates_with="fixed", stock="MR85ZZ 5 x 8 x 2.5", color="#555555",
       shape=_spec_bearing(), label="MR85ZZ in the RV02 8 mm seat: outboard support of the threaded shaft end (inferred: the STEP shows the 7.9 seat but no bearing)")
     P(id="wshaft", kind="shaft", material="steel", process="cots", stock="GR1507 5 mm shaft (part of the motor)", rotates_with="weapon", shaft_of="weapon_motor", parent="spider",
-      shape={"type": "place", "shape": {"type": "cylinder", "radius": 2.26, "height": 9.4}, "at": [-14.0, WY, WZ], "rot": [0, 90, 0]}, color="#777777", solid_fraction=0.05,
+      shape={"type": "place", "shape": {"type": "cylinder", "radius": 2.5, "height": 9.4}, "at": [-14.0, WY, WZ], "rot": [0, 90, 0]}, color="#777777", solid_fraction=0.05,
       label="threaded end of the GR1507 shaft through the MR85 (its mass is in the motor)")
-    P(id="spider", kind="weapon", material="aluminium", process="cnc", stock="3 mm 7075 plate", rotates_with="weapon", parent="mount_r", shape=M("spider"),
+    P(id="spider", kind="weapon", material="aluminium", process="waterjet", stock="3 mm 7075 plate (one 2D profile: water-jet, no milling needed)",
+      min_web_mm=0.8, min_web_reason="0.8 mm webs between the dog pockets and the rim are the designer's own (RVRN 2.0 STEP spider_1 measures 0.8 at the same four places)", rotates_with="weapon", parent="mount_r", shape=M("spider"),
       joint={"kind": "revolute", "axis": [1, 0, 0], "pivot": [0.0, WY, WZ], "min": 0, "max": 360, "default": 0}, color="#b8bcc2",
       weapon={"kind": "disc", "motor": "weapon_motor", "cells": 2, "reduction": 1.0, "spin_axis": [1, 0, 0], "spin_dir": "ccw", "supported_both_ends": True, "teeth": 1,
               "locking_bar": "weapon_lock"},
       label="3 mm aluminium spider: bolted to the bell (4 M2 on r4.5), carries the disc stack on 4 M2 on r14")
     for nm, lab in (("disc_a", "inner"), ("disc_b", "outer")):
-        P(id=nm, kind="other", role="blade", material="hardox", process="laser", stock="3 mm Hardox 450", parent="spider", rotates_with="weapon", shape=M(nm), color="#d9dde2",
+        P(id=nm, kind="other", role="blade", material="hardox", process="laser", stock="3 mm Hardox 450", parent="spider",
+          min_web_mm=0.9, min_web_reason="0.9 mm webs beside the balance window are the designer's own (RVRN 2.0 STEP Drisk_floating_3 measures 0.9 at the same four places)", rotates_with="weapon", shape=M(nm), color="#d9dde2",
           label=f"Drisk_floating_3 ({lab}): 3 mm Hardox single-tooth disc, R16.5 rim 0.5 mm eccentric against the R23 tooth, 12 mm bore with 4 ramped dogs, 4 M2 on r14")
     P(id="dspacer", kind="other", role="spacer", parent="spider", rotates_with="weapon", print_orientation="+x", shape=M("drisk_spacer"), color="#2a2c30", **PLA,
       label="Drisk_spacer_alt_x: 6 mm printed ring round the bell, 4 arc windows, 4 M2 on r14")
@@ -707,7 +709,7 @@ def make_spec(model_file):
           shape=M(f"so_a_{n}"), label="RV11 25 mm alu standoff: front axle, clamps the mount, the side panel screws to its end")
         P(id=f"so_b{n}", kind="pin", role="standoff", material="aluminium", process="cots", rotates_with="fixed", color="#b8bcc2", stock="RV10 M3 x 15 aluminium standoff, 5 OD",
           shape=M(f"so_b_{n}"), label="RV10 15 mm alu standoff: nose, through the chassis lug, the fork and the wedgelet cheeks")
-        P(id=f"fork_{n}", kind="fork", material="titanium", process="laser", stock="1.5 mm Ti Gr5 sheet", parent=f"so_b{n}", rotates_with="fixed", color="#9aa0a6", shape=M(f"fork_{n}"),
+        P(id=f"fork_{n}", kind="fork", material="titanium", process="laser", stock="1.5 mm Ti Gr5 sheet", min_web_mm=1.05, min_web_reason="1.1 mm web under the 5.3 standoff hole is the designer's own (RVRN 2.0 STEP fork_5 measures 1.1)", parent=f"so_b{n}", rotates_with="fixed", color="#9aa0a6", shape=M(f"fork_{n}"),
           label="fork_5: 1.5 mm Ti fork on the 15 mm standoff, tail pinned in the wedgelet cheek slot")
         P(id=f"wedgelet_{n}", kind="armor", material="tpu", process="fdm", print_orientation="-z", parent=f"so_a{n}", rotates_with="fixed", color="#3c4048",
           shape=M(f"wedgelet_{n}"), label=f"RV1{7 if s < 0 else 8} TPU wedgelet: 50 deg ramp over the nose, cheeks round both standoffs and the fork tail")
@@ -879,7 +881,7 @@ def _prism_yz(poly, x0, x1):
 
 
 def _spec_bearing():
-    return {"type": "subtract", "base": {"type": "place", "shape": {"type": "cylinder", "radius": 3.95, "height": 2.5}, "at": [-14.75, WY, WZ], "rot": [0, 90, 0]},
+    return {"type": "subtract", "base": {"type": "place", "shape": {"type": "cylinder", "radius": 4.0, "height": 2.5}, "at": [-14.75, WY, WZ], "rot": [0, 90, 0]},
             "cut": [{"type": "place", "shape": {"type": "cylinder", "radius": 2.5, "height": 4.0}, "at": [-14.75, WY, WZ], "rot": [0, 90, 0]}]}
 
 
@@ -997,7 +999,8 @@ def main():
                     reference_doc={"path": "REFERENCE.md", "must_mention": ["GR1507", "180 mAh", "Hardox", "JST RCY", "RV00", "XALT", "0.9 mm"],
                                    "must_not_mention": ["through an aluminium spider", "2S ≈350 mAh LiPo"]},
                     electronics=dict(failsafe=True, weapon_remote_disable=True, radio="2.4 GHz", cells=2), can_run_inverted=False,
-                    allow_overlap=[dict(a="wshaft", b="wbearing", max_depth_mm=0.3, reason="shaft in the MR85 inner race (bearing modelled as one solid)")],
+                    allow_overlap=[dict(a="wshaft", b="wbearing", max_depth_mm=0.3, reason="shaft in the MR85 inner race (bearing modelled as one solid)"),
+                                   dict(a="wbearing", b="mount_l", max_depth_mm=0.1, reason="MR85 8.0 OD pressed into the RV02 7.9 printed seat (0.05 radial interference, the STEP seat size)")],
                     claims=[dict(id="c_mass", text="weighs 150 g or less", metric="mass_total_g", op="<=", value=150),
                             dict(id="c_fit", text="fits the 150 mm square", metric="footprint_mm", op="<=", value=150)],
                     reference_cad=reference_cad(), **body)
