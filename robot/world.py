@@ -181,6 +181,8 @@ def _contains(mesh, Q):
 
 def csk_dims(d):
     """(head diameter, head depth) of an ISO 10642 countersunk screw (90 deg), by thread diameter."""
+    if d == 3.0:
+        return 6.0, 1.86   # DIN 7991 M3 (robot.cad.fastener_catalog.CSK)
     return 2.2 * d, 0.6 * d
 
 

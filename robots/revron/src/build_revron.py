@@ -381,14 +381,14 @@ def weapon_mount(side):
 
 
 def _mount_csk(s, y, z, fastener):
-    """robot.cad.holes cutter + record for a mount-to-standoff M3 CSK (bolt_u*): head flush in the inner face, ISO 10642
-    countersink (d7.0 vs the STEP's 6.2 for a DIN 7991 head: the catalog head must sit in it) and ISO 273 normal 3.4
+    """robot.cad.holes cutter + record for a mount-to-standoff M3 CSK (bolt_u*): head flush in the inner face, DIN 7991
+    countersink (dk 6.0 head in the STEP's 6.2 mm cone) and ISO 273 normal 3.4
     clearance through the 4 mm slab, so the notch, not the shank, takes fore/aft load."""
     _repo = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
     if _repo not in sys.path:
         sys.path.insert(0, _repo)
     from robot.cad.holes import hole_tool
-    return hole_tool((s * MNT_IN, y, z), (s, 0, 0), fastener, head="csk", into="through", side="head", grip=MNT_SLAB - MNT_IN, fit="normal")
+    return hole_tool((s * MNT_IN, y, z), (s, 0, 0), fastener, head="csk", into="through", side="head", grip=MNT_SLAB - MNT_IN, fit="normal", csk_clear=0.2)
 
 
 def _stator_hole(s, dy, dz):
@@ -1111,8 +1111,10 @@ def make_spec(model_file):
       exposed_reason="Drisk: the GR1507 bell is the hub of the weapon, inside the spacer bore between the two Hardox discs; the discs shield it radially",
       label="GR1507 outrunner: stator on RV03, bell drives the spider")
     P(id="wbearing", kind="bearing", parent="mount_l", material="steel", process="cots", rotates_with="fixed", stock="MR85ZZ 5 x 8 x 2.5", color="#555555",
+      deviation="bought part left out of the STEP (INDEX.txt lists no bearing): RV02 carries the 7.9 mm printed seat for it and the guide BOM lists an MR85ZZ; added for the shaft support",
       shape=_spec_bearing(), label="MR85ZZ in the RV02 8 mm seat: outboard support of the threaded shaft end (inferred: the STEP shows the 7.9 seat but no bearing)")
     P(id="wshaft", kind="shaft", material="steel", process="cots", stock="GR1507 5 mm shaft (part of the motor): modelled whole, MR85 end X -18.7 through the bell and the rear bearing to its circlip end X 11.4", rotates_with="weapon", shaft_of="weapon_motor", parent="weapon_motor",
+      deviation="the GR1507 shaft is part of the bought motor, which the STEP draws as one body (INDEX.txt lists no shaft); drawn separately here for the MR85 support and the spider collar",
       shape={"type": "place", "shape": {"type": "cylinder", "radius": 2.5, "height": 30.1}, "at": [3.65, 0, 0], "rot": [0, 90, 0]}, color="#777777", solid_fraction=0.05,
       label="threaded end of the GR1507 shaft through the MR85 (its mass is in the motor)")
     P(id="spider", kind="weapon", material="aluminium", process="waterjet", stock="3 mm 7075 plate (one 2D profile: water-jet, no milling needed)",
