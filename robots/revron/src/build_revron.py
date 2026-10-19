@@ -20,7 +20,9 @@ micro wheels on the 25 mm standoffs.
 """
 import json, math, os, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
-ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))   # repo root (works from any checkout / worktree)
+ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
+if ROOT not in sys.path:
+    sys.path.insert(0, ROOT)
 
 # ======================================================================================================================
 # Measured layout (RVRN 2.0 STEP, world frame). Each number is a dimension of a feature, not a mesh coordinate list.
@@ -45,6 +47,8 @@ WE_X, WE_Y, WE_Z = (8.63 - 6.0, 8.63 + 6.0), (-7.25 - 11.75, -7.25 + 11.75), (10
 EAR_R = 2.7                          # top-panel corner ear radius: >= CSK_M2 / 2 + 0.4 mm of Ti round the countersink
 RY, RZ = -30.5, 11.0                 # N10 shaft (rear axle)
 MOTX = 19.6                          # N10 catalog origin |X| (body 3.7..27.5, shaft to 37.5)
+N10_KEY = (23.55, 26.15)             # |X| of the chassis key tab between the N10's last two gearbox plates
+N10_TOP = 17.0                       # top face of the N10 gearbox plates
 # chassis RV01
 CH = dict(x=29.5, y0=-37.6, y1=15.0, z0=2.5, z1=19.5, wall=2.0, deck=17.5, cham=2.0)
 # drisk
@@ -217,14 +221,14 @@ def _panel_seat(which, i):
 
 
 def base_panel():
-    """RV26: 1 mm printed panel under the open chassis, 5 M2 CSK into the floor heat-sets; two 0.25 mm pads under the
+    """RV26: 1 mm printed panel under the open chassis, 5 M2 CSK into the floor heat-sets; two 0.45 mm pads under the
     N10 gearboxes preload the motors up into their keyhole pockets."""
     z0, t = 3.5, 1.0
     out = _round(_poly([(-28.1, -36.2), (28.1, -36.2), (28.1, 13.0), (-28.1, 13.0)]), r_out=0.8)
     body = _ext(out, "xy", z0, z0 + t)
     for s in (1, -1):
         pad = _round(_poly([(s * 17.95, -34.85), (s * 27.05, -34.85), (s * 27.05, -25.75), (s * 17.95, -25.75)]), r_out=0.6)
-        body = _U(body, _ext(pad, "xy", z0 + t - 0.01, z0 + t + 0.25))
+        body = _U(body, _ext(pad, "xy", z0 + t - 0.01, z0 + t + 0.45))   # [fix-D] 0.45: top 4.95, 0.05 under the N10
     # the 1 mm skin is thinner than the 1.2 mm M2 flat head: a 0.6 mm ring boss over each screw gives the seat 1.6 mm of
     # material (no knife edge under the head) and keys the panel into the column feet, so side hits shear the bosses, not the screws
     body = _U(body, *[_cyl(BOSS_R, z0 + t - 0.01, z0 + t + BOSS_H, (x, y), "z") for x, y in INS])
@@ -471,29 +475,53 @@ def rear_hub(s):
     axially), O-ring groove inboard between 8 mm flanges, a 14 mm tyre seat with a raised 7 mm crown that holds the F1
     tyre, a 6.5 mm outer lip; M2 grub into a captive nut slot on the flat."""
     from shapely.geometry import Point, Polygon
-    prof = [(0.0, 0.0), (0.0, 8.0), (0.5, 8.0), (0.8, 7.55), (1.7, 7.55), (2.0, 8.0), (2.5, 8.0), (2.55, 6.9), (2.75, 6.35), (3.35, 6.0),
-            (5.25, 6.0), (6.25, 7.0), (8.25, 7.0), (9.25, 6.0), (11.29, 6.0), (12.0, 6.5), (12.0, 2.88), (11.8, 2.88), (11.8, 0.0)]   # STEP RV21
+    # STEP RV21, except: groove flanges 0.7 thick (STEP 0.5, under the 0.63 printable floor) with the groove narrowed
+    # symmetrically to 1.1 (the 1.0 O-ring still seats, centre unchanged), and a 0.4 flat on the outer lip (the STEP
+    # lip runs out to a knife edge that prints as a ragged single line)
+    prof = [(0.0, 0.0), (0.0, 8.0), (0.7, 8.0), (0.95, 7.45), (1.55, 7.45), (1.8, 8.0), (2.5, 8.0), (2.55, 6.9), (2.75, 6.35), (3.35, 6.0),
+            (5.25, 6.0), (6.25, 7.0), (8.25, 7.0), (9.25, 6.0), (11.1, 6.0), (11.3, 6.5), (12.0, 6.5), (12.0, 2.88), (11.8, 2.88), (11.8, 0.0)]
     if s < 0:
         prof = [(-x, r) for x, r in prof]
     body = _revolve_x(prof, s * 30.0, (RY, RZ))
-    d = Point(RY, RZ).buffer(1.6, 48).intersection(Polygon([(RY - 3, RZ - 3), (RY + 3, RZ - 3), (RY + 3, RZ + 0.9), (RY - 3, RZ + 0.9)]))
-    # blind D-bore (flat 0.9 above the axis), an M2 nut slot open at the inner face, the grub hole down to the flat (STEP)
-    return _S(body, _ext(d, "yz", s * 29.0, s * 41.0), _box(s * 29.0, s * 41.0, RY - 2.05, RY + 2.05, RZ + 2.4, RZ + 4.4),
-              _cyl(1.25, RZ + 0.5, RZ + 9.0, (s * 34.5, RY), "z"))
+    # D outline: R1.6 arc under a flat 0.9 above the axis; the flat carries vertices every 0.1 mm so it stays a facet
+    # strip (a two-vertex chord reads as round to section probes); a 0.02 crown keeps the facets from being merged
+    fa = math.degrees(math.asin(0.9 / 1.6))
+    hx = 1.6 * math.cos(math.radians(fa))
+    arc = [(RY + 1.6 * math.cos(math.radians(180.0 - fa + (180.0 + 2 * fa) * k / 59)),
+            RZ + 1.6 * math.sin(math.radians(180.0 - fa + (180.0 + 2 * fa) * k / 59))) for k in range(60)]
+    d = Polygon(arc + [(RY + hx - 2 * hx * k / 27, RZ + 0.9 - 0.02 * math.sin(math.pi * k / 27)) for k in range(1, 27)])   # 0.02 crown: no face merge
+    # blind D-bore (flat 0.9 above the axis); an M2 nut slot open at the inner face (STEP: 4.1 x 2, AF 4 nut + 0.1);
+    # the M2 grub threads the nut down onto the flat. Its hole is cut by robot.cad.holes as a tapped (1.6) bore so it
+    # stays inside the 1.9 mm tyre-seat flat (a 2.4 clearance hole breaks into both 45 deg ramps as knife edges);
+    # the grub is a set screw, so it gets no spec fastener (no head to seat)
+    from robot.cad.holes import hole_tool
+    top = 6.0   # tyre-seat radius at the grub
+    grub, _rec = hole_tool((s * 34.3, RY, RZ + top), (0, 0, -1), "M2x5", head="cap", into="tapped", side="thread", engage=top - 0.9)   # tip 0.4 past the flat: breaks cleanly into the bore (STEP: through)
+    slot = _box(s * 29.0, s * 41.0, RY - 2.05, RY + 2.05, RZ + 2.4, RZ + 4.4)
+    return _S(body, _ext(d, "yz", s * 29.0, s * 41.0), slot, grub)
 
 
 def front_hub(s):
     """RV19 micro hub (9 x 9) running on the 25 mm standoff: 6 mm tyre seat between two 9 mm flanges, an O-ring
     groove inboard."""
-    prof = [(0.0, 2.7), (0.0, 4.5), (0.5, 4.5), (0.56, 3.96), (0.93, 3.7), (1.74, 3.76), (1.94, 3.96), (2.0, 4.5), (2.5, 4.5), (2.5, 4.1), (2.9, 3.7),
-            (8.1, 3.7), (8.5, 4.1), (8.5, 4.5), (9.0, 4.5), (9.0, 2.7)]   # STEP RV19
+    # STEP RV19, except all three flanges 0.7 thick (STEP 0.5): the groove flanges grow into the groove (1.1 wide, centre
+    # unchanged) and the outer flange grows 0.2 outboard so the 6 mm tyre seat keeps its width
+    prof = [(0.0, 2.7), (0.0, 4.5), (0.7, 4.5), (0.75, 3.96), (0.93, 3.7), (1.57, 3.7), (1.75, 3.96), (1.8, 4.5), (2.5, 4.5), (2.5, 4.1), (2.9, 3.7),
+            (8.1, 3.7), (8.5, 4.1), (8.5, 4.5), (9.2, 4.5), (9.2, 2.7)]
     if s < 0:
         prof = [(-x, r) for x, r in prof]
     return _revolve_x(prof, s * 30.0, SA)
 
 
-def tyre(od, idd, x0, x1, c):
-    return _S(_cyl(od / 2, x0, x1, c), _cyl(idd / 2, x0 - 1, x1 + 1, c))
+def tyre(od, idd, x0, x1, c, shoulder=0.0):
+    """Rubber tyre envelope; `shoulder` rounds the tread corners (the F1 tyre's moulded R1.2 shoulders, STEP RV22)."""
+    if shoulder <= 0:
+        return _S(_cyl(od / 2, x0, x1, c), _cyl(idd / 2, x0 - 1, x1 + 1, c))
+    R, rs = od / 2, shoulder
+    prof = [(0.0, idd / 2)] + [(rs - rs * math.cos(math.radians(a)), R - rs + rs * math.sin(math.radians(a))) for a in range(0, 91, 10)]
+    prof += [(x1 - x0 - rs + rs * math.cos(math.radians(a)), R - rs + rs * math.sin(math.radians(a))) for a in range(90, -1, -10)]
+    prof += [(x1 - x0, idd / 2)]
+    return _revolve_x(prof, x0, c)
 
 
 def standoff(L_x, c):
@@ -775,6 +803,13 @@ def chassis():
         add.append(_ext(mx(rear_blk), "xy", z0, c["deck"] + 0.1))
         # motor front stop wall (load path: the N10 gearbox bears on it, not the base screws)
         add.append(_box(sg * 17.7, sg * (x - w + 0.1), -25.4, -23.4, z0, c["deck"] + 0.1))
+        # N10 retention comb off the stop wall (deviation from the STEP, which leaves the motor to the hub and grub):
+        # a key tab drops between the last two gearbox plates (|X| 23.4 / 26.3, 0.15 each side) so a hit or a drop
+        # cannot walk the motor along its shaft, and a 0.4 mm ledge 0.1 over the gearbox plates stops it lifting off the
+        # base-panel preload pad when inverted. Both hang from the deck (printed deck-down: no supports) and clear the
+        # rounded can, so the motor still drops straight out downwards once the base panel is off.
+        add.append(_box(sg * N10_KEY[0], sg * N10_KEY[1], -26.15, -23.4, 16.0, c["deck"] + 0.1))
+        add.append(_box(sg * 20.0, sg * (x - w + 0.1), -27.3, -23.4, N10_TOP + 0.1, c["deck"] + 0.1))
         # side lobe with the thin M3 nut (Y -16.3..2.8)
         lobe = Point(NUT[0], NUT[1]).buffer(4.55, 64).union(Point(1.35, 6.9).buffer(1.2, 32)).convex_hull
         add.append(_ext(lobe, "yz", sg * (x - 0.1), sg * 32.5))
@@ -849,6 +884,9 @@ def chassis():
     for sg in (1, -1):
         # N10 keyhole: round seat for the gearbox shaft boss, narrowing to the floor (motor tilts in)
         kh = Point(RY, RZ).buffer(2.5, 64).union(Point(RY, 5.85).buffer(0.85, 24)).convex_hull   # STEP keyhole
+        # opened into a U-slot to the floor (deviation): the gearbox boss (4 dia) and the shaft drop in from below with
+        # the base panel off, instead of threading the shaft through a closed hole the motor cannot reach in a straight line
+        kh = kh.union(Polygon([(RY - 2.05, z0 - 1.0), (RY + 2.05, z0 - 1.0), (RY + 2.05, RZ), (RY - 2.05, RZ)]))
         cuts.append(_ext(kh, "yz", sg * (x - w - 0.5), sg * (x + 0.5)))
         # nut: M3 clearance through lobe + wall, hex pocket on the inside
         cuts.append(_cyl(1.6, sg * 26.0, sg * 33.0, NUT))
@@ -879,6 +917,8 @@ def chassis():
         cuts.append(_cyl(BOSS_R + 0.05, 4.4, 4.5 + BOSS_H + 0.05, (px, py), "z"))
     for sg in (1, -1):
         cuts.append(_box(sg * 17.95, sg * 27.05, -34.85, -25.75, 4.4, 4.8))   # motor preload pads
+        # square the R1 inner rear corner where the N10 gearbox plates sit (their corner would bite 0.14 into the round)
+        cuts.append(_box(sg * 25.5, sg * (x - w + 0.05), y0 + w - 0.05, y0 + w + 2.0, z0 + 2.0, c["deck"]))
     cuts += [weapon_mount("l"), weapon_mount("r"), side_panel(1), side_panel(-1)]
     body = _S(body, *cuts)
     # electronics cage hung from the deck (prints as part of the deck-down first layers): ribs 0.1 mm off the Malenki's
@@ -935,7 +975,7 @@ PARTS = {
     "side_panel_l": lambda: side_panel(-1), "side_panel_r": lambda: side_panel(1),
     "rear_hub_l": lambda: rear_hub(-1), "rear_hub_r": lambda: rear_hub(1),
     "front_hub_l": lambda: front_hub(-1), "front_hub_r": lambda: front_hub(1),
-    "rear_tyre_l": lambda: tyre(21.5, 14.0, -42.0, -32.5, (RY, RZ)), "rear_tyre_r": lambda: tyre(21.5, 14.0, 32.5, 42.0, (RY, RZ)),
+    "rear_tyre_l": lambda: tyre(21.5, 14.0, -42.0, -32.5, (RY, RZ), 1.2), "rear_tyre_r": lambda: tyre(21.5, 14.0, 32.5, 42.0, (RY, RZ), 1.2),
     "front_tyre_l": lambda: tyre(11.0, 7.0, -38.5, -32.5, SA), "front_tyre_r": lambda: tyre(11.0, 7.0, 32.5, 38.5, SA),
     "so_a_l": lambda: standoff((-SA_X[1], -SA_X[0]), SA), "so_a_r": lambda: standoff(SA_X, SA),
     "so_b_l": lambda: standoff((-SB_X[1], -SB_X[0]), SB), "so_b_r": lambda: standoff(SB_X, SB),
@@ -972,7 +1012,7 @@ def make_spec(model_file):
     P(id="tub", kind="structure", print_orientation="-z", rotates_with="fixed", solid_fraction=0.8, color="#2a2c30", shape=M("chassis"), **PLA,
       label="RV01 printed chassis: closed X-ribbed deck (printed deck-down), open floor for the base panel, N10 keyhole side pockets, nut lobes, weapon-mount tabs and standoff lugs")
     P(id="base_panel", kind="structure", print_orientation="+z", rotates_with="fixed", color="#2a2c30", shape=M("base_panel"), **PLA,
-      label="RV26 1 mm printed base panel, 5 M2 CSK into the floor heat-sets, 0.25 mm pads preload the N10s")
+      label="RV26 1 mm printed base panel, 5 M2 CSK into the floor heat-sets, 0.45 mm pads preload the N10s")
     P(id="top_panel", kind="armor", material="titanium", process="laser", stock="0.9 mm Ti Gr5 sheet", secondary_ops=["countersink"], rotates_with="fixed", color="#8d939b", shape=M("top_panel"),
       label="0.9 mm Ti top panel: laser outline with 4 countersunk 2.2 corner holes, 4 M2 flat-head thread-forming screws into the column tops (material inferred, see REFERENCE.md)")
     # ---------------------------------------------------------------- weapon module
@@ -1277,6 +1317,13 @@ def _side_dev(s):
                  "6.2 bore would trap it; 6.7 seat with a straight head bore out through the nose for the driver")]
 
 
+def _GRUB_DEV(s):
+    return [{"near": [s * 34.4, RY, RZ + 3.0], "r": 3.5,
+             "reason": "grub bore is the catalog M2 tap drill (1.6, robot.cad.holes) 0.2 inboard, not the STEP 2.5 hole at |X| 34.5: "
+                       "a 2.5 hole breaks into both 45 deg tyre-seat ramps and leaves knife edges (mfg.thin_wall 0.01 mm); the grub "
+                       "threads the 1.6 bore and the captive nut, so it clamps the flat the same"}]
+
+
 def reference_cad():
     def R(part, file, mode="shape", **k):
         return dict(part=part, file=file, mode=mode, **k)
@@ -1312,7 +1359,8 @@ def reference_cad():
         R("side_l", "RV23_side_panel_LH_1.stl", tol_mm=1.0, tol_vol_frac=0.25, deviations=_side_dev(-1)),
         R("side_r", "RV24_Mirrorside_panel_RH_1.stl", tol_mm=1.0, tol_vol_frac=0.25, deviations=_side_dev(1)),
         R("fork_l", "fork_5_2.stl", tol_mm=0.5, deviations=_fork_dev(-1)), R("fork_r", "fork_5_1.stl", tol_mm=0.5, deviations=_fork_dev(1)),
-        R("whub_rl", "RV21_Rear_Wheel_1.stl", tol_mm=0.5, tol_vol_frac=0.15), R("whub_rr", "RV21_Rear_Wheel_2.stl", tol_mm=0.5, tol_vol_frac=0.15),
+        R("whub_rl", "RV21_Rear_Wheel_1.stl", tol_mm=0.5, tol_vol_frac=0.15, deviations=_GRUB_DEV(-1)),
+        R("whub_rr", "RV21_Rear_Wheel_2.stl", tol_mm=0.5, tol_vol_frac=0.15, deviations=_GRUB_DEV(1)),
         R("whub_fl", "RV19_Hub_Micro_1.stl", tol_mm=0.5, ref_to_world=_micro_to_world("l")),
         R("whub_fr", "RV19_Hub_Micro_2.stl", tol_mm=0.5, ref_to_world=_micro_to_world("r")),
         R("so_al", "RV11_m3_25mm_aluminium_standoff_1.stl", mode="envelope", tol_mm=0.3, tol_vol_frac=0.2),

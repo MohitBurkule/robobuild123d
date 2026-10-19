@@ -1242,14 +1242,36 @@
     "file": "RV21_Rear_Wheel_1.stl",
     "mode": "shape",
     "tol_mm": 0.5,
-    "tol_vol_frac": 0.15
+    "tol_vol_frac": 0.15,
+    "deviations": [
+     {
+      "near": [
+       -34.4,
+       -30.5,
+       14.0
+      ],
+      "r": 3.5,
+      "reason": "grub bore is the catalog M2 tap drill (1.6, robot.cad.holes) 0.2 inboard, not the STEP 2.5 hole at |X| 34.5: a 2.5 hole breaks into both 45 deg tyre-seat ramps and leaves knife edges (mfg.thin_wall 0.01 mm); the grub threads the 1.6 bore and the captive nut, so it clamps the flat the same"
+     }
+    ]
    },
    {
     "part": "whub_rr",
     "file": "RV21_Rear_Wheel_2.stl",
     "mode": "shape",
     "tol_mm": 0.5,
-    "tol_vol_frac": 0.15
+    "tol_vol_frac": 0.15,
+    "deviations": [
+     {
+      "near": [
+       34.4,
+       -30.5,
+       14.0
+      ],
+      "r": 3.5,
+      "reason": "grub bore is the catalog M2 tap drill (1.6, robot.cad.holes) 0.2 inboard, not the STEP 2.5 hole at |X| 34.5: a 2.5 hole breaks into both 45 deg tyre-seat ramps and leaves knife edges (mfg.thin_wall 0.01 mm); the grub threads the 1.6 bore and the captive nut, so it clamps the flat the same"
+     }
+    ]
    },
    {
     "part": "whub_fl",
@@ -1452,7 +1474,7 @@
    },
    "material": "pla_st",
    "process": "fdm",
-   "label": "RV26 1 mm printed base panel, 5 M2 CSK into the floor heat-sets, 0.25 mm pads preload the N10s"
+   "label": "RV26 1 mm printed base panel, 5 M2 CSK into the floor heat-sets, 0.45 mm pads preload the N10s"
   },
   {
    "id": "top_panel",
