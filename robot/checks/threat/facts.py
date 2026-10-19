@@ -971,6 +971,7 @@ BLOCKS = (
     ("lips", m_lips),
     ("pockets", lambda c, s, T, F: m_pockets(c, s, T)),
     ("pulleys", lambda c, s, T, F: m_pulleys(c, s, T)),
+    ("ext", lambda c, s, T, F: m_ext(c, s, T, F)),
 )
 
 
@@ -993,3 +994,52 @@ def facts(ctx):
             T["_errors"][name] = f"{type(e).__name__}: {e}"
         T["_timings"][name] = round(time.time() - t0, 2)
     return T
+
+
+def m_ext(ctx, s, T, F):
+    """Extended-catalogue facts (combat_failure_modes_ext.json top clusters): switch, antenna, friction fits, tape,
+    robot-state answers."""
+    spec = ctx.r.spec
+    sw = [b for b in s.bodies if b.kind == "switch"]
+    hz = np.zeros(len(s.P), bool)
+    for brg in A.ALL_AROUND:
+        hz |= view(s, brg)
+    top = view(s, 0, 90.0)
+    ztop = float(s.z.max())
+    rows = []
+    for b in sw:
+        own = s.O == s.bodies.index(b)
+        rows.append({"id": b.id, "side_hit": bool((own & hz & (s.z <= 40)).any()),
+                     "top_gap": float(ztop - (b.aabb[1][2] - s.floor)), "top_visible": bool((own & top).any())})
+    T["x.switch"] = rows
+    ant = [b for b in s.bodies if "antenna" in b.id or "aerial" in b.id]
+    T["x.antenna"] = None if not ant else sorted(b.id for b in ant if (skin(s) & (s.O == s.bodies.index(b))).any())
+    T["x.has_rx"] = bool(_receivers(s.bodies))
+    fric, tape = [], []
+    fastened = set()
+    for f in spec.fasteners:
+        fastened.update(list(f.through or []) + [f.threads_into])
+    kinds = {p.id: p.kind for p in spec.parts}
+    for c in spec.connections:
+        m = str(c.method).lower()
+        pair = (c.a, c.b)
+        if any(k in m for k in ("press", "friction", "interference", "push")) and not c.mechanical_key:
+            if any(kinds.get(x) in ("pin", "tyre", "wheel", "shaft", "insert", "bearing", "pulley") for x in pair):
+                fric.append(f"{c.a}/{c.b}")
+        if any(k in m for k in ("tape", "velcro", "adhesive_pad")):
+            for x in pair:
+                if kinds.get(x) in ("esc", "receiver", "battery", "switch") and x not in fastened:
+                    tape.append(x)
+    for p in spec.parts:  # tyres held by nothing but their own stretch
+        if p.kind == "tyre" and p.tyre_of and p.id not in fastened and not any(p.id in (c.a, c.b) for c in spec.connections):
+            fric.append(f"{p.id}/{p.tyre_of}")
+    T["x.friction"] = sorted(set(fric))
+    T["x.tape"] = sorted(set(tape))
+    st = {}
+    st["inverted"] = bool(T.get("self_right")) or bool(F.get("inv_cover_3.front") and F["inv_cover_3.front"] >= 0.5)
+    ps = T.get("gd05.per_side")
+    st["one_drive_dead"] = bool(ps and min(ps) >= 2) or (F.get("n_wheels") or 0) >= 4
+    st["weapon_dead"] = (F.get("cover_3.front") or 0.0) >= 0.5 or not F.get("n_weapons")
+    st["radio_failsafe"] = bool(spec.electronics.failsafe) or not spec.is_spinner
+    st["on_side_or_walled"] = not T.get("ar03.trapped")
+    T["x.states"] = st

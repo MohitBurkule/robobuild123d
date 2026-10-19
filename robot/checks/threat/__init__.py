@@ -75,4 +75,20 @@ def run(ctx):
             if exp is not None:
                 f.expect(exp, act)
             out.append(f)
+    from .rules_ext import EXT
+    for mid, (title, fn, why, fix) in EXT.items():
+        fid = f"threat.{mid}"
+        try:
+            st, msg, exp, act = fn(T)
+        except Exception as e:  # noqa: BLE001
+            st, msg, exp, act = None, f"rule raised {type(e).__name__}: {e}", None, None
+        if st == NA:
+            continue
+        if st == SKIP or st is None:
+            ctx.not_checked.append(f"{fid} {title}: {msg}")
+            continue
+        if st:
+            out.append(ok(fid, G, title, msg))
+        else:
+            out.append(fail(fid, G, WARNING, title, f"Weak point: {msg} WHY: {why} FIX: {fix}").fix(fix).expect(exp, act))
     return out

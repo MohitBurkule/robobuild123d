@@ -106,16 +106,19 @@ def visible(P, d, cell=CELL_MM, tol=DEPTH_TOL_MM):
     v = np.cross(d, u)
     iu = np.floor(P @ u / cell).astype(np.int64)
     iv = np.floor(P @ v / cell).astype(np.int64)
-    key = (iu - iu.min()) * (int(iv.max() - iv.min()) + 1) + (iv - iv.min())
+    iu -= iu.min()
+    iv -= iv.min()
     depth = P @ d
-    order = np.lexsort((depth, key))
-    ks = key[order]
-    first = np.ones(len(ks), bool)
-    first[1:] = ks[1:] != ks[:-1]
-    start = np.maximum.accumulate(np.where(first, np.arange(len(ks)), 0))
-    near = depth[order] <= depth[order][start] + tol
-    out = np.zeros(len(P), bool)
-    out[order[near]] = True
+    grid = np.full((int(iu.max()) + 3, int(iv.max()) + 3), np.inf)
+    np.minimum.at(grid, (iu + 1, iv + 1), depth)
+    # A cell's front is the nearest depth in it or its 8 neighbours: random surface samples leave holes, and a hole in a
+    # plate must not let the attacker "see" what is behind it.
+    # Neighbours get extra slack (1.5 cells) so a sloped face is not hidden by its own nearer neighbour cell.
+    nb = grid.copy()
+    for du in (-1, 0, 1):
+        for dv in (-1, 0, 1):
+            nb = np.minimum(nb, np.roll(np.roll(grid, du, 0), dv, 1) + 1.5 * cell)
+    out = depth <= np.minimum(grid[iu + 1, iv + 1], nb[iu + 1, iv + 1]) + tol
     return out
 
 
