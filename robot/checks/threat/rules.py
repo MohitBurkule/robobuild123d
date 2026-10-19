@@ -111,7 +111,7 @@ def vs06(T):
         return NA, "", None, None
     sf, bolts = T.get("vs06.sf"), T.get("vs06.bolts")
     if sf is None:
-        return None, "No upright stress from the strength group.", None, None
+        return SKIP, "No upright stress from the strength group (strength.upright did not run or found no upright).", None, None
     bad = []
     if sf[0] < 2.0:
         bad.append(f"upright `{sf[1]}` SF {sf[0]:.2f} at 2x dynamic load")
@@ -246,7 +246,7 @@ def wl04(T):
         return NA, "", None, None
     if d is None:
         return None, "Plate material unknown.", None, None
-    return d < g, f"`{T.get('wl04.plate')}` deflects {d:.2f} mm under 200 N; the battery is {g:.1f} mm below.", f"< {g:.1f} mm", f"{d:.2f} mm"
+    return d < g, f"`{T.get('wl04.plate')}` deflects {min(d, 99.0):.2f} mm under 200 N; the battery is {g:.1f} mm below.", f"< {g:.1f} mm", f"{d:.2f} mm"
 
 
 def wl05(T):
@@ -255,8 +255,13 @@ def wl05(T):
                                        "No invertible drive or self-righting after a flip (see combat.R090)."), "invertible or self-righting", None
 
 
+WL06_N_PER_100G = 0.65
+
+
 def wl06(T):
-    """Stalemate push = min(traction mu * share * m g, motor stall force) per 100 g of robot."""
+    """Stalemate push = min(traction mu * share * m g, motor stall force) per 100 g of robot. Assumption: the catalogue's
+    1.3 N per 100 g needs a friction coefficient > 1.3, which no tyre on a steel floor reaches; we use 0.65 N per 100 g
+    (an effective mu of about 0.66, i.e. grippy tyres with the weight on the driven wheels)."""
     m, mu, sh, tq, D = _mass(T), T.get("mu"), T.get("driven_share"), T.get("stall_torque_gcm"), T.get("wheel_dia")
     if not _need(m, mu, sh, D) or not m:
         return None, "Mass, tyre grip, weight share or wheel size not measured.", None, None
@@ -265,7 +270,7 @@ def wl06(T):
     if tq:
         push = min(trac, sum(tq) * 9.81e-5 / (D / 2000))
     per = push / (m / 100)
-    return per >= 1.3, f"Push {push:.2f} N = {per:.2f} N per 100 g.", ">= 1.3 N / 100 g", f"{per:.2f}"
+    return per >= WL06_N_PER_100G, f"Push {push:.2f} N = {per:.2f} N per 100 g.", f">= {WL06_N_PER_100G} N / 100 g", f"{per:.2f}"
 
 
 def wl07(T):

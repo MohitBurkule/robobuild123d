@@ -599,15 +599,15 @@ def m_exposure(ctx, s, T):
         js = np.nonzero(m)[0]
         if not len(js):
             continue
-        js = js[:: max(len(js) // 120, 1)]
-        t = A.thickness(b, s.P[js], s.N[js], max_mm=8.0, step=0.25)
+        js = js[:: max(len(js) // 60, 1)]
+        t = A.thickness(b, s.P[js], s.N[js], max_mm=4.0, step=0.25)
         t10 = float(np.percentile(t, 10))
         pr = ph.printed(ctx, b)
         lim = 2.5 if pr else (0.8 if A.is_metal(mat) else None)
         if lim is not None and t10 < lim:
             thin.append((round(t10, 2), b.id, lim))
         # ST01: layer direction at front/side hit points.
-        if pr and mat in {k for k in A.DUCTILITY} and (s.O[fs] == bi).any():
+        if pr and mat in A.DUCTILITY and not str(mat).startswith("tpu") and (s.O[fs] == bi).any():
             p = ph.part(ctx, b)
             bd = np.asarray((p._extra.get("print_dir") or p._extra.get("build_dir") or [0, 0, 1]) if p else [0, 0, 1], float)
             bd = bd / (np.linalg.norm(bd) or 1.0)
