@@ -78,7 +78,7 @@ def keyed_bore_probe(m, axis, at, span, n=4):
     uv = [at[i] for i in range(3) if i != ax]
     out = []
     for h in np.linspace(span[0], span[1], n + 2)[1:-1]:
-        hs = [x for x in holes(section(m, ax, float(h))) if math.dist(x[0], uv) < 1.5]
+        hs = [x for x in holes(section(m, ax, float(h)), densify=True) if math.dist(x[0], uv) < 1.5]
         out.append(hs[0][2] if hs else None)
     return out
 

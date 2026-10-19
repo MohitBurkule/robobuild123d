@@ -44,6 +44,10 @@
   "top_slope_deg": [
    -5,
    25
+  ],
+  "disc_floor_gap_mm": [
+   5.0,
+   9.0
   ]
  },
  "targets": {
@@ -413,6 +417,18 @@
    "reason": "heat-set insert: 3.5 OD melted into a 3.4 bore (interference by design)"
   },
   {
+   "a": "nut_cl",
+   "b": "tub",
+   "max_depth_mm": 0.1,
+   "reason": "thin M3 nut pressed into a hex pocket 0.05 under its flats (captive)"
+  },
+  {
+   "a": "nut_cr",
+   "b": "tub",
+   "max_depth_mm": 0.1,
+   "reason": "thin M3 nut pressed into a hex pocket 0.05 under its flats (captive)"
+  },
+  {
    "a": "wbearing",
    "b": "mount_l",
    "max_depth_mm": 0.1,
@@ -472,7 +488,45 @@
     "mode": "shape",
     "tol_mm": 1.0,
     "tol_vol_frac": 0.25,
-    "note": "RV01 chassis"
+    "note": "RV01 chassis",
+    "deviations": [
+     {
+      "near": [
+       -25.0,
+       10.4,
+       17.5
+      ],
+      "r": 2.5,
+      "reason": "corner column top: 1.7 thread-forming pilot for the top-panel M2 screw instead of the STEP 3.0 bore (the STEP top panel is bonded; screws make it removable)"
+     },
+     {
+      "near": [
+       25.0,
+       10.4,
+       17.5
+      ],
+      "r": 2.5,
+      "reason": "corner column top: 1.7 thread-forming pilot for the top-panel M2 screw instead of the STEP 3.0 bore (the STEP top panel is bonded; screws make it removable)"
+     },
+     {
+      "near": [
+       -25.0,
+       -21.6,
+       17.5
+      ],
+      "r": 2.5,
+      "reason": "corner column top: 1.7 thread-forming pilot for the top-panel M2 screw instead of the STEP 3.0 bore (the STEP top panel is bonded; screws make it removable)"
+     },
+     {
+      "near": [
+       25.0,
+       -21.6,
+       17.5
+      ],
+      "r": 2.5,
+      "reason": "corner column top: 1.7 thread-forming pilot for the top-panel M2 screw instead of the STEP 3.0 bore (the STEP top panel is bonded; screws make it removable)"
+     }
+    ]
    },
    {
     "part": "base_panel",
