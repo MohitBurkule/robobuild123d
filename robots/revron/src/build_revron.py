@@ -579,7 +579,7 @@ def standoff(L_x, c):
 
 
 # ------------------------------------------------------------------------------------------------------------ wedgelet
-WEDGE_TOE_H = 0.85                   # ramp Z = 1 + 1.187 (50.1 - Y) lifted so its toe is a 0.85 mm land at full length
+WEDGE_TOE_H = 1.2                    # ramp Z = 1 + 1.187 (50.1 - Y) lifted so its toe is a 0.85 mm land at full length
 def wedgelet(s):
     """RV17/18 TPU wedgelet (left built, right mirrored), slabs along X measured on the STEP sections:
     an outer block round the 15 mm standoff end (X 36.5..38.5), a ring step (35.5..36.5), a 2.3 mm ramp skin over a
@@ -615,7 +615,10 @@ def wedgelet(s):
     # the STEP leaves the fork tine and the mount boss inside the TPU nose; cut their seats (the tine slides into a
     # 1.5 mm slit, the TPU nose tab bears on the mount)
     # the nose tab grazes the chassis lug by 0.1 mm: take the chassis out of it (a printed TPU nose conforms)
-    return _S(sh, _fork_slot(s), weapon_mount("l" if s < 0 else "r"), chassis())
+    # a few tenths of a millimetre either way, so no film is left between the chassis and the mount-boss cut
+    lug = _I(chassis(), _box(s * 17.0, s * 22.0, 38.0, 52.0, 0.0, 12.0))
+    grow = [lug] + [lug.moved(_b().Location(d)) for d in ((0, 0.5, 0), (0, -0.5, 0), (0, 0, 0.5), (0, 0, -0.5))]
+    return _S(sh, _fork_slot(s), weapon_mount("l" if s < 0 else "r"), *grow)
 
 
 # ------------------------------------------------------------------------------------------------------------ side panel
@@ -708,10 +711,13 @@ def side_panel(s):
     nose = _one(nose).split(b.Plane(origin=(-120.0, 0.0, 0.0), z_dir=(1.0, -1.525, -1.4725)), keep=b.Keep.TOP)
     nose = _S(nose, _box(-42.0, -38.4, 26.5, 39.0, 3.0, 10.5))                     # hollow behind the nose wall
     boss = _I(_cyl(3.0, -42.5, -39.5, SA), _ext(side, "yz", -60.0, -20.0))         # standoff end boss
-    body = _U(wall, nose, foot, boss)
+    # the SB countersink bottoms 1.2 mm above the floor (z 1.2): a 1.2 mm TPU skirt under the head bore, down to the
+    # floor (z 0), so the cone has a printable wall instead of a 0.2 mm film
+    skirt = _I(_I(_ext(nose_plan, "xy", 0.0, 1.0), _ext(_poly([(SB[0] - 4.5, 0.0), (SB[0] + 4.5, 0.0), (SB[0] + 4.5, 1.0), (SB[0] - 4.5, 1.0)]), "yz", -60.0, -20.0)), batter)
+    body = _U(wall, nose, foot, boss, skirt)
     # M3 CSK seats (ISO 10642 head 6.6, +0.1 clearance) with a 12 mm head bore out through the battered outer face, so a
     # driver reaches the head and the screw backs straight out
-    cuts = [_csk(3.3, 6.7, (-46.26, SA[0], SA[1]), "x", 1, 8.0, 12.0), _csk(3.3, 6.7, (-41.76, SB[0], SB[1]), "x", 1, 8.0, 12.0),
+    cuts = [_csk(3.3, 6.7, (-46.26, SA[0], SA[1]), "x", 1, 8.0, 12.0), _csk(3.3, 6.6, (-41.76, SB[0], SB[1]), "x", 1, 8.0, 12.0),
             _csk(3.3, 6.7, (-35.26, NUT[0], NUT[1]), "x", 1, 8.0, 12.0),
             _cyl(2.55, -42.55, -38.0, SA),
             _box(-45.0, -43.4, -38.7, -24.8, 5.0, 15.0),                          # rear tyre relief on the inner face
@@ -1023,7 +1029,7 @@ def belt_guard(s):
     x, y0, y1, z0, z1 = c["x"], c["y0"], c["y1"], c["z0"], c["z1"]
     # glue web/foot under the roof's inner edge: down the tub wall face, and onto the deck chamfer at the rear
     fy = [(y, z) for y, z in zip(ys, zb) if y0 + 3.0 <= y <= y1 - 4.0]
-    foot = _ext(Polygon([(y, min(z1 - 2.5, z - 3.0)) for y, z in fy] + [(y, z + 0.5) for y, z in reversed(fy)]), "yz", BG["x_foot"], x + 0.5)
+    foot = _ext(Polygon([(y, min(z1 - 2.5, z - 3.0)) for y, z in fy] + [(y, z + 0.5) for y, z in reversed(fy)]), "yz", BG["x_foot"], x + 1.2)
     roof = _U(roof, foot)
     # tub envelope (box + 2 mm top chamfer, as chassis()) and the side panel moved 0.2 inboard come out of it
     b = _b()
