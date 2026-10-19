@@ -320,3 +320,82 @@ python3 -m robot gen layouts hspin_bar -k 3           # or the layout problem of
   (pulled) direction through the face it sits in.
 - **Reference notes stay current** (`reference.doc_consistency`): `reference_doc: {path, must_mention, must_not_mention}`
   names the parts the write-up must describe and the retired ones it must no longer claim.
+
+## Combat failure modes (checked by `threat.CF-*`, `threat.CFX-*`)
+
+How an opponent, the arena or the robot's own weapon breaks the robot (research/combat_failure_modes.json). Each failing
+finding names the weak point, WHY it matters and the FIX. Measured once per run in `robot/checks/threat/` against a
+reference attack model (`attack.py`: spinner 25 J / 40 m/s tip, 6 mm bite, 5 J hammer, debris bands 1.5-15 mm wheel /
+1.5-10 mm weapon, attack bearings and height bands per weapon type). Blockers: **CF-GD08** (wire within 3 mm of the
+weapon's swept volume; needs `--full` wiring routes) and **CF-OW01** (weapon touches the floor at 5 deg nose-down pitch).
+Everything else is a warning or info. Assumptions where the catalogue leaves a number open are in each rule docstring
+(`robot/checks/threat/rules.py`), e.g. CF-WL06 uses 0.65 N/100 g because 1.3 N/100 g needs mu > 1.3.
+
+| id | sev | check | WHY |
+|---|---|---|---|
+| CF-VS01 | warning | Bite-edge exposure to vertical spinner | A tooth needs a horizontal-ish edge or step to catch; any step >= tooth bite depth lets it transfer full energy instead of glancing. |
+| CF-VS02 | warning | Front lip survives a vertical-spinner hit | Thin wedge/fork tips meet the teeth first; a printed or 0.8 mm lip shatters or bends up, leaving a gap the spinner then exploits. |
+| CF-VS03 | info | Forks vs spinner (sacrificial spacing) | Forks present less bite; if tine gaps are wider than tooth width they still let the disc reach the body, but they should break off before the chassis. |
+| CF-VS04 | info | Launch arm: CG height vs contact point | Hit below CG flips/launches robot; impulse J = sqrt(2*m_opp_weapon_I*E)/r. Rotational launch more likely when contact far below CG. |
+| CF-VS05 | warning | Top edge catch for drum | Drums hit the top front edge of tall robots; vertical face above the lip is a catch. |
+| CF-VS06 | warning | Gyro of own vertical weapon on hit (stall/reaction) | Opposite reaction torque on hit pitches robot; if weapon motor mount or belt slips, weapon dead. |
+| CF-HS01 | warning | Side armour bite by horizontal spinner | Undercutters hit 0-15 mm high at the side; vertical side walls give full bite. |
+| CF-HS02 | warning | Wheel exposure to horizontal blade | A wheel touched by an undercutter is torn off or stalls the drive. |
+| CF-HS03 | warning | Overcutter top exposure | Bar at 30-60 mm clears low wedges and hits tops; protruding top features (switches, weapon pulleys) get ripped. |
+| CF-HS04 | info | Being launched sideways (recoil spin-out) | Hit imparts lateral impulse; if traction low robot spins out and the side wall then gets hit. |
+| CF-HS05 | warning | Skirt edge lift into undercutter | A flexible skirt rising >3 mm gives the blade an edge. |
+| CF-HA01 | warning | Top plate penetration by axe | Pointed axe tip punches printed top plates; damage lands on internals underneath. |
+| CF-HA02 | warning | Critical part directly under thin top | Damage path from top: what is within 10 mm below a thin region. |
+| CF-HA03 | warning | Hammer-saw / top saw abrasion of wires | Saw dwells on top; any wire within top 3 mm cut. |
+| CF-WL01 | warning | Get-under margin vs reference opponents | Whoever is lower wins; compare edge gap distribution to reference opponents from taxonomy. |
+| CF-WL02 | info | Lift torque needed (resistance to being lifted) | A lifter must raise CG; heavy front & low CG increase required lift work. |
+| CF-WL03 | warning | Grab points for grabbers/crushers | Grabbers need a gripable section; overhangs and narrow waists help them. |
+| CF-WL04 | warning | Crusher clamp load on shell | Clamp crushes printed shell onto battery. |
+| CF-WL05 | info | Flip landing recovery | Once flipped you must work inverted. |
+| CF-WL06 | info | Wedge-on-wedge stalemate push | When both are equal, pushing force decides. |
+| CF-WL07 | warning | Side approach / T-bone get-under | Sides usually higher than front. |
+| CF-AR01 | warning | Wall pinning | Robot pinned with weapon side to wall loses mobility. |
+| CF-AR02 | info | Pit/out-of-arena drift | Low traction or slow robot is pushed out. |
+| CF-AR03 | warning | Stuck on the side | Robot resting on side cannot recover. |
+| CF-LD01 | warning | Landing impact on printed chassis | Drop energy m*g*h = 0.15*9.81*1 = 1.5 J concentrates on corners. |
+| CF-LD02 | warning | Landing on wheels/shaft | Landing on a wheel bends a 3 mm shaft or N20 output. |
+| CF-LD03 | warning | Component ejection on landing | Loose battery/receiver moves and rips connectors. |
+| CF-DB01 | warning | Wheel-to-guard gap jam band | Debris wedges between rotating tyre and static guard and stalls the wheel. |
+| CF-DB02 | warning | Weapon-to-frame jam band | Debris caught between spinning weapon and frame stops it or breaks belt. |
+| CF-DB03 | warning | Belt/pulley pinch point exposure | Debris into belt nip throws belt. |
+| CF-DB04 | info | Open vents/holes admitting debris | Holes >2 mm over electronics let shards in. |
+| CF-DB05 | info | Exposed gearbox/motor shaft | N20 output exposed gets debris in gears. |
+| CF-DB06 | info | Tyre debris trap (treads) | Tyre grooves 2-4 mm pack with dust. |
+| CF-ST01 | warning | Layer-direction weakness at hit points | FDM inter-layer strength ~ 30-60% of in-plane; hits loading layers in tension delaminate. |
+| CF-ST02 | warning | Thin wall at hit point | Wall thickness < 2 mm fails on any spinner hit. |
+| CF-ST03 | info | Stress concentration at sharp internal corners | Sharp internal corners crack. |
+| CF-ST04 | warning | Bolt boss pull-out under hit | Bosses in PLA tear out. |
+| CF-ST05 | warning | Brittle material on impact face | PLA shatters; TPU/PETG/Nylon absorb. |
+| CF-ST06 | warning | Global frame torsion / split | Hits split the chassis at narrow cross-sections. |
+| CF-GD01 | warning | Chunk-removal survivability | Remove 20 mm sphere at each hit-point; check if drive, weapon, power and radio subgraph remain connected. |
+| CF-GD02 | warning | Single-point-of-failure wire | One wire supplying everything near the skin. |
+| CF-GD03 | warning | Battery near impact face | LiPo puncture -> fire / disqualification. |
+| CF-GD04 | warning | Receiver/antenna exposure | Receiver damage = dead robot; antenna cut = failsafe. |
+| CF-GD05 | info | Drive redundancy | 2WD with one wheel lost is crippled; 4WD survives. |
+| CF-GD06 | warning | Switch/link accessibility and protection | Removable link needed per rules; exposed switch may switch off when hit. |
+| CF-GD07 | info | Connector strain relief | Shock tears unrelieved solder joints. |
+| CF-GD08 | blocker | Weapon motor wires near spinning parts | Wire touching weapon is cut. |
+| CF-GD09 | info | ESC thermal/mechanical isolation | ESC boards crack under shock. |
+| CF-AS01 | warning | Splinter/gouge snag vs fork tip angle | A tip that meets a raised splinter at a steep angle hooks it and stops/pivots the robot; a shallow tip rides over. Trade-off: lower tip wins the under race but meets more splinters. |
+| CF-AS02 | warning | Floor-panel seam/step catch | Lip at 0.2 mm meets a 1 mm step head-on and stops dead (or pivots if only one side catches). Trade-off: lip below step height maximises get-under but guarantees seam strikes. |
+| CF-AS03 | warning | Lip stiffness vs dig-in | A very stiff lip pressed down by robot weight/opponent digs into soft wood; a too-flexible lip folds under. Trade-off: stiff = consistent low edge, but digs; flexible = conforms, but folds or lifts. |
+| CF-AS04 | warning | Flexible tine wedging into floor-wall gap | Narrow flexible tines enter the gap under/beside the wall and jam; robot is self-pinned. Trade-off: thin, narrow, flexible tines are best at getting under and worst for this. |
+| CF-AS05 | info | Snag on arena screws/hazard plates | Low edges hook raised screws; side skirts snag hazard plates. Trade-off: same as floor seams. |
+| CF-AS06 | info | Pit-edge hang-up | Long overhanging forks bridge a pit edge and lever robot in, or hang it. Trade-off: long forks reach under further. |
+| CF-AS07 | info | Asymmetric snag pivot | Single tine snagging makes robot spin, presenting its side. Trade-off: multiple independent tines = more snag points. |
+| CF-AS08 | info | Floor wear rounding over time | Lip wear rounds the edge raising effective height after 2-3 fights. Trade-off: soft lips conform but wear. |
+| CF-OW01 | blocker | Weapon self-damage on floor strike when hopping | Hop on hit lowers weapon into the floor. |
+| CF-OW02 | info | Gyro bounce onto back while turning | Gyro torque lifts one side on turns. |
+| CF-OW03 | warning | Belt slip/derail on hit | Hit shock derails belt. |
+| CF-OW04 | info | Weapon bearing support after shell damage | If an upright is chunked, weapon falls out. |
+| CF-OW05 | info | Power-on after inversion (battery shift) | Battery shift pulls connector. |
+
+Extended clusters (combat_failure_modes_ext.json, uncalibrated, all warnings): **CFX-SWITCH** switch hit first from the
+side or dragging on the floor when inverted; **CFX-ANTENNA** modelled antenna on the outer skin; **CFX-FRICTION** pins/tyres
+held only by friction/press fit; **CFX-TAPE** electronics held only by tape/velcro; **CFX-STATE** no answer when inverted,
+one drive side dead, weapon dead, radio failsafe, or on its side.
