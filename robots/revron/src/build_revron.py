@@ -54,16 +54,37 @@ N10_TOP = 17.0                       # top face of the N10 gearbox plates
 SWX = 24.55   # power switch X: body side 0.05 clear of the 27.5 inner wall face (was 25.0, 0.4 into it)
 CH = dict(x=29.5, y0=-37.6, y1=15.0, z0=2.5, z1=19.5, wall=2.0, deck=17.5, cham=2.0)
 # drisk
-DR_X = dict(spider=(-8.2, -5.2), disc_a=(-5.2, -2.2), spacer=(-2.2, 3.8), disc_b=(3.8, 6.8))
+# master parameters of the stack: plate thicknesses and where the first plate starts; every X span below is chained from them
+SPIDER_T, DISC_T, SPACER_T, STACK_X0 = 3.0, 3.0, 6.0, -8.2
+DR_X, _x = {}, STACK_X0
+for _n, _t in (("spider", SPIDER_T), ("disc_a", DISC_T), ("spacer", SPACER_T), ("disc_b", DISC_T)):
+    DR_X[_n] = (_x, _x + _t)       # spider | disc_a | spacer | disc_b, each flush on the previous one
+    _x += _t
 DR_ROT = -54.889                     # drisk phase about the axis (STEP Drisk_V4 placement)
 DISC_R, DISC_ECC, DISC_ECC_A = 16.5, 0.5, -40.0   # eccentric rim: R16.5 centred 0.5 mm towards -40 deg (balances the tooth)
 TOOTH_R, TOOTH_A = 23.0, 134.8
-BOLT_R, HUB_R = 14.0, 4.5
+BOLT_R, HUB_R = 14.0, 4.5            # stack-bolt circle and bell-screw circle (radii about the weapon axis)
+N_STACK = 4                          # bolts / lobes / windows per stack, 90 deg apart
+
+
+def _polar(r, n=N_STACK, phase=0.0):
+    """Points of a polar pattern (build123d PolarLocations in the 2D shapely profiles): n points on radius r."""
+    return [(r * math.cos(math.radians(phase + 360.0 * k / n)), r * math.sin(math.radians(phase + 360.0 * k / n))) for k in range(n)]
+
+
+def _m2():
+    """ISO 273 / ISO 2306 M2 hole radii from the fastener catalog: (tap drill r, close clearance r, normal clearance r)."""
+    _repo = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
+    if _repo not in sys.path:
+        sys.path.insert(0, _repo)
+    from robot.cad import fastener_catalog as fc
+    return fc.tap_drill(2.0) / 2, fc.clearance(2.0, "close") / 2, fc.clearance(2.0, "normal") / 2
 # motor GR1507: axis X, stator base X 8.4..10.4 on the right mount via the back spacer X 11.9..13.4
-MNT_IN, MNT_OUT = 13.4, 21.4         # weapon mount |X| span (8 mm): 4 mm slab + 4 mm battered boss
-MNT_SLAB = 17.4
+MNT_IN, MNT_T, MNT_SLAB_T = 13.4, 8.0, 4.0   # weapon mount: inner face |X|, total thickness, slab thickness (rest = battered boss)
+MNT_OUT, MNT_SLAB = MNT_IN + MNT_T, MNT_IN + MNT_SLAB_T
 WEAPON_CLEAR_R = 16.0                # chassis material stays outside this radius about the weapon axis (rotor + 1 mm)
-BSP_X = (11.9, 13.4)
+BSP_T = 1.5                          # printed spacer between the stator base and the right mount
+BSP_X = (MNT_IN - BSP_T, MNT_IN)
 STAT_HOLE_R, CB_R, CB_CONE_X = 1.12, 2.25, (16.4, 17.15)   # RV03 stator screw clearance d2.24, d4.5 counterbore, its cone
 PHASE_VIA = [[11.1, 14.5, 16.0], [11.1, 15.5, 18.2], [11.1, 27.0, 18.2], [11.1, 30.0, 14.5]]   # weapon phase leads: the lug (|X| >= 10.4, up to the deck) closes z 14.5 at y 15..26
 
@@ -469,9 +490,8 @@ def floating_disc():
     bore = Polygon([(r_bore(a / 4) * math.cos(math.radians(a / 4)), r_bore(a / 4) * math.sin(math.radians(a / 4))) for a in range(1440)])
     bore = _round(bore, r_out=0.5, r_in=0.5)
     p = p.difference(bore)
-    for k in range(4):
-        a = math.radians(90 * k)
-        p = p.difference(Point(BOLT_R * math.cos(a), BOLT_R * math.sin(a)).buffer(1.1, 32))
+    for c in _polar(BOLT_R):
+        p = p.difference(Point(*c).buffer(_m2()[1], 32))
     # balance window by the tooth (STEP): a rounded triangle, the hull of three corner radii -- a straight radial-ish back
     # edge at u -13.65, the lower corner at v 4.85, the upper at v 9.1, the inner corner at (-11.65, 7.65)
     p = p.difference(MultiPoint([(-13.2, 4.85), (-13.2, 9.08), (-11.68, 7.65)]).buffer(0.44, 32).convex_hull)
@@ -488,9 +508,8 @@ def spider():
     with the r14 stack bolts, 4 quarter windows."""
     from shapely.geometry import Point, Polygon
     p = Point(0, 0).buffer(14.2, 128)
-    for k in range(4):
-        a = math.radians(90 * k)
-        p = p.union(Point(BOLT_R * math.cos(a), BOLT_R * math.sin(a)).buffer(2.3, 48))
+    for c in _polar(BOLT_R):
+        p = p.union(Point(*c).buffer(2.3, 48))
     p = _round(p, r_in=0.8)
     for sx in (1, -1):
         for sy in (1, -1):
@@ -499,10 +518,10 @@ def spider():
             q = q.difference(hub)
             p = p.difference(_round(q, r_out=0.6))
     p = p.difference(Point(0, 0).buffer(2.6, 48))
-    for k in range(4):
-        a = math.radians(90 * k)
-        for r, hr in ((HUB_R, 1.1), (BOLT_R, 0.8)):   # r14: M2 tap drill (the stack screws thread in), r4.5: clearance
-            p = p.difference(Point(r * math.cos(a), r * math.sin(a)).buffer(hr, 32))
+    tap_r, clr_r, _ = _m2()
+    for r, hr in ((HUB_R, clr_r), (BOLT_R, tap_r)):   # r14: M2 tap drill (the stack screws thread in), r4.5: clearance
+        for c in _polar(r):
+            p = p.difference(Point(*c).buffer(hr, 32))
     return _ext(_to_world_poly(p), "yz", *DR_X["spider"])
 
 
@@ -515,9 +534,8 @@ def drisk_spacer():
         wedge = Polygon([(0, 0)] + [(30 * math.cos(math.radians(a0 + d)), 30 * math.sin(math.radians(a0 + d))) for d in [-36.0 + 72.0 * i / 36 for i in range(37)]])
         q = Point(0, 0).buffer(14.5, 128).difference(Point(0, 0).buffer(11.4, 128)).intersection(wedge)
         p = p.difference(_round(q, r_out=1.0))
-    for k in range(4):
-        a = math.radians(90 * k)
-        p = p.difference(Point(BOLT_R * math.cos(a), BOLT_R * math.sin(a)).buffer(1.1, 32))
+    for c in _polar(BOLT_R):
+        p = p.difference(Point(*c).buffer(_m2()[1], 32))
     return _ext(_to_world_poly(p), "yz", *DR_X["spacer"])
 
 
