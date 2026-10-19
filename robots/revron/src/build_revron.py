@@ -607,7 +607,8 @@ def wedgelet(s):
     sh = sh if s < 0 else _mirror_x(sh)
     # the STEP leaves the fork tine and the mount boss inside the TPU nose; cut their seats (the tine slides into a
     # 1.5 mm slit, the TPU nose tab bears on the mount)
-    return _S(sh, _fork_slot(s), weapon_mount("l" if s < 0 else "r"))
+    # the nose tab grazes the chassis lug by 0.1 mm: take the chassis out of it (a printed TPU nose conforms)
+    return _S(sh, _fork_slot(s), weapon_mount("l" if s < 0 else "r"), chassis())
 
 
 # ------------------------------------------------------------------------------------------------------------ side panel
