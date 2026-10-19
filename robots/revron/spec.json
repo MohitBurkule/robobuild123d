@@ -526,6 +526,54 @@
     0
    ],
    "reason": "axle standoff slides out of the lug with the front hub and wheel on it"
+  },
+  {
+   "parts": [
+    "mount_l",
+    "bolt_ula",
+    "bolt_ulb"
+   ],
+   "dir": [
+    -1,
+    0,
+    0
+   ],
+   "reason": "RV02 slides outboard off the lug and the shaft end, its CSK screws captive"
+  },
+  {
+   "parts": [
+    "spider"
+   ],
+   "dir": [
+    -1,
+    0,
+    0
+   ],
+   "reason": "drisk (spider, discs, spacer, stack bolts) slides off the GR1507 shaft once the 4 bell screws are out"
+  },
+  {
+   "parts": [
+    "weapon_motor"
+   ],
+   "dir": [
+    -1,
+    0,
+    0
+   ],
+   "reason": "GR1507 leaves inboard-left once the 4 stator screws are out"
+  },
+  {
+   "parts": [
+    "mount_r",
+    "bolt_ura",
+    "bolt_urb"
+   ],
+   "dir": [
+    1,
+    0,
+    0
+   ],
+   "reason": "RV03 slides outboard off its lug with the back spacer, CSK screws captive"
   }
  ],
  "reference_cad": {
@@ -1715,7 +1763,7 @@
    "stock": "GR1507 5 mm shaft (part of the motor): modelled whole, MR85 end X -18.7 through the bell and the rear bearing to its circlip end X 11.4",
    "rotates_with": "weapon",
    "shaft_of": "weapon_motor",
-   "parent": "spider",
+   "parent": "weapon_motor",
    "shape": {
     "type": "place",
     "shape": {
@@ -1724,7 +1772,7 @@
      "height": 30.1
     },
     "at": [
-     -3.65,
+     3.65,
      0,
      0
     ],
