@@ -78,3 +78,13 @@ def test_boolean_diff_blobs():
 def test_surface_deviation_reports_offset():
     dev = ref_diff.surface_deviation(_plate("round", shift=0.5), _plate("round"), 4000)
     assert 0.4 < dev["model_to_ref"]["max"] < 0.7
+
+
+def test_gr1507_catalog_envelope_matches_step():
+    """GR1507 envelope (STEP part GR1507_1: 19.6 x 19.6 x 30.5 mm along the shaft)."""
+    from robot import catalog
+    from robot.shapes import to_solid
+
+    bb = to_solid(catalog.find("gr1507").shape).bounding_box()
+    ext = sorted([bb.size.X, bb.size.Y, bb.size.Z])
+    assert np.allclose(ext, [19.6, 19.6, 30.5], atol=0.3), ext

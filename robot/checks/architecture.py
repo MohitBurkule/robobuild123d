@@ -910,10 +910,16 @@ def load_path(a, p, origin, axis, sup):
 RIGID_JOIN = ("screw", "bolt", "bolted", "glue", "press_fit", "pin", "weld")
 
 
-def _rigid_chassis(a, exclude=None):
-    """Chassis plus every structure part rigidly joined to it (bolted, glued, pressed), e.g. both clamshell halves."""
+ANCHOR_KINDS = ("pin", "standoff", "spacer", "axle")
+
+
+def _rigid_chassis(a, exclude=None, anchors=False):
+    """Chassis plus every structure part rigidly joined to it (bolted, glued, pressed), e.g. both clamshell halves.
+    anchors: also metal standoffs / pins seated in the chassis, so a plate screwed to a standoff is rooted at its
+    screws (VERIFIER_ISSUES #6) rather than at incidental foot contact with the tub."""
     seen, todo = {a.chassis.id}, [a.chassis.id]
-    struct = {p.id for p in a.spec.parts if p.kind in STRUCT and p.id != exclude}
+    kinds = STRUCT + (ANCHOR_KINDS if anchors else ())
+    struct = {p.id for p in a.spec.parts if p.kind in kinds and p.id != exclude}
     while todo:
         x = todo.pop()
         nb = set()
@@ -943,7 +949,7 @@ def fork_stiffness(a, origin, axis, sup):
         boss = origin + axis * t
         # Root: centroid of the contact with the chassis or of its bolts.
         fs = a.fasteners_of(h.id)
-        rootset = _rigid_chassis(a, exclude=h.id)
+        rootset = _rigid_chassis(a, exclude=h.id, anchors=True)
         pts = [np.asarray(f.at, float) for f in fs if rootset & set(a.coupled(f))]
         if not pts and len(h.mesh.vertices):
             for rid in sorted(rootset):

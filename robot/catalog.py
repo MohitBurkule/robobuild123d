@@ -169,7 +169,7 @@ def builtin() -> list[CatalogEntry]:
                      union([at(cyl_x(9.8, 2.0), -9.4, 0, 0), at(cyl_x(4.0, 4.1), -6.35, 0, 0), at(cyl_x(9.8, 8.6), 0.0, 0, 0),
                             at(cyl_x(7.0, 2.2), 5.4, 0, 0), at(cyl_x(2.5, 3.0), 8.0, 0, 0), at(cyl_x(2.26, 9.2), 14.1, 0, 0),
                             at(cyl_x(0.75, 1.4), -11.1, 0, 0)]),
-                     {"phases": [-9.4, 0, -9.0]}, {"at": [6.5, 0, 0], "dir": [1, 0, 0], "len": 12.2, "dia": 5.0},
+                     {"phases": [-11.0, 0, -9.0]}, {"at": [6.5, 0, 0], "dir": [1, 0, 0], "len": 12.2, "dia": 5.0},
                      {"kv": 2850, "max_current_a": 18.0, "typ_current_a": 8.0, "bell_mass_frac": 0.45}, "#3a3d42"),
         flat("malenki_nano_rvrn2", "Malenki Nano (Rx + 2 brushed ESC), kapton wrapped with its leads (RVRN 2.0 RV13 envelope)", "esc", 32, 20, 4.4, 4.0,
              {"bat": [-16, -6, 0], "m1": [16, 6, 0], "m2": [-16, 6, 0], "wpn": [16, -6, 0]},

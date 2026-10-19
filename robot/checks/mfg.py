@@ -95,6 +95,8 @@ def run(ctx):
                 out.append(fail("mfg.bed", G, BLOCKER, "Part is bigger than the print bed",
                                 f"`{p.id}` is {s[0]:.0f} x {s[1]:.0f} x {s[2]:.0f} mm.").on(p.id)
                            .fix("Split it into two parts joined with screws."))
+        if (p.process or "") == "cots" or p.kind == "belt":   # bought parts have no made walls (VERIFIER_ISSUES #5)
+            continue
         if min_wall <= 0.0:
             if catalog.material(p.material) is None:
                 ctx.not_checked.append(f"Minimum wall of `{p.id}`: material `{p.material}` unknown")

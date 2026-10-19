@@ -585,3 +585,16 @@ def test_fork_root_from_mesh_contact_on_a_dense_mesh_does_not_crash():
     fl["shape"] = sub(fl["shape"], *holes)
     res, rep = run(d)
     assert "arch.crashed" not in res, [f.message for f in res["arch.crashed"]]
+
+
+def test_fork_stiffness_roots_at_standoff_screw():
+    """VERIFIER_ISSUES #6: an upright screwed to a metal standoff seated in the tub is rooted at that screw, not at
+    its foot's mesh contact with the tub (which gave a long false lever)."""
+    d = spinner()
+    d["fasteners"] = [f for f in d["fasteners"] if "fl" not in f["id"]]
+    d["parts"].append(P("so_l", "pin", cyl(2.5, 30, (10, 20, 22), (0, 90, 0)), mat="aluminium", proc="cots"))
+    d["fasteners"].append(F("bolt_so", "M3x8", (19, 20, 22), (-1, 0, 0), ["fork_l"], "so_l"))
+    d["connections"].append({"a": "so_l", "b": "tub", "method": "pin", "reason": "standoff through the tub lug"})
+    res, _ = run(d)
+    msgs = [f.message for f in res.get("arch.fork_stiffness", []) if "fork_l" in f.message]
+    assert msgs and all(f.passed for f in res["arch.fork_stiffness"] if "fork_l" in f.message), msgs
