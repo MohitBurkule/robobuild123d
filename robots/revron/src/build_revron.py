@@ -1055,7 +1055,7 @@ PARTS = {
     "rear_hub_l": lambda: rear_hub(-1), "rear_hub_r": lambda: rear_hub(1),
     "front_hub_l": lambda: front_hub(-1), "front_hub_r": lambda: front_hub(1),
     "rear_tyre_l": lambda: tyre(21.5, 14.0, -42.0, -32.5, (RY, RZ), 1.2), "rear_tyre_r": lambda: tyre(21.5, 14.0, 32.5, 42.0, (RY, RZ), 1.2),
-    "front_tyre_l": lambda: tyre(11.0, 7.0, -38.5, -32.5, SA), "front_tyre_r": lambda: tyre(11.0, 7.0, 32.5, 38.5, SA),
+    "front_tyre_l": lambda: tyre(11.0, 7.0, -38.5, -32.5, SA, 0.6), "front_tyre_r": lambda: tyre(11.0, 7.0, 32.5, 38.5, SA, 0.6),
     "so_a_l": lambda: standoff((-SA_X[1], -SA_X[0]), SA), "so_a_r": lambda: standoff(SA_X, SA),
     "so_b_l": lambda: standoff((-SB_X[1], -SB_X[0]), SB), "so_b_r": lambda: standoff(SB_X, SB),
     "esc_tray": esc_tray,
@@ -1251,7 +1251,7 @@ def make_spec(model_file):
     ORING = (45, 1.0)
     BELT_L = round(math.pi * ORING[0], 1)
     for s, n in SIDES:
-        P(id=f"belt_{n}", kind="belt", material="rubber", process="cots", shape=belt_shape(s), color="#111111",
+        P(id=f"belt_{n}", kind="belt", material="rubber", process="cots", shape=belt_shape(s), color="#3f7fbf",
           belt={"pulleys": [f"whub_r{n}", f"whub_f{n}"], "kind": "o_ring", "length_mm": BELT_L, "width_mm": ORING[1], "stock": {"id_mm": ORING[0], "cs_mm": ORING[1]}},
           label=f"stock {ORING[0]} x {ORING[1]} nitrile O-ring ({100 * (loop / BELT_L - 1):.0f} % stretch on the 61 mm centres): front wheel drive (not in the STEP; the hub grooves are)")
 

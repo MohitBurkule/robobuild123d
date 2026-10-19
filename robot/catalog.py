@@ -126,6 +126,75 @@ def hexagon(r):
     return [[r * math.cos(math.radians(i * 60)) * 1.1547, r * math.sin(math.radians(i * 60)) * 1.1547] for i in range(6)]
 
 
+def hex_prism(s, h):
+    """Hexagonal prism, `s` across flats, height `h`, centred on the origin, axis z (corners on +-x)."""
+    return {"type": "prism", "points": hexagon(s / 2), "height": h}
+
+
+def hex_nut(s, m, bore_d):
+    """ISO 4032/4035 style nut: true hexagon `s` across flats, height `m`, 30 deg chamfer on both faces down to the
+    bearing circle (dia = s), through bore. Envelope (bbox) is the same as the plain hexagon prism."""
+    R = s / 2 * 1.1547
+    c = (R - s / 2) * math.tan(math.radians(30))
+    chamf = {"type": "revolve", "profile": [[0.0, -m / 2], [s / 2, -m / 2], [R + 0.05, -m / 2 + c + 0.03],
+                                            [R + 0.05, m / 2 - c - 0.03], [s / 2, m / 2], [0.0, m / 2]]}
+    return minus({"type": "intersect", "items": [hex_prism(s, m), chamf]}, [cyl(bore_d / 2, m + 1.0)])
+
+
+def heatset(od, length, bore_d, ribs=12):
+    """Brass heat-set insert: cylinder `od` x `length` with `ribs` axial knurl grooves cut into its outer face (inside the
+    OD, so the envelope is unchanged) and a through bore."""
+    r = od / 2
+    g = max(0.12, 0.06 * od)
+    grooves = [at(cyl(g, length + 1.0), r * math.cos(math.pi * (2 * i + 1) / ribs), r * math.sin(math.pi * (2 * i + 1) / ribs), 0.0)
+               for i in range(ribs)]
+    return minus(cyl(r, length), [cyl(bore_d / 2, length + 1.0)] + grooves)
+
+
+def hex_recess(key, depth, z0, toward=1.0):
+    """Hex socket cut: key `key` across flats, `depth` deep from the plane z=z0 into the head along `toward` (+1/-1 z).
+    Overlaps the face by 0.05 so the cut opens cleanly. (No drill-point cone: its apex tessellates non-watertight.)"""
+    e = 0.05
+    return at(hex_prism(key, depth + e), 0.0, 0.0, z0 + toward * (depth - e) / 2)
+
+
+def is_hex_recess(c) -> bool:
+    """True if `c` is (contains) a hexagonal prism cut, i.e. a hex drive or nut-shaped cut."""
+    if not isinstance(c, dict):
+        return False
+    if c.get("type") == "prism":
+        return len(c.get("points") or []) == 6
+    return any(is_hex_recess(x) for x in (c.get("items") or []) + ([c["shape"]] if isinstance(c.get("shape"), dict) else []))
+
+
+def has_drive_recess(shape) -> bool:
+    """A fastener shape carries a drive if, somewhere in its tree, a subtract cuts a hexagonal (or other polygonal)
+    socket out of it."""
+    if not isinstance(shape, dict):
+        return False
+    if shape.get("type") == "subtract" and any(is_hex_recess(c) for c in shape.get("cut") or []):
+        return True
+    kids = list(shape.get("items") or []) + [shape.get(k) for k in ("base", "shape") if isinstance(shape.get(k), dict)]
+    return any(has_drive_recess(k) for k in kids)
+
+
+def is_hex_nut(shape) -> bool:
+    """A nut shape is hexagonal if its solid (subtract base, possibly intersected with a chamfer) is a 6-sided prism
+    and it has a through bore cut."""
+    if not isinstance(shape, dict):
+        return False
+    if shape.get("type") == "place":
+        return is_hex_nut(shape.get("shape"))
+    if shape.get("type") != "subtract" or not shape.get("cut"):
+        return False
+    base = shape.get("base") or {}
+    if base.get("type") == "prism":
+        return len(base.get("points") or []) == 6
+    if base.get("type") == "intersect":
+        return any(i.get("type") == "prism" and len(i.get("points") or []) == 6 for i in base.get("items") or [])
+    return False
+
+
 def builtin() -> list[CatalogEntry]:
     v = [
         gearmotor("n10_300rpm_6v", "N10 micro gearmotor 6 V 300 rpm", 12, 12, 10, 9.1, 12, 9, 7.5,
@@ -179,8 +248,8 @@ def builtin() -> list[CatalogEntry]:
              {"bat": [-11, -3, 0], "motor": [11, 0, 0], "rx": [-11, 3, 0]},
              {"cont_current_a": 12.0, "burst_current_a": 18.0, "channels": 1.0}, "#d4af37"),
         CatalogEntry("nut_m3_alu", "nut", "M3 aluminium hex nut (5.5 AF)", 0.1, "datasheet",
-                     minus({"type": "prism", "points": hexagon(2.75), "height": 2.4}, [cyl(1.5, 3.0)]), {}, None, {"thread_d_mm": 3.0}, "#c0c4c8"),
-        CatalogEntry("heatset_m2", "insert", "M2 brass heat-set insert 3.0 mm", 0.12, "estimate", minus(cyl(1.6, 3.0), [cyl(1.0, 4.0)]),
+                     hex_nut(5.5, 2.4, 3.0), {}, None, {"thread_d_mm": 3.0}, "#c0c4c8"),
+        CatalogEntry("heatset_m2", "insert", "M2 brass heat-set insert 3.0 mm", 0.12, "estimate", heatset(3.2, 3.0, 2.0),
                      {}, None, {"thread_d_mm": 2.0}, "#d4af37"),
         # RVRN 2.0 STEP envelopes (Revron rebuild 2026-10): measured outline of the vendor models, not memory.
         CatalogEntry("gr1507", "weapon_motor", "GR1507 outrunner (19.6 bell: open 1.8 wall, 8-rib vented top; 4-arm cross stator base with 4 M2 on 12 mm; threaded 5 mm shaft out of the bell face)", 15.5, "estimate",
@@ -200,11 +269,11 @@ def builtin() -> list[CatalogEntry]:
                             at(box(1.0, 3.0, 4.0), -3.0, 0, -3.75), at(box(1.0, 3.0, 4.0), 0.0, 0, -3.75), at(box(1.0, 3.0, 4.0), 3.0, 0, -3.75)]),
                      {"in": [-3.0, 0, -5.5], "out": [0.0, 0, -5.5]}, None, {"lever_travel_mm": 3.0}, "#111111"),
         CatalogEntry("nut_m3_thin", "nut", "M3 thin hex nut BS EN 24036 (5.5 AF x 1.8)", 0.25, "datasheet",
-                     minus({"type": "prism", "points": hexagon(2.75), "height": 1.8}, [cyl(1.5, 3.0)]), {}, None, {"thread_d_mm": 3.0}, "#aaaaaa"),
-        CatalogEntry("heatset_m2_4", "insert", "M2 brass heat-set insert 3.5 OD x 4 (FS1)", 0.15, "estimate", minus(cyl(1.75, 4.0), [cyl(1.0, 5.0)]),
+                     hex_nut(5.5, 1.8, 3.0), {}, None, {"thread_d_mm": 3.0}, "#aaaaaa"),
+        CatalogEntry("heatset_m2_4", "insert", "M2 brass heat-set insert 3.5 OD x 4 (FS1)", 0.15, "estimate", heatset(3.5, 4.0, 2.0),
                      {}, None, {"thread_d_mm": 2.0}, "#d4af37"),
         CatalogEntry("nut_m2", "nut", "M2 hex nut", 0.1, "datasheet",
-                     minus({"type": "prism", "points": hexagon(2.0), "height": 1.6}, [cyl(1.0, 3.0)]), {}, None, {"thread_d_mm": 2.0}, "#aaaaaa"),
+                     hex_nut(4.0, 1.6, 2.0), {}, None, {"thread_d_mm": 2.0}, "#aaaaaa"),
     ]
     return v
 

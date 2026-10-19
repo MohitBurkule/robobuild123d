@@ -8,6 +8,7 @@ import re
 import numpy as np
 
 from .. import catalog
+from ..cad import fastener_catalog
 from ..finding import BLOCKER, WARNING, fail, ok
 
 G = "fasteners"
@@ -52,6 +53,50 @@ def _first_inside(bodies, P, skip):
 NUT_ENGAGEMENT_D = 0.8
 
 
+def tool_key(tool: str):
+    """Hex key size named by a `tool` like `hex2.5`, or None when the tool is not a sized hex key."""
+    m = re.match(r"^hex([0-9.]+)$", str(tool or "").strip())
+    try:
+        return float(m.group(1)) if m else None
+    except ValueError:
+        return None
+
+
+def drive_findings(ctx):
+    """Every screw head is modelled with a drive recess and every nut is a true hexagon (so renders read as hardware and
+    the tool-access check has a real socket size to use)."""
+    from ..world import fastener_shape
+
+    r = ctx.r
+    out, n_s, n_n = [], 0, 0
+    for f in r.spec.fasteners:
+        dl = catalog.parse_designation(f.designation)
+        if not dl:
+            continue
+        n_s += 1
+        head = f.head if f.head in ("countersunk", "button") else None
+        if not catalog.has_drive_recess(fastener_shape(*dl, head=head)):
+            out.append(fail("fastener.drive", G, WARNING, "Screw head has no drive",
+                            f"`{f.id}` ({f.designation}, {head or 'socket cap'} head) is modelled without a hex socket.").on(f.id)
+                       .fix("Build heads with robot.world.fastener_shape, which cuts the ISO hex socket."))
+    for rp in r.parts:
+        if rp.part.kind != "nut":
+            continue
+        n_n += 1
+        sh = rp.shape if rp.shape is not None else (rp.cat.shape if rp.cat else None)
+        if isinstance(sh, dict) and sh.get("type") == "model":
+            ctx.not_checked.append(f"Nut `{rp.part.id}`: shape is an imported model, hexagon not checked")
+            continue
+        if not catalog.is_hex_nut(sh):
+            out.append(fail("fastener.nut_hex", G, WARNING, "Nut is not a hexagon",
+                            f"`{rp.part.id}` is modelled as something other than a hexagonal prism with a through bore.").on(rp.part.id)
+                       .fix("Use catalog.hex_nut(s, m, bore) (true hexagon, chamfered, bored) or a nut catalog entry."))
+    if not out and (n_s or n_n):
+        out.append(ok("fastener.drive", G, "Screws have drives, nuts are hexagons",
+                      f"{n_s} screw heads carry a hex socket, {n_n} nuts are chamfered hexagons with a bore."))
+    return out
+
+
 def run(ctx):
     r, w = ctx.r, ctx.world
     out, good = [], 0
@@ -82,8 +127,16 @@ def run(ctx):
         skip = lambda b: b is own or b.is_wire or b.id in before  # noqa: E731
         u, v = perp(dr)
         bad = False
+        drv = fastener_catalog.drive_key(d, f.head if f.head in ("countersunk", "button") else None)[0]
+        tk = tool_key(f.tool) if f.tool else None
+        if f.tool and f.tool.strip() == "hex":  # unsized hex: use the modelled socket's key
+            tk = drv
+        if tk is not None and abs(tk - drv) > 1e-6:
+            out.append(fail("fastener.drive_key", G, WARNING, "Driver does not fit the socket",
+                            f"`{f.id}` lists {f.tool} but an {f.designation} {f.head or 'cap'} head has a {drv:g} mm hex socket.").on(f.id)
+                       .fix(f"Set `tool` to hex{drv:g}."))
         if f.tool:
-            rad = tool_radius(f.tool)
+            rad = tool_radius(f"hex{tk:g}") if tk is not None else tool_radius(f.tool)
             reach = r.profile.driver_access_len_mm
             top = at - dr * k
             pts, ts = [], []
@@ -145,7 +198,8 @@ def run(ctx):
                        .fix("Move `at` to the surface the head presses on, or cut a counterbore whose floor is at `at`."))
         if not bad:
             good += 1
+    drive = drive_findings(ctx)
     if r.spec.fasteners and all(x.passed for x in out):
         out.append(ok("fastener.ok", G, "Screws are reachable and bite",
                       f"{good} screws: driver path clear, thread engagement enough, heads seated."))
-    return out
+    return out + drive

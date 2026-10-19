@@ -1,0 +1,198 @@
+"""Design-review gates: reference.unmapped_part, cots.fidelity, wire.rotating_clearance, wire.render_present,
+fastener.hole_record, cots.belt_wrap, print.orientation_declared. One bad and one good spec each."""
+
+import json
+import os
+import time
+
+from robot import spec
+from robot.checks import Options, verify
+
+BOX = lambda x, y, z: {"type": "box", "size": [x, y, z]}  # noqa: E731
+CYL = lambda r, h: {"type": "cylinder", "radius": r, "height": h}  # noqa: E731
+PLACE = lambda s, at, rot=(0, 0, 0): {"type": "place", "shape": s, "at": list(at), "rot": list(rot)}  # noqa: E731
+CYLX = lambda r, h, x=0.0, y=0.0, z=0.0: PLACE(CYL(r, h), (x, y, z), (0, 90, 0))  # noqa: E731
+
+
+def run(d, group, base_dir=None):
+    return verify(spec.Spec(d, base_dir), Options(only=[group], deep=False, fast=True))
+
+
+def chassis(**kw):
+    d = {"name": "t", "parts": [{"id": "chassis", "kind": "structure", "material": "pla", "process": "fdm",
+                                  "print_orientation": "+z", "shape": BOX(40, 40, 4)}]}
+    d.update(kw)
+    return d
+
+
+# ------------------------------------------------------------------------------------------- reference.unmapped_part
+def _ref(tmp_path, extra_parts=(), rows=()):
+    ref = tmp_path / "ref"
+    ref.mkdir(exist_ok=True)
+    for stem in ("RV01_Chassis_1", "FS8_1", "RV15_BBB_Switch_1"):
+        (ref / f"{stem}.stl").write_text("solid x\nendsolid x\n")
+    d = chassis(reference_cad={"dir": str(ref), "parts": [{"part": "chassis", "file": "RV01_Chassis_1.stl"}]},
+                reference_bom=list(rows))
+    d["parts"] += list(extra_parts)
+    return d
+
+
+def test_unmapped_part_invented_hardware_fails(tmp_path):
+    nut = {"id": "disc_nut", "kind": "nut", "catalog": "nut_m2", "at": [0, 0, 10]}
+    # our own BOM row (cites no reference part) does not map it
+    rows = [{"role": "disc nuts (not in the STEP)", "kind": "part", "match": ["disc_nut"]}]
+    rep = run(_ref(tmp_path, [nut], rows), "ref_map")
+    f = [f for f in rep.findings if f.id == "reference.unmapped_part" and not f.passed]
+    assert f and f[0].parts == ["disc_nut"]
+
+
+def test_unmapped_part_reference_row_or_deviation_passes(tmp_path):
+    sw = {"id": "power_switch", "kind": "switch", "catalog": "switch_bbb_ant_rvrn2", "at": [0, 0, 10]}
+    rows = [{"role": "RV15 BBB switch", "kind": "part", "match": ["power_switch"]}]
+    assert not run(_ref(tmp_path, [sw], rows), "ref_map").failed("reference.unmapped_part")
+    nut = {"id": "disc_nut", "kind": "nut", "catalog": "nut_m2", "at": [0, 0, 10], "deviation": "clamps the disc pack"}
+    assert not run(_ref(tmp_path, [nut]), "ref_map").failed("reference.unmapped_part")
+
+
+# ------------------------------------------------------------------------------------------------- cots.fidelity
+def test_cots_fidelity_catalog_gr1507_without_bolt_circle_fails():
+    d = chassis()
+    d["parts"].append({"id": "wm", "kind": "weapon_motor", "catalog": "gr1507", "at": [0, 0, 30]})
+    f = [f for f in run(d, "cots_fidelity").findings if f.id == "cots.fidelity" and not f.passed]
+    assert f and "bolt circle" in f[0].message
+
+
+def test_cots_fidelity_real_outrunner_passes():
+    body = {"type": "union", "items": [CYLX(9.8, 2.0, -9.4), CYLX(9.8, 8.6, 0.0), CYLX(2.5, 4.0, 6.3)]}
+    holes = [CYLX(1.0, 3.0, -10.4, 6.0 * c, 6.0 * s) for c, s in ((1, 0), (0, 1), (-1, 0), (0, -1))]
+    d = chassis()
+    d["parts"].append({"id": "wm", "kind": "weapon_motor", "material": "steel", "process": "cots", "at": [0, 0, 30],
+                       "shape": {"type": "subtract", "base": body, "cut": holes},
+                       "features": {"bell_d": 19.6, "stator_d": 19.6, "shaft_d": 5.0, "bolt_circle_d": 12.0, "bolt_n": 4}})
+    rep = run(d, "cots_fidelity")
+    assert not rep.failed("cots.fidelity"), [f.message for f in rep.findings]
+
+
+# ---------------------------------------------------------------------------------------- wire.rotating_clearance
+def _spinner(via):
+    d = chassis()
+    d["parts"] += [
+        {"id": "disc", "kind": "weapon", "material": "steel", "process": "laser", "at": [0, 0, 30], "shape": CYLX(15, 3),
+         "weapon": {"kind": "disc", "spin_axis": [1, 0, 0]}},
+        {"id": "dnut", "kind": "nut", "catalog": "nut_m2", "parent": "disc", "at": [3, 0, 10], "rot": [0, 90, 0]},
+        {"id": "bat", "kind": "structure", "material": "pla", "process": "fdm", "print_orientation": "+z", "shape": BOX(4, 4, 4),
+         "at": [0, -30, 4], "ports": {"p": [0, 0, 2]}},
+        {"id": "esc", "kind": "structure", "material": "pla", "process": "fdm", "print_orientation": "+z", "shape": BOX(4, 4, 4),
+         "at": [0, 30, 4], "ports": {"q": [0, 0, 2]}},
+    ]
+    d["wires"] = [{"id": "w", "from": "bat.p", "to": "esc.q", "awg": 24, "kind": "power", "via": via}]
+    return d
+
+
+def test_wire_too_close_to_rotating_nut_fails():
+    rep = run(_spinner([[5, 0, 40.5]]), "wire_review")  # passes the nut's swept circle (r~10 about the disc axis)
+    assert rep.failed("wire.rotating_clearance")
+
+
+def test_wire_clear_of_rotating_nut_passes():
+    rep = run(_spinner([[20, 0, 6]]), "wire_review")
+    f = rep.get("wire.rotating_clearance")
+    assert f is not None and f.passed, [x.message for x in rep.findings]
+
+
+# -------------------------------------------------------------------------------------------- wire.render_present
+def _rendered(tmp_path, wires_drawn, end=None):
+    d = _spinner([[20, 0, 6]])
+    (tmp_path / "spec.json").write_text(json.dumps(d))
+    rd = tmp_path / "renders"
+    rd.mkdir()
+    png = rd / "top.png"
+    png.write_bytes(b"x")
+    rec = {"wires": {"w": {"from": end or [0, -30, 6], "to": [0, 30, 6]}} if wires_drawn else {}}
+    (rd / "top.png.json").write_text(json.dumps(rec))
+    later = time.time() + 5
+    os.utime(png, (later, later))
+    d["renders"] = {"dir": "renders"}
+    return d
+
+
+def test_render_without_wires_fails(tmp_path):
+    assert run(_rendered(tmp_path, False), "wire_review", tmp_path).failed("wire.render_present")
+
+
+def test_render_with_stale_endpoint_fails(tmp_path):
+    rep = run(_rendered(tmp_path, True, end=[0, -36, 6]), "wire_review", tmp_path)  # the battery moved 6 mm since
+    assert rep.failed("wire.render_present")
+
+
+def test_render_with_current_wires_passes(tmp_path):
+    rep = run(_rendered(tmp_path, True), "wire_review", tmp_path)
+    assert not rep.failed("wire.render_present"), [f.message for f in rep.findings if not f.passed]
+
+
+# ------------------------------------------------------------------------------------------ fastener.hole_record
+def _screwed(hole, designation="M2x4", into="chassis"):
+    d = chassis()
+    d["parts"].append({"id": "lid", "kind": "plate", "material": "titanium", "process": "laser", "shape": BOX(40, 40, 1), "at": [0, 0, 2.5]})
+    d["parts"].append({"id": "ins", "kind": "insert", "catalog": "heatset_m2", "at": [10, 10, 0]})
+    d["fasteners"] = [{"id": "s", "designation": designation, "at": [10, 10, 3], "dir": [0, 0, -1], "through": ["lid"],
+                       "threads_into": into, "hole": hole}]
+    return d
+
+
+def test_fastener_without_hole_record_fails():
+    assert run(_screwed(None, "M2x8"), "fastener_record").failed("fastener.hole_record")
+
+
+def test_fastener_short_thread_in_plastic_fails():
+    rep = run(_screwed({"d": 2.0, "grip": 1.0}, "M2x4"), "fastener_record")  # 3 mm < 2.5 d = 5 mm
+    assert rep.failed("fastener.hole_record")
+
+
+def test_fastener_long_engagement_or_insert_passes():
+    assert not run(_screwed({"d": 2.0, "grip": 1.0}, "M2x8"), "fastener_record").failed("fastener.hole_record")
+    assert not run(_screwed({"d": 2.0, "grip": 1.0}, "M2x4", "ins"), "fastener_record").failed("fastener.hole_record")
+
+
+# ------------------------------------------------------------------------------------------------ cots.belt_wrap
+def _belt(shape):
+    d = chassis()
+    d["parts"] += [
+        {"id": "pa", "kind": "pulley", "material": "pla", "process": "fdm", "print_orientation": "+x", "shape": CYLX(5, 2), "at": [0, 13, 20]},
+        {"id": "pb", "kind": "pulley", "material": "pla", "process": "fdm", "print_orientation": "+x", "shape": CYLX(5, 2), "at": [0, -13, 20]},
+        {"id": "belt", "kind": "belt", "material": "rubber", "process": "cots", "shape": shape, "at": [0, 0, 20],
+         "belt": {"pulleys": ["pa", "pb"], "kind": "o_ring", "length_mm": 80, "width_mm": 1.0}},
+    ]
+    return d
+
+
+def test_flat_strip_belt_fails():
+    assert run(_belt(PLACE(BOX(1, 26, 1.0), (0, 0, 5.5))), "belt_wrap").failed("cots.belt_wrap")
+
+
+def test_closed_loop_belt_passes():
+    ring = {"type": "subtract", "base": BOX(1, 38, 12), "cut": [BOX(3, 36, 10)]}
+    rep = run(_belt(ring), "belt_wrap")
+    f = rep.get("cots.belt_wrap")
+    assert f is not None and f.passed, [x.message for x in rep.findings]
+
+
+# ---------------------------------------------------------------------------------- print.orientation_declared
+def _printed(po, shape=None):
+    d = chassis()
+    p = {"id": "bracket", "kind": "structure", "material": "pla", "process": "fdm", "at": [0, 0, 20],
+         "shape": shape or BOX(10, 10, 10)}
+    if po:
+        p["print_orientation"] = po
+    d["parts"].append(p)
+    return d
+
+
+def test_print_orientation_missing_fails():
+    assert run(_printed(None), "print_orient").failed("print.orientation_declared")
+
+
+def test_print_orientation_with_overhang_fails_and_good_passes():
+    tee = {"type": "union", "items": [BOX(4, 4, 20), PLACE(BOX(30, 30, 2), (0, 0, 9))]}  # mushroom: flat cap on a stem
+    assert run(_printed("+z", tee), "print_orient").failed("print.orientation_declared")
+    assert not run(_printed("-z", tee), "print_orient").failed("print.orientation_declared")
