@@ -43,3 +43,25 @@ def test_no_wires_note():
     r = world.resolve(s, fast=True)
     out = wiring.run(Ctx(r, world.World.start(r), Options(fast=True)))
     assert [f.id for f in out] == ["wiring.none"]
+
+
+def test_via_waypoints_followed():
+    """A wire's declared `via` waypoints lie on its route: the router goes leg by leg and never pulls taut past them."""
+    import copy
+    base = spec.load(ROOT / "templates" / "wedge_2wd.json")
+    r0 = world.resolve(base, fast=True)
+    ctx0 = Ctx(r0, world.World.start(r0), Options(fast=True))
+    wiring.run(ctx0)
+    rt = ctx0.routes[0]
+    P = np.asarray(rt.points)
+    seg = np.vstack([P[k] + (P[k + 1] - P[k]) * t for k in range(len(P) - 1) for t in np.linspace(0, 1, 9)])
+    via = seg[len(seg) // 2].tolist()   # a free point (on a clear route)
+    d = copy.deepcopy(base.raw)
+    for w in d["wires"]:
+        if w["id"] == rt.id:
+            w["via"] = [via]
+    r = world.resolve(spec.Spec(d, base.base_dir), fast=True)
+    ctx = Ctx(r, world.World.start(r), Options(fast=True))
+    wiring.run(ctx)
+    Q = np.asarray(next(x for x in ctx.routes if x.id == rt.id).points)
+    assert np.linalg.norm(Q - np.asarray(via), axis=1).min() < 1e-6

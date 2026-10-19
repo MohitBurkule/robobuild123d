@@ -139,10 +139,15 @@ def run(ctx):
         stack = [pts] + [w.body(x).mesh.vertices for x in sorted(rotor_set(r.spec, pid) - {pid})
                          if w.body(x) is not None and not w.body(x).fastener and _is_blade(r.spec.part(x))]
         spts = np.vstack(stack)
+        # the weapon meets the opponent with its swept rim, not its modelled pose (a single tooth may be parked aft)
+        q = spts - origin
+        st = q @ axis
+        sr = np.linalg.norm(q - np.outer(st, axis), axis=1)
         for deg in range(-30, 31, 10):
             a = np.radians(deg)
             dvec = np.array([np.sin(a), np.cos(a), 0.0])
-            wr = float((spts @ dvec).max())
+            ad = float(axis @ dvec)
+            wr = float((origin @ dvec + st * ad + sr * np.sqrt(max(0.0, 1.0 - ad * ad))).max())
             orr = float((ov @ dvec).max()) if len(ov) else -np.inf
             if wr - orr < worst:
                 worst, worst_deg = wr - orr, float(deg)
@@ -165,7 +170,7 @@ def run(ctx):
         floor = min(float(b.aabb[0][2]) for b in w.bodies if not b.fastener and not b.is_wire)
         if r.spec.ground_z is not None:
             floor = float(r.spec.ground_z)
-        rmax_w = rim(pts, origin, axis)
+        rmax_w = rim(spts, origin, axis)   # the whole blade stack sweeps the floor, not only the named hub part
         az = abs(float(axis[2]))
         swept_low = float(origin[2]) - rmax_w * float(np.sqrt(max(0.0, 1.0 - az * az))) - half * az
         high = swept_low - floor
