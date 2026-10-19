@@ -19,6 +19,7 @@ Severity per region (world frame):
   INFO     the reference_cad part has the same corner: ours >= reference radius - ref_tol_mm (0.2), "matches original".
 Opt-out (a non-empty reason is REQUIRED, otherwise `mfg.sharp_ok_reason` BLOCKER and the opt-out is ignored):
   part-level  "sharp_corners_ok": "reason"
+  TPU / rubber / other flexible materials: capped at WARNING unless the reference is rounder there at a bolt.
   per region  spec "sharp_ok": [{"part", "near": [x,y,z], "r_mm": 3, "reason"}]
 Parameters: spec "sharp_corner": {min_r_mm, load_min_r_mm, load_dist_mm, ref_tol_mm, window_mm, grid_mm, link_mm}.
 Corners already declared in an `intent` `fillet` entry are reported there (intent.fillet), not again here.
@@ -40,6 +41,13 @@ PROCESSES = ("fdm", "sla", "molded", "cast")
 DEFAULTS = {"min_r_mm": 0.5, "load_min_r_mm": 1.0, "load_dist_mm": 3.0, "ref_tol_mm": 0.2, "window_mm": 4.0,
             "grid_mm": 1.5, "link_mm": 2.5, "min_turn_deg": 45.0}
 LOAD_KINDS = ("structure",)
+# Flexible materials do not crack from a notch: capped at WARNING unless the reference is rounder there at a bolt.
+FLEXIBLE = ("tpu", "tpe", "rubber", "silicone", "flex")
+
+
+def flexible(material):
+    m = str(material or "").lower()
+    return any(k in m for k in FLEXIBLE)
 
 
 def params(spec_raw):
@@ -410,6 +418,12 @@ def run(ctx):
                    "turn_deg": round(worst[3], 0), "n": len(reg), "loads": loads[:3],
                    "ref_r_mm": None if r_ref is None else (round(r_ref, 2) if math.isfinite(r_ref) else "no corner"),
                    "severity": sev}
+            if sev == BLOCKER and flexible(p.material) and not (
+                    r_ref is not None and math.isfinite(r_ref) and r_ref > r_ours + prm["ref_tol_mm"]
+                    and any(lab.startswith("fastener") for lab in loads)):
+                sev = WARNING
+                row["severity"] = WARNING
+                row["why"] = f"flexible {p.material}: capped at warning"
             if opt is not None:
                 row.update(severity=INFO, why=f"opt-out: {opt['reason']}")
             elif r_ref is not None and r_ours >= r_ref - prm["ref_tol_mm"]:

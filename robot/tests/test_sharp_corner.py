@@ -22,12 +22,12 @@ def _body(id, m, kind="structure", fastener=False):
               inside=lambda P, m=m: m.contains(np.atleast_2d(P)))
 
 
-def _ctx(m, part_extra=None, raw=None, others=()):
-    p = NS(id="br", catalog=None, process="fdm", kind="structure", _extra=part_extra or {})
+def _ctx(m, part_extra=None, raw=None, others=(), material="pla"):
+    p = NS(id="br", catalog=None, process="fdm", kind="structure", material=material, _extra=part_extra or {})
     bodies = [_body("br", m)] + list(others)
     world = NS(bodies=bodies, body=lambda i: next((b for b in bodies if b.id == i), None))
     spec = NS(raw=raw or {}, base_dir=".")
-    parts = [NS(part=p)] + [NS(part=NS(id=b.id, catalog=None, process="fdm", kind=b.kind, _extra={}))
+    parts = [NS(part=p)] + [NS(part=NS(id=b.id, catalog=None, process="fdm", kind=b.kind, material="pla", _extra={}))
                             for b in others if not b.fastener]
     return NS(r=NS(spec=spec, parts=parts), world=world, metrics={}, not_checked=[])
 
@@ -94,3 +94,15 @@ def test_reference_match_downgrades(tmp_path):
 def test_intent_fillet_corner_not_double_reported():
     raw = {"intent": [{"rule": "fillet", "part": "br", "axis": "z", "h": 5, "at": [[3, 3]]}]}
     assert not _fails(S.run(_ctx(bracket(0), raw=raw)))
+
+
+def test_flexible_capped_at_warning(tmp_path):
+    screw = trimesh.creation.cylinder(1.5, 8)
+    screw.apply_translation((5, 5, 5))
+    f = [_body("f1", screw, "fastener", True)]
+    out = _fails(S.run(_ctx(bracket(0), others=f, material="tpu")))
+    assert (S.CID, WARNING) in out and (S.CID, BLOCKER) not in out
+    bracket(2.0).export(tmp_path / "ref.stl")
+    raw = {"reference_cad": {"dir": str(tmp_path), "ref_to_world": np.eye(4).tolist(),
+                             "parts": [{"part": "br", "file": "ref.stl"}]}}
+    assert (S.CID, BLOCKER) in _fails(S.run(_ctx(bracket(0), raw=raw, others=f, material="tpu")))

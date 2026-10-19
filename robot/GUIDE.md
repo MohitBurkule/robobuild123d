@@ -238,7 +238,7 @@ Every fdm / sla / molded / cast part is scanned; nothing has to be listed (mille
 mesh edge is sectioned normal to its direction and its local radius measured (arc / turn; 0 = sharp).
 - BLOCKER: r < 1.0 mm in a load path: within 3 mm of a fastener, of another `structure` part it joins (mount bases,
   bulkhead-to-deck), or of a declared `sharp_corner_loads` / `load_interfaces` entry `{part, near: [x,y,z], r_mm}`.
-- WARNING: r < 0.5 mm anywhere else.
+- WARNING: r < 0.5 mm anywhere else. Flexible materials (TPU, rubber) cap at WARNING unless the reference is rounder at a bolt.
 - INFO "matches original": the `reference_cad` part measured at the same spot has r <= ours + 0.2 mm.
 - Opt out only with a reason: part `"sharp_corners_ok": "reason"` or spec `"sharp_ok": [{part, near, r_mm, reason}]`.
   A missing or empty reason is a BLOCKER (`mfg.sharp_ok_reason`) and the opt-out is ignored.
