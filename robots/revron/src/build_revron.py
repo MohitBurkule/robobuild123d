@@ -555,9 +555,9 @@ def front_hub(s):
     """RV19 micro hub (9 x 9) running on the 25 mm standoff: 6 mm tyre seat between two 9 mm flanges, an O-ring
     groove inboard."""
     # STEP RV19, except all three flanges 0.7 thick (STEP 0.5): the groove flanges grow into the groove (1.1 wide, centre
-    # unchanged) and the outer flange grows 0.2 outboard so the 6 mm tyre seat keeps its width
+    # unchanged) and the outer flange stays inside the STEP's X 39.0 (seat 0.2 shorter, parity with the reference gap to the side panel)
     prof = [(0.0, 2.7), (0.0, 4.5), (0.7, 4.5), (0.75, 3.96), (0.93, 3.7), (1.57, 3.7), (1.75, 3.96), (1.8, 4.5), (2.5, 4.5), (2.5, 4.1), (2.9, 3.7),
-            (8.1, 3.7), (8.5, 4.1), (8.5, 4.5), (9.2, 4.5), (9.2, 2.7)]
+            (7.9, 3.7), (8.3, 4.1), (8.3, 4.5), (9.0, 4.5), (9.0, 2.7)]
     if s < 0:
         prof = [(-x, r) for x, r in prof]
     return _revolve_x(prof, s * 30.0, SA)
@@ -579,7 +579,7 @@ def standoff(L_x, c):
 
 
 # ------------------------------------------------------------------------------------------------------------ wedgelet
-WEDGE_TOE_H = 1.2                    # ramp Z = 1 + 1.187 (50.1 - Y) lifted so its toe is a 0.85 mm land at full length
+WEDGE_TOE_H = 0.85                   # ramp Z = 1 + 1.187 (50.1 - Y) lifted so its toe is a 0.85 mm land at full length
 def wedgelet(s):
     """RV17/18 TPU wedgelet (left built, right mirrored), slabs along X measured on the STEP sections:
     an outer block round the 15 mm standoff end (X 36.5..38.5), a ring step (35.5..36.5), a 2.3 mm ramp skin over a
@@ -599,7 +599,7 @@ def wedgelet(s):
     # the nose tab bears on the weapon mount's nose: take the mount's boss outline (its side profile above the
     # notch-to-nose line) out of the tab in 2D and drop any sliver thinner than a TPU wall, so no film is left
     mprof = _mount_profile(7.0 if s < 0 else 10.0).intersection(P([(15.0, 19.5), (44.34, 6.34), (60, 6.34), (60, 60), (0, 60), (0, 19.5)]))
-    tab = tab.difference(mprof.buffer(0.4, 32)).buffer(-0.6, join_style=2).buffer(0.6, join_style=2)
+    tab = tab.difference(mprof.buffer(0.1, 32)).buffer(-0.6, join_style=2).buffer(0.6, join_style=2)
     bb = _b()
     sk = _one(_ext(skin, "yz", -35.5, -29.0)).split(bb.Plane(origin=(-34.0, 41.66, 11.06), z_dir=(-1.24, -0.75, 1.0)), keep=bb.Keep.BOTTOM)
     body = _U(_ext(s1, "yz", -38.5, -36.5), _ext(s2, "yz", -36.5, -35.5), sk, _ext(cheek, "yz", -29.0, -21.5), _ext(tab, "yz", -21.5, -17.5) if not tab.is_empty else None)
@@ -615,10 +615,7 @@ def wedgelet(s):
     # the STEP leaves the fork tine and the mount boss inside the TPU nose; cut their seats (the tine slides into a
     # 1.5 mm slit, the TPU nose tab bears on the mount)
     # the nose tab grazes the chassis lug by 0.1 mm: take the chassis out of it (a printed TPU nose conforms)
-    # a few tenths of a millimetre either way, so no film is left between the chassis and the mount-boss cut
-    lug = _I(chassis(), _box(s * 17.0, s * 22.0, 38.0, 52.0, 0.0, 12.0))
-    grow = [lug] + [lug.moved(_b().Location(d)) for d in ((0, 0.5, 0), (0, -0.5, 0), (0, 0, 0.5), (0, 0, -0.5))]
-    return _S(sh, _fork_slot(s), weapon_mount("l" if s < 0 else "r"), *grow)
+    return _S(sh, _fork_slot(s), weapon_mount("l" if s < 0 else "r"), chassis())
 
 
 # ------------------------------------------------------------------------------------------------------------ side panel
@@ -711,17 +708,14 @@ def side_panel(s):
     nose = _one(nose).split(b.Plane(origin=(-120.0, 0.0, 0.0), z_dir=(1.0, -1.525, -1.4725)), keep=b.Keep.TOP)
     nose = _S(nose, _box(-42.0, -38.4, 26.5, 39.0, 3.0, 10.5))                     # hollow behind the nose wall
     boss = _I(_cyl(3.0, -42.5, -39.5, SA), _ext(side, "yz", -60.0, -20.0))         # standoff end boss
-    # the SB countersink bottoms 1.2 mm above the floor (z 1.2): a 1.2 mm TPU skirt under the head bore, down to the
-    # floor (z 0), so the cone has a printable wall instead of a 0.2 mm film
-    skirt = _I(_I(_ext(nose_plan, "xy", 0.0, 1.0), _ext(_poly([(SB[0] - 4.5, 0.0), (SB[0] + 4.5, 0.0), (SB[0] + 4.5, 1.0), (SB[0] - 4.5, 1.0)]), "yz", -60.0, -20.0)), batter)
-    body = _U(wall, nose, foot, boss, skirt)
+    body = _U(wall, nose, foot, boss)
     # M3 CSK seats (ISO 10642 head 6.6, +0.1 clearance) with a 12 mm head bore out through the battered outer face, so a
     # driver reaches the head and the screw backs straight out
-    cuts = [_csk(3.3, 6.7, (-46.26, SA[0], SA[1]), "x", 1, 8.0, 12.0), _csk(3.3, 6.6, (-41.76, SB[0], SB[1]), "x", 1, 8.0, 12.0),
+    cuts = [_csk(3.3, 6.7, (-46.26, SA[0], SA[1]), "x", 1, 8.0, 12.0), _csk(3.3, 6.7, (-41.76, SB[0], SB[1]), "x", 1, 8.0, 12.0),
             _csk(3.3, 6.7, (-35.26, NUT[0], NUT[1]), "x", 1, 8.0, 12.0),
             _cyl(2.55, -42.55, -38.0, SA),
             _box(-45.0, -43.4, -38.7, -24.8, 5.0, 15.0),                          # rear tyre relief on the inner face
-            _box(-32.5, -31.4, -16.5, 3.0, 3.9, 13.3)]                           # clears the whole chassis nut lobe (STEP: Y -16..2.5, Z 4..13): the panel does not shave it or leave a 0.25 mm shelf under it
+            _box(-32.5, -31.4, -16.5, 4.8, 3.9, 13.3)]                           # clears the whole chassis nut lobe (STEP: Y -16..2.5, Z 4..13): the panel does not shave it or leave a 0.25 mm shelf under it
     for y0 in (-11.0, -4.5, 2.0):     # diagonal vent slots (TPU wall flexes, keeps the ESC cool)
         sl = LineString([(y0, 5.0), (y0 + 5.0, 11.0)]).buffer(1.0, cap_style=1)
         cuts.append(_ext(sl, "yz", -50.0, -36.5))
