@@ -12,7 +12,7 @@ log() { echo "$(date -Is) [ci] $*" >> "$P/builder.log"; }
 [ "$(git rev-parse --abbrev-ref HEAD)" = "rvrn2-ci" ] || { log "not on rvrn2-ci, exiting"; exit 1; }
 push() { for d in 0 2 4 8 16; do sleep $d; git push -q -u origin rvrn2-ci:rvrn2 2>>"$P/ci_push.err" && { log "pushed $(git rev-parse --short HEAD) to origin/rvrn2"; return 0; }; done; log "push FAILED after retries"; }
 heads() { # newest of local fix-X and origin/fix-X per branch
-  for n in $( (git for-each-ref --format='%(refname:lstrip=2)' 'refs/heads/fix-*'; git for-each-ref --format='%(refname:lstrip=3)' 'refs/remotes/origin/fix-*') | sort -u); do
+  for n in $( (git for-each-ref --format='%(refname:lstrip=2)' 'refs/heads/fix-*'; git for-each-ref --format='%(refname:lstrip=3)' 'refs/remotes/origin/fix-*') | grep -v -e '-local$' | sort -u); do
     l=refs/heads/$n; r=refs/remotes/origin/$n
     if git rev-parse -q --verify $l >/dev/null && git rev-parse -q --verify $r >/dev/null; then
       if git merge-base --is-ancestor $l $r; then echo origin/$n; else echo $n; git merge-base --is-ancestor $r $l || echo origin/$n; fi
@@ -26,7 +26,7 @@ render() { # async, one at a time, from a snapshot worktree of the verified sha 
 }
 [ "${RENDER_FIRST:-0}" = 1 ] && render
 for i in $(seq "${START_ITER:-1}" "$MAX_ITERS"); do
-  git fetch -q origin 2>>"$P/ci_push.err" || log "fetch failed"
+  git fetch -q origin "+refs/heads/fix-*:refs/remotes/origin/fix-*" 2>>"$P/ci_push.err" || log "fetch failed"
   for b in $(heads); do
     git merge-base --is-ancestor "$b" HEAD && continue
     if git merge -q --no-edit "$b" >/dev/null 2>&1; then log "iter $i merged $b $(git rev-parse --short "$b")"
@@ -41,7 +41,7 @@ for i in $(seq "${START_ITER:-1}" "$MAX_ITERS"); do
   sha=$(git rev-parse --short HEAD)
   if [ "$sha" = "$(cat "$P/ci_last_verified" 2>/dev/null)" ]; then  # nothing new: wait without spending an iteration
     while [ "$(git rev-parse --short HEAD)" = "$sha" ]; do
-      sleep "${POLL:-120}"; git fetch -q origin 2>/dev/null
+      sleep "${POLL:-120}"; git fetch -q origin "+refs/heads/fix-*:refs/remotes/origin/fix-*" 2>/dev/null
       for b in $(heads); do git merge-base --is-ancestor "$b" HEAD || git merge -q --no-edit "$b" >/dev/null 2>&1 || { git merge --abort; log "conflict ${b#origin/}"; }; done
       [ -f "${CI_STOP:-/tmp/ci_loop.stop}" ] && { log "stop file seen, exiting"; exit 0; }
     done
