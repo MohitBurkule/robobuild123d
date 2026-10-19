@@ -62,7 +62,7 @@ def main(argv=None):
     v.add_argument("--fast", action="store_true", help="coarse tessellation for quick iteration")
     v.add_argument("--quick", action="store_true", help="skip the slow sweeps (wiring, assembly)")
     v.add_argument("--json", help="also write report.json here")
-    for name in ("render", "export", "gen.cli"):
+    for name in ("render", "export", "gen.cli", "cad.cli"):
         try:
             mod = __import__(f"robot.{name}", fromlist=["add_cli"])
             mod.add_cli(sub)
@@ -112,6 +112,10 @@ def main(argv=None):
             print(f"unknown template {a.name}; try `robot templates`", file=sys.stderr)
             return 1
         print(p.read_text())
+    elif a.cmd == "verify" and getattr(a, "changed", False):
+        from .cad import incremental  # incremental verify (robot/cad/incremental.py)
+
+        return incremental.cli(a)
     elif a.cmd == "verify":
         try:
             s = spec_mod.load(a.spec)
