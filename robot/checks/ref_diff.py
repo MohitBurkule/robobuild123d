@@ -69,9 +69,26 @@ def _voxel_blobs(occ, lo, h, min_vol, min_thick):
     return sorted(out, key=lambda b: -b["volume_mm3"])
 
 
+def clean(m: trimesh.Trimesh) -> trimesh.Trimesh:
+    """Drop the zero-volume sliver shells STEP exporters leave beside a part (open, degenerate bodies), so a reference
+    whose real body is closed can be diffed exactly. A mesh with no closed body is returned unchanged."""
+    if m.is_watertight:
+        return m
+    try:
+        bodies = m.split(only_watertight=False)
+    except Exception:  # noqa: BLE001
+        return m
+    keep = [b for b in bodies if b.is_watertight and abs(float(b.volume)) > 1e-3]
+    if not keep:
+        return m
+    return keep[0] if len(keep) == 1 else trimesh.util.concatenate(keep)
+
+
 def boolean_diff(model: trimesh.Trimesh, ref: trimesh.Trimesh, min_vol=2.0, min_thick=0.12, voxel_h=0.15):
     """Return {"extra_mm3", "missing_mm3", "extra": [blobs], "missing": [blobs], "method"}."""
     from ..geom import from_manifold
+
+    ref = clean(ref)
 
     a, b = _manifold(model), _manifold(ref) if ref.is_watertight else None
     if a is not None and b is not None:
@@ -101,6 +118,34 @@ def surface_deviation(model: trimesh.Trimesh, ref: trimesh.Trimesh, n=20000, see
         out[name] = {"max": round(float(d.max()), 3), "p95": round(float(np.percentile(d, 95)), 3)}
         out[f"_{name}_pts"] = (pts, d)
     return out
+
+
+def deviation_clusters(dev, tol=0.5, link=1.5, min_pts=1):
+    """Sample points whose surface deviation exceeds `tol`, grouped into clusters (single linkage at `link` mm).
+
+    Returns [{"kind": "extra" | "missing", "centroid": [x, y, z], "max_mm": d, "n": count}]: "extra" for model surface
+    farther than `tol` from the reference, "missing" for reference surface our model does not reach."""
+    from scipy.sparse.csgraph import connected_components
+    from scipy.spatial import cKDTree
+
+    out = []
+    for kind, key in (("extra", "_model_to_ref_pts"), ("missing", "_ref_to_model_pts")):
+        pts, d = dev[key]
+        m = d > tol
+        if not m.any():
+            continue
+        P, D = pts[m], d[m]
+        pairs = cKDTree(P).query_pairs(link, output_type="ndarray")
+        import scipy.sparse as sp
+
+        g = sp.coo_matrix((np.ones(len(pairs)), (pairs[:, 0], pairs[:, 1])), shape=(len(P), len(P))) if len(pairs) else sp.coo_matrix((len(P), len(P)))
+        n, lab = connected_components(g, directed=False)
+        for i in range(n):
+            k = lab == i
+            if k.sum() < min_pts:
+                continue
+            out.append({"kind": kind, "centroid": np.round(P[k].mean(0), 2).tolist(), "max_mm": round(float(D[k].max()), 3), "n": int(k.sum())})
+    return sorted(out, key=lambda c: -c["max_mm"])
 
 
 def render_deviation(dev, path, title="", vmax=1.0):

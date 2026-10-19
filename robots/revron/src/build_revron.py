@@ -193,12 +193,12 @@ def base_panel():
     for s in (1, -1):
         pad = _round(_poly([(s * 17.95, -34.85), (s * 27.05, -34.85), (s * 27.05, -25.75), (s * 17.95, -25.75)]), r_out=0.6)
         body = _U(body, _ext(pad, "xy", z0 + t - 0.01, z0 + t + 0.25))
-    cuts = [_csk(2.2, 4.0, (x, y, z0), "z", 1, 4.0) for x, y in INS]   # FS8 M2 CSK (4.0 head, STEP envelope)
+    cuts = [_csk(2.2, 3.2, (x, y, z0), "z", 1, 4.0) for x, y in INS]   # 3.2 x 0.5 countersink then the 2.2 hole (STEP RV26)
     return _S(body, *cuts)
 
 
 def top_panel():
-    """0.9 mm Ti top panel: four 2.8 holes in the corner ears over the insert columns take M2 thread-forming screws
+    """0.9 mm Ti top panel: four countersunk 2.2 holes in the corner ears over the insert columns take M2 flat-head thread-forming screws
     into 1.7 pilots in the column tops (the STEP has the holes, not the screws). The
     front notches clear the weapon-mount tabs; it stops at |X| 23 beside the switch so the switch stays reachable."""
     z0, t = 19.5, 0.9
@@ -209,16 +209,26 @@ def top_panel():
     ears = [Point(x, y).buffer(2.5, 64) for x, y in ((25.0, 10.4), (-25.0, 10.4), (25.0, -21.6), (-25.0, -21.6))]
     blocks = [_poly([(s * 21.0, 8.6), (s * 25.0, 8.6), (s * 25.0, 12.9), (s * 21.0, 12.9)]) for s in (1, -1)] + \
              [_poly([(s * 21.0, -24.1), (s * 25.0, -24.1), (s * 25.0, -19.0), (s * 21.0, -19.0)]) for s in (1, -1)]
+    # the ears run into the side edges along concave arcs (STEP): each arc is tangent to the |X| 23 edge and to its ear
+    fills = []
+    for sx in (1, -1):
+        for ey, yt in ((10.4, 1.0), (-21.6, -12.5)):
+            d = abs(ey - yt)
+            R = (4.0 + d * d - 6.25) / 9.0                       # (2 - R)^2 + d^2 = (R + 2.5)^2
+            cx = sx * (23.0 + R)
+            box = _poly([(sx * 23.0, yt), (sx * 26.6, yt), (sx * 26.6, ey), (sx * 23.0, ey)])
+            fills.append(box.difference(Point(cx, yt).buffer(R, 128)))
     p = core
-    for q in ears + blocks:
+    fills += [_poly([(sx * 21.0, 7.9), (sx * 25.0, 7.9), (sx * 25.0, 12.9), (sx * 21.0, 12.9)]) for sx in (1, -1)]
+    for q in ears + fills:
         p = p.union(q)
     for q in notch:
         p = p.difference(q)
-    p = p.union(tab)
+    p = p.difference(_poly([(-13.0, 11.9), (13.0, 11.9), (13.0, 14.0), (-13.0, 14.0)]))   # tab front edge at Y 11.9
     p = _round(p, r_out=0.4, r_in=1.2)
-    for x, y in ((25.0, 10.4), (-25.0, 10.4), (25.0, -21.6), (-25.0, -21.6)):
-        p = p.difference(Point(x, y).buffer(1.4, 32))
-    return _ext(p, "xy", z0, z0 + t)
+    body = _ext(p, "xy", z0, z0 + t)
+    # 2.2 holes countersunk (90 deg, 3.65 at the top face) for M2 flat heads into the column-top pilots (STEP)
+    return _S(body, *[_csk(2.2, 3.65, (x, y, z0 + t), "z", -1, 2.0) for x, y in ((25.0, 10.4), (-25.0, 10.4), (25.0, -21.6), (-25.0, -21.6))])
 
 
 def fork(s):
@@ -243,7 +253,7 @@ def _mount_profile(r_top):
     t0 = _tangent_line_circle((10.17 if r_top > 8 else 9.0, 19.5), c, r_top, upper=True)
     a0 = math.degrees(math.atan2(t0[1] - c[1], t0[0] - c[0]))
     rim = _arc(c, r_top, a0, -14.5 if r_top > 8 else -5.0, 40)
-    pts = rim + [(43.6, 3.6), (40.5, 1.25), (15.4, 1.25), (13.2, 2.5), (13.2, 4.5), (15.0, 4.5), (15.0, 5.35), (25.6, 5.35), (26.6, 6.35),
+    pts = rim + [(43.6, 3.6)] + _arc(SB, 3.25, -16.0, -90.0, 12)[1:] + [(15.4, 1.25), (13.2, 2.5), (13.2, 4.5), (15.0, 4.5), (15.0, 5.35), (25.6, 5.35), (26.6, 6.35),
                  (26.6, 12.55), (25.6, 13.55), (15.0, 13.55), (15.0, 17.5), (13.0, 19.5), ((10.17 if r_top > 8 else 9.0), 19.5)]
     p = _poly(pts)
     return _round(p, r_out=0.0, r_in=0.0)
@@ -263,13 +273,11 @@ def weapon_mount(side):
     line_lo = Polygon([(15.0, 19.5), (44.34, 6.34), (60, 6.34), (60, 60), (0, 60), (0, 19.5)])
     bp = prof.intersection(line_lo)
     boss = _ext(bp, "yz", xm, xo + s * 0.01)
-    k = math.tan(math.radians(7.7))
-    # outer battered face: |X| <= MNT_OUT - k * (Z - 8.5)  (a half-space as a big prism in the XZ plane)
-    xz = [(0.0, -10.0), (MNT_OUT + 18.5 * k, -10.0), (MNT_OUT - 40 * k, 48.5), (0.0, 48.5)]
-    if s < 0:
-        xz = [(-x, z) for x, z in xz]
-    half = _ext(_poly(xz), "xz", 0.0, 70.0)
-    boss = _I(boss, half)
+    # outer battered face (STEP): one plane leaning in with height and towards the nose,
+    # |X| = a - kz * Z - ky * Y  (RV02: a 23.48, kz 0.185, ky 0.0168; RV03: 23.88, 0.144, 0.0379)
+    a_, kz, ky = (23.88, 0.144, 0.0379) if side == "r" else (23.48, 0.185, 0.0168)
+    bb = _b()
+    boss = _one(boss).split(bb.Plane(origin=(s * a_, 0.0, 0.0), z_dir=(s * 1.0, ky, kz)), keep=bb.Keep.BOTTOM)
     body = _U(slab, boss)
     cuts = []
     if side == "r":
@@ -341,7 +349,7 @@ def floating_disc():
     for k in range(4):
         a = math.radians(90 * k)
         p = p.difference(Point(BOLT_R * math.cos(a), BOLT_R * math.sin(a)).buffer(1.1, 32))
-    p = p.difference(_round(Polygon([(-13.45, 4.65), (-13.45, 9.4), (-11.3, 7.7)]), r_out=0.45))   # balance window by the tooth
+    p = p.difference(_round(Polygon([(-13.08, 4.0), (-13.53, 9.7), (-11.15, 7.53)]), r_out=0.5))   # balance window by the tooth
     return p
 
 
@@ -402,21 +410,22 @@ def rear_hub(s):
     axially), O-ring groove inboard between 8 mm flanges, a 14 mm tyre seat with a raised 7 mm crown that holds the F1
     tyre, a 6.5 mm outer lip; M2 grub into a captive nut slot on the flat."""
     from shapely.geometry import Point, Polygon
-    prof = [(0.0, 1.6), (0.0, 8.0), (0.6, 8.0), (0.8, 7.55), (1.5, 7.55), (1.7, 8.0), (2.3, 8.0), (3.3, 6.0), (6.0, 6.0), (7.0, 7.0),
-            (8.6, 7.0), (9.3, 6.0), (11.5, 6.0), (12.0, 6.5), (12.0, 0.0), (11.2, 0.0), (11.2, 1.6)]
-    prof = [(0.0, 0.0)] + prof[1:-3] + [(12.0, 6.5), (12.0, 0.0)]
+    prof = [(0.0, 0.0), (0.0, 8.0), (0.5, 8.0), (0.8, 7.55), (1.7, 7.55), (2.0, 8.0), (2.5, 8.0), (2.55, 6.9), (2.75, 6.35), (3.35, 6.0),
+            (5.25, 6.0), (6.25, 7.0), (8.25, 7.0), (9.25, 6.0), (11.29, 6.0), (12.0, 6.5), (12.0, 2.88), (11.8, 2.88), (11.8, 0.0)]   # STEP RV21
     if s < 0:
         prof = [(-x, r) for x, r in prof]
     body = _revolve_x(prof, s * 30.0, (RY, RZ))
-    d = Point(RY, RZ).buffer(1.55, 48).intersection(Polygon([(RY - 3, RZ - 3), (RY + 3, RZ - 3), (RY + 3, RZ + 1.2), (RY - 3, RZ + 1.2)]))
-    return _S(body, _ext(d, "yz", s * 29.0, s * 41.2), _box(s * 35.8, s * 41.0, RY - 2.05, RY + 2.05, RZ + 2.4, RZ + 4.4),
-              _cyl(1.0, RZ + 1.0, RZ + 9.0, (s * 34.5, RY), "z"))
+    d = Point(RY, RZ).buffer(1.6, 48).intersection(Polygon([(RY - 3, RZ - 3), (RY + 3, RZ - 3), (RY + 3, RZ + 0.9), (RY - 3, RZ + 0.9)]))
+    # blind D-bore (flat 0.9 above the axis), an M2 nut slot open at the inner face, the grub hole down to the flat (STEP)
+    return _S(body, _ext(d, "yz", s * 29.0, s * 41.0), _box(s * 29.0, s * 41.0, RY - 2.05, RY + 2.05, RZ + 2.4, RZ + 4.4),
+              _cyl(1.25, RZ + 0.5, RZ + 9.0, (s * 34.5, RY), "z"))
 
 
 def front_hub(s):
     """RV19 micro hub (9 x 9) running on the 25 mm standoff: 6 mm tyre seat between two 9 mm flanges, an O-ring
     groove inboard."""
-    prof = [(0.0, 2.7), (0.0, 4.5), (0.4, 4.5), (0.6, 3.7), (1.8, 3.7), (2.0, 4.5), (2.5, 4.5), (2.5, 3.7), (8.5, 3.7), (8.5, 4.5), (9.0, 4.5), (9.0, 2.7)]
+    prof = [(0.0, 2.7), (0.0, 4.5), (0.5, 4.5), (0.56, 3.96), (0.93, 3.7), (1.74, 3.76), (1.94, 3.96), (2.0, 4.5), (2.5, 4.5), (2.5, 4.1), (2.9, 3.7),
+            (8.1, 3.7), (8.5, 4.1), (8.5, 4.5), (9.0, 4.5), (9.0, 2.7)]   # STEP RV19
     if s < 0:
         prof = [(-x, r) for x, r in prof]
     return _revolve_x(prof, s * 30.0, SA)
@@ -432,30 +441,27 @@ def standoff(L_x, c):
 
 # ------------------------------------------------------------------------------------------------------------ wedgelet
 def wedgelet(s):
-    """RV17/18 TPU wedgelet: one ramp face (Z = 1 + 1.187 (50.1 - Y), 50 deg) over the nose. Two cheeks either side of
-    the fork slot carry both standoffs (bores) and clamp the fork tail; the 25 mm axle standoff runs through a ring
-    at the back; outboard a block round the 15 mm standoff end and a 1.7 mm ramp skin over a hollow (TPU flexes and
-    soaks hits, and the hollow saves mass)."""
-    from shapely.geometry import Point, Polygon, LineString
-    k = 1.187
-    def zr(y):
-        return 1.0 + k * (50.1 - y)
-    ramp = _ext(Polygon([(10.0, 0.0), (50.1, 0.0), (50.1, 1.0), (10.0, zr(10.0))]), "yz", -40.0, -16.0)
-    under = _ext(Polygon([(10.0, -5.0), (50.1 - 1.7 / k, -5.0), (50.1 - 1.7 / k, 1.0), (10.0, zr(10.0) - 1.7)]), "yz", -40.0, -16.0)
-    ring = Point(*SA).buffer(3.5, 64)
-    cheek = _round(ring.union(Polygon([(26.5, 1.0), (26.5, 5.5), (29.5, 9.0), (33.5, 10.6), (38.0, 15.36), (50.1, 1.0)])), r_in=1.5)
-    parts = [_ext(cheek, "yz", -29.0, -21.5)]
-    blk = Point(*SB).buffer(3.5, 64).union(Polygon([(37.6, 2.5), (40.2, 8.0), (39.5, 10.0), (50.1, 10.0), (50.1, 1.0), (40.0, 1.0)]))
-    parts.append(_ext(blk, "yz", -38.5, -35.8))
-    parts.append(_box(-35.8, -29.0, 46.1, 50.1, 1.0, 12.0))                           # nose lip
-    parts.append(_box(-21.5, -17.5, 43.8, 50.1, 1.0, 7.5))                            # inner nose tab
-    parts.append(_S(_box(-38.5, -21.5, 38.0, 50.1, 1.0, 16.0), under))                # ramp skin
-    body = _I(_U(*parts), ramp)
-    body = _S(body, _box(-39.0, -29.0, 20.0, 52.0, 10.0, 17.0), _box(-21.5, -17.0, 20.0, 52.0, 7.5, 17.0))
-    slot = _S(_box(-27.0, -24.5, 20.0, 43.8, 0.0, 17.0), ramp.cut(under))             # fork slot under the ramp skin
-    body = _U(_S(body, slot), _I(_ext(ring, "yz", -27.0, -24.5), ramp))
-    kid = LineString([(36.3, 4.6), (37.6, 7.6)]).buffer(1.0, 24)
-    cuts = [_cyl(2.6, -39.0, -17.0, SA), _cyl(2.6, -36.5, -17.0, SB), _cyl(1.6, -39.0, -17.0, SB), _ext(kid, "yz", -29.5, -21.0)]
+    """RV17/18 TPU wedgelet (left built, right mirrored), slabs along X measured on the STEP sections:
+    an outer block round the 15 mm standoff end (X 36.5..38.5), a ring step (35.5..36.5), a 2.3 mm ramp skin over a
+    hollow whose top edge is capped by a raked plane (29..35.5), the cheek round both standoffs with the fork-tail
+    kidney slot (21.5..29) and the 2.5 mm fork slot through it, and a nose tab (17.5..21.5). Ramp face 50 deg:
+    Z = 1 + 1.187 (50.1 - Y)."""
+    from shapely.geometry import LineString, Point, Polygon
+    P = lambda pts: Polygon(pts).buffer(0)  # noqa: E731
+    s1 = Point(*SB).buffer(3.5, 64).union(P([(40.5, 1.0), (50.1, 1.0), (42.54, 10.0), (39.55, 10.0), (40.23, 8.0)]))
+    s2 = Point(*SB).buffer(3.0, 64).union(P([(40.4, 7.5), (39.55, 10.0), (41.92, 10.0), (42.29, 10.31), (50.1, 1.0), (46.68, 1.0), (44.96, 1.5), (40.5, 1.5)]))
+    skin = P([(50.1, 1.0), (47.57, 1.0), (46.8, 1.36), (40.79, 8.52), (40.22, 8.04), (37.65, 15.92)])
+    cheek = P([(38.05, 15.36), (50.1, 1.0), (26.55, 1.0), (26.59, 6.09), (26.94, 7.22), (27.48, 8.04), (28.7, 9.02), (30.78, 9.78), (32.43, 10.71),
+               (36.62, 14.17), (37.1, 12.78), (38.6, 12.78), (37.79, 15.15)])
+    in_slot = P([(38.69, 10.9), (39.12, 11.26), (37.79, 15.15), (38.05, 15.36), (50.1, 1.0), (43.75, 1.0), (43.73, 4.82), (43.37, 6.03), (42.91, 6.68),
+                 (41.0, 8.6), (40.03, 8.6), (39.52, 10.07)]).union(Point(*SA).buffer(3.5, 64))
+    tab = P([(42.78, 6.82), (44.32, 6.1), (44.69, 7.44), (50.1, 1.0), (43.75, 1.0), (43.71, 4.98), (43.37, 6.03)])
+    bb = _b()
+    sk = _one(_ext(skin, "yz", -35.5, -29.0)).split(bb.Plane(origin=(-34.0, 41.66, 11.06), z_dir=(-1.24, -0.75, 1.0)), keep=bb.Keep.BOTTOM)
+    body = _U(_ext(s1, "yz", -38.5, -36.5), _ext(s2, "yz", -36.5, -35.5), sk, _ext(cheek, "yz", -29.0, -21.5), _ext(tab, "yz", -21.5, -17.5))
+    kid = LineString([(36.05, 5.15), (36.95, 7.45)]).buffer(0.95, 24)
+    cuts = [_ext(cheek.difference(in_slot), "yz", -27.0, -24.5),                  # 2.5 mm fork slot through the cheek
+            _cyl(2.6, -39.0, -17.0, SA), _cyl(1.6, -39.0, -17.0, SB), _cyl(2.5, -36.5, -17.0, SB), _ext(kid, "yz", -29.5, -21.0)]
     sh = _S(body, *cuts)
     sh = sh if s < 0 else _mirror_x(sh)
     # the STEP leaves the fork tine and the mount boss inside the TPU nose; cut their seats (the tine slides into a
@@ -543,6 +549,22 @@ def _band(path, w):
     return Polygon(list(path) + oc[::-1]).buffer(0)
 
 
+def _loft_yz(pa, xa, pb, xb, n=160):
+    """Ruled loft between two shapely outlines in YZ planes at X xa and xb (both resampled to n points from the point
+    nearest +Y, so the rulings do not twist)."""
+    b = _b()
+    def wire(p, x):
+        ring = list(p.exterior.coords)[:-1]
+        if Polygon(ring).exterior.is_ccw is False:
+            ring = ring[::-1]
+        k = max(range(len(ring)), key=lambda i: (ring[i][0], -abs(ring[i][1])))
+        ring = ring[k:] + ring[:k] + [ring[k]]
+        pts = _resample(ring, n + 1)[:-1]
+        return b.Wire.make_polygon([b.Vector(x, u, v) for u, v in pts], close=True)
+    from shapely.geometry import Polygon
+    return b.Solid.make_loft([wire(pa, xa), wire(pb, xb)], ruled=True)
+
+
 def _resample(line, n):
     from shapely.geometry import LineString
     ln = LineString(line)
@@ -583,60 +605,113 @@ def chassis():
     inner = _round(Polygon([(-x + w, y0 + w), (x - w, y0 + w), (x - w, y1 - w), (-x + w, y1 - w)]), r_out=1.0)
     body = _S(outer, _ext(inner, "xy", z0 - 1, c["deck"]))
     add = []
-    for px, py in INS:   # insert columns (floor to deck)
-        add.append(_cyl(2.6, z0, c["deck"] + 0.1, (px, py), "z"))
+    # insert columns (floor to deck): the rear-centre one a round boss on the rear wall, the corner ones blocks merged
+    # into the wall corners with a R2.6 nose (STEP)
+    add.append(_cyl(2.75, z0, c["deck"] + 0.1, INS[4], "z"))
     for sg in (1, -1):
+        def mx(poly):
+            return Polygon([(sg * u, v) for u, v in poly.exterior.coords]).buffer(0)
+        def nose(x0, y0, dx, dy, r):   # the corner region at (x0, y0) outside an R r round (dx, dy: directions into the block)
+            q = Polygon([(x0, y0), (x0 + dx * r, y0), (x0 + dx * r, y0 + dy * r), (x0, y0 + dy * r)])
+            return q.difference(Point(x0 + dx * r, y0 + dy * r).buffer(r, 48))
+        front_blk = Polygon([(22.25, 7.65), (27.6, 7.65), (27.6, 13.1), (22.25, 13.1)]).difference(nose(22.25, 7.65, 1, 1, 2.5))
+        front_blk = front_blk.union(nose(22.25, 13.0, -1, -1, 0.8)).union(nose(27.5, 7.65, -1, -1, 0.8))      # R0.8 fillets into the walls
+        rear_blk = Polygon([(22.21, -23.45), (27.6, -23.45), (27.6, -18.85), (22.21, -18.85)]).difference(nose(22.21, -18.85, 1, -1, 2.6))
+        rear_blk = rear_blk.union(nose(22.21, -23.4, -1, 1, 0.9)).union(nose(27.5, -18.85, -1, 1, 0.9))
+        add.append(_ext(mx(front_blk), "xy", z0, c["deck"] + 0.1))
+        add.append(_ext(mx(rear_blk), "xy", z0, c["deck"] + 0.1))
         # motor front stop wall (load path: the N10 gearbox bears on it, not the base screws)
         add.append(_box(sg * 17.7, sg * (x - w + 0.1), -25.4, -23.4, z0, c["deck"] + 0.1))
-        add.append(_box(sg * 21.7, sg * (x - w + 0.1), -23.4, -18.5, z0, c["deck"] + 0.1))
         # side lobe with the thin M3 nut (Y -16.3..2.8)
-        lobe = Point(NUT[0], NUT[1]).buffer(4.7, 64).union(Point(1.5, 7.0).buffer(1.6, 32)).convex_hull
+        lobe = Point(NUT[0], NUT[1]).buffer(4.55, 64).union(Point(1.35, 6.9).buffer(1.2, 32)).convex_hull
         add.append(_ext(lobe, "yz", sg * (x - 0.1), sg * 32.5))
+        add.append(_loft_yz(lobe.buffer(1.2, join_style=1), sg * (x - 0.1), lobe, sg * (x + 1.2)))   # R1.2 root fillet (as a 45 deg blend)
         # front tabs (key into the weapon-mount notches) and inner tab walls
-        add.append(_box(sg * 10.3, sg * 17.5, 13.0, 26.5, 5.35, 13.55))
-        add.append(_box(sg * 10.3, sg * 13.3, 13.0, 26.5, z0, c["deck"]))
+        add.append(_ext(_poly([(18.5, 6.4), (19.5, 5.4), (25.5, 5.4), (26.5, 6.4), (26.5, 12.5), (25.5, 13.5), (19.5, 13.5), (18.5, 12.5)]), "yz", sg * 13.2, sg * 17.6))
+        add.append(_ext(_poly([(13.0, 2.5), (25.5, 2.5), (26.5, 3.5), (26.5, 12.35), (25.59, 14.75), (15.0, 19.5), (13.0, 19.5)]), "yz", sg * 10.3, sg * 13.3))
+        fil = Polygon([(8.3, 14.9), (10.4, 14.9), (10.4, 17.0), (8.3, 17.0)]).difference(Point(8.3, 17.0).buffer(2.0, 48))   # R2 into the front face
+        add.append(_ext(Polygon([(sg * u, v) for u, v in fil.exterior.coords]).buffer(0), "xy", z0, c["deck"]))
+        # switch pad under the deck (STEP): the switch ears bear on it
+        if sg > 0:
+            add.append(_ext(_round(Polygon([(22.5, -15.6), (27.5, -15.6), (27.5, 4.4), (22.5, 4.4)]), r_out=1.0), "xy", 16.5, c["deck"] + 0.1))
         # lugs carrying the standoffs (sloped top so they sit under the mount)
         lug = Polygon([(13.0, z0), (26.0, z0), (30.4, 1.0)] + _arc(SA, 4.5, 250, 300, 6) + [(36.6, 2.5)] + _arc(SB, 3.2, 250, 400, 16) + [(15.0, z1), (13.0, z1)])
         lug = _round(lug.convex_hull.difference(Polygon([(26.0, 0.0), (26.0, 2.5), (30.0, 1.0), (40.0, 1.3), (60, 0)])), r_in=0.0)
         add.append(_ext(lug, "yz", sg * 17.5, sg * 21.5))
+    for sg in (1, -1):
+        # front corner flanges (STEP): a bottom flange that blends from the side wall into the lug, and a top flange
+        # that carries the deck chamfer forward to the lug
+        blend = [(29.5, 15.0), (28.7, 16.0), (26.5, 18.5), (24.2, 21.0), (22.8, 22.8), (22.0, 24.6), (21.6, 26.3), (21.5, 27.5)]
+        # front face of the corners at Y 15.6 with a R2.7 fillet into the lug, R1 outer corner (STEP)
+        face = Polygon([(21.4, 13.0), (29.5, 13.0), (29.5, 14.6), (28.5, 15.6), (21.4, 15.6)]).union(
+            Polygon([(21.4, 15.5), (24.2, 15.5), (24.2, 18.3), (21.4, 18.3)]).difference(Point(24.2, 18.3).buffer(2.7, 64)))
+        add.append(_ext(Polygon([(sg * x_, y_) for x_, y_ in face.exterior.coords]).buffer(0), "xy", z0, 16.4))
+        bot = Polygon([(21.5, 13.0), (29.5, 13.0)] + blend)
+        add.append(_ext(Polygon([(sg * x_, y_) for x_, y_ in bot.exterior.coords]).buffer(0), "xy", z0, 5.0))
+        topf = _ext(_poly([(13.0, 19.5), (15.3, 19.5), (23.0, 15.83), (23.0, 13.47), (15.3, 16.4), (13.0, 16.4)]), "yz", sg * 21.4, sg * 29.5)
+        add.append(_I(topf, _ext(Polygon([(sg * x_, y_) for x_, y_ in Polygon([(21.4, 13.0), (29.5, 13.0)] + blend + [(21.4, 27.5)]).buffer(0).exterior.coords]).buffer(0), "xy", 10.0, 20.0)))
     body = _U(body, *add)
     cuts = []
+    for sg in (1, -1):
+        # lug underside: flat to Y 26, then the ramp; a scallop between the two standoffs (STEP)
+        cuts.append(_ext(_poly([(10.0, -5.0), (10.0, 2.5), (26.0, 2.5), (30.4, 1.0), (30.4, -5.0)]), "yz", sg * 17.4, sg * 21.6))
+        cuts.append(_ext(Point(36.34, -1.67).buffer(4.12, 64), "yz", sg * 17.4, sg * 21.6))
+        cuts.append(_box(sg * 13.3, sg * 17.5, 12.0, 15.1, z0 - 0.1, 4.5))   # front wall stops at the rabbet under the tab (STEP)
+        # motor stop wall: lower inner edge rounded R4.5 (STEP)
+        fil = Polygon([(17.6, 4.4), (22.2, 4.4), (22.2, 9.0), (17.6, 9.0)]).difference(Point(22.2, 9.0).buffer(4.5, 64))
+        cuts.append(_ext(Polygon([(sg * x_, z_) for x_, z_ in fil.exterior.coords]).buffer(0), "xz", -25.5, -23.3))
     # deck X-pocket lightening (from below, 1 mm skin stays)
     dz0, dz1 = c["deck"] - 0.5, c["deck"] + 1.0
-    tri = [Polygon([(-21.5, 12.2), (21.5, 12.2), (0, -2.8)]), Polygon([(-21.5, -23.0), (21.5, -23.0), (0, -8.0)]),
-           Polygon([(-22.5, 10.0), (-22.5, -20.5), (-6.5, -5.6)]), Polygon([(22.5, 10.0), (22.5, -20.5), (6.5, -5.6)])]
+    # deck pockets (STEP RV01 at Z 18): an X of 2 mm ribs, two diagonals at slope 0.64
+    k_ = 0.6404
+    tri = [Polygon([(0.0, -3.07), (-22.25, -3.07 + k_ * 22.25), (-22.25, 12.4), (22.25, 12.4), (22.25, -3.07 + k_ * 22.25)]),
+           Polygon([(0.0, -8.13), (22.25, -8.13 - k_ * 22.25), (22.25, -23.4), (17.5, -23.4), (17.5, -23.6), (-17.5, -23.6), (-17.5, -23.4),
+                    (-22.25, -23.4), (-22.25, -8.13 - k_ * 22.25)])]
     for t in tri:
-        cuts.append(_ext(_round(t, r_out=1.5), "xy", dz0, dz1))
-    for xc in (-21.3, -8.9, 8.9, 21.3):
-        cuts.append(_ext(_round(Polygon([(xc - 5, -35.5), (xc + 5, -35.5), (xc + 5, -25.5), (xc - 5, -25.5)]), r_out=1.2), "xy", dz0, dz1))
+        cuts.append(_ext(_round(t, r_out=0.8), "xy", dz0, dz1))
+    for sg in (1, -1):   # side pockets: apex R2 towards the centre
+        side = Polygon([(sg * 3.72, -5.59), (sg * 22.5, 4.51 + 0.640 * 2.99), (sg * 22.5, -15.71 - 0.6407 * 2.99)])
+        cuts.append(_ext(_round(side, r_out=1.9), "xy", dz0, dz1))
+    for xa, xb in ((-26.5, -16.13), (-14.12, -3.75), (3.75, 14.12), (16.13, 26.5)):   # rear deck pockets
+        cuts.append(_ext(_round(Polygon([(xa, -34.5), (xb, -34.5), (xb, -26.5), (xa, -26.5)]), r_out=0.6), "xy", dz0, dz1))
+    cuts.append(_ext(_round(Polygon([(-2.75, -30.0), (2.75, -30.0), (2.75, -26.5), (-2.75, -26.5)]), r_out=1.2), "xy", dz0, dz1))
+    bb = _b()
     for px, py in INS:
-        cuts.append(_cyl(1.7, INS_Z[0] - 3, INS_Z[1], (px, py), "z"))           # heat-set bore
+        # 3.0 hole floor to deck top, 0.6 chamfers both ends (STEP); the 3.5 M2 heat-set melts into its bottom
+        cuts.append(_cyl(1.5, z0 - 1.0, (z1 + 1) if py == -33.6 else z1 - 4.0, (px, py), "z"))
+        cuts.append(bb.Solid.make_cone(2.1, 1.5, 0.6, bb.Plane(origin=(px, py, 4.5 - 0.001), z_dir=(0, 0, 1))))
         if py == -33.6:
-            cuts.append(_cyl(1.9, c["deck"] + 1.0, z1 + 1, (px, py), "z"))      # through the deck (screw run-out)
-            cuts.append(_cyl(1.2, INS_Z[1] - 0.1, z1 + 1, (px, py), "z"))
-        else:   # corner columns: screw run-out below, a 1.7 thread-forming pilot for the top-panel screw on top
-            cuts.append(_cyl(1.2, INS_Z[1] - 0.1, z1 - 4.0, (px, py), "z"))
+            cuts.append(bb.Solid.make_cone(2.1, 1.5, 0.6, bb.Plane(origin=(px, py, z1 + 0.001), z_dir=(0, 0, -1))))
+        else:   # corner columns: a 1.7 thread-forming pilot in the top 4 mm for the top-panel screw (deviation: STEP 3.0 through)
             cuts.append(_cyl(0.85, z1 - 4.1, z1 + 1, (px, py), "z"))
     # switch slot in the deck beside the top panel, 2 M2 pilot holes
-    cuts.append(_ext(_round(Polygon([(23.9, -11.4), (26.1, -11.4), (26.1, 0.2), (23.9, 0.2)]), r_out=0.5), "xy", c["deck"] - 1, z1 + 1))
+    cuts.append(_ext(_round(Polygon([(23.0, -11.6), (27.0, -11.6), (27.0, 0.4), (23.0, 0.4)]), r_out=0.45), "xy", 16.0, z1 + 1))
     for yy in (1.9, -13.1):
         cuts.append(_cyl(0.85, c["deck"] - 3, z1 + 1, (25.0, yy), "z"))
-    body = _U(body, *[_cyl(1.7, c["deck"] - 1.0, c["deck"] + 0.1, (25.0, yy), "z") for yy in (1.9, -13.1)])   # pilot bosses: the switch ears bear on them
     for sg in (1, -1):
         # N10 keyhole: round seat for the gearbox shaft boss, narrowing to the floor (motor tilts in)
-        kh = Point(RY, 11.6).buffer(2.1, 48).union(Polygon([(RY - 2.1, 11.6), (RY + 2.1, 11.6), (RY + 0.6, 5.3), (RY - 0.6, 5.3)])).union(Point(RY, 5.3).buffer(0.6, 16))
+        kh = Point(RY, RZ).buffer(2.5, 64).union(Point(RY, 5.85).buffer(0.85, 24)).convex_hull   # STEP keyhole
         cuts.append(_ext(kh, "yz", sg * (x - w - 0.5), sg * (x + 0.5)))
         # nut: M3 clearance through lobe + wall, hex pocket on the inside
         cuts.append(_cyl(1.6, sg * 26.0, sg * 33.0, NUT))
-        hexp = Polygon([(NUT[0] + 3.2 * math.cos(math.radians(60 * i + 30)), NUT[1] + 3.2 * math.sin(math.radians(60 * i + 30))) for i in range(6)])
-        cuts.append(_ext(hexp, "yz", sg * 27.6, sg * 29.6))
-        cuts.append(_ext(_round(Polygon([(-7.1, 7.0), (-3.6, 7.6), (-6.6, 9.0)]), r_out=0.3), "yz", sg * 29.0, sg * 33.0))
+        hexp = Polygon([(NUT[0] + 3.29 * math.cos(math.radians(60 * i + 30)), NUT[1] + 3.2 * math.sin(math.radians(60 * i + 30))) for i in range(6)])
+        cuts.append(_ext(hexp, "yz", sg * 27.0, sg * 29.5))
+        cuts.append(_ext(_round(Polygon([(-7.14, 6.85), (-3.45, 7.05), (-3.45, 7.95), (-6.9, 8.9)]), r_out=0.25), "yz", sg * 29.0, sg * 33.0))
         # standoff holes in the lugs, square key hole
         cuts.append(_cyl(2.5, sg * 17.0, sg * 22.0, SA))
         cuts.append(_cyl(1.6, sg * 17.0, sg * 22.0, SB))
-        cuts.append(_ext(_round(Polygon([(20.8, 7.8), (24.2, 7.8), (24.2, 11.1), (20.8, 11.1)]), r_out=0.6), "yz", sg * 13.0, sg * 22.0))
+        cuts.append(_ext(_round(Polygon([(20.0, 6.9), (25.0, 6.9), (25.0, 12.0), (20.0, 12.0)]), r_out=0.9), "yz", sg * 10.0, sg * 22.0))
+    # rear wall: 1 mm deep triangle lattice on the inner face (STEP)
+    lat = []
+    for sg in (1, -1):
+        lat += [Polygon([(sg * 4.84, 7.0), (sg * 4.84, 15.0), (sg * 12.4, 11.0)]), Polygon([(sg * 26.42, 7.0), (sg * 26.42, 15.0), (sg * 18.85, 11.0)]),
+                Polygon([(sg * 10.6, 5.58), (sg * 20.65, 5.58), (sg * 15.6, 9.7)]), Polygon([(sg * 10.6, 16.42), (sg * 20.65, 16.42), (sg * 15.6, 12.3)])]
+    for t in lat:
+        cuts.append(_ext(_round(t.buffer(0), r_out=0.45), "xz", -36.6, -35.5))
     # weapon phase wire hole in the front wall
-    cuts.append(_box(-7.3, 7.3, 13.0, 16.0, 15.0, c["deck"]))
+    cuts.append(_ext(_round(Polygon([(7.25, 5.0), (10.25, 5.0), (10.25, 17.0), (7.25, 17.0)]), r_out=1.45), "xz", 12.0, 16.0))
+    for xa, xb in ((-18.25, 4.25), (13.25, 18.2)):
+        cuts.append(_ext(_round(Polygon([(xa, 6.55), (xb, 6.55), (xb, 15.55), (xa, 15.55)]), r_out=0.5), "xz", 12.0, 13.85))
     # rabbet for the base panel (recessed flush with the wall bottom lip) and the mating faces of the mounts and side
     # panels: the parts seat on the chassis, they do not share material with it
     pan = _round(_poly([(-28.15, -36.25), (28.15, -36.25), (28.15, 13.05), (-28.15, 13.05)]), r_out=0.8)
@@ -702,7 +777,7 @@ def make_spec(model_file):
     P(id="base_panel", kind="structure", print_orientation="+z", rotates_with="fixed", color="#2a2c30", shape=M("base_panel"), **PLA,
       label="RV26 1 mm printed base panel, 5 M2 CSK into the floor heat-sets, 0.25 mm pads preload the N10s")
     P(id="top_panel", kind="armor", material="titanium", process="laser", stock="0.9 mm Ti Gr5 sheet", rotates_with="fixed", color="#8d939b", shape=M("top_panel"),
-      label="0.9 mm Ti top panel: laser outline with 4 x 2.8 corner holes, 4 M2 thread-forming screws into the column tops (material inferred, see REFERENCE.md)")
+      label="0.9 mm Ti top panel: laser outline with 4 countersunk 2.2 corner holes, 4 M2 flat-head thread-forming screws into the column tops (material inferred, see REFERENCE.md)")
     # ---------------------------------------------------------------- weapon module
     P(id="mount_r", kind="structure", print_orientation="+x", rotates_with="fixed", solid_fraction=0.85, color="#2a2c30", shape=M("mount_r"), **PLA,
       label="RV03 XALT HD right weapon mount (8 mm): GR1507 stator on 4 M2 through the back spacer, notch on the chassis tab, 2 M3 CSK into the standoffs")
@@ -795,8 +870,8 @@ def make_spec(model_file):
           access_before=["mount_l", "wbearing", "weapon_motor", "mount_r", "motor_spacer", "tub", "so_al", "so_bl", "so_ar", "so_br"],
           reason="stack bolted up on the bench before it goes on the motor (inferred: the STEP has the 2.2 holes but no screws)")
     for i, (x, y) in enumerate(((25.0, 10.4), (-25.0, 10.4), (25.0, -21.6), (-25.0, -21.6))):
-        F(id=f"bolt_t{i}", designation="M2x4", head="button", tool="hex1.3", at=[x, y, 20.4], dir=[0, 0, -1], through=["top_panel"], threads_into="tub",
-          reason="thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the 2.8 holes but no screws)")
+        F(id=f"bolt_t{i}", designation="M2x4", head="countersunk", tool="hex1.3", at=[x, y, 20.4], dir=[0, 0, -1], through=["top_panel"], threads_into="tub",
+          reason="M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)")
     for i, yy in enumerate((1.9, -13.1)):
         F(id=f"bolt_sw{i}", designation="M2x3", head="button", tool="hex1.3", at=[25.0, yy, 16.0], dir=[0, 0, 1], through=["power_switch"], threads_into="tub",
           reason="thread-forming into the 1.7 pilot holes either side of the switch flange; heads clamp the flange to the deck underside (inferred)")
@@ -836,7 +911,7 @@ def make_spec(model_file):
     C("wbearing", "mount_l", "press_fit", "MR85 pressed into the 7.9 seat", interference_mm=0.05, mechanical_key=True)
     C("mount_l", "mount_r", "interlock", "Both mounts tied by the standoffs and the chassis tabs")
     C("base_panel", "tub", "screw", "Base panel under the open floor, 5 M2 CSK into heat-sets")
-    C("top_panel", "tub", "screw", "Ti top panel held by 4 M2 thread-forming screws through its 2.8 corner holes into the column-top pilots (the STEP has the holes, not the screws)")
+    C("top_panel", "tub", "screw", "Ti top panel held by 4 M2 flat-head thread-forming screws through its countersunk corner holes into the column-top pilots (the STEP has the holes, not the screws)")
     C("weapon_lock", "tub", "interlock", "TPU lock rests on the deck front edge under the tooth, lanyard to the chassis")
     C("battery", "tub", "press_fit", "Pack between the motor wall, the insert columns and the deck", interference_mm=0.1, mechanical_key=True)
     C("rxesc", "tub", "interlock", "Malenki under the deck beside the pack, kapton")
@@ -924,8 +999,8 @@ REF_BOM = [   # RVRN 2.0 STEP part list (research/rvrn_step/INDEX.txt); one row 
     dict(role="FS9: mount to standoff 2 x M3x12 CSK alu (axle standoff)", match=["bolt_u?a"], count=2, designation="M3x12", head="countersunk", threads_into="standoff", material="aluminium"),
     dict(role="FS9: mount to nose standoff 2 x M3 CSK alu", match=["bolt_u?b"], count=2, designation="M3x14", head="countersunk", threads_into="standoff", material="aluminium",
          deviation="M3x14 instead of the STEP's M3x12: through mount and lug, 12 mm engages 3.9 mm of the 15 mm standoff (< 1.5 d)"),
-    dict(role="top panel: 4 x M2 thread-forming (not in the STEP; its 2.8 holes are)", match=["bolt_t*"], count=4, designation="M2x4", threads_into="tub",
-         deviation="the STEP top panel has 4 corner holes but no screws; 4 M2x4 thread-forming screws added so the Ti panel cannot peel off"),
+    dict(role="top panel: 4 x M2 CSK thread-forming (not in the STEP; its countersunk holes are)", match=["bolt_t*"], count=4, designation="M2x4", threads_into="tub",
+         deviation="the STEP top panel has 4 countersunk corner holes but no screws; 4 M2x4 CSK thread-forming screws added so the Ti panel cannot peel off"),
     dict(role="side panel to standoff ends: 4 x M3 CSK (STEP M3x8)", match=["bolt_s?a", "bolt_s?b"], count=4, designation="M3x10", head="countersunk", threads_into="standoff",
          deviation="M3x10 instead of the STEP's M3x8: 8 mm engages 4.2 / 2.7 mm of standoff thread, under 1.5 d in aluminium"),
     dict(role="side panel to chassis: 2 x M3x8 CSK into thin nuts", match=["bolt_s?c"], count=2, designation="M3x8", head="countersunk", threads_into="nut"),

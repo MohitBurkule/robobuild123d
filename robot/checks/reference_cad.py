@@ -25,7 +25,8 @@ With a frame (the reference placed in our world frame) every entry also gets:
                                   missing (ref - model) material over `diff_min_mm3` (2) and `diff_min_thick_mm` (0.3)
                                   is one feature difference and must be fixed or listed in the entry's `deviations`
                                   [{"near": [x, y, z], "r": 3, "reason": "..."}]; surface deviation max / p95 both ways
-                                  is reported. `diff_render_dir`: write a deviation heat map per part.
+                                  is reported, and every cluster of surface points deviating more than `dev_tol_mm`
+                                  (0.5) either way is a difference too. `diff_render_dir`: write a deviation heat map per part.
   reference_cad.features (BLOCKER, shape parts)  ref_features.compare_sections: sections at 25/50/75 % on all three
                                   axes; hole count and shape (round / D / hex / slot) matched by centroid, hole
                                   profile along the thin axis (plain / countersink / counterbore / blind). A missing,
@@ -170,6 +171,8 @@ def is_copy(ma, mb, rel=0.002):
     from scipy.spatial import cKDTree
 
     fa, fb = len(ma.faces), len(mb.faces)
+    if min(fa, fb) < 100:  # a primitive (a 12-triangle box) carries no copyable detail: equal boxes are not an import
+        return False, None
     if abs(fa - fb) > 0.01 * max(fa, fb):
         return False, None
     A, B = _aligned(ma), _aligned(mb)
@@ -329,7 +332,7 @@ def _frame_checks(ctx, e, cfg, pid, fn, mod, ref):
     from . import ref_diff, ref_features
 
     out = []
-    rw = ref_in_world(ref, e, cfg)
+    rw = ref_diff.clean(ref_in_world(ref, e, cfg))
     cm = (mod.bounds[0] + mod.bounds[1]) / 2
     cr = (rw.bounds[0] + rw.bounds[1]) / 2
     d = float(np.linalg.norm(cm - cr))
@@ -359,6 +362,10 @@ def _frame_checks(ctx, e, cfg, pid, fn, mod, ref):
         for b in bd[kind]:
             why = _covered(b["centroid"], e)
             (expl if why else open_).append(f"{kind} {b['volume_mm3']} mm3 (t {b['thick_mm']}) at {b['centroid']}" + (f" [{why}]" if why else ""))
+    dtol = float(e.get("dev_tol_mm", cfg.get("dev_tol_mm", 0.5)))
+    for c in ref_diff.deviation_clusters(dev, dtol, min_pts=int(e.get("dev_min_pts", cfg.get("dev_min_pts", 2)))):
+        why = _covered(c["centroid"], e)
+        (expl if why else open_).append(f"{c['kind']} surface {c['max_mm']} mm (> {dtol}, {c['n']} pts) at {c['centroid']}" + (f" [{why}]" if why else ""))
     ctx.metrics.setdefault(f"reference_cad.{pid}", {})["diff"] = {k: bd[k] for k in ("method", "extra_mm3", "missing_mm3")} | {
         "blobs_open": len(open_), "blobs_explained": len(expl),
         "dev": {k: v for k, v in dev.items() if not k.startswith("_")}}

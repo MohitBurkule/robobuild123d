@@ -135,3 +135,40 @@ def test_with_parts_compares_the_union_clipped_to_the_reference(tmp_path):
     cfg["parts"][0].update(with_parts=["shaft"], clip_to_ref=True)
     both = RC.run(_ctx([flange, shaft], cfg))
     assert any(f.id == "reference_cad.dims" and f.passed for f in both)
+
+
+def test_surface_deviation_clusters_flag_a_bump_and_not_a_match():
+    import trimesh
+
+    from robot.checks import ref_diff
+
+    a = trimesh.creation.box((20, 20, 4))
+    same = ref_diff.surface_deviation(a, a.copy(), 4000)
+    assert ref_diff.deviation_clusters(same, 0.5) == []
+    bump = trimesh.util.concatenate([a, trimesh.creation.box((4, 4, 2), transform=trimesh.transformations.translation_matrix((5, 5, 3)))])
+    cl = ref_diff.deviation_clusters(ref_diff.surface_deviation(bump, a, 6000), 0.5, min_pts=2)
+    assert cl and cl[0]["kind"] == "extra" and cl[0]["max_mm"] > 0.5
+    assert abs(cl[0]["centroid"][0] - 5) < 2 and abs(cl[0]["centroid"][1] - 5) < 2
+
+
+def test_equal_primitive_boxes_are_not_a_copy():
+    import trimesh
+
+    from robot.checks.reference_cad import is_copy
+
+    assert is_copy(trimesh.creation.box((23.5, 12, 5)), trimesh.creation.box((23.5, 12, 5)))[0] is False
+
+
+def test_clean_drops_sliver_shells_and_diff_is_exact():
+    import trimesh
+
+    from robot.checks import ref_diff
+
+    box = trimesh.creation.box((10, 10, 4))
+    sliver = trimesh.Trimesh(vertices=[[0, 0, 5], [1, 0, 5], [0, 1, 5]], faces=[[0, 1, 2]])
+    dirty = trimesh.util.concatenate([box, sliver])
+    assert not dirty.is_watertight
+    c = ref_diff.clean(dirty)
+    assert c.is_watertight and abs(c.volume - box.volume) < 1e-6
+    d = ref_diff.boolean_diff(box.copy(), dirty)
+    assert d["method"].startswith("brep") and d["extra_mm3"] < 0.01 and d["missing_mm3"] < 0.01

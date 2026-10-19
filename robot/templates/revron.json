@@ -103,14 +103,14 @@
    "deviation": "M3x14 instead of the STEP's M3x12: through mount and lug, 12 mm engages 3.9 mm of the 15 mm standoff (< 1.5 d)"
   },
   {
-   "role": "top panel: 4 x M2 thread-forming (not in the STEP; its 2.8 holes are)",
+   "role": "top panel: 4 x M2 CSK thread-forming (not in the STEP; its countersunk holes are)",
    "match": [
     "bolt_t*"
    ],
    "count": 4,
    "designation": "M2x4",
    "threads_into": "tub",
-   "deviation": "the STEP top panel has 4 corner holes but no screws; 4 M2x4 thread-forming screws added so the Ti panel cannot peel off"
+   "deviation": "the STEP top panel has 4 countersunk corner holes but no screws; 4 M2x4 CSK thread-forming screws added so the Ti panel cannot peel off"
   },
   {
    "role": "side panel to standoff ends: 4 x M3 CSK (STEP M3x8)",
@@ -906,7 +906,7 @@
      "part": "top_panel"
     }
    },
-   "label": "0.9 mm Ti top panel: laser outline with 4 x 2.8 corner holes, 4 M2 thread-forming screws into the column tops (material inferred, see REFERENCE.md)"
+   "label": "0.9 mm Ti top panel: laser outline with 4 countersunk 2.2 corner holes, 4 M2 flat-head thread-forming screws into the column tops (material inferred, see REFERENCE.md)"
   },
   {
    "id": "mount_r",
@@ -6353,7 +6353,7 @@
   {
    "id": "bolt_t0",
    "designation": "M2x4",
-   "head": "button",
+   "head": "countersunk",
    "tool": "hex1.3",
    "at": [
     25.0,
@@ -6369,13 +6369,13 @@
     "top_panel"
    ],
    "threads_into": "tub",
-   "reason": "thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the 2.8 holes but no screws)",
+   "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
    "removable": true
   },
   {
    "id": "bolt_t1",
    "designation": "M2x4",
-   "head": "button",
+   "head": "countersunk",
    "tool": "hex1.3",
    "at": [
     -25.0,
@@ -6391,13 +6391,13 @@
     "top_panel"
    ],
    "threads_into": "tub",
-   "reason": "thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the 2.8 holes but no screws)",
+   "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
    "removable": true
   },
   {
    "id": "bolt_t2",
    "designation": "M2x4",
-   "head": "button",
+   "head": "countersunk",
    "tool": "hex1.3",
    "at": [
     25.0,
@@ -6413,13 +6413,13 @@
     "top_panel"
    ],
    "threads_into": "tub",
-   "reason": "thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the 2.8 holes but no screws)",
+   "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
    "removable": true
   },
   {
    "id": "bolt_t3",
    "designation": "M2x4",
-   "head": "button",
+   "head": "countersunk",
    "tool": "hex1.3",
    "at": [
     -25.0,
@@ -6435,7 +6435,7 @@
     "top_panel"
    ],
    "threads_into": "tub",
-   "reason": "thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the 2.8 holes but no screws)",
+   "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
    "removable": true
   },
   {
@@ -6855,7 +6855,7 @@
    "a": "top_panel",
    "b": "tub",
    "method": "screw",
-   "reason": "Ti top panel held by 4 M2 thread-forming screws through its 2.8 corner holes into the column-top pilots (the STEP has the holes, not the screws)"
+   "reason": "Ti top panel held by 4 M2 flat-head thread-forming screws through its countersunk corner holes into the column-top pilots (the STEP has the holes, not the screws)"
   },
   {
    "a": "weapon_lock",
