@@ -7377,7 +7377,7 @@
    "at": [
     25.0,
     10.4,
-    20.4
+    21.1
    ],
    "dir": [
     0,
@@ -7402,7 +7402,7 @@
     "csk_angle": 90.0,
     "csk_d": 4.5,
     "csk_depth": 1.05,
-    "sink": 0.0,
+    "sink": -0.7,
     "grip": 0.9
    },
    "removable": true
@@ -7415,7 +7415,7 @@
    "at": [
     -25.0,
     10.4,
-    20.4
+    21.1
    ],
    "dir": [
     0,
@@ -7440,7 +7440,7 @@
     "csk_angle": 90.0,
     "csk_d": 4.5,
     "csk_depth": 1.05,
-    "sink": 0.0,
+    "sink": -0.7,
     "grip": 0.9
    },
    "removable": true
@@ -7453,7 +7453,7 @@
    "at": [
     25.0,
     -21.6,
-    20.4
+    21.1
    ],
    "dir": [
     0,
@@ -7478,7 +7478,7 @@
     "csk_angle": 90.0,
     "csk_d": 4.5,
     "csk_depth": 1.05,
-    "sink": 0.0,
+    "sink": -0.7,
     "grip": 0.9
    },
    "removable": true
@@ -7491,7 +7491,7 @@
    "at": [
     -25.0,
     -21.6,
-    20.4
+    21.1
    ],
    "dir": [
     0,
@@ -7516,7 +7516,7 @@
     "csk_angle": 90.0,
     "csk_d": 4.5,
     "csk_depth": 1.05,
-    "sink": 0.0,
+    "sink": -0.7,
     "grip": 0.9
    },
    "removable": true
@@ -7543,6 +7543,20 @@
    "access_before": [
     "base_panel"
    ],
+   "hole": {
+    "d": 2.0,
+    "length": 3.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "tapped",
+    "side": "thread",
+    "grip": 0.0,
+    "tap_d": 1.6,
+    "thread_depth": 3.5
+   },
    "reason": "thread-forming into the 1.7 pilot holes either side of the switch flange; heads clamp the flange to the deck underside (inferred)",
    "removable": true
   },
@@ -7568,6 +7582,20 @@
    "access_before": [
     "base_panel"
    ],
+   "hole": {
+    "d": 2.0,
+    "length": 3.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "tapped",
+    "side": "thread",
+    "grip": 0.0,
+    "tap_d": 1.6,
+    "thread_depth": 3.5
+   },
    "reason": "thread-forming into the 1.7 pilot holes either side of the switch flange; heads clamp the flange to the deck underside (inferred)",
    "removable": true
   }
