@@ -441,11 +441,11 @@ WG_INNER = [(43.5, -47.7), (43.5, -28.8), (43.0, -26.8), (40.9, -25.1), (37.4, -
 WG_SIDE = [(-47.7, 10.3), (-47.2, 12.3), (-46.1, 13.9), (-43.7, 15.5), (-41.7, 15.87), (-14.7, 15.87), (-1.7, 13.3), (7.1, 12.4),
            (16.2, 9.9), (23.8, 9.9), (29.3, 14.0), (30.4, 15.0), (30.7, 15.2), (42.8, WG_Z0 + 1.3), (42.8, WG_Z0),
            (-39.5, WG_Z0), (-42.6, 2.1), (-45.2, 4.1), (-47.0, 6.8), (-47.5, 8.4)]  # side elevation (y, z): high rear rail, nose ramp
-WG_FRONT = [(17.5, WG_Z0), (52.0, WG_Z0), (44.5, 9.9), (38.5, 9.9), (36.7, 10.2),
+WG_FRONT = [(17.5, WG_Z0), (52.0, WG_Z0), (52.0, WG_Z0 + 1.3), (44.5, 9.9), (38.5, 9.9), (36.7, 10.2),
             (34.9, 11.4), (33.6, 12.7), (31.7, 12.7), (30.6, 15.2), (21.0, 15.2), (20.2, 14.9), (17.9, 13.2), (17.5, 12.3)]   # nose, seen from the front (x, z)
-WG_NOSE = [(17.5, 42.8), (17.5, 31.2), (18.0, 30.8), (21.5, 30.4), (21.5, 19.2),
+WG_NOSE = [(17.5, 42.8), (17.5, 31.2), (18.0, 30.8), (21.6, 30.4), (21.6, 19.2),
            (29.0, 19.2), (29.0, 29.2), (36.5, 29.2), (41.5, 29.6),
-           (41.5, 27.1), (40.5, 27.1), (40.0, 26.4), (39.5, 26.4), (39.5, 19.9), (40.0, 19.9), (40.5, 19.2), (41.5, 19.2), (41.3, 18.2),
+           (41.5, 27.1), (39.5, 27.1), (39.5, 19.2), (41.5, 19.2), (41.3, 18.2),
            (40.0, 16.6), (36.6, 15.6), (34.5, 13.4), (32.6, 9.3), (31.6, 5.0), (42.6, 5.0), (43.5, 6.4), (46.5, 8.2), (49.5, 11.2),
            (50.6, 13.0), (51.9, 17.1), (51.9, 31.3), (51.4, 33.4), (49.5, 37.2), (46.5, 40.2), (44.6, 41.3), (40.6, 42.6), (38.5, 42.8),
            (27.0, 42.8), (27.0, 37.2), (24.5, 37.2), (24.5, 42.8)]                     # nose plan (x, y): bay for the front wheel
@@ -476,6 +476,9 @@ def box_section(grow=0.0, s=1):
     return yz(pts, s * (BOX_X[0] - grow), s * (BOX_X[1] + grow))
 
 
+WG_SCREW_PAD = boxr(31.5, 33.5, NUT_Y - 3.4, NUT_Y + 3.4, NUT_Z - 3.4, NUT_Z + 3.4)   # wedglet inner face under the chassis-screw CSK (same footprint as the chassis clamp pad)
+
+
 def wedglet(s):
     """RVRN low-profile TPU wedglet / side panel, one piece per side (built for the left, mirrored for the right).
     Side wall: its inner face follows the chassis and S-bends out round the rear wheel; the outer face is battered
@@ -490,13 +493,16 @@ def wedglet(s):
     side = yz(WG_SIDE, 16.0, 54.0)
     nose = {"type": "intersect", "items": [xy(WG_NOSE, zb, zt), xz(WG_FRONT, 4.9, 43.0), side]}
     body = U({"type": "intersect", "items": [wall, side]}, nose, xy(WG_FLANGE, zb, zb + 1.0))
+    body = U(body, WG_SCREW_PAD,   # squares off the S-bend under the countersink (the chassis clamp pad meets it flat)
+             boxr(33.0, 35.2, -24.4, -21.5, NUT_Z - 3.6, NUT_Z + 3.6))   # and 1.2+ of TPU between the CSK head and the S-bend face
     cut = [
         {"type": "intersect", "items": [cylx(2.6, 17.0, SA_END, SA[0], SA[1]), boxr(16.0, 60.0, 20.0, 45.0, -1.0, 20.0)]},   # inboard the standoff runs in an open channel (the wall wraps it only partly)
-        cylx(1.6, SA_END - 0.5, 53.0, SA[0], SA[1]),       # M3 clearance
+        cylx(1.6, SA_END - 0.5, CSK_A - 1.0, SA[0], SA[1]),   # M3 clearance up to the countersink cone
         cylx(2.6, 17.0, SB_END, SB[0], SB[1]),            # bore over the axle standoff
-        cylx(1.6, SB_END - 0.5, 53.0, SB[0], SB[1]),
+        cylx(1.6, SB_END - 0.5, CSK_B - 1.0, SB[0], SB[1]),
         cylx(1.6, 30.0, 50.0, NUT_Y, NUT_Z),               # chassis screw into the alu nut
-        yz(rrect(-44.0, -32.0, 4.9, 14.9, 1.5), 43.3, 45.0),   # rear-wheel relief on the inner face
+        {"type": "intersect", "items": [yz(rrect(-44.0, -32.0, 4.9, 14.1, 1.5), 43.3, 45.0),
+                                         xz([(43.3, 4.0), (45.0, 4.0), (45.0, 11.5), (44.5, 14.1), (43.3, 14.1)], -45.0, -31.0)]},   # rear-wheel relief on the inner face, its top eased to keep 1.2 behind it under the battered face
         boxr(24.5, 27.0, 27.0, 29.3, 0.0, 16.0),           # slot between the clip cheeks
         boxr(21.0, 29.5, 25.5, 27.01, 11.2, 16.0),         # flat top ahead of the clip (no knife edge at the slope)
         boxr(23.0, 27.0, 27.0, 29.3, 7.0, 16.0),           # H clip: two cheeks joined by a web
@@ -504,17 +510,18 @@ def wedglet(s):
         csk_x(3, CSK_A, 1, SA[0], SA[1]),                  # M3 countersinks on the nose ramp (CSK alu screws, flush)
         csk_x(3, CSK_B, 1, SB[0], SB[1]),
         csk_x(3, SLC_X, 1, NUT_Y, NUT_Z),                  # and on the battered side wall
-        yz(belt_env(0.7), 30.4, 32.6),                     # belt channel on the inner face
-        boxr(30.4, 32.6, -20.0, SB[0], -1.0, 1.95),        # where the belt runs low the channel opens through the floor (no skin)
-        boxr(50.8, 60.0, -60.0, 60.0, -1.0, 20.0),
-        boxr(47.7, 51.3, SA[0] - 3.4, SA[0] + 3.4, -1.0, 2.0),   # the CSK head bore leaves a 0.2 mm floor: open it (head seats on the cone)         # outer edge of the nose ramp ends in a 1.5 mm land, not a knife edge
+        S(yz(belt_env(0.7), 30.4, 32.6), WG_SCREW_PAD, boxr(29.0, 34.0, -60.0, -19.5, -1.0, 20.0)),   # belt channel on the inner face, a pad kept between the belt runs under the chassis-screw countersink
+        boxr(30.4, 32.6, -19.5, SB[0], -1.0, 1.95),        # where the belt runs low the channel opens through the floor (no skin)
+        boxr(47.7, 53.0, SA[0] - 3.0, SA[0] + 3.0, -1.0, SA[1]),
+        boxr(CSK_A, 53.0, SA[0] + 2.5, 39.0, -1.0, 20.0),   # no sliver between the head bore and the rounded nose corner   # the CSK head bore leaves a 0.2 mm floor: open it (head seats on the cone)
         boxr(17.0, 21.7, 35.6, 38.3, 7.5, 12.0),          # no tapering tongue over the front of the box section
+        yz([(22.1, 2.7), (36.27, 15.7), (36.27, 20.0), (10.0, 20.0), (10.0, 2.7)], 17.0, 21.7),   # the skin over the box-section slope ends square to the ramp, 1.6 thick
         boxr(17.0, 21.7, 38.0, 40.0, 5.8, 12.0),          # and no knife edge on the block ahead of it
         box_section(0.1),                                  # clears the chassis box section (the nose clip sits on its outer face)
         boxr(0.0, BOX_X[0] - 0.1, -60.0, 60.0, -1.0, 30.0),   # nothing inboard of the box section (slides off outward)
         S(boxr(29.5, 44.0, 31.9, 36.5, 0.0, 6.5), cylx(3.8, 29.0, 45.0, SA[0], SA[1])),   # hollow under the nose plate, a 1.2 tube kept round the nose standoff
         boxr(28.0, 35.0, 36.4, 40.0, 0.0, 3.0),
-        xz([(29.0, 0.0), (29.0, 9.6), (37.0, 9.6), (48.4, 0.4)], 12.5, 19.1),   # hollow under the wedge ramp
+        xz([(29.0, 0.0), (29.0, 8.7), (43.5, 8.7), (49.0, 2.6), (49.0, 0.0)], 12.5, 19.1),   # hollow under the wedge ramp (1.2 roof under the ramp, 1.5 tip wall)
         xz([(29.0, 0.0), (29.0, 11.0), (32.5, 11.5), (35.6, 4.2), (38.0, 2.3), (43.0, 0.5), (43.0, 0.0)], 6.2, 12.5),
         xz([(35.3, 16.0), (35.3, 11.3), (38.0, 6.2), (44.0, 4.2), (49.0, 1.95), (55.0, 1.95), (55.0, 16.0)], 4.9, 12.5),   # ramp top face
         boxr(29.0, 34.5, 12.5, 19.1, 9.6, 16.0),
