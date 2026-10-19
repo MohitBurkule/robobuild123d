@@ -726,7 +726,7 @@ def side_panel(s):
         # (dense polygon sections: one ruling per matched point pair, adjacent facets meet at a fraction of a degree)
         secs.append(b.Wire.make_polygon([b.Vector(x, y, z) for x, y in pts], close=True))
     wall = _U(b.Solid.make_loft(secs[:2], ruled=True), b.Solid.make_loft(secs[1:], ruled=False))
-    side = _round(Polygon([(-32.9, 1.0), (-32.9, 16.0), (-4.3, 16.0), (17.0, 12.0), (20.0, 11.0), (24.0, 10.0), (42.0, 10.0), (50.1, 1.0)]), r_out=1.5)
+    side = _round(Polygon([(-32.9, 1.0), (-32.9, 16.0), (-6.7, 16.0), (14.6, 12.0), (19.3, 11.0), (24.0, 10.0), (42.0, 10.0), (50.1, 1.0)]), r_out=1.5)
     side = side.union(Point(-32.2, 9.7).buffer(8.2, 64))                           # rear end a full round over the wheel
     foot = _ext(_poly([(-31.6, -12.0), (-42.0, -11.9), (-40.6, -2.1), (-40.8, 3.3), (-42.9, 13.3), (-31.6, 13.3)]), "xy", 1.0, 2.0)   # 1 mm wide foot under the chassis lobe
     wall = _I(wall, _ext(side, "yz", -60.0, -20.0))
@@ -743,7 +743,7 @@ def side_panel(s):
     # the nose's front-outer corner is chamfered back (a plane leaning ~55 deg in and ~57 deg back) so a wedge or
     # spinner tooth coming in from the front quarter glances off instead of catching the corner
     nose = _one(nose).split(b.Plane(origin=(-120.0, 0.0, 0.0), z_dir=(1.0, -1.525, -1.4725)), keep=b.Keep.TOP)
-    nose = _S(nose, _box(-42.0, -38.4, 26.5, 39.0, 3.0, 10.5))                     # hollow behind the nose wall
+    nose = _S(nose, _ext(_poly([(26.5, 3.0), (37.0, 3.0), (37.7, 6.6), (39.0, 10.5), (26.5, 10.5)]), "yz", -42.0, -38.4))   # hollow behind the nose wall (its front face leans back with the wall)
     boss = _I(_cyl(3.0, -42.5, -39.5, SA), _ext(side, "yz", -60.0, -20.0))         # standoff end boss
     body = _U(wall, nose, foot, boss)
     # M3 CSK seats (ISO 10642 head 6.6, +0.1 clearance) with a 12 mm head bore out through the battered outer face, so a
@@ -751,7 +751,7 @@ def side_panel(s):
     cuts = [_csk(3.3, 6.7, (-46.26, SA[0], SA[1]), "x", 1, 8.0, 12.0), _csk(3.3, 6.7, (-41.76, SB[0], SB[1]), "x", 1, 8.0, 12.0),
             _csk(3.3, 6.7, (-35.26, NUT[0], NUT[1]), "x", 1, 8.0, 12.0),
             _cyl(2.55, -42.55, -38.0, SA),
-            _box(-45.0, -43.4, -38.7, -24.8, 5.0, 15.0),                          # rear tyre relief on the inner face
+            _box(-45.0, -43.4, -38.7, -24.8, 5.5, 14.5),                          # rear tyre relief on the inner face
             _ext(_poly([(-11.7, 3.8), (0.5, 4.7), (2.3, 5.7), (2.3, 8.3), (0.5, 9.3), (-3.5, 11.0), (-9.5, 13.0), (-11.7, 13.8)]), "yz", -32.5, -31.4)]    # 1 mm relief round the chassis nut lobe: STEP RV23 diamond (Y -11.7..2.3, Z 3.8..13.8, sloping top-right edge)
     for y0 in (-11.0, -4.5, 2.0):     # diagonal vent slots (TPU wall flexes, keeps the ESC cool)
         sl = LineString([(y0, 5.0), (y0 + 5.0, 11.0)]).buffer(1.0, cap_style=1)
