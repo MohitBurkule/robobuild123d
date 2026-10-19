@@ -164,11 +164,22 @@ def _contains(mesh, Q):
         np.random.set_state(st)
 
 
-def fastener_shape(d, length):
-    dk, k, _ = catalog.screw_dims(d)
-    head = catalog.at(catalog.cyl(dk / 2, k), 0, 0, -k / 2)
+def csk_dims(d):
+    """(head diameter, head depth) of an ISO 10642 countersunk screw (90 deg), by thread diameter."""
+    return 2.2 * d, 0.6 * d
+
+
+def fastener_shape(d, length, head=None):
+    """Screw solid in its own frame: `at` is the origin, the shank runs along +z. A socket/button head sits behind `at`
+    (-z); a countersunk head is a 90 deg cone *inside* the part, flush with the surface at `at` (ISO length is overall)."""
     shank = catalog.at(catalog.cyl(d / 2, length), 0, 0, length / 2)
-    return catalog.union([head, shank])
+    if head == "countersunk":
+        dk, k = csk_dims(d)
+        cone = {"type": "revolve", "profile": [[0.0, 0.0], [dk / 2, 0.0], [d / 2, k], [0.0, k]]}
+        return catalog.union([cone, shank])
+    dk, k, _ = catalog.screw_dims(d)
+    hd = catalog.at(catalog.cyl(dk / 2, k), 0, 0, -k / 2)
+    return catalog.union([hd, shank])
 
 
 class Body:
@@ -268,7 +279,7 @@ class World:
             dl = catalog.parse_designation(f.designation)
             if not dl:
                 continue
-            g = geom.geom_for(fastener_shape(*dl), None, tess)
+            g = geom.geom_for(fastener_shape(*dl, head=f.head if f.head == "countersunk" else None), None, tess)
             M = xform.make(xform.align_z_to(f.dir), f.at)
             bodies.append(Body(f.id, "other", g, M, [0xcc, 0xcc, 0xd0], None, True))
         return World(bodies, joints)

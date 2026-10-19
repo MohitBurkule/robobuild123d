@@ -626,9 +626,27 @@ def run(ctx):
     return out
 
 
+def surrounds_axis(q, t, a, max_gap_deg=120.0):
+    """True when points q (relative to a point on axis a, with axial coordinates t) lie round the axis with no angular
+    gap wider than `max_gap_deg`: the part wraps the axle (a bore, a seat, a 3/4 clamp) instead of merely passing near
+    it on one side."""
+    a = np.asarray(a, float)
+    u = np.cross(a, [1.0, 0.0, 0.0] if abs(a[0]) < 0.9 else [0.0, 1.0, 0.0])
+    u /= np.linalg.norm(u)
+    v = np.cross(a, u)
+    p = q - np.outer(t, a)
+    ang = np.sort(np.degrees(np.arctan2(p @ v, p @ u)) % 360.0)
+    if len(ang) < 3:
+        return False
+    gaps = np.diff(np.r_[ang, ang[0] + 360.0])
+    return float(gaps.max()) <= max_gap_deg
+
+
 def layer_load(ctx, by_id):
     """FDM parts that carry the weapon axle must be printed with the spin axis along the build direction, so the radial
-    impact load lies in the layer plane instead of peeling layers apart."""
+    impact load lies in the layer plane instead of peeling layers apart. A part carries the axle when it has material
+    within 8 mm of the axis that wraps round it (no angular gap over 120 deg): a bore, seat or clamp, not a part that only
+    passes near the axle line."""
     from .power import spin_axis
 
     r, w = ctx.r, ctx.world
@@ -654,8 +672,9 @@ def layer_load(ctx, by_id):
             q = s.mesh.vertices - o
             t = q @ a
             rad = np.linalg.norm(q - np.outer(t, a), axis=1)
-            if not np.any((rad < 8.0) & (t > lo) & (t < hi)):
-                continue
+            near = (rad < 8.0) & (t > lo) & (t < hi)
+            if not np.any(near) or not surrounds_axis(q[near], t[near], a):
+                continue  # close to the axle but not holding it (e.g. a wedge passing under the disc)
             po = str(sp._extra.get("print_orientation") or "").lower()
             if po not in ORIENT:
                 ctx.not_checked.append(f"Layer direction of weapon support `{sp.id}`: no valid print_orientation")

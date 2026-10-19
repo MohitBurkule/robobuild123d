@@ -64,3 +64,56 @@ def test_plate_hole_fingerprint():
     ctx = _ctx([_plate()], {})
     holes = RC.fingerprint(ctx.world.body("plate").mesh)["holes"]
     assert len(holes) == 2 and all(abs(d - 3.2) < 0.2 and abs(r - 10) < 0.3 for d, r in holes)
+
+
+def _frame_cfg(tmp_path, p, **k):
+    return {"dir": str(tmp_path), "ref_to_world": [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]],
+            "parts": [dict({"part": "plate", "file": p.name}, **k)]}
+
+
+def test_silhouette_passes_for_the_same_shape_in_place(tmp_path):
+    p = _ref_stl(tmp_path, _plate())
+    fs = RC.run(_ctx([_plate(size=(40.2, 30.1, 3))], _frame_cfg(tmp_path, p)))
+    f = [f for f in fs if f.id == "reference_cad.silhouette"]
+    assert f and f[0].passed
+
+
+def test_silhouette_fails_on_a_shape_difference_with_matching_size(tmp_path):
+    """Same bounding box and volume class, different outline: an L-plate against a rectangle fails the IoU."""
+    p = _ref_stl(tmp_path, _plate())
+    lplate = {"id": "plate", "kind": "structure", "material": "PLA", "shape": {"type": "subtract",
+              "base": {"type": "box", "size": [40, 30, 3]},
+              "cut": [{"type": "place", "shape": {"type": "box", "size": [16, 14, 10]}, "at": [12, 8, 0]}]}}
+    fs = RC.run(_ctx([lplate], _frame_cfg(tmp_path, p)))
+    f = [f for f in fs if f.id == "reference_cad.silhouette"]
+    assert f and not f[0].passed and f[0].severity == "blocker"
+
+
+def test_silhouette_catches_misplacement_and_mirror(tmp_path):
+    p = _ref_stl(tmp_path, _plate())
+    moved = dict(_plate(size=(40.2, 30.1, 3)), at=[8, 0, 0])
+    fs = RC.run(_ctx([moved], _frame_cfg(tmp_path, p)))
+    assert any(f.id == "reference_cad.silhouette" and not f.passed for f in fs)
+    # a right-hand copy at -X matches its left-hand reference only when mirrored
+    left = dict(_plate(), at=[30, 0, 0])
+    pl = _ref_stl(tmp_path, left)
+    right = dict(_plate(size=(40.2, 30.1, 3)), at=[-30, 0, 0])
+    ok_ = RC.run(_ctx([right], _frame_cfg(tmp_path, pl, mirror_x=True)))
+    bad = RC.run(_ctx([right], _frame_cfg(tmp_path, pl)))
+    assert any(f.id == "reference_cad.silhouette" and f.passed for f in ok_)
+    assert any(f.id == "reference_cad.silhouette" and not f.passed for f in bad)
+
+
+def test_outline_only_ignores_holes(tmp_path):
+    p = _ref_stl(tmp_path, _plate())
+    solid = {"id": "plate", "kind": "structure", "material": "PLA", "shape": {"type": "box", "size": [40, 30, 3]}}
+    fs = RC.run(_ctx([solid], _frame_cfg(tmp_path, p, outline_only=True, mode="envelope")))
+    assert any(f.id == "reference_cad.silhouette" and f.passed for f in fs)
+
+
+def test_silhouette_iou_values():
+    import trimesh
+    a = trimesh.creation.box([10, 10, 10])
+    b = trimesh.creation.box([10, 10, 10]); b.apply_translation([5, 0, 0])
+    iou = RC.silhouette_iou(a, b, 0.1)
+    assert abs(iou[0] - 1.0) < 0.03 and abs(iou[1] - 1 / 3) < 0.03 and abs(iou[2] - 1 / 3) < 0.03

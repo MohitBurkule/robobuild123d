@@ -140,6 +140,22 @@ def test_disasm_service_depth():
     assert not failed(run(d, "disasm"), "disasm.service_depth")
 
 
+def test_disasm_swap_module_counts_only_the_module_release():
+    """A serviceable part inside a declared swap module counts the removals that free the module, not its bench screws."""
+    d = {"name": "t", "parts": [
+        dict(id="base", kind="structure", shape=pl(BOX(40, 40, 2), (0, 0, 1)), **PLA),
+        dict(id="carrier", kind="plate", shape=pl(BOX(20, 20, 2), (0, 0, 3)), **PLA),
+        dict(id="disc", kind="weapon", shape=pl(BOX(10, 10, 1), (0, 0, 4.5)), parent="carrier", **PLA)],
+        "fasteners": [{"id": f"m{i}", "designation": "M2x6", "at": [x, 8, 4], "dir": [0, 0, -1], "through": ["carrier"],
+                       "threads_into": "base", "tool": "hex1.5"} for i, x in enumerate((-8, 8))]
+        + [{"id": f"d{i}", "designation": "M2x4", "at": [x, 0, 5], "dir": [0, 0, -1], "through": ["disc"], "threads_into": "carrier",
+            "tool": "hex1.5"} for i, x in enumerate((-3, -1, 1, 3))],
+        "service": {"max_removals": 3}}
+    assert failed(run(d, "disasm"), "disasm.service_depth")  # m0, m1, d0..d3 = 6 removals
+    d["modules"] = [{"id": "weapon_module", "root": "carrier", "parts": ["disc"]}]
+    assert not failed(run(d, "disasm"), "disasm.service_depth")  # m0, m1 and the module
+
+
 def _belt(length, mat):
     return {"name": "t", "parts": [
         dict(id="p1", kind="pulley", shape=cyl(5, 4, rot=(0, 90, 0)), at=[0, 0, 0], **PLA),

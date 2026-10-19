@@ -36,7 +36,7 @@ parts[], fasteners[], wires[], connections[], allow_overlap[], electronics{fails
 - `fused_with`: printed as one piece with that part (same material, both printed). A wedge in PETG on a nylon shell is NOT fused.
 - Spinners: `weapon: {kind, motor, cells, reduction, spin_axis (3-element local axis array such as [0,0,1], not a letter), locking_bar}` on the weapon part; the weapon motor,
   the weapon and a `locking_bar` part must exist. Tip speed is limited to 600 mph.
-- Moving parts: `parent` plus `joint: {kind (revolute|prismatic), axis, pivot (parent frame), min, max, default}`; the verifier sweeps it.
+- Moving parts: `parent` plus `joint: {kind (revolute|prismatic), axis, pivot, min, max, default}`; the verifier sweeps it. `pivot` and `axis` are in the parent's declared frame: the parent's `at`/`rot` composed with its own parents (and their joints), the same frame the child's `at`/`rot` uses, never the catalog model's internal origin. Under a rotated parent (e.g. a servo at `rot: [90, 0, 90]`) write them in that rotated frame; with no `parent` they are world coordinates.
 
 ### shape (build123d solids)
 JSON with `"type"`; everything is centred on its own origin, use `place` to move it inside a shape:
