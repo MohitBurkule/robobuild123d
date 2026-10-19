@@ -1230,7 +1230,7 @@
      "part": "rear_hub_l"
     }
    },
-   "parent": "motor_l",
+   "parent": "tub",
    "joint": {
     "kind": "revolute",
     "axis": [
@@ -1458,7 +1458,7 @@
      "part": "rear_hub_r"
     }
    },
-   "parent": "motor_r",
+   "parent": "tub",
    "joint": {
     "kind": "revolute",
     "axis": [

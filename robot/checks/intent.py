@@ -24,7 +24,8 @@ Rules (entry keys):
   seat_locates      part (motor), host, axis [dx,dy,dz], at [x,y,z], play (0.15), turn_deg (2): the part moved radially
                     by `play` or turned by `turn_deg` about its shaft hits the host.
   tool_count        max (2), module_max (1), module [fastener ids]: distinct drivers in the teardown / module swap.
-  wire_clear_rotor  rotor [ids], axis [dx,dy,dz], at [x,y,z], min (2.0): every wire (straight proxy between its ports)
+  wire_clear_rotor  rotor [ids], axis [dx,dy,dz], at [x,y,z], min (2.0), via {wire id: [[x,y,z], ...]}: every wire
+                    (polyline proxy: its ports plus the declared via points)
                     keeps `min` from the rotor's swept volume (a cylinder of its max radius over its axial span).
 """
 
@@ -197,25 +198,37 @@ def min_gap(a, others, n=2500):
     return best
 
 
-def proud(fast, host, out, at=None, max_probe=6.0):
-    """How far the fastener stands outside the host face along `out` (<= 0 is flush or sunk)."""
+def proud(fast, host, out, at=None):
+    """How far the fastener stands outside the host face along `out` (<= 0 is flush or sunk). The face level is
+    the host's outermost surface in a ring just outside the head."""
     out = _unit(out)
     top = float((fast.vertices @ out).max())
     c = np.asarray(at if at is not None else fast.bounds.mean(0), float)
+    v = _surface(host, 20000) - c
+    s = v @ out
+    r = np.linalg.norm(v - np.outer(s, out), axis=1)
     u, _ = _perp(out)
     rh = 0.5 * float(np.ptp(fast.vertices @ u))
-    o = c + u * (rh + 0.6) + out * 50
-    loc, _, _ = host.ray.intersects_location([o], [-out], multiple_hits=False)
-    if not len(loc):
+    k = (r > rh + 0.2) & (r < rh + 2.0)
+    if not k.any():
         return None
-    return top - float(loc[0] @ out)
+    return top - float((np.percentile(s[k], 90) + c @ out))
 
 
-def first_contact(moving, fixed, d, step=0.05, reach=1.5):
-    P = _surface(moving, 2500)
+def first_contact(moving, fixed, d, step=0.05, reach=1.5, skip_seated=False):
+    """Smallest move of `moving` along d that makes it touch a fixed body. skip_seated: ignore fixed-body surface
+    already touching `moving` at rest (a screw head on its seat), so only clearance-hole contact counts."""
+    import trimesh
+
     d = _unit(d)
+    Q = []
+    for f in fixed:
+        q = _surface(f, 2500)
+        if skip_seated:
+            q = q[trimesh.proximity.closest_point(moving, q)[1] > 0.08]
+        Q.append(q)
     for s in np.arange(step, reach + 1e-9, step):
-        if any(_hits(P + s * d, f) for f in fixed):
+        if any(len(q) and _hits(q - s * d, moving) for q in Q):
             return float(s)
     return math.inf
 
@@ -320,7 +333,7 @@ def _rule(ctx, e):
     if r == "notch_bears":
         mv = _m(ctx, e["part"])
         gl = first_contact(mv, [_m(ctx, e["lug"])], e["dir"])
-        gb = first_contact(mv, [_m(ctx, b) for b in e["bolts"]], e["dir"])
+        gb = first_contact(mv, [_m(ctx, b) for b in e["bolts"]], e["dir"], skip_seated=True)
         return gl < gb, "Notch bears the hit, not the bolts", f"moving `{e['part']}` along {e['dir']}: lug contact at {gl:.2f} mm, bolt contact at {gb:.2f} mm.", e["part"], [gl, gb]
     if r == "seat_locates":
         hs = [e["host"]] if isinstance(e["host"], str) else e["host"]
@@ -341,7 +354,8 @@ def _rule(ctx, e):
                 pa, pb = [np.asarray(p[0] if isinstance(p, tuple) else p, float).reshape(-1)[:3] for p in (pa, pb)]
             except Exception:  # noqa: BLE001
                 continue
-            P = pa + np.linspace(0, 1, 40)[:, None] * (pb - pa)
+            pts = [pa] + [np.asarray(v, float) for v in (e.get("via") or {}).get(w["id"], [])] + [pb]
+            P = np.vstack([a + np.linspace(0, 1, 40)[:, None] * (b - a) for a, b in zip(pts, pts[1:])])
             g = float(swept_gap(P, e["axis"], e["at"], rmax, a0, a1).min())
             if g < worst[0]:
                 worst = (g, w["id"])
