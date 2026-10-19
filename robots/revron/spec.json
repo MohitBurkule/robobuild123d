@@ -1100,7 +1100,7 @@
    "kind": "shaft",
    "material": "steel",
    "process": "cots",
-   "stock": "GR1507 5 mm shaft (part of the motor)",
+   "stock": "GR1507 5 mm shaft (part of the motor): modelled whole, MR85 end X -18.7 through the bell to the stator base X 10.4",
    "rotates_with": "weapon",
    "shaft_of": "weapon_motor",
    "parent": "spider",
@@ -1109,10 +1109,10 @@
     "shape": {
      "type": "cylinder",
      "radius": 2.5,
-     "height": 12.2
+     "height": 29.1
     },
     "at": [
-     -12.6,
+     -4.15,
      0,
      0
     ],
@@ -6086,8 +6086,8 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
-    "cbore_depth": 2.1434,
-    "grip": 5.8934
+    "cbore_depth": 1.7637,
+    "grip": 5.5137
    },
    "dir": [
     -1,
@@ -6124,8 +6124,8 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
-    "cbore_depth": 2.5982,
-    "grip": 6.3482
+    "cbore_depth": 2.2185,
+    "grip": 5.9685
    },
    "dir": [
     -1,
@@ -6162,8 +6162,8 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
-    "cbore_depth": 1.5068,
-    "grip": 5.2568
+    "cbore_depth": 1.1271,
+    "grip": 4.8771
    },
    "dir": [
     -1,
@@ -6200,8 +6200,8 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
-    "cbore_depth": 3.2348,
-    "grip": 6.9848
+    "cbore_depth": 2.8551,
+    "grip": 6.6051
    },
    "dir": [
     -1,

@@ -312,9 +312,9 @@ def _stator_hole(s, dy, dz):
         sys.path.insert(0, _repo)
     from robot.cad.holes import hole_tool
     y, z = WY + dy, WZ + dz
-    # RV03 battered outer face |X| (STEP plane, see weapon_mount), highest point on a ring 1 mm outside the counterbore:
+    # RV03 battered outer face |X| (STEP plane, see weapon_mount), its highest point 0.7 mm off the hole axis:
     # the surface the hole is measured from on a leaning face
-    face = 23.88 - 0.144 * z - 0.0379 * y + (CB_R + 1.0) * math.hypot(0.144, 0.0379)
+    face = 23.88 - 0.144 * z - 0.0379 * y + 0.7 * math.hypot(0.144, 0.0379)
     depth = face - CB_CONE_X[1]                     # counterbore down to the STEP floor at X 17.15
     cut, rec = hole_tool((s * face, y, z), (-s, 0, 0), "M2x8", head="button", into="through", side="head",
                          grip=face - MNT_IN, cbore=depth, cbore_clear=2 * CB_R - 3.5, fit="normal")
@@ -848,8 +848,8 @@ def make_spec(model_file):
       label="GR1507 outrunner: stator on RV03, bell drives the spider")
     P(id="wbearing", kind="bearing", parent="mount_l", material="steel", process="cots", rotates_with="fixed", stock="MR85ZZ 5 x 8 x 2.5", color="#555555",
       shape=_spec_bearing(), label="MR85ZZ in the RV02 8 mm seat: outboard support of the threaded shaft end (inferred: the STEP shows the 7.9 seat but no bearing)")
-    P(id="wshaft", kind="shaft", material="steel", process="cots", stock="GR1507 5 mm shaft (part of the motor)", rotates_with="weapon", shaft_of="weapon_motor", parent="spider",
-      shape={"type": "place", "shape": {"type": "cylinder", "radius": 2.5, "height": 12.2}, "at": [-12.6, 0, 0], "rot": [0, 90, 0]}, color="#777777", solid_fraction=0.05,
+    P(id="wshaft", kind="shaft", material="steel", process="cots", stock="GR1507 5 mm shaft (part of the motor): modelled whole, MR85 end X -18.7 through the bell to the stator base X 10.4", rotates_with="weapon", shaft_of="weapon_motor", parent="spider",
+      shape={"type": "place", "shape": {"type": "cylinder", "radius": 2.5, "height": 29.1}, "at": [-4.15, 0, 0], "rot": [0, 90, 0]}, color="#777777", solid_fraction=0.05,
       label="threaded end of the GR1507 shaft through the MR85 (its mass is in the motor)")
     P(id="spider", kind="weapon", material="aluminium", process="waterjet", stock="3 mm 7075 plate (one 2D profile: water-jet, no milling needed)",
       min_web_mm=0.8, min_web_reason="0.8 mm webs between the dog pockets and the rim are the designer's own (RVRN 2.0 STEP spider_1 measures 0.8 at the same four places)", rotates_with="weapon", parent="mount_r", at=list(WO), shape=M("spider", WO),
