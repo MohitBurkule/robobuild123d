@@ -108,13 +108,23 @@ def boolean_diff(model: trimesh.Trimesh, ref: trimesh.Trimesh, min_vol=2.0, min_
             "extra": _voxel_blobs(ex, lo_, h, min_vol, min_thick), "missing": _voxel_blobs(mi, lo_, h, min_vol, min_thick)}
 
 
+def closest_dist_chunked(mesh, pts, chunk=256):
+    """Exact unsigned distance from each point to `mesh`, queried in chunks: trimesh's closest_point builds candidate
+    triangle arrays for every query point at once, which on a thin, finely filleted panel ran to ~8 GB for 8000 points."""
+    pts = np.asarray(pts, float)
+    d = np.empty(len(pts))
+    for i in range(0, len(pts), chunk):
+        d[i:i + chunk] = trimesh.proximity.closest_point(mesh, pts[i:i + chunk])[1]
+    return d
+
+
 def surface_deviation(model: trimesh.Trimesh, ref: trimesh.Trimesh, n=20000, seed=3):
     """Unsigned surface-to-surface distances both ways: {"model_to_ref": {max, p95}, "ref_to_model": {max, p95}}."""
     rng = np.random.default_rng(seed)
     out = {}
     for name, a, b in (("model_to_ref", model, ref), ("ref_to_model", ref, model)):
         pts, _ = trimesh.sample.sample_surface(a, n, seed=int(rng.integers(1 << 30)))
-        _, d, _ = trimesh.proximity.closest_point(b, pts)
+        d = closest_dist_chunked(b, pts)
         out[name] = {"max": round(float(d.max()), 3), "p95": round(float(np.percentile(d, 95)), 3)}
         out[f"_{name}_pts"] = (pts, d)
     return out
