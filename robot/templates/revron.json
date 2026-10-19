@@ -265,14 +265,14 @@
    "catalog": "n10_2200rpm_spicy"
   },
   {
-   "role": "drisk stack: 4 x M2 + nuts (not in the STEP, holes are)",
+   "role": "drisk stack: 4 x M2 into the spider (not in the STEP, holes are)",
    "match": [
     "bolt_d*"
    ],
    "count": 4,
    "designation": "M2",
-   "threads_into": "nut",
-   "deviation": "the STEP leaves the r14 stack holes empty; 4 M2x16 + nuts added so the stack is held (16 mm: stack 15 + 1 mm into the nut; M2x18 stuck out 1.4 mm past the nut, 0.6 mm from the tub lug while it spins)"
+   "threads_into": "spider",
+   "deviation": "the STEP leaves the r14 stack holes empty; 4 M2x14 added from the back, tapped into the spider (r0.8 tap holes there, the STEP r1.1 clearance elsewhere): no nuts, nothing invented beyond the screws"
   },
   {
    "role": "spider to bell: 4 x M2 (not in the STEP)",
@@ -903,7 +903,18 @@
     "part": "mount_l",
     "file": "RV02_XALT_HD_left_hand_weapon_mount_1.stl",
     "mode": "shape",
-    "tol_mm": 0.5
+    "tol_mm": 0.5,
+    "deviations": [
+     {
+      "near": [
+       -15.4,
+       44.0,
+       3.5
+      ],
+      "r": 4.0,
+      "reason": "nose pad R4.4 round the nose CSK: the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); 1.15 mm of added material at the nose underside"
+     }
+    ]
    },
    {
     "part": "mount_r",
@@ -911,6 +922,15 @@
     "mode": "shape",
     "tol_mm": 0.5,
     "deviations": [
+     {
+      "near": [
+       15.4,
+       44.0,
+       3.5
+      ],
+      "r": 4.0,
+      "reason": "nose pad R4.4 round the nose CSK: the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); 1.15 mm of added material at the nose underside"
+     },
      {
       "near": [
        16.8,
@@ -985,6 +1005,44 @@
       0.0,
       1.0
      ]
+    ],
+    "deviations": [
+     {
+      "near": [
+       -6.699999999999999,
+       30.44772759118839,
+       12.047449670300885
+      ],
+      "r": 2.0,
+      "reason": "r14 stack hole is the M2 tap drill (1.6) where the stack screws thread into the spider; the STEP shows the 2.2 clearance and no screw or nut"
+     },
+     {
+      "near": [
+       -6.699999999999999,
+       27.047449670300885,
+       31.55227240881161
+      ],
+      "r": 2.0,
+      "reason": "r14 stack hole is the M2 tap drill (1.6) where the stack screws thread into the spider; the STEP shows the 2.2 clearance and no screw or nut"
+     },
+     {
+      "near": [
+       -6.699999999999999,
+       46.55227240881161,
+       34.952550329699115
+      ],
+      "r": 2.0,
+      "reason": "r14 stack hole is the M2 tap drill (1.6) where the stack screws thread into the spider; the STEP shows the 2.2 clearance and no screw or nut"
+     },
+     {
+      "near": [
+       -6.699999999999999,
+       49.952550329699115,
+       15.447727591188393
+      ],
+      "r": 2.0,
+      "reason": "r14 stack hole is the M2 tap drill (1.6) where the stack screws thread into the spider; the STEP shows the 2.2 clearance and no screw or nut"
+     }
     ]
    },
    {
@@ -2530,74 +2588,6 @@
     -33.6,
     7.1
    ]
-  },
-  {
-   "id": "nut_d0",
-   "kind": "nut",
-   "catalog": "nut_m2",
-   "at": [
-    7.6,
-    -8.05227240881161,
-    -11.452550329699115
-   ],
-   "rot": [
-    0,
-    90,
-    0
-   ],
-   "rotates_with": "weapon",
-   "parent": "spider"
-  },
-  {
-   "id": "nut_d1",
-   "kind": "nut",
-   "catalog": "nut_m2",
-   "at": [
-    7.6,
-    -11.452550329699115,
-    8.05227240881161
-   ],
-   "rot": [
-    0,
-    90,
-    0
-   ],
-   "rotates_with": "weapon",
-   "parent": "spider"
-  },
-  {
-   "id": "nut_d2",
-   "kind": "nut",
-   "catalog": "nut_m2",
-   "at": [
-    7.6,
-    8.052272408811604,
-    11.452550329699115
-   ],
-   "rot": [
-    0,
-    90,
-    0
-   ],
-   "rotates_with": "weapon",
-   "parent": "spider"
-  },
-  {
-   "id": "nut_d3",
-   "kind": "nut",
-   "catalog": "nut_m2",
-   "at": [
-    7.6,
-    11.452550329699115,
-    -8.052272408811607
-   ],
-   "rot": [
-    0,
-    90,
-    0
-   ],
-   "rotates_with": "weapon",
-   "parent": "spider"
   },
   {
    "id": "esc_tray",
@@ -7053,40 +7043,32 @@
   },
   {
    "id": "bolt_d0",
-   "designation": "M2x16",
+   "designation": "M2x14",
    "head": "button",
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    -8.2,
+    6.8,
     30.44772759118839,
     12.047449670300885
    ],
    "dir": [
-    1,
+    -1,
     0,
     0
    ],
    "through": [
-    "spider",
-    "disc_a",
+    "disc_b",
     "dspacer",
-    "disc_b"
+    "disc_a"
    ],
-   "threads_into": "nut_d0",
+   "threads_into": "spider",
    "access_before": [
-    "mount_l",
-    "wbearing",
-    "weapon_motor",
-    "mount_r",
-    "motor_spacer",
     "tub",
-    "so_al",
-    "so_bl",
-    "so_ar",
-    "so_br"
+    "mount_r",
+    "motor_spacer"
    ],
-   "reason": "stack bolted up on the bench before it goes on the motor (inferred: the STEP has the 2.2 holes but no screws)",
+   "reason": "stack screwed into the spider from the back (heads on disc_b, 2 mm of thread in the 3 mm alu spider tapped M2): no nuts, since the STEP has none (inferred: it has the 2.2 holes but no screws)",
    "removable": true
   },
   {
@@ -7118,40 +7100,32 @@
   },
   {
    "id": "bolt_d1",
-   "designation": "M2x16",
+   "designation": "M2x14",
    "head": "button",
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    -8.2,
+    6.8,
     27.047449670300885,
     31.55227240881161
    ],
    "dir": [
-    1,
+    -1,
     0,
     0
    ],
    "through": [
-    "spider",
-    "disc_a",
+    "disc_b",
     "dspacer",
-    "disc_b"
+    "disc_a"
    ],
-   "threads_into": "nut_d1",
+   "threads_into": "spider",
    "access_before": [
-    "mount_l",
-    "wbearing",
-    "weapon_motor",
-    "mount_r",
-    "motor_spacer",
     "tub",
-    "so_al",
-    "so_bl",
-    "so_ar",
-    "so_br"
+    "mount_r",
+    "motor_spacer"
    ],
-   "reason": "stack bolted up on the bench before it goes on the motor (inferred: the STEP has the 2.2 holes but no screws)",
+   "reason": "stack screwed into the spider from the back (heads on disc_b, 2 mm of thread in the 3 mm alu spider tapped M2): no nuts, since the STEP has none (inferred: it has the 2.2 holes but no screws)",
    "removable": true
   },
   {
@@ -7183,40 +7157,32 @@
   },
   {
    "id": "bolt_d2",
-   "designation": "M2x16",
+   "designation": "M2x14",
    "head": "button",
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    -8.2,
+    6.8,
     46.552272408811604,
     34.952550329699115
    ],
    "dir": [
-    1,
+    -1,
     0,
     0
    ],
    "through": [
-    "spider",
-    "disc_a",
+    "disc_b",
     "dspacer",
-    "disc_b"
+    "disc_a"
    ],
-   "threads_into": "nut_d2",
+   "threads_into": "spider",
    "access_before": [
-    "mount_l",
-    "wbearing",
-    "weapon_motor",
-    "mount_r",
-    "motor_spacer",
     "tub",
-    "so_al",
-    "so_bl",
-    "so_ar",
-    "so_br"
+    "mount_r",
+    "motor_spacer"
    ],
-   "reason": "stack bolted up on the bench before it goes on the motor (inferred: the STEP has the 2.2 holes but no screws)",
+   "reason": "stack screwed into the spider from the back (heads on disc_b, 2 mm of thread in the 3 mm alu spider tapped M2): no nuts, since the STEP has none (inferred: it has the 2.2 holes but no screws)",
    "removable": true
   },
   {
@@ -7248,40 +7214,32 @@
   },
   {
    "id": "bolt_d3",
-   "designation": "M2x16",
+   "designation": "M2x14",
    "head": "button",
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    -8.2,
+    6.8,
     49.952550329699115,
     15.447727591188393
    ],
    "dir": [
-    1,
+    -1,
     0,
     0
    ],
    "through": [
-    "spider",
-    "disc_a",
+    "disc_b",
     "dspacer",
-    "disc_b"
+    "disc_a"
    ],
-   "threads_into": "nut_d3",
+   "threads_into": "spider",
    "access_before": [
-    "mount_l",
-    "wbearing",
-    "weapon_motor",
-    "mount_r",
-    "motor_spacer",
     "tub",
-    "so_al",
-    "so_bl",
-    "so_ar",
-    "so_br"
+    "mount_r",
+    "motor_spacer"
    ],
-   "reason": "stack bolted up on the bench before it goes on the motor (inferred: the STEP has the 2.2 holes but no screws)",
+   "reason": "stack screwed into the spider from the back (heads on disc_b, 2 mm of thread in the 3 mm alu spider tapped M2): no nuts, since the STEP has none (inferred: it has the 2.2 holes but no screws)",
    "removable": true
   },
   {
@@ -8412,11 +8370,7 @@
     "spider",
     "disc_a",
     "disc_b",
-    "dspacer",
-    "nut_d0",
-    "nut_d1",
-    "nut_d2",
-    "nut_d3"
+    "dspacer"
    ],
    "axis": [
     1,
@@ -8469,11 +8423,7 @@
     "spider",
     "disc_a",
     "disc_b",
-    "dspacer",
-    "nut_d0",
-    "nut_d1",
-    "nut_d2",
-    "nut_d3"
+    "dspacer"
    ]
   }
  ]
