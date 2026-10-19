@@ -422,19 +422,21 @@ def rear_hub(s):
     if s < 0:
         prof = [(-x, r) for x, r in prof]
     body = _revolve_x(prof, s * 30.0, (RY, RZ))
-    d = Point(RY, RZ).buffer(1.6, 48).intersection(Polygon([(RY - 3, RZ - 3), (RY + 3, RZ - 3), (RY + 3, RZ + 0.9), (RY - 3, RZ + 0.9)]))
-    # blind D-bore (flat 0.9 above the axis); M2 grub down onto the flat threading a captive M2 hex nut (catalog-sized
-    # by robot.cad.holes: clearance from the seat surface, hex pocket under it), the nut fed in through a slot open at
-    # the inner face (as the STEP); the grub is a set screw, so it gets no spec fastener (nothing for a head to seat on)
+    # D outline: R1.6 arc under a flat 0.9 above the axis; the flat carries vertices every 0.1 mm so it stays a facet
+    # strip (a two-vertex chord reads as round to section probes); a 0.02 crown keeps the facets from being merged
+    fa = math.degrees(math.asin(0.9 / 1.6))
+    hx = 1.6 * math.cos(math.radians(fa))
+    arc = [(RY + 1.6 * math.cos(math.radians(180.0 - fa + (180.0 + 2 * fa) * k / 59)),
+            RZ + 1.6 * math.sin(math.radians(180.0 - fa + (180.0 + 2 * fa) * k / 59))) for k in range(60)]
+    d = Polygon(arc + [(RY + hx - 2 * hx * k / 27, RZ + 0.9 - 0.02 * math.sin(math.pi * k / 27)) for k in range(1, 27)])   # 0.02 crown: no face merge
+    # blind D-bore (flat 0.9 above the axis); an M2 nut slot open at the inner face (STEP: 4.1 x 2, AF 4 nut + 0.1);
+    # the M2 grub threads the nut down onto the flat. Its hole is cut by robot.cad.holes as a tapped (1.6) bore so it
+    # stays inside the 1.9 mm tyre-seat flat (a 2.4 clearance hole breaks into both 45 deg ramps as knife edges);
+    # the grub is a set screw, so it gets no spec fastener (no head to seat)
     from robot.cad.holes import hole_tool
-    from robot.cad import fastener_catalog as fc
-    top = 6.0   # seat radius at the grub
-    gz0 = top - 1.6
-    grub, _rec = hole_tool((s * 34.5, RY, RZ + top), (0, 0, -1), "M2x5", head="cap", into="nut", side="thread", nut="hex",
-                           nut_fit="drop", nut_offset=top - 4.4, nut_entry="radial", nut_angle=30.0, engage=top - 0.9)
-    af, m = fc.nut(2.0, "hex")
-    w2 = (af + 0.3) / math.sqrt(3.0)   # half across-corners of the drop-in pocket: the nut slides in any way round
-    slot = _box(s * 29.0, s * 34.5, RY - w2, RY + w2, RZ + 4.4 - m - 0.2, RZ + 4.4)
+    top = 6.0   # tyre-seat radius at the grub
+    grub, _rec = hole_tool((s * 34.3, RY, RZ + top), (0, 0, -1), "M2x5", head="cap", into="tapped", side="thread", engage=top - 1.4)
+    slot = _box(s * 29.0, s * 41.0, RY - 2.05, RY + 2.05, RZ + 2.4, RZ + 4.4)
     return _S(body, _ext(d, "yz", s * 29.0, s * 41.0), slot, grub)
 
 
