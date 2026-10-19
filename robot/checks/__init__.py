@@ -34,6 +34,7 @@ GROUPS = [
     ("cots", False), ("fit", False), ("contain", False), ("disasm", False), ("coverage", False), ("bom", False),
     ("support", False),  # gravity in all 6 orientations (robot/checks/support.py)
     ("threat", False),  # combat failure modes CF-* (robot/checks/threat)
+    ("fastener_seat", False),  # head/thread vs hole geometry (robot/cad/seat.py)
 ]
 
 
