@@ -142,6 +142,87 @@ class Sweep:
         return depth, gap
 
 
+class SectorSweep(Sweep):
+    """Volume a group sweeps over a limited joint range: per (axial bin, angle bin) the radial band it passes through."""
+
+    def __init__(self, P, o, a, lo, hi, bw=0.1, abin=2.0):
+        self.o, self.a, self.bw, self.abin = o, a, bw, abin
+        self.u, self.v = basis(a)
+        n_ang = int(math.ceil(360.0 / abin))
+        self.na = n_ang
+        steps = max(int(math.ceil((hi - lo) / (abin / 2))), 1)
+        ax, rad = radial(P, o, a)
+        phi = self._phi(P)
+        self.amin, self.amax = float(ax.min()), float(ax.max())
+        n = max(int(math.ceil((self.amax - self.amin) / bw)), 1)
+        self.n = n
+        idx = np.clip(((ax - self.amin) / bw).astype(int), 0, n - 1)
+        self.rmin = np.full(n * n_ang, np.inf)
+        self.rmax = np.full(n * n_ang, -np.inf)
+        pts = []
+        for s_ in range(steps + 1):
+            d = lo + (hi - lo) * s_ / steps
+            ai = (np.floor((phi + d) / abin).astype(int)) % n_ang
+            np.minimum.at(self.rmin, idx * n_ang + ai, rad)
+            np.maximum.at(self.rmax, idx * n_ang + ai, rad)
+            R = xform.axis_angle(a, d)
+            pts.append((P - o) @ R.T + o)
+        Q = np.vstack(pts)
+        self.box = np.array([Q.min(axis=0), Q.max(axis=0)])
+        self.R = float(rad.max())
+
+    def _phi(self, P):
+        q = np.atleast_2d(P) - self.o
+        return np.degrees(np.arctan2(q @ self.v, q @ self.u)) % 360.0
+
+    def aabb(self):
+        return self.box
+
+    def classify(self, P, gapmax):
+        ax, rad = radial(P, self.o, self.a)
+        ai0 = np.floor(self._phi(P) / self.abin).astype(int) % self.na
+        depth = np.full(len(P), -np.inf)
+        gap = np.full(len(P), np.inf)
+        w = int(math.ceil(gapmax / self.bw)) + 1
+        base = np.floor((ax - self.amin) / self.bw).astype(int)
+        for da in (-1, 0, 1):
+            ai = (ai0 + da) % self.na
+            for kk in range(-w, w + 1):
+                b = base + kk
+                ok_ = (b >= 0) & (b < self.n)
+                if not ok_.any():
+                    continue
+                bi = np.clip(b, 0, self.n - 1)
+                lo_a = self.amin + bi * self.bw
+                dax = np.maximum(np.maximum(lo_a - ax, ax - (lo_a + self.bw)), 0.0)
+                rmn, rmx = self.rmin[bi * self.na + ai], self.rmax[bi * self.na + ai]
+                valid = ok_ & np.isfinite(rmn)
+                dr = np.maximum(np.maximum(rmn - rad, rad - rmx), 0.0)
+                gap = np.minimum(gap, np.where(valid, np.sqrt(dax ** 2 + dr ** 2), np.inf))
+                if kk == 0 and da == 0:
+                    inner = np.minimum(rad - rmn, rmx - rad)
+                    axd = np.minimum(ax - self.amin, self.amax - ax)
+                    depth = np.where(valid, np.minimum(inner, axd), depth)
+        return depth, gap
+
+
+def limited_range(k, g):
+    """(lo, hi) joint travel in degrees relative to the current pose, for a group that does not spin continuously; else None."""
+    if g.weapon or g.rotors or g.cls != "other" or not g.joints or belt_linked(k, g):
+        return None
+    if any(k.kind(m) in SPIN_KINDS for m in g.members):
+        return None
+    rng = None
+    for jm, *_ in g.joints:
+        j = k.parts[jm].part.joint
+        if j is None or abs(j.max - j.min) >= 360 - 1e-6:
+            return None
+        if rng is None:
+            v0 = float(k.w.joints.get(jm, j.default))
+            rng = (min(j.min, j.max) - v0, max(j.min, j.max) - v0)
+    return rng
+
+
 # ----------------------------------------------------------------------------------------------- model
 class UF:
     def __init__(self, items):
@@ -1252,6 +1333,11 @@ def balance(k):
         if g.axis is None:
             k.skip("kin.balance_static", f"{label(g)}: no axis")
             continue
+        if limited_range(k, g) is not None:
+            k.info("kin.balance_static", "Limited-range joint not spin-balanced",
+                   f"{label(g)} turns through a limited joint range, not a full spin; spinner balance does not apply.",
+                   sorted(g.members))
+            continue
         o, a = g.axis
         items = []
         for m in g.members:
@@ -1349,7 +1435,8 @@ def sweeps(k):
             continue
         bodies = [k.body(m) for m in list(g.members) + g.fasteners if k.body(m) is not None]
         P = np.vstack([b.surface(k.h)[0] for b in bodies])
-        sw = Sweep(P, g.axis[0], g.axis[1])
+        lr = limited_range(k, g)
+        sw = Sweep(P, g.axis[0], g.axis[1]) if lr is None else SectorSweep(P, g.axis[0], g.axis[1], *lr)
         gapmin = RUB_GAP[g.cls]
         ex = static_exclusions(k, g)
         box = sw.aabb()
@@ -1401,7 +1488,7 @@ def sweeps(k):
             if what == "in":
                 cid = "kin.sweep_fastener" if isf else "kin.sweep_static"
                 k.bad(cid, BLOCKER, "Static part inside a swept volume" if not isf else "Screw head/nut inside a swept volume",
-                      f"`{bid}` reaches {val:.1f} mm into the volume {label(g)} sweeps as it turns about {g.axis_src}; it hits on the first turn.",
+                      f"`{bid}` reaches {val:.1f} mm into the volume {label(g)} sweeps as it turns about {g.axis_src}; " + ("it hits on the first turn." if lr is None else f"it hits within the joint range {lr[0]:+.0f}..{lr[1]:+.0f} deg."),
                       (bid, *sorted(g.members)), at=at,
                       fix="Move or shorten it, or cut a clearance so it stays outside the swept circle with "
                           f"{gapmin} mm to spare.")

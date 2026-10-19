@@ -907,6 +907,28 @@ def load_path(a, p, origin, axis, sup):
     return out
 
 
+RIGID_JOIN = ("screw", "bolt", "bolted", "glue", "press_fit", "pin", "weld")
+
+
+def _rigid_chassis(a, exclude=None):
+    """Chassis plus every structure part rigidly joined to it (bolted, glued, pressed), e.g. both clamshell halves."""
+    seen, todo = {a.chassis.id}, [a.chassis.id]
+    struct = {p.id for p in a.spec.parts if p.kind in STRUCT and p.id != exclude}
+    while todo:
+        x = todo.pop()
+        nb = set()
+        for f in a.fasteners_of(x):
+            nb |= set(a.coupled(f))
+        for c in a.conns(x):
+            if c.method in RIGID_JOIN:
+                nb.add(c.b if c.a == x else c.a)
+        for y in nb:
+            if y in struct and y not in seen:
+                seen.add(y)
+                todo.append(y)
+    return seen
+
+
 def fork_stiffness(a, origin, axis, sup):
     out = []
     for s, (t, b, host) in sup.items():
@@ -921,10 +943,13 @@ def fork_stiffness(a, origin, axis, sup):
         boss = origin + axis * t
         # Root: centroid of the contact with the chassis or of its bolts.
         fs = a.fasteners_of(h.id)
-        pts = [np.asarray(f.at, float) for f in fs if a.chassis.id in a.coupled(f)]
-        if not pts:
-            near = h.mesh.vertices[a.chassis.distance(h.mesh.vertices[:2000]) < 0.5] if len(h.mesh.vertices) else []
-            pts = list(near)
+        rootset = _rigid_chassis(a, exclude=h.id)
+        pts = [np.asarray(f.at, float) for f in fs if rootset & set(a.coupled(f))]
+        if not pts and len(h.mesh.vertices):
+            for rid in sorted(rootset):
+                rb = a.body(rid)
+                if rb is not None:
+                    pts += list(h.mesh.vertices[rb.distance(h.mesh.vertices[:2000]) < 0.5])
         if not len(pts):
             a.ctx.not_checked.append(f"Fork stiffness of `{h.id}`: no root on the chassis found")
             continue
