@@ -154,14 +154,24 @@ def _prebuild(spec, tess):
 
 
 def _contains(mesh, Q):
-    """mesh.contains with a fixed seed: trimesh re-casts ambiguous rays along *random* directions (global RNG), so
-    without this the answer depends on whatever ran before and cached and uncached runs could differ."""
+    """mesh.contains with a fixed seed: trimesh re-casts ambiguous rays along *random* directions, so without this the
+    answer depends on whatever ran before and cached and uncached runs could differ. Older trimesh draws from the
+    global numpy RNG; trimesh >= 4.6 draws from `trimesh.util.random_generator()`, a shared Generator seeded from OS
+    entropy (not reproducible even between two runs), so both are pinned here."""
+    import trimesh.util as tu
+
     st = np.random.get_state()
     np.random.seed(12345)
+    orig = getattr(tu, "random_generator", None)
+    if orig is not None:
+        rng = np.random.default_rng(12345)
+        tu.random_generator = lambda seed=None: rng if seed is None else orig(seed)
     try:
         return mesh.contains(Q)
     finally:
         np.random.set_state(st)
+        if orig is not None:
+            tu.random_generator = orig
 
 
 def csk_dims(d):
