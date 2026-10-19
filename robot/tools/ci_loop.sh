@@ -42,7 +42,7 @@ for i in $(seq "${START_ITER:-1}" "$MAX_ITERS"); do
   [ -f "$P/blockers_live.jsonl" ] && mv "$P/blockers_live.jsonl" "$P/blockers_live.prev.jsonl"
   out="$P/ci_verify_${i}_$sha.log"
   # full verify in fresh processes per chunk (one process for all groups grew past 11 GB at `threat` and was OOM-killed)
-  all=$(python3 -m robot verify --list-groups | grep -v -x -e threat -e fastener_seat | paste -sd,)
+  all=$(python3 -m robot verify --list-groups 2>/dev/null | grep -E '^[a-z_]+$' | grep -v -x -e threat -e fastener_seat | paste -sd,)
   : > "$out"; rc=0; done_n=0
   for chunk in "$all" threat fastener_seat; do
     ROBOT_RUN_SHA=$sha ROBOT_PROGRESS_LOG="$P/verify.log" HEAVY_CI=1 /tmp/heavy.sh timeout 6000 python3 -m robot verify "$SPEC" --full --only "$chunk" --jobs "${JOBS:-2}" > "$out.part" 2>&1
