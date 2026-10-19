@@ -164,6 +164,27 @@ def builtin() -> list[CatalogEntry]:
                      minus({"type": "prism", "points": hexagon(2.75), "height": 2.4}, [cyl(1.5, 3.0)]), {}, None, {"thread_d_mm": 3.0}, "#c0c4c8"),
         CatalogEntry("heatset_m2", "insert", "M2 brass heat-set insert 3.0 mm", 0.12, "estimate", minus(cyl(1.6, 3.0), [cyl(1.0, 4.0)]),
                      {}, None, {"thread_d_mm": 2.0}, "#d4af37"),
+        # RVRN 2.0 STEP envelopes (Revron rebuild 2026-10): measured outline of the vendor models, not memory.
+        CatalogEntry("gr1507", "weapon_motor", "GR1507 outrunner (19.6 bell, stator base 19.6 x 2 with 4 M2 on 12 mm, threaded 5 mm shaft out of the bell)", 15.5, "estimate",
+                     union([at(cyl_x(9.8, 2.0), -9.4, 0, 0), at(cyl_x(4.0, 4.1), -6.35, 0, 0), at(cyl_x(9.8, 8.6), 0.0, 0, 0),
+                            at(cyl_x(7.0, 2.2), 5.4, 0, 0), at(cyl_x(2.5, 3.0), 8.0, 0, 0), at(cyl_x(2.26, 9.2), 14.1, 0, 0),
+                            at(cyl_x(0.75, 1.4), -11.1, 0, 0)]),
+                     {"phases": [-9.4, 0, -9.0]}, {"at": [6.5, 0, 0], "dir": [1, 0, 0], "len": 12.2, "dia": 5.0},
+                     {"kv": 2850, "max_current_a": 18.0, "typ_current_a": 8.0, "bell_mass_frac": 0.45}, "#3a3d42"),
+        flat("malenki_nano_rvrn2", "Malenki Nano (Rx + 2 brushed ESC), kapton wrapped with its leads (RVRN 2.0 RV13 envelope)", "esc", 32, 20, 4.4, 4.0,
+             {"bat": [-16, -6, 0], "m1": [16, 6, 0], "m2": [-16, 6, 0], "wpn": [16, -6, 0]},
+             {"cont_current_a": 3.0, "burst_current_a": 6.0, "channels": 2.0}, "#e76f51"),
+        flat("bbb_ant_esc_rvrn2", "BBB brushless ant ESC, heat-shrunk (RVRN 2.0 RV14 envelope)", "esc", 23.5, 12, 5, 3.0,
+             {"bat": [-11.75, -3, 0], "motor": [11.75, 0, 0], "rx": [-11.75, 3, 0]},
+             {"cont_current_a": 12.0, "burst_current_a": 18.0, "channels": 1.0}, "#d4af37"),
+        CatalogEntry("switch_bbb_ant_rvrn2", "switch", "BBB ant switch (RVRN 2.0 RV15): 10.6 x 5.8 x 3.5 body, 12.7 x 5.8 flange, 2.9 x 3 lever, 3 pins", 1.0, "estimate",
+                     union([at(box(10.6, 5.8, 3.5), 0, 0, 0), at(box(12.7, 5.8, 0.5), 0, 0, 2.0), at(box(2.9, 3.0, 3.2), 1.75, 0, 3.85),
+                            at(box(1.0, 3.0, 4.0), -3.0, 0, -3.75), at(box(1.0, 3.0, 4.0), 0.0, 0, -3.75), at(box(1.0, 3.0, 4.0), 3.0, 0, -3.75)]),
+                     {"in": [-3.0, 0, -5.5], "out": [0.0, 0, -5.5]}, None, {"lever_travel_mm": 3.0}, "#111111"),
+        CatalogEntry("nut_m3_thin", "nut", "M3 thin hex nut BS EN 24036 (5.5 AF x 1.8)", 0.25, "datasheet",
+                     minus({"type": "prism", "points": hexagon(2.75), "height": 1.8}, [cyl(1.5, 3.0)]), {}, None, {"thread_d_mm": 3.0}, "#aaaaaa"),
+        CatalogEntry("heatset_m2_4", "insert", "M2 brass heat-set insert 3.5 OD x 4 (FS1)", 0.15, "estimate", minus(cyl(1.75, 4.0), [cyl(1.0, 5.0)]),
+                     {}, None, {"thread_d_mm": 2.0}, "#d4af37"),
         CatalogEntry("nut_m2", "nut", "M2 hex nut", 0.1, "datasheet",
                      minus({"type": "prism", "points": hexagon(2.0), "height": 1.6}, [cyl(1.0, 3.0)]), {}, None, {"thread_d_mm": 2.0}, "#aaaaaa"),
     ]
@@ -465,4 +486,5 @@ def sheet_family(mid):
 MOTOR_FACES = {
     "bl_1806_2300kv": {"stator_face": "-x", "depth_mm": 2.0},
     "be1806_bbb": {"stator_face": "-x", "depth_mm": 3.5},
+    "gr1507": {"stator_face": "-x", "depth_mm": 2.0},
 }

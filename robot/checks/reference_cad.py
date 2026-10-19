@@ -18,6 +18,20 @@ circles and pockets. Findings:
   reference_cad.copied (BLOCKER)  the model mesh is near-identical to the reference mesh (same triangle structure and
                                   ~0 Hausdorff after alignment): geometry must come from our parametric code, not an import.
   reference_cad.unusable          file missing/unreadable or part missing -> NOT CHECKED, never a pass.
+With a frame (the reference placed in our world frame) every entry also gets:
+  reference_cad.step_placement (BLOCKER)  part bbox centre vs the reference's, in the STEP assembly frame
+                                  (`placement_tol_mm`, default 0.5).
+  reference_cad.diff (BLOCKER, shape parts)  boolean diff (ref_diff.boolean_diff): every blob of extra (model - ref) or
+                                  missing (ref - model) material over `diff_min_mm3` (2) and `diff_min_thick_mm` (0.3)
+                                  is one feature difference and must be fixed or listed in the entry's `deviations`
+                                  [{"near": [x, y, z], "r": 3, "reason": "..."}]; surface deviation max / p95 both ways
+                                  is reported. `diff_render_dir`: write a deviation heat map per part.
+  reference_cad.features (BLOCKER, shape parts)  ref_features.compare_sections: sections at 25/50/75 % on all three
+                                  axes; hole count and shape (round / D / hex / slot) matched by centroid, hole
+                                  profile along the thin axis (plain / countersink / counterbore / blind). A missing,
+                                  extra or differently shaped hole, or a countersink the other side lacks, fails
+                                  unless listed in `deviations`. Section area / IoU and fillet-vs-sharp corner
+                                  differences are reported as warnings.
 """
 
 from __future__ import annotations
@@ -282,6 +296,8 @@ def run(ctx):
                            if min(ious) >= need else
                            fail("reference_cad.silhouette", G, BLOCKER, "Part shape differs from the reference CAD", smsg).on(pid)
                            .fix("Match the outline seen along the worst axis: outline, cut-outs, heights and placement."))
+        if _cfg_has_frame(e, cfg):
+            out += _frame_checks(ctx, e, cfg, pid, fn, mod, ref)
         if e.get("at") is not None:
             lo, hi = b.aabb
             c = (np.asarray(lo) + np.asarray(hi)) / 2
@@ -290,4 +306,86 @@ def run(ctx):
             pmsg = f"`{pid}` centre {np.round(c, 1).tolist()} vs expected {e['at']} ({d:.1f} mm, tol {at_tol})"
             out.append(ok("reference_cad.placement", G, "Part placed as in the reference", pmsg).on(pid) if d <= at_tol else
                        fail("reference_cad.placement", G, WARNING, "Part placed differently from the reference", pmsg).on(pid))
+    return out
+
+
+def _covered(pt, e):
+    """A diff at `pt` (3D) explained by one of the entry's `deviations` -> its reason, else None."""
+    for d in e.get("deviations") or []:
+        if d.get("near") is not None and np.linalg.norm(np.asarray(pt, float) - np.asarray(d["near"], float)) <= float(d.get("r", 3.0)):
+            return d.get("reason") or "listed"
+    return None
+
+
+def _pt3(ax_name, h, uv):
+    ax = "XYZ".index(ax_name)
+    a, b = [i for i in range(3) if i != ax]
+    p = [0.0, 0.0, 0.0]
+    p[ax], p[a], p[b] = h, uv[0], uv[1]
+    return p
+
+
+def _frame_checks(ctx, e, cfg, pid, fn, mod, ref):
+    from . import ref_diff, ref_features
+
+    out = []
+    rw = ref_in_world(ref, e, cfg)
+    cm = (mod.bounds[0] + mod.bounds[1]) / 2
+    cr = (rw.bounds[0] + rw.bounds[1]) / 2
+    d = float(np.linalg.norm(cm - cr))
+    tol = float(e.get("placement_tol_mm", cfg.get("placement_tol_mm", 0.5)))
+    msg = f"`{pid}` bbox centre {np.round(cm, 2).tolist()} vs STEP {np.round(cr, 2).tolist()} ({d:.2f} mm, tol {tol})"
+    out.append(ok("reference_cad.step_placement", G, "Part sits where the STEP assembly puts it", msg).on(pid) if d <= tol else
+               fail("reference_cad.step_placement", G, BLOCKER, "Part placed differently from the STEP assembly", msg).on(pid)
+               .fix("Move the part (or its features) to the STEP placement."))
+    if e.get("mode", "shape") != "shape":
+        return out
+    try:
+        bd = ref_diff.boolean_diff(mod, rw, float(e.get("diff_min_mm3", cfg.get("diff_min_mm3", 2.0))),
+                                   float(e.get("diff_min_thick_mm", cfg.get("diff_min_thick_mm", 0.3))))
+        dev = ref_diff.surface_deviation(mod, rw, 8000)
+    except Exception as ex:  # noqa: BLE001 - fail closed
+        out.append(fail("reference_cad.diff", G, BLOCKER, "Geometric diff crashed", f"`{pid}` vs `{fn}`: {ex}").on(pid))
+        return out
+    rdir = e.get("diff_render_dir", cfg.get("diff_render_dir"))
+    if rdir:
+        try:
+            Path(rdir).mkdir(parents=True, exist_ok=True)
+            ref_diff.render_deviation(dev, str(Path(rdir) / f"{pid}.png"), pid)
+        except Exception:  # noqa: BLE001 - render is optional
+            pass
+    open_, expl = [], []
+    for kind in ("extra", "missing"):
+        for b in bd[kind]:
+            why = _covered(b["centroid"], e)
+            (expl if why else open_).append(f"{kind} {b['volume_mm3']} mm3 (t {b['thick_mm']}) at {b['centroid']}" + (f" [{why}]" if why else ""))
+    ctx.metrics.setdefault(f"reference_cad.{pid}", {})["diff"] = {k: bd[k] for k in ("method", "extra_mm3", "missing_mm3")} | {
+        "blobs_open": len(open_), "blobs_explained": len(expl),
+        "dev": {k: v for k, v in dev.items() if not k.startswith("_")}}
+    dmsg = (f"`{pid}` vs `{fn}` ({bd['method']}): extra {bd['extra_mm3']} mm3, missing {bd['missing_mm3']} mm3; surface deviation "
+            f"model->ref max {dev['model_to_ref']['max']} / p95 {dev['model_to_ref']['p95']} mm, ref->model max {dev['ref_to_model']['max']} / "
+            f"p95 {dev['ref_to_model']['p95']} mm. Unexplained blobs: {open_[:12]}{' ...' if len(open_) > 12 else ''}. Explained: {len(expl)}.")
+    out.append(ok("reference_cad.diff", G, "Every geometric difference from the reference is fixed or reasoned", dmsg).on(pid) if not open_ else
+               fail("reference_cad.diff", G, BLOCKER, "Unexplained geometric differences from the reference", dmsg).on(pid)
+               .fix("Each blob is one feature difference: fix it, or list it in the entry's `deviations` with the reason."))
+    try:
+        fd, st = ref_features.compare_sections(mod, rw)
+    except Exception as ex:  # noqa: BLE001
+        out.append(fail("reference_cad.features", G, BLOCKER, "Feature comparison crashed", f"`{pid}`: {ex}").on(pid))
+        return out
+    hard = [x for x in fd if x["severity"] == "blocker" and not _covered(_pt3(x["axis"], x["h"], x["at"]), e)]
+    soft = [x for x in fd if x["severity"] != "blocker"]
+    ncorner = sum(1 for x in soft if x["kind"] == "corner")
+    ctx.metrics.setdefault(f"reference_cad.{pid}", {})["features"] = {"stats": st, "blockers": len(hard), "warnings": len(soft), "corner_diffs": ncorner}
+    fmsg = (f"`{pid}`: {st['sections']} sections, {st['holes_ref']} reference / {st['holes_model']} model hole cuts. "
+            + (f"Feature differences: {[x['msg'] for x in hard][:10]}" if hard else "Holes, hole shapes and countersinks match."))
+    out.append(ok("reference_cad.features", G, "Holes, hole shapes and countersinks match the reference", fmsg).on(pid) if not hard else
+               fail("reference_cad.features", G, BLOCKER, "Hole / countersink features differ from the reference", fmsg).on(pid)
+               .fix("Match the hole (count, round / D / hex / slot, countersink) or list it in `deviations` with the reason."))
+    if soft:
+        out.append(fail("reference_cad.sections", G, WARNING, "Cross-sections differ from the reference",
+                        f"`{pid}`: {len(soft) - ncorner} section area/IoU/hole-size differences, {ncorner} corner (fillet/chamfer) differences: "
+                        f"{[x['msg'] for x in soft if x['kind'] != 'corner'][:6]}").on(pid))
+    else:
+        out.append(ok("reference_cad.sections", G, "Cross-sections match the reference", f"`{pid}`: all sections within tolerance").on(pid))
     return out
