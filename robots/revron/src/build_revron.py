@@ -612,7 +612,8 @@ def wedgelet(s):
     sh = sh if s < 0 else _mirror_x(sh)
     # the STEP leaves the fork tine and the mount boss inside the TPU nose; cut their seats (the tine slides into a
     # 1.5 mm slit, the TPU nose tab bears on the mount)
-    return _S(sh, _fork_slot(s), weapon_mount("l" if s < 0 else "r"))
+    # the nose tab grazes the chassis lug by 0.1 mm: take the chassis out of it (a printed TPU nose conforms)
+    return _S(sh, _fork_slot(s), weapon_mount("l" if s < 0 else "r"), chassis())
 
 
 # ------------------------------------------------------------------------------------------------------------ side panel
@@ -986,6 +987,57 @@ def chassis():
     return _U(body, *ribs)
 
 
+# belt guard (not in the STEP: the RVRN 2.0 O-rings run open in the slot between tub wall and side panel; shielded here
+# so a spinner tooth or debris cannot reach them from above or through that slot)
+BG = dict(clear=0.6,        # roof underside above the O-ring's top run
+          t=1.3,            # roof thickness
+          x_in=CH["x"],     # inner face glued on the tub side wall
+          x_out=32.0,       # outer edge: covers the 30.8..31.8 O-ring; 1.2 mm over the front tyre top
+          x_out_rear=31.5,  # beside the rear tyre (inner face |X| 32.5): 1 mm running clearance
+          x_foot=27.9,      # rear foot reaches in over the deck chamfer, 0.2 off the top panel (|X| 27.7)
+          z_min=12.0,       # front: 1 mm over the front tyre top (Z 11)
+          z_max=20.1,       # rear: over the rear pulley wrap (O-ring top Z 19.5)
+          y0=-40.0, y1=36.2)
+
+
+def _belt_top(y):
+    """Z of the O-ring's top at Y (outer belt hull: rear hub R 8.5, front hub R 4.7)."""
+    from shapely.geometry import LineString, Point
+    hull = Point(RY, RZ).buffer(8.5, 64).union(Point(*SA).buffer(4.7, 48)).convex_hull
+    yy = min(max(y, hull.bounds[0] + 0.05), hull.bounds[2] - 0.05)
+    seg = hull.intersection(LineString([(yy, -50.0), (yy, 50.0)]))
+    return seg.bounds[3]
+
+
+def belt_guard(s):
+    """PLA roof over the O-ring: follows its top run at BG clear, clamped between the front-tyre and rear-pulley
+    heights; glued along the tub side wall (and, at the rear, on the deck chamfer). Clears the side panel by 0.2."""
+    from shapely.geometry import Polygon
+    ys = [BG["y0"] + i * 0.5 for i in range(int((BG["y1"] - BG["y0"]) / 0.5) + 1)]
+    zb = [BG["z_max"] if y <= RY else min(max(_belt_top(y) + BG["clear"], BG["z_min"]), BG["z_max"]) for y in ys]   # flat over the rear wrap
+    prof = Polygon([(y, z) for y, z in zip(ys, zb)] + [(y, z + BG["t"]) for y, z in reversed(list(zip(ys, zb)))])
+    roof = _ext(prof, "yz", BG["x_foot"], BG["x_out"])
+    c = CH
+    x, y0, y1, z0, z1 = c["x"], c["y0"], c["y1"], c["z0"], c["z1"]
+    # glue web/foot under the roof's inner edge: down the tub wall face, and onto the deck chamfer at the rear
+    fy = [(y, z) for y, z in zip(ys, zb) if y0 + 3.0 <= y <= y1 - 4.0]
+    foot = _ext(Polygon([(y, min(z1 - 2.5, z - 3.0)) for y, z in fy] + [(y, z + 0.5) for y, z in reversed(fy)]), "yz", BG["x_foot"], x + 0.5)
+    roof = _U(roof, foot)
+    # tub envelope (box + 2 mm top chamfer, as chassis()) and the side panel moved 0.2 inboard come out of it
+    b = _b()
+    plan = _round(Polygon([(-x, y0), (x, y0), (x, y1), (-x, y1)]), r_out=2.0)
+    top = _round(Polygon([(-x + 2, y0 + 2), (x - 2, y0 + 2), (x - 2, y1 - 2), (-x + 2, y1 - 2)]), r_out=0.5)
+    lo = _face(plan, "xy")[0].outer_wire().moved(b.Location((0, 0, z1 - 2.0)))
+    hi = _face(top, "xy")[0].outer_wire().moved(b.Location((0, 0, z1)))
+    tub = _U(_ext(plan, "xy", z0 - 2.0, z1 - 2.0), b.Solid.make_loft([lo, hi], ruled=True))
+    sp = side_panel(1).moved(_b().Location((-0.2, 0.0, 0.0)))
+    rt = 10.75 + 1.0   # rear tyre radius + running clearance
+    g = _S(roof, tub, sp, _box(BG["x_foot"] - 1, x, -22.0, 60.0, 0.0, 30.0),   # inboard foot only where the roof is above the deck
+           _box(BG["x_out_rear"], BG["x_out"] + 1, RY - rt, RY + rt, 0.0, 30.0),
+           _cyl(8.6, x - 0.1, BG["x_out"] + 1, (RY, RZ)))      # rear hub flange (R 8.0): web stops short of it   # foot only over the tub
+    return g if s > 0 else _mirror_x(g)
+
+
 def esc_tray():
     """TPU tray glued to the base panel under the weapon ESC (not in the STEP, where kapton alone holds it): two rails carry
     the board 0.1 mm off, 1 mm lips 0.1 mm off its -x / +x / +y sides (leads leave above the lips at the board mid-plane).
@@ -1049,6 +1101,7 @@ PARTS = {
     "so_a_l": lambda: standoff((-SA_X[1], -SA_X[0]), SA), "so_a_r": lambda: standoff(SA_X, SA),
     "so_b_l": lambda: standoff((-SB_X[1], -SB_X[0]), SB), "so_b_r": lambda: standoff(SB_X, SB),
     "weapon_lock": weapon_lock, "esc_tray": esc_tray,
+    "belt_guard_l": lambda: belt_guard(-1), "belt_guard_r": lambda: belt_guard(1),
 }
 
 
@@ -1124,6 +1177,10 @@ def make_spec(model_file):
           label=f"RV1{7 if s < 0 else 8} TPU wedgelet: 50 deg ramp over the nose, cheeks round both standoffs and the fork tail")
         P(id=f"side_{n}", kind="armor", material="tpu", process="fdm", solid_fraction=0.9, print_orientation="+z", parent=f"so_a{n}", rotates_with="fixed", color="#3c4048", shape=M(f"side_panel_{n}"),
           label=f"RV2{3 if s < 0 else 4} TPU side panel: battered S-wall round the wheels, 3 M3x8 CSK (two standoff ends, one chassis nut)")
+        P(id=f"belt_guard_{n}", kind="armor", material="pla_st", process="fdm", print_orientation="-x" if s < 0 else "+x", rotates_with="fixed", color="#2a2c30",
+          shape=M(f"belt_guard_{n}"),
+          label="PLA belt guard (not in the STEP): roof over the O-ring slot between tub wall and side panel, glued to the tub side wall")
+        C(f"belt_guard_{n}", "tub", "glue", "PLA guard web/foot CA-glued along the tub side wall and deck chamfer")
         P(id=f"nut_c{n}", kind="nut", catalog="nut_m3_thin", at=[s * 28.6, NUT[0], NUT[1]], rot=[0, 90, 0], rotates_with="fixed")
         # drive
         rot = [0, 0, 0] if s > 0 else [0, 0, 180]
@@ -1343,7 +1400,8 @@ REF_BOM = [   # RVRN 2.0 STEP part list (research/rvrn_step/INDEX.txt); one row 
     dict(role="switch: 2 x M2 into the deck pilot holes (not in the STEP)", match=["bolt_sw*"], count=2, designation="M2",
          deviation="the STEP has the two 1.7 pilot holes but no screws"),
     dict(role="weapon lock RV00 (TPU, Build Guide)", kind="part", match=["weapon_lock"], count=1, material="tpu"),
-    dict(role="nitrile O-ring belts (not in the STEP; hub grooves are)", kind="part", match=["belt_*"], count=2),
+    dict(role="nitrile O-ring belts (not in the STEP; hub grooves are)", kind="part", match=["belt_l", "belt_r"], count=2),
+    dict(role="PLA belt guards over the O-ring slots (not in the STEP)", kind="part", match=["belt_guard_*"], count=2),
     dict(role="battery lead: JST RCY", kind="wire", match=["w_bat_sw"], count=1, connector="jst_rcy"),
     dict(role="weapon phases: 3 x 2 mm bullets", kind="wire", match=["w_wesc_m"], count=1, connector="bullet2"),
 ]

@@ -577,6 +577,43 @@ def m_weapon(ctx, s, T, F):
     T["vs06.bolts"] = min(bolts) if bolts else None
 
 
+BELT_SLOT_FRAC = 0.02  # share of a belt's outward-facing surface an attacker may see through gaps before it counts as exposed
+
+
+def _belt_slots(s, n=600):
+    """Belts seen through a gap narrower than the z-buffer cell (a 1 mm slot between tub and side panel): exact ray
+    casts from the skin directions against every other body. A belt sample counts when it faces the attacker and no
+    other part is hit on the way in."""
+    import trimesh
+
+    belts = [i for i, b in enumerate(s.bodies) if b.kind == "belt"]
+    if not belts:
+        return []
+    out = []
+    dirs = [A.travel_dir(b, e) for b in range(0, 360, 30) for e in (0.0, 30.0)] + [A.travel_dir(0, 90.0)]
+    for bi in belts:
+        occ = trimesh.util.concatenate([b.mesh for j, b in enumerate(s.bodies) if j != bi and b.mesh is not None and len(b.mesh.faces)])
+        m = np.flatnonzero(s.O == bi)
+        if not len(m):
+            continue
+        m = m[np.linspace(0, len(m) - 1, min(n, len(m))).astype(int)]
+        P, N = s.P[m], s.N[m]
+        seen = np.zeros(len(m), bool)
+        for d in dirs:
+            f = (N @ -d) > 0.3
+            if not f.any():
+                continue
+            o = P[f] - d * 300.0
+            loc, idx, _ = occ.ray.intersects_location(o, np.tile(d, (len(o), 1)), multiple_hits=False)
+            hit = np.zeros(len(o), bool)
+            if len(idx):
+                hit[idx[np.linalg.norm(loc - o[idx], axis=1) < 299.9]] = True
+            seen[np.flatnonzero(f)[~hit]] = True
+        if seen.mean() > BELT_SLOT_FRAC:
+            out.append(s.bodies[bi].id)
+    return out
+
+
 def m_exposure(ctx, s, T):
     """ST01/ST02/ST05, DB03, DB05: what the outer skin is made of and how thick it is."""
     fs = np.zeros(len(s.P), bool)
@@ -584,7 +621,8 @@ def m_exposure(ctx, s, T):
         fs |= view(s, brg)
     fs &= s.face & ~s.is_rotor & ~s.is_wheel & ~s.is_fast
     sk = skin(s)
-    T["db03.visible"] = sorted({s.bodies[i].id for i in np.unique(s.O[sk]) if s.bodies[i].kind in ("belt", "pulley")})
+    T["db03.visible"] = sorted({s.bodies[i].id for i in np.unique(s.O[sk]) if s.bodies[i].kind in ("belt", "pulley")}
+                               | set(_belt_slots(s)))
     T["db05.visible"] = sorted({s.bodies[i].id for i in np.unique(s.O[sk]) if s.bodies[i].kind in ("motor", "weapon_motor")})
     brittle, thin, st1 = [], [], []
     F_imp = ph.impact_n(ctx) * 0.25
