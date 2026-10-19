@@ -195,7 +195,7 @@ def render_array(world, view: View, ground_z=None, markers=()) -> np.ndarray | N
         N = np.where((facing > 0)[:, None], -N, N)  # two-sided (caps and open meshes)
         lam = np.clip(N @ light, 0, None)
         rim = (1 - np.clip(-(N @ cam.dir), 0, 1)) ** 2 * 0.25
-        k = 0.32 + 0.68 * lam - rim * 0.3
+        k = 0.5 + 0.55 * lam - rim * 0.25
         base = np.asarray(b.color or [200, 200, 200], float)
         cols = np.clip(base[None, :] * k[:, None], 0, 255).astype(np.uint8)
         S = cam.project(T.reshape(-1, 3)).reshape(-1, 3, 3)
@@ -319,6 +319,54 @@ def without_lid(world, spec):
     return w
 
 
+# material palette for presentation renders: light, distinct colours per material family
+MATERIAL_COLORS = {
+    "pla": "#6b7078", "petg": "#6b7078", "nylon": "#7a7f87", "cf": "#5c6067",
+    "tpu": "#ff8a2a", "titanium": "#c9cdd3", "aluminium": "#d4d8dd", "aluminum": "#d4d8dd", "steel": "#b9bec5",
+    "hardox": "#e2e5e9", "brass": "#d8b45a", "rubber": "#3e4146",
+}
+STRUCTURE_COLOR = "#5a5e66"  # tub/base: dark grey, still readable
+
+
+def _material_color(mat):
+    from .world import parse_color
+
+    m = str(mat or "").lower()
+    for k, c in MATERIAL_COLORS.items():
+        if k in m:
+            return parse_color(c)
+    return None
+
+
+def material_palette(world, spec):
+    """Recolour bodies by material (metal silver, TPU orange, printed structure dark grey); bodies with no
+    known material keep their colour, lifted if it is near black."""
+    from .world import World
+
+    raw = spec.raw if hasattr(spec, "raw") else spec
+    mats = {p["id"]: p.get("material") for p in raw.get("parts") or []}
+    kinds = {p["id"]: p.get("kind") for p in raw.get("parts") or []}
+    fmat = {f.get("id"): f.get("material") or "steel" for f in raw.get("fasteners") or []}
+    out = []
+    for b in world.bodies:
+        c = _material_color(mats.get(b.id) or fmat.get(b.id))
+        if c is not None and kinds.get(b.id) == "structure":
+            c = _material_color("pla") if "pla" in str(mats.get(b.id)) else c
+            if b.id in ("tub", "base_panel"):
+                from .world import parse_color
+                c = parse_color(STRUCTURE_COLOR)
+        if c is None:
+            c = list(b.color or [200, 200, 200])
+            if sum(c) < 180:
+                c = [min(255, int(v * 1.6) + 40) for v in c]
+        nb = b.placed(b.M)
+        nb.color = c
+        out.append(nb)
+    w = World(out, world.joints)
+    w.plan = getattr(world, "plan", {})
+    return w
+
+
 def _ground(spec, world):
     if spec.ground_z is not None:
         return float(spec.ground_z)
@@ -341,6 +389,8 @@ def cli(a):
     w, rep, _ = world_for(s, checks.Options(deep=not a.quick, fast=a.fast))
     if a.no_lid:
         w = without_lid(w, s)
+    if a.palette == "material":
+        w = material_palette(w, s)
     marks = failure_markers(rep) if a.markers else []
     if a.markers:
         for i, f in enumerate([f for f in rep.findings if not f.passed], 1):
@@ -359,5 +409,7 @@ def add_cli(sub):
     p.add_argument("--width", type=int, default=1100)
     p.add_argument("--fast", action="store_true")
     p.add_argument("--quick", action="store_true", help="skip slow sweeps (no wire routes drawn)")
+    p.add_argument("--palette", choices=("material", "spec"), default="material",
+                   help="material: light per-material colours (default); spec: colours as written in the spec")
     p.add_argument("--no-lid", action="store_true", help="leave out lid/cover/top-panel parts and their bolts")
     p.set_defaults(func=cli)

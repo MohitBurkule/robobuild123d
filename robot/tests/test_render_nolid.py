@@ -38,3 +38,17 @@ def test_revron_spec_nolid_drops_top_panel_and_bolts():
         return
     d = render.lid_ids(json.loads(p.read_text()))
     assert "top_panel" in d and {"bolt_t0", "bolt_t1", "bolt_t2", "bolt_t3"} <= d
+
+
+def test_material_palette_light_and_distinct():
+    spec = {"parts": [{"id": "tub", "kind": "structure", "material": "pla_st"},
+                      {"id": "side_l", "kind": "armor", "material": "tpu"},
+                      {"id": "fork_l", "kind": "fork", "material": "titanium"}],
+            "fasteners": [{"id": "bolt_b0"}]}
+    ids = ["tub", "side_l", "fork_l", "bolt_b0"]
+    w = World([Body(i, "x", None, np.eye(4), [20, 20, 20], n, False) for n, i in enumerate(ids)], {})
+    c = {b.id: tuple(b.color) for b in render.material_palette(w, spec).bodies}
+    assert len(set(c.values())) == 4
+    assert c["side_l"][0] > 200 and c["side_l"][2] < 100  # TPU orange
+    assert min(c["fork_l"]) > 180 and min(c["bolt_b0"]) > 160  # metal silver
+    assert 60 < sum(c["tub"]) / 3 < 120  # tub dark grey, not black
