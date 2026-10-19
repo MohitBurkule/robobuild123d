@@ -17,6 +17,19 @@ Source: `research/rvrn_step/rvrn_2.0.step` (the designer's assembly) with per-pa
 
 
 
+### Weapon-module deviations and kept STEP features (fix-B)
+- **Kept: knife edge at the top of each weapon-mount notch** (RV02 Y 9.0 / RV03 Y 10.17, Z 19.5). The STEP mount profile runs
+  its upper tangent from the axis circle straight down to the chassis deck line, so the tip tapers to zero where it lies
+  on the deck front. It exists because the mount's top edge is one tangent line from the axis boss down to the deck, so
+  the mount covers the deck front edge with no step for an opponent's edge to catch. Printed, the
+  sliver is just the first perimeters lying on the chassis deck, which supports it, and it carries no load. Blunting it to the 0.9 mm
+  FDM minimum would cut 1.75 mm (RV03) / 2.4 mm (RV02) off the tip, more than the 0.5 mm reference tolerance, so it stays as in the STEP;
+  `mfg.thin_wall` on mount_l / mount_r there is this feature.
+- RV03 stator counterbores: STEP d4.5 from X 17.15, but the STEP's lead-in cone below it is left out so the button heads
+  have a flat seat; the holes are catalog cuts (robot.cad.holes), d2.4 ISO 273 clearance.
+- RV02 / RV03 standoff screws: catalog ISO 10642 countersink d7.0 (STEP 6.2 = DIN 7991 head), clearance 3.4.
+- RV02: d3.9 bore for the RV00 TPU lock pin (press fit), not in the STEP.
+
 ## Sources
 - **Project SVRN** by Shoverobotics, Printables model 1272536, licence CC-BY. Files used: `SVRN 4.0.step` (id 5310763) and `SVRN Belted.step` (id 6476965), both SolidWorks 2026 exports. These files were measured only and are not stored in the repo. Attribution: "Project SVRN Combat Robot" © Shoverobotics, CC-BY 4.0.
 - Bristol Bot Builders forum, the Revron build diary (images in `photos/`).
