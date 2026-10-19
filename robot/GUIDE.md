@@ -495,3 +495,7 @@ one param. Genuinely organic data (B-spline control points traced from a referen
 `# param: organic <reason>` on/above the `def`, or around a region closed by `# param: end`, or in spec
 `param_exempt: [{"func": ..., "reason": ...}]`; an exemption without a reason is a BLOCKER. Metric:
 `param.literal_count`. Per-function table: `python -m robot.checks.param_lint <spec.json> [N]`.
+Structure warnings in the same group: `param.pattern` (>= 3 literal points on a row/grid/circle: use
+`GridLocations`/`PolarLocations` from a named pitch/radius/count), `param.mirror` (a `*_left`/`*_right` or `_l`/`_r`
+function pair both built from literals with no `mirror()`: build one side and mirror it), `param.placement`
+(`translate`/`moved`/`Location`/`Pos` with all-literal coords: place by Joint/mate or relative to a named feature).

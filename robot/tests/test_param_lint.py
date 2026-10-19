@@ -85,3 +85,25 @@ def test_spec_level_findings(tmp_path):
     assert any(f.id == "param.exempt_reason" and not f.passed for f in out)
     out, _ = P.lint_spec(_spec(tmp_path, BAD, {"review": {"param": {"max_literals": 10}}}))
     assert not any(f.id == "param.literals" and not f.passed for f in out)
+
+
+def test_pattern_detection():
+    assert P.pattern_of([[0, 0], [5, 0], [10, 0]]) == "row"
+    assert P.pattern_of([[0, 0], [5, 0], [0, 5], [5, 5]]) == "grid"
+    assert P.pattern_of([[10, 0], [0, 10], [-10, 0], [0, -10]]) == "circle"
+    assert P.pattern_of([[1.3, 4.7], [5.9, 8.1], [9.2, 3.3]]) is None
+    r = P.lint_source("HOLES = [(12.0, 3.0), (24.0, 3.0), (36.0, 3.0)]\nOK = [(1.3, 4.7), (5.9, 8.1), (9.2, 3.3)]\n")
+    assert [p[1] for p in r["patterns"]] == ["row"]
+
+
+def test_mirror_pairs():
+    bad = "def arm_left():\n    return box(3.3, 4.4)\ndef arm_right():\n    return box(3.3, 4.4)\n"
+    good = "def arm_left():\n    return box(3.3, 4.4)\ndef arm_right():\n    return arm_left().mirror(YZ)\n"
+    assert P.lint_source(bad)["mirror_pairs"] == [("arm_left", "arm_right")]
+    assert P.lint_source(good)["mirror_pairs"] == []
+
+
+def test_literal_placement():
+    bad = "def place(p):\n    return p.translate((17.5, -4.2, 3.0))\n"
+    good = "def place(p, hub):\n    return p.translate(hub.center())\n"
+    assert P.lint_source(bad)["placements"] and not P.lint_source(good)["placements"]

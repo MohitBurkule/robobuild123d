@@ -66,6 +66,89 @@ def _organic(lines):
     return exempt, fn_marks, bad
 
 
+PLACE_CALLS = {"translate", "moved", "move", "located", "locate", "Location", "Pos", "Locations", "translated"}
+SIDES = [("left", "right"), ("_l", "_r"), ("_lh", "_rh"), ("Left", "Right")]
+
+
+def _point(node):
+    if isinstance(node, (ast.Tuple, ast.List)) and len(node.elts) in (2, 3):
+        vs = [_num(e) for e in node.elts]
+        if all(v is not None for v in vs):
+            return [float(v) for v in vs]
+    return None
+
+
+def _uniform(vals, tol=1e-6):
+    vals = sorted(set(round(v, 6) for v in vals))
+    if len(vals) < 2:
+        return len(vals)
+    d = [b - a for a, b in zip(vals, vals[1:])]
+    return len(vals) if max(d) - min(d) <= tol + 1e-3 * abs(d[0]) else 0
+
+
+def pattern_of(pts):
+    """'row' | 'grid' | 'circle' | None for >= 3 literal points (2D/3D, same dim)."""
+    if len(pts) < 3 or len({len(p) for p in pts}) != 1:
+        return None
+    dim = len(pts[0])
+    if len({tuple(p) for p in pts}) != len(pts):
+        return None
+    counts = [_uniform([p[i] for p in pts]) for i in range(dim)]
+    varying = [c for c in counts if c != 1]
+    if all(counts) and len(varying) == 1 and varying[0] == len(pts):
+        return "row"
+    if all(counts) and len(varying) >= 2 and len(pts) == __import__("math").prod(varying) and len(pts) >= 4:
+        return "grid"
+    c = [sum(p[i] for p in pts) / len(pts) for i in range(dim)]
+    rs = [sum((p[i] - c[i]) ** 2 for i in range(dim)) ** 0.5 for p in pts]
+    if min(rs) > 1e-6 and (max(rs) - min(rs)) <= 0.01 * max(rs) and len(pts) >= 4:
+        return "circle"
+    if len(pts) == 3 and min(rs) > 1e-6 and (max(rs) - min(rs)) <= 0.01 * max(rs):
+        import math  # equilateral triangle = 3-point bolt circle
+        d = [math.dist(pts[i], pts[(i + 1) % 3]) for i in range(3)]
+        if max(d) - min(d) <= 0.01 * max(d):
+            return "circle"
+    return None
+
+
+def _structure(tree, funcs):
+    """Literal point patterns, L/R pairs not using mirror, literal placements."""
+    patterns, placements = [], []
+    for n in ast.walk(tree):
+        if isinstance(n, (ast.List, ast.Tuple)) and len(n.elts) >= 3:
+            pts = [_point(e) for e in n.elts]
+            if all(pts):
+                k = pattern_of(pts)
+                if k:
+                    patterns.append((n.lineno, k, len(pts)))
+    owner = {}
+    for fn in ast.walk(tree):
+        if isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            for n in ast.walk(fn):
+                owner.setdefault(id(n), fn.name)
+    for n in ast.walk(tree):
+        if isinstance(n, ast.Call):
+            nm = n.func.attr if isinstance(n.func, ast.Attribute) else getattr(n.func, "id", None)
+            if nm in PLACE_CALLS and n.args:
+                a = n.args[0]
+                pt = _point(a) or ([_num(x) for x in n.args] if len(n.args) in (2, 3) and all(_num(x) is not None for x in n.args) else None)
+                if pt and any(v not in TRIVIAL for v in pt):
+                    placements.append((n.lineno, owner.get(id(n), "<module>"), nm))
+    srcs = {}
+    for fn in ast.walk(tree):
+        if isinstance(fn, (ast.FunctionDef, ast.AsyncFunctionDef)):
+            srcs[fn.name] = any(isinstance(c, ast.Call) and (getattr(c.func, "attr", None) or getattr(c.func, "id", "")) in
+                                ("mirror", "mirrored", "Mirror") for c in ast.walk(fn))
+    pairs = []
+    for a in srcs:
+        for l, r in SIDES:
+            if l in a:
+                b = a.replace(l, r)
+                if b in srcs and not (srcs[a] or srcs[b]) and funcs.get(a, {}).get("count") and funcs.get(b, {}).get("count"):
+                    pairs.append((a, b))
+    return patterns, sorted(set(pairs)), placements
+
+
 def lint_source(text, exempt_funcs=None):
     """Scan one source. Returns {"funcs": {name: {"count", "lines", "density", "worst", "exempt"}}, "values": {v: [lines]},
     "problems": [(line, msg)]}."""
@@ -115,7 +198,10 @@ def lint_source(text, exempt_funcs=None):
     for node in tree.body:
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
             visit_fn(node, node.name, False)
-    return {"funcs": funcs, "values": dict(values), "problems": problems}
+    patterns, pairs, placements = _structure(tree, funcs)
+    patterns = [p for p in patterns if p[0] not in ex_lines]
+    return {"funcs": funcs, "values": dict(values), "problems": problems, "patterns": patterns, "mirror_pairs": pairs,
+            "placements": [p for p in placements if p[0] not in ex_lines]}
 
 
 def sources(spec):
@@ -166,6 +252,19 @@ def lint_spec(spec):
                                 f"{name}: {v!r} appears {len(lns)}× (lines {', '.join(map(str, sorted(lns)[:8]))}"
                                 f"{'…' if len(lns) > 8 else ''}).")
                            .fix("Make it one named param (or derive it from one)."))
+        for ln, k, npt in res["patterns"]:
+            loc = {"circle": "PolarLocations", "grid": "GridLocations", "row": "GridLocations (one row) / a loop"}[k]
+            out.append(fail("param.pattern", G, WARNING, "Literal coordinates form a regular pattern",
+                            f"{name}:{ln}: {npt} literal points lie on a {k}.")
+                       .fix(f"Generate them with {loc} from a named pitch/radius/count."))
+        for a, b in res["mirror_pairs"]:
+            out.append(fail("param.mirror", G, WARNING, "Left/right pair built twice from literals",
+                            f"{name}: `{a}` and `{b}` are both built from raw numbers; neither uses mirror().")
+                       .fix("Build one side and mirror() it about the centre plane."))
+        for ln, fn, call in res["placements"]:
+            out.append(fail("param.placement", G, WARNING, "Placed by literal world coordinates",
+                            f"{name}:{ln} `{fn}` places geometry with {call}(<literal coords>).")
+                       .fix("Place by Joint/mate or relative to a named feature (face, axis, centre) instead."))
         if not n_bad:
             out.append(ok("param.literals", G, "Build code is parametric", f"{name}: no function over {nmax} raw literals."))
     return out, total
