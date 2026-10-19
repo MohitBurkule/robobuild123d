@@ -219,7 +219,7 @@ def _panel_seat(which, i):
         x, y = INS[i]
         return hole_tool((x, y, 3.5), (0, 0, 1), "M2x6", head="csk", into="through", side="head", grip=1.0 + BOSS_H, csk_clear=0.7)
     x, y = TOP_XY[i]
-    return hole_tool((x, y, 20.4), (0, 0, -1), "M2x4", head="csk", into="through", side="head", grip=0.9, csk_clear=0.7, sink=-0.7)   # M2 flat head is 1.2 tall in 0.9 Ti: it stands 0.7 proud so the 90 deg seat is 0.45 deep and leaves a 0.45 land round the 2.2 hole
+    return hole_tool((x, y, 20.4), (0, 0, -1), "M2x5", head="button", into="through", side="head", grip=0.9, cbore=0.0)   # 0.9 Ti is too thin for an M2 flat-head seat (1.2 tall): a button head bears flat on the face, plain 2.2 clearance hole
 
 
 def _panel_outline(grow):
@@ -1241,7 +1241,7 @@ def make_spec(model_file):
           access_before=["weapon_lock", "mount_l", "wbearing", "weapon_motor", "mount_r", "motor_spacer", "tub", "so_al", "so_bl", "so_ar", "so_br"],
           reason="stack bolted up on the bench before it goes on the motor (inferred: the STEP has the 2.2 holes but no screws)")
     for i, (x, y) in enumerate(((25.0, 10.4), (-25.0, 10.4), (25.0, -21.6), (-25.0, -21.6))):
-        F(id=f"bolt_t{i}", designation="M2x4", head="countersunk", tool="hex1.3", at=[x, y, 21.1], dir=[0, 0, -1], through=["top_panel"], threads_into="tub",
+        F(id=f"bolt_t{i}", designation="M2x5", head="button", tool="hex1.3", at=[x, y, 20.4], dir=[0, 0, -1], through=["top_panel"], threads_into="tub",
           reason="M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
           hole=_panel_seat("top", i)[1].hole)
     for i, yy in enumerate((1.9, -13.1)):
@@ -1375,7 +1375,7 @@ REF_BOM = [   # RVRN 2.0 STEP part list (research/rvrn_step/INDEX.txt); one row 
     dict(role="FS9: mount to standoff 2 x M3x12 CSK alu (axle standoff)", match=["bolt_u?a"], count=2, designation="M3x12", head="countersunk", threads_into="standoff", material="aluminium"),
     dict(role="FS9: mount to nose standoff 2 x M3 CSK alu", match=["bolt_u?b"], count=2, designation="M3x14", head="countersunk", threads_into="standoff", material="aluminium",
          deviation="M3x14 instead of the STEP's M3x12: through mount and lug, 12 mm engages 3.9 mm of the 15 mm standoff (< 1.5 d)"),
-    dict(role="top panel: 4 x M2 CSK thread-forming (not in the STEP; its countersunk holes are)", match=["bolt_t*"], count=4, designation="M2x4", threads_into="tub",
+    dict(role="top panel: 4 x M2 CSK thread-forming (not in the STEP; its countersunk holes are)", match=["bolt_t*"], count=4, designation="M2x5", threads_into="tub",
          deviation="the STEP top panel has 4 countersunk corner holes but no screws; 4 M2x4 CSK thread-forming screws added so the Ti panel cannot peel off"),
     dict(role="side panel to standoff ends: 4 x M3 CSK (STEP M3x8)", match=["bolt_s?a", "bolt_s?b"], count=4, designation="M3x10", head="countersunk", threads_into="standoff",
          deviation="M3x10 instead of the STEP's M3x8: 8 mm engages 4.2 / 2.7 mm of standoff thread, under 1.5 d in aluminium"),

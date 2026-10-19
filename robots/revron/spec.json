@@ -112,7 +112,7 @@
     "bolt_t*"
    ],
    "count": 4,
-   "designation": "M2x4",
+   "designation": "M2x5",
    "threads_into": "tub",
    "deviation": "the STEP top panel has 4 countersunk corner holes but no screws; 4 M2x4 CSK thread-forming screws added so the Ti panel cannot peel off"
   },
@@ -7371,13 +7371,13 @@
   },
   {
    "id": "bolt_t0",
-   "designation": "M2x4",
-   "head": "countersunk",
+   "designation": "M2x5",
+   "head": "button",
    "tool": "hex1.3",
    "at": [
     25.0,
     10.4,
-    21.1
+    20.4
    ],
    "dir": [
     0,
@@ -7391,31 +7391,29 @@
    "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
    "hole": {
     "d": 2.0,
-    "length": 4.0,
-    "head": "csk",
-    "head_std": "ISO 14581",
-    "head_dk": 3.8,
-    "head_k": 1.2,
+    "length": 5.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
     "clearance_d": 2.4,
     "into": "through",
     "side": "head",
-    "csk_angle": 90.0,
-    "csk_d": 4.5,
-    "csk_depth": 1.05,
-    "sink": -0.7,
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
     "grip": 0.9
    },
    "removable": true
   },
   {
    "id": "bolt_t1",
-   "designation": "M2x4",
-   "head": "countersunk",
+   "designation": "M2x5",
+   "head": "button",
    "tool": "hex1.3",
    "at": [
     -25.0,
     10.4,
-    21.1
+    20.4
    ],
    "dir": [
     0,
@@ -7429,31 +7427,29 @@
    "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
    "hole": {
     "d": 2.0,
-    "length": 4.0,
-    "head": "csk",
-    "head_std": "ISO 14581",
-    "head_dk": 3.8,
-    "head_k": 1.2,
+    "length": 5.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
     "clearance_d": 2.4,
     "into": "through",
     "side": "head",
-    "csk_angle": 90.0,
-    "csk_d": 4.5,
-    "csk_depth": 1.05,
-    "sink": -0.7,
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
     "grip": 0.9
    },
    "removable": true
   },
   {
    "id": "bolt_t2",
-   "designation": "M2x4",
-   "head": "countersunk",
+   "designation": "M2x5",
+   "head": "button",
    "tool": "hex1.3",
    "at": [
     25.0,
     -21.6,
-    21.1
+    20.4
    ],
    "dir": [
     0,
@@ -7467,31 +7463,29 @@
    "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
    "hole": {
     "d": 2.0,
-    "length": 4.0,
-    "head": "csk",
-    "head_std": "ISO 14581",
-    "head_dk": 3.8,
-    "head_k": 1.2,
+    "length": 5.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
     "clearance_d": 2.4,
     "into": "through",
     "side": "head",
-    "csk_angle": 90.0,
-    "csk_d": 4.5,
-    "csk_depth": 1.05,
-    "sink": -0.7,
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
     "grip": 0.9
    },
    "removable": true
   },
   {
    "id": "bolt_t3",
-   "designation": "M2x4",
-   "head": "countersunk",
+   "designation": "M2x5",
+   "head": "button",
    "tool": "hex1.3",
    "at": [
     -25.0,
     -21.6,
-    21.1
+    20.4
    ],
    "dir": [
     0,
@@ -7505,18 +7499,16 @@
    "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
    "hole": {
     "d": 2.0,
-    "length": 4.0,
-    "head": "csk",
-    "head_std": "ISO 14581",
-    "head_dk": 3.8,
-    "head_k": 1.2,
+    "length": 5.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
     "clearance_d": 2.4,
     "into": "through",
     "side": "head",
-    "csk_angle": 90.0,
-    "csk_d": 4.5,
-    "csk_depth": 1.05,
-    "sink": -0.7,
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
     "grip": 0.9
    },
    "removable": true
