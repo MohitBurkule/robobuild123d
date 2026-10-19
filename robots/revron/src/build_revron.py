@@ -1019,7 +1019,8 @@ def weapon_lock():
     b = _b()
     head0 = -(lock_outer_x() + LOCK_TIP_X)          # local z of the head's inner face (tip at local 0 = world LOCK_TIP_X)
     shank = b.Solid.make_cylinder(LOCK_R, -head0, b.Plane(origin=(0, 0, head0), z_dir=(0, 0, 1)))
-    tipc = b.Solid.make_cone(LOCK_R - 0.5, LOCK_R, 0.5, b.Plane(origin=(0, 0, -0.5), z_dir=(0, 0, 1)))   # lead-in chamfer
+    # lead-in chamfer: full d4 at local -0.5, d3 at the tip (local 0); the cone's wide end meets the shank flush
+    tipc = b.Solid.make_cone(LOCK_R, LOCK_R - 0.5, 0.5, b.Plane(origin=(0, 0, -0.5), z_dir=(0, 0, 1)))
     shank = _S(shank, _cyl(LOCK_R + 1, -0.5, 0.5, (0, 0), "z")).fuse(tipc)
     head = b.Solid.make_cylinder(LOCK_HEAD_R, LOCK_HEAD_T, b.Plane(origin=(0, 0, head0 - LOCK_HEAD_T), z_dir=(0, 0, 1)))
     # flag tab: local -X is world +Z (up), so the grip stands above the head; 2 mm lanyard eye near its end
