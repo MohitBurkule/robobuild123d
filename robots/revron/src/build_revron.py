@@ -206,7 +206,26 @@ def _solid(x):
 # ====================================================================================================================
 # Parts
 # ====================================================================================================================
-TOP_XY = ((25.0, 10.4), (-25.0, 10.4), (25.0, -21.6), (-25.0, -21.6))
+# panels (RV26 base, Ti top) [fix-T: named params, every panel dimension derives from these]
+SEG, SEG_FINE = 64, 128              # shapely buffer resolution (segments per quarter circle) for ears / tangent arcs
+CSK_CLEAR = 0.7                      # countersink diameter over the ISO 10642 head (4.5 seat: dk 3.8 + 0.7)
+BASE_Z0, BASE_T = 3.5, 1.0           # base panel underside Z, skin thickness
+BASE_OUT = dict(x=28.1, y0=-36.2, y1=13.0, r=0.8)   # RV26 outline 56.2 x 49.2, R0.8 corners
+PANEL_EAR_EDGE = 3.0                 # a screw closer than this to the outline edge gets a PANEL_EAR_R ear
+PANEL_R_IN = 0.5                     # concave blend where the ears meet the outline
+TOP_Z0, TOP_T = CH["z1"], 0.9        # Ti top panel sits on the chassis rim, 0.9 thick
+TOP_X = 23.0                         # |X| of the top-panel side edges beside the switch
+TOP_Y0, TOP_Y1 = -24.1, 12.9         # rear edge, front of the shoulders
+TOP_SHOULDER_Y = 7.9                 # front edge between the shoulders and the tab
+TOP_NOTCH_X = (13.0, 21.0)           # |X| span of the front notches clearing the weapon-mount tabs (tab is |X| < 13)
+TOP_TAB_Y = 11.9                     # tab front edge
+TOP_CUT_Y = 14.0                     # notch / tab cutters run past the panel front (ears end at Y 13.1)
+TOP_FILL_YT = (1.0, -12.5)           # Y where each concave ear-to-edge arc meets the |X| 23 edge (front, rear ear row)
+TOP_FILL_X = 26.6                    # outer X of the arc fill boxes (past the ears)
+TOP_R_OUT, TOP_R_IN = 0.4, 1.2       # top-panel edge rounds
+ESC_TRAY = dict(gap=0.1, wall=1.25, lip=1.0, fuse=0.01, rail_end=1.0, rail_x=(1.4, 2.6))   # TPU ESC tray: walls >= 1.2, rails inset from the board -x / +x edges
+CHAIKIN_Q = 0.25                     # Chaikin corner-cutting ratio (side-panel spline smoothing)
+TOP_XY = tuple(INS[i] for i in (1, 0, 3, 2))   # the four corner insert columns (+X first), screw order of bolt_t*
 
 
 def _panel_seat(which, i):
@@ -217,20 +236,22 @@ def _panel_seat(which, i):
     from robot.cad.holes import hole_tool
     if which == "base":
         x, y = INS[i]
-        return hole_tool((x, y, 3.5), (0, 0, 1), "M2x6", head="csk", into="through", side="head", grip=1.0 + BOSS_H, csk_clear=0.7)
+        return hole_tool((x, y, BASE_Z0), (0, 0, 1), "M2x6", head="csk", into="through", side="head", grip=BASE_T + BOSS_H, csk_clear=CSK_CLEAR)
     x, y = TOP_XY[i]
-    return hole_tool((x, y, 20.4), (0, 0, -1), "M2x4", head="csk", into="through", side="head", grip=0.9, csk_clear=0.7)
+    return hole_tool((x, y, TOP_Z0 + TOP_T), (0, 0, -1), "M2x4", head="csk", into="through", side="head", grip=TOP_T, csk_clear=CSK_CLEAR)
 
 
 def _panel_outline(grow):
     """RV26 outline (56.2 x 49.2, R0.8) plus R3.0 ears round the screws that sit 2.6 mm from its edge, so the 4.5
     countersink keeps a rim; `grow` > 0 gives the matching chassis rabbet."""
     from shapely.geometry import Point
-    p = _round(_poly([(-28.1 - grow, -36.2 - grow), (28.1 + grow, -36.2 - grow), (28.1 + grow, 13.0 + grow), (-28.1 - grow, 13.0 + grow)]), r_out=0.8)
+    o = BASE_OUT
+    x, y0, y1 = o["x"] + grow, o["y0"] - grow, o["y1"] + grow
+    p = _round(_poly([(-x, y0), (x, y0), (x, y1), (-x, y1)]), r_out=o["r"])
     for x, y in INS:
-        if min(13.0 - y, y + 36.2) < 3.0:
-            p = p.union(Point(x, y).buffer(PANEL_EAR_R + grow, 64))
-    return _round(p, r_in=0.5)
+        if min(o["y1"] - y, y - o["y0"]) < PANEL_EAR_EDGE:
+            p = p.union(Point(x, y).buffer(PANEL_EAR_R + grow, SEG))
+    return _round(p, r_in=PANEL_R_IN)
 
 
 def base_panel():
@@ -253,35 +274,34 @@ def top_panel():
     """0.9 mm Ti top panel: four countersunk 2.2 holes in the corner ears over the insert columns take M2 flat-head thread-forming screws
     into 1.7 pilots in the column tops (the STEP has the holes, not the screws). The
     front notches clear the weapon-mount tabs; it stops at |X| 23 beside the switch so the switch stays reachable."""
-    z0, t = 19.5, 0.9
-    core = _poly([(-23.0, -24.1), (23.0, -24.1), (23.0, 7.9), (21.0, 7.9), (21.0, 12.9), (-21.0, 12.9), (-21.0, 7.9), (-23.0, 7.9)])
-    tab = _poly([(-13.0, 7.0), (13.0, 7.0), (13.0, 11.9), (-13.0, 11.9)])
-    notch = [_poly([(s * 13.0, 7.9), (s * 21.0, 7.9), (s * 21.0, 13.5), (s * 13.0, 13.5)]) for s in (1, -1)]
+    z0, t, X, (nx0, nx1), sy = TOP_Z0, TOP_T, TOP_X, TOP_NOTCH_X, TOP_SHOULDER_Y
+    core = _poly([(-X, TOP_Y0), (X, TOP_Y0), (X, sy), (nx1, sy), (nx1, TOP_Y1), (-nx1, TOP_Y1), (-nx1, sy), (-X, sy)])
+    notch = [_poly([(s * nx0, sy), (s * nx1, sy), (s * nx1, TOP_CUT_Y), (s * nx0, TOP_CUT_Y)]) for s in (1, -1)]
     from shapely.geometry import Point
-    ears = [Point(x, y).buffer(EAR_R, 64) for x, y in ((25.0, 10.4), (-25.0, 10.4), (25.0, -21.6), (-25.0, -21.6))]
-    blocks = [_poly([(s * 21.0, 8.6), (s * 25.0, 8.6), (s * 25.0, 12.9), (s * 21.0, 12.9)]) for s in (1, -1)] + \
-             [_poly([(s * 21.0, -24.1), (s * 25.0, -24.1), (s * 25.0, -19.0), (s * 21.0, -19.0)]) for s in (1, -1)]
-    # the ears run into the side edges along concave arcs (STEP): each arc is tangent to the |X| 23 edge and to its ear
+    ears = [Point(x, y).buffer(EAR_R, SEG) for x, y in TOP_XY]
+    # the ears run into the side edges along concave arcs (STEP): each arc is tangent to the |X| TOP_X edge and to its ear
     fills = []
+    ex = TOP_XY[0][0]
+    a = ex - X                                   # ear centre inboard offset from the side edge
     for sx in (1, -1):
-        for ey, yt in ((10.4, 1.0), (-21.6, -12.5)):
+        for ey, yt in zip(sorted({y for _, y in TOP_XY}, reverse=True), TOP_FILL_YT):
             d = abs(ey - yt)
-            R = (4.0 + d * d - EAR_R ** 2) / (4.0 + 2 * EAR_R)   # (R - 2)^2 + d^2 = (R + EAR_R)^2: arc tangent to the edge and the ear
-            cx = sx * (23.0 + R)
-            box = _poly([(sx * 23.0, yt), (sx * 26.6, yt), (sx * 26.6, ey), (sx * 23.0, ey)])
-            fills.append(box.difference(Point(cx, yt).buffer(R, 128)))
+            R = (a * a + d * d - EAR_R ** 2) / (2 * a + 2 * EAR_R)   # (R - a)^2 + d^2 = (R + EAR_R)^2: arc tangent to the edge and the ear
+            cx = sx * (X + R)
+            box = _poly([(sx * X, yt), (sx * TOP_FILL_X, yt), (sx * TOP_FILL_X, ey), (sx * X, ey)])
+            fills.append(box.difference(Point(cx, yt).buffer(R, SEG_FINE)))
     p = core
-    fills += [_poly([(sx * 21.0, 7.9), (sx * 25.0, 7.9), (sx * 25.0, 12.9), (sx * 21.0, 12.9)]) for sx in (1, -1)]
+    fills += [_poly([(sx * nx1, sy), (sx * ex, sy), (sx * ex, TOP_Y1), (sx * nx1, TOP_Y1)]) for sx in (1, -1)]
     for q in ears + fills:
         p = p.union(q)
     for q in notch:
         p = p.difference(q)
-    p = p.difference(_poly([(-13.0, 11.9), (13.0, 11.9), (13.0, 14.0), (-13.0, 14.0)]))   # tab front edge at Y 11.9
-    p = _round(p, r_out=0.4, r_in=1.2)
+    p = p.difference(_poly([(-nx0, TOP_TAB_Y), (nx0, TOP_TAB_Y), (nx0, TOP_CUT_Y), (-nx0, TOP_CUT_Y)]))   # tab front edge
+    p = _round(p, r_out=TOP_R_OUT, r_in=TOP_R_IN)
     body = _ext(p, "xy", z0, z0 + t)
     # 2.2 holes countersunk (90 deg, 4.5 at the top face; STEP 3.65) for M2 flat heads into the column-top pilots: the 1.2 head is
     # deeper than the 0.9 plate, so its tip sinks into the chamfer at the column top
-    return _S(body, *[_panel_seat("top", i)[0] for i in range(4)], *[_cyl(TOP_HOLE / 2, z0 - 1, z0 + 2, (x, y), "z") for x, y in TOP_XY])
+    return _S(body, *[_panel_seat("top", i)[0] for i in range(len(TOP_XY))], *[_cyl(TOP_HOLE / 2, z0 - 1, z0 + 2, (x, y), "z") for x, y in TOP_XY])
 
 
 def _fork_outline(s):
@@ -754,10 +774,12 @@ def _offset_open(line, d):
 
 
 def _chaikin_open(p, n):
+    k = CHAIKIN_Q
+    c = 1 - k
     for _ in range(n):
         q = [p[0]]
         for (x0, y0), (x1, y1) in zip(p, p[1:]):
-            q += [(0.75 * x0 + 0.25 * x1, 0.75 * y0 + 0.25 * y1), (0.25 * x0 + 0.75 * x1, 0.25 * y0 + 0.75 * y1)]
+            q += [(c * x0 + k * x1, c * y0 + k * y1), (k * x0 + c * x1, k * y0 + c * y1)]
         q.append(p[-1])
         p = q
     return p
@@ -1038,11 +1060,14 @@ def esc_tray():
     the board 0.1 mm off, 1 mm lips 0.1 mm off its -x / +x / +y sides (leads leave above the lips at the board mid-plane).
     The deck cage holds -y and the Malenki above it +z, so the ESC cannot rattle inverted; base panel off, it lifts out."""
     (wx0, wx1), (wy0, wy1), wz0 = WE_X, WE_Y, WE_Z[0]
-    z0, top, g, w = 4.5, wz0 + 1.0, 0.1, 1.25   # TPU walls >= 1.2
+    T = ESC_TRAY
+    g, w, e = T["gap"], T["wall"], T["fuse"]
+    z0, top = BASE_Z0 + BASE_T, wz0 + T["lip"]   # sits on the base panel top face; lips rise 1 mm past the board underside
+    zw = z0 + w - e
     parts = [_box(wx0 - g - w, wx1 + g + w, wy0, wy1 + g + w, z0, z0 + w)]
-    parts += [_box(xa, xa + w, wy0 + 1.0, wy1 - 1.0, z0 + w - 0.01, wz0 - g) for xa in (wx0 + 1.4, wx1 - 2.6)]
-    parts += [_box(wx0 - g - w, wx0 - g, wy0, wy1 + g + w, z0 + w - 0.01, top), _box(wx1 + g, wx1 + g + w, wy0, wy1 + g + w, z0 + w - 0.01, top),
-              _box(wx0 - g - w, wx1 + g + w, wy1 + g, wy1 + g + w, z0 + w - 0.01, top)]
+    parts += [_box(xa, xa + w, wy0 + T["rail_end"], wy1 - T["rail_end"], zw, wz0 - g) for xa in (wx0 + T["rail_x"][0], wx1 - T["rail_x"][1])]
+    parts += [_box(wx0 - g - w, wx0 - g, wy0, wy1 + g + w, zw, top), _box(wx1 + g, wx1 + g + w, wy0, wy1 + g + w, zw, top),
+              _box(wx0 - g - w, wx1 + g + w, wy1 + g, wy1 + g + w, zw, top)]
     return _U(*parts)
 
 
