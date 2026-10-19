@@ -137,6 +137,34 @@ def loose_exit(ctx, i, present):
     return None
 
 
+TWO_LEG_MAX_SIZE = 15.0   # mm: only small loose parts (nuts, spacers) are tried
+TWO_LEG_REACH = 12.0      # mm: the first leg stops at most this far in
+
+
+def two_leg_exit(ctx, i, present):
+    """A small part with no straight way out may slide a few mm out of its seat (leg 1, along an axis) and then
+    leave sideways (leg 2) once it is clear of what held it. Returns (direction of leg 2, total travel) or None."""
+    w = ctx.world
+    b = w.bodies[i]
+    if b.fastener or float((b.aabb[1] - b.aabb[0]).max()) > TWO_LEG_MAX_SIZE:
+        return None
+    members = [i]
+    for d1 in AXES:
+        first = slide(ctx, members, present, d1)
+        reach = TWO_LEG_REACH if first[0] == "ok" else min(first[2], TWO_LEG_REACH)
+        t = 1.4
+        while t <= reach:
+            base = d1 * t
+            for d2 in AXES:
+                if abs(float(d2 @ d1)) > 0.99:
+                    continue
+                res = slide(ctx, members, present, d2, base=base)
+                if res[0] == "ok":
+                    return d2, t + res[1]
+            t += 1.4
+    return None
+
+
 def candidate_dirs(ctx, i):
     b, r = ctx.world.bodies[i], ctx.r
     if b.fastener:
@@ -198,8 +226,19 @@ def _sweep(ctx, present, root, teardown, steps):
                     steps.append(AssemblyStep(len(steps) + 1, w.bodies[m].id, [float(x) for x in d], float(res[1])))
                 progress = True
         left = sum(1 for i in range(n) if present[i] and i != root)
-        if left == 0 or not progress:
+        if left == 0:
             break
+        if not progress:
+            # last resort: a small part that only has a sliding path of two legs (a nut pushed in from the cavity,
+            # then dropped out through the open floor) leaves as it was put in
+            for i in [i for i in range(n) if present[i] and i != root]:
+                le = two_leg_exit(ctx, i, present)
+                if le is not None:
+                    present[i] = False
+                    steps.append(AssemblyStep(len(steps) + 1, w.bodies[i].id, [float(x) for x in le[0]], float(le[1])))
+                    progress = True
+            if not progress:
+                break
 
 
 def run(ctx):
