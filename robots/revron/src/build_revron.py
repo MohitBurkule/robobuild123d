@@ -193,6 +193,22 @@ def _solid(x):
 # ====================================================================================================================
 # Parts
 # ====================================================================================================================
+TOP_XY = ((25.0, 10.4), (-25.0, 10.4), (25.0, -21.6), (-25.0, -21.6))
+
+
+def _panel_seat(which, i):
+    """(cutter, FastenerRecord) of the M2 flat-head seat in the base / top panel (robot.cad.holes, head side only): the
+    90 deg seat is 4.5 at the face (ISO 10642 dk 3.8 + 0.7: also clears the verifier's 4.4 head); the panels add a wider
+    relief hole (BASE_HOLE / TOP_HOLE) so the seat stops short of the far face."""
+    sys.path.insert(0, ROOT)
+    from robot.cad.holes import hole_tool
+    if which == "base":
+        x, y = INS[i]
+        return hole_tool((x, y, 3.5), (0, 0, 1), "M2x6", head="csk", into="through", side="head", grip=1.0 + BOSS_H, csk_clear=0.7)
+    x, y = TOP_XY[i]
+    return hole_tool((x, y, 20.4), (0, 0, -1), "M2x4", head="csk", into="through", side="head", grip=0.9, csk_clear=0.7)
+
+
 def base_panel():
     """RV26: 1 mm printed panel under the open chassis, 5 M2 CSK into the floor heat-sets; two 0.25 mm pads under the
     N10 gearboxes preload the motors up into their keyhole pockets."""
@@ -213,7 +229,7 @@ def base_panel():
     cradle += [_box(wx0 - 0.1 - 1.1, wx0 - 0.1, wy0, wy1, lip, top), _box(wx1 + 0.1, wx1 + 0.1 + 1.1, wy0, wy1, lip, top),
                _box(wx0 - 1.2, wx1 + 1.2, wy1 + 0.1, wy1 + 1.1, lip, top)]
     body = _U(body, *cradle)
-    cuts = [_csk(BASE_HOLE, CSK_M2, (x, y, z0), "z", 1, 4.0) for x, y in INS]   # 4.5 countersink (STEP RV26 has 3.2 x 0.5; an ISO 10642 M2 head is 4.4 x 1.2, so a smaller seat leaves it proud and binding) then the 2.2 hole
+    cuts = [_panel_seat("base", i)[0] for i in range(len(INS))] + [_cyl(BASE_HOLE / 2, z0 - 1, z0 + 3, (x, y), "z") for x, y in INS]   # 4.5 countersink (STEP RV26 has 3.2 x 0.5; an ISO 10642 M2 head is 4.4 x 1.2, so a smaller seat leaves it proud and binding) then the 2.2 hole
     return _S(body, *cuts)
 
 
@@ -249,7 +265,7 @@ def top_panel():
     body = _ext(p, "xy", z0, z0 + t)
     # 2.2 holes countersunk (90 deg, 4.5 at the top face; STEP 3.65) for M2 flat heads into the column-top pilots: the 1.2 head is
     # deeper than the 0.9 plate, so its tip sinks into the chamfer at the column top
-    return _S(body, *[_csk(TOP_HOLE, CSK_M2, (x, y, z0 + t), "z", -1, 2.0) for x, y in ((25.0, 10.4), (-25.0, 10.4), (25.0, -21.6), (-25.0, -21.6))])
+    return _S(body, *[_panel_seat("top", i)[0] for i in range(4)], *[_cyl(TOP_HOLE / 2, z0 - 1, z0 + 2, (x, y), "z") for x, y in TOP_XY])
 
 
 def fork(s):
@@ -887,7 +903,8 @@ def make_spec(model_file):
 
     # ---------------------------------------------------------------- fasteners
     for i, (x, y) in enumerate(INS):
-        F(id=f"bolt_b{i}", designation="M2x6", material="aluminium", at=[x, y, 3.5], dir=[0, 0, 1], through=["base_panel", "tub"], threads_into=f"insert_b{i}", tool="hex1.3")
+        F(id=f"bolt_b{i}", designation="M2x6", material="aluminium", at=[x, y, 3.5], dir=[0, 0, 1], through=["base_panel", "tub"], threads_into=f"insert_b{i}", tool="hex1.3",
+          hole=_panel_seat("base", i)[1].hole)
     for s, n in SIDES:
         mnt = f"mount_{n}"
         F(id=f"bolt_u{n}a", designation="M3x12", material="aluminium", at=[s * MNT_IN, SA[0], SA[1]], dir=[s, 0, 0], through=[mnt], threads_into=f"so_a{n}",
@@ -912,7 +929,8 @@ def make_spec(model_file):
           reason="stack bolted up on the bench before it goes on the motor (inferred: the STEP has the 2.2 holes but no screws)")
     for i, (x, y) in enumerate(((25.0, 10.4), (-25.0, 10.4), (25.0, -21.6), (-25.0, -21.6))):
         F(id=f"bolt_t{i}", designation="M2x4", head="countersunk", tool="hex1.3", at=[x, y, 20.4], dir=[0, 0, -1], through=["top_panel"], threads_into="tub",
-          reason="M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)")
+          reason="M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
+          hole=_panel_seat("top", i)[1].hole)
     for i, yy in enumerate((1.9, -13.1)):
         F(id=f"bolt_sw{i}", designation="M2x3", head="button", tool="hex1.3", at=[25.0, yy, 16.0], dir=[0, 0, 1], through=["power_switch"], threads_into="tub",
           reason="thread-forming into the 1.7 pilot holes either side of the switch flange; heads clamp the flange to the deck underside (inferred)")
