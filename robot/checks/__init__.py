@@ -96,7 +96,7 @@ def verify_resolved(r, opts: Options) -> Report:
                 for k, v in delta.items():
                     setattr(ctx, k, v)
                 rep.timings_s[name] = round(time.time() - t0, 3)
-                _progress(name, t0, "cached")
+                _progress(name, t0, "cached", findings)
                 continue
             before = _snapshot(ctx) if gkey else None
             try:
@@ -118,7 +118,7 @@ def verify_resolved(r, opts: Options) -> Report:
                 if os.environ.get("ROBOT_DEBUG"):
                     traceback.print_exc()
             rep.timings_s[name] = round(time.time() - t0, 3)
-            _progress(name, t0, "ran")
+            _progress(name, t0, "ran", findings)
         findings.extend(validity.claims(ctx))
         rep.routes = ctx.routes
         rep.assembly = ctx.assembly
@@ -159,7 +159,10 @@ def _group_key(name, r, opts, base_key):
     return cache.h("group", name, base_key) if base_key else None
 
 
-def _progress(name, t0, how):
+def _progress(name, t0, how, findings=()):
+    from .. import progress
+    nb = sum(1 for f in findings if not f.passed and str(f.severity).lower() == "blocker")
+    progress.log(f"check {name} {how} in {time.time() - t0:.1f}s; blockers so far {nb}")
     if os.environ.get("ROBOT_TIMING") or os.environ.get("ROBOT_PROGRESS") == "1":
         print(f"  [{how}] {name} {time.time() - t0:.2f}s", file=sys.stdout, flush=True)
 

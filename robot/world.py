@@ -60,6 +60,7 @@ class Resolved:
 
 
 def resolve(spec: Spec, fast: bool = False) -> Resolved:
+    from . import progress
     tess = geom.FAST if fast else geom.FINE
     prof = profile.named(spec.profile)
     parts, errors = [], []
@@ -90,6 +91,9 @@ def resolve(spec: Spec, fast: bool = False) -> Resolved:
             errors.append((p.id, f"geometry failed: {type(e).__name__}: {e}"))
             shape = {"type": "box", "size": [0.1, 0.1, 0.1]}
             g = geom.geom_for(shape, spec.base_dir, tess)
+            progress.log(f"part {p.id} FAILED: {type(e).__name__}: {e}")
+        else:
+            progress.log(f"part {p.id} built")
         parts.append(RPart(p, shape, cat, g))
     return Resolved(spec, prof, parts, errors, fast)
 
