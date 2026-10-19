@@ -6032,10 +6032,24 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    17.4,
+    17.15,
     44.5,
     23.5
    ],
+   "hole": {
+    "d": 2.0,
+    "length": 8.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "cbore_d": 4.5,
+    "cbore_depth": 1.6594,
+    "grip": 5.4094
+   },
    "dir": [
     -1,
     0,
@@ -6056,10 +6070,24 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    17.4,
+    17.15,
     32.5,
     23.5
    ],
+   "hole": {
+    "d": 2.0,
+    "length": 8.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "cbore_d": 4.5,
+    "cbore_depth": 2.1142,
+    "grip": 5.8642
+   },
    "dir": [
     -1,
     0,
@@ -6080,10 +6108,24 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    17.4,
+    17.15,
     38.5,
     29.5
    ],
+   "hole": {
+    "d": 2.0,
+    "length": 8.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "cbore_d": 4.5,
+    "cbore_depth": 1.0228,
+    "grip": 4.7728
+   },
    "dir": [
     -1,
     0,
@@ -6104,10 +6146,24 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    17.4,
+    17.15,
     38.5,
     17.5
    ],
+   "hole": {
+    "d": 2.0,
+    "length": 8.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "cbore_d": 4.5,
+    "cbore_depth": 2.7508,
+    "grip": 6.5008
+   },
    "dir": [
     -1,
     0,
@@ -6142,6 +6198,7 @@
    ],
    "threads_into": "weapon_motor",
    "access_before": [
+    "weapon_lock",
     "mount_l",
     "wbearing"
    ],
@@ -6172,6 +6229,7 @@
    ],
    "threads_into": "nut_d0",
    "access_before": [
+    "weapon_lock",
     "mount_l",
     "wbearing",
     "weapon_motor",
@@ -6207,6 +6265,7 @@
    ],
    "threads_into": "weapon_motor",
    "access_before": [
+    "weapon_lock",
     "mount_l",
     "wbearing"
    ],
@@ -6237,6 +6296,7 @@
    ],
    "threads_into": "nut_d1",
    "access_before": [
+    "weapon_lock",
     "mount_l",
     "wbearing",
     "weapon_motor",
@@ -6272,6 +6332,7 @@
    ],
    "threads_into": "weapon_motor",
    "access_before": [
+    "weapon_lock",
     "mount_l",
     "wbearing"
    ],
@@ -6302,6 +6363,7 @@
    ],
    "threads_into": "nut_d2",
    "access_before": [
+    "weapon_lock",
     "mount_l",
     "wbearing",
     "weapon_motor",
@@ -6337,6 +6399,7 @@
    ],
    "threads_into": "weapon_motor",
    "access_before": [
+    "weapon_lock",
     "mount_l",
     "wbearing"
    ],
@@ -6367,6 +6430,7 @@
    ],
    "threads_into": "nut_d3",
    "access_before": [
+    "weapon_lock",
     "mount_l",
     "wbearing",
     "weapon_motor",

@@ -275,11 +275,12 @@ def weapon_mount(side):
     r_top = 10.0 if side == "r" else 7.0
     prof = _mount_profile(r_top)
     xi, xm, xo = s * MNT_IN, s * MNT_SLAB, s * MNT_OUT
-    slab = _ext(prof, "yz", xi, xm - s * 0.02)    # slab face 0.02 inside the boss start (no coplanar section face)
+    eps = 0.02 if side == "r" else 0.0           # RV03's STEP slab face sits just inside X 17.40, RV02's on it (feature sections at 17.40)
+    slab = _ext(prof, "yz", xi, xm - s * eps)
     # boss: the part of the profile above the line from the notch top to the nose, battered on its outer face
     line_lo = Polygon([(15.0, 19.5), (44.34, 6.34), (60, 6.34), (60, 60), (0, 60), (0, 19.5)])
     bp = prof.intersection(line_lo)
-    boss = _ext(bp, "yz", xm - s * 0.02, xo + s * 0.01)
+    boss = _ext(bp, "yz", xm - s * eps, xo + s * 0.01)
     # outer battered face (STEP): one plane leaning in with height and towards the nose,
     # |X| = a - kz * Z - ky * Y  (RV02: a 23.48, kz 0.185, ky 0.0168; RV03: 23.88, 0.144, 0.0379)
     a_, kz, ky = (23.88, 0.144, 0.0379) if side == "r" else (23.48, 0.185, 0.0168)
@@ -290,12 +291,13 @@ def weapon_mount(side):
     if side == "r":
         cuts.append(_cyl(2.47, -30, 30, (WY, WZ)))                                   # shaft / bearing boss clearance
         bb_ = _b()
-        for dy, dz in ((6, 0), (-6, 0), (0, 6), (0, -6)):                           # GR1507 stator M2 on 12 mm (STEP d2.2 clearance)
-            cuts.append(_cyl(STAT_HOLE_R, xi - s, xm + s, (WY + dy, WZ + dz)))
-            # STEP: d4.5 head counterbore from X 17.15, reached by a cone from the d2.2 hole at X 16.4
+        for dy, dz in ((6, 0), (-6, 0), (0, 6), (0, -6)):                           # GR1507 stator M2 on 12 mm
+            # catalog hole (robot.cad.holes): button-head M2, head seat on the STEP d4.5 counterbore floor at X 17.15,
+            # ISO 273 normal clearance through the 3.75 mm slab; the STEP's lead-in cone below the floor is kept
+            cut, _ = _stator_hole(s, dy, dz)
+            cuts.append(cut)
             x_c0, x_c1 = s * CB_CONE_X[0], s * CB_CONE_X[1]
             cuts.append(bb_.Solid.make_cone(STAT_HOLE_R, CB_R, abs(x_c1 - x_c0), bb_.Plane(origin=(x_c0, WY + dy, WZ + dz), z_dir=(s, 0, 0))))
-            cuts.append(_cyl(CB_R, x_c1, xo + s, (WY + dy, WZ + dz)))
     else:
         cuts.append(_cyl(3.95, -30, 30, (WY, WZ)))                                   # outboard bearing seat (8 mm)
         cuts.append(_cyl(6.0, xm, xo + s, (WY, WZ)))                                 # shaft nut recess
@@ -303,6 +305,20 @@ def weapon_mount(side):
     for (y, z) in (SA, SB):                                                          # M3 CSK into the standoffs, flush inside
         cuts.append(_csk(3.3, 6.2, (xi, y, z), "x", s, 6.0))
     return _S(body, *cuts)
+
+
+def _stator_hole(s, dy, dz):
+    """robot.cad.holes cutter + record for one RV03 stator screw (bolt_wm*): M2x8 button, head on the X 17.15 floor."""
+    _repo = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
+    if _repo not in sys.path:
+        sys.path.insert(0, _repo)
+    from robot.cad.holes import hole_tool
+    y, z = WY + dy, WZ + dz
+    face = 23.88 - 0.144 * z - 0.0379 * y          # RV03 battered outer face |X| at this hole (STEP plane, see weapon_mount)
+    depth = face - CB_CONE_X[1]                     # counterbore down to the STEP floor at X 17.15
+    cut, rec = hole_tool((s * face, y, z), (-s, 0, 0), "M2x8", head="button", into="through", side="head",
+                         grip=face - MNT_IN, cbore=depth, cbore_clear=2 * CB_R - 3.5, fit="normal")
+    return _one(cut.solids()[0] if hasattr(cut, "solids") and len(cut.solids()) == 1 else cut), rec
 
 
 def motor_back_spacer():
@@ -901,17 +917,17 @@ def make_spec(model_file):
         F(id=f"bolt_s{n}b", designation="M3x10", material="aluminium", reason="M3x10 CSK (STEP: M3x8): the head sits 5.3 mm out from the 15 mm standoff end, so 8 mm bites 2.7 mm; 10 mm bites 4.7", at=[s * 41.76, SB[0], SB[1]], dir=[-s, 0, 0], through=[f"side_{n}"], threads_into=f"so_b{n}")
         F(id=f"bolt_s{n}c", designation="M3x8", material="aluminium", reason="alu M3 CSK (Build Guide: aluminium bolts for weight; the STEP draws stainless)", at=[s * 35.26, NUT[0], NUT[1]], dir=[-s, 0, 0], through=[f"side_{n}", "tub"], threads_into=f"nut_c{n}")
     for k, (dy, dz) in enumerate(((6, 0), (-6, 0), (0, 6), (0, -6))):
-        F(id=f"bolt_wm{k}", designation="M2x8", head="button", tool="hex1.3", material="titanium", at=[MNT_SLAB, WY + dy, WZ + dz], dir=[-1, 0, 0], through=["mount_r", "motor_spacer"],
+        F(id=f"bolt_wm{k}", designation="M2x8", head="button", tool="hex1.3", material="titanium", at=[CB_CONE_X[1], WY + dy, WZ + dz], hole=_stator_hole(1, dy, dz)[1].hole, dir=[-1, 0, 0], through=["mount_r", "motor_spacer"],
           threads_into="weapon_motor", reason="button heads (one hex1.3 key for every M2) sunk in the RV03 boss counterbores (inferred: the STEP shows the 4.4 counterbores, not the screws)")
     for k in range(4):
         a = math.radians(90 * k)
         dy, dz = _disc_local(HUB_R * math.cos(a), HUB_R * math.sin(a))
         F(id=f"bolt_p{k}", designation="M2x4", head="button", tool="hex1.3", material="titanium", at=[DR_X["spider"][0], dy, dz], dir=[1, 0, 0], through=["spider"], threads_into="weapon_motor",
-          access_before=["mount_l", "wbearing"], reason="spider to bell, fitted before the left mount goes on (inferred)")
+          access_before=["weapon_lock", "mount_l", "wbearing"], reason="spider to bell, fitted before the left mount goes on (inferred)")
         dy, dz = _disc_local(BOLT_R * math.cos(a), BOLT_R * math.sin(a))
         F(id=f"bolt_d{k}", designation="M2x18", head="button", tool="hex1.3", material="titanium", at=[DR_X["spider"][0], dy, dz], dir=[1, 0, 0],
           through=["spider", "disc_a", "dspacer", "disc_b"], threads_into=f"nut_d{k}",
-          access_before=["mount_l", "wbearing", "weapon_motor", "mount_r", "motor_spacer", "tub", "so_al", "so_bl", "so_ar", "so_br"],
+          access_before=["weapon_lock", "mount_l", "wbearing", "weapon_motor", "mount_r", "motor_spacer", "tub", "so_al", "so_bl", "so_ar", "so_br"],
           reason="stack bolted up on the bench before it goes on the motor (inferred: the STEP has the 2.2 holes but no screws)")
     for i, (x, y) in enumerate(((25.0, 10.4), (-25.0, 10.4), (25.0, -21.6), (-25.0, -21.6))):
         F(id=f"bolt_t{i}", designation="M2x4", head="countersunk", tool="hex1.3", at=[x, y, 20.4], dir=[0, 0, -1], through=["top_panel"], threads_into="tub",

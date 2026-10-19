@@ -552,7 +552,11 @@ def _weapon(ctx):
             sa = spin_axis(w, r, i)
             if sa is not None:
                 o, a = sa
-                return b, o, a, rim_radius(b, o, a), float(np.abs((b.mesh.vertices - o) @ a).max())
+                t = (b.mesh.vertices - o) @ a
+                # centre the slab on the weapon itself: the axis origin can sit anywhere on the axis (e.g. the motor),
+                # and |t|.max() about it would mirror the weapon into a slab twice as thick on the far side
+                o = np.asarray(o, float) + a * float((t.max() + t.min()) / 2)
+                return b, o, a, rim_radius(b, o, a), float((t.max() - t.min()) / 2)
     return None
 
 
