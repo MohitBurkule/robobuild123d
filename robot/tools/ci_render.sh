@@ -14,6 +14,7 @@ for v in side iso front; do run $v "$FINAL/rvrn2_${v}_nolid.png" --no-lid; done
 for v in top side iso front; do run $v "$FINAL/rvrn2_$v.png"; done
 d=$(dirname "$SPEC")/.ci_diff.json
 python3 -c "import json,sys; s=json.load(open('$SPEC')); s['reference_cad']['diff_render_dir']='$FINAL/diff'; json.dump(s,open('$d','w'))"
-HEAVY_CI=${RENDER_HEAVY_CI:-0} /tmp/heavy.sh timeout 3000 python3 -m robot verify "$d" --only reference_cad --jobs 1 >/dev/null 2>&1 || bad="$bad diff"
+HEAVY_CI=${RENDER_HEAVY_CI:-0} /tmp/heavy.sh timeout 3000 python3 -m robot verify "$d" --only reference_cad --jobs 1 >/dev/null 2>&1  # exits 1 when blockers remain; heat maps are still written
+hm=$(find "$FINAL/diff" -name "*.png" -newer "$d" | wc -l)
 rm -f "$d"
-echo "$(date -Is) [ci] renders $(git rev-parse --short HEAD): $ok/8 views ok${bad:+, failed:$bad}; heat maps in $FINAL/diff" >> "$P/builder.log"
+echo "$(date -Is) [ci] renders $(git rev-parse --short HEAD): $ok/9 views ok${bad:+, failed:$bad}; $hm heat maps in $FINAL/diff" >> "$P/builder.log"
