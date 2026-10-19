@@ -33,6 +33,7 @@ GROUPS = [
     ("reference", False), ("archetype", False), ("architecture", False), ("electrical", False), ("combat", False), ("assembly", True), ("joints", False), ("material", False), ("plausibility", False), ("reference_ratios", False), ("reference_cad", False), ("intent", False),
     ("cots", False), ("fit", False), ("contain", False), ("disasm", False), ("coverage", False), ("bom", False),
     ("threat", False),  # combat failure modes CF-* (robot/checks/threat)
+    ("fastener_seat", False),  # head/thread vs hole geometry (robot/cad/seat.py)
 ]
 
 
