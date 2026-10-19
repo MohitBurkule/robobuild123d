@@ -241,7 +241,41 @@ def _sweep(ctx, present, root, teardown, steps):
                 break
 
 
+def apply_service_pose(ctx):
+    """Spec `service_pose` [{parts, axis_at, axis_dir, deg, reason}]: rotate those bodies about an axis for the whole
+    teardown (a weapon disc turned by hand so its tooth is not over the screws that hold the module). Returns undo()."""
+    import trimesh.transformations as tf
+
+    w = ctx.world
+    undo = []
+    for e in (ctx.r.spec.raw or {}).get("service_pose") or []:
+        R = tf.rotation_matrix(np.radians(float(e.get("deg", 0.0))), e.get("axis_dir") or [1, 0, 0], e.get("axis_at") or [0, 0, 0])
+        for pid in e.get("parts") or []:
+            k = w.index(pid)
+            if k is None:
+                continue
+            bd = w.bodies[k]
+            undo.append((bd, bd.M.copy()))
+            bd.M = R @ bd.M
+            bd._mesh = bd._man = None
+            bd._surf = {}
+    def restore():
+        for bd, M in undo:
+            bd.M = M
+            bd._mesh = bd._man = None
+            bd._surf = {}
+    return restore
+
+
 def run(ctx):
+    restore = apply_service_pose(ctx)
+    try:
+        return _run(ctx)
+    finally:
+        restore()
+
+
+def _run(ctx):
     r, w = ctx.r, ctx.world
     n = len(w.bodies)
     present = [not b.is_wire for b in w.bodies]
