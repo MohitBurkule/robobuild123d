@@ -44,8 +44,6 @@ def judge(mid, T):
 def run(ctx):
     T = facts_mod.facts(ctx)
     out = []
-    for k, v in T.get("_timings", {}).items():
-        ctx.metrics[f"threat.t.{k}"] = v
     for name, err in T.get("_errors", {}).items():
         ctx.not_checked.append(f"threat facts `{name}` failed: {err}")
     if "floor" not in T.get("cg", {}):
