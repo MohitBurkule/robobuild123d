@@ -169,6 +169,11 @@ def csk_dims(d):
     return 2.2 * d, 0.6 * d
 
 
+def button_dims(d):
+    """(head diameter, head height) of an ISO 7380 button-head screw (M3: 5.7 x 1.65, 2 mm key)."""
+    return 1.9 * d, 0.55 * d
+
+
 def fastener_shape(d, length, head=None):
     """Screw solid in its own frame: `at` is the origin, the shank runs along +z. A socket/button head sits behind `at`
     (-z); a countersunk head is a 90 deg cone *inside* the part, flush with the surface at `at` (ISO length is overall)."""
@@ -178,6 +183,8 @@ def fastener_shape(d, length, head=None):
         cone = {"type": "revolve", "profile": [[0.0, 0.0], [dk / 2, 0.0], [d / 2, k], [0.0, k]]}
         return catalog.union([cone, shank])
     dk, k, _ = catalog.screw_dims(d)
+    if head == "button":
+        dk, k = button_dims(d)
     hd = catalog.at(catalog.cyl(dk / 2, k), 0, 0, -k / 2)
     return catalog.union([hd, shank])
 
@@ -279,7 +286,7 @@ class World:
             dl = catalog.parse_designation(f.designation)
             if not dl:
                 continue
-            g = geom.geom_for(fastener_shape(*dl, head=f.head if f.head == "countersunk" else None), None, tess)
+            g = geom.geom_for(fastener_shape(*dl, head=f.head if f.head in ("countersunk", "button") else None), None, tess)
             M = xform.make(xform.align_z_to(f.dir), f.at)
             bodies.append(Body(f.id, "other", g, M, [0xcc, 0xcc, 0xd0], None, True))
         return World(bodies, joints)

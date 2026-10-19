@@ -13,6 +13,8 @@ circles and pockets. Findings:
                                   fill holes first): the reference is placed in our world frame and the
                                   silhouettes along X, Y and Z must each reach IoU >= `iou_min` (default 0.9). This
                                   catches a wrong outline, missing cut-outs, wrong heights and wrong placement.
+  `with_parts` [+ `clip_to_ref`]: compare the union of this part and the listed parts (clipped to the reference's span),
+                                  for a bought-in part modelled as more than one body.
   reference_cad.copied (BLOCKER)  the model mesh is near-identical to the reference mesh (same triangle structure and
                                   ~0 Hausdorff after alignment): geometry must come from our parametric code, not an import.
   reference_cad.unusable          file missing/unreadable or part missing -> NOT CHECKED, never a pass.
@@ -169,6 +171,22 @@ def is_copy(ma, mb, rel=0.002):
     return best < rel * diag, best
 
 
+def _clip_box(m, lo, hi):
+    """Mesh clipped to an axis-aligned box (capped)."""
+    import trimesh
+
+    for ax in range(3):
+        n = np.zeros(3)
+        n[ax] = 1.0
+        m = trimesh.intersections.slice_mesh_plane(m, n, n * lo[ax], cap=True)
+        if m is None or not len(m.faces):
+            return None
+        m = trimesh.intersections.slice_mesh_plane(m, -n, n * hi[ax], cap=True)
+        if m is None or not len(m.faces):
+            return None
+    return m
+
+
 def _cfg_has_frame(e, cfg):
     return e.get("ref_to_world", cfg.get("ref_to_world")) is not None
 
@@ -196,6 +214,17 @@ def run(ctx):
         try:
             ref = trimesh.load(path, force="mesh")
             mod = b.mesh
+            if e.get("with_parts"):
+                # a bought-in part modelled as several bodies (e.g. a prop-mount flange plus its spigot inside a shaft
+                # body): compare their union, clipped to the reference's span when `clip_to_ref` (in the world frame)
+                extra = [ctx.world.body(x) for x in e["with_parts"]]
+                if any(x is None for x in extra):
+                    raise ValueError(f"with_parts {e['with_parts']} not all in the model")
+                ms = [mod] + [x.mesh for x in extra]
+                if e.get("clip_to_ref") and _cfg_has_frame(e, cfg):
+                    rw = ref_in_world(ref, e, cfg)
+                    ms = [_clip_box(m, rw.bounds[0] - 0.05, rw.bounds[1] + 0.05) for m in ms]
+                mod = trimesh.util.concatenate([m for m in ms if m is not None and len(m.faces)])
             fr, fm = fingerprint(ref), fingerprint(mod)
         except Exception as ex:  # noqa: BLE001 - fail closed
             out.append(fail("reference_cad.unusable", G, WARNING, "Reference CAD comparison crashed", f"`{pid}` vs `{fn}`: {ex}"))

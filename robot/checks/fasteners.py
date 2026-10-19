@@ -62,6 +62,9 @@ def run(ctx):
             continue
         d, ln = dl
         dk, k, _ = catalog.screw_dims(d)
+        if f.head == "button":
+            from ..world import button_dims
+            dk, k = button_dims(d)
         dr = np.asarray(f.dir, float)
         dr = dr / np.linalg.norm(dr)
         at = np.asarray(f.at, float)
@@ -115,6 +118,10 @@ def run(ctx):
                 # A standard hex nut (height m ~ 0.8 d) is sized to strip after the bolt breaks: the whole nut is the
                 # engagement. 1.5 d is for threads cut or inserted into the parent material.
                 need = min(need, NUT_ENGAGEMENT_D * d)
+            if tp is not None and tp.kind in ("motor", "weapon_motor"):
+                # Face screws into a motor's own threaded holes: the hole depth is set by the motor maker, so
+                # arch.motor_face_bolts judges them (>= 0.8 d, <= the usable depth); 1.5 d would run into the windings.
+                need = min(need, 0.8 * d)
             if engaged + 0.01 < need:
                 bad = True
                 out.append(fail("fastener.engagement", G, BLOCKER, "Screw does not bite enough thread",
