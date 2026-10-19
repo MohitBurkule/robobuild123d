@@ -37,7 +37,11 @@ INS = [(-25.0, 10.4), (25.0, 10.4), (-25.0, -21.6), (25.0, -21.6), (0.0, -33.6)]
 INS_Z = (5.1, 9.1)                   # FS1 M2 heat-set (3.5 OD x 4)
 CSK_M2 = 4.5                         # 90 deg countersink at the face for an ISO 10642 M2 flat head (4.4 x 1.2) + 0.1
 BASE_HOLE, TOP_HOLE = 3.0, 3.5         # csk through-holes: wide enough that the 90 deg seat stops short of the far face (no knife edge)
-BOSS_R, BOSS_H = 2.6, 0.6            # base-panel ring boss round each screw (keys into a 2.65 x 0.65 recess in the column foot)
+BOSS_R, BOSS_H = 2.6, 0.6
+# electronics envelopes (catalog boxes at their spec placement, rot z 90): Malenki nano 32 x 20 x 4.4 at (8.67, -3.0, 15.3),
+# BBB ant ESC 23.5 x 12 x 5 at (8.63, -7.25, 10.6); the cage ribs and the base-panel cradle are dimensioned off these
+RX_X, RX_Y, RX_Z = (8.67 - 10.0, 8.67 + 10.0), (-3.0 - 16.0, -3.0 + 16.0), (15.3 - 2.2, 15.3 + 2.2)
+WE_X, WE_Y, WE_Z = (8.63 - 6.0, 8.63 + 6.0), (-7.25 - 11.75, -7.25 + 11.75), (10.6 - 2.5, 10.6 + 2.5)            # base-panel ring boss round each screw (keys into a 2.65 x 0.65 recess in the column foot)
 EAR_R = 2.7                          # top-panel corner ear radius: >= CSK_M2 / 2 + 0.4 mm of Ti round the countersink
 RY, RZ = -30.5, 11.0                 # N10 shaft (rear axle)
 MOTX = 19.6                          # N10 catalog origin |X| (body 3.7..27.5, shaft to 37.5)
@@ -201,6 +205,14 @@ def base_panel():
     # the 1 mm skin is thinner than the 1.2 mm M2 flat head: a 0.6 mm ring boss over each screw gives the seat 1.6 mm of
     # material (no knife edge under the head) and keys the panel into the column feet, so side hits shear the bosses, not the screws
     body = _U(body, *[_cyl(BOSS_R, z0 + t - 0.01, z0 + t + BOSS_H, (x, y), "z") for x, y in INS])
+    # weapon-ESC cradle: two ribs 0.1 under it and a 1 mm lip round its -x / +x / +y sides (leads leave above the lip at the
+    # board mid-plane): with the base panel on, the ESC cannot drop or slide; panel off, it comes straight out for service
+    (wx0, wx1), (wy0, wy1), wz0 = WE_X, WE_Y, WE_Z[0]
+    top, lip = wz0 + 1.0, z0 + t - 0.01
+    cradle = [_box(xa, xa + 1.2, wy0 + 1.0, wy1 - 1.0, lip, wz0 - 0.1) for xa in (wx0 + 2.4, wx1 - 3.6)]
+    cradle += [_box(wx0 - 0.1 - 1.1, wx0 - 0.1, wy0, wy1, lip, top), _box(wx1 + 0.1, wx1 + 0.1 + 1.1, wy0, wy1, lip, top),
+               _box(wx0 - 1.2, wx1 + 1.2, wy1 + 0.1, wy1 + 1.1, lip, top)]
+    body = _U(body, *cradle)
     cuts = [_csk(BASE_HOLE, CSK_M2, (x, y, z0), "z", 1, 4.0) for x, y in INS]   # 4.5 countersink (STEP RV26 has 3.2 x 0.5; an ISO 10642 M2 head is 4.4 x 1.2, so a smaller seat leaves it proud and binding) then the 2.2 hole
     return _S(body, *cuts)
 
@@ -740,7 +752,15 @@ def chassis():
     for sg in (1, -1):
         cuts.append(_box(sg * 17.95, sg * 27.05, -34.85, -25.75, 4.4, 4.8))   # motor preload pads
     cuts += [weapon_mount("l"), weapon_mount("r"), side_panel(1), side_panel(-1)]
-    return _S(body, *cuts)
+    body = _S(body, *cuts)
+    # electronics cage hung from the deck (prints as part of the deck-down first layers): ribs 0.1 mm off the Malenki's
+    # -x / +x / -y faces and the weapon ESC's -y face, so neither board hammers around when the robot is flipped
+    (ex0, ex1), (ey0, ey1), ez0 = RX_X, RX_Y, RX_Z[0]
+    G_ = 0.1
+    ribs = [_box(ex0 - G_ - 1.28, ex0 - G_, -12.0, 8.0, ez0, c["deck"] + 0.1),          # -x, in the gap to the pack
+            _box(ex1 + G_, ex1 + G_ + 1.2, -12.0, 8.0, ez0, c["deck"] + 0.1),           # +x
+            _box(0.0, 14.6, ey0 - G_ - 1.0, ey0 - G_, WE_Z[0] + 0.9, c["deck"] + 0.1)]   # -y, down over the ESC's end
+    return _U(body, *ribs)
 
 
 # ------------------------------------------------------------------------------------------------------------ misc
