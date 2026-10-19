@@ -56,13 +56,17 @@ def _gr1507_base():
     return minus(union(arm + [cyl_x(3.9, 2.0)]), holes)
 
 
+BELL_SCREW_R, BELL_SCREW_PHASE = 4.5, -54.889  # spider screw circle on the bell top and its phase about the axis (STEP; local frame)
+
+
 def _gr1507_bell():
     """GR1507 bell as in the RVRN 2.0 STEP (sections, local X = -world X): a hub r3 through (-4.5..6.5), an open wall r8..9.8
     over -4.5..4.0, and a vented top: a r6.2 disc (4.5..6.0) joined to the wall by 8 ribs (two per quadrant at world
     34 and 62 deg), the 4 big vents between them. The stator inside is not modelled (the STEP leaves it out)."""
     ribs = [rot(at(box(1.5, 4.6, 1.4), 4.75, 7.5, 0), [ang, 0.0, 0.0]) for ang in (146, 118, 236, 208, 326, 298, 56, 28)]
     wall = minus(cyl_x(9.8, 8.5), [cyl_x(8.0, 9.0)])
-    return union([at(cyl_x(3.0, 11.0), 1.0, 0, 0), at(wall, -0.25, 0, 0), at(cyl_x(6.2, 1.5), 5.25, 0, 0)] + ribs)
+    top = minus(cyl_x(6.2, 1.5), [rot(at(cyl_x(0.8, 1.7), 0, BELL_SCREW_R, 0), [BELL_SCREW_PHASE + 90.0 * k, 0.0, 0.0]) for k in range(4)])   # M2 tap holes (ISO 2306 r0.8) for the spider screws
+    return union([at(cyl_x(3.0, 11.0), 1.0, 0, 0), at(wall, -0.25, 0, 0), at(top, 5.25, 0, 0)] + ribs)
 
 
 @dataclass
