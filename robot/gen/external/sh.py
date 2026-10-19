@@ -91,3 +91,31 @@ def rounded_rect_pts(x0, x1, y0, y1, rad, n=4):
             t = math.radians(a + 90 * i / n)
             out.append((cx + rad * math.cos(t), cy + rad * math.sin(t)))
     return out
+
+
+_ROT = {(1, 0, 0): (0, 90, 0), (-1, 0, 0): (0, -90, 0), (0, -1, 0): (90, 0, 0), (0, 1, 0): (-90, 0, 0),
+        (0, 0, 1): (0, 0, 0), (0, 0, -1): (180, 0, 0)}
+
+
+def csk_cut(at, direction, d):
+    """Countersink seat for an ISO 10642 screw (90 deg, head 2.2 d x 0.6 d) whose head is flush at `at` and whose shank
+    runs along `direction` (an axis vector): the cone + 0.15 mm, and 0.5 mm of clearance above the surface."""
+    dk, k = 2.2 * d, 0.6 * d
+    prof = [[0.0, -0.5], [dk / 2 + 0.15, -0.5], [dk / 2 + 0.15, 0.0], [d / 2 + 0.1, k + 0.1], [0.0, k + 0.1]]
+    key = tuple(int(round(v)) for v in direction)
+    return place({"type": "revolve", "profile": [[r(a), r(b)] for a, b in prof]}, tuple(at), _ROT[key])
+
+
+def counterbore(at, direction, head_d, depth, clear_d):
+    """Counterbore so a socket/button head sits `depth` below the surface point `at` (shank along `direction`):
+    returns (cut, new head point)."""
+    import numpy as _np
+    n = _np.asarray(direction, float)
+    a0 = _np.asarray(at, float)
+    seat = a0 + n * depth
+    key = tuple(int(round(v)) for v in direction)
+    ax = "xyz"[[abs(v) for v in key].index(1)]
+    i = "xyz".index(ax)
+    lo, hi = sorted((a0[i] - n[i] * 0.5, seat[i]))
+    others = [a0[j] for j in range(3) if j != i]
+    return cyl_axis(head_d / 2 + 0.3, lo, hi, ax, *others), [float(v) for v in seat]

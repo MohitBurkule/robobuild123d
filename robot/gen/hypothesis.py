@@ -40,12 +40,16 @@ RECEIVERS = ("rx_fs_ia6_decased", "integrated")
 CHASSIS = ("clamshell", "tub")
 # disc weapons: one disc, or a spider bolted to the bell carrying two floating discs (RVRN 2.0)
 DISC_STACKS = ("single", "spider_pair")
+# ground game beyond the front: a low ramped skirt round the sides and rear (so a wedge, fork or lifter arriving from any
+# bearing meets a lip at the floor, not a 4 mm door under the belly), the rear only, or none
+SKIRTS = ("sides_rear", "rear", "none")
 
 AXES = {
     "weapon": WEAPONS, "mount": MOUNTS, "orientation": ORIENTATIONS, "attachment": ATTACHMENTS, "front": FRONTS,
     "drive_layout": DRIVE_LAYOUTS, "drive_motor": DRIVE_MOTORS, "wheel_dia": WHEEL_DIAS, "transmission": TRANSMISSIONS,
     "wheel_guards": (True, False), "invertible": (True, False), "battery": BATTERIES, "drive_esc": DRIVE_ESCS,
     "weapon_esc": WEAPON_ESCS, "rx": RECEIVERS, "chassis": CHASSIS, "disc_stack": DISC_STACKS,
+    "skirts": SKIRTS,
 }
 AXIS_ORDER = tuple(AXES)
 
@@ -137,6 +141,85 @@ BUILDABLE = {
     "vspin_drisk": {"front": ("forks", "wedgelets"), "mount": ("front",), "attachment": ("drisk",), "drive_layout": ("2WD", "4WD"),
                     "chassis": ("clamshell",), "disc_stack": ("single", "spider_pair")},
 }
+# ------------------------------------------------------------------------------------------------ ground game
+# How each axis value plays the top threat class (get under, lift and throw): the opponent's wedge, fork, lifter or
+# flipper wants to get under our lowest leading edge; a vertical spinner's tooth wants a step, hook or square face.
+OPP_LIP_MM = (0.3, 0.5)  # a well-set opponent fork / acetate lip
+GROUND_GAME = {
+    "front": {
+        "wedge": ("printed ramp, lip 0.6 mm off the floor, 1 mm thick at the edge: contests an opponent lip at 0.3-0.5 mm "
+                  "and deflects a rising tooth up its face instead of taking it square", "printed nylon"),
+        "skirt": ("TPU skirt drags on the floor and flexes over seams: wins the under-contest against rigid wedges that "
+                  "must ride 0.5 mm high; loses to a sharp metal lip, which it rides up instead of snagging", "tpu"),
+        "plow": ("V nose: deflects opponents sideways as well as up; printed lip at 0.6 mm contests", "printed nylon"),
+        "forks": ("forks = a lightweight wedge: thin hard tines at 0.6 mm get under wedges with less mass than a full "
+                  "ramp; the gap between tines is closed by the weapon so an opposing fork cannot slip in", "titanium"),
+        "wedgelets": ("wedgelets either side of the disc: TPU ramps at 0.6 mm feed the opponent into the teeth and soak "
+                      "up the disc's own debris; cheap, two screws each, replaced between fights", "tpu"),
+    },
+    "skirts": {
+        "sides_rear": "low ramped skirt round the sides and rear, 0.5 mm off the floor and protruding 3 mm, so no bearing "
+                      "has a door under the belly; its outer face slopes up 40 deg so a rising tooth glances off",
+        "rear": "rear skirt only: the sides are left to the tyres and wells (accepted risk below)",
+        "none": "no skirts beyond the front: a side or rear wedge gets under the belly (accepted risk below)",
+    },
+    "trade": ("against an opposing wedge, the lower lip wins: ours sits at 0.5-0.6 mm, a flexible acetate or TPU lip can "
+              "sit on the floor and beat a rigid one; forks win by mass (more reach per gram) but leave tine gaps an "
+              "opposing fork can enter, so the gaps are kept under the opponent's fork width or covered by the weapon"),
+}
+
+
+def ground_game(h: "Hypothesis") -> dict:
+    """The hypothesis's statement of how it plays the ground game, and the lift-and-throw risks it accepts (by
+    direction, `<dir>` = un-skirted there, `<dir>.bite` = an edge a tooth can catch there), each with its reason."""
+    front, lip = GROUND_GAME["front"].get(h.front, (f"{h.front}: no ground-game statement", "?"))
+    acc = {}
+    if h.skirts in ("rear", "none"):
+        for d in ("left", "right", "front_left", "front_right", "rear_left", "rear_right"):
+            acc[d] = (f"skirts={h.skirts}: the spinner's weapon takes the 3-4 g full side skirts would cost (they put "
+                      "it over 150 g); the weapon is the side defence and the wheels and wells cover the sides"
+                      if h.is_spinner else f"skirts={h.skirts}: the hypothesis leaves the sides to the wheels and wells")
+    if h.skirts == "rear":
+        for d in ("rear_left", "rear_right"):
+            acc[d + ".bite"] = ("the rear skirt ends in the drive wheel's door: the belly edge there sits 2-3 mm up beside "
+                                "the tyre, which stands proud of it and is what a rising tooth meets first")
+    if h.skirts == "none":
+        acc["rear"] = ("skirts=none: no mass left for a skirt (the spinner is within 2 g of 150 g); the weapon faces "
+                       "the opponent and the rear is left to the wheels" if h.is_spinner else "skirts=none")
+        acc["rear.bite"] = ("skirts=none: the top half's rear lip overhangs the belly bevel by its chamfer; without a "
+                            "skirt a rising tooth can catch it - the accepted cost of the mass")
+    if h.weapon == "vspin_drisk":
+        acc["front"] = ("the disc is the front: it sweeps 2 mm above the floor between the forks/wedgelets, so a wedge "
+                        "that reaches the gap under it meets the teeth (combat.R053 measures the sweep)")
+        acc["front.bite"] = ("the uprights' undersides stand behind the disc: a tooth reaching them has already met our "
+                             "disc; the uprights are the replaceable weapon module")
+        for d in ("front_left", "front_right"):
+            acc[d + ".bite"] = ("the upright feet flank the disc: a tooth reaching them past the corner wedgelet has "
+                                "met the disc first; the uprights are spares (CF-OW04)")
+    if h.front in ("wedge", "plow", "skirt"):
+        for d in ("front_left", "front_right"):
+            acc[d + ".bite"] = ("the ramp's underside at its outer corner, 3-5 mm up behind the 0.5 mm lip: a tooth must "
+                                "pass under the lip first, and the ramp is the replaceable front part (CF-VS01)")
+    if h.front == "plow":
+        for d in ("front", "front_left", "front_right"):
+            acc[d] = ("the V nose is swept back 25 deg: it trades a flat floor-skimming lip for deflecting opponents "
+                      "into the wall; it loses the straight-on ground game to a flat wedge by design")
+            acc[d + ".bite"] = acc[d]
+    if h.weapon == "hspin_bar":
+        for d in ("left", "right"):
+            acc[d + ".bite"] = ("the top bridge of the bar module stands 10 mm up the side: the bar sweeps below it, so a "
+                                "tooth reaching it has crossed our bar's arc first; the bridge is a bolt-on spare")
+    if h.front in ("forks", "wedgelets"):
+        for d in ("left", "right"):
+            acc[d + ".bite"] = ("button heads on the outer tine roots of the replaceable sheet stand 1.3 mm proud: a "
+                                "tooth that catches one bends a spare sheet, not the chassis (CF-AS04, CF-VS03)")
+    if h.weapon == "lifter":
+        for d in ("left", "right"):
+            acc[d] = "the scoop cheeks swing outside the side walls: a side skirt would foul them; the cheeks cover the sides"
+    return {"front": front, "lip_material": lip, "skirts": GROUND_GAME["skirts"][h.skirts],
+            "trade": GROUND_GAME["trade"], "opponent_lip_mm": list(OPP_LIP_MM), "accepted": acc}
+
+
 # options the generator builds but that do not verify clean yet: built only on request (user {"experimental": true}).
 # chassis=tub (open tub + base panel + top sheet, uprights on standoffs): 6 blockers left on the 4WD drisk - 2.7 g over
 # the limit, the upright neck flexes 1.1 mm (the verifier roots it at the foot contact, not at the standoff screws), the
@@ -185,6 +268,7 @@ class Hypothesis:
     rx: str = "rx_fs_ia6_decased"
     chassis: str = "clamshell"
     disc_stack: str = "single"
+    skirts: str = "sides_rear"
 
     @property
     def weapon_class(self) -> WeaponClass:
@@ -201,6 +285,7 @@ class Hypothesis:
                 "inv" if self.invertible else "up", self.battery.replace("lipo_", "").replace("c_typical_", ""),
                 self.drive_esc[:10], self.weapon_esc[:6], self.rx[:5]]
         bits += [b for b in (self.chassis, self.disc_stack) if b not in ("clamshell", "single")]
+        bits += [f"sk-{self.skirts}"] if self.skirts != "sides_rear" else []
         return "-".join(str(b) for b in bits)
 
     def to_dict(self) -> dict:
@@ -241,11 +326,11 @@ PRESETS = {
     "hspin_bar": dict(weapon="hspin_bar", mount="top", orientation="flat", attachment="hub_motor", front="wedge",
                       wheel_dia=22, weapon_esc="c_bbb_antweight_spinner_brushless_esc",
                       battery="c_typical_2s_300mah_lipo_lihv_betafpv_tbs_",
-                      drive_esc="c_malenki_nano_antweight_esc_receiver", rx="integrated"),
+                      drive_esc="c_malenki_nano_antweight_esc_receiver", rx="integrated", skirts="rear"),
     "vspin_drisk": dict(weapon="vspin_drisk", mount="front", orientation="vertical", attachment="drisk", front="forks",
                         drive_layout="2WD", wheel_dia=22, weapon_esc="c_bbb_antweight_spinner_brushless_esc",
                         battery="c_typical_2s_300mah_lipo_lihv_betafpv_tbs_", invertible=False, drive_esc="c_malenki_nano_antweight_esc_receiver",
-                        rx="integrated"),
+                        rx="integrated", skirts="rear"),
 }
 
 

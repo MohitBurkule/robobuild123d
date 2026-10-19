@@ -93,7 +93,7 @@ def gate(h, user: dict | None = None, fast=False, max_layouts=3, seeds=(0, 1), l
         except ValueError as e:
             attempts.append({"seed": u.get("seed"), "layout": idx, "blockers": [f"build: {e}"]})
             continue
-        missing = intent_mod.check(d)
+        missing = intent_mod.check(d, adversarial=True)
         if missing:  # a feature without a why is a generator bug, not a layout problem: refuse at once
             raise Rejected(getattr(h, "slug", str(h)), attempts + [{"blockers": [f"intent: {m}" for m in missing]}])
         rep = verify_dict(d, fast=fast)
@@ -101,6 +101,12 @@ def gate(h, user: dict | None = None, fast=False, max_layouts=3, seeds=(0, 1), l
         attempts.append({"seed": u.get("seed"), "layout": idx, "blockers": b})
         if log:
             log(f"  seed {u.get('seed')} layout {idx}: {len(b)} blockers")
+        if b and all(x.startswith("mass.over") for x in b):  # only over weight: pocket what the verifier says is spare
+            heavy = GateResult(d, rep, attempts)
+            light = lighten(h, u, idx, heavy, fast, log)
+            if light is not heavy:
+                light.spec.setdefault("generator", {})["gate"] = {"attempts": len(attempts), "fast": fast}
+                return light
         if not b:
             res = GateResult(d, rep, attempts)
             res = lighten(h, u, idx, res, fast, log)

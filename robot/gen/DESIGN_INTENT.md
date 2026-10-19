@@ -117,7 +117,7 @@ Each rule names the generator code that applies it.
    - Generator: `intent.chamfer_for` gives print 1.0 mm and impact 1.5 mm.
 17. **Wheels sit in closed wells, and an arch guards a tyre top that rises above the roof.**
    - Revron: side panels act as armour and wheel retainers.
-18. **Belts run enclosed.** The O-ring runs in a tunnel inside the side wall, so nothing outside can snag it.
+18. **Belts run enclosed.** The pulley groove sits on the inboard side of the wheel, in a closed pulley room cut into both shell halves, so no ray from outside reaches the O-ring (CF-DB03).
 19. **Screw heads sit in counterbores below the surface.** Roof bolts are counterbored 2.2 mm.
 
 ## Ground game
@@ -140,3 +140,58 @@ Each rule names the generator code that applies it.
 24. **Remove material only where the verifier reports it carries nothing** (`material.saveable_g`).
    - Revron: X-ribbed floor pockets, 4 lightening pockets in each disc, 6 holes in the base panel.
    - Generator: the gate's lighten pass. Wheels become a web with 5 windows.
+
+## Adversarial intent
+
+Every intent names the attacks it answers (`threats: [...]`, attack ids from `robot/gen/threats.py` or failure-mode
+ids `CF-xxxx` from `robot/gen/data/combat_failure_modes.json`). The gate runs `intent.check(spec, adversarial=True)`,
+which casts each attack's rays at the built robot and fails any reachable critical or fragile feature that has no
+honest answer. Per-robot reports: `/mnt/project-files/robot-cad/gen/threats/<robot>.md`.
+
+### The ground game comes first
+
+In the UK 150 g class most fights are decided by who gets under whom (taxonomy: the front-interface axis, wedge /
+wedgelets / forks / skirt, is listed as decisive; every winning archetype in it carries one). A robot that is lifted
+loses its traction, its weapon's bite and often the fight to an arena wall, so `lift_and_throw` is the top threat
+class. For each of 8 directions the engine scores: **under-ness** (our lowest leading edge against an opponent lip at
+0.3-0.5 mm), **bite** (downward-facing steps a rising tooth can catch, what it would rip off and how high it would
+launch us) and **edge shape** (ramp vs square), on the same perimeter profile as the verifier's combat.R0xx rules.
+Each hypothesis states how it plays it (`generator.ground_game`): front interface, side and rear skirts, lip
+material, and the trade-off; any direction it leaves open is an accepted risk with a reason.
+
+25. **Every direction is skirted or accepted.** Front lip <= 1.0 mm, sides and rear <= 3.0 mm over most of the arc; the
+    default `skirts=sides_rear` adds a 0.5 mm lip skirt round the sides and rear (it runs under the wedge's side ends
+    and under side-mounted tines). The spinner presets use `skirts=rear`: full side skirts put them over 150 g, so the
+    weapon, wheels and wells are the side defence, which they state as an accepted risk. Rationale: a side or rear
+    T-bone is how wedges beat a front-only wedge (CF-WL07, CF-WL01).
+26. **No bite edges.** No downward face 1-30 mm up that a tooth reaches first; screw heads near the floor are
+    countersunk. Rationale: a vertical spinner lifts by the first ledge it catches (CF-VS01, CF-VS05).
+27. **Lips and tines follow CF-AS01..04.** Tip underside 10-20 deg with a 0.3-1 mm tip radius; a >= 1 mm
+    under-chamfer or a hinge; tip pressure < 5 MPa with 0.5-5 N/mm stiffness for a flexible lip; tines > 8 mm
+    wide, joined or tip-rounded when 2-6 mm and flexible. The generator writes the numbers into each lip's intent;
+    a rule it misses is an accepted risk with a reason. Rationale: floor gouges, seams and floor-wall gaps catch
+    lips (taxonomy: forks vs. wedge stalemates).
+
+### Shielding
+
+28. **A critical or fragile feature is shielded or accepted.** Critical: drive, weapon, power, radio. Fragile: belt,
+    wire, switch, tyre, thin print. Shields: inside the hull, behind armour, recessed, captured (all must be
+    unreachable), or doubled, sacrificial, guarded (honest about being reachable). Rationale: chunk removal and
+    single points of failure end fights (CF-GD01, CF-GD02).
+29. **Belts inside** (CF-DB03, CF-OW03). The groove is inboard of the tyre, in a closed pulley room.
+30. **Battery >= 10 mm from every exposed face, receiver and ESC >= 8 mm from the skin** (CF-GD03, CF-GD04). The
+    layout solver enforces it; a robot too small for it builds on a relaxed tier that the spec records
+    (`generator.margins`) as an accepted risk.
+31. **Each drive side has its own motor lead, and the motors sit on opposite sides** (CF-GD02, CF-GD05).
+32. **Moving-to-static gaps are < 1.5 mm or > 15 mm** (CF-DB01, CF-DB02). Wheels run 0.4-1 mm from their wells. The
+    disc's 2-4 mm running gap is an accepted risk, because it must clear the hull when deflected.
+33. **Switch recessed in the rear half** (CF-GD06). It must stay reachable, so it is an accepted risk: a hit at worst
+    turns it off, and the robot is failsafe.
+34. **Screws on impact faces are countersunk or recessed** (CF-ST04). Wedge, skirt and plow webs take ISO 10642 heads
+    flush in a cone, and roof bolts are counterbored. Heads on replaceable contact parts (upright feet, fork
+    sheets) are accepted.
+35. **Weapon supports take a front hit in compression.** The upright's rear face bears on the chassis, so a hit
+    pushes it into the structure and not off its screws (CF-OW04, CF-ST04).
+36. **Cheap, replaceable parts sit at the contact points.** Uprights, wedgelets, fork sheets, tyres and the wedge are
+    bolt-on spares, marked `sacrificial` or `guarded`. Rationale: in a 3-minute fight, a 20 p part is what should
+    break (taxonomy: Revron's quick-change wedgelets).

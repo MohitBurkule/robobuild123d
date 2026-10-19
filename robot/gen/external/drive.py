@@ -24,7 +24,8 @@ MOTORS = {
 MOTOR_INNER_X = 5.85  # inner end of each motor (the 11.7 mm between them carries the wire channel)
 FACE_TO_WHEEL = 2.45  # gearbox face to the inner face of the wheel
 SIDE_MARGIN = 2.6  # outer face of the wheel to the outline
-# O-ring belt (4WD): groove section on the outboard face of every wheel
+# O-ring belt (4WD): groove section on the INBOARD face of every wheel, so the belt runs inside the hull between the
+# well's inner wall and the tyre, where no opponent can reach it (an outboard belt is cut by the first side hit)
 GROOVE_W = 3.0  # flange 0.8 + groove 1.4 + flange 0.8
 GROOVE_R = 4.5  # groove bottom radius: low enough that the tunnel clears the floor and roof skins
 BELT_CORD = 1.0  # nitrile cord: the nearest stock metric O-ring section to Revron's 1.2 mm
@@ -70,13 +71,13 @@ class DriveGeom:
 
     @property
     def tyre_cx(self):
-        """Tyre (wheel part) centre |x|: the inboard part of the wheel width."""
-        return self.wheel_cx - self.total_w / 2 + self.wheel_w / 2
+        """Tyre (wheel part) centre |x|: the outboard part of the wheel width."""
+        return self.wheel_cx + self.total_w / 2 - self.wheel_w / 2
 
     @property
     def groove_x(self):
-        """Groove mid-plane (|x|): the outboard section of the wheel."""
-        return self.wheel_cx + self.total_w / 2 - GROOVE_W / 2
+        """Groove mid-plane (|x|): the inboard section of the wheel (belt inside the hull)."""
+        return self.wheel_cx - self.total_w / 2 + GROOVE_W / 2
 
     @property
     def radius(self):
@@ -144,10 +145,11 @@ def pulley_shape(bore: str = "d") -> dict:
     """O-ring pulley printed as one piece with its wheel (fused): two flanges and a groove, axis x, centred."""
     rf = GROOVE_R + BELT_CORD / 2 + 0.6
     groove = sh.S(sh.cyl(rf + 1.0, 1.4, rot=(0, 90, 0)), sh.cyl(GROOVE_R, 1.6, rot=(0, 90, 0)))
-    bore_s = ({"type": "intersect", "items": [sh.cyl(1.5, GROOVE_W + 2, rot=(0, 90, 0)), sh.box(GROOVE_W + 2, 3.2, 2.6, (0, 0, -0.3))]}
-              if bore == "d" else sh.cyl(AXLE_R + 0.1, GROOVE_W + 2, rot=(0, 90, 0)))
-    # a 0.4 mm spigot into the hub face on the inboard (-x) side: the two print as one piece
-    spigot = sh.cyl(GROOVE_R, 0.8, (-GROOVE_W / 2, 0, 0), (0, 90, 0))
+    # on the motor side the pulley sits inboard of the hub, over the shaft's round root: a 0.1 mm clearance bore (the
+    # D-bore in the hub, printed as one piece with the pulley, carries the torque)
+    bore_s = (sh.cyl(1.6, GROOVE_W + 2, rot=(0, 90, 0)) if bore == "d" else sh.cyl(AXLE_R + 0.1, GROOVE_W + 2, rot=(0, 90, 0)))
+    # a 0.4 mm spigot into the hub face on the outboard (+x) side: the two print as one piece
+    spigot = sh.cyl(GROOVE_R, 0.8, (GROOVE_W / 2, 0, 0), (0, 90, 0))
     return sh.S(sh.U(sh.cyl(rf, GROOVE_W, rot=(0, 90, 0)), spigot), groove, bore_s)
 
 
@@ -162,11 +164,22 @@ def _well(plan, g, sgn, y, side, kind):
         hz = abs(zc * 2)
         plan.add(half, sh.box(tw + 5.0, g.wheel_dia + 5.8, hz, (sgn * g.wheel_cx, y, zc)),
                  intent=I("protection", f"{kind} wheel well: a closed box round the wheel so a hit from the side or a "
-                          "spinner tooth lands on structure, not on the tyre", "wheel + 2.9 mm wall each way (print 1.4 mm + 1.5 mm clearance)"))
+                          "spinner tooth lands on structure, not on the tyre", "wheel + 2.9 mm wall each way (print 1.4 mm + 1.5 mm clearance)", threats=["vspin_side", "hspin_floor", "grabber", "wall_slam", "under_side"]))
     slot_h = max(-zb, zt) + 0.5
-    plan.cut("bottom", sh.box(tw + 2.0, g.wheel_dia + 3.0, slot_h, (sgn * g.wheel_cx, y, zb + slot_h / 2 - 0.25)),
+    # 4WD belt: only the tyre gets a slot through the belly / roof; the O-ring groove section beside it runs in a closed
+    # room, so the belt's nips cannot be reached from outside (combat CF-DB03, belts enclosed)
+    sx, sw = (g.tyre_cx, g.wheel_w) if g.belt else (g.wheel_cx, tw)
+    if g.belt:
+        rf = GROOVE_R + BELT_CORD / 2 + 0.6 + 0.8
+        for half, z0, z1 in (("bottom", -rf, 0.1), ("top", -0.1, rf)):
+            plan.cut(half, sh.boxr(*sorted((sgn * (g.groove_x - GROOVE_W / 2 - 0.5), sgn * (g.groove_x + GROOVE_W / 2 + 0.6))),
+                                   y - rf, y + rf, z0, z1),
+                     intent=I("protection", "closed room round the O-ring pulley: the belt's nips sit inside the hull, the "
+                              "floor and roof skins stay whole under and over them", f"flange r {rf - 0.8:.1f} + 0.8 mm",
+                              threats=["CF-DB03", "lifter_flipper", "hazard_snag", "debris"]))
+    plan.cut("bottom", sh.box(sw + 2.0, g.wheel_dia + 3.0, slot_h, (sgn * sx, y, zb + slot_h / 2 - 0.25)),
              intent=I("ground_game", "slot through the belly: the tyre reaches the floor; the body rides clear of it",
-                      f"wheel + 1 mm clearance each side; belly {zb} vs floor {-g.radius}"))
+                      f"wheel + 1 mm clearance each side; belly {zb} vs floor {-g.radius}", threats=["under_side", "lifter_flipper"]))
     h = plan.hyp
     guard = getattr(h, "wheel_guards", False) and not getattr(h, "invertible", False) and h.weapon != "hspin_bar"
     z_roof = zt - plan.frame.floor
@@ -176,13 +189,14 @@ def _well(plan, g, sgn, y, side, kind):
         # roof slot: wide enough for the tyre chord at the roof underside, but never wider than where the guard's bore
         # leaves the roof top (else a knife edge of roof is left over the bore)
         half_roof = min(math.sqrt(max(R * R - z_roof * z_roof, 0.0)) + 1.5, math.sqrt(max(r_in * r_in - zt * zt, 0.0)) - 0.3)
-        xa, xb = sgn * g.wheel_cx - (tw + 2.0) / 2, sgn * g.wheel_cx + (tw + 2.0) / 2
-        plan.cut("top", sh.boxr(xa, xb, y - (g.wheel_dia + 3.0) / 2, y + (g.wheel_dia + 3.0) / 2, -0.25, z_roof),
-                 intent=I("ground_game", "wheel room under the roof", "wheel + 1.5 mm"))
+        xa, xb = sgn * sx - (sw + 2.0) / 2, sgn * sx + (sw + 2.0) / 2
+        xr = sorted((sgn * g.wheel_cx - (tw + 2.0) / 2, sgn * g.wheel_cx + (tw + 2.0) / 2))
+        plan.cut("top", sh.boxr(*xr, y - (g.wheel_dia + 3.0) / 2, y + (g.wheel_dia + 3.0) / 2, -0.25, z_roof),
+                 intent=I("ground_game", "wheel room under the roof", "wheel + 1.5 mm", threats=["inverted"]))
         plan.cut("top", {"type": "intersect", "items": [sh.cyl_axis(r_in, xa, xb, "x", y, 0.0),
                                                         sh.boxr(xa, xb, y - half_roof, y + half_roof, z_roof - 0.1, zt + r_out)]},
                  intent=I("ground_game", "the tyre top rises above the roof: a slot just as wide as it needs",
-                          f"chord of R {R:g} at the roof underside + 1.5 mm"))
+                          f"chord of R {R:g} at the roof underside + 1.5 mm", threats=["inverted", "flip_landing"]))
         lim = W - 0.35 - 1.85  # flush with the slide-on opening face: no sliver between them
         xa2, xb2 = max(xa, -lim), min(xb, lim)
         if kind == "front":
@@ -191,11 +205,11 @@ def _well(plan, g, sgn, y, side, kind):
         plan.add("top", {"type": "intersect", "items": [arch, sh.boxr(xa2, xb2, y - r_out, y + r_out, z_roof, zt + r_out)]},
                  intent=I("protection", "wheel guard: an arch over the exposed tyre top so nothing lands on the tyre from "
                           "above; concentric, so it keeps an even wall and lands on the roof slab either side",
-                          f"r {r_in:g}..{r_out:g} (1.5 mm clearance, 1.4 mm wall)"))
+                          f"r {r_in:g}..{r_out:g} (1.5 mm clearance, 1.4 mm wall)", threats=["crusher_hammer", "flip_landing", "debris", "inverted"]))
     else:
-        plan.cut("top", sh.box(tw + 2.0, g.wheel_dia + 3.0, slot_h, (sgn * g.wheel_cx, y, zt - slot_h / 2 + 0.25)),
+        plan.cut("top", sh.box(sw + 2.0, g.wheel_dia + 3.0, slot_h, (sgn * sx, y, zt - slot_h / 2 + 0.25)),
                  intent=I("ground_game", "slot through the roof: the tyre reaches the floor when inverted",
-                          "wheel + 1 mm clearance each side"))
+                          "wheel + 1 mm clearance each side", threats=["inverted", "flip_landing"]))
     wx0, wx1 = sorted((sgn * (g.wheel_cx - (tw + 5.0) / 2), sgn * (W + 0.5)))
     dy = (g.wheel_dia + 5.8) / 2
     plan.keepouts.append((f"wheel_{kind[0]}{side}" if kind == "front" else f"wheel_{side}", wx0, wx1, y - dy, y + dy))
@@ -214,7 +228,7 @@ def add_drive(plan, g: DriveGeom):
         plan.part(id=mid, kind="motor", catalog=m["cat"], at=[sgn * g.motor_cx, g.axle_y, 0.0],
                   rot=[0.0, 0.0, 0.0 if sgn > 0 else 180.0], label=f"{'left' if sgn > 0 else 'right'} drive",
                   intent=I("load_path", "drive: one gearmotor per side, back to back on the rear axle line (tank steering)",
-                           f"{m['cat']}: torque to push 150 g at {g.wheel_dia:g} mm wheels"))
+                           f"{m['cat']}: torque to push 150 g at {g.wheel_dia:g} mm wheels", threats=["under_front", "under_side", "wall_slam"]))
         plan.part(id=wid, kind="wheel", material="pla", process="fdm",
                   shape=wheel_shape(g.wheel_dia, g.wheel_w, lighten),
                   at=[sgn * g.tyre_cx, g.axle_y, 0.0], print_orientation="+x",
@@ -224,13 +238,13 @@ def add_drive(plan, g: DriveGeom):
                   intent=I("ground_game", "rear drive wheel straight on the motor shaft: no axle, bearing or coupling "
                            "to fail" + ("; its outboard groove drives the front wheel" if g.belt else ""),
                            f"{g.wheel_dia:g} mm sets ground clearance (belly {zb} above floor {-g.radius})"
-                           + ("; lightened: the gate found spare mass in the hub" if lighten else "")))
+                           + ("; lightened: the gate found spare mass in the hub" if lighten else ""), threats=["under_side", "under_front", "hazard_snag"]))
         if g.belt:
             plan.part(id=f"pulley_{side}", kind="pulley", material="pla", process="fdm", shape=pulley_shape("d"),
                       at=[sgn * g.groove_x, g.axle_y, 0.0], rot=[0.0, 0.0, 0.0 if sgn > 0 else 180.0], fused_with=wid, print_orientation="+x", color="#333333",
                       label="O-ring groove printed on the outboard face of the rear hub",
                       intent=I("load_path", "drive pulley for the front wheel's O-ring, printed with the hub so it needs no "
-                               "key of its own", f"groove r {GROOVE_R} (tunnel clears the floor/roof skins), {BELT_CORD} mm cord"))
+                               "key of its own", f"groove r {GROOVE_R} (tunnel clears the floor/roof skins), {BELT_CORD} mm cord", threats=["under_side", "lifter_flipper"]))
         reason = ("Printed hub with a D-bore matching the flat of the 3 mm gearmotor D-shaft: the flat carries drive "
                   "torque, the 0.1 mm interference only stops the hub walking off axially")
         plan.connect(mid, wid, "press_fit", reason, interference_mm=0.1, mechanical_key=True)
@@ -245,30 +259,30 @@ def add_drive(plan, g: DriveGeom):
             plan.add(half, sh.box(housing[0], housing[1], hz, (hx, g.axle_y, zc)),
                      intent=I("retention", "solid block round the gearmotor: the pocket in it holds the motor on every "
                               "face, so drive torque and hits go into the shell, not into a clip",
-                              f"motor {m['L']} x {m['flats']} + 2 mm wall"))
+                              f"motor {m['L']} x {m['flats']} + 2 mm wall", threats=["wall_slam", "vspin_side", "vspin_front", "flip_landing"]))
         _well(plan, g, sgn, g.axle_y, side, "rear")
         cav_h = m["h"] + 1.3
         plan.cut_both(sh.box(m["L"] + 0.3, m["flats"] + 0.3, cav_h, (sgn * g.motor_cx, g.axle_y, 0.0)),
                       intent=I("retention", "motor pocket: snug on the gearbox flats (they key it against reaction torque)",
-                               f"flats {m['flats']} + 0.3 mm"))
+                               f"flats {m['flats']} + 0.3 mm", threats=["reaction_gyro", "wall_slam", "flip_landing"]))
         if plan.is_tub:
             plan.cut("top", sh.box(m["L"] + 0.3, m["flats"] + 0.3, zt, (sgn * g.motor_cx, g.axle_y, zt / 2)),
                      intent=I("assembly", "tub: the motor pocket opens upward so the motor drops in from above; the top "
-                              "sheet holds it down", f"flats {m['flats']} + 0.3 mm"))
+                              "sheet holds it down", f"flats {m['flats']} + 0.3 mm", threats=["flip_landing"]))
         plan.cut_both(sh.box(3.3, 5.0, 3.5, (sgn * (MOTOR_INNER_X - 1.7), g.axle_y, 0.0)),
-                      intent=I("wiring", "terminal tab exit into the wire channel", "tab 3 x 4.6 mm + clearance"))
+                      intent=I("wiring", "terminal tab exit into the wire channel", "tab 3 x 4.6 mm + clearance", threats=["flip_landing", "wall_slam"]))
         plan.cut_both(sh.cyl(2.0, 3.0, (sgn * (g.face_x + 1.15), g.axle_y, 0.0), (0, 90, 0)),
-                      intent=I("load_path", "shaft hole: the gearbox boss locates in it", "boss 3.5 mm + 0.5"))
+                      intent=I("load_path", "shaft hole: the gearbox boss locates in it", "boss 3.5 mm + 0.5", threats=["vspin_side", "wall_slam"]))
         if plan.is_tub:
             plan.cut("top", sh.boxr(*sorted((sgn * (g.face_x - 0.5), sgn * (g.face_x + 3.0))), g.axle_y - 2.0, g.axle_y + 2.0,
                                     -0.1, zt), intent=I("assembly", "tub: keyhole over the shaft hole, so the motor and "
                                                         "its shaft drop in from above (Revron rear keyhole pockets)",
-                                                        "boss 3.5 mm + 0.5"))
+                                                        "boss 3.5 mm + 0.5", threats=["flip_landing"]))
         slot_h = max(-zb, zt) + 0.5
         side_x = sgn * (W - 0.35)
         plan.cut_both(sh.box(3.7, g.wheel_dia + 1.0, 2 * slot_h + 1, (side_x, g.axle_y, 0.0)),
                       intent=I("service", "slide-on opening in the side wall: the wheel goes on and off the shaft from "
-                               "outside without opening the shell", "wheel + 0.5 mm"))
+                               "outside without opening the shell", "wheel + 0.5 mm", threats=["vspin_side", "hspin_floor"]))
         mx0, mx1 = sorted((hx - housing[0] / 2, hx + housing[0] / 2))
         plan.keepouts.append((f"drive_{side}", mx0, mx1, g.axle_y - housing[1] / 2, g.axle_y + housing[1] / 2))
         plan.anchors[f"{mid}.terminals"] = (sgn * (MOTOR_INNER_X - 0.3), g.axle_y, 0.0)
@@ -305,15 +319,15 @@ def _front_and_belt(plan, g, side, sgn):
               label="5 mm alu standoff: front axle (greased, no bearing), captured in the split-plane bore",
               intent=I("load_path", "front axle: a stiff alu standoff carried at both ends (inner housing wall and side "
                        "wall), so the wheel load never cantilevers off the shell; its tapped ends take the side armour",
-                       f"5 mm OD (Revron); span {x_out - x_in:.1f} mm"))
+                       f"5 mm OD (Revron); span {x_out - x_in:.1f} mm", threats=["vspin_front", "under_side", "flip_landing"]))
     bore = sh.cyl_axis(AXLE_R + 0.05, min(sgn * x_in, sgn * (x_out + 0.5)), max(sgn * x_in, sgn * (x_out + 0.5)), "x", yf, 0.0)
     plan.cut_both(bore, intent=I("assembly", "axle bore on the split plane: half in each shell half, so the top half "
-                                 "clamps the axle and the wheel drops in from above", "5 mm + 0.1 mm"))
+                                 "clamps the axle and the wheel drops in from above", "5 mm + 0.1 mm", threats=["flip_landing", "wall_slam"]))
     if plan.is_tub:
         plan.cut("top", sh.boxr(min(sgn * x_in, sgn * (x_out + 0.5)), max(sgn * x_in, sgn * (x_out + 0.5)),
                                 yf - AXLE_R - 0.05, yf + AXLE_R + 0.05, -0.1, f.zt),
                  intent=I("assembly", "tub: the axle bore is a U-slot open upward, so axle and wheel drop in from above; "
-                          "the wedgelet screwed to its end holds it down", "5 mm + 0.1 mm"))
+                          "the wedgelet screwed to its end holds it down", "5 mm + 0.1 mm", threats=["flip_landing"]))
         plan.connect(aid, "tub", "interlock", "Standoff drops into the U-slot of the inner well wall and the side wall; "
                      "the wedgelet screwed into its end and the top sheet hold it down", mechanical_key=True)
     else:
@@ -327,12 +341,12 @@ def _front_and_belt(plan, g, side, sgn):
               mass_g=round(0.0045 * g.wheel_dia ** 2 + 0.6, 1),
               label=f"{g.wheel_dia:g} mm front wheel, printed hub greased on the 5 mm standoff, O-ring groove outboard",
               intent=I("ground_game", "driven front wheel: 4WD keeps traction when the front is lifted by a wedge and "
-                       "pushes with the weapon's weight over the front", f"same {g.wheel_dia:g} mm as the rear: one belt ratio 1:1"))
+                       "pushes with the weapon's weight over the front", f"same {g.wheel_dia:g} mm as the rear: one belt ratio 1:1", threats=["under_side", "under_front", "lifter_flipper"]))
     plan.connect(wid, aid, "shaft", "Printed hub turns greased on the alu standoff, located between the well walls")
     plan.part(id=f"pulley_f{side}", kind="pulley", material="pla", process="fdm", shape=pulley_shape("axle"),
               at=[sgn * g.groove_x, yf, 0.0], rot=[0.0, 0.0, 0.0 if sgn > 0 else 180.0], fused_with=wid, print_orientation="+x", color="#333333",
               label="O-ring groove printed on the outboard face of the front hub",
-              intent=I("load_path", "driven pulley: the O-ring turns the front wheel through it", f"same groove as the rear: 1:1"))
+              intent=I("load_path", "driven pulley: the O-ring turns the front wheel through it", f"same groove as the rear: 1:1", threats=["under_side", "lifter_flipper"]))
     bg = belt_geometry(g)
     r = bg["cord_r"]
     xg = sgn * g.groove_x
@@ -349,7 +363,7 @@ def _front_and_belt(plan, g, side, sgn):
               intent=I("load_path", "O-ring belt: drives the front wheel from the rear motor, so 4WD costs no extra motor; "
                        "it slips instead of breaking under a stall", f"centre {bg['centre_mm']:.1f} mm, groove r {GROOVE_R}, "
                        f"{BELT_STRETCH * 100:.0f} % stretch -> {bg['ideal_id']:.1f} mm ID; nearest stock ring {bg['ring_id']:g} x {BELT_CORD:g} "
-                       f"({bg['stretch'] * 100:.1f} %)"))
+                       f"({bg['stretch'] * 100:.1f} %)", threats=["under_side", "lifter_flipper", "hazard_snag"]))
     for p in (f"pulley_{side}", f"pulley_f{side}"):
         plan.connect(bid, p, "interlock", f"O-ring seated in the groove of {p} under {BELT_STRETCH * 100:.0f} % stretch")
     # belt tunnel inside the side wall, between the two wells
@@ -360,7 +374,7 @@ def _front_and_belt(plan, g, side, sgn):
         z_lo = f.zb + f.floor
     tun = sh.boxr(min(sgn * x0, sgn * x1), max(sgn * x0, sgn * x1), g.axle_y, yf, z_lo, tz)
     plan.cut_both(tun, intent=I("protection", "belt tunnel inside the side wall: the O-ring runs enclosed between the "
-                                "wheels, so nothing outside can snag or cut it", f"cord {BELT_CORD} mm + {TUNNEL_CLEAR} mm all round"))
+                                "wheels, so nothing outside can snag or cut it", f"cord {BELT_CORD} mm + {TUNNEL_CLEAR} mm all round", threats=["vspin_side", "hspin_floor", "hazard_snag", "debris", "grabber"]))
     plan.keepouts.append((f"belt_{side}", min(sgn * (x0 - 1.4), sgn * (W + 0.5)), max(sgn * (x0 - 1.4), sgn * (W + 0.5)),
                           g.axle_y, yf))
 
