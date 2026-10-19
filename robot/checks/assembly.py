@@ -196,6 +196,21 @@ def run(ctx):
                     present[i] = False
                     steps.append(AssemblyStep(len(steps) + 1, b.id, [float(x) for x in le[0]], float(le[1])))
                     progress = True
+        for t in getattr(r.spec, "teardown", None) or []:
+            ks = [w.index(pid) for pid in t.get("parts") or []]
+            if not ks or any(k is None for k in ks) or not all(present[k] for k in ks):
+                continue
+            members = sorted({m for k in ks for m in group(ctx, w.bodies[k].id, present) if present[m]})
+            if root in members:
+                continue
+            d = np.asarray(t.get("dir") or [0, 0, 1], float)
+            d = d / np.linalg.norm(d)
+            res = slide(ctx, members, present, d)
+            if res[0] == "ok":
+                for m in members:
+                    present[m] = False
+                    steps.append(AssemblyStep(len(steps) + 1, w.bodies[m].id, [float(x) for x in d], float(res[1])))
+                progress = True
         left = sum(1 for i in range(n) if present[i] and i != root)
         if left == 0 or not progress:
             break

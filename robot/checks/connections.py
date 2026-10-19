@@ -344,6 +344,12 @@ def cover_retention(r):
         if n >= COVER_MIN_FASTENERS:
             good += 1
             continue
+        why = str(p._extra.get("cover_fasteners_deviation") or "").strip()
+        if why and n >= 1:   # a written, reasoned deviation (e.g. the reference clamps it) with at least one real screw
+            out.append(fail("connection.cover_fasteners", G, WARNING, "Panel held by fewer screws (reasoned deviation)",
+                            f"`{p.id}` is held by {n} fastener(s), fewer than {COVER_MIN_FASTENERS}; declared deviation: {why}")
+                       .on(p.id))
+            continue
         what = "armour / cover panel" if is_cover(p) else "part declared `retained: screws`"
         out.append(fail("connection.cover_fasteners", G, BLOCKER, "Panel not bolted down",
                         f"`{p.id}` is an {what} held by {n} fastener(s); it needs >= {COVER_MIN_FASTENERS} real screws. "
