@@ -135,8 +135,13 @@ BUILDABLE = {
     "lifter": {"front": ("forks",), "attachment": ("servo_horn",), "drive_layout": ("2WD",)},
     "hspin_bar": {"front": ("wedgelets", "skirt", "wedge"), "mount": ("top",), "attachment": ("hub_motor",), "drive_layout": ("2WD",)},
     "vspin_drisk": {"front": ("forks", "wedgelets"), "mount": ("front",), "attachment": ("drisk",), "drive_layout": ("2WD", "4WD"),
-                    "chassis": ("clamshell", "tub"), "disc_stack": ("single", "spider_pair")},
+                    "chassis": ("clamshell",), "disc_stack": ("single", "spider_pair")},
 }
+# options the generator builds but that do not verify clean yet: built only on request (user {"experimental": true}).
+# chassis=tub (open tub + base panel + top sheet, uprights on standoffs): 6 blockers left on the 4WD drisk - 2.7 g over
+# the limit, the upright neck flexes 1.1 mm (the verifier roots it at the foot contact, not at the standoff screws), the
+# upper standoff screws' driver path crosses the disc, one 0.6 mm sliver at a rear corner.
+EXPERIMENTAL = {"vspin_drisk": {"chassis": ("tub",)}}
 # axes a weapon type must leave at the default when it is not listed above
 DEFAULT_ONLY = {"chassis": "clamshell", "disc_stack": "single"}
 # drive combinations the drive generator builds: 2WD direct on the motors, 4WD = 2 motors + O-ring belts
@@ -343,9 +348,11 @@ def count_by_weapon(fixed: dict | None = None) -> dict:
     return {w: count_hypotheses({**(fixed or {}), "weapon": w}) for w in WEAPONS}
 
 
-def buildable(h: Hypothesis) -> bool:
+def buildable(h: Hypothesis, experimental: bool = False) -> bool:
     b = BUILDABLE.get(h.weapon)
     if b is None:
         return False
+    if experimental:
+        b = {k: tuple(v) + EXPERIMENTAL.get(h.weapon, {}).get(k, ()) for k, v in b.items()}
     return (all(getattr(h, k) in v for k, v in b.items()) and (h.drive_layout, h.transmission) in BUILDABLE_DRIVES
             and all(getattr(h, k) == v for k, v in DEFAULT_ONLY.items() if k not in b))

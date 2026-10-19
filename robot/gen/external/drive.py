@@ -355,7 +355,10 @@ def _front_and_belt(plan, g, side, sgn):
     # belt tunnel inside the side wall, between the two wells
     tz = r + BELT_CORD / 2 + TUNNEL_CLEAR
     x0, x1 = g.groove_x - GROOVE_W / 2 - 0.1, g.groove_x + GROOVE_W / 2 + 0.3
-    tun = sh.boxr(min(sgn * x0, sgn * x1), max(sgn * x0, sgn * x1), g.axle_y, yf, -tz, tz)
+    z_lo = -tz
+    if plan.is_tub and -tz - (f.zb + f.floor) < 0.9:  # no skin thinner than print under the tunnel: the base panel closes it
+        z_lo = f.zb + f.floor
+    tun = sh.boxr(min(sgn * x0, sgn * x1), max(sgn * x0, sgn * x1), g.axle_y, yf, z_lo, tz)
     plan.cut_both(tun, intent=I("protection", "belt tunnel inside the side wall: the O-ring runs enclosed between the "
                                 "wheels, so nothing outside can snag or cut it", f"cord {BELT_CORD} mm + {TUNNEL_CLEAR} mm all round"))
     plan.keepouts.append((f"belt_{side}", min(sgn * (x0 - 1.4), sgn * (W + 0.5)), max(sgn * (x0 - 1.4), sgn * (W + 0.5)),

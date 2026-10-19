@@ -208,7 +208,7 @@ def build(h, user: dict | None = None, layout_index: int = 0, k: int = 5) -> dic
     (layouts that cannot be wired are skipped)."""
     if isinstance(h, dict):
         h = hyp_mod.Hypothesis.from_dict(h)
-    if not hyp_mod.buildable(h):
+    if not hyp_mod.buildable(h, bool((user or {}).get("experimental"))):
         raise BuildError(f"no assembler for {h.slug} yet (buildable: {sorted(hyp_mod.BUILDABLE)})")
     errors, usable, avoid = [], 0, []
     for _round in range(6):  # layouts whose wiring fails push the components at the failing wire ends elsewhere

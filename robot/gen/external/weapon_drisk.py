@@ -59,13 +59,14 @@ def _circle(c, r, n=20):
     return [(c[0] + r * math.cos(2 * math.pi * i / n), c[1] + r * math.sin(2 * math.pi * i / n)) for i in range(n)]
 
 
-def upright_profile(yf, zb, zt, axis_yz, pin_yz, hook=True):
+def upright_profile(yf, zb, zt, axis_yz, pin_yz, hook=True, foot_len=None):
     """Outline (y, z) of an upright: foot block flat on the front wall (screws below ARM_LOW), and an arm = hull of
     the foot's top, the round boss at the axis and the lock-pin lobe. Not convex: the screws' driver path stays clear."""
-    foot = Polygon([(yf, zb + 1.0), (yf + FOOT_LEN, zb + 1.0), (yf + FOOT_LEN, zt), (yf, zt)])
+    FL = foot_len or FOOT_LEN
+    foot = Polygon([(yf, zb + 1.0), (yf + FL, zb + 1.0), (yf + FL, zt), (yf, zt)])
     tab = Polygon([(yf - TAB_LEN, zt + 0.05), (yf, zt + 0.05), (yf, zt + TAB_T), (yf - TAB_LEN, zt + TAB_T)])
     ay, az = axis_yz
-    arm = MultiPoint([(yf, ARM_LOW), (yf + FOOT_LEN, ARM_LOW), (yf, zt + TAB_T), (yf + FOOT_LEN, zt)]
+    arm = MultiPoint([(yf, ARM_LOW), (yf + FL, ARM_LOW), (yf, zt + TAB_T), (yf + FL, zt)]
                      + _circle(axis_yz, AXIS_BOSS_R) + _circle(pin_yz, 4.0)
                      + [q for dy, dz in STATOR_SCREWS for q in _circle((ay + dy, az + dz), 3.5)]).convex_hull
     shape = (foot.union(arm).union(tab) if hook else foot.union(arm)).simplify(0.01)
@@ -114,7 +115,7 @@ class Drisk:
         f = plan.frame
         yw, zw, pin, xs = cls.geometry(plan)
         xm = sum(xs["motor"]) / 2
-        prof = upright_profile(f.y1, f.zb, f.zt, (yw, zw), pin, hook=not plan.is_tub)
+        prof = upright_profile(f.y1, f.zb, f.zt, (yw, zw), pin, hook=not plan.is_tub, foot_len=foot_len(plan))
         z_front = round(f.zb + 3.7, 2)
         for side, label in (("upr", "upright_r"), ("upl", "upright_l")):
             x0, x1 = xs[side]
@@ -156,7 +157,7 @@ class Drisk:
             if side == "upr":
                 for k, (dy, dz) in enumerate(STATOR_SCREWS):
                     cuts.append(sh.cyl_axis(1.1, x0 - 1, x1 + 1, "x", yw + dy, zw + dz))
-                    plan.screw(id=f"bolt_wm{'ab'[k]}", designation="M2x12" if plan.is_tub else "M2x8", at=[x0, yw + dy, zw + dz],
+                    plan.screw(id=f"bolt_wm{'ab'[k]}", designation="M2x8" if x1 - x0 <= 6 else "M2x10", at=[x0, yw + dy, zw + dz],
                                dir=[1.0, 0.0, 0.0], through=[label], threads_into="weapon_motor",
                                intent=I("load_path", "stator screws: the motor's reaction torque goes into the upright "
                                         "through them; two holes behind/above the axis keep the driver path clear",
@@ -311,14 +312,19 @@ def plan_z(plan):
 
 
 STANDOFF_ZS = (None, Z_UPPER)  # low standoff z is set from the belly (see standoff_points)
-TUB_PLATE_T = 8.0  # RVRN 2.0 uprights: 8 mm (standoff-rooted, so the plate alone carries the disc's bending)
+TUB_PLATE_T = 6.0  # standoff-rooted upright: the plate alone carries the disc's bending (RVRN 2.0: 8 mm)
+TUB_FOOT_LEN = 9.0  # deeper foot = deeper neck where the arm meets it: I grows with its cube
+
+
+def foot_len(plan):
+    return TUB_FOOT_LEN if plan.is_tub else FOOT_LEN
 LUG_W = 8.0  # chassis lug (ear) ahead of the front wall at each corner, the standoffs pass through it
 
 
 def standoff_points(plan):
     """(y, z) of the two standoffs per side: through the upright feet, ahead of the front wall."""
     f = plan.frame
-    return [(f.y1 + FOOT_LEN / 2, round(f.zb + 5.0, 2)), (f.y1 + FOOT_LEN / 2, Z_UPPER)]
+    return [(f.y1 + foot_len(plan) / 2, round(f.zb + 5.0, 2)), (f.y1 + foot_len(plan) / 2, Z_UPPER)]
 
 
 def _standoff_mount(plan, side, label, xs):
@@ -336,7 +342,7 @@ def _standoff_mount(plan, side, label, xs):
     lug = I("load_path", "lug (ear) at the chassis corner ahead of the front wall: the standoffs pass through it, so a hit "
             "on the disc goes upright -> standoffs -> lug -> side wall", f"{LUG_W:g} mm wide, as deep as the foot")
     for half, z0, z1 in (("bottom", f.zb + 1.0, 0.0), ("top", 0.0, f.zt)):
-        plan.add(half, sh.boxr(*sorted((sgn * (W - LUG_W), sgn * W)), f.y1 - 0.5, f.y1 + FOOT_LEN, z0, z1), intent=lug)
+        plan.add(half, sh.boxr(*sorted((sgn * (W - LUG_W), sgn * W)), f.y1 - 0.5, f.y1 + foot_len(plan), z0, z1), intent=lug)
     for k, (ys, zs) in enumerate(standoff_points(plan)):
         sid = f"so_{side[-1]}{k}"
         lo, hi = sorted((x_face, sgn * x_end))
@@ -348,17 +354,17 @@ def _standoff_mount(plan, side, label, xs):
                            "wedgelet, so the uprights need no screws into the printed front wall (Revron)",
                            f"5 mm OD, {hi - lo:.1f} mm; two per side {abs(Z_UPPER - zs) if k == 0 else 0:.1f} mm apart in z"))
         lx = sorted((sgn * (W - LUG_W - 0.5), sgn * (W + 0.5)))
-        plan.cut_both(sh.U(sh.cyl_axis(2.55, *lx, "x", ys, zs), sh.boxr(*lx, ys, f.y1 + FOOT_LEN + 1.0, zs - 2.55, zs + 2.55)),
+        plan.cut_both(sh.U(sh.cyl_axis(2.55, *lx, "x", ys, zs), sh.boxr(*lx, ys, f.y1 + foot_len(plan) + 1.0, zs - 2.55, zs + 2.55)),
                       intent=I("service", "key-slot in the lug, open forward: the weapon module (uprights on their standoffs) "
                                "slides out forward once the wedgelets are off (Revron box-section key-slot)",
                                "5 mm + 0.1 (slide fit)"))
         plan.connect(sid, plan.body("bottom"), "pin", "Standoff sits in the forward-open key-slot of the chassis lug; the "
                      "wedgelet screwed to its end and to the front axle holds it back in the slot", mechanical_key=True)
         cuts.append(sh.cyl_axis(1.6, *sorted((x_head - sgn, x_face + sgn)), "x", ys, zs))
-        plan.screw(id=f"bolt_{side}{k}", designation="M3x10", at=[x_head, ys, zs], dir=[float(sgn), 0.0, 0.0],
+        plan.screw(id=f"bolt_{side}{k}", designation=f"M3x{abs(x_face - x_head) + 6:.0f}", at=[x_head, ys, zs], dir=[float(sgn), 0.0, 0.0],
                    through=[label], threads_into=sid, head="button", material="aluminium",
                    intent=I("load_path", "M3 from the upright's inner face into the standoff end: clamps the upright to the "
-                            "standoff end face; button head so the key clears the disc", "upright 5 mm + 5 mm thread"))
+                            "standoff end face; button head so the key clears the disc", f"upright {abs(x_face - x_head):g} mm + 6 mm thread"))
         plan.connect(label, sid, "screw", "Upright clamped to the standoff's inner end face by an M3 along its axis")
     return cuts
 
@@ -392,7 +398,7 @@ def add_forks(plan, yw):
         # tub: the wedgelet hangs on the weapon standoffs' outer ends (and the front axle's, 4WD): no hook needed
         z_hi = standoff_points(plan)[1][1]
         y_root = (plan.extra["front_axle_y"] - 5.5) if axle else f.y1 - 2.0
-        prof = [(y_root, f.zb + 1.0), (y_root, z_hi + 4.5), (f.y1 + FOOT_LEN, z_hi + 4.5), (y_tip, z_tip + 1.5), (y_tip, z_tip)]
+        prof = [(y_root, f.zb + 1.0), (y_root, z_hi + 4.5), (f.y1 + foot_len(plan), z_hi + 4.5), (y_tip, z_tip + 1.5), (y_tip, z_tip)]
     elif axle:
         y_ax = plan.extra["front_axle_y"]
         r_well = plan.extra["front_well_dy"]

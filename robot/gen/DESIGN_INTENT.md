@@ -75,6 +75,7 @@ Each rule names the generator code that applies it.
    - The standoffs are pressed through a lug at the chassis corner. The wedgelet hangs on their outer ends.
    - A hit goes upright, then standoff, then lug, then side wall.
    - Generator: `chassis=tub` in `weapon_drisk._standoff_mount`.
+   - Experimental: it is built only on request, with `experimental: true`. It still has 6 blockers (see `hypothesis.EXPERIMENTAL`).
 
 ## Retention
 

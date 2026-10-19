@@ -119,7 +119,9 @@ def test_spider_pair_is_two_discs_on_a_spider_bolted_up():
 
 
 def test_tub_chassis_mounts_uprights_on_standoffs():
-    d = build.build(H.Hypothesis.parse(HYPS[-1] + ",chassis=tub"))
+    h = H.Hypothesis.parse(HYPS[-1] + ",chassis=tub")
+    assert not H.buildable(h) and H.buildable(h, experimental=True)  # not verified clean yet
+    d = build.build(h, {"experimental": True})
     assert intent.check(d) == []
     ids = {p["id"] for p in d["parts"]}
     assert {"tub", "lid", "base_panel", "so_r0", "so_l1"} <= ids and "chassis_top" not in ids
