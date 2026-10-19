@@ -177,7 +177,9 @@ def _well(plan, g, sgn, y, side, kind):
                      intent=I("protection", "closed room round the O-ring pulley: the belt's nips sit inside the hull, the "
                               "floor and roof skins stay whole under and over them", f"flange r {rf - 0.8:.1f} + 0.8 mm",
                               threats=["CF-DB03", "lifter_flipper", "hazard_snag", "debris"]))
-    plan.cut("bottom", sh.box(sw + 2.0, g.wheel_dia + 3.0, slot_h, (sgn * sx, y, zb + slot_h / 2 - 0.25)),
+    # belt: the slot keeps only 0.4 mm on the tyre's inboard side, so it does not open onto the pulley room beside it
+    sxa, sxb = sorted((sgn * (sx - sw / 2 - (0.4 if g.belt else 1.0)), sgn * (sx + sw / 2 + 1.0)))
+    plan.cut("bottom", sh.boxr(sxa, sxb, y - (g.wheel_dia + 3.0) / 2, y + (g.wheel_dia + 3.0) / 2, zb - 0.25, zb - 0.25 + slot_h),
              intent=I("ground_game", "slot through the belly: the tyre reaches the floor; the body rides clear of it",
                       f"wheel + 1 mm clearance each side; belly {zb} vs floor {-g.radius}", threats=["under_side", "lifter_flipper"]))
     h = plan.hyp
@@ -207,7 +209,7 @@ def _well(plan, g, sgn, y, side, kind):
                           "above; concentric, so it keeps an even wall and lands on the roof slab either side",
                           f"r {r_in:g}..{r_out:g} (1.5 mm clearance, 1.4 mm wall)", threats=["crusher_hammer", "flip_landing", "debris", "inverted"]))
     else:
-        plan.cut("top", sh.box(sw + 2.0, g.wheel_dia + 3.0, slot_h, (sgn * sx, y, zt - slot_h / 2 + 0.25)),
+        plan.cut("top", sh.boxr(sxa, sxb, y - (g.wheel_dia + 3.0) / 2, y + (g.wheel_dia + 3.0) / 2, zt + 0.25 - slot_h, zt + 0.25),
                  intent=I("ground_game", "slot through the roof: the tyre reaches the floor when inverted",
                           "wheel + 1 mm clearance each side", threats=["inverted", "flip_landing"]))
     wx0, wx1 = sorted((sgn * (g.wheel_cx - (tw + 5.0) / 2), sgn * (W + 0.5)))
@@ -229,6 +231,7 @@ def add_drive(plan, g: DriveGeom):
                   rot=[0.0, 0.0, 0.0 if sgn > 0 else 180.0], label=f"{'left' if sgn > 0 else 'right'} drive",
                   intent=I("load_path", "drive: one gearmotor per side, back to back on the rear axle line (tank steering)",
                            f"{m['cat']}: torque to push 150 g at {g.wheel_dia:g} mm wheels", threats=["under_front", "under_side", "wall_slam"]))
+        plan.extra["wheel_w"] = g.wheel_w
         plan.part(id=wid, kind="wheel", material="pla", process="fdm",
                   shape=wheel_shape(g.wheel_dia, g.wheel_w, lighten),
                   at=[sgn * g.tyre_cx, g.axle_y, 0.0], print_orientation="+x",

@@ -48,7 +48,8 @@ STATOR_SCREW_R = 8.0
 STATOR_SCREWS = ((-STATOR_SCREW_R, 0.0), (0.0, STATOR_SCREW_R))
 Z_UPPER = 3.5  # upper foot screw (top half); the arm starts above its driver path
 TAB_LEN, TAB_T = 6.0, 2.0  # hook tab over the roof edge
-FORK_T = 1.5
+FORK_T = 2.0  # 2 mm: an M2 countersink (1.3 mm deep) leaves 0.7 mm of Ti under the cone
+FORK_T_THIN = 1.5  # the gate's last mass trade: button heads (a countersink would leave 0.2 mm of Ti)
 FORK_MAT = "titanium"
 HUB_BORE_R = 0.0  # 3 mm bore reamed after cutting: not in the laser outline, hub drawn solid
 FORK_ROOT = 30.0  # fork tine length along the side wall (bolt spread against the lever of the tip)
@@ -104,6 +105,8 @@ class Drisk:
             plan.keepouts.append((f"boss_u{side}", xc - 3.0, xc + 3.0, f.y1 - 6.0, f.y1))
         # motor phase leads leave the chassis through a hole in the front wall under the right upright
         xm = sum(xs["motor"]) / 2
+        if not on_axle(plan):
+            plan.keepouts.append(("lead_baffle", xm - 3.0, xm + 3.0, f.y1 - f.wall - 6.5, f.y1 - f.wall - 5.3))
         for side, sgn, yy, z in ([] if on_axle(plan) else fork_sites(plan)):
             xw = sgn * f.x1
             plan.keepouts.append((f"boss_f{side}{yy:.0f}", min(xw, xw - sgn * 8), max(xw, xw - sgn * 8), yy - 3, yy + 3))
@@ -213,6 +216,12 @@ class Drisk:
         plan.cut("bottom", sh.boxr(xm - 1.5, xm + 1.5, f.y1 - 3.0, f.y1 + 0.5, -5.0, 0.5),
                  intent=I("wiring", "phase leads leave through the front wall under the right upright, away from the disc",
                           "3 x 3 mm hole for 3 x 24 AWG", threats=["vspin_front", "debris"]))
+        # baffle behind the hole: the leads turn round it, a debris shard or a ray from the front does not (the battery
+        # sat in the hole's line of sight)
+        if not on_axle(plan):  # (4WD: the front axle housing already blocks the line; a baffle there blocks the leads)
+            plan.add("bottom", sh.boxr(xm - 3.0, xm + 3.0, f.y1 - f.wall - 6.5, f.y1 - f.wall - 5.3, f.zb + f.floor, 0.0),
+                     intent=I("protection", "baffle behind the phase-lead hole: no straight line from outside to the battery",
+                              "1.2 mm wall, 5.3 mm behind the front wall (room for the leads to turn)", threats=["vspin_front", "debris", "CF-GD03", "CF-DB04"]))
         add_forks(plan, yw)
 
 
@@ -390,7 +399,8 @@ def add_forks(plan, yw):
     floor = plan.extra["_floor_z"]
     y_tip = yw + disc_r(plan) + 6.0
     z_tip = floor + 0.6
-    t = WEDGELET_T if kind == "wedgelets" else FORK_T
+    thin = plan.extra.get("thin_forks", False)
+    t = WEDGELET_T if kind == "wedgelets" else (FORK_T_THIN if thin else FORK_T)
     mat, proc = ("tpu", "fdm") if kind == "wedgelets" else (FORK_MAT, "laser")
     axle = on_axle(plan)
     tub = plan.is_tub
@@ -407,14 +417,17 @@ def add_forks(plan, yw):
     else:
         y_root = f.y1 - FORK_ROOT
         prof = [(y_root, f.zb + 1.0), (y_root, f.zb + 8.0), (f.y1, f.zb + 8.0), (y_tip, z_tip + 1.5), (y_tip, z_tip)]
-    # the side skirt passes under the tine plate: clear a box round the plate down to 0.4 mm below its lowest edge
-    # over the skirt's length (the skirt stops at the front wall)
+    # the side skirt passes under the tine plate: clear the plate's own strip, 0.15 mm under its sloping bottom edge,
+    # so the skirt fills right up to the tine and leaves no ledge a rising tooth could hook
     zb_root = prof[0][1]
-    z_low = zb_root - (zb_root - z_tip) * max(0.0, f.y1 - y_root) / max(y_tip - y_root, 1.0) - 0.4
-    t_ = WEDGELET_T if kind == "wedgelets" else FORK_T
+
+    def z_bot(y):
+        return zb_root - (zb_root - z_tip) * max(0.0, y - y_root) / max(y_tip - y_root, 1.0) - 0.15
+    t_ = t
+    strip = [(y_root - 0.6, z_bot(y_root) + 0.0), (f.y1 + 1.0, z_bot(f.y1 + 1.0)), (f.y1 + 1.0, f.zt + 5.0), (y_root - 0.6, f.zt + 5.0)]
     for sgn in (1, -1):
         xa, xb = sorted((sgn * (f.x1 - 0.4), sgn * (f.x1 + t_ + 0.6)))
-        plan.extra.setdefault("skirt_clear", []).append(sh.boxr(xa, xb, y_root - 0.6, f.y1 + 1.0, z_low, f.zt + 5.0))
+        plan.extra.setdefault("skirt_clear", []).append(sh.side_prism(strip, xa, xb))
     lip = (f"lip {z_tip - floor:.1f} mm off the floor, tip {y_tip - yw - disc_r(plan):.0f} mm ahead of the disc")
     for side, sgn in (("l", 1), ("r", -1)):
         x0 = f.x1 if sgn > 0 else -f.x1 - t
@@ -462,17 +475,21 @@ def add_forks(plan, yw):
                          sh.cyl_axis(3.0, xw, xw + 8.0, "x", yy, z),
                          intent=I("load_path", f"boss behind the side wall: the {kind[:-1]} tip load levers about the "
                                   "front screw and this boss takes it into 8 mm of solid", "boss r 3, 8 mm deep", threats=["vspin_front", "under_front"]))
-                bore = (xw - sgn * 3.6, xw + sgn * 0.2)
+                bore = (xw - sgn * 4.8, xw + sgn * 0.2)  # room for the M2x6 countersunk tip past the insert
                 plan.late_cut("bottom", sh.cyl_axis(1.6, min(bore), max(bore), "x", yy, z),
-                              intent=I("assembly", "melt bore for the M2 insert", "3.2 mm, 3.6 deep", threats=["flip_landing"]))
+                              intent=I("assembly", "melt bore for the M2 insert, and room for the screw tip", "3.2 mm, 4.8 deep", threats=["flip_landing"]))
                 plan.part(id=f"insert_f{side}{k}", kind="insert", catalog="heatset_m2", at=[xw - sgn * 1.7, yy, z],
                           rot=[0.0, 90.0, 0.0], retained="press_fit",
                           intent=I("service", f"brass thread: {kind} are consumables, swapped between fights", "M2 heat-set", threats=["vspin_front", "under_front"]))
-                plan.screw(id=f"bolt_f{side}{k}", designation=f"M2x{5 if t <= 2 else 6}", at=[xw + sgn * t, yy, z],
+                csk = not (thin and kind == "forks")
+                if csk:
+                    cuts.append(sh.csk_cut((xw + sgn * t, yy, z), (-sgn, 0, 0), 2.0))  # flush head: no bite (CF-VS01)
+                plan.screw(id=f"bolt_f{side}{k}", designation="M2x6" if csk else "M2x5", at=[xw + sgn * t, yy, z],
                            dir=[-sgn, 0.0, 0.0], through=[pid], threads_into=f"insert_f{side}{k}",
+                           head="countersunk" if csk else "button",
                            intent=I("assembly", f"the {kind[:-1]} goes on from the side: its screws are driven inward; "
                                     f"spread {FORK_ROOT - 8:.0f} mm apart against the lever of the tip",
-                                    f"plate {t} mm + 3 mm thread", threats=["vspin_front", "vspin_side"]))
+                                    f"M2x6 countersunk flush in the {t:g} mm plate (CF-VS01: no head to hook) + 3.8 mm thread", threats=["vspin_front", "vspin_side"]))
         shape = sh.S(sh.U(*items), *cuts)
         from .. import threats as _th
         y_r, z_r = prof[0]
@@ -490,6 +507,7 @@ def add_forks(plan, yw):
                                shield="sacrificial", accepted_risk=as_risk))
         else:
             plan.part(id=pid, kind="fork", material=mat, process=proc, shape=shape, color="#c9ccd1",
+                      **({} if thin else {"secondary_ops": ["countersink"]}),
                       label=f"{t:g} mm Ti fork tine, laser cut, bolted to the side wall",
                       intent=I("ground_game", "fork tines get under the opponent and feed it up into the disc; thin Ti "
                                "keeps the lip low and does not bend", lip + "; " + as_txt,

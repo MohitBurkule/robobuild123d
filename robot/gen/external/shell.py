@@ -197,10 +197,15 @@ def add_skirts(plan, floor_z: float):
     wy = [p["at"][1] for p in plan.parts if p.get("kind") == "wheel"]
     # rear: the skirt wraps the rear corners and ends in the rear wheels' doors (a free end would be a bite step)
     y_rear = (min(wy) + plan.extra.get("wheel_r", 15.0) + 2.0) if wy else y0 + 12.0
-    y_hi = (y1 + 5.0 if under_front else y1 - 0.5) if mode == "sides_rear" else max(y0 + 12.0, y_rear)
-    if not under_front:
-        fronts = []
+    # rear mode still wraps both rear quarters: the skirt runs forward to mid-length, so the side belly edge a tooth
+    # sees from a rear-quarter bearing (the 45 deg sector reaches the hull's mid-length) is skirted too
+    # under a horizontal bar the skirt still reaches the wedge root (y1 + 1), clear of the bar's sweep ahead of it
+    if fronts and not under_front:
+        fronts = [p for p in plan.parts if p.get("kind") in ("wedge", "skirt") and not any(p.get("at") or [])]
+    y_hi = (y1 + 5.0 if under_front else (y1 + 1.0 if fronts else y1 - 0.5)) if mode == "sides_rear" else max(y0 + 12.0, y_rear, (y0 + y1) / 2 + 4.0 if h.weapon != "hspin_bar" else y_rear)
     keep = sh.boxr(-200, 200, y0 - 10, y_hi, z_lip - 1, f.zb + 5)
+    if mode == "rear" and fronts and h.weapon != "hspin_bar":  # and the front quarters beside the ramp root, so its corners have no bare belly edge
+        keep = sh.U(keep, sh.boxr(-200, 200, y1 - 12.0, y1 + 1.0, z_lip - 1, f.zb + 5))
     cuts = [_outline_prism(inner, z_lip - 1, f.zb, False)]
     cuts += [p["shape"] for p in fronts]
     cuts += plan.extra.get("skirt_clear", [])  # side-mounted forks / wedgelets: the skirt passes under them  # run under the front ramp's side ends, clear of the ramp itself

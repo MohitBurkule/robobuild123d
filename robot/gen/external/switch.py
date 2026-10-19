@@ -7,7 +7,7 @@ from ..intent import I
 from .plan import Pocket
 
 SIZE = (11.8, 3.8, 4.0)
-RECESS = 1.2
+RECESS = 2.0  # CF-GD06: deeper than a scraping edge or a 1.5 mm fork tip reaches into a 4 mm slot
 
 
 def add_switch(plan, x, y, rot_z=0.0, cid="power_switch"):
@@ -16,7 +16,9 @@ def add_switch(plan, x, y, rot_z=0.0, cid="power_switch"):
     plan.part(id=cid, kind="switch", catalog="switch_slide_12x4", at=[x, y, z], rot=[0.0, 0.0, float(rot_z)],
               label="ON/OFF", marked=True, tool_free=True, retained="adhesive",
               intent=I("service", "rules: a removable link or switch reachable without dismantling, to make the robot safe",
-                       f"AWS rules; recessed {RECESS} mm under the roof so a hit cannot flip it", threats=["flip_landing", "crusher_hammer", "inverted"]))
+                       f"AWS rules; recessed {RECESS} mm under the roof so a hit cannot flip it; slides across the robot (x), at right "
+                       "angles to the front-rear scrape of an opponent or a wall, so a glancing scrape cannot push it off",
+                       threats=["flip_landing", "crusher_hammer", "inverted", "wall_slam", "CF-GD06"]))
     sx, sy = (SIZE[1], SIZE[0]) if int(round(rot_z)) % 180 == 90 else (SIZE[0], SIZE[1])
     pk = Pocket(cid, x - sx / 2 - 0.3, x + sx / 2 + 0.3, y - sy / 2 - 0.3, y + sy / 2 + 0.3,
                 f.zb + f.floor, f.zt + 0.5, housing=1.4, wire_through=True,

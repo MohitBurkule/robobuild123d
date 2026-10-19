@@ -121,3 +121,18 @@ def test_uprights_in_compression(drisk4):
     chassis = [p["id"] for p in d["parts"] if p.get("kind") == "structure" and p["id"].startswith("chassis")]
     assert threats.compression_ok(w, "upright_l", chassis)
     assert not threats.compression_ok(w, "upright_l", [])
+
+
+def test_fixed_bites_are_no_longer_accepted():
+    # wedge ramp ends are closed by cheeks, Ti fork bolts are countersunk: the hypothesis no longer accepts those bites
+    assert "front_left.bite" not in H.ground_game(H.Hypothesis.parse("wedge"))["accepted"]
+    acc = H.ground_game(H.Hypothesis.parse("vspin_drisk"))["accepted"]
+    assert "left.bite" not in acc and "rear_left.bite" not in acc
+
+
+def test_switch_slides_across_the_robot():
+    from robot.gen import build
+    h = H.Hypothesis.parse("wedge")
+    plan, _ = build._base(h, None)
+    sw = next(c for c in build.layout_inputs(plan, h).components if c.id == "power_switch")
+    assert sw.rot_choices == (0.0,)

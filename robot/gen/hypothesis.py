@@ -179,10 +179,6 @@ def ground_game(h: "Hypothesis") -> dict:
             acc[d] = (f"skirts={h.skirts}: the spinner's weapon takes the 3-4 g full side skirts would cost (they put "
                       "it over 150 g); the weapon is the side defence and the wheels and wells cover the sides"
                       if h.is_spinner else f"skirts={h.skirts}: the hypothesis leaves the sides to the wheels and wells")
-    if h.skirts == "rear":
-        for d in ("rear_left", "rear_right"):
-            acc[d + ".bite"] = ("the rear skirt ends in the drive wheel's door: the belly edge there sits 2-3 mm up beside "
-                                "the tyre, which stands proud of it and is what a rising tooth meets first")
     if h.skirts == "none":
         acc["rear"] = ("skirts=none: no mass left for a skirt (the spinner is within 2 g of 150 g); the weapon faces "
                        "the opponent and the rear is left to the wheels" if h.is_spinner else "skirts=none")
@@ -196,23 +192,26 @@ def ground_game(h: "Hypothesis") -> dict:
         for d in ("front_left", "front_right"):
             acc[d + ".bite"] = ("the upright feet flank the disc: a tooth reaching them past the corner wedgelet has "
                                 "met the disc first; the uprights are spares (CF-OW04)")
-    if h.front in ("wedge", "plow", "skirt"):
-        for d in ("front_left", "front_right"):
-            acc[d + ".bite"] = ("the ramp's underside at its outer corner, 3-5 mm up behind the 0.5 mm lip: a tooth must "
-                                "pass under the lip first, and the ramp is the replaceable front part (CF-VS01)")
     if h.front == "plow":
         for d in ("front", "front_left", "front_right"):
             acc[d] = ("the V nose is swept back 25 deg: it trades a flat floor-skimming lip for deflecting opponents "
                       "into the wall; it loses the straight-on ground game to a flat wedge by design")
             acc[d + ".bite"] = acc[d]
+    if h.weapon == "hspin_bar" and h.skirts in ("rear", "none"):
+        for d in ("front_left", "front_right", "rear_left", "rear_right"):
+            acc[d + ".bite"] = ("the bar sweeps over the front corners (nothing may stand ahead of it there: spinner.reach) "
+                                "and full skirts put it 2 g over 150 g; the belly edge in those quarters sits 3 mm up, "
+                                "behind the tyre or the wedge root")
     if h.weapon == "hspin_bar":
         for d in ("left", "right"):
             acc[d + ".bite"] = ("the top bridge of the bar module stands 10 mm up the side: the bar sweeps below it, so a "
                                 "tooth reaching it has crossed our bar's arc first; the bridge is a bolt-on spare")
-    if h.front in ("forks", "wedgelets"):
+    if h.front == "wedgelets" and h.drive_layout == "4WD":
         for d in ("left", "right"):
-            acc[d + ".bite"] = ("button heads on the outer tine roots of the replaceable sheet stand 1.3 mm proud: a "
-                                "tooth that catches one bends a spare sheet, not the chassis (CF-AS04, CF-VS03)")
+            acc[d + ".bite"] = ("the wedgelet hangs on the front axle standoff over the front wheel's door, so no skirt "
+                                "runs under its 3 mm TPU edge, and its M3 button head stays (a countersink would break "
+                                "into the standoff's bore); a tooth that catches either tears a spare wedgelet - a "
+                                "bevelled edge leaves a TPU knife edge under the 1.2 mm print minimum")
     if h.weapon == "lifter":
         for d in ("left", "right"):
             acc[d] = "the scoop cheeks swing outside the side walls: a side skirt would foul them; the cheeks cover the sides"
@@ -326,11 +325,12 @@ PRESETS = {
     "hspin_bar": dict(weapon="hspin_bar", mount="top", orientation="flat", attachment="hub_motor", front="wedge",
                       wheel_dia=22, weapon_esc="c_bbb_antweight_spinner_brushless_esc",
                       battery="c_typical_2s_300mah_lipo_lihv_betafpv_tbs_",
-                      drive_esc="c_malenki_nano_antweight_esc_receiver", rx="integrated", skirts="rear"),
+                      drive_esc="c_malenki_nano_antweight_esc_receiver", rx="integrated",
+                      skirts="rear"),  # full side skirts put it 2 g over 150 g; the 180 mAh pack does not wire
     "vspin_drisk": dict(weapon="vspin_drisk", mount="front", orientation="vertical", attachment="drisk", front="forks",
                         drive_layout="2WD", wheel_dia=22, weapon_esc="c_bbb_antweight_spinner_brushless_esc",
-                        battery="c_typical_2s_300mah_lipo_lihv_betafpv_tbs_", invertible=False, drive_esc="c_malenki_nano_antweight_esc_receiver",
-                        rx="integrated", skirts="rear"),
+                        battery="lipo_2s_180", invertible=False, drive_esc="c_malenki_nano_antweight_esc_receiver",
+                        rx="integrated"),
 }
 
 

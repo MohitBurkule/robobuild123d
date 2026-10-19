@@ -161,11 +161,17 @@ material, and the trade-off; any direction it leaves open is an accepted risk wi
 
 25. **Every direction is skirted or accepted.** Front lip <= 1.0 mm, sides and rear <= 3.0 mm over most of the arc; the
     default `skirts=sides_rear` adds a 0.5 mm lip skirt round the sides and rear (it runs under the wedge's side ends
-    and under side-mounted tines). The spinner presets use `skirts=rear`: full side skirts put them over 150 g, so the
-    weapon, wheels and wells are the side defence, which they state as an accepted risk. Rationale: a side or rear
-    T-bone is how wedges beat a front-only wedge (CF-WL07, CF-WL01).
-26. **No bite edges.** No downward face 1-30 mm up that a tooth reaches first; screw heads near the floor are
-    countersunk. Rationale: a vertical spinner lifts by the first ledge it catches (CF-VS01, CF-VS05).
+    and fills right up under side-mounted tines, 0.15 mm below their sloping edge). Skirts are the robot's mass trade:
+    when a variant is over 150 g only on mass after lightening, the gate steps `sides_rear -> rear -> none` and records
+    `generator.skirt_trade`; the lighter variant's ground-game statement accepts the directions it opens. A rear skirt
+    wraps both rear quarters to mid-length (the 45 deg rear-quarter sector reaches that far) and, behind a front ramp,
+    the front quarters beside its root. Rationale: a side or rear T-bone is how wedges beat a front-only wedge
+    (CF-WL07, CF-WL01).
+26. **No bite edges.** No downward face 1-30 mm up that a tooth reaches first. The wedge's ramp ends are closed by 1.2 mm
+    cheeks down to lip height. Ti fork bolts are countersunk flush in 2 mm plates. The 4WD TPU wedgelet's edge over the
+    front wheel's door and its axle screw head stay an accepted risk. An arch directly over a tyre and a seat under a flush screw head
+    do not count, because the tyre or the head is met first. Rationale: a vertical spinner lifts by the first ledge it
+    catches (CF-VS01, CF-VS05).
 27. **Lips and tines follow CF-AS01..04.** Tip underside 10-20 deg with a 0.3-1 mm tip radius; a >= 1 mm
     under-chamfer or a hinge; tip pressure < 5 MPa with 0.5-5 N/mm stiffness for a flexible lip; tines > 8 mm
     wide, joined or tip-rounded when 2-6 mm and flexible. The generator writes the numbers into each lip's intent;
@@ -184,12 +190,17 @@ material, and the trade-off; any direction it leaves open is an accepted risk wi
     (`generator.margins`) as an accepted risk.
 31. **Each drive side has its own motor lead, and the motors sit on opposite sides** (CF-GD02, CF-GD05).
 32. **Moving-to-static gaps are < 1.5 mm or > 15 mm** (CF-DB01, CF-DB02). Wheels run 0.4-1 mm from their wells. The
-    disc's 2-4 mm running gap is an accepted risk, because it must clear the hull when deflected.
-33. **Switch recessed in the rear half** (CF-GD06). It must stay reachable, so it is an accepted risk: a hit at worst
-    turns it off, and the robot is failsafe.
+    disc's 2-4 mm running gap stays an accepted risk. A concentric fender can close the 3.6 mm gap at the top-front
+    corner, but the verifier's CF-DB02 sectors below the axle are set by the uprights, which sit 3.5-5 mm axially from
+    the disc to clear its 2.5 mm hub boss. Clearing them needs a weapon-module redesign (a flush hub, or uprights
+    under 1.5 mm from the disc face).
+33. **Switch recessed 2 mm, sliding across the robot** (CF-GD06). The layout fixes its slide axis along x, square to
+    the front-rear scrape of an opponent or a wall. Only a point dropped straight down the slot reaches it, which
+    stays an accepted risk: at worst it turns the robot off, and the robot is failsafe. A spec records in
+    `generator.margins.switch_across` whether the layout had to turn it.
 34. **Screws on impact faces are countersunk or recessed** (CF-ST04). Wedge, skirt and plow webs take ISO 10642 heads
-    flush in a cone, and roof bolts are counterbored. Heads on replaceable contact parts (upright feet, fork
-    sheets) are accepted.
+    flush in a cone, Ti fork bolts are countersunk (declared `secondary_ops: countersink`), and roof bolts are
+    counterbored. Heads on replaceable contact parts (upright feet, the 4WD TPU wedgelet's axle screw) are accepted.
 35. **Weapon supports take a front hit in compression.** The upright's rear face bears on the chassis, so a hit
     pushes it into the structure and not off its screws (CF-OW04, CF-ST04).
 36. **Cheap, replaceable parts sit at the contact points.** Uprights, wedgelets, fork sheets, tyres and the wedge are
