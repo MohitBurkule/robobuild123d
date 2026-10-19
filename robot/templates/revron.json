@@ -7023,7 +7023,7 @@
   },
   {
    "id": "bolt_d0",
-   "designation": "M2x14",
+   "designation": "M2x16",
    "head": "button",
    "tool": "hex1.3",
    "material": "titanium",
@@ -7080,7 +7080,7 @@
   },
   {
    "id": "bolt_d1",
-   "designation": "M2x14",
+   "designation": "M2x16",
    "head": "button",
    "tool": "hex1.3",
    "material": "titanium",
@@ -7137,7 +7137,7 @@
   },
   {
    "id": "bolt_d2",
-   "designation": "M2x14",
+   "designation": "M2x16",
    "head": "button",
    "tool": "hex1.3",
    "material": "titanium",
@@ -7194,7 +7194,7 @@
   },
   {
    "id": "bolt_d3",
-   "designation": "M2x14",
+   "designation": "M2x16",
    "head": "button",
    "tool": "hex1.3",
    "material": "titanium",

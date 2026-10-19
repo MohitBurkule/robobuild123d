@@ -691,6 +691,16 @@ def motor_links_from_fasteners(k):
         others = [p for p in allp if k.kind(p) not in BOUNDARY]
         for m in motors:
             entry = allp.get(m)
+            if entry is None and f.threads_into == m:
+                # declared thread target the shank sits in a tap hole of (no solid to pierce): the shank enters the motor there
+                dl = catalog.parse_designation(f.designation)
+                if dl:
+                    bb = k.body(m).aabb
+                    for t in np.arange(0.0, dl[1], 0.25):
+                        q = np.asarray(f.at, float) + unit(f.dir) * t
+                        if (q >= bb[0]).all() and (q <= bb[1]).all():
+                            entry = q   # where the shank first meets the motor: its mounting face
+                            break
             if entry is None:
                 k.skip("kin.motor_face", f"`{f.id}` does not reach `{m}` geometrically; which motor face it lands on is unknown")
                 continue
