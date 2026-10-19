@@ -6,6 +6,7 @@ against the wall between motor pocket and wheel slot, shaft through a 4 mm hole,
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 
 from . import sh
@@ -115,7 +116,25 @@ def add_drive(plan, g: DriveGeom):
         plan.cut_both(sh.cyl(2.0, 3.0, (sgn * (g.face_x + 1.15), g.axle_y, 0.0), (0, 90, 0)))  # shaft hole
         slot_h = max(-zb, zt) + 0.5
         plan.cut("bottom", sh.box(g.wheel_w + 2.0, g.wheel_dia + 3.0, slot_h, (sgn * g.wheel_cx, g.axle_y, zb + slot_h / 2 - 0.25)))
-        plan.cut("top", sh.box(g.wheel_w + 2.0, g.wheel_dia + 3.0, slot_h, (sgn * g.wheel_cx, g.axle_y, zt - slot_h / 2 + 0.25)))
+        h = plan.hyp
+        guard = getattr(h, "wheel_guards", False) and not getattr(h, "invertible", False) and h.weapon != "hspin_bar"
+        z_roof = zt - plan.frame.floor
+        R = g.wheel_dia / 2
+        if guard and R + 0.3 > z_roof:
+            # wheel guard: the well stays full width under the roof, the roof slot is only as wide as the tyre needs, and a
+            # printed arch over it (concentric, 1.4 mm wall) lands on the roof slab either side of the slot
+            half_roof = math.sqrt(max(R * R - z_roof * z_roof, 0.0)) + 1.5
+            r_in, r_out = R + 1.5, R + 2.9
+            plan.cut("top", sh.boxr(sgn * g.wheel_cx - (g.wheel_w + 2.0) / 2, sgn * g.wheel_cx + (g.wheel_w + 2.0) / 2,
+                                    g.axle_y - (g.wheel_dia + 3.0) / 2, g.axle_y + (g.wheel_dia + 3.0) / 2, -0.25, z_roof))
+            xa, xb = sgn * g.wheel_cx - (g.wheel_w + 2.0) / 2, sgn * g.wheel_cx + (g.wheel_w + 2.0) / 2
+            plan.cut("top", {"type": "intersect", "items": [
+                sh.cyl_axis(r_in, xa, xb, "x", g.axle_y, 0.0),
+                sh.boxr(xa, xb, g.axle_y - half_roof, g.axle_y + half_roof, z_roof - 0.1, zt + r_out)]})
+            arch = sh.S(sh.cyl_axis(r_out, xa, xb, "x", g.axle_y, 0.0), sh.cyl_axis(r_in, xa - 0.5, xb + 0.5, "x", g.axle_y, 0.0))
+            plan.add("top", {"type": "intersect", "items": [arch, sh.boxr(xa, xb, g.axle_y - r_out, g.axle_y + r_out, z_roof, zt + r_out)]})
+        else:
+            plan.cut("top", sh.box(g.wheel_w + 2.0, g.wheel_dia + 3.0, slot_h, (sgn * g.wheel_cx, g.axle_y, zt - slot_h / 2 + 0.25)))
         side_x = sgn * (W - 0.35)
         plan.cut_both(sh.box(3.7, g.wheel_dia + 1.0, 2 * slot_h + 1, (side_x, g.axle_y, 0.0)))  # slide-on opening
         # keep-outs = the real housings: motor block and wheel block
