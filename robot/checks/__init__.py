@@ -42,6 +42,7 @@ GROUPS = [
     ("fastener_record", False),  # fastener.hole_record
     ("belt_wrap", False),  # cots.belt_wrap
     ("print_orient", False),  # print.orientation_declared
+    ("retention", False),  # retention.axial (robot/checks/retention.py)
     ("sharp_corner", False),  # mfg.sharp_internal_corner (opt-out, every printed / moulded part)
 ]
 
