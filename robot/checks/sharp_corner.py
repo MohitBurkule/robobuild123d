@@ -33,7 +33,6 @@ import numpy as np
 
 from .. import catalog
 from ..finding import BLOCKER, INFO, WARNING, fail, note, ok
-from .process import FACET_DEG
 
 G = "mfg"
 CID = "mfg.sharp_internal_corner"
@@ -161,7 +160,7 @@ def _chain(S, tol=1e-4):
     """Order 2D segments into the polyline through the segment nearest the origin."""
     if len(S) == 0:
         return None
-    key = lambda q: (round(q[0] / tol), round(q[1] / tol))  # noqa: E731
+    key = lambda q: (round(q[0] / tol), round(q[1] / tol))
     adj = {}
     for a, b in S:
         ka, kb = key(a), key(b)
@@ -300,7 +299,7 @@ def _on_intent(lines, p, tol=1.5):
 
 
 def _ref_meshes(ctx):
-    from .reference_cad import _cfg, ref_in_world
+    from .reference_cad import _cfg
 
     cfg = _cfg(ctx.r.spec)
     base = Path(getattr(ctx.r.spec, "base_dir", ".") or ".")
