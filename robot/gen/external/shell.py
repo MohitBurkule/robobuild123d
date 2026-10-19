@@ -6,6 +6,7 @@ Order (each a separate step so the generators stay independent):
 
 from __future__ import annotations
 
+from ..intent import I, chamfer_for
 from ..layout import geom
 from . import pockets as pk_mod
 from . import sh
@@ -15,7 +16,7 @@ def _outline_prism(points, z0, z1, spline):
     return sh.prism(points, z1 - z0, (0, 0, (z0 + z1) / 2), spline=spline)
 
 
-EDGE_CHAMFER = 1.0  # belly and roof perimeter bevel (wall 1.6 + floor >= 1.1 keeps >= 1 mm through the corner)
+EDGE_CHAMFER = chamfer_for("print")  # belly and roof perimeter bevel (wall 1.6 + floor >= 1.1 keeps >= 1 mm through the corner)
 
 
 def _ccw(poly) -> list:
@@ -84,3 +85,19 @@ def add_shell(plan, material="nylon", color="#23262b"):
         p.setdefault("at", [0.0, 0.0, 0.0])
         p.setdefault("rot", [0.0, 0.0, 0.0])
     plan.parts[:0] = [bottom, top]
+    f = plan.frame
+    plan.feature("part", I("load_path", "bottom half: floor, perimeter wall and every pocket; the drive and weapon loads "
+                           "close through it", "split at the axle plane so motors and wheels drop in from above"),
+                 target="chassis_bottom")
+    plan.feature("part", I("protection", "top half: roof and upper wall close the electronics bay against hits from "
+                           "above; it lifts off for service", "split at z = 0; printed roof-down (flat face on the bed)"),
+                 target="chassis_top")
+    plan.feature("wall", I("protection", "perimeter wall: the armour every side hit lands on, and the beam that ties the "
+                           "front (weapon) to the rear (drive)", plan.extra.get("wall_basis", f"{f.wall} mm")),
+                 target="chassis", half="both")
+    plan.feature("floor", I("load_path", "floor and roof skins: shear webs that keep the box square; they carry no "
+                            "direct hits", f"{f.floor} mm = 5 layers at 0.2 mm (print minimum skin)"),
+                 target="chassis", half="both")
+    plan.feature("bevel", I("protection", "belly and roof edges bevelled: removes the elephant's-foot lip on the bed "
+                            "face and gives a hit on the corner a ramp to slide off", f"chamfer {EDGE_CHAMFER} mm (print rule)"),
+                 target="chassis", half="both")

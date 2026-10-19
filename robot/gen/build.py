@@ -16,6 +16,8 @@ from pathlib import Path
 from . import hypothesis as hyp_mod
 from .external import drive, electronics, fasteners, front, pockets, shell, switch, weapon, wiring
 from .external.plan import Frame, Plan
+from .external.weapon_drisk import WEDGELET_T
+from . import intent as intent_mod
 from .layout import Component, Keepout, LayoutInputs, Link, solve
 
 ROBOT_TYPE = {"none_pusher": "wedge", "wedge": "wedge", "lifter": "lifter", "hspin_bar": "horizontal_spinner",
@@ -27,6 +29,10 @@ class BuildError(ValueError):
 
 
 # ---------------------------------------------------------------- frame
+# design side load on the perimeter wall: a 150 g robot at 3 m/s glancing off a wall/opponent, stopped over ~10 mm,
+# shared by about 4 wall strips between housings: 0.15 * 9 / (2 * 0.01) / 4 ~ 17 N; doubled for a weapon hit -> 34 N
+SIDE_HIT_N = 34.0
+
 def frame_params(h, user: dict | None = None) -> dict:
     """Default body box for a hypothesis (user `outline`/`height` override)."""
     user = user or {}
@@ -61,13 +67,24 @@ def default_outline(half_w, y0, y1, chamfer=4.0, rear_r=7.0) -> list:
 
 def make_plan(h, user=None) -> tuple:
     fp = frame_params(h, user)
-    g = drive.geom_for(h, fp["axle_y"])
+    # 4WD belt: front axle as far forward as the front well allows (longest wheelbase = most stable, longest belt)
+    front_y = fp["y1"] - fp.get("wall", 1.6) - 0.2 - (h.wheel_dia + 5.8) / 2
+    g = drive.geom_for(h, fp["axle_y"], front_y)
     W = round(g.half_width, 2)
     outline = (user or {}).get("outline") or default_outline(W, fp["y0"], fp["y1"])
-    fr = Frame(outline=[list(map(float, p)) for p in outline], zb=fp["zb"], zt=fp["zt"], floor=fp.get("floor", 1.5))
+    # wall from the side load it must carry between the housings that back it (see intent.wall_for)
+    wall = intent_mod.wall_for(SIDE_HIT_N, span_mm=25.0, material="nylon")
+    fr = Frame(outline=[list(map(float, p)) for p in outline], zb=fp["zb"], zt=fp["zt"], floor=fp.get("floor", 1.5),
+               wall=wall)
     plan = Plan(hyp=h, frame=fr, name=(user or {}).get("name") or f"gen {h.weapon}",
                 robot_type=ROBOT_TYPE.get(h.weapon, "other"))
     plan.extra["_floor_z"] = fp["floor_z"]
+    if g.belt and h.front == "wedgelets":
+        plan.extra["axle_out"] = WEDGELET_T / 2  # the standoff end enters the wedgelet's bore (takes the shear); the
+        # screw along its axis clamps the wedgelet to the end face (Revron RV17/18)
+    plan.extra["wall_basis"] = (f"side hit {SIDE_HIT_N} N on a strip between housings needs "
+                                f"{(1.5 * SIDE_HIT_N / intent_mod.SIGMA_ALLOW['nylon']) ** 0.5:.2f} mm; print minimum "
+                                f"{intent_mod.MIN_WALL_FDM} mm (4 perimeters) -> {wall} mm")
     plan.extra["lighten"] = tuple((user or {}).get("lighten", ()))
     return plan, g
 
@@ -150,7 +167,8 @@ def to_spec(plan, h) -> dict:
                    {"id": "c_fit", "text": "fits the 150 mm square", "metric": "footprint_mm", "op": "<=", "value": 150.0}]
         + plan.claims,
         "generator": {"hypothesis": h.to_dict(), "slug": h.slug, "notes": plan.notes,
-                      "layout": {k: list(v) for k, v in plan.placements.items()}},
+                      "layout": {k: list(v) for k, v in plan.placements.items()},
+                      "features": plan.features},
     }
     if plan.archetype:
         spec["archetype"] = plan.archetype

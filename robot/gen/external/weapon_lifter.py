@@ -73,14 +73,14 @@ class Lifter:
                     zp - sy / 2 - GAP, zp + sy / 2 + GAP, HOUSING)
         sig_y = yp - sx / 2
         pk.notches.append((xc - 1.6, xc + 1.6, sig_y - 2.0, sig_y + 0.5, min(zp - 1.6, -1.0), max(zp + 1.6, 1.0)))
-        plan.pockets.append(pk)
+        plan.pocket(pk)
         # window in the right wall for the servo: its output face sits just outside, in the cheek's plane, so nothing
         # of the scoop has to pass through the wall
         win = sh.boxr(W - f.wall - 0.5, W + 0.5, yp - sx / 2 - GAP, yp + sx / 2 + GAP, zp - sy / 2 - GAP, zp + sy / 2 + GAP)
         plan.cut("bottom", win)
         plan.cut("top", win)
         plan.add("bottom", sh.cyl_axis(3.0, -W, -W + 6.0, "x", yp, zp))
-        plan.late_cuts["bottom"].append(sh.cyl_axis(1.0, -W - 0.2, -W + 4.6, "x", yp, zp))
+        plan.late_cut("bottom", sh.cyl_axis(1.0, -W - 0.2, -W + 4.6, "x", yp, zp))
         # the scoop: two cheeks outside the side walls + the plate in front of the chassis
         xo = W + 0.4 + CHEEK_T
         # the plate's back edge clears the front wall over the whole lift (it swings up about the pivot)

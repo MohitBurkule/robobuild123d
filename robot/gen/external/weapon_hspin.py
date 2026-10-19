@@ -68,9 +68,9 @@ class HSpin:
         for k, ang in enumerate((90.0, 270.0)):
             a = math.radians(ang)
             x, y = 8.0 * math.cos(a), ya + 8.0 * math.sin(a)
-            plan.late_cuts["bottom"].append(sh.cyl_axis(1.1, zb - 0.5, z_col + 0.1, "z", x, y))
+            plan.late_cut("bottom", sh.cyl_axis(1.1, zb - 0.5, z_col + 0.1, "z", x, y))
             seat = z_col + 3.25 - 8.0  # M2x8 engages 3.25 mm of the stator's 3.5 mm tapped depth
-            plan.late_cuts["bottom"].append(sh.cyl_axis(2.1, zb - 0.5, seat, "z", x, y))  # counterbore
+            plan.late_cut("bottom", sh.cyl_axis(2.1, zb - 0.5, seat, "z", x, y))  # counterbore
             plan.screw(id=f"bolt_wm{'ab'[k]}", designation="M2x8", at=[x, y, seat], dir=[0.0, 0.0, 1.0],
                        through=["chassis_bottom"], threads_into="weapon_motor")
         plan.connect("weapon_motor", "chassis_bottom", "screw", "Stator face bolted onto the motor column with 2 M2 from the belly")
@@ -103,7 +103,7 @@ class HSpin:
         spinner.rotor_connections(plan, "weapon", "weapon_motor", "wshaft", "wbearing", "top_bridge", hub_depth=2.6)
         # lock pin: through the bar's pin hole into a steel lock plate bonded on the roof under the bar
         yl = ya - PIN_R
-        plan.late_cuts["top"].append(sh.boxr(-3.2, 3.2, yl - 3.2, yl + 3.2, f.zt - 0.3, f.zt + 0.1))  # recess
+        plan.late_cut("top", sh.boxr(-3.2, 3.2, yl - 3.2, yl + 3.2, f.zt - 0.3, f.zt + 0.1))  # recess
         lp = sh.S(sh.boxr(-3.0, 3.0, yl - 3.0, yl + 3.0, f.zt - 0.3, f.zt - 0.3 + LOCK_T), sh.cyl_axis(1.6, f.zt - 0.5, f.zt + LOCK_T + 0.5, "z", 0.0, yl))
         plan.part(id="lock_plate", kind="plate", material="steel", process="laser", shape=lp, rotates_with="fixed",
                   color="#c9ccd1", label="0.8 mm steel lock plate bonded to the roof: the weapon pin's lower seat")
@@ -140,7 +140,7 @@ def add_bridge(plan, ya, zbb):
             boss = sh.cyl_axis(3.0, xw - sgn * 6.0, xw, "x", ya, z) if sgn > 0 else sh.cyl_axis(3.0, xw, xw + 6.0, "x", ya, z)
             plan.add(half, boss)
             bore = (xw - sgn * 4.6, xw + sgn * 0.2)
-            plan.late_cuts[half].append(sh.cyl_axis(1.6, min(bore), max(bore), "x", ya, z))
+            plan.late_cut(half, sh.cyl_axis(1.6, min(bore), max(bore), "x", ya, z))
             iid = f"insert_b{side}{k}"
             plan.part(id=iid, kind="insert", catalog="heatset_m2", at=[xw - sgn * 1.7, ya, z], rot=[0.0, 90.0, 0.0],
                       retained="press_fit")

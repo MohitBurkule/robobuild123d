@@ -131,6 +131,8 @@ BUILDABLE = {
     "hspin_bar": {"front": ("wedgelets", "skirt", "wedge"), "mount": ("top",), "attachment": ("hub_motor",), "drive_layout": ("2WD",)},
     "vspin_drisk": {"front": ("forks", "wedgelets"), "mount": ("front",), "attachment": ("drisk",), "drive_layout": ("2WD", "4WD")},
 }
+# drive combinations the drive generator builds: 2WD direct on the motors, 4WD = 2 motors + O-ring belts
+BUILDABLE_DRIVES = {("2WD", "direct"), ("4WD", "belt")}
 
 
 @lru_cache(maxsize=1)
@@ -334,4 +336,4 @@ def buildable(h: Hypothesis) -> bool:
     b = BUILDABLE.get(h.weapon)
     if b is None:
         return False
-    return all(getattr(h, k) in v for k, v in b.items())
+    return all(getattr(h, k) in v for k, v in b.items()) and (h.drive_layout, h.transmission) in BUILDABLE_DRIVES
