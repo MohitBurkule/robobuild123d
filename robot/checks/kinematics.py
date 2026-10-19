@@ -170,6 +170,8 @@ class SectorSweep(Sweep):
         Q = np.vstack(pts)
         self.box = np.array([Q.min(axis=0), Q.max(axis=0)])
         self.R = float(rad.max())
+        self.angles = [lo + (hi - lo) * s_ / steps for s_ in range(steps + 1)]
+        self.bodies = None  # posed member bodies, set by the caller to confirm band hits on the real mesh
 
     def _phi(self, P):
         q = np.atleast_2d(P) - self.o
@@ -203,6 +205,38 @@ class SectorSweep(Sweep):
                     inner = np.minimum(rad - rmn, rmx - rad)
                     axd = np.minimum(ax - self.amin, self.amax - ax)
                     depth = np.where(valid, np.minimum(inner, axd), depth)
+        if self.bodies:
+            depth, gap = self.confirm(P, depth, gap, gapmax)
+        return depth, gap
+
+    def confirm(self, P, depth, gap, gapmax):
+        """The (axial, angle) band spans everything between a part's innermost and outermost radius, so a hub near the
+        pivot and a plate far out fill the gap between them (VERIFIER_ISSUES #3). Re-test every candidate point on the
+        real posed meshes: rotate it back by each step of the joint range and measure it against the member bodies."""
+        P = np.atleast_2d(np.asarray(P, float))
+        c = np.nonzero((depth > 0) | (gap < gapmax))[0]
+        if not len(c):
+            return depth, gap
+        Q = P[c]
+        dep = np.full(len(c), -np.inf)
+        gp = np.full(len(c), np.inf)
+        for d in self.angles:
+            R = xform.axis_angle(self.a, -d)
+            Qd = (Q - self.o) @ R.T + self.o
+            for b in self.bodies:
+                lo, hi = b.aabb
+                near = np.all((Qd >= lo - gapmax - 0.1) & (Qd <= hi + gapmax + 0.1), axis=1)
+                if not near.any():
+                    continue
+                idx = np.nonzero(near)[0]
+                dist = b.distance(Qd[idx])
+                ins = b.inside(Qd[idx])
+                dep[idx] = np.where(ins, np.maximum(dep[idx], dist), dep[idx])
+                gp[idx] = np.where(ins, 0.0, np.minimum(gp[idx], dist))
+        depth = depth.copy()
+        gap = gap.copy()
+        depth[c] = dep
+        gap[c] = gp
         return depth, gap
 
 
@@ -1437,6 +1471,8 @@ def sweeps(k):
         P = np.vstack([b.surface(k.h)[0] for b in bodies])
         lr = limited_range(k, g)
         sw = Sweep(P, g.axis[0], g.axis[1]) if lr is None else SectorSweep(P, g.axis[0], g.axis[1], *lr)
+        if lr is not None:
+            sw.bodies = bodies
         gapmin = RUB_GAP[g.cls]
         ex = static_exclusions(k, g)
         box = sw.aabb()
