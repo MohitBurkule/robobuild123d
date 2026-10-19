@@ -60,6 +60,7 @@ def make_plan(h, user=None) -> tuple:
     plan = Plan(hyp=h, frame=fr, name=(user or {}).get("name") or f"gen {h.weapon}",
                 robot_type=ROBOT_TYPE.get(h.weapon, "other"))
     plan.extra["_floor_z"] = fp["floor_z"]
+    plan.extra["lighten"] = tuple((user or {}).get("lighten", ()))
     return plan, g
 
 

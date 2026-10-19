@@ -60,13 +60,27 @@ def geom_for(h, axle_y: float) -> DriveGeom:
     return DriveGeom(h.drive_motor, float(h.wheel_dia), wheel_width(h.wheel_dia), axle_y)
 
 
-def wheel_shape(dia: float, width: float) -> dict:
-    """Printed hub with a 3 mm D-bore (flat 1.0 mm from the axis) inside a tyre ring; axis along x."""
+def wheel_shape(dia: float, width: float, lighten: bool = False) -> dict:
+    """Printed hub with a 3 mm D-bore (flat 1.0 mm from the axis) inside a tyre ring; axis along x.
+    `lighten`: the hub becomes a boss + a 2.4 mm web (with round windows when there is room) instead of a solid disc."""
     rt = dia / 2
     rim = sh.S(sh.cyl(rt, width, rot=(0, 90, 0)), sh.cyl(rt - 5.0, width + 2, rot=(0, 90, 0)))
     d_bore = {"type": "intersect", "items": [sh.cyl(1.5, width + 2, rot=(0, 90, 0)), sh.box(width + 2, 3.2, 2.6, (0, 0, -0.3))]}
-    hub = sh.S(sh.cyl(rt - 4.5, width, rot=(0, 90, 0)), d_bore)
-    return sh.U(rim, hub)
+    if not lighten:
+        hub = sh.S(sh.cyl(rt - 4.5, width, rot=(0, 90, 0)), d_bore)
+        return sh.U(rim, hub)
+    web_t = min(width, 2.4)
+    body = sh.U(sh.cyl(4.0, width, rot=(0, 90, 0)), sh.cyl(rt - 4.5, web_t, rot=(0, 90, 0)))
+    cuts = [d_bore]
+    r_in, r_out = 4.0 + 1.0, rt - 5.0 - 1.0
+    hr = (r_out - r_in) / 2
+    if hr >= 1.0:
+        import math
+        rc = (r_in + r_out) / 2
+        for k in range(5):
+            a = 2 * math.pi * k / 5
+            cuts.append(sh.cyl(hr, width + 2, (0, rc * math.cos(a), rc * math.sin(a)), (0, 90, 0)))
+    return sh.U(rim, sh.S(body, *cuts))
 
 
 def add_drive(plan, g: DriveGeom):
@@ -78,7 +92,7 @@ def add_drive(plan, g: DriveGeom):
         mid, wid = f"motor_{side}", f"wheel_{side}"
         plan.part(id=mid, kind="motor", catalog=m["cat"], at=[sgn * g.motor_cx, g.axle_y, 0.0],
                   rot=[0.0, 0.0, 0.0 if sgn > 0 else 180.0], label=f"{'left' if sgn > 0 else 'right'} drive")
-        plan.part(id=wid, kind="wheel", material="pla", process="fdm", shape=wheel_shape(g.wheel_dia, g.wheel_w),
+        plan.part(id=wid, kind="wheel", material="pla", process="fdm", shape=wheel_shape(g.wheel_dia, g.wheel_w, "wheel" in plan.extra.get("lighten", ())),
                   at=[sgn * g.wheel_cx, g.axle_y, 0.0], print_orientation="+x",
                   mass_g=round(0.0045 * g.wheel_dia ** 2, 1),
                   label=f"{g.wheel_dia:g} x {g.wheel_w:g} mm wheel, printed hub with 3 mm D-bore, silicone tyre")

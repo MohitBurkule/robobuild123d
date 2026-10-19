@@ -21,13 +21,9 @@ CASES = {
 }
 
 # A servo lifter's limited-range arm is swept a full turn by the kinematics checks (VERIFIER_ISSUES.md #1).
-KNOWN_VERIFIER_LIMITS = {"lifter"}
-
 
 @pytest.mark.parametrize("w", sorted(CASES))
 def test_generated_robot_has_no_blockers(w):
-    if w in KNOWN_VERIFIER_LIMITS:
-        pytest.xfail("limited-range joint swept a full turn by kin.* checks; see VERIFIER_ISSUES.md")
     res = gate.gate(H.preset(w), fast=True, max_layouts=2, seeds=(0,))
     assert gate.blockers(res.report) == []
     rep = gate.verify_dict(res.spec, fast=True)

@@ -42,7 +42,7 @@ class Lifter:
         floor = plan.extra["_floor_z"]
         yp = f.y1 - PIVOT_BACK
         zp = f.zb + f.floor + GAP + SERVO_SIZE[1] / 2 + 0.1  # servo resting on the floor
-        x_face = f.x1 - f.wall - 0.3  # servo output face just inside the right wall
+        x_face = f.x1 + 0.3  # servo output face flush with the outside of the right wall (it sits in a wall window)
         return yp, zp, x_face, floor
 
     @classmethod
@@ -69,15 +69,16 @@ class Lifter:
         plan.part(id="servo", kind="servo", catalog=SERVO, at=[xc, yp, zp], rot=[90.0, 0.0, 90.0], retained="captive",
                   ports={"signal": [-sx / 2, 0.0, 0.0]},
                   label="CS07 micro servo on its side, output through the right wall (BEC 5 V from the receiver lead)")
-        pk = Pocket("servo", xc - sz / 2 - GAP, xc + sz / 2 + GAP, yp - sx / 2 - GAP, yp + sx / 2 + GAP,
+        pk = Pocket("servo", xc - sz / 2 - GAP, W - f.wall, yp - sx / 2 - GAP, yp + sx / 2 + GAP,
                     zp - sy / 2 - GAP, zp + sy / 2 + GAP, HOUSING)
         sig_y = yp - sx / 2
         pk.notches.append((xc - 1.6, xc + 1.6, sig_y - 2.0, sig_y + 0.5, min(zp - 1.6, -1.0), max(zp + 1.6, 1.0)))
         plan.pockets.append(pk)
-        # hole for the hub through the right wall, boss + insert for the pivot screw in the left wall
-        plan.cut("bottom", sh.cyl_axis(HUB_R + 0.4, x_face - 0.5, W + 0.5, "x", yp, zp))
-        # open the hub hole into a slot up to the split: with the top half off, the scoop lifts straight out
-        plan.cut("bottom", sh.boxr(x_face - 0.5, W + 0.5, yp - HUB_R - 0.4, yp + HUB_R + 0.4, zp, 0.5))
+        # window in the right wall for the servo: its output face sits just outside, in the cheek's plane, so nothing
+        # of the scoop has to pass through the wall
+        win = sh.boxr(W - f.wall - 0.5, W + 0.5, yp - sx / 2 - GAP, yp + sx / 2 + GAP, zp - sy / 2 - GAP, zp + sy / 2 + GAP)
+        plan.cut("bottom", win)
+        plan.cut("top", win)
         plan.add("bottom", sh.cyl_axis(3.0, -W, -W + 6.0, "x", yp, zp))
         plan.late_cuts["bottom"].append(sh.cyl_axis(1.0, -W - 0.2, -W + 4.6, "x", yp, zp))
         # the scoop: two cheeks outside the side walls + the plate in front of the chassis
@@ -92,15 +93,14 @@ class Lifter:
         cheek = list(MultiPoint(_circle((yp, zp), 5.0) + [top_back, (y_back + 3.0, top_back[1]),
                                                           (y_back + 3.0, top_back[1] - SCOOP_T - 2.0),
                                                           (y_back, top_back[1] - SCOOP_T - 2.0)]).convex_hull.exterior.coords)[:-1]
-        body = sh.U(sh.side_prism(plate, -xo, xo), sh.side_prism(cheek, W + 0.4, xo), sh.side_prism(cheek, -xo, -W - 0.4),
-                    sh.cyl_axis(HUB_R, x_face + 0.05, W + 0.4, "x", yp, zp))
+        body = sh.U(sh.side_prism(plate, -xo, xo), sh.side_prism(cheek, W + 0.4, xo), sh.side_prism(cheek, -xo, -W - 0.4))
         cuts = [sh.cyl_axis(1.1, -xo - 0.5, -W - 0.3, "x", yp, zp)]
         # arm frame: origin on the pivot so the joint is a plain rotation about x
         arm = sh.place(sh.S(body, *cuts), (0.0, -yp, -zp))
         # the arm hangs on the servo (parent); the servo's frame is rotated, so give its pose relative to it
         plan.part(id="lifter", kind="other", material="nylon", process="fdm", print_orientation="+y",
-                  shape=arm, parent="servo", at=[0.0, 0.0, -xc], rot=[-90.0, -90.0, 0.0],
-                  joint={"kind": "revolute", "axis": [0, 0, 1], "pivot": [0.0, 0.0, x_face - xc],
+                  shape=arm, at=[0.0, yp, zp], rot=[0.0, 0.0, 0.0],
+                  joint={"kind": "revolute", "axis": [1, 0, 0], "pivot": [x_face, yp, zp],
                          "min": 0, "max": RANGE_DEG, "default": 0},
                   actuated_by="servo", rotates_with="lifter", color="#c0392b",
                   label="printed lifting scoop: cheeks outside the side walls, lip on the floor, servo-driven")
