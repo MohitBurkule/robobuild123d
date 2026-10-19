@@ -282,3 +282,21 @@ python3 -m robot gen build --hypothesis "weapon=wedge,wheel_dia=25" --out out/
 python3 -m robot gen layouts spec_inputs.json -k 5    # LayoutInputs JSON (outline, components, keepouts, ...)
 python3 -m robot gen layouts hspin_bar -k 3           # or the layout problem of a hypothesis
 ```
+
+## Reference BOM and build-guide details (`bom` group)
+- **Match the build guide's BOM** (`reference.bom`, blocker): list the guide's rows in `reference_bom`
+  (`role`, `kind` fastener/part/wire, `match` id globs, `count`, `designation`, `head`, `threads_into`
+  nut/insert/standoff/motor/tapped, `material`, `catalog`, `connector`, `optional`). A row that differs fails unless it
+  carries `deviation` with the engineering reason (e.g. a 1 mm panel cannot take a 1.3 mm CSK head). Screws in no row
+  are a warning (`reference.bom_extra`).
+- **The weapon lock is a real part** (`legal.weapon_lock_part`): name it in `weapon.locking_bar`; a declared virtual
+  pin cannot be weighed, printed or checked against the rotor (enforced when `weapon_lock.require_part` is set). A printed tooth stop that hugs a tip (<= 0.3 mm, no
+  overlap at rest) is fine; give it `role: weapon_lock` (not kind locking_bar) when it is TPU.
+- **O-ring belts are stock sizes** (`kin.belt_stock`): set `belt.stock: {id_mm, cs_mm}` from the stock list,
+  `length_mm = pi x ID`, `width_mm = CS`; 5-15 % stretch over the pulleys.
+- **Modules unplug** (`disasm.wire_cut`): a wire that crosses a `modules` boundary needs `connector` (bullets on the
+  weapon phases), or removing the module means desoldering.
+- **Switch OFF direction** (`electrical.switch_direction`): declare `off_dir` on every switch (missing = warning, wrong = blocker); OFF must be the outward
+  (pulled) direction through the face it sits in.
+- **Reference notes stay current** (`reference.doc_consistency`): `reference_doc: {path, must_mention, must_not_mention}`
+  names the parts the write-up must describe and the retired ones it must no longer claim.

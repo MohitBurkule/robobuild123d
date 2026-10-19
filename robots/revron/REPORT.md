@@ -1,46 +1,40 @@
 # Verifier report: Revron
 
-Profile `aws2025`. 0 blockers, 168 warnings, 361 checks passed. Check set revision 10 (engine build123d).
+Profile `aws2025`. 0 blockers, 185 warnings, 375 checks passed. Check set revision 11 (engine build123d).
 
-Mass 148.9 g (range 133.5 to 164.3 g, limit 150 g).
+Mass 149.5 g (range 134.1 to 165.0 g, limit 150 g).
 
 ## Findings
 
-- **pass** `validity.ok`: Spec is well formed 42 parts, 27 fasteners, 7 wires.
+- **pass** `validity.ok`: Spec is well formed 53 parts, 33 fasteners, 7 wires.
 - **warning** `wiring.bend`: Wire bends too tightly Wire `w_bat_sw` turns 55 degrees with less than 3.2 mm bend radius; it will kink or pull off its solder joint.
   - Fix: Widen the channel at the corner or route it in a straighter line.
 - **warning** `wiring.bend`: Wire bends too tightly Wire `w_wesc_m` turns 45 degrees with less than 3.2 mm bend radius; it will kink or pull off its solder joint.
   - Fix: Widen the channel at the corner or route it in a straighter line.
 - **warning** `wiring.bend`: Wire bends too tightly Wire `w_sw_rx` turns 53 degrees with less than 2.6 mm bend radius; it will kink or pull off its solder joint.
   - Fix: Widen the channel at the corner or route it in a straighter line.
-- **warning** `mass.may_be_over`: May be over the weight limit 148.9 g (range 133.5 to 164.3 g) against the 150 g limit; 4.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+- **warning** `mass.may_be_over`: May be over the weight limit 149.5 g (range 134.1 to 165.0 g) against the 150 g limit; 4.9 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
   - Fix: Weigh real parts and set `scale_mass_g`, or remove mass until the upper bound fits.
-- **pass** `interference.overlap`: No parts collide 188 touching or overlapping pairs checked; touching is allowed, overlap deeper than 0.08 mm is not.
+- **pass** `interference.overlap`: No parts collide 228 touching or overlapping pairs checked; touching is allowed, overlap deeper than 0.08 mm is not.
 - **pass** `interference.sweep`: Joint sweep is clear `blade_c` swept 0..360 deg in 80 steps without hitting anything.
 - **pass** `interference.sweep`: Joint sweep is clear `whub_rl` swept 0..360 deg in 80 steps without hitting anything.
 - **pass** `interference.sweep`: Joint sweep is clear `whub_fl` swept 0..360 deg in 80 steps without hitting anything.
 - **pass** `interference.sweep`: Joint sweep is clear `whub_rr` swept 0..360 deg in 80 steps without hitting anything.
 - **pass** `interference.sweep`: Joint sweep is clear `whub_fr` swept 0..360 deg in 80 steps without hitting anything.
-- **pass** `interference.spin`: Weapon sweep is clear `blade_c` and 13 rotor part(s) swept a full turn without touching another part.
-- **warning** `interference.wheel_clearance`: Wheel has no running clearance `wheel_fl` turning about its axle comes within 0.90 mm of `belt_l`; it needs 1.0 mm so tyre squash, flex and debris do not make it rub.
-  - Fix: Open the wheel pocket so it clears the wheel by 1 mm on every side (radius and both faces).
+- **pass** `interference.spin`: Weapon sweep is clear `blade_c` and 17 rotor part(s) swept a full turn without touching another part.
 - **warning** `interference.wheel_clearance`: Wheel has no running clearance `wheel_fl` turning about its axle comes within 0.00 mm of `so_bl`; it needs 1.0 mm so tyre squash, flex and debris do not make it rub.
   - Fix: Open the wheel pocket so it clears the wheel by 1 mm on every side (radius and both faces).
 - **warning** `interference.wheel_clearance`: Wheel has no running clearance `wheel_fl` turning about its axle comes within 0.50 mm of `wedglet_l`; it needs 1.0 mm so tyre squash, flex and debris do not make it rub.
   - Fix: Open the wheel pocket so it clears the wheel by 1 mm on every side (radius and both faces).
-- **warning** `interference.wheel_clearance`: Wheel has no running clearance `wheel_fr` turning about its axle comes within 0.90 mm of `belt_r`; it needs 1.0 mm so tyre squash, flex and debris do not make it rub.
+- **warning** `interference.wheel_clearance`: Wheel has no running clearance `wheel_fr` turning about its axle comes within 1.00 mm of `belt_r`; it needs 1.0 mm so tyre squash, flex and debris do not make it rub.
   - Fix: Open the wheel pocket so it clears the wheel by 1 mm on every side (radius and both faces).
 - **warning** `interference.wheel_clearance`: Wheel has no running clearance `wheel_fr` turning about its axle comes within 0.00 mm of `so_br`; it needs 1.0 mm so tyre squash, flex and debris do not make it rub.
   - Fix: Open the wheel pocket so it clears the wheel by 1 mm on every side (radius and both faces).
 - **warning** `interference.wheel_clearance`: Wheel has no running clearance `wheel_fr` turning about its axle comes within 0.50 mm of `wedglet_r`; it needs 1.0 mm so tyre squash, flex and debris do not make it rub.
   - Fix: Open the wheel pocket so it clears the wheel by 1 mm on every side (radius and both faces).
-- **warning** `interference.wheel_clearance`: Wheel has no running clearance `wheel_rl` turning about its axle comes within 0.90 mm of `belt_l`; it needs 1.0 mm so tyre squash, flex and debris do not make it rub.
-  - Fix: Open the wheel pocket so it clears the wheel by 1 mm on every side (radius and both faces).
 - **warning** `interference.wheel_clearance`: Wheel has no running clearance `wheel_rl` turning about its axle comes within 0.00 mm of `motor_l`; it needs 1.0 mm so tyre squash, flex and debris do not make it rub.
   - Fix: Open the wheel pocket so it clears the wheel by 1 mm on every side (radius and both faces).
-- **warning** `interference.wheel_clearance`: Wheel has no running clearance `wheel_rl` turning about its axle comes within 0.41 mm of `wedglet_l`; it needs 1.0 mm so tyre squash, flex and debris do not make it rub.
-  - Fix: Open the wheel pocket so it clears the wheel by 1 mm on every side (radius and both faces).
-- **warning** `interference.wheel_clearance`: Wheel has no running clearance `wheel_rr` turning about its axle comes within 0.90 mm of `belt_r`; it needs 1.0 mm so tyre squash, flex and debris do not make it rub.
+- **warning** `interference.wheel_clearance`: Wheel has no running clearance `wheel_rl` turning about its axle comes within 0.40 mm of `wedglet_l`; it needs 1.0 mm so tyre squash, flex and debris do not make it rub.
   - Fix: Open the wheel pocket so it clears the wheel by 1 mm on every side (radius and both faces).
 - **warning** `interference.wheel_clearance`: Wheel has no running clearance `wheel_rr` turning about its axle comes within 0.00 mm of `motor_r`; it needs 1.0 mm so tyre squash, flex and debris do not make it rub.
   - Fix: Open the wheel pocket so it clears the wheel by 1 mm on every side (radius and both faces).
@@ -53,20 +47,20 @@ Mass 148.9 g (range 133.5 to 164.3 g, limit 150 g).
 - **pass** `retention.declared`: Held by declared method `battery` is held by press_fit.
 - **pass** `retention.declared`: Held by declared method `rxesc` is held by kapton.
 - **pass** `retention.declared`: Held by declared method `wesc` is held by kapton.
-- **pass** `retention.declared`: Held by declared method `power_switch` is held by press_fit.
 - **warning** `connection.press_fit_interference`: Press fit has no sensible interference `wshaft`-`weapon_motor`: give `interference_mm` between 0.05 and 0.4 for a unknown material press fit (got 0.02).
 - **warning** `connection.press_fit_interference`: Press fit has no sensible interference `wbearing`-`upright_r`: give `interference_mm` between 0.05 and 0.4 for a metal/printed press fit (got 0.02).
-- **pass** `connection.joined`: Every part is attached All 42 parts lead back to the chassis through screws, shared prints, captive pockets, joints or declared connections.
+- **pass** `connection.cover_fasteners`: Panels bolted down All 3 armour / cover panels and screw-retained parts are held by >= 2 fasteners.
+- **pass** `connection.joined`: Every part is attached All 53 parts lead back to the chassis through screws, shared prints, captive pockets, joints or declared connections.
 - **pass** `internal.solid_invalid`: Every part is a valid solid All bodies are closed, outward-facing manifolds.
-- **pass** `internal.no_contact`: Every part touches something 42 parts each touch at least one other solid.
-- **pass** `internal.fastener_void`: Screw shanks pass through parts 27 screws each run at least 40 % through drawn solids.
+- **pass** `internal.no_contact`: Every part touches something 53 parts each touch at least one other solid.
+- **pass** `internal.fastener_void`: Screw shanks pass through parts 33 screws each run at least 40 % through drawn solids.
 - **pass** `internal.wire_in_solid`: Wires stay in free space 7 routed wires sampled every 0.5 mm stay out of every solid away from their ports.
 - **pass** `ground.wheels_touch`: Wheels touch the floor All 4 wheels reach the floor plane (z = 0.00 mm).
 - **warning** `ground.clearance`: Body is close to the floor `tub` is 0.30 mm above the floor; it will scrape on arena seams and ride on the ground when a tyre compresses.
   - Fix: Raise the chassis or use a bigger wheel; wedges and forks may go lower.
 - **pass** `ground.wedge_gap`: Wedge tip height is right `wedglet_l` tip is 0.72 mm above the floor.
 - **pass** `ground.wedge_gap`: Wedge tip height is right `wedglet_r` tip is 0.72 mm above the floor.
-- **pass** `ground.stance`: Stable on the floor Centre of mass is 19.9 mm inside the support polygon of wheels and wedge.
+- **pass** `ground.stance`: Stable on the floor Centre of mass is 19.8 mm inside the support polygon of wheels and wedge.
 - **warning** `ground.wedge_load`: Front rests on the wedge About 100% of the weight sits on the wedge tip because the centre of mass is ahead of the axle; the tip drags and wears and the drive loses traction.
   - Fix: Move the battery and motors back, or add a front skid wheel, or put the axle forward.
 - **warning** `ground.wheel_exposed`: Wheel sticks out of the body `wheel_rl` reaches open air from 37% of its side and upward rays above the belly line (allowed 5%); a spinner or a wall hits the tyre first.
@@ -80,11 +74,12 @@ Mass 148.9 g (range 133.5 to 164.3 g, limit 150 g).
 - **pass** `legal.switch`: Marked tool-free power switch `power_switch` is a marked, tool-free power switch.
 - **warning** `switch.drive_axis`: Switch slides along the drive direction `power_switch` moves forward and back: hard acceleration, braking and head-on hits push the slider.
   - Fix: Orient the slider across the robot (x axis), or add a detent plus a guard rib on both ends.
-- **warning** `switch.too_deep`: Switch is buried `power_switch` is 5.9 mm below the surface; a finger cannot move the slider without a tool.
+- **pass** `switch.recess`: Switch is recessed `power_switch` sits 2.2 mm below the surrounding surface and slides across the robot.
 - **pass** `legal.failsafe`: Failsafe declared The robot stops when the transmitter is switched off.
 - **pass** `legal.weapon_disable`: Weapon can be disabled remotely The weapon is switched off from the transmitter.
-- **pass** `legal.locking_bar`: Removable tooth-stop pin declared `blade_c`: a 2 mm pin through `tub` at 18.7 mm from the axis (tips reach 21.2 mm) stops the first tooth.
 - **pass** `legal.footprint`: Fits the square Fits a 103.8 mm square (limit 150 mm).
+- **pass** `fastener.access_order`: Screw driven before later parts `bolt_sw0` is driven before top_armour are fitted (declared order); those parts do not block its driver.
+- **pass** `fastener.access_order`: Screw driven before later parts `bolt_sw1` is driven before top_armour are fitted (declared order); those parts do not block its driver.
 - **warning** `fastener.head_seat`: Screw head sits on nothing Nothing is under the head of `bolt_sla`; it cannot clamp the parts.
   - Fix: Move `at` to the surface the head presses on, or cut a counterbore whose floor is at `at`.
 - **warning** `fastener.head_seat`: Screw head sits on nothing Nothing is under the head of `bolt_slb`; it cannot clamp the parts.
@@ -110,11 +105,19 @@ Mass 148.9 g (range 133.5 to 164.3 g, limit 150 g).
 - **warning** `power.battery`: Battery may sag under peak load Estimated peak 18.2 A against a 7.2 A rating (180 mAh x 40 C); the voltage will collapse in a hit.
   - Fix: Use a bigger or higher-C pack, or a motor that draws less.
 - **pass** `power.runtime`: Battery lasts the fight 180 mAh x 80% usable lasts about 4.1 min of fighting (per 3 min fight: drive 52 mAh, weapon spin-ups and hold 48 mAh, electronics 5 mAh = 105 mAh).
-- **warning** `mfg.thin_wall`: Wall too thin to make `top_armour` has walls down to 1.01 mm near (14.5, -44.4, 20.4); fdm tpu needs at least 1.2 mm.
+- **warning** `mfg.thin_wall`: Wall too thin to make `top_armour` has walls down to 1.01 mm near (-26.6, -25.6, 19.4); fdm tpu needs at least 1.2 mm.
   - Fix: Thicken that wall to a multiple of the nozzle width (0.8, 1.2, 1.6 mm) or merge it into a thicker feature.
-- **warning** `mfg.thin_wall`: Wall too thin to make `wedglet_l` has walls down to 0.90 mm near (34.4, 12.8, 8.7); fdm tpu needs at least 1.2 mm.
+- **warning** `mfg.thin_wall`: Wall too thin to make `whub_rl` has walls down to 0.70 mm near (35.6, -37.8, 12.9); fdm pla_st needs at least 0.9 mm.
   - Fix: Thicken that wall to a multiple of the nozzle width (0.8, 1.2, 1.6 mm) or merge it into a thicker feature.
-- **warning** `mfg.thin_wall`: Wall too thin to make `wedglet_r` has walls down to 0.93 mm near (-28.7, 35.5, 3.3); fdm tpu needs at least 1.2 mm.
+- **warning** `mfg.thin_wall`: Wall too thin to make `wedglet_l` has walls down to 0.92 mm near (28.6, 35.5, 3.3); fdm tpu needs at least 1.2 mm.
+  - Fix: Thicken that wall to a multiple of the nozzle width (0.8, 1.2, 1.6 mm) or merge it into a thicker feature.
+- **warning** `mfg.thin_wall`: Wall too thin to make `whub_rr` has walls down to 0.70 mm near (-35.6, -37.9, 12.9); fdm pla_st needs at least 0.9 mm.
+  - Fix: Thicken that wall to a multiple of the nozzle width (0.8, 1.2, 1.6 mm) or merge it into a thicker feature.
+- **warning** `mfg.thin_wall`: Wall too thin to make `wedglet_r` has walls down to 1.00 mm near (-38.9, 5.0, 1.7); fdm tpu needs at least 1.2 mm.
+  - Fix: Thicken that wall to a multiple of the nozzle width (0.8, 1.2, 1.6 mm) or merge it into a thicker feature.
+- **warning** `mfg.thin_wall`: Wall too thin to make `belt_l` has walls down to 1.00 mm near (31.8, 25.6, 3.0); cots rubber needs at least 1.2 mm.
+  - Fix: Thicken that wall to a multiple of the nozzle width (0.8, 1.2, 1.6 mm) or merge it into a thicker feature.
+- **warning** `mfg.thin_wall`: Wall too thin to make `belt_r` has walls down to 1.00 mm near (-31.2, 25.6, 3.0); cots rubber needs at least 1.2 mm.
   - Fix: Thicken that wall to a multiple of the nozzle width (0.8, 1.2, 1.6 mm) or merge it into a thicker feature.
 - **pass** `spinner.bearing`: Weapon on a shaft gripped on both sides `blade_c` turns on `wshaft`, which sits 18.5 mm and 2.5 mm in structure or bearings either side (need 3).
 - **warning** `spinner.reach`: Weapon does not lead the front Looking 30 degrees off straight ahead the chassis or a non-ground-game part is -2.8 mm ahead of `blade_c`; the opponent meets it first.
@@ -126,22 +129,28 @@ Mass 148.9 g (range 133.5 to 164.3 g, limit 150 g).
 - **warning** `spinner.invert`: Robot cannot run upside down A vertical spinner gets flipped often; if it cannot drive inverted it is out of the fight the first time that happens.
 - **warning** `spinner.exposed`: Part sits outside the armour `weapon_motor` has a clear path to open air from 20% of its outward rays; a hit or the floor reaches it directly.
   - Fix: Move it inside the shell or add an armour wall (1.2 mm nylon, or 0.8 mm steel or titanium) on the open side.
-- **warning** `spinner.exposed`: Part sits outside the armour `battery` has a clear path to open air from 3% of its outward rays; a hit or the floor reaches it directly.
+- **warning** `spinner.exposed`: Part sits outside the armour `battery` has a clear path to open air from 5% of its outward rays; a hit or the floor reaches it directly.
   - Fix: Move it inside the shell or add an armour wall (1.2 mm nylon, or 0.8 mm steel or titanium) on the open side.
+- **warning** `spinner.exposed`: Part sits outside the armour `wesc` has a clear path to open air from 7% of its outward rays; a hit or the floor reaches it directly.
+  - Fix: Move it inside the shell or add an armour wall (1.2 mm nylon, or 0.8 mm steel or titanium) on the open side.
+- **warning** `spinner.wire_exposed`: Wire runs outside the armour Wire `w_bat_sw` has a clear line to open air at this point; a hit or the weapon can cut it.
+  - Fix: Route it through the chassis interior or add a wall on the open side.
 - **warning** `spinner.wire_exposed`: Wire runs outside the armour Wire `w_sw_wesc` has a clear line to open air at this point; a hit or the weapon can cut it.
   - Fix: Route it through the chassis interior or add a wall on the open side.
 - **warning** `spinner.wire_exposed`: Wire runs outside the armour Wire `w_wesc_m` has a clear line to open air at this point; a hit or the weapon can cut it.
   - Fix: Route it through the chassis interior or add a wall on the open side.
 - **warning** `spinner.wire_exposed`: Wire runs outside the armour Wire `w_sw_rx` has a clear line to open air at this point; a hit or the weapon can cut it.
   - Fix: Route it through the chassis interior or add a wall on the open side.
-- **pass** `kin.motion_inferred`: Motion groups blade_c+bspacer+disc_f+prop_mount+spacer+wshaft about joint of `blade_c`; wheel_rl+whub_rl about joint of `whub_rl`; wheel_fl+whub_fl about joint of `whub_fl`; wheel_rr+whub_rr about joint of `whub_rr`; wheel_fr+whub_fr about joint of `whub_fr` (31 parts declare motion explicitly, the rest is inferred).
+- **warning** `spinner.wire_exposed`: Wire runs outside the armour Wire `w_rx_wesc` has a clear line to open air at this point; a hit or the weapon can cut it.
+  - Fix: Route it through the chassis interior or add a wall on the open side.
+- **pass** `kin.motion_inferred`: Motion groups blade_c+bspacer+disc_f+nut_d0+nut_d1+nut_d2+nut_d3+prop_mount+spacer+wshaft about joint of `blade_c`; wheel_rl+whub_rl about joint of `whub_rl`; wheel_fl+whub_fl about joint of `whub_fl`; wheel_rr+whub_rr about joint of `whub_rr`; wheel_fr+whub_fr about joint of `whub_fr` (36 parts declare motion explicitly, the rest is inferred).
 - **warning** `kin.bore_fit`: Part is loose on its shaft `blade_c` bore radius 2.99 mm on `wshaft` radius 2.49 mm (0.50 mm radial play); it rattles and fretts.
   - Fix: Size the bore to the shaft (ream, or 0-0.05 mm press fit).
-- **warning** `kin.rub_gap`: Rotating part runs too close to a static one wheel_rl+whub_rl passes 0.41 mm from `wedglet_l` (need 0.5 mm for a wheel).
+- **warning** `kin.rub_gap`: Rotating part runs too close to a static one wheel_rl+whub_rl passes 0.40 mm from `wedglet_l` (need 0.5 mm for a wheel).
   - Fix: Open the clearance (flex and runout eat small gaps).
 - **warning** `kin.rub_gap`: Rotating part runs too close to a static one wheel_fl+whub_fl passes 0.20 mm from `wedglet_l` (need 0.5 mm for a wheel).
   - Fix: Open the clearance (flex and runout eat small gaps).
-- **warning** `kin.rub_gap`: Rotating part runs too close to a static one wheel_rr+whub_rr passes 0.33 mm from `wedglet_r` (need 0.5 mm for a wheel).
+- **warning** `kin.rub_gap`: Rotating part runs too close to a static one wheel_rr+whub_rr passes 0.32 mm from `wedglet_r` (need 0.5 mm for a wheel).
   - Fix: Open the clearance (flex and runout eat small gaps).
 - **warning** `kin.rub_gap`: Rotating part runs too close to a static one wheel_fr+whub_fr passes 0.20 mm from `wedglet_r` (need 0.5 mm for a wheel).
   - Fix: Open the clearance (flex and runout eat small gaps).
@@ -206,29 +215,30 @@ Mass 148.9 g (range 133.5 to 164.3 g, limit 150 g).
 - **pass** `shape.aspect`: Length to width is reasonable L/W = 0.96.
 - **pass** `shape.weapon_leads`: The weapon tip leads Nothing but low forks/wedgelets reaches further forward than the weapon's swept front (ground game leads by -9.5 mm, allowed -5).
 - **pass** `shape.weapon_floor_reach`: Weapon sweeps close to the floor `blade_c` lowest sweep is 1.2 mm above the floor (axle 22.4 mm, rim 21.2 mm).
-- **pass** `shape.armour_coverage`: Internals are covered top 96%, front 93%, back 97%, left 95%, right 95% of the view is armour or structure.
-- **pass** `dynamics.tip_angle`: Stable against tipping Centre of mass 14.4 mm up; static tip angles back 73°, front 70°, left 74°, right 74°.
+- **warning** `shape.armour_coverage`: Internals exposed from the top Only 93% of the top view is covered (need 95%); exposed: `weapon_motor` 2%, `battery` 2%, `wesc` 1%, `rxesc` 0%.
+  - Fix: Extend the top plate or side walls over these parts.
+- **pass** `dynamics.tip_angle`: Stable against tipping Centre of mass 14.5 mm up; static tip angles back 73°, front 70°, left 74°, right 74°.
 - **pass** `dynamics.traction`: Weight is on the driven wheels About 100% of the weight is on the driven wheels (rest on `tub`, `upright_l`, `upright_r`, `so_al`).
-- **warning** `dynamics.invertible`: Cannot drive upside down Inverted, `wheel_rl` is 17.3 mm short, `wheel_fl` is 27.8 mm short, `wheel_rr` is 17.3 mm short, `wheel_fr` is 27.8 mm short of the floor; `blade_c`, `bspacer`, `disc_f`, `prop_mount`, `spacer` stick out above the wheels. Once flipped it is stuck unless it can self-right.
+- **warning** `dynamics.invertible`: Cannot drive upside down Inverted, `wheel_rl` is 17.3 mm short, `wheel_fl` is 27.8 mm short, `wheel_rr` is 17.3 mm short, `wheel_fr` is 27.8 mm short of the floor; `blade_c`, `bspacer`, `disc_f`, `nut_d0`, `nut_d1` stick out above the wheels. Once flipped it is stuck unless it can self-right.
   - Fix: Make the wheels stand proud of the top, or add a self-righting feature.
 - **pass** `dynamics.balance`: Weapon is balanced `blade_c` mass centre is 0.000 mm off the spin axis: grade G0.0 at 19320 rpm, a 0 N rotating load on the bearings and frame. That is 0.0x the robot's weight.
 - **warning** `strength.shaft`: Weapon shaft not analysed `blade_c`: no shaft body passes through the weapon centre and into a support, so bending was not computed.
-- **pass** `strength.bolt_pullout`: Bolts hold in the plastic 5 threaded joints each hold their share of the design impact 146 N (100 g on 149 g) with 1.5x margin.
-- **warning** `printability.overhang`: Needs support to print `tub`: best print orientation is build-up -z, which still leaves 642 mm² of overhang steeper than 45° or bridge longer than 15 mm.
+- **pass** `strength.bolt_pullout`: Bolts hold in the plastic 11 threaded joints each hold their share of the design impact 147 N (100 g on 150 g) with 1.5x margin.
+- **warning** `printability.overhang`: Needs support to print `tub`: best print orientation is build-up -z, which still leaves 577 mm² of overhang steeper than 45° or bridge longer than 15 mm.
   - Fix: Chamfer overhangs to 45°, split the part, or accept support material.
 - **warning** `printability.bridge`: Bridge too long `tub` printed build-up -z has a 53.8 mm bridge (limit 15 mm); it sags.
-- **warning** `printability.overhang`: Needs support to print `top_armour`: best print orientation is build-up -y, which still leaves 166 mm² of overhang steeper than 45° or bridge longer than 15 mm.
+- **warning** `printability.overhang`: Needs support to print `top_armour`: best print orientation is build-up +x, which still leaves 261 mm² of overhang steeper than 45° or bridge longer than 15 mm.
   - Fix: Chamfer overhangs to 45°, split the part, or accept support material.
-- **warning** `printability.bridge`: Bridge too long `top_armour` printed build-up -y has a 49.7 mm bridge (limit 15 mm); it sags.
-- **warning** `printability.overhang`: Needs support to print `wedglet_l`: best print orientation is build-up +z, which still leaves 199 mm² of overhang steeper than 45° or bridge longer than 15 mm.
+- **warning** `printability.bridge`: Bridge too long `top_armour` printed build-up +x has a 30.0 mm bridge (limit 15 mm); it sags.
+- **warning** `printability.overhang`: Needs support to print `wedglet_l`: best print orientation is build-up +z, which still leaves 206 mm² of overhang steeper than 45° or bridge longer than 15 mm.
   - Fix: Chamfer overhangs to 45°, split the part, or accept support material.
-- **warning** `printability.overhang`: Needs support to print `wedglet_r`: best print orientation is build-up +z, which still leaves 199 mm² of overhang steeper than 45° or bridge longer than 15 mm.
+- **warning** `printability.overhang`: Needs support to print `wedglet_r`: best print orientation is build-up +z, which still leaves 206 mm² of overhang steeper than 45° or bridge longer than 15 mm.
   - Fix: Chamfer overhangs to 45°, split the part, or accept support material.
-- **pass** `printability.ok`: Printable without support 9 printed part(s) print support-free in their best orientation.
+- **pass** `printability.ok`: Printable without support 10 printed part(s) print support-free in their best orientation.
 - **pass** `mfg.layer_load`: Weapon support layers carry the hit `upright_l` is printed along the spin axis.
 - **pass** `mfg.layer_load`: Weapon support layers carry the hit `upright_r` is printed along the spin axis.
 - **pass** `mfg.layer_load`: Weapon support layers carry the hit `bspacer` is printed along the spin axis.
-- **pass** `process.ok`: Geometry matches the process 28 part(s) are makeable as declared.
+- **pass** `process.ok`: Geometry matches the process 29 part(s) are makeable as declared.
 - **warning** `shape.curvature`: Organic part is boxy `blade_c`: 9 of 747 faces curved (CYLINDER).
   - Fix: Use splines/lofts and fillet the edges (photo shows smooth shapes).
 - **pass** `archetype.declared`: Archetype vertical_spinner_forks Held to the `vertical_spinner_forks` layout rules (26 rules).
@@ -239,14 +249,14 @@ Mass 148.9 g (range 133.5 to 164.3 g, limit 150 g).
 - **pass** `archetype.disc_supported`: Disc sits between two supports Static structure on the axle line: yes on one side, yes on the other (the disc must sit between two supports).
 - **pass** `archetype.disc_material`: Disc is metal stock Disc is `hardox` (metal) made by `laser`; it must be sheet- or bar-stock metal (laser/waterjet/milled/turned).
 - **pass** `archetype.teeth`: Weapon has teeth The weapon outline has 2 tooth/teeth (wanted 2..2); a round edge skids off armour.
-- **pass** `archetype.weapon_mass_fraction`: Weapon mass share Rotating mass is 25 % of the robot (wanted 18..50 %).
-- **pass** `archetype.energy_ratio`: Weapon energy for its size Stored energy per robot mass is 50.5 J/kg (wanted 40..600 J/kg).
+- **pass** `archetype.weapon_mass_fraction`: Weapon mass share Rotating mass is 26 % of the robot (wanted 18..50 %).
+- **pass** `archetype.energy_ratio`: Weapon energy for its size Stored energy per robot mass is 50.3 J/kg (wanted 40..600 J/kg).
 - **pass** `archetype.wedgelets_flank`: Blades either side of the disc Wedge/blade parts ahead of the disc axle: present on -X side, present on +X side.
 - **pass** `archetype.blade_lead`: Blade tips just ahead of the disc Low forks/wedgelets lead the disc's swept front by is -9.5 mm (wanted -12..-5 mm).
 - **pass** `archetype.disc_floor_gap`: Disc sweeps close to the floor The swept disc's lowest point above the floor is 1.2 mm (wanted 0.3..4 mm).
 - **warning** `archetype.weapon_drive`: Weapon drive layout Weapon drive is `unconnected` (accepted: inside_hub, belt_tensioned).
   - Fix: Put the outrunner inside the hub, or belt-drive with a tensioner.
-- **pass** `archetype.top_armour_slope`: Top armour slopes to the weapon The top armour slopes down toward the weapon at is 9.3 deg (wanted -5..25 deg).
+- **pass** `archetype.top_armour_slope`: Top armour slopes to the weapon The top armour slopes down toward the weapon at is -0.0 deg (wanted -5..25 deg).
 - **pass** `archetype.drive_config`: Drive layout 4 wheels, 4 driven (4WD).
 - **warning** `archetype.invertible`: Drives upside down Wheel tops stand -1.9 mm relative to the top of the chassis (need >= 0.5 mm to drive inverted).
   - Fix: Make the wheels stand proud of the top (or declare and prove `can_run_inverted`).
@@ -254,8 +264,7 @@ Mass 148.9 g (range 133.5 to 164.3 g, limit 150 g).
   - Fix: Add side pods/walls outboard of each wheel.
 - **warning** `archetype.floor_ribs`: Not checked: Printed floor is stiffened Could not evaluate (no printed chassis tub).
   - Fix: Add the missing part or data so this rule can be measured.
-- **warning** `archetype.lid_inserts`: Not checked: Lid screws go into inserts Could not evaluate (no removable lid fasteners).
-  - Fix: Add the missing part or data so this rule can be measured.
+- **pass** `archetype.lid_inserts`: Lid screws go into inserts Every removable lid screw threads into an insert or nut.
 - **warning** `archetype.switch_access`: Switch reachable from the side The switch is reachable only from the rear; the archetype puts it on a side wall.
   - Fix: Put the switch in a side-wall slot with nothing outboard of it.
 - **pass** `archetype.axle_height`: Axle height on target Axle centre above the floor is 22.4 mm (wanted 21..24 mm).
@@ -274,9 +283,9 @@ Mass 148.9 g (range 133.5 to 164.3 g, limit 150 g).
   - Fix: Print weapon uprights in nylon, PETG or TPU-free tough blends, or use metal.
 - **warning** `arch.upright_brittle`: Weapon upright in a brittle print material `upright_l` carries the weapon and is pla_st, which cracks instead of bending on a hit.
   - Fix: Print weapon uprights in nylon, PETG or TPU-free tough blends, or use metal.
-- **pass** `arch.static_on_rotor`: Rotor carries only rotating parts Rotor `blade_c`: ['blade_c', 'bspacer', 'disc_f', 'prop_mount', 'spacer', 'wshaft'].
+- **pass** `arch.static_on_rotor`: Rotor carries only rotating parts Rotor `blade_c`: ['blade_c', 'bspacer', 'disc_f', 'nut_d0', 'nut_d1', 'nut_d2', 'nut_d3', 'prop_mount', 'spacer', 'wshaft'].
 - **pass** `arch.weapon_spin_joint`: Weapon has a spin joint `blade_c` turns on a revolute joint.
-- **pass** `arch.boundary_fasteners`: No screw crosses the spin boundary 27 fasteners checked.
+- **pass** `arch.boundary_fasteners`: No screw crosses the spin boundary 33 fasteners checked.
 - **pass** `arch.fastener_spans_joint`: No screw locks a joint 8 fastener/joint pairs checked.
 - **warning** `arch.support_parent`: Weapon support hangs on the other support `upright_r` is parented to `upright_l`, the opposite weapon support; moving one drags the other and the tree no longer says both bolt to the chassis.
   - Fix: Parent `upright_r` to `tub`.
@@ -299,7 +308,7 @@ Mass 148.9 g (range 133.5 to 164.3 g, limit 150 g).
 - **pass** `arch.load_path`: Weapon load reaches the chassis Side -1: shaft → upright_r → tub
 - **pass** `arch.load_path_fasteners`: Load-path joint is bolted or seated `upright_r`→`tub`: 0 bolts, 143 mm² contact.
 - **pass** `arch.load_path`: Weapon load reaches the chassis Side +1: shaft → upright_l → tub
-- **pass** `arch.load_path_fasteners`: Load-path joint is bolted or seated `upright_l`→`tub`: 0 bolts, 155 mm² contact.
+- **pass** `arch.load_path_fasteners`: Load-path joint is bolted or seated `upright_l`→`tub`: 0 bolts, 160 mm² contact.
 - **pass** `arch.fork_stiffness`: Fork is stiff `upright_r`: 73 N at the axle, lever 19.8 mm, weakest I 884 mm⁴, E 3.5 GPa → 0.06 mm.
 - **pass** `arch.fork_stiffness`: Fork is stiff `upright_l`: 73 N at the axle, lever 19.8 mm, weakest I 2014 mm⁴, E 3.5 GPa → 0.03 mm.
 - **pass** `arch.motor_mount`: Motor is screwed or clamped `weapon_motor`: 8 fasteners, 1 clamps, sandwiched between nothing.
@@ -321,13 +330,13 @@ Mass 148.9 g (range 133.5 to 164.3 g, limit 150 g).
 - **pass** `arch.motor_face_static`: Motor screw on the matching face `bolt_p2` (rotating side) ends in the bell half of `weapon_motor` (stator face = opposite the catalog shaft output).
 - **pass** `arch.motor_face_bolts`: Motor face screw engagement ok `bolt_p3` engages 2.0 mm of `weapon_motor` (usable 3.5 mm, need ≥ 1.6).
 - **pass** `arch.motor_face_static`: Motor screw on the matching face `bolt_p3` (rotating side) ends in the bell half of `weapon_motor` (stator face = opposite the catalog shaft output).
-- **pass** `arch.motor_mount`: Motor is screwed or clamped `motor_l`: 0 fasteners, 1 clamps, sandwiched between ['tub', 'base_panel', 'top_armour'].
+- **pass** `arch.motor_mount`: Motor is screwed or clamped `motor_l`: 0 fasteners, 1 clamps, sandwiched between ['tub', 'base_panel'].
 - **pass** `arch.motor_clamp`: Motor is captured `motor_l`: structure on both sides along ['X', 'Y', 'Z']; 0 screws in its face.
 - **pass** `arch.motor_antirotation`: Motor cannot turn in its mount `motor_l`: 0 face screws, keyed False, flats held True.
-- **pass** `arch.motor_mount`: Motor is screwed or clamped `motor_r`: 0 fasteners, 1 clamps, sandwiched between ['tub', 'base_panel', 'top_armour'].
+- **pass** `arch.motor_mount`: Motor is screwed or clamped `motor_r`: 0 fasteners, 1 clamps, sandwiched between ['tub', 'base_panel'].
 - **pass** `arch.motor_clamp`: Motor is captured `motor_r`: structure on both sides along ['X', 'Y', 'Z']; 0 screws in its face.
 - **pass** `arch.motor_antirotation`: Motor cannot turn in its mount `motor_r`: 0 face screws, keyed False, flats held True.
-- **pass** `arch.bolt_shear`: Bolt groups have shear margin 18 bolt groups have SF ≥ 2.0 in shear.
+- **pass** `arch.bolt_shear`: Bolt groups have shear margin 27 bolt groups have SF ≥ 2.0 in shear.
 - **pass** `arch.bolt_bearing`: Bolt holes bear their load No printed hole is crushed by its bolt.
 - **pass** `arch.bolt_bending`: No bolt bridges a gap No shank spans more than its diameter of air.
 - **pass** `arch.bolt_washer`: Screw heads have bearing area Every head on plastic has enough area.
@@ -340,20 +349,20 @@ Mass 148.9 g (range 133.5 to 164.3 g, limit 150 g).
 - **warning** `arch.weapon_teeth`: Weapon tooth is blunt or soft `blade_c` tooth at r = 13.4 mm: tip radius ~1.30 mm, leading face 49° from radial, material hardox (hardened). tip radius 1.30 > 1 mm; face 49° off radial (> 30°): it ramps instead of biting.
   - Fix: Sharp (≤ 1 mm) tip, 0-30° leading face, hardened material (Hardox/AR500/S7, or declare `hardened: true`).
 - **pass** `arch.foreign_through_rotor`: Nothing passes through the rotor Rotor `blade_c` is clear of static parts.
-- **pass** `arch.holder_group`: Parts held by matching structure 21 parent/retainer links checked.
-- **pass** `arch.cut_breakout`: Holes keep their webs 39 cylindrical cuts leave ≥ max(1 mm, 1.5x wall).
-- **warning** `arch.armor_span`: Top armour span too long `top_armour` (tpu, ~1.3 mm) has an unsupported span of 48 mm: 300 N in the middle deflects 2854.5 mm.
+- **pass** `arch.holder_group`: Parts held by matching structure 25 parent/retainer links checked.
+- **pass** `arch.cut_breakout`: Holes keep their webs 59 cylindrical cuts leave ≥ max(1 mm, 1.5x wall).
+- **warning** `arch.armor_span`: Top armour span too long `top_armour` (tpu, ~1.2 mm) has an unsupported span of 45 mm: 300 N in the middle deflects 2972.6 mm.
   - Fix: Add a rib/post under the middle, more bolts, or thicker sheet.
 - **pass** `arch.electronics_isolated`: Electronics off the load path `battery` touches no weapon support.
-- **pass** `arch.battery_restraint`: Battery is boxed in `battery`: walls on both sides along ['Y', 'Z'], 5/6 sides; strap/clamp: False.
+- **pass** `arch.battery_restraint`: Battery is boxed in `battery`: walls on both sides along ['X', 'Y'], 5/6 sides; strap/clamp: False.
 - **pass** `arch.electronics_isolated`: Electronics off the load path `rxesc` touches no weapon support.
 - **pass** `arch.electronics_isolated`: Electronics off the load path `wesc` touches no weapon support.
 - **pass** `arch.electronics_isolated`: Electronics off the load path `power_switch` touches no weapon support.
 - **warning** `arch.symmetry`: Left/right parts differ `upright_l` mirrored differs from `upright_r` by 3.50 mm in extent and 27.9 % in volume.
   - Fix: Mirror one from the other, or list both in `asymmetric`.
 - **pass** `arch.symmetry_fasteners`: Mirrored screws match 0 screw pairs mirror within 0.5 mm.
-- **pass** `arch.com_support`: Centre of mass over the footprint Centre of mass (-0.4, 3.2) is inside the floor contact polygon by 34.8 mm.
-- **pass** `arch.com_height`: Centre of mass low 14.4 mm up, 34.8 mm from the nearest tipping edge.
+- **pass** `arch.com_support`: Centre of mass over the footprint Centre of mass (-0.4, 3.4) is inside the floor contact polygon by 34.6 mm.
+- **pass** `arch.com_height`: Centre of mass low 14.5 mm up, 34.6 mm from the nearest tipping edge.
 - **pass** `electrical.drive_motor_voltage`: Drive motors suit the pack voltage Pack 7.4 V nominal is within 1.5x of every drive motor's rating (worst 1.23x).
 - **warning** `electrical.weapon_motor_voltage`: Not checked: Weapon motor suits the pack voltage Could not evaluate (no max_cells rating for weapon_motor).
   - Fix: Add the rating to the catalog entry or a `ratings` table on the part.
@@ -363,7 +372,8 @@ Mass 148.9 g (range 133.5 to 164.3 g, limit 150 g).
 - **pass** `electrical.esc_weapon_current`: Weapon ESC covers motor current `wesc` burst 18.0 A vs max 15.0 A per channel.
 - **warning** `electrical.wire_ampacity`: Wire gauge carries the current Over capacity: `w_bat_sw` 24 AWG carries 11.4 A (rated 8.0 A).
   - Fix: Use a thicker wire (lower AWG).
-- **pass** `electrical.connector_rating`: Battery connector rating Battery connector `xt30` rated 30 A; peak load 18.4 A.
+- **warning** `electrical.connector_rating`: Battery connector rating Battery connector `jst_rcy` rated 5 A; peak load 18.4 A.
+  - Fix: Use a connector rated for the peak current.
 - **warning** `electrical.switch_rating`: Not checked: Switch rating Could not evaluate (switch `power_switch` has no current rating (add `ratings.current_a`)).
   - Fix: Add the rating to the catalog entry or a `ratings` table on the part.
 - **pass** `electrical.receiver_supply`: Receiver is powered Receiver `rxesc` is powered (wired to an ESC/BEC or integrated).
@@ -374,7 +384,8 @@ Mass 148.9 g (range 133.5 to 164.3 g, limit 150 g).
 - **pass** `electrical.battery_shielded`: Wall between battery and weapon A structural wall sits between the battery and the weapon.
 - **pass** `electrical.battery_floor`: Battery protected from below Battery underside is 6.4 mm above the floor and is covered by structure below.
 - **pass** `electrical.battery_removable`: Battery comes out without the weapon Battery comes out up past `top_armour`; no weapon part in the way.
-- **pass** `electrical.wire_bend_radius`: Wire bend radius No routed wire bends tighter than 2x its diameter.
+- **warning** `electrical.wire_bend_radius`: Wire bend radius Tight bends: `w_m_l` 2.2 mm radius (min 2.2).
+  - Fix: Give the wires room to bend (>= 2x diameter).
 - **pass** `electrical.wire_rotating_clearance`: Wires clear of rotating parts Every routed wire stays >= 2 mm from rotating parts.
 - **pass** `electrical.strain_relief`: Strain relief at ESC and battery Wires at the ESC/battery have slack and the parts are retained.
 - **pass** `electrical.cells_consistent`: Cell count consistent Cell counts: battery 2S, electronics.cells 2S, blade_c.weapon.cells 2S.
@@ -387,7 +398,7 @@ Mass 148.9 g (range 133.5 to 164.3 g, limit 150 g).
 - **pass** `electrical.wire_gauge_declared`: Wire gauges declared Every power and motor wire declares its gauge.
 - **pass** `electrical.parts_retained`: Electronics retained Battery, ESCs and receiver declare how they are held.
 - **pass** `electrical.weapon_disable`: Weapon can be disabled remotely Weapon remote disable declared.
-- **warning** `combat.R001`: Front edge sits on the floor Median edge gap across the front is 9.22 mm (limit 1.5 mm).
+- **warning** `combat.R001`: Front edge sits on the floor Median edge gap across the front is 8.24 mm (limit 1.5 mm).
   - Fix: Lower the front skirt/wedge lip to 0.3-1 mm.
 - **warning** `combat.R002`: Front edge covered by a low skirt Share of the front edge with a skirt within 1.5 mm of the floor is 38% (needs 80%).
   - Fix: Run the wedge/skirt across the whole front at 0.3-1 mm.
@@ -401,22 +412,22 @@ Mass 148.9 g (range 133.5 to 164.3 g, limit 150 g).
   - Fix: Wrap the skirt round the corner or chamfer it down to the floor.
 - **warning** `combat.R009`: Rear-left corner closed Highest edge gap at the RL corner is 99.00 mm (limit 5 mm).
   - Fix: Wrap the skirt round the corner or chamfer it down to the floor.
-- **pass** `combat.R010`: Perimeter mostly skirted Share of the whole perimeter within 3 mm of the floor is 64% (needs 60%).
+- **pass** `combat.R010`: Perimeter mostly skirted Share of the whole perimeter within 3 mm of the floor is 63% (needs 60%).
 - **pass** `combat.R011`: No wide open arc Longest arc of the perimeter with nothing within 5 mm of the floor is 42.00 deg (limit 45 deg).
 - **warning** `combat.R012`: No open door anywhere Highest edge gap anywhere on the perimeter is 99.00 mm (limit 12 mm).
   - Fix: Nothing on the outline should leave more than 12 mm under it.
 - **warning** `combat.R013`: Gets under a typical wedge Front lip gap (20th percentile) against a typical 0.5 mm opponent wedge is 0.72 mm (limit 0.6 mm).
   - Fix: Lip at or below 0.5 mm wins the who-gets-under contest.
 - **pass** `combat.R014`: Sides resist a T-bone Median side edge gap (worse side) when T-boned by a wedge is 0.72 mm (limit 2 mm).
-- **warning** `combat.R015`: No fork-sized gap in the front edge Widest stretch of the front edge with no skirt within 1.5 mm of the floor is 33.39 mm (limit 8 mm).
+- **warning** `combat.R015`: No fork-sized gap in the front edge Widest stretch of the front edge with no skirt within 1.5 mm of the floor is 33.65 mm (limit 8 mm).
   - Fix: Close gaps in the front skirt wider than 8 mm (opponent forks slip in).
 - **warning** `combat.R016`: Front edge level Spread of the edge gap across the front is 24.32 mm (limit 3 mm).
   - Fix: Make the front edge height even across the width.
 - **pass** `combat.R020`: Lip clears the floor `wedglet_l`: Lowest point above the floor is 0.72 mm (needs 0.2 mm).; `wedglet_r`: Lowest point above the floor is 0.72 mm (needs 0.2 mm).
 - **pass** `combat.R021`: Lip is low enough `wedglet_l`: Lip height above the floor is 0.72 mm (limit 1 mm).; `wedglet_r`: Lip height above the floor is 0.72 mm (limit 1 mm).
-- **warning** `combat.R024`: Sharp lip `wedglet_l`: Lip thickness 1 mm behind the edge is 2.87 mm (limit 1.2 mm).
+- **warning** `combat.R024`: Sharp lip `wedglet_l`: Lip thickness 1 mm behind the edge is 2.89 mm (limit 1.2 mm).
   - Fix: Bevel the lip to <= 1.2 mm thick 1 mm back (or use 1 mm sheet).
-- **warning** `combat.R025`: Thin lip `wedglet_l`: Lip thickness 3 mm behind the edge is 5.01 mm (limit 2.5 mm).
+- **warning** `combat.R025`: Thin lip `wedglet_l`: Lip thickness 3 mm behind the edge is 5.05 mm (limit 2.5 mm).
   - Fix: Keep the lip <= 2.5 mm thick 3 mm behind the edge.
 - **warning** `combat.R026`: No blunt nose `wedglet_l`: Height of the vertical front face at the lip is 2.93 mm (limit 0.6 mm).
   - Fix: Remove the vertical face at the lip (> 0.6 mm stops it sliding under).
@@ -427,7 +438,7 @@ Mass 148.9 g (range 133.5 to 164.3 g, limit 150 g).
 - **pass** `combat.R030`: Tip does not dig in `wedglet_l`: Underside 3-13 mm behind the tip relative to the tip is -0.00 mm (needs -0.05 mm).; `wedglet_r`: Underside 3-13 mm behind the tip relative to the tip is -0.00 mm (needs -0.05 mm).
 - **pass** `combat.R031`: Lip parallel to the floor `wedglet_l`: Lip height variation across its width is 0.00 mm (limit 0.5 mm).; `wedglet_r`: Lip height variation across its width is 0.00 mm (limit 0.5 mm).
 - **pass** `combat.R032`: Skirt stiff under push `wedglet_l`: Tip deflection under 50 N (cantilever) is 0.15 mm (limit 1 mm).; `wedglet_r`: Tip deflection under 50 N (cantilever) is 0.15 mm (limit 1 mm).
-- **pass** `combat.R033`: Skirt thick enough `wedglet_l`: Skirt thickness at mid-overhang is 5.16 mm (needs 2 mm).; `wedglet_r`: Skirt thickness at mid-overhang is 5.18 mm (needs 2 mm).
+- **pass** `combat.R033`: Skirt thick enough `wedglet_l`: Skirt thickness at mid-overhang is 5.20 mm (needs 2 mm).; `wedglet_r`: Skirt thickness at mid-overhang is 5.17 mm (needs 2 mm).
 - **pass** `combat.R034`: Skirt overhang short `wedglet_l`: Unsupported overhang past the last support is 4.70 mm (limit 45 mm).; `wedglet_r`: Unsupported overhang past the last support is 4.70 mm (limit 45 mm).
 - **warning** `combat.R037`: Skirt clears the wheels `wedglet_l`: Skirt clearance to the nearest wheel minus its load deflection is -0.15 mm (needs 1 mm).
   - Fix: Keep >= 1 mm between skirt and wheels after deflection.
@@ -447,7 +458,7 @@ Mass 148.9 g (range 133.5 to 164.3 g, limit 150 g).
 - **pass** `combat.R062`: Low centre of mass (track) Centre-of-mass height over track is 0.19  (limit 0.5 ).
 - **pass** `combat.R063`: Low centre of mass (wheelbase) Centre-of-mass height over wheelbase is 0.18  (limit 0.6 ).
 - **pass** `combat.R064`: Not top-heavy Centre-of-mass height as a share of body height is 43% (limit 50%).
-- **pass** `combat.R065`: Centred sideways Sideways centre-of-mass offset over track is 0% (limit 5%).
+- **pass** `combat.R065`: Centred sideways Sideways centre-of-mass offset over track is 1% (limit 5%).
 - **pass** `combat.R066`: Centre of mass inside the wheelbase Centre of mass inside the wheelbase (share of wheelbase from the nearer end) is 48% (needs 10%).
 - **pass** `combat.R067`: Grippy tyres Tyre materials: rubber, rubber, rubber, rubber.
 - **warning** `combat.R068`: Wheels roll over seams Smallest wheel diameter (10x a 2 mm seam) is 11.00 mm (needs 20 mm).
@@ -456,7 +467,7 @@ Mass 148.9 g (range 133.5 to 164.3 g, limit 150 g).
 - **pass** `combat.R070`: Wheels on both sides Sides of the robot with a wheel is 2.00  (needs 2 ).
 - **pass** `combat.R071`: 4WD turns 4WD wheelbase over track (turning scrub) is 0.81  (limit 1 ).
 - **pass** `combat.R072`: Wide track Track over body width is 73% (needs 50%).
-- **pass** `combat.R073`: Drive can spin the wheels Motor stall thrust 5.4 N over traction limit 1.3 N is 4.07 x (needs 1 x).
+- **pass** `combat.R073`: Drive can spin the wheels Motor stall thrust 5.4 N over traction limit 1.3 N is 4.05 x (needs 1 x).
 - **pass** `combat.R074`: Drive speed Top speed at nominal voltage is 1.27 m/s (range 1.2 to 8 m/s).
 - **pass** `combat.R080`: Only wheels touch the floor Only the wheels touch the floor.
 - **pass** `combat.R081`: Wheels coplanar Height difference between wheel contacts is 0.00 mm (limit 0.3 mm).
@@ -471,17 +482,17 @@ Mass 148.9 g (range 133.5 to 164.3 g, limit 150 g).
 - **warning** `combat.R090`: Invertible or self-righting Body above the wheel tops (upside down the wheels must still reach the floor) is 12.35 mm (limit 0.5 mm).
   - Fix: Make the wheels stand proud of the top, or add a self-righting mechanism.
 - **pass** `combat.R100`: Low profile Body height without wheels and weapon is 33.85 mm (limit 45 mm).
-- **pass** `combat.R102`: Side armour angled Vertical share of the side-facing outer surface is 50% (limit 90%).
+- **pass** `combat.R102`: Side armour angled Vertical share of the side-facing outer surface is 49% (limit 90%).
 - **pass** `combat.R110`: No wheel at the front edge Share of front bearings where a wheel is the outermost part is 0% (limit 0%).
 - **pass** `combat.R111`: Wheels shielded at the sides Share of the worse side where a wheel is the outermost part is 0% (limit 25%).
 - **pass** `combat.R112`: Wheels shielded at the rear Share of rear bearings where a wheel is the outermost part is 8% (limit 25%).
-- **pass** `combat.R113`: Wheels not the spinner target Share of the whole perimeter where a wheel is the outermost part (horizontal spinner target) is 4% (limit 10%).
+- **pass** `combat.R113`: Wheels not the spinner target Share of the whole perimeter where a wheel is the outermost part (horizontal spinner target) is 5% (limit 10%).
 - **pass** `combat.R114`: Body ahead of the wheels Body ahead of the front-most wheel is 14.15 mm (needs 5 mm).
 - **pass** `combat.R115`: Side wall outboard of wheels Side wall outboard of the wheels is 9.40 mm (needs 0 mm).
 - **pass** `combat.R116`: Wheels below the top Wheel top above the body top (non-invertible: wheels proud of the top get hit) is -22.85 mm (limit 0 mm).
 - **pass** `combat.R120`: Battery away from the front Battery behind the front outline is 37.55 mm (needs 10 mm).
 - **pass** `combat.R121`: Battery away from the sides Battery inside the side outline is 29.60 mm (needs 5 mm).
-- **pass** `assembly.order`: Everything can be assembled Every part slides in along a clear straight path. Assembly order: rxesc, bolt_p3, bolt_d3, bolt_p2, bolt_d2, bolt_p1, bolt_p0, bolt_urb, bolt_ura, bolt_ulb, bolt_ula, prop_mount, spacer, disc_f, blade_c, weapon_motor, upright_r, upright_l, bolt_wm3, insert_b4, insert_b3, insert_b2, insert_b1, insert_b0, power_switch, wesc, battery, nut_cr, wheel_rr, whub_rr, motor_r, nut_cl, wheel_rl, whub_rl, motor_l, bspacer, wbearing, wshaft, wedglet_r, wheel_fr, whub_fr, so_br, so_ar, wedglet_l, wheel_fl, whub_fl, so_bl, so_al, top_armour, base_panel, bolt_d1, bolt_d0, bolt_src, bolt_srb, bolt_sra, bolt_slc, bolt_slb, bolt_sla, bolt_wm2, bolt_wm1, bolt_wm0, bolt_b4, bolt_b3, bolt_b2, bolt_b1, bolt_b0, belt_r, belt_l.
+- **pass** `assembly.order`: Everything can be assembled Every part slides in along a clear straight path. Assembly order: insert_s1, insert_s0, power_switch, rxesc, bolt_p3, bolt_d3, bolt_p2, bolt_d2, bolt_p1, bolt_p0, bolt_urb, bolt_ura, bolt_ulb, bolt_ula, prop_mount, spacer, disc_f, blade_c, weapon_motor, upright_r, upright_l, bolt_wm3, bolt_sw0, weapon_lock, insert_l3, insert_l2, insert_l1, insert_l0, nut_d3, nut_d2, nut_d1, nut_d0, insert_b4, insert_b3, insert_b2, insert_b1, insert_b0, wesc, battery, nut_cr, wheel_rr, whub_rr, motor_r, nut_cl, wheel_rl, whub_rl, motor_l, bspacer, wbearing, wshaft, wedglet_r, wheel_fr, whub_fr, so_br, so_ar, wedglet_l, wheel_fl, whub_fl, so_bl, so_al, top_armour, base_panel, bolt_d1, bolt_d0, bolt_src, bolt_srb, bolt_sra, bolt_slc, bolt_slb, bolt_sla, bolt_wm2, bolt_wm1, bolt_wm0, bolt_sw1, bolt_l3, bolt_l2, bolt_l1, bolt_l0, bolt_b4, bolt_b3, bolt_b2, bolt_b1, bolt_b0, belt_r, belt_l.
 - **warning** `joint.no_locator`: Joint has no locating feature `upright_l` on `weapon_motor` is held in place only by friction and the screws' shear (`bolt_wm0`, `bolt_wm1`, `bolt_wm2`, `bolt_wm3`); no lip, step, pin or spigot locates it.
   - Fix: Add a lip, step or dowel so the parts register before the screws go in; screws clamp, features locate.
 - **warning** `joint.no_locator`: Joint has no locating feature `upright_l` on `so_al` is held in place only by friction and the screws' shear (`bolt_ula`); no lip, step, pin or spigot locates it.
@@ -528,6 +539,26 @@ Mass 148.9 g (range 133.5 to 164.3 g, limit 150 g).
   - Fix: Thicken `tub` around the insert to a 6.4 mm boss.
 - **warning** `joint.head_proud`: Screw head proud on an outer surface The head of `bolt_b4` stands 2.0 mm proud of `base_panel` on the outside; hits shear heads and opponents catch on them.
   - Fix: Counterbore the head flush or use a countersunk (`head: countersunk`) screw.
+- **warning** `joint.counterbore`: Counterbore too small for the screw head The 3.8 mm head of `bolt_l0` is cut into `top_armour`; a counterbore needs >= 4.2 mm dia and >= 2.0 mm depth.
+  - Fix: Open the counterbore in `top_armour` to 4.3 mm and 2.2 mm deep, or move `at` to its floor.
+- **warning** `joint.head_bearing`: Screw head crushes the plastic `bolt_l0` head bears 20 MPa on printed `top_armour` at ~150 N clamp; creep limit ~4 MPa.
+  - Fix: Add a washer (`"washer": true`), use a flange/button head, or a larger head.
+- **warning** `joint.counterbore`: Counterbore too small for the screw head The 3.8 mm head of `bolt_l1` is cut into `top_armour`; a counterbore needs >= 4.2 mm dia and >= 2.0 mm depth.
+  - Fix: Open the counterbore in `top_armour` to 4.3 mm and 2.2 mm deep, or move `at` to its floor.
+- **warning** `joint.head_bearing`: Screw head crushes the plastic `bolt_l1` head bears 20 MPa on printed `top_armour` at ~150 N clamp; creep limit ~4 MPa.
+  - Fix: Add a washer (`"washer": true`), use a flange/button head, or a larger head.
+- **warning** `joint.counterbore`: Counterbore too small for the screw head The 3.8 mm head of `bolt_l2` is cut into `top_armour`; a counterbore needs >= 4.2 mm dia and >= 2.0 mm depth.
+  - Fix: Open the counterbore in `top_armour` to 4.3 mm and 2.2 mm deep, or move `at` to its floor.
+- **warning** `joint.head_bearing`: Screw head crushes the plastic `bolt_l2` head bears 20 MPa on printed `top_armour` at ~150 N clamp; creep limit ~4 MPa.
+  - Fix: Add a washer (`"washer": true`), use a flange/button head, or a larger head.
+- **warning** `joint.counterbore`: Counterbore too small for the screw head The 3.8 mm head of `bolt_l3` is cut into `top_armour`; a counterbore needs >= 4.2 mm dia and >= 2.0 mm depth.
+  - Fix: Open the counterbore in `top_armour` to 4.3 mm and 2.2 mm deep, or move `at` to its floor.
+- **warning** `joint.head_bearing`: Screw head crushes the plastic `bolt_l3` head bears 20 MPa on printed `top_armour` at ~150 N clamp; creep limit ~4 MPa.
+  - Fix: Add a washer (`"washer": true`), use a flange/button head, or a larger head.
+- **warning** `joint.service_access`: Screw only reachable after removing another part The driver line out of `bolt_sw0` hits `top_armour` 5.5 mm from the head; `top_armour` must come off before this joint can be serviced.
+  - Fix: Turn the screw so its driver path exits through an open face or a removable cover, not through `top_armour`.
+- **warning** `joint.head_proud`: Screw head proud on an outer surface The head of `bolt_sw1` stands 2.0 mm proud of `power_switch` on the outside; hits shear heads and opponents catch on them.
+  - Fix: Counterbore the head flush or use a countersunk (`head: countersunk`) screw.
 - **warning** `joint.head_proud`: Screw head proud on an outer surface The head of `bolt_wm0` stands 2.0 mm proud of `upright_l` on the outside; hits shear heads and opponents catch on them.
   - Fix: Counterbore the head flush or use a countersunk (`head: countersunk`) screw.
 - **warning** `joint.assembly_dir`: Screw not inserted along the part's assembly direction `upright_l` can only go on along [-0.0, -1.0, -0.0] but `bolt_wm0` is driven along [-1.0, 0.0, 0.0] (90 deg off); the screw cannot pull the part home onto its seat.
@@ -572,25 +603,33 @@ Mass 148.9 g (range 133.5 to 164.3 g, limit 150 g).
   - Fix: Add a washer (`"washer": true`), use a flange/button head, or a larger head.
 - **warning** `joint.head_bearing`: Screw head crushes the plastic `bolt_src` head bears 25 MPa on printed `wedglet_r` at ~400 N clamp; creep limit ~4 MPa.
   - Fix: Add a washer (`"washer": true`), use a flange/button head, or a larger head.
+- **warning** `joint.loose_nut`: Nut is not captive Nut `nut_d0` on `bolt_d0` has material on only 0% of its flats; it will spin and must be held with a spanner (impossible once assembled).
+  - Fix: Sink the nut into a hex nut trap in the part (or replace it with a heat-set insert).
 - **warning** `joint.head_proud`: Screw head proud on an outer surface The head of `bolt_d0` stands 2.0 mm proud of `disc_f` on the outside; hits shear heads and opponents catch on them.
   - Fix: Counterbore the head flush or use a countersunk (`head: countersunk`) screw.
 - **warning** `joint.service_access`: Screw only reachable after removing another part The driver line out of `bolt_p0` hits `upright_r` 3.5 mm from the head; `upright_r` must come off before this joint can be serviced.
   - Fix: Turn the screw so its driver path exits through an open face or a removable cover, not through `upright_r`.
+- **warning** `joint.loose_nut`: Nut is not captive Nut `nut_d1` on `bolt_d1` has material on only 0% of its flats; it will spin and must be held with a spanner (impossible once assembled).
+  - Fix: Sink the nut into a hex nut trap in the part (or replace it with a heat-set insert).
 - **warning** `joint.head_proud`: Screw head proud on an outer surface The head of `bolt_d1` stands 2.0 mm proud of `disc_f` on the outside; hits shear heads and opponents catch on them.
   - Fix: Counterbore the head flush or use a countersunk (`head: countersunk`) screw.
 - **warning** `joint.service_access`: Screw only reachable after removing another part The driver line out of `bolt_p1` hits `upright_r` 3.5 mm from the head; `upright_r` must come off before this joint can be serviced.
   - Fix: Turn the screw so its driver path exits through an open face or a removable cover, not through `upright_r`.
+- **warning** `joint.loose_nut`: Nut is not captive Nut `nut_d2` on `bolt_d2` has material on only 0% of its flats; it will spin and must be held with a spanner (impossible once assembled).
+  - Fix: Sink the nut into a hex nut trap in the part (or replace it with a heat-set insert).
 - **warning** `joint.service_access`: Screw only reachable after removing another part The driver line out of `bolt_d2` hits `upright_l` 5.5 mm from the head; `upright_l` must come off before this joint can be serviced.
   - Fix: Turn the screw so its driver path exits through an open face or a removable cover, not through `upright_l`.
 - **warning** `joint.service_access`: Screw only reachable after removing another part The driver line out of `bolt_p2` hits `upright_r` 3.5 mm from the head; `upright_r` must come off before this joint can be serviced.
   - Fix: Turn the screw so its driver path exits through an open face or a removable cover, not through `upright_r`.
+- **warning** `joint.loose_nut`: Nut is not captive Nut `nut_d3` on `bolt_d3` has material on only 0% of its flats; it will spin and must be held with a spanner (impossible once assembled).
+  - Fix: Sink the nut into a hex nut trap in the part (or replace it with a heat-set insert).
 - **warning** `joint.service_access`: Screw only reachable after removing another part The driver line out of `bolt_d3` hits `wedglet_l` 10.0 mm from the head; `wedglet_l` must come off before this joint can be serviced.
   - Fix: Turn the screw so its driver path exits through an open face or a removable cover, not through `wedglet_l`.
 - **warning** `joint.service_access`: Screw only reachable after removing another part The driver line out of `bolt_p3` hits `upright_r` 3.5 mm from the head; `upright_r` must come off before this joint can be serviced.
   - Fix: Turn the screw so its driver path exits through an open face or a removable cover, not through `upright_r`.
-- **warning** `joint.screw_variety`: Too many different screws 6 different screws (M2x14, M2x6, M2x8, M3x10, M3x12, M3x16); a pit kit should need <= 5.
+- **warning** `joint.screw_variety`: Too many different screws 7 different screws (M2x16, M2x5, M2x6, M2x8, M3x10, M3x12, M3x16); a pit kit should need <= 5.
   - Fix: Adjust stacks so neighbouring joints share one length.
-- **pass** `material.exempt`: Intentionally solid parts Not judged for excess material: top_armour (kind armor), wedglet_l (elastomer), wedglet_r (elastomer).
+- **pass** `material.exempt`: Intentionally solid parts Not judged for excess material: top_armour (kind armor), wedglet_l (elastomer), wedglet_r (elastomer), weapon_lock (elastomer).
 - **pass** `material.ok`: Material follows the loads 10 of 10 printed part(s) carry no chunky boss, solid core or load-free bulk.
 - **pass** `plausibility.density`: Mass fits the envelope `weapon_motor` (weapon_motor): 18.5 g in 6.92 cm3 = 2.67 g/cm3 (plausible 1.5-7.5).
 - **pass** `plausibility.density`: Mass fits the envelope `motor_l` (motor): 9.5 g in 1.91 cm3 = 4.97 g/cm3 (plausible 1.2-7.0).
@@ -598,13 +637,13 @@ Mass 148.9 g (range 133.5 to 164.3 g, limit 150 g).
 - **pass** `plausibility.density`: Mass fits the envelope `battery` (battery): 12.5 g in 7.13 cm3 = 1.75 g/cm3 (plausible 1.0-2.6).
 - **pass** `plausibility.density`: Mass fits the envelope `rxesc` (esc): 3.5 g in 1.84 cm3 = 1.90 g/cm3 (plausible 0.4-4.0).
 - **pass** `plausibility.density`: Mass fits the envelope `wesc` (esc): 3.0 g in 0.97 cm3 = 3.10 g/cm3 (plausible 0.4-4.0).
-- **pass** `plausibility.density`: Mass fits the envelope `power_switch` (switch): 0.5 g in 0.18 cm3 = 2.79 g/cm3 (plausible 0.3-4.0).
+- **pass** `plausibility.density`: Mass fits the envelope `power_switch` (switch): 0.6 g in 0.27 cm3 = 2.20 g/cm3 (plausible 0.3-4.0).
 - **pass** `reference.feature_ratio`: Proportion matches the reference `height_over_length`: model 0.388 vs photo 0.390 ± 0.030 (ref3 side: 263 px / 682 px)
 - **pass** `reference.feature_ratio`: Proportion matches the reference `width_over_length`: model 1.036 vs photo 1.030 ± 0.040 (RVRN CAD: wedglet outer faces 104.1 (z_ref 0.52 mirrored) / 100.4 (disc tip x 8.22 to tyre x 108.59))
 - **pass** `reference.feature_ratio`: Proportion matches the reference `disc_dia_over_length`: model 0.423 vs photo 0.425 ± 0.030 (RVRN CAD: tips at R21.5 -> 43 / 101)
 - **pass** `reference.feature_ratio`: Proportion matches the reference `axle_z_over_disc_dia`: model 0.527 vs photo 0.520 ± 0.040 (RVRN CAD: axle y_ref 26.6 - floor 4.25 = 22.35 / 43)
 - **pass** `reference.feature_ratio`: Proportion matches the reference `blade_stack_over_disc_dia`: model 0.330 vs photo 0.340 ± 0.040 (RVRN CAD: drisk = 3 mm Hardox disc + 8 mm printed spacer (ID 23.3 around the BE1806 can) + 3 mm floating disc = 14 mm on 41.25 mm). Spinner energy lives in a laminated ring at the rim, not one thin plate.
-- **pass** `reference.feature_ratio`: Proportion matches the reference `rotor_mass_fraction`: model 0.254 vs photo 0.280 ± 0.030 (RVRN CAD + BOM: 2 x 14.7 g Hardox discs, 1.7 g spacer, prop mount, 4 long M2 + nuts and half the 18.5 g BE1806 (its bell turns with the drisk) of 150 g; the 31 g photo figure counted the plates only). Budget the rotor first; everything else gets what is left.
+- **pass** `reference.feature_ratio`: Proportion matches the reference `rotor_mass_fraction`: model 0.256 vs photo 0.280 ± 0.030 (RVRN CAD + BOM: 2 x 14.7 g Hardox discs, 1.7 g spacer, prop mount, 4 long M2 + nuts and half the 18.5 g BE1806 (its bell turns with the drisk) of 150 g; the 31 g photo figure counted the plates only). Budget the rotor first; everything else gets what is left.
 - **warning** `reference.feature_ratio`: Proportion differs from the reference `tub_len_over_length`: model 0.823 vs photo 0.600 ± 0.040 (ref3 tub 370 px / 682 px; SVRN box 66)
   - Fix: Move `tub_len_over_length` down by 0.223.
 - **warning** `reference.feature_ratio`: Proportion differs from the reference `tub_h_over_height`: model 0.491 vs photo 0.400 ± 0.040 (ref3 / SVRN 17 mm)
@@ -612,8 +651,9 @@ Mass 148.9 g (range 133.5 to 164.3 g, limit 150 g).
 - **pass** `reference.feature_ratio`: Proportion matches the reference `fork_span_over_width`: model 1.000 vs photo 1.000 ± 0.050 (RVRN CAD: the two low-profile wedglets are the outermost parts (outer faces z_ref 0.52 and its mirror))
 - **pass** `reference.feature_ratio`: Proportion matches the reference `upright_symmetry`: model 1.124 vs photo 1.106 ± 0.050 (RVRN CAD: fl 31.23 tall vs fr 28.24 (the bearing-side plate is smaller))
 - **pass** `reference.feature_ratio`: Proportion matches the reference `upright_thickness_mm`: model 4.000 vs photo 4.000 ± 0.500 (RVRN CAD fl/fr: 4 mm plates)
-- **pass** `reference.feature_ratio`: Proportion matches the reference `heat_set_inserts`: model 5.000 vs photo 5.000 ± 3.000 (RVRN guide BOM: 5x M2 heat-set (base panel); uprights/side panels use alu standoffs + 2 press-fit alu M3 nuts)
-- **pass** `reference.feature_ratio`: Proportion matches the reference `top_hood_height_mm`: model 6.000 vs photo 5.000 ± 2.000 (ref2 faceted hood; revron21/tpu photo: raised TPU hood with triangle cut-outs)
+- **warning** `reference.feature_ratio`: Proportion differs from the reference `heat_set_inserts`: model 11.000 vs photo 5.000 ± 3.000 (RVRN guide BOM: 5x M2 heat-set (base panel); uprights/side panels use alu standoffs + 2 press-fit alu M3 nuts)
+  - Fix: Move `heat_set_inserts` down by 6.000.
+- **pass** `reference.feature_ratio`: Proportion matches the reference `top_hood_height_mm`: model 5.200 vs photo 5.000 ± 2.000 (ref2 faceted hood; revron21/tpu photo: raised TPU hood with triangle cut-outs)
 - **pass** `reference.feature_ratio`: Proportion matches the reference `weapon_lateral_offset_mm`: model 0.481 vs photo 0.000 ± 1.000 (ref2/revron21: disc centred between uprights)
 - **warning** `reference.feature_ratio`: Proportion differs from the reference `pod_h_over_tub_h`: model 0.794 vs photo 1.000 ± 0.150 (RVRN CAD: low-profile wedglet / side panel 15 tall, chassis ~15)
   - Fix: Move `pod_h_over_tub_h` up by 0.206.
@@ -647,19 +687,17 @@ Mass 148.9 g (range 133.5 to 164.3 g, limit 150 g).
   - Fix: Add/move the missing holes (bolt circle radius, bore diameter).
 - **pass** `reference_cad.silhouette`: Part shape matches the reference in all three views `base_panel` vs `RVRN_1.7_PT_8_Bottom_Panel-1.STL` silhouette IoU along X/Y/Z [0.985, 0.986, 0.929] (need >= 0.9 on every axis, reference placed in our world frame)
 - **pass** `reference_cad.dims`: Part size matches the reference CAD `wedglet_l` vs `MirrorLow_profile_wedglet-2.STL`: extents [90.5, 33.9, 15.15] vs [90.45, 34.55, 15.0] mm (diff [0.05, -0.65, 0.15], tol 1.0)
-- **warning** `reference_cad.volume`: Part volume differs from the reference CAD `wedglet_l` volume 6.551 vs 5.616 cm3 (+17%, tol ±15%)
-  - Fix: Match wall thickness, pockets and lightening holes to the reference.
-- **warning** `reference_cad.holes`: Through-hole count differs from the reference CAD `wedglet_l` has 6 through-holes, `MirrorLow_profile_wedglet-2.STL` has 9.
-- **pass** `reference_cad.silhouette`: Part shape matches the reference in all three views `wedglet_l` vs `MirrorLow_profile_wedglet-2.STL` silhouette IoU along X/Y/Z [0.977, 0.921, 0.905] (need >= 0.9 on every axis, reference placed in our world frame)
+- **pass** `reference_cad.volume`: Part volume matches `wedglet_l` volume 6.419 vs 5.616 cm3 (+14%, tol ±15%)
+- **pass** `reference_cad.holes`: Through-hole count matches `wedglet_l`: 9 through-holes.
+- **pass** `reference_cad.silhouette`: Part shape matches the reference in all three views `wedglet_l` vs `MirrorLow_profile_wedglet-2.STL` silhouette IoU along X/Y/Z [0.933, 0.921, 0.905] (need >= 0.9 on every axis, reference placed in our world frame)
 - **pass** `reference_cad.dims`: Part size matches the reference CAD `wedglet_r` vs `MirrorLow_profile_wedglet-2.STL`: extents [90.5, 33.9, 15.15] vs [90.45, 34.55, 15.0] mm (diff [0.05, -0.65, 0.15], tol 1.0)
-- **warning** `reference_cad.volume`: Part volume differs from the reference CAD `wedglet_r` volume 6.551 vs 5.616 cm3 (+17%, tol ±15%)
-  - Fix: Match wall thickness, pockets and lightening holes to the reference.
-- **warning** `reference_cad.holes`: Through-hole count differs from the reference CAD `wedglet_r` has 6 through-holes, `MirrorLow_profile_wedglet-2.STL` has 9.
-- **pass** `reference_cad.silhouette`: Part shape matches the reference in all three views `wedglet_r` vs `MirrorLow_profile_wedglet-2.STL` silhouette IoU along X/Y/Z [0.977, 0.922, 0.907] (need >= 0.9 on every axis, reference placed in our world frame)
+- **pass** `reference_cad.volume`: Part volume matches `wedglet_r` volume 6.419 vs 5.616 cm3 (+14%, tol ±15%)
+- **pass** `reference_cad.holes`: Through-hole count matches `wedglet_r`: 9 through-holes.
+- **pass** `reference_cad.silhouette`: Part shape matches the reference in all three views `wedglet_r` vs `MirrorLow_profile_wedglet-2.STL` silhouette IoU along X/Y/Z [0.933, 0.922, 0.907] (need >= 0.9 on every axis, reference placed in our world frame)
 - **pass** `reference_cad.dims`: Part size matches the reference CAD `whub_rl` vs `RVRN_1.7_PT_13_Rear_Wheel-2.STL`: extents [16.0, 16.0, 12.0] vs [16.0, 15.98, 12.0] mm (diff [0.0, 0.02, 0.0], tol 0.8)
-- **pass** `reference_cad.volume`: Part volume matches `whub_rl` volume 1.481 vs 1.499 cm3 (-1%, tol ±25%)
+- **pass** `reference_cad.volume`: Part volume matches `whub_rl` volume 1.419 vs 1.499 cm3 (-5%, tol ±25%)
 - **pass** `reference_cad.holes`: Through-hole count matches `whub_rl`: 2 through-holes.
-- **pass** `reference_cad.silhouette`: Part shape matches the reference in all three views `whub_rl` vs `RVRN_1.7_PT_13_Rear_Wheel-2.STL` silhouette IoU along X/Y/Z [0.949, 0.939, 0.941] (need >= 0.9 on every axis, reference placed in our world frame)
+- **pass** `reference_cad.silhouette`: Part shape matches the reference in all three views `whub_rl` vs `RVRN_1.7_PT_13_Rear_Wheel-2.STL` silhouette IoU along X/Y/Z [0.949, 0.929, 0.941] (need >= 0.9 on every axis, reference placed in our world frame)
 - **pass** `reference_cad.dims`: Part size matches the reference CAD `whub_fl` vs `Micro_slx_v1.0-2_Hub_Micro-1.STL`: extents [9.2, 9.0, 9.0] vs [9.0, 8.99, 8.99] mm (diff [0.2, 0.01, 0.01], tol 0.8)
 - **pass** `reference_cad.volume`: Part volume matches `whub_fl` volume 0.218 vs 0.218 cm3 (-0%, tol ±30%)
 - **pass** `reference_cad.holes`: Through-hole count matches `whub_fl`: 1 through-holes.
@@ -678,18 +716,31 @@ Mass 148.9 g (range 133.5 to 164.3 g, limit 150 g).
 - **pass** `reference_cad.volume`: Part volume matches `weapon_motor` volume 6.918 vs 6.362 cm3 (+9%, tol ±30%)
 - **pass** `reference_cad.dims`: Part size matches the reference CAD `wbearing` vs `MF85ZZ_Budget_Metal_Shielded_Flanged_Deep_Groove_Ball_Bearing_5x8x2.5mm-1.STL`: extents [9.2, 9.2, 2.5] vs [9.2, 9.19, 2.5] mm (diff [0.0, 0.01, 0.0], tol 0.3)
 - **pass** `reference_cad.volume`: Part volume matches `wbearing` volume 0.086 vs 0.084 cm3 (+3%, tol ±30%)
-- **pass** `cots.listed`: Bought-in parts are listed sizes 42 COTS parts and screws match catalog or standard sizes.
+- **pass** `cots.listed`: Bought-in parts are listed sizes 58 COTS parts and screws match catalog or standard sizes.
 - **warning** `fit.tight`: Pocket too tight for the process `weapon_motor` has only 0.17 mm total clearance along z: 0.15 mm to `spacer`, 0.02 mm to `spacer`; the printed fit band needs at least 0.1 mm per side.
   - Fix: Open the pocket so print tolerance cannot make it an interference fit.
+- **warning** `fit.loose`: Component rattles in its pocket `battery` has 2.57 mm total play along x: 1.00 mm to `tub`, 1.57 mm to `tub`; the printed fit band is 0.1-0.5 mm per side.
+  - Fix: Close the pocket to the band, add a crush rib, or declare `retained` foam/tape with `fit: none`.
 - **pass** `contain.electronics`: Electronics are inside the armour Every battery, ESC, receiver and motor sits inside the chassis envelope.
 - **pass** `contain.wheels`: Wheels protrude as declared Wheels reach 0.3 mm below the body.
 - **pass** `contain.wires`: Wires stay inside the chassis 7 routes checked against the chassis envelope.
 - **pass** `contain.switch_access`: Switch reachable from outside `power_switch` has a clear 1.6 mm tool line out along -y.
-- **pass** `disasm.elastic_stretch`: Belt can be stretched on and off `belt_l` needs 12 % stretch over the flange (rubber limit 50 %).
-- **pass** `disasm.elastic_stretch`: Belt can be stretched on and off `belt_r` needs 12 % stretch over the flange (rubber limit 50 %).
-- **pass** `disasm.graph`: Disassembly graph is acyclic and serviceable 69 nodes; every screw is reachable; serviceable parts within 8 removals (top_armour:0, blade_c:3, wheel_rl:0, wheel_fl:0, wheel_rr:0, wheel_fr:0, battery:0).
-- **warning** `coverage.uncovered`: Parts or contacts no specific check covers 8 gap(s): pair `wheel_rl`/`wedglet_l` (0.40 mm): touching with no declared joint, connection or allowed contact; pair `whub_fl`/`wedglet_l` (0.30 mm): touching with no declared joint, connection or allowed contact; pair `wheel_fl`/`wedglet_l` (0.50 mm): touching with no declared joint, connection or allowed contact; pair `wedglet_l`/`belt_l` (0.13 mm): touching with no declared joint, connection or allowed contact; pair `wheel_rr`/`wedglet_r` (0.40 mm): touching with no declared joint, connection or allowed contact; pair `whub_fr`/`wedglet_r` (0.30 mm): touching with no declared joint, connection or allowed contact; pair `wheel_fr`/`wedglet_r` (0.50 mm): touching with no declared joint, connection or allowed contact; pair `wedglet_r`/`belt_r` (0.13 mm): touching with no declared joint, connection or allowed contact
+- **pass** `disasm.elastic_stretch`: Belt can be stretched on and off `belt_l` needs 15 % stretch over the flange (rubber limit 50 %).
+- **pass** `disasm.elastic_stretch`: Belt can be stretched on and off `belt_r` needs 15 % stretch over the flange (rubber limit 50 %).
+- **pass** `disasm.graph`: Disassembly graph is acyclic and serviceable 86 nodes; every screw is reachable; serviceable parts within 8 removals (top_armour:4, blade_c:3, wheel_rl:0, wheel_fl:0, wheel_rr:0, wheel_fr:0, battery:0).
+- **warning** `coverage.uncovered`: Parts or contacts no specific check covers 9 gap(s): pair `blade_c`/`weapon_lock` (0.07 mm): touching with no declared joint, connection or allowed contact; pair `wheel_rl`/`wedglet_l` (0.40 mm): touching with no declared joint, connection or allowed contact; pair `whub_fl`/`wedglet_l` (0.30 mm): touching with no declared joint, connection or allowed contact; pair `wheel_fl`/`wedglet_l` (0.50 mm): touching with no declared joint, connection or allowed contact; pair `wedglet_l`/`belt_l` (0.23 mm): touching with no declared joint, connection or allowed contact; pair `wheel_rr`/`wedglet_r` (0.40 mm): touching with no declared joint, connection or allowed contact; pair `whub_fr`/`wedglet_r` (0.30 mm): touching with no declared joint, connection or allowed contact; pair `wheel_fr`/`wedglet_r` (0.50 mm): touching with no declared joint, connection or allowed contact; pair `wedglet_r`/`belt_r` (0.23 mm): touching with no declared joint, connection or allowed contact
   - Fix: Declare the relation (fastener, `connections`, `allow_overlap`, `retained`) or the material/process, so a check can verify it.
+- **pass** `reference.bom`: BOM row 'base panel: 5 x M2x6 CSK into heat-sets' deviates by design `bolt_b0` head button, reference countersunk; `bolt_b1` head button, reference countersunk; `bolt_b2` head button, reference countersunk; `bolt_b3` head button, reference countersunk; `bolt_b4` head button, reference countersunk. Declared deviation: ISO 7380 button heads: an M2 CSK head is 1.3 deep and the panel is 1 mm, so the cone knife-edges through it (mfg.thin_wall)
+- **pass** `reference.bom`: BOM row 'upright to standoff: 4 x M3x12 CSK alu' deviates by design `bolt_ula` is M3x10, reference M3x12; `bolt_ula` head button, reference countersunk; `bolt_ulb` is M3x10, reference M3x12; `bolt_ulb` head button, reference countersunk; `bolt_ura` is M3x10, reference M3x12; `bolt_ura` head button, reference countersunk; `bolt_urb` is M3x10, reference M3x12; `bolt_urb` head button, reference countersunk. Declared deviation: M3x10 button: the CAD upright lobe round each standoff is R3.23, a 6 mm CSK head breaks out of it; and backed out of the standoff a 12 mm screw does not fit in the 7.5 mm between plate and disc, so the quick-change screws would not stay captive
+- **pass** `reference.bom`: BOM row 'side panel to standoff ends: M3 CSK alu' deviates by design `bolt_sla` is M3x16, reference M3x8; `bolt_slb` is M3x10, reference M3x8; `bolt_sra` is M3x16, reference M3x8; `bolt_srb` is M3x10, reference M3x8. Declared deviation: the RVRN Drive CAD uses 20 / 25 mm standoffs (guide text: 15 / 25), so the low-profile wedglet nose stands 11 / 5 mm proud of the standoff ends: M3x16 / M3x10 keep >= 5 mm thread in the standoff
+- **pass** `reference.bom`: BOM row 'side panel to chassis: M3 CSK alu into the alu nut' deviates by design `bolt_slc` is M3x12, reference M3x8; `bolt_src` is M3x12, reference M3x8. Declared deviation: the screw crosses the 4 mm chassis clamp pad and wall before the 2.4 mm nut: M3x12 (an M3x8 would not reach the nut)
+- **pass** `reference.bom`: BOM row 'prop mount: 4 x M2 CSK into the bell' deviates by design `bolt_p0` head button, reference countersunk; `bolt_p1` head button, reference countersunk; `bolt_p2` head button, reference countersunk; `bolt_p3` head button, reference countersunk. Declared deviation: button heads: on the r4.5 circle a CSK cone leaves 0.1 mm to the 5 mm bore of the 3 mm flange, and an M2x10 CSK would reach the windings (arch.motor_face_bolts)
+- **pass** `reference.bom`: Matches the reference BOM 22 of 22 BOM rows match the spec (count, size, head, thread host, connector).
+- **pass** `legal.weapon_lock_part`: Weapon lock is a real part `weapon_lock` (tpu) is modelled and named as the lock of `blade_c`.
+- **pass** `kin.belt_stock`: Stock O-ring `belt_l` is a stock 45 x 1 mm nitrile O-ring (141.4 mm inner circumference).
+- **pass** `kin.belt_stock`: Stock O-ring `belt_r` is a stock 45 x 1 mm nitrile O-ring (141.4 mm inner circumference).
+- **pass** `disasm.wire_cut`: Module unplugs Module `weapon_module`: 1 wire(s) cross its boundary, all through connectors.
+- **pass** `electrical.switch_direction`: Switch pulls outward to OFF `power_switch` switches off when pulled out through its face.
 - **pass** `claim.holds`: Claim matches the model "weighs 150 g or less" (mass_total_g <= 150)
 - **pass** `claim.holds`: Claim matches the model "fits the 150 mm square" (footprint_mm <= 150)
 
@@ -697,9 +748,9 @@ Mass 148.9 g (range 133.5 to 164.3 g, limit 150 g).
 
 | Part | Grams | Plus/minus | Source |
 |---|---|---|---|
-| tub | 11.83 | 2.37 | computed |
+| tub | 12.50 | 2.50 | computed |
 | base_panel | 2.65 | 0.53 | computed |
-| top_armour | 4.74 | 0.95 | computed |
+| top_armour | 4.06 | 0.81 | computed |
 | upright_l | 2.70 | 0.54 | computed |
 | upright_r | 1.95 | 0.39 | computed |
 | so_al | 0.80 | 0.03 | computed |
@@ -715,35 +766,52 @@ Mass 148.9 g (range 133.5 to 164.3 g, limit 150 g).
 | wbearing | 0.68 | 0.03 | computed |
 | bspacer | 0.06 | 0.01 | computed |
 | motor_l | 9.50 | 0.28 | catalog |
-| whub_rl | 1.56 | 0.31 | computed |
+| whub_rl | 1.50 | 0.30 | computed |
 | wheel_rl | 2.73 | 0.11 | computed |
 | whub_fl | 0.23 | 0.05 | computed |
 | wheel_fl | 0.39 | 0.02 | computed |
-| wedglet_l | 6.68 | 1.34 | computed |
+| wedglet_l | 6.55 | 1.31 | computed |
 | nut_cl | 0.10 | 0.00 | catalog |
 | motor_r | 9.50 | 0.28 | catalog |
-| whub_rr | 1.56 | 0.31 | computed |
+| whub_rr | 1.50 | 0.30 | computed |
 | wheel_rr | 2.73 | 0.11 | computed |
 | whub_fr | 0.23 | 0.05 | computed |
 | wheel_fr | 0.39 | 0.02 | computed |
-| wedglet_r | 6.68 | 1.34 | computed |
+| wedglet_r | 6.55 | 1.31 | computed |
 | nut_cr | 0.10 | 0.00 | catalog |
 | battery | 12.50 | 1.88 | catalog |
 | rxesc | 3.50 | 0.53 | catalog |
 | wesc | 3.00 | 0.45 | catalog |
-| power_switch | 0.50 | 0.07 | catalog |
+| power_switch | 0.60 | 0.09 | catalog |
 | insert_b0 | 0.12 | 0.02 | catalog |
 | insert_b1 | 0.12 | 0.02 | catalog |
 | insert_b2 | 0.12 | 0.02 | catalog |
 | insert_b3 | 0.12 | 0.02 | catalog |
 | insert_b4 | 0.12 | 0.02 | catalog |
-| belt_l | 0.26 | 0.01 | computed |
-| belt_r | 0.26 | 0.01 | computed |
-| bolt_b0 | 0.25 | 0.01 | fastener |
-| bolt_b1 | 0.25 | 0.01 | fastener |
-| bolt_b2 | 0.25 | 0.01 | fastener |
-| bolt_b3 | 0.25 | 0.01 | fastener |
-| bolt_b4 | 0.25 | 0.01 | fastener |
+| nut_d0 | 0.10 | 0.00 | catalog |
+| nut_d1 | 0.10 | 0.00 | catalog |
+| nut_d2 | 0.10 | 0.00 | catalog |
+| nut_d3 | 0.10 | 0.00 | catalog |
+| insert_s0 | 0.12 | 0.02 | catalog |
+| insert_s1 | 0.12 | 0.02 | catalog |
+| insert_l0 | 0.12 | 0.02 | catalog |
+| insert_l1 | 0.12 | 0.02 | catalog |
+| insert_l2 | 0.12 | 0.02 | catalog |
+| insert_l3 | 0.12 | 0.02 | catalog |
+| weapon_lock | 0.12 | 0.02 | computed |
+| belt_l | 0.18 | 0.01 | computed |
+| belt_r | 0.18 | 0.01 | computed |
+| bolt_b0 | 0.08 | 0.00 | fastener |
+| bolt_b1 | 0.08 | 0.00 | fastener |
+| bolt_b2 | 0.08 | 0.00 | fastener |
+| bolt_b3 | 0.08 | 0.00 | fastener |
+| bolt_b4 | 0.08 | 0.00 | fastener |
+| bolt_l0 | 0.08 | 0.00 | fastener |
+| bolt_l1 | 0.08 | 0.00 | fastener |
+| bolt_l2 | 0.08 | 0.00 | fastener |
+| bolt_l3 | 0.08 | 0.00 | fastener |
+| bolt_sw0 | 0.08 | 0.00 | fastener |
+| bolt_sw1 | 0.08 | 0.00 | fastener |
 | bolt_wm0 | 0.33 | 0.02 | fastener |
 | bolt_wm1 | 0.33 | 0.02 | fastener |
 | bolt_wm2 | 0.33 | 0.02 | fastener |
@@ -758,15 +826,15 @@ Mass 148.9 g (range 133.5 to 164.3 g, limit 150 g).
 | bolt_urb | 0.30 | 0.02 | fastener |
 | bolt_srb | 0.25 | 0.01 | fastener |
 | bolt_src | 0.29 | 0.01 | fastener |
-| bolt_d0 | 0.52 | 0.03 | fastener |
+| bolt_d0 | 0.57 | 0.03 | fastener |
 | bolt_p0 | 0.30 | 0.01 | fastener |
-| bolt_d1 | 0.52 | 0.03 | fastener |
+| bolt_d1 | 0.57 | 0.03 | fastener |
 | bolt_p1 | 0.30 | 0.01 | fastener |
-| bolt_d2 | 0.52 | 0.03 | fastener |
+| bolt_d2 | 0.57 | 0.03 | fastener |
 | bolt_p2 | 0.30 | 0.01 | fastener |
-| bolt_d3 | 0.52 | 0.03 | fastener |
+| bolt_d3 | 0.57 | 0.03 | fastener |
 | bolt_p3 | 0.30 | 0.01 | fastener |
-| wires | 0.65 | 0.20 | wire |
+| wires | 0.66 | 0.20 | wire |
 | allowance | 1.20 | 0.60 | declared |
 
 ## Wire routes
@@ -797,7 +865,6 @@ The verifier did not judge these. A clean report says nothing about them.
 - Fork bending: forks are not traced to their mount; only weapon uprights are sectioned
 - Process: single-profile neck width (web inside one outline) and fdm overhangs per declared orientation are not checked here
 - Archetype rule `floor_ribs`: no printed chassis tub
-- Archetype rule `lid_inserts`: no removable lid fasteners
 - Electrical `weapon_motor_voltage`: no max_cells rating for weapon_motor
 - Electrical `esc_voltage`: no cell rating for rxesc, wesc
 - Electrical `switch_rating`: switch `power_switch` has no current rating (add `ratings.current_a`)
@@ -830,3 +897,8 @@ The verifier did not judge these. A clean report says nothing about them.
 - combat.R123: Arena wall: skirt catching the wall bottom rail
 - combat.R124: Pushing match outcome vs a heavier opponent (mass + grip)
 - combat.R125: Lifter/flipper arm stays below the skirt line when lowered
+- Joint `bolt_d0`: no part found around `nut_d0` (insert/nut host unknown)
+- Joint `bolt_d1`: no part found around `nut_d1` (insert/nut host unknown)
+- Joint `bolt_d2`: no part found around `nut_d2` (insert/nut host unknown)
+- Joint `bolt_d3`: no part found around `nut_d3` (insert/nut host unknown)
+- Reference write-up `/tmp/claude-0/-home-user/6d647ed2-7427-59f3-8ab5-ba663cdaf3d4/scratchpad/REFERENCE.md` could not be read

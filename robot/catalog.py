@@ -86,8 +86,8 @@ def outrunner(id, name, dia, length, shaft_len, mass, kv, p):
                         {"at": [length / 2 - 1, 0, 0], "dir": [1, 0, 0], "len": shaft_len, "dia": 5.0}, pr, "#3a3d42")
 
 
-def lipo(id, name, l, w, h, mass, cells, mah, c):
-    return CatalogEntry(id, "battery", name, mass, "estimate", box(l, w, h), {"xt30": [0, w / 2 + 2, 0]}, None, {
+def lipo(id, name, l, w, h, mass, cells, mah, c, conn="xt30"):
+    return CatalogEntry(id, "battery", name, mass, "estimate", box(l, w, h), {conn: [0, w / 2 + 2, 0]}, None, {
         "cells": cells, "capacity_mah": mah, "c_rating": c, "nominal_v": 3.7 * cells,
         "internal_resistance_mohm": 90 / max(mah / 100, 0.5) * cells}, "#2a9d8f")
 
@@ -153,7 +153,7 @@ def builtin() -> list[CatalogEntry]:
                                   at(box(1.5, 5.0, 8.0), -7.6, 0, -15.5)]), [cyl_x(2.55, 22.0)]),
                      {"phases": [-7.5, 0, -15.0]}, {"at": [8.25, 0, 0], "dir": [1, 0, 0], "len": 2.0, "dia": 5.0},
                      {"kv": 2300, "max_current_a": 15.0, "typ_current_a": 8.0, "bell_mass_frac": 0.5}, "#3a3d42"),
-        lipo("lipo_2s_180_turnabot", "Turnabot 2S 180 mAh LiPo (36 x 18 x 11)", 36, 18, 11, 12.5, 2, 180, 40),
+        lipo("lipo_2s_180_turnabot", "Turnabot 2S 180 mAh LiPo (36 x 18 x 11)", 36, 18, 11, 12.5, 2, 180, 40, conn="jst_rcy"),
         flat("malenki_nano", "Malenki Nano (Rx + 2 brushed drive ESC), kapton wrapped", "esc", 23, 16, 5, 3.5,
              {"bat": [-11.5, -4, 0], "m1": [11.5, 4, 0], "m2": [-11.5, 4, 0], "wpn": [11.5, -4, 0]},
              {"cont_current_a": 3.0, "burst_current_a": 6.0, "channels": 2.0}, "#e76f51"),
