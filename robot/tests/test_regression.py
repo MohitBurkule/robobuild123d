@@ -406,3 +406,23 @@ def test_targets_are_checked():  # reviewer (g)
     assert failed(run(d, ["targets"]), "targets.mismatch")
     d["targets"]["bogus"] = 1
     assert failed(run(d, ["targets"]), "targets.unknown")
+
+
+def test_fixQ_claim_skipped_when_only_excludes_its_group():
+    d = {"name": "c", "parts": [_box("chassis", (0, 0, 0), (40, 40, 4))],
+         "claims": [{"id": "m", "text": "light", "metric": "mass_total_g", "op": "<=", "value": 1e6},
+                    {"id": "f", "text": "fits", "metric": "footprint_mm", "op": "<=", "value": 1e6}]}
+    rep = run(d, ["connections"])
+    assert not found(rep, "claim.unknown_metric")
+    nf = found(rep, "claim.not_evaluated")
+    assert len(nf) == 2 and all(f.passed and f.severity == "info" for f in nf)
+
+
+def test_fixQ_claims_group_measures_metrics_and_reports_false_claims():
+    d = {"name": "c", "parts": [_box("chassis", (0, 0, 0), (40, 40, 4))],
+         "claims": [{"id": "m", "text": "featherweight", "metric": "mass_total_g", "op": "<=", "value": 0.001},
+                    {"id": "f", "text": "fits", "metric": "footprint_mm", "op": "<=", "value": 1e6}]}
+    rep = run(d, ["claims"])
+    assert not found(rep, "claim.unknown_metric") and not found(rep, "claim.not_evaluated")
+    assert failed(rep, "claim.false") and found(rep, "claim.holds")
+    assert "mass_total_g" in rep.metrics and "footprint_mm" in rep.metrics

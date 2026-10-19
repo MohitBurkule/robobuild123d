@@ -125,12 +125,12 @@ def main(argv=None):
     elif a.cmd == "verify":
         names = [n for n, _ in checks.GROUPS]
         if a.list_groups:
-            print("\n".join(names))
+            print("\n".join(names + [checks.CLAIMS_GROUP]))
             return 0
         if not a.spec:
             print("error: verify needs a spec path", file=sys.stderr)
             return 1
-        bad = [g for g in (opts_from(a).only or []) if g not in names]
+        bad = [g for g in (opts_from(a).only or []) if g not in names and g != checks.CLAIMS_GROUP]
         if bad:
             print(f"error: unknown check group(s) {', '.join(bad)}; see `robot verify --list-groups`", file=sys.stderr)
             return 1
