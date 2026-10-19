@@ -525,6 +525,51 @@
       ],
       "r": 2.5,
       "reason": "corner column top: 1.7 thread-forming pilot for the top-panel M2 screw instead of the STEP 3.0 bore (the STEP top panel is bonded; screws make it removable)"
+     },
+     {
+      "near": [
+       -25.0,
+       10.4,
+       5.0
+      ],
+      "r": 4.0,
+      "reason": "column foot flared to R3.7 with a recess for the base-panel ring boss (1.0 mm base skin cannot seat a 1.2 mm M2 flat head)"
+     },
+     {
+      "near": [
+       25.0,
+       10.4,
+       5.0
+      ],
+      "r": 4.0,
+      "reason": "column foot flared to R3.7 with a recess for the base-panel ring boss (1.0 mm base skin cannot seat a 1.2 mm M2 flat head)"
+     },
+     {
+      "near": [
+       -25.0,
+       -21.6,
+       5.0
+      ],
+      "r": 4.0,
+      "reason": "column foot flared to R3.7 with a recess for the base-panel ring boss (1.0 mm base skin cannot seat a 1.2 mm M2 flat head)"
+     },
+     {
+      "near": [
+       25.0,
+       -21.6,
+       5.0
+      ],
+      "r": 4.0,
+      "reason": "column foot flared to R3.7 with a recess for the base-panel ring boss (1.0 mm base skin cannot seat a 1.2 mm M2 flat head)"
+     },
+     {
+      "near": [
+       0.0,
+       -33.6,
+       5.0
+      ],
+      "r": 4.0,
+      "reason": "column foot flared to R3.7 with a recess for the base-panel ring boss (1.0 mm base skin cannot seat a 1.2 mm M2 flat head)"
      }
     ]
    },
@@ -533,14 +578,99 @@
     "file": "RV26_Base_Panel_1.stl",
     "mode": "shape",
     "tol_mm": 0.3,
-    "note": "RV26 1 mm panel"
+    "note": "RV26 1 mm panel",
+    "deviations": [
+     {
+      "near": [
+       -25.0,
+       10.4,
+       4.5
+      ],
+      "r": 3.0,
+      "reason": "0.6 mm ring boss + 4.5 countersink on a 3.0 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
+     },
+     {
+      "near": [
+       25.0,
+       10.4,
+       4.5
+      ],
+      "r": 3.0,
+      "reason": "0.6 mm ring boss + 4.5 countersink on a 3.0 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
+     },
+     {
+      "near": [
+       -25.0,
+       -21.6,
+       4.5
+      ],
+      "r": 3.0,
+      "reason": "0.6 mm ring boss + 4.5 countersink on a 3.0 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
+     },
+     {
+      "near": [
+       25.0,
+       -21.6,
+       4.5
+      ],
+      "r": 3.0,
+      "reason": "0.6 mm ring boss + 4.5 countersink on a 3.0 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
+     },
+     {
+      "near": [
+       0.0,
+       -33.6,
+       4.5
+      ],
+      "r": 3.0,
+      "reason": "0.6 mm ring boss + 4.5 countersink on a 3.0 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
+     }
+    ]
    },
    {
     "part": "top_panel",
     "file": "Top_Panel_1.stl",
     "mode": "shape",
     "tol_mm": 0.3,
-    "note": "0.9 mm top panel"
+    "note": "0.9 mm top panel",
+    "deviations": [
+     {
+      "near": [
+       -25.0,
+       10.4,
+       19.95
+      ],
+      "r": 3.0,
+      "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
+     },
+     {
+      "near": [
+       25.0,
+       10.4,
+       19.95
+      ],
+      "r": 3.0,
+      "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
+     },
+     {
+      "near": [
+       -25.0,
+       -21.6,
+       19.95
+      ],
+      "r": 3.0,
+      "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
+     },
+     {
+      "near": [
+       25.0,
+       -21.6,
+       19.95
+      ],
+      "r": 3.0,
+      "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
+     }
+    ]
    },
    {
     "part": "mount_l",
@@ -7343,7 +7473,33 @@
    "why": "2 mm walls are 4+ perimeters: the box takes wheel-side and clamp loads without delaminating",
    "part": "tub",
    "min": 1.8,
-   "envelope": true
+   "envelope": true,
+   "except": [
+    [
+     [
+      -29.6,
+      -37.7,
+      4.6
+     ],
+     [
+      29.6,
+      -35.4,
+      17.5
+     ]
+    ],
+    [
+     [
+      -33.0,
+      -38.0,
+      0.0
+     ],
+     [
+      33.0,
+      44.0,
+      4.6
+     ]
+    ]
+   ]
   },
   {
    "rule": "insert_column",

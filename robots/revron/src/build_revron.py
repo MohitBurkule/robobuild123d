@@ -36,6 +36,8 @@ NUT_X = (27.7, 29.5)
 INS = [(-25.0, 10.4), (25.0, 10.4), (-25.0, -21.6), (25.0, -21.6), (0.0, -33.6)]   # 5 floor inserts / base screws
 INS_Z = (5.1, 9.1)                   # FS1 M2 heat-set (3.5 OD x 4)
 CSK_M2 = 4.5                         # 90 deg countersink at the face for an ISO 10642 M2 flat head (4.4 x 1.2) + 0.1
+BASE_HOLE, TOP_HOLE = 3.0, 3.5         # csk through-holes: wide enough that the 90 deg seat stops short of the far face (no knife edge)
+BOSS_R, BOSS_H = 2.6, 0.6            # base-panel ring boss round each screw (keys into a 2.65 x 0.65 recess in the column foot)
 EAR_R = 2.7                          # top-panel corner ear radius: >= CSK_M2 / 2 + 0.4 mm of Ti round the countersink
 RY, RZ = -30.5, 11.0                 # N10 shaft (rear axle)
 MOTX = 19.6                          # N10 catalog origin |X| (body 3.7..27.5, shaft to 37.5)
@@ -196,7 +198,10 @@ def base_panel():
     for s in (1, -1):
         pad = _round(_poly([(s * 17.95, -34.85), (s * 27.05, -34.85), (s * 27.05, -25.75), (s * 17.95, -25.75)]), r_out=0.6)
         body = _U(body, _ext(pad, "xy", z0 + t - 0.01, z0 + t + 0.25))
-    cuts = [_csk(2.2, CSK_M2, (x, y, z0), "z", 1, 4.0) for x, y in INS]   # 4.5 countersink (STEP RV26 has 3.2 x 0.5; an ISO 10642 M2 head is 4.4 x 1.2, so a smaller seat leaves it proud and binding) then the 2.2 hole
+    # the 1 mm skin is thinner than the 1.2 mm M2 flat head: a 0.6 mm ring boss over each screw gives the seat 1.6 mm of
+    # material (no knife edge under the head) and keys the panel into the column feet, so side hits shear the bosses, not the screws
+    body = _U(body, *[_cyl(BOSS_R, z0 + t - 0.01, z0 + t + BOSS_H, (x, y), "z") for x, y in INS])
+    cuts = [_csk(BASE_HOLE, CSK_M2, (x, y, z0), "z", 1, 4.0) for x, y in INS]   # 4.5 countersink (STEP RV26 has 3.2 x 0.5; an ISO 10642 M2 head is 4.4 x 1.2, so a smaller seat leaves it proud and binding) then the 2.2 hole
     return _S(body, *cuts)
 
 
@@ -232,7 +237,7 @@ def top_panel():
     body = _ext(p, "xy", z0, z0 + t)
     # 2.2 holes countersunk (90 deg, 4.5 at the top face; STEP 3.65) for M2 flat heads into the column-top pilots: the 1.2 head is
     # deeper than the 0.9 plate, so its tip sinks into the chamfer at the column top
-    return _S(body, *[_csk(2.2, CSK_M2, (x, y, z0 + t), "z", -1, 2.0) for x, y in ((25.0, 10.4), (-25.0, 10.4), (25.0, -21.6), (-25.0, -21.6))])
+    return _S(body, *[_csk(TOP_HOLE, CSK_M2, (x, y, z0 + t), "z", -1, 2.0) for x, y in ((25.0, 10.4), (-25.0, 10.4), (25.0, -21.6), (-25.0, -21.6))])
 
 
 def fork(s):
@@ -612,6 +617,10 @@ def chassis():
     # insert columns (floor to deck): the rear-centre one a round boss on the rear wall, the corner ones blocks merged
     # into the wall corners with a R2.6 nose (STEP)
     add.append(_cyl(2.75, z0, c["deck"] + 0.1, INS[4], "z"))
+    # every column foot flares to R3.7 (45 deg, prints deck-down without support) so the base-panel boss recess keeps a 1 mm wall
+    for px, py in INS:
+        add.append(_cyl(3.7, z0, 5.2, (px, py), "z"))
+        add.append(_b().Solid.make_cone(3.7, 2.75, 0.95, _b().Plane(origin=(px, py, 5.2 - 0.001), z_dir=(0, 0, 1))))
     for sg in (1, -1):
         def mx(poly):
             return Polygon([(sg * u, v) for u, v in poly.exterior.coords]).buffer(0)
@@ -642,7 +651,7 @@ def chassis():
         if sg > 0:
             add.append(_ext(_round(Polygon([(22.5, -15.6), (27.5, -15.6), (27.5, 4.4), (22.5, 4.4)]), r_out=1.0), "xy", 16.5, c["deck"] + 0.1))
         # lugs carrying the standoffs (sloped top so they sit under the mount)
-        lug = Polygon([(13.0, z0), (26.0, z0), (30.4, 1.0)] + _arc(SA, 4.5, 250, 300, 6) + [(36.6, 2.5)] + _arc(SB, 3.2, 250, 400, 16) + [(15.0, z1), (13.0, z1)])
+        lug = Polygon([(13.0, z0), (26.0, z0), (30.4, 1.0)] + _arc(SA, 4.5, 250, 300, 6) + [(36.6, 2.5)] + _arc(SB, 3.4, 250, 400, 16) + [(15.0, z1), (13.0, z1)])
         lug = _round(lug.convex_hull.difference(Polygon([(26.0, 0.0), (26.0, 2.5), (30.0, 1.0), (40.0, 1.3), (60, 0)])), r_in=0.0)
         add.append(_ext(lug, "yz", sg * 17.5, sg * 21.5))
     for sg in (1, -1):
@@ -726,6 +735,8 @@ def chassis():
     # panels: the parts seat on the chassis, they do not share material with it
     pan = _round(_poly([(-28.15, -36.25), (28.15, -36.25), (28.15, 13.05), (-28.15, 13.05)]), r_out=0.8)
     cuts.append(_ext(pan, "xy", z0 - 1.0, 4.5))
+    for px, py in INS:   # recess in each column foot for the base-panel ring boss
+        cuts.append(_cyl(BOSS_R + 0.05, 4.4, 4.5 + BOSS_H + 0.05, (px, py), "z"))
     for sg in (1, -1):
         cuts.append(_box(sg * 17.95, sg * 27.05, -34.85, -25.75, 4.4, 4.8))   # motor preload pads
     cuts += [weapon_mount("l"), weapon_mount("r"), side_panel(1), side_panel(-1)]
@@ -975,7 +986,10 @@ def intent_checks():
     for pid, up in (("tub", "-z"), ("mount_r", "+x"), ("mount_l", "-x"), ("whub_rr", "+x"), ("whub_rl", "-x"), ("whub_fr", "+x"), ("whub_fl", "-x"),
                     ("wedgelet_r", "-z"), ("wedgelet_l", "-z"), ("side_r", "+z"), ("side_l", "+z"), ("motor_spacer", "+x"), ("weapon_lock", "+z")):
         A("support_free", "every printed part prints without supports in its declared orientation", part=pid, up=up)
-    A("min_wall", "2 mm walls are 4+ perimeters: the box takes wheel-side and clamp loads without delaminating", part="tub", min=1.8, envelope=True)
+    # exceptions (STEP RV01, by design): the rear wall is a triangulated truss - 2 mm ribs round 1 mm deep pockets, the ribs carry
+    # the load and the 1 mm web only closes the box; the 1 mm lip below the base-panel rabbet only locates the panel edge
+    A("min_wall", "2 mm walls are 4+ perimeters: the box takes wheel-side and clamp loads without delaminating", part="tub", min=1.8, envelope=True,
+      **{"except": [[[-29.6, -37.7, 4.6], [29.6, -35.4, 17.5]], [[-33.0, -38.0, 0.0], [33.0, 44.0, 4.6]]]})
     A("insert_column", "printed deck-down, each heat-set insert sits on a solid column back to the deck (the first layers): no hanging boss to pull out",
       part="tub", inserts=[[x, y, CH["deck"]] for x, y in INS], floor_z=INS_Z[0], r=2.2)
     x, w = CH["x"], CH["wall"]
@@ -1071,9 +1085,15 @@ def reference_cad():
     rows = [
         R("tub", "RV01_Chassis_1.stl", tol_mm=1.0, tol_vol_frac=0.25, note="RV01 chassis",
           deviations=[dict(near=[x, y, 17.5], r=2.5, reason="corner column top: 1.7 thread-forming pilot for the top-panel M2 screw instead of the STEP 3.0 bore (the STEP top panel is bonded; screws make it removable)")
+                      for x, y in INS[:4]]
+          + [dict(near=[x, y, 5.0], r=4.0, reason="column foot flared to R3.7 with a recess for the base-panel ring boss (1.0 mm base skin cannot seat a 1.2 mm M2 flat head)")
+             for x, y in INS]),
+        R("base_panel", "RV26_Base_Panel_1.stl", tol_mm=0.3, note="RV26 1 mm panel",
+          deviations=[dict(near=[x, y, 4.5], r=3.0, reason="0.6 mm ring boss + 4.5 countersink on a 3.0 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud")
+                      for x, y in INS]),
+        R("top_panel", "Top_Panel_1.stl", tol_mm=0.3, note="0.9 mm top panel",
+          deviations=[dict(near=[x, y, 19.95], r=3.0, reason="4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it")
                       for x, y in INS[:4]]),
-        R("base_panel", "RV26_Base_Panel_1.stl", tol_mm=0.3, note="RV26 1 mm panel"),
-        R("top_panel", "Top_Panel_1.stl", tol_mm=0.3, note="0.9 mm top panel"),
         R("mount_l", "RV02_XALT_HD_left_hand_weapon_mount_1.stl", tol_mm=0.5),
         R("mount_r", "RV03_XALT__HD_Right_hand_weapon_mount_1.stl", tol_mm=0.5),
         R("motor_spacer", "Motor_back_spacer_1.stl", tol_mm=0.3),
