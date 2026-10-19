@@ -17,6 +17,7 @@ heads() { # newest of local fix-X and origin/fix-X per branch
       if git merge-base --is-ancestor $l $r; then echo origin/$n; else echo $n; git merge-base --is-ancestor $r $l || echo origin/$n; fi
     elif git rev-parse -q --verify $l >/dev/null; then echo $n; else echo origin/$n; fi
   done; }
+[ "${RENDER_FIRST:-0}" = 1 ] && bash robot/tools/ci_render.sh
 for i in $(seq "${START_ITER:-1}" "$MAX_ITERS"); do
   git fetch -q origin 2>>"$P/ci_push.err" || log "fetch failed"
   for b in $(heads); do
@@ -33,7 +34,7 @@ for i in $(seq "${START_ITER:-1}" "$MAX_ITERS"); do
   sha=$(git rev-parse --short HEAD)
   [ -f "$P/blockers_live.jsonl" ] && mv "$P/blockers_live.jsonl" "$P/blockers_live.prev.jsonl"
   out="$P/ci_verify_${i}_$sha.log"
-  ROBOT_RUN_SHA=$sha ROBOT_PROGRESS_LOG="$P/verify.log" /tmp/heavy.sh timeout 6000 python3 -m robot verify "$SPEC" --full --jobs "${JOBS:-2}" > "$out" 2>&1
+  ROBOT_RUN_SHA=$sha ROBOT_PROGRESS_LOG="$P/verify.log" HEAVY_CI=1 /tmp/heavy.sh timeout 6000 python3 -m robot verify "$SPEC" --full --jobs "${JOBS:-2}" > "$out" 2>&1
   rc=$?
   if ! grep -q 'blockers,' "$out"; then
     log "iter $i sha $sha: verify did not finish (rc $rc: $(grep -m1 -e Killed -e Traceback -e Error "$out" | cut -c1-120)); not counted"
@@ -43,6 +44,7 @@ for i in $(seq "${START_ITER:-1}" "$MAX_ITERS"); do
   groups=$(grep '^\[BLOCKER\]' "$out" | awk '{print $2}' | cut -d. -f1 | sort | uniq -c | awk '{printf "%s %s, ",$2,$1}')
   log "iter $i sha $sha: $n blockers (${groups%, })"
   echo "$i $sha" > "$P/ci_iter_done"
+  [ "${CI_RENDER:-1}" = 1 ] && bash robot/tools/ci_render.sh
   [ "$n" -eq 0 ] && { log "0 blockers at $sha, stopping"; exit 0; }
   [ -f "${CI_STOP:-/tmp/ci_loop.stop}" ] && { log "stop file seen, exiting"; exit 0; }
 done
