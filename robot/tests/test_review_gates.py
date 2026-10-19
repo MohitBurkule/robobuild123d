@@ -100,6 +100,14 @@ def test_wire_clear_of_rotating_nut_passes():
     assert f is not None and f.passed, [x.message for x in rep.findings]
 
 
+def test_wire_clearance_is_to_the_swept_band_of_the_nut():
+    # the nut sweeps t 2.2..3.8 x rho ~8..12 about the disc axis: a lead 2.0 mm behind its back face passes the 1 mm default,
+    # one 1.0 mm behind it does not (the 0.4 mm bundle radius counts)
+    ok_ = run(_spinner([[5.8, -30, 40], [5.8, 30, 40]]), "wire_review").get("wire.rotating_clearance")
+    assert ok_ is not None and ok_.passed, ok_ and ok_.message
+    assert run(_spinner([[4.8, -30, 40], [4.8, 30, 40]]), "wire_review").failed("wire.rotating_clearance")
+
+
 # -------------------------------------------------------------------------------------------- wire.render_present
 def _rendered(tmp_path, wires_drawn, end=None):
     d = _spinner([[20, 0, 6]])
