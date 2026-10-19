@@ -1508,6 +1508,7 @@
      "part": "wedgelet_l"
     }
    },
+   "cover_fasteners_deviation": "RVRN 2.0 STEP: the wedgelet is clamped between the side panel nose and the 15 mm standoff end by bolt_s?b (listed in its `through`), and located on both standoffs; bolt_s?a seats the side panel directly on the 25 mm standoff end (the STEP wedgelet stops at |X| 38.5 and never enters that stack). Kept as designed; no extra screw (coordinator decision).",
    "label": "RV17 TPU wedgelet: 50 deg ramp over the nose, cheeks round both standoffs and the fork tail"
   },
   {
@@ -1742,6 +1743,7 @@
      "part": "wedgelet_r"
     }
    },
+   "cover_fasteners_deviation": "RVRN 2.0 STEP: the wedgelet is clamped between the side panel nose and the 15 mm standoff end by bolt_s?b (listed in its `through`), and located on both standoffs; bolt_s?a seats the side panel directly on the 25 mm standoff end (the STEP wedgelet stops at |X| 38.5 and never enters that stack). Kept as designed; no extra screw (coordinator decision).",
    "label": "RV18 TPU wedgelet: 50 deg ramp over the nose, cheeks round both standoffs and the fork tail"
   },
   {
