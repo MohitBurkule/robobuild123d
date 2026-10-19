@@ -44,21 +44,24 @@ for i in $(seq "${START_ITER:-1}" "$MAX_ITERS"); do
   # full verify in fresh processes per chunk (one process for all groups grew past 11 GB at `threat` and was OOM-killed)
   all=$(python3 -m robot verify --list-groups 2>/dev/null | grep -E '^[a-z_]+$' | grep -v -x -e threat -e fastener_seat | paste -sd,)
   : > "$out"; rc=0; done_n=0
-  for chunk in "$all" threat fastener_seat; do
+  chunks="$all fastener_seat"; [ -f "${SKIP_THREAT_FILE:-/tmp/ci_skip_threat}" ] || chunks="$all threat fastener_seat"
+  need=$(echo $chunks | wc -w)
+  for chunk in $chunks; do
     ROBOT_RUN_SHA=$sha ROBOT_PROGRESS_LOG="$P/verify.log" HEAVY_CI=1 /tmp/heavy.sh timeout 6000 python3 -m robot verify "$SPEC" --full --only "$chunk" --jobs "${JOBS:-2}" > "$out.part" 2>&1
     r=$?; cat "$out.part" >> "$out"; grep -q 'blockers,' "$out.part" && done_n=$((done_n+1)) || rc=$r
   done
   rm -f "$out.part"
-  if [ "$done_n" -lt 3 ]; then
+  if [ "$done_n" -lt "$need" ]; then
     log "iter $i sha $sha: verify did not finish (rc $rc: $(grep -m1 -e Killed -e Traceback -e Error "$out" | cut -c1-120)); not counted"
     continue
   fi
   n=$(grep -c '^\[BLOCKER\]' "$out")
   groups=$(grep '^\[BLOCKER\]' "$out" | awk '{print $2}' | cut -d. -f1 | sort | uniq -c | awk '{printf "%s %s, ",$2,$1}')
-  log "iter $i sha $sha: $n blockers (${groups%, })"
+  note=""; [ "$need" -lt 3 ] && note=" (threat not run)"
+  log "iter $i sha $sha: $n blockers$note (${groups%, })"
   echo "$i $sha" > "$P/ci_iter_done"
   [ "${CI_RENDER:-1}" = 1 ] && render
-  [ "$n" -eq 0 ] && { log "0 blockers at $sha, stopping"; exit 0; }
+  [ "$n" -eq 0 ] && [ -z "$note" ] && { log "0 blockers at $sha, stopping"; exit 0; }
   [ -f "${CI_STOP:-/tmp/ci_loop.stop}" ] && { log "stop file seen, exiting"; exit 0; }
 done
 log "reached $MAX_ITERS iterations, exiting"
