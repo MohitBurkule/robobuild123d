@@ -181,7 +181,11 @@ def _base(h, user):
     plan.extra["axle_y"] = g.axle_y
     drive.add_drive(plan, g)
     weapon.prepare(plan, h, g)
-    fasteners.add_clamshell_screws(plan, fasteners.clamshell_sites(plan))
+    sites = fasteners.clamshell_sites(plan)
+    if plan.is_tub:
+        fasteners.add_tub_screws(plan, sites)
+    else:
+        fasteners.add_clamshell_screws(plan, sites)
     return plan, g
 
 

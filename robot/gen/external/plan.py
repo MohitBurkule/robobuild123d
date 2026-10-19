@@ -89,6 +89,19 @@ class Plan:
     placements: dict = field(default_factory=dict)  # component id -> (x, y, z, rot_z) from the layout
     features: list = field(default_factory=list)  # every feature + its design intent (see robot/gen/intent.py)
 
+    @property
+    def is_tub(self) -> bool:
+        """Open-tub chassis (walls + housings) closed by a base panel and a top sheet, instead of two halves."""
+        return getattr(self.hyp, "chassis", "clamshell") == "tub"
+
+    def body(self, half: str) -> str:
+        """Part id of the chassis piece that holds what a generator put in `half`."""
+        return "tub" if self.is_tub else f"chassis_{half}"
+
+    @property
+    def roof(self) -> str:
+        return "lid" if self.is_tub else "chassis_top"
+
     def feature(self, op, intent, target=None, half=None):
         """Record one feature and why it exists (`intent` from intent.I). The source line is kept for the check."""
         fr = sys._getframe(1)

@@ -63,7 +63,18 @@ Each rule names the generator code that applies it.
    - Generator: rear hubs have a D-bore with `mechanical_key`. Front axles are captured in the split-plane bore and clamped by the top half.
 7. **Belts and O-rings carry drive to the axles without extra motors.**
    - Revron: two N10 motors and two O-rings give 4WD.
-   - Generator: the 4WD belt option of `drive.add_drive` (`belt_geometry`) sizes the ring from the centre distance at 8 % stretch, inside nitrile's 5–10 % working range.
+   - Generator: the 4WD belt option of `drive.add_drive` (`belt_geometry`) works out the ideal ring from the centre distance at 10 % stretch over the flanges, then picks the nearest stock 1.0 mm-section metric O-ring (`belt.stock`). You buy belts; you do not make them.
+
+8a. **Two discs straddle the bell when the energy is needed wide (RVRN 2.0).**
+   - The motor-side disc is keyed to the bell face. The floating disc rides round the can. A spider spaces the two discs.
+   - Two long M2 through disc, spider and the tapped floating disc make one rotor.
+   - Generator: `disc_stack=spider_pair` in `weapon_drisk._spider_pair`.
+   - The lock pin circle moves in to keep the laser web rule (0.75 t to the tooth roots).
+8b. **Uprights on standoffs in a tub (Revron).**
+   - Each upright is clamped to the inner ends of two 5 mm alu standoffs.
+   - The standoffs are pressed through a lug at the chassis corner. The wedgelet hangs on their outer ends.
+   - A hit goes upright, then standoff, then lug, then side wall.
+   - Generator: `chassis=tub` in `weapon_drisk._standoff_mount`.
 
 ## Retention
 

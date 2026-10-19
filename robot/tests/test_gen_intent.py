@@ -98,3 +98,29 @@ def test_4wd_belt_drive_is_built_with_belts_and_front_wheels(specs):
     forks = [p for p in d["parts"] if p["kind"] == "fork"]
     assert len(forks) == 2 and all(p["material"] == "tpu" for p in forks)  # front=wedgelets honoured on the drisk
     assert any(f.get("threads_into") == "axle_fl" for f in d["fasteners"])  # wedgelet hangs on the front axle
+
+
+def test_belt_is_a_stock_o_ring(specs):
+    from robot.checks.bom import STOCK_ORINGS
+    belt = next(p for p in specs[HYPS[-1]]["parts"] if p["id"] == "belt_l")["belt"]
+    st = belt["stock"]
+    assert st["id_mm"] in STOCK_ORINGS[st["cs_mm"]]
+    assert belt["length_mm"] == pytest.approx(math.pi * st["id_mm"], rel=0.01)
+
+
+def test_spider_pair_is_two_discs_on_a_spider_bolted_up():
+    d = build.build(H.Hypothesis.parse("weapon=vspin_drisk,disc_stack=spider_pair,battery=lipo_2s_180"))
+    assert intent.check(d) == []
+    ids = {p["id"]: p for p in d["parts"]}
+    assert {"weapon", "disc_b", "spider"} <= set(ids)
+    assert ids["disc_b"]["parent"] == "weapon" and ids["spider"]["rotates_with"] == "weapon"
+    stack = [f for f in d["fasteners"] if f.get("threads_into") == "disc_b"]
+    assert len(stack) == 2 and all("spider" in f["through"] for f in stack)
+
+
+def test_tub_chassis_mounts_uprights_on_standoffs():
+    d = build.build(H.Hypothesis.parse(HYPS[-1] + ",chassis=tub"))
+    assert intent.check(d) == []
+    ids = {p["id"] for p in d["parts"]}
+    assert {"tub", "lid", "base_panel", "so_r0", "so_l1"} <= ids and "chassis_top" not in ids
+    assert any(f.get("threads_into") == "so_l0" and "upright_l" in f["through"] for f in d["fasteners"])

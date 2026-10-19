@@ -98,6 +98,7 @@ RULE_CASES = {
     "weapon_front": (dict(weapon="hspin_shell", front="wedge"), dict(weapon="wedge", front="wedge")),
     "vertical_not_under": (dict(weapon="undercutter", mount="under", orientation="vertical"), dict(weapon="wedge")),
     "walker_drive": (dict(weapon="meltybrain", drive_layout="2WD"), dict(weapon="wedge", drive_layout="2WD")),
+    "disc_stack_needs_disc": (dict(weapon="wedge", disc_stack="spider_pair"), dict(weapon="vspin_drisk", disc_stack="spider_pair")),
     "belt_needs_axles": (dict(transmission="belt", drive_layout="2WD"), dict(transmission="belt", drive_layout="4WD")),
     "wheel_size_for_motor": (dict(drive_motor="n20", wheel_dia=16), dict(drive_motor="n20", wheel_dia=28)),
     "invertible_wheels": (dict(invertible=True, wheel_dia=16), dict(invertible=True, wheel_dia=28)),

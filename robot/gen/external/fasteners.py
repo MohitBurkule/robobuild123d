@@ -74,6 +74,33 @@ def add_clamshell_screws(plan, sites, prefix="c"):
         plan.keepouts.append((f"boss_{tag}", x - BOSS_R, x + BOSS_R, y - BOSS_R, y + BOSS_R))
 
 
+def add_tub_screws(plan, sites, prefix="c"):
+    """Open tub: a boss column at each corner site carries an insert at each end; the top sheet screws down into the top
+    one, the base panel up into the bottom one (button heads: a 1 mm sheet cannot take a countersink)."""
+    f = plan.frame
+    col = I("load_path", "corner column: carries both sheets' screws and ties the tub's walls at the corner",
+            f"r {BOSS_R}, full height")
+    for i, (x, y) in enumerate(sites):
+        tag = f"{prefix}{i}"
+        plan.add("bottom", sh.cyl(BOSS_R, -f.zb, (x, y, f.zb / 2)), intent=col)
+        plan.add("top", sh.cyl(BOSS_R, f.zt, (x, y, f.zt / 2)), intent=col)
+        for end, sheet, z_face, d in (("t", "lid", f.zt - f.floor, -1.0), ("b", "base_panel", f.zb + f.floor, 1.0)):
+            z_ins = z_face + d * INSERT_LEN / 2
+            plan.late_cut("bottom" if d > 0 else "top", sh.cyl_axis(1.6, min(z_face, z_face + d * (INSERT_LEN + 1.6)),
+                                                                     max(z_face, z_face + d * (INSERT_LEN + 1.6)), "z", x, y),
+                          intent=I("assembly", "melt bore for the M2 insert in the column end", "3.2 mm, insert + 1.6 (screw tip room)"))
+            z_outer = f.zt if d < 0 else f.zb
+            plan.late_cut("top" if d < 0 else "bottom", sh.cyl_axis(1.1, min(z_face, z_outer) - 0.5, max(z_face, z_outer) + 0.5, "z", x, y),
+                          intent=I("assembly", f"clearance hole in the {sheet} for the screw", "M2 + 0.2"))
+            plan.part(id=f"insert_{tag}{end}", kind="insert", catalog="heatset_m2", at=[x, y, z_ins], retained="press_fit",
+                      intent=I("service", f"brass thread: the {sheet} comes off between fights", "M2 heat-set"))
+            plan.screw(id=f"bolt_{tag}{end}", designation="M2x5", at=[x, y, z_outer], dir=screw_dir([0.0, 0.0, d]),
+                       through=[sheet], threads_into=f"insert_{tag}{end}", head="button",
+                       intent=I("assembly", f"the {sheet} goes on from {'above' if d < 0 else 'below'}: its screws are "
+                                "driven along that direction into the column", f"sheet {f.floor} mm + 3.9 mm thread = M2x5"))
+        plan.keepouts.append((f"boss_{tag}", x - BOSS_R, x + BOSS_R, y - BOSS_R, y + BOSS_R))
+
+
 def add_front_inserts(plan, xs, z, part_id, half="top", screw_len=6, plate_t=2.4, boss_r=3.0, prefix="w"):
     """Inserts in the front wall (axis y) for a part bolted onto the front face (wedge, fork bar)."""
     f = plan.frame

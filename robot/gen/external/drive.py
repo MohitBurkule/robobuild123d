@@ -27,7 +27,8 @@ SIDE_MARGIN = 2.6  # outer face of the wheel to the outline
 # O-ring belt (4WD): groove section on the outboard face of every wheel
 GROOVE_W = 3.0  # flange 0.8 + groove 1.4 + flange 0.8
 GROOVE_R = 4.5  # groove bottom radius: low enough that the tunnel clears the floor and roof skins
-BELT_CORD = 1.2  # nitrile cord diameter (Revron: 1.2 mm)
+BELT_CORD = 1.0  # nitrile cord: the nearest stock metric O-ring section to Revron's 1.2 mm
+STOCK_ID_CS1 = (30, 32, 34, 35, 36, 38, 40, 42, 45, 48, 50)  # stock 1.0 mm-section ring IDs (metric list)
 BELT_STRETCH = 0.10  # over the flange radius (verifier convention); 6-7 % at the cord centre: nitrile's working range
 AXLE_R = 2.5  # 5 mm OD M3 aluminium standoff (front axle, Revron)
 TUNNEL_CLEAR = 0.6  # belt to tunnel wall
@@ -98,9 +99,12 @@ def belt_geometry(g: DriveGeom) -> dict:
     r = GROOVE_R + BELT_CORD / 2  # cord centre radius in the groove
     rf = r + 0.6  # flange radius: the loop is measured over the flanges (as the verifier does), the cord sits 0.6 lower
     L_installed = 2 * C + 2 * math.pi * rf
-    ring_id = belt_ring_for(C, r, r, BELT_STRETCH)
-    return {"centre_mm": C, "cord_r": r, "length_installed": L_installed, "length_rest": L_installed / (1 + BELT_STRETCH),
-            "ring_id": ring_id}
+    ideal = belt_ring_for(C, r, r, BELT_STRETCH)
+    # buy, don't make: the stock ring whose stretch over the flanges lands nearest the design stretch
+    ring_id = min(STOCK_ID_CS1, key=lambda d: abs(L_installed / (math.pi * d) - 1 - BELT_STRETCH))
+    stretch = L_installed / (math.pi * ring_id) - 1
+    return {"centre_mm": C, "cord_r": r, "length_installed": L_installed, "length_rest": round(math.pi * ring_id, 2),
+            "ring_id": ring_id, "ideal_id": ideal, "stretch": stretch}
 
 
 def wheel_shape(dia: float, width: float, lighten: bool = False, bore: str = "d") -> dict:
@@ -247,10 +251,19 @@ def add_drive(plan, g: DriveGeom):
         plan.cut_both(sh.box(m["L"] + 0.3, m["flats"] + 0.3, cav_h, (sgn * g.motor_cx, g.axle_y, 0.0)),
                       intent=I("retention", "motor pocket: snug on the gearbox flats (they key it against reaction torque)",
                                f"flats {m['flats']} + 0.3 mm"))
+        if plan.is_tub:
+            plan.cut("top", sh.box(m["L"] + 0.3, m["flats"] + 0.3, zt, (sgn * g.motor_cx, g.axle_y, zt / 2)),
+                     intent=I("assembly", "tub: the motor pocket opens upward so the motor drops in from above; the top "
+                              "sheet holds it down", f"flats {m['flats']} + 0.3 mm"))
         plan.cut_both(sh.box(3.3, 5.0, 3.5, (sgn * (MOTOR_INNER_X - 1.7), g.axle_y, 0.0)),
                       intent=I("wiring", "terminal tab exit into the wire channel", "tab 3 x 4.6 mm + clearance"))
         plan.cut_both(sh.cyl(2.0, 3.0, (sgn * (g.face_x + 1.15), g.axle_y, 0.0), (0, 90, 0)),
                       intent=I("load_path", "shaft hole: the gearbox boss locates in it", "boss 3.5 mm + 0.5"))
+        if plan.is_tub:
+            plan.cut("top", sh.boxr(*sorted((sgn * (g.face_x - 0.5), sgn * (g.face_x + 3.0))), g.axle_y - 2.0, g.axle_y + 2.0,
+                                    -0.1, zt), intent=I("assembly", "tub: keyhole over the shaft hole, so the motor and "
+                                                        "its shaft drop in from above (Revron rear keyhole pockets)",
+                                                        "boss 3.5 mm + 0.5"))
         slot_h = max(-zb, zt) + 0.5
         side_x = sgn * (W - 0.35)
         plan.cut_both(sh.box(3.7, g.wheel_dia + 1.0, 2 * slot_h + 1, (side_x, g.axle_y, 0.0)),
@@ -296,9 +309,17 @@ def _front_and_belt(plan, g, side, sgn):
     bore = sh.cyl_axis(AXLE_R + 0.05, min(sgn * x_in, sgn * (x_out + 0.5)), max(sgn * x_in, sgn * (x_out + 0.5)), "x", yf, 0.0)
     plan.cut_both(bore, intent=I("assembly", "axle bore on the split plane: half in each shell half, so the top half "
                                  "clamps the axle and the wheel drops in from above", "5 mm + 0.1 mm"))
-    plan.connect(aid, "chassis_bottom", "interlock",
-                 "Standoff lies in the half-bore of the bottom half, clamped by the top half's half-bore when the "
-                 "corner screws close the shell", mechanical_key=True)
+    if plan.is_tub:
+        plan.cut("top", sh.boxr(min(sgn * x_in, sgn * (x_out + 0.5)), max(sgn * x_in, sgn * (x_out + 0.5)),
+                                yf - AXLE_R - 0.05, yf + AXLE_R + 0.05, -0.1, f.zt),
+                 intent=I("assembly", "tub: the axle bore is a U-slot open upward, so axle and wheel drop in from above; "
+                          "the wedgelet screwed to its end holds it down", "5 mm + 0.1 mm"))
+        plan.connect(aid, "tub", "interlock", "Standoff drops into the U-slot of the inner well wall and the side wall; "
+                     "the wedgelet screwed into its end and the top sheet hold it down", mechanical_key=True)
+    else:
+        plan.connect(aid, "chassis_bottom", "interlock",
+                     "Standoff lies in the half-bore of the bottom half, clamped by the top half's half-bore when the "
+                     "corner screws close the shell", mechanical_key=True)
     plan.part(id=wid, kind="wheel", material="pla", process="fdm",
               shape=wheel_shape(g.wheel_dia, g.wheel_w, "wheel" in plan.extra.get("lighten", ()), bore="axle"),
               at=[sgn * g.tyre_cx, yf, 0.0], print_orientation="+x",
@@ -321,12 +342,14 @@ def _front_and_belt(plan, g, side, sgn):
                       sh.side_prism(inner, xg - BELT_CORD, xg + BELT_CORD))
     plan.part(id=bid, kind="belt", material="rubber", process="cots", shape=belt_shape, color="#111111",
               belt={"pulleys": [f"pulley_{side}", f"pulley_f{side}"], "kind": "o_ring", "length_mm": round(bg["length_rest"], 1),
-                    "width_mm": BELT_CORD, "thickness_mm": 0.0},
-              label=f"{BELT_CORD} mm nitrile O-ring, {bg['ring_id']:.1f} mm ID, {BELT_STRETCH * 100:.0f} % stretch: "
+                    "width_mm": BELT_CORD, "thickness_mm": 0.0,
+                    "stock": {"id_mm": bg["ring_id"], "cs_mm": BELT_CORD}},
+              label=f"stock {bg['ring_id']:g} x {BELT_CORD:g} mm nitrile O-ring, {bg['stretch'] * 100:.0f} % stretch: "
                     "drives the front wheel off the rear hub",
               intent=I("load_path", "O-ring belt: drives the front wheel from the rear motor, so 4WD costs no extra motor; "
                        "it slips instead of breaking under a stall", f"centre {bg['centre_mm']:.1f} mm, groove r {GROOVE_R}, "
-                       f"{BELT_STRETCH * 100:.0f} % stretch -> {bg['ring_id']:.1f} mm ID ring"))
+                       f"{BELT_STRETCH * 100:.0f} % stretch -> {bg['ideal_id']:.1f} mm ID; nearest stock ring {bg['ring_id']:g} x {BELT_CORD:g} "
+                       f"({bg['stretch'] * 100:.1f} %)"))
     for p in (f"pulley_{side}", f"pulley_f{side}"):
         plan.connect(bid, p, "interlock", f"O-ring seated in the groove of {p} under {BELT_STRETCH * 100:.0f} % stretch")
     # belt tunnel inside the side wall, between the two wells

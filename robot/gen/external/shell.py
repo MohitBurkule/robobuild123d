@@ -75,8 +75,59 @@ def half_shape(plan, half: str) -> dict:
     return sh.S(body, *plan.late_cuts[half])
 
 
+def _slab(f, z0, z1):
+    return _outline_prism(f.outline, z0, z1, f.spline)
+
+
+def add_tub(plan, material="nylon", color="#23262b"):
+    """Open tub + base panel + top sheet: the same walls, housings and cuts as the clamshell, but the floor and the roof
+    are separate screwed sheets (Revron). Every pocket is open upward to the top sheet so its part drops in from above;
+    the sheets close it. The base panel gives service access to the drive and electronics without touching the weapon."""
+    f = plan.frame
+    for p in plan.pockets:  # open every pocket up to the top sheet: the part drops in, the sheet holds it down
+        p.z1 = max(p.z1, f.zt - f.floor + 0.01)
+    full = sh.U(half_shape(plan, "bottom"), half_shape(plan, "top"))
+    # the sheets sit inside the side walls (the walls run full height): no sheet edge is left as a sliver beside the
+    # wheel slots, and a side hit lands on the tub, not on a sheet edge
+    from shapely.geometry import Polygon as _P
+    inner = _ccw(_P(f.outline).buffer(-f.wall, join_style=2))
+    top_slab = _outline_prism(inner, f.zt - f.floor, f.zt + 40.0, f.spline)
+    base_slab = _outline_prism(inner, f.zb - 40.0, f.zb + f.floor, f.spline)
+    tub = sh.S(full, top_slab, base_slab)
+    lid = {"type": "intersect", "items": [full, top_slab]}
+    base = {"type": "intersect", "items": [full, base_slab]}
+    parts = [
+        {"id": "tub", "kind": "structure", "material": material, "process": "fdm", "shape": tub, "color": color,
+         "print_orientation": "+z"},
+        {"id": "base_panel", "kind": "structure", "material": material, "process": "fdm", "shape": base, "color": color,
+         "print_orientation": "+z"},
+        {"id": "lid", "kind": "structure", "material": material, "process": "fdm", "shape": lid, "color": "#2f3238",
+         "print_orientation": "-z"},
+    ]
+    for p in parts:
+        p.update(at=[0.0, 0.0, 0.0], rot=[0.0, 0.0, 0.0])
+    plan.parts[:0] = parts
+    plan.feature("part", I("load_path", "open tub: perimeter wall, motor and wheel housings and every pocket in one "
+                           "print, so the drive and weapon loads close through one piece", "walls 1.6 mm; open top and bottom"),
+                 target="tub")
+    plan.feature("part", I("service", "base panel: screwed under the tub; off in 4 screws for the drive and electronics "
+                           "without touching the weapon module (Revron RV26)", f"{f.floor} mm sheet = print minimum skin"),
+                 target="base_panel")
+    plan.feature("part", I("protection", "top sheet: closes the pockets (holds every part down) and carries the wheel "
+                           "guards; screwed on, so the bay opens without disturbing the drive", f"{f.floor} mm sheet"),
+                 target="lid")
+    plan.feature("wall", I("protection", "perimeter wall: the armour every side hit lands on, and the beam that ties the "
+                           "front (weapon) to the rear (drive)", plan.extra.get("wall_basis", f"{f.wall} mm")),
+                 target="chassis", half="both")
+    plan.feature("bevel", I("protection", "belly and top edges bevelled: removes the elephant's-foot lip and gives a hit "
+                            "on the corner a ramp to slide off", f"chamfer {EDGE_CHAMFER} mm (print rule)"),
+                 target="chassis", half="both")
+
+
 def add_shell(plan, material="nylon", color="#23262b"):
     """Turn the plan's chassis features into the two printed halves (first structure part = chassis root)."""
+    if plan.is_tub:
+        return add_tub(plan, material, color)
     bottom = {"id": "chassis_bottom", "kind": "structure", "material": material, "process": "fdm",
               "shape": half_shape(plan, "bottom"), "color": color, "print_orientation": "+z"}
     top = {"id": "chassis_top", "kind": "structure", "material": material, "process": "fdm",
