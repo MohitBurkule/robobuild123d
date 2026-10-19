@@ -413,6 +413,12 @@
    "reason": "heat-set insert: 3.5 OD melted into a 3.4 bore (interference by design)"
   },
   {
+   "a": "weapon_lock",
+   "b": "mount_l",
+   "max_depth_mm": 0.1,
+   "reason": "RV00 TPU lock pin d4 pressed into the RV02 3.9 bore (0.05 radial grip) so it cannot rattle out"
+  },
+  {
    "a": "wbearing",
    "b": "mount_l",
    "max_depth_mm": 0.1,
@@ -501,7 +507,7 @@
        21.85
       ],
       "r": 4.5,
-      "reason": "RV00 weapon-lock pin bore d4.2 through RV02 (Build Guide lock rule; the STEP models no lock)"
+      "reason": "RV00 weapon-lock pin bore d3.9 through RV02 (Build Guide lock rule; the STEP models no lock)"
      }
     ]
    },
@@ -6885,8 +6891,9 @@
   {
    "a": "weapon_lock",
    "b": "mount_l",
-   "method": "pin",
-   "reason": "TPU lock pin slides in the RV02 4.2 bore (0.1 slip) into a spider window; the head stops it, the lanyard tethers it to the mount",
+   "method": "press_fit",
+   "reason": "TPU lock pin pressed into the RV02 3.9 bore (0.05 radial grip, pulled by its flag) into a spider window; the head stops it, the lanyard tethers it to the mount",
+   "interference_mm": 0.05,
    "mechanical_key": true
   },
   {
