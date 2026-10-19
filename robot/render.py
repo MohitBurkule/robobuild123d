@@ -411,8 +411,24 @@ def cli(a):
         for i, f in enumerate([f for f in rep.findings if not f.passed], 1):
             print(f"{i}: {f.id} - {f.message}")
     Path(a.out).write_bytes(render_png(w, view, _ground(s, w), marks))
+    write_record(a.out, a.spec, w, getattr(rep, "routes", None) or [])
     print(f"wrote {a.out}")
     return 0
+
+
+def write_record(out, spec_path, w, routes):
+    """Sidecar `<png>.json`: what the render shows (bodies, wire endpoints), read by wire.render_present."""
+    import json
+    import time
+
+    rec = {"spec": str(Path(spec_path).resolve()), "rendered_at": time.time(),
+           "bodies": [b.id for b in w.bodies if not b.is_wire],
+           "wires": {rt.id: {"from": [float(v) for v in rt.points[0]], "to": [float(v) for v in rt.points[-1]]}
+                     for rt in routes if len(rt.points) >= 2}}
+    try:
+        Path(str(out) + ".json").write_text(json.dumps(rec, indent=1))
+    except OSError:
+        pass
 
 
 def add_cli(sub):

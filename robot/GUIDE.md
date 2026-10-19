@@ -400,6 +400,34 @@ side or dragging on the floor when inverted; **CFX-ANTENNA** modelled antenna on
 held only by friction/press fit; **CFX-TAPE** electronics held only by tape/velcro; **CFX-STATE** no answer when inverted,
 one drive side dead, weapon dead, radio failsafe, or on its side.
 
+## Design-review gates (groups `ref_map`, `cots_fidelity`, `wire_review`, `fastener_record`, `belt_wrap`, `print_orient`)
+
+From the Revron 2.0 CAD review: findings a reviewer had to spot by eye are now checks. Run them alone with
+`python3 -m robot verify spec.json --only ref_map,cots_fidelity,wire_review,fastener_record,belt_wrap,print_orient`.
+
+- **reference.unmapped_part**: every part and fastener maps to a part in the reference STEP parts index
+  (`reference_cad.dir`): a reference_cad entry, `ref_part: "<stem glob>"`, or a `reference_bom` row that cites an index
+  part (`ref_parts` globs or a role word such as `FS8`/`RV15`/`spider`). Our own BOM rows (no cited part, or "not in the
+  STEP") do not count. Otherwise write `deviation: "why"` on the part, fastener or row. WHY: disc nuts and a lock pin
+  were invented and nobody asked why.
+- **cots.fidelity**: motors carry their identifying features (outrunner bell, stator base, shaft, mount bolt circle;
+  gearmotor can and shaft) within 0.3 mm of `cots_fidelity.FEATURES` or the part's `features`. WHY: the GR1507 model had
+  no stator holes and "looked wrong". Screw drive recesses are cut by `fastener_shape`, not judged here.
+- **wire.rotating_clearance**: every fastener and nut that turns with the weapon sweeps a ring; each wire bundle
+  (`count` x (OD + 0.3)) along port -> via -> port, and the motor phase exit, keeps >= `review.wire.rotating_clearance_mm`
+  (3). WHY: the phase leads ran next to the disc nuts.
+- **wire.render_present**: every wire end resolves to a current port, and with `renders: {dir, views}` at least one
+  render draws the wires (the `<png>.json` record `robot render` writes), newer than the spec, with each drawn end
+  within 3 mm of the port now. WHY: the final renders had no wires and the only wiring view predated the switch move.
+- **fastener.hole_record**: every fastener has a `hole` record, and a screw into a printed part (not an insert or nut)
+  has length - grip >= `review.fastener.min_engagement_d` x d (2.5 d). WHY: switch screws had no hole record; M2x4 into
+  PLA strips.
+- **cots.belt_wrap**: an O-ring belt is one closed loop (Euler number 0) with a run on both sides of each pulley centre.
+  WHY: the belts were flat strips.
+- **print.orientation_declared**: every FDM part declares `print_orientation` and its overhang/bridge is judged in THAT
+  orientation (limit `review.print.max_overhang_mm2`, default 60 mm²), not the best of six. WHY: the electronics cage
+  only works deck-down, which turns the floor lugs into overhangs.
+
 ## Support in every orientation (`support.loose`)
 
 Every part not held to the chassis by a declared hold (screw through/into it, press_fit, clamp, strap, glue, pin, shaft,
