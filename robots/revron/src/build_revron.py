@@ -50,7 +50,6 @@ MNT_IN, MNT_OUT = 13.4, 21.4         # weapon mount |X| span (8 mm): 4 mm slab +
 MNT_SLAB = 17.4
 BSP_X = (11.9, 13.4)
 STAT_HOLE_R, CB_R, CB_CONE_X = 1.12, 2.25, (16.4, 17.15)   # RV03 stator screw clearance d2.24, d4.5 counterbore, its cone
-CB_CONE_R = 1.85   # the STEP lead-in cone stops at d3.7 so the d3.5 button head keeps a flat 17.15 seat (STEP cone runs to d4.5: <=0.33 mm off)
 # RV00 weapon lock pin (Build Guide rule; not in the STEP): a d4 TPU pin pushed in from outside through RV02 into one of
 # the spider's quarter windows, parked against the window's outer arc. Drisk-local window centre angle 45 deg at r9.6:
 # the pin spans r7.6..11.6 (bolt_p heads end at r6.25, window arc r11.7, bolt_d heads start r12.25), its tip stops
@@ -294,11 +293,9 @@ def weapon_mount(side):
         bb_ = _b()
         for dy, dz in ((6, 0), (-6, 0), (0, 6), (0, -6)):                           # GR1507 stator M2 on 12 mm
             # catalog hole (robot.cad.holes): button-head M2, head seat on the STEP d4.5 counterbore floor at X 17.15,
-            # ISO 273 normal clearance through the 3.75 mm slab; the STEP's lead-in cone below the floor is kept
+            # ISO 273 normal clearance through the 3.75 mm slab; the STEP lead-in cone is left out (flat seat, see reference deviation)
             cut, _ = _stator_hole(s, dy, dz)
             cuts.append(cut)
-            x_c0, x_c1 = s * CB_CONE_X[0], s * CB_CONE_X[1]
-            cuts.append(bb_.Solid.make_cone(STAT_HOLE_R, CB_CONE_R, abs(x_c1 - x_c0), bb_.Plane(origin=(x_c0, WY + dy, WZ + dz), z_dir=(s, 0, 0))))
     else:
         cuts.append(_cyl(3.95, -30, 30, (WY, WZ)))                                   # outboard bearing seat (8 mm)
         cuts.append(_cyl(6.0, xm, xo + s, (WY, WZ)))                                 # shaft nut recess
@@ -315,7 +312,9 @@ def _stator_hole(s, dy, dz):
         sys.path.insert(0, _repo)
     from robot.cad.holes import hole_tool
     y, z = WY + dy, WZ + dz
-    face = 23.88 - 0.144 * z - 0.0379 * y          # RV03 battered outer face |X| at this hole (STEP plane, see weapon_mount)
+    # RV03 battered outer face |X| (STEP plane, see weapon_mount), highest point on a ring 1 mm outside the counterbore:
+    # the surface the hole is measured from on a leaning face
+    face = 23.88 - 0.144 * z - 0.0379 * y + (CB_R + 1.0) * math.hypot(0.144, 0.0379)
     depth = face - CB_CONE_X[1]                     # counterbore down to the STEP floor at X 17.15
     cut, rec = hole_tool((s * face, y, z), (-s, 0, 0), "M2x8", head="button", into="through", side="head",
                          grip=face - MNT_IN, cbore=depth, cbore_clear=2 * CB_R - 3.5, fit="normal")
@@ -1127,7 +1126,10 @@ def reference_cad():
         R("mount_l", "RV02_XALT_HD_left_hand_weapon_mount_1.stl", tol_mm=0.5,
           deviations=[{"near": [-17.4, *[round(v, 2) for v in _lock_yz()]], "r": 4.5,
                        "reason": "RV00 weapon-lock pin bore d3.9 through RV02 (Build Guide lock rule; the STEP models no lock)"}]),
-        R("mount_r", "RV03_XALT__HD_Right_hand_weapon_mount_1.stl", tol_mm=0.5),
+        R("mount_r", "RV03_XALT__HD_Right_hand_weapon_mount_1.stl", tol_mm=0.5,
+          deviations=[{"near": [16.8, WY + dy, WZ + dz], "r": 2.0,
+                       "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"}
+                      for dy, dz in ((6, 0), (-6, 0), (0, 6), (0, -6))]),
         R("motor_spacer", "Motor_back_spacer_1.stl", tol_mm=0.3),
         R("spider", "spider_1.stl", tol_mm=0.5, ref_to_world=dt),
         R("disc_a", "Drisk_floating_3_1.stl", tol_mm=0.5, ref_to_world=dt),

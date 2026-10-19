@@ -516,7 +516,45 @@
     "part": "mount_r",
     "file": "RV03_XALT__HD_Right_hand_weapon_mount_1.stl",
     "mode": "shape",
-    "tol_mm": 0.5
+    "tol_mm": 0.5,
+    "deviations": [
+     {
+      "near": [
+       16.8,
+       44.5,
+       23.5
+      ],
+      "r": 2.0,
+      "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"
+     },
+     {
+      "near": [
+       16.8,
+       32.5,
+       23.5
+      ],
+      "r": 2.0,
+      "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"
+     },
+     {
+      "near": [
+       16.8,
+       38.5,
+       29.5
+      ],
+      "r": 2.0,
+      "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"
+     },
+     {
+      "near": [
+       16.8,
+       38.5,
+       17.5
+      ],
+      "r": 2.0,
+      "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"
+     }
+    ]
    },
    {
     "part": "motor_spacer",
@@ -6048,8 +6086,8 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
-    "cbore_depth": 1.6594,
-    "grip": 5.4094
+    "cbore_depth": 2.1434,
+    "grip": 5.8934
    },
    "dir": [
     -1,
@@ -6086,8 +6124,8 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
-    "cbore_depth": 2.1142,
-    "grip": 5.8642
+    "cbore_depth": 2.5982,
+    "grip": 6.3482
    },
    "dir": [
     -1,
@@ -6124,8 +6162,8 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
-    "cbore_depth": 1.0228,
-    "grip": 4.7728
+    "cbore_depth": 1.5068,
+    "grip": 5.2568
    },
    "dir": [
     -1,
@@ -6162,8 +6200,8 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
-    "cbore_depth": 2.7508,
-    "grip": 6.5008
+    "cbore_depth": 3.2348,
+    "grip": 6.9848
    },
    "dir": [
     -1,
