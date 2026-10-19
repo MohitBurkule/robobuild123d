@@ -462,7 +462,7 @@ def wedgelet(s):
     # the nose tab bears on the weapon mount's nose: take the mount's boss outline (its side profile above the
     # notch-to-nose line) out of the tab in 2D and drop any sliver thinner than a TPU wall, so no film is left
     mprof = _mount_profile(7.0 if s < 0 else 10.0).intersection(P([(15.0, 19.5), (44.34, 6.34), (60, 6.34), (60, 60), (0, 60), (0, 19.5)]))
-    tab = tab.difference(mprof).buffer(-0.6, join_style=2).buffer(0.6, join_style=2)
+    tab = tab.difference(mprof.buffer(0.4, 32)).buffer(-0.6, join_style=2).buffer(0.6, join_style=2)
     bb = _b()
     sk = _one(_ext(skin, "yz", -35.5, -29.0)).split(bb.Plane(origin=(-34.0, 41.66, 11.06), z_dir=(-1.24, -0.75, 1.0)), keep=bb.Keep.BOTTOM)
     body = _U(_ext(s1, "yz", -38.5, -36.5), _ext(s2, "yz", -36.5, -35.5), sk, _ext(cheek, "yz", -29.0, -21.5), _ext(tab, "yz", -21.5, -17.5) if not tab.is_empty else None)
@@ -550,7 +550,10 @@ def side_panel(s):
     # M3 CSK seats (ISO 10642 head 6.6, +0.1 clearance) with a 12 mm head bore out through the battered outer face, so a
     # driver reaches the head and the screw backs straight out
     cuts = [_csk(3.3, 6.7, (-46.26, SA[0], SA[1]), "x", 1, 8.0, 12.0), _csk(3.3, 6.7, (-41.76, SB[0], SB[1]), "x", 1, 8.0, 12.0),
-            _csk(3.3, 6.7, (-35.26, NUT[0], NUT[1]), "x", 1, 8.0, 12.0), _cyl(2.55, -42.55, -38.0, SA),
+            _csk(3.3, 6.7, (-35.26, NUT[0], NUT[1]), "x", 1, 8.0, 12.0),
+            # the nose bolt's head bore flares 45 deg out through the chamfered nose (driver room, and no knife-edge
+            # film where a straight bore would graze the chamfer plane)
+            b.Solid.make_cone(3.35, 9.35, 6.0, b.Plane(origin=(-42.8, SB[0], SB[1]), z_dir=(-1, 0, 0))), _cyl(2.55, -42.55, -38.0, SA),
             _box(-45.0, -43.4, -38.7, -24.8, 5.0, 15.0),                          # rear tyre relief on the inner face
             _box(-32.6, -31.4, -13.1, 2.6, 3.7, 13.3)]                            # clears the chassis nut lobe
     for y0 in (-11.0, -4.5, 2.0):     # diagonal vent slots (TPU wall flexes, keeps the ESC cool)
@@ -561,7 +564,7 @@ def side_panel(s):
     # belt channel on the inner face: the O-ring runs inside the panel, covered from outside (W8)
     from shapely.geometry import Point
     band = Point(RY, RZ).buffer(7.5 + 1.25, 64).union(Point(*SA).buffer(3.7 + 1.25, 48)).convex_hull
-    band = band.difference(band.buffer(-2.6, 64))      # only the ring the O-ring actually runs in, not the whole hull
+    band = band.buffer(2.0, 64).difference(band.buffer(-2.6, 64))   # the ring the O-ring runs in (+2 mm so no film is left at the panel top), not the whole hull
     return _S(sh, _ext(band, "yz", *sorted((s * 30.5, s * 32.0))))
 
 
