@@ -19,8 +19,8 @@ Ti top panel bonded on the deck. N10s in keyhole side-wall pockets drive the rea
 micro wheels on the 25 mm standoffs.
 """
 import json, math, os, sys
-ROOT = "/home/user/robobuild123d"
 HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
 
 # ======================================================================================================================
 # Measured layout (RVRN 2.0 STEP, world frame). Each number is a dimension of a feature, not a mesh coordinate list.
@@ -37,6 +37,8 @@ INS = [(-25.0, 10.4), (25.0, 10.4), (-25.0, -21.6), (25.0, -21.6), (0.0, -33.6)]
 INS_Z = (5.1, 9.1)                   # FS1 M2 heat-set (3.5 OD x 4)
 RY, RZ = -30.5, 11.0                 # N10 shaft (rear axle)
 MOTX = 19.6                          # N10 catalog origin |X| (body 3.7..27.5, shaft to 37.5)
+N10_KEY = (23.55, 26.15)             # |X| of the chassis key tab between the N10's last two gearbox plates
+N10_TOP = 17.0                       # top face of the N10 gearbox plates
 # chassis RV01
 CH = dict(x=29.5, y0=-37.6, y1=15.0, z0=2.5, z1=19.5, wall=2.0, deck=17.5, cham=2.0)
 # drisk
@@ -410,8 +412,11 @@ def rear_hub(s):
     axially), O-ring groove inboard between 8 mm flanges, a 14 mm tyre seat with a raised 7 mm crown that holds the F1
     tyre, a 6.5 mm outer lip; M2 grub into a captive nut slot on the flat."""
     from shapely.geometry import Point, Polygon
-    prof = [(0.0, 0.0), (0.0, 8.0), (0.5, 8.0), (0.8, 7.55), (1.7, 7.55), (2.0, 8.0), (2.5, 8.0), (2.55, 6.9), (2.75, 6.35), (3.35, 6.0),
-            (5.25, 6.0), (6.25, 7.0), (8.25, 7.0), (9.25, 6.0), (11.29, 6.0), (12.0, 6.5), (12.0, 2.88), (11.8, 2.88), (11.8, 0.0)]   # STEP RV21
+    # STEP RV21, except: groove flanges 0.7 thick (STEP 0.5, under the 0.63 printable floor) with the groove narrowed
+    # symmetrically to 1.1 (the 1.0 O-ring still seats, centre unchanged), and a 0.4 flat on the outer lip (the STEP
+    # lip runs out to a knife edge that prints as a ragged single line)
+    prof = [(0.0, 0.0), (0.0, 8.0), (0.7, 8.0), (0.95, 7.55), (1.55, 7.55), (1.8, 8.0), (2.5, 8.0), (2.55, 6.9), (2.75, 6.35), (3.35, 6.0),
+            (5.25, 6.0), (6.25, 7.0), (8.25, 7.0), (9.25, 6.0), (11.29, 6.0), (11.6, 6.5), (12.0, 6.5), (12.0, 2.88), (11.8, 2.88), (11.8, 0.0)]
     if s < 0:
         prof = [(-x, r) for x, r in prof]
     body = _revolve_x(prof, s * 30.0, (RY, RZ))
@@ -424,8 +429,10 @@ def rear_hub(s):
 def front_hub(s):
     """RV19 micro hub (9 x 9) running on the 25 mm standoff: 6 mm tyre seat between two 9 mm flanges, an O-ring
     groove inboard."""
-    prof = [(0.0, 2.7), (0.0, 4.5), (0.5, 4.5), (0.56, 3.96), (0.93, 3.7), (1.74, 3.76), (1.94, 3.96), (2.0, 4.5), (2.5, 4.5), (2.5, 4.1), (2.9, 3.7),
-            (8.1, 3.7), (8.5, 4.1), (8.5, 4.5), (9.0, 4.5), (9.0, 2.7)]   # STEP RV19
+    # STEP RV19, except all three flanges 0.7 thick (STEP 0.5): the groove flanges grow into the groove (1.1 wide, centre
+    # unchanged) and the outer flange grows 0.2 outboard so the 6 mm tyre seat keeps its width
+    prof = [(0.0, 2.7), (0.0, 4.5), (0.7, 4.5), (0.75, 3.96), (0.93, 3.7), (1.57, 3.7), (1.75, 3.96), (1.8, 4.5), (2.5, 4.5), (2.5, 4.1), (2.9, 3.7),
+            (8.1, 3.7), (8.5, 4.1), (8.5, 4.5), (9.2, 4.5), (9.2, 2.7)]
     if s < 0:
         prof = [(-x, r) for x, r in prof]
     return _revolve_x(prof, s * 30.0, SA)
@@ -622,6 +629,13 @@ def chassis():
         add.append(_ext(mx(rear_blk), "xy", z0, c["deck"] + 0.1))
         # motor front stop wall (load path: the N10 gearbox bears on it, not the base screws)
         add.append(_box(sg * 17.7, sg * (x - w + 0.1), -25.4, -23.4, z0, c["deck"] + 0.1))
+        # N10 retention comb off the stop wall (deviation from the STEP, which leaves the motor to the hub and grub):
+        # a key tab drops between the last two gearbox plates (|X| 23.4 / 26.3, 0.15 each side) so a hit or a drop
+        # cannot walk the motor along its shaft, and a 0.35 mm ledge over the gearbox plates stops it lifting off the
+        # base-panel preload pad when inverted. Both hang from the deck (printed deck-down: no supports) and clear the
+        # rounded can, so the motor still drops straight out downwards once the base panel is off.
+        add.append(_box(sg * N10_KEY[0], sg * N10_KEY[1], -26.15, -23.4, 16.0, c["deck"] + 0.1))
+        add.append(_box(sg * 20.0, sg * (x - w + 0.1), -27.3, -23.4, N10_TOP + 0.15, c["deck"] + 0.1))
         # side lobe with the thin M3 nut (Y -16.3..2.8)
         lobe = Point(NUT[0], NUT[1]).buffer(4.55, 64).union(Point(1.35, 6.9).buffer(1.2, 32)).convex_hull
         add.append(_ext(lobe, "yz", sg * (x - 0.1), sg * 32.5))
@@ -691,6 +705,9 @@ def chassis():
     for sg in (1, -1):
         # N10 keyhole: round seat for the gearbox shaft boss, narrowing to the floor (motor tilts in)
         kh = Point(RY, RZ).buffer(2.5, 64).union(Point(RY, 5.85).buffer(0.85, 24)).convex_hull   # STEP keyhole
+        # opened into a U-slot to the floor (deviation): the gearbox boss (4 dia) and the shaft drop in from below with
+        # the base panel off, instead of threading the shaft through a closed hole the motor cannot reach in a straight line
+        kh = kh.union(Polygon([(RY - 2.05, z0 - 1.0), (RY + 2.05, z0 - 1.0), (RY + 2.05, RZ), (RY - 2.05, RZ)]))
         cuts.append(_ext(kh, "yz", sg * (x - w - 0.5), sg * (x + 0.5)))
         # nut: M3 clearance through lobe + wall, hex pocket on the inside
         cuts.append(_cyl(1.6, sg * 26.0, sg * 33.0, NUT))
