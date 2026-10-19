@@ -145,8 +145,9 @@ def pulley_shape(bore: str = "d") -> dict:
     """O-ring pulley printed as one piece with its wheel (fused): two flanges and a groove, axis x, centred."""
     rf = GROOVE_R + BELT_CORD / 2 + 0.6
     groove = sh.S(sh.cyl(rf + 1.0, 1.4, rot=(0, 90, 0)), sh.cyl(GROOVE_R, 1.6, rot=(0, 90, 0)))
-    bore_s = ({"type": "intersect", "items": [sh.cyl(1.5, GROOVE_W + 2, rot=(0, 90, 0)), sh.box(GROOVE_W + 2, 3.2, 2.6, (0, 0, -0.3))]}
-              if bore == "d" else sh.cyl(AXLE_R + 0.1, GROOVE_W + 2, rot=(0, 90, 0)))
+    # on the motor side the pulley sits inboard of the hub, over the shaft's round root: a 0.1 mm clearance bore (the
+    # D-bore in the hub, printed as one piece with the pulley, carries the torque)
+    bore_s = (sh.cyl(1.6, GROOVE_W + 2, rot=(0, 90, 0)) if bore == "d" else sh.cyl(AXLE_R + 0.1, GROOVE_W + 2, rot=(0, 90, 0)))
     # a 0.4 mm spigot into the hub face on the outboard (+x) side: the two print as one piece
     spigot = sh.cyl(GROOVE_R, 0.8, (GROOVE_W / 2, 0, 0), (0, 90, 0))
     return sh.S(sh.U(sh.cyl(rf, GROOVE_W, rot=(0, 90, 0)), spigot), groove, bore_s)

@@ -407,6 +407,14 @@ def add_forks(plan, yw):
     else:
         y_root = f.y1 - FORK_ROOT
         prof = [(y_root, f.zb + 1.0), (y_root, f.zb + 8.0), (f.y1, f.zb + 8.0), (y_tip, z_tip + 1.5), (y_tip, z_tip)]
+    # the side skirt passes under the tine plate: clear a box round the plate down to 0.4 mm below its lowest edge
+    # over the skirt's length (the skirt stops at the front wall)
+    zb_root = prof[0][1]
+    z_low = zb_root - (zb_root - z_tip) * max(0.0, f.y1 - y_root) / max(y_tip - y_root, 1.0) - 0.4
+    t_ = WEDGELET_T if kind == "wedgelets" else FORK_T
+    for sgn in (1, -1):
+        xa, xb = sorted((sgn * (f.x1 - 0.4), sgn * (f.x1 + t_ + 0.6)))
+        plan.extra.setdefault("skirt_clear", []).append(sh.boxr(xa, xb, y_root - 0.6, f.y1 + 1.0, z_low, f.zt + 5.0))
     lip = (f"lip {z_tip - floor:.1f} mm off the floor, tip {y_tip - yw - disc_r(plan):.0f} mm ahead of the disc")
     for side, sgn in (("l", 1), ("r", -1)):
         x0 = f.x1 if sgn > 0 else -f.x1 - t

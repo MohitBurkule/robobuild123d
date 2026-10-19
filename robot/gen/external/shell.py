@@ -156,7 +156,8 @@ def add_shell(plan, material="nylon", color="#23262b"):
 
 SKIRT_OUT = 3.0  # skirt lip protrudes this far beyond the wall
 SKIRT_LIP = 0.5  # lip height above the floor: level with a well-set opponent fork (0.3-0.5 mm)
-SKIRT_EDGE = 0.6  # vertical lip face (combat.R026: <= 0.6 mm or it stops sliding under)
+SKIRT_EDGE = 1.0  # vertical lip face: >= 0.9 mm print wall at the tip (R026 asks <= 0.6 mm on the front lip only)
+SKIRT_BAND = 1.2  # the skirt's solid band inboard of the outline (a thin band leaves a sliver at the belly bevel)
 
 
 def _aligned(f, d):
@@ -186,18 +187,29 @@ def add_skirts(plan, floor_z: float):
     sk = sh.loft([{"z": sh.r(z_lip), "points": [list(p) for p in out], "spline": False},
                   {"z": sh.r(z_lip + SKIRT_EDGE), "points": [list(p) for p in out], "spline": False},
                   {"z": sh.r(f.zb + EDGE_CHAMFER + 0.2), "points": [list(p) for p in full], "spline": False}], ruled=True)
-    inner = _ccw(geom.inset(f.outline, 0.3))
+    inner = _ccw(geom.inset(f.outline, SKIRT_BAND))
     ys = [p[1] for p in f.outline]
     y0, y1 = min(ys), max(ys)
-    y_hi = y1 + 5.0 if mode == "sides_rear" else y0 + 12.0
+    # stop short of the front parts (wedge web, side-mounted forks/wedgelets) so the skirt never overlaps them
+    fronts = [p for p in plan.parts if p.get("kind") in ("wedge", "skirt") and not any(p.get("at") or [])]
+    # (a horizontal bar sweeps just above the front corners: nothing may stand ahead of it there)
+    under_front = fronts and h.weapon != "hspin_bar"
+    wy = [p["at"][1] for p in plan.parts if p.get("kind") == "wheel"]
+    # rear: the skirt wraps the rear corners and ends in the rear wheels' doors (a free end would be a bite step)
+    y_rear = (min(wy) + plan.extra.get("wheel_r", 15.0) + 2.0) if wy else y0 + 12.0
+    y_hi = (y1 + 5.0 if under_front else y1 - 0.5) if mode == "sides_rear" else max(y0 + 12.0, y_rear)
+    if not under_front:
+        fronts = []
     keep = sh.boxr(-200, 200, y0 - 10, y_hi, z_lip - 1, f.zb + 5)
     cuts = [_outline_prism(inner, z_lip - 1, f.zb, False)]
+    cuts += [p["shape"] for p in fronts]
+    cuts += plan.extra.get("skirt_clear", [])  # side-mounted forks / wedgelets: the skirt passes under them  # run under the front ramp's side ends, clear of the ramp itself
     for p in plan.parts:  # the tyre is the edge where a wheel reaches the outline: leave its door
         if p.get("kind") == "wheel":
             x, y = p["at"][0], p["at"][1]
             r = plan.extra.get("wheel_r", 15.0)
             cuts.append(sh.boxr(*sorted((x - (8 if x > 0 else -8), x + (40 if x > 0 else -40))), y - r - 2.0, y + r + 2.0,
-                                z_lip - 1, f.zb + 0.1))
+                                z_lip - 1, f.zb + EDGE_CHAMFER + 0.5))  # the whole skirt height: no skin over the door
     plan.add("bottom", sh.S({"type": "intersect", "items": [sk, keep]}, *cuts),
              intent=I("ground_game", "side and rear skirt: a wedge, fork, lifter or flipper arriving from the side or rear "
                       "meets a lip at the floor instead of the door under the belly; its ramp face throws a rising tooth "

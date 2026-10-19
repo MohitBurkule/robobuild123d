@@ -176,9 +176,18 @@ def ground_game(h: "Hypothesis") -> dict:
     acc = {}
     if h.skirts in ("rear", "none"):
         for d in ("left", "right", "front_left", "front_right", "rear_left", "rear_right"):
-            acc[d] = f"skirts={h.skirts}: the hypothesis leaves the sides to the wheels and wells"
+            acc[d] = (f"skirts={h.skirts}: the spinner's weapon takes the 3-4 g full side skirts would cost (they put "
+                      "it over 150 g); the weapon is the side defence and the wheels and wells cover the sides"
+                      if h.is_spinner else f"skirts={h.skirts}: the hypothesis leaves the sides to the wheels and wells")
+    if h.skirts == "rear":
+        for d in ("rear_left", "rear_right"):
+            acc[d + ".bite"] = ("the rear skirt ends in the drive wheel's door: the belly edge there sits 2-3 mm up beside "
+                                "the tyre, which stands proud of it and is what a rising tooth meets first")
     if h.skirts == "none":
-        acc["rear"] = "skirts=none"
+        acc["rear"] = ("skirts=none: no mass left for a skirt (the spinner is within 2 g of 150 g); the weapon faces "
+                       "the opponent and the rear is left to the wheels" if h.is_spinner else "skirts=none")
+        acc["rear.bite"] = ("skirts=none: the top half's rear lip overhangs the belly bevel by its chamfer; without a "
+                            "skirt a rising tooth can catch it - the accepted cost of the mass")
     if h.weapon == "vspin_drisk":
         acc["front"] = ("the disc is the front: it sweeps 2 mm above the floor between the forks/wedgelets, so a wedge "
                         "that reaches the gap under it meets the teeth (combat.R053 measures the sweep)")
@@ -317,11 +326,11 @@ PRESETS = {
     "hspin_bar": dict(weapon="hspin_bar", mount="top", orientation="flat", attachment="hub_motor", front="wedge",
                       wheel_dia=22, weapon_esc="c_bbb_antweight_spinner_brushless_esc",
                       battery="c_typical_2s_300mah_lipo_lihv_betafpv_tbs_",
-                      drive_esc="c_malenki_nano_antweight_esc_receiver", rx="integrated"),
+                      drive_esc="c_malenki_nano_antweight_esc_receiver", rx="integrated", skirts="rear"),
     "vspin_drisk": dict(weapon="vspin_drisk", mount="front", orientation="vertical", attachment="drisk", front="forks",
                         drive_layout="2WD", wheel_dia=22, weapon_esc="c_bbb_antweight_spinner_brushless_esc",
                         battery="c_typical_2s_300mah_lipo_lihv_betafpv_tbs_", invertible=False, drive_esc="c_malenki_nano_antweight_esc_receiver",
-                        rx="integrated"),
+                        rx="integrated", skirts="rear"),
 }
 
 

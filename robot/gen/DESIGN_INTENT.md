@@ -160,7 +160,9 @@ Each hypothesis states how it plays it (`generator.ground_game`): front interfac
 material, and the trade-off; any direction it leaves open is an accepted risk with a reason.
 
 25. **Every direction is skirted or accepted.** Front lip <= 1.0 mm, sides and rear <= 3.0 mm over most of the arc; the
-    default `skirts=sides_rear` adds a 0.5 mm flexible skirt round the sides and rear. Rationale: a side or rear
+    default `skirts=sides_rear` adds a 0.5 mm lip skirt round the sides and rear (it runs under the wedge's side ends
+    and under side-mounted tines). The spinner presets use `skirts=rear`: full side skirts put them over 150 g, so the
+    weapon, wheels and wells are the side defence, which they state as an accepted risk. Rationale: a side or rear
     T-bone is how wedges beat a front-only wedge (CF-WL07, CF-WL01).
 26. **No bite edges.** No downward face 1-30 mm up that a tooth reaches first; screw heads near the floor are
     countersunk. Rationale: a vertical spinner lifts by the first ledge it catches (CF-VS01, CF-VS05).
