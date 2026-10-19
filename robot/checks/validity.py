@@ -89,10 +89,23 @@ def run(r, out) -> bool:
     return good
 
 
+def _excluded(metric, only) -> bool:
+    """True when --only skipped the group that measures `metric` (so its absence is not a spec error)."""
+    from . import CLAIM_METRIC_GROUPS, CLAIMS_GROUP
+    if not only or CLAIMS_GROUP in only:
+        return False
+    gs = [g for k, g in CLAIM_METRIC_GROUPS.items() if metric == k or metric.startswith(k)]
+    return bool(gs) and not any(g in only for g in gs)
+
+
 def claims(ctx):
     out = []
     for c in ctx.r.spec.claims:
         actual = ctx.metrics.get(c.metric)
+        if actual is None and _excluded(c.metric, ctx.opts.only):
+            out.append(ok("claim.not_evaluated", "claims", "Claim not evaluated in this partial run",
+                          f"claim `{c.id}`: `{c.metric}` is measured by a group excluded by --only; run with --only claims."))
+            continue
         if actual is None:
             out.append(fail("claim.unknown_metric", "claims", BLOCKER, "Claim cannot be checked", f"claim `{c.id}`: no measured metric `{c.metric}`"))
             continue

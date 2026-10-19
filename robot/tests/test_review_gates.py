@@ -55,11 +55,12 @@ def test_unmapped_part_reference_row_or_deviation_passes(tmp_path):
 
 
 # ------------------------------------------------------------------------------------------------- cots.fidelity
-def test_cots_fidelity_catalog_gr1507_without_bolt_circle_fails():
+def test_cots_fidelity_catalog_gr1507_has_its_bolt_circle():
+    """The catalog GR1507 now carries the real base cross with the 4 M2 holes on 12 mm."""
     d = chassis()
     d["parts"].append({"id": "wm", "kind": "weapon_motor", "catalog": "gr1507", "at": [0, 0, 30]})
     f = [f for f in run(d, "cots_fidelity").findings if f.id == "cots.fidelity" and not f.passed]
-    assert f and "bolt circle" in f[0].message
+    assert not any("bolt circle" in x.message for x in f)
 
 
 def test_cots_fidelity_real_outrunner_passes():

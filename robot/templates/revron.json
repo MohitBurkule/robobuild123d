@@ -356,6 +356,18 @@
  "can_run_inverted": false,
  "allow_overlap": [
   {
+   "a": "belt_l",
+   "b": "side_l",
+   "max_depth_mm": 0.3,
+   "reason": "O-ring is rubber: it squashes 0.16 mm against the plain inner face of the STEP side panel (the STEP has no belt channel)"
+  },
+  {
+   "a": "belt_r",
+   "b": "side_r",
+   "max_depth_mm": 0.3,
+   "reason": "O-ring is rubber: it squashes 0.16 mm against the plain inner face of the STEP side panel (the STEP has no belt channel)"
+  },
+  {
    "a": "wshaft",
    "b": "wbearing",
    "max_depth_mm": 0.3,
@@ -1775,6 +1787,7 @@
    "rotates_with": "fixed",
    "stock": "MR85ZZ 5 x 8 x 2.5",
    "color": "#555555",
+   "deviation": "bought part left out of the STEP (INDEX.txt lists no bearing): RV02 carries the 7.9 mm printed seat for it and the guide BOM lists an MR85ZZ; added for the shaft support",
    "shape": {
     "type": "subtract",
     "base": {
@@ -1827,6 +1840,7 @@
    "rotates_with": "weapon",
    "shaft_of": "weapon_motor",
    "parent": "weapon_motor",
+   "deviation": "the GR1507 shaft is part of the bought motor, which the STEP draws as one body (INDEX.txt lists no shaft); drawn separately here for the MR85 support and the spider collar",
    "shape": {
     "type": "place",
     "shape": {
@@ -2602,6 +2616,7 @@
    "kind": "belt",
    "material": "rubber",
    "process": "cots",
+   "deviation": "O-rings are bought parts and are not modelled in the RVRN 2.0 STEP (the original CAD shows the groove and hub only); modelled here as a stretched loop for fit and clearance checks",
    "shape": {
     "type": "subtract",
     "base": {
@@ -4482,6 +4497,7 @@
    "kind": "belt",
    "material": "rubber",
    "process": "cots",
+   "deviation": "O-rings are bought parts and are not modelled in the RVRN 2.0 STEP (the original CAD shows the groove and hub only); modelled here as a stretched loop for fit and clearance checks",
    "shape": {
     "type": "subtract",
     "base": {
@@ -6576,15 +6592,15 @@
     "d": 3.0,
     "length": 12.0,
     "head": "csk",
-    "head_std": "ISO 10642",
-    "head_dk": 6.72,
+    "head_std": "DIN 7991",
+    "head_dk": 6.0,
     "head_k": 1.86,
     "clearance_d": 3.4,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 7.02,
-    "csk_depth": 1.81,
+    "csk_d": 6.2,
+    "csk_depth": 1.4,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -6617,15 +6633,15 @@
     "d": 3.0,
     "length": 14.0,
     "head": "csk",
-    "head_std": "ISO 10642",
-    "head_dk": 6.72,
+    "head_std": "DIN 7991",
+    "head_dk": 6.0,
     "head_k": 1.86,
     "clearance_d": 3.4,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 7.02,
-    "csk_depth": 1.81,
+    "csk_d": 6.2,
+    "csk_depth": 1.4,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -6726,15 +6742,15 @@
     "d": 3.0,
     "length": 12.0,
     "head": "csk",
-    "head_std": "ISO 10642",
-    "head_dk": 6.72,
+    "head_std": "DIN 7991",
+    "head_dk": 6.0,
     "head_k": 1.86,
     "clearance_d": 3.4,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 7.02,
-    "csk_depth": 1.81,
+    "csk_d": 6.2,
+    "csk_depth": 1.4,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -6767,15 +6783,15 @@
     "d": 3.0,
     "length": 14.0,
     "head": "csk",
-    "head_std": "ISO 10642",
-    "head_dk": 6.72,
+    "head_std": "DIN 7991",
+    "head_dk": 6.0,
     "head_k": 1.86,
     "clearance_d": 3.4,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 7.02,
-    "csk_depth": 1.81,
+    "csk_d": 6.2,
+    "csk_depth": 1.4,
     "sink": 0.0,
     "grip": 4.0
    },

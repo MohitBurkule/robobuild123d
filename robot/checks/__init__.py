@@ -46,6 +46,30 @@ GROUPS = [
     ("sharp_corner", False),  # mfg.sharp_internal_corner (opt-out, every printed / moulded part)
 ]
 
+# `--only claims` is a pseudo-group: it evaluates spec claims and pulls in the groups that measure their metrics.
+CLAIMS_GROUP = "claims"
+# metric (exact name or "prefix.") -> group that measures it
+CLAIM_METRIC_GROUPS = {"mass_": "mass", "part_mass_g.": "mass", "footprint_mm": "legal", "ground_z": "ground",
+                       "com_": "mass", "cog_height_mm": "dynamics", "tip_angle_": "dynamics", "driven_weight_share": "dynamics",
+                       "arch_": "architecture", "combat.": "combat", "archetype.": "archetype", "coverage.": "coverage"}
+
+
+def claim_groups(spec) -> list:
+    """Groups that must run so every claim's metric is measured."""
+    out = []
+    for c in spec.claims:
+        for k, g in CLAIM_METRIC_GROUPS.items():
+            if (c.metric == k or c.metric.startswith(k)) and g not in out:
+                out.append(g)
+    return out
+
+
+def effective_only(spec, only):
+    """`only` with the claim-metric groups added when the `claims` pseudo-group is requested."""
+    if not only or CLAIMS_GROUP not in only:
+        return only
+    return list(only) + [g for g in claim_groups(spec) if g not in only]
+
 
 @dataclass
 class Options:
@@ -88,10 +112,11 @@ def verify_resolved(r, opts: Options) -> Report:
     base_key = _base_key(r, opts) if cache.enabled() else None
     if valid:
         ctx = Ctx(r, world_mod.World.start(r), opts)
+        only = effective_only(r.spec, opts.only)
         for name, deep_only in GROUPS:
             if deep_only and not opts.deep:
                 continue
-            if opts.only and name not in opts.only:
+            if only and name not in only:
                 continue
             t0 = time.time()
             try:
