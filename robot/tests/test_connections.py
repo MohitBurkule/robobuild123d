@@ -74,3 +74,21 @@ def test_cots_retained_screws_needs_fasteners():
     d = base(connections=[{"a": "lid", "b": "chassis", "method": "press_fit", "reason": REASON}])
     d["parts"][1]["retained"] = "screws"
     assert run(d).failed("connection.cover_fasteners")
+
+
+def test_cover_fasteners_reasoned_deviation():
+    s = {"id": "s1", "designation": "M2x6", "at": [-10, 0, 4], "dir": [0, 0, -1], "through": ["lid", "chassis"]}
+    why = "the reference clamps this panel between two parts; one screw plus that clamp, as in the STEP"
+    # good: one real screw + a written deviation -> warning only, not a blocker
+    d = _armour(fasteners=[s])
+    d["parts"][1]["cover_fasteners_deviation"] = why
+    fs = [f for f in run(d).findings if f.id == "connection.cover_fasteners"]
+    assert fs and all(f.severity != "blocker" for f in fs) and why in fs[0].message
+    # bad: a deviation does not excuse a panel with no screw at all
+    d = _armour(connections=[{"a": "lid", "b": "chassis", "method": "snap", "reason": REASON}])
+    d["parts"][1]["cover_fasteners_deviation"] = why
+    assert any(f.severity == "blocker" and not f.passed for f in run(d).findings if f.id == "connection.cover_fasteners")
+    # bad: an empty reason is not a deviation
+    d = _armour(fasteners=[s])
+    d["parts"][1]["cover_fasteners_deviation"] = " "
+    assert any(f.severity == "blocker" for f in run(d).findings if f.id == "connection.cover_fasteners")
