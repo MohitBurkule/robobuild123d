@@ -339,7 +339,7 @@ def _mount_profile(r_top):
     # R4.4 pad (CSK radius 3.5 + 0.9 mm printed wall), kept above the nose underside, wraps the countersink
     from shapely.geometry import Point, box as _sbox
     p = p.union(Point(SB).buffer(4.4, 64).intersection(_sbox(0, 1.25, 80, 40)))
-    return _round(p, r_out=0.0, r_in=0.0)
+    return _round(p, r_out=0.0, r_in=1.0)   # relieve the concave notch corners (tub deck fillet, mfg corner relief)
 
 
 def weapon_mount(side):
