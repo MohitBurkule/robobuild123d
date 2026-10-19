@@ -1783,6 +1783,7 @@
    "rotates_with": "fixed",
    "stock": "MR85ZZ 5 x 8 x 2.5",
    "color": "#555555",
+   "deviation": "bought part left out of the STEP (INDEX.txt lists no bearing): RV02 carries the 7.9 mm printed seat for it and the guide BOM lists an MR85ZZ; added for the shaft support",
    "shape": {
     "type": "subtract",
     "base": {
@@ -1835,6 +1836,7 @@
    "rotates_with": "weapon",
    "shaft_of": "weapon_motor",
    "parent": "weapon_motor",
+   "deviation": "the GR1507 shaft is part of the bought motor, which the STEP draws as one body (INDEX.txt lists no shaft); drawn separately here for the MR85 support and the spider collar",
    "shape": {
     "type": "place",
     "shape": {
