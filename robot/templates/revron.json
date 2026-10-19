@@ -467,6 +467,18 @@
    "value": 150
   }
  ],
+ "sharp_ok": [
+  {
+   "part": "base_panel",
+   "near": [
+    27.9,
+    -21.5,
+    4.5
+   ],
+   "r_mm": 3.0,
+   "reason": "screw boss is 0.3 mm tall (any taller breaks the reference silhouette), so its base fillet is capped at R0.25; the STEP pad base is R0.5"
+  }
+ ],
  "teardown": [
   {
    "parts": [
