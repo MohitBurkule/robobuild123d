@@ -897,6 +897,9 @@
    "material": "titanium",
    "process": "laser",
    "stock": "0.9 mm Ti Gr5 sheet",
+   "secondary_ops": [
+    "countersink"
+   ],
    "rotates_with": "fixed",
    "color": "#8d939b",
    "shape": {
