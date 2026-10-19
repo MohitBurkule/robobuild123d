@@ -529,6 +529,19 @@
   },
   {
    "parts": [
+    "mount_r"
+   ],
+   "dir": [
+    0,
+    1,
+    0
+   ],
+   "reason": "RV02/RV03 with the motor and drisk slide forward off the chassis tabs as one quick-change module"
+  }
+ ],
+ "module_teardown": [
+  {
+   "parts": [
     "mount_l",
     "bolt_ula",
     "bolt_ulb"
@@ -538,7 +551,7 @@
     0,
     0
    ],
-   "reason": "RV02 slides outboard off the lug and the shaft end, its CSK screws captive"
+   "reason": "RV02 slides outboard off the shaft end, its CSK screws captive"
   },
   {
    "parts": [
@@ -561,19 +574,6 @@
     0
    ],
    "reason": "GR1507 leaves inboard-left once the 4 stator screws are out"
-  },
-  {
-   "parts": [
-    "mount_r",
-    "bolt_ura",
-    "bolt_urb"
-   ],
-   "dir": [
-    1,
-    0,
-    0
-   ],
-   "reason": "RV03 slides outboard off its lug with the back spacer, CSK screws captive"
   }
  ],
  "reference_cad": {

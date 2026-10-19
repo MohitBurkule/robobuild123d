@@ -153,24 +153,10 @@ def candidate_dirs(ctx, i):
     return d
 
 
-def run(ctx):
+def _sweep(ctx, present, root, teardown, steps):
+    """Repeatedly take off whatever can leave; `teardown` entries ({parts, dir}) are declared one-direction moves."""
     r, w = ctx.r, ctx.world
     n = len(w.bodies)
-    present = [not b.is_wire for b in w.bodies]
-    rootp = next((p for p in r.spec.parts if p.kind == "structure"), None)
-    root = w.index(rootp.id) if rootp else None
-    steps, out = [], []
-    # O-rings / elastic belts that can be stretched over their flanges (disasm.elastic_stretch) come off first by
-    # stretching, not by a straight slide.
-    from . import disasm
-
-    nc = list(ctx.not_checked)
-    for bid in sorted(disasm.elastic(ctx, [])):
-        k = w.index(bid)
-        if k is not None and present[k]:
-            present[k] = False
-            steps.append(AssemblyStep(len(steps) + 1, bid, [0.0, 0.0, 0.0], 0.0))
-    ctx.not_checked[:] = nc
     while True:
         progress = False
         order = [i for i in range(n) if present[i] and i != root]
@@ -196,7 +182,7 @@ def run(ctx):
                     present[i] = False
                     steps.append(AssemblyStep(len(steps) + 1, b.id, [float(x) for x in le[0]], float(le[1])))
                     progress = True
-        for t in getattr(r.spec, "teardown", None) or []:
+        for t in teardown:
             ks = [w.index(pid) for pid in t.get("parts") or []]
             if not ks or any(k is None for k in ks) or not all(present[k] for k in ks):
                 continue
@@ -214,13 +200,46 @@ def run(ctx):
         left = sum(1 for i in range(n) if present[i] and i != root)
         if left == 0 or not progress:
             break
+
+
+def run(ctx):
+    r, w = ctx.r, ctx.world
+    n = len(w.bodies)
+    present = [not b.is_wire for b in w.bodies]
+    rootp = next((p for p in r.spec.parts if p.kind == "structure"), None)
+    root = w.index(rootp.id) if rootp else None
+    steps, out = [], []
+    # O-rings / elastic belts that can be stretched over their flanges (disasm.elastic_stretch) come off first by
+    # stretching, not by a straight slide.
+    from . import disasm
+
+    nc = list(ctx.not_checked)
+    for bid in sorted(disasm.elastic(ctx, [])):
+        k = w.index(bid)
+        if k is not None and present[k]:
+            present[k] = False
+            steps.append(AssemblyStep(len(steps) + 1, bid, [0.0, 0.0, 0.0], 0.0))
+    ctx.not_checked[:] = nc
+    _sweep(ctx, present, root, getattr(r.spec, "teardown", None) or [], steps)
+    # A declared swap module (spec `modules`) leaves as one unit; its bench teardown (`module_teardown`) is judged on the
+    # module alone, its root plate staying put, so a quick-change weapon is checked both ways.
+    stuck_bench = []
+    for m in (r.spec.raw or {}).get("modules") or []:
+        rk = w.index(m.get("root"))
+        if rk is None or present[rk]:
+            continue
+        ids = {rk} | {k for k in (w.index(x) for x in m.get("parts") or []) if k is not None}
+        ids |= set(group(ctx, m["root"], [True] * n))
+        p2 = [k in ids and not w.bodies[k].is_wire for k in range(n)]
+        _sweep(ctx, p2, rk, (r.spec.raw or {}).get("module_teardown") or [], steps)
+        stuck_bench += [(k, p2) for k in range(n) if p2[k] and k != rk]
     stuck = [i for i in range(n) if present[i] and i != root]
-    for i in stuck:
+    for i, pres in [(i, present) for i in stuck] + stuck_bench:
         b = w.bodies[i]
-        members = [i] if b.fastener else group(ctx, b.id, present)
+        members = [i] if b.fastener else group(ctx, b.id, pres)
         worst = None
         for d in candidate_dirs(ctx, i):
-            res = slide(ctx, members, present, d)
+            res = slide(ctx, members, pres, d)
             if res[0] == "hit" and (worst is None or res[2] > worst[0]):
                 worst = (res[2], res[1], d, res[3])
         if worst is not None:
@@ -232,7 +251,7 @@ def run(ctx):
         out.append(fail("assembly.blocked", G, BLOCKER, "Part cannot be assembled", msg).on(b.id)
                    .here(worst[3] if worst else b.aabb.mean(axis=0))
                    .fix("Open the pocket on the side it enters from (a U-slot instead of a hole for a shaft, a bore open to the mating face for an insert, an open wall for a wheel), or split the housing so the part can drop in."))
-    if not stuck:
+    if not stuck and not stuck_bench:
         text = ", ".join(s.id for s in reversed(steps))
         out.append(ok("assembly.order", G, "Everything can be assembled",
                       f"Every part slides in along a clear straight path. Assembly order: {text}."))

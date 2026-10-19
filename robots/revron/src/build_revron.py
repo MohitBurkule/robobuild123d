@@ -70,6 +70,7 @@ STAT_HOLE_R, CB_R, CB_CONE_X = 1.12, 2.25, (16.4, 17.15)   # RV03 stator screw c
 # the pin spans r7.6..11.6 (bolt_p heads end at r6.25, window arc r11.7, bolt_d heads start r12.25), its tip stops
 # 0.3 mm short of disc_a so only the spider bears on it.
 LOCK_R, LOCK_RC, LOCK_A = 2.0, 9.6, 45.0
+PHASE_VIA = [[11.1, 14.5, 16.0], [11.1, 15.5, 18.2], [11.1, 27.0, 18.2], [11.1, 30.0, 14.5]]   # weapon phase leads: the lug (|X| >= 10.4, up to the deck) closes z 14.5 at y 15..26
 LOCK_TIP_X = DR_X["spider"][1] - 0.3
 
 
@@ -330,6 +331,10 @@ def _mount_profile(r_top):
     pts = rim + [(43.6, 3.6)] + _arc(SB, 3.25, -16.0, -90.0, 12)[1:] + [(15.4, 1.25), (13.2, 2.5), (13.2, 4.5), (15.0, 4.5), (15.0, 5.35), (25.5, 5.35), (26.5, 6.35),   # notch front face on the lug (0 gap): the lug bears a hit before the screws
                  (26.5, 12.55), (25.5, 13.55), (15.0, 13.55), (15.0, 17.5), (13.0, 19.5), ((10.17 if r_top > 8 else 9.0), 19.5)]
     p = _poly(pts)
+    # the nose CSK (ISO 10642 d7 cone) is wider than the STEP's R3.25 nose arc and left a 0 mm knife edge there: a local
+    # R4.4 pad (CSK radius 3.5 + 0.9 mm printed wall), kept above the nose underside, wraps the countersink
+    from shapely.geometry import Point, box as _sbox
+    p = p.union(Point(SB).buffer(4.4, 64).intersection(_sbox(0, 1.25, 80, 40)))
     return _round(p, r_out=0.0, r_in=0.0)
 
 
@@ -1243,7 +1248,7 @@ def make_spec(model_file):
 
     wires = [dict(_Wr("w_bat_sw", "battery.jst_rcy", "power_switch.in", 24, "power", 8), connector="jst_rcy"), _Wr("w_sw_wesc", "power_switch.out", "wesc.bat", 24, "power", 8),
              _Wr("w_sw_rx", "power_switch.out", "rxesc.bat", 26, "power", 8), dict(_Wr("w_wesc_m", "wesc.motor", "weapon_motor.phases", 24, "motor", 15), connector="bullet2", count=3,
-                 via=[[11.1, 14.5, 16.0], [11.1, 30.0, 14.5]]),   # phases run rearward in the gap behind the drisk (4 mm axial from the stack), into the tub at the deck front
+                 via=PHASE_VIA),   # phases run rearward in the gap behind the drisk (4 mm axial from the stack), over the front lug (its top is the deck, z 17.5) and down into the tub at the deck front
              _Wr("w_rx_wesc", "rxesc.wpn", "wesc.rx", 30, "signal", 6), _Wr("w_m_l", "rxesc.m2", "motor_l.terminals", 28, "motor", 6),
              _Wr("w_m_r", "rxesc.m1", "motor_r.terminals", 28, "motor", 6)]
     return dict(parts=parts, fasteners=fast, connections=conn, wires=wires, intent=intent_checks())
@@ -1286,7 +1291,7 @@ def intent_checks():
       module=["bolt_ula", "bolt_ulb", "bolt_ura", "bolt_urb"])
     rot = ["spider", "disc_a", "disc_b", "dspacer"] + [f"nut_d{k}" for k in range(4)]
     A("wire_clear_rotor", "phases and power leads stay out of the drisk's swept volume", rotor=rot, axis=[1, 0, 0], at=[0, WY, WZ], min=2.0,
-      via={"w_wesc_m": [[11.1, 14.5, 16.0], [11.1, 30.0, 14.5]]})
+      via={"w_wesc_m": PHASE_VIA})
     return out
 
 
@@ -1474,7 +1479,7 @@ def main():
                                    dict(a="wbearing", b="mount_l", max_depth_mm=0.1, reason="MR85 8.0 OD pressed into the RV02 7.9 printed seat (0.05 radial interference, the STEP seat size)")],
                     claims=[dict(id="c_mass", text="weighs 150 g or less", metric="mass_total_g", op="<=", value=150),
                             dict(id="c_fit", text="fits the 150 mm square", metric="footprint_mm", op="<=", value=150)],
-                    teardown=TEARDOWN, reference_cad=reference_cad(), **body)
+                    teardown=TEARDOWN, module_teardown=MODULE_TEARDOWN, reference_cad=reference_cad(), **body)
         spec["modules"] = [{"id": "weapon_module", "root": "mount_r", "note": "RVRN quick change: 4 M3 out, both mounts with the drisk lift off the chassis tabs",
                             "parts": [p["id"] for p in spec["parts"] if _root(spec["parts"], p) == "mount_r" and p["id"] != "mount_r"]}]
         json.dump(spec, open(out, "w"), indent=1)
@@ -1487,13 +1492,15 @@ TEARDOWN = [t for s, n in ((-1, "l"), (1, "r")) for t in (
     dict(parts=[f"wedgelet_{n}", f"fork_{n}"], dir=[s, 0, 0], reason="fork tail is pinned in the wedgelet cheek slot: they slide off the standoffs as one"),
     dict(parts=[f"so_b{n}"], dir=[s, 0, 0], reason="nose standoff slides out of the chassis lug once the mount screw is out"),
     dict(parts=[f"so_a{n}"], dir=[s, 0, 0], reason="axle standoff slides out of the lug with the front hub and wheel on it"))] + [
-    # weapon module (fix-B): with both standoff pairs out, RV02 slides off the shaft end and its lug (MR85 and lock with it,
-    # the two CSK screws captive in it); the spider bolts are then reachable, the drisk slides off the shaft; the motor
-    # comes out after its 4 stator screws; RV03 last.
-    dict(parts=["mount_l", "bolt_ula", "bolt_ulb"], dir=[-1, 0, 0], reason="RV02 slides outboard off the lug and the shaft end, its CSK screws captive"),
+    # weapon module (fix-B): with both standoff pairs and the front end out, the module (both mounts, motor, drisk, lock)
+    # slides forward off the chassis tabs as one unit (the tub's side lugs close the other five ways)
+    dict(parts=["mount_r"], dir=[0, 1, 0], reason="RV02/RV03 with the motor and drisk slide forward off the chassis tabs as one quick-change module")]
+
+# bench teardown of the module with RV03 held: RV02 off the shaft end, drisk off the shaft, motor off its 4 stator screws
+MODULE_TEARDOWN = [
+    dict(parts=["mount_l", "bolt_ula", "bolt_ulb"], dir=[-1, 0, 0], reason="RV02 slides outboard off the shaft end, its CSK screws captive"),
     dict(parts=["spider"], dir=[-1, 0, 0], reason="drisk (spider, discs, spacer, stack bolts) slides off the GR1507 shaft once the 4 bell screws are out"),
-    dict(parts=["weapon_motor"], dir=[-1, 0, 0], reason="GR1507 leaves inboard-left once the 4 stator screws are out"),
-    dict(parts=["mount_r", "bolt_ura", "bolt_urb"], dir=[1, 0, 0], reason="RV03 slides outboard off its lug with the back spacer, CSK screws captive")]
+    dict(parts=["weapon_motor"], dir=[-1, 0, 0], reason="GR1507 leaves inboard-left once the 4 stator screws are out")]
 
 
 def _root(parts, q):
