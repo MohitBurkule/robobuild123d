@@ -20,12 +20,13 @@ import numpy as np
 import trimesh
 
 from . import cache, catalog, geom, profile, shapes, xform
+from .cad import fastener_catalog
 from .spec import Spec
 
 DEFAULT_COLORS = {
     "structure": "#2b2e34", "armor": "#444850", "wedge": "#ff6a1a", "motor": "#9aa0a6", "weapon_motor": "#5a5e66",
     "wheel": "#25282c", "battery": "#2a9d8f", "esc": "#e76f51", "receiver": "#ff9800", "servo": "#4a4e57",
-    "switch": "#c02020", "weapon": "#c8cdd2", "locking_bar": "#ffd100", "plate": "#1c1c1e",
+    "switch": "#c02020", "weapon": "#c8cdd2", "locking_bar": "#ffd100", "plate": "#1c1c1e", "belt": "#3f7fbf",
 }
 
 
@@ -188,6 +189,11 @@ def button_dims(d):
     return 1.9 * d, 0.55 * d
 
 
+def fastener_drive(d, head=None):
+    """(hex key across flats, socket depth) of the drive recess fastener_shape cuts into this head."""
+    return fastener_catalog.drive_key(d, head)
+
+
 def fastener_shape(d, length, head=None):
     """Screw solid in its own frame: `at` is the origin, the shank runs along +z. A socket/button head sits behind `at`
     (-z); a countersunk head is a 90 deg cone *inside* the part, flush with the surface at `at` (ISO length is overall)."""
@@ -195,12 +201,19 @@ def fastener_shape(d, length, head=None):
     if head == "countersunk":
         dk, k = csk_dims(d)
         cone = {"type": "revolve", "profile": [[0.0, 0.0], [dk / 2, 0.0], [d / 2, k], [0.0, k]]}
-        return catalog.union([cone, shank])
+        key, t = fastener_catalog.drive_key(d, "csk")
+        return catalog.minus(catalog.union([cone, shank]), [catalog.hex_recess(key, min(t, 0.9 * k), 0.0, +1.0)])
     dk, k, _ = catalog.screw_dims(d)
+    style = "cap"
     if head == "button":
         dk, k = button_dims(d)
+        style = "button"
+    key, t = fastener_catalog.drive_key(d, style)
     hd = catalog.at(catalog.cyl(dk / 2, k), 0, 0, -k / 2)
-    return catalog.union([hd, shank])
+    if head == "button":  # domed top: 0.35 k rim radius fillet look via a revolve, envelope unchanged
+        rr = 0.35 * k
+        hd = {"type": "revolve", "profile": [[0.0, 0.0], [dk / 2, 0.0], [dk / 2, -(k - rr)], [dk / 2 - rr, -k], [0.0, -k]]}
+    return catalog.minus(catalog.union([hd, shank]), [catalog.hex_recess(key, min(t, 0.8 * k), -k, +1.0)])
 
 
 class Body:

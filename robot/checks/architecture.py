@@ -316,7 +316,9 @@ def _carries(spec, pid):
 def materials(a):
     out = []
     bad = 0
-    struct_kinds = STRUCT + ("weapon", "shaft", "pin", "locking_bar", "hub", "bearing")
+    # A locking_bar (weapon lock pin) is pulled before the fight: it only holds an unpowered weapon against hand torque
+    # and never sees a hit, so a TPU pin (grips its bore, does not shatter when the weapon is nudged) is acceptable.
+    struct_kinds = STRUCT + ("weapon", "shaft", "pin", "hub", "bearing")
     for b in a.solids:
         p = a.part(b.id)
         if p is None or a.cls(b) != "elastomer":
@@ -518,14 +520,15 @@ def _hub_support(a, p, sh, origin, axis, s):
         return None
     if not (own and static):
         return None
-    mt = (mb.mesh.vertices - origin) @ axis
-    t = float(mt.mean())
-    if t * s <= 0:
-        return None
     held = [o for mm, o, _ in k.stator_links if mm == mid] + [o for mm, o, *_ in k.rotor_links if mm == mid]
     hosts = [a.body(o) for o in held if k.rot(o) is None and k.kind(o) not in BOUNDARY and a.body(o) is not None]
+    # The side is where the stator is screwed down (its static host), not the motor's centroid: an outrunner whose bell
+    # carries the weapon is centred on the weapon itself, while its rear bearing and stator face sit on the host's side.
+    hosts = [h for h in hosts if float(((h.mesh.vertices - origin) @ axis).mean()) * s > 0]
     if not hosts:
         return None
+    mt = (mb.mesh.vertices - origin) @ axis
+    t = 0.5 * float(mt.max() if s > 0 else mt.min())  # between the weapon plane and the stator's mounting face
     return (t, mb, hosts[0])
 
 

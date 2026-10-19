@@ -23,7 +23,7 @@ from ..spec import Spec
 
 # Bumped whenever a check is added or changed. 7 = the Rust crate's revision; 8 adds belt/fork tension (python port); 9 adds
 # wheel running clearance, wheel exposure, targets, fused/key/tape/press-fit evidence, stall-current battery peak.
-CHECKS_REVISION = 13  # 13 adds intent (functional design-intent probes); 12 adds threat (combat failure modes CF-*); 10 adds internal (no_contact, fastener_void, wire_in_solid); 11 adds bom (reference BOM, lock part, O-ring stock, wire cut, switch dir, doc) and connection.cover_fasteners
+CHECKS_REVISION = 15  # 15 adds sharp_corner (opt-out mfg.sharp_internal_corner); 14 adds the design-review groups (ref_map, cots_fidelity, wire_review, fastener_record, belt_wrap, print_orient); 13 adds intent (functional design-intent probes); 12 adds threat (combat failure modes CF-*); 10 adds internal (no_contact, fastener_void, wire_in_solid); 11 adds bom (reference BOM, lock part, O-ring stock, wire cut, switch dir, doc) and connection.cover_fasteners
 
 # (module, deep_only) in run order; same order as the Rust crate, plus `tension` before `assembly`.
 GROUPS = [
@@ -35,6 +35,14 @@ GROUPS = [
     ("support", False),  # gravity in all 6 orientations (robot/checks/support.py)
     ("threat", False),  # combat failure modes CF-* (robot/checks/threat)
     ("fastener_seat", False),  # head/thread vs hole geometry (robot/cad/seat.py)
+    # design-review gates (CAD review of Revron 2.0): one module each
+    ("ref_map", False),  # reference.unmapped_part
+    ("cots_fidelity", False),  # cots.fidelity
+    ("wire_review", False),  # wire.rotating_clearance, wire.render_present
+    ("fastener_record", False),  # fastener.hole_record
+    ("belt_wrap", False),  # cots.belt_wrap
+    ("print_orient", False),  # print.orientation_declared
+    ("sharp_corner", False),  # mfg.sharp_internal_corner (opt-out, every printed / moulded part)
 ]
 
 

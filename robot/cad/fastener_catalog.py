@@ -101,3 +101,27 @@ def nut(d: float, style: str = "hex") -> tuple[float, float]:
 def insert(d: float) -> tuple[float, float]:
     """(hole diameter, length) of a heat-set insert."""
     return _get(INSERT, d, "heat-set insert")
+
+
+# hex socket drive: key size s (across flats) and nominal socket depth t, per head style.
+# cap ISO 4762, button ISO 7380-1 (M2/M2.5 vendor), countersunk ISO 10642 (M1.6-M2.5 hex variants of ISO 14581 sizes).
+DRIVE_KEY = {
+    "cap": {1.6: (1.5, 0.7), 2.0: (1.5, 1.0), 2.5: (2.0, 1.1), 3.0: (2.5, 1.3), 4.0: (3.0, 2.0), 5.0: (4.0, 2.5), 6.0: (5.0, 3.0)},
+    "button": {2.0: (1.3, 0.7), 2.5: (1.5, 0.9), 3.0: (2.0, 1.04), 4.0: (2.5, 1.3), 5.0: (3.0, 1.56), 6.0: (4.0, 2.08)},
+    "csk": {1.6: (0.9, 0.55), 2.0: (1.3, 0.7), 2.5: (1.5, 0.85), 3.0: (2.0, 1.1), 4.0: (2.5, 1.5), 5.0: (3.0, 1.9), 6.0: (4.0, 2.2)},
+}
+# robot.world.fastener_shape `head` value -> DRIVE_KEY style
+WORLD_HEAD = {"countersunk": "csk", "button": "button", None: "cap", "cap": "cap", "socket": "cap"}
+
+
+def drive_key(d: float, style: str) -> tuple[float, float]:
+    """(hex key size across flats, socket depth) of the hex socket in a csk | button | cap head. Off-table diameters
+    take the nearest smaller tabled size (never a key that would not fit the head)."""
+    style = WORLD_HEAD.get(style, style)
+    if style not in DRIVE_KEY:
+        raise ValueError(f"drive style must be one of {sorted(DRIVE_KEY)}, not `{style}`")
+    t = DRIVE_KEY[style]
+    if d in t:
+        return t[d]
+    lower = [k for k in t if k <= d + 1e-9]
+    return t[max(lower) if lower else min(t)]

@@ -115,3 +115,32 @@ def test_belt_in_narrow_slot_is_exposed_until_hooded():
     assert F._belt_slots(scene([])) == ["belt_l"]
     hood = trimesh.creation.box((14.0, 70.0, 1.5)).apply_translation((0, 0, 6.8))
     assert F._belt_slots(scene([body("hood", "structure", hood)])) == []
+
+
+def test_belt_slot_cast_ignores_far_bodies_and_chunks():
+    """Bodies outside every ray corridor do not change the answer, and the cast splits into RAY_CHUNK batches."""
+    import types
+
+    import numpy as np
+    import trimesh
+
+    from robot.checks.threat import facts as F
+
+    belt = trimesh.creation.box((1.0, 60.0, 10.0))
+    walls = [trimesh.creation.box((10.0, 70.0, 12.0)).apply_translation((x, 0, 0)) for x in (-6.0, 6.0)]
+    far = trimesh.creation.icosphere(subdivisions=4, radius=5.0).apply_translation((0, 300.0, -200.0))
+
+    def scene(extra, n):
+        bodies = [types.SimpleNamespace(id="belt_l", kind="belt", mesh=belt)] + [
+            types.SimpleNamespace(id=f"w{i}", kind="structure", mesh=w) for i, w in enumerate(walls + extra)]
+        s = types.SimpleNamespace(bodies=bodies)
+        P, fi = trimesh.sample.sample_surface(belt, n, seed=2)
+        s.P, s.N, s.O = P, belt.face_normals[fi], np.zeros(len(P), int)
+        return s
+
+    old = F.RAY_CHUNK
+    try:
+        F.RAY_CHUNK = 7
+        assert F._belt_slots(scene([far], 3000)) == F._belt_slots(scene([], 3000)) == ["belt_l"]
+    finally:
+        F.RAY_CHUNK = old

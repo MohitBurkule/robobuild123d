@@ -233,6 +233,17 @@ Whoever gets under the other wins. Full rules with rationale, thresholds and app
 12. **Keep paired supports matched** and plates loaded in their own plane (4 mm uprights printed flat).
 13. **Centre the rotor between its supports**, so both bearings and the chassis see symmetric loads.
 
+## Sharp internal corners are opt-OUT (`mfg.sharp_internal_corner`, robot/checks/sharp_corner.py)
+Every fdm / sla / molded / cast part is scanned; nothing has to be listed (milled and cut parts: `process`). Each concave
+mesh edge is sectioned normal to its direction and its local radius measured (arc / turn; 0 = sharp).
+- BLOCKER: r < 1.0 mm in a load path: within 3 mm of a fastener, of another `structure` part it joins (mount bases,
+  bulkhead-to-deck), or of a declared `sharp_corner_loads` / `load_interfaces` entry `{part, near: [x,y,z], r_mm}`.
+- WARNING: r < 0.5 mm anywhere else. Flexible materials (TPU, rubber) cap at WARNING unless the reference is rounder at a bolt.
+- INFO "matches original": the `reference_cad` part measured at the same spot has r <= ours + 0.2 mm.
+- Opt out only with a reason: part `"sharp_corners_ok": "reason"` or spec `"sharp_ok": [{part, near, r_mm, reason}]`.
+  A missing or empty reason is a BLOCKER (`mfg.sharp_ok_reason`) and the opt-out is ignored.
+- Tune with spec `"sharp_corner": {min_r_mm, load_min_r_mm, load_dist_mm, ref_tol_mm, window_mm, grid_mm, link_mm}`.
+
 ## Design intent: check what a feature is FOR (`intent.*`, `intent` list in the spec)
 A part can match the reference outline and still not work. List each purposeful feature in `intent` with a `why`; the
 probe tests the function (robot/checks/intent.py has the keys). BLOCKER unless `"severity": "warning"`.
@@ -240,7 +251,8 @@ probe tests the function (robot/checks/intent.py has the keys). BLOCKER unless `
 2. **No supports** (`support_free`): in the declared build direction, overhang steeper than 45 deg that is wider than a
    6 mm bridge and a 1 mm ledge is <= 2 % of the area. Use 45 deg chamfers under ledges and flanges.
 3. **Walls >= 1.8 mm** (`min_wall`, `envelope` for the outer skin): 4 perimeters at 0.45 mm.
-4. **Fillet concave load corners** (`fillet`): no sharp inside corner where a hit loads PLA.
+4. **Fillet concave load corners** (`fillet`): no sharp inside corner where a hit loads PLA. Also enforced without listing
+   anything by `mfg.sharp_internal_corner` (below); a corner declared here is reported only here.
 5. **Insert columns reach the bed** (`insert_column`): solid material from each heat-set insert back to the first layers.
 6. **Tyre retention** (`tyre_retention`): the seat crest is >= 1 mm over the relaxed tyre ID on diameter.
 7. **Captive nuts** (`captive_nut`): with the screw out, the nut moved 0.3 mm in any of 14 directions hits its pocket.
@@ -399,6 +411,34 @@ Extended clusters (combat_failure_modes_ext.json, uncalibrated, all warnings): *
 side or dragging on the floor when inverted; **CFX-ANTENNA** modelled antenna on the outer skin; **CFX-FRICTION** pins/tyres
 held only by friction/press fit; **CFX-TAPE** electronics held only by tape/velcro; **CFX-STATE** no answer when inverted,
 one drive side dead, weapon dead, radio failsafe, or on its side.
+
+## Design-review gates (groups `ref_map`, `cots_fidelity`, `wire_review`, `fastener_record`, `belt_wrap`, `print_orient`)
+
+From the Revron 2.0 CAD review: findings a reviewer had to spot by eye are now checks. Run them alone with
+`python3 -m robot verify spec.json --only ref_map,cots_fidelity,wire_review,fastener_record,belt_wrap,print_orient`.
+
+- **reference.unmapped_part**: every part and fastener maps to a part in the reference STEP parts index
+  (`reference_cad.dir`): a reference_cad entry, `ref_part: "<stem glob>"`, or a `reference_bom` row that cites an index
+  part (`ref_parts` globs or a role word such as `FS8`/`RV15`/`spider`). Our own BOM rows (no cited part, or "not in the
+  STEP") do not count. Otherwise write `deviation: "why"` on the part, fastener or row. WHY: disc nuts and a lock pin
+  were invented and nobody asked why.
+- **cots.fidelity**: motors carry their identifying features (outrunner bell, stator base, shaft, mount bolt circle;
+  gearmotor can and shaft) within 0.3 mm of `cots_fidelity.FEATURES` or the part's `features`. WHY: the GR1507 model had
+  no stator holes and "looked wrong". Screw drive recesses are cut by `fastener_shape`, not judged here.
+- **wire.rotating_clearance**: every fastener and nut that turns with the weapon sweeps a ring; each wire bundle
+  (`count` x (OD + 0.3)) along port -> via -> port, and the motor phase exit, keeps >= `review.wire.rotating_clearance_mm`
+  (3). WHY: the phase leads ran next to the disc nuts.
+- **wire.render_present**: every wire end resolves to a current port, and with `renders: {dir, views}` at least one
+  render draws the wires (the `<png>.json` record `robot render` writes), newer than the spec, with each drawn end
+  within 3 mm of the port now. WHY: the final renders had no wires and the only wiring view predated the switch move.
+- **fastener.hole_record**: every fastener has a `hole` record, and a screw into a printed part (not an insert or nut)
+  has length - grip >= `review.fastener.min_engagement_d` x d (2.5 d). WHY: switch screws had no hole record; M2x4 into
+  PLA strips.
+- **cots.belt_wrap**: an O-ring belt is one closed loop (Euler number 0) with a run on both sides of each pulley centre.
+  WHY: the belts were flat strips.
+- **print.orientation_declared**: every FDM part declares `print_orientation` and its overhang/bridge is judged in THAT
+  orientation (limit `review.print.max_overhang_mm2`, default 60 mm²), not the best of six. WHY: the electronics cage
+  only works deck-down, which turns the floor lugs into overhangs.
 
 ## Support in every orientation (`support.loose`)
 
