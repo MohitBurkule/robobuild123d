@@ -516,6 +516,9 @@ def _sp_w(y, z):
     return _interp(y, (-16.0, -12.0, 11.0, 15.0), (r, m, m, w))
 
 
+SIDE_WALL_DEBUG = []
+
+
 def side_panel(s):
     """RV23/24 TPU side panel: an S-wall that hugs the chassis side, swings out round the rear wheel and the front
     wheel; its outer face is battered (5 mm at the floor, 2 mm at the top) so side hits ride up; the nose block
@@ -527,14 +530,27 @@ def side_panel(s):
     # functions of Z so the outer surface has no steps.
     secs = []
     for z in SP_W_Z:
-        path = _resample(_chaikin_open(_sp_path(z), 2), 240)
+        path = _resample(_chaikin_open(_sp_path(z), 3), 240)
         out = _offset_var(path, [_sp_w(y, z) for _, y in path])
-        secs.append(b.Wire.make_polygon([b.Vector(x, y, z) for x, y in path + out[::-1]], close=True))
+        ring = path + _end_cap(path[-1], out[-1], path[-2]) + out[::-1] + _end_cap(out[0], path[0], path[1])
+        # drop the little loops a variable offset makes inside tight bends, round what is left (r 0.6), then
+        # resample the outline to 480 points from the inner rear corner so every section's points correspond
+        poly = Polygon(ring).buffer(0)
+        poly = max(getattr(poly, "geoms", [poly]), key=lambda g: g.area).buffer(0.6, 16).buffer(-0.6, 16)
+        rg = list(poly.exterior.coords)[:-1]
+        if not poly.exterior.is_ccw:
+            rg = rg[::-1]
+        k = min(range(len(rg)), key=lambda i: math.dist(rg[i], path[0]))
+        rg = rg[k:] + rg[:k] + [rg[k]]
+        pts = _resample(rg, 481)[:-1]
+        # (dense polygon sections: one ruling per matched point pair, adjacent facets meet at a fraction of a degree)
+        secs.append(b.Wire.make_polygon([b.Vector(x, y, z) for x, y in pts], close=True))
     wall = b.Solid.make_loft(secs, ruled=False)
     side = _round(Polygon([(-32.9, 1.0), (-32.9, 16.0), (-4.3, 16.0), (17.0, 12.0), (25.0, 10.0), (42.0, 10.0), (50.1, 1.0)]), r_out=1.5)
     side = side.union(Point(-32.9, 8.5).buffer(7.5, 64))                           # rear end a full round over the wheel
     foot = _ext(_poly([(-31.6, -12.0), (-42.0, -11.9), (-40.6, -2.1), (-40.8, 3.3), (-42.9, 13.3), (-31.6, 13.3)]), "xy", 1.0, 2.0)   # 1 mm wide foot under the chassis lobe
     wall = _I(wall, _ext(side, "yz", -60.0, -20.0))
+    SIDE_WALL_DEBUG.append(wall)
     nose_plan = _round(Polygon([(-51.6, 26.5), (-51.2, 39.7), (-50.0, 43.0), (-47.9, 45.7), (-45.1, 47.9), (-41.7, 49.3), (-38.5, 49.7),
                                 (-38.5, 38.7), (-41.6, 38.7), (-42.4, 37.3), (-42.3, 34.9), (-40.5, 34.5), (-40.5, 26.5)]), r_out=0.5)
     batter = _ext(_poly([(-51.6, 1.0), (-51.6 + 0.79 * 15, 16.0), (0.0, 16.0), (0.0, 1.0), (-51.6, -5.0)]), "xz", 0.0, 60.0)   # outer face leans in 38 deg
@@ -566,6 +582,16 @@ def side_panel(s):
     band = Point(RY, RZ).buffer(7.5 + 1.25, 64).union(Point(*SA).buffer(3.7 + 1.25, 48)).convex_hull
     band = band.buffer(2.0, 64).difference(band.buffer(-2.6, 64))   # the ring the O-ring runs in (+2 mm so no film is left at the panel top), not the whole hull
     return _S(sh, _ext(band, "yz", *sorted((s * 30.5, s * 32.0))))
+
+
+def _end_cap(p, q, prev, n=5):
+    """Points of a half-round cap from p to q (open ends of a band), bulging away from `prev`."""
+    cx, cy = (p[0] + q[0]) / 2, (p[1] + q[1]) / 2
+    r = math.dist(p, q) / 2
+    a0 = math.atan2(p[1] - cy, p[0] - cx)
+    tx, ty = p[0] - prev[0], p[1] - prev[1]
+    sgn = 1 if math.cos(a0 + math.pi / 2) * tx + math.sin(a0 + math.pi / 2) * ty > 0 else -1
+    return [(cx + r * math.cos(a0 + sgn * math.pi * k / (n + 1)), cy + r * math.sin(a0 + sgn * math.pi * k / (n + 1))) for k in range(1, n + 1)]
 
 
 def _offset_var(line, ds):
