@@ -356,6 +356,18 @@
  "can_run_inverted": false,
  "allow_overlap": [
   {
+   "a": "belt_l",
+   "b": "side_l",
+   "max_depth_mm": 0.3,
+   "reason": "O-ring is rubber: it squashes 0.16 mm against the plain inner face of the STEP side panel (the STEP has no belt channel)"
+  },
+  {
+   "a": "belt_r",
+   "b": "side_r",
+   "max_depth_mm": 0.3,
+   "reason": "O-ring is rubber: it squashes 0.16 mm against the plain inner face of the STEP side panel (the STEP has no belt channel)"
+  },
+  {
    "a": "wshaft",
    "b": "wbearing",
    "max_depth_mm": 0.3,
