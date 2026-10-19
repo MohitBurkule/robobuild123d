@@ -36,8 +36,9 @@ NUT_X = (27.7, 29.5)
 INS = [(-25.0, 10.4), (25.0, 10.4), (-25.0, -21.6), (25.0, -21.6), (0.0, -33.6)]   # 5 floor inserts / base screws
 INS_Z = (5.1, 9.1)                   # FS1 M2 heat-set (3.5 OD x 4)
 CSK_M2 = 4.5                         # 90 deg countersink at the face for an ISO 10642 M2 flat head (4.4 x 1.2) + 0.1
-BASE_HOLE, TOP_HOLE = 3.0, 3.5         # csk through-holes: wide enough that the 90 deg seat stops short of the far face (no knife edge)
-BOSS_R, BOSS_H = 2.6, 0.6            # base-panel ring boss round each screw (keys into a 2.65 x 0.65 recess in the column foot)
+PANEL_EAR_R = 3.0
+BASE_HOLE, TOP_HOLE = 3.4, 3.5         # csk through-holes: wide enough that the 90 deg seat stops short of the far face (no knife edge)
+BOSS_R, BOSS_H = 2.6, 0.4            # base-panel ring boss round each screw (keys into a 2.65 x 0.45 recess in the column foot)
 # electronics envelopes (catalog boxes at their spec placement, rot z 90): Malenki nano 32 x 20 x 4.4 at (8.67, -3.0, 15.3),
 # BBB ant ESC 23.5 x 12 x 5 at (8.63, -7.25, 10.6); the deck cage ribs are dimensioned off these
 RX_X, RX_Y, RX_Z = (8.67 - 10.0, 8.67 + 10.0), (-3.0 - 16.0, -3.0 + 16.0), (15.3 - 2.2, 15.3 + 2.2)
@@ -209,16 +210,27 @@ def _panel_seat(which, i):
     return hole_tool((x, y, 20.4), (0, 0, -1), "M2x4", head="csk", into="through", side="head", grip=0.9, csk_clear=0.7)
 
 
+def _panel_outline(grow):
+    """RV26 outline (56.2 x 49.2, R0.8) plus R3.0 ears round the screws that sit 2.6 mm from its edge, so the 4.5
+    countersink keeps a rim; `grow` > 0 gives the matching chassis rabbet."""
+    from shapely.geometry import Point
+    p = _round(_poly([(-28.1 - grow, -36.2 - grow), (28.1 + grow, -36.2 - grow), (28.1 + grow, 13.0 + grow), (-28.1 - grow, 13.0 + grow)]), r_out=0.8)
+    for x, y in INS:
+        if min(13.0 - y, y + 36.2) < 3.0:
+            p = p.union(Point(x, y).buffer(PANEL_EAR_R + grow, 64))
+    return _round(p, r_in=0.5)
+
+
 def base_panel():
     """RV26: 1 mm printed panel under the open chassis, 5 M2 CSK into the floor heat-sets; two 0.25 mm pads under the
     N10 gearboxes preload the motors up into their keyhole pockets."""
     z0, t = 3.5, 1.0
-    out = _round(_poly([(-28.1, -36.2), (28.1, -36.2), (28.1, 13.0), (-28.1, 13.0)]), r_out=0.8)
+    out = _panel_outline(0.0)
     body = _ext(out, "xy", z0, z0 + t)
     for s in (1, -1):
         pad = _round(_poly([(s * 17.95, -34.85), (s * 27.05, -34.85), (s * 27.05, -25.75), (s * 17.95, -25.75)]), r_out=0.6)
         body = _U(body, _ext(pad, "xy", z0 + t - 0.01, z0 + t + 0.25))
-    # the 1 mm skin is thinner than the 1.2 mm M2 flat head: a 0.6 mm ring boss over each screw gives the seat 1.6 mm of
+    # the 1 mm skin is thinner than the 1.2 mm M2 flat head: a 0.4 mm ring boss over each screw gives the seat 1.4 mm of
     # material (no knife edge under the head) and keys the panel into the column feet, so side hits shear the bosses, not the screws
     body = _U(body, *[_cyl(BOSS_R, z0 + t - 0.01, z0 + t + BOSS_H, (x, y), "z") for x, y in INS])
     cuts = [_panel_seat("base", i)[0] for i in range(len(INS))] + [_cyl(BASE_HOLE / 2, z0 - 1, z0 + 3, (x, y), "z") for x, y in INS]   # 4.5 countersink (STEP RV26 has 3.2 x 0.5; an ISO 10642 M2 head is 4.4 x 1.2, so a smaller seat leaves it proud and binding) then the 2.2 hole
@@ -684,6 +696,10 @@ def chassis():
         add.append(_ext(Polygon([(sg * x_, y_) for x_, y_ in face.exterior.coords]).buffer(0), "xy", z0, 16.4))
         bot = Polygon([(21.5, 13.0), (29.5, 13.0)] + blend)
         add.append(_ext(Polygon([(sg * x_, y_) for x_, y_ in bot.exterior.coords]).buffer(0), "xy", z0, 5.0))
+        # 2 x 2.6 gusset (52 deg) in the corner between the flange top and the lug face: printed deck-down the flange top is a
+        # ceiling; the gusset narrows its unsupported span and stiffens the flange root
+        gus = _ext(_poly([(sg * 21.45, 4.99), (sg * 23.5, 4.99), (sg * 21.45, 7.6)]), "xz", 13.0, 27.5)
+        add.append(_I(gus, _ext(Polygon([(sg * x_, y_) for x_, y_ in bot.exterior.coords]).buffer(0), "xy", z0, 8.0)))
         topf = _ext(_poly([(13.0, 19.5), (15.3, 19.5), (23.0, 15.83), (23.0, 13.47), (15.3, 16.4), (13.0, 16.4)]), "yz", sg * 21.4, sg * 29.5)
         add.append(_I(topf, _ext(Polygon([(sg * x_, y_) for x_, y_ in Polygon([(21.4, 13.0), (29.5, 13.0)] + blend + [(21.4, 27.5)]).buffer(0).exterior.coords]).buffer(0), "xy", 10.0, 20.0)))
     body = _U(body, *add)
@@ -753,7 +769,7 @@ def chassis():
         cuts.append(_ext(_round(Polygon([(xa, 6.55), (xb, 6.55), (xb, 15.55), (xa, 15.55)]), r_out=0.5), "xz", 12.0, 13.85))
     # rabbet for the base panel (recessed flush with the wall bottom lip) and the mating faces of the mounts and side
     # panels: the parts seat on the chassis, they do not share material with it
-    pan = _round(_poly([(-28.15, -36.25), (28.15, -36.25), (28.15, 13.05), (-28.15, 13.05)]), r_out=0.8)
+    pan = _panel_outline(0.05)
     cuts.append(_ext(pan, "xy", z0 - 1.0, 4.5))
     for px, py in INS:   # recess in each column foot for the base-panel ring boss
         cuts.append(_cyl(BOSS_R + 0.05, 4.4, 4.5 + BOSS_H + 0.05, (px, py), "z"))
@@ -761,14 +777,27 @@ def chassis():
         cuts.append(_box(sg * 17.95, sg * 27.05, -34.85, -25.75, 4.4, 4.8))   # motor preload pads
     cuts += [weapon_mount("l"), weapon_mount("r"), side_panel(1), side_panel(-1)]
     body = _S(body, *cuts)
-    # electronics cage hung from the deck (prints as part of the deck-down first layers): ribs 0.1 mm off the Malenki's
+    # electronics cage hung from the deck (up into the 1 mm deck skin through the lightening pockets; prints as part of the deck-down first layers): ribs 0.1 mm off the Malenki's
     # -x / +x / -y faces and the weapon ESC's -y face, so neither board hammers around when the robot is flipped
     (ex0, ex1), (ey0, ey1), ez0 = RX_X, RX_Y, RX_Z[0]
     G_ = 0.1
-    ribs = [_box(ex0 - G_ - 1.28, ex0 - G_, -12.0, 8.0, ez0, c["deck"] + 0.1),          # -x, in the gap to the pack
-            _box(ex1 + G_, ex1 + G_ + 1.2, -12.0, 8.0, ez0, c["deck"] + 0.1),           # +x
-            _box(0.0, 14.6, ey0 - G_ - 1.0, ey0 - G_, WE_Z[0] + 0.9, c["deck"] + 0.1)]   # -y, down over the ESC's end
+    ribs = [_box(ex0 - G_ - 1.28, ex0 - G_, -12.0, 8.0, ez0, c["deck"] + 1.1),          # -x, in the gap to the pack
+            _box(ex1 + G_, ex1 + G_ + 1.2, -12.0, 8.0, ez0, c["deck"] + 1.1),           # +x
+            _box(0.0, 14.6, ey0 - G_ - 1.0, ey0 - G_, WE_Z[0] + 0.9, c["deck"] + 1.1)]   # -y, down over the ESC's end
     return _U(body, *ribs)
+
+
+def esc_tray():
+    """TPU tray glued to the base panel under the weapon ESC (not in the STEP, where kapton alone holds it): two rails carry
+    the board 0.1 mm off, 1 mm lips 0.1 mm off its -x / +x / +y sides (leads leave above the lips at the board mid-plane).
+    The deck cage holds -y and the Malenki above it +z, so the ESC cannot rattle inverted; base panel off, it lifts out."""
+    (wx0, wx1), (wy0, wy1), wz0 = WE_X, WE_Y, WE_Z[0]
+    z0, top, g = 4.5, wz0 + 1.0, 0.1
+    parts = [_box(wx0 - g - 1.1, wx1 + g + 1.1, wy0, wy1 + g + 1.0, z0, z0 + 0.8)]
+    parts += [_box(xa, xa + 1.2, wy0 + 1.0, wy1 - 1.0, z0 + 0.79, wz0 - g) for xa in (wx0 + 1.4, wx1 - 2.6)]
+    parts += [_box(wx0 - g - 1.1, wx0 - g, wy0, wy1 + g + 1.0, z0 + 0.79, top), _box(wx1 + g, wx1 + g + 1.1, wy0, wy1 + g + 1.0, z0 + 0.79, top),
+              _box(wx0 - g - 1.1, wx1 + g + 1.1, wy1 + g, wy1 + g + 1.0, z0 + 0.79, top)]
+    return _U(*parts)
 
 
 # ------------------------------------------------------------------------------------------------------------ misc
@@ -791,7 +820,7 @@ PARTS = {
     "front_tyre_l": lambda: tyre(11.0, 7.0, -38.5, -32.5, SA), "front_tyre_r": lambda: tyre(11.0, 7.0, 32.5, 38.5, SA),
     "so_a_l": lambda: standoff((-SA_X[1], -SA_X[0]), SA), "so_a_r": lambda: standoff(SA_X, SA),
     "so_b_l": lambda: standoff((-SB_X[1], -SB_X[0]), SB), "so_b_r": lambda: standoff(SB_X, SB),
-    "weapon_lock": weapon_lock,
+    "weapon_lock": weapon_lock, "esc_tray": esc_tray,
 }
 
 
@@ -890,6 +919,8 @@ def make_spec(model_file):
     for k in range(4):
         dy, dz = _disc_local(BOLT_R * math.cos(math.radians(90 * k)), BOLT_R * math.sin(math.radians(90 * k)))
         P(id=f"nut_d{k}", kind="nut", catalog="nut_m2", at=[DR_X["disc_b"][1] + 0.8, dy - WY, dz - WZ], rot=[0, 90, 0], rotates_with="weapon", parent="spider")
+    P(id="esc_tray", kind="other", material="tpu", process="fdm", print_orientation="+z", rotates_with="fixed", shape=M("esc_tray"),
+      label="TPU weapon-ESC tray (not in the STEP): glued to the base panel, lips hold the ESC when inverted")
     P(id="weapon_lock", kind="other", role="weapon_lock", material="tpu", process="fdm", print_orientation="+z", rotates_with="fixed", color="#ff6a00", tethered=True,
       marked=True, tool_free=True, shape=M("weapon_lock"), label="RV00 TPU weapon lock (Build Guide rule; not in the STEP): sits on the deck under the tooth, on a lanyard")
 
@@ -965,9 +996,9 @@ def make_spec(model_file):
     C("top_panel", "tub", "screw", "Ti top panel held by 4 M2 flat-head thread-forming screws through its countersunk corner holes into the column-top pilots (the STEP has the holes, not the screws)")
     C("weapon_lock", "tub", "interlock", "TPU lock rests on the deck front edge under the tooth, lanyard to the chassis")
     C("battery", "tub", "press_fit", "Pack between the motor wall, the insert columns and the deck", interference_mm=0.1, mechanical_key=True)
-    C("rxesc", "tub", "interlock", "Malenki under the deck beside the pack, kapton")
-    C("wesc", "rxesc", "interlock", "ESC kapton-wrapped against the Malenki; both boxed in by the walls, the deck and the base panel")
-    C("wesc", "tub", "interlock", "ESC boxed by the walls, the deck and the base panel")
+    C("rxesc", "tub", "interlock", "Malenki boxed by the deck cage ribs (0.1 mm), the front wall and the deck; the weapon ESC under it")
+    C("wesc", "esc_tray", "interlock", "weapon ESC in the TPU tray lips (0.1 mm); the cage rib holds -y, the Malenki +z")
+    C("esc_tray", "base_panel", "glue", "TPU tray contact-glued to the base panel top")
     C("power_switch", "tub", "screw", "Switch flange clamped under the deck by 2 M2", mechanical_key=True)
 
     # O-ring belts (front micro hub <-> rear hub, plane |X| 31.3)
@@ -1118,10 +1149,12 @@ def reference_cad():
                       for x, y in INS[:4]]
           + [dict(near=[x, y, 5.0], r=4.0, reason="column foot flared to R3.7 with a recess for the base-panel ring boss (1.0 mm base skin cannot seat a 1.2 mm M2 flat head)")
              for x, y in INS]
+          + [dict(near=list(p_), r=8.0, reason="2 x 2.6 gusset under the front-corner flange: printed deck-down the flange top is an unsupported ceiling")
+             for p_ in ((-22.5, 20.0, 5.8), (22.5, 20.0, 5.8))]
           + [dict(near=list(p_), r=6.0, reason="electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact")
              for p_ in ((-2.0, -2.0, 15.4), (19.4, -2.0, 15.4), (2.0, -19.6, 13.0), (12.0, -19.6, 13.0), (7.5, -19.6, 13.0), (-2.2, -9.0, 14.0), (19.3, 4.0, 14.0), (-2.2, 4.0, 14.0), (19.3, -9.0, 14.0))]),
         R("base_panel", "RV26_Base_Panel_1.stl", tol_mm=0.3, note="RV26 1 mm panel",
-          deviations=[dict(near=[x, y, 4.5], r=3.0, reason="0.6 mm ring boss + 4.5 countersink on a 3.0 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud")
+          deviations=[dict(near=[x, y, 4.5], r=3.0, reason="0.4 mm ring boss, R3 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud")
                       for x, y in INS]),
         R("top_panel", "Top_Panel_1.stl", tol_mm=0.3, note="0.9 mm top panel",
           deviations=[dict(near=[x, y, 19.95], r=3.0, reason="4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it")
