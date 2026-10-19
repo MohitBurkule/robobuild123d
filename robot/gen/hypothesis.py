@@ -35,12 +35,17 @@ BATTERIES = ("lipo_2s_180", "lipo_2s_350", "lipo_1s_300", "c_typical_2s_300mah_l
 DRIVE_ESCS = ("esc_dual_brushed", "c_malenki_nano_antweight_esc_receiver", "c_bbb_antweight_dual_esc_v3_1")
 WEAPON_ESCS = ("none", "c_bbb_antweight_spinner_brushless_esc", "esc_brushless_12a")
 RECEIVERS = ("rx_fs_ia6_decased", "integrated")
+# chassis construction: two printed halves split at the axle plane, or an open tub (walls + floor ribs) closed by a
+# screwed base panel below and a top sheet above, with standoff-mounted weapon uprights (Revron)
+CHASSIS = ("clamshell", "tub")
+# disc weapons: one disc, or a spider bolted to the bell carrying two floating discs (RVRN 2.0)
+DISC_STACKS = ("single", "spider_pair")
 
 AXES = {
     "weapon": WEAPONS, "mount": MOUNTS, "orientation": ORIENTATIONS, "attachment": ATTACHMENTS, "front": FRONTS,
     "drive_layout": DRIVE_LAYOUTS, "drive_motor": DRIVE_MOTORS, "wheel_dia": WHEEL_DIAS, "transmission": TRANSMISSIONS,
     "wheel_guards": (True, False), "invertible": (True, False), "battery": BATTERIES, "drive_esc": DRIVE_ESCS,
-    "weapon_esc": WEAPON_ESCS, "rx": RECEIVERS,
+    "weapon_esc": WEAPON_ESCS, "rx": RECEIVERS, "chassis": CHASSIS, "disc_stack": DISC_STACKS,
 }
 AXIS_ORDER = tuple(AXES)
 
@@ -129,8 +134,18 @@ BUILDABLE = {
     "wedge": {"front": ("wedge",), "drive_layout": ("2WD",)},
     "lifter": {"front": ("forks",), "attachment": ("servo_horn",), "drive_layout": ("2WD",)},
     "hspin_bar": {"front": ("wedgelets", "skirt", "wedge"), "mount": ("top",), "attachment": ("hub_motor",), "drive_layout": ("2WD",)},
-    "vspin_drisk": {"front": ("forks", "wedgelets"), "mount": ("front",), "attachment": ("drisk",), "drive_layout": ("2WD", "4WD")},
+    "vspin_drisk": {"front": ("forks", "wedgelets"), "mount": ("front",), "attachment": ("drisk",), "drive_layout": ("2WD", "4WD"),
+                    "chassis": ("clamshell",), "disc_stack": ("single", "spider_pair")},
 }
+# options the generator builds but that do not verify clean yet: built only on request (user {"experimental": true}).
+# chassis=tub (open tub + base panel + top sheet, uprights on standoffs): 6 blockers left on the 4WD drisk - 2.7 g over
+# the limit, the upright neck flexes 1.1 mm (the verifier roots it at the foot contact, not at the standoff screws), the
+# upper standoff screws' driver path crosses the disc, one 0.6 mm sliver at a rear corner.
+EXPERIMENTAL = {"vspin_drisk": {"chassis": ("tub",)}}
+# axes a weapon type must leave at the default when it is not listed above
+DEFAULT_ONLY = {"chassis": "clamshell", "disc_stack": "single"}
+# drive combinations the drive generator builds: 2WD direct on the motors, 4WD = 2 motors + O-ring belts
+BUILDABLE_DRIVES = {("2WD", "direct"), ("4WD", "belt")}
 
 
 @lru_cache(maxsize=1)
@@ -168,6 +183,8 @@ class Hypothesis:
     drive_esc: str = "esc_dual_brushed"
     weapon_esc: str = "none"
     rx: str = "rx_fs_ia6_decased"
+    chassis: str = "clamshell"
+    disc_stack: str = "single"
 
     @property
     def weapon_class(self) -> WeaponClass:
@@ -183,6 +200,7 @@ class Hypothesis:
                 f"{self.drive_motor}{self.transmission[0]}{self.wheel_dia}", "g" if self.wheel_guards else "ng",
                 "inv" if self.invertible else "up", self.battery.replace("lipo_", "").replace("c_typical_", ""),
                 self.drive_esc[:10], self.weapon_esc[:6], self.rx[:5]]
+        bits += [b for b in (self.chassis, self.disc_stack) if b not in ("clamshell", "single")]
         return "-".join(str(b) for b in bits)
 
     def to_dict(self) -> dict:
@@ -330,8 +348,11 @@ def count_by_weapon(fixed: dict | None = None) -> dict:
     return {w: count_hypotheses({**(fixed or {}), "weapon": w}) for w in WEAPONS}
 
 
-def buildable(h: Hypothesis) -> bool:
+def buildable(h: Hypothesis, experimental: bool = False) -> bool:
     b = BUILDABLE.get(h.weapon)
     if b is None:
         return False
-    return all(getattr(h, k) in v for k, v in b.items())
+    if experimental:
+        b = {k: tuple(v) + EXPERIMENTAL.get(h.weapon, {}).get(k, ()) for k, v in b.items()}
+    return (all(getattr(h, k) in v for k, v in b.items()) and (h.drive_layout, h.transmission) in BUILDABLE_DRIVES
+            and all(getattr(h, k) == v for k, v in DEFAULT_ONLY.items() if k not in b))
