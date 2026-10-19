@@ -193,7 +193,7 @@ def base_panel():
     for s in (1, -1):
         pad = _round(_poly([(s * 17.95, -34.85), (s * 27.05, -34.85), (s * 27.05, -25.75), (s * 17.95, -25.75)]), r_out=0.6)
         body = _U(body, _ext(pad, "xy", z0 + t - 0.01, z0 + t + 0.25))
-    cuts = [_csk(2.2, 3.2, (x, y, z0), "z", 1, 4.0) for x, y in INS]   # 3.2 x 0.5 countersink then the 2.2 hole (STEP RV26)
+    cuts = [_csk(2.2, 4.0, (x, y, z0), "z", 1, 4.0) for x, y in INS]   # 4.0 countersink (STEP RV26 has 3.2 x 0.5; an ISO 10642 M2 head is 3.8, so it would stand proud and bind) then the 2.2 hole
     return _S(body, *cuts)
 
 
@@ -228,7 +228,7 @@ def top_panel():
     p = _round(p, r_out=0.4, r_in=1.2)
     body = _ext(p, "xy", z0, z0 + t)
     # 2.2 holes countersunk (90 deg, 3.65 at the top face) for M2 flat heads into the column-top pilots (STEP)
-    return _S(body, *[_csk(2.2, 3.65, (x, y, z0 + t), "z", -1, 2.0) for x, y in ((25.0, 10.4), (-25.0, 10.4), (25.0, -21.6), (-25.0, -21.6))])
+    return _S(body, *[_csk(2.2, 4.0, (x, y, z0 + t), "z", -1, 2.0) for x, y in ((25.0, 10.4), (-25.0, 10.4), (25.0, -21.6), (-25.0, -21.6))])
 
 
 def fork(s):
@@ -503,7 +503,7 @@ def side_panel(s):
     nose = _S(nose, _box(-42.0, -38.4, 26.5, 39.0, 3.0, 10.5))                     # hollow behind the nose wall
     boss = _I(_cyl(3.0, -42.5, -39.5, SA), _ext(side, "yz", -60.0, -20.0))         # standoff end boss
     body = _U(wall, nose, foot, straight, boss)
-    cuts = [_csk(3.3, 6.2, (-46.26, SA[0], SA[1]), "x", 1, 8.0), _csk(3.3, 6.2, (-41.76, SB[0], SB[1]), "x", 1, 8.0), _cyl(3.1, -50.0, -41.5, SB),
+    cuts = [_csk(3.3, 6.2, (-46.26, SA[0], SA[1]), "x", 1, 8.0), _csk(3.3, 6.6, (-41.76, SB[0], SB[1]), "x", 1, 8.0), _cyl(3.1, -50.0, -41.5, SB),
             _csk(3.3, 6.2, (-35.26, NUT[0], NUT[1]), "x", 1, 8.0), _cyl(2.55, -42.55, -38.0, SA),
             _box(-45.0, -43.4, -38.7, -24.8, 5.0, 15.0),                          # rear tyre relief on the inner face
             _box(-32.6, -31.4, -13.1, 2.6, 3.7, 13.3)]                            # clears the chassis nut lobe
