@@ -552,3 +552,24 @@ def test_axle_section_views_exist_for_spinners():
     views = render.axle_sections(w, r, 200)
     assert [v.name for v in views] == ["section_axle_x", "section_axle_y"]
     assert render.render_array(w, views[0]) is not None
+
+
+def clamshell(joined):
+    """Fork bolted to the bottom tub and, through a thin 2 mm tab, to a top lid that is the declared chassis
+    (VERIFIER_ISSUES #2): the root must include the tub when the halves are joined."""
+    d = spinner()
+    d["chassis"] = "lid"
+    fl = _part(d, "fork_l")
+    fl["shape"] = {"type": "union", "items": [fl["shape"], box(10, 2, 6, (14, 34, 38))]}
+    d["fasteners"].append(F("bolt_tl", "M2x6", (14, 34, 43), (0, 0, -1), ["lid"], "fork_l"))
+    d["parts"].append(P("lid", "structure", box(60, 60, 2, (0, 20, 42))))
+    if joined:
+        d["connections"].append({"a": "lid", "b": "tub", "method": "screw", "reason": "clamshell halves bolted"})
+    return d
+
+
+def test_fork_stiffness_roots_on_whole_clamshell():
+    bad, _ = run(clamshell(False))
+    assert any(not f.passed and "fork_l" in f.message for f in bad.get("arch.fork_stiffness", []))
+    good_, _ = run(clamshell(True))
+    assert passed(good_, "arch.fork_stiffness"), [f.message for f in good_.get("arch.fork_stiffness", [])]

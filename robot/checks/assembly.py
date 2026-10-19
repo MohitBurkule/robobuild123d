@@ -27,6 +27,14 @@ def group(ctx, pid):
                 ids.append(p.id)
         if len(ids) == n:
             break
+    # A screw whose every clamped part (through + threads_into) is in the group was driven on the bench: it leaves with
+    # the sub-assembly instead of pinning it in place (drisk bolts, weapon-module standoff screws).
+    if len(ids) > 1:
+        S = set(ids)
+        for f in ctx.r.spec.fasteners:
+            cl = set(f.through or []) | ({f.threads_into} if f.threads_into else set())
+            if cl and cl <= S:
+                ids.append(f.id)
     return [k for k in (ctx.world.index(i) for i in ids) if k is not None]
 
 
@@ -83,6 +91,17 @@ def run(ctx):
     rootp = next((p for p in r.spec.parts if p.kind == "structure"), None)
     root = w.index(rootp.id) if rootp else None
     steps, out = [], []
+    # O-rings / elastic belts that can be stretched over their flanges (disasm.elastic_stretch) come off first by
+    # stretching, not by a straight slide.
+    from . import disasm
+
+    nc = list(ctx.not_checked)
+    for bid in sorted(disasm.elastic(ctx, [])):
+        k = w.index(bid)
+        if k is not None and present[k]:
+            present[k] = False
+            steps.append(AssemblyStep(len(steps) + 1, bid, [0.0, 0.0, 0.0], 0.0))
+    ctx.not_checked[:] = nc
     while True:
         progress = False
         order = [i for i in range(n) if present[i] and i != root]
