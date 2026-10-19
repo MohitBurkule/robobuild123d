@@ -303,7 +303,7 @@ def weapon_mount(side):
         cuts.append(_cyl(6.0, xm, xo + s, (WY, WZ)))                                 # shaft nut recess
         cuts.append(_cyl(LOCK_R - 0.05, xi - s, xo + 3 * s, _lock_yz()))             # RV00 lock pin bore: 0.05 radial TPU press (held, pulls by hand)
     for (y, z) in (SA, SB):                                                          # M3 CSK into the standoffs, flush inside
-        cuts.append(_csk(3.3, 6.2, (xi, y, z), "x", s, 6.0))
+        cuts.append(_csk(3.4, 6.2, (xi, y, z), "x", s, 6.0))   # ISO 273 normal 3.4: the lug bears fore/aft before the screw shanks touch
     return _S(body, *cuts)
 
 
@@ -1078,7 +1078,7 @@ REF_BOM = [   # RVRN 2.0 STEP part list (research/rvrn_step/INDEX.txt); one row 
     dict(role="RV16 Turnabot 2S 180 mAh", kind="part", match=["battery"], count=1, catalog="lipo_2s_180_turnabot"),
     dict(role="RV13 Malenki nano", kind="part", match=["rxesc"], count=1, catalog="malenki_nano_rvrn2"),
     dict(role="RV14 brushless ESC", kind="part", match=["wesc"], count=1, catalog="bbb_ant_esc_rvrn2"),
-    dict(role="RV12 N10 2200 rpm x 2", kind="part", match=["motor_*"], count=2, catalog="n10_2200rpm_spicy"),
+    dict(role="RV12 N10 2200 rpm x 2", kind="part", match=["motor_l", "motor_r"], count=2, catalog="n10_2200rpm_spicy"),
     dict(role="drisk stack: 4 x M2 + nuts (not in the STEP, holes are)", match=["bolt_d*"], count=4, designation="M2", threads_into="nut",
          deviation="the STEP leaves the r14 stack holes empty; 4 M2x18 + nuts added so the stack is held (18 mm: the nut is fully engaged)"),
     dict(role="spider to bell: 4 x M2 (not in the STEP)", match=["bolt_p*"], count=4, designation="M2", threads_into="motor",

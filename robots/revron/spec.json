@@ -254,7 +254,8 @@
    "role": "RV12 N10 2200 rpm x 2",
    "kind": "part",
    "match": [
-    "motor_*"
+    "motor_l",
+    "motor_r"
    ],
    "count": 2,
    "catalog": "n10_2200rpm_spicy"
