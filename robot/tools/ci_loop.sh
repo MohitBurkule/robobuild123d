@@ -39,6 +39,14 @@ for i in $(seq "${START_ITER:-1}" "$MAX_ITERS"); do
   (cd robots/revron/src && python3 build_revron.py >/dev/null 2>&1) && git add robots/revron/spec.json robot/templates/revron.json && git commit -qm "Revron: regenerate spec (ci loop)" >/dev/null 2>&1
   push
   sha=$(git rev-parse --short HEAD)
+  if [ "$sha" = "$(cat "$P/ci_last_verified" 2>/dev/null)" ]; then  # nothing new: wait without spending an iteration
+    while [ "$(git rev-parse --short HEAD)" = "$sha" ]; do
+      sleep "${POLL:-120}"; git fetch -q origin 2>/dev/null
+      for b in $(heads); do git merge-base --is-ancestor "$b" HEAD || git merge -q --no-edit "$b" >/dev/null 2>&1 || { git merge --abort; log "conflict ${b#origin/}"; }; done
+      [ -f "${CI_STOP:-/tmp/ci_loop.stop}" ] && { log "stop file seen, exiting"; exit 0; }
+    done
+    push; sha=$(git rev-parse --short HEAD); log "iter $i new head $sha"
+  fi
   [ -f "$P/blockers_live.jsonl" ] && mv "$P/blockers_live.jsonl" "$P/blockers_live.prev.jsonl"
   out="$P/ci_verify_${i}_$sha.log"
   # full verify in fresh processes per chunk (one process for all groups grew past 11 GB at `threat` and was OOM-killed)
@@ -59,7 +67,7 @@ for i in $(seq "${START_ITER:-1}" "$MAX_ITERS"); do
   groups=$(grep '^\[BLOCKER\]' "$out" | awk '{print $2}' | cut -d. -f1 | sort | uniq -c | awk '{printf "%s %s, ",$2,$1}')
   note=""; [ "$need" -lt 3 ] && note=" (threat not run)"
   log "iter $i sha $sha: $n blockers$note (${groups%, })"
-  echo "$i $sha" > "$P/ci_iter_done"
+  echo "$i $sha" > "$P/ci_iter_done"; echo "$sha" > "$P/ci_last_verified"
   [ "${CI_RENDER:-1}" = 1 ] && render
   [ "$n" -eq 0 ] && [ -z "$note" ] && { log "0 blockers at $sha, stopping"; exit 0; }
   [ -f "${CI_STOP:-/tmp/ci_loop.stop}" ] && { log "stop file seen, exiting"; exit 0; }
