@@ -12,6 +12,7 @@ import math
 
 from shapely.geometry import MultiPoint
 
+from ..intent import I
 from . import sh
 from .plan import Pocket
 from .pockets import GAP, HOUSING
@@ -68,19 +69,28 @@ class Lifter:
         # servo: local z (output) -> world +x, local x -> world y, local y -> world z
         plan.part(id="servo", kind="servo", catalog=SERVO, at=[xc, yp, zp], rot=[90.0, 0.0, 90.0], retained="captive",
                   ports={"signal": [-sx / 2, 0.0, 0.0]},
-                  label="CS07 micro servo on its side, output through the right wall (BEC 5 V from the receiver lead)")
+                  label="CS07 micro servo on its side, output through the right wall (BEC 5 V from the receiver lead)",
+                  intent=I("load_path", "the servo drives the scoop directly on its spline: no linkage to wear or jam",
+                           f"CS07: torque to lift at the {SCOOP_LEN:g} mm lip"))
         pk = Pocket("servo", xc - sz / 2 - GAP, W - f.wall, yp - sx / 2 - GAP, yp + sx / 2 + GAP,
-                    zp - sy / 2 - GAP, zp + sy / 2 + GAP, HOUSING)
+                    zp - sy / 2 - GAP, zp + sy / 2 + GAP, HOUSING,
+                    intent=I("retention", "servo pocket: holds the servo against the scoop's reaction torque on all faces",
+                             f"servo box + {GAP} mm"))
         sig_y = yp - sx / 2
         pk.notches.append((xc - 1.6, xc + 1.6, sig_y - 2.0, sig_y + 0.5, min(zp - 1.6, -1.0), max(zp + 1.6, 1.0)))
         plan.pocket(pk)
         # window in the right wall for the servo: its output face sits just outside, in the cheek's plane, so nothing
         # of the scoop has to pass through the wall
         win = sh.boxr(W - f.wall - 0.5, W + 0.5, yp - sx / 2 - GAP, yp + sx / 2 + GAP, zp - sy / 2 - GAP, zp + sy / 2 + GAP)
-        plan.cut("bottom", win)
-        plan.cut("top", win)
-        plan.add("bottom", sh.cyl_axis(3.0, -W, -W + 6.0, "x", yp, zp))
-        plan.late_cut("bottom", sh.cyl_axis(1.0, -W - 0.2, -W + 4.6, "x", yp, zp))
+        wi = I("load_path", "window in the right wall: the servo's output face sits in the cheek's plane, so the scoop "
+               "never passes through the wall", f"servo cross-section + {GAP} mm")
+        plan.cut("bottom", win, intent=wi)
+        plan.cut("top", win, intent=wi)
+        plan.add("bottom", sh.cyl_axis(3.0, -W, -W + 6.0, "x", yp, zp),
+                 intent=I("load_path", "boss for the left pivot dowel: the scoop's load on that side goes into 6 mm of solid",
+                          "r 3 round a 2 mm dowel"))
+        plan.late_cut("bottom", sh.cyl_axis(1.0, -W - 0.2, -W + 4.6, "x", yp, zp),
+                      intent=I("retention", "press bore for the dowel", "2 mm - 0.03 interference"))
         # the scoop: two cheeks outside the side walls + the plate in front of the chassis
         xo = W + 0.4 + CHEEK_T
         # the plate's back edge clears the front wall over the whole lift (it swings up about the pivot)
@@ -104,11 +114,15 @@ class Lifter:
                   joint={"kind": "revolute", "axis": [0, 0, 1], "pivot": [0.0, 0.0, x_face - xc],
                          "min": 0, "max": RANGE_DEG, "default": 0},
                   actuated_by="servo", rotates_with="lifter", color="#c0392b",
-                  label="printed lifting scoop: cheeks outside the side walls, lip on the floor, servo-driven")
+                  label="printed lifting scoop: cheeks outside the side walls, lip on the floor, servo-driven",
+                  intent=I("ground_game", "scoop gets under the opponent and lifts it off its wheels; cheeks outside the "
+                           "walls so it turns clear of the body", f"lip {LIP_GAP} mm off the floor, lift {RANGE_DEG:g} deg"))
         # pivot pin on the left: a 2 mm steel dowel pressed into the wall boss, the cheek turns on it
         plan.part(id="pivot_pin", kind="pin", material="steel", process="cots", stock="2 mm hardened dowel",
                   shape=sh.cyl_axis(1.0, -xo - 0.3, -W + 4.4, "x", yp, zp), rotates_with="fixed", color="#777777",
-                  label="2 mm steel dowel: the scoop's left pivot")
+                  label="2 mm steel dowel: the scoop's left pivot",
+                  intent=I("load_path", "second pivot on the scoop axis: the scoop is carried both sides, the servo "
+                           "spline only drives it", "2 mm hardened dowel"))
         plan.connect("pivot_pin", "chassis_bottom", "press_fit", "Pressed into the left wall boss", interference_mm=0.03,
                      mechanical_key=True)
         plan.connect("lifter", "pivot_pin", "shaft", "Left cheek turns on the dowel, e-clip outboard")
