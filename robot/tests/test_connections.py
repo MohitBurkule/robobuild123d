@@ -50,3 +50,27 @@ def test_joint_pivot_off_parts():
     d = base()
     d["parts"][1].update(parent="chassis", joint={"kind": "revolute", "axis": [1, 0, 0], "pivot": [0, 0, 50]})
     assert run(d).failed("connection.joint_pivot")
+
+
+def _armour(**kw):
+    d = base(**kw)
+    d["parts"][1]["kind"] = "armor"
+    return d
+
+
+def test_armour_snap_only_is_blocker():
+    rep = run(_armour(connections=[{"a": "lid", "b": "chassis", "method": "snap", "reason": REASON}]))
+    assert rep.failed("connection.cover_fasteners")
+
+
+def test_armour_one_screw_is_blocker_two_pass():
+    s = lambda i, x: {"id": i, "designation": "M2x6", "at": [x, 0, 4], "dir": [0, 0, -1], "through": ["lid", "chassis"]}  # noqa: E731
+    assert run(_armour(fasteners=[s("s1", -10)])).failed("connection.cover_fasteners")
+    f = run(_armour(fasteners=[s("s1", -10), s("s2", 10)])).get("connection.cover_fasteners")
+    assert f and f.passed
+
+
+def test_cots_retained_screws_needs_fasteners():
+    d = base(connections=[{"a": "lid", "b": "chassis", "method": "press_fit", "reason": REASON}])
+    d["parts"][1]["retained"] = "screws"
+    assert run(d).failed("connection.cover_fasteners")

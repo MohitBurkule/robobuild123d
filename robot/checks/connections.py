@@ -300,7 +300,52 @@ def run(ctx):
                         f"`{p.id}` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis.{hint}")
                    .on(p.id).here(at)
                    .fix("Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose."))
+    out += cover_retention(r)
     if loose == 0:
         out.append(ok("connection.joined", G, "Every part is attached",
                       f"All {len(r.spec.parts)} parts lead back to the chassis through screws, shared prints, captive pockets, joints or declared connections."))
+    return out
+
+
+COVER_KINDS = {"armor", "armour", "cover", "lid", "panel"}
+COVER_WORDS = ("armour", "armor", "cover", "lid", "hood", "panel")
+SCREWED_RETAINED = {"screw", "screws", "bolted", "bolt"}
+COVER_MIN_FASTENERS = 2
+
+
+def is_cover(p) -> bool:
+    """Armour and cover panels: kind armor/cover/lid/panel, or a plate/structure whose id names it a lid, hood or panel."""
+    if p.kind in COVER_KINDS:
+        return True
+    return p.kind in ("structure", "plate") and any(w in p.id.lower() for w in COVER_WORDS) and p.id.lower() != "tub"
+
+
+def needs_screws(p) -> bool:
+    """Bought-in parts the reference says are screwed (`retained: screws`)."""
+    return isinstance(p.retained, str) and p.retained.lower() in SCREWED_RETAINED
+
+
+def cover_retention(r):
+    """Every armour / cover panel (and every part declared `retained: screws`) is held by >= 2 real fasteners; a snap,
+    press fit or tape alone pops off on the first hit."""
+    count = {}
+    for f in r.spec.fasteners:
+        for pid in set(list(f.through) + ([f.threads_into] if f.threads_into else [])):
+            count[pid] = count.get(pid, 0) + 1
+    out, good = [], 0
+    for p in r.spec.parts:
+        if not (is_cover(p) or needs_screws(p)):
+            continue
+        n = count.get(p.id, 0)
+        if n >= COVER_MIN_FASTENERS:
+            good += 1
+            continue
+        what = "armour / cover panel" if is_cover(p) else "part declared `retained: screws`"
+        out.append(fail("connection.cover_fasteners", G, BLOCKER, "Panel not bolted down",
+                        f"`{p.id}` is an {what} held by {n} fastener(s); it needs >= {COVER_MIN_FASTENERS} real screws. "
+                        f"Snap, press-fit or tape retention alone lets it peel off on the first hit.")
+                   .on(p.id).fix("Bolt it with >= 2 screws into inserts, nuts or tapped bosses and declare them in `fasteners`."))
+    if good and not out:
+        out.append(ok("connection.cover_fasteners", G, "Panels bolted down",
+                      f"All {good} armour / cover panels and screw-retained parts are held by >= {COVER_MIN_FASTENERS} fasteners."))
     return out

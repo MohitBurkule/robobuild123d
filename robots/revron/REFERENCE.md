@@ -20,16 +20,16 @@ Our model is parametric and written from scratch. SVRN and the forum diary give 
 ## Coordinate frame
 X points right, Y points forward (weapon end) and Z points up. Z=0 is the underside of the chassis tub.
 
-## Architecture
-- **Weapon:** BE1806 outrunner. The drisk blades bolt to the motor bell through an aluminium spider. The motor is supported on both sides by uprights, with a flanged bearing on the rotating side. The blade stack is one long single tooth plus 2 outer Hardox blades, all laminated on the spider. The uprights are quick-change: they sit on square bosses, each fixed with 4× M3.
-- **Drive:** 2× N10 gearmotors.
-  - 4WD version (SVRN Belted layout): the motors sit at the front axle and drive the rear stub-axle wheels with O-ring belts.
-  - Alternative (SVRN 4.0): 4 motors, one per wheel.
-  - Tyres are Scalextric F1 fronts, ≈21.5 OD × 9.5–11 wide.
-- **Electronics:** Malenki Nano RX/ESC under the top deck, a 2S ≈350 mAh LiPo and a BBB switch in a side wall.
-- **Chassis:** a printed tube with an open bottom and a ≈1.2 mm top deck. A separate base panel (with X ribs) closes the bottom. M2 heat-set inserts at both ends of 6 posts take the base and top screws. The side panels fix with M3 countersunk screws into M3 aluminium nuts held in hex recesses. The motors sit in keyhole slots.
-- **Armour:** TPU side panels form the forks and front wedge. The top is a TPU cover with a Ti plate.
+## Architecture (modelled design: RVRN 1.7 Build Guide + RVRN Drive CAD)
+- **Weapon (drisk):** BBB BE1806 2300 kV; stator bolted to the left upright (+X) with 4 M2 cap screws (CAD `fl-1` carries the 12/16 stator pattern, `fr-1` the bearing seat, so the CAD hand wins over the guide text "bearing in LH"). Two 3 mm Hardox 450 discs (RV10 motor side, RV11 floating), R16.5 with two tips at R21.5, an 8 mm printed spacer (RV04) round the bell. Stack: 4 long M2x16 steel bolts through both discs and the spacer into 4 M2 nuts (threadlocked) on the motor-side disc. The BE1806 prop mount (RV07) clamps the motor-side disc to the bell with 4 M2 (button heads, see BOM deviations). Its 5 mm spigot runs in an MF85ZZ flanged bearing in the right upright (+ RV09 bearing spacer): supported both ends.
+- **Weapon module (quick change):** both 4 mm uprights (RV02/RV03) seat on the chassis lugs and bolt to the standoff ends with 4 M3x10 alu button heads (guide: M3x12 CSK; the R3.23 lobes are too small for CSK heads and a 12 mm screw cannot stay captive between plate and disc). The three weapon phases unplug at 2 mm bullet connectors.
+- **Weapon lock:** RV00, a printed TPU tooth stop (orange, on a lanyard) under the rear drisk tip, fitted whenever the battery is in.
+- **Drive:** 2 Turnabot Spicy N10 2200 rpm in rear keyhole pockets, direct to Scalextric F1 21.5 x 12 x 9.5 rear tyres on printed hubs (RV21: M2 grub-screw hole + captive nut slot; grub and nut optional per the guide, not fitted); stock 45 x 1 nitrile O-ring belts to the Scalextric micro 11 x 7 x 6 front tyres (RV19 hubs greased on the 25 mm axle standoffs). Reference CAD has the F1 tyre on the N10 at the rear (guide text is reversed; CAD wins). The guide's 32 x 30 O-ring cannot span the CAD's 61 mm centres, hence 45 x 1.
+- **Electronics:** Malenki Nano + BBB ant ESC, kapton-wrapped stack; Turnabot 2S 180 mAh LiPo on a JST RCY lead; BBB ant switch screwed to the tub with 2 M2 through its ear, lever out through the rear wall, pull rearward = off.
+- **Chassis (RV01):** printed PLA-ST open box with X-ribbed floor, 5 M2 heat-sets for the 1 mm base panel (RV26, 5 M2x6; button heads, the 1 mm panel cannot take a CSK), 2 hex pockets for the M3 alu nuts, front lugs and box sections for the 4 alu standoffs (CAD lengths 20 + 25 mm; guide text 15 + 25).
+- **Armour:** one-piece low-profile TPU wedglet / side panel per side (Drive STL), slides over both front standoffs, 3 M3 CSK alu per side; diagonal vent slots in the side wall (the Drive STL shows no round nose holes, so none are modelled). Raised TPU hood bolted down with 4 M2 into rim heat-sets (Revron photos).
 
+## SVRN measurements (historical: the first rebuild used SVRN; superseded by RVRN above)
 ## Parameter table
 Also available as `params.json` (same keys).
 
