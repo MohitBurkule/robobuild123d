@@ -859,8 +859,8 @@ def make_spec(model_file):
       label="GR1507 outrunner: stator on RV03, bell drives the spider")
     P(id="wbearing", kind="bearing", parent="mount_l", material="steel", process="cots", rotates_with="fixed", stock="MR85ZZ 5 x 8 x 2.5", color="#555555",
       shape=_spec_bearing(), label="MR85ZZ in the RV02 8 mm seat: outboard support of the threaded shaft end (inferred: the STEP shows the 7.9 seat but no bearing)")
-    P(id="wshaft", kind="shaft", material="steel", process="cots", stock="GR1507 5 mm shaft (part of the motor): modelled whole, MR85 end X -18.7 through the bell and the rear bearing to its circlip end X 11.4", rotates_with="weapon", shaft_of="weapon_motor", parent="spider",
-      shape={"type": "place", "shape": {"type": "cylinder", "radius": 2.5, "height": 30.1}, "at": [-3.65, 0, 0], "rot": [0, 90, 0]}, color="#777777", solid_fraction=0.05,
+    P(id="wshaft", kind="shaft", material="steel", process="cots", stock="GR1507 5 mm shaft (part of the motor): modelled whole, MR85 end X -18.7 through the bell and the rear bearing to its circlip end X 11.4", rotates_with="weapon", shaft_of="weapon_motor", parent="weapon_motor",
+      shape={"type": "place", "shape": {"type": "cylinder", "radius": 2.5, "height": 30.1}, "at": [3.65, 0, 0], "rot": [0, 90, 0]}, color="#777777", solid_fraction=0.05,
       label="threaded end of the GR1507 shaft through the MR85 (its mass is in the motor)")
     P(id="spider", kind="weapon", material="aluminium", process="waterjet", stock="3 mm 7075 plate (one 2D profile: water-jet, no milling needed)",
       min_web_mm=0.8, min_web_reason="0.8 mm webs between the dog pockets and the rim are the designer's own (RVRN 2.0 STEP spider_1 measures 0.8 at the same four places)", rotates_with="weapon", parent="mount_r", at=list(WO), shape=M("spider", WO),
@@ -1206,7 +1206,14 @@ def main():
 TEARDOWN = [t for s, n in ((-1, "l"), (1, "r")) for t in (
     dict(parts=[f"wedgelet_{n}", f"fork_{n}"], dir=[s, 0, 0], reason="fork tail is pinned in the wedgelet cheek slot: they slide off the standoffs as one"),
     dict(parts=[f"so_b{n}"], dir=[s, 0, 0], reason="nose standoff slides out of the chassis lug once the mount screw is out"),
-    dict(parts=[f"so_a{n}"], dir=[s, 0, 0], reason="axle standoff slides out of the lug with the front hub and wheel on it"))]
+    dict(parts=[f"so_a{n}"], dir=[s, 0, 0], reason="axle standoff slides out of the lug with the front hub and wheel on it"))] + [
+    # weapon module (fix-B): with both standoff pairs out, RV02 slides off the shaft end and its lug (MR85 and lock with it,
+    # the two CSK screws captive in it); the spider bolts are then reachable, the drisk slides off the shaft; the motor
+    # comes out after its 4 stator screws; RV03 last.
+    dict(parts=["mount_l", "bolt_ula", "bolt_ulb"], dir=[-1, 0, 0], reason="RV02 slides outboard off the lug and the shaft end, its CSK screws captive"),
+    dict(parts=["spider"], dir=[-1, 0, 0], reason="drisk (spider, discs, spacer, stack bolts) slides off the GR1507 shaft once the 4 bell screws are out"),
+    dict(parts=["weapon_motor"], dir=[-1, 0, 0], reason="GR1507 leaves inboard-left once the 4 stator screws are out"),
+    dict(parts=["mount_r", "bolt_ura", "bolt_urb"], dir=[1, 0, 0], reason="RV03 slides outboard off its lug with the back spacer, CSK screws captive")]
 
 
 def _root(parts, q):
