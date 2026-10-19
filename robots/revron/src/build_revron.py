@@ -707,7 +707,7 @@ def side_panel(s):
     wall = _I(wall, _ext(side, "yz", -60.0, -20.0))
     SIDE_WALL_DEBUG.append(wall)
     nose_plan = _round(Polygon([(-52.1, 26.5), (-51.7, 39.7), (-50.5, 43.0), (-48.4, 45.7), (-45.6, 47.9), (-42.0, 49.6), (-40.0, 50.1), (-38.5, 50.1),
-                                (-38.5, 38.7), (-41.6, 38.7), (-42.4, 37.3), (-42.3, 34.9), (-40.5, 34.5), (-40.5, 26.5)]), r_out=0.5)
+                                (-38.5, 37.6), (-41.6, 37.6), (-42.4, 37.3), (-42.3, 34.9), (-40.5, 34.5), (-40.5, 26.5)]), r_out=0.5)
     batter = _ext(_poly([(-52.06, 1.0), (-52.06 + 0.84 * 15, 16.0), (0.0, 16.0), (0.0, 1.0), (-52.06, -5.0)]), "xz", 0.0, 60.0)   # outer face leans in 38 deg
     nose = _I(_I(_ext(nose_plan, "xy", 1.0, 10.0), _ext(side, "yz", -60.0, -20.0)), batter)
     # the nose top continues the wedgelet's 50 deg ramp (Z = 1 + 1.187 (50.1 - Y)) so a wedge rides up both as one face
