@@ -834,7 +834,10 @@ def _wall_pocket(x0, x1, z0, z1, y0, y1, r_vert=0.5, r_floor=0.8):
     return b.fillet(s.faces().sort_by(b.Axis.Y)[-1].edges(), r_floor)
 
 
-def _lattice_pocket(pts, y0=-36.6, y1=-35.5, r_vert=0.45, r_floor=0.95):
+LAT_GROW = 0.35   # mm, measured from RV01 y=-36 sections (pocket area 38.1 vs 28.2)
+
+
+def _lattice_pocket(pts, y0=-36.5, y1=-35.5, r_vert=0.5, r_floor=0.25):
     """Cutter of one triangular rear-wall pocket (X, Z outline `pts`): R0.45 corners and an R0.95 floor (the STEP's R0.98),
     so the pocket has no sharp internal corner in the print."""
     b = _b()
@@ -999,8 +1002,8 @@ def chassis():
     for sg in (1, -1):
         lat += [Polygon([(sg * 4.84, 7.0), (sg * 4.84, 15.0), (sg * 12.4, 11.0)]), Polygon([(sg * 26.42, 7.0), (sg * 26.42, 15.0), (sg * 18.85, 11.0)]),
                 Polygon([(sg * 10.6, 5.58), (sg * 20.65, 5.58), (sg * 15.6, 9.7)]), Polygon([(sg * 10.6, 16.42), (sg * 20.65, 16.42), (sg * 15.6, 12.3)])]
-    for t in lat:
-        cuts.append(_lattice_pocket(list(t.exterior.coords)[:-1]))
+    for t in lat:   # STEP rib is 0.35 thinner than the nominal triangle edges: grow each pocket by LAT_GROW
+        cuts.append(_lattice_pocket(list(t.buffer(LAT_GROW, join_style=2).exterior.coords)[:-1]))
     # weapon phase wire hole in the front wall
     cuts.append(_ext(_round(Polygon([(7.25, 5.0), (10.25, 5.0), (10.25, 17.0), (7.25, 17.0)]), r_out=1.45), "xz", 12.0, 16.0))
     for xa, xb in ((-18.25, 4.25), (13.25, 18.2)):
