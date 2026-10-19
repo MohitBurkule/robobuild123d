@@ -585,7 +585,6 @@
    "reason": "RV03 slides outboard off its lug with the back spacer, CSK screws captive"
   }
  ],
- "renders": {"dir": "/mnt/project-files/robot-cad/b123d/final", "views": ["rvrn2_*.png", "wiring_*.png"], "note": "wire.render_present reads the <png>.json records robot render writes"},
  "reference_cad": {
   "dir": "/mnt/project-files/robot-cad/research/rvrn_step/parts",
   "ref_to_world": [
