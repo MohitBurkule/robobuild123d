@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import math
 
+from ..intent import I
 from . import fasteners, sh
 
 LIP_GAP = 0.6
@@ -49,7 +50,10 @@ def add_wedge(plan, length=46.0, material="petg_cf", pid="wedge"):
     trim = sh.box(width + 20, 10.0, 40.0, (0, yf - 5.0, 0))
     shape = sh.S(sh.U(*items), *holes, trim)
     plan.part(id=pid, kind="wedge", material=material, process="fdm", shape=shape, color="#ff6a1a",
-              print_orientation="+y", label=f"printed wedge, {ang:.0f} deg ramp, lip {LIP_GAP} mm off the floor")
+              print_orientation="+y", label=f"printed wedge, {ang:.0f} deg ramp, lip {LIP_GAP} mm off the floor",
+              intent=I("ground_game", "gets under the opponent first and lifts it off its wheels; ribs carry the "
+                       "lip load back to the mounting web, printed on its web so layers run along the slope",
+                       f"lip {LIP_GAP} mm off the floor (clears arena seams), {ang:.0f} deg, {WEDGE_T} mm plate, 7 ribs"))
     fasteners.add_front_inserts(plan, xs, z_ins, pid, plate_t=WEB_T)
     return y_tip, ang
 
@@ -80,7 +84,9 @@ def add_skirt(plan, length=30.0, pid="skirt", t=2.0):
     trim = sh.box(width + 20, 10.0, 40.0, (0, yf - 5.0, 0))
     plan.part(id=pid, kind="skirt", material="tpu", process="fdm", shape=sh.S(sh.U(*items), *holes, trim),
               color="#e0a020", print_orientation="+y",
-              label=f"printed TPU skirt, {math.degrees(ang):.0f} deg, {t:g} mm, lip 0.3 mm off the floor")
+              label=f"printed TPU skirt, {math.degrees(ang):.0f} deg, {t:g} mm, lip 0.3 mm off the floor",
+              intent=I("ground_game", "a flexible skirt drags on the floor and bends over seams instead of lifting the "
+                       "robot, so it wins the ground game against wedges", f"TPU {t} mm, lip 0.3 mm, no ribs (must flex)"))
     fasteners.add_front_inserts(plan, xs, z_ins, pid, plate_t=WEB_T)
     return y_tip, math.degrees(ang)
 
@@ -98,6 +104,9 @@ def add_plow(plan, length=30.0, pid="plow"):
         cut = sh.prism([(0, y_tip + 1.0), (s * (W + 2.0), y_tip + 1.0), (s * (W + 2.0), y_tip - dy)], 60.0, (0, 0, 0))
         part["shape"] = sh.S(part["shape"], cut)
     part["label"] = f"printed V plow, {ang:.0f} deg ramp, nose swept back 25 deg"
+    plan.features[-1 - next(i for i, f in enumerate(reversed(plan.features)) if f["target"] == pid)]["intent"] = I(
+        "ground_game", "the V nose deflects opponents to the side as well as lifting them, so a pusher can steer them "
+        "into the wall", f"wedge {ang:.0f} deg with the edge swept back 25 deg")
     return y_tip, ang
 
 

@@ -58,6 +58,13 @@ def weapon_front(h):
     return None if h.front in _wc(h).fronts else f"{h.weapon} does not pair with a {h.front} front"
 
 
+@rule("weapon", "disc_stack")
+def disc_stack_needs_disc(h):
+    if h.disc_stack == "spider_pair" and h.weapon not in ("vspin_drisk", "vspin_disc", "counter_gyro_vspin"):
+        return "a spider with two floating discs is a vertical disc weapon"
+    return None
+
+
 @rule("mount", "orientation")
 def vertical_not_under(h):
     return "a vertical weapon cannot sit under the robot" if (h.mount == "under" and h.orientation == "vertical") else None

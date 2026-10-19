@@ -7,6 +7,8 @@ turns the plan into the two printed halves at the end.
 
 from __future__ import annotations
 
+import os
+import sys
 from dataclasses import dataclass, field
 
 
@@ -52,6 +54,7 @@ class Pocket:
     halves: tuple = ("bottom", "top")
     notches: list = field(default_factory=list)  # [(x0, x1, y0, y1, z0, z1)] wire exits at the ports
     wire_through: bool = False  # the channel band under the part is empty (switch slot): its own wires may cross it
+    intent: dict | None = None  # why the pocket (and its housing wall) exists
 
     def outer(self) -> tuple:
         """XY extent of cavity + notches + housing wall."""
@@ -84,32 +87,88 @@ class Plan:
     extra: dict = field(default_factory=dict)  # top-level spec keys (archetype, reference, ...)
     notes: list = field(default_factory=list)
     placements: dict = field(default_factory=dict)  # component id -> (x, y, z, rot_z) from the layout
+    features: list = field(default_factory=list)  # every feature + its design intent (see robot/gen/intent.py)
 
-    def add(self, half, *shapes):
-        self.adds[half].extend(s for s in shapes if s is not None)
+    @property
+    def is_tub(self) -> bool:
+        """Open-tub chassis (walls + housings) closed by a base panel and a top sheet, instead of two halves."""
+        return getattr(self.hyp, "chassis", "clamshell") == "tub"
 
-    def cut(self, half, *shapes):
-        self.cuts[half].extend(s for s in shapes if s is not None)
+    def body(self, half: str) -> str:
+        """Part id of the chassis piece that holds what a generator put in `half`."""
+        return "tub" if self.is_tub else f"chassis_{half}"
 
-    def cut_both(self, *shapes):
-        self.cut("bottom", *shapes)
-        self.cut("top", *shapes)
+    @property
+    def roof(self) -> str:
+        return "lid" if self.is_tub else "chassis_top"
 
-    def part(self, **p):
+    def feature(self, op, intent, target=None, half=None):
+        """Record one feature and why it exists (`intent` from intent.I). The source line is kept for the check."""
+        fr = sys._getframe(1)
+        while fr is not None and os.path.basename(fr.f_code.co_filename) == "plan.py":
+            fr = fr.f_back
+        src = f"{os.path.basename(fr.f_code.co_filename)}:{fr.f_lineno}" if fr is not None else "?"
+        self.features.append({"id": f"{op}{len(self.features)}", "op": op, "target": target, "half": half,
+                              "intent": intent, "src": src})
+
+    def add(self, half, *shapes, intent=None):
+        shapes = [s for s in shapes if s is not None]
+        self.adds[half].extend(shapes)
+        if shapes:
+            self.feature("add", intent, half=half)
+
+    def cut(self, half, *shapes, intent=None):
+        shapes = [s for s in shapes if s is not None]
+        self.cuts[half].extend(shapes)
+        if shapes:
+            self.feature("cut", intent, half=half)
+
+    def cut_both(self, *shapes, intent=None):
+        self.cut("bottom", *shapes, intent=intent)
+        self.cut("top", *shapes, intent=intent)
+
+    def late_cut(self, half, *shapes, intent=None):
+        """Cuts applied after pockets (bolt bores, counterbores)."""
+        shapes = [s for s in shapes if s is not None]
+        self.late_cuts[half].extend(shapes)
+        if shapes:
+            self.feature("late_cut", intent, half=half)
+
+    def pocket(self, pk, intent=None):
+        pk.intent = intent if intent is not None else pk.intent
+        self.pockets.append(pk)
+        self.feature("pocket", pk.intent, target=pk.id)
+        return pk
+
+    def wire(self, w: dict, intent=None):
+        self.wires.append(w)
+        self.feature("wire", intent, target=w["id"])
+        return w
+
+    def part(self, intent=None, **p):
         p.setdefault("at", [0.0, 0.0, 0.0])
         p.setdefault("rot", [0.0, 0.0, 0.0])
         self.parts.append(p)
+        self.feature("part", intent, target=p["id"])
         return p
 
     def get(self, pid):
         return next((p for p in self.parts if p["id"] == pid), None)
 
-    def connect(self, a, b, method, reason, **kw):
+    def connect(self, a, b, method, reason, intent=None, **kw):
+        """A joint between two parts. Its reason is its intent; the purpose follows from the method unless given."""
         self.connections.append({"a": a, "b": b, "method": method, "reason": reason, **kw})
+        if intent is None and reason:
+            purpose = {"shaft": "load_path", "pin": "load_path", "belt": "load_path", "glue": "retention", "velcro": "retention",
+                       "tape": "retention", "snap": "assembly", "interlock": "retention"}.get(method, "assembly")
+            lim = ", ".join(f"{k}={v}" for k, v in kw.items() if k in ("interference_mm", "mechanical_key")) or "geometry"
+            intent = {"purpose": purpose, "reason": reason, "load_or_constraint": f"{method}; {lim}"}
+        self.feature("connect", intent, target=f"{a}~{b}")
 
-    def screw(self, **f):
+    def screw(self, intent=None, **f):
         f.setdefault("tool", "hex1.5")
         f.setdefault("removable", True)
         f.setdefault("head", "socket")
         self.fasteners.append(f)
+        self.feature("fastener", intent, target=f["id"])
         return f

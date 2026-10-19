@@ -52,3 +52,19 @@ The verifier correctly reads a joint's pivot and axis in the parent's declared `
 wrong: I took the measurement from a spec where I had already rewritten the joint as world `[1,0,0]` under the
 rotated servo parent. The lifter scoop is a servo-parented joint again, with axis `[0,0,1]` in the servo frame, and it
 passes.
+
+## 5. `mfg.thin_wall` warns about a stock 1.0 mm O-ring that `kin.belt_stock` requires
+
+`kin.belt_stock` accepts only O-ring sections in `STOCK_ORINGS` (1.0, 1.5 and 2.0 mm). Every O-ring belt has
+`process: cots` and `material: rubber`. `mfg.thin_wall` then warns that a 1.0 mm cord is under the 1.2 mm minimum for
+cots rubber. A bought part has no printed walls, so the warning does not apply. This is a warning, not a blocker.
+
+Suggested fix: skip `mfg.thin_wall` for `process: cots` parts, or at least for `kind: belt`.
+
+## 6. `arch.fork_stiffness` roots an upright at its contact with the chassis, not at the standoff it is screwed to
+
+The setup is the experimental `chassis=tub` option. Each weapon upright is clamped by M3 screws to alu standoffs, and
+the standoffs sit in lugs of the tub. The standoffs are not part of `_rigid_chassis`, so the screws do not count as the
+upright's root. The check falls back to the foot's mesh contact with the tub, which gives a 29.3 mm lever. Revron's
+real uprights are rooted the same way. I have not confirmed whether the lever is wrong, or whether the plate really is
+too flexible there. It is recorded so the generator's tub option can be re-checked once this is settled.

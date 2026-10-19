@@ -6,6 +6,8 @@ the floor band up to the split face) so the router finds free space through ever
 
 from __future__ import annotations
 
+from ..intent import I
+
 import math
 
 from ..layout import geom
@@ -195,6 +197,9 @@ def add_wire(plan, wid, a, b, kind, awg=26, slack=6.0, avoid=()):
     for ch in channel_boxes(path):
         (sx, sy, sz), (x, y, z) = ch["shape"]["size"], ch["at"]
         r = snap((x - sx / 2, x + sx / 2, y - sy / 2, y + sy / 2), others)
-        plan.cut("bottom", sh.boxr(*r, z - sz / 2, z + sz / 2))
-    plan.wires.append({"id": wid, "from": a, "to": b, "awg": awg, "kind": kind, "slack_mm": slack})
+        plan.cut("bottom", sh.boxr(*r, z - sz / 2, z + sz / 2),
+                 intent=I("wiring", f"channel for {wid} ({a} -> {b}) in the floor, under the parts, so no lead is pinched "
+                          "between parts or crosses a moving one", f"channel {CH_W} mm wide fits {awg} AWG with room"))
+    plan.wire({"id": wid, "from": a, "to": b, "awg": awg, "kind": kind, "slack_mm": slack},
+              intent=I("wiring", f"{kind} lead {a} -> {b}", f"{awg} AWG for the {kind} current; {slack} mm slack to unplug"))
     return path

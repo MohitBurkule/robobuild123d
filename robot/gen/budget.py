@@ -46,10 +46,13 @@ def wheel_mass(dia: float) -> float:
 def mass_low(h) -> float:
     """Lightest realistic mass of the hypothesis (grams)."""
     m = CHASSIS_G[h.drive_layout] + FASTENERS_WIRES_G + FRONT_G[h.front]
-    m += N_DRIVEN[h.drive_layout] * cat_mass(DRIVE_MOTOR_CATALOG[h.drive_motor])
+    n_motors = N_DRIVEN[h.drive_layout]
+    if h.transmission == "belt" and h.drive_layout in ("4WD", "6WD", "8WD"):
+        n_motors = 2  # one motor per side; belts carry the drive to the other axles (Revron: 2 N10 + 2 O-rings)
+    m += n_motors * cat_mass(DRIVE_MOTOR_CATALOG[h.drive_motor])
     m += N_WHEELS[h.drive_layout] * wheel_mass(h.wheel_dia)
     if h.transmission == "belt":
-        m += 1.0 * N_DRIVEN[h.drive_layout]
+        m += 1.5 * (N_WHEELS[h.drive_layout] - n_motors)  # O-ring + standoff axle per belted wheel
     m += cat_mass(h.battery) + cat_mass(h.drive_esc) + cat_mass(h.weapon_esc) + cat_mass(h.rx)
     m += _wc(h).weapon_mass_g[0]
     if h.wheel_guards:
