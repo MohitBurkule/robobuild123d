@@ -258,7 +258,8 @@
    "role": "RV12 N10 2200 rpm x 2",
    "kind": "part",
    "match": [
-    "motor_*"
+    "motor_l",
+    "motor_r"
    ],
    "count": 2,
    "catalog": "n10_2200rpm_spicy"
@@ -427,6 +428,12 @@
    "b": "tub",
    "max_depth_mm": 0.1,
    "reason": "thin M3 nut pressed into a hex pocket 0.05 under its flats (captive)"
+  },
+  {
+   "a": "weapon_lock",
+   "b": "mount_l",
+   "max_depth_mm": 0.15,
+   "reason": "RV00 TPU lock pin d4 pressed into the RV02 3.9 bore (0.05 radial grip) so it cannot rattle out"
   },
   {
    "a": "wbearing",
@@ -827,13 +834,62 @@
     "part": "mount_l",
     "file": "RV02_XALT_HD_left_hand_weapon_mount_1.stl",
     "mode": "shape",
-    "tol_mm": 0.5
+    "tol_mm": 0.5,
+    "deviations": [
+     {
+      "near": [
+       -17.4,
+       29.04,
+       21.85
+      ],
+      "r": 4.5,
+      "reason": "RV00 weapon-lock pin bore d3.9 through RV02 (Build Guide lock rule; the STEP models no lock)"
+     }
+    ]
    },
    {
     "part": "mount_r",
     "file": "RV03_XALT__HD_Right_hand_weapon_mount_1.stl",
     "mode": "shape",
-    "tol_mm": 0.5
+    "tol_mm": 0.5,
+    "deviations": [
+     {
+      "near": [
+       16.8,
+       44.5,
+       23.5
+      ],
+      "r": 2.0,
+      "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"
+     },
+     {
+      "near": [
+       16.8,
+       32.5,
+       23.5
+      ],
+      "r": 2.0,
+      "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"
+     },
+     {
+      "near": [
+       16.8,
+       38.5,
+       29.5
+      ],
+      "r": 2.0,
+      "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"
+     },
+     {
+      "near": [
+       16.8,
+       38.5,
+       17.5
+      ],
+      "r": 2.0,
+      "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"
+     }
+    ]
    },
    {
     "part": "motor_spacer",
@@ -1629,7 +1685,7 @@
    "kind": "shaft",
    "material": "steel",
    "process": "cots",
-   "stock": "GR1507 5 mm shaft (part of the motor)",
+   "stock": "GR1507 5 mm shaft (part of the motor): modelled whole, MR85 end X -18.7 through the bell to the stator base X 10.4",
    "rotates_with": "weapon",
    "shaft_of": "weapon_motor",
    "parent": "spider",
@@ -1638,10 +1694,10 @@
     "shape": {
      "type": "cylinder",
      "radius": 2.5,
-     "height": 12.2
+     "height": 29.1
     },
     "at": [
-     -12.6,
+     -4.15,
      0,
      0
     ],
@@ -2315,7 +2371,7 @@
    "kind": "switch",
    "catalog": "switch_bbb_ant_rvrn2",
    "at": [
-    25.0,
+    24.55,
     -5.6,
     14.25
    ],
@@ -2454,7 +2510,7 @@
   },
   {
    "id": "weapon_lock",
-   "kind": "other",
+   "kind": "locking_bar",
    "role": "weapon_lock",
    "material": "tpu",
    "process": "fdm",
@@ -2462,6 +2518,17 @@
    "rotates_with": "fixed",
    "color": "#ff6a00",
    "tethered": true,
+   "parent": "mount_l",
+   "at": [
+    -5.5,
+    29.042633766233717,
+    21.851296290894776
+   ],
+   "rot": [
+    0,
+    90,
+    0
+   ],
    "marked": true,
    "tool_free": true,
    "shape": {
@@ -2471,7 +2538,7 @@
      "part": "weapon_lock"
     }
    },
-   "label": "RV00 TPU weapon lock (Build Guide rule; not in the STEP): sits on the deck under the tooth, on a lanyard"
+   "label": "RV00 TPU weapon lock pin (Build Guide rule; not in the STEP): d4 pin pushed through RV02 into a spider window, flag head + lanyard outside"
   },
   {
    "id": "belt_l",
@@ -6673,10 +6740,24 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    17.4,
+    17.15,
     44.5,
     23.5
    ],
+   "hole": {
+    "d": 2.0,
+    "length": 8.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "cbore_d": 4.5,
+    "cbore_depth": 1.7637,
+    "grip": 5.5137
+   },
    "dir": [
     -1,
     0,
@@ -6697,10 +6778,24 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    17.4,
+    17.15,
     32.5,
     23.5
    ],
+   "hole": {
+    "d": 2.0,
+    "length": 8.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "cbore_d": 4.5,
+    "cbore_depth": 2.2185,
+    "grip": 5.9685
+   },
    "dir": [
     -1,
     0,
@@ -6721,10 +6816,24 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    17.4,
+    17.15,
     38.5,
     29.5
    ],
+   "hole": {
+    "d": 2.0,
+    "length": 8.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "cbore_d": 4.5,
+    "cbore_depth": 1.1271,
+    "grip": 4.8771
+   },
    "dir": [
     -1,
     0,
@@ -6745,10 +6854,24 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    17.4,
+    17.15,
     38.5,
     17.5
    ],
+   "hole": {
+    "d": 2.0,
+    "length": 8.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "cbore_d": 4.5,
+    "cbore_depth": 2.8551,
+    "grip": 6.6051
+   },
    "dir": [
     -1,
     0,
@@ -6783,6 +6906,7 @@
    ],
    "threads_into": "weapon_motor",
    "access_before": [
+    "weapon_lock",
     "mount_l",
     "wbearing"
    ],
@@ -6813,6 +6937,7 @@
    ],
    "threads_into": "nut_d0",
    "access_before": [
+    "weapon_lock",
     "mount_l",
     "wbearing",
     "weapon_motor",
@@ -6848,6 +6973,7 @@
    ],
    "threads_into": "weapon_motor",
    "access_before": [
+    "weapon_lock",
     "mount_l",
     "wbearing"
    ],
@@ -6878,6 +7004,7 @@
    ],
    "threads_into": "nut_d1",
    "access_before": [
+    "weapon_lock",
     "mount_l",
     "wbearing",
     "weapon_motor",
@@ -6913,6 +7040,7 @@
    ],
    "threads_into": "weapon_motor",
    "access_before": [
+    "weapon_lock",
     "mount_l",
     "wbearing"
    ],
@@ -6943,6 +7071,7 @@
    ],
    "threads_into": "nut_d2",
    "access_before": [
+    "weapon_lock",
     "mount_l",
     "wbearing",
     "weapon_motor",
@@ -6978,6 +7107,7 @@
    ],
    "threads_into": "weapon_motor",
    "access_before": [
+    "weapon_lock",
     "mount_l",
     "wbearing"
    ],
@@ -7008,6 +7138,7 @@
    ],
    "threads_into": "nut_d3",
    "access_before": [
+    "weapon_lock",
     "mount_l",
     "wbearing",
     "weapon_motor",
@@ -7180,7 +7311,7 @@
    "head": "button",
    "tool": "hex1.3",
    "at": [
-    25.0,
+    24.55,
     1.9,
     16.0
    ],
@@ -7202,7 +7333,7 @@
    "head": "button",
    "tool": "hex1.3",
    "at": [
-    25.0,
+    24.55,
     -13.1,
     16.0
    ],
@@ -7595,9 +7726,11 @@
   },
   {
    "a": "weapon_lock",
-   "b": "tub",
-   "method": "interlock",
-   "reason": "TPU lock rests on the deck front edge under the tooth, lanyard to the chassis"
+   "b": "mount_l",
+   "method": "press_fit",
+   "reason": "TPU lock pin pressed into the RV02 3.9 bore (0.05 radial grip, pulled by its flag) into a spider window; the head stops it, the lanyard tethers it to the mount",
+   "interference_mm": 0.05,
+   "mechanical_key": true
   },
   {
    "a": "battery",
@@ -7667,7 +7800,19 @@
    "kind": "motor",
    "slack_mm": 15,
    "connector": "bullet2",
-   "count": 3
+   "count": 3,
+   "via": [
+    [
+     11.1,
+     14.5,
+     16.0
+    ],
+    [
+     11.1,
+     30.0,
+     14.5
+    ]
+   ]
   },
   {
    "id": "w_rx_wesc",
@@ -8148,14 +8293,14 @@
    "via": {
     "w_wesc_m": [
      [
-      6.5,
+      11.1,
       14.5,
       16.0
      ],
      [
-      11.5,
-      14.5,
-      16.0
+      11.1,
+      30.0,
+      14.5
      ]
     ]
    }
@@ -8179,7 +8324,8 @@
     "nut_d0",
     "nut_d1",
     "nut_d2",
-    "nut_d3"
+    "nut_d3",
+    "weapon_lock"
    ]
   }
  ]
