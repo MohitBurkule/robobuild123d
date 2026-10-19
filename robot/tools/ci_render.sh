@@ -17,4 +17,5 @@ python3 -c "import json,sys; s=json.load(open('$SPEC')); s['reference_cad']['dif
 HEAVY_CI=${RENDER_HEAVY_CI:-0} /tmp/heavy.sh timeout 3000 python3 -m robot verify "$d" --only reference_cad --jobs 1 >/dev/null 2>&1  # exits 1 when blockers remain; heat maps are still written
 hm=$(find "$FINAL/diff" -name "*.png" -newer "$d" | wc -l)
 rm -f "$d"
+HEAVY_CI=${RENDER_HEAVY_CI:-0} /tmp/heavy.sh timeout 1800 python3 -m robot.tools.whole_diff "$SPEC" "$FINAL/diff/whole_robot.png" >/dev/null 2>>"$P/ci_render.err" && hm=$((hm+1))
 echo "$(date -Is) [ci] renders $(git rev-parse --short HEAD): $ok/9 views ok${bad:+, failed:$bad}; $hm heat maps in $FINAL/diff" >> "$P/builder.log"
