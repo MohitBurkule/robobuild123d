@@ -21,6 +21,8 @@ micro wheels on the 25 mm standoffs.
 import json, math, os, sys
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
+if ROOT not in sys.path:
+    sys.path.insert(0, ROOT)
 
 # ======================================================================================================================
 # Measured layout (RVRN 2.0 STEP, world frame). Each number is a dimension of a feature, not a mesh coordinate list.
@@ -415,15 +417,25 @@ def rear_hub(s):
     # STEP RV21, except: groove flanges 0.7 thick (STEP 0.5, under the 0.63 printable floor) with the groove narrowed
     # symmetrically to 1.1 (the 1.0 O-ring still seats, centre unchanged), and a 0.4 flat on the outer lip (the STEP
     # lip runs out to a knife edge that prints as a ragged single line)
-    prof = [(0.0, 0.0), (0.0, 8.0), (0.7, 8.0), (0.95, 7.55), (1.55, 7.55), (1.8, 8.0), (2.5, 8.0), (2.55, 6.9), (2.75, 6.35), (3.35, 6.0),
-            (5.25, 6.0), (6.25, 7.0), (8.25, 7.0), (9.25, 6.0), (11.29, 6.0), (11.6, 6.5), (12.0, 6.5), (12.0, 2.88), (11.8, 2.88), (11.8, 0.0)]
+    prof = [(0.0, 0.0), (0.0, 8.0), (0.7, 8.0), (0.95, 7.45), (1.55, 7.45), (1.8, 8.0), (2.5, 8.0), (2.55, 6.9), (2.75, 6.35), (3.35, 6.0),
+            (5.25, 6.0), (6.25, 7.0), (8.25, 7.0), (9.25, 6.0), (11.1, 6.0), (11.3, 6.5), (12.0, 6.5), (12.0, 2.88), (11.8, 2.88), (11.8, 0.0)]
     if s < 0:
         prof = [(-x, r) for x, r in prof]
     body = _revolve_x(prof, s * 30.0, (RY, RZ))
     d = Point(RY, RZ).buffer(1.6, 48).intersection(Polygon([(RY - 3, RZ - 3), (RY + 3, RZ - 3), (RY + 3, RZ + 0.9), (RY - 3, RZ + 0.9)]))
-    # blind D-bore (flat 0.9 above the axis), an M2 nut slot open at the inner face, the grub hole down to the flat (STEP)
-    return _S(body, _ext(d, "yz", s * 29.0, s * 41.0), _box(s * 29.0, s * 41.0, RY - 2.05, RY + 2.05, RZ + 2.4, RZ + 4.4),
-              _cyl(1.25, RZ + 0.5, RZ + 9.0, (s * 34.5, RY), "z"))
+    # blind D-bore (flat 0.9 above the axis); M2 grub down onto the flat threading a captive M2 hex nut (catalog-sized
+    # by robot.cad.holes: clearance from the seat surface, hex pocket under it), the nut fed in through a slot open at
+    # the inner face (as the STEP); the grub is a set screw, so it gets no spec fastener (nothing for a head to seat on)
+    from robot.cad.holes import hole_tool
+    from robot.cad import fastener_catalog as fc
+    top = 6.0   # seat radius at the grub
+    gz0 = top - 1.6
+    grub, _rec = hole_tool((s * 34.5, RY, RZ + top), (0, 0, -1), "M2x5", head="cap", into="nut", side="thread", nut="hex",
+                           nut_fit="drop", nut_offset=top - 4.4, nut_entry="radial", nut_angle=30.0, engage=top - 0.9)
+    af, m = fc.nut(2.0, "hex")
+    w2 = (af + 0.3) / math.sqrt(3.0)   # half across-corners of the drop-in pocket: the nut slides in any way round
+    slot = _box(s * 29.0, s * 34.5, RY - w2, RY + w2, RZ + 4.4 - m - 0.2, RZ + 4.4)
+    return _S(body, _ext(d, "yz", s * 29.0, s * 41.0), slot, grub)
 
 
 def front_hub(s):
@@ -438,8 +450,15 @@ def front_hub(s):
     return _revolve_x(prof, s * 30.0, SA)
 
 
-def tyre(od, idd, x0, x1, c):
-    return _S(_cyl(od / 2, x0, x1, c), _cyl(idd / 2, x0 - 1, x1 + 1, c))
+def tyre(od, idd, x0, x1, c, shoulder=0.0):
+    """Rubber tyre envelope; `shoulder` rounds the tread corners (the F1 tyre's moulded R1.2 shoulders, STEP RV22)."""
+    if shoulder <= 0:
+        return _S(_cyl(od / 2, x0, x1, c), _cyl(idd / 2, x0 - 1, x1 + 1, c))
+    R, rs = od / 2, shoulder
+    prof = [(0.0, idd / 2)] + [(rs - rs * math.cos(math.radians(a)), R - rs + rs * math.sin(math.radians(a))) for a in range(0, 91, 10)]
+    prof += [(x1 - x0 - rs + rs * math.cos(math.radians(a)), R - rs + rs * math.sin(math.radians(a))) for a in range(90, -1, -10)]
+    prof += [(x1 - x0, idd / 2)]
+    return _revolve_x(prof, x0, c)
 
 
 def standoff(L_x, c):
@@ -735,6 +754,8 @@ def chassis():
     cuts.append(_ext(pan, "xy", z0 - 1.0, 4.5))
     for sg in (1, -1):
         cuts.append(_box(sg * 17.95, sg * 27.05, -34.85, -25.75, 4.4, 4.8))   # motor preload pads
+        # square the R1 inner rear corner where the N10 gearbox plates sit (their corner would bite 0.14 into the round)
+        cuts.append(_box(sg * 25.5, sg * (x - w + 0.05), y0 + w - 0.05, y0 + w + 2.0, z0 + 2.0, c["deck"]))
     cuts += [weapon_mount("l"), weapon_mount("r"), side_panel(1), side_panel(-1)]
     return _S(body, *cuts)
 
@@ -755,7 +776,7 @@ PARTS = {
     "side_panel_l": lambda: side_panel(-1), "side_panel_r": lambda: side_panel(1),
     "rear_hub_l": lambda: rear_hub(-1), "rear_hub_r": lambda: rear_hub(1),
     "front_hub_l": lambda: front_hub(-1), "front_hub_r": lambda: front_hub(1),
-    "rear_tyre_l": lambda: tyre(21.5, 14.0, -42.0, -32.5, (RY, RZ)), "rear_tyre_r": lambda: tyre(21.5, 14.0, 32.5, 42.0, (RY, RZ)),
+    "rear_tyre_l": lambda: tyre(21.5, 14.0, -42.0, -32.5, (RY, RZ), 1.2), "rear_tyre_r": lambda: tyre(21.5, 14.0, 32.5, 42.0, (RY, RZ), 1.2),
     "front_tyre_l": lambda: tyre(11.0, 7.0, -38.5, -32.5, SA), "front_tyre_r": lambda: tyre(11.0, 7.0, 32.5, 38.5, SA),
     "so_a_l": lambda: standoff((-SA_X[1], -SA_X[0]), SA), "so_a_r": lambda: standoff(SA_X, SA),
     "so_b_l": lambda: standoff((-SB_X[1], -SB_X[0]), SB), "so_b_r": lambda: standoff(SB_X, SB),
