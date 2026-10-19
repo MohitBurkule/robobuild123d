@@ -828,6 +828,26 @@ def _band_wire(path, w, z, n=160):
 
 
 # ------------------------------------------------------------------------------------------------------------ chassis
+def _wall_pocket(x0, x1, z0, z1, y0, y1, r_vert=0.5, r_floor=0.8):
+    """Rectangular front-wall pocket cutter (X x Z, floor at y1): R0.5 corners and an R0.8 floor, as in the STEP."""
+    b = _b()
+    s = _box(x0, x1, y0, y1, z0, z1)
+    s = b.fillet(s.edges().filter_by(b.Axis.Y), r_vert)
+    return b.fillet(s.faces().sort_by(b.Axis.Y)[-1].edges(), r_floor)
+
+
+def _lattice_pocket(pts, y0=-36.6, y1=-35.5, r_vert=0.45, r_floor=0.95):
+    """Cutter of one triangular rear-wall pocket (X, Z outline `pts`): R0.45 corners and an R0.95 floor (the STEP's R0.98),
+    so the pocket has no sharp internal corner in the print."""
+    b = _b()
+    with b.BuildPart() as bp:
+        with b.BuildSketch(b.Plane.XZ.offset(-y1)):
+            b.Polygon(*pts, align=None)
+        b.extrude(amount=y1 - y0)
+    s = b.fillet(bp.part.edges().filter_by(b.Axis.Y), r_vert)
+    return b.fillet(s.faces().sort_by(b.Axis.Y)[0].edges(), r_floor)
+
+
 def chassis():
     """RV01 printed chassis: a closed-top box printed deck-down (no supports: the deck is the first layer), open
     underneath for the base panel. X-ribbed deck pockets; 5 insert columns floor to deck; N10 keyhole pockets in the
@@ -879,7 +899,11 @@ def chassis():
         # side lobe with the thin M3 nut (Y -16.3..2.8)
         lobe = Point(NUT[0], NUT[1]).buffer(4.55, 64).union(Point(1.35, 6.9).buffer(1.2, 32)).convex_hull
         add.append(_ext(lobe, "yz", sg * (x - 0.1), sg * 32.5))
-        add.append(_loft_yz(lobe.buffer(1.2, join_style=1), sg * (x - 0.1), lobe, sg * (x + 1.2)))   # R1.2 root fillet (as a 45 deg blend)
+        R_ = 1.95   # root fillet where the lobe leaves the wall (STEP R1.95): 12 ruled slices of the quarter round
+        for k in range(12):
+            h0, h1 = R_ * k / 12, R_ * (k + 1) / 12
+            d0, d1 = (R_ - math.sqrt(R_ * R_ - (R_ - h) ** 2) for h in (h0, h1))
+            add.append(_loft_yz(lobe.buffer(d0, join_style=1), sg * (x - 0.1 + h0), lobe.buffer(d1, join_style=1), sg * (x - 0.1 + h1)))
         # front tabs (key into the weapon-mount notches) and inner tab walls
         add.append(_ext(_poly([(18.5, 6.4), (19.5, 5.4), (25.5, 5.4), (26.5, 6.4), (26.5, 12.5), (25.5, 13.5), (19.5, 13.5), (18.5, 12.5)]), "yz", sg * 13.2, sg * 17.6))
         # inner tab wall, its top-front corner cut back on a R15.9 about the weapon axis: the drisk (swept R ~14.8 at the wall)
@@ -974,11 +998,11 @@ def chassis():
         lat += [Polygon([(sg * 4.84, 7.0), (sg * 4.84, 15.0), (sg * 12.4, 11.0)]), Polygon([(sg * 26.42, 7.0), (sg * 26.42, 15.0), (sg * 18.85, 11.0)]),
                 Polygon([(sg * 10.6, 5.58), (sg * 20.65, 5.58), (sg * 15.6, 9.7)]), Polygon([(sg * 10.6, 16.42), (sg * 20.65, 16.42), (sg * 15.6, 12.3)])]
     for t in lat:
-        cuts.append(_ext(_round(t.buffer(0), r_out=0.45), "xz", -36.6, -35.5))
+        cuts.append(_lattice_pocket(list(t.exterior.coords)[:-1]))
     # weapon phase wire hole in the front wall
     cuts.append(_ext(_round(Polygon([(7.25, 5.0), (10.25, 5.0), (10.25, 17.0), (7.25, 17.0)]), r_out=1.45), "xz", 12.0, 16.0))
     for xa, xb in ((-18.25, 4.25), (13.25, 18.2)):
-        cuts.append(_ext(_round(Polygon([(xa, 6.55), (xb, 6.55), (xb, 15.55), (xa, 15.55)]), r_out=0.5), "xz", 12.0, 13.85))
+        cuts.append(_wall_pocket(xa, xb, 6.55, 15.55, 12.0, 13.85))
     # rabbet for the base panel (recessed flush with the wall bottom lip) and the mating faces of the mounts and side
     # panels: the parts seat on the chassis, they do not share material with it
     pan = _panel_outline(0.05)
