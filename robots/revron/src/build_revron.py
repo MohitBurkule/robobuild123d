@@ -189,14 +189,14 @@ def _solid(x):
 # Parts
 # ====================================================================================================================
 def base_panel():
-    """RV26: 1 mm printed panel under the open chassis, 5 M2 CSK into the floor heat-sets; two 0.25 mm pads under the
+    """RV26: 1 mm printed panel under the open chassis, 5 M2 CSK into the floor heat-sets; two 0.45 mm pads under the
     N10 gearboxes preload the motors up into their keyhole pockets."""
     z0, t = 3.5, 1.0
     out = _round(_poly([(-28.1, -36.2), (28.1, -36.2), (28.1, 13.0), (-28.1, 13.0)]), r_out=0.8)
     body = _ext(out, "xy", z0, z0 + t)
     for s in (1, -1):
         pad = _round(_poly([(s * 17.95, -34.85), (s * 27.05, -34.85), (s * 27.05, -25.75), (s * 17.95, -25.75)]), r_out=0.6)
-        body = _U(body, _ext(pad, "xy", z0 + t - 0.01, z0 + t + 0.25))
+        body = _U(body, _ext(pad, "xy", z0 + t - 0.01, z0 + t + 0.45))   # [fix-D] 0.45: top 4.95, 0.05 under the N10 (was 0.25 short: the motor could drop)
     cuts = [_csk(2.2, 4.0, (x, y, z0), "z", 1, 4.0) for x, y in INS]   # 4.0 countersink (STEP RV26 has 3.2 x 0.5; an ISO 10642 M2 head is 3.8, so it would stand proud and bind) then the 2.2 hole
     return _S(body, *cuts)
 
@@ -435,7 +435,7 @@ def rear_hub(s):
     # the grub is a set screw, so it gets no spec fastener (no head to seat)
     from robot.cad.holes import hole_tool
     top = 6.0   # tyre-seat radius at the grub
-    grub, _rec = hole_tool((s * 34.3, RY, RZ + top), (0, 0, -1), "M2x5", head="cap", into="tapped", side="thread", engage=top - 1.4)
+    grub, _rec = hole_tool((s * 34.3, RY, RZ + top), (0, 0, -1), "M2x5", head="cap", into="tapped", side="thread", engage=top - 0.9)   # tip 0.4 past the flat: breaks cleanly into the bore (STEP: through)
     slot = _box(s * 29.0, s * 41.0, RY - 2.05, RY + 2.05, RZ + 2.4, RZ + 4.4)
     return _S(body, _ext(d, "yz", s * 29.0, s * 41.0), slot, grub)
 
@@ -652,11 +652,11 @@ def chassis():
         add.append(_box(sg * 17.7, sg * (x - w + 0.1), -25.4, -23.4, z0, c["deck"] + 0.1))
         # N10 retention comb off the stop wall (deviation from the STEP, which leaves the motor to the hub and grub):
         # a key tab drops between the last two gearbox plates (|X| 23.4 / 26.3, 0.15 each side) so a hit or a drop
-        # cannot walk the motor along its shaft, and a 0.35 mm ledge over the gearbox plates stops it lifting off the
+        # cannot walk the motor along its shaft, and a 0.4 mm ledge 0.1 over the gearbox plates stops it lifting off the
         # base-panel preload pad when inverted. Both hang from the deck (printed deck-down: no supports) and clear the
         # rounded can, so the motor still drops straight out downwards once the base panel is off.
         add.append(_box(sg * N10_KEY[0], sg * N10_KEY[1], -26.15, -23.4, 16.0, c["deck"] + 0.1))
-        add.append(_box(sg * 20.0, sg * (x - w + 0.1), -27.3, -23.4, N10_TOP + 0.15, c["deck"] + 0.1))
+        add.append(_box(sg * 20.0, sg * (x - w + 0.1), -27.3, -23.4, N10_TOP + 0.1, c["deck"] + 0.1))
         # side lobe with the thin M3 nut (Y -16.3..2.8)
         lobe = Point(NUT[0], NUT[1]).buffer(4.55, 64).union(Point(1.35, 6.9).buffer(1.2, 32)).convex_hull
         add.append(_ext(lobe, "yz", sg * (x - 0.1), sg * 32.5))
@@ -815,7 +815,7 @@ def make_spec(model_file):
     P(id="tub", kind="structure", print_orientation="-z", rotates_with="fixed", solid_fraction=0.8, color="#2a2c30", shape=M("chassis"), **PLA,
       label="RV01 printed chassis: closed X-ribbed deck (printed deck-down), open floor for the base panel, N10 keyhole side pockets, nut lobes, weapon-mount tabs and standoff lugs")
     P(id="base_panel", kind="structure", print_orientation="+z", rotates_with="fixed", color="#2a2c30", shape=M("base_panel"), **PLA,
-      label="RV26 1 mm printed base panel, 5 M2 CSK into the floor heat-sets, 0.25 mm pads preload the N10s")
+      label="RV26 1 mm printed base panel, 5 M2 CSK into the floor heat-sets, 0.45 mm pads preload the N10s")
     P(id="top_panel", kind="armor", material="titanium", process="laser", stock="0.9 mm Ti Gr5 sheet", secondary_ops=["countersink"], rotates_with="fixed", color="#8d939b", shape=M("top_panel"),
       label="0.9 mm Ti top panel: laser outline with 4 countersunk 2.2 corner holes, 4 M2 flat-head thread-forming screws into the column tops (material inferred, see REFERENCE.md)")
     # ---------------------------------------------------------------- weapon module
@@ -1094,6 +1094,13 @@ def _micro_to_world(side):
     return (np.array(REF_TO_WORLD, float) @ np.array(MICRO_T[side], float)).round(6).tolist()
 
 
+def _GRUB_DEV(s):
+    return [{"near": [s * 34.4, RY, RZ + 3.0], "r": 3.5,
+             "reason": "grub bore is the catalog M2 tap drill (1.6, robot.cad.holes) 0.2 inboard, not the STEP 2.5 hole at |X| 34.5: "
+                       "a 2.5 hole breaks into both 45 deg tyre-seat ramps and leaves knife edges (mfg.thin_wall 0.01 mm); the grub "
+                       "threads the 1.6 bore and the captive nut, so it clamps the flat the same"}]
+
+
 def reference_cad():
     def R(part, file, mode="shape", **k):
         return dict(part=part, file=file, mode=mode, **k)
@@ -1114,7 +1121,8 @@ def reference_cad():
         R("side_l", "RV23_side_panel_LH_1.stl", tol_mm=1.0, tol_vol_frac=0.25),
         R("side_r", "RV24_Mirrorside_panel_RH_1.stl", tol_mm=1.0, tol_vol_frac=0.25),
         R("fork_l", "fork_5_2.stl", tol_mm=0.5), R("fork_r", "fork_5_1.stl", tol_mm=0.5),
-        R("whub_rl", "RV21_Rear_Wheel_1.stl", tol_mm=0.5, tol_vol_frac=0.15), R("whub_rr", "RV21_Rear_Wheel_2.stl", tol_mm=0.5, tol_vol_frac=0.15),
+        R("whub_rl", "RV21_Rear_Wheel_1.stl", tol_mm=0.5, tol_vol_frac=0.15, deviations=_GRUB_DEV(-1)),
+        R("whub_rr", "RV21_Rear_Wheel_2.stl", tol_mm=0.5, tol_vol_frac=0.15, deviations=_GRUB_DEV(1)),
         R("whub_fl", "RV19_Hub_Micro_1.stl", tol_mm=0.5, ref_to_world=_micro_to_world("l")),
         R("whub_fr", "RV19_Hub_Micro_2.stl", tol_mm=0.5, ref_to_world=_micro_to_world("r")),
         R("so_al", "RV11_m3_25mm_aluminium_standoff_1.stl", mode="envelope", tol_mm=0.3, tol_vol_frac=0.2),
