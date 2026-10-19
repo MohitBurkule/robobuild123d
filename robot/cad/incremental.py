@@ -195,10 +195,12 @@ def verify_incremental(spec, opts=None):
                    [rp.part.id for rp in r.parts])
     if valid:
         ctx = Ctx(r, world_mod.World.start(r), opts)
+        from ..checks import effective_only
+        _only = effective_only(r.spec, opts.only)
         for name, deep_only in GROUPS:
             if deep_only and not opts.deep:
                 continue
-            if opts.only and name not in opts.only:
+            if _only and name not in _only:
                 continue
             t0 = time.time()
             try:
