@@ -41,9 +41,15 @@ for i in $(seq "${START_ITER:-1}" "$MAX_ITERS"); do
   sha=$(git rev-parse --short HEAD)
   [ -f "$P/blockers_live.jsonl" ] && mv "$P/blockers_live.jsonl" "$P/blockers_live.prev.jsonl"
   out="$P/ci_verify_${i}_$sha.log"
-  ROBOT_RUN_SHA=$sha ROBOT_PROGRESS_LOG="$P/verify.log" HEAVY_CI=1 /tmp/heavy.sh timeout 6000 python3 -m robot verify "$SPEC" --full --jobs "${JOBS:-2}" > "$out" 2>&1
-  rc=$?
-  if ! grep -q 'blockers,' "$out"; then
+  # full verify in fresh processes per chunk (one process for all groups grew past 11 GB at `threat` and was OOM-killed)
+  all=$(python3 -m robot verify --list-groups | grep -v -x -e threat -e fastener_seat | paste -sd,)
+  : > "$out"; rc=0; done_n=0
+  for chunk in "$all" threat fastener_seat; do
+    ROBOT_RUN_SHA=$sha ROBOT_PROGRESS_LOG="$P/verify.log" HEAVY_CI=1 /tmp/heavy.sh timeout 6000 python3 -m robot verify "$SPEC" --full --only "$chunk" --jobs "${JOBS:-2}" > "$out.part" 2>&1
+    r=$?; cat "$out.part" >> "$out"; grep -q 'blockers,' "$out.part" && done_n=$((done_n+1)) || rc=$r
+  done
+  rm -f "$out.part"
+  if [ "$done_n" -lt 3 ]; then
     log "iter $i sha $sha: verify did not finish (rc $rc: $(grep -m1 -e Killed -e Traceback -e Error "$out" | cut -c1-120)); not counted"
     continue
   fi
