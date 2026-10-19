@@ -70,6 +70,8 @@ def verify_resolved(r, opts: Options) -> Report:
 
     rep = Report(name=r.spec.name, profile=r.profile.name)
     findings = []
+    from .. import progress as _pg
+    _pg.reset()
     t0 = time.time()
     valid = validity.run(r, findings)
     rep.timings_s["validity"] = round(time.time() - t0, 3)
@@ -165,6 +167,7 @@ def _progress(name, t0, how, findings=()):
     from .. import progress
     nb = sum(1 for f in findings if not f.passed and str(f.severity).lower() == "blocker")
     progress.log(f"check {name} {how} in {time.time() - t0:.1f}s; blockers so far {nb}")
+    progress.blockers(name, findings)
     if os.environ.get("ROBOT_TIMING") or os.environ.get("ROBOT_PROGRESS") == "1":
         print(f"  [{how}] {name} {time.time() - t0:.2f}s", file=sys.stdout, flush=True)
 
