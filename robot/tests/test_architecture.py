@@ -573,3 +573,15 @@ def test_fork_stiffness_roots_on_whole_clamshell():
     assert any(not f.passed and "fork_l" in f.message for f in bad.get("arch.fork_stiffness", []))
     good_, _ = run(clamshell(True))
     assert passed(good_, "arch.fork_stiffness"), [f.message for f in good_.get("arch.fork_stiffness", [])]
+
+
+def test_fork_root_from_mesh_contact_on_a_dense_mesh_does_not_crash():
+    """With no fastener to the chassis, the fork root comes from mesh vertices touching the chassis. A fork mesh with
+    more than the 2000 sampled vertices used to crash `weapon` (mask built on a slice, applied to the whole array)."""
+    d = spinner()
+    d["fasteners"] = [f for f in d["fasteners"] if f["threads_into"] != "fork_l"]
+    fl = _part(d, "fork_l")
+    holes = [cyl(0.4, 3, (14 + 5, 7 + 1.2 * i, 8 + 1.2 * j), (0, 90, 0)) for i in range(22) for j in range(20)]
+    fl["shape"] = sub(fl["shape"], *holes)
+    res, rep = run(d)
+    assert "arch.crashed" not in res, [f.message for f in res["arch.crashed"]]

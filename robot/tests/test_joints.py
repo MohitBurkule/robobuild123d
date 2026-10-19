@@ -227,13 +227,16 @@ def _lipped(d):
     blk["base"]["items"].append(placed(BOX(2, 40, 2), (21, 0, 6)))
     blk["cut"] += [cyl(1.15, 3, (21, y, 6)) for y in (-12, 12)]
     for f in d["fasteners"]:
-        f.update(at=[21.0, f["at"][1], 7.0], designation="M2x14")
+        f.update(at=[21.0, f["at"][1], 7.0], designation="M2x14", head="socket")   # head on the lip (no countersink cut there)
 
 
 def test_assembly_dir():
     rb = run(mod(side_panel("top"), _lipped), ("assembly", "joints"), deep=True)
     assert rb.failed("joint.assembly_dir"), [(f.id, f.message) for f in rb.findings if not f.passed]
-    rg = run(side_panel("side"), ("assembly", "joints"), deep=True)
+    good = side_panel("side")
+    for f in good["fasteners"]:
+        f["head"] = "socket"   # the panel has plain holes: a countersunk head would now be modelled inside it
+    rg = run(good, ("assembly", "joints"), deep=True)
     assert not rg.failed("joint.assembly_dir") and not any("assembly direction" in n for n in rg.not_checked)
 
 

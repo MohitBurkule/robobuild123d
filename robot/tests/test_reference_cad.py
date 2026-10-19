@@ -117,3 +117,21 @@ def test_silhouette_iou_values():
     b = trimesh.creation.box([10, 10, 10]); b.apply_translation([5, 0, 0])
     iou = RC.silhouette_iou(a, b, 0.1)
     assert abs(iou[0] - 1.0) < 0.03 and abs(iou[1] - 1 / 3) < 0.03 and abs(iou[2] - 1 / 3) < 0.03
+
+
+def test_with_parts_compares_the_union_clipped_to_the_reference(tmp_path):
+    """A bought-in part modelled as two bodies (flange + a long shaft carrying its spigot) is compared as their union
+    clipped to the reference span."""
+    flange = {"id": "flange", "kind": "other", "material": "aluminium", "shape": {"type": "box", "size": [10, 10, 2]}, "at": [0, 0, 1]}
+    whole = {"id": "whole", "kind": "other", "material": "aluminium", "shape": {"type": "union", "items": [
+        {"type": "place", "shape": {"type": "box", "size": [10, 10, 2]}, "at": [0, 0, 1]},
+        {"type": "place", "shape": {"type": "cylinder", "radius": 1.5, "height": 8.0}, "at": [0, 0, 6]}]}}
+    p = _ref_stl(tmp_path, whole)
+    shaft = {"id": "shaft", "kind": "shaft", "material": "steel", "shape": {"type": "cylinder", "radius": 1.5, "height": 30.0}, "at": [0, 0, 12]}
+    cfg = {"dir": str(tmp_path), "ref_to_world": [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]],
+           "parts": [{"part": "flange", "file": p.name, "mode": "envelope", "tol_mm": 0.3}]}
+    alone = RC.run(_ctx([flange, shaft], cfg))
+    assert any(f.id == "reference_cad.dims" and not f.passed for f in alone)
+    cfg["parts"][0].update(with_parts=["shaft"], clip_to_ref=True)
+    both = RC.run(_ctx([flange, shaft], cfg))
+    assert any(f.id == "reference_cad.dims" and f.passed for f in both)

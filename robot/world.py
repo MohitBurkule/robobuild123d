@@ -154,19 +154,34 @@ def _prebuild(spec, tess):
 
 
 def _contains(mesh, Q):
-    """mesh.contains with a fixed seed: trimesh re-casts ambiguous rays along *random* directions (global RNG), so
-    without this the answer depends on whatever ran before and cached and uncached runs could differ."""
+    """mesh.contains with a fixed seed: trimesh re-casts ambiguous rays along *random* directions, so without this the
+    answer depends on whatever ran before and cached and uncached runs could differ. Older trimesh draws from the
+    global numpy RNG; trimesh >= 4.6 draws from `trimesh.util.random_generator()`, a shared Generator seeded from OS
+    entropy (not reproducible even between two runs), so both are pinned here."""
+    import trimesh.util as tu
+
     st = np.random.get_state()
     np.random.seed(12345)
+    orig = getattr(tu, "random_generator", None)
+    if orig is not None:
+        rng = np.random.default_rng(12345)
+        tu.random_generator = lambda seed=None: rng if seed is None else orig(seed)
     try:
         return mesh.contains(Q)
     finally:
         np.random.set_state(st)
+        if orig is not None:
+            tu.random_generator = orig
 
 
 def csk_dims(d):
     """(head diameter, head depth) of an ISO 10642 countersunk screw (90 deg), by thread diameter."""
     return 2.2 * d, 0.6 * d
+
+
+def button_dims(d):
+    """(head diameter, head height) of an ISO 7380 button-head screw (M3: 5.7 x 1.65, 2 mm key)."""
+    return 1.9 * d, 0.55 * d
 
 
 def fastener_shape(d, length, head=None):
@@ -178,6 +193,8 @@ def fastener_shape(d, length, head=None):
         cone = {"type": "revolve", "profile": [[0.0, 0.0], [dk / 2, 0.0], [d / 2, k], [0.0, k]]}
         return catalog.union([cone, shank])
     dk, k, _ = catalog.screw_dims(d)
+    if head == "button":
+        dk, k = button_dims(d)
     hd = catalog.at(catalog.cyl(dk / 2, k), 0, 0, -k / 2)
     return catalog.union([hd, shank])
 
@@ -279,7 +296,7 @@ class World:
             dl = catalog.parse_designation(f.designation)
             if not dl:
                 continue
-            g = geom.geom_for(fastener_shape(*dl, head=f.head if f.head == "countersunk" else None), None, tess)
+            g = geom.geom_for(fastener_shape(*dl, head=f.head if f.head in ("countersunk", "button") else None), None, tess)
             M = xform.make(xform.align_z_to(f.dir), f.at)
             bodies.append(Body(f.id, "other", g, M, [0xcc, 0xcc, 0xd0], None, True))
         return World(bodies, joints)

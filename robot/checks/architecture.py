@@ -949,7 +949,8 @@ def fork_stiffness(a, origin, axis, sup):
             for rid in sorted(rootset):
                 rb = a.body(rid)
                 if rb is not None:
-                    pts += list(h.mesh.vertices[rb.distance(h.mesh.vertices[:2000]) < 0.5])
+                    V = h.mesh.vertices[:2000]  # sample: the mask must index the same slice it was built from
+                    pts += list(V[rb.distance(V) < 0.5])
         if not len(pts):
             a.ctx.not_checked.append(f"Fork stiffness of `{h.id}`: no root on the chassis found")
             continue

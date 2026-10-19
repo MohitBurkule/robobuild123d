@@ -17,7 +17,7 @@ MAX_TRAVEL = 140.0
 AXES = [np.array(v, float) for v in ((0, 0, 1), (0, 0, -1), (1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0))]
 
 
-def group(ctx, pid):
+def group(ctx, pid, present=None):
     """Members that move with part `pid` (tyres on their wheel, children on a joint)."""
     ids = [pid]
     while True:
@@ -28,44 +28,113 @@ def group(ctx, pid):
         if len(ids) == n:
             break
     # A screw whose every clamped part (through + threads_into) is in the group was driven on the bench: it leaves with
-    # the sub-assembly instead of pinning it in place (drisk bolts, weapon-module standoff screws).
-    if len(ids) > 1:
+    # the sub-assembly instead of pinning it in place (drisk bolts, weapon-module standoff screws). Parts that have
+    # already been taken off (`present` False) no longer hold it: a screw backed out of a standoff that has gone stays
+    # captive in its plate and leaves with it.
+    multi = len(ids) > 1
+    if multi or present is not None:
         S = set(ids)
+        gone = set()
+        if present is not None:
+            gone = {b.id for k, b in enumerate(ctx.world.bodies) if not present[k]}
         for f in ctx.r.spec.fasteners:
-            cl = set(f.through or []) | ({f.threads_into} if f.threads_into else set())
-            if cl and cl <= S:
+            cl = (set(f.through or []) | ({f.threads_into} if f.threads_into else set())) - gone
+            k = ctx.world.index(f.id)
+            captive = bool(f.threads_into) and f.threads_into in gone
+            if cl and cl <= S and (multi or captive) and (present is None or k is None or present[k]):
                 ids.append(f.id)
+                if f.threads_into in gone and k is not None:
+                    backoff(ctx, k, f, present)
     return [k for k in (ctx.world.index(i) for i in ids) if k is not None]
 
 
-def slide(ctx, members, present, d):
-    """Slide `members` along `d`: ('ok', travel) when clear of every present body, ('hit', j, t, at) for the first body hit."""
+def backoff(ctx, k, f, present):
+    """A screw left captive in its plate (its standoff / nut has gone) is backed out along its axis until its head
+    meets whatever is behind it (at most its length) before the plate moves; record that offset for `slide`."""
+    offs = getattr(ctx, "asm_offsets", None)
+    if offs is None:
+        offs = ctx.asm_offsets = {}
+    if k in offs:
+        return
+    v = -np.asarray(f.dir, float) / np.linalg.norm(f.dir)
+    offs[k] = np.zeros(3)
+    res = slide(ctx, [k], present, v)
+    ln = float(measure_len(f))
+    t = ln if res[0] == "ok" else max(0.0, min(ln, res[2] - STEP))
+    offs[k] = v * t
+
+
+def measure_len(f):
+    import re
+    m = re.search(r"x\s*([0-9.]+)", f.designation or "")
+    return float(m.group(1)) if m else 0.0
+
+
+def slide(ctx, members, present, d, base=None):
+    """Slide `members` along `d` (starting from offset `base`): ('ok', travel) when clear of every present body,
+    ('hit', j, t, at) for the first body hit."""
     w, r = ctx.world, ctx.r
+    base = np.zeros(3) if base is None else np.asarray(base, float)
+    offs = getattr(ctx, "asm_offsets", None) or {}
     others = [j for j, o in enumerate(w.bodies) if present[j] and j not in members and not o.is_wire]
     if others:
         others_max = max(float((_corners(w.bodies[j].aabb) @ d).max()) for j in others)
     else:
         others_max = -math.inf
-    mine_min = min(float((_corners(w.bodies[m].aabb) @ d).min()) for m in members)
+    mine_min = min(float((_corners(w.bodies[m].aabb + base + offs.get(m, 0.0)) @ d).min()) for m in members)
     last = 0.0
     for k in range(int(MAX_TRAVEL / STEP) + 1):
         t = k * STEP
         if mine_min + t > others_max + 0.1:
             break
-        shift = d * t
+        shift = base + d * t
         for j in others:
             o = w.bodies[j]
             for m in members:
                 b = w.bodies[m]
-                if not measure.aabb_overlap(b.aabb + shift, o.aabb):
+                sh = shift + offs.get(m, 0.0)
+                if not measure.aabb_overlap(b.aabb + sh, o.aabb):
                     continue
                 last = t
                 allow = allowed_depth(r, b, o)
                 if math.isinf(allow) or allow >= 1.0e3:
                     continue
-                if measure.overlap_exceeds(b, o, max(allow, 0.05), shift):
-                    return ("hit", j, t, b.aabb.mean(axis=0) + shift)
+                if measure.overlap_exceeds(b, o, max(allow, 0.05), sh):
+                    return ("hit", j, t, b.aabb.mean(axis=0) + sh)
     return ("ok", last + 3.0)
+
+
+def loose_exit(ctx, i, present):
+    """A screw whose nut / threaded part has already left is loose: it backs out along its axis only until its shank
+    clears the parts it passes through, then drops out sideways (a captive screw between an upright and a disc).
+    Returns (direction, travel) of the second leg, or None."""
+    w, r = ctx.world, ctx.r
+    b = w.bodies[i]
+    f = next((f for f in r.spec.fasteners if f.id == b.id), None)
+    if f is None or not f.threads_into:
+        return None
+    k = w.index(f.threads_into)
+    if k is None or present[k]:
+        return None
+    v = -np.asarray(f.dir, float) / np.linalg.norm(f.dir)
+    first = slide(ctx, [i], present, v)
+    reach = MAX_TRAVEL if first[0] == "ok" else first[2]
+    thr = [w.index(t) for t in (f.through or [])]
+    thr = [j for j in thr if j is not None and present[j]]
+    t = 0.0
+    while t <= reach:
+        sh = v * t
+        if not any(measure.aabb_overlap(b.aabb + sh, w.bodies[j].aabb) and
+                   measure.overlap_exceeds(b, w.bodies[j], 0.05, sh) for j in thr):
+            for d in AXES:
+                if abs(float(d @ v)) > 0.99:
+                    continue
+                res = slide(ctx, [i], present, d, base=sh)
+                if res[0] == "ok":
+                    return d, t + res[1]
+            return None
+        t += STEP
+    return None
 
 
 def candidate_dirs(ctx, i):
@@ -110,7 +179,7 @@ def run(ctx):
             if not present[i]:
                 continue
             b = w.bodies[i]
-            members = [i] if b.fastener else group(ctx, b.id)
+            members = [i] if b.fastener else [m for m in group(ctx, b.id, present) if present[m]]
             if root in members:
                 continue
             for d in candidate_dirs(ctx, i):
@@ -121,13 +190,19 @@ def run(ctx):
                         steps.append(AssemblyStep(len(steps) + 1, w.bodies[m].id, [float(x) for x in d], float(res[1])))
                     progress = True
                     break
+            else:
+                le = loose_exit(ctx, i, present) if b.fastener else None
+                if le is not None:
+                    present[i] = False
+                    steps.append(AssemblyStep(len(steps) + 1, b.id, [float(x) for x in le[0]], float(le[1])))
+                    progress = True
         left = sum(1 for i in range(n) if present[i] and i != root)
         if left == 0 or not progress:
             break
     stuck = [i for i in range(n) if present[i] and i != root]
     for i in stuck:
         b = w.bodies[i]
-        members = [i] if b.fastener else group(ctx, b.id)
+        members = [i] if b.fastener else group(ctx, b.id, present)
         worst = None
         for d in candidate_dirs(ctx, i):
             res = slide(ctx, members, present, d)
