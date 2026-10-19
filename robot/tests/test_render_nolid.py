@@ -52,3 +52,9 @@ def test_material_palette_light_and_distinct():
     assert c["side_l"][0] > 200 and c["side_l"][2] < 100  # TPU orange
     assert min(c["fork_l"]) > 180 and min(c["bolt_b0"]) > 160  # metal silver
     assert 60 < sum(c["tub"]) / 3 < 120  # tub dark grey, not black
+
+
+def test_section_z_keeps_below_height():
+    v = render.with_section_z(render.named("top"), 17.0)
+    n, h = v.section
+    assert tuple(n) == (0.0, 0.0, 1.0) and h == 17.0 and v.name == "top_z17"

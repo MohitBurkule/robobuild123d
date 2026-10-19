@@ -16,6 +16,13 @@ from . import xform
 VIEW_NAMES = ["iso", "exploded", "iso_back", "top", "bottom", "front", "back", "side", "section_z", "section_x"]
 
 
+def with_section_z(view, h: float):
+    """The view cut by the plane z = h, keeping everything below it (look down on the inside of a closed body)."""
+    from dataclasses import replace
+
+    return replace(view, name=f"{view.name}_z{h:g}", section=(np.array([0.0, 0, 1.0]), float(h)))
+
+
 @dataclass
 class View:
     name: str
@@ -385,6 +392,8 @@ def cli(a):
     if view is None:
         print(f"unknown view {a.view}; views: {', '.join(VIEW_NAMES)}")
         return 1
+    if getattr(a, "section_z", None) is not None:
+        view = with_section_z(view, a.section_z)
     s = spec_mod.load(a.spec)
     w, rep, _ = world_for(s, checks.Options(deep=not a.quick, fast=a.fast))
     if a.no_lid:
@@ -411,5 +420,7 @@ def add_cli(sub):
     p.add_argument("--quick", action="store_true", help="skip slow sweeps (no wire routes drawn)")
     p.add_argument("--palette", choices=("material", "spec"), default="material",
                    help="material: light per-material colours (default); spec: colours as written in the spec")
+    p.add_argument("--section-z", type=float, default=None, metavar="H",
+                   help="cut the view at height H and keep what is below (e.g. top view under a closed deck)")
     p.add_argument("--no-lid", action="store_true", help="leave out lid/cover/top-panel parts and their bolts")
     p.set_defaults(func=cli)
