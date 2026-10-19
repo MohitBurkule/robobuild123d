@@ -39,6 +39,16 @@ def test_thin_printed_wall_is_flagged():
 
 
 @mfg_needed
+def test_thin_wall_with_reasoned_deviation_is_only_a_warning():
+    thin = {"type": "subtract", "base": box(30, 30, 10), "cut": [box(29.2, 29.2, 12)]}
+    pt = part("shell", "structure", thin, (0, 0, 0), "petg", "fdm")
+    pt["thin_wall_deviation"] = "matches original RVRN 2.0 (0.4 mm measured in the reference)"
+    rep = run({"name": "thin", "parts": [pt]}, ["mfg"])
+    assert not [f for f in rep.findings if f.id == "mfg.thin_wall" and not f.passed and f.severity == "blocker"]
+    assert [f for f in rep.findings if f.id == "mfg.thin_wall" and "matches original" in f.message]
+
+
+@mfg_needed
 def test_thick_printed_wall_is_fine():
     ok = {"type": "subtract", "base": box(30, 30, 10), "cut": [box(27, 27, 12)]}
     d = {"name": "ok", "parts": [part("shell", "structure", ok, (0, 0, 0), "petg", "fdm")]}
