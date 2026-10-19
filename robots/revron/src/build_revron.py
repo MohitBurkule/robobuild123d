@@ -231,7 +231,7 @@ def top_panel():
     return _S(body, *[_csk(2.2, 4.0, (x, y, z0 + t), "z", -1, 2.0) for x, y in ((25.0, 10.4), (-25.0, 10.4), (25.0, -21.6), (-25.0, -21.6))])
 
 
-def fork(s):
+def _fork_outline(s):
     """fork_5: 1.5 mm Ti fork. It hangs on the 15 mm nose standoff (5.2 hole) between the wedgelet cheeks, a pin hole
     in its tail stops it rotating; a triangular window lightens the blade, which tapers to a 1.5 mm tip."""
     from shapely.geometry import Point, Polygon
@@ -245,7 +245,26 @@ def fork(s):
     if s < 0:   # the STEP hangs the left fork 1.1 deg nose-down about its standoff (pin-hole play in the cheek)
         from shapely import affinity
         p = affinity.rotate(p, -1.1, origin=SB)
+    return p, x0, x1
+
+
+def fork(s):
+    p, x0, x1 = _fork_outline(s)
     return _ext(p, "yz", x0, x1)
+
+
+def _fork_slot(s):
+    """Seat for the fork tine in the wedgelet nose: the tine outline (window filled) swept straight up out of the
+    ramp ahead of Y 42, so the slit is open to the top (the tine drops in) and no TPU film is left over the tine."""
+    from shapely.geometry import Polygon
+    from shapely import affinity
+    p, x0, x1 = _fork_outline(s)
+    solid = Polygon(p.exterior)
+    up = solid
+    for k in range(1, 25):
+        up = up.union(affinity.translate(solid, 0, 0.5 * k))
+    up = up.intersection(Polygon([(42.0, -1), (80, -1), (80, 30), (42.0, 30)])).union(solid)
+    return _ext(up.buffer(0), "yz", x0, x1)
 
 
 def _mount_profile(r_top):
@@ -477,7 +496,7 @@ def wedgelet(s):
     sh = sh if s < 0 else _mirror_x(sh)
     # the STEP leaves the fork tine and the mount boss inside the TPU nose; cut their seats (the tine slides into a
     # 1.5 mm slit, the TPU nose tab bears on the mount)
-    return _S(sh, fork(s), weapon_mount("l" if s < 0 else "r"))
+    return _S(sh, _fork_slot(s), weapon_mount("l" if s < 0 else "r"))
 
 
 # ------------------------------------------------------------------------------------------------------------ side panel
@@ -492,6 +511,7 @@ SW_X = {1.0: (-32.4, -33.4, -36.6, -44.0, -46.3, -47.6, -48.3, -48.6),
         9.5: (-31.6, -31.9, -32.8, -33.6, -34.6, -36.4, -39.6, -42.3)}
 # wall thickness (normal to the inner face) against height: rear / middle run battered 5 -> 2 mm, the swing ~3.4 mm
 SP_W_Z = (1.0, 3.0, 6.0, 9.0, 12.0, 16.0)
+SP_FOOT_LAND = 0.85
 SP_W_REAR = (5.2, 4.9, 4.3, 3.6, 3.0, 2.1)
 SP_W_MID = (5.0, 4.8, 3.4, 3.0, 2.5, 2.1)
 SP_W_SWING = (3.3, 3.3, 3.0, 2.6, 2.4, 2.1)
@@ -531,9 +551,11 @@ def side_panel(s):
     # path leans out in the front swing and the thickness thins with height (outer face battered), all as smooth
     # functions of Z so the outer surface has no steps.
     secs = []
-    for z in SP_W_Z:
-        path = _resample(_chaikin_open(_sp_path(z), 3), 240)
-        out = _offset_var(path, [_sp_w(y, z) for _, y in path])
+    # the floor section is repeated SP_FOOT_LAND higher: the wall rises straight for that height before it leans, so
+    # the leaning outer face meets the floor in a printable 0.85 mm land, not a knife edge
+    for zw, z in [(SP_W_Z[0], SP_W_Z[0]), (SP_W_Z[0], SP_W_Z[0] + SP_FOOT_LAND)] + [(q, q) for q in SP_W_Z[1:]]:
+        path = _resample(_chaikin_open(_sp_path(zw), 3), 240)
+        out = _offset_var(path, [_sp_w(y, zw) for _, y in path])
         ring = path + _end_cap(path[-1], out[-1], path[-2]) + out[::-1] + _end_cap(out[0], path[0], path[1])
         # drop the little loops a variable offset makes inside tight bends, round what is left (r 0.6), then
         # resample the outline to 480 points from the inner rear corner so every section's points correspond
@@ -547,7 +569,7 @@ def side_panel(s):
         pts = _resample(rg, 481)[:-1]
         # (dense polygon sections: one ruling per matched point pair, adjacent facets meet at a fraction of a degree)
         secs.append(b.Wire.make_polygon([b.Vector(x, y, z) for x, y in pts], close=True))
-    wall = b.Solid.make_loft(secs, ruled=False)
+    wall = _U(b.Solid.make_loft(secs[:2], ruled=True), b.Solid.make_loft(secs[1:], ruled=False))
     side = _round(Polygon([(-32.9, 1.0), (-32.9, 16.0), (-4.3, 16.0), (17.0, 12.0), (25.0, 10.0), (42.0, 10.0), (50.1, 1.0)]), r_out=1.5)
     side = side.union(Point(-32.9, 8.5).buffer(7.5, 64))                           # rear end a full round over the wheel
     foot = _ext(_poly([(-31.6, -12.0), (-42.0, -11.9), (-40.6, -2.1), (-40.8, 3.3), (-42.9, 13.3), (-31.6, 13.3)]), "xy", 1.0, 2.0)   # 1 mm wide foot under the chassis lobe
@@ -559,12 +581,12 @@ def side_panel(s):
     nose = _I(_I(_ext(nose_plan, "xy", 1.0, 10.0), _ext(side, "yz", -60.0, -20.0)), batter)
     # the nose top continues the wedgelet's 50 deg ramp (Z = 1 + 1.187 (50.1 - Y)) so a wedge rides up both as one face
     nose = _one(nose).split(b.Plane(origin=(0.0, 50.1, 1.0), z_dir=(0.0, 1.187, 1.0)), keep=b.Keep.BOTTOM)
-    # the nose's front-outer corner is chamfered back (a plane leaning ~55 deg in and ~57 deg back) so a wedge or
-    # spinner tooth coming in from the front quarter glances off instead of catching the corner
-    nose = _one(nose).split(b.Plane(origin=(-120.0, 0.0, 0.0), z_dir=(1.0, -1.525, -1.4725)), keep=b.Keep.TOP)
     # like the wedgelet, the ramp's knife toe stands on a 0.85 mm land at full reach (printable TPU)
     toe = _poly([(47.0, 1.0), (50.1, 1.0), (50.1, 1.0 + WEDGE_TOE_H), (47.0, 1.0 + 3.1 * 1.187)])
     nose = _U(nose, _I(_I(_ext(nose_plan, "xy", 1.0, 10.0), _ext(toe, "yz", -60.0, -20.0)), batter))
+    # the nose's front-outer corner is chamfered back (a plane leaning ~55 deg in and ~57 deg back) so a wedge or
+    # spinner tooth coming in from the front quarter glances off instead of catching the corner
+    nose = _one(nose).split(b.Plane(origin=(-120.0, 0.0, 0.0), z_dir=(1.0, -1.525, -1.4725)), keep=b.Keep.TOP)
     nose = _S(nose, _box(-42.0, -38.4, 26.5, 39.0, 3.0, 10.5))                     # hollow behind the nose wall
     boss = _I(_cyl(3.0, -42.5, -39.5, SA), _ext(side, "yz", -60.0, -20.0))         # standoff end boss
     body = _U(wall, nose, foot, boss)
