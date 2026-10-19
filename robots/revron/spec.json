@@ -313,14 +313,6 @@
    "count": 2
   },
   {
-   "role": "PLA belt guards over the O-ring slots (not in the STEP)",
-   "kind": "part",
-   "match": [
-    "belt_guard_*"
-   ],
-   "count": 2
-  },
-  {
    "role": "battery lead: JST RCY",
    "kind": "wire",
    "match": [
@@ -2019,23 +2011,6 @@
    "label": "RV23 TPU side panel: battered S-wall round the wheels, 3 M3x8 CSK (two standoff ends, one chassis nut)"
   },
   {
-   "id": "belt_guard_l",
-   "kind": "armor",
-   "material": "pla_st",
-   "process": "fdm",
-   "print_orientation": "-x",
-   "rotates_with": "fixed",
-   "color": "#2a2c30",
-   "shape": {
-    "type": "model",
-    "file": "src/build_revron.py",
-    "params": {
-     "part": "belt_guard_l"
-    }
-   },
-   "label": "PLA belt guard (not in the STEP): roof over the O-ring slot between tub wall and side panel, glued to the tub side wall"
-  },
-  {
    "id": "nut_cl",
    "kind": "nut",
    "catalog": "nut_m3_thin",
@@ -2269,23 +2244,6 @@
     }
    },
    "label": "RV24 TPU side panel: battered S-wall round the wheels, 3 M3x8 CSK (two standoff ends, one chassis nut)"
-  },
-  {
-   "id": "belt_guard_r",
-   "kind": "armor",
-   "material": "pla_st",
-   "process": "fdm",
-   "print_orientation": "+x",
-   "rotates_with": "fixed",
-   "color": "#2a2c30",
-   "shape": {
-    "type": "model",
-    "file": "src/build_revron.py",
-    "params": {
-     "part": "belt_guard_r"
-    }
-   },
-   "label": "PLA belt guard (not in the STEP): roof over the O-ring slot between tub wall and side panel, glued to the tub side wall"
   },
   {
    "id": "nut_cr",
@@ -7526,18 +7484,6 @@
   }
  ],
  "connections": [
-  {
-   "a": "belt_guard_l",
-   "b": "tub",
-   "method": "glue",
-   "reason": "PLA guard web/foot CA-glued along the tub side wall and deck chamfer"
-  },
-  {
-   "a": "belt_guard_r",
-   "b": "tub",
-   "method": "glue",
-   "reason": "PLA guard web/foot CA-glued along the tub side wall and deck chamfer"
-  },
   {
    "a": "motor_l",
    "b": "tub",
