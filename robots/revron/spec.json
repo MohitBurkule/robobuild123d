@@ -44,6 +44,10 @@
   "top_slope_deg": [
    -5,
    25
+  ],
+  "disc_floor_gap_mm": [
+   5.0,
+   9.0
   ]
  },
  "targets": {
@@ -413,6 +417,18 @@
    "reason": "heat-set insert: 3.5 OD melted into a 3.4 bore (interference by design)"
   },
   {
+   "a": "nut_cl",
+   "b": "tub",
+   "max_depth_mm": 0.1,
+   "reason": "thin M3 nut pressed into a hex pocket 0.05 under its flats (captive)"
+  },
+  {
+   "a": "nut_cr",
+   "b": "tub",
+   "max_depth_mm": 0.1,
+   "reason": "thin M3 nut pressed into a hex pocket 0.05 under its flats (captive)"
+  },
+  {
    "a": "wbearing",
    "b": "mount_l",
    "max_depth_mm": 0.1,
@@ -472,21 +488,270 @@
     "mode": "shape",
     "tol_mm": 1.0,
     "tol_vol_frac": 0.25,
-    "note": "RV01 chassis"
+    "note": "RV01 chassis",
+    "deviations": [
+     {
+      "near": [
+       -25.0,
+       10.4,
+       11.0
+      ],
+      "r": 9.0,
+      "reason": "corner column top: 1.7 thread-forming pilot for the top-panel M2 screw instead of the STEP 3.0 bore (the STEP top panel is bonded; screws make it removable)"
+     },
+     {
+      "near": [
+       25.0,
+       10.4,
+       11.0
+      ],
+      "r": 9.0,
+      "reason": "corner column top: 1.7 thread-forming pilot for the top-panel M2 screw instead of the STEP 3.0 bore (the STEP top panel is bonded; screws make it removable)"
+     },
+     {
+      "near": [
+       -25.0,
+       -21.6,
+       11.0
+      ],
+      "r": 9.0,
+      "reason": "corner column top: 1.7 thread-forming pilot for the top-panel M2 screw instead of the STEP 3.0 bore (the STEP top panel is bonded; screws make it removable)"
+     },
+     {
+      "near": [
+       25.0,
+       -21.6,
+       11.0
+      ],
+      "r": 9.0,
+      "reason": "corner column top: 1.7 thread-forming pilot for the top-panel M2 screw instead of the STEP 3.0 bore (the STEP top panel is bonded; screws make it removable)"
+     },
+     {
+      "near": [
+       -25.0,
+       10.4,
+       5.0
+      ],
+      "r": 4.0,
+      "reason": "column foot flared to R3.7 with a recess for the base-panel ring boss (1.0 mm base skin cannot seat a 1.2 mm M2 flat head)"
+     },
+     {
+      "near": [
+       25.0,
+       10.4,
+       5.0
+      ],
+      "r": 4.0,
+      "reason": "column foot flared to R3.7 with a recess for the base-panel ring boss (1.0 mm base skin cannot seat a 1.2 mm M2 flat head)"
+     },
+     {
+      "near": [
+       -25.0,
+       -21.6,
+       5.0
+      ],
+      "r": 4.0,
+      "reason": "column foot flared to R3.7 with a recess for the base-panel ring boss (1.0 mm base skin cannot seat a 1.2 mm M2 flat head)"
+     },
+     {
+      "near": [
+       25.0,
+       -21.6,
+       5.0
+      ],
+      "r": 4.0,
+      "reason": "column foot flared to R3.7 with a recess for the base-panel ring boss (1.0 mm base skin cannot seat a 1.2 mm M2 flat head)"
+     },
+     {
+      "near": [
+       0.0,
+       -33.6,
+       5.0
+      ],
+      "r": 4.0,
+      "reason": "column foot flared to R3.7 with a recess for the base-panel ring boss (1.0 mm base skin cannot seat a 1.2 mm M2 flat head)"
+     },
+     {
+      "near": [
+       -2.0,
+       -2.0,
+       15.4
+      ],
+      "r": 6.0,
+      "reason": "electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact"
+     },
+     {
+      "near": [
+       19.4,
+       -2.0,
+       15.4
+      ],
+      "r": 6.0,
+      "reason": "electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact"
+     },
+     {
+      "near": [
+       2.0,
+       -19.6,
+       13.0
+      ],
+      "r": 6.0,
+      "reason": "electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact"
+     },
+     {
+      "near": [
+       12.0,
+       -19.6,
+       13.0
+      ],
+      "r": 6.0,
+      "reason": "electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact"
+     },
+     {
+      "near": [
+       7.5,
+       -19.6,
+       13.0
+      ],
+      "r": 6.0,
+      "reason": "electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact"
+     },
+     {
+      "near": [
+       -2.2,
+       -9.0,
+       14.0
+      ],
+      "r": 6.0,
+      "reason": "electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact"
+     },
+     {
+      "near": [
+       19.3,
+       4.0,
+       14.0
+      ],
+      "r": 6.0,
+      "reason": "electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact"
+     },
+     {
+      "near": [
+       -2.2,
+       4.0,
+       14.0
+      ],
+      "r": 6.0,
+      "reason": "electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact"
+     },
+     {
+      "near": [
+       19.3,
+       -9.0,
+       14.0
+      ],
+      "r": 6.0,
+      "reason": "electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact"
+     }
+    ]
    },
    {
     "part": "base_panel",
     "file": "RV26_Base_Panel_1.stl",
     "mode": "shape",
     "tol_mm": 0.3,
-    "note": "RV26 1 mm panel"
+    "note": "RV26 1 mm panel",
+    "deviations": [
+     {
+      "near": [
+       -25.0,
+       10.4,
+       4.5
+      ],
+      "r": 3.0,
+      "reason": "0.6 mm ring boss + 4.5 countersink on a 3.0 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
+     },
+     {
+      "near": [
+       25.0,
+       10.4,
+       4.5
+      ],
+      "r": 3.0,
+      "reason": "0.6 mm ring boss + 4.5 countersink on a 3.0 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
+     },
+     {
+      "near": [
+       -25.0,
+       -21.6,
+       4.5
+      ],
+      "r": 3.0,
+      "reason": "0.6 mm ring boss + 4.5 countersink on a 3.0 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
+     },
+     {
+      "near": [
+       25.0,
+       -21.6,
+       4.5
+      ],
+      "r": 3.0,
+      "reason": "0.6 mm ring boss + 4.5 countersink on a 3.0 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
+     },
+     {
+      "near": [
+       0.0,
+       -33.6,
+       4.5
+      ],
+      "r": 3.0,
+      "reason": "0.6 mm ring boss + 4.5 countersink on a 3.0 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
+     }
+    ]
    },
    {
     "part": "top_panel",
     "file": "Top_Panel_1.stl",
     "mode": "shape",
     "tol_mm": 0.3,
-    "note": "0.9 mm top panel"
+    "note": "0.9 mm top panel",
+    "deviations": [
+     {
+      "near": [
+       -25.0,
+       10.4,
+       19.95
+      ],
+      "r": 3.0,
+      "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
+     },
+     {
+      "near": [
+       25.0,
+       10.4,
+       19.95
+      ],
+      "r": 3.0,
+      "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
+     },
+     {
+      "near": [
+       -25.0,
+       -21.6,
+       19.95
+      ],
+      "r": 3.0,
+      "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
+     },
+     {
+      "near": [
+       25.0,
+       -21.6,
+       19.95
+      ],
+      "r": 3.0,
+      "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
+     }
+    ]
    },
    {
     "part": "mount_l",
@@ -5668,6 +5933,22 @@
    ],
    "threads_into": "insert_b0",
    "tool": "hex1.3",
+   "hole": {
+    "d": 2.0,
+    "length": 6.0,
+    "head": "csk",
+    "head_std": "ISO 14581",
+    "head_dk": 3.8,
+    "head_k": 1.2,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "csk_angle": 90.0,
+    "csk_d": 4.5,
+    "csk_depth": 1.05,
+    "sink": 0.0,
+    "grip": 1.6
+   },
    "head": "countersunk",
    "removable": true
   },
@@ -5691,6 +5972,22 @@
    ],
    "threads_into": "insert_b1",
    "tool": "hex1.3",
+   "hole": {
+    "d": 2.0,
+    "length": 6.0,
+    "head": "csk",
+    "head_std": "ISO 14581",
+    "head_dk": 3.8,
+    "head_k": 1.2,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "csk_angle": 90.0,
+    "csk_d": 4.5,
+    "csk_depth": 1.05,
+    "sink": 0.0,
+    "grip": 1.6
+   },
    "head": "countersunk",
    "removable": true
   },
@@ -5714,6 +6011,22 @@
    ],
    "threads_into": "insert_b2",
    "tool": "hex1.3",
+   "hole": {
+    "d": 2.0,
+    "length": 6.0,
+    "head": "csk",
+    "head_std": "ISO 14581",
+    "head_dk": 3.8,
+    "head_k": 1.2,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "csk_angle": 90.0,
+    "csk_d": 4.5,
+    "csk_depth": 1.05,
+    "sink": 0.0,
+    "grip": 1.6
+   },
    "head": "countersunk",
    "removable": true
   },
@@ -5737,6 +6050,22 @@
    ],
    "threads_into": "insert_b3",
    "tool": "hex1.3",
+   "hole": {
+    "d": 2.0,
+    "length": 6.0,
+    "head": "csk",
+    "head_std": "ISO 14581",
+    "head_dk": 3.8,
+    "head_k": 1.2,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "csk_angle": 90.0,
+    "csk_d": 4.5,
+    "csk_depth": 1.05,
+    "sink": 0.0,
+    "grip": 1.6
+   },
    "head": "countersunk",
    "removable": true
   },
@@ -5760,6 +6089,22 @@
    ],
    "threads_into": "insert_b4",
    "tool": "hex1.3",
+   "hole": {
+    "d": 2.0,
+    "length": 6.0,
+    "head": "csk",
+    "head_std": "ISO 14581",
+    "head_dk": 3.8,
+    "head_k": 1.2,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "csk_angle": 90.0,
+    "csk_d": 4.5,
+    "csk_depth": 1.05,
+    "sink": 0.0,
+    "grip": 1.6
+   },
    "head": "countersunk",
    "removable": true
   },
@@ -6373,6 +6718,22 @@
    ],
    "threads_into": "tub",
    "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
+   "hole": {
+    "d": 2.0,
+    "length": 4.0,
+    "head": "csk",
+    "head_std": "ISO 14581",
+    "head_dk": 3.8,
+    "head_k": 1.2,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "csk_angle": 90.0,
+    "csk_d": 4.5,
+    "csk_depth": 1.05,
+    "sink": 0.0,
+    "grip": 0.9
+   },
    "removable": true
   },
   {
@@ -6395,6 +6756,22 @@
    ],
    "threads_into": "tub",
    "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
+   "hole": {
+    "d": 2.0,
+    "length": 4.0,
+    "head": "csk",
+    "head_std": "ISO 14581",
+    "head_dk": 3.8,
+    "head_k": 1.2,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "csk_angle": 90.0,
+    "csk_d": 4.5,
+    "csk_depth": 1.05,
+    "sink": 0.0,
+    "grip": 0.9
+   },
    "removable": true
   },
   {
@@ -6417,6 +6794,22 @@
    ],
    "threads_into": "tub",
    "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
+   "hole": {
+    "d": 2.0,
+    "length": 4.0,
+    "head": "csk",
+    "head_std": "ISO 14581",
+    "head_dk": 3.8,
+    "head_k": 1.2,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "csk_angle": 90.0,
+    "csk_d": 4.5,
+    "csk_depth": 1.05,
+    "sink": 0.0,
+    "grip": 0.9
+   },
    "removable": true
   },
   {
@@ -6439,6 +6832,22 @@
    ],
    "threads_into": "tub",
    "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
+   "hole": {
+    "d": 2.0,
+    "length": 4.0,
+    "head": "csk",
+    "head_std": "ISO 14581",
+    "head_dk": 3.8,
+    "head_k": 1.2,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "csk_angle": 90.0,
+    "csk_d": 4.5,
+    "csk_depth": 1.05,
+    "sink": 0.0,
+    "grip": 0.9
+   },
    "removable": true
   },
   {
@@ -7289,7 +7698,33 @@
    "why": "2 mm walls are 4+ perimeters: the box takes wheel-side and clamp loads without delaminating",
    "part": "tub",
    "min": 1.8,
-   "envelope": true
+   "envelope": true,
+   "except": [
+    [
+     [
+      -29.6,
+      -37.7,
+      4.6
+     ],
+     [
+      29.6,
+      -35.4,
+      17.5
+     ]
+    ],
+    [
+     [
+      -33.0,
+      -38.0,
+      0.0
+     ],
+     [
+      33.0,
+      44.0,
+      4.6
+     ]
+    ]
+   ]
   },
   {
    "rule": "insert_column",

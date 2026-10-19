@@ -43,13 +43,17 @@ def section(m, ax, h):
     return out
 
 
-def hole_shape(ring):
+def hole_shape(ring, densify=False):
     """Classify a hole outline by its radial profile r(theta) about the centroid."""
     from shapely.geometry import Polygon
 
     p = Polygon(ring)
     c = np.array(p.centroid.coords[0])
-    pts = np.array(ring.coords)[:-1] - c
+    if len(ring.coords) < 7:
+        return "other"
+    # densify (opt-in): a straight edge (a D flat) is only its two end vertices, and interpolating r(theta) between
+    # them draws it as an arc, so a D reads as 'other' depending on tessellation; sampling the outline sees the flat
+    pts = np.array((p.exterior.segmentize(max(0.02, p.length / 720)) if densify else p.exterior).coords)[:-1] - c
     if len(pts) < 6:
         return "other"
     mrr = p.minimum_rotated_rectangle
@@ -76,7 +80,7 @@ def hole_shape(ring):
     return "other"
 
 
-def holes(geom):
+def holes(geom, densify=False):
     from shapely.geometry import Polygon
 
     out = []
@@ -89,7 +93,7 @@ def holes(geom):
             hp = Polygon(i)
             if hp.area < 0.5:
                 continue
-            out.append((tuple(np.round(hp.centroid.coords[0], 2)), round(2 * math.sqrt(hp.area / math.pi), 2), hole_shape(i)))
+            out.append((tuple(np.round(hp.centroid.coords[0], 2)), round(2 * math.sqrt(hp.area / math.pi), 2), hole_shape(i, densify)))
     return out
 
 
