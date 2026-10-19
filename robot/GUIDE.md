@@ -399,3 +399,14 @@ Extended clusters (combat_failure_modes_ext.json, uncalibrated, all warnings): *
 side or dragging on the floor when inverted; **CFX-ANTENNA** modelled antenna on the outer skin; **CFX-FRICTION** pins/tyres
 held only by friction/press fit; **CFX-TAPE** electronics held only by tape/velcro; **CFX-STATE** no answer when inverted,
 one drive side dead, weapon dead, radio failsafe, or on its side.
+
+## Support in every orientation (`support.loose`)
+
+Every part not held to the chassis by a declared hold (screw through/into it, press_fit, clamp, strap, glue, pin, shaft,
+fused; chains of holds count, and a group held only to itself moves as one body) is slid along all six axis directions:
+gravity with the robot upright, inverted and on each side. More than 0.2 mm of free travel before hitting another part is
+a blocker naming the part, direction and travel. WHY: robots are flipped and shaken every match, so "it rests in the
+pocket" is not retention; a part held by gravity alone drops out or hammers itself and its wires apart the first time the
+robot is upside down. `retained: pocket`, tape/kapton/velcro and `interlock` are measured, not trusted (tape peels once
+the part hammers). Joints and tensioned belts are left to `kinematics.*`/`tension.*`. Fix by closing the open side to
+<= 0.2 mm (lid, rib, clip) or adding a real hold to the chassis.
