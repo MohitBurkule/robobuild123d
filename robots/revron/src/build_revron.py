@@ -240,8 +240,8 @@ def fork(s):
     outline = _round(outline, r_out=0.3, r_in=0.5).union(Polygon([(60.0, 1.27), (66.68, 1.49), (60.0, 2.5)])).buffer(0.15, 8).buffer(-0.15, 8)   # sharp tip, r0.15 (> kerf) where it joins
     p = outline.difference(Point(SB[0], SB[1]).buffer(2.65, 48)).difference(Point(36.3, 6.3).buffer(0.8, 24))
     p = p.difference(_round(Polygon([(43.85, 2.75), (54.0, 2.75), (44.35, 5.42)]), r_out=0.3))   # lightening window
-    # laser kerf / min web: the knife tip cannot be cut sharp; blunt it where the blade is 0.45 mm (r0.22 nose)
-    p = _round(p, r_out=0.22)
+    # laser kerf / min web: the knife tip cannot be cut sharp; keep the full length but end it in a 0.45 mm land
+    p = p.union(Polygon([(64.0, 1.2), (66.68, 1.27), (66.68, 1.72), (64.0, 1.95)])).buffer(0)
     if s < 0:   # the STEP hangs the left fork 1.1 deg nose-down about its standoff (pin-hole play in the cheek)
         from shapely import affinity
         p = affinity.rotate(p, -1.1, origin=SB)
@@ -442,7 +442,7 @@ def standoff(L_x, c):
 
 
 # ------------------------------------------------------------------------------------------------------------ wedgelet
-WEDGE_TOE_Y = 50.1 - 1.25 / 1.187    # ramp Z = 1 + 1.187 (50.1 - Y) stopped where it is 1.25 mm above the floor
+WEDGE_TOE_H = 0.85                   # ramp Z = 1 + 1.187 (50.1 - Y) lifted so its toe is a 0.85 mm land at full length
 def wedgelet(s):
     """RV17/18 TPU wedgelet (left built, right mirrored), slabs along X measured on the STEP sections:
     an outer block round the 15 mm standoff end (X 36.5..38.5), a ring step (35.5..36.5), a 2.3 mm ramp skin over a
@@ -469,8 +469,10 @@ def wedgelet(s):
     kid = LineString([(36.05, 5.15), (36.95, 7.45)]).buffer(0.95, 24)
     cuts = [_ext(cheek.difference(in_slot), "yz", -27.0, -24.5),                  # 2.5 mm fork slot through the cheek
             _cyl(2.6, -39.0, -17.0, SA), _cyl(1.6, -39.0, -17.0, SB), _cyl(2.5, -36.5, -17.0, SB), _ext(kid, "yz", -29.5, -21.0)]
-    # TPU cannot print the ramp's knife toe (FDM TPU walls >= 1.2 mm): stop the ramp on a 1.25 mm high land
-    cuts.append(_box(-60.0, 0.0, WEDGE_TOE_Y, 60.0, 0.0, 30.0))
+    # TPU cannot print the ramp's knife toe: keep the 50.1 reach but stand the toe on a 0.85 mm land (2 perimeters),
+    # the ramp face running parallel to the measured one from there
+    toe = P([(46.0, 1.0), (50.1, 1.0), (50.1, 1.0 + WEDGE_TOE_H), (46.0, 1.0 + WEDGE_TOE_H + 4.1 * 1.187)])
+    body = _U(body, _I(_ext(toe, "yz", -38.5, -17.5), _ext(s1.union(cheek).union(tab).buffer(0.01), "yz", -38.5, -17.5)))
     sh = _S(body, *cuts)
     sh = sh if s < 0 else _mirror_x(sh)
     # the STEP leaves the fork tine and the mount boss inside the TPU nose; cut their seats (the tine slides into a
@@ -567,9 +569,7 @@ def side_panel(s):
     # driver reaches the head and the screw backs straight out
     cuts = [_csk(3.3, 6.7, (-46.26, SA[0], SA[1]), "x", 1, 8.0, 12.0), _csk(3.3, 6.7, (-41.76, SB[0], SB[1]), "x", 1, 8.0, 12.0),
             _csk(3.3, 6.7, (-35.26, NUT[0], NUT[1]), "x", 1, 8.0, 12.0),
-            # the nose bolt's head bore flares 45 deg out through the chamfered nose (driver room, and no knife-edge
-            # film where a straight bore would graze the chamfer plane)
-            b.Solid.make_cone(3.35, 9.35, 6.0, b.Plane(origin=(-42.8, SB[0], SB[1]), z_dir=(-1, 0, 0))), _cyl(2.55, -42.55, -38.0, SA),
+            _cyl(2.55, -42.55, -38.0, SA),
             _box(-45.0, -43.4, -38.7, -24.8, 5.0, 15.0),                          # rear tyre relief on the inner face
             _box(-32.6, -31.4, -13.1, 2.6, 3.7, 13.3)]                            # clears the chassis nut lobe
     for y0 in (-11.0, -4.5, 2.0):     # diagonal vent slots (TPU wall flexes, keeps the ESC cool)
@@ -1141,6 +1141,23 @@ def _micro_to_world(side):
     return (np.array(REF_TO_WORLD, float) @ np.array(MICRO_T[side], float)).round(6).tolist()
 
 
+def _fork_dev(s):
+    return [dict(near=[s * 25.5, 66.0, 1.4], r=2.0, reason="laser-cut Ti cannot hold the STEP's knife tip (0.0 mm): the tip ends "
+                 "in a 0.45 mm land at full length (laser titanium min web 0.4 mm)")]
+
+
+def _wedge_dev(s):
+    slit = "the STEP draws the Ti fork tine inside the TPU nose (interpenetrating solids); the TPU has the 1.5 mm slit the tine slides into"
+    toe = "the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
+    return ([dict(near=[s * 25.75, y, z], r=2.5, reason=slit) for y, z in ((46.4, 2.2), (44.4, 6.0), (43.1, 6.2), (44.2, 5.9), (48.5, 2.8))]
+            + [dict(near=[s * x, 49.3, 1.4], r=4.0, reason=toe) for x in (19.5, 24.0, 28.0, 32.0, 36.5)])
+
+
+def _side_dev(s):
+    return [dict(near=[s * 41.78, SB[0], SB[1]], r=4.0, reason="nose screw seat: ISO 10642 M3 head is 6.6 (catalog max), the STEP's "
+                 "6.2 bore would trap it; 6.7 seat with a straight head bore out through the nose for the driver")]
+
+
 def reference_cad():
     def R(part, file, mode="shape", **k):
         return dict(part=part, file=file, mode=mode, **k)
@@ -1156,11 +1173,11 @@ def reference_cad():
         R("disc_a", "Drisk_floating_3_1.stl", tol_mm=0.5, ref_to_world=dt),
         R("disc_b", "Drisk_floating_3_2.stl", tol_mm=0.5, ref_to_world=dt),
         R("dspacer", "Drisk_spacer_alt_x_1.stl", tol_mm=0.5, ref_to_world=dt),
-        R("wedgelet_l", "RV17_Wedgelet_LH_1.stl", tol_mm=0.8, tol_vol_frac=0.25),
-        R("wedgelet_r", "RV18_Wedgelet_RH_1.stl", tol_mm=0.8, tol_vol_frac=0.25),
-        R("side_l", "RV23_side_panel_LH_1.stl", tol_mm=1.0, tol_vol_frac=0.25),
-        R("side_r", "RV24_Mirrorside_panel_RH_1.stl", tol_mm=1.0, tol_vol_frac=0.25),
-        R("fork_l", "fork_5_2.stl", tol_mm=0.5), R("fork_r", "fork_5_1.stl", tol_mm=0.5),
+        R("wedgelet_l", "RV17_Wedgelet_LH_1.stl", tol_mm=0.8, tol_vol_frac=0.25, deviations=_wedge_dev(-1)),
+        R("wedgelet_r", "RV18_Wedgelet_RH_1.stl", tol_mm=0.8, tol_vol_frac=0.25, deviations=_wedge_dev(1)),
+        R("side_l", "RV23_side_panel_LH_1.stl", tol_mm=1.0, tol_vol_frac=0.25, deviations=_side_dev(-1)),
+        R("side_r", "RV24_Mirrorside_panel_RH_1.stl", tol_mm=1.0, tol_vol_frac=0.25, deviations=_side_dev(1)),
+        R("fork_l", "fork_5_2.stl", tol_mm=0.5, deviations=_fork_dev(-1)), R("fork_r", "fork_5_1.stl", tol_mm=0.5, deviations=_fork_dev(1)),
         R("whub_rl", "RV21_Rear_Wheel_1.stl", tol_mm=0.5, tol_vol_frac=0.15), R("whub_rr", "RV21_Rear_Wheel_2.stl", tol_mm=0.5, tol_vol_frac=0.15),
         R("whub_fl", "RV19_Hub_Micro_1.stl", tol_mm=0.5, ref_to_world=_micro_to_world("l")),
         R("whub_fr", "RV19_Hub_Micro_2.stl", tol_mm=0.5, ref_to_world=_micro_to_world("r")),
