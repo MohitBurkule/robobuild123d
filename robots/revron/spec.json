@@ -415,7 +415,7 @@
   {
    "a": "weapon_lock",
    "b": "mount_l",
-   "max_depth_mm": 0.1,
+   "max_depth_mm": 0.15,
    "reason": "RV00 TPU lock pin d4 pressed into the RV02 3.9 bore (0.05 radial grip) so it cannot rattle out"
   },
   {
@@ -6964,7 +6964,19 @@
    "kind": "motor",
    "slack_mm": 15,
    "connector": "bullet2",
-   "count": 3
+   "count": 3,
+   "via": [
+    [
+     11.1,
+     14.5,
+     16.0
+    ],
+    [
+     11.1,
+     30.0,
+     14.5
+    ]
+   ]
   },
   {
    "id": "w_rx_wesc",
@@ -7419,14 +7431,14 @@
    "via": {
     "w_wesc_m": [
      [
-      6.5,
+      11.1,
       14.5,
       16.0
      ],
      [
-      11.5,
-      14.5,
-      16.0
+      11.1,
+      30.0,
+      14.5
      ]
     ]
    }

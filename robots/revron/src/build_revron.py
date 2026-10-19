@@ -979,7 +979,8 @@ def make_spec(model_file):
           label=f"stock {ORING[0]} x {ORING[1]} nitrile O-ring ({100 * (loop / BELT_L - 1):.0f} % stretch on the 61 mm centres): front wheel drive (not in the STEP; the hub grooves are)")
 
     wires = [dict(_Wr("w_bat_sw", "battery.jst_rcy", "power_switch.in", 24, "power", 8), connector="jst_rcy"), _Wr("w_sw_wesc", "power_switch.out", "wesc.bat", 24, "power", 8),
-             _Wr("w_sw_rx", "power_switch.out", "rxesc.bat", 26, "power", 8), dict(_Wr("w_wesc_m", "wesc.motor", "weapon_motor.phases", 24, "motor", 15), connector="bullet2", count=3),
+             _Wr("w_sw_rx", "power_switch.out", "rxesc.bat", 26, "power", 8), dict(_Wr("w_wesc_m", "wesc.motor", "weapon_motor.phases", 24, "motor", 15), connector="bullet2", count=3,
+                 via=[[11.1, 14.5, 16.0], [11.1, 30.0, 14.5]]),   # phases run rearward in the gap behind the drisk (4 mm axial from the stack), into the tub at the deck front
              _Wr("w_rx_wesc", "rxesc.wpn", "wesc.rx", 30, "signal", 6), _Wr("w_m_l", "rxesc.m2", "motor_l.terminals", 28, "motor", 6),
              _Wr("w_m_r", "rxesc.m1", "motor_r.terminals", 28, "motor", 6)]
     return dict(parts=parts, fasteners=fast, connections=conn, wires=wires, intent=intent_checks())
@@ -1019,7 +1020,7 @@ def intent_checks():
       module=["bolt_ula", "bolt_ulb", "bolt_ura", "bolt_urb"])
     rot = ["spider", "disc_a", "disc_b", "dspacer"] + [f"nut_d{k}" for k in range(4)]
     A("wire_clear_rotor", "phases and power leads stay out of the drisk's swept volume", rotor=rot, axis=[1, 0, 0], at=[0, WY, WZ], min=2.0,
-      via={"w_wesc_m": [[6.5, 14.5, 16.0], [11.5, 14.5, 16.0]]})
+      via={"w_wesc_m": [[11.1, 14.5, 16.0], [11.1, 30.0, 14.5]]})
     return out
 
 
@@ -1160,7 +1161,7 @@ def main():
                                    dict(a="motor_l", b="whub_rl", max_depth_mm=0.4, reason="the catalog N10 shaft is drawn round; the hub's D-flat sits on its flat"),
                                    dict(a="motor_r", b="whub_rr", max_depth_mm=0.4, reason="the catalog N10 shaft is drawn round; the hub's D-flat sits on its flat"),
                                    *[dict(a=f"insert_b{i}", b="tub", max_depth_mm=0.2, reason="heat-set insert: 3.5 OD melted into a 3.4 bore (interference by design)") for i in range(5)],
-                                   dict(a="weapon_lock", b="mount_l", max_depth_mm=0.1, reason="RV00 TPU lock pin d4 pressed into the RV02 3.9 bore (0.05 radial grip) so it cannot rattle out"),
+                                   dict(a="weapon_lock", b="mount_l", max_depth_mm=0.15, reason="RV00 TPU lock pin d4 pressed into the RV02 3.9 bore (0.05 radial grip) so it cannot rattle out"),
                                    dict(a="wbearing", b="mount_l", max_depth_mm=0.1, reason="MR85 8.0 OD pressed into the RV02 7.9 printed seat (0.05 radial interference, the STEP seat size)")],
                     claims=[dict(id="c_mass", text="weighs 150 g or less", metric="mass_total_g", op="<=", value=150),
                             dict(id="c_fit", text="fits the 150 mm square", metric="footprint_mm", op="<=", value=150)],

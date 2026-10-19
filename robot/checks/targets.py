@@ -16,6 +16,10 @@ ALIASES = {"length": "length_mm", "width": "width_mm", "height": "height_mm", "d
 META = {"tol_mm", "tol_pct", "source", "note"}
 
 
+def _role(p):
+    return getattr(p, "role", None) or (getattr(p, "_extra", None) or {}).get("role")
+
+
 def measure_targets(ctx):
     """Model values for every target key we know how to measure (None when it cannot be measured)."""
     r, w = ctx.r, ctx.world
@@ -40,7 +44,7 @@ def measure_targets(ctx):
             rw = getattr(r.parts[b.part_idx].part, "rotates_with", None)
             for o in w.bodies:
                 if o is not b and o.part_idx is not None and not o.is_wire and rw and getattr(r.parts[o.part_idx].part, "rotates_with", None) == rw \
-                        and getattr(r.parts[o.part_idx].part, "role", None) == "blade":
+                        and _role(r.parts[o.part_idx].part) == "blade":
                     dias.append(2.0 * rim_radius(o, *sa))
     vals["disc_dia_mm"] = max(dias) if dias else None
     vals["mass_g"] = ctx.metrics.get("mass_total_g")

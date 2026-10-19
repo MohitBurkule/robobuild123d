@@ -250,7 +250,15 @@ def run(ctx):
         a, b = np.asarray(a, float), np.asarray(b, float)
         radius = od * 0.5
         ends = [a, b]
-        raw, miss = router.route(a, b, radius)
+        legs = [a] + [np.asarray(v, float) for v in (w.via or [])] + [b]
+        raw, miss = [], None
+        for p0, p1 in zip(legs, legs[1:]):   # declared waypoints: route leg by leg, so the wire follows the designer's channel
+            seg, miss = router.route(p0, p1, radius)
+            if seg is None:
+                raw = None
+                break
+            seg = router.smooth(seg, radius, ends)   # taut within the leg; the waypoints themselves stay
+            raw += list(seg) if not raw else list(seg)[1:]
         if raw is None:
             gap, at = miss
             at = np.asarray(at, float)
@@ -265,7 +273,7 @@ def run(ctx):
                        .fix("Cut a wire channel (at least 2.5 mm wide) through the walls between those parts, or move "
                             "the parts closer."))
             continue
-        pts = router.smooth(raw, radius, ends)
+        pts = raw
         slack = w.slack_mm if w.slack_mm is not None else 6.0
         length = polyline_len(pts) + slack
         min_bend = 2.0 * od
