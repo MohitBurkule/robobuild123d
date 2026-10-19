@@ -80,26 +80,49 @@
    "catalog": "heatset_m2_4"
   },
   {
-   "role": "FS9: mount to standoff 4 x M3x12 CSK alu",
+   "role": "FS9: mount to standoff 2 x M3x12 CSK alu (axle standoff)",
    "match": [
-    "bolt_u*"
+    "bolt_u?a"
    ],
-   "count": 4,
+   "count": 2,
    "designation": "M3x12",
    "head": "countersunk",
    "threads_into": "standoff",
    "material": "aluminium"
   },
   {
-   "role": "side panel to standoff ends: 4 x M3x8 CSK",
+   "role": "FS9: mount to nose standoff 2 x M3 CSK alu",
+   "match": [
+    "bolt_u?b"
+   ],
+   "count": 2,
+   "designation": "M3x14",
+   "head": "countersunk",
+   "threads_into": "standoff",
+   "material": "aluminium",
+   "deviation": "M3x14 instead of the STEP's M3x12: through mount and lug, 12 mm engages 3.9 mm of the 15 mm standoff (< 1.5 d)"
+  },
+  {
+   "role": "top panel: 4 x M2 thread-forming (not in the STEP; its 2.8 holes are)",
+   "match": [
+    "bolt_t*"
+   ],
+   "count": 4,
+   "designation": "M2x4",
+   "threads_into": "tub",
+   "deviation": "the STEP top panel has 4 corner holes but no screws; 4 M2x4 thread-forming screws added so the Ti panel cannot peel off"
+  },
+  {
+   "role": "side panel to standoff ends: 4 x M3 CSK (STEP M3x8)",
    "match": [
     "bolt_s?a",
     "bolt_s?b"
    ],
    "count": 4,
-   "designation": "M3x8",
+   "designation": "M3x10",
    "head": "countersunk",
-   "threads_into": "standoff"
+   "threads_into": "standoff",
+   "deviation": "M3x10 instead of the STEP's M3x8: 8 mm engages 4.2 / 2.7 mm of standoff thread, under 1.5 d in aluminium"
   },
   {
    "role": "side panel to chassis: 2 x M3x8 CSK into thin nuts",
@@ -244,7 +267,7 @@
    "count": 4,
    "designation": "M2",
    "threads_into": "nut",
-   "deviation": "the STEP leaves the r14 stack holes empty; 4 M2x16 + nuts added so the stack is held"
+   "deviation": "the STEP leaves the r14 stack holes empty; 4 M2x18 + nuts added so the stack is held (18 mm: the nut is fully engaged)"
   },
   {
    "role": "spider to bell: 4 x M2 (not in the STEP)",
@@ -340,6 +363,54 @@
    "b": "wbearing",
    "max_depth_mm": 0.3,
    "reason": "shaft in the MR85 inner race (bearing modelled as one solid)"
+  },
+  {
+   "a": "wshaft",
+   "b": "weapon_motor",
+   "max_depth_mm": 2.6,
+   "reason": "wshaft is the GR1507's own shaft, already drawn inside the catalog motor envelope"
+  },
+  {
+   "a": "motor_l",
+   "b": "whub_rl",
+   "max_depth_mm": 0.4,
+   "reason": "the catalog N10 shaft is drawn round; the hub's D-flat sits on its flat"
+  },
+  {
+   "a": "motor_r",
+   "b": "whub_rr",
+   "max_depth_mm": 0.4,
+   "reason": "the catalog N10 shaft is drawn round; the hub's D-flat sits on its flat"
+  },
+  {
+   "a": "insert_b0",
+   "b": "tub",
+   "max_depth_mm": 0.2,
+   "reason": "heat-set insert: 3.5 OD melted into a 3.4 bore (interference by design)"
+  },
+  {
+   "a": "insert_b1",
+   "b": "tub",
+   "max_depth_mm": 0.2,
+   "reason": "heat-set insert: 3.5 OD melted into a 3.4 bore (interference by design)"
+  },
+  {
+   "a": "insert_b2",
+   "b": "tub",
+   "max_depth_mm": 0.2,
+   "reason": "heat-set insert: 3.5 OD melted into a 3.4 bore (interference by design)"
+  },
+  {
+   "a": "insert_b3",
+   "b": "tub",
+   "max_depth_mm": 0.2,
+   "reason": "heat-set insert: 3.5 OD melted into a 3.4 bore (interference by design)"
+  },
+  {
+   "a": "insert_b4",
+   "b": "tub",
+   "max_depth_mm": 0.2,
+   "reason": "heat-set insert: 3.5 OD melted into a 3.4 bore (interference by design)"
   },
   {
    "a": "wbearing",
@@ -790,7 +861,7 @@
    "kind": "structure",
    "print_orientation": "-z",
    "rotates_with": "fixed",
-   "solid_fraction": 0.9,
+   "solid_fraction": 0.8,
    "color": "#2a2c30",
    "shape": {
     "type": "model",
@@ -835,14 +906,14 @@
      "part": "top_panel"
     }
    },
-   "label": "0.9 mm Ti top panel bonded (VHB) on the deck: plain laser outline, no holes (material inferred, see REFERENCE.md)"
+   "label": "0.9 mm Ti top panel: laser outline with 4 x 2.8 corner holes, 4 M2 thread-forming screws into the column tops (material inferred, see REFERENCE.md)"
   },
   {
    "id": "mount_r",
    "kind": "structure",
    "print_orientation": "+x",
    "rotates_with": "fixed",
-   "solid_fraction": 1.0,
+   "solid_fraction": 0.85,
    "color": "#2a2c30",
    "shape": {
     "type": "model",
@@ -861,7 +932,7 @@
    "parent": "mount_r",
    "print_orientation": "-x",
    "rotates_with": "fixed",
-   "solid_fraction": 1.0,
+   "solid_fraction": 0.85,
    "color": "#2a2c30",
    "shape": {
     "type": "model",
@@ -979,12 +1050,12 @@
     "shape": {
      "type": "cylinder",
      "radius": 2.5,
-     "height": 9.4
+     "height": 12.2
     },
     "at": [
-     -14.0,
-     38.5,
-     23.5
+     -12.6,
+     0,
+     0
     ],
     "rot": [
      0,
@@ -1006,11 +1077,21 @@
    "min_web_reason": "0.8 mm webs between the dog pockets and the rim are the designer's own (RVRN 2.0 STEP spider_1 measures 0.8 at the same four places)",
    "rotates_with": "weapon",
    "parent": "mount_r",
+   "at": [
+    0.0,
+    38.5,
+    23.5
+   ],
    "shape": {
     "type": "model",
     "file": "../../robots/revron/src/build_revron.py",
     "params": {
-     "part": "spider"
+     "part": "spider",
+     "origin": [
+      0.0,
+      38.5,
+      23.5
+     ]
     }
    },
    "joint": {
@@ -1021,7 +1102,7 @@
      0
     ],
     "pivot": [
-     0.0,
+     -6.7,
      38.5,
      23.5
     ],
@@ -1062,7 +1143,12 @@
     "type": "model",
     "file": "../../robots/revron/src/build_revron.py",
     "params": {
-     "part": "disc_a"
+     "part": "disc_a",
+     "origin": [
+      0.0,
+      38.5,
+      23.5
+     ]
     }
    },
    "color": "#d9dde2",
@@ -1083,7 +1169,12 @@
     "type": "model",
     "file": "../../robots/revron/src/build_revron.py",
     "params": {
-     "part": "disc_b"
+     "part": "disc_b",
+     "origin": [
+      0.0,
+      38.5,
+      23.5
+     ]
     }
    },
    "color": "#d9dde2",
@@ -1100,7 +1191,12 @@
     "type": "model",
     "file": "../../robots/revron/src/build_revron.py",
     "params": {
-     "part": "drisk_spacer"
+     "part": "drisk_spacer",
+     "origin": [
+      0.0,
+      38.5,
+      23.5
+     ]
     }
    },
    "color": "#2a2c30",
@@ -1169,6 +1265,7 @@
    "kind": "armor",
    "material": "tpu",
    "process": "fdm",
+   "solid_fraction": 0.9,
    "print_orientation": "-z",
    "parent": "so_al",
    "rotates_with": "fixed",
@@ -1187,6 +1284,7 @@
    "kind": "armor",
    "material": "tpu",
    "process": "fdm",
+   "solid_fraction": 0.9,
    "print_orientation": "+z",
    "parent": "so_al",
    "rotates_with": "fixed",
@@ -1235,6 +1333,7 @@
   {
    "id": "whub_rl",
    "kind": "pulley",
+   "solid_fraction": 0.85,
    "rotates_with": "wheel_rl",
    "print_orientation": "-x",
    "shape": {
@@ -1253,7 +1352,7 @@
      0
     ],
     "pivot": [
-     -36.0,
+     -41.6,
      -30.5,
      11.0
     ],
@@ -1288,6 +1387,7 @@
   {
    "id": "whub_fl",
    "kind": "pulley",
+   "solid_fraction": 0.85,
    "rotates_with": "wheel_fl",
    "print_orientation": "-x",
    "shape": {
@@ -1399,6 +1499,7 @@
    "kind": "armor",
    "material": "tpu",
    "process": "fdm",
+   "solid_fraction": 0.9,
    "print_orientation": "-z",
    "parent": "so_ar",
    "rotates_with": "fixed",
@@ -1417,6 +1518,7 @@
    "kind": "armor",
    "material": "tpu",
    "process": "fdm",
+   "solid_fraction": 0.9,
    "print_orientation": "+z",
    "parent": "so_ar",
    "rotates_with": "fixed",
@@ -1465,6 +1567,7 @@
   {
    "id": "whub_rr",
    "kind": "pulley",
+   "solid_fraction": 0.85,
    "rotates_with": "wheel_rr",
    "print_orientation": "+x",
    "shape": {
@@ -1483,7 +1586,7 @@
      0
     ],
     "pivot": [
-     36.0,
+     41.6,
      -30.5,
      11.0
     ],
@@ -1518,6 +1621,7 @@
   {
    "id": "whub_fr",
    "kind": "pulley",
+   "solid_fraction": 0.85,
    "rotates_with": "wheel_fr",
    "print_orientation": "+x",
    "shape": {
@@ -1696,8 +1800,8 @@
    "catalog": "nut_m2",
    "at": [
     7.6,
-    30.44772759118839,
-    12.047449670300885
+    -8.05227240881161,
+    -11.452550329699115
    ],
    "rot": [
     0,
@@ -1713,8 +1817,8 @@
    "catalog": "nut_m2",
    "at": [
     7.6,
-    27.047449670300885,
-    31.55227240881161
+    -11.452550329699115,
+    8.05227240881161
    ],
    "rot": [
     0,
@@ -1730,8 +1834,8 @@
    "catalog": "nut_m2",
    "at": [
     7.6,
-    46.552272408811604,
-    34.952550329699115
+    8.052272408811604,
+    11.452550329699115
    ],
    "rot": [
     0,
@@ -1747,8 +1851,8 @@
    "catalog": "nut_m2",
    "at": [
     7.6,
-    49.952550329699115,
-    15.447727591188393
+    11.452550329699115,
+    -8.052272408811607
    ],
    "rot": [
     0,
@@ -5544,7 +5648,7 @@
   {
    "id": "bolt_b0",
    "designation": "M2x6",
-   "material": "steel",
+   "material": "aluminium",
    "at": [
     -25.0,
     10.4,
@@ -5567,7 +5671,7 @@
   {
    "id": "bolt_b1",
    "designation": "M2x6",
-   "material": "steel",
+   "material": "aluminium",
    "at": [
     25.0,
     10.4,
@@ -5590,7 +5694,7 @@
   {
    "id": "bolt_b2",
    "designation": "M2x6",
-   "material": "steel",
+   "material": "aluminium",
    "at": [
     -25.0,
     -21.6,
@@ -5613,7 +5717,7 @@
   {
    "id": "bolt_b3",
    "designation": "M2x6",
-   "material": "steel",
+   "material": "aluminium",
    "at": [
     25.0,
     -21.6,
@@ -5636,7 +5740,7 @@
   {
    "id": "bolt_b4",
    "designation": "M2x6",
-   "material": "steel",
+   "material": "aluminium",
    "at": [
     0.0,
     -33.6,
@@ -5681,7 +5785,8 @@
   },
   {
    "id": "bolt_ulb",
-   "designation": "M3x12",
+   "designation": "M3x14",
+   "reason": "M3x14 CSK alu (STEP FS9 M3x12): through mount and lug, 12 mm bites only 3.9 mm of the 15 mm standoff",
    "material": "aluminium",
    "at": [
     -13.4,
@@ -5698,14 +5803,15 @@
     "tub"
    ],
    "threads_into": "so_bl",
-   "reason": "FS9 M3x12 CSK alu through the mount and the chassis lug into the nose standoff",
    "head": "countersunk",
    "tool": "hex2",
    "removable": true
   },
   {
    "id": "bolt_sla",
-   "designation": "M3x8",
+   "designation": "M3x10",
+   "material": "aluminium",
+   "reason": "M3x10 CSK (STEP: M3x8): 8 mm bites only 4.2 mm of the standoff thread; 10 mm gives 6.2 (>= 1.5 d in aluminium)",
    "at": [
     -46.26,
     30.5,
@@ -5726,7 +5832,9 @@
   },
   {
    "id": "bolt_slb",
-   "designation": "M3x8",
+   "designation": "M3x10",
+   "material": "aluminium",
+   "reason": "M3x10 CSK (STEP: M3x8): the head sits 5.3 mm out from the 15 mm standoff end, so 8 mm bites 2.7 mm; 10 mm bites 4.7",
    "at": [
     -41.76,
     40.5,
@@ -5748,6 +5856,8 @@
   {
    "id": "bolt_slc",
    "designation": "M3x8",
+   "material": "aluminium",
+   "reason": "alu M3 CSK (Build Guide: aluminium bolts for weight; the STEP draws stainless)",
    "at": [
     -35.26,
     -11.5,
@@ -5792,7 +5902,8 @@
   },
   {
    "id": "bolt_urb",
-   "designation": "M3x12",
+   "designation": "M3x14",
+   "reason": "M3x14 CSK alu (STEP FS9 M3x12): through mount and lug, 12 mm bites only 3.9 mm of the 15 mm standoff",
    "material": "aluminium",
    "at": [
     13.4,
@@ -5809,14 +5920,15 @@
     "tub"
    ],
    "threads_into": "so_br",
-   "reason": "FS9 M3x12 CSK alu through the mount and the chassis lug into the nose standoff",
    "head": "countersunk",
    "tool": "hex2",
    "removable": true
   },
   {
    "id": "bolt_sra",
-   "designation": "M3x8",
+   "designation": "M3x10",
+   "material": "aluminium",
+   "reason": "M3x10 CSK (STEP: M3x8): 8 mm bites only 4.2 mm of the standoff thread; 10 mm gives 6.2 (>= 1.5 d in aluminium)",
    "at": [
     46.26,
     30.5,
@@ -5837,7 +5949,9 @@
   },
   {
    "id": "bolt_srb",
-   "designation": "M3x8",
+   "designation": "M3x10",
+   "material": "aluminium",
+   "reason": "M3x10 CSK (STEP: M3x8): the head sits 5.3 mm out from the 15 mm standoff end, so 8 mm bites 2.7 mm; 10 mm bites 4.7",
    "at": [
     41.76,
     40.5,
@@ -5859,6 +5973,8 @@
   {
    "id": "bolt_src",
    "designation": "M3x8",
+   "material": "aluminium",
+   "reason": "alu M3 CSK (Build Guide: aluminium bolts for weight; the STEP draws stainless)",
    "at": [
     35.26,
     -11.5,
@@ -5883,6 +5999,7 @@
    "designation": "M2x8",
    "head": "button",
    "tool": "hex1.3",
+   "material": "titanium",
    "at": [
     17.4,
     44.5,
@@ -5906,6 +6023,7 @@
    "designation": "M2x8",
    "head": "button",
    "tool": "hex1.3",
+   "material": "titanium",
    "at": [
     17.4,
     32.5,
@@ -5929,6 +6047,7 @@
    "designation": "M2x8",
    "head": "button",
    "tool": "hex1.3",
+   "material": "titanium",
    "at": [
     17.4,
     38.5,
@@ -5952,6 +6071,7 @@
    "designation": "M2x8",
    "head": "button",
    "tool": "hex1.3",
+   "material": "titanium",
    "at": [
     17.4,
     38.5,
@@ -5975,6 +6095,7 @@
    "designation": "M2x4",
    "head": "button",
    "tool": "hex1.3",
+   "material": "titanium",
    "at": [
     -8.2,
     35.91176958288198,
@@ -5998,10 +6119,10 @@
   },
   {
    "id": "bolt_d0",
-   "designation": "M2x16",
+   "designation": "M2x18",
    "head": "button",
    "tool": "hex1.3",
-   "material": "steel",
+   "material": "titanium",
    "at": [
     -8.2,
     30.44772759118839,
@@ -6039,6 +6160,7 @@
    "designation": "M2x4",
    "head": "button",
    "tool": "hex1.3",
+   "material": "titanium",
    "at": [
     -8.2,
     34.818823108311,
@@ -6062,10 +6184,10 @@
   },
   {
    "id": "bolt_d1",
-   "designation": "M2x16",
+   "designation": "M2x18",
    "head": "button",
    "tool": "hex1.3",
-   "material": "steel",
+   "material": "titanium",
    "at": [
     -8.2,
     27.047449670300885,
@@ -6103,6 +6225,7 @@
    "designation": "M2x4",
    "head": "button",
    "tool": "hex1.3",
+   "material": "titanium",
    "at": [
     -8.2,
     41.08823041711802,
@@ -6126,10 +6249,10 @@
   },
   {
    "id": "bolt_d2",
-   "designation": "M2x16",
+   "designation": "M2x18",
    "head": "button",
    "tool": "hex1.3",
-   "material": "steel",
+   "material": "titanium",
    "at": [
     -8.2,
     46.552272408811604,
@@ -6167,6 +6290,7 @@
    "designation": "M2x4",
    "head": "button",
    "tool": "hex1.3",
+   "material": "titanium",
    "at": [
     -8.2,
     42.181176891689,
@@ -6190,10 +6314,10 @@
   },
   {
    "id": "bolt_d3",
-   "designation": "M2x16",
+   "designation": "M2x18",
    "head": "button",
    "tool": "hex1.3",
-   "material": "steel",
+   "material": "titanium",
    "at": [
     -8.2,
     49.952550329699115,
@@ -6227,14 +6351,14 @@
    "removable": true
   },
   {
-   "id": "bolt_sw0",
-   "designation": "M2x6",
+   "id": "bolt_t0",
+   "designation": "M2x4",
    "head": "button",
    "tool": "hex1.3",
    "at": [
     25.0,
-    1.9,
-    19.5
+    10.4,
+    20.4
    ],
    "dir": [
     0,
@@ -6242,7 +6366,95 @@
     -1
    ],
    "through": [
-    "tub"
+    "top_panel"
+   ],
+   "threads_into": "tub",
+   "reason": "thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the 2.8 holes but no screws)",
+   "removable": true
+  },
+  {
+   "id": "bolt_t1",
+   "designation": "M2x4",
+   "head": "button",
+   "tool": "hex1.3",
+   "at": [
+    -25.0,
+    10.4,
+    20.4
+   ],
+   "dir": [
+    0,
+    0,
+    -1
+   ],
+   "through": [
+    "top_panel"
+   ],
+   "threads_into": "tub",
+   "reason": "thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the 2.8 holes but no screws)",
+   "removable": true
+  },
+  {
+   "id": "bolt_t2",
+   "designation": "M2x4",
+   "head": "button",
+   "tool": "hex1.3",
+   "at": [
+    25.0,
+    -21.6,
+    20.4
+   ],
+   "dir": [
+    0,
+    0,
+    -1
+   ],
+   "through": [
+    "top_panel"
+   ],
+   "threads_into": "tub",
+   "reason": "thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the 2.8 holes but no screws)",
+   "removable": true
+  },
+  {
+   "id": "bolt_t3",
+   "designation": "M2x4",
+   "head": "button",
+   "tool": "hex1.3",
+   "at": [
+    -25.0,
+    -21.6,
+    20.4
+   ],
+   "dir": [
+    0,
+    0,
+    -1
+   ],
+   "through": [
+    "top_panel"
+   ],
+   "threads_into": "tub",
+   "reason": "thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the 2.8 holes but no screws)",
+   "removable": true
+  },
+  {
+   "id": "bolt_sw0",
+   "designation": "M2x3",
+   "head": "button",
+   "tool": "hex1.3",
+   "at": [
+    25.0,
+    1.9,
+    16.0
+   ],
+   "dir": [
+    0,
+    0,
+    1
+   ],
+   "through": [
+    "power_switch"
    ],
    "threads_into": "tub",
    "reason": "thread-forming into the 1.7 pilot holes either side of the switch flange; heads clamp the flange to the deck underside (inferred)",
@@ -6250,21 +6462,21 @@
   },
   {
    "id": "bolt_sw1",
-   "designation": "M2x6",
+   "designation": "M2x3",
    "head": "button",
    "tool": "hex1.3",
    "at": [
     25.0,
     -13.1,
-    19.5
+    16.0
    ],
    "dir": [
     0,
     0,
-    -1
+    1
    ],
    "through": [
-    "tub"
+    "power_switch"
    ],
    "threads_into": "tub",
    "reason": "thread-forming into the 1.7 pilot holes either side of the switch flange; heads clamp the flange to the deck underside (inferred)",
@@ -6406,7 +6618,7 @@
    "a": "belt_l",
    "b": "whub_rl",
    "method": "interlock",
-   "reason": "O-ring in the rear hub groove"
+   "reason": "O-ring stretched into the rear hub groove; its tension and the groove flanks keep it on the pulley"
   },
   {
    "a": "belt_l",
@@ -6548,7 +6760,7 @@
    "a": "belt_r",
    "b": "whub_rr",
    "method": "interlock",
-   "reason": "O-ring in the rear hub groove"
+   "reason": "O-ring stretched into the rear hub groove; its tension and the groove flanks keep it on the pulley"
   },
   {
    "a": "belt_r",
@@ -6580,7 +6792,7 @@
    "a": "disc_a",
    "b": "spider",
    "method": "pin",
-   "reason": "Disc on the 4 r14 stack bolts",
+   "reason": "Disc located and driven by the 4 r14 stack bolts and the spider dogs; the bolts clamp it in shear",
    "mechanical_key": true
   },
   {
@@ -6594,7 +6806,7 @@
    "a": "disc_b",
    "b": "dspacer",
    "method": "pin",
-   "reason": "Disc on the 4 stack bolts",
+   "reason": "Outer disc located by the 4 stack bolts through the spacer and clamped by their nuts",
    "mechanical_key": true
   },
   {
@@ -6607,7 +6819,7 @@
    "a": "wshaft",
    "b": "weapon_motor",
    "method": "press_fit",
-   "reason": "The motor's own shaft",
+   "reason": "The shaft is the GR1507 motor's own steel shaft, pressed into the bell at the factory",
    "interference_mm": 0.02,
    "mechanical_key": true
   },
@@ -6642,8 +6854,8 @@
   {
    "a": "top_panel",
    "b": "tub",
-   "method": "tape",
-   "reason": "Ti top panel bonded to the deck with VHB (no fasteners in the STEP)"
+   "method": "screw",
+   "reason": "Ti top panel held by 4 M2 thread-forming screws through its 2.8 corner holes into the column-top pilots (the STEP has the holes, not the screws)"
   },
   {
    "a": "weapon_lock",
@@ -6669,7 +6881,7 @@
    "a": "wesc",
    "b": "rxesc",
    "method": "interlock",
-   "reason": "ESC kapton-wrapped under the Malenki"
+   "reason": "ESC kapton-wrapped against the Malenki; both boxed in by the walls, the deck and the base panel"
   },
   {
    "a": "wesc",

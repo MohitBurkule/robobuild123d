@@ -66,15 +66,32 @@ def round_axis(body):
     lo, hi = v.min(axis=0), v.max(axis=0)
     e = hi - lo
     best = None
+    cands = []
     for i in range(3):
         j, k = [x for x in range(3) if x != i]
         if max(e[j], e[k]) < 1e-6:
             continue
         rel = abs(e[j] - e[k]) / max(e[j], e[k])
+        if rel < 0.08:
+            cands.append(i)
         if rel < 0.08 and (best is None or rel < best[0] - 1e-6 or (abs(rel - best[0]) < 1e-6 and e[i] < e[best[1]])):
             best = (rel, i)
     if best is None:
         return None
+    if len(cands) > 1:   # a near-cubic box (a 9 x 9 x 9 hub): pick the axis the outline is actually round about
+        c0 = (lo + hi) / 2
+
+        def _spread(i):
+            j, k = [x for x in range(3) if x != i]
+            q = v - c0
+            ang = np.arctan2(q[:, k], q[:, j])
+            r = np.hypot(q[:, j], q[:, k])
+            b = ((ang + np.pi) / (2 * np.pi) * 36).astype(int) % 36
+            mx = np.zeros(36)
+            np.maximum.at(mx, b, r)
+            mx = mx[mx > 0]
+            return float(mx.std() / max(mx.mean(), 1e-9)) if len(mx) > 8 else 1.0
+        best = (0.0, min(cands, key=_spread))
     ax = np.zeros(3)
     ax[best[1]] = 1.0
     c = (lo + hi) / 2

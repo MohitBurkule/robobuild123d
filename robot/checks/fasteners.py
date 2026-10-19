@@ -117,7 +117,7 @@ def run(ctx):
             if tp is not None and tp.kind == "nut":
                 # A standard hex nut (height m ~ 0.8 d) is sized to strip after the bolt breaks: the whole nut is the
                 # engagement. 1.5 d is for threads cut or inserted into the parent material.
-                need = min(need, NUT_ENGAGEMENT_D * d)
+                need = min(need, NUT_ENGAGEMENT_D * d, (phi - plo) - 0.05)   # a thin nut (DIN 439, 0.5 d) is fully engaged at its height
             if tp is not None and tp.kind in ("motor", "weapon_motor"):
                 # Face screws into a motor's own threaded holes: the hole depth is set by the motor maker, so
                 # arch.motor_face_bolts judges them (>= 0.8 d, <= the usable depth); 1.5 d would run into the windings.

@@ -103,6 +103,10 @@ def run(ctx):
         ids = list(f.through) + ([f.threads_into] if f.threads_into else [])
         for a, b in zip(ids, ids[1:]):
             _link(edges, a, b)
+        if f.threads_into:   # the screw clamps its whole stack: every part it passes through is joined to its thread
+            for a in f.through:
+                if a != f.threads_into:
+                    _link(edges, a, f.threads_into)
     for p in r.spec.parts:
         if p.fused_with:
             fw = p.fused_with
