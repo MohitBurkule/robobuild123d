@@ -36,6 +36,7 @@ import math
 import numpy as np
 
 from ..finding import BLOCKER, WARNING, fail, ok
+from .ref_diff import closest_dist_chunked
 
 G = "intent"
 AX = {"x": 0, "y": 1, "z": 2}
@@ -188,7 +189,7 @@ def min_gap(a, others, n=2500):
         lo, hi = b.bounds
         if np.any(a.bounds[0] > hi + 5) or np.any(a.bounds[1] < lo - 5):
             continue
-        d = trimesh.proximity.closest_point(b, P)[1]
+        d = closest_dist_chunked(b, P)  # one-shot closest_point on ~2500+ points ran the Revron tub out of memory
         from ..world import _contains
 
         if _contains(b, P).any():
@@ -225,7 +226,7 @@ def first_contact(moving, fixed, d, step=0.05, reach=1.5, skip_seated=False):
     for f in fixed:
         q = _surface(f, 2500)
         if skip_seated:
-            q = q[trimesh.proximity.closest_point(moving, q)[1] > 0.08]
+            q = q[closest_dist_chunked(moving, q) > 0.08]
         Q.append(q)
     for s in np.arange(step, reach + 1e-9, step):
         if any(len(q) and _hits(q - s * d, moving) for q in Q):

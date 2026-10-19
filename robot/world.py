@@ -158,6 +158,25 @@ def _prebuild(spec, tess):
         ex.shutdown(wait=False, cancel_futures=True)
 
 
+CONTAINS_CHUNK = 256  # points per mesh.contains call
+
+
+def _contains_chunked(mesh, Q, rng=None):
+    """mesh.contains in blocks of points. Without embree trimesh's ray test materialises every (ray, candidate triangle)
+    pair at once: a few thousand points against a large mesh (Revron tub, intent.escape_dirs) took > 7 GB. Each block
+    restarts the pinned RNG streams, so the answer is still a pure function of (mesh, Q)."""
+    Q = np.asarray(Q, float)
+    if len(Q) <= CONTAINS_CHUNK:
+        return mesh.contains(Q)
+    out = np.zeros(len(Q), bool)
+    for i in range(0, len(Q), CONTAINS_CHUNK):
+        np.random.seed(12345)
+        if rng is not None:
+            rng.bit_generator.state = np.random.default_rng(12345).bit_generator.state
+        out[i:i + CONTAINS_CHUNK] = mesh.contains(Q[i:i + CONTAINS_CHUNK])
+    return out
+
+
 def _contains(mesh, Q):
     """mesh.contains with a fixed seed: trimesh re-casts ambiguous rays along *random* directions, so without this the
     answer depends on whatever ran before and cached and uncached runs could differ. Older trimesh draws from the
@@ -172,7 +191,7 @@ def _contains(mesh, Q):
         rng = np.random.default_rng(12345)
         tu.random_generator = lambda seed=None: rng if seed is None else orig(seed)
     try:
-        return mesh.contains(Q)
+        return _contains_chunked(mesh, Q, rng if orig is not None else None)
     finally:
         np.random.set_state(st)
         if orig is not None:
