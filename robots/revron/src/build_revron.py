@@ -37,11 +37,11 @@ INS = [(-25.0, 10.4), (25.0, 10.4), (-25.0, -21.6), (25.0, -21.6), (0.0, -33.6)]
 INS_Z = (5.1, 9.1)                   # FS1 M2 heat-set (3.5 OD x 4)
 CSK_M2 = 4.5                         # 90 deg countersink at the face for an ISO 10642 M2 flat head (4.4 x 1.2) + 0.1
 BASE_HOLE, TOP_HOLE = 3.0, 3.5         # csk through-holes: wide enough that the 90 deg seat stops short of the far face (no knife edge)
-BOSS_R, BOSS_H = 2.6, 0.6
+BOSS_R, BOSS_H = 2.6, 0.6            # base-panel ring boss round each screw (keys into a 2.65 x 0.65 recess in the column foot)
 # electronics envelopes (catalog boxes at their spec placement, rot z 90): Malenki nano 32 x 20 x 4.4 at (8.67, -3.0, 15.3),
-# BBB ant ESC 23.5 x 12 x 5 at (8.63, -7.25, 10.6); the cage ribs and the base-panel cradle are dimensioned off these
+# BBB ant ESC 23.5 x 12 x 5 at (8.63, -7.25, 10.6); the deck cage ribs are dimensioned off these
 RX_X, RX_Y, RX_Z = (8.67 - 10.0, 8.67 + 10.0), (-3.0 - 16.0, -3.0 + 16.0), (15.3 - 2.2, 15.3 + 2.2)
-WE_X, WE_Y, WE_Z = (8.63 - 6.0, 8.63 + 6.0), (-7.25 - 11.75, -7.25 + 11.75), (10.6 - 2.5, 10.6 + 2.5)            # base-panel ring boss round each screw (keys into a 2.65 x 0.65 recess in the column foot)
+WE_X, WE_Y, WE_Z = (8.63 - 6.0, 8.63 + 6.0), (-7.25 - 11.75, -7.25 + 11.75), (10.6 - 2.5, 10.6 + 2.5)
 EAR_R = 2.7                          # top-panel corner ear radius: >= CSK_M2 / 2 + 0.4 mm of Ti round the countersink
 RY, RZ = -30.5, 11.0                 # N10 shaft (rear axle)
 MOTX = 19.6                          # N10 catalog origin |X| (body 3.7..27.5, shaft to 37.5)
@@ -221,14 +221,6 @@ def base_panel():
     # the 1 mm skin is thinner than the 1.2 mm M2 flat head: a 0.6 mm ring boss over each screw gives the seat 1.6 mm of
     # material (no knife edge under the head) and keys the panel into the column feet, so side hits shear the bosses, not the screws
     body = _U(body, *[_cyl(BOSS_R, z0 + t - 0.01, z0 + t + BOSS_H, (x, y), "z") for x, y in INS])
-    # weapon-ESC cradle: two ribs 0.1 under it and a 1 mm lip round its -x / +x / +y sides (leads leave above the lip at the
-    # board mid-plane): with the base panel on, the ESC cannot drop or slide; panel off, it comes straight out for service
-    (wx0, wx1), (wy0, wy1), wz0 = WE_X, WE_Y, WE_Z[0]
-    top, lip = wz0 + 1.0, z0 + t - 0.01
-    cradle = [_box(xa, xa + 1.2, wy0 + 1.0, wy1 - 1.0, lip, wz0 - 0.1) for xa in (wx0 + 2.4, wx1 - 3.6)]
-    cradle += [_box(wx0 - 0.1 - 1.1, wx0 - 0.1, wy0, wy1, lip, top), _box(wx1 + 0.1, wx1 + 0.1 + 1.1, wy0, wy1, lip, top),
-               _box(wx0 - 1.2, wx1 + 1.2, wy1 + 0.1, wy1 + 1.1, lip, top)]
-    body = _U(body, *cradle)
     cuts = [_panel_seat("base", i)[0] for i in range(len(INS))] + [_cyl(BASE_HOLE / 2, z0 - 1, z0 + 3, (x, y), "z") for x, y in INS]   # 4.5 countersink (STEP RV26 has 3.2 x 0.5; an ISO 10642 M2 head is 4.4 x 1.2, so a smaller seat leaves it proud and binding) then the 2.2 hole
     return _S(body, *cuts)
 
@@ -645,10 +637,10 @@ def chassis():
     # insert columns (floor to deck): the rear-centre one a round boss on the rear wall, the corner ones blocks merged
     # into the wall corners with a R2.6 nose (STEP)
     add.append(_cyl(2.75, z0, c["deck"] + 0.1, INS[4], "z"))
-    # every column foot flares to R3.7 (45 deg, prints deck-down without support) so the base-panel boss recess keeps a 1 mm wall
+    # every column foot flares to R3.7 (56 deg cone, prints deck-down without support) so the base-panel boss recess keeps a 1 mm wall
     for px, py in INS:
         add.append(_cyl(3.7, z0, 5.2, (px, py), "z"))
-        add.append(_b().Solid.make_cone(3.7, 2.75, 0.95, _b().Plane(origin=(px, py, 5.2 - 0.001), z_dir=(0, 0, 1))))
+        add.append(_b().Solid.make_cone(3.7, 2.75, 1.4, _b().Plane(origin=(px, py, 5.2 - 0.001), z_dir=(0, 0, 1))))   # 56 deg: no overhang printed deck-down
     for sg in (1, -1):
         def mx(poly):
             return Polygon([(sg * u, v) for u, v in poly.exterior.coords]).buffer(0)
@@ -679,7 +671,7 @@ def chassis():
         if sg > 0:
             add.append(_ext(_round(Polygon([(22.5, -15.6), (27.5, -15.6), (27.5, 4.4), (22.5, 4.4)]), r_out=1.0), "xy", 16.5, c["deck"] + 0.1))
         # lugs carrying the standoffs (sloped top so they sit under the mount)
-        lug = Polygon([(13.0, z0), (26.0, z0), (30.4, 1.0)] + _arc(SA, 4.5, 250, 300, 6) + [(36.6, 2.5)] + _arc(SB, 3.4, 250, 400, 16) + [(15.0, z1), (13.0, z1)])
+        lug = Polygon([(13.0, z0), (26.0, z0), (30.4, 1.0)] + _arc(SA, 4.5, 250, 300, 6) + [(36.6, 2.5)] + _arc(SB, 3.5, 250, 400, 16) + [(15.0, z1), (13.0, z1)])
         lug = _round(lug.convex_hull.difference(Polygon([(26.0, 0.0), (26.0, 2.5), (30.0, 1.0), (40.0, 1.3), (60, 0)])), r_in=0.0)
         add.append(_ext(lug, "yz", sg * 17.5, sg * 21.5))
     for sg in (1, -1):
@@ -1122,10 +1114,12 @@ def reference_cad():
     dt = _drisk_to_world()
     rows = [
         R("tub", "RV01_Chassis_1.stl", tol_mm=1.0, tol_vol_frac=0.25, note="RV01 chassis",
-          deviations=[dict(near=[x, y, 17.5], r=2.5, reason="corner column top: 1.7 thread-forming pilot for the top-panel M2 screw instead of the STEP 3.0 bore (the STEP top panel is bonded; screws make it removable)")
+          deviations=[dict(near=[x, y, 11.0], r=9.0, reason="corner column top: 1.7 thread-forming pilot for the top-panel M2 screw instead of the STEP 3.0 bore (the STEP top panel is bonded; screws make it removable)")
                       for x, y in INS[:4]]
           + [dict(near=[x, y, 5.0], r=4.0, reason="column foot flared to R3.7 with a recess for the base-panel ring boss (1.0 mm base skin cannot seat a 1.2 mm M2 flat head)")
-             for x, y in INS]),
+             for x, y in INS]
+          + [dict(near=list(p_), r=6.0, reason="electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact")
+             for p_ in ((-2.0, -2.0, 15.4), (19.4, -2.0, 15.4), (2.0, -19.6, 13.0), (12.0, -19.6, 13.0), (7.5, -19.6, 13.0), (-2.2, -9.0, 14.0), (19.3, 4.0, 14.0), (-2.2, 4.0, 14.0), (19.3, -9.0, 14.0))]),
         R("base_panel", "RV26_Base_Panel_1.stl", tol_mm=0.3, note="RV26 1 mm panel",
           deviations=[dict(near=[x, y, 4.5], r=3.0, reason="0.6 mm ring boss + 4.5 countersink on a 3.0 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud")
                       for x, y in INS]),
