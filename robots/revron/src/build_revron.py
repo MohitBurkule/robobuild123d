@@ -1233,7 +1233,7 @@ def make_spec(model_file):
         F(id=f"bolt_p{k}", designation="M2x4", head="button", tool="hex1.3", material="titanium", at=[DR_X["spider"][0], dy, dz], dir=[1, 0, 0], through=["spider"], threads_into="weapon_motor",
           access_before=["weapon_lock", "mount_l", "wbearing"], reason="spider to bell, fitted before the left mount goes on (inferred)")
         dy, dz = _disc_local(BOLT_R * math.cos(a), BOLT_R * math.sin(a))
-        F(id=f"bolt_d{k}", designation="M2x18", head="button", tool="hex1.3", material="titanium", at=[DR_X["spider"][0], dy, dz], dir=[1, 0, 0],
+        F(id=f"bolt_d{k}", designation="M2x16", head="button", tool="hex1.3", material="titanium", at=[DR_X["spider"][0], dy, dz], dir=[1, 0, 0],
           through=["spider", "disc_a", "dspacer", "disc_b"], threads_into=f"nut_d{k}",
           access_before=["weapon_lock", "mount_l", "wbearing", "weapon_motor", "mount_r", "motor_spacer", "tub", "so_al", "so_bl", "so_ar", "so_br"],
           reason="stack bolted up on the bench before it goes on the motor (inferred: the STEP has the 2.2 holes but no screws)")
@@ -1392,7 +1392,7 @@ REF_BOM = [   # RVRN 2.0 STEP part list (research/rvrn_step/INDEX.txt); one row 
     dict(role="RV14 brushless ESC", kind="part", match=["wesc"], count=1, catalog="bbb_ant_esc_rvrn2"),
     dict(role="RV12 N10 2200 rpm x 2", kind="part", match=["motor_l", "motor_r"], count=2, catalog="n10_2200rpm_spicy"),
     dict(role="drisk stack: 4 x M2 + nuts (not in the STEP, holes are)", match=["bolt_d*"], count=4, designation="M2", threads_into="nut",
-         deviation="the STEP leaves the r14 stack holes empty; 4 M2x18 + nuts added so the stack is held (18 mm: the nut is fully engaged)"),
+         deviation="the STEP leaves the r14 stack holes empty; 4 M2x16 + nuts added so the stack is held (16 mm: stack 15 + 1 mm into the nut; M2x18 stuck out 1.4 mm past the nut, 0.6 mm from the tub lug while it spins)"),
     dict(role="spider to bell: 4 x M2 (not in the STEP)", match=["bolt_p*"], count=4, designation="M2", threads_into="motor",
          deviation="the STEP shows the r4.5 holes only"),
     dict(role="stator: 4 x M2 (not in the STEP)", match=["bolt_wm*"], count=4, designation="M2", threads_into="motor",

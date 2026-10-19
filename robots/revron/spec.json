@@ -272,7 +272,7 @@
    "count": 4,
    "designation": "M2",
    "threads_into": "nut",
-   "deviation": "the STEP leaves the r14 stack holes empty; 4 M2x18 + nuts added so the stack is held (18 mm: the nut is fully engaged)"
+   "deviation": "the STEP leaves the r14 stack holes empty; 4 M2x16 + nuts added so the stack is held (16 mm: stack 15 + 1 mm into the nut; M2x18 stuck out 1.4 mm past the nut, 0.6 mm from the tub lug while it spins)"
   },
   {
    "role": "spider to bell: 4 x M2 (not in the STEP)",
@@ -7113,7 +7113,7 @@
   },
   {
    "id": "bolt_d0",
-   "designation": "M2x18",
+   "designation": "M2x16",
    "head": "button",
    "tool": "hex1.3",
    "material": "titanium",
@@ -7180,7 +7180,7 @@
   },
   {
    "id": "bolt_d1",
-   "designation": "M2x18",
+   "designation": "M2x16",
    "head": "button",
    "tool": "hex1.3",
    "material": "titanium",
@@ -7247,7 +7247,7 @@
   },
   {
    "id": "bolt_d2",
-   "designation": "M2x18",
+   "designation": "M2x16",
    "head": "button",
    "tool": "hex1.3",
    "material": "titanium",
@@ -7314,7 +7314,7 @@
   },
   {
    "id": "bolt_d3",
-   "designation": "M2x18",
+   "designation": "M2x16",
    "head": "button",
    "tool": "hex1.3",
    "material": "titanium",
@@ -8019,6 +8019,16 @@
     ],
     [
      11.1,
+     15.5,
+     18.2
+    ],
+    [
+     11.1,
+     27.0,
+     18.2
+    ],
+    [
+     11.1,
      30.0,
      14.5
     ]
@@ -8506,6 +8516,16 @@
       11.1,
       14.5,
       16.0
+     ],
+     [
+      11.1,
+      15.5,
+      18.2
+     ],
+     [
+      11.1,
+      27.0,
+      18.2
      ],
      [
       11.1,
