@@ -40,7 +40,7 @@ INS_Z = (5.1, 9.1)                   # FS1 M2 heat-set (3.5 OD x 4)
 CSK_M2 = 4.5                         # 90 deg countersink at the face for an ISO 10642 M2 flat head (4.4 x 1.2) + 0.1
 PANEL_EAR_R = 3.0
 BASE_HOLE, TOP_HOLE = 3.4, 3.5         # csk through-holes: wide enough that the 90 deg seat stops short of the far face (no knife edge)
-BOSS_R, BOSS_H = 2.6, 0.4            # base-panel ring boss round each screw (keys into a 2.65 x 0.45 recess in the column foot)
+BOSS_R, BOSS_H = 2.6, 0.3            # base-panel ring boss round each screw (keys into a 2.65 x 0.45 recess in the column foot)
 # electronics envelopes (catalog boxes at their spec placement, rot z 90): Malenki nano 32 x 20 x 4.4 at (8.67, -3.0, 15.3),
 # BBB ant ESC 23.5 x 12 x 5 at (8.63, -7.25, 10.6); the deck cage ribs are dimensioned off these
 RX_X, RX_Y, RX_Z = (8.67 - 10.0, 8.67 + 10.0), (-3.0 - 16.0, -3.0 + 16.0), (15.3 - 2.2, 15.3 + 2.2)
@@ -62,7 +62,7 @@ BOLT_R, HUB_R = 14.0, 4.5
 # motor GR1507: axis X, stator base X 8.4..10.4 on the right mount via the back spacer X 11.9..13.4
 MNT_IN, MNT_OUT = 13.4, 21.4         # weapon mount |X| span (8 mm): 4 mm slab + 4 mm battered boss
 MNT_SLAB = 17.4
-WEAPON_CLEAR_R = 15.9                # chassis material stays outside this radius about the weapon axis (rotor + 1 mm)
+WEAPON_CLEAR_R = 16.0                # chassis material stays outside this radius about the weapon axis (rotor + 1 mm)
 BSP_X = (11.9, 13.4)
 STAT_HOLE_R, CB_R, CB_CONE_X = 1.12, 2.25, (16.4, 17.15)   # RV03 stator screw clearance d2.24, d4.5 counterbore, its cone
 # RV00 weapon lock pin (Build Guide rule; not in the STEP): a d4 TPU pin pushed in from outside through RV02 into one of
@@ -707,7 +707,7 @@ def side_panel(s):
             _csk(3.3, 6.7, (-35.26, NUT[0], NUT[1]), "x", 1, 8.0, 12.0),
             _cyl(2.55, -42.55, -38.0, SA),
             _box(-45.0, -43.4, -38.7, -24.8, 5.0, 15.0),                          # rear tyre relief on the inner face
-            _box(-32.5, -31.4, -12.5, 0.5, 4.5, 13.3)]                            # clears the chassis nut lobe
+            _box(-32.5, -31.4, -16.5, 3.0, 3.9, 13.3)]                           # clears the whole chassis nut lobe (STEP: Y -16..2.5, Z 4..13): the panel does not shave it or leave a 0.25 mm shelf under it
     for y0 in (-11.0, -4.5, 2.0):     # diagonal vent slots (TPU wall flexes, keeps the ESC cool)
         sl = LineString([(y0, 5.0), (y0 + 5.0, 11.0)]).buffer(1.0, cap_style=1)
         cuts.append(_ext(sl, "yz", -50.0, -36.5))
@@ -870,9 +870,9 @@ def chassis():
         add.append(_ext(Polygon([(sg * u, v) for u, v in fil.exterior.coords]).buffer(0), "xy", z0, c["deck"]))
         # switch pad under the deck (STEP): the switch ears bear on it
         if sg > 0:
-            add.append(_ext(_round(Polygon([(22.5, -15.6), (27.5, -15.6), (27.5, 4.4), (22.5, 4.4)]), r_out=1.0), "xy", 16.5, c["deck"] + 0.1))
+            add.append(_ext(_round(Polygon([(22.0, -15.6), (27.5, -15.6), (27.5, 4.4), (22.0, 4.4)]), r_out=1.0), "xy", 16.5, c["deck"] + 0.1))
         # lugs carrying the standoffs (sloped top so they sit under the mount)
-        lug = Polygon([(13.0, z0), (26.0, z0), (30.4, 1.0)] + _arc(SA, 4.5, 250, 300, 6) + [(36.6, 2.5)] + _arc(SB, 3.5, 250, 400, 16) + [(15.0, z1), (13.0, z1)])
+        lug = Polygon([(13.0, z0), (26.0, z0), (30.4, 1.0)] + _arc(SA, 4.5, 250, 300, 6) + [(36.6, 2.5)] + _arc(SB, 3.3, 250, 400, 16) + [(15.0, z1), (13.0, z1)])
         lug = _round(lug.convex_hull.difference(Polygon([(26.0, 0.0), (26.0, 2.5), (30.0, 1.0), (40.0, 1.3), (60, 0)])), r_in=0.0)
         add.append(_ext(lug, "yz", sg * 17.5, sg * 21.5))
     for sg in (1, -1):
@@ -911,7 +911,7 @@ def chassis():
     for t in tri:
         cuts.append(_ext(_round(t, r_out=0.8), "xy", dz0, dz1))
     for sg in (1, -1):   # side pockets: apex R2 towards the centre
-        side = Polygon([(sg * 3.72, -5.59), (sg * 22.5, 4.51 + 0.640 * 2.99), (sg * 22.5, -15.71 - 0.6407 * 2.99)])
+        side = Polygon([(sg * 3.72, -5.59), (sg * 22.0, 4.51 + 0.640 * 2.49), (sg * 22.0, -15.71 - 0.6407 * 2.49)])   # right edge at |X| 22.0 (STEP 22.5): 1.0 mm rib to the 23.0 switch slot, not 0.5
         cuts.append(_ext(_round(side, r_out=1.9), "xy", dz0, dz1))
     for xa, xb in ((-26.5, -16.13), (-14.12, -3.75), (3.75, 14.12), (16.13, 26.5)):   # rear deck pockets
         cuts.append(_ext(_round(Polygon([(xa, -34.5), (xb, -34.5), (xb, -26.5), (xa, -26.5)]), r_out=0.6), "xy", dz0, dz1))
@@ -1179,7 +1179,7 @@ def make_spec(model_file):
           reason="M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
           hole=_panel_seat("top", i)[1].hole)
     for i, yy in enumerate((1.9, -13.1)):
-        F(id=f"bolt_sw{i}", designation="M2x3", head="button", tool="hex1.3", at=[SWX, yy, 16.0], dir=[0, 0, 1], through=["power_switch"], threads_into="tub",
+        F(id=f"bolt_sw{i}", designation="M2x3", head="button", tool="hex1.3", at=[SWX, yy, 16.0], dir=[0, 0, 1], through=["power_switch"], threads_into="tub", access_before=["base_panel"],
           reason="thread-forming into the 1.7 pilot holes either side of the switch flange; heads clamp the flange to the deck underside (inferred)")
 
     # ---------------------------------------------------------------- connections
@@ -1396,6 +1396,8 @@ def reference_cad():
         R("tub", "RV01_Chassis_1.stl", tol_mm=1.0, tol_vol_frac=0.25, note="RV01 chassis",
           deviations=[dict(near=[x, y, 11.0], r=9.0, reason="corner column top: 1.7 thread-forming pilot for the top-panel M2 screw instead of the STEP 3.0 bore (the STEP top panel is bonded; screws make it removable)")
                       for x, y in INS[:4]]
+          + [dict(near=[sx * 28.6, -30.6, 4.5], r=4.5, reason="N10 keyhole opened into a U-slot to the floor so the gearbox boss and shaft drop in from below with the base panel off (the STEP closes the keyhole, the shaft cannot be threaded through it)")
+             for sx in (1, -1)]
           + [dict(near=[x, y, 5.0], r=4.0, reason="column foot flared to R3.7 with a recess for the base-panel ring boss (1.0 mm base skin cannot seat a 1.2 mm M2 flat head)")
              for x, y in INS]
           + [dict(near=[-10.97, -9.03, 14.13], r=3.0, reason="centroid of one connected extra blob (bbox x -27..-0.4) made of the left cage rib, the left column-foot flares and the left flange gusset, each reasoned above")]

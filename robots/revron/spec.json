@@ -653,6 +653,24 @@
      },
      {
       "near": [
+       28.6,
+       -30.6,
+       4.5
+      ],
+      "r": 4.5,
+      "reason": "N10 keyhole opened into a U-slot to the floor so the gearbox boss and shaft drop in from below with the base panel off (the STEP closes the keyhole, the shaft cannot be threaded through it)"
+     },
+     {
+      "near": [
+       -28.6,
+       -30.6,
+       4.5
+      ],
+      "r": 4.5,
+      "reason": "N10 keyhole opened into a U-slot to the floor so the gearbox boss and shaft drop in from below with the base panel off (the STEP closes the keyhole, the shaft cannot be threaded through it)"
+     },
+     {
+      "near": [
        -25.0,
        10.4,
        5.0
@@ -6427,7 +6445,7 @@
     "csk_d": 4.5,
     "csk_depth": 1.05,
     "sink": 0.0,
-    "grip": 1.4
+    "grip": 1.3
    },
    "head": "countersunk",
    "removable": true
@@ -6466,7 +6484,7 @@
     "csk_d": 4.5,
     "csk_depth": 1.05,
     "sink": 0.0,
-    "grip": 1.4
+    "grip": 1.3
    },
    "head": "countersunk",
    "removable": true
@@ -6505,7 +6523,7 @@
     "csk_d": 4.5,
     "csk_depth": 1.05,
     "sink": 0.0,
-    "grip": 1.4
+    "grip": 1.3
    },
    "head": "countersunk",
    "removable": true
@@ -6544,7 +6562,7 @@
     "csk_d": 4.5,
     "csk_depth": 1.05,
     "sink": 0.0,
-    "grip": 1.4
+    "grip": 1.3
    },
    "head": "countersunk",
    "removable": true
@@ -6583,7 +6601,7 @@
     "csk_d": 4.5,
     "csk_depth": 1.05,
     "sink": 0.0,
-    "grip": 1.4
+    "grip": 1.3
    },
    "head": "countersunk",
    "removable": true
@@ -7479,6 +7497,9 @@
     "power_switch"
    ],
    "threads_into": "tub",
+   "access_before": [
+    "base_panel"
+   ],
    "reason": "thread-forming into the 1.7 pilot holes either side of the switch flange; heads clamp the flange to the deck underside (inferred)",
    "removable": true
   },
@@ -7501,6 +7522,9 @@
     "power_switch"
    ],
    "threads_into": "tub",
+   "access_before": [
+    "base_panel"
+   ],
    "reason": "thread-forming into the 1.7 pilot holes either side of the switch flange; heads clamp the flange to the deck underside (inferred)",
    "removable": true
   }
