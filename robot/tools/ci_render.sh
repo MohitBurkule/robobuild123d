@@ -7,7 +7,7 @@ P=${PROGRESS_DIR:-/mnt/project-files/robot-cad/b123d/progress}
 R="env HEAVY_CI=${RENDER_HEAVY_CI:-0} /tmp/heavy.sh timeout 1800 python3 -m robot render $SPEC"
 mkdir -p "$FINAL/diff"
 ok=0; bad=""
-run() { if $R "$@" --quick --jobs 1 >/dev/null 2>"$P/ci_render.err"; then ok=$((ok+1)); else bad="$bad $(basename "$2")"; fi; }
+run() { if $R "$@" --no-checks --jobs 1 >/dev/null 2>"$P/ci_render.err"; then ok=$((ok+1)); else bad="$bad $(basename "$2")"; fi; }
 run top "$FINAL/rvrn2_top_nolid.png" --no-lid
 run top "$FINAL/rvrn2_top_section_z17.png" --no-lid --section-z 17
 for v in side iso front; do run $v "$FINAL/rvrn2_${v}_nolid.png" --no-lid; done

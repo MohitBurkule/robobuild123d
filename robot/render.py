@@ -395,7 +395,13 @@ def cli(a):
     if getattr(a, "section_z", None) is not None:
         view = with_section_z(view, a.section_z)
     s = spec_mod.load(a.spec)
-    w, rep, _ = world_for(s, checks.Options(deep=not a.quick, fast=a.fast))
+    if getattr(a, "no_checks", False):  # geometry only: no verify, no wire routes or failure markers
+        from . import world as world_mod
+
+        w = world_mod.World.start(world_mod.resolve(s, fast=a.fast))
+        rep = type("R", (), {"findings": []})()
+    else:
+        w, rep, _ = world_for(s, checks.Options(deep=not a.quick, fast=a.fast))
     if a.no_lid:
         w = without_lid(w, s)
     if a.palette == "material":
@@ -422,5 +428,7 @@ def add_cli(sub):
                    help="material: light per-material colours (default); spec: colours as written in the spec")
     p.add_argument("--section-z", type=float, default=None, metavar="H",
                    help="cut the view at height H and keep what is below (e.g. top view under a closed deck)")
+    p.add_argument("--no-checks", action="store_true",
+                   help="geometry only: skip the verify pass (much faster and lighter; no wires or markers)")
     p.add_argument("--no-lid", action="store_true", help="leave out lid/cover/top-panel parts and their bolts")
     p.set_defaults(func=cli)
