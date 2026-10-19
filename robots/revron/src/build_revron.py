@@ -224,9 +224,12 @@ def fork(s):
     from shapely.geometry import Point, Polygon
     x0, x1 = (24.5, 26.0) if s > 0 else (-26.5, -25.0)
     outline = Point(36.3, 6.3).buffer(1.95, 48).union(Polygon([(35.0, 4.9), (36.1, 8.2), (41.0, 8.25), (66.68, 1.49), (51.75, 0.75), (40.5, 0.75), (38.3, 1.5)]))
-    outline = _round(outline, r_out=0.3, r_in=0.5)
+    outline = _round(outline, r_out=0.3, r_in=0.5).union(Polygon([(60.0, 1.27), (66.68, 1.49), (60.0, 2.5)]))   # sharp tip
     p = outline.difference(Point(SB[0], SB[1]).buffer(2.65, 48)).difference(Point(36.3, 6.3).buffer(0.8, 24))
-    p = p.difference(_round(Polygon([(44.2, 2.0), (52.3, 2.0), (44.2, 5.3)]), r_out=0.4))
+    p = p.difference(_round(Polygon([(44.2, 2.75), (52.6, 2.85), (44.4, 5.3)]), r_out=0.25))
+    if s < 0:   # the STEP hangs the left fork 1.1 deg nose-down about its standoff (pin-hole play in the cheek)
+        from shapely import affinity
+        p = affinity.rotate(p, -1.1, origin=SB)
     return _ext(p, "yz", x0, x1)
 
 
@@ -283,9 +286,12 @@ def motor_back_spacer():
     """1.5 mm printed spacer between the GR1507 stator base and RV03: clears the motor's rear bearing boss and wires."""
     from shapely.geometry import Point
     p = Point(WY, WZ).buffer(10.0, 64).difference(Point(WY, WZ).buffer(3.95, 48))
-    for k in range(4):
-        a = math.radians(45 + 90 * k)
-        p = p.difference(Point(WY + 6.9 * math.cos(a), WZ + 6.9 * math.sin(a)).buffer(2.25, 32))
+    from shapely.geometry import Polygon
+    ring = Point(WY, WZ).buffer(8.45, 96).difference(Point(WY, WZ).buffer(5.05, 64))
+    for sy in (1, -1):   # 4 wire / lightening windows between the screw webs: annular sectors, r0.5 corners
+        for sz in (1, -1):
+            q = Polygon([(WY + sy * 2.45, WZ + sz * 2.45), (WY + sy * 12, WZ + sz * 2.45), (WY + sy * 12, WZ + sz * 12), (WY + sy * 2.45, WZ + sz * 12)])
+            p = p.difference(_round(ring.intersection(q), r_out=0.75))
     for dy, dz in ((6, 0), (-6, 0), (0, 6), (0, -6)):
         p = p.difference(Point(WY + dy, WZ + dz).buffer(1.05, 24))
     return _ext(p, "yz", *BSP_X)
@@ -393,7 +399,7 @@ def rear_hub(s):
     axially), O-ring groove inboard between 8 mm flanges, a 14 mm tyre seat with a raised 7 mm crown that holds the F1
     tyre, a 6.5 mm outer lip; M2 grub into a captive nut slot on the flat."""
     from shapely.geometry import Point, Polygon
-    prof = [(0.0, 1.6), (0.0, 8.0), (0.6, 8.0), (0.8, 7.55), (1.5, 7.55), (1.7, 8.0), (2.3, 8.0), (3.3, 6.0), (6.3, 6.0), (7.0, 7.0),
+    prof = [(0.0, 1.6), (0.0, 8.0), (0.6, 8.0), (0.8, 7.55), (1.5, 7.55), (1.7, 8.0), (2.3, 8.0), (3.3, 6.0), (6.0, 6.0), (7.0, 7.0),
             (8.6, 7.0), (9.3, 6.0), (11.5, 6.0), (12.0, 6.5), (12.0, 0.0), (11.2, 0.0), (11.2, 1.6)]
     prof = [(0.0, 0.0)] + prof[1:-3] + [(12.0, 6.5), (12.0, 0.0)]
     if s < 0:
@@ -564,7 +570,7 @@ def chassis():
     hi = _face(top, "xy")[0].outer_wire().moved(b.Location((0, 0, z1)))
     cap = b.Solid.make_loft([lo, hi], ruled=True)
     outer = _U(_ext(plan, "xy", z0, z1 - 2.0), cap)
-    inner = _round(Polygon([(-x + w, y0 + w), (x - w, y0 + w), (x - w, y1 - 1.6), (-x + w, y1 - 1.6)]), r_out=1.0)
+    inner = _round(Polygon([(-x + w, y0 + w), (x - w, y0 + w), (x - w, y1 - w), (-x + w, y1 - w)]), r_out=1.0)
     body = _S(outer, _ext(inner, "xy", z0 - 1, c["deck"]))
     add = []
     for px, py in INS:   # insert columns (floor to deck)
@@ -703,7 +709,7 @@ def make_spec(model_file):
           shape=M(f"so_b_{n}"), label="RV10 15 mm alu standoff: nose, through the chassis lug, the fork and the wedgelet cheeks")
         P(id=f"fork_{n}", kind="fork", material="titanium", process="laser", stock="1.5 mm Ti Gr5 sheet", parent=f"so_b{n}", rotates_with="fixed", color="#9aa0a6", shape=M(f"fork_{n}"),
           label="fork_5: 1.5 mm Ti fork on the 15 mm standoff, tail pinned in the wedgelet cheek slot")
-        P(id=f"wedgelet_{n}", kind="armor", material="tpu", process="fdm", print_orientation="-x" if s < 0 else "+x", parent=f"so_a{n}", rotates_with="fixed", color="#3c4048",
+        P(id=f"wedgelet_{n}", kind="armor", material="tpu", process="fdm", print_orientation="-z", parent=f"so_a{n}", rotates_with="fixed", color="#3c4048",
           shape=M(f"wedgelet_{n}"), label=f"RV1{7 if s < 0 else 8} TPU wedgelet: 50 deg ramp over the nose, cheeks round both standoffs and the fork tail")
         P(id=f"side_{n}", kind="armor", material="tpu", process="fdm", print_orientation="+z", parent=f"so_a{n}", rotates_with="fixed", color="#3c4048", shape=M(f"side_panel_{n}"),
           label=f"RV2{3 if s < 0 else 4} TPU side panel: battered S-wall round the wheels, 3 M3x8 CSK (two standoff ends, one chassis nut)")
@@ -747,8 +753,8 @@ def make_spec(model_file):
         F(id=f"bolt_s{n}b", designation="M3x8", at=[s * 41.76, SB[0], SB[1]], dir=[-s, 0, 0], through=[f"side_{n}"], threads_into=f"so_b{n}")
         F(id=f"bolt_s{n}c", designation="M3x8", at=[s * 35.26, NUT[0], NUT[1]], dir=[-s, 0, 0], through=[f"side_{n}", "tub"], threads_into=f"nut_c{n}")
     for k, (dy, dz) in enumerate(((6, 0), (-6, 0), (0, 6), (0, -6))):
-        F(id=f"bolt_wm{k}", designation="M2x8", head="socket", tool="hex1.5", at=[MNT_SLAB, WY + dy, WZ + dz], dir=[-1, 0, 0], through=["mount_r", "motor_spacer"],
-          threads_into="weapon_motor", reason="cap heads in the RV03 boss counterbores (inferred: the STEP shows the 4.4 counterbores, not the screws)")
+        F(id=f"bolt_wm{k}", designation="M2x8", head="button", tool="hex1.3", at=[MNT_SLAB, WY + dy, WZ + dz], dir=[-1, 0, 0], through=["mount_r", "motor_spacer"],
+          threads_into="weapon_motor", reason="button heads (one hex1.3 key for every M2) sunk in the RV03 boss counterbores (inferred: the STEP shows the 4.4 counterbores, not the screws)")
     for k in range(4):
         a = math.radians(90 * k)
         dy, dz = _disc_local(HUB_R * math.cos(a), HUB_R * math.sin(a))
@@ -825,7 +831,44 @@ def make_spec(model_file):
              _Wr("w_sw_rx", "power_switch.out", "rxesc.bat", 26, "power", 8), dict(_Wr("w_wesc_m", "wesc.motor", "weapon_motor.phases", 24, "motor", 15), connector="bullet2", count=3),
              _Wr("w_rx_wesc", "rxesc.wpn", "wesc.rx", 30, "signal", 6), _Wr("w_m_l", "rxesc.m2", "motor_l.terminals", 28, "motor", 6),
              _Wr("w_m_r", "rxesc.m1", "motor_r.terminals", 28, "motor", 6)]
-    return dict(parts=parts, fasteners=fast, connections=conn, wires=wires)
+    return dict(parts=parts, fasteners=fast, connections=conn, wires=wires, intent=intent_checks())
+
+
+def intent_checks():
+    """Functional design-intent probes (robot.checks.intent): each tests what the feature is FOR."""
+    out = []
+    A = lambda rule, why, **k: out.append(dict(rule=rule, why=why, **k))  # noqa: E731
+    for s, n in ((-1, "l"), (1, "r")):
+        A("keyed_bore", "the N10 shaft is a 3 mm D; the flat in the blind bore drives the hub (a round printed bore slips at stall)",
+          part=f"whub_r{n}", axis="x", at=[s * 35.0, RY, RZ], span=sorted([s * 30.5, s * 40.5]))
+        A("tyre_retention", "the F1 tyre (13 mm relaxed ID, assumed; the STEP shows it stretched to 14) is held by stretch over the 45 deg crown, so side hits cannot walk it off",
+          hub=f"whub_r{n}", axis=[1, 0, 0], at=[0, RY, RZ], span=sorted([s * 32.5, s * 42.0]), tyre_id=13.0, min_interference=1.0)
+        A("captive_nut", "the thin M3 nut sits in a hex pocket inside the wall: with the side panel off it cannot turn or drop into the electronics bay",
+          nut=f"nut_c{n}", host="tub", move=0.3)
+        A("wheel_clearance", "a tyre rubbing the armour or chassis is a brake on a 2-motor 4WD", wheel=f"wheel_r{n}", exclude=[f"whub_r{n}", f"belt_{n}"], min=1.0)
+        A("wheel_clearance", "front tyres run on the standoff axle and must clear the wedgelet and side panel", wheel=f"wheel_f{n}",
+          exclude=[f"whub_f{n}", f"so_a{n}", f"belt_{n}"], min=1.0)
+        A("flush_head", "side-panel screws sit in TPU countersinks: nothing proud for a spinner to catch", fastener=f"bolt_s{n}a", host=f"side_{n}", out=[s, 0, 0])
+        A("flush_head", "mount screws are countersunk in the inner face, the face beside the disc rim", fastener=f"bolt_u{n}a", host=f"mount_{n}", out=[-s, 0, 0])
+        A("seat_locates", "the N10 gearbox boss seats in the keyhole and its body bears on the stop walls: shaft concentric, stall torque reacted by the chassis",
+          part=f"motor_{n}", host=["tub", "base_panel"], axis=[1, 0, 0], at=[s * MOTX, RY, RZ], play=0.15, turn_deg=2.0)
+    for n in ("l", "r"):
+        A("notch_bears", "a hit drives the mount back; the notch on the chassis tab bears it in compression, the bolts only clamp",
+          part=f"mount_{n}" if n == "l" else "mount_r", lug="tub", bolts=[f"bolt_u{n}a", f"bolt_u{n}b"], dir=[0, -1, 0])
+    for pid, up in (("tub", "-z"), ("mount_r", "+x"), ("mount_l", "-x"), ("whub_rr", "+x"), ("whub_rl", "-x"), ("whub_fr", "+x"), ("whub_fl", "-x"),
+                    ("wedgelet_r", "-z"), ("wedgelet_l", "-z"), ("side_r", "+z"), ("side_l", "+z"), ("motor_spacer", "+x"), ("weapon_lock", "+z")):
+        A("support_free", "every printed part prints without supports in its declared orientation", part=pid, up=up)
+    A("min_wall", "2 mm walls are 4+ perimeters: the box takes wheel-side and clamp loads without delaminating", part="tub", min=1.8, envelope=True)
+    A("insert_column", "printed deck-down, each heat-set insert sits on a solid column back to the deck (the first layers): no hanging boss to pull out",
+      part="tub", inserts=[[x, y, CH["deck"]] for x, y in INS], floor_z=INS_Z[0], r=2.2)
+    x, w = CH["x"], CH["wall"]
+    A("fillet", "inside wall corners are radiused: sharp PLA inside corners crack under impact", part="tub", axis="z", h=10.0,
+      at=[[-x + w, CH["y0"] + w], [x - w, CH["y0"] + w], [x - w, CH["y1"] - w], [-x + w, CH["y1"] - w]])
+    A("tool_count", "pit kit: one hex key per screw size (1.3 for M2, 2 for M3); the weapon swap needs only the 2 mm key", max=2, module_max=1,
+      module=["bolt_ula", "bolt_ulb", "bolt_ura", "bolt_urb"])
+    rot = ["spider", "disc_a", "disc_b", "dspacer"] + [f"nut_d{k}" for k in range(4)]
+    A("wire_clear_rotor", "phases and power leads stay out of the drisk's swept volume", rotor=rot, axis=[1, 0, 0], at=[0, WY, WZ], min=2.0)
+    return out
 
 
 def _prism_yz(poly, x0, x1):

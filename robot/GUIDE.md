@@ -233,6 +233,26 @@ Whoever gets under the other wins. Full rules with rationale, thresholds and app
 12. **Keep paired supports matched** and plates loaded in their own plane (4 mm uprights printed flat).
 13. **Centre the rotor between its supports**, so both bearings and the chassis see symmetric loads.
 
+## Design intent: check what a feature is FOR (`intent.*`, `intent` list in the spec)
+A part can match the reference outline and still not work. List each purposeful feature in `intent` with a `why`; the
+probe tests the function (robot/checks/intent.py has the keys). BLOCKER unless `"severity": "warning"`.
+1. **Keyed drive** (`keyed_bore`): a hub on a D-shaft has a D in its bore over its whole length. A round printed bore slips at stall.
+2. **No supports** (`support_free`): in the declared build direction, overhang steeper than 45 deg that is wider than a
+   6 mm bridge and a 1 mm ledge is <= 2 % of the area. Use 45 deg chamfers under ledges and flanges.
+3. **Walls >= 1.8 mm** (`min_wall`, `envelope` for the outer skin): 4 perimeters at 0.45 mm.
+4. **Fillet concave load corners** (`fillet`): no sharp inside corner where a hit loads PLA.
+5. **Insert columns reach the bed** (`insert_column`): solid material from each heat-set insert back to the first layers.
+6. **Tyre retention** (`tyre_retention`): the seat crest is >= 1 mm over the relaxed tyre ID on diameter.
+7. **Captive nuts** (`captive_nut`): with the screw out, the nut moved 0.3 mm in any of 14 directions hits its pocket.
+8. **Wheels run clear** (`wheel_clearance`): >= 1 mm from every body except its own hub, axle and belt. A rub is a brake.
+9. **Flush heads** (`flush_head`): countersunk heads are no more than 0.2 mm proud of the face they sit in.
+10. **Notch bears, bolts clamp** (`notch_bears`): pushed along the hit reaction, the plate meets the chassis tab before
+    it meets any bolt shank.
+11. **Seats locate** (`seat_locates`): a gearmotor in its keyhole cannot shift 0.15 mm radially or turn 2 deg.
+12. **Small pit kit** (`tool_count`): two hex keys for the full teardown, one for the weapon-module swap.
+13. **Wires clear the rotor** (`wire_clear_rotor`): every wire (straight proxy between ports) stays >= 2 mm outside the
+    rotor's swept cylinder.
+
 ## Bought-in sizes, fit, containment, disassembly and coverage (`cots.*`, `fit.*`, `contain.*`, `disasm.*`, `coverage.*`)
 
 - **No unlisted sizes** (`cots.unlisted`, BLOCKER): every motor, ESC, battery, RX, switch, servo, bearing, insert, nut and

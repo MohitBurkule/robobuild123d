@@ -1155,7 +1155,7 @@
    "kind": "armor",
    "material": "tpu",
    "process": "fdm",
-   "print_orientation": "-x",
+   "print_orientation": "-z",
    "parent": "so_al",
    "rotates_with": "fixed",
    "color": "#3c4048",
@@ -1383,7 +1383,7 @@
    "kind": "armor",
    "material": "tpu",
    "process": "fdm",
-   "print_orientation": "+x",
+   "print_orientation": "-z",
    "parent": "so_ar",
    "rotates_with": "fixed",
    "color": "#3c4048",
@@ -5865,8 +5865,8 @@
   {
    "id": "bolt_wm0",
    "designation": "M2x8",
-   "head": "socket",
-   "tool": "hex1.5",
+   "head": "button",
+   "tool": "hex1.3",
    "at": [
     17.4,
     44.5,
@@ -5882,14 +5882,14 @@
     "motor_spacer"
    ],
    "threads_into": "weapon_motor",
-   "reason": "cap heads in the RV03 boss counterbores (inferred: the STEP shows the 4.4 counterbores, not the screws)",
+   "reason": "button heads (one hex1.3 key for every M2) sunk in the RV03 boss counterbores (inferred: the STEP shows the 4.4 counterbores, not the screws)",
    "removable": true
   },
   {
    "id": "bolt_wm1",
    "designation": "M2x8",
-   "head": "socket",
-   "tool": "hex1.5",
+   "head": "button",
+   "tool": "hex1.3",
    "at": [
     17.4,
     32.5,
@@ -5905,14 +5905,14 @@
     "motor_spacer"
    ],
    "threads_into": "weapon_motor",
-   "reason": "cap heads in the RV03 boss counterbores (inferred: the STEP shows the 4.4 counterbores, not the screws)",
+   "reason": "button heads (one hex1.3 key for every M2) sunk in the RV03 boss counterbores (inferred: the STEP shows the 4.4 counterbores, not the screws)",
    "removable": true
   },
   {
    "id": "bolt_wm2",
    "designation": "M2x8",
-   "head": "socket",
-   "tool": "hex1.5",
+   "head": "button",
+   "tool": "hex1.3",
    "at": [
     17.4,
     38.5,
@@ -5928,14 +5928,14 @@
     "motor_spacer"
    ],
    "threads_into": "weapon_motor",
-   "reason": "cap heads in the RV03 boss counterbores (inferred: the STEP shows the 4.4 counterbores, not the screws)",
+   "reason": "button heads (one hex1.3 key for every M2) sunk in the RV03 boss counterbores (inferred: the STEP shows the 4.4 counterbores, not the screws)",
    "removable": true
   },
   {
    "id": "bolt_wm3",
    "designation": "M2x8",
-   "head": "socket",
-   "tool": "hex1.5",
+   "head": "button",
+   "tool": "hex1.3",
    "at": [
     17.4,
     38.5,
@@ -5951,7 +5951,7 @@
     "motor_spacer"
    ],
    "threads_into": "weapon_motor",
-   "reason": "cap heads in the RV03 boss counterbores (inferred: the STEP shows the 4.4 counterbores, not the screws)",
+   "reason": "button heads (one hex1.3 key for every M2) sunk in the RV03 boss counterbores (inferred: the STEP shows the 4.4 counterbores, not the screws)",
    "removable": true
   },
   {
@@ -6728,6 +6728,433 @@
    "awg": 28,
    "kind": "motor",
    "slack_mm": 6
+  }
+ ],
+ "intent": [
+  {
+   "rule": "keyed_bore",
+   "why": "the N10 shaft is a 3 mm D; the flat in the blind bore drives the hub (a round printed bore slips at stall)",
+   "part": "whub_rl",
+   "axis": "x",
+   "at": [
+    -35.0,
+    -30.5,
+    11.0
+   ],
+   "span": [
+    -40.5,
+    -30.5
+   ]
+  },
+  {
+   "rule": "tyre_retention",
+   "why": "the F1 tyre (13 mm relaxed ID, assumed; the STEP shows it stretched to 14) is held by stretch over the 45 deg crown, so side hits cannot walk it off",
+   "hub": "whub_rl",
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "at": [
+    0,
+    -30.5,
+    11.0
+   ],
+   "span": [
+    -42.0,
+    -32.5
+   ],
+   "tyre_id": 13.0,
+   "min_interference": 1.0
+  },
+  {
+   "rule": "captive_nut",
+   "why": "the thin M3 nut sits in a hex pocket inside the wall: with the side panel off it cannot turn or drop into the electronics bay",
+   "nut": "nut_cl",
+   "host": "tub",
+   "move": 0.3
+  },
+  {
+   "rule": "wheel_clearance",
+   "why": "a tyre rubbing the armour or chassis is a brake on a 2-motor 4WD",
+   "wheel": "wheel_rl",
+   "exclude": [
+    "whub_rl",
+    "belt_l"
+   ],
+   "min": 1.0
+  },
+  {
+   "rule": "wheel_clearance",
+   "why": "front tyres run on the standoff axle and must clear the wedgelet and side panel",
+   "wheel": "wheel_fl",
+   "exclude": [
+    "whub_fl",
+    "so_al",
+    "belt_l"
+   ],
+   "min": 1.0
+  },
+  {
+   "rule": "flush_head",
+   "why": "side-panel screws sit in TPU countersinks: nothing proud for a spinner to catch",
+   "fastener": "bolt_sla",
+   "host": "side_l",
+   "out": [
+    -1,
+    0,
+    0
+   ]
+  },
+  {
+   "rule": "flush_head",
+   "why": "mount screws are countersunk in the inner face, the face beside the disc rim",
+   "fastener": "bolt_ula",
+   "host": "mount_l",
+   "out": [
+    1,
+    0,
+    0
+   ]
+  },
+  {
+   "rule": "seat_locates",
+   "why": "the N10 gearbox boss seats in the keyhole and its body bears on the stop walls: shaft concentric, stall torque reacted by the chassis",
+   "part": "motor_l",
+   "host": [
+    "tub",
+    "base_panel"
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "at": [
+    -19.6,
+    -30.5,
+    11.0
+   ],
+   "play": 0.15,
+   "turn_deg": 2.0
+  },
+  {
+   "rule": "keyed_bore",
+   "why": "the N10 shaft is a 3 mm D; the flat in the blind bore drives the hub (a round printed bore slips at stall)",
+   "part": "whub_rr",
+   "axis": "x",
+   "at": [
+    35.0,
+    -30.5,
+    11.0
+   ],
+   "span": [
+    30.5,
+    40.5
+   ]
+  },
+  {
+   "rule": "tyre_retention",
+   "why": "the F1 tyre (13 mm relaxed ID, assumed; the STEP shows it stretched to 14) is held by stretch over the 45 deg crown, so side hits cannot walk it off",
+   "hub": "whub_rr",
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "at": [
+    0,
+    -30.5,
+    11.0
+   ],
+   "span": [
+    32.5,
+    42.0
+   ],
+   "tyre_id": 13.0,
+   "min_interference": 1.0
+  },
+  {
+   "rule": "captive_nut",
+   "why": "the thin M3 nut sits in a hex pocket inside the wall: with the side panel off it cannot turn or drop into the electronics bay",
+   "nut": "nut_cr",
+   "host": "tub",
+   "move": 0.3
+  },
+  {
+   "rule": "wheel_clearance",
+   "why": "a tyre rubbing the armour or chassis is a brake on a 2-motor 4WD",
+   "wheel": "wheel_rr",
+   "exclude": [
+    "whub_rr",
+    "belt_r"
+   ],
+   "min": 1.0
+  },
+  {
+   "rule": "wheel_clearance",
+   "why": "front tyres run on the standoff axle and must clear the wedgelet and side panel",
+   "wheel": "wheel_fr",
+   "exclude": [
+    "whub_fr",
+    "so_ar",
+    "belt_r"
+   ],
+   "min": 1.0
+  },
+  {
+   "rule": "flush_head",
+   "why": "side-panel screws sit in TPU countersinks: nothing proud for a spinner to catch",
+   "fastener": "bolt_sra",
+   "host": "side_r",
+   "out": [
+    1,
+    0,
+    0
+   ]
+  },
+  {
+   "rule": "flush_head",
+   "why": "mount screws are countersunk in the inner face, the face beside the disc rim",
+   "fastener": "bolt_ura",
+   "host": "mount_r",
+   "out": [
+    -1,
+    0,
+    0
+   ]
+  },
+  {
+   "rule": "seat_locates",
+   "why": "the N10 gearbox boss seats in the keyhole and its body bears on the stop walls: shaft concentric, stall torque reacted by the chassis",
+   "part": "motor_r",
+   "host": [
+    "tub",
+    "base_panel"
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "at": [
+    19.6,
+    -30.5,
+    11.0
+   ],
+   "play": 0.15,
+   "turn_deg": 2.0
+  },
+  {
+   "rule": "notch_bears",
+   "why": "a hit drives the mount back; the notch on the chassis tab bears it in compression, the bolts only clamp",
+   "part": "mount_l",
+   "lug": "tub",
+   "bolts": [
+    "bolt_ula",
+    "bolt_ulb"
+   ],
+   "dir": [
+    0,
+    -1,
+    0
+   ]
+  },
+  {
+   "rule": "notch_bears",
+   "why": "a hit drives the mount back; the notch on the chassis tab bears it in compression, the bolts only clamp",
+   "part": "mount_r",
+   "lug": "tub",
+   "bolts": [
+    "bolt_ura",
+    "bolt_urb"
+   ],
+   "dir": [
+    0,
+    -1,
+    0
+   ]
+  },
+  {
+   "rule": "support_free",
+   "why": "every printed part prints without supports in its declared orientation",
+   "part": "tub",
+   "up": "-z"
+  },
+  {
+   "rule": "support_free",
+   "why": "every printed part prints without supports in its declared orientation",
+   "part": "mount_r",
+   "up": "+x"
+  },
+  {
+   "rule": "support_free",
+   "why": "every printed part prints without supports in its declared orientation",
+   "part": "mount_l",
+   "up": "-x"
+  },
+  {
+   "rule": "support_free",
+   "why": "every printed part prints without supports in its declared orientation",
+   "part": "whub_rr",
+   "up": "+x"
+  },
+  {
+   "rule": "support_free",
+   "why": "every printed part prints without supports in its declared orientation",
+   "part": "whub_rl",
+   "up": "-x"
+  },
+  {
+   "rule": "support_free",
+   "why": "every printed part prints without supports in its declared orientation",
+   "part": "whub_fr",
+   "up": "+x"
+  },
+  {
+   "rule": "support_free",
+   "why": "every printed part prints without supports in its declared orientation",
+   "part": "whub_fl",
+   "up": "-x"
+  },
+  {
+   "rule": "support_free",
+   "why": "every printed part prints without supports in its declared orientation",
+   "part": "wedgelet_r",
+   "up": "-z"
+  },
+  {
+   "rule": "support_free",
+   "why": "every printed part prints without supports in its declared orientation",
+   "part": "wedgelet_l",
+   "up": "-z"
+  },
+  {
+   "rule": "support_free",
+   "why": "every printed part prints without supports in its declared orientation",
+   "part": "side_r",
+   "up": "+z"
+  },
+  {
+   "rule": "support_free",
+   "why": "every printed part prints without supports in its declared orientation",
+   "part": "side_l",
+   "up": "+z"
+  },
+  {
+   "rule": "support_free",
+   "why": "every printed part prints without supports in its declared orientation",
+   "part": "motor_spacer",
+   "up": "+x"
+  },
+  {
+   "rule": "support_free",
+   "why": "every printed part prints without supports in its declared orientation",
+   "part": "weapon_lock",
+   "up": "+z"
+  },
+  {
+   "rule": "min_wall",
+   "why": "2 mm walls are 4+ perimeters: the box takes wheel-side and clamp loads without delaminating",
+   "part": "tub",
+   "min": 1.8,
+   "envelope": true
+  },
+  {
+   "rule": "insert_column",
+   "why": "printed deck-down, each heat-set insert sits on a solid column back to the deck (the first layers): no hanging boss to pull out",
+   "part": "tub",
+   "inserts": [
+    [
+     -25.0,
+     10.4,
+     17.5
+    ],
+    [
+     25.0,
+     10.4,
+     17.5
+    ],
+    [
+     -25.0,
+     -21.6,
+     17.5
+    ],
+    [
+     25.0,
+     -21.6,
+     17.5
+    ],
+    [
+     0.0,
+     -33.6,
+     17.5
+    ]
+   ],
+   "floor_z": 5.1,
+   "r": 2.2
+  },
+  {
+   "rule": "fillet",
+   "why": "inside wall corners are radiused: sharp PLA inside corners crack under impact",
+   "part": "tub",
+   "axis": "z",
+   "h": 10.0,
+   "at": [
+    [
+     -27.5,
+     -35.6
+    ],
+    [
+     27.5,
+     -35.6
+    ],
+    [
+     27.5,
+     13.0
+    ],
+    [
+     -27.5,
+     13.0
+    ]
+   ]
+  },
+  {
+   "rule": "tool_count",
+   "why": "pit kit: one hex key per screw size (1.3 for M2, 2 for M3); the weapon swap needs only the 2 mm key",
+   "max": 2,
+   "module_max": 1,
+   "module": [
+    "bolt_ula",
+    "bolt_ulb",
+    "bolt_ura",
+    "bolt_urb"
+   ]
+  },
+  {
+   "rule": "wire_clear_rotor",
+   "why": "phases and power leads stay out of the drisk's swept volume",
+   "rotor": [
+    "spider",
+    "disc_a",
+    "disc_b",
+    "dspacer",
+    "nut_d0",
+    "nut_d1",
+    "nut_d2",
+    "nut_d3"
+   ],
+   "axis": [
+    1,
+    0,
+    0
+   ],
+   "at": [
+    0,
+    38.5,
+    23.5
+   ],
+   "min": 2.0
   }
  ],
  "modules": [

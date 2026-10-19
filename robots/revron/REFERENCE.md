@@ -1,6 +1,21 @@
-# Revron reference v2
+# Revron reference v3 (RVRN 2.0)
 
-Our model is parametric and written from scratch. SVRN and the forum diary give **dimensions and specs only**. No SVRN geometry is imported.
+Our model is parametric and written from scratch in `src/build_revron.py`. Reference CAD gives **dimensions, placements and features only**: nothing is imported, and `reference_cad.copied` fails a part whose mesh matches the reference's triangle structure.
+
+## RVRN 2.0 (current source of truth)
+Source: `research/rvrn_step/rvrn_2.0.step` (the designer's assembly) with per-part STL exports and `INDEX.txt`. Every part is compared in the STEP assembly frame (ours: X = -z_ref, Y = -x_ref, Z = y_ref) by `reference_cad.*`: silhouettes on 3 axes, placement, boolean diff blobs, surface deviation, hole count/shape and countersinks.
+
+- **Weapon (drisk), GR1507 outrunner:** single-tooth drisk. A 3 mm spider on the bell, two 3 mm floating Hardox discs (`Drisk_floating_3`) and a 6 mm printed spacer (`Drisk_spacer_alt_x`): 3+6+3 on the spider. Bore with 4 ramped dogs; one tooth at R23. Stack bolts (M2) and nuts are inferred (the STEP has the 2.2 holes but no screws).
+- **Weapon mounts RV02/RV03 "XALT HD":** 4 mm printed slabs plus battered bosses. RV03 (+X) carries the stator: 4.94 bore, 4 M2 on r6, 4.44 counterbores, motor back spacer (1.5 mm) between. RV02 (-X) has a 7.9 seat (MR85ZZ, inferred) with a 12 mm recess. Each mount keys onto a chassis tab notch and bolts to the 25 mm and 15 mm standoffs with FS9 M3x12 alu CSK.
+- **Weapon lock:** RV00 TPU tooth stop on a lanyard (Build Guide safety rule; not in the STEP).
+- **Drive:** 2 N10 2200 rpm in keyhole side-wall pockets, direct to RV21 hubs (blind D-bore) with Scalextric F1 21.5 tyres. 45 x 1 O-rings drive RV19 micro hubs with 11 x 7 x 6 tyres on the 25 mm standoffs.
+- **Electronics:** Malenki Nano, BBB ant ESC, Turnabot 2S 180 mAh on a JST RCY lead, BBB ant switch in the deck slot.
+- **Chassis RV01:** printed closed-top box (2 mm walls, 2 mm top chamfer), printed deck-down, X-pocketed deck, 5 FS1 M2 heat-set columns for the RV26 1 mm base panel (FS8 CSK M2), thin M3 nuts in hex pockets in the side lobes, front tabs and standoff lugs.
+- **Armour:** RV17/18 TPU wedgelets on the nose standoffs plus RV23/24 TPU side panels (3 M3x8 CSK per side), with 1.5 mm Ti `fork_5` forks on the 15 mm standoffs.
+- **Top panel (0.9 mm):** the STEP part `Top_Panel` is a plain 37 x 55 x 0.9 mm laser outline with no holes, countersinks or chamfers. **Material inference:** 0.9 mm is a stock titanium / spring-steel / G10 sheet gauge and not a printable thickness. A plain outline with no fastener holes means it is bonded, not screwed. We model it as 0.9 mm Ti Gr5, bonded to the deck with VHB (connection method `tape`). G10 (lighter, ~2.4 g) is the fallback if mass is tight.
+- **Not in the STEP, inferred (BOM deviations):** MR85ZZ bearing, drisk stack bolts and nuts, spider-to-bell M2, stator M2 screws (button head, hex 1.3), switch M2 screws, O-ring belts, RV00 lock.
+
+
 
 ## Sources
 - **Project SVRN** by Shoverobotics, Printables model 1272536, licence CC-BY. Files used: `SVRN 4.0.step` (id 5310763) and `SVRN Belted.step` (id 6476965), both SolidWorks 2026 exports. These files were measured only and are not stored in the repo. Attribution: "Project SVRN Combat Robot" © Shoverobotics, CC-BY 4.0.
@@ -20,7 +35,7 @@ Our model is parametric and written from scratch. SVRN and the forum diary give 
 ## Coordinate frame
 X points right, Y points forward (weapon end) and Z points up. Z=0 is the underside of the chassis tub.
 
-## Architecture (modelled design: RVRN 1.7 Build Guide + RVRN Drive CAD)
+## Architecture (historical: RVRN 1.7 Build Guide + RVRN Drive CAD)
 - **Weapon (drisk):** BBB BE1806 2300 kV; stator bolted to the left upright (+X) with 4 M2 cap screws (CAD `fl-1` carries the 12/16 stator pattern, `fr-1` the bearing seat, so the CAD hand wins over the guide text "bearing in LH"). Two 3 mm Hardox 450 discs (RV10 motor side, RV11 floating), R16.5 with two tips at R21.5, an 8 mm printed spacer (RV04) round the bell. Stack: 4 long M2x16 steel bolts through both discs and the spacer into 4 M2 nuts (threadlocked) on the motor-side disc. The BE1806 prop mount (RV07) clamps the motor-side disc to the bell with 4 M2 (button heads, see BOM deviations). Its 5 mm spigot runs in an MF85ZZ flanged bearing in the right upright (+ RV09 bearing spacer): supported both ends.
 - **Weapon module (quick change):** both 4 mm uprights (RV02/RV03) seat on the chassis lugs and bolt to the standoff ends with 4 M3x10 alu button heads (guide: M3x12 CSK; the R3.23 lobes are too small for CSK heads and a 12 mm screw cannot stay captive between plate and disc). The three weapon phases unplug at 2 mm bullet connectors.
 - **Weapon lock:** RV00, a printed TPU tooth stop (orange, on a lanyard) under the rear drisk tip, fitted whenever the battery is in.
