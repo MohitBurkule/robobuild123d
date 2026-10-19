@@ -1225,11 +1225,19 @@ def main():
                                    dict(a="wbearing", b="mount_l", max_depth_mm=0.1, reason="MR85 8.0 OD pressed into the RV02 7.9 printed seat (0.05 radial interference, the STEP seat size)")],
                     claims=[dict(id="c_mass", text="weighs 150 g or less", metric="mass_total_g", op="<=", value=150),
                             dict(id="c_fit", text="fits the 150 mm square", metric="footprint_mm", op="<=", value=150)],
-                    reference_cad=reference_cad(), **body)
+                    teardown=TEARDOWN, reference_cad=reference_cad(), **body)
         spec["modules"] = [{"id": "weapon_module", "root": "mount_r", "note": "RVRN quick change: 4 M3 out, both mounts with the drisk lift off the chassis tabs",
                             "parts": [p["id"] for p in spec["parts"] if _root(spec["parts"], p) == "mount_r" and p["id"] != "mount_r"]}]
         json.dump(spec, open(out, "w"), indent=1)
     print("wrote", out_spec, len(spec["parts"]), "parts", len(spec["fasteners"]), "fasteners")
+
+
+# real service order (Build Guide): side screws out, side panels off, then each wedgelet comes off its standoffs
+# outward together with the fork whose tail sits in its cheek slot; then the standoffs slide out of the lugs.
+TEARDOWN = [t for s, n in ((-1, "l"), (1, "r")) for t in (
+    dict(parts=[f"wedgelet_{n}", f"fork_{n}"], dir=[s, 0, 0], reason="fork tail is pinned in the wedgelet cheek slot: they slide off the standoffs as one"),
+    dict(parts=[f"so_b{n}"], dir=[s, 0, 0], reason="nose standoff slides out of the chassis lug once the mount screw is out"),
+    dict(parts=[f"so_a{n}"], dir=[s, 0, 0], reason="axle standoff slides out of the lug with the front hub and wheel on it"))]
 
 
 def _root(parts, q):

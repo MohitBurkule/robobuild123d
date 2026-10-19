@@ -435,6 +435,76 @@
    "value": 150
   }
  ],
+ "teardown": [
+  {
+   "parts": [
+    "wedgelet_l",
+    "fork_l"
+   ],
+   "dir": [
+    -1,
+    0,
+    0
+   ],
+   "reason": "fork tail is pinned in the wedgelet cheek slot: they slide off the standoffs as one"
+  },
+  {
+   "parts": [
+    "so_bl"
+   ],
+   "dir": [
+    -1,
+    0,
+    0
+   ],
+   "reason": "nose standoff slides out of the chassis lug once the mount screw is out"
+  },
+  {
+   "parts": [
+    "so_al"
+   ],
+   "dir": [
+    -1,
+    0,
+    0
+   ],
+   "reason": "axle standoff slides out of the lug with the front hub and wheel on it"
+  },
+  {
+   "parts": [
+    "wedgelet_r",
+    "fork_r"
+   ],
+   "dir": [
+    1,
+    0,
+    0
+   ],
+   "reason": "fork tail is pinned in the wedgelet cheek slot: they slide off the standoffs as one"
+  },
+  {
+   "parts": [
+    "so_br"
+   ],
+   "dir": [
+    1,
+    0,
+    0
+   ],
+   "reason": "nose standoff slides out of the chassis lug once the mount screw is out"
+  },
+  {
+   "parts": [
+    "so_ar"
+   ],
+   "dir": [
+    1,
+    0,
+    0
+   ],
+   "reason": "axle standoff slides out of the lug with the front hub and wheel on it"
+  }
+ ],
  "reference_cad": {
   "dir": "/mnt/project-files/robot-cad/research/rvrn_step/parts",
   "ref_to_world": [
