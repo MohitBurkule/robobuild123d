@@ -86,8 +86,8 @@ def outrunner(id, name, dia, length, shaft_len, mass, kv, p):
                         {"at": [length / 2 - 1, 0, 0], "dir": [1, 0, 0], "len": shaft_len, "dia": 5.0}, pr, "#3a3d42")
 
 
-def lipo(id, name, l, w, h, mass, cells, mah, c):
-    return CatalogEntry(id, "battery", name, mass, "estimate", box(l, w, h), {"xt30": [0, w / 2 + 2, 0]}, None, {
+def lipo(id, name, l, w, h, mass, cells, mah, c, conn="xt30"):
+    return CatalogEntry(id, "battery", name, mass, "estimate", box(l, w, h), {conn: [0, w / 2 + 2, 0]}, None, {
         "cells": cells, "capacity_mah": mah, "c_rating": c, "nominal_v": 3.7 * cells,
         "internal_resistance_mohm": 90 / max(mah / 100, 0.5) * cells}, "#2a9d8f")
 
@@ -133,6 +133,9 @@ def builtin() -> list[CatalogEntry]:
              {"stall_torque_kgcm": 1.8, "nominal_v": 4.8, "stall_current_a": 0.7}, "#4a4e57"),
         flat("switch_slide_12x4", "Miniature slide switch 11.8 x 3.8", "switch", 11.8, 3.8, 4, 0.5,
              {"in": [-4, 0, -2.5], "out": [4, 0, -2.5]}, {}, "#111111"),
+        CatalogEntry("switch_slide_bbb_ant", "switch", "BBB ant slide switch 11.8 x 3.8 with a front mounting ear (2 x M2 holes)", 0.6, "estimate",
+                     union([box(11.8, 3.8, 4), minus(at(box(15.8, 6.4, 1.0), 13.8, 0.8, 2.5), [at(cyl(1.1, 3), x, 0.8, 2.5) for x in (12.1, 18.1)])]),
+                     {"in": [-4, 0, -2.5], "out": [4, 0, -2.5]}, None, {"mount_holes_mm": [[12.1, 0.8, 3.0], [18.1, 0.8, 3.0]], "mount_thread": "M2"}, "#111111"),
         wheel("wheel_28x10", 28, 10, 19, 3.4),
         wheel("wheel_30x8", 30, 8, 19, 3.0),
         wheel("wheel_20x8", 20, 8, 12, 1.8),
@@ -150,7 +153,7 @@ def builtin() -> list[CatalogEntry]:
                                   at(box(1.5, 5.0, 8.0), -7.6, 0, -15.5)]), [cyl_x(2.55, 22.0)]),
                      {"phases": [-7.5, 0, -15.0]}, {"at": [8.25, 0, 0], "dir": [1, 0, 0], "len": 2.0, "dia": 5.0},
                      {"kv": 2300, "max_current_a": 15.0, "typ_current_a": 8.0, "bell_mass_frac": 0.5}, "#3a3d42"),
-        lipo("lipo_2s_180_turnabot", "Turnabot 2S 180 mAh LiPo (36 x 18 x 11)", 36, 18, 11, 12.5, 2, 180, 40),
+        lipo("lipo_2s_180_turnabot", "Turnabot 2S 180 mAh LiPo (36 x 18 x 11)", 36, 18, 11, 12.5, 2, 180, 40, conn="jst_rcy"),
         flat("malenki_nano", "Malenki Nano (Rx + 2 brushed drive ESC), kapton wrapped", "esc", 23, 16, 5, 3.5,
              {"bat": [-11.5, -4, 0], "m1": [11.5, 4, 0], "m2": [-11.5, 4, 0], "wpn": [11.5, -4, 0]},
              {"cont_current_a": 3.0, "burst_current_a": 6.0, "channels": 2.0}, "#e76f51"),

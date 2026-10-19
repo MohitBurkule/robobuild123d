@@ -2,19 +2,13 @@
 
 ![Revron](renders/iso.png)
 
-Verifier (`aws2025`): passes. 0 blockers, 168 warnings, 361 checks passed. 45 items NOT CHECKED (see REPORT.md).
+Verifier (`aws2025`): passes. 0 blockers, 185 warnings, 375 checks passed. 49 items NOT CHECKED (see REPORT.md).
 
-Mass 148.9 g (range 133.5 to 164.3 g).
+Mass 149.5 g (range 134.1 to 165.0 g).
 
 | Top | Exploded | Section |
 |---|---|---|
 | ![top](renders/top.png) | ![exploded](renders/exploded.png) | ![section](renders/section_z.png) |
-
-## Parts vs the RVRN reference CAD
-
-Each modelled part against the RVRN drive CAD (measurement only, never imported), silhouettes along X/Y/Z: red is reference only, blue is ours only. Full table with IoU and volumes: [parts_compare/index.md](parts_compare/index.md).
-
-![parts compare index](parts_compare/index.png)
 
 ## Files
 
