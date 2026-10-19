@@ -255,21 +255,65 @@ def switch_direction(ctx):
             ctx.not_checked.append(f"Switch `{p.id}` direction: no body")
             continue
         c = b.center
-        mid = (lo + hi) / 2
-        d = np.asarray(c, float) - mid
-        d[2] = 0.0
-        ax = int(np.argmax(np.abs(d[:2]) / np.maximum((hi - lo)[:2] / 2, 1e-6)))
-        outward = np.zeros(3)
-        outward[ax] = math.copysign(1.0, d[ax])
         v = np.asarray(od, float)
         v = v / (np.linalg.norm(v) or 1.0)
-        if float(v @ outward) < SWITCH_DIR_COS:
-            out.append(fail("electrical.switch_direction", G, BLOCKER, "Switch turns off the wrong way",
-                            f"`{p.id}` switches off along {list(np.round(v, 2))}, not outward through its face ({list(outward)}): pulling the slider out from the outside must turn it off.")
-                       .on(p.id).here(c).fix("Turn the switch round so OFF is the outward (pulled) position."))
-        else:
+        face = _switch_face(r, w, b, lo, hi)
+        if face is None:
+            out.append(fail("electrical.switch_direction", G, BLOCKER, "Switch cannot be reached from outside",
+                            f"`{p.id}` is covered on every side; the slider must be reachable from outside the robot.")
+                       .on(p.id).here(c).fix("Move the switch to an exterior face or open an access slot over it."))
+            continue
+        n = np.asarray(face, float)
+        if float(v @ n) >= SWITCH_DIR_COS:
             out.append(ok("electrical.switch_direction", G, "Switch pulls outward to OFF", f"`{p.id}` switches off when pulled out through its face."))
+        elif n[2] != 0.0 and abs(float(v @ n)) < 1.0 - SWITCH_DIR_COS:
+            # deck/top (or belly) mount: the lever is reached through the face and slides in its plane; the declared
+            # direction is the OFF throw, and with no "outward" in that plane any declared in-plane throw is accepted
+            out.append(ok("electrical.switch_direction", G, "Switch OFF throw declared on an exposed deck",
+                          f"`{p.id}` is reached from {'+z' if n[2] > 0 else '-z'} and slides to OFF along {[round(float(x), 2) for x in v]}."))
+        else:
+            out.append(fail("electrical.switch_direction", G, BLOCKER, "Switch turns off the wrong way",
+                            f"`{p.id}` switches off along {list(np.round(v, 2))}, not outward through its face ({list(n)}): pulling the slider out from the outside must turn it off.")
+                       .on(p.id).here(c).fix("Turn the switch round so OFF is the outward (pulled) position."))
     return out
+
+
+def _switch_face(r, w, b, lo, hi):
+    """Outward normal of the exterior face the switch is reached through. For each of the six axis directions, rays are
+    cast outward from the switch's extreme points on that side (its lever, for a deck mount poking through a slot); the
+    side is open when at least one ray escapes every other part. Of the open sides, a side wall within 2 mm wins
+    (side mount), else the nearest open face. WHY: OFF must be judged against where a hand actually reaches the slider."""
+    v = np.asarray(b.mesh.vertices)
+    found = []
+    for k in range(3):
+        for sgn in (1.0, -1.0):
+            n = np.zeros(3)
+            n[k] = sgn
+            proj = v @ n
+            pts = v[proj >= proj.max() - 0.5]
+            if len(pts) > 64:
+                pts = pts[np.linspace(0, len(pts) - 1, 64).astype(int)]
+            org = pts + n * 0.05
+            free = np.ones(len(org), bool)
+            for o in w.bodies:
+                if o is b or o.is_wire or o.fastener or o.part_idx is None:
+                    continue
+                far = org + n * 1.0e3
+                if not np.all((np.minimum(org.min(0), far.min(0)) <= o.aabb[1]) & (np.maximum(org.max(0), far.max(0)) >= o.aabb[0])):
+                    continue
+                idx = np.flatnonzero(free)
+                if not len(idx):
+                    break
+                hit = o.mesh.ray.intersects_any(org[idx], np.tile(n, (len(idx), 1)))
+                free[idx[hit]] = False
+            if free.any():
+                dist = float((hi[k] - proj.max()) if sgn > 0 else (-proj.max() - lo[k]))
+                found.append((dist, k, n))
+    if not found:
+        return None
+    # a switch within 2 mm of an open side wall is side-mounted (pulled out sideways); otherwise the nearest open face
+    side = [f for f in found if f[1] < 2 and f[0] <= 2.0]
+    return min(side or found, key=lambda f: f[0])[2]
 
 
 # ------------------------------------------------------------------------------------------------ reference.doc_consistency
