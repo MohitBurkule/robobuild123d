@@ -18,9 +18,8 @@ CASES = {
     "hspin_bar": "horizontal bar spinner",
     "vspin_drisk": "vertical drisk (Revron-like layout, generic sizes)",
     "lifter": "servo lifter",
+    "none_pusher": "pusher with a TPU skirt",
 }
-
-# A servo lifter's limited-range arm is swept a full turn by the kinematics checks (VERIFIER_ISSUES.md #1).
 
 @pytest.mark.parametrize("w", sorted(CASES))
 def test_generated_robot_has_no_blockers(w):
