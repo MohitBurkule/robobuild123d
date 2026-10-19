@@ -130,7 +130,7 @@ def _box(x0, x1, y0, y1, z0, z1):
     return b.Solid.make_box(abs(x1 - x0), abs(y1 - y0), abs(z1 - z0)).moved(b.Location((min(x0, x1), min(y0, y1), min(z0, z1))))
 
 
-def _csk(d_hole, d_head, at, axis, sign, depth=8.0):
+def _csk(d_hole, d_head, at, axis, sign, depth=8.0, head=3.0):
     """Countersink + clearance for a flat head screw whose head is flush at `at` (face point), shank going `sign`
     along `axis`: a 90 deg cone from d_head at the face down to d_hole, the clearance hole, and a head bore outward."""
     b = _b()
@@ -139,7 +139,7 @@ def _csk(d_hole, d_head, at, axis, sign, depth=8.0):
     h = (d_head - d_hole) / 2
     cone = b.Solid.make_cone(d_head / 2, d_hole / 2, h, b.Plane(origin=at, z_dir=d))
     hole = b.Solid.make_cylinder(d_hole / 2, depth, b.Plane(origin=at, z_dir=d))
-    head = b.Solid.make_cylinder(d_head / 2, 3.0, b.Plane(origin=at, z_dir=[-c for c in d]))
+    head = b.Solid.make_cylinder(d_head / 2, head, b.Plane(origin=at, z_dir=[-c for c in d]))
     return cone.fuse(hole, head)
 
 
@@ -239,7 +239,9 @@ def fork(s):
     outline = Point(36.3, 6.3).buffer(1.95, 48).union(Polygon([(35.0, 4.9), (36.1, 8.2), (41.0, 8.25), (66.68, 1.49), (51.75, 0.75), (39.0, 0.75), (38.0, 1.5)]))
     outline = _round(outline, r_out=0.3, r_in=0.5).union(Polygon([(60.0, 1.27), (66.68, 1.49), (60.0, 2.5)])).buffer(0.15, 8).buffer(-0.15, 8)   # sharp tip, r0.15 (> kerf) where it joins
     p = outline.difference(Point(SB[0], SB[1]).buffer(2.65, 48)).difference(Point(36.3, 6.3).buffer(0.8, 24))
-    p = p.difference(_round(Polygon([(44.2, 2.75), (52.6, 2.85), (44.4, 5.3)]), r_out=0.25))
+    p = p.difference(_round(Polygon([(43.85, 2.75), (54.0, 2.75), (44.35, 5.42)]), r_out=0.3))   # lightening window
+    # laser kerf / min web: the knife tip cannot be cut sharp; blunt it where the blade is 0.45 mm (r0.22 nose)
+    p = _round(p, r_out=0.22)
     if s < 0:   # the STEP hangs the left fork 1.1 deg nose-down about its standoff (pin-hole play in the cheek)
         from shapely import affinity
         p = affinity.rotate(p, -1.1, origin=SB)
@@ -440,6 +442,7 @@ def standoff(L_x, c):
 
 
 # ------------------------------------------------------------------------------------------------------------ wedgelet
+WEDGE_TOE_Y = 50.1 - 1.25 / 1.187    # ramp Z = 1 + 1.187 (50.1 - Y) stopped where it is 1.25 mm above the floor
 def wedgelet(s):
     """RV17/18 TPU wedgelet (left built, right mirrored), slabs along X measured on the STEP sections:
     an outer block round the 15 mm standoff end (X 36.5..38.5), a ring step (35.5..36.5), a 2.3 mm ramp skin over a
@@ -456,12 +459,18 @@ def wedgelet(s):
     in_slot = P([(38.69, 10.9), (39.12, 11.26), (37.79, 15.15), (38.05, 15.36), (50.1, 1.0), (43.75, 1.0), (43.73, 4.82), (43.37, 6.03), (42.91, 6.68),
                  (41.0, 8.6), (40.03, 8.6), (39.52, 10.07)]).union(Point(*SA).buffer(3.5, 64))
     tab = P([(42.78, 6.82), (44.32, 6.1), (44.69, 7.44), (50.1, 1.0), (43.75, 1.0), (43.71, 4.98), (43.37, 6.03)])
+    # the nose tab bears on the weapon mount's nose: take the mount's boss outline (its side profile above the
+    # notch-to-nose line) out of the tab in 2D and drop any sliver thinner than a TPU wall, so no film is left
+    mprof = _mount_profile(7.0 if s < 0 else 10.0).intersection(P([(15.0, 19.5), (44.34, 6.34), (60, 6.34), (60, 60), (0, 60), (0, 19.5)]))
+    tab = tab.difference(mprof).buffer(-0.6, join_style=2).buffer(0.6, join_style=2)
     bb = _b()
     sk = _one(_ext(skin, "yz", -35.5, -29.0)).split(bb.Plane(origin=(-34.0, 41.66, 11.06), z_dir=(-1.24, -0.75, 1.0)), keep=bb.Keep.BOTTOM)
-    body = _U(_ext(s1, "yz", -38.5, -36.5), _ext(s2, "yz", -36.5, -35.5), sk, _ext(cheek, "yz", -29.0, -21.5), _ext(tab, "yz", -21.5, -17.5))
+    body = _U(_ext(s1, "yz", -38.5, -36.5), _ext(s2, "yz", -36.5, -35.5), sk, _ext(cheek, "yz", -29.0, -21.5), _ext(tab, "yz", -21.5, -17.5) if not tab.is_empty else None)
     kid = LineString([(36.05, 5.15), (36.95, 7.45)]).buffer(0.95, 24)
     cuts = [_ext(cheek.difference(in_slot), "yz", -27.0, -24.5),                  # 2.5 mm fork slot through the cheek
             _cyl(2.6, -39.0, -17.0, SA), _cyl(1.6, -39.0, -17.0, SB), _cyl(2.5, -36.5, -17.0, SB), _ext(kid, "yz", -29.5, -21.0)]
+    # TPU cannot print the ramp's knife toe (FDM TPU walls >= 1.2 mm): stop the ramp on a 1.25 mm high land
+    cuts.append(_box(-60.0, 0.0, WEDGE_TOE_Y, 60.0, 0.0, 30.0))
     sh = _S(body, *cuts)
     sh = sh if s < 0 else _mirror_x(sh)
     # the STEP leaves the fork tine and the mount boss inside the TPU nose; cut their seats (the tine slides into a
@@ -472,7 +481,39 @@ def wedgelet(s):
 # ------------------------------------------------------------------------------------------------------------ side panel
 SP_IN = [(-43.5, -40.0), (-43.5, -21.3), (-43.0, -19.6), (-41.2, -17.9), (-37.2, -17.2), (-34.4, -15.7), (-32.3, -13.0), (-31.5, -9.9),
          (-31.5, 11.1), (-31.9, 13.4), (-33.6, 17.5), (-35.5, 20.4), (-37.2, 21.9), (-41.2, 23.3), (-42.7, 26.6)]
-SP_IN_BOT = SP_IN[:9] + [(-31.9, 12.2), (-35.5, 15.6), (-41.8, 17.0), (-44.9, 18.7), (-47.4, 21.8), (-48.6, 25.6), (-48.6, 26.6)]   # the swing leans: its foot sits 4 mm further out and back   # inner face (Y, |X|) path
+# the front swing round the front wheel (inner face X at Y 13, 14, 16, 18, 20, 22, 24, 26.6) at three heights: it leans
+# out towards the floor so wheel hits ride up it (STEP RV23: inner face at Y 22 is X -47.6 at the floor, -41.6 at Z 7)
+SW_Y = (13.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, 26.6)
+SW_X = {1.0: (-32.4, -33.4, -36.6, -44.0, -46.3, -47.6, -48.3, -48.6),
+        4.0: (-32.2, -32.7, -34.2, -36.7, -43.0, -45.1, -46.0, -46.6),
+        7.5: (-31.7, -32.2, -33.2, -34.4, -36.0, -40.5, -43.0, -43.8),
+        9.5: (-31.6, -31.9, -32.8, -33.6, -34.6, -36.4, -39.6, -42.3)}
+# wall thickness (normal to the inner face) against height: rear / middle run battered 5 -> 2 mm, the swing ~3.4 mm
+SP_W_Z = (1.0, 3.0, 6.0, 9.0, 12.0, 16.0)
+SP_W_REAR = (5.2, 4.9, 4.3, 3.6, 3.0, 2.1)
+SP_W_MID = (5.0, 4.8, 3.4, 3.0, 2.5, 2.1)
+SP_W_SWING = (3.3, 3.3, 3.0, 2.6, 2.4, 2.1)
+
+
+def _interp(x, xs, ys):
+    if x <= xs[0]:
+        return ys[0]
+    for (x0, y0), (x1, y1) in zip(zip(xs, ys), zip(xs[1:], ys[1:])):
+        if x <= x1:
+            return y0 + (y1 - y0) * (x - x0) / (x1 - x0)
+    return ys[-1]
+
+
+def _sp_path(z):
+    """Inner face path (X, Y) of the side wall at height z."""
+    ks = sorted(SW_X)
+    sw = [_interp(z, ks, [SW_X[k][i] for k in ks]) for i in range(len(SW_Y))]
+    return SP_IN[:9] + list(zip(sw, SW_Y))
+
+
+def _sp_w(y, z):
+    r, m, w = (_interp(z, SP_W_Z, t) for t in (SP_W_REAR, SP_W_MID, SP_W_SWING))
+    return _interp(y, (-16.0, -12.0, 11.0, 15.0), (r, m, m, w))
 
 
 def side_panel(s):
@@ -481,30 +522,35 @@ def side_panel(s):
     takes the standoff ends (M3x8 CSK, flush)."""
     from shapely.geometry import LineString, Point, Polygon
     b = _b()
-    K, z0, z1 = 10, 1.0, 16.0    # the battered, leaning wall as K stacked layers (path and width interpolated floor -> top)
-    layers = []
-    for i in range(K):
-        t = (i + 0.5) / K
-        tp = min(1.0, 2.5 * t)   # the swing's lean is all in its foot
-        path = _chaikin_open([(xb + (xt - xb) * tp, yb + (yt - yb) * tp) for (xb, yb), (xt, yt) in zip(SP_IN_BOT, SP_IN)], 2)
-        band = _band(path, 5.0 + (2.0 - 5.0) * t)
-        layers.append(_ext(band, "xy", z0 + (z1 - z0) * i / K, z0 + (z1 - z0) * (i + 1) / K + 0.01))
-    wall = _U(*layers)
+    # the battered, leaning wall is one smooth (non-ruled) loft through six band sections floor -> top: the inner face
+    # path leans out in the front swing and the thickness thins with height (outer face battered), all as smooth
+    # functions of Z so the outer surface has no steps.
+    secs = []
+    for z in SP_W_Z:
+        path = _resample(_chaikin_open(_sp_path(z), 2), 240)
+        out = _offset_var(path, [_sp_w(y, z) for _, y in path])
+        secs.append(b.Wire.make_polygon([b.Vector(x, y, z) for x, y in path + out[::-1]], close=True))
+    wall = b.Solid.make_loft(secs, ruled=False)
     side = _round(Polygon([(-32.9, 1.0), (-32.9, 16.0), (-4.3, 16.0), (17.0, 12.0), (25.0, 10.0), (42.0, 10.0), (50.1, 1.0)]), r_out=1.5)
     side = side.union(Point(-32.9, 8.5).buffer(7.5, 64))                           # rear end a full round over the wheel
-    foot = _ext(_poly([(-31.6, -12.0), (-42.0, -11.9), (-40.6, -2.1), (-40.8, 3.3), (-42.9, 13.3), (-31.6, 13.3)]), "xy", 1.0, 2.6)   # wide foot under the chassis lobe
+    foot = _ext(_poly([(-31.6, -12.0), (-42.0, -11.9), (-40.6, -2.1), (-40.8, 3.3), (-42.9, 13.3), (-31.6, 13.3)]), "xy", 1.0, 2.0)   # 1 mm wide foot under the chassis lobe
     wall = _I(wall, _ext(side, "yz", -60.0, -20.0))
     nose_plan = _round(Polygon([(-51.6, 26.5), (-51.2, 39.7), (-50.0, 43.0), (-47.9, 45.7), (-45.1, 47.9), (-41.7, 49.3), (-38.5, 49.7),
                                 (-38.5, 38.7), (-41.6, 38.7), (-42.4, 37.3), (-42.3, 34.9), (-40.5, 34.5), (-40.5, 26.5)]), r_out=0.5)
     batter = _ext(_poly([(-51.6, 1.0), (-51.6 + 0.79 * 15, 16.0), (0.0, 16.0), (0.0, 1.0), (-51.6, -5.0)]), "xz", 0.0, 60.0)   # outer face leans in 38 deg
     nose = _I(_I(_ext(nose_plan, "xy", 1.0, 10.0), _ext(side, "yz", -60.0, -20.0)), batter)
-    wall = _S(wall, _box(-60.0, -30.0, 12.5, 60.0, 10.0, 20.0))                    # above the front wheel the wall runs straight on
-    straight = _I(_box(-34.0, -31.5, 9.0, 17.2, 1.0, 16.0), _ext(side, "yz", -60.0, -20.0))
+    # the nose top continues the wedgelet's 50 deg ramp (Z = 1 + 1.187 (50.1 - Y)) so a wedge rides up both as one face
+    nose = _one(nose).split(b.Plane(origin=(0.0, 50.1, 1.0), z_dir=(0.0, 1.187, 1.0)), keep=b.Keep.BOTTOM)
+    # the nose's front-outer corner is chamfered back (a plane leaning ~55 deg in and ~57 deg back) so a wedge or
+    # spinner tooth coming in from the front quarter glances off instead of catching the corner
+    nose = _one(nose).split(b.Plane(origin=(-120.0, 0.0, 0.0), z_dir=(1.0, -1.525, -1.4725)), keep=b.Keep.TOP)
     nose = _S(nose, _box(-42.0, -38.4, 26.5, 39.0, 3.0, 10.5))                     # hollow behind the nose wall
     boss = _I(_cyl(3.0, -42.5, -39.5, SA), _ext(side, "yz", -60.0, -20.0))         # standoff end boss
-    body = _U(wall, nose, foot, straight, boss)
-    cuts = [_csk(3.3, 6.2, (-46.26, SA[0], SA[1]), "x", 1, 8.0), _csk(3.3, 6.6, (-41.76, SB[0], SB[1]), "x", 1, 8.0), _cyl(3.1, -50.0, -41.5, SB),
-            _csk(3.3, 6.2, (-35.26, NUT[0], NUT[1]), "x", 1, 8.0), _cyl(2.55, -42.55, -38.0, SA),
+    body = _U(wall, nose, foot, boss)
+    # M3 CSK seats (ISO 10642 head 6.6, +0.1 clearance) with a 12 mm head bore out through the battered outer face, so a
+    # driver reaches the head and the screw backs straight out
+    cuts = [_csk(3.3, 6.7, (-46.26, SA[0], SA[1]), "x", 1, 8.0, 12.0), _csk(3.3, 6.7, (-41.76, SB[0], SB[1]), "x", 1, 8.0, 12.0),
+            _csk(3.3, 6.7, (-35.26, NUT[0], NUT[1]), "x", 1, 8.0, 12.0), _cyl(2.55, -42.55, -38.0, SA),
             _box(-45.0, -43.4, -38.7, -24.8, 5.0, 15.0),                          # rear tyre relief on the inner face
             _box(-32.6, -31.4, -13.1, 2.6, 3.7, 13.3)]                            # clears the chassis nut lobe
     for y0 in (-11.0, -4.5, 2.0):     # diagonal vent slots (TPU wall flexes, keeps the ESC cool)
@@ -515,7 +561,19 @@ def side_panel(s):
     # belt channel on the inner face: the O-ring runs inside the panel, covered from outside (W8)
     from shapely.geometry import Point
     band = Point(RY, RZ).buffer(7.5 + 1.25, 64).union(Point(*SA).buffer(3.7 + 1.25, 48)).convex_hull
+    band = band.difference(band.buffer(-2.6, 64))      # only the ring the O-ring actually runs in, not the whole hull
     return _S(sh, _ext(band, "yz", *sorted((s * 30.5, s * 32.0))))
+
+
+def _offset_var(line, ds):
+    """Offset of an open (x, y) polyline to its left by a per-point distance (averaged tangent normals, smoothed)."""
+    out = []
+    for i, (x, y) in enumerate(line):
+        a, b = line[max(i - 2, 0)], line[min(i + 2, len(line) - 1)]
+        tx, ty = b[0] - a[0], b[1] - a[1]
+        L = math.hypot(tx, ty)
+        out.append((x - ds[i] * ty / L, y + ds[i] * tx / L))
+    return _chaikin_open(out, 0)
 
 
 def _offset_open(line, d):
@@ -854,7 +912,7 @@ def make_spec(model_file):
         F(id=f"bolt_u{n}b", designation="M3x14", reason="M3x14 CSK alu (STEP FS9 M3x12): through mount and lug, 12 mm bites only 3.9 mm of the 15 mm standoff", material="aluminium", at=[s * MNT_IN, SB[0], SB[1]], dir=[s, 0, 0], through=[mnt, "tub"], threads_into=f"so_b{n}",
           )
         F(id=f"bolt_s{n}a", designation="M3x10", material="aluminium", reason="M3x10 CSK (STEP: M3x8): 8 mm bites only 4.2 mm of the standoff thread; 10 mm gives 6.2 (>= 1.5 d in aluminium)", at=[s * 46.26, SA[0], SA[1]], dir=[-s, 0, 0], through=[f"side_{n}"], threads_into=f"so_a{n}")
-        F(id=f"bolt_s{n}b", designation="M3x10", material="aluminium", reason="M3x10 CSK (STEP: M3x8): the head sits 5.3 mm out from the 15 mm standoff end, so 8 mm bites 2.7 mm; 10 mm bites 4.7", at=[s * 41.76, SB[0], SB[1]], dir=[-s, 0, 0], through=[f"side_{n}"], threads_into=f"so_b{n}")
+        F(id=f"bolt_s{n}b", designation="M3x10", material="aluminium", reason="M3x10 CSK (STEP: M3x8): the head sits 5.3 mm out from the 15 mm standoff end, so 8 mm bites 2.7 mm; 10 mm bites 4.7", at=[s * 41.76, SB[0], SB[1]], dir=[-s, 0, 0], through=[f"side_{n}", f"wedgelet_{n}"], threads_into=f"so_b{n}")
         F(id=f"bolt_s{n}c", designation="M3x8", material="aluminium", reason="alu M3 CSK (Build Guide: aluminium bolts for weight; the STEP draws stainless)", at=[s * 35.26, NUT[0], NUT[1]], dir=[-s, 0, 0], through=[f"side_{n}", "tub"], threads_into=f"nut_c{n}")
     for k, (dy, dz) in enumerate(((6, 0), (-6, 0), (0, 6), (0, -6))):
         F(id=f"bolt_wm{k}", designation="M2x8", head="button", tool="hex1.3", material="titanium", at=[MNT_SLAB, WY + dy, WZ + dz], dir=[-1, 0, 0], through=["mount_r", "motor_spacer"],

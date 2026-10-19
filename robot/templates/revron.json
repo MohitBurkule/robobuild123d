@@ -5849,7 +5849,8 @@
     0
    ],
    "through": [
-    "side_l"
+    "side_l",
+    "wedgelet_l"
    ],
    "threads_into": "so_bl",
    "head": "countersunk",
@@ -5966,7 +5967,8 @@
     0
    ],
    "through": [
-    "side_r"
+    "side_r",
+    "wedgelet_r"
    ],
    "threads_into": "so_br",
    "head": "countersunk",
