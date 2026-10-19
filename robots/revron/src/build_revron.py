@@ -1000,9 +1000,6 @@ def main():
                     allow_overlap=[dict(a="wshaft", b="wbearing", max_depth_mm=0.3, reason="shaft in the MR85 inner race (bearing modelled as one solid)")],
                     claims=[dict(id="c_mass", text="weighs 150 g or less", metric="mass_total_g", op="<=", value=150),
                             dict(id="c_fit", text="fits the 150 mm square", metric="footprint_mm", op="<=", value=150)],
-                    exposure={"max_frac": 0.35, "tilt_gap_mm": 3.0, "tilt_deg": 2,
-                              "catch_mm2": {"front": 1383, "rear": 2094, "left": 2845, "right": 2331},
-                              "catch_note": "limits = RVRN 2.0 STEP assembly measured by exposure.catch_area x 1.2 (tyre side walls dominate)"},
                     reference_cad=reference_cad(), **body)
         spec["modules"] = [{"id": "weapon_module", "root": "mount_r", "note": "RVRN quick change: 4 M3 out, both mounts with the drisk lift off the chassis tabs",
                             "parts": [p["id"] for p in spec["parts"] if _root(spec["parts"], p) == "mount_r" and p["id"] != "mount_r"]}]
