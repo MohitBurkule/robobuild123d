@@ -199,7 +199,7 @@ def add_wire(plan, wid, a, b, kind, awg=26, slack=6.0, avoid=()):
         r = snap((x - sx / 2, x + sx / 2, y - sy / 2, y + sy / 2), others)
         plan.cut("bottom", sh.boxr(*r, z - sz / 2, z + sz / 2),
                  intent=I("wiring", f"channel for {wid} ({a} -> {b}) in the floor, under the parts, so no lead is pinched "
-                          "between parts or crosses a moving one", f"channel {CH_W} mm wide fits {awg} AWG with room"))
+                          "between parts or crosses a moving one", f"channel {CH_W} mm wide fits {awg} AWG with room", threats=["lifter_flipper", "hazard_snag", "flip_landing", "wall_slam"]))
     plan.wire({"id": wid, "from": a, "to": b, "awg": awg, "kind": kind, "slack_mm": slack},
-              intent=I("wiring", f"{kind} lead {a} -> {b}", f"{awg} AWG for the {kind} current; {slack} mm slack to unplug"))
+              intent=I("wiring", f"{kind} lead {a} -> {b}", f"{awg} AWG for the {kind} current; {slack} mm slack to unplug", threats=["wall_slam", "flip_landing"]))
     return path

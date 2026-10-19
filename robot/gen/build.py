@@ -18,6 +18,7 @@ from .external import drive, electronics, fasteners, front, pockets, shell, swit
 from .external.plan import Frame, Plan
 from .external.weapon_drisk import WEDGELET_T
 from . import intent as intent_mod
+from . import threats as threats_mod
 from .layout import Component, Keepout, LayoutInputs, Link, solve
 
 ROBOT_TYPE = {"none_pusher": "wedge", "wedge": "wedge", "lifter": "lifter", "hspin_bar": "horizontal_spinner",
@@ -79,6 +80,7 @@ def make_plan(h, user=None) -> tuple:
     plan = Plan(hyp=h, frame=fr, name=(user or {}).get("name") or f"gen {h.weapon}",
                 robot_type=ROBOT_TYPE.get(h.weapon, "other"))
     plan.extra["_floor_z"] = fp["floor_z"]
+    plan.extra["wheel_r"] = h.wheel_dia / 2
     if g.belt and h.front == "wedgelets":
         plan.extra["axle_out"] = WEDGELET_T / 2  # the standoff end enters the wedgelet's bore (takes the shear); the
         # screw along its axis clamps the wedgelet to the end face (Revron RV17/18)
@@ -92,7 +94,7 @@ def make_plan(h, user=None) -> tuple:
 # ---------------------------------------------------------------- layout
 def layout_inputs(plan, h, user=None) -> LayoutInputs:
     comps = []
-    for c in electronics.components(h):
+    for c in electronics.components(h, (user or {}).get("margin_tier", 0)):
         size = electronics.size_of(c["catalog"])
         fixed = ((user or {}).get("fixed") or {}).get(c["id"])
         comps.append(Component(c["id"], c["kind"], size, electronics.mass_of(c["catalog"]), c["catalog"],
@@ -156,6 +158,7 @@ def add_wiring(plan, h):
 # ---------------------------------------------------------------- spec
 def to_spec(plan, h) -> dict:
     weaponed = plan.extra.get("weapon_motor") or plan.extra.get("servo")
+    threats_mod.answer(plan)
     cells = 1 if h.battery == "lipo_1s_300" else 2
     spec = {
         "name": plan.name, "profile": "aws2025", "robot_type": plan.robot_type, "locomotion": "roller",
@@ -168,7 +171,7 @@ def to_spec(plan, h) -> dict:
         + plan.claims,
         "generator": {"hypothesis": h.to_dict(), "slug": h.slug, "notes": plan.notes,
                       "layout": {k: list(v) for k, v in plan.placements.items()},
-                      "features": plan.features},
+                      "features": plan.features, "ground_game": hyp_mod.ground_game(h)},
     }
     if plan.archetype:
         spec["archetype"] = plan.archetype
@@ -194,6 +197,7 @@ def _finish(plan, g, h, lay):
     add_front(plan, h)
     weapon.add(plan, h, g)
     add_wiring(plan, h)
+    shell.add_skirts(plan, plan.extra["_floor_z"])
     shell.add_shell(plan)
     return to_spec(plan, h)
 
@@ -210,6 +214,22 @@ def build(h, user: dict | None = None, layout_index: int = 0, k: int = 5) -> dic
         h = hyp_mod.Hypothesis.from_dict(h)
     if not hyp_mod.buildable(h, bool((user or {}).get("experimental"))):
         raise BuildError(f"no assembler for {h.slug} yet (buildable: {sorted(hyp_mod.BUILDABLE)})")
+    errors = []
+    for tier in range(len(electronics.MARGIN_TIERS)):
+        u = dict(user or {}, margin_tier=tier)
+        try:
+            spec = _build(h, u, layout_index, k)
+        except BuildError as e:
+            errors.append(str(e))
+            continue
+        spec["generator"]["margins"] = {"tier": tier, "battery_front_side_mm": list(electronics.MARGIN_TIERS[tier][:2]),
+                                        "electronics_front_side_mm": list(electronics.MARGIN_TIERS[tier][2:]),
+                                        "why": electronics.MARGIN_WHY[tier]}
+        return spec
+    raise BuildError(errors[-1] if errors else f"{h.slug}: no layout")
+
+
+def _build(h, user, layout_index, k):
     errors, usable, avoid = [], 0, []
     for _round in range(6):  # layouts whose wiring fails push the components at the failing wire ends elsewhere
         u = dict(user or {}, avoid=list(avoid))

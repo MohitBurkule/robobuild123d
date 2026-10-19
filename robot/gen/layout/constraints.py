@@ -32,7 +32,8 @@ def clear_of_holes(inp, comp, pl):
 
 
 def edge_margins(inp, comp, pl):
-    """Battery rule: >= min_front_mm from the front edge and >= min_side_mm from each side (combat R120/R121)."""
+    """Keep-away rule: >= min_front_mm from the front edge and >= min_side_mm from each side and the rear (combat
+    R120/R121; CF-GD03 battery 10 mm from any exposed face, CF-GD04 receiver/ESC 8 mm from the skin)."""
     if not (comp.min_front_mm or comp.min_side_mm):
         return None
     x0, x1, y0, y1 = geom.bounds(inp.outline)
@@ -42,6 +43,8 @@ def edge_margins(inp, comp, pl):
         return "too close to the front"
     if r[0] - x0 < comp.min_side_mm or x1 - r[1] < comp.min_side_mm:
         return "too close to a side"
+    if r[2] - y0 < comp.min_side_mm:
+        return "too close to the rear"
     return None
 
 

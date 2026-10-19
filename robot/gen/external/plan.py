@@ -162,7 +162,10 @@ class Plan:
             purpose = {"shaft": "load_path", "pin": "load_path", "belt": "load_path", "glue": "retention", "velcro": "retention",
                        "tape": "retention", "snap": "assembly", "interlock": "retention"}.get(method, "assembly")
             lim = ", ".join(f"{k}={v}" for k, v in kw.items() if k in ("interference_mm", "mechanical_key")) or "geometry"
-            intent = {"purpose": purpose, "reason": reason, "load_or_constraint": f"{method}; {lim}"}
+            # a joint answers the shocks that would loosen or shear it: impacts and landings; a running joint also the
+            # weapon's own reaction torque and gyro load
+            threats = (["reaction_gyro", "wall_slam"] if method in ("shaft", "pin", "belt") else ["wall_slam", "flip_landing"])
+            intent = {"purpose": purpose, "reason": reason, "load_or_constraint": f"{method}; {lim}", "threats": threats}
         self.feature("connect", intent, target=f"{a}~{b}")
 
     def screw(self, intent=None, **f):

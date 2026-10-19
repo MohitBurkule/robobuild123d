@@ -47,14 +47,21 @@ def add_wedge(plan, length=46.0, material="petg_cf", pid="wedge"):
     xs = [round(s * W * k, 1) for k in (0.4, 0.8) for s in (1, -1)]
     z_ins = round(f.zt * 0.6, 2)
     holes = [sh.cyl_axis(1.1, yf, yf + WEB_T + 1.6, "y", x, z_ins) for x in xs]
+    holes += [sh.csk_cut((x, yf + WEB_T, z_ins), (0, -1, 0), 2.0) for x in xs]  # CF-ST04 / CF-VS01: flush heads
     trim = sh.box(width + 20, 10.0, 40.0, (0, yf - 5.0, 0))
     shape = sh.S(sh.U(*items), *holes, trim)
+    from .. import threats as _th
+    as_txt, as_miss = _th.lip_rules(material, ang, 0.3, 0.0, False, width, WEDGE_T, length, width, True, contact_mm2=width * 0.6)
     plan.part(id=pid, kind="wedge", material=material, process="fdm", shape=shape, color="#ff6a1a",
               print_orientation="+y", label=f"printed wedge, {ang:.0f} deg ramp, lip {LIP_GAP} mm off the floor",
               intent=I("ground_game", "gets under the opponent first and lifts it off its wheels; ribs carry the "
                        "lip load back to the mounting web, printed on its web so layers run along the slope",
-                       f"lip {LIP_GAP} mm off the floor (clears arena seams), {ang:.0f} deg, {WEDGE_T} mm plate, 7 ribs"))
-    fasteners.add_front_inserts(plan, xs, z_ins, pid, plate_t=WEB_T)
+                       f"lip {LIP_GAP} mm off the floor (clears arena seams), {ang:.0f} deg, {WEDGE_T} mm plate, 7 ribs; " + as_txt,
+                       threats=["under_front", "under_side", "lifter_flipper", "CF-AS01", "CF-AS02", "CF-AS03", "CF-AS04", "CF-WL01"],
+                       accepted_risk=(f"misses {', '.join(as_miss)}: a rigid ribbed ramp, full width with one joined edge - it "
+                                      "rides 0.6 mm up instead of flexing, so it does not dig in, but a seam step can catch it"
+                                      if as_miss else None)))
+    fasteners.add_front_inserts(plan, xs, z_ins, pid, plate_t=WEB_T, head="countersunk")
     return y_tip, ang
 
 
@@ -81,13 +88,19 @@ def add_skirt(plan, length=30.0, pid="skirt", t=2.0):
     xs = [round(s * W * k, 1) for k in (0.4, 0.8) for s in (1, -1)]
     z_ins = round(f.zt * 0.45, 2)
     holes = [sh.cyl_axis(1.1, yf - 0.5, yf + WEB_T + 1.6, "y", x, z_ins) for x in xs]
+    holes += [sh.csk_cut((x, yf + WEB_T, z_ins), (0, -1, 0), 2.0) for x in xs]  # CF-ST04 / CF-VS01: flush heads
     trim = sh.box(width + 20, 10.0, 40.0, (0, yf - 5.0, 0))
+    from .. import threats as _th
+    as_txt, as_miss = _th.lip_rules("tpu", math.degrees(ang), 0.3, 0.0, False, width, t, length, width, True, contact_mm2=width * 0.6)
     plan.part(id=pid, kind="skirt", material="tpu", process="fdm", shape=sh.S(sh.U(*items), *holes, trim),
               color="#e0a020", print_orientation="+y",
               label=f"printed TPU skirt, {math.degrees(ang):.0f} deg, {t:g} mm, lip 0.3 mm off the floor",
               intent=I("ground_game", "a flexible skirt drags on the floor and bends over seams instead of lifting the "
-                       "robot, so it wins the ground game against wedges", f"TPU {t} mm, lip 0.3 mm, no ribs (must flex)"))
-    fasteners.add_front_inserts(plan, xs, z_ins, pid, plate_t=WEB_T)
+                       "robot, so it wins the ground game against wedges", f"TPU {t} mm, lip 0.3 mm, no ribs (must flex); " + as_txt,
+                       threats=["under_front", "hazard_snag", "lifter_flipper", "CF-AS01", "CF-AS02", "CF-AS03", "CF-AS04", "CF-WL01"],
+                       accepted_risk=(f"misses {', '.join(as_miss)}: a full-width TPU sheet, joined edge; it flexes over seams"
+                                      if as_miss else None)))
+    fasteners.add_front_inserts(plan, xs, z_ins, pid, plate_t=WEB_T, head="countersunk")
     return y_tip, math.degrees(ang)
 
 
@@ -106,7 +119,7 @@ def add_plow(plan, length=30.0, pid="plow"):
     part["label"] = f"printed V plow, {ang:.0f} deg ramp, nose swept back 25 deg"
     plan.features[-1 - next(i for i, f in enumerate(reversed(plan.features)) if f["target"] == pid)]["intent"] = I(
         "ground_game", "the V nose deflects opponents to the side as well as lifting them, so a pusher can steer them "
-        "into the wall", f"wedge {ang:.0f} deg with the edge swept back 25 deg")
+        "into the wall", f"wedge {ang:.0f} deg with the edge swept back 25 deg", threats=["under_front", "grabber", "wall_slam"])
     return y_tip, ang
 
 

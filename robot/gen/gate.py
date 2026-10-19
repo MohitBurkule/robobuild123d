@@ -93,7 +93,7 @@ def gate(h, user: dict | None = None, fast=False, max_layouts=3, seeds=(0, 1), l
         except ValueError as e:
             attempts.append({"seed": u.get("seed"), "layout": idx, "blockers": [f"build: {e}"]})
             continue
-        missing = intent_mod.check(d)
+        missing = intent_mod.check(d, adversarial=True)
         if missing:  # a feature without a why is a generator bug, not a layout problem: refuse at once
             raise Rejected(getattr(h, "slug", str(h)), attempts + [{"blockers": [f"intent: {m}" for m in missing]}])
         rep = verify_dict(d, fast=fast)
