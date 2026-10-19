@@ -191,7 +191,7 @@ def upright(side):
     for (y, z) in (SA, SB):
         cut.append(cylx(1.6, x0 - 1, x1 + 1, y, z))                             # 3.2 M3 clearance into the standoffs
     if side == "r":
-        cut.append(cylx(4.6, BR_X[1], x1 + 1, WY, WZ))                          # clearance round the bearing spacer, inboard of the seat
+        cut.append(cylx(4.6, BR_X[1] - 1.0, x1 + 1, WY, WZ))                          # clearance round the bearing spacer, inboard of the seat
     cut.append(yz(slot2((24.0, 9.75), (29.4, 5.75), 2.0), x0 - 1, x1 + 1))       # lightening slot over the standoffs
     if side == "l":
         cut.append(yz(chaikin([(20.6, 16.5), (25.9, 16.5), (23.85, 20.1)], 3), x0 - 1, x1 + 1))
@@ -335,11 +335,12 @@ def chassis():
         # box section (RV01 front): a hollow rectangular tube outboard of the upright, the two standoffs pass through its
         # 5 mm holes; open at the back into the tub (phase wires run through it), the wedglet clip bears on its outer face
         bx = S(box_section(0.0, s), yz([(y, z) for y, z in shrink_yz(BOX_YZ, 1.2)], *sorted((s * (BOX_X[0] + 1.2), s * (BOX_X[1] - 1.2)))),
-               boxr(*sorted((s * (BOX_X[0] + 1.2), s * (BOX_X[1] - 1.2))), CY1 - CW - 0.5, CY1 + 0.5, WG_Z0 + 1.2, 11.8))
+               boxr(*sorted((s * (BOX_X[0] + 1.2), s * (BOX_X[1] - 1.2))), CY1 - CW - 0.5, CY1 + 1.3, WG_Z0 + 1.2, 11.8))
         add.append(bx)
         for (y, z) in (SA, SB):
-            add.append({"type": "intersect", "items": [cylx(3.75, *sorted((s * BOX_X[0], s * BOX_X[1])), y, z), box_section(0.0, s)]})   # boss round each standoff hole
-        pad = boxr(*sorted((s * (CX - 0.1), s * 33.5)), NUT_Y - 3.4, NUT_Y + 3.4, NUT_Z - 3.4, NUT_Z + 3.4)   # clamp pad: takes the wedglet's inner face
+            add.append({"type": "intersect", "items": [cylx(3.75, *sorted((s * BOX_X[0], s * BOX_X[1])), y, z), box_section(0.0, s),
+                                                       boxr(-CX - 10, CX + 10, CY1 - 1.0, SB[0], -1.0, 20.0)]})   # rear half only (the key-slot runs forward)   # boss round each standoff hole
+        pad = boxr(*sorted((s * (CX - 0.1), s * 33.0)), NUT_Y - 3.4, NUT_Y + 3.4, NUT_Z - 3.4, NUT_Z + 3.4)   # clamp pad: takes the wedglet's inner face
         add.append(S(pad, wedglet(s)))
     # motor pockets (rear): front and rear stop walls either side of each N10
     for s in (1, -1):
@@ -360,7 +361,8 @@ def chassis():
     yc = (RY + 5 + CY1 - CW) / 2
     for tri in ([(-22, CY1 - CW - 3), (22, CY1 - CW - 3), (0, yc + 3)], [(-22, RY + 8.0), (22, RY + 8.0), (0, yc - 3)],
                 [(-CX + CW + 2.5, CY1 - CW - 6), (-CX + CW + 2.5, RY + 11), (-4.0, yc)], [(CX - CW - 2.5, CY1 - CW - 6), (4.0, yc), (CX - CW - 2.5, RY + 11)]):
-        cut.append(place({"type": "prism", "points": r4(chaikin(tri, 3)), "height": 3.0}, (0, 0, FLOOR_Z1 - 0.5)))
+        cut.append(S(place({"type": "prism", "points": r4(chaikin(tri, 3)), "height": 3.0}, (0, 0, FLOOR_Z1 - 0.5)),
+                     *[boxr(*sorted((s_ * (NUT_X0 - 1.0), s_ * CX)), NUT_Y - 5.6, NUT_Y + 5.6, FLOOR_Z0 - 3, NUT_Z + 5) for s_ in (1, -1)]))   # pockets stop short of the nut bosses
     for s in (1, -1):
         cut.append(boxr(*sorted((s * 3.6, s * (CX - CW + 0.05))), CY0 + CW - 0.05, RY + 5.0, FLOOR_Z0 - 2, FLOOR_Z1 + 0.05))   # motor bays open to the panel
         cut.append(cylx(1.7, *sorted((s * (CX - CW - 0.5), s * (CX + 0.5))), RY, RZ))                     # N10 shaft bushing hole
@@ -371,7 +373,7 @@ def chassis():
             cut.append(cylx(2.55, *sorted((s * (BOX_X[0] - 0.5), s * (BOX_X[1] + 0.5))), y, z))          # 5.1 standoff holes
             # 3.3 key-slot forward from each hole through the inner part of the box: the upright screws, backed out of the
             # standoffs, stay captive in the uprights and their shanks slide forward out of the box with the weapon module
-        cut.append(boxr(*sorted((s * (BOX_X[0] - 0.5), s * SLOT_X)), SB[0], BOX_YZ[1][0] + 1.0, SA[1] - 1.65, SB[1] + 1.65))
+        cut.append(boxr(*sorted((s * (BOX_X[0] - 0.5), s * SLOT_X)), SB[0], BOX_YZ[1][0] + 1.0, 1.5, SB[1] + 1.65))
         cut.append(boxr(*sorted((s * (NUT_XC - 1.3), s * (NUT_XC + 1.3))), NUT_Y - 2.8, NUT_Y + 2.8, NUT_Z, NUT_Z + 4.5))   # nut drops in from above
         cut.append(place({"type": "prism", "points": hexagon_pts(5.6), "height": NUT_XC + 1.25 - NUT_X0 + 0.5}, (s * (NUT_XC + 1.25 + NUT_X0 - 0.5) / 2, NUT_Y, NUT_Z), (0, 90, 0)))   # alu nut pocket (5.5 AF + 0.1), open to the inside
     for px, py in INS:
@@ -442,7 +444,7 @@ WG_SIDE = [(-47.7, 10.3), (-47.2, 12.3), (-46.1, 13.9), (-43.7, 15.5), (-41.7, 1
 WG_FRONT = [(17.5, WG_Z0), (52.0, WG_Z0), (44.5, 9.9), (38.5, 9.9), (36.7, 10.2),
             (34.9, 11.4), (33.6, 12.7), (31.7, 12.7), (30.6, 15.2), (21.0, 15.2), (20.2, 14.9), (17.9, 13.2), (17.5, 12.3)]   # nose, seen from the front (x, z)
 WG_NOSE = [(17.5, 42.8), (17.5, 31.2), (18.0, 30.8), (21.5, 30.4), (21.5, 19.2),
-           (29.0, 19.2), (29.0, 30.4), (30.6, 30.4), (31.3, 31.3), (33.3, 32.2), (35.5, 32.2), (35.5, 30.7), (36.5, 29.7), (41.5, 29.6),
+           (29.0, 19.2), (29.0, 29.2), (36.5, 29.2), (41.5, 29.6),
            (41.5, 27.1), (40.5, 27.1), (40.0, 26.4), (39.5, 26.4), (39.5, 19.9), (40.0, 19.9), (40.5, 19.2), (41.5, 19.2), (41.3, 18.2),
            (40.0, 16.6), (36.6, 15.6), (34.5, 13.4), (32.6, 9.3), (31.6, 5.0), (42.6, 5.0), (43.5, 6.4), (46.5, 8.2), (49.5, 11.2),
            (50.6, 13.0), (51.9, 17.1), (51.9, 31.3), (51.4, 33.4), (49.5, 37.2), (46.5, 40.2), (44.6, 41.3), (40.6, 42.6), (38.5, 42.8),
@@ -496,20 +498,25 @@ def wedglet(s):
         cylx(1.6, 30.0, 50.0, NUT_Y, NUT_Z),               # chassis screw into the alu nut
         yz(rrect(-44.0, -32.0, 4.9, 14.9, 1.5), 43.3, 45.0),   # rear-wheel relief on the inner face
         boxr(24.5, 27.0, 27.0, 29.3, 0.0, 16.0),           # slot between the clip cheeks
-        boxr(23.0, 27.5, 27.0, 29.3, 7.0, 16.0),           # H clip: two cheeks joined by a web
-        boxr(23.0, 27.5, 27.0, 29.3, 0.0, 5.0),
+        boxr(21.0, 29.5, 25.5, 27.01, 11.2, 16.0),         # flat top ahead of the clip (no knife edge at the slope)
+        boxr(23.0, 27.0, 27.0, 29.3, 7.0, 16.0),           # H clip: two cheeks joined by a web
+        boxr(23.0, 27.0, 27.0, 29.3, 0.0, 5.0),
         csk_x(3, CSK_A, 1, SA[0], SA[1]),                  # M3 countersinks on the nose ramp (CSK alu screws, flush)
         csk_x(3, CSK_B, 1, SB[0], SB[1]),
         csk_x(3, SLC_X, 1, NUT_Y, NUT_Z),                  # and on the battered side wall
         yz(belt_env(0.7), 30.4, 32.6),                     # belt channel on the inner face
         boxr(30.4, 32.6, -20.0, SB[0], -1.0, 1.95),        # where the belt runs low the channel opens through the floor (no skin)
+        boxr(50.8, 60.0, -60.0, 60.0, -1.0, 20.0),
+        boxr(47.7, 51.3, SA[0] - 3.4, SA[0] + 3.4, -1.0, 2.0),   # the CSK head bore leaves a 0.2 mm floor: open it (head seats on the cone)         # outer edge of the nose ramp ends in a 1.5 mm land, not a knife edge
+        boxr(17.0, 21.7, 35.6, 38.3, 7.5, 12.0),          # no tapering tongue over the front of the box section
+        boxr(17.0, 21.7, 38.0, 40.0, 5.8, 12.0),          # and no knife edge on the block ahead of it
         box_section(0.1),                                  # clears the chassis box section (the nose clip sits on its outer face)
         boxr(0.0, BOX_X[0] - 0.1, -60.0, 60.0, -1.0, 30.0),   # nothing inboard of the box section (slides off outward)
-        S(boxr(29.5, 44.0, 30.5, 36.5, 0.0, 6.5), cylx(3.8, 29.0, 45.0, SA[0], SA[1])),   # hollow under the nose plate, a 1.2 tube kept round the nose standoff
+        S(boxr(29.5, 44.0, 31.9, 36.5, 0.0, 6.5), cylx(3.8, 29.0, 45.0, SA[0], SA[1])),   # hollow under the nose plate, a 1.2 tube kept round the nose standoff
         boxr(28.0, 35.0, 36.4, 40.0, 0.0, 3.0),
         xz([(29.0, 0.0), (29.0, 9.6), (37.0, 9.6), (48.4, 0.4)], 12.5, 19.1),   # hollow under the wedge ramp
         xz([(29.0, 0.0), (29.0, 11.0), (32.5, 11.5), (35.6, 4.2), (38.0, 2.3), (43.0, 0.5), (43.0, 0.0)], 6.2, 12.5),
-        xz([(35.3, 16.0), (35.3, 11.3), (38.0, 6.2), (44.0, 4.2), (49.0, 1.2), (55.0, 1.2), (55.0, 16.0)], 4.9, 12.5),   # ramp top face
+        xz([(35.3, 16.0), (35.3, 11.3), (38.0, 6.2), (44.0, 4.2), (49.0, 1.95), (55.0, 1.95), (55.0, 16.0)], 4.9, 12.5),   # ramp top face
         boxr(29.0, 34.5, 12.5, 19.1, 9.6, 16.0),
     ]
     sh = S(body, *cut)
