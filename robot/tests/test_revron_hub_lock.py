@@ -99,3 +99,11 @@ def test_weapon_lock_missing_declaration_fails():
 def test_weapon_lock_missing_hole_fails():
     assert failed(run(_lock(drisk(), plate_hole=False), LEGAL), "legal.locking_bar")
     assert failed(run(_lock(drisk(), disc_hole=False), LEGAL), "legal.locking_bar")
+
+
+def test_weapon_lock_external_pin_is_a_warning_not_a_blocker():
+    d = drisk()
+    d["weapon_lock"] = {"type": "external_pin", "note": "pit pin, pulled before a fight"}
+    rep = run(d, LEGAL)
+    fs = [f for f in rep.findings if f.id == "legal.locking_bar" and not f.passed]
+    assert fs and all(f.severity != "blocker" for f in fs), dump(rep)

@@ -65,13 +65,7 @@ MNT_SLAB = 17.4
 WEAPON_CLEAR_R = 15.9                # chassis material stays outside this radius about the weapon axis (rotor + 1 mm)
 BSP_X = (11.9, 13.4)
 STAT_HOLE_R, CB_R, CB_CONE_X = 1.12, 2.25, (16.4, 17.15)   # RV03 stator screw clearance d2.24, d4.5 counterbore, its cone
-# RV00 weapon lock pin (Build Guide rule; not in the STEP): a d4 TPU pin pushed in from outside through RV02 into one of
-# the spider's quarter windows, parked against the window's outer arc. Drisk-local window centre angle 45 deg at r9.6:
-# the pin spans r7.6..11.6 (bolt_p heads end at r6.25, window arc r11.7, bolt_d heads start r12.25), its tip stops
-# 0.3 mm short of disc_a so only the spider bears on it.
-LOCK_R, LOCK_RC, LOCK_A = 2.0, 9.6, 45.0
 PHASE_VIA = [[11.1, 14.5, 16.0], [11.1, 15.5, 18.2], [11.1, 27.0, 18.2], [11.1, 30.0, 14.5]]   # weapon phase leads: the lug (|X| >= 10.4, up to the deck) closes z 14.5 at y 15..26
-LOCK_TIP_X = DR_X["spider"][1] - 0.3
 
 
 # ---------------------------------------------------------------------------------------------------------------- 2D
@@ -371,7 +365,6 @@ def weapon_mount(side):
     else:
         cuts.append(_cyl(3.95, -30, 30, (WY, WZ)))                                   # outboard bearing seat (8 mm)
         cuts.append(_cyl(6.0, xm, xo + s, (WY, WZ)))                                 # shaft nut recess
-        cuts.append(_cyl(LOCK_R - 0.05, xi - s, xo + 3 * s, _lock_yz()))             # RV00 lock pin bore: 0.05 radial TPU press (held, pulls by hand)
     for (y, z) in (SA, SB):                                                          # M3 CSK into the standoffs, flush inside
         cuts.append(_mount_csk(s, y, z, "M3x12" if (y, z) == SA else "M3x14")[0])   # catalog CSK hole (robot.cad.holes)
     return _S(body, *cuts)
@@ -1052,41 +1045,6 @@ def esc_tray():
 
 
 # ------------------------------------------------------------------------------------------------------------ misc
-def _lock_yz():
-    """World (Y, Z) of the RV00 lock pin axis: the spider window at LOCK_A, radius LOCK_RC, in the drisk's modelled phase."""
-    a = math.radians(LOCK_A)
-    return _disc_local(LOCK_RC * math.cos(a), LOCK_RC * math.sin(a))
-
-
-def lock_outer_x():
-    """|X| just clear of RV02's battered outer face over the pin's head footprint (face: |X| = 23.48 - 0.185 Z - 0.0168 Y)."""
-    y, z = _lock_yz()
-    return 23.48 - 0.185 * (z - LOCK_HEAD_R) - 0.0168 * (y - LOCK_HEAD_R) + 0.15
-
-
-LOCK_HEAD_R, LOCK_HEAD_T = 3.5, 1.6
-
-
-def weapon_lock():
-    """RV00 TPU weapon lock (Build Guide safety rule, not in the STEP), in its own frame: the pin axis is local +Z with
-    the tip at the origin (the spec places it at the tip, local Z -> world +X). A d4 shank runs back from the tip
-    through the spider window and the RV02 bore; outside RV02 a d7 head with a flag tab (pull grip, lanyard eye) stops
-    it going in too far. Pulled out along the axis before a fight; while it is in, the spider's window bears on the shank
-    and the drisk cannot turn."""
-    b = _b()
-    head0 = -(lock_outer_x() + LOCK_TIP_X)          # local z of the head's inner face (tip at local 0 = world LOCK_TIP_X)
-    shank = b.Solid.make_cylinder(LOCK_R, -head0, b.Plane(origin=(0, 0, head0), z_dir=(0, 0, 1)))
-    # lead-in chamfer: full d4 at local -0.5, d3 at the tip (local 0); the cone's wide end meets the shank flush
-    tipc = b.Solid.make_cone(LOCK_R, LOCK_R - 0.5, 0.5, b.Plane(origin=(0, 0, -0.5), z_dir=(0, 0, 1)))
-    shank = _S(shank, _cyl(LOCK_R + 1, -0.5, 0.5, (0, 0), "z")).fuse(tipc)
-    head = b.Solid.make_cylinder(LOCK_HEAD_R, LOCK_HEAD_T, b.Plane(origin=(0, 0, head0 - LOCK_HEAD_T), z_dir=(0, 0, 1)))
-    # flag tab: local -X is world +Z (up), so the grip stands above the head; 2 mm lanyard eye near its end
-    from shapely.geometry import Point
-    flag = Point(0, 0).buffer(2.5, 32).union(Point(-9.0, 0).buffer(2.5, 32)).convex_hull.difference(Point(-9.0, 0).buffer(1.0, 24))
-    tab = _ext(flag, "xy", head0 - LOCK_HEAD_T, head0 - LOCK_HEAD_T + 1.2)
-    return _U(shank, head, tab)
-
-
 PARTS = {
     "base_panel": base_panel, "top_panel": top_panel, "chassis": chassis, "motor_back_spacer": motor_back_spacer,
     "mount_l": lambda: weapon_mount("l"), "mount_r": lambda: weapon_mount("r"),
@@ -1100,7 +1058,7 @@ PARTS = {
     "front_tyre_l": lambda: tyre(11.0, 7.0, -38.5, -32.5, SA), "front_tyre_r": lambda: tyre(11.0, 7.0, 32.5, 38.5, SA),
     "so_a_l": lambda: standoff((-SA_X[1], -SA_X[0]), SA), "so_a_r": lambda: standoff(SA_X, SA),
     "so_b_l": lambda: standoff((-SB_X[1], -SB_X[0]), SB), "so_b_r": lambda: standoff(SB_X, SB),
-    "weapon_lock": weapon_lock, "esc_tray": esc_tray,
+    "esc_tray": esc_tray,
     "belt_guard_l": lambda: belt_guard(-1), "belt_guard_r": lambda: belt_guard(1),
 }
 
@@ -1155,8 +1113,7 @@ def make_spec(model_file):
     P(id="spider", kind="weapon", material="aluminium", process="waterjet", stock="3 mm 7075 plate (one 2D profile: water-jet, no milling needed)",
       min_web_mm=0.8, min_web_reason="0.8 mm webs between the dog pockets and the rim are the designer's own (RVRN 2.0 STEP spider_1 measures 0.8 at the same four places)", rotates_with="weapon", parent="mount_r", at=list(WO), shape=M("spider", WO),
       joint={"kind": "revolute", "axis": [1, 0, 0], "pivot": [-6.7, WY, WZ], "min": 0, "max": 360, "default": 0}, color="#b8bcc2",
-      weapon={"kind": "disc", "motor": "weapon_motor", "cells": 2, "reduction": 1.0, "spin_axis": [1, 0, 0], "spin_dir": "ccw", "supported_both_ends": True, "teeth": 1,
-              "locking_bar": "weapon_lock"},
+      weapon={"kind": "disc", "motor": "weapon_motor", "cells": 2, "reduction": 1.0, "spin_axis": [1, 0, 0], "spin_dir": "ccw", "supported_both_ends": True, "teeth": 1},
       label="3 mm aluminium spider: bolted to the bell (4 M2 on r4.5), carries the disc stack on 4 M2 on r14")
     for nm, lab in (("disc_a", "inner"), ("disc_b", "outer")):
         P(id=nm, kind="other", role="blade", material="hardox", process="laser", stock="3 mm Hardox 450", parent="spider",
@@ -1207,10 +1164,6 @@ def make_spec(model_file):
         P(id=f"nut_d{k}", kind="nut", catalog="nut_m2", at=[DR_X["disc_b"][1] + 0.8, dy - WY, dz - WZ], rot=[0, 90, 0], rotates_with="weapon", parent="spider")
     P(id="esc_tray", kind="other", material="tpu", process="fdm", print_orientation="+z", rotates_with="fixed", shape=M("esc_tray"),
       label="TPU weapon-ESC tray (not in the STEP): glued to the base panel, lips hold the ESC when inverted")
-    ly, lz = _lock_yz()
-    P(id="weapon_lock", kind="locking_bar", role="weapon_lock", material="tpu", process="fdm", print_orientation="+z", rotates_with="fixed", color="#ff6a00", tethered=True,
-      parent="mount_l", at=[LOCK_TIP_X, ly, lz], rot=[0, 90, 0],
-      marked=True, tool_free=True, shape=M("weapon_lock"), label="RV00 TPU weapon lock pin (Build Guide rule; not in the STEP): d4 pin pushed through RV02 into a spider window, flag head + lanyard outside")
 
     # ---------------------------------------------------------------- fasteners
     for i, (x, y) in enumerate(INS):
@@ -1231,11 +1184,11 @@ def make_spec(model_file):
         a = math.radians(90 * k)
         dy, dz = _disc_local(HUB_R * math.cos(a), HUB_R * math.sin(a))
         F(id=f"bolt_p{k}", designation="M2x4", head="button", tool="hex1.3", material="titanium", at=[DR_X["spider"][0], dy, dz], dir=[1, 0, 0], through=["spider"], threads_into="weapon_motor",
-          access_before=["weapon_lock", "mount_l", "wbearing"], reason="spider to bell, fitted before the left mount goes on (inferred)")
+          access_before=["mount_l", "wbearing"], reason="spider to bell, fitted before the left mount goes on (inferred)")
         dy, dz = _disc_local(BOLT_R * math.cos(a), BOLT_R * math.sin(a))
         F(id=f"bolt_d{k}", designation="M2x16", head="button", tool="hex1.3", material="titanium", at=[DR_X["spider"][0], dy, dz], dir=[1, 0, 0],
           through=["spider", "disc_a", "dspacer", "disc_b"], threads_into=f"nut_d{k}",
-          access_before=["weapon_lock", "mount_l", "wbearing", "weapon_motor", "mount_r", "motor_spacer", "tub", "so_al", "so_bl", "so_ar", "so_br"],
+          access_before=["mount_l", "wbearing", "weapon_motor", "mount_r", "motor_spacer", "tub", "so_al", "so_bl", "so_ar", "so_br"],
           reason="stack bolted up on the bench before it goes on the motor (inferred: the STEP has the 2.2 holes but no screws)")
     for i, (x, y) in enumerate(((25.0, 10.4), (-25.0, 10.4), (25.0, -21.6), (-25.0, -21.6))):
         F(id=f"bolt_t{i}", designation="M2x4", head="countersunk", tool="hex1.3", at=[x, y, 20.4], dir=[0, 0, -1], through=["top_panel"], threads_into="tub",
@@ -1281,7 +1234,6 @@ def make_spec(model_file):
     C("mount_l", "mount_r", "interlock", "Both mounts tied by the standoffs and the chassis tabs")
     C("base_panel", "tub", "screw", "Base panel under the open floor, 5 M2 CSK into heat-sets")
     C("top_panel", "tub", "screw", "Ti top panel held by 4 M2 flat-head thread-forming screws through its countersunk corner holes into the column-top pilots (the STEP has the holes, not the screws)")
-    C("weapon_lock", "mount_l", "press_fit", "TPU lock pin pressed into the RV02 3.9 bore (0.05 radial grip, pulled by its flag) into a spider window; the head stops it, the lanyard tethers it to the mount", interference_mm=0.05, mechanical_key=True)
     C("battery", "tub", "press_fit", "Pack between the motor wall, the insert columns and the deck", interference_mm=0.1, mechanical_key=True)
     C("rxesc", "tub", "interlock", "Malenki boxed by the deck cage ribs (0.1 mm), the front wall and the deck; the weapon ESC under it")
     C("wesc", "esc_tray", "interlock", "weapon ESC in the TPU tray lips (0.1 mm); the cage rib holds -y, the Malenki +z")
@@ -1333,7 +1285,7 @@ def intent_checks():
         A("notch_bears", "a hit drives the mount back; the notch on the chassis tab bears it in compression, the bolts only clamp",
           part=f"mount_{n}" if n == "l" else "mount_r", lug="tub", bolts=[f"bolt_u{n}a", f"bolt_u{n}b"], dir=[0, -1, 0])
     for pid, up in (("tub", "-z"), ("mount_r", "+x"), ("mount_l", "-x"), ("whub_rr", "+x"), ("whub_rl", "-x"), ("whub_fr", "+x"), ("whub_fl", "-x"),
-                    ("wedgelet_r", "-z"), ("wedgelet_l", "-z"), ("side_r", "+z"), ("side_l", "+z"), ("motor_spacer", "+x"), ("weapon_lock", "+z")):
+                    ("wedgelet_r", "-z"), ("wedgelet_l", "-z"), ("side_r", "+z"), ("side_l", "+z"), ("motor_spacer", "+x")):
         A("support_free", "every printed part prints without supports in its declared orientation", part=pid, up=up)
     # exceptions (STEP RV01, by design): the rear wall is a triangulated truss - 2 mm ribs round 1 mm deep pockets, the ribs carry
     # the load and the 1 mm web only closes the box; the 1 mm lip below the base-panel rabbet only locates the panel edge
@@ -1399,7 +1351,6 @@ REF_BOM = [   # RVRN 2.0 STEP part list (research/rvrn_step/INDEX.txt); one row 
          deviation="the STEP shows the RV03 counterbores only"),
     dict(role="switch: 2 x M2 into the deck pilot holes (not in the STEP)", match=["bolt_sw*"], count=2, designation="M2",
          deviation="the STEP has the two 1.7 pilot holes but no screws"),
-    dict(role="weapon lock RV00 (TPU, Build Guide)", kind="part", match=["weapon_lock"], count=1, material="tpu"),
     dict(role="nitrile O-ring belts (not in the STEP; hub grooves are)", kind="part", match=["belt_l", "belt_r"], count=2),
     dict(role="PLA belt guards over the O-ring slots (not in the STEP)", kind="part", match=["belt_guard_*"], count=2),
     dict(role="battery lead: JST RCY", kind="wire", match=["w_bat_sw"], count=1, connector="jst_rcy"),
@@ -1473,9 +1424,7 @@ def reference_cad():
         R("top_panel", "Top_Panel_1.stl", tol_mm=0.3, note="0.9 mm top panel",
           deviations=[dict(near=[x, y, 19.95], r=3.0, reason="4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it")
                       for x, y in INS[:4]]),
-        R("mount_l", "RV02_XALT_HD_left_hand_weapon_mount_1.stl", tol_mm=0.5,
-          deviations=[{"near": [-17.4, *[round(v, 2) for v in _lock_yz()]], "r": 4.5,
-                       "reason": "RV00 weapon-lock pin bore d3.9 through RV02 (Build Guide lock rule; the STEP models no lock)"}]),
+        R("mount_l", "RV02_XALT_HD_left_hand_weapon_mount_1.stl", tol_mm=0.5),
         R("mount_r", "RV03_XALT__HD_Right_hand_weapon_mount_1.stl", tol_mm=0.5,
           deviations=[{"near": [16.8, WY + dy, WZ + dz], "r": 2.0,
                        "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"}
@@ -1522,7 +1471,7 @@ def main():
                     targets={"length_mm": 107, "width_mm": 104.1, "disc_dia_mm": 46, "wheel_dia_mm": 21.5, "tol_mm": 3,
                              "source": "RVRN 2.0 STEP (research/rvrn_step) measured in its assembly frame",
                              "note": "GR1507 drisk (single tooth, 3+6+3 on a 3 mm spider) on 8 mm XALT mounts; N10 direct to 21.5 rear tyres, O-rings to 11 mm fronts"},
-                    weapon_lock={"require_part": True, "note": "RV00 TPU tooth stop (weapon.locking_bar = weapon_lock), fitted whenever the battery is in"},
+                    weapon_lock={"type": "external_pin", "note": "pit safety pin handled outside the robot and pulled before a fight: not part of the build, no bore in RV02/RV03 (the STEP has none; user 2026-10-19)"},
                     reference_bom=REF_BOM,
                     reference_doc={"path": "REFERENCE.md", "must_mention": ["GR1507", "180 mAh", "Hardox", "JST RCY", "RV00", "XALT", "0.9 mm"],
                                    "must_not_mention": ["through an aluminium spider", "2S ≈350 mAh LiPo"]},
@@ -1533,7 +1482,6 @@ def main():
                                    dict(a="motor_r", b="whub_rr", max_depth_mm=0.4, reason="the catalog N10 shaft is drawn round; the hub's D-flat sits on its flat"),
                                    *[dict(a=f"insert_b{i}", b="tub", max_depth_mm=0.2, reason="heat-set insert: 3.5 OD melted into a 3.4 bore (interference by design)") for i in range(5)],
                                    *[dict(a=f"nut_c{n}", b="tub", max_depth_mm=0.1, reason="thin M3 nut pressed into a hex pocket 0.05 under its flats (captive)") for n in "lr"],
-                                   dict(a="weapon_lock", b="mount_l", max_depth_mm=0.15, reason="RV00 TPU lock pin d4 pressed into the RV02 3.9 bore (0.05 radial grip) so it cannot rattle out"),
                                    dict(a="wbearing", b="mount_l", max_depth_mm=0.1, reason="MR85 8.0 OD pressed into the RV02 7.9 printed seat (0.05 radial interference, the STEP seat size)")],
                     claims=[dict(id="c_mass", text="weighs 150 g or less", metric="mass_total_g", op="<=", value=150),
                             dict(id="c_fit", text="fits the 150 mm square", metric="footprint_mm", op="<=", value=150)],

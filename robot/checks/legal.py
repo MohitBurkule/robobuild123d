@@ -97,6 +97,11 @@ def weapons(ctx):
             continue
         bar = r.spec.part(wd.locking_bar) if wd.locking_bar else None
         lock = (getattr(r.spec, "raw", None) or {}).get("weapon_lock")
+        if bar is None and isinstance(lock, dict) and lock.get("type") == "external_pin":
+            # the pit pin is handled outside the robot and pulled before a fight (nothing in the build holds it): declared, not judged
+            out.append(fail("legal.locking_bar", G, WARNING, "Weapon lock is not part of the build",
+                            f"`{p.id}`: rule 5f lock declared as an outside pit pin ({lock.get('note') or 'no note'}); its fit is not checked.").on(p.id))
+            continue
         if bar is None and isinstance(lock, dict) and lock.get("type") == "removable_pin":
             out += tooth_stop_lock(r, w, p, lock) if lock.get("mode") == "tooth_stop" else pin_lock(r, w, p, lock)
             continue
