@@ -227,8 +227,20 @@ def png_bytes(img: np.ndarray | None) -> bytes:
     return out.getvalue()
 
 
+def scene_hash(world, view: View, ground_z=None, markers=()) -> str:
+    from . import cache
+
+    bodies = [(b.id, cache.body_sig(b), repr(b.color)) for b in world.bodies]
+    mk = [(np.asarray(m.at, float) if hasattr(m, "at") else repr(m), repr(m)) for m in markers]
+    return cache.h("render", cache.source_hash(__file__), bodies, repr(view), ground_z, mk)
+
+
 def render_png(world, view: View, ground_z=None, markers=()) -> bytes:
-    return png_bytes(render_array(world, view, ground_z, markers))
+    """PNG of a view; whole renders are cached by scene hash (part meshes come from the geometry cache)."""
+    from . import cache
+
+    return cache.memo("render", (scene_hash(world, view, ground_z, markers),),
+                      lambda: png_bytes(render_array(world, view, ground_z, markers)))
 
 
 def failure_markers(rep) -> list:

@@ -14,11 +14,12 @@ API used by the checks (all coordinates world mm, numpy arrays):
 from __future__ import annotations
 
 import copy
+import os
 
 import numpy as np
 import trimesh
 
-from . import catalog, geom, profile, shapes, xform
+from . import cache, catalog, geom, profile, shapes, xform
 from .spec import Spec
 
 DEFAULT_COLORS = {
@@ -62,6 +63,7 @@ def resolve(spec: Spec, fast: bool = False) -> Resolved:
     tess = geom.FAST if fast else geom.FINE
     prof = profile.named(spec.profile)
     parts, errors = [], []
+    _prebuild(spec, tess)
     for p in spec.parts:
         cat = None
         if p.catalog:
@@ -92,11 +94,109 @@ def resolve(spec: Spec, fast: bool = False) -> Resolved:
     return Resolved(spec, prof, parts, errors, fast)
 
 
-def fastener_shape(d, length):
-    dk, k, _ = catalog.screw_dims(d)
-    head = catalog.at(catalog.cyl(dk / 2, k), 0, 0, -k / 2)
+BUILD_TIMEOUT_S = float(os.environ.get("ROBOT_BUILD_TIMEOUT") or 600)
+JOBS = int(os.environ.get("ROBOT_JOBS") or 0) or (os.cpu_count() or 1)
+
+
+def _part_shape(p):
+    if p.catalog:
+        cat = catalog.find(p.catalog)
+        return cat.shape if cat else None
+    if p.model:
+        return {"type": "model", "file": p.model, "params": p.params or {}}
+    return p.shape
+
+
+def _build_one(args):
+    shape, base_dir, tess = args
+    try:
+        geom.geom_for(shape, base_dir, tess)
+        return None
+    except Exception as e:  # noqa: BLE001 - the serial pass reports it as a finding
+        return f"{type(e).__name__}: {e}"
+
+
+def _prebuild(spec, tess):
+    """Build every uncached part solid concurrently (one process per part); results land in the geometry cache."""
+    if JOBS <= 1 or not cache.enabled():
+        return
+    todo, seen = [], set()
+    for p in spec.parts:
+        sh = _part_shape(p)
+        if sh is None:
+            continue
+        try:
+            shapes.validate(sh)
+        except shapes.ShapeError:
+            continue
+        k = geom.key_for(sh, spec.base_dir, tess)
+        if k in seen or geom.cached(k):
+            continue
+        seen.add(k)
+        todo.append((sh, spec.base_dir, tess))
+    if len(todo) < 2:
+        return
+    import multiprocessing as mp
+    from concurrent.futures import ProcessPoolExecutor
+
+    n = min(JOBS, len(todo))
+    print(f"building {len(todo)} changed part solids on {n} processes", flush=True)
+    # spawn, not fork: forking a process that holds OCP / BLAS threads can deadlock the children.
+    ex = ProcessPoolExecutor(n, mp_context=mp.get_context("spawn"))
+    try:
+        list(ex.map(_build_one, todo, timeout=BUILD_TIMEOUT_S))
+        ex.shutdown(wait=True)
+    except Exception as e:  # noqa: BLE001 - timeout or worker crash: the serial pass builds what is missing
+        print(f"parallel build failed ({type(e).__name__}); building the rest serially", flush=True)
+        for pr in list((getattr(ex, "_processes", None) or {}).values()):
+            pr.terminate()
+        ex.shutdown(wait=False, cancel_futures=True)
+
+
+def _contains(mesh, Q):
+    """mesh.contains with a fixed seed: trimesh re-casts ambiguous rays along *random* directions, so without this the
+    answer depends on whatever ran before and cached and uncached runs could differ. Older trimesh draws from the
+    global numpy RNG; trimesh >= 4.6 draws from `trimesh.util.random_generator()`, a shared Generator seeded from OS
+    entropy (not reproducible even between two runs), so both are pinned here."""
+    import trimesh.util as tu
+
+    st = np.random.get_state()
+    np.random.seed(12345)
+    orig = getattr(tu, "random_generator", None)
+    if orig is not None:
+        rng = np.random.default_rng(12345)
+        tu.random_generator = lambda seed=None: rng if seed is None else orig(seed)
+    try:
+        return mesh.contains(Q)
+    finally:
+        np.random.set_state(st)
+        if orig is not None:
+            tu.random_generator = orig
+
+
+def csk_dims(d):
+    """(head diameter, head depth) of an ISO 10642 countersunk screw (90 deg), by thread diameter."""
+    return 2.2 * d, 0.6 * d
+
+
+def button_dims(d):
+    """(head diameter, head height) of an ISO 7380 button-head screw (M3: 5.7 x 1.65, 2 mm key)."""
+    return 1.9 * d, 0.55 * d
+
+
+def fastener_shape(d, length, head=None):
+    """Screw solid in its own frame: `at` is the origin, the shank runs along +z. A socket/button head sits behind `at`
+    (-z); a countersunk head is a 90 deg cone *inside* the part, flush with the surface at `at` (ISO length is overall)."""
     shank = catalog.at(catalog.cyl(d / 2, length), 0, 0, length / 2)
-    return catalog.union([head, shank])
+    if head == "countersunk":
+        dk, k = csk_dims(d)
+        cone = {"type": "revolve", "profile": [[0.0, 0.0], [dk / 2, 0.0], [d / 2, k], [0.0, k]]}
+        return catalog.union([cone, shank])
+    dk, k, _ = catalog.screw_dims(d)
+    if head == "button":
+        dk, k = button_dims(d)
+    hd = catalog.at(catalog.cyl(dk / 2, k), 0, 0, -k / 2)
+    return catalog.union([hd, shank])
 
 
 class Body:
@@ -144,13 +244,14 @@ class Body:
         lo, hi = self.aabb
         m = np.all((P >= lo - 1e-9) & (P <= hi + 1e-9), axis=1)
         if m.any():
-            out[m] = self.mesh.contains(P[m])
+            Q = P[m]
+            out[m] = cache.memo("inside", ("in", cache.body_sig(self), Q), lambda: _contains(self.mesh, Q))
         return out
 
     def distance(self, P) -> np.ndarray:
         P = np.atleast_2d(np.asarray(P, float))
-        _, d, _ = trimesh.proximity.closest_point(self.mesh, P)
-        return d
+        return cache.memo("distance", ("dist", cache.body_sig(self), P),
+                          lambda: trimesh.proximity.closest_point(self.mesh, P)[1])
 
     def sdf(self, P) -> np.ndarray:
         d = self.distance(P)
@@ -195,7 +296,7 @@ class World:
             dl = catalog.parse_designation(f.designation)
             if not dl:
                 continue
-            g = geom.geom_for(fastener_shape(*dl), None, tess)
+            g = geom.geom_for(fastener_shape(*dl, head=f.head if f.head in ("countersunk", "button") else None), None, tess)
             M = xform.make(xform.align_z_to(f.dir), f.at)
             bodies.append(Body(f.id, "other", g, M, [0xcc, 0xcc, 0xd0], None, True))
         return World(bodies, joints)

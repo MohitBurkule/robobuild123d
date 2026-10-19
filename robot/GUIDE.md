@@ -36,7 +36,7 @@ parts[], fasteners[], wires[], connections[], allow_overlap[], electronics{fails
 - `fused_with`: printed as one piece with that part (same material, both printed). A wedge in PETG on a nylon shell is NOT fused.
 - Spinners: `weapon: {kind, motor, cells, reduction, spin_axis (3-element local axis array such as [0,0,1], not a letter), locking_bar}` on the weapon part; the weapon motor,
   the weapon and a `locking_bar` part must exist. Tip speed is limited to 600 mph.
-- Moving parts: `parent` plus `joint: {kind (revolute|prismatic), axis, pivot (parent frame), min, max, default}`; the verifier sweeps it.
+- Moving parts: `parent` plus `joint: {kind (revolute|prismatic), axis, pivot, min, max, default}`; the verifier sweeps it. `pivot` and `axis` are in the parent's declared frame: the parent's `at`/`rot` composed with its own parents (and their joints), the same frame the child's `at`/`rot` uses, never the catalog model's internal origin. Under a rotated parent (e.g. a servo at `rot: [90, 0, 90]`) write them in that rotated frame; with no `parent` they are world coordinates.
 
 ### shape (build123d solids)
 JSON with `"type"`; everything is centred on its own origin, use `place` to move it inside a shape:
@@ -193,3 +193,64 @@ Whoever gets under the other wins. Full rules with rationale, thresholds and app
 - **Inverted:** drive upside down or self-right (R090); keep a lip on the top side too (R091-R094).
 - **Wheels hidden:** none at the front edge, <= 25% of sides/rear, <= 10% overall (R110-R113); body ahead of and outboard
   of the wheels (R114-R115). Battery >= 10 mm from the front, >= 5 mm from the sides (R120-R121).
+
+## Reference proportions and reference CAD (checked by `reference.feature_ratio`, `reference_cad.*`, `plausibility.density`)
+- `reference_ratios` (or `reference.ratios`): `[{name, num, den?, value, tol | tol_frac, severity?, source, lesson?, fix?}]`.
+  Terms: `overall.L|W|H`, `part:<glob>.<q>`, `kind:<glob>.<q>` (q = L W H cx cy cz mass vol count), `mass.total`,
+  `count.fasteners`, `metric:<report metric>` (any earlier group's metric), or a number; a list is summed. Ratios cancel
+  photo scale. Off by more than tol → warning (or `severity: blocker`); a term that cannot be measured → NOT CHECKED.
+- `reference_cad: {dir, parts: [{part, file, mode: shape|envelope, tol_mm, tol_vol_frac, hole_tol_mm, at?, at_tol?}]}`
+  compares our part with a reference STL by pose-independent fingerprint: oriented-box extents, volume, through-hole count,
+  and for plates the mid-plane holes (diameter, radius from centre: bores, bolt circles, pockets), plus optional placement.
+  Reference CAD is for MEASURING only: a model mesh that is triangle-for-triangle the reference (Hausdorff ≈ 0 after
+  alignment, same face count) is `reference_cad.copied` BLOCKER. Build every part from parametric code.
+- `plausibility.density`: bought-in parts (battery, motors, ESC, switch) must have mass / modelled volume in a physical range
+  (LiPo 1.0-2.6 g/cm3). A wrong envelope hides a packaging problem; a wrong mass hides a budget problem.
+
+## Design rules learned from reference matching (Revron/RVRN audit, 2026-10)
+1. **Budget the rotor first.** A spinner puts ≥20 % of the robot mass in the rotating stack; everything else gets what is
+   left. If the rotor fraction is low, look for mass in the drive, shell and fasteners, not in the weapon.
+2. **Wrap the rotor around the motor can (drisk).** Two discs on a spacer around an outrunner bell: the can becomes rotating
+   mass, the stack width becomes impact width, and two plates on a spacer form a stiff box section. Bolt the disc to the
+   can's own mount holes; no spider, no pins.
+3. **Support the weapon motor on both sides** on the strongest shaft available (the 5 mm prop mount), bearing on one
+   upright, clamp on the other.
+4. **Make one part do several jobs.** RVRN's 4 Al standoffs clamp the weapon module, are the front-wheel axles and carry
+   the wedglets and side panels. Count parts and fasteners against the reference; each joint costs flanges, screws and inserts.
+5. **Direct drive where possible.** Driven wheels sit straight on the gearmotor shafts; idler wheels run on a structural
+   standoff via a belt. Every axle, bearing and hub you delete is mass and a failure point gone.
+6. **Size the battery to the duty cycle, not "biggest that fits".** A 150 g drisk runs 3 min on 2S 180 mAh.
+7. **Calibrate verifier models on a robot that is known to work.** A check that fails a proven winner (the old runtime model
+   failed RVRN on 180 mAh) is wrong; anchor it with a test.
+8. **Use vendor/reference CAD envelopes for bought-in parts**, and sanity-check mass against volume.
+9. **Thin covers, ribs in the tub.** The base panel is a 1 mm plate; stiffness comes from the tub's X-rib and walls.
+10. **Compliant armour on hard nodes.** TPU wedglets and side panels hang on the standoffs and press-fit nuts, so hits go
+    straight into structure; forks sit inside the pods, just outside the disc.
+11. **Inserts only where screws come out often.** RVRN uses 5 (base panel); the rest are standoffs and press-fit nuts.
+12. **Keep paired supports matched** and plates loaded in their own plane (4 mm uprights printed flat).
+13. **Centre the rotor between its supports**, so both bearings and the chassis see symmetric loads.
+
+## Bought-in sizes, fit, containment, disassembly and coverage (`cots.*`, `fit.*`, `contain.*`, `disasm.*`, `coverage.*`)
+
+- **No unlisted sizes** (`cots.unlisted`, BLOCKER): every motor, ESC, battery, RX, switch, servo, bearing, insert, nut and
+  tyre (or any part with `cots: true`) uses a catalog id; a bearing may instead carry a standard designation (e.g.
+  `MF85ZZ`) in `designation` or `label`. `cots.dims_mismatch` (BLOCKER): a declared `dims` or own shape/bearing model
+  differs from the listed size by > 0.3 mm. `cots.fastener_size` (BLOCKER): screws are M1.6/2/2.5/3/4/5/6 in stocked lengths.
+- **Snug fit** (`fit.*`): a component with walls within 3 mm on two or more faces is in a pocket; gaps are ray-measured on
+  all six faces. Per axis with walls on both sides the clearance must be in the wall process's band (printed 0.1-0.5 mm
+  per side, machined 0.05-0.3; override with `fit: {min_mm, max_mm}`, opt out with `fit: "none"`). `fit.loose` and
+  `fit.tight` warn, `fit.interference` blocks; `clearance_mm` declared on the part must match the model (`fit.declared_mismatch`).
+- **Containment by role** (`contain.*`): electronics inside the convex envelope of chassis/armour parts (a shaft inside its
+  own wheel/hub/weapon is fine; deliberately exposed parts declare `exposed: true`); wheels protrude below the body and,
+  when `can_run_inverted`, above it; routed wires stay inside unless the wire has `external: true`; the power switch has a
+  clear straight tool line from outside (`contain.switch_access`).
+- **Disassembly graph** (`disasm.*`, shared builder `robot/analysis/disassembly.py`): nodes are parts and screws; an edge
+  X -> Y means X must come off first (X in Y's driver line, a screw clamping a part, a part trapped by another; mutually
+  trapped clamped stacks come off as one). The graph must be acyclic (`disasm.cycle`), every screw reachable
+  (`disasm.unreachable`), and battery, weapon, wheels, armour (or `serviceable: true`) reachable within
+  `service.max_removals` (default 8, `disasm.service_depth`). O-rings/elastic belts are not "trapped" when they can be
+  stretched over the largest flange within the material limit (nitrile 50 %, viton 30 %; `disasm.elastic_stretch`);
+  installed tension is `tension.belt_stretch`.
+- **Coverage** (`coverage.uncovered`, WARNING): lists any part kind only generic checks touch, made parts with no
+  material/process, rotating parts of a kind no balance/clearance check knows, and part pairs within 0.5 mm with no
+  declared relation (screw, connection, allow_overlap, parent/fused/cover, captive pocket, belt/pulley, tyre/rotating group).

@@ -91,22 +91,47 @@ def tessellate(solid, tess: Tess):
 _MEM: dict[str, PartGeom] = {}
 
 
+def _b123d_version() -> str:
+    try:
+        import build123d as b
+
+        return str(getattr(b, "__version__", "?"))
+    except ImportError:
+        return "none"
+
+
+def key_for(shape: dict, base_dir: Path | None, tess: Tess = FINE, key_extra: str = "") -> str:
+    """Cache key: shape JSON + model file sources + build123d version + tessellation settings."""
+    return shapes.shape_key(shape, base_dir, f"{CACHE_VERSION}|{_b123d_version()}|{tess.lin}|{tess.ang}|{key_extra}")
+
+
+def cached(key: str) -> bool:
+    d = cache_dir()
+    return key in _MEM or ((d / f"{key}.npz").exists() and (d / f"{key}.json").exists())
+
+
 def geom_for(shape: dict, base_dir: Path | None, tess: Tess = FINE, solid_factory=None, key_extra: str = "") -> PartGeom:
     """Build (or load from cache) the geometry of a shape tree."""
-    key = shapes.shape_key(shape, base_dir, f"{CACHE_VERSION}|{tess.lin}|{tess.ang}|{key_extra}")
-    if key in _MEM:
+    from . import cache
+
+    key = key_for(shape, base_dir, tess, key_extra)
+    use = cache.enabled()
+    if use and key in _MEM:
+        cache.hits["part_geom"] += 1
         return _MEM[key]
     d = cache_dir()
     npz, js, brep = d / f"{key}.npz", d / f"{key}.json", d / f"{key}.brep"
-    if npz.exists() and js.exists():
+    if use and npz.exists() and js.exists():
         try:
             z = np.load(npz)
             meta = json.loads(js.read_text())
             g = PartGeom(key, z["v"], z["f"], meta["volume"], meta["centroid"], meta["inertia"], brep)
             _MEM[key] = g
+            cache.hits["part_geom"] += 1
             return g
         except (OSError, ValueError, KeyError):
             pass
+    cache.misses["part_geom"] += 1
     solid = solid_factory() if solid_factory else shapes.to_solid(shape, base_dir)
     vol, cen, I = mass_props(solid)
     V, F = tessellate(solid, tess)

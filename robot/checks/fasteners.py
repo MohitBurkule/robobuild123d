@@ -48,6 +48,10 @@ def _first_inside(bodies, P, skip):
     return best
 
 
+# Through-bolt into a standard hex nut: the nut height (ISO 4032 m ~ 0.8 d) is the engagement.
+NUT_ENGAGEMENT_D = 0.8
+
+
 def run(ctx):
     r, w = ctx.r, ctx.world
     out, good = [], 0
@@ -58,11 +62,24 @@ def run(ctx):
             continue
         d, ln = dl
         dk, k, _ = catalog.screw_dims(d)
+        if f.head == "button":
+            from ..world import button_dims
+            dk, k = button_dims(d)
         dr = np.asarray(f.dir, float)
         dr = dr / np.linalg.norm(dr)
         at = np.asarray(f.at, float)
         own = w.body(f.id)
-        skip = lambda b: b is own or b.is_wire  # noqa: E731
+        before = set(getattr(f, "_extra", {}).get("access_before") or [])
+        bad_before = [x for x in before if x in set(f.through or []) | ({f.threads_into} if f.threads_into else set()) or r.spec.part(x) is None]
+        if bad_before:
+            out.append(fail("fastener.access_order", G, BLOCKER, "Screw driven before parts it passes through",
+                            f"`{f.id}` declares `access_before` {sorted(bad_before)}, but it passes through / threads into them (or they do not exist).")
+                       .on(f.id, *[x for x in bad_before if r.spec.part(x) is not None]))
+            before = set()
+        elif before:
+            out.append(ok("fastener.access_order", G, "Screw driven before later parts",
+                          f"`{f.id}` is driven before {', '.join(sorted(before))} are fitted (declared order); those parts do not block its driver."))
+        skip = lambda b: b is own or b.is_wire or b.id in before  # noqa: E731
         u, v = perp(dr)
         bad = False
         if f.tool:
@@ -96,10 +113,19 @@ def run(ctx):
             plo, phi = float(cs.min()), float(cs.max())
             engaged = max(min(hi, phi) - max(lo, plo), 0.0)
             need = r.profile.engagement_d * d
+            tp = r.spec.part(t)
+            if tp is not None and tp.kind == "nut":
+                # A standard hex nut (height m ~ 0.8 d) is sized to strip after the bolt breaks: the whole nut is the
+                # engagement. 1.5 d is for threads cut or inserted into the parent material.
+                need = min(need, NUT_ENGAGEMENT_D * d)
+            if tp is not None and tp.kind in ("motor", "weapon_motor"):
+                # Face screws into a motor's own threaded holes: the hole depth is set by the motor maker, so
+                # arch.motor_face_bolts judges them (>= 0.8 d, <= the usable depth); 1.5 d would run into the windings.
+                need = min(need, 0.8 * d)
             if engaged + 0.01 < need:
                 bad = True
                 out.append(fail("fastener.engagement", G, BLOCKER, "Screw does not bite enough thread",
-                                f"`{f.id}` engages {engaged:.1f} mm in `{t}`; it needs at least {need:.1f} mm (1.5 x diameter) or it will strip.")
+                                f"`{f.id}` engages {engaged:.1f} mm in `{t}`; it needs at least {need:.1f} mm ({need / d:.1f} x diameter) or it will strip.")
                            .on(f.id, t).expect(f">= {need:.1f} mm", f"{engaged:.1f} mm")
                            .fix("Use a longer screw, a longer insert, or move the insert closer to the screw tip."))
             if hi > phi + 4.0:

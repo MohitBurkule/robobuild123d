@@ -305,6 +305,14 @@ def run(ctx):
 
 # --------------------------------------------------------------------------------------------------------------- materials
 
+SKIN_KINDS = ("armor", "fork", "wedge")
+
+
+def _carries(spec, pid):
+    """True when another part is parented to `pid` or a screw threads into it: it is in some part's load path."""
+    return any(q.parent == pid for q in spec.parts) or any(f.threads_into == pid for f in spec.fasteners)
+
+
 def materials(a):
     out = []
     bad = 0
@@ -312,6 +320,12 @@ def materials(a):
     for b in a.solids:
         p = a.part(b.id)
         if p is None or a.cls(b) != "elastomer":
+            continue
+        if p.kind in SKIN_KINDS and b.id != a.chassis.id and not _carries(a.spec, p.id):
+            # TPU armour / wedgelets / side panels that carry nothing (no child part, nothing threads into them) are a
+            # skin that soaks hits and springs back (RVRN: TPU hood and wedglets on a PLA tub); the load path is elsewhere.
+            out.append(ok("arch.tpu_skin", G, "Elastomer skin carries nothing",
+                          f"`{b.id}` ({p.kind}) is {p.material} but holds no other part; it is a hit-absorbing skin."))
             continue
         if p.kind in struct_kinds or b.id == a.chassis.id:
             bad += 1
@@ -893,6 +907,28 @@ def load_path(a, p, origin, axis, sup):
     return out
 
 
+RIGID_JOIN = ("screw", "bolt", "bolted", "glue", "press_fit", "pin", "weld")
+
+
+def _rigid_chassis(a, exclude=None):
+    """Chassis plus every structure part rigidly joined to it (bolted, glued, pressed), e.g. both clamshell halves."""
+    seen, todo = {a.chassis.id}, [a.chassis.id]
+    struct = {p.id for p in a.spec.parts if p.kind in STRUCT and p.id != exclude}
+    while todo:
+        x = todo.pop()
+        nb = set()
+        for f in a.fasteners_of(x):
+            nb |= set(a.coupled(f))
+        for c in a.conns(x):
+            if c.method in RIGID_JOIN:
+                nb.add(c.b if c.a == x else c.a)
+        for y in nb:
+            if y in struct and y not in seen:
+                seen.add(y)
+                todo.append(y)
+    return seen
+
+
 def fork_stiffness(a, origin, axis, sup):
     out = []
     for s, (t, b, host) in sup.items():
@@ -907,10 +943,14 @@ def fork_stiffness(a, origin, axis, sup):
         boss = origin + axis * t
         # Root: centroid of the contact with the chassis or of its bolts.
         fs = a.fasteners_of(h.id)
-        pts = [np.asarray(f.at, float) for f in fs if a.chassis.id in a.coupled(f)]
-        if not pts:
-            near = h.mesh.vertices[a.chassis.distance(h.mesh.vertices[:2000]) < 0.5] if len(h.mesh.vertices) else []
-            pts = list(near)
+        rootset = _rigid_chassis(a, exclude=h.id)
+        pts = [np.asarray(f.at, float) for f in fs if rootset & set(a.coupled(f))]
+        if not pts and len(h.mesh.vertices):
+            for rid in sorted(rootset):
+                rb = a.body(rid)
+                if rb is not None:
+                    V = h.mesh.vertices[:2000]  # sample: the mask must index the same slice it was built from
+                    pts += list(V[rb.distance(V) < 0.5])
         if not len(pts):
             a.ctx.not_checked.append(f"Fork stiffness of `{h.id}`: no root on the chassis found")
             continue
@@ -1853,7 +1893,8 @@ def holders(a):
             judged += 1
             g1, g2 = a.group_of(p.id), a.group_of(h)
             elec_on_weapon = p.kind in ELEC and (g2 not in (None, "fixed") or hp.kind == "weapon")
-            cross = g1 is not None and g2 is not None and g1 != g2
+            # a jointed part held by its parent moves relative to it by design (that is what the joint is)
+            cross = g1 is not None and g2 is not None and g1 != g2 and not (how == "parent" and p.joint is not None)
             weak_holder = hp.kind in ELEC and p.kind in STRUCT
             if cross or elec_on_weapon or weak_holder:
                 bad += 1
@@ -1932,8 +1973,10 @@ def cut_breakout(a):
         bb = b.placed(b.M)
         bb.geom = bg
         bb._mesh = None
-        wall = catalog.material(p.material).min_wall_mm if catalog.material(p.material) else 0.9
-        lim = max(1.0, 1.5 * wall)
+        mat = catalog.material(p.material)
+        wall = mat.min_wall_mm if mat else 0.9
+        # An elastomer (TPU) web stretches instead of cracking out: 1 mm holds a screw or a standoff bore (RVRN wedglet).
+        lim = 1.0 if (mat is not None and mat.cls == "elastomer") else max(1.0, 1.5 * wall)
         for Mc, r, hgt in cuts:
             W = b.M @ Mc
             c, ax = W[:3, 3], _unit(W[:3, 2])

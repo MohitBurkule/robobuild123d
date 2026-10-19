@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -67,7 +68,28 @@ def main(argv=None):
             mod.add_cli(sub)
         except ImportError:
             pass
+    for name, sp in sub.choices.items():
+        if name in ("verify", "render", "export"):
+            sp.add_argument("--no-cache", action="store_true", help="ignore and do not use the run cache")
+            sp.add_argument("--cache-stats", action="store_true", help="print cache hits and misses at the end")
+            sp.add_argument("--jobs", type=int, default=0, help="processes for part builds (default: cpu count)")
     a = ap.parse_args(argv)
+    if a.cmd in ("verify", "render", "export"):
+        from . import cache, world as world_mod
+
+        os.environ["ROBOT_PROGRESS"] = "1"
+        if a.no_cache:
+            cache.set_enabled(False)
+        if a.jobs:
+            world_mod.JOBS = a.jobs
+        import atexit
+
+        def _stats():
+            print(cache.stats_line(), flush=True)
+            if a.cache_stats:
+                print(json.dumps(cache.stats(), indent=2), flush=True)
+
+        atexit.register(_stats)
     if a.cmd in (None, "guide"):
         g = HERE / "GUIDE.md"
         print(g.read_text() if g.exists() else ap.format_help())

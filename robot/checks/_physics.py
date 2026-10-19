@@ -244,3 +244,25 @@ def blade_stack(ctx, rotor_ids, origin, axis):
         return None
     t = np.concatenate(ts)
     return float(t.max() - t.min())
+
+
+def rotor_mass(ctx, wid):
+    """(grams, rotor part ids, bell grams) of everything that turns with weapon `wid`: the rotor parts (blade stack,
+    spacer, hub, shaft, rotor nuts) plus, when an outrunner's bell carries the rotor (motor-as-hub / drisk), the bell share
+    of that motor (`bell_mass_frac` catalog prop, default 0.5). None when a part mass is unknown."""
+    from .archetype import _bell_carries, rotor_set
+
+    spec = ctx.r.spec
+    rot = rotor_set(spec, wid)
+    masses = [ctx.metrics.get(f"part_mass_g.{x}") for x in rot]
+    if any(m is None for m in masses):
+        return None
+    bell = 0.0
+    wp = spec.part(wid)
+    mid = wp.weapon.motor if wp is not None and wp.weapon is not None else None
+    if mid and _bell_carries(spec, mid, rot):
+        rp = next((q for q in ctx.r.parts if q.part.id == mid), None)
+        if rp is not None and rp.cat is not None and rp.cat.kind == "weapon_motor":
+            mm = ctx.metrics.get(f"part_mass_g.{mid}", rp.cat.mass_g)
+            bell = float(rp.cat.props.get("bell_mass_frac", 0.5)) * float(mm or 0.0)
+    return sum(masses) + bell, sorted(rot), bell

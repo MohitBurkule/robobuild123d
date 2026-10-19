@@ -142,6 +142,121 @@ class Sweep:
         return depth, gap
 
 
+class SectorSweep(Sweep):
+    """Volume a group sweeps over a limited joint range: per (axial bin, angle bin) the radial band it passes through."""
+
+    def __init__(self, P, o, a, lo, hi, bw=0.1, abin=2.0):
+        self.o, self.a, self.bw, self.abin = o, a, bw, abin
+        self.u, self.v = basis(a)
+        n_ang = int(math.ceil(360.0 / abin))
+        self.na = n_ang
+        steps = max(int(math.ceil((hi - lo) / (abin / 2))), 1)
+        ax, rad = radial(P, o, a)
+        phi = self._phi(P)
+        self.amin, self.amax = float(ax.min()), float(ax.max())
+        n = max(int(math.ceil((self.amax - self.amin) / bw)), 1)
+        self.n = n
+        idx = np.clip(((ax - self.amin) / bw).astype(int), 0, n - 1)
+        self.rmin = np.full(n * n_ang, np.inf)
+        self.rmax = np.full(n * n_ang, -np.inf)
+        pts = []
+        for s_ in range(steps + 1):
+            d = lo + (hi - lo) * s_ / steps
+            ai = (np.floor((phi + d) / abin).astype(int)) % n_ang
+            np.minimum.at(self.rmin, idx * n_ang + ai, rad)
+            np.maximum.at(self.rmax, idx * n_ang + ai, rad)
+            R = xform.axis_angle(a, d)
+            pts.append((P - o) @ R.T + o)
+        Q = np.vstack(pts)
+        self.box = np.array([Q.min(axis=0), Q.max(axis=0)])
+        self.R = float(rad.max())
+        self.angles = [lo + (hi - lo) * s_ / steps for s_ in range(steps + 1)]
+        self.bodies = None  # posed member bodies, set by the caller to confirm band hits on the real mesh
+
+    def _phi(self, P):
+        q = np.atleast_2d(P) - self.o
+        return np.degrees(np.arctan2(q @ self.v, q @ self.u)) % 360.0
+
+    def aabb(self):
+        return self.box
+
+    def classify(self, P, gapmax):
+        ax, rad = radial(P, self.o, self.a)
+        ai0 = np.floor(self._phi(P) / self.abin).astype(int) % self.na
+        depth = np.full(len(P), -np.inf)
+        gap = np.full(len(P), np.inf)
+        w = int(math.ceil(gapmax / self.bw)) + 1
+        base = np.floor((ax - self.amin) / self.bw).astype(int)
+        for da in (-1, 0, 1):
+            ai = (ai0 + da) % self.na
+            for kk in range(-w, w + 1):
+                b = base + kk
+                ok_ = (b >= 0) & (b < self.n)
+                if not ok_.any():
+                    continue
+                bi = np.clip(b, 0, self.n - 1)
+                lo_a = self.amin + bi * self.bw
+                dax = np.maximum(np.maximum(lo_a - ax, ax - (lo_a + self.bw)), 0.0)
+                rmn, rmx = self.rmin[bi * self.na + ai], self.rmax[bi * self.na + ai]
+                valid = ok_ & np.isfinite(rmn)
+                dr = np.maximum(np.maximum(rmn - rad, rad - rmx), 0.0)
+                gap = np.minimum(gap, np.where(valid, np.sqrt(dax ** 2 + dr ** 2), np.inf))
+                if kk == 0 and da == 0:
+                    inner = np.minimum(rad - rmn, rmx - rad)
+                    axd = np.minimum(ax - self.amin, self.amax - ax)
+                    depth = np.where(valid, np.minimum(inner, axd), depth)
+        if self.bodies:
+            depth, gap = self.confirm(P, depth, gap, gapmax)
+        return depth, gap
+
+    def confirm(self, P, depth, gap, gapmax):
+        """The (axial, angle) band spans everything between a part's innermost and outermost radius, so a hub near the
+        pivot and a plate far out fill the gap between them (VERIFIER_ISSUES #3). Re-test every candidate point on the
+        real posed meshes: rotate it back by each step of the joint range and measure it against the member bodies."""
+        P = np.atleast_2d(np.asarray(P, float))
+        c = np.nonzero((depth > 0) | (gap < gapmax))[0]
+        if not len(c):
+            return depth, gap
+        Q = P[c]
+        dep = np.full(len(c), -np.inf)
+        gp = np.full(len(c), np.inf)
+        for d in self.angles:
+            R = xform.axis_angle(self.a, -d)
+            Qd = (Q - self.o) @ R.T + self.o
+            for b in self.bodies:
+                lo, hi = b.aabb
+                near = np.all((Qd >= lo - gapmax - 0.1) & (Qd <= hi + gapmax + 0.1), axis=1)
+                if not near.any():
+                    continue
+                idx = np.nonzero(near)[0]
+                dist = b.distance(Qd[idx])
+                ins = b.inside(Qd[idx])
+                dep[idx] = np.where(ins, np.maximum(dep[idx], dist), dep[idx])
+                gp[idx] = np.where(ins, 0.0, np.minimum(gp[idx], dist))
+        depth = depth.copy()
+        gap = gap.copy()
+        depth[c] = dep
+        gap[c] = gp
+        return depth, gap
+
+
+def limited_range(k, g):
+    """(lo, hi) joint travel in degrees relative to the current pose, for a group that does not spin continuously; else None."""
+    if g.weapon or g.rotors or g.cls != "other" or not g.joints or belt_linked(k, g):
+        return None
+    if any(k.kind(m) in SPIN_KINDS for m in g.members):
+        return None
+    rng = None
+    for jm, *_ in g.joints:
+        j = k.parts[jm].part.joint
+        if j is None or abs(j.max - j.min) >= 360 - 1e-6:
+            return None
+        if rng is None:
+            v0 = float(k.w.joints.get(jm, j.default))
+            rng = (min(j.min, j.max) - v0, max(j.min, j.max) - v0)
+    return rng
+
+
 # ----------------------------------------------------------------------------------------------- model
 class UF:
     def __init__(self, items):
@@ -288,10 +403,18 @@ class Kin:
         v = b.geom.mesh.vertices
         local_dir = unit(sh["dir"])
         xs = v @ local_dir
+        can_end = float(np.asarray(sh["at"]) @ local_dir)
+        rr = np.linalg.norm(v - np.outer(xs, local_dir), axis=1)
+        # Bell radius over the bell only: the stator base (and a wire exit or mount tab on it) is static and may stand
+        # proud of the bell without being "inside the bell".
+        dep = float(getattr(catalog, "MOTOR_FACES", {}).get(rp.cat.id, {}).get("depth_mm", 2.0))
+        bell = (xs > float(xs.min()) + dep - 1e-6) & (xs <= can_end + 1e-6)
+        if not bell.any():
+            bell = xs <= can_end + 1e-6
         return {"o": o, "d": d, "len": float(sh.get("len", 0)), "dia": float(sh.get("dia", 3.0)),
                 "outrunner": rp.cat.kind == "weapon_motor" or "outrunner" in rp.cat.name.lower(),
-                "back": float(xs.min()), "can_end": float(np.asarray(sh["at"]) @ local_dir), "local_dir": local_dir,
-                "R": float(np.linalg.norm(v - np.outer(xs, local_dir), axis=1)[xs <= float(np.asarray(sh["at"]) @ local_dir) + 1e-6].max())}
+                "back": float(xs.min()), "can_end": can_end, "local_dir": local_dir, "face_depth": dep,
+                "R": float(rr[bell].max())}
 
     def motor_side(self, mpid, entry_world):
         """'stator' or 'bell' for a point where something lands on a motor. Gearmotor cans are static everywhere."""
@@ -1244,6 +1367,11 @@ def balance(k):
         if g.axis is None:
             k.skip("kin.balance_static", f"{label(g)}: no axis")
             continue
+        if limited_range(k, g) is not None:
+            k.info("kin.balance_static", "Limited-range joint not spin-balanced",
+                   f"{label(g)} turns through a limited joint range, not a full spin; spinner balance does not apply.",
+                   sorted(g.members))
+            continue
         o, a = g.axis
         items = []
         for m in g.members:
@@ -1341,7 +1469,10 @@ def sweeps(k):
             continue
         bodies = [k.body(m) for m in list(g.members) + g.fasteners if k.body(m) is not None]
         P = np.vstack([b.surface(k.h)[0] for b in bodies])
-        sw = Sweep(P, g.axis[0], g.axis[1])
+        lr = limited_range(k, g)
+        sw = Sweep(P, g.axis[0], g.axis[1]) if lr is None else SectorSweep(P, g.axis[0], g.axis[1], *lr)
+        if lr is not None:
+            sw.bodies = bodies
         gapmin = RUB_GAP[g.cls]
         ex = static_exclusions(k, g)
         box = sw.aabb()
@@ -1393,7 +1524,7 @@ def sweeps(k):
             if what == "in":
                 cid = "kin.sweep_fastener" if isf else "kin.sweep_static"
                 k.bad(cid, BLOCKER, "Static part inside a swept volume" if not isf else "Screw head/nut inside a swept volume",
-                      f"`{bid}` reaches {val:.1f} mm into the volume {label(g)} sweeps as it turns about {g.axis_src}; it hits on the first turn.",
+                      f"`{bid}` reaches {val:.1f} mm into the volume {label(g)} sweeps as it turns about {g.axis_src}; " + ("it hits on the first turn." if lr is None else f"it hits within the joint range {lr[0]:+.0f}..{lr[1]:+.0f} deg."),
                       (bid, *sorted(g.members)), at=at,
                       fix="Move or shorten it, or cut a clearance so it stays outside the swept circle with "
                           f"{gapmin} mm to spare.")
@@ -1438,7 +1569,7 @@ def bell_rub(k, g, ex):
             if b.part_idx is not None and float(rr.max()) <= mi["dia"] / 2 + HUB_COAX_MM:
                 # Dead shaft: a static part coaxial with the motor and inside its shaft bore; the bell turns around it.
                 continue
-            zone = (x > mi["back"] + 2.0) & (x < mi["can_end"] - 0.2)
+            zone = (x > mi["back"] + mi.get("face_depth", 2.0)) & (x < mi["can_end"] - 0.2)
             near = zone & (rr < mi["R"] + 0.5)
             if near.any():
                 inside = zone & (rr < mi["R"] - 0.2)
@@ -1556,7 +1687,10 @@ def belts(k):
             if ang > 0.5:
                 k.bad("kin.belt_axes_parallel", BLOCKER if ang > 2 else WARNING, "Belt pulleys are not parallel",
                       f"`{p0}` and `{p1}` axes differ by {ang:.1f} deg; the belt walks off.", (b, p0, p1))
-            off = abs(float((c1 - c0) @ a0))
+            bb = k.body(b)
+            ref = float(bb.center @ a0) if bb is not None else None
+            g0, g1 = groove_plane(k.body(p0), c0, a0, ref), groove_plane(k.body(p1), c1, a0, ref)
+            off = abs(g1 - g0)
             if off > 0.5:
                 k.bad("kin.belt_coplanar", BLOCKER if off > 1.5 else WARNING, "Belt grooves do not line up",
                       f"`{p0}` and `{p1}` grooves are {off:.2f} mm apart along the axle; the belt runs crooked and jumps off.",
@@ -1640,3 +1774,39 @@ def bore_fit(k):
                     k.bad("kin.bore_fit", WARNING, "Part is loose on its shaft",
                           f"`{m}` bore radius {bore:.2f} mm on `{sid}` radius {rs:.2f} mm ({bore - rs:.2f} mm radial play); it rattles and fretts.",
                           (m, sid), expect=("<= 0.15 mm play", f"{bore - rs:.2f} mm"), fix="Size the bore to the shaft (ream, or 0-0.05 mm press fit).")
+
+
+def groove_plane(pb, c, ax, ref=None):
+    """Axial position (along unit `ax`) of a pulley's belt groove: a band whose outer radius dips below material on both
+    sides (the flanges). A hub that is also a wheel or carries a tyre seat has its groove off its centroid, so lining up
+    centroids is wrong. Picks the groove nearest `ref` (the belt's own plane); falls back to the centroid."""
+    if pb is None:
+        return float(c @ ax)
+    v = pb.mesh.vertices
+    t = (v - c) @ ax
+    rmax = float(np.linalg.norm((v - c) - np.outer(t, ax), axis=1).max())
+    u = np.cross(ax, [1.0, 0.0, 0.0] if abs(ax[0]) < 0.9 else [0.0, 1.0, 0.0])
+    u /= np.linalg.norm(u)
+    keys = np.arange(float(t.min()) + 0.05, float(t.max()), 0.1)
+    rs = np.arange(0.1, rmax + 0.1, 0.1)
+    P = c + np.outer(np.repeat(keys, len(rs)), ax) + np.outer(np.tile(rs, len(keys)), u)
+    ins = pb.inside(P).reshape(len(keys), len(rs))
+    prof = np.array([rs[row].max() if row.any() else 0.0 for row in ins])
+    q = []
+    for i in range(len(keys)):
+        lo, hi = prof[(keys >= keys[i] - 2.5) & (keys < keys[i] - 0.05)], prof[(keys > keys[i] + 0.05) & (keys <= keys[i] + 2.5)]
+        q.append(bool(len(lo) and len(hi) and lo.max() > prof[i] + 0.4 and hi.max() > prof[i] + 0.4 and prof[i] > 0))
+    best, i = None, 0
+    while i < len(keys):
+        if not q[i]:
+            i += 1
+            continue
+        j = i
+        while j + 1 < len(keys) and q[j + 1]:
+            j += 1
+        mid = float(c @ ax) + 0.5 * (keys[i] + keys[j])
+        if best is None or (ref is not None and abs(mid - ref) < abs(best - ref)):
+            best = mid
+        i = j + 1
+    return best if best is not None else float(c @ ax)
+
