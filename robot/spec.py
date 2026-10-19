@@ -104,6 +104,10 @@ Claim = _obj({"id": "", "text": "", "metric": "", "op": "<=", "value": 0.0})
 class Spec:
     def __init__(self, d: dict, base_dir: str | Path | None = None):
         d = dict(d or {})
+        if any(isinstance(p, dict) and p.get("mate") for p in (d.get("parts") or [])):
+            from .cad import mates  # parts placed by constraints (robot/cad/mates.py)
+
+            d = mates.apply(d)
         self.raw = d
         self.base_dir = Path(base_dir) if base_dir else Path.cwd()
         self.name = d.get("name") or ""
