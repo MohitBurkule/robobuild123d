@@ -41,8 +41,12 @@ def test_spinners_have_joint_lock_and_bearing(specs, w):
 
 
 def test_lifter_arm_is_jointed_to_the_servo(specs):
-    arm = next(p for p in specs["lifter"]["parts"] if p["id"] == "lifter")
-    assert arm["parent"] == "servo" and arm["joint"]["max"] >= 30
+    parts = {p["id"]: p for p in specs["lifter"]["parts"]}
+    arm, servo = parts["lifter"], parts["servo"]
+    assert arm.get("actuated_by") == "servo" and arm["joint"]["max"] >= 30
+    # the joint (world frame) runs along the servo's output axis, through its centre line
+    assert arm["joint"]["axis"] == [1, 0, 0]
+    assert abs(arm["joint"]["pivot"][1] - servo["at"][1]) < 1e-6 and abs(arm["joint"]["pivot"][2] - servo["at"][2]) < 1e-6
 
 
 def test_every_wire_has_a_channel(specs):
