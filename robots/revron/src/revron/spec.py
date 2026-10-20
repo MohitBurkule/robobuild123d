@@ -314,8 +314,6 @@ def reference_cad():
           + [dict(near=[x, y, FOOT_DEV_Z], r=FOOT_DEV_R, reason="column foot flared to R3.7 with a recess for the base-panel ring boss (1.0 mm base skin cannot seat a 1.2 mm M2 flat head)")
              for x, y in INS]
           + [dict(near=list(BLOB_DEV), r=BLOB_R, reason="centroid of one connected extra blob (bbox x -27..-0.4) made of the left cage rib, the left column-foot flares and the left flange gusset, each reasoned above")]
-          + [dict(near=list(p_), r=GUSSET_R, reason="2 x 2.6 gusset under the front-corner flange: printed deck-down the flange top is an unsupported ceiling")
-             for p_ in GUSSET_PTS]
           + [dict(near=list(p_), r=CAGE_RIB_R, reason="electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact")
              for p_ in CAGE_RIBS]
           + [dict(near=[sx * LOBE_DEV[0], LOBE_DEV[1], LOBE_DEV[2]], r=LOBE_DEV_R, reason="lobe tail below Y -11.7 trimmed to the side-panel inner face: the STEP lobe and side panel overlap by 31 mm3, the tub does not duplicate it")

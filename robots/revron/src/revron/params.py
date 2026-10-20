@@ -333,7 +333,6 @@ VOL = dict(part=0.25, hub=0.15, motor=0.3, standoff=0.2, switch=0.5)          # 
 REF_IOU_MIN = 0.9                                                              # silhouette IoU floor on every axis
 COLUMN_TOP_Z, COLUMN_DEV_R, FOOT_DEV_Z, FOOT_DEV_R = 11.0, 9.0, 5.0, 4.0       # tub corner columns: top pilot and flared foot
 KEYHOLE_DEV, BLOB_DEV, BLOB_R = (28.6, -30.6, 4.5), (-10.97, -9.03, 14.13), 3.0 # N10 keyhole U-slot (x, y, z=r) and the merged extra blob
-GUSSET_PTS, GUSSET_R = ((-22.5, 20.0, 5.8), (22.5, 20.0, 5.8)), 8.0
 CAGE_RIBS = ((-2.0, -2.0, 15.4), (19.4, -2.0, 15.4), (2.0, -19.6, 13.0), (12.0, -19.6, 13.0), (7.5, -19.6, 13.0), (-2.2, -9.0, 14.0), (19.3, 4.0, 14.0), (-2.2, 4.0, 14.0), (19.3, -9.0, 14.0))
 LOBE_DEV, LOBE_DEV_R = (32.0, -13.5, 9.4), 3.5  # param: organic centroid of the lobe-tail trim vs STEP blobs
 # param: end

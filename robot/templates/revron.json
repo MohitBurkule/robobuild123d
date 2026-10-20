@@ -828,24 +828,6 @@
      },
      {
       "near": [
-       -22.5,
-       20.0,
-       5.8
-      ],
-      "r": 8.0,
-      "reason": "2 x 2.6 gusset under the front-corner flange: printed deck-down the flange top is an unsupported ceiling"
-     },
-     {
-      "near": [
-       22.5,
-       20.0,
-       5.8
-      ],
-      "r": 8.0,
-      "reason": "2 x 2.6 gusset under the front-corner flange: printed deck-down the flange top is an unsupported ceiling"
-     },
-     {
-      "near": [
        -2.0,
        -2.0,
        15.4
