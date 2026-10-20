@@ -169,7 +169,7 @@ def chassis():
         add.append(_box(sg * N10_KEY[0], sg * N10_KEY[1], -26.15, -23.4, 16.0, c["deck"] + 0.1))
         add.append(_box(sg * 20.0, sg * (x - w + 0.1), -27.3, -23.4, N10_TOP + 0.1, c["deck"] + 0.1))
         # side lobe with the thin M3 nut (Y -16.3..2.8)
-        lobe = Point(NUT[0], NUT[1]).buffer(4.55, 64).union(Point(1.35, 6.9).buffer(1.2, 32)).convex_hull
+        lobe = NUT_LOBE
         add.append(_ext(lobe, "yz", sg * (x - 0.1), sg * 32.5))
         R_ = 1.95   # root fillet where the lobe leaves the wall (STEP R1.95): one ruled loft, 12 bands of the quarter round
         add.append(_loft_yz_n([(lobe.buffer(R_ - math.sqrt(R_ * R_ - (R_ - h) ** 2), join_style=1), sg * (x - 0.1 + h))
@@ -210,7 +210,7 @@ def chassis():
     for sg in (1, -1):
         # lug underside: flat to Y 26, then the ramp; a scallop between the two standoffs (STEP)
         cuts.append(_ext(_poly([(10.0, -5.0), (10.0, 2.5), (26.0, 2.5), (30.4, 1.0), (30.4, -5.0)]), "yz", sg * 17.4, sg * 21.6))
-        cuts.append(_ext(Point(36.70, -0.66).buffer(3.16, 96), "yz", sg * 17.4, sg * 21.6))   # R3.16 scallop tangent to the lug arc round the nose standoff (STEP section at X 18.8)
+        cuts.append(_ext(LUG_SCALLOP, "yz", sg * 17.4, sg * 21.6))   # lug underside rises along a big arc tangent to the flat at LUG_FLOOR_Z (fit to STEP RV01 sections at X 19.5)
         # under the nose standoff the lug follows its R3.25 arc (STEP): no hull chord below it where the scallop meets it
         under = Polygon([(36.7, 0.0), (40.5, 0.0), (40.5, 2.5), (36.7, 2.5)]).difference(Point(SB).buffer(3.25, 96))   # the cusp between the scallop circle and the standoff arc
         cuts.append(_ext(under, "yz", sg * 17.4, sg * 21.6))
@@ -245,7 +245,8 @@ def chassis():
             cuts.append(_cyl(0.85, z1 - 4.1, z1 + 1, (px, py), "z"))
             cuts.append(bb.Solid.make_cone(2.1, 1.5, 0.6, bb.Plane(origin=(px, py, z1 + 0.001), z_dir=(0, 0, -1))))
     # switch slot in the deck beside the top panel, 2 M2 pilot holes
-    cuts.append(_ext(_round(Polygon([(23.0, -11.6), (26.6, -11.6), (26.6, 0.4), (23.0, 0.4)]), r_out=0.45), "xy", 16.0, z1 + 1))
+    sw_x0, sw_w, sw_y0, sw_l = 23.0, 4.0, -11.6, 12.0   # slot: inner edge 23.0 (top-panel edge), 4.0 wide and 12 long as measured on RV01
+    cuts.append(_ext(_round(Polygon([(sw_x0, sw_y0), (sw_x0 + sw_w, sw_y0), (sw_x0 + sw_w, sw_y0 + sw_l), (sw_x0, sw_y0 + sw_l)]), r_out=0.45), "xy", 16.0, z1 + 1))
     for yy in (1.9, -13.1):
         cuts.append(_cyl(0.85, c["deck"] - 3, z1 + 1, (SWX, yy), "z"))
     for sg in (1, -1):
@@ -287,7 +288,9 @@ def chassis():
         cuts.append(_box(sg * 17.65, sg * 27.35, -35.15, -25.45, 4.4, 4.8))   # pad + 0.25 base fillet   # motor preload pads
         # square the R1 inner rear corner where the N10 gearbox plates sit (their corner would bite 0.14 into the round)
         cuts.append(_box(sg * 25.5, sg * (x - w + 0.05), y0 + w - 0.05, y0 + w + 2.0, z0 + 2.0, c["deck"]))
-    cuts += [weapon_mount("l"), weapon_mount("r"), side_panel(1), side_panel(-1)]
+    # the STEP panel overlaps the lobe below Y -11.7; the printed chassis keeps its whole lobe (RV01), so the panel cut stops at the lobe
+    lobe_keep = [_ext(NUT_LOBE, "yz", sg * (x - 0.1), sg * 32.5) for sg in (1, -1)]
+    cuts += [weapon_mount("l"), weapon_mount("r")] + [_S(side_panel(sg), lobe_keep[0 if sg > 0 else 1]) for sg in (1, -1)]
     body = _S(body, *cuts)
     # electronics cage hung from the deck (up into the 1 mm deck skin through the lightening pockets; prints as part of the deck-down first layers): ribs 0.1 mm off the Malenki's
     # -x / +x / -y faces and the weapon ESC's -y face, so neither board hammers around when the robot is flipped
