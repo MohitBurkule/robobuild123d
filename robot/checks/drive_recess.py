@@ -7,6 +7,8 @@ from __future__ import annotations
 
 import numpy as np
 
+from .. import catalog
+from ..cad import fastener_catalog as fc
 from ..finding import BLOCKER, fail, ok
 from ._review import params
 
@@ -28,6 +30,27 @@ def recess_depth(mesh, at, axis):
     return first - top
 
 
+def expected_depth(f):
+    """Catalog socket depth for this screw (DIN 7991 csk: M3 2.0 AF x 1.9), at most the head height + 0.5 into the shank."""
+    dl = catalog.parse_designation(f.designation)
+    if not dl:
+        return 0.0
+    d = dl[0]
+    head = "countersunk" if f.head == "countersunk" else f.head
+    _, t = fc.drive_key(d, head)
+    k = world_head_height(d, head)
+    return min(t, k + 0.5)
+
+
+def world_head_height(d, head):
+    from .. import world
+    if head == "countersunk":
+        return world.csk_dims(d)[1]
+    if head == "button":
+        return world.button_dims(d)[1]
+    return catalog.screw_dims(d)[1]
+
+
 def run(ctx):
     r, w = ctx.r, ctx.world
     need = float(params(r.spec, "drive_recess", DEFAULTS)["min_depth_mm"])
@@ -37,10 +60,11 @@ def run(ctx):
         if b is None:
             continue
         d = recess_depth(b.mesh, f.at, f.dir)
-        if d < need:
+        want = max(need, 0.8 * expected_depth(f))
+        if d < want:
             out.append(fail("fastener.drive_recess", G, BLOCKER, "Screw head has no tool recess",
-                            f"`{f.id}` ({f.designation}) head is a plain disc (recess {d:.2f} mm deep, need {need:.1f}): no hex socket to drive it.")
-                       .on(f.id).expect(f">= {need:.1f} mm recess", f"{d:.2f} mm")
+                            f"`{f.id}` ({f.designation}) head is a plain disc (recess {d:.2f} mm deep, need {want:.1f}): no hex socket to drive it.")
+                       .on(f.id).expect(f">= {want:.1f} mm recess", f"{d:.2f} mm")
                        .fix("Set the fastener `head` (countersunk / button / cap) so the screw model carries its hex socket."))
         else:
             n += 1

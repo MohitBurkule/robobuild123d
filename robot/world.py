@@ -223,7 +223,7 @@ def fastener_shape(d, length, head=None):
         dk, k = csk_dims(d)
         cone = {"type": "revolve", "profile": [[0.0, 0.0], [dk / 2, 0.0], [d / 2, k], [0.0, k]]}
         key, t = fastener_catalog.drive_key(d, "csk")
-        return catalog.minus(catalog.union([cone, shank]), [catalog.hex_recess(key, min(t, 0.9 * k), 0.0, +1.0)])
+        return catalog.minus(catalog.union([cone, shank]), [catalog.hex_recess(key, min(t, k + 0.5), 0.0, +1.0)])
     dk, k, _ = catalog.screw_dims(d)
     style = "cap"
     if head == "button":
