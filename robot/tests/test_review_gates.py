@@ -193,6 +193,13 @@ def test_closed_loop_belt_in_an_off_centre_groove_passes():
     assert f is not None and f.passed, [x.message for x in rep.findings]
 
 
+def test_belt_beside_the_hub_fails():
+    ring = {"type": "subtract", "base": BOX(1, 38, 12), "cut": [BOX(3, 36, 10)]}
+    rep = run(_belt(PLACE(ring, (6.0, 0, 0))), "belt_wrap")
+    assert rep.failed("cots.belt_wrap")
+    assert any("beside" in x.message for x in rep.findings), [x.message for x in rep.findings]
+
+
 # ---------------------------------------------------------------------------------- print.orientation_declared
 def _printed(po, shape=None):
     d = chassis()

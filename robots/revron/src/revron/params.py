@@ -225,7 +225,9 @@ SOLID = dict(tub=0.8, mount=0.85, hub=0.85, tpu=0.9, shaft=0.05)    # solid_frac
 WEDGE_REF = {-1: "RV17", 1: "RV18"}                      # STEP part ids of the wedgelets and side panels per side
 SIDE_REF = {-1: "RV23", 1: "RV24"}
 SIDE_BOLT_X = dict(a=46.26, b=41.76, c=35.26)            # |X| of the side-panel screw heads (STEP: seated in a bore below the face; axle standoff, nose standoff, chassis nut)
-SIDE_FACE_X = dict(a=48.41, b=47.51, c=36.31)            # |X| of the battered outer face at each screw (RV23); the screw heads sit SIDE_FACE_X - SIDE_BOLT_X below it
+SIDE_SINK = dict(a=2.15, b=5.75, c=1.05)                 # depth of each screw head below the battered outer face, measured on the STEP side panels RV23 (LH) / RV24 (RH): outer face |X| 48.41 / 47.51 / 36.31 at the screw axes, minus the head planes above
+SIDE_FACE_X = {k: SIDE_BOLT_X[k] + SIDE_SINK[k] for k in SIDE_BOLT_X}   # |X| of the battered outer face at each screw
+assert all(0 < d <= SP_CSK["head_clear"] for d in SIDE_SINK.values()), "a screw head must sit inside its driver bore (sink <= bore depth)"
 SIDE_BOLT_DES = dict(a="M3x10", b="M3x10", c="M3x8")
 BASE_BOLT_Z = 3.5                                        # base-panel screw head plane
 TOP_BOLT_XY = INS[1::-1] + INS[3:1:-1]                   # top-panel screws sit on the four corner columns, right-hand first
