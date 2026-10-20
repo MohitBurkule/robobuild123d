@@ -402,6 +402,36 @@
    "reason": "the catalog N10 shaft is drawn round; the hub's D-flat sits on its flat"
   },
   {
+   "a": "bolt_b0",
+   "b": "base_panel",
+   "max_depth_mm": 0.3,
+   "reason": "STEP RV26 seat is 3.2 x 0.5, smaller than the ISO 10642 M2 head (4.4 x 1.2): the original head stands 0.2 proud of a seat that cannot take it, the printed PLA seat gives by that much"
+  },
+  {
+   "a": "bolt_b1",
+   "b": "base_panel",
+   "max_depth_mm": 0.3,
+   "reason": "STEP RV26 seat is 3.2 x 0.5, smaller than the ISO 10642 M2 head (4.4 x 1.2): the original head stands 0.2 proud of a seat that cannot take it, the printed PLA seat gives by that much"
+  },
+  {
+   "a": "bolt_b2",
+   "b": "base_panel",
+   "max_depth_mm": 0.3,
+   "reason": "STEP RV26 seat is 3.2 x 0.5, smaller than the ISO 10642 M2 head (4.4 x 1.2): the original head stands 0.2 proud of a seat that cannot take it, the printed PLA seat gives by that much"
+  },
+  {
+   "a": "bolt_b3",
+   "b": "base_panel",
+   "max_depth_mm": 0.3,
+   "reason": "STEP RV26 seat is 3.2 x 0.5, smaller than the ISO 10642 M2 head (4.4 x 1.2): the original head stands 0.2 proud of a seat that cannot take it, the printed PLA seat gives by that much"
+  },
+  {
+   "a": "bolt_b4",
+   "b": "base_panel",
+   "max_depth_mm": 0.3,
+   "reason": "STEP RV26 seat is 3.2 x 0.5, smaller than the ISO 10642 M2 head (4.4 x 1.2): the original head stands 0.2 proud of a seat that cannot take it, the printed PLA seat gives by that much"
+  },
+  {
    "a": "insert_b0",
    "b": "tub",
    "max_depth_mm": 0.2,
@@ -711,20 +741,20 @@
     "deviations": [
      {
       "near": [
-       28.6,
-       -30.6,
-       4.5
+       28.5,
+       -30.5,
+       5.85
       ],
-      "r": 4.5,
+      "r": 4.0,
       "reason": "N10 keyhole opened into a U-slot to the floor so the gearbox boss and shaft drop in from below with the base panel off (the STEP closes the keyhole, the shaft cannot be threaded through it)"
      },
      {
       "near": [
-       -28.6,
-       -30.6,
-       4.5
+       -28.5,
+       -30.5,
+       5.85
       ],
-      "r": 4.5,
+      "r": 4.0,
       "reason": "N10 keyhole opened into a U-slot to the floor so the gearbox boss and shaft drop in from below with the base panel off (the STEP closes the keyhole, the shaft cannot be threaded through it)"
      },
      {
@@ -841,7 +871,7 @@
        10.4,
        4.5
       ],
-      "r": 3.0,
+      "r": 3.5,
       "reason": "R3 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
      },
      {
@@ -850,7 +880,7 @@
        10.4,
        4.5
       ],
-      "r": 3.0,
+      "r": 3.5,
       "reason": "R3 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
      },
      {
@@ -859,7 +889,7 @@
        -21.6,
        4.5
       ],
-      "r": 3.0,
+      "r": 3.5,
       "reason": "R3 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
      },
      {
@@ -868,7 +898,7 @@
        -21.6,
        4.5
       ],
-      "r": 3.0,
+      "r": 3.5,
       "reason": "R3 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
      },
      {
@@ -877,7 +907,7 @@
        -33.6,
        4.5
       ],
-      "r": 3.0,
+      "r": 3.5,
       "reason": "R3 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
      }
     ]
@@ -895,7 +925,7 @@
        10.4,
        19.95
       ],
-      "r": 3.0,
+      "r": 3.5,
       "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
      },
      {
@@ -904,7 +934,7 @@
        10.4,
        19.95
       ],
-      "r": 3.0,
+      "r": 3.5,
       "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
      },
      {
@@ -913,7 +943,7 @@
        -21.6,
        19.95
       ],
-      "r": 3.0,
+      "r": 3.5,
       "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
      },
      {
@@ -922,7 +952,7 @@
        -21.6,
        19.95
       ],
-      "r": 3.0,
+      "r": 3.5,
       "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
      }
     ]
@@ -2914,8 +2944,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 4.5,
-    "csk_depth": 1.05,
+    "csk_d": 3.2,
+    "csk_depth": 0.4,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -2953,8 +2983,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 4.5,
-    "csk_depth": 1.05,
+    "csk_d": 3.2,
+    "csk_depth": 0.4,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -2992,8 +3022,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 4.5,
-    "csk_depth": 1.05,
+    "csk_d": 3.2,
+    "csk_depth": 0.4,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -3031,8 +3061,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 4.5,
-    "csk_depth": 1.05,
+    "csk_d": 3.2,
+    "csk_depth": 0.4,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -3070,8 +3100,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 4.5,
-    "csk_depth": 1.05,
+    "csk_d": 3.2,
+    "csk_depth": 0.4,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -5054,6 +5084,42 @@
       33.0,
       44.0,
       4.6
+     ]
+    ],
+    [
+     [
+      -33.0,
+      41.5,
+      4.6
+     ],
+     [
+      33.0,
+      44.0,
+      7.0
+     ]
+    ],
+    [
+     [
+      -33.0,
+      -15.0,
+      4.6
+     ],
+     [
+      -31.0,
+      -11.2,
+      15.0
+     ]
+    ],
+    [
+     [
+      31.0,
+      -15.0,
+      4.6
+     ],
+     [
+      33.0,
+      -11.2,
+      15.0
      ]
     ]
    ]

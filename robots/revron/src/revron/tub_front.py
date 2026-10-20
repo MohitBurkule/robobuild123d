@@ -34,8 +34,11 @@ LAT_MID = Polygon([(10.58, 5.51), (20.66, 5.51), (20.66, 7.07), (LAT_C[0], 9.83)
 LATTICE = [LAT_SIDE, scale(LAT_SIDE, -1, 1, origin=(LAT_C[0], 0)), LAT_MID, scale(LAT_MID, 1, -1, origin=(0, LAT_C[1]))]
 
 
-def _wall_pocket(x0, x1, z0, z1, y0, y1, r_vert=0.5, r_floor=0.8):
-    """Rectangular front-wall pocket cutter (X x Z, floor at y1): R0.5 corners and an R0.8 floor, as in the STEP."""
+WALL_POCKET_R = (1.0, 0.8)   # corner R, floor R: the floor fillet must be smaller than the corner R, else the blend degenerates to zero-area slivers (STEP: R0.5 corners)
+
+
+def _wall_pocket(x0, x1, z0, z1, y0, y1, r_vert=WALL_POCKET_R[0], r_floor=WALL_POCKET_R[1]):
+    """Rectangular front-wall pocket cutter (X x Z, floor at y1): R1.0 corners and R0.8 floor (STEP: R0.5 corners, R0.8 floor)."""
     b = _b()
     s = _box(x0, x1, y0, y1, z0, z1)
     s = b.fillet(s.edges().filter_by(b.Axis.Y), r_vert)

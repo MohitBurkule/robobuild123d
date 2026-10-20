@@ -20,7 +20,7 @@ INS = [(-25.0, 10.4), (25.0, 10.4), (-25.0, -21.6), (25.0, -21.6), (0.0, -33.6)]
 INS_Z = (5.1, 9.1)                   # FS1 M2 heat-set (3.5 OD x 4)
 CSK_M2 = 4.5                         # 90 deg countersink at the face for an ISO 10642 M2 flat head (4.4 x 1.2) + 0.1
 PANEL_EAR_R = 3.0
-BASE_HOLE, TOP_HOLE = 3.4, 3.5         # csk through-holes: wide enough that the 90 deg seat stops short of the far face (no knife edge)
+TOP_HOLE = 3.5         # csk through-holes: wide enough that the 90 deg seat stops short of the far face (no knife edge)
 # electronics envelopes (catalog boxes at their spec placement, rot z 90): Malenki nano 32 x 20 x 4.4 at (8.67, -3.0, 15.3),
 # BBB ant ESC 23.5 x 12 x 5 at (8.63, -7.25, 10.6); the deck cage ribs are dimensioned off these
 RX_X, RX_Y, RX_Z = (8.67 - 10.0, 8.67 + 10.0), (-3.0 - 16.0, -3.0 + 16.0), (15.3 - 2.2, 15.3 + 2.2)
@@ -66,9 +66,9 @@ PHASE_VIA = [[11.8, 14.5, 16.0], [11.8, 15.5, 18.2], [11.8, 27.0, 18.2], [11.8, 
 # ====================================================================================================================
 # panels (RV26 base, Ti top) [fix-T: named params, every panel dimension derives from these]
 SEG, SEG_FINE = 64, 128              # shapely buffer resolution (segments per quarter circle) for ears / tangent arcs
-CSK_CLEAR = 0.7                      # countersink diameter over the ISO 10642 head (4.5 seat: dk 3.8 + 0.7)
+BASE_CSK_CLEAR = -0.6                # base-panel seat 3.2 at the face = STEP RV26 (dk 3.8 - 0.6)
 BASE_Z0, BASE_T = 3.5, 1.0           # base panel underside Z, skin thickness
-PRELOAD_PAD = dict(c=(22.5, -30.3), s=9.1, h=0.465, r=0.6, sink=0.01)   # N10 preload pad on the base skin: centre |X|/Y, side, height (0.45 + 0.015), corner R, sink into the skin (union overlap)
+PRELOAD_PAD = dict(c=(22.5, -30.3), s=9.1, h=0.465, r=0.6, sink=0.01)   # N10 preload pad on the base skin: centre |X|/Y, side, height (0.45 + 0.015: closes the 0.2 mm the STEP leaves under the N10, intent.seat_locates), corner R, sink into the skin (union overlap)
 BASE_FILLET, BASE_EDGE_TOL, BASE_EDGE_UP, FLAT_TOL = 0.25, 0.02, 0.1, 1e-3   # base skin joint fillet; edge selection tolerances (height band, face rise, flatness)
 BASE_OUT = dict(x=28.1, y0=-36.2, y1=13.0, r=0.8)   # RV26 outline 56.2 x 49.2, R0.8 corners
 PANEL_EAR_EDGE = 3.0                 # a screw closer than this to the outline edge gets a PANEL_EAR_R ear
@@ -270,7 +270,8 @@ HUB_BORE_SPAN, TYRE_SPAN = (30.5, 40.5), (32.5, 42.0)   # |X| of the hub's blind
 TYRE_ID, TYRE_STRETCH, NUT_MOVE, WHEEL_MIN_GAP = 13.0, 1.0, 0.3, 1.0   # relaxed F1 tyre ID, its stretch over the crown, nut play, wheel-to-armour gap
 SEAT_PLAY, SEAT_TURN_DEG = 0.15, 2.0                      # motor boss play in the keyhole, shaft turn it allows
 WALL_MIN = 1.8                                            # printed wall floor: 4+ perimeters on a 2 mm wall
-WALL_EXCEPT = [[[-29.6, -37.7, 4.6], [29.6, -35.4, 17.5]], [[-33.0, -38.0, 0.0], [33.0, 44.0, 4.6]]]   # rear truss and base lip (STEP RV01)
+WALL_EXCEPT = [[[-29.6, -37.7, 4.6], [29.6, -35.4, 17.5]], [[-33.0, -38.0, 0.0], [33.0, 44.0, 4.6]], [[-33.0, 41.5, 4.6], [33.0, 44.0, 7.0]],
+               [[-33.0, -15.0, 4.6], [-31.0, NUT_RELIEF_END_Y + 2.0, 15.0]], [[31.0, -15.0, 4.6], [33.0, NUT_RELIEF_END_Y + 2.0, 15.0]]]   # rear truss, base lip and the +Y flange foot (1.7 mm over the lattice, same in the STEP RV01) and the lobe tail where the nut relief ends (STEP RV01)
 FILLET_H, ROTOR_CLEAR = 10.0, 2.0                         # inside-corner fillet probe height; lead-to-rotor clearance
 
 
@@ -335,10 +336,10 @@ TOL = dict(tight=0.3, std=0.5, motor=0.6, wedge=0.8, loose=1.0)             # mm
 VOL = dict(part=0.25, hub=0.15, motor=0.3, standoff=0.2, switch=0.5)          # fraction: volume mismatch allowed
 REF_IOU_MIN = 0.9                                                              # silhouette IoU floor on every axis
 FOOT_DEV_Z, FOOT_DEV_R = 5.0, 4.0       # tub corner column flared foot
-KEYHOLE_DEV = (28.6, -30.6, 4.5)   # N10 keyhole U-slot (x, y, z=r)
+KEYHOLE_DEV, KEYHOLE_DEV_R = (28.5, -30.5, 5.85), 4.0   # N10 keyhole U-slot: centre of its 2 x 4.1 x 6.7 cut, and the sphere that holds all of it
 LOBE_DEV, LOBE_DEV_R = (32.0, -13.5, 9.4), 3.5  # param: organic centroid of the lobe-tail trim vs STEP blobs
 # param: end
-BASE_DEV_Z, PANEL_DEV_R, TOP_DEV_Z = 4.5, 3.0, 19.95
+BASE_DEV_Z, PANEL_DEV_R, TOP_DEV_Z = 4.5, 3.5, 19.95
 NOSE_DEV, NOSE_DEV_R = (MNT_IN + 2.0, SB[0] + 1.5, SB[1] - 1.0), 5.0             # mount nose pad (|x|, y, z): thickened nose wall, deviation from the STEP nose
 STATOR_DEV_X, TAP_DEV_R = 16.8, 2.0                                              # stator lead-in cone site; tap-hole sites
 
@@ -367,6 +368,7 @@ ALLOW_OVERLAP = [dict(a="belt_l", b="side_l", max_depth_mm=0.3, reason=_ORING),
                  dict(a="wshaft", b="weapon_motor_can", max_depth_mm=2.6, reason="wshaft is the GR1507's own shaft, already drawn inside the catalog motor envelope"),
                  dict(a="motor_l", b="whub_rl", max_depth_mm=0.4, reason=_N10_FLAT),
                  dict(a="motor_r", b="whub_rr", max_depth_mm=0.4, reason=_N10_FLAT),
+                 *[dict(a=f"bolt_b{i}", b="base_panel", max_depth_mm=0.3, reason="STEP RV26 seat is 3.2 x 0.5, smaller than the ISO 10642 M2 head (4.4 x 1.2): the original head stands 0.2 proud of a seat that cannot take it, the printed PLA seat gives by that much") for i in range(len(INS))],
                  *[dict(a=f"insert_b{i}", b="tub", max_depth_mm=0.2, reason="heat-set insert: 3.5 OD melted into a 3.4 bore (interference by design)") for i in range(len(INS))],
                  *[dict(a=f"insert_{k}", b="tub", max_depth_mm=0.2, reason="heat-set insert: 3.5 / 3.2 OD melted into a 3.4 / 3.1 bore (interference by design)") for k in ("t0", "t1", "t2", "t3")],
                  *[dict(a=f"nut_c{n}", b="tub", max_depth_mm=0.1, reason="thin M3 nut pressed into a hex pocket 0.05 under its flats (captive)") for n in "lr"],

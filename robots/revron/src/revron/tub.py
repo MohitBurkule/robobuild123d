@@ -11,11 +11,10 @@ SW_PAD = dict(x=(22.5, 27.5), y=(-15.6, 4.4), r=1.5, z0=16.5, fillet=1.5, over=0
 
 def _panel_seat(which, i):
     """(cutter, FastenerRecord) of the M2 flat-head seat in the base / top panel (robot.cad.holes, head side only): the
-    90 deg seat is 4.5 at the face (ISO 10642 dk 3.8 + 0.7: also clears the verifier's 4.4 head); the panels add a wider
-    relief hole (BASE_HOLE / TOP_HOLE) so the seat stops short of the far face."""
+    base seat is the STEP's 3.2 at the face (ISO 10642 dk 3.8 - 0.6), the top panel a plain clearance hole."""
     if which == "base":
         x, y = INS[i]
-        return hole_tool((x, y, BASE_Z0), (0, 0, 1), "M2x6", head="csk", into="through", side="head", grip=BASE_T, csk_clear=CSK_CLEAR)
+        return hole_tool((x, y, BASE_Z0), (0, 0, 1), "M2x6", head="csk", into="through", side="head", grip=BASE_T, csk_clear=BASE_CSK_CLEAR)
     x, y = TOP_XY[i]
     return hole_tool((x, y, TOP_Z0 + TOP_T), (0, 0, -1), "M2x5", head="button", into="through", side="head", grip=TOP_T, cbore=0)   # 0.9 Ti is too thin for an M2 flat-head seat (1.2 tall): a button head bears flat on the face, plain 2.2 clearance hole
 
@@ -52,7 +51,7 @@ def base_panel():
         fs = [f for f in body.faces() if any(e.is_same(x) for x in f.edges())]
         return len(fs) == 2 and any(f.bounding_box().max.Z > skin_top + BASE_EDGE_UP and f.bounding_box().min.Z < skin_top + BASE_EDGE_TOL / 2 for f in fs)
     body = b.fillet([e for e in body.edges() if _base_edge(e)], BASE_FILLET)
-    cuts = [_panel_seat("base", i)[0] for i in range(len(INS))] + [_cyl(BASE_HOLE / 2, z0 - 1, z0 + 3, (x, y), "z") for x, y in INS]   # 4.5 countersink (STEP RV26 has 3.2 x 0.5; an ISO 10642 M2 head is 4.4 x 1.2, so a smaller seat leaves it proud and binding) then the 2.2 hole
+    cuts = [_panel_seat("base", i)[0] for i in range(len(INS))]   # STEP RV26: 3.2 x 0.5 seat then the 2.2 clearance hole (the M2 flat head 4.4 x 1.2 stands proud of it, as in the original)
     return _S(body, *cuts)
 
 
