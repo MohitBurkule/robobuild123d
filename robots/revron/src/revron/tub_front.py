@@ -25,7 +25,7 @@ TOPF_YZ = _poly([(13.0, 19.5), (15.1, 19.5), (25.2, 14.96), (25.2, 12.17), (15.8
 
 WIRE_HOLE, WIRE_Y, WIRE_R = (7.25, 5.0, 10.25, 17.0), (12.0, 16.0), 1.45   # weapon phase wire hole through the front wall: (x0, z0, x1, z1) box
 WALL_POCKET_X, WALL_POCKET_Z, WALL_POCKET_Y = ((-18.25, 4.25), (13.25, 18.2)), (6.55, 15.55), (12.0, 13.85)
-LAT_Y, LAT_R_VERT, LAT_R_FLOOR = (-36.62, -35.5), 0.95, 0.93   # rear-wall pocket floor / opening Y, corner radius, floor fillet (STEP)
+LAT_Y, LAT_R_VERT, LAT_R_FLOOR = (-36.62, -35.5), 0.95, 0.7   # rear-wall pocket floor / opening Y, corner radius, floor fillet (STEP)
 LAT_C = (15.62, 11.0)                                           # symmetry centre of the lattice (X, Z): the pockets mirror about it
 # param: organic rear-wall lattice, sharp outlines of the two base pockets measured at Y -35.75 (STEP RV01), X Z
 LAT_SIDE = Polygon([(4.76, 6.22), (4.76, 15.78), (13.54, LAT_C[1])])                                       # wall-side triangle
