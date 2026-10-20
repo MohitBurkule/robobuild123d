@@ -829,7 +829,7 @@ def side_panel(s):
             _csk(3.3, 6.7, (-35.26, NUT[0], NUT[1]), "x", 1, 8.0, 12.0),
             _cyl(2.55, -42.55, -38.0, SA),
             _box(-45.0, -43.4, -38.7, -24.8, 5.5, 14.5),                          # rear tyre relief on the inner face
-            _ext(_poly([(-11.7, 3.8), (0.5, 4.7), (2.3, 5.7), (2.3, 8.3), (0.5, 9.3), (-3.5, 11.0), (-9.5, 13.0), (-11.7, 13.8)]), "yz", -32.5, -31.4)]    # 1 mm relief round the chassis nut lobe: STEP RV23 diamond (Y -11.7..2.3, Z 3.8..13.8, sloping top-right edge)
+            _ext(NUT_RELIEF, "yz", -32.5, -31.4)]    # relief round the chassis nut lobe: STEP RV23 diamond (Y -11.7..2.3, Z 3.8..13.8) united with the lobe outline, so the panel never shaves the lobe
     for y0 in (-11.0, -4.5, 2.0):     # diagonal vent slots (TPU wall flexes, keeps the ESC cool)
         sl = LineString([(y0, 5.0), (y0 + 5.0, 11.0)]).buffer(1.0, cap_style=1)
         cuts.append(_ext(sl, "yz", -50.0, -36.5))
@@ -970,6 +970,14 @@ def _lattice_pocket(pts, y0=-36.5, y1=-35.5, r_vert=0.5, r_floor=0.25):
     return b.fillet(s.faces().sort_by(b.Axis.Y)[0].edges(), r_floor)
 
 
+from shapely.geometry import Point, Polygon   # noqa: E402
+NUT_LOBE = Point(NUT[0], NUT[1]).buffer(4.55, 64).union(Point(1.35, 6.9).buffer(1.2, 32)).convex_hull   # chassis wall lobe round the thin nut (Y, Z)
+NUT_RELIEF = Polygon([(-11.7, 3.8), (0.5, 4.7), (2.3, 5.7), (2.3, 8.3), (0.5, 9.3), (-3.5, 11.0), (-9.5, 13.0), (-11.7, 13.8)]).union(NUT_LOBE)   # param: organic diamond measured on RV23
+LUG_FLOOR_Z, LUG_SCALLOP_YT, LUG_SCALLOP_R = 2.5, 36.27, 8.6   # param: organic lug underside arc, tangent to the lug floor at Y 36.27
+LUG_SCALLOP = Point(LUG_SCALLOP_YT, LUG_FLOOR_Z - LUG_SCALLOP_R).buffer(LUG_SCALLOP_R, 128).intersection(
+    Polygon([(0.0, -20.0), (LUG_SCALLOP_YT, -20.0), (LUG_SCALLOP_YT, LUG_FLOOR_Z), (0.0, LUG_FLOOR_Z)]))
+
+
 def chassis():
     """RV01 printed chassis: a closed-top box printed deck-down (no supports: the deck is the first layer), open
     underneath for the base panel. X-ribbed deck pockets; 5 insert columns floor to deck; N10 keyhole pockets in the
@@ -1019,7 +1027,7 @@ def chassis():
         add.append(_box(sg * N10_KEY[0], sg * N10_KEY[1], -26.15, -23.4, 16.0, c["deck"] + 0.1))
         add.append(_box(sg * 20.0, sg * (x - w + 0.1), -27.3, -23.4, N10_TOP + 0.1, c["deck"] + 0.1))
         # side lobe with the thin M3 nut (Y -16.3..2.8)
-        lobe = Point(NUT[0], NUT[1]).buffer(4.55, 64).union(Point(1.35, 6.9).buffer(1.2, 32)).convex_hull
+        lobe = NUT_LOBE
         add.append(_ext(lobe, "yz", sg * (x - 0.1), sg * 32.5))
         R_ = 1.95   # root fillet where the lobe leaves the wall (STEP R1.95): one ruled loft, 12 bands of the quarter round
         add.append(_loft_yz_n([(lobe.buffer(R_ - math.sqrt(R_ * R_ - (R_ - h) ** 2), join_style=1), sg * (x - 0.1 + h))
@@ -1060,7 +1068,7 @@ def chassis():
     for sg in (1, -1):
         # lug underside: flat to Y 26, then the ramp; a scallop between the two standoffs (STEP)
         cuts.append(_ext(_poly([(10.0, -5.0), (10.0, 2.5), (26.0, 2.5), (30.4, 1.0), (30.4, -5.0)]), "yz", sg * 17.4, sg * 21.6))
-        cuts.append(_ext(Point(36.70, -0.66).buffer(3.16, 96), "yz", sg * 17.4, sg * 21.6))   # R3.16 scallop tangent to the lug arc round the nose standoff (STEP section at X 18.8)
+        cuts.append(_ext(LUG_SCALLOP, "yz", sg * 17.4, sg * 21.6))   # lug underside rises along a big arc tangent to the flat at LUG_FLOOR_Z (fit to STEP RV01 sections at X 19.5)
         # under the nose standoff the lug follows its R3.25 arc (STEP): no hull chord below it where the scallop meets it
         under = Polygon([(36.7, 0.0), (40.5, 0.0), (40.5, 2.5), (36.7, 2.5)]).difference(Point(SB).buffer(3.25, 96))   # the cusp between the scallop circle and the standoff arc
         cuts.append(_ext(under, "yz", sg * 17.4, sg * 21.6))
@@ -1095,7 +1103,8 @@ def chassis():
             cuts.append(_cyl(0.85, z1 - 4.1, z1 + 1, (px, py), "z"))
             cuts.append(bb.Solid.make_cone(2.1, 1.5, 0.6, bb.Plane(origin=(px, py, z1 + 0.001), z_dir=(0, 0, -1))))
     # switch slot in the deck beside the top panel, 2 M2 pilot holes
-    cuts.append(_ext(_round(Polygon([(23.0, -11.6), (26.6, -11.6), (26.6, 0.4), (23.0, 0.4)]), r_out=0.45), "xy", 16.0, z1 + 1))
+    sw_x0, sw_w, sw_y0, sw_l = 23.0, 4.0, -11.6, 12.0   # slot: inner edge 23.0 (top-panel edge), 4.0 wide and 12 long as measured on RV01
+    cuts.append(_ext(_round(Polygon([(sw_x0, sw_y0), (sw_x0 + sw_w, sw_y0), (sw_x0 + sw_w, sw_y0 + sw_l), (sw_x0, sw_y0 + sw_l)]), r_out=0.45), "xy", 16.0, z1 + 1))
     for yy in (1.9, -13.1):
         cuts.append(_cyl(0.85, c["deck"] - 3, z1 + 1, (SWX, yy), "z"))
     for sg in (1, -1):
