@@ -81,8 +81,9 @@ gcount() { # dir group -> blocker count (-1 = did not finish)
   local c; c=$(mktemp -d "${TMPDIR:-/tmp}/ci_gate_cache.XXXX")  # c: log dir only; cache is the shared content-keyed one (fix-K)
   local fc=; [ $(( ${i:-1} % ${FRESH_EVERY:-3} )) -eq 0 ] && fc="ROBOT_CACHE=$c"   # every 3rd round: fresh cache spot check
   (cd "$1" && env $fc HEAVY_CI=1 /tmp/heavy.sh timeout "${GATE_TIMEOUT:-3000}" python3 -m robot verify "$SPEC" --full --only "$2" > "$c.log" 2>&1)
+  cp "$c.log" "$P/ci_gate_$(basename "$1")_$2.log" 2>/dev/null   # kept so a rejected fixer can read the blocker lines
   $GPY count "$c.log"; rm -rf "$c" "$c.log"; }
-gfail() { log "gate rejected ${1#origin/} $2: $3"; printf '{"t":"%s","sha":"%s","group":"ci_gate","id":"ci_gate.rejected","parts":[],"branch":"%s","message":"[ci] gate rejected %s %s: %s"}\n' \
+gfail() { log "gate rejected ${1#origin/} $2: $3 (blocker lines: $P/ci_gate_trial_{assembly,interference}.log)"; printf '{"t":"%s","sha":"%s","group":"ci_gate","id":"ci_gate.rejected","parts":[],"branch":"%s","message":"[ci] gate rejected %s %s: %s"}\n' \
   "$(date -Is)" "$2" "${1#origin/}" "${1#origin/}" "$2" "$3" >> "$P/blockers_live_$(echo "${1#origin/}" | sed -E 's/^fix-(.).*/\1/' | tr a-z A-Z).jsonl"; return 1; }
 gate() {
   [ "${GATE:-1}" = 1 ] || return 0

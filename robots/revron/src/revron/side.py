@@ -35,7 +35,7 @@ def _side_seat(key, at, sgn=-1):
     from robot.cad.holes import hole_tool
     far = {"a": SA_X[1], "b": SB_X[1], "c": NUT_X[1]}[key]
     return hole_tool((sgn * SIDE_FACE_X[key], *at), (-sgn, 0, 0), SIDE_BOLT_DES[key], head="csk", into="through", side="head",
-                     sink=SIDE_FACE_X[key] - SIDE_BOLT_X[key], grip=SIDE_FACE_X[key] - far, fit="normal",
+                     sink=SIDE_SINK[key], grip=SIDE_FACE_X[key] - far, fit="normal",
                      csk_clear=SP_CSK["csk_clear"], head_clear=SP_CSK["head_clear"])
 
 

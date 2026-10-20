@@ -2,7 +2,8 @@
 strip between them. The belt solid must be one ring (Euler number 0: a torus-like loop), and from each pulley centre,
 in the pulley plane, the belt must lie on both sides of the centre line (top and bottom runs), within the pulley radius
 plus `review.belt.wrap_tol_mm` (default 2). The runs are looked for in the belt's own plane
-(a groove sits off the hub's mid-plane).
+(a groove sits off the hub's mid-plane), and that plane must lie within the hub's axial extent
+(+ `axial_tol_mm`, default 0.5), so a belt beside the hub fails.
 """
 
 from __future__ import annotations
@@ -14,7 +15,7 @@ from ..finding import BLOCKER, fail, ok
 from ._review import params
 
 G = "belt_wrap"
-DEFAULTS = {"wrap_tol_mm": 2.0}
+DEFAULTS = {"wrap_tol_mm": 2.0, "axial_tol_mm": 0.5}
 ROUND = ("o_ring", "round", "oring")
 
 
@@ -27,7 +28,7 @@ def _axis(b, part):
     return a / np.linalg.norm(a)
 
 
-def wraps(belt_b, pulleys, tol):
+def wraps(belt_b, pulleys, tol, axial_tol=0.5):
     """List of problems (empty when the belt wraps every pulley)."""
     probs = []
     m = belt_b.mesh
@@ -37,7 +38,12 @@ def wraps(belt_b, pulleys, tol):
     for k, (pb, part) in enumerate(pulleys):
         ax = _axis(pb, part)
         c = cs[k]
-        c = c - ((c - belt_b.mesh.bounds.mean(axis=0)) @ ax) * ax   # a groove sits off the hub's mid-plane: look in the belt's own plane
+        bc = belt_b.mesh.bounds.mean(axis=0)
+        lo, hi = (pb.mesh.vertices @ ax).min(), (pb.mesh.vertices @ ax).max()
+        if not lo - axial_tol <= bc @ ax <= hi + axial_tol:
+            probs.append(f"the belt plane is {float(min(abs(bc @ ax - lo), abs(bc @ ax - hi))):.1f} mm beside `{part.id}` (axial extent {lo:.1f}..{hi:.1f}, belt at {float(bc @ ax):.1f})")
+            continue
+        c = c - ((c - bc) @ ax) * ax   # a groove sits off the hub's mid-plane: look in the belt's own plane
         other = cs[1 - k] if len(cs) > 1 else c + np.cross(ax, [0, 0, 1.0])
         line = other - c
         line -= (line @ ax) * ax
@@ -66,7 +72,7 @@ def run(ctx):
         pul = [(b, q) for b, q in pul if b is not None and q is not None]
         if bb is None or len(pul) < 2:
             continue
-        probs = wraps(bb, pul, tol)
+        probs = wraps(bb, pul, tol, float(params(r.spec, "belt", DEFAULTS)["axial_tol_mm"]))
         if probs:
             out.append(fail("cots.belt_wrap", G, BLOCKER, "O-ring belt does not wrap its pulleys",
                             f"`{p.id}`: " + "; ".join(probs) + ".").on(p.id, *[q.id for _, q in pul])
