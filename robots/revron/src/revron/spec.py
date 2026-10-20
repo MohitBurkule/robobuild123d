@@ -119,7 +119,7 @@ def make_spec(model_file):
           threads_into="weapon_motor_stator", reason="button heads (one hex1.3 key for every M2) sunk in the RV03 boss counterbores (inferred: the STEP shows the 4.4 counterbores, not the screws)")
     for k, (hub_c, bolt_c) in enumerate(zip(_polar(HUB_R), _polar(BOLT_R))):
         dy, dz = _disc_local(*hub_c)
-        F(id=f"bolt_p{k}", designation="M2x4", head="button", tool="hex1.3", material="titanium", at=[DR_X["spider"][0], dy, dz], dir=[1, 0, 0], through=["spider"], threads_into="weapon_motor_can", hole=_stack_hole("M2x4", DR_X["spider"][0], dy, dz, 1, SPIDER_T).hole,
+        F(id=f"bolt_p{k}", designation="M2x6", head="button", tool="hex1.3", material="titanium", at=[DR_X["spider"][0], dy, dz], dir=[1, 0, 0], through=["spider"], threads_into="weapon_motor_can", hole=_stack_hole("M2x6", DR_X["spider"][0], dy, dz, 1, SPIDER_T).hole,
           access_before=["mount_l", "wbearing"], reason="spider to bell, fitted before the left mount goes on (inferred)")
         dy, dz = _disc_local(*bolt_c)
         F(id=f"bolt_d{k}", designation="M2x16", head="button", tool="hex1.3", material="titanium", at=[DR_X["disc_b"][1], dy, dz], dir=[-1, 0, 0],

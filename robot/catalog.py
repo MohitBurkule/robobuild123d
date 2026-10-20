@@ -59,8 +59,9 @@ def _gr1507_base():
 # GR1507 outrunner, local frame (X along the axis, +X = bell top / output side, -X = stator base). Bell: wall r7.4-9.8 and a solid r4 core
 # (RVRN 2.0 STEP sections), closed top 4.3..6.7. The STEP leaves the stator out; ours is a real 12-slot stack (OD 13.8, 7 mm) on the base cross.
 BELL_WALL_R, BELL_CORE_R, BELL_X0, BELL_TOP_X = (7.4, 9.8), 4.0, -4.5, (4.3, 5.2)   # the STEP top runs to 6.7 but the spider's inner face is at 5.2: the top ends flush on it
-STATOR_BASE_X, STATOR_STACK_X0 = -8.4, -4.0              # top face of the base cross; the stack sits inside the bell on a post from it
-STATOR_STACK_H, STATOR_SLOTS = 8.0, 12                 # GR1507: 15 mm class stator, 7 mm stack
+BELL_BOSS_R, BELL_BOSS_L = 1.9, 2.1                           # spider-screw tapping bosses under the top (top 0.9 + boss 2.1 = 3.0 mm of thread)
+STATOR_BASE_X, STATOR_STACK_X0 = -8.4, -5.0              # top face of the base cross; the stack sits inside the bell on a post from it
+STATOR_STACK_H, STATOR_SLOTS = 7.0, 12                 # GR1507: 15 mm class stator, 7 mm stack
 STATOR_BORE_R, STATOR_YOKE_R, STATOR_TIP_R = 3.3, 4.4, 6.9   # bore (clears the r4 rotor core), yoke outer, tooth tip
 SHAFT_STUB_R = 2.5                                     # rotor shaft down through the stator bore to the base
 LEAD_R, LEAD_X, LEAD_Z, LEAD_PITCH = 0.45, (-11.8, -9.4), -6.4, 1.0   # 3 phase leads leave the base through the -Z arm
@@ -75,7 +76,9 @@ def _gr1507_bell():
     wl = BELL_TOP_X[0] - BELL_X0
     wall = minus(cyl_x(BELL_WALL_R[1], wl), [cyl_x(BELL_WALL_R[0], wl + 1.0)])
     tl = BELL_TOP_X[1] - BELL_TOP_X[0]
-    top = minus(cyl_x(6.2, tl), [rot(at(cyl_x(0.8, tl + 0.2), 0, BELL_SCREW_R, 0), [BELL_SCREW_PHASE + 90.0 * k, 0.0, 0.0]) for k in range(4)] + [cyl_x(SHAFT_STUB_R, tl + 0.2)])   # M2 tap holes (ISO 2306 r0.8) for the spider screws; the shaft bore
+    bosses = [at(rot(at(cyl_x(BELL_BOSS_R, BELL_BOSS_L), 0, BELL_SCREW_R, 0), [BELL_SCREW_PHASE + 90.0 * k, 0.0, 0.0]), -0.5 * (tl + BELL_BOSS_L), 0, 0) for k in range(4)]
+    holes = [at(rot(at(cyl_x(0.8, tl + BELL_BOSS_L + 0.2), 0, BELL_SCREW_R, 0), [BELL_SCREW_PHASE + 90.0 * k, 0.0, 0.0]), -0.5 * BELL_BOSS_L, 0, 0) for k in range(4)]   # M2 tap holes (ISO 2306 r0.8), blind through top + boss
+    top = minus(union([cyl_x(6.2, tl)] + bosses), holes + [cyl_x(SHAFT_STUB_R, tl + 0.2)])   # the shaft bore
     return union([at(wall, 0.5 * (BELL_X0 + BELL_TOP_X[0]), 0, 0), at(top, 0.5 * sum(BELL_TOP_X), 0, 0)] + ribs)
 
 

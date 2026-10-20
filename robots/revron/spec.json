@@ -3759,7 +3759,7 @@
   },
   {
    "id": "bolt_p0",
-   "designation": "M2x4",
+   "designation": "M2x6",
    "head": "button",
    "tool": "hex1.3",
    "material": "titanium",
@@ -3779,7 +3779,7 @@
    "threads_into": "weapon_motor_can",
    "hole": {
     "d": 2.0,
-    "length": 4.0,
+    "length": 6.0,
     "head": "button",
     "head_std": "ISO 7380-1",
     "head_dk": 3.5,
@@ -3791,7 +3791,7 @@
     "cbore_depth": 0.0,
     "grip": 3.0,
     "tap_d": 1.6,
-    "thread_depth": 1.5
+    "thread_depth": 3.5
    },
    "access_before": [
     "mount_l",
@@ -3848,7 +3848,7 @@
   },
   {
    "id": "bolt_p1",
-   "designation": "M2x4",
+   "designation": "M2x6",
    "head": "button",
    "tool": "hex1.3",
    "material": "titanium",
@@ -3868,7 +3868,7 @@
    "threads_into": "weapon_motor_can",
    "hole": {
     "d": 2.0,
-    "length": 4.0,
+    "length": 6.0,
     "head": "button",
     "head_std": "ISO 7380-1",
     "head_dk": 3.5,
@@ -3880,7 +3880,7 @@
     "cbore_depth": 0.0,
     "grip": 3.0,
     "tap_d": 1.6,
-    "thread_depth": 1.5
+    "thread_depth": 3.5
    },
    "access_before": [
     "mount_l",
@@ -3937,7 +3937,7 @@
   },
   {
    "id": "bolt_p2",
-   "designation": "M2x4",
+   "designation": "M2x6",
    "head": "button",
    "tool": "hex1.3",
    "material": "titanium",
@@ -3957,7 +3957,7 @@
    "threads_into": "weapon_motor_can",
    "hole": {
     "d": 2.0,
-    "length": 4.0,
+    "length": 6.0,
     "head": "button",
     "head_std": "ISO 7380-1",
     "head_dk": 3.5,
@@ -3969,7 +3969,7 @@
     "cbore_depth": 0.0,
     "grip": 3.0,
     "tap_d": 1.6,
-    "thread_depth": 1.5
+    "thread_depth": 3.5
    },
    "access_before": [
     "mount_l",
@@ -4026,7 +4026,7 @@
   },
   {
    "id": "bolt_p3",
-   "designation": "M2x4",
+   "designation": "M2x6",
    "head": "button",
    "tool": "hex1.3",
    "material": "titanium",
@@ -4046,7 +4046,7 @@
    "threads_into": "weapon_motor_can",
    "hole": {
     "d": 2.0,
-    "length": 4.0,
+    "length": 6.0,
     "head": "button",
     "head_std": "ISO 7380-1",
     "head_dk": 3.5,
@@ -4058,7 +4058,7 @@
     "cbore_depth": 0.0,
     "grip": 3.0,
     "tap_d": 1.6,
-    "thread_depth": 1.5
+    "thread_depth": 3.5
    },
    "access_before": [
     "mount_l",
