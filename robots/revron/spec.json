@@ -1007,8 +1007,8 @@
      {
       "near": [
        16.8,
-       32.5,
-       23.5
+       38.5,
+       29.5
       ],
       "r": 2.0,
       "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"
@@ -1016,8 +1016,8 @@
      {
       "near": [
        16.8,
-       38.5,
-       29.5
+       32.5,
+       23.5
       ],
       "r": 2.0,
       "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"
@@ -1092,7 +1092,7 @@
      {
       "near": [
        -6.699999999999999,
-       46.55227240881161,
+       46.552272408811604,
        34.952550329699115
       ],
       "r": 2.0,
