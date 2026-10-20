@@ -3,10 +3,10 @@
 Modules share one namespace: after import every module sees every other module's names (cross-group calls such as
 the chassis using weapon-mount profiles resolve at call time)."""
 from . import (params, common, tub_util, tub_shell_cols, tub_shell_cuts, tub_shell, tub_lobes, tub_lugs, tub_front, tub,
-               side_wall, side, fork, hubs, wedgelet, mount, drisk, weapon, assembly, spec)
+               side_wall, side, side_joint, fork, hubs, wedgelet, mount, drisk, weapon, assembly, spec)
 
 MODULES = (params, common, tub_util, tub_shell_cols, tub_shell_cuts, tub_shell, tub_lobes, tub_lugs, tub_front, tub,
-           side_wall, side, fork, hubs, wedgelet, mount, drisk, weapon, assembly, spec)
+           side_wall, side, side_joint, fork, hubs, wedgelet, mount, drisk, weapon, assembly, spec)
 NAMESPACE = {}
 for _m in MODULES:
     NAMESPACE.update({k: v for k, v in vars(_m).items() if not k.startswith("__") and k not in ("_m",)})

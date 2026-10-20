@@ -193,6 +193,11 @@ SP_SA_CLEAR = (2.6, -42.55, -38.0)   # STEP RV23 r 2.6: standoff-end clearance b
 SP_BOSS = dict(r=4.0, r_end=3.3, x=(-42.5, -39.5), x_ch=-40.75)
 SP_TYRE_RELIEF = (-45.0, -43.4, -38.7, -24.8, 5.5, 14.5)   # rear tyre relief box on the inner face (x0, x1, y0, y1, z0, z1)
 SP_NUT_RELIEF_X = (-32.5, -31.4)
+# [fix-C-j1] the panel is modelled once, left hand (RV23, -X); RV24 is its YZ mirror. Its frame sits on the SA standoff
+# end (the boss face the 25 mm standoff seats against); each screw seat sits on the axis of the part it clamps.
+SP_BUILT_SIDE = -1
+SPEC_DP = 6                          # decimals of solved positions written to the spec (micron noise-free)
+SP_SEAT_AXIS = dict(a=SA, b=SB, c=NUT)   # (Y, Z) of each side screw: 25 mm standoff, 15 mm standoff, chassis nut
 CHASSIS_MIN_VOLUME = 15000.0         # mm3: the intact chassis is 15988 mm3 in one solid
 SP_NUT_RELIEF_R = 1.0                # relief corners round r1: no sharp concave corner in the printed wall
 SP_VENT = dict(y0=(-11.0, -4.5, 2.0), z0=5.0, dy=5.0, dz=6.0, r=1.0, x=(-50.0, -36.5))   # diagonal ESC vent slots

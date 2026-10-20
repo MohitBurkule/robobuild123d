@@ -55,5 +55,15 @@ def tyre(od, idd, x0, x1, c, shoulder=0.0):
     return _revolve_x(prof, x0, c)
 
 
+def standoff_end(L_x, c):
+    """The standoff's outboard end: (point, outward axis). The side panel's SA boss seats on it."""
+    x = max(L_x, key=abs)
+    return (x, *c), (x / abs(x), 0.0, 0.0)
+
+
 def standoff(L_x, c):
-    return _S(_cyl(SO_R, *L_x, c), _cyl(STANDOFF_BORE_R, L_x[0] - 1, L_x[1] + 1, c))
+    b = _b()
+    s = _S(_cyl(SO_R, *L_x, c), _cyl(STANDOFF_BORE_R, L_x[0] - 1, L_x[1] + 1, c))
+    p, z = standoff_end(L_x, c)
+    b.RigidJoint("end", s, b.Location(b.Plane(origin=p, z_dir=z)))   # [fix-C-j1] the panel's `sa` joint connects here
+    return s
