@@ -233,8 +233,8 @@ def intent_checks():
     A("insert_column", "printed deck-down, each heat-set insert sits on a solid column back to the deck (the first layers): no hanging boss to pull out",
       part="tub", inserts=[[x, y, CH["deck"]] for x, y in INS], floor_z=INS_Z[0], r=2.2)
     x, w = CH["x"], CH["wall"]
-    A("fillet", "inside wall corners are radiused: sharp PLA inside corners crack under impact", part="tub", axis="z", h=FILLET_H,
-      at=[[-x + w, CH["y0"] + w], [x - w, CH["y0"] + w], [x - w, CH["y1"] - w], [-x + w, CH["y1"] - w]])
+    A("fillet", "inside wall corners are radiused: sharp PLA inside corners crack under impact (the two rear corners are squared on purpose for the N10 gearbox plates, SQUARE in tub_shell_cuts)", part="tub", axis="z", h=FILLET_H,
+      at=[[x - w, CH["y1"] - w], [-x + w, CH["y1"] - w]])
     A("tool_count", "pit kit: one hex key per screw size (1.3 for M2, 2 for M3); the weapon swap needs only the 2 mm key", max=2, module_max=1,
       module=["bolt_ula", "bolt_ulb", "bolt_ura", "bolt_urb"])
     rot = ["spider", "disc_a", "disc_b", "dspacer"]
