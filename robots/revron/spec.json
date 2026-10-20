@@ -1053,11 +1053,20 @@
      {
       "near": [
        -15.4,
-       44.0,
-       3.5
+       12.5,
+       19.3
       ],
       "r": 4.0,
-      "reason": "nose pad R4.4 round the nose CSK: the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); 1.15 mm of added material at the nose underside"
+      "reason": "the STEP notch top is a zero-thickness wedge (mfg.thin_wall); thickened to a printable wall, rearmost point unchanged"
+     },
+     {
+      "near": [
+       -15.4,
+       42.0,
+       3.5
+      ],
+      "r": 5.0,
+      "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside, so the countersink keeps a 0.9 mm wall"
      }
     ]
    },
@@ -1070,11 +1079,20 @@
      {
       "near": [
        15.4,
-       44.0,
-       3.5
+       12.5,
+       19.3
       ],
       "r": 4.0,
-      "reason": "nose pad R4.4 round the nose CSK: the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); 1.15 mm of added material at the nose underside"
+      "reason": "the STEP notch top is a zero-thickness wedge (mfg.thin_wall); thickened to a printable wall, rearmost point unchanged"
+     },
+     {
+      "near": [
+       15.4,
+       42.0,
+       3.5
+      ],
+      "r": 5.0,
+      "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside, so the countersink keeps a 0.9 mm wall"
      },
      {
       "near": [
@@ -3178,8 +3196,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 6.2,
-    "csk_depth": 1.3,
+    "csk_d": 6.4,
+    "csk_depth": 1.4,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -3219,8 +3237,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 6.2,
-    "csk_depth": 1.3,
+    "csk_d": 6.4,
+    "csk_depth": 1.4,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -3376,8 +3394,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 6.2,
-    "csk_depth": 1.3,
+    "csk_d": 6.4,
+    "csk_depth": 1.4,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -3417,8 +3435,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 6.2,
-    "csk_depth": 1.3,
+    "csk_d": 6.4,
+    "csk_depth": 1.4,
     "sink": 0.0,
     "grip": 4.0
    },
