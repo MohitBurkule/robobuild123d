@@ -155,9 +155,17 @@ def run(ctx):
             ctx.metrics["weapon_reach_lead_mm"] = worst
         if worst < 3.0:
             behind = worst < 0.0
-            out.append(fail("spinner.reach", G, BLOCKER if behind else WARNING, "Weapon does not lead the front",
-                            f"Looking {worst_deg:.0f} degrees off straight ahead the chassis or a non-ground-game part is {-worst:.1f} mm ahead of `{pid}`; the opponent meets it first.")
-                       .on(pid).expect(">= 3 mm lead across +/-30 degrees", f"{worst:.1f} mm")
+            dv = np.array([np.sin(np.radians(worst_deg)), np.cos(np.radians(worst_deg)), 0.0])
+            lead_b = max(others, key=lambda b: float((b.mesh.vertices @ dv).max())) if others else None
+            lead_part = r.spec.part(lead_b.id) if lead_b is not None else None
+            from .waiver import valid
+            dev = str((getattr(lead_part, "_extra", None) or {}).get("deviation", "") or "")
+            waived = behind and bool(dev) and "lead" in dev.lower() and valid(dev)   # a cited reference deviation on the leading part
+            who = f"`{lead_b.id}`" if lead_b is not None else "the chassis or a non-ground-game part"
+            out.append(fail("spinner.reach", G, BLOCKER if behind and not waived else WARNING, "Weapon does not lead the front",
+                            f"Looking {worst_deg:.0f} degrees off straight ahead {who} is {-worst:.1f} mm ahead of `{pid}`; the opponent meets it first."
+                            + (f" Deviation: {dev}" if waived else ""))
+                       .on(pid, *([lead_b.id] if lead_b is not None else [])).expect(">= 3 mm lead across +/-30 degrees", f"{worst:.1f} mm")
                        .fix("Cut the wedge back or move the weapon forward until it leads by 5-10 mm across plus or minus 30 degrees."))
         for b, lead, allowed, _ in gbad[:1]:
             out.append(fail("spinner.reach", G, WARNING, "Ground-game part leads the weapon too far",

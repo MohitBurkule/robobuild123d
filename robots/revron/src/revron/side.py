@@ -1,5 +1,5 @@
 """[fix-S] Side groups: the side panel (wedgelet, fork and hub groups live in their own modules)."""
-import json, math, os, sys
+import math, os, sys
 from .params import *  # noqa: F401,F403
 from .common import *  # noqa: F401,F403
 
@@ -59,7 +59,6 @@ def side_panel(s):
     profile = _ext(side, "yz", *SLAB_X)
     foot = _ext(_poly(SP_FOOT), "xy", *SP_FOOT_Z)
     wall = _I(wall, profile)
-    SIDE_WALL_DEBUG.append(wall)
     nose_plan = _round(Polygon(SP_NOSE), r_out=SP_NOSE_R)
     bt = SP_BATTER
     z_lo, z_hi = bt["z"]
