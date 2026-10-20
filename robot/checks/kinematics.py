@@ -307,6 +307,33 @@ class RGroup:
         self.driven = False
 
 
+MOTOR_KINDS = ("motor", "weapon_motor")
+ROTOR_SUFFIXES = ("_can", "_bell")
+
+
+def split_motors(parts):
+    """{rotor id: stator id} for motors modelled as two parts: a static stator (kind motor/weapon_motor) and its spinning can.
+    A pair is `<base>_can` (or `_bell`) next to `<base>_stator`, or a part with `role: rotor` whose catalog id extends the
+    stator's (`gr1507_can` -> `gr1507`). A single fused motor body has no entry."""
+    out = {}
+    stators = {pid: rp for pid, rp in parts.items() if rp.part.kind in MOTOR_KINDS}
+    for pid, rp in parts.items():
+        p = rp.part
+        if p.kind in MOTOR_KINDS:
+            continue
+        st = None
+        for suf in ROTOR_SUFFIXES:
+            if pid.endswith(suf) and pid[: -len(suf)] + "_stator" in stators:
+                st = pid[: -len(suf)] + "_stator"
+        if st is None and getattr(p, "_extra", {}).get("role") == "rotor" and p.catalog:
+            cands = [s for s, srp in stators.items() if srp.part.catalog and p.catalog.startswith(srp.part.catalog)]
+            if len(cands) == 1:
+                st = cands[0]
+        if st is not None:
+            out[pid] = st
+    return out
+
+
 def declared_fixed(p):
     return bool(p.fixed) or str(p.rotates_with or "").lower() in ("fixed", "static", "none", "ground")
 
@@ -531,6 +558,16 @@ class Kin:
             for x in ps[1:]:
                 uf.union(ps[0], x)
                 edge(ps[0], x, f"both declare `rotates_with: {lab}`", "key")
+        # a split motor: its can is the rotor, joined to the stator (the motor body) through the motor's own bearings
+        self.rotor_of = split_motors(self.parts)
+        for can, st in self.rotor_of.items():
+            if self.kind(can) in BOUNDARY:
+                continue
+            # The can couples to what it drives exactly as a fused bell would: flexibly only when every join of the can
+            # is a flexible coupling and it is nobody's child.
+            rs = [(c.reason or "").lower() for c in spec.connections if can in (c.a, c.b) and st not in (c.a, c.b)]
+            flex = bool(rs) and self.parts[can].part.parent not in self.parts and all(any(w in r for w in FLEX_WORDS) for r in rs)
+            self.rotor_links.append((st, can, f"rotor can `{can}` of the split motor", "key", None, "; ".join(rs) if flex else ""))
         self.uf = uf
         # fasteners (geometry + declaration)
         self.fpierce = {}
@@ -955,7 +992,8 @@ def motor_own_shaft(k, sid, m):
     ang, dist = coax(mi["o"], mi["d"], ra[0], ra[1])
     rad = float(np.max(radial(sb.mesh.vertices, ra[0], ra[1])[1]))
     sp, mp = k.parts[sid].part, k.parts[m].part
-    declared = getattr(sp, "_extra", {}).get("shaft_of") == m or bool(getattr(mp, "_extra", {}).get("motor_shaft_extended"))
+    rotors = {m} | {c for c, st in getattr(k, "rotor_of", {}).items() if st == m}
+    declared = getattr(sp, "_extra", {}).get("shaft_of") in rotors or bool(getattr(mp, "_extra", {}).get("motor_shaft_extended"))
     fits = rad <= mi["dia"] / 2 + HUB_COAX_MM
     if declared and ang <= COAX_DEG and dist <= COAX_MM and fits:
         return True, f"`{sid}` is declared the motor's own shaft"
