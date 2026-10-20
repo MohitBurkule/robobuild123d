@@ -110,7 +110,4 @@ LUG_BLEND_FILL = Polygon([(LUG_SCALLOP_YT, LUG_FLOOR_Z), _corner, SB, _blend_c])
 LUG_SCALLOP = Point(LUG_SCALLOP_YT, LUG_FLOOR_Z - LUG_SCALLOP_R).buffer(LUG_SCALLOP_R, 128).intersection(
     Polygon([(0.0, -20.0), (LUG_SCALLOP_YT, -20.0), (LUG_SCALLOP_YT, LUG_FLOOR_Z), (0.0, LUG_FLOOR_Z)]))
 # param: end
-# --- tub_lugs/tub_lobes relations ---
-M3_NUT_AF, M3_NUT_AC, NUT_PRESS = 5.5, 6.35, 0.05   # thin M3 nut across flats / corners; the captive hex pocket is this much under it (pressed in)
-# --- end tub_lugs/tub_lobes relations ---
 __all__ = [n for n in dir() if not n.startswith("__")]   # last line: every name above is exported
