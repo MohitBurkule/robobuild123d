@@ -11,9 +11,13 @@ Outrunners (a catalog entry with `bell_d`, or any `weapon_motor*` part) must be 
 bolted down: a single fused motor part is a BLOCKER (cots.motor_split), and so is a can whose bore has no stator in it
 (cots.motor_bore: less than BORE_FILL_MIN of the bore is stator). The feature table is then judged on can + stator
 together in the can's frame. When a `reference_cad` entry maps the motor (its `part` or `with_parts` names the base, the
-can or the stator) the reference mesh volume (RVRN 2.0 STEP GR1507_1: 2303 mm3) is the target and can + stator (+ any
-part declaring `shaft_of` the motor, since the STEP draws the shaft inside the motor body) must be within REF_VOL_TOL,
-else BLOCKER (cots.motor_volume).
+can or the stator) the motor's ENVELOPE must match the reference's within REF_VOL_TOL, else BLOCKER (cots.motor_volume).
+The envelope is the union of can + stator (+ any part declaring `shaft_of` the motor, since the STEP draws the shaft
+inside the motor body) with interior voids filled: the solid of revolution of the max radius per axial slice
+(envelope_volume). The reference mesh is filled the same way. Raw solid volume is not compared because the RVRN 2.0
+STEP GR1507_1 (2303 mm3) is a simplified solid, a hollow can with an r4 core standing in for the stator, so a real
+stator inflates raw volume by ~22% while the outer envelope (what clearance and parity depend on) is unchanged. Both raw
+and envelope volumes are reported as metrics.
 """
 
 from __future__ import annotations
@@ -30,7 +34,8 @@ G = "cots"
 TOL_MM = 0.3
 MOTOR_KINDS = ("motor", "weapon_motor")
 ROLES = {"_can": "can", "_bell": "can", "_stator": "stator"}
-REF_VOL_TOL = 0.05  # can + stator volume vs the reference mesh volume
+REF_VOL_TOL = 0.05  # motor envelope vs the reference envelope (RVRN 2.0 STEP GR1507_1, filled the same way)
+ENV_SLICE_MM = 0.25
 BORE_FILL_MIN = 0.25  # a real stator (core + windings) fills most of the bell bore; less than this is an empty can
 
 # Catalog id -> identifying features (mm). Outrunners: bell_d, stator_d (base flange at the -axis end), shaft_d (the
@@ -166,8 +171,27 @@ def bore_fill(can, stator, n=4000):
     return float(stator.contains(bore).mean()) if len(bore) else 0.0
 
 
+def envelope_volume(mesh, axis=None, slice_mm=ENV_SLICE_MM, n=40000):
+    """Volume (mm3) of the solid of revolution of the max radius per axial slice, interior voids filled. The axis runs
+    through the bounding-box centre; with no axis given it is the bbox axis whose cross-section is most nearly square."""
+    lo, hi = mesh.bounds
+    if axis is None:
+        ext = hi - lo
+        k = min(range(3), key=lambda i: (abs(ext[(i + 1) % 3] - ext[(i + 2) % 3]) / max(ext.max(), 1e-9), -ext[i]))
+        axis = np.eye(3)[k]
+    axis = np.asarray(axis, float) / np.linalg.norm(axis)
+    pts = np.vstack([mesh.vertices, mesh.sample(n)]) - (lo + hi) / 2
+    t = pts @ axis
+    rho = np.linalg.norm(pts - np.outer(t, axis), axis=1)
+    nb = max(1, int(np.ceil((t.max() - t.min()) / slice_mm)))
+    idx = np.minimum(((t - t.min()) / (t.max() - t.min() + 1e-12) * nb).astype(int), nb - 1)
+    rmax = np.zeros(nb)
+    np.maximum.at(rmax, idx, rho)
+    return float(np.pi * (rmax ** 2).sum() * (t.max() - t.min()) / nb)
+
+
 def ref_volume(ctx, ids):
-    """(volume mm3, file) of the reference_cad mesh mapped to any of `ids`, or None (no entry / file not readable)."""
+    """(raw volume mm3, envelope mm3, file) of the reference_cad mesh mapped to any of `ids`, or None."""
     from .reference_cad import _cfg
 
     cfg = _cfg(ctx.r.spec)
@@ -178,7 +202,8 @@ def ref_volume(ctx, ids):
             try:
                 import trimesh
 
-                return abs(float(trimesh.load(path, force="mesh").volume)), e["file"]
+                rm = trimesh.load(path, force="mesh")
+                return abs(float(rm.volume)), envelope_volume(rm), e["file"]
             except Exception:  # noqa: BLE001 - unreadable reference: not checked
                 ctx.not_checked.append(f"cots.motor_volume: reference `{path}` not readable")
                 return None
@@ -245,19 +270,28 @@ def run(ctx):
                 _judge_report(out, can.part.id, can.part.catalog or st.part.catalog or base, feat, miss)
             else:
                 n += 1
+        import trimesh
+
         extra = [rp.part.id for rp in ctx.r.parts if x(rp.part, "shaft_of") in ids]
-        vol = sum(abs(float(ctx.world.body(i).mesh.volume)) for i in [can.part.id, st.part.id] + extra)
-        ctx.metrics[f"cots.motor.{base}"] = {"volume_mm3": round(vol, 1), "bore_fill": round(fill, 3)}
+        bodies = [ctx.world.body(i).mesh for i in [can.part.id, st.part.id] + extra]
+        vol = sum(abs(float(b.volume)) for b in bodies)
+        um = trimesh.util.concatenate(bodies)
+        um.apply_transform(np.linalg.inv(wc.M))
+        env = envelope_volume(um, _frame(can))
+        ctx.metrics[f"cots.motor.{base}"] = {"volume_mm3": round(vol, 1), "envelope_mm3": round(env, 1),
+                                             "bore_fill": round(fill, 3)}
         rv = ref_volume(ctx, ids)
         if rv is not None:
-            ref, fn = rv
-            d = vol / ref - 1 if ref > 0 else 0.0
-            msg = (f"`{base}` can + stator{' + ' + ', '.join(extra) if extra else ''} {vol:.0f} mm3 vs reference `{fn}` "
-                   f"{ref:.0f} mm3 ({d:+.1%}, tol ±{REF_VOL_TOL:.0%})")
-            out.append(ok("cots.motor_volume", G, "Motor volume matches the reference", msg).on(can.part.id, st.part.id)
+            rraw, ref, fn = rv
+            ctx.metrics[f"cots.motor.{base}"].update(ref_volume_mm3=round(rraw, 1), ref_envelope_mm3=round(ref, 1))
+            d = env / ref - 1 if ref > 0 else 0.0
+            msg = (f"`{base}` envelope of can + stator{' + ' + ', '.join(extra) if extra else ''} {env:.0f} mm3 vs "
+                   f"reference `{fn}` envelope {ref:.0f} mm3 ({d:+.1%}, tol ±{REF_VOL_TOL:.0%}, per RVRN 2.0 STEP "
+                   f"GR1507_1); raw solid {vol:.0f} vs {rraw:.0f} mm3 (not judged: the STEP stator is a simplified core)")
+            out.append(ok("cots.motor_volume", G, "Motor envelope matches the reference", msg).on(can.part.id, st.part.id)
                        if abs(d) <= REF_VOL_TOL else
-                       fail("cots.motor_volume", G, BLOCKER, "Motor volume differs from the reference", msg)
-                       .on(can.part.id, st.part.id).fix("Match the bell wall, stator core and base to the reference CAD."))
+                       fail("cots.motor_volume", G, BLOCKER, "Motor envelope differs from the reference", msg)
+                       .on(can.part.id, st.part.id).fix("Match the bell, base flange and shaft outline to the reference CAD."))
     if n:
         out.append(ok("cots.fidelity", G, "Bought parts carry their features", f"{n} motor(s) match their feature tables."))
     return out

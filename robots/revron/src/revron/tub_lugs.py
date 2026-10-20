@@ -29,8 +29,12 @@ FIL_BLOCK = Polygon([(FIL_BOX[0], FIL_BOX[1]), (FIL_BOX[2], FIL_BOX[1]), (FIL_BO
 # param: organic lug outline (STEP RV01): foot, ramp toe, standoff arcs SA / SB, nose tip, top
 LUG_Y0, LUG_FOOT_Y, LUG_RAMP_TOE, LUG_NOSE_TIP, LUG_TOP_Y = 13.0, 26.0, (30.4, 1.0), (36.6, LUG_FLOOR_Z), 15.0
 # param: end
+FULL_TURN = 360.0
 UNDER_BLEND_N, UNDER_SB_N = 24, 24                  # facets of the underside blend / standoff arcs
-SA_ARC, SB_ARC = (4.5, 250, 300, 6), (LUG_SB_R, 250, 400, 24)
+# the lug's top edge runs from the top-back corner tangent to the nose standoff arc: the arc ends where that tangent leaves it
+_TOP_D = (SB[0] - LUG_TOP_Y, SB[1] - CH["z1"])
+SB_TOP_ANG = math.degrees(math.atan2(-_TOP_D[1], -_TOP_D[0]) - math.acos(LUG_SB_R / math.hypot(*_TOP_D)))   # direction standoff centre -> tangent point
+SA_ARC, SB_ARC = (4.5, 250, 300, 6), (LUG_SB_R, 250, SB_TOP_ANG + FULL_TURN, 36)
 LUG_UNDER_POLY = Polygon([(LUG_FOOT_Y, 0.0), (LUG_FOOT_Y, LUG_FLOOR_Z), (30.0, 1.0), (40.0, 0.9), (60, 0)])   # underside the hull must not fill
 LUG_FLAT_RAMP = _poly([(10.0, -5.0), (10.0, LUG_FLOOR_Z), (LUG_FOOT_Y, LUG_FLOOR_Z), LUG_RAMP_TOE, (LUG_RAMP_TOE[0], -5.0)])
 # under the nose standoff the lug follows its arc: no hull chord below it where the scallop meets it

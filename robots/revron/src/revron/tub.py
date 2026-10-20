@@ -1,19 +1,18 @@
 """[fix-S] Chassis tub and its panels: chassis, base_panel, top_panel, esc_tray, inserts / panel seats."""
-import json, math, os, sys
 from .params import *  # noqa: F401,F403
 from .common import *  # noqa: F401,F403
 from . import tub_shell, tub_lobes, tub_lugs, tub_front
 from .tub_util import rect
+from robot.cad.holes import hole_tool   # the repo root is on the import path (params.py)
 
-SW_PAD = dict(x=(22.0, 27.5), y=(-15.6, 4.4), r=1.0, z0=16.5)   # switch pad under the deck: X / Y span, corner R, bottom Z
+SW_PAD_ENGAGE = 3.0   # pad material above the switch screw head seat (M2x3 thread-forming into the 1.7 pilot)
+SW_PAD = dict(x=(22.5, 27.5), y=(-15.6, 4.4), r=1.5, z0=16.5, fillet=1.5, over=0.5, up=0.1)   # switch pad under the deck (STEP): X / Y span (the +X end is the wall), free corner R, bottom Z, wall fillet R, reach into the wall, reach up into the deck
 
 
 def _panel_seat(which, i):
     """(cutter, FastenerRecord) of the M2 flat-head seat in the base / top panel (robot.cad.holes, head side only): the
     90 deg seat is 4.5 at the face (ISO 10642 dk 3.8 + 0.7: also clears the verifier's 4.4 head); the panels add a wider
     relief hole (BASE_HOLE / TOP_HOLE) so the seat stops short of the far face."""
-    sys.path.insert(0, ROOT)
-    from robot.cad.holes import hole_tool
     if which == "base":
         x, y = INS[i]
         return hole_tool((x, y, BASE_Z0), (0, 0, 1), "M2x6", head="csk", into="through", side="head", grip=BASE_T + BOSS_H, csk_clear=CSK_CLEAR)
@@ -97,17 +96,20 @@ def top_panel():
 
 def _switch_hole(yy):
     """robot.cad.holes record for a switch screw: M2x3 button thread-forming up into the 1.7 pilot of the deck pad (3.0 mm of pad above its 16.0 head seat)."""
-    _repo = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
-    if _repo not in sys.path:
-        sys.path.insert(0, _repo)
-    from robot.cad.holes import hole_tool
-    return hole_tool((SWX, yy, 16.0), (0, 0, 1), "M2x3", head="button", into="tapped", side="thread", engage=3.0)
+    return hole_tool((SWX, yy, SW_BOLT_Z), (0, 0, 1), "M2x3", head="button", into="tapped", side="thread", engage=SW_PAD_ENGAGE)
 
 
 # ------------------------------------------------------------------------------------------------------------ chassis
 def switch_pad(c):
     """Pad under the deck that the switch ears bear on (STEP); +X side only."""
-    return _ext(_round(rect(*SW_PAD["x"], *SW_PAD["y"]), r_out=SW_PAD["r"]), "xy", SW_PAD["z0"], c["deck"] + 0.1)
+    from shapely.geometry import Point
+    P = SW_PAD
+    (x0, x1), (y0, y1), f = P["x"], P["y"], P["fillet"]
+    plan = _round(rect(x0, x1 + P["over"], y0, y1), r_out=P["r"])
+    for yw, d in ((y0, -1), (y1, 1)):   # concave fillet where the pad ends meet the side wall
+        q = rect(x1 - f, x1, *sorted((yw, yw + d * f)))
+        plan = plan.union(q.difference(Point(x1 - f, yw + d * f).buffer(f, SEG)))
+    return _ext(plan, "xy", P["z0"], c["deck"] + P["up"])
 
 
 def chassis():
@@ -117,7 +119,9 @@ def chassis():
     c = CH
     adds = tub_shell.additions(c) + tub_lobes.additions(c) + tub_lugs.additions(c) + tub_front.additions(c) + [switch_pad(c)]
     cuts = tub_shell.cuts(c) + tub_lobes.cuts(c) + tub_lugs.cuts(c) + tub_front.cuts(c)
-    return _U(_S(_U(tub_shell.shell(c), *adds), *cuts), *tub_shell.ribs(c))
+    tub = _U(_S(_U(tub_shell.shell(c), *adds), *cuts), *tub_shell.ribs(c))
+    assert len(tub.solids()) == 1 and tub.volume > CHASSIS_MIN_VOL, f"chassis boolean collapsed: {len(tub.solids())} solids, {tub.volume:.0f} mm3"
+    return tub
 
 
 def esc_tray():
