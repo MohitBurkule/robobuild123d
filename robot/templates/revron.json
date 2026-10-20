@@ -384,12 +384,6 @@
    "reason": "shaft in the MR85 inner race (bearing modelled as one solid)"
   },
   {
-   "a": "wshaft",
-   "b": "weapon_motor_can",
-   "max_depth_mm": 2.6,
-   "reason": "wshaft is the GR1507's own shaft, already drawn inside the catalog motor envelope"
-  },
-  {
    "a": "motor_l",
    "b": "whub_rl",
    "max_depth_mm": 0.4,

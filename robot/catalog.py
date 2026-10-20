@@ -59,10 +59,11 @@ def _gr1507_base():
 # GR1507 outrunner, local frame (X along the axis, +X = bell top / output side, -X = stator base). Bell: wall r7.4-9.8 and a solid r4 core
 # (RVRN 2.0 STEP sections), closed top 4.3..6.7. The STEP leaves the stator out; ours is a real 12-slot stack (OD 13.8, 7 mm) on the base cross.
 BELL_WALL_R, BELL_CORE_R, BELL_X0, BELL_TOP_X = (7.4, 9.8), 4.0, -4.5, (4.3, 5.2)   # the STEP top runs to 6.7 but the spider's inner face is at 5.2: the top ends flush on it
+BELL_CAP_R, BELL_VENT_R, BELL_VENT_AT = 6.2, 1.2, 7.4          # flat of the chamfered cap; 4 vent holes between the screw bosses
 BELL_BOSS_R, BELL_BOSS_L = 1.9, 2.1                           # spider-screw tapping bosses under the top (top 0.9 + boss 2.1 = 3.0 mm of thread)
 STATOR_BASE_X, STATOR_STACK_X0 = -8.4, -5.0              # top face of the base cross; the stack sits inside the bell on a post from it
 STATOR_STACK_H, STATOR_SLOTS = 7.0, 12                 # GR1507: 15 mm class stator, 7 mm stack
-STATOR_BORE_R, STATOR_YOKE_R, STATOR_TIP_R = 3.3, 4.4, 6.9   # bore (clears the r4 rotor core), yoke outer, tooth tip
+STATOR_BORE_R, STATOR_YOKE_R, STATOR_TIP_R = 3.0, 4.4, 6.9   # bore (clears the r4 rotor core), yoke outer, tooth tip
 SHAFT_STUB_R = 2.5                                     # rotor shaft down through the stator bore to the base
 LEAD_R, LEAD_X, LEAD_Z, LEAD_PITCH = 0.45, (-11.8, -9.4), -6.4, 1.0   # 3 phase leads leave the base through the -Z arm
 BELL_SCREW_R, BELL_SCREW_PHASE = 4.5, -54.889  # spider screw circle on the bell top and its phase about the axis (STEP; local frame)
@@ -72,14 +73,15 @@ def _gr1507_bell():
     """GR1507 bell, local X = -world X (RVRN 2.0 STEP sections): solid r4 core through (-4.5..6.5), wall r7.4-9.8 over -4.5..4.3,
     and a vented top: a r6.2 disc (4.3..6.7) joined to the wall by 8 ribs (two per quadrant at world 34 and 62 deg), the 4 vents
     between them. Rotates with the weapon; the stator inside is `_gr1507_stator`."""
-    ribs = [rot(at(box(BELL_TOP_X[1] - BELL_TOP_X[0], 4.6, 1.4), 0.5 * sum(BELL_TOP_X), 7.5, 0), [ang, 0.0, 0.0]) for ang in (146, 118, 236, 208, 326, 298, 56, 28)]
     wl = BELL_TOP_X[0] - BELL_X0
     wall = minus(cyl_x(BELL_WALL_R[1], wl), [cyl_x(BELL_WALL_R[0], wl + 1.0)])
     tl = BELL_TOP_X[1] - BELL_TOP_X[0]
-    bosses = [at(rot(at(cyl_x(BELL_BOSS_R, BELL_BOSS_L), 0, BELL_SCREW_R, 0), [BELL_SCREW_PHASE + 90.0 * k, 0.0, 0.0]), -0.5 * (tl + BELL_BOSS_L), 0, 0) for k in range(4)]
-    holes = [at(rot(at(cyl_x(0.8, tl + BELL_BOSS_L + 0.2), 0, BELL_SCREW_R, 0), [BELL_SCREW_PHASE + 90.0 * k, 0.0, 0.0]), -0.5 * BELL_BOSS_L, 0, 0) for k in range(4)]   # M2 tap holes (ISO 2306 r0.8), blind through top + boss
-    top = minus(union([cyl_x(6.2, tl)] + bosses), holes + [cyl_x(SHAFT_STUB_R, tl + 0.2)])   # the shaft bore
-    return union([at(wall, 0.5 * (BELL_X0 + BELL_TOP_X[0]), 0, 0), at(top, 0.5 * sum(BELL_TOP_X), 0, 0)] + ribs)
+    cap = {"type": "revolve", "profile": [[0.0, 0.0], [BELL_WALL_R[1], 0.0], [BELL_CAP_R, tl], [0.0, tl]], "angle": 360.0}   # chamfered cap: wall OD down to the flat
+    cap = at(rot(cap, [0.0, 90.0, 0.0]), BELL_TOP_X[0], 0, 0)
+    bosses = [at(rot(at(cyl_x(BELL_BOSS_R, BELL_BOSS_L), 0, BELL_SCREW_R, 0), [BELL_SCREW_PHASE + 90.0 * k, 0.0, 0.0]), BELL_TOP_X[0] - 0.5 * BELL_BOSS_L, 0, 0) for k in range(4)]   # tapping bosses under the cap: 3 mm of thread for the spider screws
+    holes = [at(rot(at(cyl_x(0.8, tl + BELL_BOSS_L + 0.2), 0, BELL_SCREW_R, 0), [BELL_SCREW_PHASE + 90.0 * k, 0.0, 0.0]), BELL_TOP_X[0] + 0.5 * (tl - BELL_BOSS_L), 0, 0) for k in range(4)]   # M2 tap holes (ISO 2306 r0.8), blind through cap + boss
+    vents = [at(rot(at(cyl_x(BELL_VENT_R, tl + 0.2), 0, BELL_VENT_AT, 0), [BELL_SCREW_PHASE + 45.0 + 90.0 * k, 0.0, 0.0]), BELL_TOP_X[0] + 0.5 * tl, 0, 0) for k in range(4)]
+    return union([at(wall, 0.5 * (BELL_X0 + BELL_TOP_X[0]), 0, 0), minus(union([cap] + bosses), holes + vents + [at(cyl_x(SHAFT_STUB_R, tl + 0.4), BELL_TOP_X[0] + 0.5 * tl, 0, 0)])])
 
 
 def _gr1507_stator():
