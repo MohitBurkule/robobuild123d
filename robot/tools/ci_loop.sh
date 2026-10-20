@@ -62,7 +62,7 @@ gate() {
   read a0 i0 < "$bf"
   a1=$(gcount "$GWT/trial" assembly); i1=$(gcount "$GWT/trial" interference)
   $GPY decide "$b" "$s" "$a0" "$a1" "$i0" "$i1" "$P" >/dev/null || return 1
-  if [[ "$b" == *-param ]] || git log --format=%B HEAD.."$b" | grep -qiE 'param|refactor'; then
+  if [[ "$b" == *-param ]] || git log --format=%B HEAD.."$b" | grep -qE '^\[refactor\]'; then
     local ge=robots/revron/tools/geom_equal.py
     if [ -f "$GWT/trial/$ge" ]; then
       gwt "$GWT/base" HEAD; cp "$GWT/trial/$ge" "$GWT/base/$ge"; rm -rf "$GWT/snap"
