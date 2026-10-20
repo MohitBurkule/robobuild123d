@@ -275,7 +275,12 @@ WIRES = [("w_bat_sw", "battery.jst_rcy", "power_switch.in", AWG["power"], "power
 
 
 # make_spec tables: weapon shaft, web floors, hub pivots, electronics placements, press-fit interference, belt geometry
-WSHAFT = dict(r=2.5, len=30.1, x=3.65, x_end=-18.7, thread_pitch=0.8, thread_depth=0.3, thread_len=10.0, chamfer=0.4)                  # GR1507 shaft: radius, length, start in the motor frame
+# One switch swaps the weapon motor model: "datasheet" = real GR1507 (GEPRC drawing: 12-slot wound stator, 4-spoke chamfered cap, side wire exit, M5 thread 8 mm),
+# "step" = the simplified RVRN 2.0 STEP motor (solid r4 core, flat cap, no stator, thread 10 mm). Same part ids, mount points and screws in both.
+MOTOR_VARIANT = os.environ.get("REVRON_MOTOR_VARIANT", "datasheet")
+MOTOR_VARIANTS = {"datasheet": dict(stator="gr1507", can="gr1507_can", thread_len=8.0), "step": dict(stator="gr1507_step", can="gr1507_step_can", thread_len=10.0)}
+MOTOR = MOTOR_VARIANTS[MOTOR_VARIANT]
+WSHAFT = dict(r=2.5, len=30.1, x=3.65, x_end=-18.7, thread_pitch=0.8, thread_depth=0.3, thread_len=MOTOR["thread_len"], chamfer=0.4)                  # GR1507 shaft: radius, length, start in the motor frame
 WEB = dict(spider=0.8, disc=0.9, fork=1.05)             # min_web_mm the designer owns (STEP measures the same webs)
 HUB_PIVOT_X = dict(rear=41.6, front=34.5)               # |X| of each hub's revolute pivot
 ELEC = dict(battery=(-11.81, -5.4, 12.0), rxesc=(8.67, -3.0, 15.3), wesc=(8.63, -7.25, 10.6), switch_yz=(-5.6, 14.25))   # catalog origins (STEP envelopes)
@@ -315,8 +320,8 @@ REF_BOM = [   # RVRN 2.0 STEP part list (research/rvrn_step/INDEX.txt); one row 
     dict(role="side panel to chassis: 2 x M3x8 CSK into thin nuts", match=["bolt_s?c"], count=2, designation="M3x8", head="countersunk", threads_into="nut"),
     dict(role="M3 thin nuts (BS EN 24036)", kind="part", match=["nut_c*"], count=2, catalog="nut_m3_thin"),
     dict(role="RV11 25 mm + RV10 15 mm alu standoffs", kind="part", match=["so_*"], count=4, material="aluminium"),
-    dict(role="GR1507 weapon motor", kind="part", match=["weapon_motor_stator"], count=1, catalog="gr1507"),
-    dict(role="GR1507 bell (rotor half)", kind="part", match=["weapon_motor_can"], count=1, catalog="gr1507_can"),
+    dict(role="GR1507 weapon motor", kind="part", match=["weapon_motor_stator"], count=1, catalog=MOTOR["stator"]),
+    dict(role="GR1507 bell (rotor half)", kind="part", match=["weapon_motor_can"], count=1, catalog=MOTOR["can"]),
     dict(role="Motor back spacer", kind="part", match=["motor_spacer"], count=1),
     dict(role="spider + 2 Drisk_floating_3 + Drisk_spacer_alt_x", kind="part", match=["spider", "disc_a", "disc_b", "dspacer"], count=4),
     dict(role="fork_5 x 2", kind="part", match=["fork_*"], count=2),
@@ -386,7 +391,7 @@ SHARP_OK = [dict(part="tub", near=[sg * 31.4, -11.7, 5.4], r_mm=1.0, reason="ins
                  reason="screw boss is 0.3 mm tall (any taller breaks the reference silhouette), so its base fillet is capped at R0.25; the STEP pad base is R0.5")]
 _ORING = "O-ring is rubber: it squashes 0.16 mm against the plain inner face of the STEP side panel (the STEP has no belt channel)"
 _N10_FLAT = "the catalog N10 shaft is drawn round; the hub's D-flat sits on its flat"
-ALLOW_OVERLAP = [dict(a="belt_l", b="side_l", max_depth_mm=0.3, reason=_ORING),
+ALLOW_OVERLAP = ([dict(a="wshaft", b="weapon_motor_can", max_depth_mm=2.6, reason="STEP variant: the shaft is drawn through the simplified solid rotor core")] if MOTOR_VARIANT == "step" else []) + [dict(a="belt_l", b="side_l", max_depth_mm=0.3, reason=_ORING),
                  dict(a="belt_r", b="side_r", max_depth_mm=0.3, reason=_ORING),
                  dict(a="wshaft", b="wbearing", max_depth_mm=0.3, reason="shaft in the MR85 inner race (bearing modelled as one solid)"),
                  dict(a="motor_l", b="whub_rl", max_depth_mm=0.4, reason=_N10_FLAT),

@@ -37,11 +37,11 @@ def make_spec(model_file):
       label="RV02 XALT HD left weapon mount (8 mm): outboard MR85 bearing for the threaded shaft end, notch on the chassis tab, 2 M3 CSK into the standoffs")
     P(id="motor_spacer", kind="other", role="spacer", parent="mount_r", print_orientation="+x", rotates_with="fixed", color="#2a2c30", shape=M("motor_back_spacer"), **PLA,
       label="1.5 mm printed motor back spacer: stator base off the mount, clears the rear bearing boss and the phase leads")
-    P(id="weapon_motor_stator", kind="weapon_motor", catalog="gr1507", parent="mount_r", at=[0.0, WY, WZ], rot=[0, 0, 180], rotates_with="fixed", exposed=True,
+    P(id="weapon_motor_stator", kind="weapon_motor", catalog=MOTOR["stator"], parent="mount_r", at=[0.0, WY, WZ], rot=[0, 0, 180], rotates_with="fixed", exposed=True,
       exposed_reason="Drisk: the GR1507 bell is the hub of the weapon, inside the spacer bore between the two Hardox discs; the discs shield it radially",
       label="GR1507 outrunner, fixed half: stator and cross base on RV03, phase leads out the back",
       deviation="RVRN 2.0 STEP draws the GR1507 as one empty can with no stator, no windings and no leads; the real fixed stator stack, windings and the 3 phase leads (out of the base through the -Z arm, STEP shows no wire exit) are added: a real motor has them")
-    P(id="weapon_motor_can", kind="other", role="rotor", catalog="gr1507_can", parent="spider", at=[0.0, 0.0, 0.0], rot=[0, 0, 180], rotates_with="weapon", exposed=True,
+    P(id="weapon_motor_can", kind="other", role="rotor", catalog=MOTOR["can"], parent="spider", at=[0.0, 0.0, 0.0], rot=[0, 0, 180], rotates_with="weapon", exposed=True,
       exposed_reason="Drisk: the GR1507 bell is the hub of the weapon, inside the spacer bore between the two Hardox discs; the discs shield it radially",
       label="GR1507 bell and core: spins with the spider, wshaft and discs round the fixed stator")
     P(id="wbearing", kind="bearing", parent="mount_l", material="steel", process="cots", rotates_with="fixed", stock="MR85ZZ 5 x 8 x 2.5", color="#555555",
