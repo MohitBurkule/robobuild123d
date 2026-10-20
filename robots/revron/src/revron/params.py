@@ -387,3 +387,31 @@ SERVICE_POSE = [dict(parts=["spider", "disc_a", "disc_b", "dspacer"] + [f"bolt_{
 
 
 __all__ = [n for n in dir() if not n.startswith('__')]
+
+
+# --- side.py: fork, hubs, side-panel width (fix-B lint) ---
+FK_X = {1: (24.5, 26.0), -1: (-26.5, -25.0)}      # fork X slab per side sign
+FK_EYE, FK_EYE_R, FK_PIN_R, FK_SB_R = (36.3, 6.3), 1.95, 0.8, 2.65   # eye on the nose standoff, pin hole, standoff hole
+FK_RES, FK_RES_PIN, FK_RES_BUF = 48, 24, 8        # circle / buffer segment counts
+FK_BLADE = [(35.0, 4.9), (36.1, 8.2), (41.0, 8.25), (66.68, 1.49), (51.75, 0.75), (39.0, 0.75), (38.0, 1.5)]   # param: organic fork blade outline (measured, STEP)
+FK_ROUND = (0.3, 0.5)                             # outer / inner corner radius of the blade
+FK_TIP = [(60.0, 1.27), (66.68, 1.49), (60.0, 2.5)]   # param: organic sharp-tip wedge
+FK_TIP_R = 0.15                                   # tip join radius (> kerf)
+FK_WIN = [(43.85, 2.75), (54.0, 2.75), (44.35, 5.42)]   # param: organic lightening window
+FK_WIN_R = 0.3
+FK_LAND = [(64.0, 1.2), (66.68, 1.27), (66.68, 1.72), (64.0, 1.95)]   # param: organic 0.45 mm kerf land
+FK_TILT = -1.1                                    # deg, left fork nose-down about its standoff
+FKS_STEPS, FKS_DY = 24, 0.5                       # fork-slot sweep up out of the ramp
+FKS_CLIP = (42.0, -1, 80, 30)                     # x0, y0, x1, y1 of the sweep clip box
+HUB_X0 = 30.0                                     # hub inboard face X
+RH_PROF = [(0.0, 0.0), (0.0, 8.0), (0.7, 8.0), (0.95, 7.45), (1.55, 7.45), (1.8, 8.0), (2.5, 8.0), (2.55, 6.9), (2.75, 6.35), (3.35, 6.0),
+           (5.25, 6.0), (6.25, 7.0), (8.25, 7.0), (9.25, 6.0), (11.1, 6.0), (11.3, 6.5), (12.0, 6.5), (12.0, 2.88), (11.8, 2.88), (11.8, 0.0)]   # param: organic RV21 hub revolve profile (STEP)
+RH_DR, RH_FLAT, RH_CROWN = 1.6, 0.9, 0.02         # D-bore radius, flat height above axis, flat crown
+RH_NARC, RH_NFLAT = 60, 27                        # D-bore arc points / flat divisions
+RH_SEAT_R, RH_GRUB_X, RH_GRUB = 6.0, 34.3, "M2x5" # tyre-seat radius, grub X, grub fastener
+RH_GRUB_DIR = (0, 0, -1)
+RH_X_IN, RH_X_OUT, RH_SLOT_HW, RH_SLOT_Z = 29.0, 41.0, 2.05, (2.4, 4.4)   # D-bore/nut-slot X span, slot half width, slot Z span
+FH_PROF = [(0.0, 2.7), (0.0, 4.5), (0.7, 4.5), (0.75, 3.96), (0.93, 3.7), (1.57, 3.7), (1.75, 3.96), (1.8, 4.5), (2.5, 4.5), (2.5, 4.1), (2.9, 3.7),
+           (7.9, 3.7), (8.3, 4.1), (8.3, 4.5), (9.0, 4.5), (9.0, 2.7)]   # param: organic RV19 hub revolve profile (STEP)
+SPW_Y = (-16.0, -12.0, 11.0, 15.0)                # side-panel width stations along Y
+SPW_BUMP, SPW_BUMP_YC, SPW_BUMP_YH, SPW_BUMP_ZC, SPW_BUMP_ZH = 0.7, -5.0, 6.0, 7.5, 5.0   # nut-lobe swell: height, Y centre/half, Z centre/half
