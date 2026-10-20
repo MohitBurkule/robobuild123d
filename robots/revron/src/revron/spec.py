@@ -280,7 +280,7 @@ def _micro_to_world(side):
 
 
 def _fork_dev(s):
-    return [dict(near=[s * 25.5, 66.0, 1.4], r=2.0, reason="laser-cut Ti cannot hold the STEP's knife tip (0.0 mm): the tip ends "
+    return [dict(near=[s * FORK_DEV["x"], FORK_DEV["y"], FORK_DEV["z"]], r=FORK_DEV["r"], reason="laser-cut Ti cannot hold the STEP's knife tip (0.0 mm): the tip ends "
                  "in a 0.45 mm land at full length (laser titanium min web 0.4 mm)")]
 
 
@@ -292,7 +292,7 @@ def _wedge_dev(s):
 
 
 def _side_dev(s):
-    return [dict(near=[s * 41.78, SB[0], SB[1]], r=4.0, reason="nose screw seat: ISO 10642 M3 head is 6.6 (catalog max), the STEP's "
+    return [dict(near=[s * SIDE_DEV_X, SB[0], SB[1]], r=SIDE_DEV_R, reason="nose screw seat: ISO 10642 M3 head is 6.6 (catalog max), the STEP's "
                  "6.2 bore would trap it; 6.7 seat with a straight head bore out through the nose for the driver")]
 
 
