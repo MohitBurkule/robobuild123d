@@ -262,7 +262,7 @@ def builtin() -> list[CatalogEntry]:
                             at(cyl_x(STATOR_HUB_R, STATOR_HUB_X1 - STATOR_HUB_X0), 0.5 * (STATOR_HUB_X0 + STATOR_HUB_X1), 0, 0), at(_gr1507_bell(), 0.0, 0, 0),
                             at(cyl_x(2.5, 3.0), 8.0, 0, 0), at(cyl_x(2.26, 9.2), 14.1, 0, 0),
                             at(cyl_x(0.75, 1.4), -11.1, 0, 0)]),
-                     {"phases": [-11.0, 0, -9.0]}, {"at": [4.1, 0, 0], "dir": [1, 0, 0], "len": 14.6, "dia": 5.0},   # shaft leaves the bell face at 4.1 (the vented top to 6.0 is not bell wall)
+                     {"phases": [-11.8, 0, -9.0]}, {"at": [4.1, 0, 0], "dir": [1, 0, 0], "len": 14.6, "dia": 5.0},   # shaft leaves the bell face at 4.1 (the vented top to 6.0 is not bell wall)
                      {"kv": 2850, "max_current_a": 18.0, "typ_current_a": 8.0, "bell_mass_frac": 0.45}, "#3a3d42"),
         flat("malenki_nano_rvrn2", "Malenki Nano (Rx + 2 brushed ESC), kapton wrapped with its leads (RVRN 2.0 RV13 envelope)", "esc", 32, 20, 4.4, 4.0,
              {"bat": [-16, -6, -1.0], "m1": [16, 6, -1.0], "m2": [-16, 6, -1.0], "wpn": [16, -6, -1.0]},
