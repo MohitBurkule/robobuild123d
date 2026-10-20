@@ -13,13 +13,24 @@ sys.path.insert(0, os.path.abspath(os.path.join(HERE, "..", "..", "..")))
 import build123d as b
 import build_revron as R
 
-SOLIDS = ["top_panel", "base_panel", "esc_tray"]
+WEAPON = {"mount_l": lambda: R.weapon_mount("l"), "mount_r": lambda: R.weapon_mount("r"), "spider": lambda: R.spider(),
+          "drisk_spacer": lambda: R.drisk_spacer(), "disc_a": lambda: R.disc("disc_a"), "disc_b": lambda: R.disc("disc_b"),
+          "motor_back_spacer": lambda: R.motor_back_spacer()}   # [fix-B] weapon parts
+SOLIDS = ["top_panel", "base_panel", "esc_tray"] + list(WEAPON)
+
+
+def _build(n):
+    return WEAPON[n]() if n in WEAPON else getattr(R, n)()
 TOL = 0.01
 
 
 def helpers():
     out = {f"panel_outline_{g}": R._panel_outline(g) for g in (0.0, 0.05)}
     pts = [(0.0, 0.0), (3.0, 1.0), (5.0, 4.0), (9.0, 4.5)]
+    out["disc_outline"] = R.disc_outline()
+    out["floating_disc"] = R.floating_disc()
+    out["mount_profile_r10"] = R._mount_profile("r")
+    out["mount_profile_r7"] = R._mount_profile("l")
     out["chaikin"] = {n: R._chaikin_open(pts, n) for n in (0, 1, 3)}
     return out
 
@@ -42,7 +53,7 @@ def _dev(a, c, n=20000):
 def snap(d):
     os.makedirs(d, exist_ok=True)
     for n in SOLIDS:
-        b.export_brep(getattr(R, n)(), os.path.join(d, n + ".brep"))
+        b.export_brep(_build(n), os.path.join(d, n + ".brep"))
     pickle.dump(helpers(), open(os.path.join(d, "helpers.pkl"), "wb"))
     print("snap", d)
 
@@ -50,7 +61,7 @@ def snap(d):
 def check(d):
     bad = 0
     for n in SOLIDS:
-        old, new = b.import_brep(os.path.join(d, n + ".brep")), getattr(R, n)()
+        old, new = b.import_brep(os.path.join(d, n + ".brep")), _build(n)
         bo, bn = old.bounding_box(), new.bounding_box()
         dv = abs(old.volume - new.volume)
         db = max(abs(x - y) for x, y in zip((*bo.min, *bo.max), (*bn.min, *bn.max)))
