@@ -175,7 +175,8 @@ SP_CSK = dict(csk_clear=0.7, head_clear=12.0)   # M3 ISO 10642 seat (head dk 6.0
 SP_SA_CLEAR = (2.55, -42.55, -38.0)  # standoff-end clearance bore round SA (R, X0, X1)
 SP_BOSS = (3.0, -42.5, -39.5)        # standoff end boss round SA (R, X0, X1)
 SP_TYRE_RELIEF = (-45.0, -43.4, -38.7, -24.8, 5.5, 14.5)   # rear tyre relief box on the inner face (x0, x1, y0, y1, z0, z1)
-SP_NUT_RELIEF = [(-11.7, 3.8), (0.5, 4.7), (2.3, 5.7), (2.3, 8.3), (0.5, 9.3), (-3.5, 11.0), (-9.5, 13.0), (-11.7, 13.8)]   # STEP RV23 diamond (Y, Z)
+NUT_RELIEF_END_Y = -13.2          # relief end along Y (RV23: the panel has no wall strip between Y -13.2 and -11.7); the tub tail cut reads it too
+SP_NUT_RELIEF = [(NUT_RELIEF_END_Y, 3.8), (0.5, 4.7), (2.3, 5.7), (2.3, 8.3), (0.5, 9.3), (-3.5, 11.0), (-9.5, 13.0), (NUT_RELIEF_END_Y, 13.8)]   # STEP RV23 diamond (Y, Z)
 SP_NUT_RELIEF_X = (-32.5, -31.4)
 CHASSIS_MIN_VOLUME = 15000.0         # mm3: the intact chassis is 15988 mm3 in one solid
 SP_NUT_RELIEF_R = 1.0                # relief corners round r1: no sharp concave corner in the printed wall
