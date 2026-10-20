@@ -1,4 +1,5 @@
 #!/bin/bash
+# [fix-G] Every fix-* head passes gate() (below) before it is merged; see robot/tools/ci_gate.py.
 # Bounded integration loop: at most MAX_ITERS passes of
 #   fetch origin; merge every fix-* head (local or origin/, whichever is newer) into rvrn2-ci
 #   (conflicts aborted and logged as `[ci] conflict fix-X`); push rvrn2-ci:rvrn2 with retries;
@@ -24,11 +25,61 @@ render() { # async, one at a time, from a snapshot worktree of the verified sha 
   [ -d "$rd" ] || git worktree add -q --detach "$rd" HEAD
   git -C "$rd" checkout -q --detach "$(git rev-parse HEAD)" && (cd "$rd" && nohup setsid bash robot/tools/ci_render.sh >/dev/null 2>&1 < /dev/null &)
 }
+# [fix-G] merge gate: trial-merge $1 into a temp worktree of HEAD, run assembly + interference (one process each,
+# one at a time, fresh ROBOT_CACHE per run) and reject when either blocker count rises vs the cached baseline of HEAD.
+# Branches touching only robot/checks/ or docs skip the verify but must pass the pytest files they touch.
+# *-param branches / commits mentioning param|refactor must also pass robots/revron/tools/geom_equal.py vs HEAD.
+# GATE=0 disables. Returns 0 = merge, 1 = rejected (already logged).
+GWT=${GATE_WT:-/tmp/claude-0/-home-user/6d647ed2-7427-59f3-8ab5-ba663cdaf3d4/scratchpad/ci_gate}
+GPY="python3 $PWD/robot/tools/ci_gate.py"
+gwt() { [ -d "$1" ] || git worktree add -q --detach "$1" HEAD; git -C "$1" merge --abort 2>/dev/null; git -C "$1" reset -q --hard; git -C "$1" checkout -q --detach "$2"; }
+gcount() { # dir group -> blocker count (-1 = did not finish)
+  local c; c=$(mktemp -d "${TMPDIR:-/tmp}/ci_gate_cache.XXXX")
+  (cd "$1" && ROBOT_CACHE=$c HEAVY_CI=1 /tmp/heavy.sh timeout "${GATE_TIMEOUT:-3000}" python3 -m robot verify "$SPEC" --full --only "$2" > "$c.log" 2>&1)
+  $GPY count "$c.log"; rm -rf "$c" "$c.log"; }
+gfail() { log "gate rejected ${1#origin/} $2: $3"; printf '{"t":"%s","sha":"%s","group":"ci_gate","id":"ci_gate.rejected","parts":[],"branch":"%s","message":"[ci] gate rejected %s %s: %s"}\n' \
+  "$(date -Is)" "$2" "${1#origin/}" "${1#origin/}" "$2" "$3" >> "$P/blockers_live_$(echo "${1#origin/}" | sed -E 's/^fix-(.).*/\1/' | tr a-z A-Z).jsonl"; return 1; }
+gate() {
+  [ "${GATE:-1}" = 1 ] || return 0
+  local b=$1 s; s=$(git rev-parse --short "$b"); local head; head=$(git rev-parse --short HEAD)
+  local files; files=$(git diff --name-only HEAD..."$b")
+  gwt "$GWT/trial" HEAD
+  git -C "$GWT/trial" merge -q --no-edit "$b" >/dev/null 2>&1 || { git -C "$GWT/trial" merge --abort; return 0; }  # conflicts: normal path logs them
+  if [ "$($GPY kind $files)" = verifier-only ]; then
+    local t; t=$(echo "$files" | grep -E '^robot/tests/test_.*\.py$'); for f in $(echo "$files" | grep '^robot/checks/'); do
+      m=$(basename "$f" .py); [ -f "$GWT/trial/robot/tests/test_$m.py" ] && t="$t robot/tests/test_$m.py"; done
+    [ -z "$t" ] && t=robot/tests/test_checks.py
+    (cd "$GWT/trial" && timeout 1800 python3 -m pytest $(echo $t | tr ' ' '\n' | sort -u | while read x; do [ -f "$x" ] && echo "$x"; done) -q -x > "$P/ci_gate_pytest.log" 2>&1) \
+      || { gfail "$b" "$s" "unit tests failed ($(tail -1 "$P/ci_gate_pytest.log" | cut -c1-100))"; return 1; }
+    log "gate passed ${b#origin/} $s (verifier-only, tests ok)"; return 0
+  fi
+  local bf="$P/ci_gate_baseline_$head" a0 i0 a1 i1
+  if [ ! -s "$bf" ]; then gwt "$GWT/base" HEAD; echo "$(gcount "$GWT/base" assembly) $(gcount "$GWT/base" interference)" > "$bf"; log "gate baseline $head: $(cat "$bf")"; fi
+  read a0 i0 < "$bf"
+  a1=$(gcount "$GWT/trial" assembly); i1=$(gcount "$GWT/trial" interference)
+  $GPY decide "$b" "$s" "$a0" "$a1" "$i0" "$i1" "$P" >/dev/null || return 1
+  if [[ "$b" == *-param ]] || git log --format=%B HEAD.."$b" | grep -qiE 'param|refactor'; then
+    local ge=robots/revron/tools/geom_equal.py
+    if [ -f "$GWT/trial/$ge" ]; then
+      gwt "$GWT/base" HEAD; cp "$GWT/trial/$ge" "$GWT/base/$ge"; rm -rf "$GWT/snap"
+      (cd "$GWT/base" && HEAVY_CI=1 /tmp/heavy.sh python3 "$ge" snap "$GWT/snap") > "$P/ci_gate_geom.log" 2>&1 \
+        && (cd "$GWT/trial" && HEAVY_CI=1 /tmp/heavy.sh python3 "$ge" check "$GWT/snap") >> "$P/ci_gate_geom.log" 2>&1 \
+        || { git -C "$GWT/base" checkout -q -- . ; git -C "$GWT/base" clean -qfd robots/revron/tools; gfail "$b" "$s" "geom_equal failed ($(tail -1 "$P/ci_gate_geom.log" | cut -c1-100))"; return 1; }
+      git -C "$GWT/base" checkout -q -- . ; git -C "$GWT/base" clean -qfd robots/revron/tools
+    fi
+  fi
+  log "gate passed ${b#origin/} $s: assembly $a0->$a1, interference $i0->$i1"; return 0
+}
+gated() { # skip branches already rejected at this exact sha (re-gated once HEAD moves)
+  local k="${1#origin/} $(git rev-parse --short "$1") $(git rev-parse --short HEAD)"
+  grep -qxF "$k" "$P/ci_gate_rejected" 2>/dev/null && return 1
+  gate "$1" || { echo "$k" >> "$P/ci_gate_rejected"; return 1; }; }
 [ "${RENDER_FIRST:-0}" = 1 ] && render
 for i in $(seq "${START_ITER:-1}" "$MAX_ITERS"); do
   git fetch -q origin "+refs/heads/fix-*:refs/remotes/origin/fix-*" 2>>"$P/ci_push.err" || log "fetch failed"
   for b in $(heads); do
     git merge-base --is-ancestor "$b" HEAD && continue
+    gated "$b" || continue
     if git merge -q --no-edit "$b" >/dev/null 2>&1; then log "iter $i merged $b $(git rev-parse --short "$b")"
     else
       f=$(git diff --name-only --diff-filter=U | grep -v -e 'spec.json$' -e 'templates/revron.json$')
@@ -42,7 +93,7 @@ for i in $(seq "${START_ITER:-1}" "$MAX_ITERS"); do
   if [ "$sha" = "$(cat "$P/ci_last_verified" 2>/dev/null)" ]; then  # nothing new: wait without spending an iteration
     while [ "$(git rev-parse --short HEAD)" = "$sha" ]; do
       sleep "${POLL:-120}"; git fetch -q origin "+refs/heads/fix-*:refs/remotes/origin/fix-*" 2>/dev/null
-      for b in $(heads); do git merge-base --is-ancestor "$b" HEAD || git merge -q --no-edit "$b" >/dev/null 2>&1 || { git merge --abort; log "conflict ${b#origin/}"; }; done
+      for b in $(heads); do git merge-base --is-ancestor "$b" HEAD || ! gated "$b" || git merge -q --no-edit "$b" >/dev/null 2>&1 || { git merge --abort; log "conflict ${b#origin/}"; }; done
       [ -f "${CI_STOP:-/tmp/ci_loop.stop}" ] && { log "stop file seen, exiting"; exit 0; }
     done
     push; sha=$(git rev-parse --short HEAD); log "iter $i new head $sha"
