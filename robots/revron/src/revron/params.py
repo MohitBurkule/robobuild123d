@@ -173,6 +173,7 @@ SP_TYRE_RELIEF = (-45.0, -43.4, -38.7, -24.8, 5.5, 14.5)   # rear tyre relief bo
 SP_NUT_RELIEF = [(-11.7, 3.8), (0.5, 4.7), (2.3, 5.7), (2.3, 8.3), (0.5, 9.3), (-3.5, 11.0), (-9.5, 13.0), (-11.7, 13.8)]   # STEP RV23 diamond (Y, Z)
 SP_NUT_RELIEF_X = (-32.5, -31.4)
 SP_NUT_RELIEF_R = 1.0                # relief corners round r1: no sharp concave corner in the printed wall
+SP_NUT_RELIEF_FILLET = 0.5          # floor edges of the relief round r0.5 (the depth is 1.1): no knife edge where the relief meets the wall
 SP_VENT = dict(y0=(-11.0, -4.5, 2.0), z0=5.0, dy=5.0, dz=6.0, r=1.0, x=(-50.0, -36.5))   # diagonal ESC vent slots
 SP_LOFT = dict(resample=400, path=240, ring=481, round=0.6, arc=16)   # section smoothing: pchip samples, path points, ring points, fillet
 WG_X = (-38.5, -36.5, -35.5, -29.0, -21.5, -17.5)   # slab edges along X: block | ring step | skin | cheek | nose tab
