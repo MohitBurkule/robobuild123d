@@ -17,7 +17,7 @@ def test_inserts_sit_on_bore_floor_and_flush_with_rim():
 
 def test_switch_side_face_clears_the_wall():
     x = J.place_at("power_switch")[0]
-    assert math.isclose(x + P.SW_HALF + P.SW_WALL_CLEAR, P.CH["x"] - P.CH["wall"])
+    assert math.isclose(x + P.SW_HALF_W + P.SW_CLR, P.CH["x"] - P.CH["wall"])
 
 
 def test_switch_screws_straddle_the_switch_on_its_body_top():

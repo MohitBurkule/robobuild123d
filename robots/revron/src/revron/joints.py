@@ -53,7 +53,7 @@ def tub_rig():
         r.joint(f"insert_t{i}", "top", (0, 0, INS_LEN / 2))
         r.mate("tub", f"bore_t{i}", f"insert_t{i}", "top")
     r.joint("tub", "switch_wall", (CH["x"] - CH["wall"], ELEC["switch_yz"][0], ELEC["switch_yz"][1]), (0, 0, 90))   # inner face of the +X wall at the switch (switch turned 90 about Z)
-    r.joint("power_switch", "side", (0, -(SW_HALF + SW_WALL_CLEAR), 0))                                       # its side face, the clearance off the wall
+    r.joint("power_switch", "side", (0, -(SW_HALF_W + SW_CLR), 0))                                       # its side face, the clearance off the wall
     r.mate("tub", "switch_wall", "power_switch", "side")
     for s, n in ((1, "r"), (-1, "l")):               # N10 seats: the gearbox origin sits MOTX out from the chassis centre on the rear axle line
         r.joint("tub", f"n10_{n}", (s * MOTX, RY, RZ), (0, 0, 0 if s > 0 else 180))

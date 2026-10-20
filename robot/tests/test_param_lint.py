@@ -107,3 +107,14 @@ def test_literal_placement():
     bad = "def place(p):\n    return p.translate((17.5, -4.2, 3.0))\n"
     good = "def place(p, hub):\n    return p.translate(hub.center())\n"
     assert P.lint_source(bad)["placements"] and not P.lint_source(good)["placements"]
+
+
+def test_unlinked_duplicate():
+    from robot.checks.param_lint import param_pool, unlinked
+    pool = param_pool("A = 29.5\nB, C = 1.8, 3.0\nT = (21.5, 36.5)\nD = dict(x=4.25)\n")
+    assert unlinked(29.5, pool) == "A"
+    assert unlinked(21.5, pool) == "T[0]"
+    assert unlinked(27.7, pool) == "A - B"
+    assert unlinked(4.8, pool) == "B + C"
+    assert unlinked(4.25, pool) == "D.x"
+    assert unlinked(11.11, pool) is None

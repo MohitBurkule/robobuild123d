@@ -231,6 +231,56 @@ def lint_source(text, exempt_funcs=None):
             "placements": [p for p in placements if p[0] not in ex_lines]}
 
 
+def param_pool(text):
+    """{value: name} of module-level named params: scalars, tuple/list/dict members (`NAME[i]`, `NAME.key`)."""
+    pool = {}
+    try:
+        tree = ast.parse(text)
+    except SyntaxError:
+        return pool
+
+    def add(node, name, depth=0):
+        v = _num(node)
+        if v is not None:
+            if v not in TRIVIAL:
+                pool.setdefault(float(v), name)
+        elif depth < 2 and isinstance(node, (ast.Tuple, ast.List)):
+            for i, e in enumerate(node.elts):
+                add(e, f"{name}[{i}]", depth + 1)
+        elif depth < 2 and isinstance(node, ast.Call) and getattr(node.func, "id", None) == "dict":
+            for k in node.keywords:
+                if k.arg:
+                    add(k.value, f"{name}.{k.arg}", depth + 1)
+    for st in tree.body:
+        if isinstance(st, ast.Assign):
+            for t in st.targets:
+                if isinstance(t, ast.Name):
+                    add(st.value, t.id)
+                elif isinstance(t, ast.Tuple) and isinstance(st.value, ast.Tuple) and len(t.elts) == len(st.value.elts):
+                    for n, v in zip(t.elts, st.value.elts):
+                        if isinstance(n, ast.Name):
+                            add(v, n.id)
+    return pool
+
+
+def unlinked(v, pool, scalars=None, tol=1e-6):
+    """Relation a raw literal duplicates: a named param equal to it, or `A + B` / `A - B` of two named scalars."""
+    v = float(v)
+    for p, n in pool.items():
+        if abs(p - v) <= tol:
+            return n
+    sc = scalars if scalars is not None else pool
+    items = sorted(sc.items())
+    for i, (a, na) in enumerate(items):
+        for b, nb in items[i:]:
+            if abs(a + b - v) <= tol:
+                return f"{na} + {nb}"
+        for b, nb in items:
+            if b != a and abs(a - b - v) <= tol:
+                return f"{na} - {nb}"
+    return None
+
+
 def sources(spec):
     seen = []
     for p in spec.parts:
@@ -268,7 +318,12 @@ def lint_spec(spec):
     ex, out = exemptions(spec)
     matched = set()
     nmax, dmin = int(cfg["max_literals"]), int(cfg["dup_min"])
-    for path in sources(spec):
+    srcs, pool = sources(spec), {}
+    for path in srcs:
+        for v, n in param_pool(path.read_text()).items():
+            pool.setdefault(v, n)
+    scalars = {v: n for v, n in pool.items() if "[" not in n and "." not in n and abs(v) >= 1.0}
+    for path in srcs:
         name = path.name
         res = lint_source(path.read_text(), ex.get(name, {}))
         matched |= {f"{name}:{q}" for q in res["exempt_used"]}
@@ -293,6 +348,14 @@ def lint_spec(spec):
                                 f"{name}: {v!r} appears {len(lns)}× (lines {', '.join(map(str, sorted(lns)[:8]))}"
                                 f"{'…' if len(lns) > 8 else ''}).")
                            .fix("Make it one named param (or derive it from one)."))
+        for v, lns in sorted(res["values"].items(), key=lambda kv: min(kv[1])):
+            # dimensions only: an int is a count / angle / segment number, a whole float < 10 is too common to mean much
+            dim = isinstance(v, float) and abs(v) >= 1.0 and (v % 1 or abs(v) >= 10)
+            rel = unlinked(v, pool, scalars if v % 1 else {}) if dim else None
+            if rel:
+                out.append(fail("param.unlinked", G, WARNING, "Unlinked duplicate of a param",
+                                f"{name}: literal {v!r} (lines {', '.join(map(str, sorted(lns)[:8]))}) equals `{rel}`.")
+                           .fix("Write the relation (`" + rel + "`) instead of retyping its value."))
         for ln, k, npt in res["patterns"]:
             loc = {"circle": "PolarLocations", "grid": "GridLocations", "row": "GridLocations (one row) / a loop"}[k]
             out.append(fail("param.pattern", G, WARNING, "Literal coordinates form a regular pattern",
