@@ -10,7 +10,7 @@ from .common import *  # noqa: F401,F403
 SEG_AXIS = 128                  # facets of the weapon-axis clearance circle
 FUSE = 0.1                      # overlap that fuses a feature into its neighbour / cutter overshoot past a face
 MNT_GAP = (0.2, 0.1)            # tab / tab wall stop this far short of the weapon-mount inner face (tab keys into the notch)
-LUG_X = (SA_X[0], SB_X[0])      # lug spans from the axle standoff end to the nose standoff end
+LUG_X = (SA_X0, SB_X0)      # lug spans from the axle standoff end to the nose standoff end
 TAB_X = (MNT_IN - MNT_GAP[0], LUG_X[0] + FUSE)          # key tab: from the mount face (inside the notch) into the lug
 TABW_THK = 3.0                  # inner tab wall thickness
 TABW_X = (MNT_IN - MNT_GAP[1] - TABW_THK, MNT_IN - MNT_GAP[1])
@@ -19,9 +19,9 @@ HOLE_OVER = 0.5                 # standoff hole cutters overshoot the lug faces
 HOLE_X = (LUG_X[0] - HOLE_OVER, LUG_X[1] + HOLE_OVER)
 KEY_X = (TABW_X[0] - 0.3, HOLE_X[1])                  # key hole runs through tab wall and lug (0.3 overshoot past the wall)
 SA_HOLE_R, SB_HOLE_R, KEY_R = 2.5, 1.6, 0.9           # standoff end clearance holes (SA M5, SB M3), key hole corner radius
-FRONT_Y = CH["y1"]              # front wall outer face
+FRONT_Y = CH_Y1              # front wall outer face
 RABBET_X, RABBET_Y = (TABW_X[1], LUG_X[0]), (12.0, FRONT_Y + FUSE)   # front wall stops at the base-panel rabbet under the tab
-RABBET_TOP = CH["z0"] + CH["wall"]                    # rabbet floor: top of the base panel
+RABBET_TOP = CH_Z0 + CH_WALL                    # rabbet floor: top of the base panel
 
 KEY_BOX, KEY_CHAM, KEY_WALL = (18.5, 5.4, 26.5, 13.5), 1.0, 1.5   # key tab (Y0, Z0, Y1, Z1), its chamfer, wall left round the key hole
 
@@ -31,11 +31,11 @@ def _octagon(y0, z0, y1, z1, ch):
 
 
 TAB_PROFILE = _octagon(*KEY_BOX, KEY_CHAM)   # key tab octagon that keys into the weapon-mount notch
-LUG_Y0 = FRONT_Y - CH["wall"]   # lug / tab wall start at the front wall's inner face
+LUG_Y0 = FRONT_Y - CH_WALL   # lug / tab wall start at the front wall's inner face
 # param: organic inner tab wall (STEP outline) right flank and top slope; the rest follows the chassis and key tab
 _KY1 = KEY_BOX[2]
-TABW_PROFILE = [(LUG_Y0, CH["z0"]), (_KY1 - KEY_CHAM, CH["z0"]), (_KY1, CH["z0"] + KEY_CHAM), (_KY1, 12.35), (25.59, 14.75),
-                (FRONT_Y, CH["z1"]), (LUG_Y0, CH["z1"])]
+TABW_PROFILE = [(LUG_Y0, CH_Z0), (_KY1 - KEY_CHAM, CH_Z0), (_KY1, CH_Z0 + KEY_CHAM), (_KY1, 12.35), (25.59, 14.75),
+                (FRONT_Y, CH_Z1), (LUG_Y0, CH_Z1)]
 # param: end
 TAB_WALL = Polygon(TABW_PROFILE).difference(Point(WY, WZ).buffer(WEAPON_CLEAR_R, SEG_AXIS))
 FIL_R = 2.0                     # R2 fillet block into the front face (XY): corner circle at (x0, y1)
@@ -49,14 +49,14 @@ LUG_FOOT_Y, LUG_RAMP_TOE, LUG_NOSE_TIP, LUG_TOP_Y = 26.0, (30.4, 1.0), (36.6, LU
 FULL_TURN = 360.0
 UNDER_BLEND_N, UNDER_SB_N = 24, 24                  # facets of the underside blend / standoff arcs
 # the lug's top edge runs from the top-back corner tangent to the nose standoff arc: the arc ends where that tangent leaves it
-_TOP_D = (SB[0] - LUG_TOP_Y, SB[1] - CH["z1"])
+_TOP_D = (SB[0] - LUG_TOP_Y, SB[1] - CH_Z1)
 SB_TOP_ANG = math.degrees(math.atan2(-_TOP_D[1], -_TOP_D[0]) - math.acos(LUG_SB_R / math.hypot(*_TOP_D)))   # direction standoff centre -> tangent point
 LUG_SA_R = 4.5   # standoff end boss round SA
 SA_ARC, SB_ARC = (LUG_SA_R, 250, 300, 6), (LUG_SB_R, 250, SB_TOP_ANG + FULL_TURN, 36)
 # param: organic underside the hull must not fill (STEP ramp, Y/Z)
 LUG_UNDER_POLY = Polygon([(LUG_FOOT_Y, 0.0), (LUG_FOOT_Y, LUG_FLOOR_Z), (30.0, 1.0), (40.0, 0.9), (60, 0)])
 # param: end
-CUT_Y0, CUT_Z0 = LUG_Y0 - 3.0, CH["z0"] - 7.5   # flat-ramp cutter starts clear behind the lug and reaches well below the floor
+CUT_Y0, CUT_Z0 = LUG_Y0 - 3.0, CH_Z0 - 7.5   # flat-ramp cutter starts clear behind the lug and reaches well below the floor
 LUG_FLAT_RAMP = _poly([(CUT_Y0, CUT_Z0), (CUT_Y0, LUG_FLOOR_Z), (LUG_FOOT_Y, LUG_FLOOR_Z), LUG_RAMP_TOE, (LUG_RAMP_TOE[0], CUT_Z0)])
 # under the nose standoff the lug follows its arc: no hull chord below it where the scallop meets it
 # one path floor -> blend arc -> standoff arc, so the blend and standoff arcs share their tangent point exactly (no boolean sliver)

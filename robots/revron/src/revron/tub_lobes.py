@@ -8,7 +8,7 @@ from .common import *  # noqa: F401,F403
 # ---- lobe (relations off CH / LOBE)
 LOBE_SINK = 0.1                       # lobe starts this far inside the wall face (fuses with the wall)
 LOBE_PROUD = 3.0                      # lobe stands this proud of the wall's outer face
-LOBE_OUT = CH["x"] + LOBE_PROUD      # outer face of the lobe, |X|
+LOBE_OUT = CH_HALF_W + LOBE_PROUD      # outer face of the lobe, |X|
 LOBE_NUT_R, LOBE_CAP, LOBE_CAP_R, LOBE_SEG = 4.5, (0.5, 6.9), 2.0, 64   # organic STEP lobe: R4.5 round the nut hulled with an R2 end cap (Y, Z)
 LOBE = Point(NUT[0], NUT[1]).buffer(LOBE_NUT_R, LOBE_SEG).union(Point(*LOBE_CAP).buffer(LOBE_CAP_R, LOBE_SEG)).convex_hull
 LOBE_ROOT_R, LOBE_ROOT_BANDS = 1.95, 12   # STEP root fillet where the lobe leaves the wall, as one ruled loft of 12 bands
@@ -37,8 +37,8 @@ NUT_DETAIL_R = 0.25
 # ---- motor stop wall lower inner edge R4.5 (STEP)
 STOP_ROUND_R = 4.5
 STOP_ROUND_X = 22.2                   # arc centre |X| (STEP)
-STOP_ROUND_C = (STOP_ROUND_X, CH["z0"] + CH["wall"] + STOP_ROUND_R)   # arc (X, Z) rests on the floor panel's top face
-STOP_WALL_Y = (KEY_SPAN[1] - CH["wall"], KEY_SPAN[1])   # wall as thick as the chassis wall, ending at the key tab's front
+STOP_ROUND_C = (STOP_ROUND_X, CH_Z0 + CH_WALL + STOP_ROUND_R)   # arc (X, Z) rests on the floor panel's top face
+STOP_WALL_Y = (KEY_SPAN[1] - CH_WALL, KEY_SPAN[1])   # wall as thick as the chassis wall, ending at the key tab's front
 STOP_OVER = 0.1                       # cutter reaches this far past the wall/arc: no skin left under the R0.9 corner fillet
 STOP_THRU = 1.0                       # cutter length behind the wall
 # ---- lobe tail: panel/lobe overlap slab removed with the side panel
