@@ -37,8 +37,8 @@ gwt() { # dir rev; rev resolved in THIS worktree (a bare "HEAD" inside -C dir wo
   [ -d "$1" ] || git worktree add -q --detach "$1" "$r"; git -C "$1" merge --abort 2>/dev/null; git -C "$1" reset -q --hard; git -C "$1" clean -fdq
   git -C "$1" checkout -q --detach "$r" && [ "$(git -C "$1" rev-parse HEAD)" = "$r" ] || { log "gate worktree $1 not at $r"; return 1; }; }
 gcount() { # dir group -> blocker count (-1 = did not finish)
-  local c; c=$(mktemp -d "${TMPDIR:-/tmp}/ci_gate_cache.XXXX")
-  (cd "$1" && ROBOT_CACHE=$c HEAVY_CI=1 /tmp/heavy.sh timeout "${GATE_TIMEOUT:-3000}" python3 -m robot verify "$SPEC" --full --only "$2" > "$c.log" 2>&1)
+  local c; c=$(mktemp -d "${TMPDIR:-/tmp}/ci_gate_cache.XXXX")  # c: log dir only; cache is the shared content-keyed one (fix-K)
+  (cd "$1" && HEAVY_CI=1 /tmp/heavy.sh timeout "${GATE_TIMEOUT:-3000}" python3 -m robot verify "$SPEC" --full --only "$2" > "$c.log" 2>&1)
   $GPY count "$c.log"; rm -rf "$c" "$c.log"; }
 gfail() { log "gate rejected ${1#origin/} $2: $3"; printf '{"t":"%s","sha":"%s","group":"ci_gate","id":"ci_gate.rejected","parts":[],"branch":"%s","message":"[ci] gate rejected %s %s: %s"}\n' \
   "$(date -Is)" "$2" "${1#origin/}" "${1#origin/}" "$2" "$3" >> "$P/blockers_live_$(echo "${1#origin/}" | sed -E 's/^fix-(.).*/\1/' | tr a-z A-Z).jsonl"; return 1; }
@@ -108,10 +108,14 @@ for i in $(seq "${START_ITER:-1}" "$MAX_ITERS"); do
   : > "$out"; rc=0; done_n=0; failed=
   chunks="$all fastener_seat"; [ -f "${SKIP_THREAT_FILE:-/tmp/ci_skip_threat}" ] || chunks="$all threat fastener_seat"
   need=$(echo $chunks | wc -w)
+  # groups run PAR at a time (own process each, shared content-keyed cache); an OOM still only loses its own group
+  mkdir -p "$out.d"; rm -f "$out.d"/*
+  printf '%s\n' $chunks | xargs -P "${PAR:-3}" -I{} sh -c 'ROBOT_RUN_SHA=$0 ROBOT_PROGRESS_LOG="$1/verify.log" timeout 6000 python3 -m robot verify "$2" --full --only {} --jobs 1 > "$3/{}.log" 2>&1; echo $? > "$3/{}.rc"' "$sha" "$P" "$SPEC" "$out.d"
   for chunk in $chunks; do
-    ROBOT_RUN_SHA=$sha ROBOT_PROGRESS_LOG="$P/verify.log" HEAVY_CI=1 /tmp/heavy.sh timeout 6000 python3 -m robot verify "$SPEC" --full --only "$chunk" --jobs "${JOBS:-2}" > "$out.part" 2>&1
-    r=$?; cat "$out.part" >> "$out"; grep -q 'blockers,' "$out.part" && done_n=$((done_n+1)) || { rc=$r; failed="$failed $chunk"; }
+    cat "$out.d/$chunk.log" >> "$out" 2>/dev/null
+    grep -q 'blockers,' "$out.d/$chunk.log" 2>/dev/null && done_n=$((done_n+1)) || { rc=$(cat "$out.d/$chunk.rc" 2>/dev/null); failed="$failed $chunk"; }
   done
+  rm -rf "$out.d"
   rm -f "$out.part"
   if [ "$done_n" -eq 0 ]; then
     log "iter $i sha $sha: verify did not finish (rc $rc: $(grep -m1 -e Killed -e Traceback -e Error "$out" | cut -c1-120)); not counted"
