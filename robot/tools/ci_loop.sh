@@ -1,5 +1,5 @@
 #!/bin/bash
-# [fix-G] Every fix-* head passes gate() (below) before it is merged; see robot/tools/ci_gate.py.
+# [fix-G] All fix-* heads pass the combined gate_all() (below) before it is merged; see robot/tools/ci_gate.py.
 # Bounded integration loop: at most MAX_ITERS passes of
 #   fetch origin; merge every fix-* head (local or origin/, whichever is newer) into rvrn2-ci
 #   (conflicts aborted and logged as `[ci] conflict fix-X`); push rvrn2-ci:rvrn2 with retries;
@@ -25,38 +25,26 @@ render() { # async, one at a time, from a snapshot worktree of the verified sha 
   [ -d "$rd" ] || git worktree add -q --detach "$rd" HEAD
   git -C "$rd" checkout -q --detach "$(git rev-parse HEAD)" && (cd "$rd" && nohup setsid bash robot/tools/ci_render.sh >/dev/null 2>&1 < /dev/null &)
 }
-# [fix-G] merge gate: trial-merge $1 into a temp worktree of HEAD, run assembly + interference (one process each,
-# one at a time, fresh ROBOT_CACHE per run) and reject when either blocker count rises vs the cached baseline of HEAD.
-# Fail closed: the trial and the baseline both regenerate the spec first; a baseline run that does not finish is
-# re-measured once and otherwise holds the branch (never an accept).
+# [fix-G] combined merge gate (gate_all): ONE trial merge of all updated fix-* heads, one spec build (cached by input
+# tree hash), assembly + interference in parallel; not worse than HEAD's tree-keyed baseline -> all merge, else bisect
+# with halves gated in parallel until the offenders are found (rejected; blocker lines in $P/ci_gate_<branch>_<group>.log).
+# Fail closed: every run must finish (a -1 count, baseline or trial, is never an accept; an unfinished baseline is
+# re-measured once, then the round's geometry branches are held); a failed spec build holds, never verifies stale.
 # Branches touching only robot/checks/ or docs run the full robot/tests suite AND verify the check groups their modules
-# feed on HEAD and on the trial; blockers that disappear are held for review (listed in the log), not auto-merged.
-# *-param branches / commits starting [param] or [refactor] must also pass robots/revron/tools/geom_equal.py vs HEAD.
-# GATE=0 disables. Returns 0 = merge, 1 = rejected (already logged), 2 = gate infra failure (held, retried next pass).
+# feed on HEAD and on the trial; blockers that disappear are rejected as "needs review" (listed in the log).
+# *-param / all-[param]/[refactor] branches must also pass robots/revron/tools/geom_equal.py vs HEAD.
+# Infra failures hold a branch (neither merged nor rejected). GATE=0 disables.
 GWT=${GATE_WT:-/tmp/claude-0/-home-user/6d647ed2-7427-59f3-8ab5-ba663cdaf3d4/scratchpad/ci_gate}
 GPY="python3 $PWD/robot/tools/ci_gate.py"
 gwt() { # dir rev; rev resolved in THIS worktree (a bare "HEAD" inside -C dir would be dir's own HEAD)
   local r; r=$(git rev-parse "$2^{commit}") || return 1
-  [ -d "$1" ] || git worktree add -q --detach "$1" "$r"; git -C "$1" merge --abort 2>/dev/null; git -C "$1" reset -q --hard; git -C "$1" clean -fdq
+  [ -d "$1" ] || for t in 1 2 3 4 5; do git worktree add -q --detach "$1" "$r" 2>/dev/null && break; sleep $t; done; git -C "$1" merge --abort 2>/dev/null; git -C "$1" reset -q --hard; git -C "$1" clean -fdq
   git -C "$1" checkout -q --detach "$r" && [ "$(git -C "$1" rev-parse HEAD)" = "$r" ] || { log "gate worktree $1 not at $r"; return 1; }; }
 # SHARD=1: hand groups to robot/tools/shard_worker.sh on any container sharing $P (plus PAR local workers).
 # Workers rewrite their claim's content every HB s. A claim is requeued only when its content has not
 # changed across two polls spanning more than STALE s of this host's clock (mtime is never trusted: on a
 # network mount it comes from the server's clock/attribute cache and was judged stale ~2 min after claiming).
 # Sets done_n/failed/rc and appends results to $3 in group order, exactly like the serial path.
-regen() { # dir: regenerate spec.json in that worktree; non-zero (and a log line) when the build fails
-  (cd "$1/robots/revron/src" && timeout "${REGEN_TIMEOUT:-3000}" python3 build_revron.py) > "$P/ci_regen.log" 2>&1 \
-    || { log "regen FAILED in $1 ($(tail -1 "$P/ci_regen.log" | cut -c1-100))"; return 1; }; }
-merge_one() { # branch: merge into this worktree; spec-only conflicts take the branch's spec (regen rewrites it)
-  if git merge -q --no-edit "$1" >/dev/null 2>&1; then log "iter $i merged $1 $(git rev-parse --short "$1")"; return 0; fi
-  local f; f=$(git diff --name-only --diff-filter=U | grep -v -e 'spec.json$' -e 'templates/revron.json$')
-  if [ -z "$f" ] && [ -n "$(git diff --name-only --diff-filter=U)" ]; then
-    git checkout --theirs robots/revron/spec.json robot/templates/revron.json 2>/dev/null; git add robots/revron/spec.json robot/templates/revron.json; git commit -qm "Merge $1"; log "iter $i merged $1 (spec-only conflict)"
-  else git merge --abort 2>/dev/null; log "conflict ${1#origin/}: $(echo $f)"; return 1; fi; }
-merge_all() { local b; for b in $(heads); do git merge-base --is-ancestor "$b" HEAD && continue; gated "$b" || continue; merge_one "$b"; done; }
-regen_commit() { # regenerate the spec here and commit it; returns 1 (logged) when the build failed: do not verify
-  regen . || return 1
-  git add robots/revron/spec.json robot/templates/revron.json && { git diff --cached --quiet || git commit -qm "Revron: regenerate spec (ci loop)" >/dev/null; }; }
 shard_verify() { # sha "groups" out
   local S="$P/shards/$1" g w pids= now m c k cur
   local -A seen=() since=()
@@ -69,7 +57,7 @@ shard_verify() { # sha "groups" out
   while :; do
     m=0; for g in $2; do [ -f "$S/results/$g.rc" ] || m=$((m+1)); done
     [ "$m" -eq 0 ] && break
-    touch "$S/.now"; now=$(stat -c %Y "$S/.now" 2>/dev/null || date +%s)   # the share's clock, not ours (NFS skew)
+    now=$(date +%s)
     for c in "$S"/claimed/*; do
       [ -f "$c" ] || continue
       k=${c##*/}; g=${k##*.}; cur=$(cat "$c" 2>/dev/null)
@@ -94,86 +82,144 @@ shard_verify() { # sha "groups" out
   done
 }
 gmode() { [ $(( ${i:-1} % ${FRESH_EVERY:-3} )) -eq 0 ] && echo fresh || echo cached; }   # every 3rd round: fresh cache
-gcount() { # dir group [keep-log] -> blocker count (-1 = did not finish or a bad exit code); same cache mode for base and trial
-  local c rc; c=$(mktemp -d "${TMPDIR:-/tmp}/ci_gate_cache.XXXX")  # c: log dir; cache is the shared content-keyed one (fix-K)
-  local fc=; [ "$(gmode)" = fresh ] && fc="ROBOT_CACHE=$c"
+gcount() { # dir group label -> blocker count (-1 = did not finish or bad exit code); log kept at $P/ci_gate_<label>_<group>.log
+  local c rc; c=$(mktemp -d "${TMPDIR:-/tmp}/ci_gate_cache.XXXX")  # c: log dir only; cache is the shared content-keyed one (fix-K)
+  local fc=; [ "$(gmode)" = fresh ] && fc="ROBOT_CACHE=$c"   # base and trial of one round use the same mode
   (cd "$1" && env $fc HEAVY_CI=1 /tmp/heavy.sh timeout "${GATE_TIMEOUT:-3000}" python3 -m robot verify "$SPEC" --full --only "$2" > "$c.log" 2>&1); rc=$?
-  [ -n "$3" ] && cp "$c.log" "$3"
-  cp "$c.log" "$P/ci_gate_$(basename "$1")_$2.log" 2>/dev/null   # kept so a rejected fixer can read the blocker lines
-  $GPY count "$c.log" "$rc"; rm -rf "$c" "$c.log"; }
-ginfra() { log "gate infra failure ${1#origin/} $2: $3 (held, not merged)"; return 2; }
-gfail() { log "gate rejected ${1#origin/} $2: $3 (blocker lines: $P/ci_gate_trial_{assembly,interference}.log)"; printf '{"t":"%s","sha":"%s","group":"ci_gate","id":"ci_gate.rejected","parts":[],"branch":"%s","message":"[ci] gate rejected %s %s: %s"}\n' \
+  cp "$c.log" "$P/ci_gate_${3:-$(basename "$1")}_$2.log" 2>/dev/null   # kept so a rejected fixer can read the blocker lines
+  $GPY count "$c.log" "$rc"; rm -rf "${c:?}" "${c:?}.log"; }
+gpair() { # dir label -> "assembly interference", both groups in parallel
+  local t; t=$(mktemp -d "${TMPDIR:-/tmp}/ci_gpair.XXXX")
+  gcount "$1" assembly "$2" > "$t/a" & gcount "$1" interference "$2" > "$t/i" & wait
+  echo "$(cat "$t/a") $(cat "$t/i")"; rm -rf "${t:?}"; }
+# spec regeneration cached by the git tree hashes of robots/revron/src and robot (the build inputs) of dir's HEAD
+spec_build() { # dir
+  local k; k=$(echo "$(git -C "$1" rev-parse HEAD:robots/revron/src) $(git -C "$1" rev-parse HEAD:robot)" | sha1sum | cut -c1-16)
+  local C="$P/spec_cache/$k"
+  if [ -s "$C/spec.json" ] && [ -s "$C/revron.json" ]; then cp "$C/spec.json" "$1/robots/revron/spec.json"; cp "$C/revron.json" "$1/robot/templates/revron.json"; return 0; fi
+  (cd "$1/robots/revron/src" && timeout "${REGEN_TIMEOUT:-3000}" python3 build_revron.py) > "$P/ci_regen_$(basename "$1").log" 2>&1 \
+    || { log "regen FAILED in $1 ($(tail -1 "$P/ci_regen_$(basename "$1").log" | cut -c1-100))"; return 1; }   # never verify a stale spec
+  mkdir -p "$P/spec_cache"; local t; t=$(mktemp -d "$P/spec_cache/.tmp.XXXX") || return 0
+  if cp "$1/robots/revron/spec.json" "$t/spec.json" && cp "$1/robot/templates/revron.json" "$t/revron.json" && mv -T "$t" "$C" 2>/dev/null; then :; else rm -rf "${t:?}"; fi; }
+gfail() { log "gate rejected ${1#origin/} $2: $3 (blocker lines: $P/ci_gate_${1#origin/}_{assembly,interference}.log)"; printf '{"t":"%s","sha":"%s","group":"ci_gate","id":"ci_gate.rejected","parts":[],"branch":"%s","message":"[ci] gate rejected %s %s: %s"}\n' \
   "$(date -Is)" "$2" "${1#origin/}" "${1#origin/}" "$2" "$3" >> "$P/blockers_live_$(echo "${1#origin/}" | sed -E 's/^fix-(.).*/\1/' | tr a-z A-Z).jsonl"; return 1; }
-gate() {
-  [ "${GATE:-1}" = 1 ] || return 0
-  local b=$1 s; s=$(git rev-parse --short "$b"); local head; head=$(git rev-parse --short "HEAD^{tree}")   # baselines keyed by tree: a merged trial is already measured
-  local files; files=$(git diff --name-only HEAD..."$b")
-  gwt "$GWT/trial" HEAD || { ginfra "$b" "$s" "trial worktree"; return; }
-  if ! git -C "$GWT/trial" merge -q --no-edit "$b" >/dev/null 2>&1; then
-    local u; u=$(git -C "$GWT/trial" diff --name-only --diff-filter=U); git -C "$GWT/trial" merge --abort 2>/dev/null
-    [ -n "$u" ] && { log "gate: ${b#origin/} $s conflicts with HEAD ($(echo $u)); not merged"; return 1; }
-    ginfra "$b" "$s" "trial merge failed without conflicts"; return
-  fi
-  if [ "$($GPY kind $files)" = verifier-only ]; then
-    (cd "$GWT/trial" && timeout "${GATE_PYTEST_TIMEOUT:-3600}" python3 -m pytest robot/tests -q -p no:cacheprovider > "$P/ci_gate_pytest.log" 2>&1) \
-      || { gfail "$b" "$s" "unit tests failed ($(tail -1 "$P/ci_gate_pytest.log" | cut -c1-100))"; return 1; }
-    local known vg; known=$(python3 -m robot verify --list-groups 2>/dev/null | grep -E '^[a-z_]+$' | paste -sd' ')
-    vg=$(cd "$GWT/trial" && $GPY groups "$known" $files)
-    [ "$vg" = all ] && vg=$(echo "$known" | tr ' ' '\n' | grep -v -x -e threat -e claims | paste -sd' ')
-    [ -z "$vg" ] && { log "gate passed ${b#origin/} $s (docs-only, tests ok)"; return 0; }
-    gwt "$GWT/base" HEAD || { ginfra "$b" "$s" "base worktree"; return; }
-    regen "$GWT/base" || { ginfra "$b" "$s" "base regen"; return; }
-    regen "$GWT/trial" || { gfail "$b" "$s" "spec regeneration failed on the trial merge"; return 1; }
-    local g bl tl; bl="$P/ci_gate_vbase.log"; tl="$P/ci_gate_vtrial.log"; : > "$bl"; : > "$tl"
-    for g in $vg; do
-      [ "$(gcount "$GWT/base" "$g" "$bl.g")" -ge 0 ] || { ginfra "$b" "$s" "baseline verify of $g did not finish"; return; }
-      cat "$bl.g" >> "$bl"
-      [ "$(gcount "$GWT/trial" "$g" "$tl.g")" -ge 0 ] || { cat "$tl.g" >> "$tl"; gfail "$b" "$s" "verify of $g did not finish on the trial"; return 1; }
-      cat "$tl.g" >> "$tl"
-    done
-    rm -f "$bl.g" "$tl.g"
-    if ! $GPY vanished "$bl" "$tl" > "$P/ci_gate_vanished.log"; then
-      gfail "$b" "$s" "needs review: $(grep -c . "$P/ci_gate_vanished.log") blockers disappeared on [$vg] ($(head -3 "$P/ci_gate_vanished.log" | cut -c1-80 | paste -sd'|'))"; return 1
-    fi
-    log "gate passed ${b#origin/} $s (verifier-only, full tests + verify of [$vg]: no blocker disappeared)"; return 0
-  fi
-  regen "$GWT/trial" || { gfail "$b" "$s" "spec regeneration failed on the trial merge"; return 1; }
-  local bf="$P/ci_gate_baseline_${head}_$(gmode)" a0 i0 a1 i1 k
+baseline() { # -> "a0 i0" for HEAD's tree (cached by tree hash + cache mode; a merged trial is already measured)
+  # an unfinished run (-1) is re-measured once; still -1 -> return 1 (hold), never cached, never an accept
+  local bf="$P/ci_gate_baseline_$(git rev-parse --short "HEAD^{tree}")_$(gmode)" a i k
   if [ ! -s "$bf" ]; then
-    gwt "$GWT/base" HEAD || { ginfra "$b" "$s" "base worktree"; return; }
-    regen "$GWT/base" || { ginfra "$b" "$s" "base regen"; return; }
-    for k in 1 2; do   # a baseline that did not finish is re-measured once, then the branch is held (never accepted)
-      a0=$(gcount "$GWT/base" assembly); i0=$(gcount "$GWT/base" interference)
-      [ "$a0" -ge 0 ] && [ "$i0" -ge 0 ] && break
-    done
-    log "gate baseline $head ($(gmode), measured $(git -C "$GWT/base" rev-parse --short HEAD)): $a0 $i0"
-    [ "$a0" -ge 0 ] && [ "$i0" -ge 0 ] || { ginfra "$b" "$s" "baseline did not finish twice ($a0 $i0)"; return; }
-    echo "$a0 $i0" > "$bf"
+    gwt "$GWT/base" HEAD || return 1; spec_build "$GWT/base" || return 1
+    for k in 1 2; do read a i < <(gpair "$GWT/base" base); [ "${a:--1}" -ge 0 ] && [ "${i:--1}" -ge 0 ] && break; done
+    log "gate baseline $(git rev-parse --short "HEAD^{tree}") ($(gmode)): $a $i"
+    [ "${a:--1}" -ge 0 ] && [ "${i:--1}" -ge 0 ] || { log "gate baseline did not finish twice ($a $i)"; return 1; }
+    echo "$a $i" > "$bf.tmp" && mv "$bf.tmp" "$bf"
   fi
-  read a0 i0 < "$bf"
-  a1=$(gcount "$GWT/trial" assembly); i1=$(gcount "$GWT/trial" interference)
-  [ "$a1" -ge 0 ] && [ "$i1" -ge 0 ] && echo "$a1 $i1" > "$P/ci_gate_baseline_$(git -C "$GWT/trial" rev-parse --short "HEAD^{tree}")_$(gmode)"
-  $GPY decide "$b" "$s" "$a0" "$a1" "$i0" "$i1" "$P" >/dev/null || return 1
-  if [[ "$b" == *-param ]] || ! git log --no-merges --format=%s HEAD.."$b" | grep -qvE '^\[(param|refactor)\]'; then
-    local ge=robots/revron/tools/geom_equal.py
-    if [ -f "$GWT/trial/$ge" ]; then
-      gwt "$GWT/base" HEAD || { ginfra "$b" "$s" "base worktree (geom_equal)"; return; }
-      cp "$GWT/trial/$ge" "$GWT/base/$ge"; rm -rf "$GWT/snap"
-      (cd "$GWT/base" && HEAVY_CI=1 /tmp/heavy.sh timeout 3000 python3 -u "$ge" snap "$GWT/snap") > "$P/ci_gate_geom.log" 2>&1 \
-        && (cd "$GWT/trial" && HEAVY_CI=1 /tmp/heavy.sh timeout 3000 python3 -u "$ge" check "$GWT/snap"; r=$?; echo "geom_equal check exit $r"; exit $r) >> "$P/ci_gate_geom.log" 2>&1 \
-        || { git -C "$GWT/base" checkout -q -- . ; git -C "$GWT/base" clean -qfd robots/revron/tools; gfail "$b" "$s" "geom_equal failed ($(tail -1 "$P/ci_gate_geom.log" | cut -c1-100))"; return 1; }
-      git -C "$GWT/base" checkout -q -- . ; git -C "$GWT/base" clean -qfd robots/revron/tools
-    fi
+  cat "$bf"; }
+gverifier() { # branch -> 0 pass, 1 rejected, 2 infra. checks-only: full robot/tests, then verify the touched groups on
+  # HEAD and on the trial; a blocker present on HEAD that is gone on the trial needs review (rejected, listed)
+  local b=$1 s d="$GWT/v_${1#origin/}" bd="$GWT/vb_${1#origin/}" files u; s=$(git rev-parse --short "$b"); files=$(git diff --name-only HEAD..."$b")
+  gwt "$d" HEAD || return 2
+  if ! git -C "$d" merge -q --no-edit "$b" >/dev/null 2>&1; then
+    u=$(git -C "$d" diff --name-only --diff-filter=U); git -C "$d" merge --abort 2>/dev/null
+    [ -n "$u" ] && log "conflict ${b#origin/} (verifier gate): $(echo $u)"; return 2; fi
+  (cd "$d" && timeout "${GATE_PYTEST_TIMEOUT:-3600}" python3 -m pytest robot/tests -q -p no:cacheprovider > "$P/ci_gate_pytest_${b#origin/}.log" 2>&1) \
+    || { gfail "$b" "$s" "unit tests failed ($(tail -1 "$P/ci_gate_pytest_${b#origin/}.log" | cut -c1-100))"; return 1; }
+  local known vg g x bl="$P/ci_gate_vbase_${b#origin/}.log" tl="$P/ci_gate_vtrial_${b#origin/}.log"
+  known=$(python3 -m robot verify --list-groups 2>/dev/null | grep -E '^[a-z_]+$' | paste -sd' ')
+  vg=$(cd "$d" && $GPY groups "$known" $files)
+  [ "$vg" = all ] && vg=$(echo "$known" | tr ' ' '\n' | grep -v -x -e threat -e claims | paste -sd' ')
+  [ -z "$vg" ] && { log "gate passed ${b#origin/} $s (docs-only, tests ok)"; return 0; }
+  gwt "$bd" HEAD || return 2; spec_build "$bd" || return 2
+  spec_build "$d" || { gfail "$b" "$s" "spec regeneration failed on the trial merge"; return 1; }
+  : > "$bl"; : > "$tl"
+  for g in $vg; do
+    x=$(gcount "$bd" "$g" "vbase_${b#origin/}"); cat "$P/ci_gate_vbase_${b#origin/}_$g.log" >> "$bl" 2>/dev/null
+    [ "$x" -ge 0 ] || { log "gate hold ${b#origin/}: baseline verify of $g did not finish"; return 2; }
+    x=$(gcount "$d" "$g" "${b#origin/}"); cat "$P/ci_gate_${b#origin/}_$g.log" >> "$tl" 2>/dev/null
+    [ "$x" -ge 0 ] || { gfail "$b" "$s" "verify of $g did not finish on the trial"; return 1; }
+  done
+  if ! $GPY vanished "$bl" "$tl" > "$P/ci_gate_vanished_${b#origin/}.log"; then
+    gfail "$b" "$s" "needs review: $(grep -c . "$P/ci_gate_vanished_${b#origin/}.log") blockers disappeared on [$vg] ($(head -3 "$P/ci_gate_vanished_${b#origin/}.log" | cut -c1-80 | paste -sd'|'))"; return 1
   fi
-  log "gate passed ${b#origin/} $s: assembly $a0->$a1, interference $i0->$i1"; return 0
+  log "gate passed ${b#origin/} $s (verifier-only, full tests + verify of [$vg]: no blocker disappeared)"; return 0; }
+ggeom() { # branch -> 0 ok; [param]/[refactor] branches must be geometry-identical vs HEAD (own single-branch trial)
+  local b=$1 s ge=robots/revron/tools/geom_equal.py d="$GWT/geom"; s=$(git rev-parse --short "$b")
+  [[ "$b" == *-param ]] || ! git log --no-merges --format=%s HEAD.."$b" | grep -qvE '^\[(param|refactor)\]' || return 0
+  gwt "$d" HEAD || return 2; git -C "$d" merge -q --no-edit "$b" >/dev/null 2>&1 || { git -C "$d" merge --abort; return 2; }
+  [ -f "$d/$ge" ] || return 0; spec_build "$d" || return 2
+  gwt "$GWT/base" HEAD || return 2; spec_build "$GWT/base" || return 2; cp "$d/$ge" "$GWT/base/$ge"; rm -rf "${GWT:?}/snap"
+  (cd "$GWT/base" && HEAVY_CI=1 /tmp/heavy.sh timeout 3000 python3 -u "$ge" snap "$GWT/snap") > "$P/ci_gate_geom.log" 2>&1 \
+    && (cd "$d" && HEAVY_CI=1 /tmp/heavy.sh timeout 3000 python3 -u "$ge" check "$GWT/snap"; r=$?; echo "geom_equal check exit $r"; exit $r) >> "$P/ci_gate_geom.log" 2>&1
+  local r=$?; git -C "$GWT/base" checkout -q -- . ; git -C "$GWT/base" clean -qfd robots/revron/tools
+  [ $r = 0 ] || { cp "$P/ci_gate_geom.log" "$P/ci_gate_${b#origin/}_geom.log"; gfail "$b" "$s" "geom_equal failed ($(tail -1 "$P/ci_gate_geom.log" | cut -c1-100))"; return 1; }; }
+# gate_set LABEL A0 I0 B...: trial-merge B... into $GWT/t_LABEL, regenerate the spec (cached), run assembly+interference
+# in parallel. Not worse than A0/I0 -> "pass b" for all. Worse -> a single branch is rejected, a set is split in two
+# halves gated in PARALLEL (own worktrees), recursively (mirrors bisect() in ci_gate.py). Writes "pass|reject|hold|skip b" to $GR/LABEL.
+gate_set() {
+  local L=$1 a0=$2 i0=$3; shift 3; local out="$GR/$L" d="$GWT/t_$L" b m=
+  : > "$out"
+  gwt "$d" HEAD || { for b; do echo "hold $b"; done > "$out"; return; }
+  for b; do
+    if git -C "$d" merge -q --no-edit "$b" >/dev/null 2>&1; then m="$m $b"
+    else git -C "$d" merge --abort 2>/dev/null; [ "$L" = r ] && log "conflict ${b#origin/} (in combined gate trial)"; echo "skip $b" >> "$out"; fi
+  done
+  set -- $m; [ $# -eq 0 ] && return
+  spec_build "$d" || { for b; do echo "hold $b"; done >> "$out"; return; }
+  local lab="set$L"; [ $# -eq 1 ] && lab=${1#origin/}
+  local a1 i1; read a1 i1 < <(gpair "$d" "$lab")
+  [ -n "$i1" ] || { for b; do echo "hold $b"; done >> "$out"; return; }
+  if $GPY ok "$a0" "$a1" "$i0" "$i1"; then
+    echo "$a1 $i1" > "$P/ci_gate_baseline_$(git -C "$d" rev-parse --short "HEAD^{tree}")_$(gmode)"
+    log "gate set $L passed ($#: $(echo ${*#origin/})): assembly $a0->$a1, interference $i0->$i1"
+    for b; do echo "pass $b"; done >> "$out"; return
+  fi
+  log "gate set $L worse ($#: $(echo ${*#origin/})): assembly $a0->$a1, interference $i0->$i1"
+  if [ $# -eq 1 ]; then
+    $GPY decide "$1" "$(git rev-parse --short "$1")" "$a0" "$a1" "$i0" "$i1" "$P" >/dev/null
+    log "gate rejected ${1#origin/}: blocker lines in $P/ci_gate_${1#origin/}_{assembly,interference}.log"
+    echo "reject $1" >> "$out"; return
+  fi
+  local h1 h2; { read h1; read h2; } < <($GPY halves "$@")
+  gate_set "${L}0" "$a0" "$i0" $h1 & gate_set "${L}1" "$a0" "$i0" $h2 & wait
+  cat "$GR/${L}0" >> "$out"
+  if ! grep -qv '^pass ' "$GR/${L}0" "$GR/${L}1"; then sed 's/^pass /hold /' "$GR/${L}1" >> "$out"; log "gate set $L: halves pass alone but not together, holding: $(echo $h2)"
+  else cat "$GR/${L}1" >> "$out"; fi
 }
-gated() { # skip branches already rejected at this exact sha (re-gated once HEAD moves)
-  local k="${1#origin/} $(git rev-parse --short "$1") $(git rev-parse --short HEAD)"
-  grep -qxF "$k" "$P/ci_gate_rejected" 2>/dev/null && return 1
-  gate "$1"; local r=$?
-  [ $r -eq 0 ] && return 0
-  [ $r -eq 1 ] && echo "$k" >> "$P/ci_gate_rejected"   # infra failures (2) are held and re-gated next pass
-  return 1; }
+# combined gate for all candidate heads; prints the branches approved for merging. GATE=0 disables.
+gate_all() {
+  [ "${GATE:-1}" = 1 ] || { printf '%s\n' "$@"; return; }
+  local b k geo= ok=
+  for b; do
+    k="${b#origin/} $(git rev-parse --short "$b") $(git rev-parse --short HEAD)"
+    grep -qxF "$k" "$P/ci_gate_rejected" 2>/dev/null && continue   # rejected at this exact sha (re-gated once HEAD moves)
+    if [ "$($GPY kind $(git diff --name-only HEAD..."$b"))" = verifier-only ]; then
+      gverifier "$b"; case $? in 0) ok="$ok $b";; 1) echo "$k" >> "$P/ci_gate_rejected";; *) log "gate hold ${b#origin/}: infra failure";; esac
+    else geo="$geo $b"; fi
+  done
+  if [ -n "$geo" ]; then
+    local base; base=$(baseline) || { log "gate hold (baseline infra failure):$geo"; printf '%s\n' $ok; return; }
+    GR=$(mktemp -d "${TMPDIR:-/tmp}/ci_gr.XXXX")
+    gate_set r $base $geo
+    for b in $(awk '$1=="reject"{print $2}' "$GR/r"); do echo "${b#origin/} $(git rev-parse --short "$b") $(git rev-parse --short HEAD)" >> "$P/ci_gate_rejected"; done
+    for b in $(awk '$1=="hold"{print $2}' "$GR/r"); do log "gate hold ${b#origin/} (infra failure or interaction; retried next round)"; done
+    for b in $(awk '$1=="pass"{print $2}' "$GR/r"); do
+      ggeom "$b"; case $? in 0) ok="$ok $b";; 1) echo "${b#origin/} $(git rev-parse --short "$b") $(git rev-parse --short HEAD)" >> "$P/ci_gate_rejected";; *) log "gate hold ${b#origin/}: geom infra failure";; esac
+    done
+    rm -rf "${GR:?}"
+  fi
+  printf '%s\n' $ok; }
+mergeb() { # branch: merge into HEAD (spec-only conflicts take theirs; real conflicts aborted and logged)
+  local b=$1 f
+  if git merge -q --no-edit "$b" >/dev/null 2>&1; then log "iter $i merged $b $(git rev-parse --short "$b")"
+  else
+    f=$(git diff --name-only --diff-filter=U | grep -v -e 'spec.json$' -e 'templates/revron.json$')
+    if [ -z "$f" ]; then git checkout --theirs robots/revron/spec.json robot/templates/revron.json 2>/dev/null; git add robots/revron/spec.json robot/templates/revron.json; git commit -qm "Merge $b"; log "iter $i merged $b (spec-only conflict)"
+    else git merge --abort; log "conflict ${b#origin/}: $(echo $f)"; fi
+  fi; }
+regen_commit() { # regenerate the spec here (cached) and commit it; 1 (logged) when the build failed: do not verify
+  spec_build . || return 1
+  git add robots/revron/spec.json robot/templates/revron.json && { git diff --cached --quiet || git commit -qm "Revron: regenerate spec (ci loop)" >/dev/null; }; }
+merge_all() { local c b; c=$(cands); [ -n "$c" ] && for b in $(gate_all $c); do mergeb "$b"; done; }
+cands() { for b in $(heads); do git merge-base --is-ancestor "$b" HEAD || echo "$b"; done; }
 [ "${RENDER_FIRST:-0}" = 1 ] && render
 for i in $(seq "${START_ITER:-1}" "$MAX_ITERS"); do
   git fetch -q origin "+refs/heads/fix-*:refs/remotes/origin/fix-*" 2>>"$P/ci_push.err" || log "fetch failed"
@@ -187,7 +233,7 @@ for i in $(seq "${START_ITER:-1}" "$MAX_ITERS"); do
       merge_all
       [ -f "${CI_STOP:-/tmp/ci_loop.stop}" ] && { log "stop file seen, exiting"; exit 0; }
     done
-    regen_commit || { push; continue; }   # same regeneration and conflict handling as the main pass
+    regen_commit || { push; continue; }   # same regeneration as the main pass
     push; sha=$(git rev-parse --short HEAD); log "iter $i new head $sha"
   fi
   [ -f "$P/blockers_live.jsonl" ] && mv "$P/blockers_live.jsonl" "$P/blockers_live.prev.jsonl"

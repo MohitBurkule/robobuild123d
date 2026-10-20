@@ -68,25 +68,37 @@ def test_ci_loop_syntax():
     assert subprocess.run(["bash", "-n", str(ROOT / "robot" / "tools" / "ci_loop.sh")]).returncode == 0
 
 
+def _fn(name):
+    a = LOOP.index("\n" + name + "() {") + 1
+    e = LOOP.index("\n", a)
+    nxt = re.search(r"^(#|[a-z_]+\(\) \{|\[ )", LOOP[e + 1:], re.M)
+    return LOOP[a:e + 1 + nxt.start()]
+
+
 def test_gate_fails_closed_on_setup():
-    gate = LOOP[LOOP.index("gate() {"):LOOP.index("gated() {")]
-    assert gate.count("|| return 0") == 1 and '[ "${GATE:-1}" = 1 ] || return 0' in gate   # only the GATE=0 switch
-    calls = re.findall(r'gwt "\$GWT/\w+" HEAD[^\n]*', gate)
-    assert calls and all("|| { ginfra" in c for c in calls)                 # every gwt is checked
-    assert "[ $r -eq 1 ] && echo" in LOOP                               # infra holds are not recorded as rejections
+    assert "|| return 0   # build failure" not in LOOP                              # bad: stale spec verified
+    assert "spec_build \"$d\" || { for b; do echo \"hold $b\"" in LOOP                   # good: failed build holds
+    for f in ("baseline", "gverifier", "ggeom", "gate_set"):
+        body = _fn(f)
+        assert not re.search(r"gwt [^|\n]*\n", body), f                          # every gwt has a failure branch
+        assert not re.search(r"spec_build \S+\s*;", body), f                       # every spec_build is checked
+
+
+def test_baseline_unfinished_is_held():
+    body = _fn("baseline")
+    assert "for k in 1 2" in body and "return 1" in body and "_$(gmode)" in body
 
 
 def test_verifier_only_branch_runs_verify():
-    gate = LOOP[LOOP.index("gate() {"):LOOP.index("gated() {")]
-    assert "pytest robot/tests" in gate and "$GPY vanished" in gate and "$GPY groups" in gate
+    body = _fn("gverifier")
+    assert "pytest robot/tests -q" in body and "$GPY vanished" in body and "$GPY groups" in body
 
 
 def test_regen_everywhere():
-    gate = LOOP[LOOP.index("gate() {"):LOOP.index("gated() {")]
-    assert 'regen "$GWT/trial"' in gate and 'regen "$GWT/base"' in gate               # #15
     wait = LOOP[LOOP.index("nothing new: wait"):LOOP.index("blockers_live.prev")]
     assert "merge_all" in wait and "regen_commit" in wait                               # #13
     assert ">/dev/null 2>&1) && git add" not in LOOP and "regen FAILED" in LOOP
+    assert 'spec_build "$d" ||' in _fn("gate_set")                                       # #15
 
 
 def test_last_verified_only_when_complete():
@@ -95,8 +107,8 @@ def test_last_verified_only_when_complete():
 
 def test_loop_small_consistencies():
     assert r"'^\[(param|refactor)\]'" in LOOP                                          # #26 regex
-    assert 'ci_gate_baseline_${head}_$(gmode)' in LOOP                                 # same cache mode
-    assert 'stat -c %Y "$S/.now"' in LOOP                                              # share clock
+    assert LOOP.count('ci_gate_baseline_') == LOOP.count('ci_gate_baseline_$(git') and "_$(gmode)\"" in LOOP
+    assert '$GPY count "$c.log" "$rc"' in LOOP
 
 
 # ---------------------------------------------------------------------------------------------- intent #4 #8 #16 #29

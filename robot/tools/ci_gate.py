@@ -7,6 +7,8 @@
   python3 robot/tools/ci_gate.py groups "KNOWN" FILE...  # check groups the changed robot/checks modules feed ('all' if unsure)
   python3 robot/tools/ci_gate.py vanished BASE TRIAL     # exit 1 (and print them) if blockers in BASE are gone in TRIAL,
                                                          # or either log did not finish: a verifier change needs review
+  python3 robot/tools/ci_gate.py ok A0 A1 I0 I1          # exit 0 if not worse, 1 if worse (no logging)
+  python3 robot/tools/ci_gate.py halves B...             # print the two bisect halves, one per line
 """
 import datetime, json, os, re, sys
 
@@ -72,6 +74,35 @@ def decide(a0, a1, i0, i1):
     return a1 <= a0 and i1 <= i0
 
 
+def halves(branches):
+    """Split a branch set for bisection: first half gets the extra one; order preserved."""
+    k = (len(branches) + 1) // 2
+    return list(branches[:k]), list(branches[k:])
+
+
+def bisect(branches, gate):
+    """Pure model of the combined gate in ci_loop.sh. gate(subset) -> True (not worse), False (worse) or
+    None (infra failure). Returns {branch: 'pass'|'reject'|'hold'}.
+    The whole set passing merges all; a failing single branch is rejected; otherwise both halves are gated
+    (in parallel in the shell) and recursed. If every branch of both halves passes although the union failed
+    (an interaction), the second half is held for the next round so the passing first half still merges."""
+    branches = list(branches)
+    if not branches:
+        return {}
+    r = gate(branches)
+    if r is None:
+        return {b: "hold" for b in branches}
+    if r:
+        return {b: "pass" for b in branches}
+    if len(branches) == 1:
+        return {branches[0]: "reject"}
+    h1, h2 = halves(branches)
+    out1, out2 = bisect(h1, gate), bisect(h2, gate)
+    if all(v == "pass" for v in out1.values()) and all(v == "pass" for v in out2.values()):
+        out2 = {b: "hold" for b in out2}
+    return {**out1, **out2}
+
+
 def reject_line(branch, sha, a0, a1, i0, i1):
     return f"[ci] gate rejected {branch.replace('origin/', '')} {sha}: assembly {a0}->{a1}, interference {i0}->{i1}"
 
@@ -114,6 +145,12 @@ def main(argv):
         return 1 if gone else 0
     if cmd == "kind":
         print("verifier-only" if verifier_only(argv[1:]) else "geometry")
+        return 0
+    if cmd == "ok":
+        return 0 if decide(*map(int, argv[1:5])) else 1
+    if cmd == "halves":
+        for h in halves(argv[1:]):
+            print(" ".join(h))
         return 0
     if cmd == "decide":
         b, sha = argv[1], argv[2]
