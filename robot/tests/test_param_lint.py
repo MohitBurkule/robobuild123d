@@ -118,3 +118,9 @@ def test_unlinked_duplicate():
     assert unlinked(4.8, pool) == "B + C"
     assert unlinked(4.25, pool) == "D.x"
     assert unlinked(11.11, pool) is None
+
+
+def test_module_literals_skip_organic():
+    from robot.checks.param_lint import module_literals
+    src = "X = 21.5\n# param: organic table\nT = (3.3, 4.4)\n# param: end\ndef f():\n    return 7.7\n"
+    assert module_literals(src) == {21.5: [1]}
