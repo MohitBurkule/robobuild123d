@@ -110,6 +110,7 @@ DOG = dict(r=12.0, rise=1.52, t0=5.0, t1=18.0, t2=55.0)       # bore dogs (90 de
 DISC_BORE_ROUND, DISC_HOLE_R_WIN = 0.5, 0.44                    # bore corner rounding; balance window corner radius
 DISC_BAL_PTS = [(-13.2, 4.85), (-13.2, 9.08), (-11.68, 7.65)]    # param: organic balance-window hull corners (measured, STEP)
 TOOTH_PTS = [(-11.0, 11.6), (-8.0, 8.0), (-16.2, 0.0), (-16.25, 15.0)]   # param: organic tooth flank/root polygon (measured, STEP)
+# param: end
 DISC_ROUND = dict(r_out=0.2, r_in=0.7)                           # tooth tip land (0.4 laser-cuttable) and root fillet
 
 
@@ -197,6 +198,7 @@ NUT_LOBE = Point(NUT[0], NUT[1]).buffer(4.55, 64).union(Point(1.35, 6.9).buffer(
 NUT_RELIEF_Y0, NUT_STEP_R = -11.7, 0.0   # side-panel relief edge (STEP RV23 diamond); the lobe-tail step corner is the panel's own square edge (SHARP_OK)
 PANEL_IN = 31.4   # inner face of the side panel at the nut lobe (|X|)
 LUG_FLOOR_Z, LUG_SCALLOP_R, LUG_BLEND_R, LUG_SB_R = 2.5, 8.6, 4.95, 3.25   # param: organic lug underside arcs fitted to RV01: scallop R, the blend into the standoff arc (ref R4.95), standoff arc R
+# param: end
 # the blend circle (R4.95) sits under the lug floor, tangent to it and to the standoff arc round SB: its centre follows from both
 _blend_c = (SB[0] - math.sqrt((LUG_BLEND_R + LUG_SB_R) ** 2 - (SB[1] - (LUG_FLOOR_Z - LUG_BLEND_R)) ** 2), LUG_FLOOR_Z - LUG_BLEND_R)
 LUG_SCALLOP_YT = _blend_c[0]   # the big scallop arc ends tangent to the floor where the blend begins
@@ -318,6 +320,7 @@ KEYHOLE_DEV, BLOB_DEV, BLOB_R = (28.6, -30.6, 4.5), (-10.97, -9.03, 14.13), 3.0 
 GUSSET_PTS, GUSSET_R = ((-22.5, 20.0, 5.8), (22.5, 20.0, 5.8)), 8.0
 CAGE_RIBS = ((-2.0, -2.0, 15.4), (19.4, -2.0, 15.4), (2.0, -19.6, 13.0), (12.0, -19.6, 13.0), (7.5, -19.6, 13.0), (-2.2, -9.0, 14.0), (19.3, 4.0, 14.0), (-2.2, 4.0, 14.0), (19.3, -9.0, 14.0))
 LOBE_DEV, LOBE_DEV_R = (32.0, -13.5, 9.4), 3.5  # param: organic centroid of the lobe-tail trim vs STEP blobs
+# param: end
 CAGE_RIB_R, BASE_DEV_Z, PANEL_DEV_R, TOP_DEV_Z = 6.0, 4.5, 3.0, 19.95
 NOSE_DEV, NOSE_DEV_R = (MNT_IN + 2.0, SB[0] + 3.5, SB[1] - 1.0), 4.0             # mount nose pad (|x|, y, z)
 STATOR_DEV_X, TAP_DEV_R = 16.8, 2.0                                              # stator lead-in cone site; tap-hole sites
