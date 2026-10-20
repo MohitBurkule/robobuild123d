@@ -5208,17 +5208,31 @@
    "exempt": [
     {
      "at": [
+      27.55,
+      -35.65
+     ],
+     "reason": "RVRN RV01 square, N10 gearbox plate seat, r=0.0 (RV01_Chassis_1 z=10 slice: wall x=27.5 meets y=-35.6 at 90 deg, seat arc starts at x=26.5; ours squares at x=27.55 and the seat arc starts at x=26.77)"
+    },
+    {
+     "at": [
       26.77,
       -35.65
      ],
-     "reason": "RVRN RV01 square, N10 gearbox plate seat, r=0.0 (RV01_Chassis_1 z=10 slice: wall x=27.5 meets y=-35.6 at 90 deg, seat arc starts at x=26.5; ours seat arc starts at x=26.77)"
+     "reason": "RVRN RV01 square, N10 gearbox plate seat, r=0.0 (RV01_Chassis_1 z=10 slice: wall x=27.5 meets y=-35.6 at 90 deg, seat arc starts at x=26.5; ours squares at x=27.55 and the seat arc starts at x=26.77)"
+    },
+    {
+     "at": [
+      -27.55,
+      -35.65
+     ],
+     "reason": "RVRN RV01 square, N10 gearbox plate seat, r=0.0 (RV01_Chassis_1 z=10 slice: wall x=27.5 meets y=-35.6 at 90 deg, seat arc starts at x=26.5; ours squares at x=27.55 and the seat arc starts at x=26.77)"
     },
     {
      "at": [
       -26.77,
       -35.65
      ],
-     "reason": "RVRN RV01 square, N10 gearbox plate seat, r=0.0 (RV01_Chassis_1 z=10 slice: wall x=27.5 meets y=-35.6 at 90 deg, seat arc starts at x=26.5; ours seat arc starts at x=26.77)"
+     "reason": "RVRN RV01 square, N10 gearbox plate seat, r=0.0 (RV01_Chassis_1 z=10 slice: wall x=27.5 meets y=-35.6 at 90 deg, seat arc starts at x=26.5; ours squares at x=27.55 and the seat arc starts at x=26.77)"
     }
    ]
   },
