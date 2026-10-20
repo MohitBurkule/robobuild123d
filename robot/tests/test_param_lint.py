@@ -65,7 +65,7 @@ def test_marker_without_reason_is_problem():
 
 
 def test_spec_exempt_and_duplicates():
-    assert P.lint_source(BAD, {"bracket": "x"})["funcs"]["bracket"]["count"] == 0
+    assert P.lint_source(BAD, {"bracket": "x"})["funcs"]["bracket"]["count"] == 0   # keys are qualified names
     assert len(P.lint_source(DUP)["values"][3.7]) == 3
 
 
@@ -83,7 +83,7 @@ def test_spec_level_findings(tmp_path):
     assert all(f.passed for f in out)
     out, _ = P.lint_spec(_spec(tmp_path, BAD, {"param_exempt": [{"func": "bracket"}]}))
     assert any(f.id == "param.exempt_reason" and not f.passed for f in out)
-    out, _ = P.lint_spec(_spec(tmp_path, BAD, {"review": {"param": {"max_literals": 10}}}))
+    out, _ = P.lint_spec(_spec(tmp_path, BAD, {"review": {"param": {"max_literals": 10, "reason": "legacy module"}}}))
     assert not any(f.id == "param.literals" and not f.passed for f in out)
 
 

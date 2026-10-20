@@ -15,7 +15,9 @@ def test_decide():
     assert not G.decide(3, 4, 5, 5)
     assert not G.decide(3, 3, 5, 6)
     assert not G.decide(3, -1, 5, 5)      # trial crashed while baseline finished
-    assert G.decide(-1, 7, 5, 5)          # unknown baseline: do not block on it
+    assert not G.decide(-1, 7, 5, 5)      # unknown baseline: never an accept (review #1)
+    assert not G.decide(-1, 50, -1, 50) and not G.decide(3, 3, -1, 99)
+    assert not G.decide(3, 3, 5, -1)
 
 
 def test_kind_and_owner():

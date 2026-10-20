@@ -1,13 +1,16 @@
 """param.*: build code derives dimensions from named params and relations, not raw numbers.
 
 AST-scans each build source a spec's `model` shapes reference. Numeric literals inside functions are counted per
-function unless they are trivial (TRIVIAL), subscript indices, default-argument values, or inside an organic region.
-Module-level assignments are the robot's named params and are never counted.
+function unless they are trivial (TRIVIAL), subscript indices, or inside an organic region. Default-argument values
+count against their function (moving numbers into defaults does not make them parameters). Module-level lambdas count
+as a function named after their target (or `<lambda>@L<line>`), and class-body statements count as `Class.<body>`.
+Module-level numeric assignments are the robot's named params and are never counted.
 
 Organic exemptions (B-spline control-point tables and the like):
   * a `# param: organic <reason>` comment on, or directly above, a `def` exempts that function;
   * a `# param: organic <reason>` ... `# param: end` comment pair exempts the lines between;
-  * spec `param_exempt: [{"func": name, "reason": text}]`.
+  * spec `param_exempt: [{"func": "file.py:Qual.name", "reason": text}]` (matched by file and exact qualified name;
+    an unqualified name is ignored with a WARNING, and an entry that matches no function is a WARNING).
 An exemption without a reason is a BLOCKER (param.exempt_reason).
 
 A function with more than `review.param.max_literals` (default 3) unexplained literals is a BLOCKER (param.literals);
@@ -23,7 +26,7 @@ from collections import defaultdict
 from pathlib import Path
 
 from ..finding import BLOCKER, WARNING, fail, ok
-from ._review import params
+from ._review import _section, override_findings, params
 
 G = "param"
 TRIVIAL = {0, 1, 2, 0.5, -1, 90, 180, 360, -90, -180}
@@ -158,22 +161,26 @@ def lint_source(text, exempt_funcs=None):
     ex_lines, fn_marks, problems = _organic(lines)
     funcs, values = {}, defaultdict(list)
 
+    used = set()
+
     def visit_fn(fn, qual, organic):
-        organic = organic or fn.name in exempt_funcs or fn.lineno in fn_marks or \
-            any(d.lineno in fn_marks for d in fn.decorator_list)
+        if qual in exempt_funcs:
+            used.add(qual)
+        organic = organic or qual in exempt_funcs or fn.lineno in fn_marks or \
+            any(d.lineno in fn_marks for d in getattr(fn, "decorator_list", []))
         skip = set()
-        for d in list(fn.args.defaults) + [d for d in fn.args.kw_defaults if d is not None]:
-            skip |= {id(n) for n in ast.walk(d)}
         for n in ast.walk(fn):
             if isinstance(n, ast.Subscript):
                 skip |= {id(m) for m in ast.walk(n.slice) if _num(m) is not None and isinstance(_num(m), int)}
         per = defaultdict(int)
         nested = []
-        stack = list(ast.iter_child_nodes(fn))
+        stack = list(fn.body) if isinstance(fn, ast.ClassDef) else list(ast.iter_child_nodes(fn))
         while stack:
             n = stack.pop()
             if isinstance(n, (ast.FunctionDef, ast.AsyncFunctionDef)):
                 nested.append(n)
+                continue
+            if isinstance(fn, ast.ClassDef) and isinstance(n, ast.ClassDef):
                 continue
             v = _num(n)
             if v is not None:
@@ -187,20 +194,40 @@ def lint_source(text, exempt_funcs=None):
         cnt = sum(per.values())
         funcs[qual] = {"count": cnt, "lines": span, "density": cnt / span, "line": fn.lineno, "exempt": organic,
                        "worst": sorted(per.items(), key=lambda kv: (-kv[1], kv[0]))[:3]}
-        for c in nested:
+        for c in ([] if isinstance(fn, ast.ClassDef) else nested):   # class methods are visited by visit_class
             visit_fn(c, f"{qual}.{c.name}", organic)
 
-    for node in ast.walk(tree):
-        if isinstance(node, ast.ClassDef):
-            for c in node.body:
-                if isinstance(c, (ast.FunctionDef, ast.AsyncFunctionDef)):
-                    visit_fn(c, f"{node.name}.{c.name}", False)
+    def visit_class(node, qual):
+        visit_fn(node, f"{qual}.<body>", qual in exempt_funcs or node.lineno in fn_marks)   # class attributes / tables
+        for c in node.body:
+            if isinstance(c, (ast.FunctionDef, ast.AsyncFunctionDef)):
+                visit_fn(c, f"{qual}.{c.name}", qual in exempt_funcs)
+            elif isinstance(c, ast.ClassDef):
+                visit_class(c, f"{qual}.{c.name}")
+        if qual in exempt_funcs:
+            used.add(qual)
+
+    def lambdas(stmt):
+        """Lambdas outside any def (module level / class body): yield (lambda, name)."""
+        tgt = stmt.targets[0] if isinstance(stmt, ast.Assign) and len(stmt.targets) == 1 else \
+            stmt.target if isinstance(stmt, ast.AnnAssign) else None
+        for n in ast.walk(stmt):
+            if isinstance(n, ast.Lambda):
+                nm = tgt.id if isinstance(tgt, ast.Name) and stmt.value is n else f"<lambda>@L{n.lineno}"
+                yield n, nm
+
     for node in tree.body:
         if isinstance(node, (ast.FunctionDef, ast.AsyncFunctionDef)):
             visit_fn(node, node.name, False)
+        elif isinstance(node, ast.ClassDef):
+            visit_class(node, node.name)
+        else:
+            for lam, nm in lambdas(node):
+                visit_fn(lam, nm, False)
     patterns, pairs, placements = _structure(tree, funcs)
     patterns = [p for p in patterns if p[0] not in ex_lines]
     return {"funcs": funcs, "values": dict(values), "problems": problems, "patterns": patterns, "mirror_pairs": pairs,
+            "exempt_used": sorted(used),
             "placements": [p for p in placements if p[0] not in ex_lines]}
 
 
@@ -238,18 +265,13 @@ def _package_modules(path):
 def lint_spec(spec):
     cfg = params(spec, "param", DEFAULTS)
     out, total = [], 0
-    ex = {}
-    for e in (spec.raw or {}).get("param_exempt") or []:
-        e = e if isinstance(e, dict) else {"func": str(e)}
-        if not str(e.get("reason") or "").strip():
-            out.append(fail("param.exempt_reason", G, BLOCKER, "Organic exemption without a reason",
-                            f"`param_exempt` entry for `{e.get('func')}` gives no reason.")
-                       .fix("Add `reason`: why this function's numbers are organic (e.g. B-spline control points)."))
-        ex[e.get("func")] = e.get("reason")
+    ex, out = exemptions(spec)
+    matched = set()
     nmax, dmin = int(cfg["max_literals"]), int(cfg["dup_min"])
     for path in sources(spec):
-        res = lint_source(path.read_text(), ex)
         name = path.name
+        res = lint_source(path.read_text(), ex.get(name, {}))
+        matched |= {f"{name}:{q}" for q in res["exempt_used"]}
         for ln, msg in res["problems"]:
             out.append(fail("param.exempt_reason", G, BLOCKER, "Bad organic marker", f"{name}:{ln}: {msg}.")
                        .fix("Write `# param: organic <reason>` and close regions with `# param: end`."))
@@ -286,14 +308,44 @@ def lint_spec(spec):
                        .fix("Place by Joint/mate or relative to a named feature (face, axis, centre) instead."))
         if not n_bad:
             out.append(ok("param.literals", G, "Build code is parametric", f"{name}: no function over {nmax} raw literals."))
+    for f, qs in ex.items():
+        for q in qs:
+            if f"{f}:{q}" not in matched:
+                out.append(fail("param.exempt_unused", G, WARNING, "Exemption matches no function",
+                                f"`param_exempt` entry `{f}:{q}` matches no function in the linted sources.")
+                           .fix("Fix the file / qualified name, or delete the stale entry."))
     return out, total
+
+
+def exemptions(spec):
+    """spec `param_exempt` -> ({file name: {qualname: reason}}, findings). Keys are `file.py:Qual.name`."""
+    ex, out = defaultdict(dict), []
+    for e in (spec.raw or {}).get("param_exempt") or []:
+        e = e if isinstance(e, dict) else {"func": str(e)}
+        key = str(e.get("func") or "")
+        if not str(e.get("reason") or "").strip():
+            out.append(fail("param.exempt_reason", G, BLOCKER, "Organic exemption without a reason",
+                            f"`param_exempt` entry for `{key}` gives no reason.")
+                       .fix("Add `reason`: why this function's numbers are organic (e.g. B-spline control points)."))
+            continue
+        f, sep, q = key.partition(":")
+        if not sep or not f or not q:
+            out.append(fail("param.exempt_unused", G, WARNING, "Unqualified exemption ignored",
+                            f"`param_exempt` entry `{key}` is not `file.py:Qual.name`; a bare name would exempt every "
+                            f"function of that name in every file, so it is not applied.")
+                       .fix("Write the entry as `file.py:qualified.name`."))
+            continue
+        ex[f][q] = e.get("reason")
+    return dict(ex), out
 
 
 def run(ctx):
     spec = ctx.r.spec
+    ov = override_findings(_section(spec, "param"), DEFAULTS, "param", "param.override", G)
     if not params(spec, "param", DEFAULTS)["enabled"]:
-        return []
+        return ov
     out, total = lint_spec(spec)
+    out += ov
     ctx.metrics["param.literal_count"] = total
     return out
 
@@ -302,9 +354,9 @@ if __name__ == "__main__":  # python -m robot.checks.param_lint spec.json : per-
     import sys
     from ..spec import load
     sp = load(sys.argv[1])
-    ex = {e.get("func"): e.get("reason") for e in (sp.raw.get("param_exempt") or []) if isinstance(e, dict)}
+    ex, _ = exemptions(sp)
     for path in sources(sp):
-        res = lint_source(path.read_text(), ex)
+        res = lint_source(path.read_text(), ex.get(path.name, {}))
         fs = sorted(res["funcs"].items(), key=lambda kv: -kv[1]["count"])
         print(f"{path.name}: total {sum(f['count'] for _, f in fs)} literals in {len(fs)} functions")
         for q, f in fs[:int(sys.argv[2]) if len(sys.argv) > 2 else 20]:

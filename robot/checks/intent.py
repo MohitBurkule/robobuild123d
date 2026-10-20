@@ -275,9 +275,35 @@ def rotor_envelope(meshes, axis, at):
 
 
 # ------------------------------------------------------------------------------------------------ runner
+class NotChecked(Exception):
+    """The rule could not measure anything (missing part, no samples, no resolvable wire): never a pass."""
+
+
+RULES = ("keyed_bore", "support_free", "min_wall", "fillet", "insert_column", "tyre_retention", "captive_nut",
+         "wheel_clearance", "flush_head", "notch_bears", "seat_locates", "tool_count", "wire_clear_rotor")
+PART_KEYS = ("part", "hub", "nut", "wheel", "fastener", "lug", "host", "bolts", "rotor")
+MIN_SAMPLES = 20
+
+
 def _m(ctx, pid):
     b = ctx.world.body(pid)
-    return b.mesh if b is not None else None
+    if b is None or b.mesh is None:
+        raise NotChecked(f"part `{pid}` is not in the world")
+    return b.mesh
+
+
+def validate(ctx, e):
+    """Up-front check of an entry: known rule and every referenced part id exists. Raises NotChecked."""
+    r = e.get("rule")
+    if r not in RULES:
+        raise NotChecked(f"unknown intent rule `{r}`")
+    for k in PART_KEYS:
+        v = e.get(k)
+        if v is None:
+            continue
+        for pid in ([v] if isinstance(v, str) else v):
+            if ctx.world.body(pid) is None:
+                raise NotChecked(f"`{k}` id `{pid}` is not in the world")
 
 
 def _rule(ctx, e):
@@ -300,6 +326,8 @@ def _rule(ctx, e):
             keep &= (np.abs(p[:, :2] - lo[:2]) < 0.05).any(1) | (np.abs(p[:, :2] - hi[:2]) < 0.05).any(1)
         for lo, hi in e.get("except", []):
             keep &= ~np.all((p >= lo) & (p <= hi), axis=1)
+        if int(keep.sum()) < e.get("min_samples", MIN_SAMPLES):
+            raise NotChecked(f"min_wall on `{e['part']}`: only {int(keep.sum())} wall samples left after envelope/except filters")
         mn = e.get("min", 1.8)
         thin = keep & (t < mn)
         f = float(thin.sum() / max(keep.sum(), 1))
@@ -342,6 +370,9 @@ def _rule(ctx, e):
         return not free, "Seat locates the part", f"`{e['part']}` is free to {free} in `{e['host']}`; the seat must hold it concentric and stop it turning.", e["part"], len(free)
     if r == "tool_count":
         fs = ctx.r.spec.raw.get("fasteners", [])
+        untooled = [f.get("id") for f in fs if not f.get("tool")]
+        if untooled:
+            raise NotChecked(f"fasteners with no `tool` declared: {untooled[:8]}")
         tools = sorted({f.get("tool") for f in fs if f.get("tool")})
         mod = sorted({f.get("tool") for f in fs if f.get("id") in set(e.get("module", [])) and f.get("tool")})
         good = len(tools) <= e.get("max", 2) and len(mod) <= e.get("module_max", 1)
@@ -349,17 +380,22 @@ def _rule(ctx, e):
     if r == "wire_clear_rotor":
         rmax, a0, a1 = rotor_envelope([_m(ctx, x) for x in e["rotor"]], e["axis"], e["at"])
         worst = (math.inf, None)
+        skipped = []
         for w in ctx.r.spec.raw.get("wires", []):
             try:
                 pa, pb = ctx.world.port(ctx.r, w["from"]), ctx.world.port(ctx.r, w["to"])
                 pa, pb = [np.asarray(p[0] if isinstance(p, tuple) else p, float).reshape(-1)[:3] for p in (pa, pb)]
-            except Exception:  # noqa: BLE001
+            except Exception as ex:  # noqa: BLE001
+                skipped.append(w.get("id"))
+                ctx.not_checked.append(f"intent.wire_clear_rotor: wire `{w.get('id')}` ports did not resolve ({type(ex).__name__})")
                 continue
             pts = [pa] + [np.asarray(v, float) for v in (e.get("via") or {}).get(w["id"], [])] + [pb]
             P = np.vstack([a + np.linspace(0, 1, 40)[:, None] * (b - a) for a, b in zip(pts, pts[1:])])
             g = float(swept_gap(P, e["axis"], e["at"], rmax, a0, a1).min())
             if g < worst[0]:
                 worst = (g, w["id"])
+        if worst[1] is None:
+            raise NotChecked(f"no wire could be measured (skipped {skipped})")
         mn = e.get("min", 2.0)
         return worst[0] >= mn, "Wires clear the disc", f"closest wire `{worst[1]}` is {worst[0]:.2f} mm from the rotor's swept volume (need >= {mn}).", "wires", round(worst[0], 3)
     raise KeyError(r)
@@ -369,17 +405,19 @@ def run(ctx):
     out = []
     for e in (ctx.r.spec.raw or {}).get("intent", []) or []:
         cid = f"intent.{e.get('rule')}"
+        sev = WARNING if e.get("severity") == "warning" else BLOCKER
         try:
+            validate(ctx, e)
             good, title, detail, subj, met = _rule(ctx, e)
-        except Exception as ex:  # noqa: BLE001
-            out.append(fail(cid, G, WARNING, "Intent check could not run", f"{e}: {type(ex).__name__}: {ex}"))
-            ctx.not_checked.append(f"{cid} on {e.get('part') or e.get('wheel') or e.get('nut')}")
+        except Exception as ex:  # noqa: BLE001  fail closed: a crash or a typo keeps the entry's severity
+            what = "NOT CHECKED" if isinstance(ex, NotChecked) else "crashed"
+            out.append(fail(cid, G, sev, f"Intent check {what}", f"{e}: {type(ex).__name__}: {ex}"))
+            ctx.not_checked.append(f"{cid} on {e.get('part') or e.get('wheel') or e.get('nut') or e.get('rotor')}: {ex}")
             continue
         ctx.metrics.setdefault("intent", []).append({"rule": e["rule"], "subject": subj, "value": met, "pass": bool(good)})
         why = f" Why: {e['why']}" if e.get("why") else ""
         if good:
             out.append(ok(cid, G, title, detail + why))
         else:
-            sev = WARNING if e.get("severity") == "warning" else BLOCKER
             out.append(fail(cid, G, sev, title, detail + why).on(subj))
     return out
