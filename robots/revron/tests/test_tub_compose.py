@@ -18,7 +18,7 @@ def test_chassis_is_composed_from_the_modules():
     src = inspect.getsource(tub.chassis)
     for m in ("tub_shell", "tub_lobes", "tub_lugs", "tub_front"):
         assert m + ".additions" in src or m + ".shell" in src
-        assert m + ".cuts" in src or m + ".ribs" in src
+        assert m + ".cuts" in src or m + ".shell" in src
     assert len(src.splitlines()) < 30
 
 
@@ -32,4 +32,4 @@ def test_chassis_geometry():
     lo, hi = c.bounding_box().min, c.bounding_box().max
     assert abs(hi.X - CH["x"]) < 0.05 and abs(lo.X + CH["x"]) < 0.05 and abs(hi.Z - CH["z1"]) < 0.05
     assert len(c.solids()) == 1
-    assert 15000 < c.volume < 17000     # RV01 is 15704 mm3; the printed tub adds the cage ribs and the key tabs
+    assert 15000 < c.volume < 17000     # RV01 is 15704 mm3; the printed tub adds the key tabs

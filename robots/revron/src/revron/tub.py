@@ -15,7 +15,7 @@ def _panel_seat(which, i):
     relief hole (BASE_HOLE / TOP_HOLE) so the seat stops short of the far face."""
     if which == "base":
         x, y = INS[i]
-        return hole_tool((x, y, BASE_Z0), (0, 0, 1), "M2x6", head="csk", into="through", side="head", grip=BASE_T + BOSS_H, csk_clear=CSK_CLEAR)
+        return hole_tool((x, y, BASE_Z0), (0, 0, 1), "M2x6", head="csk", into="through", side="head", grip=BASE_T, csk_clear=CSK_CLEAR)
     x, y = TOP_XY[i]
     return hole_tool((x, y, TOP_Z0 + TOP_T), (0, 0, -1), "M2x5", head="button", into="through", side="head", grip=TOP_T, cbore=0)   # 0.9 Ti is too thin for an M2 flat-head seat (1.2 tall): a button head bears flat on the face, plain 2.2 clearance hole
 
@@ -45,11 +45,7 @@ def base_panel():
     for s in (1, -1):   # plain boxes (not shapely polylines) so the base can take a fillet
         pad = b.Pos(s * px, py, skin_top - PRELOAD_PAD["sink"] + PRELOAD_PAD["h"] / 2) * b.Box(PRELOAD_PAD["s"], PRELOAD_PAD["s"], PRELOAD_PAD["h"])
         body = body + b.fillet(pad.edges().filter_by(b.Axis.Z), PRELOAD_PAD["r"])
-    # the 1 mm skin is thinner than the 1.2 mm M2 flat head: a ring boss over each screw gives the seat material (no knife edge
-    # under the head) and keys the panel into the column feet, so side hits shear the bosses, not the screws
-    for x, y in INS:
-        body = body + b.Pos(x, y, skin_top - PRELOAD_PAD["sink"] + (BOSS_H + PRELOAD_PAD["sink"]) / 2) * b.Cylinder(BOSS_R, BOSS_H + PRELOAD_PAD["sink"])
-    # small fillet where pads and bosses meet the skin: no sharp internal corner in the print (the STEP has r 0.5 at the pads)
+    # small fillet where the pads meet the skin: no sharp internal corner in the print (the STEP has r 0.5 at the pads)
     def _base_edge(e):
         if abs(e.center().Z - skin_top) > BASE_EDGE_TOL or abs(e.bounding_box().max.Z - e.bounding_box().min.Z) > FLAT_TOL:
             return False
@@ -119,7 +115,7 @@ def chassis():
     c = CH
     adds = tub_shell.additions(c) + tub_lobes.additions(c) + tub_lugs.additions(c) + tub_front.additions(c) + [switch_pad(c)]
     cuts = tub_shell.cuts(c) + tub_lobes.cuts(c) + tub_lugs.cuts(c) + tub_front.cuts(c)
-    tub = _U(_S(_U(tub_shell.shell(c), *adds), *cuts), *tub_shell.ribs(c))
+    tub = _S(_U(tub_shell.shell(c), *adds), *cuts)
     assert len(tub.solids()) == 1 and tub.volume > CHASSIS_MIN_VOL, f"chassis boolean collapsed: {len(tub.solids())} solids, {tub.volume:.0f} mm3"
     return tub
 
