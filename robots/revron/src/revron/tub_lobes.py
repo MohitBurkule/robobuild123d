@@ -107,7 +107,7 @@ def stop_wall_round(c):
 
 def lobe_tail(c):
     """Whole overlapping slab of the lobe tail (rounded inside corner) goes with the side panel cut."""
-    y1 = NUT_RELIEF_Y0
+    y1 = NUT_RELIEF_END_Y
     tail = _rect(PANEL_IN, c["x"] + TAIL_OUT, y1 - TAIL_LEN, y1).buffer(-NUT_STEP_R).buffer(NUT_STEP_R)
     return _ext(tail, "xy", LOBE.bounds[1] - TAIL_MARGIN, LOBE.bounds[3] + TAIL_MARGIN)
 
