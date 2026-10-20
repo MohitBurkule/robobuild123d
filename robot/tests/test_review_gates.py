@@ -107,25 +107,30 @@ def test_cots_motor_empty_can_fails():
     assert f is not None and not f.passed
 
 
-def _ref_stl(tmp_path, scale):
-    """A reference mesh whose volume is `scale` x our can + stator (the STEP GR1507_1 stand-in)."""
+def _ref_stl(tmp_path, scale, core_r=4.0):
+    """A GR1507_1 stand-in: hollow can with an r`core_r` core, sized so its filled envelope is `scale` x ours."""
     import trimesh
 
-    vol = scale * run(_outrunner(), "cots_fidelity").metrics["cots.motor.weapon_motor"]["volume_mm3"]
-    (tmp_path / "GR1507_1.stl").write_bytes(trimesh.creation.cylinder(radius=9.8, height=vol / (np.pi * 9.8 ** 2),
-                                                                          sections=256).export(file_type="stl"))
+    env = scale * run(_outrunner(), "cots_fidelity").metrics["cots.motor.weapon_motor"]["envelope_mm3"]
+    h = env / (np.pi * 9.8 ** 2)
+    shell = trimesh.creation.annulus(r_min=9.0, r_max=9.8, height=h, sections=256)
+    core = trimesh.creation.cylinder(radius=core_r, height=h, sections=128)
+    (tmp_path / "GR1507_1.stl").write_bytes(trimesh.util.concatenate([shell, core]).export(file_type="stl"))
     return {"dir": str(tmp_path), "parts": [{"part": "weapon_motor_can", "with_parts": ["weapon_motor_stator"],
                                              "file": "GR1507_1.stl", "mode": "envelope"}]}
 
 
-def test_cots_motor_volume_off_reference_fails(tmp_path):
+def test_cots_motor_envelope_off_reference_fails(tmp_path):
     f = run(_outrunner(ref=_ref_stl(tmp_path, 1.10)), "cots_fidelity").get("cots.motor_volume")
     assert f is not None and not f.passed and f.severity == "blocker"
 
 
-def test_cots_motor_volume_matches_reference_passes(tmp_path):
-    f = run(_outrunner(ref=_ref_stl(tmp_path, 1.02)), "cots_fidelity").get("cots.motor_volume")
+def test_cots_motor_real_stator_envelope_close_passes(tmp_path):
+    rep = run(_outrunner(ref=_ref_stl(tmp_path, 1.02)), "cots_fidelity")
+    f, m = rep.get("cots.motor_volume"), rep.metrics["cots.motor.weapon_motor"]
     assert f is not None and f.passed, f and f.message
+    assert abs(m["volume_mm3"] / m["ref_volume_mm3"] - 1) > 0.05  # raw volume alone would have blocked
+    assert m["envelope_mm3"] > m["volume_mm3"]
 
 
 # ---------------------------------------------------------------------------------------- wire.rotating_clearance
