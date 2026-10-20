@@ -92,7 +92,8 @@ def make_spec(model_file):
     for i, (x, y) in enumerate(INS):
         P(id=f"insert_b{i}", kind="insert", catalog="heatset_m2_4", at=[x, y, (INS_Z[0] + INS_Z[1]) / 2])
     P(id="esc_tray", kind="other", material="tpu", process="fdm", print_orientation="+z", rotates_with="fixed", shape=M("esc_tray"),
-      label="TPU weapon-ESC tray (not in the STEP): glued to the base panel, lips hold the ESC when inverted")
+      label="TPU weapon-ESC tray (not in the STEP): glued to the base panel, lips hold the ESC when inverted",
+      deviation="the STEP holds the weapon ESC with kapton tape alone; a hit that flips the robot or tears the tape would free the board, so a TPU tray with 0.1 mm lips holds it (adds 1.1 g, reversible)")
 
     # ---------------------------------------------------------------- fasteners
     for i, (x, y) in enumerate(INS):

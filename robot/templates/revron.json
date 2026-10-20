@@ -458,6 +458,26 @@
  ],
  "sharp_ok": [
   {
+   "part": "tub",
+   "near": [
+    31.4,
+    -11.7,
+    5.4
+   ],
+   "r_mm": 1.0,
+   "reason": "inside corner of the lobe-tail step is the side panel's own square relief edge (STEP RV23 diamond): the TPU panel conforms, rounding it in the tub would leave a 0.07 mm sliver"
+  },
+  {
+   "part": "tub",
+   "near": [
+    -31.4,
+    -11.7,
+    5.4
+   ],
+   "r_mm": 1.0,
+   "reason": "inside corner of the lobe-tail step is the side panel's own square relief edge (STEP RV23 diamond): the TPU panel conforms, rounding it in the tub would leave a 0.07 mm sliver"
+  },
+  {
    "part": "base_panel",
    "near": [
     27.9,
