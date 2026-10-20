@@ -24,6 +24,7 @@ def make_spec(model_file):
 
     # ---------------------------------------------------------------- structure
     P(id="tub", kind="structure", print_orientation="-z", rotates_with="fixed", solid_fraction=SOLID["tub"], color="#2a2c30", shape=M("chassis"), **PLA,
+      thin_wall_deviation="matches original RVRN 2.0: the switch-slot rim is 0.5 mm wide on RV01_Chassis_1 too (RV01 section y=-10: slot edge x=27.0, outer face x=27.5) and 0.65 mm between the slot front and the deck pocket (section x=25: y -12.25 to -11.6)",
       label="RV01 printed chassis: closed X-ribbed deck (printed deck-down), open floor for the base panel, N10 keyhole side pockets, nut lobes, weapon-mount tabs and standoff lugs")
     P(id="base_panel", kind="structure", print_orientation="+z", rotates_with="fixed", color="#2a2c30", shape=M("base_panel"), **PLA,
       label="RV26 1 mm printed base panel, 5 M2 CSK into the floor heat-sets, 0.45 mm pads preload the N10s")
@@ -93,8 +94,6 @@ def make_spec(model_file):
         P(id=f"insert_b{i}", kind="insert", catalog="heatset_m2_4", at=[x, y, (INS_Z[0] + INS_Z[1]) / 2])
     for i, (x, y) in enumerate(TOP_XY):
         P(id=f"insert_t{i}", kind="insert", catalog="heatset_m2_4", at=[x, y, CH["z1"] - 2.0])
-    for i, yy in enumerate(SW_SCREW_Y):
-        P(id=f"insert_sw{i}", kind="insert", catalog="heatset_m2", at=[SWX, yy, CH["z1"] - 1.5])
     P(id="esc_tray", kind="other", material="tpu", process="fdm", print_orientation="+z", rotates_with="fixed", shape=M("esc_tray"),
       label="TPU weapon-ESC tray (not in the STEP): glued to the base panel, lips hold the ESC when inverted",
       deviation="the STEP holds the weapon ESC with kapton tape alone; a hit that flips the robot or tears the tape would free the board, so a TPU tray with 0.1 mm lips holds it (adds 1.1 g, reversible)")
@@ -124,12 +123,13 @@ def make_spec(model_file):
           access_before=["tub", "mount_r", "motor_spacer"],
           reason="stack screwed into the spider from the back (heads on disc_b, 2 mm of thread in the 3 mm alu spider tapped M2): no nuts, since the STEP has none (inferred: it has the 2.2 holes but no screws)")
     for i, (x, y) in enumerate(TOP_BOLT_XY):
-        F(id=f"bolt_t{i}", designation="M2x5", head="button", tool="hex1.3", at=[x, y, TOP_BOLT_Z], dir=[0, 0, -1], through=["top_panel"], threads_into=f"insert_t{i}",
+        F(id=f"bolt_t{i}", designation="M2x5", head="button", tool="hex1.3", at=[x, y, TOP_BOLT_Z], dir=[0, 0, -1], through=["top_panel", "tub"], threads_into=f"insert_t{i}",
           reason="M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
           hole=_panel_seat("top", i)[1].hole)
     for i, yy in enumerate(SW_SCREW_Y):
-        F(id=f"bolt_sw{i}", designation="M2x3", head="button", tool="hex1.3", at=[SWX, yy, SW_BOLT_Z], dir=[0, 0, 1], through=["power_switch"], threads_into=f"insert_sw{i}", access_before=["base_panel"], hole=_switch_hole(yy)[1].hole,
-          reason="thread-forming into the 1.7 pilot holes either side of the switch flange; heads clamp the flange to the deck underside (inferred)")
+        F(id=f"bolt_sw{i}", designation="M2x3", head="button", tool="hex1.3", at=[SWX, yy, SW_BOLT_Z], dir=[0, 0, 1], through=["power_switch", "tub"], threads_into="tub", access_before=["base_panel"], hole=_switch_hole(yy)[1].hole,
+          reason="thread-forming into the 1.7 pilot holes either side of the switch flange; heads clamp the flange to the deck underside (inferred)",
+          waive={"fastener.hole_record": "switch retention only, no structural load; RVRN RV01 has 5 FS1_M2_heatsert, all base panel, none at the switch, the switch's 2 M2 screws self-tap in plastic"})
 
     # ---------------------------------------------------------------- connections
     for s, n in SIDES:
@@ -237,7 +237,8 @@ def intent_checks():
     # a corner sharp in the original may be listed as exempt=[{"at": [x, y], "reason": "<cites RVRN / RVnn / FSn>"}]
     # (still probed; INFO "matches original" within 0.5 mm; JSON: "exempt": [...] on the same intent entry)
     A("fillet", "inside wall corners are radiused: sharp PLA inside corners crack under impact", part="tub", axis="z", h=FILLET_H,
-      at=[[-x + w, CH["y0"] + w], [x - w, CH["y0"] + w], [x - w, CH["y1"] - w], [-x + w, CH["y1"] - w]])
+      at=[[-x + w, CH["y0"] + w], [x - w, CH["y0"] + w], [x - w, CH["y1"] - w], [-x + w, CH["y1"] - w]],
+      exempt=[dict(at=[sg * FILLET_REAR_X, CH["y0"] + w - 0.05], reason="RVRN RV01 square, N10 gearbox plate seat, r=0.0 (RV01_Chassis_1 z=10 slice: wall x=27.5 meets y=-35.6 at 90 deg, seat arc starts at x=26.5; ours seat arc starts at x=26.77)") for sg in (1, -1)])
     A("tool_count", "pit kit: one hex key per screw size (1.3 for M2, 2 for M3); the weapon swap needs only the 2 mm key", max=2, module_max=1,
       module=["bolt_ula", "bolt_ulb", "bolt_ura", "bolt_urb"])
     rot = ["spider", "disc_a", "disc_b", "dspacer"]
@@ -307,6 +308,8 @@ def reference_cad():
                       for x, y in INS[:4]]
           + [dict(near=[sx * KEYHOLE_DEV[0], KEYHOLE_DEV[1], KEYHOLE_DEV[2]], r=KEYHOLE_DEV[2], reason="N10 keyhole opened into a U-slot to the floor so the gearbox boss and shaft drop in from below with the base panel off (the STEP closes the keyhole, the shaft cannot be threaded through it)")
              for sx in (1, -1)]
+          + [dict(near=[SWX, yy, CH["deck"]], r=SWX_DEV_R, reason="switch pilot holes follow the switch, which sits 0.45 mm in from the STEP X 25.0 so its body clears the 27.5 inner wall face (the STEP switch penetrates the wall 0.4 mm)")
+             for yy in SW_SCREW_Y]
           + [dict(near=[x, y, FOOT_DEV_Z], r=FOOT_DEV_R, reason="column foot flared to R3.7 with a recess for the base-panel ring boss (1.0 mm base skin cannot seat a 1.2 mm M2 flat head)")
              for x, y in INS]
           + [dict(near=list(BLOB_DEV), r=BLOB_R, reason="centroid of one connected extra blob (bbox x -27..-0.4) made of the left cage rib, the left column-foot flares and the left flange gusset, each reasoned above")]
@@ -323,11 +326,11 @@ def reference_cad():
           deviations=[dict(near=[x, y, TOP_DEV_Z], r=PANEL_DEV_R, reason="4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it")
                       for x, y in INS[:4]]),
         R("mount_l", "RV02_XALT_HD_left_hand_weapon_mount_1.stl", tol_mm=TOL["std"],
-          deviations=[{"near": [-NOSE_DEV[0], NOSE_DEV[1], NOSE_DEV[2]], "r": NOSE_DEV_R,
-                       "reason": "nose pad R4.4 round the nose CSK: the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); 1.15 mm of added material at the nose underside"}]),
+          deviations=[{"near": [-MNT_TIP_DEV[0], MNT_TIP_DEV[1], MNT_TIP_DEV[2]], "r": MNT_TIP_DEV_R, "reason": "the STEP notch top is a zero-thickness wedge (mfg.thin_wall); thickened to a printable wall, rearmost point unchanged"}, {"near": [-NOSE_DEV[0], NOSE_DEV[1], NOSE_DEV[2]], "r": NOSE_DEV_R,
+                       "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside, so the countersink keeps a 0.9 mm wall"}]),
         R("mount_r", "RV03_XALT__HD_Right_hand_weapon_mount_1.stl", tol_mm=TOL["std"],
-          deviations=[{"near": [NOSE_DEV[0], NOSE_DEV[1], NOSE_DEV[2]], "r": NOSE_DEV_R,
-                       "reason": "nose pad R4.4 round the nose CSK: the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); 1.15 mm of added material at the nose underside"}] + [{"near": [STATOR_DEV_X, WY + dy, WZ + dz], "r": TAP_DEV_R,
+          deviations=[{"near": [MNT_TIP_DEV[0], MNT_TIP_DEV[1], MNT_TIP_DEV[2]], "r": MNT_TIP_DEV_R, "reason": "the STEP notch top is a zero-thickness wedge (mfg.thin_wall); thickened to a printable wall, rearmost point unchanged"}, {"near": [NOSE_DEV[0], NOSE_DEV[1], NOSE_DEV[2]], "r": NOSE_DEV_R,
+                       "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside, so the countersink keeps a 0.9 mm wall"}] + [{"near": [STATOR_DEV_X, WY + dy, WZ + dz], "r": TAP_DEV_R,
                        "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"}
                       for dy, dz in _polar(STATOR_PCD / 2, 4, 0.0)]),
         R("motor_spacer", "Motor_back_spacer_1.stl", tol_mm=TOL["tight"]),

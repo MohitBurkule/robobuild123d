@@ -50,10 +50,16 @@ def _lattice_pocket(pts, y0=-36.5, y1=-35.5, r_vert=0.5, r_floor=0.25):
     return b.fillet(s.faces().sort_by(b.Axis.Y)[0].edges(), r_floor)
 
 
+def _chamfer_xz(c):
+    """X-Z outline of the flange with the deck chamfer carried forward along its outer top edge (STEP z17.6: wall at 29.4)."""
+    x0, x1 = FL_X
+    return _poly([(x0, c["z0"]), (x1, c["z0"]), (x1, c["z1"] - c["cham"]), (x1 - c["cham"], c["z1"]), (x0, c["z1"])])
+
+
 def _flange(c):
     return [_ext(FLANGE_FACE, "xy", c["z0"], FACE_TOP), _ext(BOT_POLY, "xy", c["z0"], BOT_TOP),
             _I(_ext(GUSSET, "xz", *GUSSET_Y), _ext(BOT_POLY, "xy", c["z0"], GUSSET_CLIP_Z)),
-            _I(_ext(TOPF_YZ, "yz", *FL_X), _ext(TOPF_CLIP, "xy", *TOPF_Z))]
+            _I(_I(_ext(TOPF_YZ, "yz", *FL_X), _ext(TOPF_CLIP, "xy", *TOPF_Z)), _ext(_chamfer_xz(c), "xz", *GUSSET_Y))]
 
 
 def _lattice():
