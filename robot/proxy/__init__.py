@@ -3,6 +3,7 @@
 `python3 -m robot verify SPEC --proxy [--parts a,b] [--baseline report.json] [--only reference_cad,...]`
 
   group          proxy (module)                                           full group it stands in for
+  integrity      the full integrity group (already cheap): one closed solid, no volume collapse
   reference_cad  refcad: fingerprint checks + sliced section outlines     boolean diff, features, silhouette raster
   interference   interference: AABB pre-pass, depth bound, revolved hull  inscribed depth, 3-degree joint sweeps
   assembly       assembly: replay the baseline teardown order             greedy take-apart search
@@ -19,7 +20,7 @@ import json
 import time
 from pathlib import Path
 
-GROUPS = ("reference_cad", "interference", "assembly", "wiring")
+GROUPS = ("integrity", "reference_cad", "interference", "assembly", "wiring")
 BASELINE_NAME = "baseline_{name}.json"
 
 
@@ -49,7 +50,10 @@ def run(ctx, groups=GROUPS, parts=None, baseline=None):
     from . import assembly, interference, refcad, wiring
 
     baseline = baseline or {}
-    fns = {"reference_cad": lambda: refcad.run(ctx, parts),
+    from ..checks import integrity as _integrity
+
+    fns = {"integrity": lambda: _integrity.run(ctx, parts),
+           "reference_cad": lambda: refcad.run(ctx, parts),
            "interference": lambda: interference.run(ctx, parts),
            "assembly": lambda: assembly.run(ctx, baseline.get("assembly"), parts),
            "wiring": lambda: wiring.run(ctx, baseline.get("routes"), parts)}

@@ -23,10 +23,11 @@ from ..spec import Spec
 
 # Bumped whenever a check is added or changed. 7 = the Rust crate's revision; 8 adds belt/fork tension (python port); 9 adds
 # wheel running clearance, wheel exposure, targets, fused/key/tape/press-fit evidence, stall-current battery peak.
-CHECKS_REVISION = 17  # 17 merges fix-T; 15 adds param (raw-literal lint) and sharp_corner (opt-out mfg.sharp_internal_corner); 14 adds the design-review groups (ref_map, cots_fidelity, wire_review, fastener_record, belt_wrap, print_orient); 13 adds intent (functional design-intent probes); 12 adds threat (combat failure modes CF-*); 10 adds internal (no_contact, fastener_void, wire_in_solid); 11 adds bom (reference BOM, lock part, O-ring stock, wire cut, switch dir, doc) and connection.cover_fasteners
+CHECKS_REVISION = 18  # 18 adds integrity (one closed solid, volume collapse; runs first); 17 merges fix-T; 15 adds param (raw-literal lint) and sharp_corner (opt-out mfg.sharp_internal_corner); 14 adds the design-review groups (ref_map, cots_fidelity, wire_review, fastener_record, belt_wrap, print_orient); 13 adds intent (functional design-intent probes); 12 adds threat (combat failure modes CF-*); 10 adds internal (no_contact, fastener_void, wire_in_solid); 11 adds bom (reference BOM, lock part, O-ring stock, wire cut, switch dir, doc) and connection.cover_fasteners
 
 # (module, deep_only) in run order; same order as the Rust crate, plus `tension` before `assembly`.
 GROUPS = [
+    ("integrity", False),  # integrity.solids / integrity.volume (opt-out, every part; first and cheap)
     ("wiring", True), ("mass", False), ("interference", False), ("connections", False), ("internal", False), ("ground", False),
     ("legal", False), ("fasteners", False), ("power", False), ("mfg", False), ("spinner", False), ("kinematics", False), ("tension", False), ("targets", False),
     ("shape", False), ("dynamics", False), ("strength", False), ("printability", False), ("process", False),
