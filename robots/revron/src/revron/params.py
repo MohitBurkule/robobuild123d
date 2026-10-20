@@ -142,6 +142,11 @@ SP_FOOT_LAND = 0.85
 SP_W_REAR = (5.2, 4.9, 4.3, 3.6, 3.0, 2.1)
 SP_W_MID = (5.0, 4.7, 3.5, 2.7, 2.3, 2.0)
 SP_W_SWING = (3.3, 3.3, 3.0, 2.6, 2.4, 2.1)
+SP_W_Y = (-16.0, -12.0, 11.0, 15.0)   # rear / mid / mid / swing thickness stations along Y
+# STEP RV23: the outer face swells 0.7 mm round the nut lobe (Y -11..1) at Z 4..12 (outer X -35.3 at Y -5 vs -34.5 at Y 5, Z 7.5)
+SP_BUMP = 0.7
+SP_BUMP_Y = (-5.0, 6.0)   # centre, half-width
+SP_BUMP_Z = (7.5, 5.0)
 
 
 # --- side panel + wedgelet shared / derived dimensions (outlines are organic point tables measured on RV23/RV17) ---
@@ -161,8 +166,7 @@ SP_TOE_RUN = 3.1                     # Y run of the ramp skin the toe polygon fo
 SP_CHAMFER = ((-120.0, 0.0, 0.0), (1.0, -1.525, -1.4725))   # front-outer corner chamfer plane (origin, normal)
 SP_HOLLOW = [(26.5, 3.0), (37.0, 3.0), (37.7, 6.6), (39.0, 10.5), (26.5, 10.5)]   # hollow behind the nose wall (Y, Z)
 SP_HOLLOW_X = (-42.0, -38.4)
-SP_CSK = dict(d_hole=3.3, d_head=6.7, depth=8.0, bore=12.0)   # M3 ISO 10642 seat + driver bore
-SP_CSK_X = dict(sa=-46.26, sb=-41.76, nut=-35.26)             # seat plane X at the standoff SA, SB and the chassis nut
+SP_CSK = dict(csk_clear=0.7, head_clear=12.0)   # M3 ISO 10642 seat (head dk 6.0 + 0.7) + 12 mm driver bore out through the battered face
 SP_SA_CLEAR = (2.55, -42.55, -38.0)  # standoff-end clearance bore round SA (R, X0, X1)
 SP_BOSS = (3.0, -42.5, -39.5)        # standoff end boss round SA (R, X0, X1)
 SP_TYRE_RELIEF = (-45.0, -43.4, -38.7, -24.8, 5.5, 14.5)   # rear tyre relief box on the inner face (x0, x1, y0, y1, z0, z1)
@@ -384,6 +388,33 @@ SERVICE_POSE = [dict(parts=["spider", "disc_a", "disc_b", "dspacer"] + [f"bolt_{
                      axis_at=[0.0, WY, WZ], axis_dir=[1, 0, 0], deg=SERVICE_TURN_DEG,
                      reason="drisk turned by hand so the rim clears the nose screws; whole stack with its bolts moves as one")]
 
+UNIT = 1          # unit direction-cosine norm (k^2 + h^2 = UNIT) for the belt tangent construction
+BELT_DIGITS = 4   # decimals kept on belt path points in the spec
+
+
+
+# --- hubs: rear RV21 (16 x 12) and front RV19 micro (9 x 9) revolve profiles, (x, radius) from the hub's inner face
+HUB_FLANGE_T, HUB_GROOVE_C, HUB_GROOVE_W, HUB_GROOVE_CH = 0.7, 1.25, 1.1, 0.25          # flange thickness, O-ring groove centre / width, groove wall chamfer
+RH_FLANGE_R, RH_GROOVE_R, RH_SEAT_R, RH_CROWN_H, RH_LIP_R, RH_LEN, RH_WALL_R, RH_WALL_T = 8.0, 7.45, 6.0, 1.0, 6.5, 12.0, 2.88, 0.2
+RH_SEAT_RAMP = ((2.55, 6.9), (2.75, 6.35), (3.35, RH_SEAT_R))                           # flange-to-seat ramp
+RH_SEAT_X, RH_CROWN_X, RH_SEAT_END, RH_LIP_X = (3.35, 5.25), (6.25, 8.25), 11.1, 11.3   # seat span, crown span, seat end, lip start
+_g0, _g1 = HUB_GROOVE_C - HUB_GROOVE_W / 2, HUB_GROOVE_C + HUB_GROOVE_W / 2
+REAR_HUB_PROFILE = ((0.0, 0.0), (0.0, RH_FLANGE_R), (_g0, RH_FLANGE_R), (_g0 + HUB_GROOVE_CH, RH_GROOVE_R), (_g1 - HUB_GROOVE_CH, RH_GROOVE_R),
+                    (_g1, RH_FLANGE_R), (_g1 + HUB_FLANGE_T, RH_FLANGE_R), *RH_SEAT_RAMP, (RH_SEAT_X[1], RH_SEAT_R),
+                    (RH_CROWN_X[0], RH_SEAT_R + RH_CROWN_H), (RH_CROWN_X[1], RH_SEAT_R + RH_CROWN_H), (RH_CROWN_X[1] + RH_CROWN_H, RH_SEAT_R),
+                    (RH_SEAT_END, RH_SEAT_R), (RH_LIP_X, RH_LIP_R), (RH_LEN, RH_LIP_R), (RH_LEN, RH_WALL_R), (RH_LEN - RH_WALL_T, RH_WALL_R),
+                    (RH_LEN - RH_WALL_T, 0.0))
+RH_D = dict(r=1.6, flat=0.9, arc_n=60, flat_n=27, crown=0.02)                           # D-bore: radius, flat height above the axis, facet counts, flat crown
+RH_BORE_X, RH_NUT_X, RH_NUT_HALF, RH_NUT_Z, RH_GRUB_X, RH_GRUB_ENGAGE = 29.0, 41.0, 2.05, (2.4, 4.4), 34.3, 0.9   # |X| of bore start / slot end, slot half-width, slot z above axis, grub, grub tip past the flat
+RH_ORIGIN_X = 30.0                                                                      # |X| of the hub inner face
+FH_FLANGE_R, FH_SEAT_R, FH_BORE_R, FH_LEN, FH_RAMP, FH_SEAT_X, FH_GROOVE_FLOOR = 4.5, 3.7, 2.7, 9.0, 0.4, (2.9, 7.9), (0.93, 1.57)
+FRONT_HUB_PROFILE = ((0.0, FH_BORE_R), (0.0, FH_FLANGE_R), (HUB_FLANGE_T, FH_FLANGE_R), (0.75, 3.96), (FH_GROOVE_FLOOR[0], FH_SEAT_R),
+                     (FH_GROOVE_FLOOR[1], FH_SEAT_R), (1.75, 3.96), (1.8, FH_FLANGE_R), (2.5, FH_FLANGE_R), (2.5, FH_SEAT_R + FH_RAMP),
+                     (FH_SEAT_X[0], FH_SEAT_R), (FH_SEAT_X[1], FH_SEAT_R), (FH_SEAT_X[1] + FH_RAMP, FH_SEAT_R + FH_RAMP),
+                     (FH_SEAT_X[1] + FH_RAMP, FH_FLANGE_R), (FH_LEN, FH_FLANGE_R), (FH_LEN, FH_BORE_R))
+FH_ORIGIN_X = 30.0                                                                      # |X| of the front hub inner face
+STANDOFF_BORE_R, TYRE_SECTION_STEP = 1.25, 10                                           # standoff through-bore radius; shoulder arc step (deg)
+
 
 __all__ = [n for n in dir() if not n.startswith('__')]
 
@@ -396,8 +427,9 @@ FK_BLADE = [(35.0, 4.9), (36.1, 8.2), (41.0, 8.25), (66.68, 1.49), (51.75, 0.75)
 FK_ROUND = (0.3, 0.5)                             # outer / inner corner radius of the blade
 FK_TIP = [(60.0, 1.27), (66.68, 1.49), (60.0, 2.5)]   # param: organic sharp-tip wedge
 FK_TIP_R = 0.15                                   # tip join radius (> kerf)
-FK_WIN = [(43.85, 2.75), (54.0, 2.75), (44.35, 5.42)]   # param: organic lightening window
+FK_WIN = [(44.15, 2.75), (54.0, 2.75), (44.65, 5.42)]   # param: organic lightening window
 FK_WIN_R = 0.3
+FK_LAND_R = 0.15                     # land corners round r0.15 (> kerf)
 FK_LAND = [(64.0, 1.2), (66.68, 1.27), (66.68, 1.72), (64.0, 1.95)]   # param: organic 0.45 mm kerf land
 FK_TILT = -1.1                                    # deg, left fork nose-down about its standoff
 FKS_STEPS, FKS_DY = 24, 0.5                       # fork-slot sweep up out of the ramp
@@ -412,5 +444,6 @@ RH_GRUB_DIR = (0, 0, -1)
 RH_X_IN, RH_X_OUT, RH_SLOT_HW, RH_SLOT_Z = 29.0, 41.0, 2.05, (2.4, 4.4)   # D-bore/nut-slot X span, slot half width, slot Z span
 FH_PROF = [(0.0, 2.7), (0.0, 4.5), (0.7, 4.5), (0.75, 3.96), (0.93, 3.7), (1.57, 3.7), (1.75, 3.96), (1.8, 4.5), (2.5, 4.5), (2.5, 4.1), (2.9, 3.7),
            (7.9, 3.7), (8.3, 4.1), (8.3, 4.5), (9.0, 4.5), (9.0, 2.7)]   # param: organic RV19 hub revolve profile (STEP)
+# param: end
 SPW_Y = (-16.0, -12.0, 11.0, 15.0)                # side-panel width stations along Y
 SPW_BUMP, SPW_BUMP_YC, SPW_BUMP_YH, SPW_BUMP_ZC, SPW_BUMP_ZH = 0.7, -5.0, 6.0, 7.5, 5.0   # nut-lobe swell: height, Y centre/half, Z centre/half

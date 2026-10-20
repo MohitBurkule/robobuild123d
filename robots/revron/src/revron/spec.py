@@ -106,9 +106,9 @@ def make_spec(model_file):
         F(id=f"bolt_u{n}a", designation="M3x12", material="aluminium", at=[s * MNT_IN, SA[0], SA[1]], dir=[s, 0, 0], through=[mnt], threads_into=f"so_a{n}", hole=_mount_csk(s, *SA, "M3x12")[1].hole,
           reason="FS9 M3x12 CSK alu, head flush in the mount's inner face")
         F(id=f"bolt_u{n}b", designation="M3x14", reason="M3x14 CSK alu (STEP FS9 M3x12): through mount and lug, 12 mm bites only 3.9 mm of the 15 mm standoff", material="aluminium", at=[s * MNT_IN, SB[0], SB[1]], dir=[s, 0, 0], through=[mnt, "tub"], threads_into=f"so_b{n}", hole=_mount_csk(s, *SB, "M3x14")[1].hole)
-        F(id=f"bolt_s{n}a", designation="M3x10", material="aluminium", reason="M3x10 CSK (STEP: M3x8): 8 mm bites only 4.2 mm of the standoff thread; 10 mm gives 6.2 (>= 1.5 d in aluminium)", at=[s * SIDE_BOLT_X["a"], SA[0], SA[1]], dir=[-s, 0, 0], through=[f"side_{n}"], threads_into=f"so_a{n}")
-        F(id=f"bolt_s{n}b", designation="M3x10", material="aluminium", reason="M3x10 CSK (STEP: M3x8): the head sits 5.3 mm out from the 15 mm standoff end, so 8 mm bites 2.7 mm; 10 mm bites 4.7", at=[s * SIDE_BOLT_X["b"], SB[0], SB[1]], dir=[-s, 0, 0], through=[f"side_{n}", f"wedgelet_{n}"], threads_into=f"so_b{n}")
-        F(id=f"bolt_s{n}c", designation="M3x8", material="aluminium", reason="alu M3 CSK (Build Guide: aluminium bolts for weight; the STEP draws stainless)", at=[s * SIDE_BOLT_X["c"], NUT[0], NUT[1]], dir=[-s, 0, 0], through=[f"side_{n}", "tub"], threads_into=f"nut_c{n}")
+        F(id=f"bolt_s{n}a", designation="M3x10", material="aluminium", reason="M3x10 CSK (STEP: M3x8): 8 mm bites only 4.2 mm of the standoff thread; 10 mm gives 6.2 (>= 1.5 d in aluminium)", at=[s * SIDE_BOLT_X["a"], SA[0], SA[1]], dir=[-s, 0, 0], through=[f"side_{n}"], threads_into=f"so_a{n}", hole=_side_seat("a", SA, "M3x10", s)[1].hole)
+        F(id=f"bolt_s{n}b", designation="M3x10", material="aluminium", reason="M3x10 CSK (STEP: M3x8): the head sits 5.3 mm out from the 15 mm standoff end, so 8 mm bites 2.7 mm; 10 mm bites 4.7", at=[s * SIDE_BOLT_X["b"], SB[0], SB[1]], dir=[-s, 0, 0], through=[f"side_{n}", f"wedgelet_{n}"], threads_into=f"so_b{n}", hole=_side_seat("b", SB, "M3x10", s)[1].hole)
+        F(id=f"bolt_s{n}c", designation="M3x8", material="aluminium", reason="alu M3 CSK (Build Guide: aluminium bolts for weight; the STEP draws stainless)", at=[s * SIDE_BOLT_X["c"], NUT[0], NUT[1]], dir=[-s, 0, 0], through=[f"side_{n}", "tub"], threads_into=f"nut_c{n}", hole=_side_seat("c", NUT, "M3x8", s)[1].hole)
     for k, (dy, dz) in enumerate((STATOR_PCD / 2 * u, STATOR_PCD / 2 * v) for u, v in STATOR_DIRS):
         F(id=f"bolt_wm{k}", designation="M2x8", head="button", tool="hex1.3", material="titanium", at=[CB_CONE_X[1], WY + dy, WZ + dz], hole=_stator_hole(1, dy, dz)[1].hole, dir=[-1, 0, 0], through=["mount_r", "motor_spacer"],
           threads_into="weapon_motor", reason="button heads (one hex1.3 key for every M2) sunk in the RV03 boss counterbores (inferred: the STEP shows the 4.4 counterbores, not the screws)")
@@ -122,12 +122,13 @@ def make_spec(model_file):
           access_before=["tub", "mount_r", "motor_spacer"],
           reason="stack screwed into the spider from the back (heads on disc_b, 2 mm of thread in the 3 mm alu spider tapped M2): no nuts, since the STEP has none (inferred: it has the 2.2 holes but no screws)")
     for i, (x, y) in enumerate(TOP_BOLT_XY):
-        F(id=f"bolt_t{i}", designation="M2x5", head="button", tool="hex1.3", at=[x, y, TOP_BOLT_Z], dir=[0, 0, -1], through=["top_panel"], threads_into=f"insert_t{i}",
+        F(id=f"bolt_t{i}", designation="M2x5", head="button", tool="hex1.3", at=[x, y, TOP_BOLT_Z], dir=[0, 0, -1], through=["top_panel", "tub"], threads_into=f"insert_t{i}",
           reason="M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
           hole=_panel_seat("top", i)[1].hole)
     for i, yy in enumerate(SW_SCREW_Y):
-        F(id=f"bolt_sw{i}", designation="M2x3", head="button", tool="hex1.3", at=[SWX, yy, SW_BOLT_Z], dir=[0, 0, 1], through=["power_switch"], threads_into="tub", access_before=["base_panel"], hole=_switch_hole(yy)[1].hole,
-          reason="thread-forming into the 1.7 pilot holes either side of the switch flange; heads clamp the flange to the deck underside (inferred)")
+        F(id=f"bolt_sw{i}", designation="M2x3", head="button", tool="hex1.3", at=[SWX, yy, SW_BOLT_Z], dir=[0, 0, 1], through=["power_switch", "tub"], threads_into="tub", access_before=["base_panel"], hole=_switch_hole(yy)[1].hole,
+          reason="thread-forming into the 1.7 pilot holes either side of the switch flange; heads clamp the flange to the deck underside (inferred)",
+          waive={"fastener.hole_record": "switch retention only, no structural load; RVRN RV01 has 5 FS1_M2_heatsert, all base panel, none at the switch, the switch's 2 M2 screws self-tap in plastic"})
 
     # ---------------------------------------------------------------- connections
     for s, n in SIDES:
@@ -179,8 +180,8 @@ def make_spec(model_file):
         c = math.hypot(by - ay, bz - az)
         d = ((by - ay) / c, (bz - az) / c)
         k = (BELT_R - BELT_r) / c
-        h = math.sqrt(1 - k * k)
-        P2 = lambda y, z: [round(-z, 4), round(y, 4)]   # noqa: E731 - the YZ plane as _prism_yz lays it out
+        h = math.sqrt(UNIT - k * k)
+        P2 = lambda y, z: [round(-z, BELT_DIGITS), round(y, BELT_DIGITS)]   # noqa: E731 - the YZ plane as _prism_yz lays it out
         segs, tgt = [], []
         for sg in (1, -1):
             n = (k * d[0] - sg * h * d[1], k * d[1] + sg * h * d[0])
@@ -243,7 +244,7 @@ def intent_checks():
 
 
 def _prism_yz(poly, x0, x1):
-    pts = [[round(-z, 4), round(y, 4)] for y, z in list(poly.exterior.coords)[:-1]]
+    pts = [[round(-z, BELT_DIGITS), round(y, BELT_DIGITS)] for y, z in list(poly.exterior.coords)[:-1]]
     x0, x1 = min(x0, x1), max(x0, x1)
     return {"type": "place", "shape": {"type": "prism", "points": pts, "height": x1 - x0}, "at": [(x0 + x1) / 2, 0, 0], "rot": [0, 90, 0]}
 
