@@ -299,6 +299,24 @@ def _GRUB_DEV(s):
                        "threads the 1.6 bore and the captive nut, so it clamps the flat the same"}]
 
 
+def _rib_zones(r):
+    """Deviation zones (spheres of radius r) that tile each cage rib of the tub: spaced along its long axis so every point of
+    the rib is within r of a centre (the zone stays the size of the real deviation)."""
+    out = []
+    for rib in tub_shell.ribs(CH):
+        bb = rib.bounding_box()
+        lo, hi = [bb.min.X, bb.min.Y, bb.min.Z], [bb.max.X, bb.max.Y, bb.max.Z]
+        size = [h - l for l, h in zip(lo, hi)]
+        ax = size.index(max(size))
+        cross = math.sqrt(sum((s / 2) ** 2 for k, s in enumerate(size) if k != ax))
+        n = math.ceil(size[ax] / (2 * math.sqrt(max(r * r - cross * cross, (r / 2) ** 2))))
+        for i in range(n):
+            c = [(l + h) / 2 for l, h in zip(lo, hi)]
+            c[ax] = lo[ax] + size[ax] * (i + 0.5) / n
+            out.append(tuple(round(v, 2) for v in c))
+    return out
+
+
 def reference_cad():
     def R(part, file, mode="shape", **k):
         return dict(part=part, file=file, mode=mode, **k)
@@ -313,9 +331,8 @@ def reference_cad():
              for yy in SW_SCREW_Y]
           + [dict(near=[x, y, FOOT_DEV_Z], r=FOOT_DEV_R, reason="column foot flared to R3.7 with a recess for the base-panel ring boss (1.0 mm base skin cannot seat a 1.2 mm M2 flat head)")
              for x, y in INS]
-          + [dict(near=list(BLOB_DEV), r=BLOB_R, reason="centroid of one connected extra blob (bbox x -27..-0.4) made of the left cage rib, the left column-foot flares and the left flange gusset, each reasoned above")]
           + [dict(near=list(p_), r=CAGE_RIB_R, reason="electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact")
-             for p_ in CAGE_RIBS]
+             for p_ in _rib_zones(CAGE_RIB_R)]
           + [dict(near=[sx * LOBE_DEV[0], LOBE_DEV[1], LOBE_DEV[2]], r=LOBE_DEV_R, reason="lobe tail below Y -11.7 trimmed to the side-panel inner face: the STEP lobe and side panel overlap by 31 mm3, the tub does not duplicate it")
              for sx in (1, -1)]),
         R("base_panel", "RV26_Base_Panel_1.stl", tol_mm=TOL["tight"], note="RV26 1 mm panel",
