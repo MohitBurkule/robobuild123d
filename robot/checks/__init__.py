@@ -40,6 +40,7 @@ GROUPS = [
     ("cots_fidelity", False),  # cots.fidelity
     ("wire_review", False),  # wire.rotating_clearance, wire.render_present
     ("fastener_record", False),  # fastener.hole_record
+    ("drive_recess", False),  # fastener.drive_recess
     ("belt_wrap", False),  # cots.belt_wrap
     ("print_orient", False),  # print.orientation_declared
     ("retention", False),  # retention.axial (robot/checks/retention.py)

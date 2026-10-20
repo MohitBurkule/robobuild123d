@@ -191,3 +191,33 @@ def test_disc_thickness_still_judged():
     d["archetype_params"] = {"disc_thickness_mm": [12.0, 16.0]}  # a drum-thick target: 7.5 mm of blades is not it
     rep = run(d, ("mass", "power", "archetype"))
     assert failed(rep, "archetype.disc_thickness"), dump(rep)
+
+
+# 4. a cited reference deviation on the leading part downgrades spinner.reach ----------------------------------------
+def _front_base():
+    d = drisk()
+    part(d, "base")["shape"] = box(60, 90, 4)
+    part(d, "base")["at"] = [0, 0, 2]
+    return d
+
+
+def _reach(rep):
+    return [f for f in rep.findings if f.id == "spinner.reach" and not f.passed]
+
+
+def test_a_part_leading_the_weapon_is_a_blocker():
+    fs = _reach(run(_front_base(), ("spinner",)))
+    assert fs and fs[0].severity == "blocker" and "`base`" in fs[0].message, dump(run(_front_base(), ("spinner",)))
+
+
+def test_cited_deviation_on_the_leading_part_downgrades_spinner_reach():
+    d = _front_base()
+    part(d, "base")["deviation"] = "RVRN original architecture: RV23 front leads the spider by the same amount at +-30 deg"
+    fs = _reach(run(d, ("spinner",)))
+    assert fs and all(f.severity == "warning" for f in fs) and "Deviation:" in fs[0].message
+
+
+def test_uncited_deviation_does_not_downgrade_spinner_reach():
+    d = _front_base()
+    part(d, "base")["deviation"] = "it leads and that is fine because we like it"
+    assert _reach(run(d, ("spinner",)))[0].severity == "blocker"

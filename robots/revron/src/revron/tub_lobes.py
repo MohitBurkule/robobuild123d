@@ -5,9 +5,11 @@ from shapely.geometry import Point, Polygon
 from .params import *  # noqa: F401,F403
 from .common import *  # noqa: F401,F403
 
-# ---- lobe (relations off CH / NUT_LOBE)
+# ---- lobe (relations off CH / LOBE)
 LOBE_SINK = 0.1                       # lobe starts this far inside the wall face (fuses with the wall)
 LOBE_OUT = CH["x"] + 3.0              # outer face of the lobe, |X|
+LOBE_NUT_R, LOBE_CAP, LOBE_CAP_R, LOBE_SEG = 4.5, (0.5, 6.9), 2.0, 64   # STEP lobe: R4.5 round the nut hulled with an R2 end cap (Y, Z)
+LOBE = Point(NUT[0], NUT[1]).buffer(LOBE_NUT_R, LOBE_SEG).union(Point(*LOBE_CAP).buffer(LOBE_CAP_R, LOBE_SEG)).convex_hull
 LOBE_ROOT_R, LOBE_ROOT_BANDS = 1.95, 12   # STEP root fillet where the lobe leaves the wall, as one ruled loft of 12 bands
 # ---- N10 keyhole (U-slot to the floor)
 KH_SEAT_R, KH_NECK_DZ, KH_NECK_R = 2.5, 5.15, 0.85   # round seat for the gearbox boss, neck below it (STEP keyhole)
@@ -52,13 +54,13 @@ def _root_offset(h):
 
 
 def lobe_body(c):
-    return _ext(NUT_LOBE, "yz", c["x"] - LOBE_SINK, LOBE_OUT)
+    return _ext(LOBE, "yz", c["x"] - LOBE_SINK, LOBE_OUT)
 
 
 def lobe_root_fillet(c):
     x0 = c["x"] - LOBE_SINK
     heights = [LOBE_ROOT_R * k / LOBE_ROOT_BANDS for k in range(LOBE_ROOT_BANDS + 1)]
-    return _loft_yz_n([(NUT_LOBE.buffer(_root_offset(h), join_style=1), x0 + h) for h in heights])
+    return _loft_yz_n([(LOBE.buffer(_root_offset(h), join_style=1), x0 + h) for h in heights])
 
 
 def additions(c):
@@ -81,7 +83,7 @@ def nut_bore(c):
 
 
 def floor_relief(c):
-    y0, z0, y1, z1 = NUT_LOBE.bounds   # outline is in (Y, Z)
+    y0, z0, y1, z1 = LOBE.bounds   # outline is in (Y, Z)
     return _box(c["x"] - 0.5, LOBE_OUT + RELIEF_OUT, y0 - LOBE_ROOT_R - 1.0, y1 + LOBE_ROOT_R + 1.0,
                 c["z0"] - FLOOR_RELIEF_DEPTH, c["z0"])
 
@@ -107,7 +109,7 @@ def lobe_tail(c):
     """Whole overlapping slab of the lobe tail (rounded inside corner) goes with the side panel cut."""
     y1 = NUT_RELIEF_Y0
     tail = _rect(PANEL_IN, c["x"] + TAIL_OUT, y1 - TAIL_LEN, y1).buffer(-NUT_STEP_R).buffer(NUT_STEP_R)
-    return _ext(tail, "xy", NUT_LOBE.bounds[1] - TAIL_MARGIN, NUT_LOBE.bounds[3] + TAIL_MARGIN)
+    return _ext(tail, "xy", LOBE.bounds[1] - TAIL_MARGIN, LOBE.bounds[3] + TAIL_MARGIN)
 
 
 def panel_mating():
