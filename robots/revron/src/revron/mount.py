@@ -31,7 +31,7 @@ def _mount_profile(side):
     # the rear notch meets the rim tangent in a wedge thinner than a printed wall: thicken it to MNT_TIP_WALL without
     # moving the part's rearmost point (the grown copy is cut at the notch-top Y)
     from shapely.geometry import Point, box as _sb
-    tip = Point((m["notch_y"], MNT_TOP_Z)).buffer(MNT_TIP_REACH, WSEG_HI).intersection(_sb(m["notch_y"], -BIG, BIG, BIG))
+    tip = Point((m["notch_y"], MNT_TOP_Z)).buffer(MNT_TIP_REACH, WSEG_HI).intersection(_sb(m["notch_y"], MNT_TOP_Z, BIG, BIG))
     p = p.union(p.buffer(MNT_TIP_WALL / 2, WSEG_HI).intersection(tip))
     return _round(p, r_out=0.0, r_in=MNT_RELIEF_R)
 
