@@ -101,7 +101,7 @@ BOSS_NOSE_Y = 44.34
 BIG = 60.0                              # a box edge bigger than any part, for half-plane clips
 MNT_RELIEF_R = 1.0                      # concave corner relief of the profile (tub deck fillet, mfg corner relief)
 MNT_CSK_CLEAR = 0.4                     # extra cone diameter over the DIN 7991 head: the seated head floats, so the notch bears a hit before the screws do
-MNT_THIN_WALL_WHY = "matches original RVRN 2.0: the RV02/RV03 STEP has a knife edge where the rear notch meets the rim tangent (reference_cad blob at the notch top) and a 0.2 mm skin at the nose where the M3 countersink cone leaves the nose arc; kept for parity (user order)"
+MNT_THIN_WALL_WHY = "same in the STEP: inward-ray wall at (20.1, 10.6, 19.7) RV03 0.001 mm vs ours 0.000; at (-16.8, 9.0, 19.5) RV02 0.000 vs ours 0.000; at (-18.3, 44.3, 6.3) RV02 0.001 vs ours 0.001 (2.5 mm radius samples, mount thin-wall probe 2026-10-20); kept for parity pending the verifier ruling"
 
 
 HOLE_FACE_RISE = 0.7                    # the battered face's highest point over a stator hole axis: the surface the hole is measured from
