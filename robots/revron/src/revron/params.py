@@ -183,13 +183,18 @@ SP_LOFT = dict(resample=400, path=240, ring=481, round=0.6, arc=16)   # section 
 WG_X = (-38.5, -36.5, -35.5, -29.0, -21.5, -17.5)   # slab edges along X: block | ring step | skin | cheek | nose tab
 WG_S1 = (3.5, [(40.5, 1.0), (RAMP_REACH, 1.0), (42.54, 10.0), (39.55, 10.0), (40.23, 8.0)])   # block round SB: (R, tail outline (Y, Z))
 WG_S2 = (3.0, [(40.4, 7.5), (39.55, 10.0), (41.92, 10.0), (42.29, 10.31), (RAMP_REACH, 1.0), (46.68, 1.0), (44.96, 1.5), (40.5, 1.5)])
-WG_SKIN = [(RAMP_REACH, 1.0), (47.57, 1.0), (46.8, 1.36), (40.79, 8.52), (40.22, 8.04), (37.65, 15.92)]
-WG_SKIN_RAKE = ((-34.0, 41.66, 11.06), (-1.24, -0.75, 1.0))   # plane (origin, normal) capping the skin's top edge
 WG_CHEEK = [(38.05, 15.36), (RAMP_REACH, 1.0), (26.55, 1.0), (26.59, 6.09), (26.94, 7.22), (27.48, 8.04), (28.7, 9.02), (30.78, 9.78), (32.43, 10.71),
             (36.62, 14.17), (37.1, 12.78), (38.6, 12.78), (37.79, 15.15)]
 WG_IN_SLOT = [(38.69, 10.9), (39.12, 11.26), (37.79, 15.15), (38.05, 15.36), (RAMP_REACH, 1.0), (43.75, 1.0), (43.73, 4.82), (43.37, 6.03),
               (42.91, 6.68), (41.0, 8.6), (40.03, 8.6), (39.52, 10.07)]
 WG_TAB = [(42.78, 6.82), (44.32, 6.1), (44.69, 7.44), (RAMP_REACH, 1.0), (43.75, 1.0), (43.71, 4.98), (43.37, 6.03)]
+WG_SKIN = [(RAMP_REACH, 1.0), (47.57, 1.0), (46.8, 1.36), (40.79, 8.52), (40.22, 8.04), WG_CHEEK[-1], WG_CHEEK[0]]   # skin tops out on the cheek's top corner
+# skin top cap: in (X, W = Z - k Y) the cap is a circular arc rising to the full skin height (vertical tangent at
+# X = centre + R); swept along (0, 1, k). Fitted on 12 STEP X sections from X -35 to -30.65 (residual < 0.03 mm)
+WG_SKIN_CAP = dict(k=0.84, c=(-41.166, -16.147), r=10.554)   # param: organic skin cap arc (slope k, centre (X, W), R) fitted to RV17
+# fork-tail entry: between the kidney and the cheek's top notch the STEP opens the kidney to the notch over the last
+# 1.05 mm before the nose tab, so the fork tail drops into the kidney from above
+WG_TAIL_ENTRY = ([(35.08, 5.3), (37.36, 12.78), (37.36, 13.2), (38.14, 13.2), (38.14, 12.78), (38.2, 10.0), (38.04, 7.25)], -22.55)   # param: organic entry outline (Y, Z) mid-slot on RV17, X start (ends at the nose tab)
 ARC_N, ARC_MOUNT, ARC_KIDNEY, WG_MERGE_EPS = 64, 32, 24, 0.01       # circle facets per quarter; overlap that merges the toe land with the wedgelet body
 WG_TAB_FILM = 0.6                    # TPU film limit: slivers thinner than this are dropped from the nose tab
 WG_MOUNT_GAP = 0.1                   # nose tab clearance to the weapon mount boss
@@ -207,7 +212,9 @@ LAT_GROW = 0.35   # mm, measured from RV01 y=-36 sections (pocket area 38.1 vs 2
 from shapely.geometry import Point, Polygon   # noqa: E402
 NUT_LOBE = Point(NUT[0], NUT[1]).buffer(4.55, 64).union(Point(1.35, 6.9).buffer(1.2, 32)).convex_hull   # chassis wall lobe round the thin nut (Y, Z)
 NUT_RELIEF_END_Y, NUT_STEP_R = -13.2, 0.0   # Y where the side-panel nut relief ends (RV23 runs on to -13.2; shared with side.py and the tub lobe tail); the lobe-tail step corner is the panel's own square edge (SHARP_OK)
-SP_NUT_RELIEF = [(NUT_RELIEF_END_Y, 3.8), (0.5, 4.7), (2.3, 5.7), (2.3, 8.3), (0.5, 9.3), (-3.5, 11.0), (-9.5, 13.0), (NUT_RELIEF_END_Y, 13.8)]   # STEP RV23 diamond (Y, Z)
+SP_NUT_RELIEF_RUN = 1.0   # the relief floor runs on past NUT_RELIEF_END_Y until it dies out in the inner face's rear sweep (RV23: floor X-32.5 meets the sweep at Y-13.37, ours at -13.45), so it ends with no step wall
+SP_NUT_RELIEF_Y1 = NUT_RELIEF_END_Y - SP_NUT_RELIEF_RUN
+SP_NUT_RELIEF = [(SP_NUT_RELIEF_Y1, 3.8), (0.5, 4.7), (2.3, 5.7), (2.3, 8.3), (0.5, 9.3), (-3.5, 11.0), (-9.5, 13.0), (SP_NUT_RELIEF_Y1, 13.8)]   # STEP RV23 diamond (Y, Z)
 PANEL_IN = 31.4   # inner face of the side panel at the nut lobe (|X|)
 LUG_FLOOR_Z, LUG_SCALLOP_R, LUG_BLEND_R, LUG_SB_R = 2.5, 8.6, 4.95, 3.25   # param: organic lug underside arcs fitted to RV01: scallop R, the blend into the standoff arc (ref R4.95), standoff arc R
 # param: end
@@ -448,4 +455,6 @@ FK_TILT = -1.1                                    # deg, left fork nose-down abo
 FKS_STEPS, FKS_DY = 24, 0.5                       # fork-slot sweep up out of the ramp
 FKS_CLIP = (42.0, -1, 80, 30)                     # x0, y0, x1, y1 of the sweep clip box
 
+TYRE_REAR = dict(od_id=(21.5, 14.0), x=(32.5, 42.0), shoulder=1.2)    # RV21 F1 tyre on the N10 shaft (right side; the left is mirrored)
+TYRE_FRONT = dict(od_id=(11.0, 7.0), x=(32.5, 38.5), shoulder=0.6)     # micro tyre on the nose standoff
 __all__ = [n for n in dir() if not n.startswith("__")]   # last line: every name above is exported

@@ -266,7 +266,7 @@ def builtin() -> list[CatalogEntry]:
                             at(cyl_x(2.4, 3.0), -14.4, 0, 0)]
                            + [at(box(0.9, 10.0, 12.0), x, 0, 0) for x in (0.6, 3.35, 7.15)]
                            + [at(cyl_x(1.1, 7.6), 3.9, 0, z) for z in (-3.5, 3.5)]
-                           + [at(cyl_x(1.5, 10.0), 12.9, 0, 0)]),
+                           + [at(cyl_x(1.5, 10.4), 12.7, 0, 0)]),   # shaft starts 0.1 inside the last gearbox plate: one solid
                      {"terminals": [-16.2, 0, 0]}, {"at": [7.9, 0, 0], "dir": [1, 0, 0], "len": 10.0, "dia": 3.0},
                      {"nominal_v": 6.0, "rpm_nominal": 2200.0, "stall_current_a": 1.6, "no_load_current_a": 0.1, "stall_torque_gcm": 150.0}, "#9aa0a6"),
         CatalogEntry("be1806_bbb", "weapon_motor", "BBB BE1806 2300 kV outrunner (23 mm bell, 20.5 incl. base and shaft collar, 5 mm shaft bore)", 18.5, "datasheet",
