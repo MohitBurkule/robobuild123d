@@ -166,14 +166,31 @@ SP_NOSE = [(-52.1, 26.5), (-51.7, 39.7), (-50.5, 43.0), (-48.4, 45.7), (-45.6, 4
            (-38.5, 37.6), (-41.6, 37.6), (-42.4, 37.3), (-42.3, 34.9), (-40.5, 34.5), (-40.5, 26.5)]   # nose plan (X, Y)
 SP_NOSE_R, SP_NOSE_Z = 0.5, (FLOOR_Z, 10.0)
 SP_BATTER = dict(x0=-52.06, slope=0.84, z=(FLOOR_Z, 16.0), below=-5.0, far=0.0, depth=60.0)   # outer face leans in 38 deg: X = x0 + slope (Z - FLOOR_Z)
+# STEP RV23: the front swing's outer face never stands proud of the nose's battered plane (it meets it flush at the
+# nose, Y 26.5): the loft swells up to 0.2 mm past it there, which left a sharp notch at the SA driver bore. The
+# swing is clipped to the batter over the batter's Y run, the clip tool reaching SP_CLIP_OVER above the top face.
+SP_CLIP_OVER = 4.0
+# STEP RV23: where the swing's leaning inner face runs into the nose's front face (Y SP_NOSE[0][1]) the reference has a
+# concave round (r 1.75 measured at X -43.5, Z 7.6). It is drawn in the plan sketch: at each height the swing section
+# (inner path, outer side) and the nose front are closed by r (shapely buffer +r / -r) and the fill is lofted through
+# sections every dz over the nose height, sunk `sink` into the wall; it stops at the hollow (SP_HOLLOW_X[0]) and reaches `win` behind the front face.
+SP_FRONT_ROUND = dict(r=1.2, dz=0.5, win=2.0, sink=0.15, ring=97, arc=32)   # r >= the 1 mm load-path minimum; sections every dz
 SP_TOE_Y0 = 47.0                     # the ramp toe's land starts here (Y)
 SP_TOE_RUN = 3.1                     # Y run of the ramp skin the toe polygon follows
 SP_CHAMFER = ((-120.0, 0.0, 0.0), (1.0, -1.525, -1.4725))   # front-outer corner chamfer plane (origin, normal)
 SP_HOLLOW = [(26.5, 3.0), (37.0, 3.0), (37.7, 6.6), (39.0, 10.5), (26.5, 10.5)]   # hollow behind the nose wall (Y, Z)
 SP_HOLLOW_X = (-42.0, -38.4)
-SP_CSK = dict(csk_clear=0.7, head_clear=12.0)   # M3 ISO 10642 seat (head dk 6.0 + 0.7) + 12 mm driver bore out through the battered face
-SP_SA_CLEAR = (2.55, -42.55, -38.0)  # standoff-end clearance bore round SA (R, X0, X1)
-SP_BOSS = (3.0, -42.5, -39.5)        # standoff end boss round SA (R, X0, X1)
+# STEP RV23: above Z0 the hollow runs on forward over the SB pocket and ends in a round in plan (vertical axis, X, Y)
+SP_HOLLOW_END = dict(c=(-38.5, 36.6), r=3.6, z0=7.25)
+# M3 ISO 10642 seats (head dk 6.0 + csk_clear) + a driver bore out through the battered face, per screw. STEP RV23 nose
+# (a, b): the 90 deg seat is the dk + 0.7 cone but the driver bore is only r `drive_r` 3.10 (the cone's rim is a 0.25 mm
+# undercut at the seat; the seat's own r0 bore runs just `lip` above it) and the shank is a close fit (r 1.6); the
+# chassis-nut screw (c) keeps the r0 driver bore and the normal fit
+SP_CSK = dict(csk_clear=0.7, fit=dict(a="close", b="close", c="normal"), drive_r=dict(a=3.1, b=3.1), lip=0.05, head_clear=12.0)
+SP_SA_CLEAR = (2.6, -42.55, -38.0)   # STEP RV23 r 2.6: standoff-end clearance bore round SA (R, X0, X1)
+# STEP RV23: standoff end boss ring round SA (X0 -> X1): r 4.0 up into the nose roof to `x_ch`, then a 45 deg chamfer
+# down to r_end, which runs on to the standoff end
+SP_BOSS = dict(r=4.0, r_end=3.3, x=(-42.5, -39.5), x_ch=-40.75)
 SP_TYRE_RELIEF = (-45.0, -43.4, -38.7, -24.8, 5.5, 14.5)   # rear tyre relief box on the inner face (x0, x1, y0, y1, z0, z1)
 SP_NUT_RELIEF_X = (-32.5, -31.4)
 CHASSIS_MIN_VOLUME = 15000.0         # mm3: the intact chassis is 15988 mm3 in one solid
