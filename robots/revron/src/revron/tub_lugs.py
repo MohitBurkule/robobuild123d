@@ -1,6 +1,7 @@
 """Tub front lugs: weapon-mount tabs, the standoff lugs and their underside cuts, standoff / key holes.
 
 Everything is built for the +X half and mirrored; `additions(c)` / `cuts(c)` take the CH dict and return solids."""
+import math
 from shapely.geometry import Point, Polygon
 from .params import *  # noqa: F401,F403
 from .common import *  # noqa: F401,F403
@@ -28,12 +29,16 @@ FIL_BLOCK = Polygon([(FIL_BOX[0], FIL_BOX[1]), (FIL_BOX[2], FIL_BOX[1]), (FIL_BO
 # param: organic lug outline (STEP RV01): foot, ramp toe, standoff arcs SA / SB, nose tip, top
 LUG_Y0, LUG_FOOT_Y, LUG_RAMP_TOE, LUG_NOSE_TIP, LUG_TOP_Y = 13.0, 26.0, (30.4, 1.0), (36.6, LUG_FLOOR_Z), 15.0
 # param: end
+UNDER_BLEND_N, UNDER_SB_N = 24, 24                  # facets of the underside blend / standoff arcs
 SA_ARC, SB_ARC = (4.5, 250, 300, 6), (LUG_SB_R, 250, 400, 24)
 LUG_UNDER_POLY = Polygon([(LUG_FOOT_Y, 0.0), (LUG_FOOT_Y, LUG_FLOOR_Z), (30.0, 1.0), (40.0, 0.9), (60, 0)])   # underside the hull must not fill
 LUG_FLAT_RAMP = _poly([(10.0, -5.0), (10.0, LUG_FLOOR_Z), (LUG_FOOT_Y, LUG_FLOOR_Z), LUG_RAMP_TOE, (LUG_RAMP_TOE[0], -5.0)])
 # under the nose standoff the lug follows its arc: no hull chord below it where the scallop meets it
-LUG_UNDER = Polygon([(LUG_SCALLOP_YT, 0.0), (SB[0], 0.0), (SB[0], LUG_FLOOR_Z), (LUG_SCALLOP_YT, LUG_FLOOR_Z)]).difference(
-    Point(SB).buffer(LUG_SB_R, 96)).difference(LUG_BLEND_FILL)
+# one path floor -> blend arc -> standoff arc, so the blend and standoff arcs share their tangent point exactly (no boolean sliver)
+_T_ON_BLEND = math.degrees(math.atan2(SB[1] - _blend_c[1], SB[0] - _blend_c[0]))   # direction blend centre -> tangent point
+_T_ON_SB = _T_ON_BLEND - 180.0                                                     # direction standoff centre -> tangent point
+LUG_UNDER = Polygon(_arc(_blend_c, LUG_BLEND_R, 90.0, _T_ON_BLEND, UNDER_BLEND_N) + _arc(SB, LUG_SB_R, _T_ON_SB + 360.0, 270.0, UNDER_SB_N)[1:]
+                    + [(SB[0], 0.0), (LUG_SCALLOP_YT, 0.0)])
 # param: organic square key hole through lug and tab wall
 KEY_HOLE = _round(Polygon([(20.0, 6.9), (25.0, 6.9), (25.0, 12.0), (20.0, 12.0)]), r_out=KEY_R)
 # param: end

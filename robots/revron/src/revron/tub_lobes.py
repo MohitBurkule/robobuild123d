@@ -25,6 +25,7 @@ RELIEF_OUT = 1.5
 FLOOR_RELIEF_DEPTH = 3.0              # the root fillet must not hang below the floor plane
 # param: organic nut detail relief measured on the STEP (Y, Z), sits beside the nut
 NUT_DETAIL = [(-7.14, 6.85), (-3.45, 7.05), (-3.45, 7.95), (-6.9, 8.9)]
+# param: end
 NUT_DETAIL_R = 0.25
 # ---- motor stop wall lower inner edge R4.5 (STEP)
 STOP_ROUND_R = 4.5
@@ -118,6 +119,6 @@ def panel_mating():
 
 def cuts(c):
     out = []
-    for f in (keyhole, nut_bore, floor_relief, hex_pocket, nut_detail, stop_wall_round, lobe_tail):
+    for f in (keyhole, nut_bore, floor_relief, hex_pocket, nut_detail, lobe_tail):
         out += _both(f(c))
     return out + panel_mating()
