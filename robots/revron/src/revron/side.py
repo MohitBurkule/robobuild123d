@@ -40,62 +40,6 @@ def _fork_slot(s):
     return _ext(up.buffer(0), "yz", x0, x1)
 
 
-def rear_hub(s):
-    """RV21 printed rear hub (16 x 12): blind D-bore on the N10 3 mm D-shaft (the flat drives, the blind end stops it
-    axially), O-ring groove inboard between 8 mm flanges, a 14 mm tyre seat with a raised 7 mm crown that holds the F1
-    tyre, a 6.5 mm outer lip; M2 grub into a captive nut slot on the flat."""
-    from shapely.geometry import Point, Polygon
-    # STEP RV21, except: groove flanges 0.7 thick (STEP 0.5, under the 0.63 printable floor) with the groove narrowed
-    # symmetrically to 1.1 (the 1.0 O-ring still seats, centre unchanged), and a 0.4 flat on the outer lip (the STEP
-    # lip runs out to a knife edge that prints as a ragged single line)
-    prof = [(0.0, 0.0), (0.0, 8.0), (0.7, 8.0), (0.95, 7.45), (1.55, 7.45), (1.8, 8.0), (2.5, 8.0), (2.55, 6.9), (2.75, 6.35), (3.35, 6.0),
-            (5.25, 6.0), (6.25, 7.0), (8.25, 7.0), (9.25, 6.0), (11.1, 6.0), (11.3, 6.5), (12.0, 6.5), (12.0, 2.88), (11.8, 2.88), (11.8, 0.0)]
-    if s < 0:
-        prof = [(-x, r) for x, r in prof]
-    body = _revolve_x(prof, s * 30.0, (RY, RZ))
-    # D outline: R1.6 arc under a flat 0.9 above the axis; the flat carries vertices every 0.1 mm so it stays a facet
-    # strip (a two-vertex chord reads as round to section probes); a 0.02 crown keeps the facets from being merged
-    fa = math.degrees(math.asin(0.9 / 1.6))
-    hx = 1.6 * math.cos(math.radians(fa))
-    arc = [(RY + 1.6 * math.cos(math.radians(180.0 - fa + (180.0 + 2 * fa) * k / 59)),
-            RZ + 1.6 * math.sin(math.radians(180.0 - fa + (180.0 + 2 * fa) * k / 59))) for k in range(60)]
-    d = Polygon(arc + [(RY + hx - 2 * hx * k / 27, RZ + 0.9 - 0.02 * math.sin(math.pi * k / 27)) for k in range(1, 27)])   # 0.02 crown: no face merge
-    # blind D-bore (flat 0.9 above the axis); an M2 nut slot open at the inner face (STEP: 4.1 x 2, AF 4 nut + 0.1);
-    # the M2 grub threads the nut down onto the flat. Its hole is cut by robot.cad.holes as a tapped (1.6) bore so it
-    # stays inside the 1.9 mm tyre-seat flat (a 2.4 clearance hole breaks into both 45 deg ramps as knife edges);
-    # the grub is a set screw, so it gets no spec fastener (no head to seat)
-    from robot.cad.holes import hole_tool
-    top = 6.0   # tyre-seat radius at the grub
-    grub, _rec = hole_tool((s * 34.3, RY, RZ + top), (0, 0, -1), "M2x5", head="cap", into="tapped", side="thread", engage=top - 0.9)   # tip 0.4 past the flat: breaks cleanly into the bore (STEP: through)
-    slot = _box(s * 29.0, s * 41.0, RY - 2.05, RY + 2.05, RZ + 2.4, RZ + 4.4)
-    return _S(body, _ext(d, "yz", s * 29.0, s * 41.0), slot, grub)
-
-
-def front_hub(s):
-    """RV19 micro hub (9 x 9) running on the 25 mm standoff: 6 mm tyre seat between two 9 mm flanges, an O-ring
-    groove inboard."""
-    # STEP RV19, except all three flanges 0.7 thick (STEP 0.5): the groove flanges grow into the groove (1.1 wide, centre
-    # unchanged) and the outer flange stays inside the STEP's X 39.0 (seat 0.2 shorter, parity with the reference gap to the side panel)
-    prof = [(0.0, 2.7), (0.0, 4.5), (0.7, 4.5), (0.75, 3.96), (0.93, 3.7), (1.57, 3.7), (1.75, 3.96), (1.8, 4.5), (2.5, 4.5), (2.5, 4.1), (2.9, 3.7),
-            (7.9, 3.7), (8.3, 4.1), (8.3, 4.5), (9.0, 4.5), (9.0, 2.7)]
-    if s < 0:
-        prof = [(-x, r) for x, r in prof]
-    return _revolve_x(prof, s * 30.0, SA)
-
-
-def tyre(od, idd, x0, x1, c, shoulder=0.0):
-    """Rubber tyre envelope; `shoulder` rounds the tread corners (the F1 tyre's moulded R1.2 shoulders, STEP RV22)."""
-    if shoulder <= 0:
-        return _S(_cyl(od / 2, x0, x1, c), _cyl(idd / 2, x0 - 1, x1 + 1, c))
-    R, rs = od / 2, shoulder
-    prof = [(0.0, idd / 2)] + [(rs - rs * math.cos(math.radians(a)), R - rs + rs * math.sin(math.radians(a))) for a in range(0, 91, 10)]
-    prof += [(x1 - x0 - rs + rs * math.cos(math.radians(a)), R - rs + rs * math.sin(math.radians(a))) for a in range(90, -1, -10)]
-    prof += [(x1 - x0, idd / 2)]
-    return _revolve_x(prof, x0, c)
-
-
-def standoff(L_x, c):
-    return _S(_cyl(SO_R, *L_x, c), _cyl(1.25, L_x[0] - 1, L_x[1] + 1, c))
 def wedgelet(s):
     """RV17/18 TPU wedgelet (left built, right mirrored), slabs along X (WG_X) measured on the STEP sections:
     an outer block round the 15 mm standoff end, a ring step, a 2.3 mm ramp skin over a hollow whose top edge is
