@@ -1820,6 +1820,7 @@
   {
    "id": "mount_r",
    "kind": "structure",
+   "thin_wall_deviation": "matches original RVRN 2.0: the RV02/RV03 STEP has a knife edge where the rear notch meets the rim tangent (reference_cad blob at the notch top) and a 0.2 mm skin at the nose where the M3 countersink cone leaves the nose arc; kept for parity (user order)",
    "print_orientation": "+x",
    "rotates_with": "fixed",
    "solid_fraction": 0.85,
@@ -1838,6 +1839,7 @@
   {
    "id": "mount_l",
    "kind": "structure",
+   "thin_wall_deviation": "matches original RVRN 2.0: the RV02/RV03 STEP has a knife edge where the rear notch meets the rim tangent (reference_cad blob at the notch top) and a 0.2 mm skin at the nose where the M3 countersink cone leaves the nose arc; kept for parity (user order)",
    "parent": "mount_r",
    "print_orientation": "-x",
    "rotates_with": "fixed",
@@ -3199,8 +3201,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 6.2,
-    "csk_depth": 1.3,
+    "csk_d": 6.4,
+    "csk_depth": 1.4,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -3240,8 +3242,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 6.2,
-    "csk_depth": 1.3,
+    "csk_d": 6.4,
+    "csk_depth": 1.4,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -3397,8 +3399,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 6.2,
-    "csk_depth": 1.3,
+    "csk_d": 6.4,
+    "csk_depth": 1.4,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -3438,8 +3440,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 6.2,
-    "csk_depth": 1.3,
+    "csk_d": 6.4,
+    "csk_depth": 1.4,
     "sink": 0.0,
     "grip": 4.0
    },

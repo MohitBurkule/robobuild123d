@@ -28,10 +28,6 @@ def _mount_profile(side):
     # (CSK radius + printed wall), kept above the nose underside, wraps the countersink
     from shapely.geometry import Point, box as _sbox
     p = p.union(Point(SB).buffer(NOSE_PAD_R, WSEG_HI).intersection(_sbox(0, MNT_HEEL["z"], BIG + 20, BIG - 20)))
-    # the rear notch meets the rim tangent in a wedge thinner than a printed wall: trim only that sliver
-    tip = Point((m["notch_y"], MNT_TOP_Z)).buffer(MNT_TIP_REACH, WSEG_HI)
-    sliver = p.difference(p.buffer(-MNT_TIP_WALL / 2, WSEG_HI).buffer(MNT_TIP_WALL / 2, WSEG_HI)).intersection(tip)
-    p = p.difference(sliver)
     return _round(p, r_out=0.0, r_in=MNT_RELIEF_R)
 
 
@@ -73,7 +69,7 @@ def _mount_csk(s, y, z, fastener):
     if _repo not in sys.path:
         sys.path.insert(0, _repo)
     from robot.cad.holes import hole_tool
-    return hole_tool((s * MNT_IN, y, z), (s, 0, 0), fastener, head="csk", into="through", side="head", grip=MNT_SLAB - MNT_IN, fit=MNT_SCREW_FIT, csk_clear=0.2)
+    return hole_tool((s * MNT_IN, y, z), (s, 0, 0), fastener, head="csk", into="through", side="head", grip=MNT_SLAB - MNT_IN, fit=MNT_SCREW_FIT, csk_clear=MNT_CSK_CLEAR)
 
 
 def _stator_hole(s, dy, dz):
