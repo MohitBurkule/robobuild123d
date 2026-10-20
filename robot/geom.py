@@ -22,7 +22,7 @@ import numpy as np
 import trimesh
 from scipy import ndimage
 
-from . import shapes, xform
+from . import cache, shapes, xform
 
 CACHE_VERSION = "1"
 
@@ -102,7 +102,8 @@ def _b123d_version() -> str:
 
 def key_for(shape: dict, base_dir: Path | None, tess: Tess = FINE, key_extra: str = "") -> str:
     """Cache key: shape JSON + model file sources + build123d version + tessellation settings."""
-    return shapes.shape_key(shape, base_dir, f"{CACHE_VERSION}|{_b123d_version()}|{tess.lin}|{tess.ang}|{key_extra}")
+    src = cache.source_hash(Path(shapes.__file__), Path(__file__))  # the shape builder itself, by content
+    return shapes.shape_key(shape, base_dir, f"{CACHE_VERSION}|{_b123d_version()}|{cache.lib_versions()}|{src}|{tess.lin}|{tess.ang}|{key_extra}")
 
 
 def cached(key: str) -> bool:
