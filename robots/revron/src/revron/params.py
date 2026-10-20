@@ -244,7 +244,7 @@ WIRES = [("w_bat_sw", "battery.jst_rcy", "power_switch.in", AWG["power"], "power
          ("w_sw_wesc", "power_switch.out", "wesc.bat", AWG["power"], "power", SLACK["bench"], {}),
          ("w_sw_rx", "power_switch.out", "rxesc.bat", AWG["rx"], "power", SLACK["bench"], {}),
          # phases run rearward in the gap behind the drisk (4 mm axial from the stack), over the front lug (its top is the deck) and down into the tub at the deck front
-         ("w_wesc_m", "wesc.motor", "weapon_motor.phases", AWG["power"], "motor", SLACK["phases"], dict(connector="bullet2", count=3, via=PHASE_VIA)),
+         ("w_wesc_m", "wesc.motor", "weapon_motor_stator.phases", AWG["power"], "motor", SLACK["phases"], dict(connector="bullet2", count=3, via=PHASE_VIA)),
          ("w_rx_wesc", "rxesc.wpn", "wesc.rx", AWG["signal"], "signal", SLACK["short"], {}),
          ("w_m_l", "rxesc.m2", "motor_l.terminals", AWG["motor"], "motor", SLACK["short"], {}),
          ("w_m_r", "rxesc.m1", "motor_r.terminals", AWG["motor"], "motor", SLACK["short"], {})]
@@ -291,7 +291,8 @@ REF_BOM = [   # RVRN 2.0 STEP part list (research/rvrn_step/INDEX.txt); one row 
     dict(role="side panel to chassis: 2 x M3x8 CSK into thin nuts", match=["bolt_s?c"], count=2, designation="M3x8", head="countersunk", threads_into="nut"),
     dict(role="M3 thin nuts (BS EN 24036)", kind="part", match=["nut_c*"], count=2, catalog="nut_m3_thin"),
     dict(role="RV11 25 mm + RV10 15 mm alu standoffs", kind="part", match=["so_*"], count=4, material="aluminium"),
-    dict(role="GR1507 weapon motor", kind="part", match=["weapon_motor"], count=1, catalog="gr1507"),
+    dict(role="GR1507 weapon motor", kind="part", match=["weapon_motor_stator"], count=1, catalog="gr1507"),
+    dict(role="GR1507 bell (rotor half)", kind="part", match=["weapon_motor_can"], count=1, catalog="gr1507_can"),
     dict(role="Motor back spacer", kind="part", match=["motor_spacer"], count=1),
     dict(role="spider + 2 Drisk_floating_3 + Drisk_spacer_alt_x", kind="part", match=["spider", "disc_a", "disc_b", "dspacer"], count=4),
     dict(role="fork_5 x 2", kind="part", match=["fork_*"], count=2),
@@ -364,7 +365,7 @@ _N10_FLAT = "the catalog N10 shaft is drawn round; the hub's D-flat sits on its 
 ALLOW_OVERLAP = [dict(a="belt_l", b="side_l", max_depth_mm=0.3, reason=_ORING),
                  dict(a="belt_r", b="side_r", max_depth_mm=0.3, reason=_ORING),
                  dict(a="wshaft", b="wbearing", max_depth_mm=0.3, reason="shaft in the MR85 inner race (bearing modelled as one solid)"),
-                 dict(a="wshaft", b="weapon_motor", max_depth_mm=2.6, reason="wshaft is the GR1507's own shaft, already drawn inside the catalog motor envelope"),
+                 dict(a="wshaft", b="weapon_motor_can", max_depth_mm=2.6, reason="wshaft is the GR1507's own shaft, already drawn inside the catalog motor envelope"),
                  dict(a="motor_l", b="whub_rl", max_depth_mm=0.4, reason=_N10_FLAT),
                  dict(a="motor_r", b="whub_rr", max_depth_mm=0.4, reason=_N10_FLAT),
                  *[dict(a=f"insert_b{i}", b="tub", max_depth_mm=0.2, reason="heat-set insert: 3.5 OD melted into a 3.4 bore (interference by design)") for i in range(len(INS))],
@@ -388,7 +389,7 @@ TEARDOWN = [t for s, n in ((-1, "l"), (1, "r")) for t in (
 MODULE_TEARDOWN = [
     dict(parts=["mount_l", "bolt_ula", "bolt_ulb"], dir=[-1, 0, 0], reason="RV02 slides outboard off the shaft end, its CSK screws captive"),
     dict(parts=["spider"], dir=[-1, 0, 0], reason="drisk (spider, discs, spacer, stack bolts) slides off the GR1507 shaft once the 4 bell screws are out"),
-    dict(parts=["weapon_motor"], dir=[-1, 0, 0], reason="GR1507 leaves inboard-left once the 4 stator screws are out")]
+    dict(parts=["weapon_motor_stator"], dir=[-1, 0, 0], reason="GR1507 leaves inboard-left once the 4 stator screws are out")]
 
 
 # the drisk is turned by hand before the nose screws (bolt_u?b) are drawn: in the STEP pose the eccentric rim and tooth flank
@@ -442,20 +443,9 @@ FK_WIN = [(44.15, 2.75), (54.0, 2.75), (44.65, 5.42)]   # param: organic lighten
 FK_WIN_R = 0.3
 FK_LAND_R = 0.15                     # land corners round r0.15 (> kerf)
 FK_LAND = [(64.0, 1.2), (66.68, 1.27), (66.68, 1.72), (64.0, 1.95)]   # param: organic 0.45 mm kerf land
+# param: end
 FK_TILT = -1.1                                    # deg, left fork nose-down about its standoff
 FKS_STEPS, FKS_DY = 24, 0.5                       # fork-slot sweep up out of the ramp
 FKS_CLIP = (42.0, -1, 80, 30)                     # x0, y0, x1, y1 of the sweep clip box
-HUB_X0 = 30.0                                     # hub inboard face X
-RH_PROF = [(0.0, 0.0), (0.0, 8.0), (0.7, 8.0), (0.95, 7.45), (1.55, 7.45), (1.8, 8.0), (2.5, 8.0), (2.55, 6.9), (2.75, 6.35), (3.35, 6.0),
-           (5.25, 6.0), (6.25, 7.0), (8.25, 7.0), (9.25, 6.0), (11.1, 6.0), (11.3, 6.5), (12.0, 6.5), (12.0, 2.88), (11.8, 2.88), (11.8, 0.0)]   # param: organic RV21 hub revolve profile (STEP)
-RH_DR, RH_FLAT, RH_CROWN = 1.6, 0.9, 0.02         # D-bore radius, flat height above axis, flat crown
-RH_NARC, RH_NFLAT = 60, 27                        # D-bore arc points / flat divisions
-RH_SEAT_R, RH_GRUB_X, RH_GRUB = 6.0, 34.3, "M2x5" # tyre-seat radius, grub X, grub fastener
-RH_GRUB_DIR = (0, 0, -1)
-RH_X_IN, RH_X_OUT, RH_SLOT_HW, RH_SLOT_Z = 29.0, 41.0, 2.05, (2.4, 4.4)   # D-bore/nut-slot X span, slot half width, slot Z span
-FH_PROF = [(0.0, 2.7), (0.0, 4.5), (0.7, 4.5), (0.75, 3.96), (0.93, 3.7), (1.57, 3.7), (1.75, 3.96), (1.8, 4.5), (2.5, 4.5), (2.5, 4.1), (2.9, 3.7),
-           (7.9, 3.7), (8.3, 4.1), (8.3, 4.5), (9.0, 4.5), (9.0, 2.7)]   # param: organic RV19 hub revolve profile (STEP)
-# param: end
-SPW_Y = (-16.0, -12.0, 11.0, 15.0)                # side-panel width stations along Y
-SPW_BUMP, SPW_BUMP_YC, SPW_BUMP_YH, SPW_BUMP_ZC, SPW_BUMP_ZH = 0.7, -5.0, 6.0, 7.5, 5.0   # nut-lobe swell: height, Y centre/half, Z centre/half
-__all__ = [n for n in dir() if not n.startswith('__')]   # last line: exports every parameter above (incl. the FK_* and hub blocks)
+
+__all__ = [n for n in dir() if not n.startswith("__")]   # last line: every name above is exported

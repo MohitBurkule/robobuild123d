@@ -37,20 +37,24 @@ def make_spec(model_file):
       label="RV02 XALT HD left weapon mount (8 mm): outboard MR85 bearing for the threaded shaft end, notch on the chassis tab, 2 M3 CSK into the standoffs")
     P(id="motor_spacer", kind="other", role="spacer", parent="mount_r", print_orientation="+x", rotates_with="fixed", color="#2a2c30", shape=M("motor_back_spacer"), **PLA,
       label="1.5 mm printed motor back spacer: stator base off the mount, clears the rear bearing boss and the phase leads")
-    P(id="weapon_motor", kind="weapon_motor", catalog="gr1507", parent="mount_r", at=[0.0, WY, WZ], rot=[0, 0, 180], rotates_with="fixed", exposed=True,
+    P(id="weapon_motor_stator", kind="weapon_motor", catalog="gr1507", parent="mount_r", at=[0.0, WY, WZ], rot=[0, 0, 180], rotates_with="fixed", exposed=True,
       exposed_reason="Drisk: the GR1507 bell is the hub of the weapon, inside the spacer bore between the two Hardox discs; the discs shield it radially",
-      label="GR1507 outrunner: stator on RV03, bell drives the spider")
+      label="GR1507 outrunner, fixed half: stator and cross base on RV03, phase leads out the back",
+      deviation="RVRN 2.0 STEP draws the GR1507 as one empty can with no stator; the real fixed stator stack and windings are added (a real motor has them)")
+    P(id="weapon_motor_can", kind="other", role="rotor", catalog="gr1507_can", parent="spider", at=[0.0, 0.0, 0.0], rot=[0, 0, 180], rotates_with="weapon", exposed=True,
+      exposed_reason="Drisk: the GR1507 bell is the hub of the weapon, inside the spacer bore between the two Hardox discs; the discs shield it radially",
+      label="GR1507 bell and core: spins with the spider, wshaft and discs round the fixed stator")
     P(id="wbearing", kind="bearing", parent="mount_l", material="steel", process="cots", rotates_with="fixed", stock="MR85ZZ 5 x 8 x 2.5", color="#555555",
       deviation="bought part left out of the STEP (INDEX.txt lists no bearing): RV02 carries the 7.9 mm printed seat for it and the guide BOM lists an MR85ZZ; added for the shaft support",
       shape=_spec_bearing(), label="MR85ZZ in the RV02 8 mm seat: outboard support of the threaded shaft end (inferred: the STEP shows the 7.9 seat but no bearing)")
-    P(id="wshaft", kind="shaft", material="steel", process="cots", stock="GR1507 5 mm shaft (part of the motor): modelled whole, MR85 end X -18.7 through the bell and the rear bearing to its circlip end X 11.4", rotates_with="weapon", shaft_of="weapon_motor", parent="weapon_motor",
+    P(id="wshaft", kind="shaft", material="steel", process="cots", stock="GR1507 5 mm shaft (part of the motor): modelled whole, MR85 end X -18.7 through the bell and the rear bearing to its circlip end X 11.4", rotates_with="weapon", shaft_of="weapon_motor_can", parent="weapon_motor_can",
       deviation="the GR1507 shaft is part of the bought motor, which the STEP draws as one body (INDEX.txt lists no shaft); drawn separately here for the MR85 support and the spider collar",
       shape={"type": "place", "shape": {"type": "cylinder", "radius": WSHAFT["r"], "height": WSHAFT["len"]}, "at": [WSHAFT["x"], 0, 0], "rot": [0, 90, 0]}, color="#777777", solid_fraction=SOLID["shaft"],
       label="threaded end of the GR1507 shaft through the MR85 (its mass is in the motor)")
     P(id="spider", kind="weapon", material="aluminium", process="waterjet", stock="3 mm 7075 plate (one 2D profile: water-jet, no milling needed)",
       min_web_mm=WEB["spider"], min_web_reason="0.8 mm webs between the dog pockets and the rim are the designer's own (RVRN 2.0 STEP spider_1 measures 0.8 at the same four places)", rotates_with="weapon", parent="mount_r", at=list(WO), shape=M("spider", WO),
       joint={"kind": "revolute", "axis": [1, 0, 0], "pivot": [_mid(DR_X["spider"]), WY, WZ], "min": 0, "max": 360, "default": 0}, color="#b8bcc2",
-      weapon={"kind": "disc", "motor": "weapon_motor", "cells": 2, "reduction": 1.0, "spin_axis": [1, 0, 0], "spin_dir": "ccw", "supported_both_ends": True, "teeth": 1},
+      weapon={"kind": "disc", "motor": "weapon_motor_stator", "cells": 2, "reduction": 1.0, "spin_axis": [1, 0, 0], "spin_dir": "ccw", "supported_both_ends": True, "teeth": 1},
       label="3 mm aluminium spider: bolted to the bell (4 M2 on r4.5), carries the disc stack on 4 M2 on r14")
     for nm, lab in (("disc_a", "inner"), ("disc_b", "outer")):
         P(id=nm, kind="other", role="blade", material="hardox", process="laser", stock="3 mm Hardox 450", parent="spider",
@@ -112,10 +116,10 @@ def make_spec(model_file):
         F(id=f"bolt_s{n}c", designation=SIDE_BOLT_DES["c"], head="countersunk", material="aluminium", reason="alu M3 CSK (Build Guide: aluminium bolts for weight; the STEP draws stainless)", at=[s * SIDE_BOLT_X["c"], NUT[0], NUT[1]], dir=[-s, 0, 0], through=[f"side_{n}", "tub"], threads_into=f"nut_c{n}", hole=_side_seat("c", NUT, s)[1].hole)
     for k, (dy, dz) in enumerate((STATOR_PCD / 2 * u, STATOR_PCD / 2 * v) for u, v in STATOR_DIRS):
         F(id=f"bolt_wm{k}", designation="M2x8", head="button", tool="hex1.3", material="titanium", at=[CB_CONE_X[1], WY + dy, WZ + dz], hole=_stator_hole(1, dy, dz)[1].hole, dir=[-1, 0, 0], through=["mount_r", "motor_spacer"],
-          threads_into="weapon_motor", reason="button heads (one hex1.3 key for every M2) sunk in the RV03 boss counterbores (inferred: the STEP shows the 4.4 counterbores, not the screws)")
+          threads_into="weapon_motor_stator", reason="button heads (one hex1.3 key for every M2) sunk in the RV03 boss counterbores (inferred: the STEP shows the 4.4 counterbores, not the screws)")
     for k, (hub_c, bolt_c) in enumerate(zip(_polar(HUB_R), _polar(BOLT_R))):
         dy, dz = _disc_local(*hub_c)
-        F(id=f"bolt_p{k}", designation="M2x4", head="button", tool="hex1.3", material="titanium", at=[DR_X["spider"][0], dy, dz], dir=[1, 0, 0], through=["spider"], threads_into="weapon_motor", hole=_stack_hole("M2x4", DR_X["spider"][0], dy, dz, 1, SPIDER_T).hole,
+        F(id=f"bolt_p{k}", designation="M2x4", head="button", tool="hex1.3", material="titanium", at=[DR_X["spider"][0], dy, dz], dir=[1, 0, 0], through=["spider"], threads_into="weapon_motor_can", hole=_stack_hole("M2x4", DR_X["spider"][0], dy, dz, 1, SPIDER_T).hole,
           access_before=["mount_l", "wbearing"], reason="spider to bell, fitted before the left mount goes on (inferred)")
         dy, dz = _disc_local(*bolt_c)
         F(id=f"bolt_d{k}", designation="M2x16", head="button", tool="hex1.3", material="titanium", at=[DR_X["disc_b"][1], dy, dz], dir=[-1, 0, 0],
@@ -154,14 +158,14 @@ def make_spec(model_file):
         C(mnt, "tub", "interlock", "Mount notch drops over the chassis tab: the tab takes fore/aft and vertical load, the screws only clamp", mechanical_key=True)
         C(f"belt_{n}", f"whub_r{n}", "interlock", "O-ring stretched into the rear hub groove; its tension and the groove flanks keep it on the pulley")
         C(f"belt_{n}", f"whub_f{n}", "interlock", "O-ring in the front hub groove: drives the front wheel")
-    C("weapon_motor", "mount_r", "screw", "Stator base on 4 M2 through RV03 and the back spacer")
+    C("weapon_motor_stator", "mount_r", "screw", "Stator base on 4 M2 through RV03 and the back spacer")
     C("motor_spacer", "mount_r", "interlock", "Spacer clamped between the stator base and RV03 by the 4 motor screws", mechanical_key=True)
-    C("spider", "weapon_motor", "screw", "Spider on the bell, 4 M2 on r4.5; its 5.2 bore centres it on the shaft collar", mechanical_key=True)
+    C("spider", "weapon_motor_can", "screw", "Spider on the bell, 4 M2 on r4.5; its 5.2 bore centres it on the shaft collar", mechanical_key=True)
     C("disc_a", "spider", "pin", "Disc located and driven by the 4 r14 stack bolts and the spider dogs; the bolts clamp it in shear", mechanical_key=True)
     C("dspacer", "disc_a", "pin", "Spacer on the 4 stack bolts between the discs", mechanical_key=True)
     C("disc_b", "dspacer", "pin", "Outer disc located by the 4 stack bolts through the spacer and clamped by their nuts", mechanical_key=True)
     C("wshaft", "wbearing", "shaft", "Threaded shaft end in the MR85 inner race: second support of the drisk")
-    C("wshaft", "weapon_motor", "press_fit", "The shaft is the GR1507 motor's own steel shaft, pressed into the bell at the factory", interference_mm=PRESS["shaft"], mechanical_key=True)
+    C("wshaft", "weapon_motor_can", "press_fit", "The shaft is the GR1507 motor's own steel shaft, pressed into the bell at the factory", interference_mm=PRESS["shaft"], mechanical_key=True)
     C("wshaft", "spider", "press_fit", "Spider bore on the shaft collar", interference_mm=PRESS["shaft"], mechanical_key=True)
     C("wbearing", "mount_l", "press_fit", "MR85 pressed into the 7.9 seat", interference_mm=PRESS["bearing"], mechanical_key=True)
     C("mount_l", "mount_r", "interlock", "Both mounts tied by the standoffs and the chassis tabs")
@@ -373,7 +377,8 @@ def reference_cad():
         R("wheel_rl", "RV22_Scalextric_F1_Front_tyre_1.stl", mode="envelope", tol_mm=TOL["tight"]),
         R("wheel_fl", "RV20_11OD_7ID_6W_Micro_slx_1.stl", mode="envelope", tol_mm=TOL["tight"], ref_to_world=_micro_to_world("l")),
         R("motor_l", "RV12_N10_2200_RPM_1.stl", mode="envelope", tol_mm=TOL["motor"], tol_vol_frac=VOL["motor"]),
-        R("weapon_motor", "GR1507_1.stl", mode="envelope", tol_mm=TOL["motor"], tol_vol_frac=VOL["motor"]),
+        R("weapon_motor_can", "GR1507_1.stl", mode="envelope", with_parts=["weapon_motor_stator"], tol_mm=TOL["motor"], tol_vol_frac=VOL["motor"],
+          note="fixed half + rotating bell compared together; the STEP bell is empty, the real stator stack and windings sit in it (declared on the part)"),
         R("battery", "RV16_Turnabot_180mah_2s_1.stl", mode="envelope", tol_mm=TOL["motor"], tol_vol_frac=VOL["standoff"]),
         R("rxesc", "RV13_Malenki_nano_1.stl", mode="envelope", tol_mm=TOL["motor"], tol_vol_frac=VOL["motor"]),
         R("wesc", "RV14_Brushless_ESC__1.stl", mode="envelope", tol_mm=TOL["motor"], tol_vol_frac=VOL["motor"]),
