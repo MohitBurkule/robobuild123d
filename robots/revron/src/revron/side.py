@@ -8,16 +8,16 @@ def _fork_outline(s):
     """fork_5: 1.5 mm Ti fork. It hangs on the 15 mm nose standoff (5.2 hole) between the wedgelet cheeks, a pin hole
     in its tail stops it rotating; a triangular window lightens the blade, which tapers to a 1.5 mm tip."""
     from shapely.geometry import Point, Polygon
-    x0, x1 = (24.5, 26.0) if s > 0 else (-26.5, -25.0)
-    outline = Point(36.3, 6.3).buffer(1.95, 48).union(Polygon([(35.0, 4.9), (36.1, 8.2), (41.0, 8.25), (66.68, 1.49), (51.75, 0.75), (39.0, 0.75), (38.0, 1.5)]))
-    outline = _round(outline, r_out=0.3, r_in=0.5).union(Polygon([(60.0, 1.27), (66.68, 1.49), (60.0, 2.5)])).buffer(0.15, 8).buffer(-0.15, 8)   # sharp tip, r0.15 (> kerf) where it joins
-    p = outline.difference(Point(SB[0], SB[1]).buffer(2.65, 48)).difference(Point(36.3, 6.3).buffer(0.8, 24))
-    p = p.difference(_round(Polygon([(43.85, 2.75), (54.0, 2.75), (44.35, 5.42)]), r_out=0.3))   # lightening window
+    x0, x1 = FK_X[1 if s > 0 else -1]
+    outline = Point(*FK_EYE).buffer(FK_EYE_R, FK_RES).union(Polygon(FK_BLADE))
+    outline = _round(outline, r_out=FK_ROUND[0], r_in=FK_ROUND[1]).union(Polygon(FK_TIP)).buffer(FK_TIP_R, FK_RES_BUF).buffer(-FK_TIP_R, FK_RES_BUF)   # sharp tip, r0.15 (> kerf) where it joins
+    p = outline.difference(Point(SB[0], SB[1]).buffer(FK_SB_R, FK_RES)).difference(Point(*FK_EYE).buffer(FK_PIN_R, FK_RES_PIN))
+    p = p.difference(_round(Polygon(FK_WIN), r_out=FK_WIN_R))   # lightening window
     # laser kerf / min web: the knife tip cannot be cut sharp; keep the full length but end it in a 0.45 mm land
-    p = p.union(Polygon([(64.0, 1.2), (66.68, 1.27), (66.68, 1.72), (64.0, 1.95)])).buffer(0)
+    p = p.union(Polygon(FK_LAND)).buffer(0)
     if s < 0:   # the STEP hangs the left fork 1.1 deg nose-down about its standoff (pin-hole play in the cheek)
         from shapely import affinity
-        p = affinity.rotate(p, -1.1, origin=SB)
+        p = affinity.rotate(p, FK_TILT, origin=SB)
     return p, x0, x1
 
 
@@ -34,9 +34,9 @@ def _fork_slot(s):
     p, x0, x1 = _fork_outline(s)
     solid = Polygon(p.exterior)
     up = solid
-    for k in range(1, 25):
-        up = up.union(affinity.translate(solid, 0, 0.5 * k))
-    up = up.intersection(Polygon([(42.0, -1), (80, -1), (80, 30), (42.0, 30)])).union(solid)
+    for k in range(1, FKS_STEPS + 1):
+        up = up.union(affinity.translate(solid, 0, FKS_DY * k))
+    up = up.intersection(Polygon([(FKS_CLIP[0], FKS_CLIP[1]), (FKS_CLIP[2], FKS_CLIP[1]), (FKS_CLIP[2], FKS_CLIP[3]), (FKS_CLIP[0], FKS_CLIP[3])])).union(solid)
     return _ext(up.buffer(0), "yz", x0, x1)
 
 
@@ -48,27 +48,27 @@ def rear_hub(s):
     # STEP RV21, except: groove flanges 0.7 thick (STEP 0.5, under the 0.63 printable floor) with the groove narrowed
     # symmetrically to 1.1 (the 1.0 O-ring still seats, centre unchanged), and a 0.4 flat on the outer lip (the STEP
     # lip runs out to a knife edge that prints as a ragged single line)
-    prof = [(0.0, 0.0), (0.0, 8.0), (0.7, 8.0), (0.95, 7.45), (1.55, 7.45), (1.8, 8.0), (2.5, 8.0), (2.55, 6.9), (2.75, 6.35), (3.35, 6.0),
-            (5.25, 6.0), (6.25, 7.0), (8.25, 7.0), (9.25, 6.0), (11.1, 6.0), (11.3, 6.5), (12.0, 6.5), (12.0, 2.88), (11.8, 2.88), (11.8, 0.0)]
+    prof = RH_PROF
     if s < 0:
         prof = [(-x, r) for x, r in prof]
-    body = _revolve_x(prof, s * 30.0, (RY, RZ))
+    body = _revolve_x(prof, s * HUB_X0, (RY, RZ))
     # D outline: R1.6 arc under a flat 0.9 above the axis; the flat carries vertices every 0.1 mm so it stays a facet
     # strip (a two-vertex chord reads as round to section probes); a 0.02 crown keeps the facets from being merged
-    fa = math.degrees(math.asin(0.9 / 1.6))
-    hx = 1.6 * math.cos(math.radians(fa))
-    arc = [(RY + 1.6 * math.cos(math.radians(180.0 - fa + (180.0 + 2 * fa) * k / 59)),
-            RZ + 1.6 * math.sin(math.radians(180.0 - fa + (180.0 + 2 * fa) * k / 59))) for k in range(60)]
-    d = Polygon(arc + [(RY + hx - 2 * hx * k / 27, RZ + 0.9 - 0.02 * math.sin(math.pi * k / 27)) for k in range(1, 27)])   # 0.02 crown: no face merge
+    fa = math.degrees(math.asin(RH_FLAT / RH_DR))
+    hx = RH_DR * math.cos(math.radians(fa))
+    n1 = RH_NARC - 1
+    arc = [(RY + RH_DR * math.cos(math.radians(180.0 - fa + (180.0 + 2 * fa) * k / n1)),
+            RZ + RH_DR * math.sin(math.radians(180.0 - fa + (180.0 + 2 * fa) * k / n1))) for k in range(RH_NARC)]
+    d = Polygon(arc + [(RY + hx - 2 * hx * k / RH_NFLAT, RZ + RH_FLAT - RH_CROWN * math.sin(math.pi * k / RH_NFLAT)) for k in range(1, RH_NFLAT - 1)])   # 0.02 crown: no face merge
     # blind D-bore (flat 0.9 above the axis); an M2 nut slot open at the inner face (STEP: 4.1 x 2, AF 4 nut + 0.1);
     # the M2 grub threads the nut down onto the flat. Its hole is cut by robot.cad.holes as a tapped (1.6) bore so it
     # stays inside the 1.9 mm tyre-seat flat (a 2.4 clearance hole breaks into both 45 deg ramps as knife edges);
     # the grub is a set screw, so it gets no spec fastener (no head to seat)
     from robot.cad.holes import hole_tool
-    top = 6.0   # tyre-seat radius at the grub
-    grub, _rec = hole_tool((s * 34.3, RY, RZ + top), (0, 0, -1), "M2x5", head="cap", into="tapped", side="thread", engage=top - 0.9)   # tip 0.4 past the flat: breaks cleanly into the bore (STEP: through)
-    slot = _box(s * 29.0, s * 41.0, RY - 2.05, RY + 2.05, RZ + 2.4, RZ + 4.4)
-    return _S(body, _ext(d, "yz", s * 29.0, s * 41.0), slot, grub)
+    top = RH_SEAT_R   # tyre-seat radius at the grub
+    grub, _rec = hole_tool((s * RH_GRUB_X, RY, RZ + top), RH_GRUB_DIR, RH_GRUB, head="cap", into="tapped", side="thread", engage=top - RH_FLAT)   # tip 0.4 past the flat: breaks cleanly into the bore (STEP: through)
+    slot = _box(s * RH_X_IN, s * RH_X_OUT, RY - RH_SLOT_HW, RY + RH_SLOT_HW, RZ + RH_SLOT_Z[0], RZ + RH_SLOT_Z[1])
+    return _S(body, _ext(d, "yz", s * RH_X_IN, s * RH_X_OUT), slot, grub)
 
 
 def front_hub(s):
@@ -76,11 +76,10 @@ def front_hub(s):
     groove inboard."""
     # STEP RV19, except all three flanges 0.7 thick (STEP 0.5): the groove flanges grow into the groove (1.1 wide, centre
     # unchanged) and the outer flange stays inside the STEP's X 39.0 (seat 0.2 shorter, parity with the reference gap to the side panel)
-    prof = [(0.0, 2.7), (0.0, 4.5), (0.7, 4.5), (0.75, 3.96), (0.93, 3.7), (1.57, 3.7), (1.75, 3.96), (1.8, 4.5), (2.5, 4.5), (2.5, 4.1), (2.9, 3.7),
-            (7.9, 3.7), (8.3, 4.1), (8.3, 4.5), (9.0, 4.5), (9.0, 2.7)]
+    prof = FH_PROF
     if s < 0:
         prof = [(-x, r) for x, r in prof]
-    return _revolve_x(prof, s * 30.0, SA)
+    return _revolve_x(prof, s * HUB_X0, SA)
 
 
 def tyre(od, idd, x0, x1, c, shoulder=0.0):
@@ -144,8 +143,8 @@ def _sp_path(z):
 def _sp_w(y, z):
     r, m, w = (_interp(z, SP_W_Z, t) for t in (SP_W_REAR, SP_W_MID, SP_W_SWING))
     # STEP RV23: the outer face swells 0.7 mm round the nut lobe (Y -11..1) at Z 4..12 (outer X -35.3 at Y -5 vs -34.5 at Y 5, Z 7.5)
-    bump = 0.7 * max(0.0, 1.0 - abs(y + 5.0) / 6.0) * max(0.0, 1.0 - abs(z - 7.5) / 5.0)
-    return _interp(y, (-16.0, -12.0, 11.0, 15.0), (r, m, m, w)) + bump
+    bump = SPW_BUMP * max(0.0, 1.0 - abs(y - SPW_BUMP_YC) / SPW_BUMP_YH) * max(0.0, 1.0 - abs(z - SPW_BUMP_ZC) / SPW_BUMP_ZH)
+    return _interp(y, SPW_Y, (r, m, m, w)) + bump
 
 
 def side_panel(s):
