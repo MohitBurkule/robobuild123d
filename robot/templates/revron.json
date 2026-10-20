@@ -928,6 +928,24 @@
       ],
       "r": 6.0,
       "reason": "electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact"
+     },
+     {
+      "near": [
+       32.0,
+       -13.5,
+       9.4
+      ],
+      "r": 3.5,
+      "reason": "lobe tail below Y -11.7 trimmed to the side-panel inner face: the STEP lobe and side panel overlap by 31 mm3, the tub does not duplicate it"
+     },
+     {
+      "near": [
+       -32.0,
+       -13.5,
+       9.4
+      ],
+      "r": 3.5,
+      "reason": "lobe tail below Y -11.7 trimmed to the side-panel inner face: the STEP lobe and side panel overlap by 31 mm3, the tub does not duplicate it"
      }
     ]
    },
@@ -2766,7 +2784,8 @@
      "part": "esc_tray"
     }
    },
-   "label": "TPU weapon-ESC tray (not in the STEP): glued to the base panel, lips hold the ESC when inverted"
+   "label": "TPU weapon-ESC tray (not in the STEP): glued to the base panel, lips hold the ESC when inverted",
+   "deviation": "the STEP holds the weapon ESC with kapton tape alone; a hit that flips the robot or tears the tape would free the board, so a TPU tray with 0.1 mm lips holds it (adds 1.1 g, reversible)"
   },
   {
    "id": "belt_l",

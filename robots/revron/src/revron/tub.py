@@ -96,7 +96,7 @@ def _switch_hole(yy):
     if _repo not in sys.path:
         sys.path.insert(0, _repo)
     from robot.cad.holes import hole_tool
-    return hole_tool((SWX, yy, 16.0), (0, 0, 1), "M2x3", head="button", into="insert", side="thread", engage=3.0)
+    return hole_tool((SWX, yy, 16.0), (0, 0, 1), "M2x3", head="button", into="tapped", side="thread", engage=3.0)
 
 
 # ------------------------------------------------------------------------------------------------------------ chassis
@@ -248,7 +248,7 @@ def chassis():
     sw_x0, sw_w, sw_y0, sw_l = 23.0, 4.0, -11.6, 12.0   # slot: inner edge 23.0 (top-panel edge), 4.0 wide and 12 long as measured on RV01
     cuts.append(_ext(_round(Polygon([(sw_x0, sw_y0), (sw_x0 + sw_w, sw_y0), (sw_x0 + sw_w, sw_y0 + sw_l), (sw_x0, sw_y0 + sw_l)]), r_out=0.45), "xy", 16.0, z1 + 1))
     for yy in (1.9, -13.1):
-        cuts.append(_cyl(1.55, c["deck"] - 3, z1 + 1, (SWX, yy), "z"))   # 3.1 bore: the 3.2 OD x 3.0 M2 heat-set (heatset_m2) melts in flush with the pad top
+        cuts.append(_cyl(0.85, c["deck"] - 3, z1 + 1, (SWX, yy), "z"))
     for sg in (1, -1):
         # N10 keyhole: round seat for the gearbox shaft boss, narrowing to the floor (motor tilts in)
         kh = Point(RY, RZ).buffer(2.5, 64).union(Point(RY, 5.85).buffer(0.85, 24)).convex_hull   # STEP keyhole

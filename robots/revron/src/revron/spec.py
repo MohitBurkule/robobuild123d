@@ -93,8 +93,6 @@ def make_spec(model_file):
         P(id=f"insert_b{i}", kind="insert", catalog="heatset_m2_4", at=[x, y, (INS_Z[0] + INS_Z[1]) / 2])
     for i, (x, y) in enumerate(TOP_XY):
         P(id=f"insert_t{i}", kind="insert", catalog="heatset_m2_4", at=[x, y, CH["z1"] - 2.0])
-    for i, yy in enumerate(SW_SCREW_Y):
-        P(id=f"insert_sw{i}", kind="insert", catalog="heatset_m2", at=[SWX, yy, CH["z1"] - 1.5])
     P(id="esc_tray", kind="other", material="tpu", process="fdm", print_orientation="+z", rotates_with="fixed", shape=M("esc_tray"),
       label="TPU weapon-ESC tray (not in the STEP): glued to the base panel, lips hold the ESC when inverted",
       deviation="the STEP holds the weapon ESC with kapton tape alone; a hit that flips the robot or tears the tape would free the board, so a TPU tray with 0.1 mm lips holds it (adds 1.1 g, reversible)")
@@ -128,7 +126,7 @@ def make_spec(model_file):
           reason="M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
           hole=_panel_seat("top", i)[1].hole)
     for i, yy in enumerate(SW_SCREW_Y):
-        F(id=f"bolt_sw{i}", designation="M2x3", head="button", tool="hex1.3", at=[SWX, yy, SW_BOLT_Z], dir=[0, 0, 1], through=["power_switch"], threads_into=f"insert_sw{i}", access_before=["base_panel"], hole=_switch_hole(yy)[1].hole,
+        F(id=f"bolt_sw{i}", designation="M2x3", head="button", tool="hex1.3", at=[SWX, yy, SW_BOLT_Z], dir=[0, 0, 1], through=["power_switch"], threads_into="tub", access_before=["base_panel"], hole=_switch_hole(yy)[1].hole,
           reason="thread-forming into the 1.7 pilot holes either side of the switch flange; heads clamp the flange to the deck underside (inferred)")
 
     # ---------------------------------------------------------------- connections

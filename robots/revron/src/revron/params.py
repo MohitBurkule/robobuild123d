@@ -262,7 +262,6 @@ BRG = dict(od_r=4.0, w=2.5, bore_r=2.5, x=-14.75)   # MR85ZZ 5 x 8 x 2.5, centre
 REF_BOM = [   # RVRN 2.0 STEP part list (research/rvrn_step/INDEX.txt); one row per joint or part family
     dict(role="FS8: base panel 5 x M2 CSK into heat-sets", match=["bolt_b*"], count=5, designation="M2x6", head="countersunk", threads_into="insert"),
     dict(role="FS1 M2 heat-sets (floor)", kind="part", match=["insert_b*", "insert_t*"], count=9, catalog="heatset_m2_4"),
-    dict(role="M2 heat-sets 3.0 (switch pad)", kind="part", match=["insert_sw*"], count=2, catalog="heatset_m2"),
     dict(role="FS9: mount to standoff 2 x M3x12 CSK alu (axle standoff)", match=["bolt_u?a"], count=2, designation="M3x12", head="countersunk", threads_into="standoff", material="aluminium"),
     dict(role="FS9: mount to nose standoff 2 x M3 CSK alu", match=["bolt_u?b"], count=2, designation="M3x14", head="countersunk", threads_into="standoff", material="aluminium",
          deviation="M3x14 instead of the STEP's M3x12: through mount and lug, 12 mm engages 3.9 mm of the 15 mm standoff (< 1.5 d)"),
@@ -291,7 +290,7 @@ REF_BOM = [   # RVRN 2.0 STEP part list (research/rvrn_step/INDEX.txt); one row 
          deviation="the STEP shows the r4.5 holes only"),
     dict(role="stator: 4 x M2 (not in the STEP)", match=["bolt_wm*"], count=4, designation="M2", threads_into="motor",
          deviation="the STEP shows the RV03 counterbores only"),
-    dict(role="switch: 2 x M2 into the deck pilot holes (not in the STEP)", match=["bolt_sw*"], count=2, designation="M2", threads_into="insert",
+    dict(role="switch: 2 x M2 into the deck pilot holes (not in the STEP)", match=["bolt_sw*"], count=2, designation="M2",
          deviation="the STEP has the two 1.7 pilot holes but no screws"),
     dict(role="nitrile O-ring belts (not in the STEP; hub grooves are)", kind="part", match=["belt_l", "belt_r"], count=2),
     dict(role="battery lead: JST RCY", kind="wire", match=["w_bat_sw"], count=1, connector="jst_rcy"),
@@ -352,7 +351,7 @@ ALLOW_OVERLAP = [dict(a="belt_l", b="side_l", max_depth_mm=0.3, reason=_ORING),
                  dict(a="motor_l", b="whub_rl", max_depth_mm=0.4, reason=_N10_FLAT),
                  dict(a="motor_r", b="whub_rr", max_depth_mm=0.4, reason=_N10_FLAT),
                  *[dict(a=f"insert_b{i}", b="tub", max_depth_mm=0.2, reason="heat-set insert: 3.5 OD melted into a 3.4 bore (interference by design)") for i in range(len(INS))],
-                 *[dict(a=f"insert_{k}", b="tub", max_depth_mm=0.2, reason="heat-set insert: 3.5 / 3.2 OD melted into a 3.4 / 3.1 bore (interference by design)") for k in ("t0", "t1", "t2", "t3", "sw0", "sw1")],
+                 *[dict(a=f"insert_{k}", b="tub", max_depth_mm=0.2, reason="heat-set insert: 3.5 / 3.2 OD melted into a 3.4 / 3.1 bore (interference by design)") for k in ("t0", "t1", "t2", "t3")],
                  *[dict(a=f"nut_c{n}", b="tub", max_depth_mm=0.1, reason="thin M3 nut pressed into a hex pocket 0.05 under its flats (captive)") for n in "lr"],
                  dict(a="wbearing", b="mount_l", max_depth_mm=0.1, reason="MR85 8.0 OD pressed into the RV02 7.9 printed seat (0.05 radial interference, the STEP seat size)")]
 MODULE_NOTE = "RVRN quick change: 4 M3 out, both mounts with the drisk lift off the chassis tabs"
