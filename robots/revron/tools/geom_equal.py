@@ -61,14 +61,18 @@ def snap(d):
 def check(d):
     bad = 0
     for n in SOLIDS:
-        old, new = b.import_brep(os.path.join(d, n + ".brep")), _build(n)
+        f = os.path.join(d, n + ".brep"); new = _build(n); tmp = f + ".new"; b.export_brep(new, tmp)
+        same = open(f, "rb").read() == open(tmp, "rb").read(); os.remove(tmp)
+        if same:   # byte-identical B-rep: geometry equal, skip the costly surface sampling
+            print(f"{n:12s} identical B-rep  OK", flush=True); continue
+        old = b.import_brep(f)
         bo, bn = old.bounding_box(), new.bounding_box()
         dv = abs(old.volume - new.volume)
         db = max(abs(x - y) for x, y in zip((*bo.min, *bo.max), (*bn.min, *bn.max)))
         ds = max(_dev(new, old), _dev(old, new))
         ok = dv < 1e-3 and db < 1e-6 and ds < TOL
         bad += not ok
-        print(f"{n:12s} vol {new.volume:10.4f} dV {dv:.2e}  dBB {db:.2e}  maxdev {ds:.2e}  {'OK' if ok else 'FAIL'}")
+        print(f"{n:12s} vol {new.volume:10.4f} dV {dv:.2e}  dBB {db:.2e}  maxdev {ds:.2e}  {'OK' if ok else 'FAIL'}", flush=True)
     old, new = pickle.load(open(os.path.join(d, "helpers.pkl"), "rb")), helpers()
     for k in old:
         if k == "chaikin":

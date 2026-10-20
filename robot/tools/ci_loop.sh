@@ -65,8 +65,8 @@ gate() {
     local ge=robots/revron/tools/geom_equal.py
     if [ -f "$GWT/trial/$ge" ]; then
       gwt "$GWT/base" HEAD; cp "$GWT/trial/$ge" "$GWT/base/$ge"; rm -rf "$GWT/snap"
-      (cd "$GWT/base" && HEAVY_CI=1 /tmp/heavy.sh python3 "$ge" snap "$GWT/snap") > "$P/ci_gate_geom.log" 2>&1 \
-        && (cd "$GWT/trial" && HEAVY_CI=1 /tmp/heavy.sh python3 "$ge" check "$GWT/snap") >> "$P/ci_gate_geom.log" 2>&1 \
+      (cd "$GWT/base" && HEAVY_CI=1 /tmp/heavy.sh timeout 3000 python3 -u "$ge" snap "$GWT/snap") > "$P/ci_gate_geom.log" 2>&1 \
+        && (cd "$GWT/trial" && HEAVY_CI=1 /tmp/heavy.sh timeout 3000 python3 -u "$ge" check "$GWT/snap"; r=$?; echo "geom_equal check exit $r"; exit $r) >> "$P/ci_gate_geom.log" 2>&1 \
         || { git -C "$GWT/base" checkout -q -- . ; git -C "$GWT/base" clean -qfd robots/revron/tools; gfail "$b" "$s" "geom_equal failed ($(tail -1 "$P/ci_gate_geom.log" | cut -c1-100))"; return 1; }
       git -C "$GWT/base" checkout -q -- . ; git -C "$GWT/base" clean -qfd robots/revron/tools
     fi
