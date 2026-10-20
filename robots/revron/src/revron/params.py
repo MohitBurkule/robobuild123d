@@ -368,4 +368,19 @@ SERVICE_POSE = [dict(parts=["spider", "disc_a", "disc_b", "dspacer"] + [f"bolt_{
                      reason="drisk turned by hand so the rim clears the nose screws; whole stack with its bolts moves as one")]
 
 
+# --- fork (Ti tine on the nose standoff) and its wedgelet slot; outlines are organic point tables measured on fork_5 (Y, Z) ---
+FORK_X = {1: (24.5, 26.0), -1: (-26.5, -25.0)}     # plate X span per side sign
+FORK_EYE, FORK_EYE_R, FORK_PIN_R = (36.3, 6.3), 1.95, 0.8   # tail eye round and its anti-rotation pin hole
+FORK_BORE_R = 2.65                                 # clearance bore round the nose standoff SB
+FORK_BLADE = [(35.0, 4.9), (36.1, 8.2), (41.0, 8.25), (66.68, 1.49), (51.75, 0.75), (39.0, 0.75), (38.0, 1.5)]
+FORK_TIP_WEDGE = [(60.0, 1.27), (66.68, 1.49), (60.0, 2.5)]
+FORK_TIP_LAND = [(64.0, 1.2), (66.68, 1.27), (66.68, 1.72), (64.0, 1.95)]   # 0.45 mm land: laser kerf cannot cut a knife tip
+FORK_WINDOW = [(44.15, 2.75), (54.0, 2.75), (44.65, 5.42)]
+FORK_R_OUT, FORK_R_IN, FORK_R_WINDOW, FORK_R_TIP = 0.3, 0.5, 0.3, 0.15   # corner radii; tip radius exceeds the kerf
+FORK_SEG = dict(eye=48, pin=24, tip=8)             # circle / buffer segment counts
+FORK_TILT = -1.1                                   # deg, the STEP hangs the left fork nose-down about SB
+FORK_SWEEP = dict(steps=24, dy=0.5, clip=(42.0, -1, 80, 30))   # slot sweep up out of the ramp, clip box x0,y0,x1,y1
+FORK_DEV = dict(near=(25.5, 66.0, 1.4), r=2.0)     # STEP-deviation site: knife tip land
+
+
 __all__ = [n for n in dir() if not n.startswith('__')]

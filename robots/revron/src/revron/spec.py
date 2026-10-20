@@ -267,7 +267,7 @@ def _micro_to_world(side):
 
 
 def _fork_dev(s):
-    return [dict(near=[s * 25.5, 66.0, 1.4], r=2.0, reason="laser-cut Ti cannot hold the STEP's knife tip (0.0 mm): the tip ends "
+    return [dict(near=[s * FORK_DEV["near"][0], *FORK_DEV["near"][1:]], r=FORK_DEV["r"], reason="laser-cut Ti cannot hold the STEP's knife tip (0.0 mm): the tip ends "
                  "in a 0.45 mm land at full length (laser titanium min web 0.4 mm)")]
 
 
