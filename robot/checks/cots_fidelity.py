@@ -259,10 +259,12 @@ def run(ctx):
         else:
             out.append(ok("cots.motor_bore", G, "Stator sits inside the can", f"`{st.part.id}` fills {fill:.0%} of the bore.")
                        .on(can.part.id, st.part.id))
+        # the motor's own shaft may be drawn as a separate part (`shaft_of` the can/stator): it is part of what is judged
+        extra = [rp.part.id for rp in ctx.r.parts if x(rp.part, "shaft_of") in ids]
         if feat:
             import trimesh
 
-            m = trimesh.util.concatenate([wc.mesh, ws.mesh])
+            m = trimesh.util.concatenate([wc.mesh, ws.mesh] + [ctx.world.body(i).mesh for i in extra if ctx.world.body(i) is not None])
             m.apply_transform(np.linalg.inv(wc.M))
             cat = next((rp.cat for rp in (can, st) if rp.cat is not None), None)
             miss = judge(SimpleNamespace(geom=SimpleNamespace(mesh=m), cat=cat), feat)
@@ -272,7 +274,6 @@ def run(ctx):
                 n += 1
         import trimesh
 
-        extra = [rp.part.id for rp in ctx.r.parts if x(rp.part, "shaft_of") in ids]
         bodies = [ctx.world.body(i).mesh for i in [can.part.id, st.part.id] + extra]
         vol = sum(abs(float(b.volume)) for b in bodies)
         um = trimesh.util.concatenate(bodies)

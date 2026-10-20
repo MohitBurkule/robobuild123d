@@ -278,3 +278,25 @@ def test_print_orientation_with_overhang_fails_and_good_passes():
     tee = {"type": "union", "items": [BOX(4, 4, 20), PLACE(BOX(30, 30, 2), (0, 0, 9))]}  # mushroom: flat cap on a stem
     assert run(_printed("+z", tee), "print_orient").failed("print.orientation_declared")
     assert not run(_printed("-z", tee), "print_orient").failed("print.orientation_declared")
+
+
+def _outrunner_sep_shaft(shaft_r):
+    """Split outrunner whose shaft is its own part (`shaft_of` the can): the can ends in a d6 hub, the shaft runs on past it."""
+    d = _outrunner()
+    can = next(p for p in d["parts"] if p["id"] == "weapon_motor_can")
+    can["shape"] = {"type": "union", "items": [{"type": "subtract", "base": CYLX(9.8, 8.6, 0.0), "cut": [CYLX(8.0, 8.0, -0.3)]},
+                                               CYLX(3.0, 1.0, 4.8)]}
+    d["parts"].append({"id": "wshaft", "kind": "shaft", "material": "steel", "process": "cots", "shaft_of": "weapon_motor_can",
+                       "at": [0, 0, 30], "shape": CYLX(shaft_r, 14.0, 3.0)})
+    return d
+
+
+def test_cots_fidelity_judges_separate_shaft_part():
+    rep = run(_outrunner_sep_shaft(2.5), "cots_fidelity")
+    bad = [f.message for f in rep.findings if f.id == "cots.fidelity" and not f.passed]
+    assert not bad, bad
+
+
+def test_cots_fidelity_separate_shaft_wrong_diameter_fails():
+    rep = run(_outrunner_sep_shaft(1.5), "cots_fidelity")
+    assert any("shaft" in f.message for f in rep.findings if f.id == "cots.fidelity" and not f.passed)
