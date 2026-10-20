@@ -144,7 +144,7 @@ SW_X = {1.0: (-32.4, -33.4, -36.6, -44.0, -46.3, -47.6, -48.3, -48.6),
 # wall thickness (normal to the inner face) against height: rear / middle run battered 5 -> 2 mm, the swing ~3.4 mm
 SP_W_Z = (1.0, 3.0, 6.0, 9.0, 12.0, 16.0)
 SP_FOOT_LAND = 0.85
-SP_W_REAR = (5.2, 4.9, 4.3, 3.6, 3.0, 2.1)
+SP_W_REAR = (5.09, 4.79, 4.18, 3.47, 2.83, 1.9)   # rear thickness trimmed 0.11..0.2 mm: outer face sat that far proud of RV23 (measured at Y -30 and -20)
 SP_W_MID = (5.0, 4.7, 3.5, 2.7, 2.3, 2.0)
 SP_W_SWING = (3.3, 3.3, 3.0, 2.6, 2.4, 2.1)
 SP_W_Y = (-16.0, -12.0, 11.0, 15.0)   # rear / mid / mid / swing thickness stations along Y
