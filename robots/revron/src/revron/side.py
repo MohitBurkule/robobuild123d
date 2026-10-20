@@ -12,9 +12,9 @@ def _fork_outline(s):
     outline = Point(36.3, 6.3).buffer(1.95, 48).union(Polygon([(35.0, 4.9), (36.1, 8.2), (41.0, 8.25), (66.68, 1.49), (51.75, 0.75), (39.0, 0.75), (38.0, 1.5)]))
     outline = _round(outline, r_out=0.3, r_in=0.5).union(Polygon([(60.0, 1.27), (66.68, 1.49), (60.0, 2.5)])).buffer(0.15, 8).buffer(-0.15, 8)   # sharp tip, r0.15 (> kerf) where it joins
     p = outline.difference(Point(SB[0], SB[1]).buffer(2.65, 48)).difference(Point(36.3, 6.3).buffer(0.8, 24))
-    p = p.difference(_round(Polygon([(43.85, 2.75), (54.0, 2.75), (44.35, 5.42)]), r_out=0.3))   # lightening window
+    p = p.difference(_round(Polygon([(44.15, 2.75), (54.0, 2.75), (44.65, 5.42)]), r_out=0.3))   # lightening window
     # laser kerf / min web: the knife tip cannot be cut sharp; keep the full length but end it in a 0.45 mm land
-    p = p.union(Polygon([(64.0, 1.2), (66.68, 1.27), (66.68, 1.72), (64.0, 1.95)])).buffer(0)
+    p = p.union(_round(Polygon([(64.0, 1.2), (66.68, 1.27), (66.68, 1.72), (64.0, 1.95)]), r_out=0.15)).buffer(0)   # r0.15 (> kerf) land corners
     if s < 0:   # the STEP hangs the left fork 1.1 deg nose-down about its standoff (pin-hole play in the cheek)
         from shapely import affinity
         p = affinity.rotate(p, -1.1, origin=SB)
