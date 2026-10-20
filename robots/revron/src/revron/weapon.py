@@ -67,13 +67,13 @@ def weapon_mount(side):
 
 def _mount_csk(s, y, z, fastener):
     """robot.cad.holes cutter + record for a mount-to-standoff M3 CSK (bolt_u*): head flush in the inner face, DIN 7991
-    countersink (dk 6.0 head in the STEP's 6.2 mm cone) and ISO 273 normal 3.4
+    countersink (dk 6.0 head in the STEP's 6.2 mm cone) and ISO 273 loose 3.6
     clearance through the 4 mm slab, so the notch, not the shank, takes fore/aft load."""
     _repo = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
     if _repo not in sys.path:
         sys.path.insert(0, _repo)
     from robot.cad.holes import hole_tool
-    return hole_tool((s * MNT_IN, y, z), (s, 0, 0), fastener, head="csk", into="through", side="head", grip=MNT_SLAB - MNT_IN, fit="normal", csk_clear=0.2)
+    return hole_tool((s * MNT_IN, y, z), (s, 0, 0), fastener, head="csk", into="through", side="head", grip=MNT_SLAB - MNT_IN, fit=MNT_SCREW_FIT, csk_clear=0.2)
 
 
 def _stator_hole(s, dy, dz):

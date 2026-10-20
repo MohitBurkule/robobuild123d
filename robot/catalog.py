@@ -56,6 +56,7 @@ def _gr1507_base():
     return minus(union(arm + [cyl_x(3.9, 2.0)]), holes)
 
 
+STATOR_HUB_R, STATOR_HUB_X0, STATOR_HUB_X1 = 3.5, -8.4, -4.5  # stator bearing tube round the shaft, from the base cross top to the bell hub (inside the bell; the stator itself is not modelled)
 BELL_SCREW_R, BELL_SCREW_PHASE = 4.5, -54.889  # spider screw circle on the bell top and its phase about the axis (STEP; local frame)
 
 
@@ -257,7 +258,8 @@ def builtin() -> list[CatalogEntry]:
                      {}, None, {"thread_d_mm": 2.0}, "#d4af37"),
         # RVRN 2.0 STEP envelopes (Revron rebuild 2026-10): measured outline of the vendor models, not memory.
         CatalogEntry("gr1507", "weapon_motor", "GR1507 outrunner (19.6 bell: open 1.8 wall, 8-rib vented top; 4-arm cross stator base with 4 M2 on 12 mm; threaded 5 mm shaft out of the bell face)", 15.5, "estimate",
-                     union([at(_gr1507_base(), -9.4, 0, 0), at(cyl_x(0.75, 4.1), -6.35, 0, 0), at(_gr1507_bell(), 0.0, 0, 0),
+                     union([at(_gr1507_base(), -9.4, 0, 0), at(cyl_x(0.75, 4.1), -6.35, 0, 0),
+                            at(cyl_x(STATOR_HUB_R, STATOR_HUB_X1 - STATOR_HUB_X0), 0.5 * (STATOR_HUB_X0 + STATOR_HUB_X1), 0, 0), at(_gr1507_bell(), 0.0, 0, 0),
                             at(cyl_x(2.5, 3.0), 8.0, 0, 0), at(cyl_x(2.26, 9.2), 14.1, 0, 0),
                             at(cyl_x(0.75, 1.4), -11.1, 0, 0)]),
                      {"phases": [-11.0, 0, -9.0]}, {"at": [4.1, 0, 0], "dir": [1, 0, 0], "len": 14.6, "dia": 5.0},   # shaft leaves the bell face at 4.1 (the vented top to 6.0 is not bell wall)
