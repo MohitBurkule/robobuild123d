@@ -25,7 +25,9 @@ MAX_SWEEP_HEIGHT_HORIZONTAL_MM = 25.0  # a horizontal blade must still hit at bu
 def hold_mm(w, shaft, weapon, origin, axis, half, sign, extra=(), ring=None, bearing_only=False) -> float:
     """Millimetres of shaft inside a support body on one side of the weapon (0.25 mm steps). `extra`: body indices that also
     count as support (a weapon motor whose stator is bolted to structure, carrying its own extended shaft). `ring`: shaft
-    radius; a support around the shaft (a bore, a bearing race) is found just outside it, not only on the axis."""
+    radius; a support around the shaft (a bore, a bearing race) is found just outside it, not only on the axis. An `extra`
+    motor holds its own shaft along its whole axial length (its bearings sit inside it, whether the motor is drawn as one
+    solid envelope or as a stator with an open bore), so it counts at every station within its span along the axis."""
     d = half + np.arange(0, 160) * 0.25
     P = origin + np.outer(sign * d, axis)
     in_shaft = w.bodies[shaft].inside(P)
@@ -38,6 +40,9 @@ def hold_mm(w, shaft, weapon, origin, axis, half, sign, extra=(), ring=None, bea
         v = np.cross(axis, u)
         for e in (u, -u, v, -v):
             held |= measure.inside_any(sup, P + (ring + 0.3) * e)
+    for j in extra:
+        t = (w.bodies[j].mesh.vertices - origin) @ axis
+        held |= ((P - origin) @ axis >= float(t.min())) & ((P - origin) @ axis <= float(t.max()))
     if bearing_only:
         held = measure.inside_any([b for b in sup if b.kind == "bearing"], P) if not ring else np.zeros(len(P), bool)
         if ring:
