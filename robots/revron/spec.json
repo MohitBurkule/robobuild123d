@@ -78,10 +78,20 @@
    "role": "FS1 M2 heat-sets (floor)",
    "kind": "part",
    "match": [
-    "insert_b*"
+    "insert_b*",
+    "insert_t*"
    ],
-   "count": 5,
+   "count": 9,
    "catalog": "heatset_m2_4"
+  },
+  {
+   "role": "M2 heat-sets 3.0 (switch pad)",
+   "kind": "part",
+   "match": [
+    "insert_sw*"
+   ],
+   "count": 2,
+   "catalog": "heatset_m2"
   },
   {
    "role": "FS9: mount to standoff 2 x M3x12 CSK alu (axle standoff)",
@@ -113,7 +123,7 @@
    ],
    "count": 4,
    "designation": "M2x5",
-   "threads_into": "tub",
+   "threads_into": "insert",
    "deviation": "the STEP top panel has 4 countersunk corner holes but no screws; 4 M2x4 CSK thread-forming screws added so the Ti panel cannot peel off"
   },
   {
@@ -301,6 +311,7 @@
    ],
    "count": 2,
    "designation": "M2",
+   "threads_into": "insert",
    "deviation": "the STEP has the two 1.7 pilot holes but no screws"
   },
   {
@@ -422,6 +433,42 @@
    "reason": "heat-set insert: 3.5 OD melted into a 3.4 bore (interference by design)"
   },
   {
+   "a": "insert_t0",
+   "b": "tub",
+   "max_depth_mm": 0.2,
+   "reason": "heat-set insert: 3.5 / 3.2 OD melted into a 3.4 / 3.1 bore (interference by design)"
+  },
+  {
+   "a": "insert_t1",
+   "b": "tub",
+   "max_depth_mm": 0.2,
+   "reason": "heat-set insert: 3.5 / 3.2 OD melted into a 3.4 / 3.1 bore (interference by design)"
+  },
+  {
+   "a": "insert_t2",
+   "b": "tub",
+   "max_depth_mm": 0.2,
+   "reason": "heat-set insert: 3.5 / 3.2 OD melted into a 3.4 / 3.1 bore (interference by design)"
+  },
+  {
+   "a": "insert_t3",
+   "b": "tub",
+   "max_depth_mm": 0.2,
+   "reason": "heat-set insert: 3.5 / 3.2 OD melted into a 3.4 / 3.1 bore (interference by design)"
+  },
+  {
+   "a": "insert_sw0",
+   "b": "tub",
+   "max_depth_mm": 0.2,
+   "reason": "heat-set insert: 3.5 / 3.2 OD melted into a 3.4 / 3.1 bore (interference by design)"
+  },
+  {
+   "a": "insert_sw1",
+   "b": "tub",
+   "max_depth_mm": 0.2,
+   "reason": "heat-set insert: 3.5 / 3.2 OD melted into a 3.4 / 3.1 bore (interference by design)"
+  },
+  {
    "a": "nut_cl",
    "b": "tub",
    "max_depth_mm": 0.1,
@@ -457,6 +504,26 @@
   }
  ],
  "sharp_ok": [
+  {
+   "part": "tub",
+   "near": [
+    31.4,
+    -11.7,
+    5.4
+   ],
+   "r_mm": 1.0,
+   "reason": "inside corner of the lobe-tail step is the side panel's own square relief edge (STEP RV23 diamond): the TPU panel conforms, rounding it in the tub would leave a 0.07 mm sliver"
+  },
+  {
+   "part": "tub",
+   "near": [
+    -31.4,
+    -11.7,
+    5.4
+   ],
+   "r_mm": 1.0,
+   "reason": "inside corner of the lobe-tail step is the side panel's own square relief edge (STEP RV23 diamond): the TPU panel conforms, rounding it in the tub would leave a 0.07 mm sliver"
+  },
   {
    "part": "base_panel",
    "near": [
@@ -861,6 +928,24 @@
       ],
       "r": 6.0,
       "reason": "electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact"
+     },
+     {
+      "near": [
+       32.0,
+       -13.5,
+       9.4
+      ],
+      "r": 3.5,
+      "reason": "lobe tail below Y -11.7 trimmed to the side-panel inner face: the STEP lobe and side panel overlap by 31 mm3, the tub does not duplicate it"
+     },
+     {
+      "near": [
+       -32.0,
+       -13.5,
+       9.4
+      ],
+      "r": 3.5,
+      "reason": "lobe tail below Y -11.7 trimmed to the side-panel inner face: the STEP lobe and side panel overlap by 31 mm3, the tub does not duplicate it"
      }
     ]
    },
@@ -2626,6 +2711,66 @@
    ]
   },
   {
+   "id": "insert_t0",
+   "kind": "insert",
+   "catalog": "heatset_m2_4",
+   "at": [
+    25.0,
+    10.4,
+    17.5
+   ]
+  },
+  {
+   "id": "insert_t1",
+   "kind": "insert",
+   "catalog": "heatset_m2_4",
+   "at": [
+    -25.0,
+    10.4,
+    17.5
+   ]
+  },
+  {
+   "id": "insert_t2",
+   "kind": "insert",
+   "catalog": "heatset_m2_4",
+   "at": [
+    25.0,
+    -21.6,
+    17.5
+   ]
+  },
+  {
+   "id": "insert_t3",
+   "kind": "insert",
+   "catalog": "heatset_m2_4",
+   "at": [
+    -25.0,
+    -21.6,
+    17.5
+   ]
+  },
+  {
+   "id": "insert_sw0",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    24.55,
+    1.9,
+    18.0
+   ]
+  },
+  {
+   "id": "insert_sw1",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    24.55,
+    -13.1,
+    18.0
+   ]
+  },
+  {
    "id": "esc_tray",
    "kind": "other",
    "material": "tpu",
@@ -2639,7 +2784,8 @@
      "part": "esc_tray"
     }
    },
-   "label": "TPU weapon-ESC tray (not in the STEP): glued to the base panel, lips hold the ESC when inverted"
+   "label": "TPU weapon-ESC tray (not in the STEP): glued to the base panel, lips hold the ESC when inverted",
+   "deviation": "the STEP holds the weapon ESC with kapton tape alone; a hit that flips the robot or tears the tape would free the board, so a TPU tray with 0.1 mm lips holds it (adds 1.1 g, reversible)"
   },
   {
    "id": "belt_l",
@@ -3049,12 +3195,12 @@
     "head_std": "DIN 7991",
     "head_dk": 6.0,
     "head_k": 1.86,
-    "clearance_d": 3.4,
+    "clearance_d": 3.6,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
     "csk_d": 6.2,
-    "csk_depth": 1.4,
+    "csk_depth": 1.3,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -3090,12 +3236,12 @@
     "head_std": "DIN 7991",
     "head_dk": 6.0,
     "head_k": 1.86,
-    "clearance_d": 3.4,
+    "clearance_d": 3.6,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
     "csk_d": 6.2,
-    "csk_depth": 1.4,
+    "csk_depth": 1.3,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -3247,12 +3393,12 @@
     "head_std": "DIN 7991",
     "head_dk": 6.0,
     "head_k": 1.86,
-    "clearance_d": 3.4,
+    "clearance_d": 3.6,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
     "csk_d": 6.2,
-    "csk_depth": 1.4,
+    "csk_depth": 1.3,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -3288,12 +3434,12 @@
     "head_std": "DIN 7991",
     "head_dk": 6.0,
     "head_k": 1.86,
-    "clearance_d": 3.4,
+    "clearance_d": 3.6,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
     "csk_d": 6.2,
-    "csk_depth": 1.4,
+    "csk_depth": 1.3,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -3946,7 +4092,7 @@
    "through": [
     "top_panel"
    ],
-   "threads_into": "tub",
+   "threads_into": "insert_t0",
    "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
    "hole": {
     "d": 2.0,
@@ -3982,7 +4128,7 @@
    "through": [
     "top_panel"
    ],
-   "threads_into": "tub",
+   "threads_into": "insert_t1",
    "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
    "hole": {
     "d": 2.0,
@@ -4018,7 +4164,7 @@
    "through": [
     "top_panel"
    ],
-   "threads_into": "tub",
+   "threads_into": "insert_t2",
    "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
    "hole": {
     "d": 2.0,
@@ -4054,7 +4200,7 @@
    "through": [
     "top_panel"
    ],
-   "threads_into": "tub",
+   "threads_into": "insert_t3",
    "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
    "hole": {
     "d": 2.0,
@@ -4090,7 +4236,7 @@
    "through": [
     "power_switch"
    ],
-   "threads_into": "tub",
+   "threads_into": "insert_sw0",
    "access_before": [
     "base_panel"
    ],
@@ -4102,11 +4248,12 @@
     "head_dk": 3.5,
     "head_k": 1.3,
     "clearance_d": 2.4,
-    "into": "tapped",
+    "into": "insert",
     "side": "thread",
     "grip": 0.0,
-    "tap_d": 1.6,
-    "thread_depth": 3.5
+    "insert_d": 3.2,
+    "insert_len": 4.0,
+    "insert_depth": 4.3
    },
    "reason": "thread-forming into the 1.7 pilot holes either side of the switch flange; heads clamp the flange to the deck underside (inferred)",
    "removable": true
@@ -4129,7 +4276,7 @@
    "through": [
     "power_switch"
    ],
-   "threads_into": "tub",
+   "threads_into": "insert_sw1",
    "access_before": [
     "base_panel"
    ],
@@ -4141,11 +4288,12 @@
     "head_dk": 3.5,
     "head_k": 1.3,
     "clearance_d": 2.4,
-    "into": "tapped",
+    "into": "insert",
     "side": "thread",
     "grip": 0.0,
-    "tap_d": 1.6,
-    "thread_depth": 3.5
+    "insert_d": 3.2,
+    "insert_len": 4.0,
+    "insert_depth": 4.3
    },
    "reason": "thread-forming into the 1.7 pilot holes either side of the switch flange; heads clamp the flange to the deck underside (inferred)",
    "removable": true
@@ -4523,7 +4671,7 @@
    "a": "top_panel",
    "b": "tub",
    "method": "screw",
-   "reason": "Ti top panel held by 4 M2 flat-head thread-forming screws through its countersunk corner holes into the column-top pilots (the STEP has the holes, not the screws)"
+   "reason": "Ti top panel held by 4 M2 flat-head screws through its countersunk corner holes into M2 heat-sets in the column tops (the STEP has the holes, not the screws)"
   },
   {
    "a": "battery",

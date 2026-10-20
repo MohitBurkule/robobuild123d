@@ -1,43 +1,7 @@
-"""[fix-S] Side groups: side panels, wedgelets, forks, standoffs, hubs, wheels / tyres."""
+"""[fix-S] Side groups: the side panel (wedgelet, fork and hub groups live in their own modules)."""
 import json, math, os, sys
 from .params import *  # noqa: F401,F403
 from .common import *  # noqa: F401,F403
-
-
-def _fork_outline(s):
-    """fork_5: 1.5 mm Ti fork. It hangs on the 15 mm nose standoff (5.2 hole) between the wedgelet cheeks, a pin hole
-    in its tail stops it rotating; a triangular window lightens the blade, which tapers to a 1.5 mm tip."""
-    from shapely.geometry import Point, Polygon
-    x0, x1 = (24.5, 26.0) if s > 0 else (-26.5, -25.0)
-    outline = Point(36.3, 6.3).buffer(1.95, 48).union(Polygon([(35.0, 4.9), (36.1, 8.2), (41.0, 8.25), (66.68, 1.49), (51.75, 0.75), (39.0, 0.75), (38.0, 1.5)]))
-    outline = _round(outline, r_out=0.3, r_in=0.5).union(Polygon([(60.0, 1.27), (66.68, 1.49), (60.0, 2.5)])).buffer(0.15, 8).buffer(-0.15, 8)   # sharp tip, r0.15 (> kerf) where it joins
-    p = outline.difference(Point(SB[0], SB[1]).buffer(2.65, 48)).difference(Point(36.3, 6.3).buffer(0.8, 24))
-    p = p.difference(_round(Polygon([(44.15, 2.75), (54.0, 2.75), (44.65, 5.42)]), r_out=0.3))   # lightening window
-    # laser kerf / min web: the knife tip cannot be cut sharp; keep the full length but end it in a 0.45 mm land
-    p = p.union(_round(Polygon([(64.0, 1.2), (66.68, 1.27), (66.68, 1.72), (64.0, 1.95)]), r_out=0.15)).buffer(0)   # r0.15 (> kerf) land corners
-    if s < 0:   # the STEP hangs the left fork 1.1 deg nose-down about its standoff (pin-hole play in the cheek)
-        from shapely import affinity
-        p = affinity.rotate(p, -1.1, origin=SB)
-    return p, x0, x1
-
-
-def fork(s):
-    p, x0, x1 = _fork_outline(s)
-    return _ext(p, "yz", x0, x1)
-
-
-def _fork_slot(s):
-    """Seat for the fork tine in the wedgelet nose: the tine outline (window filled) swept straight up out of the
-    ramp ahead of Y 42, so the slit is open to the top (the tine drops in) and no TPU film is left over the tine."""
-    from shapely.geometry import Polygon
-    from shapely import affinity
-    p, x0, x1 = _fork_outline(s)
-    solid = Polygon(p.exterior)
-    up = solid
-    for k in range(1, 25):
-        up = up.union(affinity.translate(solid, 0, 0.5 * k))
-    up = up.intersection(Polygon([(42.0, -1), (80, -1), (80, 30), (42.0, 30)])).union(solid)
-    return _ext(up.buffer(0), "yz", x0, x1)
 
 
 def _sp_ring(zw, z, b, Polygon):
