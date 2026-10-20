@@ -8,14 +8,27 @@ if ROOT not in sys.path:
 # ======================================================================================================================
 # Measured layout (RVRN 2.0 STEP, world frame). Each number is a dimension of a feature, not a mesh coordinate list.
 # ======================================================================================================================
-REF_TO_WORLD = [[0, 0, -1, 0], [-1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1]]
+# ---- MASTER DESIGN PARAMETERS (everything below is constrained to these, or is a catalog / measured organic value) ----
+CH_HALF_W = 29.5                     # chassis outer half-width |X| (outer side-wall face)
+CH_Y0, CH_Y1 = -37.6, 15.0           # chassis rear face / front face (where the weapon-mount tabs start)
+CH_Z0, CH_Z1 = 2.5, 19.5             # chassis floor underside / rim (top panel and mount notch sit on it)
+CH_WALL = 2.0                        # printed wall and deck thickness
 WY, WZ = 38.5, 23.5                  # weapon axis (along X)
-SA = (30.5, 5.5)                     # 25 mm standoff (RV11): front axle, X 17.5..42.5
-SB = (40.5, 4.5)                     # 15 mm standoff (RV10): nose, X 21.5..36.5
-SA_X, SB_X = (17.5, 42.5), (21.5, 36.5)
-SO_R = 2.5
+RY, RZ = -30.5, 11.0                 # N10 shaft (rear axle)
+SA = (30.5, 5.5)                     # 25 mm standoff (RV11): front axle (Y, Z)
+SB = (40.5, 4.5)                     # 15 mm standoff (RV10): nose (Y, Z)
+SA_LEN, SB_LEN = 25.0, 15.0          # catalog standoff lengths
+SA_X0, SB_X0 = 17.5, 21.5            # |X| of each standoff's inner end
+SO_R = 2.5                           # standoff radius
+M3_THIN_NUT_T = 1.8                  # DIN 439 M3 thin nut thickness
+MNT_IN, MNT_T, MNT_SLAB_T = 13.4, 8.0, 4.0   # weapon mount: inner face |X|, total thickness, slab thickness (rest = battered boss)
+FLOOR_Z = 1.0                        # ground-contact plane of the ramps / side feet
+# ---------------------------------------------------------------------------------------------------------------------
+CH_IN_X = CH_HALF_W - CH_WALL        # inner face of the side walls (27.5)
+REF_TO_WORLD = [[0, 0, -1, 0], [-1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1]]
+SA_X, SB_X = (SA_X0, SA_X0 + SA_LEN), (SB_X0, SB_X0 + SB_LEN)   # standoff |X| spans: inner end + catalog length
 NUT = (-11.5, 8.5)                   # side-panel screw into a thin M3 nut in the chassis wall (Y, Z)
-NUT_X = (27.7, 29.5)
+NUT_X = (CH_HALF_W - M3_THIN_NUT_T, CH_HALF_W)   # nut pocket opens on the outer wall face, one nut deep
 INS = [(-25.0, 10.4), (25.0, 10.4), (-25.0, -21.6), (25.0, -21.6), (0.0, -33.6)]   # 5 floor inserts / base screws
 INS_Z = (5.1, 9.1)                   # FS1 M2 heat-set (3.5 OD x 4)
 CSK_M2 = 4.5                         # 90 deg countersink at the face for an ISO 10642 M2 flat head (4.4 x 1.2) + 0.1
@@ -24,18 +37,27 @@ BASE_HOLE, TOP_HOLE = 3.4, 3.5         # csk through-holes: wide enough that the
 BOSS_R, BOSS_H = 2.6, 0.3            # base-panel ring boss round each screw (keys into a 2.65 x 0.45 recess in the column foot)
 # electronics envelopes (catalog boxes at their spec placement, rot z 90): Malenki nano 32 x 20 x 4.4 at (8.67, -3.0, 15.3),
 # BBB ant ESC 23.5 x 12 x 5 at (8.63, -7.25, 10.6); the deck cage ribs are dimensioned off these
-RX_X, RX_Y, RX_Z = (8.67 - 10.0, 8.67 + 10.0), (-3.0 - 16.0, -3.0 + 16.0), (15.3 - 2.2, 15.3 + 2.2)
-WE_X, WE_Y, WE_Z = (8.63 - 6.0, 8.63 + 6.0), (-7.25 - 11.75, -7.25 + 11.75), (10.6 - 2.5, 10.6 + 2.5)
+RX_SIZE, RX_C = (32.0, 20.0, 4.4), (8.67, -3.0, 15.3)     # receiver catalog box (L, W, H) and placed centre
+WE_SIZE, WE_C = (23.5, 12.0, 5.0), (8.63, -7.25, 10.6)     # weapon ESC catalog box and placed centre
+
+
+def _env(c, size):
+    """(X, Y, Z) spans of a catalog box rotated 90 deg about Z (length along Y) centred on c."""
+    w, l, h = size[1], size[0], size[2]
+    return tuple((ci - d / 2, ci + d / 2) for ci, d in zip(c, (w, l, h)))
+
+
+(RX_X, RX_Y, RX_Z), (WE_X, WE_Y, WE_Z) = _env(RX_C, RX_SIZE), _env(WE_C, WE_SIZE)
 EAR_R = 2.7                          # top-panel corner ear radius: >= CSK_M2 / 2 + 0.4 mm of Ti round the countersink
-RY, RZ = -30.5, 11.0                 # N10 shaft (rear axle)
 MOTX = 19.6                          # N10 catalog origin |X| (body 3.7..27.5, shaft to 37.5)
 N10_KEY = (23.55, 26.15)             # |X| of the chassis key tab between the N10's last two gearbox plates
 CHASSIS_MIN_VOL = 15000.0               # a sound chassis is ~15900 mm3 in one solid; less means a boolean collapsed
 KEY_SPAN, KEY_DEV_R = (-26.15, -23.4), 2.5   # Y span of the key tab, radius of its reference-deviation zone
 N10_TOP = 17.0                       # top face of the N10 gearbox plates
 # chassis RV01
-SWX = 24.55   # power switch X: body side 0.05 clear of the 27.5 inner wall face (was 25.0, 0.4 into it)
-CH = dict(x=29.5, y0=-37.6, y1=15.0, z0=2.5, z1=19.5, wall=2.0, deck=17.5, cham=2.0)
+SW_HALF_W, SW_CLR = 2.9, 0.05   # power switch body half-width, its clearance to the inner wall face
+SWX = CH_IN_X - SW_CLR - SW_HALF_W   # power switch X: body side 0.05 clear of the 27.5 inner wall face (was 25.0, 0.4 into it)
+CH = dict(x=CH_HALF_W, y0=CH_Y0, y1=CH_Y1, z0=CH_Z0, z1=CH_Z1, wall=CH_WALL, deck=CH_Z1 - CH_WALL, cham=CH_WALL)
 # drisk
 # master parameters of the stack: plate thicknesses and where the first plate starts; every X span below is chained from them
 SPIDER_T, DISC_T, SPACER_T, STACK_X0 = 3.0, 3.0, 6.0, -8.2
@@ -53,7 +75,6 @@ SHAFT_D, SHAFT_CLR, BRG_SEAT_R, NUT_RECESS_R = 5.0, 0.1, 3.95, 6.0   # GR1507 sh
 STATOR_PCD, BOSS_OVER = 12.0, 0.01        # stator M2 bolt circle; boss overshoots the battered plane before it is split
 MNT_SCREW = ("M3x12", "M3x14")           # mount-to-standoff CSK screws at SA, SB
 MNT_SCREW_FIT = "loose"                  # ISO 273 loose clearance: the screws have slack, the notch face takes the hit first
-MNT_IN, MNT_T, MNT_SLAB_T = 13.4, 8.0, 4.0   # weapon mount: inner face |X|, total thickness, slab thickness (rest = battered boss)
 MNT_OUT, MNT_SLAB = MNT_IN + MNT_T, MNT_IN + MNT_SLAB_T
 WEAPON_CLEAR_R = 16.0                # chassis material stays outside this radius about the weapon axis (rotor + 1 mm)
 BSP_T = 1.5                          # printed spacer between the stator base and the right mount
@@ -94,8 +115,8 @@ WSEG_LO, WSEG_FINE, WSEG_MID, WSEG_HI, WSEG_FN, WSEG_MAX, WSEG_ARC, WSEG_ARC_S =
 MNT_SIDE = dict(
     r=dict(top_r=10.0, notch_y=10.17, rim_end=-14.5, slab_eps=0.02, face=(23.88, 0.144, 0.0379)),   # a, kz, ky of |X| = a - kz*Z - ky*Y
     l=dict(top_r=7.0, notch_y=9.0, rim_end=-5.0, slab_eps=0.0, face=(23.48, 0.185, 0.0168)))
-MNT_TOP_Z = 19.5                        # top of the rear notch: the teardrop's tangent line starts here
-TAB = dict(y0=15.0, z0=5.35, h=8.2, y1=26.5, cham=1.0)   # chassis tab the notch drops over: rear Y, floor Z, height, front-face Y, front chamfer
+MNT_TOP_Z = CH_Z1                        # top of the rear notch: the teardrop's tangent line starts here
+TAB = dict(y0=CH_Y1, z0=5.35, h=8.2, y1=26.5, cham=1.0)   # chassis tab the notch drops over: rear Y, floor Z, height, front-face Y, front chamfer
 MNT_HEEL = dict(z=1.25, step=0.4, back=1.8, z_hook=2.5, z_lip=4.5)   # rear foot hooked under the tab: floor Z, tip step, setback, hook and lip Z
 MNT_NOTCH_UP = 2.0                      # the rear face above the tab leans back by this much over the last stretch to the top
 NOSE_R, NOSE_A0 = 3.25, -16.0           # nose arc round the SB standoff and where it leaves the outline (deg)
@@ -155,7 +176,7 @@ SP_BUMP_Z = (7.5, 5.0)
 
 
 # --- side panel + wedgelet shared / derived dimensions (outlines are organic point tables measured on RV23/RV17) ---
-RAMP_REACH, RAMP_SLOPE, FLOOR_Z = 50.1, 1.187, 1.0   # ramp face Z = FLOOR_Z + RAMP_SLOPE (RAMP_REACH - Y), shared by wedgelet and nose
+RAMP_REACH, RAMP_SLOPE = 50.1, 1.187   # ramp face Z = FLOOR_Z + RAMP_SLOPE (RAMP_REACH - Y), shared by wedgelet and nose
 SLAB_X = (-60.0, -20.0)              # X slab the (Y, Z) side profile is extruded through before it is cut to the panel
 SP_TOP = [(-32.9, 1.0), (-32.9, 16.0), (-6.7, 16.0), (14.6, 12.0), (19.3, 11.0), (24.0, 10.0), (42.0, 10.0), (RAMP_REACH, 1.0)]   # top line, (Y, Z)
 SP_TOP_R = 1.5
@@ -359,7 +380,7 @@ TOE_DEV_YZ, TOE_DEV_R, TOE_DEV_X = (49.3, 1.4), 4.0, (19.5, 24.0, 28.0, 32.0, 36
 TOL = dict(tight=0.3, std=0.5, motor=0.6, wedge=0.8, loose=1.0)             # mm: surface deviation allowed per part class
 VOL = dict(part=0.25, hub=0.15, motor=0.3, standoff=0.2, switch=0.5)          # fraction: volume mismatch allowed
 REF_IOU_MIN = 0.9                                                              # silhouette IoU floor on every axis
-COLUMN_TOP_Z, COLUMN_DEV_R, FOOT_DEV_Z, FOOT_DEV_R = 17.5, 3.0, 5.0, 4.0       # tub corner columns: top bore (centre of the 4 mm bore) and flared foot
+COLUMN_TOP_Z, COLUMN_DEV_R, FOOT_DEV_Z, FOOT_DEV_R = CH_Z1 - CH_WALL, 3.0, 5.0, 4.0       # tub corner columns: top bore (centre of the 4 mm bore) and flared foot
 KEYHOLE_DEV = (28.6, -30.6, 4.5)   # N10 keyhole U-slot (x, y, z=r)
 LOBE_DEV, LOBE_DEV_R = (32.0, -13.5, 9.4), 3.5  # param: organic centroid of the lobe-tail trim vs STEP blobs
 # param: end
