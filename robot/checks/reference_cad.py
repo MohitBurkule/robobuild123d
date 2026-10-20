@@ -240,8 +240,9 @@ def check_entries(ctx, frame_checks, exact=True, parts=None):
         b = ctx.world.body(pid) if pid else None
         path = rdir / (fn or "")
         if b is None or not fn or not path.is_file():
+            # a part id that is not in the model is a typo that silently disables BLOCKER checks: fail closed
             why = f"part `{pid}` not in the model" if b is None else f"reference file `{path}` not found"
-            out.append(fail("reference_cad.unusable", G, WARNING, "Reference CAD comparison not possible", why))
+            out.append(fail("reference_cad.unusable", G, BLOCKER if b is None else WARNING, "Reference CAD comparison not possible", why))
             ctx.not_checked.append(f"Reference CAD `{fn}` vs `{pid}`")
             continue
         try:
@@ -328,12 +329,48 @@ def check_entries(ctx, frame_checks, exact=True, parts=None):
     return out
 
 
-def _covered(pt, e):
-    """A diff at `pt` (3D) explained by one of the entry's `deviations` -> its reason, else None."""
-    for d in e.get("deviations") or []:
-        if d.get("near") is not None and np.linalg.norm(np.asarray(pt, float) - np.asarray(d["near"], float)) <= float(d.get("r", 3.0)):
-            return d.get("reason") or "listed"
+DEV_R_MAX = 5.0   # mm: a deviation waiver is a local note, not a region of the part
+
+
+def _dev_valid(d):
+    """None when the waiver is usable, else why not (no reason, no centre, radius over the cap)."""
+    if not str(d.get("reason") or "").strip():
+        return "no reason"
+    if d.get("near") is None:
+        return "no `near` point"
+    if float(d.get("r", 3.0)) > DEV_R_MAX:
+        return f"r {d.get('r')} mm > cap {DEV_R_MAX} mm"
     return None
+
+
+def _covered(pt, e, bbox=None):
+    """A diff at `pt` (3D) explained by one of the entry's valid `deviations` -> its reason, else None. With `bbox`
+    (the blob's [lo, hi]) the whole box must fit inside the waiver sphere, not just the centroid."""
+    for d in e.get("deviations") or []:
+        if _dev_valid(d):
+            continue
+        c, r = np.asarray(d["near"], float), float(d.get("r", 3.0))
+        if np.linalg.norm(np.asarray(pt, float) - c) > r:
+            continue
+        if bbox is not None:
+            lo, hi = np.asarray(bbox[0], float), np.asarray(bbox[1], float)
+            far = np.maximum(np.abs(lo - c), np.abs(hi - c))   # farthest bbox corner from the centre
+            if np.linalg.norm(far) > r:
+                continue
+        return d["reason"]
+    return None
+
+
+def deviation_findings(e, pid):
+    """BLOCKER for each waiver with no reason, no centre or an oversized radius (such a waiver waives nothing)."""
+    out = []
+    for d in e.get("deviations") or []:
+        why = _dev_valid(d)
+        if why:
+            out.append(fail("reference_cad.deviation", G, BLOCKER, "Invalid reference deviation waiver",
+                            f"`{pid}` deviation at {d.get('near')} (r {d.get('r', 3.0)}): {why}; it waives nothing.").on(pid)
+                       .fix(f"Give each deviation a `reason` and r <= {DEV_R_MAX} mm (split a large one into local ones)."))
+    return out
 
 
 def _pt3(ax_name, h, uv):
@@ -380,20 +417,23 @@ def _frame_checks(ctx, e, cfg, pid, fn, mod, ref):
         except Exception:  # noqa: BLE001 - render is optional
             pass
     open_, expl = [], []
+    out += deviation_findings(e, pid)
+    waived = 0.0
     for kind in ("extra", "missing"):
         for b in bd[kind]:
-            why = _covered(b["centroid"], e)
+            why = _covered(b["centroid"], e, b.get("bbox"))
+            waived += float(b["volume_mm3"]) if why else 0.0
             (expl if why else open_).append(f"{kind} {b['volume_mm3']} mm3 (t {b['thick_mm']}) at {b['centroid']}" + (f" [{why}]" if why else ""))
     dtol = float(e.get("dev_tol_mm", cfg.get("dev_tol_mm", 0.5)))
     for c in ref_diff.deviation_clusters(dev, dtol, min_pts=int(e.get("dev_min_pts", cfg.get("dev_min_pts", 2)))):
         why = _covered(c["centroid"], e)
         (expl if why else open_).append(f"{c['kind']} surface {c['max_mm']} mm (> {dtol}, {c['n']} pts) at {c['centroid']}" + (f" [{why}]" if why else ""))
     ctx.metrics.setdefault(f"reference_cad.{pid}", {})["diff"] = {k: bd[k] for k in ("method", "extra_mm3", "missing_mm3")} | {
-        "blobs_open": len(open_), "blobs_explained": len(expl),
+        "blobs_open": len(open_), "blobs_explained": len(expl), "waived_mm3": round(waived, 2),
         "dev": {k: v for k, v in dev.items() if not k.startswith("_")}}
     dmsg = (f"`{pid}` vs `{fn}` ({bd['method']}): extra {bd['extra_mm3']} mm3, missing {bd['missing_mm3']} mm3; surface deviation "
             f"model->ref max {dev['model_to_ref']['max']} / p95 {dev['model_to_ref']['p95']} mm, ref->model max {dev['ref_to_model']['max']} / "
-            f"p95 {dev['ref_to_model']['p95']} mm. Unexplained blobs: {open_[:12]}{' ...' if len(open_) > 12 else ''}. Explained: {len(expl)}.")
+            f"p95 {dev['ref_to_model']['p95']} mm. Unexplained blobs: {open_[:12]}{' ...' if len(open_) > 12 else ''}. Explained: {len(expl)} ({waived:.1f} mm3 waived).")
     out.append(ok("reference_cad.diff", G, "Every geometric difference from the reference is fixed or reasoned", dmsg).on(pid) if not open_ else
                fail("reference_cad.diff", G, BLOCKER, "Unexplained geometric differences from the reference", dmsg).on(pid)
                .fix("Each blob is one feature difference: fix it, or list it in the entry's `deviations` with the reason."))
