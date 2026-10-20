@@ -19,13 +19,13 @@ SIDE_R = 1.9                                  # apex R towards the centre
 REAR_Y1 = -26.5                               # front edge of the rear pockets (shared)
 RIB, WEB = 1.0, 2.0                           # rib to the centre pocket / inner wall, web between the two side pockets
 REAR_C = dict(half=COL_R, y=(-30.0, REAR_Y1), r=1.2)                    # centre rear pocket: as wide as the rear boss
-_REAR_W = (WALL_IN_X - RIB - (REAR_C["half"] + RIB) - WEB) / 2          # width of each rear box: from the centre-pocket rib to the wall rib
+_REAR_W = (CH_IN_X - RIB - (REAR_C["half"] + RIB) - WEB) / 2          # width of each rear box: from the centre-pocket rib to the wall rib
 REAR_P = dict(x0=REAR_C["half"] + RIB, w=_REAR_W, pitch=_REAR_W + WEB, y=(WALL_IN_REAR + 1.1, REAR_Y1), r=0.6)   # rear deck pockets: first inner X, width, pitch, Y span (1.1 skin off the rear wall), corner R
 # ---- base-panel seat
 SEAT_Z = BASE_Z0 + BASE_T                     # top of the base panel skin = Z of the rabbet floor
 RABBET_GROW = 0.05                            # the rabbet is the panel outline grown by this
 PAD = dict(c=PRELOAD_PAD["c"], s=PRELOAD_PAD["s"], margin=0.3, z=(-0.1, 0.3))   # N10 preload pad: centre, side, recess margin (0.25 fillet), Z span about SEAT_Z
-SQUARE = dict(x0=25.5, depth=CH["wall"], up=SEAT_Z - CH["z0"], over=0.05)            # squared rear corner behind the gearbox plates: inner |X|, Y depth, Z over the floor
+SQUARE = dict(x0=25.5, depth=CH_WALL, up=SEAT_Z - CH_Z0, over=0.05)            # squared rear corner behind the gearbox plates: inner |X|, Y depth, Z over the floor
 ROUND_R, ROUND_Y, ROUND_Z = 4.5, (STOP_Y[0] - OVER, STOP_Y[1] + 1.0), (SEAT_Z - OVER, 9.4)   # stop wall lower inner edge R4.5 (STEP): radius, cutter Y span (through the corner fillet too), Z span of the round
 # ---- column bores and switch slot (NO-CHANGE: owned by the heat-set worker)
 HOLE_R, CH_H = 1.5, 0.6; CH_R = HOLE_R + CH_H            # M2 heat-set hole R, chamfer outer R, chamfer height

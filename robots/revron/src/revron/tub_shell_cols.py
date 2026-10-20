@@ -13,7 +13,7 @@ NOSE_SEG = 48                    # buffer resolution of the corner-block rounds
 # measured corner blocks (STEP), per block: inner face X, nose-end Y, wall-end Y, fillet-end Y, nose R, wall-fillet R
 # Each block's face and nose are tangent to the insert column boss of its corner (face X = column X - COL_R, nose Y = column Y -/+ COL_R);
 # the wall end overshoots the inner wall by OVER and the fillet ends on the inner wall / stop-wall face.
-STOP_X0, STOP_Y = 17.5, (-25.4, KEY_SPAN[1])   # motor stop wall: inner end |X| (independent: gearbox-rear bearing), Y span (the N10 gearbox bears on its rear face)
+STOP_X0, STOP_Y = SA_X0, (-25.4, KEY_SPAN[1])   # motor stop wall: inner end |X| (independent: gearbox-rear bearing), Y span (the N10 gearbox bears on its rear face)
 CORNER_BLOCKS = ((INS[1][0] - COL_R, INS[1][1] - COL_R, WALL_IN_FRONT + OVER, WALL_IN_FRONT, 2.5, 0.8),
                  (22.21, INS[3][1] + COL_R, STOP_Y[1] - 0.05, STOP_Y[1], 2.6, 0.9))   # rear block face 22.21: STEP measure, 0.04 off the column tangent
 KEY_DROP = 1.0                              # the key tab reaches this far below the plate top so it really keys between the N10 gearbox plates (STEP: flush, 0.1 would not stop the motor)

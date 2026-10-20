@@ -77,8 +77,7 @@ def make_spec(model_file):
           label=f"{SIDE_REF[s]} TPU side panel: battered S-wall round the wheels, 3 M3x8 CSK (two standoff ends, one chassis nut)")
         P(id=f"nut_c{n}", kind="nut", catalog="nut_m3_thin", at=[s * _mid(NUT_X), NUT[0], NUT[1]], rot=[0, 90, 0], rotates_with="fixed")
         # drive
-        rot = [0, 0, 0] if s > 0 else [0, 0, 180]
-        P(id=f"motor_{n}", kind="motor", catalog="n10_2200rpm_spicy", at=[s * MOTX, RY, RZ], rot=rot, rotates_with="fixed")
+        P(id=f"motor_{n}", kind="motor", catalog="n10_2200rpm_spicy", at=place_at(f"motor_{n}"), rot=place_rot(f"motor_{n}"), rotates_with="fixed")
         P(id=f"whub_r{n}", kind="pulley", solid_fraction=SOLID["hub"], rotates_with=f"wheel_r{n}", print_orientation="+x" if s > 0 else "-x", shape=M(f"rear_hub_{n}"), parent="tub",
           joint={"kind": "revolute", "axis": [1, 0, 0], "pivot": [s * HUB_PIVOT_X["rear"], RY, RZ], "min": 0, "max": 360, "default": 0}, color="#333333", **PLA,
           label="RV21 printed rear hub 16 x 12: blind D-bore on the N10, O-ring groove, crowned F1 tyre seat, M2 grub on the flat")
@@ -92,19 +91,19 @@ def make_spec(model_file):
     P(id="battery", kind="battery", catalog="lipo_2s_180_turnabot", at=list(ELEC["battery"]), rot=[0, 0, 90], retained="press_fit")
     P(id="rxesc", kind="esc", catalog="malenki_nano_rvrn2", at=list(ELEC["rxesc"]), rot=[0, 0, 90], retained="kapton")
     P(id="wesc", kind="esc", catalog="bbb_ant_esc_rvrn2", at=list(ELEC["wesc"]), rot=[0, 0, 90], retained="kapton")
-    P(id="power_switch", kind="switch", catalog="switch_bbb_ant_rvrn2", at=[SWX, *ELEC["switch_yz"]], rot=[0, 0, 90], retained="screws", marked=True, tool_free=True,
+    P(id="power_switch", kind="switch", catalog="switch_bbb_ant_rvrn2", at=place_at("power_switch"), rot=place_rot("power_switch"), retained="screws", marked=True, tool_free=True,
       off_dir=[0, -1, 0], label="BBB ant switch hung under the deck beside the top panel: lever flush in the deck slot, 2 M2 into the deck")
     for i, (x, y) in enumerate(INS):
-        P(id=f"insert_b{i}", kind="insert", catalog="heatset_m2_4", at=[x, y, (INS_Z[0] + INS_Z[1]) / 2])
+        P(id=f"insert_b{i}", kind="insert", catalog="heatset_m2_4", at=place_at(f"insert_b{i}"))
     for i, (x, y) in enumerate(TOP_XY):
-        P(id=f"insert_t{i}", kind="insert", catalog="heatset_m2_4", at=[x, y, CH["z1"] - 2.0])
+        P(id=f"insert_t{i}", kind="insert", catalog="heatset_m2_4", at=place_at(f"insert_t{i}"))
     P(id="esc_tray", kind="other", material="tpu", process="fdm", print_orientation="+z", rotates_with="fixed", shape=M("esc_tray"),
       label="TPU weapon-ESC tray (not in the STEP): glued to the base panel, lips hold the ESC when inverted",
       deviation="the STEP holds the weapon ESC with kapton tape alone; a hit that flips the robot or tears the tape would free the board, so a TPU tray with 0.1 mm lips holds it (adds 1.1 g, reversible)")
 
     # ---------------------------------------------------------------- fasteners
     for i, (x, y) in enumerate(INS):
-        F(id=f"bolt_b{i}", designation="M2x6", material="aluminium", at=[x, y, BASE_BOLT_Z], dir=[0, 0, 1], through=["base_panel", "tub"], threads_into=f"insert_b{i}", tool="hex1.3",
+        F(id=f"bolt_b{i}", designation="M2x6", material="aluminium", at=place_at(f"bolt_b{i}"), dir=[0, 0, 1], through=["base_panel", "tub"], threads_into=f"insert_b{i}", tool="hex1.3",
           hole=_panel_seat("base", i)[1].hole)
     for s, n in SIDES:
         mnt = f"mount_{n}"
@@ -127,11 +126,11 @@ def make_spec(model_file):
           access_before=["tub", "mount_r", "motor_spacer"],
           reason="stack screwed into the spider from the back (heads on disc_b, 2 mm of thread in the 3 mm alu spider tapped M2): no nuts, since the STEP has none (inferred: it has the 2.2 holes but no screws)")
     for i, (x, y) in enumerate(TOP_BOLT_XY):
-        F(id=f"bolt_t{i}", designation="M2x5", head="button", tool="hex1.3", at=[x, y, TOP_BOLT_Z], dir=[0, 0, -1], through=["top_panel", "tub"], threads_into=f"insert_t{i}",
+        F(id=f"bolt_t{i}", designation="M2x5", head="button", tool="hex1.3", at=place_at(f"bolt_t{i}"), dir=[0, 0, -1], through=["top_panel", "tub"], threads_into=f"insert_t{i}",
           reason="M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
           hole=_panel_seat("top", i)[1].hole)
     for i, yy in enumerate(SW_SCREW_Y):
-        F(id=f"bolt_sw{i}", designation="M2x3", head="button", tool="hex1.3", at=[SWX, yy, SW_BOLT_Z], dir=[0, 0, 1], through=["power_switch", "tub"], threads_into="tub", access_before=["base_panel"], hole=_switch_hole(yy)[1].hole,
+        F(id=f"bolt_sw{i}", designation="M2x3", head="button", tool="hex1.3", at=place_at(f"bolt_sw{i}"), dir=[0, 0, 1], through=["power_switch", "tub"], threads_into="tub", access_before=["base_panel"], hole=_switch_hole(yy)[1].hole,
           reason="thread-forming into the 1.7 pilot holes either side of the switch flange; heads clamp the flange to the deck underside (inferred)",
           waive={"fastener.hole_record": "switch retention only, no structural load; RVRN RV01 has 5 FS1_M2_heatsert, all base panel, none at the switch, the switch's 2 M2 screws self-tap in plastic"})
 
