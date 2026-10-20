@@ -344,10 +344,10 @@ def model_files(s, base_dir: Path | None) -> list[Path]:
 
 def shape_key(s, base_dir: Path | None, extra: str = "") -> str:
     h = hashlib.sha256(json.dumps(s, sort_keys=True).encode())
+    from . import cache
+
     for f in model_files(s, base_dir):
-        try:
-            h.update(f.read_bytes())
-        except OSError:
-            h.update(str(f).encode())
+        # the model file and everything it imports or reads (helpers, params modules, robot.cad.*), by content only
+        h.update(cache.model_hash(f).encode())
     h.update(extra.encode())
     return h.hexdigest()[:24]

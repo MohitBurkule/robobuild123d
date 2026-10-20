@@ -288,9 +288,10 @@ def chassis():
         cuts.append(_box(sg * 17.65, sg * 27.35, -35.15, -25.45, 4.4, 4.8))   # pad + 0.25 base fillet   # motor preload pads
         # square the R1 inner rear corner where the N10 gearbox plates sit (their corner would bite 0.14 into the round)
         cuts.append(_box(sg * 25.5, sg * (x - w + 0.05), y0 + w - 0.05, y0 + w + 2.0, z0 + 2.0, c["deck"]))
-    # the STEP panel overlaps the lobe below Y -11.7; the printed chassis keeps its whole lobe (RV01), so the panel cut stops at the lobe
-    lobe_keep = [_ext(NUT_LOBE, "yz", sg * (x - 0.1), sg * 32.5) for sg in (1, -1)]
-    cuts += [weapon_mount("l"), weapon_mount("r")] + [_S(side_panel(sg), lobe_keep[0 if sg > 0 else 1]) for sg in (1, -1)]
+    # the STEP panel and lobe overlap (31 mm3) where the panel relief stops, at Y -11.7: the panel cuts the chassis, and the whole
+    # overlapping slab of the lobe tail goes with it, so no 0.05 mm sliver of lobe is left beside the cut
+    tail = NUT_LOBE.intersection(Polygon([(-20.0, 0.0), (-11.7, 0.0), (-11.7, 20.0), (-20.0, 20.0)]))
+    cuts += [weapon_mount("l"), weapon_mount("r"), side_panel(1), side_panel(-1)] + [_ext(tail, "yz", sg * PANEL_IN, sg * (x + 4.0)) for sg in (1, -1)]
     body = _S(body, *cuts)
     # electronics cage hung from the deck (up into the 1 mm deck skin through the lightening pockets; prints as part of the deck-down first layers): ribs 0.1 mm off the Malenki's
     # -x / +x / -y faces and the weapon ESC's -y face, so neither board hammers around when the robot is flipped

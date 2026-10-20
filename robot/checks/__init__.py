@@ -192,7 +192,7 @@ def _snapshot(ctx) -> dict:
 def _base_key(r, opts) -> str:
     """Everything every group can read: all sources, the spec, every part's geometry key, options."""
     o = dict(vars(opts))  # includes `only`: a group's verdicts depend on which groups ran before it
-    return cache.h(cache.code_hash(), json.dumps(r.spec.raw, sort_keys=True, default=str), str(r.spec.base_dir),
+    return cache.h(cache.code_hash(), json.dumps(r.spec.raw, sort_keys=True, default=str), cache.referenced_hash(r.spec.raw, r.spec.base_dir),
                    [p.geom.key for p in r.parts], r.load_errors, json.dumps(o, sort_keys=True, default=str), r.fast)
 
 
