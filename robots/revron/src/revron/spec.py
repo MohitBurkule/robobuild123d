@@ -170,10 +170,22 @@ def make_spec(model_file):
 
     # O-ring belts (front micro hub <-> rear hub, plane |X| 31.3)
     def belt_shape(s):
-        from shapely.geometry import Point
-        o = Point(RY, RZ).buffer(PULLEY_R[0] + BELT_WALL, WSEG_HI).union(Point(*SA).buffer(PULLEY_R[1] + BELT_WALL, WSEG_MID)).convex_hull
-        i = Point(RY, RZ).buffer(PULLEY_R[0], WSEG_HI).union(Point(*SA).buffer(PULLEY_R[1], WSEG_MID)).convex_hull
-        return {"type": "subtract", "base": _prism_yz(o, *(s * x for x in BELT_X["slab"])), "cut": [_prism_yz(i, *(s * x for x in BELT_X["cut"]))]}
+        # O-ring: round section (stock cs) swept along the closed belt path round the rear hub groove (R = groove floor + cs/2)
+        # and the front hub groove (r), joined by the two external tangent runs; centreline plane = groove centre |X|
+        (ay, az), (by, bz) = (RY, RZ), SA
+        c = math.hypot(by - ay, bz - az)
+        d = ((by - ay) / c, (bz - az) / c)
+        k = (BELT_R - BELT_r) / c
+        h = math.sqrt(1 - k * k)
+        P2 = lambda y, z: [round(-z, 4), round(y, 4)]   # noqa: E731 - the YZ plane as _prism_yz lays it out
+        segs, tgt = [], []
+        for sg in (1, -1):
+            n = (k * d[0] - sg * h * d[1], k * d[1] + sg * h * d[0])
+            tgt.append((P2(ay + BELT_R * n[0], az + BELT_R * n[1]), P2(by + BELT_r * n[0], bz + BELT_r * n[1])))
+        (ra, fa), (rb, fb) = tgt
+        segs = [["line", ra, fa], ["arc", fa, P2(by + BELT_r * d[0], bz + BELT_r * d[1]), fb], ["line", fb, rb],
+                ["arc", rb, P2(ay - BELT_R * d[0], az - BELT_R * d[1]), ra]]
+        return {"type": "place", "shape": {"type": "ring", "radius": O_RING[1] / 2, "path": segs}, "at": [s * BELT_X["centre"], 0, 0], "rot": [0, 90, 0]}
     c_ = math.hypot(SA[0] - RY, SA[1] - RZ)
     loop = 2 * math.sqrt(c_ ** 2 - (BELT_R - BELT_r) ** 2) + math.pi * (BELT_R + BELT_r) + 2 * (BELT_R - BELT_r) * math.asin((BELT_R - BELT_r) / c_)
     ORING = O_RING
