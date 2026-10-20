@@ -586,36 +586,6 @@
    "reason": "GR1507 leaves inboard-left once the 4 stator screws are out"
   }
  ],
- "service_pose": [
-  {
-   "parts": [
-    "spider",
-    "disc_a",
-    "disc_b",
-    "dspacer",
-    "bolt_p0",
-    "bolt_p1",
-    "bolt_p2",
-    "bolt_p3",
-    "bolt_d0",
-    "bolt_d1",
-    "bolt_d2",
-    "bolt_d3"
-   ],
-   "axis_at": [
-    0.0,
-    38.5,
-    23.5
-   ],
-   "axis_dir": [
-    1,
-    0,
-    0
-   ],
-   "deg": 160.0,
-   "reason": "drisk turned by hand so the rim clears the nose screws; whole stack with its bolts moves as one"
-  }
- ],
  "reference_cad": {
   "dir": "/mnt/project-files/robot-cad/research/rvrn_step/parts",
   "ref_to_world": [
