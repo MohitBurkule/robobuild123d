@@ -165,11 +165,15 @@ def verify_resolved(r, opts: Options) -> Report:
         rep.assembly = ctx.assembly
         rep.mass = getattr(ctx, "mass_lines", [])
     rep.findings = findings
+    from . import waiver as _waiver
+    waivers = _waiver.apply(r.spec, findings)
     rep.metrics = ctx.metrics if ctx else {}
     rep.checks_revision = CHECKS_REVISION
     rep.not_checked = not_checked(r, opts) + (ctx.not_checked if ctx else ["Every geometric check: the spec is not valid"])
     rep.bench_checklist = []
     rep.finish()
+    if waivers:
+        rep.summary["waivers"] = waivers
     return rep
 
 
