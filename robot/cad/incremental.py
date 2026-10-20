@@ -190,7 +190,7 @@ def verify_incremental(spec, opts=None):
     ctx = None
     sigs = part_sigs(r)
     _all_ids = tuple(sigs)
-    base = cache.h(cache.code_hash(), json.dumps(_strip(r.spec.raw), sort_keys=True, default=str), str(r.spec.base_dir),
+    base = cache.h(cache.code_hash(), json.dumps(_strip(r.spec.raw), sort_keys=True, default=str), cache.referenced_hash(r.spec.raw, r.spec.base_dir),
                    r.load_errors, json.dumps(dict(vars(opts)), sort_keys=True, default=str), r.fast,
                    [rp.part.id for rp in r.parts])
     if valid:
