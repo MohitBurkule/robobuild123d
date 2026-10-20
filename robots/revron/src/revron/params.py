@@ -448,4 +448,6 @@ FK_TILT = -1.1                                    # deg, left fork nose-down abo
 FKS_STEPS, FKS_DY = 24, 0.5                       # fork-slot sweep up out of the ramp
 FKS_CLIP = (42.0, -1, 80, 30)                     # x0, y0, x1, y1 of the sweep clip box
 
+TYRE_REAR = dict(od_id=(21.5, 14.0), x=(32.5, 42.0), shoulder=1.2)    # RV21 F1 tyre on the N10 shaft (right side; the left is mirrored)
+TYRE_FRONT = dict(od_id=(11.0, 7.0), x=(32.5, 38.5), shoulder=0.6)     # micro tyre on the nose standoff
 __all__ = [n for n in dir() if not n.startswith("__")]   # last line: every name above is exported
