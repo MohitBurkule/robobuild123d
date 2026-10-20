@@ -40,7 +40,7 @@ def make_spec(model_file):
     P(id="weapon_motor_stator", kind="weapon_motor", catalog="gr1507", parent="mount_r", at=[0.0, WY, WZ], rot=[0, 0, 180], rotates_with="fixed", exposed=True,
       exposed_reason="Drisk: the GR1507 bell is the hub of the weapon, inside the spacer bore between the two Hardox discs; the discs shield it radially",
       label="GR1507 outrunner, fixed half: stator and cross base on RV03, phase leads out the back",
-      deviation="RVRN 2.0 STEP draws the GR1507 as one empty can with no stator; the real fixed stator stack and windings are added (a real motor has them)")
+      deviation="RVRN 2.0 STEP draws the GR1507 as one empty can with no stator, no windings and no leads; the real fixed stator stack, windings and the 3 phase leads (out of the base through the -Z arm, STEP shows no wire exit) are added: a real motor has them")
     P(id="weapon_motor_can", kind="other", role="rotor", catalog="gr1507_can", parent="spider", at=[0.0, 0.0, 0.0], rot=[0, 0, 180], rotates_with="weapon", exposed=True,
       exposed_reason="Drisk: the GR1507 bell is the hub of the weapon, inside the spacer bore between the two Hardox discs; the discs shield it radially",
       label="GR1507 bell and core: spins with the spider, wshaft and discs round the fixed stator")
@@ -49,7 +49,7 @@ def make_spec(model_file):
       shape=_spec_bearing(), label="MR85ZZ in the RV02 8 mm seat: outboard support of the threaded shaft end (inferred: the STEP shows the 7.9 seat but no bearing)")
     P(id="wshaft", kind="shaft", material="steel", process="cots", stock="GR1507 5 mm shaft (part of the motor): modelled whole, MR85 end X -18.7 through the bell and the rear bearing to its circlip end X 11.4", rotates_with="weapon", shaft_of="weapon_motor_can", parent="weapon_motor_can",
       deviation="the GR1507 shaft is part of the bought motor, which the STEP draws as one body (INDEX.txt lists no shaft); drawn separately here for the MR85 support and the spider collar",
-      shape={"type": "place", "shape": {"type": "cylinder", "radius": WSHAFT["r"], "height": WSHAFT["len"]}, "at": [WSHAFT["x"], 0, 0], "rot": [0, 90, 0]}, color="#777777", solid_fraction=SOLID["shaft"],
+      at=[0.0, 0.0, 0.0], rot=[0, 0, 180], shape=M("weapon_shaft", WO), color="#777777", solid_fraction=SOLID["shaft"],
       label="threaded end of the GR1507 shaft through the MR85 (its mass is in the motor)")
     P(id="spider", kind="weapon", material="aluminium", process="waterjet", stock="3 mm 7075 plate (one 2D profile: water-jet, no milling needed)",
       min_web_mm=WEB["spider"], min_web_reason="0.8 mm webs between the dog pockets and the rim are the designer's own (RVRN 2.0 STEP spider_1 measures 0.8 at the same four places)", rotates_with="weapon", parent="mount_r", at=list(WO), shape=M("spider", WO),
@@ -377,7 +377,7 @@ def reference_cad():
         R("wheel_rl", "RV22_Scalextric_F1_Front_tyre_1.stl", mode="envelope", tol_mm=TOL["tight"]),
         R("wheel_fl", "RV20_11OD_7ID_6W_Micro_slx_1.stl", mode="envelope", tol_mm=TOL["tight"], ref_to_world=_micro_to_world("l")),
         R("motor_l", "RV12_N10_2200_RPM_1.stl", mode="envelope", tol_mm=TOL["motor"], tol_vol_frac=VOL["motor"]),
-        R("weapon_motor_can", "GR1507_1.stl", mode="envelope", with_parts=["weapon_motor_stator"], tol_mm=TOL["motor"], tol_vol_frac=VOL["motor"],
+        R("weapon_motor_can", "GR1507_1.stl", mode="envelope", with_parts=["weapon_motor_stator", "wshaft"], tol_mm=TOL["motor"], tol_vol_frac=VOL["motor"],
           note="fixed half + rotating bell compared together; the STEP bell is empty, the real stator stack and windings sit in it (declared on the part)"),
         R("battery", "RV16_Turnabot_180mah_2s_1.stl", mode="envelope", tol_mm=TOL["motor"], tol_vol_frac=VOL["standoff"]),
         R("rxesc", "RV13_Malenki_nano_1.stl", mode="envelope", tol_mm=TOL["motor"], tol_vol_frac=VOL["motor"]),

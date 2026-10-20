@@ -1061,18 +1061,18 @@
     "deviations": [
      {
       "near": [
-       -15.4,
-       12.5,
-       19.3
+       -15.9,
+       11.5,
+       20.4
       ],
-      "r": 4.0,
+      "r": 5.0,
       "reason": "the STEP notch top is a zero-thickness wedge (mfg.thin_wall); thickened to a printable wall, rearmost point unchanged"
      },
      {
       "near": [
        -15.4,
-       42.0,
-       3.5
+       41.1,
+       2.8
       ],
       "r": 5.0,
       "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside, so the countersink keeps a 0.9 mm wall"
@@ -1087,18 +1087,18 @@
     "deviations": [
      {
       "near": [
-       15.4,
-       12.5,
-       19.3
+       15.9,
+       11.5,
+       20.4
       ],
-      "r": 4.0,
+      "r": 5.0,
       "reason": "the STEP notch top is a zero-thickness wedge (mfg.thin_wall); thickened to a printable wall, rearmost point unchanged"
      },
      {
       "near": [
        15.4,
-       42.0,
-       3.5
+       41.1,
+       2.8
       ],
       "r": 5.0,
       "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside, so the countersink keeps a 0.9 mm wall"
@@ -1745,7 +1745,8 @@
     "file": "GR1507_1.stl",
     "mode": "envelope",
     "with_parts": [
-     "weapon_motor_stator"
+     "weapon_motor_stator",
+     "wshaft"
     ],
     "tol_mm": 0.6,
     "tol_vol_frac": 0.3,
@@ -1920,7 +1921,7 @@
    "exposed": true,
    "exposed_reason": "Drisk: the GR1507 bell is the hub of the weapon, inside the spacer bore between the two Hardox discs; the discs shield it radially",
    "label": "GR1507 outrunner, fixed half: stator and cross base on RV03, phase leads out the back",
-   "deviation": "RVRN 2.0 STEP draws the GR1507 as one empty can with no stator; the real fixed stator stack and windings are added (a real motor has them)"
+   "deviation": "RVRN 2.0 STEP draws the GR1507 as one empty can with no stator, no windings and no leads; the real fixed stator stack, windings and the 3 phase leads (out of the base through the -Z arm, STEP shows no wire exit) are added: a real motor has them"
   },
   {
    "id": "weapon_motor_can",
@@ -2006,23 +2007,27 @@
    "shaft_of": "weapon_motor_can",
    "parent": "weapon_motor_can",
    "deviation": "the GR1507 shaft is part of the bought motor, which the STEP draws as one body (INDEX.txt lists no shaft); drawn separately here for the MR85 support and the spider collar",
+   "at": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    180
+   ],
    "shape": {
-    "type": "place",
-    "shape": {
-     "type": "cylinder",
-     "radius": 2.5,
-     "height": 30.1
-    },
-    "at": [
-     3.65,
-     0,
-     0
-    ],
-    "rot": [
-     0,
-     90,
-     0
-    ]
+    "type": "model",
+    "file": "src/build_revron.py",
+    "params": {
+     "part": "weapon_shaft",
+     "origin": [
+      0.0,
+      38.5,
+      23.5
+     ]
+    }
    },
    "color": "#777777",
    "solid_fraction": 0.05,
