@@ -212,7 +212,7 @@ def chassis():
         cuts.append(_ext(_poly([(10.0, -5.0), (10.0, 2.5), (26.0, 2.5), (30.4, 1.0), (30.4, -5.0)]), "yz", sg * 17.4, sg * 21.6))
         cuts.append(_ext(LUG_SCALLOP, "yz", sg * 17.4, sg * 21.6))   # lug underside rises along a big arc tangent to the flat at LUG_FLOOR_Z (fit to STEP RV01 sections at X 19.5)
         # under the nose standoff the lug follows its R3.25 arc (STEP): no hull chord below it where the scallop meets it
-        under = Polygon([(LUG_SCALLOP_YT, 0.0), (40.5, 0.0), (40.5, LUG_FLOOR_Z), (LUG_SCALLOP_YT, LUG_FLOOR_Z)]).difference(Point(SB).buffer(3.25, 96))   # the cusp between the scallop circle and the standoff arc
+        under = Polygon([(LUG_SCALLOP_YT, 0.0), (40.5, 0.0), (40.5, LUG_FLOOR_Z), (LUG_SCALLOP_YT, LUG_FLOOR_Z)]).difference(Point(SB).buffer(LUG_SB_R, 96)).difference(LUG_BLEND_FILL)   # the cusp between the scallop circle and the standoff arc
         cuts.append(_ext(under, "yz", sg * 17.4, sg * 21.6))
         cuts.append(_box(sg * 13.3, sg * 17.5, 12.0, 15.1, z0 - 0.1, 4.5))   # front wall stops at the rabbet under the tab (STEP)
         # motor stop wall: lower inner edge rounded R4.5 (STEP)
