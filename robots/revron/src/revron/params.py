@@ -427,7 +427,7 @@ FH_ORIGIN_X = 30.0                                                              
 STANDOFF_BORE_R, TYRE_SECTION_STEP = 1.25, 10                                           # standoff through-bore radius; shoulder arc step (deg)
 
 
-MNT_TIP_DEV, MNT_TIP_DEV_R = (MNT_IN + 2.5, 11.5, MNT_TOP_Z - 0.6), 5.0   # mount notch-top wedge thickened to a printable wall (|x|, y, z)
+MNT_TIP_DEV, MNT_TIP_DEV_R = (MNT_IN + 2.5, 11.5, MNT_TOP_Z + 0.9), 5.0   # mount notch-top wedge thickened to a printable wall (|x|, y, z)
 
 
 

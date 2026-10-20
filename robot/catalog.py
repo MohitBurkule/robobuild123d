@@ -291,7 +291,7 @@ def builtin() -> list[CatalogEntry]:
                      {"phases": [-11.8, 0, -6.4]}, {"at": [4.1, 0, 0], "dir": [1, 0, 0], "len": 14.6, "dia": 5.0},
                      {"kv": 2850, "max_current_a": 18.0, "typ_current_a": 8.0, "bell_mass_frac": 0.0, "rotor_part": "gr1507_can"}, "#3a3d42"),
         CatalogEntry("gr1507_can", "other", "GR1507 outrunner, rotating half: 19.6 bell (r7.4-9.8 wall, solid r4 core, 8-rib vented top), threaded 5 mm shaft out of the bell face", 7.4, "estimate",
-                     union([at(_gr1507_bell(), 0.0, 0, 0), at(minus(cyl_x(3.0, 5.2), [cyl_x(SHAFT_STUB_R, 5.4)]), 6.9, 0, 0)]),
+                     at(_gr1507_bell(), 0.0, 0, 0),
                      {}, {"at": [4.1, 0, 0], "dir": [1, 0, 0], "len": 14.6, "dia": 5.0}, {}, "#3a3d42"),
         flat("malenki_nano_rvrn2", "Malenki Nano (Rx + 2 brushed ESC), kapton wrapped with its leads (RVRN 2.0 RV13 envelope)", "esc", 32, 20, 4.4, 4.0,
              {"bat": [-16, -6, -1.0], "m1": [16, 6, -1.0], "m2": [-16, 6, -1.0], "wpn": [16, -6, -1.0]},

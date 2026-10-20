@@ -1063,7 +1063,7 @@
       "near": [
        -15.9,
        11.5,
-       18.9
+       20.4
       ],
       "r": 5.0,
       "reason": "the STEP notch top is a zero-thickness wedge (mfg.thin_wall); thickened to a printable wall, rearmost point unchanged"
@@ -1089,7 +1089,7 @@
       "near": [
        15.9,
        11.5,
-       18.9
+       20.4
       ],
       "r": 5.0,
       "reason": "the STEP notch top is a zero-thickness wedge (mfg.thin_wall); thickened to a printable wall, rearmost point unchanged"
@@ -1745,7 +1745,8 @@
     "file": "GR1507_1.stl",
     "mode": "envelope",
     "with_parts": [
-     "weapon_motor_stator"
+     "weapon_motor_stator",
+     "wshaft"
     ],
     "tol_mm": 0.6,
     "tol_vol_frac": 0.3,

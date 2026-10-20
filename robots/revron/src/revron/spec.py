@@ -377,7 +377,7 @@ def reference_cad():
         R("wheel_rl", "RV22_Scalextric_F1_Front_tyre_1.stl", mode="envelope", tol_mm=TOL["tight"]),
         R("wheel_fl", "RV20_11OD_7ID_6W_Micro_slx_1.stl", mode="envelope", tol_mm=TOL["tight"], ref_to_world=_micro_to_world("l")),
         R("motor_l", "RV12_N10_2200_RPM_1.stl", mode="envelope", tol_mm=TOL["motor"], tol_vol_frac=VOL["motor"]),
-        R("weapon_motor_can", "GR1507_1.stl", mode="envelope", with_parts=["weapon_motor_stator"], tol_mm=TOL["motor"], tol_vol_frac=VOL["motor"],
+        R("weapon_motor_can", "GR1507_1.stl", mode="envelope", with_parts=["weapon_motor_stator", "wshaft"], tol_mm=TOL["motor"], tol_vol_frac=VOL["motor"],
           note="fixed half + rotating bell compared together; the STEP bell is empty, the real stator stack and windings sit in it (declared on the part)"),
         R("battery", "RV16_Turnabot_180mah_2s_1.stl", mode="envelope", tol_mm=TOL["motor"], tol_vol_frac=VOL["standoff"]),
         R("rxesc", "RV13_Malenki_nano_1.stl", mode="envelope", tol_mm=TOL["motor"], tol_vol_frac=VOL["motor"]),
