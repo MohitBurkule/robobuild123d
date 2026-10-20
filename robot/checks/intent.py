@@ -14,6 +14,8 @@ Rules (entry keys):
   min_wall          part, min (1.8), max_frac (0.02), except [[lo], [hi]] boxes, envelope (only the outer X / Y skin):
                     wall thickness from inward rays.
   fillet            part, axis, h, at [[u, v], ...], r (0.8): no sharp outline corner within 1 mm of each load corner.
+                    exempt [{"at": [x, y], "reason": "<cites RVRN/RVnn/FSn, >= 20 chars>"}]: a sharp corner within 0.5 mm
+                    is INFO "matches original"; uncited reason stays BLOCKER; unmatched exempt point is a WARNING.
   insert_column     part, inserts [[x, y, z_bottom]], floor_z, r: material all the way from the floor to the insert.
   tyre_retention    hub, axis, at, span, tyre_id, min_interference (1.0 on diameter).
   captive_nut       nut, host (one or a list), move (0.3): the nut moved by `move` in any of 14 directions hits a host.
@@ -148,6 +150,55 @@ def sharp_corners_near(m, axis, h, pts, tol=1.0):
     g = section(m, AX[axis], h)
     cs = corners(g)
     return [tuple(p) for p in pts if any(math.dist(p, c[:2]) <= tol and c[2] > 60 for c in cs)]
+
+
+def sharp_corners_found(m, axis, h, pts, tol=1.0):
+    """The sharp outline corners [(x, y)] themselves that lie within tol of a load point."""
+    from .ref_features import corners, section
+
+    cs = corners(section(m, AX[axis], h))
+    return [(float(c[0]), float(c[1])) for c in cs if c[2] > 60 and any(math.dist(p, c[:2]) <= tol for p in pts)]
+
+
+EXEMPT_TOL = 0.5
+
+
+def fillet_exempt(found, exempt, tol=EXEMPT_TOL):
+    """Split sharp corners by `exempt` [{"at": [x, y], "reason": ...}].
+    Returns (blocked [(corner, note)], matched [(corner, reason)], stale [exempt dicts])."""
+    from .waiver import valid
+
+    blocked, matched, used = [], [], set()
+    for c in found:
+        i = next((i for i, x in enumerate(exempt) if math.dist(c, x["at"][:2]) <= tol), None)
+        if i is None:
+            blocked.append((c, ""))
+            continue
+        used.add(i)
+        if valid(exempt[i].get("reason")):
+            matched.append((c, exempt[i]["reason"]))
+        else:
+            blocked.append((c, "invalid exemption: needs reason >= 20 chars citing RVRN / RVnn / FSn"))
+    return blocked, matched, [x for i, x in enumerate(exempt) if i not in used]
+
+
+def _fillet(ctx, e, cid, why):
+    """intent.fillet with per-corner `exempt`: every corner is still probed."""
+    found = sharp_corners_found(_m(ctx, e["part"]), e["axis"], e["h"], e["at"])
+    blocked, matched, stale = fillet_exempt(found, e.get("exempt") or [])
+    r = lambda c: (round(c[0], 2), round(c[1], 2))
+    ctx.metrics.setdefault("intent", []).append({"rule": "fillet", "subject": e["part"], "value": len(blocked), "pass": not blocked})
+    out = [ok(cid, G, "Sharp corner matches original", f"{r(c)} in the {e['axis']}={e['h']} section: matches original: {why_}").on(e["part"])
+           for c, why_ in matched]
+    out += [fail(cid, G, WARNING, "Stale fillet exemption", f"exempt point {x['at']} matches no sharp corner (within {EXEMPT_TOL} mm) in the {e['axis']}={e['h']} section; remove it.").on(e["part"])
+            for x in stale]
+    if blocked:
+        sev = WARNING if e.get("severity") == "warning" else BLOCKER
+        bad = "; ".join(f"{r(c)}" + (f" ({n})" if n else "") for c, n in blocked)
+        out.append(fail(cid, G, sev, "Load corners are filleted", f"sharp corners at {bad} in the {e['axis']}={e['h']} section; concave load corners need r >= {e.get('r', 0.8)} so PLA does not crack there.{why}").on(e["part"]))
+    elif not matched:
+        out.append(ok(cid, G, "Load corners are filleted", f"no sharp corners in the {e['axis']}={e['h']} section.{why}"))
+    return out
 
 
 def column_gaps(m, inserts, floor_z, r):
@@ -370,6 +421,9 @@ def run(ctx):
     for e in (ctx.r.spec.raw or {}).get("intent", []) or []:
         cid = f"intent.{e.get('rule')}"
         try:
+            if e.get("rule") == "fillet" and e.get("exempt"):
+                out += _fillet(ctx, e, cid, f" Why: {e['why']}" if e.get("why") else "")
+                continue
             good, title, detail, subj, met = _rule(ctx, e)
         except Exception as ex:  # noqa: BLE001
             out.append(fail(cid, G, WARNING, "Intent check could not run", f"{e}: {type(ex).__name__}: {ex}"))
