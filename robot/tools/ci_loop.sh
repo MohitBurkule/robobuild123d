@@ -91,6 +91,7 @@ gate() {
   local files; files=$(git diff --name-only HEAD..."$b")
   gwt "$GWT/trial" HEAD || return 0
   git -C "$GWT/trial" merge -q --no-edit "$b" >/dev/null 2>&1 || { git -C "$GWT/trial" merge --abort; return 0; }  # conflicts: normal path logs them
+  (cd "$GWT/trial/robots/revron/src" && python3 build_revron.py >/dev/null 2>&1)   # committed spec.json may be stale vs spec.py: verify what the source builds
   if [ "$($GPY kind $files)" = verifier-only ]; then
     local t; t=$(echo "$files" | grep -E '^robot/tests/test_.*\.py$'); for f in $(echo "$files" | grep '^robot/checks/'); do
       m=$(basename "$f" .py); [ -f "$GWT/trial/robot/tests/test_$m.py" ] && t="$t robot/tests/test_$m.py"; done
@@ -100,7 +101,7 @@ gate() {
     log "gate passed ${b#origin/} $s (verifier-only, tests ok)"; return 0
   fi
   local bf="$P/ci_gate_baseline_$head" a0 i0 a1 i1
-  if [ ! -s "$bf" ]; then gwt "$GWT/base" HEAD || return 0; echo "$(gcount "$GWT/base" assembly) $(gcount "$GWT/base" interference)" > "$bf"; log "gate baseline $head (measured $(git -C "$GWT/base" rev-parse --short HEAD)): $(cat "$bf")"; fi
+  if [ ! -s "$bf" ]; then gwt "$GWT/base" HEAD || return 0; (cd "$GWT/base/robots/revron/src" && python3 build_revron.py >/dev/null 2>&1); echo "$(gcount "$GWT/base" assembly) $(gcount "$GWT/base" interference)" > "$bf"; log "gate baseline $head (measured $(git -C "$GWT/base" rev-parse --short HEAD)): $(cat "$bf")"; fi
   read a0 i0 < "$bf"
   a1=$(gcount "$GWT/trial" assembly); i1=$(gcount "$GWT/trial" interference)
   echo "$a1 $i1" > "$P/ci_gate_baseline_$(git -C "$GWT/trial" rev-parse --short "HEAD^{tree}")"
