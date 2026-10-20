@@ -28,8 +28,11 @@ render() { # async, one at a time, from a snapshot worktree of the verified sha 
 # [fix-G] combined merge gate (gate_all): ONE trial merge of all updated fix-* heads, one spec build (cached by input
 # tree hash), assembly + interference in parallel; not worse than HEAD's tree-keyed baseline -> all merge, else bisect
 # with halves gated in parallel until the offenders are found (rejected; blocker lines in $P/ci_gate_<branch>_<group>.log).
-# Branches touching only robot/checks/ or docs skip the verify but must pass the pytest files they touch.
-# *-param / all-[refactor] branches must also pass robots/revron/tools/geom_equal.py vs HEAD.
+# Fail closed: every run must finish (a -1 count, baseline or trial, is never an accept; an unfinished baseline is
+# re-measured once, then the round's geometry branches are held); a failed spec build holds, never verifies stale.
+# Branches touching only robot/checks/ or docs run the full robot/tests suite AND verify the check groups their modules
+# feed on HEAD and on the trial; blockers that disappear are rejected as "needs review" (listed in the log).
+# *-param / all-[param]/[refactor] branches must also pass robots/revron/tools/geom_equal.py vs HEAD.
 # Infra failures hold a branch (neither merged nor rejected). GATE=0 disables.
 GWT=${GATE_WT:-/tmp/claude-0/-home-user/6d647ed2-7427-59f3-8ab5-ba663cdaf3d4/scratchpad/ci_gate}
 GPY="python3 $PWD/robot/tools/ci_gate.py"
@@ -78,12 +81,13 @@ shard_verify() { # sha "groups" out
     else rc=$(cat "$S/results/$g.rc" 2>/dev/null || echo 99); failed="$failed $g"; fi
   done
 }
-gcount() { # dir group label -> blocker count (-1 = did not finish); log kept at $P/ci_gate_<label>_<group>.log
-  local c; c=$(mktemp -d "${TMPDIR:-/tmp}/ci_gate_cache.XXXX")  # c: log dir only; cache is the shared content-keyed one (fix-K)
-  local fc=; [ $(( ${i:-1} % ${FRESH_EVERY:-3} )) -eq 0 ] && fc="ROBOT_CACHE=$c"   # every 3rd round: fresh cache spot check
-  (cd "$1" && env $fc HEAVY_CI=1 /tmp/heavy.sh timeout "${GATE_TIMEOUT:-3000}" python3 -m robot verify "$SPEC" --full --only "$2" > "$c.log" 2>&1)
+gmode() { [ $(( ${i:-1} % ${FRESH_EVERY:-3} )) -eq 0 ] && echo fresh || echo cached; }   # every 3rd round: fresh cache
+gcount() { # dir group label -> blocker count (-1 = did not finish or bad exit code); log kept at $P/ci_gate_<label>_<group>.log
+  local c rc; c=$(mktemp -d "${TMPDIR:-/tmp}/ci_gate_cache.XXXX")  # c: log dir only; cache is the shared content-keyed one (fix-K)
+  local fc=; [ "$(gmode)" = fresh ] && fc="ROBOT_CACHE=$c"   # base and trial of one round use the same mode
+  (cd "$1" && env $fc HEAVY_CI=1 /tmp/heavy.sh timeout "${GATE_TIMEOUT:-3000}" python3 -m robot verify "$SPEC" --full --only "$2" > "$c.log" 2>&1); rc=$?
   cp "$c.log" "$P/ci_gate_${3:-$(basename "$1")}_$2.log" 2>/dev/null   # kept so a rejected fixer can read the blocker lines
-  $GPY count "$c.log"; rm -rf "${c:?}" "${c:?}.log"; }
+  $GPY count "$c.log" "$rc"; rm -rf "${c:?}" "${c:?}.log"; }
 gpair() { # dir label -> "assembly interference", both groups in parallel
   local t; t=$(mktemp -d "${TMPDIR:-/tmp}/ci_gpair.XXXX")
   gcount "$1" assembly "$2" > "$t/a" & gcount "$1" interference "$2" > "$t/i" & wait
@@ -93,30 +97,56 @@ spec_build() { # dir
   local k; k=$(echo "$(git -C "$1" rev-parse HEAD:robots/revron/src) $(git -C "$1" rev-parse HEAD:robot)" | sha1sum | cut -c1-16)
   local C="$P/spec_cache/$k"
   if [ -s "$C/spec.json" ] && [ -s "$C/revron.json" ]; then cp "$C/spec.json" "$1/robots/revron/spec.json"; cp "$C/revron.json" "$1/robot/templates/revron.json"; return 0; fi
-  (cd "$1/robots/revron/src" && python3 build_revron.py >/dev/null 2>&1) || return 0   # build failure: verify what is committed
+  (cd "$1/robots/revron/src" && timeout "${REGEN_TIMEOUT:-3000}" python3 build_revron.py) > "$P/ci_regen_$(basename "$1").log" 2>&1 \
+    || { log "regen FAILED in $1 ($(tail -1 "$P/ci_regen_$(basename "$1").log" | cut -c1-100))"; return 1; }   # never verify a stale spec
   mkdir -p "$P/spec_cache"; local t; t=$(mktemp -d "$P/spec_cache/.tmp.XXXX") || return 0
   if cp "$1/robots/revron/spec.json" "$t/spec.json" && cp "$1/robot/templates/revron.json" "$t/revron.json" && mv -T "$t" "$C" 2>/dev/null; then :; else rm -rf "${t:?}"; fi; }
 gfail() { log "gate rejected ${1#origin/} $2: $3 (blocker lines: $P/ci_gate_${1#origin/}_{assembly,interference}.log)"; printf '{"t":"%s","sha":"%s","group":"ci_gate","id":"ci_gate.rejected","parts":[],"branch":"%s","message":"[ci] gate rejected %s %s: %s"}\n' \
   "$(date -Is)" "$2" "${1#origin/}" "${1#origin/}" "$2" "$3" >> "$P/blockers_live_$(echo "${1#origin/}" | sed -E 's/^fix-(.).*/\1/' | tr a-z A-Z).jsonl"; return 1; }
-baseline() { # -> "a0 i0" for HEAD's tree (cached by tree hash; a merged trial is already measured)
-  local bf="$P/ci_gate_baseline_$(git rev-parse --short "HEAD^{tree}")"
-  if [ ! -s "$bf" ]; then gwt "$GWT/base" HEAD || return 1; spec_build "$GWT/base"; gpair "$GWT/base" base > "$bf.tmp" && mv "$bf.tmp" "$bf"; log "gate baseline $(git rev-parse --short "HEAD^{tree}"): $(cat "$bf")"; fi
+baseline() { # -> "a0 i0" for HEAD's tree (cached by tree hash + cache mode; a merged trial is already measured)
+  # an unfinished run (-1) is re-measured once; still -1 -> return 1 (hold), never cached, never an accept
+  local bf="$P/ci_gate_baseline_$(git rev-parse --short "HEAD^{tree}")_$(gmode)" a i k
+  if [ ! -s "$bf" ]; then
+    gwt "$GWT/base" HEAD || return 1; spec_build "$GWT/base" || return 1
+    for k in 1 2; do read a i < <(gpair "$GWT/base" base); [ "${a:--1}" -ge 0 ] && [ "${i:--1}" -ge 0 ] && break; done
+    log "gate baseline $(git rev-parse --short "HEAD^{tree}") ($(gmode)): $a $i"
+    [ "${a:--1}" -ge 0 ] && [ "${i:--1}" -ge 0 ] || { log "gate baseline did not finish twice ($a $i)"; return 1; }
+    echo "$a $i" > "$bf.tmp" && mv "$bf.tmp" "$bf"
+  fi
   cat "$bf"; }
-gverifier() { # branch -> 0 pass, 1 rejected, 2 infra. checks-only branches: the pytest files they touch
-  local b=$1 s d="$GWT/v_${1#origin/}" files t m f; s=$(git rev-parse --short "$b"); files=$(git diff --name-only HEAD..."$b")
-  gwt "$d" HEAD || return 2; git -C "$d" merge -q --no-edit "$b" >/dev/null 2>&1 || { git -C "$d" merge --abort; return 2; }
-  t=$(echo "$files" | grep -E '^robot/tests/test_.*\.py$'); for f in $(echo "$files" | grep '^robot/checks/'); do
-    m=$(basename "$f" .py); [ -f "$d/robot/tests/test_$m.py" ] && t="$t robot/tests/test_$m.py"; done
-  [ -z "$t" ] && t=robot/tests/test_checks.py
-  (cd "$d" && timeout 1800 python3 -m pytest $(echo $t | tr ' ' '\n' | sort -u | while read x; do [ -f "$x" ] && echo "$x"; done) -q -x > "$P/ci_gate_pytest_${b#origin/}.log" 2>&1) \
+gverifier() { # branch -> 0 pass, 1 rejected, 2 infra. checks-only: full robot/tests, then verify the touched groups on
+  # HEAD and on the trial; a blocker present on HEAD that is gone on the trial needs review (rejected, listed)
+  local b=$1 s d="$GWT/v_${1#origin/}" bd="$GWT/vb_${1#origin/}" files u; s=$(git rev-parse --short "$b"); files=$(git diff --name-only HEAD..."$b")
+  gwt "$d" HEAD || return 2
+  if ! git -C "$d" merge -q --no-edit "$b" >/dev/null 2>&1; then
+    u=$(git -C "$d" diff --name-only --diff-filter=U); git -C "$d" merge --abort 2>/dev/null
+    [ -n "$u" ] && log "conflict ${b#origin/} (verifier gate): $(echo $u)"; return 2; fi
+  (cd "$d" && timeout "${GATE_PYTEST_TIMEOUT:-3600}" python3 -m pytest robot/tests -q -p no:cacheprovider > "$P/ci_gate_pytest_${b#origin/}.log" 2>&1) \
     || { gfail "$b" "$s" "unit tests failed ($(tail -1 "$P/ci_gate_pytest_${b#origin/}.log" | cut -c1-100))"; return 1; }
-  log "gate passed ${b#origin/} $s (verifier-only, tests ok)"; return 0; }
+  local known vg g x bl="$P/ci_gate_vbase_${b#origin/}.log" tl="$P/ci_gate_vtrial_${b#origin/}.log"
+  known=$(python3 -m robot verify --list-groups 2>/dev/null | grep -E '^[a-z_]+$' | paste -sd' ')
+  vg=$(cd "$d" && $GPY groups "$known" $files)
+  [ "$vg" = all ] && vg=$(echo "$known" | tr ' ' '\n' | grep -v -x -e threat -e claims | paste -sd' ')
+  [ -z "$vg" ] && { log "gate passed ${b#origin/} $s (docs-only, tests ok)"; return 0; }
+  gwt "$bd" HEAD || return 2; spec_build "$bd" || return 2
+  spec_build "$d" || { gfail "$b" "$s" "spec regeneration failed on the trial merge"; return 1; }
+  : > "$bl"; : > "$tl"
+  for g in $vg; do
+    x=$(gcount "$bd" "$g" "vbase_${b#origin/}"); cat "$P/ci_gate_vbase_${b#origin/}_$g.log" >> "$bl" 2>/dev/null
+    [ "$x" -ge 0 ] || { log "gate hold ${b#origin/}: baseline verify of $g did not finish"; return 2; }
+    x=$(gcount "$d" "$g" "${b#origin/}"); cat "$P/ci_gate_${b#origin/}_$g.log" >> "$tl" 2>/dev/null
+    [ "$x" -ge 0 ] || { gfail "$b" "$s" "verify of $g did not finish on the trial"; return 1; }
+  done
+  if ! $GPY vanished "$bl" "$tl" > "$P/ci_gate_vanished_${b#origin/}.log"; then
+    gfail "$b" "$s" "needs review: $(grep -c . "$P/ci_gate_vanished_${b#origin/}.log") blockers disappeared on [$vg] ($(head -3 "$P/ci_gate_vanished_${b#origin/}.log" | cut -c1-80 | paste -sd'|'))"; return 1
+  fi
+  log "gate passed ${b#origin/} $s (verifier-only, full tests + verify of [$vg]: no blocker disappeared)"; return 0; }
 ggeom() { # branch -> 0 ok; [param]/[refactor] branches must be geometry-identical vs HEAD (own single-branch trial)
   local b=$1 s ge=robots/revron/tools/geom_equal.py d="$GWT/geom"; s=$(git rev-parse --short "$b")
-  [[ "$b" == *-param ]] || ! git log --no-merges --format=%s HEAD.."$b" | grep -qvE '^\[refactor\]' || return 0
+  [[ "$b" == *-param ]] || ! git log --no-merges --format=%s HEAD.."$b" | grep -qvE '^\[(param|refactor)\]' || return 0
   gwt "$d" HEAD || return 2; git -C "$d" merge -q --no-edit "$b" >/dev/null 2>&1 || { git -C "$d" merge --abort; return 2; }
-  [ -f "$d/$ge" ] || return 0; spec_build "$d"
-  gwt "$GWT/base" HEAD || return 2; spec_build "$GWT/base"; cp "$d/$ge" "$GWT/base/$ge"; rm -rf "${GWT:?}/snap"
+  [ -f "$d/$ge" ] || return 0; spec_build "$d" || return 2
+  gwt "$GWT/base" HEAD || return 2; spec_build "$GWT/base" || return 2; cp "$d/$ge" "$GWT/base/$ge"; rm -rf "${GWT:?}/snap"
   (cd "$GWT/base" && HEAVY_CI=1 /tmp/heavy.sh timeout 3000 python3 -u "$ge" snap "$GWT/snap") > "$P/ci_gate_geom.log" 2>&1 \
     && (cd "$d" && HEAVY_CI=1 /tmp/heavy.sh timeout 3000 python3 -u "$ge" check "$GWT/snap"; r=$?; echo "geom_equal check exit $r"; exit $r) >> "$P/ci_gate_geom.log" 2>&1
   local r=$?; git -C "$GWT/base" checkout -q -- . ; git -C "$GWT/base" clean -qfd robots/revron/tools
@@ -133,12 +163,12 @@ gate_set() {
     else git -C "$d" merge --abort 2>/dev/null; [ "$L" = r ] && log "conflict ${b#origin/} (in combined gate trial)"; echo "skip $b" >> "$out"; fi
   done
   set -- $m; [ $# -eq 0 ] && return
-  spec_build "$d"
+  spec_build "$d" || { for b; do echo "hold $b"; done >> "$out"; return; }
   local lab="set$L"; [ $# -eq 1 ] && lab=${1#origin/}
   local a1 i1; read a1 i1 < <(gpair "$d" "$lab")
   [ -n "$i1" ] || { for b; do echo "hold $b"; done >> "$out"; return; }
   if $GPY ok "$a0" "$a1" "$i0" "$i1"; then
-    echo "$a1 $i1" > "$P/ci_gate_baseline_$(git -C "$d" rev-parse --short "HEAD^{tree}")"
+    echo "$a1 $i1" > "$P/ci_gate_baseline_$(git -C "$d" rev-parse --short "HEAD^{tree}")_$(gmode)"
     log "gate set $L passed ($#: $(echo ${*#origin/})): assembly $a0->$a1, interference $i0->$i1"
     for b; do echo "pass $b"; done >> "$out"; return
   fi
@@ -185,20 +215,25 @@ mergeb() { # branch: merge into HEAD (spec-only conflicts take theirs; real conf
     if [ -z "$f" ]; then git checkout --theirs robots/revron/spec.json robot/templates/revron.json 2>/dev/null; git add robots/revron/spec.json robot/templates/revron.json; git commit -qm "Merge $b"; log "iter $i merged $b (spec-only conflict)"
     else git merge --abort; log "conflict ${b#origin/}: $(echo $f)"; fi
   fi; }
+regen_commit() { # regenerate the spec here (cached) and commit it; 1 (logged) when the build failed: do not verify
+  spec_build . || return 1
+  git add robots/revron/spec.json robot/templates/revron.json && { git diff --cached --quiet || git commit -qm "Revron: regenerate spec (ci loop)" >/dev/null; }; }
+merge_all() { local c b; c=$(cands); [ -n "$c" ] && for b in $(gate_all $c); do mergeb "$b"; done; }
 cands() { for b in $(heads); do git merge-base --is-ancestor "$b" HEAD || echo "$b"; done; }
 [ "${RENDER_FIRST:-0}" = 1 ] && render
 for i in $(seq "${START_ITER:-1}" "$MAX_ITERS"); do
   git fetch -q origin "+refs/heads/fix-*:refs/remotes/origin/fix-*" 2>>"$P/ci_push.err" || log "fetch failed"
-  c=$(cands); [ -n "$c" ] && for b in $(gate_all $c); do mergeb "$b"; done
-  (cd robots/revron/src && python3 build_revron.py >/dev/null 2>&1) && git add robots/revron/spec.json robot/templates/revron.json && git commit -qm "Revron: regenerate spec (ci loop)" >/dev/null 2>&1
+  merge_all
+  regen_commit || { push; continue; }   # build failed (logged): never verify a stale spec
   push
   sha=$(git rev-parse --short HEAD)
   if [ "$sha" = "$(cat "$P/ci_last_verified" 2>/dev/null)" ]; then  # nothing new: wait without spending an iteration
     while [ "$(git rev-parse --short HEAD)" = "$sha" ]; do
       sleep "${POLL:-120}"; git fetch -q origin "+refs/heads/fix-*:refs/remotes/origin/fix-*" 2>/dev/null
-      c=$(cands); [ -n "$c" ] && for b in $(gate_all $c); do mergeb "$b"; done
+      merge_all
       [ -f "${CI_STOP:-/tmp/ci_loop.stop}" ] && { log "stop file seen, exiting"; exit 0; }
     done
+    regen_commit || { push; continue; }   # same regeneration as the main pass
     push; sha=$(git rev-parse --short HEAD); log "iter $i new head $sha"
   fi
   [ -f "$P/blockers_live.jsonl" ] && mv "$P/blockers_live.jsonl" "$P/blockers_live.prev.jsonl"
@@ -227,7 +262,9 @@ for i in $(seq "${START_ITER:-1}" "$MAX_ITERS"); do
   groups=$(grep '^\[BLOCKER\]' "$out" | awk '{print $2}' | cut -d. -f1 | sort | uniq -c | awk '{printf "%s %s, ",$2,$1}')
   note=""; [ -n "$failed" ] && note=" (did not finish:$failed)"
   log "iter $i sha $sha: $n blockers$note (${groups%, })"
-  echo "$i $sha" > "$P/ci_iter_done"; echo "$sha" > "$P/ci_last_verified"
+  echo "$i $sha" > "$P/ci_iter_done"
+  # only a complete round marks the sha verified; groups that did not finish are retried on the same sha
+  [ -z "$failed" ] && echo "$sha" > "$P/ci_last_verified"
   [ "${CI_RENDER:-1}" = 1 ] && render
   [ "$n" -eq 0 ] && [ -z "$note" ] && { log "0 blockers at $sha, stopping"; exit 0; }
   [ -f "${CI_STOP:-/tmp/ci_loop.stop}" ] && { log "stop file seen, exiting"; exit 0; }

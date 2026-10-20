@@ -51,9 +51,11 @@ def flexible(material):
 
 
 def params(spec_raw):
-    p = dict(DEFAULTS)
-    p.update({k: float(v) for k, v in ((spec_raw or {}).get("sharp_corner") or {}).items() if k in DEFAULTS})
-    return p
+    """`sharp_corner` overrides over DEFAULTS: need a `reason`, clamped to _review.BOUNDS (see override_findings)."""
+    from ._review import BOUNDS, resolve
+
+    p = resolve((spec_raw or {}).get("sharp_corner"), DEFAULTS, BOUNDS["sharp_corner"])[0]
+    return {k: float(v) for k, v in p.items()}
 
 
 # ---------------------------------------------------------------- mesh helpers
@@ -288,20 +290,23 @@ def _near(e, p, default_r=3.0):
     return float(np.linalg.norm(np.asarray(e["near"], float) - p)) <= float(e.get("r_mm", default_r))
 
 
+INTENT_WINDOW_MM = 1.5   # the intent `fillet` rule probes only the section at `h`: own corners only that near it
+
+
 def intent_lines(raw):
-    """{part: [(axis index, (u, v))]}: corners owned by an intent `fillet` entry (vertical lines through u, v)."""
+    """{part: [(axis index, (u, v), h)]}: corners owned by an intent `fillet` entry (the point (u, v) in section h)."""
     out = {}
     for e in (raw or {}).get("intent") or []:
         if e.get("rule") == "fillet":
             ax = "xyz".index(e["axis"])
-            out.setdefault(e["part"], []).extend((ax, tuple(uv)) for uv in e.get("at", []))
+            out.setdefault(e["part"], []).extend((ax, tuple(uv), float(e["h"])) for uv in e.get("at", []))
     return out
 
 
-def _on_intent(lines, p, tol=1.5):
-    for ax, uv in lines:
+def _on_intent(lines, p, tol=1.5, window=INTENT_WINDOW_MM):
+    for ax, uv, h in lines:
         a, b = [i for i in range(3) if i != ax]
-        if math.dist((p[a], p[b]), uv) <= tol:
+        if math.dist((p[a], p[b]), uv) <= tol and abs(p[ax] - h) <= window:
             return True
     return False
 
@@ -369,6 +374,8 @@ def run(ctx):
     prm = params(raw)
     made = [rp for rp in ctx.r.parts if rp.part.catalog is None and catalog.process_canon(rp.part.process) in PROCESSES]
     whole, local, out = optouts(raw, [rp.part for rp in made])
+    from ._review import override_findings
+    out += override_findings((raw or {}).get("sharp_corner"), DEFAULTS, "sharp_corner", CID, G)
     lines = intent_lines(raw)
     refs = _ref_meshes(ctx)
     n_clean, rows = 0, []
@@ -427,7 +434,8 @@ def run(ctx):
             if opt is not None:
                 row.update(severity=INFO, why=f"opt-out: {opt['reason']}")
             elif r_ref is not None and r_ours >= r_ref - prm["ref_tol_mm"]:
-                row.update(severity=INFO, why="matches original")
+                # a sharp reference is no evidence a printed load path survives it: load corners stay WARNING
+                row.update(severity=WARNING if loads else INFO, why="matches original")
             rows.append(row)
             sev_groups[row["severity"]].append(row)
         for sev in (BLOCKER, WARNING):

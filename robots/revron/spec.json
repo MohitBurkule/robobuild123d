@@ -161,10 +161,19 @@
    "role": "GR1507 weapon motor",
    "kind": "part",
    "match": [
-    "weapon_motor"
+    "weapon_motor_stator"
    ],
    "count": 1,
    "catalog": "gr1507"
+  },
+  {
+   "role": "GR1507 bell (rotor half)",
+   "kind": "part",
+   "match": [
+    "weapon_motor_can"
+   ],
+   "count": 1,
+   "catalog": "gr1507_can"
   },
   {
    "role": "Motor back spacer",
@@ -376,7 +385,7 @@
   },
   {
    "a": "wshaft",
-   "b": "weapon_motor",
+   "b": "weapon_motor_can",
    "max_depth_mm": 2.6,
    "reason": "wshaft is the GR1507's own shaft, already drawn inside the catalog motor envelope"
   },
@@ -621,7 +630,7 @@
   },
   {
    "parts": [
-    "weapon_motor"
+    "weapon_motor_stator"
    ],
    "dir": [
     -1,
@@ -1606,11 +1615,15 @@
     "tol_vol_frac": 0.3
    },
    {
-    "part": "weapon_motor",
+    "part": "weapon_motor_can",
     "file": "GR1507_1.stl",
     "mode": "envelope",
+    "with_parts": [
+     "weapon_motor_stator"
+    ],
     "tol_mm": 0.6,
-    "tol_vol_frac": 0.3
+    "tol_vol_frac": 0.3,
+    "note": "fixed half + rotating bell compared together; the STEP bell is empty, the real stator stack and windings sit in it (declared on the part)"
    },
    {
     "part": "battery",
@@ -1763,7 +1776,7 @@
    "label": "1.5 mm printed motor back spacer: stator base off the mount, clears the rear bearing boss and the phase leads"
   },
   {
-   "id": "weapon_motor",
+   "id": "weapon_motor_stator",
    "kind": "weapon_motor",
    "catalog": "gr1507",
    "parent": "mount_r",
@@ -1780,7 +1793,29 @@
    "rotates_with": "fixed",
    "exposed": true,
    "exposed_reason": "Drisk: the GR1507 bell is the hub of the weapon, inside the spacer bore between the two Hardox discs; the discs shield it radially",
-   "label": "GR1507 outrunner: stator on RV03, bell drives the spider"
+   "label": "GR1507 outrunner, fixed half: stator and cross base on RV03, phase leads out the back",
+   "deviation": "RVRN 2.0 STEP draws the GR1507 as one empty can with no stator; the real fixed stator stack and windings are added (a real motor has them)"
+  },
+  {
+   "id": "weapon_motor_can",
+   "kind": "other",
+   "role": "rotor",
+   "catalog": "gr1507_can",
+   "parent": "spider",
+   "at": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    180
+   ],
+   "rotates_with": "weapon",
+   "exposed": true,
+   "exposed_reason": "Drisk: the GR1507 bell is the hub of the weapon, inside the spacer bore between the two Hardox discs; the discs shield it radially",
+   "label": "GR1507 bell and core: spins with the spider, wshaft and discs round the fixed stator"
   },
   {
    "id": "wbearing",
@@ -1842,8 +1877,8 @@
    "process": "cots",
    "stock": "GR1507 5 mm shaft (part of the motor): modelled whole, MR85 end X -18.7 through the bell and the rear bearing to its circlip end X 11.4",
    "rotates_with": "weapon",
-   "shaft_of": "weapon_motor",
-   "parent": "weapon_motor",
+   "shaft_of": "weapon_motor_can",
+   "parent": "weapon_motor_can",
    "deviation": "the GR1507 shaft is part of the bought motor, which the STEP draws as one body (INDEX.txt lists no shaft); drawn separately here for the MR85 support and the spider collar",
    "shape": {
     "type": "place",
@@ -1913,7 +1948,7 @@
    "color": "#b8bcc2",
    "weapon": {
     "kind": "disc",
-    "motor": "weapon_motor",
+    "motor": "weapon_motor_stator",
     "cells": 2,
     "reduction": 1.0,
     "spin_axis": [
@@ -3473,7 +3508,7 @@
     "mount_r",
     "motor_spacer"
    ],
-   "threads_into": "weapon_motor",
+   "threads_into": "weapon_motor_stator",
    "reason": "button heads (one hex1.3 key for every M2) sunk in the RV03 boss counterbores (inferred: the STEP shows the 4.4 counterbores, not the screws)",
    "removable": true
   },
@@ -3511,7 +3546,7 @@
     "mount_r",
     "motor_spacer"
    ],
-   "threads_into": "weapon_motor",
+   "threads_into": "weapon_motor_stator",
    "reason": "button heads (one hex1.3 key for every M2) sunk in the RV03 boss counterbores (inferred: the STEP shows the 4.4 counterbores, not the screws)",
    "removable": true
   },
@@ -3549,7 +3584,7 @@
     "mount_r",
     "motor_spacer"
    ],
-   "threads_into": "weapon_motor",
+   "threads_into": "weapon_motor_stator",
    "reason": "button heads (one hex1.3 key for every M2) sunk in the RV03 boss counterbores (inferred: the STEP shows the 4.4 counterbores, not the screws)",
    "removable": true
   },
@@ -3587,7 +3622,7 @@
     "mount_r",
     "motor_spacer"
    ],
-   "threads_into": "weapon_motor",
+   "threads_into": "weapon_motor_stator",
    "reason": "button heads (one hex1.3 key for every M2) sunk in the RV03 boss counterbores (inferred: the STEP shows the 4.4 counterbores, not the screws)",
    "removable": true
   },
@@ -3610,7 +3645,7 @@
    "through": [
     "spider"
    ],
-   "threads_into": "weapon_motor",
+   "threads_into": "weapon_motor_can",
    "hole": {
     "d": 2.0,
     "length": 4.0,
@@ -3699,7 +3734,7 @@
    "through": [
     "spider"
    ],
-   "threads_into": "weapon_motor",
+   "threads_into": "weapon_motor_can",
    "hole": {
     "d": 2.0,
     "length": 4.0,
@@ -3788,7 +3823,7 @@
    "through": [
     "spider"
    ],
-   "threads_into": "weapon_motor",
+   "threads_into": "weapon_motor_can",
    "hole": {
     "d": 2.0,
     "length": 4.0,
@@ -3877,7 +3912,7 @@
    "through": [
     "spider"
    ],
-   "threads_into": "weapon_motor",
+   "threads_into": "weapon_motor_can",
    "hole": {
     "d": 2.0,
     "length": 4.0,
@@ -4468,7 +4503,7 @@
    "reason": "O-ring in the front hub groove: drives the front wheel"
   },
   {
-   "a": "weapon_motor",
+   "a": "weapon_motor_stator",
    "b": "mount_r",
    "method": "screw",
    "reason": "Stator base on 4 M2 through RV03 and the back spacer"
@@ -4482,7 +4517,7 @@
   },
   {
    "a": "spider",
-   "b": "weapon_motor",
+   "b": "weapon_motor_can",
    "method": "screw",
    "reason": "Spider on the bell, 4 M2 on r4.5; its 5.2 bore centres it on the shaft collar",
    "mechanical_key": true
@@ -4516,7 +4551,7 @@
   },
   {
    "a": "wshaft",
-   "b": "weapon_motor",
+   "b": "weapon_motor_can",
    "method": "press_fit",
    "reason": "The shaft is the GR1507 motor's own steel shaft, pressed into the bell at the factory",
    "interference_mm": 0.02,
@@ -4619,7 +4654,7 @@
   {
    "id": "w_wesc_m",
    "from": "wesc.motor",
-   "to": "weapon_motor.phases",
+   "to": "weapon_motor_stator.phases",
    "awg": 24,
    "kind": "motor",
    "slack_mm": 15,
@@ -5178,7 +5213,8 @@
    "parts": [
     "mount_l",
     "motor_spacer",
-    "weapon_motor",
+    "weapon_motor_stator",
+    "weapon_motor_can",
     "wbearing",
     "wshaft",
     "spider",

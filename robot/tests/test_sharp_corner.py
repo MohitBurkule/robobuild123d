@@ -92,8 +92,11 @@ def test_reference_match_downgrades(tmp_path):
 
 
 def test_intent_fillet_corner_not_double_reported():
-    raw = {"intent": [{"rule": "fillet", "part": "br", "axis": "z", "h": 5, "at": [[3, 3]]}]}
-    assert not _fails(S.run(_ctx(bracket(0), raw=raw)))
+    # the intent rule probes only the section at h: it owns the corner there, not along the whole line (review #11)
+    short = trimesh.creation.extrude_polygon(L, 2)
+    raw = {"intent": [{"rule": "fillet", "part": "br", "axis": "z", "h": 1, "at": [[3, 3]]}]}
+    assert not _fails(S.run(_ctx(short, raw=raw)))
+    assert (S.CID, WARNING) in _fails(S.run(_ctx(bracket(0), raw=raw)))   # 10 mm tall: corner far above h=1 is unowned
 
 
 def test_flexible_capped_at_warning(tmp_path):
