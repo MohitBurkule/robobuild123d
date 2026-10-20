@@ -32,7 +32,10 @@ render() { # async, one at a time, from a snapshot worktree of the verified sha 
 # GATE=0 disables. Returns 0 = merge, 1 = rejected (already logged).
 GWT=${GATE_WT:-/tmp/claude-0/-home-user/6d647ed2-7427-59f3-8ab5-ba663cdaf3d4/scratchpad/ci_gate}
 GPY="python3 $PWD/robot/tools/ci_gate.py"
-gwt() { [ -d "$1" ] || git worktree add -q --detach "$1" HEAD; git -C "$1" merge --abort 2>/dev/null; git -C "$1" reset -q --hard; git -C "$1" checkout -q --detach "$2"; }
+gwt() { # dir rev; rev resolved in THIS worktree (a bare "HEAD" inside -C dir would be dir's own HEAD)
+  local r; r=$(git rev-parse "$2^{commit}") || return 1
+  [ -d "$1" ] || git worktree add -q --detach "$1" "$r"; git -C "$1" merge --abort 2>/dev/null; git -C "$1" reset -q --hard; git -C "$1" clean -fdq
+  git -C "$1" checkout -q --detach "$r" && [ "$(git -C "$1" rev-parse HEAD)" = "$r" ] || { log "gate worktree $1 not at $r"; return 1; }; }
 gcount() { # dir group -> blocker count (-1 = did not finish)
   local c; c=$(mktemp -d "${TMPDIR:-/tmp}/ci_gate_cache.XXXX")
   (cd "$1" && ROBOT_CACHE=$c HEAVY_CI=1 /tmp/heavy.sh timeout "${GATE_TIMEOUT:-3000}" python3 -m robot verify "$SPEC" --full --only "$2" > "$c.log" 2>&1)
@@ -43,7 +46,7 @@ gate() {
   [ "${GATE:-1}" = 1 ] || return 0
   local b=$1 s; s=$(git rev-parse --short "$b"); local head; head=$(git rev-parse --short HEAD)
   local files; files=$(git diff --name-only HEAD..."$b")
-  gwt "$GWT/trial" HEAD
+  gwt "$GWT/trial" HEAD || return 0
   git -C "$GWT/trial" merge -q --no-edit "$b" >/dev/null 2>&1 || { git -C "$GWT/trial" merge --abort; return 0; }  # conflicts: normal path logs them
   if [ "$($GPY kind $files)" = verifier-only ]; then
     local t; t=$(echo "$files" | grep -E '^robot/tests/test_.*\.py$'); for f in $(echo "$files" | grep '^robot/checks/'); do
@@ -54,7 +57,7 @@ gate() {
     log "gate passed ${b#origin/} $s (verifier-only, tests ok)"; return 0
   fi
   local bf="$P/ci_gate_baseline_$head" a0 i0 a1 i1
-  if [ ! -s "$bf" ]; then gwt "$GWT/base" HEAD; echo "$(gcount "$GWT/base" assembly) $(gcount "$GWT/base" interference)" > "$bf"; log "gate baseline $head: $(cat "$bf")"; fi
+  if [ ! -s "$bf" ]; then gwt "$GWT/base" HEAD || return 0; echo "$(gcount "$GWT/base" assembly) $(gcount "$GWT/base" interference)" > "$bf"; log "gate baseline $head (measured $(git -C "$GWT/base" rev-parse --short HEAD)): $(cat "$bf")"; fi
   read a0 i0 < "$bf"
   a1=$(gcount "$GWT/trial" assembly); i1=$(gcount "$GWT/trial" interference)
   $GPY decide "$b" "$s" "$a0" "$a1" "$i0" "$i1" "$P" >/dev/null || return 1
