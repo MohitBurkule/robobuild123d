@@ -104,6 +104,36 @@ def slide(ctx, members, present, d, base=None):
     return ("ok", last + 3.0)
 
 
+def shank_clears(ctx, i, present):
+    """A screw backed out along a free path until its shank has left the part it threads into and every part it passes
+    through is out: the rest of its way is open, so it counts as removed even if the straight slide to infinity hits
+    something further on (the other mount). Once clear it must also leave along a collision-free sideways path (a screw boxed in on all sides still fails). Returns (direction, travel)."""
+    w, r = ctx.world, ctx.r
+    b = w.bodies[i]
+    f = next((f for f in r.spec.fasteners if f.id == b.id), None)
+    if f is None or not f.threads_into:
+        return None
+    host = [w.index(t) for t in [f.threads_into] + list(f.through or [])]
+    host = [j for j in host if j is not None and present[j]]
+    for d in candidate_dirs(ctx, i):
+        res = slide(ctx, [i], present, d)
+        if res[0] != "hit":
+            continue
+        t = 0.0
+        while t < res[2] - 1e-9:
+            sh = d * t
+            if not any(measure.aabb_overlap(b.aabb + sh, w.bodies[j].aabb) and
+                       measure.overlap_exceeds(b, w.bodies[j], 0.05, sh) for j in host):
+                for e in AXES:   # out of its threads, it must leave along a free path (lifted out of the gap), not just sit clear
+                    if abs(float(e @ d)) > 0.99:
+                        continue
+                    r2 = slide(ctx, [i], present, e, base=sh)
+                    if r2[0] == "ok":
+                        return e, t + r2[1]
+            t += STEP
+    return None
+
+
 def loose_exit(ctx, i, present):
     """A screw whose nut / threaded part has already left is loose: it backs out along its axis only until its shank
     clears the parts it passes through, then drops out sideways (a captive screw between an upright and a disc).
@@ -205,7 +235,9 @@ def _sweep(ctx, present, root, teardown, steps):
                     progress = True
                     break
             else:
-                le = loose_exit(ctx, i, present) if b.fastener else None
+                le = shank_clears(ctx, i, present) if b.fastener else None
+                if le is None:
+                    le = loose_exit(ctx, i, present) if b.fastener else None
                 if le is not None:
                     present[i] = False
                     steps.append(AssemblyStep(len(steps) + 1, b.id, [float(x) for x in le[0]], float(le[1])))
