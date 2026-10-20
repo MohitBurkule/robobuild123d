@@ -1,7 +1,7 @@
 # Revron relations
 
-Masters live at the top of `src/revron/params.py`. Everything else is derived from them or is a catalog / measured
-(`# param: organic`) value. Part files must use the derived name, never retype its number (lint: `param.unlinked`).
+Masters live at the top of `src/revron/params_chassis.py` (`params.py` re-exports the themed modules chassis -> weapon -> side -> hardware -> spec -> drive). Everything else is derived from them or is a catalog / measured
+(`# param: organic`) value. Part files must use the derived name, never retype its number (lint: `param.unlinked`, which also scans module-level constants and tables of part files outside `# param: organic` blocks).
 
 | Master | Value | Meaning |
 |---|---|---|

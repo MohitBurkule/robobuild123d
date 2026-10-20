@@ -233,14 +233,29 @@ def lint_source(text, exempt_funcs=None):
 
 def param_pool(text):
     """{value: name} of module-level named params: scalars, tuple/list/dict members (`NAME[i]`, `NAME.key`)."""
-    pool = {}
+    pool, env = {}, {}
     try:
         tree = ast.parse(text)
     except SyntaxError:
         return pool
 
-    def add(node, name, depth=0):
+    def ev(node):   # derived params: + - * / of literals and earlier named scalars
         v = _num(node)
+        if v is not None:
+            return v
+        if isinstance(node, ast.Name):
+            return env.get(node.id)
+        if isinstance(node, ast.BinOp) and isinstance(node.op, (ast.Add, ast.Sub, ast.Mult, ast.Div)):
+            a, b = ev(node.left), ev(node.right)
+            if a is None or b is None or (isinstance(node.op, ast.Div) and not b):
+                return None
+            return {ast.Add: a + b, ast.Sub: a - b, ast.Mult: a * b}.get(type(node.op), a / b if b else None)
+        return None
+
+    def add(node, name, depth=0):
+        v = ev(node)
+        if v is not None and depth == 0:
+            env[name] = v
         if v is not None:
             if v not in TRIVIAL:
                 pool.setdefault(float(v), name)
@@ -281,6 +296,45 @@ def unlinked(v, pool, scalars=None, tol=1e-6):
     return None
 
 
+def module_literals(text):
+    """{value: [lines]} of numeric literals at module level (constants, tuples, tables) outside organic regions."""
+    tree, lines = ast.parse(text), text.splitlines()
+    ex, _, _ = _organic(lines)
+    vals = defaultdict(list)
+    for st in tree.body:
+        if isinstance(st, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Import, ast.ImportFrom)):
+            continue
+        stack = [st]
+        while stack:
+            n = stack.pop()
+            if isinstance(n, (ast.Lambda, ast.Subscript)):
+                continue
+            v = _num(n)
+            if v is not None:
+                if n.lineno not in ex and v not in TRIVIAL:
+                    vals[v].append(n.lineno)
+                continue
+            stack.extend(ast.iter_child_nodes(n))
+    return dict(vals)
+
+
+def master_block(text):
+    """Source of the master-parameter block: from a `MASTER DESIGN PARAMETERS` comment to the next `# ---` rule."""
+    out, on = [], False
+    for ln in text.splitlines():
+        if "MASTER DESIGN PARAMETERS" in ln:
+            on = True
+        elif on and ln.startswith("# ---"):
+            break
+        elif on:
+            out.append(ln)
+    return "\n".join(out)
+
+
+def is_param_module(path):
+    return Path(path).name.startswith("params")
+
+
 def sources(spec):
     seen = []
     for p in spec.parts:
@@ -319,10 +373,15 @@ def lint_spec(spec):
     matched = set()
     nmax, dmin = int(cfg["max_literals"]), int(cfg["dup_min"])
     srcs, pool = sources(spec), {}
-    for path in srcs:
-        for v, n in param_pool(path.read_text()).items():
+    pmods, masters = [p for p in srcs if is_param_module(p)], {}
+    for path in pmods or srcs:
+        text = path.read_text()
+        for v, n in param_pool(text).items():
             pool.setdefault(v, n)
-    scalars = {v: n for v, n in pool.items() if "[" not in n and "." not in n and abs(v) >= 1.0}
+        for v, n in param_pool(master_block(text)).items():
+            masters.setdefault(v, n)
+    # A +- B only over the master design params (sums of unrelated params are coincidences, not relations)
+    scalars = {v: n for v, n in (masters or pool).items() if "." not in n and abs(v) >= 1.0}
     for path in srcs:
         name = path.name
         res = lint_source(path.read_text(), ex.get(name, {}))
@@ -348,7 +407,11 @@ def lint_spec(spec):
                                 f"{name}: {v!r} appears {len(lns)}× (lines {', '.join(map(str, sorted(lns)[:8]))}"
                                 f"{'…' if len(lns) > 8 else ''}).")
                            .fix("Make it one named param (or derive it from one)."))
-        for v, lns in sorted(res["values"].items(), key=lambda kv: min(kv[1])):
+        vals = defaultdict(list, {v: list(l) for v, l in res["values"].items()})
+        if pmods and not is_param_module(path):
+            for v, l in module_literals(path.read_text()).items():
+                vals[v] += l
+        for v, lns in sorted(vals.items(), key=lambda kv: min(kv[1])):
             # dimensions only: an int is a count / angle / segment number, a whole float < 10 is too common to mean much
             dim = isinstance(v, float) and abs(v) >= 1.0 and (v % 1 or abs(v) >= 10)
             rel = unlinked(v, pool, scalars if v % 1 else {}) if dim else None
