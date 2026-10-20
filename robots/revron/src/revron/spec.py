@@ -24,6 +24,7 @@ def make_spec(model_file):
 
     # ---------------------------------------------------------------- structure
     P(id="tub", kind="structure", print_orientation="-z", rotates_with="fixed", solid_fraction=SOLID["tub"], color="#2a2c30", shape=M("chassis"), **PLA,
+      thin_wall_deviation="matches original RVRN 2.0: the switch-slot rim is 0.5 mm wide on RV01_Chassis_1 too (RV01 section y=-10: slot edge x=27.0, outer face x=27.5) and 0.65 mm between the slot front and the deck pocket (section x=25: y -12.25 to -11.6)",
       label="RV01 printed chassis: closed X-ribbed deck (printed deck-down), open floor for the base panel, N10 keyhole side pockets, nut lobes, weapon-mount tabs and standoff lugs")
     P(id="base_panel", kind="structure", print_orientation="+z", rotates_with="fixed", color="#2a2c30", shape=M("base_panel"), **PLA,
       label="RV26 1 mm printed base panel, 5 M2 CSK into the floor heat-sets, 0.45 mm pads preload the N10s")
@@ -233,8 +234,9 @@ def intent_checks():
     A("insert_column", "printed deck-down, each heat-set insert sits on a solid column back to the deck (the first layers): no hanging boss to pull out",
       part="tub", inserts=[[x, y, CH["deck"]] for x, y in INS], floor_z=INS_Z[0], r=2.2)
     x, w = CH["x"], CH["wall"]
-    A("fillet", "inside wall corners are radiused: sharp PLA inside corners crack under impact (the two rear corners are squared on purpose for the N10 gearbox plates, SQUARE in tub_shell_cuts)", part="tub", axis="z", h=FILLET_H,
-      at=[[x - w, CH["y1"] - w], [-x + w, CH["y1"] - w]])
+    A("fillet", "inside wall corners are radiused: sharp PLA inside corners crack under impact", part="tub", axis="z", h=FILLET_H,
+      at=[[-x + w, CH["y0"] + w], [x - w, CH["y0"] + w], [x - w, CH["y1"] - w], [-x + w, CH["y1"] - w]],
+      exempt=[dict(at=[sg * (x - w), CH["y0"] + w], reason="RVRN RV01 square, N10 gearbox plate seat, r=0.0 (RV01_Chassis_1 z=10 slice: wall x=27.5 meets y=-35.6 at 90 deg)") for sg in (1, -1)])
     A("tool_count", "pit kit: one hex key per screw size (1.3 for M2, 2 for M3); the weapon swap needs only the 2 mm key", max=2, module_max=1,
       module=["bolt_ula", "bolt_ulb", "bolt_ura", "bolt_urb"])
     rot = ["spider", "disc_a", "disc_b", "dspacer"]

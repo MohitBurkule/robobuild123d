@@ -347,7 +347,7 @@ ELECTRONICS = dict(failsafe=True, weapon_remote_disable=True, radio="2.4 GHz", c
 MASS_LIMIT_G, SQUARE_MM = 150, 150      # AWS 2025 antweight limits
 CLAIMS = [dict(id="c_mass", text=f"weighs {MASS_LIMIT_G} g or less", metric="mass_total_g", op="<=", value=MASS_LIMIT_G),
           dict(id="c_fit", text=f"fits the {SQUARE_MM} mm square", metric="footprint_mm", op="<=", value=SQUARE_MM)]
-SHARP_OK = [dict(part="tub", near=[sg * 31.4, -11.7, 5.4], r_mm=1.0, reason="inside corner of the lobe-tail step is the side panel's own square relief edge (STEP RV23 diamond): the TPU panel conforms, rounding it in the tub would leave a 0.07 mm sliver") for sg in (1, -1)] + [dict(part="tub", near=[sg * 29.4, 13.0, 17.6], r_mm=1.0, reason="0.1 mm step where the side-panel mating cut ends at the front-corner flange (Y 13.0): the cut is the TPU panel's own square edge (STEP RV23); a radius would leave a sliver of panel inside the tub") for sg in (1, -1)] + [dict(part="base_panel", near=[27.9, -21.5, 4.5], r_mm=3.0,
+SHARP_OK = [dict(part="tub", near=[sg * 31.4, -11.7, 5.4], r_mm=1.0, reason="inside corner of the lobe-tail step is the side panel's own square relief edge (STEP RV23 diamond): the TPU panel conforms, rounding it in the tub would leave a 0.07 mm sliver") for sg in (1, -1)] + [dict(part="base_panel", near=[27.9, -21.5, 4.5], r_mm=3.0,
                  reason="screw boss is 0.3 mm tall (any taller breaks the reference silhouette), so its base fillet is capped at R0.25; the STEP pad base is R0.5")]
 _ORING = "O-ring is rubber: it squashes 0.16 mm against the plain inner face of the STEP side panel (the STEP has no belt channel)"
 _N10_FLAT = "the catalog N10 shaft is drawn round; the hub's D-flat sits on its flat"
