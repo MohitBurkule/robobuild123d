@@ -33,6 +33,38 @@ render() { # async, one at a time, from a snapshot worktree of the verified sha 
 GWT=${GATE_WT:-/tmp/claude-0/-home-user/6d647ed2-7427-59f3-8ab5-ba663cdaf3d4/scratchpad/ci_gate}
 GPY="python3 $PWD/robot/tools/ci_gate.py"
 gwt() { [ -d "$1" ] || git worktree add -q --detach "$1" HEAD; git -C "$1" merge --abort 2>/dev/null; git -C "$1" reset -q --hard; git -C "$1" checkout -q --detach "$2"; }
+# SHARD=1: hand groups to robot/tools/shard_worker.sh on any container sharing $P (plus PAR local workers).
+# A claim whose heartbeat (mtime) is older than STALE s is requeued, so local workers pick it up.
+# Sets done_n/failed/rc and appends results to $3 in group order, exactly like the serial path.
+shard_verify() { # sha "groups" out
+  local S="$P/shards/$1" g w pids= now m
+  rm -rf "$S"; mkdir -p "$S/queue" "$S/claimed" "$S/results"
+  git rev-parse HEAD > "$S/sha"
+  for g in $2; do echo "$1" > "$S/queue/$g"; done
+  for w in $(seq "${PAR:-1}"); do
+    WORKER_ID="local$w-$$" SHARDS="$P/shards" STOP="$S/done" IDLE=999999 robot/tools/shard_worker.sh 2>>"$P/shard_local.log" & pids="$pids $!"
+  done
+  while :; do
+    m=0; for g in $2; do [ -f "$S/results/$g.rc" ] || m=$((m+1)); done
+    [ "$m" -eq 0 ] && break
+    now=$(date +%s)
+    for c in "$S"/claimed/*; do
+      [ -f "$c" ] || continue
+      if [ $((now - $(stat -c %Y "$c" 2>/dev/null || echo "$now"))) -gt "${STALE:-900}" ]; then
+        g=${c##*.}; [ -f "$S/results/$g.rc" ] && { rm -f "$c"; continue; }
+        mv "$c" "$S/queue/$g" 2>/dev/null && log "shard $g: stale claim ${c##*/} requeued"
+      fi
+    done
+    [ -f "${CI_STOP:-/tmp/ci_loop.stop}" ] && break
+    sleep "${SHARD_POLL:-15}"
+  done
+  touch "$S/done"; wait $pids 2>/dev/null
+  for g in $2; do
+    if [ -f "$S/results/$g.log" ]; then cat "$S/results/$g.log" >> "$3"; fi
+    if grep -q 'blockers,' "$S/results/$g.log" 2>/dev/null; then done_n=$((done_n+1))
+    else rc=$(cat "$S/results/$g.rc" 2>/dev/null || echo 99); failed="$failed $g"; fi
+  done
+}
 gcount() { # dir group -> blocker count (-1 = did not finish)
   local c; c=$(mktemp -d "${TMPDIR:-/tmp}/ci_gate_cache.XXXX")
   (cd "$1" && ROBOT_CACHE=$c HEAVY_CI=1 /tmp/heavy.sh timeout "${GATE_TIMEOUT:-3000}" python3 -m robot verify "$SPEC" --full --only "$2" > "$c.log" 2>&1)
@@ -105,10 +137,12 @@ for i in $(seq "${START_ITER:-1}" "$MAX_ITERS"); do
   : > "$out"; rc=0; done_n=0; failed=
   chunks="$all fastener_seat"; [ -f "${SKIP_THREAT_FILE:-/tmp/ci_skip_threat}" ] || chunks="$all threat fastener_seat"
   need=$(echo $chunks | wc -w)
+  if [ "${SHARD:-0}" = 1 ]; then shard_verify "$sha" "$chunks" "$out"; else
   for chunk in $chunks; do
     ROBOT_RUN_SHA=$sha ROBOT_PROGRESS_LOG="$P/verify.log" HEAVY_CI=1 /tmp/heavy.sh timeout 6000 python3 -m robot verify "$SPEC" --full --only "$chunk" --jobs "${JOBS:-2}" > "$out.part" 2>&1
     r=$?; cat "$out.part" >> "$out"; grep -q 'blockers,' "$out.part" && done_n=$((done_n+1)) || { rc=$r; failed="$failed $chunk"; }
   done
+  fi
   rm -f "$out.part"
   if [ "$done_n" -eq 0 ]; then
     log "iter $i sha $sha: verify did not finish (rc $rc: $(grep -m1 -e Killed -e Traceback -e Error "$out" | cut -c1-120)); not counted"
