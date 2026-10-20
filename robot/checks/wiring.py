@@ -226,6 +226,21 @@ def _unit(v):
     return v / n if n > 1e-12 else v * 0.0
 
 
+def sharp_bend(pts, od):
+    """(corner point, degrees) of the last corner tighter than a 2 x OD bend radius allows, else None."""
+    pts = [np.asarray(p, float) for p in pts]
+    min_bend = 2.0 * od
+    sharp = None
+    for p, q, s in zip(pts, pts[1:], pts[2:]):
+        u, v = _unit(q - p), _unit(s - q)
+        theta = math.acos(float(np.clip(u.dot(v), -1, 1)))
+        need = min_bend * math.tan(theta / 2)
+        room = min(np.linalg.norm(q - p), np.linalg.norm(s - q))
+        if theta > 0.2 and need > room * 0.9 + 0.5:
+            sharp = (q, math.degrees(theta))
+    return sharp
+
+
 def run(ctx):
     out = []
     r, world = ctx.r, ctx.world
@@ -277,14 +292,7 @@ def run(ctx):
         slack = w.slack_mm if w.slack_mm is not None else 6.0
         length = polyline_len(pts) + slack
         min_bend = 2.0 * od
-        sharp = None
-        for p, q, s in zip(pts, pts[1:], pts[2:]):
-            u, v = _unit(q - p), _unit(s - q)
-            theta = math.acos(float(np.clip(u.dot(v), -1, 1)))
-            need = min_bend * math.tan(theta / 2)
-            room = min(np.linalg.norm(q - p), np.linalg.norm(s - q))
-            if theta > 0.2 and need > room * 0.9 + 0.5:
-                sharp = (q, math.degrees(theta))
+        sharp = sharp_bend(pts, od)
         total_len += length
         total_g += length * wire_g_per_mm(awg)
         if sharp is not None:

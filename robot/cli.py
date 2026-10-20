@@ -68,6 +68,9 @@ def main(argv=None):
     v.add_argument("--fast", action="store_true", help="coarse tessellation for quick iteration")
     v.add_argument("--quick", action="store_true", help="skip the slow sweeps (wiring, assembly)")
     v.add_argument("--json", help="also write report.json here")
+    v.add_argument("--proxy", action="store_true", help="fast proxies of the slow groups (robot/proxy); --only picks among them")
+    v.add_argument("--parts", help="with --proxy: only check these part ids (comma separated)")
+    v.add_argument("--baseline", help="with --proxy: a full report.json whose routes / assembly order the proxies replay")
     for name in ("render", "export", "gen.cli", "cad.cli"):
         try:
             mod = __import__(f"robot.{name}", fromlist=["add_cli"])
@@ -122,6 +125,13 @@ def main(argv=None):
         from .cad import incremental  # incremental verify (robot/cad/incremental.py)
 
         return incremental.cli(a)
+    elif a.cmd == "verify" and getattr(a, "proxy", False):
+        from .proxy import cli as proxy_cli
+
+        if not a.spec:
+            print("error: verify needs a spec path", file=sys.stderr)
+            return 1
+        return proxy_cli.verify(a, print_report)
     elif a.cmd == "verify":
         names = [n for n, _ in checks.GROUPS]
         if a.list_groups:
