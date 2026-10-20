@@ -1057,11 +1057,20 @@
      {
       "near": [
        -15.4,
-       44.0,
-       3.5
+       12.5,
+       19.3
       ],
       "r": 4.0,
-      "reason": "nose pad R4.4 round the nose CSK: the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); 1.15 mm of added material at the nose underside"
+      "reason": "the STEP notch top is a zero-thickness wedge (mfg.thin_wall); thickened to a printable wall, rearmost point unchanged"
+     },
+     {
+      "near": [
+       -15.4,
+       42.0,
+       3.5
+      ],
+      "r": 5.0,
+      "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside, so the countersink keeps a 0.9 mm wall"
      }
     ]
    },
@@ -1074,11 +1083,20 @@
      {
       "near": [
        15.4,
-       44.0,
-       3.5
+       12.5,
+       19.3
       ],
       "r": 4.0,
-      "reason": "nose pad R4.4 round the nose CSK: the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); 1.15 mm of added material at the nose underside"
+      "reason": "the STEP notch top is a zero-thickness wedge (mfg.thin_wall); thickened to a printable wall, rearmost point unchanged"
+     },
+     {
+      "near": [
+       15.4,
+       42.0,
+       3.5
+      ],
+      "r": 5.0,
+      "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside, so the countersink keeps a 0.9 mm wall"
      },
      {
       "near": [
@@ -1820,7 +1838,6 @@
   {
    "id": "mount_r",
    "kind": "structure",
-   "thin_wall_deviation": "same in the STEP: inward-ray wall at (20.1, 10.6, 19.7) RV03 0.001 mm vs ours 0.000; at (-16.8, 9.0, 19.5) RV02 0.000 vs ours 0.000; at (-18.3, 44.3, 6.3) RV02 0.001 vs ours 0.001 (2.5 mm radius samples, mount thin-wall probe 2026-10-20); kept for parity pending the verifier ruling",
    "print_orientation": "+x",
    "rotates_with": "fixed",
    "solid_fraction": 0.85,
@@ -1839,7 +1856,6 @@
   {
    "id": "mount_l",
    "kind": "structure",
-   "thin_wall_deviation": "same in the STEP: inward-ray wall at (20.1, 10.6, 19.7) RV03 0.001 mm vs ours 0.000; at (-16.8, 9.0, 19.5) RV02 0.000 vs ours 0.000; at (-18.3, 44.3, 6.3) RV02 0.001 vs ours 0.001 (2.5 mm radius samples, mount thin-wall probe 2026-10-20); kept for parity pending the verifier ruling",
    "parent": "mount_r",
    "print_orientation": "-x",
    "rotates_with": "fixed",

@@ -95,13 +95,13 @@ TAB = dict(y0=15.0, z0=5.35, h=8.2, y1=26.5, cham=1.0)   # chassis tab the notch
 MNT_HEEL = dict(z=1.25, step=0.4, back=1.8, z_hook=2.5, z_lip=4.5)   # rear foot hooked under the tab: floor Z, tip step, setback, hook and lip Z
 MNT_NOTCH_UP = 2.0                      # the rear face above the tab leans back by this much over the last stretch to the top
 NOSE_R, NOSE_A0 = 3.25, -16.0           # nose arc round the SB standoff and where it leaves the outline (deg)
-NOSE_PAD_R = 4.3                        # local pad round the nose CSK: CSK radius + printed wall
+NOSE_PAD_R = 4.1                        # local pad round the nose CSK: CSK cone radius (3.2) + a 0.9 mm printed wall (the STEP nose leaves 0.15 mm)
 BOSS_Z = 6.34                           # the boss starts above the line from the notch top to the nose, at this Z at the nose end
 BOSS_NOSE_Y = 44.34
 BIG = 60.0                              # a box edge bigger than any part, for half-plane clips
 MNT_RELIEF_R = 1.0                      # concave corner relief of the profile (tub deck fillet, mfg corner relief)
 MNT_CSK_CLEAR = 0.4                     # extra cone diameter over the DIN 7991 head: the seated head floats, so the notch bears a hit before the screws do
-MNT_THIN_WALL_WHY = "same in the STEP: inward-ray wall at (20.1, 10.6, 19.7) RV03 0.001 mm vs ours 0.000; at (-16.8, 9.0, 19.5) RV02 0.000 vs ours 0.000; at (-18.3, 44.3, 6.3) RV02 0.001 vs ours 0.001 (2.5 mm radius samples, mount thin-wall probe 2026-10-20); kept for parity pending the verifier ruling"
+MNT_TIP_WALL, MNT_TIP_REACH = 1.5, 3.0    # printed wall: the wedge where the rear notch meets the rim tangent is thickened to this within this reach of the notch top (rearmost point unchanged)
 
 
 HOLE_FACE_RISE = 0.7                    # the battered face's highest point over a stator hole axis: the surface the hole is measured from
@@ -331,7 +331,7 @@ CAGE_RIBS = ((-2.0, -2.0, 15.4), (19.4, -2.0, 15.4), (2.0, -19.6, 13.0), (12.0, 
 LOBE_DEV, LOBE_DEV_R = (32.0, -13.5, 9.4), 3.5  # param: organic centroid of the lobe-tail trim vs STEP blobs
 # param: end
 CAGE_RIB_R, BASE_DEV_Z, PANEL_DEV_R, TOP_DEV_Z = 6.0, 4.5, 3.0, 19.95
-NOSE_DEV, NOSE_DEV_R = (MNT_IN + 2.0, SB[0] + 3.5, SB[1] - 1.0), 4.0             # mount nose pad (|x|, y, z)
+NOSE_DEV, NOSE_DEV_R = (MNT_IN + 2.0, SB[0] + 1.5, SB[1] - 1.0), 5.0             # mount nose pad (|x|, y, z): thickened nose wall, deviation from the STEP nose
 STATOR_DEV_X, TAP_DEV_R = 16.8, 2.0                                              # stator lead-in cone site; tap-hole sites
 
 
@@ -417,6 +417,8 @@ FRONT_HUB_PROFILE = ((0.0, FH_BORE_R), (0.0, FH_FLANGE_R), (HUB_FLANGE_T, FH_FLA
 FH_ORIGIN_X = 30.0                                                                      # |X| of the front hub inner face
 STANDOFF_BORE_R, TYRE_SECTION_STEP = 1.25, 10                                           # standoff through-bore radius; shoulder arc step (deg)
 
+
+MNT_TIP_DEV, MNT_TIP_DEV_R = (MNT_IN + 2.0, 12.5, MNT_TOP_Z - 0.2), 4.0   # mount notch-top wedge thickened to a printable wall (|x|, y, z)
 
 __all__ = [n for n in dir() if not n.startswith('__')]
 

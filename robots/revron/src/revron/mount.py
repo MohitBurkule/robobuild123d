@@ -27,7 +27,12 @@ def _mount_profile(side):
     # the nose CSK (DIN 7991 cone) is wider than the STEP's nose arc and left a 0 mm knife edge there: a local pad
     # (CSK radius + printed wall), kept above the nose underside, wraps the countersink
     from shapely.geometry import Point, box as _sbox
-    p = p.union(Point(SB).buffer(NOSE_PAD_R, WSEG_HI).intersection(_sbox(0, MNT_HEEL["z"], BIG + 20, BIG - 20)))
+    p = p.union(Point(SB).buffer(NOSE_PAD_R, WSEG_HI).intersection(_sbox(0, SB[1] - NOSE_PAD_R, BIG + 20, SB[1])))
+    # the rear notch meets the rim tangent in a wedge thinner than a printed wall: thicken it to MNT_TIP_WALL without
+    # moving the part's rearmost point (the grown copy is cut at the notch-top Y)
+    from shapely.geometry import Point, box as _sb
+    tip = Point((m["notch_y"], MNT_TOP_Z)).buffer(MNT_TIP_REACH, WSEG_HI).intersection(_sb(m["notch_y"], -BIG, BIG, BIG))
+    p = p.union(p.buffer(MNT_TIP_WALL / 2, WSEG_HI).intersection(tip))
     return _round(p, r_out=0.0, r_in=MNT_RELIEF_R)
 
 
