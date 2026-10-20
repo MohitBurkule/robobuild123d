@@ -803,7 +803,7 @@ def side_panel(s):
         # (dense polygon sections: one ruling per matched point pair, adjacent facets meet at a fraction of a degree)
         secs.append(b.Wire.make_polygon([b.Vector(x, y, z) for x, y in pts], close=True))
     wall = _U(b.Solid.make_loft(secs[:2], ruled=True), b.Solid.make_loft(secs[1:], ruled=False))
-    side = _round(Polygon([(-32.9, 1.0), (-32.9, 16.0), (-4.3, 16.0), (17.0, 12.0), (20.0, 11.0), (24.0, 10.0), (42.0, 10.0), (50.1, 1.0)]), r_out=1.5)
+    side = _round(Polygon([(-32.9, 1.0), (-32.9, 16.0), (-6.7, 16.0), (14.6, 12.0), (19.3, 11.0), (24.0, 10.0), (42.0, 10.0), (50.1, 1.0)]), r_out=1.5)
     side = side.union(Point(-32.2, 9.7).buffer(8.2, 64))                           # rear end a full round over the wheel
     foot = _ext(_poly([(-31.6, -12.0), (-42.0, -11.9), (-40.6, -2.1), (-40.8, 3.3), (-42.9, 13.3), (-31.6, 13.3)]), "xy", 1.0, 2.0)   # 1 mm wide foot under the chassis lobe
     wall = _I(wall, _ext(side, "yz", -60.0, -20.0))
@@ -820,7 +820,7 @@ def side_panel(s):
     # the nose's front-outer corner is chamfered back (a plane leaning ~55 deg in and ~57 deg back) so a wedge or
     # spinner tooth coming in from the front quarter glances off instead of catching the corner
     nose = _one(nose).split(b.Plane(origin=(-120.0, 0.0, 0.0), z_dir=(1.0, -1.525, -1.4725)), keep=b.Keep.TOP)
-    nose = _S(nose, _box(-42.0, -38.4, 26.5, 39.0, 3.0, 10.5))                     # hollow behind the nose wall
+    nose = _S(nose, _ext(_poly([(26.5, 3.0), (37.0, 3.0), (37.7, 6.6), (39.0, 10.5), (26.5, 10.5)]), "yz", -42.0, -38.4))   # hollow behind the nose wall (its front face leans back with the wall)
     boss = _I(_cyl(3.0, -42.5, -39.5, SA), _ext(side, "yz", -60.0, -20.0))         # standoff end boss
     body = _U(wall, nose, foot, boss)
     # M3 CSK seats (ISO 10642 head 6.6, +0.1 clearance) with a 12 mm head bore out through the battered outer face, so a
@@ -828,7 +828,7 @@ def side_panel(s):
     cuts = [_csk(3.3, 6.7, (-46.26, SA[0], SA[1]), "x", 1, 8.0, 12.0), _csk(3.3, 6.7, (-41.76, SB[0], SB[1]), "x", 1, 8.0, 12.0),
             _csk(3.3, 6.7, (-35.26, NUT[0], NUT[1]), "x", 1, 8.0, 12.0),
             _cyl(2.55, -42.55, -38.0, SA),
-            _box(-45.0, -43.4, -38.7, -24.8, 5.0, 15.0),                          # rear tyre relief on the inner face
+            _box(-45.0, -43.4, -38.7, -24.8, 5.5, 14.5),                          # rear tyre relief on the inner face
             _ext(_poly([(-11.7, 3.8), (0.5, 4.7), (2.3, 5.7), (2.3, 8.3), (0.5, 9.3), (-3.5, 11.0), (-9.5, 13.0), (-11.7, 13.8)]), "yz", -32.5, -31.4)]    # 1 mm relief round the chassis nut lobe: STEP RV23 diamond (Y -11.7..2.3, Z 3.8..13.8, sloping top-right edge)
     for y0 in (-11.0, -4.5, 2.0):     # diagonal vent slots (TPU wall flexes, keeps the ESC cool)
         sl = LineString([(y0, 5.0), (y0 + 5.0, 11.0)]).buffer(1.0, cap_style=1)
@@ -907,6 +907,13 @@ def _band(path, w):
 def _loft_yz(pa, xa, pb, xb, n=160):
     """Ruled loft between two shapely outlines in YZ planes at X xa and xb (both resampled to n points from the point
     nearest +Y, so the rulings do not twist)."""
+    return _loft_yz_n([(pa, xa), (pb, xb)], n)
+
+
+def _loft_yz_n(sections, n=160):
+    """One ruled loft through several (shapely outline, X) sections: the same faces as a chain of two-section _loft_yz
+    slices, but one solid, so the chain is not handed to a fuse slice by slice (24 touching slices in one fuse ran OCC
+    out of memory on a cold build)."""
     b = _b()
     def wire(p, x):
         ring = list(p.exterior.coords)[:-1]
@@ -917,7 +924,7 @@ def _loft_yz(pa, xa, pb, xb, n=160):
         pts = _resample(ring, n + 1)[:-1]
         return b.Wire.make_polygon([b.Vector(x, u, v) for u, v in pts], close=True)
     from shapely.geometry import Polygon
-    return b.Solid.make_loft([wire(pa, xa), wire(pb, xb)], ruled=True)
+    return b.Solid.make_loft([wire(p, x) for p, x in sections], ruled=True)
 
 
 def _resample(line, n):
@@ -948,7 +955,10 @@ def _wall_pocket(x0, x1, z0, z1, y0, y1, r_vert=0.5, r_floor=0.8):
     return b.fillet(s.faces().sort_by(b.Axis.Y)[-1].edges(), r_floor)
 
 
-def _lattice_pocket(pts, y0=-36.6, y1=-35.5, r_vert=0.45, r_floor=0.95):
+LAT_GROW = 0.35   # mm, measured from RV01 y=-36 sections (pocket area 38.1 vs 28.2)
+
+
+def _lattice_pocket(pts, y0=-36.5, y1=-35.5, r_vert=0.5, r_floor=0.25):
     """Cutter of one triangular rear-wall pocket (X, Z outline `pts`): R0.45 corners and an R0.95 floor (the STEP's R0.98),
     so the pocket has no sharp internal corner in the print."""
     b = _b()
@@ -958,6 +968,14 @@ def _lattice_pocket(pts, y0=-36.6, y1=-35.5, r_vert=0.45, r_floor=0.95):
         b.extrude(amount=y1 - y0)
     s = b.fillet(bp.part.edges().filter_by(b.Axis.Y), r_vert)
     return b.fillet(s.faces().sort_by(b.Axis.Y)[0].edges(), r_floor)
+
+
+from shapely.geometry import Point, Polygon   # noqa: E402
+NUT_LOBE = Point(NUT[0], NUT[1]).buffer(4.55, 64).union(Point(1.35, 6.9).buffer(1.2, 32)).convex_hull   # chassis wall lobe round the thin nut (Y, Z)
+PANEL_IN = 31.4   # inner face of the side panel at the nut lobe (|X|)
+LUG_FLOOR_Z, LUG_SCALLOP_YT, LUG_SCALLOP_R = 2.5, 36.27, 8.6   # param: organic lug underside arc, tangent to the lug floor at Y 36.27
+LUG_SCALLOP = Point(LUG_SCALLOP_YT, LUG_FLOOR_Z - LUG_SCALLOP_R).buffer(LUG_SCALLOP_R, 128).intersection(
+    Polygon([(0.0, -20.0), (LUG_SCALLOP_YT, -20.0), (LUG_SCALLOP_YT, LUG_FLOOR_Z), (0.0, LUG_FLOOR_Z)]))
 
 
 def chassis():
@@ -1009,13 +1027,11 @@ def chassis():
         add.append(_box(sg * N10_KEY[0], sg * N10_KEY[1], -26.15, -23.4, 16.0, c["deck"] + 0.1))
         add.append(_box(sg * 20.0, sg * (x - w + 0.1), -27.3, -23.4, N10_TOP + 0.1, c["deck"] + 0.1))
         # side lobe with the thin M3 nut (Y -16.3..2.8)
-        lobe = Point(NUT[0], NUT[1]).buffer(4.55, 64).union(Point(1.35, 6.9).buffer(1.2, 32)).convex_hull
+        lobe = NUT_LOBE
         add.append(_ext(lobe, "yz", sg * (x - 0.1), sg * 32.5))
-        R_ = 1.95   # root fillet where the lobe leaves the wall (STEP R1.95): 12 ruled slices of the quarter round
-        for k in range(12):
-            h0, h1 = R_ * k / 12, R_ * (k + 1) / 12
-            d0, d1 = (R_ - math.sqrt(R_ * R_ - (R_ - h) ** 2) for h in (h0, h1))
-            add.append(_loft_yz(lobe.buffer(d0, join_style=1), sg * (x - 0.1 + h0), lobe.buffer(d1, join_style=1), sg * (x - 0.1 + h1)))
+        R_ = 1.95   # root fillet where the lobe leaves the wall (STEP R1.95): one ruled loft, 12 bands of the quarter round
+        add.append(_loft_yz_n([(lobe.buffer(R_ - math.sqrt(R_ * R_ - (R_ - h) ** 2), join_style=1), sg * (x - 0.1 + h))
+                               for h in (R_ * k / 12 for k in range(13))]))
         # front tabs (key into the weapon-mount notches) and inner tab walls
         add.append(_ext(_poly([(18.5, 6.4), (19.5, 5.4), (25.5, 5.4), (26.5, 6.4), (26.5, 12.5), (25.5, 13.5), (19.5, 13.5), (18.5, 12.5)]), "yz", sg * 13.2, sg * 17.6))
         # inner tab wall, its top-front corner cut back on a R15.9 about the weapon axis: the drisk (swept R ~14.8 at the wall)
@@ -1052,7 +1068,7 @@ def chassis():
     for sg in (1, -1):
         # lug underside: flat to Y 26, then the ramp; a scallop between the two standoffs (STEP)
         cuts.append(_ext(_poly([(10.0, -5.0), (10.0, 2.5), (26.0, 2.5), (30.4, 1.0), (30.4, -5.0)]), "yz", sg * 17.4, sg * 21.6))
-        cuts.append(_ext(Point(36.70, -0.66).buffer(3.16, 96), "yz", sg * 17.4, sg * 21.6))   # R3.16 scallop tangent to the lug arc round the nose standoff (STEP section at X 18.8)
+        cuts.append(_ext(LUG_SCALLOP, "yz", sg * 17.4, sg * 21.6))   # lug underside rises along a big arc tangent to the flat at LUG_FLOOR_Z (fit to STEP RV01 sections at X 19.5)
         # under the nose standoff the lug follows its R3.25 arc (STEP): no hull chord below it where the scallop meets it
         under = Polygon([(36.7, 0.0), (40.5, 0.0), (40.5, 2.5), (36.7, 2.5)]).difference(Point(SB).buffer(3.25, 96))   # the cusp between the scallop circle and the standoff arc
         cuts.append(_ext(under, "yz", sg * 17.4, sg * 21.6))
@@ -1087,7 +1103,8 @@ def chassis():
             cuts.append(_cyl(0.85, z1 - 4.1, z1 + 1, (px, py), "z"))
             cuts.append(bb.Solid.make_cone(2.1, 1.5, 0.6, bb.Plane(origin=(px, py, z1 + 0.001), z_dir=(0, 0, -1))))
     # switch slot in the deck beside the top panel, 2 M2 pilot holes
-    cuts.append(_ext(_round(Polygon([(23.0, -11.6), (26.6, -11.6), (26.6, 0.4), (23.0, 0.4)]), r_out=0.45), "xy", 16.0, z1 + 1))
+    sw_x0, sw_w, sw_y0, sw_l = 23.0, 4.0, -11.6, 12.0   # slot: inner edge 23.0 (top-panel edge), 4.0 wide and 12 long as measured on RV01
+    cuts.append(_ext(_round(Polygon([(sw_x0, sw_y0), (sw_x0 + sw_w, sw_y0), (sw_x0 + sw_w, sw_y0 + sw_l), (sw_x0, sw_y0 + sw_l)]), r_out=0.45), "xy", 16.0, z1 + 1))
     for yy in (1.9, -13.1):
         cuts.append(_cyl(0.85, c["deck"] - 3, z1 + 1, (SWX, yy), "z"))
     for sg in (1, -1):
@@ -1113,8 +1130,8 @@ def chassis():
     for sg in (1, -1):
         lat += [Polygon([(sg * 4.84, 7.0), (sg * 4.84, 15.0), (sg * 12.4, 11.0)]), Polygon([(sg * 26.42, 7.0), (sg * 26.42, 15.0), (sg * 18.85, 11.0)]),
                 Polygon([(sg * 10.6, 5.58), (sg * 20.65, 5.58), (sg * 15.6, 9.7)]), Polygon([(sg * 10.6, 16.42), (sg * 20.65, 16.42), (sg * 15.6, 12.3)])]
-    for t in lat:
-        cuts.append(_lattice_pocket(list(t.exterior.coords)[:-1]))
+    for t in lat:   # STEP rib is 0.35 thinner than the nominal triangle edges: grow each pocket by LAT_GROW
+        cuts.append(_lattice_pocket(list(t.buffer(LAT_GROW, join_style=2).exterior.coords)[:-1]))
     # weapon phase wire hole in the front wall
     cuts.append(_ext(_round(Polygon([(7.25, 5.0), (10.25, 5.0), (10.25, 17.0), (7.25, 17.0)]), r_out=1.45), "xz", 12.0, 16.0))
     for xa, xb in ((-18.25, 4.25), (13.25, 18.2)):
@@ -1129,7 +1146,10 @@ def chassis():
         cuts.append(_box(sg * 17.65, sg * 27.35, -35.15, -25.45, 4.4, 4.8))   # pad + 0.25 base fillet   # motor preload pads
         # square the R1 inner rear corner where the N10 gearbox plates sit (their corner would bite 0.14 into the round)
         cuts.append(_box(sg * 25.5, sg * (x - w + 0.05), y0 + w - 0.05, y0 + w + 2.0, z0 + 2.0, c["deck"]))
-    cuts += [weapon_mount("l"), weapon_mount("r"), side_panel(1), side_panel(-1)]
+    # the STEP panel and lobe overlap (31 mm3) where the panel relief stops, at Y -11.7: the panel cuts the chassis, and the whole
+    # overlapping slab of the lobe tail goes with it, so no 0.05 mm sliver of lobe is left beside the cut
+    tail = NUT_LOBE.intersection(Polygon([(-20.0, 0.0), (-11.7, 0.0), (-11.7, 20.0), (-20.0, 20.0)]))
+    cuts += [weapon_mount("l"), weapon_mount("r"), side_panel(1), side_panel(-1)] + [_ext(tail, "yz", sg * PANEL_IN, sg * (x + 4.0)) for sg in (1, -1)]
     body = _S(body, *cuts)
     # electronics cage hung from the deck (up into the 1 mm deck skin through the lightening pockets; prints as part of the deck-down first layers): ribs 0.1 mm off the Malenki's
     # -x / +x / -y faces and the weapon ESC's -y face, so neither board hammers around when the robot is flipped
