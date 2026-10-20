@@ -30,6 +30,7 @@ EAR_R = 2.7                          # top-panel corner ear radius: >= CSK_M2 / 
 RY, RZ = -30.5, 11.0                 # N10 shaft (rear axle)
 MOTX = 19.6                          # N10 catalog origin |X| (body 3.7..27.5, shaft to 37.5)
 N10_KEY = (23.55, 26.15)             # |X| of the chassis key tab between the N10's last two gearbox plates
+KEY_SPAN, KEY_DEV_R = (-26.15, -23.4), 2.5   # Y span of the key tab, radius of its reference-deviation zone
 N10_TOP = 17.0                       # top face of the N10 gearbox plates
 # chassis RV01
 SWX = 24.55   # power switch X: body side 0.05 clear of the 27.5 inner wall face (was 25.0, 0.4 into it)

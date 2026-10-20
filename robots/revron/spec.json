@@ -756,6 +756,24 @@
      },
      {
       "near": [
+       24.85,
+       -24.775,
+       16.5
+      ],
+      "r": 2.5,
+      "reason": "N10 key tab reaches KEY_DROP below the gearbox plate top so it keys between the plates and stops the motor inboard (the STEP tab is flush, which leaves the motor free to slide in x: retention.loose)"
+     },
+     {
+      "near": [
+       -24.85,
+       -24.775,
+       16.5
+      ],
+      "r": 2.5,
+      "reason": "N10 key tab reaches KEY_DROP below the gearbox plate top so it keys between the plates and stops the motor inboard (the STEP tab is flush, which leaves the motor free to slide in x: retention.loose)"
+     },
+     {
+      "near": [
        24.55,
        1.9,
        17.5

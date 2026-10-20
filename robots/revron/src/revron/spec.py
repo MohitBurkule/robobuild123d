@@ -327,6 +327,8 @@ def reference_cad():
                       for x, y in INS[:4]]
           + [dict(near=[sx * KEYHOLE_DEV[0], KEYHOLE_DEV[1], KEYHOLE_DEV[2]], r=KEYHOLE_DEV[2], reason="N10 keyhole opened into a U-slot to the floor so the gearbox boss and shaft drop in from below with the base panel off (the STEP closes the keyhole, the shaft cannot be threaded through it)")
              for sx in (1, -1)]
+          + [dict(near=[sx * sum(N10_KEY) / 2, sum(KEY_SPAN) / 2, N10_TOP - KEY_DROP / 2], r=KEY_DEV_R, reason="N10 key tab reaches KEY_DROP below the gearbox plate top so it keys between the plates and stops the motor inboard (the STEP tab is flush, which leaves the motor free to slide in x: retention.loose)")
+             for sx in (1, -1)]
           + [dict(near=[SWX, yy, CH["deck"]], r=SWX_DEV_R, reason="switch pilot holes follow the switch, which sits 0.45 mm in from the STEP X 25.0 so its body clears the 27.5 inner wall face (the STEP switch penetrates the wall 0.4 mm)")
              for yy in SW_SCREW_Y]
           + [dict(near=[x, y, FOOT_DEV_Z], r=FOOT_DEV_R, reason="column foot flared to R3.7 with a recess for the base-panel ring boss (1.0 mm base skin cannot seat a 1.2 mm M2 flat head)")
