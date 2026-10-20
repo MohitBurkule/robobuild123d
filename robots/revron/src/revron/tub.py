@@ -5,7 +5,7 @@ from .common import *  # noqa: F401,F403
 from . import tub_shell, tub_lobes, tub_lugs, tub_front
 from .tub_util import rect
 
-SW_PAD = dict(x=(22.0, 27.5), y=(-15.6, 4.4), r=1.0, z0=16.5)   # switch pad under the deck: X / Y span, corner R, bottom Z
+SW_PAD = dict(x=(22.5, 27.5), y=(-15.6, 4.4), r=1.5, z0=16.5, fillet=1.5, over=0.5, up=0.1)   # switch pad under the deck (STEP): X / Y span (the +X end is the wall), free corner R, bottom Z, wall fillet R, reach into the wall, reach up into the deck
 
 
 def _panel_seat(which, i):
@@ -107,7 +107,14 @@ def _switch_hole(yy):
 # ------------------------------------------------------------------------------------------------------------ chassis
 def switch_pad(c):
     """Pad under the deck that the switch ears bear on (STEP); +X side only."""
-    return _ext(_round(rect(*SW_PAD["x"], *SW_PAD["y"]), r_out=SW_PAD["r"]), "xy", SW_PAD["z0"], c["deck"] + 0.1)
+    from shapely.geometry import Point
+    P = SW_PAD
+    (x0, x1), (y0, y1), f = P["x"], P["y"], P["fillet"]
+    plan = _round(rect(x0, x1 + P["over"], y0, y1), r_out=P["r"])
+    for yw, d in ((y0, -1), (y1, 1)):   # concave fillet where the pad ends meet the side wall
+        q = rect(x1 - f, x1, *sorted((yw, yw + d * f)))
+        plan = plan.union(q.difference(Point(x1 - f, yw + d * f).buffer(f, SEG)))
+    return _ext(plan, "xy", P["z0"], c["deck"] + P["up"])
 
 
 def chassis():
