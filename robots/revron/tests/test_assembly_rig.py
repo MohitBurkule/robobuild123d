@@ -1,4 +1,5 @@
-"""Joint-chain placement: every part's world pose equals the pre-joint baseline, and every mate is a real coincidence."""
+"""Joint-chain placement: every part's geometry sits where the pre-joint baseline put it (placements_baseline.json:
+world pose composed with the model origin, regenerated with tests/_poses.py), and every mate is a real coincidence."""
 import json, os
 import numpy as np
 from _poses import world_poses
@@ -36,7 +37,7 @@ def test_every_mate_coincides():
 
 def test_spin_axes_pass_through_their_hubs():
     """Each revolute axis runs through the bore of the part that spins on it."""
-    for part, host, ax, bore in (("spider", "mount_r", "weapon_axis", "bore"), ("whub_rr", "motor_r", "output_shaft", "d_bore"),
+    for part, host, ax, bore in (("spider", "weapon_motor_stator", "rotor_axis", "bell_face"), ("whub_rr", "motor_r", "output_shaft", "d_bore"),
                                  ("whub_fl", "so_al", "axle", "bore")):
         h = J.RIG.parts[host]
         axis = h.joints[ax].relative_axis.located(h.location)

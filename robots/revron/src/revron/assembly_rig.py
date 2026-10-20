@@ -10,7 +10,7 @@ place as their host, so the mate leaves them at identity and the tests prove the
 """
 from .params import *  # noqa: F401,F403
 from .joints import Rig, tub_rig
-from .fastener_rig import screws
+from .fastener_rig import screws, on_mount
 
 SIDES = ((-1, "l"), (1, "r"))
 
@@ -41,30 +41,31 @@ def _electronics(r):
 
 
 def _weapon(r):
-    WA = (0, WY, WZ)                                         # weapon axis on the robot centre plane
+    """RV03 / RV02 frames sit on the weapon axis at their inner faces (MNT_FRAME); every weapon joint is a feature of
+    the part it is declared on, in that part's own frame."""
     for s, n in SIDES:                                       # mount: notch over the chassis tab, on the bolt_u?b axis
         r.joint("tub", f"mount_tab_{n}", (s * MNT_IN, *SB))
-        r.joint(f"mount_{n}", "tab_notch", (s * MNT_IN, *SB))
+        r.joint(f"mount_{n}", "tab_notch", on_mount(n, (s * MNT_IN, *SB)))
         r.mate("tub", f"mount_tab_{n}", f"mount_{n}", "tab_notch")
-    r.joint("mount_r", "stator_seat", WA, (0, 0, 180))       # GR1507 base on RV03: catalog +X shaft points inboard (-X)
+    r.joint("mount_r", "spacer_seat", (0, 0, 0))                       # back spacer flat on the RV03 inner face
+    r.joint("motor_spacer", "mount_face", (0, 0, 0))                   # its frame: mount face on the axis
+    r.mate("mount_r", "spacer_seat", "motor_spacer", "mount_face")
+    r.joint("mount_r", "stator_seat", on_mount("r", W_FRAME), MOTOR_FLIP)   # GR1507 frame on the axis, base turned to RV03
     r.joint("weapon_motor_stator", "base", (0, 0, 0))
     r.mate("mount_r", "stator_seat", "weapon_motor_stator", "base")
-    r.joint("mount_r", "weapon_frame", WA)                   # weapon frame: on the spin axis
-    r.axis("mount_r", "weapon_axis", (_mid(DR_X["spider"]), WY, WZ))   # spin axis at the spider mid-plane
-    r.joint("spider", "bore", (0, 0, 0))
-    r.mate("mount_r", "weapon_frame", "spider", "bore")
-    r.joint("spider", "bell_flange", (0, 0, 0), (0, 0, 180))  # 4 M2 on r4.5 into the bell: bell faces the spider
-    r.joint("weapon_motor_can", "flange", (0, 0, 0))
-    r.mate("spider", "bell_flange", "weapon_motor_can", "flange")
-    r.joint("weapon_motor_can", "shaft_bore", (0, 0, 0), (0, 0, 180))   # shaft pressed through the bell
+    r.joint("weapon_motor_stator", "rotor_fit", (0, 0, 0))              # the bell runs concentric in the motor's own bearings
+    r.axis("weapon_motor_stator", "rotor_axis", (-_mid(DR_X["spider"]), 0, 0))   # spin axis (catalog X), pivot at the spider mid-plane
+    r.joint("weapon_motor_can", "origin", (0, 0, 0))
+    r.mate("weapon_motor_stator", "rotor_fit", "weapon_motor_can", "origin")
+    r.joint("weapon_motor_can", "cap_face", (BELL_TOP_X[1], 0, 0))     # bell cap face (catalog frame)
+    r.joint("spider", "bell_face", (DR_X["spider"][1], 0, 0), MOTOR_FLIP)   # spider inner face, drawn in the weapon frame
+    r.mate("weapon_motor_can", "cap_face", "spider", "bell_face")      # 4 M2 on the bell's r4.5 screw circle
+    r.joint("weapon_motor_can", "shaft_bore", (0, 0, 0), MOTOR_FLIP)   # shaft pressed through the bell, drawn in the weapon frame
     r.joint("wshaft", "axis", (0, 0, 0))
     r.mate("weapon_motor_can", "shaft_bore", "wshaft", "axis")
-    r.joint("mount_l", "bearing_seat", (BRG["x"], WY, WZ), (0, 90, 0))   # MR85 centred in the RV02 seat, bore on the axis
+    r.joint("mount_l", "bearing_seat", on_mount("l", (BRG["x"], WY, WZ)), (0, 90, 0))   # MR85 centred in the RV02 seat, bore on the axis
     r.joint("wbearing", "seat", (0, 0, 0))                               # MR85 drawn on its own axis (z)
     r.mate("mount_l", "bearing_seat", "wbearing", "seat")
-    r.joint("mount_r", "spacer_seat", (BSP_X[1], WY, WZ))             # back spacer flat on RV03, stator base on its far face
-    r.joint("motor_spacer", "mount_face", (BSP_X[1], WY, WZ))
-    r.mate("mount_r", "spacer_seat", "motor_spacer", "mount_face")
     prev, face = "spider", DR_X["spider"][1]                 # disc stack: each layer flush on the previous one
     for nm, key in (("disc_a", "disc_a"), ("dspacer", "spacer"), ("disc_b", "disc_b")):
         r.joint(prev, "stack_face", (face, 0, 0))
@@ -80,7 +81,7 @@ def _drive(r):
         r.joint(f"whub_r{n}", "d_bore", (s * HUB_PIVOT_X["rear"], RY, RZ), _flip(s))
         r.mate(f"motor_{n}", "shaft_tip", f"whub_r{n}", "d_bore")
         a, b_ = f"so_a{n}", f"so_b{n}"
-        r.joint(f"mount_{n}", "so_a_seat", (s * SA_X[0], *SA))      # 25 mm standoff end on the mount outer face
+        r.joint(f"mount_{n}", "so_a_seat", on_mount(n, (s * SA_X[0], *SA)))   # 25 mm standoff end in the mount
         r.joint(a, "inner_end", (s * SA_X[0], *SA))
         r.mate(f"mount_{n}", "so_a_seat", a, "inner_end")
         r.joint("tub", f"lug_b_{n}", (s * SB_X[0], *SB))            # 15 mm standoff end on the nose lug
@@ -117,7 +118,7 @@ def assembly_rig():
 
 def revolutes(r):
     """Spec `joint` dicts of the spinning parts, read off their spin axes."""
-    out = {"spider": r.revolute("mount_r", "weapon_axis")}
+    out = {"spider": r.revolute("weapon_motor_stator", "rotor_axis", frame="mount_r")}   # spec pivot: in the spider's parent (RV03) frame
     for _, n in SIDES:
         out[f"whub_r{n}"] = r.revolute(f"motor_{n}", "output_shaft")
         out[f"whub_f{n}"] = r.revolute(f"so_a{n}", "axle")

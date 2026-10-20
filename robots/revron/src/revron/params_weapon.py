@@ -26,6 +26,7 @@ BOLT_R, HUB_R = 14.0, BELL_SCREW_R   # stack-bolt circle; spider-to-bell screws 
 N_STACK = 4                          # bolts / lobes / windows per stack, 90 deg apart
 # motor GR1507: axis X, stator base X 8.4..10.4 on the right mount via the back spacer X 11.9..13.4
 MNT_OUT, MNT_SLAB = MNT_IN + MNT_T, MNT_IN + MNT_SLAB_T
+MNT_FRAME = dict(r=(MNT_IN, WY, WZ), l=(-MNT_IN, WY, WZ))   # each mount's frame: its inner face on the weapon axis
 # GR1507 shaft and its outboard MR85ZZ (5 x 8 x 2.5) in the RV02 seat
 SHAFT_CLR = 0.1                      # radial clearance round the shaft (RV03 hole, spider bore)
 BRG_RECESS, BRG_PRESS = 0.1, 0.05    # MR85 sits this far below the RV02 inner face (race clear of the spider); seat interference

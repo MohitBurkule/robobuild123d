@@ -1755,9 +1755,24 @@
     "type": "model",
     "file": "../../robots/revron/src/build_revron.py",
     "params": {
-     "part": "mount_r"
+     "part": "mount_r",
+     "origin": [
+      13.4,
+      38.5,
+      23.5
+     ]
     }
    },
+   "at": [
+    13.4,
+    38.5,
+    23.5
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
    "material": "pla_st",
    "process": "fdm",
    "label": "RV03 XALT HD right weapon mount (8 mm): GR1507 stator on 4 M2 through the back spacer, notch on the chassis tab, 2 M3 CSK into the standoffs"
@@ -1774,9 +1789,24 @@
     "type": "model",
     "file": "../../robots/revron/src/build_revron.py",
     "params": {
-     "part": "mount_l"
+     "part": "mount_l",
+     "origin": [
+      -13.4,
+      38.5,
+      23.5
+     ]
     }
    },
+   "at": [
+    -26.8,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
    "material": "pla_st",
    "process": "fdm",
    "label": "RV02 XALT HD left weapon mount (8 mm): outboard MR85 bearing for the threaded shaft end, notch on the chassis tab, 2 M3 CSK into the standoffs"
@@ -1793,9 +1823,24 @@
     "type": "model",
     "file": "../../robots/revron/src/build_revron.py",
     "params": {
-     "part": "motor_back_spacer"
+     "part": "motor_back_spacer",
+     "origin": [
+      13.4,
+      38.5,
+      23.5
+     ]
     }
    },
+   "at": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
    "material": "pla_st",
    "process": "fdm",
    "label": "1.5 mm printed motor back spacer: stator base off the mount, clears the rear bearing boss and the phase leads"
@@ -1806,9 +1851,9 @@
    "catalog": "gr1507",
    "parent": "mount_r",
    "at": [
+    -13.4,
     0.0,
-    38.5,
-    23.5
+    0.0
    ],
    "rot": [
     0.0,
@@ -1862,14 +1907,14 @@
       "height": 2.5
      },
      "at": [
-      -14.75,
-      38.5,
-      23.5
+      0,
+      0,
+      0
      ],
      "rot": [
-      0.0,
-      90.0,
-      0.0
+      0,
+      0,
+      0
      ]
     },
     "cut": [
@@ -1881,18 +1926,28 @@
        "height": 4.0
       },
       "at": [
-       -14.75,
-       38.5,
-       23.5
+       0,
+       0,
+       0
       ],
       "rot": [
-       0.0,
-       90.0,
-       0.0
+       0,
+       0,
+       0
       ]
      }
     ]
    },
+   "at": [
+    -1.35,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
    "label": "MR85ZZ in the RV02 8 mm seat: outboard support of the threaded shaft end (inferred: the STEP shows the 7.9 seat but no bearing)"
   },
   {
@@ -1942,9 +1997,14 @@
    "rotates_with": "weapon",
    "parent": "mount_r",
    "at": [
+    -13.4,
     0.0,
-    38.5,
-    23.5
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
    ],
    "shape": {
     "type": "model",
@@ -1966,9 +2026,9 @@
      0.0
     ],
     "pivot": [
-     -6.7,
-     38.5,
-     23.5
+     -20.1,
+     0.0,
+     0.0
     ],
     "min": 0,
     "max": 360,
@@ -2014,6 +2074,16 @@
      ]
     }
    },
+   "at": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
    "color": "#d9dde2",
    "label": "Drisk_floating_3 (inner): 3 mm Hardox single-tooth disc, R16.5 rim 0.5 mm eccentric against the R23 tooth, 12 mm bore with 4 ramped dogs, 4 M2 on r14"
   },
@@ -2040,6 +2110,16 @@
      ]
     }
    },
+   "at": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
    "color": "#d9dde2",
    "label": "Drisk_floating_3 (outer): 3 mm Hardox single-tooth disc, R16.5 rim 0.5 mm eccentric against the R23 tooth, 12 mm bore with 4 ramped dogs, 4 M2 on r14"
   },
@@ -2062,6 +2142,16 @@
      ]
     }
    },
+   "at": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
    "color": "#2a2c30",
    "material": "pla_st",
    "process": "fdm",

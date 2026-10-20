@@ -40,10 +40,12 @@ class Rig:
         """Spin axis `label` on `part` (build123d RevoluteJoint): a bearing bore or a shaft the mating part turns on."""
         b.RevoluteJoint(label, self._host(part), b.Axis(tuple(at), tuple(direction)))
 
-    def revolute(self, part, label, span=(0, 360)):
+    def revolute(self, part, label, span=(0, 360), frame=None):
         """Spec `joint` dict of a spin axis in world: pivot on the axis, sense normalised to + (an axle's sense is a
         convention, a mirrored motor still turns its hub about +X)."""
         ax = self.parts[part].joints[label].relative_axis.located(self.parts[part].location)
+        if frame is not None:   # in `frame` part's frame (a spec joint pivot is in the part's parent frame)
+            ax = ax.located(self.parts[frame].location.inverse())
         d = [ax.direction.X, ax.direction.Y, ax.direction.Z]
         d = [-v for v in d] if max(d, key=abs) < 0 else d
         p = ax.position
