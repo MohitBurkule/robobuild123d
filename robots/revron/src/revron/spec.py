@@ -13,6 +13,8 @@ def make_spec(model_file):
     def M(name, origin=None):
         return {"type": "model", "file": model_file, "params": {"part": name, **({"origin": list(origin)} if origin else {})}}
     WO = (0.0, WY, WZ)   # weapon frame: on the spin axis
+    from .assembly_rig import revolutes
+    JT = revolutes(RIG)   # spin axes read off the joint chain (assembly_rig)
 
     parts, fast, conn = [], [], []
     def P(**k): parts.append(k)
@@ -37,11 +39,11 @@ def make_spec(model_file):
       label="RV02 XALT HD left weapon mount (8 mm): outboard MR85 bearing for the threaded shaft end, notch on the chassis tab, 2 M3 CSK into the standoffs")
     P(id="motor_spacer", kind="other", role="spacer", parent="mount_r", print_orientation="+x", rotates_with="fixed", color="#2a2c30", shape=M("motor_back_spacer"), **PLA,
       label="1.5 mm printed motor back spacer: stator base off the mount, clears the rear bearing boss and the phase leads")
-    P(id="weapon_motor_stator", kind="weapon_motor", catalog="gr1507", parent="mount_r", at=[0.0, WY, WZ], rot=[0, 0, 180], rotates_with="fixed", exposed=True,
+    P(id="weapon_motor_stator", kind="weapon_motor", catalog="gr1507", parent="mount_r", **place("weapon_motor_stator", "mount_r"), rotates_with="fixed", exposed=True,
       exposed_reason="Drisk: the GR1507 bell is the hub of the weapon, inside the spacer bore between the two Hardox discs; the discs shield it radially",
       label="GR1507 outrunner, fixed half: stator and cross base on RV03, phase leads out the back",
       deviation="RVRN 2.0 STEP draws the GR1507 as one empty can with no stator, no windings and no leads; the real fixed stator stack, windings and the 3 phase leads (out of the base through the -Z arm, STEP shows no wire exit) are added: a real motor has them")
-    P(id="weapon_motor_can", kind="other", role="rotor", catalog="gr1507_can", parent="spider", at=[0.0, 0.0, 0.0], rot=[0, 0, 180], rotates_with="weapon", exposed=True,
+    P(id="weapon_motor_can", kind="other", role="rotor", catalog="gr1507_can", parent="spider", **place("weapon_motor_can", "spider"), rotates_with="weapon", exposed=True,
       exposed_reason="Drisk: the GR1507 bell is the hub of the weapon, inside the spacer bore between the two Hardox discs; the discs shield it radially",
       label="GR1507 bell and core: spins with the spider, wshaft and discs round the fixed stator")
     P(id="wbearing", kind="bearing", parent="mount_l", material="steel", process="cots", rotates_with="fixed", stock="MR85ZZ 5 x 8 x 2.5", color="#555555",
@@ -49,11 +51,11 @@ def make_spec(model_file):
       shape=_spec_bearing(), label="MR85ZZ in the RV02 8 mm seat: outboard support of the threaded shaft end (inferred: the STEP shows the 7.9 seat but no bearing)")
     P(id="wshaft", kind="shaft", material="steel", process="cots", stock="GR1507 5 mm shaft (part of the motor): modelled whole, MR85 end X -18.7 through the bell and the rear bearing to its circlip end X 11.4", rotates_with="weapon", shaft_of="weapon_motor_can", parent="weapon_motor_can",
       deviation="the GR1507 shaft is part of the bought motor, which the STEP draws as one body (INDEX.txt lists no shaft); drawn separately here for the MR85 support and the spider collar",
-      at=[0.0, 0.0, 0.0], rot=[0, 0, 180], shape=M("weapon_shaft", WO), color="#777777", solid_fraction=SOLID["shaft"],
+      **place("wshaft", "weapon_motor_can"), shape=M("weapon_shaft", WO), color="#777777", solid_fraction=SOLID["shaft"],
       label="threaded end of the GR1507 shaft through the MR85 (its mass is in the motor)")
     P(id="spider", kind="weapon", material="aluminium", process="waterjet", stock="3 mm 7075 plate (one 2D profile: water-jet, no milling needed)",
-      min_web_mm=WEB["spider"], min_web_reason="0.8 mm webs between the dog pockets and the rim are the designer's own (RVRN 2.0 STEP spider_1 measures 0.8 at the same four places)", rotates_with="weapon", parent="mount_r", at=list(WO), shape=M("spider", WO),
-      joint={"kind": "revolute", "axis": [1, 0, 0], "pivot": [_mid(DR_X["spider"]), WY, WZ], "min": 0, "max": 360, "default": 0}, color="#b8bcc2",
+      min_web_mm=WEB["spider"], min_web_reason="0.8 mm webs between the dog pockets and the rim are the designer's own (RVRN 2.0 STEP spider_1 measures 0.8 at the same four places)", rotates_with="weapon", parent="mount_r", at=place_at("spider"), shape=M("spider", WO),
+      joint=JT["spider"], color="#b8bcc2",
       weapon={"kind": "disc", "motor": "weapon_motor_stator", "cells": 2, "reduction": 1.0, "spin_axis": [1, 0, 0], "spin_dir": "ccw", "supported_both_ends": True, "teeth": 1},
       label="3 mm aluminium spider: bolted to the bell (4 M2 on r4.5), carries the disc stack on 4 M2 on r14")
     for nm, lab in (("disc_a", "inner"), ("disc_b", "outer")):
@@ -75,22 +77,22 @@ def make_spec(model_file):
           label=f"{WEDGE_REF[s]} TPU wedgelet: 50 deg ramp over the nose, cheeks round both standoffs and the fork tail")
         P(id=f"side_{n}", kind="armor", deviation="matches original RVRN 2.0: RV23/RV24 front leads the spider swept rim by the same amount at +-30 deg (STEP projection 64.45 mm vs ours 64.24 mm at -30 deg, within 0.5 mm)", material="tpu", process="fdm", thin_wall_deviation="matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)", solid_fraction=0.9, print_orientation="+z", parent=f"so_a{n}", rotates_with="fixed", color="#3c4048", shape=M(f"side_panel_{n}"),
           label=f"{SIDE_REF[s]} TPU side panel: battered S-wall round the wheels, 3 M3x8 CSK (two standoff ends, one chassis nut)")
-        P(id=f"nut_c{n}", kind="nut", catalog="nut_m3_thin", at=[s * _mid(NUT_X), NUT[0], NUT[1]], rot=[0, 90, 0], rotates_with="fixed")
+        P(id=f"nut_c{n}", kind="nut", catalog="nut_m3_thin", **place(f"nut_c{n}"), rotates_with="fixed")
         # drive
         P(id=f"motor_{n}", kind="motor", catalog="n10_2200rpm_spicy", at=place_at(f"motor_{n}"), rot=place_rot(f"motor_{n}"), rotates_with="fixed")
         P(id=f"whub_r{n}", kind="pulley", solid_fraction=SOLID["hub"], rotates_with=f"wheel_r{n}", print_orientation="+x" if s > 0 else "-x", shape=M(f"rear_hub_{n}"), parent="tub",
-          joint={"kind": "revolute", "axis": [1, 0, 0], "pivot": [s * HUB_PIVOT_X["rear"], RY, RZ], "min": 0, "max": 360, "default": 0}, color="#333333", **PLA,
+          joint=JT[f"whub_r{n}"], color="#333333", **PLA,
           label="RV21 printed rear hub 16 x 12: blind D-bore on the N10, O-ring groove, crowned F1 tyre seat, M2 grub on the flat")
         P(id=f"wheel_r{n}", kind="wheel", material="rubber", process="cots", tyre_of=f"whub_r{n}", rotates_with=f"wheel_r{n}", parent=f"whub_r{n}", shape=M(f"rear_tyre_{n}"),
           color="#1b1b1b", stock="RV22 Scalextric F1 front tyre 21.5 x 14 x 9.5", label="Scalextric F1 tyre 21.5 x 14 x 9.5")
         P(id=f"whub_f{n}", kind="pulley", solid_fraction=SOLID["hub"], rotates_with=f"wheel_f{n}", print_orientation="+x" if s > 0 else "-x", shape=M(f"front_hub_{n}"), parent=f"so_a{n}",
-          joint={"kind": "revolute", "axis": [1, 0, 0], "pivot": [s * HUB_PIVOT_X["front"], SA[0], SA[1]], "min": 0, "max": 360, "default": 0}, color="#333333", **PLA,
+          joint=JT[f"whub_f{n}"], color="#333333", **PLA,
           label="RV19 micro hub 9 x 9 greased on the 25 mm standoff, O-ring groove inboard")
         P(id=f"wheel_f{n}", kind="wheel", material="rubber", process="cots", tyre_of=f"whub_f{n}", rotates_with=f"wheel_f{n}", parent=f"whub_f{n}", shape=M(f"front_tyre_{n}"),
           color="#1b1b1b", stock="RV20 Scalextric micro SLX tyre 11 x 7 x 6", label="Scalextric micro tyre 11 x 7 x 6")
-    P(id="battery", kind="battery", catalog="lipo_2s_180_turnabot", at=list(ELEC["battery"]), rot=[0, 0, 90], retained="press_fit")
-    P(id="rxesc", kind="esc", catalog="malenki_nano_rvrn2", at=list(ELEC["rxesc"]), rot=[0, 0, 90], retained="kapton")
-    P(id="wesc", kind="esc", catalog="bbb_ant_esc_rvrn2", at=list(ELEC["wesc"]), rot=[0, 0, 90], retained="kapton")
+    P(id="battery", kind="battery", catalog="lipo_2s_180_turnabot", **place("battery"), retained="press_fit")
+    P(id="rxesc", kind="esc", catalog="malenki_nano_rvrn2", **place("rxesc"), retained="kapton")
+    P(id="wesc", kind="esc", catalog="bbb_ant_esc_rvrn2", **place("wesc"), retained="kapton")
     P(id="power_switch", kind="switch", catalog="switch_bbb_ant_rvrn2", at=place_at("power_switch"), rot=place_rot("power_switch"), retained="screws", marked=True, tool_free=True,
       off_dir=[0, -1, 0], label="BBB ant switch hung under the deck beside the top panel: lever flush in the deck slot, 2 M2 into the deck")
     for i, (x, y) in enumerate(INS):

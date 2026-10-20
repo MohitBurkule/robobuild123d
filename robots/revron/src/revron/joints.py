@@ -24,6 +24,20 @@ class Rig:
         """Frame `label` on `part`, at `at` with orientation `rot` (degrees about X, Y, Z), in the part's own frame."""
         b.RigidJoint(label, self._host(part), b.Location(tuple(at), tuple(rot)))
 
+    def axis(self, part, label, at, direction=(1, 0, 0)):
+        """Spin axis `label` on `part` (build123d RevoluteJoint): a bearing bore or a shaft the mating part turns on."""
+        b.RevoluteJoint(label, self._host(part), b.Axis(tuple(at), tuple(direction)))
+
+    def revolute(self, part, label, span=(0, 360)):
+        """Spec `joint` dict of a spin axis in world: pivot on the axis, sense normalised to + (an axle's sense is a
+        convention, a mirrored motor still turns its hub about +X)."""
+        ax = self.parts[part].joints[label].relative_axis.located(self.parts[part].location)
+        d = [ax.direction.X, ax.direction.Y, ax.direction.Z]
+        d = [-v for v in d] if max(d, key=abs) < 0 else d
+        p = ax.position
+        return {"kind": "revolute", "axis": [round(v, 6) + 0.0 for v in d], "pivot": [round(v, 6) + 0.0 for v in (p.X, p.Y, p.Z)],
+                "min": span[0], "max": span[1], "default": span[0]}
+
     def mate(self, parent, plabel, child, clabel):
         """Place `child` so its joint `clabel` coincides with the parent's `plabel` (applied by solve(), in the order given: a
         joint added to an already placed part is taken relative to the world, so every joint is declared first)."""
@@ -34,16 +48,18 @@ class Rig:
             pp, cp = self.parts[parent], self.parts[child]
             cp.location = pp.location * pp.joints[plabel].relative_location * cp.joints[clabel].relative_location.inverse()
 
-    def pose(self, part):
-        """(at, rot) of the mated part, rounded to the spec's precision."""
+    def pose(self, part, frame=None):
+        """(at, rot) of the mated part (in `frame` part's frame, else world), rounded to the spec's precision."""
         loc = self.parts[part].location
+        if frame is not None:
+            loc = self.parts[frame].location.inverse() * loc
         at, rot = loc.position, loc.orientation
         return [round(v, 6) + 0.0 for v in (at.X, at.Y, at.Z)], [round(v, 6) + 0.0 for v in (rot.X, rot.Y, rot.Z)]
 
 
-def tub_rig():
+def tub_rig(r=None, solve=True):
     """Rig of the parts that mate to the tub: heat-set inserts (floor and rim), the power switch, the N10 motors."""
-    r = Rig()
+    r = r or Rig()
     for i, (x, y) in enumerate(INS):                 # floor bores: the insert rests on the bore floor
         r.joint("tub", f"bore_b{i}", (x, y, INS_Z[0]))
         r.joint(f"insert_b{i}", "bottom", (0, 0, -INS_LEN / 2))
@@ -71,11 +87,17 @@ def tub_rig():
         r.joint("power_switch", f"ear{i}", (sg * SW_PITCH / 2, 0, SW_BODY_H / 2))
         r.joint(f"bolt_sw{i}", "head", (0, 0, 0))
         r.mate("power_switch", f"ear{i}", f"bolt_sw{i}", "head")
-    r.solve()
+    if solve:
+        r.solve()
     return r
 
 
-RIG = tub_rig()
+def _rig():
+    from .assembly_rig import assembly_rig   # the rest of the chain (weapon, drive, armour, electronics)
+    return assembly_rig()
+
+
+RIG = _rig()
 
 
 def place_at(part):
@@ -84,3 +106,9 @@ def place_at(part):
 
 def place_rot(part):
     return RIG.pose(part)[1]
+
+
+def place(part, frame=None):
+    """Spec `at`/`rot` of a mated part in its spec parent's frame."""
+    at, rot = RIG.pose(part, frame)
+    return {"at": at, "rot": rot}
