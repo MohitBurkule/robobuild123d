@@ -238,7 +238,7 @@ def intent_checks():
     # (still probed; INFO "matches original" within 0.5 mm; JSON: "exempt": [...] on the same intent entry)
     A("fillet", "inside wall corners are radiused: sharp PLA inside corners crack under impact", part="tub", axis="z", h=FILLET_H,
       at=[[-x + w, CH["y0"] + w], [x - w, CH["y0"] + w], [x - w, CH["y1"] - w], [-x + w, CH["y1"] - w]],
-      exempt=[dict(at=[sg * (x - w), CH["y0"] + w], reason="RVRN RV01 square, N10 gearbox plate seat, r=0.0 (RV01_Chassis_1 z=10 slice: wall x=27.5 meets y=-35.6 at 90 deg)") for sg in (1, -1)])
+      exempt=[dict(at=[sg * FILLET_REAR_X, CH["y0"] + w - 0.05], reason="RVRN RV01 square, N10 gearbox plate seat, r=0.0 (RV01_Chassis_1 z=10 slice: wall x=27.5 meets y=-35.6 at 90 deg, seat arc starts at x=26.5; ours seat arc starts at x=26.77)") for sg in (1, -1)])
     A("tool_count", "pit kit: one hex key per screw size (1.3 for M2, 2 for M3); the weapon swap needs only the 2 mm key", max=2, module_max=1,
       module=["bolt_ula", "bolt_ulb", "bolt_ura", "bolt_urb"])
     rot = ["spider", "disc_a", "disc_b", "dspacer"]
