@@ -326,6 +326,8 @@ def _run(ctx):
         _sweep(ctx, present, root, getattr(r.spec, "teardown", None) or [], steps)
     finally:
         restore()
+    if (r.spec.raw or {}).get("service_pose"):   # the rotor is turned back by hand: what the service pose could not reach comes off in the as-built pose
+        _sweep(ctx, present, root, getattr(r.spec, "teardown", None) or [], steps)
     # A declared swap module (spec `modules`) leaves as one unit; its bench teardown (`module_teardown`) is judged on the
     # module alone, its root plate staying put, so a quick-change weapon is checked both ways.
     stuck_bench = []
