@@ -324,4 +324,148 @@ SERVICE_POSE = [dict(parts=["spider", "disc_a", "disc_b", "dspacer"] + [f"bolt_{
                      reason="drisk turned by hand so the rim clears the nose screws; whole stack with its bolts moves as one")]
 
 
+
+# ---- [fix-B-lint-tub] chassis named dimensions (positions in the chassis frame; all values verbatim from the former inline literals)
+TB_OV, TB_EPS = 0.1, 0.001                              # deck overlap of the hanging features / cone seating epsilon
+TB_COL_R, TB_FOOT_R, TB_FOOT_Z, TB_FOOT_CONE = 2.75, 3.7, 5.2, 1.4   # rear-centre boss R, column foot R / top Z, 56 deg cone height
+# corner column blocks: (outline, nose cut (x0, y0, dx, dy, r), [R fillets into the walls])
+TB_BLKS = [([(22.25, 7.65), (27.6, 7.65), (27.6, 13.1), (22.25, 13.1)], (22.25, 7.65, 1, 1, 2.5), [(22.25, 13.0, -1, -1, 0.8), (27.5, 7.65, -1, -1, 0.8)]),
+           ([(22.21, -23.45), (27.6, -23.45), (27.6, -18.85), (22.21, -18.85)], (22.21, -18.85, 1, -1, 2.6), [(22.21, -23.4, -1, 1, 0.9), (27.5, -18.85, -1, 1, 0.9)])]
+TB_STOP = (17.7, -25.4, -23.4)                          # motor front stop wall: |X| inner, Y0, Y1
+TB_KEY = (-26.15, -23.4, 16.0)                          # N10 key tab: Y0, Y1, Z0
+TB_LEDGE = (20.0, -27.3, -23.4)                         # N10 lift-off ledge: |X| inner, Y0, Y1
+TB_LOBE_X1, TB_LOBE_R, TB_LOBE_N = 32.5, 1.95, 12      # lobe outer |X|, root fillet R, loft bands
+TB_TAB_PTS = [(18.5, 6.4), (19.5, 5.4), (25.5, 5.4), (26.5, 6.4), (26.5, 12.5), (25.5, 13.5), (19.5, 13.5), (18.5, 12.5)]
+TB_TAB_X = (13.2, 17.6)
+TB_TABW_PTS = [(13.0, 2.5), (25.5, 2.5), (26.5, 3.5), (26.5, 12.35), (25.59, 14.75), (15.0, 19.5), (13.0, 19.5)]
+TB_TABW_X = (10.3, 13.3)
+TB_TABFIL = ([(8.3, 14.9), (10.4, 14.9), (10.4, 17.0), (8.3, 17.0)], (8.3, 17.0), 2.0)   # R2 into the front face: outline, centre, R
+TB_SWPAD = ([(22.0, -15.6), (27.5, -15.6), (27.5, 4.4), (22.0, 4.4)], 16.5)              # switch pad outline, bottom Z
+TB_LUG_HEAD = [(13.0, CH["z0"]), (26.0, CH["z0"]), (30.4, 1.0)]
+TB_LUG_ARCA, TB_LUG_ARCB = (4.5, 250, 300, 6), (3.25, 250, 400, 24)
+TB_LUG_MID, TB_LUG_TAIL = (36.6, 2.5), [(15.0, CH["z1"]), (13.0, CH["z1"])]
+TB_LUG_CUT = [(26.0, 0.0), (26.0, 2.5), (30.0, 1.0), (40.0, 0.9), (60, 0)]
+TB_LUG_X = (17.5, 21.5)
+TB_BLEND = [(29.5, 15.0), (28.7, 16.0), (26.5, 18.5), (24.2, 21.0), (22.8, 22.8), (22.0, 24.6), (21.6, 26.3), (21.5, 27.5)]
+TB_FACE_A = [(21.4, 13.0), (29.5, 13.0), (29.5, 14.6), (28.5, 15.6), (21.4, 15.6)]
+TB_FACE_B = ([(21.4, 15.5), (24.2, 15.5), (24.2, 18.3), (21.4, 18.3)], (24.2, 18.3), 2.7)   # R2.7 fillet into the lug
+TB_FACE_Z = 16.4
+TB_BOT_HEAD, TB_BOT_Z1 = [(21.5, 13.0), (29.5, 13.0)], 5.0
+TB_GUS = ([(21.45, 4.99), (23.5, 4.99), (21.45, 7.6)], 13.0, 27.5, 8.0)                   # section (sign * X), Y span, bot clip Z
+TB_TOPF = ([(13.0, 19.5), (15.3, 19.5), (23.0, 15.83), (23.0, 13.47), (15.3, 16.4), (13.0, 16.4)], 21.4, 29.5)
+TB_TOPF_HEAD, TB_TOPF_TAIL, TB_TOPF_Z = [(21.4, 13.0), (29.5, 13.0)], [(21.4, 27.5)], (10.0, 20.0)
+# lug underside cuts
+TB_LUGCUT_A = [(10.0, -5.0), (10.0, 2.5), (26.0, 2.5), (30.4, 1.0), (30.4, -5.0)]
+TB_LUGCUT_X = (17.4, 21.6)
+TB_UNDER = ([(36.7, 0.0), (40.5, 0.0), (40.5, 2.5), (36.7, 2.5)], 3.25, 96)
+TB_RABBET = (13.3, 17.5, 12.0, 15.1, 4.5)               # |X| in, |X| out, Y0, Y1, top Z of the front-wall rabbet
+TB_STOPFIL = ([(17.6, 4.4), (22.2, 4.4), (22.2, 9.0), (17.6, 9.0)], (22.2, 9.0), 4.5, (-25.5, -22.4))
+# deck pockets
+TB_DK = 0.6404
+TB_TRI = [[(0.0, -3.07), (-22.25, -3.07 + TB_DK * 22.25), (-22.25, 12.4), (22.25, 12.4), (22.25, -3.07 + TB_DK * 22.25)],
+          [(0.0, -8.13), (22.25, -8.13 - TB_DK * 22.25), (22.25, -23.4), (17.5, -23.4), (17.5, -23.6), (-17.5, -23.6), (-17.5, -23.4),
+           (-22.25, -23.4), (-22.25, -8.13 - TB_DK * 22.25)]]
+TB_DECK_R = 0.8
+TB_SIDEPK = [(3.72, -5.59), (22.0, 4.51 + 0.640 * 2.49), (22.0, -15.71 - 0.6407 * 2.49)]   # right edge at |X| 22.0: 1.0 mm rib to the switch slot
+TB_SIDEPK_R = 1.9
+TB_REARPK = ([(-26.5, -16.13), (-14.12, -3.75), (3.75, 14.12), (16.13, 26.5)], -34.5, -26.5, 0.6)
+TB_REARPK_C = ([(-2.75, -30.0), (2.75, -30.0), (2.75, -26.5), (-2.75, -26.5)], 1.2)
+TB_DECK_CUT = (-0.5, 1.0)                               # deck pocket Z span relative to the deck face
+# insert column holes: bore R, chamfer R, chamfer height, chamfer Z (bottom), blind depth below z1, pilot R, pilot start below z1
+TB_CHOLE = dict(bore=1.5, ch_r=2.1, ch_h=0.6, ch_z=4.5, blind=4.0, pilot_r=0.85, pilot_z=4.1)
+TB_SWSLOT = (23.0, 4.0, -11.6, 12.0, 0.45, 16.0)        # slot x0, w, y0, l, corner R, bottom Z
+TB_SWPILOT = (1.9, -13.1)                               # switch pilot Y
+TB_SWPILOT_R, TB_SWPILOT_DZ = 0.85, 3
+TB_KH = (2.5, 5.85, 0.85, 2.05)                         # keyhole seat R, pilot Z, pilot R, U-slot half width
+TB_NUTHOLE = (1.6, 26.0, 33.0)                          # M3 clearance R, |X| span
+TB_NUTREL = (29.0, 34.0, -20.0, 6.0, 3.0)               # floor-trim box: |X| span, Y span, depth below floor
+TB_HEX = (3.12, 3.13, 27.0, 29.5)                       # hex pocket radii, |X| span
+TB_NUTSLOT = ([(-7.14, 6.85), (-3.45, 7.05), (-3.45, 7.95), (-6.9, 8.9)], 0.25, 29.0, 33.0)
+TB_STANDOFF = (2.5, 1.6, 17.0, 22.0)                    # holes R(SA), R(SB), |X| span
+TB_KEYHOLE = ([(20.0, 6.9), (25.0, 6.9), (25.0, 12.0), (20.0, 12.0)], 0.9, 10.0, 22.0)
+TB_LAT = [[(4.84, 7.0), (4.84, 15.0), (12.4, 11.0)], [(26.42, 7.0), (26.42, 15.0), (18.85, 11.0)],
+          [(10.6, 5.58), (20.65, 5.58), (15.6, 9.7)], [(10.6, 16.42), (20.65, 16.42), (15.6, 12.3)]]
+TB_WIRE = ([(7.25, 5.0), (10.25, 5.0), (10.25, 17.0), (7.25, 17.0)], 1.45, 12.0, 16.0)
+TB_WALLPK = ([(-18.25, 4.25), (13.25, 18.2)], 6.55, 15.55, 12.0, 13.85)
+TB_RABBET_Z = (4.5, 4.4)                                # base-panel rabbet top Z, boss recess bottom Z
+TB_PADREC = (17.65, 27.35, -35.15, -25.45, 4.4, 4.8)
+TB_CORNER = (25.5, 0.05, 2.0)                           # N10 corner square: |X| inner, edge clearance, Y length
+TB_TAIL = ([(-20.0, 0.0), (-11.7, 0.0), (-11.7, 20.0), (-20.0, 20.0)], 4.0)
+TB_CAGE_G, TB_CAGE_W, TB_CAGE_Y, TB_CAGE_TOP = 0.1, (1.28, 1.2), (-12.0, 8.0), 1.1
+TB_CAGE_ESC = (14.6, 1.0, 0.9)
+
+
+
+# ---- [fix-B-lint-tub] chassis named dimensions (chassis frame; values verbatim from the former inline literals)
+TB_OV, TB_EPS = 0.1, 0.001                              # deck overlap of the hanging features / cone seating epsilon
+TB_COL_R, TB_FOOT_R, TB_FOOT_Z, TB_FOOT_CONE = 2.75, 3.7, 5.2, 1.4   # rear-centre boss R, column foot R / top Z, 56 deg cone height
+# corner column blocks: (outline, nose cut (x0, y0, dx, dy, r), [R fillets into the walls])
+TB_BLKS = [([(22.25, 7.65), (27.6, 7.65), (27.6, 13.1), (22.25, 13.1)], (22.25, 7.65, 1, 1, 2.5), [(22.25, 13.0, -1, -1, 0.8), (27.5, 7.65, -1, -1, 0.8)]),
+           ([(22.21, -23.45), (27.6, -23.45), (27.6, -18.85), (22.21, -18.85)], (22.21, -18.85, 1, -1, 2.6), [(22.21, -23.4, -1, 1, 0.9), (27.5, -18.85, -1, 1, 0.9)])]
+TB_STOP = (17.7, -25.4, -23.4)                          # motor front stop wall: |X| inner, Y0, Y1
+TB_KEY = (-26.15, -23.4, 16.0)                          # N10 key tab: Y0, Y1, Z0
+TB_LEDGE = (20.0, -27.3, -23.4)                         # N10 lift-off ledge: |X| inner, Y0, Y1
+TB_LOBE_X1, TB_LOBE_R, TB_LOBE_N = 32.5, 1.95, 12      # lobe outer |X|, root fillet R, loft bands
+TB_TAB_PTS = [(18.5, 6.4), (19.5, 5.4), (25.5, 5.4), (26.5, 6.4), (26.5, 12.5), (25.5, 13.5), (19.5, 13.5), (18.5, 12.5)]
+TB_TAB_X = (13.2, 17.6)
+TB_TABW_PTS = [(13.0, 2.5), (25.5, 2.5), (26.5, 3.5), (26.5, 12.35), (25.59, 14.75), (15.0, 19.5), (13.0, 19.5)]
+TB_TABW_X = (10.3, 13.3)
+TB_TABFIL = ([(8.3, 14.9), (10.4, 14.9), (10.4, 17.0), (8.3, 17.0)], (8.3, 17.0), 2.0)   # R2 into the front face: outline, centre, R
+TB_SWPAD = ([(22.0, -15.6), (27.5, -15.6), (27.5, 4.4), (22.0, 4.4)], 16.5)              # switch pad outline, bottom Z
+TB_LUG_HEAD = [(13.0, CH["z0"]), (26.0, CH["z0"]), (30.4, 1.0)]
+TB_LUG_ARCA, TB_LUG_ARCB = (4.5, 250, 300, 6), (3.25, 250, 400, 24)
+TB_LUG_MID, TB_LUG_TAIL = (36.6, 2.5), [(15.0, CH["z1"]), (13.0, CH["z1"])]
+TB_LUG_CUT = [(26.0, 0.0), (26.0, 2.5), (30.0, 1.0), (40.0, 0.9), (60, 0)]
+TB_LUG_X = (17.5, 21.5)
+TB_BLEND = [(29.5, 15.0), (28.7, 16.0), (26.5, 18.5), (24.2, 21.0), (22.8, 22.8), (22.0, 24.6), (21.6, 26.3), (21.5, 27.5)]
+TB_FACE_A = [(21.4, 13.0), (29.5, 13.0), (29.5, 14.6), (28.5, 15.6), (21.4, 15.6)]
+TB_FACE_B = ([(21.4, 15.5), (24.2, 15.5), (24.2, 18.3), (21.4, 18.3)], (24.2, 18.3), 2.7)   # R2.7 fillet into the lug
+TB_FACE_Z = 16.4
+TB_BOT_HEAD, TB_BOT_Z1 = [(21.5, 13.0), (29.5, 13.0)], 5.0
+TB_GUS = ([(21.45, 4.99), (23.5, 4.99), (21.45, 7.6)], 13.0, 27.5, 8.0)                   # section (sign * X), Y span, bot clip Z
+TB_TOPF = ([(13.0, 19.5), (15.3, 19.5), (23.0, 15.83), (23.0, 13.47), (15.3, 16.4), (13.0, 16.4)], 21.4, 29.5)
+TB_TOPF_HEAD, TB_TOPF_TAIL, TB_TOPF_Z = [(21.4, 13.0), (29.5, 13.0)], [(21.4, 27.5)], (10.0, 20.0)
+TB_LUGCUT_A = [(10.0, -5.0), (10.0, 2.5), (26.0, 2.5), (30.4, 1.0), (30.4, -5.0)]
+TB_LUGCUT_X = (17.4, 21.6)
+TB_UNDER = ([(36.7, 0.0), (40.5, 0.0), (40.5, 2.5), (36.7, 2.5)], 3.25, 96)
+TB_RABBET = (13.3, 17.5, 12.0, 15.1, 4.5)               # |X| in, |X| out, Y0, Y1, top Z of the front-wall rabbet
+TB_STOPFIL = ([(17.6, 4.4), (22.2, 4.4), (22.2, 9.0), (17.6, 9.0)], (22.2, 9.0), 4.5, (-25.5, -22.4))
+TB_DK = 0.6404
+TB_TRI = [[(0.0, -3.07), (-22.25, -3.07 + TB_DK * 22.25), (-22.25, 12.4), (22.25, 12.4), (22.25, -3.07 + TB_DK * 22.25)],
+          [(0.0, -8.13), (22.25, -8.13 - TB_DK * 22.25), (22.25, -23.4), (17.5, -23.4), (17.5, -23.6), (-17.5, -23.6), (-17.5, -23.4),
+           (-22.25, -23.4), (-22.25, -8.13 - TB_DK * 22.25)]]
+TB_DECK_R = 0.8
+TB_SIDEPK = [(3.72, -5.59), (22.0, 4.51 + 0.640 * 2.49), (22.0, -15.71 - 0.6407 * 2.49)]   # right edge at |X| 22.0: 1.0 mm rib to the switch slot
+TB_SIDEPK_R = 1.9
+TB_REARPK = ([-26.5, -16.13, -14.12, -3.75, 3.75, 14.12, 16.13, 26.5], -34.5, -26.5, 0.6)   # flat (xa, xb) pairs, Y0, Y1, R
+TB_REARPK_C = ([(-2.75, -30.0), (2.75, -30.0), (2.75, -26.5), (-2.75, -26.5)], 1.2)
+TB_DECK_CUT = (-0.5, 1.0)                               # deck pocket Z span relative to the deck face
+TB_CHOLE = dict(bore=1.5, ch_r=2.1, ch_h=0.6, ch_z=4.5, blind=4.0, pilot_r=0.85, pilot_z=4.1)
+TB_SWSLOT = (23.0, 4.0, -11.6, 12.0, 0.45, 16.0)        # slot x0, w, y0, l, corner R, bottom Z
+TB_SWPILOT = (1.9, -13.1)                               # switch pilot Y
+TB_SWPILOT_R, TB_SWPILOT_DZ = 0.85, 3
+TB_KH = (2.5, 5.85, 0.85, 2.05)                         # keyhole seat R, pilot Z, pilot R, U-slot half width
+TB_NUTHOLE = (1.6, 26.0, 33.0)                          # M3 clearance R, |X| span
+TB_NUTREL = (29.0, 34.0, -20.0, 6.0, 3.0)               # floor-trim box: |X| span, Y span, depth below floor
+TB_HEX = (3.12, 3.13, 27.0, 29.5)                       # hex pocket radii, |X| span
+TB_NUTSLOT = ([(-7.14, 6.85), (-3.45, 7.05), (-3.45, 7.95), (-6.9, 8.9)], 0.25, 29.0, 33.0)
+TB_STANDOFF = (2.5, 1.6, 17.0, 22.0)                    # holes R(SA), R(SB), |X| span
+TB_KEYHOLE = ([(20.0, 6.9), (25.0, 6.9), (25.0, 12.0), (20.0, 12.0)], 0.9, 10.0, 22.0)
+TB_LAT = [[(4.84, 7.0), (4.84, 15.0), (12.4, 11.0)], [(26.42, 7.0), (26.42, 15.0), (18.85, 11.0)],
+          [(10.6, 5.58), (20.65, 5.58), (15.6, 9.7)], [(10.6, 16.42), (20.65, 16.42), (15.6, 12.3)]]
+TB_WIRE = ([(7.25, 5.0), (10.25, 5.0), (10.25, 17.0), (7.25, 17.0)], 1.45, 12.0, 16.0)
+TB_WALLPK = ([(-18.25, 4.25), (13.25, 18.2)], 6.55, 15.55, 12.0, 13.85)
+TB_RABBET_Z = (4.5, 4.4)                                # base-panel rabbet top Z, boss recess bottom Z
+TB_PADREC = (17.65, 27.35, -35.15, -25.45, 4.4, 4.8)
+TB_CORNER = (25.5, 0.05, 2.0)                           # N10 corner square: |X| inner, edge clearance, Y length
+TB_TAIL = ([(-20.0, 0.0), (-11.7, 0.0), (-11.7, 20.0), (-20.0, 20.0)], 4.0)
+TB_CAGE_G, TB_CAGE_W, TB_CAGE_Y, TB_CAGE_TOP = 0.1, (1.28, 1.2), (-12.0, 8.0), 1.1
+TB_CAGE_ESC = (14.6, 1.0, 0.9)
+
+
+TB_PAD = (22.5, -30.3, 9.1, 0.465, 0.6)                # base-panel preload pad: |X|, Y, side, height, edge fillet
+TB_SINK, TB_SKIN_FILLET = 0.01, 0.25                     # pads/bosses sink into the skin; R0.25 where they meet it
+TB_EDGE_TOL = (0.02, 1e-3, 0.1, 0.01)                    # base-edge picker: Z match, flat edge, face rise, face floor
+TB_CSK_CUT = (1, 3)                                      # relief hole: starts this far under / ends this far over the panel underside
+
 __all__ = [n for n in dir() if not n.startswith('__')]
