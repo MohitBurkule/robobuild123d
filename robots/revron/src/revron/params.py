@@ -1,0 +1,326 @@
+"""[fix-S] Revron master dimensions and module-level constants (measured on the RVRN 2.0 STEP)."""
+import json, math, os, sys
+HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))   # src/
+ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
+if ROOT not in sys.path:
+    sys.path.insert(0, ROOT)
+
+# ======================================================================================================================
+# Measured layout (RVRN 2.0 STEP, world frame). Each number is a dimension of a feature, not a mesh coordinate list.
+# ======================================================================================================================
+REF_TO_WORLD = [[0, 0, -1, 0], [-1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1]]
+WY, WZ = 38.5, 23.5                  # weapon axis (along X)
+SA = (30.5, 5.5)                     # 25 mm standoff (RV11): front axle, X 17.5..42.5
+SB = (40.5, 4.5)                     # 15 mm standoff (RV10): nose, X 21.5..36.5
+SA_X, SB_X = (17.5, 42.5), (21.5, 36.5)
+SO_R = 2.5
+NUT = (-11.5, 8.5)                   # side-panel screw into a thin M3 nut in the chassis wall (Y, Z)
+NUT_X = (27.7, 29.5)
+INS = [(-25.0, 10.4), (25.0, 10.4), (-25.0, -21.6), (25.0, -21.6), (0.0, -33.6)]   # 5 floor inserts / base screws
+INS_Z = (5.1, 9.1)                   # FS1 M2 heat-set (3.5 OD x 4)
+CSK_M2 = 4.5                         # 90 deg countersink at the face for an ISO 10642 M2 flat head (4.4 x 1.2) + 0.1
+PANEL_EAR_R = 3.0
+BASE_HOLE, TOP_HOLE = 3.4, 3.5         # csk through-holes: wide enough that the 90 deg seat stops short of the far face (no knife edge)
+BOSS_R, BOSS_H = 2.6, 0.3            # base-panel ring boss round each screw (keys into a 2.65 x 0.45 recess in the column foot)
+# electronics envelopes (catalog boxes at their spec placement, rot z 90): Malenki nano 32 x 20 x 4.4 at (8.67, -3.0, 15.3),
+# BBB ant ESC 23.5 x 12 x 5 at (8.63, -7.25, 10.6); the deck cage ribs are dimensioned off these
+RX_X, RX_Y, RX_Z = (8.67 - 10.0, 8.67 + 10.0), (-3.0 - 16.0, -3.0 + 16.0), (15.3 - 2.2, 15.3 + 2.2)
+WE_X, WE_Y, WE_Z = (8.63 - 6.0, 8.63 + 6.0), (-7.25 - 11.75, -7.25 + 11.75), (10.6 - 2.5, 10.6 + 2.5)
+EAR_R = 2.7                          # top-panel corner ear radius: >= CSK_M2 / 2 + 0.4 mm of Ti round the countersink
+RY, RZ = -30.5, 11.0                 # N10 shaft (rear axle)
+MOTX = 19.6                          # N10 catalog origin |X| (body 3.7..27.5, shaft to 37.5)
+N10_KEY = (23.55, 26.15)             # |X| of the chassis key tab between the N10's last two gearbox plates
+N10_TOP = 17.0                       # top face of the N10 gearbox plates
+# chassis RV01
+SWX = 24.55   # power switch X: body side 0.05 clear of the 27.5 inner wall face (was 25.0, 0.4 into it)
+CH = dict(x=29.5, y0=-37.6, y1=15.0, z0=2.5, z1=19.5, wall=2.0, deck=17.5, cham=2.0)
+# drisk
+# master parameters of the stack: plate thicknesses and where the first plate starts; every X span below is chained from them
+SPIDER_T, DISC_T, SPACER_T, STACK_X0 = 3.0, 3.0, 6.0, -8.2
+DR_X, _x = {}, STACK_X0
+for _n, _t in (("spider", SPIDER_T), ("disc_a", DISC_T), ("spacer", SPACER_T), ("disc_b", DISC_T)):
+    DR_X[_n] = (_x, _x + _t)       # spider | disc_a | spacer | disc_b, each flush on the previous one
+    _x += _t
+DR_ROT = -54.889                     # drisk phase about the axis (STEP Drisk_V4 placement)
+DISC_R, DISC_ECC, DISC_ECC_A = 16.5, 0.5, -40.0   # eccentric rim: R16.5 centred 0.5 mm towards -40 deg (balances the tooth)
+TOOTH_R, TOOTH_A = 23.0, 134.8
+BOLT_R, HUB_R = 14.0, 4.5            # stack-bolt circle and bell-screw circle (radii about the weapon axis)
+N_STACK = 4                          # bolts / lobes / windows per stack, 90 deg apart
+# motor GR1507: axis X, stator base X 8.4..10.4 on the right mount via the back spacer X 11.9..13.4
+SHAFT_D, SHAFT_CLR, BRG_SEAT_R, NUT_RECESS_R = 5.0, 0.1, 3.95, 6.0   # GR1507 shaft, its clearance in RV03, MR85 seat (8 mm bearing, 7.9 STEP), shaft nut recess
+STATOR_PCD, BOSS_OVER = 12.0, 0.01        # stator M2 bolt circle; boss overshoots the battered plane before it is split
+MNT_SCREW = ("M3x12", "M3x14")           # mount-to-standoff CSK screws at SA, SB
+MNT_IN, MNT_T, MNT_SLAB_T = 13.4, 8.0, 4.0   # weapon mount: inner face |X|, total thickness, slab thickness (rest = battered boss)
+MNT_OUT, MNT_SLAB = MNT_IN + MNT_T, MNT_IN + MNT_SLAB_T
+WEAPON_CLEAR_R = 16.0                # chassis material stays outside this radius about the weapon axis (rotor + 1 mm)
+BSP_T = 1.5                          # printed spacer between the stator base and the right mount
+BSP_X = (MNT_IN - BSP_T, MNT_IN)
+STAT_HOLE_R, CB_R, CB_CONE_X = 1.12, 2.25, (16.4, 17.15)   # RV03 stator screw clearance d2.24, d4.5 counterbore, its cone
+PHASE_VIA = [[11.1, 14.5, 16.0], [11.1, 15.5, 18.2], [11.1, 27.0, 18.2], [11.1, 30.0, 14.5]]   # weapon phase leads: the lug (|X| >= 10.4, up to the deck) closes z 14.5 at y 15..26
+
+
+# ====================================================================================================================
+# Parts
+# ====================================================================================================================
+# panels (RV26 base, Ti top) [fix-T: named params, every panel dimension derives from these]
+SEG, SEG_FINE = 64, 128              # shapely buffer resolution (segments per quarter circle) for ears / tangent arcs
+CSK_CLEAR = 0.7                      # countersink diameter over the ISO 10642 head (4.5 seat: dk 3.8 + 0.7)
+BASE_Z0, BASE_T = 3.5, 1.0           # base panel underside Z, skin thickness
+BASE_OUT = dict(x=28.1, y0=-36.2, y1=13.0, r=0.8)   # RV26 outline 56.2 x 49.2, R0.8 corners
+PANEL_EAR_EDGE = 3.0                 # a screw closer than this to the outline edge gets a PANEL_EAR_R ear
+PANEL_R_IN = 0.5                     # concave blend where the ears meet the outline
+TOP_Z0, TOP_T = CH["z1"], 0.9        # Ti top panel sits on the chassis rim, 0.9 thick
+TOP_X = 23.0                         # |X| of the top-panel side edges beside the switch
+TOP_Y0, TOP_Y1 = -24.1, 12.9         # rear edge, front of the shoulders
+TOP_SHOULDER_Y = 7.9                 # front edge between the shoulders and the tab
+TOP_NOTCH_X = (13.0, 21.0)           # |X| span of the front notches clearing the weapon-mount tabs (tab is |X| < 13)
+TOP_TAB_Y = 11.9                     # tab front edge
+TOP_CUT_Y = 14.0                     # notch / tab cutters run past the panel front (ears end at Y 13.1)
+TOP_FILL_YT = (1.0, -12.5)           # Y where each concave ear-to-edge arc meets the |X| 23 edge (front, rear ear row)
+TOP_FILL_X = 26.6                    # outer X of the arc fill boxes (past the ears)
+TOP_R_OUT, TOP_R_IN = 0.4, 1.2       # top-panel edge rounds
+ESC_TRAY = dict(gap=0.1, wall=1.25, lip=1.0, fuse=0.01, rail_end=1.0, rail_x=(1.4, 2.6))   # TPU ESC tray: walls >= 1.2, rails inset from the board -x / +x edges
+CHAIKIN_Q = 0.25                     # Chaikin corner-cutting ratio (side-panel spline smoothing)
+TOP_XY = tuple(INS[i] for i in (1, 0, 3, 2))   # the four corner insert columns (+X first), screw order of bolt_t*
+
+
+WSEG_LO, WSEG_FINE, WSEG_MID, WSEG_HI, WSEG_FN, WSEG_MAX, WSEG_ARC, WSEG_ARC_S = 24, 32, 48, 64, 96, 128, 40, 12   # circle / arc tessellation of the 2D profiles
+# weapon mount RV02 (left, shaft end) / RV03 (right, stator): per-side master parameters (STEP measurements)
+MNT_SIDE = dict(
+    r=dict(top_r=10.0, notch_y=10.17, rim_end=-14.5, slab_eps=0.02, face=(23.88, 0.144, 0.0379)),   # a, kz, ky of |X| = a - kz*Z - ky*Y
+    l=dict(top_r=7.0, notch_y=9.0, rim_end=-5.0, slab_eps=0.0, face=(23.48, 0.185, 0.0168)))
+MNT_TOP_Z = 19.5                        # top of the rear notch: the teardrop's tangent line starts here
+TAB = dict(y0=15.0, z0=5.35, h=8.2, y1=26.5, cham=1.0)   # chassis tab the notch drops over: rear Y, floor Z, height, front-face Y, front chamfer
+MNT_HEEL = dict(z=1.25, step=0.4, back=1.8, z_hook=2.5, z_lip=4.5)   # rear foot hooked under the tab: floor Z, tip step, setback, hook and lip Z
+MNT_NOTCH_UP = 2.0                      # the rear face above the tab leans back by this much over the last stretch to the top
+NOSE_R, NOSE_A0 = 3.25, -16.0           # nose arc round the SB standoff and where it leaves the outline (deg)
+NOSE_PAD_R = 4.4                        # local pad round the nose CSK: CSK radius + printed wall
+BOSS_Z = 6.34                           # the boss starts above the line from the notch top to the nose, at this Z at the nose end
+BOSS_NOSE_Y = 44.34
+BIG = 60.0                              # a box edge bigger than any part, for half-plane clips
+MNT_RELIEF_R = 1.0                      # concave corner relief of the profile (tub deck fillet, mfg corner relief)
+
+
+HOLE_FACE_RISE = 0.7                    # the battered face's highest point over a stator hole axis: the surface the hole is measured from
+BSP = dict(r=10.0, bore_r=4.0, win_in=5.5, win_out=8.5, half_deg=25.0, win_round=1.5, hole_r=1.05, phase=45.0)   # motor back spacer (STEP)
+
+
+DISC_BORE_RES = 4                       # bore polygon samples per degree
+DOG = dict(r=12.0, rise=1.52, t0=5.0, t1=18.0, t2=55.0)       # bore dogs (90 deg pitch): steep rise t0..t1, long ramp back to t2
+DISC_BORE_ROUND, DISC_HOLE_R_WIN = 0.5, 0.44                    # bore corner rounding; balance window corner radius
+DISC_BAL_PTS = [(-13.2, 4.85), (-13.2, 9.08), (-11.68, 7.65)]    # param: organic balance-window hull corners (measured, STEP)
+TOOTH_PTS = [(-11.0, 11.6), (-8.0, 8.0), (-16.2, 0.0), (-16.25, 15.0)]   # param: organic tooth flank/root polygon (measured, STEP)
+DISC_ROUND = dict(r_out=0.2, r_in=0.7)                           # tooth tip land (0.4 laser-cuttable) and root fillet
+
+
+SPIDER = dict(r=14.2, lobe_r=2.3, round_in=0.8, win_r=11.7, win_off=2.3, win_far=20.0, hub_r=5.6, win_round=0.6, bore_r=2.6)
+
+
+SPACER = dict(r=16.0, bore_r=9.9, win_in=11.4, win_out=14.5, half_deg=36.0, win_round=1.0, phase=45.0)
+
+
+# ------------------------------------------------------------------------------------------------------------ wedgelet
+WEDGE_TOE_H = 0.85                   # ramp Z = 1 + 1.187 (50.1 - Y) lifted so its toe is a 0.85 mm land at full length
+
+
+# ------------------------------------------------------------------------------------------------------------ side panel
+SP_IN = [(-43.5, -41.0), (-43.5, -21.3), (-43.0, -19.6), (-41.2, -17.9), (-37.2, -17.2), (-34.4, -15.7), (-32.3, -13.0), (-31.5, -9.9),
+         (-31.5, 11.1), (-31.9, 13.4), (-33.6, 17.5), (-35.5, 20.4), (-37.2, 21.9), (-41.2, 23.3), (-42.7, 26.6)]
+# the front swing round the front wheel (inner face X at Y 13, 14, 16, 18, 20, 22, 24, 26.6) at three heights: it leans
+# out towards the floor so wheel hits ride up it (STEP RV23: inner face at Y 22 is X -47.6 at the floor, -41.6 at Z 7)
+SW_Y = (13.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, 26.6)
+SW_X = {1.0: (-32.4, -33.4, -36.6, -44.0, -46.3, -47.6, -48.3, -48.6),
+        4.0: (-32.2, -32.7, -34.2, -36.7, -43.0, -45.1, -46.0, -46.6),
+        7.5: (-31.7, -32.2, -33.2, -34.4, -36.0, -40.5, -43.0, -43.8),
+        9.5: (-31.6, -31.9, -32.8, -33.6, -34.6, -36.4, -39.6, -42.3)}
+# wall thickness (normal to the inner face) against height: rear / middle run battered 5 -> 2 mm, the swing ~3.4 mm
+SP_W_Z = (1.0, 3.0, 6.0, 9.0, 12.0, 16.0)
+SP_FOOT_LAND = 0.85
+SP_W_REAR = (5.2, 4.9, 4.3, 3.6, 3.0, 2.1)
+SP_W_MID = (5.0, 4.7, 3.5, 2.7, 2.3, 2.0)
+SP_W_SWING = (3.3, 3.3, 3.0, 2.6, 2.4, 2.1)
+
+
+SIDE_WALL_DEBUG = []
+
+
+LAT_GROW = 0.35   # mm, measured from RV01 y=-36 sections (pocket area 38.1 vs 28.2)
+
+
+from shapely.geometry import Point, Polygon   # noqa: E402
+NUT_LOBE = Point(NUT[0], NUT[1]).buffer(4.55, 64).union(Point(1.35, 6.9).buffer(1.2, 32)).convex_hull   # chassis wall lobe round the thin nut (Y, Z)
+LUG_FLOOR_Z, LUG_SCALLOP_YT, LUG_SCALLOP_R = 2.5, 36.27, 8.6   # param: organic lug underside arc, tangent to the lug floor at Y 36.27
+LUG_SCALLOP = Point(LUG_SCALLOP_YT, LUG_FLOOR_Z - LUG_SCALLOP_R).buffer(LUG_SCALLOP_R, 128).intersection(
+    Polygon([(0.0, -20.0), (LUG_SCALLOP_YT, -20.0), (LUG_SCALLOP_YT, LUG_FLOOR_Z), (0.0, LUG_FLOOR_Z)]))
+
+
+# ====================================================================================================================
+# Spec
+# ====================================================================================================================
+SOLID = dict(tub=0.8, mount=0.85, hub=0.85, tpu=0.9, shaft=0.05)    # solid_fraction of printed parts (infill and shell mass share)
+WEDGE_REF = {-1: "RV17", 1: "RV18"}                      # STEP part ids of the wedgelets and side panels per side
+SIDE_REF = {-1: "RV23", 1: "RV24"}
+SIDE_BOLT_X = dict(a=46.26, b=41.76, c=35.26)            # |X| of the side-panel screw heads (axle standoff, nose standoff, chassis nut)
+BASE_BOLT_Z = 3.5                                        # base-panel screw head plane
+TOP_BOLT_XY = INS[1::-1] + INS[3:1:-1]                   # top-panel screws sit on the four corner columns, right-hand first
+PCT = 100                                                # percent
+AWG = dict(power=24, rx=26, motor=28, signal=30)
+SLACK = dict(short=6, bench=8, phases=15)                # wire slack allowed, mm
+# (id, from, to, awg, kind, slack, extras)
+WIRES = [("w_bat_sw", "battery.jst_rcy", "power_switch.in", AWG["power"], "power", SLACK["bench"], dict(connector="jst_rcy")),
+         ("w_sw_wesc", "power_switch.out", "wesc.bat", AWG["power"], "power", SLACK["bench"], {}),
+         ("w_sw_rx", "power_switch.out", "rxesc.bat", AWG["rx"], "power", SLACK["bench"], {}),
+         # phases run rearward in the gap behind the drisk (4 mm axial from the stack), over the front lug (its top is the deck) and down into the tub at the deck front
+         ("w_wesc_m", "wesc.motor", "weapon_motor.phases", AWG["power"], "motor", SLACK["phases"], dict(connector="bullet2", count=3, via=PHASE_VIA)),
+         ("w_rx_wesc", "rxesc.wpn", "wesc.rx", AWG["signal"], "signal", SLACK["short"], {}),
+         ("w_m_l", "rxesc.m2", "motor_l.terminals", AWG["motor"], "motor", SLACK["short"], {}),
+         ("w_m_r", "rxesc.m1", "motor_r.terminals", AWG["motor"], "motor", SLACK["short"], {})]
+
+
+# make_spec tables: weapon shaft, web floors, hub pivots, electronics placements, press-fit interference, belt geometry
+WSHAFT = dict(r=2.5, len=30.1, x=3.65)                  # GR1507 shaft: radius, length, start in the motor frame
+WEB = dict(spider=0.8, disc=0.9, fork=1.05)             # min_web_mm the designer owns (STEP measures the same webs)
+HUB_PIVOT_X = dict(rear=41.6, front=34.5)               # |X| of each hub's revolute pivot
+ELEC = dict(battery=(-11.81, -5.4, 12.0), rxesc=(8.67, -3.0, 15.3), wesc=(8.63, -7.25, 10.6), switch_yz=(-5.6, 14.25))   # catalog origins (STEP envelopes)
+STATOR_DIRS = ((1, 0), (-1, 0), (0, 1), (0, -1))        # stator screw directions on the bolt circle (bolt_wm0..3)
+SW_SCREW_Y, SW_BOLT_Z, TOP_BOLT_Z = (1.9, -13.1), 16.0, 20.4  # switch screws (Y, head Z) and the top-panel screw head plane
+PRESS = dict(hub=0.05, tyre=0.3, micro=0.2, nut=0.05, shaft=0.02, bearing=0.05, pack=0.1)   # press-fit interference per joint, mm
+PULLEY_R, BELT_R, BELT_r, BELT_WALL = (7.5, 3.7), 8.0, 4.2, 1.0   # pulley radii (rear, front), O-ring path radii, ring wall
+BELT_X = dict(slab=(30.8, 31.8), cut=(29.0, 33.0))                       # |X| of the belt loop slab and of its cut
+O_RING = (45, 1.0)                                      # stock O-ring ID x cross-section
+
+
+# intent-probe parameters (rear hub / tyre / nut / seat) and the TPU-print exceptions of the chassis wall
+HUB_PROBE_X = 35.0                                      # |X| of the keyed-bore probe point (inside the bore, off its centre line)
+HUB_BORE_SPAN, TYRE_SPAN = (30.5, 40.5), (32.5, 42.0)   # |X| of the hub's blind D-bore and of the tyre seat
+TYRE_ID, TYRE_STRETCH, NUT_MOVE, WHEEL_MIN_GAP = 13.0, 1.0, 0.3, 1.0   # relaxed F1 tyre ID, its stretch over the crown, nut play, wheel-to-armour gap
+SEAT_PLAY, SEAT_TURN_DEG = 0.15, 2.0                      # motor boss play in the keyhole, shaft turn it allows
+WALL_MIN = 1.8                                            # printed wall floor: 4+ perimeters on a 2 mm wall
+WALL_EXCEPT = [[[-29.6, -37.7, 4.6], [29.6, -35.4, 17.5]], [[-33.0, -38.0, 0.0], [33.0, 44.0, 4.6]]]   # rear truss and base lip (STEP RV01)
+FILLET_H, ROTOR_CLEAR = 10.0, 2.0                         # inside-corner fillet probe height; lead-to-rotor clearance
+
+
+BRG = dict(od_r=4.0, w=2.5, bore_r=2.5, x=-14.75)   # MR85ZZ 5 x 8 x 2.5, centred in the RV02 seat
+
+
+REF_BOM = [   # RVRN 2.0 STEP part list (research/rvrn_step/INDEX.txt); one row per joint or part family
+    dict(role="FS8: base panel 5 x M2 CSK into heat-sets", match=["bolt_b*"], count=5, designation="M2x6", head="countersunk", threads_into="insert"),
+    dict(role="FS1 M2 heat-sets (floor)", kind="part", match=["insert_b*"], count=5, catalog="heatset_m2_4"),
+    dict(role="FS9: mount to standoff 2 x M3x12 CSK alu (axle standoff)", match=["bolt_u?a"], count=2, designation="M3x12", head="countersunk", threads_into="standoff", material="aluminium"),
+    dict(role="FS9: mount to nose standoff 2 x M3 CSK alu", match=["bolt_u?b"], count=2, designation="M3x14", head="countersunk", threads_into="standoff", material="aluminium",
+         deviation="M3x14 instead of the STEP's M3x12: through mount and lug, 12 mm engages 3.9 mm of the 15 mm standoff (< 1.5 d)"),
+    dict(role="top panel: 4 x M2 CSK thread-forming (not in the STEP; its countersunk holes are)", match=["bolt_t*"], count=4, designation="M2x5", threads_into="tub",
+         deviation="the STEP top panel has 4 countersunk corner holes but no screws; 4 M2x4 CSK thread-forming screws added so the Ti panel cannot peel off"),
+    dict(role="side panel to standoff ends: 4 x M3 CSK (STEP M3x8)", match=["bolt_s?a", "bolt_s?b"], count=4, designation="M3x10", head="countersunk", threads_into="standoff",
+         deviation="M3x10 instead of the STEP's M3x8: 8 mm engages 4.2 / 2.7 mm of standoff thread, under 1.5 d in aluminium"),
+    dict(role="side panel to chassis: 2 x M3x8 CSK into thin nuts", match=["bolt_s?c"], count=2, designation="M3x8", head="countersunk", threads_into="nut"),
+    dict(role="M3 thin nuts (BS EN 24036)", kind="part", match=["nut_c*"], count=2, catalog="nut_m3_thin"),
+    dict(role="RV11 25 mm + RV10 15 mm alu standoffs", kind="part", match=["so_*"], count=4, material="aluminium"),
+    dict(role="GR1507 weapon motor", kind="part", match=["weapon_motor"], count=1, catalog="gr1507"),
+    dict(role="Motor back spacer", kind="part", match=["motor_spacer"], count=1),
+    dict(role="spider + 2 Drisk_floating_3 + Drisk_spacer_alt_x", kind="part", match=["spider", "disc_a", "disc_b", "dspacer"], count=4),
+    dict(role="fork_5 x 2", kind="part", match=["fork_*"], count=2),
+    dict(role="RV17/18 wedgelets", kind="part", match=["wedgelet_*"], count=2, material="tpu"),
+    dict(role="RV23/24 side panels", kind="part", match=["side_*"], count=2, material="tpu"),
+    dict(role="Top panel 0.9 sheet", kind="part", match=["top_panel"], count=1),
+    dict(role="RV15 BBB antweight switch", kind="part", match=["power_switch"], count=1, catalog="switch_bbb_ant_rvrn2"),
+    dict(role="RV16 Turnabot 2S 180 mAh", kind="part", match=["battery"], count=1, catalog="lipo_2s_180_turnabot"),
+    dict(role="RV13 Malenki nano", kind="part", match=["rxesc"], count=1, catalog="malenki_nano_rvrn2"),
+    dict(role="RV14 brushless ESC", kind="part", match=["wesc"], count=1, catalog="bbb_ant_esc_rvrn2"),
+    dict(role="RV12 N10 2200 rpm x 2", kind="part", match=["motor_l", "motor_r"], count=2, catalog="n10_2200rpm_spicy"),
+    dict(role="drisk stack: 4 x M2 into the spider (not in the STEP, holes are)", match=["bolt_d*"], count=4, designation="M2", threads_into="spider",
+         deviation="the STEP leaves the r14 stack holes empty; 4 M2x14 added from the back, tapped into the spider (r0.8 tap holes there, the STEP r1.1 clearance elsewhere): no nuts, nothing invented beyond the screws"),
+    dict(role="spider to bell: 4 x M2 (not in the STEP)", match=["bolt_p*"], count=4, designation="M2", threads_into="motor",
+         deviation="the STEP shows the r4.5 holes only"),
+    dict(role="stator: 4 x M2 (not in the STEP)", match=["bolt_wm*"], count=4, designation="M2", threads_into="motor",
+         deviation="the STEP shows the RV03 counterbores only"),
+    dict(role="switch: 2 x M2 into the deck pilot holes (not in the STEP)", match=["bolt_sw*"], count=2, designation="M2",
+         deviation="the STEP has the two 1.7 pilot holes but no screws"),
+    dict(role="nitrile O-ring belts (not in the STEP; hub grooves are)", kind="part", match=["belt_l", "belt_r"], count=2),
+    dict(role="battery lead: JST RCY", kind="wire", match=["w_bat_sw"], count=1, connector="jst_rcy"),
+    dict(role="weapon phases: 3 x 2 mm bullets", kind="wire", match=["w_wesc_m"], count=1, connector="bullet2"),
+]
+
+REF_DIR = "/mnt/project-files/robot-cad/research/rvrn_step/parts"
+DRISK_T = None
+
+
+MICRO_T = {   # STEP Micro_slx_v1_0 instance placements (assembly frame), composed with REF_TO_WORLD
+    "l": [[0, -0.33, 0.944, -30.5], [0, 0.944, 0.33, 5.5], [-1, 0, 0, 35.5], [0, 0, 0, 1]],
+    "r": [[0, -0.33, -0.944, -30.5], [0, 0.944, -0.33, 5.5], [1, 0, 0, -35.5], [0, 0, 0, 1]],
+}
+
+
+SLIT_DEV_X, SLIT_DEV_R, SLIT_DEV_YZ = 25.75, 2.5, ((46.4, 2.2), (44.4, 6.0), (43.1, 6.2), (44.2, 5.9), (48.5, 2.8))   # fork-tine slit sites in the wedgelet
+TOE_DEV_YZ, TOE_DEV_R, TOE_DEV_X = (49.3, 1.4), 4.0, (19.5, 24.0, 28.0, 32.0, 36.5)                             # knife-toe land sites
+
+
+# reference_cad tolerances and the reasoned-deviation sites (centres + radii of the regions allowed to differ from the STEP)
+TOL = dict(tight=0.3, std=0.5, motor=0.6, wedge=0.8, loose=1.0)             # mm: surface deviation allowed per part class
+VOL = dict(part=0.25, hub=0.15, motor=0.3, standoff=0.2, switch=0.5)          # fraction: volume mismatch allowed
+REF_IOU_MIN = 0.9                                                              # silhouette IoU floor on every axis
+COLUMN_TOP_Z, COLUMN_DEV_R, FOOT_DEV_Z, FOOT_DEV_R = 11.0, 9.0, 5.0, 4.0       # tub corner columns: top pilot and flared foot
+KEYHOLE_DEV, BLOB_DEV, BLOB_R = (28.6, -30.6, 4.5), (-10.97, -9.03, 14.13), 3.0 # N10 keyhole U-slot (x, y, z=r) and the merged extra blob
+GUSSET_PTS, GUSSET_R = ((-22.5, 20.0, 5.8), (22.5, 20.0, 5.8)), 8.0
+CAGE_RIBS = ((-2.0, -2.0, 15.4), (19.4, -2.0, 15.4), (2.0, -19.6, 13.0), (12.0, -19.6, 13.0), (7.5, -19.6, 13.0), (-2.2, -9.0, 14.0), (19.3, 4.0, 14.0), (-2.2, 4.0, 14.0), (19.3, -9.0, 14.0))
+CAGE_RIB_R, BASE_DEV_Z, PANEL_DEV_R, TOP_DEV_Z = 6.0, 4.5, 3.0, 19.95
+NOSE_DEV, NOSE_DEV_R = (MNT_IN + 2.0, SB[0] + 3.5, SB[1] - 1.0), 4.0             # mount nose pad (|x|, y, z)
+STATOR_DEV_X, TAP_DEV_R = 16.8, 2.0                                              # stator lead-in cone site; tap-hole sites
+
+
+# robot-level declarations (data tables, not geometry): archetype ranges, targets, claims, allowed overlaps
+ARCHETYPE_PARAMS = {"blade_lead_mm": [-30, -10], "axle_height_mm": [22, 25], "disc_thickness_mm": [14, 16], "disc_dia_mm": [44, 48], "teeth": [1, 1],
+                    "tub_height_mm": [15, 19], "wheels": [4, 4], "wheel_dia_mm": [10, 23], "weapon_mass_fraction": [0.18, 0.5], "top_slope_deg": [-5, 25],
+                    "disc_floor_gap_mm": [5.0, 9.0]}   # STEP: R16.5 drisk on the 23.5 axle sweeps ~7 mm up; the forks and wedgelets work the floor, not the disc
+TARGETS = {"length_mm": 107, "width_mm": 104.1, "disc_dia_mm": 46, "wheel_dia_mm": 21.5, "tol_mm": 3,
+           "source": "RVRN 2.0 STEP (research/rvrn_step) measured in its assembly frame",
+           "note": "GR1507 drisk (single tooth, 3+6+3 on a 3 mm spider) on 8 mm XALT mounts; N10 direct to 21.5 rear tyres, O-rings to 11 mm fronts"}
+WEAPON_LOCK = {"type": "external_pin", "note": "pit safety pin handled outside the robot and pulled before a fight: not part of the build, no bore in RV02/RV03 (the STEP has none; user 2026-10-19)"}
+REFERENCE_DOC = {"path": "REFERENCE.md", "must_mention": ["GR1507", "180 mAh", "Hardox", "JST RCY", "RV00", "XALT", "0.9 mm"],
+                 "must_not_mention": ["through an aluminium spider", "2S ≈350 mAh LiPo"]}
+ELECTRONICS = dict(failsafe=True, weapon_remote_disable=True, radio="2.4 GHz", cells=2)
+MASS_LIMIT_G, SQUARE_MM = 150, 150      # AWS 2025 antweight limits
+CLAIMS = [dict(id="c_mass", text=f"weighs {MASS_LIMIT_G} g or less", metric="mass_total_g", op="<=", value=MASS_LIMIT_G),
+          dict(id="c_fit", text=f"fits the {SQUARE_MM} mm square", metric="footprint_mm", op="<=", value=SQUARE_MM)]
+SHARP_OK = [dict(part="base_panel", near=[27.9, -21.5, 4.5], r_mm=3.0,
+                 reason="screw boss is 0.3 mm tall (any taller breaks the reference silhouette), so its base fillet is capped at R0.25; the STEP pad base is R0.5")]
+_ORING = "O-ring is rubber: it squashes 0.16 mm against the plain inner face of the STEP side panel (the STEP has no belt channel)"
+_N10_FLAT = "the catalog N10 shaft is drawn round; the hub's D-flat sits on its flat"
+ALLOW_OVERLAP = [dict(a="belt_l", b="side_l", max_depth_mm=0.3, reason=_ORING),
+                 dict(a="belt_r", b="side_r", max_depth_mm=0.3, reason=_ORING),
+                 dict(a="wshaft", b="wbearing", max_depth_mm=0.3, reason="shaft in the MR85 inner race (bearing modelled as one solid)"),
+                 dict(a="wshaft", b="weapon_motor", max_depth_mm=2.6, reason="wshaft is the GR1507's own shaft, already drawn inside the catalog motor envelope"),
+                 dict(a="motor_l", b="whub_rl", max_depth_mm=0.4, reason=_N10_FLAT),
+                 dict(a="motor_r", b="whub_rr", max_depth_mm=0.4, reason=_N10_FLAT),
+                 *[dict(a=f"insert_b{i}", b="tub", max_depth_mm=0.2, reason="heat-set insert: 3.5 OD melted into a 3.4 bore (interference by design)") for i in range(len(INS))],
+                 *[dict(a=f"nut_c{n}", b="tub", max_depth_mm=0.1, reason="thin M3 nut pressed into a hex pocket 0.05 under its flats (captive)") for n in "lr"],
+                 dict(a="wbearing", b="mount_l", max_depth_mm=0.1, reason="MR85 8.0 OD pressed into the RV02 7.9 printed seat (0.05 radial interference, the STEP seat size)")]
+MODULE_NOTE = "RVRN quick change: 4 M3 out, both mounts with the drisk lift off the chassis tabs"
+
+
+# real service order (Build Guide): side screws out, side panels off, then each wedgelet comes off its standoffs
+# outward together with the fork whose tail sits in its cheek slot; then the standoffs slide out of the lugs.
+TEARDOWN = [t for s, n in ((-1, "l"), (1, "r")) for t in (
+    dict(parts=[f"wedgelet_{n}", f"fork_{n}"], dir=[s, 0, 0], reason="fork tail is pinned in the wedgelet cheek slot: they slide off the standoffs as one"),
+    dict(parts=[f"so_b{n}"], dir=[s, 0, 0], reason="nose standoff slides out of the chassis lug once the mount screw is out"),
+    dict(parts=[f"so_a{n}"], dir=[s, 0, 0], reason="axle standoff slides out of the lug with the front hub and wheel on it"))] + [
+    # weapon module (fix-B): with both standoff pairs and the front end out, the module (both mounts, motor, drisk, lock)
+    # slides forward off the chassis tabs as one unit (the tub's side lugs close the other five ways)
+    dict(parts=["mount_r"], dir=[0, 1, 0], reason="RV02/RV03 with the motor and drisk slide forward off the chassis tabs as one quick-change module")]
+
+# bench teardown of the module with RV03 held: RV02 off the shaft end, drisk off the shaft, motor off its 4 stator screws
+MODULE_TEARDOWN = [
+    dict(parts=["mount_l", "bolt_ula", "bolt_ulb"], dir=[-1, 0, 0], reason="RV02 slides outboard off the shaft end, its CSK screws captive"),
+    dict(parts=["spider"], dir=[-1, 0, 0], reason="drisk (spider, discs, spacer, stack bolts) slides off the GR1507 shaft once the 4 bell screws are out"),
+    dict(parts=["weapon_motor"], dir=[-1, 0, 0], reason="GR1507 leaves inboard-left once the 4 stator screws are out")]
+
+
+# the drisk is turned by hand before the nose screws (bolt_u?b) are drawn: in the STEP pose the eccentric rim and tooth flank
+# pass within 2.1 mm of their line (heads r3.0); 160 deg about the axis puts the rim 3.07 mm off it, so the screws leave inward
+SERVICE_TURN_DEG = 160.0
+SERVICE_POSE = [dict(parts=["spider", "disc_a", "disc_b", "dspacer"] + [f"bolt_{c}{k}" for c in "pd" for k in range(N_STACK)],
+                     axis_at=[0.0, WY, WZ], axis_dir=[1, 0, 0], deg=SERVICE_TURN_DEG,
+                     reason="drisk turned by hand so the rim clears the nose screws; whole stack with its bolts moves as one")]
+
+
+__all__ = [n for n in dir() if not n.startswith('__')]
