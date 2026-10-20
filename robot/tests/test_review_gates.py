@@ -5,6 +5,8 @@ import json
 import os
 import time
 
+import numpy as np
+
 from robot import spec
 from robot.checks import Options, verify
 
@@ -63,15 +65,67 @@ def test_cots_fidelity_catalog_gr1507_has_its_bolt_circle():
     assert not any("bolt circle" in x.message for x in f)
 
 
-def test_cots_fidelity_real_outrunner_passes():
-    body = {"type": "union", "items": [CYLX(9.8, 2.0, -9.4), CYLX(9.8, 8.6, 0.0), CYLX(2.5, 4.0, 6.3)]}
-    holes = [CYLX(1.0, 3.0, -10.4, 6.0 * c, 6.0 * s) for c, s in ((1, 0), (0, 1), (-1, 0), (0, -1))]
+FEAT = {"bell_d": 19.6, "stator_d": 19.6, "shaft_d": 5.0, "bolt_circle_d": 12.0, "bolt_n": 4}
+HOLES = [CYLX(1.0, 3.0, -10.4, 6.0 * c, 6.0 * s) for c, s in ((1, 0), (0, 1), (-1, 0), (0, -1))]
+
+
+def _outrunner(stator_at=(0, 0, 30), ref=None):
+    """Split outrunner: a rotating bell (open at -X, shaft out of +X) and a stator (base flange with 4 M2 holes + core)."""
+    can = {"type": "union", "items": [{"type": "subtract", "base": CYLX(9.8, 8.6, 0.0), "cut": [CYLX(8.0, 8.0, -0.3)]},
+                                      CYLX(2.5, 4.0, 6.3)]}
+    stator = {"type": "subtract", "base": {"type": "union", "items": [CYLX(9.8, 2.0, -9.4), CYLX(7.5, 11.8, -2.5)]},
+              "cut": HOLES}
     d = chassis()
-    d["parts"].append({"id": "wm", "kind": "weapon_motor", "material": "steel", "process": "cots", "at": [0, 0, 30],
-                       "shape": {"type": "subtract", "base": body, "cut": holes},
-                       "features": {"bell_d": 19.6, "stator_d": 19.6, "shaft_d": 5.0, "bolt_circle_d": 12.0, "bolt_n": 4}})
-    rep = run(d, "cots_fidelity")
-    assert not rep.failed("cots.fidelity"), [f.message for f in rep.findings]
+    d["parts"] += [
+        {"id": "weapon_motor_can", "kind": "weapon_motor", "material": "steel", "process": "cots", "at": [0, 0, 30],
+         "shape": can, "features": FEAT},
+        {"id": "weapon_motor_stator", "kind": "structure", "material": "steel", "process": "cots",
+         "at": list(stator_at), "shape": stator}]
+    if ref is not None:
+        d["reference_cad"] = ref
+    return d
+
+
+def test_cots_fidelity_real_outrunner_passes():
+    rep = run(_outrunner(), "cots_fidelity")
+    assert not [f for f in rep.findings if not f.passed and f.severity == "blocker"], [f.message for f in rep.findings]
+    assert rep.get("cots.motor_bore").passed
+
+
+def test_cots_motor_fused_single_part_fails():
+    body = {"type": "union", "items": [CYLX(9.8, 2.0, -9.4), CYLX(9.8, 8.6, 0.0), CYLX(2.5, 4.0, 6.3)]}
+    d = chassis()
+    d["parts"].append({"id": "weapon_motor", "kind": "weapon_motor", "material": "steel", "process": "cots",
+                       "at": [0, 0, 30], "shape": {"type": "subtract", "base": body, "cut": HOLES}, "features": FEAT})
+    f = run(d, "cots_fidelity").get("cots.motor_split")
+    assert f is not None and not f.passed and f.parts == ["weapon_motor"]
+
+
+def test_cots_motor_empty_can_fails():
+    rep = run(_outrunner(stator_at=(0, 60, 30)), "cots_fidelity")  # stator beside the can, not in its bore
+    f = rep.get("cots.motor_bore")
+    assert f is not None and not f.passed
+
+
+def _ref_stl(tmp_path, scale):
+    """A reference mesh whose volume is `scale` x our can + stator (the STEP GR1507_1 stand-in)."""
+    import trimesh
+
+    vol = scale * run(_outrunner(), "cots_fidelity").metrics["cots.motor.weapon_motor"]["volume_mm3"]
+    (tmp_path / "GR1507_1.stl").write_bytes(trimesh.creation.cylinder(radius=9.8, height=vol / (np.pi * 9.8 ** 2),
+                                                                          sections=256).export(file_type="stl"))
+    return {"dir": str(tmp_path), "parts": [{"part": "weapon_motor_can", "with_parts": ["weapon_motor_stator"],
+                                             "file": "GR1507_1.stl", "mode": "envelope"}]}
+
+
+def test_cots_motor_volume_off_reference_fails(tmp_path):
+    f = run(_outrunner(ref=_ref_stl(tmp_path, 1.10)), "cots_fidelity").get("cots.motor_volume")
+    assert f is not None and not f.passed and f.severity == "blocker"
+
+
+def test_cots_motor_volume_matches_reference_passes(tmp_path):
+    f = run(_outrunner(ref=_ref_stl(tmp_path, 1.02)), "cots_fidelity").get("cots.motor_volume")
+    assert f is not None and f.passed, f and f.message
 
 
 # ---------------------------------------------------------------------------------------- wire.rotating_clearance
@@ -184,6 +238,20 @@ def test_closed_loop_belt_passes():
     rep = run(_belt(ring), "belt_wrap")
     f = rep.get("cots.belt_wrap")
     assert f is not None and f.passed, [x.message for x in rep.findings]
+
+
+def test_closed_loop_belt_in_an_off_centre_groove_passes():
+    ring = {"type": "subtract", "base": BOX(1, 38, 12), "cut": [BOX(3, 36, 10)]}
+    rep = run(_belt(PLACE(ring, (0.9, 0, 0))), "belt_wrap")
+    f = rep.get("cots.belt_wrap")
+    assert f is not None and f.passed, [x.message for x in rep.findings]
+
+
+def test_belt_beside_the_hub_fails():
+    ring = {"type": "subtract", "base": BOX(1, 38, 12), "cut": [BOX(3, 36, 10)]}
+    rep = run(_belt(PLACE(ring, (6.0, 0, 0))), "belt_wrap")
+    assert rep.failed("cots.belt_wrap")
+    assert any("beside" in x.message for x in rep.findings), [x.message for x in rep.findings]
 
 
 # ---------------------------------------------------------------------------------- print.orientation_declared

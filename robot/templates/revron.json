@@ -85,15 +85,6 @@
    "catalog": "heatset_m2_4"
   },
   {
-   "role": "M2 heat-sets 3.0 (switch pad)",
-   "kind": "part",
-   "match": [
-    "insert_sw*"
-   ],
-   "count": 2,
-   "catalog": "heatset_m2"
-  },
-  {
    "role": "FS9: mount to standoff 2 x M3x12 CSK alu (axle standoff)",
    "match": [
     "bolt_u?a"
@@ -311,7 +302,6 @@
    ],
    "count": 2,
    "designation": "M2",
-   "threads_into": "insert",
    "deviation": "the STEP has the two 1.7 pilot holes but no screws"
   },
   {
@@ -452,18 +442,6 @@
   },
   {
    "a": "insert_t3",
-   "b": "tub",
-   "max_depth_mm": 0.2,
-   "reason": "heat-set insert: 3.5 / 3.2 OD melted into a 3.4 / 3.1 bore (interference by design)"
-  },
-  {
-   "a": "insert_sw0",
-   "b": "tub",
-   "max_depth_mm": 0.2,
-   "reason": "heat-set insert: 3.5 / 3.2 OD melted into a 3.4 / 3.1 bore (interference by design)"
-  },
-  {
-   "a": "insert_sw1",
    "b": "tub",
    "max_depth_mm": 0.2,
    "reason": "heat-set insert: 3.5 / 3.2 OD melted into a 3.4 / 3.1 bore (interference by design)"
@@ -778,6 +756,24 @@
      },
      {
       "near": [
+       24.55,
+       1.9,
+       17.5
+      ],
+      "r": 1.5,
+      "reason": "switch pilot holes follow the switch, which sits 0.45 mm in from the STEP X 25.0 so its body clears the 27.5 inner wall face (the STEP switch penetrates the wall 0.4 mm)"
+     },
+     {
+      "near": [
+       24.55,
+       -13.1,
+       17.5
+      ],
+      "r": 1.5,
+      "reason": "switch pilot holes follow the switch, which sits 0.45 mm in from the STEP X 25.0 so its body clears the 27.5 inner wall face (the STEP switch penetrates the wall 0.4 mm)"
+     },
+     {
+      "near": [
        -25.0,
        10.4,
        5.0
@@ -1057,11 +1053,20 @@
      {
       "near": [
        -15.4,
-       44.0,
-       3.5
+       12.5,
+       19.3
       ],
       "r": 4.0,
-      "reason": "nose pad R4.4 round the nose CSK: the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); 1.15 mm of added material at the nose underside"
+      "reason": "the STEP notch top is a zero-thickness wedge (mfg.thin_wall); thickened to a printable wall, rearmost point unchanged"
+     },
+     {
+      "near": [
+       -15.4,
+       42.0,
+       3.5
+      ],
+      "r": 5.0,
+      "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside, so the countersink keeps a 0.9 mm wall"
      }
     ]
    },
@@ -1074,11 +1079,20 @@
      {
       "near": [
        15.4,
-       44.0,
-       3.5
+       12.5,
+       19.3
       ],
       "r": 4.0,
-      "reason": "nose pad R4.4 round the nose CSK: the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); 1.15 mm of added material at the nose underside"
+      "reason": "the STEP notch top is a zero-thickness wedge (mfg.thin_wall); thickened to a printable wall, rearmost point unchanged"
+     },
+     {
+      "near": [
+       15.4,
+       42.0,
+       3.5
+      ],
+      "r": 5.0,
+      "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside, so the countersink keeps a 0.9 mm wall"
      },
      {
       "near": [
@@ -1778,6 +1792,7 @@
    },
    "material": "pla_st",
    "process": "fdm",
+   "thin_wall_deviation": "matches original RVRN 2.0: the switch-slot rim is 0.5 mm wide on RV01_Chassis_1 too (RV01 section y=-10: slot edge x=27.0, outer face x=27.5) and 0.65 mm between the slot front and the deck pocket (section x=25: y -12.25 to -11.6)",
    "label": "RV01 printed chassis: closed X-ribbed deck (printed deck-down), open floor for the base panel, N10 keyhole side pockets, nut lobes, weapon-mount tabs and standoff lugs"
   },
   {
@@ -2194,6 +2209,7 @@
   {
    "id": "side_l",
    "kind": "armor",
+   "deviation": "matches original RVRN 2.0: RV23/RV24 front leads the spider swept rim by the same amount at +-30 deg (STEP projection 64.45 mm vs ours 64.24 mm at -30 deg, within 0.5 mm)",
    "material": "tpu",
    "process": "fdm",
    "thin_wall_deviation": "matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)",
@@ -2431,6 +2447,7 @@
   {
    "id": "side_r",
    "kind": "armor",
+   "deviation": "matches original RVRN 2.0: RV23/RV24 front leads the spider swept rim by the same amount at +-30 deg (STEP projection 64.45 mm vs ours 64.24 mm at -30 deg, within 0.5 mm)",
    "material": "tpu",
    "process": "fdm",
    "thin_wall_deviation": "matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)",
@@ -2748,26 +2765,6 @@
     -25.0,
     -21.6,
     17.5
-   ]
-  },
-  {
-   "id": "insert_sw0",
-   "kind": "insert",
-   "catalog": "heatset_m2",
-   "at": [
-    24.55,
-    1.9,
-    18.0
-   ]
-  },
-  {
-   "id": "insert_sw1",
-   "kind": "insert",
-   "catalog": "heatset_m2",
-   "at": [
-    24.55,
-    -13.1,
-    18.0
    ]
   },
   {
@@ -3199,8 +3196,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 6.2,
-    "csk_depth": 1.3,
+    "csk_d": 6.4,
+    "csk_depth": 1.4,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -3240,8 +3237,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 6.2,
-    "csk_depth": 1.3,
+    "csk_d": 6.4,
+    "csk_depth": 1.4,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -3281,8 +3278,8 @@
     "csk_angle": 90.0,
     "csk_d": 6.7,
     "csk_depth": 1.65,
-    "sink": 0.0,
-    "grip": 3.76
+    "sink": 2.15,
+    "grip": 5.91
    },
    "head": "countersunk",
    "tool": "hex2",
@@ -3321,8 +3318,8 @@
     "csk_angle": 90.0,
     "csk_d": 6.7,
     "csk_depth": 1.65,
-    "sink": 0.0,
-    "grip": 5.26
+    "sink": 5.75,
+    "grip": 11.01
    },
    "head": "countersunk",
    "tool": "hex2",
@@ -3361,8 +3358,8 @@
     "csk_angle": 90.0,
     "csk_d": 6.7,
     "csk_depth": 1.65,
-    "sink": 0.0,
-    "grip": 5.76
+    "sink": 1.05,
+    "grip": 6.81
    },
    "head": "countersunk",
    "tool": "hex2",
@@ -3397,8 +3394,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 6.2,
-    "csk_depth": 1.3,
+    "csk_d": 6.4,
+    "csk_depth": 1.4,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -3438,8 +3435,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 6.2,
-    "csk_depth": 1.3,
+    "csk_d": 6.4,
+    "csk_depth": 1.4,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -3479,8 +3476,8 @@
     "csk_angle": 90.0,
     "csk_d": 6.7,
     "csk_depth": 1.65,
-    "sink": 0.0,
-    "grip": 3.76
+    "sink": 2.15,
+    "grip": 5.91
    },
    "head": "countersunk",
    "tool": "hex2",
@@ -3519,8 +3516,8 @@
     "csk_angle": 90.0,
     "csk_d": 6.7,
     "csk_depth": 1.65,
-    "sink": 0.0,
-    "grip": 5.26
+    "sink": 5.75,
+    "grip": 11.01
    },
    "head": "countersunk",
    "tool": "hex2",
@@ -3559,8 +3556,8 @@
     "csk_angle": 90.0,
     "csk_d": 6.7,
     "csk_depth": 1.65,
-    "sink": 0.0,
-    "grip": 5.76
+    "sink": 1.05,
+    "grip": 6.81
    },
    "head": "countersunk",
    "tool": "hex2",
@@ -4090,7 +4087,8 @@
     -1
    ],
    "through": [
-    "top_panel"
+    "top_panel",
+    "tub"
    ],
    "threads_into": "insert_t0",
    "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
@@ -4126,7 +4124,8 @@
     -1
    ],
    "through": [
-    "top_panel"
+    "top_panel",
+    "tub"
    ],
    "threads_into": "insert_t1",
    "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
@@ -4162,7 +4161,8 @@
     -1
    ],
    "through": [
-    "top_panel"
+    "top_panel",
+    "tub"
    ],
    "threads_into": "insert_t2",
    "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
@@ -4198,7 +4198,8 @@
     -1
    ],
    "through": [
-    "top_panel"
+    "top_panel",
+    "tub"
    ],
    "threads_into": "insert_t3",
    "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
@@ -4234,9 +4235,10 @@
     1
    ],
    "through": [
-    "power_switch"
+    "power_switch",
+    "tub"
    ],
-   "threads_into": "insert_sw0",
+   "threads_into": "tub",
    "access_before": [
     "base_panel"
    ],
@@ -4248,14 +4250,16 @@
     "head_dk": 3.5,
     "head_k": 1.3,
     "clearance_d": 2.4,
-    "into": "insert",
+    "into": "tapped",
     "side": "thread",
     "grip": 0.0,
-    "insert_d": 3.2,
-    "insert_len": 4.0,
-    "insert_depth": 4.3
+    "tap_d": 1.6,
+    "thread_depth": 3.5
    },
    "reason": "thread-forming into the 1.7 pilot holes either side of the switch flange; heads clamp the flange to the deck underside (inferred)",
+   "waive": {
+    "fastener.hole_record": "switch retention only, no structural load; RVRN RV01 has 5 FS1_M2_heatsert, all base panel, none at the switch, the switch's 2 M2 screws self-tap in plastic"
+   },
    "removable": true
   },
   {
@@ -4274,9 +4278,10 @@
     1
    ],
    "through": [
-    "power_switch"
+    "power_switch",
+    "tub"
    ],
-   "threads_into": "insert_sw1",
+   "threads_into": "tub",
    "access_before": [
     "base_panel"
    ],
@@ -4288,14 +4293,16 @@
     "head_dk": 3.5,
     "head_k": 1.3,
     "clearance_d": 2.4,
-    "into": "insert",
+    "into": "tapped",
     "side": "thread",
     "grip": 0.0,
-    "insert_d": 3.2,
-    "insert_len": 4.0,
-    "insert_depth": 4.3
+    "tap_d": 1.6,
+    "thread_depth": 3.5
    },
    "reason": "thread-forming into the 1.7 pilot holes either side of the switch flange; heads clamp the flange to the deck underside (inferred)",
+   "waive": {
+    "fastener.hole_record": "switch retention only, no structural load; RVRN RV01 has 5 FS1_M2_heatsert, all base panel, none at the switch, the switch's 2 M2 screws self-tap in plastic"
+   },
    "removable": true
   }
  ],
@@ -4744,22 +4751,22 @@
    "count": 3,
    "via": [
     [
-     11.1,
+     11.8,
      14.5,
      16.0
     ],
     [
-     11.1,
+     11.8,
      15.5,
      18.2
     ],
     [
-     11.1,
+     11.8,
      27.0,
      18.2
     ],
     [
-     11.1,
+     11.8,
      30.0,
      14.5
     ]
@@ -5197,6 +5204,36 @@
      -27.5,
      13.0
     ]
+   ],
+   "exempt": [
+    {
+     "at": [
+      27.55,
+      -35.65
+     ],
+     "reason": "RVRN RV01 square, N10 gearbox plate seat, r=0.0 (RV01_Chassis_1 z=10 slice: wall x=27.5 meets y=-35.6 at 90 deg, seat arc starts at x=26.5; ours squares at x=27.55 and the seat arc starts at x=26.77)"
+    },
+    {
+     "at": [
+      26.77,
+      -35.65
+     ],
+     "reason": "RVRN RV01 square, N10 gearbox plate seat, r=0.0 (RV01_Chassis_1 z=10 slice: wall x=27.5 meets y=-35.6 at 90 deg, seat arc starts at x=26.5; ours squares at x=27.55 and the seat arc starts at x=26.77)"
+    },
+    {
+     "at": [
+      -27.55,
+      -35.65
+     ],
+     "reason": "RVRN RV01 square, N10 gearbox plate seat, r=0.0 (RV01_Chassis_1 z=10 slice: wall x=27.5 meets y=-35.6 at 90 deg, seat arc starts at x=26.5; ours squares at x=27.55 and the seat arc starts at x=26.77)"
+    },
+    {
+     "at": [
+      -26.77,
+      -35.65
+     ],
+     "reason": "RVRN RV01 square, N10 gearbox plate seat, r=0.0 (RV01_Chassis_1 z=10 slice: wall x=27.5 meets y=-35.6 at 90 deg, seat arc starts at x=26.5; ours squares at x=27.55 and the seat arc starts at x=26.77)"
+    }
    ]
   },
   {
@@ -5234,22 +5271,22 @@
    "via": {
     "w_wesc_m": [
      [
-      11.1,
+      11.8,
       14.5,
       16.0
      ],
      [
-      11.1,
+      11.8,
       15.5,
       18.2
      ],
      [
-      11.1,
+      11.8,
       27.0,
       18.2
      ],
      [
-      11.1,
+      11.8,
       30.0,
       14.5
      ]

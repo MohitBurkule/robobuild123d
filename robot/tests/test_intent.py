@@ -141,3 +141,22 @@ def test_tool_count():
     assert I._rule(ctx(["hex2", "hex2", "hex1.3"]), e)[0]
     assert not I._rule(ctx(["hex2", "hex1.5", "hex1.3"]), e)[0]
     assert not I._rule(ctx(["hex2", "hex1.3"]), e)[0]   # the module swap needs two keys
+
+
+def test_fillet_exempt():
+    found = [(2.0, 2.0)]
+    cite = "RVRN STEP RV01 has a sharp inside corner here"
+    b, m, s = I.fillet_exempt(found, [{"at": [2.2, 2.1], "reason": cite}])
+    assert not b and m == [((2.0, 2.0), cite)] and not s                      # valid -> INFO
+    b, m, s = I.fillet_exempt(found, [{"at": [2.0, 2.0], "reason": "the original has it sharp too"}])
+    assert b and "invalid exemption" in b[0][1] and not m                     # missing citation blocks
+    b, m, s = I.fillet_exempt(found, [{"at": [3.0, 2.0], "reason": cite}])
+    assert b == [((2.0, 2.0), "")] and not m and len(s) == 1                  # far point doesn't exempt (and is stale)
+    b, m, s = I.fillet_exempt([], [{"at": [9, 9], "reason": cite}])
+    assert not b and not m and s == [{"at": [9, 9], "reason": cite}]         # stale -> warning
+
+
+def test_fillet_exempt_corner_still_probed():
+    sharp = _box((0, 0, 0), (10, 2, 5)).union(_box((0, 0, 0), (2, 10, 5)))
+    f = I.sharp_corners_found(sharp, "z", 2.5, [(2, 2)])
+    assert f and all(abs(x - 2) < 0.5 and abs(y - 2) < 0.5 for x, y in f)

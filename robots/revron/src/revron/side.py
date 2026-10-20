@@ -24,17 +24,19 @@ def _sp_ring(zw, z, b, Polygon):
     return b.Wire.make_polygon([b.Vector(x, y, z) for x, y in pts], close=True)
 
 
-def _side_seat(key, at, fastener, sgn=-1):
-    """robot.cad.holes (cutter, FastenerRecord) of one side-panel M3 CSK (bolt_s*): head on the outer face seat plane at
-    |X| SIDE_BOLT_X[key], clearance through the panel (and wedgelet) down to the far end of the part it clamps
-    against (standoff end SA_X / SB_X, chassis nut wall NUT_X). `sgn` -1 builds the left panel's tool, +1 the record for the right."""
+def _side_seat(key, at, sgn=-1):
+    """robot.cad.holes (cutter, FastenerRecord) of one side-panel M3 CSK (bolt_s*): the STEP seats the head SIDE_FACE_X -
+    SIDE_BOLT_X below the battered outer face, in a driver bore from the face; clearance runs on through the panel (and
+    wedgelet) to the far end of the part it clamps (standoff end SA_X / SB_X, chassis nut wall NUT_X). `sgn` -1 builds the
+    left panel's tool, +1 the record for the right."""
     _repo = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
     if _repo not in sys.path:
         sys.path.insert(0, _repo)
     from robot.cad.holes import hole_tool
     far = {"a": SA_X[1], "b": SB_X[1], "c": NUT_X[1]}[key]
-    return hole_tool((sgn * SIDE_BOLT_X[key], *at), (-sgn, 0, 0), fastener, head="csk", into="through", side="head",
-                     grip=SIDE_BOLT_X[key] - far, fit="normal", csk_clear=SP_CSK["csk_clear"], head_clear=SP_CSK["head_clear"])
+    return hole_tool((sgn * SIDE_FACE_X[key], *at), (-sgn, 0, 0), SIDE_BOLT_DES[key], head="csk", into="through", side="head",
+                     sink=SIDE_SINK[key], grip=SIDE_FACE_X[key] - far, fit="normal",
+                     csk_clear=SP_CSK["csk_clear"], head_clear=SP_CSK["head_clear"])
 
 
 def side_panel(s):
@@ -78,10 +80,10 @@ def side_panel(s):
     body = _U(wall, nose, foot, boss)
     # M3 CSK seats with a head bore out through the battered outer face, so a driver reaches the head and the screw backs straight out
     cr_, cx0, cx1 = SP_SA_CLEAR
-    cuts = [_side_seat("a", SA, "M3x10")[0], _side_seat("b", SB, "M3x10")[0], _side_seat("c", NUT, "M3x8")[0],
+    cuts = [_side_seat(k, at)[0] for k, at in (("a", SA), ("b", SB), ("c", NUT))] + [
             _cyl(cr_, cx0, cx1, SA),
             _box(*SP_TYRE_RELIEF),                                                # rear tyre relief on the inner face
-            _ext(_poly(SP_NUT_RELIEF), "yz", *SP_NUT_RELIEF_X)]                  # 1 mm relief round the chassis nut lobe
+            _ext(_round(Polygon(SP_NUT_RELIEF), r_out=SP_NUT_RELIEF_R), "yz", *SP_NUT_RELIEF_X)]                  # 1 mm relief round the chassis nut lobe
     v = SP_VENT
     for y0 in v["y0"]:     # diagonal vent slots (TPU wall flexes, keeps the ESC cool)
         sl = LineString([(y0, v["z0"]), (y0 + v["dy"], v["z0"] + v["dz"])]).buffer(v["r"], cap_style=1)
