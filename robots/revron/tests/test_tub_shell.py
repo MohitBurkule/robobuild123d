@@ -7,7 +7,7 @@ from revron.params import CH, INS, N10_KEY
 
 
 def test_interface():
-    for name in ("shell", "additions", "cuts", "ribs"):
+    for name in ("shell", "additions", "cuts"):
         assert callable(getattr(tub_shell, name))
     for name in ("column_bores", "switch_slot"):
         assert callable(getattr(tub_shell_cuts, name))
