@@ -75,7 +75,7 @@ def _gr1507_bell():
     wl = BELL_TOP_X[0] - BELL_X0
     wall = minus(cyl_x(BELL_WALL_R[1], wl), [cyl_x(BELL_WALL_R[0], wl + 1.0)])
     tl = BELL_TOP_X[1] - BELL_TOP_X[0]
-    top = minus(cyl_x(6.2, tl), [rot(at(cyl_x(0.8, tl + 0.2), 0, BELL_SCREW_R, 0), [BELL_SCREW_PHASE + 90.0 * k, 0.0, 0.0]) for k in range(4)])   # M2 tap holes (ISO 2306 r0.8) for the spider screws
+    top = minus(cyl_x(6.2, tl), [rot(at(cyl_x(0.8, tl + 0.2), 0, BELL_SCREW_R, 0), [BELL_SCREW_PHASE + 90.0 * k, 0.0, 0.0]) for k in range(4)] + [cyl_x(SHAFT_STUB_R, tl + 0.2)])   # M2 tap holes (ISO 2306 r0.8) for the spider screws; the shaft bore
     return union([at(wall, 0.5 * (BELL_X0 + BELL_TOP_X[0]), 0, 0), at(top, 0.5 * sum(BELL_TOP_X), 0, 0)] + ribs)
 
 
@@ -89,7 +89,8 @@ def _gr1507_stator():
         a = [360.0 / STATOR_SLOTS * k, 0.0, 0.0]
         parts.append(rot(at(box(h, 1.6, tooth_r), 0, 0, STATOR_YOKE_R + 0.5 * tooth_r - 0.1), a))              # tooth
         parts.append(rot(at(box(h, 2.6, 0.5), 0, 0, STATOR_TIP_R - 0.25), a))                                  # tip shoe
-        parts.append(rot(at(box(h + 0.6, 3.0, STATOR_TIP_R - STATOR_YOKE_R - 0.6), 0, 0, 0.5 * (STATOR_YOKE_R + STATOR_TIP_R - 0.6)), a))   # copper winding fills the slot
+        wl, zc = STATOR_TIP_R - STATOR_YOKE_R - 0.6, 0.5 * (STATOR_YOKE_R + STATOR_TIP_R - 0.6)
+        parts += [rot(at(box(h + 0.4, 1.9, wl), 0, 0, zc), a), rot(at(box(h, 2.4, wl), 0, 0, zc), a)]   # copper winding: end turns past the stack, bevelled
     parts.append(at(minus(cyl_x(STATOR_BORE_R + 0.05, STATOR_STACK_X0 - STATOR_BASE_X), [cyl_x(SHAFT_STUB_R + 0.1, STATOR_STACK_X0 - STATOR_BASE_X + 0.2)]), -0.5 * (STATOR_STACK_X0 - STATOR_BASE_X) - 0.5 * h, 0, 0))   # holder post: base to the stack
     return at(union(parts), STATOR_STACK_X0 + 0.5 * h, 0, 0)
 
@@ -265,7 +266,7 @@ def builtin() -> list[CatalogEntry]:
                             at(cyl_x(2.4, 3.0), -14.4, 0, 0)]
                            + [at(box(0.9, 10.0, 12.0), x, 0, 0) for x in (0.6, 3.35, 7.15)]
                            + [at(cyl_x(1.1, 7.6), 3.9, 0, z) for z in (-3.5, 3.5)]
-                           + [at(cyl_x(1.5, 10.0), 12.9, 0, 0)]),
+                           + [at(cyl_x(1.5, 10.4), 12.7, 0, 0)]),   # shaft starts 0.1 inside the last gearbox plate: one solid
                      {"terminals": [-16.2, 0, 0]}, {"at": [7.9, 0, 0], "dir": [1, 0, 0], "len": 10.0, "dia": 3.0},
                      {"nominal_v": 6.0, "rpm_nominal": 2200.0, "stall_current_a": 1.6, "no_load_current_a": 0.1, "stall_torque_gcm": 150.0}, "#9aa0a6"),
         CatalogEntry("be1806_bbb", "weapon_motor", "BBB BE1806 2300 kV outrunner (23 mm bell, 20.5 incl. base and shaft collar, 5 mm shaft bore)", 18.5, "datasheet",
@@ -285,12 +286,12 @@ def builtin() -> list[CatalogEntry]:
         CatalogEntry("heatset_m2", "insert", "M2 brass heat-set insert 3.0 mm", 0.12, "estimate", heatset(3.2, 3.0, 2.0),
                      {}, None, {"thread_d_mm": 2.0}, "#d4af37"),
         # RVRN 2.0 STEP envelopes (Revron rebuild 2026-10): measured outline of the vendor models, not memory.
-        CatalogEntry("gr1507", "weapon_motor", "GR1507 outrunner, fixed half: 4-arm cross base with 4 M2 on 12 mm, 12-slot wound stator stack, 3 phase leads (bell and shaft are `gr1507_can`)", 9.9, "estimate",
+        CatalogEntry("gr1507", "weapon_motor", "GR1507 outrunner, fixed half: 4-arm cross base with 4 M2 on 12 mm, 12-slot wound stator stack, 3 phase leads (bell is `gr1507_can`)", 9.1, "estimate",
                      minus(union([at(_gr1507_base(), -9.4, 0, 0), _gr1507_stator(), _gr1507_leads(), at(cyl_x(0.75, 1.4), -11.1, 0, 0)]), [at(cyl_x(SHAFT_STUB_R + 0.1, 30.0), 0.0, 0, 0)]),
                      {"phases": [-11.8, 0, -6.4]}, {"at": [4.1, 0, 0], "dir": [1, 0, 0], "len": 14.6, "dia": 5.0},
                      {"kv": 2850, "max_current_a": 18.0, "typ_current_a": 8.0, "bell_mass_frac": 0.0, "rotor_part": "gr1507_can"}, "#3a3d42"),
-        CatalogEntry("gr1507_can", "other", "GR1507 outrunner, rotating half: 19.6 bell (r7.4-9.8 wall, solid r4 core, 8-rib vented top), threaded 5 mm shaft out of the bell face", 8.1, "estimate",
-                     union([at(_gr1507_bell(), 0.0, 0, 0), at(cyl_x(2.5, 3.0), 8.0, 0, 0), at(cyl_x(2.26, 10.0), 13.7, 0, 0)]),
+        CatalogEntry("gr1507_can", "other", "GR1507 outrunner, rotating half: 19.6 bell (r7.4-9.8 wall, solid r4 core, 8-rib vented top), threaded 5 mm shaft out of the bell face", 7.4, "estimate",
+                     at(_gr1507_bell(), 0.0, 0, 0),
                      {}, {"at": [4.1, 0, 0], "dir": [1, 0, 0], "len": 14.6, "dia": 5.0}, {}, "#3a3d42"),
         flat("malenki_nano_rvrn2", "Malenki Nano (Rx + 2 brushed ESC), kapton wrapped with its leads (RVRN 2.0 RV13 envelope)", "esc", 32, 20, 4.4, 4.0,
              {"bat": [-16, -6, -1.0], "m1": [16, 6, -1.0], "m2": [-16, 6, -1.0], "wpn": [16, -6, -1.0]},

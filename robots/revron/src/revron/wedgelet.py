@@ -7,9 +7,9 @@ from .common import *  # noqa: F401,F403
 def wedgelet(s):
     """RV17/18 TPU wedgelet (left built, right mirrored), slabs along X (WG_X) measured on the STEP sections:
     an outer block round the 15 mm standoff end, a ring step, a 2.3 mm ramp skin over a hollow whose top edge is
-    capped by a raked plane, the cheek round both standoffs with the fork-tail kidney slot and the 2.5 mm fork slot
+    capped by an arc swept along the ramp (WG_SKIN_CAP), the cheek round both standoffs with the fork-tail kidney slot and the 2.5 mm fork slot
     through it, and a nose tab. Ramp face 50 deg: Z = FLOOR_Z + RAMP_SLOPE (RAMP_REACH - Y)."""
-    from shapely.geometry import LineString, Point, Polygon
+    from shapely.geometry import LineString, Point, Polygon, box
     P = lambda pts: Polygon(pts).buffer(0)  # noqa: E731
     (r1, tail1), (r2, tail2) = WG_S1, WG_S2
     s1 = Point(*SB).buffer(r1, ARC_N).union(P(tail1))
@@ -22,14 +22,20 @@ def wedgelet(s):
     tab = tab.difference(mprof.buffer(WG_MOUNT_GAP, ARC_MOUNT)).buffer(-WG_TAB_FILM, join_style=2).buffer(WG_TAB_FILM, join_style=2)
     bb = _b()
     xb, xr, xs, xc, xt, xe = WG_X
-    origin, normal = WG_SKIN_RAKE
-    sk = _one(_ext(skin, "yz", xs, xc)).split(bb.Plane(origin=origin, z_dir=normal), keep=bb.Keep.BOTTOM)
+    # skin cap: arc in (X, W = Z - k Y) drawn on the XZ plane (Y = 0) and swept along (0, 1, k) over the skin
+    k, (cx, cw), rc = WG_SKIN_CAP["k"], WG_SKIN_CAP["c"], WG_SKIN_CAP["r"]
+    xcap = min(cx + rc, xc)
+    cap = Point(cx, cw).buffer(rc, ARC_N).union(box(xs, cw, xcap, cw + rc)).intersection(box(xs, cw - rc, xcap, cw + rc))
+    reach = RAMP_REACH + rc
+    cutter = bb.Solid.extrude(_face(cap, "xz")[0], bb.Vector(0, reach, k * reach))
+    sk = _S(_ext(skin, "yz", xs, xc), cutter)
     body = _U(_ext(s1, "yz", xb, xr), _ext(s2, "yz", xr, xs), sk, _ext(cheek, "yz", xc, xt), _ext(tab, "yz", xt, xe) if not tab.is_empty else None)
     line, half, kx = WG_KIDNEY
     bx0, bx1 = WG_BORE_X
     cuts = [_ext(cheek.difference(in_slot), "yz", *WG_FORK_SLOT_X),               # 2.5 mm fork slot through the cheek
             _cyl(WG_BORES["sa"], bx0, bx1, SA), _cyl(WG_BORES["sb"], bx0, bx1, SB), _cyl(WG_BORES["sb_head"], xr, bx1, SB),
-            _ext(LineString(line).buffer(half, ARC_KIDNEY), "yz", *kx)]
+            _ext(LineString(line).buffer(half, ARC_KIDNEY), "yz", *kx),
+            _ext(P(WG_TAIL_ENTRY[0]).union(LineString(line).buffer(half, ARC_KIDNEY)), "yz", WG_TAIL_ENTRY[1], xt)]   # tail entry from the notch
     # TPU cannot print the ramp's knife toe: keep the full reach but stand the toe on a printable land,
     # the ramp face running parallel to the measured one from there
     body = _U(body, _I(_ext(P(WG_TOE), "yz", xb, xe), _ext(s1.union(cheek).union(tab).buffer(WG_MERGE_EPS), "yz", xb, xe)))

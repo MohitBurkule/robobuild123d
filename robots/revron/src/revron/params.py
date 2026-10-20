@@ -165,14 +165,31 @@ SP_NOSE = [(-52.1, 26.5), (-51.7, 39.7), (-50.5, 43.0), (-48.4, 45.7), (-45.6, 4
            (-38.5, 37.6), (-41.6, 37.6), (-42.4, 37.3), (-42.3, 34.9), (-40.5, 34.5), (-40.5, 26.5)]   # nose plan (X, Y)
 SP_NOSE_R, SP_NOSE_Z = 0.5, (FLOOR_Z, 10.0)
 SP_BATTER = dict(x0=-52.06, slope=0.84, z=(FLOOR_Z, 16.0), below=-5.0, far=0.0, depth=60.0)   # outer face leans in 38 deg: X = x0 + slope (Z - FLOOR_Z)
+# STEP RV23: the front swing's outer face never stands proud of the nose's battered plane (it meets it flush at the
+# nose, Y 26.5): the loft swells up to 0.2 mm past it there, which left a sharp notch at the SA driver bore. The
+# swing is clipped to the batter over the batter's Y run, the clip tool reaching SP_CLIP_OVER above the top face.
+SP_CLIP_OVER = 4.0
+# STEP RV23: where the swing's leaning inner face runs into the nose's front face (Y SP_NOSE[0][1]) the reference has a
+# concave round (r 1.75 measured at X -43.5, Z 7.6). It is drawn in the plan sketch: at each height the swing section
+# (inner path, outer side) and the nose front are closed by r (shapely buffer +r / -r) and the fill is lofted through
+# sections every dz over the nose height, sunk `sink` into the wall; it stops at the hollow (SP_HOLLOW_X[0]) and reaches `win` behind the front face.
+SP_FRONT_ROUND = dict(r=1.2, dz=0.5, win=2.0, sink=0.15, ring=97, arc=32)   # r >= the 1 mm load-path minimum; sections every dz
 SP_TOE_Y0 = 47.0                     # the ramp toe's land starts here (Y)
 SP_TOE_RUN = 3.1                     # Y run of the ramp skin the toe polygon follows
 SP_CHAMFER = ((-120.0, 0.0, 0.0), (1.0, -1.525, -1.4725))   # front-outer corner chamfer plane (origin, normal)
 SP_HOLLOW = [(26.5, 3.0), (37.0, 3.0), (37.7, 6.6), (39.0, 10.5), (26.5, 10.5)]   # hollow behind the nose wall (Y, Z)
 SP_HOLLOW_X = (-42.0, -38.4)
-SP_CSK = dict(csk_clear=0.7, head_clear=12.0)   # M3 ISO 10642 seat (head dk 6.0 + 0.7) + 12 mm driver bore out through the battered face
-SP_SA_CLEAR = (2.55, -42.55, -38.0)  # standoff-end clearance bore round SA (R, X0, X1)
-SP_BOSS = (3.0, -42.5, -39.5)        # standoff end boss round SA (R, X0, X1)
+# STEP RV23: above Z0 the hollow runs on forward over the SB pocket and ends in a round in plan (vertical axis, X, Y)
+SP_HOLLOW_END = dict(c=(-38.5, 36.6), r=3.6, z0=7.25)
+# M3 ISO 10642 seats (head dk 6.0 + csk_clear) + a driver bore out through the battered face, per screw. STEP RV23 nose
+# (a, b): the 90 deg seat is the dk + 0.7 cone but the driver bore is only r `drive_r` 3.10 (the cone's rim is a 0.25 mm
+# undercut at the seat; the seat's own r0 bore runs just `lip` above it) and the shank is a close fit (r 1.6); the
+# chassis-nut screw (c) keeps the r0 driver bore and the normal fit
+SP_CSK = dict(csk_clear=0.7, fit=dict(a="close", b="close", c="normal"), drive_r=dict(a=3.1, b=3.1), lip=0.05, head_clear=12.0)
+SP_SA_CLEAR = (2.6, -42.55, -38.0)   # STEP RV23 r 2.6: standoff-end clearance bore round SA (R, X0, X1)
+# STEP RV23: standoff end boss ring round SA (X0 -> X1): r 4.0 up into the nose roof to `x_ch`, then a 45 deg chamfer
+# down to r_end, which runs on to the standoff end
+SP_BOSS = dict(r=4.0, r_end=3.3, x=(-42.5, -39.5), x_ch=-40.75)
 SP_TYRE_RELIEF = (-45.0, -43.4, -38.7, -24.8, 5.5, 14.5)   # rear tyre relief box on the inner face (x0, x1, y0, y1, z0, z1)
 SP_NUT_RELIEF_X = (-32.5, -31.4)
 CHASSIS_MIN_VOLUME = 15000.0         # mm3: the intact chassis is 15988 mm3 in one solid
@@ -182,13 +199,18 @@ SP_LOFT = dict(resample=400, path=240, ring=481, round=0.6, arc=16)   # section 
 WG_X = (-38.5, -36.5, -35.5, -29.0, -21.5, -17.5)   # slab edges along X: block | ring step | skin | cheek | nose tab
 WG_S1 = (3.5, [(40.5, 1.0), (RAMP_REACH, 1.0), (42.54, 10.0), (39.55, 10.0), (40.23, 8.0)])   # block round SB: (R, tail outline (Y, Z))
 WG_S2 = (3.0, [(40.4, 7.5), (39.55, 10.0), (41.92, 10.0), (42.29, 10.31), (RAMP_REACH, 1.0), (46.68, 1.0), (44.96, 1.5), (40.5, 1.5)])
-WG_SKIN = [(RAMP_REACH, 1.0), (47.57, 1.0), (46.8, 1.36), (40.79, 8.52), (40.22, 8.04), (37.65, 15.92)]
-WG_SKIN_RAKE = ((-34.0, 41.66, 11.06), (-1.24, -0.75, 1.0))   # plane (origin, normal) capping the skin's top edge
 WG_CHEEK = [(38.05, 15.36), (RAMP_REACH, 1.0), (26.55, 1.0), (26.59, 6.09), (26.94, 7.22), (27.48, 8.04), (28.7, 9.02), (30.78, 9.78), (32.43, 10.71),
             (36.62, 14.17), (37.1, 12.78), (38.6, 12.78), (37.79, 15.15)]
 WG_IN_SLOT = [(38.69, 10.9), (39.12, 11.26), (37.79, 15.15), (38.05, 15.36), (RAMP_REACH, 1.0), (43.75, 1.0), (43.73, 4.82), (43.37, 6.03),
               (42.91, 6.68), (41.0, 8.6), (40.03, 8.6), (39.52, 10.07)]
 WG_TAB = [(42.78, 6.82), (44.32, 6.1), (44.69, 7.44), (RAMP_REACH, 1.0), (43.75, 1.0), (43.71, 4.98), (43.37, 6.03)]
+WG_SKIN = [(RAMP_REACH, 1.0), (47.57, 1.0), (46.8, 1.36), (40.79, 8.52), (40.22, 8.04), WG_CHEEK[-1], WG_CHEEK[0]]   # skin tops out on the cheek's top corner
+# skin top cap: in (X, W = Z - k Y) the cap is a circular arc rising to the full skin height (vertical tangent at
+# X = centre + R); swept along (0, 1, k). Fitted on 12 STEP X sections from X -35 to -30.65 (residual < 0.03 mm)
+WG_SKIN_CAP = dict(k=0.84, c=(-41.166, -16.147), r=10.554)   # param: organic skin cap arc (slope k, centre (X, W), R) fitted to RV17
+# fork-tail entry: between the kidney and the cheek's top notch the STEP opens the kidney to the notch over the last
+# 1.05 mm before the nose tab, so the fork tail drops into the kidney from above
+WG_TAIL_ENTRY = ([(35.08, 5.3), (37.36, 12.78), (37.36, 13.2), (38.14, 13.2), (38.14, 12.78), (38.2, 10.0), (38.04, 7.25)], -22.55)   # param: organic entry outline (Y, Z) mid-slot on RV17, X start (ends at the nose tab)
 ARC_N, ARC_MOUNT, ARC_KIDNEY, WG_MERGE_EPS = 64, 32, 24, 0.01       # circle facets per quarter; overlap that merges the toe land with the wedgelet body
 WG_TAB_FILM = 0.6                    # TPU film limit: slivers thinner than this are dropped from the nose tab
 WG_MOUNT_GAP = 0.1                   # nose tab clearance to the weapon mount boss
@@ -206,7 +228,9 @@ LAT_GROW = 0.35   # mm, measured from RV01 y=-36 sections (pocket area 38.1 vs 2
 from shapely.geometry import Point, Polygon   # noqa: E402
 NUT_LOBE = Point(NUT[0], NUT[1]).buffer(4.55, 64).union(Point(1.35, 6.9).buffer(1.2, 32)).convex_hull   # chassis wall lobe round the thin nut (Y, Z)
 NUT_RELIEF_END_Y, NUT_STEP_R = -13.2, 0.0   # Y where the side-panel nut relief ends (RV23 runs on to -13.2; shared with side.py and the tub lobe tail); the lobe-tail step corner is the panel's own square edge (SHARP_OK)
-SP_NUT_RELIEF = [(NUT_RELIEF_END_Y, 3.8), (0.5, 4.7), (2.3, 5.7), (2.3, 8.3), (0.5, 9.3), (-3.5, 11.0), (-9.5, 13.0), (NUT_RELIEF_END_Y, 13.8)]   # STEP RV23 diamond (Y, Z)
+SP_NUT_RELIEF_RUN = 1.0   # the relief floor runs on past NUT_RELIEF_END_Y until it dies out in the inner face's rear sweep (RV23: floor X-32.5 meets the sweep at Y-13.37, ours at -13.45), so it ends with no step wall
+SP_NUT_RELIEF_Y1 = NUT_RELIEF_END_Y - SP_NUT_RELIEF_RUN
+SP_NUT_RELIEF = [(SP_NUT_RELIEF_Y1, 3.8), (0.5, 4.7), (2.3, 5.7), (2.3, 8.3), (0.5, 9.3), (-3.5, 11.0), (-9.5, 13.0), (SP_NUT_RELIEF_Y1, 13.8)]   # STEP RV23 diamond (Y, Z)
 PANEL_IN = 31.4   # inner face of the side panel at the nut lobe (|X|)
 LUG_FLOOR_Z, LUG_SCALLOP_R, LUG_BLEND_R, LUG_SB_R = 2.5, 8.6, 4.95, 3.25   # param: organic lug underside arcs fitted to RV01: scallop R, the blend into the standoff arc (ref R4.95), standoff arc R
 # param: end
@@ -250,7 +274,7 @@ WIRES = [("w_bat_sw", "battery.jst_rcy", "power_switch.in", AWG["power"], "power
 
 
 # make_spec tables: weapon shaft, web floors, hub pivots, electronics placements, press-fit interference, belt geometry
-WSHAFT = dict(r=2.5, len=30.1, x=3.65)                  # GR1507 shaft: radius, length, start in the motor frame
+WSHAFT = dict(r=2.5, len=30.1, x=3.65, x_end=-18.7, thread_pitch=0.8, thread_depth=0.3, thread_len=10.0, chamfer=0.4)                  # GR1507 shaft: radius, length, start in the motor frame
 WEB = dict(spider=0.8, disc=0.9, fork=1.05)             # min_web_mm the designer owns (STEP measures the same webs)
 HUB_PIVOT_X = dict(rear=41.6, front=34.5)               # |X| of each hub's revolute pivot
 ELEC = dict(battery=(-11.81, -5.4, 12.0), rxesc=(8.67, -3.0, 15.3), wesc=(8.63, -7.25, 10.6), switch_yz=(-5.6, 14.25))   # catalog origins (STEP envelopes)
@@ -340,7 +364,7 @@ KEYHOLE_DEV, KEYHOLE_DEV_R = (28.5, -30.5, 5.85), 4.0   # N10 keyhole U-slot: ce
 LOBE_DEV, LOBE_DEV_R = (32.0, -13.5, 9.4), 3.5  # param: organic centroid of the lobe-tail trim vs STEP blobs
 # param: end
 BASE_DEV_Z, PANEL_DEV_R, TOP_DEV_Z = 4.5, 3.5, 19.95
-NOSE_DEV, NOSE_DEV_R = (MNT_IN + 2.0, SB[0] + 1.5, SB[1] - 1.0), 5.0             # mount nose pad (|x|, y, z): thickened nose wall, deviation from the STEP nose
+NOSE_DEV, NOSE_DEV_R = (MNT_IN + 2.0, SB[0] + 0.6, SB[1] - 1.7), 5.0             # mount nose pad (|x|, y, z): thickened nose wall, deviation from the STEP nose
 STATOR_DEV_X, TAP_DEV_R = 16.8, 2.0                                              # stator lead-in cone site; tap-hole sites
 
 
@@ -428,7 +452,7 @@ FH_ORIGIN_X = 30.0                                                              
 STANDOFF_BORE_R, TYRE_SECTION_STEP = 1.25, 10                                           # standoff through-bore radius; shoulder arc step (deg)
 
 
-MNT_TIP_DEV, MNT_TIP_DEV_R = (MNT_IN + 2.0, 12.5, MNT_TOP_Z - 0.2), 4.0   # mount notch-top wedge thickened to a printable wall (|x|, y, z)
+MNT_TIP_DEV, MNT_TIP_DEV_R = (MNT_IN + 2.5, 11.5, MNT_TOP_Z + 0.9), 5.0   # mount notch-top wedge thickened to a printable wall (|x|, y, z)
 
 
 
@@ -449,4 +473,6 @@ FK_TILT = -1.1                                    # deg, left fork nose-down abo
 FKS_STEPS, FKS_DY = 24, 0.5                       # fork-slot sweep up out of the ramp
 FKS_CLIP = (42.0, -1, 80, 30)                     # x0, y0, x1, y1 of the sweep clip box
 
+TYRE_REAR = dict(od_id=(21.5, 14.0), x=(32.5, 42.0), shoulder=1.2)    # RV21 F1 tyre on the N10 shaft (right side; the left is mirrored)
+TYRE_FRONT = dict(od_id=(11.0, 7.0), x=(32.5, 38.5), shoulder=0.6)     # micro tyre on the nose standoff
 __all__ = [n for n in dir() if not n.startswith("__")]   # last line: every name above is exported
