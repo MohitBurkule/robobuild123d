@@ -704,36 +704,36 @@
       "near": [
        -25.0,
        10.4,
-       11.0
+       17.5
       ],
-      "r": 9.0,
+      "r": 3.0,
       "reason": "corner column top: 1.7 thread-forming pilot for the top-panel M2 screw instead of the STEP 3.0 bore (the STEP top panel is bonded; screws make it removable)"
      },
      {
       "near": [
        25.0,
        10.4,
-       11.0
+       17.5
       ],
-      "r": 9.0,
+      "r": 3.0,
       "reason": "corner column top: 1.7 thread-forming pilot for the top-panel M2 screw instead of the STEP 3.0 bore (the STEP top panel is bonded; screws make it removable)"
      },
      {
       "near": [
        -25.0,
        -21.6,
-       11.0
+       17.5
       ],
-      "r": 9.0,
+      "r": 3.0,
       "reason": "corner column top: 1.7 thread-forming pilot for the top-panel M2 screw instead of the STEP 3.0 bore (the STEP top panel is bonded; screws make it removable)"
      },
      {
       "near": [
        25.0,
        -21.6,
-       11.0
+       17.5
       ],
-      "r": 9.0,
+      "r": 3.0,
       "reason": "corner column top: 1.7 thread-forming pilot for the top-panel M2 screw instead of the STEP 3.0 bore (the STEP top panel is bonded; screws make it removable)"
      },
      {
@@ -753,6 +753,24 @@
       ],
       "r": 4.5,
       "reason": "N10 keyhole opened into a U-slot to the floor so the gearbox boss and shaft drop in from below with the base panel off (the STEP closes the keyhole, the shaft cannot be threaded through it)"
+     },
+     {
+      "near": [
+       24.85,
+       -24.775,
+       16.5
+      ],
+      "r": 2.5,
+      "reason": "N10 key tab reaches KEY_DROP below the gearbox plate top so it keys between the plates and stops the motor inboard (the STEP tab is flush, which leaves the motor free to slide in x: retention.loose)"
+     },
+     {
+      "near": [
+       -24.85,
+       -24.775,
+       16.5
+      ],
+      "r": 2.5,
+      "reason": "N10 key tab reaches KEY_DROP below the gearbox plate top so it keys between the plates and stops the motor inboard (the STEP tab is flush, which leaves the motor free to slide in x: retention.loose)"
      },
      {
       "near": [
@@ -819,110 +837,92 @@
      },
      {
       "near": [
-       -10.97,
-       -9.03,
-       14.13
+       -2.07,
+       -8.67,
+       15.85
       ],
-      "r": 3.0,
-      "reason": "centroid of one connected extra blob (bbox x -27..-0.4) made of the left cage rib, the left column-foot flares and the left flange gusset, each reasoned above"
+      "r": 4.5,
+      "reason": "electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact"
      },
      {
       "near": [
-       -22.5,
-       20.0,
-       5.8
-      ],
-      "r": 8.0,
-      "reason": "2 x 2.6 gusset under the front-corner flange: printed deck-down the flange top is an unsupported ceiling"
-     },
-     {
-      "near": [
-       22.5,
-       20.0,
-       5.8
-      ],
-      "r": 8.0,
-      "reason": "2 x 2.6 gusset under the front-corner flange: printed deck-down the flange top is an unsupported ceiling"
-     },
-     {
-      "near": [
+       -2.07,
        -2.0,
+       15.85
+      ],
+      "r": 4.5,
+      "reason": "electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact"
+     },
+     {
+      "near": [
+       -2.07,
+       4.67,
+       15.85
+      ],
+      "r": 4.5,
+      "reason": "electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact"
+     },
+     {
+      "near": [
+       19.37,
+       -8.67,
+       15.85
+      ],
+      "r": 4.5,
+      "reason": "electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact"
+     },
+     {
+      "near": [
+       19.37,
        -2.0,
-       15.4
+       15.85
       ],
-      "r": 6.0,
+      "r": 4.5,
       "reason": "electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact"
      },
      {
       "near": [
-       19.4,
-       -2.0,
-       15.4
+       19.37,
+       4.67,
+       15.85
       ],
-      "r": 6.0,
+      "r": 4.5,
       "reason": "electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact"
      },
      {
       "near": [
-       2.0,
+       1.82,
        -19.6,
-       13.0
+       13.8
       ],
-      "r": 6.0,
+      "r": 4.5,
       "reason": "electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact"
      },
      {
       "near": [
-       12.0,
+       5.47,
        -19.6,
-       13.0
+       13.8
       ],
-      "r": 6.0,
+      "r": 4.5,
       "reason": "electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact"
      },
      {
       "near": [
-       7.5,
+       9.12,
        -19.6,
-       13.0
+       13.8
       ],
-      "r": 6.0,
+      "r": 4.5,
       "reason": "electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact"
      },
      {
       "near": [
-       -2.2,
-       -9.0,
-       14.0
+       12.78,
+       -19.6,
+       13.8
       ],
-      "r": 6.0,
-      "reason": "electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact"
-     },
-     {
-      "near": [
-       19.3,
-       4.0,
-       14.0
-      ],
-      "r": 6.0,
-      "reason": "electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact"
-     },
-     {
-      "near": [
-       -2.2,
-       4.0,
-       14.0
-      ],
-      "r": 6.0,
-      "reason": "electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact"
-     },
-     {
-      "near": [
-       19.3,
-       -9.0,
-       14.0
-      ],
-      "r": 6.0,
+      "r": 4.5,
       "reason": "electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact"
      },
      {
