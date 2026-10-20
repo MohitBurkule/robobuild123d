@@ -199,7 +199,6 @@ WG_BORE_X = (-39.0, -17.0)
 WG_KIDNEY = ([(36.05, 5.15), (36.95, 7.45)], 0.95, (-29.5, -21.0))   # fork-tail kidney slot (centre line (Y, Z), half width, X span)
 WG_TOE = [(48.6, 1.0), (RAMP_REACH, 1.0), (RAMP_REACH, 1.0 + WEDGE_TOE_H), (48.6, 1.0 + 1.5 * RAMP_SLOPE)]   # knife toe on a printable land (Y, Z)
 
-SIDE_WALL_DEBUG = []
 
 
 LAT_GROW = 0.35   # mm, measured from RV01 y=-36 sections (pocket area 38.1 vs 28.2)
@@ -428,11 +427,10 @@ STANDOFF_BORE_R, TYRE_SECTION_STEP = 1.25, 10                                   
 
 MNT_TIP_DEV, MNT_TIP_DEV_R = (MNT_IN + 2.0, 12.5, MNT_TOP_Z - 0.2), 4.0   # mount notch-top wedge thickened to a printable wall (|x|, y, z)
 
-__all__ = [n for n in dir() if not n.startswith('__')]
 
 
 # --- side.py: fork, hubs, side-panel width (fix-B lint) ---
-FK_X = {1: (24.5, 26.0), -1: (-26.5, -25.0)}      # fork X slab per side sign
+FK_X = {1: (24.5, 26.0), -1: (-26.5, -25.0)}      # fork X slab per side sign: asymmetric in the STEP (fork_5_1 24.5..26.0, fork_5_2 -26.5..-25.0), so not a mirror
 FK_EYE, FK_EYE_R, FK_PIN_R, FK_SB_R = (36.3, 6.3), 1.95, 0.8, 2.65   # eye on the nose standoff, pin hole, standoff hole
 FK_RES, FK_RES_PIN, FK_RES_BUF = 48, 24, 8        # circle / buffer segment counts
 FK_BLADE = [(35.0, 4.9), (36.1, 8.2), (41.0, 8.25), (66.68, 1.49), (51.75, 0.75), (39.0, 0.75), (38.0, 1.5)]   # param: organic fork blade outline (measured, STEP)
@@ -459,3 +457,4 @@ FH_PROF = [(0.0, 2.7), (0.0, 4.5), (0.7, 4.5), (0.75, 3.96), (0.93, 3.7), (1.57,
 # param: end
 SPW_Y = (-16.0, -12.0, 11.0, 15.0)                # side-panel width stations along Y
 SPW_BUMP, SPW_BUMP_YC, SPW_BUMP_YH, SPW_BUMP_ZC, SPW_BUMP_ZH = 0.7, -5.0, 6.0, 7.5, 5.0   # nut-lobe swell: height, Y centre/half, Z centre/half
+__all__ = [n for n in dir() if not n.startswith('__')]   # last line: exports every parameter above (incl. the FK_* and hub blocks)
