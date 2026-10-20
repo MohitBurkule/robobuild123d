@@ -93,6 +93,7 @@ def Part(d: dict) -> Obj:
 Fastener = _obj({
     "id": "", "designation": "", "at": lambda: [0.0, 0.0, 0.0], "dir": lambda: [0.0, 0.0, -1.0], "through": list,
     "threads_into": None, "tool": None, "removable": False, "head": None,
+    "waive": dict,  # {"<check id or prefix>": "<reason citing RVRN/RVnn/FSn>"}: see checks/waiver.py
 })
 Wire = _obj({"id": "", "from": "", "to": "", "awg": None, "kind": "signal", "slack_mm": None, "via": list})   # via: waypoints [[x,y,z],...] the route passes in order
 Electronics = _obj({"failsafe": False, "weapon_remote_disable": False, "radio": None, "cells": None})
