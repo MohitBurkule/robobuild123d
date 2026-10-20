@@ -475,4 +475,7 @@ FKS_CLIP = (42.0, -1, 80, 30)                     # x0, y0, x1, y1 of the sweep 
 
 TYRE_REAR = dict(od_id=(21.5, 14.0), x=(32.5, 42.0), shoulder=1.2)    # RV21 F1 tyre on the N10 shaft (right side; the left is mirrored)
 TYRE_FRONT = dict(od_id=(11.0, 7.0), x=(32.5, 38.5), shoulder=0.6)     # micro tyre on the nose standoff
+# --- tub_lugs/tub_lobes relations ---
+M3_NUT_AF, M3_NUT_AC, NUT_PRESS = 5.5, 6.35, 0.05   # thin M3 nut across flats / corners; the captive hex pocket is this much under it (pressed in)
+# --- end tub_lugs/tub_lobes relations ---
 __all__ = [n for n in dir() if not n.startswith("__")]   # last line: every name above is exported
