@@ -176,7 +176,7 @@ WEB = dict(spider=0.8, disc=0.9, fork=1.05)             # min_web_mm the designe
 HUB_PIVOT_X = dict(rear=41.6, front=34.5)               # |X| of each hub's revolute pivot
 ELEC = dict(battery=(-11.81, -5.4, 12.0), rxesc=(8.67, -3.0, 15.3), wesc=(8.63, -7.25, 10.6), switch_yz=(-5.6, 14.25))   # catalog origins (STEP envelopes)
 STATOR_DIRS = ((1, 0), (-1, 0), (0, 1), (0, -1))        # stator screw directions on the bolt circle (bolt_wm0..3)
-SW_Y, SW_BOLT_Z, TOP_BOLT_Z = (1.9, -13.1), 16.0, 20.4  # switch screws (Y, head Z) and the top-panel screw head plane
+SW_SCREW_Y, SW_BOLT_Z, TOP_BOLT_Z = (1.9, -13.1), 16.0, 20.4  # switch screws (Y, head Z) and the top-panel screw head plane   # [fix-S] was SW_Y: shadowed the side-panel wall stations SW_Y (chassis / side panels changed)
 PRESS = dict(hub=0.05, tyre=0.3, micro=0.2, nut=0.05, shaft=0.02, bearing=0.05, pack=0.1)   # press-fit interference per joint, mm
 PULLEY_R, BELT_R, BELT_r, BELT_WALL = (7.5, 3.7), 8.0, 4.2, 1.0   # pulley radii (rear, front), O-ring path radii, ring wall
 BELT_X = dict(slab=(30.8, 31.8), cut=(29.0, 33.0))                       # |X| of the belt loop slab and of its cut
