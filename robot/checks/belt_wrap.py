@@ -1,7 +1,8 @@
 """cots.belt_wrap: an O-ring (or any round) belt must be modelled as a closed loop that wraps both pulleys, not a flat
 strip between them. The belt solid must be one ring (Euler number 0: a torus-like loop), and from each pulley centre,
 in the pulley plane, the belt must lie on both sides of the centre line (top and bottom runs), within the pulley radius
-plus `review.belt.wrap_tol_mm` (default 2).
+plus `review.belt.wrap_tol_mm` (default 2). The runs are looked for in the belt's own plane
+(a groove sits off the hub's mid-plane).
 """
 
 from __future__ import annotations
@@ -36,6 +37,7 @@ def wraps(belt_b, pulleys, tol):
     for k, (pb, part) in enumerate(pulleys):
         ax = _axis(pb, part)
         c = cs[k]
+        c = c - ((c - belt_b.mesh.bounds.mean(axis=0)) @ ax) * ax   # a groove sits off the hub's mid-plane: look in the belt's own plane
         other = cs[1 - k] if len(cs) > 1 else c + np.cross(ax, [0, 0, 1.0])
         line = other - c
         line -= (line @ ax) * ax
