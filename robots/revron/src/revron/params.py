@@ -17,7 +17,8 @@ SO_R = 2.5
 NUT = (-11.5, 8.5)                   # side-panel screw into a thin M3 nut in the chassis wall (Y, Z)
 NUT_X = (27.7, 29.5)
 INS = [(-25.0, 10.4), (25.0, 10.4), (-25.0, -21.6), (25.0, -21.6), (0.0, -33.6)]   # 5 floor inserts / base screws
-INS_Z = (5.1, 9.1)                   # FS1 M2 heat-set (3.5 OD x 4)
+INS_Z = (5.1, 9.1)                   # FS1 M2 heat-set (3.5 OD x 4): bore floor and mouth Z (insert sits on the bore floor)
+INS_LEN = INS_Z[1] - INS_Z[0]
 CSK_M2 = 4.5                         # 90 deg countersink at the face for an ISO 10642 M2 flat head (4.4 x 1.2) + 0.1
 PANEL_EAR_R = 3.0
 TOP_HOLE = 3.5         # csk through-holes: wide enough that the 90 deg seat stops short of the far face (no knife edge)
@@ -33,8 +34,9 @@ CHASSIS_MIN_VOL = 15000.0               # a sound chassis is ~15900 mm3 in one s
 KEY_SPAN, KEY_DEV_R = (-26.15, -23.4), 2.5   # Y span of the key tab, radius of its reference-deviation zone
 N10_TOP = 17.0                       # top face of the N10 gearbox plates
 # chassis RV01
-SWX = 24.55   # power switch X: body side 0.05 clear of the 27.5 inner wall face (was 25.0, 0.4 into it)
 CH = dict(x=29.5, y0=-37.6, y1=15.0, z0=2.5, z1=19.5, wall=2.0, deck=17.5, cham=2.0)
+SW_HALF, SW_WALL_CLEAR = 2.9, 0.05   # BBB ant switch half width (catalog body 5.8), gap kept to the chassis inner wall
+SWX = CH["x"] - CH["wall"] - SW_WALL_CLEAR - SW_HALF   # power switch X: its side face mates the chassis inner wall face with the gap (24.55)
 # drisk
 # master parameters of the stack: plate thicknesses and where the first plate starts; every X span below is chained from them
 SPIDER_T, DISC_T, SPACER_T, STACK_X0 = 3.0, 3.0, 6.0, -8.2
@@ -257,7 +259,7 @@ SIDE_SINK = dict(a=2.15, b=5.75, c=1.05)                 # depth of each screw h
 SIDE_FACE_X = {k: SIDE_BOLT_X[k] + SIDE_SINK[k] for k in SIDE_BOLT_X}   # |X| of the battered outer face at each screw
 assert all(0 < d <= SP_CSK["head_clear"] for d in SIDE_SINK.values()), "a screw head must sit inside its driver bore (sink <= bore depth)"
 SIDE_BOLT_DES = dict(a="M3x10", b="M3x10", c="M3x8")
-BASE_BOLT_Z = 3.5                                        # base-panel screw head plane
+BASE_BOLT_Z = BASE_Z0                                        # base-panel screw head plane
 TOP_BOLT_XY = INS[1::-1] + INS[3:1:-1]                   # top-panel screws sit on the four corner columns, right-hand first
 PCT = 100                                                # percent
 AWG = dict(power=24, rx=26, motor=28, signal=30)
@@ -281,7 +283,9 @@ ELEC = dict(battery=(-11.81, -5.4, 12.0), rxesc=(8.67, -3.0, 15.3), wesc=(8.63, 
 STATOR_DIRS = ((1, 0), (-1, 0), (0, 1), (0, -1))        # stator screw directions on the bolt circle (bolt_wm0..3)
 FILLET_REAR_X = 26.77   # |X| where the squared N10 gearbox-plate seat meets its seat arc at the rear wall (measured on our section z=10; RV01 26.5)
 SWX_DEV_R = 1.5   # reference_cad deviation radius round each switch pilot (hole shifted 0.45 from the STEP)
-SW_SCREW_Y, SW_BOLT_Z, TOP_BOLT_Z = (1.9, -13.1), 16.0, 20.4  # switch screws (Y, head Z) and the top-panel screw head plane
+SW_PITCH, SW_BODY_H = 15.0, 3.5   # BBB ant switch ear-hole pitch and body height (catalog)
+SW_SCREW_Y = tuple(round(ELEC["switch_yz"][0] + sg * SW_PITCH / 2, 6) for sg in (1, -1))   # the two ear holes straddle the switch centre
+SW_BOLT_Z, TOP_BOLT_Z = ELEC["switch_yz"][1] + SW_BODY_H / 2, TOP_Z0 + TOP_T  # switch screws (Y, head Z) and the top-panel screw head plane
 PRESS = dict(hub=0.05, tyre=0.3, micro=0.2, nut=0.05, shaft=0.02, bearing=0.05, pack=0.1)   # press-fit interference per joint, mm
 BELT_R, BELT_r = 7.95, 4.2   # O-ring centreline radii: rear / front hub groove floor (7.45, 3.7) + half the 1.0 cs
 BELT_X = dict(centre=31.25)                                              # |X| of the O-ring centreline (hub groove centre)
