@@ -586,7 +586,10 @@ def facts(ctx) -> dict:
         sides = []
         # reach per side from the rotor's own face: a shaft tail (e.g. the motor shaft running on into the far bearing) is
         # not rotor face and would push the sampling past the upright
-        nsh = [b for b in rbodies if b.kind not in ("shaft", "pin")] or rbodies
+        # A split motor's rotor can is part of the motor, not rotor face (a fused weapon_motor body is never in the rotor).
+        from .kinematics import split_motors
+        cans = set(split_motors({rp.part.id: rp for rp in ctx.r.parts}))
+        nsh = [b for b in rbodies if b.kind not in ("shaft", "pin") and b.id not in cans] or rbodies
         tq = np.concatenate([(b.mesh.vertices - origin) @ axis for b in nsh])
         reach = {1.0: max(0.0, float(tq.max())), -1.0: max(0.0, float(-tq.min()))}
         for s in (1.0, -1.0):
