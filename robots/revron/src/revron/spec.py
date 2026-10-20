@@ -294,7 +294,9 @@ def reference_cad():
           + [dict(near=list(p_), r=GUSSET_R, reason="2 x 2.6 gusset under the front-corner flange: printed deck-down the flange top is an unsupported ceiling")
              for p_ in GUSSET_PTS]
           + [dict(near=list(p_), r=CAGE_RIB_R, reason="electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact")
-             for p_ in CAGE_RIBS]),
+             for p_ in CAGE_RIBS]
+          + [dict(near=[sx * LOBE_DEV[0], LOBE_DEV[1], LOBE_DEV[2]], r=LOBE_DEV_R, reason="lobe tail below Y -11.7 trimmed to the side-panel inner face: the STEP lobe and side panel overlap by 31 mm3, the tub does not duplicate it")
+             for sx in (1, -1)]),
         R("base_panel", "RV26_Base_Panel_1.stl", tol_mm=TOL["tight"], note="RV26 1 mm panel",
           deviations=[dict(near=[x, y, BASE_DEV_Z], r=PANEL_DEV_R, reason="0.4 mm ring boss, R3 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud")
                       for x, y in INS]),
