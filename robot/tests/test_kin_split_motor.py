@@ -121,3 +121,30 @@ def test_hub_motor_with_open_bore_holds_its_shaft():
     o, a = np.zeros(3), np.array([1.0, 0, 0])
     assert hold_mm(w, 1, 0, o, a, 1.0, 1.0, (2,), 2.5) >= 6.0
     assert hold_mm(w, 1, 0, o, a, 1.0, 1.0, (), 2.5) == 0.0
+
+
+ARC = ("mass", "power", "archetype")
+
+
+def long_can(d):
+    """The can reaches past the far bearing along the axle (as revron's bell-and-core body does)."""
+    if stator_of(d) == "wm_stator":
+        part(d, "wm_can")["at"] = [0, 0, 18]
+        part(d, "wm_can")["shape"] = cyl(3.5, 30, 2.5)
+
+
+@pytest.mark.parametrize("make", [fused, split])
+def test_disc_supported_good(make):
+    d = make()
+    long_can(d)
+    rep = run(d, ARC)
+    assert passed(rep, "archetype.disc_supported"), dump(rep)
+
+
+@pytest.mark.parametrize("make", [fused, split])
+def test_disc_supported_missing_side_fails(make):
+    d = make()
+    long_can(d)
+    part(d, "upl")["at"] = [16, 0, AXZ + 40]
+    part(d, "brg")["at"] = [16, 0, AXZ + 40]
+    assert failed(run(d, ARC), "archetype.disc_supported")
