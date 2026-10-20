@@ -99,6 +99,7 @@ BOSS_Z = 6.34                           # the boss starts above the line from th
 BOSS_NOSE_Y = 44.34
 BIG = 60.0                              # a box edge bigger than any part, for half-plane clips
 MNT_RELIEF_R = 1.0                      # concave corner relief of the profile (tub deck fillet, mfg corner relief)
+MNT_TIP_WALL, MNT_TIP_REACH = 0.9, 3.0    # printed wall: the wedge where the rear notch meets the rim tangent is trimmed back to this thickness within this reach of the notch top
 
 
 HOLE_FACE_RISE = 0.7                    # the battered face's highest point over a stator hole axis: the surface the hole is measured from
@@ -198,6 +199,7 @@ PANEL_IN = 31.4   # inner face of the side panel at the nut lobe (|X|)
 LUG_FLOOR_Z, LUG_SCALLOP_YT, LUG_SCALLOP_R = 2.5, 36.27, 8.6   # param: organic lug underside arc, tangent to the lug floor at Y 36.27
 LUG_SCALLOP = Point(LUG_SCALLOP_YT, LUG_FLOOR_Z - LUG_SCALLOP_R).buffer(LUG_SCALLOP_R, 128).intersection(
     Polygon([(0.0, -20.0), (LUG_SCALLOP_YT, -20.0), (LUG_SCALLOP_YT, LUG_FLOOR_Z), (0.0, LUG_FLOOR_Z)]))
+# param: end
 
 
 # ====================================================================================================================
