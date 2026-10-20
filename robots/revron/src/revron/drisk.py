@@ -89,3 +89,15 @@ def drisk_spacer():
     for pt in _polar(BOLT_R):
         p = p.difference(Point(*pt).buffer(_m2()[1], WSEG_FINE))
     return _ext(_to_world_poly(p), "yz", *DR_X["spacer"])
+
+
+def weapon_shaft():
+    """GR1507 5 mm shaft in world coordinates: V-thread (pitch, depth, length from the free end) with a lead-in chamfer, plain r2.5 to the circlip end."""
+    w = WSHAFT
+    n = int(round(w["thread_len"] / w["thread_pitch"]))
+    prof = [(0.0, 0.0), (0.0, w["r"] - w["thread_depth"] - w["chamfer"]), (w["chamfer"], w["r"] - w["thread_depth"])]
+    for k in range(n):
+        x = w["chamfer"] + k * w["thread_pitch"]
+        prof += [(x + 0.5 * w["thread_pitch"], w["r"]), (x + w["thread_pitch"], w["r"] - w["thread_depth"])]
+    prof += [(w["thread_len"], w["r"]), (w["len"], w["r"]), (w["len"], 0.0)]
+    return _revolve_x(prof, w["x_end"], (WY, WZ))

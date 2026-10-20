@@ -12,7 +12,7 @@ PARTS = {
     "base_panel": base_panel, "top_panel": top_panel, "chassis": chassis, "motor_back_spacer": motor_back_spacer,
     "mount_l": lambda: weapon_mount("l"), "mount_r": lambda: weapon_mount("r"),
     "fork_l": lambda: fork(-1), "fork_r": lambda: fork(1),
-    "spider": spider, "disc_a": lambda: disc("disc_a"), "disc_b": lambda: disc("disc_b"), "drisk_spacer": drisk_spacer,
+    "spider": spider, "disc_a": lambda: disc("disc_a"), "disc_b": lambda: disc("disc_b"), "drisk_spacer": drisk_spacer, "weapon_shaft": weapon_shaft,
     "wedgelet_l": lambda: wedgelet(-1), "wedgelet_r": lambda: wedgelet(1),
     "side_panel_l": lambda: side_panel(-1), "side_panel_r": lambda: side_panel(1),
     "rear_hub_l": lambda: rear_hub(-1), "rear_hub_r": lambda: rear_hub(1),
