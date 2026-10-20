@@ -3281,8 +3281,8 @@
     "csk_angle": 90.0,
     "csk_d": 6.7,
     "csk_depth": 1.65,
-    "sink": 0.0,
-    "grip": 3.76
+    "sink": 2.15,
+    "grip": 5.91
    },
    "head": "countersunk",
    "tool": "hex2",
@@ -3321,8 +3321,8 @@
     "csk_angle": 90.0,
     "csk_d": 6.7,
     "csk_depth": 1.65,
-    "sink": 0.0,
-    "grip": 5.26
+    "sink": 5.75,
+    "grip": 11.01
    },
    "head": "countersunk",
    "tool": "hex2",
@@ -3361,8 +3361,8 @@
     "csk_angle": 90.0,
     "csk_d": 6.7,
     "csk_depth": 1.65,
-    "sink": 0.0,
-    "grip": 5.76
+    "sink": 1.05,
+    "grip": 6.81
    },
    "head": "countersunk",
    "tool": "hex2",
@@ -3479,8 +3479,8 @@
     "csk_angle": 90.0,
     "csk_d": 6.7,
     "csk_depth": 1.65,
-    "sink": 0.0,
-    "grip": 3.76
+    "sink": 2.15,
+    "grip": 5.91
    },
    "head": "countersunk",
    "tool": "hex2",
@@ -3519,8 +3519,8 @@
     "csk_angle": 90.0,
     "csk_d": 6.7,
     "csk_depth": 1.65,
-    "sink": 0.0,
-    "grip": 5.26
+    "sink": 5.75,
+    "grip": 11.01
    },
    "head": "countersunk",
    "tool": "hex2",
@@ -3559,8 +3559,8 @@
     "csk_angle": 90.0,
     "csk_d": 6.7,
     "csk_depth": 1.65,
-    "sink": 0.0,
-    "grip": 5.76
+    "sink": 1.05,
+    "grip": 6.81
    },
    "head": "countersunk",
    "tool": "hex2",
