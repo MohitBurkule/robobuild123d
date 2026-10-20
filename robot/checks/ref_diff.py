@@ -103,7 +103,8 @@ def boolean_diff(model: trimesh.Trimesh, ref: trimesh.Trimesh, min_vol=2.0, min_
     A, lo_, h = voxelize(model, voxel_h, lo, hi)
     B, _, _ = voxelize(ref, voxel_h, lo, hi)
     ex, mi = A & ~B, B & ~A
-    return {"method": f"voxel {voxel_h} mm (reference not a closed manifold)", "extra_mm3": round(float(ex.sum()) * h ** 3, 2),
+    bad = [n for n, ok_ in (("model", a is not None), ("reference", b is not None)) if not ok_]
+    return {"method": f"voxel {voxel_h} mm ({' and '.join(bad)} not a closed manifold)", "extra_mm3": round(float(ex.sum()) * h ** 3, 2),
             "missing_mm3": round(float(mi.sum()) * h ** 3, 2),
             "extra": _voxel_blobs(ex, lo_, h, min_vol, min_thick), "missing": _voxel_blobs(mi, lo_, h, min_vol, min_thick)}
 
