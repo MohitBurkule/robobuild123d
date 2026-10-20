@@ -12,7 +12,9 @@ X_RIB, X_SLOPE, X_R = 22.25, 0.6404, 0.8      # half width of the X pockets (= t
 X_UP = (-3.07, 12.4)                          # front pocket: apex Y on the axis, top edge Y
 X_LO = (-8.13, -23.4, -23.6)                  # rear pocket: apex Y, rear edge Y beside the blocks, rear edge Y between the stop walls
 X_NOTCH = 17.5                                # |X| where the rear pocket steps back between the motor stop walls
-SIDE_TRI = [(3.72, -5.59), (22.0, 4.51 + 0.640 * 2.49), (22.0, -15.71 - 0.6407 * 2.49)]   # side pocket: right edge at |X| 22.0 (1.0 rib to the switch slot)
+SIDE_X, SIDE_DIAG = 22.5, dict(x=19.51, y_up=4.51, k_up=0.640, y_lo=-15.71, k_lo=0.6407)   # side pocket: right edge |X| (= the switch pad edge), diagonals through (x, y) with slope k
+SIDE_TRI = [(3.72, -5.59), (SIDE_X, SIDE_DIAG["y_up"] + SIDE_DIAG["k_up"] * (SIDE_X - SIDE_DIAG["x"])),
+            (SIDE_X, SIDE_DIAG["y_lo"] - SIDE_DIAG["k_lo"] * (SIDE_X - SIDE_DIAG["x"]))]
 SIDE_R = 1.9                                  # apex R towards the centre
 REAR_P = dict(x0=3.75, w=10.37, pitch=12.38, y=(-34.5, -26.5), r=0.6)   # rear deck pockets: first inner X, width, pitch, Y span, corner R
 REAR_C = dict(half=2.75, y=(-30.0, -26.5), r=1.2)                       # centre rear pocket
@@ -22,8 +24,7 @@ RABBET_GROW = 0.05                            # the rabbet is the panel outline 
 RING = dict(clear=0.3, below=0.1, above=0.05)   # recess R over BOSS_R (0.25 base fillet + 0.05), start under the seat, overshoot over the boss
 PAD = dict(c=(22.5, -30.3), s=9.1, margin=0.3, z=(-0.1, 0.3))   # N10 preload pad: centre, side, recess margin (0.25 fillet), Z span about SEAT_Z
 SQUARE = dict(x0=25.5, depth=2.0, up=2.0, over=0.05)            # squared rear corner behind the gearbox plates: inner |X|, Y depth, Z over the floor
-ROUND_BOX = (17.6, 22.2, 4.4, 9.0)            # stop wall lower inner edge R4.5 (STEP): X and Z box of the round
-ROUND_R, ROUND_Y = 4.5, (-25.5, -22.4)        # radius, cutter Y span (through the corner fillet too)
+ROUND_R, ROUND_Y, ROUND_Z = 4.5, (-25.5, -22.4), (4.4, 9.4)   # stop wall lower inner edge R4.5 (STEP): radius, cutter Y span (through the corner fillet too), Z span of the round
 # ---- column bores and switch slot (NO-CHANGE: owned by the heat-set worker)
 HOLE_R, CH_R, CH_H = 1.5, 2.1, 0.6            # M2 heat-set hole R, chamfer outer R, chamfer height
 PILOT_R, PILOT_DEPTH, OVER_PILOT = 1.7, 4.0, 0.0    # 3.4 bore in the column top for the M2 heat-set (3.5 OD x 4), starting at the hole cut end
@@ -65,7 +66,8 @@ def seat_cuts(c):
 
 def stop_wall_round(c):
     """Motor stop wall: lower inner edge rounded (STEP)."""
-    x0, x1, z0, z1 = ROUND_BOX
+    x0, z0, z1 = STOP_X0, *ROUND_Z
+    x1 = x0 + ROUND_R
     fil = rect(x0, x1, z0, z1).difference(Point(x1, z1).buffer(ROUND_R, SEG))
     return both(_ext(fil, "xz", *ROUND_Y))
 

@@ -12,8 +12,9 @@ BOSS_FILLET_R = 1.0              # concave fillet where the rear-centre boss mee
 NOSE_SEG = 48                    # buffer resolution of the corner-block rounds
 # measured corner blocks (STEP), per block: inner face X, nose-end Y, wall-end Y, fillet-end Y, nose R, wall-fillet R
 CORNER_BLOCKS = ((22.25, 7.65, 13.1, 13.0, 2.5, 0.8), (22.21, -18.85, -23.45, -23.4, 2.6, 0.9))
-STOP_X0, STOP_Y = 17.7, (-25.4, -23.4)       # motor stop wall: inner end |X|, Y span (the N10 gearbox bears on its rear face)
-KEY_Y0, KEY_Z0 = -26.15, N10_TOP - 1.0       # key tab between the gearbox plates: front Y, bottom Z
+STOP_X0, STOP_Y = 17.5, (-25.4, -23.4)       # motor stop wall: inner end |X|, Y span (the N10 gearbox bears on its rear face)
+KEY_DROP = 0.1                              # the key tab reaches this far below the plate top (STEP: flush; the tab must still key between the plates)
+KEY_Y0, KEY_Z0 = -26.15, N10_TOP - KEY_DROP   # key tab between the gearbox plates: front Y, bottom Z
 LEDGE_X0, LEDGE_Y0 = 20.0, -27.3             # 0.4 ledge over the gearbox plates: inner |X|, front Y
 
 
