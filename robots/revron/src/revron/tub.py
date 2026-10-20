@@ -119,7 +119,9 @@ def chassis():
     c = CH
     adds = tub_shell.additions(c) + tub_lobes.additions(c) + tub_lugs.additions(c) + tub_front.additions(c) + [switch_pad(c)]
     cuts = tub_shell.cuts(c) + tub_lobes.cuts(c) + tub_lugs.cuts(c) + tub_front.cuts(c)
-    return _U(_S(_U(tub_shell.shell(c), *adds), *cuts), *tub_shell.ribs(c))
+    tub = _U(_S(_U(tub_shell.shell(c), *adds), *cuts), *tub_shell.ribs(c))
+    assert len(tub.solids()) == 1 and tub.volume > CHASSIS_MIN_VOL, f"chassis boolean collapsed: {len(tub.solids())} solids, {tub.volume:.0f} mm3"
+    return tub
 
 
 def esc_tray():
