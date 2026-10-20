@@ -7,6 +7,8 @@ a coordinate typed beside the part."""
 import build123d as b
 from .params import *  # noqa: F401,F403
 
+DIGITS = 6   # spec precision: micron / micro-degree, JSON free of float noise
+
 
 class Rig:
     def __init__(self):
@@ -35,7 +37,7 @@ class Rig:
         d = [ax.direction.X, ax.direction.Y, ax.direction.Z]
         d = [-v for v in d] if max(d, key=abs) < 0 else d
         p = ax.position
-        return {"kind": "revolute", "axis": [round(v, 6) + 0.0 for v in d], "pivot": [round(v, 6) + 0.0 for v in (p.X, p.Y, p.Z)],
+        return {"kind": "revolute", "axis": [round(v, DIGITS) + 0.0 for v in d], "pivot": [round(v, DIGITS) + 0.0 for v in (p.X, p.Y, p.Z)],
                 "min": span[0], "max": span[1], "default": span[0]}
 
     def mate(self, parent, plabel, child, clabel):
@@ -54,7 +56,7 @@ class Rig:
         if frame is not None:
             loc = self.parts[frame].location.inverse() * loc
         at, rot = loc.position, loc.orientation
-        return [round(v, 6) + 0.0 for v in (at.X, at.Y, at.Z)], [round(v, 6) + 0.0 for v in (rot.X, rot.Y, rot.Z)]
+        return [round(v, DIGITS) + 0.0 for v in (at.X, at.Y, at.Z)], [round(v, DIGITS) + 0.0 for v in (rot.X, rot.Y, rot.Z)]
 
 
 def tub_rig(r=None, solve=True):
