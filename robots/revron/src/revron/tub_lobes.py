@@ -118,6 +118,6 @@ def panel_mating():
 
 def cuts(c):
     out = []
-    for f in (keyhole, nut_bore, floor_relief, hex_pocket, nut_detail, stop_wall_round, lobe_tail):
+    for f in (keyhole, nut_bore, floor_relief, hex_pocket, nut_detail, lobe_tail):
         out += _both(f(c))
     return out + panel_mating()

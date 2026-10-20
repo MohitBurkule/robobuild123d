@@ -26,7 +26,7 @@ ROUND_BOX = (17.6, 22.2, 4.4, 9.0)            # stop wall lower inner edge R4.5 
 ROUND_R, ROUND_Y = 4.5, (-25.5, -22.4)        # radius, cutter Y span (through the corner fillet too)
 # ---- column bores and switch slot (NO-CHANGE: owned by the heat-set worker)
 HOLE_R, CH_R, CH_H = 1.5, 2.1, 0.6            # M2 heat-set hole R, chamfer outer R, chamfer height
-PILOT_R, PILOT_DEPTH, OVER_PILOT = 0.85, 4.0, 0.1   # 1.7 thread-forming pilot in the column top, starting OVER_PILOT above the hole cut
+PILOT_R, PILOT_DEPTH, OVER_PILOT = 1.7, 4.0, 0.0    # 3.4 bore in the column top for the M2 heat-set (3.5 OD x 4), starting at the hole cut end
 SW_SLOT = dict(x0=23.0, w=4.0, y0=-11.6, l=12.0, r=0.45, z0=16.0)   # slot beside the top panel: inner edge, width, front Y, length, corner R, floor Z
 SW_PILOT = dict(r=0.85, pitch=15.0, down=3.0)   # switch pilot R, Y pitch about the slot centre, depth under the deck
 
