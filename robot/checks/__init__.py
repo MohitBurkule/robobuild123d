@@ -23,7 +23,7 @@ from ..spec import Spec
 
 # Bumped whenever a check is added or changed. 7 = the Rust crate's revision; 8 adds belt/fork tension (python port); 9 adds
 # wheel running clearance, wheel exposure, targets, fused/key/tape/press-fit evidence, stall-current battery peak.
-CHECKS_REVISION = 15  # 15 adds sharp_corner (opt-out mfg.sharp_internal_corner); 14 adds the design-review groups (ref_map, cots_fidelity, wire_review, fastener_record, belt_wrap, print_orient); 13 adds intent (functional design-intent probes); 12 adds threat (combat failure modes CF-*); 10 adds internal (no_contact, fastener_void, wire_in_solid); 11 adds bom (reference BOM, lock part, O-ring stock, wire cut, switch dir, doc) and connection.cover_fasteners
+CHECKS_REVISION = 15  # 15 adds param (raw-literal lint) and sharp_corner (opt-out mfg.sharp_internal_corner); 14 adds the design-review groups (ref_map, cots_fidelity, wire_review, fastener_record, belt_wrap, print_orient); 13 adds intent (functional design-intent probes); 12 adds threat (combat failure modes CF-*); 10 adds internal (no_contact, fastener_void, wire_in_solid); 11 adds bom (reference BOM, lock part, O-ring stock, wire cut, switch dir, doc) and connection.cover_fasteners
 
 # (module, deep_only) in run order; same order as the Rust crate, plus `tension` before `assembly`.
 GROUPS = [
@@ -44,6 +44,7 @@ GROUPS = [
     ("print_orient", False),  # print.orientation_declared
     ("retention", False),  # retention.axial (robot/checks/retention.py)
     ("sharp_corner", False),  # mfg.sharp_internal_corner (opt-out, every printed / moulded part)
+    ("param", False),  # param.literals, param.duplicate, param.exempt_reason (opt out: review.param.enabled=false)
 ]
 
 # `--only claims` is a pseudo-group: it evaluates spec claims and pulls in the groups that measure their metrics.
@@ -69,6 +70,8 @@ def effective_only(spec, only):
     if not only or CLAIMS_GROUP not in only:
         return only
     return list(only) + [g for g in claim_groups(spec) if g not in only]
+
+MODULE = {"param": "param_lint"}  # group name -> module file when they differ
 
 
 @dataclass
@@ -120,7 +123,7 @@ def verify_resolved(r, opts: Options) -> Report:
                 continue
             t0 = time.time()
             try:
-                mod = importlib.import_module(f".{name}", __name__)
+                mod = importlib.import_module(f".{MODULE.get(name, name)}", __name__)
             except ModuleNotFoundError:
                 findings.append(fail("checks.missing", "checks", WARNING, "Check group not available",
                                      f"The `{name}` checks are not in this build; nothing in that group was judged."))

@@ -241,7 +241,37 @@ def _sweep(ctx, present, root, teardown, steps):
                 break
 
 
+def apply_service_pose(ctx):
+    """Spec `service_pose` [{parts, axis_at, axis_dir, deg, reason}]: rotate those bodies about an axis for the whole
+    full-robot teardown (a weapon disc turned by hand so its rim clears the screws that hold the module). Returns undo()."""
+    import trimesh.transformations as tf
+
+    w = ctx.world
+    undo = []
+    for e in (ctx.r.spec.raw or {}).get("service_pose") or []:
+        R = tf.rotation_matrix(np.radians(float(e.get("deg", 0.0))), e.get("axis_dir") or [1, 0, 0], e.get("axis_at") or [0, 0, 0])
+        for pid in e.get("parts") or []:
+            k = w.index(pid)
+            if k is None:
+                continue
+            bd = w.bodies[k]
+            undo.append((bd, bd.M.copy()))
+            bd.M = R @ bd.M
+            bd._mesh = bd._man = None
+            bd._surf = {}
+    def restore():
+        for bd, M in undo:
+            bd.M = M
+            bd._mesh = bd._man = None
+            bd._surf = {}
+    return restore
+
+
 def run(ctx):
+    return _run(ctx)
+
+
+def _run(ctx):
     r, w = ctx.r, ctx.world
     n = len(w.bodies)
     present = [not b.is_wire for b in w.bodies]
@@ -259,7 +289,11 @@ def run(ctx):
             present[k] = False
             steps.append(AssemblyStep(len(steps) + 1, bid, [0.0, 0.0, 0.0], 0.0))
     ctx.not_checked[:] = nc
-    _sweep(ctx, present, root, getattr(r.spec, "teardown", None) or [], steps)
+    restore = apply_service_pose(ctx)   # the declared service pose holds for the full-robot teardown only (not the bench pass)
+    try:
+        _sweep(ctx, present, root, getattr(r.spec, "teardown", None) or [], steps)
+    finally:
+        restore()
     # A declared swap module (spec `modules`) leaves as one unit; its bench teardown (`module_teardown`) is judged on the
     # module alone, its root plate staying put, so a quick-change weapon is checked both ways.
     stuck_bench = []

@@ -495,3 +495,19 @@ a full run is tested. Plain `verify` is unchanged and remains the reference.
 reference" was claimed on partial evidence. Prints PASS/FAIL for: full verify 0 blockers, every
 `reference_cad.diff`/`.features` passing (and present), every `intent.support_free`/`printability.*` passing (and
 present), render PNGs present and newer than the spec. Exit 0 only when all pass. Run it before claiming a match.
+
+## Parametric build code (`param.*`, group `param`, opt out with `review.param.enabled: false`)
+
+Rule: **dims come from params + relations; raw numbers only in organic tables.** Declare every dimension once as a
+named module-level constant (or spec param), then place features by relation: centre of X, offset from a corner/face of
+Y, mirror of Z. `param.literals` (BLOCKER) fires when a build function holds more than `review.param.max_literals`
+(default 3) unexplained numeric literals; trivial values (0, 1, 2, 0.5, -1, 90, 180, 360), subscript indices and
+default-argument values do not count. `param.duplicate` (WARNING) fires when one value appears in >= 3 places: make it
+one param. Genuinely organic data (B-spline control points traced from a reference) is marked
+`# param: organic <reason>` on/above the `def`, or around a region closed by `# param: end`, or in spec
+`param_exempt: [{"func": ..., "reason": ...}]`; an exemption without a reason is a BLOCKER. Metric:
+`param.literal_count`. Per-function table: `python -m robot.checks.param_lint <spec.json> [N]`.
+Structure warnings in the same group: `param.pattern` (>= 3 literal points on a row/grid/circle: use
+`GridLocations`/`PolarLocations` from a named pitch/radius/count), `param.mirror` (a `*_left`/`*_right` or `_l`/`_r`
+function pair both built from literals with no `mirror()`: build one side and mirror it), `param.placement`
+(`translate`/`moved`/`Location`/`Pos` with all-literal coords: place by Joint/mate or relative to a named feature).
