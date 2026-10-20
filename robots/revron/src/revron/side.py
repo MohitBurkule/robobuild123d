@@ -96,57 +96,6 @@ def tyre(od, idd, x0, x1, c, shoulder=0.0):
 
 def standoff(L_x, c):
     return _S(_cyl(SO_R, *L_x, c), _cyl(1.25, L_x[0] - 1, L_x[1] + 1, c))
-def wedgelet(s):
-    """RV17/18 TPU wedgelet (left built, right mirrored), slabs along X (WG_X) measured on the STEP sections:
-    an outer block round the 15 mm standoff end, a ring step, a 2.3 mm ramp skin over a hollow whose top edge is
-    capped by a raked plane, the cheek round both standoffs with the fork-tail kidney slot and the 2.5 mm fork slot
-    through it, and a nose tab. Ramp face 50 deg: Z = FLOOR_Z + RAMP_SLOPE (RAMP_REACH - Y)."""
-    from shapely.geometry import LineString, Point, Polygon
-    P = lambda pts: Polygon(pts).buffer(0)  # noqa: E731
-    (r1, tail1), (r2, tail2) = WG_S1, WG_S2
-    s1 = Point(*SB).buffer(r1, ARC_N).union(P(tail1))
-    s2 = Point(*SB).buffer(r2, ARC_N).union(P(tail2))
-    skin, cheek, tab = P(WG_SKIN), P(WG_CHEEK), P(WG_TAB)
-    in_slot = P(WG_IN_SLOT).union(Point(*SA).buffer(r1, ARC_N))
-    # the nose tab bears on the weapon mount's nose: take the mount's boss outline (its side profile above the
-    # notch-to-nose line) out of the tab in 2D and drop any sliver thinner than a TPU wall, so no film is left
-    mprof = _mount_profile("l" if s < 0 else "r").intersection(_mount_clip())
-    tab = tab.difference(mprof.buffer(WG_MOUNT_GAP, ARC_MOUNT)).buffer(-WG_TAB_FILM, join_style=2).buffer(WG_TAB_FILM, join_style=2)
-    bb = _b()
-    xb, xr, xs, xc, xt, xe = WG_X
-    origin, normal = WG_SKIN_RAKE
-    sk = _one(_ext(skin, "yz", xs, xc)).split(bb.Plane(origin=origin, z_dir=normal), keep=bb.Keep.BOTTOM)
-    body = _U(_ext(s1, "yz", xb, xr), _ext(s2, "yz", xr, xs), sk, _ext(cheek, "yz", xc, xt), _ext(tab, "yz", xt, xe) if not tab.is_empty else None)
-    line, half, kx = WG_KIDNEY
-    bx0, bx1 = WG_BORE_X
-    cuts = [_ext(cheek.difference(in_slot), "yz", *WG_FORK_SLOT_X),               # 2.5 mm fork slot through the cheek
-            _cyl(WG_BORES["sa"], bx0, bx1, SA), _cyl(WG_BORES["sb"], bx0, bx1, SB), _cyl(WG_BORES["sb_head"], xr, bx1, SB),
-            _ext(LineString(line).buffer(half, ARC_KIDNEY), "yz", *kx)]
-    # TPU cannot print the ramp's knife toe: keep the full reach but stand the toe on a printable land,
-    # the ramp face running parallel to the measured one from there
-    body = _U(body, _I(_ext(P(WG_TOE), "yz", xb, xe), _ext(s1.union(cheek).union(tab).buffer(WG_MERGE_EPS), "yz", xb, xe)))
-    sh = _S(body, *cuts)
-    sh = sh if s < 0 else _mirror_x(sh)
-    # the STEP leaves the fork tine and the mount boss inside the TPU nose; cut their seats (the tine slides into a
-    # 1.5 mm slit, the TPU nose tab bears on the mount)
-    # the nose tab grazes the chassis lug by 0.1 mm: take the chassis out of it (a printed TPU nose conforms)
-    return _S(sh, _fork_slot(s), weapon_mount("l" if s < 0 else "r"), chassis())
-
-
-def _sp_path(z):
-    """Inner face path (X, Y) of the side wall at height z."""
-    ks = sorted(SW_X)
-    sw = [_interp(z, ks, [SW_X[k][i] for k in ks]) for i in range(len(SW_Y))]
-    return SP_IN[:9] + list(zip(sw, SW_Y))
-
-
-def _sp_w(y, z):
-    r, m, w = (_interp(z, SP_W_Z, t) for t in (SP_W_REAR, SP_W_MID, SP_W_SWING))
-    # STEP RV23: the outer face swells 0.7 mm round the nut lobe (Y -11..1) at Z 4..12 (outer X -35.3 at Y -5 vs -34.5 at Y 5, Z 7.5)
-    bump = 0.7 * max(0.0, 1.0 - abs(y + 5.0) / 6.0) * max(0.0, 1.0 - abs(z - 7.5) / 5.0)
-    return _interp(y, (-16.0, -12.0, 11.0, 15.0), (r, m, m, w)) + bump
-
-
 def _sp_ring(zw, z, b, Polygon):
     """One wall section at height z: the inner-face path, offset by the local thickness, closed by half-round caps and
     resampled from the inner rear corner so every section's points correspond (dense polygon sections: one ruling per

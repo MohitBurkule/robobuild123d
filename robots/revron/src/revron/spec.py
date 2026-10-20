@@ -176,8 +176,8 @@ def make_spec(model_file):
         c = math.hypot(by - ay, bz - az)
         d = ((by - ay) / c, (bz - az) / c)
         k = (BELT_R - BELT_r) / c
-        h = math.sqrt(1 - k * k)
-        P2 = lambda y, z: [round(-z, 4), round(y, 4)]   # noqa: E731 - the YZ plane as _prism_yz lays it out
+        h = math.sqrt(UNIT - k * k)
+        P2 = lambda y, z: [round(-z, BELT_DIGITS), round(y, BELT_DIGITS)]   # noqa: E731 - the YZ plane as _prism_yz lays it out
         segs, tgt = [], []
         for sg in (1, -1):
             n = (k * d[0] - sg * h * d[1], k * d[1] + sg * h * d[0])
@@ -240,7 +240,7 @@ def intent_checks():
 
 
 def _prism_yz(poly, x0, x1):
-    pts = [[round(-z, 4), round(y, 4)] for y, z in list(poly.exterior.coords)[:-1]]
+    pts = [[round(-z, BELT_DIGITS), round(y, BELT_DIGITS)] for y, z in list(poly.exterior.coords)[:-1]]
     x0, x1 = min(x0, x1), max(x0, x1)
     return {"type": "place", "shape": {"type": "prism", "points": pts, "height": x1 - x0}, "at": [(x0 + x1) / 2, 0, 0], "rot": [0, 90, 0]}
 

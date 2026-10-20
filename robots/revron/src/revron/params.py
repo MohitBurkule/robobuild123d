@@ -139,6 +139,11 @@ SP_FOOT_LAND = 0.85
 SP_W_REAR = (5.2, 4.9, 4.3, 3.6, 3.0, 2.1)
 SP_W_MID = (5.0, 4.7, 3.5, 2.7, 2.3, 2.0)
 SP_W_SWING = (3.3, 3.3, 3.0, 2.6, 2.4, 2.1)
+SP_W_Y = (-16.0, -12.0, 11.0, 15.0)   # rear / mid / mid / swing thickness stations along Y
+# STEP RV23: the outer face swells 0.7 mm round the nut lobe (Y -11..1) at Z 4..12 (outer X -35.3 at Y -5 vs -34.5 at Y 5, Z 7.5)
+SP_BUMP = 0.7
+SP_BUMP_Y = (-5.0, 6.0)   # centre, half-width
+SP_BUMP_Z = (7.5, 5.0)
 
 
 # --- side panel + wedgelet shared / derived dimensions (outlines are organic point tables measured on RV23/RV17) ---
@@ -366,6 +371,9 @@ SERVICE_TURN_DEG = 160.0
 SERVICE_POSE = [dict(parts=["spider", "disc_a", "disc_b", "dspacer"] + [f"bolt_{c}{k}" for c in "pd" for k in range(N_STACK)],
                      axis_at=[0.0, WY, WZ], axis_dir=[1, 0, 0], deg=SERVICE_TURN_DEG,
                      reason="drisk turned by hand so the rim clears the nose screws; whole stack with its bolts moves as one")]
+
+UNIT = 1          # unit direction-cosine norm (k^2 + h^2 = UNIT) for the belt tangent construction
+BELT_DIGITS = 4   # decimals kept on belt path points in the spec
 
 
 __all__ = [n for n in dir() if not n.startswith('__')]
