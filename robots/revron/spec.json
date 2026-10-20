@@ -6698,6 +6698,22 @@
     "side_l"
    ],
    "threads_into": "so_al",
+   "hole": {
+    "d": 3.0,
+    "length": 10.0,
+    "head": "csk",
+    "head_std": "DIN 7991",
+    "head_dk": 6.0,
+    "head_k": 1.86,
+    "clearance_d": 3.4,
+    "into": "through",
+    "side": "head",
+    "csk_angle": 90.0,
+    "csk_d": 6.7,
+    "csk_depth": 1.65,
+    "sink": 0.0,
+    "grip": 3.76
+   },
    "head": "countersunk",
    "tool": "hex2",
    "removable": true
@@ -6722,6 +6738,22 @@
     "wedgelet_l"
    ],
    "threads_into": "so_bl",
+   "hole": {
+    "d": 3.0,
+    "length": 10.0,
+    "head": "csk",
+    "head_std": "DIN 7991",
+    "head_dk": 6.0,
+    "head_k": 1.86,
+    "clearance_d": 3.4,
+    "into": "through",
+    "side": "head",
+    "csk_angle": 90.0,
+    "csk_d": 6.7,
+    "csk_depth": 1.65,
+    "sink": 0.0,
+    "grip": 5.26
+   },
    "head": "countersunk",
    "tool": "hex2",
    "removable": true
@@ -6746,6 +6778,22 @@
     "tub"
    ],
    "threads_into": "nut_cl",
+   "hole": {
+    "d": 3.0,
+    "length": 8.0,
+    "head": "csk",
+    "head_std": "DIN 7991",
+    "head_dk": 6.0,
+    "head_k": 1.86,
+    "clearance_d": 3.4,
+    "into": "through",
+    "side": "head",
+    "csk_angle": 90.0,
+    "csk_d": 6.7,
+    "csk_depth": 1.65,
+    "sink": 0.0,
+    "grip": 5.76
+   },
    "head": "countersunk",
    "tool": "hex2",
    "removable": true
@@ -6848,6 +6896,22 @@
     "side_r"
    ],
    "threads_into": "so_ar",
+   "hole": {
+    "d": 3.0,
+    "length": 10.0,
+    "head": "csk",
+    "head_std": "DIN 7991",
+    "head_dk": 6.0,
+    "head_k": 1.86,
+    "clearance_d": 3.4,
+    "into": "through",
+    "side": "head",
+    "csk_angle": 90.0,
+    "csk_d": 6.7,
+    "csk_depth": 1.65,
+    "sink": 0.0,
+    "grip": 3.76
+   },
    "head": "countersunk",
    "tool": "hex2",
    "removable": true
@@ -6872,6 +6936,22 @@
     "wedgelet_r"
    ],
    "threads_into": "so_br",
+   "hole": {
+    "d": 3.0,
+    "length": 10.0,
+    "head": "csk",
+    "head_std": "DIN 7991",
+    "head_dk": 6.0,
+    "head_k": 1.86,
+    "clearance_d": 3.4,
+    "into": "through",
+    "side": "head",
+    "csk_angle": 90.0,
+    "csk_d": 6.7,
+    "csk_depth": 1.65,
+    "sink": 0.0,
+    "grip": 5.26
+   },
    "head": "countersunk",
    "tool": "hex2",
    "removable": true
@@ -6896,6 +6976,22 @@
     "tub"
    ],
    "threads_into": "nut_cr",
+   "hole": {
+    "d": 3.0,
+    "length": 8.0,
+    "head": "csk",
+    "head_std": "DIN 7991",
+    "head_dk": 6.0,
+    "head_k": 1.86,
+    "clearance_d": 3.4,
+    "into": "through",
+    "side": "head",
+    "csk_angle": 90.0,
+    "csk_d": 6.7,
+    "csk_depth": 1.65,
+    "sink": 0.0,
+    "grip": 5.76
+   },
    "head": "countersunk",
    "tool": "hex2",
    "removable": true

@@ -158,8 +158,7 @@ SP_TOE_RUN = 3.1                     # Y run of the ramp skin the toe polygon fo
 SP_CHAMFER = ((-120.0, 0.0, 0.0), (1.0, -1.525, -1.4725))   # front-outer corner chamfer plane (origin, normal)
 SP_HOLLOW = [(26.5, 3.0), (37.0, 3.0), (37.7, 6.6), (39.0, 10.5), (26.5, 10.5)]   # hollow behind the nose wall (Y, Z)
 SP_HOLLOW_X = (-42.0, -38.4)
-SP_CSK = dict(d_hole=3.3, d_head=6.7, depth=8.0, bore=12.0)   # M3 ISO 10642 seat + driver bore
-SP_CSK_X = dict(sa=-46.26, sb=-41.76, nut=-35.26)             # seat plane X at the standoff SA, SB and the chassis nut
+SP_CSK = dict(csk_clear=0.7, head_clear=12.0)   # M3 ISO 10642 seat (head dk 6.0 + 0.7) + 12 mm driver bore out through the battered face
 SP_SA_CLEAR = (2.55, -42.55, -38.0)  # standoff-end clearance bore round SA (R, X0, X1)
 SP_BOSS = (3.0, -42.5, -39.5)        # standoff end boss round SA (R, X0, X1)
 SP_TYRE_RELIEF = (-45.0, -43.4, -38.7, -24.8, 5.5, 14.5)   # rear tyre relief box on the inner face (x0, x1, y0, y1, z0, z1)
