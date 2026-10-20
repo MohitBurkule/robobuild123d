@@ -7,6 +7,9 @@
   `<png>.json` (spec path, wire endpoints); renders in `renders.dir` (spec key, relative to the spec) with no sidecar,
   with no wires, older than the spec, or whose wire endpoints sit more than `endpoint_tol_mm` (3) from the port's
   current position (a part moved since) fail. With no `renders` key it only checks every wire end resolves.
+- wire.render_wires (opt-out): every robot-level PNG (not part_* / section_*, sidecar shows >= half the parts) in
+  `renders.dir` (default renders/) and `review_renders` dirs must have a sidecar listing every declared wire. A robot
+  render made without routes (render_present only needed ONE render with wires) is a BLOCKER; `render_ok` exempts a file.
 """
 
 from __future__ import annotations
@@ -183,5 +186,70 @@ def render_present(ctx):
     return out
 
 
+PART_VIEW = ("part_", "section_")  # single-part and section renders do not show the wiring by design
+
+
+def render_dirs(spec):
+    """Directories holding robot renders: `renders.dir` (default `renders/` next to the spec) and `review_renders`."""
+    base = Path(spec.base_dir)
+    raw = spec.raw or {}
+    ds = [(raw.get("renders") or {}).get("dir", "renders")] + list(raw.get("review_renders") or [])
+    out = []
+    for d in ds:
+        p = Path(d) if Path(d).is_absolute() else base / d
+        if p.is_dir() and p not in out:
+            out.append(p)
+    return out
+
+
+def robot_render_wires(png: Path, wire_ids, n_parts):
+    """None when `png` is not a robot-level render, else the list of problems (empty = every wire drawn)."""
+    side = png.with_suffix(png.suffix + ".json")
+    if png.name.startswith(PART_VIEW):
+        return None
+    if not side.is_file():
+        return ["no render record (`<png>.json`), so nothing says the wires were drawn"]
+    try:
+        man = json.loads(side.read_text())
+    except Exception:  # noqa: BLE001
+        return ["render record unreadable"]
+    bodies = man.get("bodies") or []
+    if n_parts and len(bodies) < 0.5 * n_parts:
+        return None  # a close-up of a few parts
+    drawn = man.get("wires") or {}
+    miss = [w for w in wire_ids if w not in drawn]
+    if len(miss) == len(wire_ids):
+        return ["rendered without wires (checks off or no routes)"]
+    return [f"wire `{w}` not drawn" for w in miss]
+
+
+def render_wires(ctx):
+    """wire.render_wires (opt-out): every robot-level render in the render dirs draws every declared wire route.
+    Exempt one file with spec `render_ok: [{"file": "<name>.png", "reason": "..."}]`."""
+    spec = ctx.r.spec
+    if not spec.wires:
+        return []
+    ids = [w.id for w in spec.wires]
+    okd = {e.get("file"): e.get("reason") for e in (spec.raw or {}).get("render_ok") or [] if str(e.get("reason") or "").strip()}
+    bad, n = [], 0
+    for d in render_dirs(spec):
+        for png in sorted(d.glob("*.png")):
+            probs = robot_render_wires(png, ids, len(spec.parts))
+            if probs is None:
+                continue
+            n += 1
+            if probs and png.name not in okd:
+                bad.append(f"{d.name}/{png.name}: {probs[0]}" + (f" (+{len(probs) - 1})" if len(probs) > 1 else ""))
+    if bad:
+        return [fail("wire.render_wires", G, BLOCKER, "Robot render made without the wire routes",
+                     f"{len(bad)} of {n} robot render(s) do not draw all {len(ids)} wires: " + "; ".join(bad[:8]) + ("..." if len(bad) > 8 else ""))
+                .fix("Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or "
+                     "exempt the file in `render_ok` with a reason.")]
+    if n:
+        return [ok("wire.render_wires", G, "Every robot render shows the wiring", f"{n} robot render(s) draw all {len(ids)} wires.")]
+    ctx.not_checked.append("wire.render_wires: no robot renders found in the render dirs")
+    return []
+
+
 def run(ctx):
-    return rotating_clearance(ctx) + render_present(ctx)
+    return rotating_clearance(ctx) + render_present(ctx) + render_wires(ctx)
