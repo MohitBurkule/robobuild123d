@@ -212,7 +212,7 @@ def chassis():
         cuts.append(_ext(_poly([(10.0, -5.0), (10.0, 2.5), (26.0, 2.5), (30.4, 1.0), (30.4, -5.0)]), "yz", sg * 17.4, sg * 21.6))
         cuts.append(_ext(LUG_SCALLOP, "yz", sg * 17.4, sg * 21.6))   # lug underside rises along a big arc tangent to the flat at LUG_FLOOR_Z (fit to STEP RV01 sections at X 19.5)
         # under the nose standoff the lug follows its R3.25 arc (STEP): no hull chord below it where the scallop meets it
-        under = Polygon([(36.7, 0.0), (40.5, 0.0), (40.5, 2.5), (36.7, 2.5)]).difference(Point(SB).buffer(3.25, 96))   # the cusp between the scallop circle and the standoff arc
+        under = Polygon([(LUG_SCALLOP_YT, 0.0), (40.5, 0.0), (40.5, LUG_FLOOR_Z), (LUG_SCALLOP_YT, LUG_FLOOR_Z)]).difference(Point(SB).buffer(LUG_SB_R, 96)).difference(LUG_BLEND_FILL)   # the cusp between the scallop circle and the standoff arc
         cuts.append(_ext(under, "yz", sg * 17.4, sg * 21.6))
         cuts.append(_box(sg * 13.3, sg * 17.5, 12.0, 15.1, z0 - 0.1, 4.5))   # front wall stops at the rabbet under the tab (STEP)
         # motor stop wall: lower inner edge rounded R4.5 (STEP)
@@ -289,9 +289,12 @@ def chassis():
         # square the R1 inner rear corner where the N10 gearbox plates sit (their corner would bite 0.14 into the round)
         cuts.append(_box(sg * 25.5, sg * (x - w + 0.05), y0 + w - 0.05, y0 + w + 2.0, z0 + 2.0, c["deck"]))
     # the STEP panel and lobe overlap (31 mm3) where the panel relief stops, at Y -11.7: the panel cuts the chassis, and the whole
-    # overlapping slab of the lobe tail goes with it, so no 0.05 mm sliver of lobe is left beside the cut
-    tail = NUT_LOBE.intersection(Polygon([(-20.0, 0.0), (-11.7, 0.0), (-11.7, 20.0), (-20.0, 20.0)]))
-    cuts += [weapon_mount("l"), weapon_mount("r"), side_panel(1), side_panel(-1)] + [_ext(tail, "yz", sg * PANEL_IN, sg * (x + 4.0)) for sg in (1, -1)]
+    # overlapping slab of the lobe tail goes with it (rounded inside corner), so no 0.05 mm sliver of lobe is left beside the cut
+    tail_y = NUT_RELIEF_Y0
+    tail = Polygon([(PANEL_IN, tail_y - 12.0), (x + 4.0, tail_y - 12.0), (x + 4.0, tail_y), (PANEL_IN, tail_y)]).buffer(-NUT_STEP_R).buffer(NUT_STEP_R)
+    tz0, tz1 = NUT_LOBE.bounds[1] - 2.0, NUT_LOBE.bounds[3] + 2.0
+    cuts += [weapon_mount("l"), weapon_mount("r"), side_panel(1), side_panel(-1)] + [
+        _ext(Polygon([(sg * x_, y_) for x_, y_ in tail.exterior.coords]).buffer(0), "xy", tz0, tz1) for sg in (1, -1)]
     body = _S(body, *cuts)
     # electronics cage hung from the deck (up into the 1 mm deck skin through the lightening pockets; prints as part of the deck-down first layers): ribs 0.1 mm off the Malenki's
     # -x / +x / -y faces and the weapon ESC's -y face, so neither board hammers around when the robot is flipped
