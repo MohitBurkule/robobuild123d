@@ -96,7 +96,7 @@ def _switch_hole(yy):
     if _repo not in sys.path:
         sys.path.insert(0, _repo)
     from robot.cad.holes import hole_tool
-    return hole_tool((SWX, yy, 16.0), (0, 0, 1), "M2x3", head="button", into="tapped", side="thread", engage=3.0)
+    return hole_tool((SWX, yy, 16.0), (0, 0, 1), "M2x3", head="button", into="insert", side="thread", engage=3.0)
 
 
 # ------------------------------------------------------------------------------------------------------------ chassis
@@ -212,7 +212,7 @@ def chassis():
         cuts.append(_ext(_poly([(10.0, -5.0), (10.0, 2.5), (26.0, 2.5), (30.4, 1.0), (30.4, -5.0)]), "yz", sg * 17.4, sg * 21.6))
         cuts.append(_ext(LUG_SCALLOP, "yz", sg * 17.4, sg * 21.6))   # lug underside rises along a big arc tangent to the flat at LUG_FLOOR_Z (fit to STEP RV01 sections at X 19.5)
         # under the nose standoff the lug follows its R3.25 arc (STEP): no hull chord below it where the scallop meets it
-        under = Polygon([(36.7, 0.0), (40.5, 0.0), (40.5, 2.5), (36.7, 2.5)]).difference(Point(SB).buffer(3.25, 96))   # the cusp between the scallop circle and the standoff arc
+        under = Polygon([(LUG_SCALLOP_YT, 0.0), (40.5, 0.0), (40.5, LUG_FLOOR_Z), (LUG_SCALLOP_YT, LUG_FLOOR_Z)]).difference(Point(SB).buffer(LUG_SB_R, 96)).difference(LUG_BLEND_FILL)   # the cusp between the scallop circle and the standoff arc
         cuts.append(_ext(under, "yz", sg * 17.4, sg * 21.6))
         cuts.append(_box(sg * 13.3, sg * 17.5, 12.0, 15.1, z0 - 0.1, 4.5))   # front wall stops at the rabbet under the tab (STEP)
         # motor stop wall: lower inner edge rounded R4.5 (STEP)
@@ -242,13 +242,13 @@ def chassis():
             cuts.append(bb.Solid.make_cone(2.1, 1.5, 0.6, bb.Plane(origin=(px, py, z1 + 0.001), z_dir=(0, 0, -1))))
         else:   # corner columns: a 1.7 thread-forming pilot in the top 4 mm for the top-panel screw (deviation: STEP 3.0 through),
             # under the STEP 0.6 top chamfer, which takes the tip of the M2 flat head that the 0.9 plate is too thin to hold
-            cuts.append(_cyl(0.85, z1 - 4.1, z1 + 1, (px, py), "z"))
+            cuts.append(_cyl(1.7, z1 - 4.0, z1 + 1, (px, py), "z"))   # 3.4 bore: the M2 heat-set (3.5 OD x 4) melts in flush with the column top
             cuts.append(bb.Solid.make_cone(2.1, 1.5, 0.6, bb.Plane(origin=(px, py, z1 + 0.001), z_dir=(0, 0, -1))))
     # switch slot in the deck beside the top panel, 2 M2 pilot holes
     sw_x0, sw_w, sw_y0, sw_l = 23.0, 4.0, -11.6, 12.0   # slot: inner edge 23.0 (top-panel edge), 4.0 wide and 12 long as measured on RV01
     cuts.append(_ext(_round(Polygon([(sw_x0, sw_y0), (sw_x0 + sw_w, sw_y0), (sw_x0 + sw_w, sw_y0 + sw_l), (sw_x0, sw_y0 + sw_l)]), r_out=0.45), "xy", 16.0, z1 + 1))
     for yy in (1.9, -13.1):
-        cuts.append(_cyl(0.85, c["deck"] - 3, z1 + 1, (SWX, yy), "z"))
+        cuts.append(_cyl(1.55, c["deck"] - 3, z1 + 1, (SWX, yy), "z"))   # 3.1 bore: the 3.2 OD x 3.0 M2 heat-set (heatset_m2) melts in flush with the pad top
     for sg in (1, -1):
         # N10 keyhole: round seat for the gearbox shaft boss, narrowing to the floor (motor tilts in)
         kh = Point(RY, RZ).buffer(2.5, 64).union(Point(RY, 5.85).buffer(0.85, 24)).convex_hull   # STEP keyhole
@@ -289,9 +289,12 @@ def chassis():
         # square the R1 inner rear corner where the N10 gearbox plates sit (their corner would bite 0.14 into the round)
         cuts.append(_box(sg * 25.5, sg * (x - w + 0.05), y0 + w - 0.05, y0 + w + 2.0, z0 + 2.0, c["deck"]))
     # the STEP panel and lobe overlap (31 mm3) where the panel relief stops, at Y -11.7: the panel cuts the chassis, and the whole
-    # overlapping slab of the lobe tail goes with it, so no 0.05 mm sliver of lobe is left beside the cut
-    tail = NUT_LOBE.intersection(Polygon([(-20.0, 0.0), (-11.7, 0.0), (-11.7, 20.0), (-20.0, 20.0)]))
-    cuts += [weapon_mount("l"), weapon_mount("r"), side_panel(1), side_panel(-1)] + [_ext(tail, "yz", sg * PANEL_IN, sg * (x + 4.0)) for sg in (1, -1)]
+    # overlapping slab of the lobe tail goes with it (rounded inside corner), so no 0.05 mm sliver of lobe is left beside the cut
+    tail_y = NUT_RELIEF_Y0
+    tail = Polygon([(PANEL_IN, tail_y - 12.0), (x + 4.0, tail_y - 12.0), (x + 4.0, tail_y), (PANEL_IN, tail_y)]).buffer(-NUT_STEP_R).buffer(NUT_STEP_R)
+    tz0, tz1 = NUT_LOBE.bounds[1] - 2.0, NUT_LOBE.bounds[3] + 2.0
+    cuts += [weapon_mount("l"), weapon_mount("r"), side_panel(1), side_panel(-1)] + [
+        _ext(Polygon([(sg * x_, y_) for x_, y_ in tail.exterior.coords]).buffer(0), "xy", tz0, tz1) for sg in (1, -1)]
     body = _S(body, *cuts)
     # electronics cage hung from the deck (up into the 1 mm deck skin through the lightening pockets; prints as part of the deck-down first layers): ribs 0.1 mm off the Malenki's
     # -x / +x / -y faces and the weapon ESC's -y face, so neither board hammers around when the robot is flipped

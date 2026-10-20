@@ -91,8 +91,13 @@ def make_spec(model_file):
       off_dir=[0, -1, 0], label="BBB ant switch hung under the deck beside the top panel: lever flush in the deck slot, 2 M2 into the deck")
     for i, (x, y) in enumerate(INS):
         P(id=f"insert_b{i}", kind="insert", catalog="heatset_m2_4", at=[x, y, (INS_Z[0] + INS_Z[1]) / 2])
+    for i, (x, y) in enumerate(TOP_XY):
+        P(id=f"insert_t{i}", kind="insert", catalog="heatset_m2_4", at=[x, y, CH["z1"] - 2.0])
+    for i, yy in enumerate(SW_SCREW_Y):
+        P(id=f"insert_sw{i}", kind="insert", catalog="heatset_m2", at=[SWX, yy, CH["z1"] - 1.5])
     P(id="esc_tray", kind="other", material="tpu", process="fdm", print_orientation="+z", rotates_with="fixed", shape=M("esc_tray"),
-      label="TPU weapon-ESC tray (not in the STEP): glued to the base panel, lips hold the ESC when inverted")
+      label="TPU weapon-ESC tray (not in the STEP): glued to the base panel, lips hold the ESC when inverted",
+      deviation="the STEP holds the weapon ESC with kapton tape alone; a hit that flips the robot or tears the tape would free the board, so a TPU tray with 0.1 mm lips holds it (adds 1.1 g, reversible)")
 
     # ---------------------------------------------------------------- fasteners
     for i, (x, y) in enumerate(INS):
@@ -103,9 +108,9 @@ def make_spec(model_file):
         F(id=f"bolt_u{n}a", designation="M3x12", material="aluminium", at=[s * MNT_IN, SA[0], SA[1]], dir=[s, 0, 0], through=[mnt], threads_into=f"so_a{n}", hole=_mount_csk(s, *SA, "M3x12")[1].hole,
           reason="FS9 M3x12 CSK alu, head flush in the mount's inner face")
         F(id=f"bolt_u{n}b", designation="M3x14", reason="M3x14 CSK alu (STEP FS9 M3x12): through mount and lug, 12 mm bites only 3.9 mm of the 15 mm standoff", material="aluminium", at=[s * MNT_IN, SB[0], SB[1]], dir=[s, 0, 0], through=[mnt, "tub"], threads_into=f"so_b{n}", hole=_mount_csk(s, *SB, "M3x14")[1].hole)
-        F(id=f"bolt_s{n}a", designation="M3x10", material="aluminium", reason="M3x10 CSK (STEP: M3x8): 8 mm bites only 4.2 mm of the standoff thread; 10 mm gives 6.2 (>= 1.5 d in aluminium)", at=[s * SIDE_BOLT_X["a"], SA[0], SA[1]], dir=[-s, 0, 0], through=[f"side_{n}"], threads_into=f"so_a{n}")
-        F(id=f"bolt_s{n}b", designation="M3x10", material="aluminium", reason="M3x10 CSK (STEP: M3x8): the head sits 5.3 mm out from the 15 mm standoff end, so 8 mm bites 2.7 mm; 10 mm bites 4.7", at=[s * SIDE_BOLT_X["b"], SB[0], SB[1]], dir=[-s, 0, 0], through=[f"side_{n}", f"wedgelet_{n}"], threads_into=f"so_b{n}")
-        F(id=f"bolt_s{n}c", designation="M3x8", material="aluminium", reason="alu M3 CSK (Build Guide: aluminium bolts for weight; the STEP draws stainless)", at=[s * SIDE_BOLT_X["c"], NUT[0], NUT[1]], dir=[-s, 0, 0], through=[f"side_{n}", "tub"], threads_into=f"nut_c{n}")
+        F(id=f"bolt_s{n}a", designation="M3x10", material="aluminium", reason="M3x10 CSK (STEP: M3x8): 8 mm bites only 4.2 mm of the standoff thread; 10 mm gives 6.2 (>= 1.5 d in aluminium)", at=[s * SIDE_BOLT_X["a"], SA[0], SA[1]], dir=[-s, 0, 0], through=[f"side_{n}"], threads_into=f"so_a{n}", hole=_side_seat("a", SA, "M3x10", s)[1].hole)
+        F(id=f"bolt_s{n}b", designation="M3x10", material="aluminium", reason="M3x10 CSK (STEP: M3x8): the head sits 5.3 mm out from the 15 mm standoff end, so 8 mm bites 2.7 mm; 10 mm bites 4.7", at=[s * SIDE_BOLT_X["b"], SB[0], SB[1]], dir=[-s, 0, 0], through=[f"side_{n}", f"wedgelet_{n}"], threads_into=f"so_b{n}", hole=_side_seat("b", SB, "M3x10", s)[1].hole)
+        F(id=f"bolt_s{n}c", designation="M3x8", material="aluminium", reason="alu M3 CSK (Build Guide: aluminium bolts for weight; the STEP draws stainless)", at=[s * SIDE_BOLT_X["c"], NUT[0], NUT[1]], dir=[-s, 0, 0], through=[f"side_{n}", "tub"], threads_into=f"nut_c{n}", hole=_side_seat("c", NUT, "M3x8", s)[1].hole)
     for k, (dy, dz) in enumerate((STATOR_PCD / 2 * u, STATOR_PCD / 2 * v) for u, v in STATOR_DIRS):
         F(id=f"bolt_wm{k}", designation="M2x8", head="button", tool="hex1.3", material="titanium", at=[CB_CONE_X[1], WY + dy, WZ + dz], hole=_stator_hole(1, dy, dz)[1].hole, dir=[-1, 0, 0], through=["mount_r", "motor_spacer"],
           threads_into="weapon_motor", reason="button heads (one hex1.3 key for every M2) sunk in the RV03 boss counterbores (inferred: the STEP shows the 4.4 counterbores, not the screws)")
@@ -119,11 +124,11 @@ def make_spec(model_file):
           access_before=["tub", "mount_r", "motor_spacer"],
           reason="stack screwed into the spider from the back (heads on disc_b, 2 mm of thread in the 3 mm alu spider tapped M2): no nuts, since the STEP has none (inferred: it has the 2.2 holes but no screws)")
     for i, (x, y) in enumerate(TOP_BOLT_XY):
-        F(id=f"bolt_t{i}", designation="M2x5", head="button", tool="hex1.3", at=[x, y, TOP_BOLT_Z], dir=[0, 0, -1], through=["top_panel"], threads_into="tub",
+        F(id=f"bolt_t{i}", designation="M2x5", head="button", tool="hex1.3", at=[x, y, TOP_BOLT_Z], dir=[0, 0, -1], through=["top_panel"], threads_into=f"insert_t{i}",
           reason="M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
           hole=_panel_seat("top", i)[1].hole)
     for i, yy in enumerate(SW_SCREW_Y):
-        F(id=f"bolt_sw{i}", designation="M2x3", head="button", tool="hex1.3", at=[SWX, yy, SW_BOLT_Z], dir=[0, 0, 1], through=["power_switch"], threads_into="tub", access_before=["base_panel"], hole=_switch_hole(yy)[1].hole,
+        F(id=f"bolt_sw{i}", designation="M2x3", head="button", tool="hex1.3", at=[SWX, yy, SW_BOLT_Z], dir=[0, 0, 1], through=["power_switch"], threads_into=f"insert_sw{i}", access_before=["base_panel"], hole=_switch_hole(yy)[1].hole,
           reason="thread-forming into the 1.7 pilot holes either side of the switch flange; heads clamp the flange to the deck underside (inferred)")
 
     # ---------------------------------------------------------------- connections
@@ -161,7 +166,7 @@ def make_spec(model_file):
     C("wbearing", "mount_l", "press_fit", "MR85 pressed into the 7.9 seat", interference_mm=PRESS["bearing"], mechanical_key=True)
     C("mount_l", "mount_r", "interlock", "Both mounts tied by the standoffs and the chassis tabs")
     C("base_panel", "tub", "screw", "Base panel under the open floor, 5 M2 CSK into heat-sets")
-    C("top_panel", "tub", "screw", "Ti top panel held by 4 M2 flat-head thread-forming screws through its countersunk corner holes into the column-top pilots (the STEP has the holes, not the screws)")
+    C("top_panel", "tub", "screw", "Ti top panel held by 4 M2 flat-head screws through its countersunk corner holes into M2 heat-sets in the column tops (the STEP has the holes, not the screws)")
     C("battery", "tub", "press_fit", "Pack between the motor wall, the insert columns and the deck", interference_mm=PRESS["pack"], mechanical_key=True)
     C("rxesc", "tub", "interlock", "Malenki boxed by the deck cage ribs (0.1 mm), the front wall and the deck; the weapon ESC under it")
     C("wesc", "esc_tray", "interlock", "weapon ESC in the TPU tray lips (0.1 mm); the cage rib holds -y, the Malenki +z")
@@ -170,10 +175,22 @@ def make_spec(model_file):
 
     # O-ring belts (front micro hub <-> rear hub, plane |X| 31.3)
     def belt_shape(s):
-        from shapely.geometry import Point
-        o = Point(RY, RZ).buffer(PULLEY_R[0] + BELT_WALL, WSEG_HI).union(Point(*SA).buffer(PULLEY_R[1] + BELT_WALL, WSEG_MID)).convex_hull
-        i = Point(RY, RZ).buffer(PULLEY_R[0], WSEG_HI).union(Point(*SA).buffer(PULLEY_R[1], WSEG_MID)).convex_hull
-        return {"type": "subtract", "base": _prism_yz(o, *(s * x for x in BELT_X["slab"])), "cut": [_prism_yz(i, *(s * x for x in BELT_X["cut"]))]}
+        # O-ring: round section (stock cs) swept along the closed belt path round the rear hub groove (R = groove floor + cs/2)
+        # and the front hub groove (r), joined by the two external tangent runs; centreline plane = groove centre |X|
+        (ay, az), (by, bz) = (RY, RZ), SA
+        c = math.hypot(by - ay, bz - az)
+        d = ((by - ay) / c, (bz - az) / c)
+        k = (BELT_R - BELT_r) / c
+        h = math.sqrt(UNIT - k * k)
+        P2 = lambda y, z: [round(-z, BELT_DIGITS), round(y, BELT_DIGITS)]   # noqa: E731 - the YZ plane as _prism_yz lays it out
+        segs, tgt = [], []
+        for sg in (1, -1):
+            n = (k * d[0] - sg * h * d[1], k * d[1] + sg * h * d[0])
+            tgt.append((P2(ay + BELT_R * n[0], az + BELT_R * n[1]), P2(by + BELT_r * n[0], bz + BELT_r * n[1])))
+        (ra, fa), (rb, fb) = tgt
+        segs = [["line", ra, fa], ["arc", fa, P2(by + BELT_r * d[0], bz + BELT_r * d[1]), fb], ["line", fb, rb],
+                ["arc", rb, P2(ay - BELT_R * d[0], az - BELT_R * d[1]), ra]]
+        return {"type": "place", "shape": {"type": "ring", "radius": O_RING[1] / 2, "path": segs}, "at": [s * BELT_X["centre"], 0, 0], "rot": [0, 90, 0]}
     c_ = math.hypot(SA[0] - RY, SA[1] - RZ)
     loop = 2 * math.sqrt(c_ ** 2 - (BELT_R - BELT_r) ** 2) + math.pi * (BELT_R + BELT_r) + 2 * (BELT_R - BELT_r) * math.asin((BELT_R - BELT_r) / c_)
     ORING = O_RING
@@ -228,7 +245,7 @@ def intent_checks():
 
 
 def _prism_yz(poly, x0, x1):
-    pts = [[round(-z, 4), round(y, 4)] for y, z in list(poly.exterior.coords)[:-1]]
+    pts = [[round(-z, BELT_DIGITS), round(y, BELT_DIGITS)] for y, z in list(poly.exterior.coords)[:-1]]
     x0, x1 = min(x0, x1), max(x0, x1)
     return {"type": "place", "shape": {"type": "prism", "points": pts, "height": x1 - x0}, "at": [(x0 + x1) / 2, 0, 0], "rot": [0, 90, 0]}
 
@@ -294,7 +311,9 @@ def reference_cad():
           + [dict(near=list(p_), r=GUSSET_R, reason="2 x 2.6 gusset under the front-corner flange: printed deck-down the flange top is an unsupported ceiling")
              for p_ in GUSSET_PTS]
           + [dict(near=list(p_), r=CAGE_RIB_R, reason="electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact")
-             for p_ in CAGE_RIBS]),
+             for p_ in CAGE_RIBS]
+          + [dict(near=[sx * LOBE_DEV[0], LOBE_DEV[1], LOBE_DEV[2]], r=LOBE_DEV_R, reason="lobe tail below Y -11.7 trimmed to the side-panel inner face: the STEP lobe and side panel overlap by 31 mm3, the tub does not duplicate it")
+             for sx in (1, -1)]),
         R("base_panel", "RV26_Base_Panel_1.stl", tol_mm=TOL["tight"], note="RV26 1 mm panel",
           deviations=[dict(near=[x, y, BASE_DEV_Z], r=PANEL_DEV_R, reason="0.4 mm ring boss, R3 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud")
                       for x, y in INS]),

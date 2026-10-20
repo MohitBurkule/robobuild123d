@@ -112,6 +112,7 @@ DOG = dict(r=12.0, rise=1.52, t0=5.0, t1=18.0, t2=55.0)       # bore dogs (90 de
 DISC_BORE_ROUND, DISC_HOLE_R_WIN = 0.5, 0.44                    # bore corner rounding; balance window corner radius
 DISC_BAL_PTS = [(-13.2, 4.85), (-13.2, 9.08), (-11.68, 7.65)]    # param: organic balance-window hull corners (measured, STEP)
 TOOTH_PTS = [(-11.0, 11.6), (-8.0, 8.0), (-16.2, 0.0), (-16.25, 15.0)]   # param: organic tooth flank/root polygon (measured, STEP)
+# param: end
 DISC_ROUND = dict(r_out=0.2, r_in=0.7)                           # tooth tip land (0.4 laser-cuttable) and root fillet
 
 
@@ -141,6 +142,11 @@ SP_FOOT_LAND = 0.85
 SP_W_REAR = (5.2, 4.9, 4.3, 3.6, 3.0, 2.1)
 SP_W_MID = (5.0, 4.7, 3.5, 2.7, 2.3, 2.0)
 SP_W_SWING = (3.3, 3.3, 3.0, 2.6, 2.4, 2.1)
+SP_W_Y = (-16.0, -12.0, 11.0, 15.0)   # rear / mid / mid / swing thickness stations along Y
+# STEP RV23: the outer face swells 0.7 mm round the nut lobe (Y -11..1) at Z 4..12 (outer X -35.3 at Y -5 vs -34.5 at Y 5, Z 7.5)
+SP_BUMP = 0.7
+SP_BUMP_Y = (-5.0, 6.0)   # centre, half-width
+SP_BUMP_Z = (7.5, 5.0)
 
 
 # --- side panel + wedgelet shared / derived dimensions (outlines are organic point tables measured on RV23/RV17) ---
@@ -160,8 +166,7 @@ SP_TOE_RUN = 3.1                     # Y run of the ramp skin the toe polygon fo
 SP_CHAMFER = ((-120.0, 0.0, 0.0), (1.0, -1.525, -1.4725))   # front-outer corner chamfer plane (origin, normal)
 SP_HOLLOW = [(26.5, 3.0), (37.0, 3.0), (37.7, 6.6), (39.0, 10.5), (26.5, 10.5)]   # hollow behind the nose wall (Y, Z)
 SP_HOLLOW_X = (-42.0, -38.4)
-SP_CSK = dict(d_hole=3.3, d_head=6.7, depth=8.0, bore=12.0)   # M3 ISO 10642 seat + driver bore
-SP_CSK_X = dict(sa=-46.26, sb=-41.76, nut=-35.26)             # seat plane X at the standoff SA, SB and the chassis nut
+SP_CSK = dict(csk_clear=0.7, head_clear=12.0)   # M3 ISO 10642 seat (head dk 6.0 + 0.7) + 12 mm driver bore out through the battered face
 SP_SA_CLEAR = (2.55, -42.55, -38.0)  # standoff-end clearance bore round SA (R, X0, X1)
 SP_BOSS = (3.0, -42.5, -39.5)        # standoff end boss round SA (R, X0, X1)
 SP_TYRE_RELIEF = (-45.0, -43.4, -38.7, -24.8, 5.5, 14.5)   # rear tyre relief box on the inner face (x0, x1, y0, y1, z0, z1)
@@ -196,8 +201,17 @@ LAT_GROW = 0.35   # mm, measured from RV01 y=-36 sections (pocket area 38.1 vs 2
 
 from shapely.geometry import Point, Polygon   # noqa: E402
 NUT_LOBE = Point(NUT[0], NUT[1]).buffer(4.55, 64).union(Point(1.35, 6.9).buffer(1.2, 32)).convex_hull   # chassis wall lobe round the thin nut (Y, Z)
+NUT_RELIEF_Y0, NUT_STEP_R = -11.7, 0.0   # side-panel relief edge (STEP RV23 diamond); the lobe-tail step corner is the panel's own square edge (SHARP_OK)
 PANEL_IN = 31.4   # inner face of the side panel at the nut lobe (|X|)
-LUG_FLOOR_Z, LUG_SCALLOP_YT, LUG_SCALLOP_R = 2.5, 36.27, 8.6   # param: organic lug underside arc, tangent to the lug floor at Y 36.27
+LUG_FLOOR_Z, LUG_SCALLOP_R, LUG_BLEND_R, LUG_SB_R = 2.5, 8.6, 4.95, 3.25   # param: organic lug underside arcs fitted to RV01: scallop R, the blend into the standoff arc (ref R4.95), standoff arc R
+# param: end
+# the blend circle (R4.95) sits under the lug floor, tangent to it and to the standoff arc round SB: its centre follows from both
+_blend_c = (SB[0] - math.sqrt((LUG_BLEND_R + LUG_SB_R) ** 2 - (SB[1] - (LUG_FLOOR_Z - LUG_BLEND_R)) ** 2), LUG_FLOOR_Z - LUG_BLEND_R)
+LUG_SCALLOP_YT = _blend_c[0]   # the big scallop arc ends tangent to the floor where the blend begins
+_k = LUG_SB_R / (LUG_BLEND_R + LUG_SB_R)
+_blend_t = (SB[0] + _k * (_blend_c[0] - SB[0]), SB[1] + _k * (_blend_c[1] - SB[1]))   # blend / standoff-arc tangent point
+_corner = (SB[0] - math.sqrt(LUG_SB_R ** 2 - (LUG_FLOOR_Z - SB[1]) ** 2), LUG_FLOOR_Z)   # where the floor would meet the standoff arc
+LUG_BLEND_FILL = Polygon([(LUG_SCALLOP_YT, LUG_FLOOR_Z), _corner, SB, _blend_c]).difference(Point(_blend_c).buffer(LUG_BLEND_R, 96))   # cusp material the blend keeps
 LUG_SCALLOP = Point(LUG_SCALLOP_YT, LUG_FLOOR_Z - LUG_SCALLOP_R).buffer(LUG_SCALLOP_R, 128).intersection(
     Polygon([(0.0, -20.0), (LUG_SCALLOP_YT, -20.0), (LUG_SCALLOP_YT, LUG_FLOOR_Z), (0.0, LUG_FLOOR_Z)]))
 # param: end
@@ -234,8 +248,8 @@ ELEC = dict(battery=(-11.81, -5.4, 12.0), rxesc=(8.67, -3.0, 15.3), wesc=(8.63, 
 STATOR_DIRS = ((1, 0), (-1, 0), (0, 1), (0, -1))        # stator screw directions on the bolt circle (bolt_wm0..3)
 SW_SCREW_Y, SW_BOLT_Z, TOP_BOLT_Z = (1.9, -13.1), 16.0, 20.4  # switch screws (Y, head Z) and the top-panel screw head plane
 PRESS = dict(hub=0.05, tyre=0.3, micro=0.2, nut=0.05, shaft=0.02, bearing=0.05, pack=0.1)   # press-fit interference per joint, mm
-PULLEY_R, BELT_R, BELT_r, BELT_WALL = (7.5, 3.7), 8.0, 4.2, 1.0   # pulley radii (rear, front), O-ring path radii, ring wall
-BELT_X = dict(slab=(30.8, 31.8), cut=(29.0, 33.0))                       # |X| of the belt loop slab and of its cut
+BELT_R, BELT_r = 7.95, 4.2   # O-ring centreline radii: rear / front hub groove floor (7.45, 3.7) + half the 1.0 cs
+BELT_X = dict(centre=31.25)                                              # |X| of the O-ring centreline (hub groove centre)
 O_RING = (45, 1.0)                                      # stock O-ring ID x cross-section
 
 
@@ -254,11 +268,12 @@ BRG = dict(od_r=4.0, w=2.5, bore_r=2.5, x=-14.75)   # MR85ZZ 5 x 8 x 2.5, centre
 
 REF_BOM = [   # RVRN 2.0 STEP part list (research/rvrn_step/INDEX.txt); one row per joint or part family
     dict(role="FS8: base panel 5 x M2 CSK into heat-sets", match=["bolt_b*"], count=5, designation="M2x6", head="countersunk", threads_into="insert"),
-    dict(role="FS1 M2 heat-sets (floor)", kind="part", match=["insert_b*"], count=5, catalog="heatset_m2_4"),
+    dict(role="FS1 M2 heat-sets (floor)", kind="part", match=["insert_b*", "insert_t*"], count=9, catalog="heatset_m2_4"),
+    dict(role="M2 heat-sets 3.0 (switch pad)", kind="part", match=["insert_sw*"], count=2, catalog="heatset_m2"),
     dict(role="FS9: mount to standoff 2 x M3x12 CSK alu (axle standoff)", match=["bolt_u?a"], count=2, designation="M3x12", head="countersunk", threads_into="standoff", material="aluminium"),
     dict(role="FS9: mount to nose standoff 2 x M3 CSK alu", match=["bolt_u?b"], count=2, designation="M3x14", head="countersunk", threads_into="standoff", material="aluminium",
          deviation="M3x14 instead of the STEP's M3x12: through mount and lug, 12 mm engages 3.9 mm of the 15 mm standoff (< 1.5 d)"),
-    dict(role="top panel: 4 x M2 CSK thread-forming (not in the STEP; its countersunk holes are)", match=["bolt_t*"], count=4, designation="M2x5", threads_into="tub",
+    dict(role="top panel: 4 x M2 CSK thread-forming (not in the STEP; its countersunk holes are)", match=["bolt_t*"], count=4, designation="M2x5", threads_into="insert",
          deviation="the STEP top panel has 4 countersunk corner holes but no screws; 4 M2x4 CSK thread-forming screws added so the Ti panel cannot peel off"),
     dict(role="side panel to standoff ends: 4 x M3 CSK (STEP M3x8)", match=["bolt_s?a", "bolt_s?b"], count=4, designation="M3x10", head="countersunk", threads_into="standoff",
          deviation="M3x10 instead of the STEP's M3x8: 8 mm engages 4.2 / 2.7 mm of standoff thread, under 1.5 d in aluminium"),
@@ -283,7 +298,7 @@ REF_BOM = [   # RVRN 2.0 STEP part list (research/rvrn_step/INDEX.txt); one row 
          deviation="the STEP shows the r4.5 holes only"),
     dict(role="stator: 4 x M2 (not in the STEP)", match=["bolt_wm*"], count=4, designation="M2", threads_into="motor",
          deviation="the STEP shows the RV03 counterbores only"),
-    dict(role="switch: 2 x M2 into the deck pilot holes (not in the STEP)", match=["bolt_sw*"], count=2, designation="M2",
+    dict(role="switch: 2 x M2 into the deck pilot holes (not in the STEP)", match=["bolt_sw*"], count=2, designation="M2", threads_into="insert",
          deviation="the STEP has the two 1.7 pilot holes but no screws"),
     dict(role="nitrile O-ring belts (not in the STEP; hub grooves are)", kind="part", match=["belt_l", "belt_r"], count=2),
     dict(role="battery lead: JST RCY", kind="wire", match=["w_bat_sw"], count=1, connector="jst_rcy"),
@@ -312,6 +327,8 @@ COLUMN_TOP_Z, COLUMN_DEV_R, FOOT_DEV_Z, FOOT_DEV_R = 11.0, 9.0, 5.0, 4.0       #
 KEYHOLE_DEV, BLOB_DEV, BLOB_R = (28.6, -30.6, 4.5), (-10.97, -9.03, 14.13), 3.0 # N10 keyhole U-slot (x, y, z=r) and the merged extra blob
 GUSSET_PTS, GUSSET_R = ((-22.5, 20.0, 5.8), (22.5, 20.0, 5.8)), 8.0
 CAGE_RIBS = ((-2.0, -2.0, 15.4), (19.4, -2.0, 15.4), (2.0, -19.6, 13.0), (12.0, -19.6, 13.0), (7.5, -19.6, 13.0), (-2.2, -9.0, 14.0), (19.3, 4.0, 14.0), (-2.2, 4.0, 14.0), (19.3, -9.0, 14.0))
+LOBE_DEV, LOBE_DEV_R = (32.0, -13.5, 9.4), 3.5  # param: organic centroid of the lobe-tail trim vs STEP blobs
+# param: end
 CAGE_RIB_R, BASE_DEV_Z, PANEL_DEV_R, TOP_DEV_Z = 6.0, 4.5, 3.0, 19.95
 NOSE_DEV, NOSE_DEV_R = (MNT_IN + 2.0, SB[0] + 3.5, SB[1] - 1.0), 4.0             # mount nose pad (|x|, y, z)
 STATOR_DEV_X, TAP_DEV_R = 16.8, 2.0                                              # stator lead-in cone site; tap-hole sites
@@ -331,7 +348,7 @@ ELECTRONICS = dict(failsafe=True, weapon_remote_disable=True, radio="2.4 GHz", c
 MASS_LIMIT_G, SQUARE_MM = 150, 150      # AWS 2025 antweight limits
 CLAIMS = [dict(id="c_mass", text=f"weighs {MASS_LIMIT_G} g or less", metric="mass_total_g", op="<=", value=MASS_LIMIT_G),
           dict(id="c_fit", text=f"fits the {SQUARE_MM} mm square", metric="footprint_mm", op="<=", value=SQUARE_MM)]
-SHARP_OK = [dict(part="base_panel", near=[27.9, -21.5, 4.5], r_mm=3.0,
+SHARP_OK = [dict(part="tub", near=[sg * 31.4, -11.7, 5.4], r_mm=1.0, reason="inside corner of the lobe-tail step is the side panel's own square relief edge (STEP RV23 diamond): the TPU panel conforms, rounding it in the tub would leave a 0.07 mm sliver") for sg in (1, -1)] + [dict(part="base_panel", near=[27.9, -21.5, 4.5], r_mm=3.0,
                  reason="screw boss is 0.3 mm tall (any taller breaks the reference silhouette), so its base fillet is capped at R0.25; the STEP pad base is R0.5")]
 _ORING = "O-ring is rubber: it squashes 0.16 mm against the plain inner face of the STEP side panel (the STEP has no belt channel)"
 _N10_FLAT = "the catalog N10 shaft is drawn round; the hub's D-flat sits on its flat"
@@ -342,6 +359,7 @@ ALLOW_OVERLAP = [dict(a="belt_l", b="side_l", max_depth_mm=0.3, reason=_ORING),
                  dict(a="motor_l", b="whub_rl", max_depth_mm=0.4, reason=_N10_FLAT),
                  dict(a="motor_r", b="whub_rr", max_depth_mm=0.4, reason=_N10_FLAT),
                  *[dict(a=f"insert_b{i}", b="tub", max_depth_mm=0.2, reason="heat-set insert: 3.5 OD melted into a 3.4 bore (interference by design)") for i in range(len(INS))],
+                 *[dict(a=f"insert_{k}", b="tub", max_depth_mm=0.2, reason="heat-set insert: 3.5 / 3.2 OD melted into a 3.4 / 3.1 bore (interference by design)") for k in ("t0", "t1", "t2", "t3", "sw0", "sw1")],
                  *[dict(a=f"nut_c{n}", b="tub", max_depth_mm=0.1, reason="thin M3 nut pressed into a hex pocket 0.05 under its flats (captive)") for n in "lr"],
                  dict(a="wbearing", b="mount_l", max_depth_mm=0.1, reason="MR85 8.0 OD pressed into the RV02 7.9 printed seat (0.05 radial interference, the STEP seat size)")]
 MODULE_NOTE = "RVRN quick change: 4 M3 out, both mounts with the drisk lift off the chassis tabs"
@@ -371,5 +389,61 @@ SERVICE_POSE = [dict(parts=["spider", "disc_a", "disc_b", "dspacer"] + [f"bolt_{
                      axis_at=[0.0, WY, WZ], axis_dir=[1, 0, 0], deg=SERVICE_TURN_DEG,
                      reason="drisk turned by hand so the rim clears the nose screws; whole stack with its bolts moves as one")]
 
+UNIT = 1          # unit direction-cosine norm (k^2 + h^2 = UNIT) for the belt tangent construction
+BELT_DIGITS = 4   # decimals kept on belt path points in the spec
+
+
+
+# --- hubs: rear RV21 (16 x 12) and front RV19 micro (9 x 9) revolve profiles, (x, radius) from the hub's inner face
+HUB_FLANGE_T, HUB_GROOVE_C, HUB_GROOVE_W, HUB_GROOVE_CH = 0.7, 1.25, 1.1, 0.25          # flange thickness, O-ring groove centre / width, groove wall chamfer
+RH_FLANGE_R, RH_GROOVE_R, RH_SEAT_R, RH_CROWN_H, RH_LIP_R, RH_LEN, RH_WALL_R, RH_WALL_T = 8.0, 7.45, 6.0, 1.0, 6.5, 12.0, 2.88, 0.2
+RH_SEAT_RAMP = ((2.55, 6.9), (2.75, 6.35), (3.35, RH_SEAT_R))                           # flange-to-seat ramp
+RH_SEAT_X, RH_CROWN_X, RH_SEAT_END, RH_LIP_X = (3.35, 5.25), (6.25, 8.25), 11.1, 11.3   # seat span, crown span, seat end, lip start
+_g0, _g1 = HUB_GROOVE_C - HUB_GROOVE_W / 2, HUB_GROOVE_C + HUB_GROOVE_W / 2
+REAR_HUB_PROFILE = ((0.0, 0.0), (0.0, RH_FLANGE_R), (_g0, RH_FLANGE_R), (_g0 + HUB_GROOVE_CH, RH_GROOVE_R), (_g1 - HUB_GROOVE_CH, RH_GROOVE_R),
+                    (_g1, RH_FLANGE_R), (_g1 + HUB_FLANGE_T, RH_FLANGE_R), *RH_SEAT_RAMP, (RH_SEAT_X[1], RH_SEAT_R),
+                    (RH_CROWN_X[0], RH_SEAT_R + RH_CROWN_H), (RH_CROWN_X[1], RH_SEAT_R + RH_CROWN_H), (RH_CROWN_X[1] + RH_CROWN_H, RH_SEAT_R),
+                    (RH_SEAT_END, RH_SEAT_R), (RH_LIP_X, RH_LIP_R), (RH_LEN, RH_LIP_R), (RH_LEN, RH_WALL_R), (RH_LEN - RH_WALL_T, RH_WALL_R),
+                    (RH_LEN - RH_WALL_T, 0.0))
+RH_D = dict(r=1.6, flat=0.9, arc_n=60, flat_n=27, crown=0.02)                           # D-bore: radius, flat height above the axis, facet counts, flat crown
+RH_BORE_X, RH_NUT_X, RH_NUT_HALF, RH_NUT_Z, RH_GRUB_X, RH_GRUB_ENGAGE = 29.0, 41.0, 2.05, (2.4, 4.4), 34.3, 0.9   # |X| of bore start / slot end, slot half-width, slot z above axis, grub, grub tip past the flat
+RH_ORIGIN_X = 30.0                                                                      # |X| of the hub inner face
+FH_FLANGE_R, FH_SEAT_R, FH_BORE_R, FH_LEN, FH_RAMP, FH_SEAT_X, FH_GROOVE_FLOOR = 4.5, 3.7, 2.7, 9.0, 0.4, (2.9, 7.9), (0.93, 1.57)
+FRONT_HUB_PROFILE = ((0.0, FH_BORE_R), (0.0, FH_FLANGE_R), (HUB_FLANGE_T, FH_FLANGE_R), (0.75, 3.96), (FH_GROOVE_FLOOR[0], FH_SEAT_R),
+                     (FH_GROOVE_FLOOR[1], FH_SEAT_R), (1.75, 3.96), (1.8, FH_FLANGE_R), (2.5, FH_FLANGE_R), (2.5, FH_SEAT_R + FH_RAMP),
+                     (FH_SEAT_X[0], FH_SEAT_R), (FH_SEAT_X[1], FH_SEAT_R), (FH_SEAT_X[1] + FH_RAMP, FH_SEAT_R + FH_RAMP),
+                     (FH_SEAT_X[1] + FH_RAMP, FH_FLANGE_R), (FH_LEN, FH_FLANGE_R), (FH_LEN, FH_BORE_R))
+FH_ORIGIN_X = 30.0                                                                      # |X| of the front hub inner face
+STANDOFF_BORE_R, TYRE_SECTION_STEP = 1.25, 10                                           # standoff through-bore radius; shoulder arc step (deg)
+
 
 __all__ = [n for n in dir() if not n.startswith('__')]
+
+
+# --- side.py: fork, hubs, side-panel width (fix-B lint) ---
+FK_X = {1: (24.5, 26.0), -1: (-26.5, -25.0)}      # fork X slab per side sign
+FK_EYE, FK_EYE_R, FK_PIN_R, FK_SB_R = (36.3, 6.3), 1.95, 0.8, 2.65   # eye on the nose standoff, pin hole, standoff hole
+FK_RES, FK_RES_PIN, FK_RES_BUF = 48, 24, 8        # circle / buffer segment counts
+FK_BLADE = [(35.0, 4.9), (36.1, 8.2), (41.0, 8.25), (66.68, 1.49), (51.75, 0.75), (39.0, 0.75), (38.0, 1.5)]   # param: organic fork blade outline (measured, STEP)
+FK_ROUND = (0.3, 0.5)                             # outer / inner corner radius of the blade
+FK_TIP = [(60.0, 1.27), (66.68, 1.49), (60.0, 2.5)]   # param: organic sharp-tip wedge
+FK_TIP_R = 0.15                                   # tip join radius (> kerf)
+FK_WIN = [(44.15, 2.75), (54.0, 2.75), (44.65, 5.42)]   # param: organic lightening window
+FK_WIN_R = 0.3
+FK_LAND_R = 0.15                     # land corners round r0.15 (> kerf)
+FK_LAND = [(64.0, 1.2), (66.68, 1.27), (66.68, 1.72), (64.0, 1.95)]   # param: organic 0.45 mm kerf land
+FK_TILT = -1.1                                    # deg, left fork nose-down about its standoff
+FKS_STEPS, FKS_DY = 24, 0.5                       # fork-slot sweep up out of the ramp
+FKS_CLIP = (42.0, -1, 80, 30)                     # x0, y0, x1, y1 of the sweep clip box
+HUB_X0 = 30.0                                     # hub inboard face X
+RH_PROF = [(0.0, 0.0), (0.0, 8.0), (0.7, 8.0), (0.95, 7.45), (1.55, 7.45), (1.8, 8.0), (2.5, 8.0), (2.55, 6.9), (2.75, 6.35), (3.35, 6.0),
+           (5.25, 6.0), (6.25, 7.0), (8.25, 7.0), (9.25, 6.0), (11.1, 6.0), (11.3, 6.5), (12.0, 6.5), (12.0, 2.88), (11.8, 2.88), (11.8, 0.0)]   # param: organic RV21 hub revolve profile (STEP)
+RH_DR, RH_FLAT, RH_CROWN = 1.6, 0.9, 0.02         # D-bore radius, flat height above axis, flat crown
+RH_NARC, RH_NFLAT = 60, 27                        # D-bore arc points / flat divisions
+RH_SEAT_R, RH_GRUB_X, RH_GRUB = 6.0, 34.3, "M2x5" # tyre-seat radius, grub X, grub fastener
+RH_GRUB_DIR = (0, 0, -1)
+RH_X_IN, RH_X_OUT, RH_SLOT_HW, RH_SLOT_Z = 29.0, 41.0, 2.05, (2.4, 4.4)   # D-bore/nut-slot X span, slot half width, slot Z span
+FH_PROF = [(0.0, 2.7), (0.0, 4.5), (0.7, 4.5), (0.75, 3.96), (0.93, 3.7), (1.57, 3.7), (1.75, 3.96), (1.8, 4.5), (2.5, 4.5), (2.5, 4.1), (2.9, 3.7),
+           (7.9, 3.7), (8.3, 4.1), (8.3, 4.5), (9.0, 4.5), (9.0, 2.7)]   # param: organic RV19 hub revolve profile (STEP)
+SPW_Y = (-16.0, -12.0, 11.0, 15.0)                # side-panel width stations along Y
+SPW_BUMP, SPW_BUMP_YC, SPW_BUMP_YH, SPW_BUMP_ZC, SPW_BUMP_ZH = 0.7, -5.0, 6.0, 7.5, 5.0   # nut-lobe swell: height, Y centre/half, Z centre/half

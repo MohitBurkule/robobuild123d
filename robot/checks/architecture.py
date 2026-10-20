@@ -1741,11 +1741,41 @@ def balance(a):
 
 # --------------------------------------------------------------------------------------------------------------- blade direction
 
+def _is_ramp_wedge(p):
+    """A wedgelet / armour ramp: spans the robot's width with its toe edge across the front, not a blade with a root."""
+    return p.kind == "armor" or bool(re.search(r"wedgelet", p.id))
+
+
+def _ramp_orientation(b, span_min=0.6, slope_min=0.05):
+    """(toe fraction of X span at the front, mean Y component of the upward-facing normals, front Y) of a ramp wedge:
+    the toe edge (max Y) must run along most of the span, and its ramp face must lean forward (z falls as Y grows)."""
+    V = b.mesh.vertices
+    front = float(V[:, 1].max())
+    toe = V[V[:, 1] >= front - 0.5]
+    span = float(V[:, 0].max() - V[:, 0].min()) or 1.0
+    frac = float(toe[:, 0].max() - toe[:, 0].min()) / span
+    n, area = b.mesh.face_normals, b.mesh.area_faces
+    up = n[:, 2] > 0.3
+    ny = float(np.sum(n[up, 1] * area[up]) / max(np.sum(area[up]), 1e-9))
+    return frac, ny, front
+
+
 def blade_orientation(a):
     out = []
     for b in a.solids:
         p = a.part(b.id)
         if p is None or not _is_blade(p):
+            continue
+        if _is_ramp_wedge(p):
+            frac, ny, front = _ramp_orientation(b)
+            m = (f"`{b.id}` is a ramp wedge: its toe edge (Y {front:.1f}) covers {frac * 100:.0f}% of its width and "
+                 f"its ramp faces {'forward' if ny > 0 else 'back'} (mean upward-normal Y component {ny:+.2f}).")
+            if frac < 0.6 or ny < 0.05:
+                out.append(fail("arch.blade_orientation", G, BLOCKER, "Wedge does not point forward", m).on(b.id)
+                           .expect("toe edge front-most over >= 60% of the width, ramp facing +Y", f"{frac * 100:.0f}%, {ny:+.2f}")
+                           .fix("Turn the wedge so its low toe edge is the front-most edge and the ramp rises towards the robot."))
+            else:
+                out.append(ok("arch.blade_orientation", G, "Wedge points forward", m))
             continue
         fs = a.fasteners_of(b.id)
         base = np.mean([f.at for f in fs], axis=0) if fs else b.mesh.vertices.mean(axis=0)
