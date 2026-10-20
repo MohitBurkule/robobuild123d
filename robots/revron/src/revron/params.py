@@ -50,6 +50,7 @@ N_STACK = 4                          # bolts / lobes / windows per stack, 90 deg
 SHAFT_D, SHAFT_CLR, BRG_SEAT_R, NUT_RECESS_R = 5.0, 0.1, 3.95, 6.0   # GR1507 shaft, its clearance in RV03, MR85 seat (8 mm bearing, 7.9 STEP), shaft nut recess
 STATOR_PCD, BOSS_OVER = 12.0, 0.01        # stator M2 bolt circle; boss overshoots the battered plane before it is split
 MNT_SCREW = ("M3x12", "M3x14")           # mount-to-standoff CSK screws at SA, SB
+MNT_SCREW_FIT = "loose"                  # ISO 273 loose clearance: the screws have slack, the notch face takes the hit first
 MNT_IN, MNT_T, MNT_SLAB_T = 13.4, 8.0, 4.0   # weapon mount: inner face |X|, total thickness, slab thickness (rest = battered boss)
 MNT_OUT, MNT_SLAB = MNT_IN + MNT_T, MNT_IN + MNT_SLAB_T
 WEAPON_CLEAR_R = 16.0                # chassis material stays outside this radius about the weapon axis (rotor + 1 mm)
@@ -99,6 +100,7 @@ BOSS_Z = 6.34                           # the boss starts above the line from th
 BOSS_NOSE_Y = 44.34
 BIG = 60.0                              # a box edge bigger than any part, for half-plane clips
 MNT_RELIEF_R = 1.0                      # concave corner relief of the profile (tub deck fillet, mfg corner relief)
+MNT_TIP_WALL, MNT_TIP_REACH = 0.9, 3.0    # printed wall: the wedge where the rear notch meets the rim tangent is trimmed back to this thickness within this reach of the notch top
 
 
 HOLE_FACE_RISE = 0.7                    # the battered face's highest point over a stator hole axis: the surface the hole is measured from
@@ -208,6 +210,7 @@ _corner = (SB[0] - math.sqrt(LUG_SB_R ** 2 - (LUG_FLOOR_Z - SB[1]) ** 2), LUG_FL
 LUG_BLEND_FILL = Polygon([(LUG_SCALLOP_YT, LUG_FLOOR_Z), _corner, SB, _blend_c]).difference(Point(_blend_c).buffer(LUG_BLEND_R, 96))   # cusp material the blend keeps
 LUG_SCALLOP = Point(LUG_SCALLOP_YT, LUG_FLOOR_Z - LUG_SCALLOP_R).buffer(LUG_SCALLOP_R, 128).intersection(
     Polygon([(0.0, -20.0), (LUG_SCALLOP_YT, -20.0), (LUG_SCALLOP_YT, LUG_FLOOR_Z), (0.0, LUG_FLOOR_Z)]))
+# param: end
 
 
 # ====================================================================================================================
@@ -241,8 +244,8 @@ ELEC = dict(battery=(-11.81, -5.4, 12.0), rxesc=(8.67, -3.0, 15.3), wesc=(8.63, 
 STATOR_DIRS = ((1, 0), (-1, 0), (0, 1), (0, -1))        # stator screw directions on the bolt circle (bolt_wm0..3)
 SW_SCREW_Y, SW_BOLT_Z, TOP_BOLT_Z = (1.9, -13.1), 16.0, 20.4  # switch screws (Y, head Z) and the top-panel screw head plane
 PRESS = dict(hub=0.05, tyre=0.3, micro=0.2, nut=0.05, shaft=0.02, bearing=0.05, pack=0.1)   # press-fit interference per joint, mm
-PULLEY_R, BELT_R, BELT_r, BELT_WALL = (7.5, 3.7), 8.0, 4.2, 1.0   # pulley radii (rear, front), O-ring path radii, ring wall
-BELT_X = dict(slab=(30.8, 31.8), cut=(29.0, 33.0))                       # |X| of the belt loop slab and of its cut
+BELT_R, BELT_r = 7.95, 4.2   # O-ring centreline radii: rear / front hub groove floor (7.45, 3.7) + half the 1.0 cs
+BELT_X = dict(centre=31.25)                                              # |X| of the O-ring centreline (hub groove centre)
 O_RING = (45, 1.0)                                      # stock O-ring ID x cross-section
 
 
@@ -383,3 +386,31 @@ SERVICE_POSE = [dict(parts=["spider", "disc_a", "disc_b", "dspacer"] + [f"bolt_{
 
 
 __all__ = [n for n in dir() if not n.startswith('__')]
+
+
+# --- side.py: fork, hubs, side-panel width (fix-B lint) ---
+FK_X = {1: (24.5, 26.0), -1: (-26.5, -25.0)}      # fork X slab per side sign
+FK_EYE, FK_EYE_R, FK_PIN_R, FK_SB_R = (36.3, 6.3), 1.95, 0.8, 2.65   # eye on the nose standoff, pin hole, standoff hole
+FK_RES, FK_RES_PIN, FK_RES_BUF = 48, 24, 8        # circle / buffer segment counts
+FK_BLADE = [(35.0, 4.9), (36.1, 8.2), (41.0, 8.25), (66.68, 1.49), (51.75, 0.75), (39.0, 0.75), (38.0, 1.5)]   # param: organic fork blade outline (measured, STEP)
+FK_ROUND = (0.3, 0.5)                             # outer / inner corner radius of the blade
+FK_TIP = [(60.0, 1.27), (66.68, 1.49), (60.0, 2.5)]   # param: organic sharp-tip wedge
+FK_TIP_R = 0.15                                   # tip join radius (> kerf)
+FK_WIN = [(43.85, 2.75), (54.0, 2.75), (44.35, 5.42)]   # param: organic lightening window
+FK_WIN_R = 0.3
+FK_LAND = [(64.0, 1.2), (66.68, 1.27), (66.68, 1.72), (64.0, 1.95)]   # param: organic 0.45 mm kerf land
+FK_TILT = -1.1                                    # deg, left fork nose-down about its standoff
+FKS_STEPS, FKS_DY = 24, 0.5                       # fork-slot sweep up out of the ramp
+FKS_CLIP = (42.0, -1, 80, 30)                     # x0, y0, x1, y1 of the sweep clip box
+HUB_X0 = 30.0                                     # hub inboard face X
+RH_PROF = [(0.0, 0.0), (0.0, 8.0), (0.7, 8.0), (0.95, 7.45), (1.55, 7.45), (1.8, 8.0), (2.5, 8.0), (2.55, 6.9), (2.75, 6.35), (3.35, 6.0),
+           (5.25, 6.0), (6.25, 7.0), (8.25, 7.0), (9.25, 6.0), (11.1, 6.0), (11.3, 6.5), (12.0, 6.5), (12.0, 2.88), (11.8, 2.88), (11.8, 0.0)]   # param: organic RV21 hub revolve profile (STEP)
+RH_DR, RH_FLAT, RH_CROWN = 1.6, 0.9, 0.02         # D-bore radius, flat height above axis, flat crown
+RH_NARC, RH_NFLAT = 60, 27                        # D-bore arc points / flat divisions
+RH_SEAT_R, RH_GRUB_X, RH_GRUB = 6.0, 34.3, "M2x5" # tyre-seat radius, grub X, grub fastener
+RH_GRUB_DIR = (0, 0, -1)
+RH_X_IN, RH_X_OUT, RH_SLOT_HW, RH_SLOT_Z = 29.0, 41.0, 2.05, (2.4, 4.4)   # D-bore/nut-slot X span, slot half width, slot Z span
+FH_PROF = [(0.0, 2.7), (0.0, 4.5), (0.7, 4.5), (0.75, 3.96), (0.93, 3.7), (1.57, 3.7), (1.75, 3.96), (1.8, 4.5), (2.5, 4.5), (2.5, 4.1), (2.9, 3.7),
+           (7.9, 3.7), (8.3, 4.1), (8.3, 4.5), (9.0, 4.5), (9.0, 2.7)]   # param: organic RV19 hub revolve profile (STEP)
+SPW_Y = (-16.0, -12.0, 11.0, 15.0)                # side-panel width stations along Y
+SPW_BUMP, SPW_BUMP_YC, SPW_BUMP_YH, SPW_BUMP_ZC, SPW_BUMP_ZH = 0.7, -5.0, 6.0, 7.5, 5.0   # nut-lobe swell: height, Y centre/half, Z centre/half

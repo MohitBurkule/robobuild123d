@@ -36,9 +36,42 @@ gwt() { # dir rev; rev resolved in THIS worktree (a bare "HEAD" inside -C dir wo
   local r; r=$(git rev-parse "$2^{commit}") || return 1
   [ -d "$1" ] || git worktree add -q --detach "$1" "$r"; git -C "$1" merge --abort 2>/dev/null; git -C "$1" reset -q --hard; git -C "$1" clean -fdq
   git -C "$1" checkout -q --detach "$r" && [ "$(git -C "$1" rev-parse HEAD)" = "$r" ] || { log "gate worktree $1 not at $r"; return 1; }; }
+# SHARD=1: hand groups to robot/tools/shard_worker.sh on any container sharing $P (plus PAR local workers).
+# A claim whose heartbeat (mtime) is older than STALE s is requeued, so local workers pick it up.
+# Sets done_n/failed/rc and appends results to $3 in group order, exactly like the serial path.
+shard_verify() { # sha "groups" out
+  local S="$P/shards/$1" g w pids= now m
+  rm -rf "$S"; mkdir -p "$S/queue" "$S/claimed" "$S/results"
+  git rev-parse HEAD > "$S/sha"
+  for g in $2; do echo "$1" > "$S/queue/$g"; done
+  for w in $(seq "${PAR:-1}"); do
+    WORKER_ID="local$w-$$" SHARDS="$P/shards" STOP="$S/done" IDLE=999999 robot/tools/shard_worker.sh 2>>"$P/shard_local.log" & pids="$pids $!"
+  done
+  while :; do
+    m=0; for g in $2; do [ -f "$S/results/$g.rc" ] || m=$((m+1)); done
+    [ "$m" -eq 0 ] && break
+    now=$(date +%s)
+    for c in "$S"/claimed/*; do
+      [ -f "$c" ] || continue
+      if [ $((now - $(stat -c %Y "$c" 2>/dev/null || echo "$now"))) -gt "${STALE:-900}" ]; then
+        g=${c##*.}; [ -f "$S/results/$g.rc" ] && { rm -f "$c"; continue; }
+        mv "$c" "$S/queue/$g" 2>/dev/null && log "shard $g: stale claim ${c##*/} requeued"
+      fi
+    done
+    [ -f "${CI_STOP:-/tmp/ci_loop.stop}" ] && break
+    sleep "${SHARD_POLL:-15}"
+  done
+  touch "$S/done"; wait $pids 2>/dev/null
+  for g in $2; do
+    if [ -f "$S/results/$g.log" ]; then cat "$S/results/$g.log" >> "$3"; fi
+    if grep -q 'blockers,' "$S/results/$g.log" 2>/dev/null; then done_n=$((done_n+1))
+    else rc=$(cat "$S/results/$g.rc" 2>/dev/null || echo 99); failed="$failed $g"; fi
+  done
+}
 gcount() { # dir group -> blocker count (-1 = did not finish)
-  local c; c=$(mktemp -d "${TMPDIR:-/tmp}/ci_gate_cache.XXXX")
-  (cd "$1" && ROBOT_CACHE=$c HEAVY_CI=1 /tmp/heavy.sh timeout "${GATE_TIMEOUT:-3000}" python3 -m robot verify "$SPEC" --full --only "$2" > "$c.log" 2>&1)
+  local c; c=$(mktemp -d "${TMPDIR:-/tmp}/ci_gate_cache.XXXX")  # c: log dir only; cache is the shared content-keyed one (fix-K)
+  local fc=; [ $(( ${i:-1} % ${FRESH_EVERY:-3} )) -eq 0 ] && fc="ROBOT_CACHE=$c"   # every 3rd round: fresh cache spot check
+  (cd "$1" && env $fc HEAVY_CI=1 /tmp/heavy.sh timeout "${GATE_TIMEOUT:-3000}" python3 -m robot verify "$SPEC" --full --only "$2" > "$c.log" 2>&1)
   $GPY count "$c.log"; rm -rf "$c" "$c.log"; }
 gfail() { log "gate rejected ${1#origin/} $2: $3"; printf '{"t":"%s","sha":"%s","group":"ci_gate","id":"ci_gate.rejected","parts":[],"branch":"%s","message":"[ci] gate rejected %s %s: %s"}\n' \
   "$(date -Is)" "$2" "${1#origin/}" "${1#origin/}" "$2" "$3" >> "$P/blockers_live_$(echo "${1#origin/}" | sed -E 's/^fix-(.).*/\1/' | tr a-z A-Z).jsonl"; return 1; }
@@ -61,7 +94,7 @@ gate() {
   read a0 i0 < "$bf"
   a1=$(gcount "$GWT/trial" assembly); i1=$(gcount "$GWT/trial" interference)
   $GPY decide "$b" "$s" "$a0" "$a1" "$i0" "$i1" "$P" >/dev/null || return 1
-  if [[ "$b" == *-param ]] || git log --format=%B HEAD.."$b" | grep -qiE 'param|refactor'; then
+  if [[ "$b" == *-param ]] || git log --format=%B HEAD.."$b" | grep -qE '^\[refactor\]'; then
     local ge=robots/revron/tools/geom_equal.py
     if [ -f "$GWT/trial/$ge" ]; then
       gwt "$GWT/base" HEAD; cp "$GWT/trial/$ge" "$GWT/base/$ge"; rm -rf "$GWT/snap"
@@ -108,10 +141,16 @@ for i in $(seq "${START_ITER:-1}" "$MAX_ITERS"); do
   : > "$out"; rc=0; done_n=0; failed=
   chunks="$all fastener_seat"; [ -f "${SKIP_THREAT_FILE:-/tmp/ci_skip_threat}" ] || chunks="$all threat fastener_seat"
   need=$(echo $chunks | wc -w)
+  if [ "${SHARD:-0}" = 1 ]; then shard_verify "$sha" "$chunks" "$out"; else
+  # groups run PAR at a time (own process each, shared content-keyed cache); an OOM still only loses its own group
+  mkdir -p "$out.d"; rm -f "$out.d"/*
+  printf '%s\n' $chunks | xargs -P "${PAR:-3}" -I{} sh -c 'ROBOT_RUN_SHA=$0 ROBOT_PROGRESS_LOG="$1/verify.log" timeout 6000 python3 -m robot verify "$2" --full --only {} --jobs 1 > "$3/{}.log" 2>&1; echo $? > "$3/{}.rc"' "$sha" "$P" "$SPEC" "$out.d"
   for chunk in $chunks; do
-    ROBOT_RUN_SHA=$sha ROBOT_PROGRESS_LOG="$P/verify.log" HEAVY_CI=1 /tmp/heavy.sh timeout 6000 python3 -m robot verify "$SPEC" --full --only "$chunk" --jobs "${JOBS:-2}" > "$out.part" 2>&1
-    r=$?; cat "$out.part" >> "$out"; grep -q 'blockers,' "$out.part" && done_n=$((done_n+1)) || { rc=$r; failed="$failed $chunk"; }
+    cat "$out.d/$chunk.log" >> "$out" 2>/dev/null
+    grep -q 'blockers,' "$out.d/$chunk.log" 2>/dev/null && done_n=$((done_n+1)) || { rc=$(cat "$out.d/$chunk.rc" 2>/dev/null); failed="$failed $chunk"; }
   done
+  rm -rf "$out.d"
+  fi
   rm -f "$out.part"
   if [ "$done_n" -eq 0 ]; then
     log "iter $i sha $sha: verify did not finish (rc $rc: $(grep -m1 -e Killed -e Traceback -e Error "$out" | cut -c1-120)); not counted"

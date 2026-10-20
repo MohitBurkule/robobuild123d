@@ -52,7 +52,14 @@ def _cfg(spec):
 
 
 def fingerprint(m):
-    """Pose-independent fingerprint of a trimesh mesh."""
+    """Pose-independent fingerprint of a trimesh mesh (memoised on the mesh content and this file in the run cache)."""
+    from .. import cache
+
+    return cache.memo("ref_fingerprint", (cache.source_hash(__file__), np.asarray(m.vertices), np.asarray(m.faces)),
+                      lambda: _fingerprint(m))
+
+
+def _fingerprint(m):
     obb = m.bounding_box_oriented.primitive
     ext = np.asarray(obb.extents, float)
     comps = m.body_count if hasattr(m, "body_count") else 1
@@ -209,6 +216,13 @@ def _cfg_has_frame(e, cfg):
 
 
 def run(ctx):
+    return check_entries(ctx, _frame_checks)
+
+
+def check_entries(ctx, frame_checks, exact=True, parts=None):
+    """Every `reference_cad` entry: fingerprint checks, then `frame_checks(ctx, e, cfg, pid, fn, mod, ref)` for entries
+    placed in our world frame. exact=False (the fast proxy, robot/proxy/refcad.py) skips the copy test and the
+    rasterised silhouette, which `frame_checks` then stands in for; `parts` limits the entries checked."""
     spec = ctx.r.spec
     cfg = _cfg(spec)
     items = cfg.get("parts") or []
@@ -221,6 +235,8 @@ def run(ctx):
     out = []
     for e in items:
         pid, fn = e.get("part"), e.get("file")
+        if parts is not None and pid not in parts:
+            continue
         b = ctx.world.body(pid) if pid else None
         path = rdir / (fn or "")
         if b is None or not fn or not path.is_file():
@@ -248,7 +264,7 @@ def run(ctx):
             ctx.not_checked.append(f"Reference CAD `{fn}` vs `{pid}`")
             continue
         ctx.metrics[f"reference_cad.{pid}"] = {"ref": fr, "model": fm}
-        copied, h = is_copy(mod, ref)
+        copied, h = is_copy(mod, ref) if exact else (False, None)
         if copied:
             out.append(fail("reference_cad.copied", G, BLOCKER, "Part geometry is a copy of the reference CAD",
                             f"`{pid}` matches `{fn}` triangle for triangle (Hausdorff {h:.4f} mm after alignment).")
@@ -283,7 +299,7 @@ def run(ctx):
                                 f"`{pid}` has {fm['genus']} through-holes, `{fn}` has {fr['genus']}.").on(pid))
             else:
                 out.append(ok("reference_cad.holes", G, "Through-hole count matches", f"`{pid}`: {fm['genus']} through-holes.").on(pid))
-        if (e.get("mode", "shape") == "shape" or e.get("outline_only")) and _cfg_has_frame(e, cfg):
+        if exact and (e.get("mode", "shape") == "shape" or e.get("outline_only")) and _cfg_has_frame(e, cfg):
             need = float(e.get("iou_min", cfg.get("iou_min", 0.9)))
             try:
                 ious = silhouette_iou(mod, ref_in_world(ref, e, cfg), float(cfg.get("iou_res_mm", 0.1)), bool(e.get("outline_only")))
@@ -300,7 +316,7 @@ def run(ctx):
                            fail("reference_cad.silhouette", G, BLOCKER, "Part shape differs from the reference CAD", smsg).on(pid)
                            .fix("Match the outline seen along the worst axis: outline, cut-outs, heights and placement."))
         if _cfg_has_frame(e, cfg):
-            out += _frame_checks(ctx, e, cfg, pid, fn, mod, ref)
+            out += frame_checks(ctx, e, cfg, pid, fn, mod, ref)
         if e.get("at") is not None:
             lo, hi = b.aabb
             c = (np.asarray(lo) + np.asarray(hi)) / 2
@@ -328,19 +344,25 @@ def _pt3(ax_name, h, uv):
     return p
 
 
-def _frame_checks(ctx, e, cfg, pid, fn, mod, ref):
-    from . import ref_diff, ref_features
-
-    out = []
-    rw = ref_diff.clean(ref_in_world(ref, e, cfg))
+def step_placement(e, cfg, pid, mod, rw):
+    """reference_cad.step_placement: part bbox centre vs the reference's in the STEP frame (shared with the proxy)."""
     cm = (mod.bounds[0] + mod.bounds[1]) / 2
     cr = (rw.bounds[0] + rw.bounds[1]) / 2
     d = float(np.linalg.norm(cm - cr))
+    out = []
     tol = float(e.get("placement_tol_mm", cfg.get("placement_tol_mm", 0.5)))
     msg = f"`{pid}` bbox centre {np.round(cm, 2).tolist()} vs STEP {np.round(cr, 2).tolist()} ({d:.2f} mm, tol {tol})"
     out.append(ok("reference_cad.step_placement", G, "Part sits where the STEP assembly puts it", msg).on(pid) if d <= tol else
                fail("reference_cad.step_placement", G, BLOCKER, "Part placed differently from the STEP assembly", msg).on(pid)
                .fix("Move the part (or its features) to the STEP placement."))
+    return out
+
+
+def _frame_checks(ctx, e, cfg, pid, fn, mod, ref):
+    from . import ref_diff, ref_features
+
+    rw = ref_diff.clean(ref_in_world(ref, e, cfg))
+    out = step_placement(e, cfg, pid, mod, rw)
     if e.get("mode", "shape") != "shape":
         return out
     try:
