@@ -598,3 +598,38 @@ def test_fork_stiffness_roots_at_standoff_screw():
     res, _ = run(d)
     msgs = [f.message for f in res.get("arch.fork_stiffness", []) if "fork_l" in f.message]
     assert msgs and all(f.passed for f in res["arch.fork_stiffness"] if "fork_l" in f.message), msgs
+
+
+def _ramp(profile_yz, width=60.0, at_x=0.0):
+    """A wedgelet-like prism: (Y, Z) profile extruded `width` along X."""
+    pts = [[round(-z, 4), round(y, 4)] for y, z in profile_yz]
+    return {"type": "place", "shape": {"type": "prism", "points": pts, "height": width}, "at": [at_x, 0, 0], "rot": [0, 90, 0]}
+
+
+def _with_ramp(profile_yz):
+    d = wedge()
+    d["parts"].append(P("wedgelet_l", "armor", _ramp(profile_yz), mat="tpu", **{"print_dir": [0, 0, 1]}))
+    return d
+
+
+FRONT_RAMP = [(36, -6), (56, -6), (56, -5), (36, 0)]     # low toe at Y 56, rising towards the robot
+BACK_RAMP = [(36, -6), (56, -6), (56, 0), (36, -5)]      # high edge at the front: faces back
+
+
+def test_ramp_wedge_with_forward_toe_passes_orientation():
+    res, _ = run(_with_ramp(FRONT_RAMP))
+    msgs = [f for f in res["arch.blade_orientation"] if "wedgelet_l" in f.message]
+    assert msgs and all(f.passed for f in msgs), [(f.passed, f.message) for f in msgs]
+
+
+def test_ramp_wedge_facing_back_fails_orientation():
+    res, _ = run(_with_ramp(BACK_RAMP))
+    msgs = [f for f in res["arch.blade_orientation"] if "wedgelet_l" in f.message]
+    assert msgs and any(not f.passed for f in msgs), [(f.passed, f.message) for f in msgs]
+
+
+def test_blade_still_triggers_orientation_next_to_a_ramp_wedge():
+    d = _with_ramp(FRONT_RAMP)
+    m_blade_orientation(d)
+    res, _ = run(d)
+    assert any(not f.passed and "blade_l" in f.message for f in res["arch.blade_orientation"])
