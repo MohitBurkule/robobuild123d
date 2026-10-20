@@ -110,8 +110,8 @@ def motor_back_spacer():
 def _disc_local(u, v):
     """Drisk-local (u, v) -> world (Y, Z): STEP Drisk_V4 rotation about the axis, then the ref -> world map."""
     a = math.radians(DR_ROT)
-    xr = u * math.cos(a) - v * math.sin(a) - 38.5
-    yr = u * math.sin(a) + v * math.cos(a) + 23.5
+    xr = u * math.cos(a) - v * math.sin(a) - WY
+    yr = u * math.sin(a) + v * math.cos(a) + WZ
     return (-xr, yr)
 
 
