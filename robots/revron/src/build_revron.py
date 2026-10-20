@@ -257,7 +257,7 @@ def _panel_seat(which, i):
         x, y = INS[i]
         return hole_tool((x, y, BASE_Z0), (0, 0, 1), "M2x6", head="csk", into="through", side="head", grip=BASE_T + BOSS_H, csk_clear=CSK_CLEAR)
     x, y = TOP_XY[i]
-    return hole_tool((x, y, 20.4), (0, 0, -1), "M2x5", head="button", into="through", side="head", grip=0.9, cbore=0.0)   # 0.9 Ti is too thin for an M2 flat-head seat (1.2 tall): a button head bears flat on the face, plain 2.2 clearance hole
+    return hole_tool((x, y, TOP_Z0 + TOP_T), (0, 0, -1), "M2x5", head="button", into="through", side="head", grip=TOP_T, cbore=0)   # 0.9 Ti is too thin for an M2 flat-head seat (1.2 tall): a button head bears flat on the face, plain 2.2 clearance hole
 
 
 def _panel_outline(grow):
@@ -330,7 +330,7 @@ def top_panel():
     body = _ext(p, "xy", z0, z0 + t)
     # 2.2 holes countersunk (90 deg, 4.5 at the top face; STEP 3.65) for M2 flat heads into the column-top pilots: the 1.2 head is
     # deeper than the 0.9 plate, so its tip sinks into the chamfer at the column top
-    return _S(body, *[_panel_seat("top", i)[0] for i in range(4)])
+    return _S(body, *[_panel_seat("top", i)[0] for i in range(len(TOP_XY))])
 
 
 def _fork_outline(s):
