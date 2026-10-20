@@ -57,7 +57,7 @@ WEAPON_CLEAR_R = 16.0                # chassis material stays outside this radiu
 BSP_T = 1.5                          # printed spacer between the stator base and the right mount
 BSP_X = (MNT_IN - BSP_T, MNT_IN)
 STAT_HOLE_R, CB_R, CB_CONE_X = 1.12, 2.25, (16.4, 17.15)   # RV03 stator screw clearance d2.24, d4.5 counterbore, its cone
-PHASE_VIA = [[11.1, 14.5, 16.0], [11.1, 15.5, 18.2], [11.1, 27.0, 18.2], [11.1, 30.0, 14.5]]   # weapon phase leads: the lug (|X| >= 10.4, up to the deck) closes z 14.5 at y 15..26
+PHASE_VIA = [[11.8, 14.5, 16.0], [11.8, 15.5, 18.2], [11.8, 27.0, 18.2], [11.8, 30.0, 14.5]]   # weapon phase leads: the lug (|X| >= 10.4, up to the deck) closes z 14.5 at y 15..26
 
 
 # ====================================================================================================================
