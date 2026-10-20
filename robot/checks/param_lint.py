@@ -213,7 +213,26 @@ def sources(spec):
             path = (Path(spec.base_dir) / f).resolve()
             if path.suffix == ".py" and path not in seen:
                 seen.append(path)
+                seen.extend(q for q in _package_modules(path) if q not in seen)
     return seen
+
+
+def _package_modules(path):
+    """[fix-S] A model file may be a thin shim over a sibling package (`import revron`): lint every module of it too."""
+    import ast
+    out = []
+    try:
+        tree = ast.parse(path.read_text())
+    except (OSError, SyntaxError):
+        return out
+    for node in ast.walk(tree):
+        names = [a.name for a in node.names] if isinstance(node, ast.Import) else \
+            [node.module] if isinstance(node, ast.ImportFrom) and node.module and not node.level else []
+        for n in names:
+            pkg = path.parent / n.split(".")[0]
+            if (pkg / "__init__.py").is_file():
+                out += sorted(q.resolve() for q in pkg.glob("*.py"))
+    return out
 
 
 def lint_spec(spec):

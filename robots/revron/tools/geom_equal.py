@@ -16,11 +16,11 @@ import build_revron as R
 WEAPON = {"mount_l": lambda: R.weapon_mount("l"), "mount_r": lambda: R.weapon_mount("r"), "spider": lambda: R.spider(),
           "drisk_spacer": lambda: R.drisk_spacer(), "disc_a": lambda: R.disc("disc_a"), "disc_b": lambda: R.disc("disc_b"),
           "motor_back_spacer": lambda: R.motor_back_spacer()}   # [fix-B] weapon parts
-SOLIDS = ["top_panel", "base_panel", "esc_tray"] + list(WEAPON)
+SOLIDS = list(R.PARTS)   # [fix-S] every part
 
 
 def _build(n):
-    return WEAPON[n]() if n in WEAPON else getattr(R, n)()
+    return R._solid(R.PARTS[n]())
 TOL = 0.01
 
 
