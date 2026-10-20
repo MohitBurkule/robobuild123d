@@ -13,6 +13,8 @@ def make_spec(model_file):
     def M(name, origin=None):
         return {"type": "model", "file": model_file, "params": {"part": name, **({"origin": list(origin)} if origin else {})}}
     WO = (0.0, WY, WZ)   # weapon frame: on the spin axis
+    from .assembly_rig import revolutes
+    JT = revolutes(RIG)   # spin axes read off the joint chain (assembly_rig)
 
     parts, fast, conn = [], [], []
     def P(**k): parts.append(k)
@@ -37,11 +39,11 @@ def make_spec(model_file):
       label="RV02 XALT HD left weapon mount (8 mm): outboard MR85 bearing for the threaded shaft end, notch on the chassis tab, 2 M3 CSK into the standoffs")
     P(id="motor_spacer", kind="other", role="spacer", parent="mount_r", print_orientation="+x", rotates_with="fixed", color="#2a2c30", shape=M("motor_back_spacer"), **PLA,
       label="1.5 mm printed motor back spacer: stator base off the mount, clears the rear bearing boss and the phase leads")
-    P(id="weapon_motor_stator", kind="weapon_motor", catalog=MOTOR["stator"], parent="mount_r", at=[0.0, WY, WZ], rot=[0, 0, 180], rotates_with="fixed", exposed=True,
+    P(id="weapon_motor_stator", kind="weapon_motor", catalog=MOTOR["stator"], parent="mount_r", **place("weapon_motor_stator", "mount_r"), rotates_with="fixed", exposed=True,
       exposed_reason="Drisk: the GR1507 bell is the hub of the weapon, inside the spacer bore between the two Hardox discs; the discs shield it radially",
       label="GR1507 outrunner, fixed half: stator and cross base on RV03, phase leads out the back",
       deviation="RVRN 2.0 STEP draws the GR1507 as one empty can with no stator, no windings and no leads; the real fixed stator stack, windings and the 3 phase leads (out of the base through the -Z arm, STEP shows no wire exit) are added: a real motor has them")
-    P(id="weapon_motor_can", kind="other", role="rotor", catalog=MOTOR["can"], parent="spider", at=[0.0, 0.0, 0.0], rot=[0, 0, 180], rotates_with="weapon", exposed=True,
+    P(id="weapon_motor_can", kind="other", role="rotor", catalog=MOTOR["can"], parent="spider", **place("weapon_motor_can", "spider"), rotates_with="weapon", exposed=True,
       exposed_reason="Drisk: the GR1507 bell is the hub of the weapon, inside the spacer bore between the two Hardox discs; the discs shield it radially",
       label="GR1507 bell and core: spins with the spider, wshaft and discs round the fixed stator")
     P(id="wbearing", kind="bearing", parent="mount_l", material="steel", process="cots", rotates_with="fixed", stock="MR85ZZ 5 x 8 x 2.5", color="#555555",
@@ -49,11 +51,11 @@ def make_spec(model_file):
       shape=_spec_bearing(), label="MR85ZZ in the RV02 8 mm seat: outboard support of the threaded shaft end (inferred: the STEP shows the 7.9 seat but no bearing)")
     P(id="wshaft", kind="shaft", material="steel", process="cots", stock="GR1507 5 mm shaft (part of the motor): modelled whole, MR85 end X -18.7 through the bell and the rear bearing to its circlip end X 11.4", rotates_with="weapon", shaft_of="weapon_motor_can", parent="weapon_motor_can",
       deviation="the GR1507 shaft is part of the bought motor, which the STEP draws as one body (INDEX.txt lists no shaft); drawn separately here for the MR85 support and the spider collar",
-      at=[0.0, 0.0, 0.0], rot=[0, 0, 180], shape=M("weapon_shaft", WO), color="#777777", solid_fraction=SOLID["shaft"],
+      **place("wshaft", "weapon_motor_can"), shape=M("weapon_shaft", WO), color="#777777", solid_fraction=SOLID["shaft"],
       label="threaded end of the GR1507 shaft through the MR85 (its mass is in the motor)")
     P(id="spider", kind="weapon", material="aluminium", process="waterjet", stock="3 mm 7075 plate (one 2D profile: water-jet, no milling needed)",
-      min_web_mm=WEB["spider"], min_web_reason="0.8 mm webs between the dog pockets and the rim are the designer's own (RVRN 2.0 STEP spider_1 measures 0.8 at the same four places)", rotates_with="weapon", parent="mount_r", at=list(WO), shape=M("spider", WO),
-      joint={"kind": "revolute", "axis": [1, 0, 0], "pivot": [_mid(DR_X["spider"]), WY, WZ], "min": 0, "max": 360, "default": 0}, color="#b8bcc2",
+      min_web_mm=WEB["spider"], min_web_reason="0.8 mm webs between the dog pockets and the rim are the designer's own (RVRN 2.0 STEP spider_1 measures 0.8 at the same four places)", rotates_with="weapon", parent="mount_r", at=place_at("spider"), shape=M("spider", WO),
+      joint=JT["spider"], color="#b8bcc2",
       weapon={"kind": "disc", "motor": "weapon_motor_stator", "cells": 2, "reduction": 1.0, "spin_axis": [1, 0, 0], "spin_dir": "ccw", "supported_both_ends": True, "teeth": 1},
       label="3 mm aluminium spider: bolted to the bell (4 M2 on r4.5), carries the disc stack on 4 M2 on r14")
     for nm, lab in (("disc_a", "inner"), ("disc_b", "outer")):
@@ -75,63 +77,62 @@ def make_spec(model_file):
           label=f"{WEDGE_REF[s]} TPU wedgelet: 50 deg ramp over the nose, cheeks round both standoffs and the fork tail")
         P(id=f"side_{n}", kind="armor", deviation="matches original RVRN 2.0: RV23/RV24 front leads the spider swept rim by the same amount at +-30 deg (STEP projection 64.45 mm vs ours 64.24 mm at -30 deg, within 0.5 mm)", material="tpu", process="fdm", thin_wall_deviation="matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)", solid_fraction=0.9, print_orientation="+z", parent=f"so_a{n}", rotates_with="fixed", color="#3c4048", shape=M(f"side_panel_{n}"),
           label=f"{SIDE_REF[s]} TPU side panel: battered S-wall round the wheels, 3 M3x8 CSK (two standoff ends, one chassis nut)")
-        P(id=f"nut_c{n}", kind="nut", catalog="nut_m3_thin", at=[s * _mid(NUT_X), NUT[0], NUT[1]], rot=[0, 90, 0], rotates_with="fixed")
+        P(id=f"nut_c{n}", kind="nut", catalog="nut_m3_thin", **place(f"nut_c{n}"), rotates_with="fixed")
         # drive
-        rot = [0, 0, 0] if s > 0 else [0, 0, 180]
-        P(id=f"motor_{n}", kind="motor", catalog="n10_2200rpm_spicy", at=[s * MOTX, RY, RZ], rot=rot, rotates_with="fixed")
+        P(id=f"motor_{n}", kind="motor", catalog="n10_2200rpm_spicy", at=place_at(f"motor_{n}"), rot=place_rot(f"motor_{n}"), rotates_with="fixed")
         P(id=f"whub_r{n}", kind="pulley", solid_fraction=SOLID["hub"], rotates_with=f"wheel_r{n}", print_orientation="+x" if s > 0 else "-x", shape=M(f"rear_hub_{n}"), parent="tub",
-          joint={"kind": "revolute", "axis": [1, 0, 0], "pivot": [s * HUB_PIVOT_X["rear"], RY, RZ], "min": 0, "max": 360, "default": 0}, color="#333333", **PLA,
+          joint=JT[f"whub_r{n}"], color="#333333", **PLA,
           label="RV21 printed rear hub 16 x 12: blind D-bore on the N10, O-ring groove, crowned F1 tyre seat, M2 grub on the flat")
         P(id=f"wheel_r{n}", kind="wheel", material="rubber", process="cots", tyre_of=f"whub_r{n}", rotates_with=f"wheel_r{n}", parent=f"whub_r{n}", shape=M(f"rear_tyre_{n}"),
           color="#1b1b1b", stock="RV22 Scalextric F1 front tyre 21.5 x 14 x 9.5", label="Scalextric F1 tyre 21.5 x 14 x 9.5")
         P(id=f"whub_f{n}", kind="pulley", solid_fraction=SOLID["hub"], rotates_with=f"wheel_f{n}", print_orientation="+x" if s > 0 else "-x", shape=M(f"front_hub_{n}"), parent=f"so_a{n}",
-          joint={"kind": "revolute", "axis": [1, 0, 0], "pivot": [s * HUB_PIVOT_X["front"], SA[0], SA[1]], "min": 0, "max": 360, "default": 0}, color="#333333", **PLA,
+          joint=JT[f"whub_f{n}"], color="#333333", **PLA,
           label="RV19 micro hub 9 x 9 greased on the 25 mm standoff, O-ring groove inboard")
         P(id=f"wheel_f{n}", kind="wheel", material="rubber", process="cots", tyre_of=f"whub_f{n}", rotates_with=f"wheel_f{n}", parent=f"whub_f{n}", shape=M(f"front_tyre_{n}"),
           color="#1b1b1b", stock="RV20 Scalextric micro SLX tyre 11 x 7 x 6", label="Scalextric micro tyre 11 x 7 x 6")
-    P(id="battery", kind="battery", catalog="lipo_2s_180_turnabot", at=list(ELEC["battery"]), rot=[0, 0, 90], retained="press_fit")
-    P(id="rxesc", kind="esc", catalog="malenki_nano_rvrn2", at=list(ELEC["rxesc"]), rot=[0, 0, 90], retained="kapton")
-    P(id="wesc", kind="esc", catalog="bbb_ant_esc_rvrn2", at=list(ELEC["wesc"]), rot=[0, 0, 90], retained="kapton")
-    P(id="power_switch", kind="switch", catalog="switch_bbb_ant_rvrn2", at=[SWX, *ELEC["switch_yz"]], rot=[0, 0, 90], retained="screws", marked=True, tool_free=True,
+    P(id="battery", kind="battery", catalog="lipo_2s_180_turnabot", **place("battery"), retained="press_fit")
+    P(id="rxesc", kind="esc", catalog="malenki_nano_rvrn2", **place("rxesc"), retained="kapton")
+    P(id="wesc", kind="esc", catalog="bbb_ant_esc_rvrn2", **place("wesc"), retained="kapton")
+    P(id="power_switch", kind="switch", catalog="switch_bbb_ant_rvrn2", at=place_at("power_switch"), rot=place_rot("power_switch"), retained="screws", marked=True, tool_free=True,
       off_dir=[0, -1, 0], label="BBB ant switch hung under the deck beside the top panel: lever flush in the deck slot, 2 M2 into the deck")
     for i, (x, y) in enumerate(INS):
-        P(id=f"insert_b{i}", kind="insert", catalog="heatset_m2_4", at=[x, y, (INS_Z[0] + INS_Z[1]) / 2])
+        P(id=f"insert_b{i}", kind="insert", catalog="heatset_m2_4", at=place_at(f"insert_b{i}"))
     for i, (x, y) in enumerate(TOP_XY):
-        P(id=f"insert_t{i}", kind="insert", catalog="heatset_m2_4", at=[x, y, CH["z1"] - 2.0])
+        P(id=f"insert_t{i}", kind="insert", catalog="heatset_m2_4", at=place_at(f"insert_t{i}"))
     P(id="esc_tray", kind="other", material="tpu", process="fdm", print_orientation="+z", rotates_with="fixed", shape=M("esc_tray"),
       label="TPU weapon-ESC tray (not in the STEP): glued to the base panel, lips hold the ESC when inverted",
       deviation="the STEP holds the weapon ESC with kapton tape alone; a hit that flips the robot or tears the tape would free the board, so a TPU tray with 0.1 mm lips holds it (adds 1.1 g, reversible)")
 
     # ---------------------------------------------------------------- fasteners
     for i, (x, y) in enumerate(INS):
-        F(id=f"bolt_b{i}", designation="M2x6", material="aluminium", at=[x, y, BASE_BOLT_Z], dir=[0, 0, 1], through=["base_panel", "tub"], threads_into=f"insert_b{i}", tool="hex1.3",
+        F(id=f"bolt_b{i}", designation="M2x6", material="aluminium", **seat(f"bolt_b{i}"), through=["base_panel", "tub"], threads_into=f"insert_b{i}", tool="hex1.3",
           hole=_panel_seat("base", i)[1].hole)
     for s, n in SIDES:
         mnt = f"mount_{n}"
-        F(id=f"bolt_u{n}a", designation="M3x12", head="countersunk", material="aluminium", at=[s * MNT_IN, SA[0], SA[1]], dir=[s, 0, 0], through=[mnt], threads_into=f"so_a{n}", hole=_mount_csk(s, *SA, "M3x12")[1].hole,
+        F(id=f"bolt_u{n}a", designation="M3x12", head="countersunk", material="aluminium", **seat(f"bolt_u{n}a"), through=[mnt], threads_into=f"so_a{n}", hole=_mount_csk(s, *SA, "M3x12")[1].hole,
           reason="FS9 M3x12 CSK alu, head flush in the mount's inner face")
-        F(id=f"bolt_u{n}b", designation="M3x14", head="countersunk", reason="M3x14 CSK alu (STEP FS9 M3x12): through mount and lug, 12 mm bites only 3.9 mm of the 15 mm standoff", material="aluminium", at=[s * MNT_IN, SB[0], SB[1]], dir=[s, 0, 0], through=[mnt, "tub"], threads_into=f"so_b{n}", hole=_mount_csk(s, *SB, "M3x14")[1].hole)
-        F(id=f"bolt_s{n}a", designation=SIDE_BOLT_DES["a"], head="countersunk", material="aluminium", reason="M3x10 CSK (STEP: M3x8): 8 mm bites only 4.2 mm of the standoff thread; 10 mm gives 6.2 (>= 1.5 d in aluminium)", at=[s * SIDE_BOLT_X["a"], SA[0], SA[1]], dir=[-s, 0, 0], through=[f"side_{n}"], threads_into=f"so_a{n}", hole=_side_seat("a", SA, s)[1].hole)
-        F(id=f"bolt_s{n}b", designation=SIDE_BOLT_DES["b"], head="countersunk", material="aluminium", reason="M3x10 CSK (STEP: M3x8): the head sits 5.3 mm out from the 15 mm standoff end, so 8 mm bites 2.7 mm; 10 mm bites 4.7", at=[s * SIDE_BOLT_X["b"], SB[0], SB[1]], dir=[-s, 0, 0], through=[f"side_{n}", f"wedgelet_{n}"], threads_into=f"so_b{n}", hole=_side_seat("b", SB, s)[1].hole)
-        F(id=f"bolt_s{n}c", designation=SIDE_BOLT_DES["c"], head="countersunk", material="aluminium", reason="alu M3 CSK (Build Guide: aluminium bolts for weight; the STEP draws stainless)", at=[s * SIDE_BOLT_X["c"], NUT[0], NUT[1]], dir=[-s, 0, 0], through=[f"side_{n}", "tub"], threads_into=f"nut_c{n}", hole=_side_seat("c", NUT, s)[1].hole)
+        F(id=f"bolt_u{n}b", designation="M3x14", head="countersunk", reason="M3x14 CSK alu (STEP FS9 M3x12): through mount and lug, 12 mm bites only 3.9 mm of the 15 mm standoff", material="aluminium", **seat(f"bolt_u{n}b"), through=[mnt, "tub"], threads_into=f"so_b{n}", hole=_mount_csk(s, *SB, "M3x14")[1].hole)
+        F(id=f"bolt_s{n}a", designation=SIDE_BOLT_DES["a"], head="countersunk", material="aluminium", reason="M3x10 CSK (STEP: M3x8): 8 mm bites only 4.2 mm of the standoff thread; 10 mm gives 6.2 (>= 1.5 d in aluminium)", **seat(f"bolt_s{n}a"), through=[f"side_{n}"], threads_into=f"so_a{n}", hole=_side_seat("a", SA, s)[1].hole)
+        F(id=f"bolt_s{n}b", designation=SIDE_BOLT_DES["b"], head="countersunk", material="aluminium", reason="M3x10 CSK (STEP: M3x8): the head sits 5.3 mm out from the 15 mm standoff end, so 8 mm bites 2.7 mm; 10 mm bites 4.7", **seat(f"bolt_s{n}b"), through=[f"side_{n}", f"wedgelet_{n}"], threads_into=f"so_b{n}", hole=_side_seat("b", SB, s)[1].hole)
+        F(id=f"bolt_s{n}c", designation=SIDE_BOLT_DES["c"], head="countersunk", material="aluminium", reason="alu M3 CSK (Build Guide: aluminium bolts for weight; the STEP draws stainless)", **seat(f"bolt_s{n}c"), through=[f"side_{n}", "tub"], threads_into=f"nut_c{n}", hole=_side_seat("c", NUT, s)[1].hole)
     for k, (dy, dz) in enumerate((STATOR_PCD / 2 * u, STATOR_PCD / 2 * v) for u, v in STATOR_DIRS):
-        F(id=f"bolt_wm{k}", designation="M2x8", head="button", tool="hex1.3", material="titanium", at=[CB_CONE_X[1], WY + dy, WZ + dz], hole=_stator_hole(1, dy, dz)[1].hole, dir=[-1, 0, 0], through=["mount_r", "motor_spacer"],
+        F(id=f"bolt_wm{k}", designation="M2x8", head="button", tool="hex1.3", material="titanium", **seat(f"bolt_wm{k}"), hole=_stator_hole(1, dy, dz)[1].hole, through=["mount_r", "motor_spacer"],
           threads_into="weapon_motor_stator", reason="button heads (one hex1.3 key for every M2) sunk in the RV03 boss counterbores (inferred: the STEP shows the 4.4 counterbores, not the screws)")
     for k, (hub_c, bolt_c) in enumerate(zip(_polar(HUB_R), _polar(BOLT_R))):
         dy, dz = _disc_local(*hub_c)
-        F(id=f"bolt_p{k}", designation="M2x6", head="button", tool="hex1.3", material="titanium", at=[DR_X["spider"][0], dy, dz], dir=[1, 0, 0], through=["spider"], threads_into="weapon_motor_can", hole=_stack_hole("M2x6", DR_X["spider"][0], dy, dz, 1, SPIDER_T).hole,
+        F(id=f"bolt_p{k}", designation="M2x6", head="button", tool="hex1.3", material="titanium", **seat(f"bolt_p{k}"), through=["spider"], threads_into="weapon_motor_can", hole=_stack_hole("M2x6", DR_X["spider"][0], dy, dz, 1, SPIDER_T).hole,
           access_before=["mount_l", "wbearing"], reason="spider to bell, fitted before the left mount goes on (inferred)")
         dy, dz = _disc_local(*bolt_c)
-        F(id=f"bolt_d{k}", designation="M2x16", head="button", tool="hex1.3", material="titanium", at=[DR_X["disc_b"][1], dy, dz], dir=[-1, 0, 0],
+        F(id=f"bolt_d{k}", designation="M2x16", head="button", tool="hex1.3", material="titanium", **seat(f"bolt_d{k}"),
           through=["disc_b", "dspacer", "disc_a"], threads_into="spider", hole=_stack_hole("M2x16", DR_X["disc_b"][1], dy, dz, -1, DISC_T * 2 + SPACER_T).hole,
           access_before=["tub", "mount_r", "motor_spacer"],
           reason="stack screwed into the spider from the back (heads on disc_b, 2 mm of thread in the 3 mm alu spider tapped M2): no nuts, since the STEP has none (inferred: it has the 2.2 holes but no screws)")
     for i, (x, y) in enumerate(TOP_BOLT_XY):
-        F(id=f"bolt_t{i}", designation="M2x5", head="button", tool="hex1.3", at=[x, y, TOP_BOLT_Z], dir=[0, 0, -1], through=["top_panel", "tub"], threads_into=f"insert_t{i}",
+        F(id=f"bolt_t{i}", designation="M2x5", head="button", tool="hex1.3", **seat(f"bolt_t{i}"), through=["top_panel", "tub"], threads_into=f"insert_t{i}",
           reason="M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
           hole=_panel_seat("top", i)[1].hole)
     for i, yy in enumerate(SW_SCREW_Y):
-        F(id=f"bolt_sw{i}", designation="M2x3", head="button", tool="hex1.3", at=[SWX, yy, SW_BOLT_Z], dir=[0, 0, 1], through=["power_switch", "tub"], threads_into="tub", access_before=["base_panel"], hole=_switch_hole(yy)[1].hole,
+        F(id=f"bolt_sw{i}", designation="M2x3", head="button", tool="hex1.3", **seat(f"bolt_sw{i}"), through=["power_switch", "tub"], threads_into="tub", access_before=["base_panel"], hole=_switch_hole(yy)[1].hole,
           reason="thread-forming into the 1.7 pilot holes either side of the switch flange; heads clamp the flange to the deck underside (inferred)",
           waive={"fastener.hole_record": "switch retention only, no structural load; RVRN RV01 has 5 FS1_M2_heatsert, all base panel, none at the switch, the switch's 2 M2 screws self-tap in plastic"})
 
@@ -260,7 +261,7 @@ def _prism_yz(poly, x0, x1):
 
 def _spec_bearing():
     def cyl(r, h):
-        return {"type": "place", "shape": {"type": "cylinder", "radius": r, "height": h}, "at": [BRG["x"], WY, WZ], "rot": [0, 90, 0]}
+        return {"type": "place", "shape": {"type": "cylinder", "radius": r, "height": h}, **place("wbearing")}
     return {"type": "subtract", "base": cyl(BRG["od_r"], BRG["w"]), "cut": [cyl(BRG["bore_r"], BRG["od_r"])]}
 
 
@@ -303,46 +304,24 @@ def _GRUB_DEV(s):
                        "threads the 1.6 bore and the captive nut, so it clamps the flat the same"}]
 
 
-def _rib_zones(r):
-    """Deviation zones (spheres of radius r) that tile each cage rib of the tub: spaced along its long axis so every point of
-    the rib is within r of a centre (the zone stays the size of the real deviation)."""
-    out = []
-    for rib in tub_shell.ribs(CH):
-        bb = rib.bounding_box()
-        lo, hi = [bb.min.X, bb.min.Y, bb.min.Z], [bb.max.X, bb.max.Y, bb.max.Z]
-        size = [h - l for l, h in zip(lo, hi)]
-        ax = size.index(max(size))
-        cross = math.sqrt(sum((s / 2) ** 2 for k, s in enumerate(size) if k != ax))
-        n = math.ceil(size[ax] / (2 * math.sqrt(max(r * r - cross * cross, (r / 2) ** 2))))
-        for i in range(n):
-            c = [(l + h) / 2 for l, h in zip(lo, hi)]
-            c[ax] = lo[ax] + size[ax] * (i + 0.5) / n
-            out.append(tuple(round(v, 2) for v in c))
-    return out
-
-
 def reference_cad():
     def R(part, file, mode="shape", **k):
         return dict(part=part, file=file, mode=mode, **k)
     dt = _drisk_to_world()
     rows = [
         R("tub", "RV01_Chassis_1.stl", tol_mm=TOL["loose"], tol_vol_frac=VOL["part"], note="RV01 chassis",
-          deviations=[dict(near=[x, y, COLUMN_TOP_Z], r=COLUMN_DEV_R, reason="corner column top: 1.7 thread-forming pilot for the top-panel M2 screw instead of the STEP 3.0 bore (the STEP top panel is bonded; screws make it removable)")
-                      for x, y in INS[:4]]
-          + [dict(near=[sx * KEYHOLE_DEV[0], KEYHOLE_DEV[1], KEYHOLE_DEV[2]], r=KEYHOLE_DEV[2], reason="N10 keyhole opened into a U-slot to the floor so the gearbox boss and shaft drop in from below with the base panel off (the STEP closes the keyhole, the shaft cannot be threaded through it)")
+          deviations=[dict(near=[sx * KEYHOLE_DEV[0], KEYHOLE_DEV[1], KEYHOLE_DEV[2]], r=KEYHOLE_DEV_R, reason="N10 keyhole opened into a U-slot to the floor so the gearbox boss and shaft drop in from below with the base panel off (the STEP closes the keyhole, the shaft cannot be threaded through it)")
              for sx in (1, -1)]
           + [dict(near=[sx * sum(N10_KEY) / 2, sum(KEY_SPAN) / 2, N10_TOP - KEY_DROP / 2], r=KEY_DEV_R, reason="N10 key tab reaches KEY_DROP below the gearbox plate top so it keys between the plates and stops the motor inboard (the STEP tab is flush, which leaves the motor free to slide in x: retention.loose)")
              for sx in (1, -1)]
           + [dict(near=[SWX, yy, CH["deck"]], r=SWX_DEV_R, reason="switch pilot holes follow the switch, which sits 0.45 mm in from the STEP X 25.0 so its body clears the 27.5 inner wall face (the STEP switch penetrates the wall 0.4 mm)")
              for yy in SW_SCREW_Y]
-          + [dict(near=[x, y, FOOT_DEV_Z], r=FOOT_DEV_R, reason="column foot flared to R3.7 with a recess for the base-panel ring boss (1.0 mm base skin cannot seat a 1.2 mm M2 flat head)")
+          + [dict(near=[x, y, FOOT_DEV_Z], r=FOOT_DEV_R, reason="column foot flared to R3.7 (1.0 mm base skin cannot seat a 1.2 mm M2 flat head)")
              for x, y in INS]
-          + [dict(near=list(p_), r=CAGE_RIB_R, reason="electronics cage ribs hung from the deck (not in the STEP, where kapton alone holds the boards): the Malenki and weapon ESC stay put inverted and under impact")
-             for p_ in _rib_zones(CAGE_RIB_R)]
           + [dict(near=[sx * LOBE_DEV[0], LOBE_DEV[1], LOBE_DEV[2]], r=LOBE_DEV_R, reason="lobe tail below Y -11.7 trimmed to the side-panel inner face: the STEP lobe and side panel overlap by 31 mm3, the tub does not duplicate it")
              for sx in (1, -1)]),
         R("base_panel", "RV26_Base_Panel_1.stl", tol_mm=TOL["tight"], note="RV26 1 mm panel",
-          deviations=[dict(near=[x, y, BASE_DEV_Z], r=PANEL_DEV_R, reason="0.4 mm ring boss, R3 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud")
+          deviations=[dict(near=[x, y, BASE_DEV_Z], r=PANEL_DEV_R, reason="R3 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud")
                       for x, y in INS]),
         R("top_panel", "Top_Panel_1.stl", tol_mm=TOL["tight"], note="0.9 mm top panel",
           deviations=[dict(near=[x, y, TOP_DEV_Z], r=PANEL_DEV_R, reason="4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it")

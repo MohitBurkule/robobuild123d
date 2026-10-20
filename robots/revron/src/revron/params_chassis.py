@@ -30,7 +30,8 @@ SA_X, SB_X = (SA_X0, SA_X0 + SA_LEN), (SB_X0, SB_X0 + SB_LEN)   # standoff |X| s
 NUT = (-11.5, 8.5)                   # side-panel screw into a thin M3 nut in the chassis wall (Y, Z)
 NUT_X = (CH_HALF_W - M3_THIN_NUT_T, CH_HALF_W)   # nut pocket opens on the outer wall face, one nut deep
 INS = [(-25.0, 10.4), (25.0, 10.4), (-25.0, -21.6), (25.0, -21.6), (0.0, -33.6)]   # 5 floor inserts / base screws
-INS_Z = (5.1, 9.1)                   # FS1 M2 heat-set (3.5 OD x 4)
+INS_Z = (5.1, 9.1)                   # FS1 M2 heat-set (3.5 OD x 4): bore floor and mouth Z (insert sits on the bore floor)
+INS_LEN = INS_Z[1] - INS_Z[0]
 CSK_M2 = 4.5                         # 90 deg countersink at the face for an ISO 10642 M2 flat head (4.4 x 1.2) + 0.1
 PANEL_EAR_R = 3.0
 BASE_HOLE, TOP_HOLE = 3.4, 3.5         # csk through-holes: wide enough that the 90 deg seat stops short of the far face (no knife edge)
@@ -56,6 +57,7 @@ KEY_SPAN, KEY_DEV_R = (-26.15, -23.4), 2.5   # Y span of the key tab, radius of 
 N10_TOP = 17.0                       # top face of the N10 gearbox plates
 # chassis RV01
 SW_HALF_W, SW_CLR = 2.9, 0.05   # power switch body half-width, its clearance to the inner wall face
+SW_HALF, SW_WALL_CLEAR = SW_HALF_W, SW_CLR   # fix-joints names (switch joint in joints.py)
 SWX = CH_IN_X - SW_CLR - SW_HALF_W   # power switch X: body side 0.05 clear of the 27.5 inner wall face (was 25.0, 0.4 into it)
 CH = dict(x=CH_HALF_W, y0=CH_Y0, y1=CH_Y1, z0=CH_Z0, z1=CH_Z1, wall=CH_WALL, deck=CH_Z1 - CH_WALL, cham=CH_WALL)
 # drisk
@@ -65,6 +67,7 @@ CH = dict(x=CH_HALF_W, y0=CH_Y0, y1=CH_Y1, z0=CH_Z0, z1=CH_Z1, wall=CH_WALL, dec
 # ====================================================================================================================
 # panels (RV26 base, Ti top) [fix-T: named params, every panel dimension derives from these]
 SEG, SEG_FINE = 64, 128              # shapely buffer resolution (segments per quarter circle) for ears / tangent arcs
+BASE_CSK_CLEAR = -0.6                # base-panel seat 3.2 at the face = STEP RV26 (dk 3.8 - 0.6)
 CSK_CLEAR = 0.7                      # countersink diameter over the ISO 10642 head (4.5 seat: dk 3.8 + 0.7)
 BASE_Z0, BASE_T = 3.5, 1.0           # base panel underside Z, skin thickness
 PRELOAD_PAD = dict(c=(22.5, -30.3), s=9.1, h=0.465, r=0.6, sink=0.01)   # N10 preload pad on the base skin: centre |X|/Y, side, height (0.45 + 0.015), corner R, sink into the skin (union overlap)

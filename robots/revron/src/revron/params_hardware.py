@@ -13,7 +13,7 @@ SIDE_SINK = dict(a=2.15, b=5.75, c=1.05)                 # depth of each screw h
 SIDE_FACE_X = {k: SIDE_BOLT_X[k] + SIDE_SINK[k] for k in SIDE_BOLT_X}   # |X| of the battered outer face at each screw
 assert all(0 < d <= SP_CSK["head_clear"] for d in SIDE_SINK.values()), "a screw head must sit inside its driver bore (sink <= bore depth)"
 SIDE_BOLT_DES = dict(a="M3x10", b="M3x10", c="M3x8")
-BASE_BOLT_Z = 3.5                                        # base-panel screw head plane
+BASE_BOLT_Z = BASE_Z0                                    # base-panel screw head plane
 TOP_BOLT_XY = INS[1::-1] + INS[3:1:-1]                   # top-panel screws sit on the four corner columns, right-hand first
 PCT = 100                                                # percent
 AWG = dict(power=24, rx=26, motor=28, signal=30)
@@ -35,7 +35,9 @@ HUB_PIVOT_X = dict(rear=41.6, front=34.5)               # |X| of each hub's revo
 ELEC = dict(battery=(-11.81, -5.4, 12.0), rxesc=(8.67, -3.0, 15.3), wesc=(8.63, -7.25, 10.6), switch_yz=(-5.6, 14.25))   # catalog origins (STEP envelopes)
 FILLET_REAR_X = 26.77   # |X| where the squared N10 gearbox-plate seat meets its seat arc at the rear wall (measured on our section z=10; RV01 26.5)
 SWX_DEV_R = 1.5   # reference_cad deviation radius round each switch pilot (hole shifted 0.45 from the STEP)
-SW_SCREW_Y, SW_BOLT_Z, TOP_BOLT_Z = (1.9, -13.1), 16.0, 20.4  # switch screws (Y, head Z) and the top-panel screw head plane
+SW_PITCH, SW_BODY_H = 15.0, 3.5   # BBB ant switch ear-hole pitch and body height (catalog)
+SW_SCREW_Y = tuple(round(ELEC["switch_yz"][0] + sg * SW_PITCH / 2, 6) for sg in (1, -1))   # the two ear holes straddle the switch centre
+SW_BOLT_Z, TOP_BOLT_Z = ELEC["switch_yz"][1] + SW_BODY_H / 2, TOP_Z0 + TOP_T  # switch screws (Y, head Z) and the top-panel screw head plane
 PRESS = dict(hub=0.05, tyre=0.3, micro=0.2, nut=0.05, shaft=0.02, bearing=BRG_PRESS, pack=0.1)   # press-fit interference per joint, mm
 BELT_R, BELT_r = 7.95, 4.2   # O-ring centreline radii: rear / front hub groove floor (7.45, 3.7) + half the 1.0 cs
 BELT_X = dict(centre=31.25)                                              # |X| of the O-ring centreline (hub groove centre)
@@ -48,7 +50,8 @@ HUB_BORE_SPAN, TYRE_SPAN = (30.5, 40.5), (32.5, 42.0)   # |X| of the hub's blind
 TYRE_ID, TYRE_STRETCH, NUT_MOVE, WHEEL_MIN_GAP = 13.0, 1.0, 0.3, 1.0   # relaxed F1 tyre ID, its stretch over the crown, nut play, wheel-to-armour gap
 SEAT_PLAY, SEAT_TURN_DEG = 0.15, 2.0                      # motor boss play in the keyhole, shaft turn it allows
 WALL_MIN = 1.8                                            # printed wall floor: 4+ perimeters on a 2 mm wall
-WALL_EXCEPT = [[[-29.6, -37.7, 4.6], [29.6, -35.4, 17.5]], [[-33.0, -38.0, 0.0], [33.0, 44.0, 4.6]]]   # rear truss and base lip (STEP RV01)
+WALL_EXCEPT = [[[-29.6, -37.7, 4.6], [29.6, -35.4, 17.5]], [[-33.0, -38.0, 0.0], [33.0, 44.0, 4.6]], [[-33.0, 41.5, 4.6], [33.0, 44.0, 7.0]],
+               [[-33.0, -15.0, 4.6], [-31.0, NUT_RELIEF_END_Y + 2.0, 15.0]], [[31.0, -15.0, 4.6], [33.0, NUT_RELIEF_END_Y + 2.0, 15.0]]]   # rear truss, base lip and the +Y flange foot (1.7 mm over the lattice, same in the STEP RV01) and the lobe tail where the nut relief ends (STEP RV01)
 FILLET_H, ROTOR_CLEAR = 10.0, 2.0                         # inside-corner fillet probe height; lead-to-rotor clearance
 
 
@@ -112,10 +115,10 @@ TOL = dict(tight=0.3, std=0.5, motor=0.6, wedge=0.8, loose=1.0)             # mm
 VOL = dict(part=0.25, hub=0.15, motor=0.3, standoff=0.2, switch=0.5)          # fraction: volume mismatch allowed
 REF_IOU_MIN = 0.9                                                              # silhouette IoU floor on every axis
 COLUMN_TOP_Z, COLUMN_DEV_R, FOOT_DEV_Z, FOOT_DEV_R = CH_Z1 - CH_WALL, 3.0, 5.0, 4.0       # tub corner columns: top bore (centre of the 4 mm bore) and flared foot
-KEYHOLE_DEV = (28.6, -30.6, 4.5)   # N10 keyhole U-slot (x, y, z=r)
+KEYHOLE_DEV, KEYHOLE_DEV_R = (28.5, -30.5, 5.85), 4.0   # N10 keyhole U-slot: centre of its 2 x 4.1 x 6.7 cut, and the sphere that holds all of it
 LOBE_DEV, LOBE_DEV_R = (32.0, -13.5, 9.4), 3.5  # param: organic centroid of the lobe-tail trim vs STEP blobs
 # param: end
-CAGE_RIB_R, BASE_DEV_Z, PANEL_DEV_R, TOP_DEV_Z = 4.5, 4.5, 3.0, 19.95
+CAGE_RIB_R, BASE_DEV_Z, PANEL_DEV_R, TOP_DEV_Z = 4.5, 4.5, 3.5, 19.95
 NOSE_DEV, NOSE_DEV_R = (MNT_IN + 2.0, SB[0] + 0.6, SB[1] - 1.7), 5.0             # mount nose pad (|x|, y, z): thickened nose wall, deviation from the STEP nose
 STATOR_DEV_X, TAP_DEV_R = 16.8, 2.0                                              # stator lead-in cone site; tap-hole sites
 __all__ = [n for n in dir() if not n.startswith("__")]   # last line: every name above is exported
