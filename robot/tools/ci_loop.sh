@@ -77,7 +77,7 @@ gfail() { log "gate rejected ${1#origin/} $2: $3"; printf '{"t":"%s","sha":"%s",
   "$(date -Is)" "$2" "${1#origin/}" "${1#origin/}" "$2" "$3" >> "$P/blockers_live_$(echo "${1#origin/}" | sed -E 's/^fix-(.).*/\1/' | tr a-z A-Z).jsonl"; return 1; }
 gate() {
   [ "${GATE:-1}" = 1 ] || return 0
-  local b=$1 s; s=$(git rev-parse --short "$b"); local head; head=$(git rev-parse --short HEAD)
+  local b=$1 s; s=$(git rev-parse --short "$b"); local head; head=$(git rev-parse --short "HEAD^{tree}")   # baselines keyed by tree: a merged trial is already measured
   local files; files=$(git diff --name-only HEAD..."$b")
   gwt "$GWT/trial" HEAD || return 0
   git -C "$GWT/trial" merge -q --no-edit "$b" >/dev/null 2>&1 || { git -C "$GWT/trial" merge --abort; return 0; }  # conflicts: normal path logs them
@@ -93,6 +93,7 @@ gate() {
   if [ ! -s "$bf" ]; then gwt "$GWT/base" HEAD || return 0; echo "$(gcount "$GWT/base" assembly) $(gcount "$GWT/base" interference)" > "$bf"; log "gate baseline $head (measured $(git -C "$GWT/base" rev-parse --short HEAD)): $(cat "$bf")"; fi
   read a0 i0 < "$bf"
   a1=$(gcount "$GWT/trial" assembly); i1=$(gcount "$GWT/trial" interference)
+  echo "$a1 $i1" > "$P/ci_gate_baseline_$(git -C "$GWT/trial" rev-parse --short "HEAD^{tree}")"
   $GPY decide "$b" "$s" "$a0" "$a1" "$i0" "$i1" "$P" >/dev/null || return 1
   if [[ "$b" == *-param ]] || git log --format=%B HEAD.."$b" | grep -qE '^\[refactor\]'; then
     local ge=robots/revron/tools/geom_equal.py
