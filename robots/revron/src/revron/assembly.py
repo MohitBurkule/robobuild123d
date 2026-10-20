@@ -29,6 +29,8 @@ def build(part, origin=None):
     """Model-file entry point (robot.shapes `model`): one part in world coordinates, or relative to `origin` (the part's
     `at`, for rotating parts whose frame sits on their spin axis)."""
     s = _solid(PARTS[part]())
+    if part == "chassis":   # a failed panel boolean once left 413 mm3 in 7 solids and nothing passed noticed
+        assert len(s.solids()) == 1 and s.volume > CHASSIS_MIN_VOLUME, f"chassis collapsed: {s.volume:.0f} mm3 in {len(s.solids())} solids"
     if origin:
         s = s.moved(_b().Location(tuple(-float(v) for v in origin)))
     return s
