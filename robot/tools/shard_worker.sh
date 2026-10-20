@@ -3,8 +3,10 @@
 # Usage (from any checkout of this repo): robot/tools/shard_worker.sh
 # Env: SHARDS (default /mnt/project-files/robot-cad/b123d/progress/shards), IDLE (exit after this many s
 # with an empty queue, default 600), STOP (stop file, default $SHARDS/stop), GROUP_TIMEOUT (6000),
-# HB (heartbeat touch interval, 60), RUN (test hook: command run as `$RUN <worktree> <group>`).
-# Layout per sha: sha (full sha), queue/<g>, claimed/<host>.<g> (mtime = heartbeat), results/<g>.log|.rc.
+# HB (heartbeat interval, 60), RUN (test hook: command run as `$RUN <worktree> <group>`).
+# Layout per sha: sha (full sha), queue/<g>, claimed/<host>.<g> (content = "<worker epoch> <beat n>",
+# rewritten every HB s; readers judge staleness by content changes on their own clock, never by mtime,
+# because a network mount's mtimes come from the server's clock/attribute cache), results/<g>.log|.rc.
 # Claims are a rename (atomic on one filesystem, NFS included); results are written to a temp name and renamed.
 SHARDS=${SHARDS:-/mnt/project-files/robot-cad/b123d/progress/shards}
 IDLE=${IDLE:-600}; STOP=${STOP:-$SHARDS/stop}; HB=${HB:-60}
@@ -26,16 +28,21 @@ checkout() { # full sha -> $TMP/wt at that sha
 run_group() { # worktree group -> stdout/rc
   if [ -n "$RUN" ]; then $RUN "$1" "$2"; return; fi
   local h=; [ -x /tmp/heavy.sh ] && h="/tmp/heavy.sh"
-  (cd "$1" && HEAVY_CI=1 $h timeout "${GROUP_TIMEOUT:-6000}" python3 -m robot verify robots/revron/spec.json --full --only "$2" --jobs 1)
+  (cd "$1" && HEAVY_CI=1 $h timeout "${GROUP_TIMEOUT:-6000}" python3 -m robot verify "${SPEC:-robots/revron/spec.json}" --full --only "$2" --jobs 1)
 }
+
+beat() { echo "$(date +%s) $1" > "$C" 2>/dev/null; }  # heartbeat: content changes every HB s
 
 claim() { # -> sets D (shard dir), G (group), C (claim path); 0 if claimed
   local q
   for q in "$SHARDS"/*/queue/*; do
     [ -f "$q" ] || continue
     D=${q%/queue/*}; G=${q##*/}; C="$D/claimed/$HOST.$G"
+    [ -f "$D/results/$G.rc" ] && { rm -f "$q"; continue; }  # already done (late requeue): never run twice
     mkdir -p "$D/claimed" 2>/dev/null
-    mv "$q" "$C" 2>/dev/null && [ -f "$C" ] && { touch "$C"; return 0; }  # lost the race otherwise
+    mv "$q" "$C" 2>/dev/null && [ -f "$C" ] || continue  # lost the race
+    [ -f "$D/results/$G.rc" ] && { rm -f "$C"; continue; }
+    beat 0; return 0
   done; return 1
 }
 
@@ -47,7 +54,7 @@ while [ ! -f "$STOP" ]; do
   fi
   wlog "claimed $G in $D"
   sha=$(cat "$D/sha" 2>/dev/null)
-  ( while [ -f "$C" ]; do touch -c "$C" 2>/dev/null; sleep "$HB"; done ) & hb=$!
+  ( n=0; while [ -f "$C" ]; do sleep "$HB"; n=$((n+1)); [ -f "$C" ] && beat $n; done ) & hb=$!
   mkdir -p "$D/results"
   if [ -n "$sha" ] && checkout "$sha"; then run_group "$TMP/wt" "$G" > "$TMP/$G.log" 2>&1; rc=$?
   else echo "shard worker $HOST: checkout of '$sha' failed" > "$TMP/$G.log"; rc=97; fi
