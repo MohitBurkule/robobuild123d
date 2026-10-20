@@ -4,30 +4,34 @@ from shapely.geometry import Point, Polygon
 from .params import *  # noqa: F401,F403
 from .common import *  # noqa: F401,F403
 from .tub_util import both, rect, sym, cone, inner
-from .tub_shell_cols import STOP_X0, STOP_Y, EPS
+from .tub_shell_cols import STOP_X0, STOP_Y, CORNER_BLOCKS, EPS, OVER
 
 # ---- deck pockets (STEP RV01 at deck Z): an X of 2 mm ribs, two diagonals; 1 mm skin stays
 POCKET_Z = (-0.5, 1.0)                        # cutter Z span relative to the deck underside
-X_RIB, X_SLOPE, X_R = 22.25, 0.6404, 0.8      # half width of the X pockets (= the corner block face), diagonal slope, corner R
-X_UP = (-3.07, 12.4)                          # front pocket: apex Y on the axis, top edge Y
-X_LO = (-8.13, -23.4, -23.6)                  # rear pocket: apex Y, rear edge Y beside the blocks, rear edge Y between the stop walls
-X_NOTCH = 17.5                                # |X| where the rear pocket steps back between the motor stop walls
-SIDE_X, SIDE_DIAG = 22.5, dict(x=19.51, y_up=4.51, k_up=0.640, y_lo=-15.71, k_lo=0.6407)   # side pocket: right edge |X| (= the switch pad edge), diagonals through (x, y) with slope k
+X_RIB, X_SLOPE, X_R = CORNER_BLOCKS[0][0], 0.6404, 0.8      # half width of the X pockets (= the corner block face), diagonal slope, corner R
+X_UP = (-3.07, WALL_IN_FRONT - 0.6)                          # front pocket: apex Y on the axis, top edge Y
+X_LO = (-8.13, STOP_Y[1], STOP_Y[1] - 0.2)                  # rear pocket: apex Y, rear edge Y beside the blocks, rear edge Y between the stop walls
+X_NOTCH = STOP_X0                                # |X| where the rear pocket steps back between the motor stop walls
+SIDE_X, SIDE_DIAG = TOP_X - 0.5, dict(x=19.51, y_up=4.51, k_up=0.640, y_lo=-15.71, k_lo=0.6407)   # side pocket: right edge |X| (= the switch pad edge), diagonals through (x, y) with slope k
 SIDE_TRI = [(3.72, -5.59), (SIDE_X, SIDE_DIAG["y_up"] + SIDE_DIAG["k_up"] * (SIDE_X - SIDE_DIAG["x"])),
             (SIDE_X, SIDE_DIAG["y_lo"] - SIDE_DIAG["k_lo"] * (SIDE_X - SIDE_DIAG["x"]))]
 SIDE_R = 1.9                                  # apex R towards the centre
-REAR_P = dict(x0=3.75, w=10.37, pitch=12.38, y=(-34.5, -26.5), r=0.6)   # rear deck pockets: first inner X, width, pitch, Y span, corner R
-REAR_C = dict(half=2.75, y=(-30.0, -26.5), r=1.2)                       # centre rear pocket
+REAR_Y1 = -26.5                               # front edge of the rear pockets (shared)
+RIB, WEB = 1.0, 2.0                           # rib to the centre pocket / inner wall, web between the two side pockets
+REAR_C = dict(half=COL_R, y=(-30.0, REAR_Y1), r=1.2)                    # centre rear pocket: as wide as the rear boss
+_REAR_W = (WALL_IN_X - RIB - (REAR_C["half"] + RIB) - WEB) / 2          # width of each rear box: from the centre-pocket rib to the wall rib
+REAR_P = dict(x0=REAR_C["half"] + RIB, w=_REAR_W, pitch=_REAR_W + WEB, y=(WALL_IN_REAR + 1.1, REAR_Y1), r=0.6)   # rear deck pockets: first inner X, width, pitch, Y span (1.1 skin off the rear wall), corner R
 # ---- base-panel seat
 SEAT_Z = BASE_Z0 + BASE_T                     # top of the base panel skin = Z of the rabbet floor
 RABBET_GROW = 0.05                            # the rabbet is the panel outline grown by this
-PAD = dict(c=(22.5, -30.3), s=9.1, margin=0.3, z=(-0.1, 0.3))   # N10 preload pad: centre, side, recess margin (0.25 fillet), Z span about SEAT_Z
-SQUARE = dict(x0=25.5, depth=2.0, up=2.0, over=0.05)            # squared rear corner behind the gearbox plates: inner |X|, Y depth, Z over the floor
-ROUND_R, ROUND_Y, ROUND_Z = 4.5, (-25.5, -22.4), (4.4, 9.4)   # stop wall lower inner edge R4.5 (STEP): radius, cutter Y span (through the corner fillet too), Z span of the round
+PAD = dict(c=PRELOAD_PAD["c"], s=PRELOAD_PAD["s"], margin=0.3, z=(-0.1, 0.3))   # N10 preload pad: centre, side, recess margin (0.25 fillet), Z span about SEAT_Z
+SQUARE = dict(x0=25.5, depth=CH["wall"], up=SEAT_Z - CH["z0"], over=0.05)            # squared rear corner behind the gearbox plates: inner |X|, Y depth, Z over the floor
+ROUND_R, ROUND_Y, ROUND_Z = 4.5, (STOP_Y[0] - OVER, STOP_Y[1] + 1.0), (SEAT_Z - OVER, 9.4)   # stop wall lower inner edge R4.5 (STEP): radius, cutter Y span (through the corner fillet too), Z span of the round
 # ---- column bores and switch slot (NO-CHANGE: owned by the heat-set worker)
-HOLE_R, CH_R, CH_H = 1.5, 2.1, 0.6            # M2 heat-set hole R, chamfer outer R, chamfer height
-SW_SLOT = dict(x0=23.0, w=4.0, y0=-11.6, l=12.0, r=0.45, z0=16.0)   # slot beside the top panel: inner edge, width, front Y, length, corner R, floor Z
-SW_PILOT = dict(r=0.85, pitch=15.0, down=3.0)   # switch pilot R, Y pitch about the slot centre, depth under the deck
+HOLE_R, CH_H = 1.5, 0.6; CH_R = HOLE_R + CH_H            # M2 heat-set hole R, chamfer outer R, chamfer height
+_SW_L = 12.0                                  # switch slot length, centred on the switch catalog Y
+SW_SLOT = dict(x0=TOP_X, w=4.0, y0=ELEC["switch_yz"][0] - _SW_L / 2, l=_SW_L, r=0.45, z0=SW_BOLT_Z)   # slot beside the top panel: inner edge, width, front Y, length, corner R, floor Z
+SW_PILOT = dict(r=0.85, pitch=SW_SCREW_Y[0] - SW_SCREW_Y[1], down=3.0)   # switch pilot R, Y pitch about the slot centre, depth under the deck
 
 
 def _pocket(poly, c):

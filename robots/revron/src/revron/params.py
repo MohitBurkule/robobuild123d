@@ -475,4 +475,11 @@ FKS_CLIP = (42.0, -1, 80, 30)                     # x0, y0, x1, y1 of the sweep 
 
 TYRE_REAR = dict(od_id=(21.5, 14.0), x=(32.5, 42.0), shoulder=1.2)    # RV21 F1 tyre on the N10 shaft (right side; the left is mirrored)
 TYRE_FRONT = dict(od_id=(11.0, 7.0), x=(32.5, 38.5), shoulder=0.6)     # micro tyre on the nose standoff
+# --- tub_front/tub_shell relations ---
+WALL_IN_FRONT = CH["y1"] - CH["wall"]            # inner face of the front wall (Y)
+WALL_IN_REAR = CH["y0"] + CH["wall"]             # inner face of the rear wall (Y)
+WALL_IN_X = CH["x"] - CH["wall"]                 # inner face of the side wall (|X|)
+COL_R = 2.75                                      # insert column boss radius (corner blocks, rear boss and deck pockets are tangent to it)
+LUG_FACE_X = 21.5                                 # |X| of the lug's inner face the front corner flange blends into
+OVERLAP = 0.1                                     # solids reach this far into a neighbour so they fuse
 __all__ = [n for n in dir() if not n.startswith("__")]   # last line: every name above is exported

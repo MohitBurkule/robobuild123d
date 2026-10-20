@@ -5,16 +5,19 @@ from .common import *  # noqa: F401,F403
 import math
 from .tub_util import both, rect, cone, inner
 
-OVER = 0.1                       # solids reach this far into the deck / walls so they fuse
+OVER = OVERLAP                   # solids reach this far into the deck / walls so they fuse
 EPS = 0.001                      # cones start this far inside the column so they fuse
-COL_R, FOOT_R, FOOT_Z, FOOT_H = 2.75, 3.7, 5.2, 1.4   # column boss R; foot R (56 deg flare, prints deck-down), foot cylinder top Z, flare height
+FOOT_R, FOOT_Z, FOOT_H = 3.7, 5.2, 1.4   # (COL_R in params) foot R (56 deg flare, prints deck-down), foot cylinder top Z, flare height
 BOSS_FILLET_R = 1.0              # concave fillet where the rear-centre boss meets the rear wall (STEP RV01: boss half width 3.0 at 0.2 mm off the wall)
 NOSE_SEG = 48                    # buffer resolution of the corner-block rounds
 # measured corner blocks (STEP), per block: inner face X, nose-end Y, wall-end Y, fillet-end Y, nose R, wall-fillet R
-CORNER_BLOCKS = ((22.25, 7.65, 13.1, 13.0, 2.5, 0.8), (22.21, -18.85, -23.45, -23.4, 2.6, 0.9))
-STOP_X0, STOP_Y = 17.5, (-25.4, -23.4)       # motor stop wall: inner end |X|, Y span (the N10 gearbox bears on its rear face)
+# Each block's face and nose are tangent to the insert column boss of its corner (face X = column X - COL_R, nose Y = column Y -/+ COL_R);
+# the wall end overshoots the inner wall by OVER and the fillet ends on the inner wall / stop-wall face.
+STOP_X0, STOP_Y = 17.5, (-25.4, KEY_SPAN[1])   # motor stop wall: inner end |X| (independent: gearbox-rear bearing), Y span (the N10 gearbox bears on its rear face)
+CORNER_BLOCKS = ((INS[1][0] - COL_R, INS[1][1] - COL_R, WALL_IN_FRONT + OVER, WALL_IN_FRONT, 2.5, 0.8),
+                 (22.21, INS[3][1] + COL_R, STOP_Y[1] - 0.05, STOP_Y[1], 2.6, 0.9))   # rear block face 22.21: STEP measure, 0.04 off the column tangent
 KEY_DROP = 1.0                              # the key tab reaches this far below the plate top so it really keys between the N10 gearbox plates (STEP: flush, 0.1 would not stop the motor)
-KEY_Y0, KEY_Z0 = -26.15, N10_TOP - KEY_DROP   # key tab between the gearbox plates: front Y, bottom Z
+KEY_Y0, KEY_Z0 = KEY_SPAN[0], N10_TOP - KEY_DROP   # key tab between the gearbox plates: front Y, bottom Z
 LEDGE_X0, LEDGE_Y0 = 20.0, -27.3             # 0.4 ledge over the gearbox plates: inner |X|, front Y
 
 
