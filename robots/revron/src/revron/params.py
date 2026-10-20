@@ -177,7 +177,7 @@ WG_CHEEK = [(38.05, 15.36), (RAMP_REACH, 1.0), (26.55, 1.0), (26.59, 6.09), (26.
 WG_IN_SLOT = [(38.69, 10.9), (39.12, 11.26), (37.79, 15.15), (38.05, 15.36), (RAMP_REACH, 1.0), (43.75, 1.0), (43.73, 4.82), (43.37, 6.03),
               (42.91, 6.68), (41.0, 8.6), (40.03, 8.6), (39.52, 10.07)]
 WG_TAB = [(42.78, 6.82), (44.32, 6.1), (44.69, 7.44), (RAMP_REACH, 1.0), (43.75, 1.0), (43.71, 4.98), (43.37, 6.03)]
-ARC_N, WG_MERGE_EPS = 64, 0.01       # circle facets per quarter; overlap that merges the toe land with the wedgelet body
+ARC_N, ARC_MOUNT, ARC_KIDNEY, WG_MERGE_EPS = 64, 32, 24, 0.01       # circle facets per quarter; overlap that merges the toe land with the wedgelet body
 WG_TAB_FILM = 0.6                    # TPU film limit: slivers thinner than this are dropped from the nose tab
 WG_MOUNT_GAP = 0.1                   # nose tab clearance to the weapon mount boss
 WG_FORK_SLOT_X = (-27.0, -24.5)      # 2.5 mm fork slot through the cheek

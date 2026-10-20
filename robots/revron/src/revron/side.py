@@ -111,7 +111,7 @@ def wedgelet(s):
     # the nose tab bears on the weapon mount's nose: take the mount's boss outline (its side profile above the
     # notch-to-nose line) out of the tab in 2D and drop any sliver thinner than a TPU wall, so no film is left
     mprof = _mount_profile("l" if s < 0 else "r").intersection(_mount_clip())
-    tab = tab.difference(mprof.buffer(WG_MOUNT_GAP, ARC_N // 2)).buffer(-WG_TAB_FILM, join_style=2).buffer(WG_TAB_FILM, join_style=2)
+    tab = tab.difference(mprof.buffer(WG_MOUNT_GAP, ARC_MOUNT)).buffer(-WG_TAB_FILM, join_style=2).buffer(WG_TAB_FILM, join_style=2)
     bb = _b()
     xb, xr, xs, xc, xt, xe = WG_X
     origin, normal = WG_SKIN_RAKE
@@ -121,7 +121,7 @@ def wedgelet(s):
     bx0, bx1 = WG_BORE_X
     cuts = [_ext(cheek.difference(in_slot), "yz", *WG_FORK_SLOT_X),               # 2.5 mm fork slot through the cheek
             _cyl(WG_BORES["sa"], bx0, bx1, SA), _cyl(WG_BORES["sb"], bx0, bx1, SB), _cyl(WG_BORES["sb_head"], xr, bx1, SB),
-            _ext(LineString(line).buffer(half, ARC_N // 2), "yz", *kx)]
+            _ext(LineString(line).buffer(half, ARC_KIDNEY), "yz", *kx)]
     # TPU cannot print the ramp's knife toe: keep the full reach but stand the toe on a printable land,
     # the ramp face running parallel to the measured one from there
     body = _U(body, _I(_ext(P(WG_TOE), "yz", xb, xe), _ext(s1.union(cheek).union(tab).buffer(WG_MERGE_EPS), "yz", xb, xe)))
