@@ -63,7 +63,7 @@ BELL_CAP_R, BELL_WIN_W, BELL_WIN_R = 6.2, 4.2, (4.3, 8.9)   # flat of the chamfe
 BELL_BOSS_R, BELL_BOSS_L = 1.9, 2.1                           # spider-screw tapping bosses under the top (top 0.9 + boss 2.1 = 3.0 mm of thread)
 STATOR_BASE_X, STATOR_STACK_X0 = -8.4, -5.0              # top face of the base cross; the stack sits inside the bell on a post from it
 STATOR_STACK_H, STATOR_SLOTS = 7.0, 12                 # GR1507: 15 mm class stator, 7 mm stack
-STATOR_BORE_R, STATOR_YOKE_R, STATOR_TIP_R = 3.0, 4.4, 6.9   # bore (clears the r4 rotor core), yoke outer, tooth tip
+STATOR_BORE_R, STATOR_YOKE_R, STATOR_TIP_R = 2.9, 4.4, 6.9   # bore (clears the r4 rotor core), yoke outer, tooth tip
 SHAFT_STUB_R = 2.5                                     # rotor shaft down through the stator bore to the base
 LEAD_R, LEAD_X, LEAD_Z, LEAD_PITCH = 0.45, -10.7, (-3.9, -6.0), 1.0   # 3 phase leads leave the hub sideways (datasheet photo), run out along the -Z arm and end at its tip
 BELL_SCREW_R, BELL_SCREW_PHASE = 4.5, -54.889  # spider screw circle on the bell top and its phase about the axis (STEP; local frame)
