@@ -10,6 +10,7 @@ place as their host, so the mate leaves them at identity and the tests prove the
 """
 from .params import *  # noqa: F401,F403
 from .joints import Rig, tub_rig
+from .fastener_rig import screws
 
 SIDES = ((-1, "l"), (1, "r"))
 
@@ -58,6 +59,12 @@ def _weapon(r):
     r.joint("weapon_motor_can", "shaft_bore", (0, 0, 0), (0, 0, 180))   # shaft pressed through the bell
     r.joint("wshaft", "axis", (0, 0, 0))
     r.mate("weapon_motor_can", "shaft_bore", "wshaft", "axis")
+    r.joint("mount_l", "bearing_seat", (BRG["x"], WY, WZ), (0, 90, 0))   # MR85 centred in the RV02 seat, bore on the axis
+    r.joint("wbearing", "seat", (0, 0, 0))                               # MR85 drawn on its own axis (z)
+    r.mate("mount_l", "bearing_seat", "wbearing", "seat")
+    r.joint("mount_r", "spacer_seat", (BSP_X[1], WY, WZ))             # back spacer flat on RV03, stator base on its far face
+    r.joint("motor_spacer", "mount_face", (BSP_X[1], WY, WZ))
+    r.mate("mount_r", "spacer_seat", "motor_spacer", "mount_face")
     prev, face = "spider", DR_X["spider"][1]                 # disc stack: each layer flush on the previous one
     for nm, key in (("disc_a", "disc_a"), ("dspacer", "spacer"), ("disc_b", "disc_b")):
         r.joint(prev, "stack_face", (face, 0, 0))
@@ -92,7 +99,7 @@ def _drive(r):
         r.joint("base_panel", f"hole_{i}", (x, y, BASE_BOLT_Z))
     r.mate("tub", "screw_b0", "base_panel", "hole_0")
     for i, (x, y) in enumerate(TOP_XY):                              # Ti top panel: its holes on the column tops
-        r.joint("top_panel", f"hole_{i}", (x, y, TOP_BOLT_Z))
+        r.hole("top_panel", f"hole_{i}", (x, y, TOP_BOLT_Z), (0, 0, -1))
     r.mate("tub", "screw_t0", "top_panel", "hole_0")
 
 
@@ -103,6 +110,7 @@ def assembly_rig():
     _electronics(r)
     _weapon(r)
     _drive(r)
+    screws(r)
     r.solve()
     return r
 

@@ -26,6 +26,16 @@ class Rig:
         """Frame `label` on `part`, at `at` with orientation `rot` (degrees about X, Y, Z), in the part's own frame."""
         b.RigidJoint(label, self._host(part), b.Location(tuple(at), tuple(rot)))
 
+    def hole(self, part, label, at, direction):
+        """Screw hole `label` on `part`: frame on the head seat, z along the screw's insertion direction."""
+        b.RigidJoint(label, self._host(part), b.Location(b.Plane(tuple(at), z_dir=tuple(direction))))
+
+    def seat(self, fastener):
+        """Spec `at`/`dir` of a fastener mated into its hole: head point and insertion direction (the frame's z)."""
+        loc = self.parts[fastener].location
+        z = loc.wrapped.Transformation().HVectorialPart().Column(3)
+        return {"at": self.pose(fastener)[0], "dir": [round(v, DIGITS) + 0.0 for v in (z.X(), z.Y(), z.Z())]}
+
     def axis(self, part, label, at, direction=(1, 0, 0)):
         """Spin axis `label` on `part` (build123d RevoluteJoint): a bearing bore or a shaft the mating part turns on."""
         b.RevoluteJoint(label, self._host(part), b.Axis(tuple(at), tuple(direction)))
@@ -82,7 +92,7 @@ def tub_rig(r=None, solve=True):
         r.joint(f"bolt_b{i}", "head", (0, 0, 0))
         r.mate("tub", f"screw_b{i}", f"bolt_b{i}", "head")
     for i, (x, y) in enumerate(TOP_XY):              # top-panel screws: head plane on the panel top face
-        r.joint("tub", f"screw_t{i}", (x, y, TOP_BOLT_Z))
+        r.hole("tub", f"screw_t{i}", (x, y, TOP_BOLT_Z), (0, 0, -1))   # driven down through the panel
         r.joint(f"bolt_t{i}", "head", (0, 0, 0))
         r.mate("tub", f"screw_t{i}", f"bolt_t{i}", "head")
     for i, sg in enumerate((1, -1)):                 # switch screws: through the ear holes (SW_PITCH apart along its length) at the body top
@@ -114,3 +124,7 @@ def place(part, frame=None):
     """Spec `at`/`rot` of a mated part in its spec parent's frame."""
     at, rot = RIG.pose(part, frame)
     return {"at": at, "rot": rot}
+
+
+def seat(fastener):
+    return RIG.seat(fastener)
