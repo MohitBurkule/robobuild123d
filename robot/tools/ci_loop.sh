@@ -37,10 +37,13 @@ gwt() { # dir rev; rev resolved in THIS worktree (a bare "HEAD" inside -C dir wo
   [ -d "$1" ] || git worktree add -q --detach "$1" "$r"; git -C "$1" merge --abort 2>/dev/null; git -C "$1" reset -q --hard; git -C "$1" clean -fdq
   git -C "$1" checkout -q --detach "$r" && [ "$(git -C "$1" rev-parse HEAD)" = "$r" ] || { log "gate worktree $1 not at $r"; return 1; }; }
 # SHARD=1: hand groups to robot/tools/shard_worker.sh on any container sharing $P (plus PAR local workers).
-# A claim whose heartbeat (mtime) is older than STALE s is requeued, so local workers pick it up.
+# Workers rewrite their claim's content every HB s. A claim is requeued only when its content has not
+# changed across two polls spanning more than STALE s of this host's clock (mtime is never trusted: on a
+# network mount it comes from the server's clock/attribute cache and was judged stale ~2 min after claiming).
 # Sets done_n/failed/rc and appends results to $3 in group order, exactly like the serial path.
 shard_verify() { # sha "groups" out
-  local S="$P/shards/$1" g w pids= now m
+  local S="$P/shards/$1" g w pids= now m c k cur
+  local -A seen=() since=()
   rm -rf "$S"; mkdir -p "$S/queue" "$S/claimed" "$S/results"
   git rev-parse HEAD > "$S/sha"
   for g in $2; do echo "$1" > "$S/queue/$g"; done
@@ -53,11 +56,17 @@ shard_verify() { # sha "groups" out
     now=$(date +%s)
     for c in "$S"/claimed/*; do
       [ -f "$c" ] || continue
-      if [ $((now - $(stat -c %Y "$c" 2>/dev/null || echo "$now"))) -gt "${STALE:-900}" ]; then
-        g=${c##*.}; [ -f "$S/results/$g.rc" ] && { rm -f "$c"; continue; }
-        mv "$c" "$S/queue/$g" 2>/dev/null && log "shard $g: stale claim ${c##*/} requeued"
+      k=${c##*/}; g=${k##*.}; cur=$(cat "$c" 2>/dev/null)
+      [ -f "$S/results/$g.rc" ] && { rm -f "$c"; continue; }
+      if [ -z "${since[$k]+x}" ] || [ "${seen[$k]}" != "$cur" ]; then seen[$k]=$cur; since[$k]=$now; continue; fi
+      if [ $((now - ${since[$k]})) -gt "${STALE:-900}" ]; then
+        unset "seen[$k]" "since[$k]"
+        [ -f "$S/results/$g.rc" ] && { rm -f "$c"; continue; }
+        mv "$c" "$S/queue/$g" 2>/dev/null && log "shard $g: stale claim $k requeued"
+        [ -f "$S/results/$g.rc" ] && rm -f "$S/queue/$g"  # result landed during the move
       fi
     done
+    for g in $2; do [ -f "$S/results/$g.rc" ] && rm -f "$S/queue/$g"; done
     [ -f "${CI_STOP:-/tmp/ci_loop.stop}" ] && break
     sleep "${SHARD_POLL:-15}"
   done
