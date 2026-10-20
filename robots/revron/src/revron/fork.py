@@ -14,7 +14,7 @@ def _fork_outline(s):
     p = outline.difference(Point(SB[0], SB[1]).buffer(FK_SB_R, FK_RES)).difference(Point(*FK_EYE).buffer(FK_PIN_R, FK_RES_PIN))
     p = p.difference(_round(Polygon(FK_WIN), r_out=FK_WIN_R))   # lightening window
     # laser kerf / min web: the knife tip cannot be cut sharp; keep the full length but end it in a 0.45 mm land
-    p = p.union(_round(Polygon(FK_LAND), r_out=FK_LAND_R)).buffer(0)
+    p = p.union(_round(Polygon(FK_LAND), r_out=FK_LAND_R)).buffer(FK_LAND_R, FK_RES).buffer(-FK_LAND_R, FK_RES)   # closing: the land's junctions with the blade edges get r >= kerf
     if s < 0:   # the STEP hangs the left fork 1.1 deg nose-down about its standoff (pin-hole play in the cheek)
         from shapely import affinity
         p = affinity.rotate(p, FK_TILT, origin=SB)
