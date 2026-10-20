@@ -176,7 +176,6 @@ SP_TYRE_RELIEF = (-45.0, -43.4, -38.7, -24.8, 5.5, 14.5)   # rear tyre relief bo
 SP_NUT_RELIEF = [(-11.7, 3.8), (0.5, 4.7), (2.3, 5.7), (2.3, 8.3), (0.5, 9.3), (-3.5, 11.0), (-9.5, 13.0), (-11.7, 13.8)]   # STEP RV23 diamond (Y, Z)
 SP_NUT_RELIEF_X = (-32.5, -31.4)
 SP_NUT_RELIEF_R = 1.0                # relief corners round r1: no sharp concave corner in the printed wall
-SP_NUT_RELIEF_FILLET = 0.5          # floor edges of the relief round r0.5 (the depth is 1.1): no knife edge where the relief meets the wall
 SP_VENT = dict(y0=(-11.0, -4.5, 2.0), z0=5.0, dy=5.0, dz=6.0, r=1.0, x=(-50.0, -36.5))   # diagonal ESC vent slots
 SP_LOFT = dict(resample=400, path=240, ring=481, round=0.6, arc=16)   # section smoothing: pchip samples, path points, ring points, fillet
 WG_X = (-38.5, -36.5, -35.5, -29.0, -21.5, -17.5)   # slab edges along X: block | ring step | skin | cheek | nose tab
@@ -198,7 +197,6 @@ WG_BORE_X = (-39.0, -17.0)
 WG_KIDNEY = ([(36.05, 5.15), (36.95, 7.45)], 0.95, (-29.5, -21.0))   # fork-tail kidney slot (centre line (Y, Z), half width, X span)
 WG_TOE = [(48.6, 1.0), (RAMP_REACH, 1.0), (RAMP_REACH, 1.0 + WEDGE_TOE_H), (48.6, 1.0 + 1.5 * RAMP_SLOPE)]   # knife toe on a printable land (Y, Z)
 
-SIDE_WALL_DEBUG = []
 
 
 LAT_GROW = 0.35   # mm, measured from RV01 y=-36 sections (pocket area 38.1 vs 28.2)
@@ -433,7 +431,7 @@ __all__ = [n for n in dir() if not n.startswith('__')]
 
 
 # --- side.py: fork, hubs, side-panel width (fix-B lint) ---
-FK_X = {1: (24.5, 26.0), -1: (-26.5, -25.0)}      # fork X slab per side sign
+FK_X = {1: (24.5, 26.0), -1: (-26.5, -25.0)}      # fork X slab per side sign: asymmetric in the STEP (fork_5_1 24.5..26.0, fork_5_2 -26.5..-25.0), so not a mirror
 FK_EYE, FK_EYE_R, FK_PIN_R, FK_SB_R = (36.3, 6.3), 1.95, 0.8, 2.65   # eye on the nose standoff, pin hole, standoff hole
 FK_RES, FK_RES_PIN, FK_RES_BUF = 48, 24, 8        # circle / buffer segment counts
 FK_BLADE = [(35.0, 4.9), (36.1, 8.2), (41.0, 8.25), (66.68, 1.49), (51.75, 0.75), (39.0, 0.75), (38.0, 1.5)]   # param: organic fork blade outline (measured, STEP)

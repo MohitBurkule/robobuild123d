@@ -1,5 +1,5 @@
 """[fix-S] Side groups: the side panel (wedgelet, fork and hub groups live in their own modules)."""
-import json, math, os, sys
+import math, os, sys
 from .params import *  # noqa: F401,F403
 from .common import *  # noqa: F401,F403
 
@@ -39,13 +39,6 @@ def _side_seat(key, at, sgn=-1):
                      csk_clear=SP_CSK["csk_clear"], head_clear=SP_CSK["head_clear"])
 
 
-def _relief_floor_rounded():
-    """Nut-lobe relief tool with its floor-face edges rounded, so the cut leaves no knife edge where floor meets wall."""
-    t = _ext(_round(Polygon(SP_NUT_RELIEF), r_out=SP_NUT_RELIEF_R), "yz", *SP_NUT_RELIEF_X)
-    floor = [e for e in t.edges() if abs(e.center().X - min(SP_NUT_RELIEF_X)) < 1e-6 and e.length > 1e-3 and abs(e.start_point().X - e.end_point().X) < 1e-6]
-    return _b().fillet(floor, SP_NUT_RELIEF_FILLET)
-
-
 def side_panel(s):
     """RV23/24 TPU side panel: an S-wall that hugs the chassis side, swings out round the rear wheel and the front
     wheel; its outer face is battered (5 mm at the floor, 2 mm at the top) so side hits ride up; the nose block
@@ -66,7 +59,6 @@ def side_panel(s):
     profile = _ext(side, "yz", *SLAB_X)
     foot = _ext(_poly(SP_FOOT), "xy", *SP_FOOT_Z)
     wall = _I(wall, profile)
-    SIDE_WALL_DEBUG.append(wall)
     nose_plan = _round(Polygon(SP_NOSE), r_out=SP_NOSE_R)
     bt = SP_BATTER
     z_lo, z_hi = bt["z"]
@@ -90,7 +82,7 @@ def side_panel(s):
     cuts = [_side_seat(k, at)[0] for k, at in (("a", SA), ("b", SB), ("c", NUT))] + [
             _cyl(cr_, cx0, cx1, SA),
             _box(*SP_TYRE_RELIEF),                                                # rear tyre relief on the inner face
-            _relief_floor_rounded()]  # 1 mm relief round the chassis nut lobe
+            _ext(_round(Polygon(SP_NUT_RELIEF), r_out=SP_NUT_RELIEF_R), "yz", *SP_NUT_RELIEF_X)]                  # 1 mm relief round the chassis nut lobe
     v = SP_VENT
     for y0 in v["y0"]:     # diagonal vent slots (TPU wall flexes, keeps the ESC cool)
         sl = LineString([(y0, v["z0"]), (y0 + v["dy"], v["z0"] + v["dz"])]).buffer(v["r"], cap_style=1)
