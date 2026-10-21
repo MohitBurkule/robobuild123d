@@ -38,11 +38,13 @@ def _at(c, r, deg):
 
 
 # ------------------------------------------------------------------------------------------------- side profile
-def _tab():
+def _tab(square=False):
     """The chassis tab the notch drops over (side view, chassis Y, Z): rear Y0 to the front face Y1, floor Z0, height
-    h, its two front corners chamfered `cham` (STEP)."""
-    t = TAB
+    h, its two front corners chamfered `cham` (STEP mount notch); `square`: the STEP tub tab itself has none."""
+    t = dict(TAB, cham=0.0) if square else TAB
     zt = t["z0"] + t["h"]
+    if square:
+        return bd.Polygon((t["y0"], t["z0"]), (t["y1"], t["z0"]), (t["y1"], zt), (t["y0"], zt), align=None)
     return bd.Polygon((t["y0"], t["z0"]), (t["y1"] - t["cham"], t["z0"]), (t["y1"], t["z0"] + t["cham"]), (t["y1"], zt - t["cham"]),
                       (t["y1"] - t["cham"], zt), (t["y0"], zt), align=None)
 
@@ -79,7 +81,7 @@ def _outline(m):
     return f if f.normal_at().Z > 0 else -f              # counter-clockwise, so it fuses with the pad circle
 
 
-def mount_profile(side):
+def mount_profile(side, square_tab=False):
     """Side sketch of a mount (chassis Y, Z): the outline, a pad round the nose CSK (NOSE_PAD_R = CSK cone + a printed
     wall: the STEP nose arc left the cone a 0 mm knife edge), the notch-top wedge thickened to MNT_TIP_WALL within
     MNT_TIP_REACH (rearmost point kept), concave corners relieved MNT_RELIEF_R, then the notch: the tab cut out, its
@@ -92,7 +94,7 @@ def mount_profile(side):
         top = _v((m["notch_y"], MNT_TOP_Z))
         zone = (bd.Pos(*top) * bd.Circle(MNT_TIP_REACH)) & (bd.Pos(*top) * bd.Rectangle(MNT_TIP_REACH, MNT_TIP_REACH, align=bd.Align.MIN))
         p = p + (bd.offset(p, MNT_TIP_WALL / 2, kind=bd.Kind.ARC) & zone)
-    tab = _tab()
+    tab = _tab(square_tab)
     return pl.round_corners(p, r_in=MNT_RELIEF_R, keep=tab.vertices()) - tab
 
 
@@ -170,11 +172,11 @@ def lead_groove():
 
 
 # --------------------------------------------------------------------------------------------------------- the plate
-def _plate(side):
+def _plate(side, square_tab=False):
     """Mount body in the mount frame, outboard = +x: a slab (MNT_SLAB_T) carrying the
     full profile, and the boss over the rest of MNT_T on the boss zone, its outer face battered (split on _batter)."""
     m = MNT_SIDE[side]
-    prof = mount_profile(side)
+    prof = mount_profile(side, square_tab)
     slab = _prism(prof, 0.0, MNT_SLAB_T)
     boss = _prism(prof & _boss_zone(prof), MNT_SLAB_T, MNT_T + BOSS_OVER).split(_batter(m), keep=bd.Keep.BOTTOM)
     return _U(slab, boss)
@@ -229,11 +231,13 @@ def _stack_hole(fastener, x, y, z, sx, grip):
     return _hole_tool()((x, y, z), (sx, 0, 0), fastener, head="button", into="tapped", side="both", grip=grip, fit="close")[1]
 
 
-def weapon_mount(side):
+def weapon_mount(side, tub_cut=False):
     """RV02 (left, shaft end) / RV03 (right, stator): 8 mm printed XALT HD plates. A slab carries the full profile; the
     boss above the standoff line has its outer face battered (leans in) so side hits glance off. The rear notch drops
-    over the chassis tab: the tab, not the screws, takes fore/aft load. Built in the mount frame (RV02 mirrored)."""
-    body = _plate(side)
+    over the chassis tab: the tab, not the screws, takes fore/aft load. Built in the mount frame (RV02 mirrored).
+    `tub_cut`: the tub cutter, notch square like the STEP tub tab (the mount's chamfered notch corners would leave a
+    1.41 mm chamfer face in the tub)."""
+    body = _plate(side, tub_cut)
     cuts = [_mount_csk(1, y, z, f, world=False)[0] for (y, z), f in zip((SA, SB), MNT_SCREW)]   # M3 CSK into the standoffs
     if side == "r":
         cuts.append(_bore(SHAFT_R + SHAFT_CLR, -MNT_T, 2 * MNT_T))                              # shaft end clearance
