@@ -108,8 +108,9 @@ def _lug(c):
 
 
 def _underside(c):
-    return [_ext(p, "yz", *LUG_CUT_X) for p in (LUG_FLAT_RAMP, LUG_SCALLOP, LUG_UNDER)] + [
-        _box(*RABBET_X, *RABBET_Y, c["z0"] - FUSE, RABBET_TOP)]
+    # rabbet box first: its face is coplanar with the lug end face (X = LUG_X[0]), and cut after the lug underside cutters it leaves an
+    # invalid cylinder face (BRepCheck) on the lug underside at X 17.5..21.5
+    return [_box(*RABBET_X, *RABBET_Y, c["z0"] - FUSE, RABBET_TOP)] + [_ext(p, "yz", *LUG_CUT_X) for p in (LUG_FLAT_RAMP, LUG_SCALLOP, LUG_UNDER)]
 
 
 def _holes():
@@ -121,4 +122,5 @@ def additions(c):
 
 
 def cuts(c):
-    return [m for s in _underside(c) + _holes() for m in _both(s)]
+    # the nose-standoff underside cutter (index 3: LUG_UNDER) goes -X side first: +X first leaves an invalid cylinder face (BRepCheck)
+    return [m for k, s in enumerate(_underside(c) + _holes()) for m in (_both(s)[::-1] if k == 3 else _both(s))]
