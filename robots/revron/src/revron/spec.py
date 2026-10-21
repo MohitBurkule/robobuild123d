@@ -333,7 +333,7 @@ def reference_cad():
           deviations=[{"near": [MNT_TIP_DEV[0], MNT_TIP_DEV[1], MNT_TIP_DEV[2]], "r": MNT_TIP_DEV_R, "reason": "the STEP notch top is a zero-thickness wedge (mfg.thin_wall); thickened to a printable wall, rearmost point unchanged"}, {"near": [NOSE_DEV[0], NOSE_DEV[1], NOSE_DEV[2]], "r": NOSE_DEV_R,
                        "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside, so the countersink keeps a 0.9 mm wall"}] + [{"near": [STATOR_DEV_X, WY + dy, WZ + dz], "r": TAP_DEV_R,
                        "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"}
-                      for dy, dz in _polar(STATOR_PCD / 2, 4, 0.0)]),
+                      for dy, dz in stator_bolt_circle()]),
         R("motor_spacer", "Motor_back_spacer_1.stl", tol_mm=TOL["tight"]),
         R("spider", "spider_1.stl", tol_mm=TOL["std"], ref_to_world=dt,
           deviations=[dict(near=[sum(DR_X["spider"]) / 2, *_disc_local(*c)], r=TAP_DEV_R,
