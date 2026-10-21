@@ -103,6 +103,10 @@ REF_BOM = [   # RVRN 2.0 STEP part list (research/rvrn_step/INDEX.txt); one row 
          reason="the STEP holds the weapon ESC with kapton tape alone; a TPU tray with 0.1 mm lips keeps the board in if the tape fails (adds 1.1 g, reversible)"),
     dict(role="battery lead: JST RCY", kind="wire", match=["w_bat_sw"], count=1, connector="jst_rcy"),
     dict(role="weapon phases: 3 x 2 mm bullets", kind="wire", match=["w_wesc_m"], count=1, connector="bullet2"),
+    dict(role="MR85ZZ bearing in the RV02 seat (outboard shaft support)", kind="part", match=["wbearing"], count=1,
+         deviation="added: bought part left out of the STEP (INDEX.txt lists no bearing), but RV02 carries the 7.9 mm printed seat and the guide BOM lists an MR85ZZ"),
+    dict(role="GR1507 5 mm threaded shaft", kind="part", match=["wshaft"], count=1,
+         deviation="added: the shaft belongs to the bought GR1507, which the STEP draws as one body (INDEX.txt lists no shaft); drawn apart for the MR85 support and the spider collar, its mass stays in the motor"),
 ]
 
 REF_DIR = "/mnt/project-files/robot-cad/research/rvrn_step/parts"
