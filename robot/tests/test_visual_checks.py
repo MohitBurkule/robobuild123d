@@ -393,3 +393,46 @@ def test_render_count_mismatch_fails(tmp_path):
 def test_render_count_match_passes(tmp_path):
     out = wire_review.render_count(_count_ctx(tmp_path, ["w1", "w2"]))
     assert out and out[0].passed
+
+
+def test_twisted_triplet_radius_is_circumscribed_circle():
+    from types import SimpleNamespace as NS
+
+    w3 = NS(awg=24, kind="motor", count=3, _extra={})
+    od = 1.6   # silicone AWG24
+    assert wire_review.bundle_radius(w3) == pytest.approx(od * (0.5 + 1 / math.sqrt(3)) + wire_review.TWIST_MARGIN_MM)
+    assert wire_review.bundle_radius(NS(awg=24, kind="motor", count=1, _extra={})) == pytest.approx(0.8)
+
+
+def test_rotor_pivot_is_in_the_parent_frame():
+    from types import SimpleNamespace as NS
+
+    j = {"kind": "revolute", "axis": [1, 0, 0], "pivot": [-20.1, 0, 0]}
+    rotor = NS(id="spider", kind="weapon", rotates_with="weapon", parent="mount", joint=j, _extra={})
+    mount = NS(id="mount", kind="structure", rotates_with="fixed", parent=None, joint=None, _extra={})
+    spec = NS(parts=[rotor, mount], fasteners=[], part=lambda i: {"spider": rotor, "mount": mount}.get(i))
+    M = np.eye(4)
+    M[:3, 3] = (13.4, 38.5, 23.5)
+    world = NS(body=lambda i: NS(M=M) if i == "mount" else None)
+    (grp, piv, ax, ids), = wire_review.rotor_groups(spec, world)
+    assert piv.tolist() == pytest.approx([-6.7, 38.5, 23.5]) and ax.tolist() == [1, 0, 0]
+
+
+def _tube_cloud(enclose):
+    """Points of a 3 mm bore round the X axis (enclose) or of a plate under it only (one side)."""
+    th = np.linspace(0, 2 * math.pi, 48, endpoint=False) if enclose else np.linspace(math.pi * 1.25, math.pi * 1.75, 12)
+    xs = np.linspace(0, 20, 41)
+    return np.array([(x_, 1.5 * math.cos(t), 1.5 * math.sin(t)) for x_ in xs for t in th])
+
+
+def test_wire_through_a_hole_is_enclosed():
+    Q = wire_review._samples(np.array([[0.0, 0, 0], [20.0, 0, 0]]))
+    near = wire_review.enclosed(Q, np.zeros(len(Q), bool), _tube_cloud(True), 2.5)
+    assert near.all()
+
+
+def test_wire_lying_along_a_face_is_not_retained():
+    Q = wire_review._samples(np.array([[0.0, 0, 0], [20.0, 0, 0]]))
+    near = wire_review.enclosed(Q, np.zeros(len(Q), bool), _tube_cloud(False), 2.5)
+    assert not near.any()
+    assert max(wire_review.unsupported_runs(Q, np.zeros(len(Q), bool), near))[0] > wire_review.UNSUPPORTED_MAX_MM
