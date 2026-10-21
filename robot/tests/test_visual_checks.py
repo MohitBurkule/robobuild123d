@@ -315,3 +315,33 @@ def test_terminal_port_floating_off_the_can_fails():
 def test_terminal_on_the_part_passes():
     out = visual.terminal_findings(_term_ctx([0, 0, -4.95]), visual.DEFAULTS)
     assert out and out[0].passed
+
+
+# ------------------------------------------------------------------ ligament: face graze vs a real thin wall
+def _cbore_near_edge(depth):
+    """20 x 20 x 6 block (Z 0..6), d3 through bore at (0, 5.9), d7.6 counterbore `depth` deep from the top: its wall
+    to the y = 10 face is 0.3 mm."""
+    b = _box((20, 20, 6), (0, 0, 3))
+    h = trimesh.creation.cylinder(1.5, 10, sections=96)
+    h.apply_translation((0, 5.9, 3))
+    cb = trimesh.creation.cylinder(3.8, 2 * depth, sections=96)
+    cb.apply_translation((0, 5.9, 6))
+    return b.difference(h).difference(cb)
+
+
+def test_face_graze_is_a_note_not_a_blocker():
+    m = _cbore_near_edge(0.15)                    # only the last slice before the top face is thin
+    d = [x for x in visual.ligament_diffs(m, None) if x["at"][2] > 5.7]
+    assert d and all(x["kind"] == "graze" and x["matches"] for x in d), d
+
+
+def test_deep_thin_counterbore_wall_still_fails():
+    m = _cbore_near_edge(3.0)
+    d = visual.ligament_diffs(m, None)
+    assert any(x["kind"] == "thin" and not x["matches"] for x in d), d
+
+
+def test_reference_sampled_at_our_height():
+    m = _cbore_near_edge(3.0)
+    d = visual.ligament_diffs(m, m.copy())
+    assert d and all(x["matches"] for x in d), d
