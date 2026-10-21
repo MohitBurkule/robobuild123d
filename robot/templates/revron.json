@@ -402,36 +402,6 @@
    "reason": "the catalog N10 shaft is drawn round; the hub's D-flat sits on its flat"
   },
   {
-   "a": "bolt_b0",
-   "b": "base_panel",
-   "max_depth_mm": 0.3,
-   "reason": "STEP RV26 seat is 3.2 x 0.5, smaller than the ISO 10642 M2 head (4.4 x 1.2): the original head stands 0.2 proud of a seat that cannot take it, the printed PLA seat gives by that much"
-  },
-  {
-   "a": "bolt_b1",
-   "b": "base_panel",
-   "max_depth_mm": 0.3,
-   "reason": "STEP RV26 seat is 3.2 x 0.5, smaller than the ISO 10642 M2 head (4.4 x 1.2): the original head stands 0.2 proud of a seat that cannot take it, the printed PLA seat gives by that much"
-  },
-  {
-   "a": "bolt_b2",
-   "b": "base_panel",
-   "max_depth_mm": 0.3,
-   "reason": "STEP RV26 seat is 3.2 x 0.5, smaller than the ISO 10642 M2 head (4.4 x 1.2): the original head stands 0.2 proud of a seat that cannot take it, the printed PLA seat gives by that much"
-  },
-  {
-   "a": "bolt_b3",
-   "b": "base_panel",
-   "max_depth_mm": 0.3,
-   "reason": "STEP RV26 seat is 3.2 x 0.5, smaller than the ISO 10642 M2 head (4.4 x 1.2): the original head stands 0.2 proud of a seat that cannot take it, the printed PLA seat gives by that much"
-  },
-  {
-   "a": "bolt_b4",
-   "b": "base_panel",
-   "max_depth_mm": 0.3,
-   "reason": "STEP RV26 seat is 3.2 x 0.5, smaller than the ISO 10642 M2 head (4.4 x 1.2): the original head stands 0.2 proud of a seat that cannot take it, the printed PLA seat gives by that much"
-  },
-  {
    "a": "insert_b0",
    "b": "tub",
    "max_depth_mm": 0.2,
