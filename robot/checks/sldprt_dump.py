@@ -514,7 +514,25 @@ def snap(v, exact, rel=0.35, absol=0.3):
     return float(x) if abs(x - v) <= max(absol, rel * x) else v
 
 
-def features_in_frame(dump, faces, T, part_pts=None):
+def surf_samples(f, T, ref, n=9, eps=0.05):
+    """Points on a box-only face (surf / sphere / torus: a blended corner of a chamfer or fillet) in frame T: a grid over
+    the face's box mapped by T and snapped onto the reference mesh `ref` (same frame), kept when the snapped point is
+    still inside the box (the reference's surface there IS the face). None when nothing lands in the box."""
+    import trimesh
+
+    lo, hi = f["box"][:3] * 1e3, f["box"][3:6] * 1e3
+    g = np.stack(np.meshgrid(*[np.linspace(lo[i], hi[i], 5) for i in range(3)]), -1).reshape(-1, 3)
+    W = g @ T[:3, :3].T + T[:3, 3]
+    q, d, _ = trimesh.proximity.closest_point(ref, W)
+    back = (q - T[:3, 3]) @ np.linalg.inv(T[:3, :3]).T
+    keep = np.all((back >= lo - eps) & (back <= hi + eps), axis=1)
+    if not keep.any():
+        return None
+    Q = q[keep]
+    return Q[np.linspace(0, len(Q) - 1, min(n, len(Q))).astype(int)]
+
+
+def features_in_frame(dump, faces, T, part_pts=None, ref=None):
     """Fillet / chamfer face samples, hole rings and extrude cap samples of a dump mapped by 4x4 T (part mm -> frame).
     Fillet faces: the cyl / cone / plane faces listed under the Fillet / Chamfer feature, plus the same-radius cyl faces
     under a pattern / mirror of it (the copies)."""
@@ -541,6 +559,11 @@ def features_in_frame(dump, faces, T, part_pts=None):
             if fc["type"] == "cyl" and abs(fc["r"] * 1e3 - r) > 1e-3:
                 continue   # a cylinder of the fillet feature with another radius is not its blend face
             if fc["type"] not in ("cyl", "cone", "plane"):
+                if ref is None or fc["type"] not in ("surf", "sphere", "torus"):
+                    continue
+                sp = surf_samples(fc, T, ref)   # already in the frame
+                if sp is not None:
+                    out["fillets"].append((name, r, sp))
                 continue
         elif f["type"] in ("CirPattern", "LPattern", "MirrorPattern") and fc["type"] == "cyl":
             src = [p for p in f["parents"] if p in fr and abs(fc["r"] * 1e3 - fr[p]) <= 1e-3]
@@ -666,7 +689,7 @@ def run(ctx):
             from .reference_cad import ref_in_world
 
             ref = clean(ref_in_world(refm, e, cfg))
-            rows = compare(b.mesh, ref, features_in_frame(dump, faces, M, part_vertices(faces)))
+            rows = compare(b.mesh, ref, features_in_frame(dump, faces, M, part_vertices(faces), ref=ref))
         except Exception as ex:  # noqa: BLE001 - fail closed
             out.append(fail("dump.unusable", G, WARNING, "SolidWorks dump comparison crashed", f"`{pid}` vs `{name}`: {ex}").on(pid))
             ctx.not_checked.append(f"SolidWorks dump parity of `{pid}`")

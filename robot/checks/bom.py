@@ -87,8 +87,11 @@ WAIVER_KEY = re.compile(r"deviation|waive|exempt|allow_|_ok$|^ok_|ignore|skip")
 KNOWN_WAIVERS = {
     "deviation", "deviations", "sharp_corners_ok", "sharp_ok", "ref_ok", "exempt", "waive", "waivers",
     "cover_fasteners_deviation", "thin_wall_deviation", "param_exempt", "allow_overlap", "visual_ok",
-    "wire_avoid_ok", "rotor_ok", "render_ok", "offset_ok", "reference_deviation_ids",
+    "wire_avoid_ok", "rotor_ok", "render_ok", "offset_ok", "reference_deviation_ids", "practice_ok", "no_contact_ok",
+    "assembly_ok", "rub_gap_ok",
 }
+
+INTENT_WAIVERS = {"exempt", "gap_ok"}
 
 
 def _keys(o):
@@ -104,6 +107,9 @@ def waiver_schema(ctx):
         for o in objs:
             bad += [f"{where} `{o.id}`: `{k}`" for k in _keys(o) if WAIVER_KEY.search(k) and k not in KNOWN_WAIVERS]
     bad += [f"spec: `{k}`" for k in (sp.raw or {}) if WAIVER_KEY.search(k) and k not in KNOWN_WAIVERS]
+    for e in (sp.raw or {}).get("intent") or []:   # intent rules read only these (a `waive` text there is ignored)
+        if isinstance(e, dict):
+            bad += [f"intent `{e.get('rule')}` on `{e.get('part')}`: `{k}`" for k in e if WAIVER_KEY.search(k) and k not in INTENT_WAIVERS]
     if not bad:
         return [ok("spec.waiver_schema", G, "Waiver keys known", "Every waiver/deviation key is one a check reads.")]
     return [fail("spec.waiver_schema", G, BLOCKER, "Unknown waiver key",

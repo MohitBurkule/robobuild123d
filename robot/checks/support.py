@@ -21,7 +21,7 @@ LADDER = (MAX_PLAY_MM, 0.5, 1.0, 2.0, 5.0, 10.0)  # travel probes (mm); first bl
 SKIP_KINDS = {"structure", "belt"}  # the chassis is the frame parts are held against; belts are held by tension (`tension.*`)
 # Declared holds that resist pull-out in every direction. Tape/kapton/velcro, `pocket` and `interlock` are only as good as
 # the geometry around them (tape peels when the part hammers), so those are measured.
-HOLD_METHODS = {"screw", "screws", "shaft", "pin", "press_fit", "glue", "adhesive", "snap", "clamp", "strap", "fused"}
+HOLD_METHODS = {"screw", "screws", "shaft", "pin", "press_fit", "glue", "adhesive", "tape", "snap", "clamp", "strap", "fused"}
 
 
 def hold_groups(r):

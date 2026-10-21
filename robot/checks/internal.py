@@ -60,6 +60,33 @@ def solid_valid(ctx):
     return out
 
 
+WAIVE_GAP_MM = 2.0   # a no_contact waiver names the one part it is held by; that part must be this close
+
+
+def _contact_waiver(ctx, b, sol):
+    """None when part `b` declares no `no_contact_ok`, else (valid, message). The waiver claims ONE pair: `with` names
+    the part that holds it (glue, tape, a press the model cannot show); the reason must be >= 20 chars and cite the
+    reference (reference_cad.PATH_CITE), and the named part must exist and lie within WAIVE_GAP_MM."""
+    from .reference_cad import PATH_CITE
+
+    rp = next((x for x in ctx.r.parts if x.part.id == b.id), None)
+    w = ((getattr(rp.part, "_extra", None) or {}) if rp else {}).get("no_contact_ok")
+    if w is None:
+        return None
+    if not isinstance(w, dict):
+        return False, "`no_contact_ok` must be {with, reason}"
+    why, other = str(w.get("reason") or "").strip(), w.get("with")
+    if len(why) < 20 or not PATH_CITE.search(why):
+        return False, "reason must be >= 20 chars and cite the STEP / RVnn / datasheet"
+    o = next((x for x in sol if x.id == other), None)
+    if o is None:
+        return False, f"`with` part `{other}` is not a solid of this robot"
+    gap = float(measure.min_gap(b, o, WAIVE_GAP_MM + 1.0))
+    if gap > WAIVE_GAP_MM:
+        return False, f"`{other}` is {gap:.2f} mm away (more than {WAIVE_GAP_MM})"
+    return True, f"{gap:.2f} mm from `{other}`, waived: {why}"
+
+
 def no_contact(ctx):
     w = ctx.world
     skip = getattr(ctx, "invalid_solids", set())
@@ -79,12 +106,29 @@ def no_contact(ctx):
                 break
         if not near:
             floating.append(b)
+    waivers = {b.id: _contact_waiver(ctx, b, sol) for b in floating}
+    partner = {}
+    for b in floating:   # a valid waiver explains its one pair: both parts of it
+        w_ = waivers[b.id]
+        if w_ is not None and w_[0]:
+            other = ((next(x for x in ctx.r.parts if x.part.id == b.id).part._extra or {}).get("no_contact_ok") or {}).get("with")
+            partner.setdefault(other, b.id)
     for b in floating:
+        w_ = waivers[b.id]
+        if w_ is not None and w_[0]:
+            out.append(ok("internal.no_contact", G, "Gap waived", f"`{b.id}`: {w_[1]}").on(b.id))
+            continue
+        if w_ is None and b.id in partner:
+            continue   # the other half of a waived pair
+        if w_ is not None:
+            out.append(fail("internal.no_contact", G, BLOCKER, "Invalid no_contact waiver", f"`{b.id}`: {w_[1]}; it waives nothing.")
+                       .on(b.id).fix('`no_contact_ok: {"with": "<part>", "reason": "<>= 20 chars, cite the STEP / RVnn / datasheet>"}`, '
+                                     f"and the named part must be within {WAIVE_GAP_MM} mm."))
         out.append(fail("internal.no_contact", G, BLOCKER, "Part touches nothing",
                         f"`{b.id}` is more than {TOUCH_MM} mm from every other solid; in a section view it hangs in the air.")
                    .on(b.id).here(b.center)
                    .fix("Move it onto its mount, add the bracket, pocket or screw that holds it, or close the gap."))
-    if not floating:
+    if not [f for f in out if not f.passed]:
         out.append(ok("internal.no_contact", G, "Every part touches something",
                       f"{sum(1 for b in sol if not b.fastener)} parts each touch at least one other solid."))
     return out
