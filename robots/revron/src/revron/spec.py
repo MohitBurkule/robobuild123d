@@ -299,7 +299,9 @@ def _fork_dev(s):
 def _wedge_dev(s):
     slit = "the STEP draws the Ti fork tine inside the TPU nose (interpenetrating solids); the TPU has the 1.5 mm slit the tine slides into"
     toe = "the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
-    return ([dict(near=[s * SLIT_DEV_X, y, z], r=SLIT_DEV_R, reason=slit) for y, z in SLIT_DEV_YZ]
+    boss = "the STEP nose tab interpenetrates the weapon mount's boss; the tab is cut by the boss outline plus the WG_MOUNT_GAP clearance, and its arc round SB stands WG_MOUNT_GAP off the chassis lug radius"
+    return ([dict(near=[s * WG_TAB_DEV["x"], *WG_TAB_DEV["yz"]], r=WG_TAB_DEV["r"], reason=boss)]
+            + [dict(near=[s * SLIT_DEV_X, y, z], r=SLIT_DEV_R, reason=slit) for y, z in SLIT_DEV_YZ]
             + [dict(near=[s * x, TOE_DEV_YZ[0], TOE_DEV_YZ[1]], r=TOE_DEV_R, reason=toe) for x in TOE_DEV_X])
 
 

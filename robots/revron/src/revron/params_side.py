@@ -73,6 +73,7 @@ SP_PIN_HOLE = dict(d=2.05, at=(2.92, 12.07), x=(-36.0, -31.0))   # STEP RV23: d1
 SP_VENT = dict(y0=(-11.0, -4.5, 2.0), z0=5.0, dy=5.0, dz=6.0, r=1.0, x=(-50.0, -36.5))   # diagonal ESC vent slots
 # [fix-C wedgelet] measured polyline arcs rebuilt as true arcs (sampled finer than the 6 deg facet-seam threshold)
 WG_RING_CHAMFER, WG_RING_CHAMFER_Y = 1.0, 44.96    # Chamfer7: the ring step's far edge is chamfered 45 deg round the SB side (cone) and along the floor to this Y (plane)
+WG_TAB_DEV = dict(x=19.5, yz=(43.7, 5.8), r=2.5)   # reference-diff deviation sphere on the nose tab where the mount boss is taken out of it
 WG_STEP_MIN = 8.0                    # skin outline lines shorter than this carry no step blend
 WG_STEP_FILLET = 1.0                 # Fillet1: skin-to-ring-step blend
 WG_MOUNT_GAP = 0.1                   # clearance of the nose tab to the weapon mount boss and to the chassis lug round SB
