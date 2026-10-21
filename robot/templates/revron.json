@@ -384,12 +384,6 @@
    "reason": "shaft in the MR85 inner race (bearing modelled as one solid)"
   },
   {
-   "a": "wshaft",
-   "b": "weapon_motor_can",
-   "max_depth_mm": 2.6,
-   "reason": "wshaft is the GR1507's own shaft, already drawn inside the catalog motor envelope"
-  },
-  {
    "a": "motor_l",
    "b": "whub_rl",
    "max_depth_mm": 0.4,
@@ -400,36 +394,6 @@
    "b": "whub_rr",
    "max_depth_mm": 0.4,
    "reason": "the catalog N10 shaft is drawn round; the hub's D-flat sits on its flat"
-  },
-  {
-   "a": "bolt_b0",
-   "b": "base_panel",
-   "max_depth_mm": 0.3,
-   "reason": "STEP RV26 seat is 3.2 x 0.5, smaller than the ISO 10642 M2 head (4.4 x 1.2): the original head stands 0.2 proud of a seat that cannot take it, the printed PLA seat gives by that much"
-  },
-  {
-   "a": "bolt_b1",
-   "b": "base_panel",
-   "max_depth_mm": 0.3,
-   "reason": "STEP RV26 seat is 3.2 x 0.5, smaller than the ISO 10642 M2 head (4.4 x 1.2): the original head stands 0.2 proud of a seat that cannot take it, the printed PLA seat gives by that much"
-  },
-  {
-   "a": "bolt_b2",
-   "b": "base_panel",
-   "max_depth_mm": 0.3,
-   "reason": "STEP RV26 seat is 3.2 x 0.5, smaller than the ISO 10642 M2 head (4.4 x 1.2): the original head stands 0.2 proud of a seat that cannot take it, the printed PLA seat gives by that much"
-  },
-  {
-   "a": "bolt_b3",
-   "b": "base_panel",
-   "max_depth_mm": 0.3,
-   "reason": "STEP RV26 seat is 3.2 x 0.5, smaller than the ISO 10642 M2 head (4.4 x 1.2): the original head stands 0.2 proud of a seat that cannot take it, the printed PLA seat gives by that much"
-  },
-  {
-   "a": "bolt_b4",
-   "b": "base_panel",
-   "max_depth_mm": 0.3,
-   "reason": "STEP RV26 seat is 3.2 x 0.5, smaller than the ISO 10642 M2 head (4.4 x 1.2): the original head stands 0.2 proud of a seat that cannot take it, the printed PLA seat gives by that much"
   },
   {
    "a": "insert_b0",
@@ -745,7 +709,7 @@
        -30.5,
        5.85
       ],
-      "r": 4.0,
+      "r": 5.0,
       "reason": "N10 keyhole opened into a U-slot to the floor so the gearbox boss and shaft drop in from below with the base panel off (the STEP closes the keyhole, the shaft cannot be threaded through it)"
      },
      {
@@ -754,7 +718,7 @@
        -30.5,
        5.85
       ],
-      "r": 4.0,
+      "r": 5.0,
       "reason": "N10 keyhole opened into a U-slot to the floor so the gearbox boss and shaft drop in from below with the base panel off (the STEP closes the keyhole, the shaft cannot be threaded through it)"
      },
      {
@@ -1693,6 +1657,15 @@
    }
   ]
  },
+ "renders": {
+  "dir": "renders",
+  "views": [
+   "iso.png",
+   "top.png",
+   "back.png",
+   "exploded.png"
+  ]
+ },
  "parts": [
   {
    "id": "tub",
@@ -1761,9 +1734,24 @@
     "type": "model",
     "file": "../../robots/revron/src/build_revron.py",
     "params": {
-     "part": "mount_r"
+     "part": "mount_r",
+     "origin": [
+      13.4,
+      38.5,
+      23.5
+     ]
     }
    },
+   "at": [
+    13.4,
+    38.5,
+    23.5
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
    "material": "pla_st",
    "process": "fdm",
    "label": "RV03 XALT HD right weapon mount (8 mm): GR1507 stator on 4 M2 through the back spacer, notch on the chassis tab, 2 M3 CSK into the standoffs"
@@ -1780,9 +1768,24 @@
     "type": "model",
     "file": "../../robots/revron/src/build_revron.py",
     "params": {
-     "part": "mount_l"
+     "part": "mount_l",
+     "origin": [
+      -13.4,
+      38.5,
+      23.5
+     ]
     }
    },
+   "at": [
+    -26.8,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
    "material": "pla_st",
    "process": "fdm",
    "label": "RV02 XALT HD left weapon mount (8 mm): outboard MR85 bearing for the threaded shaft end, notch on the chassis tab, 2 M3 CSK into the standoffs"
@@ -1799,9 +1802,24 @@
     "type": "model",
     "file": "../../robots/revron/src/build_revron.py",
     "params": {
-     "part": "motor_back_spacer"
+     "part": "motor_back_spacer",
+     "origin": [
+      13.4,
+      38.5,
+      23.5
+     ]
     }
    },
+   "at": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
    "material": "pla_st",
    "process": "fdm",
    "label": "1.5 mm printed motor back spacer: stator base off the mount, clears the rear bearing boss and the phase leads"
@@ -1812,14 +1830,14 @@
    "catalog": "gr1507",
    "parent": "mount_r",
    "at": [
+    -13.4,
     0.0,
-    38.5,
-    23.5
+    0.0
    ],
    "rot": [
-    0,
-    0,
-    180
+    0.0,
+    0.0,
+    180.0
    ],
    "rotates_with": "fixed",
    "exposed": true,
@@ -1839,9 +1857,9 @@
     0.0
    ],
    "rot": [
-    0,
-    0,
-    180
+    0.0,
+    0.0,
+    180.0
    ],
    "rotates_with": "weapon",
    "exposed": true,
@@ -1868,13 +1886,13 @@
       "height": 2.5
      },
      "at": [
-      -14.75,
-      38.5,
-      23.5
+      0,
+      0,
+      0
      ],
      "rot": [
       0,
-      90,
+      0,
       0
      ]
     },
@@ -1887,18 +1905,28 @@
        "height": 4.0
       },
       "at": [
-       -14.75,
-       38.5,
-       23.5
+       0,
+       0,
+       0
       ],
       "rot": [
        0,
-       90,
+       0,
        0
       ]
      }
     ]
    },
+   "at": [
+    -1.35,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
    "label": "MR85ZZ in the RV02 8 mm seat: outboard support of the threaded shaft end (inferred: the STEP shows the 7.9 seat but no bearing)"
   },
   {
@@ -1917,9 +1945,9 @@
     0.0
    ],
    "rot": [
-    0,
-    0,
-    180
+    0.0,
+    0.0,
+    180.0
    ],
    "shape": {
     "type": "model",
@@ -1948,9 +1976,14 @@
    "rotates_with": "weapon",
    "parent": "mount_r",
    "at": [
+    -13.4,
     0.0,
-    38.5,
-    23.5
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
    ],
    "shape": {
     "type": "model",
@@ -1967,14 +2000,14 @@
    "joint": {
     "kind": "revolute",
     "axis": [
-     1,
-     0,
-     0
+     1.0,
+     0.0,
+     0.0
     ],
     "pivot": [
-     -6.7,
-     38.5,
-     23.5
+     -20.1,
+     0.0,
+     0.0
     ],
     "min": 0,
     "max": 360,
@@ -2020,6 +2053,16 @@
      ]
     }
    },
+   "at": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
    "color": "#d9dde2",
    "label": "Drisk_floating_3 (inner): 3 mm Hardox single-tooth disc, R16.5 rim 0.5 mm eccentric against the R23 tooth, 12 mm bore with 4 ramped dogs, 4 M2 on r14"
   },
@@ -2046,6 +2089,16 @@
      ]
     }
    },
+   "at": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
    "color": "#d9dde2",
    "label": "Drisk_floating_3 (outer): 3 mm Hardox single-tooth disc, R16.5 rim 0.5 mm eccentric against the R23 tooth, 12 mm bore with 4 ramped dogs, 4 M2 on r14"
   },
@@ -2068,6 +2121,16 @@
      ]
     }
    },
+   "at": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
    "color": "#2a2c30",
    "material": "pla_st",
    "process": "fdm",
@@ -2297,9 +2360,9 @@
     8.5
    ],
    "rot": [
-    0,
-    90,
-    0
+    0.0,
+    90.0,
+    0.0
    ],
    "rotates_with": "fixed"
   },
@@ -2336,9 +2399,9 @@
    "joint": {
     "kind": "revolute",
     "axis": [
-     1,
-     0,
-     0
+     1.0,
+     0.0,
+     0.0
     ],
     "pivot": [
      -41.6,
@@ -2390,9 +2453,9 @@
    "joint": {
     "kind": "revolute",
     "axis": [
-     1,
-     0,
-     0
+     1.0,
+     0.0,
+     0.0
     ],
     "pivot": [
      -34.5,
@@ -2651,9 +2714,9 @@
     8.5
    ],
    "rot": [
-    0,
-    90,
-    0
+    0.0,
+    90.0,
+    0.0
    ],
    "rotates_with": "fixed"
   },
@@ -2690,9 +2753,9 @@
    "joint": {
     "kind": "revolute",
     "axis": [
-     1,
-     0,
-     0
+     1.0,
+     0.0,
+     0.0
     ],
     "pivot": [
      41.6,
@@ -2744,9 +2807,9 @@
    "joint": {
     "kind": "revolute",
     "axis": [
-     1,
-     0,
-     0
+     1.0,
+     0.0,
+     0.0
     ],
     "pivot": [
      34.5,
@@ -2791,9 +2854,9 @@
     12.0
    ],
    "rot": [
-    0,
-    0,
-    90
+    0.0,
+    0.0,
+    90.0
    ],
    "retained": "press_fit"
   },
@@ -2807,11 +2870,12 @@
     15.3
    ],
    "rot": [
-    0,
-    0,
-    90
+    0.0,
+    0.0,
+    90.0
    ],
-   "retained": "kapton"
+   "retained": "strap",
+   "deviation": "RV01/RV13: the Malenki is taped (kapton) to the deck in the STEP; with the cage ribs gone a 6 mm TPU strap (RV01 esc_tray strap slot, glued to the chassis walls over the board) holds it instead, so it cannot slide inverted (adds ~0.3 g, reversible)"
   },
   {
    "id": "wesc",
@@ -2823,9 +2887,9 @@
     10.6
    ],
    "rot": [
-    0,
-    0,
-    90
+    0.0,
+    0.0,
+    90.0
    ],
    "retained": "kapton"
   },
@@ -3158,9 +3222,9 @@
     3.5
    ],
    "dir": [
-    0,
-    0,
-    1
+    0.0,
+    0.0,
+    1.0
    ],
    "through": [
     "base_panel",
@@ -3179,8 +3243,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 3.2,
-    "csk_depth": 0.4,
+    "csk_d": 3.9,
+    "csk_depth": 0.75,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -3197,9 +3261,9 @@
     3.5
    ],
    "dir": [
-    0,
-    0,
-    1
+    0.0,
+    0.0,
+    1.0
    ],
    "through": [
     "base_panel",
@@ -3218,8 +3282,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 3.2,
-    "csk_depth": 0.4,
+    "csk_d": 3.9,
+    "csk_depth": 0.75,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -3236,9 +3300,9 @@
     3.5
    ],
    "dir": [
-    0,
-    0,
-    1
+    0.0,
+    0.0,
+    1.0
    ],
    "through": [
     "base_panel",
@@ -3257,8 +3321,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 3.2,
-    "csk_depth": 0.4,
+    "csk_d": 3.9,
+    "csk_depth": 0.75,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -3275,9 +3339,9 @@
     3.5
    ],
    "dir": [
-    0,
-    0,
-    1
+    0.0,
+    0.0,
+    1.0
    ],
    "through": [
     "base_panel",
@@ -3296,8 +3360,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 3.2,
-    "csk_depth": 0.4,
+    "csk_d": 3.9,
+    "csk_depth": 0.75,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -3314,9 +3378,9 @@
     3.5
    ],
    "dir": [
-    0,
-    0,
-    1
+    0.0,
+    0.0,
+    1.0
    ],
    "through": [
     "base_panel",
@@ -3335,8 +3399,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 3.2,
-    "csk_depth": 0.4,
+    "csk_d": 3.9,
+    "csk_depth": 0.75,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -3354,9 +3418,9 @@
     5.5
    ],
    "dir": [
-    -1,
-    0,
-    0
+    -1.0,
+    0.0,
+    0.0
    ],
    "through": [
     "mount_l"
@@ -3394,9 +3458,9 @@
     4.5
    ],
    "dir": [
-    -1,
-    0,
-    0
+    -1.0,
+    0.0,
+    0.0
    ],
    "through": [
     "mount_l",
@@ -3552,9 +3616,9 @@
     5.5
    ],
    "dir": [
-    1,
-    0,
-    0
+    1.0,
+    0.0,
+    0.0
    ],
    "through": [
     "mount_r"
@@ -3592,9 +3656,9 @@
     4.5
    ],
    "dir": [
-    1,
-    0,
-    0
+    1.0,
+    0.0,
+    0.0
    ],
    "through": [
     "mount_r",
@@ -3750,6 +3814,11 @@
     44.5,
     23.5
    ],
+   "dir": [
+    -1.0,
+    0.0,
+    0.0
+   ],
    "hole": {
     "d": 2.0,
     "length": 8.0,
@@ -3764,11 +3833,6 @@
     "cbore_depth": 1.7637,
     "grip": 5.5137
    },
-   "dir": [
-    -1,
-    0,
-    0
-   ],
    "through": [
     "mount_r",
     "motor_spacer"
@@ -3788,6 +3852,11 @@
     32.5,
     23.5
    ],
+   "dir": [
+    -1.0,
+    0.0,
+    0.0
+   ],
    "hole": {
     "d": 2.0,
     "length": 8.0,
@@ -3802,11 +3871,6 @@
     "cbore_depth": 2.2185,
     "grip": 5.9685
    },
-   "dir": [
-    -1,
-    0,
-    0
-   ],
    "through": [
     "mount_r",
     "motor_spacer"
@@ -3826,6 +3890,11 @@
     38.5,
     29.5
    ],
+   "dir": [
+    -1.0,
+    0.0,
+    0.0
+   ],
    "hole": {
     "d": 2.0,
     "length": 8.0,
@@ -3840,11 +3909,6 @@
     "cbore_depth": 1.1271,
     "grip": 4.8771
    },
-   "dir": [
-    -1,
-    0,
-    0
-   ],
    "through": [
     "mount_r",
     "motor_spacer"
@@ -3864,6 +3928,11 @@
     38.5,
     17.5
    ],
+   "dir": [
+    -1.0,
+    0.0,
+    0.0
+   ],
    "hole": {
     "d": 2.0,
     "length": 8.0,
@@ -3878,11 +3947,6 @@
     "cbore_depth": 2.8551,
     "grip": 6.6051
    },
-   "dir": [
-    -1,
-    0,
-    0
-   ],
    "through": [
     "mount_r",
     "motor_spacer"
@@ -3893,19 +3957,19 @@
   },
   {
    "id": "bolt_p0",
-   "designation": "M2x4",
+   "designation": "M2x6",
    "head": "button",
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
     -8.2,
-    35.91176958288198,
-    19.818823108311
+    35.91177,
+    19.818823
    ],
    "dir": [
-    1,
-    0,
-    0
+    1.0,
+    0.0,
+    0.0
    ],
    "through": [
     "spider"
@@ -3913,7 +3977,7 @@
    "threads_into": "weapon_motor_can",
    "hole": {
     "d": 2.0,
-    "length": 4.0,
+    "length": 6.0,
     "head": "button",
     "head_std": "ISO 7380-1",
     "head_dk": 3.5,
@@ -3925,7 +3989,7 @@
     "cbore_depth": 0.0,
     "grip": 3.0,
     "tap_d": 1.6,
-    "thread_depth": 1.5
+    "thread_depth": 3.5
    },
    "access_before": [
     "mount_l",
@@ -3941,14 +4005,14 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    6.800000000000001,
-    30.44772759118839,
-    12.047449670300885
+    6.8,
+    30.447728,
+    12.04745
    ],
    "dir": [
-    -1,
-    0,
-    0
+    -1.0,
+    0.0,
+    0.0
    ],
    "through": [
     "disc_b",
@@ -3982,19 +4046,19 @@
   },
   {
    "id": "bolt_p1",
-   "designation": "M2x4",
+   "designation": "M2x6",
    "head": "button",
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
     -8.2,
-    34.818823108311,
-    26.088230417118016
+    34.818823,
+    26.08823
    ],
    "dir": [
-    1,
-    0,
-    0
+    1.0,
+    0.0,
+    0.0
    ],
    "through": [
     "spider"
@@ -4002,7 +4066,7 @@
    "threads_into": "weapon_motor_can",
    "hole": {
     "d": 2.0,
-    "length": 4.0,
+    "length": 6.0,
     "head": "button",
     "head_std": "ISO 7380-1",
     "head_dk": 3.5,
@@ -4014,7 +4078,7 @@
     "cbore_depth": 0.0,
     "grip": 3.0,
     "tap_d": 1.6,
-    "thread_depth": 1.5
+    "thread_depth": 3.5
    },
    "access_before": [
     "mount_l",
@@ -4030,14 +4094,14 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    6.800000000000001,
-    27.047449670300885,
-    31.55227240881161
+    6.8,
+    27.04745,
+    31.552272
    ],
    "dir": [
-    -1,
-    0,
-    0
+    -1.0,
+    0.0,
+    0.0
    ],
    "through": [
     "disc_b",
@@ -4071,19 +4135,19 @@
   },
   {
    "id": "bolt_p2",
-   "designation": "M2x4",
+   "designation": "M2x6",
    "head": "button",
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
     -8.2,
-    41.08823041711802,
-    27.181176891689002
+    41.08823,
+    27.181177
    ],
    "dir": [
-    1,
-    0,
-    0
+    1.0,
+    0.0,
+    0.0
    ],
    "through": [
     "spider"
@@ -4091,7 +4155,7 @@
    "threads_into": "weapon_motor_can",
    "hole": {
     "d": 2.0,
-    "length": 4.0,
+    "length": 6.0,
     "head": "button",
     "head_std": "ISO 7380-1",
     "head_dk": 3.5,
@@ -4103,7 +4167,7 @@
     "cbore_depth": 0.0,
     "grip": 3.0,
     "tap_d": 1.6,
-    "thread_depth": 1.5
+    "thread_depth": 3.5
    },
    "access_before": [
     "mount_l",
@@ -4119,14 +4183,14 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    6.800000000000001,
-    46.552272408811604,
-    34.952550329699115
+    6.8,
+    46.552272,
+    34.95255
    ],
    "dir": [
-    -1,
-    0,
-    0
+    -1.0,
+    0.0,
+    0.0
    ],
    "through": [
     "disc_b",
@@ -4160,19 +4224,19 @@
   },
   {
    "id": "bolt_p3",
-   "designation": "M2x4",
+   "designation": "M2x6",
    "head": "button",
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
     -8.2,
-    42.181176891689,
-    20.911769582881984
+    42.181177,
+    20.91177
    ],
    "dir": [
-    1,
-    0,
-    0
+    1.0,
+    0.0,
+    0.0
    ],
    "through": [
     "spider"
@@ -4180,7 +4244,7 @@
    "threads_into": "weapon_motor_can",
    "hole": {
     "d": 2.0,
-    "length": 4.0,
+    "length": 6.0,
     "head": "button",
     "head_std": "ISO 7380-1",
     "head_dk": 3.5,
@@ -4192,7 +4256,7 @@
     "cbore_depth": 0.0,
     "grip": 3.0,
     "tap_d": 1.6,
-    "thread_depth": 1.5
+    "thread_depth": 3.5
    },
    "access_before": [
     "mount_l",
@@ -4208,14 +4272,14 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    6.800000000000001,
-    49.952550329699115,
-    15.447727591188393
+    6.8,
+    49.95255,
+    15.447728
    ],
    "dir": [
-    -1,
-    0,
-    0
+    -1.0,
+    0.0,
+    0.0
    ],
    "through": [
     "disc_b",
@@ -4258,9 +4322,9 @@
     20.4
    ],
    "dir": [
-    0,
-    0,
-    -1
+    0.0,
+    0.0,
+    -1.0
    ],
    "through": [
     "top_panel",
@@ -4295,9 +4359,9 @@
     20.4
    ],
    "dir": [
-    0,
-    0,
-    -1
+    0.0,
+    0.0,
+    -1.0
    ],
    "through": [
     "top_panel",
@@ -4332,9 +4396,9 @@
     20.4
    ],
    "dir": [
-    0,
-    0,
-    -1
+    0.0,
+    0.0,
+    -1.0
    ],
    "through": [
     "top_panel",
@@ -4369,9 +4433,9 @@
     20.4
    ],
    "dir": [
-    0,
-    0,
-    -1
+    0.0,
+    0.0,
+    -1.0
    ],
    "through": [
     "top_panel",
@@ -4406,9 +4470,9 @@
     16.0
    ],
    "dir": [
-    0,
-    0,
-    1
+    0.0,
+    0.0,
+    1.0
    ],
    "through": [
     "power_switch",
@@ -4449,9 +4513,9 @@
     16.0
    ],
    "dir": [
-    0,
-    0,
-    1
+    0.0,
+    0.0,
+    1.0
    ],
    "through": [
     "power_switch",
@@ -4868,13 +4932,13 @@
    "a": "rxesc",
    "b": "tub",
    "method": "interlock",
-   "reason": "Malenki boxed by the deck cage ribs (0.1 mm), the front wall and the deck; the weapon ESC under it"
+   "reason": "Malenki held by a TPU strap, boxed by the front wall and the deck; the weapon ESC under it"
   },
   {
    "a": "wesc",
    "b": "esc_tray",
    "method": "interlock",
-   "reason": "weapon ESC in the TPU tray lips (0.1 mm); the cage rib holds -y, the Malenki +z"
+   "reason": "weapon ESC in the TPU tray lips (0.1 mm); lips on all four sides, the Malenki +z"
   },
   {
    "a": "esc_tray",

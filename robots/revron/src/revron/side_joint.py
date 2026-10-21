@@ -38,12 +38,12 @@ def sp_frames(s):
     return loc if s == sb else {k: (_mx(p), _mx(z)) for k, (p, z) in loc.items()}
 
 
-def side_panel_local(s):
+def side_panel_local(s, pin=True):
     """RV23/24 panel solid in its own frame, carrying its joints."""
     from OCP.BRepBuilderAPI import BRepBuilderAPI_Transform
     b = _b()
     to_frame = b.Location(tuple(-v for v in _datum())).wrapped.Transformation()
-    body = b.Solid(BRepBuilderAPI_Transform(_solid(_side_body()).wrapped, to_frame, True).Shape())   # geometry re-based, not just located
+    body = b.Solid(BRepBuilderAPI_Transform(_solid(_side_body(pin)).wrapped, to_frame, True).Shape())   # geometry re-based, not just located
     if s != SP_BUILT_SIDE:
         body = _solid(_mirror_x(body))
     for k, (p, z) in sp_frames(s).items():
@@ -51,10 +51,10 @@ def side_panel_local(s):
     return body
 
 
-def side_panel(s):
+def side_panel(s, pin=True):
     """The panel placed on its 25 mm standoff: standoff `end` joint -> panel `sa` joint."""
     so = standoff(_so_a_span(s), SA)
-    panel = side_panel_local(s)
+    panel = side_panel_local(s, pin)
     so.joints["end"].connect_to(panel.joints["sa"])
     return panel
 

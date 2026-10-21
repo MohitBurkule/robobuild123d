@@ -69,7 +69,7 @@ def _side_seat(key, at, sgn=-1):
     return tool, rec
 
 
-def _side_body():
+def _side_body(pin=True):
     """The left (RV23) panel's solid, drawn in the frame its SP_* tables were measured in (the STEP assembly frame);
     side_joint.side_panel_local re-bases it on its own datum and mirrors it for RV24. RV23/24 TPU side panel: an S-wall that hugs the chassis side, swings out round the rear wheel and the front
     wheel; its outer face is battered (5 mm at the floor, 2 mm at the top) so side hits ride up; the nose block
@@ -124,7 +124,8 @@ def _side_body():
             _box(*SP_TYRE_RELIEF),                                                # rear tyre relief on the inner face
             _ext(_round(Polygon(SP_NUT_RELIEF), r_out=SP_NUT_RELIEF_R), "yz", *SP_NUT_RELIEF_X)]                  # 1 mm relief round the chassis nut lobe
     ph = SP_PIN_HOLE
-    cuts.append(_cyl(ph["d"] / 2, *ph["x"], ph["at"]))
+    if pin:   # the chassis cutter has no pin hole: it would leave a loose pin of chassis material
+        cuts.append(_cyl(ph["d"] / 2, *ph["x"], ph["at"]))
     v = SP_VENT
     for y0 in v["y0"]:     # diagonal vent slots (TPU wall flexes, keeps the ESC cool)
         sl = LineString([(y0, v["z0"]), (y0 + v["dy"], v["z0"] + v["dz"])]).buffer(v["r"], cap_style=1)
