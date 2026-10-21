@@ -13,8 +13,7 @@
 - wire.render_count: each render record lists exactly the spec's wires (count and ids).
 - wire.rotor_clearance (opt-out): every routed wire keeps >= 2 mm from the revolved volume of every revolute group (the
   whole weapon rotor and each wheel+hub, not only rotating fasteners); `rotor_ok: reason` on a wire exempts it.
-- wire.exterior_support (opt-out): a wire outside the chassis hull must run along a hole wall / channel / clip (a body
-  within 1.5 mm); a free span over 8 mm is a BLOCKER unless the wire declares `exposed_reason`.
+- wire.exterior_support (opt-out): a wire outside the chassis hull must run along a hole wall / channel / clip (material within 1.5 mm on BOTH sides of the run; lying along one face is not retention); a free span over 8 mm is a BLOCKER unless the wire declares `exposed_reason`.
 """
 
 from __future__ import annotations
@@ -45,10 +44,13 @@ def wire_path(world, r, w):
 def bundle_radius(w):
     awg = float(w.awg) if w.awg is not None else default_awg(w.kind)
     n = int(x(w, "count", 1) or 1)
-    od = wire_od(awg)
-    if n <= 3:   # leads run twisted together: circumscribed circle of 1 / 2 / 3 touching round leads
-        return 0.5 * od * (1.0, 2.0, 1.0 + 2.0 / math.sqrt(3.0))[n - 1]
+    od = wire_od(awg)   # silicone hookup OD (wiring._OD: AWG24 1.6 mm, e.g. 200-strand 0.08 mm silicone wire datasheets 1.5-1.6)
+    if n <= 3:   # leads twisted together: circumscribed circle of 1 / 2 / 3 touching round leads (3: d(1/2 + 1/sqrt 3) = 1.077 d)
+        return od * (0.5, 1.0, 0.5 + 1.0 / math.sqrt(3.0))[n - 1] + (TWIST_MARGIN_MM if n > 1 else 0.0)
     return 0.5 * n * (od + 0.3)
+
+
+TWIST_MARGIN_MM = 0.1   # a hand twist is not tight: allowance on the touching-circle radius
 
 
 def swept_bands(bodies, origin, axis, n=600):
@@ -283,7 +285,7 @@ def rotor_groups(spec, world=None):
         ids += [f.id for f in spec.fasteners if fastener_rotates(spec, f, grp)]
         a, piv = np.asarray(j["axis"], float), np.asarray(j["pivot"], float)
         pb = world.body(p.parent) if world is not None and p.parent else None
-        if pb is not None:   # a joint's pivot and axis are in its parent's frame
+        if pb is not None:   # a joint's pivot and axis are in its parent's frame (as kinematics.spin_axis reads them)
             a, piv = pb.M[:3, :3] @ a, pb.M[:3, :3] @ piv + pb.M[:3, 3]
         out.append((grp, piv, a / np.linalg.norm(a), ids))
     return out
@@ -357,6 +359,38 @@ def chassis_hull(ctx):
     return None if best is None else best[1].mesh.convex_hull
 
 
+def enclosed(Q, inside, cloud, reach):
+    """Per sample: True when material within `reach` of the wire axis surrounds it on BOTH sides in the plane normal to
+    the run (a hole, channel or clip holds it). Material on one side only - a wire lying along a mount face - is not."""
+    from scipy.spatial import cKDTree
+
+    out = np.zeros(len(Q), bool)
+    if not len(cloud):
+        return out
+    tr = cKDTree(cloud)
+    T = np.gradient(Q, axis=0)
+    T /= np.maximum(np.linalg.norm(T, axis=1), 1e-9)[:, None]
+    for i in np.nonzero(~inside)[0]:
+        idx = tr.query_ball_point(Q[i], reach)
+        if len(idx) < 2:
+            continue
+        v = cloud[idx] - Q[i]
+        v -= np.outer(v @ T[i], T[i])
+        n = np.linalg.norm(v, axis=1)
+        v = v[n > 1e-6] / n[n > 1e-6, None]
+        if len(v) < 6:
+            continue
+        # opposite the side the material mostly is on, there must be material too (a face seen from beside the wire
+        # spans up to ~120 deg on its own side, so a pairwise spread test would call a wire lying on a face enclosed)
+        m = v.mean(0)
+        if np.linalg.norm(m) < 0.2:          # material all round: a hole
+            out[i] = True
+            continue
+        m /= np.linalg.norm(m)
+        out[i] = int(np.count_nonzero(v @ m < -0.5)) >= 3
+    return out
+
+
 def unsupported_runs(Q, inside, near, step=0.5):
     """Longest runs (mm) of consecutive samples outside the chassis with no supporting body near: [(length, i0, i1)]."""
     out, i0 = [], None
@@ -372,7 +406,7 @@ def unsupported_runs(Q, inside, near, step=0.5):
 
 def exterior_support(ctx):
     """wire.exterior_support (opt-out): a wire outside the chassis hull must lie along a body (hole wall, channel, clip)
-    within SUPPORT_MM; a free span over UNSUPPORTED_MAX_MM hangs loose. Exempt with `exposed_reason` on the wire."""
+    within SUPPORT_MM on both sides (enclosed); a span over UNSUPPORTED_MAX_MM that is not enclosed hangs loose. Exempt with `exposed_reason` on the wire."""
     from scipy.spatial import cKDTree
 
     r, w = ctx.r, ctx.world
@@ -380,6 +414,7 @@ def exterior_support(ctx):
     if hull is None or not r.spec.wires:
         return []
     out, n = [], 0
+    spinning = {i for *_, ids in rotor_groups(r.spec, w) for i in ids}   # a spinning part holds nothing
     for wr in r.spec.wires:
         pts, _ = _route_points(ctx, wr)
         if pts is None or str(x(wr, "exposed_reason", "") or "").strip():
@@ -390,23 +425,21 @@ def exterior_support(ctx):
             continue
         n += 1
         out_pts = Q[~inside]
-        near = np.zeros(len(Q), bool)
         rad = bundle_radius(wr)
+        cloud = []
         for b in w.bodies:
-            if b.is_wire or b.mesh is None or not len(b.mesh.faces):
+            if b.is_wire or b.mesh is None or not len(b.mesh.faces) or b.id in spinning:
                 continue
             lo, hi = b.aabb
-            k = np.all((Q >= np.asarray(lo) - SUPPORT_MM - rad) & (Q <= np.asarray(hi) + SUPPORT_MM + rad), axis=1) & ~inside
-            if not k.any():
+            if np.any(np.asarray(lo) > Q.max(0) + SUPPORT_MM + rad) or np.any(np.asarray(hi) < Q.min(0) - SUPPORT_MM - rad):
                 continue
-            pts_b = np.vstack([b.mesh.vertices, b.mesh.sample(3000)])
-            d, _ = cKDTree(pts_b).query(Q[k])
-            near[np.nonzero(k)[0]] |= d - rad <= SUPPORT_MM
+            cloud.append(np.vstack([b.mesh.vertices, b.mesh.sample(6000)]))
+        near = enclosed(Q, inside, np.vstack(cloud) if cloud else np.zeros((0, 3)), rad + SUPPORT_MM)
         runs = [x_ for x_ in unsupported_runs(Q, inside, near) if x_[0] > UNSUPPORTED_MAX_MM]
         if runs:
             L, i0, i1 = max(runs)
             out.append(fail("wire.exterior_support", G, BLOCKER, "Wire hangs loose outside the chassis",
-                            f"wire `{wr.id}` runs {L:.1f} mm outside the chassis with nothing within {SUPPORT_MM:g} mm to hold it "
+                            f"wire `{wr.id}` runs {L:.1f} mm outside the chassis without a hole, channel or clip round it (material within {SUPPORT_MM:g} mm on both sides) "
                             f"(from {np.round(Q[i0], 1).tolist()} to {np.round(Q[i1], 1).tolist()}).")
                        .on(wr.id).here(Q[(i0 + i1) // 2])
                        .fix("Run it through a hole or channel, or clip it; declare `exposed_reason` if it must be free."))
