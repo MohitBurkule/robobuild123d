@@ -10,6 +10,11 @@
 - wire.render_wires (opt-out): every robot-level PNG (not part_* / section_*, sidecar shows >= half the parts) in
   `renders.dir` (default renders/) and `review_renders` dirs must have a sidecar listing every declared wire. A robot
   render made without routes (render_present only needed ONE render with wires) is a BLOCKER; `render_ok` exempts a file.
+- wire.render_count: each render record lists exactly the spec's wires (count and ids).
+- wire.rotor_clearance (opt-out): every routed wire keeps >= 2 mm from the revolved volume of every revolute group (the
+  whole weapon rotor and each wheel+hub, not only rotating fasteners); `rotor_ok: reason` on a wire exempts it.
+- wire.exterior_support (opt-out): a wire outside the chassis hull must run along a hole wall / channel / clip (a body
+  within 1.5 mm); a free span over 8 mm is a BLOCKER unless the wire declares `exposed_reason`.
 """
 
 from __future__ import annotations
@@ -251,5 +256,184 @@ def render_wires(ctx):
     return []
 
 
+# ------------------------------------------------------------------------------------------------ rotor clearance
+ROTOR_MIN_MM = 2.0      # wire.rotor_clearance: route to the revolved envelope of every revolute group
+SUPPORT_MM = 1.5        # wire.exterior_support: a wire point outside the chassis is held when a body is this close
+UNSUPPORTED_MAX_MM = 8.0  # longest run outside the chassis with nothing (hole wall, channel, clip) within SUPPORT_MM
+
+
+def rotor_groups(spec):
+    """[(group, pivot, unit axis, [part ids])] for every revolute joint: the weapon and each wheel. The group is the
+    jointed part's `rotates_with` (else its id); members are every part that rotates with it."""
+    out = []
+    for p in spec.parts:
+        j = getattr(p, "joint", None) or (getattr(p, "_extra", None) or {}).get("joint")
+        if not j:
+            continue
+        j = j if isinstance(j, dict) else getattr(j, "__dict__", {})
+        if j.get("kind") != "revolute" or j.get("axis") is None or j.get("pivot") is None:
+            continue
+        grp = p.rotates_with if p.rotates_with not in (None, "fixed") else p.id
+        if any(g == grp for g, *_ in out):
+            continue
+        ids = [q.id for q in spec.parts if q.id == p.id or rotating(spec, q.id, grp)]
+        ids += [f.id for f in spec.fasteners if fastener_rotates(spec, f, grp)]
+        a = np.asarray(j["axis"], float)
+        out.append((grp, np.asarray(j["pivot"], float), a / np.linalg.norm(a), ids))
+    return out
+
+
+def rotor_gaps(Q, rad, origin, axis, bands):
+    """Clearance of a wire (sample points Q, bundle radius rad) to the swept bands: (gap, index of the worst point)."""
+    d = band_dist(Q, origin, axis, bands) - rad
+    k = int(np.argmin(d))
+    return float(d[k]), k
+
+
+def _route_points(ctx, wr):
+    rt = next((x for x in (getattr(ctx, "routes", None) or []) if x.id == wr.id), None)
+    if rt is not None and len(rt.points) >= 2:
+        return np.asarray(rt.points, float), True
+    path = wire_path(ctx.world, ctx.r, wr)
+    return path, False
+
+
+def rotor_clearance(ctx):
+    """wire.rotor_clearance (opt-out): every wire keeps ROTOR_MIN_MM from the revolved volume of every revolute group
+    (the whole rotor, not only its fasteners). Exempt a wire with `rotor_ok: "reason"`."""
+    r, w = ctx.r, ctx.world
+    spec = r.spec
+    if not spec.wires:
+        return []
+    groups = []
+    for grp, piv, ax, ids in rotor_groups(spec):
+        bodies = [b for b in (w.body(i) for i in ids) if b is not None and b.mesh is not None and len(b.mesh.faces)]
+        if bodies:
+            groups.append((grp, piv, ax, ids, swept_bands(bodies, piv, ax)))
+    out, worst, routed = [], None, 0
+    for wr in spec.wires:
+        pts, real = _route_points(ctx, wr)
+        if pts is None:
+            continue
+        routed += real
+        Q = _samples(pts)
+        rad = bundle_radius(wr)
+        for grp, piv, ax, ids, bands in groups:
+            gap, k = rotor_gaps(Q, rad, piv, ax, bands)
+            worst = gap if worst is None else min(worst, gap)
+            if gap < ROTOR_MIN_MM and not str(x(wr, "rotor_ok", "") or "").strip():
+                out.append(fail("wire.rotor_clearance", G, BLOCKER, "Wire runs too close to a spinning part",
+                                f"wire `{wr.id}` passes {gap:.1f} mm from the volume swept by the `{grp}` rotor "
+                                f"({', '.join(ids[:4])}{'...' if len(ids) > 4 else ''}) at {np.round(Q[k], 1).tolist()}.")
+                           .on(wr.id, *ids[:2]).here(Q[k]).expect(f">= {ROTOR_MIN_MM:g} mm", f"{gap:.1f} mm")
+                           .fix("Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`."))
+    if not routed and spec.wires:
+        ctx.not_checked.append("wire.rotor_clearance: routes not computed in this run (wiring group); used port + via polylines")
+    if not out and groups:
+        out.append(ok("wire.rotor_clearance", G, "Wires clear every rotor",
+                      f"{len(spec.wires)} wires keep >= {ROTOR_MIN_MM:g} mm from {len(groups)} rotor(s) (closest {worst:.1f} mm)."))
+    ctx.metrics["wire_rotor_clearance_mm"] = worst
+    return out + exterior_support(ctx)
+
+
+def chassis_hull(ctx):
+    """Convex hull of the chassis (the largest-volume `structure` part), the wires' 'inside'."""
+    best = None
+    for p in ctx.r.spec.parts:
+        if p.kind != "structure":
+            continue
+        b = ctx.world.body(p.id)
+        if b is None or b.mesh is None or not len(b.mesh.faces):
+            continue
+        v = abs(float(b.mesh.volume))
+        if best is None or v > best[0]:
+            best = (v, b)
+    return None if best is None else best[1].mesh.convex_hull
+
+
+def unsupported_runs(Q, inside, near, step=0.5):
+    """Longest runs (mm) of consecutive samples outside the chassis with no supporting body near: [(length, i0, i1)]."""
+    out, i0 = [], None
+    bad = (~inside) & (~near)
+    for i, b in enumerate(list(bad) + [False]):
+        if b and i0 is None:
+            i0 = i
+        elif not b and i0 is not None:
+            out.append(((i - i0) * step, i0, i - 1))
+            i0 = None
+    return out
+
+
+def exterior_support(ctx):
+    """wire.exterior_support (opt-out): a wire outside the chassis hull must lie along a body (hole wall, channel, clip)
+    within SUPPORT_MM; a free span over UNSUPPORTED_MAX_MM hangs loose. Exempt with `exposed_reason` on the wire."""
+    from scipy.spatial import cKDTree
+
+    r, w = ctx.r, ctx.world
+    hull = chassis_hull(ctx)
+    if hull is None or not r.spec.wires:
+        return []
+    out, n = [], 0
+    for wr in r.spec.wires:
+        pts, _ = _route_points(ctx, wr)
+        if pts is None or str(x(wr, "exposed_reason", "") or "").strip():
+            continue
+        Q = _samples(pts)
+        inside = hull.contains(Q)
+        if inside.all():
+            continue
+        n += 1
+        out_pts = Q[~inside]
+        near = np.zeros(len(Q), bool)
+        rad = bundle_radius(wr)
+        for b in w.bodies:
+            if b.is_wire or b.mesh is None or not len(b.mesh.faces):
+                continue
+            lo, hi = b.aabb
+            k = np.all((Q >= np.asarray(lo) - SUPPORT_MM - rad) & (Q <= np.asarray(hi) + SUPPORT_MM + rad), axis=1) & ~inside
+            if not k.any():
+                continue
+            pts_b = np.vstack([b.mesh.vertices, b.mesh.sample(3000)])
+            d, _ = cKDTree(pts_b).query(Q[k])
+            near[np.nonzero(k)[0]] |= d - rad <= SUPPORT_MM
+        runs = [x_ for x_ in unsupported_runs(Q, inside, near) if x_[0] > UNSUPPORTED_MAX_MM]
+        if runs:
+            L, i0, i1 = max(runs)
+            out.append(fail("wire.exterior_support", G, BLOCKER, "Wire hangs loose outside the chassis",
+                            f"wire `{wr.id}` runs {L:.1f} mm outside the chassis with nothing within {SUPPORT_MM:g} mm to hold it "
+                            f"(from {np.round(Q[i0], 1).tolist()} to {np.round(Q[i1], 1).tolist()}).")
+                       .on(wr.id).here(Q[(i0 + i1) // 2])
+                       .fix("Run it through a hole or channel, or clip it; declare `exposed_reason` if it must be free."))
+    if n and not out:
+        out.append(ok("wire.exterior_support", G, "Wires outside the chassis are held", f"{n} wire(s) leave the chassis; every run is along a hole, channel or clip."))
+    return out
+
+
+def render_count(ctx):
+    """wire.render_count: every robot render record lists exactly the spec's wires (no stale or missing routes)."""
+    spec = ctx.r.spec
+    ids = {w.id for w in spec.wires or []}
+    bad, n = [], 0
+    for d in render_dirs(spec):
+        for png in sorted(d.glob("*.png")):
+            side = png.with_suffix(png.suffix + ".json")
+            if png.name.startswith(PART_VIEW) or not side.is_file():
+                continue
+            try:
+                drawn = set((json.loads(side.read_text()).get("wires") or {}).keys())
+            except Exception:  # noqa: BLE001
+                continue
+            if not drawn:
+                continue
+            n += 1
+            if drawn != ids:
+                bad.append(f"{png.name}: {len(drawn)} routes vs {len(ids)} spec wires"
+                           + (f" (extra {sorted(drawn - ids)[:3]})" if drawn - ids else "") + (f" (missing {sorted(ids - drawn)[:3]})" if ids - drawn else ""))
+    if bad:
+        return [fail("wire.render_count", G, BLOCKER, "Render shows a different set of wires than the spec", "; ".join(bad[:6]))
+                .fix("Re-render: the render record must list exactly the spec's wires.")]
+    return [ok("wire.render_count", G, "Render wire count matches", f"{n} render record(s) list all {len(ids)} spec wires.")] if n else []
+
+
 def run(ctx):
-    return rotating_clearance(ctx) + render_present(ctx) + render_wires(ctx)
+    return rotating_clearance(ctx) + render_present(ctx) + render_wires(ctx) + rotor_clearance(ctx) + render_count(ctx)
