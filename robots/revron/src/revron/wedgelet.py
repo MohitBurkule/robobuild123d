@@ -47,5 +47,12 @@ def wedgelet(s):
     sh = _S(sh, _fork_slot(s), weapon_mount("l" if s < 0 else "r"))
     # the chassis is only valid to cut on its +X half (the -X cut of the same shape comes back non-manifold), so always
     # take it out in the +X frame and mirror back: both hands then get the same, symmetric cut
-    cut_r = _one((sh if s > 0 else _mirror_x(sh)).cut(_one(chassis())))   # no clean(): merging faces after the grazing chassis cut leaves the nose tab non-manifold
+    # only the nose tab (|X| beyond the chassis wall WG_X[4]) meets the chassis; the cheek just touches the wall plane. Cutting
+    # the tab alone keeps the wall's lug outline from imprinting a zero-width spur on the cheek's end face
+    shp = sh if s > 0 else _mirror_x(sh)
+    wall, big = -WG_X[4], 200.0
+    tab_part = _I(shp, _box(wall - big, wall, -big, big, -big, big))
+    rest = _I(shp, _box(wall, wall + big, -big, big, -big, big))
+    tab_cut = _one(tab_part.cut(_one(chassis())))   # no clean(): merging faces after the grazing chassis cut leaves the nose tab non-manifold
+    cut_r = _one(rest.fuse(tab_cut))
     return cut_r if s > 0 else _mirror_x(cut_r)

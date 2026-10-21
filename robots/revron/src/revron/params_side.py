@@ -66,6 +66,7 @@ SP_NUT_RELIEF_R = 1.0                # relief corners round r1: no sharp concave
 SP_PIN_HOLE = dict(d=2.05, at=(2.92, 12.07), x=(-36.0, -31.0))   # STEP RV23: d1.25 cross hole along X through the wall at the nut lobe top (Y, Z; X span)
 SP_VENT = dict(y0=(-11.0, -4.5, 2.0), z0=5.0, dy=5.0, dz=6.0, r=1.0, x=(-50.0, -36.5))   # diagonal ESC vent slots
 # [fix-C wedgelet] measured polyline arcs rebuilt as true arcs (sampled finer than the 6 deg facet-seam threshold)
+WG_MOUNT_GAP = 0.1                   # clearance of the nose tab to the weapon mount boss and to the chassis lug round SB
 WG_ARC_STEP = 3   # deg per sampled chord of a wedgelet profile arc
 
 
@@ -90,8 +91,8 @@ def _wg_flank():
     return _wg_arc(c1, r1, 180, lean)[:-1] + _wg_arc(c2, r2, lean - 180, end)
 
 
-WG_FLANK = dict(c=(30.55, 5.5), r=4.0, lean=106, r2=10.0, end=-50)   # (centre (Y, Z) of the R4, R, centre-line angle, R of the second arc, its end angle)
-WG_NOSE_ARC = dict(c=(40.48, 4.49), r=3.27)                          # nose arc round (Y, Z), vertical tangent at its foot: the tab and the slot share it
+WG_FLANK = dict(c=SA, r=3.9519, lean=105.84, r2=10.0, end=-50)   # (centre (Y, Z) of the R4, R, centre-line angle, R of the second arc, its end angle)
+WG_NOSE_ARC = dict(c=SB, r=LUG_SB_R + WG_MOUNT_GAP)                          # nose arc round (Y, Z), vertical tangent at its foot: the tab and the slot share it
 _NA = WG_NOSE_ARC
 WG_X = (-38.5, -36.5, -35.5, -29.0, -21.5, -17.5)   # slab edges along X: block | ring step | skin | cheek | nose tab
 WG_S1 = (3.5, [(40.5, 1.0), (RAMP_REACH, 1.0), (42.54, 10.0), (39.55, 10.0), (40.23, 8.0)])   # block round SB: (R, tail outline (Y, Z))
@@ -112,7 +113,6 @@ WG_TAIL_ENTRY = ([(35.08, 5.3), (37.36, 12.78), (37.36, 13.2), (38.14, 13.2), (3
 # param: end
 ARC_N, ARC_MOUNT, ARC_KIDNEY, WG_MERGE_EPS = 64, 32, 24, 0.01       # circle facets per quarter; overlap that merges the toe land with the wedgelet body
 WG_TAB_FILM = 0.6                    # TPU film limit: slivers thinner than this are dropped from the nose tab
-WG_MOUNT_GAP = 0.1                   # nose tab clearance to the weapon mount boss
 WG_FORK_SLOT_X = (-27.0, -24.5)      # 2.5 mm fork slot through the cheek
 WG_BORES = dict(sa=2.6, sb=1.6, sb_head=2.5)   # radii of the standoff bores through the wedgelet (sb_head: block end only)
 WG_BORE_X = (-39.0, -17.0)
