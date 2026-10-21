@@ -37,13 +37,17 @@ MNT_TIP_DEV, MNT_TIP_DEV_R = (MNT_IN + 2.5, 11.5, MNT_TOP_Z + 0.9), 5.0   # moun
 
 # --- side.py: fork, hubs, side-panel width (fix-B lint) ---
 FK_X = {1: (24.5, 26.0), -1: (-26.5, -25.0)}      # fork X slab per side sign: asymmetric in the STEP (fork_5_1 24.5..26.0, fork_5_2 -26.5..-25.0), so not a mirror
-FK_EYE, FK_EYE_R, FK_PIN_R, FK_SB_R = (36.33, 6.2), 1.85, 0.75, 2.65   # eye on the nose standoff, pin hole, standoff hole
+FK_EYE, FK_PIN_R, FK_SB_R = (36.33, 6.2), 0.75, 2.6   # eye on the nose standoff, pin hole, standoff hole (STEP 5.2 bore)
 FK_RES, FK_RES_PIN, FK_RES_BUF = 48, 24, 8        # circle / buffer segment counts
-FK_BLADE = [(35.0, 4.9), (FK_EYE[0], FK_EYE[1] + FK_EYE_R), (40.4, 8.25), (41.0, 8.25), (66.68, 1.49), (51.75, 0.75), (38.9, 0.75)]   # param: organic fork blade outline (measured, STEP)
+FK_WEB, FK_WIN_LEAN = 1.2, 0.1                      # web left between cut loops (laser min 0.75 x 1.5 = 1.12); window edge lean
+FK_EYE_R = FK_PIN_R + FK_WEB                         # eye ring: a web of metal around the pin hole
+FK_BOT = SB[1] - FK_SB_R - FK_WEB                    # blade lower edge: a web below the standoff hole
+FK_BLADE = [(35.0, 4.9), (FK_EYE[0], FK_EYE[1] + FK_EYE_R), (40.4, 8.25), (41.0, 8.25), (66.68, 1.49), (51.75, FK_BOT), (38.9, FK_BOT)]   # param: organic fork blade outline (measured, STEP)
 FK_ROUND = (0.3, 0.5)                             # outer / inner corner radius of the blade
 FK_TIP = [(60.0, 1.27), (66.68, 1.49), (60.0, 2.5)]   # param: organic sharp-tip wedge
 FK_TIP_R = 0.15                                   # tip join radius (> kerf)
-FK_WIN = [(43.9, 2.75), (54.0, 2.75), (44.1, 5.4)]   # param: organic lightening window
+FK_WIN_X0 = SB[0] + FK_SB_R + FK_WEB + FK_WIN_LEAN   # window rear edge sits a web away from the standoff hole
+FK_WIN = [(FK_WIN_X0 - FK_WIN_LEAN, 2.75), (54.0, 2.75), (FK_WIN_X0 + FK_WIN_LEAN, 5.4)]   # param: organic lightening window
 FK_WIN_R = 0.3
 FK_LAND_R = 0.15                     # land corners round r0.15 (> kerf)
 FK_LAND = [(64.0, 1.2), (66.68, 1.27), (66.68, 1.72), (64.0, 1.95)]   # param: organic 0.45 mm kerf land
