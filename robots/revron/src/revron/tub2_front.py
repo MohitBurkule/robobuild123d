@@ -1,0 +1,41 @@
+"""[tub2] Front wall: the weapon-wire slot (Cut-Extrude7 + Fillet10) and the two lightening pockets either side of its rib frame
+(Cut-Extrude + Fillet22 R0.8 on every pocket edge but the open one). Wall thickness, axle height and ribs are shared masters."""
+from build123d import Axis, BuildSketch, Box, Locations, Plane, Pos, Rectangle, extrude, fillet
+from .tub2_params import CH_WALL, SKIN, OVER, WALL_IN_FRONT
+from .params_chassis import RZ
+
+WIRE_X, WIRE_W, WIRE_H = 8.75, 3.0, 12.0       # Sketch16: slot width 3 and height 12 about the axle height; centre X
+WIRE_RIB = CH_WALL + SKIN                      # rib frame round the slot (3)
+POCKET_HALF_X = 18.25                          # pockets stop here either side of the axis (just inside the lug faces)
+POCKET_H = 9.0                                 # pocket height about the axle height
+POCKET_DEPTH = 0.85                            # sunk into the wall from its inner face
+POCKET_R = 0.8                                 # Fillet22
+FLOOR_SHY = 0.005                              # floor fillet a hair under the corner R: equal radii leave a degenerate sphere seam
+TAB_FRONT = 26.5                               # the slot runs on through the weapon tab
+
+
+def wire_slot():
+    """Obround slot through the front wall and the tab (R = half the width)."""
+    with BuildSketch(_xz()) as sk:
+        with Locations((WIRE_X, RZ)):
+            Rectangle(WIRE_W, WIRE_H)
+        fillet(sk.vertices(), WIRE_W / 2)
+    return extrude(sk.sketch, -(TAB_FRONT - WALL_IN_FRONT + SKIN))   # XZ plane normal is -Y: negative amount runs toward the front
+
+
+def _xz():
+    return Plane.XZ.offset(-(WALL_IN_FRONT - SKIN))
+
+
+def _pocket(x0, x1):
+    """Rectangular pocket cutter (X x Z), floor at the pocket depth; R on its four corner edges and its four floor edges."""
+    y0, y1 = WALL_IN_FRONT - SKIN, WALL_IN_FRONT + POCKET_DEPTH
+    s = Pos((x0 + x1) / 2, (y0 + y1) / 2, RZ) * Box(x1 - x0, y1 - y0, POCKET_H)
+    s = fillet(s.edges().filter_by(Axis.Y), POCKET_R)
+    return fillet(s.faces().sort_by(Axis.Y)[-1].edges(), POCKET_R - FLOOR_SHY)
+
+
+def wall_pockets():
+    """One pocket from the -X end to the rib frame, one from the frame to +X end; the frame is the slot plus a rib each side."""
+    f0, f1 = WIRE_X - WIRE_W / 2 - WIRE_RIB, WIRE_X + WIRE_W / 2 + WIRE_RIB
+    return [_pocket(-POCKET_HALF_X, f0), _pocket(f1, POCKET_HALF_X)]

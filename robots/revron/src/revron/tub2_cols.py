@@ -9,7 +9,7 @@ def feet():
     """A foot cylinder under every column (+X pattern and the axis one), flaring 45 deg into the column radius."""
     foot_top, flare = INS_Z[0], FOOT_R - COL_R
     parts = []
-    for x, y in INS_RIGHT + INS_AXIS:
+    for x, y in INS_AXIS:   # only the rear-centre column stands free of a block; the corner columns sit inside theirs
         parts.append(Pos(x, y, CH_Z0) * Cylinder(FOOT_R, foot_top - CH_Z0, align=(Align.CENTER, Align.CENTER, Align.MIN)))
         parts.append(Pos(x, y, foot_top - OVER) * Cone(FOOT_R, COL_R, flare + OVER, align=(Align.CENTER, Align.CENTER, Align.MIN)))
     return sum(parts[1:], parts[0])
