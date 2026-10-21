@@ -23,7 +23,7 @@ Rules (entry keys):
   flush_head        fastener, host, out [dx, dy, dz] (outward face normal), max_proud (0.2).
   notch_bears       part, lug, bolts [ids], dir [dx,dy,dz] (reaction direction): the part moved along dir hits the lug
                     before any bolt shank, so the notch carries the load and the bolts only clamp.
-  seat_locates      part (motor), host, axis [dx,dy,dz], at [x,y,z], play (0.15), turn_deg (2): the part moved radially
+  seat_locates      part (motor), host, axis [dx,dy,dz], at [x,y,z], play (0.15), turn_deg (2), gap_ok [{shift, max_mm, reason}]: the part moved radially
                     by `play` or turned by `turn_deg` about its shaft hits the host.
   tool_count        max (2), module_max (1), module [fastener ids]: distinct drivers in the teardown / module swap.
   wire_clear_rotor  rotor [ids], axis [dx,dy,dz], at [x,y,z], min (2.0), via {wire id: [[x,y,z], ...]}: every wire
@@ -315,6 +315,37 @@ def seat_free(part, hosts, axis, at, play=0.15, turn=2.0):
     return free
 
 
+GAP_OK_MAX_MM = 0.5
+
+
+def seat_gap_waive(part, hosts, e, free):
+    """seat_locates `gap_ok` [{shift: [dx,dy,dz], max_mm, reason}]: each entry claims ONE free shift direction that the
+    original has too (a measured clearance under a motor, say). That shift is re-probed at max_mm (<= GAP_OK_MAX_MM):
+    the part must hit the host by then, so the gap is bounded; the reason must be >= 20 chars and cite the reference.
+    Returns (still free, waived notes, invalid notes)."""
+    from .waiver import valid
+
+    left, waived, bad = list(free), [], []
+    for g in e.get("gap_ok") or []:
+        d = _unit(g.get("shift") or [0, 0, 0]) if np.linalg.norm(g.get("shift") or [0, 0, 0]) > 0 else None
+        mx = float(g.get("max_mm") or 0)
+        if d is None or not valid(g.get("reason")) or not 0 < mx <= GAP_OK_MAX_MM:
+            bad.append(f"{g.get('shift')}: needs a shift, 0 < max_mm <= {GAP_OK_MAX_MM} and a cited reason >= 20 chars")
+            continue
+        key = f"shift {np.round(d, 2).tolist()}"
+        hit = next((x for x in left if x.replace("-0.0", "0.0") == key.replace("-0.0", "0.0")), None)
+        if hit is None:
+            bad.append(f"{key} is not a free motion (stale waiver)")
+            continue
+        P = _surface(part, 3000)
+        if not any(_hits(P + mx * d, h) for h in hosts):
+            bad.append(f"{key} is still free at {mx} mm")
+            continue
+        left.remove(hit)
+        waived.append(f"{key} <= {mx} mm ({g['reason']})")
+    return left, waived, bad
+
+
 def swept_gap(P, axis, at, rmax, a0, a1):
     """Distance from points to a solid cylinder (radius rmax, axial span a0..a1 about `at` along `axis`)."""
     a = _unit(axis)
@@ -426,8 +457,11 @@ def _rule(ctx, e):
         return gl < gb, "Notch bears the hit, not the bolts", f"moving `{e['part']}` along {e['dir']}: lug contact at {gl:.2f} mm, bolt contact at {gb:.2f} mm.", e["part"], [gl, gb]
     if r == "seat_locates":
         hs = [e["host"]] if isinstance(e["host"], str) else e["host"]
-        free = seat_free(_m(ctx, e["part"]), [_m(ctx, h) for h in hs], e["axis"], e["at"], e.get("play", 0.15), e.get("turn_deg", 2.0))
-        return not free, "Seat locates the part", f"`{e['part']}` is free to {free} in `{e['host']}`; the seat must hold it concentric and stop it turning.", e["part"], len(free)
+        pm, hm = _m(ctx, e["part"]), [_m(ctx, h) for h in hs]
+        free = seat_free(pm, hm, e["axis"], e["at"], e.get("play", 0.15), e.get("turn_deg", 2.0))
+        free, waived, bad = seat_gap_waive(pm, hm, e, free)
+        note = (f" Waived as in the original: {waived}." if waived else "") + (f" Invalid gap_ok: {bad}." if bad else "")
+        return not free and not bad, "Seat locates the part", f"`{e['part']}` is free to {free} in `{e['host']}`; the seat must hold it concentric and stop it turning.{note}", e["part"], len(free)
     if r == "tool_count":
         fs = ctx.r.spec.raw.get("fasteners", [])
         untooled = [f.get("id") for f in fs if not f.get("tool")]

@@ -11,20 +11,22 @@ Every junction is a shared planar section, so the fused wall has no step and no 
 import math
 from .params import (
     BEZIER_DEG, FLOOR_Z, SP_BEND_R, SP_BEND_TENSION, SP_FRONT, SP_LEAN, SP_MID_Y, SP_MID_Z_FRONT,
-    SP_NOSE_RUN, SP_NOSE_Z, SP_REAR_Y_END, SP_W_FLOOR, SP_W_TOP, SP_X_IN, SP_Z_TOP)
-from .common import _U
+    SLAB_X, SP_NOSE_RUN, SP_NOSE_Z, SP_REAR_Y_END, SP_W_FLOOR, SP_W_TOP, SP_X_IN, SP_Z_TOP)
+from .common import _I, _U
 
 
 def _quad(b, *pts):
     return b.Face(b.Wire.make_polygon([b.Vector(*p) for p in pts], close=True))
 
 
-def _trap(b, plane, at, x_in, z_hi, sign):
+def _trap(b, plane, at, x_in, z_hi, sign, z_top=None):
     """Wall section in a vertical plane: chassis-side face vertical at offset `x_in`, outer face battered from SP_W_FLOOR thick at the
-    floor to SP_W_TOP at `z_hi`. plane 'y': section in the plane Y = at (u = X, outer = -sign direction); 'x': plane X = at (u = Y)."""
+    floor to SP_W_TOP at `z_hi`. plane 'y': section in the plane Y = at (u = X, outer = -sign direction); 'x': plane X = at (u = Y).
+    `z_top` runs the section on above z_hi along the same batter (a top line trims it later)."""
     z0 = FLOOR_Z
     t = lambda z: SP_W_FLOOR + (SP_W_TOP - SP_W_FLOOR) * (z - z0) / (z_hi - z0)
-    pts = [(x_in - sign * t(z0), z0), (x_in, z0), (x_in, z_hi), (x_in - sign * t(z_hi), z_hi)]
+    z_top = z_hi if z_top is None else z_top
+    pts = [(x_in - sign * t(z0), z0), (x_in, z0), (x_in, z_top), (x_in - sign * t(z_top), z_top)]
     return _quad(b, *[(u, at, v) if plane == "y" else (at, u, v) for u, v in pts])
 
 
@@ -48,9 +50,14 @@ def _bend(b, a_pts, mid_pts):
     Each side face is the single ruled B-spline surface between two neighbouring corner curves (the SolidWorks loft's `surf` faces)."""
     def corner(p0, p1):
         k = SP_BEND_TENSION * math.dist(p0[:2], p1[:2]) / BEZIER_DEG
-        return b.Edge.make_bezier(b.Vector(*p0), b.Vector(p0[0] + k, p0[1], p0[2]), b.Vector(p1[0], p1[1] + k, p1[2]), b.Vector(*p1))
+        return [b.Vector(*p0), b.Vector(p0[0] + k, p0[1], p0[2]), b.Vector(p1[0], p1[1] + k, p1[2]), b.Vector(*p1)]
     c = [corner(p0, p1) for p0, p1 in zip(a_pts, mid_pts)]
-    sides = [b.Face.make_surface_from_curves(c[k], c[(k + 1) % len(c)]) for k in range(len(c))]
+    curve = lambda P: b.Edge.make_bezier(*P)
+    sides = []
+    for k in range(len(c)):
+        P, Q = c[k], c[(k + 1) % len(c)]
+        mid = [(u + v) * 0.5 for u, v in zip(P, Q)]   # the ruled surface's own mid line: the patch cut in two along its rulings
+        sides += [b.Face.make_surface_from_curves(curve(P), curve(mid)), b.Face.make_surface_from_curves(curve(mid), curve(Q))]
     return b.Solid(b.Shell(sides + [_quad(b, *a_pts), _quad(b, *mid_pts)]))
 
 
@@ -78,13 +85,21 @@ def sp_wall(b):
     # S-bend (Loft1): the swing's end section (plane X = cx) -> the mid wall's front section (plane Y = y_front), swept on
     # SP_BEND_SECTIONS sections that turn the outward normal 90 deg and blend the profile, so the loft never twists
     mid_f = _trap(b, "y", y_front, s, SP_MID_Z_FRONT, 1)
+    mid_f_up = _trap(b, "y", y_front, s, SP_MID_Z_FRONT, 1, z_top=SP_Z_TOP)
     a_pts = [(cx, cy - _swing_r(k, z), z) for z, k in ((FLOOR_Z, 1), (FLOOR_Z, 0), (zt, 0), (zt, 1))]
     t = lambda z: SP_W_FLOOR + (SP_W_TOP - SP_W_FLOOR) * (z - FLOOR_Z) / (SP_MID_Z_FRONT - FLOOR_Z)
     mid_pts = [(s - t(FLOOR_Z), y_front, FLOOR_Z), (s, y_front, FLOOR_Z), (s, y_front, SP_MID_Z_FRONT), (s - t(SP_MID_Z_FRONT), y_front, SP_MID_Z_FRONT)]
     bend = _bend(b, a_pts, mid_pts)
     # mid wall (Loft2): front section -> rear section (full height)
     mid_r = _trap(b, "y", y_rear, s, SP_Z_TOP, 1)
-    mid = b.Solid.make_loft([mid_f.outer_wire(), mid_r.outer_wire()], ruled=True)
+    mid = b.Solid.make_loft([mid_f_up.outer_wire(), mid_r.outer_wire()], ruled=True)
+    # the mid wall's top is one S-curve (cubic, level at both ends: Y_REAR at SP_Z_TOP -> Y_FRONT at SP_MID_Z_FRONT, handles a third of the run), cut through the loft
+    third = (y_front - y_rear) / 3
+    V = lambda y, z: b.Vector(SLAB_X[0], y, z)
+    top = b.Edge.make_bezier(V(y_rear, SP_Z_TOP), V(y_rear + third, SP_Z_TOP), V(y_front - third, SP_MID_Z_FRONT), V(y_front, SP_MID_Z_FRONT))
+    under = b.Wire([b.Edge.make_line(V(y_front, FLOOR_Z - 1), V(y_rear, FLOOR_Z - 1)), b.Edge.make_line(V(y_rear, FLOOR_Z - 1), V(y_rear, SP_Z_TOP)), top,
+                    b.Edge.make_line(V(y_front, SP_MID_Z_FRONT), V(y_front, FLOOR_Z - 1))])
+    mid = _I(mid, b.Solid.extrude(b.Face(under), b.Vector(SLAB_X[1] - SLAB_X[0], 0, 0)))
     # rear bends (Revolve6, Revolve7) and the straight rear wall
     b1 = _spin(b, mid_r, c1, -90.0)
     b2 = _spin(b, _trap(b, "x", c1[0], c2[1] + r2, SP_Z_TOP, -1), c2, 90.0)
