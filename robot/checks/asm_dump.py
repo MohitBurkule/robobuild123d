@@ -131,20 +131,20 @@ def world_of(e, cfg):
 
 # ------------------------------------------------------------------------------------------------ mapping
 def part_map(ctx, asm):
-    """{part id: (component name, reference_cad entry or None)} for the parts we can name in the assembly."""
-    import trimesh
-
+    """{part id: (component name, reference_cad entry or None)} for the parts we can name in the assembly: `map`, else
+    the entry's STL stem; among same-named components the one whose mass centre (assembly frame -> world by the
+    config's ref_to_world) is nearest our part's. Entries with their own `ref_to_world` keep STLs in another frame, so
+    our body, not the STL, is the reference point."""
     from .reference_cad import _cfg
 
     spec = ctx.r.spec
     cfg = _cfg(spec)
     ac = (spec.raw or {}).get("asm_dump") or {}
+    W = world_of({}, cfg)
     out = {}
     for pid, comp in (ac.get("map") or {}).items():
         if comp in asm["comps"]:
             out[pid] = (comp, next((e for e in cfg.get("parts") or [] if e.get("part") == pid), None))
-    base_dir = Path(getattr(spec, "base_dir", ".") or ".")
-    rdir = base_dir / (cfg.get("dir") or ".")
     taken = {c for c, _ in out.values()}
     for e in cfg.get("parts") or []:
         pid = e.get("part")
@@ -154,13 +154,10 @@ def part_map(ctx, asm):
         cands = [c for c, v in asm["comps"].items() if _norm(base(c)) == _norm(stem) and "com" in v and "T" in v and c not in taken]
         if not cands:
             continue
-        if len(cands) > 1:
-            try:
-                m = trimesh.load(rdir / e["file"], force="mesh")
-                ctr = m.center_mass if m.is_volume else m.bounds.mean(0)
-                cands.sort(key=lambda c: float(np.linalg.norm((asm["comps"][c]["T"] @ np.r_[asm["comps"][c]["com"], 1])[:3] - ctr)))
-            except Exception:  # noqa: BLE001 - keep the name order
-                pass
+        b = ctx.world.body(pid) if getattr(ctx, "world", None) is not None else None
+        if len(cands) > 1 and b is not None and b.mesh is not None:
+            ctr = np.asarray(b.mesh.center_mass if b.mesh.is_volume else b.mesh.bounds.mean(0), float)
+            cands.sort(key=lambda c: float(np.linalg.norm((W @ asm["comps"][c]["T"] @ np.r_[asm["comps"][c]["com"], 1])[:3] - ctr)))
         out[pid] = (cands[0], e)
         taken.add(cands[0])
     return out
@@ -231,7 +228,7 @@ def run(ctx):
         b, mesh = _model(ctx, pid, e)
         if b is None:
             continue
-        W = world_of(e or {}, cfg)
+        W = world_of({k: v for k, v in (e or {}).items() if k != "ref_to_world"}, cfg)   # assembly frame -> world
         ref = W @ c["T"]
         ours = np.asarray(b.M, float)
         if (e or {}).get("ref_frame") is not None:

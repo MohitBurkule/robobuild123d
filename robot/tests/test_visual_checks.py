@@ -121,6 +121,19 @@ def test_sharp_root_where_reference_is_filleted_fails():
     assert len(hits) >= 3 and min(h[2] for h in hits) > 1.5, hits
 
 
+def test_dump_sites_keep_a_real_reference_fillet_with_its_exact_radius():
+    # the dumped fillet face of the root: axis along Z at (6, 6), r 2 -> box x/y 4..6, z 0..10
+    sites = [(np.array([4.0, 4.0, 0.0]), np.array([6.0, 6.0, 10.0]), 2.0)]
+    hits = visual.fillet_diffs(_l_bracket(0), _l_bracket(2.0), grid=1.0, sites=sites)
+    assert len(hits) >= 3 and all(h[2] == 2.0 for h in hits), hits
+
+
+def test_dump_sites_drop_a_neighbouring_arc_on_a_sharp_reference_edge():
+    # the dump has no fillet face at this root (the reference's arc there belongs to another feature): not a fillet
+    far = [(np.array([30.0, 30.0, 0.0]), np.array([32.0, 32.0, 10.0]), 2.0)]
+    assert visual.fillet_diffs(_l_bracket(0), _l_bracket(2.0), grid=1.0, sites=far) == []
+
+
 def test_matching_fillet_passes():
     assert visual.fillet_diffs(_l_bracket(2.0), _l_bracket(2.0), grid=1.0) == []
 

@@ -588,6 +588,49 @@ def part_vertices(faces):
     return np.vstack(pts) if pts else np.zeros((0, 3))
 
 
+def dump_to_world(spec, e, cfg, name, faces, refm):
+    """(4x4 dump part frame (mm) -> our world, 80 % registration gap mm) for a reference_cad entry."""
+    from .. import cache
+    from .asm_dump import DEFAULT_FILE, world_of
+
+    raw = spec.raw or {}
+    if e.get("dump_to_ref") is not None:
+        A, rms = np.asarray(e["dump_to_ref"], float), 0.0
+    else:
+        st = asm_starts(((raw.get("asm_dump") or {}).get("file")) or DEFAULT_FILE, name, e["file"])
+        A, rms = cache.memo("dump_register", (cache.source_hash(__file__), name, np.asarray(refm.vertices), len(st), *st),
+                            lambda: register(part_vertices(faces), refm, st))
+    return world_of(e, cfg) @ A, rms
+
+
+def fillet_sites(spec, e, cfg, refm):
+    """[(lo, hi, r)] world boxes (mm) of the reference's fillet faces (cyl faces of Fillet features and their pattern
+    copies) for a reference_cad entry whose dump registers; None when there is no usable dump. visual.fillet_ref uses
+    them: a reference arc counts only on a dumped fillet face, never a neighbouring feature's arc."""
+    root = (spec.raw or {}).get("sldprt_dumps") or DEFAULT_ROOT
+    name = find_dump(root, e)
+    if not name:
+        return None
+    dump, faces = _load(str(root), name)
+    M, rms = dump_to_world(spec, e, cfg, name, faces, refm)
+    if rms > REG_RMS_MM:
+        return None
+    fr = {f["name"]: f["fillet"]["r"] * 1e3 for f in dump["features"] if not f["suppressed"] and f["type"] == "Fillet" and (f.get("fillet") or {}).get("r")}
+    out = []
+    for f, fc in faces:
+        if fc["type"] != "cyl" or f["suppressed"]:
+            continue
+        r = fc["r"] * 1e3
+        own = f["name"] in fr and abs(fr[f["name"]] - r) <= 1e-3
+        copy = f["type"] in ("CirPattern", "LPattern", "MirrorPattern") and any(abs(fr.get(p, -1) - r) <= 1e-3 for p in f["parents"])
+        if not (own or copy):
+            continue
+        lo, hi = fc["box"][:3] * 1e3, fc["box"][3:6] * 1e3
+        c = np.array([[x, y, z, 1.0] for x in (lo[0], hi[0]) for y in (lo[1], hi[1]) for z in (lo[2], hi[2])]) @ M.T
+        out.append((c[:, :3].min(0), c[:, :3].max(0), r))
+    return out
+
+
 # ------------------------------------------------------------------------------------------------ group
 def run(ctx):
     import trimesh
@@ -599,7 +642,7 @@ def run(ctx):
     raw = spec.raw or {}
     cfg = _cfg(spec)
     root = raw.get("sldprt_dumps") or DEFAULT_ROOT
-    if not (Path(root) / "dumps").is_dir():
+    if not dumps_dir(root).is_dir():
         return []
     base = Path(getattr(spec, "base_dir", ".") or ".")
     rdir = base / (cfg.get("dir") or ".")
@@ -616,33 +659,14 @@ def run(ctx):
         try:
             dump, faces = _load(str(root), name)
             refm = trimesh.load(rdir / e["file"], force="mesh")
-            if e.get("dump_to_ref") is not None:
-                A, rms = np.asarray(e["dump_to_ref"], float), 0.0
-            else:
-                from .. import cache
-
-                from .asm_dump import DEFAULT_FILE
-
-                st = asm_starts(((raw.get("asm_dump") or {}).get("file")) or DEFAULT_FILE, name, e["file"])
-                A, rms = cache.memo("dump_register", (cache.source_hash(__file__), name, np.asarray(refm.vertices),
-                                                      len(st), *st), lambda: register(part_vertices(faces), refm, st))
+            M, rms = dump_to_world(spec, e, cfg, name, faces, refm)
             if rms > REG_RMS_MM:
                 skipped.append(f"`{pid}` (dump `{name}` does not fit `{e['file']}`: 80 % vertex gap {rms:.3f} mm - a different revision)")
                 continue
             from .reference_cad import ref_in_world
 
-            W = np.eye(4)
-            T = e.get("ref_to_world", cfg.get("ref_to_world"))
-            if T is not None:
-                W = np.asarray(T, float) @ W
-            if e.get("mirror_x"):
-                W = np.diag([-1.0, 1, 1, 1]) @ W
-            if e.get("ref_shift") is not None:
-                S = np.eye(4)
-                S[:3, 3] = e["ref_shift"]
-                W = S @ W
             ref = clean(ref_in_world(refm, e, cfg))
-            rows = compare(b.mesh, ref, features_in_frame(dump, faces, W @ A, part_vertices(faces)))
+            rows = compare(b.mesh, ref, features_in_frame(dump, faces, M, part_vertices(faces)))
         except Exception as ex:  # noqa: BLE001 - fail closed
             out.append(fail("dump.unusable", G, WARNING, "SolidWorks dump comparison crashed", f"`{pid}` vs `{name}`: {ex}").on(pid))
             ctx.not_checked.append(f"SolidWorks dump parity of `{pid}`")
