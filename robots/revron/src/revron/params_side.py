@@ -1,4 +1,5 @@
 """Revron params: side panels RV23/24 and wedgelets RV17/18. Re-exported by params.py."""
+import math
 from .params_weapon import *  # noqa: F401,F403
 
 # ------------------------------------------------------------------------------------------------------------ wedgelet
@@ -6,26 +7,19 @@ WEDGE_TOE_H = 0.85                   # ramp Z = 1 + 1.187 (50.1 - Y) lifted so i
 
 
 # ------------------------------------------------------------------------------------------------------------ side panel
-SP_IN = [(-43.5, -41.0), (-43.5, -21.3), (-43.0, -19.6), (-41.2, -17.9), (-37.2, -17.2), (-34.4, -15.7), (-32.3, -13.0), (-31.5, -9.9),
-         (-31.5, 11.1), (-31.9, 13.4), (-33.6, 17.5), (-35.5, 20.4), (-37.2, 21.9), (-41.2, 23.3), (-42.7, 26.6)]
-# the front swing round the front wheel (inner face X at Y 13, 14, 16, 18, 20, 22, 24, 26.6) at three heights: it leans
-# out towards the floor so wheel hits ride up it (STEP RV23: inner face at Y 22 is X -47.6 at the floor, -41.6 at Z 7)
-SW_Y = (13.0, 14.0, 16.0, 18.0, 20.0, 22.0, 24.0, 26.6)
-SW_X = {1.0: (-32.4, -33.4, -36.6, -44.0, -46.3, -47.6, -48.3, -48.6),
-        4.0: (-32.2, -32.7, -34.2, -36.7, -43.0, -45.1, -46.0, -46.6),
-        7.5: (-31.7, -32.2, -33.2, -34.4, -36.0, -40.5, -43.0, -43.8),
-        9.5: (-31.6, -31.9, -32.8, -33.6, -34.6, -36.4, -39.6, -42.3)}
-# wall thickness (normal to the inner face) against height: rear / middle run battered 5 -> 2 mm, the swing ~3.4 mm
-SP_W_Z = (1.0, 3.0, 6.0, 9.0, 12.0, 16.0)
-SP_FOOT_LAND = 0.85
-SP_W_REAR = (5.09, 4.79, 4.18, 3.47, 2.83, 1.9)   # rear thickness trimmed 0.11..0.2 mm: outer face sat that far proud of RV23 (measured at Y -30 and -20)
-SP_W_MID = (5.0, 4.7, 3.5, 2.7, 2.3, 2.0)
-SP_W_SWING = (3.3, 3.3, 3.0, 2.6, 2.4, 2.1)
-SP_W_Y = (-16.0, -12.0, 11.0, 15.0)   # rear / mid / mid / swing thickness stations along Y
-# STEP RV23: the outer face swells 0.7 mm round the nut lobe (Y -11..1) at Z 4..12 (outer X -35.3 at Y -5 vs -34.5 at Y 5, Z 7.5)
-SP_BUMP = 0.7
-SP_BUMP_Y = (-5.0, 6.0)   # centre, half-width
-SP_BUMP_Z = (7.5, 5.0)
+# The wall is the RV23 feature tree rebuilt from analytic faces (SLDPRT: Loft1/2 + Revolve5/6/7), no organic point tables:
+# every face is a plane, a cylinder/cone about a vertical axis, or one ruled S-bend patch.
+SP_LEAN_DEG = 40.0                  # STEP RV23: the front swing and nose leave the floor 40 deg off vertical (cone half angle)
+SP_LEAN = math.tan(math.radians(SP_LEAN_DEG))   # radial run per mm of height of those cones (== the battered nose plane's slope)
+SP_X_IN = -31.5                     # chassis-side (inner) face of the straight wall: the lobe pocket gap outside the chassis wall
+SP_W_FLOOR, SP_W_TOP = 5.2154, 2.0  # wall thickness battered from the floor (Z FLOOR_Z) to the top (Z SP_Z_TOP): outer face 12.1 deg off vertical
+SP_Z_TOP = 16.0                     # full wall height (the rear / mid wall; the profile top line trims it)
+SP_MID_Y = (-9.5, 10.5)             # straight mid wall (RV23 Loft2) from the rear bend to the S-bend; its top rises 13 -> SP_Z_TOP
+SP_MID_Z_FRONT = 13.0               # mid wall height at its front end (Loft2 sketch at Y 10.5)
+SP_BEND_R = (8.0, 4.0)              # rear wall bends out round two 90 deg arcs (RV23 Revolve6, Revolve7), chassis-side radii
+SP_FRONT = dict(c=(-38.5, 26.55), r_in=10.55, w=3.0, z_top=12.0, over=5.0)   # front swing (Revolve5): axis (X, Y), chassis-side radius at the floor, radial thickness, top, lead-in deg
+SP_BEND_STEPS, SP_BEND_LEVELS, SP_BEND_TENSION = 56, 10, 0.5   # S-bend strips (each turns < the 6 deg seam threshold), Hermite tangent length / chord
+SP_REAR_Y_END = -46.0               # the straight rear wall runs on past the rear round (the profile trims it)
 
 
 # --- side panel + wedgelet shared / derived dimensions (outlines are organic point tables measured on RV23/RV17) ---
@@ -36,19 +30,11 @@ SP_TOP_R = 1.5
 SP_REAR_ROUND = ((-32.2, 9.7), 8.2)  # rear end: a full round over the wheel
 SP_FOOT = [(-31.6, -12.0), (-42.0, -11.9), (-40.6, -2.1), (-40.8, 3.3), (-42.9, 13.3), (-31.6, 13.3)]   # 1 mm wide foot under the chassis lobe (X, Y)
 SP_FOOT_Z = (FLOOR_Z, FLOOR_Z + 1.0)
-SP_NOSE = [(-52.1, 26.5), (-51.7, 39.7), (-50.5, 43.0), (-48.4, 45.7), (-45.6, 47.9), (-42.0, 49.6), (-40.0, RAMP_REACH), (-38.5, RAMP_REACH),
-           (-38.5, 37.6), (-41.6, 37.6), (-42.4, 37.3), (-42.3, 34.9), (-40.5, 34.5), (-40.5, 26.5)]   # nose plan (X, Y)
+SP_NOSE_Y0 = SP_FRONT["c"][1]    # nose front face (plane through the swing axis, tangent to the swing's outer cone)
+SP_NOSE = [(-52.1, SP_NOSE_Y0), (-51.7, 39.7), (-50.5, 43.0), (-48.4, 45.7), (-45.6, 47.9), (-42.0, 49.6), (-40.0, RAMP_REACH), (-38.5, RAMP_REACH),
+           (-38.5, 37.6), (-41.6, 37.6), (-42.4, 37.3), (-42.3, 34.9), (-40.5, 34.5), (-40.5, SP_NOSE_Y0)]   # nose plan (X, Y)
 SP_NOSE_R, SP_NOSE_Z = 0.5, (FLOOR_Z, 10.0)
-SP_BATTER = dict(x0=-52.06, slope=0.84, z=(FLOOR_Z, 16.0), below=-5.0, far=0.0, depth=60.0)   # outer face leans in 38 deg: X = x0 + slope (Z - FLOOR_Z)
-# STEP RV23: the front swing's outer face never stands proud of the nose's battered plane (it meets it flush at the
-# nose, Y 26.5): the loft swells up to 0.2 mm past it there, which left a sharp notch at the SA driver bore. The
-# swing is clipped to the batter over the batter's Y run, the clip tool reaching SP_CLIP_OVER above the top face.
-SP_CLIP_OVER = 4.0
-# STEP RV23: where the swing's leaning inner face runs into the nose's front face (Y SP_NOSE[0][1]) the reference has a
-# concave round (r 1.75 measured at X -43.5, Z 7.6). It is drawn in the plan sketch: at each height the swing section
-# (inner path, outer side) and the nose front are closed by r (shapely buffer +r / -r) and the fill is lofted through
-# sections every dz over the nose height, sunk `sink` into the wall; it stops at the hollow (SP_HOLLOW_X[0]) and reaches `win` behind the front face.
-SP_FRONT_ROUND = dict(r=1.2, dz=0.5, win=2.0, sink=0.15, ring=97, arc=32)   # r >= the 1 mm load-path minimum; sections every dz
+SP_BATTER = dict(x0=SP_FRONT["c"][0] - SP_FRONT["r_in"] - SP_FRONT["w"], slope=SP_LEAN, z=(FLOOR_Z, 16.0), below=-5.0, far=0.0, depth=60.0)   # outer face leans in 40 deg (the swing's outer cone continues it): X = x0 + slope (Z - FLOOR_Z)
 SP_TOE_Y0 = 47.0                     # the ramp toe's land starts here (Y)
 SP_TOE_RUN = 3.1                     # Y run of the ramp skin the toe polygon follows
 SP_CHAMFER = ((-120.0, 0.0, 0.0), (1.0, -1.525, -1.4725))   # front-outer corner chamfer plane (origin, normal)
@@ -79,7 +65,6 @@ CHASSIS_MIN_VOLUME = 15000.0         # mm3: the intact chassis is 15988 mm3 in o
 SP_NUT_RELIEF_R = 1.0                # relief corners round r1: no sharp concave corner in the printed wall
 SP_PIN_HOLE = dict(d=2.05, at=(2.92, 12.07), x=(-36.0, -31.0))   # STEP RV23: d1.25 cross hole along X through the wall at the nut lobe top (Y, Z; X span)
 SP_VENT = dict(y0=(-11.0, -4.5, 2.0), z0=5.0, dy=5.0, dz=6.0, r=1.0, x=(-50.0, -36.5))   # diagonal ESC vent slots
-SP_LOFT = dict(resample=400, path=240, ring=481, round=0.6, arc=16)   # section smoothing: pchip samples, path points, ring points, fillet
 # [fix-C wedgelet] measured polyline arcs rebuilt as true arcs (sampled finer than the 6 deg facet-seam threshold)
 WG_ARC_STEP = 3   # deg per sampled chord of a wedgelet profile arc
 
