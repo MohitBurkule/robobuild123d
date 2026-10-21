@@ -250,6 +250,10 @@ relations and named dims; `section_planes` proposes where to cut). Then:
 6. **A design change keeps the designer's blends.** When you alter a feature on purpose (a deeper pad, an opened slot),
    keep its fillet / chamfer sizes and record the change as a `deviations` entry with its reason. Don't shrink or drop
    the blend silently.
+7. **Never assume a standard countersink or counterbore.** Don't model a hole's seat from ISO 10642 / ISO 4762 (or any
+   catalogue). Measure the chamfer or cone the reference actually has (`blend_finder`: kind, leg, angle at that hole) and
+   build exactly that. Example: on RV03 the designer used 1 mm and 1.5 mm x 45 deg chamfers. Our assumed 7 mm ISO cone
+   broke the R3.25 nose and forced an invented pad.
 
 ## Sharp internal corners are opt-OUT (`mfg.sharp_internal_corner`, robot/checks/sharp_corner.py)
 Every fdm / sla / molded / cast part is scanned; nothing has to be listed (milled and cut parts: `process`). Each concave
