@@ -417,9 +417,12 @@ def _model_mesh(ctx, e):
 
 def covered(e, at):
     """Reason of a valid entry `deviation` covering 3D point `at` (citing the reference), else None."""
-    from .reference_cad import _dev_valid, path_dist
+    from .reference_cad import _dev_valid, path_dist, split_waivers
 
+    split = split_waivers(e)
     for d in e.get("deviations") or []:
+        if id(d) in split:
+            continue
         if d.get("path") is not None:   # capsule waiver (validated by reference_cad._dev_valid)
             if _dev_valid(d) is None and float(path_dist(np.atleast_2d(np.asarray(at, float)), np.asarray(d["path"], float))[0]) <= float(d["r"]):
                 return d["reason"]

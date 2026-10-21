@@ -110,3 +110,18 @@ def test_surf_face_samples_snap_to_reference():
     f = {"type": "surf", "box": np.array([4.9, -2, -2, 5.1, 2, 2]) * 1e-3}
     P = surf_samples(f, np.eye(4), ref)
     assert P is not None and np.allclose(P[:, 0], 5.0, atol=1e-6)
+
+
+def test_split_sphere_waivers_are_capped_as_their_union():
+    from robot.checks import reference_cad as rc
+    why = "the fork rails run through the TPU cheek (RV17 STEP has the tine interpenetrating it)"
+    one = {"deviations": [{"near": [25.25, 42.0, 5.3], "r": 6.0, "reason": why}]}
+    split = {"deviations": [{"near": [25.25, 39.5, 5.3], "r": 4.5, "reason": why}, {"near": [25.25, 44.5, 5.3], "r": 4.5, "reason": why}]}
+    assert rc.deviation_findings(one, "w") and len(rc.deviation_findings(split, "w")) == 2   # both halves waive nothing
+    assert "union" in rc.deviation_findings(split, "w")[0].message
+    assert rc._covered([25.25, 39.5, 5.3], split) is None
+    # two separate features (different reasons) or a same-reason pair inside the cap stay valid
+    two = {"deviations": [split["deviations"][0], dict(split["deviations"][1], reason="RV17 nose tab boss cut out for the mount")]}
+    assert not rc.deviation_findings(two, "w") and rc._covered([25.25, 39.5, 5.3], two)
+    near = {"deviations": [{"near": [0, 0, 0], "r": 2.0, "reason": why}, {"near": [0, 2.0, 0], "r": 2.0, "reason": why}]}
+    assert not rc.deviation_findings(near, "w")

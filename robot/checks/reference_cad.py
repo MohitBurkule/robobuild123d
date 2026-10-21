@@ -371,6 +371,41 @@ def _dev_valid(d):
     return None
 
 
+def split_waivers(e):
+    """{id(d): why} for sphere waivers that dodge DEV_R_MAX by splitting: spheres of one entry with the same reason
+    (one feature) that overlap or touch form a group, and the sphere enclosing the group must stay within the cap.
+    Every member of an over-cap group waives nothing (two r 4.5 spheres 5 mm apart are one r 7 region)."""
+    ds = [d for d in (e.get("deviations") or []) if d.get("path") is None and d.get("near") is not None and not _dev_valid(d)]
+    n = len(ds)
+    par = list(range(n))
+
+    def root(i):
+        while par[i] != i:
+            par[i] = par[par[i]]
+            i = par[i]
+        return i
+
+    C = [np.asarray(d["near"], float) for d in ds]
+    R = [float(d.get("r", 3.0)) for d in ds]
+    for i in range(n):
+        for j in range(i + 1, n):
+            if str(ds[i]["reason"]).strip() == str(ds[j]["reason"]).strip() and np.linalg.norm(C[i] - C[j]) <= R[i] + R[j]:
+                par[root(i)] = root(j)
+    groups = {}
+    for i in range(n):
+        groups.setdefault(root(i), []).append(i)
+    out = {}
+    for g in groups.values():
+        if len(g) < 2:
+            continue
+        span = max([R[i] for i in g] + [(np.linalg.norm(C[i] - C[j]) + R[i] + R[j]) / 2 for i in g for j in g if i < j])
+        if span > DEV_R_MAX + 1e-9:
+            for i in g:
+                out[id(ds[i])] = (f"{len(g)} overlapping spheres with the same reason span r {span:.1f} mm > cap {DEV_R_MAX} mm "
+                                  "(one feature: split spheres are capped as their union)")
+    return out
+
+
 def _covers(d, pt, bbox=None, pts=None, vol=None):
     """True when the single valid waiver `d` covers a blob at pt (whole bbox / points inside it, path volume cap)."""
     if _dev_valid(d):
@@ -403,7 +438,8 @@ def claim(items, e):
     one extra and / or one missing blob). Other items inside the same sphere are still differences. Returns ({item index: reason}, [(index, reason)] of items a waiver's sphere held but did not
     claim)."""
     got, held = {}, []
-    devs = [d for d in (e.get("deviations") or []) if not _dev_valid(d)]
+    split = split_waivers(e)
+    devs = [d for d in (e.get("deviations") or []) if not _dev_valid(d) and id(d) not in split]
     for d in devs:
         cand = []
         for i, b in enumerate(items):
@@ -428,8 +464,9 @@ def _covered(pt, e, bbox=None, pts=None, vol=None):
     """A diff at `pt` (3D) explained by one of the entry's valid `deviations` -> its reason, else None. With `bbox`
     (the blob's [lo, hi]) the whole box must fit inside the waiver sphere, not just the centroid. A path waiver covers
     a blob only when every blob point (`pts`, else the bbox corners) is within r of its polyline and `vol` <= max_mm3."""
+    split = split_waivers(e)
     for d in e.get("deviations") or []:
-        if _dev_valid(d):
+        if _dev_valid(d) or id(d) in split:
             continue
         if d.get("path") is not None:
             path, r = np.asarray(d["path"], float), float(d["r"])
@@ -456,12 +493,13 @@ def _covered(pt, e, bbox=None, pts=None, vol=None):
 def deviation_findings(e, pid):
     """BLOCKER for each waiver with no reason, no centre or an oversized radius (such a waiver waives nothing)."""
     out = []
+    split = split_waivers(e)
     for d in e.get("deviations") or []:
-        why = _dev_valid(d)
+        why = _dev_valid(d) or split.get(id(d))
         if why:
             out.append(fail("reference_cad.deviation", G, BLOCKER, "Invalid reference deviation waiver",
                             f"`{pid}` deviation at {d.get('near')} (r {d.get('r', 3.0)}): {why}; it waives nothing.").on(pid)
-                       .fix(f"Give each deviation a `reason` and r <= {DEV_R_MAX} mm (split a large one into local ones)."))
+                       .fix(f"Give each deviation a `reason` and r <= {DEV_R_MAX} mm; a region larger than that is a real deviation to fix (overlapping spheres of one feature count as their union)."))
     return out
 
 
