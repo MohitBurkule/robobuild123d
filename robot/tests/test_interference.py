@@ -72,3 +72,20 @@ def test_battery_retention_must_be_declared():
     fs = interference.run(_ctx(walls + [box("bat", (0, 0, 0), (14, 14, 10), kind="battery")]))
     f = ids(fs, "retention.battery_undeclared")
     assert f and f[0].severity == "blocker"
+
+
+def test_loose_ok_waiver_bounded_one_direction():
+    # motor in a pocket with 2 mm of inboard (+x) play, as the RVRN N10 in RV01: wall w2 inner face at x 9, motor face at 7
+    walls = [box("floor", (0, 0, -6), (30, 30, 2)), box("w1", (-8, 0, 0), (2, 30, 10)), box("w2", (10, 0, 0), (2, 30, 10)),
+             box("w3", (0, -8, 0), (30, 2, 10)), box("w4", (0, 8, 0), (30, 2, 10)), box("lid", (0, 0, 6), (30, 30, 2))]
+    why = "RVRN STEP: RV12 N10 slides 2.0 mm inboard in RV01 before it touches"
+    mot = lambda wv: box("mot", (0, 0, 0), (14, 14, 10), kind="motor", **({"loose_ok": wv} if wv else {}))
+    f = ids(interference.run(_ctx(walls + [mot(None)])), "retention.loose")
+    assert f and "+x" in f[0].message
+    fs = interference.run(_ctx(walls + [mot({"axis": "+x", "max_mm": 2.2, "reason": why})]))
+    assert not ids(fs, "retention.loose") and ids(fs, "retention.loose_waived")
+    for wv, msg in (({"axis": "+x", "max_mm": 1.5, "reason": why}, "still free"),       # bound tighter than the play
+                    ({"axis": "-x", "max_mm": 2.2, "reason": why}, "stale"),            # not the free direction
+                    ({"axis": "+x", "max_mm": 2.2, "reason": "it rattles in the original too"}, "citing")):
+        f = ids(interference.run(_ctx(walls + [mot(wv)])), "retention.loose")
+        assert f and msg in f[0].message, f[0].message if f else None
