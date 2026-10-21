@@ -1,14 +1,9 @@
 """[fix-S] Chassis tub and its panels: chassis, base_panel, top_panel, esc_tray, inserts / panel seats."""
-import os
 from .params import *  # noqa: F401,F403
 from .common import *  # noqa: F401,F403
-from . import tub_shell, tub_lobes, tub_lugs, tub_front
-from .tub_util import rect
 from robot.cad.holes import hole_tool   # the repo root is on the import path (params.py)
 
-USE_TUB2 = os.environ.get("REVRON_TUB2", "1") != "0"   # one flag: tub2 feature-tree modules by default; REVRON_TUB2=0 builds the old tub
 SW_PAD_ENGAGE = 3.0   # pad material above the switch screw head seat (M2x3 thread-forming into the 1.7 pilot)
-SW_PAD = dict(x=(22.5, 27.5), y=(-15.6, 4.4), r=1.5, z0=16.5, fillet=1.5, over=0.5, up=0.1)   # switch pad under the deck (STEP): X / Y span (the +X end is the wall), free corner R, bottom Z, wall fillet R, reach into the wall, reach up into the deck
 
 
 def _switch_hole(yy):
@@ -16,35 +11,10 @@ def _switch_hole(yy):
     return hole_tool((SWX, yy, SW_BOLT_Z), (0, 0, 1), "M2x3", head="button", into="tapped", side="thread", engage=SW_PAD_ENGAGE)
 
 
-# ------------------------------------------------------------------------------------------------------------ chassis
-def switch_pad(c):
-    """Pad under the deck that the switch ears bear on (STEP); +X side only."""
-    from shapely.geometry import Point
-    P = SW_PAD
-    (x0, x1), (y0, y1), f = P["x"], P["y"], P["fillet"]
-    plan = _round(rect(x0, x1 + P["over"], y0, y1), r_out=P["r"])
-    for yw, d in ((y0, -1), (y1, 1)):   # concave fillet where the pad ends meet the side wall
-        q = rect(x1 - f, x1, *sorted((yw, yw + d * f)))
-        plan = plan.union(q.difference(Point(x1 - f, yw + d * f).buffer(f, SEG)))
-    return _ext(plan, "xy", P["z0"], c["deck"] + P["up"])
-
-
 def chassis():
-    """RV01 printed chassis: a closed-top box printed deck-down, open underneath for the base panel. Composed from the
-    per-feature modules: shell (box, columns, deck pockets, base seat), lobes (side lobes with the captive M3 nut),
-    lugs (front tabs and standoff lugs), front (corner flanges, rear lattice, wire hole, wall pockets)."""
-    if USE_TUB2:
-        from .tub2 import chassis2
-        return chassis2()
-    c = CH
-    adds = tub_shell.additions(c) + tub_lobes.additions(c) + tub_lugs.additions(c) + tub_front.additions(c) + [switch_pad(c)]
-    body = _U(tub_shell.shell(c), *adds)
-    tub = _S(tub_lobes.root_fillet(body, c), *(tub_shell.cuts(c) + tub_lobes.cuts(c)))
-    for cut in tub_lugs.cuts(c):   # one by one, in order: a single multi-tool cut of the lug cutters leaves an invalid face (BRepCheck) on the lug underside
-        tub = _S(tub, cut)
-    tub = _S(tub, *tub_front.cuts(c))
-    assert len(tub.solids()) == 1 and tub.volume > CHASSIS_MIN_VOL, f"chassis boolean collapsed: {len(tub.solids())} solids, {tub.volume:.0f} mm3"
-    return tub
+    """RV01 printed chassis, built as the designer's feature tree (see tub2.py)."""
+    from .tub2 import chassis2
+    return chassis2()
 
 
 def esc_tray():
