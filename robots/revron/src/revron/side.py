@@ -1,7 +1,13 @@
 """[fix-S] Side groups: the side panel (wedgelet, fork and hub groups live in their own modules)."""
 import math, os, sys
-from .params import *  # noqa: F401,F403
-from .common import *  # noqa: F401,F403
+from .params import (
+    FLOOR_Z, GEO_EPS, HERE, NUT, NUT_X, RAMP_REACH, RAMP_SLOPE, SA,
+    SA_X, SB, SB_X, SIDE_BOLT_DES, SIDE_BOLT_X, SIDE_FACE_X, SIDE_SINK, SLAB_X,
+    SP_BOSS, SP_CSK, SP_DRIVER_SEATS, SP_FOOT, SP_FOOT_Z, SP_HOLLOW, SP_HOLLOW_END, SP_HOLLOW_X,
+    SP_NOSE_NOTCH, SP_NOSE_OVER, SP_NOSE_R, SP_NOSE_Y0, SP_NOSE_Z, SP_NUT_RELIEF, SP_NUT_RELIEF_R, SP_NUT_RELIEF_X,
+    SP_PIN_HOLE, SP_REAR_ROUND, SP_SA_CLEAR, SP_TOE_RUN, SP_TOE_Y0, SP_TOP, SP_TOP_R, SP_TOP_R_MIN_DEG,
+    SP_TYRE_RELIEF, SP_VENT, SP_X_IN, WEDGE_TOE_H)
+from .common import _I, _S, _U, _b, _box, _cyl, _ext, _one, _poly, _round
 from .side_wall import sp_wall, nose_body
 
 

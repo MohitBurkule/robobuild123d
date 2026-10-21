@@ -9,8 +9,10 @@ Plan, from the front (nose) to the rear, one wall of constant cross-section fami
   rear     extrude    straight rear wall
 Every junction is a shared planar section, so the fused wall has no step and no tessellation-split organic surface."""
 import math
-from .params import *  # noqa: F401,F403
-from .common import *  # noqa: F401,F403
+from .params import (
+    BEZIER_DEG, FLOOR_Z, SP_BEND_R, SP_BEND_TENSION, SP_FRONT, SP_LEAN, SP_MID_Y, SP_MID_Z_FRONT,
+    SP_NOSE_RUN, SP_NOSE_Z, SP_REAR_Y_END, SP_W_FLOOR, SP_W_TOP, SP_X_IN, SP_Z_TOP)
+from .common import _U
 
 
 def _quad(b, *pts):
