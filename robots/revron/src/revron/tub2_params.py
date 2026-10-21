@@ -1,8 +1,7 @@
 """[tub2] ONE master block of the RV01 tub. Shared masters (wall, skin, column radius, column/bolt pattern INS) drive every
 feature file; only the dims below are literals, everything else is a relation. World frame: X across, Y front, Z up."""
 from .params_chassis import (CH_HALF_W, CH_Y0, CH_Y1, CH_Z0, CH_Z1, CH_WALL, CH_IN_X, COL_R, INS, INS_Z, N10_TOP, N10_KEY,
-                             KEY_SPAN, SA_X0, WALL_IN_FRONT, WALL_IN_REAR, BASE_Z0, BASE_T, BASE_OUT, PANEL_EAR_R,
-                             PANEL_EAR_EDGE, PANEL_R_IN, PRELOAD_PAD)
+                             KEY_SPAN, SA_X0, WALL_IN_FRONT, WALL_IN_REAR, BASE_Z0, BASE_T, BASE_OUT, PRELOAD_PAD)
 
 SKIN = CH_WALL / 2                      # master: skin left under pockets; also every small fillet / rib in the tub
 DECK = CH_Z1 - CH_WALL                  # deck underside

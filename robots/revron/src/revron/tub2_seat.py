@@ -1,26 +1,15 @@
 """[tub2] Base-panel seat: rabbet in the RV26 outline (rect, ears round the screws near the edge, R blends), N10 preload pad recess,
 squared rear corner behind the gearbox plates, and the stop wall's lower inner edge round."""
 from build123d import Align, Axis, BuildSketch, Circle, Locations, Mode, Plane, Rectangle, extrude, fillet
-from .tub2_params import (BASE_OUT, INS, PANEL_EAR_R, PANEL_EAR_EDGE, PANEL_R_IN, PRELOAD_PAD, PAD_MARGIN, SEAT_Z, CH_Z0, CH_WALL,
+from .tub2_params import (PRELOAD_PAD, PAD_MARGIN, SEAT_Z, CH_Z0, CH_WALL,
                           CH_IN_X, WALL_IN_REAR, DECK, OVER, SA_X0, STOP_BACK_Y, STOP_FRONT_Y, STOP_ROUND_R, SKIN, PANEL_CLEARANCE)
+from . import panel_base
 from .tub2_util import box_xy, concave_filler, mirrored, prism
 
 
-def panel_outline(grow):
-    """RV26 outline grown by `grow`: rect with corner R, plus an ear round every screw closer than PANEL_EAR_EDGE to an edge, blended PANEL_R_IN."""
-    o = BASE_OUT
-    near_edge = [(x, y) for x, y in INS if min(o["y1"] - y, y - o["y0"]) < PANEL_EAR_EDGE]
-    with BuildSketch() as sk:
-        with Locations((0, o["y0"] - grow)):
-            Rectangle(2 * (o["x"] + grow), o["y1"] - o["y0"] + 2 * grow, align=(Align.CENTER, Align.MIN))
-        fillet(sk.vertices(), o["r"] + grow)   # grown outline: corner R grows with it
-        with Locations(*near_edge):
-            Circle(PANEL_EAR_R + grow)
-    return sk
-
-
 def rabbet():
-    return prism(panel_outline(PANEL_CLEARANCE), CH_Z0 - CH_WALL, SEAT_Z)
+    """The seat is the RV26 outline (panel_base.outline, the panel's own sketch) grown by the print clearance."""
+    return panel_base.rabbet(PANEL_CLEARANCE, CH_Z0 - CH_WALL, SEAT_Z)
 
 
 def pad_recess_and_corner():

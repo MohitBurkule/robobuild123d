@@ -6,7 +6,7 @@ from . import tub_shell, tub_lobes, tub_lugs, tub_front
 from .tub_util import rect
 from robot.cad.holes import hole_tool   # the repo root is on the import path (params.py)
 
-USE_TUB2 = os.environ.get("REVRON_TUB2") == "1"   # one flag: build the chassis from the tub2 feature-tree modules
+USE_TUB2 = os.environ.get("REVRON_TUB2", "1") != "0"   # one flag: tub2 feature-tree modules by default; REVRON_TUB2=0 builds the old tub
 SW_PAD_ENGAGE = 3.0   # pad material above the switch screw head seat (M2x3 thread-forming into the 1.7 pilot)
 SW_PAD = dict(x=(22.5, 27.5), y=(-15.6, 4.4), r=1.5, z0=16.5, fillet=1.5, over=0.5, up=0.1)   # switch pad under the deck (STEP): X / Y span (the +X end is the wall), free corner R, bottom Z, wall fillet R, reach into the wall, reach up into the deck
 
@@ -38,9 +38,11 @@ def chassis():
         return chassis2()
     c = CH
     adds = tub_shell.additions(c) + tub_lobes.additions(c) + tub_lugs.additions(c) + tub_front.additions(c) + [switch_pad(c)]
-    cuts = tub_shell.cuts(c) + tub_lobes.cuts(c) + tub_lugs.cuts(c) + tub_front.cuts(c)
     body = _U(tub_shell.shell(c), *adds)
-    tub = _S(tub_lobes.root_fillet(body, c), *cuts)
+    tub = _S(tub_lobes.root_fillet(body, c), *(tub_shell.cuts(c) + tub_lobes.cuts(c)))
+    for cut in tub_lugs.cuts(c):   # one by one, in order: a single multi-tool cut of the lug cutters leaves an invalid face (BRepCheck) on the lug underside
+        tub = _S(tub, cut)
+    tub = _S(tub, *tub_front.cuts(c))
     assert len(tub.solids()) == 1 and tub.volume > CHASSIS_MIN_VOL, f"chassis boolean collapsed: {len(tub.solids())} solids, {tub.volume:.0f} mm3"
     return tub
 

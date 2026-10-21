@@ -94,7 +94,11 @@ def run(ctx):
         origin, axis = sa
         wb = w.bodies[i]
         pts = wb.mesh.vertices  # extremes of a polyhedron are at its vertices
-        half = float(np.abs((pts - origin) @ axis).max())
+        ta = (pts - origin) @ axis
+        half = float(np.abs(ta).max())
+        # per-side faces: the weapon need not be centred on its origin (a spider hub sits wholly to one side), so each
+        # side's hold starts at that side's own face, not at the farther face mirrored across the origin
+        face = {1.0: float(ta.max()), -1.0: float(-ta.min())}
         energy = ctx.metrics.get("weapon_energy_j")
 
         # Bearing support: one shaft through the weapon centre, gripped by structure on both sides.
@@ -105,7 +109,7 @@ def run(ctx):
             extra = _hub_motor(ctx, wd, b.id)
             q = b.mesh.vertices - origin
             ring = float(np.linalg.norm(q - np.outer(q @ axis, axis), axis=1).max())
-            a, c = (hold_mm(w, j, i, origin, axis, half, 1.0, extra, ring), hold_mm(w, j, i, origin, axis, half, -1.0, extra, ring))
+            a, c = (hold_mm(w, j, i, origin, axis, face[1.0], 1.0, extra, ring), hold_mm(w, j, i, origin, axis, face[-1.0], -1.0, extra, ring))
             if min(a, c) >= min(best[0], best[1]):
                 best = (a, c, b.id)
         need = [MIN_HOLD_MM, MIN_HOLD_MM]
@@ -114,7 +118,7 @@ def run(ctx):
             q = w.bodies[jb].mesh.vertices - origin
             rg = float(np.linalg.norm(q - np.outer(q @ axis, axis), axis=1).max())
             for k, sg in enumerate((1.0, -1.0)):
-                if hold_mm(w, jb, i, origin, axis, half, sg, (), rg, bearing_only=True) >= MIN_BEARING_HOLD_MM:
+                if hold_mm(w, jb, i, origin, axis, face[sg], sg, (), rg, bearing_only=True) >= MIN_BEARING_HOLD_MM:
                     need[k] = min(need[k], MIN_BEARING_HOLD_MM)
         if best[0] >= need[0] and best[1] >= need[1]:
             ctx.metrics["weapon_shaft_hold_mm"] = min(best[0], best[1])

@@ -1,28 +1,29 @@
 """[tub2] RV01 chassis rebuilt as the designer's feature tree: master params (tub2_params), +X half features mirrored.
 Done natively: shell, columns, bores, corner blocks / stop wall / key / ledge, deck pockets, base seat. Still delegated to the
 old modules (organic, not yet re-derived): side lobes + keyholes + nut pocket, lugs, front flanges / lattice, switch pad + slot."""
-from . import tub2_fillets, tub2_lobes, tub2_front, tub2_switch, tub2_body, tub2_cols, tub2_blocks, tub2_pockets, tub2_seat
+from . import tub2_fillets, tub2_lobes, tub2_front, tub2_switch, tub2_lug, tub2_tab, tub2_body, tub2_cols, tub2_blocks, tub2_pockets, tub2_seat, tub2_flange
 from .tub2_util import mirrored
 
 
 def additions():
     """Material added on the shell: rear boss, switch pad, then the +X half blocks mirrored."""
-    half = tub2_blocks.corner_blocks() + tub2_blocks.stop_wall_key_ledge() + [tub2_pockets.rear_pad()]
+    half = (tub2_blocks.corner_blocks() + tub2_blocks.stop_wall_key_ledge() + [tub2_pockets.rear_pad()]
+            + [tub2_lug.lug(), tub2_tab.tab_wall(), tub2_tab.key_tab(), tub2_tab.wall_blend(), tub2_flange.flange()])
     return [tub2_cols.rear_boss()] + tub2_lobes.additions() + [mirrored(h) for h in half] + tub2_switch.switch_pad()
 
 
 def cuts():
-    return tub2_pockets.deck_pockets() + tub2_seat.seat_cuts() + [tub2_cols.bores()] + tub2_lobes.cuts() + tub2_front.wall_pockets() + [tub2_front.wire_slot()] + tub2_switch.switch_slot()
+    return tub2_pockets.deck_pockets() + tub2_seat.seat_cuts() + [tub2_cols.bores()] + tub2_lobes.cuts() + [mirrored(c) for c in (tub2_tab.rabbet(), tub2_tab.key_hole())] + tub2_front.wall_pockets() + [tub2_front.wire_slot()] + tub2_switch.switch_slot()
 
 
 def chassis2():
     from .common import _U, _S
     from .params_chassis import CH
-    from . import tub_lobes, tub_lugs, tub_front
+    from . import tub_lobes, tub_front
     from .tub import CHASSIS_MIN_VOL
     c = CH
-    adds = additions() + tub_lugs.additions(c) + tub_front.additions(c)
-    old_cuts = tub_lobes.panel_mating() + tub_lugs.cuts(c) + [m for s in tub_front._lattice() for m in tub_front._both(s)]
+    adds = additions()
+    old_cuts = tub_lobes.panel_mating() + [m for s in tub_front._lattice() for m in tub_front._both(s)]
     body = _U(tub2_body.shell(), *adds)
     tub = _S(tub2_fillets.lobe_root(body, tub2_lobes.bounds()), *cuts(), *old_cuts)
     assert len(tub.solids()) == 1 and tub.volume > CHASSIS_MIN_VOL, f"tub2 boolean collapsed: {len(tub.solids())} solids, {tub.volume:.0f} mm3"

@@ -13,17 +13,15 @@ from .panel_top import top_panel
 PARTS = {
     "base_panel": base_panel, "top_panel": top_panel, "chassis": chassis, "motor_back_spacer": motor_back_spacer,
     "mount_l": lambda: weapon_mount("l"), "mount_r": lambda: weapon_mount("r"),
-    "fork_l": lambda: fork(-1), "fork_r": lambda: fork(1),
+    "fork_l": lambda: fork_local(), "fork_r": lambda: fork_local(),   # one sheet part, placed twice by the rig
     "spider": spider, "disc_a": lambda: disc("disc_a"), "disc_b": lambda: disc("disc_b"), "drisk_spacer": drisk_spacer, "weapon_shaft": weapon_shaft,
     "wedgelet_l": lambda: wedgelet(-1), "wedgelet_r": lambda: wedgelet(1),
     "side_panel_l": lambda: side_panel(-1), "side_panel_r": lambda: side_panel(1),
     "side_panel_l_local": lambda: side_panel_local(-1), "side_panel_r_local": lambda: side_panel_local(1),   # [fix-C-j1] spec shapes: placed by the mate
-    "rear_hub_l": lambda: rear_hub(-1), "rear_hub_r": lambda: rear_hub(1),
-    "front_hub_l": lambda: front_hub(-1), "front_hub_r": lambda: front_hub(1),
-    "rear_tyre_l": lambda: tyre(*TYRE_REAR["od_id"], -TYRE_REAR["x"][1], -TYRE_REAR["x"][0], (RY, RZ), TYRE_REAR["shoulder"]),
-    "rear_tyre_r": lambda: tyre(*TYRE_REAR["od_id"], *TYRE_REAR["x"], (RY, RZ), TYRE_REAR["shoulder"]),
-    "front_tyre_l": lambda: tyre(*TYRE_FRONT["od_id"], -TYRE_FRONT["x"][1], -TYRE_FRONT["x"][0], SA, TYRE_FRONT["shoulder"]),
-    "front_tyre_r": lambda: tyre(*TYRE_FRONT["od_id"], *TYRE_FRONT["x"], SA, TYRE_FRONT["shoulder"]),
+    "rear_hub_l": lambda: rear_hub(), "rear_hub_r": lambda: rear_hub(),   # one solid each, the left one is turned half a turn by the rig
+    "front_hub_l": lambda: front_hub(), "front_hub_r": lambda: front_hub(),
+    "rear_tyre_l": lambda: rear_tyre(), "rear_tyre_r": lambda: rear_tyre(),
+    "front_tyre_l": lambda: front_tyre(), "front_tyre_r": lambda: front_tyre(),
     "so_a_l": lambda: standoff((-SA_X[1], -SA_X[0]), SA), "so_a_r": lambda: standoff(SA_X, SA),
     "so_b_l": lambda: standoff((-SB_X[1], -SB_X[0]), SB), "so_b_r": lambda: standoff(SB_X, SB),
     "esc_tray": esc_tray,
