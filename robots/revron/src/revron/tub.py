@@ -33,9 +33,11 @@ def chassis():
     lugs (front tabs and standoff lugs), front (corner flanges, rear lattice, wire hole, wall pockets)."""
     c = CH
     adds = tub_shell.additions(c) + tub_lobes.additions(c) + tub_lugs.additions(c) + tub_front.additions(c) + [switch_pad(c)]
-    cuts = tub_shell.cuts(c) + tub_lobes.cuts(c) + tub_lugs.cuts(c) + tub_front.cuts(c)
     body = _U(tub_shell.shell(c), *adds)
-    tub = _S(tub_lobes.root_fillet(body, c), *cuts)
+    tub = _S(tub_lobes.root_fillet(body, c), *(tub_shell.cuts(c) + tub_lobes.cuts(c)))
+    for cut in tub_lugs.cuts(c):   # one by one, in order: a single multi-tool cut of the lug cutters leaves an invalid face (BRepCheck) on the lug underside
+        tub = _S(tub, cut)
+    tub = _S(tub, *tub_front.cuts(c))
     assert len(tub.solids()) == 1 and tub.volume > CHASSIS_MIN_VOL, f"chassis boolean collapsed: {len(tub.solids())} solids, {tub.volume:.0f} mm3"
     return tub
 

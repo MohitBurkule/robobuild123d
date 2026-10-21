@@ -44,4 +44,5 @@ def wedgelet(s):
     # the STEP leaves the fork tine and the mount boss inside the TPU nose; cut their seats (the tine slides into a
     # 1.5 mm slit, the TPU nose tab bears on the mount)
     # the nose tab grazes the chassis lug by 0.1 mm: take the chassis out of it (a printed TPU nose conforms)
-    return _S(sh, _fork_slot(s), weapon_mount("l" if s < 0 else "r"), chassis())
+    sh = _S(sh, _fork_slot(s), weapon_mount("l" if s < 0 else "r"))
+    return _S(sh, chassis())   # chassis cut on its own: with the fork / mount cutters in one multi-tool cut the result is invalid (BRepCheck)
