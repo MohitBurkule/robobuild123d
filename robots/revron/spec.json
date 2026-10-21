@@ -2342,6 +2342,11 @@
     180.0
    ],
    "rotates_with": "fixed",
+   "loose_ok": {
+    "axis": "+x",
+    "max_mm": 2.2,
+    "reason": "RVRN STEP: RV12 N10 slides 2.0 mm inboard in RV01 before touching the tub; outboard it bears on the RV01 wall at x -27.5"
+   },
    "assembly_ok": {
     "reason": "original RVRN 2.0: the RV01 wall solid at z 3..5.5 under the RV12 boss means the N10 goes into the keyhole tilted, shaft first, not by a straight slide"
    }
@@ -2751,6 +2756,11 @@
     0.0
    ],
    "rotates_with": "fixed",
+   "loose_ok": {
+    "axis": "-x",
+    "max_mm": 2.2,
+    "reason": "RVRN STEP: RV12 N10 slides 2.0 mm inboard in RV01 before touching the tub; outboard it bears on the RV01 wall at x 27.5"
+   },
    "assembly_ok": {
     "reason": "original RVRN 2.0: the RV01 wall solid at z 3..5.5 under the RV12 boss means the N10 goes into the keyhole tilted, shaft first, not by a straight slide"
    }

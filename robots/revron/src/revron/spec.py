@@ -91,6 +91,7 @@ def make_spec(model_file):
         P(id=f"nut_c{n}", kind="nut", catalog="nut_m3_thin", **place(f"nut_c{n}"), rotates_with="fixed")
         # drive
         P(id=f"motor_{n}", kind="motor", catalog="n10_2200rpm_spicy", at=place_at(f"motor_{n}"), rot=place_rot(f"motor_{n}"), rotates_with="fixed",
+          **({} if variant("open_keyhole") else {"loose_ok": {"axis": "+x" if s < 0 else "-x", "max_mm": 2.2, "reason": f"RVRN STEP: RV12 N10 slides 2.0 mm inboard in RV01 before touching the tub; outboard it bears on the RV01 wall at x {s * 27.5:g}"}}),
           assembly_ok={"reason": "original RVRN 2.0: the RV01 wall solid at z 3..5.5 under the RV12 boss means the N10 goes into the keyhole tilted, shaft first, not by a straight slide"})
         P(id=f"whub_r{n}", kind="pulley", solid_fraction=SOLID["hub"], rotates_with=f"wheel_r{n}", print_orientation="+x", shape=M(f"rear_hub_{n}"), parent="tub", **place(f"whub_r{n}", "tub"),
           thin_wall_deviation="matches original RVRN 2.0: RV21 draws the 0.5 mm O-ring flange, the 0.5 mm raised lip at the free end and the 0.2 mm end recess; kept for parity (user order)",
