@@ -79,7 +79,9 @@ STATOR_STACK_H, STATOR_SLOTS = 7.0, 12                 # GR1507: 15 mm class sta
 STATOR_BORE_R, STATOR_YOKE_R, STATOR_TIP_R = 2.9, 4.4, 7.5   # bore (clears the r4 rotor core), yoke outer, tooth tip (drawing: 15 mm stator)
 SHAFT_STUB_R = 2.5                                     # rotor shaft down through the stator bore to the base
 STATOR_POST_R = SHAFT_STUB_R + 0.6 + 0.3               # holder post round the shaft: the arch.boss_aligned ring (shaft + 0.6) plus a 0.3 wall
-LEAD_R, LEAD_X, LEAD_Z, LEAD_PITCH = 0.45, -10.7, (-3.9, -7.6), 1.0   # 3 phase leads leave the hub sideways (datasheet photo), run out along the -Z arm and end 7.6 mm off the axis so the bundle clears the shaft stub
+LEAD_R, LEAD_Z, LEAD_PITCH = 0.45, (-3.9, -7.6), 1.0
+LEAD_X = STATOR_BACK_X + LEAD_R   # leads lie on the base back face so the body stays the drawing's 17.1 long;
+# 3 phase leads leave the hub sideways (datasheet photo), run out along the -Z arm and end 7.6 mm off the axis so the bundle clears the shaft stub
 BELL_SCREW_R, BELL_SCREW_PHASE = 4.5, -54.889  # spider screw circle on the bell top and its phase about the axis (STEP; local frame)
 
 
