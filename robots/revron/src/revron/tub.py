@@ -84,10 +84,10 @@ def top_panel():
     p = p.difference(_poly([(-nx0, TOP_TAB_Y), (nx0, TOP_TAB_Y), (nx0, TOP_CUT_Y), (-nx0, TOP_CUT_Y)]))   # tab front edge
     p = _round(p, r_out=TOP_R_OUT, r_in=TOP_R_IN)
     body = _ext(p, "xy", z0, z0 + t)
+    # (the STEP's four 0.1 deep underside recesses are dropped: the top panel is laser-cut Ti, one thickness level only (process.geometry))
     # 2.2 holes countersunk (90 deg, 4.5 at the top face; STEP 3.65) for M2 flat heads into the column-top pilots: the 1.2 head is
     # deeper than the 0.9 plate, so its tip sinks into the chamfer at the column top
-    recess = [_cyl(d / 2, z0 - 0.1, z0 + TOP_RECESS_DEPTH, (x, y), axis="z") for x, y, d in TOP_RECESS]
-    return _S(body, *[_panel_seat("top", i)[0] for i in range(len(TOP_XY))], *recess)
+    return _S(body, *[_panel_seat("top", i)[0] for i in range(len(TOP_XY))])
 
 
 def _switch_hole(yy):
