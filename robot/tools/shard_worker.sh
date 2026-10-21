@@ -3,13 +3,14 @@
 # Usage (from any checkout of this repo): robot/tools/shard_worker.sh
 # Env: SHARDS (default /mnt/project-files/robot-cad/b123d/progress/shards), IDLE (exit after this many s
 # with an empty queue, default 600), STOP (stop file, default $SHARDS/stop), GROUP_TIMEOUT (6000),
-# HB (heartbeat interval, 60), RUN (test hook: command run as `$RUN <worktree> <group>`).
+# HB (heartbeat interval, 30), RUN (test hook: command run as `$RUN <worktree> <group>`).
 # Layout per sha: sha (full sha), queue/<g>, claimed/<host>.<g> (content = "<worker epoch> <beat n>",
 # rewritten every HB s; readers judge staleness by content changes on their own clock, never by mtime,
 # because a network mount's mtimes come from the server's clock/attribute cache), results/<g>.log|.rc.
+# Results: first finisher creates results/<g>.won (atomic mkdir) and alone writes .log/.rc.
 # Claims are a rename (atomic on one filesystem, NFS included); results are written to a temp name and renamed.
 SHARDS=${SHARDS:-/mnt/project-files/robot-cad/b123d/progress/shards}
-IDLE=${IDLE:-600}; STOP=${STOP:-$SHARDS/stop}; HB=${HB:-60}
+IDLE=${IDLE:-600}; STOP=${STOP:-$SHARDS/stop}; HB=${HB:-30}
 HOST=${WORKER_ID:-$(hostname)-$$}
 REPO=$(git rev-parse --show-toplevel 2>/dev/null) || REPO=
 TMP=$(mktemp -d); trap 'cd /; [ -n "$REPO" ] && git -C "$REPO" worktree remove --force "$TMP/wt" 2>/dev/null; rm -rf "$TMP"' EXIT
@@ -60,8 +61,11 @@ while [ ! -f "$STOP" ]; do
   else echo "shard worker $HOST: checkout of '$sha' failed" > "$TMP/$G.log"; rc=97; fi
   kill $hb 2>/dev/null; wait $hb 2>/dev/null
   # copy to a temp name on the share, then rename: readers never see a half-written log
-  cp "$TMP/$G.log" "$D/results/.$G.log.$HOST" && mv -f "$D/results/.$G.log.$HOST" "$D/results/$G.log"
-  echo $rc > "$D/results/.$G.rc.$HOST" && mv -f "$D/results/.$G.rc.$HOST" "$D/results/$G.rc"
+  # first finished result wins: mkdir is atomic and fails if it exists (NFS included); losers discard theirs
+  if mkdir "$D/results/$G.won" 2>/dev/null; then
+    cp "$TMP/$G.log" "$D/results/.$G.log.$HOST" && mv -f "$D/results/.$G.log.$HOST" "$D/results/$G.log"
+    echo $rc > "$D/results/.$G.rc.$HOST" && mv -f "$D/results/.$G.rc.$HOST" "$D/results/$G.rc"
+  else wlog "$G already has a result, discarding mine"; fi
   rm -f "$C"; wlog "$G rc $rc"; idle_since=$(date +%s)
 done
 wlog "stop file seen, exiting"
