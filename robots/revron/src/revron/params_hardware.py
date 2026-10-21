@@ -1,0 +1,124 @@
+"""Revron params: fasteners, wiring, electronics, reference BOM and check tolerances. Re-exported by params.py."""
+from .params_side import *  # noqa: F401,F403
+
+
+# ====================================================================================================================
+# Spec
+# ====================================================================================================================
+SOLID = dict(tub=0.8, mount=0.85, hub=0.85, tpu=0.9, shaft=0.05)    # solid_fraction of printed parts (infill and shell mass share)
+WEDGE_REF = {-1: "RV17", 1: "RV18"}                      # STEP part ids of the wedgelets and side panels per side
+SIDE_REF = {-1: "RV23", 1: "RV24"}
+SIDE_BOLT_X = dict(a=46.26, b=41.76, c=35.26)            # |X| of the side-panel screw heads (STEP: seated in a bore below the face; axle standoff, nose standoff, chassis nut)
+SIDE_SINK = dict(a=2.15, b=5.75, c=1.05)                 # depth of each screw head below the battered outer face, measured on the STEP side panels RV23 (LH) / RV24 (RH): outer face |X| 48.41 / 47.51 / 36.31 at the screw axes, minus the head planes above
+SIDE_FACE_X = {k: SIDE_BOLT_X[k] + SIDE_SINK[k] for k in SIDE_BOLT_X}   # |X| of the battered outer face at each screw
+assert all(0 < d <= SP_CSK["head_clear"] for d in SIDE_SINK.values()), "a screw head must sit inside its driver bore (sink <= bore depth)"
+SIDE_BOLT_DES = dict(a="M3x10", b="M3x10", c="M3x8")
+BASE_BOLT_Z = 3.5                                        # base-panel screw head plane
+TOP_BOLT_XY = INS[1::-1] + INS[3:1:-1]                   # top-panel screws sit on the four corner columns, right-hand first
+PCT = 100                                                # percent
+AWG = dict(power=24, rx=26, motor=28, signal=30)
+SLACK = dict(short=6, bench=8, phases=15)                # wire slack allowed, mm
+# (id, from, to, awg, kind, slack, extras)
+WIRES = [("w_bat_sw", "battery.jst_rcy", "power_switch.in", AWG["power"], "power", SLACK["bench"], dict(connector="jst_rcy")),
+         ("w_sw_wesc", "power_switch.out", "wesc.bat", AWG["power"], "power", SLACK["bench"], {}),
+         ("w_sw_rx", "power_switch.out", "rxesc.bat", AWG["rx"], "power", SLACK["bench"], {}),
+         # phases run rearward in the gap behind the drisk (4 mm axial from the stack), over the front lug (its top is the deck) and down into the tub at the deck front
+         ("w_wesc_m", "wesc.motor", "weapon_motor_stator.phases", AWG["power"], "motor", SLACK["phases"], dict(connector="bullet2", count=3, via=PHASE_VIA)),
+         ("w_rx_wesc", "rxesc.wpn", "wesc.rx", AWG["signal"], "signal", SLACK["short"], {}),
+         ("w_m_l", "rxesc.m2", "motor_l.terminals", AWG["motor"], "motor", SLACK["short"], {}),
+         ("w_m_r", "rxesc.m1", "motor_r.terminals", AWG["motor"], "motor", SLACK["short"], {})]
+
+
+# make_spec tables: weapon shaft, web floors, hub pivots, electronics placements, press-fit interference, belt geometry
+WSHAFT = dict(r=2.5, len=30.1, x=3.65, x_end=-18.7, thread_pitch=0.8, thread_depth=0.3, thread_len=10.0, chamfer=0.4)                  # GR1507 shaft: radius, length, start in the motor frame
+WEB = dict(spider=0.8, disc=0.9, fork=1.05)             # min_web_mm the designer owns (STEP measures the same webs)
+HUB_PIVOT_X = dict(rear=41.6, front=34.5)               # |X| of each hub's revolute pivot
+ELEC = dict(battery=(-11.81, -5.4, 12.0), rxesc=(8.67, -3.0, 15.3), wesc=(8.63, -7.25, 10.6), switch_yz=(-5.6, 14.25))   # catalog origins (STEP envelopes)
+STATOR_DIRS = ((1, 0), (-1, 0), (0, 1), (0, -1))        # stator screw directions on the bolt circle (bolt_wm0..3)
+FILLET_REAR_X = 26.77   # |X| where the squared N10 gearbox-plate seat meets its seat arc at the rear wall (measured on our section z=10; RV01 26.5)
+SWX_DEV_R = 1.5   # reference_cad deviation radius round each switch pilot (hole shifted 0.45 from the STEP)
+SW_SCREW_Y, SW_BOLT_Z, TOP_BOLT_Z = (1.9, -13.1), 16.0, 20.4  # switch screws (Y, head Z) and the top-panel screw head plane
+PRESS = dict(hub=0.05, tyre=0.3, micro=0.2, nut=0.05, shaft=0.02, bearing=0.05, pack=0.1)   # press-fit interference per joint, mm
+BELT_R, BELT_r = 7.95, 4.2   # O-ring centreline radii: rear / front hub groove floor (7.45, 3.7) + half the 1.0 cs
+BELT_X = dict(centre=31.25)                                              # |X| of the O-ring centreline (hub groove centre)
+O_RING = (45, 1.0)                                      # stock O-ring ID x cross-section
+
+
+# intent-probe parameters (rear hub / tyre / nut / seat) and the TPU-print exceptions of the chassis wall
+HUB_PROBE_X = 35.0                                      # |X| of the keyed-bore probe point (inside the bore, off its centre line)
+HUB_BORE_SPAN, TYRE_SPAN = (30.5, 40.5), (32.5, 42.0)   # |X| of the hub's blind D-bore and of the tyre seat
+TYRE_ID, TYRE_STRETCH, NUT_MOVE, WHEEL_MIN_GAP = 13.0, 1.0, 0.3, 1.0   # relaxed F1 tyre ID, its stretch over the crown, nut play, wheel-to-armour gap
+SEAT_PLAY, SEAT_TURN_DEG = 0.15, 2.0                      # motor boss play in the keyhole, shaft turn it allows
+WALL_MIN = 1.8                                            # printed wall floor: 4+ perimeters on a 2 mm wall
+WALL_EXCEPT = [[[-29.6, -37.7, 4.6], [29.6, -35.4, 17.5]], [[-33.0, -38.0, 0.0], [33.0, 44.0, 4.6]]]   # rear truss and base lip (STEP RV01)
+FILLET_H, ROTOR_CLEAR = 10.0, 2.0                         # inside-corner fillet probe height; lead-to-rotor clearance
+
+
+BRG = dict(od_r=4.0, w=2.5, bore_r=2.5, x=-14.75)   # MR85ZZ 5 x 8 x 2.5, centred in the RV02 seat
+
+
+REF_BOM = [   # RVRN 2.0 STEP part list (research/rvrn_step/INDEX.txt); one row per joint or part family
+    dict(role="FS8: base panel 5 x M2 CSK into heat-sets", match=["bolt_b*"], count=5, designation="M2x6", head="countersunk", threads_into="insert"),
+    dict(role="FS1 M2 heat-sets (floor)", kind="part", match=["insert_b*", "insert_t*"], count=9, catalog="heatset_m2_4"),
+    dict(role="FS9: mount to standoff 2 x M3x12 CSK alu (axle standoff)", match=["bolt_u?a"], count=2, designation="M3x12", head="countersunk", threads_into="standoff", material="aluminium"),
+    dict(role="FS9: mount to nose standoff 2 x M3 CSK alu", match=["bolt_u?b"], count=2, designation="M3x14", head="countersunk", threads_into="standoff", material="aluminium",
+         deviation="M3x14 instead of the STEP's M3x12: through mount and lug, 12 mm engages 3.9 mm of the 15 mm standoff (< 1.5 d)"),
+    dict(role="top panel: 4 x M2 CSK thread-forming (not in the STEP; its countersunk holes are)", match=["bolt_t*"], count=4, designation="M2x5", threads_into="insert",
+         deviation="the STEP top panel has 4 countersunk corner holes but no screws; 4 M2x4 CSK thread-forming screws added so the Ti panel cannot peel off"),
+    dict(role="side panel to standoff ends: 4 x M3 CSK (STEP M3x8)", match=["bolt_s?a", "bolt_s?b"], count=4, designation="M3x10", head="countersunk", threads_into="standoff",
+         deviation="M3x10 instead of the STEP's M3x8: 8 mm engages 4.2 / 2.7 mm of standoff thread, under 1.5 d in aluminium"),
+    dict(role="side panel to chassis: 2 x M3x8 CSK into thin nuts", match=["bolt_s?c"], count=2, designation="M3x8", head="countersunk", threads_into="nut"),
+    dict(role="M3 thin nuts (BS EN 24036)", kind="part", match=["nut_c*"], count=2, catalog="nut_m3_thin"),
+    dict(role="RV11 25 mm + RV10 15 mm alu standoffs", kind="part", match=["so_*"], count=4, material="aluminium"),
+    dict(role="GR1507 weapon motor", kind="part", match=["weapon_motor_stator"], count=1, catalog="gr1507"),
+    dict(role="GR1507 bell (rotor half)", kind="part", match=["weapon_motor_can"], count=1, catalog="gr1507_can"),
+    dict(role="Motor back spacer", kind="part", match=["motor_spacer"], count=1),
+    dict(role="spider + 2 Drisk_floating_3 + Drisk_spacer_alt_x", kind="part", match=["spider", "disc_a", "disc_b", "dspacer"], count=4),
+    dict(role="fork_5 x 2", kind="part", match=["fork_*"], count=2),
+    dict(role="RV17/18 wedgelets", kind="part", match=["wedgelet_*"], count=2, material="tpu"),
+    dict(role="RV23/24 side panels", kind="part", match=["side_*"], count=2, material="tpu"),
+    dict(role="Top panel 0.9 sheet", kind="part", match=["top_panel"], count=1),
+    dict(role="RV15 BBB antweight switch", kind="part", match=["power_switch"], count=1, catalog="switch_bbb_ant_rvrn2"),
+    dict(role="RV16 Turnabot 2S 180 mAh", kind="part", match=["battery"], count=1, catalog="lipo_2s_180_turnabot"),
+    dict(role="RV13 Malenki nano", kind="part", match=["rxesc"], count=1, catalog="malenki_nano_rvrn2"),
+    dict(role="RV14 brushless ESC", kind="part", match=["wesc"], count=1, catalog="bbb_ant_esc_rvrn2"),
+    dict(role="RV12 N10 2200 rpm x 2", kind="part", match=["motor_l", "motor_r"], count=2, catalog="n10_2200rpm_spicy"),
+    dict(role="drisk stack: 4 x M2 into the spider (not in the STEP, holes are)", match=["bolt_d*"], count=4, designation="M2", threads_into="spider",
+         deviation="the STEP leaves the r14 stack holes empty; 4 M2x14 added from the back, tapped into the spider (r0.8 tap holes there, the STEP r1.1 clearance elsewhere): no nuts, nothing invented beyond the screws"),
+    dict(role="spider to bell: 4 x M2 (not in the STEP)", match=["bolt_p*"], count=4, designation="M2", threads_into="motor",
+         deviation="the STEP shows the r4.5 holes only"),
+    dict(role="stator: 4 x M2 (not in the STEP)", match=["bolt_wm*"], count=4, designation="M2", threads_into="motor",
+         deviation="the STEP shows the RV03 counterbores only"),
+    dict(role="switch: 2 x M2 into the deck pilot holes (not in the STEP)", match=["bolt_sw*"], count=2, designation="M2",
+         deviation="the STEP has the two 1.7 pilot holes but no screws"),
+    dict(role="nitrile O-ring belts (not in the STEP; hub grooves are)", kind="part", match=["belt_l", "belt_r"], count=2),
+    dict(role="battery lead: JST RCY", kind="wire", match=["w_bat_sw"], count=1, connector="jst_rcy"),
+    dict(role="weapon phases: 3 x 2 mm bullets", kind="wire", match=["w_wesc_m"], count=1, connector="bullet2"),
+]
+
+REF_DIR = "/mnt/project-files/robot-cad/research/rvrn_step/parts"
+DRISK_T = None
+
+
+MICRO_T = {   # STEP Micro_slx_v1_0 instance placements (assembly frame), composed with REF_TO_WORLD
+    "l": [[0, -0.33, 0.944, -30.5], [0, 0.944, 0.33, 5.5], [-1, 0, 0, 35.5], [0, 0, 0, 1]],
+    "r": [[0, -0.33, -0.944, -30.5], [0, 0.944, -0.33, 5.5], [1, 0, 0, -35.5], [0, 0, 0, 1]],
+}
+
+
+SLIT_DEV_X, SLIT_DEV_R, SLIT_DEV_YZ = 25.75, 2.5, ((46.4, 2.2), (44.4, 6.0), (43.1, 6.2), (44.2, 5.9), (48.5, 2.8))   # fork-tine slit sites in the wedgelet
+TOE_DEV_YZ, TOE_DEV_R, TOE_DEV_X = (49.3, 1.4), 4.0, (19.5, 24.0, 28.0, 32.0, 36.5)                             # knife-toe land sites
+
+
+# reference_cad tolerances and the reasoned-deviation sites (centres + radii of the regions allowed to differ from the STEP)
+TOL = dict(tight=0.3, std=0.5, motor=0.6, wedge=0.8, loose=1.0)             # mm: surface deviation allowed per part class
+VOL = dict(part=0.25, hub=0.15, motor=0.3, standoff=0.2, switch=0.5)          # fraction: volume mismatch allowed
+REF_IOU_MIN = 0.9                                                              # silhouette IoU floor on every axis
+COLUMN_TOP_Z, COLUMN_DEV_R, FOOT_DEV_Z, FOOT_DEV_R = CH_Z1 - CH_WALL, 3.0, 5.0, 4.0       # tub corner columns: top bore (centre of the 4 mm bore) and flared foot
+KEYHOLE_DEV = (28.6, -30.6, 4.5)   # N10 keyhole U-slot (x, y, z=r)
+LOBE_DEV, LOBE_DEV_R = (32.0, -13.5, 9.4), 3.5  # param: organic centroid of the lobe-tail trim vs STEP blobs
+# param: end
+CAGE_RIB_R, BASE_DEV_Z, PANEL_DEV_R, TOP_DEV_Z = 4.5, 4.5, 3.0, 19.95
+NOSE_DEV, NOSE_DEV_R = (MNT_IN + 2.0, SB[0] + 0.6, SB[1] - 1.7), 5.0             # mount nose pad (|x|, y, z): thickened nose wall, deviation from the STEP nose
+STATOR_DEV_X, TAP_DEV_R = 16.8, 2.0                                              # stator lead-in cone site; tap-hole sites
+__all__ = [n for n in dir() if not n.startswith("__")]   # last line: every name above is exported
