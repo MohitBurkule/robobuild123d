@@ -47,6 +47,114 @@ FEATURES = {
     "n10_2200rpm_spicy": {"can_d": 12.6, "shaft_d": 3.0, "source": "N10 micro-metal gearmotor, 3 mm D shaft"},
 }
 
+# Datasheet engineering drawing (research/motor_cad/geprc_site/1507.jpg, GEPRC GR1507 page): dims as (value, -tol, +tol)
+# mm / g. Judged only on the datasheet variant (catalog ids below); the `_step` variant copies the simplified STEP.
+# Measured from the built solids (can + stator + any `shaft_of` part, in the can frame), never from catalog params.
+DRAWING = {
+    "total_len": (29.1, 0.2, 0.2), "shaft_protrusion": (12.0, 0.3, 0.3), "thread_len": (8.0, 0.2, 0.5),
+    "thread_d": (5.0, 0.3, 0.3), "can_d": (19.6, 0.05, 0.05), "body_len": (17.1, 0.3, 0.3),
+    "stator_d": (15.0, 0.3, 0.3), "stator_stack": (7.0, 0.3, 0.3), "bolt_circle": (12.0, 0.3, 0.3), "mass_g": (15.5, 0.5, 0.5),
+}
+DRAWING_IDS = {"gr1507", "gr1507_can"}
+DRAWING_SRC = "GEPRC GR1507 drawing (research/motor_cad/geprc_site/1507.jpg)"
+BODY_R = 3.0   # anything wider than this radius is motor body, narrower is shaft
+
+
+def _slices(t, rho, step=0.25):
+    """{slice index: (rho max, rho min)} over axial slices."""
+    k = np.floor((t - t.min()) / step).astype(int)
+    out = {}
+    for i in np.unique(k):
+        r = rho[k == i]
+        out[int(i)] = (float(r.max()), float(r.min()))
+    return out
+
+
+def _radial(mesh, axis, n=60000):
+    """Axial t / radius rho of surface samples on faces whose normal is mostly radial (no end caps)."""
+    pts, fi = mesh.sample(n, return_index=True)
+    nrm = mesh.face_normals[fi]
+    keep = np.abs(nrm @ axis) < 0.3
+    pts = pts[keep]
+    t = pts @ axis
+    rho = np.linalg.norm(pts - np.outer(t, axis), axis=1)
+    return t, rho
+
+
+def drawing_dims(can, stator, shafts, axis, mass_g):
+    """Measured drawing dims {name: value or None} for one GR1507 (meshes in the can frame, axis = output side)."""
+    import trimesh
+
+    allm = trimesh.util.concatenate([can, stator] + list(shafts))
+    v = allm.vertices @ axis
+    got = {"total_len": float(v.max() - v.min()), "mass_g": mass_g}
+    t, rho = _radial(allm, axis)
+    body = t[rho > BODY_R]
+    top, bot = float(body.max()), float(body.min())
+    got["body_len"] = top - bot
+    got["can_d"] = 2 * float(np.percentile(_radial(can, axis)[1], 99.5))
+    got["shaft_protrusion"] = float(v.max()) - top if v.max() > top + 0.1 else 0.0
+    # thread: beyond the bell top, the shaft's outer radius per slice dips to the root at every pitch; a plain rod has
+    # no dips. Length = first to last root, plus one pitch (half a crest each end).
+    tp, rp = profile(trimesh.util.concatenate(list(shafts)), axis, n=60000)[1:] if shafts else (np.zeros(0), np.zeros(0))
+    beyond = tp > top + 0.05
+    step = 0.1
+    if beyond.any():
+        tb, rb = tp[beyond], rp[beyond]
+        k = np.floor((tb - tb.min()) / step).astype(int)
+        mx = np.array([rb[k == i].max() if (k == i).any() else np.nan for i in range(k.max() + 1)])
+        crest = float(np.nanmax(mx))
+        roots = np.where(mx < crest - 0.15)[0]
+        roots = roots[(roots > 0) & (roots < len(mx) - 1)]   # the chamfered tip end is not a root
+        starts = roots[np.r_[True, np.diff(roots) > 1]] if len(roots) else roots
+        pitch = float(np.mean(np.diff(starts))) * step if len(starts) > 1 else 0.0
+        got["thread_len"] = float(roots.max() - roots.min() + 1) * step + pitch if len(starts) > 1 else 0.0
+        got["thread_d"] = 2 * crest
+    else:
+        got["thread_len"], got["thread_d"] = 0.0, None
+    # stator stack: slices of the stator whose outer radius is between the hub and the base cross arms
+    ts, rs = _radial(stator, axis)
+    ss = _slices(ts, rs)
+    band = {i: h for i, (h, _) in ss.items() if 5.0 < h < 9.0}
+    if band:   # the lamination stack proper: drop winding end turns, which stop short of the tooth tips
+        top_r = float(np.median(list(band.values())))
+        band = {i: h for i, h in band.items() if h > top_r - 0.15}
+        runs, cur = [], []
+        for i in sorted(band):   # longest contiguous run: the stack, not stray leads
+            if cur and i != cur[-1] + 1:
+                runs.append(cur)
+                cur = []
+            cur.append(i)
+        runs.append(cur)
+        best = max(runs, key=len)
+        band = {i: band[i] for i in best}
+    if band:
+        got["stator_d"] = 2 * float(np.median(list(band.values())))
+        t0 = float(ts.min())
+        lo_t = min(i for i in band) * 0.25 + t0
+        hi_t = (max(i for i in band) + 1) * 0.25 + t0
+        edge = ts[(ts >= lo_t) & (ts <= hi_t) & (rs > top_r - 0.15) & (rs < 9.0)]
+        got["stator_stack"] = float(edge.max() - edge.min())
+    else:
+        got["stator_d"], got["stator_stack"] = None, 0.0
+    # base bolt circle: the 4 holes are open at the drawing's d12
+    tf, rf = profile(stator, axis)[1:]
+    face = float(tf.min())
+    k = bolt_holes(stator, axis, face, 1.0, DRAWING["bolt_circle"][0] / 2, 4)
+    got["bolt_circle"] = DRAWING["bolt_circle"][0] if k == 4 else None
+    return got
+
+
+def drawing_misses(got):
+    rows, miss = [], []
+    for k, (want, lo, hi) in DRAWING.items():
+        g = got.get(k)
+        good = g is not None and want - lo - 1e-6 <= g <= want + hi + 1e-6
+        rows.append((k, want, lo, hi, g, good))
+        if not good:
+            miss.append(f"{k} {'none' if g is None else f'{g:.2f}'} vs {want:g} (-{lo:g}/+{hi:g})")
+    return rows, miss
+
 
 def _frame(rp):
     sh = rp.cat.shaft if rp.cat is not None else None
@@ -272,6 +380,29 @@ def run(ctx):
                 _judge_report(out, can.part.id, can.part.catalog or st.part.catalog or base, feat, miss)
             else:
                 n += 1
+        if {can.part.catalog, st.part.catalog} <= DRAWING_IDS:
+            inv = np.linalg.inv(wc.M)
+            cm, sm = wc.mesh.copy(), ws.mesh.copy()
+            cm.apply_transform(inv)
+            sm.apply_transform(inv)
+            shs = []
+            for i in extra:
+                b = ctx.world.body(i)
+                if b is not None:
+                    bm = b.mesh.copy()
+                    bm.apply_transform(inv)
+                    shs.append(bm)
+            mass = sum(float(rp.cat.mass_g) for rp in (can, st) if rp.cat is not None)
+            got = drawing_dims(cm, sm, shs, _frame(can), mass)
+            rows, dmiss = drawing_misses(got)
+            ctx.metrics[f"cots.drawing.{base}"] = {k: (None if g is None else round(g, 2)) for k, _, _, _, g, _ in rows}
+            if dmiss:
+                out.append(fail("cots.drawing_dims", G, BLOCKER, "Motor differs from its datasheet drawing",
+                                f"`{base}` vs {DRAWING_SRC}: " + "; ".join(dmiss)).on(can.part.id, st.part.id)
+                           .fix("Model the motor to the drawing: overall length, shaft protrusion and thread, can, stator and base."))
+            else:
+                out.append(ok("cots.drawing_dims", G, "Motor matches its datasheet drawing",
+                              f"`{base}`: all {len(rows)} drawing dims within tolerance ({DRAWING_SRC}).").on(can.part.id, st.part.id))
         import trimesh
 
         bodies = [ctx.world.body(i).mesh for i in [can.part.id, st.part.id] + extra]
