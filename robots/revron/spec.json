@@ -1039,36 +1039,36 @@
      },
      {
       "near": [
-       14.766416394821409,
-       20.5625,
-       19.628787697233737
+       15.66641639482141,
+       21.4375,
+       19.23632007623851
       ],
       "r": 5.0,
       "reason": "phase-lead C-groove in the inner face (added, not in the STEP): the twisted 3 x AWG24 bundle snaps through a 3.0 mouth into a R2.0 channel from the stator exit to the lug top, so the leads never hang free next to the disc (wire.exterior_support)"
      },
      {
       "near": [
-       14.766416394821409,
-       25.6875,
-       17.330048774261684
+       15.66641639482141,
+       26.3125,
+       17.049714759265093
       ],
       "r": 5.0,
       "reason": "phase-lead C-groove in the inner face (added, not in the STEP): the twisted 3 x AWG24 bundle snaps through a 3.0 mouth into a R2.0 channel from the stator exit to the lug top, so the leads never hang free next to the disc (wire.exterior_support)"
      },
      {
       "near": [
-       14.766416394821409,
-       30.8125,
-       15.031309851289635
+       15.66641639482141,
+       31.1875,
+       14.86310944229168
       ],
       "r": 5.0,
       "reason": "phase-lead C-groove in the inner face (added, not in the STEP): the twisted 3 x AWG24 bundle snaps through a 3.0 mouth into a R2.0 channel from the stator exit to the lug top, so the leads never hang free next to the disc (wire.exterior_support)"
      },
      {
       "near": [
-       14.766416394821409,
-       35.9375,
-       12.732570928317582
+       15.66641639482141,
+       36.0625,
+       12.676504125318264
       ],
       "r": 5.0,
       "reason": "phase-lead C-groove in the inner face (added, not in the STEP): the twisted 3 x AWG24 bundle snaps through a 3.0 mouth into a R2.0 channel from the stator exit to the lug top, so the leads never hang free next to the disc (wire.exterior_support)"
@@ -4831,12 +4831,12 @@
      16.0
     ],
     [
-     14.766416394821409,
-     18.0,
-     20.77815715871976
+     15.66641639482141,
+     19.0,
+     20.329622734725216
     ],
     [
-     14.766416394821409,
+     15.66641639482141,
      38.5,
      11.583201466831557
     ],
@@ -5387,12 +5387,12 @@
       16.0
      ],
      [
-      14.766416394821409,
-      18.0,
-      20.77815715871976
+      15.66641639482141,
+      19.0,
+      20.329622734725216
      ],
      [
-      14.766416394821409,
+      15.66641639482141,
       38.5,
       11.583201466831557
      ],

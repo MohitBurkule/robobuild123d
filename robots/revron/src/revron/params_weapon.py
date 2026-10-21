@@ -91,9 +91,10 @@ LEAD_OD, LEAD_TWIST = 1.6, 0.1                                  # AWG24 silicone
 LEAD_BUNDLE_R = LEAD_OD * (0.5 + 1 / math.sqrt(3)) + LEAD_TWIST  # 3 touching round leads: circumscribed radius (wire_review.bundle_radius), 1.82
 LEAD_GROOVE_R = LEAD_BUNDLE_R + 0.2                             # groove radius: bundle + printed-clearance
 LEAD_MOUTH = LEAD_OD * (1 + math.sqrt(3) / 2)                   # mouth at the inner face = the bundle's narrow width (one lead over two, 2.99): it snaps in flat side first, the round twist cannot fall out
-LEAD_GROOVE_X = MNT_IN + math.sqrt(LEAD_GROOVE_R ** 2 - (LEAD_MOUTH / 2) ** 2)   # groove axis behind the inner face (the mouth is the chord at the face)
+LEAD_LIP = 0.9                                                  # the mouth is a LEAD_MOUTH slot through a lip this thick (one fdm wall, mfg.thin_wall): square lip edges, no knife edge where the round groove meets the face
+LEAD_GROOVE_X = MNT_IN + LEAD_LIP + math.sqrt(LEAD_GROOVE_R ** 2 - (LEAD_MOUTH / 2) ** 2)   # groove axis behind the inner face: the slot meets the round groove in the mouth chord
 LEAD_LIG = 0.6                                                  # groove edge above the boss line (floor in the 8 mm boss); also puts the front end clear of the back spacer ring (test_lead_route)
-LEAD_Y_REAR = 18.0                                              # groove rear end: its top keeps >= LEAD_LIG under RV03's top tangent edge
+LEAD_Y_REAR = 19.0                                              # groove rear end: its ball end keeps >= LEAD_LIP (one fdm wall, mfg.thin_wall) under RV03's top tangent edge
 LEAD_FAN_X = sum(BSP_X) / 2                                     # the bundle turns into the groove round the back spacer rim, mid its thickness (the stator-side gap is 1.5 mm, too thin for it)
 LEAD_DEV_N, REF_DEV_R_MAX = 4, 5.0                              # reference_cad deviation sites along the groove; a waiver's largest radius (reference_cad.diff)
 

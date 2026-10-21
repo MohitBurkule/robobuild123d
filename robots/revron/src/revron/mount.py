@@ -74,14 +74,19 @@ def weapon_mount(side):
 
 
 def lead_groove():
-    """Cutter of RV03's phase-lead C-groove: a round channel (LEAD_GROOVE_R, ball ends) on the axis X = LEAD_GROOVE_X, so the inner
-    face cuts it in a LEAD_MOUTH chord the twisted bundle snaps through, between the lead_groove_ends() (parallel to the boss line)."""
+    """Cutter of RV03's phase-lead C-groove: a round channel (LEAD_GROOVE_R, ball ends) on the axis X = LEAD_GROOVE_X behind a
+    LEAD_LIP lip, opened to the inner face by a round-ended LEAD_MOUTH slot the twisted bundle snaps through, between the lead_groove_ends()."""
     bb = _b()
     (y0, z0), (y1, z1) = lead_groove_ends()
     ang = math.degrees(math.atan2(z1 - z0, y1 - y0))
     rod = bb.Cylinder(LEAD_GROOVE_R, math.hypot(y1 - y0, z1 - z0), rotation=(-90, 0, 0)).rotate(bb.Axis.X, ang)   # along +Y, then tilted onto the run
     rod = rod.translate((LEAD_GROOVE_X, (y0 + y1) / 2, (z0 + z1) / 2))
-    return _U(rod, *[bb.Sphere(LEAD_GROOVE_R).translate((LEAD_GROOVE_X, y, z)) for y, z in ((y0, z0), (y1, z1))])
+    slot = bb.Box(2 * (LEAD_GROOVE_X - MNT_IN), math.hypot(y1 - y0, z1 - z0), LEAD_MOUTH).rotate(bb.Axis.X, ang)   # the mouth through the lip
+    slot = slot.translate((MNT_IN, (y0 + y1) / 2, (z0 + z1) / 2))
+    ends = [bb.Sphere(LEAD_GROOVE_R).translate((LEAD_GROOVE_X, y, z)) for y, z in ((y0, z0), (y1, z1))]
+    caps = [bb.Cylinder(LEAD_MOUTH / 2, 2 * (LEAD_GROOVE_X - MNT_IN), rotation=(0, 90, 0)).translate((MNT_IN, y, z))   # round slot ends: each meets its ball end in the mouth circle, no lip sliver
+            for y, z in ((y0, z0), (y1, z1))]
+    return _U(rod, slot, *ends, *caps)
 
 
 def _mount_csk(s, y, z, fastener):
