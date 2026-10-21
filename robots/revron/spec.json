@@ -323,6 +323,28 @@
    "count": 2
   },
   {
+   "role": "bat_pad: double-sided foam tape pad under the pack (not in the STEP)",
+   "kind": "part",
+   "match": [
+    "bat_pad"
+   ],
+   "count": 1,
+   "material": "foam_tape",
+   "deviation": "the STEP pack floats 2 mm over the base panel; a foam tape pad supports and retains it (adds ~0.05 g, reversible)",
+   "reason": "the STEP pack floats 2 mm over the base panel; a foam tape pad supports and retains it (adds ~0.05 g, reversible)"
+  },
+  {
+   "role": "esc_tray: TPU weapon-ESC tray (not in the STEP)",
+   "kind": "part",
+   "match": [
+    "esc_tray"
+   ],
+   "count": 1,
+   "material": "tpu",
+   "deviation": "the STEP holds the weapon ESC with kapton tape alone; a TPU tray with 0.1 mm lips keeps the board in if the tape fails (adds 1.1 g, reversible)",
+   "reason": "the STEP holds the weapon ESC with kapton tape alone; a TPU tray with 0.1 mm lips keeps the board in if the tape fails (adds 1.1 g, reversible)"
+  },
+  {
    "role": "battery lead: JST RCY",
    "kind": "wire",
    "match": [
@@ -926,7 +948,7 @@
        19.57
       ],
       "r": 5.0,
-      "reason": "the STEP top panel carries a shallow 0.1 mm d5.8-6.6 recess here; the panel is laser-cut Ti (one thickness level, no depth-limited pockets), so the recess is not cut and the panel stays a flat 0.9 mm sheet"
+      "reason": "0.1 mm engraved lettering, laser-etch omitted"
      },
      {
       "near": [
@@ -935,7 +957,7 @@
        19.57
       ],
       "r": 5.0,
-      "reason": "the STEP top panel carries a shallow 0.1 mm d5.8-6.6 recess here; the panel is laser-cut Ti (one thickness level, no depth-limited pockets), so the recess is not cut and the panel stays a flat 0.9 mm sheet"
+      "reason": "0.1 mm engraved lettering, laser-etch omitted"
      },
      {
       "near": [
@@ -944,7 +966,7 @@
        19.57
       ],
       "r": 5.0,
-      "reason": "the STEP top panel carries a shallow 0.1 mm d5.8-6.6 recess here; the panel is laser-cut Ti (one thickness level, no depth-limited pockets), so the recess is not cut and the panel stays a flat 0.9 mm sheet"
+      "reason": "0.1 mm engraved lettering, laser-etch omitted"
      },
      {
       "near": [
@@ -953,7 +975,7 @@
        19.57
       ],
       "r": 5.0,
-      "reason": "the STEP top panel carries a shallow 0.1 mm d5.8-6.6 recess here; the panel is laser-cut Ti (one thickness level, no depth-limited pockets), so the recess is not cut and the panel stays a flat 0.9 mm sheet"
+      "reason": "0.1 mm engraved lettering, laser-etch omitted"
      }
     ]
    },
@@ -1720,7 +1742,6 @@
    "material": "pla_st",
    "process": "fdm",
    "thin_wall_deviation": "matches original RVRN 2.0: the switch-slot rim is 0.5 mm wide on RV01_Chassis_1 too (RV01 section y=-10: slot edge x=27.0, outer face x=27.5) and 0.65 mm between the slot front and the deck pocket (section x=25: y -12.25 to -11.6)",
-   "sharp_corner_deviation": "remaining concave corners are plate-to-plate seams with parts that seat on them (base panel lip, mount_l/mount_r tab faces, standoff bolt faces): a round would unseat the mating flat; the R7.45 blend at (-21.5,23.0,14.5) belongs to the RV02 mount tab, which this chassis meets square (fixed-face joint)",
    "label": "RV01 printed chassis: closed X-ribbed deck (printed deck-down), open floor for the base panel, N10 keyhole side pockets, nut lobes, weapon-mount tabs and standoff lugs"
   },
   {
@@ -1749,7 +1770,7 @@
    "material": "pla_st",
    "process": "fdm",
    "thin_wall_deviation": "the 1 mm panel is shallower than the 1.2 mm M2 CSK head (STEP RV26 has the same 5 countersunk seats): a 90 deg seat cone leaves a knife wedge under the countersink rim, unavoidable at this thickness (parity with RV26)",
-   "sharp_corner_deviation": "the panel's concave corners at (+-25.1,-25.5,4.5) are where its 1 mm plate edge butts the tub floor lip; RV26 is a flat plate against the RV01 lip (reference r 0.27), a round there would lift the panel off the lip and unseat bolt_b2/b3",
+   "sharp_corners_ok": "the panel's concave corners at (+-25.1,-25.5,4.5) are where its 1 mm plate edge butts the tub floor lip; RV26 is a flat plate against the RV01 lip (reference r 0.27), a round there would lift the panel off the lip and unseat bolt_b2/b3; the RV26 Chamfer2 is 1.3 mm away from these corners and there is no fillet on them in the dump",
    "label": "RV26 1 mm printed base panel, 5 M2 CSK into the floor heat-sets, 0.45 mm pads preload the N10s"
   },
   {
