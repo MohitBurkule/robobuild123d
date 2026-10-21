@@ -11,8 +11,10 @@ def stator_bolt_circle():
 
 
 def _mount_clip():
-    """Region above the line from the notch top to the nose (the battered boss) as a polygon."""
-    return Polygon_([(TAB["y0"], MNT_TOP_Z), (BOSS_NOSE_Y, BOSS_Z), (BIG, BOSS_Z), (BIG, BIG), (0, BIG), (0, MNT_TOP_Z)])
+    """Region above the line from the notch top to the nose (the battered boss) as a polygon. The line runs on past the
+    nose to Y = BIG (no horizontal step at BOSS_Z): RV03's front edge passes within 1 um of the nose point, and a corner
+    there left a zero-width sliver face (visual.sliver)."""
+    return Polygon_([(TAB["y0"], MNT_TOP_Z), (BIG, boss_line_z(BIG)), (BIG, BIG), (0, BIG), (0, MNT_TOP_Z)])
 
 
 def _mount_profile(side):
@@ -31,9 +33,9 @@ def _mount_profile(side):
              (t["y0"], MNT_TOP_Z - MNT_NOTCH_UP), (t["y0"] - MNT_NOTCH_UP, MNT_TOP_Z), (m["notch_y"], MNT_TOP_Z)]
     p = _poly(rim + [nose[0]] + nose[1:] + heel + notch)
     # the nose CSK (DIN 7991 cone) is wider than the STEP's nose arc and left a 0 mm knife edge there: a local pad
-    # (CSK radius + printed wall), kept above the nose underside, wraps the countersink
-    from shapely.geometry import Point, box as _sbox
-    p = p.union(Point(SB).buffer(NOSE_PAD_R, WSEG_HI).intersection(_sbox(0, SB[1] - NOSE_PAD_R, BIG + 20, SB[1])))
+    # (CSK radius + printed wall) wraps the countersink, under the nose and up the front edge (RV02's front tangent passed 0.3 mm from the cone rim)
+    from shapely.geometry import Point
+    p = p.union(Point(SB).buffer(NOSE_PAD_R, WSEG_HI))
     # the rear notch meets the rim tangent in a wedge thinner than a printed wall: thicken it to MNT_TIP_WALL without
     # moving the part's rearmost point (the grown copy is cut at the notch-top Y)
     from shapely.geometry import Point, box as _sb
@@ -57,8 +59,9 @@ def weapon_mount(side):
     xi, xm, xo = s * MNT_IN, s * MNT_SLAB, s * MNT_OUT
     eps = m["slab_eps"]                          # RV03's STEP slab face sits just inside the slab plane, RV02's on it
     slab = _ext(prof, "yz", xi, xm - s * eps, arcs=True)
-    bp = prof.intersection(_mount_clip())         # boss: the profile above the line from the notch top to the nose
-    boss = _ext(bp, "yz", xm - s * eps, xo + s * BOSS_OVER, arcs=True)
+    # boss: the profile above the line from the notch top to the nose, clipped in 3D so it keeps the slab's true arcs
+    # (a 2D clip left arc stubs too short to refit, whose chords against the slab's arcs made sliver faces)
+    boss = _one(_ext(prof, "yz", xm - s * eps, xo + s * BOSS_OVER, arcs=True)).intersect(_ext(_mount_clip(), "yz", xm - s * eps - s, xo + s * (BOSS_OVER + 1)))
     a_, kz, ky = m["face"]                        # outer battered face (STEP): one plane leaning in with height and towards the nose
     bb = _b()
     boss = _one(boss).split(bb.Plane(origin=(s * a_, 0.0, 0.0), z_dir=(s * 1.0, ky, kz)), keep=bb.Keep.BOTTOM)
@@ -78,20 +81,47 @@ def weapon_mount(side):
     return _S(body, *cuts)
 
 
+def lead_groove_section(half=False):
+    """[(kind, points)] outline in (u = world X, v = offset across the run) of RV03's phase-lead C-groove section: the
+    round channel (LEAD_GROOVE_R) on u = LEAD_GROOVE_X, opened to the inner face by the LEAD_MOUTH slot through the
+    LEAD_LIP lip, the lip / channel chord filleted LEAD_ROUND (it was a sharp crease, mfg.sharp_internal_corner), a
+    LEAD_FLOOR_W flat on the channel floor (the revolved ends then close on a flat, not on a degenerate pole: integrity.solids).
+    kind 'l' = line (2 points), 'a' = arc (3 points); half=True gives the v >= 0 half closed on v = 0."""
+    X, R, h, r = LEAD_GROOVE_X, LEAD_GROOVE_R, LEAD_MOUTH / 2, LEAD_ROUND
+    u0 = MNT_IN - LEAD_ROUND                                                   # slot starts outside the part
+    uc = X - math.sqrt((R + r) ** 2 - (h + r) ** 2)                           # fillet centre (uc, h + r): on the lip side, tangent to both
+    k = R / (R + r)
+    t = (X + k * (uc - X), k * (h + r))                                       # fillet / channel tangent point
+    def fm(sg):   # fillet arc midpoint on the side sg
+        a0, a1 = math.atan2(-r, 0.0), math.atan2(t[1] - (h + r), t[0] - uc)
+        a = (a0 + a1) / 2
+        return (uc + r * math.cos(a), sg * (h + r + r * math.sin(a)))
+    top = [("l", [(u0, h), (uc, h)]), ("a", [(uc, h), fm(1), t])]
+    w = LEAD_FLOOR_W / 2                                                      # flat floor strip: the revolved ends get a flat, not a pole on the surface
+    ta, fa = math.atan2(t[1], t[0] - X), math.asin(w / R)
+    am = (ta + fa) / 2
+    f = (X + R * math.cos(fa), w)
+    arc = lambda sg: ("a", [(t[0], sg * t[1]), (X + R * math.cos(am), sg * R * math.sin(am)), (f[0], sg * w)])   # noqa: E731
+    if half:
+        return [("l", [(u0, 0.0), (u0, h)])] + top + [arc(1), ("l", [f, (f[0], 0.0)]), ("l", [(f[0], 0.0), (u0, 0.0)])]
+    rev = lambda e: (e[0], e[1][::-1])   # noqa: E731
+    return ([("l", [(u0, -h), (u0, h)])] + top + [arc(1), ("l", [f, (f[0], -w)]), rev(arc(-1)), ("a", [(t[0], -t[1]), fm(-1), (uc, -h)]), ("l", [(uc, -h), (u0, -h)])])
+
+
 def lead_groove():
-    """Cutter of RV03's phase-lead C-groove: a round channel (LEAD_GROOVE_R, ball ends) on the axis X = LEAD_GROOVE_X behind a
-    LEAD_LIP lip, opened to the inner face by a round-ended LEAD_MOUTH slot the twisted bundle snaps through, between the lead_groove_ends()."""
+    """Cutter of RV03's phase-lead C-groove: lead_groove_section() swept along the run between the lead_groove_ends(),
+    each end closed by its half section revolved half a turn about the X line through it (a round end matching the section)."""
     bb = _b()
     (y0, z0), (y1, z1) = lead_groove_ends()
-    ang = math.degrees(math.atan2(z1 - z0, y1 - y0))
-    rod = bb.Cylinder(LEAD_GROOVE_R, math.hypot(y1 - y0, z1 - z0), rotation=(-90, 0, 0)).rotate(bb.Axis.X, ang)   # along +Y, then tilted onto the run
-    rod = rod.translate((LEAD_GROOVE_X, (y0 + y1) / 2, (z0 + z1) / 2))
-    slot = bb.Box(2 * (LEAD_GROOVE_X - MNT_IN), math.hypot(y1 - y0, z1 - z0), LEAD_MOUTH).rotate(bb.Axis.X, ang)   # the mouth through the lip
-    slot = slot.translate((MNT_IN, (y0 + y1) / 2, (z0 + z1) / 2))
-    ends = [bb.Sphere(LEAD_GROOVE_R).translate((LEAD_GROOVE_X, y, z)) for y, z in ((y0, z0), (y1, z1))]
-    caps = [bb.Cylinder(LEAD_MOUTH / 2, 2 * (LEAD_GROOVE_X - MNT_IN), rotation=(0, 90, 0)).translate((MNT_IN, y, z))   # round slot ends: each meets its ball end in the mouth circle, no lip sliver
-            for y, z in ((y0, z0), (y1, z1))]
-    return _U(rod, slot, *ends, *caps)
+    L = math.hypot(y1 - y0, z1 - z0)
+    ry, rz = (y1 - y0) / L, (z1 - z0) / L
+    def face(y, z, outline):
+        P = lambda q: bb.Vector(q[0], y - q[1] * rz, z + q[1] * ry)   # noqa: E731
+        return bb.Face(bb.Wire([bb.Edge.make_line(*map(P, q)) if kd == "l" else bb.Edge.make_three_point_arc(*map(P, q)) for kd, q in outline]))
+    body = bb.Solid.extrude(face(y0, z0, lead_groove_section()), bb.Vector(0, y1 - y0, z1 - z0))
+    # half a turn each, outwards only: a full turn would lie on the swept prism's own faces (coincident boolean faces)
+    ends = [bb.Solid.revolve(face(y, z, lead_groove_section(half=True)), 180, bb.Axis((0, y, z), (k, 0, 0))) for (y, z), k in (((y0, z0), 1), ((y1, z1), -1))]
+    return _U(body, *ends)
 
 
 def _mount_csk(s, y, z, fastener):
@@ -128,12 +158,28 @@ def _stack_hole(fastener, x, y, z, sx, grip):
     return hole_tool((x, y, z), (sx, 0, 0), fastener, head="button", into="tapped", side="both", grip=grip, fit="close")[1]
 
 
+def _bsp_window(c, a0):
+    """Face (YZ plane at X 0) of one back-spacer window: the ring sector win_in..win_out, half_deg either side of a0,
+    its outer corners filleted round_out and its inner ones round_in as true arcs (STEP windows, measured)."""
+    bb, b = _b(), BSP
+    P = lambda r, a: bb.Vector(0.0, c[0] + r * math.cos(math.radians(a)), c[1] + r * math.sin(math.radians(a)))   # noqa: E731
+    lo, hi = a0 - b["half_deg"], a0 + b["half_deg"]
+    w = bb.Wire([bb.Edge.make_three_point_arc(P(b["win_out"], lo), P(b["win_out"], a0), P(b["win_out"], hi)), bb.Edge.make_line(P(b["win_out"], hi), P(b["win_in"], hi)),
+                 bb.Edge.make_three_point_arc(P(b["win_in"], hi), P(b["win_in"], a0), P(b["win_in"], lo)), bb.Edge.make_line(P(b["win_in"], lo), P(b["win_out"], lo))])
+    f = bb.Face(w)
+    rc = lambda v: math.hypot(v.Y - c[0], v.Z - c[1])   # noqa: E731
+    mid = (b["win_in"] + b["win_out"]) / 2
+    f = f.fillet_2d(b["round_out"], [v for v in f.vertices() if rc(v) > mid])
+    return f.fillet_2d(b["round_in"], [v for v in f.vertices() if rc(v) < mid and abs(rc(v) - b["win_in"]) < 1e-6])
+
+
 def motor_back_spacer():
-    """1.5 mm printed spacer between the GR1507 stator base and RV03: clears the motor's rear bearing boss and wires."""
-    from shapely.geometry import Point
-    c, b = (WY, WZ), BSP
-    p = Point(c).buffer(b["r"], WSEG_HI).difference(Point(c).buffer(b["bore_r"], WSEG_MID))
-    p = _ring_windows(p, c, b["win_in"], b["win_out"], b["half_deg"], b["phase"], b["win_round"])   # STEP windows (measured)
-    for dy, dz in stator_bolt_circle():
-        p = p.difference(Point(WY + dy, WZ + dz).buffer(b["hole_r"], WSEG_LO))
-    return _ext(p, "yz", *BSP_X)
+    """1.5 mm printed spacer between the GR1507 stator base and RV03: clears the motor's rear bearing boss and wires.
+    Built from true circles and arcs (a shapely polyline ring tessellates as faceted seams, visual.faceting)."""
+    bb, b, c = _b(), BSP, (WY, WZ)
+    x0, x1 = BSP_X
+    cuts = [_cyl(b["bore_r"], x0 - 1, x1 + 1, c)]
+    cuts += [_cyl(b["hole_r"], x0 - 1, x1 + 1, (WY + dy, WZ + dz)) for dy, dz in stator_bolt_circle()]
+    cuts += [bb.Solid.extrude(_bsp_window(c, b["phase"] + 360.0 * k / N_STACK), bb.Vector(x1 - x0 + 2, 0, 0)).moved(bb.Location((x0 - 1, 0, 0)))
+             for k in range(N_STACK)]
+    return _S(_cyl(b["r"], x0, x1, c), *cuts)
