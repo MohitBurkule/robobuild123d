@@ -117,3 +117,16 @@ def test_footprint_fails_when_too_big():
 def test_dirs26():
     d = dirs26()
     assert d.shape == (26, 3)
+
+
+def test_spinner_bearing_measures_each_side_from_its_own_face():
+    # disc material wholly below its origin (z 4..8 for origin z 12), a collar just above it (z 8..11.5): the + side hold
+    # starts at the disc's own top face (z 8), not at the bottom face mirrored across the origin (z 20, past the collar)
+    s = spinner_spec()
+    s.parts = [p for p in s.parts if p.id != "top"]
+    s.part("disc").shape = {"type": "place", "shape": cyl(40, 4), "at": [0, 0, -6], "rot": [0, 0, 0]}
+    s.parts.append(spec.Spec({"name": "x", "parts": [{"id": "collar", "kind": "structure", "material": "nylon",
+                                                     "shape": box(20, 20, 3.5), "at": [0, 0, 9.75]}]}).parts[0])
+    rep = verify(s, Options(only=["mass", "legal", "power", "spinner"], deep=False, fast=True))
+    f = rep.get("spinner.bearing")
+    assert f.passed, f.message
