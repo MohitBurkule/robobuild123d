@@ -32,7 +32,9 @@ WIRES = [("w_bat_sw", "battery.jst_rcy", "power_switch.in", AWG["power"], "power
 # make_spec tables: weapon shaft, web floors, hub pivots, electronics placements, press-fit interference, belt geometry
 WEB = dict(spider=0.8, disc=0.9, fork=1.05)             # min_web_mm the designer owns (STEP measures the same webs)
 HUB_PIVOT_X = dict(rear=41.6, front=34.5)               # |X| of each hub's revolute pivot
-ELEC = dict(battery=(-11.81, -5.4, 12.0), rxesc=(8.67, -3.0, 15.3), wesc=(8.63, -7.25, 10.6), switch_yz=(-5.6, 14.25))   # catalog origins (STEP envelopes)
+BAT_BELOW = 5.5                                          # lipo_2s_180_turnabot catalog origin -> pack underside (STEP pack 11 thick, z 6.5..17.5 about origin z 12)
+BAT_Z = BASE_Z0 + BASE_T + BAT_BELOW                    # the pack rests on the base panel skin top (was 12.0, hanging 2 mm clear of it)
+ELEC = dict(battery=(-11.81, -5.4, BAT_Z), rxesc=(8.67, -3.0, 15.3), wesc=(8.63, -7.25, 10.6), switch_yz=(-5.6, 14.25))   # catalog origins (STEP envelopes)
 FILLET_REAR_X = 26.77   # |X| where the squared N10 gearbox-plate seat meets its seat arc at the rear wall (measured on our section z=10; RV01 26.5)
 SWX_DEV_R = 1.5   # reference_cad deviation radius round each switch pilot (hole shifted 0.45 from the STEP)
 SW_PITCH, SW_BODY_H = 15.0, 3.5   # BBB ant switch ear-hole pitch and body height (catalog)
