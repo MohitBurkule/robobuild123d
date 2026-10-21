@@ -485,3 +485,22 @@ def test_belt_wheel_mutation_fails(mut, cid):
     mut(d)
     rep, bad = run(d)
     assert cid in bad, [(f.id, f.message) for f in rep.findings if not f.passed]
+
+
+def test_rub_gap_waiver_claims_one_pair_and_place():
+    d = wheels()
+    w_rub(d)
+    rep, bad = run(d)
+    f = next(f for f in rep.findings if f.id == "kin.rub_gap" and not f.passed)
+    at, wheel = list(f.at), next(p for p in f.parts if p != "guard")
+    why = "RVRN STEP: RV01 face clears the spider sweep by 0.600 mm"
+    part(d, "guard")["rub_gap_ok"] = {"with": wheel, "min_mm": 0.0, "at": at, "reason": why}
+    rep, bad = run(d)
+    assert "kin.rub_gap" not in bad, [(x.id, x.message) for x in rep.findings if not x.passed]
+    assert any(x.id == "kin.rub_gap" and "waived" in x.message for x in rep.findings)
+    for wv, msg in (({"with": wheel, "min_mm": 5.0, "at": at, "reason": why}, "below"),          # bound tighter than the gap
+                    ({"with": wheel, "min_mm": 0.0, "at": [at[0] + 5, at[1], at[2]], "reason": why}, "within"),  # other place
+                    ({"with": wheel, "min_mm": 0.0, "at": at, "reason": "close enough, trust me"}, "reason")):
+        part(d, "guard")["rub_gap_ok"] = wv
+        rep, bad = run(d)
+        assert "kin.rub_gap" in bad and any(msg in x.message for x in rep.findings if x.id == "kin.rub_gap" and not x.passed)

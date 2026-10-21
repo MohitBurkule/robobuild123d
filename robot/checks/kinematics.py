@@ -1594,8 +1594,15 @@ def sweeps(k):
                       fix="Move or shorten it, or cut a clearance so it stays outside the swept circle with "
                           f"{gapmin} mm to spare.")
             else:
+                wv = rub_gap_waiver(k, g, bid, val, at, lr)
+                if wv is True:
+                    w_ = k.parts[bid].part._extra["rub_gap_ok"]
+                    k.info("kin.rub_gap", "Rub gap matches original",
+                           f"{label(g)} passes {val:.2f} mm from `{bid}` (class gap {gapmin} mm), waived for `{w_['with']}` at "
+                           f"{np.round(at, 1).tolist()} down to {w_['min_mm']} mm: {w_['reason']}", (bid, w_["with"]))
+                    continue
                 k.bad("kin.rub_gap", WARNING if g.cls != "weapon" else BLOCKER, "Rotating part runs too close to a static one",
-                      f"{label(g)} passes {val:.2f} mm from `{bid}` (need {gapmin} mm for a {g.cls}).", (bid, *sorted(g.members)), at=at,
+                      f"{label(g)} passes {val:.2f} mm from `{bid}` (need {gapmin} mm for a {g.cls}).{' Invalid rub_gap_ok: ' + wv + '.' if isinstance(wv, str) else ''}", (bid, *sorted(g.members)), at=at,
                       expect=(f">= {gapmin} mm", f"{val:.2f} mm"), fix="Open the clearance (flex and runout eat small gaps).")
         if g.weapon:
             wd = k.parts[g.weapon].part.weapon
@@ -1611,6 +1618,44 @@ def sweeps(k):
                               f"`{lb}` never enters the volume `{g.weapon}` sweeps; it cannot stop it turning.", (lb, g.weapon),
                               fix="Run the pin through a hole in the disc (inside its swept ring) in the locked pose.")
         bell_rub(k, g, ex)
+
+
+RUB_WAIVE_AT_MM = 1.0
+
+
+def rub_gap_waiver(k, g, bid, val, at, lr):
+    """Static part `rub_gap_ok: {with, min_mm, at, reason}`: claims ONE pair (this part and the rotating member `with`)
+    at ONE place. Valid when `with` turns in this group, the closest point lies within RUB_WAIVE_AT_MM of `at`, that
+    member's own sweep makes the gap there, the gap is >= min_mm and the reason (>= 20 chars) cites the reference.
+    None when absent, True when valid, else why not."""
+    from .waiver import valid
+
+    p = k.parts[bid].part if bid in k.parts else None
+    w = (getattr(p, "_extra", None) or {}).get("rub_gap_ok") if p is not None else None
+    if w is None:
+        return None
+    if not isinstance(w, dict) or not valid(w.get("reason")):
+        return "needs {with, min_mm, at, reason} with a reason >= 20 chars citing RVRN / RVnn / FSn"
+    m = w.get("with")
+    if m not in g.members:
+        return f"`{m}` does not turn with {label(g)}"
+    try:
+        mn, wat = float(w.get("min_mm")), np.asarray(w.get("at"), float).reshape(3)
+    except (TypeError, ValueError):
+        return "`min_mm` and `at` [x, y, z] are required"
+    if val < mn - 0.01:
+        return f"gap {val:.2f} mm is below the waived {mn} mm"
+    if float(np.linalg.norm(np.asarray(at, float) - wat)) > RUB_WAIVE_AT_MM:
+        return f"closest point {np.round(at, 1).tolist()} is not within {RUB_WAIVE_AT_MM} mm of the waived `at`"
+    mb = k.body(m)
+    P = mb.surface(k.h)[0]
+    sw = Sweep(P, g.axis[0], g.axis[1]) if lr is None else SectorSweep(P, g.axis[0], g.axis[1], *lr)
+    if lr is not None:
+        sw.bodies = [mb]
+    _, gap = sw.classify(np.atleast_2d(np.asarray(at, float)), val + 1.0)
+    if float(gap.min()) > val + 0.1:
+        return f"`{m}` is not what passes closest there"
+    return True
 
 
 def bell_rub(k, g, ex):

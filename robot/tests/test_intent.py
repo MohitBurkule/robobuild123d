@@ -187,3 +187,23 @@ def test_wide_slot_roof_needs_support_at_any_angle():
     for ang in (0, 24):
         a, f, _ = I.unsupported(_slot_roof(8.0, ang), (0, 0, 1))
         assert a > 0, (ang, a)
+
+
+def test_seat_locates_gap_ok_claims_one_bounded_shift():
+    # boss located radially, but the floor stops the body only 0.25 mm below (RVRN N10 over the RV26 pad)
+    motor = trimesh.creation.cylinder(2.1, 3, sections=64).union(_box((-5, -6, -6), (5, 6, -1.5)))
+    walls = [_box((-8, 6.05, -7), (8, 8, -1.5)), _box((5.05, -8, -7), (8, 8, -1.5)), _box((-8, -8, -7), (-5.05, 8, -1.5))]
+    floor = _box((-8, -9, -7), (8, -6.25, -1.5))
+    hosts = walls + [floor]
+    free = I.seat_free(motor, hosts, (0, 0, 1), (0, 0, 0))
+    assert [x.replace("-0.0", "0.0") for x in free] == ["shift [0.0, -1.0, 0.0]"], free
+    why = "RVRN RV26 pad leaves 0.25 mm under the N10 gearbox in the STEP"
+    left, ok_, bad = I.seat_gap_waive(motor, hosts, {"gap_ok": [{"shift": [0, -1, 0], "max_mm": 0.3, "reason": why}]}, free)
+    assert not left and ok_ and not bad
+    # too tight a bound: the part is still free at 0.2 mm, so the waiver does not hold
+    _, _, bad = I.seat_gap_waive(motor, hosts, {"gap_ok": [{"shift": [0, -1, 0], "max_mm": 0.2, "reason": why}]}, free)
+    assert bad and "still free" in bad[0]
+    # uncited reason, over-wide bound, stale direction
+    assert I.seat_gap_waive(motor, hosts, {"gap_ok": [{"shift": [0, -1, 0], "max_mm": 0.3, "reason": "it was like that anyway ok"}]}, free)[2]
+    assert I.seat_gap_waive(motor, hosts, {"gap_ok": [{"shift": [0, -1, 0], "max_mm": 2.0, "reason": why}]}, free)[2]
+    assert "stale" in I.seat_gap_waive(motor, hosts, {"gap_ok": [{"shift": [1, 0, 0], "max_mm": 0.3, "reason": why}]}, free)[2][0]
