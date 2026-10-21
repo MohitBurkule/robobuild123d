@@ -90,7 +90,8 @@ def make_spec(model_file):
           label=f"{SIDE_REF[s]} TPU side panel: battered S-wall round the wheels, 3 M3x8 CSK (two standoff ends, one chassis nut)")
         P(id=f"nut_c{n}", kind="nut", catalog="nut_m3_thin", **place(f"nut_c{n}"), rotates_with="fixed")
         # drive
-        P(id=f"motor_{n}", kind="motor", catalog="n10_2200rpm_spicy", at=place_at(f"motor_{n}"), rot=place_rot(f"motor_{n}"), rotates_with="fixed")
+        P(id=f"motor_{n}", kind="motor", catalog="n10_2200rpm_spicy", at=place_at(f"motor_{n}"), rot=place_rot(f"motor_{n}"), rotates_with="fixed",
+          assembly_ok={"reason": "original RVRN 2.0: the RV01 wall solid at z 3..5.5 under the RV12 boss means the N10 goes into the keyhole tilted, shaft first, not by a straight slide"})
         P(id=f"whub_r{n}", kind="pulley", solid_fraction=SOLID["hub"], rotates_with=f"wheel_r{n}", print_orientation="+x", shape=M(f"rear_hub_{n}"), parent="tub", **place(f"whub_r{n}"),
           thin_wall_deviation="matches original RVRN 2.0: RV21 draws the 0.5 mm O-ring flange, the 0.5 mm raised lip at the free end and the 0.2 mm end recess; kept for parity (user order)",
           joint=JT[f"whub_r{n}"], color="#333333", **PLA,
@@ -263,7 +264,7 @@ def intent_checks():
         A("flush_head", "mount screws are countersunk in the inner face, the face beside the disc rim", fastener=f"bolt_u{n}a", host=f"mount_{n}", out=[-s, 0, 0])
         A("seat_locates", "the N10 gearbox boss seats in the keyhole and its body bears on the stop walls: shaft concentric, stall torque reacted by the chassis",
           part=f"motor_{n}", host=["tub", "base_panel"], axis=[1, 0, 0], at=[s * MOTX, RY, RZ], play=SEAT_PLAY, turn_deg=SEAT_TURN_DEG,
-          **({} if variant("pad_preload") else {"waive": "RVRN RV26 base panel preload pad is 0.25 tall and leaves ~0.2 mm under the N10 gearbox: the original motor is held down by the base panel clamp, not by contact (variant pad_preload closes the gap)"}))
+          **({} if variant("pad_preload") else {"gap_ok": [{"shift": [0, 0, -1], "max_mm": 0.3, "reason": "original RVRN 2.0: RV12 gearbox underside z 5.0 sits 0.25 above the RV26 base-panel preload pad top z 4.75 (pad 0.25 tall); the motor is held by the panel clamp, not contact (variant pad_preload closes the gap)"}]}))
     for n in ("l", "r"):
         A("notch_bears", "a hit drives the mount back; the notch on the chassis tab bears it in compression, the bolts only clamp",
           part=f"mount_{n}" if n == "l" else "mount_r", lug="tub", bolts=[f"bolt_u{n}a", f"bolt_u{n}b"], dir=[0, -1, 0])

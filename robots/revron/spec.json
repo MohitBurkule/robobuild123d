@@ -2331,7 +2331,10 @@
     0.0,
     180.0
    ],
-   "rotates_with": "fixed"
+   "rotates_with": "fixed",
+   "assembly_ok": {
+    "reason": "original RVRN 2.0: the RV01 wall solid at z 3..5.5 under the RV12 boss means the N10 goes into the keyhole tilted, shaft first, not by a straight slide"
+   }
   },
   {
    "id": "whub_rl",
@@ -2737,7 +2740,10 @@
     0.0,
     0.0
    ],
-   "rotates_with": "fixed"
+   "rotates_with": "fixed",
+   "assembly_ok": {
+    "reason": "original RVRN 2.0: the RV01 wall solid at z 3..5.5 under the RV12 boss means the N10 goes into the keyhole tilted, shaft first, not by a straight slide"
+   }
   },
   {
    "id": "whub_rr",
@@ -3250,7 +3256,7 @@
    "at": [
     -25.0,
     10.4,
-    3.5
+    2.9
    ],
    "dir": [
     0.0,
@@ -3292,7 +3298,7 @@
    "at": [
     25.0,
     10.4,
-    3.5
+    2.9
    ],
    "dir": [
     0.0,
@@ -3334,7 +3340,7 @@
    "at": [
     -25.0,
     -21.6,
-    3.5
+    2.9
    ],
    "dir": [
     0.0,
@@ -3376,7 +3382,7 @@
    "at": [
     25.0,
     -21.6,
-    3.5
+    2.9
    ],
    "dir": [
     0.0,
@@ -3418,7 +3424,7 @@
    "at": [
     0.0,
     -33.6,
-    3.5
+    2.9
    ],
    "dir": [
     0.0,
@@ -5036,7 +5042,17 @@
    ],
    "play": 0.15,
    "turn_deg": 2.0,
-   "waive": "RVRN RV26 base panel preload pad is 0.25 tall and leaves ~0.2 mm under the N10 gearbox: the original motor is held down by the base panel clamp, not by contact (variant pad_preload closes the gap)"
+   "gap_ok": [
+    {
+     "shift": [
+      0,
+      0,
+      -1
+     ],
+     "max_mm": 0.3,
+     "reason": "original RVRN 2.0: RV12 gearbox underside z 5.0 sits 0.25 above the RV26 base-panel preload pad top z 4.75 (pad 0.25 tall); the motor is held by the panel clamp, not contact (variant pad_preload closes the gap)"
+    }
+   ]
   },
   {
    "rule": "keyed_bore",
@@ -5144,7 +5160,17 @@
    ],
    "play": 0.15,
    "turn_deg": 2.0,
-   "waive": "RVRN RV26 base panel preload pad is 0.25 tall and leaves ~0.2 mm under the N10 gearbox: the original motor is held down by the base panel clamp, not by contact (variant pad_preload closes the gap)"
+   "gap_ok": [
+    {
+     "shift": [
+      0,
+      0,
+      -1
+     ],
+     "max_mm": 0.3,
+     "reason": "original RVRN 2.0: RV12 gearbox underside z 5.0 sits 0.25 above the RV26 base-panel preload pad top z 4.75 (pad 0.25 tall); the motor is held by the panel clamp, not contact (variant pad_preload closes the gap)"
+    }
+   ]
   },
   {
    "rule": "notch_bears",

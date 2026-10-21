@@ -13,7 +13,7 @@ SIDE_SINK = dict(a=2.15, b=5.75, c=1.05)                 # depth of each screw h
 SIDE_FACE_X = {k: SIDE_BOLT_X[k] + SIDE_SINK[k] for k in SIDE_BOLT_X}   # |X| of the battered outer face at each screw
 assert all(0 < d <= SP_CSK["head_clear"] for d in SIDE_SINK.values()), "a screw head must sit inside its driver bore (sink <= bore depth)"
 SIDE_BOLT_DES = dict(a="M3x10", b="M3x10", c="M3x8")
-BASE_BOLT_Z = BASE_Z0                                        # base-panel screw head plane
+BASE_BOLT_Z = 2.9                                        # base-panel screw head plane
 TOP_BOLT_XY = INS[1::-1] + INS[3:1:-1]                   # top-panel screws sit on the four corner columns, right-hand first
 PCT = 100                                                # percent
 AWG = dict(power=24, rx=26, motor=28, signal=30)
