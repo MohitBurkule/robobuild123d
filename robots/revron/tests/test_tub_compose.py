@@ -3,10 +3,11 @@ import inspect, os, sys
 import pytest
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "src"))
 import revron
-from revron import tub, tub_shell, tub_lobes, tub_lugs, tub_front
+from revron import tub, tub2
 from revron.params import CH
 
-MODS = ("tub_util", "tub_shell_cols", "tub_shell_cuts", "tub_shell", "tub_lobes", "tub_lugs", "tub_front")
+MODS = ("tub2_params", "tub2_body", "tub2_cols", "tub2_blocks", "tub2_pockets", "tub2_seat", "tub2_fillets", "tub2_lobes", "tub2_front",
+        "tub2_switch", "tub2_lug", "tub2_tab", "tub2_flange", "tub2_lattice", "tub2")
 
 
 def test_split_modules_are_built_modules():
@@ -14,12 +15,11 @@ def test_split_modules_are_built_modules():
     assert all(n in names for n in MODS)
 
 
-def test_chassis_is_composed_from_the_modules():
-    src = inspect.getsource(tub.chassis)
-    for m in ("tub_shell", "tub_lobes", "tub_lugs", "tub_front"):
-        assert m + ".additions" in src or m + ".shell" in src
-        assert m + ".cuts" in src or m + ".shell" in src
-    assert len(src.splitlines()) < 30
+def test_chassis_is_composed_from_the_feature_modules():
+    src = inspect.getsource(tub2.cuts) + inspect.getsource(tub2.additions)
+    for m in ("tub2_lobes", "tub2_pockets", "tub2_seat", "tub2_lattice", "tub2_flange", "tub2_lug", "tub2_switch"):
+        assert m in src
+    assert tub.chassis.__code__.co_firstlineno and len(inspect.getsource(tub.chassis).splitlines()) < 10
 
 
 def test_tub_has_no_import_path_hacks():
