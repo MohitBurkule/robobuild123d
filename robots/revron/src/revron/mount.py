@@ -33,7 +33,12 @@ def _mount_profile(side):
     from shapely.geometry import Point, box as _sb
     tip = Point((m["notch_y"], MNT_TOP_Z)).buffer(MNT_TIP_REACH, WSEG_HI).intersection(_sb(m["notch_y"], MNT_TOP_Z, BIG, BIG))
     p = p.union(p.buffer(MNT_TIP_WALL / 2, WSEG_HI).intersection(tip))
-    return _round(p, r_out=0.0, r_in=MNT_RELIEF_R)
+    # the notch takes the chassis tab (sharp 45 deg chamfered corners in the STEP): the corner relief must not fill the notch,
+    # or the sharp tab corners would be cut away by the relief when the mount is subtracted from the chassis
+    from shapely.geometry import Polygon as _P
+    void = _P([(t["y0"], t["z0"]), (t["y1"] - t["cham"], t["z0"]), (t["y1"], t["z0"] + t["cham"]), (t["y1"], zt - t["cham"]),
+               (t["y1"] - t["cham"], zt), (t["y0"], zt)])
+    return _sharpen(_round(p, r_out=0.0, r_in=MNT_RELIEF_R).difference(void))
 
 
 def weapon_mount(side):
@@ -45,9 +50,9 @@ def weapon_mount(side):
     prof = _mount_profile(side)
     xi, xm, xo = s * MNT_IN, s * MNT_SLAB, s * MNT_OUT
     eps = m["slab_eps"]                          # RV03's STEP slab face sits just inside the slab plane, RV02's on it
-    slab = _ext(prof, "yz", xi, xm - s * eps)
+    slab = _ext(prof, "yz", xi, xm - s * eps, arcs=True)
     bp = prof.intersection(_mount_clip())         # boss: the profile above the line from the notch top to the nose
-    boss = _ext(bp, "yz", xm - s * eps, xo + s * BOSS_OVER)
+    boss = _ext(bp, "yz", xm - s * eps, xo + s * BOSS_OVER, arcs=True)
     a_, kz, ky = m["face"]                        # outer battered face (STEP): one plane leaning in with height and towards the nose
     bb = _b()
     boss = _one(boss).split(bb.Plane(origin=(s * a_, 0.0, 0.0), z_dir=(s * 1.0, ky, kz)), keep=bb.Keep.BOTTOM)
