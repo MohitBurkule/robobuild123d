@@ -507,6 +507,7 @@ def run(ctx):
                 ctx.not_checked.append(f"visual.{check} of `{pid}`")
     ctx.metrics["visual"] = rows
     out += leads(ctx, prm)
+    out += rev2_findings(ctx, prm)
     return out
 
 
@@ -557,4 +558,314 @@ def leads(ctx, prm):
                       + (" whose route starts at the lead" if routes else " (routes not computed in this run)") + "."))
     if not routes and spec.wires:
         ctx.not_checked.append("visual.lead: wire routes not computed (run the wiring group) - only declared ends checked")
+    return out
+
+
+# ================================================================================================ review rev2 gates
+# visual.shaft_mate   every catalog shaft (cat.shaft at/dir/len): at sections along its span inside another body's bore,
+#                     the shaft's profile (round / D / hex) must equal the bore's. A round shaft in a D-bore (or the
+#                     reverse) is a BLOCKER: the parts cannot both be right.
+# visual.ligament     every printed part, sections at 30 heights on X, Y and Z: the wall round every closed bore (ring
+#                     to the outline or the next ring) >= ligament_mm (0.8). Where the reference ring is just as thin at
+#                     the same place it is INFO; where the reference has a closed ring and ours is open (a bore broken
+#                     through the wall: an open C) it is a BLOCKER.
+# visual.deviation_claim  a deviation note that states an extent ("x -26.5..-25, y 43-50") is held to it: the material
+#                     the reference has and we removed inside that box must be filled by the part it seats (another
+#                     body) for >= claim_fill (0.8, i.e. cut volume <= seated volume x 1.25); the rest of the box is
+#                     over-cut (a "1.5 mm seat" cut through the full cheek height).
+# visual.terminal     every lead / terminal port of a catalog motor or ESC lies on the part's own solid (within
+#                     terminal_tol_mm 0.2): the tab or lead the wire solders to exists in the model.
+DEFAULTS.update({"ligament_mm": 0.8, "claim_fill": 0.8, "terminal_tol_mm": 0.2})
+BOUNDS.update({"ligament_mm": (0.4, 2.0), "claim_fill": (0.5, 1.0), "terminal_tol_mm": (0.05, 1.0)})
+TERMINAL_PORTS = ("terminals", "phases")
+
+
+def _align(d):
+    """4x4 rotation taking unit vector d to +Z."""
+    import trimesh
+
+    d = np.asarray(d, float) / np.linalg.norm(d)
+    return trimesh.geometry.align_vectors(d, [0, 0, 1.0])
+
+
+def profile_at(m, T, h, uv, want="solid"):
+    """Shape of the region at (u, v) in section z=h of mesh m moved by T: want='solid' -> the polygon containing the
+    point (a shaft), 'hole' -> the interior ring containing it (a bore). None when there is none."""
+    from shapely.geometry import Point, Polygon
+
+    from .ref_features import hole_shape, section
+
+    mm = m.copy()
+    mm.apply_transform(T)
+    g = section(mm, 2, h)
+    if g is None or g.is_empty:
+        return None
+    pt = Point(uv)
+    for p in getattr(g, "geoms", [g]):
+        if want == "solid" and p.contains(pt):
+            return hole_shape(p.exterior, densify=True)
+        if want == "hole":
+            for ring in p.interiors:
+                if Polygon(ring).contains(pt):
+                    return hole_shape(ring, densify=True)
+    return None
+
+
+def shaft_mate(shaft_mesh, bore_mesh, at, d, span, n=5):
+    """[(t, shaft shape, bore shape)] at n sections over the shaft span where the bore mesh has a bore round the axis."""
+    T = _align(d)
+    out = []
+    for t in np.linspace(0.15, 0.85, n):
+        p = np.asarray(at, float) + np.asarray(d, float) / np.linalg.norm(d) * span * t
+        q = (T[:3, :3] @ p)
+        sb = profile_at(bore_mesh, T, q[2], q[:2], "hole")
+        if sb is None:
+            continue
+        ss = profile_at(shaft_mesh, T, q[2], q[:2], "solid")
+        if ss is not None:
+            out.append((round(float(t), 2), ss, sb))
+    return out
+
+
+def shaft_findings(ctx):
+    from .. import xform
+
+    out, n = [], 0
+    r, w = ctx.r, ctx.world
+    for rp in r.parts:
+        cat = getattr(rp, "cat", None)
+        sh = getattr(cat, "shaft", None) if cat is not None else None
+        b = w.body(rp.part.id)
+        if not sh or b is None or b.mesh is None:
+            continue
+        at = xform.apply(b.M, sh["at"])
+        d = np.asarray(b.M)[:3, :3] @ np.asarray(sh.get("dir") or [1, 0, 0], float)
+        L = float(sh.get("len") or 0)
+        end = at + d / np.linalg.norm(d) * L
+        for o in w.bodies:
+            if o.id == b.id or o.is_wire or o.mesh is None or getattr(o, "fastener", None):
+                continue
+            lo, hi = o.aabb
+            mid = (at + end) / 2
+            if np.any(mid < np.asarray(lo) - 0.5) or np.any(mid > np.asarray(hi) + 0.5):
+                if not any(np.all(p >= np.asarray(lo) - 0.5) and np.all(p <= np.asarray(hi) + 0.5) for p in (at, end)):
+                    continue
+            rows = shaft_mate(b.mesh, o.mesh, at, d, L)
+            if not rows:
+                continue
+            n += 1
+            bad = [x for x in rows if x[1] != x[2] and "other" not in (x[1], x[2])]
+            if bad:
+                out.append(fail("visual.shaft_mate", G, BLOCKER, "Shaft profile does not match the bore it drives",
+                                f"`{rp.part.id}` shaft ({cat.id}) in `{o.id}`: shaft {bad[0][1]} vs bore {bad[0][2]} at "
+                                f"{len(bad)}/{len(rows)} sections along the shaft.").on(rp.part.id, o.id).here(mid)
+                           .fix("Give the catalog shaft its real profile (e.g. the N10's 3 mm D-flat) or the bore the shaft's; "
+                                "a round shaft in a D-bore (or the reverse) cannot both be right."))
+    if n and not out:
+        out.append(ok("visual.shaft_mate", G, "Shafts match their bores", f"{n} shaft/bore pair(s) have the same profile."))
+    return out
+
+
+def ligaments(m, n=30):
+    """[(axis, h, centre (u, v), ring d, ligament mm)] for every closed hole ring in sections on all three axes."""
+    from shapely.geometry import LinearRing, Polygon
+
+    from .ref_features import section
+
+    out = []
+    for ax in range(3):
+        lo, hi = m.bounds[0][ax], m.bounds[1][ax]
+        for f in np.linspace(0.02, 0.98, n):
+            h = float(lo + (hi - lo) * f)
+            g = section(m, ax, h)
+            if g is None or g.is_empty:
+                continue
+            for p in getattr(g, "geoms", [g]):
+                rings = list(p.interiors)
+                for i, ring in enumerate(rings):
+                    lr = LinearRing(ring)
+                    d = lr.distance(p.exterior)
+                    for j, o in enumerate(rings):
+                        if j != i:
+                            d = min(d, lr.distance(LinearRing(o)))
+                    pc = Polygon(ring)
+                    out.append((ax, h, (pc.centroid.x, pc.centroid.y), 2 * math.sqrt(pc.area / math.pi), float(d)))
+    return out
+
+
+def ligament_diffs(model, ref, lim=0.8, tol=0.1):
+    """[{kind: thin | open, at, msg, ref}] - thin: our ring's wall < lim (ref_lig set when the reference is as thin);
+    open: the reference has a closed ring (d >= 2) whose centre is not inside a closed ring of ours at that height."""
+    from shapely.geometry import Point
+
+    from .ref_features import section
+
+    lm = ligaments(model)
+    lr = ligaments(ref) if ref is not None else []
+    out = []
+
+    def p3(ax, h, c):
+        a, b = [i for i in range(3) if i != ax]
+        p = [0.0] * 3
+        p[ax], p[a], p[b] = h, c[0], c[1]
+        return [round(x, 2) for x in p]
+
+    for ax, h, c, d, lig in lm:
+        if lig >= lim or d < 0.8:
+            continue
+        same = [x for x in lr if x[0] == ax and abs(x[1] - h) < 0.6 and math.dist(x[2], c) < 0.8]
+        rl = min((x[4] for x in same), default=None)
+        out.append({"kind": "thin", "at": p3(ax, h, c), "lig": round(lig, 2), "ref": None if rl is None else round(rl, 2),
+                    "matches": rl is not None and lig >= rl - tol,
+                    "msg": f"bore d{d:.1f} at {p3(ax, h, c)}: wall {lig:.2f} mm" + ("" if rl is None else f" (reference {rl:.2f})")})
+    for ax, h, c, d, lig in lr:
+        if d < 2.0:
+            continue
+        if any(x[0] == ax and abs(x[1] - h) < 0.6 and math.dist(x[2], c) < 0.8 for x in lm):
+            continue
+        g = section(model, ax, h)
+        if g is None or g.is_empty:
+            continue
+        # open C: our section has material right round where the reference ring's wall is, but no closed ring
+        ring_pt = Point(c[0] + d / 2 + lig / 2, c[1])
+        if g.buffer(0.05).contains(ring_pt) and not g.contains(Point(c)):
+            out.append({"kind": "open", "at": p3(ax, h, c), "lig": 0.0, "ref": round(lig, 2), "matches": False,
+                        "msg": f"bore d{d:.1f} at {p3(ax, h, c)} is closed in the reference (wall {lig:.2f} mm) but open in ours"})
+    return out
+
+
+CLAIM_RE = re.compile(r"\b([xyz])\s*(-?\d+(?:\.\d+)?)\s*(?:\.\.|to|–|-)\s*(-?\d+(?:\.\d+)?)", re.I)
+
+
+def claim_box(text, bounds):
+    """(lo, hi) box from 'x a..b, y c-d' ranges in a deviation note (unnamed axes span `bounds`), or None."""
+    got = {}
+    for ax, a, b in CLAIM_RE.findall(text or ""):
+        got["xyz".index(ax.lower())] = sorted((float(a), float(b)))
+    if not got:
+        return None
+    lo, hi = np.array(bounds[0], float), np.array(bounds[1], float)
+    for k, (a, b) in got.items():
+        lo[k], hi[k] = a, b
+    return lo, hi
+
+
+def claim_fill(model, ref, others, box, step=0.2):
+    """(cut mm3, filled fraction): material in the box the reference has and we do not, and the share of it that
+    another body (the part the cut seats) occupies."""
+    from ..world import _contains
+
+    lo, hi = box
+    ax = [np.arange(lo[i] + step / 2, hi[i], step) for i in range(3)]
+    if any(len(a) == 0 for a in ax):
+        return 0.0, 1.0
+    g = np.stack(np.meshgrid(*ax, indexing="ij"), -1).reshape(-1, 3)
+    if len(g) > 60000:
+        g = g[np.random.default_rng(0).choice(len(g), 60000, replace=False)]
+        step3 = float(np.prod(hi - lo)) / len(g)
+    else:
+        step3 = step ** 3
+    cut = g[_contains(ref, g) & ~_contains(model, g)]
+    if not len(cut):
+        return 0.0, 1.0
+    fill = np.zeros(len(cut), bool)
+    for o in others:
+        olo, ohi = o.bounds
+        k = np.all((cut >= olo) & (cut <= ohi), axis=1)
+        if k.any():
+            fill[np.nonzero(k)[0]] |= _contains(o, cut[k])
+    return len(cut) * step3, float(fill.mean())
+
+
+def rev2_findings(ctx, prm):
+    import trimesh
+
+    from .reference_cad import ref_in_world
+    from .ref_diff import clean
+
+    out = shaft_findings(ctx)
+    refs = {e.get("part"): (e, cfg, path) for e, cfg, path in _entries(ctx)}
+    nlig = 0
+    for rp in ctx.r.parts:
+        p = rp.part
+        if p.catalog is not None or str(p.process or "").lower() not in ("fdm", "sla", "molded", "cast", "resin"):
+            continue
+        b = ctx.world.body(p.id)
+        if b is None or b.mesh is None or not len(b.mesh.faces):
+            continue
+        ref, e = None, {}
+        if p.id in refs:
+            e, cfg, path = refs[p.id]
+            try:
+                ref = clean(ref_in_world(trimesh.load(path, force="mesh"), e, cfg)) if path.is_file() else None
+            except Exception:  # noqa: BLE001
+                ref = None
+        try:
+            items = ligament_diffs(b.mesh, ref, prm["ligament_mm"])
+        except Exception as ex:  # noqa: BLE001 - fail closed
+            out.append(fail("visual.ligament", G, BLOCKER, "Bore-wall check crashed", f"`{p.id}`: {ex}").on(p.id))
+            continue
+        nlig += 1
+        same = [x for x in items if x["matches"]]
+        op, wv = _split(e, [x for x in items if not x["matches"]])
+        if op:
+            out.append(fail("visual.ligament", G, BLOCKER, "Wall round a bore too thin or broken through",
+                            f"`{p.id}`: " + "; ".join(x["msg"] for x in op[:8]) + (f" (+{len(op) - 8})" if len(op) > 8 else ""))
+                       .on(p.id).here(op[0]["at"]).fix(f"Keep >= {prm['ligament_mm']:g} mm of wall round every bore (move or shrink the bore, or thicken the wall)."))
+        if same or wv:
+            out.append(note("visual.ligament", G, "Thin bore walls the reference has too",
+                            f"`{p.id}`: {len(same)} as thin in the reference" + (f", {len(wv)} reasoned deviations" if wv else "") + "."))
+        # deviation claims with a stated extent
+        notes = [(str(p._extra.get("deviation") or ""), None)] + [(str(d.get("reason") or ""), d) for d in e.get("deviations") or []]
+        seen = set()
+        for text, _ in notes:
+            box = claim_box(text, b.mesh.bounds)
+            if ref is None or box is None or text in seen:
+                continue
+            seen.add(text)
+            others = [o.mesh for o in ctx.world.bodies if o.id != p.id and not o.is_wire and o.mesh is not None
+                      and np.all(np.asarray(o.aabb[0]) <= box[1]) and np.all(np.asarray(o.aabb[1]) >= box[0])]
+            vol, fill = claim_fill(b.mesh, ref, others, box)
+            if vol > 1.0 and fill < prm["claim_fill"]:
+                out.append(fail("visual.deviation_claim", G, BLOCKER, "Cut is bigger than its deviation note says",
+                                f"`{p.id}`: the note \"{text[:140]}\" covers x/y/z {np.round(box[0], 1).tolist()}..{np.round(box[1], 1).tolist()}; "
+                                f"{vol:.1f} mm3 of reference material is cut there but only {fill:.0%} of it is filled by the part it seats "
+                                f"(need >= {prm['claim_fill']:.0%}).").on(p.id).here((box[0] + box[1]) / 2)
+                           .fix("Cut only what the seated part occupies (e.g. a 1.5 mm seat, not a slot through the full height), or "
+                                "correct the note to the real extent and reason."))
+            elif vol > 1.0:
+                out.append(ok("visual.deviation_claim", G, "Cut matches its deviation note", f"`{p.id}`: {vol:.1f} mm3, {fill:.0%} filled by the seated part.").on(p.id))
+    if nlig:
+        out.append(ok("visual.ligament.scan", G, "Bore walls scanned", f"{nlig} printed part(s) scanned for bore walls on all three axes."))
+    out += terminal_findings(ctx, prm)
+    return out
+
+
+def terminal_findings(ctx, prm):
+    """visual.terminal: a lead / terminal port must sit on the part's own solid (its tab or lead exists)."""
+    r, w = ctx.r, ctx.world
+    out, bad, n = [], [], 0
+    for rp in r.parts:
+        cat = getattr(rp, "cat", None)
+        if cat is None or not getattr(cat, "ports", None) or cat.kind not in ("motor", "weapon_motor", "esc"):
+            continue
+        b = w.body(rp.part.id)
+        if b is None or b.mesh is None:
+            continue
+        for pname in cat.ports:
+            if pname not in TERMINAL_PORTS:
+                continue
+            p = w.port(r, f"{rp.part.id}.{pname}")
+            if p is None:
+                continue
+            n += 1
+            d = float(np.abs(b.mesh.nearest.signed_distance([p])[0]))
+            inside = bool(b.inside([p])[0]) if hasattr(b, "inside") else False
+            if not inside and d > prm["terminal_tol_mm"]:
+                bad.append(f"`{rp.part.id}.{pname}` ({cat.id}) is {d:.2f} mm off the part: no tab or lead where the wire solders")
+    if bad:
+        out.append(fail("visual.terminal", G, BLOCKER, "Motor / ESC terminal feature missing", "; ".join(bad[:8]))
+                   .fix("Model the terminal tabs (brushed gearmotor) or phase leads in the catalog shape, ending at the port."))
+    elif n:
+        out.append(ok("visual.terminal", G, "Terminals modelled", f"{n} terminal / lead port(s) sit on their part's tab or lead."))
     return out

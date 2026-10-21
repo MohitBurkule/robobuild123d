@@ -216,3 +216,102 @@ def test_routed_lead_passes():
     rt = NS(id="w", points=[[10, 0, 0], [0.2, 0, 0]])
     out = visual.leads(_lead_ctx([w], [rt]), visual.DEFAULTS)
     assert out[0].passed
+
+
+# ------------------------------------------------------------------ rev2: shaft/bore profile mate
+def _d_prism(r, flat, h, sections=96):
+    from shapely.geometry import Point
+    p = Point(0, 0).buffer(r, sections).intersection(Polygon([(-9, -9), (9, -9), (9, flat), (-9, flat)]))
+    m = trimesh.creation.extrude_polygon(p, h)
+    m.apply_translation((0, 0, -h / 2))
+    return m
+
+
+def _hub(bore):
+    hub = trimesh.creation.cylinder(6.0, 8.0, sections=96)
+    return hub.difference(bore)
+
+
+def test_round_shaft_in_d_bore_fails():
+    shaft = trimesh.creation.cylinder(1.5, 12.0, sections=96)
+    hub = _hub(_d_prism(1.5, 1.0, 20))
+    rows = visual.shaft_mate(shaft, hub, (0, 0, -3), (0, 0, 1), 6.0)
+    assert rows and all(s == "round" and b == "D" for _, s, b in rows), rows
+
+
+def test_d_shaft_in_d_bore_passes():
+    shaft = _d_prism(1.45, 0.95, 12)
+    hub = _hub(_d_prism(1.5, 1.0, 20))
+    rows = visual.shaft_mate(shaft, hub, (0, 0, -3), (0, 0, 1), 6.0)
+    assert rows and all(s == b == "D" for _, s, b in rows), rows
+
+
+# ------------------------------------------------------------------ rev2: wall round a bore
+def _seat_block(y):
+    """20 x 20 x 6 block (Z 0..6) with a d8 bore along Z centred at (0, y): y 4.0 leaves 2 mm of wall, y 5.7 0.3 mm,
+    y 6.5 breaks through (an open C)."""
+    b = _box((20, 20, 6), (0, 0, 3))
+    c = trimesh.creation.cylinder(4.0, 10, sections=96)
+    c.apply_translation((0, y, 3))
+    return b.difference(c)
+
+
+def test_thin_bore_wall_fails():
+    d = visual.ligament_diffs(_seat_block(5.7), _seat_block(4.0))
+    assert any(x["kind"] == "thin" and not x["matches"] for x in d), d
+
+
+def test_bore_wall_as_thin_as_reference_is_not_flagged():
+    d = visual.ligament_diffs(_seat_block(5.7), _seat_block(5.7))
+    assert d and all(x["matches"] for x in d), d
+
+
+def test_bore_broken_through_where_reference_is_closed_fails():
+    d = visual.ligament_diffs(_seat_block(6.5), _seat_block(4.0))
+    assert any(x["kind"] == "open" for x in d), d
+
+
+def test_healthy_bore_passes():
+    assert visual.ligament_diffs(_seat_block(4.0), _seat_block(4.0)) == []
+
+
+# ------------------------------------------------------------------ rev2: deviation note extent
+def test_claim_box_parses_ranges():
+    lo, hi = visual.claim_box("cut the 1.5 mm seat at x -26.5..-25, y 43-50", ([-30, 40, 0], [-20, 55, 10]))
+    assert lo.tolist() == [-26.5, 43, 0] and hi.tolist() == [-25, 50, 10]
+    assert visual.claim_box("no ranges here", ([0, 0, 0], [1, 1, 1])) is None
+
+
+def test_full_height_slot_for_a_low_tine_fails():
+    ref = _box((10, 10, 10), (0, 0, 5))
+    slot = _box((1.5, 12, 10), (0, 0, 5))           # through the whole height
+    tine = _box((1.5, 10, 2), (0, 0, 1))            # the part it seats fills only the bottom 2 mm
+    vol, fill = visual.claim_fill(ref.difference(slot), ref, [tine], (np.array([-0.75, -5, 0]), np.array([0.75, 5, 10])))
+    assert vol > 100 and fill < 0.3
+
+
+def test_seat_cut_to_the_tine_passes():
+    ref = _box((10, 10, 10), (0, 0, 5))
+    seat = _box((1.5, 12, 2), (0, 0, 1))
+    vol, fill = visual.claim_fill(ref.difference(seat), ref, [seat], (np.array([-0.75, -5, 0]), np.array([0.75, 5, 10])))
+    assert vol > 20 and fill > 0.9
+
+
+# ------------------------------------------------------------------ rev2: terminal features on catalog motors
+def _term_ctx(port):
+    from types import SimpleNamespace as NS
+
+    can = trimesh.creation.cylinder(5.0, 10.0, sections=64)
+    body = NS(id="mot", mesh=can, inside=lambda P: can.contains(np.asarray(P)))
+    rp = NS(part=NS(id="mot"), cat=NS(id="gm", kind="motor", ports={"terminals": port}))
+    return NS(r=NS(parts=[rp]), world=NS(body=lambda i: body, port=lambda r, n: np.asarray(port, float)))
+
+
+def test_terminal_port_floating_off_the_can_fails():
+    out = visual.terminal_findings(_term_ctx([0, 0, -5.3]), visual.DEFAULTS)
+    assert out and not out[0].passed
+
+
+def test_terminal_on_the_part_passes():
+    out = visual.terminal_findings(_term_ctx([0, 0, -4.95]), visual.DEFAULTS)
+    assert out and out[0].passed
