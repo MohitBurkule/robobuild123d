@@ -1687,6 +1687,15 @@
    }
   ]
  },
+ "renders": {
+  "dir": "renders",
+  "views": [
+   "iso.png",
+   "top.png",
+   "back.png",
+   "exploded.png"
+  ]
+ },
  "parts": [
   {
    "id": "tub",
