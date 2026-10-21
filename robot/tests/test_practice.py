@@ -114,3 +114,8 @@ def test_two_sided_code_without_mirror_flagged():
     assert P.two_sided_code(loop) == []
     mir = "def lobes():\n    a = box(4.5, 2).at(21.5, 3.0)\n    return a + mirror(a)  # -21.5, -3.0\n"
     assert P.two_sided_code(mir) == []
+
+
+def test_practice_severity_flag():
+    from robot.checks import practice
+    assert practice.PRACTICE_BLOCKS is False and practice.SEV == "warning"

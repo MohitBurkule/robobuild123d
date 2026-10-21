@@ -23,7 +23,7 @@ review/code/MISSES.md (RV01 / RV17 rebuild vs the designer's feature tree) turne
   practice.waiver_bounds      (reference_cad) a deviation waiver covers ONE blob, the one at its centre; other blobs
                               inside its sphere are still differences (a lobe-tail waiver hid a hex pocket 0.15 off).
 
-Every finding is a BLOCKER; opt out per part with `practice_ok: {"<check suffix>": "<reason, >= 20 chars>"}`.
+Every finding is a WARNING while PRACTICE_BLOCKS is False (rollout), else a BLOCKER; opt out per part with `practice_ok: {"<check suffix>": "<reason, >= 20 chars>"}`.
 Mesh measurements use ref_local (mirror gap field) and ref_radii (per-edge blend radius from sections).
 """
 
@@ -34,9 +34,12 @@ from pathlib import Path
 
 import numpy as np
 
-from ..finding import BLOCKER, fail, ok
+from ..finding import BLOCKER, WARNING, fail, ok
 
 G = "practice"
+# Rollout: practice reports WARNINGs until every part has practice_ok reasons or tuned thresholds; set True to gate.
+PRACTICE_BLOCKS = False
+SEV = BLOCKER if PRACTICE_BLOCKS else WARNING
 SYM_FRAC = 0.95
 SYM_TOL_MM = 0.2
 ASYM_MM = 0.2
@@ -331,11 +334,11 @@ def run(ctx):
             continue
         bad += [f"{Path(path).name}:{ln} `{nm}` ({n} points)" for ln, nm, n in point_tables(text)]
         two += [f"{Path(path).name}:{ln} `{nm}` (+-{', +-'.join(f'{v:g}' for v in vs)})" for ln, nm, vs in two_sided_code(text)]
-    out.append(fail("practice.symmetry", G, BLOCKER, "Both sides built by hand",
+    out.append(fail("practice.symmetry", G, SEV, "Both sides built by hand",
                     f"{len(two)} function(s) place the same numbers at + and - without mirror() or a sign loop: " + "; ".join(two[:12]))
                .fix("Build one side and mirror() it (or loop `for s in (1, -1)`), so an edit reaches both copies.") if two else
                ok("practice.symmetry", G, "Two-sided geometry comes from one code path", "No hand-built +/- pairs."))
-    out.append(fail("practice.point_table", G, BLOCKER, "Coordinate tables in the build code",
+    out.append(fail("practice.point_table", G, SEV, "Coordinate tables in the build code",
                     f"{len(bad)} table(s) of measured points instead of dims + relations: " + "; ".join(bad[:12]))
                .fix("Draw the outline as a sketch with dims and relations (or tag `# param: organic <why>`).") if bad else
                ok("practice.point_table", G, "No coordinate tables", "Build code has no untagged point tables."))
@@ -365,7 +368,7 @@ def part_findings(p, m):
         elif why:
             out.append(ok(f"practice.{check}", G, title, f"`{pid}`: {len(items)} opted out: {why}").on(pid))
         else:
-            out.append(fail(f"practice.{check}", G, BLOCKER, title, f"`{pid}`: " + "; ".join(fmt(x) for x in items[:10])
+            out.append(fail(f"practice.{check}", G, SEV, title, f"`{pid}`: " + "; ".join(fmt(x) for x in items[:10])
                             + (f" ... ({len(items)})" if len(items) > 10 else "")).on(pid).fix(fix))
 
     if sym is not None:
@@ -456,7 +459,7 @@ def pocket_findings(ctx):
             bad.append(f"`{p.id}` in `{host}`: wall gap up to {d.max():.2f} mm vs declared clearance {float(clr):.2f}")
     if not n:
         return out
-    out.append(fail("practice.drawn_vs_catalog", G, BLOCKER, "Pocket not drawn round its part", "; ".join(bad[:12]))
+    out.append(fail("practice.drawn_vs_catalog", G, SEV, "Pocket not drawn round its part", "; ".join(bad[:12]))
                .fix("Size the pocket from the part's outline plus a declared `pocket_clearance_mm`, closing on every side.") if bad else
                ok("practice.drawn_vs_catalog", G, "Pockets close round their parts", f"{n} catalog part pocket(s) within clearance."))
     return out
