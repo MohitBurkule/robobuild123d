@@ -376,13 +376,12 @@ def reference_cad():
 
 
 def _lead_groove_dev():
-    """reference_cad deviations along RV03's phase-lead C-groove (the STEP has none: its leads run free over the lug)."""
+    """reference_cad capsule waiver along RV03's phase-lead C-groove (the STEP has none: its leads run free over the lug)."""
     (y0, z0), (y1, z1) = lead_groove_ends()
-    ts = [(k + 0.5) / LEAD_DEV_N for k in range(LEAD_DEV_N)]
-    return [{"near": [LEAD_GROOVE_X, y0 + t * (y1 - y0), z0 + t * (z1 - z0)], "r": REF_DEV_R_MAX,
+    return [{"path": [[LEAD_GROOVE_X, y0, z0], [LEAD_GROOVE_X, y1, z1]], "r": LEAD_DEV_R, "max_mm3": LEAD_DEV_MAX_MM3,
              "reason": "phase-lead C-groove in the inner face (added, not in the STEP): the twisted 3 x AWG24 bundle snaps through a 3.0 mouth into a "
-                       "R2.0 channel from the stator exit to the lug top: the original STEP has no lead channel (leads run free over the lug), so the leads are retained and held "
-                       "clear of the disc bolt heads (wire.exterior_support, wire.rotor_clearance)"} for t in ts]
+                       "R2.0 channel from the stator exit to the lug top: the original RV03/STEP has no lead channel (leads run free over the lug), so the leads are retained and held "
+                       "clear of the disc bolt heads (wire.exterior_support, wire.rotor_clearance)"}]
 
 
 def main():
