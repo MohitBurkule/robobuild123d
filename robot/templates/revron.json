@@ -3002,7 +3002,11 @@
     0.0,
     90.0
    ],
-   "retained": "press_fit"
+   "retained": "press_fit",
+   "no_contact_ok": {
+    "with": "tub",
+    "reason": "original RVRN 2.0: RV16 pack at STEP z 12.0 (underside 6.5) floats 2.0 mm over the RV26 base-panel skin (z 4.5); the assembly mates the pack to the chassis only, no pad"
+   }
   },
   {
    "id": "rxesc",
@@ -4924,14 +4928,14 @@
   {
    "a": "rxesc",
    "b": "tub",
-   "method": "glue",
-   "reason": "Malenki kapton-taped to the deck (adhesive tape hold), as in the original RVRN 2.0: revron_deconstruction.md 'Malenki+ESC kapton-wrapped, stacked'; no tray or strap"
+   "method": "tape",
+   "reason": "Malenki kapton-taped to the deck, as in the original RVRN 2.0: revron_deconstruction.md 'Malenki+ESC kapton-wrapped, stacked'; no tray or strap"
   },
   {
    "a": "wesc",
    "b": "tub",
-   "method": "glue",
-   "reason": "weapon ESC kapton-taped (adhesive tape hold), as in the original RVRN 2.0: revron_deconstruction.md 'Malenki+ESC kapton-wrapped, stacked'; no tray"
+   "method": "tape",
+   "reason": "weapon ESC kapton-taped, as in the original RVRN 2.0: revron_deconstruction.md 'Malenki+ESC kapton-wrapped, stacked'; no tray"
   },
   {
    "a": "power_switch",
