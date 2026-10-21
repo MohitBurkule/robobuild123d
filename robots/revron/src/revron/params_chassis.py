@@ -65,7 +65,7 @@ CH = dict(x=CH_HALF_W, y0=CH_Y0, y1=CH_Y1, z0=CH_Z0, z1=CH_Z1, wall=CH_WALL, dec
 # ====================================================================================================================
 # panels (RV26 base, Ti top) [fix-T: named params, every panel dimension derives from these]
 SEG, SEG_FINE = 64, 128              # shapely buffer resolution (segments per quarter circle) for ears / tangent arcs
-BASE_CSK_CLEAR = -0.6                # base-panel seat 3.2 at the face = STEP RV26 (dk 3.8 - 0.6)
+BASE_CSK_CLEAR = 0.1                 # base-panel seat 4.5 at the face: cut to the ISO 10642 M2 head (dk 4.4) so it sits flush; the STEP RV26 seat (3.2 x 0.5) is smaller than that head and cannot take it
 BASE_Z0, BASE_T = 3.5, 1.0           # base panel underside Z, skin thickness
 PRELOAD_PAD = dict(c=(22.5, -30.3), s=9.1, h=0.465, r=0.6, sink=0.01)   # N10 preload pad on the base skin: centre |X|/Y, side, height (0.45 + 0.015: closes the 0.2 mm the STEP leaves under the N10, intent.seat_locates), corner R, sink into the skin (union overlap)
 BASE_FILLET, BASE_EDGE_TOL, BASE_EDGE_UP, FLAT_TOL = 0.25, 0.02, 0.1, 1e-3   # base skin joint fillet; edge selection tolerances (height band, face rise, flatness)

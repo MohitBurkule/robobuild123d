@@ -83,9 +83,11 @@ WG_SKIN = [(RAMP_REACH, 1.0), (47.57, 1.0), (46.8, 1.36), (40.79, 8.52), (40.22,
 # skin top cap: in (X, W = Z - k Y) the cap is a circular arc rising to the full skin height (vertical tangent at
 # X = centre + R); swept along (0, 1, k). Fitted on 12 STEP X sections from X -35 to -30.65 (residual < 0.03 mm)
 WG_SKIN_CAP = dict(k=0.84, c=(-41.166, -16.147), r=10.554)   # param: organic skin cap arc (slope k, centre (X, W), R) fitted to RV17
+# param: end
 # fork-tail entry: between the kidney and the cheek's top notch the STEP opens the kidney to the notch over the last
 # 1.05 mm before the nose tab, so the fork tail drops into the kidney from above
 WG_TAIL_ENTRY = ([(35.08, 5.3), (37.36, 12.78), (37.36, 13.2), (38.14, 13.2), (38.14, 12.78), (38.2, 10.0), (38.04, 7.25)], -22.55)   # param: organic entry outline (Y, Z) mid-slot on RV17, X start (ends at the nose tab)
+# param: end
 ARC_N, ARC_MOUNT, ARC_KIDNEY, WG_MERGE_EPS = 64, 32, 24, 0.01       # circle facets per quarter; overlap that merges the toe land with the wedgelet body
 WG_TAB_FILM = 0.6                    # TPU film limit: slivers thinner than this are dropped from the nose tab
 WG_MOUNT_GAP = 0.1                   # nose tab clearance to the weapon mount boss

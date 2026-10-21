@@ -2581,7 +2581,8 @@
     0,
     90
    ],
-   "retained": "kapton"
+   "retained": "strap",
+   "deviation": "RV01/RV13: the Malenki is taped (kapton) to the deck in the STEP; with the cage ribs gone a 6 mm TPU strap (RV01 esc_tray strap slot, glued to the chassis walls over the board) holds it instead, so it cannot slide inverted (adds ~0.3 g, reversible)"
   },
   {
    "id": "wesc",
@@ -2949,8 +2950,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 3.2,
-    "csk_depth": 0.4,
+    "csk_d": 3.9,
+    "csk_depth": 0.75,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -2988,8 +2989,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 3.2,
-    "csk_depth": 0.4,
+    "csk_d": 3.9,
+    "csk_depth": 0.75,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -3027,8 +3028,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 3.2,
-    "csk_depth": 0.4,
+    "csk_d": 3.9,
+    "csk_depth": 0.75,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -3066,8 +3067,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 3.2,
-    "csk_depth": 0.4,
+    "csk_d": 3.9,
+    "csk_depth": 0.75,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -3105,8 +3106,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 3.2,
-    "csk_depth": 0.4,
+    "csk_d": 3.9,
+    "csk_depth": 0.75,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -4638,13 +4639,13 @@
    "a": "rxesc",
    "b": "tub",
    "method": "interlock",
-   "reason": "Malenki boxed by the deck cage ribs (0.1 mm), the front wall and the deck; the weapon ESC under it"
+   "reason": "Malenki held by a TPU strap, boxed by the front wall and the deck; the weapon ESC under it"
   },
   {
    "a": "wesc",
    "b": "esc_tray",
    "method": "interlock",
-   "reason": "weapon ESC in the TPU tray lips (0.1 mm); the cage rib holds -y, the Malenki +z"
+   "reason": "weapon ESC in the TPU tray lips (0.1 mm); lips on all four sides, the Malenki +z"
   },
   {
    "a": "esc_tray",
