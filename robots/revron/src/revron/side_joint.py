@@ -10,8 +10,10 @@ Joints (build123d RigidJoint, Z along the feature's axis):
 The panel is modelled once (SP_BUILT_SIDE, left); the right panel and its joints are its YZ mirror."""
 import os, sys
 import numpy as np
-from .params import *  # noqa: F401,F403
-from .common import *  # noqa: F401,F403
+from .params import HERE, NUT, SA, SA_X, SIDE_BOLT_X, SPEC_DP, SP_BUILT_SIDE, SP_NUT_RELIEF_X, SP_SEAT_AXIS
+from .common import _b, _mirror_x, _solid
+from .hubs import standoff, standoff_end
+from .side import _side_body
 
 
 def _mx(v):

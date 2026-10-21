@@ -275,7 +275,7 @@ def builtin() -> list[CatalogEntry]:
         # RVRN reference-CAD envelopes (Revron audit 2026-10): vendor/reference envelopes, not memory.
         CatalogEntry("n10_2200rpm_spicy", "motor", "Turnabot Spicy N10 2200 rpm (micro-metal 10 x 12, 33.8 incl. 9.5 mm shaft)", 9.5, "datasheet",
                      union([at({"type": "intersect", "items": [cyl_x(6.3, 13.0), box(15.0, 10.0, 12.0)]}, -6.4, 0, 0),
-                            at(cyl_x(2.4, 1.3), -13.55, 0, 0)]
+                            at(cyl_x(2.4, 3.0), -14.4, 0, 0)]
                            + [at(box(0.9, 10.0, 12.0), x, 0, 0) for x in (0.6, 3.35, 7.15)]
                            + [at(cyl_x(1.1, 7.6), 3.9, 0, z) for z in (-3.5, 3.5)]
                            + [at(box(3.1, 2.0, 0.4), -14.35, 0, z) for z in (-3.8, 3.8)]       # RV12 STEP solder tabs: 0.4 thick, 2.0 wide, 3.8 off the axis, tips at the 33.8 mm length (tab tip -15.9)

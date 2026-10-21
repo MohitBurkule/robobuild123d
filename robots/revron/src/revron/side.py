@@ -1,53 +1,50 @@
 """[fix-S] Side groups: the side panel (wedgelet, fork and hub groups live in their own modules)."""
 import math, os, sys
-from .params import *  # noqa: F401,F403
-from .common import *  # noqa: F401,F403
+from .params import (
+    FLOOR_Z, GEO_EPS, HERE, NUT, NUT_X, RAMP_REACH, RAMP_SLOPE, SA,
+    SA_X, SB, SB_X, SIDE_BOLT_DES, SIDE_BOLT_X, SIDE_FACE_X, SIDE_SINK, SLAB_X,
+    SP_BOSS, SP_CSK, SP_DRIVER_SEATS, SP_FOOT, SP_FOOT_Z, SP_HOLLOW, SP_HOLLOW_END, SP_HOLLOW_X,
+    SP_NOSE_NOTCH, SP_NOSE_OVER, SP_NOSE_R, SP_NOSE_Y0, SP_NOSE_Z, SP_NUT_RELIEF, SP_NUT_RELIEF_R, SP_NUT_RELIEF_X,
+    SP_PIN_HOLE, SP_REAR_ROUND, SP_SA_CLEAR, SP_TOE_RUN, SP_TOE_Y0, SP_TOP, SP_TOP_R, SP_TOP_R_MIN_DEG,
+    SP_TYRE_RELIEF, SP_VENT, SP_X_IN, WEDGE_TOE_H)
+from .common import _I, _S, _U, _b, _box, _cyl, _ext, _one, _poly, _round
+from .side_wall import sp_wall, nose_body
 
 
-def _sp_ring(zw, z, b, Polygon):
-    """One wall section at height z: the inner-face path, offset by the local thickness, closed by half-round caps and
-    resampled from the inner rear corner so every section's points correspond (dense polygon sections: one ruling per
-    matched point pair, adjacent facets meet at a fraction of a degree)."""
-    L = SP_LOFT
-    path = _resample(_pchip_open(_sp_path(zw), L["resample"]), L["path"])
-    out = _offset_var(path, [_sp_w(y, zw) for _, y in path])
-    ring = path + _end_cap(path[-1], out[-1], path[-2]) + out[::-1] + _end_cap(out[0], path[0], path[1])
-    # drop the little loops a variable offset makes inside tight bends, round what is left
-    poly = Polygon(ring).buffer(0)
-    poly = max(getattr(poly, "geoms", [poly]), key=lambda g: g.area).buffer(L["round"], L["arc"]).buffer(-L["round"], L["arc"])
-    rg = list(poly.exterior.coords)[:-1]
-    if not poly.exterior.is_ccw:
-        rg = rg[::-1]
-    k = min(range(len(rg)), key=lambda i: math.dist(rg[i], path[0]))
-    rg = rg[k:] + rg[:k] + [rg[k]]
-    pts = _resample(rg, L["ring"])[:-1]
-    return b.Wire.make_polygon([b.Vector(x, y, z) for x, y in pts], close=True)
+def _sp_tyre_relief(b):
+    """Rear tyre relief pocket cutter: the round-ended slot profile (SP_TYRE_RELIEF: true arcs, r about the rear axis line, r_front
+    front corners) extruded from the floor to the inner face, its floor edge filleted r_floor (the side's own relief tool: the
+    pocket it cuts is plain, the chassis cutter just loses it)."""
+    t = SP_TYRE_RELIEF
+    (cy, cz), r, yf, rf, (x0, x1) = t["c"], t["r"], t["y_front"], t["r_front"], t["x"]
+    V = lambda y, z: b.Vector(x0, y, z)
+    k = rf * (1 - math.sqrt(0.5))   # corner arc mid-point offset
+    e = [b.Edge.make_line(V(cy, cz + r), V(yf - rf, cz + r)),
+         b.Edge.make_three_point_arc(V(yf - rf, cz + r), V(yf - k, cz + r - k), V(yf, cz + r - rf)),
+         b.Edge.make_line(V(yf, cz + r - rf), V(yf, cz - r + rf)),
+         b.Edge.make_three_point_arc(V(yf, cz - r + rf), V(yf - k, cz - r + k), V(yf - rf, cz - r)),
+         b.Edge.make_line(V(yf - rf, cz - r), V(cy, cz - r)),
+         b.Edge.make_three_point_arc(V(cy, cz - r), V(cy - r, cz), V(cy, cz + r))]
+    tool = b.Solid.extrude(b.Face(b.Wire(e)), b.Vector(x1 - x0, 0, 0))
+    floor = min(tool.faces(), key=lambda f: f.center().X)   # the face at the pocket floor
+    return tool.fillet(t["r_floor"], floor.edges())
 
 
-def _sp_front_round(b, Polygon, box):
-    """Concave round (SP_FRONT_ROUND r) where the swing's leaning inner face meets the nose front face, drawn in the plan
-    sketch every SP_FRONT_ROUND["dz"] up the nose: the swing section (inner path, outer side) and the nose front are
-    closed by r (buffer +r / -r) and what that adds is lofted (ruled) through the heights."""
-    fr, y_f, x_h = SP_FRONT_ROUND, SP_NOSE[0][1], SP_HOLLOW_X[0]
-    r, x_o = fr["r"], SLAB_X[0]
-    win = box(SP_NOSE[0][0], y_f - fr["win"], x_h, y_f + r)   # reaches r into the nose so the fill overlaps it (no coplanar fuse)
-    secs = []
-    (z0, z1), n = SP_NOSE_Z, max(1, round((SP_NOSE_Z[1] - SP_NOSE_Z[0]) / fr["dz"]))
-    land = SP_W_Z[0] + SP_FOOT_LAND   # the wall stands straight up to here, then leans (see side_panel)
-    for z in sorted({z0 + (z1 - z0) * i / n for i in range(n + 1)} | {land}):
-        zw = _interp(z, [SP_W_Z[0], land, *SP_W_Z[1:]], [SP_W_Z[0], *SP_W_Z])
-        path = [p for p in _resample(_pchip_open(_sp_path(zw), SP_LOFT["resample"]), SP_LOFT["path"]) if p[1] >= y_f - fr["win"] - r]
-        swing = Polygon(path + [(x_o, path[-1][1]), (x_o, path[0][1])]).buffer(0)
-        solid = swing.union(box(x_o, y_f, x_h, y_f + fr["win"]))
-        fill = solid.buffer(r, fr["arc"]).buffer(-r, fr["arc"]).difference(swing.buffer(-fr["sink"])).intersection(win)   # sinks into the wall: no sliver
-        fill = max(getattr(fill, "geoms", [fill]), key=lambda g: g.area)
-        rg = list(fill.exterior.coords)[:-1]
-        if not fill.exterior.is_ccw:
-            rg = rg[::-1]
-        k = min(range(len(rg)), key=lambda i: (rg[i][1], rg[i][0]))   # start every ring at its rear-most point
-        rg = rg[k:] + rg[:k] + [rg[k]]
-        secs.append(b.Wire.make_polygon([b.Vector(x, y, z) for x, y in _resample(rg, fr["ring"])[:-1]], close=True))
-    return b.Solid.make_loft(secs, ruled=True)
+def _side_profile(b):
+    """Side outline (Y, Z) extruded through the slab: the top line with its convex corners rounded SP_TOP_R (true cylinders), and the rear
+    end a full round over the wheel (a cylinder about the wheel axis line)."""
+    pts = SP_TOP
+    sgn = 1 if sum(p[0] * q[1] - q[0] * p[1] for p, q in zip(pts, pts[1:] + pts[:1])) > 0 else -1   # +1 counter-clockwise
+    def convex(i):   # a corner that turns by at least SP_TOP_R_MIN_DEG the convex way
+        p, q, r = pts[i - 1], pts[i], pts[(i + 1) % len(pts)]
+        a = math.atan2(r[1] - q[1], r[0] - q[0]) - math.atan2(q[1] - p[1], q[0] - p[0])
+        return sgn * math.degrees(math.remainder(a, math.tau)) >= SP_TOP_R_MIN_DEG
+    prism = _ext(Polygon(pts), "yz", *SLAB_X)
+    corner = [pts[i] for i in range(len(pts)) if convex(i)]
+    edges = [e for e in prism.edges() if abs(e.start_point().Y - e.end_point().Y) < GEO_EPS and abs(e.start_point().Z - e.end_point().Z) < GEO_EPS
+             and any(math.dist((e.start_point().Y, e.start_point().Z), c) < GEO_EPS for c in corner)]
+    (cy, cz), cr = SP_REAR_ROUND
+    return _U(_one(prism.fillet(SP_TOP_R, edges)), _cyl(cr, *SLAB_X, (cy, cz)))
 
 
 def _side_seat(key, at, sgn=-1):
@@ -60,9 +57,9 @@ def _side_seat(key, at, sgn=-1):
         sys.path.insert(0, _repo)
     from robot.cad.holes import hole_tool
     far = {"a": SA_X[1], "b": SB_X[1], "c": NUT_X[1]}[key]
-    dr, hc = SP_CSK["drive_r"].get(key), SP_CSK["head_clear"]
+    dr, hc = SP_CSK["drive_r"] if key in SP_DRIVER_SEATS else None, SP_CSK["head_clear"]
     tool, rec = hole_tool((sgn * SIDE_FACE_X[key], *at), (-sgn, 0, 0), SIDE_BOLT_DES[key], head="csk", into="through", side="head",
-                          sink=SIDE_SINK[key], grip=SIDE_FACE_X[key] - far, fit=SP_CSK["fit"][key], csk_clear=SP_CSK["csk_clear"],
+                          sink=SIDE_SINK[key], grip=SIDE_FACE_X[key] - far, fit=SP_CSK["fit"], csk_clear=SP_CSK["csk_clear"],
                           head_clear=hc if dr is None else SP_CSK["lip"] - SIDE_SINK[key])
     if dr is not None:   # the narrower driver bore from outside the face down to the seat
         tool = _U(tool, _cyl(dr, sgn * (SIDE_FACE_X[key] + hc), sgn * SIDE_BOLT_X[key], at))
@@ -74,43 +71,22 @@ def _side_body(pin=True):
     side_joint.side_panel_local re-bases it on its own datum and mirrors it for RV24. RV23/24 TPU side panel: an S-wall that hugs the chassis side, swings out round the rear wheel and the front
     wheel; its outer face is battered (5 mm at the floor, 2 mm at the top) so side hits ride up; the nose block
     takes the standoff ends (M3x8 CSK, flush)."""
-    from shapely.geometry import LineString, Point, Polygon, box
+    from shapely.geometry import LineString, Point, Polygon
     b = _b()
-    # the battered, leaning wall is one smooth (non-ruled) loft through six band sections floor -> top: the inner face
-    # path leans out in the front swing and the thickness thins with height (outer face battered), all as smooth
-    # functions of Z so the outer surface has no steps.
-    # the floor section is repeated SP_FOOT_LAND higher: the wall rises straight for that height before it leans, so
-    # the leaning outer face meets the floor in a printable land, not a knife edge
-    z0 = SP_W_Z[0]
-    secs = [_sp_ring(zw, z, b, Polygon) for zw, z in [(z0, z0), (z0, z0 + SP_FOOT_LAND)] + [(q, q) for q in SP_W_Z[1:]]]
-    wall = _U(b.Solid.make_loft(secs[:2], ruled=True), b.Solid.make_loft(secs[1:], ruled=False))
-    side = _round(Polygon(SP_TOP), r_out=SP_TOP_R)
-    (cy, cz), cr = SP_REAR_ROUND   # rear end a full round over the wheel
-    side = side.union(Point(cy, cz).buffer(cr, ARC_N))
-    profile = _ext(side, "yz", *SLAB_X)
-    foot = _ext(_poly(SP_FOOT), "xy", *SP_FOOT_Z)
+    wall = sp_wall(b)   # analytic wall (side_wall.py): cones / planes / one S-bend skin; the profile below trims its top and rear end
+    profile = _side_profile(b)
+    ft = SP_FOOT
+    foot = _S(_box(SP_X_IN, ft["c"][0], *ft["y"], *SP_FOOT_Z), _cyl(ft["r"], *SP_FOOT_Z, ft["c"], "z"))   # the lobe's footprint, outside the arc
     wall = _I(wall, profile)
-    nose_plan = _round(Polygon(SP_NOSE), r_out=SP_NOSE_R)
-    bt = SP_BATTER
-    z_lo, z_hi = bt["z"]
-    batter = _ext(_poly([(bt["x0"], z_lo), (bt["x0"] + bt["slope"] * (z_hi - z_lo), z_hi), (bt["far"], z_hi), (bt["far"], z_lo), (bt["x0"], bt["below"])]), "xz", 0.0, bt["depth"])
-    # the front swing never stands proud of the battered plane (it meets the nose flush)
-    clip = _ext(_poly([(bt["x0"], z_lo), (bt["x0"] + bt["slope"] * (z_hi + SP_CLIP_OVER - z_lo), z_hi + SP_CLIP_OVER),
-                       (SLAB_X[0], z_hi + SP_CLIP_OVER), (SLAB_X[0], bt["below"]), (bt["x0"], bt["below"])]), "xz", 0.0, bt["depth"])
-    wall = _S(wall, clip)
-    nose_blk = _ext(nose_plan, "xy", *SP_NOSE_Z)
-    nose = _I(_I(_U(nose_blk, _sp_front_round(b, Polygon, box)), profile), batter)
-    # the nose top continues the wedgelet's ramp so a wedge rides up both as one face
-    nose = _one(nose).split(b.Plane(origin=(0.0, RAMP_REACH, FLOOR_Z), z_dir=(0.0, RAMP_SLOPE, 1.0)), keep=b.Keep.BOTTOM)
-    # like the wedgelet, the ramp's knife toe stands on a printable land at full reach
-    toe = _poly([(SP_TOE_Y0, FLOOR_Z), (RAMP_REACH, FLOOR_Z), (RAMP_REACH, FLOOR_Z + WEDGE_TOE_H), (SP_TOE_Y0, FLOOR_Z + SP_TOE_RUN * RAMP_SLOPE)])
-    nose = _U(nose, _I(_I(nose_blk, _ext(toe, "yz", *SLAB_X)), batter))
-    # the nose's front-outer corner is chamfered back so a wedge or spinner tooth coming in from the front quarter
-    # glances off instead of catching the corner
-    nose = _one(nose).split(b.Plane(origin=SP_CHAMFER[0], z_dir=SP_CHAMFER[1]), keep=b.Keep.TOP)
+    nose_blk = _S(nose_body(b), _ext(_round(Polygon(SP_NOSE_NOTCH), r_in=SP_NOSE_R), "xy", *SP_NOSE_Z))   # inner notch round the wedgelet block
+    # the nose top is the wedgelet's ramp (the swing's 40 deg cone is tangent to it, so a wedge rides up both as one face); like the
+    # wedgelet, the ramp's knife toe stands on a printable land at full reach
+    z1 = SP_NOSE_Z[1]
+    ramp = Polygon([(SP_NOSE_Y0 - SP_NOSE_OVER, FLOOR_Z), (RAMP_REACH, FLOOR_Z), (RAMP_REACH, FLOOR_Z + WEDGE_TOE_H),
+                    (SP_TOE_Y0, FLOOR_Z + SP_TOE_RUN * RAMP_SLOPE), (RAMP_REACH - (z1 - FLOOR_Z) / RAMP_SLOPE, z1), (SP_NOSE_Y0 - SP_NOSE_OVER, z1)])
+    nose = _I(nose_blk, _ext(ramp, "yz", *SLAB_X))
     he = SP_HOLLOW_END
-    hollow_end = _ext(Point(*he["c"]).buffer(he["r"], ARC_N).intersection(box(SP_HOLLOW_X[0], he["c"][1] - he["r"], SP_HOLLOW_X[1], he["c"][1] + he["r"])),
-                      "xy", he["z0"], SP_HOLLOW[-1][1])
+    hollow_end = _I(_cyl(he["r"], he["z0"], SP_HOLLOW[-1][1], he["c"], "z"), _box(SP_HOLLOW_X[0], SP_HOLLOW_X[1], *[he["c"][1] + k * he["r"] for k in (-1, 1)], he["z0"], SP_HOLLOW[-1][1]))
     nose = _S(nose, _ext(_poly(SP_HOLLOW), "yz", *SP_HOLLOW_X), hollow_end)       # hollow behind the nose wall, round front end
     bs_ = SP_BOSS
     (bx0, bx1), x_ch, ch = bs_["x"], bs_["x_ch"], bs_["r"] - bs_["r_end"]   # 45 deg chamfer: its X run is its radial drop
@@ -121,7 +97,7 @@ def _side_body(pin=True):
     cr_, cx0, cx1 = SP_SA_CLEAR
     cuts = [_side_seat(k, at)[0] for k, at in (("a", SA), ("b", SB), ("c", NUT))] + [
             _cyl(cr_, cx0, cx1, SA),
-            _box(*SP_TYRE_RELIEF),                                                # rear tyre relief on the inner face
+            _sp_tyre_relief(b),                                                   # rear tyre relief pocket on the inner face
             _ext(_round(Polygon(SP_NUT_RELIEF), r_out=SP_NUT_RELIEF_R), "yz", *SP_NUT_RELIEF_X)]                  # 1 mm relief round the chassis nut lobe
     ph = SP_PIN_HOLE
     if pin:   # the chassis cutter has no pin hole: it would leave a loose pin of chassis material
