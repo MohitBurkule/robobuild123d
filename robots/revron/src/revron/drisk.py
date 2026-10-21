@@ -1,107 +1,127 @@
-"""[fix-B] Drisk: spider, floating Hardox discs, spacer."""
-import json, math, os, sys
-from .params import *  # noqa: F401,F403
-from .common import *  # noqa: F401,F403
+"""[fix-B] Drisk: spider, floating Hardox discs, drisk spacer, GR1507 shaft.
+
+[fix-B-rebuild] Every plate is one build123d sketch in the drisk frame (u, v about the spin axis, drawn on the spider's
+own clocking DR_ROT), extruded over its stack span DR_X and placed on the weapon frame W_FRAME. Shared masters:
+BOLT_R / N_STACK (the stack-bolt pattern every plate carries), HUB_R (the bell's screw circle), DISC_R, SHAFT_R."""
+import math
+
+import build123d as bd
+
+from . import plate as pl
+from .common import _m2
+from .params_weapon import (BOLT_R, DISC_BAL_PTS, DISC_BORE_ROUND, DISC_ECC, DISC_ECC_A, DISC_HOLE_R_WIN, DISC_R,
+                            DISC_ROUND, DOG, DR_ROT, DR_X, HALF_PITCH, HUB_R, N_STACK, SPACER, SPIDER, TOOTH_A,
+                            TOOTH_BACK_A, TOOTH_BACK_R, TOOTH_HOOK, TOOTH_R, W_FRAME, WSHAFT)
+from .params_chassis import WY, WZ
 
 
-# ------------------------------------------------------------------------------------------------------------ drisk
+# ------------------------------------------------------------------------------------------------------- the frame
 def _disc_local(u, v):
-    """Drisk-local (u, v) -> world (Y, Z): STEP Drisk_V4 rotation about the axis, then the ref -> world map."""
+    """Drisk-local (u, v) -> world (Y, Z): the drisk_plane() basis about the axis, then onto the axis (WY, WZ)."""
+    p = drisk_plane(0.0).from_local_coords((u, v))
+    return (WY + p.Y, WZ + p.Z)
+
+
+def drisk_plane(x):
+    """Sketch plane of a drisk plate at axial X = x (weapon frame): u clocked DR_ROT about the axis, normal -X (the
+    plates are drawn looking at the bell cap from outboard, as the STEP's Drisk_V4)."""
     a = math.radians(DR_ROT)
-    xr = u * math.cos(a) - v * math.sin(a) - WY
-    yr = u * math.sin(a) + v * math.cos(a) + WZ
-    return (-xr, yr)
+    return bd.Plane(origin=(x, 0, 0), x_dir=(0, -math.cos(a), math.sin(a)), z_dir=(-1, 0, 0))
 
 
-def _to_world_poly(p):
-    from shapely.geometry import Polygon
-    ext = [_disc_local(u, v) for u, v in list(p.exterior.coords)]
-    ints = [[_disc_local(u, v) for u, v in list(i.coords)] for i in p.interiors]
-    return Polygon(ext, ints).buffer(0)
+def _plate(sketch, span):
+    """Prism of a drisk sketch over its stack span (x0, x1) in the weapon frame, placed on W_FRAME (world)."""
+    x0, x1 = span
+    return pl.placed(bd.extrude(drisk_plane(x1) * sketch, amount=x1 - x0), W_FRAME)
 
 
+def _at(r, deg):
+    return bd.Vector(r * math.cos(math.radians(deg)), r * math.sin(math.radians(deg)))
+
+
+# ------------------------------------------------------------------------------------------------------------ discs
 def disc_outline():
-    """Single-tooth eccentric disc (local frame): rim R16.5 centred 0.5 mm off towards -40 deg so the rim mass
-    balances the tooth; the tooth leaves the rim with a straight leading flank to R23 at 134.8 deg, and its back face
-    drops back to the rim; the root is filleted."""
-    from shapely.geometry import Point, Polygon
-    ea = math.radians(DISC_ECC_A)
-    rim = Point(DISC_ECC * math.cos(ea), DISC_ECC * math.sin(ea)).buffer(DISC_R, WSEG_MAX)
-    ta = math.radians(TOOTH_A)
-    tip = (TOOTH_R * math.cos(ta), TOOTH_R * math.sin(ta))
-    c, top = rim.centroid, TOOTH_BACK   # back face: from its top down to the rim tangent point, so it joins the rim without a kink
-    d = math.dist((c.x, c.y), top)
-    a = math.atan2(top[1] - c.y, top[0] - c.x) + math.acos(DISC_R / d)
-    foot = (c.x + DISC_R * math.cos(a), c.y + DISC_R * math.sin(a))
-    tooth = Polygon([tip] + TOOTH_PTS + [foot, top])
-    return _round(rim.union(tooth), **DISC_ROUND)
+    """Single-tooth eccentric disc: rim DISC_R centred DISC_ECC off towards DISC_ECC_A so the rim mass balances the
+    tooth. The tooth tip sits at (TOOTH_R, TOOTH_A); the leading flank runs in from the tip TOOTH_HOOK deg off the
+    radial, the tip land runs back to the back-face top (TOOTH_BACK_R, TOOTH_BACK_A), and the back face drops to the
+    rim tangent point (a smooth join). Tip land rounded DISC_ROUND r_out, flank root r_in."""
+    ec = _at(DISC_ECC, DISC_ECC_A)
+    tip, top = _at(TOOTH_R, TOOTH_A), _at(TOOTH_BACK_R, TOOTH_BACK_A)
+    d = (top - ec).length                                           # back face: tangent from its top to the rim
+    a = math.degrees(math.atan2(top.Y - ec.Y, top.X - ec.X) + math.acos(DISC_R / d))
+    foot = ec + _at(DISC_R, a)
+    root = tip + _at(TOOTH_R, TOOTH_A + 180 + TOOTH_HOOK)            # flank run in to the hub (inside the rim and the bore)
+    rim = bd.Pos(ec.X, ec.Y) * bd.Circle(DISC_R)
+    tooth = bd.Polygon(top, foot, root, tip, align=None)                 # counter-clockwise, as the rim
+    return pl.round_corners(rim + tooth, **DISC_ROUND)
+
+
+def _dog_bore():
+    """Bore with N_STACK ramped drive dogs: base circle DOG r, a steep rise of DOG rise from t0 to t1 and a long ramp
+    back down to t2 (deg after each dog's pitch start); every corner rounded DISC_BORE_ROUND."""
+    d, edges = DOG, []
+    for k in range(N_STACK):
+        p = 2 * HALF_PITCH * k
+        r1 = d["r"] + d["rise"]
+        ramp = lambda t0, ra, t1, rb: bd.Edge.make_three_point_arc(_at(ra, p + t0), _at((ra + rb) / 2, p + (t0 + t1) / 2), _at(rb, p + t1))  # noqa: E731
+        edges += [ramp(d["t0"], d["r"], d["t1"], r1), ramp(d["t1"], r1, d["t2"], d["r"]),
+                  bd.Edge.make_three_point_arc(_at(d["r"], p + d["t2"]), _at(d["r"], p + (d["t2"] + d["t0"]) / 2 + HALF_PITCH), _at(d["r"], p + d["t0"] + 2 * HALF_PITCH))]
+    return pl.round_corners(bd.Face(bd.Wire(edges)), r_out=DISC_BORE_ROUND, r_in=DISC_BORE_ROUND)
 
 
 def floating_disc():
-    from shapely.geometry import MultiPoint, Point, Polygon
-    p = disc_outline()
-    d = DOG
-
-    def r_bore(a):   # bore with 4 ramped drive dogs
-        t = a % (360.0 / N_STACK)
-        return d["r"] + (d["rise"] * (t - d["t0"]) / (d["t1"] - d["t0"]) if d["t0"] <= t < d["t1"] else d["rise"] * (d["t2"] - t) / (d["t2"] - d["t1"]) if d["t1"] <= t < d["t2"] else 0.0)
-    steps = DISC_BORE_RES * 360
-    bore = Polygon([(r_bore(a / DISC_BORE_RES) * math.cos(math.radians(a / DISC_BORE_RES)), r_bore(a / DISC_BORE_RES) * math.sin(math.radians(a / DISC_BORE_RES))) for a in range(steps)])
-    bore = _round(bore, r_out=DISC_BORE_ROUND, r_in=DISC_BORE_ROUND)
-    p = p.difference(bore)
-    for c in _polar(BOLT_R):
-        p = p.difference(Point(*c).buffer(_m2()[1], WSEG_FINE))
-    # balance window by the tooth (STEP): a rounded triangle, the hull of three corner radii
-    p = p.difference(MultiPoint(DISC_BAL_PTS).buffer(DISC_HOLE_R_WIN, WSEG_FINE).convex_hull)
-    return p
+    """Disc sketch: outline minus the dog bore, the stack-bolt clearance holes and the balance window by the tooth."""
+    # param: organic balance window: rounded triangle on three measured corners (STEP), corner radius DISC_HOLE_R_WIN
+    win = bd.offset(bd.Polygon(*DISC_BAL_PTS, align=None), DISC_HOLE_R_WIN, kind=bd.Kind.ARC)
+    # param: end
+    return disc_outline() - _dog_bore() - pl.holes(_m2()[1], BOLT_R, N_STACK) - win
 
 
 def disc(which):
-    x0, x1 = DR_X[which]
-    return _ext(_to_world_poly(floating_disc()), "yz", x0, x1)
+    return _plate(floating_disc(), DR_X[which])
+
+
+# ----------------------------------------------------------------------------------------------------------- spider
+def _spider_window():
+    """One quarter window, centred between two arms: hub ring (hub_r) to the lobe circles' inner edge (win_r), its
+    sides an arm half-width off the arm axes, all four corners rounded win_round."""
+    sp = SPIDER
+    side = sp["win_r"] - sp["arm"]
+    box = bd.Pos(sp["arm"] + side / 2, sp["arm"] + side / 2) * bd.Rectangle(side, side)
+    q = (bd.Circle(sp["win_r"]) - bd.Circle(sp["hub_r"])) & box
+    return pl.round_corners(q, r_out=sp["win_round"])
 
 
 def spider():
-    """3 mm aluminium spider on the GR1507 bell: bore on the shaft collar, 4 M2 on r4.5 into the bell, 4 lobes
-    with the r14 stack bolts, 4 quarter windows."""
-    from shapely.geometry import Point, Polygon
+    """3 mm aluminium spider on the GR1507 bell: disc with N_STACK lobes round the stack bolts (root filleted), the
+    quarter windows, the shaft-collar bore, M2 clearance on the bell's HUB_R screw circle and M2 tap holes on BOLT_R
+    (the stack screws thread in)."""
     sp = SPIDER
-    p = Point(0, 0).buffer(sp["r"], WSEG_MAX)
-    for c in _polar(BOLT_R):
-        p = p.union(Point(*c).buffer(sp["lobe_r"], WSEG_MID))
-    p = _round(p, r_in=sp["round_in"])
-    o, f = sp["win_off"], sp["win_far"]
-    for sx in (1, -1):
-        for sy in (1, -1):
-            q = Point(0, 0).buffer(sp["win_r"], WSEG_FN).intersection(Polygon([(sx * o, sy * o), (sx * f, sy * o), (sx * f, sy * f), (sx * o, sy * f)]))
-            q = q.difference(Point(0, 0).buffer(sp["hub_r"], WSEG_HI))   # hub ring round the 4 bell screws
-            p = p.difference(_round(q, r_out=sp["win_round"]))
-    p = p.difference(Point(0, 0).buffer(sp["bore_r"], WSEG_MID))
     tap_r, clr_r, _ = _m2()
-    for r, hr in ((HUB_R, clr_r), (BOLT_R, tap_r)):   # r14: M2 tap drill (the stack screws thread in), r4.5: clearance
-        for c in _polar(r):
-            p = p.difference(Point(*c).buffer(hr, WSEG_FINE))
-    return _ext(_to_world_poly(p), "yz", *DR_X["spider"], arcs=True)   # true arcs, as the STEP
+    body = pl.round_corners(bd.Circle(sp["r"]) + pl.holes(sp["lobe_r"], BOLT_R, N_STACK), r_in=sp["round_in"])
+    sk = body - pl.polar(_spider_window(), N_STACK) - bd.Circle(sp["bore_r"]) - pl.holes(clr_r, HUB_R, N_STACK) - pl.holes(tap_r, BOLT_R, N_STACK)
+    return _plate(sk, DR_X["spider"])
 
 
+# ----------------------------------------------------------------------------------------------------------- spacer
 def drisk_spacer():
-    """6 mm printed spacer between the discs: bore round the bell, 4 bolt holes, 4 arc windows (STEP, measured)."""
-    from shapely.geometry import Point
-    sp, c = SPACER, (0, 0)
-    p = Point(c).buffer(sp["r"], WSEG_MAX).difference(Point(c).buffer(sp["bore_r"], WSEG_FN))
-    p = _ring_windows(p, c, sp["win_in"], sp["win_out"], sp["half_deg"], sp["phase"], sp["win_round"], WSEG_MAX)
-    for pt in _polar(BOLT_R):
-        p = p.difference(Point(*pt).buffer(_m2()[1], WSEG_FINE))
-    return _ext(_to_world_poly(p), "yz", *DR_X["spacer"], arcs=True)   # true arcs: the STEP windows are r1 corners on exact arcs (visual.fillet_ref)
+    """6 mm printed spacer between the discs: ring round the bell, a window midway between each pair of stack bolts."""
+    sp = SPACER
+    win = pl.ring_window(sp["win_in"], sp["win_out"], sp["half_deg"], sp["win_round"])
+    sk = bd.Circle(sp["r"]) - bd.Circle(sp["bore_r"]) - pl.polar(win, N_STACK, sp["phase"]) - pl.holes(_m2()[1], BOLT_R, N_STACK)
+    return _plate(sk, DR_X["spacer"])
 
 
+# ------------------------------------------------------------------------------------------------------------ shaft
 def weapon_shaft():
-    """GR1507 5 mm shaft in world coordinates: V-thread (pitch, depth, length from the free end) with a lead-in chamfer, plain r2.5 to the circlip end."""
+    """GR1507 5 mm shaft, revolved about the weapon axis: V-thread (pitch, depth, length from the free end) behind a
+    lead-in chamfer, then plain to the circlip end."""
     w = WSHAFT
-    n = int(round(w["thread_len"] / w["thread_pitch"]))
-    prof = [(0.0, 0.0), (0.0, w["r"] - w["thread_depth"] - w["chamfer"]), (w["chamfer"], w["r"] - w["thread_depth"])]
-    for k in range(n):
-        x = w["chamfer"] + k * w["thread_pitch"]
-        prof += [(x + 0.5 * w["thread_pitch"], w["r"]), (x + w["thread_pitch"], w["r"] - w["thread_depth"])]
-    prof += [(w["thread_len"], w["r"]), (w["len"], w["r"]), (w["len"], 0.0)]
-    return _revolve_x(prof, w["x_end"], (WY, WZ))
+    p, r, dr = w["thread_pitch"], w["r"], w["thread_depth"]
+    prof = [(0.0, 0.0), (0.0, r - dr - w["chamfer"]), (w["chamfer"], r - dr)]
+    for k in range(int(round(w["thread_len"] / p))):
+        x = w["chamfer"] + k * p
+        prof += [(x + p / 2, r), (x + p, r - dr)]
+    prof += [(w["thread_len"], r), (w["len"], r), (w["len"], 0.0)]
+    face = bd.Face(bd.Wire.make_polygon([bd.Vector(w["x_end"] + x, 0, z) for x, z in prof], close=True))
+    return pl.placed(bd.Solid.revolve(face, 360, bd.Axis.X), W_FRAME)
