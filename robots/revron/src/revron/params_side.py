@@ -72,6 +72,9 @@ SP_NUT_RELIEF_R = 1.0                # relief corners round r1: no sharp concave
 SP_PIN_HOLE = dict(d=2.05, at=(2.92, 12.07), x=(-36.0, -31.0))   # STEP RV23: d1.25 cross hole along X through the wall at the nut lobe top (Y, Z; X span)
 SP_VENT = dict(y0=(-11.0, -4.5, 2.0), z0=5.0, dy=5.0, dz=6.0, r=1.0, x=(-50.0, -36.5))   # diagonal ESC vent slots
 # [fix-C wedgelet] measured polyline arcs rebuilt as true arcs (sampled finer than the 6 deg facet-seam threshold)
+WG_RING_CHAMFER, WG_RING_CHAMFER_Y = 1.0, 44.96    # Chamfer7: the ring step's far edge is chamfered 45 deg round the SB side (cone) and along the floor to this Y (plane)
+WG_STEP_MIN = 8.0                    # skin outline lines shorter than this carry no step blend
+WG_STEP_FILLET = 1.0                 # Fillet1: skin-to-ring-step blend
 WG_MOUNT_GAP = 0.1                   # clearance of the nose tab to the weapon mount boss and to the chassis lug round SB
 WG_ARC_STEP = 3   # deg per sampled chord of a wedgelet profile arc
 
@@ -106,7 +109,7 @@ _NA = WG_NOSE_ARC
 WG_ENTRY = dict(ring_end=170.0, top=8.28, rear_dy=-1.9015, width=1.5, depth=1.0, fillet=0.5)
 WG_X = (-38.5, -36.5, -35.5, -29.0, -21.5, -17.5)   # slab edges along X: block | ring step | skin | cheek | nose tab
 WG_S1 = (3.5, [(40.5, 1.0), (RAMP_REACH, 1.0), (42.54, 10.0), (39.55, 10.0), (40.23, 8.0)])   # block round SB: (R, tail outline (Y, Z))
-WG_S2 = (3.0, [(40.4, 7.5), (39.55, 10.0), (41.92, 10.0), (42.29, 10.31), (RAMP_REACH, 1.0), (46.68, 1.0), (44.96, 1.5), (40.5, 1.5)])
+WG_S2 = (WG_S1[0], [(40.4, 7.5), (39.55, 10.0), (41.92, 10.0), (42.29, 10.31), (RAMP_REACH, 1.0), (46.68, 1.0), (SB[0], 1.0)])   # ring step: (R of the boss round SB as the block, tail outline (Y, Z))
 WG_CHEEK = [(38.05, 15.36), (RAMP_REACH, 1.0), (26.55, 1.0), *_wg_flank(),
             (36.62, 14.17), (SB[0] + WG_ENTRY["rear_dy"] - WG_ENTRY["width"], SB[1] + WG_ENTRY["top"]),
             (SB[0] + WG_ENTRY["rear_dy"], SB[1] + WG_ENTRY["top"]), (37.79, 15.15)]
