@@ -15,6 +15,7 @@ X_NOTCH = STOP_X0                                # |X| where the rear pocket ste
 SIDE_X, SIDE_DIAG = TOP_X - 0.5, dict(x=19.51, y_up=4.51, k_up=0.640, y_lo=-15.71, k_lo=0.6407)   # side pocket: right edge |X| (= the switch pad edge), diagonals through (x, y) with slope k
 SIDE_TRI = [(3.72, -5.59), (SIDE_X, SIDE_DIAG["y_up"] + SIDE_DIAG["k_up"] * (SIDE_X - SIDE_DIAG["x"])),
             (SIDE_X, SIDE_DIAG["y_lo"] - SIDE_DIAG["k_lo"] * (SIDE_X - SIDE_DIAG["x"]))]
+X_APEX_R, X_APEX_REACH = 2.0, 4.0              # RV01 R2 round at the pocket apex on the axis (the other corners stay X_R), and the radius round the apex it replaces
 SIDE_R = 1.9                                  # apex R towards the centre
 REAR_Y1 = -26.5                               # front edge of the rear pockets (shared)
 RIB, WEB, REAR_W = 1.0, 2.01, 10.37          # rib to the centre pocket, web between the two side pockets, width of each (STEP; they end 1.0 off the inner wall)
@@ -37,12 +38,18 @@ def _pocket(poly, c):
     return _ext(poly, "xy", c["deck"] + POCKET_Z[0], c["deck"] + POCKET_Z[1])
 
 
+def _apex_round(poly, apex):
+    """`poly` with its corners rounded X_R except the one at `apex` (on the axis), rounded X_APEX_R."""
+    zone = Point(apex).buffer(X_APEX_REACH, SEG)
+    return _round(poly, r_out=X_R).difference(zone).union(_round(poly, r_out=X_APEX_R).intersection(zone)).buffer(0)
+
+
 def deck_pockets(c):
     """Lightening pockets seen from below: the two X triangles, two side triangles, four rear boxes, the centre rear box."""
     X, k = X_RIB, X_SLOPE
     up = [(0.0, X_UP[0]), (X, X_UP[0] + k * X), (X, X_UP[1])]
     lo = [(0.0, X_LO[0]), (X, X_LO[0] - k * X), (X, X_LO[1]), (X_NOTCH, X_LO[1]), (X_NOTCH, X_LO[2]), (0.0, X_LO[2])]
-    out = [_pocket(_round(sym(p), r_out=X_R), c) for p in (up, lo)]
+    out = [_pocket(_apex_round(sym(p), p[0]), c) for p in (up, lo)]
     R = REAR_P
     boxes = [rect(R["x0"] + i * R["pitch"], R["x0"] + i * R["pitch"] + R["w"], *R["y"]) for i in range(2)]
     side = _pocket(_round(Polygon(SIDE_TRI), r_out=SIDE_R), c)
