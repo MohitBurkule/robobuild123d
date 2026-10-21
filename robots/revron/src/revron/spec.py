@@ -333,7 +333,7 @@ def reference_cad():
           deviations=[{"near": [MNT_TIP_DEV[0], MNT_TIP_DEV[1], MNT_TIP_DEV[2]], "r": MNT_TIP_DEV_R, "reason": "the STEP notch top is a zero-thickness wedge (mfg.thin_wall); thickened to a printable wall, rearmost point unchanged"}, {"near": [NOSE_DEV[0], NOSE_DEV[1], NOSE_DEV[2]], "r": NOSE_DEV_R,
                        "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside, so the countersink keeps a 0.9 mm wall"}] + [{"near": [STATOR_DEV_X, WY + dy, WZ + dz], "r": TAP_DEV_R,
                        "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"}
-                      for dy, dz in stator_bolt_circle()]),
+                      for dy, dz in stator_bolt_circle()] + _lead_groove_dev()),
         R("motor_spacer", "Motor_back_spacer_1.stl", tol_mm=TOL["tight"]),
         R("spider", "spider_1.stl", tol_mm=TOL["std"], ref_to_world=dt,
           deviations=[dict(near=[sum(DR_X["spider"]) / 2, *_disc_local(*c)], r=TAP_DEV_R,
@@ -365,6 +365,15 @@ def reference_cad():
         R("nut_cl", "hex_thin_nut_gradeb_bsi_BS_EN_24036_-_M3_-_N_1.stl", mode="envelope", tol_mm=TOL["tight"], tol_vol_frac=VOL["motor"]),
     ]
     return {"dir": REF_DIR, "ref_to_world": REF_TO_WORLD, "iou_min": REF_IOU_MIN, "placement_tol_mm": TOL["std"], "parts": rows}
+
+
+def _lead_groove_dev():
+    """reference_cad deviations along RV03's phase-lead C-groove (the STEP has none: its leads run free over the lug)."""
+    (y0, z0), (y1, z1) = lead_groove_ends()
+    ts = [(k + 0.5) / LEAD_DEV_N for k in range(LEAD_DEV_N)]
+    return [{"near": [LEAD_GROOVE_X, y0 + t * (y1 - y0), z0 + t * (z1 - z0)], "r": REF_DEV_R_MAX,
+             "reason": "phase-lead C-groove in the inner face (added, not in the STEP): the twisted 3 x AWG24 bundle snaps through a 3.0 mouth into a "
+                       "R2.0 channel from the stator exit to the lug top, so the leads never hang free next to the disc (wire.exterior_support)"} for t in ts]
 
 
 def main():

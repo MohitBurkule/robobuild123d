@@ -45,7 +45,6 @@ BSP_X = (MNT_IN - BSP_T, MNT_IN)
 STAT_HOLE_R, CB_R, CB_CONE_X = 1.12, 2.25, (16.4, 17.15)   # RV03 stator screw clearance d2.24, d4.5 counterbore, its cone
 STATOR_ARMS_DEG = (0, 180, 90, 270)   # the GR1507 base cross arms, in bolt_wm0..3 order
 STATOR_DIRS = tuple((round(math.cos(math.radians(a))), round(math.sin(math.radians(a)))) for a in STATOR_ARMS_DEG)   # stator screw directions on the bolt circle
-PHASE_VIA = [[11.8, 14.5, 16.0], [11.8, 15.5, 18.2], [11.8, 27.0, 18.2], [11.8, 30.0, 14.5]]   # weapon phase leads: the lug (|X| >= 10.4, up to the deck) closes z 14.5 at y 15..26
 
 
 
@@ -85,4 +84,34 @@ SPIDER = dict(r=14.2, lobe_r=2.3, round_in=0.8, win_r=11.7, win_off=2.3, win_far
 
 
 SPACER = dict(r=16.0, bore_r=BELL_WALL_R[1] + SHAFT_CLR, win_in=11.4, win_out=14.5, half_deg=36.0, win_round=1.0, phase=45.0)
+# weapon phase leads (fix-B-leads): RVRN 2.0 runs them free over the lug (RV03 / RV01 have no lead hole or groove). Here the 3 AWG24 leads fan out
+# flat through the 1.5 mm stator-to-spacer gap to below the back spacer, twist into one bundle and snap into a C-groove in RV03's inner face that
+# runs parallel to the boss's standoff line (so the whole groove sits in the 8 mm boss), back to the lug top, where they drop into the tub.
+LEAD_OD, LEAD_TWIST = 1.6, 0.1                                  # AWG24 silicone OD (wire_review.wire_od); hand-twist allowance on the bundle radius
+LEAD_BUNDLE_R = LEAD_OD * (0.5 + 1 / math.sqrt(3)) + LEAD_TWIST  # 3 touching round leads: circumscribed radius (wire_review.bundle_radius), 1.82
+LEAD_GROOVE_R = LEAD_BUNDLE_R + 0.2                             # groove radius: bundle + printed-clearance
+LEAD_MOUTH = LEAD_OD * (1 + math.sqrt(3) / 2)                   # mouth at the inner face = the bundle's narrow width (one lead over two, 2.99): it snaps in flat side first, the round twist cannot fall out
+LEAD_GROOVE_X = MNT_IN + math.sqrt(LEAD_GROOVE_R ** 2 - (LEAD_MOUTH / 2) ** 2)   # groove axis behind the inner face (the mouth is the chord at the face)
+LEAD_LIG = 0.6                                                  # groove edge above the boss line (floor in the 8 mm boss); also puts the front end clear of the back spacer ring (test_lead_route)
+LEAD_Y_REAR = 18.0                                              # groove rear end: its top keeps >= LEAD_LIG under RV03's top tangent edge
+LEAD_FAN_X = sum(BSP_X) / 2                                     # the bundle turns into the groove round the back spacer rim, mid its thickness (the stator-side gap is 1.5 mm, too thin for it)
+LEAD_DEV_N, REF_DEV_R_MAX = 4, 5.0                              # reference_cad deviation sites along the groove; a waiver's largest radius (reference_cad.diff)
+
+
+def boss_line_z(y):
+    """Z of the boss's lower edge (the line from the notch top to the nose, see mount._mount_clip) at Y."""
+    return MNT_TOP_Z + (y - TAB["y0"]) * (BOSS_Z - MNT_TOP_Z) / (BOSS_NOSE_Y - TAB["y0"])
+
+
+def lead_groove_ends():
+    """((y, z) rear, (y, z) front) of the phase-lead groove axis in RV03: parallel to the boss line, LEAD_GROOVE_R + LEAD_LIG above it,
+    from LEAD_Y_REAR to straight below the weapon axis (WY), where the leads come out of the stator."""
+    off = LEAD_GROOVE_R + LEAD_LIG
+    return tuple((y, boss_line_z(y) + off) for y in (LEAD_Y_REAR, WY))
+
+
+_LG = lead_groove_ends()
+PHASE_VIA = [[11.8, 14.5, 16.0]] + [[LEAD_GROOVE_X, y, z] for y, z in _LG] + [[LEAD_FAN_X, WY, _LG[1][1]]]   # tub inside -> groove rear -> groove front -> lead fan under the spacer
+
+
 __all__ = [n for n in dir() if not n.startswith("__")]   # last line: every name above is exported

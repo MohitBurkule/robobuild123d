@@ -64,12 +64,24 @@ def weapon_mount(side):
         cuts.append(_cyl(SHAFT_D / 2 + SHAFT_CLR, -BIG / 2, BIG / 2, axis))          # shaft end clearance
         for dy, dz in stator_bolt_circle():                                # GR1507 stator M2 on its bolt circle
             cuts.append(_stator_hole(s, dy, dz)[0])
+        cuts.append(lead_groove())                                         # snap-in channel for the weapon phase leads
     else:
         cuts.append(_cyl(BRG_SEAT_R, -BIG / 2, BIG / 2, axis))                        # outboard bearing seat
         cuts.append(_cyl(NUT_RECESS_R, xm, xo + s, axis))                             # shaft nut recess
     for (y, z), fastener in zip((SA, SB), MNT_SCREW):                                 # M3 CSK into the standoffs, flush inside
         cuts.append(_mount_csk(s, y, z, fastener)[0])
     return _S(body, *cuts)
+
+
+def lead_groove():
+    """Cutter of RV03's phase-lead C-groove: a round channel (LEAD_GROOVE_R, ball ends) on the axis X = LEAD_GROOVE_X, so the inner
+    face cuts it in a LEAD_MOUTH chord the twisted bundle snaps through, between the lead_groove_ends() (parallel to the boss line)."""
+    bb = _b()
+    (y0, z0), (y1, z1) = lead_groove_ends()
+    ang = math.degrees(math.atan2(z1 - z0, y1 - y0))
+    rod = bb.Cylinder(LEAD_GROOVE_R, math.hypot(y1 - y0, z1 - z0), rotation=(-90, 0, 0)).rotate(bb.Axis.X, ang)   # along +Y, then tilted onto the run
+    rod = rod.translate((LEAD_GROOVE_X, (y0 + y1) / 2, (z0 + z1) / 2))
+    return _U(rod, *[bb.Sphere(LEAD_GROOVE_R).translate((LEAD_GROOVE_X, y, z)) for y, z in ((y0, z0), (y1, z1))])
 
 
 def _mount_csk(s, y, z, fastener):
