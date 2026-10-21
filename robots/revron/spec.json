@@ -2852,7 +2852,7 @@
    "at": [
     -11.81,
     -5.4,
-    10.0
+    12.0
    ],
    "rot": [
     0.0,
@@ -3024,6 +3024,22 @@
    },
    "label": "TPU weapon-ESC tray (not in the STEP): glued to the base panel, lips hold the ESC when inverted",
    "deviation": "the STEP holds the weapon ESC with kapton tape alone; a hit that flips the robot or tears the tape would free the board, so a TPU tray with 0.1 mm lips holds it (adds 1.1 g, reversible)"
+  },
+  {
+   "id": "bat_pad",
+   "kind": "other",
+   "material": "foam_tape",
+   "process": "manual",
+   "rotates_with": "fixed",
+   "shape": {
+    "type": "model",
+    "file": "src/build_revron.py",
+    "params": {
+     "part": "bat_pad"
+    }
+   },
+   "label": "Double-sided foam tape pad under the pack (not in the STEP): carries the pack 2 mm above the base panel",
+   "deviation": "the STEP pack floats 2 mm over the base panel; a foam tape pad supports and retains it (adds ~0.05 g, reversible)"
   },
   {
    "id": "belt_l",
@@ -4931,9 +4947,15 @@
   },
   {
    "a": "battery",
+   "b": "bat_pad",
+   "method": "tape",
+   "reason": "Pack underside taped to the foam pad (double-sided), which holds it against sliding"
+  },
+  {
+   "a": "bat_pad",
    "b": "base_panel",
-   "method": "rest",
-   "reason": "Pack underside rests on the base panel skin; the panel is screwed to the tub and the deck/top panel close the pack in from above"
+   "method": "tape",
+   "reason": "Foam pad stuck to the base panel skin; deck and top panel close the pack in from above"
   },
   {
    "a": "rxesc",

@@ -136,3 +136,10 @@ def esc_tray():
               _box(wx0 - g - w, wx1 + g + w, wy1 + g, wy1 + g + w, zw, top),
               _box(wx0 - g - w, wx1 + g + w, wy0 - g - w, wy0 - g, zw, top)]   # closing -y lip: the removed cage rib no longer holds that side
     return _U(*parts)
+
+
+def bat_pad():
+    """Double-sided foam tape pad between the base panel skin and the pack underside (STEP pack floats 2 mm above the panel):
+    it carries the pack and keeps it from sliding on the panel."""
+    P = BAT_PAD
+    return _box(*P["x"], *P["y"], BASE_Z0 + BASE_T, BAT_Z - BAT_BELOW)

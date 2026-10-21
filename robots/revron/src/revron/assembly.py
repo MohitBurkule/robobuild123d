@@ -25,6 +25,7 @@ PARTS = {
     "so_a_l": lambda: standoff((-SA_X[1], -SA_X[0]), SA), "so_a_r": lambda: standoff(SA_X, SA),
     "so_b_l": lambda: standoff((-SB_X[1], -SB_X[0]), SB), "so_b_r": lambda: standoff(SB_X, SB),
     "esc_tray": esc_tray,
+    "bat_pad": bat_pad,
 }
 
 
