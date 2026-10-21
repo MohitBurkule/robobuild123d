@@ -75,12 +75,13 @@ DISC_BORE_RES = 4                       # bore polygon samples per degree
 DOG = dict(r=12.0, rise=1.52, t0=5.0, t1=18.0, t2=55.0)       # bore dogs (90 deg pitch): steep rise t0..t1, long ramp back to t2
 DISC_BORE_ROUND, DISC_HOLE_R_WIN = 0.5, 0.44                    # bore corner rounding; balance window corner radius
 DISC_BAL_PTS = [(-13.2, 4.85), (-13.2, 9.08), (-11.68, 7.65)]    # param: organic balance-window hull corners (measured, STEP)
-TOOTH_PTS = [(-11.0, 11.6), (-8.0, 8.0), (-16.2, 0.0), (-16.25, 15.0)]   # param: organic tooth flank/root polygon (measured, STEP)
+TOOTH_PTS = [(-11.0, 11.6), (-8.0, 8.0)]   # param: organic tooth flank/root inner corners (measured, STEP)
+TOOTH_BACK = (-16.25, 15.0)                # param: organic top of the tooth back face (measured, STEP); its foot is the rim tangent point (smooth join, visual.faceting)
 # param: end
 DISC_ROUND = dict(r_out=0.2, r_in=0.7)                           # tooth tip land (0.4 laser-cuttable) and root fillet
 
 
-SPIDER = dict(r=14.2, lobe_r=2.3, round_in=0.8, win_r=11.7, win_off=2.3, win_far=20.0, hub_r=5.6, win_round=0.6, bore_r=WSHAFT["r"] + SHAFT_CLR)   # bore on the shaft collar
+SPIDER = dict(r=14.2, lobe_r=2.3, round_in=0.8, win_r=11.7, win_off=2.3, win_far=20.0, hub_r=6.0, win_round=1.0, bore_r=WSHAFT["r"] + SHAFT_CLR)   # bore on the shaft collar; window: r1 corners, inner arc r6 (STEP spider_1 section, visual.fillet_ref / silhouette)
 
 
 SPACER = dict(r=16.0, bore_r=BELL_WALL_R[1] + SHAFT_CLR, win_in=11.4, win_out=14.5, half_deg=36.0, win_round=1.0, phase=45.0)

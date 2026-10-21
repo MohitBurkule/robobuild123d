@@ -29,7 +29,11 @@ def disc_outline():
     rim = Point(DISC_ECC * math.cos(ea), DISC_ECC * math.sin(ea)).buffer(DISC_R, WSEG_MAX)
     ta = math.radians(TOOTH_A)
     tip = (TOOTH_R * math.cos(ta), TOOTH_R * math.sin(ta))
-    tooth = Polygon([tip] + TOOTH_PTS)
+    c, top = rim.centroid, TOOTH_BACK   # back face: from its top down to the rim tangent point, so it joins the rim without a kink
+    d = math.dist((c.x, c.y), top)
+    a = math.atan2(top[1] - c.y, top[0] - c.x) + math.acos(DISC_R / d)
+    foot = (c.x + DISC_R * math.cos(a), c.y + DISC_R * math.sin(a))
+    tooth = Polygon([tip] + TOOTH_PTS + [foot, top])
     return _round(rim.union(tooth), **DISC_ROUND)
 
 
@@ -77,7 +81,7 @@ def spider():
     for r, hr in ((HUB_R, clr_r), (BOLT_R, tap_r)):   # r14: M2 tap drill (the stack screws thread in), r4.5: clearance
         for c in _polar(r):
             p = p.difference(Point(*c).buffer(hr, WSEG_FINE))
-    return _ext(_to_world_poly(p), "yz", *DR_X["spider"])
+    return _ext(_to_world_poly(p), "yz", *DR_X["spider"], arcs=True)   # true arcs, as the STEP
 
 
 def drisk_spacer():
@@ -88,7 +92,7 @@ def drisk_spacer():
     p = _ring_windows(p, c, sp["win_in"], sp["win_out"], sp["half_deg"], sp["phase"], sp["win_round"], WSEG_MAX)
     for pt in _polar(BOLT_R):
         p = p.difference(Point(*pt).buffer(_m2()[1], WSEG_FINE))
-    return _ext(_to_world_poly(p), "yz", *DR_X["spacer"])
+    return _ext(_to_world_poly(p), "yz", *DR_X["spacer"], arcs=True)   # true arcs: the STEP windows are r1 corners on exact arcs (visual.fillet_ref)
 
 
 def weapon_shaft():
