@@ -46,26 +46,32 @@ MNT_SCREW_FIT = "loose"                  # ISO 273 loose clearance: the screws h
 WEAPON_CLEAR_R = 16.0                # chassis material stays outside this radius about the weapon axis (rotor + 1 mm)
 BSP_T = 1.5                          # printed spacer between the stator base and the right mount
 BSP_X = (MNT_IN - BSP_T, MNT_IN)
-STAT_HOLE_R, CB_R, CB_CONE_X = 1.12, 2.25, (16.4, 17.15)   # RV03 stator screw clearance d2.24, d4.5 counterbore, its cone
+STAT_HOLE_R = 1.12                   # RV03 stator screw clearance d2.24 (STEP)
+CB_R, CB_FLOOR_X = 2.25, 17.15       # RV03 stator counterbore d4.5 and its floor |X| (the button head seats here)
+CB_CONE_X = (16.4, CB_FLOOR_X)       # the STEP's lead-in cone under the counterbore (left out, see spec deviations)
 STATOR_ARMS_DEG = (0, 180, 90, 270)   # the GR1507 base cross arms, in bolt_wm0..3 order
 STATOR_DIRS = tuple((round(math.cos(math.radians(a))), round(math.sin(math.radians(a)))) for a in STATOR_ARMS_DEG)   # stator screw directions on the bolt circle
 
 
 
 WSEG_LO, WSEG_FINE, WSEG_MID, WSEG_HI, WSEG_FN, WSEG_MAX, WSEG_ARC, WSEG_ARC_S = 24, 32, 48, 64, 96, 128, 40, 12   # circle / arc tessellation of the 2D profiles
-# weapon mount RV02 (left, shaft end) / RV03 (right, stator): per-side master parameters (STEP measurements)
+# weapon mount RV02 (left, shaft end) / RV03 (right, stator): the per-side master parameters of the one plate builder
+# (STEP measurements): teardrop top radius about the axis, notch-top Y where its tangent starts, angle where the rim
+# leaves for the front edge, and the battered outer face x = x0 - lean*z - toe*y in the mount frame
+# (x out from the inner face, y, z from the weapon axis): it stands x0 off the inner face at the axis, leans in with
+# height and towards the nose
 MNT_SIDE = dict(
-    r=dict(top_r=10.0, notch_y=10.17, rim_end=-14.5, slab_eps=0.02, face=(24.166, 0.154, 0.0404)),   # a, kz, ky of |X| = a - kz*Z - ky*Y
-    l=dict(top_r=7.0, notch_y=9.0, rim_end=-5.0, slab_eps=0.0, face=(23.203, 0.1701, 0.0158)))
+    r=dict(top_r=10.0, notch_y=10.17, rim_end=-14.5, batter=dict(x0=5.5916, lean=0.154, toe=0.0404)),
+    l=dict(top_r=7.0, notch_y=9.0, rim_end=-5.0, batter=dict(x0=5.19735, lean=0.1701, toe=0.0158)))
 MNT_TOP_Z = CH_Z1                        # top of the rear notch: the teardrop's tangent line starts here
 TAB = dict(y0=CH_Y1, z0=5.35, h=8.2, y1=26.5, cham=1.0)   # chassis tab the notch drops over: rear Y, floor Z, height, front-face Y, front chamfer
-MNT_HEEL = dict(z=1.25, step=0.4, back=1.8, z_hook=2.5, z_lip=4.5)   # rear foot hooked under the tab: floor Z, tip step, setback, hook and lip Z
-MNT_NOTCH_UP = 2.0                      # the rear face above the tab leans back by this much over the last stretch to the top
 NOSE_R, NOSE_A0 = 3.25, -16.0           # nose arc round the SB standoff and where it leaves the outline (deg)
+MNT_HEEL = dict(z=SB[1] - NOSE_R, step=0.4, back=1.8, z_hook=2.5, z_lip=4.5)   # rear foot hooked under the tab: flat underside (tangent to the nose arc), tip step, setback, hook and lip Z
+MNT_NOTCH_UP = 2.0                      # the rear face above the tab leans back by this much over the last stretch to the top
 NOSE_PAD_R = 4.1                        # local pad round the nose CSK: CSK cone radius (3.2) + a 0.9 mm printed wall (the STEP nose leaves 0.15 mm)
 BOSS_Z = 6.34                           # the boss starts above the line from the notch top to the nose, at this Z at the nose end
 BOSS_NOSE_Y = 44.34
-BIG = 60.0                              # a box edge bigger than any part, for half-plane clips
+BIG = 60.0                              # a box edge bigger than any part, for the wedgelet's 2D half-plane clip (_mount_clip)
 MNT_RELIEF_R = 1.0                      # concave corner relief of the profile (tub deck fillet, mfg corner relief)
 MNT_CSK_CLEAR = 0.4                     # extra cone diameter over the DIN 7991 head: the seated head floats, so the notch bears a hit before the screws do
 MNT_TIP_WALL, MNT_TIP_REACH = 1.5, 3.0    # printed wall: the wedge where the rear notch meets the rim tangent is thickened upward to this within this reach of the notch top (rearmost point and underside unchanged: the underside rides on the chassis tab)

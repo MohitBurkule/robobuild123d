@@ -34,17 +34,22 @@ def corners(face, convex=True):
     return out
 
 
-def round_corners(face, r_out=0.0, r_in=0.0):
-    """2D fillets of a sketch face: convex corners r_out, concave corners r_in (the CAD 'sketch fillet' on every corner)."""
+def round_corners(face, r_out=0.0, r_in=0.0, keep=()):
+    """2D fillets of a sketch face: convex corners r_out, concave corners r_in (the CAD 'sketch fillet' on every corner),
+    except the corners at the points `keep` (left sharp)."""
     if not isinstance(face, bd.Face):
         fs = face.clean().faces()
         assert len(fs) == 1, f"round_corners: the sketch is {len(fs)} faces (a reversed loop does not fuse)"
         face = fs[0]
     if r_in:
-        face = face.fillet_2d(r_in, corners(face, convex=False))
+        face = face.fillet_2d(r_in, _free(corners(face, convex=False), keep))
     if r_out:
-        face = face.fillet_2d(r_out, corners(face, convex=True))
+        face = face.fillet_2d(r_out, _free(corners(face, convex=True), keep))
     return face
+
+
+def _free(vs, keep):
+    return [v for v in vs if all((bd.Vector(v) - bd.Vector(k)).length > EPS for k in keep)]
 
 
 def ring_window(r_in, r_out, half_deg, round_out, round_in=None):
