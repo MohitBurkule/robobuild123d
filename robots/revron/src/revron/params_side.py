@@ -24,10 +24,13 @@ SP_REAR_Y_END = -46.0               # the straight rear wall runs on past the re
 
 
 # --- side panel + wedgelet shared / derived dimensions (outlines are organic point tables measured on RV23/RV17) ---
-RAMP_REACH, RAMP_SLOPE = 50.1, 1.187   # ramp face Z = FLOOR_Z + RAMP_SLOPE (RAMP_REACH - Y), shared by wedgelet and nose
+RAMP_REACH = 50.1
+RAMP_SLOPE = 1.187   # ramp face Z = FLOOR_Z + RAMP_SLOPE (RAMP_REACH - Y), shared by wedgelet and nose
 SLAB_X = (-60.0, -20.0)              # X slab the (Y, Z) side profile is extruded through before it is cut to the panel
-SP_TOP = [(-32.9, 1.0), (-32.9, 16.0), (-6.7, 16.0), (14.6, 12.0), (19.3, 11.0), (24.0, 10.0), (42.0, 10.0), (RAMP_REACH, 1.0)]   # top line, (Y, Z)
-SP_TOP_R, SP_TOP_R_MIN_DEG = 1.5, 5.0   # top-line corner round; corners that turn less than this stay sharp
+SP_REAR_Y = -32.9                   # rear end of the profile
+SP_TOP = [(SP_REAR_Y, FLOOR_Z), (SP_REAR_Y, SP_Z_TOP), (-6.7, SP_Z_TOP), (14.6, 12.0), (24.0, 10.0), (RAMP_REACH, 10.0), (RAMP_REACH, FLOOR_Z)]   # top line, (Y, Z): level to Y -6.7, then one slope down to the nose top
+SP_TOP_R = 1.5                      # top-line corner round
+SP_TOP_R_MIN_DEG = 5.0              # corners that turn less than this stay sharp
 GEO_EPS = 1e-4                      # coordinate match tolerance when picking edges by position
 SP_REAR_ROUND = ((-32.2, 9.7), 8.2)  # rear end: a full round over the wheel
 SP_FOOT = [(-31.6, -12.0), (-42.0, -11.9), (-40.6, -2.1), (-40.8, 3.3), (-42.9, 13.3), (-31.6, 13.3)]   # 1 mm wide foot under the chassis lobe (X, Y)
@@ -48,14 +51,15 @@ SP_HOLLOW_END = dict(c=(SP_FRONT["c"][0], SP_FRONT["c"][1] + SP_NOSE_RUN), r=3.6
 # (a, b): the 90 deg seat is the dk + 0.7 cone but the driver bore is only r `drive_r` 3.10 (the cone's rim is a 0.25 mm
 # undercut at the seat; the seat's own r0 bore runs just `lip` above it) and the shank is a close fit (r 1.6); the
 # chassis-nut screw (c) keeps the r0 driver bore and the normal fit
-SP_CSK = dict(csk_clear=0.7, fit=dict(a="close", b="close", c="close"), drive_r=dict(a=3.1, b=3.1), lip=0.05, head_clear=12.0)
+SP_DRIVER_SEATS = "ab"                # the screws that get the narrower driver bore (the chassis-nut one keeps the full head bore)
+SP_CSK = dict(csk_clear=0.7, fit="close", drive_r=3.1, lip=0.05, head_clear=12.0)   # drive_r: narrower driver bore of the two standoff seats
 SP_SA_CLEAR = (2.6, -42.55, -38.0)   # STEP RV23 r 2.6: standoff-end clearance bore round SA (R, X0, X1)
 # STEP RV23: standoff end boss ring round SA (X0 -> X1): r 4.0 up into the nose roof to `x_ch`, then a 45 deg chamfer
 # down to r_end, which runs on to the standoff end
 SP_BOSS = dict(r=4.0, r_end=3.3, x=(-SA_X[1], -SA_X[1] + 3.0), x_ch=-40.75)   # [fix-C-j1] boss face = the 25 mm standoff's outboard end
 # STEP RV23 rear tyre relief pocket on the inner face (measured on RV23 sections X -43.7..-44.9): a round-ended slot, r 5 round about
 # the rear wheel axis line (Y, Z) with its front corners r1.75 (the r1.5 floor fillet stays inside them), from the floor X to the inner face; the floor edge is rounded r1.5 (Fillet5)
-SP_TYRE_RELIEF = dict(c=(-34.4, 10.0), r=5.0, y_front=-24.4, r_front=1.75, x=(-45.0, -43.4), r_floor=1.5)
+SP_TYRE_RELIEF = dict(c=(-34.4, 10.0), r=5.0, y_front=-34.4 + 2 * 5.0, r_front=1.75, x=(-45.0, -43.4), r_floor=1.5)
 SP_NUT_RELIEF_X = (-32.5, -31.4)
 # [fix-C-j1] the panel is modelled once, left hand (RV23, -X); RV24 is its YZ mirror. Its frame sits on the SA standoff
 # end (the boss face the 25 mm standoff seats against); each screw seat sits on the axis of the part it clamps.

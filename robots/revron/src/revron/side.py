@@ -51,9 +51,9 @@ def _side_seat(key, at, sgn=-1):
         sys.path.insert(0, _repo)
     from robot.cad.holes import hole_tool
     far = {"a": SA_X[1], "b": SB_X[1], "c": NUT_X[1]}[key]
-    dr, hc = SP_CSK["drive_r"].get(key), SP_CSK["head_clear"]
+    dr, hc = SP_CSK["drive_r"] if key in SP_DRIVER_SEATS else None, SP_CSK["head_clear"]
     tool, rec = hole_tool((sgn * SIDE_FACE_X[key], *at), (-sgn, 0, 0), SIDE_BOLT_DES[key], head="csk", into="through", side="head",
-                          sink=SIDE_SINK[key], grip=SIDE_FACE_X[key] - far, fit=SP_CSK["fit"][key], csk_clear=SP_CSK["csk_clear"],
+                          sink=SIDE_SINK[key], grip=SIDE_FACE_X[key] - far, fit=SP_CSK["fit"], csk_clear=SP_CSK["csk_clear"],
                           head_clear=hc if dr is None else SP_CSK["lip"] - SIDE_SINK[key])
     if dr is not None:   # the narrower driver bore from outside the face down to the seat
         tool = _U(tool, _cyl(dr, sgn * (SIDE_FACE_X[key] + hc), sgn * SIDE_BOLT_X[key], at))
@@ -79,8 +79,7 @@ def _side_body(pin=True):
                     (SP_TOE_Y0, FLOOR_Z + SP_TOE_RUN * RAMP_SLOPE), (RAMP_REACH - (z1 - FLOOR_Z) / RAMP_SLOPE, z1), (SP_NOSE_Y0 - SP_NOSE_OVER, z1)])
     nose = _I(nose_blk, _ext(ramp, "yz", *SLAB_X))
     he = SP_HOLLOW_END
-    hollow_end = _ext(Point(*he["c"]).buffer(he["r"], ARC_N).intersection(Polygon_([(SP_HOLLOW_X[0], he["c"][1] - he["r"]), (SP_HOLLOW_X[1], he["c"][1] - he["r"]), (SP_HOLLOW_X[1], he["c"][1] + he["r"]), (SP_HOLLOW_X[0], he["c"][1] + he["r"])])),
-                      "xy", he["z0"], SP_HOLLOW[-1][1])
+    hollow_end = _I(_cyl(he["r"], he["z0"], SP_HOLLOW[-1][1], he["c"], "z"), _box(SP_HOLLOW_X[0], SP_HOLLOW_X[1], *[he["c"][1] + k * he["r"] for k in (-1, 1)], he["z0"], SP_HOLLOW[-1][1]))
     nose = _S(nose, _ext(_poly(SP_HOLLOW), "yz", *SP_HOLLOW_X), hollow_end)       # hollow behind the nose wall, round front end
     bs_ = SP_BOSS
     (bx0, bx1), x_ch, ch = bs_["x"], bs_["x_ch"], bs_["r"] - bs_["r_end"]   # 45 deg chamfer: its X run is its radial drop
