@@ -477,7 +477,13 @@ def _frame_checks(ctx, e, cfg, pid, fn, mod, ref):
                fail("reference_cad.diff", G, BLOCKER, "Unexplained geometric differences from the reference", dmsg).on(pid)
                .fix("Each blob is one feature difference: fix it, or list it in the entry's `deviations` with the reason."))
     try:
-        fd, st = ref_features.compare_sections(mod, rw)
+        from .sldprt_dump import exact_for
+
+        try:
+            ex = exact_for(ctx.r.spec, e)
+        except Exception:  # noqa: BLE001 - estimates only
+            ex = None
+        fd, st = ref_features.compare_sections(mod, rw, exact_d=(ex or {}).get("hole_d"))
     except Exception as ex:  # noqa: BLE001
         out.append(fail("reference_cad.features", G, BLOCKER, "Feature comparison crashed", f"`{pid}`: {ex}").on(pid))
         return out

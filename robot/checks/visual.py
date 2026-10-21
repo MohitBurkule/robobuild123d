@@ -167,8 +167,10 @@ def view_diff(model, ref, d, prm=DEFAULTS):
 
 
 # ------------------------------------------------------------------------------------------------ holes (pure)
-def hole_list(m, ref_bounds, n=25):
-    """[(axis, centre (u, v), d)] of every hole cut by sections at n heights along each axis (deduplicated)."""
+def hole_list(m, ref_bounds, n=25, with_h=False):
+    """[(axis, centre (u, v), d)] of every hole cut by sections at n heights along each axis (deduplicated);
+    with_h: (axis, centre, d, h) with the section height the centre was measured at (a slanted hole or groove moves
+    across sections, so its centre is only true at that height)."""
     from .ref_features import holes, section
 
     out = []
@@ -177,10 +179,10 @@ def hole_list(m, ref_bounds, n=25):
         for f in np.linspace(0.02, 0.98, n):
             h = float(lo[ax] + (hi[ax] - lo[ax]) * f)
             for c, d, _ in holes(section(m, ax, h)):
-                if any(a == ax and math.dist(c, cc) < 0.8 for a, cc, _ in out):
+                if any(a == ax and math.dist(c, cc) < 0.8 for a, cc, *_r in out):
                     continue
-                out.append((ax, tuple(float(x) for x in c), float(d)))
-    return out
+                out.append((ax, tuple(float(x) for x in c), float(d), h))
+    return out if with_h else [x[:3] for x in out]
 
 
 def hole_diffs(model, ref, tol=0.8):
@@ -189,15 +191,20 @@ def hole_diffs(model, ref, tol=0.8):
 
     lo = np.minimum(model.bounds[0], ref.bounds[0])
     hi = np.maximum(model.bounds[1], ref.bounds[1])
-    hr, hm = hole_list(ref, (lo, hi)), hole_list(model, (lo, hi))
+    hr, hm = hole_list(ref, (lo, hi), with_h=True), hole_list(model, (lo, hi), with_h=True)
     out = []
 
-    def runs3(ax, c, prof):
-        """3D centre of every contiguous run of heights where the hole exists (two coaxial holes at the two ends of a
-        part are two features, not one at their average height)."""
+    def at_h(ax, c, h):
+        p = [0.0] * 3
         a, b = [i for i in range(3) if i != ax]
-        ts = np.linspace(0.04, 0.96, len(prof))
-        hs = [lo[ax] + (hi[ax] - lo[ax]) * t for t in ts]
+        p[a], p[b], p[ax] = c[0], c[1], float(h)
+        return [round(x, 2) for x in p]
+
+    def runs(ax, c, prof):
+        """[(3D centre, (h_lo, h_hi))] of every contiguous run of heights where the hole exists at c (two coaxial holes
+        at the two ends of a part are two features, not one at their average height)."""
+        a, b = [i for i in range(3) if i != ax]
+        hs = [lo[ax] + (hi[ax] - lo[ax]) * t for t in np.linspace(0.04, 0.96, len(prof))]
         out_, cur = [], []
         for h, d in zip(hs, prof):
             if d:
@@ -207,23 +214,26 @@ def hole_diffs(model, ref, tol=0.8):
                 cur = []
         if cur:
             out_.append(cur)
-        pts = []
-        for run in out_ or [[float((lo[ax] + hi[ax]) / 2)]]:
+        res = []
+        for run in out_:
             p = [0.0] * 3
             p[a], p[b], p[ax] = c[0], c[1], float(np.mean(run))
-            pts.append([round(x, 2) for x in p])
-        return pts
+            res.append(([round(x, 2) for x in p], (min(run), max(run))))
+        return res, (hs[1] - hs[0] if len(hs) > 1 else 1.0)
 
-    def p3(ax, c, prof):
-        return runs3(ax, c, prof)[0]
+    def places(ax, c, h, prof):
+        """Where the hole is: its measured spot (c at the section height h) first - a run's mid-height would put a
+        slanted hole or groove off its own centreline - then every other coaxial run of the profile at c."""
+        rs, step = runs(ax, c, prof)
+        return [at_h(ax, c, h)] + [q for q, (r0, r1) in rs if not (r0 - step <= h <= r1 + step)]
 
     used = set()
-    for ax, c, d in hr:
-        j = next((k for k, (a2, c2, _) in enumerate(hm) if a2 == ax and k not in used and math.dist(c, c2) <= tol), None)
+    for ax, c, d, h0 in hr:
+        j = next((k for k, (a2, c2, _, _h) in enumerate(hm) if a2 == ax and k not in used and math.dist(c, c2) <= tol), None)
         pr = hole_profile(ref, ax, c, lo[ax], hi[ax], n=15)
-        at = p3(ax, c, pr)
+        at = at_h(ax, c, h0)
         if j is None:
-            for at_ in runs3(ax, c, pr):
+            for at_ in places(ax, c, h0, pr):
                 out.append({"kind": "missing", "axis": "XYZ"[ax], "at": at_, "msg": f"reference hole d{d:.2f} along {'XYZ'[ax]} at {at_} has no counterpart"})
             continue
         used.add(j)
@@ -234,10 +244,10 @@ def hole_diffs(model, ref, tol=0.8):
         vr, vm = [x for x in pr if x], [x for x in pm if x]
         if vr and vm and abs(min(vr) - min(vm)) > max(0.4, 0.12 * min(vr)):
             out.append({"kind": "size", "axis": "XYZ"[ax], "at": at, "msg": f"hole along {'XYZ'[ax]} at {at}: min d {min(vm):.2f} vs reference {min(vr):.2f}"})
-    for k, (ax, c, d) in enumerate(hm):
+    for k, (ax, c, d, h0) in enumerate(hm):
         if k in used:
             continue
-        at = p3(ax, c, hole_profile(model, ax, c, lo[ax], hi[ax], n=15))
+        at = at_h(ax, c, h0)
         out.append({"kind": "extra", "axis": "XYZ"[ax], "at": at, "msg": f"hole d{d:.2f} along {'XYZ'[ax]} at {at} is not in the reference"})
     return out
 
@@ -301,14 +311,20 @@ def face_mix(m, lo_deg=6.0):
 
 
 # ------------------------------------------------------------------------------------------------ fillets (pure)
+SITE_MM = 0.3           # a reference spot is on a dumped fillet face when within this of its box
 TURN_MATCH_DEG = 15.0   # the reference corner compared must turn as much as ours (else it is a different corner)
 
 
-def fillet_diffs(model, ref, grid=1.5, min_turn=30.0, tol=0.3, frac=0.3, snap=1.2):
+def fillet_diffs(model, ref, grid=1.5, min_turn=30.0, tol=0.3, frac=0.3, snap=1.2, exact=None, sites=None):
     """[(point, r_ours, r_ref)] on model concave edges where the reference at the same spot is rounder.
     The reference is measured with section windows of 2, 4 and 6 mm and only a measurement whose turn matches ours
     within TURN_MATCH_DEG counts (the closest match): a 4 mm window that reaches the next corner, a slot (turn ~180) or a
-    shallow 20 deg bend is a different feature, not a rounder version of ours. No matching corner -> not compared."""
+    shallow 20 deg bend is a different feature, not a rounder version of ours. No matching corner -> not compared.
+    `exact`: the reference's exact fillet radii (SolidWorks dump, sldprt_dump.exact_for): the estimate is snapped to the
+    nearest one when within 35 % / 0.3 mm (the place comes from the estimate, the radius from the dump).
+    `sites`: world boxes (lo, hi, r) of the reference's dumped fillet faces (sldprt_dump.fillet_sites). With them the
+    reference is rounder only where the measured spot lies on one (within SITE_MM), and its radius is that face's:
+    an estimate picking up a neighbouring feature's arc on a sharp reference edge is not a fillet."""
     import trimesh
 
     from . import sharp_corner as sc
@@ -327,6 +343,15 @@ def fillet_diffs(model, ref, grid=1.5, min_turn=30.0, tol=0.3, frac=0.3, snap=1.
         if not cands:
             continue
         b = min(cands, key=lambda x: abs(x[1] - a[1]))
+        if sites is not None:
+            on = [r for lo, hi, r in sites if float(np.linalg.norm(np.clip(q[0], lo, hi) - q[0])) <= SITE_MM]
+            if not on:
+                continue   # the reference is sharp here (no fillet face of its own)
+            b = (min(on, key=lambda r: abs(r - b[0])),) + tuple(b[1:])
+        elif exact:
+            from .sldprt_dump import snap as _snap
+
+            b = (_snap(b[0], exact),) + tuple(b[1:])
         if b[0] - a[0] > max(tol, frac * b[0]):
             out.append((np.asarray(p, float), float(a[0]), float(b[0])))
     return out
@@ -514,7 +539,15 @@ def run(ctx):
                 elif check == "fillet_ref":
                     from .sharp_corner import regions
 
-                    hits = fillet_diffs(mod, ref, prm["fillet_grid_mm"], tol=prm["fillet_tol_mm"], frac=prm["fillet_frac"])
+                    from .sldprt_dump import exact_for, fillet_sites
+
+                    try:
+                        ex = exact_for(ctx.r.spec, e)
+                        sites = fillet_sites(ctx.r.spec, e, cfg, trimesh.load(path, force="mesh"))
+                    except Exception:  # noqa: BLE001 - estimates only
+                        ex, sites = None, None
+                    hits = fillet_diffs(mod, ref, prm["fillet_grid_mm"], tol=prm["fillet_tol_mm"], frac=prm["fillet_frac"],
+                                        exact=(ex or {}).get("fillet"), sites=sites)
                     items = []
                     for g in regions([(p, None, a, b) for p, a, b in hits], 2.5):
                         if len(g) < 2:   # 2 samples on the 1.5 mm grid = a >= 1.5 mm run of edge

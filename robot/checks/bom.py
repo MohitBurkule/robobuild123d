@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import fnmatch
 import math
+import re
 from pathlib import Path
 
 import numpy as np
@@ -68,6 +69,8 @@ def _host_kind(r, host):
 
 def run(ctx):
     out = []
+    out += waiver_schema(ctx)
+    out += added_parts(ctx)
     out += reference_bom(ctx)
     out += weapon_lock_part(ctx)
     out += belt_stock(ctx)
@@ -75,6 +78,56 @@ def run(ctx):
     out += switch_direction(ctx)
     out += doc_consistency(ctx)
     return out
+
+
+# ------------------------------------------------------------------------------------------------ spec.waiver_schema
+# Waiver / deviation keys some check actually reads. A waiver-shaped key outside this set waives nothing, so it is a
+# BLOCKER (e.g. `sharp_corner_deviation`, read by no check, sat on parts looking like a valid opt-out).
+WAIVER_KEY = re.compile(r"deviation|waive|exempt|allow_|_ok$|^ok_|ignore|skip")
+KNOWN_WAIVERS = {
+    "deviation", "deviations", "sharp_corners_ok", "sharp_ok", "ref_ok", "exempt", "waive", "waivers",
+    "cover_fasteners_deviation", "thin_wall_deviation", "param_exempt", "allow_overlap", "visual_ok",
+    "wire_avoid_ok", "rotor_ok", "render_ok", "offset_ok", "reference_deviation_ids",
+}
+
+
+def _keys(o):
+    if isinstance(o, dict):
+        return list(o)
+    return list(getattr(o, "_extra", {}) or {}) + [k for k in vars(o) if not k.startswith("_")]
+
+
+def waiver_schema(ctx):
+    sp = ctx.r.spec
+    bad = []
+    for where, objs in (("part", sp.parts), ("fastener", sp.fasteners), ("wire", sp.wires)):
+        for o in objs:
+            bad += [f"{where} `{o.id}`: `{k}`" for k in _keys(o) if WAIVER_KEY.search(k) and k not in KNOWN_WAIVERS]
+    bad += [f"spec: `{k}`" for k in (sp.raw or {}) if WAIVER_KEY.search(k) and k not in KNOWN_WAIVERS]
+    if not bad:
+        return [ok("spec.waiver_schema", G, "Waiver keys known", "Every waiver/deviation key is one a check reads.")]
+    return [fail("spec.waiver_schema", G, BLOCKER, "Unknown waiver key",
+                 f"{len(bad)} waiver/deviation key(s) no check reads, so they waive nothing: " + "; ".join(bad))
+            .fix("Use a key a check reads (" + ", ".join(sorted(KNOWN_WAIVERS)) + ") or delete it.")]
+
+
+# ------------------------------------------------------------------------------------------------ bom.added_parts
+def added_parts(ctx):
+    """A part declared `deviation` (added, not in the reference) must still be listed in reference_bom."""
+    sp = ctx.r.spec
+    rows = (sp.raw or {}).get("reference_bom")
+    if not rows:
+        return []
+    listed = set()
+    for row in rows:
+        if row.get("kind", "fastener") == "part":
+            listed.update(_match([p.id for p in sp.parts], row.get("match") or []))
+    miss = [p.id for p in sp.parts if _x(p, "deviation") and p.id not in listed]
+    if not miss:
+        return [ok("bom.added_parts", G, "Added parts in BOM", "Every part declared `deviation` has a reference_bom row.")]
+    return [fail("bom.added_parts", G, BLOCKER, "Added part missing from BOM",
+                 "Part(s) declared `deviation` (added) with no reference_bom row: " + ", ".join(f"`{i}`" for i in miss))
+            .on(*miss).fix('Add a reference_bom row {"kind": "part", "role": ..., "match": [id], "count": 1, "deviation": "<why added>"}.')]
 
 
 # ------------------------------------------------------------------------------------------------ reference.bom

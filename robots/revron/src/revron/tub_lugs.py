@@ -78,6 +78,21 @@ KEY_HOLE = _round(Polygon([(KEY_BOX[0] + _k0, KEY_BOX[1] + _k0), (KEY_BOX[2] - _
                            (KEY_BOX[0] + _k0, KEY_BOX[3] - _k0)]), r_out=KEY_R)   # square key hole = key tab inset by KEY_WALL
 
 
+# RV01 Fillet2 R8 (vertical axis at |X| 29.5, Y 26.31): concave blend flaring the lug's outer face (|X| 21.5) out to 23.84 at Y 20.68,
+# a flat shoulder at Y 20.04; the slab is cut between two parallel planes sloping -0.449 Z/Y (Cut-Extrude4, measured on RV01 sections)
+R8_C, R8_R, R8_Y0, R8_XOUT = (29.5, 26.31), 8.0, 20.04, 23.84
+R8_SLOPE, R8_ZLO, R8_ZHI, R8_YREF = -0.449, 14.07, 16.81, 21.0   # slab bottom / top Z at Y 21
+
+
+def _r8_blend():
+    plan = Polygon([(LUG_X[1] - FUSE, R8_Y0), (R8_XOUT, R8_Y0), (R8_XOUT, R8_C[1]), (LUG_X[1] - FUSE, R8_C[1])]).difference(
+        Point(*R8_C).buffer(R8_R, 128))
+    y0, y1 = R8_Y0 - 0.1, R8_C[1] + 0.1
+    z = lambda zr, y: zr + R8_SLOPE * (y - R8_YREF)   # noqa: E731
+    slab = _poly([(y0, z(R8_ZLO, y0)), (y1, z(R8_ZLO, y1)), (y1, z(R8_ZHI, y1)), (y0, z(R8_ZHI, y0))])
+    return _I(_ext(plan, "xy", 10.0, 20.0), _ext(slab, "yz", LUG_X[1] - 0.2, R8_XOUT + 0.2))
+
+
 def _both(s):
     return [s, _mirror_x(s)]
 
@@ -102,7 +117,7 @@ def _holes():
 
 
 def additions(c):
-    return [m for s in _tabs(c) + [_lug(c)] for m in _both(s)]
+    return [m for s in _tabs(c) + [_lug(c), _r8_blend()] for m in _both(s)]
 
 
 def cuts(c):

@@ -5,6 +5,8 @@ from .common import *  # noqa: F401,F403
 from .tub import *  # noqa: F401,F403
 from .side import *  # noqa: F401,F403
 from .weapon import *  # noqa: F401,F403
+from .panel_base import base_panel
+from .panel_top import top_panel
 
 
 # ------------------------------------------------------------------------------------------------------------ misc
@@ -25,6 +27,7 @@ PARTS = {
     "so_a_l": lambda: standoff((-SA_X[1], -SA_X[0]), SA), "so_a_r": lambda: standoff(SA_X, SA),
     "so_b_l": lambda: standoff((-SB_X[1], -SB_X[0]), SB), "so_b_r": lambda: standoff(SB_X, SB),
     "esc_tray": esc_tray,
+    "bat_pad": bat_pad,
 }
 
 

@@ -160,3 +160,30 @@ def test_fillet_exempt_corner_still_probed():
     sharp = _box((0, 0, 0), (10, 2, 5)).union(_box((0, 0, 0), (2, 10, 5)))
     f = I.sharp_corners_found(sharp, "z", 2.5, [(2, 2)])
     assert f and all(abs(x - 2) < 0.5 and abs(y - 2) < 0.5 for x, y in f)
+
+
+def _slot_roof(width, angle_deg):
+    """30 x 30 x 8 block (printed +Z) with a 3 mm tall slot of `width` running through it at `angle_deg` to X, under
+    a 3 mm roof: the roof is an overhang as wide as the slot."""
+    blk = _box((-15, -15, 0), (15, 15, 8))
+    slot = _box((-30, -width / 2, 2), (30, width / 2, 5))
+    slot.apply_transform(trimesh.transformations.rotation_matrix(math.radians(angle_deg), (0, 0, 1)))
+    return blk.difference(slot)
+
+
+def test_bridge_span_is_the_narrowest_width():
+    x, y = np.array([0, 10, 10, 0.0]), np.array([0, 0, 2.9, 2.9])
+    c, s = math.cos(math.radians(30)), math.sin(math.radians(30))
+    assert abs(I.bridge_span(x * c - y * s, x * s + y * c) - 2.9) < 0.05   # a slanted strip: its width, not its run
+
+
+def test_slanted_narrow_slot_roof_bridges():
+    for ang in (0, 24, 45):
+        a, f, _ = I.unsupported(_slot_roof(2.9, ang), (0, 0, 1))
+        assert a == 0, (ang, a)
+
+
+def test_wide_slot_roof_needs_support_at_any_angle():
+    for ang in (0, 24):
+        a, f, _ = I.unsupported(_slot_roof(8.0, ang), (0, 0, 1))
+        assert a > 0, (ang, a)

@@ -124,3 +124,51 @@ def test_module_literals_skip_organic():
     from robot.checks.param_lint import module_literals
     src = "X = 21.5\n# param: organic table\nT = (3.3, 4.4)\n# param: end\ndef f():\n    return 7.7\n"
     assert module_literals(src) == {21.5: [1]}
+
+
+# ------------------------------------------------------------------ add-ons: copied params, star import, point tables, budget, symmetry
+from robot.checks import param_lint as _pl
+
+
+def test_copied_params_flags_bare_decimals_not_masters_or_tagged():
+    src = ("# ---- MASTER DESIGN PARAMETERS ----\nA = 29.5\n# ----\n"
+           "B = A - 2.0\nC = 12.7\nD = (3.5, 8.25)\nE = 4.4  # param: datasheet RV12 drawing\n"
+           "# param: organic spline\nF = 1.75\nG = dict(x=0.6, y=A)\n")
+    cp, nmaster = _pl.copied_params(src)
+    assert sorted(n for _l, n, _v in cp) == ["C", "D[0]", "D[1]", "G.x"] and nmaster == 1
+
+
+def test_star_import_found():
+    assert _pl.star_imports("from .params import *\nfrom .common import a\n") == [(1, ".params")]
+
+
+def test_point_table():
+    src = ("P = [(0, 1), (2, 3), (4, 5), (6, 7.5)]\nQ = [(0, 1), (2, 3), (4, 5)]\nR = {'a': (1, 2)}\nS = dict(x=(1, 2))\n"
+           "# param: organic traced outline\nT = [(0, 1), (2, 3), (4, 5), (6, 7)]\n")
+    assert [n for _l, n, _k in _pl.point_tables(src)] == ["P", "R", "S"]
+
+
+def test_dump_dims_skips_nested_and_suppressed():
+    txt = ("FEATURE 1 | Boss | Extrusion | id=1 | suppressed=False\n  DIM D1@Boss@p.Part = 0.004\n"
+           "  DIM D1@Sketch1@p.Part = 0.01\n  FEATURE -1 | Sketch1 | ProfileFeature | id=2 | suppressed=False\n"
+           "  DIM D9@Sketch1@p.Part = 0.02\nFEATURE 2 | Cut | ICE | id=3 | suppressed=True\n  DIM D1@Cut@p.Part = 0.001\n"
+           "FEATURE 3 | Fillet1 | Fillet | id=4 | suppressed=False\n  DIM D1@Fillet1@p.Part = 0.001\n  DIM D1@Boss@p.Part = 0.004\n")
+    assert _pl.dump_dims(txt) == 3
+
+
+def test_numeric_tokens_and_closure():
+    import ast as _ast
+    src = "def a():\n    return b(3.5) + 1\n\ndef b(x):\n    return x * 7.25 + 2\n\ndef c():\n    return 9.5\n"
+    tree = _ast.parse(src)
+    defs = {("m", n.name): n for n in tree.body}
+    assert _pl._closure(("m", "a"), defs) == {("m", "a"), ("m", "b")}
+    assert _pl.numeric_tokens(src) == 3
+
+
+def test_mirror_symmetry_detection():
+    import trimesh
+    box = trimesh.creation.box((10, 4, 2))
+    assert _pl.mirror_symmetric(box, 0)
+    off = trimesh.util.concatenate([box, trimesh.creation.box((1, 1, 1)).apply_translation((4, 2.5, 0))])
+    assert not _pl.mirror_symmetric(off, 0)
+    assert _pl.mirror_count("x = a.mirror(P)\ny = mirrored(z)\n") == 2
