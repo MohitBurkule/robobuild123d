@@ -8,7 +8,6 @@ from revron import tub2_params as P, tub2_pockets as K, tub2_body, tub2_blocks, 
 def test_skin_and_wall_relations():
     assert P.SKIN == P.CH_WALL / 2 and P.DECK == P.CH_Z1 - P.CH_WALL
     assert P.STOP_BACK_Y == P.STOP_FRONT_Y - P.CH_WALL            # stop wall is one wall thick
-    assert abs(P.FOOT_R - P.COL_R - P.SKIN) < 1e-9                # 45 deg flare: foot R - column R = skin
     assert abs(P.POCKET_X - (P.INS_RIGHT[0][0] - P.COL_R)) < 1e-9  # pocket half width = corner-block face (tangent to column)
 
 
@@ -21,10 +20,26 @@ def test_rear_pockets_fill_width():
     assert 10.2 < w < 10.5                                         # RV01 measures 10.37 per side pocket
 
 
-def test_side_pocket_tip_is_diagonal_intersection():
-    k = P.DIAG_K
-    tip = (P.LO_APEX - P.UP_APEX + 2 * P.RIB_V) / (2 * k)
-    assert abs((P.UP_APEX - P.RIB_V + k * tip) - (P.LO_APEX + P.RIB_V - k * tip)) < 1e-9
+def test_rib_diagonals_run_through_column_centres():
+    (fx, fy), (rx, ry) = P.INS_RIGHT
+    assert abs(P.CENTRE_Y - (fy + ry) / 2) < 1e-9                     # ribs cross midway between the column rows
+    assert abs(P.CENTRE_Y + P.DIAG_K * fx - fy) < 1e-9 and abs(P.CENTRE_Y - P.DIAG_K * rx - ry) < 1e-9
+    # a rib is two walls wide: perpendicular distance between its edges = vertical offset 2 * RIB_OFF * cos(angle)
+    import math
+    assert abs(2 * P.RIB_OFF / math.sqrt(1 + P.DIAG_K ** 2) - 2 * P.CH_WALL) < 1e-9
+
+
+def test_side_pocket_tip_is_edge_intersection():
+    tip = P.RIB_OFF / P.DIAG_K
+    up = P.CENTRE_Y - P.RIB_OFF + P.DIAG_K * tip
+    lo = P.CENTRE_Y + P.RIB_OFF - P.DIAG_K * tip
+    assert abs(up - lo) < 1e-9 and abs(up - P.CENTRE_Y) < 1e-9        # edges meet on the centre row
+
+
+def test_pocket_solids_stay_inside_the_chassis():
+    for c in K.deck_pockets():
+        bb = c.bounding_box()
+        assert bb.max.X <= P.CH_IN_X and bb.min.X >= -P.CH_IN_X
 
 
 def test_shell_is_valid_solid_and_symmetric():

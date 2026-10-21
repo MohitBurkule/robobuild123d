@@ -1,6 +1,6 @@
 """[tub2] Boss-Extrude1 + Chamfer + Fillet3: the outer box (plan R = wall, top edge chamfer = wall) and the cavity up to the deck."""
-from build123d import Align, BuildPart, BuildSketch, Locations, Mode, Plane, Rectangle, extrude, fillet, chamfer, Axis
-from .tub2_params import CH_HALF_W, CH_Y0, CH_Y1, CH_Z0, CH_Z1, CH_IN_X, WALL_IN_REAR, WALL_IN_FRONT, DECK, CH_WALL, SKIN
+from build123d import Align, Axis, BuildPart, BuildSketch, Locations, Plane, Rectangle, chamfer, extrude, fillet
+from .tub2_params import CH_HALF_W, CH_Y0, CH_Y1, CH_Z0, CH_Z1, CH_IN_X, WALL_IN_REAR, WALL_IN_FRONT, DECK, CH_WALL, CAVITY_R
 
 
 def _plan(x_half, y0, y1, r):
@@ -22,5 +22,5 @@ def shell():
         extrude(amount=CH_Z1 - CH_Z0)
         chamfer(p.faces().sort_by(Axis.Z)[-1].edges(), CH_WALL)          # chamfer = wall thickness
     outer = p.part
-    cav = _plan(CH_IN_X, WALL_IN_REAR, WALL_IN_FRONT, SKIN)
+    cav = _plan(CH_IN_X, WALL_IN_REAR, WALL_IN_FRONT, CAVITY_R)
     return outer - (Plane.XY.offset(CH_Z0 - CH_WALL) * extrude(cav.sketch, DECK - CH_Z0 + CH_WALL))

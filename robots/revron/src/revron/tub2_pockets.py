@@ -2,8 +2,8 @@
 X pockets and two side pockets (R = wall at every rib corner); rear boxes sit between the stop walls. Right-hand pockets are mirrored."""
 from build123d import Align, BuildSketch, Locations, Polygon, Rectangle, fillet
 from .tub2_params import (POCKET_X, SIDE_X, CENTRE_Y, DIAG_K, RIB_OFF, FRONT_RIB, STOP_GAP, POCKET_SKIN, CENTRE_Y0, REAR_R, SKIN,
-                          CH_WALL, CH_IN_X, COL_R, DECK, WALL_IN_FRONT, WALL_IN_REAR, STOP_BACK_Y, STOP_FRONT_Y, SA_X0)
-from .tub2_util import prism, mirrored
+                          CH_WALL, CH_IN_X, COL_R, DECK, OVER, WALL_IN_FRONT, WALL_IN_REAR, STOP_BACK_Y, STOP_FRONT_Y, SA_X0)
+from .tub2_util import box_xy, prism, mirrored
 
 
 def _cut(sk):
@@ -39,11 +39,22 @@ def side_pocket():
     return _cut(_rounded(pts, pts))
 
 
-def rear_pockets():
-    """Right-hand rear boxes: two share the width between the centre box and the side wall, split by one wall; the centre box is as wide as the boss."""
+def _rear_layout():
+    """Right-hand rear boxes: x0 (first box start), w (box width), y0 / y1 (rear / front edge). The two boxes share the width between the
+    centre box and the side wall, split by one wall thickness."""
     x0, x1 = COL_R + SKIN, CH_IN_X - SKIN
-    w = (x1 - x0 - CH_WALL) / 2
-    y0, y1 = WALL_IN_REAR + POCKET_SKIN, STOP_BACK_Y - POCKET_SKIN
+    return x0, (x1 - x0 - CH_WALL) / 2, WALL_IN_REAR + POCKET_SKIN, STOP_BACK_Y - POCKET_SKIN
+
+
+def rear_pad():
+    """Boss-Extrude10: the deck is half a skin thicker behind the stop wall, from the web's outer skin out to the side wall."""
+    x0, w, _, _ = _rear_layout()
+    return box_xy(x0 + w + SKIN, CH_IN_X + OVER, WALL_IN_REAR - OVER, STOP_BACK_Y, DECK - SKIN / 2, DECK + OVER)
+
+
+def rear_pockets():
+    """Rear boxes cut through the deck and its pad (one skin deep below the pad, so they start at the pad underside); the centre box is as wide as the boss."""
+    x0, w, y0, y1 = _rear_layout()
     with BuildSketch() as sk:
         for x in (x0, x0 + w + CH_WALL):
             with Locations((x, y0)):

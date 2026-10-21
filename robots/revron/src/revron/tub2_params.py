@@ -7,12 +7,12 @@ from .params_chassis import (CH_HALF_W, CH_Y0, CH_Y1, CH_Z0, CH_Z1, CH_WALL, CH_
 SKIN = CH_WALL / 2                      # master: skin left under pockets; also every small fillet / rib in the tub
 DECK = CH_Z1 - CH_WALL                  # deck underside
 SEAT_Z = BASE_Z0 + BASE_T               # base panel top = rabbet floor
+CAVITY_R = 3 * SKIN / 2                 # inner cavity corner R
 OVER = SKIN / 10                        # boolean overlap (fuse), not a dimension
 # right-hand (+X) bolt pattern; the rear-centre one sits on the axis
 INS_RIGHT = tuple(p for p in INS if p[0] > 0)
 INS_AXIS = tuple(p for p in INS if p[0] == 0)
 # columns
-FOOT_R = COL_R + SKIN                   # foot flares 45 deg from this radius into the column
 BORE_R, BORE_CH = 1.5, 0.6              # heat-set bore, chamfer at both ends
 # corner blocks: face tangent to the column, nose R = COL_R, wall-end fillet = SKIN
 # stop wall / key tab / ledge
