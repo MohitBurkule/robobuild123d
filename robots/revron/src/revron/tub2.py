@@ -1,7 +1,7 @@
 """[tub2] RV01 chassis rebuilt as the designer's feature tree: master params (tub2_params), +X half features mirrored.
 Done natively: shell, columns, bores, corner blocks / stop wall / key / ledge, deck pockets, base seat. Still delegated to the
 old modules (organic, not yet re-derived): side lobes + keyholes + nut pocket, lugs, front flanges / lattice, switch pad + slot."""
-from . import tub2_body, tub2_cols, tub2_blocks, tub2_pockets, tub2_seat
+from . import tub2_fillets, tub2_body, tub2_cols, tub2_blocks, tub2_pockets, tub2_seat
 from .tub2_util import mirrored
 
 
@@ -24,6 +24,6 @@ def chassis2():
     adds = additions() + tub_lobes.additions(c) + tub_lugs.additions(c) + tub_front.additions(c) + [switch_pad(c)]
     old_cuts = tub_lobes.cuts(c) + tub_lugs.cuts(c) + tub_front.cuts(c) + tub_shell_cuts.switch_slot(c)
     body = _U(tub2_body.shell(), *adds)
-    tub = _S(tub_lobes.root_fillet(body, c), *cuts(), *old_cuts)
+    tub = _S(tub2_fillets.lobe_root(body, tub_lobes.LOBE.bounds), *cuts(), *old_cuts)
     assert len(tub.solids()) == 1 and tub.volume > CHASSIS_MIN_VOL, f"tub2 boolean collapsed: {len(tub.solids())} solids, {tub.volume:.0f} mm3"
     return tub
