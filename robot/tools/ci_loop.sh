@@ -211,13 +211,24 @@ mergeb() { # branch: merge into HEAD (spec-only conflicts take theirs; real conf
   local b=$1 f
   if git merge -q --no-edit "$b" >/dev/null 2>&1; then log "iter $i merged $b $(git rev-parse --short "$b")"
   else
-    f=$(git diff --name-only --diff-filter=U | grep -v -e 'spec.json$' -e 'templates/revron.json$')
-    if [ -z "$f" ]; then git checkout --theirs robots/revron/spec.json robot/templates/revron.json 2>/dev/null; git add robots/revron/spec.json robot/templates/revron.json; git commit -qm "Merge $b"; log "iter $i merged $b (spec-only conflict)"
+    f=$(git diff --name-only --diff-filter=U | grep -v -e 'spec.json$' -e 'templates/revron.json$' -e '^robots/revron/renders/')
+    if [ -z "$f" ]; then git checkout --theirs robots/revron/spec.json robot/templates/revron.json robots/revron/renders 2>/dev/null; git add robots/revron/spec.json robot/templates/revron.json robots/revron/renders; git commit -qm "Merge $b"; log "iter $i merged $b (spec-only conflict)"
     else git merge --abort; log "conflict ${b#origin/}: $(echo $f)"; fi
   fi; }
-regen_commit() { # regenerate the spec here (cached) and commit it; 1 (logged) when the build failed: do not verify
+render_declared() { # re-render the spec's declared `renders` views (with wire routes + record) so wire.render_present never sees stale ends
+  local d v; d=$(python3 -c "import json; r=json.load(open('robots/revron/spec.json')).get('renders') or {}; print(r.get('dir','renders'), ' '.join(r.get('views') or []))") || return 0
+  set -- $d; local dir="robots/revron/$1"; shift
+  for v in "$@"; do
+    timeout 1800 python3 -m robot render robots/revron/spec.json "${v%.png}" "$dir/$v" --no-checks --jobs 1 >/dev/null 2>>"$P/ci_render_declared.err" \
+      || log "declared render $v failed"
+  done
+  git add "$dir"; }
+regen_commit() { # regenerate the spec here (cached) and commit it with fresh declared renders; 1 (logged) when the build failed: do not verify
   spec_build . || return 1
-  git add robots/revron/spec.json robot/templates/revron.json && { git diff --cached --quiet || git commit -qm "Revron: regenerate spec (ci loop)" >/dev/null; }; }
+  git add robots/revron/spec.json robot/templates/revron.json || return 0
+  git diff --cached --quiet && return 0
+  [ "${CI_DECLARED_RENDERS:-1}" = 1 ] && render_declared
+  git commit -qm "Revron: regenerate spec and declared renders (ci loop)" >/dev/null; }
 merge_all() { local c b; c=$(cands); [ -n "$c" ] && for b in $(gate_all $c); do mergeb "$b"; done; }
 cands() { for b in $(heads); do git merge-base --is-ancestor "$b" HEAD || echo "$b"; done; }
 [ "${RENDER_FIRST:-0}" = 1 ] && render

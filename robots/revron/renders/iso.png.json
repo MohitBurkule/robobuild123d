@@ -1,6 +1,6 @@
 {
- "spec": "/tmp/claude-0/-home-user/6d647ed2-7427-59f3-8ab5-ba663cdaf3d4/scratchpad/vischk/robots/revron/spec.json",
- "rendered_at": 1792540533.4227014,
+ "spec": "/tmp/claude-0/-home-user/6d647ed2-7427-59f3-8ab5-ba663cdaf3d4/scratchpad/rendfix/robots/revron/spec.json",
+ "rendered_at": 1792567183.8380246,
  "bodies": [
   "tub",
   "base_panel",
@@ -120,9 +120,9 @@
     10.6
    ],
    "to": [
-    11.8,
+    11.2,
     38.5,
-    17.1
+    15.9
    ]
   },
   "w_sw_rx": {
@@ -144,9 +144,9 @@
     14.3
    ],
    "to": [
-    -3.400000000000002,
+    -3.700000000000001,
     -30.500000000000004,
-    11.0
+    14.8
    ]
   },
   "w_m_r": {
@@ -156,9 +156,9 @@
     14.3
    ],
    "to": [
-    3.400000000000002,
+    3.700000000000001,
     -30.5,
-    11.0
+    14.8
    ]
   },
   "w_rx_wesc": {
