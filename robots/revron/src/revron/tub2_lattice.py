@@ -1,6 +1,6 @@
 """[tub2] Rear-wall lightening: one X-braced window per side, four pockets (two side triangles, two caps) between the brace ribs.
 Window = the rear wall between the rear boss collar and the side wall, skin above the floor and below the deck; ribs are two wall-thick
-diagonals crossing at the window centre; the cap pockets stop at the corner posts. Cut from the inside, floor R1 and plan corners R1."""
+diagonals crossing at the window centre; the cap pockets stop at the corner posts. Cut from the inside, floor R1 (Fillet19)."""
 from math import atan2, degrees, hypot
 from build123d import Align, Axis, BuildSketch, Locations, Mode, Plane, Pos, Rectangle, Box, extrude, fillet
 from .tub2_params import CH_Y0, CH_Z0, CH_Z1, CH_WALL, CH_IN_X, COL_R, SKIN, WALL_IN_REAR, OVER
@@ -11,7 +11,7 @@ XC, ZC = (X0 + X1) / 2, (Z0 + Z1) / 2                  # crossing point of the b
 RIB_W = CH_WALL                                        # brace thickness = wall
 RIB_END = CH_Z0 + 5 * SKIN / 2                         # a brace's centreline meets the window side this high (Z)
 CAP_HALF = 5 * CH_WALL / 2                             # cap pockets stop this far either side of the crossing (corner posts beyond)
-CORNER_R = SKIN                                        # plan corners and floor round of every pocket
+FLOOR_R = SKIN                                         # floor round of every pocket (the plan corners are sharp)
 FLOOR_Y = CH_Y0 + SKIN                                 # pocket floor leaves one skin on the outside
 TOP_Y = WALL_IN_REAR + SKIN                            # cutter runs a skin past the inner face
 
@@ -35,6 +35,5 @@ def pockets():
         s = extrude(f, -(TOP_Y - FLOOR_Y))
         if abs(f.center().X - XC) < SKIN:
             s = s & (Pos(XC, (FLOOR_Y + TOP_Y) / 2, ZC) * Box(2 * CAP_HALF, TOP_Y - FLOOR_Y + 2 * OVER, Z1 - Z0 + 2 * OVER))
-        s = fillet(s.edges().filter_by(Axis.Y), CORNER_R)
-        out.append(fillet(s.faces().sort_by(Axis.Y)[0].edges(), CORNER_R - 0.02))
+        out.append(fillet(s.faces().sort_by(Axis.Y)[0].edges(), FLOOR_R))
     return out

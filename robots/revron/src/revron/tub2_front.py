@@ -10,7 +10,6 @@ POCKET_HALF_X = 18.25                          # pockets stop here either side o
 POCKET_H = 9.0                                 # pocket height about the axle height
 POCKET_DEPTH = 0.85                            # sunk into the wall from its inner face
 POCKET_R = 0.8                                 # Fillet22
-FLOOR_SHY = 0.005                              # floor fillet a hair under the corner R: equal radii leave a degenerate sphere seam
 TAB_FRONT = 26.5                               # the slot runs on through the weapon tab
 
 
@@ -31,8 +30,7 @@ def _pocket(x0, x1):
     """Rectangular pocket cutter (X x Z), floor at the pocket depth; R on its four corner edges and its four floor edges."""
     y0, y1 = WALL_IN_FRONT - SKIN, WALL_IN_FRONT + POCKET_DEPTH
     s = Pos((x0 + x1) / 2, (y0 + y1) / 2, RZ) * Box(x1 - x0, y1 - y0, POCKET_H)
-    s = fillet(s.edges().filter_by(Axis.Y), POCKET_R)
-    return fillet(s.faces().sort_by(Axis.Y)[-1].edges(), POCKET_R - FLOOR_SHY)
+    return fillet(s.faces().sort_by(Axis.Y)[-1].edges(), POCKET_R)
 
 
 def wall_pockets():
