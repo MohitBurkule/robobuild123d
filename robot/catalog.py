@@ -71,6 +71,7 @@ def bell_dims(variant="datasheet"):
     return (STEP_BELL_WALL_R, STEP_BELL_TOP_X) if variant == "step" else (BELL_WALL_R, BELL_TOP_X)
 
 
+BELL_CHAMFER_T = 0.25   # axial depth of the cap chamfer (9.8 -> flat r6.2)
 BELL_CAP_R, BELL_WIN_W, BELL_WIN_R = 6.2, 4.2, (4.3, 8.9)   # flat of the chamfered cap; width and radial span of the 4 windows between the X spokes
 BELL_BOSS_R, BELL_BOSS_L = 1.9, 2.1                           # spider-screw tapping bosses under the top (top 0.9 + boss 2.1 = 3.0 mm of thread)
 STATOR_BASE_X, STATOR_STACK_X0 = -8.4, -3.5              # top face of the base cross; the stack sits inside the bell on a post from it
@@ -78,7 +79,7 @@ STATOR_BACK_X = STATOR_BASE_X - 2.0                    # back face of the 2 mm b
 STATOR_STACK_H, STATOR_SLOTS = 7.0, 12                 # GR1507: 15 mm class stator, 7 mm stack
 STATOR_BORE_R, STATOR_YOKE_R, STATOR_TIP_R = 2.9, 4.4, 7.5   # bore (clears the r4 rotor core), yoke outer, tooth tip (drawing: 15 mm stator)
 SHAFT_STUB_R = 2.5                                     # rotor shaft down through the stator bore to the base
-STATOR_POST_R = SHAFT_STUB_R + 0.6 + 0.3               # holder post round the shaft: the arch.boss_aligned ring (shaft + 0.6) plus a 0.3 wall
+STATOR_POST_R = SHAFT_STUB_R + 0.6 + 0.1               # holder post round the shaft: the arch.boss_aligned ring (shaft + 0.6) plus a 0.1 wall
 LEAD_R, LEAD_Z, LEAD_PITCH = 0.45, (-3.9, -7.6), 1.0
 LEAD_X = STATOR_BACK_X + LEAD_R   # leads lie on the base back face so the body stays the drawing's 17.1 long;
 # 3 phase leads leave the hub sideways (datasheet photo), run out along the -Z arm and end 7.6 mm off the axis so the bundle clears the shaft stub
@@ -96,7 +97,7 @@ def _gr1507_bell(variant="datasheet"):
     if variant == "step":   # STEP simplified bell: flat disc cap on a solid r4 core, no windows
         cap = at(cyl_x(BELL_CAP_R, tl), top[0] + 0.5 * tl, 0, 0)
     else:                   # datasheet: chamfered cap, wall OD down to the flat
-        cap = {"type": "revolve", "profile": [[0.0, 0.0], [wall_r[1], 0.0], [BELL_CAP_R, tl], [0.0, tl]], "angle": 360.0}
+        cap = {"type": "revolve", "profile": [[0.0, 0.0], [wall_r[1], 0.0], [BELL_CAP_R, BELL_CHAMFER_T], [BELL_CAP_R, tl], [0.0, tl]], "angle": 360.0}
         cap = at(rot(cap, [0.0, 90.0, 0.0]), top[0], 0, 0)
     bosses = [at(rot(at(cyl_x(BELL_BOSS_R, BELL_BOSS_L), 0, BELL_SCREW_R, 0), [BELL_SCREW_PHASE + 90.0 * k, 0.0, 0.0]), top[0] - 0.5 * BELL_BOSS_L, 0, 0) for k in range(4)]   # tapping bosses under the cap: 3 mm of thread for the spider screws
     holes = [at(rot(at(cyl_x(0.8, tl + BELL_BOSS_L + 0.2), 0, BELL_SCREW_R, 0), [BELL_SCREW_PHASE + 90.0 * k, 0.0, 0.0]), top[0] + 0.5 * (tl - BELL_BOSS_L), 0, 0) for k in range(4)]   # M2 tap holes (ISO 2306 r0.8), blind through cap + boss
