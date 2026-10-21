@@ -2,19 +2,21 @@
 N10 keyhole (hull of two circles, opened into a U-slot to the floor so the gearbox boss drops in from below), the snap slit. Built for +X, mirrored."""
 from build123d import Box, BuildSketch, Circle, Cylinder, Locations, Mode, Plane, Pos, Align, RegularPolygon, Polygon, Rectangle, Rotation, extrude, fillet, make_hull
 from .tub2_params import CH_HALF_W, CH_IN_X, CH_Z0, CH_WALL, OVER, SKIN
+from math import hypot
 from .params_chassis import NUT, RY, RZ, variant
+from .tub2_arcs import inset_line, line_meet, outer_tangents
 from .params_hardware import PRESS
 
 LOBE_R = 4.5                         # D10: lobe round about the nut (diameter 9)
-LOBE_CAP, CAP_R = (0.5, 6.9), 2.0    # (Y, Z) and R of the hull's end cap towards the middle
+CAP_R, CAP_REACH = 2.0, (12.0, -1.58)  # R of the hull's end cap towards the middle and its centre's (Y, Z) offset from the nut
 LOBE_PROUD = 3.0                     # Boss-Extrude6 depth
 NUT_AF = 5.5                         # M3 thin nut across flats; pocket circumradius = AF / sqrt(3)
 BORE_R = 1.6                         # D7: 3.2 clearance bore
 SEAT_R, NECK_R, NECK_DZ = 2.5, SKIN, 5.0   # keyhole: boss seat round at the shaft, neck round centred NECK_DZ below it
 BOSS_R, BOSS_CLR = 2.0, 0.05        # 4 dia gearbox boss and its slot clearance each side: U-slot half width = sum
-SLIT = ((-7.14, 6.85), (-3.45, 7.05), (-3.45, 7.95), (-6.9, 8.9))   # snap-in relief wedge in the lobe (Y, Z), R0.5 corners
-SLIT_R = 0.5
+SLIT_R, SLIT_INSET = 0.5, 2.413   # slit corner R; slit walls sit this far inside the lobe's tangent lines (leaves the snap-in wall)
 LOBE_OUT = CH_HALF_W + LOBE_PROUD
+CAP_AT = (NUT[0] + CAP_REACH[0], NUT[1] + CAP_REACH[1])
 
 
 def _yz(x0):
@@ -27,7 +29,7 @@ def lobe():
     with BuildSketch(_yz(CH_HALF_W - OVER)) as sk:
         with Locations(NUT):
             Circle(LOBE_R)
-        with Locations(LOBE_CAP):
+        with Locations(CAP_AT):
             Circle(CAP_R)
         make_hull()
     return extrude(sk.sketch, LOBE_PROUD + OVER)
@@ -66,8 +68,16 @@ def hex_pocket():
 
 
 def slit():
+    """Snap-in relief (Fillet7 R0.5): the wedge between the lobe's two tangent lines moved SLIT_INSET inward, outside the nut round; its
+    corners are rounded."""
+    lines = [inset_line(t, NUT, SLIT_INSET) for t in outer_tangents(NUT, LOBE_R, CAP_AT, CAP_R)]
+    apex = line_meet(*lines)
+    reach = hypot(NUT[0] - apex[0], NUT[1] - apex[1])                  # the wedge opens toward the nut and runs out past it
+    ends = [(apex[0] - reach * d[0], apex[1] - reach * d[1]) for _, d in lines]
     with BuildSketch(_yz(CH_HALF_W)) as sk:
-        Polygon(*SLIT, align=None)
+        Polygon(apex, *ends, align=None)
+        with Locations(NUT):
+            Circle(LOBE_R, mode=Mode.SUBTRACT)
         fillet(sk.vertices(), SLIT_R)
     return extrude(sk.sketch, LOBE_PROUD + OVER)
 
