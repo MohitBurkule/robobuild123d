@@ -26,6 +26,10 @@ class Rig:
         """Frame `label` on `part`, at `at` with orientation `rot` (degrees about X, Y, Z), in the part's own frame."""
         b.RigidJoint(label, self._host(part), b.Location(tuple(at), tuple(rot)))
 
+    def joint_in(self, part, label, frame, world):
+        """Frame `label` on `part` at the robot-world Location `world`, written in the part's own frame `frame` (part frame -> world)."""
+        b.RigidJoint(label, self._host(part), frame.inverse() * world)
+
     def hole(self, part, label, at, direction):
         """Screw hole `label` on `part`: frame on the head seat, z along the screw's insertion direction."""
         b.RigidJoint(label, self._host(part), b.Location(b.Plane(tuple(at), z_dir=tuple(direction))))

@@ -323,6 +323,28 @@
    "count": 2
   },
   {
+   "role": "bat_pad: double-sided foam tape pad under the pack (not in the STEP)",
+   "kind": "part",
+   "match": [
+    "bat_pad"
+   ],
+   "count": 1,
+   "material": "foam_tape",
+   "deviation": "the STEP pack floats 2 mm over the base panel; a foam tape pad supports and retains it (adds ~0.05 g, reversible)",
+   "reason": "the STEP pack floats 2 mm over the base panel; a foam tape pad supports and retains it (adds ~0.05 g, reversible)"
+  },
+  {
+   "role": "esc_tray: TPU weapon-ESC tray (not in the STEP)",
+   "kind": "part",
+   "match": [
+    "esc_tray"
+   ],
+   "count": 1,
+   "material": "tpu",
+   "deviation": "the STEP holds the weapon ESC with kapton tape alone; a TPU tray with 0.1 mm lips keeps the board in if the tape fails (adds 1.1 g, reversible)",
+   "reason": "the STEP holds the weapon ESC with kapton tape alone; a TPU tray with 0.1 mm lips keeps the board in if the tape fails (adds 1.1 g, reversible)"
+  },
+  {
    "role": "battery lead: JST RCY",
    "kind": "wire",
    "match": [
@@ -764,7 +786,7 @@
        5.0
       ],
       "r": 4.0,
-      "reason": "column foot flared to R3.7 (1.0 mm base skin cannot seat a 1.2 mm M2 flat head)"
+      "reason": "RV01 column foot is an R8 blend (RV01 Chassis.SLDPRT Fillet2, 4 edges); flared to R3.7 because the 1.0 mm base skin cannot seat a 1.2 mm M2 flat head"
      },
      {
       "near": [
@@ -773,7 +795,7 @@
        5.0
       ],
       "r": 4.0,
-      "reason": "column foot flared to R3.7 (1.0 mm base skin cannot seat a 1.2 mm M2 flat head)"
+      "reason": "RV01 column foot is an R8 blend (RV01 Chassis.SLDPRT Fillet2, 4 edges); flared to R3.7 because the 1.0 mm base skin cannot seat a 1.2 mm M2 flat head"
      },
      {
       "near": [
@@ -782,7 +804,7 @@
        5.0
       ],
       "r": 4.0,
-      "reason": "column foot flared to R3.7 (1.0 mm base skin cannot seat a 1.2 mm M2 flat head)"
+      "reason": "RV01 column foot is an R8 blend (RV01 Chassis.SLDPRT Fillet2, 4 edges); flared to R3.7 because the 1.0 mm base skin cannot seat a 1.2 mm M2 flat head"
      },
      {
       "near": [
@@ -791,7 +813,7 @@
        5.0
       ],
       "r": 4.0,
-      "reason": "column foot flared to R3.7 (1.0 mm base skin cannot seat a 1.2 mm M2 flat head)"
+      "reason": "RV01 column foot is an R8 blend (RV01 Chassis.SLDPRT Fillet2, 4 edges); flared to R3.7 because the 1.0 mm base skin cannot seat a 1.2 mm M2 flat head"
      },
      {
       "near": [
@@ -800,7 +822,7 @@
        5.0
       ],
       "r": 4.0,
-      "reason": "column foot flared to R3.7 (1.0 mm base skin cannot seat a 1.2 mm M2 flat head)"
+      "reason": "RV01 column foot is an R8 blend (RV01 Chassis.SLDPRT Fillet2, 4 edges); flared to R3.7 because the 1.0 mm base skin cannot seat a 1.2 mm M2 flat head"
      },
      {
       "near": [
@@ -918,6 +940,42 @@
       ],
       "r": 3.5,
       "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
+     },
+     {
+      "near": [
+       -3.78,
+       -5.57,
+       19.57
+      ],
+      "r": 5.0,
+      "reason": "0.1 mm engraved lettering, laser-etch omitted"
+     },
+     {
+      "near": [
+       -13.73,
+       -5.62,
+       19.57
+      ],
+      "r": 5.0,
+      "reason": "0.1 mm engraved lettering, laser-etch omitted"
+     },
+     {
+      "near": [
+       5.84,
+       -5.26,
+       19.57
+      ],
+      "r": 5.0,
+      "reason": "0.1 mm engraved lettering, laser-etch omitted"
+     },
+     {
+      "near": [
+       15.04,
+       -5.66,
+       19.57
+      ],
+      "r": 5.0,
+      "reason": "0.1 mm engraved lettering, laser-etch omitted"
      }
     ]
    },
@@ -1716,9 +1774,20 @@
      "part": "base_panel"
     }
    },
+   "at": [
+    0.0,
+    -11.6,
+    4.5
+   ],
+   "rot": [
+    -180.0,
+    0.0,
+    -180.0
+   ],
    "material": "pla_st",
    "process": "fdm",
    "thin_wall_deviation": "the 1 mm panel is shallower than the 1.2 mm M2 CSK head (STEP RV26 has the same 5 countersunk seats): a 90 deg seat cone leaves a knife wedge under the countersink rim, unavoidable at this thickness (parity with RV26)",
+   "sharp_corners_ok": "the panel's concave corners at (+-25.1,-25.5,4.5) are where its 1 mm plate edge butts the tub floor lip; RV26 is a flat plate against the RV01 lip (reference r 0.27), a round there would lift the panel off the lip and unseat bolt_b2/b3; the RV26 Chamfer2 is 1.3 mm away from these corners and there is no fillet on them in the dump",
    "label": "RV26 1 mm printed base panel, 5 M2 CSK into the floor heat-sets, 0.45 mm pads preload the N10s"
   },
   {
@@ -1739,6 +1808,16 @@
      "part": "top_panel"
     }
    },
+   "at": [
+    0.0,
+    -5.6,
+    20.4
+   ],
+   "rot": [
+    -180.0,
+    0.0,
+    -180.0
+   ],
    "label": "0.9 mm Ti top panel: laser outline with 4 countersunk 2.2 corner holes, 4 M2 flat-head thread-forming screws into the column tops (material inferred, see REFERENCE.md)"
   },
   {
@@ -3041,6 +3120,22 @@
    },
    "label": "TPU weapon-ESC tray (not in the STEP): glued to the base panel, lips hold the ESC when inverted",
    "deviation": "the STEP holds the weapon ESC with kapton tape alone; a hit that flips the robot or tears the tape would free the board, so a TPU tray with 0.1 mm lips holds it (adds 1.1 g, reversible)"
+  },
+  {
+   "id": "bat_pad",
+   "kind": "other",
+   "material": "foam_tape",
+   "process": "manual",
+   "rotates_with": "fixed",
+   "shape": {
+    "type": "model",
+    "file": "src/build_revron.py",
+    "params": {
+     "part": "bat_pad"
+    }
+   },
+   "label": "Double-sided foam tape pad under the pack (not in the STEP): carries the pack 2 mm above the base panel",
+   "deviation": "the STEP pack floats 2 mm over the base panel; a foam tape pad supports and retains it (adds ~0.05 g, reversible)"
   },
   {
    "id": "belt_l",
@@ -4945,6 +5040,18 @@
    "reason": "Pack between the motor wall, the insert columns and the deck",
    "interference_mm": 0.1,
    "mechanical_key": true
+  },
+  {
+   "a": "battery",
+   "b": "bat_pad",
+   "method": "tape",
+   "reason": "Pack underside taped to the foam pad (double-sided), which holds it against sliding"
+  },
+  {
+   "a": "bat_pad",
+   "b": "base_panel",
+   "method": "tape",
+   "reason": "Foam pad stuck to the base panel skin; deck and top panel close the pack in from above"
   },
   {
    "a": "rxesc",
