@@ -315,11 +315,6 @@ def reference_cad():
         R("tub", "RV01_Chassis_1.stl", tol_mm=TOL["loose"], tol_vol_frac=VOL["part"], note="RV01 chassis",
           deviations=[dict(near=[sx * KEYHOLE_DEV[0], KEYHOLE_DEV[1], KEYHOLE_DEV[2]], r=KEYHOLE_DEV_R, reason="N10 keyhole opened into a U-slot to the floor so the gearbox boss and shaft drop in from below with the base panel off (the STEP closes the keyhole, the shaft cannot be threaded through it)")
              for sx in (1, -1)]
-          + [dict(near=list(p), r=5.0, reason="view of the N10 keyhole U-slot (STEP RV01 keyhole closed, ours opened to the floor so the boss drops in from below): " + why)
-             for p, why in (((0.0, RY, KEYHOLE_DEV[2] + 3.9), "the two keyholes average to X 0 in the hole scan, no counterpart hole on the mid-plane"),
-                            ((0.9, RY + 0.3, 4.0), "side view: the STEP web under the keyhole is missing at the slot"),
-                            ((17.0, -18.6, -7.5), "iso view-plane projection of the +X slot at (28.5, -30.5, 4)"),
-                            ((-25.5, -33.8, 1.0), "iso_back view-plane projection of the -X slot at (-28.5, -30.5, 4)"))]
           + [dict(near=[sx * sum(N10_KEY) / 2, sum(KEY_SPAN) / 2, N10_TOP - KEY_DROP / 2], r=KEY_DEV_R, reason="N10 key tab reaches KEY_DROP below the gearbox plate top so it keys between the plates and stops the motor inboard (the STEP tab is flush, which leaves the motor free to slide in x: retention.loose)")
              for sx in (1, -1)]
           + [dict(near=[SWX, yy, CH["deck"]], r=SWX_DEV_R, reason="switch pilot holes follow the switch, which sits 0.45 mm in from the STEP X 25.0 so its body clears the 27.5 inner wall face (the STEP switch penetrates the wall 0.4 mm)")

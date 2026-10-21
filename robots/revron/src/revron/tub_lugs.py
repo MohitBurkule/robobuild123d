@@ -53,7 +53,6 @@ UNDER_BLEND_N, UNDER_SB_N = 24, 24                  # facets of the underside bl
 # the lug's top edge runs from the top-back corner tangent to the nose standoff arc: the arc ends where that tangent leaves it
 _TOP_D = (SB[0] - LUG_TOP_Y, SB[1] - CH_Z1)
 SB_TOP_ANG = math.degrees(math.atan2(-_TOP_D[1], -_TOP_D[0]) - math.acos(LUG_SB_R / math.hypot(*_TOP_D)))   # direction standoff centre -> tangent point
-LUG_SA_R = 4.5   # standoff end boss round SA
 SA_ARC, SB_ARC = (LUG_SA_R, 250, 300, 6), (LUG_SB_R, 250, SB_TOP_ANG + FULL_TURN, 36)
 # param: organic underside the hull must not fill (STEP ramp, Y/Z)
 LUG_UNDER_POLY = Polygon([(LUG_FOOT_Y, 0.0), (LUG_FOOT_Y, LUG_FLOOR_Z), (30.0, 1.0), (40.0, 0.9), (60, 0)])

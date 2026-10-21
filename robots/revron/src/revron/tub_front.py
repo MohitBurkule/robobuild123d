@@ -38,7 +38,7 @@ WALL_POCKET_X, WALL_POCKET_Z = ((-18.25, 4.25), (13.25, 18.2)), (6.55, 15.55)
 WALL_POCKET_Y = (WALL_IN_FRONT - 1.0, WALL_IN_FRONT + WALL_POCKET_DEPTH)
 LAT_SKIN = 0.98                                         # rear-wall skin left behind the lattice pockets (STEP)
 LAT_Y = (CH_Y0 + LAT_SKIN, WALL_IN_REAR + 1.0)   # pocket floor / opening Y: opens 0.1 into the cavity
-LAT_R_VERT, LAT_R_FLOOR = 0.95, 0.9                     # corner radius, floor fillet (STEP)
+LAT_R_VERT, LAT_R_FLOOR = 1.0, 0.98                     # corner radius (RV01 R1), floor fillet (STEP R0.98: it ends 0.04 under the wall face, and must stay under the corner radius or the floor blend opens the mesh)
 LAT_C = (15.62, RZ)                                     # symmetry centre (X, Z); Z is the rear axle height; the pockets mirror about it
 # param: organic rear-wall lattice, sharp outlines of the two base pockets measured at Y -35.75 (STEP RV01), offsets from LAT_C
 _cx, _cz = LAT_C
@@ -59,15 +59,11 @@ def _wall_pocket(x0, x1, z0, z1, y0, y1, r_vert=WALL_POCKET_R[0], r_floor=WALL_P
     return b.fillet(s.faces().sort_by(b.Axis.Y)[-1].edges(), r_floor)
 
 
-def _lattice_pocket(pts, y0=LAT_Y[0], y1=LAT_Y[1], r_vert=LAT_R_VERT, r_floor=LAT_R_FLOOR):
-    """Cutter of one triangular rear-wall pocket (X, Z outline `pts`): R0.5 corners and an R0.98 floor fillet (STEP), so the
-    pocket has no sharp internal corner in the print."""
+def _lattice_pocket(poly, y0=LAT_Y[0], y1=LAT_Y[1], r_vert=LAT_R_VERT, r_floor=LAT_R_FLOOR):
+    """Cutter of one rear-wall pocket (X, Z outline `poly`): R1 corners (rounded in plan, so the floor fillet follows the arcs) and
+    an R1 floor fillet on the floor face, so the pocket has no sharp internal corner in the print."""
     b = _b()
-    with b.BuildPart() as bp:
-        with b.BuildSketch(b.Plane.XZ.offset(-y1)):
-            b.Polygon(*pts, align=None)
-        b.extrude(amount=y1 - y0)
-    s = b.fillet(bp.part.edges().filter_by(b.Axis.Y), r_vert)
+    s = _ext(_round(poly, r_out=r_vert), "xz", y0, y1)
     return b.fillet(s.faces().sort_by(b.Axis.Y)[0].edges(), r_floor)
 
 
@@ -92,7 +88,7 @@ def _flange(c):
 
 
 def _lattice():
-    return [_lattice_pocket(list(t.exterior.coords)[:-1]) for t in LATTICE]
+    return [_lattice_pocket(t) for t in LATTICE]
 
 
 def _wire_hole():
