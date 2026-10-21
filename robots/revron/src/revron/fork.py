@@ -84,9 +84,9 @@ def fork_world(s, window=True):
 
 
 def _fork_slot(s):
-    """Seat for the fork tine in the wedgelet nose: the 1.5 mm tine's outline at its tilt, the lightening window filled (a slit
-    with an island in it cannot be printed; the window is 16 mm3 of the tine's 152), the pin and standoff holes left."""
-    return fork_world(s, window=False)
+    """Seat for the fork tine in the wedgelet nose: exactly the 1.5 mm tine (window and tilt included), so the cut volume
+    is the volume the fork fills and nothing else is taken from the TPU."""
+    return fork_world(s)
 
 
 def rig_fork(r, s, n):

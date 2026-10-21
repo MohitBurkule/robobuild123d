@@ -119,6 +119,7 @@ WG_BORE_X = (-39.0, -17.0)
 WG_KIDNEY = ([(36.05, 5.15), (36.95, 7.45)], 0.95, (-29.5, -21.0))   # fork-tail kidney slot (centre line (Y, Z), half width, X span)
 WG_TOE = [(48.6, 1.0), (RAMP_REACH, 1.0), (RAMP_REACH, 1.0 + WEDGE_TOE_H), (48.6, 1.0 + 1.5 * RAMP_SLOPE)]   # knife toe on a printable land (Y, Z)
 QUARTER_TURN = 90   # deg, tyre shoulder arcs sweep a quarter turn
+FORK_RAIL_DEV = dict(x=25.25, y=42.0, z=5.3, r=6.0)   # reference-diff deviation sphere over the fork's rail tunnels in the wedgelet cheek
 FORK_DEV = dict(x=25.5, y=66.0, z=1.4, r=2.0)   # reference-diff deviation sphere at the fork tip land (STEP knife tip)
 SIDE_DEV_X, SIDE_DEV_R = 41.78, 4.0              # deviation sphere at the nose screw seat (STEP RV23 bore centre X, radius)
 __all__ = [n for n in dir() if not n.startswith("__")]   # last line: every name above is exported
