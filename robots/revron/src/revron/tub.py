@@ -86,7 +86,8 @@ def top_panel():
     body = _ext(p, "xy", z0, z0 + t)
     # 2.2 holes countersunk (90 deg, 4.5 at the top face; STEP 3.65) for M2 flat heads into the column-top pilots: the 1.2 head is
     # deeper than the 0.9 plate, so its tip sinks into the chamfer at the column top
-    return _S(body, *[_panel_seat("top", i)[0] for i in range(len(TOP_XY))])
+    recess = [_cyl(d / 2, z0 - 0.1, z0 + TOP_RECESS_DEPTH, (x, y), axis="z") for x, y, d in TOP_RECESS]
+    return _S(body, *[_panel_seat("top", i)[0] for i in range(len(TOP_XY))], *recess)
 
 
 def _switch_hole(yy):
@@ -114,7 +115,8 @@ def chassis():
     c = CH
     adds = tub_shell.additions(c) + tub_lobes.additions(c) + tub_lugs.additions(c) + tub_front.additions(c) + [switch_pad(c)]
     cuts = tub_shell.cuts(c) + tub_lobes.cuts(c) + tub_lugs.cuts(c) + tub_front.cuts(c)
-    tub = _S(_U(tub_shell.shell(c), *adds), *cuts)
+    body = _U(tub_shell.shell(c), *adds)
+    tub = _S(tub_lobes.root_fillet(body, c), *cuts)
     assert len(tub.solids()) == 1 and tub.volume > CHASSIS_MIN_VOL, f"chassis boolean collapsed: {len(tub.solids())} solids, {tub.volume:.0f} mm3"
     return tub
 

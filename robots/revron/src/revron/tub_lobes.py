@@ -11,7 +11,8 @@ LOBE_PROUD = 3.0                      # lobe stands this proud of the wall's out
 LOBE_OUT = CH_HALF_W + LOBE_PROUD      # outer face of the lobe, |X|
 LOBE_NUT_R, LOBE_CAP, LOBE_CAP_R, LOBE_SEG = 4.5, (0.5, 6.9), 2.0, 64   # organic STEP lobe: R4.5 round the nut hulled with an R2 end cap (Y, Z)
 LOBE = Point(NUT[0], NUT[1]).buffer(LOBE_NUT_R, LOBE_SEG).union(Point(*LOBE_CAP).buffer(LOBE_CAP_R, LOBE_SEG)).convex_hull
-LOBE_ROOT_R, LOBE_ROOT_BANDS = 1.95, 12   # STEP root fillet where the lobe leaves the wall, as one ruled loft of 12 bands
+LOBE_ROOT_R = LOBE_CAP_R              # STEP Fillet3 R2: root fillet where the lobe leaves the wall, the lobe end cap radius
+LOBE_ROOT_TOL = 0.05                  # edge-on-wall-plane tolerance when picking the root edges
 # ---- N10 keyhole (U-slot to the floor)
 KH_SEAT_R, KH_NECK_DZ, KH_NECK_R = 2.5, 5.15, 0.85   # round seat for the gearbox boss, neck below it (STEP keyhole)
 KH_NECK_Z = RZ - KH_NECK_DZ
@@ -54,24 +55,25 @@ def _rect(u0, u1, v0, v1):
 
 
 # ------------------------------------------------------------------------------------------------------------ additions
-def _root_offset(h):
-    """Outward offset of the lobe outline at height h above the wall face on a quarter round of radius LOBE_ROOT_R."""
-    return LOBE_ROOT_R - math.sqrt(LOBE_ROOT_R ** 2 - (LOBE_ROOT_R - h) ** 2)
-
-
 def lobe_body(c):
     return _ext(LOBE, "yz", c["x"] - LOBE_SINK, LOBE_OUT)
 
 
-def lobe_root_fillet(c):
-    x0 = c["x"] - LOBE_SINK
-    heights = [LOBE_ROOT_R * k / LOBE_ROOT_BANDS for k in range(LOBE_ROOT_BANDS + 1)]
-    return _loft_yz_n([(LOBE.buffer(_root_offset(h), join_style=1), x0 + h) for h in heights])
+def root_fillet(solid, c):
+    """True R-LOBE_ROOT_R fillet round the closed loop where each lobe meets the wall's outer face (build123d fillet)."""
+    y0, z0, y1, z1 = LOBE.bounds   # (Y, Z)
+    m = LOBE_ROOT_R + 0.5
+
+    def on_root(e):
+        bb = e.bounding_box()
+        return (abs(abs(bb.min.X) - c["x"]) < LOBE_ROOT_TOL and abs(bb.max.X - bb.min.X) < LOBE_ROOT_TOL
+                and bb.min.Y > y0 - m and bb.max.Y < y1 + m and bb.min.Z > z0 - m and bb.max.Z < z1 + m)
+    return _b().fillet([e for e in solid.edges() if on_root(e)], LOBE_ROOT_R)
 
 
 def additions(c):
     out = []
-    for s in (lobe_body(c), lobe_root_fillet(c)):
+    for s in (lobe_body(c),):
         out += _both(s)
     return out
 
