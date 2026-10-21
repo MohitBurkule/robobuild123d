@@ -120,5 +120,6 @@ LOBE_DEV, LOBE_DEV_R = (32.0, -13.5, 9.4), 3.5  # param: organic centroid of the
 # param: end
 BASE_DEV_Z, PANEL_DEV_R, TOP_DEV_Z = 4.5, 3.5, 19.95
 NOSE_DEV, NOSE_DEV_R = (MNT_IN + 2.0, SB[0] + 0.6, SB[1] - 1.7), 5.0             # mount nose pad (|x|, y, z): thickened nose wall, deviation from the STEP nose
+NOSE_FRONT_DEV = (MNT_IN + 2.0, SB[0] + 3.6, SB[1] + 2.3)        # where the slab nose pad meets the front edge (R1 relief, STEP R3 blend): |x| mid slab, y, z
 STATOR_DEV_X, TAP_DEV_R = 16.8, 2.0                                              # stator lead-in cone site; tap-hole sites
 __all__ = [n for n in dir() if not n.startswith("__")]   # last line: every name above is exported

@@ -18,7 +18,7 @@ def wedgelet(s):
     in_slot = P(WG_IN_SLOT).union(Point(*SA).buffer(r1, ARC_N))
     # the nose tab bears on the weapon mount's nose: take the mount's boss outline (its side profile above the
     # notch-to-nose line) out of the tab in 2D and drop any sliver thinner than a TPU wall, so no film is left
-    mprof = _mount_profile("l" if s < 0 else "r").intersection(_mount_clip())
+    mprof = _mount_profile("l" if s < 0 else "r", pad_up=False).intersection(_mount_clip(nose_step=True))
     tab = tab.difference(mprof.buffer(WG_MOUNT_GAP, ARC_MOUNT)).buffer(-WG_TAB_FILM, join_style=2).buffer(WG_TAB_FILM, join_style=2)
     bb = _b()
     xb, xr, xs, xc, xt, xe = WG_X

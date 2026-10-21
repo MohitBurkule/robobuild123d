@@ -10,14 +10,17 @@ def stator_bolt_circle():
     return _polar(STATOR_PCD / 2, len(STATOR_DIRS))
 
 
-def _mount_clip():
+def _mount_clip(nose_step=False):
     """Region above the line from the notch top to the nose (the battered boss) as a polygon. The line runs on past the
     nose to Y = BIG (no horizontal step at BOSS_Z): RV03's front edge passes within 1 um of the nose point, and a corner
-    there left a zero-width sliver face (visual.sliver)."""
+    there left a zero-width sliver face (visual.sliver). nose_step=True: the STEP outline (horizontal at BOSS_Z past the
+    nose), which the wedgelet's nose tab is cut to."""
+    if nose_step:
+        return Polygon_([(TAB["y0"], MNT_TOP_Z), (BOSS_NOSE_Y, BOSS_Z), (BIG, BOSS_Z), (BIG, BIG), (0, BIG), (0, MNT_TOP_Z)])
     return Polygon_([(TAB["y0"], MNT_TOP_Z), (BIG, boss_line_z(BIG)), (BIG, BIG), (0, BIG), (0, MNT_TOP_Z)])
 
 
-def _mount_profile(side):
+def _mount_profile(side, pad_up=True):
     """Weapon mount side profile (Y, Z): a teardrop round the weapon axis (R top_r) running down to the standoffs,
     with the notch that drops over the chassis tab (open to the rear)."""
     m, t = MNT_SIDE[side], TAB
@@ -34,8 +37,11 @@ def _mount_profile(side):
     p = _poly(rim + [nose[0]] + nose[1:] + heel + notch)
     # the nose CSK (DIN 7991 cone) is wider than the STEP's nose arc and left a 0 mm knife edge there: a local pad
     # (CSK radius + printed wall) wraps the countersink, under the nose and up the front edge (RV02's front tangent passed 0.3 mm from the cone rim)
-    from shapely.geometry import Point
-    p = p.union(Point(SB).buffer(NOSE_PAD_R, WSEG_HI))
+    # pad_up=False: the pad only under the nose (the 4 mm boss carries no countersink, and a pad bump there left a knife
+    # edge on the battered face); the slab's pad crosses the front edge (declared deviation)
+    from shapely.geometry import Point, box as _sbox
+    pad = Point(SB).buffer(NOSE_PAD_R, WSEG_HI)
+    p = p.union(pad.intersection(_sbox(0, SB[1] - NOSE_PAD_R, BIG + 20, SB[1])))
     # the rear notch meets the rim tangent in a wedge thinner than a printed wall: thicken it to MNT_TIP_WALL without
     # moving the part's rearmost point (the grown copy is cut at the notch-top Y)
     from shapely.geometry import Point, box as _sb
@@ -46,7 +52,10 @@ def _mount_profile(side):
     from shapely.geometry import Polygon as _P
     void = _P([(t["y0"], t["z0"]), (t["y1"] - t["cham"], t["z0"]), (t["y1"], t["z0"] + t["cham"]), (t["y1"], zt - t["cham"]),
                (t["y1"] - t["cham"], zt), (t["y0"], zt)])
-    return _sharpen(_round(p, r_out=0.0, r_in=MNT_RELIEF_R).difference(void))
+    out = _sharpen(_round(p, r_out=0.0, r_in=MNT_RELIEF_R).difference(void))
+    # the slab's pad above the nose goes on after the relief rounding: it crosses the front edge at a shallow angle
+    # (no relief needed), and a relief-rounded crossing left arc stubs that broke the wedgelet's boolean with the mount
+    return out.union(pad) if pad_up else out
 
 
 def weapon_mount(side):
@@ -61,7 +70,7 @@ def weapon_mount(side):
     slab = _ext(prof, "yz", xi, xm - s * eps, arcs=True)
     # boss: the profile above the line from the notch top to the nose, clipped in 3D so it keeps the slab's true arcs
     # (a 2D clip left arc stubs too short to refit, whose chords against the slab's arcs made sliver faces)
-    boss = _one(_ext(prof, "yz", xm - s * eps, xo + s * BOSS_OVER, arcs=True)).intersect(_ext(_mount_clip(), "yz", xm - s * eps - s, xo + s * (BOSS_OVER + 1)))
+    boss = _one(_ext(_mount_profile(side, pad_up=False), "yz", xm - s * eps, xo + s * BOSS_OVER, arcs=True)).intersect(_ext(_mount_clip(), "yz", xm - s * eps - s, xo + s * (BOSS_OVER + 1)))
     a_, kz, ky = m["face"]                        # outer battered face (STEP): one plane leaning in with height and towards the nose
     bb = _b()
     boss = _one(boss).split(bb.Plane(origin=(s * a_, 0.0, 0.0), z_dir=(s * 1.0, ky, kz)), keep=bb.Keep.BOTTOM)

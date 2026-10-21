@@ -975,6 +975,15 @@
      {
       "near": [
        -15.4,
+       44.1,
+       6.8
+      ],
+      "r": 5.0,
+      "reason": "slab nose pad (NOSE_PAD_R) stands up to 0.6 mm proud of the STEP front edge above the nose so the ISO 10642 cone keeps a 0.9 mm wall at the inner face (mfg.thin_wall); it crosses the edge at a shallow angle where the STEP RV02/RV03 has its R3 nose blend"
+     },
+     {
+      "near": [
+       -15.4,
        41.1,
        2.8
       ],
@@ -997,6 +1006,15 @@
       ],
       "r": 5.0,
       "reason": "the STEP notch top is a zero-thickness wedge (mfg.thin_wall); thickened to a printable wall, rearmost point unchanged"
+     },
+     {
+      "near": [
+       15.4,
+       44.1,
+       6.8
+      ],
+      "r": 5.0,
+      "reason": "slab nose pad (NOSE_PAD_R) stands up to 0.6 mm proud of the STEP front edge above the nose so the ISO 10642 cone keeps a 0.9 mm wall at the inner face (mfg.thin_wall); it crosses the edge at a shallow angle where the STEP RV02/RV03 has its R3 nose blend"
      },
      {
       "near": [
