@@ -541,3 +541,29 @@ def test_path_waiver_needs_cap_radius_and_cited_reason():
     assert rc._dev_valid(dict(_PATH, max_mm3=5000))
     assert rc._dev_valid(dict(_PATH, reason="groove for the leads"))
     assert rc._dev_valid(dict(_PATH, path=[[0, 0, 0]]))
+
+
+# ------------------------------------------------------------------ slanted groove: located on its own centreline
+def _slanted_bore_block(bore=True):
+    """10 x 40 x 30 block (X 0..10, Y 0..40, Z 0..30) with a d4 bore from (5, 0, 25) to (5, 40, 5) (slanted in YZ)."""
+    blk = trimesh.creation.box((10, 40, 30))
+    blk.apply_translation((5, 20, 15))
+    if not bore:
+        return blk
+    a, b = np.array([5.0, -5.0, 27.5]), np.array([5.0, 45.0, 2.5])
+    cyl = trimesh.creation.cylinder(2.0, segment=[a, b], sections=48)
+    return blk.difference(cyl)
+
+
+def test_slanted_extra_hole_is_located_on_its_centreline_and_waivable():
+    from robot.checks.reference_cad import path_dist
+
+    items = [x for x in visual.hole_diffs(_slanted_bore_block(), _slanted_bore_block(False)) if x["kind"] == "extra"]
+    assert items, items
+    path = np.array([[5.0, 0.0, 25.0], [5.0, 40.0, 5.0]])
+    d = path_dist(np.array([x["at"] for x in items], float), path)
+    assert float(d.max()) <= 1.0, list(zip([x["at"] for x in items], d))    # on the axis, not at the part's mid-height
+    e = {"deviations": [{"path": path.tolist(), "r": 3.0, "max_mm3": 600,
+                         "reason": "lead groove added, not in the reference STEP (RV03 has no channel)"}]}
+    op, wv = visual._split(e, items)
+    assert not op and len(wv) == len(items)

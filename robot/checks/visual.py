@@ -167,8 +167,10 @@ def view_diff(model, ref, d, prm=DEFAULTS):
 
 
 # ------------------------------------------------------------------------------------------------ holes (pure)
-def hole_list(m, ref_bounds, n=25):
-    """[(axis, centre (u, v), d)] of every hole cut by sections at n heights along each axis (deduplicated)."""
+def hole_list(m, ref_bounds, n=25, with_h=False):
+    """[(axis, centre (u, v), d)] of every hole cut by sections at n heights along each axis (deduplicated);
+    with_h: (axis, centre, d, h) with the section height the centre was measured at (a slanted hole or groove moves
+    across sections, so its centre is only true at that height)."""
     from .ref_features import holes, section
 
     out = []
@@ -177,10 +179,10 @@ def hole_list(m, ref_bounds, n=25):
         for f in np.linspace(0.02, 0.98, n):
             h = float(lo[ax] + (hi[ax] - lo[ax]) * f)
             for c, d, _ in holes(section(m, ax, h)):
-                if any(a == ax and math.dist(c, cc) < 0.8 for a, cc, _ in out):
+                if any(a == ax and math.dist(c, cc) < 0.8 for a, cc, *_r in out):
                     continue
-                out.append((ax, tuple(float(x) for x in c), float(d)))
-    return out
+                out.append((ax, tuple(float(x) for x in c), float(d), h))
+    return out if with_h else [x[:3] for x in out]
 
 
 def hole_diffs(model, ref, tol=0.8):
@@ -189,15 +191,20 @@ def hole_diffs(model, ref, tol=0.8):
 
     lo = np.minimum(model.bounds[0], ref.bounds[0])
     hi = np.maximum(model.bounds[1], ref.bounds[1])
-    hr, hm = hole_list(ref, (lo, hi)), hole_list(model, (lo, hi))
+    hr, hm = hole_list(ref, (lo, hi), with_h=True), hole_list(model, (lo, hi), with_h=True)
     out = []
 
-    def runs3(ax, c, prof):
-        """3D centre of every contiguous run of heights where the hole exists (two coaxial holes at the two ends of a
-        part are two features, not one at their average height)."""
+    def at_h(ax, c, h):
+        p = [0.0] * 3
         a, b = [i for i in range(3) if i != ax]
-        ts = np.linspace(0.04, 0.96, len(prof))
-        hs = [lo[ax] + (hi[ax] - lo[ax]) * t for t in ts]
+        p[a], p[b], p[ax] = c[0], c[1], float(h)
+        return [round(x, 2) for x in p]
+
+    def runs(ax, c, prof):
+        """[(3D centre, (h_lo, h_hi))] of every contiguous run of heights where the hole exists at c (two coaxial holes
+        at the two ends of a part are two features, not one at their average height)."""
+        a, b = [i for i in range(3) if i != ax]
+        hs = [lo[ax] + (hi[ax] - lo[ax]) * t for t in np.linspace(0.04, 0.96, len(prof))]
         out_, cur = [], []
         for h, d in zip(hs, prof):
             if d:
@@ -207,23 +214,26 @@ def hole_diffs(model, ref, tol=0.8):
                 cur = []
         if cur:
             out_.append(cur)
-        pts = []
-        for run in out_ or [[float((lo[ax] + hi[ax]) / 2)]]:
+        res = []
+        for run in out_:
             p = [0.0] * 3
             p[a], p[b], p[ax] = c[0], c[1], float(np.mean(run))
-            pts.append([round(x, 2) for x in p])
-        return pts
+            res.append(([round(x, 2) for x in p], (min(run), max(run))))
+        return res, (hs[1] - hs[0] if len(hs) > 1 else 1.0)
 
-    def p3(ax, c, prof):
-        return runs3(ax, c, prof)[0]
+    def places(ax, c, h, prof):
+        """Where the hole is: its measured spot (c at the section height h) first - a run's mid-height would put a
+        slanted hole or groove off its own centreline - then every other coaxial run of the profile at c."""
+        rs, step = runs(ax, c, prof)
+        return [at_h(ax, c, h)] + [q for q, (r0, r1) in rs if not (r0 - step <= h <= r1 + step)]
 
     used = set()
-    for ax, c, d in hr:
-        j = next((k for k, (a2, c2, _) in enumerate(hm) if a2 == ax and k not in used and math.dist(c, c2) <= tol), None)
+    for ax, c, d, h0 in hr:
+        j = next((k for k, (a2, c2, _, _h) in enumerate(hm) if a2 == ax and k not in used and math.dist(c, c2) <= tol), None)
         pr = hole_profile(ref, ax, c, lo[ax], hi[ax], n=15)
-        at = p3(ax, c, pr)
+        at = at_h(ax, c, h0)
         if j is None:
-            for at_ in runs3(ax, c, pr):
+            for at_ in places(ax, c, h0, pr):
                 out.append({"kind": "missing", "axis": "XYZ"[ax], "at": at_, "msg": f"reference hole d{d:.2f} along {'XYZ'[ax]} at {at_} has no counterpart"})
             continue
         used.add(j)
@@ -234,10 +244,10 @@ def hole_diffs(model, ref, tol=0.8):
         vr, vm = [x for x in pr if x], [x for x in pm if x]
         if vr and vm and abs(min(vr) - min(vm)) > max(0.4, 0.12 * min(vr)):
             out.append({"kind": "size", "axis": "XYZ"[ax], "at": at, "msg": f"hole along {'XYZ'[ax]} at {at}: min d {min(vm):.2f} vs reference {min(vr):.2f}"})
-    for k, (ax, c, d) in enumerate(hm):
+    for k, (ax, c, d, h0) in enumerate(hm):
         if k in used:
             continue
-        at = p3(ax, c, hole_profile(model, ax, c, lo[ax], hi[ax], n=15))
+        at = at_h(ax, c, h0)
         out.append({"kind": "extra", "axis": "XYZ"[ax], "at": at, "msg": f"hole d{d:.2f} along {'XYZ'[ax]} at {at} is not in the reference"})
     return out
 
