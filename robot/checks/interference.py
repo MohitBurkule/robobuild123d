@@ -117,6 +117,13 @@ def run(ctx):
             checked += 1
             o = measure.overlap(a, b, cap=allow)
             if o is not None and o.depth > allow:
+                from .asm_dump import known_interference
+
+                why = known_interference(ctx, a.id, b.id, float(o.volume))
+                if why:   # the original interferes the same way: a known waiver citing the SolidWorks report
+                    out.append(note("interference.known", G, "Overlap also present in the reference assembly",
+                                    f"`{a.id}` and `{b.id}` overlap by {o.depth:.2f} mm ({o.volume:.1f} mm3): {why}.").on(a.id, b.id).here(o.at))
+                    continue
                 bad += 1
                 out.append(fail("interference.overlap", G, BLOCKER, "Parts collide",
                                 f"`{a.id}` and `{b.id}` overlap by {o.depth:.2f} mm (about {o.volume:.1f} mm3).")

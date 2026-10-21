@@ -1674,6 +1674,9 @@
    }
   ]
  },
+ "asm_dump": {
+  "rig": "revron.joints:RIG"
+ },
  "renders": {
   "dir": "renders",
   "views": [

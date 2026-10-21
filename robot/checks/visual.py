@@ -304,11 +304,13 @@ def face_mix(m, lo_deg=6.0):
 TURN_MATCH_DEG = 15.0   # the reference corner compared must turn as much as ours (else it is a different corner)
 
 
-def fillet_diffs(model, ref, grid=1.5, min_turn=30.0, tol=0.3, frac=0.3, snap=1.2):
+def fillet_diffs(model, ref, grid=1.5, min_turn=30.0, tol=0.3, frac=0.3, snap=1.2, exact=None):
     """[(point, r_ours, r_ref)] on model concave edges where the reference at the same spot is rounder.
     The reference is measured with section windows of 2, 4 and 6 mm and only a measurement whose turn matches ours
     within TURN_MATCH_DEG counts (the closest match): a 4 mm window that reaches the next corner, a slot (turn ~180) or a
-    shallow 20 deg bend is a different feature, not a rounder version of ours. No matching corner -> not compared."""
+    shallow 20 deg bend is a different feature, not a rounder version of ours. No matching corner -> not compared.
+    `exact`: the reference's exact fillet radii (SolidWorks dump, sldprt_dump.exact_for): the estimate is snapped to the
+    nearest one when within 35 % / 0.3 mm (the place comes from the estimate, the radius from the dump)."""
     import trimesh
 
     from . import sharp_corner as sc
@@ -327,6 +329,10 @@ def fillet_diffs(model, ref, grid=1.5, min_turn=30.0, tol=0.3, frac=0.3, snap=1.
         if not cands:
             continue
         b = min(cands, key=lambda x: abs(x[1] - a[1]))
+        if exact:
+            from .sldprt_dump import snap as _snap
+
+            b = (_snap(b[0], exact),) + tuple(b[1:])
         if b[0] - a[0] > max(tol, frac * b[0]):
             out.append((np.asarray(p, float), float(a[0]), float(b[0])))
     return out
@@ -514,7 +520,14 @@ def run(ctx):
                 elif check == "fillet_ref":
                     from .sharp_corner import regions
 
-                    hits = fillet_diffs(mod, ref, prm["fillet_grid_mm"], tol=prm["fillet_tol_mm"], frac=prm["fillet_frac"])
+                    from .sldprt_dump import exact_for
+
+                    try:
+                        ex = exact_for(ctx.r.spec, e)
+                    except Exception:  # noqa: BLE001 - estimates only
+                        ex = None
+                    hits = fillet_diffs(mod, ref, prm["fillet_grid_mm"], tol=prm["fillet_tol_mm"], frac=prm["fillet_frac"],
+                                        exact=(ex or {}).get("fillet"))
                     items = []
                     for g in regions([(p, None, a, b) for p, a, b in hits], 2.5):
                         if len(g) < 2:   # 2 samples on the 1.5 mm grid = a >= 1.5 mm run of edge
