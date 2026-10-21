@@ -3,9 +3,9 @@ import math, os, sys
 from .params import (
     FLOOR_Z, GEO_EPS, HERE, NUT, NUT_X, RAMP_REACH, RAMP_SLOPE, SA,
     SA_X, SB, SB_X, SIDE_BOLT_DES, SIDE_BOLT_X, SIDE_FACE_X, SIDE_SINK, SLAB_X,
-    SP_BOSS, SP_CSK, SP_DRIVER_SEATS, SP_FLUTE, SP_FOOT, SP_FOOT_Z,
-    SP_FRONT, SP_MID_Y, SP_MID_Z_FRONT, SP_NOSE_PKT, SP_NOSE_OVER, SP_NOSE_Y0, SP_NOSE_Z, SP_NUT_POCKET, SP_NUT_RELIEF_X,
-    SP_REAR, SP_SA_CLEAR, SP_TOE_RUN, SP_TOE_Y0, SP_W_TOP, SP_Z_TOP,
+    SP_BEND_R, SP_BOSS, SP_CSK, SP_DRIVER_SEATS, SP_FLUTE, SP_FOOT, SP_FOOT_Z,
+    SP_FRONT, SP_NOSE_PKT, SP_NOSE_OVER, SP_NOSE_Y0, SP_NOSE_Z, SP_NUT_POCKET, SP_NUT_RELIEF_X,
+    SP_REAR, SP_SA_CLEAR, SP_TOE_RUN, SP_TOE_Y0, SP_Z_TOP,
     SP_TYRE_RELIEF, SP_X_IN, WEDGE_TOE_H)
 from .common import _I, _S, _U, _b, _box, _cyl, _ext, _one
 from .side_wall import sp_wall, nose_body
@@ -16,7 +16,10 @@ def _sp_tyre_relief(b):
     front corners) extruded from the floor to the inner face, its floor edge filleted r_floor (the side's own relief tool: the
     pocket it cuts is plain, the chassis cutter just loses it)."""
     t = SP_TYRE_RELIEF
-    (cy, cz), r, yf, rf, (x0, x1) = t["c"], t["r"], t["y_front"], t["r_front"], t["x"]
+    (cy, cz), r = _rear_centres()[1], SP_REAR["r_top"] - t["rim"]   # concentric with the rear end's R6 round, a `rim` inside it
+    yf, rf = cy + 2 * r, t["r_front"]                                  # the slot is two radii long
+    x1 = SP_X_IN - sum(SP_BEND_R)                                       # the rear wall's inner face (after both bends)
+    x0, x1 = x1 - t["depth"], x1 + SP_NOSE_OVER
     V = lambda y, z: b.Vector(x0, y, z)
     k = rf * (1 - math.sqrt(0.5))   # corner arc mid-point offset
     e = [b.Edge.make_line(V(cy, cz + r), V(yf - rf, cz + r)),
@@ -34,12 +37,18 @@ def _arc_pt(c, r, a):
     return (c[0] + r * math.cos(a), c[1] + r * math.sin(a))
 
 
+def _rear_centres():
+    """(R10 axis, R6 axis) (Y, Z) of the rear end: the R10 tangent to the floor, the R6 tangent to the top line and internally tangent to it."""
+    r_lo, r_hi, y = SP_REAR["r_floor"], SP_REAR["r_top"], SP_REAR["y"]
+    c_lo = (y, FLOOR_Z + r_lo)
+    return c_lo, (y - math.sqrt((r_lo - r_hi) ** 2 - (c_lo[1] - (SP_Z_TOP - r_hi)) ** 2), SP_Z_TOP - r_hi)
+
+
 def _side_profile(b):
     """Rear clip of the wall (Y, Z) extruded through the slab: the rear end is a R10 round tangent to the floor that is internally tangent to a
     R6 round tangent to the top line (STEP RV23 faces 36 / 37); everything forward of it is kept."""
-    r_lo, r_hi, y = SP_REAR["r_floor"], SP_REAR["r_top"], SP_REAR["y"]
-    c_lo = (y, FLOOR_Z + r_lo)
-    c_hi = (y - math.sqrt((r_lo - r_hi) ** 2 - (c_lo[1] - (SP_Z_TOP - r_hi)) ** 2), SP_Z_TOP - r_hi)   # internal tangency of the two rounds
+    r_lo, r_hi = SP_REAR["r_floor"], SP_REAR["r_top"]
+    c_lo, c_hi = _rear_centres()
     a_j = math.atan2(c_hi[1] - c_lo[1], c_hi[0] - c_lo[0])   # direction of the tangency point seen from the R10 axis
     V = lambda p: b.Vector(SLAB_X[0], *p)
     t0, tj, t1 = (c_lo[0], FLOOR_Z), _arc_pt(c_lo, r_lo, a_j), (c_hi[0], SP_Z_TOP)
@@ -74,11 +83,14 @@ def _nose_notch(b):   # cut from the fused wall + nose
     post_r = SA[0] - SP_NOSE_Y0                       # the post is as wide as the nose is long ahead of the axis: its front side is flush with the nose front face
     y_post = SA[0] + post_r                           # the post's rear edge = the pocket B's rear wall
     a = _box(n["x_post"], cx + SP_NOSE_OVER, cy - SP_NOSE_OVER, y_post, z0, z1)
-    pb = _S(_box(n["x_b"], cx + SP_NOSE_OVER, y_post, SB[0], z0, n["z_top"]), _cyl(n["r_ring"], n["x_b"] - 1, cx + 2 * SP_NOSE_OVER, SB))
+    xb = lambda z: n["x_b"] + (z - FLOOR_Z) * math.tan(math.radians(n["draft_deg"]))   # the pocket's end wall leans in towards its roof
+    xz = [(cx + SP_NOSE_OVER, z0), (xb(z0), z0), (xb(n["z_top"]), n["z_top"]), (cx + SP_NOSE_OVER, n["z_top"])]
+    pb = b.Solid.extrude(b.Face(b.Wire.make_polygon([b.Vector(x, y_post, z) for x, z in xz], close=True)), b.Vector(0, SB[0] - y_post, 0))
+    pb = _S(pb, _cyl(n["r_ring"], xb(z0) - 1, cx + 2 * SP_NOSE_OVER, SB))
 
-    def corner(e):   # the one blend the finder reports here (R1, face 88): the straight edge where the pocket's end wall X_B meets the post's rear wall
+    def corner(e):   # the one blend the finder reports here (R1, face 88): the edge where the pocket's end wall meets the post's rear wall
         pts = [e.position_at(t) for t in (0.0, 0.5, 1.0)]
-        return all(abs(q.X - n["x_b"]) < GEO_EPS and abs(q.Y - y_post) < GEO_EPS for q in pts)
+        return all(abs(q.Y - y_post) < GEO_EPS and abs(q.X - xb(q.Z)) < GEO_EPS for q in pts)
     pb = _one(pb.fillet(n["r_round"], [e for e in pb.edges() if corner(e)]))
     # above the pocket's roof the cavity runs on as a tapered slot (walls lean `taper_deg`, like its round end: a cone about the swing axis at
     # the end of the nose run); beside the post it starts at the post's axis height, and the post's round stands up in it
@@ -118,22 +130,20 @@ def _nut_pocket(b):
 
 def _flutes(b, body):
     """The three diagonal flutes (STEP RV23): bands `pitch` apart at `deg` below the Y axis, cut `depth` into the outer face (the layer between
-    the wall and the wall moved inboard), from Z0 up to W_TOP under the wall's top line."""
+    the wall and the wall moved inboard), each from Z0 up to its own level top end (`top`, rear flute first)."""
     from shapely.geometry import LineString, Polygon
     f = SP_FLUTE
     a = math.radians(f["deg"])
     d, nrm = (math.cos(a), -math.sin(a)), (math.sin(a), math.cos(a))
     big = 4 * SP_Z_TOP
-    top = SP_Z_TOP - SP_W_TOP
-    top_f = SP_MID_Z_FRONT - SP_W_TOP
-    keep = Polygon([(-big, f["z0"]), (-big, top), (SP_MID_Y[0], top), (SP_MID_Y[1], top_f), (big, top_f), (big, f["z0"])])
     bands = None
     for k in range(f["n"]):
         o = (f["y"] + (k - (f["n"] - 1) / 2) * f["pitch"] * nrm[0], f["z"] + (k - (f["n"] - 1) / 2) * f["pitch"] * nrm[1])
         band = LineString([(o[0] - big * d[0], o[1] - big * d[1]), (o[0] + big * d[0], o[1] + big * d[1])]).buffer(f["w"] / 2, cap_style=2)
+        band = band.intersection(Polygon([(-big, f["z0"]), (-big, f["top"][k]), (big, f["top"][k]), (big, f["z0"])]))
         bands = band if bands is None else bands.union(band)
     skin = _S(body, body.moved(b.Location((f["depth"], 0, 0))))
-    return _I(skin, _ext(bands.intersection(keep), "yz", *SLAB_X))
+    return _I(skin, _ext(bands, "yz", *SLAB_X))
 
 
 def _side_seat(key, at, sgn=-1):
@@ -150,8 +160,9 @@ def _side_seat(key, at, sgn=-1):
     tool, rec = hole_tool((sgn * SIDE_FACE_X[key], *at), (-sgn, 0, 0), SIDE_BOLT_DES[key], head="csk", into="through", side="head",
                           sink=SIDE_SINK[key], grip=SIDE_FACE_X[key] - far, fit=SP_CSK["fit"], csk_clear=SP_CSK["csk_clear"],
                           head_clear=hc if dr is None else SP_CSK["lip"] - SIDE_SINK[key])
-    if dr is not None:   # the narrower driver bore from outside the face down to the seat
+    if dr is not None:   # the narrower driver bore from outside the face down to the seat; the csk cone is cut off where it meets it (no undercut)
         tool = _U(tool, _cyl(dr, sgn * (SIDE_FACE_X[key] + hc), sgn * SIDE_BOLT_X[key], at))
+        tool = _I(tool, _cyl(dr, sgn * (SIDE_FACE_X[key] + hc), sgn * far, at))
     return tool, rec
 
 
