@@ -1050,7 +1050,7 @@
        19.23632007623851
       ],
       "r": 5.0,
-      "reason": "phase-lead C-groove in the inner face (added, not in the STEP): the twisted 3 x AWG24 bundle snaps through a 3.0 mouth into a R2.0 channel from the stator exit to the lug top, so the leads never hang free next to the disc (wire.exterior_support)"
+      "reason": "phase-lead C-groove in the inner face (added, not in the STEP): the twisted 3 x AWG24 bundle snaps through a 3.0 mouth into a R2.0 channel from the stator exit to the lug top: the original STEP has no lead channel (leads run free over the lug), so the leads are retained and held clear of the disc bolt heads (wire.exterior_support, wire.rotor_clearance)"
      },
      {
       "near": [
@@ -1059,7 +1059,7 @@
        17.049714759265093
       ],
       "r": 5.0,
-      "reason": "phase-lead C-groove in the inner face (added, not in the STEP): the twisted 3 x AWG24 bundle snaps through a 3.0 mouth into a R2.0 channel from the stator exit to the lug top, so the leads never hang free next to the disc (wire.exterior_support)"
+      "reason": "phase-lead C-groove in the inner face (added, not in the STEP): the twisted 3 x AWG24 bundle snaps through a 3.0 mouth into a R2.0 channel from the stator exit to the lug top: the original STEP has no lead channel (leads run free over the lug), so the leads are retained and held clear of the disc bolt heads (wire.exterior_support, wire.rotor_clearance)"
      },
      {
       "near": [
@@ -1068,7 +1068,7 @@
        14.86310944229168
       ],
       "r": 5.0,
-      "reason": "phase-lead C-groove in the inner face (added, not in the STEP): the twisted 3 x AWG24 bundle snaps through a 3.0 mouth into a R2.0 channel from the stator exit to the lug top, so the leads never hang free next to the disc (wire.exterior_support)"
+      "reason": "phase-lead C-groove in the inner face (added, not in the STEP): the twisted 3 x AWG24 bundle snaps through a 3.0 mouth into a R2.0 channel from the stator exit to the lug top: the original STEP has no lead channel (leads run free over the lug), so the leads are retained and held clear of the disc bolt heads (wire.exterior_support, wire.rotor_clearance)"
      },
      {
       "near": [
@@ -1077,7 +1077,7 @@
        12.676504125318264
       ],
       "r": 5.0,
-      "reason": "phase-lead C-groove in the inner face (added, not in the STEP): the twisted 3 x AWG24 bundle snaps through a 3.0 mouth into a R2.0 channel from the stator exit to the lug top, so the leads never hang free next to the disc (wire.exterior_support)"
+      "reason": "phase-lead C-groove in the inner face (added, not in the STEP): the twisted 3 x AWG24 bundle snaps through a 3.0 mouth into a R2.0 channel from the stator exit to the lug top: the original STEP has no lead channel (leads run free over the lug), so the leads are retained and held clear of the disc bolt heads (wire.exterior_support, wire.rotor_clearance)"
      }
     ]
    },

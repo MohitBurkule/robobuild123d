@@ -381,7 +381,8 @@ def _lead_groove_dev():
     ts = [(k + 0.5) / LEAD_DEV_N for k in range(LEAD_DEV_N)]
     return [{"near": [LEAD_GROOVE_X, y0 + t * (y1 - y0), z0 + t * (z1 - z0)], "r": REF_DEV_R_MAX,
              "reason": "phase-lead C-groove in the inner face (added, not in the STEP): the twisted 3 x AWG24 bundle snaps through a 3.0 mouth into a "
-                       "R2.0 channel from the stator exit to the lug top, so the leads never hang free next to the disc (wire.exterior_support)"} for t in ts]
+                       "R2.0 channel from the stator exit to the lug top: the original STEP has no lead channel (leads run free over the lug), so the leads are retained and held "
+                       "clear of the disc bolt heads (wire.exterior_support, wire.rotor_clearance)"} for t in ts]
 
 
 def main():
