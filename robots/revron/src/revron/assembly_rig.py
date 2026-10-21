@@ -13,6 +13,8 @@ from .joints import Rig, tub_rig
 from .fastener_rig import screws, on_mount
 from . import panel_base, panel_top
 import build123d as b
+from .fork import rig_fork, rig_nose
+from .hubs import rig_wheels
 
 SIDES = ((-1, "l"), (1, "r"))
 
@@ -80,7 +82,6 @@ def _drive(r):
     for s, n in SIDES:
         r.axis(f"motor_{n}", "output_shaft", (HUB_PIVOT_X["rear"] - MOTX, 0, 0))   # D-shaft the rear hub turns with
         r.joint(f"motor_{n}", "shaft_tip", (HUB_PIVOT_X["rear"] - MOTX, 0, 0))
-        r.joint(f"whub_r{n}", "d_bore", (s * HUB_PIVOT_X["rear"], RY, RZ), _flip(s))
         r.mate(f"motor_{n}", "shaft_tip", f"whub_r{n}", "d_bore")
         a, b_ = f"so_a{n}", f"so_b{n}"
         r.joint(f"mount_{n}", "so_a_seat", on_mount(n, (s * SA_X[0], *SA)))   # 25 mm standoff end in the mount
@@ -92,12 +93,14 @@ def _drive(r):
         for so, xs, yz in ((a, SA_X, SA), (b_, SB_X, SB)):
             r.joint(so, "outer_end", (s * xs[1], *yz))
         r.axis(a, "axle", (s * HUB_PIVOT_X["front"], *SA))           # micro hub greased on the 25 mm standoff
-        r.joint(a, "hub_seat", (s * HUB_PIVOT_X["front"], *SA))
-        r.joint(f"whub_f{n}", "bore", (s * HUB_PIVOT_X["front"], *SA))
+        r.joint(a, "hub_seat", (s * HUB_PIVOT_X["front"], *SA), _flip(s))
         r.mate(a, "hub_seat", f"whub_f{n}", "bore")
-        for part, so, xs, yz in ((f"side_{n}", a, SA_X, SA), (f"wedgelet_{n}", b_, SB_X, SB), (f"fork_{n}", b_, SB_X, SB)):
+        for part, so, xs, yz in ((f"side_{n}", a, SA_X, SA), (f"wedgelet_{n}", b_, SB_X, SB)):
             r.joint(part, "standoff_seat", (s * xs[1], *yz))         # screw seat / 5.3 hole on the standoff end
             r.mate(so, "outer_end", part, "standoff_seat")
+        rig_fork(r, s, n)                                            # fork_5 on the 15 mm standoff (fork.py)
+        rig_nose(r, s, n)                                            # side panel nose hole on the wedgelet's (fork.py)
+        rig_wheels(r, s, n)                                          # hub joints + tyres on the hubs (hubs.py)
     for i, (x, y) in enumerate(INS):                                 # base panel: its screw holes on the floor bores
         r.joint_in("base_panel", f"hole_{i}", panel_base.FRAME, b.Location((x, y, BASE_BOLT_Z)))
     r.mate("tub", "screw_b0", "base_panel", "hole_0")

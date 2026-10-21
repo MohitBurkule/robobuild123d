@@ -329,6 +329,24 @@
    ],
    "count": 1,
    "connector": "bullet2"
+  },
+  {
+   "role": "MR85ZZ bearing in the RV02 seat (outboard shaft support)",
+   "kind": "part",
+   "match": [
+    "wbearing"
+   ],
+   "count": 1,
+   "deviation": "added: bought part left out of the STEP (INDEX.txt lists no bearing), but RV02 carries the 7.9 mm printed seat and the guide BOM lists an MR85ZZ"
+  },
+  {
+   "role": "GR1507 5 mm threaded shaft",
+   "kind": "part",
+   "match": [
+    "wshaft"
+   ],
+   "count": 1,
+   "deviation": "added: the shaft belongs to the bought GR1507, which the STEP draws as one body (INDEX.txt lists no shaft); drawn apart for the MR85 support and the spider collar, its mass stays in the motor"
   }
  ],
  "reference_doc": {
@@ -829,6 +847,42 @@
     "deviations": [
      {
       "near": [
+       -25.0,
+       10.4,
+       19.95
+      ],
+      "r": 3.5,
+      "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
+     },
+     {
+      "near": [
+       25.0,
+       10.4,
+       19.95
+      ],
+      "r": 3.5,
+      "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
+     },
+     {
+      "near": [
+       -25.0,
+       -21.6,
+       19.95
+      ],
+      "r": 3.5,
+      "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
+     },
+     {
+      "near": [
+       25.0,
+       -21.6,
+       19.95
+      ],
+      "r": 3.5,
+      "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
+     },
+     {
+      "near": [
        -3.78,
        -5.57,
        19.57
@@ -986,7 +1040,7 @@
       0.0,
       0.0,
       -1.0,
-      -6.7
+      -8.2
      ],
      [
       -0.575162,
@@ -1010,7 +1064,7 @@
     "deviations": [
      {
       "near": [
-       -6.699999999999999,
+       -8.2,
        30.44772759118839,
        12.047449670300885
       ],
@@ -1019,7 +1073,7 @@
      },
      {
       "near": [
-       -6.699999999999999,
+       -8.2,
        27.047449670300885,
        31.55227240881161
       ],
@@ -1028,7 +1082,7 @@
      },
      {
       "near": [
-       -6.699999999999999,
+       -8.2,
        46.552272408811604,
        34.952550329699115
       ],
@@ -1037,7 +1091,7 @@
      },
      {
       "near": [
-       -6.699999999999999,
+       -8.2,
        49.952550329699115,
        15.447727591188393
       ],
@@ -1056,7 +1110,7 @@
       0.0,
       0.0,
       -1.0,
-      -6.7
+      -8.2
      ],
      [
       -0.575162,
@@ -1088,7 +1142,7 @@
       0.0,
       0.0,
       -1.0,
-      -6.7
+      -8.2
      ],
      [
       -0.575162,
@@ -1120,7 +1174,7 @@
       0.0,
       0.0,
       -1.0,
-      -6.7
+      -8.2
      ],
      [
       -0.575162,
@@ -1247,6 +1301,15 @@
       ],
       "r": 4.0,
       "reason": "the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
+     },
+     {
+      "near": [
+       -25.25,
+       42.0,
+       5.3
+      ],
+      "r": 6.0,
+      "reason": "the fork's two rails run through the TPU cheek as closed tunnels (the STEP's solid wedgelet has no slit: the tine interpenetrates it)"
      }
     ]
    },
@@ -1355,6 +1418,15 @@
       ],
       "r": 4.0,
       "reason": "the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
+     },
+     {
+      "near": [
+       25.25,
+       42.0,
+       5.3
+      ],
+      "r": 6.0,
+      "reason": "the fork's two rails run through the TPU cheek as closed tunnels (the STEP's solid wedgelet has no slit: the tine interpenetrates it)"
      }
     ]
    },
@@ -1687,9 +1759,9 @@
     4.5
    ],
    "rot": [
-    -180.0,
+    180.0,
     0.0,
-    -180.0
+    180.0
    ],
    "material": "pla_st",
    "process": "fdm",
@@ -1721,9 +1793,9 @@
     20.4
    ],
    "rot": [
-    -180.0,
+    180.0,
     0.0,
-    -180.0
+    180.0
    ],
    "label": "0.9 mm Ti top panel: laser outline with 4 countersunk 2.2 corner holes, 4 M2 flat-head thread-forming screws into the column tops (material inferred, see REFERENCE.md)"
   },
@@ -2009,7 +2081,7 @@
      0.0
     ],
     "pivot": [
-     -20.1,
+     -21.6,
      0.0,
      0.0
     ],
@@ -2208,8 +2280,8 @@
    "material": "titanium",
    "process": "laser",
    "stock": "1.5 mm Ti Gr5 sheet",
-   "min_web_mm": 1.05,
-   "min_web_reason": "1.1 mm web under the 5.3 standoff hole is the designer's own (RVRN 2.0 STEP fork_5 measures 1.1)",
+   "min_web_mm": 1.12,
+   "min_web_reason": "every web is the laser minimum 0.75 x 1.5 mm sheet = 1.12 mm (rings round the standoff and pin holes; the STEP fork_5 draws 1.10 and 1.098)",
    "parent": "so_bl",
    "rotates_with": "fixed",
    "color": "#9aa0a6",
@@ -2220,12 +2292,22 @@
      "part": "fork_l"
     }
    },
+   "at": [
+    -25.0,
+    40.5,
+    4.5
+   ],
+   "rot": [
+    90.0,
+    1.763,
+    -90.0
+   ],
    "label": "fork_5: 1.5 mm Ti fork on the 15 mm standoff, tail pinned in the wedgelet cheek slot"
   },
   {
    "id": "wedgelet_l",
    "kind": "armor",
-   "deviation": "RVRN 2.0 STEP: the wedgelet and the fork tine interpenetrate in the original (an interference there); we cut the tine's own 1.5 mm outline out of the wedgelet as its seat (nothing more), so the fork sits in with interference 0, hence the wedgelet is short by the tine volume at x -26.5..-25",
+   "deviation": "RVRN 2.0 STEP: the wedgelet and the fork tine interpenetrate in the original (an interference there); we cut the tine's own 1.5 mm outline out of the wedgelet as its seat, so the fork sits in with interference 0, hence the wedgelet is short by the tine volume at x -26.5..-25",
    "material": "tpu",
    "process": "fdm",
    "thin_wall_deviation": "matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)",
@@ -2391,7 +2473,7 @@
    "kind": "pulley",
    "solid_fraction": 0.85,
    "rotates_with": "wheel_rl",
-   "print_orientation": "-x",
+   "print_orientation": "+x",
    "shape": {
     "type": "model",
     "file": "src/build_revron.py",
@@ -2400,6 +2482,17 @@
     }
    },
    "parent": "tub",
+   "at": [
+    -30.0,
+    -30.5,
+    11.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    180.0
+   ],
+   "thin_wall_deviation": "matches original RVRN 2.0: RV21 draws the 0.5 mm O-ring flange, the 0.5 mm raised lip at the free end and the 0.2 mm end recess; kept for parity (user order)",
    "joint": {
     "kind": "revolute",
     "axis": [
@@ -2436,6 +2529,16 @@
      "part": "rear_tyre_l"
     }
    },
+   "at": [
+    2.5,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
    "color": "#1b1b1b",
    "stock": "RV22 Scalextric F1 front tyre 21.5 x 14 x 9.5",
    "label": "Scalextric F1 tyre 21.5 x 14 x 9.5"
@@ -2445,7 +2548,7 @@
    "kind": "pulley",
    "solid_fraction": 0.85,
    "rotates_with": "wheel_fl",
-   "print_orientation": "-x",
+   "print_orientation": "+x",
    "shape": {
     "type": "model",
     "file": "src/build_revron.py",
@@ -2454,6 +2557,17 @@
     }
    },
    "parent": "so_al",
+   "at": [
+    -30.0,
+    30.5,
+    5.5
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    180.0
+   ],
+   "thin_wall_deviation": "matches original RVRN 2.0: RV19 draws its three flanges 0.5 mm thick; kept for parity (user order)",
    "joint": {
     "kind": "revolute",
     "axis": [
@@ -2490,6 +2604,16 @@
      "part": "front_tyre_l"
     }
    },
+   "at": [
+    2.5,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
    "color": "#1b1b1b",
    "stock": "RV20 Scalextric micro SLX tyre 11 x 7 x 6",
    "label": "Scalextric micro tyre 11 x 7 x 6"
@@ -2562,8 +2686,8 @@
    "material": "titanium",
    "process": "laser",
    "stock": "1.5 mm Ti Gr5 sheet",
-   "min_web_mm": 1.05,
-   "min_web_reason": "1.1 mm web under the 5.3 standoff hole is the designer's own (RVRN 2.0 STEP fork_5 measures 1.1)",
+   "min_web_mm": 1.12,
+   "min_web_reason": "every web is the laser minimum 0.75 x 1.5 mm sheet = 1.12 mm (rings round the standoff and pin holes; the STEP fork_5 draws 1.10 and 1.098)",
    "parent": "so_br",
    "rotates_with": "fixed",
    "color": "#9aa0a6",
@@ -2574,12 +2698,22 @@
      "part": "fork_r"
     }
    },
+   "at": [
+    26.0,
+    40.5,
+    4.5
+   ],
+   "rot": [
+    90.0,
+    2.825,
+    -90.0
+   ],
    "label": "fork_5: 1.5 mm Ti fork on the 15 mm standoff, tail pinned in the wedgelet cheek slot"
   },
   {
    "id": "wedgelet_r",
    "kind": "armor",
-   "deviation": "RVRN 2.0 STEP: the wedgelet and the fork tine interpenetrate in the original (an interference there); we cut the tine's own 1.5 mm outline out of the wedgelet as its seat (nothing more), so the fork sits in with interference 0, hence the wedgelet is short by the tine volume at x 24.5..26",
+   "deviation": "RVRN 2.0 STEP: the wedgelet and the fork tine interpenetrate in the original (an interference there); we cut the tine's own 1.5 mm outline out of the wedgelet as its seat, so the fork sits in with interference 0, hence the wedgelet is short by the tine volume at x 24.5..26",
    "material": "tpu",
    "process": "fdm",
    "thin_wall_deviation": "matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)",
@@ -2754,6 +2888,17 @@
     }
    },
    "parent": "tub",
+   "at": [
+    30.0,
+    -30.5,
+    11.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "thin_wall_deviation": "matches original RVRN 2.0: RV21 draws the 0.5 mm O-ring flange, the 0.5 mm raised lip at the free end and the 0.2 mm end recess; kept for parity (user order)",
    "joint": {
     "kind": "revolute",
     "axis": [
@@ -2790,6 +2935,16 @@
      "part": "rear_tyre_r"
     }
    },
+   "at": [
+    2.5,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
    "color": "#1b1b1b",
    "stock": "RV22 Scalextric F1 front tyre 21.5 x 14 x 9.5",
    "label": "Scalextric F1 tyre 21.5 x 14 x 9.5"
@@ -2808,6 +2963,17 @@
     }
    },
    "parent": "so_ar",
+   "at": [
+    30.0,
+    30.5,
+    5.5
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "thin_wall_deviation": "matches original RVRN 2.0: RV19 draws its three flanges 0.5 mm thick; kept for parity (user order)",
    "joint": {
     "kind": "revolute",
     "axis": [
@@ -2844,6 +3010,16 @@
      "part": "front_tyre_r"
     }
    },
+   "at": [
+    2.5,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
    "color": "#1b1b1b",
    "stock": "RV20 Scalextric micro SLX tyre 11 x 7 x 6",
    "label": "Scalextric micro tyre 11 x 7 x 6"
@@ -3948,7 +4124,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    -8.2,
+    -9.7,
     35.91177,
     19.818823
    ],
@@ -3991,7 +4167,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    6.8,
+    5.3,
     30.447728,
     12.04745
    ],
@@ -4037,7 +4213,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    -8.2,
+    -9.7,
     34.818823,
     26.08823
    ],
@@ -4080,7 +4256,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    6.8,
+    5.3,
     27.04745,
     31.552272
    ],
@@ -4126,7 +4302,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    -8.2,
+    -9.7,
     41.08823,
     27.181177
    ],
@@ -4169,7 +4345,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    6.8,
+    5.3,
     46.552272,
     34.95255
    ],
@@ -4215,7 +4391,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    -8.2,
+    -9.7,
     42.181177,
     20.91177
    ],
@@ -4258,7 +4434,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    6.8,
+    5.3,
     49.95255,
     15.447728
    ],

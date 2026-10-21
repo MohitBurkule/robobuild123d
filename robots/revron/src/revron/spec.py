@@ -80,9 +80,9 @@ def make_spec(model_file):
           shape=M(f"so_a_{n}"), features=sp_spec(s, f"so_a{n}")[2], label="RV11 25 mm alu standoff: front axle, clamps the mount, the side panel screws to its end")
         P(id=f"so_b{n}", kind="pin", role="standoff", material="aluminium", process="cots", rotates_with="fixed", color="#b8bcc2", stock="RV10 M3 x 15 aluminium standoff, 5 OD",
           shape=M(f"so_b_{n}"), label="RV10 15 mm alu standoff: nose, through the chassis lug, the fork and the wedgelet cheeks")
-        P(id=f"fork_{n}", kind="fork", material="titanium", process="laser", stock="1.5 mm Ti Gr5 sheet", min_web_mm=WEB["fork"], min_web_reason="1.1 mm web under the 5.3 standoff hole is the designer's own (RVRN 2.0 STEP fork_5 measures 1.1)", parent=f"so_b{n}", rotates_with="fixed", color="#9aa0a6", shape=M(f"fork_{n}"),
+        P(id=f"fork_{n}", kind="fork", material="titanium", process="laser", stock="1.5 mm Ti Gr5 sheet", min_web_mm=FK_WEB, min_web_reason="every web is the laser minimum 0.75 x 1.5 mm sheet = 1.12 mm (rings round the standoff and pin holes; the STEP fork_5 draws 1.10 and 1.098)", parent=f"so_b{n}", rotates_with="fixed", color="#9aa0a6", shape=M(f"fork_{n}"), **place(f"fork_{n}"),
           label="fork_5: 1.5 mm Ti fork on the 15 mm standoff, tail pinned in the wedgelet cheek slot")
-        P(id=f"wedgelet_{n}", kind="armor", deviation=f"RVRN 2.0 STEP: the wedgelet and the fork tine interpenetrate in the original (an interference there); we cut the tine's own {FK_X[s][1]-FK_X[s][0]:g} mm outline out of the wedgelet as its seat (nothing more), so the fork sits in with interference 0, hence the wedgelet is short by the tine volume at x {FK_X[s][0]:g}..{FK_X[s][1]:g}", material="tpu", process="fdm", thin_wall_deviation="matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)", solid_fraction=SOLID["tpu"], print_orientation="-z", parent=f"so_a{n}", rotates_with="fixed", color="#3c4048",
+        P(id=f"wedgelet_{n}", kind="armor", deviation=f"RVRN 2.0 STEP: the wedgelet and the fork tine interpenetrate in the original (an interference there); we cut the tine's own {FK_X[s][1]-FK_X[s][0]:g} mm outline out of the wedgelet as its seat, so the fork sits in with interference 0, hence the wedgelet is short by the tine volume at x {FK_X[s][0]:g}..{FK_X[s][1]:g}", material="tpu", process="fdm", thin_wall_deviation="matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)", solid_fraction=SOLID["tpu"], print_orientation="-z", parent=f"so_a{n}", rotates_with="fixed", color="#3c4048",
           shape=M(f"wedgelet_{n}"), cover_fasteners_deviation="RVRN 2.0 STEP: the wedgelet is clamped between the side panel nose and the 15 mm standoff end by bolt_s?b (listed in its `through`), and located on both standoffs; bolt_s?a seats the side panel directly on the 25 mm standoff end (the STEP wedgelet stops at |X| 38.5 and never enters that stack). Kept as designed; no extra screw (coordinator decision).",
           label=f"{WEDGE_REF[s]} TPU wedgelet: 50 deg ramp over the nose, cheeks round both standoffs and the fork tail")
         P(id=f"side_{n}", kind="armor", deviation="matches original RVRN 2.0: RV23/RV24 front leads the spider swept rim by the same amount at +-30 deg (STEP projection 64.45 mm vs ours 64.24 mm at -30 deg, within 0.5 mm)", material="tpu", process="fdm", thin_wall_deviation="matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)", solid_fraction=0.9, print_orientation="+z", parent=f"so_a{n}", rotates_with="fixed", color="#3c4048", shape=M(f"side_panel_{n}_local"),
@@ -91,15 +91,17 @@ def make_spec(model_file):
         P(id=f"nut_c{n}", kind="nut", catalog="nut_m3_thin", **place(f"nut_c{n}"), rotates_with="fixed")
         # drive
         P(id=f"motor_{n}", kind="motor", catalog="n10_2200rpm_spicy", at=place_at(f"motor_{n}"), rot=place_rot(f"motor_{n}"), rotates_with="fixed")
-        P(id=f"whub_r{n}", kind="pulley", solid_fraction=SOLID["hub"], rotates_with=f"wheel_r{n}", print_orientation="+x" if s > 0 else "-x", shape=M(f"rear_hub_{n}"), parent="tub",
+        P(id=f"whub_r{n}", kind="pulley", solid_fraction=SOLID["hub"], rotates_with=f"wheel_r{n}", print_orientation="+x", shape=M(f"rear_hub_{n}"), parent="tub", **place(f"whub_r{n}"),
+          thin_wall_deviation="matches original RVRN 2.0: RV21 draws the 0.5 mm O-ring flange, the 0.5 mm raised lip at the free end and the 0.2 mm end recess; kept for parity (user order)",
           joint=JT[f"whub_r{n}"], color="#333333", **PLA,
           label="RV21 printed rear hub 16 x 12: blind D-bore on the N10, O-ring groove, crowned F1 tyre seat, M2 grub on the flat")
-        P(id=f"wheel_r{n}", kind="wheel", material="rubber", process="cots", tyre_of=f"whub_r{n}", rotates_with=f"wheel_r{n}", parent=f"whub_r{n}", shape=M(f"rear_tyre_{n}"),
+        P(id=f"wheel_r{n}", kind="wheel", material="rubber", process="cots", tyre_of=f"whub_r{n}", rotates_with=f"wheel_r{n}", parent=f"whub_r{n}", shape=M(f"rear_tyre_{n}"), **place(f"wheel_r{n}", f"whub_r{n}"),
           color="#1b1b1b", stock="RV22 Scalextric F1 front tyre 21.5 x 14 x 9.5", label="Scalextric F1 tyre 21.5 x 14 x 9.5")
-        P(id=f"whub_f{n}", kind="pulley", solid_fraction=SOLID["hub"], rotates_with=f"wheel_f{n}", print_orientation="+x" if s > 0 else "-x", shape=M(f"front_hub_{n}"), parent=f"so_a{n}",
+        P(id=f"whub_f{n}", kind="pulley", solid_fraction=SOLID["hub"], rotates_with=f"wheel_f{n}", print_orientation="+x", shape=M(f"front_hub_{n}"), parent=f"so_a{n}", **place(f"whub_f{n}", f"so_a{n}"),
+          thin_wall_deviation="matches original RVRN 2.0: RV19 draws its three flanges 0.5 mm thick; kept for parity (user order)",
           joint=JT[f"whub_f{n}"], color="#333333", **PLA,
           label="RV19 micro hub 9 x 9 greased on the 25 mm standoff, O-ring groove inboard")
-        P(id=f"wheel_f{n}", kind="wheel", material="rubber", process="cots", tyre_of=f"whub_f{n}", rotates_with=f"wheel_f{n}", parent=f"whub_f{n}", shape=M(f"front_tyre_{n}"),
+        P(id=f"wheel_f{n}", kind="wheel", material="rubber", process="cots", tyre_of=f"whub_f{n}", rotates_with=f"wheel_f{n}", parent=f"whub_f{n}", shape=M(f"front_tyre_{n}"), **place(f"wheel_f{n}", f"whub_f{n}"),
           color="#1b1b1b", stock="RV20 Scalextric micro SLX tyre 11 x 7 x 6", label="Scalextric micro tyre 11 x 7 x 6")
     P(id="battery", kind="battery", catalog="lipo_2s_180_turnabot", **place("battery"), retained="press_fit")
     if variant("rxesc_strap"):
@@ -323,7 +325,9 @@ def _wedge_dev(s):
     boss = "the STEP nose tab interpenetrates the weapon mount's boss; the tab is cut by the boss outline plus the WG_MOUNT_GAP clearance, and its arc round SB stands WG_MOUNT_GAP off the chassis lug radius"
     return ([dict(near=[s * WG_TAB_DEV["x"], *WG_TAB_DEV["yz"]], r=WG_TAB_DEV["r"], reason=boss)]
             + [dict(near=[s * SLIT_DEV_X, y, z], r=SLIT_DEV_R, reason=slit) for y, z in SLIT_DEV_YZ]
-            + [dict(near=[s * x, TOE_DEV_YZ[0], TOE_DEV_YZ[1]], r=TOE_DEV_R, reason=toe) for x in TOE_DEV_X])
+            + [dict(near=[s * x, TOE_DEV_YZ[0], TOE_DEV_YZ[1]], r=TOE_DEV_R, reason=toe) for x in TOE_DEV_X]
+            + [dict(near=[s * FORK_RAIL_DEV["x"], FORK_RAIL_DEV["y"], FORK_RAIL_DEV["z"]], r=FORK_RAIL_DEV["r"],
+                    reason="the fork's two rails run through the TPU cheek as closed tunnels (the STEP's solid wedgelet has no slit: the tine interpenetrates it)")])
 
 
 def _side_dev(s):
@@ -358,8 +362,10 @@ def reference_cad():
           deviations=[dict(near=[x, y, BASE_DEV_Z], r=PANEL_DEV_R, reason="[variant base_csk_fit] R2.6 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud")
                       for x, y in (INS if variant("base_csk_fit") else ())]),   # [variant base_csk_fit] the default seat is the RV26 one
         R("top_panel", "Top_Panel_1.stl", tol_mm=TOL["tight"], note="0.9 mm top panel",
-          deviations=[dict(near=[x, y, 19.57], r=5.0, reason="0.1 mm engraved lettering, laser-etch omitted")
-             for x, y in ((-3.78, -5.57), (-13.73, -5.62), (5.84, -5.26), (15.04, -5.66))]),
+          deviations=[dict(near=[x, y, TOP_DEV_Z], r=PANEL_DEV_R, reason="4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it")
+                      for x, y in INS[:4]]
+          + [dict(near=[x, y, TOP_TEXT_DEV_Z], r=TOP_TEXT_DEV_R, reason="0.1 mm engraved lettering, laser-etch omitted")
+             for x, y in TOP_TEXT_DEV_XY]),
         R("mount_l", "RV02_XALT_HD_left_hand_weapon_mount_1.stl", tol_mm=TOL["std"],
           deviations=[{"near": [-MNT_TIP_DEV[0], MNT_TIP_DEV[1], MNT_TIP_DEV[2]], "r": MNT_TIP_DEV_R, "reason": "the STEP notch top is a zero-thickness wedge (mfg.thin_wall); thickened to a printable wall, rearmost point unchanged"}, {"near": [-NOSE_DEV[0], NOSE_DEV[1], NOSE_DEV[2]], "r": NOSE_DEV_R,
                        "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside and front edge, so the countersink keeps a 0.9 mm wall"}]),
