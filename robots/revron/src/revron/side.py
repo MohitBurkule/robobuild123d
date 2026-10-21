@@ -2,7 +2,7 @@
 import math, os, sys
 from .params import *  # noqa: F401,F403
 from .common import *  # noqa: F401,F403
-from .side_wall import sp_wall
+from .side_wall import sp_wall, nose_body
 
 
 def _sp_tyre_relief(b):
@@ -57,20 +57,13 @@ def _side_body(pin=True):
     profile = _ext(side, "yz", *SLAB_X)
     foot = _ext(_poly(SP_FOOT), "xy", *SP_FOOT_Z)
     wall = _I(wall, profile)
-    nose_plan = _round(Polygon(SP_NOSE), r_out=SP_NOSE_R)
-    bt = SP_BATTER
-    z_lo, z_hi = bt["z"]
-    batter = _ext(_poly([(bt["x0"], z_lo), (bt["x0"] + bt["slope"] * (z_hi - z_lo), z_hi), (bt["far"], z_hi), (bt["far"], z_lo), (bt["x0"], bt["below"])]), "xz", 0.0, bt["depth"])
-    nose_blk = _ext(nose_plan, "xy", *SP_NOSE_Z)
-    nose = _I(_I(nose_blk, profile), batter)
-    # the nose top continues the wedgelet's ramp so a wedge rides up both as one face
-    nose = _one(nose).split(b.Plane(origin=(0.0, RAMP_REACH, FLOOR_Z), z_dir=(0.0, RAMP_SLOPE, 1.0)), keep=b.Keep.BOTTOM)
-    # like the wedgelet, the ramp's knife toe stands on a printable land at full reach
-    toe = _poly([(SP_TOE_Y0, FLOOR_Z), (RAMP_REACH, FLOOR_Z), (RAMP_REACH, FLOOR_Z + WEDGE_TOE_H), (SP_TOE_Y0, FLOOR_Z + SP_TOE_RUN * RAMP_SLOPE)])
-    nose = _U(nose, _I(_I(nose_blk, _ext(toe, "yz", *SLAB_X)), batter))
-    # the nose's front-outer corner is chamfered back so a wedge or spinner tooth coming in from the front quarter
-    # glances off instead of catching the corner
-    nose = _one(nose).split(b.Plane(origin=SP_CHAMFER[0], z_dir=SP_CHAMFER[1]), keep=b.Keep.TOP)
+    nose_blk = _S(nose_body(b), _ext(_round(Polygon(SP_NOSE_NOTCH), r_in=SP_NOSE_R), "xy", *SP_NOSE_Z))   # inner notch round the wedgelet block
+    # the nose top is the wedgelet's ramp (the swing's 40 deg cone is tangent to it, so a wedge rides up both as one face); like the
+    # wedgelet, the ramp's knife toe stands on a printable land at full reach
+    z1 = SP_NOSE_Z[1]
+    ramp = Polygon([(SP_NOSE_Y0 - SP_NOSE_OVER, FLOOR_Z), (RAMP_REACH, FLOOR_Z), (RAMP_REACH, FLOOR_Z + WEDGE_TOE_H),
+                    (SP_TOE_Y0, FLOOR_Z + SP_TOE_RUN * RAMP_SLOPE), (RAMP_REACH - (z1 - FLOOR_Z) / RAMP_SLOPE, z1), (SP_NOSE_Y0 - SP_NOSE_OVER, z1)])
+    nose = _I(nose_blk, _ext(ramp, "yz", *SLAB_X))
     he = SP_HOLLOW_END
     hollow_end = _ext(Point(*he["c"]).buffer(he["r"], ARC_N).intersection(Polygon_([(SP_HOLLOW_X[0], he["c"][1] - he["r"]), (SP_HOLLOW_X[1], he["c"][1] - he["r"]), (SP_HOLLOW_X[1], he["c"][1] + he["r"]), (SP_HOLLOW_X[0], he["c"][1] + he["r"])])),
                       "xy", he["z0"], SP_HOLLOW[-1][1])

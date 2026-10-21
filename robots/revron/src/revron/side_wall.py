@@ -52,6 +52,16 @@ def _bend(b, a_pts, mid_pts):
     return b.Solid(b.Shell(sides + [_quad(b, *a_pts), _quad(b, *mid_pts)]))
 
 
+def nose_body(b):
+    """The nose block (STEP RV23): the swing's outer cone swept straight on by SP_NOSE_RUN along +Y, so its outer face is the battered plane
+    to the sweep end and then a quarter cone (same 40 deg lean, same radius law) about the axis there; its inner face is the plane X = swing
+    axis. Un-trimmed in height / ramp (side._side_body cuts those)."""
+    (cx, cy), z1 = SP_FRONT["c"], SP_NOSE_Z[1]
+    sec = lambda y: _quad(b, *[(cx - _swing_r(1, FLOOR_Z), y, FLOOR_Z), (cx, y, FLOOR_Z), (cx, y, z1), (cx - _swing_r(1, z1), y, z1)])
+    run = b.Solid.extrude(sec(cy), b.Vector(0, SP_NOSE_RUN, 0))
+    return _U(run, _spin(b, sec(cy + SP_NOSE_RUN), (cx, cy + SP_NOSE_RUN), -90.0))
+
+
 def sp_wall(b):
     """The whole wall, un-trimmed (the side profile, the top line and the rear round cut it in side._side_body)."""
     s, fr = SP_X_IN, SP_FRONT

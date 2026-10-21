@@ -32,17 +32,17 @@ SP_REAR_ROUND = ((-32.2, 9.7), 8.2)  # rear end: a full round over the wheel
 SP_FOOT = [(-31.6, -12.0), (-42.0, -11.9), (-40.6, -2.1), (-40.8, 3.3), (-42.9, 13.3), (-31.6, 13.3)]   # 1 mm wide foot under the chassis lobe (X, Y)
 SP_FOOT_Z = (FLOOR_Z, FLOOR_Z + 1.0)
 SP_NOSE_Y0 = SP_FRONT["c"][1]    # nose front face (plane through the swing axis, tangent to the swing's outer cone)
-SP_NOSE = [(-52.1, SP_NOSE_Y0), (-51.7, 39.7), (-50.5, 43.0), (-48.4, 45.7), (-45.6, 47.9), (-42.0, 49.6), (-40.0, RAMP_REACH), (-38.5, RAMP_REACH),
-           (-38.5, 37.6), (-41.6, 37.6), (-42.4, 37.3), (-42.3, 34.9), (-40.5, 34.5), (-40.5, SP_NOSE_Y0)]   # nose plan (X, Y)
+SP_NOSE_RUN = 10.0                   # the nose is the swing's outer cone swept on this far along +Y (its round end is the hollow's axis)
+SP_NOSE_OVER = 1.0                   # cutters overshoot the faces they open
+SP_NOSE_NOTCH = [(SP_FRONT["c"][0] + SP_NOSE_OVER, 37.6), (-41.6, 37.6), (-42.4, 37.3), (-42.3, 34.9), (-40.5, 34.5), (-40.5, SP_NOSE_Y0 - SP_NOSE_OVER),
+                 (SP_FRONT["c"][0] + SP_NOSE_OVER, SP_NOSE_Y0 - SP_NOSE_OVER)]   # nose plan (X, Y): the notch round the wedgelet block
 SP_NOSE_R, SP_NOSE_Z = 0.5, (FLOOR_Z, 10.0)
-SP_BATTER = dict(x0=SP_FRONT["c"][0] - SP_FRONT["r_in"] - SP_FRONT["w"], slope=SP_LEAN, z=(FLOOR_Z, 16.0), below=-5.0, far=0.0, depth=60.0)   # outer face leans in 40 deg (the swing's outer cone continues it): X = x0 + slope (Z - FLOOR_Z)
 SP_TOE_Y0 = 47.0                     # the ramp toe's land starts here (Y)
 SP_TOE_RUN = 3.1                     # Y run of the ramp skin the toe polygon follows
-SP_CHAMFER = ((-120.0, 0.0, 0.0), (1.0, -1.525, -1.4725))   # front-outer corner chamfer plane (origin, normal)
 SP_HOLLOW = [(26.5, 3.0), (37.0, 3.0), (37.7, 6.6), (39.0, 10.5), (26.5, 10.5)]   # hollow behind the nose wall (Y, Z)
 SP_HOLLOW_X = (-42.0, -38.4)
 # STEP RV23: above Z0 the hollow runs on forward over the SB pocket and ends in a round in plan (vertical axis, X, Y)
-SP_HOLLOW_END = dict(c=(-38.5, 36.6), r=3.6, z0=7.25)
+SP_HOLLOW_END = dict(c=(SP_FRONT["c"][0], SP_FRONT["c"][1] + SP_NOSE_RUN), r=3.6, z0=7.25)
 # M3 ISO 10642 seats (head dk 6.0 + csk_clear) + a driver bore out through the battered face, per screw. STEP RV23 nose
 # (a, b): the 90 deg seat is the dk + 0.7 cone but the driver bore is only r `drive_r` 3.10 (the cone's rim is a 0.25 mm
 # undercut at the seat; the seat's own r0 bore runs just `lip` above it) and the shank is a close fit (r 1.6); the
