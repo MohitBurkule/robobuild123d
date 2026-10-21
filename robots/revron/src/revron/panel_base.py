@@ -33,7 +33,7 @@ def seat(i, local=True):
     """(cutter, FastenerRecord) of countersink i: the M2 CSK of the bolt, head side, 4.4 head in a seat cone parallel to it."""
     x, y = INS[i]
     at, axis = ((*to_local(FRAME, (x, y, BASE_Z0))[:2], BASE_T), (0, 0, -1)) if local else ((x, y, BASE_Z0), (0, 0, 1))
-    return hole_tool(at, axis, "M2x6", head="csk", into="through", side="head", grip=BASE_T, csk_clear=BASE_CSK_CLEAR if variant("base_csk_fit") else BASE_CSK_CLEAR_STEP)   # original RV26 seat unless the base_csk_fit variant
+    return hole_tool(at, axis, "M2x6", head="csk", into="through", side="head", grip=BASE_T, csk_clear=BASE_CSK_CLEAR if variant("base_csk_fit") else BASE_CSK_CLEAR_STEP, fit="normal" if variant("base_csk_fit") else "close")   # original RV26 seat unless the base_csk_fit variant
 
 
 def pad(sx):
