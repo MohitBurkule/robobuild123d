@@ -66,8 +66,9 @@ def _wg_round_step(body, skin, ring, x):
     bars = []
     cs = list(skin.exterior.coords)
     for p, q in zip(cs[:-1], cs[1:]):
-        if min(p[1], q[1]) <= floor + 1e-6 or math.dist(p, q) < WG_STEP_MIN:
-            continue                                   # floor and toe land: the ramp's own chamfer; corner stubs: no bar
+        par = abs((q[0] - p[0]) * RAMP_SLOPE + (q[1] - p[1])) < 1e-2 * math.dist(p, q)   # direction (1, -RAMP_SLOPE): parallel to the ramp
+        if min(p[1], q[1]) <= floor + 1e-6 or not par:
+            continue                                   # Fillet1 runs only on the skin's inner face (parallel to the ramp); floor, toe chamfer, stubs carry none
         for seg in getattr(LineString([p, q]).intersection(ring), "geoms", [LineString([p, q]).intersection(ring)]):
             if seg.length < 1e-3 or seg.geom_type != "LineString":
                 continue
@@ -98,7 +99,16 @@ def _wg_ring(r, tail, x0, x1):
     left = _I(cone, _box(x0, x1, SB[0] - 2 * r, SB[0], SB[1] - 2 * r, SB[1] + 2 * r))
     floor = tail[-1][1]
     wedge = _ext(Polygon([(x1 - c, floor), (x1, floor + c), (x1, floor - 1.0), (x1 - c, floor - 1.0)]), "xz", SB[0], WG_RING_CHAMFER_Y)
-    return _S(_U(left, _ext(Polygon(tail).buffer(0), "yz", x0, x1)), wedge)
+    body = _S(_U(left, _ext(Polygon(tail).buffer(0), "yz", x0, x1)), wedge)
+    # the floor chamfer ends in a vertex blend with Fillet1: along the floor it runs on to y0 + sqrt(A h - B h^2), h = height of the chamfer at that X
+    y0, A, B = WG_RING_CHAMFER_Y, WG_CHAMFER_END["a"], WG_CHAMFER_END["b"]
+    secs = []
+    for h in (0.05, 0.2, 0.4, 0.6, 0.8, 0.95, 1.0):
+        ye = y0 + math.sqrt(A * h - B * h * h)
+        secs.append(b.Wire([b.Edge.make_line(b.Vector(x1 - c + h, *p), b.Vector(x1 - c + h, *q)) for p, q in zip(
+            [(y0 - 0.5, floor - 0.5), (y0 - 0.5, floor + h), (y0, floor + h), (ye, floor), (ye, floor - 0.5)],
+            [(y0 - 0.5, floor + h), (y0, floor + h), (ye, floor), (ye, floor - 0.5), (y0 - 0.5, floor - 0.5)])]))
+    return _S(body, b.Solid.make_loft(secs))
 
 
 def wedgelet(s):
@@ -116,7 +126,10 @@ def wedgelet(s):
     # the nose tab bears on the weapon mount's nose: take the mount's boss outline (its side profile above the
     # notch-to-nose line) out of the tab in 2D and drop any sliver thinner than a TPU wall, so no film is left
     mprof = _mount_profile("l" if s < 0 else "r").intersection(_mount_clip())
-    tab = tab.difference(mprof.buffer(WG_MOUNT_GAP, ARC_MOUNT)).buffer(-WG_TAB_FILM, join_style=2).buffer(WG_TAB_FILM, join_style=2)
+    cut = tab.difference(mprof.buffer(WG_MOUNT_GAP, ARC_MOUNT))
+    # opening by reconstruction: films thinner than a TPU wall go, but the surviving body keeps its own sharp tips and edges
+    # (a plain open rounds every corner of the tab, which moved the tab by ~1 mm when the mount profile changed)
+    tab = cut.intersection(cut.buffer(-WG_TAB_FILM, join_style=2).buffer(WG_TAB_FILM + WG_MERGE_EPS, join_style=2))
     bb = _b()
     xb, xr, xs, xc, xt, xe = WG_X
     # skin cap: arc in (X, W = Z - k Y) drawn on the XZ plane (Y = 0) and swept along (0, 1, k) over the skin
@@ -126,7 +139,10 @@ def wedgelet(s):
     reach = RAMP_REACH + rc
     cutter = bb.Solid.extrude(_face(cap, "xz")[0], bb.Vector(0, reach, k * reach))
     sk = _S(_ext(skin, "yz", xs, xc), cutter)
-    body = _U(_U(_cyl(r1, xb, xr, SB), _ext(P(tail1), "yz", xb, xr)), _wg_ring(r2, tail2, xr, xs), sk, _ext(cheek, "yz", xc, xt), _ext(tab, "yz", xt, xe) if not tab.is_empty else None)
+    # gusset: past the ring step the reference keeps the ring outline above the skin cap arc (the cap cutter's own volume inside the
+    # ring outline) until the arc climbs out of the ring top; same arc, no new number
+    gusset = _I(_ext(P(tail2), "yz", xs, xcap), cutter)
+    body = _U(_U(_cyl(r1, xb, xr, SB), _ext(P(tail1), "yz", xb, xr)), _wg_ring(r2, tail2, xr, xs), sk, gusset, _ext(cheek, "yz", xc, xt), _ext(tab, "yz", xt, xe) if not tab.is_empty else None)
     body = _wg_round_step(body, skin, s2, xs)
     kidney, entry = _wg_kidney_entry(xt)
     bx0, bx1 = WG_BORE_X
