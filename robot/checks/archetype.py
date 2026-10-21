@@ -554,6 +554,10 @@ def facts(ctx) -> dict:
         F["rotor_joint"] = (jgood, jwhy)
         # fasteners that mix rotor and static parts, or sit in the swept volume while gripping a static part
         bad = []
+        # swept slab = the rotor's own axial extent (disc, spider, spacers), not +-half of the weapon body about the origin
+        sw = [b for b in rbodies if b.kind != "shaft"] or [wb]
+        sax = np.concatenate([(b.mesh.vertices - origin) @ axis for b in sw])
+        lo, hi = float(sax.min()), float(sax.max())
         for f in spec.fasteners:
             touched = set(f.through or []) | ({f.threads_into} if f.threads_into else set())
             mot = {wpart.weapon.motor} if wpart.weapon and wpart.weapon.motor else set()
@@ -570,7 +574,7 @@ def facts(ctx) -> dict:
                 q = fb.mesh.vertices - origin
                 ax = q @ axis
                 rad = np.linalg.norm(q - np.outer(ax, axis), axis=1)
-                in_sweep = bool(np.any((np.abs(ax) < half - 0.2) & (rad < R - 0.2)))
+                in_sweep = bool(np.any((ax > lo + 0.2) & (ax < hi - 0.2) & (rad < R - 0.2)))
             if rt and st:
                 bad.append(f"`{f.id}` joins {', '.join(sorted(rt))} to {', '.join(sorted(st))}")
             elif in_sweep and st:

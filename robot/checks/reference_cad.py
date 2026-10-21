@@ -371,6 +371,59 @@ def _dev_valid(d):
     return None
 
 
+def _covers(d, pt, bbox=None, pts=None, vol=None):
+    """True when the single valid waiver `d` covers a blob at pt (whole bbox / points inside it, path volume cap)."""
+    if _dev_valid(d):
+        return False
+    if d.get("path") is not None:
+        path, r = np.asarray(d["path"], float), float(d["r"])
+        if vol is not None and float(vol) > float(d["max_mm3"]):
+            return False
+        Q = np.asarray(pts, float) if pts is not None and len(pts) else (
+            np.array([[bbox[i][k] for k, i in enumerate(ix)] for ix in np.ndindex(2, 2, 2)], float) if bbox is not None else
+            np.atleast_2d(np.asarray(pt, float)))
+        return float(path_dist(Q, path).max()) <= r
+    c, r = np.asarray(d["near"], float), float(d.get("r", 3.0))
+    if np.linalg.norm(np.asarray(pt, float) - c) > r:
+        return False
+    if bbox is not None:
+        lo, hi = np.asarray(bbox[0], float), np.asarray(bbox[1], float)
+        if np.linalg.norm(np.maximum(np.abs(lo - c), np.abs(hi - c))) > r:
+            return False
+    return True
+
+
+def _anchor(d):
+    return np.asarray(d["near"], float) if d.get("near") is not None else np.asarray(d["path"], float).mean(0)
+
+
+def claim(items, e):
+    """practice.waiver_bounds: each waiver explains at most ONE item of each kind (a blob / cluster dict with "centroid"
+    or "at", optional "kind", "bbox", "pts", "volume_mm3"): the covered item nearest its centre (a changed feature is
+    one extra and / or one missing blob). Other items inside the same sphere are still differences. Returns ({item index: reason}, [(index, reason)] of items a waiver's sphere held but did not
+    claim)."""
+    got, held = {}, []
+    devs = [d for d in (e.get("deviations") or []) if not _dev_valid(d)]
+    for d in devs:
+        cand = []
+        for i, b in enumerate(items):
+            if i in got:
+                continue
+            c = b.get("centroid", b.get("at"))
+            if _covers(d, c, b.get("bbox"), b.get("pts"), b.get("volume_mm3")):
+                cand.append((float(np.linalg.norm(np.asarray(c, float) - _anchor(d))), i))
+        taken = set()
+        for _, i in sorted(cand):
+            k = items[i].get("kind")
+            if k in taken:
+                held.append((i, d["reason"]))
+                continue
+            taken.add(k)
+            got[i] = d["reason"]
+    held = [(i, w) for i, w in held if i not in got]
+    return got, held
+
+
 def _covered(pt, e, bbox=None, pts=None, vol=None):
     """A diff at `pt` (3D) explained by one of the entry's valid `deviations` -> its reason, else None. With `bbox`
     (the blob's [lo, hi]) the whole box must fit inside the waiver sphere, not just the centroid. A path waiver covers
@@ -458,17 +511,21 @@ def _frame_checks(ctx, e, cfg, pid, fn, mod, ref):
     open_, expl = [], []
     out += deviation_findings(e, pid)
     waived = 0.0
-    for kind in ("extra", "missing"):
-        for b in bd[kind]:
-            why = _covered(b["centroid"], e, b.get("bbox"), b.get("pts"), b.get("volume_mm3"))
-            waived += float(b["volume_mm3"]) if why else 0.0
-            (expl if why else open_).append(f"{kind} {b['volume_mm3']} mm3 (t {b['thick_mm']}) at {b['centroid']}" + (f" [{why}]" if why else ""))
+    items = [dict(b, kind=kind) for kind in ("extra", "missing") for b in bd[kind]]
+    got, held = claim(items, e)
+    for i, b in enumerate(items):
+        why = got.get(i)
+        waived += float(b["volume_mm3"]) if why else 0.0
+        (expl if why else open_).append(f"{b['kind']} {b['volume_mm3']} mm3 (t {b['thick_mm']}) at {b['centroid']}" + (f" [{why}]" if why else ""))
     dtol = float(e.get("dev_tol_mm", cfg.get("dev_tol_mm", 0.5)))
-    for c in ref_diff.deviation_clusters(dev, dtol, min_pts=int(e.get("dev_min_pts", cfg.get("dev_min_pts", 2)))):
-        why = _covered(c["centroid"], e)
+    cl = ref_diff.deviation_clusters(dev, dtol, min_pts=int(e.get("dev_min_pts", cfg.get("dev_min_pts", 2))))
+    cgot, chold = claim(cl, e)
+    for i, c in enumerate(cl):
+        why = cgot.get(i)
         (expl if why else open_).append(f"{c['kind']} surface {c['max_mm']} mm (> {dtol}, {c['n']} pts) at {c['centroid']}" + (f" [{why}]" if why else ""))
+    held_n = len(held) + len(chold)
     ctx.metrics.setdefault(f"reference_cad.{pid}", {})["diff"] = {k: bd[k] for k in ("method", "extra_mm3", "missing_mm3")} | {
-        "blobs_open": len(open_), "blobs_explained": len(expl), "waived_mm3": round(waived, 2),
+        "blobs_open": len(open_), "blobs_explained": len(expl), "waived_mm3": round(waived, 2), "held_not_claimed": held_n,
         "dev": {k: v for k, v in dev.items() if not k.startswith("_")}}
     dmsg = (f"`{pid}` vs `{fn}` ({bd['method']}): extra {bd['extra_mm3']} mm3, missing {bd['missing_mm3']} mm3; surface deviation "
             f"model->ref max {dev['model_to_ref']['max']} / p95 {dev['model_to_ref']['p95']} mm, ref->model max {dev['ref_to_model']['max']} / "
@@ -476,6 +533,7 @@ def _frame_checks(ctx, e, cfg, pid, fn, mod, ref):
     out.append(ok("reference_cad.diff", G, "Every geometric difference from the reference is fixed or reasoned", dmsg).on(pid) if not open_ else
                fail("reference_cad.diff", G, BLOCKER, "Unexplained geometric differences from the reference", dmsg).on(pid)
                .fix("Each blob is one feature difference: fix it, or list it in the entry's `deviations` with the reason."))
+    out += local_findings(e, cfg, pid, fn, mod, rw, ctx)
     try:
         from .sldprt_dump import exact_for
 
@@ -502,4 +560,48 @@ def _frame_checks(ctx, e, cfg, pid, fn, mod, ref):
                         f"{[x['msg'] for x in soft if x['kind'] != 'corner'][:6]}").on(pid))
     else:
         out.append(ok("reference_cad.sections", G, "Cross-sections match the reference", f"`{pid}`: all sections within tolerance").on(pid))
+    return out
+
+
+LOCAL_TOL_MM = 0.1      # local surface tolerance: a fillet 0.5 off, a pocket 0.15 off, a boss outline 0.18 off
+LOCAL_MIN_MM2 = 2.0     # smallest blob reported (area of surface off by more than LOCAL_TOL_MM)
+
+
+def local_findings(e, cfg, pid, fn, mod, rw, ctx=None):
+    """reference_cad.local and reference_cad.radii (BLOCKER, shape parts with a frame): the dump-free, feature-level
+    comparison. local: every blob of surface > `local_tol_mm` (0.1) off the reference (either way, clustered; a surface
+    standing off shows as one "moved" blob) of >= `local_min_mm2` (2) is one difference, wherever it is (mirrored and
+    patterned copies included: the whole surface is sampled, not a seed). radii: blend radius per edge sample on both
+    meshes (ref_radii), a difference over 0.1 mm (sharp vs R1, R1.5 vs R1, a chamfer the reference lacks) is one
+    finding per edge run. A waiver claims one item per kind (claim: the nearest it covers); the rest of its sphere is
+    still checked. `local: false` on an entry skips both (a part whose reference is a different revision)."""
+    from . import ref_local, ref_radii
+
+    out = []
+    if e.get("local") is False:
+        return out
+    tol = float(e.get("local_tol_mm", cfg.get("local_tol_mm", LOCAL_TOL_MM)))
+    amin = float(e.get("local_min_mm2", cfg.get("local_min_mm2", LOCAL_MIN_MM2)))
+    try:
+        bl = ref_local.local_blobs(mod, rw, tol, amin)
+        rd = ref_radii.radius_diffs(ref_radii.radius_pairs(mod, rw))
+    except Exception as ex:  # noqa: BLE001 - fail closed
+        return [fail("reference_cad.local", G, BLOCKER, "Local comparison crashed", f"`{pid}` vs `{fn}`: {ex}").on(pid)]
+    for name, items, fmt, title, fix in (
+            ("local", bl, lambda b: f"{b['kind']} {b['area_mm2']} mm2 up to {b['max_mm']} mm at {b['centroid']}",
+             "Surface differs locally from the reference", "Each blob is one feature drawn differently: match its section (or waive that feature)."),
+            ("radii", [dict(c, kind="radius") for c in rd],
+             lambda c: f"R{c['r_ours']} vs reference R{c['r_ref']} ({c['turn']} deg corner, {c['n']} samples) at {c['at']}",
+             "Blend radius differs from the reference", "Measure the reference's blend at that edge and use it (0 = sharp).")):
+        got, held = claim(items, e)
+        opn = [items[i] for i in range(len(items)) if i not in got]
+        heldi = {i for i, _ in held}
+        msg = (f"`{pid}` vs `{fn}` (tol {tol} mm, >= {amin} mm2): {len(opn)} open, {len(got)} waived"
+               + (f" ({len(heldi)} of the open ones lie inside a waiver that already claimed its own feature)" if heldi else "")
+               + (": " + "; ".join(fmt(x) for x in opn[:12]) + (" ..." if len(opn) > 12 else "") if opn else "."))
+        if ctx is not None:
+            ctx.metrics.setdefault(f"reference_cad.{pid}", {})[name] = {"open": len(opn), "waived": len(got), "held": len(heldi),
+                                                                       "items": [{k: v for k, v in x.items() if k != "pts"} for x in opn[:40]]}
+        out.append(fail(f"reference_cad.{name}", G, BLOCKER, title, msg).on(pid).fix(fix) if opn else
+                   ok(f"reference_cad.{name}", G, title.replace("differs", "matches"), msg).on(pid))
     return out

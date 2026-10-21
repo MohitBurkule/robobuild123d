@@ -67,3 +67,18 @@ def test_small_part_with_two_leg_exit_assembles():
     fs, c = _run([shell, nut])
     assert not [f for f in fs if f.id == "assembly.blocked"], [f.message for f in fs]
     assert {s.id for s in c.assembly} == {"nut"}
+
+
+def test_assembly_ok_waiver_claims_one_trapped_part():
+    shell = {"id": "shell", "kind": "structure", "material": "pla",
+             "shape": {"type": "subtract", "base": {"type": "box", "size": [30, 30, 30]}, "cut": [{"type": "box", "size": [20, 20, 20]}]}}
+    why = {"reason": "RVRN RV12 N10 goes in tilted shaft-first through the closed keyhole"}
+    a = box("mot", (-5, 0, 0), (8, 16, 16), kind="motor", assembly_ok=why)
+    b = box("bat", (5, 0, 0), (8, 16, 16), kind="battery")
+    fs, c = _run([shell, a, b])
+    assert [f.parts for f in fs if f.id == "assembly.waived"] == [["mot"]]
+    assert [f.parts for f in fs if f.id == "assembly.blocked"] == [["bat"]]   # claims one part only
+    a["assembly_ok"] = {"reason": "trust me, it goes in somehow"}            # uncited: no waiver
+    fs, _ = _run([shell, a])
+    f = [x for x in fs if x.id == "assembly.blocked"]
+    assert f and "Invalid assembly_ok" in f[0].message and not [x for x in fs if x.id == "assembly.waived"]

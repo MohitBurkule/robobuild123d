@@ -8,7 +8,7 @@ import math
 import numpy as np
 
 from .. import measure
-from ..finding import BLOCKER, AssemblyStep, fail, ok
+from ..finding import BLOCKER, WARNING, AssemblyStep, fail, ok
 from .interference import _corners, allowed_depth
 
 G = "assembly"
@@ -270,7 +270,31 @@ def _sweep(ctx, present, root, teardown, steps):
                     steps.append(AssemblyStep(len(steps) + 1, w.bodies[i].id, [float(x) for x in le[0]], float(le[1])))
                     progress = True
             if not progress:
+                # an `assembly_ok` waiver: the original part goes in by a move a straight slide cannot show (an N10
+                # tilted shaft-first into a closed keyhole). Claims that ONE part, only once nothing else can leave.
+                for i in [i for i in range(n) if present[i] and i != root]:
+                    if assembly_waiver(ctx, w.bodies[i].id) is True:
+                        present[i] = False
+                        steps.append(AssemblyStep(len(steps) + 1, w.bodies[i].id, [0.0, 0.0, 0.0], 0.0))
+                        ctx.asm_waived = getattr(ctx, "asm_waived", []) + [w.bodies[i].id]
+                        progress = True
+                        break
+            if not progress:
                 break
+
+
+def assembly_waiver(ctx, pid):
+    """Part `assembly_ok: {reason}`: None when absent, True when valid (reason >= 20 chars citing the reference), else
+    the reason it is invalid."""
+    from .waiver import valid
+
+    rp = next((x for x in ctx.r.parts if x.part.id == pid), None)
+    wv = ((getattr(rp.part, "_extra", None) or {}) if rp else {}).get("assembly_ok")
+    if wv is None:
+        return None
+    if not isinstance(wv, dict) or not valid(wv.get("reason")):
+        return "`assembly_ok` must be {reason} with >= 20 chars citing RVRN / RVnn / FSn"
+    return True
 
 
 def apply_service_pose(ctx):
@@ -310,6 +334,7 @@ def _run(ctx):
     rootp = next((p for p in r.spec.parts if p.kind == "structure"), None)
     root = w.index(rootp.id) if rootp else None
     steps, out = [], []
+    ctx.asm_waived = []
     # O-rings / elastic belts that can be stretched over their flanges (disasm.elastic_stretch) come off first by
     # stretching, not by a straight slide.
     from . import disasm
@@ -355,12 +380,20 @@ def _run(ctx):
                    f"{t:.1f} mm before it hits `{w.bodies[j].id}`.")
         else:
             msg = f"`{b.id}` has no way out."
+        bad = assembly_waiver(ctx, b.id)
+        if isinstance(bad, str):
+            msg += f" Invalid assembly_ok: {bad}."
         out.append(fail("assembly.blocked", G, BLOCKER, "Part cannot be assembled", msg).on(b.id)
                    .here(worst[3] if worst else b.aabb.mean(axis=0))
                    .fix("Open the pocket on the side it enters from (a U-slot instead of a hole for a shaft, a bore open to the mating face for an insert, an open wall for a wheel), or split the housing so the part can drop in."))
+    for pid in ctx.asm_waived:
+        wv = next(x for x in r.parts if x.part.id == pid).part._extra["assembly_ok"]
+        out.append(fail("assembly.waived", G, WARNING, "Assembly move waived",
+                        f"`{pid}` has no straight or two-leg path out; it is taken off last, by hand, waived: {wv['reason']}").on(pid))
     if not stuck and not stuck_bench:
         text = ", ".join(s.id for s in reversed(steps))
         out.append(ok("assembly.order", G, "Everything can be assembled",
-                      f"Every part slides in along a clear straight path. Assembly order: {text}."))
+                      f"Every part slides in along a clear straight path"
+                      f"{' (except the waived ' + ', '.join(ctx.asm_waived) + ')' if ctx.asm_waived else ''}. Assembly order: {text}."))
     ctx.assembly = steps
     return out
