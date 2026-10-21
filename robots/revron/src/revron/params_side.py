@@ -19,7 +19,7 @@ SP_MID_Z_FRONT = 13.0               # mid wall height at its front end (Loft2 sk
 SP_BEND_R = (8.0, 4.0)              # rear wall bends out round two 90 deg arcs (RV23 Revolve6, Revolve7), chassis-side radii
 SP_FRONT = dict(c=(-38.5, 26.55), r_in=10.55, w=3.0, z_top=12.0, over=5.0)   # front swing (Revolve5): axis (X, Y), chassis-side radius at the floor, radial thickness, top, lead-in deg
 BEZIER_DEG = 3                      # a cubic Bezier's handle is a third of the Hermite tangent
-SP_BEND_TENSION = 0.9               # S-bend corner-curve tangent length / chord
+SP_BEND_TENSION = 0.8               # S-bend corner-curve tangent length / chord
 SP_REAR_Y_END = -46.0               # the straight rear wall runs on past the rear round (the profile trims it)
 
 
@@ -27,7 +27,8 @@ SP_REAR_Y_END = -46.0               # the straight rear wall runs on past the re
 RAMP_REACH, RAMP_SLOPE = 50.1, 1.187   # ramp face Z = FLOOR_Z + RAMP_SLOPE (RAMP_REACH - Y), shared by wedgelet and nose
 SLAB_X = (-60.0, -20.0)              # X slab the (Y, Z) side profile is extruded through before it is cut to the panel
 SP_TOP = [(-32.9, 1.0), (-32.9, 16.0), (-6.7, 16.0), (14.6, 12.0), (19.3, 11.0), (24.0, 10.0), (42.0, 10.0), (RAMP_REACH, 1.0)]   # top line, (Y, Z)
-SP_TOP_R = 1.5
+SP_TOP_R, SP_TOP_R_MIN_DEG = 1.5, 5.0   # top-line corner round; corners that turn less than this stay sharp
+GEO_EPS = 1e-4                      # coordinate match tolerance when picking edges by position
 SP_REAR_ROUND = ((-32.2, 9.7), 8.2)  # rear end: a full round over the wheel
 SP_FOOT = [(-31.6, -12.0), (-42.0, -11.9), (-40.6, -2.1), (-40.8, 3.3), (-42.9, 13.3), (-31.6, 13.3)]   # 1 mm wide foot under the chassis lobe (X, Y)
 SP_FOOT_Z = (FLOOR_Z, FLOOR_Z + 1.0)

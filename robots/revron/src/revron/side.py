@@ -24,6 +24,23 @@ def _sp_tyre_relief(b):
     return tool.fillet(t["r_floor"], floor.edges())
 
 
+def _side_profile(b):
+    """Side outline (Y, Z) extruded through the slab: the top line with its convex corners rounded SP_TOP_R (true cylinders), and the rear
+    end a full round over the wheel (a cylinder about the wheel axis line)."""
+    pts = SP_TOP
+    sgn = 1 if sum(p[0] * q[1] - q[0] * p[1] for p, q in zip(pts, pts[1:] + pts[:1])) > 0 else -1   # +1 counter-clockwise
+    def convex(i):   # a corner that turns by at least SP_TOP_R_MIN_DEG the convex way
+        p, q, r = pts[i - 1], pts[i], pts[(i + 1) % len(pts)]
+        a = math.atan2(r[1] - q[1], r[0] - q[0]) - math.atan2(q[1] - p[1], q[0] - p[0])
+        return sgn * math.degrees(math.remainder(a, math.tau)) >= SP_TOP_R_MIN_DEG
+    prism = _ext(Polygon(pts), "yz", *SLAB_X)
+    corner = [pts[i] for i in range(len(pts)) if convex(i)]
+    edges = [e for e in prism.edges() if abs(e.start_point().Y - e.end_point().Y) < GEO_EPS and abs(e.start_point().Z - e.end_point().Z) < GEO_EPS
+             and any(math.dist((e.start_point().Y, e.start_point().Z), c) < GEO_EPS for c in corner)]
+    (cy, cz), cr = SP_REAR_ROUND
+    return _U(_one(prism.fillet(SP_TOP_R, edges)), _cyl(cr, *SLAB_X, (cy, cz)))
+
+
 def _side_seat(key, at, sgn=-1):
     """robot.cad.holes (cutter, FastenerRecord) of one side-panel M3 CSK (bolt_s*): the STEP seats the head SIDE_FACE_X -
     SIDE_BOLT_X below the battered outer face, in a driver bore from the face; clearance runs on through the panel (and
@@ -51,10 +68,7 @@ def _side_body(pin=True):
     from shapely.geometry import LineString, Point, Polygon
     b = _b()
     wall = sp_wall(b)   # analytic wall (side_wall.py): cones / planes / one S-bend skin; the profile below trims its top and rear end
-    side = _round(Polygon(SP_TOP), r_out=SP_TOP_R)
-    (cy, cz), cr = SP_REAR_ROUND   # rear end a full round over the wheel
-    side = side.union(Point(cy, cz).buffer(cr, ARC_N))
-    profile = _ext(side, "yz", *SLAB_X)
+    profile = _side_profile(b)
     foot = _ext(_poly(SP_FOOT), "xy", *SP_FOOT_Z)
     wall = _I(wall, profile)
     nose_blk = _S(nose_body(b), _ext(_round(Polygon(SP_NOSE_NOTCH), r_in=SP_NOSE_R), "xy", *SP_NOSE_Z))   # inner notch round the wedgelet block
