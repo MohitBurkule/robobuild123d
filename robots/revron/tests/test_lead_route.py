@@ -44,3 +44,14 @@ def test_groove_is_cut_in_the_mount():
         n = (0.0, -(z1 - z0), y1 - y0)
         k = (P.LEAD_MOUTH / 2 + 0.3) / math.hypot(*n)
         assert m.is_inside((P.MNT_IN + P.LEAD_LIP / 2, p[1] + k * n[1], p[2] + k * n[2])), p   # lip beside the mouth
+
+
+def test_mount_r_tessellates_as_one_closed_shell():
+    """integrity.solids: the groove's ball-end poles sit inside the cut, so no stray zero-area triangle shells."""
+    import tempfile, trimesh
+    from build123d import export_stl
+    from robot.checks.integrity import shells
+    from revron import assembly
+    f = tempfile.mktemp(suffix=".stl")
+    export_stl(assembly.PARTS["mount_r"](), f)
+    assert shells(trimesh.load(f)) == (1, 0)
