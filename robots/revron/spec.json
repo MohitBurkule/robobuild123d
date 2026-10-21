@@ -1597,9 +1597,19 @@
     "type": "model",
     "file": "src/build_revron.py",
     "params": {
-     "part": "chassis"
+     "part": "chassis_local"
     }
    },
+   "at": [
+    0.0,
+    0.0,
+    11.0
+   ],
+   "rot": [
+    180.0,
+    0.0,
+    180.0
+   ],
    "material": "pla_st",
    "process": "fdm",
    "thin_wall_deviation": "matches original RVRN 2.0: the switch-slot rim is 0.5 mm wide on RV01_Chassis_1 too (RV01 section y=-10: slot edge x=27.0, outer face x=27.5) and 0.65 mm between the slot front and the deck pocket (section x=25: y -12.25 to -11.6)",
@@ -2348,14 +2358,14 @@
    },
    "parent": "tub",
    "at": [
-    -30.0,
+    30.0,
     -30.5,
-    11.0
+    0.0
    ],
    "rot": [
+    -180.0,
     0.0,
-    0.0,
-    180.0
+    0.0
    ],
    "thin_wall_deviation": "matches original RVRN 2.0: RV21 draws the 0.5 mm O-ring flange, the 0.5 mm raised lip at the free end and the 0.2 mm end recess; kept for parity (user order)",
    "joint": {
@@ -2366,9 +2376,9 @@
      0.0
     ],
     "pivot": [
-     -41.6,
+     41.6,
      -30.5,
-     11.0
+     0.0
     ],
     "min": 0,
     "max": 360,
@@ -2754,14 +2764,14 @@
    },
    "parent": "tub",
    "at": [
-    30.0,
+    -30.0,
     -30.5,
-    11.0
+    0.0
    ],
    "rot": [
+    180.0,
     0.0,
-    0.0,
-    0.0
+    180.0
    ],
    "thin_wall_deviation": "matches original RVRN 2.0: RV21 draws the 0.5 mm O-ring flange, the 0.5 mm raised lip at the free end and the 0.2 mm end recess; kept for parity (user order)",
    "joint": {
@@ -2772,9 +2782,9 @@
      0.0
     ],
     "pivot": [
-     41.6,
+     -41.6,
      -30.5,
-     11.0
+     0.0
     ],
     "min": 0,
     "max": 360,

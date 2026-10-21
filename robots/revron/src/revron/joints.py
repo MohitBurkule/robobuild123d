@@ -9,6 +9,7 @@ import build123d as b
 from .params import *  # noqa: F401,F403
 from .variants import variant
 
+TUB_FRAME = b.Location((0, 0, (CH_Z0 + CH_Z1) / 2), (0, 180, 0))   # RV01 part frame -> robot world: turned half a turn about Y (x, z flipped) about the mid-height
 DIGITS = 6   # spec precision: micron / micro-degree, JSON free of float noise
 
 
@@ -16,16 +17,18 @@ class Rig:
     def __init__(self):
         self.parts = {}
         self._mates = []
+        self.frames = {"tub": TUB_FRAME}   # parts drawn in their own SolidWorks part frame: frame -> robot world; joints are declared in robot coordinates
 
     def _host(self, name):
         if name not in self.parts:
             h = b.Compound(children=[b.Box(1, 1, 1)])
             h.label = name
+            h.location = self.frames.get(name, b.Location())
             self.parts[name] = h
         return self.parts[name]
 
     def joint(self, part, label, at, rot=(0, 0, 0)):
-        """Frame `label` on `part`, at `at` with orientation `rot` (degrees about X, Y, Z), in the part's own frame."""
+        """Frame `label` on `part`, at `at` with orientation `rot` (degrees about X, Y, Z), given in robot coordinates (build123d re-expresses it in the host's frame: the host of a part with a reference frame is created at that frame)."""
         b.RigidJoint(label, self._host(part), b.Location(tuple(at), tuple(rot)))
 
     def joint_in(self, part, label, frame, world):

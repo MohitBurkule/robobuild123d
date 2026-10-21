@@ -125,6 +125,6 @@ def revolutes(r):
     """Spec `joint` dicts of the spinning parts, read off their spin axes."""
     out = {"spider": r.revolute("weapon_motor_stator", "rotor_axis", frame="mount_r")}   # spec pivot: in the spider's parent (RV03) frame
     for _, n in SIDES:
-        out[f"whub_r{n}"] = r.revolute(f"motor_{n}", "output_shaft")
+        out[f"whub_r{n}"] = r.revolute(f"motor_{n}", "output_shaft", frame="tub")
         out[f"whub_f{n}"] = r.revolute(f"so_a{n}", "axle")
     return out

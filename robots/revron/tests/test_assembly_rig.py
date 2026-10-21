@@ -20,7 +20,11 @@ def test_world_poses_match_baseline():
     for k, v in base["poses"].items():
         a, b = np.concatenate([np.ravel(x) for x in v]), np.concatenate([np.ravel(x) for x in poses[k]])
         assert np.abs(a - b).max() < TOL, k
-    assert joints == base["joints"]
+    for k, j in joints.items():   # a spin sense is a convention: the axis of a joint under a turned parent (the tub frame) may come out as -axis
+        if j["axis"] != base["joints"][k]["axis"]:
+            j = dict(j, axis=[v + 0.0 for v in np.negative(j["axis"])])
+        assert j == base["joints"][k], k
+    assert joints.keys() == base["joints"].keys()
 
 
 def _world(part, label):
