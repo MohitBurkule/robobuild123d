@@ -1,10 +1,12 @@
 """[fix-S] Chassis tub and its panels: chassis, base_panel, top_panel, esc_tray, inserts / panel seats."""
+import os
 from .params import *  # noqa: F401,F403
 from .common import *  # noqa: F401,F403
 from . import tub_shell, tub_lobes, tub_lugs, tub_front
 from .tub_util import rect
 from robot.cad.holes import hole_tool   # the repo root is on the import path (params.py)
 
+USE_TUB2 = os.environ.get("REVRON_TUB2") == "1"   # one flag: build the chassis from the tub2 feature-tree modules
 SW_PAD_ENGAGE = 3.0   # pad material above the switch screw head seat (M2x3 thread-forming into the 1.7 pilot)
 SW_PAD = dict(x=(22.5, 27.5), y=(-15.6, 4.4), r=1.5, z0=16.5, fillet=1.5, over=0.5, up=0.1)   # switch pad under the deck (STEP): X / Y span (the +X end is the wall), free corner R, bottom Z, wall fillet R, reach into the wall, reach up into the deck
 
@@ -112,6 +114,9 @@ def chassis():
     """RV01 printed chassis: a closed-top box printed deck-down, open underneath for the base panel. Composed from the
     per-feature modules: shell (box, columns, deck pockets, base seat), lobes (side lobes with the captive M3 nut),
     lugs (front tabs and standoff lugs), front (corner flanges, rear lattice, wire hole, wall pockets)."""
+    if USE_TUB2:
+        from .tub2 import chassis2
+        return chassis2()
     c = CH
     adds = tub_shell.additions(c) + tub_lobes.additions(c) + tub_lugs.additions(c) + tub_front.additions(c) + [switch_pad(c)]
     cuts = tub_shell.cuts(c) + tub_lobes.cuts(c) + tub_lugs.cuts(c) + tub_front.cuts(c)
