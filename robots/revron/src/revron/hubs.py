@@ -4,7 +4,8 @@ Hubs and tyres are drawn in their own frame (spin axis = +X, inner face at x = 0
 per kind serves both sides, the left one is the right one turned half a turn about Z (the hubs are axisymmetric apart from the
 D-bore, whose flat stays on top)."""
 import math
-from .params_drive import (RH_GAP, REAR_HUB_PROFILE, RH_D, RH_SEAT_R, RH_BORE_X, RH_NUT_X, RH_NUT_HALF, RH_NUT_Z, RH_GRUB_X, RH_ORIGIN_X, RH_ROOT_X,
+from .params_drive import (RH_GAP, RH_D, RH_SEAT_R, RH_FLANGE_R, RH_FLANGE_T, RH_BLOCK, RH_GROOVE_DEPTH, RH_GROOVE_FLOOR, RH_GROOVE_FILLET,
+                           RH_CROWN_H, RH_CROWN_W, RH_ROOT_R, RH_LIP_R, RH_LIP_ANG, RH_LEN, RH_WALL_R, RH_WALL_T, RH_BORE_X, RH_NUT_X, RH_NUT_HALF, RH_NUT_Z, RH_GRUB_X, RH_ORIGIN_X, RH_ROOT_X,
                            FH_BORE_R, FH_FLANGE_R, FH_SEAT_R, FH_FLANGE_T, FH_GROOVE_W, FH_SEAT_W, FH_FILLET, FH_GUSSET, FH_LEN, FH_ORIGIN_X,
                            TY_REAR, TY_FRONT, TY_ARC_STEP, SO_R, SO_CHAMFER, SO_TAP_R, SO_PITCH, SO_THREAD_H)
 from .params_chassis import SA, RY, RZ, CH_HALF_W, SA_X
@@ -35,9 +36,42 @@ def _nut_slot():
     return _box(RH_BORE_X - RH_ORIGIN_X, RH_NUT_X - RH_ORIGIN_X, -RH_NUT_HALF, RH_NUT_HALF, z0, z1)
 
 
+def _round_corner(a, b, c, r):
+    """Points rounding the vertex b of the polyline a-b-c with a fillet of radius r (tangent points and the arc between)."""
+    u1, u2 = (a[0] - b[0], a[1] - b[1]), (c[0] - b[0], c[1] - b[1])
+    u1 = (u1[0] / math.hypot(*u1), u1[1] / math.hypot(*u1))
+    u2 = (u2[0] / math.hypot(*u2), u2[1] / math.hypot(*u2))
+    half = math.acos(max(-1.0, min(1.0, u1[0] * u2[0] + u1[1] * u2[1]))) / 2
+    d, m = r / math.tan(half), (u1[0] + u2[0], u1[1] + u2[1])
+    m = (m[0] / math.hypot(*m), m[1] / math.hypot(*m))
+    cen = (b[0] + m[0] * r / math.sin(half), b[1] + m[1] * r / math.sin(half))
+    a1 = math.degrees(math.atan2(b[1] + u1[1] * d - cen[1], b[0] + u1[0] * d - cen[0]))
+    a2 = math.degrees(math.atan2(b[1] + u2[1] * d - cen[1], b[0] + u2[0] * d - cen[0]))
+    if a2 - a1 > 180:
+        a2 -= 360
+    elif a1 - a2 > 180:
+        a2 += 360
+    return _arc(cen, r, a1, a2)
+
+
+def _rear_profile():
+    """RV21 section (x, r) from the inner face: flange | O-ring groove (r0.2 floor corners) | flange | R1 root | seat with the
+    crown (45 deg flanks, centred on the tyre) | lip slope | end face with the shallow recess."""
+    f, t, g, s = RH_FLANGE_R, RH_FLANGE_T, RH_GROOVE_DEPTH, RH_SEAT_R
+    x0 = t + (RH_BLOCK - 2 * t - RH_GROOVE_FLOOR) / 2           # groove floor span (the walls slope down to it)
+    x1 = x0 + RH_GROOVE_FLOOR
+    c, ch, w2 = RH_BLOCK + TY_REAR["w"] / 2, RH_CROWN_H, RH_CROWN_W / 2
+    lip = (RH_LIP_R - s) / math.tan(math.radians(RH_LIP_ANG))
+    return [(0, 0), (0, f), (t, f), *_round_corner((t, f), (x0, f - g), (x1, f - g), RH_GROOVE_FILLET),
+            *_round_corner((x0, f - g), (x1, f - g), (RH_BLOCK - t, f), RH_GROOVE_FILLET), (RH_BLOCK - t, f), (RH_BLOCK, f),
+            (RH_BLOCK, s + RH_ROOT_R), *_arc((RH_BLOCK + RH_ROOT_R, s + RH_ROOT_R), RH_ROOT_R, 180, 270)[1:],
+            (c - w2 - ch, s), (c - w2, s + ch), (c + w2, s + ch), (c + w2 + ch, s), (RH_LEN - lip, s), (RH_LEN, RH_LIP_R),
+            (RH_LEN, RH_WALL_R), (RH_LEN - RH_WALL_T, RH_WALL_R), (RH_LEN - RH_WALL_T, 0)]
+
+
 def rear_hub():
     """RV21 rear hub in its own frame: axis +X through the origin, inner face x = 0."""
-    body = _revolve_x(REAR_HUB_PROFILE, 0.0, (0.0, 0.0))
+    body = _spin(_rear_profile())
     return _S(body, _ext(_d_outline(), "yz", RH_BORE_X - RH_ORIGIN_X, RH_NUT_X - RH_ORIGIN_X), _nut_slot(), _grub())
 
 
@@ -50,7 +84,7 @@ def _spin(pts):
     """Solid of revolution about +X of a closed (x, r) outline; arcs are true arcs."""
     from shapely.geometry import Polygon
     b = _b()
-    return b.Solid.revolve(_face(Polygon(pts), "xy", arcs=True)[0], 360, b.Axis((0, 0, 0), (1, 0, 0)))
+    return b.Solid.revolve(_face(Polygon(pts), "xz", arcs=True)[0], 360, b.Axis((0, 0, 0), (1, 0, 0)))
 
 
 def front_hub():
@@ -74,7 +108,7 @@ def rear_tyre():
     g0, g1 = (w - t["groove_w"]) / 2, (w + t["groove_w"]) / 2
     sec = body.difference(Polygon([(g0, rb - 1), (g1, rb - 1), (g1, t["groove_r"]), (g0, t["groove_r"])]))
     b = _b()
-    return b.Solid.revolve(_face(sec, "xy", arcs=True)[0], 360, b.Axis((0, 0, 0), (1, 0, 0)))
+    return b.Solid.revolve(_face(sec, "xz", arcs=True)[0], 360, b.Axis((0, 0, 0), (1, 0, 0)))
 
 
 def front_tyre():

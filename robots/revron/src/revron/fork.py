@@ -18,8 +18,9 @@ def _tangent_top(t, r):
     return max(pts, key=lambda p: p[1])
 
 
-def fork_outline():
-    """fork_5 laser outline in the sketch frame (u back along the blade, v up), standoff axis at the origin."""
+def fork_outline(window=True):
+    """fork_5 laser outline in the sketch frame (u back along the blade, v up), standoff axis at the origin; window=False leaves the
+    lightening window filled (the wedgelet's slit has no island in it)."""
     from shapely.geometry import Point, Polygon
     r_eye = FK_EYE_D / 2
     a = math.radians(90 - FK_PIN_ANG)
@@ -58,12 +59,12 @@ def fork_outline():
     e_up = (foot[0] - ut[0] * hu, foot[1] - ut[1] * hu)
     win = Polygon([v0, w0, e_low, (0, 0), e_up]).difference(q(r_eye))
     win = _round(win, r_out=FK_FILLET)                                     # Fillet1: r0.2 on the window's corners
-    return body.difference(q(r_hole)).difference(q(r_pin, pin)).difference(win)
+    return body.difference(q(r_hole)).difference(q(r_pin, pin)).difference(win if window else Polygon())
 
 
-def fork_local():
+def fork_local(window=True):
     """The fork_5 solid in its own frame (sketch plane at w = 0, sheet FK_T towards +w), joint `seat` at the standoff axis."""
-    s = _ext(fork_outline(), "xy", 0.0, FK_T, arcs=True)
+    s = _ext(fork_outline(window), "xy", 0.0, FK_T, arcs=True)
     b = _b()
     b.RigidJoint("seat", s, b.Location((0, 0, 0)))
     return s
@@ -77,15 +78,15 @@ def seat_plane(s):
     return b.Plane(origin=(FK_X0[s], *SB), x_dir=(0, -math.cos(t), -math.sin(t)), z_dir=(-1, 0, 0))
 
 
-def fork_world(s):
+def fork_world(s, window=True):
     """The fork where the assembly puts it (for the wedgelet's seat); the spec places the local part by the rig mate."""
-    return fork_local().moved(_b().Location(seat_plane(s)))
+    return fork_local(window).moved(_b().Location(seat_plane(s)))
 
 
 def _fork_slot(s):
-    """Seat for the fork tine in the wedgelet nose: exactly the 1.5 mm tine (window and tilt included), so the cut volume
-    is the volume the fork fills and nothing else is taken from the TPU."""
-    return fork_world(s)
+    """Seat for the fork tine in the wedgelet nose: the 1.5 mm tine's outline at its tilt, the lightening window filled (a slit
+    with an island in it cannot be printed; the window is 16 mm3 of the tine's 152), the pin and standoff holes left."""
+    return fork_world(s, window=False)
 
 
 def rig_fork(r, s, n):

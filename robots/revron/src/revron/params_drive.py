@@ -4,20 +4,12 @@ from .params_spec import *  # noqa: F401,F403
 
 
 
-# --- hubs: rear RV21 (16 x 12) and front RV19 micro (9 x 9) revolve profiles, (x, radius) from the hub's inner face
-HUB_FLANGE_T, HUB_GROOVE_C, HUB_GROOVE_W, HUB_GROOVE_CH = 0.7, 1.25, 1.1, 0.25          # flange thickness, O-ring groove centre / width, groove wall chamfer
-RH_FLANGE_R, RH_GROOVE_R, RH_SEAT_R, RH_CROWN_H, RH_LIP_R, RH_LEN, RH_WALL_R, RH_WALL_T = 8.0, 7.45, 6.0, 1.0, 6.5, 12.0, 2.88, 0.2
-RH_ROOT_R, RH_ROOT_STEP = 1.0, 5                                                       # RV21 Fillet2: R1 concave root between the flange wall and the seat; arc step (deg, under the 6 deg facet seam)
-RH_ROOT_X = HUB_GROOVE_C + HUB_GROOVE_W / 2 + HUB_FLANGE_T                              # flange wall plane (= end of the flange land)
-RH_SEAT_RAMP = tuple((RH_ROOT_X + RH_ROOT_R * (1 - math.cos(math.radians(a))), RH_SEAT_R + RH_ROOT_R * (1 - math.sin(math.radians(a))))
-                     for a in range(0, 90 + RH_ROOT_STEP, RH_ROOT_STEP))                    # flange wall -> seat as a true R1 arc (wall tangent at the top, seat tangent at the foot)
-RH_SEAT_X, RH_CROWN_X, RH_SEAT_END, RH_LIP_X = (3.35, 5.25), (6.25, 8.25), 11.1, 11.3   # seat span, crown span, seat end, lip start
-_g0, _g1 = HUB_GROOVE_C - HUB_GROOVE_W / 2, HUB_GROOVE_C + HUB_GROOVE_W / 2
-REAR_HUB_PROFILE = ((0.0, 0.0), (0.0, RH_FLANGE_R), (_g0, RH_FLANGE_R), (_g0 + HUB_GROOVE_CH, RH_GROOVE_R), (_g1 - HUB_GROOVE_CH, RH_GROOVE_R),
-                    (_g1, RH_FLANGE_R), (_g1 + HUB_FLANGE_T, RH_FLANGE_R), *RH_SEAT_RAMP, (RH_SEAT_X[1], RH_SEAT_R),
-                    (RH_CROWN_X[0], RH_SEAT_R + RH_CROWN_H), (RH_CROWN_X[1], RH_SEAT_R + RH_CROWN_H), (RH_CROWN_X[1] + RH_CROWN_H, RH_SEAT_R),
-                    (RH_SEAT_END, RH_SEAT_R), (RH_LIP_X, RH_LIP_R), (RH_LEN, RH_LIP_R), (RH_LEN, RH_WALL_R), (RH_LEN - RH_WALL_T, RH_WALL_R),
-                    (RH_LEN - RH_WALL_T, 0.0))
+# --- hubs: rear RV21 (Revolve1 + Chamfer1 + Fillet1/2 + D-bore, slot, grub), drawn from the hub's inner face (the sketch runs the other way)
+RH_FLANGE_R, RH_FLANGE_T, RH_BLOCK = 8.0, 0.5, 2.5                                      # O-ring flange block: radius, outer flange width, whole block width (= tyre seat start)
+RH_GROOVE_DEPTH, RH_GROOVE_FLOOR, RH_GROOVE_FILLET = 0.5, 0.8, 0.2                      # O-ring groove: depth, flat floor width, Fillet1 at the floor corners
+RH_SEAT_R, RH_CROWN_H, RH_CROWN_W, RH_ROOT_R = 6.0, 1.0, 2.0, 1.0                       # tyre seat, crown height / flat width (Chamfer1 gussets are its flanks), Fillet2 root R1
+RH_LIP_R, RH_LIP_ANG, RH_LEN, RH_WALL_R, RH_WALL_T = 6.5, 35.0, 12.0, 2.88, 0.2         # lip radius and its slope to the seat (deg), length, end recess radius / depth
+RH_ROOT_X = RH_BLOCK                                                                    # flange wall plane (= start of the tyre seat)
 RH_D = dict(r=1.6, flat=0.9, arc_n=60, flat_n=27, crown=0.02)                           # D-bore: radius, flat height above the axis, facet counts, flat crown
 RH_BORE_X, RH_NUT_X, RH_NUT_HALF, RH_NUT_Z, RH_GRUB_X, RH_GRUB_ENGAGE = 29.0, 41.0, 2.05, (2.4, 4.4), 34.3, 0.9   # |X| of bore start / slot end, slot half-width, slot z above axis, grub, grub tip past the flat
 RH_GAP = 0.5                                                                            # Distance2: hub inner face off the chassis wall
