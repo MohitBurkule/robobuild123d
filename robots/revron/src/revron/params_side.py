@@ -12,12 +12,14 @@ WEDGE_TOE_H = 0.85                   # ramp Z = 1 + 1.187 (50.1 - Y) lifted so i
 SP_LEAN_DEG = 40.0                  # STEP RV23: the front swing and nose leave the floor 40 deg off vertical (cone half angle)
 SP_LEAN = math.tan(math.radians(SP_LEAN_DEG))   # radial run per mm of height of those cones (== the battered nose plane's slope)
 SP_X_IN = -31.5                     # chassis-side (inner) face of the straight wall: the lobe pocket gap outside the chassis wall
-SP_W_FLOOR, SP_W_TOP = 5.2154, 2.0  # wall thickness battered from the floor (Z FLOOR_Z) to the top (Z SP_Z_TOP): outer face 12.1 deg off vertical
-SP_Z_TOP = 16.0                     # full wall height (the rear / mid wall; the profile top line trims it)
+SP_W_TOP = 2.0                      # THE wall thickness master: the wall at its full height (Z SP_Z_TOP); the flutes keep this much below the top line
+SP_BATTER_DEG = 12.1                # the outer face leans this far off vertical (every battered plane / cone of the wall)
+SP_Z_TOP = 16.0                     # full wall height (the rear / mid wall)
+SP_W_FLOOR = SP_W_TOP + (SP_Z_TOP - 1.0) * math.tan(math.radians(SP_BATTER_DEG))   # thickness at the floor (Z 1)
 SP_MID_Y = (-9.5, 10.5)             # straight mid wall (RV23 Loft2) from the rear bend to the S-bend; its top rises 13 -> SP_Z_TOP
 SP_MID_Z_FRONT = 13.0               # mid wall height at its front end (Loft2 sketch at Y 10.5)
 SP_BEND_R = (8.0, 4.0)              # rear wall bends out round two 90 deg arcs (RV23 Revolve6, Revolve7), chassis-side radii
-SP_FRONT = dict(c=(-38.5, 26.55), r_in=10.55, w=3.0, z_top=12.0, over=5.0)   # front swing (Revolve5): axis (X, Y), chassis-side radius at the floor, radial thickness, top, lead-in deg
+SP_FRONT = dict(c=(-38.5, 26.55), r_in=10.55, w=3.0, z_top=10.0, over=5.0)   # front swing (Revolve5): axis (X, Y), chassis-side radius at the floor, radial thickness, top, lead-in deg
 BEZIER_DEG = 3                      # a cubic Bezier's handle is a third of the Hermite tangent
 SP_BEND_TENSION = 0.8               # S-bend corner-curve tangent length / chord
 SP_REAR_Y_END = -46.0               # the straight rear wall runs on past the rear round (the profile trims it)
@@ -27,26 +29,21 @@ SP_REAR_Y_END = -46.0               # the straight rear wall runs on past the re
 RAMP_REACH = 50.1
 RAMP_SLOPE = 1.187   # ramp face Z = FLOOR_Z + RAMP_SLOPE (RAMP_REACH - Y), shared by wedgelet and nose
 SLAB_X = (-60.0, -20.0)              # X slab the (Y, Z) side profile is extruded through before it is cut to the panel
-SP_REAR_Y = -32.9                   # rear end of the profile
-SP_TOP = [(SP_REAR_Y, FLOOR_Z), (SP_REAR_Y, SP_Z_TOP), (-6.7, SP_Z_TOP), (14.6, 12.0), (24.0, 10.0), (RAMP_REACH, 10.0), (RAMP_REACH, FLOOR_Z)]   # top line, (Y, Z): level to Y -6.7, then one slope down to the nose top
-SP_TOP_R = 1.5                      # top-line corner round
-SP_TOP_R_MIN_DEG = 5.0              # corners that turn less than this stay sharp
 GEO_EPS = 1e-4                      # coordinate match tolerance when picking edges by position
-SP_REAR_ROUND = ((-32.2, 9.7), 8.2)  # rear end: a full round over the wheel
+# rear end (STEP RV23 sections): a R10 round tangent to the floor, internally tangent to a R6 round tangent to the top line; the one number is
+# the R10 axis Y (the R6 axis follows from the tangency)
+SP_REAR = dict(y=-30.5, r_floor=10.0, r_top=6.0)
 SP_FOOT = dict(c=(-85.46, -0.92), r=44.83, y=(-12.0, 13.3))   # 1 mm foot under the chassis lobe: from the inner face out to an R44.8 arc (STEP fit < 0.2 mm), between these Y
 SP_FOOT_Z = (FLOOR_Z, FLOOR_Z + 1.0)
 SP_NOSE_Y0 = SP_FRONT["c"][1]    # nose front face (plane through the swing axis, tangent to the swing's outer cone)
 SP_NOSE_RUN = 10.0                   # the nose is the swing's outer cone swept on this far along +Y (its round end is the hollow's axis)
 SP_NOSE_OVER = 1.0                   # cutters overshoot the faces they open
-SP_NOSE_NOTCH = [(SP_FRONT["c"][0] + SP_NOSE_OVER, 37.6), (-41.6, 37.6), (-42.4, 37.3), (-42.3, 34.9), (-40.5, 34.5), (-40.5, SP_NOSE_Y0 - SP_NOSE_OVER),
-                 (SP_FRONT["c"][0] + SP_NOSE_OVER, SP_NOSE_Y0 - SP_NOSE_OVER)]   # nose plan (X, Y): the notch round the wedgelet block
-SP_NOSE_R, SP_NOSE_Z = 0.5, (FLOOR_Z, 10.0)
+# nose notch (STEP RV23 sections): the standoff-end post (R3.952 round SA) stands in a pocket (floor X_POST); behind it a deeper pocket (X_B, rear corner r_round)
+# keeps the wedgelet ring round SB as a R3.5 post
+SP_NOSE_PKT = dict(x_post=-40.5, post_r=3.952, x_b=-42.4, r_round=1.0, r_ring=3.5, z_top=8.0, r_slot=3.687, taper_deg=18.9, x_cav=-41.5)   # z_top: the pocket's roof, above it a slot round the nose-run end
+SP_NOSE_R, SP_NOSE_Z = 0.5, (FLOOR_Z, 10.0)   # SP_NOSE_Z[1] is also the top of the swing and of the S-bend's front end
 SP_TOE_Y0 = 47.0                     # the ramp toe's land starts here (Y)
 SP_TOE_RUN = 3.1                     # Y run of the ramp skin the toe polygon follows
-SP_HOLLOW = [(26.5, 3.0), (37.0, 3.0), (37.7, 6.6), (39.0, 10.5), (26.5, 10.5)]   # hollow behind the nose wall (Y, Z)
-SP_HOLLOW_X = (-42.0, -38.4)
-# STEP RV23: above Z0 the hollow runs on forward over the SB pocket and ends in a round in plan (vertical axis, X, Y)
-SP_HOLLOW_END = dict(c=(SP_FRONT["c"][0], SP_FRONT["c"][1] + SP_NOSE_RUN), r=3.6, z0=7.25)
 # M3 ISO 10642 seats (head dk 6.0 + csk_clear) + a driver bore out through the battered face, per screw. STEP RV23 nose
 # (a, b): the 90 deg seat is the dk + 0.7 cone but the driver bore is only r `drive_r` 3.10 (the cone's rim is a 0.25 mm
 # undercut at the seat; the seat's own r0 bore runs just `lip` above it) and the shank is a close fit (r 1.6); the
@@ -68,9 +65,11 @@ SPEC_DP = 6                          # decimals of solved positions written to t
 SP_SEAT_AXIS = dict(a=SA, b=SB, c=NUT)   # (Y, Z) of each side screw: 25 mm standoff, 15 mm standoff, chassis nut
 SIDE_DEV_X, SIDE_DEV_R = 41.78, 4.0              # deviation sphere at the nose screw seat (STEP RV23 bore centre X, radius)
 CHASSIS_MIN_VOLUME = 15000.0         # mm3: the intact chassis is 15988 mm3 in one solid
-SP_NUT_RELIEF_R = 1.0                # relief corners round r1: no sharp concave corner in the printed wall
-SP_PIN_HOLE = dict(d=2.05, at=(2.92, 12.07), x=(-36.0, -31.0))   # STEP RV23: d1.25 cross hole along X through the wall at the nut lobe top (Y, Z; X span)
-SP_VENT = dict(y0=(-11.0, -4.5, 2.0), z0=5.0, dy=5.0, dz=6.0, r=1.0, x=(-50.0, -36.5))   # diagonal ESC vent slots
+# chassis-nut relief (STEP RV23, section X -32): the hull of the R4.6 round about the nut axis NUT and a small R2.1 round `dy` further along Y at height `z`
+SP_NUT_POCKET = dict(r=4.6, r2=2.1, dy=12.0, z=6.921)
+# three diagonal flutes on the outer face (STEP RV23): width / pitch / angle off the Y axis, the middle one through (Y 0, Z `z`), `depth` deep along X,
+# from Z `z0` up to W_TOP under the wall's top line
+SP_FLUTE = dict(n=3, w=1.6, pitch=3.0, deg=30.0, y=0.0, z=10.0, z0=4.2, depth=0.53)
 # [fix-C wedgelet] measured polyline arcs rebuilt as true arcs (sampled finer than the 6 deg facet-seam threshold)
 WG_RING_CHAMFER, WG_RING_CHAMFER_Y = 1.0, 44.96    # Chamfer7: the ring step's far edge is chamfered 45 deg round the SB side (cone) and along the floor to this Y (plane)
 WG_TAB_DEV = dict(x=19.5, yz=(43.7, 5.8), r=2.5)   # reference-diff deviation sphere on the nose tab where the mount boss is taken out of it

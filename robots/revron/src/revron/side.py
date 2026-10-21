@@ -3,10 +3,10 @@ import math, os, sys
 from .params import (
     FLOOR_Z, GEO_EPS, HERE, NUT, NUT_X, RAMP_REACH, RAMP_SLOPE, SA,
     SA_X, SB, SB_X, SIDE_BOLT_DES, SIDE_BOLT_X, SIDE_FACE_X, SIDE_SINK, SLAB_X,
-    SP_BOSS, SP_CSK, SP_DRIVER_SEATS, SP_FOOT, SP_FOOT_Z, SP_HOLLOW, SP_HOLLOW_END, SP_HOLLOW_X,
-    SP_NOSE_NOTCH, SP_NOSE_OVER, SP_NOSE_R, SP_NOSE_Y0, SP_NOSE_Z, SP_NUT_RELIEF, SP_NUT_RELIEF_R, SP_NUT_RELIEF_X,
-    SP_PIN_HOLE, SP_REAR_ROUND, SP_SA_CLEAR, SP_TOE_RUN, SP_TOE_Y0, SP_TOP, SP_TOP_R, SP_TOP_R_MIN_DEG,
-    SP_TYRE_RELIEF, SP_VENT, SP_X_IN, WEDGE_TOE_H)
+    SP_BOSS, SP_CSK, SP_DRIVER_SEATS, SP_FLUTE, SP_FOOT, SP_FOOT_Z,
+    SP_FRONT, SP_MID_Y, SP_MID_Z_FRONT, SP_NOSE_PKT, SP_NOSE_OVER, SP_NOSE_R, SP_NOSE_Y0, SP_NOSE_Z, SP_NUT_POCKET, SP_NUT_RELIEF_X,
+    SP_REAR, SP_SA_CLEAR, SP_TOE_RUN, SP_TOE_Y0, SP_W_TOP, SP_Z_TOP,
+    SP_TYRE_RELIEF, SP_X_IN, WEDGE_TOE_H)
 from .common import _I, _S, _U, _b, _box, _cyl, _ext, _one, _poly, _round
 from .side_wall import sp_wall, nose_body
 
@@ -30,21 +30,89 @@ def _sp_tyre_relief(b):
     return tool.fillet(t["r_floor"], floor.edges())
 
 
+def _arc_pt(c, r, a):
+    return (c[0] + r * math.cos(a), c[1] + r * math.sin(a))
+
+
 def _side_profile(b):
-    """Side outline (Y, Z) extruded through the slab: the top line with its convex corners rounded SP_TOP_R (true cylinders), and the rear
-    end a full round over the wheel (a cylinder about the wheel axis line)."""
-    pts = SP_TOP
-    sgn = 1 if sum(p[0] * q[1] - q[0] * p[1] for p, q in zip(pts, pts[1:] + pts[:1])) > 0 else -1   # +1 counter-clockwise
-    def convex(i):   # a corner that turns by at least SP_TOP_R_MIN_DEG the convex way
-        p, q, r = pts[i - 1], pts[i], pts[(i + 1) % len(pts)]
-        a = math.atan2(r[1] - q[1], r[0] - q[0]) - math.atan2(q[1] - p[1], q[0] - p[0])
-        return sgn * math.degrees(math.remainder(a, math.tau)) >= SP_TOP_R_MIN_DEG
-    prism = _ext(Polygon(pts), "yz", *SLAB_X)
-    corner = [pts[i] for i in range(len(pts)) if convex(i)]
-    edges = [e for e in prism.edges() if abs(e.start_point().Y - e.end_point().Y) < GEO_EPS and abs(e.start_point().Z - e.end_point().Z) < GEO_EPS
-             and any(math.dist((e.start_point().Y, e.start_point().Z), c) < GEO_EPS for c in corner)]
-    (cy, cz), cr = SP_REAR_ROUND
-    return _U(_one(prism.fillet(SP_TOP_R, edges)), _cyl(cr, *SLAB_X, (cy, cz)))
+    """Rear clip of the wall (Y, Z) extruded through the slab: the rear end is a R10 round tangent to the floor that is internally tangent to a
+    R6 round tangent to the top line (STEP RV23 faces 36 / 37); everything forward of it is kept."""
+    r_lo, r_hi, y = SP_REAR["r_floor"], SP_REAR["r_top"], SP_REAR["y"]
+    c_lo = (y, FLOOR_Z + r_lo)
+    c_hi = (y - math.sqrt((r_lo - r_hi) ** 2 - (c_lo[1] - (SP_Z_TOP - r_hi)) ** 2), SP_Z_TOP - r_hi)   # internal tangency of the two rounds
+    a_j = math.atan2(c_hi[1] - c_lo[1], c_hi[0] - c_lo[0])   # direction of the tangency point seen from the R10 axis
+    V = lambda p: b.Vector(SLAB_X[0], *p)
+    t0, tj, t1 = (c_lo[0], FLOOR_Z), _arc_pt(c_lo, r_lo, a_j), (c_hi[0], SP_Z_TOP)
+    a0 = -math.pi / 2                                  # the R10 starts straight below its axis and runs rearwards (clockwise) to the tangency
+    e = [b.Edge.make_line(V((t0[0], FLOOR_Z - 1)), V(t0)),
+         b.Edge.make_three_point_arc(V(t0), V(_arc_pt(c_lo, r_lo, (a0 + a_j) / 2)), V(tj)),
+         b.Edge.make_three_point_arc(V(tj), V(_arc_pt(c_hi, r_hi, (a_j - 1.5 * math.pi) / 2)), V(t1)),   # the R6 runs on clockwise up to straight above its axis
+         b.Edge.make_line(V(t1), V((t1[0], SP_Z_TOP + 1))),
+         b.Edge.make_line(V((t1[0], SP_Z_TOP + 1)), V((RAMP_REACH, SP_Z_TOP + 1))),
+         b.Edge.make_line(V((RAMP_REACH, SP_Z_TOP + 1)), V((RAMP_REACH, FLOOR_Z - 1))),
+         b.Edge.make_line(V((RAMP_REACH, FLOOR_Z - 1)), V((t0[0], FLOOR_Z - 1)))]
+    return b.Solid.extrude(b.Face(b.Wire(e)), b.Vector(SLAB_X[1] - SLAB_X[0], 0, 0))
+
+
+def _hull_circles(b, x, c1, r1, c2, r2):
+    """Face in the plane X = x: the convex hull of two circles (exact arcs and the two outer tangent lines), r1 >= r2."""
+    d = math.dist(c1, c2)
+    phi, al = math.atan2(c2[1] - c1[1], c2[0] - c1[0]), math.acos((r1 - r2) / d)
+    V = lambda p: b.Vector(x, *p)
+    p1, p2 = _arc_pt(c1, r1, phi + al), _arc_pt(c1, r1, phi - al)
+    q1, q2 = _arc_pt(c2, r2, phi + al), _arc_pt(c2, r2, phi - al)
+    return b.Face(b.Wire([b.Edge.make_three_point_arc(V(p1), V(_arc_pt(c1, r1, phi + math.pi)), V(p2)), b.Edge.make_line(V(p2), V(q2)),
+                          b.Edge.make_three_point_arc(V(q2), V(_arc_pt(c2, r2, phi)), V(q1)), b.Edge.make_line(V(q1), V(p1))]))
+
+
+def _nose_notch(b):
+    """The nose's inner notch (STEP RV23): the standoff-end post stands in a pocket whose floor is X_POST and whose end is the post's edge, the
+    SB boss stays as a R3.5 post (the wedgelet's ring round SB) inside a deeper, full-height pocket X_B whose rear corner is rounded r_round."""
+    n = SP_NOSE_PKT
+    cx, cy = SP_FRONT["c"]
+    z0, z1 = SP_NOSE_Z[0] - SP_NOSE_OVER, SP_NOSE_Z[1] + SP_NOSE_OVER
+    y_post = SA[0] + n["post_r"]                       # the post's rear edge = the pocket B's rear wall
+    a = _box(n["x_post"], cx + SP_NOSE_OVER, cy - SP_NOSE_OVER, y_post, z0, z1)
+    pb = _S(_box(n["x_b"], cx + SP_NOSE_OVER, y_post, SB[0], z0, n["z_top"]), _cyl(n["r_ring"], n["x_b"] - 1, cx + 2 * SP_NOSE_OVER, SB))
+
+    def corner(e):   # the two edges of the pocket's end wall X_B that stand up from floor to roof (the plane meets the ring / the post wall)
+        pts = [e.position_at(t) for t in (0.0, 0.5, 1.0)]
+        return all(abs(q.X - n["x_b"]) < GEO_EPS for q in pts) and not all(abs(q.Z - z0) < GEO_EPS for q in pts) and not all(abs(q.Z - n["z_top"]) < GEO_EPS for q in pts)
+    pb = _one(pb.fillet(n["r_round"], [e for e in pb.edges() if corner(e)]))
+    # above the pocket's roof the cavity runs on as a slot with a round end: a cone about the swing axis at the end of the nose run (taper `taper_deg`)
+    ce = (cx, cy + SP_NOSE_RUN)
+    r_top = n["r_slot"] - (z1 - n["z_top"]) * math.tan(math.radians(n["taper_deg"]))
+    cone = b.Solid.make_cone(n["r_slot"], r_top, z1 - n["z_top"], b.Plane(origin=(*ce, n["z_top"]), z_dir=(0, 0, 1)))
+    slot = _U(_I(cone, _box(cx - n["r_slot"], cx + SP_NOSE_OVER, ce[1] - n["r_slot"], ce[1] + n["r_slot"], n["z_top"], z1)),
+              _box(cx - n["r_slot"], cx + SP_NOSE_OVER, y_post, ce[1], n["z_top"], z1))
+    over_post = _S(_box(n["x_cav"], cx + SP_NOSE_OVER, cy - SP_NOSE_OVER, y_post, n["z_top"], z1), _cyl(n["post_r"], n["x_cav"] - 1, n["x_post"], SA))   # the cavity runs on over the post
+    return _U(a, pb, slot, over_post)
+
+
+def _nut_pocket(b):
+    n = SP_NUT_POCKET
+    from .params import NUT
+    return b.Solid.extrude(_hull_circles(b, SP_NUT_RELIEF_X[0], NUT, n["r"], (NUT[0] + n["dy"], n["z"]), n["r2"]), b.Vector(SP_NUT_RELIEF_X[1] - SP_NUT_RELIEF_X[0], 0, 0))
+
+
+def _flutes(b, body):
+    """The three diagonal flutes (STEP RV23): bands `pitch` apart at `deg` below the Y axis, cut `depth` into the outer face (the layer between
+    the wall and the wall moved inboard), from Z0 up to W_TOP under the wall's top line."""
+    from shapely.geometry import LineString, Polygon
+    f = SP_FLUTE
+    a = math.radians(f["deg"])
+    d, nrm = (math.cos(a), -math.sin(a)), (math.sin(a), math.cos(a))
+    big = 4 * SP_Z_TOP
+    top = SP_Z_TOP - SP_W_TOP
+    top_f = SP_MID_Z_FRONT - SP_W_TOP
+    keep = Polygon([(-big, f["z0"]), (-big, top), (SP_MID_Y[0], top), (SP_MID_Y[1], top_f), (big, top_f), (big, f["z0"])])
+    bands = None
+    for k in range(f["n"]):
+        o = (f["y"] + (k - (f["n"] - 1) / 2) * f["pitch"] * nrm[0], f["z"] + (k - (f["n"] - 1) / 2) * f["pitch"] * nrm[1])
+        band = LineString([(o[0] - big * d[0], o[1] - big * d[1]), (o[0] + big * d[0], o[1] + big * d[1])]).buffer(f["w"] / 2, cap_style=2)
+        bands = band if bands is None else bands.union(band)
+    skin = _S(body, body.moved(b.Location((f["depth"], 0, 0))))
+    return _I(skin, _ext(bands.intersection(keep), "yz", *SLAB_X))
 
 
 def _side_seat(key, at, sgn=-1):
@@ -74,20 +142,17 @@ def _side_body(pin=True):
     from shapely.geometry import LineString, Point, Polygon
     b = _b()
     wall = sp_wall(b)   # analytic wall (side_wall.py): cones / planes / one S-bend skin; the profile below trims its top and rear end
-    profile = _side_profile(b)
+    profile = _side_profile(b)   # the rear end clip
     ft = SP_FOOT
     foot = _S(_box(SP_X_IN, ft["c"][0], *ft["y"], *SP_FOOT_Z), _cyl(ft["r"], *SP_FOOT_Z, ft["c"], "z"))   # the lobe's footprint, outside the arc
     wall = _I(wall, profile)
-    nose_blk = _S(nose_body(b), _ext(_round(Polygon(SP_NOSE_NOTCH), r_in=SP_NOSE_R), "xy", *SP_NOSE_Z))   # inner notch round the wedgelet block
+    nose_blk = _S(nose_body(b), _nose_notch(b))   # inner notch round the wedgelet block
     # the nose top is the wedgelet's ramp (the swing's 40 deg cone is tangent to it, so a wedge rides up both as one face); like the
     # wedgelet, the ramp's knife toe stands on a printable land at full reach
     z1 = SP_NOSE_Z[1]
     ramp = Polygon([(SP_NOSE_Y0 - SP_NOSE_OVER, FLOOR_Z), (RAMP_REACH, FLOOR_Z), (RAMP_REACH, FLOOR_Z + WEDGE_TOE_H),
                     (SP_TOE_Y0, FLOOR_Z + SP_TOE_RUN * RAMP_SLOPE), (RAMP_REACH - (z1 - FLOOR_Z) / RAMP_SLOPE, z1), (SP_NOSE_Y0 - SP_NOSE_OVER, z1)])
     nose = _I(nose_blk, _ext(ramp, "yz", *SLAB_X))
-    he = SP_HOLLOW_END
-    hollow_end = _I(_cyl(he["r"], he["z0"], SP_HOLLOW[-1][1], he["c"], "z"), _box(SP_HOLLOW_X[0], SP_HOLLOW_X[1], *[he["c"][1] + k * he["r"] for k in (-1, 1)], he["z0"], SP_HOLLOW[-1][1]))
-    nose = _S(nose, _ext(_poly(SP_HOLLOW), "yz", *SP_HOLLOW_X), hollow_end)       # hollow behind the nose wall, round front end
     bs_ = SP_BOSS
     (bx0, bx1), x_ch, ch = bs_["x"], bs_["x_ch"], bs_["r"] - bs_["r_end"]   # 45 deg chamfer: its X run is its radial drop
     boss = _I(_U(_cyl(bs_["r"], bx0, x_ch, SA), b.Solid.make_cone(bs_["r"], bs_["r_end"], ch, b.Plane(origin=(x_ch, *SA), z_dir=(1, 0, 0))),
@@ -98,14 +163,7 @@ def _side_body(pin=True):
     cuts = [_side_seat(k, at)[0] for k, at in (("a", SA), ("b", SB), ("c", NUT))] + [
             _cyl(cr_, cx0, cx1, SA),
             _sp_tyre_relief(b),                                                   # rear tyre relief pocket on the inner face
-            _ext(_round(Polygon(SP_NUT_RELIEF), r_out=SP_NUT_RELIEF_R), "yz", *SP_NUT_RELIEF_X)]                  # 1 mm relief round the chassis nut lobe
-    ph = SP_PIN_HOLE
-    if pin:   # the chassis cutter has no pin hole: it would leave a loose pin of chassis material
-        cuts.append(_cyl(ph["d"] / 2, *ph["x"], ph["at"]))
-    v = SP_VENT
-    for y0 in v["y0"]:     # diagonal vent slots (TPU wall flexes, keeps the ESC cool)
-        sl = LineString([(y0, v["z0"]), (y0 + v["dy"], v["z0"] + v["dz"])]).buffer(v["r"], cap_style=1)
-        cuts.append(_ext(sl, "yz", *v["x"]))
-    sh = _S(body, *cuts)
+            _nut_pocket(b)]                                                       # relief round the chassis nut lobe
+    sh = _S(_S(body, _flutes(b, body)), *cuts)   # the flutes cut first, from the wall as it stands before the pin / seat bores
     # RVRN 2.0 parity: the STEP side panel has a plain inner face (no belt channel); the O-ring grazes it
     return sh
