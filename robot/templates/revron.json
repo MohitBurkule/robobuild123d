@@ -396,36 +396,6 @@
    "reason": "the catalog N10 shaft is drawn round; the hub's D-flat sits on its flat"
   },
   {
-   "a": "bolt_b0",
-   "b": "base_panel",
-   "max_depth_mm": 0.3,
-   "reason": "STEP RV26 seat is 3.2 x 0.5, smaller than the ISO 10642 M2 head (4.4 x 1.2): the original head stands 0.2 proud of a seat that cannot take it, the printed PLA seat gives by that much"
-  },
-  {
-   "a": "bolt_b1",
-   "b": "base_panel",
-   "max_depth_mm": 0.3,
-   "reason": "STEP RV26 seat is 3.2 x 0.5, smaller than the ISO 10642 M2 head (4.4 x 1.2): the original head stands 0.2 proud of a seat that cannot take it, the printed PLA seat gives by that much"
-  },
-  {
-   "a": "bolt_b2",
-   "b": "base_panel",
-   "max_depth_mm": 0.3,
-   "reason": "STEP RV26 seat is 3.2 x 0.5, smaller than the ISO 10642 M2 head (4.4 x 1.2): the original head stands 0.2 proud of a seat that cannot take it, the printed PLA seat gives by that much"
-  },
-  {
-   "a": "bolt_b3",
-   "b": "base_panel",
-   "max_depth_mm": 0.3,
-   "reason": "STEP RV26 seat is 3.2 x 0.5, smaller than the ISO 10642 M2 head (4.4 x 1.2): the original head stands 0.2 proud of a seat that cannot take it, the printed PLA seat gives by that much"
-  },
-  {
-   "a": "bolt_b4",
-   "b": "base_panel",
-   "max_depth_mm": 0.3,
-   "reason": "STEP RV26 seat is 3.2 x 0.5, smaller than the ISO 10642 M2 head (4.4 x 1.2): the original head stands 0.2 proud of a seat that cannot take it, the printed PLA seat gives by that much"
-  },
-  {
    "a": "insert_b0",
    "b": "tub",
    "max_depth_mm": 0.2,
@@ -739,7 +709,7 @@
        -30.5,
        5.85
       ],
-      "r": 4.0,
+      "r": 5.0,
       "reason": "N10 keyhole opened into a U-slot to the floor so the gearbox boss and shaft drop in from below with the base panel off (the STEP closes the keyhole, the shaft cannot be threaded through it)"
      },
      {
@@ -748,7 +718,7 @@
        -30.5,
        5.85
       ],
-      "r": 4.0,
+      "r": 5.0,
       "reason": "N10 keyhole opened into a U-slot to the floor so the gearbox boss and shaft drop in from below with the base panel off (the STEP closes the keyhole, the shaft cannot be threaded through it)"
      },
      {
@@ -2674,7 +2644,8 @@
     0.0,
     90.0
    ],
-   "retained": "kapton"
+   "retained": "strap",
+   "deviation": "RV01/RV13: the Malenki is taped (kapton) to the deck in the STEP; with the cage ribs gone a 6 mm TPU strap (RV01 esc_tray strap slot, glued to the chassis walls over the board) holds it instead, so it cannot slide inverted (adds ~0.3 g, reversible)"
   },
   {
    "id": "wesc",
@@ -3042,8 +3013,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 3.2,
-    "csk_depth": 0.4,
+    "csk_d": 3.9,
+    "csk_depth": 0.75,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -3081,8 +3052,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 3.2,
-    "csk_depth": 0.4,
+    "csk_d": 3.9,
+    "csk_depth": 0.75,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -3120,8 +3091,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 3.2,
-    "csk_depth": 0.4,
+    "csk_d": 3.9,
+    "csk_depth": 0.75,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -3159,8 +3130,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 3.2,
-    "csk_depth": 0.4,
+    "csk_d": 3.9,
+    "csk_depth": 0.75,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -3198,8 +3169,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 3.2,
-    "csk_depth": 0.4,
+    "csk_d": 3.9,
+    "csk_depth": 0.75,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -4731,13 +4702,13 @@
    "a": "rxesc",
    "b": "tub",
    "method": "interlock",
-   "reason": "Malenki boxed by the deck cage ribs (0.1 mm), the front wall and the deck; the weapon ESC under it"
+   "reason": "Malenki held by a TPU strap, boxed by the front wall and the deck; the weapon ESC under it"
   },
   {
    "a": "wesc",
    "b": "esc_tray",
    "method": "interlock",
-   "reason": "weapon ESC in the TPU tray lips (0.1 mm); the cage rib holds -y, the Malenki +z"
+   "reason": "weapon ESC in the TPU tray lips (0.1 mm); lips on all four sides, the Malenki +z"
   },
   {
    "a": "esc_tray",

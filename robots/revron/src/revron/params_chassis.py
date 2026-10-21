@@ -66,7 +66,7 @@ CH = dict(x=CH_HALF_W, y0=CH_Y0, y1=CH_Y1, z0=CH_Z0, z1=CH_Z1, wall=CH_WALL, dec
 # ====================================================================================================================
 # panels (RV26 base, Ti top) [fix-T: named params, every panel dimension derives from these]
 SEG, SEG_FINE = 64, 128              # shapely buffer resolution (segments per quarter circle) for ears / tangent arcs
-BASE_CSK_CLEAR = -0.6                # base-panel seat 3.2 at the face = STEP RV26 (dk 3.8 - 0.6)
+BASE_CSK_CLEAR = 0.1                 # base-panel seat 4.5 at the face: cut to the ISO 10642 M2 head (dk 4.4) so it sits flush; the STEP RV26 seat (3.2 x 0.5) is smaller than that head and cannot take it
 BASE_Z0, BASE_T = 3.5, 1.0           # base panel underside Z, skin thickness
 PRELOAD_PAD = dict(c=(22.5, -30.3), s=9.1, h=0.465, r=0.6, sink=0.01)   # N10 preload pad on the base skin: centre |X|/Y, side, height (0.45 + 0.015: closes the 0.2 mm the STEP leaves under the N10, intent.seat_locates), corner R, sink into the skin (union overlap)
 BASE_FILLET, BASE_EDGE_TOL, BASE_EDGE_UP, FLAT_TOL = 0.25, 0.02, 0.1, 1e-3   # base skin joint fillet; edge selection tolerances (height band, face rise, flatness)
@@ -82,6 +82,8 @@ TOP_TAB_Y = 11.9                     # tab front edge
 TOP_CUT_Y = 14.0                     # notch / tab cutters run past the panel front (ears end at Y 13.1)
 TOP_FILL_YT = (1.0, -12.5)           # Y where each concave ear-to-edge arc meets the |X| 23 edge (front, rear ear row)
 TOP_FILL_X = 26.6                    # outer X of the arc fill boxes (past the ears)
+TOP_RECESS_DEPTH = 0.1               # STEP: four shallow round recesses in the underside of the top panel, one row at Y -5.5 (X, Y, dia)
+TOP_RECESS = ((-13.73, -5.62, 6.54), (-3.78, -5.57, 6.57), (5.84, -5.26, 5.80), (15.04, -5.66, 5.76))
 TOP_R_OUT, TOP_R_IN = 0.4, 1.2       # top-panel edge rounds
 ESC_TRAY = dict(gap=0.1, wall=1.25, lip=1.0, fuse=0.01, rail_end=1.0, rail_x=(1.4, 2.6))   # TPU ESC tray: walls >= 1.2, rails inset from the board -x / +x edges
 CHAIKIN_Q = 0.25                     # Chaikin corner-cutting ratio (side-panel spline smoothing)
@@ -111,4 +113,10 @@ LUG_BLEND_FILL = Polygon([(LUG_SCALLOP_YT, LUG_FLOOR_Z), _corner, SB, _blend_c])
 LUG_SCALLOP = Point(LUG_SCALLOP_YT, LUG_FLOOR_Z - LUG_SCALLOP_R).buffer(LUG_SCALLOP_R, 128).intersection(
     Polygon([(0.0, -20.0), (LUG_SCALLOP_YT, -20.0), (LUG_SCALLOP_YT, LUG_FLOOR_Z), (0.0, LUG_FLOOR_Z)]))
 # param: end
+# --- tub_front/tub_shell relations ---
+WALL_IN_FRONT = CH_Y1 - CH_WALL                  # inner face of the front wall (Y)
+WALL_IN_REAR = CH_Y0 + CH_WALL                   # inner face of the rear wall (Y)
+COL_R = 2.75                                      # insert column boss radius (corner blocks, rear boss and deck pockets are tangent to it)
+LUG_FACE_X = SB_X0                                # |X| of the lug's inner face the front corner flange blends into
+OVERLAP = 0.1                                     # solids reach this far into a neighbour so they fuse
 __all__ = [n for n in dir() if not n.startswith("__")]   # last line: every name above is exported

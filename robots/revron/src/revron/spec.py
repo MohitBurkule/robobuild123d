@@ -91,7 +91,8 @@ def make_spec(model_file):
         P(id=f"wheel_f{n}", kind="wheel", material="rubber", process="cots", tyre_of=f"whub_f{n}", rotates_with=f"wheel_f{n}", parent=f"whub_f{n}", shape=M(f"front_tyre_{n}"),
           color="#1b1b1b", stock="RV20 Scalextric micro SLX tyre 11 x 7 x 6", label="Scalextric micro tyre 11 x 7 x 6")
     P(id="battery", kind="battery", catalog="lipo_2s_180_turnabot", **place("battery"), retained="press_fit")
-    P(id="rxesc", kind="esc", catalog="malenki_nano_rvrn2", **place("rxesc"), retained="kapton")
+    P(id="rxesc", kind="esc", catalog="malenki_nano_rvrn2", **place("rxesc"), retained="strap",
+      deviation="RV01/RV13: the Malenki is taped (kapton) to the deck in the STEP; with the cage ribs gone a 6 mm TPU strap (RV01 esc_tray strap slot, glued to the chassis walls over the board) holds it instead, so it cannot slide inverted (adds ~0.3 g, reversible)")
     P(id="wesc", kind="esc", catalog="bbb_ant_esc_rvrn2", **place("wesc"), retained="kapton")
     P(id="power_switch", kind="switch", catalog="switch_bbb_ant_rvrn2", at=place_at("power_switch"), rot=place_rot("power_switch"), retained="screws", marked=True, tool_free=True,
       off_dir=[0, -1, 0], label="BBB ant switch hung under the deck beside the top panel: lever flush in the deck slot, 2 M2 into the deck")
@@ -173,8 +174,8 @@ def make_spec(model_file):
     C("base_panel", "tub", "screw", "Base panel under the open floor, 5 M2 CSK into heat-sets")
     C("top_panel", "tub", "screw", "Ti top panel held by 4 M2 flat-head screws through its countersunk corner holes into M2 heat-sets in the column tops (the STEP has the holes, not the screws)")
     C("battery", "tub", "press_fit", "Pack between the motor wall, the insert columns and the deck", interference_mm=PRESS["pack"], mechanical_key=True)
-    C("rxesc", "tub", "interlock", "Malenki boxed by the deck cage ribs (0.1 mm), the front wall and the deck; the weapon ESC under it")
-    C("wesc", "esc_tray", "interlock", "weapon ESC in the TPU tray lips (0.1 mm); the cage rib holds -y, the Malenki +z")
+    C("rxesc", "tub", "interlock", "Malenki held by a TPU strap, boxed by the front wall and the deck; the weapon ESC under it")
+    C("wesc", "esc_tray", "interlock", "weapon ESC in the TPU tray lips (0.1 mm); lips on all four sides, the Malenki +z")
     C("esc_tray", "base_panel", "glue", "TPU tray contact-glued to the base panel top")
     C("power_switch", "tub", "screw", "Switch flange clamped under the deck by 2 M2", mechanical_key=True)
 

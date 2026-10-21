@@ -86,7 +86,8 @@ def top_panel():
     body = _ext(p, "xy", z0, z0 + t)
     # 2.2 holes countersunk (90 deg, 4.5 at the top face; STEP 3.65) for M2 flat heads into the column-top pilots: the 1.2 head is
     # deeper than the 0.9 plate, so its tip sinks into the chamfer at the column top
-    return _S(body, *[_panel_seat("top", i)[0] for i in range(len(TOP_XY))])
+    recess = [_cyl(d / 2, z0 - 0.1, z0 + TOP_RECESS_DEPTH, (x, y), axis="z") for x, y, d in TOP_RECESS]
+    return _S(body, *[_panel_seat("top", i)[0] for i in range(len(TOP_XY))], *recess)
 
 
 def _switch_hole(yy):
@@ -114,7 +115,8 @@ def chassis():
     c = CH
     adds = tub_shell.additions(c) + tub_lobes.additions(c) + tub_lugs.additions(c) + tub_front.additions(c) + [switch_pad(c)]
     cuts = tub_shell.cuts(c) + tub_lobes.cuts(c) + tub_lugs.cuts(c) + tub_front.cuts(c)
-    tub = _S(_U(tub_shell.shell(c), *adds), *cuts)
+    body = _U(tub_shell.shell(c), *adds)
+    tub = _S(tub_lobes.root_fillet(body, c), *cuts)
     assert len(tub.solids()) == 1 and tub.volume > CHASSIS_MIN_VOL, f"chassis boolean collapsed: {len(tub.solids())} solids, {tub.volume:.0f} mm3"
     return tub
 
@@ -122,14 +124,15 @@ def chassis():
 def esc_tray():
     """TPU tray glued to the base panel under the weapon ESC (not in the STEP, where kapton alone holds it): two rails carry
     the board 0.1 mm off, 1 mm lips 0.1 mm off its -x / +x / +y sides (leads leave above the lips at the board mid-plane).
-    The deck cage holds -y and the Malenki above it +z, so the ESC cannot rattle inverted; base panel off, it lifts out."""
+    Lips on all four sides (the cage rib no longer exists) and the Malenki above it +z, so the ESC cannot rattle inverted; base panel off, it lifts out."""
     (wx0, wx1), (wy0, wy1), wz0 = WE_X, WE_Y, WE_Z[0]
     T = ESC_TRAY
     g, w, e = T["gap"], T["wall"], T["fuse"]
     z0, top = BASE_Z0 + BASE_T, wz0 + T["lip"]   # sits on the base panel top face; lips rise 1 mm past the board underside
     zw = z0 + w - e
-    parts = [_box(wx0 - g - w, wx1 + g + w, wy0, wy1 + g + w, z0, z0 + w)]
+    parts = [_box(wx0 - g - w, wx1 + g + w, wy0 - g - w, wy1 + g + w, z0, z0 + w)]
     parts += [_box(xa, xa + w, wy0 + T["rail_end"], wy1 - T["rail_end"], zw, wz0 - g) for xa in (wx0 + T["rail_x"][0], wx1 - T["rail_x"][1])]
     parts += [_box(wx0 - g - w, wx0 - g, wy0, wy1 + g + w, zw, top), _box(wx1 + g, wx1 + g + w, wy0, wy1 + g + w, zw, top),
-              _box(wx0 - g - w, wx1 + g + w, wy1 + g, wy1 + g + w, zw, top)]
+              _box(wx0 - g - w, wx1 + g + w, wy1 + g, wy1 + g + w, zw, top),
+              _box(wx0 - g - w, wx1 + g + w, wy0 - g - w, wy0 - g, zw, top)]   # closing -y lip: the removed cage rib no longer holds that side
     return _U(*parts)
