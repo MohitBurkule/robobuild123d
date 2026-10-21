@@ -632,9 +632,10 @@ def _align(d):
     return trimesh.geometry.align_vectors(d, [0, 0, 1.0])
 
 
-def profile_at(m, T, h, uv, want="solid"):
+def profile_at(m, T, h, uv, want="solid", geom=False):
     """Shape of the region at (u, v) in section z=h of mesh m moved by T: want='solid' -> the polygon containing the
-    point (a shaft), 'hole' -> the interior ring containing it (a bore). None when there is none."""
+    point (a shaft), 'hole' -> the interior ring containing it (a bore). None when there is none. geom=True returns
+    (shape, shapely geometry)."""
     from shapely.geometry import Point, Polygon
 
     from .ref_features import hole_shape, section
@@ -647,28 +648,52 @@ def profile_at(m, T, h, uv, want="solid"):
     pt = Point(uv)
     for p in getattr(g, "geoms", [g]):
         if want == "solid" and p.contains(pt):
-            return hole_shape(p.exterior, densify=True)
+            sh = hole_shape(p.exterior, densify=True)
+            return (sh, Polygon(p.exterior)) if geom else sh
         if want == "hole":
             for ring in p.interiors:
                 if Polygon(ring).contains(pt):
-                    return hole_shape(ring, densify=True)
+                    sh = hole_shape(ring, densify=True)
+                    return (sh, Polygon(ring)) if geom else sh
     return None
 
 
-def shaft_mate(shaft_mesh, bore_mesh, at, d, span, n=5):
-    """[(t, shaft shape, bore shape)] at n sections over the shaft span where the bore mesh has a bore round the axis."""
+BORE_FLAT_MM = 1.0    # most a bore wall may stand off the shaft (a D flat on a round shaft) and still be its bore
+BORE_TOUCH_MM = 0.3   # a bore drives / locates the shaft only when its wall is this close to the shaft outline
+
+
+def shaft_mate(shaft_mesh, bore_mesh, at, d, span, n=5, touch=BORE_TOUCH_MM):
+    """[(t, shaft shape, bore shape)] at n sections over the shaft span where the bore mesh has a bore round the axis
+    whose wall touches the shaft (within `touch` mm of its outline). A wider ring round the axis - a tyre stretched
+    over the hub, a housing - has another body between it and the shaft and is not the shaft's bore."""
     T = _align(d)
     out = []
     for t in np.linspace(0.15, 0.85, n):
         p = np.asarray(at, float) + np.asarray(d, float) / np.linalg.norm(d) * span * t
         q = (T[:3, :3] @ p)
-        sb = profile_at(bore_mesh, T, q[2], q[:2], "hole")
-        if sb is None:
+        b = profile_at(bore_mesh, T, q[2], q[:2], "hole", geom=True)
+        if b is None:
             continue
-        ss = profile_at(shaft_mesh, T, q[2], q[:2], "solid")
-        if ss is not None:
-            out.append((round(float(t), 2), ss, sb))
+        s_ = profile_at(shaft_mesh, T, q[2], q[:2], "solid", geom=True)
+        if s_ is None:
+            continue
+        if b[1].exterior.distance(s_[1].exterior) > touch:   # nearest wall point must touch the shaft
+            continue
+        # the bore wall must hug the shaft all round: max gap from the bore ring to the shaft outline <= touch + flat
+        if _ring_gap(b[1], s_[1]) > touch + BORE_FLAT_MM:
+            continue
+        out.append((round(float(t), 2), s_[0], b[0]))
     return out
+
+
+def _ring_gap(bore_poly, shaft_poly):
+    """Largest distance from a point of the bore ring to the shaft outline (a bore round a D shaft with a round hole
+    shows the flat's depth here; a tyre round the hub shows the hub wall)."""
+    from shapely.geometry import Point
+
+    ring = bore_poly.exterior
+    pts = [ring.interpolate(f, normalized=True) for f in np.linspace(0, 1, 72, endpoint=False)]
+    return max(shaft_poly.exterior.distance(Point(q.x, q.y)) for q in pts)
 
 
 def shaft_findings(ctx):

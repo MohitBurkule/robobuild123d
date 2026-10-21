@@ -246,6 +246,25 @@ def test_d_shaft_in_d_bore_passes():
     assert rows and all(s == b == "D" for _, s, b in rows), rows
 
 
+
+def _tyre():
+    """Tyre: r10 ring with a round r6 bore stretched over the hub (revron wheel_rl over whub_rl)."""
+    return trimesh.creation.cylinder(10.0, 8.0, sections=96).difference(trimesh.creation.cylinder(6.0, 20.0, sections=96))
+
+
+def test_shaft_not_paired_with_tyre_round_hub():
+    """Bad pairing: the tyre's round bore surrounds the shaft but the hub lies between - no rows, no finding."""
+    shaft = trimesh.creation.cylinder(1.5, 12.0, sections=96)
+    assert visual.shaft_mate(shaft, _tyre(), (0, 0, -3), (0, 0, 1), 6.0) == []
+
+
+def test_shaft_paired_with_hub_inside_tyre():
+    """Good pairing: the D-bore hub inside the tyre is still the shaft's mate and its mismatch is reported."""
+    shaft = trimesh.creation.cylinder(1.5, 12.0, sections=96)
+    hub = _hub(_d_prism(1.5, 1.0, 20))
+    rows = visual.shaft_mate(shaft, hub, (0, 0, -3), (0, 0, 1), 6.0)
+    assert rows and all(s == "round" and b == "D" for _, s, b in rows), rows
+
 # ------------------------------------------------------------------ rev2: wall round a bore
 def _seat_block(y):
     """20 x 20 x 6 block (Z 0..6) with a d8 bore along Z centred at (0, y): y 4.0 leaves 2 mm of wall, y 5.7 0.3 mm,

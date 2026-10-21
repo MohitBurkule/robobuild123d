@@ -101,17 +101,25 @@ SP_NUT_RELIEF_RUN = 1.0   # the relief floor runs on past NUT_RELIEF_END_Y until
 SP_NUT_RELIEF_Y1 = NUT_RELIEF_END_Y - SP_NUT_RELIEF_RUN
 SP_NUT_RELIEF = [(SP_NUT_RELIEF_Y1, 3.8), (0.5, 4.7), (2.3, 5.7), (2.3, 8.3), (0.5, 9.3), (-3.5, 11.0), (-9.5, 13.0), (SP_NUT_RELIEF_Y1, 13.8)]   # STEP RV23 diamond (Y, Z)
 PANEL_IN = 31.4   # inner face of the side panel at the nut lobe (|X|)
-LUG_FLOOR_Z, LUG_SCALLOP_R, LUG_BLEND_R, LUG_SB_R = 2.5, 8.6, 4.95, 3.25   # param: organic lug underside arcs fitted to RV01: scallop R, the blend into the standoff arc (ref R4.95), standoff arc R
+LUG_FLOOR_Z, LUG_SCALLOP_R, LUG_BLEND_R, LUG_SB_R = 2.5, 4.0, 4.95, 3.25   # param: organic lug underside arcs fitted to RV01: scallop R (RV01 R4), the blend into the standoff arc (ref R4.95), standoff arc R
+LUG_SA_R = 4.5   # standoff end boss round SA (RV01 R4.5)
 # param: end
 # the blend circle (R4.95) sits under the lug floor, tangent to it and to the standoff arc round SB: its centre follows from both
 _blend_c = (SB[0] - math.sqrt((LUG_BLEND_R + LUG_SB_R) ** 2 - (SB[1] - (LUG_FLOOR_Z - LUG_BLEND_R)) ** 2), LUG_FLOOR_Z - LUG_BLEND_R)
-LUG_SCALLOP_YT = _blend_c[0]   # the big scallop arc ends tangent to the floor where the blend begins
+LUG_SCALLOP_YT = _blend_c[0]   # the flat floor after the scallop ends where the blend begins
 _k = LUG_SB_R / (LUG_BLEND_R + LUG_SB_R)
 _blend_t = (SB[0] + _k * (_blend_c[0] - SB[0]), SB[1] + _k * (_blend_c[1] - SB[1]))   # blend / standoff-arc tangent point
 _corner = (SB[0] - math.sqrt(LUG_SB_R ** 2 - (LUG_FLOOR_Z - SB[1]) ** 2), LUG_FLOOR_Z)   # where the floor would meet the standoff arc
 LUG_BLEND_FILL = Polygon([(LUG_SCALLOP_YT, LUG_FLOOR_Z), _corner, SB, _blend_c]).difference(Point(_blend_c).buffer(LUG_BLEND_R, 96))   # cusp material the blend keeps
-LUG_SCALLOP = Point(LUG_SCALLOP_YT, LUG_FLOOR_Z - LUG_SCALLOP_R).buffer(LUG_SCALLOP_R, 128).intersection(
-    Polygon([(0.0, -20.0), (LUG_SCALLOP_YT, -20.0), (LUG_SCALLOP_YT, LUG_FLOOR_Z), (0.0, LUG_FLOOR_Z)]))
+# the scallop (R4) is tangent to the floor and to the SA boss round, so the underside runs boss round -> scallop -> flat floor with no cusp
+_sc = (SA[0] + math.sqrt((LUG_SA_R + LUG_SCALLOP_R) ** 2 - (SA[1] - (LUG_FLOOR_Z - LUG_SCALLOP_R)) ** 2), LUG_FLOOR_Z - LUG_SCALLOP_R)   # scallop centre
+LUG_SCOOP_YT = _sc[0]   # Y where the scallop meets the lug floor
+_ta = math.atan2(_sc[1] - SA[1], _sc[0] - SA[0])   # direction SA -> scallop centre: the tangent point on the boss round
+LUG_BOSS_UNDER = Polygon([(SA[0] + LUG_SA_R * math.cos(a), SA[1] + LUG_SA_R * math.sin(a)) for a in [1.5 * math.pi + (_ta + 2 * math.pi - 1.5 * math.pi) * i / 24 for i in range(25)]]
+                         + [(SA[0] + LUG_SA_R * math.cos(_ta), -20.0), (SA[0], -20.0)])   # hull fill under the boss round, from its bottom to the tangent point
+LUG_SCALLOP = Point(LUG_SCOOP_YT, LUG_FLOOR_Z - LUG_SCALLOP_R).buffer(LUG_SCALLOP_R, 128).intersection(
+    Polygon([(0.0, -20.0), (LUG_SCOOP_YT, -20.0), (LUG_SCOOP_YT, LUG_FLOOR_Z), (0.0, LUG_FLOOR_Z)])).union(
+    Polygon([(LUG_SCOOP_YT, -20.0), (LUG_SCALLOP_YT, -20.0), (LUG_SCALLOP_YT, LUG_FLOOR_Z), (LUG_SCOOP_YT, LUG_FLOOR_Z)])).union(LUG_BOSS_UNDER)   # boss-round underside, R scoop, then the flat floor to the blend
 # param: end
 # --- tub_front/tub_shell relations ---
 WALL_IN_FRONT = CH_Y1 - CH_WALL                  # inner face of the front wall (Y)
