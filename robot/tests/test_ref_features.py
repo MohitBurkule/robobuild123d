@@ -85,6 +85,11 @@ def test_gr1507_catalog_envelope_matches_step():
     from robot import catalog
     from robot.shapes import to_solid
 
-    bb = to_solid(catalog.find("gr1507").shape).bounding_box()
-    ext = sorted([bb.size.X, bb.size.Y, bb.size.Z])
-    assert np.allclose(ext, [19.6, 19.6, 30.5], atol=0.3), ext
+    bbs = [to_solid(catalog.find(i).shape).bounding_box() for i in ("gr1507_step", "gr1507_step_can")]   # the STEP motor = fixed half + rotor
+    lo = [min(getattr(b.min, a) for b in bbs) for a in "XYZ"]
+    hi = [max(getattr(b.max, a) for b in bbs) for a in "XYZ"]
+    sh = catalog.find("gr1507_step_can").shaft                       # the prop shaft is its own part in the spec; its stick-out ends the envelope
+    hi[0] = max(hi[0], sh["at"][0] + sh["len"])
+    ext = [h - l for h, l in zip(hi, lo)]
+    assert np.allclose(ext[1:], [19.6, 19.6], atol=0.3), ext
+    assert abs(ext[0] - 30.5) < 1.5, ext                             # GEPRC drawing 29.1 vs STEP 30.5 (hollow-shaft stick-out)

@@ -436,3 +436,76 @@ def test_wire_lying_along_a_face_is_not_retained():
     near = wire_review.enclosed(Q, np.zeros(len(Q), bool), _tube_cloud(False), 2.5)
     assert not near.any()
     assert max(wire_review.unsupported_runs(Q, np.zeros(len(Q), bool), near))[0] > wire_review.UNSUPPORTED_MAX_MM
+
+
+# ------------------------------------------------------------------ finding locations are on the geometry (no fake waiver points)
+def test_two_coaxial_missing_holes_are_reported_at_each_end():
+    ref = _box((60, 10, 10), (0, 0, 5))
+    for x0 in (-27, 27):
+        h = trimesh.creation.cylinder(2.0, 6.0, sections=64)
+        h.apply_transform(trimesh.transformations.rotation_matrix(math.pi / 2, (0, 1, 0)))
+        h.apply_translation((x0, 0, 5))
+        ref = ref.difference(h)
+    d = [x for x in visual.hole_diffs(_box((60, 10, 10), (0, 0, 5)), ref) if x["kind"] == "missing" and x["axis"] == "X"]
+    xs = sorted(round(x["at"][0]) for x in d)
+    assert xs and xs[0] < -20 and xs[-1] > 20 and not any(abs(v) < 5 for v in xs), d
+
+
+def test_outline_blob_is_located_on_the_extra_material():
+    ref = _box((20, 10, 4))
+    ours = _union(ref, _box((4, 4, 4), (12, 0, 0)))
+    for name in ("iso", "top", "front"):
+        _, blobs = visual.view_diff(ours, ref, visual.VIEWS[name])
+        ext = [b for b in blobs if b["kind"] == "extra outline"]
+        assert ext and all(abs(b["at"][0] - 12) < 2.5 for b in ext), (name, ext)
+
+
+def test_fillet_compare_ignores_a_different_reference_corner():
+    """Ours: a sharp 90 deg root. Reference at the same spot: a shallow 20 deg bend of large radius (another feature).
+    Comparing the two radii would invent a 'missing fillet'; only a corner that turns like ours is compared."""
+    ours = _l_bracket(0)
+    pts = [(0, 0), (20, 0), (20, 4), (8, 4), (4, 5.4), (4, 20), (0, 20)]   # bend of ~20 deg, not a 90 deg root
+    ref = trimesh.creation.extrude_polygon(Polygon(pts), 10)
+    hits = [h for h in visual.fillet_diffs(ours, ref, grid=1.0) if abs(h[0][0] - 4) < 1 and abs(h[0][1] - 4) < 1]
+    assert hits == [], hits
+
+
+# ------------------------------------------------------------------ path (capsule) deviation waivers
+def _groove_blob():
+    xs = np.linspace(0, 20, 41)
+    pts = np.array([(x_, 1.0 * math.cos(t), 1.0 * math.sin(t)) for x_ in xs for t in np.linspace(0, 2 * math.pi, 8)])
+    return {"centroid": pts.mean(0).tolist(), "bbox": [pts.min(0).tolist(), pts.max(0).tolist()], "pts": pts.tolist(), "volume_mm3": 63.0}
+
+
+_PATH = {"path": [[0, 0, 0], [20, 0, 0]], "r": 1.5, "max_mm3": 100,
+         "reason": "lead-retention groove (design intent: leads clipped away from the rotor, STEP has no leads)"}
+
+
+def test_path_waiver_covers_a_long_groove():
+    from robot.checks import reference_cad as rc
+
+    b = _groove_blob()
+    assert rc._covered(b["centroid"], {"deviations": [dict(_PATH)]}, b["bbox"], b["pts"], b["volume_mm3"])
+    # one r<=5 sphere cannot hold a 20 mm groove
+    assert rc._covered(b["centroid"], {"deviations": [{"near": [10, 0, 0], "r": 5, "reason": "STEP x"}]}, b["bbox"], b["pts"], 63) is None
+
+
+def test_path_waiver_rejects_blob_off_path_or_over_volume():
+    from robot.checks import reference_cad as rc
+
+    b = _groove_blob()
+    off = dict(_PATH, path=[[0, 3, 0], [20, 3, 0]])
+    assert rc._covered(b["centroid"], {"deviations": [off]}, b["bbox"], b["pts"], 63) is None
+    small = dict(_PATH, max_mm3=50)
+    assert rc._covered(b["centroid"], {"deviations": [small]}, b["bbox"], b["pts"], 63) is None
+
+
+def test_path_waiver_needs_cap_radius_and_cited_reason():
+    from robot.checks import reference_cad as rc
+
+    assert rc._dev_valid(dict(_PATH)) is None
+    assert rc._dev_valid(dict(_PATH, r=4.0))
+    assert rc._dev_valid(dict(_PATH, max_mm3=None))
+    assert rc._dev_valid(dict(_PATH, max_mm3=5000))
+    assert rc._dev_valid(dict(_PATH, reason="groove for the leads"))
+    assert rc._dev_valid(dict(_PATH, path=[[0, 0, 0]]))

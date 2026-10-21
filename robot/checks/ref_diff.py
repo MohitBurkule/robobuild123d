@@ -41,8 +41,10 @@ def _blobs_from_mesh(d, min_vol, min_thick):
         if v < min_vol or t < min_thick:
             continue
         lo, hi = c.bounds
+        P = np.asarray(c.vertices)
+        P = P[np.linspace(0, len(P) - 1, min(len(P), 400)).astype(int)] if len(P) else P
         out.append({"volume_mm3": round(v, 2), "thick_mm": round(t, 3), "centroid": np.round(c.centroid, 2).tolist(),
-                    "bbox": [np.round(lo, 2).tolist(), np.round(hi, 2).tolist()]})
+                    "bbox": [np.round(lo, 2).tolist(), np.round(hi, 2).tolist()], "pts": np.round(P, 2).tolist()})
     return sorted(out, key=lambda b: -b["volume_mm3"])
 
 
@@ -64,8 +66,10 @@ def _voxel_blobs(occ, lo, h, min_vol, min_thick):
             continue
         idx = np.argwhere(m) + [s.start for s in sl]
         pts = lo + (idx + 0.5) * h
+        sub = pts[np.linspace(0, len(pts) - 1, min(len(pts), 400)).astype(int)]
         out.append({"volume_mm3": round(v, 2), "thick_mm": round(t, 3), "centroid": np.round(pts.mean(0), 2).tolist(),
-                    "bbox": [np.round(pts.min(0) - h / 2, 2).tolist(), np.round(pts.max(0) + h / 2, 2).tolist()]})
+                    "bbox": [np.round(pts.min(0) - h / 2, 2).tolist(), np.round(pts.max(0) + h / 2, 2).tolist()],
+                    "pts": np.round(sub, 2).tolist()})
     return sorted(out, key=lambda b: -b["volume_mm3"])
 
 
