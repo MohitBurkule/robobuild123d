@@ -175,6 +175,7 @@ def write_all(slug: str, spec, out_dir, opts=None, step=True, width=1100):
     for v in VIEWS:
         view = render.named(v, width)
         put(f"renders/{v}.png", render.render_png(world, view, None, []))
+        render.write_record(root / f"renders/{v}.png", root / "spec.json", world, rep.routes or [])  # read by wire.render_wires
     for view in render.axle_sections(world, resolved, width):
         put(f"renders/{view.name}.png", render.render_png(world, view, None, []))
     from .checks import reference as ref_check

@@ -32,5 +32,12 @@ SA_X0 + SA_LEN ── SA_X;  SB_X0 + SB_LEN ── SB_X
 MNT_IN + MNT_T ── MNT_OUT;  MNT_IN + MNT_SLAB_T ── MNT_SLAB;  MNT_IN - BSP_T ── BSP_X
 RX_C ± RX_SIZE/2 ── RX_X/Y/Z;  WE_C ± WE_SIZE/2 ── WE_X/Y/Z     electronics pockets = catalog box at placement
 FLOOR_Z ── SP_FOOT_Z, SP_NOSE_Z, SP_BATTER.z, ramp face Z
+GR1507 catalog BELL_TOP_X ── BELL_CAP_X ── STACK_X0 = BELL_CAP_X - SPIDER_T   spider inner face on the bell cap
 STACK_X0 + SPIDER_T/DISC_T/SPACER_T ── DR_X (each plate flush on the previous)
+GR1507 BELL_SCREW_R / BELL_SCREW_PHASE ── HUB_R / DR_ROT          spider clocked to the bell screws
+WSHAFT.r ── SHAFT_D, BRG.bore_r, SPIDER.bore_r (+ SHAFT_CLR);  BELL_WALL_R + SHAFT_CLR ── SPACER.bore_r
+MNT_IN + BRG_RECESS + BRG.w/2 ── BRG.x;  BRG.od_r - BRG_PRESS ── BRG_SEAT_R;  MNT_SLAB + SHAFT_INTO_RECESS ── WSHAFT.x_end
+MNT_FRAME = (±MNT_IN, WY, WZ): mount frames; joint chain in src/revron/assembly_rig.py (_weapon):
+  tub tab -> mount notch; RV03 inner face -> back spacer; RV03 stator seat -> stator -> bell (rotor fit)
+  -> spider (bell cap) -> disc_a -> dspacer -> disc_b; bell bore -> wshaft; RV02 seat -> MR85
 ```

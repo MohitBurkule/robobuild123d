@@ -56,6 +56,7 @@ KEY_SPAN, KEY_DEV_R = (-26.15, -23.4), 2.5   # Y span of the key tab, radius of 
 N10_TOP = 17.0                       # top face of the N10 gearbox plates
 # chassis RV01
 SW_HALF_W, SW_CLR = 2.9, 0.05   # power switch body half-width, its clearance to the inner wall face
+SW_HALF, SW_WALL_CLEAR = SW_HALF_W, SW_CLR   # fix-joints names (switch joint in joints.py)
 SWX = CH_IN_X - SW_CLR - SW_HALF_W   # power switch X: body side 0.05 clear of the 27.5 inner wall face (was 25.0, 0.4 into it)
 CH = dict(x=CH_HALF_W, y0=CH_Y0, y1=CH_Y1, z0=CH_Z0, z1=CH_Z1, wall=CH_WALL, deck=CH_Z1 - CH_WALL, cham=CH_WALL)
 # drisk

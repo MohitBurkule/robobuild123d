@@ -30,17 +30,15 @@ WIRES = [("w_bat_sw", "battery.jst_rcy", "power_switch.in", AWG["power"], "power
 
 
 # make_spec tables: weapon shaft, web floors, hub pivots, electronics placements, press-fit interference, belt geometry
-WSHAFT = dict(r=2.5, len=30.1, x=3.65, x_end=-18.7, thread_pitch=0.8, thread_depth=0.3, thread_len=10.0, chamfer=0.4)                  # GR1507 shaft: radius, length, start in the motor frame
 WEB = dict(spider=0.8, disc=0.9, fork=1.05)             # min_web_mm the designer owns (STEP measures the same webs)
 HUB_PIVOT_X = dict(rear=41.6, front=34.5)               # |X| of each hub's revolute pivot
 ELEC = dict(battery=(-11.81, -5.4, 12.0), rxesc=(8.67, -3.0, 15.3), wesc=(8.63, -7.25, 10.6), switch_yz=(-5.6, 14.25))   # catalog origins (STEP envelopes)
-STATOR_DIRS = ((1, 0), (-1, 0), (0, 1), (0, -1))        # stator screw directions on the bolt circle (bolt_wm0..3)
 FILLET_REAR_X = 26.77   # |X| where the squared N10 gearbox-plate seat meets its seat arc at the rear wall (measured on our section z=10; RV01 26.5)
 SWX_DEV_R = 1.5   # reference_cad deviation radius round each switch pilot (hole shifted 0.45 from the STEP)
 SW_PITCH, SW_BODY_H = 15.0, 3.5   # BBB ant switch ear-hole pitch and body height (catalog)
 SW_SCREW_Y = tuple(round(ELEC["switch_yz"][0] + sg * SW_PITCH / 2, 6) for sg in (1, -1))   # the two ear holes straddle the switch centre
 SW_BOLT_Z, TOP_BOLT_Z = ELEC["switch_yz"][1] + SW_BODY_H / 2, TOP_Z0 + TOP_T  # switch screws (Y, head Z) and the top-panel screw head plane
-PRESS = dict(hub=0.05, tyre=0.3, micro=0.2, nut=0.05, shaft=0.02, bearing=0.05, pack=0.1)   # press-fit interference per joint, mm
+PRESS = dict(hub=0.05, tyre=0.3, micro=0.2, nut=0.05, shaft=0.02, bearing=BRG_PRESS, pack=0.1)   # press-fit interference per joint, mm
 BELT_R, BELT_r = 7.95, 4.2   # O-ring centreline radii: rear / front hub groove floor (7.45, 3.7) + half the 1.0 cs
 BELT_X = dict(centre=31.25)                                              # |X| of the O-ring centreline (hub groove centre)
 O_RING = (45, 1.0)                                      # stock O-ring ID x cross-section
@@ -57,7 +55,6 @@ WALL_EXCEPT = [[[-29.6, -37.7, 4.6], [29.6, -35.4, 17.5]], [[-33.0, -38.0, 0.0],
 FILLET_H, ROTOR_CLEAR = 10.0, 2.0                         # inside-corner fillet probe height; lead-to-rotor clearance
 
 
-BRG = dict(od_r=4.0, w=2.5, bore_r=2.5, x=-14.75)   # MR85ZZ 5 x 8 x 2.5, centred in the RV02 seat
 
 
 REF_BOM = [   # RVRN 2.0 STEP part list (research/rvrn_step/INDEX.txt); one row per joint or part family
@@ -73,8 +70,8 @@ REF_BOM = [   # RVRN 2.0 STEP part list (research/rvrn_step/INDEX.txt); one row 
     dict(role="side panel to chassis: 2 x M3x8 CSK into thin nuts", match=["bolt_s?c"], count=2, designation="M3x8", head="countersunk", threads_into="nut"),
     dict(role="M3 thin nuts (BS EN 24036)", kind="part", match=["nut_c*"], count=2, catalog="nut_m3_thin"),
     dict(role="RV11 25 mm + RV10 15 mm alu standoffs", kind="part", match=["so_*"], count=4, material="aluminium"),
-    dict(role="GR1507 weapon motor", kind="part", match=["weapon_motor_stator"], count=1, catalog="gr1507"),
-    dict(role="GR1507 bell (rotor half)", kind="part", match=["weapon_motor_can"], count=1, catalog="gr1507_can"),
+    dict(role="GR1507 weapon motor", kind="part", match=["weapon_motor_stator"], count=1, catalog=MOTOR["stator"]),
+    dict(role="GR1507 bell (rotor half)", kind="part", match=["weapon_motor_can"], count=1, catalog=MOTOR["can"]),
     dict(role="Motor back spacer", kind="part", match=["motor_spacer"], count=1),
     dict(role="spider + 2 Drisk_floating_3 + Drisk_spacer_alt_x", kind="part", match=["spider", "disc_a", "disc_b", "dspacer"], count=4),
     dict(role="fork_5 x 2", kind="part", match=["fork_*"], count=2),

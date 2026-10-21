@@ -4,6 +4,12 @@ from .params import *  # noqa: F401,F403
 from .common import *  # noqa: F401,F403
 
 
+def stator_bolt_circle():
+    """(dY, dZ) of the GR1507 base screws about the weapon axis: one per arm of the stator cross (STATOR_DIRS) on its PCD.
+    RV03's counterbores, the back spacer's holes and the reference deviations all use this one pattern."""
+    return _polar(STATOR_PCD / 2, len(STATOR_DIRS))
+
+
 def _mount_clip():
     """Region above the line from the notch top to the nose (the battered boss) as a polygon."""
     return Polygon_([(TAB["y0"], MNT_TOP_Z), (BOSS_NOSE_Y, BOSS_Z), (BIG, BOSS_Z), (BIG, BIG), (0, BIG), (0, MNT_TOP_Z)])
@@ -61,7 +67,7 @@ def weapon_mount(side):
     axis = (WY, WZ)
     if side == "r":
         cuts.append(_cyl(SHAFT_D / 2 + SHAFT_CLR, -BIG / 2, BIG / 2, axis))          # shaft end clearance
-        for dy, dz in _polar(STATOR_PCD / 2, 4, 0.0):                                # GR1507 stator M2 on its bolt circle
+        for dy, dz in stator_bolt_circle():                                # GR1507 stator M2 on its bolt circle
             cuts.append(_stator_hole(s, dy, dz)[0])
     else:
         cuts.append(_cyl(BRG_SEAT_R, -BIG / 2, BIG / 2, axis))                        # outboard bearing seat
@@ -111,6 +117,6 @@ def motor_back_spacer():
     c, b = (WY, WZ), BSP
     p = Point(c).buffer(b["r"], WSEG_HI).difference(Point(c).buffer(b["bore_r"], WSEG_MID))
     p = _ring_windows(p, c, b["win_in"], b["win_out"], b["half_deg"], b["phase"], b["win_round"])   # STEP windows (measured)
-    for dy, dz in _polar(STATOR_PCD / 2, 4, 0.0):
+    for dy, dz in stator_bolt_circle():
         p = p.difference(Point(WY + dy, WZ + dz).buffer(b["hole_r"], WSEG_LO))
     return _ext(p, "yz", *BSP_X)
