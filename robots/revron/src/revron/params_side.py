@@ -40,7 +40,7 @@ SP_NOSE_RUN = 10.0                   # the nose is the swing's outer cone swept 
 SP_NOSE_OVER = 1.0                   # cutters overshoot the faces they open
 # nose notch (STEP RV23 sections): the standoff-end post (R3.952 round SA) stands in a pocket (floor X_POST); behind it a deeper pocket (X_B, rear corner r_round)
 # keeps the wedgelet ring round SB as a R3.5 post
-SP_NOSE_PKT = dict(x_post=-40.5, x_b=-42.4, r_round=1.0, r_ring=3.5, z_top=8.0, r_slot=3.65, taper_deg=18.9)   # z_top: the pocket's roof, above it a slot round the nose-run end
+SP_NOSE_PKT = dict(x_post=-40.5, x_b=-42.5, draft_deg=2.2, r_round=1.0, r_ring=3.5, z_top=8.0, r_slot=3.65, taper_deg=18.9)   # z_top: the pocket's roof, above it a slot round the nose-run end
 SP_NOSE_Z = (FLOOR_Z, 10.0)   # SP_NOSE_Z[1] is also the top of the swing and of the S-bend's front end
 SP_TOE_Y0 = 47.0                     # the ramp toe's land starts here (Y)
 SP_TOE_RUN = 3.1                     # Y run of the ramp skin the toe polygon follows
@@ -55,7 +55,7 @@ SP_SA_CLEAR = (2.6, -42.55, -38.0)   # STEP RV23 r 2.6: standoff-end clearance b
 SP_BOSS = dict(r=3.25, h=1.0, chamfer=0.5)
 # STEP RV23 rear tyre relief pocket on the inner face (measured on RV23 sections X -43.7..-44.9): a round-ended slot, r 5 round about
 # the rear wheel axis line (Y, Z) with its front corners r1.75 (the r1.5 floor fillet stays inside them), from the floor X to the inner face; the floor edge is rounded r1.5 (Fillet5)
-SP_TYRE_RELIEF = dict(c=(-34.4, 10.0), r=5.0, y_front=-34.4 + 2 * 5.0, r_front=1.75, x=(-45.0, -43.4), r_floor=1.5)
+SP_TYRE_RELIEF = dict(rim=1.0, depth=1.5, r_front=1.75, r_floor=1.5)   # round end concentric with the rear R6, `rim` inside it; `depth` into the rear wall's inner face
 SP_NUT_RELIEF_X = (-32.5, -31.4)
 # [fix-C-j1] the panel is modelled once, left hand (RV23, -X); RV24 is its YZ mirror. Its frame sits on the SA standoff
 # end (the boss face the 25 mm standoff seats against); each screw seat sits on the axis of the part it clamps.
@@ -67,8 +67,8 @@ CHASSIS_MIN_VOLUME = 15000.0         # mm3: the intact chassis is 15988 mm3 in o
 # chassis-nut relief (STEP RV23, section X -32): the hull of the R4.6 round about the nut axis NUT and a small R2.1 round `dy` further along Y at height `z`
 SP_NUT_POCKET = dict(r=4.6, r2=2.1, dy=12.0, z=6.921)
 # three diagonal flutes on the outer face (STEP RV23): width / pitch / angle off the Y axis, the middle one through (Y 0, Z `z`), `depth` deep along X,
-# from Z `z0` up to W_TOP under the wall's top line
-SP_FLUTE = dict(n=3, w=1.6, pitch=3.0, deg=30.0, y=0.0, z=10.0, z0=4.2, depth=0.53)
+# each from Z `z0` up to its own level top end (`top`, rear flute first)
+SP_FLUTE = dict(n=3, w=1.6, pitch=3.0, deg=30.0, y=0.0, z=10.0, z0=4.2, top=(14.1, 13.1, 12.4), depth=0.53)
 # [fix-C wedgelet] measured polyline arcs rebuilt as true arcs (sampled finer than the 6 deg facet-seam threshold)
 WG_RING_CHAMFER, WG_RING_CHAMFER_Y = 1.0, 44.96    # Chamfer7: the ring step's far edge is chamfered 45 deg round the SB side (cone) and along the floor to this Y (plane)
 WG_CHAMFER_END = dict(a=6.77, b=1.68)   # Chamfer7's floor end vertex blend: (dy)^2 = a h - b h^2 (h = chamfer height at that X)
