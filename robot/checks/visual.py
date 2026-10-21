@@ -18,7 +18,7 @@ Checks (ids):
                      than half as much within 2 mm is a polygon / stair-step standing in for a curved surface.
   visual.fillet_ref  every concave edge of ours: local radius vs the reference's at the same spot (sharp_corner's
                      section method). Flagged where the reference is rounder by > max(0.3 mm, 30 %) over a region of
-                     >= 3 samples. BLOCKER on structure / printed load parts when the reference radius >= 1 mm.
+                     >= 2 samples (1.5 mm grid). BLOCKER on structure / printed load parts when the reference radius >= 1 mm.
   visual.sliver      degenerate B-rep faces (coplanar triangle groups bounded only by real edges > 20 deg): area <
                      sliver_area_mm2 (0.02) or width < sliver_w_mm (0.05). Only where the reference has no sliver
                      within 1 mm (the RVRN STEP has its own).
@@ -127,14 +127,26 @@ def view_diff(model, ref, d, prm=DEFAULTS):
     cm = (np.vstack([model.vertices, ref.vertices]) @ w).mean()
     blobs = []
     k = max(int(round(0.3 / res)), 1)
-    for kind, X in (("extra outline", A & ~B), ("missing outline", B & ~A)):
+    import trimesh
+
+    for kind, X, src in (("extra outline", A & ~B, model), ("missing outline", B & ~A, ref)):
         lab, n = ndimage.label(ndimage.binary_opening(X, iterations=k))
+        if not n:
+            continue
+        # where the differing outline IS in 3D: surface samples of the mesh that has it, projecting into the blob
+        P, _ = trimesh.sample.sample_surface(src, int(min(max(src.area * 20, 20000), 300000)), seed=2)
+        ij = np.floor((np.c_[P @ u, P @ v] - lo) / res).astype(int)
+        okp = (ij[:, 0] >= 0) & (ij[:, 1] >= 0) & (ij[:, 0] < lab.shape[0]) & (ij[:, 1] < lab.shape[1])
+        lp = np.zeros(len(P), int)
+        lp[okp] = lab[ij[okp, 0], ij[okp, 1]]
         for i in range(1, n + 1):
             xs, ys = np.nonzero(lab == i)
             a = len(xs) * res * res
             if a >= prm["blob_mm2"]:
                 uv = lo + np.array([xs.mean(), ys.mean()]) * res
-                blobs.append({"kind": kind, "area_mm2": round(a, 2), "at": (uv[0] * u + uv[1] * v + cm * w).round(2).tolist(),
+                hit = P[lp == i]
+                at = hit.mean(0) if len(hit) else uv[0] * u + uv[1] * v + cm * w
+                blobs.append({"kind": kind, "area_mm2": round(a, 2), "at": np.round(at, 2).tolist(),
                               "uv": uv.tolist(), "depth_mm": None})
     (DA, DB), lo2, _ = _depth([model, ref], d, dres)
     both = (DA > -1e8) & (DB > -1e8)
@@ -180,13 +192,30 @@ def hole_diffs(model, ref, tol=0.8):
     hr, hm = hole_list(ref, (lo, hi)), hole_list(model, (lo, hi))
     out = []
 
-    def p3(ax, c, prof):
+    def runs3(ax, c, prof):
+        """3D centre of every contiguous run of heights where the hole exists (two coaxial holes at the two ends of a
+        part are two features, not one at their average height)."""
         a, b = [i for i in range(3) if i != ax]
         ts = np.linspace(0.04, 0.96, len(prof))
-        hs = [lo[ax] + (hi[ax] - lo[ax]) * t for t, d in zip(ts, prof) if d]
-        p = [0.0] * 3
-        p[a], p[b], p[ax] = c[0], c[1], float(np.mean(hs)) if hs else float((lo[ax] + hi[ax]) / 2)
-        return [round(x, 2) for x in p]
+        hs = [lo[ax] + (hi[ax] - lo[ax]) * t for t in ts]
+        out_, cur = [], []
+        for h, d in zip(hs, prof):
+            if d:
+                cur.append(h)
+            elif cur:
+                out_.append(cur)
+                cur = []
+        if cur:
+            out_.append(cur)
+        pts = []
+        for run in out_ or [[float((lo[ax] + hi[ax]) / 2)]]:
+            p = [0.0] * 3
+            p[a], p[b], p[ax] = c[0], c[1], float(np.mean(run))
+            pts.append([round(x, 2) for x in p])
+        return pts
+
+    def p3(ax, c, prof):
+        return runs3(ax, c, prof)[0]
 
     used = set()
     for ax, c, d in hr:
@@ -194,7 +223,8 @@ def hole_diffs(model, ref, tol=0.8):
         pr = hole_profile(ref, ax, c, lo[ax], hi[ax], n=15)
         at = p3(ax, c, pr)
         if j is None:
-            out.append({"kind": "missing", "axis": "XYZ"[ax], "at": at, "msg": f"reference hole d{d:.2f} along {'XYZ'[ax]} at {at} has no counterpart"})
+            for at_ in runs3(ax, c, pr):
+                out.append({"kind": "missing", "axis": "XYZ"[ax], "at": at_, "msg": f"reference hole d{d:.2f} along {'XYZ'[ax]} at {at_} has no counterpart"})
             continue
         used.add(j)
         pm = hole_profile(model, ax, hm[j][1], lo[ax], hi[ax], n=15)
@@ -271,8 +301,14 @@ def face_mix(m, lo_deg=6.0):
 
 
 # ------------------------------------------------------------------------------------------------ fillets (pure)
+TURN_MATCH_DEG = 15.0   # the reference corner compared must turn as much as ours (else it is a different corner)
+
+
 def fillet_diffs(model, ref, grid=1.5, min_turn=30.0, tol=0.3, frac=0.3, snap=1.2):
-    """[(point, r_ours, r_ref)] on model concave edges where the reference at the same spot is rounder."""
+    """[(point, r_ours, r_ref)] on model concave edges where the reference at the same spot is rounder.
+    The reference is measured with section windows of 2, 4 and 6 mm and only a measurement whose turn matches ours
+    within TURN_MATCH_DEG counts (the closest match): a 4 mm window that reaches the next corner, a slot (turn ~180) or a
+    shallow 20 deg bend is a different feature, not a rounder version of ours. No matching corner -> not compared."""
     import trimesh
 
     from . import sharp_corner as sc
@@ -286,9 +322,11 @@ def fillet_diffs(model, ref, grid=1.5, min_turn=30.0, tol=0.3, frac=0.3, snap=1.
         q, d, _ = trimesh.proximity.closest_point(ref, [p])
         if d[0] > snap:
             continue
-        b = sc.local_radius(ref, q[0], t, 4.0, br)
-        if b is None or b[1] < 0.5 * min_turn:
+        cands = [x for x in (sc.local_radius(ref, q[0], t, wdw, br) for wdw in (2.0, 4.0, 6.0)) if x is not None]
+        cands = [x for x in cands if abs(x[1] - a[1]) <= TURN_MATCH_DEG]
+        if not cands:
             continue
+        b = min(cands, key=lambda x: abs(x[1] - a[1]))
         if b[0] - a[0] > max(tol, frac * b[0]):
             out.append((np.asarray(p, float), float(a[0]), float(b[0])))
     return out
@@ -354,7 +392,13 @@ def _model_mesh(ctx, e):
 
 def covered(e, at):
     """Reason of a valid entry `deviation` covering 3D point `at` (citing the reference), else None."""
+    from .reference_cad import _dev_valid, path_dist
+
     for d in e.get("deviations") or []:
+        if d.get("path") is not None:   # capsule waiver (validated by reference_cad._dev_valid)
+            if _dev_valid(d) is None and float(path_dist(np.atleast_2d(np.asarray(at, float)), np.asarray(d["path"], float))[0]) <= float(d["r"]):
+                return d["reason"]
+            continue
         if not cites(d.get("reason")) or d.get("near") is None or float(d.get("r", 3.0)) > 5.0:
             continue
         if np.linalg.norm(np.asarray(at, float) - np.asarray(d["near"], float)) <= float(d.get("r", 3.0)):
@@ -473,7 +517,7 @@ def run(ctx):
                     hits = fillet_diffs(mod, ref, prm["fillet_grid_mm"], tol=prm["fillet_tol_mm"], frac=prm["fillet_frac"])
                     items = []
                     for g in regions([(p, None, a, b) for p, a, b in hits], 2.5):
-                        if len(g) < 3:
+                        if len(g) < 2:   # 2 samples on the 1.5 mm grid = a >= 1.5 mm run of edge
                             continue
                         w = max(g, key=lambda h: h[3] - h[2])
                         items.append({"at": np.round(w[0], 2).tolist(), "r": round(w[2], 2), "r_ref": round(w[3], 2), "n": len(g),
