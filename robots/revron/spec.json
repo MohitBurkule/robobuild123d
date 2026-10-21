@@ -3374,6 +3374,9 @@
     "sink": 0.0,
     "grip": 1.0
    },
+   "waive": {
+    "fastener_seat": "RV26 base panel seat is dk 3.2 x 0.5 deep in the STEP (panel volume matches the STEP to 0.03 %); the modelled ISO 10642 M2 head (4.4 x 1.2) sits proud of that seat, same as the original RVRN 2.0 assembly. The base_csk_fit variant opens the seat."
+   },
    "head": "countersunk",
    "removable": true
   },
@@ -3412,6 +3415,9 @@
     "csk_depth": 0.4,
     "sink": 0.0,
     "grip": 1.0
+   },
+   "waive": {
+    "fastener_seat": "RV26 base panel seat is dk 3.2 x 0.5 deep in the STEP (panel volume matches the STEP to 0.03 %); the modelled ISO 10642 M2 head (4.4 x 1.2) sits proud of that seat, same as the original RVRN 2.0 assembly. The base_csk_fit variant opens the seat."
    },
    "head": "countersunk",
    "removable": true
@@ -3452,6 +3458,9 @@
     "sink": 0.0,
     "grip": 1.0
    },
+   "waive": {
+    "fastener_seat": "RV26 base panel seat is dk 3.2 x 0.5 deep in the STEP (panel volume matches the STEP to 0.03 %); the modelled ISO 10642 M2 head (4.4 x 1.2) sits proud of that seat, same as the original RVRN 2.0 assembly. The base_csk_fit variant opens the seat."
+   },
    "head": "countersunk",
    "removable": true
   },
@@ -3491,6 +3500,9 @@
     "sink": 0.0,
     "grip": 1.0
    },
+   "waive": {
+    "fastener_seat": "RV26 base panel seat is dk 3.2 x 0.5 deep in the STEP (panel volume matches the STEP to 0.03 %); the modelled ISO 10642 M2 head (4.4 x 1.2) sits proud of that seat, same as the original RVRN 2.0 assembly. The base_csk_fit variant opens the seat."
+   },
    "head": "countersunk",
    "removable": true
   },
@@ -3529,6 +3541,9 @@
     "csk_depth": 0.4,
     "sink": 0.0,
     "grip": 1.0
+   },
+   "waive": {
+    "fastener_seat": "RV26 base panel seat is dk 3.2 x 0.5 deep in the STEP (panel volume matches the STEP to 0.03 %); the modelled ISO 10642 M2 head (4.4 x 1.2) sits proud of that seat, same as the original RVRN 2.0 assembly. The base_csk_fit variant opens the seat."
    },
    "head": "countersunk",
    "removable": true
@@ -4902,21 +4917,21 @@
    "a": "battery",
    "b": "tub",
    "method": "press_fit",
-   "reason": "Pack between the motor wall, the insert columns and the deck",
+   "reason": "RV16 pack at STEP z 12.0, underside 6.5, 2.0 mm over the RV26 base-panel skin (z 4.5): the original assembly mates the pack to the chassis only, no pad. Pack between the motor wall, the insert columns and the deck",
    "interference_mm": 0.1,
    "mechanical_key": true
   },
   {
    "a": "rxesc",
    "b": "tub",
-   "method": "tape",
-   "reason": "Malenki kapton-taped to the deck, as in the original RVRN 2.0 (kapton-wrapped ESC stack, no tray or strap)"
+   "method": "glue",
+   "reason": "Malenki kapton-taped to the deck (adhesive tape hold), as in the original RVRN 2.0: revron_deconstruction.md 'Malenki+ESC kapton-wrapped, stacked'; no tray or strap"
   },
   {
    "a": "wesc",
    "b": "tub",
-   "method": "tape",
-   "reason": "weapon ESC kapton-taped in the bay, as in the original RVRN 2.0 (no tray)"
+   "method": "glue",
+   "reason": "weapon ESC kapton-taped (adhesive tape hold), as in the original RVRN 2.0: revron_deconstruction.md 'Malenki+ESC kapton-wrapped, stacked'; no tray"
   },
   {
    "a": "power_switch",

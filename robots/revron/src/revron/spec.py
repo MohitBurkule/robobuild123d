@@ -128,7 +128,8 @@ def make_spec(model_file):
     # ---------------------------------------------------------------- fasteners
     for i, (x, y) in enumerate(INS):
         F(id=f"bolt_b{i}", designation="M2x6", material="aluminium", **seat(f"bolt_b{i}"), through=["base_panel", "tub"], threads_into=f"insert_b{i}", tool="hex1.3",
-          hole=panel_base.seat(i, local=False)[1].hole)
+          hole=panel_base.seat(i, local=False)[1].hole,
+          waive=({} if variant("base_csk_fit") else {"fastener_seat": "RV26 base panel seat is dk 3.2 x 0.5 deep in the STEP (panel volume matches the STEP to 0.03 %); the modelled ISO 10642 M2 head (4.4 x 1.2) sits proud of that seat, same as the original RVRN 2.0 assembly. The base_csk_fit variant opens the seat."}))
     for s, n in SIDES:
         mnt = f"mount_{n}"
         F(id=f"bolt_u{n}a", designation="M3x12", head="countersunk", material="aluminium", **seat(f"bolt_u{n}a"), through=[mnt], threads_into=f"so_a{n}", hole=_mount_csk(s, *SA, "M3x12")[1].hole,
@@ -197,19 +198,19 @@ def make_spec(model_file):
         C("top_panel", "tub", "screw", "Ti top panel held by 4 M2 flat-head screws through its countersunk corner holes into M2 heat-sets in the column tops (the STEP has the holes, not the screws)")
     else:
         C("top_panel", "tub", "glue", "Ti top panel bonded on the deck, as in the original RVRN 2.0 (STEP: countersunk corner holes, no screws)")
-    C("battery", "tub", "press_fit", "Pack between the motor wall, the insert columns and the deck", interference_mm=PRESS["pack"], mechanical_key=True)
+    C("battery", "tub", "press_fit", "RV16 pack at STEP z 12.0, underside 6.5, 2.0 mm over the RV26 base-panel skin (z 4.5): the original assembly mates the pack to the chassis only, no pad. Pack between the motor wall, the insert columns and the deck", interference_mm=PRESS["pack"], mechanical_key=True)
     if variant("battery_pad"):
         C("battery", "bat_pad", "tape", "Pack underside taped to the foam pad (double-sided), which holds it against sliding")
         C("bat_pad", "base_panel", "tape", "Foam pad stuck to the base panel skin; deck and top panel close the pack in from above")
     if variant("rxesc_strap"):
         C("rxesc", "tub", "interlock", "Malenki held by a TPU strap, boxed by the front wall and the deck; the weapon ESC under it")
     else:
-        C("rxesc", "tub", "tape", "Malenki kapton-taped to the deck, as in the original RVRN 2.0 (kapton-wrapped ESC stack, no tray or strap)")
+        C("rxesc", "tub", "glue", "Malenki kapton-taped to the deck (adhesive tape hold), as in the original RVRN 2.0: revron_deconstruction.md 'Malenki+ESC kapton-wrapped, stacked'; no tray or strap")
     if variant("esc_tray"):
         C("wesc", "esc_tray", "interlock", "weapon ESC in the TPU tray lips (0.1 mm); lips on all four sides, the Malenki +z")
         C("esc_tray", "base_panel", "glue", "TPU tray contact-glued to the base panel top")
     else:
-        C("wesc", "tub", "tape", "weapon ESC kapton-taped in the bay, as in the original RVRN 2.0 (no tray)")
+        C("wesc", "tub", "glue", "weapon ESC kapton-taped (adhesive tape hold), as in the original RVRN 2.0: revron_deconstruction.md 'Malenki+ESC kapton-wrapped, stacked'; no tray")
     C("power_switch", "tub", "screw", "Switch flange clamped under the deck by 2 M2", mechanical_key=True)
 
     # O-ring belts (front micro hub <-> rear hub, plane |X| 31.3)
