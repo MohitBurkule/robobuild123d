@@ -6,6 +6,7 @@ the N10 seats); each attached part carries the matching joint on itself (insert 
 a coordinate typed beside the part."""
 import build123d as b
 from .params import *  # noqa: F401,F403
+from .variants import variant
 
 DIGITS = 6   # spec precision: micron / micro-degree, JSON free of float noise
 
@@ -99,8 +100,9 @@ def tub_rig(r=None, solve=True):
         r.mate("tub", f"screw_b{i}", f"bolt_b{i}", "head")
     for i, (x, y) in enumerate(TOP_XY):              # top-panel screws: head plane on the panel top face
         r.hole("tub", f"screw_t{i}", (x, y, TOP_BOLT_Z), (0, 0, -1))   # driven down through the panel
-        r.joint(f"bolt_t{i}", "head", (0, 0, 0))
-        r.mate("tub", f"screw_t{i}", f"bolt_t{i}", "head")
+        if variant("top_screws"):   # the original has no top-panel screws
+            r.joint(f"bolt_t{i}", "head", (0, 0, 0))
+            r.mate("tub", f"screw_t{i}", f"bolt_t{i}", "head")
     for i, sg in enumerate((1, -1)):                 # switch screws: through the ear holes (SW_PITCH apart along its length) at the body top
         r.joint("power_switch", f"ear{i}", (sg * SW_PITCH / 2, 0, SW_BODY_H / 2))
         r.joint(f"bolt_sw{i}", "head", (0, 0, 0))
