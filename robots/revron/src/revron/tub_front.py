@@ -48,15 +48,16 @@ LAT_MID = Polygon([(_cx - 5.04, _cz - 5.49), (_cx + 5.04, _cz - 5.49), (_cx + 5.
 LATTICE = [LAT_SIDE, scale(LAT_SIDE, -1, 1, origin=(LAT_C[0], 0)), LAT_MID, scale(LAT_MID, 1, -1, origin=(0, LAT_C[1]))]
 
 
-WALL_POCKET_R = (1.0, 0.8)   # corner R, floor R: the floor fillet must be smaller than the corner R, else the blend degenerates to zero-area slivers (STEP: R0.5 corners)
+WALL_POCKET_FILLET = 0.8   # RV01 Fillet22 (R0.8, 16 edges): the 4 corner edges and the 4 floor edges of each of the two front-wall pockets
+POCKET_FLOOR_SHY = 0.005   # the floor fillet runs 5 um under the corner R: equal radii give a degenerate sphere seam that tessellates open (STL not watertight)
 
 
-def _wall_pocket(x0, x1, z0, z1, y0, y1, r_vert=WALL_POCKET_R[0], r_floor=WALL_POCKET_R[1]):
-    """Rectangular front-wall pocket cutter (X x Z, floor at y1): R1.0 corners and R0.8 floor (STEP: R0.5 corners, R0.8 floor)."""
+def _wall_pocket(x0, x1, z0, z1, y0, y1, r=WALL_POCKET_FILLET):
+    """Rectangular front-wall pocket cutter (X x Z, floor at y1): R0.8 on its 4 corner edges (parallel to Y) and its 4 floor edges, i.e.
+    every edge but the open (y0) face's (RV01 Fillet22). Edges are picked by relation: parallel to Y, then the floor face's loop."""
     b = _b()
-    s = _box(x0, x1, y0, y1, z0, z1)
-    s = b.fillet(s.edges().filter_by(b.Axis.Y), r_vert)
-    return b.fillet(s.faces().sort_by(b.Axis.Y)[-1].edges(), r_floor)
+    s = b.fillet(_box(x0, x1, y0, y1, z0, z1).edges().filter_by(b.Axis.Y), r)
+    return b.fillet(s.faces().sort_by(b.Axis.Y)[-1].edges(), r - POCKET_FLOOR_SHY)
 
 
 def _lattice_pocket(poly, y0=LAT_Y[0], y1=LAT_Y[1], r_vert=LAT_R_VERT, r_floor=LAT_R_FLOOR):
