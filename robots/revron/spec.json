@@ -2089,6 +2089,32 @@
      "part": "so_a_l"
     }
    },
+   "features": {
+    "end_face": {
+     "point": [
+      -42.5,
+      30.5,
+      5.5
+     ],
+     "normal": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    },
+    "axis": {
+     "point": [
+      -42.5,
+      30.5,
+      5.5
+     ],
+     "axis": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    }
+   },
    "label": "RV11 25 mm alu standoff: front axle, clamps the mount, the side panel screws to its end"
   },
   {
@@ -2167,8 +2193,97 @@
     "type": "model",
     "file": "src/build_revron.py",
     "params": {
-     "part": "side_panel_l"
+     "part": "side_panel_l_local"
     }
+   },
+   "features": {
+    "sa_face": {
+     "point": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "normal": [
+      1.0,
+      -0.0,
+      -0.0
+     ]
+    },
+    "sa_axis": {
+     "point": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "axis": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    },
+    "seat_a": {
+     "point": [
+      -3.759999999999998,
+      0.0,
+      0.0
+     ],
+     "axis": [
+      1,
+      0.0,
+      0.0
+     ]
+    },
+    "seat_b": {
+     "point": [
+      0.740000000000002,
+      10.0,
+      -1.0
+     ],
+     "axis": [
+      1,
+      0.0,
+      0.0
+     ]
+    },
+    "seat_c": {
+     "point": [
+      7.240000000000002,
+      -42.0,
+      3.0
+     ],
+     "axis": [
+      1,
+      0.0,
+      0.0
+     ]
+    },
+    "nut_relief": {
+     "point": [
+      11.100000000000001,
+      -42.0,
+      3.0
+     ],
+     "axis": [
+      1,
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "mate": {
+    "to": "so_al",
+    "constraints": [
+     {
+      "type": "coaxial",
+      "a": "axis",
+      "b": "sa_axis"
+     },
+     {
+      "type": "face",
+      "a": "end_face",
+      "b": "sa_face"
+     }
+    ]
    },
    "label": "RV23 TPU side panel: battered S-wall round the wheels, 3 M3x8 CSK (two standoff ends, one chassis nut)"
   },
@@ -2328,6 +2443,32 @@
      "part": "so_a_r"
     }
    },
+   "features": {
+    "end_face": {
+     "point": [
+      42.5,
+      30.5,
+      5.5
+     ],
+     "normal": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    },
+    "axis": {
+     "point": [
+      42.5,
+      30.5,
+      5.5
+     ],
+     "axis": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    }
+   },
    "label": "RV11 25 mm alu standoff: front axle, clamps the mount, the side panel screws to its end"
   },
   {
@@ -2406,8 +2547,97 @@
     "type": "model",
     "file": "src/build_revron.py",
     "params": {
-     "part": "side_panel_r"
+     "part": "side_panel_r_local"
     }
+   },
+   "features": {
+    "sa_face": {
+     "point": [
+      -0.0,
+      0.0,
+      0.0
+     ],
+     "normal": [
+      -1.0,
+      -0.0,
+      -0.0
+     ]
+    },
+    "sa_axis": {
+     "point": [
+      -0.0,
+      0.0,
+      0.0
+     ],
+     "axis": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    },
+    "seat_a": {
+     "point": [
+      3.759999999999998,
+      0.0,
+      0.0
+     ],
+     "axis": [
+      -1,
+      0.0,
+      0.0
+     ]
+    },
+    "seat_b": {
+     "point": [
+      -0.740000000000002,
+      10.0,
+      -1.0
+     ],
+     "axis": [
+      -1,
+      0.0,
+      0.0
+     ]
+    },
+    "seat_c": {
+     "point": [
+      -7.240000000000002,
+      -42.0,
+      3.0
+     ],
+     "axis": [
+      -1,
+      0.0,
+      0.0
+     ]
+    },
+    "nut_relief": {
+     "point": [
+      -11.100000000000001,
+      -42.0,
+      3.0
+     ],
+     "axis": [
+      -1,
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "mate": {
+    "to": "so_ar",
+    "constraints": [
+     {
+      "type": "coaxial",
+      "a": "axis",
+      "b": "sa_axis"
+     },
+     {
+      "type": "face",
+      "a": "end_face",
+      "b": "sa_face"
+     }
+    ]
    },
    "label": "RV24 TPU side panel: battered S-wall round the wheels, 3 M3x8 CSK (two standoff ends, one chassis nut)"
   },
@@ -3204,9 +3434,9 @@
     5.5
    ],
    "dir": [
-    1,
-    0,
-    0
+    1.0,
+    0.0,
+    0.0
    ],
    "through": [
     "side_l"
@@ -3243,9 +3473,9 @@
     4.5
    ],
    "dir": [
-    1,
-    0,
-    0
+    1.0,
+    0.0,
+    0.0
    ],
    "through": [
     "side_l",
@@ -3283,9 +3513,9 @@
     8.5
    ],
    "dir": [
-    1,
-    0,
-    0
+    1.0,
+    0.0,
+    0.0
    ],
    "through": [
     "side_l",
@@ -3402,9 +3632,9 @@
     5.5
    ],
    "dir": [
-    -1,
-    0,
-    0
+    -1.0,
+    0.0,
+    0.0
    ],
    "through": [
     "side_r"
@@ -3441,9 +3671,9 @@
     4.5
    ],
    "dir": [
-    -1,
-    0,
-    0
+    -1.0,
+    0.0,
+    0.0
    ],
    "through": [
     "side_r",
@@ -3481,9 +3711,9 @@
     8.5
    ],
    "dir": [
-    -1,
-    0,
-    0
+    -1.0,
+    0.0,
+    0.0
    ],
    "through": [
     "side_r",

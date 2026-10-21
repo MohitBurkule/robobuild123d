@@ -16,7 +16,7 @@ import build_revron as R
 WEAPON = {"mount_l": lambda: R.weapon_mount("l"), "mount_r": lambda: R.weapon_mount("r"), "spider": lambda: R.spider(),
           "drisk_spacer": lambda: R.drisk_spacer(), "disc_a": lambda: R.disc("disc_a"), "disc_b": lambda: R.disc("disc_b"),
           "motor_back_spacer": lambda: R.motor_back_spacer()}   # [fix-B] weapon parts
-SOLIDS = list(R.PARTS)   # [fix-S] every part
+SOLIDS = list(R.PARTS)   # [fix-S] every part ([fix-C-j1] parts new since the snap are reported, not compared)
 
 
 def _build(n):
@@ -61,7 +61,10 @@ def snap(d):
 def check(d):
     bad = 0
     for n in SOLIDS:
-        f = os.path.join(d, n + ".brep"); new = _build(n); tmp = f + ".new"; b.export_brep(new, tmp)
+        f = os.path.join(d, n + ".brep")
+        if not os.path.exists(f):
+            print(f"{n:12s} new (not in snap)", flush=True); continue
+        new = _build(n); tmp = f + ".new"; b.export_brep(new, tmp)
         same = open(f, "rb").read() == open(tmp, "rb").read(); os.remove(tmp)
         if same:   # byte-identical B-rep: geometry equal, skip the costly surface sampling
             print(f"{n:12s} identical B-rep  OK", flush=True); continue
