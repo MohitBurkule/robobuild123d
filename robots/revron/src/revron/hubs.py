@@ -49,11 +49,21 @@ def tyre(od, idd, x0, x1, c, shoulder=0.0):
     if shoulder <= 0:
         return _S(_cyl(od / 2, x0, x1, c), _cyl(idd / 2, x0 - 1, x1 + 1, c))
     R, rs, w, st = od / 2, shoulder, x1 - x0, TYRE_SECTION_STEP
-    up = [(a, -1) for a in range(0, 91, st)]
-    down = [(a, 1) for a in range(90, -1, -st)]
+    up = [(a, -1) for a in range(0, QUARTER_TURN + 1, st)]
+    down = [(a, 1) for a in range(QUARTER_TURN, -1, -st)]
     prof = [(0.0, idd / 2)] + _tyre_arc(rs, R - rs, rs, up) + _tyre_arc(w - rs, R - rs, rs, down) + [(w, idd / 2)]
     return _revolve_x(prof, x0, c)
 
 
+def standoff_end(L_x, c):
+    """The standoff's outboard end: (point, outward axis). The side panel's SA boss seats on it."""
+    x = max(L_x, key=abs)
+    return (x, *c), (x / abs(x), 0.0, 0.0)
+
+
 def standoff(L_x, c):
-    return _S(_cyl(SO_R, *L_x, c), _cyl(STANDOFF_BORE_R, L_x[0] - 1, L_x[1] + 1, c))
+    b = _b()
+    s = _S(_cyl(SO_R, *L_x, c), _cyl(STANDOFF_BORE_R, L_x[0] - 1, L_x[1] + 1, c))
+    p, z = standoff_end(L_x, c)
+    b.RigidJoint("end", s, b.Location(b.Plane(origin=p, z_dir=z)))   # [fix-C-j1] the panel's `sa` joint connects here
+    return s

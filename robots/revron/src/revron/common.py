@@ -36,6 +36,54 @@ def _round(p, r_out=0.0, r_in=0.0):
     return p
 
 
+def _sharpen(p, eps=0.03):
+    """Polygon with every micro-bevel (a run of segments all shorter than eps that turns a corner, the leftover of a buffer in /
+    out round trip at a convex corner) replaced by the sharp corner: the intersection of its two neighbouring long segments."""
+    from shapely.geometry import Polygon
+
+    def ring(coords):
+        pts = list(coords)[:-1]
+        n = len(pts)
+        tiny = [math.dist(pts[i], pts[(i + 1) % n]) < eps for i in range(n)]
+        if not any(tiny) or all(tiny):
+            return pts
+        s0 = next(i for i in range(n) if not tiny[i])      # a long segment starts here: rotate so the ring starts after a long one
+        pts = pts[s0 + 1:] + pts[:s0 + 1]
+        tiny = tiny[s0 + 1:] + tiny[:s0 + 1]
+        out, i = [], 0
+        while i < n:
+            if tiny[i]:
+                j = i
+                while j < n and tiny[j]:
+                    j += 1
+                # tiny segments i..j-1 join vertices i..j; long segments end at vertex i (from i-1) and start at vertex j (to j+1)
+                a, b = pts[i - 1], pts[i]
+                c, d = pts[j % n], pts[(j + 1) % n]
+                den = (b[0] - a[0]) * (d[1] - c[1]) - (b[1] - a[1]) * (d[0] - c[0])
+                tot = sum(math.dist(pts[k % n], pts[(k + 1) % n]) for k in range(i, j))
+                if abs(den) > 1e-9:
+                    t = ((c[0] - a[0]) * (d[1] - c[1]) - (c[1] - a[1]) * (d[0] - c[0])) / den
+                    x = (a[0] + t * (b[0] - a[0]), a[1] + t * (b[1] - a[1]))
+                    if math.dist(x, b) < 4 * eps + tot:
+                        out.append(x)
+                        i = j + 1
+                        continue
+                out.append(pts[i])
+                i += 1
+            else:
+                out.append(pts[i])
+                i += 1
+        return out
+    polys = getattr(p, "geoms", [p])
+    res = []
+    for q in polys:
+        res.append(Polygon(ring(q.exterior.coords), [ring(r.coords) for r in q.interiors]).buffer(0))
+    r = res[0]
+    for q in res[1:]:
+        r = r.union(q)
+    return r
+
+
 def _tangent_line_circle(p, c, r, upper=True):
     """Tangent point on circle (c, r) of a line from point p (upper / lower side seen from p)."""
     dx, dy = c[0] - p[0], c[1] - p[1]
@@ -53,12 +101,109 @@ def _b():
     return b
 
 
-def _face(poly, plane):
-    """build123d face of a shapely polygon (with holes) drawn on `plane` ('xy', 'yz', 'xz') at offset 0."""
+def _arc_runs(pts, max_turn=20.0, tol=1e-4):
+    """Runs of >= 4 consecutive ring vertices lying on one circle (polygonised arcs): [(i, j, mid)] vertex index ranges."""
+    n = len(pts)
+    cen = []
+    for i in range(n):
+        a, b, c = pts[i - 1], pts[i], pts[(i + 1) % n]
+        d = 2 * (a[0] * (b[1] - c[1]) + b[0] * (c[1] - a[1]) + c[0] * (a[1] - b[1]))
+        v1, v2 = (b[0] - a[0], b[1] - a[1]), (c[0] - b[0], c[1] - b[1])
+        cr = v1[0] * v2[1] - v1[1] * v2[0]
+        turn = math.degrees(math.atan2(cr, v1[0] * v2[0] + v1[1] * v2[1]))
+        if abs(d) < 1e-12 or abs(turn) > max_turn or abs(turn) < 0.2:
+            cen.append(None)
+            continue
+        ux = ((a[0] ** 2 + a[1] ** 2) * (b[1] - c[1]) + (b[0] ** 2 + b[1] ** 2) * (c[1] - a[1]) + (c[0] ** 2 + c[1] ** 2) * (a[1] - b[1])) / d
+        uy = ((a[0] ** 2 + a[1] ** 2) * (c[0] - b[0]) + (b[0] ** 2 + b[1] ** 2) * (a[0] - c[0]) + (c[0] ** 2 + c[1] ** 2) * (b[0] - a[0])) / d
+        cen.append((ux, uy, math.hypot(a[0] - ux, a[1] - uy), 1 if turn > 0 else -1))
+    runs, i = [], 0
+    def same(p, q):
+        p, q = cen[p % n], cen[q % n]
+        return bool(p and q and p[3] == q[3] and math.hypot(p[0] - q[0], p[1] - q[1]) < tol * (1 + p[2]) and abs(p[2] - q[2]) < tol * (1 + p[2]))
+    while i < n:
+        if not cen[i]:
+            i += 1
+            continue
+        j = i
+        while j + 1 < n and same(j, j + 1):
+            j += 1
+        if j > i:
+            runs.append((i, j))       # triples centred on vertices i..j: arc vertices i-1 .. j+1
+        i = j + 1
+    # isolated triples of a fine polygonised arc (two equal short segments, a few degrees of turn): a 3-point arc
+    seg = set()
+    for i, j in runs:
+        seg |= {k % n for k in range(i - 1, j + 1)}
+    for i in range(n):
+        if cen[i] is None or {(i - 1) % n, i} & seg:
+            continue
+        a, b, c = pts[i - 1], pts[i], pts[(i + 1) % n]
+        l1, l2 = math.dist(a, b), math.dist(b, c)
+        if abs(l1 - l2) < 0.02 * max(l1, l2) and max(l1, l2) < 0.5 and cen[i][2] < 2.0:
+            runs.append((i, i))
+            seg |= {(i - 1) % n, i}
+    runs.sort()
+    return runs
+
+
+def _arc_wire(ring, to3):
+    """Wire of a shapely ring with every polygonised arc (>= 4 co-circular vertices) replaced by a true arc."""
+    b = _b()
+    pts = list(ring.coords)[:-1]
+    pts = [q for k, q in enumerate(pts) if math.dist(q, pts[k - 1]) > 1e-6]   # no zero-length edges
+    n = len(pts)
+    runs = _arc_runs(pts)
+    if runs:   # start the ring on a vertex outside every arc, so no arc wraps the index origin
+        inside = set()
+        for i, j in runs:
+            inside |= set(range(i, j + 1))
+        free = [k for k in range(n) if k not in inside]
+        if free:
+            r = free[0]
+            pts = pts[r:] + pts[:r]
+            runs = _arc_runs(pts)
+    if not runs:
+        return b.Wire.make_polygon([b.Vector(*to3(*p)) for p in pts], close=True)
+    # element list over the ring: ('l', k) segment from vertex k to k+1 or ('a', k0, k1) arc vertices k0..k1 (indices mod n, unwrapped)
+    arc_of = {}
+    for i, j in runs:
+        arc_of[(i - 1) % n] = (i - 1, j + 1)
+    covered = set()
+    for k0, k1 in arc_of.values():
+        covered |= {m % n for m in range(k0, k1)}
+    if len(covered) >= n:   # a full circle: two half arcs
+        v = lambda k: b.Vector(*to3(*pts[k % n]))
+        h = n // 2
+        return b.Wire([b.Edge.make_three_point_arc(v(0), v(h // 2), v(h)), b.Edge.make_three_point_arc(v(h), v(h + (n - h) // 2), v(n))])
+    start = next(k for k in range(n) if k not in covered or k in arc_of)
+    edges, k, guard = [], start, 0
+    P = lambda m: b.Vector(*to3(*pts[m % n]))
+    total = 0
+    while total < n and guard < 4 * n:
+        guard += 1
+        if k % n in arc_of and arc_of[k % n][0] % n == k % n:
+            k0, k1 = arc_of[k % n]
+            k1 = k0 + ((k1 - k0) if k1 >= k0 else k1 - k0 + n)
+            edges.append(b.Edge.make_three_point_arc(P(k0), P((k0 + k1) // 2), P(k1)))
+            total += k1 - k0
+            k = k1
+        else:
+            edges.append(b.Edge.make_line(P(k), P(k + 1)))
+            total += 1
+            k += 1
+    return b.Wire(edges)
+
+
+def _face(poly, plane, arcs=False):
+    """build123d face of a shapely polygon (with holes) drawn on `plane` ('xy', 'yz', 'xz') at offset 0. arcs=True turns
+    polygonised arcs (co-circular vertex runs) into true arcs, so the surfaces are cylinders, not facets."""
     b = _b()
     def to3(u, v):
         return {"xy": (u, v, 0.0), "yz": (0.0, u, v), "xz": (u, 0.0, v)}[plane]
     def wire(ring):
+        if arcs:
+            return _arc_wire(ring, to3)
         pts = [b.Vector(*to3(u, v)) for u, v in list(ring.coords)[:-1]]
         return b.Wire.make_polygon(pts, close=True)
     polys = getattr(poly, "geoms", [poly])
@@ -71,13 +216,13 @@ def _face(poly, plane):
     return faces
 
 
-def _ext(poly, plane, a0, a1):
+def _ext(poly, plane, a0, a1, arcs=False):
     """Prism of a shapely polygon on `plane`, extruded along its normal from a0 to a1."""
     b = _b()
     n = {"xy": (0, 0, 1), "yz": (1, 0, 0), "xz": (0, 1, 0)}[plane]
     a0, a1 = min(a0, a1), max(a0, a1)
     out = None
-    for f in _face(poly, plane):
+    for f in _face(poly, plane, arcs):
         s = b.Solid.extrude(f, b.Vector(*[c * (a1 - a0) for c in n])).moved(b.Location(tuple(c * a0 for c in n)))
         out = s if out is None else out.fuse(s)
     return out

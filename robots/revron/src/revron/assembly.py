@@ -15,6 +15,7 @@ PARTS = {
     "spider": spider, "disc_a": lambda: disc("disc_a"), "disc_b": lambda: disc("disc_b"), "drisk_spacer": drisk_spacer, "weapon_shaft": weapon_shaft,
     "wedgelet_l": lambda: wedgelet(-1), "wedgelet_r": lambda: wedgelet(1),
     "side_panel_l": lambda: side_panel(-1), "side_panel_r": lambda: side_panel(1),
+    "side_panel_l_local": lambda: side_panel_local(-1), "side_panel_r_local": lambda: side_panel_local(1),   # [fix-C-j1] spec shapes: placed by the mate
     "rear_hub_l": lambda: rear_hub(-1), "rear_hub_r": lambda: rear_hub(1),
     "front_hub_l": lambda: front_hub(-1), "front_hub_r": lambda: front_hub(1),
     "rear_tyre_l": lambda: tyre(*TYRE_REAR["od_id"], -TYRE_REAR["x"][1], -TYRE_REAR["x"][0], (RY, RZ), TYRE_REAR["shoulder"]),

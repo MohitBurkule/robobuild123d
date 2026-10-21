@@ -4,32 +4,46 @@ from shapely.affinity import scale
 from shapely.geometry import Point, Polygon
 from .params import *  # noqa: F401,F403
 from .common import *  # noqa: F401,F403
+from functools import partial as _partial
+_ext = _partial(_ext, arcs=True)   # polygonised arcs become true arcs (cylinders, not facets)
 from .tub_lugs import _both
 
-FL_X = (21.4, 29.5)                                      # flange |X| span, side wall to the lug
-FACE_Y, FACE_TOP, BOT_TOP, TOPF_Z = 15.6, 16.4, 5.0, (10.0, 20.0)
-FLANGE_Y = (13.0, 27.5)
+FL_X = (MNT_IN + MNT_T, CH_HALF_W)                                      # flange |X| span, side wall to the lug
+FACE_Y, FACE_TOP, BOT_TOP, TOPF_Z = 15.6, 16.5, 5.0, (10.0, CH_Z1 + 0.5)
+FLANGE_Y = (WALL_IN_FRONT, 27.5)                         # from the front wall inner face to the lug end
 DIAG_S, DIAG_DEG = 44.5, 45.0                            # outer diagonal edge of the corner: x + y = DIAG_S (STEP), its direction angle
-# param: organic corner outline, wall corner R1 then the 45 deg diagonal and the blend into the lug (STEP RV01 front corner), (X, Y)
-BLEND = [(29.5, 14.4), (29.3, 15.0), (28.9, FACE_Y), (23.6, 20.9), (22.9, 21.9), (22.3, 22.9), (21.9, 24.0), (21.6, 25.2), (21.5, 28.2)]
+# param: corner outline (STEP RV01 front corner): wall corner R1, the 45 deg diagonal x + y = DIAG_S, an R8 concave blend into the lug face (true arcs)
+CORNER_R1, BLEND_R = 1.0, 8.0
+_c1 = (CH_HALF_W - CORNER_R1, DIAG_S - CH_HALF_W + CORNER_R1 * (1 - math.sqrt(2.0)))              # wall corner arc centre
+_c2 = (LUG_FACE_X + BLEND_R, (DIAG_S - (LUG_FACE_X + BLEND_R)) + BLEND_R * math.sqrt(2.0))   # blend arc centre (outside the material)
+BLEND = ([(CH_HALF_W, _c1[1])] + _arc(_c1, CORNER_R1, 0.0, 45.0, 12)[1:]
+         + _arc(_c2, BLEND_R, 225.0, 180.0, 30))
 # param: end
-BOT_POLY = Polygon([(21.5, FLANGE_Y[0]), (FL_X[1], FLANGE_Y[0])] + BLEND)
+BOT_POLY = Polygon([(LUG_FACE_X, FLANGE_Y[0]), (FL_X[1], FLANGE_Y[0])] + BLEND)
 TOPF_CLIP = Polygon([(FL_X[0], FLANGE_Y[0]), (FL_X[1], FLANGE_Y[0])] + BLEND + [(FL_X[0], BLEND[-1][1])]).buffer(0)
 # front face of the corner at Y 15.6, R2.7 fillet into the lug (STEP)
-FACE_FIL_C, FACE_FIL_R = (24.2, 18.3), 2.7
-FLANGE_FACE = Polygon([(FL_X[0], FLANGE_Y[0])] + BLEND[:3] + [(FL_X[0], FACE_Y)]).union(
+FACE_FIL_R = 2.85
+FACE_FIL_C = (LUG_FACE_X + FACE_FIL_R, FACE_Y + FACE_FIL_R)   # tangent to the lug face and to the corner face
+_CORNER = Polygon([(FL_X[0], FLANGE_Y[0]), (FL_X[1], FLANGE_Y[0])] + BLEND + [(FL_X[0], BLEND[-1][1])]).buffer(0)
+FLANGE_FACE = _CORNER.intersection(Polygon([(FL_X[0], FLANGE_Y[0]), (FL_X[1] + 1, FLANGE_Y[0]), (FL_X[1] + 1, FACE_Y), (FL_X[0], FACE_Y)])).union(
     Polygon([(FL_X[0], FACE_Y - 0.1), (FACE_FIL_C[0], FACE_Y - 0.1), FACE_FIL_C, (FL_X[0], FACE_FIL_C[1])]).difference(Point(FACE_FIL_C).buffer(FACE_FIL_R, 64)))
 # param: organic top flange carrying the deck chamfer forward to the lug (Y, Z): sloped 0.45/mm top and underside, 2.7 thick
-TOPF_YZ = _poly([(13.0, 19.5), (15.1, 19.5), (25.2, 14.96), (25.2, 12.17), (15.8, 16.4), (13.0, 16.4)])
+TOPF_YZ = _poly([(FLANGE_Y[0], CH_Z1), (15.1, CH_Z1), (25.2, 14.96), (25.2, 12.17), (FACE_Y, FACE_TOP), (FLANGE_Y[0], FACE_TOP)])
 # param: end
 
-WIRE_HOLE, WIRE_Y, WIRE_R = (7.25, 5.0, 10.25, 17.0), (12.0, 16.0), 1.45   # weapon phase wire hole through the front wall: (x0, z0, x1, z1) box
-WALL_POCKET_X, WALL_POCKET_Z, WALL_POCKET_Y = ((-18.25, 4.25), (13.25, 18.2)), (6.55, 15.55), (12.0, 13.85)
-LAT_Y, LAT_R_VERT, LAT_R_FLOOR = (-36.62, -35.5), 0.95, 0.7   # rear-wall pocket floor / opening Y, corner radius, floor fillet (STEP)
-LAT_C = (15.62, 11.0)                                           # symmetry centre of the lattice (X, Z): the pockets mirror about it
-# param: organic rear-wall lattice, sharp outlines of the two base pockets measured at Y -35.75 (STEP RV01), X Z
-LAT_SIDE = Polygon([(4.76, 6.22), (4.76, 15.78), (13.54, LAT_C[1])])                                       # wall-side triangle
-LAT_MID = Polygon([(10.58, 5.51), (20.66, 5.51), (20.66, 7.07), (LAT_C[0], 9.83), (10.58, 7.07)])         # lower pentagon
+WIRE_HOLE, WIRE_R = (7.25, 5.0, 10.25, 17.0), 1.45   # weapon phase wire hole through the front wall: (x0, z0, x1, z1) box
+WIRE_Y = (WALL_IN_FRONT - 1.0, CH_Y1 + 1.0)             # cutter spans the front wall with 1 mm to spare each side
+WALL_POCKET_DEPTH = 0.85                                  # pockets sink this far into the front wall from its inner face
+WALL_POCKET_X, WALL_POCKET_Z = ((-18.25, 4.25), (13.25, 18.2)), (6.55, 15.55)
+WALL_POCKET_Y = (WALL_IN_FRONT - 1.0, WALL_IN_FRONT + WALL_POCKET_DEPTH)
+LAT_SKIN = 0.98                                         # rear-wall skin left behind the lattice pockets (STEP)
+LAT_Y = (CH_Y0 + LAT_SKIN, WALL_IN_REAR + 1.0)   # pocket floor / opening Y: opens 0.1 into the cavity
+LAT_R_VERT, LAT_R_FLOOR = 0.95, 0.9                     # corner radius, floor fillet (STEP)
+LAT_C = (15.62, RZ)                                     # symmetry centre (X, Z); Z is the rear axle height; the pockets mirror about it
+# param: organic rear-wall lattice, sharp outlines of the two base pockets measured at Y -35.75 (STEP RV01), offsets from LAT_C
+_cx, _cz = LAT_C
+LAT_SIDE = Polygon([(_cx - 10.86, _cz - 4.78), (_cx - 10.86, _cz + 4.78), (_cx - 2.08, _cz)])                       # wall-side triangle (offsets from the centre)
+LAT_MID = Polygon([(_cx - 5.04, _cz - 5.49), (_cx + 5.04, _cz - 5.49), (_cx + 5.04, _cz - 3.93), (_cx, _cz - 1.17), (_cx - 5.04, _cz - 3.93)])   # lower pentagon
 # param: end
 LATTICE = [LAT_SIDE, scale(LAT_SIDE, -1, 1, origin=(LAT_C[0], 0)), LAT_MID, scale(LAT_MID, 1, -1, origin=(0, LAT_C[1]))]
 

@@ -115,7 +115,7 @@ TOL = dict(tight=0.3, std=0.5, motor=0.6, wedge=0.8, loose=1.0)             # mm
 VOL = dict(part=0.25, hub=0.15, motor=0.3, standoff=0.2, switch=0.5)          # fraction: volume mismatch allowed
 REF_IOU_MIN = 0.9                                                              # silhouette IoU floor on every axis
 FOOT_DEV_Z, FOOT_DEV_R = 5.0, 4.0       # tub corner column flared foot
-KEYHOLE_DEV, KEYHOLE_DEV_R = (28.5, -30.5, 5.85), 4.0   # N10 keyhole U-slot: centre of its 2 x 4.1 x 6.7 cut, and the sphere that holds all of it
+KEYHOLE_DEV, KEYHOLE_DEV_R = (28.5, -30.5, 5.85), 5.0   # N10 keyhole U-slot: centre of its 2 x 4.1 x 6.7 cut, and the sphere that holds all of it
 LOBE_DEV, LOBE_DEV_R = (32.0, -13.5, 9.4), 3.5  # param: organic centroid of the lobe-tail trim vs STEP blobs
 # param: end
 BASE_DEV_Z, PANEL_DEV_R, TOP_DEV_Z = 4.5, 3.5, 19.95

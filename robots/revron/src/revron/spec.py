@@ -29,6 +29,7 @@ def make_spec(model_file):
       thin_wall_deviation="matches original RVRN 2.0: the switch-slot rim is 0.5 mm wide on RV01_Chassis_1 too (RV01 section y=-10: slot edge x=27.0, outer face x=27.5) and 0.65 mm between the slot front and the deck pocket (section x=25: y -12.25 to -11.6)",
       label="RV01 printed chassis: closed X-ribbed deck (printed deck-down), open floor for the base panel, N10 keyhole side pockets, nut lobes, weapon-mount tabs and standoff lugs")
     P(id="base_panel", kind="structure", print_orientation="+z", rotates_with="fixed", color="#2a2c30", shape=M("base_panel"), **PLA,
+      thin_wall_deviation="the 1 mm panel is shallower than the 1.2 mm M2 CSK head (STEP RV26 has the same 5 countersunk seats): a 90 deg seat cone leaves a knife wedge under the countersink rim, unavoidable at this thickness (parity with RV26)",
       label="RV26 1 mm printed base panel, 5 M2 CSK into the floor heat-sets, 0.45 mm pads preload the N10s")
     P(id="top_panel", kind="armor", material="titanium", process="laser", stock="0.9 mm Ti Gr5 sheet", secondary_ops=["countersink"], rotates_with="fixed", color="#8d939b", shape=M("top_panel"),
       label="0.9 mm Ti top panel: laser outline with 4 countersunk 2.2 corner holes, 4 M2 flat-head thread-forming screws into the column tops (material inferred, see REFERENCE.md)")
@@ -67,15 +68,16 @@ def make_spec(model_file):
     for s, n in SIDES:
         mnt = f"mount_{n}"
         P(id=f"so_a{n}", kind="pin", role="standoff", material="aluminium", process="cots", rotates_with="fixed", color="#b8bcc2", stock="RV11 M3 x 25 aluminium standoff, 5 OD",
-          shape=M(f"so_a_{n}"), label="RV11 25 mm alu standoff: front axle, clamps the mount, the side panel screws to its end")
+          shape=M(f"so_a_{n}"), features=sp_spec(s, f"so_a{n}")[2], label="RV11 25 mm alu standoff: front axle, clamps the mount, the side panel screws to its end")
         P(id=f"so_b{n}", kind="pin", role="standoff", material="aluminium", process="cots", rotates_with="fixed", color="#b8bcc2", stock="RV10 M3 x 15 aluminium standoff, 5 OD",
           shape=M(f"so_b_{n}"), label="RV10 15 mm alu standoff: nose, through the chassis lug, the fork and the wedgelet cheeks")
         P(id=f"fork_{n}", kind="fork", material="titanium", process="laser", stock="1.5 mm Ti Gr5 sheet", min_web_mm=WEB["fork"], min_web_reason="1.1 mm web under the 5.3 standoff hole is the designer's own (RVRN 2.0 STEP fork_5 measures 1.1)", parent=f"so_b{n}", rotates_with="fixed", color="#9aa0a6", shape=M(f"fork_{n}"),
           label="fork_5: 1.5 mm Ti fork on the 15 mm standoff, tail pinned in the wedgelet cheek slot")
-        P(id=f"wedgelet_{n}", kind="armor", deviation="RVRN 2.0 STEP: RV17 and fork_5_2 overlap by 26.0 mm3 in the original (an interference there); we cut the 1.5 mm tine seat so the fork drops in with interference 0, hence the wedgelet is short by the tine slot at x -26.5..-25, y 43-50", material="tpu", process="fdm", thin_wall_deviation="matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)", solid_fraction=SOLID["tpu"], print_orientation="-z", parent=f"so_a{n}", rotates_with="fixed", color="#3c4048",
+        P(id=f"wedgelet_{n}", kind="armor", deviation=f"RVRN 2.0 STEP: the wedgelet and the fork tine interpenetrate in the original (an interference there); we cut the tine's own {FK_X[s][1]-FK_X[s][0]:g} mm outline out of the wedgelet as its seat (nothing more), so the fork sits in with interference 0, hence the wedgelet is short by the tine volume at x {FK_X[s][0]:g}..{FK_X[s][1]:g}", material="tpu", process="fdm", thin_wall_deviation="matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)", solid_fraction=SOLID["tpu"], print_orientation="-z", parent=f"so_a{n}", rotates_with="fixed", color="#3c4048",
           shape=M(f"wedgelet_{n}"), cover_fasteners_deviation="RVRN 2.0 STEP: the wedgelet is clamped between the side panel nose and the 15 mm standoff end by bolt_s?b (listed in its `through`), and located on both standoffs; bolt_s?a seats the side panel directly on the 25 mm standoff end (the STEP wedgelet stops at |X| 38.5 and never enters that stack). Kept as designed; no extra screw (coordinator decision).",
           label=f"{WEDGE_REF[s]} TPU wedgelet: 50 deg ramp over the nose, cheeks round both standoffs and the fork tail")
-        P(id=f"side_{n}", kind="armor", deviation="matches original RVRN 2.0: RV23/RV24 front leads the spider swept rim by the same amount at +-30 deg (STEP projection 64.45 mm vs ours 64.24 mm at -30 deg, within 0.5 mm)", material="tpu", process="fdm", thin_wall_deviation="matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)", solid_fraction=0.9, print_orientation="+z", parent=f"so_a{n}", rotates_with="fixed", color="#3c4048", shape=M(f"side_panel_{n}"),
+        P(id=f"side_{n}", kind="armor", deviation="matches original RVRN 2.0: RV23/RV24 front leads the spider swept rim by the same amount at +-30 deg (STEP projection 64.45 mm vs ours 64.24 mm at -30 deg, within 0.5 mm)", material="tpu", process="fdm", thin_wall_deviation="matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)", solid_fraction=0.9, print_orientation="+z", parent=f"so_a{n}", rotates_with="fixed", color="#3c4048", shape=M(f"side_panel_{n}_local"),
+          features=sp_spec(s, f"so_a{n}")[0], mate=sp_spec(s, f"so_a{n}")[1],
           label=f"{SIDE_REF[s]} TPU side panel: battered S-wall round the wheels, 3 M3x8 CSK (two standoff ends, one chassis nut)")
         P(id=f"nut_c{n}", kind="nut", catalog="nut_m3_thin", **place(f"nut_c{n}"), rotates_with="fixed")
         # drive
@@ -91,7 +93,8 @@ def make_spec(model_file):
         P(id=f"wheel_f{n}", kind="wheel", material="rubber", process="cots", tyre_of=f"whub_f{n}", rotates_with=f"wheel_f{n}", parent=f"whub_f{n}", shape=M(f"front_tyre_{n}"),
           color="#1b1b1b", stock="RV20 Scalextric micro SLX tyre 11 x 7 x 6", label="Scalextric micro tyre 11 x 7 x 6")
     P(id="battery", kind="battery", catalog="lipo_2s_180_turnabot", **place("battery"), retained="press_fit")
-    P(id="rxesc", kind="esc", catalog="malenki_nano_rvrn2", **place("rxesc"), retained="kapton")
+    P(id="rxesc", kind="esc", catalog="malenki_nano_rvrn2", **place("rxesc"), retained="strap",
+      deviation="RV01/RV13: the Malenki is taped (kapton) to the deck in the STEP; with the cage ribs gone a 6 mm TPU strap (RV01 esc_tray strap slot, glued to the chassis walls over the board) holds it instead, so it cannot slide inverted (adds ~0.3 g, reversible)")
     P(id="wesc", kind="esc", catalog="bbb_ant_esc_rvrn2", **place("wesc"), retained="kapton")
     P(id="power_switch", kind="switch", catalog="switch_bbb_ant_rvrn2", at=place_at("power_switch"), rot=place_rot("power_switch"), retained="screws", marked=True, tool_free=True,
       off_dir=[0, -1, 0], label="BBB ant switch hung under the deck beside the top panel: lever flush in the deck slot, 2 M2 into the deck")
@@ -173,8 +176,8 @@ def make_spec(model_file):
     C("base_panel", "tub", "screw", "Base panel under the open floor, 5 M2 CSK into heat-sets")
     C("top_panel", "tub", "screw", "Ti top panel held by 4 M2 flat-head screws through its countersunk corner holes into M2 heat-sets in the column tops (the STEP has the holes, not the screws)")
     C("battery", "tub", "press_fit", "Pack between the motor wall, the insert columns and the deck", interference_mm=PRESS["pack"], mechanical_key=True)
-    C("rxesc", "tub", "interlock", "Malenki boxed by the deck cage ribs (0.1 mm), the front wall and the deck; the weapon ESC under it")
-    C("wesc", "esc_tray", "interlock", "weapon ESC in the TPU tray lips (0.1 mm); the cage rib holds -y, the Malenki +z")
+    C("rxesc", "tub", "interlock", "Malenki held by a TPU strap, boxed by the front wall and the deck; the weapon ESC under it")
+    C("wesc", "esc_tray", "interlock", "weapon ESC in the TPU tray lips (0.1 mm); lips on all four sides, the Malenki +z")
     C("esc_tray", "base_panel", "glue", "TPU tray contact-glued to the base panel top")
     C("power_switch", "tub", "screw", "Switch flange clamped under the deck by 2 M2", mechanical_key=True)
 
@@ -281,7 +284,7 @@ def _micro_to_world(side):
 
 
 def _fork_dev(s):
-    return [dict(near=[s * 25.5, 66.0, 1.4], r=2.0, reason="laser-cut Ti cannot hold the STEP's knife tip (0.0 mm): the tip ends "
+    return [dict(near=[s * FORK_DEV["x"], FORK_DEV["y"], FORK_DEV["z"]], r=FORK_DEV["r"], reason="laser-cut Ti cannot hold the STEP's knife tip (0.0 mm): the tip ends "
                  "in a 0.45 mm land at full length (laser titanium min web 0.4 mm)")]
 
 
@@ -293,7 +296,7 @@ def _wedge_dev(s):
 
 
 def _side_dev(s):
-    return [dict(near=[s * 41.78, SB[0], SB[1]], r=4.0, reason="nose screw seat: ISO 10642 M3 head is 6.6 (catalog max), the STEP's "
+    return [dict(near=[s * SIDE_DEV_X, SB[0], SB[1]], r=SIDE_DEV_R, reason="nose screw seat: ISO 10642 M3 head is 6.6 (catalog max), the STEP's "
                  "6.2 bore would trap it; 6.7 seat with a straight head bore out through the nose for the driver")]
 
 
@@ -312,6 +315,11 @@ def reference_cad():
         R("tub", "RV01_Chassis_1.stl", tol_mm=TOL["loose"], tol_vol_frac=VOL["part"], note="RV01 chassis",
           deviations=[dict(near=[sx * KEYHOLE_DEV[0], KEYHOLE_DEV[1], KEYHOLE_DEV[2]], r=KEYHOLE_DEV_R, reason="N10 keyhole opened into a U-slot to the floor so the gearbox boss and shaft drop in from below with the base panel off (the STEP closes the keyhole, the shaft cannot be threaded through it)")
              for sx in (1, -1)]
+          + [dict(near=list(p), r=5.0, reason="view of the N10 keyhole U-slot (STEP RV01 keyhole closed, ours opened to the floor so the boss drops in from below): " + why)
+             for p, why in (((0.0, RY, KEYHOLE_DEV[2] + 3.9), "the two keyholes average to X 0 in the hole scan, no counterpart hole on the mid-plane"),
+                            ((0.9, RY + 0.3, 4.0), "side view: the STEP web under the keyhole is missing at the slot"),
+                            ((17.0, -18.6, -7.5), "iso view-plane projection of the +X slot at (28.5, -30.5, 4)"),
+                            ((-25.5, -33.8, 1.0), "iso_back view-plane projection of the -X slot at (-28.5, -30.5, 4)"))]
           + [dict(near=[sx * sum(N10_KEY) / 2, sum(KEY_SPAN) / 2, N10_TOP - KEY_DROP / 2], r=KEY_DEV_R, reason="N10 key tab reaches KEY_DROP below the gearbox plate top so it keys between the plates and stops the motor inboard (the STEP tab is flush, which leaves the motor free to slide in x: retention.loose)")
              for sx in (1, -1)]
           + [dict(near=[SWX, yy, CH["deck"]], r=SWX_DEV_R, reason="switch pilot holes follow the switch, which sits 0.45 mm in from the STEP X 25.0 so its body clears the 27.5 inner wall face (the STEP switch penetrates the wall 0.4 mm)")
@@ -321,7 +329,7 @@ def reference_cad():
           + [dict(near=[sx * LOBE_DEV[0], LOBE_DEV[1], LOBE_DEV[2]], r=LOBE_DEV_R, reason="lobe tail below Y -11.7 trimmed to the side-panel inner face: the STEP lobe and side panel overlap by 31 mm3, the tub does not duplicate it")
              for sx in (1, -1)]),
         R("base_panel", "RV26_Base_Panel_1.stl", tol_mm=TOL["tight"], note="RV26 1 mm panel",
-          deviations=[dict(near=[x, y, BASE_DEV_Z], r=PANEL_DEV_R, reason="R3 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud")
+          deviations=[dict(near=[x, y, BASE_DEV_Z], r=PANEL_DEV_R, reason="R2.6 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud")
                       for x, y in INS]),
         R("top_panel", "Top_Panel_1.stl", tol_mm=TOL["tight"], note="0.9 mm top panel",
           deviations=[dict(near=[x, y, TOP_DEV_Z], r=PANEL_DEV_R, reason="4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it")

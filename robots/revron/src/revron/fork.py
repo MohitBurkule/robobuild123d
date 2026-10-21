@@ -26,14 +26,6 @@ def fork(s):
 
 
 def _fork_slot(s):
-    """Seat for the fork tine in the wedgelet nose: the tine outline (window filled) swept straight up out of the
-    ramp ahead of Y 42, so the slit is open to the top (the tine drops in) and no TPU film is left over the tine."""
-    from shapely.geometry import Polygon
-    from shapely import affinity
-    p, x0, x1 = _fork_outline(s)
-    solid = Polygon(p.exterior)
-    up = solid
-    for k in range(1, FKS_STEPS + 1):
-        up = up.union(affinity.translate(solid, 0, FKS_DY * k))
-    up = up.intersection(Polygon([(FKS_CLIP[0], FKS_CLIP[1]), (FKS_CLIP[2], FKS_CLIP[1]), (FKS_CLIP[2], FKS_CLIP[3]), (FKS_CLIP[0], FKS_CLIP[3])])).union(solid)
-    return _ext(up.buffer(0), "yz", x0, x1)
+    """Seat for the fork tine in the wedgelet nose: exactly the 1.5 mm tine outline (window and tilt included), so the
+    cut volume is the volume the fork fills and nothing else is taken from the TPU."""
+    return fork(s)

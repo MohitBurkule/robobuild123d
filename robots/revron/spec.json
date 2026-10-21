@@ -396,36 +396,6 @@
    "reason": "the catalog N10 shaft is drawn round; the hub's D-flat sits on its flat"
   },
   {
-   "a": "bolt_b0",
-   "b": "base_panel",
-   "max_depth_mm": 0.3,
-   "reason": "STEP RV26 seat is 3.2 x 0.5, smaller than the ISO 10642 M2 head (4.4 x 1.2): the original head stands 0.2 proud of a seat that cannot take it, the printed PLA seat gives by that much"
-  },
-  {
-   "a": "bolt_b1",
-   "b": "base_panel",
-   "max_depth_mm": 0.3,
-   "reason": "STEP RV26 seat is 3.2 x 0.5, smaller than the ISO 10642 M2 head (4.4 x 1.2): the original head stands 0.2 proud of a seat that cannot take it, the printed PLA seat gives by that much"
-  },
-  {
-   "a": "bolt_b2",
-   "b": "base_panel",
-   "max_depth_mm": 0.3,
-   "reason": "STEP RV26 seat is 3.2 x 0.5, smaller than the ISO 10642 M2 head (4.4 x 1.2): the original head stands 0.2 proud of a seat that cannot take it, the printed PLA seat gives by that much"
-  },
-  {
-   "a": "bolt_b3",
-   "b": "base_panel",
-   "max_depth_mm": 0.3,
-   "reason": "STEP RV26 seat is 3.2 x 0.5, smaller than the ISO 10642 M2 head (4.4 x 1.2): the original head stands 0.2 proud of a seat that cannot take it, the printed PLA seat gives by that much"
-  },
-  {
-   "a": "bolt_b4",
-   "b": "base_panel",
-   "max_depth_mm": 0.3,
-   "reason": "STEP RV26 seat is 3.2 x 0.5, smaller than the ISO 10642 M2 head (4.4 x 1.2): the original head stands 0.2 proud of a seat that cannot take it, the printed PLA seat gives by that much"
-  },
-  {
    "a": "insert_b0",
    "b": "tub",
    "max_depth_mm": 0.2,
@@ -739,7 +709,7 @@
        -30.5,
        5.85
       ],
-      "r": 4.0,
+      "r": 5.0,
       "reason": "N10 keyhole opened into a U-slot to the floor so the gearbox boss and shaft drop in from below with the base panel off (the STEP closes the keyhole, the shaft cannot be threaded through it)"
      },
      {
@@ -748,8 +718,44 @@
        -30.5,
        5.85
       ],
-      "r": 4.0,
+      "r": 5.0,
       "reason": "N10 keyhole opened into a U-slot to the floor so the gearbox boss and shaft drop in from below with the base panel off (the STEP closes the keyhole, the shaft cannot be threaded through it)"
+     },
+     {
+      "near": [
+       0.0,
+       -30.5,
+       9.75
+      ],
+      "r": 5.0,
+      "reason": "view of the N10 keyhole U-slot (STEP RV01 keyhole closed, ours opened to the floor so the boss drops in from below): the two keyholes average to X 0 in the hole scan, no counterpart hole on the mid-plane"
+     },
+     {
+      "near": [
+       0.9,
+       -30.2,
+       4.0
+      ],
+      "r": 5.0,
+      "reason": "view of the N10 keyhole U-slot (STEP RV01 keyhole closed, ours opened to the floor so the boss drops in from below): side view: the STEP web under the keyhole is missing at the slot"
+     },
+     {
+      "near": [
+       17.0,
+       -18.6,
+       -7.5
+      ],
+      "r": 5.0,
+      "reason": "view of the N10 keyhole U-slot (STEP RV01 keyhole closed, ours opened to the floor so the boss drops in from below): iso view-plane projection of the +X slot at (28.5, -30.5, 4)"
+     },
+     {
+      "near": [
+       -25.5,
+       -33.8,
+       1.0
+      ],
+      "r": 5.0,
+      "reason": "view of the N10 keyhole U-slot (STEP RV01 keyhole closed, ours opened to the floor so the boss drops in from below): iso_back view-plane projection of the -X slot at (-28.5, -30.5, 4)"
      },
      {
       "near": [
@@ -866,7 +872,7 @@
        4.5
       ],
       "r": 3.5,
-      "reason": "R3 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
+      "reason": "R2.6 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
      },
      {
       "near": [
@@ -875,7 +881,7 @@
        4.5
       ],
       "r": 3.5,
-      "reason": "R3 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
+      "reason": "R2.6 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
      },
      {
       "near": [
@@ -884,7 +890,7 @@
        4.5
       ],
       "r": 3.5,
-      "reason": "R3 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
+      "reason": "R2.6 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
      },
      {
       "near": [
@@ -893,7 +899,7 @@
        4.5
       ],
       "r": 3.5,
-      "reason": "R3 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
+      "reason": "R2.6 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
      },
      {
       "near": [
@@ -902,7 +908,7 @@
        4.5
       ],
       "r": 3.5,
-      "reason": "R3 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
+      "reason": "R2.6 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
      }
     ]
    },
@@ -1767,6 +1773,7 @@
    },
    "material": "pla_st",
    "process": "fdm",
+   "thin_wall_deviation": "the 1 mm panel is shallower than the 1.2 mm M2 CSK head (STEP RV26 has the same 5 countersunk seats): a 90 deg seat cone leaves a knife wedge under the countersink rim, unavoidable at this thickness (parity with RV26)",
    "label": "RV26 1 mm printed base panel, 5 M2 CSK into the floor heat-sets, 0.45 mm pads preload the N10s"
   },
   {
@@ -2218,6 +2225,32 @@
      "part": "so_a_l"
     }
    },
+   "features": {
+    "end_face": {
+     "point": [
+      -42.5,
+      30.5,
+      5.5
+     ],
+     "normal": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    },
+    "axis": {
+     "point": [
+      -42.5,
+      30.5,
+      5.5
+     ],
+     "axis": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    }
+   },
    "label": "RV11 25 mm alu standoff: front axle, clamps the mount, the side panel screws to its end"
   },
   {
@@ -2261,7 +2294,7 @@
   {
    "id": "wedgelet_l",
    "kind": "armor",
-   "deviation": "RVRN 2.0 STEP: RV17 and fork_5_2 overlap by 26.0 mm3 in the original (an interference there); we cut the 1.5 mm tine seat so the fork drops in with interference 0, hence the wedgelet is short by the tine slot at x -26.5..-25, y 43-50",
+   "deviation": "RVRN 2.0 STEP: the wedgelet and the fork tine interpenetrate in the original (an interference there); we cut the tine's own 1.5 mm outline out of the wedgelet as its seat (nothing more), so the fork sits in with interference 0, hence the wedgelet is short by the tine volume at x -26.5..-25",
    "material": "tpu",
    "process": "fdm",
    "thin_wall_deviation": "matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)",
@@ -2296,8 +2329,97 @@
     "type": "model",
     "file": "src/build_revron.py",
     "params": {
-     "part": "side_panel_l"
+     "part": "side_panel_l_local"
     }
+   },
+   "features": {
+    "sa_face": {
+     "point": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "normal": [
+      1.0,
+      -0.0,
+      -0.0
+     ]
+    },
+    "sa_axis": {
+     "point": [
+      0.0,
+      0.0,
+      0.0
+     ],
+     "axis": [
+      -1.0,
+      0.0,
+      0.0
+     ]
+    },
+    "seat_a": {
+     "point": [
+      -3.759999999999998,
+      0.0,
+      0.0
+     ],
+     "axis": [
+      1,
+      0.0,
+      0.0
+     ]
+    },
+    "seat_b": {
+     "point": [
+      0.740000000000002,
+      10.0,
+      -1.0
+     ],
+     "axis": [
+      1,
+      0.0,
+      0.0
+     ]
+    },
+    "seat_c": {
+     "point": [
+      7.240000000000002,
+      -42.0,
+      3.0
+     ],
+     "axis": [
+      1,
+      0.0,
+      0.0
+     ]
+    },
+    "nut_relief": {
+     "point": [
+      11.100000000000001,
+      -42.0,
+      3.0
+     ],
+     "axis": [
+      1,
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "mate": {
+    "to": "so_al",
+    "constraints": [
+     {
+      "type": "coaxial",
+      "a": "axis",
+      "b": "sa_axis"
+     },
+     {
+      "type": "face",
+      "a": "end_face",
+      "b": "sa_face"
+     }
+    ]
    },
    "label": "RV23 TPU side panel: battered S-wall round the wheels, 3 M3x8 CSK (two standoff ends, one chassis nut)"
   },
@@ -2457,6 +2579,32 @@
      "part": "so_a_r"
     }
    },
+   "features": {
+    "end_face": {
+     "point": [
+      42.5,
+      30.5,
+      5.5
+     ],
+     "normal": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    },
+    "axis": {
+     "point": [
+      42.5,
+      30.5,
+      5.5
+     ],
+     "axis": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    }
+   },
    "label": "RV11 25 mm alu standoff: front axle, clamps the mount, the side panel screws to its end"
   },
   {
@@ -2500,7 +2648,7 @@
   {
    "id": "wedgelet_r",
    "kind": "armor",
-   "deviation": "RVRN 2.0 STEP: RV17 and fork_5_2 overlap by 26.0 mm3 in the original (an interference there); we cut the 1.5 mm tine seat so the fork drops in with interference 0, hence the wedgelet is short by the tine slot at x -26.5..-25, y 43-50",
+   "deviation": "RVRN 2.0 STEP: the wedgelet and the fork tine interpenetrate in the original (an interference there); we cut the tine's own 1.5 mm outline out of the wedgelet as its seat (nothing more), so the fork sits in with interference 0, hence the wedgelet is short by the tine volume at x 24.5..26",
    "material": "tpu",
    "process": "fdm",
    "thin_wall_deviation": "matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)",
@@ -2535,8 +2683,97 @@
     "type": "model",
     "file": "src/build_revron.py",
     "params": {
-     "part": "side_panel_r"
+     "part": "side_panel_r_local"
     }
+   },
+   "features": {
+    "sa_face": {
+     "point": [
+      -0.0,
+      0.0,
+      0.0
+     ],
+     "normal": [
+      -1.0,
+      -0.0,
+      -0.0
+     ]
+    },
+    "sa_axis": {
+     "point": [
+      -0.0,
+      0.0,
+      0.0
+     ],
+     "axis": [
+      1.0,
+      0.0,
+      0.0
+     ]
+    },
+    "seat_a": {
+     "point": [
+      3.759999999999998,
+      0.0,
+      0.0
+     ],
+     "axis": [
+      -1,
+      0.0,
+      0.0
+     ]
+    },
+    "seat_b": {
+     "point": [
+      -0.740000000000002,
+      10.0,
+      -1.0
+     ],
+     "axis": [
+      -1,
+      0.0,
+      0.0
+     ]
+    },
+    "seat_c": {
+     "point": [
+      -7.240000000000002,
+      -42.0,
+      3.0
+     ],
+     "axis": [
+      -1,
+      0.0,
+      0.0
+     ]
+    },
+    "nut_relief": {
+     "point": [
+      -11.100000000000001,
+      -42.0,
+      3.0
+     ],
+     "axis": [
+      -1,
+      0.0,
+      0.0
+     ]
+    }
+   },
+   "mate": {
+    "to": "so_ar",
+    "constraints": [
+     {
+      "type": "coaxial",
+      "a": "axis",
+      "b": "sa_axis"
+     },
+     {
+      "type": "face",
+      "a": "end_face",
+      "b": "sa_face"
+     }
+    ]
    },
    "label": "RV24 TPU side panel: battered S-wall round the wheels, 3 M3x8 CSK (two standoff ends, one chassis nut)"
   },
@@ -2710,7 +2947,8 @@
     0.0,
     90.0
    ],
-   "retained": "kapton"
+   "retained": "strap",
+   "deviation": "RV01/RV13: the Malenki is taped (kapton) to the deck in the STEP; with the cage ribs gone a 6 mm TPU strap (RV01 esc_tray strap slot, glued to the chassis walls over the board) holds it instead, so it cannot slide inverted (adds ~0.3 g, reversible)"
   },
   {
    "id": "wesc",
@@ -3078,8 +3316,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 3.2,
-    "csk_depth": 0.4,
+    "csk_d": 4.5,
+    "csk_depth": 1.05,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -3117,8 +3355,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 3.2,
-    "csk_depth": 0.4,
+    "csk_d": 4.5,
+    "csk_depth": 1.05,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -3156,8 +3394,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 3.2,
-    "csk_depth": 0.4,
+    "csk_d": 4.5,
+    "csk_depth": 1.05,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -3195,8 +3433,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 3.2,
-    "csk_depth": 0.4,
+    "csk_d": 4.5,
+    "csk_depth": 1.05,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -3234,8 +3472,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 3.2,
-    "csk_depth": 0.4,
+    "csk_d": 4.5,
+    "csk_depth": 1.05,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -4767,13 +5005,13 @@
    "a": "rxesc",
    "b": "tub",
    "method": "interlock",
-   "reason": "Malenki boxed by the deck cage ribs (0.1 mm), the front wall and the deck; the weapon ESC under it"
+   "reason": "Malenki held by a TPU strap, boxed by the front wall and the deck; the weapon ESC under it"
   },
   {
    "a": "wesc",
    "b": "esc_tray",
    "method": "interlock",
-   "reason": "weapon ESC in the TPU tray lips (0.1 mm); the cage rib holds -y, the Malenki +z"
+   "reason": "weapon ESC in the TPU tray lips (0.1 mm); lips on all four sides, the Malenki +z"
   },
   {
    "a": "esc_tray",
