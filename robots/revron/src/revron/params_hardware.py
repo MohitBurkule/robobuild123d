@@ -119,8 +119,9 @@ MICRO_T = {   # STEP Micro_slx_v1_0 instance placements (assembly frame), compos
 }
 
 
-SLIT_DEV_X, SLIT_DEV_R, SLIT_DEV_YZ = 25.75, 2.5, ((46.4, 2.2), (44.4, 6.0), (43.1, 6.2), (44.2, 5.9), (48.5, 2.8))   # fork-tine slit sites in the wedgelet
-TOE_DEV_YZ, TOE_DEV_R, TOE_DEV_X = (49.3, 1.4), 4.0, (19.5, 24.0, 28.0, 32.0, 36.5)                             # knife-toe land sites
+FORK_PATH_X, FORK_PATH_R, FORK_PATH_MM3 = 25.75, 3.0, 30.0   # fork tine runs through the wedgelet cheek: path capsule radius (cap 3) and the interpenetration volume (RV17 STEP: 26 mm3)
+FORK_PATH_YZ = ((50.1, 2.0), (43.5, 2.0), (43.5, 6.0), (41.5, 7.9))   # fork tine path, y/z along the slit
+TOE_DEV_YZ, TOE_DEV_R, TOE_DEV_X, TOE_DEV_MM3 = (49.3, 1.4), 3.0, (19.5, 36.5), 40.0   # knife-toe land: path capsule from the first to the last x   # mm3: land volume the STEP knife has over the printable land
 
 
 # reference_cad tolerances and the reasoned-deviation sites (centres + radii of the regions allowed to differ from the STEP)

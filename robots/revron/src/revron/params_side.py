@@ -77,24 +77,26 @@ WG_SKIN_T = 2.3             # THE skin thickness master (normal to the ramp)
 WG_SKIN_RUN = 7.0           # skin plate length along the ramp below K: its hollow starts there, the cap cylinder (R = run + 1, axis 1 above K) bottoms there and the nose top stands at its foot
 WG_TAPER_DEG = 18.9         # rear face T leans this far off vertical; it is tangent to the WG_FLANK_R circle about SA
 WG_FLANK_R = 10.0           # R10 convex flank blend, also T's stand-off from SA
-WG_SA_R = 3.952             # cheek bulb round the 25 mm standoff SA (the flank's first arc)
+WG_BORES_SA = 2.6           # radius of the 25 mm standoff bore through the wedgelet
+WG_BORE_WALL = 1.4          # TPU wall left round a standoff bore
+WG_SA_R = WG_BORES_SA + WG_BORE_WALL   # cheek bulb round the 25 mm standoff SA = its bore plus a wall (the flank's first arc)
 WG_BOSS_R = 3.5             # ring round SB (block, ring step) = clearance circle round SA in the fork bay
 WG_NOTCH = dict(depth=2.5, width=1.5)   # tail-entry notch: depth down T from the cheek corner, width back from T
 WG_BAY_Z = 8.6              # fork bay ledge height; the bay is bounded by T, this ledge and the 45 deg tangent to the lug round SB
 WG_PIN_SWING = 15.0         # the fork's pin travels this far each side of its rest angle in the kidney slot round SB (r = FK_PIN_DIST)
 WG_TOE_CHAMFER = 0.47       # toe chamfer leg (skin inner face to floor, equal legs)
-WG_RING_CHAMFER_Y = 44.96   # Chamfer7: the ring step's far edge is chamfered 1 mm x 45 deg round the SB side (cone) and along the floor to this Y (plane)
+WG_RING_CHAMFER = 1.0       # Chamfer7: the ring step's far edge is chamfered this much x 45 deg round the SB side (cone) and along the floor
+WG_RING_CHAMFER_Y = SB[0] + WG_BOSS_R + WG_RING_CHAMFER   # the floor chamfer ends one chamfer width past the ring
 WG_CHAMFER_END = dict(a=6.77, b=1.68)   # Chamfer7's floor end vertex blend: (dy)^2 = a h - b h^2 (h = chamfer height at that X)
 WG_TAB_DEV = dict(x=19.5, yz=(43.7, 5.8), r=2.5)   # reference-diff deviation sphere on the nose tab where the mount boss is taken out of it
 WG_MOUNT_GAP = 0.1          # clearance of the nose tab to the weapon mount boss and to the chassis lug round SB
 WG_X0 = -38.5               # nose block outer face (also the cap cylinder's axis plane); the slabs follow by thickness
 WG_SLAB = (2.0, 1.0, 6.5, 7.5, 4.0)   # block | ring step | skin | cheek | nose tab thicknesses along X
-WG_BORES = dict(sa=2.6, sb=1.6, sb_head=2.5)   # radii of the standoff bores through the wedgelet (sb_head: from the ring step on)
+WG_BORES = dict(sa=WG_BORES_SA, sb=1.6, sb_head=2.5)   # radii of the standoff bores through the wedgelet (sb_head: from the ring step on)
 WG_TAB_FILM = 0.6           # TPU film limit: slivers thinner than this are dropped from the nose tab
 WG_MERGE_EPS = 0.01         # overlap that merges the toe land with the body
 ARC_N = 64                  # circle / arc facets per quarter turn
 QUARTER_TURN = 90   # deg, tyre shoulder arcs sweep a quarter turn
-FORK_RAIL_DEV = dict(x=25.25, ys=(39.5, 44.5), z=5.3, r=4.5)   # two reference-diff deviation spheres (cap r 5) over the fork's rail tunnels in the wedgelet cheek
 FORK_DEV = dict(x=25.5, y=66.0, z=1.4, r=2.0)   # reference-diff deviation sphere at the fork tip land (STEP knife tip)
 SIDE_DEV_X, SIDE_DEV_R = 41.78, 4.0              # deviation sphere at the nose screw seat (STEP RV23 bore centre X, radius)
 __all__ = [n for n in dir() if not n.startswith("__")]   # last line: every name above is exported
