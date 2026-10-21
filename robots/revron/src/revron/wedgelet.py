@@ -96,10 +96,9 @@ def _wg_ring(r, tail, x0, x1):
     c = WG_RING_CHAMFER
     cone = b.Solid.make_cone(r, r - c, x1 - x0, b.Plane(origin=(x0, SB[0], SB[1]), z_dir=(1, 0, 0)))
     left = _I(cone, _box(x0, x1, SB[0] - 2 * r, SB[0], SB[1] - 2 * r, SB[1] + 2 * r))
-    right = _I(_cyl(r, x0, x1, SB), _box(x0, x1, SB[0], SB[0] + 2 * r, SB[1] - 2 * r, SB[1] + 2 * r))
     floor = tail[-1][1]
     wedge = _ext(Polygon([(x1 - c, floor), (x1, floor + c), (x1, floor - 1.0), (x1 - c, floor - 1.0)]), "xz", SB[0], WG_RING_CHAMFER_Y)
-    return _S(_U(left, right, _ext(Polygon(tail).buffer(0), "yz", x0, x1)), wedge)
+    return _S(_U(left, _ext(Polygon(tail).buffer(0), "yz", x0, x1)), wedge)
 
 
 def wedgelet(s):
