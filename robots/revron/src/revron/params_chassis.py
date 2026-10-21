@@ -81,6 +81,8 @@ TOP_TAB_Y = 11.9                     # tab front edge
 TOP_CUT_Y = 14.0                     # notch / tab cutters run past the panel front (ears end at Y 13.1)
 TOP_FILL_YT = (1.0, -12.5)           # Y where each concave ear-to-edge arc meets the |X| 23 edge (front, rear ear row)
 TOP_FILL_X = 26.6                    # outer X of the arc fill boxes (past the ears)
+TOP_RECESS_DEPTH = 0.1               # STEP: four shallow round recesses in the underside of the top panel, one row at Y -5.5 (X, Y, dia)
+TOP_RECESS = ((-13.73, -5.62, 6.54), (-3.78, -5.57, 6.57), (5.84, -5.26, 5.80), (15.04, -5.66, 5.76))
 TOP_R_OUT, TOP_R_IN = 0.4, 1.2       # top-panel edge rounds
 ESC_TRAY = dict(gap=0.1, wall=1.25, lip=1.0, fuse=0.01, rail_end=1.0, rail_x=(1.4, 2.6))   # TPU ESC tray: walls >= 1.2, rails inset from the board -x / +x edges
 CHAIKIN_Q = 0.25                     # Chaikin corner-cutting ratio (side-panel spline smoothing)
