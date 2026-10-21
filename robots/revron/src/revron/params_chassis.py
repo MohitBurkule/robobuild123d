@@ -5,6 +5,13 @@ ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
+# ---- tub variants: the DEFAULT is the original RV01 geometry; each deliberate deviation is an opt-in flag (REVRON_TUB_VARIANT=a,b)
+TUB_VARIANTS = frozenset(v for v in os.environ.get("REVRON_TUB_VARIANT", "").split(",") if v)
+KNOWN_VARIANTS = {"open_keyhole": "N10 keyhole opened into a U-slot to the floor (motor drops out -Z with the base panel off)",
+                  "pad_preload": "base-panel preload pad 0.465 tall so it touches the gearbox (RV01 dump: 0.25, leaves 0.2 mm)",
+                  "switch_on_bolt_axis": "switch pilots on the switch screw axis SWX (RV01 pilots sit on the column x)"}
+assert TUB_VARIANTS <= set(KNOWN_VARIANTS), TUB_VARIANTS - set(KNOWN_VARIANTS)
+
 # ======================================================================================================================
 # Measured layout (RVRN 2.0 STEP, world frame). Each number is a dimension of a feature, not a mesh coordinate list.
 # ======================================================================================================================
@@ -67,7 +74,7 @@ BASE_HEAD_DK = 2.2 * 2.0             # modelled M2 CSK head diameter (robot.worl
 BASE_CSK_SEAT_CLR = 0.1              # diametral clearance between that head and the seat cone
 BASE_CSK_CLEAR = BASE_HEAD_DK + BASE_CSK_SEAT_CLR - 3.8   # hole_tool's csk_clear is added to the catalog dk (3.8): seat 4.5 at the face, cone parallel to the head so the 4.4 head never touches (r5 overlap 0.09)
 BASE_Z0, BASE_T = 3.5, 1.0           # base panel underside Z, skin thickness
-PRELOAD_PAD = dict(c=(22.5, -30.3), s=9.8, h=0.465, r=1.0, sink=0.01)   # N10 preload pad on the base skin: centre |X|/Y, side, height (0.45 + 0.015: closes the 0.2 mm the STEP leaves under the N10, intent.seat_locates), corner R, sink into the skin (union overlap)
+PRELOAD_PAD = dict(c=(22.5, -30.3), s=9.8, h=0.465 if "pad_preload" in TUB_VARIANTS else 0.25, r=1.0, sink=0.01)   # N10 preload pad on the base skin: centre |X|/Y, side, height (0.45 + 0.015: closes the 0.2 mm the STEP leaves under the N10, intent.seat_locates), corner R, sink into the skin (union overlap)
 BASE_OUT = dict(x=28.1, y0=-36.2, y1=13.0, r=0.8)   # RV26 outline 56.2 x 49.2, R0.8 corners
 TOP_Z0, TOP_T = CH["z1"], 0.9        # Ti top panel sits on the chassis rim, 0.9 thick
 TOP_X = 23.0                         # |X| of the top-panel side edges beside the switch
