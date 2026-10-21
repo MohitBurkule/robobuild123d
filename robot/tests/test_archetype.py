@@ -157,3 +157,23 @@ def test_no_archetype_no_findings():
     rep = verify(spec.Spec({"name": "x", "parts": [{"id": "a", "kind": "structure", "material": "pla", "shape": box(10, 10, 10)}]}),
                  Options(only=["archetype"], deep=False, fast=True))
     assert not [f for f in rep.findings if f.group == "archetype"]
+
+
+def test_rotor_fasteners_sweep_uses_rotor_axial_extent():
+    # an off-centre rotor (disc hub one side of the pivot, as revron's spider at x -9.7..-6.7 with discs to 5.3):
+    # a static bolt beside the rotor but within |x| < weapon half width of the pivot is not in the swept volume
+    def run(bx):
+        d = {"name": "vs", "robot_type": "vertical_spinner", "archetype": "vertical_spinner_forks", "electronics": {"failsafe": True},
+             "parts": [
+                 {"id": "tub", "kind": "structure", "material": "nylon", "process": "fdm", "shape": box(70, 70, 20), "at": [0, 0, 10]},
+                 {"id": "fork_r", "kind": "structure", "material": "nylon", "process": "fdm", "shape": box(6, 30, 40), "at": [14, 45, 25]},
+                 {"id": "disc", "kind": "weapon", "material": "titanium", "process": "laser", "at": [0, 55, 26], "rot": [0, 90, 0],
+                  "shape": {"type": "place", "shape": {"type": "cylinder", "radius": 22, "height": 16}, "at": [0, 0, -10], "rot": [0, 0, 0]},
+                  "weapon": {"kind": "disc", "motor": None, "spin_axis": [0, 0, 1]},
+                  "joint": {"kind": "revolute", "axis": [1, 0, 0], "pivot": [0, 55, 26], "min": -180, "max": 180}}],
+             "fasteners": [{"id": "s1", "designation": "M2x6", "at": [bx, 55, 36], "dir": [1, 0, 0], "threads_into": "fork_r",
+                            "removable": True}]}
+        rep = verify(spec.Spec(d), Options(only=["archetype"], deep=False, fast=True))
+        return {f.id: f for f in rep.findings}["archetype.rotor_fasteners"]
+    assert run(5).passed            # disc spans x -18..-2: the bolt at x 5..11 is beside it
+    assert not run(-12).passed      # inside the disc slab
