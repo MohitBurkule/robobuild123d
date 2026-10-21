@@ -108,16 +108,6 @@
    "deviation": "M3x14 instead of the STEP's M3x12: through mount and lug, 12 mm engages 3.9 mm of the 15 mm standoff (< 1.5 d)"
   },
   {
-   "role": "top panel: 4 x M2 CSK thread-forming (not in the STEP; its countersunk holes are)",
-   "match": [
-    "bolt_t*"
-   ],
-   "count": 4,
-   "designation": "M2x5",
-   "threads_into": "insert",
-   "deviation": "the STEP top panel has 4 countersunk corner holes but no screws; 4 M2x4 CSK thread-forming screws added so the Ti panel cannot peel off"
-  },
-  {
    "role": "side panel to standoff ends: 4 x M3 CSK (STEP M3x8)",
    "match": [
     "bolt_s?a",
@@ -323,28 +313,6 @@
    "count": 2
   },
   {
-   "role": "bat_pad: double-sided foam tape pad under the pack (not in the STEP)",
-   "kind": "part",
-   "match": [
-    "bat_pad"
-   ],
-   "count": 1,
-   "material": "foam_tape",
-   "deviation": "the STEP pack floats 2 mm over the base panel; a foam tape pad supports and retains it (adds ~0.05 g, reversible)",
-   "reason": "the STEP pack floats 2 mm over the base panel; a foam tape pad supports and retains it (adds ~0.05 g, reversible)"
-  },
-  {
-   "role": "esc_tray: TPU weapon-ESC tray (not in the STEP)",
-   "kind": "part",
-   "match": [
-    "esc_tray"
-   ],
-   "count": 1,
-   "material": "tpu",
-   "deviation": "the STEP holds the weapon ESC with kapton tape alone; a TPU tray with 0.1 mm lips keeps the board in if the tape fails (adds 1.1 g, reversible)",
-   "reason": "the STEP holds the weapon ESC with kapton tape alone; a TPU tray with 0.1 mm lips keeps the board in if the tape fails (adds 1.1 g, reversible)"
-  },
-  {
    "role": "battery lead: JST RCY",
    "kind": "wire",
    "match": [
@@ -361,6 +329,24 @@
    ],
    "count": 1,
    "connector": "bullet2"
+  },
+  {
+   "role": "MR85ZZ bearing in the RV02 seat (outboard shaft support)",
+   "kind": "part",
+   "match": [
+    "wbearing"
+   ],
+   "count": 1,
+   "deviation": "added: bought part left out of the STEP (INDEX.txt lists no bearing), but RV02 carries the 7.9 mm printed seat and the guide BOM lists an MR85ZZ"
+  },
+  {
+   "role": "GR1507 5 mm threaded shaft",
+   "kind": "part",
+   "match": [
+    "wshaft"
+   ],
+   "count": 1,
+   "deviation": "added: the shaft belongs to the bought GR1507, which the STEP draws as one body (INDEX.txt lists no shaft); drawn apart for the MR85 support and the spider collar, its mass stays in the motor"
   }
  ],
  "reference_doc": {
@@ -850,53 +836,7 @@
     "mode": "shape",
     "tol_mm": 0.3,
     "note": "RV26 1 mm panel",
-    "deviations": [
-     {
-      "near": [
-       -25.0,
-       10.4,
-       4.5
-      ],
-      "r": 3.5,
-      "reason": "R2.6 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
-     },
-     {
-      "near": [
-       25.0,
-       10.4,
-       4.5
-      ],
-      "r": 3.5,
-      "reason": "R2.6 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
-     },
-     {
-      "near": [
-       -25.0,
-       -21.6,
-       4.5
-      ],
-      "r": 3.5,
-      "reason": "R2.6 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
-     },
-     {
-      "near": [
-       25.0,
-       -21.6,
-       4.5
-      ],
-      "r": 3.5,
-      "reason": "R2.6 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
-     },
-     {
-      "near": [
-       0.0,
-       -33.6,
-       4.5
-      ],
-      "r": 3.5,
-      "reason": "R2.6 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
-     }
-    ]
+    "deviations": []
    },
    {
     "part": "top_panel",
@@ -905,42 +845,6 @@
     "tol_mm": 0.3,
     "note": "0.9 mm top panel",
     "deviations": [
-     {
-      "near": [
-       -25.0,
-       10.4,
-       19.95
-      ],
-      "r": 3.5,
-      "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
-     },
-     {
-      "near": [
-       25.0,
-       10.4,
-       19.95
-      ],
-      "r": 3.5,
-      "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
-     },
-     {
-      "near": [
-       -25.0,
-       -21.6,
-       19.95
-      ],
-      "r": 3.5,
-      "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
-     },
-     {
-      "near": [
-       25.0,
-       -21.6,
-       19.95
-      ],
-      "r": 3.5,
-      "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
-     },
      {
       "near": [
        -3.78,
@@ -1100,7 +1004,7 @@
       0.0,
       0.0,
       -1.0,
-      -6.7
+      -8.2
      ],
      [
       -0.575162,
@@ -1124,7 +1028,7 @@
     "deviations": [
      {
       "near": [
-       -6.699999999999999,
+       -8.2,
        30.44772759118839,
        12.047449670300885
       ],
@@ -1133,7 +1037,7 @@
      },
      {
       "near": [
-       -6.699999999999999,
+       -8.2,
        27.047449670300885,
        31.55227240881161
       ],
@@ -1142,7 +1046,7 @@
      },
      {
       "near": [
-       -6.699999999999999,
+       -8.2,
        46.552272408811604,
        34.952550329699115
       ],
@@ -1151,7 +1055,7 @@
      },
      {
       "near": [
-       -6.699999999999999,
+       -8.2,
        49.952550329699115,
        15.447727591188393
       ],
@@ -1170,7 +1074,7 @@
       0.0,
       0.0,
       -1.0,
-      -6.7
+      -8.2
      ],
      [
       -0.575162,
@@ -1202,7 +1106,7 @@
       0.0,
       0.0,
       -1.0,
-      -6.7
+      -8.2
      ],
      [
       -0.575162,
@@ -1234,7 +1138,7 @@
       0.0,
       0.0,
       -1.0,
-      -6.7
+      -8.2
      ],
      [
       -0.575162,
@@ -1361,6 +1265,15 @@
       ],
       "r": 4.0,
       "reason": "the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
+     },
+     {
+      "near": [
+       -25.25,
+       42.0,
+       5.3
+      ],
+      "r": 6.0,
+      "reason": "the fork's two rails run through the TPU cheek as closed tunnels (the STEP's solid wedgelet has no slit: the tine interpenetrates it)"
      }
     ]
    },
@@ -1469,6 +1382,15 @@
       ],
       "r": 4.0,
       "reason": "the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
+     },
+     {
+      "near": [
+       25.25,
+       42.0,
+       5.3
+      ],
+      "r": 6.0,
+      "reason": "the fork's two rails run through the TPU cheek as closed tunnels (the STEP's solid wedgelet has no slit: the tine interpenetrates it)"
      }
     ]
    },
@@ -1801,9 +1723,9 @@
     4.5
    ],
    "rot": [
-    -180.0,
+    180.0,
     0.0,
-    -180.0
+    180.0
    ],
    "material": "pla_st",
    "process": "fdm",
@@ -1835,9 +1757,9 @@
     20.4
    ],
    "rot": [
-    -180.0,
+    180.0,
     0.0,
-    -180.0
+    180.0
    ],
    "label": "0.9 mm Ti top panel: laser outline with 4 countersunk 2.2 corner holes, 4 M2 flat-head thread-forming screws into the column tops (material inferred, see REFERENCE.md)"
   },
@@ -2123,7 +2045,7 @@
      0.0
     ],
     "pivot": [
-     -20.1,
+     -21.6,
      0.0,
      0.0
     ],
@@ -2322,8 +2244,8 @@
    "material": "titanium",
    "process": "laser",
    "stock": "1.5 mm Ti Gr5 sheet",
-   "min_web_mm": 1.05,
-   "min_web_reason": "1.1 mm web under the 5.3 standoff hole is the designer's own (RVRN 2.0 STEP fork_5 measures 1.1)",
+   "min_web_mm": 1.12,
+   "min_web_reason": "every web is the laser minimum 0.75 x 1.5 mm sheet = 1.12 mm (rings round the standoff and pin holes; the STEP fork_5 draws 1.10 and 1.098)",
    "parent": "so_bl",
    "rotates_with": "fixed",
    "color": "#9aa0a6",
@@ -2334,12 +2256,22 @@
      "part": "fork_l"
     }
    },
+   "at": [
+    -25.0,
+    40.5,
+    4.5
+   ],
+   "rot": [
+    90.0,
+    1.763,
+    -90.0
+   ],
    "label": "fork_5: 1.5 mm Ti fork on the 15 mm standoff, tail pinned in the wedgelet cheek slot"
   },
   {
    "id": "wedgelet_l",
    "kind": "armor",
-   "deviation": "RVRN 2.0 STEP: the wedgelet and the fork tine interpenetrate in the original (an interference there); we cut the tine's own 1.5 mm outline out of the wedgelet as its seat (nothing more), so the fork sits in with interference 0, hence the wedgelet is short by the tine volume at x -26.5..-25",
+   "deviation": "RVRN 2.0 STEP: the wedgelet and the fork tine interpenetrate in the original (an interference there); we cut the tine's own 1.5 mm outline out of the wedgelet as its seat, so the fork sits in with interference 0, hence the wedgelet is short by the tine volume at x -26.5..-25",
    "material": "tpu",
    "process": "fdm",
    "thin_wall_deviation": "matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)",
@@ -2505,7 +2437,7 @@
    "kind": "pulley",
    "solid_fraction": 0.85,
    "rotates_with": "wheel_rl",
-   "print_orientation": "-x",
+   "print_orientation": "+x",
    "shape": {
     "type": "model",
     "file": "../../robots/revron/src/build_revron.py",
@@ -2514,6 +2446,17 @@
     }
    },
    "parent": "tub",
+   "at": [
+    -30.0,
+    -30.5,
+    11.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    180.0
+   ],
+   "thin_wall_deviation": "matches original RVRN 2.0: RV21 draws the 0.5 mm O-ring flange, the 0.5 mm raised lip at the free end and the 0.2 mm end recess; kept for parity (user order)",
    "joint": {
     "kind": "revolute",
     "axis": [
@@ -2550,6 +2493,16 @@
      "part": "rear_tyre_l"
     }
    },
+   "at": [
+    2.5,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
    "color": "#1b1b1b",
    "stock": "RV22 Scalextric F1 front tyre 21.5 x 14 x 9.5",
    "label": "Scalextric F1 tyre 21.5 x 14 x 9.5"
@@ -2559,7 +2512,7 @@
    "kind": "pulley",
    "solid_fraction": 0.85,
    "rotates_with": "wheel_fl",
-   "print_orientation": "-x",
+   "print_orientation": "+x",
    "shape": {
     "type": "model",
     "file": "../../robots/revron/src/build_revron.py",
@@ -2568,6 +2521,17 @@
     }
    },
    "parent": "so_al",
+   "at": [
+    -30.0,
+    30.5,
+    5.5
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    180.0
+   ],
+   "thin_wall_deviation": "matches original RVRN 2.0: RV19 draws its three flanges 0.5 mm thick; kept for parity (user order)",
    "joint": {
     "kind": "revolute",
     "axis": [
@@ -2604,6 +2568,16 @@
      "part": "front_tyre_l"
     }
    },
+   "at": [
+    2.5,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
    "color": "#1b1b1b",
    "stock": "RV20 Scalextric micro SLX tyre 11 x 7 x 6",
    "label": "Scalextric micro tyre 11 x 7 x 6"
@@ -2676,8 +2650,8 @@
    "material": "titanium",
    "process": "laser",
    "stock": "1.5 mm Ti Gr5 sheet",
-   "min_web_mm": 1.05,
-   "min_web_reason": "1.1 mm web under the 5.3 standoff hole is the designer's own (RVRN 2.0 STEP fork_5 measures 1.1)",
+   "min_web_mm": 1.12,
+   "min_web_reason": "every web is the laser minimum 0.75 x 1.5 mm sheet = 1.12 mm (rings round the standoff and pin holes; the STEP fork_5 draws 1.10 and 1.098)",
    "parent": "so_br",
    "rotates_with": "fixed",
    "color": "#9aa0a6",
@@ -2688,12 +2662,22 @@
      "part": "fork_r"
     }
    },
+   "at": [
+    26.0,
+    40.5,
+    4.5
+   ],
+   "rot": [
+    90.0,
+    2.825,
+    -90.0
+   ],
    "label": "fork_5: 1.5 mm Ti fork on the 15 mm standoff, tail pinned in the wedgelet cheek slot"
   },
   {
    "id": "wedgelet_r",
    "kind": "armor",
-   "deviation": "RVRN 2.0 STEP: the wedgelet and the fork tine interpenetrate in the original (an interference there); we cut the tine's own 1.5 mm outline out of the wedgelet as its seat (nothing more), so the fork sits in with interference 0, hence the wedgelet is short by the tine volume at x 24.5..26",
+   "deviation": "RVRN 2.0 STEP: the wedgelet and the fork tine interpenetrate in the original (an interference there); we cut the tine's own 1.5 mm outline out of the wedgelet as its seat, so the fork sits in with interference 0, hence the wedgelet is short by the tine volume at x 24.5..26",
    "material": "tpu",
    "process": "fdm",
    "thin_wall_deviation": "matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)",
@@ -2868,6 +2852,17 @@
     }
    },
    "parent": "tub",
+   "at": [
+    30.0,
+    -30.5,
+    11.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "thin_wall_deviation": "matches original RVRN 2.0: RV21 draws the 0.5 mm O-ring flange, the 0.5 mm raised lip at the free end and the 0.2 mm end recess; kept for parity (user order)",
    "joint": {
     "kind": "revolute",
     "axis": [
@@ -2904,6 +2899,16 @@
      "part": "rear_tyre_r"
     }
    },
+   "at": [
+    2.5,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
    "color": "#1b1b1b",
    "stock": "RV22 Scalextric F1 front tyre 21.5 x 14 x 9.5",
    "label": "Scalextric F1 tyre 21.5 x 14 x 9.5"
@@ -2922,6 +2927,17 @@
     }
    },
    "parent": "so_ar",
+   "at": [
+    30.0,
+    30.5,
+    5.5
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "thin_wall_deviation": "matches original RVRN 2.0: RV19 draws its three flanges 0.5 mm thick; kept for parity (user order)",
    "joint": {
     "kind": "revolute",
     "axis": [
@@ -2958,6 +2974,16 @@
      "part": "front_tyre_r"
     }
    },
+   "at": [
+    2.5,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
    "color": "#1b1b1b",
    "stock": "RV20 Scalextric micro SLX tyre 11 x 7 x 6",
    "label": "Scalextric micro tyre 11 x 7 x 6"
@@ -2992,8 +3018,7 @@
     0.0,
     90.0
    ],
-   "retained": "strap",
-   "deviation": "RV01/RV13: the Malenki is taped (kapton) to the deck in the STEP; with the cage ribs gone a 6 mm TPU strap (RV01 esc_tray strap slot, glued to the chassis walls over the board) holds it instead, so it cannot slide inverted (adds ~0.3 g, reversible)"
+   "retained": "kapton"
   },
   {
    "id": "wesc",
@@ -3124,39 +3149,6 @@
     -21.6,
     17.5
    ]
-  },
-  {
-   "id": "esc_tray",
-   "kind": "other",
-   "material": "tpu",
-   "process": "fdm",
-   "print_orientation": "+z",
-   "rotates_with": "fixed",
-   "shape": {
-    "type": "model",
-    "file": "../../robots/revron/src/build_revron.py",
-    "params": {
-     "part": "esc_tray"
-    }
-   },
-   "label": "TPU weapon-ESC tray (not in the STEP): glued to the base panel, lips hold the ESC when inverted",
-   "deviation": "the STEP holds the weapon ESC with kapton tape alone; a hit that flips the robot or tears the tape would free the board, so a TPU tray with 0.1 mm lips holds it (adds 1.1 g, reversible)"
-  },
-  {
-   "id": "bat_pad",
-   "kind": "other",
-   "material": "foam_tape",
-   "process": "manual",
-   "rotates_with": "fixed",
-   "shape": {
-    "type": "model",
-    "file": "../../robots/revron/src/build_revron.py",
-    "params": {
-     "part": "bat_pad"
-    }
-   },
-   "label": "Double-sided foam tape pad under the pack (not in the STEP): carries the pack 2 mm above the base panel",
-   "deviation": "the STEP pack floats 2 mm over the base panel; a foam tape pad supports and retains it (adds ~0.05 g, reversible)"
   },
   {
    "id": "belt_l",
@@ -3377,8 +3369,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 4.5,
-    "csk_depth": 1.05,
+    "csk_d": 3.2,
+    "csk_depth": 0.4,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -3416,8 +3408,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 4.5,
-    "csk_depth": 1.05,
+    "csk_d": 3.2,
+    "csk_depth": 0.4,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -3455,8 +3447,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 4.5,
-    "csk_depth": 1.05,
+    "csk_d": 3.2,
+    "csk_depth": 0.4,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -3494,8 +3486,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 4.5,
-    "csk_depth": 1.05,
+    "csk_d": 3.2,
+    "csk_depth": 0.4,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -3533,8 +3525,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 4.5,
-    "csk_depth": 1.05,
+    "csk_d": 3.2,
+    "csk_depth": 0.4,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -4096,7 +4088,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    -8.2,
+    -9.7,
     35.91177,
     19.818823
    ],
@@ -4139,7 +4131,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    6.8,
+    5.3,
     30.447728,
     12.04745
    ],
@@ -4185,7 +4177,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    -8.2,
+    -9.7,
     34.818823,
     26.08823
    ],
@@ -4228,7 +4220,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    6.8,
+    5.3,
     27.04745,
     31.552272
    ],
@@ -4274,7 +4266,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    -8.2,
+    -9.7,
     41.08823,
     27.181177
    ],
@@ -4317,7 +4309,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    6.8,
+    5.3,
     46.552272,
     34.95255
    ],
@@ -4363,7 +4355,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    -8.2,
+    -9.7,
     42.181177,
     20.91177
    ],
@@ -4406,7 +4398,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    6.8,
+    5.3,
     49.95255,
     15.447728
    ],
@@ -4443,154 +4435,6 @@
     "motor_spacer"
    ],
    "reason": "stack screwed into the spider from the back (heads on disc_b, 2 mm of thread in the 3 mm alu spider tapped M2): no nuts, since the STEP has none (inferred: it has the 2.2 holes but no screws)",
-   "removable": true
-  },
-  {
-   "id": "bolt_t0",
-   "designation": "M2x5",
-   "head": "button",
-   "tool": "hex1.3",
-   "at": [
-    25.0,
-    10.4,
-    20.4
-   ],
-   "dir": [
-    0.0,
-    0.0,
-    -1.0
-   ],
-   "through": [
-    "top_panel",
-    "tub"
-   ],
-   "threads_into": "insert_t0",
-   "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
-   "hole": {
-    "d": 2.0,
-    "length": 5.0,
-    "head": "button",
-    "head_std": "ISO 7380-1",
-    "head_dk": 3.5,
-    "head_k": 1.3,
-    "clearance_d": 2.4,
-    "into": "through",
-    "side": "head",
-    "cbore_d": 3.9,
-    "cbore_depth": 0.0,
-    "grip": 0.9
-   },
-   "removable": true
-  },
-  {
-   "id": "bolt_t1",
-   "designation": "M2x5",
-   "head": "button",
-   "tool": "hex1.3",
-   "at": [
-    -25.0,
-    10.4,
-    20.4
-   ],
-   "dir": [
-    0.0,
-    0.0,
-    -1.0
-   ],
-   "through": [
-    "top_panel",
-    "tub"
-   ],
-   "threads_into": "insert_t1",
-   "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
-   "hole": {
-    "d": 2.0,
-    "length": 5.0,
-    "head": "button",
-    "head_std": "ISO 7380-1",
-    "head_dk": 3.5,
-    "head_k": 1.3,
-    "clearance_d": 2.4,
-    "into": "through",
-    "side": "head",
-    "cbore_d": 3.9,
-    "cbore_depth": 0.0,
-    "grip": 0.9
-   },
-   "removable": true
-  },
-  {
-   "id": "bolt_t2",
-   "designation": "M2x5",
-   "head": "button",
-   "tool": "hex1.3",
-   "at": [
-    25.0,
-    -21.6,
-    20.4
-   ],
-   "dir": [
-    0.0,
-    0.0,
-    -1.0
-   ],
-   "through": [
-    "top_panel",
-    "tub"
-   ],
-   "threads_into": "insert_t2",
-   "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
-   "hole": {
-    "d": 2.0,
-    "length": 5.0,
-    "head": "button",
-    "head_std": "ISO 7380-1",
-    "head_dk": 3.5,
-    "head_k": 1.3,
-    "clearance_d": 2.4,
-    "into": "through",
-    "side": "head",
-    "cbore_d": 3.9,
-    "cbore_depth": 0.0,
-    "grip": 0.9
-   },
-   "removable": true
-  },
-  {
-   "id": "bolt_t3",
-   "designation": "M2x5",
-   "head": "button",
-   "tool": "hex1.3",
-   "at": [
-    -25.0,
-    -21.6,
-    20.4
-   ],
-   "dir": [
-    0.0,
-    0.0,
-    -1.0
-   ],
-   "through": [
-    "top_panel",
-    "tub"
-   ],
-   "threads_into": "insert_t3",
-   "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
-   "hole": {
-    "d": 2.0,
-    "length": 5.0,
-    "head": "button",
-    "head_std": "ISO 7380-1",
-    "head_dk": 3.5,
-    "head_k": 1.3,
-    "clearance_d": 2.4,
-    "into": "through",
-    "side": "head",
-    "cbore_d": 3.9,
-    "cbore_depth": 0.0,
-    "grip": 0.9
-   },
    "removable": true
   },
   {
@@ -5051,8 +4895,8 @@
   {
    "a": "top_panel",
    "b": "tub",
-   "method": "screw",
-   "reason": "Ti top panel held by 4 M2 flat-head screws through its countersunk corner holes into M2 heat-sets in the column tops (the STEP has the holes, not the screws)"
+   "method": "glue",
+   "reason": "Ti top panel bonded on the deck, as in the original RVRN 2.0 (STEP: countersunk corner holes, no screws)"
   },
   {
    "a": "battery",
@@ -5063,34 +4907,16 @@
    "mechanical_key": true
   },
   {
-   "a": "battery",
-   "b": "bat_pad",
-   "method": "tape",
-   "reason": "Pack underside taped to the foam pad (double-sided), which holds it against sliding"
-  },
-  {
-   "a": "bat_pad",
-   "b": "base_panel",
-   "method": "tape",
-   "reason": "Foam pad stuck to the base panel skin; deck and top panel close the pack in from above"
-  },
-  {
    "a": "rxesc",
    "b": "tub",
-   "method": "interlock",
-   "reason": "Malenki held by a TPU strap, boxed by the front wall and the deck; the weapon ESC under it"
+   "method": "tape",
+   "reason": "Malenki kapton-taped to the deck, as in the original RVRN 2.0 (kapton-wrapped ESC stack, no tray or strap)"
   },
   {
    "a": "wesc",
-   "b": "esc_tray",
-   "method": "interlock",
-   "reason": "weapon ESC in the TPU tray lips (0.1 mm); lips on all four sides, the Malenki +z"
-  },
-  {
-   "a": "esc_tray",
-   "b": "base_panel",
-   "method": "glue",
-   "reason": "TPU tray contact-glued to the base panel top"
+   "b": "tub",
+   "method": "tape",
+   "reason": "weapon ESC kapton-taped in the bay, as in the original RVRN 2.0 (no tray)"
   },
   {
    "a": "power_switch",

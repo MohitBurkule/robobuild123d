@@ -4,8 +4,10 @@ The tub is the datum (world frame). Its joints are the places other parts attach
 the N10 seats); each attached part carries the matching joint on itself (insert bottom, switch side face, motor origin).
 `pose(part)` is the mated location as the (at, rot) pair the spec uses, so a part's position is the result of a mate, not
 a coordinate typed beside the part."""
+import math
 import build123d as b
 from .params import *  # noqa: F401,F403
+from .variants import variant
 
 DIGITS = 6   # spec precision: micron / micro-degree, JSON free of float noise
 
@@ -71,8 +73,12 @@ class Rig:
         loc = self.parts[part].location
         if frame is not None:
             loc = self.parts[frame].location.inverse() * loc
-        at, rot = loc.position, loc.orientation
-        return [round(v, DIGITS) + 0.0 for v in (at.X, at.Y, at.Z)], [round(v, DIGITS) + 0.0 for v in (rot.X, rot.Y, rot.Z)]
+        t = loc.wrapped.Transformation()
+        R = [[t.Value(i, j) for j in (1, 2, 3)] for i in (1, 2, 3)]
+        ry = -math.asin(max(-1.0, min(1.0, R[2][0])))   # the spec's Euler angles are R = Rz * Ry * Rx (robot.xform), not build123d's intrinsic XYZ
+        rx, rz = (math.atan2(R[2][1], R[2][2]), math.atan2(R[1][0], R[0][0])) if abs(R[2][0]) < 1 - 1e-9 else (math.atan2(-R[1][2], R[1][1]), 0.0)
+        at = loc.position
+        return [round(v, DIGITS) + 0.0 for v in (at.X, at.Y, at.Z)], [round(math.degrees(v), DIGITS) + 0.0 for v in (rx, ry, rz)]
 
 
 def tub_rig(r=None, solve=True):
@@ -99,8 +105,9 @@ def tub_rig(r=None, solve=True):
         r.mate("tub", f"screw_b{i}", f"bolt_b{i}", "head")
     for i, (x, y) in enumerate(TOP_XY):              # top-panel screws: head plane on the panel top face
         r.hole("tub", f"screw_t{i}", (x, y, TOP_BOLT_Z), (0, 0, -1))   # driven down through the panel
-        r.joint(f"bolt_t{i}", "head", (0, 0, 0))
-        r.mate("tub", f"screw_t{i}", f"bolt_t{i}", "head")
+        if variant("top_screws"):   # the original has no top-panel screws
+            r.joint(f"bolt_t{i}", "head", (0, 0, 0))
+            r.mate("tub", f"screw_t{i}", f"bolt_t{i}", "head")
     for i, sg in enumerate((1, -1)):                 # switch screws: through the ear holes (SW_PITCH apart along its length) at the body top
         r.joint("power_switch", f"ear{i}", (sg * SW_PITCH / 2, 0, SW_BODY_H / 2))
         r.joint(f"bolt_sw{i}", "head", (0, 0, 0))

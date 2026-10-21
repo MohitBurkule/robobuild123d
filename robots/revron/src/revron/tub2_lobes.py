@@ -2,7 +2,7 @@
 N10 keyhole (hull of two circles, opened into a U-slot to the floor so the gearbox boss drops in from below), the snap slit. Built for +X, mirrored."""
 from build123d import Box, BuildSketch, Circle, Cylinder, Locations, Mode, Plane, Pos, Align, RegularPolygon, Polygon, Rectangle, Rotation, extrude, fillet, make_hull
 from .tub2_params import CH_HALF_W, CH_IN_X, CH_Z0, CH_WALL, OVER, SKIN
-from .params_chassis import NUT, RY, RZ, TUB_VARIANTS
+from .params_chassis import NUT, RY, RZ, variant
 from .params_hardware import PRESS
 
 LOBE_R = 4.5                         # D10: lobe round about the nut (diameter 9)
@@ -46,7 +46,7 @@ def keyhole():
         with Locations((RY, RZ - NECK_DZ)):
             Circle(NECK_R)
         make_hull()
-        if "open_keyhole" in TUB_VARIANTS:   # variant: U-slot from the seat down through the floor
+        if variant("open_keyhole"):   # variant: U-slot from the seat down through the floor
             with Locations((RY, (RZ + CH_Z0 - 2 * OVER) / 2)):
                 Rectangle(2 * (BOSS_R + BOSS_CLR), RZ - CH_Z0 + 2 * OVER)
     return extrude(sk.sketch, CH_WALL + 2 * OVER)
