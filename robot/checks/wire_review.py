@@ -186,7 +186,7 @@ def render_present(ctx):
     return out
 
 
-PART_VIEW = ("part_", "section_")  # single-part and section renders do not show the wiring by design
+PART_VIEW = ("part_", "section_", "compare_")  # single-part and section renders do not show the wiring by design
 
 
 def render_dirs(spec):
