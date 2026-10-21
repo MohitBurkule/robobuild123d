@@ -75,6 +75,7 @@ SP_SEAT_AXIS = dict(a=SA, b=SB, c=NUT)   # (Y, Z) of each side screw: 25 mm stan
 SIDE_DEV_X, SIDE_DEV_R = 41.78, 4.0              # deviation sphere at the nose screw seat (STEP RV23 bore centre X, radius)
 CHASSIS_MIN_VOLUME = 15000.0         # mm3: the intact chassis is 15988 mm3 in one solid
 SP_NUT_RELIEF_R = 1.0                # relief corners round r1: no sharp concave corner in the printed wall
+SP_PIN_HOLE = dict(d=1.25, at=(2.92, 12.07), x=(-36.0, -31.0))   # STEP RV23: d1.25 cross hole along X through the wall at the nut lobe top (Y, Z; X span)
 SP_VENT = dict(y0=(-11.0, -4.5, 2.0), z0=5.0, dy=5.0, dz=6.0, r=1.0, x=(-50.0, -36.5))   # diagonal ESC vent slots
 SP_LOFT = dict(resample=400, path=240, ring=481, round=0.6, arc=16)   # section smoothing: pchip samples, path points, ring points, fillet
 # [fix-C wedgelet] measured polyline arcs rebuilt as true arcs (sampled finer than the 6 deg facet-seam threshold)
