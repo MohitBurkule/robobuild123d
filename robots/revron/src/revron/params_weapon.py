@@ -1,12 +1,13 @@
 """Revron params: drisk stack, GR1507 motor, weapon mounts RV02/RV03, disc / spider / spacer. Re-exported by params.py."""
 from .params_chassis import *  # noqa: F401,F403
 # GR1507 catalog features the weapon mates to (robot/catalog.py, motor-local: +X = bell top, -X = stator base)
-from robot.catalog import BELL_TOP_X, BELL_WALL_R, BELL_SCREW_R, BELL_SCREW_PHASE   # noqa: E402
+from robot.catalog import bell_dims, STATOR_BACK_X, BELL_SCREW_R, BELL_SCREW_PHASE   # noqa: E402
 # One switch swaps the weapon motor model: "datasheet" = real GR1507 (GEPRC drawing: 12-slot wound stator, 4-spoke chamfered cap, side wire exit, M5 thread 8 mm),
 # "step" = the simplified RVRN 2.0 STEP motor (solid r4 core, flat cap, no stator, thread 10 mm). Same part ids, mount points and screws in both.
 MOTOR_VARIANT = os.environ.get("REVRON_MOTOR_VARIANT", "datasheet")
 MOTOR_VARIANTS = {"datasheet": dict(stator="gr1507", can="gr1507_can", thread_len=8.0), "step": dict(stator="gr1507_step", can="gr1507_step_can", thread_len=10.0)}
 MOTOR = MOTOR_VARIANTS[MOTOR_VARIANT]
+BELL_WALL_R, BELL_TOP_X = bell_dims(MOTOR_VARIANT)   # datasheet: 17.1 mm body, cap top 6.7 above the base back; step: the STEP's 5.2
 # weapon frame: on the spin axis (WY, WZ) at the robot centre plane; the GR1507 sits in it with its catalog +X (bell top) turned to world -X
 W_FRAME = (0.0, WY, WZ)
 MOTOR_FLIP = (0, 0, 180)             # catalog -> weapon frame: half a turn about Z, so the stator base faces RV03 (+X)
@@ -35,7 +36,7 @@ SHAFT_CLR = 0.1                      # radial clearance round the shaft (RV03 ho
 BRG_RECESS, BRG_PRESS = 0.1, 0.05    # MR85 sits this far below the RV02 inner face (race clear of the spider); seat interference
 SHAFT_INTO_RECESS = 1.3              # the threaded end stands this far past the RV02 slab into the nut recess
 SHAFT_R = 2.5                        # GR1507 shaft radius (5 mm)
-WSHAFT = dict(r=SHAFT_R, len=30.1, x_end=-(MNT_SLAB + SHAFT_INTO_RECESS), thread_pitch=0.8, thread_depth=0.3, thread_len=MOTOR["thread_len"], chamfer=0.4)   # GR1507 shaft: radius, length, free end in RV02's nut recess
+WSHAFT = dict(r=SHAFT_R, len=-STATOR_BACK_X + MNT_SLAB + SHAFT_INTO_RECESS, x_end=-(MNT_SLAB + SHAFT_INTO_RECESS), thread_pitch=0.8, thread_depth=0.3, thread_len=MOTOR["thread_len"], chamfer=0.4)   # GR1507 shaft: radius, length (back flush with the base), free end in RV02's nut recess
 SHAFT_D = 2 * SHAFT_R
 BRG = dict(od_r=4.0, w=2.5, bore_r=SHAFT_R)   # MR85ZZ: the shaft runs in its bore
 BRG["x"] = -(MNT_IN + BRG_RECESS + BRG["w"] / 2)   # centred in the RV02 seat

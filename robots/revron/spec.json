@@ -361,6 +361,24 @@
    ],
    "count": 1,
    "connector": "bullet2"
+  },
+  {
+   "role": "MR85ZZ bearing in the RV02 seat (outboard shaft support)",
+   "kind": "part",
+   "match": [
+    "wbearing"
+   ],
+   "count": 1,
+   "deviation": "added: bought part left out of the STEP (INDEX.txt lists no bearing), but RV02 carries the 7.9 mm printed seat and the guide BOM lists an MR85ZZ"
+  },
+  {
+   "role": "GR1507 5 mm threaded shaft",
+   "kind": "part",
+   "match": [
+    "wshaft"
+   ],
+   "count": 1,
+   "deviation": "added: the shaft belongs to the bought GR1507, which the STEP draws as one body (INDEX.txt lists no shaft); drawn apart for the MR85 support and the spider collar, its mass stays in the motor"
   }
  ],
  "reference_doc": {
@@ -1100,7 +1118,7 @@
       0.0,
       0.0,
       -1.0,
-      -6.7
+      -8.2
      ],
      [
       -0.575162,
@@ -1124,7 +1142,7 @@
     "deviations": [
      {
       "near": [
-       -6.699999999999999,
+       -8.2,
        30.44772759118839,
        12.047449670300885
       ],
@@ -1133,7 +1151,7 @@
      },
      {
       "near": [
-       -6.699999999999999,
+       -8.2,
        27.047449670300885,
        31.55227240881161
       ],
@@ -1142,7 +1160,7 @@
      },
      {
       "near": [
-       -6.699999999999999,
+       -8.2,
        46.552272408811604,
        34.952550329699115
       ],
@@ -1151,7 +1169,7 @@
      },
      {
       "near": [
-       -6.699999999999999,
+       -8.2,
        49.952550329699115,
        15.447727591188393
       ],
@@ -1170,7 +1188,7 @@
       0.0,
       0.0,
       -1.0,
-      -6.7
+      -8.2
      ],
      [
       -0.575162,
@@ -1202,7 +1220,7 @@
       0.0,
       0.0,
       -1.0,
-      -6.7
+      -8.2
      ],
      [
       -0.575162,
@@ -1234,7 +1252,7 @@
       0.0,
       0.0,
       -1.0,
-      -6.7
+      -8.2
      ],
      [
       -0.575162,
@@ -2141,7 +2159,7 @@
      0.0
     ],
     "pivot": [
-     -20.1,
+     -21.6,
      0.0,
      0.0
     ],
@@ -4218,7 +4236,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    -8.2,
+    -9.7,
     35.91177,
     19.818823
    ],
@@ -4261,7 +4279,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    6.8,
+    5.3,
     30.447728,
     12.04745
    ],
@@ -4307,7 +4325,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    -8.2,
+    -9.7,
     34.818823,
     26.08823
    ],
@@ -4350,7 +4368,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    6.8,
+    5.3,
     27.04745,
     31.552272
    ],
@@ -4396,7 +4414,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    -8.2,
+    -9.7,
     41.08823,
     27.181177
    ],
@@ -4439,7 +4457,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    6.8,
+    5.3,
     46.552272,
     34.95255
    ],
@@ -4485,7 +4503,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    -8.2,
+    -9.7,
     42.181177,
     20.91177
    ],
@@ -4528,7 +4546,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    6.8,
+    5.3,
     49.95255,
     15.447728
    ],
@@ -5752,31 +5770,31 @@
    "exempt": [
     {
      "at": [
-      27.55,
-      -35.65
+      27.6,
+      -35.7
      ],
-     "reason": "RVRN RV01 square, N10 gearbox plate seat, r=0.0 (RV01_Chassis_1 z=10 slice: wall x=27.5 meets y=-35.6 at 90 deg, seat arc starts at x=26.5; ours squares at x=27.55 and the seat arc starts at x=26.77)"
+     "reason": "RVRN RV01 square, N10 gearbox plate seat, r=0.0 (RV01_Chassis_1 z=10 slice: wall x=27.5 meets y=-35.6 at 90 deg, seat arc starts at x=26.5; ours squares at x=27.60 and the seat arc starts at x=26.77)"
     },
     {
      "at": [
       26.77,
-      -35.65
+      -35.7
      ],
-     "reason": "RVRN RV01 square, N10 gearbox plate seat, r=0.0 (RV01_Chassis_1 z=10 slice: wall x=27.5 meets y=-35.6 at 90 deg, seat arc starts at x=26.5; ours squares at x=27.55 and the seat arc starts at x=26.77)"
+     "reason": "RVRN RV01 square, N10 gearbox plate seat, r=0.0 (RV01_Chassis_1 z=10 slice: wall x=27.5 meets y=-35.6 at 90 deg, seat arc starts at x=26.5; ours squares at x=27.60 and the seat arc starts at x=26.77)"
     },
     {
      "at": [
-      -27.55,
-      -35.65
+      -27.6,
+      -35.7
      ],
-     "reason": "RVRN RV01 square, N10 gearbox plate seat, r=0.0 (RV01_Chassis_1 z=10 slice: wall x=27.5 meets y=-35.6 at 90 deg, seat arc starts at x=26.5; ours squares at x=27.55 and the seat arc starts at x=26.77)"
+     "reason": "RVRN RV01 square, N10 gearbox plate seat, r=0.0 (RV01_Chassis_1 z=10 slice: wall x=27.5 meets y=-35.6 at 90 deg, seat arc starts at x=26.5; ours squares at x=27.60 and the seat arc starts at x=26.77)"
     },
     {
      "at": [
       -26.77,
-      -35.65
+      -35.7
      ],
-     "reason": "RVRN RV01 square, N10 gearbox plate seat, r=0.0 (RV01_Chassis_1 z=10 slice: wall x=27.5 meets y=-35.6 at 90 deg, seat arc starts at x=26.5; ours squares at x=27.55 and the seat arc starts at x=26.77)"
+     "reason": "RVRN RV01 square, N10 gearbox plate seat, r=0.0 (RV01_Chassis_1 z=10 slice: wall x=27.5 meets y=-35.6 at 90 deg, seat arc starts at x=26.5; ours squares at x=27.60 and the seat arc starts at x=26.77)"
     }
    ]
   },

@@ -233,6 +233,24 @@ Whoever gets under the other wins. Full rules with rationale, thresholds and app
 12. **Keep paired supports matched** and plates loaded in their own plane (4 mm uprights printed flat).
 13. **Centre the rotor between its supports**, so both bearings and the chassis see symmetric loads.
 
+## Modelling a part from a reference STEP (lessons from review/code/MISSES.md, 2026-10)
+Read the reference with `robot/cad/blend_finder.py` (every fillet / chamfer as a tangent chain: kind, size to 0.05 mm,
+convex / concave, the faces and corners that carry it) and `robot/cad/sketch_extract.py` (a section's lines, arcs,
+relations and named dims; `section_planes` proposes where to cut). Then:
+1. **No measured coordinate tables.** A profile is lines and arcs with dims and relations (tangent, equal, concentric,
+   symmetric), never a list of (Y, Z) points read off a mesh. Take the dims from `sketch_extract`, not the vertices.
+2. **Build each outline from its own section.** Cut the reference normal to the feature's axis and model what the section
+   shows; never a convex hull of guessed circles or a shape "close enough" to an STL silhouette.
+3. **Blends go on the corners that carry them.** Apply a fillet or chamfer to exactly the edge chain `blend_finder` reports.
+   Never generalise it to every corner of a sketch, and never select blend edges with a length or position threshold.
+4. **Measure every radius; don't derive it.** A radius written as a formula of a master (`3 * SKIN / 2`) must equal the
+   radius `blend_finder` measured on that corner. If it doesn't, the measured value wins.
+5. **Size pockets from the drawn section, not the catalogue.** A nut pocket, a slot or a seat is the shape the reference
+   cuts (clearance included); the bought-in part's catalogue size is only the check that it fits.
+6. **A design change keeps the designer's blends.** When you alter a feature on purpose (a deeper pad, an opened slot),
+   keep its fillet / chamfer sizes and record the change as a `deviations` entry with its reason. Don't shrink or drop
+   the blend silently.
+
 ## Sharp internal corners are opt-OUT (`mfg.sharp_internal_corner`, robot/checks/sharp_corner.py)
 Every fdm / sla / molded / cast part is scanned; nothing has to be listed (milled and cut parts: `process`). Each concave
 mesh edge is sectioned normal to its direction and its local radius measured (arc / turn; 0 = sharp).

@@ -3,6 +3,7 @@ import json, math, os, sys
 from .params import *  # noqa: F401,F403
 from .common import *  # noqa: F401,F403
 from . import panel_base, panel_top
+from .tub2_params import OVER   # the squared rear corner overshoots the wall by the tub2 over-cut
 
 
 def _mid(span):
@@ -256,8 +257,8 @@ def intent_checks():
     # (still probed; INFO "matches original" within 0.5 mm; JSON: "exempt": [...] on the same intent entry)
     A("fillet", "inside wall corners are radiused: sharp PLA inside corners crack under impact", part="tub", axis="z", h=FILLET_H,
       at=[[-x + w, CH["y0"] + w], [x - w, CH["y0"] + w], [x - w, CH["y1"] - w], [-x + w, CH["y1"] - w]],
-      exempt=[dict(at=[sg * fx, CH["y0"] + w - SQUARE["over"]], reason="RVRN RV01 square, N10 gearbox plate seat, r=0.0 (RV01_Chassis_1 z=10 slice: wall x=27.5 meets y=-35.6 at 90 deg, seat arc starts at x=26.5; ours squares at x=%.2f and the seat arc starts at x=%.2f)" % (x - w + SQUARE["over"], FILLET_REAR_X))
-              for sg in (1, -1) for fx in (x - w + SQUARE["over"], FILLET_REAR_X)])
+      exempt=[dict(at=[sg * fx, CH["y0"] + w - OVER], reason="RVRN RV01 square, N10 gearbox plate seat, r=0.0 (RV01_Chassis_1 z=10 slice: wall x=27.5 meets y=-35.6 at 90 deg, seat arc starts at x=26.5; ours squares at x=%.2f and the seat arc starts at x=%.2f)" % (x - w + OVER, FILLET_REAR_X))
+              for sg in (1, -1) for fx in (x - w + OVER, FILLET_REAR_X)])
     A("tool_count", "pit kit: one hex key per screw size (1.3 for M2, 2 for M3); the weapon swap needs only the 2 mm key", max=2, module_max=1,
       module=["bolt_ula", "bolt_ulb", "bolt_ura", "bolt_urb"])
     rot = ["spider", "disc_a", "disc_b", "dspacer"]
@@ -343,8 +344,8 @@ def reference_cad():
         R("top_panel", "Top_Panel_1.stl", tol_mm=TOL["tight"], note="0.9 mm top panel",
           deviations=[dict(near=[x, y, TOP_DEV_Z], r=PANEL_DEV_R, reason="4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it")
                       for x, y in INS[:4]]
-          + [dict(near=[x, y, 19.57], r=5.0, reason="0.1 mm engraved lettering, laser-etch omitted")
-             for x, y in ((-3.78, -5.57), (-13.73, -5.62), (5.84, -5.26), (15.04, -5.66))]),
+          + [dict(near=[x, y, TOP_TEXT_DEV_Z], r=TOP_TEXT_DEV_R, reason="0.1 mm engraved lettering, laser-etch omitted")
+             for x, y in TOP_TEXT_DEV_XY]),
         R("mount_l", "RV02_XALT_HD_left_hand_weapon_mount_1.stl", tol_mm=TOL["std"],
           deviations=[{"near": [-MNT_TIP_DEV[0], MNT_TIP_DEV[1], MNT_TIP_DEV[2]], "r": MNT_TIP_DEV_R, "reason": "the STEP notch top is a zero-thickness wedge (mfg.thin_wall); thickened to a printable wall, rearmost point unchanged"}, {"near": [-NOSE_DEV[0], NOSE_DEV[1], NOSE_DEV[2]], "r": NOSE_DEV_R,
                        "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside and front edge, so the countersink keeps a 0.9 mm wall"}]),
