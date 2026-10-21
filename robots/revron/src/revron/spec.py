@@ -260,7 +260,8 @@ def intent_checks():
         A("flush_head", "side-panel screws sit in TPU countersinks: nothing proud for a spinner to catch", fastener=f"bolt_s{n}a", host=f"side_{n}", out=[s, 0, 0])
         A("flush_head", "mount screws are countersunk in the inner face, the face beside the disc rim", fastener=f"bolt_u{n}a", host=f"mount_{n}", out=[-s, 0, 0])
         A("seat_locates", "the N10 gearbox boss seats in the keyhole and its body bears on the stop walls: shaft concentric, stall torque reacted by the chassis",
-          part=f"motor_{n}", host=["tub", "base_panel"], axis=[1, 0, 0], at=[s * MOTX, RY, RZ], play=SEAT_PLAY, turn_deg=SEAT_TURN_DEG)
+          part=f"motor_{n}", host=["tub", "base_panel"], axis=[1, 0, 0], at=[s * MOTX, RY, RZ], play=SEAT_PLAY, turn_deg=SEAT_TURN_DEG,
+          **({} if variant("pad_preload") else {"waive": "RVRN RV26 base panel preload pad is 0.25 tall and leaves ~0.2 mm under the N10 gearbox: the original motor is held down by the base panel clamp, not by contact (variant pad_preload closes the gap)"}))
     for n in ("l", "r"):
         A("notch_bears", "a hit drives the mount back; the notch on the chassis tab bears it in compression, the bolts only clamp",
           part=f"mount_{n}" if n == "l" else "mount_r", lug="tub", bolts=[f"bolt_u{n}a", f"bolt_u{n}b"], dir=[0, -1, 0])

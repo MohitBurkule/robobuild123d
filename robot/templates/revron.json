@@ -5115,7 +5115,8 @@
     11.0
    ],
    "play": 0.15,
-   "turn_deg": 2.0
+   "turn_deg": 2.0,
+   "waive": "RVRN RV26 base panel preload pad is 0.25 tall and leaves ~0.2 mm under the N10 gearbox: the original motor is held down by the base panel clamp, not by contact (variant pad_preload closes the gap)"
   },
   {
    "rule": "keyed_bore",
@@ -5222,7 +5223,8 @@
     11.0
    ],
    "play": 0.15,
-   "turn_deg": 2.0
+   "turn_deg": 2.0,
+   "waive": "RVRN RV26 base panel preload pad is 0.25 tall and leaves ~0.2 mm under the N10 gearbox: the original motor is held down by the base panel clamp, not by contact (variant pad_preload closes the gap)"
   },
   {
    "rule": "notch_bears",
