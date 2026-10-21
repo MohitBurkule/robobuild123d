@@ -20,6 +20,7 @@ CORNER_BLOCKS = ((INS[1][0] - COL_R, INS[1][1] - COL_R, WALL_IN_FRONT + OVER, WA
 KEY_DROP = 1.0                              # the key tab reaches this far below the plate top so it really keys between the N10 gearbox plates (STEP: flush, 0.1 would not stop the motor)
 KEY_Y0, KEY_Z0 = KEY_SPAN[0], N10_TOP - KEY_DROP   # key tab between the gearbox plates: front Y, bottom Z
 LEDGE_X0, LEDGE_Y0 = 20.0, -27.3             # 0.4 ledge over the gearbox plates: inner |X|, front Y
+LEDGE_FILLET_R = 1.5                         # RV01 R1.5 vertical fillets of the ledge: its inner end into the stop wall's front face, its front face into the side wall
 
 
 def _nose(x0, y0, dx, dy, r):
@@ -56,6 +57,18 @@ def boss_fillet(c):
     return _ext(region, "xy", c["z0"], c["deck"] + OVER)
 
 
+def ledge_fillets(c):
+    """Two R LEDGE_FILLET_R vertical fillets of the ledge (plan regions over the ledge's Z span): inner end x = LEDGE_X0 into the stop wall's front face
+    (y = STOP_Y[0]), and front face y = LEDGE_Y0 into the inner side wall."""
+    xi, r = inner(c)[0], LEDGE_FILLET_R
+    z0, z1 = N10_TOP + OVER, c["deck"] + OVER
+    out = []
+    for cx, cy in ((LEDGE_X0, STOP_Y[0]), (xi, LEDGE_Y0)):
+        reg = rect(cx - r, cx + OVER, cy - r, cy + OVER).difference(Point(cx - r, cy - r).buffer(r, NOSE_SEG))
+        out.append(_ext(reg, "xy", z0, z1))
+    return out
+
+
 def half_adds(c):
     """+X half: corner blocks, motor stop wall, N10 key tab and ledge (all hang from the deck: printed deck-down)."""
     xo, top = inner(c)[0] + OVER, c["deck"] + OVER
@@ -63,7 +76,7 @@ def half_adds(c):
     stop = _box(STOP_X0, xo, *STOP_Y, c["z0"], top)
     key = _box(N10_KEY[0], N10_KEY[1], KEY_Y0, STOP_Y[1], KEY_Z0, top)
     ledge = _box(LEDGE_X0, xo, LEDGE_Y0, STOP_Y[1], N10_TOP + OVER, top)
-    return blocks + [stop, key, ledge, boss_fillet(c)]
+    return blocks + [stop, key, ledge, boss_fillet(c)] + ledge_fillets(c)
 
 
 def column_adds(c):
