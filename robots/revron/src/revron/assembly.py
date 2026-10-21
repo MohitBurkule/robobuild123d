@@ -5,6 +5,8 @@ from .common import *  # noqa: F401,F403
 from .tub import *  # noqa: F401,F403
 from .side import *  # noqa: F401,F403
 from .weapon import *  # noqa: F401,F403
+from .panel_base import base_panel
+from .panel_top import top_panel
 
 
 # ------------------------------------------------------------------------------------------------------------ misc

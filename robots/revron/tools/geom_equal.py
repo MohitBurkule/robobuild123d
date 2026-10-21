@@ -25,7 +25,7 @@ TOL = 0.01
 
 
 def helpers():
-    out = {f"panel_outline_{g}": R._panel_outline(g) for g in (0.0, 0.05)}
+    out = {}
     pts = [(0.0, 0.0), (3.0, 1.0), (5.0, 4.0), (9.0, 4.5)]
     out["disc_outline"] = R.disc_outline()
     out["floating_disc"] = R.floating_disc()

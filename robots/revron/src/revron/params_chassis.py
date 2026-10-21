@@ -32,9 +32,6 @@ NUT_X = (CH_HALF_W - M3_THIN_NUT_T, CH_HALF_W)   # nut pocket opens on the outer
 INS = [(-25.0, 10.4), (25.0, 10.4), (-25.0, -21.6), (25.0, -21.6), (0.0, -33.6)]   # 5 floor inserts / base screws
 INS_Z = (5.1, 9.1)                   # FS1 M2 heat-set (3.5 OD x 4): bore floor and mouth Z (insert sits on the bore floor)
 INS_LEN = INS_Z[1] - INS_Z[0]
-CSK_M2 = 4.5                         # 90 deg countersink at the face for an ISO 10642 M2 flat head (4.4 x 1.2) + 0.1
-PANEL_EAR_R = 2.6
-TOP_HOLE = 3.5         # csk through-holes: wide enough that the 90 deg seat stops short of the far face (no knife edge)
 # electronics envelopes (catalog boxes at their spec placement, rot z 90): Malenki nano 32 x 20 x 4.4 at (8.67, -3.0, 15.3),
 # BBB ant ESC 23.5 x 12 x 5 at (8.63, -7.25, 10.6); the deck cage ribs are dimensioned off these
 RX_SIZE, RX_C = (32.0, 20.0, 4.4), (8.67, -3.0, 15.3)     # receiver catalog box (L, W, H) and placed centre
@@ -48,7 +45,6 @@ def _env(c, size):
 
 
 (RX_X, RX_Y, RX_Z), (WE_X, WE_Y, WE_Z) = _env(RX_C, RX_SIZE), _env(WE_C, WE_SIZE)
-EAR_R = 2.7                          # top-panel corner ear radius: >= CSK_M2 / 2 + 0.4 mm of Ti round the countersink
 MOTX = 19.6                          # N10 catalog origin |X| (body 3.7..27.5, shaft to 37.5)
 N10_KEY = (23.55, 26.15)             # |X| of the chassis key tab between the N10's last two gearbox plates
 CHASSIS_MIN_VOL = 15000.0               # a sound chassis is ~15900 mm3 in one solid; less means a boolean collapsed
@@ -70,21 +66,13 @@ BASE_HEAD_DK = 2.2 * 2.0             # modelled M2 CSK head diameter (robot.worl
 BASE_CSK_SEAT_CLR = 0.1              # diametral clearance between that head and the seat cone
 BASE_CSK_CLEAR = BASE_HEAD_DK + BASE_CSK_SEAT_CLR - 3.8   # hole_tool's csk_clear is added to the catalog dk (3.8): seat 4.5 at the face, cone parallel to the head so the 4.4 head never touches (r5 overlap 0.09)
 BASE_Z0, BASE_T = 3.5, 1.0           # base panel underside Z, skin thickness
-PRELOAD_PAD = dict(c=(22.5, -30.3), s=9.1, h=0.35, r=0.6, sink=0.01)   # N10 preload pad on the base skin: centre |X|/Y, side, height (0.45 + 0.015: closes the 0.2 mm the STEP leaves under the N10, intent.seat_locates), corner R, sink into the skin (union overlap)
-BASE_FILLET, BASE_EDGE_TOL, BASE_EDGE_UP, FLAT_TOL = 0.25, 0.02, 0.1, 1e-3   # base skin joint fillet; edge selection tolerances (height band, face rise, flatness)
+PRELOAD_PAD = dict(c=(22.5, -30.3), s=9.8, h=0.25, r=1.0, sink=0.01)   # N10 preload pad on the base skin: centre |X|/Y, side, height (0.45 + 0.015: closes the 0.2 mm the STEP leaves under the N10, intent.seat_locates), corner R, sink into the skin (union overlap)
 BASE_OUT = dict(x=28.1, y0=-36.2, y1=13.0, r=0.8)   # RV26 outline 56.2 x 49.2, R0.8 corners
-PANEL_EAR_EDGE = 3.0                 # a screw closer than this to the outline edge gets a PANEL_EAR_R ear
-PANEL_R_IN = 0.5                     # concave blend where the ears meet the outline
 TOP_Z0, TOP_T = CH["z1"], 0.9        # Ti top panel sits on the chassis rim, 0.9 thick
 TOP_X = 23.0                         # |X| of the top-panel side edges beside the switch
-TOP_Y0, TOP_Y1 = -24.1, 12.9         # rear edge, front of the shoulders
 TOP_SHOULDER_Y = 7.9                 # front edge between the shoulders and the tab
 TOP_NOTCH_X = (13.0, 21.0)           # |X| span of the front notches clearing the weapon-mount tabs (tab is |X| < 13)
 TOP_TAB_Y = 11.9                     # tab front edge
-TOP_CUT_Y = 14.0                     # notch / tab cutters run past the panel front (ears end at Y 13.1)
-TOP_FILL_YT = (1.0, -12.5)           # Y where each concave ear-to-edge arc meets the |X| 23 edge (front, rear ear row)
-TOP_FILL_X = 26.6                    # outer X of the arc fill boxes (past the ears)
-TOP_R_OUT, TOP_R_IN = 0.4, 1.2       # top-panel edge rounds
 ESC_TRAY = dict(gap=0.1, wall=1.25, lip=1.0, fuse=0.01, rail_end=1.0, rail_x=(1.4, 2.6))   # TPU ESC tray: walls >= 1.2, rails inset from the board -x / +x edges
 CHAIKIN_Q = 0.25                     # Chaikin corner-cutting ratio (side-panel spline smoothing)
 TOP_XY = tuple(INS[i] for i in (1, 0, 3, 2))   # the four corner insert columns (+X first), screw order of bolt_t*
