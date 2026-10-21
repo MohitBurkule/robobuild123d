@@ -18,7 +18,7 @@ Checks (ids):
                      than half as much within 2 mm is a polygon / stair-step standing in for a curved surface.
   visual.fillet_ref  every concave edge of ours: local radius vs the reference's at the same spot (sharp_corner's
                      section method). Flagged where the reference is rounder by > max(0.3 mm, 30 %) over a region of
-                     >= 3 samples. BLOCKER on structure / printed load parts when the reference radius >= 1 mm.
+                     >= 2 samples (1.5 mm grid). BLOCKER on structure / printed load parts when the reference radius >= 1 mm.
   visual.sliver      degenerate B-rep faces (coplanar triangle groups bounded only by real edges > 20 deg): area <
                      sliver_area_mm2 (0.02) or width < sliver_w_mm (0.05). Only where the reference has no sliver
                      within 1 mm (the RVRN STEP has its own).
@@ -127,14 +127,26 @@ def view_diff(model, ref, d, prm=DEFAULTS):
     cm = (np.vstack([model.vertices, ref.vertices]) @ w).mean()
     blobs = []
     k = max(int(round(0.3 / res)), 1)
-    for kind, X in (("extra outline", A & ~B), ("missing outline", B & ~A)):
+    import trimesh
+
+    for kind, X, src in (("extra outline", A & ~B, model), ("missing outline", B & ~A, ref)):
         lab, n = ndimage.label(ndimage.binary_opening(X, iterations=k))
+        if not n:
+            continue
+        # where the differing outline IS in 3D: surface samples of the mesh that has it, projecting into the blob
+        P, _ = trimesh.sample.sample_surface(src, int(min(max(src.area * 20, 20000), 300000)), seed=2)
+        ij = np.floor((np.c_[P @ u, P @ v] - lo) / res).astype(int)
+        okp = (ij[:, 0] >= 0) & (ij[:, 1] >= 0) & (ij[:, 0] < lab.shape[0]) & (ij[:, 1] < lab.shape[1])
+        lp = np.zeros(len(P), int)
+        lp[okp] = lab[ij[okp, 0], ij[okp, 1]]
         for i in range(1, n + 1):
             xs, ys = np.nonzero(lab == i)
             a = len(xs) * res * res
             if a >= prm["blob_mm2"]:
                 uv = lo + np.array([xs.mean(), ys.mean()]) * res
-                blobs.append({"kind": kind, "area_mm2": round(a, 2), "at": (uv[0] * u + uv[1] * v + cm * w).round(2).tolist(),
+                hit = P[lp == i]
+                at = hit.mean(0) if len(hit) else uv[0] * u + uv[1] * v + cm * w
+                blobs.append({"kind": kind, "area_mm2": round(a, 2), "at": np.round(at, 2).tolist(),
                               "uv": uv.tolist(), "depth_mm": None})
     (DA, DB), lo2, _ = _depth([model, ref], d, dres)
     both = (DA > -1e8) & (DB > -1e8)
@@ -155,8 +167,10 @@ def view_diff(model, ref, d, prm=DEFAULTS):
 
 
 # ------------------------------------------------------------------------------------------------ holes (pure)
-def hole_list(m, ref_bounds, n=25):
-    """[(axis, centre (u, v), d)] of every hole cut by sections at n heights along each axis (deduplicated)."""
+def hole_list(m, ref_bounds, n=25, with_h=False):
+    """[(axis, centre (u, v), d)] of every hole cut by sections at n heights along each axis (deduplicated);
+    with_h: (axis, centre, d, h) with the section height the centre was measured at (a slanted hole or groove moves
+    across sections, so its centre is only true at that height)."""
     from .ref_features import holes, section
 
     out = []
@@ -165,10 +179,10 @@ def hole_list(m, ref_bounds, n=25):
         for f in np.linspace(0.02, 0.98, n):
             h = float(lo[ax] + (hi[ax] - lo[ax]) * f)
             for c, d, _ in holes(section(m, ax, h)):
-                if any(a == ax and math.dist(c, cc) < 0.8 for a, cc, _ in out):
+                if any(a == ax and math.dist(c, cc) < 0.8 for a, cc, *_r in out):
                     continue
-                out.append((ax, tuple(float(x) for x in c), float(d)))
-    return out
+                out.append((ax, tuple(float(x) for x in c), float(d), h))
+    return out if with_h else [x[:3] for x in out]
 
 
 def hole_diffs(model, ref, tol=0.8):
@@ -177,24 +191,50 @@ def hole_diffs(model, ref, tol=0.8):
 
     lo = np.minimum(model.bounds[0], ref.bounds[0])
     hi = np.maximum(model.bounds[1], ref.bounds[1])
-    hr, hm = hole_list(ref, (lo, hi)), hole_list(model, (lo, hi))
+    hr, hm = hole_list(ref, (lo, hi), with_h=True), hole_list(model, (lo, hi), with_h=True)
     out = []
 
-    def p3(ax, c, prof):
-        a, b = [i for i in range(3) if i != ax]
-        ts = np.linspace(0.04, 0.96, len(prof))
-        hs = [lo[ax] + (hi[ax] - lo[ax]) * t for t, d in zip(ts, prof) if d]
+    def at_h(ax, c, h):
         p = [0.0] * 3
-        p[a], p[b], p[ax] = c[0], c[1], float(np.mean(hs)) if hs else float((lo[ax] + hi[ax]) / 2)
+        a, b = [i for i in range(3) if i != ax]
+        p[a], p[b], p[ax] = c[0], c[1], float(h)
         return [round(x, 2) for x in p]
 
+    def runs(ax, c, prof):
+        """[(3D centre, (h_lo, h_hi))] of every contiguous run of heights where the hole exists at c (two coaxial holes
+        at the two ends of a part are two features, not one at their average height)."""
+        a, b = [i for i in range(3) if i != ax]
+        hs = [lo[ax] + (hi[ax] - lo[ax]) * t for t in np.linspace(0.04, 0.96, len(prof))]
+        out_, cur = [], []
+        for h, d in zip(hs, prof):
+            if d:
+                cur.append(h)
+            elif cur:
+                out_.append(cur)
+                cur = []
+        if cur:
+            out_.append(cur)
+        res = []
+        for run in out_:
+            p = [0.0] * 3
+            p[a], p[b], p[ax] = c[0], c[1], float(np.mean(run))
+            res.append(([round(x, 2) for x in p], (min(run), max(run))))
+        return res, (hs[1] - hs[0] if len(hs) > 1 else 1.0)
+
+    def places(ax, c, h, prof):
+        """Where the hole is: its measured spot (c at the section height h) first - a run's mid-height would put a
+        slanted hole or groove off its own centreline - then every other coaxial run of the profile at c."""
+        rs, step = runs(ax, c, prof)
+        return [at_h(ax, c, h)] + [q for q, (r0, r1) in rs if not (r0 - step <= h <= r1 + step)]
+
     used = set()
-    for ax, c, d in hr:
-        j = next((k for k, (a2, c2, _) in enumerate(hm) if a2 == ax and k not in used and math.dist(c, c2) <= tol), None)
+    for ax, c, d, h0 in hr:
+        j = next((k for k, (a2, c2, _, _h) in enumerate(hm) if a2 == ax and k not in used and math.dist(c, c2) <= tol), None)
         pr = hole_profile(ref, ax, c, lo[ax], hi[ax], n=15)
-        at = p3(ax, c, pr)
+        at = at_h(ax, c, h0)
         if j is None:
-            out.append({"kind": "missing", "axis": "XYZ"[ax], "at": at, "msg": f"reference hole d{d:.2f} along {'XYZ'[ax]} at {at} has no counterpart"})
+            for at_ in places(ax, c, h0, pr):
+                out.append({"kind": "missing", "axis": "XYZ"[ax], "at": at_, "msg": f"reference hole d{d:.2f} along {'XYZ'[ax]} at {at_} has no counterpart"})
             continue
         used.add(j)
         pm = hole_profile(model, ax, hm[j][1], lo[ax], hi[ax], n=15)
@@ -204,10 +244,10 @@ def hole_diffs(model, ref, tol=0.8):
         vr, vm = [x for x in pr if x], [x for x in pm if x]
         if vr and vm and abs(min(vr) - min(vm)) > max(0.4, 0.12 * min(vr)):
             out.append({"kind": "size", "axis": "XYZ"[ax], "at": at, "msg": f"hole along {'XYZ'[ax]} at {at}: min d {min(vm):.2f} vs reference {min(vr):.2f}"})
-    for k, (ax, c, d) in enumerate(hm):
+    for k, (ax, c, d, h0) in enumerate(hm):
         if k in used:
             continue
-        at = p3(ax, c, hole_profile(model, ax, c, lo[ax], hi[ax], n=15))
+        at = at_h(ax, c, h0)
         out.append({"kind": "extra", "axis": "XYZ"[ax], "at": at, "msg": f"hole d{d:.2f} along {'XYZ'[ax]} at {at} is not in the reference"})
     return out
 
@@ -271,8 +311,20 @@ def face_mix(m, lo_deg=6.0):
 
 
 # ------------------------------------------------------------------------------------------------ fillets (pure)
-def fillet_diffs(model, ref, grid=1.5, min_turn=30.0, tol=0.3, frac=0.3, snap=1.2):
-    """[(point, r_ours, r_ref)] on model concave edges where the reference at the same spot is rounder."""
+SITE_MM = 0.3           # a reference spot is on a dumped fillet face when within this of its box
+TURN_MATCH_DEG = 15.0   # the reference corner compared must turn as much as ours (else it is a different corner)
+
+
+def fillet_diffs(model, ref, grid=1.5, min_turn=30.0, tol=0.3, frac=0.3, snap=1.2, exact=None, sites=None):
+    """[(point, r_ours, r_ref)] on model concave edges where the reference at the same spot is rounder.
+    The reference is measured with section windows of 2, 4 and 6 mm and only a measurement whose turn matches ours
+    within TURN_MATCH_DEG counts (the closest match): a 4 mm window that reaches the next corner, a slot (turn ~180) or a
+    shallow 20 deg bend is a different feature, not a rounder version of ours. No matching corner -> not compared.
+    `exact`: the reference's exact fillet radii (SolidWorks dump, sldprt_dump.exact_for): the estimate is snapped to the
+    nearest one when within 35 % / 0.3 mm (the place comes from the estimate, the radius from the dump).
+    `sites`: world boxes (lo, hi, r) of the reference's dumped fillet faces (sldprt_dump.fillet_sites). With them the
+    reference is rounder only where the measured spot lies on one (within SITE_MM), and its radius is that face's:
+    an estimate picking up a neighbouring feature's arc on a sharp reference edge is not a fillet."""
     import trimesh
 
     from . import sharp_corner as sc
@@ -286,9 +338,20 @@ def fillet_diffs(model, ref, grid=1.5, min_turn=30.0, tol=0.3, frac=0.3, snap=1.
         q, d, _ = trimesh.proximity.closest_point(ref, [p])
         if d[0] > snap:
             continue
-        b = sc.local_radius(ref, q[0], t, 4.0, br)
-        if b is None or b[1] < 0.5 * min_turn:
+        cands = [x for x in (sc.local_radius(ref, q[0], t, wdw, br) for wdw in (2.0, 4.0, 6.0)) if x is not None]
+        cands = [x for x in cands if abs(x[1] - a[1]) <= TURN_MATCH_DEG]
+        if not cands:
             continue
+        b = min(cands, key=lambda x: abs(x[1] - a[1]))
+        if sites is not None:
+            on = [r for lo, hi, r in sites if float(np.linalg.norm(np.clip(q[0], lo, hi) - q[0])) <= SITE_MM]
+            if not on:
+                continue   # the reference is sharp here (no fillet face of its own)
+            b = (min(on, key=lambda r: abs(r - b[0])),) + tuple(b[1:])
+        elif exact:
+            from .sldprt_dump import snap as _snap
+
+            b = (_snap(b[0], exact),) + tuple(b[1:])
         if b[0] - a[0] > max(tol, frac * b[0]):
             out.append((np.asarray(p, float), float(a[0]), float(b[0])))
     return out
@@ -354,7 +417,13 @@ def _model_mesh(ctx, e):
 
 def covered(e, at):
     """Reason of a valid entry `deviation` covering 3D point `at` (citing the reference), else None."""
+    from .reference_cad import _dev_valid, path_dist
+
     for d in e.get("deviations") or []:
+        if d.get("path") is not None:   # capsule waiver (validated by reference_cad._dev_valid)
+            if _dev_valid(d) is None and float(path_dist(np.atleast_2d(np.asarray(at, float)), np.asarray(d["path"], float))[0]) <= float(d["r"]):
+                return d["reason"]
+            continue
         if not cites(d.get("reason")) or d.get("near") is None or float(d.get("r", 3.0)) > 5.0:
             continue
         if np.linalg.norm(np.asarray(at, float) - np.asarray(d["near"], float)) <= float(d.get("r", 3.0)):
@@ -470,10 +539,18 @@ def run(ctx):
                 elif check == "fillet_ref":
                     from .sharp_corner import regions
 
-                    hits = fillet_diffs(mod, ref, prm["fillet_grid_mm"], tol=prm["fillet_tol_mm"], frac=prm["fillet_frac"])
+                    from .sldprt_dump import exact_for, fillet_sites
+
+                    try:
+                        ex = exact_for(ctx.r.spec, e)
+                        sites = fillet_sites(ctx.r.spec, e, cfg, trimesh.load(path, force="mesh"))
+                    except Exception:  # noqa: BLE001 - estimates only
+                        ex, sites = None, None
+                    hits = fillet_diffs(mod, ref, prm["fillet_grid_mm"], tol=prm["fillet_tol_mm"], frac=prm["fillet_frac"],
+                                        exact=(ex or {}).get("fillet"), sites=sites)
                     items = []
                     for g in regions([(p, None, a, b) for p, a, b in hits], 2.5):
-                        if len(g) < 3:
+                        if len(g) < 2:   # 2 samples on the 1.5 mm grid = a >= 1.5 mm run of edge
                             continue
                         w = max(g, key=lambda h: h[3] - h[2])
                         items.append({"at": np.round(w[0], 2).tolist(), "r": round(w[2], 2), "r_ref": round(w[3], 2), "n": len(g),
@@ -588,9 +665,10 @@ def _align(d):
     return trimesh.geometry.align_vectors(d, [0, 0, 1.0])
 
 
-def profile_at(m, T, h, uv, want="solid"):
+def profile_at(m, T, h, uv, want="solid", geom=False):
     """Shape of the region at (u, v) in section z=h of mesh m moved by T: want='solid' -> the polygon containing the
-    point (a shaft), 'hole' -> the interior ring containing it (a bore). None when there is none."""
+    point (a shaft), 'hole' -> the interior ring containing it (a bore). None when there is none. geom=True returns
+    (shape, shapely geometry)."""
     from shapely.geometry import Point, Polygon
 
     from .ref_features import hole_shape, section
@@ -603,28 +681,52 @@ def profile_at(m, T, h, uv, want="solid"):
     pt = Point(uv)
     for p in getattr(g, "geoms", [g]):
         if want == "solid" and p.contains(pt):
-            return hole_shape(p.exterior, densify=True)
+            sh = hole_shape(p.exterior, densify=True)
+            return (sh, Polygon(p.exterior)) if geom else sh
         if want == "hole":
             for ring in p.interiors:
                 if Polygon(ring).contains(pt):
-                    return hole_shape(ring, densify=True)
+                    sh = hole_shape(ring, densify=True)
+                    return (sh, Polygon(ring)) if geom else sh
     return None
 
 
-def shaft_mate(shaft_mesh, bore_mesh, at, d, span, n=5):
-    """[(t, shaft shape, bore shape)] at n sections over the shaft span where the bore mesh has a bore round the axis."""
+BORE_FLAT_MM = 1.0    # most a bore wall may stand off the shaft (a D flat on a round shaft) and still be its bore
+BORE_TOUCH_MM = 0.3   # a bore drives / locates the shaft only when its wall is this close to the shaft outline
+
+
+def shaft_mate(shaft_mesh, bore_mesh, at, d, span, n=5, touch=BORE_TOUCH_MM):
+    """[(t, shaft shape, bore shape)] at n sections over the shaft span where the bore mesh has a bore round the axis
+    whose wall touches the shaft (within `touch` mm of its outline). A wider ring round the axis - a tyre stretched
+    over the hub, a housing - has another body between it and the shaft and is not the shaft's bore."""
     T = _align(d)
     out = []
     for t in np.linspace(0.15, 0.85, n):
         p = np.asarray(at, float) + np.asarray(d, float) / np.linalg.norm(d) * span * t
         q = (T[:3, :3] @ p)
-        sb = profile_at(bore_mesh, T, q[2], q[:2], "hole")
-        if sb is None:
+        b = profile_at(bore_mesh, T, q[2], q[:2], "hole", geom=True)
+        if b is None:
             continue
-        ss = profile_at(shaft_mesh, T, q[2], q[:2], "solid")
-        if ss is not None:
-            out.append((round(float(t), 2), ss, sb))
+        s_ = profile_at(shaft_mesh, T, q[2], q[:2], "solid", geom=True)
+        if s_ is None:
+            continue
+        if b[1].exterior.distance(s_[1].exterior) > touch:   # nearest wall point must touch the shaft
+            continue
+        # the bore wall must hug the shaft all round: max gap from the bore ring to the shaft outline <= touch + flat
+        if _ring_gap(b[1], s_[1]) > touch + BORE_FLAT_MM:
+            continue
+        out.append((round(float(t), 2), s_[0], b[0]))
     return out
+
+
+def _ring_gap(bore_poly, shaft_poly):
+    """Largest distance from a point of the bore ring to the shaft outline (a bore round a D shaft with a round hole
+    shows the flat's depth here; a tyre round the hub shows the hub wall)."""
+    from shapely.geometry import Point
+
+    ring = bore_poly.exterior
+    pts = [ring.interpolate(f, normalized=True) for f in np.linspace(0, 1, 72, endpoint=False)]
+    return max(shaft_poly.exterior.distance(Point(q.x, q.y)) for q in pts)
 
 
 def shaft_findings(ctx):

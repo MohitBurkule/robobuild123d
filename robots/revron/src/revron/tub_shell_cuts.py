@@ -60,9 +60,9 @@ def deck_pockets(c):
 
 def seat_cuts(c):
     """Rabbet for the base panel, N10 preload pad recess, squared rear corner."""
-    from .tub import _panel_outline
+    from .panel_base import rabbet
     z0, (xi, yi0, _) = c["z0"], inner(c)
-    out = [_ext(_panel_outline(RABBET_GROW), "xy", z0 - 1, SEAT_Z)]
+    out = [rabbet(RABBET_GROW, z0 - 1, SEAT_Z)]
     (pcx, pcy), h = PAD["c"], PAD["s"] / 2 + PAD["margin"]
     pad = _box(pcx - h, pcx + h, pcy - h, pcy + h, SEAT_Z + PAD["z"][0], SEAT_Z + PAD["z"][1])
     S = SQUARE

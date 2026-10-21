@@ -37,6 +37,7 @@ With a frame (the reference placed in our world frame) every entry also gets:
 
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 import numpy as np
@@ -330,12 +331,39 @@ def check_entries(ctx, frame_checks, exact=True, parts=None):
 
 
 DEV_R_MAX = 5.0   # mm: a deviation waiver is a local note, not a region of the part
+PATH_R_MAX = 3.0        # mm: a path (capsule) waiver's radius
+PATH_MM3_MAX = 600.0    # mm3: hard cap on the volume one path waiver may excuse (its `max_mm3` must be <= this)
+PATH_CITE = re.compile(r"(RV\d|RVRN|STEP|\.stl|FS\d|reference|datasheet|design[- ]intent|intent)", re.I)
+
+
+def path_dist(P, path):
+    """Distance from points P (k,3) to the polyline `path` (the capsule axis)."""
+    from ._review import polyline_dist
+
+    return polyline_dist(path, P)
+
+
+def _path_valid(d):
+    path = d.get("path")
+    if not isinstance(path, (list, tuple)) or len(path) < 2 or any(len(q) != 3 for q in path):
+        return "`path` needs >= 2 [x, y, z] points"
+    if float(d.get("r", 0) or 0) <= 0 or float(d.get("r")) > PATH_R_MAX:
+        return f"path r {d.get('r')} mm must be in (0, {PATH_R_MAX}]"
+    if d.get("max_mm3") is None or not (0 < float(d["max_mm3"]) <= PATH_MM3_MAX):
+        return f"path `max_mm3` must be set and <= {PATH_MM3_MAX:g}"
+    if not PATH_CITE.search(str(d.get("reason") or "")) or len(str(d.get("reason")).strip()) < 20:
+        return "path reason must say why and cite the reference, a datasheet or the design intent"
+    return None
 
 
 def _dev_valid(d):
-    """None when the waiver is usable, else why not (no reason, no centre, radius over the cap)."""
+    """None when the waiver is usable, else why not (no reason, no centre, radius over the cap). A path waiver
+    {"path": [[x,y,z], ...], "r" <= 3, "max_mm3" <= 600, "reason"} is a capsule round a polyline (a groove or a
+    channel): the whole blob must lie inside it and its volume must not exceed max_mm3."""
     if not str(d.get("reason") or "").strip():
         return "no reason"
+    if d.get("path") is not None:
+        return _path_valid(d)
     if d.get("near") is None:
         return "no `near` point"
     if float(d.get("r", 3.0)) > DEV_R_MAX:
@@ -343,11 +371,22 @@ def _dev_valid(d):
     return None
 
 
-def _covered(pt, e, bbox=None):
+def _covered(pt, e, bbox=None, pts=None, vol=None):
     """A diff at `pt` (3D) explained by one of the entry's valid `deviations` -> its reason, else None. With `bbox`
-    (the blob's [lo, hi]) the whole box must fit inside the waiver sphere, not just the centroid."""
+    (the blob's [lo, hi]) the whole box must fit inside the waiver sphere, not just the centroid. A path waiver covers
+    a blob only when every blob point (`pts`, else the bbox corners) is within r of its polyline and `vol` <= max_mm3."""
     for d in e.get("deviations") or []:
         if _dev_valid(d):
+            continue
+        if d.get("path") is not None:
+            path, r = np.asarray(d["path"], float), float(d["r"])
+            if vol is not None and float(vol) > float(d["max_mm3"]):
+                continue
+            Q = np.asarray(pts, float) if pts is not None and len(pts) else (
+                np.array([[bbox[i][k] for k, i in enumerate(ix)] for ix in np.ndindex(2, 2, 2)], float) if bbox is not None else
+                np.atleast_2d(np.asarray(pt, float)))
+            if float(path_dist(Q, path).max()) <= r:
+                return d["reason"]
             continue
         c, r = np.asarray(d["near"], float), float(d.get("r", 3.0))
         if np.linalg.norm(np.asarray(pt, float) - c) > r:
@@ -421,7 +460,7 @@ def _frame_checks(ctx, e, cfg, pid, fn, mod, ref):
     waived = 0.0
     for kind in ("extra", "missing"):
         for b in bd[kind]:
-            why = _covered(b["centroid"], e, b.get("bbox"))
+            why = _covered(b["centroid"], e, b.get("bbox"), b.get("pts"), b.get("volume_mm3"))
             waived += float(b["volume_mm3"]) if why else 0.0
             (expl if why else open_).append(f"{kind} {b['volume_mm3']} mm3 (t {b['thick_mm']}) at {b['centroid']}" + (f" [{why}]" if why else ""))
     dtol = float(e.get("dev_tol_mm", cfg.get("dev_tol_mm", 0.5)))
@@ -438,7 +477,13 @@ def _frame_checks(ctx, e, cfg, pid, fn, mod, ref):
                fail("reference_cad.diff", G, BLOCKER, "Unexplained geometric differences from the reference", dmsg).on(pid)
                .fix("Each blob is one feature difference: fix it, or list it in the entry's `deviations` with the reason."))
     try:
-        fd, st = ref_features.compare_sections(mod, rw)
+        from .sldprt_dump import exact_for
+
+        try:
+            ex = exact_for(ctx.r.spec, e)
+        except Exception:  # noqa: BLE001 - estimates only
+            ex = None
+        fd, st = ref_features.compare_sections(mod, rw, exact_d=(ex or {}).get("hole_d"))
     except Exception as ex:  # noqa: BLE001
         out.append(fail("reference_cad.features", G, BLOCKER, "Feature comparison crashed", f"`{pid}`: {ex}").on(pid))
         return out

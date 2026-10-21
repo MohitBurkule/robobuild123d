@@ -82,3 +82,14 @@ def test_mounts_and_spacer_sit_on_their_frames():
     sp = J.RIG.parts["motor_spacer"].location.position
     assert np.allclose((sp.X, sp.Y, sp.Z), (P.BSP_X[1], P.WY, P.WZ), atol=TOL)   # back spacer face on RV03's inner face
     assert abs(P.BSP_X[1] - P.MNT_IN) < TOL
+
+
+def test_nose_csk_keeps_a_printed_wall_at_the_inner_face():
+    """mfg.thin_wall: the nose pad (NOSE_PAD_R) leaves >= 0.9 mm round the nose CSK rim on both mounts (RV02 was 0.27)."""
+    from shapely.geometry import Point
+    from revron import mount
+    from revron import params as P
+    for side in "lr":
+        prof = mount._mount_profile(side)
+        rim = Point(P.SB).buffer(P.NOSE_PAD_R - 0.9 + 1e-3)   # cone rim at the flush inner face + one fdm wall
+        assert prof.contains(rim), side

@@ -25,6 +25,8 @@ import re
 from collections import defaultdict
 from pathlib import Path
 
+import numpy as np
+
 from ..finding import BLOCKER, WARNING, fail, ok
 from ._review import _section, override_findings, params
 
@@ -465,6 +467,337 @@ def exemptions(spec):
     return dict(ex), out
 
 
+# ------------------------------------------------------------------------------------------------ add-ons (WARNING for now)
+MASTER_MAX = 40          # a master block longer than this is not a short whitelist
+TAG = re.compile(r"#\s*param:\s*(organic|datasheet)\b[ \t:,-]*(.*)$")
+SYM_TOL_MM = 0.05        # style.symmetry: halves mirror each other within this
+SYM_SAMPLES = 1500
+MIRROR_CALLS = ("mirror", "mirrored", "Mirror")
+
+
+def copied_params(text):
+    """[(line, name, value)] of params_*.py raw decimals: module-level constants (and tuple / list / dict members) whose
+    value is a bare literal, not an expression of other params. Exempt: the MASTER DESIGN PARAMETERS block, organic
+    regions, and lines tagged (on the line or the line above) `# param: organic <why>` / `# param: datasheet <src>`."""
+    lines = text.splitlines()
+    tree = ast.parse(text)
+    ex, _, _ = _organic(lines)
+    mb, on = set(), False
+    for i, ln in enumerate(lines, 1):
+        if "MASTER DESIGN PARAMETERS" in ln:
+            on = True
+        elif on and ln.startswith("# ---"):
+            on = False
+        elif on:
+            mb.add(i)
+
+    def tagged(i):
+        return any(TAG.search(lines[j - 1]) and TAG.search(lines[j - 1]).group(2).strip() for j in (i, i - 1) if 1 <= j <= len(lines))
+
+    out = []
+
+    def walk(node, name, ln):
+        v = _num(node)
+        if v is not None:
+            if isinstance(v, float) and v not in TRIVIAL:
+                out.append((ln, name, v))
+            return
+        if isinstance(node, (ast.Tuple, ast.List)):
+            for k, e in enumerate(node.elts):
+                walk(e, f"{name}[{k}]", getattr(e, "lineno", ln))
+        elif isinstance(node, ast.Dict):
+            for k, e in zip(node.keys, node.values):
+                key = k.value if isinstance(k, ast.Constant) else "?"
+                walk(e, f"{name}[{key!r}]", getattr(e, "lineno", ln))
+        elif isinstance(node, ast.Call) and getattr(node.func, "id", None) == "dict":
+            for kw in node.keywords:
+                walk(kw.value, f"{name}.{kw.arg}", getattr(kw.value, "lineno", ln))
+        # anything else (BinOp of names, calls) is an expression built from other params
+
+    for st in tree.body:
+        if not isinstance(st, (ast.Assign, ast.AnnAssign)) or st.lineno in mb or st.lineno in ex or tagged(st.lineno):
+            continue
+        tg = st.targets if isinstance(st, ast.Assign) else [st.target]
+        for t in tg:
+            if isinstance(t, ast.Name):
+                walk(st.value, t.id, st.lineno)
+            elif isinstance(t, ast.Tuple) and isinstance(st.value, ast.Tuple) and len(t.elts) == len(st.value.elts):
+                for n, v in zip(t.elts, st.value.elts):
+                    if isinstance(n, ast.Name):
+                        walk(v, n.id, st.lineno)
+    return [x for x in out if x[0] not in ex and not tagged(x[0])], len({i for i in mb if lines[i - 1].split("#")[0].strip()})
+
+
+def point_tables(text):
+    """[(line, name, kind)] of params point tables: a module-level tuple / list of >= 4 coordinate pairs (or triples),
+    or a dict (literal or dict()) whose values are tuples. Exempt: organic regions and `# param: organic <why>` tags."""
+    lines = text.splitlines()
+    ex, _, _ = _organic(lines)
+
+    def organic(i):
+        return any(TAG.search(lines[j - 1]) and TAG.search(lines[j - 1]).group(1) == "organic" and TAG.search(lines[j - 1]).group(2).strip()
+                   for j in (i, i - 1) if 1 <= j <= len(lines))
+
+    def is_pt(e):
+        return isinstance(e, (ast.Tuple, ast.List)) and len(e.elts) in (2, 3)
+
+    out = []
+    for st in ast.parse(text).body:
+        if not isinstance(st, ast.Assign) or st.lineno in ex or organic(st.lineno):
+            continue
+        names = [t.id for t in st.targets if isinstance(t, ast.Name)]
+        if not names:
+            continue
+        v = st.value
+        if isinstance(v, (ast.Tuple, ast.List)) and len(v.elts) >= 4 and all(is_pt(e) for e in v.elts):
+            out.append((st.lineno, names[0], f"{len(v.elts)} coordinate points"))
+        elif isinstance(v, ast.Dict) and v.values and any(isinstance(e, ast.Tuple) for e in v.values):
+            out.append((st.lineno, names[0], "dict of tuples"))
+        elif isinstance(v, ast.Call) and getattr(v.func, "id", None) == "dict" and any(isinstance(k.value, ast.Tuple) for k in v.keywords):
+            out.append((st.lineno, names[0], "dict of tuples"))
+    return out
+
+
+def star_imports(text):
+    """[(line, module)] of `from .x import *`."""
+    return [(n.lineno, "." * n.level + (n.module or "")) for n in ast.walk(ast.parse(text))
+            if isinstance(n, ast.ImportFrom) and any(a.name == "*" for a in n.names)]
+
+
+def addon_findings(spec):
+    out, counts = [], {"copied": 0, "star_import": 0, "point_table": 0}
+    for path in sources(spec):
+        text = path.read_text()
+        name = path.name
+        if is_param_module(path):
+            cp, nmaster = copied_params(text)
+            counts["copied"] += len(cp)
+            if cp:
+                out.append(fail("param.copied", G, WARNING, "Param is a copied raw decimal",
+                                f"{name}: {len(cp)} constants are bare decimals, not built from other params: "
+                                + ", ".join(f"L{ln} {n}={v:g}" for ln, n, v in cp[:12]) + (" ..." if len(cp) > 12 else ""))
+                           .fix("Derive it from the masters (relation), or tag `# param: datasheet <source>` / `# param: organic <why>`."))
+            pt = point_tables(text)
+            counts["point_table"] = counts.get("point_table", 0) + len(pt)
+            if pt:
+                out.append(fail("param.point_table", G, WARNING, "Coordinate table in params",
+                                f"{name}: {len(pt)} point tables: " + ", ".join(f"L{ln} {n} ({k})" for ln, n, k in pt[:15]))
+                           .fix("Derive the points from features (radius, pitch, offsets from masters), or tag `# param: organic <why>`."))
+            if nmaster > MASTER_MAX:
+                out.append(fail("param.copied", G, WARNING, "Master block is not a short whitelist",
+                                f"{name}: {nmaster} master lines (> {MASTER_MAX})."))
+        else:
+            st = star_imports(text)
+            if st and path.name != "__init__.py":
+                counts["star_import"] += len(st)
+                out.append(fail("style.star_import", G, WARNING, "Star import in a part file",
+                                f"{name}: " + ", ".join(f"L{ln} from {m} import *" for ln, m in st))
+                           .fix("Import the names the part uses (`from .params import CH_WALL, ...`)."))
+    return out, counts
+
+
+def _part_module(spec, key):
+    """Source file defining the build function a model part `params.part` names (via a {'key': fn} table), or None."""
+    srcs = [p for p in sources(spec) if not is_param_module(p)]
+    fname = None
+    for p in srcs:
+        for n in ast.walk(ast.parse(p.read_text())):
+            if isinstance(n, ast.Dict):
+                for k, v in zip(n.keys, n.values):
+                    if isinstance(k, ast.Constant) and k.value == key:
+                        if isinstance(v, ast.Lambda) and isinstance(v.body, ast.Call):
+                            v = v.body.func
+                        if isinstance(v, ast.Name):
+                            fname = v.id
+    fname = fname or key
+    for p in srcs:
+        if any(isinstance(n, ast.FunctionDef) and n.name == fname for n in ast.walk(ast.parse(p.read_text()))):
+            return p, fname
+    return None, fname
+
+
+def mirror_count(text, fname=None):
+    """mirror() / mirrored() calls in the module that builds the part (the build function often calls helpers there)."""
+    del fname
+    return sum(1 for c in ast.walk(ast.parse(text)) if isinstance(c, ast.Call)
+               and (getattr(c.func, "attr", None) or getattr(c.func, "id", "")) in MIRROR_CALLS)
+
+
+def mirror_symmetric(mesh, axis=0, tol=SYM_TOL_MM, n=SYM_SAMPLES):
+    """True when the mesh's half on one side of its bbox mid-plane (normal `axis`) mirrors the other within tol."""
+    import trimesh
+
+    c = float((mesh.bounds[0][axis] + mesh.bounds[1][axis]) / 2)
+    pts = trimesh.sample.sample_surface(mesh, n, seed=3)[0]
+    q = pts.copy()
+    q[:, axis] = 2 * c - q[:, axis]
+    d = trimesh.proximity.ProximityQuery(mesh).on_surface(q)[1]
+    return float(np.quantile(d, 0.99)) <= tol
+
+
+def symmetry_findings(ctx):
+    """style.symmetry: a part centred on the robot's X = 0 plane that is mirror-symmetric there, whose build module
+    makes no mirror() call (proxy: both sides are built)."""
+    spec, w = ctx.r.spec, ctx.world
+    out, flagged, n_sym = [], [], 0
+    for p in spec.parts:
+        sh = p.shape if isinstance(p.shape, dict) else {}
+        key = (sh.get("params") or {}).get("part") if sh.get("type") == "model" else None
+        b = w.body(p.id) if (key and w is not None) else None
+        if b is None or b.mesh is None or len(b.mesh.faces) < 4:
+            continue
+        lo, hi = b.mesh.bounds
+        if abs((lo[0] + hi[0]) / 2) > 1.0 or hi[0] - lo[0] < 2.0:
+            continue
+        try:
+            if not mirror_symmetric(b.mesh, 0):
+                continue
+        except Exception:  # noqa: BLE001
+            continue
+        n_sym += 1
+        mod, fname = _part_module(spec, key)
+        if mod is None:
+            continue
+        k = mirror_count(mod.read_text(), fname)
+        if k == 0:
+            flagged.append(f"`{p.id}` ({mod.name}:{fname})")
+    ctx.metrics["style.symmetry"] = {"symmetric_parts": n_sym, "built_both_sides": len(flagged)}
+    if flagged:
+        out.append(fail("style.symmetry", G, WARNING, "Symmetric part built side by side",
+                        f"{len(flagged)} of {n_sym} parts mirror-symmetric about X = 0 (within {SYM_TOL_MM} mm) have no mirror() "
+                        f"in their build code: " + ", ".join(flagged))
+                   .fix("Build one half and mirror() it about the centre plane."))
+    return out
+
+
+BUDGET_FRAC = 1.0   # param.budget: our numeric tokens may not exceed the reference's dimension count (beat the designer)
+
+
+def numeric_tokens(text, names=None):
+    """Non-trivial numeric literals in a source; with `names`, only those in module-level assignments to those names."""
+    tree = ast.parse(text)
+    nodes = tree.body if names is None else [st for st in tree.body if isinstance(st, ast.Assign) and any(
+        isinstance(t, ast.Name) and t.id in names or isinstance(t, ast.Tuple) and any(getattr(e, "id", None) in names for e in t.elts)
+        for t in st.targets)]
+    n = 0
+    for st in nodes:
+        stack = [st]
+        while stack:
+            x = stack.pop()
+            v = _num(x)
+            if v is not None:
+                n += v not in TRIVIAL
+                continue
+            stack.extend(ast.iter_child_nodes(x))
+    return n
+
+
+def dump_dims(text):
+    """Unique DIM names (`D1@Sketch3`) of the non-suppressed top-level features of a SolidWorks part dump."""
+    names, on = set(), False
+    for ln in text.splitlines():
+        if ln.startswith("FEATURE "):
+            on = "suppressed=False" in ln
+        elif ln.startswith("  FEATURE "):
+            on = False
+        elif on and ln.startswith("  DIM "):
+            names.add("@".join(ln[6:].split(" = ")[0].split("@")[:2]))
+    return len(names)
+
+
+def _closure(start, defs):
+    """(module, name) keys reachable from `start` through calls inside the package: `f(...)` resolves in the same
+    module first, then any module; `mod.f(...)` in module `mod`. defs: {(module stem, name): FunctionDef}."""
+    by_name = {}
+    for (m, n) in defs:
+        by_name.setdefault(n, []).append((m, n))
+    seen, todo = set(), [start]
+    while todo:
+        k = todo.pop()
+        if k in seen or k not in defs:
+            continue
+        seen.add(k)
+        for c in ast.walk(defs[k]):
+            if not isinstance(c, ast.Call):
+                continue
+            f = c.func
+            if isinstance(f, ast.Name):
+                todo.append((k[0], f.id) if (k[0], f.id) in defs else (by_name.get(f.id) or [None])[0])
+            elif isinstance(f, ast.Attribute) and isinstance(f.value, ast.Name):
+                todo.append((f.value.id, f.attr))
+    return seen
+
+
+def budget_rows(spec):
+    """[{function, parts, ours, ref, dump, ratio}] per build function (an RH / mirrored part built by the same function
+    as its LH part is counted once, so it adds nothing): non-trivial numeric tokens in the function and every package
+    function it calls, plus the literals of the params it reads, vs the unique dimensions of the matching SolidWorks
+    dump (its LH part's)."""
+    from .reference_cad import _cfg
+    from .sldprt_dump import DEFAULT_ROOT, dumps_dir, find_dump
+
+    srcs = sources(spec)
+    pmods = [p for p in srcs if is_param_module(p)]
+    defs = {}
+    for p in srcs:
+        if not is_param_module(p):
+            for n in ast.walk(ast.parse(p.read_text())):
+                if isinstance(n, ast.FunctionDef):
+                    defs.setdefault((p.stem, n.name), n)
+    pnames = set()
+    for pm in pmods:
+        for st in ast.parse(pm.read_text()).body:
+            if isinstance(st, ast.Assign):
+                for t in st.targets:
+                    pnames |= {e.id for e in ([t] if isinstance(t, ast.Name) else getattr(t, "elts", [])) if isinstance(e, ast.Name)}
+    root = (spec.raw or {}).get("sldprt_dumps") or DEFAULT_ROOT
+    entries = {e.get("part"): e for e in _cfg(spec).get("parts") or []}
+    groups = {}
+    for p in spec.parts:
+        sh = p.shape if isinstance(p.shape, dict) else {}
+        key = (sh.get("params") or {}).get("part") if sh.get("type") == "model" else None
+        if not key:
+            continue
+        _mod, fname = _part_module(spec, key)
+        if _mod is None or (_mod.stem, fname) not in defs:
+            continue
+        g = groups.setdefault(fname, {"parts": [], "dumps": [], "key": (_mod.stem, fname)})
+        g["parts"].append(p.id)
+        d = find_dump(root, entries[p.id]) if p.id in entries else None
+        if d:
+            g["dumps"].append(d)
+    rows = []
+    for fname, g in groups.items():
+        fns = _closure(g["key"], defs)
+        ours, used = 0, set()
+        for f in fns:
+            for x in ast.walk(defs[f]):
+                v = _num(x)
+                if v is not None and v not in TRIVIAL and not (isinstance(x, ast.Constant) and isinstance(getattr(x, "_parent", None), ast.UnaryOp)):
+                    ours += 1
+                if isinstance(x, ast.Name) and x.id in pnames:
+                    used.add(x.id)
+        ours += sum(numeric_tokens(pm.read_text(), used) for pm in pmods)
+        lh = sorted(set(g["dumps"]), key=lambda d: (d.lower().startswith("mirror") or " rh" in d.lower() or "right" in d.lower(), d))
+        ref = dump_dims((dumps_dir(root) / f"{lh[0]}.dump.txt").read_text(errors="replace")) if lh else None
+        rows.append({"function": fname, "parts": g["parts"], "ours": ours, "ref": ref, "dump": lh[0] if lh else None,
+                     "ratio": round(ours / ref, 2) if ref else None})
+    return sorted(rows, key=lambda r: (r["ratio"] is None, -(r["ratio"] or 0)))
+
+
+def budget_findings(spec):
+    try:
+        rows = budget_rows(spec)
+    except Exception as ex:  # noqa: BLE001
+        return [fail("param.budget", G, WARNING, "Dimension budget could not be computed", str(ex))], []
+    over = [r for r in rows if r["ratio"] is not None and r["ratio"] > BUDGET_FRAC]
+    msg = "; ".join(f"{r['function']} ({', '.join(r['parts'][:4])}) {r['ours']} vs {r['dump']} {r['ref']} (x{r['ratio']})" for r in over)
+    return ([fail("param.budget", G, WARNING, "More numbers than the reference design has dimensions",
+                  f"{len(over)} build functions exceed {BUDGET_FRAC}x the SolidWorks dimension count: {msg}")
+             .fix("Derive from fewer masters (relations, patterns, mirror) - the reference needs only its DIM count.")] if over else
+            [ok("param.budget", G, "Within the reference dimension budget", f"{len(rows)} build functions checked")]), rows
+
+
 def run(ctx):
     spec = ctx.r.spec
     ov = override_findings(_section(spec, "param"), DEFAULTS, "param", "param.override", G)
@@ -473,6 +806,16 @@ def run(ctx):
     out, total = lint_spec(spec)
     out += ov
     ctx.metrics["param.literal_count"] = total
+    add, counts = addon_findings(spec)
+    out += add
+    ctx.metrics["param.copied_count"] = counts["copied"]
+    ctx.metrics["style.star_import_count"] = counts["star_import"]
+    ctx.metrics["param.point_table_count"] = counts["point_table"]
+    bf, rows = budget_findings(spec)
+    out += bf
+    ctx.metrics["param.budget"] = rows
+    if getattr(ctx, "world", None) is not None:
+        out += symmetry_findings(ctx)
     return out
 
 

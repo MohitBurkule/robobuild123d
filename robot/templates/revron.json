@@ -323,6 +323,28 @@
    "count": 2
   },
   {
+   "role": "bat_pad: double-sided foam tape pad under the pack (not in the STEP)",
+   "kind": "part",
+   "match": [
+    "bat_pad"
+   ],
+   "count": 1,
+   "material": "foam_tape",
+   "deviation": "the STEP pack floats 2 mm over the base panel; a foam tape pad supports and retains it (adds ~0.05 g, reversible)",
+   "reason": "the STEP pack floats 2 mm over the base panel; a foam tape pad supports and retains it (adds ~0.05 g, reversible)"
+  },
+  {
+   "role": "esc_tray: TPU weapon-ESC tray (not in the STEP)",
+   "kind": "part",
+   "match": [
+    "esc_tray"
+   ],
+   "count": 1,
+   "material": "tpu",
+   "deviation": "the STEP holds the weapon ESC with kapton tape alone; a TPU tray with 0.1 mm lips keeps the board in if the tape fails (adds 1.1 g, reversible)",
+   "reason": "the STEP holds the weapon ESC with kapton tape alone; a TPU tray with 0.1 mm lips keeps the board in if the tape fails (adds 1.1 g, reversible)"
+  },
+  {
    "role": "battery lead: JST RCY",
    "kind": "wire",
    "match": [
@@ -918,6 +940,42 @@
       ],
       "r": 3.5,
       "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
+     },
+     {
+      "near": [
+       -3.78,
+       -5.57,
+       19.57
+      ],
+      "r": 5.0,
+      "reason": "0.1 mm engraved lettering, laser-etch omitted"
+     },
+     {
+      "near": [
+       -13.73,
+       -5.62,
+       19.57
+      ],
+      "r": 5.0,
+      "reason": "0.1 mm engraved lettering, laser-etch omitted"
+     },
+     {
+      "near": [
+       5.84,
+       -5.26,
+       19.57
+      ],
+      "r": 5.0,
+      "reason": "0.1 mm engraved lettering, laser-etch omitted"
+     },
+     {
+      "near": [
+       15.04,
+       -5.66,
+       19.57
+      ],
+      "r": 5.0,
+      "reason": "0.1 mm engraved lettering, laser-etch omitted"
      }
     ]
    },
@@ -943,7 +1001,7 @@
        2.8
       ],
       "r": 5.0,
-      "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside, so the countersink keeps a 0.9 mm wall"
+      "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside and front edge, so the countersink keeps a 0.9 mm wall"
      }
     ]
    },
@@ -969,7 +1027,7 @@
        2.8
       ],
       "r": 5.0,
-      "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside, so the countersink keeps a 0.9 mm wall"
+      "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside and front edge, so the countersink keeps a 0.9 mm wall"
      },
      {
       "near": [
@@ -1006,6 +1064,23 @@
       ],
       "r": 2.0,
       "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"
+     },
+     {
+      "path": [
+       [
+        15.66641639482141,
+        19.0,
+        20.329622734725216
+       ],
+       [
+        15.66641639482141,
+        38.5,
+        11.583201466831557
+       ]
+      ],
+      "r": 3.0,
+      "max_mm3": 520,
+      "reason": "phase-lead C-groove in the inner face (added, not in the STEP): the twisted 3 x AWG24 bundle snaps through a 3.0 mouth into a R2.0 channel from the stator exit to the lug top: the original RV03/STEP has no lead channel (leads run free over the lug), so the leads are retained and held clear of the disc bolt heads (wire.exterior_support, wire.rotor_clearance)"
      }
     ]
    },
@@ -1657,6 +1732,9 @@
    }
   ]
  },
+ "asm_dump": {
+  "rig": "revron.joints:RIG"
+ },
  "renders": {
   "dir": "renders",
   "views": [
@@ -1699,9 +1777,20 @@
      "part": "base_panel"
     }
    },
+   "at": [
+    0.0,
+    -11.6,
+    4.5
+   ],
+   "rot": [
+    -180.0,
+    0.0,
+    -180.0
+   ],
    "material": "pla_st",
    "process": "fdm",
    "thin_wall_deviation": "the 1 mm panel is shallower than the 1.2 mm M2 CSK head (STEP RV26 has the same 5 countersunk seats): a 90 deg seat cone leaves a knife wedge under the countersink rim, unavoidable at this thickness (parity with RV26)",
+   "sharp_corners_ok": "the panel's concave corners at (+-25.1,-25.5,4.5) are where its 1 mm plate edge butts the tub floor lip; RV26 is a flat plate against the RV01 lip (reference r 0.27), a round there would lift the panel off the lip and unseat bolt_b2/b3; the RV26 Chamfer2 is 1.3 mm away from these corners and there is no fillet on them in the dump",
    "label": "RV26 1 mm printed base panel, 5 M2 CSK into the floor heat-sets, 0.45 mm pads preload the N10s"
   },
   {
@@ -1722,6 +1811,16 @@
      "part": "top_panel"
     }
    },
+   "at": [
+    0.0,
+    -5.6,
+    20.4
+   ],
+   "rot": [
+    -180.0,
+    0.0,
+    -180.0
+   ],
    "label": "0.9 mm Ti top panel: laser outline with 4 countersunk 2.2 corner holes, 4 M2 flat-head thread-forming screws into the column tops (material inferred, see REFERENCE.md)"
   },
   {
@@ -2852,7 +2951,7 @@
    "at": [
     -11.81,
     -5.4,
-    10.0
+    12.0
    ],
    "rot": [
     0.0,
@@ -3024,6 +3123,22 @@
    },
    "label": "TPU weapon-ESC tray (not in the STEP): glued to the base panel, lips hold the ESC when inverted",
    "deviation": "the STEP holds the weapon ESC with kapton tape alone; a hit that flips the robot or tears the tape would free the board, so a TPU tray with 0.1 mm lips holds it (adds 1.1 g, reversible)"
+  },
+  {
+   "id": "bat_pad",
+   "kind": "other",
+   "material": "foam_tape",
+   "process": "manual",
+   "rotates_with": "fixed",
+   "shape": {
+    "type": "model",
+    "file": "../../robots/revron/src/build_revron.py",
+    "params": {
+     "part": "bat_pad"
+    }
+   },
+   "label": "Double-sided foam tape pad under the pack (not in the STEP): carries the pack 2 mm above the base panel",
+   "deviation": "the STEP pack floats 2 mm over the base panel; a foam tape pad supports and retains it (adds ~0.05 g, reversible)"
   },
   {
    "id": "belt_l",
@@ -3594,12 +3709,12 @@
     "head_std": "DIN 7991",
     "head_dk": 6.0,
     "head_k": 1.86,
-    "clearance_d": 3.4,
+    "clearance_d": 3.2,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
     "csk_d": 6.7,
-    "csk_depth": 1.65,
+    "csk_depth": 1.75,
     "sink": 1.05,
     "grip": 6.81
    },
@@ -3792,12 +3907,12 @@
     "head_std": "DIN 7991",
     "head_dk": 6.0,
     "head_k": 1.86,
-    "clearance_d": 3.4,
+    "clearance_d": 3.2,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
     "csk_d": 6.7,
-    "csk_depth": 1.65,
+    "csk_depth": 1.75,
     "sink": 1.05,
     "grip": 6.81
    },
@@ -3831,8 +3946,8 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
-    "cbore_depth": 1.7637,
-    "grip": 5.5137
+    "cbore_depth": 1.7106,
+    "grip": 5.4606
    },
    "through": [
     "mount_r",
@@ -3869,8 +3984,8 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
-    "cbore_depth": 2.2185,
-    "grip": 5.9685
+    "cbore_depth": 2.1954,
+    "grip": 5.9454
    },
    "through": [
     "mount_r",
@@ -3907,8 +4022,8 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
-    "cbore_depth": 1.1271,
-    "grip": 4.8771
+    "cbore_depth": 1.029,
+    "grip": 4.779
    },
    "through": [
     "mount_r",
@@ -3945,8 +4060,8 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
-    "cbore_depth": 2.8551,
-    "grip": 6.6051
+    "cbore_depth": 2.877,
+    "grip": 6.627
    },
    "through": [
     "mount_r",
@@ -4931,9 +5046,15 @@
   },
   {
    "a": "battery",
+   "b": "bat_pad",
+   "method": "tape",
+   "reason": "Pack underside taped to the foam pad (double-sided), which holds it against sliding"
+  },
+  {
+   "a": "bat_pad",
    "b": "base_panel",
-   "method": "rest",
-   "reason": "Pack underside rests on the base panel skin; the panel is screwed to the tub and the deck/top panel close the pack in from above"
+   "method": "tape",
+   "reason": "Foam pad stuck to the base panel skin; deck and top panel close the pack in from above"
   },
   {
    "a": "rxesc",
@@ -5003,19 +5124,19 @@
      16.0
     ],
     [
-     11.8,
-     15.5,
-     18.2
+     15.66641639482141,
+     19.0,
+     20.329622734725216
     ],
     [
-     11.8,
-     27.0,
-     18.2
+     15.66641639482141,
+     38.5,
+     11.583201466831557
     ],
     [
-     11.8,
-     30.0,
-     14.5
+     12.65,
+     38.5,
+     11.583201466831557
     ]
    ]
   },
@@ -5559,19 +5680,19 @@
       16.0
      ],
      [
-      11.8,
-      15.5,
-      18.2
+      15.66641639482141,
+      19.0,
+      20.329622734725216
      ],
      [
-      11.8,
-      27.0,
-      18.2
+      15.66641639482141,
+      38.5,
+      11.583201466831557
      ],
      [
-      11.8,
-      30.0,
-      14.5
+      12.65,
+      38.5,
+      11.583201466831557
      ]
     ]
    }

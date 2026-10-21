@@ -2,6 +2,7 @@
 import json, math, os, sys
 from .params import *  # noqa: F401,F403
 from .common import *  # noqa: F401,F403
+from . import panel_base, panel_top
 
 
 def _mid(span):
@@ -28,10 +29,11 @@ def make_spec(model_file):
     P(id="tub", kind="structure", print_orientation="-z", rotates_with="fixed", solid_fraction=SOLID["tub"], color="#2a2c30", shape=M("chassis"), **PLA,
       thin_wall_deviation="matches original RVRN 2.0: the switch-slot rim is 0.5 mm wide on RV01_Chassis_1 too (RV01 section y=-10: slot edge x=27.0, outer face x=27.5) and 0.65 mm between the slot front and the deck pocket (section x=25: y -12.25 to -11.6)",
       label="RV01 printed chassis: closed X-ribbed deck (printed deck-down), open floor for the base panel, N10 keyhole side pockets, nut lobes, weapon-mount tabs and standoff lugs")
-    P(id="base_panel", kind="structure", print_orientation="+z", rotates_with="fixed", color="#2a2c30", shape=M("base_panel"), **PLA,
+    P(id="base_panel", kind="structure", print_orientation="+z", rotates_with="fixed", color="#2a2c30", shape=M("base_panel"), **place("base_panel"), **PLA,
       thin_wall_deviation="the 1 mm panel is shallower than the 1.2 mm M2 CSK head (STEP RV26 has the same 5 countersunk seats): a 90 deg seat cone leaves a knife wedge under the countersink rim, unavoidable at this thickness (parity with RV26)",
+      sharp_corners_ok="the panel's concave corners at (+-25.1,-25.5,4.5) are where its 1 mm plate edge butts the tub floor lip; RV26 is a flat plate against the RV01 lip (reference r 0.27), a round there would lift the panel off the lip and unseat bolt_b2/b3; the RV26 Chamfer2 is 1.3 mm away from these corners and there is no fillet on them in the dump",
       label="RV26 1 mm printed base panel, 5 M2 CSK into the floor heat-sets, 0.45 mm pads preload the N10s")
-    P(id="top_panel", kind="armor", material="titanium", process="laser", stock="0.9 mm Ti Gr5 sheet", secondary_ops=["countersink"], rotates_with="fixed", color="#8d939b", shape=M("top_panel"),
+    P(id="top_panel", kind="armor", material="titanium", process="laser", stock="0.9 mm Ti Gr5 sheet", secondary_ops=["countersink"], rotates_with="fixed", color="#8d939b", shape=M("top_panel"), **place("top_panel"),
       label="0.9 mm Ti top panel: laser outline with 4 countersunk 2.2 corner holes, 4 M2 flat-head thread-forming screws into the column tops (material inferred, see REFERENCE.md)")
     # ---------------------------------------------------------------- weapon module
     P(id="mount_r", kind="structure", print_orientation="+x", rotates_with="fixed", solid_fraction=SOLID["mount"], color="#2a2c30", shape=M("mount_r", MNT_FRAME["r"]), **place("mount_r"), **PLA,
@@ -106,10 +108,14 @@ def make_spec(model_file):
       label="TPU weapon-ESC tray (not in the STEP): glued to the base panel, lips hold the ESC when inverted",
       deviation="the STEP holds the weapon ESC with kapton tape alone; a hit that flips the robot or tears the tape would free the board, so a TPU tray with 0.1 mm lips holds it (adds 1.1 g, reversible)")
 
+    P(id="bat_pad", kind="other", material="foam_tape", process="manual", rotates_with="fixed", shape=M("bat_pad"),
+      label="Double-sided foam tape pad under the pack (not in the STEP): carries the pack 2 mm above the base panel",
+      deviation="the STEP pack floats 2 mm over the base panel; a foam tape pad supports and retains it (adds ~0.05 g, reversible)")
+
     # ---------------------------------------------------------------- fasteners
     for i, (x, y) in enumerate(INS):
         F(id=f"bolt_b{i}", designation="M2x6", material="aluminium", **seat(f"bolt_b{i}"), through=["base_panel", "tub"], threads_into=f"insert_b{i}", tool="hex1.3",
-          hole=_panel_seat("base", i)[1].hole)
+          hole=panel_base.seat(i, local=False)[1].hole)
     for s, n in SIDES:
         mnt = f"mount_{n}"
         F(id=f"bolt_u{n}a", designation="M3x12", head="countersunk", material="aluminium", **seat(f"bolt_u{n}a"), through=[mnt], threads_into=f"so_a{n}", hole=_mount_csk(s, *SA, "M3x12")[1].hole,
@@ -133,7 +139,7 @@ def make_spec(model_file):
     for i, (x, y) in enumerate(TOP_BOLT_XY):
         F(id=f"bolt_t{i}", designation="M2x5", head="button", tool="hex1.3", **seat(f"bolt_t{i}"), through=["top_panel", "tub"], threads_into=f"insert_t{i}",
           reason="M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
-          hole=_panel_seat("top", i)[1].hole)
+          hole=panel_top.seat(i)[1].hole)
     for i, yy in enumerate(SW_SCREW_Y):
         F(id=f"bolt_sw{i}", designation="M2x3", head="button", tool="hex1.3", **seat(f"bolt_sw{i}"), through=["power_switch", "tub"], threads_into="tub", access_before=["base_panel"], hole=_switch_hole(yy)[1].hole,
           reason="thread-forming into the 1.7 pilot holes either side of the switch flange; heads clamp the flange to the deck underside (inferred)",
@@ -176,7 +182,8 @@ def make_spec(model_file):
     C("base_panel", "tub", "screw", "Base panel under the open floor, 5 M2 CSK into heat-sets")
     C("top_panel", "tub", "screw", "Ti top panel held by 4 M2 flat-head screws through its countersunk corner holes into M2 heat-sets in the column tops (the STEP has the holes, not the screws)")
     C("battery", "tub", "press_fit", "Pack between the motor wall, the insert columns and the deck", interference_mm=PRESS["pack"], mechanical_key=True)
-    C("battery", "base_panel", "rest", "Pack underside rests on the base panel skin; the panel is screwed to the tub and the deck/top panel close the pack in from above")
+    C("battery", "bat_pad", "tape", "Pack underside taped to the foam pad (double-sided), which holds it against sliding")
+    C("bat_pad", "base_panel", "tape", "Foam pad stuck to the base panel skin; deck and top panel close the pack in from above")
     C("rxesc", "tub", "interlock", "Malenki held by a TPU strap, boxed by the front wall and the deck; the weapon ESC under it")
     C("wesc", "esc_tray", "interlock", "weapon ESC in the TPU tray lips (0.1 mm); lips on all four sides, the Malenki +z")
     C("esc_tray", "base_panel", "glue", "TPU tray contact-glued to the base panel top")
@@ -329,15 +336,17 @@ def reference_cad():
                       for x, y in INS]),
         R("top_panel", "Top_Panel_1.stl", tol_mm=TOL["tight"], note="0.9 mm top panel",
           deviations=[dict(near=[x, y, TOP_DEV_Z], r=PANEL_DEV_R, reason="4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it")
-                      for x, y in INS[:4]]),
+                      for x, y in INS[:4]]
+          + [dict(near=[x, y, 19.57], r=5.0, reason="0.1 mm engraved lettering, laser-etch omitted")
+             for x, y in ((-3.78, -5.57), (-13.73, -5.62), (5.84, -5.26), (15.04, -5.66))]),
         R("mount_l", "RV02_XALT_HD_left_hand_weapon_mount_1.stl", tol_mm=TOL["std"],
           deviations=[{"near": [-MNT_TIP_DEV[0], MNT_TIP_DEV[1], MNT_TIP_DEV[2]], "r": MNT_TIP_DEV_R, "reason": "the STEP notch top is a zero-thickness wedge (mfg.thin_wall); thickened to a printable wall, rearmost point unchanged"}, {"near": [-NOSE_DEV[0], NOSE_DEV[1], NOSE_DEV[2]], "r": NOSE_DEV_R,
-                       "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside, so the countersink keeps a 0.9 mm wall"}]),
+                       "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside and front edge, so the countersink keeps a 0.9 mm wall"}]),
         R("mount_r", "RV03_XALT__HD_Right_hand_weapon_mount_1.stl", tol_mm=TOL["std"],
           deviations=[{"near": [MNT_TIP_DEV[0], MNT_TIP_DEV[1], MNT_TIP_DEV[2]], "r": MNT_TIP_DEV_R, "reason": "the STEP notch top is a zero-thickness wedge (mfg.thin_wall); thickened to a printable wall, rearmost point unchanged"}, {"near": [NOSE_DEV[0], NOSE_DEV[1], NOSE_DEV[2]], "r": NOSE_DEV_R,
-                       "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside, so the countersink keeps a 0.9 mm wall"}] + [{"near": [STATOR_DEV_X, WY + dy, WZ + dz], "r": TAP_DEV_R,
+                       "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside and front edge, so the countersink keeps a 0.9 mm wall"}] + [{"near": [STATOR_DEV_X, WY + dy, WZ + dz], "r": TAP_DEV_R,
                        "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"}
-                      for dy, dz in stator_bolt_circle()]),
+                      for dy, dz in stator_bolt_circle()] + _lead_groove_dev()),
         R("motor_spacer", "Motor_back_spacer_1.stl", tol_mm=TOL["tight"]),
         R("spider", "spider_1.stl", tol_mm=TOL["std"], ref_to_world=dt,
           deviations=[dict(near=[sum(DR_X["spider"]) / 2, *_disc_local(*c)], r=TAP_DEV_R,
@@ -371,6 +380,15 @@ def reference_cad():
     return {"dir": REF_DIR, "ref_to_world": REF_TO_WORLD, "iou_min": REF_IOU_MIN, "placement_tol_mm": TOL["std"], "parts": rows}
 
 
+def _lead_groove_dev():
+    """reference_cad capsule waiver along RV03's phase-lead C-groove (the STEP has none: its leads run free over the lug)."""
+    (y0, z0), (y1, z1) = lead_groove_ends()
+    return [{"path": [[LEAD_GROOVE_X, y0, z0], [LEAD_GROOVE_X, y1, z1]], "r": LEAD_DEV_R, "max_mm3": LEAD_DEV_MAX_MM3,
+             "reason": "phase-lead C-groove in the inner face (added, not in the STEP): the twisted 3 x AWG24 bundle snaps through a 3.0 mouth into a "
+                       "R2.0 channel from the stator exit to the lug top: the original RV03/STEP has no lead channel (leads run free over the lug), so the leads are retained and held "
+                       "clear of the disc bolt heads (wire.exterior_support, wire.rotor_clearance)"}]
+
+
 def main():
     spec_dir = os.path.join(HERE, "..")
     out_spec = os.path.join(spec_dir, "spec.json")
@@ -381,6 +399,7 @@ def main():
                     archetype_params=ARCHETYPE_PARAMS, targets=TARGETS, weapon_lock=WEAPON_LOCK, reference_bom=REF_BOM, reference_doc=REFERENCE_DOC,
                     electronics=ELECTRONICS, can_run_inverted=False, allow_overlap=ALLOW_OVERLAP, claims=CLAIMS, sharp_ok=SHARP_OK,
                     teardown=TEARDOWN, module_teardown=MODULE_TEARDOWN, service_pose=SERVICE_POSE, reference_cad=reference_cad(),
+                    asm_dump={"rig": "revron.joints:RIG"},   # asm.mate: our assembly mates (joints.Rig)
                     renders={"dir": "renders", "views": ["iso.png", "top.png", "back.png", "exploded.png"]}, **body)
         spec["modules"] = [{"id": "weapon_module", "root": "mount_r", "note": MODULE_NOTE,
                             "parts": [p["id"] for p in spec["parts"] if _root(spec["parts"], p) == "mount_r" and p["id"] != "mount_r"]}]

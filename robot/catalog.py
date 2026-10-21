@@ -65,6 +65,7 @@ STATOR_BASE_X, STATOR_STACK_X0 = -8.4, -5.0              # top face of the base 
 STATOR_STACK_H, STATOR_SLOTS = 7.0, 12                 # GR1507: 15 mm class stator, 7 mm stack
 STATOR_BORE_R, STATOR_YOKE_R, STATOR_TIP_R = 2.9, 4.4, 6.9   # bore (clears the r4 rotor core), yoke outer, tooth tip
 SHAFT_STUB_R = 2.5                                     # rotor shaft down through the stator bore to the base
+STATOR_POST_R = SHAFT_STUB_R + 0.6 + 0.3               # holder post round the shaft: the arch.boss_aligned ring (shaft + 0.6) plus a 0.3 wall
 LEAD_R, LEAD_X, LEAD_Z, LEAD_PITCH = 0.45, -10.7, (-3.9, -7.6), 1.0   # 3 phase leads leave the hub sideways (datasheet photo), run out along the -Z arm and end 7.6 mm off the axis so the bundle clears the shaft stub
 BELL_SCREW_R, BELL_SCREW_PHASE = 4.5, -54.889  # spider screw circle on the bell top and its phase about the axis (STEP; local frame)
 
@@ -102,7 +103,7 @@ def _gr1507_stator():
         parts.append(rot(at(box(h, 2.6, 0.5), 0, 0, STATOR_TIP_R - 0.25), a))                                  # tip shoe
         wl, zc = STATOR_TIP_R - STATOR_YOKE_R - 0.6, 0.5 * (STATOR_YOKE_R + STATOR_TIP_R - 0.6)
         parts += [rot(at(box(h + 0.4, 1.9, wl), 0, 0, zc), a), rot(at(box(h, 2.4, wl), 0, 0, zc), a)]   # copper winding: end turns past the stack, bevelled
-    parts.append(at(minus(cyl_x(STATOR_BORE_R + 0.05, STATOR_STACK_X0 - STATOR_BASE_X), [cyl_x(SHAFT_STUB_R + 0.1, STATOR_STACK_X0 - STATOR_BASE_X + 0.2)]), -0.5 * (STATOR_STACK_X0 - STATOR_BASE_X) - 0.5 * h, 0, 0))   # holder post: base to the stack
+    parts.append(at(minus(cyl_x(STATOR_POST_R, STATOR_STACK_X0 - STATOR_BASE_X), [cyl_x(SHAFT_STUB_R + 0.1, STATOR_STACK_X0 - STATOR_BASE_X + 0.2)]), -0.5 * (STATOR_STACK_X0 - STATOR_BASE_X) - 0.5 * h, 0, 0))   # holder post: base to the stack
     return at(union(parts), STATOR_STACK_X0 + 0.5 * h, 0, 0)
 
 
@@ -274,7 +275,7 @@ def builtin() -> list[CatalogEntry]:
         # RVRN reference-CAD envelopes (Revron audit 2026-10): vendor/reference envelopes, not memory.
         CatalogEntry("n10_2200rpm_spicy", "motor", "Turnabot Spicy N10 2200 rpm (micro-metal 10 x 12, 33.8 incl. 9.5 mm shaft)", 9.5, "datasheet",
                      union([at({"type": "intersect", "items": [cyl_x(6.3, 13.0), box(15.0, 10.0, 12.0)]}, -6.4, 0, 0),
-                            at(cyl_x(2.4, 1.3), -13.55, 0, 0)]
+                            at(cyl_x(2.4, 3.0), -14.4, 0, 0)]
                            + [at(box(0.9, 10.0, 12.0), x, 0, 0) for x in (0.6, 3.35, 7.15)]
                            + [at(cyl_x(1.1, 7.6), 3.9, 0, z) for z in (-3.5, 3.5)]
                            + [at(box(3.1, 2.0, 0.4), -14.35, 0, z) for z in (-3.8, 3.8)]       # RV12 STEP solder tabs: 0.4 thick, 2.0 wide, 3.8 off the axis, tips at the 33.8 mm length (tab tip -15.9)
