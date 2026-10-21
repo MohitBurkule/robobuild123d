@@ -2,7 +2,7 @@
 N10 keyhole (hull of two circles, opened into a U-slot to the floor so the gearbox boss drops in from below), the snap slit. Built for +X, mirrored."""
 from build123d import Box, BuildSketch, Circle, Cylinder, Locations, Mode, Plane, Pos, Align, RegularPolygon, Polygon, Rectangle, Rotation, extrude, fillet, make_hull
 from .tub2_params import CH_HALF_W, CH_IN_X, CH_Z0, CH_WALL, OVER, SKIN
-from math import hypot
+from math import atan2, degrees, hypot
 from .params_chassis import NUT, RY, RZ, variant
 from .tub2_arcs import inset_line, line_meet, outer_tangents
 from .params_hardware import PRESS
@@ -10,6 +10,7 @@ from .params_hardware import PRESS
 LOBE_R = 4.5                         # D10: lobe round about the nut (diameter 9)
 CAP_R, CAP_REACH = 2.0, (12.0, -1.58)  # R of the hull's end cap towards the middle and its centre's (Y, Z) offset from the nut
 LOBE_PROUD = 3.0                     # Boss-Extrude6 depth
+HEX_CLR = 0.05                       # drawn pocket: clearance each side of the nut's flats
 NUT_AF = 5.5                         # M3 thin nut across flats; pocket circumradius = AF / sqrt(3)
 BORE_R = 1.6                         # D7: 3.2 clearance bore
 SEAT_R, NECK_R, NECK_DZ = 2.5, SKIN, 5.0   # keyhole: boss seat round at the shaft, neck round centred NECK_DZ below it
@@ -60,10 +61,14 @@ def nut_bore():
 
 
 def hex_pocket():
-    """Hex pocket for the thin nut through the wall thickness; corners point up and down (flats parallel to Z)."""
+    """Hex pocket for the thin nut through the wall (Cut-Extrude6): nut AF plus clearance each side, flats parallel to the lobe's upper
+    tangent line. Variant nut_press: a hair under the nut instead, so it is pressed in and cannot shift."""
+    af = NUT_AF + (-PRESS["nut"] if variant("nut_press") else 2 * HEX_CLR)
+    upper = max(outer_tangents(NUT, LOBE_R, CAP_AT, CAP_R), key=lambda t: t[0][1])
+    tilt = degrees(atan2(upper[1][1] - upper[0][1], upper[1][0] - upper[0][0]))
     with BuildSketch(_yz(CH_IN_X - OVER)) as sk:
         with Locations(NUT):
-            RegularPolygon(NUT_AF / 3 ** 0.5 - PRESS["nut"], 6, rotation=30)   # pocket corners under the nut's: it is pressed in, so it cannot shift or turn
+            RegularPolygon(af / 3 ** 0.5, 6, rotation=tilt)
     return extrude(sk.sketch, CH_WALL + OVER)
 
 
