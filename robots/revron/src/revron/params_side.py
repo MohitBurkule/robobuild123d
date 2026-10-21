@@ -47,7 +47,7 @@ SP_HOLLOW_END = dict(c=(-38.5, 36.6), r=3.6, z0=7.25)
 # (a, b): the 90 deg seat is the dk + 0.7 cone but the driver bore is only r `drive_r` 3.10 (the cone's rim is a 0.25 mm
 # undercut at the seat; the seat's own r0 bore runs just `lip` above it) and the shank is a close fit (r 1.6); the
 # chassis-nut screw (c) keeps the r0 driver bore and the normal fit
-SP_CSK = dict(csk_clear=0.7, fit=dict(a="close", b="close", c="normal"), drive_r=dict(a=3.1, b=3.1), lip=0.05, head_clear=12.0)
+SP_CSK = dict(csk_clear=0.7, fit=dict(a="close", b="close", c="close"), drive_r=dict(a=3.1, b=3.1), lip=0.05, head_clear=12.0)
 SP_SA_CLEAR = (2.6, -42.55, -38.0)   # STEP RV23 r 2.6: standoff-end clearance bore round SA (R, X0, X1)
 # STEP RV23: standoff end boss ring round SA (X0 -> X1): r 4.0 up into the nose roof to `x_ch`, then a 45 deg chamfer
 # down to r_end, which runs on to the standoff end
