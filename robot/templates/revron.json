@@ -1291,103 +1291,43 @@
       "reason": "the STEP nose tab interpenetrates the weapon mount's boss; the tab is cut by the boss outline plus the WG_MOUNT_GAP clearance, and its arc round SB stands WG_MOUNT_GAP off the chassis lug radius"
      },
      {
-      "near": [
-       -25.75,
-       46.4,
-       2.2
+      "path": [
+       [
+        -25.75,
+        50.1,
+        2.0
+       ],
+       [
+        -25.75,
+        45.0,
+        3.0
+       ],
+       [
+        -25.75,
+        41.5,
+        7.5
+       ]
       ],
-      "r": 2.5,
-      "reason": "the STEP draws the Ti fork tine inside the TPU nose (interpenetrating solids); the TPU has the 1.5 mm slit the tine slides into"
+      "r": 3.0,
+      "max_mm3": 30.0,
+      "reason": "RV17 STEP: the Ti fork tine interpenetrates the solid TPU cheek (26 mm3, y 41.5-50.1); the STEP draws the Ti fork tine inside the TPU nose (interpenetrating solids); the TPU has the 1.5 mm slit the tine slides into"
      },
      {
-      "near": [
-       -25.75,
-       44.4,
-       6.0
+      "path": [
+       [
+        -19.5,
+        49.3,
+        1.4
+       ],
+       [
+        -36.5,
+        49.3,
+        1.4
+       ]
       ],
-      "r": 2.5,
-      "reason": "the STEP draws the Ti fork tine inside the TPU nose (interpenetrating solids); the TPU has the 1.5 mm slit the tine slides into"
-     },
-     {
-      "near": [
-       -25.75,
-       43.1,
-       6.2
-      ],
-      "r": 2.5,
-      "reason": "the STEP draws the Ti fork tine inside the TPU nose (interpenetrating solids); the TPU has the 1.5 mm slit the tine slides into"
-     },
-     {
-      "near": [
-       -25.75,
-       44.2,
-       5.9
-      ],
-      "r": 2.5,
-      "reason": "the STEP draws the Ti fork tine inside the TPU nose (interpenetrating solids); the TPU has the 1.5 mm slit the tine slides into"
-     },
-     {
-      "near": [
-       -25.75,
-       48.5,
-       2.8
-      ],
-      "r": 2.5,
-      "reason": "the STEP draws the Ti fork tine inside the TPU nose (interpenetrating solids); the TPU has the 1.5 mm slit the tine slides into"
-     },
-     {
-      "near": [
-       -19.5,
-       49.3,
-       1.4
-      ],
-      "r": 4.0,
-      "reason": "the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
-     },
-     {
-      "near": [
-       -24.0,
-       49.3,
-       1.4
-      ],
-      "r": 4.0,
-      "reason": "the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
-     },
-     {
-      "near": [
-       -28.0,
-       49.3,
-       1.4
-      ],
-      "r": 4.0,
-      "reason": "the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
-     },
-     {
-      "near": [
-       -32.0,
-       49.3,
-       1.4
-      ],
-      "r": 4.0,
-      "reason": "the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
-     },
-     {
-      "near": [
-       -36.5,
-       49.3,
-       1.4
-      ],
-      "r": 4.0,
-      "reason": "the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
-     },
-     {
-      "near": [
-       -25.25,
-       42.0,
-       5.3
-      ],
-      "r": 6.0,
-      "reason": "the fork's two rails run through the TPU cheek as closed tunnels (the STEP's solid wedgelet has no slit: the tine interpenetrates it)"
+      "r": 3.0,
+      "max_mm3": 40.0,
+      "reason": "RV17 STEP: the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
      }
     ]
    },
@@ -1408,103 +1348,43 @@
       "reason": "the STEP nose tab interpenetrates the weapon mount's boss; the tab is cut by the boss outline plus the WG_MOUNT_GAP clearance, and its arc round SB stands WG_MOUNT_GAP off the chassis lug radius"
      },
      {
-      "near": [
-       25.75,
-       46.4,
-       2.2
+      "path": [
+       [
+        25.75,
+        50.1,
+        2.0
+       ],
+       [
+        25.75,
+        45.0,
+        3.0
+       ],
+       [
+        25.75,
+        41.5,
+        7.5
+       ]
       ],
-      "r": 2.5,
-      "reason": "the STEP draws the Ti fork tine inside the TPU nose (interpenetrating solids); the TPU has the 1.5 mm slit the tine slides into"
+      "r": 3.0,
+      "max_mm3": 30.0,
+      "reason": "RV17 STEP: the Ti fork tine interpenetrates the solid TPU cheek (26 mm3, y 41.5-50.1); the STEP draws the Ti fork tine inside the TPU nose (interpenetrating solids); the TPU has the 1.5 mm slit the tine slides into"
      },
      {
-      "near": [
-       25.75,
-       44.4,
-       6.0
+      "path": [
+       [
+        19.5,
+        49.3,
+        1.4
+       ],
+       [
+        36.5,
+        49.3,
+        1.4
+       ]
       ],
-      "r": 2.5,
-      "reason": "the STEP draws the Ti fork tine inside the TPU nose (interpenetrating solids); the TPU has the 1.5 mm slit the tine slides into"
-     },
-     {
-      "near": [
-       25.75,
-       43.1,
-       6.2
-      ],
-      "r": 2.5,
-      "reason": "the STEP draws the Ti fork tine inside the TPU nose (interpenetrating solids); the TPU has the 1.5 mm slit the tine slides into"
-     },
-     {
-      "near": [
-       25.75,
-       44.2,
-       5.9
-      ],
-      "r": 2.5,
-      "reason": "the STEP draws the Ti fork tine inside the TPU nose (interpenetrating solids); the TPU has the 1.5 mm slit the tine slides into"
-     },
-     {
-      "near": [
-       25.75,
-       48.5,
-       2.8
-      ],
-      "r": 2.5,
-      "reason": "the STEP draws the Ti fork tine inside the TPU nose (interpenetrating solids); the TPU has the 1.5 mm slit the tine slides into"
-     },
-     {
-      "near": [
-       19.5,
-       49.3,
-       1.4
-      ],
-      "r": 4.0,
-      "reason": "the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
-     },
-     {
-      "near": [
-       24.0,
-       49.3,
-       1.4
-      ],
-      "r": 4.0,
-      "reason": "the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
-     },
-     {
-      "near": [
-       28.0,
-       49.3,
-       1.4
-      ],
-      "r": 4.0,
-      "reason": "the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
-     },
-     {
-      "near": [
-       32.0,
-       49.3,
-       1.4
-      ],
-      "r": 4.0,
-      "reason": "the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
-     },
-     {
-      "near": [
-       36.5,
-       49.3,
-       1.4
-      ],
-      "r": 4.0,
-      "reason": "the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
-     },
-     {
-      "near": [
-       25.25,
-       42.0,
-       5.3
-      ],
-      "r": 6.0,
-      "reason": "the fork's two rails run through the TPU cheek as closed tunnels (the STEP's solid wedgelet has no slit: the tine interpenetrates it)"
+      "r": 3.0,
+      "max_mm3": 40.0,
+      "reason": "RV17 STEP: the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
      }
     ]
    },
