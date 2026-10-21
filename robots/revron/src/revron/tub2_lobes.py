@@ -1,6 +1,6 @@
 """[tub2] Side nut lobe (Boss-Extrude6 + Fillet3/Fillet8 root R2) and what mates with it: the captive M3 nut bore and hex pocket, the
-N10 keyhole (hull of two circles, no slot to the floor), the snap slit. Built for +X, mirrored."""
-from build123d import Box, BuildSketch, Circle, Cylinder, Locations, Mode, Plane, Pos, Align, RegularPolygon, Polygon, Rotation, extrude, fillet, make_hull
+N10 keyhole (hull of two circles, opened into a U-slot to the floor so the gearbox boss drops in from below), the snap slit. Built for +X, mirrored."""
+from build123d import Box, BuildSketch, Circle, Cylinder, Locations, Mode, Plane, Pos, Align, RegularPolygon, Polygon, Rectangle, Rotation, extrude, fillet, make_hull
 from .tub2_params import CH_HALF_W, CH_IN_X, CH_Z0, CH_WALL, OVER, SKIN
 from .params_chassis import NUT, RY, RZ
 
@@ -10,6 +10,7 @@ LOBE_PROUD = 3.0                     # Boss-Extrude6 depth
 NUT_AF = 5.5                         # M3 thin nut across flats; pocket circumradius = AF / sqrt(3)
 BORE_R = 1.6                         # D7: 3.2 clearance bore
 SEAT_R, NECK_R, NECK_DZ = 2.5, SKIN, 5.0   # keyhole: boss seat round at the shaft, neck round centred NECK_DZ below it
+BOSS_R, BOSS_CLR = 2.0, 0.05        # 4 dia gearbox boss and its slot clearance each side: U-slot half width = sum
 SLIT = ((-7.14, 6.85), (-3.45, 7.05), (-3.45, 7.95), (-6.9, 8.9))   # snap-in relief wedge in the lobe (Y, Z), R0.5 corners
 SLIT_R = 0.5
 LOBE_OUT = CH_HALF_W + LOBE_PROUD
@@ -44,6 +45,8 @@ def keyhole():
         with Locations((RY, RZ - NECK_DZ)):
             Circle(NECK_R)
         make_hull()
+        with Locations((RY, (RZ + CH_Z0 - 2 * OVER) / 2)):
+            Rectangle(2 * (BOSS_R + BOSS_CLR), RZ - CH_Z0 + 2 * OVER)   # U-slot from the seat down through the floor
     return extrude(sk.sketch, CH_WALL + 2 * OVER)
 
 
