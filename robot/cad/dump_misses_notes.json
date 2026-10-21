@@ -1,0 +1,139 @@
+{
+ "tub": {
+  "Chamfer2": {
+   "what": "wrong edges: tub2_tab.key_sketch chamfers all 4 corners of the key-tab rectangle by SKIN (1.0); SW chamfers 2 corners per side (one 45 deg top-front, one along the sloped lug face, n=(-0.93,0.36))",
+   "cause": "chamfer on wrong edge set (assumed symmetric octagon)",
+   "fix": "tool: chamfer finder that reports which corners of a section carry a bevel (not just the size); guide: never generalise a blend to all corners of a sketch without seeing each one"
+  },
+  "Boss-Extrude6": {
+   "what": "wrong section: tub2_lobes.lobe = hull(circle R4.5 at nut, circle R2 at LOBE_CAP (0.5, 6.9)); SW Sketch12 is lines + the R4.5 and R2 arcs with two tangent sloped edges (n=(-0.33,0.94), (0.08,1.0)) and the slit cut in the same sketch",
+   "cause": "misread section",
+   "fix": "tool: sketch extractor (STEP section normal to the boss axis, fit lines/arcs, report tangency) ; guide: build a boss outline from its own section, not a convex hull of guessed circles"
+  },
+  "Mirror7": {
+   "what": "the -X copy of Boss-Extrude6 + Fillet7: same 0.18 mm error mirrored",
+   "cause": "misread section",
+   "fix": "check: per-feature face offset map (a mirrored copy repeats the error of its seed, and one global IoU hides it)"
+  },
+  "Fillet7": {
+   "what": "radius right (SLIT_R 0.5) but on a measured point table: tub2_lobes.SLIT = 4 (Y,Z) points read off the STEP",
+   "cause": "patch/fudge (measured point table)",
+   "fix": "guide: no measured coordinate tables; a slit is a sketch with dims + relations; tool: sketch extractor returns dims, not points"
+  },
+  "Fillet12": {
+   "what": "cavity corner R1.5 (tub2_params.CAVITY_R = 3*SKIN/2) where SW has R1 (Fillet12, 4 vertical cavity corners)",
+   "cause": "fillet wrong radius (radius derived from a relation, not measured)",
+   "fix": "tool: fillet radius finder on STEP sections (concave corner arcs) ; guide: a radius written as a formula of a master must be checked against a measured r"
+  },
+  "Fillet13": {
+   "what": "deck-pocket corners R2: 8 of 12 faces match, the 4 short arcs near the X-rib ends are 0.16 off (pocket outline vertex 0.16 mm from SW)",
+   "cause": "wrong place",
+   "fix": "check: per-feature face offset map at 0.05 mm (reference_cad.diff tol 1.0 is 6x too coarse)"
+  },
+  "Fillet20": {
+   "what": "rear box corners R1.5 (tub2_params.REAR_R) where SW has R1 (Fillet20)",
+   "cause": "fillet wrong radius",
+   "fix": "tool: fillet radius finder on STEP sections ; check: dump-free fillet radius parity (visual.fillet_ref) on every concave corner"
+  },
+  "Cut-Extrude6": {
+   "what": "hex nut pocket 0.15 off: ours is a catalogue hex (AF 5.5, corners up), SW sketch is its own polygon (D1 depth 2)",
+   "cause": "catalogue part substituted for the drawn sketch",
+   "fix": "guide: a pocket's size comes from the drawn section (clearance included), not from the nut catalogue"
+  },
+  "Mirror8": {
+   "what": "-X copy of Cut-Extrude6, same 0.15; the waiver on +X does not cover it",
+   "cause": "catalogue part substituted for the drawn sketch",
+   "fix": "check: per-feature face offset map at 0.05 mm"
+  },
+  "Cut-Extrude9": {
+   "what": "N10 keyhole opened into a U-slot (design change, waived)",
+   "cause": "waived"
+  },
+  "extra:1": {
+   "what": "+X front deck corner: the 2 mm deck chamfer (Chamfer3) turns the 45 deg corner as a blended 'surf' face; ours leaves 1.1 mm of material there",
+   "cause": "chamfer skipped (corner transition)",
+   "fix": "tool: chamfer finder that follows the chamfer round plan corners ; check: sample dump 'surf' faces too (sldprt_dump.face_samples skips them, so dump.fillet is blind here)"
+  },
+  "extra:2": {
+   "what": "-X mirror of extra 1",
+   "cause": "chamfer skipped (corner transition)",
+   "fix": "tool: chamfer finder that follows the chamfer round plan corners"
+  },
+  "extra:4": {
+   "what": "-X only, under the deck at the rear corner block (Z 17.3-17.5), 0.5 mm proud; no +X counterpart, so it is an asymmetric leftover of a -X-first boolean",
+   "cause": "invented feature / patch",
+   "fix": "check: mirror symmetry of a part declared symmetric (diff the part with its own mirror)"
+  }
+ },
+ "base_panel": {
+  "Chamfer2": {
+   "what": "N10 preload pad top chamfer 0.25 (panel_base.PAD_CHAMFER = the whole pad height) where SW has 0.4 x 45 deg; the pad height was changed to preload the N10 and the chamfer shrunk with it",
+   "cause": "chamfer wrong size (follows an altered feature)",
+   "fix": "guide: when a design change alters a feature, keep the designer's blend sizes and record the change as a deviation, not silently ; check: blend size parity in sections (tool: chamfer finder)"
+  },
+  "Boss-Extrude1": {
+   "what": "outline ears R2.6 at the CSK holes (waived: M2 head seat)",
+   "cause": "waived"
+  },
+  "Chamfer1": {
+   "what": "CSK seat 4.5 instead of SW 0.5 chamfer (waived)",
+   "cause": "waived"
+  }
+ },
+ "top_panel": {
+  "Cut-Extrude3": {
+   "what": "0.1 mm engraved lettering omitted (waived)",
+   "cause": "waived"
+  }
+ },
+ "wedgelet_l": {
+  "Fillet1": {
+   "what": "skin-to-ring-step R1 (WG_STEP_FILLET) only on outline lines longer than WG_STEP_MIN 8 mm; SW fillets the whole edge chain, 0.52 mm off on the short segments",
+   "cause": "fillet partly skipped (edge filter heuristic)",
+   "fix": "tool: fillet finder that returns the whole tangent edge chain ; guide: select blend edges by chain, never by a length threshold"
+  },
+  "Cut-Extrude16": {
+   "what": "cut outline from the measured (Y,Z) point tables in params_side (WG_IN_SLOT / WG_CHEEK); 0.13 mm off",
+   "cause": "patch/fudge (measured point table)",
+   "fix": "tool: sketch extractor (lines/arcs + relations from STEP sections) ; guide: no measured coordinate tables"
+  },
+  "Cut-Extrude20": {
+   "what": "slot from measured point table, 0.44 mm off",
+   "cause": "patch/fudge (measured point table)",
+   "fix": "tool: sketch extractor (lines/arcs + relations from STEP sections) ; guide: no measured coordinate tables"
+  },
+  "Boss-Extrude13": {
+   "what": "nose tab trimmed to clear the weapon-mount boss (waived)",
+   "cause": "waived"
+  },
+  "Boss-Extrude15": {
+   "what": "fork tine seat cut (waived)",
+   "cause": "waived"
+  },
+  "Cut-Extrude23": {
+   "what": "nose tab trim (waived)",
+   "cause": "waived"
+  },
+  "extra:0": {
+   "what": "40.6 mm2 of our surface up to 1.18 mm off round the fork tine seat; the Boss-Extrude15 waiver covers the feature row, not this cluster",
+   "cause": "patch/fudge (tine seat cut beyond the waiver)",
+   "fix": "check: waivers must bound the deviating volume (reference_cad path waivers with max_mm3)"
+  },
+  "extra:1": {
+   "what": "near Fillet1: the skipped short fillet segments leave material",
+   "cause": "fillet partly skipped (edge filter heuristic)",
+   "fix": "tool: fillet finder that returns the whole tangent edge chain"
+  },
+  "extra:2": {
+   "what": "floor corner near Fillet1/Boss-Extrude1, 0.68 mm",
+   "cause": "patch/fudge (measured point table)",
+   "fix": "tool: sketch extractor (lines/arcs + relations from STEP sections)"
+  }
+ },
+ "fork_l": {
+  "extra:0": {
+   "what": "knife tip blunted for laser cutting (waived)",
+   "cause": "waived"
+  }
+ }
+}
