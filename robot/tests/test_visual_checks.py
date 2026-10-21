@@ -345,3 +345,51 @@ def test_reference_sampled_at_our_height():
     m = _cbore_near_edge(3.0)
     d = visual.ligament_diffs(m, m.copy())
     assert d and all(x["matches"] for x in d), d
+
+
+# ------------------------------------------------------------------ W3: wires vs rotors, loose exterior runs, render count
+def _rotor_bands():
+    disc = trimesh.creation.cylinder(20.0, 3.0, sections=96)       # axis Z, swept radius 20, z -1.5..1.5
+    return wire_review.swept_bands([type("B", (), {"mesh": disc})()], np.zeros(3), np.array([0, 0, 1.0]))
+
+
+def test_wire_hanging_near_the_rotor_fails():
+    Q = wire_review._samples(np.array([[21.0, 0, 3.0], [21.0, 10, 3.0]]))   # 1.5 mm above the disc rim plane
+    gap, _ = wire_review.rotor_gaps(Q, 0.5, np.zeros(3), np.array([0, 0, 1.0]), _rotor_bands())
+    assert gap < wire_review.ROTOR_MIN_MM
+
+
+def test_wire_clear_of_the_rotor_passes():
+    Q = wire_review._samples(np.array([[25.0, 0, 6.0], [25.0, 10, 6.0]]))
+    gap, _ = wire_review.rotor_gaps(Q, 0.5, np.zeros(3), np.array([0, 0, 1.0]), _rotor_bands())
+    assert gap >= wire_review.ROTOR_MIN_MM
+
+
+def test_long_free_span_outside_chassis_is_unsupported():
+    inside = np.array([True] * 4 + [False] * 30 + [True] * 4)
+    near = np.zeros(38, bool)
+    runs = wire_review.unsupported_runs(None, inside, near)
+    assert max(runs)[0] > wire_review.UNSUPPORTED_MAX_MM
+    near[4:34] = True                                    # clipped / in a channel all the way
+    assert wire_review.unsupported_runs(None, inside, near) == []
+
+
+def _count_ctx(tmp_path, drawn):
+    from types import SimpleNamespace as NS
+
+    d = tmp_path / "renders"
+    d.mkdir()
+    (d / "iso.png").write_bytes(b"\x89PNG")
+    (d / "iso.png.json").write_text(json.dumps({"bodies": ["a"], "wires": {k: {} for k in drawn}}))
+    spec = NS(base_dir=str(tmp_path), raw={}, wires=[NS(id="w1"), NS(id="w2")], parts=[])
+    return NS(r=NS(spec=spec), not_checked=[])
+
+
+def test_render_count_mismatch_fails(tmp_path):
+    out = wire_review.render_count(_count_ctx(tmp_path, ["w1", "w2", "w_old"]))
+    assert out and not out[0].passed
+
+
+def test_render_count_match_passes(tmp_path):
+    out = wire_review.render_count(_count_ctx(tmp_path, ["w1", "w2"]))
+    assert out and out[0].passed
