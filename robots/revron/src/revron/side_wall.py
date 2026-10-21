@@ -40,37 +40,16 @@ def _swing_r(k, z):
     return fr["r_in"] + k * fr["w"] - SP_LEAN * (z - FLOOR_Z)
 
 
-def _hermite(p0, p1, h0, h1, m, u):
-    """Cubic Hermite point at u between 3D points p0 -> p1 leaving along h0, arriving along h1 (tangent length m, none in Z)."""
-    h00, h10, h01, h11 = 2 * u ** 3 - 3 * u ** 2 + 1, u ** 3 - 2 * u ** 2 + u, -2 * u ** 3 + 3 * u ** 2, u ** 3 - u ** 2
-    return tuple(h00 * p0[k] + h10 * m * h0[k] + h01 * p1[k] + h11 * m * h1[k] for k in range(3))
-
-
 def _bend(b, a_pts, mid_pts):
-    """The S-bend (Loft1): four corner curves from the swing's end section to the mid wall's front section (cubic Hermite, leaving
-    along +X and arriving along -Y, i.e. normal to each profile like a guide-less SolidWorks loft), each face a strip of SP_BEND_STEPS
-    planar triangle pairs along the curves. The facets turn less than the 6 deg faceting-seam threshold, so the tessellated skin has
-    no seam where a freeform surface would (OCC splits a skinned spline near the threshold); the end sections are the neighbours' own."""
-    n = SP_BEND_STEPS
-    rows = []
-    for u in [(1 - math.cos(math.pi * i / n)) / 2 for i in range(n + 1)]:   # stations bunch up at both ends, where the curves turn hardest
-        rows.append([_hermite(p0, p1, (1.0, 0.0, 0.0), (0.0, -1.0, 0.0), SP_BEND_TENSION * math.dist(p0[:2], p1[:2]), u)
-                     for p0, p1 in zip(a_pts, mid_pts)])
-    rows[0], rows[-1] = list(a_pts), list(mid_pts)
-    V = lambda q: b.Vector(*q)
-    tri = lambda *q: b.Face(b.Wire.make_polygon([V(x) for x in q], close=True))
-    faces = [_quad(b, *a_pts), _quad(b, *mid_pts)]
-    lerp = lambda p, q, w: tuple(p[k] + (q[k] - p[k]) * w for k in range(3))
-    for r0, r1 in zip(rows[:-1], rows[1:]):
-        for k in range(4):
-            k1 = (k + 1) % 4
-            m = SP_BEND_LEVELS if k in (1, 3) else 1          # the tall faces (chassis-side, outer) are cut into levels: less twist per facet
-            for j in range(m):
-                w0, w1 = j / m, (j + 1) / m
-                # the side runs corner k -> k1 (k=1: floor-in -> top-in; k=3: top-out -> floor-out), levels along it
-                q = lambda r, w: lerp(r[k], r[k1], w)
-                faces += [tri(q(r0, w0), q(r0, w1), q(r1, w1)), tri(q(r0, w0), q(r1, w1), q(r1, w0))]
-    return b.Solid(b.Shell(faces))
+    """The S-bend (Loft1): the swing's end section -> the mid wall's front section. Its four corner curves leave along +X and arrive
+    along -Y (normal to each profile, like a guide-less SolidWorks loft): cubic Beziers with handles SP_BEND_TENSION x chord / 3 long.
+    Each side face is the single ruled B-spline surface between two neighbouring corner curves (the SolidWorks loft's `surf` faces)."""
+    def corner(p0, p1):
+        k = SP_BEND_TENSION * math.dist(p0[:2], p1[:2]) / BEZIER_DEG
+        return b.Edge.make_bezier(b.Vector(*p0), b.Vector(p0[0] + k, p0[1], p0[2]), b.Vector(p1[0], p1[1] + k, p1[2]), b.Vector(*p1))
+    c = [corner(p0, p1) for p0, p1 in zip(a_pts, mid_pts)]
+    sides = [b.Face.make_surface_from_curves(c[k], c[(k + 1) % len(c)]) for k in range(len(c))]
+    return b.Solid(b.Shell(sides + [_quad(b, *a_pts), _quad(b, *mid_pts)]))
 
 
 def sp_wall(b):
