@@ -263,12 +263,12 @@ def builtin() -> list[CatalogEntry]:
         # RVRN reference-CAD envelopes (Revron audit 2026-10): vendor/reference envelopes, not memory.
         CatalogEntry("n10_2200rpm_spicy", "motor", "Turnabot Spicy N10 2200 rpm (micro-metal 10 x 12, 33.8 incl. 9.5 mm shaft)", 9.5, "datasheet",
                      union([at({"type": "intersect", "items": [cyl_x(6.3, 13.0), box(15.0, 10.0, 12.0)]}, -6.4, 0, 0),
-                            at(cyl_x(2.4, 3.0), -14.4, 0, 0)]
+                            at(cyl_x(2.4, 1.3), -13.55, 0, 0)]
                            + [at(box(0.9, 10.0, 12.0), x, 0, 0) for x in (0.6, 3.35, 7.15)]
                            + [at(cyl_x(1.1, 7.6), 3.9, 0, z) for z in (-3.5, 3.5)]
-                           + [at(box(0.5, 0.4, 1.6), -16.05, y, 0) for y in (-1.5, 1.5)]       # solder tabs: 0.1 into the end cap, terminal point sits on them
+                           + [at(box(3.1, 2.0, 0.4), -14.35, 0, z) for z in (-3.8, 3.8)]       # RV12 STEP solder tabs: 0.4 thick, 2.0 wide, 3.8 off the axis, tips at the 33.8 mm length (tab tip -15.9)
                            + [minus(at(cyl_x(1.5, 10.4), 12.7, 0, 0), [at(box(10.4, 3.0, 1.0), 12.7, 0, 0.9 + 0.5)])]),   # shaft starts 0.1 inside the last gearbox plate: one solid; D-flat 0.9 above the axis (mates the hub D-bore)
-                     {"terminals": [-16.2, 0, 0]}, {"at": [7.9, 0, 0], "dir": [1, 0, 0], "len": 10.0, "dia": 3.0},
+                     {"terminals": [-15.9, 0, 3.8]}, {"at": [7.9, 0, 0], "dir": [1, 0, 0], "len": 10.0, "dia": 3.0},
                      {"nominal_v": 6.0, "rpm_nominal": 2200.0, "stall_current_a": 1.6, "no_load_current_a": 0.1, "stall_torque_gcm": 150.0}, "#9aa0a6"),
         CatalogEntry("be1806_bbb", "weapon_motor", "BBB BE1806 2300 kV outrunner (23 mm bell, 20.5 incl. base and shaft collar, 5 mm shaft bore)", 18.5, "datasheet",
                      minus(union([at(cyl_x(11.5, 15.0), 0.75, 0, 0), at(cyl_x(9.5, 3.5), -8.5, 0, 0), at(cyl_x(2.95, 2.0), 9.25, 0, 0),
