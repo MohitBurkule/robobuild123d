@@ -21,13 +21,11 @@ REAR_C = dict(half=2.75, y=(-30.0, -26.5), r=1.2)                       # centre
 # ---- base-panel seat
 SEAT_Z = BASE_Z0 + BASE_T                     # top of the base panel skin = Z of the rabbet floor
 RABBET_GROW = 0.05                            # the rabbet is the panel outline grown by this
-RING = dict(clear=0.3, below=0.1, above=0.05)   # recess R over BOSS_R (0.25 base fillet + 0.05), start under the seat, overshoot over the boss
 PAD = dict(c=(22.5, -30.3), s=9.1, margin=0.3, z=(-0.1, 0.3))   # N10 preload pad: centre, side, recess margin (0.25 fillet), Z span about SEAT_Z
 SQUARE = dict(x0=25.5, depth=2.0, up=2.0, over=0.05)            # squared rear corner behind the gearbox plates: inner |X|, Y depth, Z over the floor
 ROUND_R, ROUND_Y, ROUND_Z = 4.5, (-25.5, -22.4), (4.4, 9.4)   # stop wall lower inner edge R4.5 (STEP): radius, cutter Y span (through the corner fillet too), Z span of the round
 # ---- column bores and switch slot (NO-CHANGE: owned by the heat-set worker)
 HOLE_R, CH_R, CH_H = 1.5, 2.1, 0.6            # M2 heat-set hole R, chamfer outer R, chamfer height
-PILOT_R, PILOT_DEPTH, OVER_PILOT = 1.7, 4.0, 0.0    # 3.4 bore in the column top for the M2 heat-set (3.5 OD x 4), starting at the hole cut end
 SW_SLOT = dict(x0=23.0, w=4.0, y0=-11.6, l=12.0, r=0.45, z0=16.0)   # slot beside the top panel: inner edge, width, front Y, length, corner R, floor Z
 SW_PILOT = dict(r=0.85, pitch=15.0, down=3.0)   # switch pilot R, Y pitch about the slot centre, depth under the deck
 
@@ -51,12 +49,10 @@ def deck_pockets(c):
 
 
 def seat_cuts(c):
-    """Rabbet for the base panel, ring-boss recesses in the column feet, N10 preload pad recess, squared rear corner."""
+    """Rabbet for the base panel, N10 preload pad recess, squared rear corner."""
     from .tub import _panel_outline
     z0, (xi, yi0, _) = c["z0"], inner(c)
     out = [_ext(_panel_outline(RABBET_GROW), "xy", z0 - 1, SEAT_Z)]
-    for px, py in INS:
-        out.append(_cyl(BOSS_R + RING["clear"], SEAT_Z - RING["below"], SEAT_Z + BOSS_H + RING["above"], (px, py), "z"))
     (pcx, pcy), h = PAD["c"], PAD["s"] / 2 + PAD["margin"]
     pad = _box(pcx - h, pcx + h, pcy - h, pcy + h, SEAT_Z + PAD["z"][0], SEAT_Z + PAD["z"][1])
     S = SQUARE
@@ -73,15 +69,12 @@ def stop_wall_round(c):
 
 
 def column_bores(c):
-    """NO-CHANGE: owned by the heat-set worker. Heat-set hole with 0.6 chamfers both ends; corner columns get a thread-forming pilot in the top."""
+    """NO-CHANGE: owned by the heat-set worker. Hole with 0.6 chamfers both ends (STEP: 3.0 bore through, no pilot)."""
     z0, z1, out = c["z0"], c["z1"], []
     for px, py in INS:
-        rear = (px, py) == INS[-1]
-        out.append(_cyl(HOLE_R, z0 - 1, (z1 + 1) if rear else z1 - PILOT_DEPTH, (px, py), "z"))
+        out.append(_cyl(HOLE_R, z0 - 1, z1 + 1, (px, py), "z"))
         out.append(cone(CH_R, HOLE_R, CH_H, (px, py, SEAT_Z - EPS)))
         out.append(cone(CH_R, HOLE_R, CH_H, (px, py, z1 + EPS), up=False))
-        if not rear:
-            out.append(_cyl(PILOT_R, z1 - PILOT_DEPTH - OVER_PILOT, z1 + 1, (px, py), "z"))
     return out
 
 
