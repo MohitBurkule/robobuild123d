@@ -12,7 +12,8 @@ OVER = SKIN / 10                        # boolean overlap (fuse), not a dimensio
 INS_RIGHT = tuple(p for p in INS if p[0] > 0)
 INS_AXIS = tuple(p for p in INS if p[0] == 0)
 # columns
-BORE_R, BORE_CH = 1.5, 0.6              # heat-set bore, chamfer at both ends
+INSERT_OD, KNURL = 3.5, 0.25            # FS1 M2 heat-set: knurled OD and knurl depth
+BORE_R, BORE_CH = INSERT_OD / 2 - KNURL, 0.6   # heat-set bore = the insert's core (the knurl melts in), chamfer 0.6 at both ends
 # corner blocks: face tangent to the column, nose R = COL_R, wall-end fillet = SKIN
 # stop wall / key tab / ledge
 STOP_FRONT_Y = KEY_SPAN[1]              # stop wall front face is the key tab front face

@@ -12,7 +12,7 @@ SWITCH_PITCH = 15.0                   # D1: screw pitch of the switch ears; the 
 PAD_LEN = SWITCH_PITCH + 5.0          # D1 of Sketch23: 20
 SLOT_L, SLOT_W, SLOT_R = 12.0, 4.0, SKIN / 2   # D3 / D4 and the slot corner R
 PILOT_R = 0.85                        # D2: 1.7 thread-forming pilot, on the bolt axis SWX (the switch body sits SWX, not on the column)
-PILOT_DEPTH = 3 * SKIN                # pilot starts this far under the deck: the thread bite
+PILOT_DEPTH = SKIN                    # pilot starts at the pad underside (one skin under the deck) and runs out through the deck: 3 mm of thread bite
 PAD_R = 3 * SKIN / 2                  # R1.5 on the pad's free corners and into the wall
 
 
