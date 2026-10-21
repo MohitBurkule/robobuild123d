@@ -31,5 +31,9 @@ grep -q 'stale claim deadhost.e requeued' "$P/builder.log" || { echo "FAIL no re
 [ "$(grep -c -x slow "$P/runs")" = 1 ] || { echo "FAIL slow ran $(grep -c -x slow "$P/runs") times"; fail=1; }
 [ "$(sort "$P/runs" | uniq -d)" = "" ] || { echo "FAIL duplicate runs: $(sort "$P/runs" | uniq -d)"; fail=1; }
 grep -q claimed "$T/remote.log" || { echo "FAIL remotes claimed nothing"; fail=1; }
+# first result wins: a late duplicate finisher of group a (won elsewhere) must not overwrite a's result
+D=$P/shards/$sha; cp "$D/results/a.log" "$T/a.first"; rm -f "$D/results/a.rc"; echo "$sha" > "$D/queue/a"
+WORKER_ID=late SHARDS=$P/shards IDLE=2 robot/tools/shard_worker.sh 2>>"$T/late.log"
+[ ! -f "$D/results/a.rc" ] && cmp -s "$D/results/a.log" "$T/a.first" && grep -q 'discarding mine' "$T/late.log" || { echo "FAIL late duplicate overwrote result"; fail=1; }
 wait
 [ $fail = 0 ] && echo "PASS"; exit $fail

@@ -40,10 +40,12 @@ gwt() { # dir rev; rev resolved in THIS worktree (a bare "HEAD" inside -C dir wo
   local r; r=$(git rev-parse "$2^{commit}") || return 1
   [ -d "$1" ] || for t in 1 2 3 4 5; do git worktree add -q --detach "$1" "$r" 2>/dev/null && break; sleep $t; done; git -C "$1" merge --abort 2>/dev/null; git -C "$1" reset -q --hard; git -C "$1" clean -fdq
   git -C "$1" checkout -q --detach "$r" && [ "$(git -C "$1" rev-parse HEAD)" = "$r" ] || { log "gate worktree $1 not at $r"; return 1; }; }
-# SHARD=1: hand groups to robot/tools/shard_worker.sh on any container sharing $P (plus PAR local workers).
+# SHARD=1 (default; SHARD=0 = serial): hand groups to robot/tools/shard_worker.sh on any container sharing $P (plus PAR local workers).
 # Workers rewrite their claim's content every HB s. A claim is requeued only when its content has not
 # changed across two polls spanning more than STALE s of this host's clock (mtime is never trusted: on a
 # network mount it comes from the server's clock/attribute cache and was judged stale ~2 min after claiming).
+# Extra workers on a fixer container (one command, from any checkout of the repo with /mnt/project-files mounted):
+#   nohup robot/tools/shard_worker.sh >> /mnt/project-files/robot-cad/b123d/progress/shard_$(hostname).log 2>&1 &
 # Sets done_n/failed/rc and appends results to $3 in group order, exactly like the serial path.
 shard_verify() { # sha "groups" out
   local S="$P/shards/$1" g w pids= now m c k cur
@@ -63,7 +65,7 @@ shard_verify() { # sha "groups" out
       k=${c##*/}; g=${k##*.}; cur=$(cat "$c" 2>/dev/null)
       [ -f "$S/results/$g.rc" ] && { rm -f "$c"; continue; }
       if [ -z "${since[$k]+x}" ] || [ "${seen[$k]}" != "$cur" ]; then seen[$k]=$cur; since[$k]=$now; continue; fi
-      if [ $((now - ${since[$k]})) -gt "${STALE:-900}" ]; then
+      if [ $((now - ${since[$k]})) -gt "${STALE:-180}" ]; then
         unset "seen[$k]" "since[$k]"
         [ -f "$S/results/$g.rc" ] && { rm -f "$c"; continue; }
         mv "$c" "$S/queue/$g" 2>/dev/null && log "shard $g: stale claim $k requeued"
@@ -254,7 +256,7 @@ for i in $(seq "${START_ITER:-1}" "$MAX_ITERS"); do
   : > "$out"; rc=0; done_n=0; failed=
   chunks="$all fastener_seat"; [ -f "${SKIP_THREAT_FILE:-/tmp/ci_skip_threat}" ] || chunks="$all threat fastener_seat"
   need=$(echo $chunks | wc -w)
-  if [ "${SHARD:-0}" = 1 ]; then shard_verify "$sha" "$chunks" "$out"; else
+  if [ "${SHARD:-1}" = 1 ]; then shard_verify "$sha" "$chunks" "$out"; else
   # groups run PAR at a time (own process each, shared content-keyed cache); an OOM still only loses its own group
   mkdir -p "$out.d"; rm -f "$out.d"/*
   printf '%s\n' $chunks | xargs -P "${PAR:-3}" -I{} sh -c 'ROBOT_RUN_SHA=$0 ROBOT_PROGRESS_LOG="$1/verify.log" timeout 6000 python3 -m robot verify "$2" --full --only {} --jobs 1 > "$3/{}.log" 2>&1; echo $? > "$3/{}.rc"' "$sha" "$P" "$SPEC" "$out.d"
