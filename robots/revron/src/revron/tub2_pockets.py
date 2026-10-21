@@ -6,8 +6,8 @@ from .tub2_params import (INS_AXIS, POCKET_X, SIDE_X, CENTRE_Y, DIAG_K, RIB_OFF,
 from .tub2_util import box_xy, concave_filler, prism, mirrored
 
 
-def _cut(sk):
-    return prism(sk, DECK - SKIN, DECK + SKIN)
+def _cut(sk, below=SKIN):
+    return prism(sk, DECK - below, DECK + SKIN)
 
 
 def _rounded(pts, tips):
@@ -26,7 +26,7 @@ def x_pockets():
     face = STOP_FRONT_Y
     lo = [(0, a_lo), (x, a_lo - k * x), (x, face), (SA_X0, face), (SA_X0, face - STOP_GAP), (-SA_X0, face - STOP_GAP), (-SA_X0, face), (-x, face), (-x, a_lo - k * x)]
     tips = lambda p: [p[0], p[1], p[-1]]
-    return [_cut(_rounded(up, tips(up))), _cut(_rounded(lo, tips(lo)))]
+    return [_cut(_rounded(up, tips(up)), 0), _cut(_rounded(lo, tips(lo)), 0)]
 
 
 def side_pocket():
