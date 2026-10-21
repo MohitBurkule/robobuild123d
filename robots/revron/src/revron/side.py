@@ -50,6 +50,25 @@ def _sp_front_round(b, Polygon, box):
     return b.Solid.make_loft(secs, ruled=True)
 
 
+def _sp_tyre_relief(b):
+    """Rear tyre relief pocket cutter: the round-ended slot profile (SP_TYRE_RELIEF: true arcs, r about the rear axis line, r_front
+    front corners) extruded from the floor to the inner face, its floor edge filleted r_floor (the side's own relief tool: the
+    pocket it cuts is plain, the chassis cutter just loses it)."""
+    t = SP_TYRE_RELIEF
+    (cy, cz), r, yf, rf, (x0, x1) = t["c"], t["r"], t["y_front"], t["r_front"], t["x"]
+    V = lambda y, z: b.Vector(x0, y, z)
+    k = rf * (1 - math.sqrt(0.5))   # corner arc mid-point offset
+    e = [b.Edge.make_line(V(cy, cz + r), V(yf - rf, cz + r)),
+         b.Edge.make_three_point_arc(V(yf - rf, cz + r), V(yf - k, cz + r - k), V(yf, cz + r - rf)),
+         b.Edge.make_line(V(yf, cz + r - rf), V(yf, cz - r + rf)),
+         b.Edge.make_three_point_arc(V(yf, cz - r + rf), V(yf - k, cz - r + k), V(yf - rf, cz - r)),
+         b.Edge.make_line(V(yf - rf, cz - r), V(cy, cz - r)),
+         b.Edge.make_three_point_arc(V(cy, cz - r), V(cy - r, cz), V(cy, cz + r))]
+    tool = b.Solid.extrude(b.Face(b.Wire(e)), b.Vector(x1 - x0, 0, 0))
+    floor = min(tool.faces(), key=lambda f: f.center().X)   # the face at the pocket floor
+    return tool.fillet(t["r_floor"], floor.edges())
+
+
 def _side_seat(key, at, sgn=-1):
     """robot.cad.holes (cutter, FastenerRecord) of one side-panel M3 CSK (bolt_s*): the STEP seats the head SIDE_FACE_X -
     SIDE_BOLT_X below the battered outer face, in a driver bore from the face; clearance runs on through the panel (and
@@ -121,7 +140,7 @@ def _side_body(pin=True):
     cr_, cx0, cx1 = SP_SA_CLEAR
     cuts = [_side_seat(k, at)[0] for k, at in (("a", SA), ("b", SB), ("c", NUT))] + [
             _cyl(cr_, cx0, cx1, SA),
-            _box(*SP_TYRE_RELIEF),                                                # rear tyre relief on the inner face
+            _sp_tyre_relief(b),                                                   # rear tyre relief pocket on the inner face
             _ext(_round(Polygon(SP_NUT_RELIEF), r_out=SP_NUT_RELIEF_R), "yz", *SP_NUT_RELIEF_X)]                  # 1 mm relief round the chassis nut lobe
     ph = SP_PIN_HOLE
     if pin:   # the chassis cutter has no pin hole: it would leave a loose pin of chassis material
