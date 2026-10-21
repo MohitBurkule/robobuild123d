@@ -11,6 +11,7 @@ BELL_WALL_R, BELL_TOP_X = bell_dims(MOTOR_VARIANT)   # datasheet: 17.1 mm body, 
 # weapon frame: on the spin axis (WY, WZ) at the robot centre plane; the GR1507 sits in it with its catalog +X (bell top) turned to world -X
 W_FRAME = (0.0, WY, WZ)
 MOTOR_FLIP = (0, 0, 180)             # catalog -> weapon frame: half a turn about Z, so the stator base faces RV03 (+X)
+MOTOR_PLACE_TOL = 0.8               # reference_cad placement tolerance of the motor: drawing-true bell cap is 1.5 mm above the STEP can (half of it shifts the bbox centre)
 BELL_CAP_X = -BELL_TOP_X[1]          # world X of the bell's cap face (the flip mirrors catalog X)
 
 # master parameters of the stack: plate thicknesses; the spider's inner face sits on the bell cap and every X span below is chained from it
@@ -43,13 +44,17 @@ BRG["x"] = -(MNT_IN + BRG_RECESS + BRG["w"] / 2)   # centred in the RV02 seat
 BRG_SEAT_R, NUT_RECESS_R = BRG["od_r"] - BRG_PRESS, 6.0   # MR85 seat (pressed: 7.9 STEP), shaft nut recess
 STATOR_PCD, BOSS_OVER = 12.0, 0.01        # stator M2 bolt circle; boss overshoots the battered plane before it is split
 MNT_SCREW = ("M3x12", "M3x14")           # mount-to-standoff CSK screws at SA, SB
-MNT_SCREW_FIT = "loose"                  # ISO 273 loose clearance: the screws have slack, the notch face takes the hit first
+MOUNT_VARIANT = os.environ.get("REVRON_MOUNT_VARIANT", "original")   # "original" = RV02/RV03 as the STEP draws them; "printable" = nose pad, thickened notch tip, relieved corners, loose screw holes (improvements, not parity)
+PRINTABLE = MOUNT_VARIANT == "printable"
+MNT_SCREW_FIT = "loose" if PRINTABLE else "close"   # ISO 273: loose slack so the notch face takes the hit first; close = the STEP's d3.2 holes
 WEAPON_CLEAR_R = 16.0                # chassis material stays outside this radius about the weapon axis (rotor + 1 mm)
 BSP_T = 1.5                          # printed spacer between the stator base and the right mount
 BSP_X = (MNT_IN - BSP_T, MNT_IN)
 STAT_HOLE_R = 1.12                   # RV03 stator screw clearance d2.24 (STEP)
-CB_R, CB_FLOOR_X = 2.25, 17.15       # RV03 stator counterbore d4.5 and its floor |X| (the button head seats here)
-CB_CONE_X = (16.4, CB_FLOOR_X)       # the STEP's lead-in cone under the counterbore (left out, see spec deviations)
+WM_LEN, WM_BITE = 8.0, 1.7           # stator screw M2x8 and the thread it must bite in the 2 mm base (0.8 d = 1.6, plus 0.1)
+CB_R = 2.25                          # RV03 stator counterbore d4.5
+CB_FLOOR_X = -STATOR_BACK_X + WM_LEN - WM_BITE   # its floor |X| (the button head seats here): the screw tip lands WM_BITE inside the base (STEP 17.15 gives only 1.25: declared deviation)
+CB_CONE_X = (CB_FLOOR_X - 0.75, CB_FLOOR_X)      # the STEP's 0.75 lead-in cone under the counterbore (left out, see spec deviations)
 STATOR_ARMS_DEG = (0, 180, 90, 270)   # the GR1507 base cross arms, in bolt_wm0..3 order
 STATOR_DIRS = tuple((round(math.cos(math.radians(a))), round(math.sin(math.radians(a)))) for a in STATOR_ARMS_DEG)   # stator screw directions on the bolt circle
 
@@ -69,13 +74,13 @@ TAB = dict(y0=CH_Y1, z0=5.35, h=8.2, y1=26.5, cham=1.0)   # chassis tab the notc
 NOSE_R, NOSE_A0 = 3.25, -16.0           # nose arc round the SB standoff and where it leaves the outline (deg)
 MNT_HEEL = dict(z=SB[1] - NOSE_R, step=0.4, back=1.8, z_hook=2.5, z_lip=4.5)   # rear foot hooked under the tab: flat underside (tangent to the nose arc), tip step, setback, hook and lip Z
 MNT_NOTCH_UP = 2.0                      # the rear face above the tab leans back by this much over the last stretch to the top
-NOSE_PAD_R = 4.1                        # local pad round the nose CSK: CSK cone radius (3.2) + a 0.9 mm printed wall (the STEP nose leaves 0.15 mm)
+NOSE_PAD_R = 4.1 if PRINTABLE else 0.0                        # local pad round the nose CSK: CSK cone radius (3.2) + a 0.9 mm printed wall (the STEP nose leaves 0.15 mm)
 BOSS_Z = 6.34                           # the boss starts above the line from the notch top to the nose, at this Z at the nose end
 BOSS_NOSE_Y = 44.34
 BIG = 60.0                              # a box edge bigger than any part, for the wedgelet's 2D half-plane clip (_mount_clip)
-MNT_RELIEF_R = 1.0                      # concave corner relief of the profile (tub deck fillet, mfg corner relief)
+MNT_RELIEF_R = 1.0 if PRINTABLE else 0.0                      # concave corner relief of the profile (tub deck fillet, mfg corner relief)
 MNT_CSK_CLEAR = 0.4                     # extra cone diameter over the DIN 7991 head: the seated head floats, so the notch bears a hit before the screws do
-MNT_TIP_WALL, MNT_TIP_REACH = 1.5, 3.0    # printed wall: the wedge where the rear notch meets the rim tangent is thickened upward to this within this reach of the notch top (rearmost point and underside unchanged: the underside rides on the chassis tab)
+MNT_TIP_WALL, MNT_TIP_REACH = (1.5 if PRINTABLE else 0.0), 3.0    # printed wall: the wedge where the rear notch meets the rim tangent is thickened upward to this within this reach of the notch top (rearmost point and underside unchanged: the underside rides on the chassis tab)
 
 
 HOLE_FACE_RISE = 0.7                    # the battered face's highest point over a stator hole axis: the surface the hole is measured from
@@ -126,7 +131,9 @@ def lead_groove_ends():
 
 
 _LG = lead_groove_ends()
-PHASE_VIA = [[11.8, 14.5, 16.0]] + [[LEAD_GROOVE_X, y, z] for y, z in _LG] + [[LEAD_FAN_X, WY, _LG[1][1]]]   # tub inside -> groove rear -> groove front -> lead fan under the spacer
+LEAD_GROOVE = os.environ.get("REVRON_LEAD_GROOVE", "off") == "on"   # optional RV03 variant (one setting, like MOTOR_VARIANT): "on" cuts the snap-in lead C-groove; default "off" = the original RV03, leads run free over the lug
+PHASE_VIA = ([[11.8, 14.5, 16.0]] + [[LEAD_GROOVE_X, y, z] for y, z in _LG] + [[LEAD_FAN_X, WY, _LG[1][1]]] if LEAD_GROOVE   # tub inside -> groove rear -> groove front -> lead fan under the spacer
+             else [[11.8, 14.5, 16.0], [11.8, 15.5, 18.2], [11.8, 27.0, 18.2], [11.8, 30.0, 14.5]])   # original: over the lug, no channel
 
 
 __all__ = [n for n in dir() if not n.startswith("__")]   # last line: every name above is exported

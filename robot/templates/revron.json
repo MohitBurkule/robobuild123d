@@ -1002,26 +1002,7 @@
     "file": "RV02_XALT_HD_left_hand_weapon_mount_1.stl",
     "mode": "shape",
     "tol_mm": 0.5,
-    "deviations": [
-     {
-      "near": [
-       -15.9,
-       11.5,
-       20.4
-      ],
-      "r": 5.0,
-      "reason": "the STEP notch top is a zero-thickness wedge (mfg.thin_wall); thickened to a printable wall, rearmost point unchanged"
-     },
-     {
-      "near": [
-       -15.4,
-       41.1,
-       2.8
-      ],
-      "r": 5.0,
-      "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside and front edge, so the countersink keeps a 0.9 mm wall"
-     }
-    ]
+    "deviations": []
    },
    {
     "part": "mount_r",
@@ -1031,30 +1012,12 @@
     "deviations": [
      {
       "near": [
-       15.9,
-       11.5,
-       20.4
-      ],
-      "r": 5.0,
-      "reason": "the STEP notch top is a zero-thickness wedge (mfg.thin_wall); thickened to a printable wall, rearmost point unchanged"
-     },
-     {
-      "near": [
-       15.4,
-       41.1,
-       2.8
-      ],
-      "r": 5.0,
-      "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside and front edge, so the countersink keeps a 0.9 mm wall"
-     },
-     {
-      "near": [
        16.8,
        44.5,
        23.5
       ],
       "r": 2.0,
-      "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"
+      "reason": "STEP counterbore ends in a 45 deg lead-in cone (r2.25 at |X| 17.4 down to r1.1 at 16.4); we cut a flat floor at CB_FLOOR_X instead: the inferred M2x8 button head needs a flat seat (fastener_seat.head_bearing) and its tip must bite 1.7 mm of the 2 mm stator base (fastener.engagement; the STEP floor gives 1.25)"
      },
      {
       "near": [
@@ -1063,7 +1026,7 @@
        29.5
       ],
       "r": 2.0,
-      "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"
+      "reason": "STEP counterbore ends in a 45 deg lead-in cone (r2.25 at |X| 17.4 down to r1.1 at 16.4); we cut a flat floor at CB_FLOOR_X instead: the inferred M2x8 button head needs a flat seat (fastener_seat.head_bearing) and its tip must bite 1.7 mm of the 2 mm stator base (fastener.engagement; the STEP floor gives 1.25)"
      },
      {
       "near": [
@@ -1072,7 +1035,7 @@
        23.5
       ],
       "r": 2.0,
-      "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"
+      "reason": "STEP counterbore ends in a 45 deg lead-in cone (r2.25 at |X| 17.4 down to r1.1 at 16.4); we cut a flat floor at CB_FLOOR_X instead: the inferred M2x8 button head needs a flat seat (fastener_seat.head_bearing) and its tip must bite 1.7 mm of the 2 mm stator base (fastener.engagement; the STEP floor gives 1.25)"
      },
      {
       "near": [
@@ -1081,24 +1044,7 @@
        17.5
       ],
       "r": 2.0,
-      "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"
-     },
-     {
-      "path": [
-       [
-        15.66641639482141,
-        19.0,
-        20.329622734725216
-       ],
-       [
-        15.66641639482141,
-        38.5,
-        11.583201466831557
-       ]
-      ],
-      "r": 3.0,
-      "max_mm3": 520,
-      "reason": "phase-lead C-groove in the inner face (added, not in the STEP): the twisted 3 x AWG24 bundle snaps through a 3.0 mouth into a R2.0 channel from the stator exit to the lug top: the original RV03/STEP has no lead channel (leads run free over the lug), so the leads are retained and held clear of the disc bolt heads (wire.exterior_support, wire.rotor_clearance)"
+      "reason": "STEP counterbore ends in a 45 deg lead-in cone (r2.25 at |X| 17.4 down to r1.1 at 16.4); we cut a flat floor at CB_FLOOR_X instead: the inferred M2x8 button head needs a flat seat (fastener_seat.head_bearing) and its tip must bite 1.7 mm of the 2 mm stator base (fastener.engagement; the STEP floor gives 1.25)"
      }
     ]
    },
@@ -1747,7 +1693,8 @@
     ],
     "tol_mm": 0.6,
     "tol_vol_frac": 0.3,
-    "note": "fixed half + rotating bell compared together; the STEP bell is empty, the real stator stack and windings sit in it (declared on the part)"
+    "placement_tol_mm": 0.8,
+    "note": "fixed half + rotating bell compared together; the STEP bell is empty, the real stator stack and windings sit in it (declared on the part); the GEPRC drawing bell is 1.5 mm taller than the STEP can (cap 6.7 vs 5.2), so the can bbox centre sits 0.75 mm off"
    },
    {
     "part": "battery",
@@ -1908,6 +1855,7 @@
    ],
    "material": "pla_st",
    "process": "fdm",
+   "thin_wall_deviation": "matches original RVRN 2.0: RV02/RV03 end the notch top in a zero-thickness wedge and the R3.25 nose arc leaves 0.15 mm round the CSK cone (STEP sections at the notch top and y 40.5); kept for parity (user order)",
    "label": "RV03 XALT HD right weapon mount (8 mm): GR1507 stator on 4 M2 through the back spacer, notch on the chassis tab, 2 M3 CSK into the standoffs"
   },
   {
@@ -1942,6 +1890,7 @@
    ],
    "material": "pla_st",
    "process": "fdm",
+   "thin_wall_deviation": "matches original RVRN 2.0: RV02/RV03 end the notch top in a zero-thickness wedge and the R3.25 nose arc leaves 0.15 mm round the CSK cone (STEP sections at the notch top and y 40.5); kept for parity (user order)",
    "label": "RV02 XALT HD left weapon mount (8 mm): outboard MR85 bearing for the threaded shaft end, notch on the chassis tab, 2 M3 CSK into the standoffs"
   },
   {
@@ -3707,12 +3656,12 @@
     "head_std": "DIN 7991",
     "head_dk": 6.0,
     "head_k": 1.86,
-    "clearance_d": 3.6,
+    "clearance_d": 3.2,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
     "csk_d": 6.4,
-    "csk_depth": 1.4,
+    "csk_depth": 1.6,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -3748,12 +3697,12 @@
     "head_std": "DIN 7991",
     "head_dk": 6.0,
     "head_k": 1.86,
-    "clearance_d": 3.6,
+    "clearance_d": 3.2,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
     "csk_d": 6.4,
-    "csk_depth": 1.4,
+    "csk_depth": 1.6,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -3905,12 +3854,12 @@
     "head_std": "DIN 7991",
     "head_dk": 6.0,
     "head_k": 1.86,
-    "clearance_d": 3.6,
+    "clearance_d": 3.2,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
     "csk_d": 6.4,
-    "csk_depth": 1.4,
+    "csk_depth": 1.6,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -3946,12 +3895,12 @@
     "head_std": "DIN 7991",
     "head_dk": 6.0,
     "head_k": 1.86,
-    "clearance_d": 3.6,
+    "clearance_d": 3.2,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
     "csk_d": 6.4,
-    "csk_depth": 1.4,
+    "csk_depth": 1.6,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -4084,7 +4033,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    17.15,
+    16.7,
     44.5,
     23.5
    ],
@@ -4104,7 +4053,7 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
-    "cbore_depth": 1.7106,
+    "cbore_depth": 2.1606,
     "grip": 5.4606
    },
    "through": [
@@ -4122,7 +4071,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    17.15,
+    16.7,
     32.5,
     23.5
    ],
@@ -4142,7 +4091,7 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
-    "cbore_depth": 2.1954,
+    "cbore_depth": 2.6454,
     "grip": 5.9454
    },
    "through": [
@@ -4160,7 +4109,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    17.15,
+    16.7,
     38.5,
     29.5
    ],
@@ -4180,7 +4129,7 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
-    "cbore_depth": 1.029,
+    "cbore_depth": 1.479,
     "grip": 4.779
    },
    "through": [
@@ -4198,7 +4147,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    17.15,
+    16.7,
     38.5,
     17.5
    ],
@@ -4218,7 +4167,7 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
-    "cbore_depth": 2.877,
+    "cbore_depth": 3.327,
     "grip": 6.627
    },
    "through": [
@@ -5282,19 +5231,19 @@
      16.0
     ],
     [
-     15.66641639482141,
-     19.0,
-     20.329622734725216
+     11.8,
+     15.5,
+     18.2
     ],
     [
-     15.66641639482141,
-     38.5,
-     11.583201466831557
+     11.8,
+     27.0,
+     18.2
     ],
     [
-     12.65,
-     38.5,
-     11.583201466831557
+     11.8,
+     30.0,
+     14.5
     ]
    ]
   },
@@ -5838,19 +5787,19 @@
       16.0
      ],
      [
-      15.66641639482141,
-      19.0,
-      20.329622734725216
+      11.8,
+      15.5,
+      18.2
      ],
      [
-      15.66641639482141,
-      38.5,
-      11.583201466831557
+      11.8,
+      27.0,
+      18.2
      ],
      [
-      12.65,
-      38.5,
-      11.583201466831557
+      11.8,
+      30.0,
+      14.5
      ]
     ]
    }
