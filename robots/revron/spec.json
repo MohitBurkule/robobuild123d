@@ -1265,6 +1265,15 @@
     "deviations": [
      {
       "near": [
+       -19.5,
+       43.7,
+       5.8
+      ],
+      "r": 2.5,
+      "reason": "the STEP nose tab interpenetrates the weapon mount's boss; the tab is cut by the boss outline plus the WG_MOUNT_GAP clearance, and its arc round SB stands WG_MOUNT_GAP off the chassis lug radius"
+     },
+     {
+      "near": [
        -25.75,
        46.4,
        2.2
@@ -1362,6 +1371,15 @@
     "tol_mm": 0.8,
     "tol_vol_frac": 0.25,
     "deviations": [
+     {
+      "near": [
+       19.5,
+       43.7,
+       5.8
+      ],
+      "r": 2.5,
+      "reason": "the STEP nose tab interpenetrates the weapon mount's boss; the tab is cut by the boss outline plus the WG_MOUNT_GAP clearance, and its arc round SB stands WG_MOUNT_GAP off the chassis lug radius"
+     },
      {
       "near": [
        25.75,
