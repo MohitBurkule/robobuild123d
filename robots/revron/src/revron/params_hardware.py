@@ -132,6 +132,10 @@ KEYHOLE_DEV, KEYHOLE_DEV_R = (28.5, -30.5, 5.85), 5.0   # N10 keyhole U-slot: ce
 LOBE_DEV, LOBE_DEV_R = (32.0, -13.5, 9.4), 3.5  # param: organic centroid of the lobe-tail trim vs STEP blobs
 # param: end
 BASE_DEV_Z, PANEL_DEV_R, TOP_DEV_Z = 4.5, 3.5, 19.95
+# Top Panel Cut-Extrude3 (RVRN 2.0 STEP Top_Panel_1, dumps_v2): 0.1 mm-deep engraved lettering, world x -17.75..18.81,
+# y -8.68..-2.53, top face z 19.57; four r5 spheres along the text line cover it (laser-etched, not modelled)
+TOP_TEXT_DEV_Z, TOP_TEXT_DEV_R = 19.57, 5.0
+TOP_TEXT_DEV_XY = ((-3.78, -5.57), (-13.73, -5.62), (5.84, -5.26), (15.04, -5.66))
 NOSE_DEV, NOSE_DEV_R = (MNT_IN + 2.0, SB[0] + 0.6, SB[1] - 1.7), 5.0             # mount nose pad (|x|, y, z): thickened nose wall, deviation from the STEP nose
 STATOR_DEV_X, TAP_DEV_R = 16.8, 2.0                                              # stator lead-in cone site; tap-hole sites
 __all__ = [n for n in dir() if not n.startswith("__")]   # last line: every name above is exported
