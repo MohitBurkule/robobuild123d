@@ -666,31 +666,51 @@ def shaft_findings(ctx):
     return out
 
 
-def ligaments(m, n=30):
-    """[(axis, h, centre (u, v), ring d, ligament mm)] for every closed hole ring in sections on all three axes."""
+def _rings_at(m, ax, h):
+    """[(centre (u, v), ring d, ligament mm)] of the closed hole rings in the section {axis = h}."""
     from shapely.geometry import LinearRing, Polygon
 
     from .ref_features import section
 
+    g = section(m, ax, h)
+    if g is None or g.is_empty:
+        return []
+    out = []
+    for p in getattr(g, "geoms", [g]):
+        rings = list(p.interiors)
+        for i, ring in enumerate(rings):
+            lr = LinearRing(ring)
+            d = lr.distance(p.exterior)
+            for j, o in enumerate(rings):
+                if j != i:
+                    d = min(d, lr.distance(LinearRing(o)))
+            pc = Polygon(ring)
+            out.append(((pc.centroid.x, pc.centroid.y), 2 * math.sqrt(pc.area / math.pi), float(d)))
+    return out
+
+
+def ring_lig(m, ax, h, c):
+    """Ligament of the ring centred near c in section {axis = h} of m, or None when there is no ring there."""
+    got = [x for x in _rings_at(m, ax, h) if math.dist(x[0], c) < 0.8]
+    return min((x[2] for x in got), default=None)
+
+
+def ligaments(m, n=30):
+    """[(axis, h, centre (u, v), ring d, ligament mm)] for every closed hole ring in sections on all three axes."""
     out = []
     for ax in range(3):
         lo, hi = m.bounds[0][ax], m.bounds[1][ax]
         for f in np.linspace(0.02, 0.98, n):
             h = float(lo + (hi - lo) * f)
-            g = section(m, ax, h)
-            if g is None or g.is_empty:
-                continue
-            for p in getattr(g, "geoms", [g]):
-                rings = list(p.interiors)
-                for i, ring in enumerate(rings):
-                    lr = LinearRing(ring)
-                    d = lr.distance(p.exterior)
-                    for j, o in enumerate(rings):
-                        if j != i:
-                            d = min(d, lr.distance(LinearRing(o)))
-                    pc = Polygon(ring)
-                    out.append((ax, h, (pc.centroid.x, pc.centroid.y), 2 * math.sqrt(pc.area / math.pi), float(d)))
+            out += [(ax, h, c, d, lig) for c, d, lig in _rings_at(m, ax, h)]
     return out
+
+
+def face_graze(m, ax, h, c, lim, step=0.25):
+    """True when a thin ring at height h is only the last slice before the bore leaves a face: one step outward
+    the ring is gone (or the section is), one step inward the wall is >= lim."""
+    a, b = ring_lig(m, ax, h - step, c), ring_lig(m, ax, h + step, c)
+    return (a is None and b is not None and b >= lim) or (b is None and a is not None and a >= lim)
 
 
 def ligament_diffs(model, ref, lim=0.8, tol=0.1):
@@ -713,10 +733,14 @@ def ligament_diffs(model, ref, lim=0.8, tol=0.1):
     for ax, h, c, d, lig in lm:
         if lig >= lim or d < 0.8:
             continue
-        same = [x for x in lr if x[0] == ax and abs(x[1] - h) < 0.6 and math.dist(x[2], c) < 0.8]
-        rl = min((x[4] for x in same), default=None)
-        out.append({"kind": "thin", "at": p3(ax, h, c), "lig": round(lig, 2), "ref": None if rl is None else round(rl, 2),
-                    "matches": rl is not None and lig >= rl - tol,
+        # the reference measured at the SAME height (not at its own sample heights: a face graze is one thin slice)
+        rl = ring_lig(ref, ax, h, c) if ref is not None else None
+        if rl is None and ref is not None:
+            same = [x for x in lr if x[0] == ax and abs(x[1] - h) < 0.6 and math.dist(x[2], c) < 0.8]
+            rl = min((x[4] for x in same), default=None)
+        graze = face_graze(model, ax, h, c, lim)
+        out.append({"kind": "graze" if graze else "thin", "at": p3(ax, h, c), "lig": round(lig, 2), "ref": None if rl is None else round(rl, 2),
+                    "matches": graze or (rl is not None and lig >= rl - tol),
                     "msg": f"bore d{d:.1f} at {p3(ax, h, c)}: wall {lig:.2f} mm" + ("" if rl is None else f" (reference {rl:.2f})")})
     for ax, h, c, d, lig in lr:
         if d < 2.0:
@@ -814,7 +838,7 @@ def rev2_findings(ctx, prm):
                        .on(p.id).here(op[0]["at"]).fix(f"Keep >= {prm['ligament_mm']:g} mm of wall round every bore (move or shrink the bore, or thicken the wall)."))
         if same or wv:
             out.append(note("visual.ligament", G, "Thin bore walls the reference has too",
-                            f"`{p.id}`: {len(same)} as thin in the reference" + (f", {len(wv)} reasoned deviations" if wv else "") + "."))
+                            f"`{p.id}`: {len(same)} as thin in the reference or a face graze (thin only in the last slice before a face)" + (f", {len(wv)} reasoned deviations" if wv else "") + "."))
         # deviation claims with a stated extent
         notes = [(str(p._extra.get("deviation") or ""), None)] + [(str(d.get("reason") or ""), d) for d in e.get("deviations") or []]
         seen = set()
