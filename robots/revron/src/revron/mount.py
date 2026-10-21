@@ -103,15 +103,15 @@ def _prism(sk, x0, x1):
 
 
 def _batter(m):
-    """The battered outer face as a plane in the mount frame (x = x0 - lean*z - toe*y)."""
+    """The battered outer face as a plane in the mount frame (x = MNT_T - drop - lean*z - toe*y)."""
     b = m["batter"]
-    return bd.Plane(origin=(b["x0"], 0, 0), z_dir=(1, b["toe"], b["lean"]))
+    return bd.Plane(origin=(MNT_T - b["drop"], 0, 0), z_dir=(1, b["toe"], b["lean"]))
 
 
 def batter_x(side, y, z):
     """x (mount frame) of the battered outer face at (y, z) about the axis."""
     b = MNT_SIDE[side]["batter"]
-    return b["x0"] - b["lean"] * z - b["toe"] * y
+    return MNT_T - b["drop"] - b["lean"] * z - b["toe"] * y
 
 
 # ------------------------------------------------------------------------------------------- phase-lead groove

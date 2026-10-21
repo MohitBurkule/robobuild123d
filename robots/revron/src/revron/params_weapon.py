@@ -57,12 +57,12 @@ STATOR_DIRS = tuple((round(math.cos(math.radians(a))), round(math.sin(math.radia
 WSEG_LO, WSEG_FINE, WSEG_MID, WSEG_HI, WSEG_FN, WSEG_MAX, WSEG_ARC, WSEG_ARC_S = 24, 32, 48, 64, 96, 128, 40, 12   # circle / arc tessellation of the 2D profiles
 # weapon mount RV02 (left, shaft end) / RV03 (right, stator): the per-side master parameters of the one plate builder
 # (STEP measurements): teardrop top radius about the axis, notch-top Y where its tangent starts, angle where the rim
-# leaves for the front edge, and the battered outer face x = x0 - lean*z - toe*y in the mount frame
-# (x out from the inner face, y, z from the weapon axis): it stands x0 off the inner face at the axis, leans in with
-# height and towards the nose
+# leaves for the front edge, and the battered outer face x = MNT_T - drop - lean*z - toe*y in the mount frame
+# (x out from the inner face, y, z from the weapon axis): at the axis it sits `drop` below the full plate thickness,
+# and leans in with height and towards the nose
 MNT_SIDE = dict(
-    r=dict(top_r=10.0, notch_y=10.17, rim_end=-14.5, batter=dict(x0=5.5916, lean=0.154, toe=0.0404)),
-    l=dict(top_r=7.0, notch_y=9.0, rim_end=-5.0, batter=dict(x0=5.19735, lean=0.1701, toe=0.0158)))
+    r=dict(top_r=10.0, notch_y=10.17, rim_end=-14.5, batter=dict(drop=2.4084, lean=0.154, toe=0.0404)),
+    l=dict(top_r=7.0, notch_y=9.0, rim_end=-5.0, batter=dict(drop=2.80265, lean=0.1701, toe=0.0158)))
 MNT_TOP_Z = CH_Z1                        # top of the rear notch: the teardrop's tangent line starts here
 TAB = dict(y0=CH_Y1, z0=5.35, h=8.2, y1=26.5, cham=1.0)   # chassis tab the notch drops over: rear Y, floor Z, height, front-face Y, front chamfer
 NOSE_R, NOSE_A0 = 3.25, -16.0           # nose arc round the SB standoff and where it leaves the outline (deg)
