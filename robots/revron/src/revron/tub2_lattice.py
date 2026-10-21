@@ -32,8 +32,8 @@ def pockets():
     """+X cutters. Faces centred on the crossing in X are the caps and are clipped to the corner posts."""
     out = []
     for f in _pockets_2d().faces():
-        s = extrude(f, -(TOP_Y - FLOOR_Y))
-        if abs(f.center().X - XC) < SKIN:
+        s = fillet(extrude(f, -(TOP_Y - FLOOR_Y)).faces().sort_by(Axis.Y)[0].edges(), FLOOR_R)
+        if abs(f.center().X - XC) < SKIN:                  # caps: clipped after the round, so the clip cuts stay sharp
             s = s & (Pos(XC, (FLOOR_Y + TOP_Y) / 2, ZC) * Box(2 * CAP_HALF, TOP_Y - FLOOR_Y + 2 * OVER, Z1 - Z0 + 2 * OVER))
-        out.append(fillet(s.faces().sort_by(Axis.Y)[0].edges(), FLOOR_R))
+        out.append(s)
     return out
