@@ -33,7 +33,7 @@ SP_TOP_R = 1.5                      # top-line corner round
 SP_TOP_R_MIN_DEG = 5.0              # corners that turn less than this stay sharp
 GEO_EPS = 1e-4                      # coordinate match tolerance when picking edges by position
 SP_REAR_ROUND = ((-32.2, 9.7), 8.2)  # rear end: a full round over the wheel
-SP_FOOT = [(-31.6, -12.0), (-42.0, -11.9), (-40.6, -2.1), (-40.8, 3.3), (-42.9, 13.3), (-31.6, 13.3)]   # 1 mm wide foot under the chassis lobe (X, Y)
+SP_FOOT = dict(c=(-85.46, -0.92), r=44.83, y=(-12.0, 13.3))   # 1 mm foot under the chassis lobe: from the inner face out to an R44.8 arc (STEP fit < 0.2 mm), between these Y
 SP_FOOT_Z = (FLOOR_Z, FLOOR_Z + 1.0)
 SP_NOSE_Y0 = SP_FRONT["c"][1]    # nose front face (plane through the swing axis, tangent to the swing's outer cone)
 SP_NOSE_RUN = 10.0                   # the nose is the swing's outer cone swept on this far along +Y (its round end is the hollow's axis)

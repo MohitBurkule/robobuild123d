@@ -69,7 +69,8 @@ def _side_body(pin=True):
     b = _b()
     wall = sp_wall(b)   # analytic wall (side_wall.py): cones / planes / one S-bend skin; the profile below trims its top and rear end
     profile = _side_profile(b)
-    foot = _ext(_poly(SP_FOOT), "xy", *SP_FOOT_Z)
+    ft = SP_FOOT
+    foot = _S(_box(SP_X_IN, ft["c"][0], *ft["y"], *SP_FOOT_Z), _cyl(ft["r"], *SP_FOOT_Z, ft["c"], "z"))   # the lobe's footprint, outside the arc
     wall = _I(wall, profile)
     nose_blk = _S(nose_body(b), _ext(_round(Polygon(SP_NOSE_NOTCH), r_in=SP_NOSE_R), "xy", *SP_NOSE_Z))   # inner notch round the wedgelet block
     # the nose top is the wedgelet's ramp (the swing's 40 deg cone is tangent to it, so a wedge rides up both as one face); like the
