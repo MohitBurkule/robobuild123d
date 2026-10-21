@@ -124,7 +124,7 @@ def panel_mating():
     """The weapon mounts and side panels seat on the chassis: their solids are cut out of it."""
     from .weapon import weapon_mount
     from .side import side_panel
-    return [weapon_mount("l"), weapon_mount("r"), side_panel(1), side_panel(-1)]
+    return [weapon_mount("l"), weapon_mount("r"), side_panel(1, pin=False), side_panel(-1, pin=False)]
 
 
 def cuts(c):
