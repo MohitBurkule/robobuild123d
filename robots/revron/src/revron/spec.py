@@ -83,11 +83,13 @@ def make_spec(model_file):
         # drive
         P(id=f"motor_{n}", kind="motor", catalog="n10_2200rpm_spicy", at=place_at(f"motor_{n}"), rot=place_rot(f"motor_{n}"), rotates_with="fixed")
         P(id=f"whub_r{n}", kind="pulley", solid_fraction=SOLID["hub"], rotates_with=f"wheel_r{n}", print_orientation="+x", shape=M(f"rear_hub_{n}"), parent="tub", **place(f"whub_r{n}"),
+          thin_wall_deviation="matches original RVRN 2.0: RV21 draws the 0.5 mm O-ring flange, the 0.5 mm raised lip at the free end and the 0.2 mm end recess; kept for parity (user order)",
           joint=JT[f"whub_r{n}"], color="#333333", **PLA,
           label="RV21 printed rear hub 16 x 12: blind D-bore on the N10, O-ring groove, crowned F1 tyre seat, M2 grub on the flat")
         P(id=f"wheel_r{n}", kind="wheel", material="rubber", process="cots", tyre_of=f"whub_r{n}", rotates_with=f"wheel_r{n}", parent=f"whub_r{n}", shape=M(f"rear_tyre_{n}"), **place(f"wheel_r{n}", f"whub_r{n}"),
           color="#1b1b1b", stock="RV22 Scalextric F1 front tyre 21.5 x 14 x 9.5", label="Scalextric F1 tyre 21.5 x 14 x 9.5")
         P(id=f"whub_f{n}", kind="pulley", solid_fraction=SOLID["hub"], rotates_with=f"wheel_f{n}", print_orientation="+x", shape=M(f"front_hub_{n}"), parent=f"so_a{n}", **place(f"whub_f{n}", f"so_a{n}"),
+          thin_wall_deviation="matches original RVRN 2.0: RV19 draws its three flanges 0.5 mm thick; kept for parity (user order)",
           joint=JT[f"whub_f{n}"], color="#333333", **PLA,
           label="RV19 micro hub 9 x 9 greased on the 25 mm standoff, O-ring groove inboard")
         P(id=f"wheel_f{n}", kind="wheel", material="rubber", process="cots", tyre_of=f"whub_f{n}", rotates_with=f"wheel_f{n}", parent=f"whub_f{n}", shape=M(f"front_tyre_{n}"), **place(f"wheel_f{n}", f"whub_f{n}"),

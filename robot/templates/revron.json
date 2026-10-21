@@ -2471,6 +2471,7 @@
     0.0,
     180.0
    ],
+   "thin_wall_deviation": "matches original RVRN 2.0: RV21 draws the 0.5 mm O-ring flange, the 0.5 mm raised lip at the free end and the 0.2 mm end recess; kept for parity (user order)",
    "joint": {
     "kind": "revolute",
     "axis": [
@@ -2545,6 +2546,7 @@
     0.0,
     180.0
    ],
+   "thin_wall_deviation": "matches original RVRN 2.0: RV19 draws its three flanges 0.5 mm thick; kept for parity (user order)",
    "joint": {
     "kind": "revolute",
     "axis": [
@@ -2875,6 +2877,7 @@
     0.0,
     0.0
    ],
+   "thin_wall_deviation": "matches original RVRN 2.0: RV21 draws the 0.5 mm O-ring flange, the 0.5 mm raised lip at the free end and the 0.2 mm end recess; kept for parity (user order)",
    "joint": {
     "kind": "revolute",
     "axis": [
@@ -2949,6 +2952,7 @@
     0.0,
     0.0
    ],
+   "thin_wall_deviation": "matches original RVRN 2.0: RV19 draws its three flanges 0.5 mm thick; kept for parity (user order)",
    "joint": {
     "kind": "revolute",
     "axis": [
