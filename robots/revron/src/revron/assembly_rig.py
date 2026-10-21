@@ -11,6 +11,8 @@ place as their host, so the mate leaves them at identity and the tests prove the
 from .params import *  # noqa: F401,F403
 from .joints import Rig, tub_rig
 from .fastener_rig import screws, on_mount
+from . import panel_base, panel_top
+import build123d as b
 
 SIDES = ((-1, "l"), (1, "r"))
 
@@ -97,10 +99,10 @@ def _drive(r):
             r.joint(part, "standoff_seat", (s * xs[1], *yz))         # screw seat / 5.3 hole on the standoff end
             r.mate(so, "outer_end", part, "standoff_seat")
     for i, (x, y) in enumerate(INS):                                 # base panel: its screw holes on the floor bores
-        r.joint("base_panel", f"hole_{i}", (x, y, BASE_BOLT_Z))
+        r.joint_in("base_panel", f"hole_{i}", panel_base.FRAME, b.Location((x, y, BASE_BOLT_Z)))
     r.mate("tub", "screw_b0", "base_panel", "hole_0")
     for i, (x, y) in enumerate(TOP_XY):                              # Ti top panel: its holes on the column tops
-        r.hole("top_panel", f"hole_{i}", (x, y, TOP_BOLT_Z), (0, 0, -1))
+        r.joint_in("top_panel", f"hole_{i}", panel_top.FRAME, b.Location(b.Plane((x, y, TOP_BOLT_Z), z_dir=(0, 0, -1))))
     r.mate("tub", "screw_t0", "top_panel", "hole_0")
 
 

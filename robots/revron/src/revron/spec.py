@@ -2,6 +2,7 @@
 import json, math, os, sys
 from .params import *  # noqa: F401,F403
 from .common import *  # noqa: F401,F403
+from . import panel_base, panel_top
 
 
 def _mid(span):
@@ -28,10 +29,10 @@ def make_spec(model_file):
     P(id="tub", kind="structure", print_orientation="-z", rotates_with="fixed", solid_fraction=SOLID["tub"], color="#2a2c30", shape=M("chassis"), **PLA,
       thin_wall_deviation="matches original RVRN 2.0: the switch-slot rim is 0.5 mm wide on RV01_Chassis_1 too (RV01 section y=-10: slot edge x=27.0, outer face x=27.5) and 0.65 mm between the slot front and the deck pocket (section x=25: y -12.25 to -11.6)",
       label="RV01 printed chassis: closed X-ribbed deck (printed deck-down), open floor for the base panel, N10 keyhole side pockets, nut lobes, weapon-mount tabs and standoff lugs")
-    P(id="base_panel", kind="structure", print_orientation="+z", rotates_with="fixed", color="#2a2c30", shape=M("base_panel"), **PLA,
+    P(id="base_panel", kind="structure", print_orientation="+z", rotates_with="fixed", color="#2a2c30", shape=M("base_panel"), **place("base_panel"), **PLA,
       thin_wall_deviation="the 1 mm panel is shallower than the 1.2 mm M2 CSK head (STEP RV26 has the same 5 countersunk seats): a 90 deg seat cone leaves a knife wedge under the countersink rim, unavoidable at this thickness (parity with RV26)",
       label="RV26 1 mm printed base panel, 5 M2 CSK into the floor heat-sets, 0.45 mm pads preload the N10s")
-    P(id="top_panel", kind="armor", material="titanium", process="laser", stock="0.9 mm Ti Gr5 sheet", secondary_ops=["countersink"], rotates_with="fixed", color="#8d939b", shape=M("top_panel"),
+    P(id="top_panel", kind="armor", material="titanium", process="laser", stock="0.9 mm Ti Gr5 sheet", secondary_ops=["countersink"], rotates_with="fixed", color="#8d939b", shape=M("top_panel"), **place("top_panel"),
       label="0.9 mm Ti top panel: laser outline with 4 countersunk 2.2 corner holes, 4 M2 flat-head thread-forming screws into the column tops (material inferred, see REFERENCE.md)")
     # ---------------------------------------------------------------- weapon module
     P(id="mount_r", kind="structure", print_orientation="+x", rotates_with="fixed", solid_fraction=SOLID["mount"], color="#2a2c30", shape=M("mount_r", MNT_FRAME["r"]), **place("mount_r"), **PLA,
@@ -109,7 +110,7 @@ def make_spec(model_file):
     # ---------------------------------------------------------------- fasteners
     for i, (x, y) in enumerate(INS):
         F(id=f"bolt_b{i}", designation="M2x6", material="aluminium", **seat(f"bolt_b{i}"), through=["base_panel", "tub"], threads_into=f"insert_b{i}", tool="hex1.3",
-          hole=_panel_seat("base", i)[1].hole)
+          hole=panel_base.seat(i, local=False)[1].hole)
     for s, n in SIDES:
         mnt = f"mount_{n}"
         F(id=f"bolt_u{n}a", designation="M3x12", head="countersunk", material="aluminium", **seat(f"bolt_u{n}a"), through=[mnt], threads_into=f"so_a{n}", hole=_mount_csk(s, *SA, "M3x12")[1].hole,
@@ -133,7 +134,7 @@ def make_spec(model_file):
     for i, (x, y) in enumerate(TOP_BOLT_XY):
         F(id=f"bolt_t{i}", designation="M2x5", head="button", tool="hex1.3", **seat(f"bolt_t{i}"), through=["top_panel", "tub"], threads_into=f"insert_t{i}",
           reason="M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
-          hole=_panel_seat("top", i)[1].hole)
+          hole=panel_top.seat(i)[1].hole)
     for i, yy in enumerate(SW_SCREW_Y):
         F(id=f"bolt_sw{i}", designation="M2x3", head="button", tool="hex1.3", **seat(f"bolt_sw{i}"), through=["power_switch", "tub"], threads_into="tub", access_before=["base_panel"], hole=_switch_hole(yy)[1].hole,
           reason="thread-forming into the 1.7 pilot holes either side of the switch flange; heads clamp the flange to the deck underside (inferred)",
