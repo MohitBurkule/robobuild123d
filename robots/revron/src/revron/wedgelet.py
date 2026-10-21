@@ -45,4 +45,7 @@ def wedgelet(s):
     # 1.5 mm slit, the TPU nose tab bears on the mount)
     # the nose tab grazes the chassis lug by 0.1 mm: take the chassis out of it (a printed TPU nose conforms)
     sh = _S(sh, _fork_slot(s), weapon_mount("l" if s < 0 else "r"))
-    return _one(sh.cut(_one(chassis())))   # no clean(): merging faces after the grazing chassis cut leaves the nose tab non-manifold
+    # the chassis is only valid to cut on its +X half (the -X cut of the same shape comes back non-manifold), so always
+    # take it out in the +X frame and mirror back: both hands then get the same, symmetric cut
+    cut_r = _one((sh if s > 0 else _mirror_x(sh)).cut(_one(chassis())))   # no clean(): merging faces after the grazing chassis cut leaves the nose tab non-manifold
+    return cut_r if s > 0 else _mirror_x(cut_r)
