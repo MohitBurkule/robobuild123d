@@ -1736,6 +1736,16 @@
      "part": "base_panel"
     }
    },
+   "at": [
+    0.0,
+    -11.6,
+    4.5
+   ],
+   "rot": [
+    -180.0,
+    0.0,
+    -180.0
+   ],
    "material": "pla_st",
    "process": "fdm",
    "thin_wall_deviation": "the 1 mm panel is shallower than the 1.2 mm M2 CSK head (STEP RV26 has the same 5 countersunk seats): a 90 deg seat cone leaves a knife wedge under the countersink rim, unavoidable at this thickness (parity with RV26)",
@@ -1760,6 +1770,16 @@
      "part": "top_panel"
     }
    },
+   "at": [
+    0.0,
+    -5.6,
+    20.4
+   ],
+   "rot": [
+    -180.0,
+    0.0,
+    -180.0
+   ],
    "label": "0.9 mm Ti top panel: laser outline with 4 countersunk 2.2 corner holes, 4 M2 flat-head thread-forming screws into the column tops (material inferred, see REFERENCE.md)"
   },
   {
