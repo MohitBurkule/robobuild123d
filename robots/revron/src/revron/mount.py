@@ -1,7 +1,26 @@
-"""[fix-B] Weapon mounts RV02/RV03: profile, notch, standoff screws, stator holes, motor back spacer."""
-import json, math, os, sys
-from .params import *  # noqa: F401,F403
-from .common import *  # noqa: F401,F403
+"""[fix-B] Weapon mounts RV02/RV03: profile, notch, standoff screws, stator holes, motor back spacer.
+
+[fix-B-rebuild] One plate builder for both mounts, in the mount frame (MNT_FRAME: x out from the inner face, y, z from
+the weapon axis): a build123d side sketch (teardrop round the axis, nose round the SB standoff, heel and the notch over
+the chassis tab) from the chassis features it fits and the per-side MNT_SIDE masters, extruded as a slab plus a
+battered boss, holes as patterns. RV03 is built as drawn; RV02 is the same builder with its own profile masters,
+mirrored to -X. Placed on MNT_FRAME (the joint rig's mount frames)."""
+import math
+import os
+import sys
+
+import build123d as bd
+
+from . import plate as pl
+from .common import _U, _b, _m2, _polar, _tangent_line_circle
+from .params_chassis import HERE, MNT_IN, MNT_SLAB_T, MNT_T, SA, SB, WY, WZ
+from .params_weapon import (BIG, BOSS_OVER, BRG_SEAT_R, BSP, BSP_T, CB_FLOOR_X, CB_R,
+                            HOLE_FACE_RISE, LEAD_FLOOR_W, LEAD_GROOVE_R, LEAD_GROOVE_X, LEAD_MOUTH, LEAD_ROUND, MNT_FRAME,
+                            MNT_HEEL, MNT_NOTCH_UP, MNT_RELIEF_R, MNT_SCREW, MNT_SCREW_FIT, MNT_CSK_CLEAR, MNT_SIDE,
+                            MNT_TIP_REACH, MNT_TIP_WALL, MNT_TOP_Z, N_STACK, NOSE_A0, NOSE_PAD_R, NOSE_R, NUT_RECESS_R,
+                            SHAFT_CLR, SHAFT_R, STATOR_DIRS, STATOR_PCD, TAB, boss_line_z, lead_groove_ends)
+
+AXIS = bd.Vector(WY, WZ)   # the weapon axis in the chassis side view (Y, Z): the mount frame's origin in that view
 
 
 def stator_bolt_circle():
@@ -10,77 +29,92 @@ def stator_bolt_circle():
     return _polar(STATOR_PCD / 2, len(STATOR_DIRS))
 
 
-def _mount_clip():
-    """Region above the line from the notch top to the nose (the battered boss) as a polygon. The line runs on past the
-    nose to Y = BIG (no horizontal step at BOSS_Z): RV03's front edge passes within 1 um of the nose point, and a corner
-    there left a zero-width sliver face (visual.sliver)."""
-    return Polygon_([(TAB["y0"], MNT_TOP_Z), (BIG, boss_line_z(BIG)), (BIG, BIG), (0, BIG), (0, MNT_TOP_Z)])
+def _v(p):
+    return bd.Vector(*p)
 
 
-def _mount_profile(side):
-    """Weapon mount side profile (Y, Z): a teardrop round the weapon axis (R top_r) running down to the standoffs,
-    with the notch that drops over the chassis tab (open to the rear)."""
-    m, t = MNT_SIDE[side], TAB
-    c = (WY, WZ)
-    t0 = _tangent_line_circle((m["notch_y"], MNT_TOP_Z), c, m["top_r"], upper=True)
-    a0 = math.degrees(math.atan2(t0[1] - c[1], t0[0] - c[0]))
-    rim = _arc(c, m["top_r"], a0, m["rim_end"], WSEG_ARC)
-    nose = _arc(SB, NOSE_R, NOSE_A0, -90.0, WSEG_ARC_S)
+def _at(c, r, deg):
+    return _v(c) + bd.Vector(r * math.cos(math.radians(deg)), r * math.sin(math.radians(deg)))
+
+
+# ------------------------------------------------------------------------------------------------- side profile
+def _tab():
+    """The chassis tab the notch drops over (side view, chassis Y, Z): rear Y0 to the front face Y1, floor Z0, height
+    h, its two front corners chamfered `cham` (STEP)."""
+    t = TAB
     zt = t["z0"] + t["h"]
-    heel = [(t["y0"] + MNT_HEEL["step"], MNT_HEEL["z"]), (t["y0"] - MNT_HEEL["back"], MNT_HEEL["z_hook"]), (t["y0"] - MNT_HEEL["back"], MNT_HEEL["z_lip"]), (t["y0"], MNT_HEEL["z_lip"])]
-    # notch front face on the lug (0 gap): the lug bears a hit before the screws
-    notch = [(t["y0"], t["z0"]), (t["y1"] - t["cham"], t["z0"]), (t["y1"], t["z0"] + t["cham"]), (t["y1"], zt - t["cham"]), (t["y1"] - t["cham"], zt), (t["y0"], zt),
-             (t["y0"], MNT_TOP_Z - MNT_NOTCH_UP), (t["y0"] - MNT_NOTCH_UP, MNT_TOP_Z), (m["notch_y"], MNT_TOP_Z)]
-    p = _poly(rim + [nose[0]] + nose[1:] + heel + notch)
-    # the nose CSK (DIN 7991 cone) is wider than the STEP's nose arc and left a 0 mm knife edge there: a local pad
-    # (CSK radius + printed wall) wraps the countersink, under the nose and up the front edge (RV02's front tangent passed 0.3 mm from the cone rim)
-    from shapely.geometry import Point
-    p = p.union(Point(SB).buffer(NOSE_PAD_R, WSEG_HI))
-    # the rear notch meets the rim tangent in a wedge thinner than a printed wall: thicken it to MNT_TIP_WALL without
-    # moving the part's rearmost point (the grown copy is cut at the notch-top Y)
-    from shapely.geometry import Point, box as _sb
-    tip = Point((m["notch_y"], MNT_TOP_Z)).buffer(MNT_TIP_REACH, WSEG_HI).intersection(_sb(m["notch_y"], MNT_TOP_Z, BIG, BIG))
-    p = p.union(p.buffer(MNT_TIP_WALL / 2, WSEG_HI).intersection(tip))
-    # the notch takes the chassis tab (sharp 45 deg chamfered corners in the STEP): the corner relief must not fill the notch,
-    # or the sharp tab corners would be cut away by the relief when the mount is subtracted from the chassis
-    from shapely.geometry import Polygon as _P
-    void = _P([(t["y0"], t["z0"]), (t["y1"] - t["cham"], t["z0"]), (t["y1"], t["z0"] + t["cham"]), (t["y1"], zt - t["cham"]),
-               (t["y1"] - t["cham"], zt), (t["y0"], zt)])
-    return _sharpen(_round(p, r_out=0.0, r_in=MNT_RELIEF_R).difference(void))
+    return bd.Polygon((t["y0"], t["z0"]), (t["y1"] - t["cham"], t["z0"]), (t["y1"], t["z0"] + t["cham"]), (t["y1"], zt - t["cham"]),
+                      (t["y1"] - t["cham"], zt), (t["y0"], zt), align=None)
 
 
-def weapon_mount(side):
-    """RV02 (left, shaft end) / RV03 (right, stator): 8 mm printed XALT HD plates. A 4 mm slab carries the full
-    profile; the outer 4 mm is a boss above the standoff line whose outer face is battered (leans in 7.7 deg) so side
-    hits glance off. The rear notch drops over the chassis tab: the tab, not the screws, takes fore/aft load."""
+def _outline(m):
+    """Closed side outline (chassis Y, Z) of the plate before the notch: notch top -> tangent -> teardrop rim (top_r
+    round the axis) -> front edge -> nose arc (NOSE_R round SB) -> flat underside -> heel hooked under the tab ->
+    rear face up the tab's rear Y -> leaned top-rear corner -> notch top."""
+    t, h = TAB, MNT_HEEL
+    top = _v((m["notch_y"], MNT_TOP_Z))
+    t0 = _v(_tangent_line_circle((m["notch_y"], MNT_TOP_Z), (WY, WZ), m["top_r"], upper=True))
+    a0 = math.degrees(math.atan2(t0.Y - AXIS.Y, t0.X - AXIS.X))
+    rim1 = _at(AXIS, m["top_r"], m["rim_end"])
+    nose0, nose1 = _at(SB, NOSE_R, NOSE_A0), _at(SB, NOSE_R, -90.0)
+    # heel lip -> tab floor: the corner relief (MNT_RELIEF_R, tangent to the lip) runs out on the tab's rear-bottom
+    # corner, the lip under the tab being shorter than the relief radius
+    rc = (t["y0"] - math.sqrt(MNT_RELIEF_R ** 2 - (h["z_lip"] + MNT_RELIEF_R - t["z0"]) ** 2), h["z_lip"] + MNT_RELIEF_R)
+    heel = [nose1, (t["y0"] + h["step"], h["z"]), (t["y0"] - h["back"], h["z_hook"]), (t["y0"] - h["back"], h["z_lip"]), (rc[0], h["z_lip"])]
+    rear = [(t["y0"], t["z0"]), (t["y0"], MNT_TOP_Z - MNT_NOTCH_UP), (t["y0"] - MNT_NOTCH_UP, MNT_TOP_Z), top, t0]
+    a_end = math.degrees(math.atan2(t["z0"] - rc[1], t["y0"] - rc[0]))
+    edges = [bd.Edge.make_three_point_arc(t0, _at(AXIS, m["top_r"], (a0 + m["rim_end"]) / 2), rim1), bd.Edge.make_line(rim1, nose0),
+             bd.Edge.make_three_point_arc(nose0, _at(SB, NOSE_R, (NOSE_A0 - 90.0) / 2), nose1),
+             bd.Edge.make_three_point_arc(_v((rc[0], h["z_lip"])), _at(rc, MNT_RELIEF_R, (-90.0 + a_end) / 2), _v(rear[0]))]
+    edges += [bd.Edge.make_line(_v(p), _v(q)) for line in (heel, rear) for p, q in zip(line, line[1:])]
+    f = bd.Face(bd.Wire(edges))
+    return f if f.normal_at().Z > 0 else -f              # counter-clockwise, so it fuses with the pad circle
+
+
+def mount_profile(side):
+    """Side sketch of a mount (chassis Y, Z): the outline, a pad round the nose CSK (NOSE_PAD_R = CSK cone + a printed
+    wall: the STEP nose arc left the cone a 0 mm knife edge), the notch-top wedge thickened to MNT_TIP_WALL within
+    MNT_TIP_REACH (rearmost point kept), concave corners relieved MNT_RELIEF_R, then the notch: the tab cut out, its
+    corners sharp as the tab's."""
     m = MNT_SIDE[side]
-    s = 1 if side == "r" else -1
-    prof = _mount_profile(side)
-    xi, xm, xo = s * MNT_IN, s * MNT_SLAB, s * MNT_OUT
-    eps = m["slab_eps"]                          # RV03's STEP slab face sits just inside the slab plane, RV02's on it
-    slab = _ext(prof, "yz", xi, xm - s * eps, arcs=True)
-    # boss: the profile above the line from the notch top to the nose, clipped in 3D so it keeps the slab's true arcs
-    # (a 2D clip left arc stubs too short to refit, whose chords against the slab's arcs made sliver faces)
-    boss = _one(_ext(prof, "yz", xm - s * eps, xo + s * BOSS_OVER, arcs=True)).intersect(_ext(_mount_clip(), "yz", xm - s * eps - s, xo + s * (BOSS_OVER + 1)))
-    a_, kz, ky = m["face"]                        # outer battered face (STEP): one plane leaning in with height and towards the nose
-    bb = _b()
-    boss = _one(boss).split(bb.Plane(origin=(s * a_, 0.0, 0.0), z_dir=(s * 1.0, ky, kz)), keep=bb.Keep.BOTTOM)
-    body = _U(slab, boss)
-    cuts = []
-    axis = (WY, WZ)
-    if side == "r":
-        cuts.append(_cyl(SHAFT_D / 2 + SHAFT_CLR, -BIG / 2, BIG / 2, axis))          # shaft end clearance
-        for dy, dz in stator_bolt_circle():                                # GR1507 stator M2 on its bolt circle
-            cuts.append(_stator_hole(s, dy, dz)[0])
-        cuts.append(lead_groove())                                         # snap-in channel for the weapon phase leads
-    else:
-        cuts.append(_cyl(BRG_SEAT_R, -BIG / 2, BIG / 2, axis))                        # outboard bearing seat
-        cuts.append(_cyl(NUT_RECESS_R, xm, xo + s, axis))                             # shaft nut recess
-    for (y, z), fastener in zip((SA, SB), MNT_SCREW):                                 # M3 CSK into the standoffs, flush inside
-        cuts.append(_mount_csk(s, y, z, fastener)[0])
-    return _S(body, *cuts)
+    p = _outline(m) + bd.Pos(*SB) * bd.Circle(NOSE_PAD_R)
+    top = _v((m["notch_y"], MNT_TOP_Z))
+    zone = (bd.Pos(*top) * bd.Circle(MNT_TIP_REACH)) & (bd.Pos(*top) * bd.Rectangle(MNT_TIP_REACH, MNT_TIP_REACH, align=bd.Align.MIN))
+    p = p + (bd.offset(p, MNT_TIP_WALL / 2, kind=bd.Kind.ARC) & zone)
+    tab = _tab()
+    return pl.round_corners(p, r_in=MNT_RELIEF_R, keep=tab.vertices()) - tab
 
 
+def _boss_zone(prof):
+    """Side region of the boss: above the line from the notch top to the nose (boss_line_z), and above the notch top
+    behind the tab (the leaned rear corner), out to the profile's own extent."""
+    bb = prof.bounding_box()
+    y0, y1, z1 = bb.min.X, bb.max.X, bb.max.Y
+    return bd.Polygon((TAB["y0"], MNT_TOP_Z), (y1, boss_line_z(y1)), (y1, z1), (y0, z1), (y0, MNT_TOP_Z), align=None)
+
+
+def _side_plane(x):
+    """The mount frame's side-view plane at x (out from the inner face): sketch (u, v) = chassis (Y, Z) - axis."""
+    return bd.Plane(origin=(x, -WY, -WZ), x_dir=(0, 1, 0), z_dir=(1, 0, 0))
+
+
+def _prism(sk, x0, x1):
+    return bd.extrude(_side_plane(x0) * sk, amount=x1 - x0)
+
+
+def _batter(m):
+    """The battered outer face as a plane in the mount frame (x = MNT_T - drop - lean*z - toe*y)."""
+    b = m["batter"]
+    return bd.Plane(origin=(MNT_T - b["drop"], 0, 0), z_dir=(1, b["toe"], b["lean"]))
+
+
+def batter_x(side, y, z):
+    """x (mount frame) of the battered outer face at (y, z) about the axis."""
+    b = MNT_SIDE[side]["batter"]
+    return MNT_T - b["drop"] - b["lean"] * z - b["toe"] * y
+
+
+# ------------------------------------------------------------------------------------------- phase-lead groove
 def lead_groove_section(half=False):
     """[(kind, points)] outline in (u = world X, v = offset across the run) of RV03's phase-lead C-groove section: the
     round channel (LEAD_GROOVE_R) on u = LEAD_GROOVE_X, opened to the inner face by the LEAD_MOUTH slot through the
@@ -124,62 +158,113 @@ def lead_groove():
     return _U(body, *ends)
 
 
-def _mount_csk(s, y, z, fastener):
-    """robot.cad.holes cutter + record for a mount-to-standoff M3 CSK (bolt_u*): head flush in the inner face, DIN 7991
-    countersink (dk 6.0 head in the STEP's 6.2 mm cone) and ISO 273 loose 3.6
-    clearance through the 4 mm slab, so the notch, not the shank, takes fore/aft load."""
+# --------------------------------------------------------------------------------------------------------- the plate
+def _plate(side):
+    """Mount body in the mount frame, outboard = +x: a slab (MNT_SLAB_T) carrying the
+    full profile, and the boss over the rest of MNT_T on the boss zone, its outer face battered (split on _batter)."""
+    m = MNT_SIDE[side]
+    prof = mount_profile(side)
+    slab = _prism(prof, 0.0, MNT_SLAB_T)
+    boss = _prism(prof & _boss_zone(prof), MNT_SLAB_T, MNT_T + BOSS_OVER).split(_batter(m), keep=bd.Keep.BOTTOM)
+    return _U(slab, boss)
+
+
+def _bore(r, x0, x1):
+    """Cylinder r on the weapon axis from x0 to x1 (mount frame)."""
+    return bd.Solid.make_cylinder(r, x1 - x0, bd.Plane(origin=(x0, 0, 0), z_dir=(1, 0, 0)))
+
+
+def _hole_tool():
     _repo = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
     if _repo not in sys.path:
         sys.path.insert(0, _repo)
     from robot.cad.holes import hole_tool
-    return hole_tool((s * MNT_IN, y, z), (s, 0, 0), fastener, head="csk", into="through", side="head", grip=MNT_SLAB - MNT_IN, fit=MNT_SCREW_FIT, csk_clear=MNT_CSK_CLEAR)
+    return hole_tool
 
 
-def _stator_hole(s, dy, dz):
-    """robot.cad.holes cutter + record for one RV03 stator screw (bolt_wm*): M2x8 button, head on the counterbore floor."""
-    _repo = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
-    if _repo not in sys.path:
-        sys.path.insert(0, _repo)
-    from robot.cad.holes import hole_tool
+def _to_mount(p, side="r", world=True):
+    """A mount-frame point in world coordinates (world=True), else as is; the mirrored RV02 frame flips x."""
+    if not world:
+        return p
+    s = 1 if side == "r" else -1
+    o = MNT_FRAME[side]
+    return (o[0] + s * p[0], o[1] + p[1], o[2] + p[2])
+
+
+def _mount_csk(s, y, z, fastener, world=True):
+    """robot.cad.holes cutter + record for a mount-to-standoff M3 CSK (bolt_u*) at chassis (y, z): head flush in the
+    inner face, DIN 7991 countersink (dk 6.0 head in the STEP's 6.2 mm cone) and ISO 273 loose clearance through the
+    slab, so the notch, not the shank, takes fore/aft load. world=False: in the (unmirrored) mount frame."""
+    side = "r" if s > 0 else "l"
+    p = _to_mount((0.0, y - WY, z - WZ), side, world)
+    d = (s, 0, 0) if world else (1, 0, 0)
+    return _hole_tool()(p, d, fastener, head="csk", into="through", side="head", grip=MNT_SLAB_T, fit=MNT_SCREW_FIT, csk_clear=MNT_CSK_CLEAR)
+
+
+def _stator_hole(s, dy, dz, world=True):
+    """robot.cad.holes cutter + record for one RV03 stator screw (bolt_wm*): M2x8 button through RV03, head on the
+    counterbore floor (STEP CB_FLOOR_X); the counterbore opens on the battered face, measured from its highest
+    point over the hole (HOLE_FACE_RISE)."""
     from robot.cad import fastener_catalog as fc
-    y, z = WY + dy, WZ + dz
-    a_, kz, ky = MNT_SIDE["r"]["face"]
-    face = a_ - kz * z - ky * y + HOLE_FACE_RISE * math.hypot(kz, ky)   # RV03 battered outer face |X| (STEP plane, see weapon_mount)
-    depth = face - CB_CONE_X[1]                     # counterbore down to the STEP floor
-    cut, rec = hole_tool((s * face, y, z), (-s, 0, 0), "M2x8", head="button", into="through", side="head",
-                         grip=face - MNT_IN, cbore=depth, cbore_clear=2 * CB_R - fc.head(2.0, "button")[0], fit="normal")
-    return _one(cut.solids()[0] if hasattr(cut, "solids") and len(cut.solids()) == 1 else cut), rec
+    b = MNT_SIDE["r"]["batter"]
+    x = batter_x("r", dy, dz) + HOLE_FACE_RISE * math.hypot(b["lean"], b["toe"])
+    cut, rec = _hole_tool()(_to_mount((x, dy, dz), "r", world), (-s, 0, 0), "M2x8", head="button", into="through", side="head",
+                            grip=x, cbore=x - (CB_FLOOR_X - MNT_IN), cbore_clear=2 * CB_R - fc.head(2.0, "button")[0], fit="normal")
+    return (cut.solids()[0] if hasattr(cut, "solids") and len(cut.solids()) == 1 else cut), rec
 
 
 def _stack_hole(fastener, x, y, z, sx, grip):
     """robot.cad.holes record of an M2 button screw on the weapon axis direction sx: clearance through `grip` mm, tapped beyond."""
-    _m2()   # puts the repo on sys.path
-    from robot.cad.holes import hole_tool
-    return hole_tool((x, y, z), (sx, 0, 0), fastener, head="button", into="tapped", side="both", grip=grip, fit="close")[1]
+    return _hole_tool()((x, y, z), (sx, 0, 0), fastener, head="button", into="tapped", side="both", grip=grip, fit="close")[1]
 
 
-def _bsp_window(c, a0):
-    """Face (YZ plane at X 0) of one back-spacer window: the ring sector win_in..win_out, half_deg either side of a0,
-    its outer corners filleted round_out and its inner ones round_in as true arcs (STEP windows, measured)."""
-    bb, b = _b(), BSP
-    P = lambda r, a: bb.Vector(0.0, c[0] + r * math.cos(math.radians(a)), c[1] + r * math.sin(math.radians(a)))   # noqa: E731
-    lo, hi = a0 - b["half_deg"], a0 + b["half_deg"]
-    w = bb.Wire([bb.Edge.make_three_point_arc(P(b["win_out"], lo), P(b["win_out"], a0), P(b["win_out"], hi)), bb.Edge.make_line(P(b["win_out"], hi), P(b["win_in"], hi)),
-                 bb.Edge.make_three_point_arc(P(b["win_in"], hi), P(b["win_in"], a0), P(b["win_in"], lo)), bb.Edge.make_line(P(b["win_in"], lo), P(b["win_out"], lo))])
-    f = bb.Face(w)
-    rc = lambda v: math.hypot(v.Y - c[0], v.Z - c[1])   # noqa: E731
-    mid = (b["win_in"] + b["win_out"]) / 2
-    f = f.fillet_2d(b["round_out"], [v for v in f.vertices() if rc(v) > mid])
-    return f.fillet_2d(b["round_in"], [v for v in f.vertices() if rc(v) < mid and abs(rc(v) - b["win_in"]) < 1e-6])
+def weapon_mount(side):
+    """RV02 (left, shaft end) / RV03 (right, stator): 8 mm printed XALT HD plates. A slab carries the full profile; the
+    boss above the standoff line has its outer face battered (leans in) so side hits glance off. The rear notch drops
+    over the chassis tab: the tab, not the screws, takes fore/aft load. Built in the mount frame (RV02 mirrored)."""
+    body = _plate(side)
+    cuts = [_mount_csk(1, y, z, f, world=False)[0] for (y, z), f in zip((SA, SB), MNT_SCREW)]   # M3 CSK into the standoffs
+    if side == "r":
+        cuts.append(_bore(SHAFT_R + SHAFT_CLR, -MNT_T, 2 * MNT_T))                              # shaft end clearance
+        cuts += [_stator_hole(1, dy, dz, world=False)[0] for dy, dz in stator_bolt_circle()]     # GR1507 stator M2
+        cuts.append(lead_groove().moved(bd.Location(tuple(-v for v in MNT_FRAME["r"]))))          # snap-in channel for the phase leads
+    else:
+        cuts.append(_bore(BRG_SEAT_R, -MNT_T, 2 * MNT_T))                                        # outboard bearing seat (MR85, pressed)
+        cuts.append(_bore(NUT_RECESS_R, MNT_SLAB_T, 2 * MNT_T))                                  # shaft nut recess
+    part = body.cut(*cuts).clean()
+    part = part if side == "r" else part.mirror(bd.Plane.YZ)
+    return pl.placed(part.solids()[0] if len(part.solids()) == 1 else part, MNT_FRAME[side])
 
 
+# ----------------------------------------------------------------------------------------------- motor back spacer
 def motor_back_spacer():
-    """1.5 mm printed spacer between the GR1507 stator base and RV03: clears the motor's rear bearing boss and wires.
-    Built from true circles and arcs (a shapely polyline ring tessellates as faceted seams, visual.faceting)."""
-    bb, b, c = _b(), BSP, (WY, WZ)
-    x0, x1 = BSP_X
-    cuts = [_cyl(b["bore_r"], x0 - 1, x1 + 1, c)]
-    cuts += [_cyl(b["hole_r"], x0 - 1, x1 + 1, (WY + dy, WZ + dz)) for dy, dz in stator_bolt_circle()]
-    cuts += [bb.Solid.extrude(_bsp_window(c, b["phase"] + 360.0 * k / N_STACK), bb.Vector(x1 - x0 + 2, 0, 0)).moved(bb.Location((x0 - 1, 0, 0)))
-             for k in range(N_STACK)]
-    return _S(_cyl(b["r"], x0, x1, c), *cuts)
+    """1.5 mm printed spacer between the GR1507 stator base and RV03 (mount frame, inboard of the inner face): clears
+    the motor's rear bearing boss and wires; stator screw holes on the stator bolt circle, N_STACK windows between them."""
+    b = BSP
+    win = pl.ring_window(b["win_in"], b["win_out"], b["half_deg"], b["round_out"], b["round_in"])
+    sk = (bd.Circle(b["r"]) - bd.Circle(b["bore_r"]) - pl.polar(win, N_STACK, b["phase"])
+          - [bd.Pos(dy, dz) * bd.Circle(_m2()[1]) for dy, dz in stator_bolt_circle()])
+    plane = bd.Plane(origin=(-BSP_T, 0, 0), x_dir=(0, 1, 0), z_dir=(1, 0, 0))
+    return pl.placed(bd.extrude(plane * sk, amount=BSP_T), MNT_FRAME["r"])
+
+
+# ------------------------------------------------------------------------------------- 2D views for the wedgelet
+def _mount_profile(side, tol=0.005):
+    """mount_profile() as a shapely polygon (chassis Y, Z), its edges sampled to `tol` chord: the wedgelet's nose tab
+    and the profile tests work in shapely."""
+    from shapely.geometry import Polygon
+    f = mount_profile(side).faces()[0]
+
+    def ring(w):
+        pts = []
+        for e in w.order_edges():
+            n = 1 if e.geom_type == bd.GeomType.LINE else max(2, int(math.ceil(e.length / math.sqrt(8 * tol * e.radius))))
+            pts += [(q.X, q.Y) for q in (e.position_at(k / n) for k in range(n))]
+        return pts
+    return Polygon(ring(f.outer_wire()), [ring(w) for w in f.inner_wires()]).buffer(0)
+
+
+def _mount_clip():
+    """The boss zone as a shapely half-plane (above the notch-top-to-nose line, run on to Y = BIG) for the wedgelet."""
+    from shapely.geometry import Polygon
+    return Polygon([(TAB["y0"], MNT_TOP_Z), (BIG, boss_line_z(BIG)), (BIG, BIG), (0, BIG), (0, MNT_TOP_Z)])
