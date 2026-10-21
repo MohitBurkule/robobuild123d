@@ -20,41 +20,37 @@ REAR_HUB_PROFILE = ((0.0, 0.0), (0.0, RH_FLANGE_R), (_g0, RH_FLANGE_R), (_g0 + H
                     (RH_LEN - RH_WALL_T, 0.0))
 RH_D = dict(r=1.6, flat=0.9, arc_n=60, flat_n=27, crown=0.02)                           # D-bore: radius, flat height above the axis, facet counts, flat crown
 RH_BORE_X, RH_NUT_X, RH_NUT_HALF, RH_NUT_Z, RH_GRUB_X, RH_GRUB_ENGAGE = 29.0, 41.0, 2.05, (2.4, 4.4), 34.3, 0.9   # |X| of bore start / slot end, slot half-width, slot z above axis, grub, grub tip past the flat
-RH_ORIGIN_X = 30.0                                                                      # |X| of the hub inner face
-FH_FLANGE_R, FH_SEAT_R, FH_BORE_R, FH_LEN, FH_RAMP, FH_SEAT_X, FH_GROOVE_FLOOR = 4.5, 3.7, 2.7, 9.0, 0.4, (2.9, 7.9), (0.93, 1.57)
-FRONT_HUB_PROFILE = ((0.0, FH_BORE_R), (0.0, FH_FLANGE_R), (HUB_FLANGE_T, FH_FLANGE_R), (0.75, 3.96), (FH_GROOVE_FLOOR[0], FH_SEAT_R),
-                     (FH_GROOVE_FLOOR[1], FH_SEAT_R), (1.75, 3.96), (1.8, FH_FLANGE_R), (2.5, FH_FLANGE_R), (2.5, FH_SEAT_R + FH_RAMP),
-                     (FH_SEAT_X[0], FH_SEAT_R), (FH_SEAT_X[1], FH_SEAT_R), (FH_SEAT_X[1] + FH_RAMP, FH_SEAT_R + FH_RAMP),
-                     (FH_SEAT_X[1] + FH_RAMP, FH_FLANGE_R), (FH_LEN, FH_FLANGE_R), (FH_LEN, FH_BORE_R))
-FH_ORIGIN_X = 30.0                                                                      # |X| of the front hub inner face
-QUARTER_TURN = 90   # deg, tyre shoulder arcs sweep a quarter turn
-STANDOFF_BORE_R, TYRE_SECTION_STEP = 1.25, 10                                           # standoff through-bore radius; shoulder arc step (deg)
+RH_GAP = 0.5                                                                            # Distance2: hub inner face off the chassis wall
+RH_ORIGIN_X = CH_HALF_W + RH_GAP                                                        # |X| of the hub inner face
+# RV19 micro hub (Revolve1 + Fillet1 + Chamfer1), drawn from its inner face: flange, O-ring groove, flange, 6 mm tyre seat, flange
+FH_BORE_R, FH_FLANGE_R, FH_SEAT_R, FH_FLANGE_T, FH_GROOVE_W, FH_SEAT_W = 2.7, 4.5, 3.7, 0.5, 1.5, 6.0   # bore, flange and seat radii, flange width, O-ring groove width, tyre seat width
+FH_FILLET, FH_GUSSET = 0.5, 0.4                                                          # Fillet1: groove roots; Chamfer1: 45 deg gussets at the seat ends
+FH_LEN = 3 * FH_FLANGE_T + FH_GROOVE_W + FH_SEAT_W                                       # 9
+FH_ORIGIN_X = RH_ORIGIN_X                                                               # Coincident82: the front hub inner face is in the rear hub's plane
+# RV22 rear tyre (Revolve1 + Chamfer1 + Fillet1): bore with a centre groove for the hub crown; RV20 micro tyre: plain ring, 4 chamfers
+TY_REAR = dict(od=21.5, bore=12.0, groove_r=7.0, groove_w=2.5, w=9.5, chamfer=1.0, fillet=0.5)
+TY_FRONT = dict(od=11.0, id=7.0, w=6.0, chamfer=0.2)
+TY_ARC_STEP = 5                                                                          # deg per fillet segment (under the 6 deg facet seam)
+SO_TAP_R, SO_PITCH, SO_CHAMFER = 1.25, 0.5, 0.2                                        # RV10/RV11: M3 tap bore radius, thread pitch, 45 deg end chamfer (Chamfer1)
+SO_THREAD_H = 0.625 * math.sqrt(3) / 2 * SO_PITCH                                       # thread depth (5/8 H, Profile_Height 0.2706); flat root P/8 wide, 60 deg flanks
 
 
 MNT_TIP_DEV, MNT_TIP_DEV_R = (MNT_IN + 2.5, 11.5, MNT_TOP_Z + 0.9), 5.0   # mount notch-top wedge thickened to a printable wall (|x|, y, z)
 
 
 
-# --- side.py: fork, hubs, side-panel width (fix-B lint) ---
-FK_X = {1: (24.5, 26.0), -1: (-26.5, -25.0)}      # fork X slab per side sign: asymmetric in the STEP (fork_5_1 24.5..26.0, fork_5_2 -26.5..-25.0), so not a mirror
-FK_EYE, FK_PIN_R, FK_SB_R = (36.33, 6.2), 0.75, 2.6   # eye on the nose standoff, pin hole, standoff hole (STEP 5.2 bore)
-FK_RES, FK_RES_PIN, FK_RES_BUF = 48, 24, 8        # circle / buffer segment counts
-FK_WEB, FK_WIN_LEAN = 1.2, 0.1                      # web left between cut loops (laser min 0.75 x 1.5 = 1.12); window edge lean
-FK_EYE_R = FK_PIN_R + FK_WEB                         # eye ring: a web of metal around the pin hole
-FK_BOT = SB[1] - FK_SB_R - FK_WEB                    # blade lower edge: a web below the standoff hole
-FK_BLADE = [(35.0, 4.9), (FK_EYE[0], FK_EYE[1] + FK_EYE_R), (40.4, 8.25), (41.0, 8.25), (66.68, 1.49), (51.75, FK_BOT), (38.9, FK_BOT)]   # param: organic fork blade outline (measured, STEP)
-FK_ROUND = (0.3, 0.5)                             # outer / inner corner radius of the blade
-FK_TIP = [(60.0, 1.27), (66.68, 1.49), (60.0, 2.5)]   # param: organic sharp-tip wedge
-FK_TIP_R = 0.15                                   # tip join radius (> kerf)
-FK_WIN_X0 = SB[0] + FK_SB_R + FK_WEB + FK_WIN_LEAN   # window rear edge sits a web away from the standoff hole
-FK_WIN = [(FK_WIN_X0 - FK_WIN_LEAN, 2.75), (54.0, 2.75), (FK_WIN_X0 + FK_WIN_LEAN, 5.4)]   # param: organic lightening window
-FK_WIN_R = 0.3
-FK_LAND_R = 0.15                     # land corners round r0.15 (> kerf)
-FK_LAND = [(64.0, 1.2), (66.68, 1.27), (66.68, 1.72), (64.0, 1.95)]   # param: organic 0.45 mm kerf land
-# param: end
-FK_TILT = -1.1                                    # deg, left fork nose-down about its standoff
+# --- fork_5 (Mirrorfork 5 sketch, the designer's driving dims; everything else in fork.py is a relation) ---
+# fork_5 frame: the sketch plane (u, v) with the origin on the 15 mm standoff axis, extruded +w FK_T. The assembly places it by
+# the STEP transform: origin on the standoff axis at X = FK_X0[side], extruded towards the chassis centre, turned FK_TILT[side] deg.
+FK_EYE_D, FK_PIN_DIST, FK_PIN_ANG = 7.5, 4.5, 65.0                      # D2 eye round the standoff, D5 pin distance, D4 angle from the sketch's vertical (the pin boss is tangent to the eye's top line)
+FK_TIP, FK_RAIL, FK_FILLET, FK_T = (26.0, 4.3), 2.0, 0.2, 1.5          # D8/D9 tip (back, down), D6/D7/D10 rails, Fillet1, Boss-Extrude1
+FK_WEB = 1.12                                                          # laser min web (0.75 x 1.5 mm Ti): the standoff hole and the pin hole are cut a web inside their rings (STEP: 1.10 and 1.098 -> d5.26 / d1.46 for the STEP's d5.3 / d1.5)
+FK_KERF = 0.15                                                         # laser kerf: the knife tip ends in a land 3 kerfs wide, its corners r >= kerf
+FK_BOT_ANG = 2.825                                                     # deg, lower edge tangent to the eye: the STEP hangs the right fork with that edge level (Parallel2)
+FK_X0 = {1: 26.0, -1: -25.0}                                           # |X| of the sketch plane per side: asymmetric in the STEP (fork_5_1 at 26.0, fork_5_2 at -25.0)
+FK_TILT = {1: FK_BOT_ANG, -1: 1.763}                                   # deg nose-down about the standoff (the left fork floats in the wedgelet cheek)
+FK_X = {1: (FK_X0[1] - FK_T, FK_X0[1]), -1: (FK_X0[-1] - FK_T, FK_X0[-1])}   # X slab per side
+FK_RES = 24                                                            # arc segments per quarter turn (3.75 deg: fitted to true arcs)
 
-TYRE_REAR = dict(od_id=(21.5, 14.0), x=(32.5, 42.0), shoulder=1.2)    # RV21 F1 tyre on the N10 shaft (right side; the left is mirrored)
-TYRE_FRONT = dict(od_id=(11.0, 7.0), x=(32.5, 38.5), shoulder=0.6)     # micro tyre on the nose standoff
 FORK_DEV = dict(x=25.5, y=66.0, z=1.4, r=2.0)   # reference-diff deviation sphere at the fork tip land (STEP knife tip)
 __all__ = [n for n in dir() if not n.startswith("__")]   # last line: every name above is exported

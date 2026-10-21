@@ -2241,8 +2241,8 @@
    "material": "titanium",
    "process": "laser",
    "stock": "1.5 mm Ti Gr5 sheet",
-   "min_web_mm": 1.05,
-   "min_web_reason": "1.1 mm web under the 5.3 standoff hole is the designer's own (RVRN 2.0 STEP fork_5 measures 1.1)",
+   "min_web_mm": 1.12,
+   "min_web_reason": "every web is the laser minimum 0.75 x 1.5 mm sheet = 1.12 mm (rings round the standoff and pin holes; the STEP fork_5 draws 1.10 and 1.098)",
    "parent": "so_bl",
    "rotates_with": "fixed",
    "color": "#9aa0a6",
@@ -2253,6 +2253,16 @@
      "part": "fork_l"
     }
    },
+   "at": [
+    -25.0,
+    40.5,
+    4.5
+   ],
+   "rot": [
+    90.0,
+    1.763,
+    -90.0
+   ],
    "label": "fork_5: 1.5 mm Ti fork on the 15 mm standoff, tail pinned in the wedgelet cheek slot"
   },
   {
@@ -2424,7 +2434,7 @@
    "kind": "pulley",
    "solid_fraction": 0.85,
    "rotates_with": "wheel_rl",
-   "print_orientation": "-x",
+   "print_orientation": "+x",
    "shape": {
     "type": "model",
     "file": "src/build_revron.py",
@@ -2433,6 +2443,16 @@
     }
    },
    "parent": "tub",
+   "at": [
+    -30.0,
+    -30.5,
+    11.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    180.0
+   ],
    "joint": {
     "kind": "revolute",
     "axis": [
@@ -2469,6 +2489,16 @@
      "part": "rear_tyre_l"
     }
    },
+   "at": [
+    2.5,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
    "color": "#1b1b1b",
    "stock": "RV22 Scalextric F1 front tyre 21.5 x 14 x 9.5",
    "label": "Scalextric F1 tyre 21.5 x 14 x 9.5"
@@ -2478,7 +2508,7 @@
    "kind": "pulley",
    "solid_fraction": 0.85,
    "rotates_with": "wheel_fl",
-   "print_orientation": "-x",
+   "print_orientation": "+x",
    "shape": {
     "type": "model",
     "file": "src/build_revron.py",
@@ -2487,6 +2517,16 @@
     }
    },
    "parent": "so_al",
+   "at": [
+    -30.0,
+    30.5,
+    5.5
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    180.0
+   ],
    "joint": {
     "kind": "revolute",
     "axis": [
@@ -2523,6 +2563,16 @@
      "part": "front_tyre_l"
     }
    },
+   "at": [
+    2.5,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
    "color": "#1b1b1b",
    "stock": "RV20 Scalextric micro SLX tyre 11 x 7 x 6",
    "label": "Scalextric micro tyre 11 x 7 x 6"
@@ -2595,8 +2645,8 @@
    "material": "titanium",
    "process": "laser",
    "stock": "1.5 mm Ti Gr5 sheet",
-   "min_web_mm": 1.05,
-   "min_web_reason": "1.1 mm web under the 5.3 standoff hole is the designer's own (RVRN 2.0 STEP fork_5 measures 1.1)",
+   "min_web_mm": 1.12,
+   "min_web_reason": "every web is the laser minimum 0.75 x 1.5 mm sheet = 1.12 mm (rings round the standoff and pin holes; the STEP fork_5 draws 1.10 and 1.098)",
    "parent": "so_br",
    "rotates_with": "fixed",
    "color": "#9aa0a6",
@@ -2607,6 +2657,16 @@
      "part": "fork_r"
     }
    },
+   "at": [
+    26.0,
+    40.5,
+    4.5
+   ],
+   "rot": [
+    90.0,
+    2.825,
+    -90.0
+   ],
    "label": "fork_5: 1.5 mm Ti fork on the 15 mm standoff, tail pinned in the wedgelet cheek slot"
   },
   {
@@ -2787,6 +2847,16 @@
     }
    },
    "parent": "tub",
+   "at": [
+    30.0,
+    -30.5,
+    11.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
    "joint": {
     "kind": "revolute",
     "axis": [
@@ -2823,6 +2893,16 @@
      "part": "rear_tyre_r"
     }
    },
+   "at": [
+    2.5,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
    "color": "#1b1b1b",
    "stock": "RV22 Scalextric F1 front tyre 21.5 x 14 x 9.5",
    "label": "Scalextric F1 tyre 21.5 x 14 x 9.5"
@@ -2841,6 +2921,16 @@
     }
    },
    "parent": "so_ar",
+   "at": [
+    30.0,
+    30.5,
+    5.5
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
    "joint": {
     "kind": "revolute",
     "axis": [
@@ -2877,6 +2967,16 @@
      "part": "front_tyre_r"
     }
    },
+   "at": [
+    2.5,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
    "color": "#1b1b1b",
    "stock": "RV20 Scalextric micro SLX tyre 11 x 7 x 6",
    "label": "Scalextric micro tyre 11 x 7 x 6"

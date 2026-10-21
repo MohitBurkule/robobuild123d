@@ -71,7 +71,7 @@ def make_spec(model_file):
           shape=M(f"so_a_{n}"), features=sp_spec(s, f"so_a{n}")[2], label="RV11 25 mm alu standoff: front axle, clamps the mount, the side panel screws to its end")
         P(id=f"so_b{n}", kind="pin", role="standoff", material="aluminium", process="cots", rotates_with="fixed", color="#b8bcc2", stock="RV10 M3 x 15 aluminium standoff, 5 OD",
           shape=M(f"so_b_{n}"), label="RV10 15 mm alu standoff: nose, through the chassis lug, the fork and the wedgelet cheeks")
-        P(id=f"fork_{n}", kind="fork", material="titanium", process="laser", stock="1.5 mm Ti Gr5 sheet", min_web_mm=WEB["fork"], min_web_reason="1.1 mm web under the 5.3 standoff hole is the designer's own (RVRN 2.0 STEP fork_5 measures 1.1)", parent=f"so_b{n}", rotates_with="fixed", color="#9aa0a6", shape=M(f"fork_{n}"),
+        P(id=f"fork_{n}", kind="fork", material="titanium", process="laser", stock="1.5 mm Ti Gr5 sheet", min_web_mm=FK_WEB, min_web_reason="every web is the laser minimum 0.75 x 1.5 mm sheet = 1.12 mm (rings round the standoff and pin holes; the STEP fork_5 draws 1.10 and 1.098)", parent=f"so_b{n}", rotates_with="fixed", color="#9aa0a6", shape=M(f"fork_{n}"), **place(f"fork_{n}"),
           label="fork_5: 1.5 mm Ti fork on the 15 mm standoff, tail pinned in the wedgelet cheek slot")
         P(id=f"wedgelet_{n}", kind="armor", deviation=f"RVRN 2.0 STEP: the wedgelet and the fork tine interpenetrate in the original (an interference there); we cut the tine's own {FK_X[s][1]-FK_X[s][0]:g} mm outline out of the wedgelet as its seat (nothing more), so the fork sits in with interference 0, hence the wedgelet is short by the tine volume at x {FK_X[s][0]:g}..{FK_X[s][1]:g}", material="tpu", process="fdm", thin_wall_deviation="matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)", solid_fraction=SOLID["tpu"], print_orientation="-z", parent=f"so_a{n}", rotates_with="fixed", color="#3c4048",
           shape=M(f"wedgelet_{n}"), cover_fasteners_deviation="RVRN 2.0 STEP: the wedgelet is clamped between the side panel nose and the 15 mm standoff end by bolt_s?b (listed in its `through`), and located on both standoffs; bolt_s?a seats the side panel directly on the 25 mm standoff end (the STEP wedgelet stops at |X| 38.5 and never enters that stack). Kept as designed; no extra screw (coordinator decision).",
@@ -82,15 +82,15 @@ def make_spec(model_file):
         P(id=f"nut_c{n}", kind="nut", catalog="nut_m3_thin", **place(f"nut_c{n}"), rotates_with="fixed")
         # drive
         P(id=f"motor_{n}", kind="motor", catalog="n10_2200rpm_spicy", at=place_at(f"motor_{n}"), rot=place_rot(f"motor_{n}"), rotates_with="fixed")
-        P(id=f"whub_r{n}", kind="pulley", solid_fraction=SOLID["hub"], rotates_with=f"wheel_r{n}", print_orientation="+x" if s > 0 else "-x", shape=M(f"rear_hub_{n}"), parent="tub",
+        P(id=f"whub_r{n}", kind="pulley", solid_fraction=SOLID["hub"], rotates_with=f"wheel_r{n}", print_orientation="+x", shape=M(f"rear_hub_{n}"), parent="tub", **place(f"whub_r{n}"),
           joint=JT[f"whub_r{n}"], color="#333333", **PLA,
           label="RV21 printed rear hub 16 x 12: blind D-bore on the N10, O-ring groove, crowned F1 tyre seat, M2 grub on the flat")
-        P(id=f"wheel_r{n}", kind="wheel", material="rubber", process="cots", tyre_of=f"whub_r{n}", rotates_with=f"wheel_r{n}", parent=f"whub_r{n}", shape=M(f"rear_tyre_{n}"),
+        P(id=f"wheel_r{n}", kind="wheel", material="rubber", process="cots", tyre_of=f"whub_r{n}", rotates_with=f"wheel_r{n}", parent=f"whub_r{n}", shape=M(f"rear_tyre_{n}"), **place(f"wheel_r{n}", f"whub_r{n}"),
           color="#1b1b1b", stock="RV22 Scalextric F1 front tyre 21.5 x 14 x 9.5", label="Scalextric F1 tyre 21.5 x 14 x 9.5")
-        P(id=f"whub_f{n}", kind="pulley", solid_fraction=SOLID["hub"], rotates_with=f"wheel_f{n}", print_orientation="+x" if s > 0 else "-x", shape=M(f"front_hub_{n}"), parent=f"so_a{n}",
+        P(id=f"whub_f{n}", kind="pulley", solid_fraction=SOLID["hub"], rotates_with=f"wheel_f{n}", print_orientation="+x", shape=M(f"front_hub_{n}"), parent=f"so_a{n}", **place(f"whub_f{n}", f"so_a{n}"),
           joint=JT[f"whub_f{n}"], color="#333333", **PLA,
           label="RV19 micro hub 9 x 9 greased on the 25 mm standoff, O-ring groove inboard")
-        P(id=f"wheel_f{n}", kind="wheel", material="rubber", process="cots", tyre_of=f"whub_f{n}", rotates_with=f"wheel_f{n}", parent=f"whub_f{n}", shape=M(f"front_tyre_{n}"),
+        P(id=f"wheel_f{n}", kind="wheel", material="rubber", process="cots", tyre_of=f"whub_f{n}", rotates_with=f"wheel_f{n}", parent=f"whub_f{n}", shape=M(f"front_tyre_{n}"), **place(f"wheel_f{n}", f"whub_f{n}"),
           color="#1b1b1b", stock="RV20 Scalextric micro SLX tyre 11 x 7 x 6", label="Scalextric micro tyre 11 x 7 x 6")
     P(id="battery", kind="battery", catalog="lipo_2s_180_turnabot", **place("battery"), retained="press_fit")
     P(id="rxesc", kind="esc", catalog="malenki_nano_rvrn2", **place("rxesc"), retained="strap",
