@@ -17,10 +17,9 @@ SIDE_TRI = [(3.72, -5.59), (SIDE_X, SIDE_DIAG["y_up"] + SIDE_DIAG["k_up"] * (SID
             (SIDE_X, SIDE_DIAG["y_lo"] - SIDE_DIAG["k_lo"] * (SIDE_X - SIDE_DIAG["x"]))]
 SIDE_R = 1.9                                  # apex R towards the centre
 REAR_Y1 = -26.5                               # front edge of the rear pockets (shared)
-RIB, WEB = 1.0, 2.0                           # rib to the centre pocket / inner wall, web between the two side pockets
+RIB, WEB, REAR_W = 1.0, 2.01, 10.37          # rib to the centre pocket, web between the two side pockets, width of each (STEP; they end 1.0 off the inner wall)
 REAR_C = dict(half=COL_R, y=(-30.0, REAR_Y1), r=1.2)                    # centre rear pocket: as wide as the rear boss
-_REAR_W = (CH_IN_X - RIB - (REAR_C["half"] + RIB) - WEB) / 2          # width of each rear box: from the centre-pocket rib to the wall rib
-REAR_P = dict(x0=REAR_C["half"] + RIB, w=_REAR_W, pitch=_REAR_W + WEB, y=(WALL_IN_REAR + 1.1, REAR_Y1), r=0.6)   # rear deck pockets: first inner X, width, pitch, Y span (1.1 skin off the rear wall), corner R
+REAR_P = dict(x0=REAR_C["half"] + RIB, w=REAR_W, pitch=REAR_W + WEB, y=(WALL_IN_REAR + 1.1, REAR_Y1), r=0.6)   # rear deck pockets: first inner X, width, pitch, Y span (1.1 skin off the rear wall), corner R
 # ---- base-panel seat
 SEAT_Z = BASE_Z0 + BASE_T                     # top of the base panel skin = Z of the rabbet floor
 RABBET_GROW = 0.05                            # the rabbet is the panel outline grown by this
