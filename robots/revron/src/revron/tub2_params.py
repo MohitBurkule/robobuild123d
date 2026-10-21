@@ -19,10 +19,19 @@ BORE_R, BORE_CH = 1.5, 0.6              # heat-set bore, chamfer at both ends
 STOP_FRONT_Y = KEY_SPAN[1]              # stop wall front face is the key tab front face
 STOP_BACK_Y = STOP_FRONT_Y - CH_WALL    # one wall thick
 LEDGE_X0, LEDGE_Y0, LEDGE_R = 20.0, -27.3, 1.5
-STOP_ROUND_R = 4.5
-# deck pockets: X pockets on the axis, side pockets between their diagonals, rear boxes between the stop walls
-UP_APEX, LO_APEX, DIAG_K, RIB_V = -3.07, -8.13, 0.6404, 4.9
-CENTRE_Y0 = -30.0
-POCKET_X = INS_RIGHT[0][0] - COL_R      # pocket half width = corner block face
+STOP_ROUND_R = 5.0
+# deck pockets: two diagonal ribs run from the centre (mid of the front/rear column rows) through the column centres; each rib is
+# 2 walls wide. The four regions between the ribs are the pockets (X pockets on the axis, side pockets); R = wall at every rib corner.
+CENTRE_Y = sum(y for _, y in INS_RIGHT) / len(INS_RIGHT)         # crossing point of the ribs on the axis
+DIAG_K = (INS_RIGHT[0][1] - CENTRE_Y) / INS_RIGHT[0][0]           # rib slope: centre -> front column
+RIB_OFF = CH_WALL * (1 + DIAG_K ** 2) ** 0.5                      # vertical offset of a rib edge from its centre line (half width = wall)
+POCKET_X = INS_RIGHT[0][0] - COL_R                                # X pocket half width = corner block face (tangent to the column)
+SIDE_X = CH_IN_X - 5.0                                            # side pocket right edge = switch pad inner edge (pad 5 wide)
+FRONT_RIB = 0.6                                                   # X pocket stops this far short of the front wall inner face
+STOP_GAP = 0.2                                                    # rear X pocket stops this far in front of the stop wall face between the walls
+POCKET_SKIN = 1.1                                                 # rear boxes stay this far from the rear wall and from the stop wall
+CENTRE_Y0 = -30.0                                                 # centre rear box rear edge
+REAR_R = 1.5                                                      # rear box corner R
 # base seat
 PAD_MARGIN = 0.3
+PANEL_CLEARANCE = 0.2                  # rabbet = RV26 outline offset by this (print clearance)

@@ -2,7 +2,7 @@
 squared rear corner behind the gearbox plates, and the stop wall's lower inner edge round."""
 from build123d import Align, Axis, BuildSketch, Circle, Locations, Mode, Plane, Rectangle, extrude, fillet
 from .tub2_params import (BASE_OUT, INS, PANEL_EAR_R, PANEL_EAR_EDGE, PANEL_R_IN, PRELOAD_PAD, PAD_MARGIN, SEAT_Z, CH_Z0, CH_WALL,
-                          CH_IN_X, WALL_IN_REAR, DECK, OVER, SA_X0, STOP_BACK_Y, STOP_FRONT_Y, STOP_ROUND_R, SKIN)
+                          CH_IN_X, WALL_IN_REAR, DECK, OVER, SA_X0, STOP_BACK_Y, STOP_FRONT_Y, STOP_ROUND_R, SKIN, PANEL_CLEARANCE)
 from .tub2_util import box_xy, concave_filler, mirrored, prism
 
 
@@ -13,14 +13,14 @@ def panel_outline(grow):
     with BuildSketch() as sk:
         with Locations((0, o["y0"] - grow)):
             Rectangle(2 * (o["x"] + grow), o["y1"] - o["y0"] + 2 * grow, align=(Align.CENTER, Align.MIN))
-        fillet(sk.vertices(), o["r"])
+        fillet(sk.vertices(), o["r"] + grow)   # grown outline: corner R grows with it
         with Locations(*near_edge):
             Circle(PANEL_EAR_R + grow)
     return sk
 
 
 def rabbet():
-    return prism(panel_outline(SKIN / 20), CH_Z0 - CH_WALL, SEAT_Z)
+    return prism(panel_outline(PANEL_CLEARANCE), CH_Z0 - CH_WALL, SEAT_Z)
 
 
 def pad_recess_and_corner():
@@ -34,12 +34,12 @@ def pad_recess_and_corner():
 def stop_wall_round():
     """+X: the lower inner edge of the stop wall is rounded R: a quarter-round cutter (square minus circle) run along the wall's Y span."""
     z1 = SEAT_Z + STOP_ROUND_R
-    with BuildSketch(Plane.XZ.offset(-(STOP_FRONT_Y + SKIN))) as sk:
+    with BuildSketch(Plane.XZ.offset(-(STOP_BACK_Y + STOP_ROUND_R))) as sk:
         with Locations((SA_X0, SEAT_Z - OVER)):
             Rectangle(STOP_ROUND_R, z1 - SEAT_Z + OVER, align=(Align.MIN, Align.MIN))
         with Locations((SA_X0 + STOP_ROUND_R, z1)):
             Circle(STOP_ROUND_R, mode=Mode.SUBTRACT)
-    return extrude(sk.sketch, STOP_FRONT_Y + SKIN - STOP_BACK_Y + OVER)
+    return extrude(sk.sketch, STOP_ROUND_R + OVER)   # runs R along Y from the stop wall back face
 
 
 def seat_cuts():

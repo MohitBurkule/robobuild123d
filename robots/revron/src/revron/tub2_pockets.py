@@ -1,70 +1,61 @@
-"""[tub2] Deck lightening pockets (cut from below, SKIN left): two X pockets on the axis, two side pockets between their diagonals,
-the centre rear box and two side rear boxes between the stop walls. Side and rear pockets are built on +X and mirrored."""
+"""[tub2] Deck lightening pockets (cut from below, SKIN left): the diagonal ribs from the centre through the column centres bound the two
+X pockets and two side pockets (R = wall at every rib corner); rear boxes sit between the stop walls. Right-hand pockets are mirrored."""
 from build123d import Align, BuildSketch, Locations, Polygon, Rectangle, fillet
-from .tub2_params import (POCKET_X, UP_APEX, LO_APEX, DIAG_K, RIB_V, CENTRE_Y0, SKIN, CH_WALL, CH_IN_X, COL_R, DECK,
-                          WALL_IN_FRONT, WALL_IN_REAR, STOP_BACK_Y, STOP_FRONT_Y)
+from .tub2_params import (POCKET_X, SIDE_X, CENTRE_Y, DIAG_K, RIB_OFF, FRONT_RIB, STOP_GAP, POCKET_SKIN, CENTRE_Y0, REAR_R, SKIN,
+                          CH_WALL, CH_IN_X, COL_R, DECK, WALL_IN_FRONT, WALL_IN_REAR, STOP_BACK_Y, STOP_FRONT_Y, SA_X0)
 from .tub2_util import prism, mirrored
-
-APEX_R = CH_WALL                          # round at the pocket tips on the axis and at the side-pocket tip
-REAR_FRONT_Y = STOP_BACK_Y - SKIN         # rear boxes stop a skin short of the stop wall
 
 
 def _cut(sk):
     return prism(sk, DECK - SKIN, DECK + SKIN)
 
 
-def _round(sk, tips=()):
-    """Corner rounds: SKIN everywhere, APEX_R at the vertices listed in `tips` (x, y)."""
-    near = lambda v: any(abs(v.X - x) + abs(v.Y - y) < SKIN / 10 for x, y in tips)
-    fillet([v for v in sk.vertices() if not near(v)], SKIN / 2)   # short front edge: half-skin rounds
-    fillet([v for v in sk.vertices() if near(v)], APEX_R)
+def _rounded(pts, tips):
+    """Polygon through pts with R = wall at the vertices listed in `tips`, sharp elsewhere."""
+    with BuildSketch() as sk:
+        Polygon(*pts, align=None)
+        fillet([v for v in sk.vertices() if any(abs(v.X - x) + abs(v.Y - y) < SKIN / 10 for x, y in tips)], CH_WALL)
     return sk
 
 
 def x_pockets():
-    """Two triangles-with-box on the axis: front pocket opens toward the front wall, rear toward the stop wall front face; shared diagonal slope."""
-    x, k = POCKET_X, DIAG_K
-    front_y = WALL_IN_FRONT - SKIN
-    with BuildSketch() as up:
-        Polygon((0, UP_APEX), (x, UP_APEX + k * x), (x, front_y), (-x, front_y), (-x, UP_APEX + k * x), align=None)
-    with BuildSketch() as lo:
-        Polygon((0, LO_APEX), (x, LO_APEX - k * x), (x, STOP_FRONT_Y), (-x, STOP_FRONT_Y), (-x, LO_APEX - k * x), align=None)
-    return [_cut(_round(up, [(0, UP_APEX)])), _cut(_round(lo, [(0, LO_APEX)]))]
+    """Front pocket above the front rib, rear pocket below the rear rib; both pointed on the axis."""
+    x, k, top = POCKET_X, DIAG_K, WALL_IN_FRONT - FRONT_RIB
+    a_up, a_lo = CENTRE_Y + RIB_OFF, CENTRE_Y - RIB_OFF
+    up = [(0, a_up), (x, a_up + k * x), (x, top), (-x, top), (-x, a_up + k * x)]
+    face = STOP_FRONT_Y
+    lo = [(0, a_lo), (x, a_lo - k * x), (x, face), (SA_X0, face), (SA_X0, face - STOP_GAP), (-SA_X0, face - STOP_GAP), (-SA_X0, face), (-x, face), (-x, a_lo - k * x)]
+    tips = lambda p: [p[0], p[1], p[-1]]
+    return [_cut(_rounded(up, tips(up))), _cut(_rounded(lo, tips(lo)))]
 
 
-def side_pockets():
-    """+X triangle between the two X-pocket diagonals (each RIB_V below/above them); the tip is where the two diagonals meet."""
-    k, x = DIAG_K, POCKET_X
-    up_y = lambda u: UP_APEX - RIB_V + k * u
-    lo_y = lambda u: LO_APEX + RIB_V - k * u
-    tip = (LO_APEX - UP_APEX + 2 * RIB_V) / (2 * k)
-    with BuildSketch() as sk:
-        Polygon((tip, up_y(tip)), (x, up_y(x)), (x, lo_y(x)), align=None)
-    fillet(sk.vertices(), APEX_R)
-    return [_cut(sk)]
+def side_pocket():
+    """Triangle between the two rib edges (front rib's lower edge, rear rib's upper edge) out to SIDE_X; tip where they cross."""
+    k, x = DIAG_K, SIDE_X
+    up_y = lambda u: CENTRE_Y - RIB_OFF + k * u
+    lo_y = lambda u: CENTRE_Y + RIB_OFF - k * u
+    tip = RIB_OFF / k
+    pts = [(tip, up_y(tip)), (x, up_y(x)), (x, lo_y(x))]
+    return _cut(_rounded(pts, pts))
 
 
 def rear_pockets():
-    """+X rear boxes: the centre box is as wide as the rear boss; two side boxes share the remaining width, separated by one wall thickness."""
+    """Right-hand rear boxes: two share the width between the centre box and the side wall, split by one wall; the centre box is as wide as the boss."""
     x0, x1 = COL_R + SKIN, CH_IN_X - SKIN
     w = (x1 - x0 - CH_WALL) / 2
-    y0 = WALL_IN_REAR + SKIN
-    out = []
+    y0, y1 = WALL_IN_REAR + POCKET_SKIN, STOP_BACK_Y - POCKET_SKIN
     with BuildSketch() as sk:
         for x in (x0, x0 + w + CH_WALL):
             with Locations((x, y0)):
-                Rectangle(w, REAR_FRONT_Y - y0, align=(Align.MIN, Align.MIN))
-    fillet(sk.vertices(), SKIN)
-    out.append(_cut(sk))
+                Rectangle(w, y1 - y0, align=(Align.MIN, Align.MIN))
+        fillet(sk.vertices(), REAR_R)
     with BuildSketch() as ck:
         with Locations((0, CENTRE_Y0)):
-            Rectangle(2 * COL_R, REAR_FRONT_Y - CENTRE_Y0, align=(Align.CENTER, Align.MIN))
-    fillet(ck.vertices(), SKIN)
-    return out, _cut(ck)
+            Rectangle(2 * COL_R, y1 - CENTRE_Y0, align=(Align.CENTER, Align.MIN))
+        fillet(ck.vertices(), REAR_R)
+    return _cut(sk), _cut(ck)
 
 
 def deck_pockets():
-    sides = side_pockets()
     rear, centre = rear_pockets()
-    half = sides + rear
-    return x_pockets() + [centre] + [mirrored(h) for h in half]
+    return x_pockets() + [centre] + [mirrored(h) for h in (side_pocket(), rear)]
