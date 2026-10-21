@@ -468,3 +468,44 @@ def test_fillet_compare_ignores_a_different_reference_corner():
     ref = trimesh.creation.extrude_polygon(Polygon(pts), 10)
     hits = [h for h in visual.fillet_diffs(ours, ref, grid=1.0) if abs(h[0][0] - 4) < 1 and abs(h[0][1] - 4) < 1]
     assert hits == [], hits
+
+
+# ------------------------------------------------------------------ path (capsule) deviation waivers
+def _groove_blob():
+    xs = np.linspace(0, 20, 41)
+    pts = np.array([(x_, 1.0 * math.cos(t), 1.0 * math.sin(t)) for x_ in xs for t in np.linspace(0, 2 * math.pi, 8)])
+    return {"centroid": pts.mean(0).tolist(), "bbox": [pts.min(0).tolist(), pts.max(0).tolist()], "pts": pts.tolist(), "volume_mm3": 63.0}
+
+
+_PATH = {"path": [[0, 0, 0], [20, 0, 0]], "r": 1.5, "max_mm3": 100,
+         "reason": "lead-retention groove (design intent: leads clipped away from the rotor, STEP has no leads)"}
+
+
+def test_path_waiver_covers_a_long_groove():
+    from robot.checks import reference_cad as rc
+
+    b = _groove_blob()
+    assert rc._covered(b["centroid"], {"deviations": [dict(_PATH)]}, b["bbox"], b["pts"], b["volume_mm3"])
+    # one r<=5 sphere cannot hold a 20 mm groove
+    assert rc._covered(b["centroid"], {"deviations": [{"near": [10, 0, 0], "r": 5, "reason": "STEP x"}]}, b["bbox"], b["pts"], 63) is None
+
+
+def test_path_waiver_rejects_blob_off_path_or_over_volume():
+    from robot.checks import reference_cad as rc
+
+    b = _groove_blob()
+    off = dict(_PATH, path=[[0, 3, 0], [20, 3, 0]])
+    assert rc._covered(b["centroid"], {"deviations": [off]}, b["bbox"], b["pts"], 63) is None
+    small = dict(_PATH, max_mm3=50)
+    assert rc._covered(b["centroid"], {"deviations": [small]}, b["bbox"], b["pts"], 63) is None
+
+
+def test_path_waiver_needs_cap_radius_and_cited_reason():
+    from robot.checks import reference_cad as rc
+
+    assert rc._dev_valid(dict(_PATH)) is None
+    assert rc._dev_valid(dict(_PATH, r=4.0))
+    assert rc._dev_valid(dict(_PATH, max_mm3=None))
+    assert rc._dev_valid(dict(_PATH, max_mm3=5000))
+    assert rc._dev_valid(dict(_PATH, reason="groove for the leads"))
+    assert rc._dev_valid(dict(_PATH, path=[[0, 0, 0]]))
