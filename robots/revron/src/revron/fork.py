@@ -4,7 +4,7 @@ Driving dims are the designer's (Mirrorfork 5 sketch: hole, pin hole and distanc
 sheet); the eye and boss rings, tangent edges, window and tip land are relations of those. One solid serves both sides: the
 STEP places the same part at two X offsets and two tilts, so there is no mirror."""
 import math
-from .params_drive import (FK_EYE_D, FK_PIN_DIST, FK_PIN_ANG, FK_TIP, FK_RAIL, FK_FILLET, FK_T, FK_WEB, FK_KERF,
+from .params_drive import (FK_EYE_D, FK_PIN_D, FK_PIN_DIST, FK_PIN_ANG, FK_TIP, FK_RAIL, FK_FILLET, FK_T, FK_WEB, FK_KERF,
                            FK_BOT_ANG, FK_X0, FK_TILT, FK_RES)
 from .params_chassis import SB, SB_X
 from .common import _ext, _round, _b
@@ -25,8 +25,8 @@ def fork_outline(window=True):
     r_eye = FK_EYE_D / 2
     a = math.radians(90 - FK_PIN_ANG)
     pin = (FK_PIN_DIST * math.cos(a), FK_PIN_DIST * math.sin(a))
-    r_boss = r_eye - pin[1]                                               # boss round the pin, tangent to the eye's top line
-    r_hole, r_pin = r_eye - FK_WEB, r_boss - FK_WEB
+    r_pin, r_hole = FK_PIN_D / 2, r_eye - FK_WEB
+    r_boss = r_pin + FK_WEB                                               # boss round the pin hole (the STEP's is tangent to the eye's top line: 0.02 smaller)
     tip = (-FK_TIP[0], -FK_TIP[1])
     al = math.radians(FK_BOT_ANG)
     t_top = _tangent_top(tip, r_eye)

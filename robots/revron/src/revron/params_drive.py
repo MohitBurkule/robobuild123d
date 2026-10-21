@@ -34,9 +34,9 @@ MNT_TIP_DEV, MNT_TIP_DEV_R = (MNT_IN + 2.5, 11.5, MNT_TOP_Z + 0.9), 5.0   # moun
 # --- fork_5 (Mirrorfork 5 sketch, the designer's driving dims; everything else in fork.py is a relation) ---
 # fork_5 frame: the sketch plane (u, v) with the origin on the 15 mm standoff axis, extruded +w FK_T. The assembly places it by
 # the STEP transform: origin on the standoff axis at X = FK_X0[side], extruded towards the chassis centre, turned FK_TILT[side] deg.
-FK_EYE_D, FK_PIN_DIST, FK_PIN_ANG = 7.5, 4.5, 65.0                      # D2 eye round the standoff, D5 pin distance, D4 angle from the sketch's vertical (the pin boss is tangent to the eye's top line)
+FK_EYE_D, FK_PIN_D, FK_PIN_DIST, FK_PIN_ANG = 7.5, 1.5, 4.5, 65.0                      # D2 eye round the standoff, D3 pin hole (laser minimum = the sheet), D5 pin distance, D4 angle from the sketch's vertical
 FK_TIP, FK_RAIL, FK_FILLET, FK_T = (26.0, 4.3), 2.0, 0.2, 1.5          # D8/D9 tip (back, down), D6/D7/D10 rails, Fillet1, Boss-Extrude1
-FK_WEB = 1.12                                                          # laser min web (0.75 x 1.5 mm Ti): the standoff hole and the pin hole are cut a web inside their rings (STEP: 1.10 and 1.098 -> d5.26 / d1.46 for the STEP's d5.3 / d1.5)
+FK_WEB = 1.12                                                          # laser min web (0.75 x 1.5 mm Ti): the standoff hole is cut a web inside the eye (STEP: 1.10 -> d5.26 for its d5.3), the pin boss is a web round the pin hole (STEP: 1.098)
 FK_KERF = 0.15                                                         # laser kerf: the knife tip ends in a land 3 kerfs wide, its corners r >= kerf
 FK_BOT_ANG = 2.825                                                     # deg, lower edge tangent to the eye: the STEP hangs the right fork with that edge level (Parallel2)
 FK_X0 = {1: 26.0, -1: -25.0}                                           # |X| of the sketch plane per side: asymmetric in the STEP (fork_5_1 at 26.0, fork_5_2 at -25.0)
