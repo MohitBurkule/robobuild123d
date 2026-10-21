@@ -11,7 +11,7 @@ LOBE_PROUD = 3.0                      # lobe stands this proud of the wall's out
 LOBE_OUT = CH_HALF_W + LOBE_PROUD      # outer face of the lobe, |X|
 LOBE_NUT_R, LOBE_CAP, LOBE_CAP_R, LOBE_SEG = 4.5, (0.5, 6.9), 2.0, 64   # organic STEP lobe: R4.5 round the nut hulled with an R2 end cap (Y, Z)
 LOBE = Point(NUT[0], NUT[1]).buffer(LOBE_NUT_R, LOBE_SEG).union(Point(*LOBE_CAP).buffer(LOBE_CAP_R, LOBE_SEG)).convex_hull
-LOBE_ROOT_R = LOBE_CAP_R              # STEP Fillet3 R2: root fillet where the lobe leaves the wall, the lobe end cap radius
+LOBE_ROOT_R = PANEL_IN - CH_HALF_W + 0.05    # STEP Fillet3 is R2; 1.95 here (1.9 and 1.99 make OCC fail): its tangent line on the lobe stops 0.05 short of the side panel inner face (|X| 31.5), so it never grazes the panel plane (non-manifold edge / 0.11 mm tub-side overlap at the lobe end)
 LOBE_ROOT_TOL = 0.05                  # edge-on-wall-plane tolerance when picking the root edges
 # ---- N10 keyhole (U-slot to the floor)
 KH_SEAT_R, KH_NECK_DZ, KH_NECK_R = 2.5, 5.15, 0.85   # round seat for the gearbox boss, neck below it (STEP keyhole)

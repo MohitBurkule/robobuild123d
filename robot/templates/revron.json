@@ -1698,6 +1698,7 @@
    },
    "material": "pla_st",
    "process": "fdm",
+   "thin_wall_deviation": "the 1 mm panel is shallower than the 1.2 mm M2 CSK head (STEP RV26 has the same 5 countersunk seats): a 90 deg seat cone leaves a knife wedge under the countersink rim, unavoidable at this thickness (parity with RV26)",
    "label": "RV26 1 mm printed base panel, 5 M2 CSK into the floor heat-sets, 0.45 mm pads preload the N10s"
   },
   {
@@ -2920,8 +2921,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 3.9,
-    "csk_depth": 0.75,
+    "csk_d": 4.5,
+    "csk_depth": 1.05,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -2959,8 +2960,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 3.9,
-    "csk_depth": 0.75,
+    "csk_d": 4.5,
+    "csk_depth": 1.05,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -2998,8 +2999,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 3.9,
-    "csk_depth": 0.75,
+    "csk_d": 4.5,
+    "csk_depth": 1.05,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -3037,8 +3038,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 3.9,
-    "csk_depth": 0.75,
+    "csk_d": 4.5,
+    "csk_depth": 1.05,
     "sink": 0.0,
     "grip": 1.0
    },
@@ -3076,8 +3077,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 3.9,
-    "csk_depth": 0.75,
+    "csk_d": 4.5,
+    "csk_depth": 1.05,
     "sink": 0.0,
     "grip": 1.0
    },
