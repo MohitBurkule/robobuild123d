@@ -72,6 +72,7 @@ SP_NUT_RELIEF_R = 1.0                # relief corners round r1: no sharp concave
 SP_PIN_HOLE = dict(d=2.05, at=(2.92, 12.07), x=(-36.0, -31.0))   # STEP RV23: d1.25 cross hole along X through the wall at the nut lobe top (Y, Z; X span)
 SP_VENT = dict(y0=(-11.0, -4.5, 2.0), z0=5.0, dy=5.0, dz=6.0, r=1.0, x=(-50.0, -36.5))   # diagonal ESC vent slots
 # [fix-C wedgelet] measured polyline arcs rebuilt as true arcs (sampled finer than the 6 deg facet-seam threshold)
+WG_MOUNT_GAP = 0.1                   # clearance of the nose tab to the weapon mount boss and to the chassis lug round SB
 WG_ARC_STEP = 3   # deg per sampled chord of a wedgelet profile arc
 
 
@@ -96,14 +97,19 @@ def _wg_flank():
     return _wg_arc(c1, r1, 180, lean)[:-1] + _wg_arc(c2, r2, lean - 180, end)
 
 
-WG_FLANK = dict(c=(30.55, 5.5), r=4.0, lean=106, r2=10.0, end=-50)   # (centre (Y, Z) of the R4, R, centre-line angle, R of the second arc, its end angle)
-WG_NOSE_ARC = dict(c=(40.48, 4.49), r=3.27)                          # nose arc round (Y, Z), vertical tangent at its foot: the tab and the slot share it
+WG_FLANK = dict(c=SA, r=3.9519, lean=105.84, r2=10.0, end=-50)   # (centre (Y, Z) of the R4, R, centre-line angle, R of the second arc, its end angle)
+WG_NOSE_ARC = dict(c=SB, r=LUG_SB_R + WG_MOUNT_GAP)                          # nose arc round (Y, Z), vertical tangent at its foot: the tab and the slot share it
 _NA = WG_NOSE_ARC
+# fork-tail entry (RV17 Cut-Extrude20, 1 mm deep from the nose face, floor edges rounded Fillet9 r0.5) opens the kidney arc slot:
+# its rear edge runs from the slot's outer wall (at `ring_end` deg) up to the notch floor `top` above SB, `width` wide, the front
+# edge tangent to the slot's upper end cap. dY (rear_dy) and `top` are measured from SB.
+WG_ENTRY = dict(ring_end=170.0, top=8.28, rear_dy=-1.9015, width=1.5, depth=1.0, fillet=0.5)
 WG_X = (-38.5, -36.5, -35.5, -29.0, -21.5, -17.5)   # slab edges along X: block | ring step | skin | cheek | nose tab
 WG_S1 = (3.5, [(40.5, 1.0), (RAMP_REACH, 1.0), (42.54, 10.0), (39.55, 10.0), (40.23, 8.0)])   # block round SB: (R, tail outline (Y, Z))
 WG_S2 = (3.0, [(40.4, 7.5), (39.55, 10.0), (41.92, 10.0), (42.29, 10.31), (RAMP_REACH, 1.0), (46.68, 1.0), (44.96, 1.5), (40.5, 1.5)])
 WG_CHEEK = [(38.05, 15.36), (RAMP_REACH, 1.0), (26.55, 1.0), *_wg_flank(),
-            (36.62, 14.17), (37.1, 12.78), (38.6, 12.78), (37.79, 15.15)]
+            (36.62, 14.17), (SB[0] + WG_ENTRY["rear_dy"] - WG_ENTRY["width"], SB[1] + WG_ENTRY["top"]),
+            (SB[0] + WG_ENTRY["rear_dy"], SB[1] + WG_ENTRY["top"]), (37.79, 15.15)]
 WG_IN_SLOT = [(38.69, 10.9), (39.12, 11.26), (37.79, 15.15), (38.05, 15.36), (RAMP_REACH, 1.0), (43.75, 1.0), *_wg_arc(_NA["c"], _NA["r"], 0, _wg_ang(_NA["c"], (42.91, 6.68))),
               (41.0, 8.6), (40.03, 8.6), (39.52, 10.07)]
 WG_TAB = [(42.78, 6.82), (44.32, 6.1), (44.69, 7.44), (RAMP_REACH, 1.0), (43.75, 1.0), *_wg_arc(_NA["c"], _NA["r"], 0, _wg_ang(_NA["c"], (42.78, 6.82)))[:-1]]
@@ -112,17 +118,13 @@ WG_SKIN = [(RAMP_REACH, 1.0), (47.57, 1.0), (46.8, 1.36), (40.79, 8.52), (40.22,
 # X = centre + R); swept along (0, 1, k). Fitted on 12 STEP X sections from X -35 to -30.65 (residual < 0.03 mm)
 WG_SKIN_CAP = dict(k=0.84, c=(-41.166, -16.147), r=10.554)   # param: organic skin cap arc (slope k, centre (X, W), R) fitted to RV17
 # param: end
-# fork-tail entry: between the kidney and the cheek's top notch the STEP opens the kidney to the notch over the last
-# 1.05 mm before the nose tab, so the fork tail drops into the kidney from above
-WG_TAIL_ENTRY = ([(35.08, 5.3), (37.36, 12.78), (37.36, 13.2), (38.14, 13.2), (38.14, 12.78), (38.2, 10.0), (38.04, 7.25)], -22.55)   # param: organic entry outline (Y, Z) mid-slot on RV17, X start (ends at the nose tab)
 # param: end
 ARC_N, ARC_MOUNT, ARC_KIDNEY, WG_MERGE_EPS = 64, 32, 24, 0.01       # circle facets per quarter; overlap that merges the toe land with the wedgelet body
 WG_TAB_FILM = 0.6                    # TPU film limit: slivers thinner than this are dropped from the nose tab
-WG_MOUNT_GAP = 0.1                   # nose tab clearance to the weapon mount boss
 WG_FORK_SLOT_X = (-27.0, -24.5)      # 2.5 mm fork slot through the cheek
 WG_BORES = dict(sa=2.6, sb=1.6, sb_head=2.5)   # radii of the standoff bores through the wedgelet (sb_head: block end only)
 WG_BORE_X = (-39.0, -17.0)
-WG_KIDNEY = ([(36.05, 5.15), (36.95, 7.45)], 0.95, (-29.5, -21.0))   # fork-tail kidney slot (centre line (Y, Z), half width, X span)
+WG_KIDNEY = dict(r=4.5, hw=1.0, a_lo=171.7, a_hi=140.0, x=(-29.5, -21.0))   # fork-tail kidney: an arc slot about SB (centre-line R, half width, end angles deg, X span)
 WG_TOE = [(48.6, 1.0), (RAMP_REACH, 1.0), (RAMP_REACH, 1.0 + WEDGE_TOE_H), (48.6, 1.0 + 1.5 * RAMP_SLOPE)]   # knife toe on a printable land (Y, Z)
 QUARTER_TURN = 90   # deg, tyre shoulder arcs sweep a quarter turn
 FORK_DEV = dict(x=25.5, y=66.0, z=1.4, r=2.0)   # reference-diff deviation sphere at the fork tip land (STEP knife tip)
