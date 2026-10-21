@@ -110,4 +110,10 @@ LUG_BLEND_FILL = Polygon([(LUG_SCALLOP_YT, LUG_FLOOR_Z), _corner, SB, _blend_c])
 LUG_SCALLOP = Point(LUG_SCALLOP_YT, LUG_FLOOR_Z - LUG_SCALLOP_R).buffer(LUG_SCALLOP_R, 128).intersection(
     Polygon([(0.0, -20.0), (LUG_SCALLOP_YT, -20.0), (LUG_SCALLOP_YT, LUG_FLOOR_Z), (0.0, LUG_FLOOR_Z)]))
 # param: end
+# --- tub_front/tub_shell relations ---
+WALL_IN_FRONT = CH_Y1 - CH_WALL                  # inner face of the front wall (Y)
+WALL_IN_REAR = CH_Y0 + CH_WALL                   # inner face of the rear wall (Y)
+COL_R = 2.75                                      # insert column boss radius (corner blocks, rear boss and deck pockets are tangent to it)
+LUG_FACE_X = SB_X0                                # |X| of the lug's inner face the front corner flange blends into
+OVERLAP = 0.1                                     # solids reach this far into a neighbour so they fuse
 __all__ = [n for n in dir() if not n.startswith("__")]   # last line: every name above is exported
