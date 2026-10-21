@@ -45,7 +45,10 @@ def wire_path(world, r, w):
 def bundle_radius(w):
     awg = float(w.awg) if w.awg is not None else default_awg(w.kind)
     n = int(x(w, "count", 1) or 1)
-    return 0.5 * (n * (wire_od(awg) + 0.3) if n > 1 else wire_od(awg))
+    od = wire_od(awg)
+    if n <= 3:   # leads run twisted together: circumscribed circle of 1 / 2 / 3 touching round leads
+        return 0.5 * od * (1.0, 2.0, 1.0 + 2.0 / math.sqrt(3.0))[n - 1]
+    return 0.5 * n * (od + 0.3)
 
 
 def swept_bands(bodies, origin, axis, n=600):
@@ -262,7 +265,7 @@ SUPPORT_MM = 1.5        # wire.exterior_support: a wire point outside the chassi
 UNSUPPORTED_MAX_MM = 8.0  # longest run outside the chassis with nothing (hole wall, channel, clip) within SUPPORT_MM
 
 
-def rotor_groups(spec):
+def rotor_groups(spec, world=None):
     """[(group, pivot, unit axis, [part ids])] for every revolute joint: the weapon and each wheel. The group is the
     jointed part's `rotates_with` (else its id); members are every part that rotates with it."""
     out = []
@@ -278,8 +281,11 @@ def rotor_groups(spec):
             continue
         ids = [q.id for q in spec.parts if q.id == p.id or rotating(spec, q.id, grp)]
         ids += [f.id for f in spec.fasteners if fastener_rotates(spec, f, grp)]
-        a = np.asarray(j["axis"], float)
-        out.append((grp, np.asarray(j["pivot"], float), a / np.linalg.norm(a), ids))
+        a, piv = np.asarray(j["axis"], float), np.asarray(j["pivot"], float)
+        pb = world.body(p.parent) if world is not None and p.parent else None
+        if pb is not None:   # a joint's pivot and axis are in its parent's frame
+            a, piv = pb.M[:3, :3] @ a, pb.M[:3, :3] @ piv + pb.M[:3, 3]
+        out.append((grp, piv, a / np.linalg.norm(a), ids))
     return out
 
 
@@ -306,7 +312,7 @@ def rotor_clearance(ctx):
     if not spec.wires:
         return []
     groups = []
-    for grp, piv, ax, ids in rotor_groups(spec):
+    for grp, piv, ax, ids in rotor_groups(spec, w):
         bodies = [b for b in (w.body(i) for i in ids) if b is not None and b.mesh is not None and len(b.mesh.faces)]
         if bodies:
             groups.append((grp, piv, ax, ids, swept_bands(bodies, piv, ax)))
