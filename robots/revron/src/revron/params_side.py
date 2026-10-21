@@ -18,7 +18,7 @@ SP_MID_Y = (-9.5, 10.5)             # straight mid wall (RV23 Loft2) from the re
 SP_MID_Z_FRONT = 13.0               # mid wall height at its front end (Loft2 sketch at Y 10.5)
 SP_BEND_R = (8.0, 4.0)              # rear wall bends out round two 90 deg arcs (RV23 Revolve6, Revolve7), chassis-side radii
 SP_FRONT = dict(c=(-38.5, 26.55), r_in=10.55, w=3.0, z_top=12.0, over=5.0)   # front swing (Revolve5): axis (X, Y), chassis-side radius at the floor, radial thickness, top, lead-in deg
-SP_BEND_STEPS, SP_BEND_LEVELS, SP_BEND_TENSION = 56, 10, 0.5   # S-bend strips (each turns < the 6 deg seam threshold), Hermite tangent length / chord
+SP_BEND_STEPS, SP_BEND_LEVELS, SP_BEND_TENSION = 96, 10, 0.9   # S-bend strips (each turns < the 6 deg seam threshold), Hermite tangent length / chord
 SP_REAR_Y_END = -46.0               # the straight rear wall runs on past the rear round (the profile trims it)
 
 
