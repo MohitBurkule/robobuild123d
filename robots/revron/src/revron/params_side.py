@@ -18,7 +18,7 @@ SW_X = {1.0: (-32.4, -33.4, -36.6, -44.0, -46.3, -47.6, -48.3, -48.6),
 # wall thickness (normal to the inner face) against height: rear / middle run battered 5 -> 2 mm, the swing ~3.4 mm
 SP_W_Z = (1.0, 3.0, 6.0, 9.0, 12.0, 16.0)
 SP_FOOT_LAND = 0.85
-SP_W_REAR = (5.2, 4.9, 4.3, 3.6, 3.0, 2.1)
+SP_W_REAR = (5.09, 4.79, 4.18, 3.47, 2.83, 1.9)   # rear thickness trimmed 0.11..0.2 mm: outer face sat that far proud of RV23 (measured at Y -30 and -20)
 SP_W_MID = (5.0, 4.7, 3.5, 2.7, 2.3, 2.0)
 SP_W_SWING = (3.3, 3.3, 3.0, 2.6, 2.4, 2.1)
 SP_W_Y = (-16.0, -12.0, 11.0, 15.0)   # rear / mid / mid / swing thickness stations along Y
@@ -96,4 +96,7 @@ WG_BORES = dict(sa=2.6, sb=1.6, sb_head=2.5)   # radii of the standoff bores thr
 WG_BORE_X = (-39.0, -17.0)
 WG_KIDNEY = ([(36.05, 5.15), (36.95, 7.45)], 0.95, (-29.5, -21.0))   # fork-tail kidney slot (centre line (Y, Z), half width, X span)
 WG_TOE = [(48.6, 1.0), (RAMP_REACH, 1.0), (RAMP_REACH, 1.0 + WEDGE_TOE_H), (48.6, 1.0 + 1.5 * RAMP_SLOPE)]   # knife toe on a printable land (Y, Z)
+QUARTER_TURN = 90   # deg, tyre shoulder arcs sweep a quarter turn
+FORK_DEV = dict(x=25.5, y=66.0, z=1.4, r=2.0)   # reference-diff deviation sphere at the fork tip land (STEP knife tip)
+SIDE_DEV_X, SIDE_DEV_R = 41.78, 4.0              # deviation sphere at the nose screw seat (STEP RV23 bore centre X, radius)
 __all__ = [n for n in dir() if not n.startswith("__")]   # last line: every name above is exported

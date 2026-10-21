@@ -49,8 +49,8 @@ def tyre(od, idd, x0, x1, c, shoulder=0.0):
     if shoulder <= 0:
         return _S(_cyl(od / 2, x0, x1, c), _cyl(idd / 2, x0 - 1, x1 + 1, c))
     R, rs, w, st = od / 2, shoulder, x1 - x0, TYRE_SECTION_STEP
-    up = [(a, -1) for a in range(0, 91, st)]
-    down = [(a, 1) for a in range(90, -1, -st)]
+    up = [(a, -1) for a in range(0, QUARTER_TURN + 1, st)]
+    down = [(a, 1) for a in range(QUARTER_TURN, -1, -st)]
     prof = [(0.0, idd / 2)] + _tyre_arc(rs, R - rs, rs, up) + _tyre_arc(w - rs, R - rs, rs, down) + [(w, idd / 2)]
     return _revolve_x(prof, x0, c)
 
