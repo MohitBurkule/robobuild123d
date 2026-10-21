@@ -2195,7 +2195,7 @@
   {
    "id": "wedgelet_l",
    "kind": "armor",
-   "deviation": "RVRN 2.0 STEP: RV17 and fork_5_2 overlap by 26.0 mm3 in the original (an interference there); we cut the 1.5 mm tine seat so the fork drops in with interference 0, hence the wedgelet is short by the tine slot at x -26.5..-25, y 43-50",
+   "deviation": "RVRN 2.0 STEP: the wedgelet and the fork tine interpenetrate in the original (an interference there); we cut the tine's own 1.5 mm outline out of the wedgelet as its seat (nothing more), so the fork sits in with interference 0, hence the wedgelet is short by the tine volume at x -26.5..-25",
    "material": "tpu",
    "process": "fdm",
    "thin_wall_deviation": "matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)",
@@ -2434,7 +2434,7 @@
   {
    "id": "wedgelet_r",
    "kind": "armor",
-   "deviation": "RVRN 2.0 STEP: RV17 and fork_5_2 overlap by 26.0 mm3 in the original (an interference there); we cut the 1.5 mm tine seat so the fork drops in with interference 0, hence the wedgelet is short by the tine slot at x -26.5..-25, y 43-50",
+   "deviation": "RVRN 2.0 STEP: the wedgelet and the fork tine interpenetrate in the original (an interference there); we cut the tine's own 1.5 mm outline out of the wedgelet as its seat (nothing more), so the fork sits in with interference 0, hence the wedgelet is short by the tine volume at x 24.5..26",
    "material": "tpu",
    "process": "fdm",
    "thin_wall_deviation": "matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)",

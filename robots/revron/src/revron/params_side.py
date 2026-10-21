@@ -72,14 +72,42 @@ SP_NUT_RELIEF_R = 1.0                # relief corners round r1: no sharp concave
 SP_PIN_HOLE = dict(d=1.25, at=(2.92, 12.07), x=(-36.0, -31.0))   # STEP RV23: d1.25 cross hole along X through the wall at the nut lobe top (Y, Z; X span)
 SP_VENT = dict(y0=(-11.0, -4.5, 2.0), z0=5.0, dy=5.0, dz=6.0, r=1.0, x=(-50.0, -36.5))   # diagonal ESC vent slots
 SP_LOFT = dict(resample=400, path=240, ring=481, round=0.6, arc=16)   # section smoothing: pchip samples, path points, ring points, fillet
+# [fix-C wedgelet] measured polyline arcs rebuilt as true arcs (sampled finer than the 6 deg facet-seam threshold)
+WG_ARC_STEP = 3   # deg per sampled chord of a wedgelet profile arc
+
+
+def _wg_arc(c, r, a0, a1, step=WG_ARC_STEP):
+    """Points round centre c (radius r) from angle a0 to a1 (deg), one chord per `step` deg, both ends included."""
+    import math as _m
+    n = max(2, int(_m.ceil(abs(a1 - a0) / step)))
+    return [(c[0] + r * _m.cos(_m.radians(a0 + (a1 - a0) * k / n)), c[1] + r * _m.sin(_m.radians(a0 + (a1 - a0) * k / n))) for k in range(n + 1)]
+
+
+def _wg_ang(c, p):
+    import math as _m
+    return _m.degrees(_m.atan2(p[1] - c[1], p[0] - c[0]))
+
+
+def _wg_flank():
+    """Cheek flank = two tangent arcs measured on the STEP section (fit residual < 0.01): a concave R4 from the wall foot, then a
+    convex R10 (centres on the line at `lean` deg), ending where the straight shoulder takes over at `end` deg."""
+    import math as _m
+    c1, r1, lean, r2, end = WG_FLANK["c"], WG_FLANK["r"], WG_FLANK["lean"], WG_FLANK["r2"], WG_FLANK["end"]
+    c2 = (c1[0] + (r1 + r2) * _m.cos(_m.radians(lean)), c1[1] + (r1 + r2) * _m.sin(_m.radians(lean)))
+    return _wg_arc(c1, r1, 180, lean)[:-1] + _wg_arc(c2, r2, lean - 180, end)
+
+
+WG_FLANK = dict(c=(30.55, 5.5), r=4.0, lean=106, r2=10.0, end=-50)   # (centre (Y, Z) of the R4, R, centre-line angle, R of the second arc, its end angle)
+WG_NOSE_ARC = dict(c=(40.48, 4.49), r=3.27)                          # nose arc round (Y, Z), vertical tangent at its foot: the tab and the slot share it
+_NA = WG_NOSE_ARC
 WG_X = (-38.5, -36.5, -35.5, -29.0, -21.5, -17.5)   # slab edges along X: block | ring step | skin | cheek | nose tab
 WG_S1 = (3.5, [(40.5, 1.0), (RAMP_REACH, 1.0), (42.54, 10.0), (39.55, 10.0), (40.23, 8.0)])   # block round SB: (R, tail outline (Y, Z))
 WG_S2 = (3.0, [(40.4, 7.5), (39.55, 10.0), (41.92, 10.0), (42.29, 10.31), (RAMP_REACH, 1.0), (46.68, 1.0), (44.96, 1.5), (40.5, 1.5)])
-WG_CHEEK = [(38.05, 15.36), (RAMP_REACH, 1.0), (26.55, 1.0), (26.59, 6.09), (26.94, 7.22), (27.48, 8.04), (28.7, 9.02), (30.78, 9.78), (32.43, 10.71),
+WG_CHEEK = [(38.05, 15.36), (RAMP_REACH, 1.0), (26.55, 1.0), *_wg_flank(),
             (36.62, 14.17), (37.1, 12.78), (38.6, 12.78), (37.79, 15.15)]
-WG_IN_SLOT = [(38.69, 10.9), (39.12, 11.26), (37.79, 15.15), (38.05, 15.36), (RAMP_REACH, 1.0), (43.75, 1.0), (43.73, 4.82), (43.37, 6.03),
-              (42.91, 6.68), (41.0, 8.6), (40.03, 8.6), (39.52, 10.07)]
-WG_TAB = [(42.78, 6.82), (44.32, 6.1), (44.69, 7.44), (RAMP_REACH, 1.0), (43.75, 1.0), (43.71, 4.98), (43.37, 6.03)]
+WG_IN_SLOT = [(38.69, 10.9), (39.12, 11.26), (37.79, 15.15), (38.05, 15.36), (RAMP_REACH, 1.0), (43.75, 1.0), *_wg_arc(_NA["c"], _NA["r"], 0, _wg_ang(_NA["c"], (42.91, 6.68))),
+              (41.0, 8.6), (40.03, 8.6), (39.52, 10.07)]
+WG_TAB = [(42.78, 6.82), (44.32, 6.1), (44.69, 7.44), (RAMP_REACH, 1.0), (43.75, 1.0), *_wg_arc(_NA["c"], _NA["r"], 0, _wg_ang(_NA["c"], (42.78, 6.82)))[:-1]]
 WG_SKIN = [(RAMP_REACH, 1.0), (47.57, 1.0), (46.8, 1.36), (40.79, 8.52), (40.22, 8.04), WG_CHEEK[-1], WG_CHEEK[0]]   # skin tops out on the cheek's top corner
 # skin top cap: in (X, W = Z - k Y) the cap is a circular arc rising to the full skin height (vertical tangent at
 # X = centre + R); swept along (0, 1, k). Fitted on 12 STEP X sections from X -35 to -30.65 (residual < 0.03 mm)
