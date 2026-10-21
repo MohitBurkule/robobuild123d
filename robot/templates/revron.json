@@ -5245,7 +5245,8 @@
      30.0,
      14.5
     ]
-   ]
+   ],
+   "exposed_reason": "original RV03 / RVRN 2.0 STEP has no lead channel: the 3 phase leads run over the lug and are kapton-taped flat to it (RV03 lug top, STEP); the optional lead groove (REVRON_LEAD_GROOVE=on) replaces the tape"
   },
   {
    "id": "w_rx_wesc",

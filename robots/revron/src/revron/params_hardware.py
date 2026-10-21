@@ -19,11 +19,12 @@ PCT = 100                                                # percent
 AWG = dict(power=24, rx=26, motor=28, signal=30)
 SLACK = dict(short=6, bench=8, phases=15)                # wire slack allowed, mm
 # (id, from, to, awg, kind, slack, extras)
+LEAD_TAPE = dict(exposed_reason="original RV03 / RVRN 2.0 STEP has no lead channel: the 3 phase leads run over the lug and are kapton-taped flat to it (RV03 lug top, STEP); the optional lead groove (REVRON_LEAD_GROOVE=on) replaces the tape")
 WIRES = [("w_bat_sw", "battery.jst_rcy", "power_switch.in", AWG["power"], "power", SLACK["bench"], dict(connector="jst_rcy")),
          ("w_sw_wesc", "power_switch.out", "wesc.bat", AWG["power"], "power", SLACK["bench"], {}),
          ("w_sw_rx", "power_switch.out", "rxesc.bat", AWG["rx"], "power", SLACK["bench"], {}),
          # phases run rearward in the gap behind the drisk (4 mm axial from the stack), over the front lug (its top is the deck) and down into the tub at the deck front
-         ("w_wesc_m", "wesc.motor", "weapon_motor_stator.phases", AWG["power"], "motor", SLACK["phases"], dict(connector="bullet2", count=3, via=PHASE_VIA)),
+         ("w_wesc_m", "wesc.motor", "weapon_motor_stator.phases", AWG["power"], "motor", SLACK["phases"], dict(connector="bullet2", count=3, via=PHASE_VIA, **({} if LEAD_GROOVE else LEAD_TAPE))),
          ("w_rx_wesc", "rxesc.wpn", "wesc.rx", AWG["signal"], "signal", SLACK["short"], {}),
          ("w_m_l", "rxesc.m2", "motor_l.terminals", AWG["motor"], "motor", SLACK["short"], {}),
          ("w_m_r", "rxesc.m1", "motor_r.terminals", AWG["motor"], "motor", SLACK["short"], {})]
