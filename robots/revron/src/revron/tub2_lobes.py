@@ -2,7 +2,8 @@
 N10 keyhole (hull of two circles, opened into a U-slot to the floor so the gearbox boss drops in from below), the snap slit. Built for +X, mirrored."""
 from build123d import Box, BuildSketch, Circle, Cylinder, Locations, Mode, Plane, Pos, Align, RegularPolygon, Polygon, Rectangle, Rotation, extrude, fillet, make_hull
 from .tub2_params import CH_HALF_W, CH_IN_X, CH_Z0, CH_WALL, OVER, SKIN
-from .params_chassis import NUT, RY, RZ
+from .params_chassis import NUT, RY, RZ, variant
+from .params_hardware import PRESS
 
 LOBE_R = 4.5                         # D10: lobe round about the nut (diameter 9)
 LOBE_CAP, CAP_R = (0.5, 6.9), 2.0    # (Y, Z) and R of the hull's end cap towards the middle
@@ -45,8 +46,9 @@ def keyhole():
         with Locations((RY, RZ - NECK_DZ)):
             Circle(NECK_R)
         make_hull()
-        with Locations((RY, (RZ + CH_Z0 - 2 * OVER) / 2)):
-            Rectangle(2 * (BOSS_R + BOSS_CLR), RZ - CH_Z0 + 2 * OVER)   # U-slot from the seat down through the floor
+        if variant("open_keyhole"):   # variant: U-slot from the seat down through the floor
+            with Locations((RY, (RZ + CH_Z0 - 2 * OVER) / 2)):
+                Rectangle(2 * (BOSS_R + BOSS_CLR), RZ - CH_Z0 + 2 * OVER)
     return extrude(sk.sketch, CH_WALL + 2 * OVER)
 
 
@@ -59,7 +61,7 @@ def hex_pocket():
     """Hex pocket for the thin nut through the wall thickness; corners point up and down (flats parallel to Z)."""
     with BuildSketch(_yz(CH_IN_X - OVER)) as sk:
         with Locations(NUT):
-            RegularPolygon(NUT_AF / 3 ** 0.5, 6, rotation=30)
+            RegularPolygon(NUT_AF / 3 ** 0.5 - PRESS["nut"], 6, rotation=30)   # pocket corners under the nut's: it is pressed in, so it cannot shift or turn
     return extrude(sk.sketch, CH_WALL + OVER)
 
 

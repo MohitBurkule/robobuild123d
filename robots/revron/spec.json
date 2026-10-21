@@ -847,42 +847,6 @@
     "deviations": [
      {
       "near": [
-       -25.0,
-       10.4,
-       19.95
-      ],
-      "r": 3.5,
-      "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
-     },
-     {
-      "near": [
-       25.0,
-       10.4,
-       19.95
-      ],
-      "r": 3.5,
-      "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
-     },
-     {
-      "near": [
-       -25.0,
-       -21.6,
-       19.95
-      ],
-      "r": 3.5,
-      "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
-     },
-     {
-      "near": [
-       25.0,
-       -21.6,
-       19.95
-      ],
-      "r": 3.5,
-      "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
-     },
-     {
-      "near": [
        -3.78,
        -5.57,
        19.57

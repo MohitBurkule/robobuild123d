@@ -8,11 +8,14 @@ import, or at run time with set_variants("battery_pad", ...) / set_variants() to
   esc_tray      TPU weapon-ESC tray glued to the base panel (original: wesc held by kapton alone, no tray)
   rxesc_strap   6 mm TPU strap over the Malenki (original: kapton to the deck); retained="strap"
   base_csk_fit  base panel M2 countersinks opened to seat the 4.4 mm ISO head (original RV26 seat: dk 3.2, 0.5 deep)
+  open_keyhole  tub: N10 keyhole opened into a U-slot to the floor (original: closed keyhole; motor cannot drop out -Z)
+  pad_preload   base-panel preload pad 0.465 tall so it touches the gearbox (original dump: 0.25, leaves ~0.2 mm)
+  switch_on_bolt_axis  tub: switch pilots on the screw axis SWX (original: pilots on the column x)
   top_screws    4 M2x5 thread-forming screws through the Ti top panel (original: panel bonded on the deck, no screws)
 """
 import os
 
-NAMES = ("battery_pad", "esc_tray", "rxesc_strap", "base_csk_fit", "top_screws")
+NAMES = ("battery_pad", "esc_tray", "rxesc_strap", "base_csk_fit", "top_screws", "open_keyhole", "pad_preload", "switch_on_bolt_axis")
 VARIANTS = {n: False for n in NAMES}
 
 
