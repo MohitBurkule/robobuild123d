@@ -4,10 +4,10 @@ from .params import (
     FLOOR_Z, GEO_EPS, HERE, NUT, NUT_X, RAMP_REACH, RAMP_SLOPE, SA,
     SA_X, SB, SB_X, SIDE_BOLT_DES, SIDE_BOLT_X, SIDE_FACE_X, SIDE_SINK, SLAB_X,
     SP_BOSS, SP_CSK, SP_DRIVER_SEATS, SP_FLUTE, SP_FOOT, SP_FOOT_Z,
-    SP_FRONT, SP_MID_Y, SP_MID_Z_FRONT, SP_NOSE_PKT, SP_NOSE_OVER, SP_NOSE_R, SP_NOSE_Y0, SP_NOSE_Z, SP_NUT_POCKET, SP_NUT_RELIEF_X,
+    SP_FRONT, SP_MID_Y, SP_MID_Z_FRONT, SP_NOSE_PKT, SP_NOSE_OVER, SP_NOSE_Y0, SP_NOSE_Z, SP_NUT_POCKET, SP_NUT_RELIEF_X,
     SP_REAR, SP_SA_CLEAR, SP_TOE_RUN, SP_TOE_Y0, SP_W_TOP, SP_Z_TOP,
     SP_TYRE_RELIEF, SP_X_IN, WEDGE_TOE_H)
-from .common import _I, _S, _U, _b, _box, _cyl, _ext, _one, _poly, _round
+from .common import _I, _S, _U, _b, _box, _cyl, _ext, _one
 from .side_wall import sp_wall, nose_body
 
 
@@ -65,28 +65,49 @@ def _hull_circles(b, x, c1, r1, c2, r2):
                           b.Edge.make_three_point_arc(V(q2), V(_arc_pt(c2, r2, phi)), V(q1)), b.Edge.make_line(V(q1), V(p1))]))
 
 
-def _nose_notch(b):
+def _nose_notch(b):   # cut from the fused wall + nose
     """The nose's inner notch (STEP RV23): the standoff-end post stands in a pocket whose floor is X_POST and whose end is the post's edge, the
     SB boss stays as a R3.5 post (the wedgelet's ring round SB) inside a deeper, full-height pocket X_B whose rear corner is rounded r_round."""
     n = SP_NOSE_PKT
     cx, cy = SP_FRONT["c"]
     z0, z1 = SP_NOSE_Z[0] - SP_NOSE_OVER, SP_NOSE_Z[1] + SP_NOSE_OVER
-    y_post = SA[0] + n["post_r"]                       # the post's rear edge = the pocket B's rear wall
+    post_r = SA[0] - SP_NOSE_Y0                       # the post is as wide as the nose is long ahead of the axis: its front side is flush with the nose front face
+    y_post = SA[0] + post_r                           # the post's rear edge = the pocket B's rear wall
     a = _box(n["x_post"], cx + SP_NOSE_OVER, cy - SP_NOSE_OVER, y_post, z0, z1)
     pb = _S(_box(n["x_b"], cx + SP_NOSE_OVER, y_post, SB[0], z0, n["z_top"]), _cyl(n["r_ring"], n["x_b"] - 1, cx + 2 * SP_NOSE_OVER, SB))
 
-    def corner(e):   # the two edges of the pocket's end wall X_B that stand up from floor to roof (the plane meets the ring / the post wall)
+    def corner(e):   # the one blend the finder reports here (R1, face 88): the straight edge where the pocket's end wall X_B meets the post's rear wall
         pts = [e.position_at(t) for t in (0.0, 0.5, 1.0)]
-        return all(abs(q.X - n["x_b"]) < GEO_EPS for q in pts) and not all(abs(q.Z - z0) < GEO_EPS for q in pts) and not all(abs(q.Z - n["z_top"]) < GEO_EPS for q in pts)
+        return all(abs(q.X - n["x_b"]) < GEO_EPS and abs(q.Y - y_post) < GEO_EPS for q in pts)
     pb = _one(pb.fillet(n["r_round"], [e for e in pb.edges() if corner(e)]))
-    # above the pocket's roof the cavity runs on as a slot with a round end: a cone about the swing axis at the end of the nose run (taper `taper_deg`)
+    # above the pocket's roof the cavity runs on as a tapered slot (walls lean `taper_deg`, like its round end: a cone about the swing axis at
+    # the end of the nose run); beside the post it starts at the post's axis height, and the post's round stands up in it
     ce = (cx, cy + SP_NOSE_RUN)
-    r_top = n["r_slot"] - (z1 - n["z_top"]) * math.tan(math.radians(n["taper_deg"]))
-    cone = b.Solid.make_cone(n["r_slot"], r_top, z1 - n["z_top"], b.Plane(origin=(*ce, n["z_top"]), z_dir=(0, 0, 1)))
-    slot = _U(_I(cone, _box(cx - n["r_slot"], cx + SP_NOSE_OVER, ce[1] - n["r_slot"], ce[1] + n["r_slot"], n["z_top"], z1)),
-              _box(cx - n["r_slot"], cx + SP_NOSE_OVER, y_post, ce[1], n["z_top"], z1))
-    over_post = _S(_box(n["x_cav"], cx + SP_NOSE_OVER, cy - SP_NOSE_OVER, y_post, n["z_top"], z1), _cyl(n["post_r"], n["x_cav"] - 1, n["x_post"], SA))   # the cavity runs on over the post
+    x0, dz = cx - n["r_slot"], z1 - n["z_top"]
+    lean = dz * math.tan(math.radians(n["taper_deg"]))
+    cone = b.Solid.make_cone(n["r_slot"], n["r_slot"] - lean, dz, b.Plane(origin=(*ce, n["z_top"]), z_dir=(0, 0, 1)))
+
+    def tapered(y0, y1, z_from):   # the slot's cross-section (X, Z) swept along Y
+        xz = [(cx + SP_NOSE_OVER, z_from), (x0, z_from), (x0, n["z_top"]), (x0 + lean, z1), (cx + SP_NOSE_OVER, z1)]
+        return b.Solid.extrude(b.Face(b.Wire.make_polygon([b.Vector(x, y0, z) for x, z in xz], close=True)), b.Vector(0, y1 - y0, 0))
+    slot = _U(_I(cone, _box(x0, cx + SP_NOSE_OVER, ce[1], ce[1] + n["r_slot"], n["z_top"], z1)), tapered(y_post, ce[1], n["z_top"]))
+    over_post = _S(tapered(cy, y_post, SA[1]), _cyl(post_r, x0 - 1, n["x_post"], SA))
     return _U(a, pb, slot, over_post)
+
+
+def _foot(b):
+    """The 1 mm foot under the chassis lobe (STEP RV23 section Z 1.5): a R23 arc with a tangent line off each end (leaning `deg_lo` / `deg_hi`
+    off the Y axis), run out to the Y limits, back to the wall at X_IN."""
+    f = SP_FOOT
+    c, r = f["c"], f["r"]
+    ang = {k: math.radians(f[k]) for k in ("a_lo", "a_hi")}   # the radius direction at each tangent point, from +X
+    t_lo, t_hi = _arc_pt(c, r, ang["a_lo"]), _arc_pt(c, r, ang["a_hi"])
+    end = lambda t, a, y: (t[0] + (y - t[1]) * math.tan(-a), y)   # the tangent line from t, a off the X direction, run out to Y = y
+    p_lo, p_hi = end(t_lo, ang["a_lo"], f["y"][0]), end(t_hi, ang["a_hi"], f["y"][1])
+    V = lambda p: b.Vector(p[0], p[1], SP_FOOT_Z[0])
+    e = [b.Edge.make_line(V(p_lo), V(t_lo)), b.Edge.make_three_point_arc(V(t_lo), V(_arc_pt(c, r, 0.0)), V(t_hi)), b.Edge.make_line(V(t_hi), V(p_hi)),
+         b.Edge.make_line(V(p_hi), V((f["x_in"], p_hi[1]))), b.Edge.make_line(V((f["x_in"], p_hi[1])), V((f["x_in"], p_lo[1]))), b.Edge.make_line(V((f["x_in"], p_lo[1])), V(p_lo))]
+    return b.Solid.extrude(b.Face(b.Wire(e)), b.Vector(0, 0, SP_FOOT_Z[1] - SP_FOOT_Z[0]))
 
 
 def _nut_pocket(b):
@@ -134,36 +155,34 @@ def _side_seat(key, at, sgn=-1):
     return tool, rec
 
 
-def _side_body(pin=True):
+def _side_body(pin=True):   # pin: kept for the chassis-cutter call (tub_lobes.panel_mating); the STEP panel has no pin hole
     """The left (RV23) panel's solid, drawn in the frame its SP_* tables were measured in (the STEP assembly frame);
     side_joint.side_panel_local re-bases it on its own datum and mirrors it for RV24. RV23/24 TPU side panel: an S-wall that hugs the chassis side, swings out round the rear wheel and the front
     wheel; its outer face is battered (5 mm at the floor, 2 mm at the top) so side hits ride up; the nose block
     takes the standoff ends (M3x8 CSK, flush)."""
-    from shapely.geometry import LineString, Point, Polygon
+    from shapely.geometry import Polygon
     b = _b()
-    wall = sp_wall(b)   # analytic wall (side_wall.py): cones / planes / one S-bend skin; the profile below trims its top and rear end
+    wall = sp_wall(b)   # analytic wall (side_wall.py): cones / planes / one S-bend skin; the profile below trims its rear end
     profile = _side_profile(b)   # the rear end clip
-    ft = SP_FOOT
-    foot = _S(_box(SP_X_IN, ft["c"][0], *ft["y"], *SP_FOOT_Z), _cyl(ft["r"], *SP_FOOT_Z, ft["c"], "z"))   # the lobe's footprint, outside the arc
+    foot = _foot(b)
     wall = _I(wall, profile)
-    nose_blk = _S(nose_body(b), _nose_notch(b))   # inner notch round the wedgelet block
+    nose_blk = nose_body(b)
     # the nose top is the wedgelet's ramp (the swing's 40 deg cone is tangent to it, so a wedge rides up both as one face); like the
     # wedgelet, the ramp's knife toe stands on a printable land at full reach
     z1 = SP_NOSE_Z[1]
     ramp = Polygon([(SP_NOSE_Y0 - SP_NOSE_OVER, FLOOR_Z), (RAMP_REACH, FLOOR_Z), (RAMP_REACH, FLOOR_Z + WEDGE_TOE_H),
                     (SP_TOE_Y0, FLOOR_Z + SP_TOE_RUN * RAMP_SLOPE), (RAMP_REACH - (z1 - FLOOR_Z) / RAMP_SLOPE, z1), (SP_NOSE_Y0 - SP_NOSE_OVER, z1)])
     nose = _I(nose_blk, _ext(ramp, "yz", *SLAB_X))
-    bs_ = SP_BOSS
-    (bx0, bx1), x_ch, ch = bs_["x"], bs_["x_ch"], bs_["r"] - bs_["r_end"]   # 45 deg chamfer: its X run is its radial drop
-    boss = _I(_U(_cyl(bs_["r"], bx0, x_ch, SA), b.Solid.make_cone(bs_["r"], bs_["r_end"], ch, b.Plane(origin=(x_ch, *SA), z_dir=(1, 0, 0))),
-                 _cyl(bs_["r_end"], x_ch + ch, bx1, SA)), profile)                 # standoff end boss
-    body = _U(wall, nose, foot, boss)
+    bs_ = SP_BOSS      # the standoff-end lip on the post's face: a chamfered ring round SA (STEP RV23 faces 86 / 85 / 2)
+    x0, ch = SP_NOSE_PKT["x_post"], bs_["chamfer"]
+    boss = _U(b.Solid.make_cone(bs_["r"] + ch, bs_["r"], ch, b.Plane(origin=(x0, *SA), z_dir=(1, 0, 0))), _cyl(bs_["r"], x0 + ch, x0 + bs_["h"], SA))
+    body = _U(_S(_U(wall, nose, foot), _nose_notch(b)), boss)   # the inner notch round the wedgelet block is cut through the swing's lead-in too
     # M3 CSK seats with a head bore out through the battered outer face, so a driver reaches the head and the screw backs straight out
     cr_, cx0, cx1 = SP_SA_CLEAR
     cuts = [_side_seat(k, at)[0] for k, at in (("a", SA), ("b", SB), ("c", NUT))] + [
             _cyl(cr_, cx0, cx1, SA),
             _sp_tyre_relief(b),                                                   # rear tyre relief pocket on the inner face
             _nut_pocket(b)]                                                       # relief round the chassis nut lobe
-    sh = _S(_S(body, _flutes(b, body)), *cuts)   # the flutes cut first, from the wall as it stands before the pin / seat bores
+    sh = _S(_S(body, _flutes(b, body)), *cuts)   # the flutes cut first, from the wall as it stands before the seat bores
     # RVRN 2.0 parity: the STEP side panel has a plain inner face (no belt channel); the O-ring grazes it
     return sh

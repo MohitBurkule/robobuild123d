@@ -33,27 +33,26 @@ GEO_EPS = 1e-4                      # coordinate match tolerance when picking ed
 # rear end (STEP RV23 sections): a R10 round tangent to the floor, internally tangent to a R6 round tangent to the top line; the one number is
 # the R10 axis Y (the R6 axis follows from the tangency)
 SP_REAR = dict(y=-30.5, r_floor=10.0, r_top=6.0)
-SP_FOOT = dict(c=(-85.46, -0.92), r=44.83, y=(-12.0, 13.3))   # 1 mm foot under the chassis lobe: from the inner face out to an R44.8 arc (STEP fit < 0.2 mm), between these Y
+SP_FOOT = dict(c=(-63.58, -0.07), r=23.021, a_lo=-7.8, a_hi=11.2, y=(-13.3, 15.2), x_in=-35.0)   # 1 mm foot under the chassis lobe (STEP section): R23 arc about c, its tangent lines leave at these radius angles (deg from +X), run out to y, back to the wall at x_in
 SP_FOOT_Z = (FLOOR_Z, FLOOR_Z + 1.0)
 SP_NOSE_Y0 = SP_FRONT["c"][1]    # nose front face (plane through the swing axis, tangent to the swing's outer cone)
 SP_NOSE_RUN = 10.0                   # the nose is the swing's outer cone swept on this far along +Y (its round end is the hollow's axis)
 SP_NOSE_OVER = 1.0                   # cutters overshoot the faces they open
 # nose notch (STEP RV23 sections): the standoff-end post (R3.952 round SA) stands in a pocket (floor X_POST); behind it a deeper pocket (X_B, rear corner r_round)
 # keeps the wedgelet ring round SB as a R3.5 post
-SP_NOSE_PKT = dict(x_post=-40.5, post_r=3.952, x_b=-42.4, r_round=1.0, r_ring=3.5, z_top=8.0, r_slot=3.687, taper_deg=18.9, x_cav=-41.5)   # z_top: the pocket's roof, above it a slot round the nose-run end
-SP_NOSE_R, SP_NOSE_Z = 0.5, (FLOOR_Z, 10.0)   # SP_NOSE_Z[1] is also the top of the swing and of the S-bend's front end
+SP_NOSE_PKT = dict(x_post=-40.5, x_b=-42.4, r_round=1.0, r_ring=3.5, z_top=8.0, r_slot=3.65, taper_deg=18.9)   # z_top: the pocket's roof, above it a slot round the nose-run end
+SP_NOSE_Z = (FLOOR_Z, 10.0)   # SP_NOSE_Z[1] is also the top of the swing and of the S-bend's front end
 SP_TOE_Y0 = 47.0                     # the ramp toe's land starts here (Y)
 SP_TOE_RUN = 3.1                     # Y run of the ramp skin the toe polygon follows
 # M3 ISO 10642 seats (head dk 6.0 + csk_clear) + a driver bore out through the battered face, per screw. STEP RV23 nose
 # (a, b): the 90 deg seat is the dk + 0.7 cone but the driver bore is only r `drive_r` 3.10 (the cone's rim is a 0.25 mm
 # undercut at the seat; the seat's own r0 bore runs just `lip` above it) and the shank is a close fit (r 1.6); the
 # chassis-nut screw (c) keeps the r0 driver bore and the normal fit
-SP_DRIVER_SEATS = "ab"                # the screws that get the narrower driver bore (the chassis-nut one keeps the full head bore)
+SP_DRIVER_SEATS = "abc"               # all three screws get the narrower driver bore (STEP RV23: r 3.10 at the chassis nut too)
 SP_CSK = dict(csk_clear=0.7, fit="close", drive_r=3.1, lip=0.05, head_clear=12.0)   # drive_r: narrower driver bore of the two standoff seats
 SP_SA_CLEAR = (2.6, -42.55, -38.0)   # STEP RV23 r 2.6: standoff-end clearance bore round SA (R, X0, X1)
-# STEP RV23: standoff end boss ring round SA (X0 -> X1): r 4.0 up into the nose roof to `x_ch`, then a 45 deg chamfer
-# down to r_end, which runs on to the standoff end
-SP_BOSS = dict(r=4.0, r_end=3.3, x=(-SA_X[1], -SA_X[1] + 3.0), x_ch=-40.75)   # [fix-C-j1] boss face = the 25 mm standoff's outboard end
+# STEP RV23: the lip on the post's inner face: a ring round SA, r 3.25, `h` tall, its root edge chamfered 45 deg
+SP_BOSS = dict(r=3.25, h=1.0, chamfer=0.5)
 # STEP RV23 rear tyre relief pocket on the inner face (measured on RV23 sections X -43.7..-44.9): a round-ended slot, r 5 round about
 # the rear wheel axis line (Y, Z) with its front corners r1.75 (the r1.5 floor fillet stays inside them), from the floor X to the inner face; the floor edge is rounded r1.5 (Fillet5)
 SP_TYRE_RELIEF = dict(c=(-34.4, 10.0), r=5.0, y_front=-34.4 + 2 * 5.0, r_front=1.75, x=(-45.0, -43.4), r_floor=1.5)
