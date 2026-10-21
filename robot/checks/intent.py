@@ -95,9 +95,18 @@ def overhang_frac(m, up, angle=45.0):
     return float(m.area_faces[bad].sum() / m.area), float(m.area_faces[bad].sum())
 
 
+def bridge_span(x, y, step_deg=2.0):
+    """Shortest bridge across a downward region seen from above: its minimum width over all horizontal directions
+    (not just the two world axes - a slanted slot's roof is as wide as the slot, not as long as its run along Y)."""
+    th = np.radians(np.arange(0.0, 180.0, step_deg))
+    proj = np.outer(np.asarray(x, float), np.cos(th)) + np.outer(np.asarray(y, float), np.sin(th))
+    return float(np.ptp(proj, axis=0).min())
+
+
 def unsupported(m, up, angle=45.0, bridge_max=6.0, ledge_max=1.0):
     """Overhang that needs support: connected regions of faces steeper than `angle` below horizontal (bed excluded)
-    whose shorter horizontal span exceeds `bridge_max` (shorter spans bridge: hole roofs, slot tops) and whose width
+    whose narrowest horizontal width (bridge_span, any direction) exceeds `bridge_max` (shorter spans bridge: hole
+    roofs, slot tops, slanted groove ceilings) and whose width
     (2 x area / boundary length) exceeds `ledge_max` (a narrower ledge or ring prints as a short cantilever). Returns
     (area mm2, fraction of total area, [region centroids])."""
     import networkx as nx
@@ -119,7 +128,7 @@ def unsupported(m, up, angle=45.0, bridge_max=6.0, ledge_max=1.0):
     for comp in nx.connected_components(g):
         c = np.fromiter(comp, int)
         P = m.vertices[m.faces[c]].reshape(-1, 3)
-        span = min(np.ptp(P @ u), np.ptp(P @ v))
+        span = bridge_span(P @ u, P @ v)
         a = float(m.area_faces[c].sum())
         E = np.sort(m.faces[c][:, [0, 1, 1, 2, 2, 0]].reshape(-1, 2), axis=1)
         ue, cnt = np.unique(E, axis=0, return_counts=True)

@@ -101,7 +101,16 @@ def _b():
     return b
 
 
-def _arc_runs(pts, max_turn=20.0, tol=1e-4):
+ARC_MAX_TURN_DEG = 20.0   # a polygonised arc turns less than this per vertex
+ARC_MIN_TURN_DEG = 0.2    # ... and more than this (else it is a straight run)
+ARC_CENTRE_TOL = 1e-4     # relative tolerance for "same circle" (centre and radius, scaled by 1 + r)
+ARC_DEGENERATE = 1e-12    # collinear-triple determinant floor
+ARC3_EQ_FRAC = 0.02       # 3-point arc: the two segments equal within this fraction
+ARC3_MAX_SEG_MM = 0.5     # ... each shorter than this
+ARC3_MAX_R_MM = 2.0       # ... on a circle smaller than this
+
+
+def _arc_runs(pts, max_turn=ARC_MAX_TURN_DEG, tol=ARC_CENTRE_TOL):
     """Runs of >= 4 consecutive ring vertices lying on one circle (polygonised arcs): [(i, j, mid)] vertex index ranges."""
     n = len(pts)
     cen = []
@@ -111,7 +120,7 @@ def _arc_runs(pts, max_turn=20.0, tol=1e-4):
         v1, v2 = (b[0] - a[0], b[1] - a[1]), (c[0] - b[0], c[1] - b[1])
         cr = v1[0] * v2[1] - v1[1] * v2[0]
         turn = math.degrees(math.atan2(cr, v1[0] * v2[0] + v1[1] * v2[1]))
-        if abs(d) < 1e-12 or abs(turn) > max_turn or abs(turn) < 0.2:
+        if abs(d) < ARC_DEGENERATE or abs(turn) > max_turn or abs(turn) < ARC_MIN_TURN_DEG:
             cen.append(None)
             continue
         ux = ((a[0] ** 2 + a[1] ** 2) * (b[1] - c[1]) + (b[0] ** 2 + b[1] ** 2) * (c[1] - a[1]) + (c[0] ** 2 + c[1] ** 2) * (a[1] - b[1])) / d
@@ -140,7 +149,7 @@ def _arc_runs(pts, max_turn=20.0, tol=1e-4):
             continue
         a, b, c = pts[i - 1], pts[i], pts[(i + 1) % n]
         l1, l2 = math.dist(a, b), math.dist(b, c)
-        if abs(l1 - l2) < 0.02 * max(l1, l2) and max(l1, l2) < 0.5 and cen[i][2] < 2.0:
+        if abs(l1 - l2) < ARC3_EQ_FRAC * max(l1, l2) and max(l1, l2) < ARC3_MAX_SEG_MM and cen[i][2] < ARC3_MAX_R_MM:
             runs.append((i, i))
             seg |= {(i - 1) % n, i}
     runs.sort()

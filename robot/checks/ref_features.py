@@ -174,8 +174,13 @@ def hole_kind(profile):
     return "csk"
 
 
-def compare_sections(model, ref, fracs=(0.25, 0.5, 0.75), hole_tol=0.6, sec_iou_min=0.8, area_tol=0.15, corner_tol=0.6):
-    """Feature differences between two meshes in one frame. Returns (diffs, stats): diffs is a list of
+EXACT_HOLE_TOL_MM = 0.15   # hole size tolerance when the reference diameter is exact (SolidWorks dump); mesh facets
+
+
+def compare_sections(model, ref, fracs=(0.25, 0.5, 0.75), hole_tol=0.6, sec_iou_min=0.8, area_tol=0.15, corner_tol=0.6, exact_d=None):
+    """Feature differences between two meshes in one frame. `exact_d`: the reference's exact hole diameters (SolidWorks
+    dump): a reference hole's mesh-estimated diameter is snapped to the nearest one (within 0.3 mm / 10 %) and the size
+    is then compared at EXACT_HOLE_TOL_MM. Returns (diffs, stats): diffs is a list of
     {"kind", "axis", "h", "msg", "severity"} with kinds: section_area, section_iou, hole_missing, hole_extra,
     hole_shape, hole_kind, corner."""
     lo = np.minimum(model.bounds[0], ref.bounds[0])
@@ -210,10 +215,17 @@ def compare_sections(model, ref, fracs=(0.25, 0.5, 0.75), hole_tol=0.6, sec_iou_
                 diffs.append({"kind": "hole_extra", "axis": name, "h": round(h, 2), "severity": "blocker", "at": c,
                               "msg": f"{name}={h:.2f}: model hole {s} d{d} at {c} is not in the reference"})
             for (c, d, s), (c2, d2, s2) in pairs:
+                dx = None
+                if exact_d:
+                    q = min(exact_d, key=lambda v: abs(v - d))
+                    dx = q if abs(q - d) <= max(0.3, 0.1 * q) else None
                 if s != s2 and "other" not in (s, s2):
                     diffs.append({"kind": "hole_shape", "axis": name, "h": round(h, 2), "severity": "blocker", "at": c,
                                   "msg": f"{name}={h:.2f}: hole at {c} is {s2} (d{d2}) in the model but {s} (d{d}) in the reference"})
-                elif abs(d - d2) > max(0.3, 0.1 * d):
+                elif dx is not None and abs(dx - d2) > EXACT_HOLE_TOL_MM:
+                    diffs.append({"kind": "hole_size", "axis": name, "h": round(h, 2), "severity": "warning", "at": c,
+                                  "msg": f"{name}={h:.2f}: hole at {c} d{d2} vs reference d{dx:g} (exact, SolidWorks dump)"})
+                elif dx is None and abs(d - d2) > max(0.3, 0.1 * d):
                     diffs.append({"kind": "hole_size", "axis": name, "h": round(h, 2), "severity": "warning", "at": c,
                                   "msg": f"{name}={h:.2f}: hole at {c} d{d2} vs reference d{d}"})
             if f == 0.5 and gr is not None and gm is not None:
