@@ -306,8 +306,9 @@ def _wedge_dev(s):
     return ([dict(near=[s * WG_TAB_DEV["x"], *WG_TAB_DEV["yz"]], r=WG_TAB_DEV["r"], reason=boss)]
             + [dict(near=[s * SLIT_DEV_X, y, z], r=SLIT_DEV_R, reason=slit) for y, z in SLIT_DEV_YZ]
             + [dict(near=[s * x, TOE_DEV_YZ[0], TOE_DEV_YZ[1]], r=TOE_DEV_R, reason=toe) for x in TOE_DEV_X]
-            + [dict(near=[s * FORK_RAIL_DEV["x"], FORK_RAIL_DEV["y"], FORK_RAIL_DEV["z"]], r=FORK_RAIL_DEV["r"],
-                    reason="the fork's two rails run through the TPU cheek as closed tunnels (the STEP's solid wedgelet has no slit: the tine interpenetrates it)")])
+            + [dict(near=[s * FORK_RAIL_DEV["x"], y, FORK_RAIL_DEV["z"]], r=FORK_RAIL_DEV["r"],
+                    reason="the fork's two rails run through the TPU cheek as closed tunnels (the STEP's solid wedgelet has no slit: the tine interpenetrates it)")
+               for y in FORK_RAIL_DEV["ys"]])
 
 
 def _side_dev(s):

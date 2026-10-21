@@ -1383,10 +1383,19 @@
      {
       "near": [
        -25.25,
-       42.0,
+       39.5,
        5.3
       ],
-      "r": 6.0,
+      "r": 4.5,
+      "reason": "the fork's two rails run through the TPU cheek as closed tunnels (the STEP's solid wedgelet has no slit: the tine interpenetrates it)"
+     },
+     {
+      "near": [
+       -25.25,
+       44.5,
+       5.3
+      ],
+      "r": 4.5,
       "reason": "the fork's two rails run through the TPU cheek as closed tunnels (the STEP's solid wedgelet has no slit: the tine interpenetrates it)"
      }
     ]
@@ -1500,10 +1509,19 @@
      {
       "near": [
        25.25,
-       42.0,
+       39.5,
        5.3
       ],
-      "r": 6.0,
+      "r": 4.5,
+      "reason": "the fork's two rails run through the TPU cheek as closed tunnels (the STEP's solid wedgelet has no slit: the tine interpenetrates it)"
+     },
+     {
+      "near": [
+       25.25,
+       44.5,
+       5.3
+      ],
+      "r": 4.5,
       "reason": "the fork's two rails run through the TPU cheek as closed tunnels (the STEP's solid wedgelet has no slit: the tine interpenetrates it)"
      }
     ]
