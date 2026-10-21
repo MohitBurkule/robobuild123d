@@ -1,15 +1,18 @@
 """[tub2] Base-panel seat: rabbet in the RV26 outline (rect, ears round the screws near the edge, R blends), N10 preload pad recess,
 squared rear corner behind the gearbox plates, and the stop wall's lower inner edge round."""
-from build123d import Align, Axis, BuildSketch, Circle, Locations, Mode, Plane, Rectangle, extrude, fillet
-from .tub2_params import (PRELOAD_PAD, PAD_MARGIN, SEAT_Z, CH_Z0, CH_WALL,
+from build123d import Align, Axis, BuildSketch, Circle, Locations, Mode, Plane, Pos, Rectangle, RectangleRounded, extrude, fillet
+from .tub2_params import (BASE_OUT, PRELOAD_PAD, PAD_MARGIN, SEAT_Z, CH_Z0, CH_WALL,
                           CH_IN_X, WALL_IN_REAR, DECK, OVER, SA_X0, STOP_BACK_Y, STOP_FRONT_Y, STOP_ROUND_R, SKIN, PANEL_CLEARANCE)
 from . import panel_base
 from .tub2_util import box_xy, concave_filler, mirrored, prism
 
 
 def rabbet():
-    """The seat is the RV26 outline (panel_base.outline, the panel's own sketch) grown by the print clearance."""
-    return panel_base.rabbet(PANEL_CLEARANCE, CH_Z0 - CH_WALL, SEAT_Z)
+    """The seat is the panel outline (panel_base.outline) offset by the print clearance: sides move out by it, and the corner R grows with it
+    (an offset curve), so the rabbet corner is R0.8 + 0.2."""
+    g = PANEL_CLEARANCE
+    z0 = CH_Z0 - CH_WALL
+    return Pos(0, panel_base.YC, z0) * extrude(RectangleRounded(2 * (BASE_OUT["x"] + g), BASE_OUT["y1"] - BASE_OUT["y0"] + 2 * g, BASE_OUT["r"] + g), SEAT_Z - z0)
 
 
 def pad_recess_and_corner():
