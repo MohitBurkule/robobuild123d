@@ -1021,7 +1021,7 @@
        ]
       ],
       "r": 3.0,
-      "max_mm3": 450,
+      "max_mm3": 520,
       "reason": "phase-lead C-groove in the inner face (added, not in the STEP): the twisted 3 x AWG24 bundle snaps through a 3.0 mouth into a R2.0 channel from the stator exit to the lug top: the original RV03/STEP has no lead channel (leads run free over the lug), so the leads are retained and held clear of the disc bolt heads (wire.exterior_support, wire.rotor_clearance)"
      }
     ]

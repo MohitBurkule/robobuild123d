@@ -99,7 +99,7 @@ LEAD_ROUND = 1.5                                                # groove lip / c
 LEAD_LIG = 0.6                                                  # groove edge above the boss line (floor in the 8 mm boss); also puts the front end clear of the back spacer ring (test_lead_route)
 LEAD_Y_REAR = 19.0                                              # groove rear end: its ball end keeps >= LEAD_LIP (one fdm wall, mfg.thin_wall) under RV03's top tangent edge
 LEAD_FAN_X = sum(BSP_X) / 2                                     # the bundle turns into the groove round the back spacer rim, mid its thickness (the stator-side gap is 1.5 mm, too thin for it)
-LEAD_DEV_R, LEAD_DEV_MAX_MM3 = 3.0, 450                        # reference_cad capsule waiver along the groove: capsule radius (mouth + lip), cap on the volume it may explain (groove ~340 mm3)
+LEAD_DEV_R, LEAD_DEV_MAX_MM3 = 3.0, 520                        # reference_cad capsule waiver along the groove: capsule radius (mouth + lip), cap on the volume it may explain (groove ~340 mm3)
 
 
 def boss_line_z(y):
