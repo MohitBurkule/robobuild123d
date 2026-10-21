@@ -5,6 +5,8 @@ import math
 from shapely.geometry import Point, Polygon
 from .params import *  # noqa: F401,F403
 from .common import *  # noqa: F401,F403
+from functools import partial as _partial
+_ext = _partial(_ext, arcs=True)   # polygonised arcs become true arcs (cylinders, not facets)
 
 # ---- tables are (Y, Z) in the yz plane unless noted; the |X| spans are the extrusion ranges
 SEG_AXIS = 128                  # facets of the weapon-axis clearance circle
@@ -44,7 +46,7 @@ FIL_BLOCK = Polygon([(FIL_BOX[0], FIL_BOX[1]), (FIL_BOX[2], FIL_BOX[1]), (FIL_BO
     Point(FIL_BOX[0], FIL_BOX[3]).buffer(FIL_R, 48))
 
 # param: organic lug outline (STEP RV01): foot, ramp toe, standoff arcs SA / SB, nose tip, top
-LUG_FOOT_Y, LUG_RAMP_TOE, LUG_NOSE_TIP, LUG_TOP_Y = 26.0, (30.4, 1.0), (36.6, LUG_FLOOR_Z), FRONT_Y
+LUG_FOOT_Y, LUG_RAMP_TOE, LUG_NOSE_TIP, LUG_TOP_Y = 26.0, (SA[0], SA[1] - 4.5), (36.6, LUG_FLOOR_Z), FRONT_Y
 # param: end
 FULL_TURN = 360.0
 UNDER_BLEND_N, UNDER_SB_N = 24, 24                  # facets of the underside blend / standoff arcs
@@ -57,7 +59,15 @@ SA_ARC, SB_ARC = (LUG_SA_R, 250, 300, 6), (LUG_SB_R, 250, SB_TOP_ANG + FULL_TURN
 LUG_UNDER_POLY = Polygon([(LUG_FOOT_Y, 0.0), (LUG_FOOT_Y, LUG_FLOOR_Z), (30.0, 1.0), (40.0, 0.9), (60, 0)])
 # param: end
 CUT_Y0, CUT_Z0 = LUG_Y0 - 3.0, CH_Z0 - 7.5   # flat-ramp cutter starts clear behind the lug and reaches well below the floor
-LUG_FLAT_RAMP = _poly([(CUT_Y0, CUT_Z0), (CUT_Y0, LUG_FLOOR_Z), (LUG_FOOT_Y, LUG_FLOOR_Z), LUG_RAMP_TOE, (LUG_RAMP_TOE[0], CUT_Z0)])
+# param: underside ramp of the axle standoff boss (STEP, fitted at X 19.5): an R4 concave fillet off the floor tangent to the R4.5 boss round (Fillet6 R4)
+RAMP_R = 4.0
+_RC = (SA[0] - math.sqrt((LUG_SA_R + RAMP_R) ** 2 - (SA[1] - (LUG_FLOOR_Z - RAMP_R)) ** 2), LUG_FLOOR_Z - RAMP_R)   # fillet centre
+_RA = math.degrees(math.atan2(SA[1] - _RC[1], SA[0] - _RC[0]))                                                   # direction fillet centre -> tangent point
+RAMP_CURVE = _arc(_RC, RAMP_R, 90.0, _RA, 16) + _arc(SA, LUG_SA_R, _RA + 180.0, 270.0, 16)[1:]                    # floor -> fillet -> boss bottom
+# param: end
+LUG_FLAT_RAMP = _poly([(CUT_Y0, CUT_Z0), (CUT_Y0, LUG_FLOOR_Z)] + RAMP_CURVE + [(SA[0], CUT_Z0)])
+RAMP_KEEP = _poly(RAMP_CURVE + [(SA[0], LUG_FLOOR_Z + 0.5), (_RC[0], LUG_FLOOR_Z + 0.5)])          # material above the curve
+RAMP_ZONE = Polygon([(_RC[0], 0.0), (SA[0], 0.0), (SA[0], LUG_FLOOR_Z + 0.5), (_RC[0], LUG_FLOOR_Z + 0.5)])   # hull layer the curve replaces
 # under the nose standoff the lug follows its arc: no hull chord below it where the scallop meets it
 # one path floor -> blend arc -> standoff arc, so the blend and standoff arcs share their tangent point exactly (no boolean sliver)
 _T_ON_BLEND = math.degrees(math.atan2(SB[1] - _blend_c[1], SB[0] - _blend_c[0]))   # direction blend centre -> tangent point
@@ -80,7 +90,7 @@ def _tabs(c):
 def _lug(c):
     hull = Polygon([(LUG_Y0, c["z0"]), (LUG_FOOT_Y, c["z0"]), LUG_RAMP_TOE] + _arc(SA, *SA_ARC) + [LUG_NOSE_TIP]
                    + _arc(SB, *SB_ARC) + [(LUG_TOP_Y, c["z1"]), (LUG_Y0, c["z1"])])
-    return _ext(hull.convex_hull.difference(LUG_UNDER_POLY), "yz", *LUG_X)
+    return _ext(hull.convex_hull.difference(LUG_UNDER_POLY).difference(RAMP_ZONE).union(RAMP_KEEP), "yz", *LUG_X)
 
 
 def _underside(c):

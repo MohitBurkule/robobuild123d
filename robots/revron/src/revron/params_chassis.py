@@ -33,7 +33,7 @@ INS = [(-25.0, 10.4), (25.0, 10.4), (-25.0, -21.6), (25.0, -21.6), (0.0, -33.6)]
 INS_Z = (5.1, 9.1)                   # FS1 M2 heat-set (3.5 OD x 4): bore floor and mouth Z (insert sits on the bore floor)
 INS_LEN = INS_Z[1] - INS_Z[0]
 CSK_M2 = 4.5                         # 90 deg countersink at the face for an ISO 10642 M2 flat head (4.4 x 1.2) + 0.1
-PANEL_EAR_R = 3.0
+PANEL_EAR_R = 2.6
 TOP_HOLE = 3.5         # csk through-holes: wide enough that the 90 deg seat stops short of the far face (no knife edge)
 # electronics envelopes (catalog boxes at their spec placement, rot z 90): Malenki nano 32 x 20 x 4.4 at (8.67, -3.0, 15.3),
 # BBB ant ESC 23.5 x 12 x 5 at (8.63, -7.25, 10.6); the deck cage ribs are dimensioned off these
@@ -67,7 +67,7 @@ CH = dict(x=CH_HALF_W, y0=CH_Y0, y1=CH_Y1, z0=CH_Z0, z1=CH_Z1, wall=CH_WALL, dec
 SEG, SEG_FINE = 64, 128              # shapely buffer resolution (segments per quarter circle) for ears / tangent arcs
 BASE_CSK_CLEAR = 0.1                 # base-panel seat 4.5 at the face: cut to the ISO 10642 M2 head (dk 4.4) so it sits flush; the STEP RV26 seat (3.2 x 0.5) is smaller than that head and cannot take it
 BASE_Z0, BASE_T = 3.5, 1.0           # base panel underside Z, skin thickness
-PRELOAD_PAD = dict(c=(22.5, -30.3), s=9.1, h=0.465, r=0.6, sink=0.01)   # N10 preload pad on the base skin: centre |X|/Y, side, height (0.45 + 0.015: closes the 0.2 mm the STEP leaves under the N10, intent.seat_locates), corner R, sink into the skin (union overlap)
+PRELOAD_PAD = dict(c=(22.5, -30.3), s=9.1, h=0.35, r=0.6, sink=0.01)   # N10 preload pad on the base skin: centre |X|/Y, side, height (0.45 + 0.015: closes the 0.2 mm the STEP leaves under the N10, intent.seat_locates), corner R, sink into the skin (union overlap)
 BASE_FILLET, BASE_EDGE_TOL, BASE_EDGE_UP, FLAT_TOL = 0.25, 0.02, 0.1, 1e-3   # base skin joint fillet; edge selection tolerances (height band, face rise, flatness)
 BASE_OUT = dict(x=28.1, y0=-36.2, y1=13.0, r=0.8)   # RV26 outline 56.2 x 49.2, R0.8 corners
 PANEL_EAR_EDGE = 3.0                 # a screw closer than this to the outline edge gets a PANEL_EAR_R ear
