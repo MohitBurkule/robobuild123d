@@ -918,6 +918,42 @@
       ],
       "r": 3.5,
       "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
+     },
+     {
+      "near": [
+       -3.78,
+       -5.57,
+       19.57
+      ],
+      "r": 5.0,
+      "reason": "the STEP top panel carries a shallow 0.1 mm d5.8-6.6 recess here; the panel is laser-cut Ti (one thickness level, no depth-limited pockets), so the recess is not cut and the panel stays a flat 0.9 mm sheet"
+     },
+     {
+      "near": [
+       -13.73,
+       -5.62,
+       19.57
+      ],
+      "r": 5.0,
+      "reason": "the STEP top panel carries a shallow 0.1 mm d5.8-6.6 recess here; the panel is laser-cut Ti (one thickness level, no depth-limited pockets), so the recess is not cut and the panel stays a flat 0.9 mm sheet"
+     },
+     {
+      "near": [
+       5.84,
+       -5.26,
+       19.57
+      ],
+      "r": 5.0,
+      "reason": "the STEP top panel carries a shallow 0.1 mm d5.8-6.6 recess here; the panel is laser-cut Ti (one thickness level, no depth-limited pockets), so the recess is not cut and the panel stays a flat 0.9 mm sheet"
+     },
+     {
+      "near": [
+       15.04,
+       -5.66,
+       19.57
+      ],
+      "r": 5.0,
+      "reason": "the STEP top panel carries a shallow 0.1 mm d5.8-6.6 recess here; the panel is laser-cut Ti (one thickness level, no depth-limited pockets), so the recess is not cut and the panel stays a flat 0.9 mm sheet"
      }
     ]
    },
@@ -1684,6 +1720,7 @@
    "material": "pla_st",
    "process": "fdm",
    "thin_wall_deviation": "matches original RVRN 2.0: the switch-slot rim is 0.5 mm wide on RV01_Chassis_1 too (RV01 section y=-10: slot edge x=27.0, outer face x=27.5) and 0.65 mm between the slot front and the deck pocket (section x=25: y -12.25 to -11.6)",
+   "sharp_corner_deviation": "remaining concave corners are plate-to-plate seams with parts that seat on them (base panel lip, mount_l/mount_r tab faces, standoff bolt faces): a round would unseat the mating flat; the R7.45 blend at (-21.5,23.0,14.5) belongs to the RV02 mount tab, which this chassis meets square (fixed-face joint)",
    "label": "RV01 printed chassis: closed X-ribbed deck (printed deck-down), open floor for the base panel, N10 keyhole side pockets, nut lobes, weapon-mount tabs and standoff lugs"
   },
   {
@@ -1702,6 +1739,7 @@
    "material": "pla_st",
    "process": "fdm",
    "thin_wall_deviation": "the 1 mm panel is shallower than the 1.2 mm M2 CSK head (STEP RV26 has the same 5 countersunk seats): a 90 deg seat cone leaves a knife wedge under the countersink rim, unavoidable at this thickness (parity with RV26)",
+   "sharp_corner_deviation": "the panel's concave corners at (+-25.1,-25.5,4.5) are where its 1 mm plate edge butts the tub floor lip; RV26 is a flat plate against the RV01 lip (reference r 0.27), a round there would lift the panel off the lip and unseat bolt_b2/b3",
    "label": "RV26 1 mm printed base panel, 5 M2 CSK into the floor heat-sets, 0.45 mm pads preload the N10s"
   },
   {
