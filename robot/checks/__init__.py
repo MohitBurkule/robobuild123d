@@ -47,6 +47,7 @@ GROUPS = [
     ("retention", False),  # retention.axial (robot/checks/retention.py)
     ("sharp_corner", False),  # mfg.sharp_internal_corner (opt-out, every printed / moulded part)
     ("visual", False),  # visual.* (robot/checks/visual.py): opt-out shape gates vs the reference, every mapped part
+    ("practice", False),  # practice.* (robot/checks/practice.py): best-CAD-practice gates with NO reference (MISSES.md causes)
     ("sldprt_dump", False),  # dump.fillet / dump.hole / dump.extrude vs the SolidWorks part dumps (robot/checks/sldprt_dump.py)
     ("asm_dump", False),  # asm.placement / asm.mass / asm.mate vs the SolidWorks assembly dump (robot/checks/asm_dump.py)
     ("param", False),  # param.literals, param.duplicate, param.exempt_reason (opt out: review.param.enabled=false)
