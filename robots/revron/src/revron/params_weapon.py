@@ -51,8 +51,8 @@ STATOR_DIRS = tuple((round(math.cos(math.radians(a))), round(math.sin(math.radia
 WSEG_LO, WSEG_FINE, WSEG_MID, WSEG_HI, WSEG_FN, WSEG_MAX, WSEG_ARC, WSEG_ARC_S = 24, 32, 48, 64, 96, 128, 40, 12   # circle / arc tessellation of the 2D profiles
 # weapon mount RV02 (left, shaft end) / RV03 (right, stator): per-side master parameters (STEP measurements)
 MNT_SIDE = dict(
-    r=dict(top_r=10.0, notch_y=10.17, rim_end=-14.5, slab_eps=0.02, face=(23.88, 0.144, 0.0379)),   # a, kz, ky of |X| = a - kz*Z - ky*Y
-    l=dict(top_r=7.0, notch_y=9.0, rim_end=-5.0, slab_eps=0.0, face=(23.48, 0.185, 0.0168)))
+    r=dict(top_r=10.0, notch_y=10.17, rim_end=-14.5, slab_eps=0.02, face=(24.166, 0.154, 0.0404)),   # a, kz, ky of |X| = a - kz*Z - ky*Y
+    l=dict(top_r=7.0, notch_y=9.0, rim_end=-5.0, slab_eps=0.0, face=(23.203, 0.1701, 0.0158)))
 MNT_TOP_Z = CH_Z1                        # top of the rear notch: the teardrop's tangent line starts here
 TAB = dict(y0=CH_Y1, z0=5.35, h=8.2, y1=26.5, cham=1.0)   # chassis tab the notch drops over: rear Y, floor Z, height, front-face Y, front chamfer
 MNT_HEEL = dict(z=1.25, step=0.4, back=1.8, z_hook=2.5, z_lip=4.5)   # rear foot hooked under the tab: floor Z, tip step, setback, hook and lip Z
@@ -68,19 +68,20 @@ MNT_TIP_WALL, MNT_TIP_REACH = 1.5, 3.0    # printed wall: the wedge where the re
 
 
 HOLE_FACE_RISE = 0.7                    # the battered face's highest point over a stator hole axis: the surface the hole is measured from
-BSP = dict(r=10.0, bore_r=4.0, win_in=5.5, win_out=8.5, half_deg=25.0, win_round=1.5, hole_r=1.05, phase=45.0)   # motor back spacer (STEP)
+BSP = dict(r=10.0, bore_r=4.0, win_in=5.5, win_out=8.5, half_deg=24.5, round_in=1.25, round_out=1.0, hole_r=1.1, phase=45.0)   # motor back spacer (Motor_back_spacer_1.stl section fit)
 
 
 DISC_BORE_RES = 4                       # bore polygon samples per degree
 DOG = dict(r=12.0, rise=1.52, t0=5.0, t1=18.0, t2=55.0)       # bore dogs (90 deg pitch): steep rise t0..t1, long ramp back to t2
 DISC_BORE_ROUND, DISC_HOLE_R_WIN = 0.5, 0.44                    # bore corner rounding; balance window corner radius
 DISC_BAL_PTS = [(-13.2, 4.85), (-13.2, 9.08), (-11.68, 7.65)]    # param: organic balance-window hull corners (measured, STEP)
-TOOTH_PTS = [(-11.0, 11.6), (-8.0, 8.0), (-16.2, 0.0), (-16.25, 15.0)]   # param: organic tooth flank/root polygon (measured, STEP)
+TOOTH_PTS = [(-11.0, 11.6), (-8.0, 8.0)]   # param: organic tooth flank/root inner corners (measured, STEP)
+TOOTH_BACK = (-16.25, 15.0)                # param: organic top of the tooth back face (measured, STEP); its foot is the rim tangent point (smooth join, visual.faceting)
 # param: end
 DISC_ROUND = dict(r_out=0.2, r_in=0.7)                           # tooth tip land (0.4 laser-cuttable) and root fillet
 
 
-SPIDER = dict(r=14.2, lobe_r=2.3, round_in=0.8, win_r=11.7, win_off=2.3, win_far=20.0, hub_r=5.6, win_round=0.6, bore_r=WSHAFT["r"] + SHAFT_CLR)   # bore on the shaft collar
+SPIDER = dict(r=14.2, lobe_r=2.3, round_in=0.8, win_r=11.7, win_off=2.3, win_far=20.0, hub_r=6.0, win_round=1.0, bore_r=WSHAFT["r"] + SHAFT_CLR)   # bore on the shaft collar; window: r1 corners, inner arc r6 (STEP spider_1 section, visual.fillet_ref / silhouette)
 
 
 SPACER = dict(r=16.0, bore_r=BELL_WALL_R[1] + SHAFT_CLR, win_in=11.4, win_out=14.5, half_deg=36.0, win_round=1.0, phase=45.0)
@@ -93,10 +94,12 @@ LEAD_GROOVE_R = LEAD_BUNDLE_R + 0.2                             # groove radius:
 LEAD_MOUTH = LEAD_OD * (1 + math.sqrt(3) / 2)                   # mouth at the inner face = the bundle's narrow width (one lead over two, 2.99): it snaps in flat side first, the round twist cannot fall out
 LEAD_LIP = 0.9                                                  # the mouth is a LEAD_MOUTH slot through a lip this thick (one fdm wall, mfg.thin_wall): square lip edges, no knife edge where the round groove meets the face
 LEAD_GROOVE_X = MNT_IN + LEAD_LIP + math.sqrt(LEAD_GROOVE_R ** 2 - (LEAD_MOUTH / 2) ** 2)   # groove axis behind the inner face: the slot meets the round groove in the mouth chord
+LEAD_FLOOR_W = 0.3                                              # flat strip on the groove floor (no pole where the round ends close)
+LEAD_ROUND = 1.5                                                # groove lip / channel chord rounding (mfg.sharp_internal_corner r >= 1)
 LEAD_LIG = 0.6                                                  # groove edge above the boss line (floor in the 8 mm boss); also puts the front end clear of the back spacer ring (test_lead_route)
 LEAD_Y_REAR = 19.0                                              # groove rear end: its ball end keeps >= LEAD_LIP (one fdm wall, mfg.thin_wall) under RV03's top tangent edge
 LEAD_FAN_X = sum(BSP_X) / 2                                     # the bundle turns into the groove round the back spacer rim, mid its thickness (the stator-side gap is 1.5 mm, too thin for it)
-LEAD_DEV_R, LEAD_DEV_MAX_MM3 = 3.0, 450                        # reference_cad capsule waiver along the groove: capsule radius (mouth + lip), cap on the volume it may explain (groove ~340 mm3)
+LEAD_DEV_R, LEAD_DEV_MAX_MM3 = 3.0, 520                        # reference_cad capsule waiver along the groove: capsule radius (mouth + lip), cap on the volume it may explain (groove ~340 mm3)
 
 
 def boss_line_z(y):

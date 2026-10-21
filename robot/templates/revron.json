@@ -1001,7 +1001,7 @@
        2.8
       ],
       "r": 5.0,
-      "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside, so the countersink keeps a 0.9 mm wall"
+      "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside and front edge, so the countersink keeps a 0.9 mm wall"
      }
     ]
    },
@@ -1027,7 +1027,7 @@
        2.8
       ],
       "r": 5.0,
-      "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside, so the countersink keeps a 0.9 mm wall"
+      "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside and front edge, so the countersink keeps a 0.9 mm wall"
      },
      {
       "near": [
@@ -1079,7 +1079,7 @@
        ]
       ],
       "r": 3.0,
-      "max_mm3": 450,
+      "max_mm3": 520,
       "reason": "phase-lead C-groove in the inner face (added, not in the STEP): the twisted 3 x AWG24 bundle snaps through a 3.0 mouth into a R2.0 channel from the stator exit to the lug top: the original RV03/STEP has no lead channel (leads run free over the lug), so the leads are retained and held clear of the disc bolt heads (wire.exterior_support, wire.rotor_clearance)"
      }
     ]
@@ -3943,8 +3943,8 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
-    "cbore_depth": 1.7637,
-    "grip": 5.5137
+    "cbore_depth": 1.7106,
+    "grip": 5.4606
    },
    "through": [
     "mount_r",
@@ -3981,8 +3981,8 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
-    "cbore_depth": 2.2185,
-    "grip": 5.9685
+    "cbore_depth": 2.1954,
+    "grip": 5.9454
    },
    "through": [
     "mount_r",
@@ -4019,8 +4019,8 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
-    "cbore_depth": 1.1271,
-    "grip": 4.8771
+    "cbore_depth": 1.029,
+    "grip": 4.779
    },
    "through": [
     "mount_r",
@@ -4057,8 +4057,8 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
-    "cbore_depth": 2.8551,
-    "grip": 6.6051
+    "cbore_depth": 2.877,
+    "grip": 6.627
    },
    "through": [
     "mount_r",
