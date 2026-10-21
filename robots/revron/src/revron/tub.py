@@ -6,7 +6,7 @@ from . import tub_shell, tub_lobes, tub_lugs, tub_front
 from .tub_util import rect
 from robot.cad.holes import hole_tool   # the repo root is on the import path (params.py)
 
-USE_TUB2 = os.environ.get("REVRON_TUB2") == "1"   # one flag: build the chassis from the tub2 feature-tree modules
+USE_TUB2 = os.environ.get("REVRON_TUB2", "1") != "0"   # one flag: tub2 feature-tree modules by default; REVRON_TUB2=0 builds the old tub
 SW_PAD_ENGAGE = 3.0   # pad material above the switch screw head seat (M2x3 thread-forming into the 1.7 pilot)
 SW_PAD = dict(x=(22.5, 27.5), y=(-15.6, 4.4), r=1.5, z0=16.5, fillet=1.5, over=0.5, up=0.1)   # switch pad under the deck (STEP): X / Y span (the +X end is the wall), free corner R, bottom Z, wall fillet R, reach into the wall, reach up into the deck
 
