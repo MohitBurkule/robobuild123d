@@ -2852,7 +2852,7 @@
    "at": [
     -11.81,
     -5.4,
-    12.0
+    10.0
    ],
    "rot": [
     0.0,
@@ -4928,6 +4928,12 @@
    "reason": "Pack between the motor wall, the insert columns and the deck",
    "interference_mm": 0.1,
    "mechanical_key": true
+  },
+  {
+   "a": "battery",
+   "b": "base_panel",
+   "method": "rest",
+   "reason": "Pack underside rests on the base panel skin; the panel is screwed to the tub and the deck/top panel close the pack in from above"
   },
   {
    "a": "rxesc",

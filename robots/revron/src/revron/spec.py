@@ -176,6 +176,7 @@ def make_spec(model_file):
     C("base_panel", "tub", "screw", "Base panel under the open floor, 5 M2 CSK into heat-sets")
     C("top_panel", "tub", "screw", "Ti top panel held by 4 M2 flat-head screws through its countersunk corner holes into M2 heat-sets in the column tops (the STEP has the holes, not the screws)")
     C("battery", "tub", "press_fit", "Pack between the motor wall, the insert columns and the deck", interference_mm=PRESS["pack"], mechanical_key=True)
+    C("battery", "base_panel", "rest", "Pack underside rests on the base panel skin; the panel is screwed to the tub and the deck/top panel close the pack in from above")
     C("rxesc", "tub", "interlock", "Malenki held by a TPU strap, boxed by the front wall and the deck; the weapon ESC under it")
     C("wesc", "esc_tray", "interlock", "weapon ESC in the TPU tray lips (0.1 mm); lips on all four sides, the Malenki +z")
     C("esc_tray", "base_panel", "glue", "TPU tray contact-glued to the base panel top")
