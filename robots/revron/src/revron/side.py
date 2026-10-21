@@ -122,6 +122,8 @@ def side_panel(s):
             _cyl(cr_, cx0, cx1, SA),
             _box(*SP_TYRE_RELIEF),                                                # rear tyre relief on the inner face
             _ext(_round(Polygon(SP_NUT_RELIEF), r_out=SP_NUT_RELIEF_R), "yz", *SP_NUT_RELIEF_X)]                  # 1 mm relief round the chassis nut lobe
+    ph = SP_PIN_HOLE
+    cuts.append(_cyl(ph["d"] / 2, *ph["x"], ph["at"]))
     v = SP_VENT
     for y0 in v["y0"]:     # diagonal vent slots (TPU wall flexes, keeps the ESC cool)
         sl = LineString([(y0, v["z0"]), (y0 + v["dy"], v["z0"] + v["dz"])]).buffer(v["r"], cap_style=1)
