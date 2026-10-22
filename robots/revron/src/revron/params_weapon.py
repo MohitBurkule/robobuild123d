@@ -1,7 +1,7 @@
 """Revron params: drisk stack, GR1507 motor, weapon mounts RV02/RV03, disc / spider / spacer. Re-exported by params.py."""
 from .params_chassis import *  # noqa: F401,F403
 # GR1507 catalog features the weapon mates to (robot/catalog.py, motor-local: +X = bell top, -X = stator base)
-from robot.catalog import bell_dims, STATOR_BACK_X, BELL_SCREW_R, BELL_SCREW_PHASE   # noqa: E402
+from robot.catalog import bell_dims, STATOR_BACK_X, BELL_SCREW_R, BELL_SCREW_PHASE, BEARINGS, _gr1507_base   # noqa: E402
 # One switch swaps the weapon motor model: "datasheet" = real GR1507 (GEPRC drawing: 12-slot wound stator, 4-spoke chamfered cap, side wire exit, M5 thread 8 mm),
 # "step" = the simplified RVRN 2.0 STEP motor (solid r4 core, flat cap, no stator, thread 10 mm). Same part ids, mount points and screws in both.
 MOTOR_VARIANT = os.environ.get("REVRON_MOTOR_VARIANT", "datasheet")
@@ -37,10 +37,13 @@ SHAFT_INTO_RECESS = 1.3              # the threaded end stands this far past the
 SHAFT_R = 2.5                        # GR1507 shaft radius (5 mm)
 WSHAFT = dict(r=SHAFT_R, len=-STATOR_BACK_X + MNT_SLAB + SHAFT_INTO_RECESS, x_end=-(MNT_SLAB + SHAFT_INTO_RECESS), thread_pitch=0.8, thread_depth=0.3, thread_len=MOTOR["thread_len"], chamfer=0.4)   # GR1507 shaft: radius, length (back flush with the base), free end in RV02's nut recess
 SHAFT_D = 2 * SHAFT_R
-BRG = dict(od_r=4.0, w=2.5, bore_r=SHAFT_R)   # MR85ZZ: the shaft runs in its bore
+BRG_NAME = "mr85"                   # outboard bearing designation (robot.catalog.BEARINGS): bore, OD, width
+_bd, _bod, _bw = BEARINGS[BRG_NAME]
+BRG = dict(od_r=_bod / 2, w=_bw, bore_r=_bd / 2)   # MR85ZZ from the catalog: the shaft runs in its bore
 BRG["x"] = -(MNT_IN + BRG_RECESS + BRG["w"] / 2)   # centred in the RV02 seat
 BRG_SEAT_R, NUT_RECESS_R = BRG["od_r"] - BRG_PRESS, 6.0   # MR85 seat (pressed: 7.9 STEP), shaft nut recess
-STATOR_PCD, BOSS_OVER = 12.0, 0.01        # stator M2 bolt circle; boss overshoots the battered plane before it is split
+STATOR_PCD = 2 * math.hypot(*_gr1507_base()["cut"][0]["at"][1:])   # stator M2 bolt circle: the motor catalog's base holes
+BOSS_OVER = 0.01                     # boss overshoots the battered plane before it is split
 MNT_SCREW = ("M3x12", "M3x14")           # mount-to-standoff CSK screws at SA, SB
 MOUNT_VARIANT = os.environ.get("REVRON_MOUNT_VARIANT", "original")   # "original" = RV02/RV03 as the STEP draws them; "printable" = nose pad, thickened notch tip, relieved corners, loose screw holes (improvements, not parity)
 PRINTABLE = MOUNT_VARIANT == "printable"
@@ -50,7 +53,6 @@ STATOR_SCREW_FIT = "normal" if PRINTABLE else "close"   # RV03 stator M2 holes: 
 WEAPON_CLEAR_R = 16.0                # chassis material stays outside this radius about the weapon axis (rotor + 1 mm)
 BSP_T = 1.5                          # printed spacer between the stator base and the right mount
 BSP_X = (MNT_IN - BSP_T, MNT_IN)
-STAT_HOLE_R = 1.12                   # RV03 stator screw clearance d2.24 (STEP)
 WM_LEN, WM_BITE = 8.0, 1.7           # stator screw M2x8 and the thread it must bite in the 2 mm base (0.8 d = 1.6, plus 0.1)
 CB_R = 2.25                          # RV03 stator counterbore d4.5
 CB_FLOOR_X = -STATOR_BACK_X + WM_LEN - WM_BITE   # its floor |X| (the button head seats here): the screw tip lands WM_BITE inside the base (STEP 17.15 gives only 1.25: declared deviation)
@@ -76,9 +78,8 @@ MNT_NOTCH_GAP = 0.1                     # the notch's front face stands this far
 NOSE_R = 3.25                           # nose arc round the SB standoff; it leaves the outline at the side's rim_end angle (the front edge is the common tangent of rim and nose: STEP RV02 -5, RV03 -14.5)
 MNT_HEEL = dict(z=SB[1] - NOSE_R, step=0.4, back=1.8, z_hook=2.5, z_lip=4.5)   # rear foot hooked under the tab: flat underside (tangent to the nose arc), tip step, setback, hook and lip Z
 MNT_NOTCH_UP = 2.0                      # the rear face above the tab leans back by this much over the last stretch to the top
+BOSS_Z, BOSS_NOSE_Y = 6.34, 44.34          # the boss starts above the line from the notch top to (BOSS_NOSE_Y, BOSS_Z): STEP, it runs tangent to the nose arc to 0.4 um
 NOSE_PAD_R = 4.1 if PRINTABLE else 0.0                        # local pad round the nose CSK: CSK cone radius (3.2) + a 0.9 mm printed wall (the STEP nose leaves 0.15 mm)
-BOSS_Z = 6.34                           # the boss starts above the line from the notch top to the nose, at this Z at the nose end
-BOSS_NOSE_Y = 44.34
 BIG = 60.0                              # a box edge bigger than any part, for the wedgelet's 2D half-plane clip (_mount_clip)
 MNT_RELIEF_R = 1.0 if PRINTABLE else 0.0                      # concave corner relief of the profile (tub deck fillet, mfg corner relief)
 MNT_CSK_CLEAR = 0.4 if PRINTABLE else 0.2   # extra cone diameter over the DIN 7991 head (dk 6.0): STEP cone d6.2; printable 0.4 floats the seated head so the notch bears a hit first
@@ -87,7 +88,8 @@ MNT_TIP_WALL, MNT_TIP_REACH = (1.5 if PRINTABLE else 0.0), 3.0    # printed wall
 
 
 HOLE_FACE_RISE = 0.7                    # the battered face's highest point over a stator hole axis: the surface the hole is measured from
-BSP = dict(r=10.0, bore_r=4.0, win_in=5.5, win_out=8.5, half_deg=24.6, round_in=2.0, round_out=1.0, phase=HALF_PITCH)   # motor back spacer (Motor_back_spacer_1.stl section fit)
+BSP = dict(r=MNT_SIDE["r"]["top_r"], bore_r=4.0, half_deg=24.6, round_in=2.0, round_out=1.0, phase=HALF_PITCH)   # motor back spacer: flush with RV03's teardrop rim, bore over the base hub
+BSP.update(win_in=BSP["bore_r"] + BSP_T, win_out=BSP["r"] - BSP_T)   # windows leave a hub ring and a rim ring one spacer thickness wide
 
 
 DOG = dict(r=12.0, rise=1.9, t0=6.6, t1=13.1, t2=54.7, ramp_r=15.3, nose_r=2.0)   # bore dogs (90 deg pitch): straight flank t0..t1, R15.3 ramp back to t2, R2 nose (STEP section fit)
