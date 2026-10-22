@@ -11,7 +11,8 @@ RH_SEAT_R, RH_CROWN_H, RH_CROWN_W, RH_ROOT_R = 6.0, 1.0, 2.0, 1.0               
 RH_LIP_R, RH_LIP_ANG, RH_LEN, RH_WALL_R, RH_WALL_T = 6.5, 35.0, 12.0, 3.0, 0.2         # lip radius and its slope to the seat (deg), length, end recess radius / depth
 RH_ROOT_X = RH_BLOCK                                                                    # flange wall plane (= start of the tyre seat)
 RH_D = dict(r=1.6, flat=0.9, arc_n=60, flat_n=27, crown=0.02)                           # D-bore: radius, flat height above the axis, facet counts, flat crown
-RH_BORE_X, RH_NUT_X, RH_NUT_HALF, RH_NUT_Z, RH_GRUB_X, RH_GRUB_ENGAGE = 29.0, 41.0, 2.05, (2.4, 4.4), 34.5, 0.9   # |X| of bore start / slot end, slot half-width, slot z above axis, grub, grub tip past the flat
+RH_BORE_X, RH_NUT_X, RH_NUT_HALF, RH_NUT_Z, RH_GRUB_X = 29.0, 41.0, 2.05, (2.4, 4.4), 34.5   # |X| of bore start / slot end, slot half-width, slot z above axis, grub
+RH_GRUB_D = 2.5                                                                       # STEP grub bore: plain d2.5 through all (not tapped)
 HUB_GRUB_PRINTABLE = False                                                             # False: the STEP's M3 grub bore (tap drill 2.5 at |X| 34.5, breaks into both 45 deg seat ramps); True: the M2 bore 0.2 inboard (no mfg.thin_wall knife edges)
 RH_GAP = 0.5                                                                            # Distance2: hub inner face off the chassis wall
 RH_ORIGIN_X = CH_HALF_W + RH_GAP                                                        # |X| of the hub inner face
