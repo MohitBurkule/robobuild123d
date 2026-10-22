@@ -1,0 +1,24 @@
+{
+  "_doc": "Settings hooks for change hypotheses (robot/overlay.py, robot/gen/changes.py). Values that map to ops are pure spec overlays; env hooks are build-time settings the robust runner applies as choice edits. Anchors are named locations a part can be added at. Owners map build files to the fixer that owns them.",
+  "anchors": {
+    "top_deck_rear": {"at": [0.0, -25.0, 30.5], "rot": [0.0, 0.0, 90.0], "_why": "standing on the Ti top panel (top z 20.4) behind the switch"},
+    "rear_outside": {"at": [0.0, -44.0, 12.0], "rot": [0.0, 0.0, 0.0], "_why": "behind the tub rear face (y -37.6), between the rear wheels"},
+    "tub_interior_rear": {"at": [0.0, -28.0, 11.0], "rot": [0.0, 0.0, 0.0], "_why": "inside the tub between the N10s on the rear axle line"}
+  },
+  "hooks": {
+    "weapon.motor_variant": {"env": "REVRON_MOTOR_VARIANT", "values": ["datasheet", "step"], "default": "datasheet"},
+    "weapon.mount_variant": {"env": "REVRON_MOUNT_VARIANT", "values": ["original", "printable"], "default": "original"},
+    "drive.driven_wheels": {
+      "default": "4WD",
+      "values": {
+        "4WD": [],
+        "2WD": [{"op": "remove", "select": {"kind": "belt"}}]
+      }
+    }
+  },
+  "owners": {
+    "A (tub)": ["tub*.py", "panel_*.py", "params_chassis.py"],
+    "B (weapon)": ["weapon.py", "mount.py", "params_weapon.py", "drisk.py"],
+    "C (side/fork/wedgelet/hubs)": ["side*.py", "fork.py", "wedgelet.py", "hubs.py", "params_side.py", "params_drive.py"]
+  }
+}
