@@ -9,7 +9,7 @@ import build123d as bd
 
 from . import plate as pl
 from .common import _m2
-from .params_weapon import (BOLT_R, DISC_BAL_PTS, DISC_BORE_ROUND, DISC_ECC, DISC_ECC_A, DISC_HOLE_R_WIN, DISC_R,
+from .params_weapon import (BIG, BOLT_R, DISC_BAL_PTS, DISC_BORE_ROUND, DISC_ECC, DISC_ECC_A, DISC_HOLE_R_WIN, DISC_R,
                             DISC_ROUND, DOG, DR_ROT, DR_X, HALF_PITCH, HUB_R, N_STACK, SPACER, SPIDER, TOOTH_A,
                             TOOTH_R, W_FRAME, WSHAFT)
 from .params_chassis import WY, WZ
@@ -84,11 +84,12 @@ def disc(which):
 
 # ----------------------------------------------------------------------------------------------------------- spider
 def _quarter_window(r_in, r_out, arm, rnd):
-    """One quarter window, centred between two stack-bolt axes (0 and 2 HALF_PITCH): the ring r_in..r_out cut by sides
-    parallel to, and `arm` off, the bolt axes (a constant-width spoke along each bolt axis), all four corners rounded rnd."""
-    side = r_out - arm
-    box = bd.Pos(arm + side / 2, arm + side / 2) * bd.Rectangle(side, side)
-    return pl.round_corners((bd.Circle(r_out) - bd.Circle(r_in)) & box, r_out=rnd)
+    """One window, centred between two stack-bolt axes (0 and 2 HALF_PITCH): the ring r_in..r_out cut by sides
+    parallel to, and `arm` off, the two bolt axes (a constant-width spoke along each bolt axis, for any N_STACK), all
+    corners rounded rnd."""
+    ccw_of_0 = bd.Pos(0, arm + BIG / 2) * bd.Rectangle(2 * BIG, BIG)                     # arm off bolt axis 0, towards the window
+    cw_of_pitch = bd.Rot(0, 0, 2 * HALF_PITCH) * bd.Pos(0, -arm - BIG / 2) * bd.Rectangle(2 * BIG, BIG)   # arm off the next bolt axis
+    return pl.round_corners((bd.Circle(r_out) - bd.Circle(r_in)) & ccw_of_0 & cw_of_pitch, r_out=rnd)
 
 
 def spider_sketch():
