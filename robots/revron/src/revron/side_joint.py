@@ -10,10 +10,10 @@ Joints (build123d RigidJoint, Z along the feature's axis):
 The panel is modelled once (SP_BUILT_SIDE, left); the right panel and its joints are its YZ mirror."""
 import os, sys
 import numpy as np
-from .params import HERE, NUT, SA, SA_X, SIDE_BOLT_X, SPEC_DP, SP_BUILT_SIDE, SP_NUT_RELIEF_X, SP_RH_BLEND, SP_SEAT_AXIS
+from .params import HERE, NUT, SA, SA_X, SPEC_DP, SP_BUILT_SIDE, SP_NUT_RELIEF_X, SP_RH_BLEND, SP_SEAT_AXIS
 from .common import _b, _mirror_x, _solid
 from .hubs import standoff, standoff_end
-from .side import _side_body
+from .side import _side_body, bolt_x
 
 
 def _mx(v):
@@ -34,7 +34,7 @@ def sp_frames(s):
     sb, d = SP_BUILT_SIDE, _datum()
     inboard = (-sb, 0.0, 0.0)
     raw = {"sa": (d, standoff_end(_so_a_span(sb), SA)[1]),
-           **{f"seat_{k}": ((sb * SIDE_BOLT_X[k], *ax), inboard) for k, ax in SP_SEAT_AXIS.items()},
+           **{f"seat_{k}": ((sb * bolt_x(k), *ax), inboard) for k, ax in SP_SEAT_AXIS.items()},
            "nut_relief": ((SP_NUT_RELIEF_X[1], *NUT), inboard)}
     loc = {k: (tuple(p - q for p, q in zip(pt, d)), z) for k, (pt, z) in raw.items()}
     return loc if s == sb else {k: (_mx(p), _mx(z)) for k, (p, z) in loc.items()}
