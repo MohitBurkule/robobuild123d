@@ -74,7 +74,7 @@ def test_mount_thickness_follows(tmp_path, base):
 
 
 def test_stator_bolt_circle_follows(tmp_path):
-    _ok(_build(tmp_path, ("params_weapon.py", r"^STATOR_PCD, BOSS_OVER = 12.0,", "STATOR_PCD, BOSS_OVER = 13.0,")))
+    _ok(_build(tmp_path, ("params_weapon.py", r"^STATOR_PCD = 2 \* math.hypot.*$", "STATOR_PCD = 13.0")))
 
 
 def test_stack_bolt_circle_follows(tmp_path):

@@ -82,7 +82,8 @@ def check(d):
             dm = max(max(abs(a - c) for p, q in zip(old[k][m], new[k][m]) for a, c in zip(p, q)) for m in old[k])
             ok = all(len(old[k][m]) == len(new[k][m]) for m in old[k]) and dm < 1e-9
         else:
-            dm = old[k].symmetric_difference(new[k]).area
+            dm = (old[k].symmetric_difference(new[k]).area if hasattr(old[k], "symmetric_difference")   # shapely
+                  else sum(f.area for f in ((old[k] - new[k]).faces() + (new[k] - old[k]).faces())))   # build123d Face
             ok = dm < 1e-9
         bad += not ok
         print(f"{k:20s} dev {dm:.2e}  {'OK' if ok else 'FAIL'}")
