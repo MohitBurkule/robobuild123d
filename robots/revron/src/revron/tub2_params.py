@@ -1,7 +1,7 @@
 """[tub2] ONE master block of the RV01 tub. Shared masters (wall, skin, column radius, column/bolt pattern INS) drive every
 feature file; only the dims below are literals, everything else is a relation. World frame: X across, Y front, Z up."""
 from .params_chassis import (CH_HALF_W, CH_Y0, CH_Y1, CH_Z0, CH_Z1, CH_WALL, CH_IN_X, COL_R, INS, INS_Z, N10_TOP, N10_KEY,
-                             KEY_SPAN, SA_X0, WALL_IN_FRONT, WALL_IN_REAR, BASE_Z0, BASE_T, BASE_OUT, PRELOAD_PAD)
+                             KEY_SPAN, SA_X0, INSERT_OD, BORE_CH, WALL_IN_FRONT, WALL_IN_REAR, BASE_Z0, BASE_T, BASE_OUT, PRELOAD_PAD)
 
 SKIN = CH_WALL / 2                      # master: skin left under pockets; also every small fillet / rib in the tub
 DECK = CH_Z1 - CH_WALL                  # deck underside
@@ -12,8 +12,8 @@ OVER = SKIN / 10                        # boolean overlap (fuse), not a dimensio
 INS_RIGHT = tuple(p for p in INS if p[0] > 0)
 INS_AXIS = tuple(p for p in INS if p[0] == 0)
 # columns
-INSERT_OD, KNURL = 3.5, 0.25            # FS1 M2 heat-set: knurled OD and knurl depth
-BORE_R, BORE_CH = INSERT_OD / 2 - KNURL, 0.6   # heat-set bore = the insert's core (the knurl melts in), chamfer 0.6 at both ends
+KNURL = 0.25                            # FS1 M2 heat-set: knurl depth
+BORE_R = INSERT_OD / 2 - KNURL          # heat-set bore = the insert's core (the knurl melts in); chamfer BORE_CH at both ends
 # corner blocks: face tangent to the column, nose R = COL_R, wall-end fillet = SKIN
 # stop wall / key tab / ledge
 STOP_FRONT_Y = KEY_SPAN[1]              # stop wall front face is the key tab front face
@@ -33,6 +33,5 @@ POCKET_SKIN = 1.1                                                 # rear boxes s
 CENTRE_Y0 = -30.0                                                 # centre rear box rear edge
 REAR_R = 1.5                                                      # rear box corner R
 # base seat
-PAD_MARGIN = 0.3
 PAD_RECESS = 0.15                        # tub recess half-width beyond the pad half-width: clearance each side (recess = pad + 0.3, STEP 9.8)
 PANEL_CLEARANCE = 0.2                  # rabbet = RV26 outline offset by this (print clearance)

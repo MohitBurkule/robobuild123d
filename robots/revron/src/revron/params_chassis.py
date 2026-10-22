@@ -5,7 +5,10 @@ ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
-from .variants import variant   # tub deviations (open_keyhole, pad_preload, switch_on_bolt_axis) are opt-in switches, see variants.py
+from .variants import variant
+from . import hw
+from robot.cad import fastener_catalog as fc   # standard fastener / insert dimensions
+from robot.world import csk_dims   # tub deviations (open_keyhole, pad_preload, switch_on_bolt_axis) are opt-in switches, see variants.py
 
 # ======================================================================================================================
 # Measured layout (RVRN 2.0 STEP, world frame). Each number is a dimension of a feature, not a mesh coordinate list.
@@ -22,7 +25,8 @@ SB = (40.5, 4.5)                     # 15 mm standoff (RV10): nose (Y, Z)
 SA_LEN, SB_LEN = 25.0, 15.0          # catalog standoff lengths
 SA_X0, SB_X0 = 17.5, 21.5            # |X| of each standoff's inner end
 SO_R = 2.5                           # standoff radius
-M3_THIN_NUT_T = 1.8                  # DIN 439 M3 thin nut thickness
+M2, M3 = 2.0, 3.0                    # thread diameters of the screws the tub is drilled for
+M3_THIN_NUT_T = fc.nut(M3, 'thin')[1]   # thin M3 nut thickness (ISO 4035)
 MNT_IN, MNT_T, MNT_SLAB_T = 13.4, 8.0, 4.0   # weapon mount: inner face |X|, total thickness, slab thickness (rest = battered boss)
 FLOOR_Z = 1.0                        # ground-contact plane of the ramps / side feet
 # ---------------------------------------------------------------------------------------------------------------------
@@ -31,9 +35,13 @@ REF_TO_WORLD = [[0, 0, -1, 0], [-1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1]]
 SA_X, SB_X = (SA_X0, SA_X0 + SA_LEN), (SB_X0, SB_X0 + SB_LEN)   # standoff |X| spans: inner end + catalog length
 NUT = (-11.5, 8.5)                   # side-panel screw into a thin M3 nut in the chassis wall (Y, Z)
 NUT_X = (CH_HALF_W - M3_THIN_NUT_T, CH_HALF_W)   # nut pocket opens on the outer wall face, one nut deep
-INS = [(-25.0, 10.4), (25.0, 10.4), (-25.0, -21.6), (25.0, -21.6), (0.0, -33.6)]   # 5 floor inserts / base screws
-INS_Z = (5.1, 9.1)                   # FS1 M2 heat-set (3.5 OD x 4): bore floor and mouth Z (insert sits on the bore floor)
-INS_LEN = INS_Z[1] - INS_Z[0]
+# insert columns: a 2 x 2 grid, each centre a fixed distance in from the inner wall faces, plus the rear boss one wall in front of the rear inner face
+INS_PITCH_Y, INS_EDGE = 32.0, (2.5, 2.6)   # grid pitch along Y; column centre to the side wall inner face / to the front wall inner face
+INS_COLS = tuple((sx * (CH_IN_X - INS_EDGE[0]), CH_Y1 - CH_WALL - INS_EDGE[1] - k * INS_PITCH_Y) for k in (0, 1) for sx in (-1, 1))
+INS = [*INS_COLS, (0.0, CH_Y0 + 2 * CH_WALL)]   # 5 floor inserts / base screws
+INSERT_CAT = "heatset_m2_4"          # FS1 M2 heat-set, brass, 3.5 OD x 4
+INSERT_OD, INS_LEN = hw.size(INSERT_CAT)[1:]   # knurled OD and length from the catalog
+BORE_CH = 0.6                        # chamfer of the heat-set bore at the panel seat and at the rim
 # electronics envelopes (catalog boxes at their spec placement, rot z 90): Malenki nano 32 x 20 x 4.4 at (8.67, -3.0, 15.3),
 # BBB ant ESC 23.5 x 12 x 5 at (8.63, -7.25, 10.6); the deck cage ribs are dimensioned off these
 RX_SIZE, RX_C = (32.0, 20.0, 4.4), (8.67, -3.0, 15.3)     # receiver catalog box (L, W, H) and placed centre
@@ -47,11 +55,15 @@ def _env(c, size):
 
 
 (RX_X, RX_Y, RX_Z), (WE_X, WE_Y, WE_Z) = _env(RX_C, RX_SIZE), _env(WE_C, WE_SIZE)
-MOTX = 19.6                          # N10 catalog origin |X| (body 3.7..27.5, shaft to 37.5)
-N10_KEY = (23.55, 26.15)             # |X| of the chassis key tab between the N10's last two gearbox plates
-KEY_DROP = CH_WALL / 2                 # key tab reaches half a wall below the gearbox plate top so it keys between the plates
-KEY_SPAN, KEY_DEV_R = (-26.15, -23.4), 2.5   # Y span of the key tab, radius of its reference-deviation zone
-N10_TOP = 17.0                       # top face of the N10 gearbox plates
+DRIVE_MOTOR = "n10_2200rpm_spicy"    # catalog id of the drive gearmotors (RV12): the tub is dimensioned from its plate stack
+GB = hw.gearbox(DRIVE_MOTOR)         # plate stack in the motor frame: top, half_w, end, gaps
+MOTOR_WALL_GAP = 0.3                 # last gearbox plate to the chassis wall's inner face
+MOTX = round(CH_IN_X - MOTOR_WALL_GAP - GB["end"], 6)   # N10 catalog origin |X|: the stack ends a gap short of the wall
+KEY_CLR = 0.15                       # chassis key tab to each gearbox plate
+N10_KEY = tuple(round(MOTX + g + s * KEY_CLR, 6) for g, s in zip(GB["gaps"][-1], (1, -1))) if GB["gaps"] else None   # |X| of the key tab: the open span between the stack's last two plates less the clearance; none when the gearbox has no such gap
+N10_TOP = round(RZ + GB["top"], 6)   # top face of the N10 gearbox plates
+KEY_BITE, STOP_CLR = 0.65, 0.1       # key tab reaches this far behind the gearbox front face; the stop wall stands this clear of it
+KEY_SPAN = (round(RY + GB["half_w"] - KEY_BITE, 6), round(RY + GB["half_w"] + STOP_CLR + CH_WALL, 6))   # Y span of the key tab / stop wall
 # chassis RV01
 SW_HALF_W, SW_CLR = 2.9, 0.05   # power switch body half-width, its clearance to the inner wall face
 SW_HALF, SW_WALL_CLEAR = SW_HALF_W, SW_CLR   # fix-joints names (switch joint in joints.py)
@@ -64,13 +76,17 @@ CH = dict(x=CH_HALF_W, y0=CH_Y0, y1=CH_Y1, z0=CH_Z0, z1=CH_Z1, wall=CH_WALL, dec
 # ====================================================================================================================
 # panels (RV26 base, Ti top) [fix-T: named params, every panel dimension derives from these]
 SEG, SEG_FINE = 64, 128              # shapely buffer resolution (segments per quarter circle) for ears / tangent arcs
-BASE_HEAD_DK = 2.2 * 2.0             # modelled M2 CSK head diameter (robot.world.csk_dims: 2.2 d = 4.4, 90 deg, 1.2 deep)
+BASE_HEAD_DK = csk_dims(M2)[0]       # modelled M2 CSK head diameter (robot.world.csk_dims: 2.2 d = 4.4, 90 deg, 1.2 deep)
 BASE_CSK_SEAT_CLR = 0.1              # diametral clearance between that head and the seat cone
-BASE_CSK_CLEAR = BASE_HEAD_DK + BASE_CSK_SEAT_CLR - 3.8   # hole_tool's csk_clear is added to the catalog dk (3.8): seat 4.5 at the face, cone parallel to the head so the 4.4 head never touches (r5 overlap 0.09)
-BASE_CSK_CLEAR_STEP = 3.2 - 3.8      # original RV26 seat: dk 3.2 (Chamfer1 0.5 on the 2.2 hole; panel volume matches the STEP to 0.03 %)
+BASE_CSK_CLEAR = BASE_HEAD_DK + BASE_CSK_SEAT_CLR - fc.head(M2, 'csk')[0]   # hole_tool's csk_clear is added to the catalog dk (3.8): seat 4.5 at the face, cone parallel to the head so the 4.4 head never touches (r5 overlap 0.09)
+BASE_CSK_CLEAR_STEP = fc.clearance(M2, 'close') + 2 * 0.5 - fc.head(M2, 'csk')[0]   # original RV26 seat: dk 3.2 = the 2.2 hole plus Chamfer1 0.5 each side (panel volume matches the STEP to 0.03 %)
 BASE_Z0, BASE_T = 3.5, 1.0           # base panel underside Z, skin thickness
-PRELOAD_PAD = dict(c=(22.5, -30.3), s=9.5, h=0.465 if variant("pad_preload") else 0.25, r=0.85, sink=0.01)   # N10 preload pad on the base skin: centre |X|/Y, side, height (0.45 + 0.015: closes the 0.2 mm the STEP leaves under the N10, intent.seat_locates), corner R, sink into the skin (union overlap)
-BASE_OUT = dict(x=28.1, y0=-36.2, y1=13.0, r=0.8)   # RV26 outline 56.2 x 49.2, R0.8 corners
+INS_Z = (BASE_Z0 + BASE_T + BORE_CH, BASE_Z0 + BASE_T + BORE_CH + INS_LEN)   # the insert sits on the bore floor, a chamfer above the panel seat; bore mouth a length above
+PAD_EDGE, PAD_DY = 0.25, 0.2          # N10 preload pad: its outer edge this far in from the wall inner face; its centre this far off the motor axis (Y)
+PAD_S = 2 * GB["half_w"] - 0.5      # pad side: the gearbox width less a margin
+PRELOAD_PAD = dict(c=(round(CH_IN_X - PAD_EDGE - PAD_S / 2, 6), round(RY + PAD_DY, 6)), s=PAD_S, h=0.465 if variant("pad_preload") else 0.25, r=0.85, sink=0.01)   # N10 preload pad on the base skin: centre |X|/Y, side, height (0.45 + 0.015: closes the 0.2 mm the STEP leaves under the N10, intent.seat_locates), corner R, sink into the skin (union overlap)
+BASE_IN = 1.4                       # RV26 outline edge in from the chassis outer face (rear and side); the front edge is the front wall inner face
+BASE_OUT = dict(x=round(CH_HALF_W - BASE_IN, 6), y0=round(CH_Y0 + BASE_IN, 6), y1=CH_Y1 - CH_WALL, r=0.8)   # RV26 outline 56.2 x 49.2, R0.8 corners
 TOP_Z0, TOP_T = CH["z1"], 0.9               # Ti top panel sits on the chassis rim, 0.9 thick
 TOP_X = 23.0                         # |X| of the top-panel side edges beside the switch
 TOP_SHOULDER_Y = 7.9                 # front edge between the shoulders and the tab

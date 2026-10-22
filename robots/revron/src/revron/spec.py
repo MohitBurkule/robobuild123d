@@ -90,7 +90,7 @@ def make_spec(model_file):
           label=f"{SIDE_REF[s]} TPU side panel: battered S-wall round the wheels, 3 M3x8 CSK (two standoff ends, one chassis nut)")
         P(id=f"nut_c{n}", kind="nut", catalog="nut_m3_thin", **place(f"nut_c{n}"), rotates_with="fixed")
         # drive
-        P(id=f"motor_{n}", kind="motor", catalog="n10_2200rpm_spicy", at=place_at(f"motor_{n}"), rot=place_rot(f"motor_{n}"), rotates_with="fixed",
+        P(id=f"motor_{n}", kind="motor", catalog=DRIVE_MOTOR, at=place_at(f"motor_{n}"), rot=place_rot(f"motor_{n}"), rotates_with="fixed",
           **({} if variant("open_keyhole") else {"loose_ok": {"axis": "+x" if s < 0 else "-x", "max_mm": 2.2, "reason": f"RVRN STEP: RV12 N10 slides 2.0 mm inboard in RV01 before touching the tub; outboard it bears on the RV01 wall at x {s * 27.5:g}"}}),
           assembly_ok={"reason": "original RVRN 2.0: the RV01 wall solid at z 3..5.5 under the RV12 boss means the N10 goes into the keyhole tilted, shaft first, not by a straight slide"})
         P(id=f"whub_r{n}", kind="pulley", solid_fraction=SOLID["hub"], rotates_with=f"wheel_r{n}", print_orientation="+x", shape=M(f"rear_hub_{n}"), parent="tub", **place(f"whub_r{n}", "tub"),
@@ -105,7 +105,7 @@ def make_spec(model_file):
           label="RV19 micro hub 9 x 9 greased on the 25 mm standoff, O-ring groove inboard")
         P(id=f"wheel_f{n}", kind="wheel", material="rubber", process="cots", tyre_of=f"whub_f{n}", rotates_with=f"wheel_f{n}", parent=f"whub_f{n}", shape=M(f"front_tyre_{n}"), **place(f"wheel_f{n}", f"whub_f{n}"),
           color="#1b1b1b", stock="RV20 Scalextric micro SLX tyre 11 x 7 x 6", label="Scalextric micro tyre 11 x 7 x 6")
-    P(id="battery", kind="battery", catalog="lipo_2s_180_turnabot", **place("battery"), retained="press_fit",
+    P(id="battery", kind="battery", catalog=BATTERY, **place("battery"), retained="press_fit",
       no_contact_ok=None if variant("battery_pad") else {"with": "tub", "reason": "original RVRN 2.0: RV16 pack at STEP z 12.0 (underside 6.5) floats 2.0 mm over the RV26 base-panel skin (z 4.5); the assembly mates the pack to the chassis only, no pad"})
     if variant("rxesc_strap"):
         P(id="rxesc", kind="esc", catalog="malenki_nano_rvrn2", **place("rxesc"), retained="strap",

@@ -1,5 +1,6 @@
 """Revron params: fasteners, wiring, electronics, reference BOM and check tolerances. Re-exported by params.py."""
 from .params_side import *  # noqa: F401,F403
+from . import hw
 
 
 # ====================================================================================================================
@@ -32,10 +33,14 @@ WIRES = [("w_bat_sw", "battery.jst_rcy", "power_switch.in", AWG["power"], "power
 # make_spec tables: weapon shaft, web floors, hub pivots, electronics placements, press-fit interference, belt geometry
 WEB = dict(spider=0.8, disc=0.9, fork=1.05)             # min_web_mm the designer owns (STEP measures the same webs)
 HUB_PIVOT_X = dict(rear=41.6, front=34.5)               # |X| of each hub's revolute pivot
-BAT_BELOW = 5.5                                          # lipo_2s_180_turnabot catalog origin -> pack underside (STEP pack 11 thick, z 6.5..17.5 about origin z 12)
+BATTERY = "lipo_2s_180_turnabot"                          # RV16 pack, catalog id
+BAT_L, BAT_W, BAT_H = hw.size(BATTERY)                    # catalog box (long side L): in the bay it is turned 90 about Z, so L runs along Y and W along X
+BAT_BELOW = BAT_H / 2                                     # catalog origin -> pack underside (STEP pack 11 thick, z 6.5..17.5 about origin z 12)
 BAT_Z = 12.0                                            # STEP/dump pack origin (RV16 xform z 11.8 ~ 12); underside 6.5, 2.0 over the base panel skin (original: no pad, pack mated to the chassis only; foam pad = variant battery_pad)
-BAT_PAD = dict(x=(-14.8, -8.8), y=(-11.4, 0.6))          # double-sided foam pad footprint under the pack, base-panel skin top -> pack underside
 ELEC = dict(battery=(-11.81, -5.4, BAT_Z), rxesc=(8.67, -3.0, 15.3), wesc=(8.63, -7.25, 10.6), switch_yz=(-5.6, 14.25))   # catalog origins (STEP envelopes)
+BAT_PAD_FRAC = 3                                         # the foam pad is this fraction of the pack footprint each way
+_bx, _by = ELEC["battery"][:2]   # pack centre
+BAT_PAD = dict(x=(_bx - BAT_W / BAT_PAD_FRAC / 2, _bx + BAT_W / BAT_PAD_FRAC / 2), y=(_by - BAT_L / BAT_PAD_FRAC / 2, _by + BAT_L / BAT_PAD_FRAC / 2))   # double-sided foam pad footprint under the pack, centred, base-panel skin top -> pack underside
 FILLET_REAR_X = 26.77   # |X| where the squared N10 gearbox-plate seat meets its seat arc at the rear wall (measured on our section z=10; RV01 26.5)
 SWX_DEV_R = 1.5   # reference_cad deviation radius round each switch pilot (hole shifted 0.45 from the STEP)
 SW_PITCH, SW_BODY_H = 15.0, 3.5   # BBB ant switch ear-hole pitch and body height (catalog)
@@ -62,7 +67,7 @@ FILLET_H, ROTOR_CLEAR = 10.0, 2.0                         # inside-corner fillet
 
 REF_BOM = [   # RVRN 2.0 STEP part list (research/rvrn_step/INDEX.txt); one row per joint or part family
     dict(role="FS8: base panel 5 x M2 CSK into heat-sets", match=["bolt_b*"], count=5, designation="M2x6", head="countersunk", threads_into="insert"),
-    dict(role="FS1 M2 heat-sets (floor)", kind="part", match=["insert_b*", "insert_t*"], count=9, catalog="heatset_m2_4"),
+    dict(role="FS1 M2 heat-sets (floor)", kind="part", match=["insert_b*", "insert_t*"], count=9, catalog=INSERT_CAT),
     dict(role="FS9: mount to standoff 2 x M3x12 CSK alu (axle standoff)", match=["bolt_u?a"], count=2, designation="M3x12", head="countersunk", threads_into="standoff", material="aluminium"),
     dict(role="FS9: mount to nose standoff 2 x M3 CSK alu", match=["bolt_u?b"], count=2, designation="M3x14", head="countersunk", threads_into="standoff", material="aluminium",
          deviation="M3x14 instead of the STEP's M3x12: through mount and lug, 12 mm engages 3.9 mm of the 15 mm standoff (< 1.5 d)"),
@@ -80,10 +85,10 @@ REF_BOM = [   # RVRN 2.0 STEP part list (research/rvrn_step/INDEX.txt); one row 
     dict(role="RV23/24 side panels", kind="part", match=["side_*"], count=2, material="tpu"),
     dict(role="Top panel 0.9 sheet", kind="part", match=["top_panel"], count=1),
     dict(role="RV15 BBB antweight switch", kind="part", match=["power_switch"], count=1, catalog="switch_bbb_ant_rvrn2"),
-    dict(role="RV16 Turnabot 2S 180 mAh", kind="part", match=["battery"], count=1, catalog="lipo_2s_180_turnabot"),
+    dict(role="RV16 Turnabot 2S 180 mAh", kind="part", match=["battery"], count=1, catalog=BATTERY),
     dict(role="RV13 Malenki nano", kind="part", match=["rxesc"], count=1, catalog="malenki_nano_rvrn2"),
     dict(role="RV14 brushless ESC", kind="part", match=["wesc"], count=1, catalog="bbb_ant_esc_rvrn2"),
-    dict(role="RV12 N10 2200 rpm x 2", kind="part", match=["motor_l", "motor_r"], count=2, catalog="n10_2200rpm_spicy"),
+    dict(role="RV12 N10 2200 rpm x 2", kind="part", match=["motor_l", "motor_r"], count=2, catalog=DRIVE_MOTOR),
     dict(role="drisk stack: 4 x M2 into the spider (not in the STEP, holes are)", match=["bolt_d*"], count=4, designation="M2", threads_into="spider",
          deviation="the STEP leaves the r14 stack holes empty; 4 M2x14 added from the back, tapped into the spider (r0.8 tap holes there, the STEP r1.1 clearance elsewhere): no nuts, nothing invented beyond the screws"),
     dict(role="spider to bell: 4 x M2 (not in the STEP)", match=["bolt_p*"], count=4, designation="M2", threads_into="motor",

@@ -4,6 +4,7 @@ from build123d import Axis, BuildSketch, Box, Locations, Plane, Pos, Rectangle, 
 from .tub2_util import round_floor_pocket
 from .tub2_params import CH_WALL, SKIN, OVER, WALL_IN_FRONT
 from .params_chassis import RZ
+from .params_weapon import TAB
 
 WIRE_X, WIRE_W, WIRE_H = 8.75, 3.0, 12.0       # Sketch16: slot width 3 and height 12 about the axle height; centre X
 WIRE_RIB = CH_WALL + SKIN                      # rib frame round the slot (3)
@@ -11,7 +12,7 @@ POCKET_HALF_X = 18.25                          # pockets stop here either side o
 POCKET_H = 9.0                                 # pocket height about the axle height
 POCKET_R = 0.8                                 # Fillet22: corner round = floor round ...
 POCKET_DEPTH = POCKET_R                        # ... = depth sunk into the wall from its inner face, so the floor corners are spheres
-TAB_FRONT = 26.5                               # the slot runs on through the weapon tab
+TAB_FRONT = TAB['y1']                           # the slot runs on through the weapon tab
 
 
 def wire_slot():

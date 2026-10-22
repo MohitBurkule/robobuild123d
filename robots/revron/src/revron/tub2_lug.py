@@ -2,14 +2,14 @@
 R4 blend down to the axle-standoff round SA, R4 blend back up, flat, R4 blend down to the nose round SB, SB round, then the line from the
 front-top corner tangent to SB. The two standoff holes are circles in the same sketch. Built for +X and mirrored."""
 from build123d import BuildLine, BuildSketch, Circle, CenterArc, Line, Locations, Mode, Plane, extrude, make_face
-from .params_chassis import SA, SB, LUG_SA_R, LUG_SB_R, SA_X0, SB_X0
+from .params_chassis import SA, SB, LUG_SA_R, LUG_SB_R, LUG_SCALLOP_R, SA_X0, SB_X0, SO_R, M3, fc
 from .tub2_params import CH_Y1, CH_Z0, CH_Z1, WALL_IN_FRONT, CH_WALL, OVER
 from math import atan2, cos, hypot, sin, sqrt
 from .tub2_arcs import angle, floor_blend, tangent_from_point
 
-BLEND_R = 4.0                                   # Fillet6 R4 under the lug
+BLEND_R = LUG_SCALLOP_R                         # Fillet6 R4 under the lug (the scallop R)
 NOSE_TIP_OFF, NOSE_TIP_R = (0.16, 0.2), 3.0         # top of the nose: a slightly smaller round, shifted up-front, takes the top line (STEP: R3.0 on the section)
-SA_HOLE_R, SB_HOLE_R = 2.5, 1.6                 # 25 mm standoff end clearance, M3 clearance (Sketch4 D1 / D4)
+SA_HOLE_R, SB_HOLE_R = SO_R, fc.clearance(M3, 'close') / 2   # standoff end (its own radius), M3 clearance (Sketch4 D1 / D4)
 
 
 def profile_points():

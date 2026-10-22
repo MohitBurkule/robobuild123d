@@ -3,16 +3,19 @@ line, clear of the weapon rotor circle), the key tab keyed into the mount's notc
 tab and the square key hole. Built for +X and mirrored."""
 from build123d import Align, BuildSketch, Circle, Locations, Mode, Plane, Polygon, Rectangle, chamfer, extrude, fillet
 from .params_chassis import MNT_IN, SA_X0, SB_X0, WY, WZ
+from .params_weapon import TAB
 from .params_weapon import WEAPON_CLEAR_R
 from .tub2_params import CH_Y1, CH_Z0, CH_Z1, CH_WALL, SKIN, OVER, WALL_IN_FRONT, DECK, SEAT_Z
 from .tub2_lug import top_line_slope
 from .tub2_util import box_xy, concave_filler, prism
 
-TAB_FRONT = 26.5                                  # tab front face (Y); also the slot's reach
+TAB_FRONT = TAB['y1']                             # tab front face (Y); also the slot's reach
 TAB_WALL_T = 3 * SKIN                             # tab wall thickness
 TAB_GAP = SKIN / 10                               # tab wall stops this short of the mount's inner face
 WALL_X = (MNT_IN - TAB_GAP - TAB_WALL_T, MNT_IN - TAB_GAP)   # tab wall X span (inboard of the mount)
-KEY_Y0, KEY_Z0, KEY_Z1 = 18.5, 5.4, 13.5          # key tab octagon (Y0 .. TAB_FRONT, Z0 .. Z1), chamfer SKIN
+KEY_CLR = 0.05                                   # key tab to the mount notch
+KEY_Y0 = 18.5                                     # key tab octagon from here to TAB_FRONT, chamfer SKIN
+KEY_Z0, KEY_Z1 = TAB['z0'] + KEY_CLR, TAB['z0'] + TAB['h'] - KEY_CLR   # between the mount notch's floor and roof (Z)
 KEY_X = (MNT_IN - 2 * TAB_GAP, SA_X0 + OVER)      # key tab runs from the mount's notch into the lug
 KEY_WALL, KEY_R = 3 * SKIN / 2, SKIN                # wall left round the key hole; its corner R (Fillet4)
 
