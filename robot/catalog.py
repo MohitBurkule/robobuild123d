@@ -422,7 +422,8 @@ def research_entries(path: Path | None = None) -> list[CatalogEntry]:
 
 @lru_cache(maxsize=1)
 def catalog() -> tuple:
-    return tuple(builtin() + research_entries())
+    from robot import cots_alts   # vendor-sourced alternatives (lazy: cots_alts imports this module's helpers)
+    return tuple(builtin() + cots_alts.entries() + research_entries())
 
 
 def find(cid: str):
