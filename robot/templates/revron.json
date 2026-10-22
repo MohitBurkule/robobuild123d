@@ -80,9 +80,9 @@
     "bolt_t*"
    ],
    "count": 4,
-   "designation": "M2x5",
+   "designation": "M2x6",
    "threads_into": "tub",
-   "deviation": "the STEP top panel has 4 countersunk corner holes over the corner columns' d3 bores but no screws; 4 M2x5 added, tapping a 1.7 pilot in a 3 mm web left under the column rim, so the Ti panel cannot peel off"
+   "deviation": "the STEP top panel has 4 countersunk corner holes over the corner columns' d3 bores but no screws; 4 M2x6 added, tapping a 1.7 pilot in a 5 mm web left under the column rim, so the Ti panel cannot peel off"
   },
   {
    "role": "FS1 M2 heat-sets (floor)",
@@ -4222,7 +4222,7 @@
   },
   {
    "id": "bolt_t0",
-   "designation": "M2x5",
+   "designation": "M2x6",
    "head": "button",
    "tool": "hex1.3",
    "at": [
@@ -4243,7 +4243,7 @@
    "reason": "M2 button head on the panel top, thread-forming into the 1.7 pilot in the TOP_NECK web under the rim of the corner column (the STEP top panel has the 4 holes over those columns, no screws)",
    "hole": {
     "d": 2.0,
-    "length": 5.0,
+    "length": 6.0,
     "head": "button",
     "head_std": "ISO 7380-1",
     "head_dk": 3.5,
@@ -4259,7 +4259,7 @@
   },
   {
    "id": "bolt_t1",
-   "designation": "M2x5",
+   "designation": "M2x6",
    "head": "button",
    "tool": "hex1.3",
    "at": [
@@ -4280,7 +4280,7 @@
    "reason": "M2 button head on the panel top, thread-forming into the 1.7 pilot in the TOP_NECK web under the rim of the corner column (the STEP top panel has the 4 holes over those columns, no screws)",
    "hole": {
     "d": 2.0,
-    "length": 5.0,
+    "length": 6.0,
     "head": "button",
     "head_std": "ISO 7380-1",
     "head_dk": 3.5,
@@ -4296,7 +4296,7 @@
   },
   {
    "id": "bolt_t2",
-   "designation": "M2x5",
+   "designation": "M2x6",
    "head": "button",
    "tool": "hex1.3",
    "at": [
@@ -4317,7 +4317,7 @@
    "reason": "M2 button head on the panel top, thread-forming into the 1.7 pilot in the TOP_NECK web under the rim of the corner column (the STEP top panel has the 4 holes over those columns, no screws)",
    "hole": {
     "d": 2.0,
-    "length": 5.0,
+    "length": 6.0,
     "head": "button",
     "head_std": "ISO 7380-1",
     "head_dk": 3.5,
@@ -4333,7 +4333,7 @@
   },
   {
    "id": "bolt_t3",
-   "designation": "M2x5",
+   "designation": "M2x6",
    "head": "button",
    "tool": "hex1.3",
    "at": [
@@ -4354,7 +4354,7 @@
    "reason": "M2 button head on the panel top, thread-forming into the 1.7 pilot in the TOP_NECK web under the rim of the corner column (the STEP top panel has the 4 holes over those columns, no screws)",
    "hole": {
     "d": 2.0,
-    "length": 5.0,
+    "length": 6.0,
     "head": "button",
     "head_std": "ISO 7380-1",
     "head_dk": 3.5,

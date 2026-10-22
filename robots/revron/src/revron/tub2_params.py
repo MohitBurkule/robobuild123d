@@ -14,7 +14,7 @@ INS_RIGHT = tuple(p for p in INS if p[0] > 0)
 INS_AXIS = tuple(p for p in INS if p[0] == 0)
 # columns
 INSERT_OD, KNURL = 3.5, 0.25            # FS1 M2 heat-set: knurled OD and knurl depth
-TOP_NECK = CH_WALL + SKIN                # web left under the rim in the top-screw columns: the deck plus a skin = 3 mm of thread bite (1.5 d for M2)
+TOP_NECK = 2.5 * 2.0                     # web left under the rim in the top-screw columns: plastic thread engagement >= 2.5 d (M2)
 TOP_PILOT_R = tap_drill(2.0) / 2         # M2 thread-forming pilot (catalog tap drill)
 BORE_R, BORE_CH = INSERT_OD / 2 - KNURL, 0.6   # heat-set bore = the insert's core (the knurl melts in), chamfer 0.6 at both ends
 # corner blocks: face tangent to the column, nose R = COL_R, wall-end fillet = SKIN
