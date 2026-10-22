@@ -218,4 +218,15 @@ if BELL_HEAD_CLEAR < 0.2:
                                f"(bell-screw heads {BELL_HEAD_CLEAR:+.2f} mm from RV02, the motor sits {LEAD_GAP + BSP_T:g} mm off RV03)")
 if N_HUB > 1 and 2 * HUB_R * math.sin(math.pi / N_HUB) < _fc.head(HUB_D, "button")[0] + 0.5:   # heads need room to turn a key between them
     raise _wm.WeaponMotorError(f"weapon motor `{WM['id']}`: its bell-top screws ({N_HUB} x M{HUB_D:g} on r{HUB_R:g}) are closer than one button head: the spider cannot be screwed on")
+
+
+def tub_interface():
+    """[fix-B-vers] What the tub fits to the weapon module, for the selected weapon.type (only 'drisk' is built): the
+    tub (A) should read these instead of the weapon constants, so another weapon style can supply its own. Keys:
+    type, mount_in (mount inner face |X|), mount_frames, tab (the notch tab RV02/RV03 drop over), clear_r (chassis
+    stays outside this radius about the axis), axis (Y, Z), phase_via (lead route over the lug)."""
+    return dict(type=WEAPON_TYPE, mount_in=MNT_IN, mount_frames=dict(MNT_FRAME), tab=dict(TAB), clear_r=WEAPON_CLEAR_R,
+                axis=(WY, WZ), motor=WM["id"], phase_via=[list(p) for p in PHASE_VIA])
+
+
 __all__ = [n for n in dir() if not n.startswith("__")]   # last line: every name above is exported
