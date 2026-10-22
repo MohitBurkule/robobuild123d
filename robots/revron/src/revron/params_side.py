@@ -78,6 +78,7 @@ WG_SKIN_RUN = 7.0           # skin plate length along the ramp below K: its holl
 WG_TAPER_DEG = 18.9         # rear face T leans this far off vertical; it is tangent to the WG_FLANK_R circle about SA
 WG_FLANK_R = 10.0           # R10 convex flank blend, also T's stand-off from SA
 WG_BORES_SA = 2.6           # radius of the 25 mm standoff bore through the wedgelet
+WG_SLIT_W = 0.0            # width of a slit for the 1.5 mm Ti tine, centred on it. 0 = the STEP: the wedgelet is solid there and the tine runs inside it (RV17/18 interpenetrate 26 mm3, y 41.5-50.1); >0 is the printable variant (a 1.5 slit gives interference 0)
 WG_BORE_WALL = 1.352         # TPU wall left round a standoff bore
 WG_SA_R = WG_BORES_SA + WG_BORE_WALL   # cheek bulb round the 25 mm standoff SA = its bore plus a wall (the flank's first arc)
 WG_BOSS_R = 3.5             # ring round SB (block, ring step) = clearance circle round SA in the fork bay
@@ -88,8 +89,8 @@ WG_TOE_CHAMFER = 0.47       # toe chamfer leg (skin inner face to floor, equal l
 WG_RING_CHAMFER = 1.0       # Chamfer7: the ring step's far edge is chamfered this much x 45 deg round the SB side (cone) and along the floor
 WG_RING_CHAMFER_Y = SB[0] + WG_BOSS_R + WG_RING_CHAMFER   # the floor chamfer ends one chamfer width past the ring
 WG_CHAMFER_END = dict(a=6.77, b=1.68)   # Chamfer7's floor end vertex blend: (dy)^2 = a h - b h^2 (h = chamfer height at that X)
-WG_TAB_DEV = dict(x=19.5, y=43.7, z=(1.1, 7.9), r=2.5, mm3=40.0)   # reference-diff path waiver down the nose tab where the mount boss is taken out of it (x, y of the boss axis, z span)
-WG_MOUNT_GAP = 0.1          # clearance of the nose tab to the weapon mount boss and to the chassis lug round SB
+WG_TAB_DEV = dict(x=19.5, y=44.2, z=(6.0, 8.0), r=2.5, mm3=20.0)   # path waiver down the nose tab's notch edge: the V follows the mount's notch-top wedge, which we thicken to a printable wall (MNT_TIP_DEV, RV03); STEP edge (44.32, 6.10)-(44.69, 7.44) vs ours (44.11, 6.45)-(44.06, 8.19)
+WG_MOUNT_GAP = 0.02         # clearance of the nose tab to the weapon mount boss and to the chassis lug round SB
 WG_X0 = -38.5               # nose block outer face (also the cap cylinder's axis plane); the slabs follow by thickness
 WG_SLAB = (2.0, 1.0, 6.5, 7.5, 4.0)   # block | ring step | skin | cheek | nose tab thicknesses along X
 WG_BORES = dict(sa=WG_BORES_SA, sb=1.6, sb_head=2.5)   # radii of the standoff bores through the wedgelet (sb_head: from the ring step on)

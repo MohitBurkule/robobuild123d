@@ -76,7 +76,7 @@ def make_spec(model_file):
           shape=M(f"so_b_{n}"), label="RV10 15 mm alu standoff: nose, through the chassis lug, the fork and the wedgelet cheeks")
         P(id=f"fork_{n}", kind="fork", material="titanium", process="laser", stock="1.5 mm Ti Gr5 sheet", min_web_mm=FK_WEB, min_web_reason="every web is the laser minimum 0.75 x 1.5 mm sheet = 1.12 mm (rings round the standoff and pin holes; the STEP fork_5 draws 1.10 and 1.098)", parent=f"so_b{n}", rotates_with="fixed", color="#9aa0a6", shape=M(f"fork_{n}"), **place(f"fork_{n}"),
           label="fork_5: 1.5 mm Ti fork on the 15 mm standoff, tail pinned in the wedgelet cheek slot")
-        P(id=f"wedgelet_{n}", kind="armor", deviation=f"RVRN 2.0 STEP: the wedgelet and the fork tine interpenetrate in the original (an interference there); we cut the tine's own {FK_X[s][1]-FK_X[s][0]:g} mm outline out of the wedgelet as its seat, so the fork sits in with interference 0, hence the wedgelet is short by the tine volume at x {FK_X[s][0]:g}..{FK_X[s][1]:g}", material="tpu", process="fdm", thin_wall_deviation="matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)", solid_fraction=SOLID["tpu"], print_orientation="-z", parent=f"so_a{n}", rotates_with="fixed", color="#3c4048",
+        P(id=f"wedgelet_{n}", kind="armor", deviation=f"RVRN 2.0 STEP: the wedgelet is solid where the fork tine runs (x {FK_X[s][0]:g}..{FK_X[s][1]:g}); tine and TPU interpenetrate 26 mm3 in the original (allow_overlap), kept for parity; WG_SLIT_W > 0 cuts the printable slit", material="tpu", process="fdm", thin_wall_deviation="matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)", solid_fraction=SOLID["tpu"], print_orientation="-z", parent=f"so_a{n}", rotates_with="fixed", color="#3c4048",
           shape=M(f"wedgelet_{n}"), cover_fasteners_deviation="RVRN 2.0 STEP: the wedgelet is clamped between the side panel nose and the 15 mm standoff end by bolt_s?b (listed in its `through`), and located on both standoffs; bolt_s?a seats the side panel directly on the 25 mm standoff end (the STEP wedgelet stops at |X| 38.5 and never enters that stack). Kept as designed; no extra screw (coordinator decision).",
           label=f"{WEDGE_REF[s]} TPU wedgelet: 50 deg ramp over the nose, cheeks round both standoffs and the fork tail")
         P(id=f"side_{n}", kind="armor", deviation="matches original RVRN 2.0: RV23/RV24 front leads the spider swept rim by the same amount at +-30 deg (STEP projection 64.45 mm vs ours 64.24 mm at -30 deg, within 0.5 mm)", material="tpu", process="fdm", thin_wall_deviation="matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)", solid_fraction=0.9, print_orientation="+z", parent=f"so_a{n}", rotates_with="fixed", color="#3c4048", shape=M(f"side_panel_{n}_local"),
@@ -300,12 +300,9 @@ def _fork_dev(s):
 
 
 def _wedge_dev(s):
-    slit = "the STEP draws the Ti fork tine inside the TPU nose (interpenetrating solids); the TPU has the 1.5 mm slit the tine slides into"
     toe = "the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
-    boss = "the STEP nose tab interpenetrates the weapon mount's boss; the tab is cut by the boss outline plus the WG_MOUNT_GAP clearance, and its arc round SB stands WG_MOUNT_GAP off the chassis lug radius"
+    boss = "the nose tab's notch edge follows the weapon mount's notch-top wedge, which we thicken to a printable wall (MNT_TIP_DEV, RV03); the STEP edge runs (44.32, 6.10)-(44.69, 7.44), ours (44.11, 6.45)-(44.06, 8.19) at x 19.5"
     return ([dict(path=[[s * WG_TAB_DEV["x"], WG_TAB_DEV["y"], z] for z in WG_TAB_DEV["z"]], r=WG_TAB_DEV["r"], max_mm3=WG_TAB_DEV["mm3"], reason="RV17 STEP: " + boss),
-             dict(path=[[s * FORK_PATH_X, y, z] for y, z in FORK_PATH_YZ], r=FORK_PATH_R, max_mm3=FORK_PATH_MM3,
-                  reason="RV17 STEP: the Ti fork tine interpenetrates the solid TPU cheek (26 mm3, y 41.5-50.1); " + slit),
              dict(path=[[s * x, *TOE_DEV_YZ] for x in TOE_DEV_X], r=TOE_DEV_R, max_mm3=TOE_DEV_MM3, reason="RV17 STEP: " + toe)])
 
 

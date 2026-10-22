@@ -120,8 +120,6 @@ MICRO_T = {   # STEP Micro_slx_v1_0 instance placements (assembly frame), compos
 }
 
 
-FORK_PATH_X, FORK_PATH_R, FORK_PATH_MM3 = 25.75, 3.0, 30.0   # fork tine runs through the wedgelet cheek: path capsule radius (cap 3) and the interpenetration volume (RV17 STEP: 26 mm3)
-FORK_PATH_YZ = ((50.1, 2.0), (45.0, 3.0), (41.5, 7.5))
 TOE_DEV_YZ, TOE_DEV_R, TOE_DEV_X, TOE_DEV_MM3 = (49.3, 1.4), 3.0, (19.5, 36.5), 40.0   # knife-toe land: path capsule from the first to the last x   # mm3: land volume the STEP knife has over the printable land
 
 

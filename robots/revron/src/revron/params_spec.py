@@ -27,6 +27,7 @@ ALLOW_OVERLAP = ([dict(a="wshaft", b="weapon_motor_can", max_depth_mm=2.6, reaso
                  *[dict(a=f"insert_b{i}", b="tub", max_depth_mm=0.2, reason="heat-set insert: 3.5 OD melted into a 3.4 bore (interference by design)") for i in range(len(INS))],
                  *[dict(a=f"insert_{k}", b="tub", max_depth_mm=0.2, reason="heat-set insert: 3.5 / 3.2 OD melted into a 3.4 / 3.1 bore (interference by design)") for k in ("t0", "t1", "t2", "t3")],
                  *[dict(a=f"nut_c{n}", b="tub", max_depth_mm=0.1, reason="thin M3 nut pressed into a hex pocket 0.05 under its flats (captive)") for n in "lr"],
+                 *[dict(a=f"wedgelet_{n}", b=f"fork_{n}", max_depth_mm=1.6, reason="STEP RV17/18 vs fork_5: the 1.5 mm Ti tine runs inside the solid TPU cheek (26 mm3, y 41.5-50.1); the wedgelet has no slit in the STEP") for n in "lr"],
                  dict(a="wbearing", b="mount_l", max_depth_mm=0.1, reason="MR85 8.0 OD pressed into the RV02 7.9 printed seat (0.05 radial interference, the STEP seat size)")]
 MODULE_NOTE = "RVRN quick change: 4 M3 out, both mounts with the drisk lift off the chassis tabs"
 
