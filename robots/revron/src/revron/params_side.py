@@ -63,7 +63,6 @@ SP_BUILT_SIDE = -1
 SPEC_DP = 6                          # decimals of solved positions written to the spec (micron noise-free)
 SP_SEAT_AXIS = dict(a=SA, b=SB, c=NUT)   # (Y, Z) of each side screw: 25 mm standoff, 15 mm standoff, chassis nut
 SIDE_DEV_X, SIDE_DEV_R = 41.78, 4.0              # deviation sphere at the nose screw seat (STEP RV23 bore centre X, radius)
-CHASSIS_MIN_VOLUME = 15000.0         # mm3: the intact chassis is 15988 mm3 in one solid
 # chassis-nut relief (STEP RV23, section X -32): the hull of the R4.6 round about the nut axis NUT and a small R2.1 round `dy` further along Y at height `z`
 SP_NUT_POCKET = dict(r=4.6, r2=2.1, dy=12.0, z=6.921)
 # three diagonal flutes on the outer face (STEP RV23): width / pitch / angle off the Y axis, the middle one through (Y 0, Z `z`), `depth` deep along X,
