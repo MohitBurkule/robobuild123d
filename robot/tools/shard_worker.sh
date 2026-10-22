@@ -1,5 +1,5 @@
 #!/bin/bash
-# Shard worker: claims verify-group tickets from $SHARDS/<sha>/queue/ and writes results/<group>.{log,rc}.
+# Shard worker: claims verify-group tickets (and the merge gate's 'unit' ticket: robot/tests via pytest) from $SHARDS/<sha>/queue/ and writes results/<group>.{log,rc}.
 # Usage (from any checkout of this repo): robot/tools/shard_worker.sh
 # Env: SHARDS (default /mnt/project-files/robot-cad/b123d/progress/shards), IDLE (exit after this many s
 # with an empty queue, default 600), STOP (stop file, default $SHARDS/stop), GROUP_TIMEOUT (6000),
@@ -22,13 +22,20 @@ checkout() { # full sha -> $TMP/wt at that sha
   git -C "$REPO" worktree remove --force "$TMP/wt" 2>/dev/null; rm -rf "$TMP/wt"
   for d in 0 2 4 8 16; do sleep $d
     git -C "$REPO" cat-file -e "$1^{commit}" 2>/dev/null || git -C "$REPO" fetch -q origin rvrn2 "$1" 2>/dev/null || git -C "$REPO" fetch -q origin rvrn2 2>/dev/null
+    git -C "$REPO" cat-file -e "$1^{commit}" 2>/dev/null || git -C "$REPO" fetch -q origin '+refs/heads/ci-unit/*:refs/remotes/origin/ci-unit/*' 2>/dev/null  # gate trial merges
     git -C "$REPO" cat-file -e "$1^{commit}" 2>/dev/null && git -C "$REPO" worktree add -q --detach "$TMP/wt" "$1" 2>/dev/null && return 0
   done; wlog "cannot check out $1"; return 1
 }
 
 run_group() { # worktree group -> stdout/rc
-  if [ -n "$RUN" ]; then $RUN "$1" "$2"; return; fi
+  if [ -n "$RUN" ]; then SHARD_DIR=$D $RUN "$1" "$2"; return; fi
   local h=; [ -x /tmp/heavy.sh ] && h="/tmp/heavy.sh"
+  # unit / unit-K: robot/tests (unit-K: the files listed in $D/unit_files/unit-K). Timeout: $D/unit_timeout written by the
+  # loop (so it does not depend on each worker's env), else UNIT_TIMEOUT (4 h). --durations feeds the loop's shard balancing.
+  if [ "$2" = unit ] || [[ "$2" == unit-* ]]; then
+    local f=robot/tests t; [ "$2" = unit ] || f=$(cat "$D/unit_files/$2" 2>/dev/null) || { echo "no file list for $2"; return 97; }
+    t=$(cat "$D/unit_timeout" 2>/dev/null || echo "${UNIT_TIMEOUT:-14400}")
+    (cd "$1" && timeout "$t" python3 -m pytest $f -q -p no:cacheprovider --durations=0 --durations-min=0.05); return; fi
   (cd "$1" && HEAVY_CI=1 $h timeout "${GROUP_TIMEOUT:-6000}" python3 -m robot verify "${SPEC:-robots/revron/spec.json}" --full --only "$2" --jobs 1)
 }
 

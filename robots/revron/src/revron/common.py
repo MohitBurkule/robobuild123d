@@ -1,5 +1,6 @@
 """[fix-S] Shared geometry helpers: polygons, extrusions, booleans, lofts, Chaikin/PCHIP smoothing, catalog hardware."""
 import json, math, os, sys
+from collections import namedtuple
 from .params import *  # noqa: F401,F403
 
 
@@ -104,10 +105,15 @@ def _b():
 ARC_MAX_TURN_DEG = 20.0   # a polygonised arc turns less than this per vertex
 ARC_MIN_TURN_DEG = 0.2    # ... and more than this (else it is a straight run)
 ARC_CENTRE_TOL = 1e-4     # relative tolerance for "same circle" (centre and radius, scaled by 1 + r)
+ZERO_LEN = 1e-6          # shorter than this is a zero-length edge / sliver face
+WALK_GUARD = 4            # the arc walk stops after this many times the ring's vertex count (corrupt ring)
 ARC_DEGENERATE = 1e-12    # collinear-triple determinant floor
 ARC3_EQ_FRAC = 0.02       # 3-point arc: the two segments equal within this fraction
 ARC3_MAX_SEG_MM = 0.5     # ... each shorter than this
 ARC3_MAX_R_MM = 2.0       # ... on a circle smaller than this
+
+
+_Circle = namedtuple("_Circle", "x y r sign")   # circle through three ring vertices; sign = turning direction
 
 
 def _arc_runs(pts, max_turn=ARC_MAX_TURN_DEG, tol=ARC_CENTRE_TOL):
@@ -125,11 +131,11 @@ def _arc_runs(pts, max_turn=ARC_MAX_TURN_DEG, tol=ARC_CENTRE_TOL):
             continue
         ux = ((a[0] ** 2 + a[1] ** 2) * (b[1] - c[1]) + (b[0] ** 2 + b[1] ** 2) * (c[1] - a[1]) + (c[0] ** 2 + c[1] ** 2) * (a[1] - b[1])) / d
         uy = ((a[0] ** 2 + a[1] ** 2) * (c[0] - b[0]) + (b[0] ** 2 + b[1] ** 2) * (a[0] - c[0]) + (c[0] ** 2 + c[1] ** 2) * (b[0] - a[0])) / d
-        cen.append((ux, uy, math.hypot(a[0] - ux, a[1] - uy), 1 if turn > 0 else -1))
+        cen.append(_Circle(ux, uy, math.hypot(a[0] - ux, a[1] - uy), 1 if turn > 0 else -1))
     runs, i = [], 0
     def same(p, q):
         p, q = cen[p % n], cen[q % n]
-        return bool(p and q and p[3] == q[3] and math.hypot(p[0] - q[0], p[1] - q[1]) < tol * (1 + p[2]) and abs(p[2] - q[2]) < tol * (1 + p[2]))
+        return bool(p and q and p.sign == q.sign and math.hypot(p.x - q.x, p.y - q.y) < tol * (1 + p.r) and abs(p.r - q.r) < tol * (1 + p.r))
     while i < n:
         if not cen[i]:
             i += 1
@@ -160,7 +166,7 @@ def _arc_wire(ring, to3):
     """Wire of a shapely ring with every polygonised arc (>= 4 co-circular vertices) replaced by a true arc."""
     b = _b()
     pts = list(ring.coords)[:-1]
-    pts = [q for k, q in enumerate(pts) if math.dist(q, pts[k - 1]) > 1e-6]   # no zero-length edges
+    pts = [q for k, q in enumerate(pts) if math.dist(q, pts[k - 1]) > ZERO_LEN]   # no zero-length edges
     n = len(pts)
     runs = _arc_runs(pts)
     if runs:   # start the ring on a vertex outside every arc, so no arc wraps the index origin
@@ -189,7 +195,7 @@ def _arc_wire(ring, to3):
     edges, k, guard = [], start, 0
     P = lambda m: b.Vector(*to3(*pts[m % n]))
     total = 0
-    while total < n and guard < 4 * n:
+    while total < n and guard < WALK_GUARD * n:
         guard += 1
         if k % n in arc_of and arc_of[k % n][0] % n == k % n:
             k0, k1 = arc_of[k % n]
@@ -218,7 +224,7 @@ def _face(poly, plane, arcs=False):
     polys = getattr(poly, "geoms", [poly])
     faces = []
     for p in polys:
-        if p.area < 1e-6:
+        if p.area < ZERO_LEN:
             continue
         f = b.Face(wire(p.exterior), [wire(i) for i in p.interiors])
         faces.append(f)

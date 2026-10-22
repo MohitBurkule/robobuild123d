@@ -470,6 +470,18 @@
    "reason": "thin M3 nut pressed into a hex pocket 0.05 under its flats (captive)"
   },
   {
+   "a": "wedgelet_l",
+   "b": "fork_l",
+   "max_depth_mm": 1.6,
+   "reason": "STEP RV17/18 vs fork_5: the 1.5 mm Ti tine runs inside the solid TPU cheek (26 mm3, y 41.5-50.1); the wedgelet has no slit in the STEP"
+  },
+  {
+   "a": "wedgelet_r",
+   "b": "fork_r",
+   "max_depth_mm": 1.6,
+   "reason": "STEP RV17/18 vs fork_5: the 1.5 mm Ti tine runs inside the solid TPU cheek (26 mm3, y 41.5-50.1); the wedgelet has no slit in the STEP"
+  },
+  {
    "a": "wbearing",
    "b": "mount_l",
    "max_depth_mm": 0.1,
@@ -1016,45 +1028,6 @@
       "path": [
        [
         -19.5,
-        43.7,
-        1.1
-       ],
-       [
-        -19.5,
-        43.7,
-        7.9
-       ]
-      ],
-      "r": 2.5,
-      "max_mm3": 40.0,
-      "reason": "RV17 STEP: the STEP nose tab interpenetrates the weapon mount's boss; the tab is cut by the boss outline plus the WG_MOUNT_GAP clearance, and its arc round SB stands WG_MOUNT_GAP off the chassis lug radius"
-     },
-     {
-      "path": [
-       [
-        -25.75,
-        50.1,
-        2.0
-       ],
-       [
-        -25.75,
-        45.0,
-        3.0
-       ],
-       [
-        -25.75,
-        41.5,
-        7.5
-       ]
-      ],
-      "r": 3.0,
-      "max_mm3": 30.0,
-      "reason": "RV17 STEP: the Ti fork tine interpenetrates the solid TPU cheek (26 mm3, y 41.5-50.1); the STEP draws the Ti fork tine inside the TPU nose (interpenetrating solids); the TPU has the 1.5 mm slit the tine slides into"
-     },
-     {
-      "path": [
-       [
-        -19.5,
         49.3,
         1.4
        ],
@@ -1077,45 +1050,6 @@
     "tol_mm": 0.8,
     "tol_vol_frac": 0.25,
     "deviations": [
-     {
-      "path": [
-       [
-        19.5,
-        43.7,
-        1.1
-       ],
-       [
-        19.5,
-        43.7,
-        7.9
-       ]
-      ],
-      "r": 2.5,
-      "max_mm3": 40.0,
-      "reason": "RV17 STEP: the STEP nose tab interpenetrates the weapon mount's boss; the tab is cut by the boss outline plus the WG_MOUNT_GAP clearance, and its arc round SB stands WG_MOUNT_GAP off the chassis lug radius"
-     },
-     {
-      "path": [
-       [
-        25.75,
-        50.1,
-        2.0
-       ],
-       [
-        25.75,
-        45.0,
-        3.0
-       ],
-       [
-        25.75,
-        41.5,
-        7.5
-       ]
-      ],
-      "r": 3.0,
-      "max_mm3": 30.0,
-      "reason": "RV17 STEP: the Ti fork tine interpenetrates the solid TPU cheek (26 mm3, y 41.5-50.1); the STEP draws the Ti fork tine inside the TPU nose (interpenetrating solids); the TPU has the 1.5 mm slit the tine slides into"
-     },
      {
       "path": [
        [
@@ -2025,7 +1959,7 @@
   {
    "id": "wedgelet_l",
    "kind": "armor",
-   "deviation": "RVRN 2.0 STEP: the wedgelet and the fork tine interpenetrate in the original (an interference there); we cut the tine's own 1.5 mm outline out of the wedgelet as its seat, so the fork sits in with interference 0, hence the wedgelet is short by the tine volume at x -26.5..-25",
+   "deviation": "RVRN 2.0 STEP: the wedgelet is solid where the fork tine runs (x -26.5..-25); tine and TPU interpenetrate 26 mm3 in the original (allow_overlap), kept for parity; WG_SLIT_W > 0 cuts the printable slit",
    "material": "tpu",
    "process": "fdm",
    "thin_wall_deviation": "matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)",
@@ -2439,7 +2373,7 @@
   {
    "id": "wedgelet_r",
    "kind": "armor",
-   "deviation": "RVRN 2.0 STEP: the wedgelet and the fork tine interpenetrate in the original (an interference there); we cut the tine's own 1.5 mm outline out of the wedgelet as its seat, so the fork sits in with interference 0, hence the wedgelet is short by the tine volume at x 24.5..26",
+   "deviation": "RVRN 2.0 STEP: the wedgelet is solid where the fork tine runs (x 24.5..26); tine and TPU interpenetrate 26 mm3 in the original (allow_overlap), kept for parity; WG_SLIT_W > 0 cuts the printable slit",
    "material": "tpu",
    "process": "fdm",
    "thin_wall_deviation": "matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)",

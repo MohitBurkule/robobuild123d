@@ -47,12 +47,19 @@ gwt() { # dir rev; rev resolved in THIS worktree (a bare "HEAD" inside -C dir wo
 # Extra workers on a fixer container (one command, from any checkout of the repo with /mnt/project-files mounted):
 #   nohup robot/tools/shard_worker.sh >> /mnt/project-files/robot-cad/b123d/progress/shard_$(hostname).log 2>&1 &
 # Sets done_n/failed/rc and appends results to $3 in group order, exactly like the serial path.
-shard_verify() { # sha "groups" out
-  local S="$P/shards/$1" g w pids= now m c k cur
+# $4: full sha the workers check out (default HEAD). RESUME=1 with a shard dir already for that sha (a restarted loop):
+# keep its results and claims (dead claims are requeued by the STALE check below) and queue only groups with neither.
+shard_verify() { # sha "groups" out [fullsha]
+  local S="$P/shards/$1" g w pids= now m c k cur f=${4:-$(git rev-parse HEAD)}
   local -A seen=() since=()
-  rm -rf "$S"; mkdir -p "$S/queue" "$S/claimed" "$S/results"
-  git rev-parse HEAD > "$S/sha"
-  for g in $2; do echo "$1" > "$S/queue/$g"; done
+  if [ "${RESUME:-0}" = 1 ] && [ "$(cat "$S/sha" 2>/dev/null)" = "$f" ]; then
+    rm -f "$S/done"; mkdir -p "$S/queue" "$S/claimed" "$S/results"
+    for g in $2; do [ -f "$S/results/$g.rc" ] || [ -f "$S/queue/$g" ] || ls "$S/claimed/"*".$g" >/dev/null 2>&1 || echo "$1" > "$S/queue/$g"; done
+  else
+    rm -rf "$S"; mkdir -p "$S/queue" "$S/claimed" "$S/results"
+    echo "$f" > "$S/sha"
+    for g in $2; do echo "$1" > "$S/queue/$g"; done
+  fi
   for w in $(seq "${PAR:-1}"); do
     WORKER_ID="local$w-$$" SHARDS="$P/shards" STOP="$S/done" IDLE=999999 robot/tools/shard_worker.sh 2>>"$P/shard_local.log" & pids="$pids $!"
   done
@@ -76,7 +83,7 @@ shard_verify() { # sha "groups" out
     [ -f "${CI_STOP:-/tmp/ci_loop.stop}" ] && break
     sleep "${SHARD_POLL:-15}"
   done
-  touch "$S/done"; wait $pids 2>/dev/null
+  touch "$S/done"; [ -n "$pids" ] && wait $pids 2>/dev/null
   for g in $2; do
     if [ -f "$S/results/$g.log" ]; then cat "$S/results/$g.log" >> "$3"; fi
     if grep -q 'blockers,' "$S/results/$g.log" 2>/dev/null; then done_n=$((done_n+1))
@@ -116,6 +123,33 @@ baseline() { # -> "a0 i0" for HEAD's tree (cached by tree hash + cache mode; a m
     echo "$a $i" > "$bf.tmp" && mv "$bf.tmp" "$bf"
   fi
   cat "$bf"; }
+# unit_tests DIR LOG -> 0 pass, 1 failed, 2 infra. robot/tests of DIR's HEAD (a local trial merge) run as a 'unit' shard
+# ticket, so any shard worker can take it: the commit is pushed to origin ci-unit/<tree> for remote checkouts. The result is
+# cached by the merged TREE hash ($P/ci_unit_cache/<tree>), so a candidate set already tested (e.g. before a container
+# restart; a re-made merge commit has a new sha but the same tree) is never re-tested. Only pass/fail is cached, never infra.
+unit_tests() {
+  local d=$1 lg=$2 tr c cf r ref done_n=0 failed= rc=0
+  tr=$(git -C "$d" rev-parse "HEAD^{tree}") || return 2; c=$(git -C "$d" rev-parse HEAD); cf="$P/ci_unit_cache/$tr"
+  if [ -s "$cf" ] && [ -f "$cf.log" ]; then cp "$cf.log" "$lg"; log "unit tests of tree ${tr:0:12}: cached result $(cat "$cf")"; return "$(cat "$cf")"; fi
+  ref=ci-unit/${tr:0:16}
+  [ "${UNIT_PUSH:-1}" = 1 ] && { git -C "$d" push -q -f origin "$c:refs/heads/$ref" 2>>"$P/ci_push.err" || log "unit: push of $ref failed (local workers only)"; }
+  # split into UNIT_SHARDS tickets unit-0..unit-N-1 by test file, balanced by past per-file durations
+  # ($P/ci_unit_durations.json, learned from each shard's --durations output); combined: any fail -> 1, else any infra -> 2
+  local S="$P/shards/unit-${tr:0:16}" k gs= rs=
+  if [ "$(cat "$S/sha" 2>/dev/null)" != "$c" ] || [ ! -d "$S/unit_files" ]; then
+    rm -rf "$S"; mkdir -p "$S/unit_files"; echo "$c" > "$S/sha"; echo "${UNIT_TIMEOUT:-14400}" > "$S/unit_timeout"
+    k=0; while read -r l; do [ -n "$l" ] && echo "$l" > "$S/unit_files/unit-$k" && k=$((k+1)); done \
+      < <(cd "$d" && $GPY unitsplit "${UNIT_SHARDS:-8}" "$P/ci_unit_durations.json" $(ls robot/tests/test_*.py))
+  fi
+  gs=$(ls "$S/unit_files" | sort -t- -k2 -n | paste -sd' ')
+  : > "$lg"; RESUME=1 shard_verify "unit-${tr:0:16}" "$gs" "$lg" "$c"
+  for k in $gs; do rs="$rs $k=$(cat "$S/results/$k.rc" 2>/dev/null || echo 99)"; done
+  $GPY unitdur "$P/ci_unit_durations.json" "$S"/results/unit-*.log 2>/dev/null
+  $GPY unitcombine "$S/results" $rs; r=$?; log "unit tests of tree ${tr:0:12}:$rs -> $r"
+  [ $r -lt 2 ] && { mkdir -p "$P/ci_unit_cache"; cp "$lg" "$cf.log.$$" && mv -f "$cf.log.$$" "$cf.log" && echo $r > "$cf.$$" && mv -f "$cf.$$" "$cf"; }
+  rm -rf "${P:?}/shards/unit-${tr:0:16}"   # collected (an infra result is retried with a fresh ticket next time)
+  [ "${UNIT_PUSH:-1}" = 1 ] && git -C "$d" push -q origin ":refs/heads/$ref" 2>/dev/null
+  return $r; }
 gverifier() { # branch -> 0 pass, 1 rejected, 2 infra. checks-only: full robot/tests, then verify the touched groups on
   # HEAD and on the trial; a blocker present on HEAD that is gone on the trial needs review (rejected, listed)
   local b=$1 s d="$GWT/v_${1#origin/}" bd="$GWT/vb_${1#origin/}" files u; s=$(git rev-parse --short "$b"); files=$(git diff --name-only HEAD..."$b")
@@ -123,8 +157,8 @@ gverifier() { # branch -> 0 pass, 1 rejected, 2 infra. checks-only: full robot/t
   if ! git -C "$d" merge -q --no-edit "$b" >/dev/null 2>&1; then
     u=$(git -C "$d" diff --name-only --diff-filter=U); git -C "$d" merge --abort 2>/dev/null
     [ -n "$u" ] && log "conflict ${b#origin/} (verifier gate): $(echo $u)"; return 2; fi
-  (cd "$d" && timeout "${GATE_PYTEST_TIMEOUT:-3600}" python3 -m pytest robot/tests -q -p no:cacheprovider > "$P/ci_gate_pytest_${b#origin/}.log" 2>&1) \
-    || { gfail "$b" "$s" "unit tests failed ($(tail -1 "$P/ci_gate_pytest_${b#origin/}.log" | cut -c1-100))"; return 1; }
+  unit_tests "$d" "$P/ci_gate_pytest_${b#origin/}.log"; case $? in 0) ;; 1)
+    gfail "$b" "$s" "unit tests failed ($(tail -1 "$P/ci_gate_pytest_${b#origin/}.log" | cut -c1-100))"; return 1;; *) log "gate hold ${b#origin/}: unit tests did not finish"; return 2;; esac
   local known vg g x bl="$P/ci_gate_vbase_${b#origin/}.log" tl="$P/ci_gate_vtrial_${b#origin/}.log"
   known=$(python3 -m robot verify --list-groups 2>/dev/null | grep -E '^[a-z_]+$' | paste -sd' ')
   vg=$(cd "$d" && $GPY groups "$known" $files)
@@ -231,10 +265,47 @@ regen_commit() { # regenerate the spec here (cached) and commit it with fresh de
   git diff --cached --quiet && return 0
   [ "${CI_DECLARED_RENDERS:-1}" = 1 ] && render_declared
   git commit -qm "Revron: regenerate spec and declared renders (ci loop)" >/dev/null; }
-merge_all() { local c b; c=$(cands); [ -n "$c" ] && for b in $(gate_all $c); do mergeb "$b"; done; }
+# Round state on the share ($ST): iter, sha, phase gate|verify|done, plus the last gate's key and approved branches, so a
+# restarted container (killed every 30-60 min) neither redoes a gate it finished nor a verify round already sharded.
+ST="$P/ci_state.json"
+sget() { $GPY state "$ST" get "$1"; }
+sset() { $GPY state "$ST" set "$@"; }
+merge_all() { # gate key = HEAD + every candidate's sha: the same candidate set on the same HEAD reuses the recorded gate result
+  local c b k ok; c=$(cands); [ -n "$c" ] || return 0
+  k="$(git rev-parse --short HEAD) $(for b in $c; do echo "$b=$(git rev-parse --short "$b")"; done | paste -sd' ')"
+  if [ "$(sget gate_key)" = "$k" ]; then ok=$(sget gate); log "gate: reusing recorded result for this candidate set ($(echo ${ok:-none}))"
+  else sset "iter=${i:-0}" phase=gate "sha=$(git rev-parse --short HEAD)"; ok=$(gate_all $c | paste -sd' '); sset "gate_key=$k" "gate=$ok"; fi
+  for b in $ok; do mergeb "$b"; done; }
+# summary line of a verify round, written exactly once per (iter, sha) by whichever process collected the results
+summarize() { # iter sha out -> 0 written here, 1 already written / not counted
+  local n groups note=""
+  mkdir "$P/shards/$2/summary.$1" 2>/dev/null || [ "${SHARD:-1}" != 1 ] || { log "iter $1 sha $2: summary already written"; return 1; }
+  if [ "$done_n" -eq 0 ]; then
+    log "iter $1 sha $2: verify did not finish (rc $rc: $(grep -m1 -e Killed -e Traceback -e Error "$3" | cut -c1-120)); not counted"; return 1; fi
+  n=$(grep -c '^\[BLOCKER\]' "$3")
+  groups=$(grep '^\[BLOCKER\]' "$3" | awk '{print $2}' | cut -d. -f1 | sort | uniq -c | awk '{printf "%s %s, ",$2,$1}')
+  [ -n "$failed" ] && note=" (did not finish:$failed)"
+  log "iter $1 sha $2: $n blockers$note (${groups%, })"
+  echo "$1 $2" > "$P/ci_iter_done"
+  # only a complete round marks the sha verified; groups that did not finish are retried on the same sha
+  [ -z "$failed" ] && echo "$2" > "$P/ci_last_verified"
+  sset "iter=$1" "sha=$2" phase=done "blockers=$n" "failed=${failed# }"
+  [ "$n" -eq 0 ] && [ -z "$note" ] && { log "0 blockers at $2, stopping"; exit 0; }
+  return 0; }
+# resume: the state says a verify round of a sha that is still origin/rvrn2's tip -> skip merge+gate, collect its shards
+resume=
+if [ "${SHARD:-1}" = 1 ] && [ "$(sget phase)" = verify ]; then
+  rs=$(sget sha); git fetch -q origin rvrn2 2>>"$P/ci_push.err"
+  if [ -n "$rs" ] && [ "$(git rev-parse --short origin/rvrn2)" = "$rs" ]; then
+    [ "$(git rev-parse --short HEAD)" = "$rs" ] || git merge -q --ff-only origin/rvrn2 2>/dev/null
+    if [ "$(git rev-parse --short HEAD)" = "$rs" ]; then resume=$rs; START_ITER=$(sget iter); log "restart: resuming iter $START_ITER verify of $rs (gate skipped)"
+    else log "restart: HEAD $(git rev-parse --short HEAD) is not $rs, starting a fresh round"; fi
+  else log "restart: state sha $rs is no longer origin/rvrn2's tip, starting a fresh round"; fi
+fi
 cands() { for b in $(heads); do git merge-base --is-ancestor "$b" HEAD || echo "$b"; done; }
 [ "${RENDER_FIRST:-0}" = 1 ] && render
 for i in $(seq "${START_ITER:-1}" "$MAX_ITERS"); do
+  if [ -n "$resume" ]; then sha=$resume; else
   git fetch -q origin "+refs/heads/fix-*:refs/remotes/origin/fix-*" 2>>"$P/ci_push.err" || log "fetch failed"
   merge_all
   regen_commit || { push; continue; }   # build failed (logged): never verify a stale spec
@@ -250,13 +321,15 @@ for i in $(seq "${START_ITER:-1}" "$MAX_ITERS"); do
     push; sha=$(git rev-parse --short HEAD); log "iter $i new head $sha"
   fi
   [ -f "$P/blockers_live.jsonl" ] && mv "$P/blockers_live.jsonl" "$P/blockers_live.prev.jsonl"
+  fi
+  sset "iter=$i" "sha=$sha" phase=verify
   out="$P/ci_verify_${i}_$sha.log"
   # full verify, one fresh process per group: an OOM in one group skips only that group, not the round
   all=$(python3 -m robot verify --list-groups 2>/dev/null | grep -E '^[a-z_]+$' | grep -v -x -e threat -e fastener_seat | paste -sd' ')
   : > "$out"; rc=0; done_n=0; failed=
   chunks="$all fastener_seat"; [ -f "${SKIP_THREAT_FILE:-/tmp/ci_skip_threat}" ] || chunks="$all threat fastener_seat"
   need=$(echo $chunks | wc -w)
-  if [ "${SHARD:-1}" = 1 ]; then shard_verify "$sha" "$chunks" "$out"; else
+  if [ "${SHARD:-1}" = 1 ]; then RESUME=${resume:+1} shard_verify "$sha" "$chunks" "$out"; resume=; else
   # groups run PAR at a time (own process each, shared content-keyed cache); an OOM still only loses its own group
   mkdir -p "$out.d"; rm -f "$out.d"/*
   printf '%s\n' $chunks | xargs -P "${PAR:-3}" -I{} sh -c 'ROBOT_RUN_SHA=$0 ROBOT_PROGRESS_LOG="$1/verify.log" timeout 6000 python3 -m robot verify "$2" --full --only {} --jobs 1 > "$3/{}.log" 2>&1; echo $? > "$3/{}.rc"' "$sha" "$P" "$SPEC" "$out.d"
@@ -267,19 +340,10 @@ for i in $(seq "${START_ITER:-1}" "$MAX_ITERS"); do
   rm -rf "$out.d"
   fi
   rm -f "$out.part"
-  if [ "$done_n" -eq 0 ]; then
-    log "iter $i sha $sha: verify did not finish (rc $rc: $(grep -m1 -e Killed -e Traceback -e Error "$out" | cut -c1-120)); not counted"
-    continue
-  fi
-  n=$(grep -c '^\[BLOCKER\]' "$out")
-  groups=$(grep '^\[BLOCKER\]' "$out" | awk '{print $2}' | cut -d. -f1 | sort | uniq -c | awk '{printf "%s %s, ",$2,$1}')
-  note=""; [ -n "$failed" ] && note=" (did not finish:$failed)"
-  log "iter $i sha $sha: $n blockers$note (${groups%, })"
-  echo "$i $sha" > "$P/ci_iter_done"
-  # only a complete round marks the sha verified; groups that did not finish are retried on the same sha
-  [ -z "$failed" ] && echo "$sha" > "$P/ci_last_verified"
+  [ -f "${CI_STOP:-/tmp/ci_loop.stop}" ] && [ "${SHARD:-1}" = 1 ] && [ "$(( $(echo $chunks | wc -w) ))" -gt "$(ls "$P/shards/$sha/results/"*.rc 2>/dev/null | wc -l)" ] \
+    && { log "stop file seen mid-verify, exiting (state kept: a restart resumes $sha)"; exit 0; }
+  summarize "$i" "$sha" "$out" || { [ "$(sget phase)" = verify ] && sset phase=done; continue; }
   [ "${CI_RENDER:-1}" = 1 ] && render
-  [ "$n" -eq 0 ] && [ -z "$note" ] && { log "0 blockers at $sha, stopping"; exit 0; }
   [ -f "${CI_STOP:-/tmp/ci_loop.stop}" ] && { log "stop file seen, exiting"; exit 0; }
 done
 log "reached $MAX_ITERS iterations, exiting"
