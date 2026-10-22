@@ -19,7 +19,8 @@ PCT = 100                                                # percent
 AWG = dict(power=24, rx=26, motor=28, signal=30)
 SLACK = dict(short=6, bench=8, phases=15)                # wire slack allowed, mm
 # (id, from, to, awg, kind, slack, extras)
-LEAD_TAPE = dict(exposed_reason="original RV03 / RVRN 2.0 STEP has no lead channel: the 3 phase leads run over the lug and are kapton-taped flat to it (RV03 lug top, STEP); the optional lead groove (REVRON_LEAD_GROOVE=on) replaces the tape")
+LEAD_TAPE_WHY = "INFERRED, not in the STEP (it has no wires): the original has no lead channel, so the 3 phase leads are taped flat along the RV03 lug; the optional lead groove (REVRON_LEAD_GROOVE=on) replaces the tape"
+LEAD_TAPE = dict(exposed_reason=LEAD_TAPE_WHY)
 WIRES = [("w_bat_sw", "battery.jst_rcy", "power_switch.in", AWG["power"], "power", SLACK["bench"], dict(connector="jst_rcy")),
          ("w_sw_wesc", "power_switch.out", "wesc.bat", AWG["power"], "power", SLACK["bench"], {}),
          ("w_sw_rx", "power_switch.out", "rxesc.bat", AWG["rx"], "power", SLACK["bench"], {}),

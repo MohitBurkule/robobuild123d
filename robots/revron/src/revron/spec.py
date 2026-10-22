@@ -186,6 +186,8 @@ def make_spec(model_file):
     C("base_panel", "tub", "screw", "Base panel under the open floor, 5 M2 CSK into heat-sets")
     C("top_panel", "tub", "screw", "Ti top panel held by 4 M2 flat-head screws through its countersunk corner holes into M2 heat-sets in the column tops (the STEP has the holes, not the screws)")
     C("battery", "tub", "press_fit", "Pack between the motor wall, the insert columns and the deck", interference_mm=PRESS["pack"], mechanical_key=True)
+    if not LEAD_GROOVE:
+        C("weapon_motor_stator", "mount_r", "tape", LEAD_TAPE_WHY)
     C("battery", "bat_pad", "tape", "Pack underside taped to the foam pad (double-sided), which holds it against sliding")
     C("bat_pad", "base_panel", "tape", "Foam pad stuck to the base panel skin; deck and top panel close the pack in from above")
     C("rxesc", "tub", "interlock", "Malenki held by a TPU strap, boxed by the front wall and the deck; the weapon ESC under it")
