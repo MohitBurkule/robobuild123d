@@ -59,7 +59,7 @@ def swept_bands(bodies, origin, axis, n=600):
     surface was sampled (a point cloud of samples leaves gaps and reads a lead as clear between two vertices)."""
     out = []
     for b in bodies:
-        q = np.vstack([b.mesh.vertices, b.mesh.sample(n)]) - origin
+        q = np.vstack([b.mesh.vertices, b.mesh.sample(n, seed=0)]) - origin
         t = q @ axis
         rho = np.linalg.norm(q - np.outer(t, axis), axis=1)
         out.append((float(t.min()), float(t.max()), float(rho.min()), float(rho.max())))
@@ -433,7 +433,7 @@ def exterior_support(ctx):
             lo, hi = b.aabb
             if np.any(np.asarray(lo) > Q.max(0) + SUPPORT_MM + rad) or np.any(np.asarray(hi) < Q.min(0) - SUPPORT_MM - rad):
                 continue
-            cloud.append(np.vstack([b.mesh.vertices, b.mesh.sample(6000)]))
+            cloud.append(np.vstack([b.mesh.vertices, b.mesh.sample(6000, seed=0)]))
         near = enclosed(Q, inside, np.vstack(cloud) if cloud else np.zeros((0, 3)), rad + SUPPORT_MM)
         runs = [x_ for x_ in unsupported_runs(Q, inside, near) if x_[0] > UNSUPPORTED_MAX_MM]
         if runs:

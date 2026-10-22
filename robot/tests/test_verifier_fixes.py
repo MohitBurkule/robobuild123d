@@ -138,7 +138,8 @@ def _revron_with(cat):
     for p in d["parts"]:
         if p["id"] == "battery" or p.get("kind") == "battery":
             p["catalog"] = cat
-    return verify(spec.Spec(d), Options(only=["power"], deep=False, fast=True))
+    # the template's model path ("../../robots/revron/src/build_revron.py") is relative to the template's own folder
+    return verify(spec.Spec(d, ROOT / "templates"), Options(only=["power"], deep=False, fast=True))
 
 
 def test_runtime_real_revron_180mah_passes():

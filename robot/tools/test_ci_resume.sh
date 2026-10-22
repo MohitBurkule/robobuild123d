@@ -19,7 +19,7 @@ F
 cat > robots/revron/src/build_revron.py <<'F'
 open("../spec.json", "w").write("{}\n"); open("../../../robot/templates/revron.json", "w").write("{}\n")
 F
-git add -A; git commit -qm init; git branch -M rvrn2-ci; git remote add origin "$T/origin.git"; git push -q origin rvrn2-ci:rvrn2
+git add -A; git commit -qm init; git branch -M dev-ci; git remote add origin "$T/origin.git"; git push -q origin dev-ci:dev
 cat > "$T/fake" <<'F'
 #!/bin/bash
 echo "$2" >> "$P/runs"
@@ -30,7 +30,7 @@ sleep 1; echo "[BLOCKER] $2.x thing"; echo "done: 1 blockers, 0 warnings"; exit 
 F
 chmod +x "$T/fake"; : > "$T/skipthreat"
 export RUN=$T/fake POLL=1 SHARD_POLL=1 STALE=3 HB=1 CI_STOP=$T/stop SKIP_THREAT_FILE=$T/skipthreat \
-  CI_RENDER=0 CI_DECLARED_RENDERS=0 MAX_ITERS=1 GATE=0 SHARDS=$T/p/shards
+  CI_RENDER=0 CI_DECLARED_RENDERS=0 MERGE=1 TARGET=dev MAX_ITERS=1 GATE=0 SHARDS=$T/p/shards
 fail=0; ok() { "$@" || { echo "FAIL: $*"; fail=1; }; }
 wait_for() { for _ in $(seq 120); do eval "$1" && return 0; sleep 0.5; done; echo "FAIL timeout: $1"; fail=1; return 1; }
 
@@ -67,6 +67,17 @@ python3 robot/tools/ci_gate.py state "$P/ci_state.json" set phase=verify sha=000
 GPY="python3 robot/tools/ci_gate.py"; log() { echo "$*" >> "$P/builder.log"; }; sget() { $GPY state "$P/ci_state.json" get "$1"; }; ST=$P/ci_state.json
 eval "$(sed -n '/^# resume: the state says/,/^fi$/p' robot/tools/ci_loop.sh)"
 ok [ -z "$resume" ]; ok grep -q 'state sha 0000000 is no longer' "$P/builder.log"
+
+# --- verify-only (MERGE=0, default): a fixer merged into dev; the loop verifies dev's new tip, merges and pushes nothing
+git clone -q "$T/origin.git" -b dev "$T/fixer"; echo fix > "$T/fixer/fix.txt"
+git -C "$T/fixer" add fix.txt; git -C "$T/fixer" -c user.email=f@f -c user.name=f commit -qm fix; git -C "$T/fixer" push -q origin dev
+new=$(git -C "$T/fixer" rev-parse --short HEAD); git branch -q fix-ignored HEAD~0
+python3 robot/tools/ci_gate.py state "$P/ci_state.json" set phase=done
+MERGE=0 PAR=1 START_ITER=2 MAX_ITERS=2 bash robot/tools/ci_loop.sh > "$T/loop3.out" 2>&1
+ok [ "$(git rev-parse --short HEAD)" = "$new" ]
+ok [ "$(grep -c "iter 2 sha $new: 5 blockers" "$P/builder.log")" = 1 ]
+ok [ "$(grep -c 'pushed' "$P/builder.log")" = "$pushes1" ]
+ok [ "$(git -C "$T/fixer" ls-remote origin dev | cut -c1-7)" = "$new" ]
 
 # --- unit ticket: run by a (remote) shard worker, cached by merged tree hash (a re-made merge commit hits the cache)
 eval "$(sed -n '/^shard_verify() {/,/^}/p;/^unit_tests() {/,/^  return \$r; }/p' robot/tools/ci_loop.sh)"

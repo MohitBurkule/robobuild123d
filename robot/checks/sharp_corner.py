@@ -418,7 +418,7 @@ def load_zones(ctx, body, prm):
             label = f"joint with `{b.id}`"
         else:
             continue
-        pts = b.mesh.sample(4000, return_index=False) if len(b.mesh.faces) else b.mesh.vertices
+        pts = b.mesh.sample(4000, return_index=False, seed=0) if len(b.mesh.faces) else b.mesh.vertices
         tr = cKDTree(np.vstack([pts, b.mesh.vertices]))
         zones.append((label, lambda p, tr=tr, b=b: tr.query(p)[0] <= d or bool(b.inside([p])[0])))
     for key in ("sharp_corner_loads", "load_interfaces"):

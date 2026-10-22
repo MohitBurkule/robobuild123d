@@ -91,7 +91,10 @@ def test_baseline_unfinished_is_held():
 
 def test_verifier_only_branch_runs_verify():
     body = _fn("gverifier")
-    assert "pytest robot/tests -q" in body and "$GPY vanished" in body and "$GPY groups" in body
+    assert "unit_tests \"$d\"" in body and "$GPY vanished" in body and "$GPY groups" in body
+    # the full robot/tests run moved to shard tickets (unit-K, run by robot/tools/shard_worker.sh)
+    assert "shard_verify" in LOOP[LOOP.index("unit_tests() {"):]
+    assert "python3 -m pytest $f -q" in (Path(__file__).resolve().parents[1] / "tools" / "shard_worker.sh").read_text()
 
 
 def test_regen_everywhere():
@@ -102,7 +105,7 @@ def test_regen_everywhere():
 
 
 def test_last_verified_only_when_complete():
-    assert '[ -z "$failed" ] && echo "$sha" > "$P/ci_last_verified"' in LOOP          # #14
+    assert '[ -z "$failed" ] && echo "$2" > "$P/ci_last_verified"' in _fn("summarize")  # #14
 
 
 def test_loop_small_consistencies():
