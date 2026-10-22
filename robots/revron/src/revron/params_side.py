@@ -89,13 +89,13 @@ WG_TOE_CHAMFER = 0.47       # toe chamfer leg (skin inner face to floor, equal l
 WG_RING_CHAMFER = 1.0       # Chamfer7: the ring step's far edge is chamfered this much x 45 deg round the SB side (cone) and along the floor
 WG_RING_CHAMFER_Y = SB[0] + WG_BOSS_R + WG_RING_CHAMFER   # the floor chamfer ends one chamfer width past the ring
 WG_CHAMFER_END = dict(a=6.77, b=1.68)   # Chamfer7's floor end vertex blend: (dy)^2 = a h - b h^2 (h = chamfer height at that X)
-WG_TAB_DEV = dict(x=19.5, y=44.2, z=(6.0, 8.0), r=2.5, mm3=20.0)   # path waiver down the nose tab's notch edge: the V follows the mount's notch-top wedge, which we thicken to a printable wall (MNT_TIP_DEV, RV03); STEP edge (44.32, 6.10)-(44.69, 7.44) vs ours (44.11, 6.45)-(44.06, 8.19)
 WG_MOUNT_GAP = 0.02         # clearance of the nose tab to the weapon mount boss and to the chassis lug round SB
 WG_X0 = -38.5               # nose block outer face (also the cap cylinder's axis plane); the slabs follow by thickness
 WG_SLAB = (2.0, 1.0, 6.5, 7.5, 4.0)   # block | ring step | skin | cheek | nose tab thicknesses along X
 WG_BORES = dict(sa=WG_BORES_SA, sb=1.6, sb_head=2.5)   # radii of the standoff bores through the wedgelet (sb_head: from the ring step on)
 WG_TAB_FILM = 0.0           # TPU film limit: slivers thinner than this are dropped from the nose tab (0 = the STEP keeps its thin tip)
 WG_BOSS_GAP = 0.3          # clearance of the nose tab notch to the weapon mount boss (STEP RV17: notch edge 0.37 off the RV02 boss outline)
+WG_TAB_LEAN_DEG, WG_TAB_LEAN_FOOT = 15.4, 0.11   # the nose tab's notch wall leans this far off vertical, from a foot this much past the mount's offset wall (STEP RV17 edge (44.32, 6.10)-(44.69, 7.44))
 WG_MERGE_EPS = 0.01         # overlap that merges the toe land with the body
 ARC_N = 64                  # circle / arc facets per quarter turn
 QUARTER_TURN = 90   # deg, tyre shoulder arcs sweep a quarter turn
