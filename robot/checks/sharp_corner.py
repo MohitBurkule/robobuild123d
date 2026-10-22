@@ -151,9 +151,14 @@ def local_radius(m, p, t, window=4.0, boxes=None, bounded=False):
             return False
         return not bounded or 0.4 <= kv(j) / max(kv(c), 1e-9) <= 2.5
 
-    while lo - 1 >= 1 and same(lo - 1):
+    cref = min(L[c - 1], L[c])   # the arc's own facet length: a much longer segment is a flat between two blends
+
+    def fits(seg):
+        return not bounded or L[seg] <= max(3.0 * cref, 0.05)
+
+    while lo - 1 >= 1 and same(lo - 1) and fits(lo - 1):
         lo -= 1
-    while hi + 1 <= len(P) - 2 and same(hi + 1):
+    while hi + 1 <= len(P) - 2 and same(hi + 1) and fits(hi):
         hi += 1
     if bounded:
         # a blend ends inside the window on both sides: at a flat, a sharp turn or a change of curvature (a fillet into

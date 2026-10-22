@@ -150,3 +150,13 @@ def test_radii_tessellation_independent_but_catch_real_blend_change():
     for qa, qb in ((16, 16), (3, 3)):
         d = R.radius_diffs(R.radius_pairs(_rounded_plate(1.5, qa), _rounded_plate(1.0, qb)))
         assert len(d) == 4 and all(abs(x["r_ours"] - 1.5) < 0.05 and abs(x["r_ref"] - 1.0) < 0.05 for x in d)
+
+
+def test_radii_confirm_drops_diffs_the_surfaces_do_not_show():
+    import numpy as np
+    from robot.checks import ref_radii as R
+    a, b = _rounded_plate(1.5, 16), _rounded_plate(1.0, 16)
+    real = R.radius_diffs(R.radius_pairs(a, b))
+    assert len(R.confirm(real, a, b)) == 4                       # R1.5 vs R1: the corner moves 0.2 mm, kept
+    fake = [dict(c, r_ref=c["r_ours"] + 0.4) for c in R.radius_diffs(R.radius_pairs(a, b))]
+    assert R.confirm(fake, a, a.copy()) == []                    # same surface, any estimate pair: estimator noise

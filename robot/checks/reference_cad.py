@@ -665,7 +665,7 @@ def local_findings(e, cfg, pid, fn, mod, rw, ctx=None):
     amin = float(e.get("local_min_mm2", cfg.get("local_min_mm2", LOCAL_MIN_MM2)))
     try:
         bl = ref_local.local_blobs(mod, rw, tol, amin)
-        rd = ref_radii.radius_diffs(ref_radii.radius_pairs(mod, rw))
+        rd = ref_radii.confirm(ref_radii.radius_diffs(ref_radii.radius_pairs(mod, rw)), mod, rw)
     except Exception as ex:  # noqa: BLE001 - fail closed
         return [fail("reference_cad.local", G, BLOCKER, "Local comparison crashed", f"`{pid}` vs `{fn}`: {ex}").on(pid)]
     for name, items, fmt, title, fix in (
