@@ -4752,12 +4752,6 @@
    "reason": "Base panel under the open floor, 5 M2 CSK into heat-sets"
   },
   {
-   "a": "weapon_motor_stator",
-   "b": "mount_r",
-   "method": "tape",
-   "reason": "INFERRED, not in the STEP (it has no wires): the original has no lead channel, so the 3 phase leads are taped flat along the RV03 lug; the optional lead groove (REVRON_LEAD_GROOVE=on) replaces the tape"
-  },
-  {
    "a": "top_panel",
    "b": "tub",
    "method": "screw",

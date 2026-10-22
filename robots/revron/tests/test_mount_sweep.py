@@ -114,4 +114,4 @@ def test_mount_follows_standoffs(case, tmp_path):
     nx, nz = -(zb - z0), (yb - y0)
     n = (nx * nx + nz * nz) ** 0.5
     d = abs((P["SB"][0] - y0) * nx + (P["SB"][1] - z0) * nz) / n
-    assert abs(d - P["NOSE_R"]) < (1e-3 if case == "default" else 0.2), (case, d)   # tangent to the STEP's 0.4 um; it rides on SB
+    assert abs(d - P["NOSE_R"]) < (5e-3 if case == "default" else 0.2), (case, d)   # tangent to the STEP (2 um: the line is parallel to the tub lug top line); it rides on SB
