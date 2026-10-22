@@ -42,7 +42,7 @@ from pathlib import Path
 
 import numpy as np
 
-from ..finding import BLOCKER, WARNING, fail, ok
+from ..finding import BLOCKER, WARNING, fail, note, ok
 
 G = "reference"
 
@@ -104,6 +104,9 @@ def plate_holes(m, obb=None):
     return sorted(out)
 
 
+RASTER_SNAP_DP = 4   # vertices snap to 1e-4 mm before rasterising: STL float noise must not flip a pixel edge
+
+
 def _raster(meshes, ax, lo, res, shape):
     """Silhouette of meshes projected along world axis `ax` on a grid (origin lo, pixel res mm)."""
     from PIL import Image, ImageDraw
@@ -112,8 +115,8 @@ def _raster(meshes, ax, lo, res, shape):
     img = Image.new("1", shape, 0)
     d = ImageDraw.Draw(img)
     for m in meshes:
-        T = np.asarray(m.vertices, float)[np.asarray(m.faces)][:, :, [a, b]]
-        T = (T - np.asarray(lo)[[a, b]]) / res
+        T = np.round(np.asarray(m.vertices, float), RASTER_SNAP_DP)[np.asarray(m.faces)][:, :, [a, b]]   # 0.89999962 is 0.9
+        T = np.round((T - np.round(np.asarray(lo, float), RASTER_SNAP_DP)[[a, b]]) / res, 6)
         for t in T:
             d.polygon([tuple(p) for p in t], fill=1, outline=1)
     return np.asarray(img, bool)
@@ -196,6 +199,41 @@ def is_copy(ma, mb, rel=0.002):
     return best < rel * diag, best
 
 
+MESH_READ = re.compile(r"""(trimesh\.load|load_mesh|read_stl|stl\.mesh|import_step|importStep|STEPControl_Reader|read_step|"""
+                       r"""cq\.importers|np\.load\(|numpy\.load\(|open\([^)]*\.(stl|step|stp|obj|ply)\b)""", re.I)
+TABLE_MIN_PTS = 20      # a coordinate table this long is an imported outline, not a design sketch
+SAME_TESS_MM = 1e-3     # vertices that coincide this closely (with equal face counts) are the reference's own tessellation
+
+
+def copy_evidence(spec, mod, ref, h):
+    """Provenance evidence that a near-identical part was imported rather than rebuilt: the build code reads mesh / STEP
+    data, carries a large coordinate table, or the mesh has the reference's own tessellation (equal face count and
+    vertices coinciding to SAME_TESS_MM). A small Hausdorff alone is what a faithful parametric rebuild of a simple part
+    should achieve, so it is not evidence."""
+    ev = []
+    if h is not None and h < SAME_TESS_MM and len(mod.faces) == len(ref.faces):
+        ev.append(f"same tessellation ({len(mod.faces)} faces, vertices within {h:.1e} mm)")
+    try:
+        from .param_lint import sources
+        from .practice import point_tables
+        paths = sources(spec) if spec is not None else []
+    except Exception:  # noqa: BLE001
+        paths = []
+    for path in paths:
+        try:
+            text = Path(path).read_text()
+        except OSError:
+            continue
+        for i, ln in enumerate(text.splitlines(), 1):
+            if MESH_READ.search(ln) and not ln.lstrip().startswith("#"):
+                ev.append(f"{Path(path).name}:{i} reads mesh/STEP data")
+        try:
+            ev += [f"{Path(path).name}:{ln} `{nm}` table of {n} points" for ln, nm, n in point_tables(text) if n >= TABLE_MIN_PTS]
+        except SyntaxError:
+            pass
+    return ev
+
+
 def _clip_box(m, lo, hi):
     """Mesh clipped to an axis-aligned box (capped)."""
     import trimesh
@@ -267,9 +305,14 @@ def check_entries(ctx, frame_checks, exact=True, parts=None):
             continue
         ctx.metrics[f"reference_cad.{pid}"] = {"ref": fr, "model": fm}
         copied, h = is_copy(mod, ref) if exact else (False, None)
-        if copied:
+        ev = copy_evidence(spec, mod, ref, h) if copied else []
+        if copied and not ev:
+            out.append(note("reference_cad.faithful", G, "Faithful parametric rebuild",
+                            f"`{pid}` is within {h:.4f} mm of `{fn}` but the build code shows no import (no mesh/STEP read, "
+                            f"no coordinate table >= {TABLE_MIN_PTS} points, its own tessellation).").on(pid))
+        elif copied:
             out.append(fail("reference_cad.copied", G, BLOCKER, "Part geometry is a copy of the reference CAD",
-                            f"`{pid}` matches `{fn}` triangle for triangle (Hausdorff {h:.4f} mm after alignment).")
+                            f"`{pid}` matches `{fn}` (Hausdorff {h:.4f} mm after alignment) and: {'; '.join(ev[:4])}.")
                        .on(pid).fix("Reference CAD is for measurement only. Build the part from parametric code."))
             continue
         tol = float(e.get("tol_mm", 0.5))
