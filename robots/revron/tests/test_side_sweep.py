@@ -37,3 +37,12 @@ def test_wedgelet_and_side_survive_standoff_sweep(name, idx, f):
     code = BODY.format(src=str(SRC), name=name, idx=idx, f=f)
     r = subprocess.run([sys.executable, "-I", "-c", code], capture_output=True, text=True, timeout=600)
     assert r.returncode == 0, r.stderr[-1500:]
+
+
+def test_seat_face_matches_the_step_table_at_the_defaults():
+    sys.path.insert(0, str(SRC))
+    from revron.params import SIDE_FACE_X
+    from revron.side import face_x
+    for k in "abc":
+        assert abs(face_x(k) - SIDE_FACE_X[k]) < 0.01, k
+

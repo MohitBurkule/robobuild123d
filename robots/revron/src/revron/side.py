@@ -1,10 +1,11 @@
 """[fix-S] Side groups: the side panel (wedgelet, fork and hub groups live in their own modules)."""
 import math, os, sys
+from functools import lru_cache
 from .params import (
     FLOOR_Z, GEO_EPS, HERE, NUT, NUT_X, RAMP_REACH, RAMP_SLOPE, SA,
-    SA_X, SB, SB_X, SIDE_BOLT_DES, SIDE_BOLT_X, SIDE_FACE_X, SIDE_SINK, SLAB_X,
+    SA_X, SB, SB_X, SIDE_BOLT_DES, SIDE_PROBE_N, SIDE_PROBE_OFF, SIDE_PROBE_R, SIDE_SINK, SLAB_X,
     SP_BEND_R, SP_BOSS, SP_CSK, SP_DRIVER_SEATS, SP_FLUTE, SP_FOOT, SP_FOOT_Z,
-    SP_FRONT, SP_NOSE_PKT, SP_NOSE_OVER, SP_NOSE_Y0, SP_NOSE_Z, SP_NUT_POCKET, SP_NUT_RELIEF_X,
+    SP_FRONT, SP_NOSE_PKT, SP_NOSE_OVER, SP_NOSE_RUN, SP_NOSE_Y0, SP_NOSE_Z, SP_NUT_POCKET, SP_NUT_RELIEF_X,
     SP_REAR, SP_SA_CLEAR, SP_TOE_RUN, SP_TOE_Y0, SP_Z_TOP,
     SP_TYRE_RELIEF, SP_X_IN, WEDGE_TOE_H)
 from .common import _I, _S, _U, _b, _box, _cyl, _ext, _one
@@ -146,6 +147,26 @@ def _flutes(b, body):
     return _I(skin, _ext(bands, "yz", *SLAB_X))
 
 
+@lru_cache(maxsize=None)
+def face_x(key):
+    """|X| of the battered outer face at seat `key`, as the screw's seat check sees it: the level where half of a ring round the screw axis
+    (radius SIDE_PROBE_R, SIDE_PROBE_N points) lies in the blank, plus SIDE_PROBE_OFF (table - probe at the default standoffs). The nose
+    face curves away where a standoff can move (the round end of the nose), so the seat follows the modelled surface and the defaults stay
+    on the measured STEP face."""
+    at = {"a": SA, "b": SB, "c": NUT}[key]
+    blank, depth = _side_blank(), []
+    for k in range(SIDE_PROBE_N):
+        y, z = (at[0] + SIDE_PROBE_R * math.cos(2 * math.pi * k / SIDE_PROBE_N), at[1] + SIDE_PROBE_R * math.sin(2 * math.pi * k / SIDE_PROBE_N))
+        hit = (blank & _box(SLAB_X[0], SLAB_X[1], y - GEO_EPS, y + GEO_EPS, z - GEO_EPS, z + GEO_EPS)).solids()
+        depth.append(abs(min(s.bounding_box().min.X for s in hit)) if hit else 0.0)
+    return sorted(depth, reverse=True)[(SIDE_PROBE_N + 1) // 2 - 1] + SIDE_PROBE_OFF[key]
+
+
+def bolt_x(key):
+    """|X| of the head plane of seat `key`: SIDE_SINK below the outer face."""
+    return face_x(key) - SIDE_SINK[key]
+
+
 def _side_seat(key, at, sgn=-1):
     """robot.cad.holes (cutter, FastenerRecord) of one side-panel M3 CSK (bolt_s*): the STEP seats the head SIDE_FACE_X -
     SIDE_BOLT_X below the battered outer face, in a driver bore from the face; clearance runs on through the panel (and
@@ -157,16 +178,17 @@ def _side_seat(key, at, sgn=-1):
     from robot.cad.holes import hole_tool
     far = {"a": SA_X[1], "b": SB_X[1], "c": NUT_X[1]}[key]
     dr, hc = SP_CSK["drive_r"] if key in SP_DRIVER_SEATS else None, SP_CSK["head_clear"]
-    tool, rec = hole_tool((sgn * SIDE_FACE_X[key], *at), (-sgn, 0, 0), SIDE_BOLT_DES[key], head="csk", into="through", side="head",
-                          sink=SIDE_SINK[key], grip=SIDE_FACE_X[key] - far, fit=SP_CSK["fit"], csk_clear=SP_CSK["csk_clear"],
+    tool, rec = hole_tool((sgn * face_x(key), *at), (-sgn, 0, 0), SIDE_BOLT_DES[key], head="csk", into="through", side="head",
+                          sink=SIDE_SINK[key], grip=face_x(key) - far, fit=SP_CSK["fit"], csk_clear=SP_CSK["csk_clear"],
                           head_clear=hc if dr is None else SP_CSK["lip"] - SIDE_SINK[key])
     if dr is not None:   # the narrower driver bore from outside the face down to the seat; the csk cone is cut off where it meets it (no undercut)
-        tool = _U(tool, _cyl(dr, sgn * (SIDE_FACE_X[key] + hc), sgn * SIDE_BOLT_X[key], at))
-        tool = _I(tool, _cyl(dr, sgn * (SIDE_FACE_X[key] + hc), sgn * far, at))
+        tool = _U(tool, _cyl(dr, sgn * (face_x(key) + hc), sgn * bolt_x(key), at))
+        tool = _I(tool, _cyl(dr, sgn * (face_x(key) + hc), sgn * far, at))
     return tool, rec
 
 
-def _side_body(pin=True):   # pin: kept for the chassis-cutter call (tub_lobes.panel_mating); the STEP panel has no pin hole
+@lru_cache(maxsize=None)
+def _side_blank():   # pin: kept for the chassis-cutter call (tub_lobes.panel_mating); the STEP panel has no pin hole
     """The left (RV23) panel's solid, drawn in the frame its SP_* tables were measured in (the STEP assembly frame);
     side_joint.side_panel_local re-bases it on its own datum and mirrors it for RV24. RV23/24 TPU side panel: an S-wall that hugs the chassis side, swings out round the rear wheel and the front
     wheel; its outer face is battered (5 mm at the floor, 2 mm at the top) so side hits ride up; the nose block
@@ -188,6 +210,13 @@ def _side_body(pin=True):   # pin: kept for the chassis-cutter call (tub_lobes.p
     x0, ch = SP_NOSE_PKT["x_post"], bs_["chamfer"]
     boss = _U(b.Solid.make_cone(bs_["r"] + ch, bs_["r"], ch, b.Plane(origin=(x0, *SA), z_dir=(1, 0, 0))), _cyl(bs_["r"], x0 + ch, x0 + bs_["h"], SA))
     body = _U(_S(_U(wall, nose, foot), _nose_notch(b)), boss)   # the inner notch round the wedgelet block is cut through the swing's lead-in too
+    return body
+
+
+def _side_body(pin=True):   # pin: kept for the chassis-cutter call (tub_lobes.panel_mating); the STEP panel has no pin hole
+    """The blank with its seats, bores and pockets cut."""
+    b = _b()
+    body = _side_blank()
     # M3 CSK seats with a head bore out through the battered outer face, so a driver reaches the head and the screw backs straight out
     cr_, cx0, cx1 = SP_SA_CLEAR
     cuts = [_side_seat(k, at)[0] for k, at in (("a", SA), ("b", SB), ("c", NUT))] + [

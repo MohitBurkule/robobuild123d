@@ -2018,7 +2018,7 @@
     },
     "seat_a": {
      "point": [
-      -3.759999999999998,
+      -3.7601355696653584,
       0.0,
       0.0
      ],
@@ -2030,7 +2030,7 @@
     },
     "seat_b": {
      "point": [
-      0.740000000000002,
+      0.7402767003668984,
       10.0,
       -1.0
      ],
@@ -2042,7 +2042,7 @@
     },
     "seat_c": {
      "point": [
-      7.240000000000002,
+      7.240479624009211,
       -42.0,
       3.0
      ],
@@ -2432,7 +2432,7 @@
     },
     "seat_a": {
      "point": [
-      3.759999999999998,
+      3.7601355696653584,
       0.0,
       0.0
      ],
@@ -2444,7 +2444,7 @@
     },
     "seat_b": {
      "point": [
-      -0.740000000000002,
+      -0.7402767003668984,
       10.0,
       -1.0
      ],
@@ -2456,7 +2456,7 @@
     },
     "seat_c": {
      "point": [
-      -7.240000000000002,
+      -7.240479624009211,
       -42.0,
       3.0
      ],
@@ -3336,7 +3336,7 @@
    "material": "aluminium",
    "reason": "M3x10 CSK (STEP: M3x8): 8 mm bites only 4.2 mm of the standoff thread; 10 mm gives 6.2 (>= 1.5 d in aluminium)",
    "at": [
-    -46.26,
+    -46.260136,
     30.5,
     5.5
    ],
@@ -3363,7 +3363,7 @@
     "csk_d": 6.7,
     "csk_depth": 1.75,
     "sink": 2.15,
-    "grip": 5.91
+    "grip": 5.9101
    },
    "tool": "hex2",
    "removable": true
@@ -3375,7 +3375,7 @@
    "material": "aluminium",
    "reason": "M3x10 CSK (STEP: M3x8): the head sits 5.3 mm out from the 15 mm standoff end, so 8 mm bites 2.7 mm; 10 mm bites 4.7",
    "at": [
-    -41.76,
+    -41.759723,
     40.5,
     4.5
    ],
@@ -3403,7 +3403,7 @@
     "csk_d": 6.7,
     "csk_depth": 1.75,
     "sink": 5.75,
-    "grip": 11.01
+    "grip": 11.0097
    },
    "tool": "hex2",
    "removable": true
@@ -3415,7 +3415,7 @@
    "material": "aluminium",
    "reason": "alu M3 CSK (Build Guide: aluminium bolts for weight; the STEP draws stainless)",
    "at": [
-    -35.26,
+    -35.25952,
     -11.5,
     8.5
    ],
@@ -3443,7 +3443,7 @@
     "csk_d": 6.7,
     "csk_depth": 1.75,
     "sink": 1.05,
-    "grip": 6.81
+    "grip": 6.8095
    },
    "tool": "hex2",
    "removable": true
@@ -3534,7 +3534,7 @@
    "material": "aluminium",
    "reason": "M3x10 CSK (STEP: M3x8): 8 mm bites only 4.2 mm of the standoff thread; 10 mm gives 6.2 (>= 1.5 d in aluminium)",
    "at": [
-    46.26,
+    46.260136,
     30.5,
     5.5
    ],
@@ -3561,7 +3561,7 @@
     "csk_d": 6.7,
     "csk_depth": 1.75,
     "sink": 2.15,
-    "grip": 5.91
+    "grip": 5.9101
    },
    "tool": "hex2",
    "removable": true
@@ -3573,7 +3573,7 @@
    "material": "aluminium",
    "reason": "M3x10 CSK (STEP: M3x8): the head sits 5.3 mm out from the 15 mm standoff end, so 8 mm bites 2.7 mm; 10 mm bites 4.7",
    "at": [
-    41.76,
+    41.759723,
     40.5,
     4.5
    ],
@@ -3601,7 +3601,7 @@
     "csk_d": 6.7,
     "csk_depth": 1.75,
     "sink": 5.75,
-    "grip": 11.01
+    "grip": 11.0097
    },
    "tool": "hex2",
    "removable": true
@@ -3613,7 +3613,7 @@
    "material": "aluminium",
    "reason": "alu M3 CSK (Build Guide: aluminium bolts for weight; the STEP draws stainless)",
    "at": [
-    35.26,
+    35.25952,
     -11.5,
     8.5
    ],
@@ -3641,7 +3641,7 @@
     "csk_d": 6.7,
     "csk_depth": 1.75,
     "sink": 1.05,
-    "grip": 6.81
+    "grip": 6.8095
    },
    "tool": "hex2",
    "removable": true

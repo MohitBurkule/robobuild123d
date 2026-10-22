@@ -3,6 +3,7 @@ frame mated onto it. The spec reads `at`/`dir` back with joints.seat(). Weapon h
 in the weapon frame (on the spin axis) of the spider / outer disc they belong to."""
 from .params import *  # noqa: F401,F403
 from .common import _polar
+from .side import bolt_x
 from .drisk import _disc_local
 from .joints import DIGITS
 
@@ -32,7 +33,7 @@ def screws(r):
         _screw(r, mnt, "csk_a", on_mount(n, (s * (MNT_IN - MNT_CSK_PROUD), *SA)), sx, f"bolt_u{n}a")      # mount into the 25 mm standoff
         _screw(r, mnt, "csk_b", on_mount(n, (s * (MNT_IN - MNT_CSK_PROUD), *SB)), sx, f"bolt_u{n}b")      # mount + lug into the 15 mm standoff
         for k, yz in (("a", SA), ("b", SB), ("c", NUT)):                    # side panel seats: two standoff ends, the nut
-            _screw(r, f"side_{n}", f"seat_{k}", (s * SIDE_BOLT_X[k], *yz), (-s, 0, 0), f"bolt_s{n}{k}")
+            _screw(r, f"side_{n}", f"seat_{k}", (s * bolt_x(k), *yz), (-s, 0, 0), f"bolt_s{n}{k}")
     for k, (u, v) in enumerate(STATOR_DIRS):                                # RV03 counterbores on the stator bolt circle
         dy, dz = STATOR_PCD / 2 * u, STATOR_PCD / 2 * v
         _screw(r, "mount_r", f"stator_cb{k}", on_mount("r", (CB_CONE_X[1], WY + dy, WZ + dz)), OUT_X, f"bolt_wm{k}")
