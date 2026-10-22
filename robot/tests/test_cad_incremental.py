@@ -16,6 +16,10 @@ def tmp_cache(tmp_path, monkeypatch):
     monkeypatch.setenv("ROBOT_CACHE", str(tmp_path))
     monkeypatch.setattr(cache, "_db", None)
     monkeypatch.setattr(geom, "_MEM", {})
+    # integrity.volume compares with the PREVIOUS run's volumes (a store each run rewrites), so back-to-back runs differ
+    # in that message by design; every run here sees "no previous run" so full and incremental stay comparable
+    from robot.checks import integrity
+    monkeypatch.setattr(integrity, "_load", lambda path: {})
     cache.set_enabled(True)
     cache.reset_stats()
     yield tmp_path
