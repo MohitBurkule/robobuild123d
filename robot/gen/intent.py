@@ -26,18 +26,39 @@ MIN_SKIN_FDM = 1.0  # roof / floor skin: 4-5 top/bottom layers at 0.2 mm
 SIGMA_ALLOW = {"nylon": 20.0, "pla_st": 22.0, "pla": 18.0, "petg": 18.0, "tpu": 6.0, "pc": 25.0}
 
 
-def I(purpose: str, reason: str, load_or_constraint: str) -> dict:  # noqa: E743 (short on purpose: used everywhere)
-    """An intent record. Raises on an unknown purpose or an empty reason/constraint, so it cannot be skipped."""
+def I(purpose: str, reason: str, load_or_constraint: str, threats=None, shield: str | None = None,  # noqa: E743
+      accepted_risk: str | None = None) -> dict:
+    """An intent record. Raises on an unknown purpose, an empty reason/constraint, no threats named (or an unknown one),
+    or an unknown shield, so it cannot be skipped.
+
+    threats: the attacks of `threats.ATTACKS` this feature answers (why it has to exist in a fight).
+    shield: how a critical/fragile feature survives them (`threats.SHIELDS`).
+    accepted_risk: the reason a reachable critical/fragile feature is left reachable (e.g. a tyre must touch the floor)."""
+    from .threats import ATTACKS, SHIELDS, known_threat
     if purpose not in PURPOSES:
         raise ValueError(f"intent purpose {purpose!r} not in {PURPOSES}")
     if not str(reason).strip() or not str(load_or_constraint).strip():
         raise ValueError("intent needs a reason and the load or constraint that sized it")
-    return {"purpose": purpose, "reason": str(reason), "load_or_constraint": str(load_or_constraint)}
+    threats = list(threats or [])
+    if not threats or any(not known_threat(t) for t in threats):
+        raise ValueError(f"intent must name the threats it answers (attacks {sorted(ATTACKS)} or combat failure-mode "
+                         f"ids CF-*); got {threats}")
+    if shield is not None and shield not in SHIELDS:
+        raise ValueError(f"shield {shield!r} not in {SHIELDS}")
+    d = {"purpose": purpose, "reason": str(reason), "load_or_constraint": str(load_or_constraint), "threats": threats}
+    if shield:
+        d["shield"] = shield
+    if accepted_risk:
+        d["accepted_risk"] = str(accepted_risk)
+    return d
 
 
 def valid(intent) -> bool:
+    from .threats import known_threat
+    th = intent.get("threats") if isinstance(intent, dict) else None
     return (isinstance(intent, dict) and intent.get("purpose") in PURPOSES and bool(str(intent.get("reason", "")).strip())
-            and bool(str(intent.get("load_or_constraint", "")).strip()))
+            and bool(str(intent.get("load_or_constraint", "")).strip())
+            and isinstance(th, list) and bool(th) and all(known_threat(t) for t in th))
 
 
 # ------------------------------------------------------------------------------------------------- sizing from intent
@@ -82,8 +103,10 @@ def belt_ring_for(centre_mm: float, groove_r_rear: float, groove_r_front: float,
 
 # ------------------------------------------------------------------------------------------------- check
 
-def check(spec: dict) -> list[str]:
-    """Every feature of a generated spec that lacks a valid intent (empty list = every feature has its why)."""
+def check(spec: dict, adversarial: bool = False) -> list[str]:
+    """Every feature of a generated spec that lacks a valid intent (empty list = every feature has its why).
+    adversarial=True also runs the threat model (`threats.check`): every exposed critical or fragile feature must be
+    shielded or carry an accepted risk naming the attack (builds the geometry: a few seconds)."""
     gen = spec.get("generator") or {}
     feats = gen.get("features")
     if feats is None:
@@ -91,7 +114,8 @@ def check(spec: dict) -> list[str]:
     out = []
     for f in feats:
         if not valid(f.get("intent")):
-            out.append(f"{f.get('op')} {f.get('target') or f.get('id')} ({f.get('src', '?')}): no intent")
+            why = "no intent" if not f.get("intent") else "intent without valid threats" if f["intent"].get("purpose") else "no intent"
+            out.append(f"{f.get('op')} {f.get('target') or f.get('id')} ({f.get('src', '?')}): {why}")
     has = {(f.get("op"), f.get("target")) for f in feats if valid(f.get("intent"))}
     for p in spec.get("parts", []):
         if ("part", p["id"]) not in has:
@@ -105,4 +129,7 @@ def check(spec: dict) -> list[str]:
     for c in spec.get("connections", []):
         if ("connect", f"{c['a']}~{c['b']}") not in has:
             out.append(f"connection {c['a']}~{c['b']}: no intent")
+    if adversarial and not out:
+        from . import threats
+        out += [f"threat: {m}" for m in threats.check(spec)]
     return out

@@ -7,6 +7,8 @@ with a blocker.
 
 from __future__ import annotations
 
+import dataclasses
+
 from dataclasses import dataclass, field
 
 from .. import checks
@@ -93,7 +95,7 @@ def gate(h, user: dict | None = None, fast=False, max_layouts=3, seeds=(0, 1), l
         except ValueError as e:
             attempts.append({"seed": u.get("seed"), "layout": idx, "blockers": [f"build: {e}"]})
             continue
-        missing = intent_mod.check(d)
+        missing = intent_mod.check(d, adversarial=True)
         if missing:  # a feature without a why is a generator bug, not a layout problem: refuse at once
             raise Rejected(getattr(h, "slug", str(h)), attempts + [{"blockers": [f"intent: {m}" for m in missing]}])
         rep = verify_dict(d, fast=fast)
@@ -101,9 +103,32 @@ def gate(h, user: dict | None = None, fast=False, max_layouts=3, seeds=(0, 1), l
         attempts.append({"seed": u.get("seed"), "layout": idx, "blockers": b})
         if log:
             log(f"  seed {u.get('seed')} layout {idx}: {len(b)} blockers")
+        if b and all(x.startswith("mass.over") for x in b):  # only over weight: pocket what the verifier says is spare
+            heavy = GateResult(d, rep, attempts)
+            light = lighten(h, u, idx, heavy, fast, log)
+            if light is not heavy:
+                light.spec.setdefault("generator", {})["gate"] = {"attempts": len(attempts), "fast": fast}
+                return light
         if not b:
             res = GateResult(d, rep, attempts)
             res = lighten(h, u, idx, res, fast, log)
             res.spec.setdefault("generator", {})["gate"] = {"attempts": len(attempts), "fast": fast}
             return res
+    # only ever over weight: the skirts are the mass trade the hypothesis can make (sides_rear -> rear -> none); the
+    # ground-game statement of the lighter variant then accepts the directions it leaves open, with that reason
+    mass_only = [a for a in attempts if a.get("blockers") and all(x.startswith("mass.over") for x in a["blockers"])]
+    nxt = {"sides_rear": "rear", "rear": "none"}.get(getattr(h, "skirts", "none"))
+    if mass_only and nxt and not (user or {}).get("no_skirt_trade"):
+        if log:
+            log(f"  over weight with skirts={h.skirts}: trying skirts={nxt}")
+        res = gate(dataclasses.replace(h, skirts=nxt), user, fast, max_layouts, seeds, log)
+        res.spec.setdefault("generator", {})["skirt_trade"] = {"from": h.skirts, "to": nxt, "why": "over 150 g with the "
+                                                               "fuller skirt after lightening"}
+        return res
+    if mass_only and not nxt and getattr(h, "weapon", "") == "vspin_drisk" and not (user or {}).get("thin_forks"):
+        if log:
+            log("  over weight with no skirts left to trade: trying 1.5 mm forks with button heads")
+        res = gate(h, dict(user or {}, thin_forks=True), fast, max_layouts, seeds, log)
+        res.spec.setdefault("generator", {})["fork_trade"] = {"fork_t": 1.5, "why": "over 150 g with 2 mm countersunk forks"}
+        return res
     raise Rejected(getattr(h, "slug", str(h)), attempts)

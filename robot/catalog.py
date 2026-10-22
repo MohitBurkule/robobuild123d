@@ -94,8 +94,8 @@ def _gr1507_bell(variant="datasheet"):
     wl = top[0] - BELL_X0
     wall = minus(cyl_x(wall_r[1], wl), [cyl_x(wall_r[0], wl + 1.0)])
     tl = top[1] - top[0]
-    if variant == "step":   # STEP simplified bell: flat disc cap on a solid r4 core, no windows
-        cap = at(cyl_x(BELL_CAP_R, tl), top[0] + 0.5 * tl, 0, 0)
+    if variant == "step":   # STEP simplified bell: closed flat disc cap out to the wall OD (it joins wall and core: one solid), no windows
+        cap = at(cyl_x(wall_r[1], tl), top[0] + 0.5 * tl, 0, 0)
     else:                   # datasheet: chamfered cap, wall OD down to the flat
         cap = {"type": "revolve", "profile": [[0.0, 0.0], [wall_r[1], 0.0], [BELL_CAP_R, BELL_CHAMFER_T], [BELL_CAP_R, tl], [0.0, tl]], "angle": 360.0}
         cap = at(rot(cap, [0.0, 90.0, 0.0]), top[0], 0, 0)

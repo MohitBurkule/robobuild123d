@@ -65,6 +65,11 @@ dependencies = [
 "Citation" = "https://doi.org/10.5281/zenodo.14872323"
 
 [project.optional-dependencies]
+# physics simulation (robot.sim)
+sim = [
+    "mujoco>=3.2",
+]
+
 # enable the optional ocp_vscode visualization package
 ocp_vscode = [
     "ocp_vscode",
