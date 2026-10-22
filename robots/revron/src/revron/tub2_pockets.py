@@ -1,8 +1,8 @@
 """[tub2] Deck lightening pockets (cut from below, SKIN left): the diagonal ribs from the centre through the column centres bound the two
 X pockets and two side pockets (R = wall at every rib corner); rear boxes sit between the stop walls. Right-hand pockets are mirrored."""
-from build123d import Align, BuildSketch, Circle, Locations, Mode, Polygon, Rectangle, fillet
+from build123d import Align, BuildSketch, Circle, Cylinder, Locations, Mode, Pos, Polygon, Rectangle, fillet
 from .tub2_params import (INS_AXIS, POCKET_X, SIDE_X, CENTRE_Y, DIAG_K, RIB_OFF, FRONT_RIB, STOP_GAP, POCKET_SKIN, CENTRE_Y0, REAR_R, SKIN,
-                          CH_WALL, CH_IN_X, COL_R, DECK, PAD_Z0, OVER, WALL_IN_FRONT, WALL_IN_REAR, STOP_BACK_Y, STOP_FRONT_Y, SA_X0)
+                          CH_WALL, CH_IN_X, COL_R, DECK, PAD_Z0, OVER, WALL_IN_FRONT, WALL_IN_REAR, STOP_BACK_Y, STOP_FRONT_Y, SA_X0, BOSS_AT_REAR)
 from .tub2_util import box_xy, concave_filler, fit_radius, prism, mirrored
 
 
@@ -30,6 +30,8 @@ def x_pockets():
     face = STOP_FRONT_Y
     lo = [(0, a_lo), (x, a_lo - k * x), (x, face), (SA_X0, face), (SA_X0, face - STOP_GAP), (-SA_X0, face - STOP_GAP), (-SA_X0, face), (-x, face), (-x, a_lo - k * x)]
     tips = lambda p: [p[0], p[1], p[-1]]
+    if face >= a_lo - k * x:                    # the stop wall stands forward of the rib's lower edge at the pocket's side (drive axle moved forward): no room for the rear X pocket
+        return [_cut(_rounded(up, tips(up)), 0)]
     return [_cut(_rounded(up, tips(up)), 0), _cut(_rounded(lo, tips(lo)), 0)]
 
 
@@ -82,4 +84,8 @@ def rear_pockets():
 
 def deck_pockets():
     rear, centre = rear_pockets()
-    return x_pockets() + [centre] + [mirrored(h) for h in (side_pocket(), rear)]
+    xp = x_pockets()
+    if not BOSS_AT_REAR:                           # the boss stands in front of the gearmotor, under the X pockets: they wrap round its collar
+        collars = [Pos(bx, by, DECK - 2 * SKIN) * Cylinder(COL_R + SKIN, 4 * SKIN + CH_WALL, align=(Align.CENTER, Align.CENTER, Align.MIN)) for bx, by in INS_AXIS]
+        xp = [p - c for p in xp for c in collars[:1]]
+    return xp + [centre] + [mirrored(h) for h in (side_pocket(), rear)]

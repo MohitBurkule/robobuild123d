@@ -14,6 +14,14 @@
     "battery.pack": {"env": "REVRON_BATTERY", "_why": "catalog id of the pack (params_hardware.BATTERY); the bay is cut from its envelope, it stands against the stop wall and the deck"},
     "drive.esc": {"env": "REVRON_RXESC", "_why": "catalog id of the receiver / drive ESC (params_chassis.RXESC); its bay is cut from the envelope"},
     "weapon.esc": {"env": "REVRON_WESC", "_why": "catalog id of the weapon ESC (params_chassis.WESC); its bay is cut from the envelope"},
+    "drive.belt": {
+      "default": "o_ring",
+      "values": {
+        "o_ring": [],
+        "none": [{"op": "remove", "select": {"kind": "belt"}}]
+      },
+      "_why": "belt drive between the rear hub groove and the front hub groove: o_ring = the stock O-ring belts; none = no belt, for wheels without a belt groove (catalogue wheels have none: the O-ring has nothing to ride in). The front wheels then free-wheel (same overlay as 2WD, but a different cause: the wheel, not the drive layout)"
+    },
     "drive.driven_wheels": {
       "default": "4WD",
       "values": {
