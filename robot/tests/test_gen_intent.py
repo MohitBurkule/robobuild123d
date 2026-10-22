@@ -19,12 +19,12 @@ def specs():
 
 def test_intent_record_rejects_unknown_purpose_and_empty_reason():
     with pytest.raises(ValueError):
-        intent.I("looks_nice", "because", "1 mm")
+        intent.I("looks_nice", "because", "1 mm", threats=["wall_slam"])
     with pytest.raises(ValueError):
-        intent.I("load_path", "", "1 mm")
+        intent.I("load_path", "", "1 mm", threats=["wall_slam"])
     with pytest.raises(ValueError):
-        intent.I("load_path", "carries the hit", " ")
-    assert intent.valid(intent.I("mass", "carries nothing", "verifier saveable_g"))
+        intent.I("load_path", "carries the hit", " ", threats=["wall_slam"])
+    assert intent.valid(intent.I("mass", "carries nothing", "verifier saveable_g", threats=["CF-GD01"]))
 
 
 @pytest.mark.parametrize("t", HYPS)
