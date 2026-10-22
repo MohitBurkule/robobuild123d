@@ -19,7 +19,7 @@ def _d_outline(d=RH_D):
     hx = d["r"] * math.cos(fa)
     a0, span = math.pi - fa, math.pi + 2 * fa
     arc = [(d["r"] * math.cos(a0 + span * k / (d["arc_n"] - 1)), d["r"] * math.sin(a0 + span * k / (d["arc_n"] - 1))) for k in range(d["arc_n"])]
-    n = d["flat_n"]
+    n = max(2, round(2 * hx / (d["r"] * span) * d["arc_n"]))                              # flat facets as long as the arc's
     flat = [(hx - 2 * hx * k / n, d["flat"] - d["crown"] * math.sin(math.pi * k / n)) for k in range(1, n)]
     return Polygon(arc + flat)
 
