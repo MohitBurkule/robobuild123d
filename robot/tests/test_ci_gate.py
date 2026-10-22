@@ -79,3 +79,21 @@ def test_bisect_interaction_holds_second_half():
 def test_ok_cli():
     assert G.main(["ok", "3", "3", "5", "5"]) == 0
     assert G.main(["ok", "3", "4", "5", "5"]) == 1
+
+
+def test_state_roundtrip(tmp_path):
+    f = str(tmp_path / "ci_state.json")
+    assert G.main(["state", f, "get", "phase"]) == 0 and G.state_load(f) == {}
+    G.main(["state", f, "set", "iter=3", "sha=abc1234", "phase=gate"])
+    G.main(["state", f, "set", "phase=verify", "gate=origin/fix-A origin/fix-B"])
+    d = G.state_load(f)
+    assert d["iter"] == "3" and d["sha"] == "abc1234" and d["phase"] == "verify" and d["gate"] == "origin/fix-A origin/fix-B"
+    open(f, "w").write("{half")            # a torn file reads as empty state (fresh round), never a crash
+    assert G.state_load(f) == {}
+
+
+def test_unit_result():
+    assert G.unit_result("....\n12 passed in 3.21s", 0) == 0
+    assert G.unit_result("F.\n1 failed, 11 passed in 3.2s", 1) == 1
+    assert G.unit_result("Traceback ... robot verify: unknown group unit", 2) == 2   # old worker ran it as a verify group
+    assert G.unit_result("", 124) == 2
