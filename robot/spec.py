@@ -105,6 +105,10 @@ Claim = _obj({"id": "", "text": "", "metric": "", "op": "<=", "value": 0.0})
 class Spec:
     def __init__(self, d: dict, base_dir: str | Path | None = None):
         d = dict(d or {})
+        if d.get("overlay"):  # declarative settings overlay (robot/overlay.py): a variant robot without code edits
+            from . import overlay as _ov
+
+            d = _ov.apply(d, d["overlay"], base_dir=base_dir)
         if any(isinstance(p, dict) and p.get("mate") for p in (d.get("parts") or [])):
             from .cad import mates  # parts placed by constraints (robot/cad/mates.py)
 
