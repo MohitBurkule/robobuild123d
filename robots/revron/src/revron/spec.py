@@ -5,6 +5,7 @@ from .common import *  # noqa: F401,F403
 from . import panel_base, panel_top
 from .variants import variant
 from .tub2_params import OVER   # the squared rear corner overshoots the wall by the tub2 over-cut
+from .drisk import service_turn_deg   # [fix-B-robust] drisk service turn: a relation of SA and the disc outline
 
 
 def ref_bom():
@@ -440,7 +441,7 @@ def main():
         spec = dict(name="Revron", profile="aws2025", robot_type="vertical_spinner", locomotion="roller", archetype="vertical_spinner_forks",
                     archetype_params=ARCHETYPE_PARAMS, targets=TARGETS, weapon_lock=WEAPON_LOCK, reference_bom=ref_bom(), reference_doc=REFERENCE_DOC,
                     electronics=ELECTRONICS, can_run_inverted=False, allow_overlap=ALLOW_OVERLAP, claims=CLAIMS, sharp_ok=SHARP_OK,
-                    teardown=TEARDOWN, module_teardown=MODULE_TEARDOWN, service_pose=SERVICE_POSE, reference_cad=reference_cad(),
+                    teardown=TEARDOWN, module_teardown=MODULE_TEARDOWN, service_pose=[dict(e, deg=service_turn_deg()) for e in SERVICE_POSE], reference_cad=reference_cad(),
                     start_pose={f"whub_r{n}": HUB_SPIN_DEG for n in "lr"},   # spin of the rear hubs on their shafts (STEP pose)
                     asm_dump={"rig": "revron.joints:RIG"},   # asm.mate: our assembly mates (joints.Rig)
                     renders={"dir": "renders", "views": ["iso.png", "top.png", "back.png", "exploded.png"]}, **body)

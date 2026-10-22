@@ -9,7 +9,7 @@ import build123d as bd
 
 from . import plate as pl
 from .common import _m2
-from .params_weapon import (BIG, BOLT_R, DISC_BAL_PTS, DISC_BORE_ROUND, DISC_ECC, DISC_ECC_A, DISC_HOLE_R_WIN, DISC_R,
+from .params_weapon import (BIG, BOLT_R, DISC_BAL_PTS, DISC_BORE_ROUND, DISC_ECC, DISC_ECC_A, DISC_HOLE_R_WIN, DISC_R, SERVICE_TURN_MARGIN_DEG,
                             DISC_ROUND, DOG, DR_ROT, DR_X, HALF_PITCH, HUB_R, N_STACK, SPACER, SPIDER, TOOTH_A,
                             TOOTH_R, W_FRAME, WSHAFT)
 from .params_chassis import WY, WZ
@@ -132,3 +132,27 @@ def weapon_shaft():
     prof += [(w["thread_len"], r), (w["len"], r), (w["len"], 0.0)]
     face = bd.Face(bd.Wire.make_polygon([bd.Vector(w["x_end"] + x, 0, z) for x, z in prof], close=True))
     return pl.placed(bd.Solid.revolve(face, 360, bd.Axis.X), W_FRAME)
+
+
+# --------------------------------------------------------------------------------------------- service pose (teardown)
+def service_turn_deg(step=1.0, margin=SERVICE_TURN_MARGIN_DEG):
+    """[fix-B-robust] The hand turn of the drisk (deg about +X, the spec service_pose) before the mount screws into the
+    25 mm standoffs (bolt_u?a) are drawn: the turn that leaves the most room between the disc outline (rim and tooth) and
+    their CSK heads, seen along the axis, held over +-margin deg (a hand turn is not exact; the tooth flank is a cliff
+    in that room). A relation of SA and the disc outline, so the screws still leave when a
+    standoff moves (the STEP's hand-picked 160 deg traps them at SA[1] + 10 %)."""
+    from robot.cad import fastener_catalog as fc
+    from .params_chassis import SA
+    from .params_weapon import MNT_SCREW
+    head_r = fc.head(fc.parse(MNT_SCREW[0]).d, "csk")[0] / 2
+    loc = drisk_plane(0.0).to_local_coords(bd.Vector(0, SA[0] - WY, SA[1] - WZ))
+    head = bd.Pos(loc.X, loc.Y) * bd.Circle(head_r)
+    o = disc_outline()
+
+    def room(deg):   # the sketch normal is -X: a turn of +deg about +X is -deg in the sketch
+        f = o.rotate(bd.Axis.Z, -deg)
+        return -(f & head).area if (f & head).area > 0 else f.distance_to(head)
+    n, w = int(round(360.0 / step)), int(round(margin / step))
+    rooms = [room(k * step) for k in range(n)]
+    held = [min(rooms[(k + j) % n] for j in range(-w, w + 1)) for k in range(n)]
+    return max(range(n), key=lambda k: held[k]) * step

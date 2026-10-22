@@ -22,6 +22,7 @@ for _n, _t in (("spider", SPIDER_T), ("disc_a", DISC_T), ("spacer", SPACER_T), (
     DR_X[_n] = (_x, _x + _t)       # spider | disc_a | spacer | disc_b, each flush on the previous one
     _x += _t
 DR_ROT = BELL_SCREW_PHASE            # drisk phase about the axis: the spider is clocked to the bell's screw pattern (STEP Drisk_V4 placement)
+SERVICE_TURN_MARGIN_DEG = 5.0   # the drisk service turn (drisk.service_turn_deg) keeps the mount screw heads clear over +- this (hand turn)
 DISC_R, DISC_ECC, DISC_ECC_A = 16.5, 0.5, -40.0   # eccentric rim: R16.5 centred 0.5 mm towards -40 deg (balances the tooth)
 TOOTH_R, TOOTH_A = 23.0, 134.8        # tooth tip: radius and angle in the drisk frame
 BOLT_R, HUB_R = 14.0, BELL_SCREW_R   # stack-bolt circle; spider-to-bell screws on the bell's own screw circle (radii about the weapon axis)
@@ -78,7 +79,11 @@ MNT_NOTCH_GAP = 0.1                     # the notch's front face stands this far
 NOSE_R = 3.25                           # nose arc round the SB standoff; it leaves the outline at the side's rim_end angle (the front edge is the common tangent of rim and nose: STEP RV02 -5, RV03 -14.5)
 MNT_HEEL = dict(z=SB[1] - NOSE_R, step=0.4, back=1.8, z_hook=2.5, z_lip=4.5)   # rear foot hooked under the tab: flat underside (tangent to the nose arc), tip step, setback, hook and lip Z
 MNT_NOTCH_UP = 2.0                      # the rear face above the tab leans back by this much over the last stretch to the top
-BOSS_Z, BOSS_NOSE_Y = 6.34, 44.34          # the boss starts above the line from the notch top to (BOSS_NOSE_Y, BOSS_Z): STEP, it runs tangent to the nose arc to 0.4 um
+# the boss starts above the line from the notch top to (BOSS_NOSE_Y, BOSS_Z): STEP 44.34, 6.34, it runs tangent to the nose
+# arc to 0.4 um. [fix-B-robust] That point rides on the nose standoff SB (STEP offset 3.84, 1.84 from it), so the boss
+# line follows SB when it moves and stays tangent to the nose arc round it
+BOSS_NOSE_DY, BOSS_NOSE_DZ = 3.84, 1.84
+BOSS_NOSE_Y, BOSS_Z = SB[0] + BOSS_NOSE_DY, SB[1] + BOSS_NOSE_DZ
 NOSE_PAD_R = 4.1 if PRINTABLE else 0.0                        # local pad round the nose CSK: CSK cone radius (3.2) + a 0.9 mm printed wall (the STEP nose leaves 0.15 mm)
 BIG = 60.0                              # a box edge bigger than any part, for the wedgelet's 2D half-plane clip (_mount_clip)
 MNT_RELIEF_R = 1.0 if PRINTABLE else 0.0                      # concave corner relief of the profile (tub deck fillet, mfg corner relief)
@@ -128,7 +133,7 @@ LEAD_DEV_R, LEAD_DEV_MAX_MM3 = 3.0, 520                        # reference_cad c
 
 def boss_line_z(y):
     """Z of the boss's lower edge (the line from the notch top to the nose, see mount._mount_clip) at Y."""
-    return MNT_TOP_Z + (y - TAB["y0"]) * (BOSS_Z - MNT_TOP_Z) / (BOSS_NOSE_Y - TAB["y0"])
+    return MNT_TOP_Z + (y - TAB["y0"]) * (BOSS_Z - MNT_TOP_Z) / (BOSS_NOSE_Y - TAB["y0"])   # BOSS_* on the nose tangent
 
 
 def lead_groove_ends():

@@ -49,11 +49,12 @@ MODULE_TEARDOWN = [
     dict(parts=["weapon_motor_stator"], dir=[-1, 0, 0], reason="GR1507 leaves inboard-left once the 4 stator screws are out")]
 
 
-# the drisk is turned by hand before the nose screws (bolt_u?b) are drawn: in the STEP pose the eccentric rim and tooth flank
-# pass within 2.1 mm of their line (heads r3.0); 160 deg about the axis puts the rim 3.07 mm off it, so the screws leave inward
-SERVICE_TURN_DEG = 160.0
+# the drisk is turned by hand before the mount screws are drawn: in the STEP pose the eccentric rim and tooth flank
+# pass over their heads (r3.0). [fix-B-robust] The turn is a relation, drisk.service_turn_deg() (most room round the
+# bolt_u?a heads at SA, held over +-SERVICE_TURN_MARGIN_DEG), filled in by spec.py; the STEP's hand pick 160 deg traps
+# them once SA[1] rises 10 %
 SERVICE_POSE = [dict(parts=["spider", "disc_a", "disc_b", "dspacer"] + [f"bolt_{c}{k}" for c in "pd" for k in range(N_STACK)],
-                     axis_at=[0.0, WY, WZ], axis_dir=[1, 0, 0], deg=SERVICE_TURN_DEG,
+                     axis_at=[0.0, WY, WZ], axis_dir=[1, 0, 0], deg=None,
                      reason="drisk turned by hand so the rim clears the nose screws; whole stack with its bolts moves as one")]
 
 UNIT = 1          # unit direction-cosine norm (k^2 + h^2 = UNIT) for the belt tangent construction
