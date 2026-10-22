@@ -19,7 +19,11 @@ CH_Y0, CH_Y1 = -37.6, 15.0           # chassis rear face / front face (where the
 CH_Z0, CH_Z1 = 2.5, 19.5             # chassis floor underside / rim (top panel and mount notch sit on it)
 CH_WALL = 2.0                        # printed wall and deck thickness
 WY, WZ = 38.5, 23.5                  # weapon axis (along X)
-RY, RZ = -30.5, 11.0                 # N10 shaft (rear axle)
+# drive location (hook drive.location): the drive axle line Y per declared location; the tub's motor features (keyhole, key tab, stop wall, pad recess)
+# and the pack bay follow RY (the pack butts the stop wall); the rear-only structure (rear boss, lattice window) does not move with it
+DRIVE_LOCATION = os.environ.get("REVRON_DRIVE_LOCATION", "rear")
+DRIVE_LOCATIONS = {"rear": dict(ry=-30.5), "mid": dict(ry=-8.0), "front": dict(ry=5.0)}
+RY, RZ = DRIVE_LOCATIONS[DRIVE_LOCATION]["ry"], 11.0   # N10 shaft (rear axle at the default location)
 SA = (30.5, 5.5)                     # 25 mm standoff (RV11): front axle (Y, Z)
 SB = (40.5, 4.5)                     # 15 mm standoff (RV10): nose (Y, Z)
 # the rotor axis keeps at least its distance (WY, WZ master and the STEP's standoff positions) from each mount-screw axis: the heads back out inboard
@@ -49,8 +53,10 @@ INSERT_OD, INS_LEN = hw.size(INSERT_CAT)[1:]   # knurled OD and length from the 
 BORE_CH = 0.6                        # chamfer of the heat-set bore at the panel seat and at the rim
 # electronics envelopes (catalog boxes at their spec placement, rot z 90): Malenki nano 32 x 20 x 4.4 at (8.67, -3.0, 15.3),
 # BBB ant ESC 23.5 x 12 x 5 at (8.63, -7.25, 10.6); the deck cage ribs are dimensioned off these
-RX_SIZE, RX_C = (32.0, 20.0, 4.4), (8.67, -3.0, 15.3)     # receiver catalog box (L, W, H) and placed centre
-WE_SIZE, WE_C = (23.5, 12.0, 5.0), (8.63, -7.25, 10.6)     # weapon ESC catalog box and placed centre
+RXESC = os.environ.get("REVRON_RXESC", "malenki_nano_rvrn2")   # receiver / drive ESC catalog id
+RX_SIZE, RX_C = hw.size(RXESC), (8.67, -3.0, 15.3)     # receiver catalog box (L, W, H) (32 x 20 x 4.4 at the default) and placed centre
+WESC = os.environ.get("REVRON_WESC", "bbb_ant_esc_rvrn2")   # weapon ESC catalog id
+WE_SIZE, WE_C = hw.size(WESC), (8.63, -7.25, 10.6)     # weapon ESC catalog box (23.5 x 12 x 5 at the default) and placed centre
 
 
 def _env(c, size):
@@ -60,12 +66,18 @@ def _env(c, size):
 
 
 (RX_X, RX_Y, RX_Z), (WE_X, WE_Y, WE_Z) = _env(RX_C, RX_SIZE), _env(WE_C, WE_SIZE)
-DRIVE_MOTOR = "n10_2200rpm_spicy"    # catalog id of the drive gearmotors (RV12): the tub is dimensioned from its plate stack
+DRIVE_MOTOR = os.environ.get("REVRON_DRIVE_MOTOR", "n10_2200rpm_spicy")    # catalog id of the drive gearmotors (RV12): the tub is dimensioned from its plate stack
 GB = hw.gearbox(DRIVE_MOTOR)         # plate stack in the motor frame: top, half_w, end, gaps
 MOTOR_WALL_GAP = 0.3                 # last gearbox plate to the chassis wall's inner face
 MOTX = round(CH_IN_X - MOTOR_WALL_GAP - GB["end"], 6)   # N10 catalog origin |X|: the stack ends a gap short of the wall
 KEY_CLR = 0.15                       # chassis key tab to each gearbox plate
 N10_KEY = tuple(round(MOTX + g + s * KEY_CLR, 6) for g, s in zip(GB["gaps"][-1], (1, -1))) if GB["gaps"] else None   # |X| of the key tab: the open span between the stack's last two plates less the clearance; none when the gearbox has no such gap
+# declared compartment layout (hook chassis.compartments): the interior compartments the tub carves, by name. motor = the pocket for the gearmotor body
+# and the stop wall / key tab / ledge that locate it; battery = the bay cut from the pack's catalog envelope; partition = the rib splitting the pack bay
+# from the electronics bay beside it
+COMPARTMENT = os.environ.get("REVRON_COMPARTMENTS", "standard")
+COMPARTMENTS = {"standard": ("motor", "battery"), "none": (), "split_battery_bay": ("motor", "battery", "partition")}
+LAYOUT = COMPARTMENTS[COMPARTMENT]
 N10_TOP = round(RZ + GB["top"], 6)   # top face of the N10 gearbox plates
 KEY_BITE, STOP_CLR = 0.65, 0.1       # key tab reaches this far behind the gearbox front face; the stop wall stands this clear of it
 KEY_SPAN = (round(RY + GB["half_w"] - KEY_BITE, 6), round(RY + GB["half_w"] + STOP_CLR + CH_WALL, 6))   # Y span of the key tab / stop wall
