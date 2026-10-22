@@ -90,7 +90,10 @@ MNT_NOTCH_UP = 2.0                      # the rear face above the tab leans back
 # arc to 0.4 um. [fix-B-robust] That point rides on the nose standoff SB (STEP offset 3.84, 1.84 from it), so the boss
 # line follows SB when it moves and stays tangent to the nose arc round it
 BOSS_NOSE_DY, BOSS_NOSE_DZ = 3.84, 1.84
-BOSS_NOSE_Y, BOSS_Z = SB[0] + BOSS_NOSE_DY, SB[1] + BOSS_NOSE_DZ
+from .tub2_lug import top_line_slope   # noqa: E402
+BOSS_SLOPE = top_line_slope()           # the boss line is parallel to the chassis lug's top line (tangent from the front-top corner to the nose round SB), so it follows SB with the lug
+BOSS_NOSE_Y = SB[0] + BOSS_NOSE_DY
+BOSS_Z = MNT_TOP_Z + (BOSS_NOSE_Y - TAB["y0"]) * BOSS_SLOPE   # STEP 6.34 at the default SB
 NOSE_PAD_R = 4.1 if PRINTABLE else 0.0                        # local pad round the nose CSK: CSK cone radius (3.2) + a 0.9 mm printed wall (the STEP nose leaves 0.15 mm)
 BIG = 60.0                              # a box edge bigger than any part, for the wedgelet's 2D half-plane clip (_mount_clip)
 MNT_RELIEF_R = 1.0 if PRINTABLE else 0.0                      # concave corner relief of the profile (tub deck fillet, mfg corner relief)
@@ -141,7 +144,7 @@ LEAD_DEV_R, LEAD_DEV_MAX_MM3 = 3.0, 520                        # reference_cad c
 
 def boss_line_z(y):
     """Z of the boss's lower edge (the line from the notch top to the nose, see mount._mount_clip) at Y."""
-    return MNT_TOP_Z + (y - TAB["y0"]) * (BOSS_Z - MNT_TOP_Z) / (BOSS_NOSE_Y - TAB["y0"])   # BOSS_* on the nose tangent
+    return MNT_TOP_Z + (y - TAB["y0"]) * BOSS_SLOPE
 
 
 def lead_groove_ends():
