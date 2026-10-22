@@ -47,6 +47,87 @@ def minus(base, cuts):
     return {"type": "subtract", "base": base, "cut": cuts} if cuts else base
 
 
+def _gr1507_base():
+    """GR1507 stator base as in the RVRN 2.0 STEP: a 2 mm cross (4 arms 3.5 wide, round tips to R9.8) round a R3.9 hub,
+    one d1.6 tap-drill hole per arm at R6 (the M2 stator screws; the STEP shows d2.0). Measured sections, not a plate: a solid disc was 3.5 mm too much."""
+    arm = [box(2.0, 16.1, 3.5), box(2.0, 3.5, 16.1)] + [at(rot(cyl(1.75, 2.0), [0.0, 90.0, 0.0]), 0, sy * 8.05, sz * 8.05)
+                                                       for sy, sz in ((1, 0), (-1, 0), (0, 1), (0, -1))]
+    holes = [at(cyl_x(0.8, 3.0), 0, 6.0 * sy, 6.0 * sz) for sy, sz in ((1, 0), (-1, 0), (0, 1), (0, -1))]
+    return minus(union(arm + [cyl_x(3.9, 2.0)]), holes)
+
+
+# GR1507 outrunner, local frame (X along the axis, +X = bell top / output side, -X = stator base). Bell: wall r7.4-9.8 and a solid r4 core
+# (RVRN 2.0 STEP sections), closed top 4.3..6.7. The STEP leaves the stator out; ours is a real 12-slot stack (OD 13.8, 7 mm) on the base cross.
+BELL_CORE_R, BELL_X0 = 4.0, -4.5
+# datasheet bell: the drawing's 29.1 total - 12 mm shaft stick-out = 17.1 mm body, so the cap top is 17.1 above the base back (-10.4): 6.7.
+# Wall r7.9-9.8 holds the magnets round a 15 mm stator with 0.4 mm air each side (OD 19.6).
+BELL_WALL_R, BELL_TOP_X = (7.9, 9.8), (5.8, 6.7)
+# STEP bell: wall r7.4-9.8, top 4.3..5.2 (the STEP top runs to 6.7 but its spider's inner face is at 5.2: the original overlaps the spider by 1.5 mm)
+STEP_BELL_WALL_R, STEP_BELL_TOP_X = (7.4, 9.8), (4.3, 5.2)
+
+
+def bell_dims(variant="datasheet"):
+    """(wall radii, cap top span) of the bell of a motor variant."""
+    return (STEP_BELL_WALL_R, STEP_BELL_TOP_X) if variant == "step" else (BELL_WALL_R, BELL_TOP_X)
+
+
+BELL_CHAMFER_T = 0.25   # axial depth of the cap chamfer (9.8 -> flat r6.2)
+BELL_CAP_R, BELL_WIN_W, BELL_WIN_R = 6.2, 4.2, (4.3, 8.9)   # flat of the chamfered cap; width and radial span of the 4 windows between the X spokes
+BELL_BOSS_R, BELL_BOSS_L = 1.9, 2.1                           # spider-screw tapping bosses under the top (top 0.9 + boss 2.1 = 3.0 mm of thread)
+STATOR_BASE_X, STATOR_STACK_X0 = -8.4, -3.5              # top face of the base cross; the stack sits inside the bell on a post from it
+STATOR_BACK_X = STATOR_BASE_X - 2.0                    # back face of the 2 mm base cross (the drawing's rear datum: total 29.1 runs from here to the shaft tip)
+STATOR_STACK_H, STATOR_SLOTS = 7.0, 12                 # GR1507: 15 mm class stator, 7 mm stack
+STATOR_BORE_R, STATOR_YOKE_R, STATOR_TIP_R = 2.9, 4.4, 7.5   # bore (clears the r4 rotor core), yoke outer, tooth tip (drawing: 15 mm stator)
+SHAFT_STUB_R = 2.5                                     # rotor shaft down through the stator bore to the base
+STATOR_POST_R = SHAFT_STUB_R + 0.6 + 0.1               # holder post round the shaft: the arch.boss_aligned ring (shaft + 0.6) plus a 0.1 wall
+LEAD_R, LEAD_Z, LEAD_PITCH = 0.45, (-3.9, -7.6), 1.0
+LEAD_X = STATOR_BACK_X + LEAD_R   # leads lie on the base back face so the body stays the drawing's 17.1 long;
+# 3 phase leads leave the hub sideways (datasheet photo), run out along the -Z arm and end 7.6 mm off the axis so the bundle clears the shaft stub
+BELL_SCREW_R, BELL_SCREW_PHASE = 4.5, -54.889  # spider screw circle on the bell top and its phase about the axis (STEP; local frame)
+
+
+def _gr1507_bell(variant="datasheet"):
+    """GR1507 bell, local X = -world X (RVRN 2.0 STEP sections): solid r4 core through (-4.5..6.5), wall r7.4-9.8 over -4.5..4.3,
+    and a vented top: a r6.2 disc (4.3..6.7) joined to the wall by 8 ribs (two per quadrant at world 34 and 62 deg), the 4 vents
+    between them. Rotates with the weapon; the stator inside is `_gr1507_stator`."""
+    wall_r, top = bell_dims(variant)
+    wl = top[0] - BELL_X0
+    wall = minus(cyl_x(wall_r[1], wl), [cyl_x(wall_r[0], wl + 1.0)])
+    tl = top[1] - top[0]
+    if variant == "step":   # STEP simplified bell: flat disc cap on a solid r4 core, no windows
+        cap = at(cyl_x(BELL_CAP_R, tl), top[0] + 0.5 * tl, 0, 0)
+    else:                   # datasheet: chamfered cap, wall OD down to the flat
+        cap = {"type": "revolve", "profile": [[0.0, 0.0], [wall_r[1], 0.0], [BELL_CAP_R, BELL_CHAMFER_T], [BELL_CAP_R, tl], [0.0, tl]], "angle": 360.0}
+        cap = at(rot(cap, [0.0, 90.0, 0.0]), top[0], 0, 0)
+    bosses = [at(rot(at(cyl_x(BELL_BOSS_R, BELL_BOSS_L), 0, BELL_SCREW_R, 0), [BELL_SCREW_PHASE + 90.0 * k, 0.0, 0.0]), top[0] - 0.5 * BELL_BOSS_L, 0, 0) for k in range(4)]   # tapping bosses under the cap: 3 mm of thread for the spider screws
+    holes = [at(rot(at(cyl_x(0.8, tl + BELL_BOSS_L + 0.2), 0, BELL_SCREW_R, 0), [BELL_SCREW_PHASE + 90.0 * k, 0.0, 0.0]), top[0] + 0.5 * (tl - BELL_BOSS_L), 0, 0) for k in range(4)]   # M2 tap holes (ISO 2306 r0.8), blind through cap + boss
+    vents = [at(rot(at(box(tl + 0.2, BELL_WIN_W, BELL_WIN_R[1] - BELL_WIN_R[0]), 0, 0.5 * sum(BELL_WIN_R), 0), [BELL_SCREW_PHASE + 45.0 + 90.0 * k, 0.0, 0.0]), top[0] + 0.5 * tl, 0, 0) for k in range(4)]   # 4 fan windows between the X spokes: the windings show (datasheet top view)
+    if variant == "step":
+        core = at(cyl_x(BELL_CORE_R, top[1] - BELL_X0), 0.5 * (BELL_X0 + top[1]), 0, 0)
+        return union([at(wall, 0.5 * (BELL_X0 + top[0]), 0, 0), core, minus(union([cap] + bosses), holes)])
+    return union([at(wall, 0.5 * (BELL_X0 + top[0]), 0, 0), minus(union([cap] + bosses), holes + vents + [at(cyl_x(SHAFT_STUB_R, tl + 0.4), top[0] + 0.5 * tl, 0, 0)])])
+
+
+def _gr1507_stator():
+    """Fixed stator: 12-slot stack (yoke ring, 12 teeth with tip shoes, windings on the teeth) standing on the base cross and
+    running up into the bell with 0.5 mm of air to the magnets."""
+    h = STATOR_STACK_H
+    tooth_r = STATOR_TIP_R - STATOR_YOKE_R
+    parts = [minus(cyl_x(STATOR_YOKE_R, h), [cyl_x(STATOR_BORE_R, h + 0.2)])]
+    for k in range(STATOR_SLOTS):
+        a = [360.0 / STATOR_SLOTS * k, 0.0, 0.0]
+        parts.append(rot(at(box(h, 1.6, tooth_r), 0, 0, STATOR_YOKE_R + 0.5 * tooth_r - 0.1), a))              # tooth
+        parts.append(rot(at(box(h, 2.6, 0.5), 0, 0, STATOR_TIP_R - 0.25), a))                                  # tip shoe
+        wl, zc = STATOR_TIP_R - STATOR_YOKE_R - 0.6, 0.5 * (STATOR_YOKE_R + STATOR_TIP_R - 0.6)
+        parts += [rot(at(box(h + 0.4, 1.9, wl), 0, 0, zc), a), rot(at(box(h, 2.4, wl), 0, 0, zc), a)]   # copper winding: end turns past the stack, bevelled
+    parts.append(at(minus(cyl_x(STATOR_POST_R, STATOR_STACK_X0 - STATOR_BASE_X), [cyl_x(SHAFT_STUB_R + 0.1, STATOR_STACK_X0 - STATOR_BASE_X + 0.2)]), -0.5 * (STATOR_STACK_X0 - STATOR_BASE_X) - 0.5 * h, 0, 0))   # holder post: base to the stack
+    return at(union(parts), STATOR_STACK_X0 + 0.5 * h, 0, 0)
+
+
+def _gr1507_leads():
+    return union([at(cyl(LEAD_R, LEAD_Z[0] - LEAD_Z[1]), LEAD_X, dy * LEAD_PITCH, 0.5 * sum(LEAD_Z)) for dy in (-1, 0, 1)])
+
+
 @dataclass
 class CatalogEntry:
     id: str
@@ -108,6 +189,75 @@ def hexagon(r):
     return [[r * math.cos(math.radians(i * 60)) * 1.1547, r * math.sin(math.radians(i * 60)) * 1.1547] for i in range(6)]
 
 
+def hex_prism(s, h):
+    """Hexagonal prism, `s` across flats, height `h`, centred on the origin, axis z (corners on +-x)."""
+    return {"type": "prism", "points": hexagon(s / 2), "height": h}
+
+
+def hex_nut(s, m, bore_d):
+    """ISO 4032/4035 style nut: true hexagon `s` across flats, height `m`, 30 deg chamfer on both faces down to the
+    bearing circle (dia = s), through bore. Envelope (bbox) is the same as the plain hexagon prism."""
+    R = s / 2 * 1.1547
+    c = (R - s / 2) * math.tan(math.radians(30))
+    chamf = {"type": "revolve", "profile": [[0.0, -m / 2], [s / 2, -m / 2], [R + 0.05, -m / 2 + c + 0.03],
+                                            [R + 0.05, m / 2 - c - 0.03], [s / 2, m / 2], [0.0, m / 2]]}
+    return minus({"type": "intersect", "items": [hex_prism(s, m), chamf]}, [cyl(bore_d / 2, m + 1.0)])
+
+
+def heatset(od, length, bore_d, ribs=12):
+    """Brass heat-set insert: cylinder `od` x `length` with `ribs` axial knurl grooves cut into its outer face (inside the
+    OD, so the envelope is unchanged) and a through bore."""
+    r = od / 2
+    g = max(0.12, 0.06 * od)
+    grooves = [at(cyl(g, length + 1.0), r * math.cos(math.pi * (2 * i + 1) / ribs), r * math.sin(math.pi * (2 * i + 1) / ribs), 0.0)
+               for i in range(ribs)]
+    return minus(cyl(r, length), [cyl(bore_d / 2, length + 1.0)] + grooves)
+
+
+def hex_recess(key, depth, z0, toward=1.0):
+    """Hex socket cut: key `key` across flats, `depth` deep from the plane z=z0 into the head along `toward` (+1/-1 z).
+    Overlaps the face by 0.05 so the cut opens cleanly. (No drill-point cone: its apex tessellates non-watertight.)"""
+    e = 0.05
+    return at(hex_prism(key, depth + e), 0.0, 0.0, z0 + toward * (depth - e) / 2)
+
+
+def is_hex_recess(c) -> bool:
+    """True if `c` is (contains) a hexagonal prism cut, i.e. a hex drive or nut-shaped cut."""
+    if not isinstance(c, dict):
+        return False
+    if c.get("type") == "prism":
+        return len(c.get("points") or []) == 6
+    return any(is_hex_recess(x) for x in (c.get("items") or []) + ([c["shape"]] if isinstance(c.get("shape"), dict) else []))
+
+
+def has_drive_recess(shape) -> bool:
+    """A fastener shape carries a drive if, somewhere in its tree, a subtract cuts a hexagonal (or other polygonal)
+    socket out of it."""
+    if not isinstance(shape, dict):
+        return False
+    if shape.get("type") == "subtract" and any(is_hex_recess(c) for c in shape.get("cut") or []):
+        return True
+    kids = list(shape.get("items") or []) + [shape.get(k) for k in ("base", "shape") if isinstance(shape.get(k), dict)]
+    return any(has_drive_recess(k) for k in kids)
+
+
+def is_hex_nut(shape) -> bool:
+    """A nut shape is hexagonal if its solid (subtract base, possibly intersected with a chamfer) is a 6-sided prism
+    and it has a through bore cut."""
+    if not isinstance(shape, dict):
+        return False
+    if shape.get("type") == "place":
+        return is_hex_nut(shape.get("shape"))
+    if shape.get("type") != "subtract" or not shape.get("cut"):
+        return False
+    base = shape.get("base") or {}
+    if base.get("type") == "prism":
+        return len(base.get("points") or []) == 6
+    if base.get("type") == "intersect":
+        return any(i.get("type") == "prism" and len(i.get("points") or []) == 6 for i in base.get("items") or [])
+    return False
+
+
 def builtin() -> list[CatalogEntry]:
     v = [
         gearmotor("n10_300rpm_6v", "N10 micro gearmotor 6 V 300 rpm", 12, 12, 10, 9.1, 12, 9, 7.5,
@@ -145,8 +295,9 @@ def builtin() -> list[CatalogEntry]:
                             at(cyl_x(2.4, 3.0), -14.4, 0, 0)]
                            + [at(box(0.9, 10.0, 12.0), x, 0, 0) for x in (0.6, 3.35, 7.15)]
                            + [at(cyl_x(1.1, 7.6), 3.9, 0, z) for z in (-3.5, 3.5)]
-                           + [at(cyl_x(1.5, 10.0), 12.9, 0, 0)]),
-                     {"terminals": [-16.2, 0, 0]}, {"at": [7.9, 0, 0], "dir": [1, 0, 0], "len": 10.0, "dia": 3.0},
+                           + [at(box(3.1, 2.0, 0.4), -14.35, 0, z) for z in (-3.8, 3.8)]       # RV12 STEP solder tabs: 0.4 thick, 2.0 wide, 3.8 off the axis, tips at the 33.8 mm length (tab tip -15.9)
+                           + [minus(at(cyl_x(1.5, 10.4), 12.7, 0, 0), [at(box(10.4, 3.0, 1.0), 12.7, 0, 0.9 + 0.5)])]),   # shaft starts 0.1 inside the last gearbox plate: one solid; D-flat 0.9 above the axis (mates the hub D-bore)
+                     {"terminals": [-15.9, 0, 3.8]}, {"at": [7.9, 0, 0], "dir": [1, 0, 0], "len": 10.0, "dia": 3.0},
                      {"nominal_v": 6.0, "rpm_nominal": 2200.0, "stall_current_a": 1.6, "no_load_current_a": 0.1, "stall_torque_gcm": 150.0}, "#9aa0a6"),
         CatalogEntry("be1806_bbb", "weapon_motor", "BBB BE1806 2300 kV outrunner (23 mm bell, 20.5 incl. base and shaft collar, 5 mm shaft bore)", 18.5, "datasheet",
                      minus(union([at(cyl_x(11.5, 15.0), 0.75, 0, 0), at(cyl_x(9.5, 3.5), -8.5, 0, 0), at(cyl_x(2.95, 2.0), 9.25, 0, 0),
@@ -161,11 +312,40 @@ def builtin() -> list[CatalogEntry]:
              {"bat": [-11, -3, 0], "motor": [11, 0, 0], "rx": [-11, 3, 0]},
              {"cont_current_a": 12.0, "burst_current_a": 18.0, "channels": 1.0}, "#d4af37"),
         CatalogEntry("nut_m3_alu", "nut", "M3 aluminium hex nut (5.5 AF)", 0.1, "datasheet",
-                     minus({"type": "prism", "points": hexagon(2.75), "height": 2.4}, [cyl(1.5, 3.0)]), {}, None, {"thread_d_mm": 3.0}, "#c0c4c8"),
-        CatalogEntry("heatset_m2", "insert", "M2 brass heat-set insert 3.0 mm", 0.12, "estimate", minus(cyl(1.6, 3.0), [cyl(1.0, 4.0)]),
+                     hex_nut(5.5, 2.4, 3.0), {}, None, {"thread_d_mm": 3.0}, "#c0c4c8"),
+        CatalogEntry("heatset_m2", "insert", "M2 brass heat-set insert 3.0 mm", 0.12, "estimate", heatset(3.2, 3.0, 2.0),
+                     {}, None, {"thread_d_mm": 2.0}, "#d4af37"),
+        # RVRN 2.0 STEP envelopes (Revron rebuild 2026-10): measured outline of the vendor models, not memory.
+        CatalogEntry("gr1507", "weapon_motor", "GR1507 outrunner, fixed half: 4-arm cross base with 4 M2 on 12 mm, 12-slot wound stator stack, 3 phase leads (bell is `gr1507_can`)", 8.5, "datasheet",
+                     minus(union([at(_gr1507_base(), -9.4, 0, 0), _gr1507_stator(), _gr1507_leads()]), [at(cyl_x(SHAFT_STUB_R + 0.1, 30.0), 0.0, 0, 0)]),
+                     {"phases": [LEAD_X, 0, LEAD_Z[1]]}, {"at": [4.1, 0, 0], "dir": [1, 0, 0], "len": 14.6, "dia": 5.0},
+                     {"kv": 2850, "max_current_a": 18.0, "typ_current_a": 8.0, "bell_mass_frac": 0.0, "rotor_part": "gr1507_can"}, "#3a3d42"),
+        CatalogEntry("gr1507_can", "other", "GR1507 outrunner, rotating half: 19.6 bell (r7.4-9.8 wall, solid r4 core, 8-rib vented top), threaded 5 mm shaft out of the bell face", 7.0, "datasheet",
+                     at(_gr1507_bell(), 0.0, 0, 0),
+                     {}, {"at": [4.1, 0, 0], "dir": [1, 0, 0], "len": 14.6, "dia": 5.0}, {}, "#3a3d42"),
+        CatalogEntry("gr1507_step", "weapon_motor", "GR1507 outrunner, STEP-simplified fixed half (base cross and pin only, as the STEP): 4-arm cross base with 4 M2 on 12 mm, 12-slot wound stator stack, 3 phase leads (bell is `gr1507_can`)", 8.5, "datasheet",
+                     minus(union([at(_gr1507_base(), -9.4, 0, 0), at(cyl_x(0.75, 1.4), -11.1, 0, 0)]), [at(cyl_x(SHAFT_STUB_R + 0.1, 30.0), 0.0, 0, 0)]),
+                     {"phases": [-11.8, 0, -9.0]}, {"at": [4.1, 0, 0], "dir": [1, 0, 0], "len": 14.6, "dia": 5.0},
+                     {"kv": 2850, "max_current_a": 18.0, "typ_current_a": 8.0, "bell_mass_frac": 0.0, "rotor_part": "gr1507_step_can"}, "#3a3d42"),
+        CatalogEntry("gr1507_step_can", "other", "GR1507 outrunner, STEP-simplified rotating half: 19.6 bell (r7.4-9.8 wall, solid r4 core, 8-rib vented top), threaded 5 mm shaft out of the bell face", 7.0, "datasheet",
+                     at(_gr1507_bell("step"), 0.0, 0, 0),
+                     {}, {"at": [4.1, 0, 0], "dir": [1, 0, 0], "len": 14.6, "dia": 5.0}, {}, "#3a3d42"),
+        flat("malenki_nano_rvrn2", "Malenki Nano (Rx + 2 brushed ESC), kapton wrapped with its leads (RVRN 2.0 RV13 envelope)", "esc", 32, 20, 4.4, 4.0,
+             {"bat": [-16, -6, -1.0], "m1": [16, 6, -1.0], "m2": [-16, 6, -1.0], "wpn": [16, -6, -1.0]},
+             {"cont_current_a": 3.0, "burst_current_a": 6.0, "channels": 2.0}, "#e76f51"),
+        flat("bbb_ant_esc_rvrn2", "BBB brushless ant ESC, heat-shrunk (RVRN 2.0 RV14 envelope)", "esc", 23.5, 12, 5, 3.0,
+             {"bat": [-11.75, -3, 0], "motor": [11.75, 0, 0], "rx": [-11.75, 3, 0]},
+             {"cont_current_a": 12.0, "burst_current_a": 18.0, "channels": 1.0}, "#d4af37"),
+        CatalogEntry("switch_bbb_ant_rvrn2", "switch", "BBB ant switch (RVRN 2.0 RV15): 10.6 x 5.8 x 3.5 body, 20 x 5.8 flange with 2.2 holes in ears on 15 mm (STEP RV15 envelope 20 long), 2.9 x 3 lever, 3 pins", 1.0, "estimate",
+                     union([at(box(10.6, 5.8, 3.5), 0, 0, 0), minus(at(box(20.0, 5.8, 0.5), 0, 0, 2.0), [at(cyl(1.1, 1.0), 7.5, 0, 2.0), at(cyl(1.1, 1.0), -7.5, 0, 2.0)]), at(box(2.9, 3.0, 3.2), 1.75, 0, 3.85),
+                            at(box(1.0, 3.0, 4.0), -3.0, 0, -3.75), at(box(1.0, 3.0, 4.0), 0.0, 0, -3.75), at(box(1.0, 3.0, 4.0), 3.0, 0, -3.75)]),
+                     {"in": [-3.0, 0, -5.5], "out": [0.0, 0, -5.5]}, None, {"lever_travel_mm": 3.0}, "#111111"),
+        CatalogEntry("nut_m3_thin", "nut", "M3 thin hex nut BS EN 24036 (5.5 AF x 1.8)", 0.25, "datasheet",
+                     hex_nut(5.5, 1.8, 3.0), {}, None, {"thread_d_mm": 3.0}, "#aaaaaa"),
+        CatalogEntry("heatset_m2_4", "insert", "M2 brass heat-set insert 3.5 OD x 4 (FS1)", 0.15, "estimate", heatset(3.5, 4.0, 2.0),
                      {}, None, {"thread_d_mm": 2.0}, "#d4af37"),
         CatalogEntry("nut_m2", "nut", "M2 hex nut", 0.1, "datasheet",
-                     minus({"type": "prism", "points": hexagon(2.0), "height": 1.6}, [cyl(1.0, 3.0)]), {}, None, {"thread_d_mm": 2.0}, "#aaaaaa"),
+                     hex_nut(4.0, 1.6, 2.0), {}, None, {"thread_d_mm": 2.0}, "#aaaaaa"),
     ]
     return v
 
@@ -417,7 +597,7 @@ SHEET_STOCK_MM = {
     "steel": [0.5, 0.8, 1.0, 1.2, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0],
     "spring_steel": [0.3, 0.5, 0.8, 1.0, 1.2, 1.5, 2.0],
     "hardox": [3.0, 4.0, 5.0, 6.0, 8.0, 10.0],
-    "titanium": [0.5, 0.8, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0],
+    "titanium": [0.5, 0.8, 0.9, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0],  # 0.9 = 0.035 in (US Ti Gr5 sheet)
     "aluminium": [0.5, 0.8, 1.0, 1.2, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 6.0, 8.0, 10.0, 12.0],
     "cf_plate": [0.5, 1.0, 1.5, 2.0, 2.5, 3.0, 4.0, 5.0, 6.0],
     "polycarbonate": [0.5, 0.75, 1.0, 1.5, 2.0, 3.0, 4.0, 5.0, 6.0],
@@ -445,7 +625,7 @@ ROD_STOCK_MM = {
 BEARINGS = {
     "684": (4.0, 9.0, 4.0), "mr84": (4.0, 8.0, 3.0), "mr104": (4.0, 10.0, 4.0), "694": (4.0, 11.0, 4.0),
     "604": (4.0, 12.0, 4.0), "683": (3.0, 7.0, 3.0), "mr63": (3.0, 6.0, 2.5), "623": (3.0, 10.0, 4.0),
-    "mf85": (5.0, 8.0, 2.5), "685": (5.0, 11.0, 5.0), "mr105": (5.0, 10.0, 4.0), "625": (5.0, 16.0, 5.0), "686": (6.0, 13.0, 5.0),
+    "mf85": (5.0, 8.0, 2.5), "mr85": (5.0, 8.0, 2.5), "685": (5.0, 11.0, 5.0), "mr105": (5.0, 10.0, 4.0), "625": (5.0, 16.0, 5.0), "686": (6.0, 13.0, 5.0),
     "688": (8.0, 16.0, 5.0), "608": (8.0, 22.0, 7.0),
 }
 # Flange OD of flanged bearings (the drawn envelope includes the flange).
@@ -465,4 +645,5 @@ def sheet_family(mid):
 MOTOR_FACES = {
     "bl_1806_2300kv": {"stator_face": "-x", "depth_mm": 2.0},
     "be1806_bbb": {"stator_face": "-x", "depth_mm": 3.5},
+    "gr1507": {"stator_face": "-x", "depth_mm": 2.0},
 }

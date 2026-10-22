@@ -25,7 +25,9 @@ MAX_SWEEP_HEIGHT_HORIZONTAL_MM = 25.0  # a horizontal blade must still hit at bu
 def hold_mm(w, shaft, weapon, origin, axis, half, sign, extra=(), ring=None, bearing_only=False) -> float:
     """Millimetres of shaft inside a support body on one side of the weapon (0.25 mm steps). `extra`: body indices that also
     count as support (a weapon motor whose stator is bolted to structure, carrying its own extended shaft). `ring`: shaft
-    radius; a support around the shaft (a bore, a bearing race) is found just outside it, not only on the axis."""
+    radius; a support around the shaft (a bore, a bearing race) is found just outside it, not only on the axis. An `extra`
+    motor holds its own shaft along its whole axial length (its bearings sit inside it, whether the motor is drawn as one
+    solid envelope or as a stator with an open bore), so it counts at every station within its span along the axis."""
     d = half + np.arange(0, 160) * 0.25
     P = origin + np.outer(sign * d, axis)
     in_shaft = w.bodies[shaft].inside(P)
@@ -38,6 +40,9 @@ def hold_mm(w, shaft, weapon, origin, axis, half, sign, extra=(), ring=None, bea
         v = np.cross(axis, u)
         for e in (u, -u, v, -v):
             held |= measure.inside_any(sup, P + (ring + 0.3) * e)
+    for j in extra:
+        t = (w.bodies[j].mesh.vertices - origin) @ axis
+        held |= ((P - origin) @ axis >= float(t.min())) & ((P - origin) @ axis <= float(t.max()))
     if bearing_only:
         held = measure.inside_any([b for b in sup if b.kind == "bearing"], P) if not ring else np.zeros(len(P), bool)
         if ring:
@@ -89,7 +94,11 @@ def run(ctx):
         origin, axis = sa
         wb = w.bodies[i]
         pts = wb.mesh.vertices  # extremes of a polyhedron are at its vertices
-        half = float(np.abs((pts - origin) @ axis).max())
+        ta = (pts - origin) @ axis
+        half = float(np.abs(ta).max())
+        # per-side faces: the weapon need not be centred on its origin (a spider hub sits wholly to one side), so each
+        # side's hold starts at that side's own face, not at the farther face mirrored across the origin
+        face = {1.0: float(ta.max()), -1.0: float(-ta.min())}
         energy = ctx.metrics.get("weapon_energy_j")
 
         # Bearing support: one shaft through the weapon centre, gripped by structure on both sides.
@@ -100,7 +109,7 @@ def run(ctx):
             extra = _hub_motor(ctx, wd, b.id)
             q = b.mesh.vertices - origin
             ring = float(np.linalg.norm(q - np.outer(q @ axis, axis), axis=1).max())
-            a, c = (hold_mm(w, j, i, origin, axis, half, 1.0, extra, ring), hold_mm(w, j, i, origin, axis, half, -1.0, extra, ring))
+            a, c = (hold_mm(w, j, i, origin, axis, face[1.0], 1.0, extra, ring), hold_mm(w, j, i, origin, axis, face[-1.0], -1.0, extra, ring))
             if min(a, c) >= min(best[0], best[1]):
                 best = (a, c, b.id)
         need = [MIN_HOLD_MM, MIN_HOLD_MM]
@@ -109,7 +118,7 @@ def run(ctx):
             q = w.bodies[jb].mesh.vertices - origin
             rg = float(np.linalg.norm(q - np.outer(q @ axis, axis), axis=1).max())
             for k, sg in enumerate((1.0, -1.0)):
-                if hold_mm(w, jb, i, origin, axis, half, sg, (), rg, bearing_only=True) >= MIN_BEARING_HOLD_MM:
+                if hold_mm(w, jb, i, origin, axis, face[sg], sg, (), rg, bearing_only=True) >= MIN_BEARING_HOLD_MM:
                     need[k] = min(need[k], MIN_BEARING_HOLD_MM)
         if best[0] >= need[0] and best[1] >= need[1]:
             ctx.metrics["weapon_shaft_hold_mm"] = min(best[0], best[1])
@@ -139,10 +148,15 @@ def run(ctx):
         stack = [pts] + [w.body(x).mesh.vertices for x in sorted(rotor_set(r.spec, pid) - {pid})
                          if w.body(x) is not None and not w.body(x).fastener and _is_blade(r.spec.part(x))]
         spts = np.vstack(stack)
+        # the weapon meets the opponent with its swept rim, not its modelled pose (a single tooth may be parked aft)
+        q = spts - origin
+        st = q @ axis
+        sr = np.linalg.norm(q - np.outer(st, axis), axis=1)
         for deg in range(-30, 31, 10):
             a = np.radians(deg)
             dvec = np.array([np.sin(a), np.cos(a), 0.0])
-            wr = float((spts @ dvec).max())
+            ad = float(axis @ dvec)
+            wr = float((origin @ dvec + st * ad + sr * np.sqrt(max(0.0, 1.0 - ad * ad))).max())
             orr = float((ov @ dvec).max()) if len(ov) else -np.inf
             if wr - orr < worst:
                 worst, worst_deg = wr - orr, float(deg)
@@ -150,9 +164,17 @@ def run(ctx):
             ctx.metrics["weapon_reach_lead_mm"] = worst
         if worst < 3.0:
             behind = worst < 0.0
-            out.append(fail("spinner.reach", G, BLOCKER if behind else WARNING, "Weapon does not lead the front",
-                            f"Looking {worst_deg:.0f} degrees off straight ahead the chassis or a non-ground-game part is {-worst:.1f} mm ahead of `{pid}`; the opponent meets it first.")
-                       .on(pid).expect(">= 3 mm lead across +/-30 degrees", f"{worst:.1f} mm")
+            dv = np.array([np.sin(np.radians(worst_deg)), np.cos(np.radians(worst_deg)), 0.0])
+            lead_b = max(others, key=lambda b: float((b.mesh.vertices @ dv).max())) if others else None
+            lead_part = r.spec.part(lead_b.id) if lead_b is not None else None
+            from .waiver import valid
+            dev = str((getattr(lead_part, "_extra", None) or {}).get("deviation", "") or "")
+            waived = behind and bool(dev) and "lead" in dev.lower() and valid(dev)   # a cited reference deviation on the leading part
+            who = f"`{lead_b.id}`" if lead_b is not None else "the chassis or a non-ground-game part"
+            out.append(fail("spinner.reach", G, BLOCKER if behind and not waived else WARNING, "Weapon does not lead the front",
+                            f"Looking {worst_deg:.0f} degrees off straight ahead {who} is {-worst:.1f} mm ahead of `{pid}`; the opponent meets it first."
+                            + (f" Deviation: {dev}" if waived else ""))
+                       .on(pid, *([lead_b.id] if lead_b is not None else [])).expect(">= 3 mm lead across +/-30 degrees", f"{worst:.1f} mm")
                        .fix("Cut the wedge back or move the weapon forward until it leads by 5-10 mm across plus or minus 30 degrees."))
         for b, lead, allowed, _ in gbad[:1]:
             out.append(fail("spinner.reach", G, WARNING, "Ground-game part leads the weapon too far",
@@ -165,7 +187,7 @@ def run(ctx):
         floor = min(float(b.aabb[0][2]) for b in w.bodies if not b.fastener and not b.is_wire)
         if r.spec.ground_z is not None:
             floor = float(r.spec.ground_z)
-        rmax_w = rim(pts, origin, axis)
+        rmax_w = rim(spts, origin, axis)   # the whole blade stack sweeps the floor, not only the named hub part
         az = abs(float(axis[2]))
         swept_low = float(origin[2]) - rmax_w * float(np.sqrt(max(0.0, 1.0 - az * az))) - half * az
         high = swept_low - floor

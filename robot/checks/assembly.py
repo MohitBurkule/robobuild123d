@@ -8,7 +8,7 @@ import math
 import numpy as np
 
 from .. import measure
-from ..finding import BLOCKER, AssemblyStep, fail, ok
+from ..finding import BLOCKER, WARNING, AssemblyStep, fail, ok
 from .interference import _corners, allowed_depth
 
 G = "assembly"
@@ -104,6 +104,36 @@ def slide(ctx, members, present, d, base=None):
     return ("ok", last + 3.0)
 
 
+def shank_clears(ctx, i, present):
+    """A screw backed out along a free path until its shank has left the part it threads into and every part it passes
+    through is out: the rest of its way is open, so it counts as removed even if the straight slide to infinity hits
+    something further on (the other mount). Once clear it must also leave along a collision-free sideways path (a screw boxed in on all sides still fails). Returns (direction, travel)."""
+    w, r = ctx.world, ctx.r
+    b = w.bodies[i]
+    f = next((f for f in r.spec.fasteners if f.id == b.id), None)
+    if f is None or not f.threads_into:
+        return None
+    host = [w.index(t) for t in [f.threads_into] + list(f.through or [])]
+    host = [j for j in host if j is not None and present[j]]
+    for d in candidate_dirs(ctx, i):
+        res = slide(ctx, [i], present, d)
+        if res[0] != "hit":
+            continue
+        t = 0.0
+        while t < res[2] - 1e-9:
+            sh = d * t
+            if not any(measure.aabb_overlap(b.aabb + sh, w.bodies[j].aabb) and
+                       measure.overlap_exceeds(b, w.bodies[j], 0.05, sh) for j in host):
+                for e in AXES:   # out of its threads, it must leave along a free path (lifted out of the gap), not just sit clear
+                    if abs(float(e @ d)) > 0.99:
+                        continue
+                    r2 = slide(ctx, [i], present, e, base=sh)
+                    if r2[0] == "ok":
+                        return e, t + r2[1]
+            t += STEP
+    return None
+
+
 def loose_exit(ctx, i, present):
     """A screw whose nut / threaded part has already left is loose: it backs out along its axis only until its shank
     clears the parts it passes through, then drops out sideways (a captive screw between an upright and a disc).
@@ -137,6 +167,34 @@ def loose_exit(ctx, i, present):
     return None
 
 
+TWO_LEG_MAX_SIZE = 15.0   # mm: only small loose parts (nuts, spacers) are tried
+TWO_LEG_REACH = 12.0      # mm: the first leg stops at most this far in
+
+
+def two_leg_exit(ctx, i, present):
+    """A small part with no straight way out may slide a few mm out of its seat (leg 1, along an axis) and then
+    leave sideways (leg 2) once it is clear of what held it. Returns (direction of leg 2, total travel) or None."""
+    w = ctx.world
+    b = w.bodies[i]
+    if b.fastener or float((b.aabb[1] - b.aabb[0]).max()) > TWO_LEG_MAX_SIZE:
+        return None
+    members = [i]
+    for d1 in AXES:
+        first = slide(ctx, members, present, d1)
+        reach = TWO_LEG_REACH if first[0] == "ok" else min(first[2], TWO_LEG_REACH)
+        t = 1.4
+        while t <= reach:
+            base = d1 * t
+            for d2 in AXES:
+                if abs(float(d2 @ d1)) > 0.99:
+                    continue
+                res = slide(ctx, members, present, d2, base=base)
+                if res[0] == "ok":
+                    return d2, t + res[1]
+            t += 1.4
+    return None
+
+
 def candidate_dirs(ctx, i):
     b, r = ctx.world.bodies[i], ctx.r
     if b.fastener:
@@ -153,24 +211,10 @@ def candidate_dirs(ctx, i):
     return d
 
 
-def run(ctx):
+def _sweep(ctx, present, root, teardown, steps):
+    """Repeatedly take off whatever can leave; `teardown` entries ({parts, dir}) are declared one-direction moves."""
     r, w = ctx.r, ctx.world
     n = len(w.bodies)
-    present = [not b.is_wire for b in w.bodies]
-    rootp = next((p for p in r.spec.parts if p.kind == "structure"), None)
-    root = w.index(rootp.id) if rootp else None
-    steps, out = [], []
-    # O-rings / elastic belts that can be stretched over their flanges (disasm.elastic_stretch) come off first by
-    # stretching, not by a straight slide.
-    from . import disasm
-
-    nc = list(ctx.not_checked)
-    for bid in sorted(disasm.elastic(ctx, [])):
-        k = w.index(bid)
-        if k is not None and present[k]:
-            present[k] = False
-            steps.append(AssemblyStep(len(steps) + 1, bid, [0.0, 0.0, 0.0], 0.0))
-    ctx.not_checked[:] = nc
     while True:
         progress = False
         order = [i for i in range(n) if present[i] and i != root]
@@ -191,21 +235,143 @@ def run(ctx):
                     progress = True
                     break
             else:
-                le = loose_exit(ctx, i, present) if b.fastener else None
+                le = shank_clears(ctx, i, present) if b.fastener else None
+                if le is None:
+                    le = loose_exit(ctx, i, present) if b.fastener else None
                 if le is not None:
                     present[i] = False
                     steps.append(AssemblyStep(len(steps) + 1, b.id, [float(x) for x in le[0]], float(le[1])))
                     progress = True
+        for t in teardown:
+            ks = [w.index(pid) for pid in t.get("parts") or []]
+            if not ks or any(k is None for k in ks) or not all(present[k] for k in ks):
+                continue
+            members = sorted({m for k in ks for m in group(ctx, w.bodies[k].id, present) if present[m]})
+            if root in members:
+                continue
+            d = np.asarray(t.get("dir") or [0, 0, 1], float)
+            d = d / np.linalg.norm(d)
+            res = slide(ctx, members, present, d)
+            if res[0] == "ok":
+                for m in members:
+                    present[m] = False
+                    steps.append(AssemblyStep(len(steps) + 1, w.bodies[m].id, [float(x) for x in d], float(res[1])))
+                progress = True
         left = sum(1 for i in range(n) if present[i] and i != root)
-        if left == 0 or not progress:
+        if left == 0:
             break
+        if not progress:
+            # last resort: a small part that only has a sliding path of two legs (a nut pushed in from the cavity,
+            # then dropped out through the open floor) leaves as it was put in
+            for i in [i for i in range(n) if present[i] and i != root]:
+                le = two_leg_exit(ctx, i, present)
+                if le is not None:
+                    present[i] = False
+                    steps.append(AssemblyStep(len(steps) + 1, w.bodies[i].id, [float(x) for x in le[0]], float(le[1])))
+                    progress = True
+            if not progress:
+                # an `assembly_ok` waiver: the original part goes in by a move a straight slide cannot show (an N10
+                # tilted shaft-first into a closed keyhole). Claims that ONE part, only once nothing else can leave.
+                for i in [i for i in range(n) if present[i] and i != root]:
+                    if assembly_waiver(ctx, w.bodies[i].id) is True:
+                        present[i] = False
+                        steps.append(AssemblyStep(len(steps) + 1, w.bodies[i].id, [0.0, 0.0, 0.0], 0.0))
+                        ctx.asm_waived = getattr(ctx, "asm_waived", []) + [w.bodies[i].id]
+                        progress = True
+                        break
+            if not progress:
+                break
+
+
+def assembly_waiver(ctx, pid):
+    """Part `assembly_ok: {reason}`: None when absent, True when valid (reason >= 20 chars citing the reference), else
+    the reason it is invalid."""
+    from .waiver import valid
+
+    rp = next((x for x in ctx.r.parts if x.part.id == pid), None)
+    wv = ((getattr(rp.part, "_extra", None) or {}) if rp else {}).get("assembly_ok")
+    if wv is None:
+        return None
+    if not isinstance(wv, dict) or not valid(wv.get("reason")):
+        return "`assembly_ok` must be {reason} with >= 20 chars citing RVRN / RVnn / FSn"
+    return True
+
+
+def apply_service_pose(ctx):
+    """Spec `service_pose` [{parts, axis_at, axis_dir, deg, reason}]: rotate those bodies about an axis for the whole
+    full-robot teardown (a weapon disc turned by hand so its rim clears the screws that hold the module). Returns undo()."""
+    import trimesh.transformations as tf
+
+    w = ctx.world
+    undo = []
+    for e in (ctx.r.spec.raw or {}).get("service_pose") or []:
+        R = tf.rotation_matrix(np.radians(float(e.get("deg", 0.0))), e.get("axis_dir") or [1, 0, 0], e.get("axis_at") or [0, 0, 0])
+        for pid in e.get("parts") or []:
+            k = w.index(pid)
+            if k is None:
+                continue
+            bd = w.bodies[k]
+            undo.append((bd, bd.M.copy()))
+            bd.M = R @ bd.M
+            bd._mesh = bd._man = None
+            bd._surf = {}
+    def restore():
+        for bd, M in undo:
+            bd.M = M
+            bd._mesh = bd._man = None
+            bd._surf = {}
+    return restore
+
+
+def run(ctx):
+    return _run(ctx)
+
+
+def _run(ctx):
+    r, w = ctx.r, ctx.world
+    n = len(w.bodies)
+    present = [not b.is_wire for b in w.bodies]
+    rootp = next((p for p in r.spec.parts if p.kind == "structure"), None)
+    root = w.index(rootp.id) if rootp else None
+    steps, out = [], []
+    ctx.asm_waived = []
+    # O-rings / elastic belts that can be stretched over their flanges (disasm.elastic_stretch) come off first by
+    # stretching, not by a straight slide.
+    from . import disasm
+
+    nc = list(ctx.not_checked)
+    for bid in sorted(disasm.elastic(ctx, [])):
+        k = w.index(bid)
+        if k is not None and present[k]:
+            present[k] = False
+            steps.append(AssemblyStep(len(steps) + 1, bid, [0.0, 0.0, 0.0], 0.0))
+    ctx.not_checked[:] = nc
+    restore = apply_service_pose(ctx)   # the declared service pose holds for the full-robot teardown only (not the bench pass)
+    try:
+        _sweep(ctx, present, root, getattr(r.spec, "teardown", None) or [], steps)
+    finally:
+        restore()
+    if (r.spec.raw or {}).get("service_pose"):   # the rotor is turned back by hand: what the service pose could not reach comes off in the as-built pose
+        _sweep(ctx, present, root, getattr(r.spec, "teardown", None) or [], steps)
+    # A declared swap module (spec `modules`) leaves as one unit; its bench teardown (`module_teardown`) is judged on the
+    # module alone, its root plate staying put, so a quick-change weapon is checked both ways.
+    stuck_bench = []
+    for m in (r.spec.raw or {}).get("modules") or []:
+        rk = w.index(m.get("root"))
+        if rk is None or present[rk]:
+            continue
+        ids = {rk} | {k for k in (w.index(x) for x in m.get("parts") or []) if k is not None}
+        ids |= set(group(ctx, m["root"], [True] * n))
+        p2 = [k in ids and not w.bodies[k].is_wire for k in range(n)]
+        _sweep(ctx, p2, rk, (r.spec.raw or {}).get("module_teardown") or [], steps)
+        stuck_bench += [(k, p2) for k in range(n) if p2[k] and k != rk]
     stuck = [i for i in range(n) if present[i] and i != root]
-    for i in stuck:
+    for i, pres in [(i, present) for i in stuck] + stuck_bench:
         b = w.bodies[i]
-        members = [i] if b.fastener else group(ctx, b.id, present)
+        members = [i] if b.fastener else group(ctx, b.id, pres)
         worst = None
         for d in candidate_dirs(ctx, i):
-            res = slide(ctx, members, present, d)
+            res = slide(ctx, members, pres, d)
             if res[0] == "hit" and (worst is None or res[2] > worst[0]):
                 worst = (res[2], res[1], d, res[3])
         if worst is not None:
@@ -214,12 +380,20 @@ def run(ctx):
                    f"{t:.1f} mm before it hits `{w.bodies[j].id}`.")
         else:
             msg = f"`{b.id}` has no way out."
+        bad = assembly_waiver(ctx, b.id)
+        if isinstance(bad, str):
+            msg += f" Invalid assembly_ok: {bad}."
         out.append(fail("assembly.blocked", G, BLOCKER, "Part cannot be assembled", msg).on(b.id)
                    .here(worst[3] if worst else b.aabb.mean(axis=0))
                    .fix("Open the pocket on the side it enters from (a U-slot instead of a hole for a shaft, a bore open to the mating face for an insert, an open wall for a wheel), or split the housing so the part can drop in."))
-    if not stuck:
+    for pid in ctx.asm_waived:
+        wv = next(x for x in r.parts if x.part.id == pid).part._extra["assembly_ok"]
+        out.append(fail("assembly.waived", G, WARNING, "Assembly move waived",
+                        f"`{pid}` has no straight or two-leg path out; it is taken off last, by hand, waived: {wv['reason']}").on(pid))
+    if not stuck and not stuck_bench:
         text = ", ".join(s.id for s in reversed(steps))
         out.append(ok("assembly.order", G, "Everything can be assembled",
-                      f"Every part slides in along a clear straight path. Assembly order: {text}."))
+                      f"Every part slides in along a clear straight path"
+                      f"{' (except the waived ' + ', '.join(ctx.asm_waived) + ')' if ctx.asm_waived else ''}. Assembly order: {text}."))
     ctx.assembly = steps
     return out

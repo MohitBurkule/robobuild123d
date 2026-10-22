@@ -53,7 +53,7 @@ wrong: I took the measurement from a spec where I had already rewritten the join
 rotated servo parent. The lifter scoop is a servo-parented joint again, with axis `[0,0,1]` in the servo frame, and it
 passes.
 
-## 5. `mfg.thin_wall` warns about a stock 1.0 mm O-ring that `kin.belt_stock` requires
+## 5. [RESOLVED: cots / belt parts skipped, test_cots_o_ring_is_not_a_thin_wall] `mfg.thin_wall` warns about a stock 1.0 mm O-ring that `kin.belt_stock` requires
 
 `kin.belt_stock` accepts only O-ring sections in `STOCK_ORINGS` (1.0, 1.5 and 2.0 mm). Every O-ring belt has
 `process: cots` and `material: rubber`. `mfg.thin_wall` then warns that a 1.0 mm cord is under the 1.2 mm minimum for
@@ -61,7 +61,7 @@ cots rubber. A bought part has no printed walls, so the warning does not apply. 
 
 Suggested fix: skip `mfg.thin_wall` for `process: cots` parts, or at least for `kind: belt`.
 
-## 6. `arch.fork_stiffness` roots an upright at its contact with the chassis, not at the standoff it is screwed to
+## 6. [RESOLVED: standoffs / pins seated in the chassis count as the root, test_fork_stiffness_roots_at_standoff_screw] `arch.fork_stiffness` roots an upright at its contact with the chassis, not at the standoff it is screwed to
 
 The setup is the experimental `chassis=tub` option. Each weapon upright is clamped by M3 screws to alu standoffs, and
 the standoffs sit in lugs of the tub. The standoffs are not part of `_rigid_chassis`, so the screws do not count as the

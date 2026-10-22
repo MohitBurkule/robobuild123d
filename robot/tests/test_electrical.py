@@ -123,3 +123,23 @@ def test_small_robot_bad_wiring():
     assert not f["electrical.cells_consistent"].passed
     assert not f["electrical.failsafe"].passed  # ESC not driven from the receiver
     assert not f["electrical.receiver_supply"].passed
+
+
+def test_weapon_slab_centred_on_weapon(monkeypatch):
+    """The weapon's swept slab is centred on the weapon, not mirrored about a far-off axis origin (Revron: a phase lead
+    17 mm from the spider was reported 0.4 mm from it)."""
+    import types
+
+    import numpy as np
+    import trimesh
+
+    from robot.checks import electrical as el
+
+    disc = trimesh.creation.cylinder(radius=10.0, height=3.0, transform=trimesh.transformations.rotation_matrix(np.pi / 2, [0, 1, 0]))
+    disc.apply_translation([-6.7, 0, 0])
+    b = types.SimpleNamespace(part_idx=0, kind="weapon", mesh=disc)
+    ctx = types.SimpleNamespace(world=types.SimpleNamespace(bodies=[b]), r=None)
+    monkeypatch.setattr(el, "spin_axis", lambda w, r, i: (np.array([0.0, 0, 0]), np.array([1.0, 0, 0])))
+    monkeypatch.setattr(el, "rim_radius", lambda b, o, a: 10.0)
+    _, o, a, R, half = el._weapon(ctx)
+    assert abs(o[0] + 6.7) < 1e-6 and abs(half - 1.5) < 1e-6

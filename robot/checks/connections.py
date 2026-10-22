@@ -103,6 +103,10 @@ def run(ctx):
         ids = list(f.through) + ([f.threads_into] if f.threads_into else [])
         for a, b in zip(ids, ids[1:]):
             _link(edges, a, b)
+        if f.threads_into:   # the screw clamps its whole stack: every part it passes through is joined to its thread
+            for a in f.through:
+                if a != f.threads_into:
+                    _link(edges, a, f.threads_into)
     for p in r.spec.parts:
         if p.fused_with:
             fw = p.fused_with
@@ -339,6 +343,12 @@ def cover_retention(r):
         n = count.get(p.id, 0)
         if n >= COVER_MIN_FASTENERS:
             good += 1
+            continue
+        why = str(p._extra.get("cover_fasteners_deviation") or "").strip()
+        if why and n >= 1:   # a written, reasoned deviation (e.g. the reference clamps it) with at least one real screw
+            out.append(fail("connection.cover_fasteners", G, WARNING, "Panel held by fewer screws (reasoned deviation)",
+                            f"`{p.id}` is held by {n} fastener(s), fewer than {COVER_MIN_FASTENERS}; declared deviation: {why}")
+                       .on(p.id))
             continue
         what = "armour / cover panel" if is_cover(p) else "part declared `retained: screws`"
         out.append(fail("connection.cover_fasteners", G, BLOCKER, "Panel not bolted down",

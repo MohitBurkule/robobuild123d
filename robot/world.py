@@ -20,12 +20,13 @@ import numpy as np
 import trimesh
 
 from . import cache, catalog, geom, profile, shapes, xform
+from .cad import fastener_catalog
 from .spec import Spec
 
 DEFAULT_COLORS = {
     "structure": "#2b2e34", "armor": "#444850", "wedge": "#ff6a1a", "motor": "#9aa0a6", "weapon_motor": "#5a5e66",
     "wheel": "#25282c", "battery": "#2a9d8f", "esc": "#e76f51", "receiver": "#ff9800", "servo": "#4a4e57",
-    "switch": "#c02020", "weapon": "#c8cdd2", "locking_bar": "#ffd100", "plate": "#1c1c1e",
+    "switch": "#c02020", "weapon": "#c8cdd2", "locking_bar": "#ffd100", "plate": "#1c1c1e", "belt": "#3f7fbf",
 }
 
 
@@ -60,6 +61,7 @@ class Resolved:
 
 
 def resolve(spec: Spec, fast: bool = False) -> Resolved:
+    from . import progress
     tess = geom.FAST if fast else geom.FINE
     prof = profile.named(spec.profile)
     parts, errors = [], []
@@ -90,6 +92,9 @@ def resolve(spec: Spec, fast: bool = False) -> Resolved:
             errors.append((p.id, f"geometry failed: {type(e).__name__}: {e}"))
             shape = {"type": "box", "size": [0.1, 0.1, 0.1]}
             g = geom.geom_for(shape, spec.base_dir, tess)
+            progress.log(f"part {p.id} FAILED: {type(e).__name__}: {e}")
+        else:
+            progress.log(f"part {p.id} built")
         parts.append(RPart(p, shape, cat, g))
     return Resolved(spec, prof, parts, errors, fast)
 
@@ -153,6 +158,25 @@ def _prebuild(spec, tess):
         ex.shutdown(wait=False, cancel_futures=True)
 
 
+CONTAINS_CHUNK = 256  # points per mesh.contains call
+
+
+def _contains_chunked(mesh, Q, rng=None):
+    """mesh.contains in blocks of points. Without embree trimesh's ray test materialises every (ray, candidate triangle)
+    pair at once: a few thousand points against a large mesh (Revron tub, intent.escape_dirs) took > 7 GB. Each block
+    restarts the pinned RNG streams, so the answer is still a pure function of (mesh, Q)."""
+    Q = np.asarray(Q, float)
+    if len(Q) <= CONTAINS_CHUNK:
+        return mesh.contains(Q)
+    out = np.zeros(len(Q), bool)
+    for i in range(0, len(Q), CONTAINS_CHUNK):
+        np.random.seed(12345)
+        if rng is not None:
+            rng.bit_generator.state = np.random.default_rng(12345).bit_generator.state
+        out[i:i + CONTAINS_CHUNK] = mesh.contains(Q[i:i + CONTAINS_CHUNK])
+    return out
+
+
 def _contains(mesh, Q):
     """mesh.contains with a fixed seed: trimesh re-casts ambiguous rays along *random* directions, so without this the
     answer depends on whatever ran before and cached and uncached runs could differ. Older trimesh draws from the
@@ -167,7 +191,7 @@ def _contains(mesh, Q):
         rng = np.random.default_rng(12345)
         tu.random_generator = lambda seed=None: rng if seed is None else orig(seed)
     try:
-        return mesh.contains(Q)
+        return _contains_chunked(mesh, Q, rng if orig is not None else None)
     finally:
         np.random.set_state(st)
         if orig is not None:
@@ -176,12 +200,19 @@ def _contains(mesh, Q):
 
 def csk_dims(d):
     """(head diameter, head depth) of an ISO 10642 countersunk screw (90 deg), by thread diameter."""
+    if d == 3.0:
+        return 6.0, 1.86   # DIN 7991 M3 (robot.cad.fastener_catalog.CSK)
     return 2.2 * d, 0.6 * d
 
 
 def button_dims(d):
     """(head diameter, head height) of an ISO 7380 button-head screw (M3: 5.7 x 1.65, 2 mm key)."""
     return 1.9 * d, 0.55 * d
+
+
+def fastener_drive(d, head=None):
+    """(hex key across flats, socket depth) of the drive recess fastener_shape cuts into this head."""
+    return fastener_catalog.drive_key(d, head)
 
 
 def fastener_shape(d, length, head=None):
@@ -191,12 +222,19 @@ def fastener_shape(d, length, head=None):
     if head == "countersunk":
         dk, k = csk_dims(d)
         cone = {"type": "revolve", "profile": [[0.0, 0.0], [dk / 2, 0.0], [d / 2, k], [0.0, k]]}
-        return catalog.union([cone, shank])
+        key, t = fastener_catalog.drive_key(d, "csk")
+        return catalog.minus(catalog.union([cone, shank]), [catalog.hex_recess(key, min(t, k + 0.5), 0.0, +1.0)])
     dk, k, _ = catalog.screw_dims(d)
+    style = "cap"
     if head == "button":
         dk, k = button_dims(d)
+        style = "button"
+    key, t = fastener_catalog.drive_key(d, style)
     hd = catalog.at(catalog.cyl(dk / 2, k), 0, 0, -k / 2)
-    return catalog.union([hd, shank])
+    if head == "button":  # domed top: 0.35 k rim radius fillet look via a revolve, envelope unchanged
+        rr = 0.35 * k
+        hd = {"type": "revolve", "profile": [[0.0, 0.0], [dk / 2, 0.0], [dk / 2, -(k - rr)], [dk / 2 - rr, -k], [0.0, -k]]}
+    return catalog.minus(catalog.union([hd, shank]), [catalog.hex_recess(key, min(t, 0.8 * k), -k, +1.0)])
 
 
 class Body:

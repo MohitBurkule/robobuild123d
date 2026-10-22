@@ -66,3 +66,22 @@ def test_solid_invalid_good_and_bad():
     b._mesh, b._man = m, None
     f = internal.solid_valid(c)
     assert any(x.id == "internal.solid_invalid" and not x.passed for x in f) and c.not_checked
+
+
+def test_no_contact_waiver_claims_one_pair_with_cited_reason():
+    # battery at the STEP height with a 1 mm gap to the tub floor and no pad modelled (RVRN 2.0 battery at STEP z12)
+    gap = {"id": "blk", "kind": "structure", "material": "pla", "shape": BOX(10, 10, 4), "at": [0, 0, 7.5]}
+    good = dict(gap, no_contact_ok={"with": "base", "reason": "held by the STEP press fit at RV16 z12, no pad modelled"})
+    assert not rep([good]).failed("internal.no_contact")
+    for bad in ({"with": "base", "reason": "it is fine"},                                       # too short, no citation
+                {"with": "base", "reason": "held there by friction and nothing else at all"},   # no citation
+                {"with": "nope", "reason": "held by the STEP press fit at RV16 z12, no pad"}):  # unknown partner
+        assert rep([dict(gap, no_contact_ok=bad)]).failed("internal.no_contact")
+    far = dict(good, at=[0, 0, 12])   # 6 mm off: beyond the waivable gap
+    assert rep([far]).failed("internal.no_contact")
+
+
+def test_tape_is_a_hold_method():
+    from robot.checks.support import HOLD_METHODS
+
+    assert "tape" in HOLD_METHODS and "glue" in HOLD_METHODS

@@ -316,7 +316,9 @@ def _carries(spec, pid):
 def materials(a):
     out = []
     bad = 0
-    struct_kinds = STRUCT + ("weapon", "shaft", "pin", "locking_bar", "hub", "bearing")
+    # A locking_bar (weapon lock pin) is pulled before the fight: it only holds an unpowered weapon against hand torque
+    # and never sees a hit, so a TPU pin (grips its bore, does not shatter when the weapon is nudged) is acceptable.
+    struct_kinds = STRUCT + ("weapon", "shaft", "pin", "hub", "bearing")
     for b in a.solids:
         p = a.part(b.id)
         if p is None or a.cls(b) != "elastomer":
@@ -518,14 +520,15 @@ def _hub_support(a, p, sh, origin, axis, s):
         return None
     if not (own and static):
         return None
-    mt = (mb.mesh.vertices - origin) @ axis
-    t = float(mt.mean())
-    if t * s <= 0:
-        return None
     held = [o for mm, o, _ in k.stator_links if mm == mid] + [o for mm, o, *_ in k.rotor_links if mm == mid]
     hosts = [a.body(o) for o in held if k.rot(o) is None and k.kind(o) not in BOUNDARY and a.body(o) is not None]
+    # The side is where the stator is screwed down (its static host), not the motor's centroid: an outrunner whose bell
+    # carries the weapon is centred on the weapon itself, while its rear bearing and stator face sit on the host's side.
+    hosts = [h for h in hosts if float(((h.mesh.vertices - origin) @ axis).mean()) * s > 0]
     if not hosts:
         return None
+    mt = (mb.mesh.vertices - origin) @ axis
+    t = 0.5 * float(mt.max() if s > 0 else mt.min())  # between the weapon plane and the stator's mounting face
     return (t, mb, hosts[0])
 
 
@@ -910,10 +913,16 @@ def load_path(a, p, origin, axis, sup):
 RIGID_JOIN = ("screw", "bolt", "bolted", "glue", "press_fit", "pin", "weld")
 
 
-def _rigid_chassis(a, exclude=None):
-    """Chassis plus every structure part rigidly joined to it (bolted, glued, pressed), e.g. both clamshell halves."""
+ANCHOR_KINDS = ("pin", "standoff", "spacer", "axle")
+
+
+def _rigid_chassis(a, exclude=None, anchors=False):
+    """Chassis plus every structure part rigidly joined to it (bolted, glued, pressed), e.g. both clamshell halves.
+    anchors: also metal standoffs / pins seated in the chassis, so a plate screwed to a standoff is rooted at its
+    screws (VERIFIER_ISSUES #6) rather than at incidental foot contact with the tub."""
     seen, todo = {a.chassis.id}, [a.chassis.id]
-    struct = {p.id for p in a.spec.parts if p.kind in STRUCT and p.id != exclude}
+    kinds = STRUCT + (ANCHOR_KINDS if anchors else ())
+    struct = {p.id for p in a.spec.parts if p.kind in kinds and p.id != exclude}
     while todo:
         x = todo.pop()
         nb = set()
@@ -943,7 +952,7 @@ def fork_stiffness(a, origin, axis, sup):
         boss = origin + axis * t
         # Root: centroid of the contact with the chassis or of its bolts.
         fs = a.fasteners_of(h.id)
-        rootset = _rigid_chassis(a, exclude=h.id)
+        rootset = _rigid_chassis(a, exclude=h.id, anchors=True)
         pts = [np.asarray(f.at, float) for f in fs if rootset & set(a.coupled(f))]
         if not pts and len(h.mesh.vertices):
             for rid in sorted(rootset):
@@ -1732,11 +1741,41 @@ def balance(a):
 
 # --------------------------------------------------------------------------------------------------------------- blade direction
 
+def _is_ramp_wedge(p):
+    """A wedgelet / armour ramp: spans the robot's width with its toe edge across the front, not a blade with a root."""
+    return p.kind == "armor" or bool(re.search(r"wedgelet", p.id))
+
+
+def _ramp_orientation(b, span_min=0.6, slope_min=0.05):
+    """(toe fraction of X span at the front, mean Y component of the upward-facing normals, front Y) of a ramp wedge:
+    the toe edge (max Y) must run along most of the span, and its ramp face must lean forward (z falls as Y grows)."""
+    V = b.mesh.vertices
+    front = float(V[:, 1].max())
+    toe = V[V[:, 1] >= front - 0.5]
+    span = float(V[:, 0].max() - V[:, 0].min()) or 1.0
+    frac = float(toe[:, 0].max() - toe[:, 0].min()) / span
+    n, area = b.mesh.face_normals, b.mesh.area_faces
+    up = n[:, 2] > 0.3
+    ny = float(np.sum(n[up, 1] * area[up]) / max(np.sum(area[up]), 1e-9))
+    return frac, ny, front
+
+
 def blade_orientation(a):
     out = []
     for b in a.solids:
         p = a.part(b.id)
         if p is None or not _is_blade(p):
+            continue
+        if _is_ramp_wedge(p):
+            frac, ny, front = _ramp_orientation(b)
+            m = (f"`{b.id}` is a ramp wedge: its toe edge (Y {front:.1f}) covers {frac * 100:.0f}% of its width and "
+                 f"its ramp faces {'forward' if ny > 0 else 'back'} (mean upward-normal Y component {ny:+.2f}).")
+            if frac < 0.6 or ny < 0.05:
+                out.append(fail("arch.blade_orientation", G, BLOCKER, "Wedge does not point forward", m).on(b.id)
+                           .expect("toe edge front-most over >= 60% of the width, ramp facing +Y", f"{frac * 100:.0f}%, {ny:+.2f}")
+                           .fix("Turn the wedge so its low toe edge is the front-most edge and the ramp rises towards the robot."))
+            else:
+                out.append(ok("arch.blade_orientation", G, "Wedge points forward", m))
             continue
         fs = a.fasteners_of(b.id)
         base = np.mean([f.at for f in fs], axis=0) if fs else b.mesh.vertices.mean(axis=0)

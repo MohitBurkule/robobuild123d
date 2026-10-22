@@ -1,0 +1,112 @@
+"""[fix-G] Tests for the CI merge-gate decision function."""
+import json, os, sys
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "tools"))
+import ci_gate as G
+
+
+def test_count():
+    assert G.count_blockers("[BLOCKER] a.x\n[BLOCKER] a.y\nfoo: 2 blockers, 0 warnings") == 2
+    assert G.count_blockers("Traceback\nKilled") == -1
+
+
+def test_decide():
+    assert G.decide(3, 3, 5, 4)
+    assert G.decide(3, 2, 5, 5)
+    assert not G.decide(3, 4, 5, 5)
+    assert not G.decide(3, 3, 5, 6)
+    assert not G.decide(3, -1, 5, 5)      # trial crashed while baseline finished
+    assert not G.decide(-1, 7, 5, 5)      # unknown baseline: never an accept (review #1)
+    assert not G.decide(-1, 50, -1, 50) and not G.decide(3, 3, -1, 99)
+    assert not G.decide(3, 3, 5, -1)
+
+
+def test_kind_and_owner():
+    assert G.verifier_only(["robot/checks/a.py", "docs/x.md"])
+    assert not G.verifier_only(["robot/checks/a.py", "robots/revron/src/build_revron.py"])
+    assert G.owner("origin/fix-B2") == "B" and G.owner("fix-c-param") == "C"
+
+
+def test_reject_logs(tmp_path):
+    assert G.main(["decide", "origin/fix-B", "abc1234", "2", "3", "4", "4", str(tmp_path)]) == 1
+    log = (tmp_path / "builder.log").read_text()
+    assert "[ci] gate rejected fix-B abc1234: assembly 2->3, interference 4->4" in log
+    row = json.loads((tmp_path / "blockers_live_B.jsonl").read_text())
+    assert row["group"] == "ci_gate" and row["assembly"] == [2, 3]
+    assert G.main(["decide", "fix-B", "abc", "2", "2", "4", "4", str(tmp_path)]) == 0
+
+
+def test_halves():
+    assert G.halves(["a", "b", "c"]) == (["a", "b"], ["c"])
+    assert G.halves(["a"]) == (["a"], [])
+
+
+def _gate(bad, infra=()):
+    calls = []
+    def g(s):
+        calls.append(tuple(s))
+        if any(b in infra for b in s):
+            return None
+        return not any(b in bad for b in s)
+    return g, calls
+
+
+def test_bisect_all_pass_one_trial():
+    g, calls = _gate(set())
+    assert G.bisect(list("abcde"), g) == {b: "pass" for b in "abcde"}
+    assert calls == [tuple("abcde")]
+
+
+def test_bisect_finds_offenders():
+    g, _ = _gate({"b", "e"})
+    r = G.bisect(list("abcde"), g)
+    assert [b for b, v in r.items() if v == "reject"] == ["b", "e"]
+    assert all(r[b] == "pass" for b in "acd")
+
+
+def test_bisect_infra_holds():
+    g, _ = _gate(set(), infra={"d"})
+    assert G.bisect(list("abcd"), g) == {b: "hold" for b in "abcd"}   # infra on the union: nothing merges
+    calls = iter([False, True, None])                                  # union worse, half 1 ok, half 2 infra
+    assert G.bisect(list("abcd"), lambda s: next(calls)) == {"a": "pass", "b": "pass", "c": "hold", "d": "hold"}
+
+
+def test_bisect_interaction_holds_second_half():
+    g = lambda s: not ({"a", "c"} <= set(s))
+    r = G.bisect(list("abcd"), g)
+    assert r == {"a": "pass", "b": "pass", "c": "hold", "d": "hold"}
+
+
+def test_ok_cli():
+    assert G.main(["ok", "3", "3", "5", "5"]) == 0
+    assert G.main(["ok", "3", "4", "5", "5"]) == 1
+
+
+def test_state_roundtrip(tmp_path):
+    f = str(tmp_path / "ci_state.json")
+    assert G.main(["state", f, "get", "phase"]) == 0 and G.state_load(f) == {}
+    G.main(["state", f, "set", "iter=3", "sha=abc1234", "phase=gate"])
+    G.main(["state", f, "set", "phase=verify", "gate=origin/fix-A origin/fix-B"])
+    d = G.state_load(f)
+    assert d["iter"] == "3" and d["sha"] == "abc1234" and d["phase"] == "verify" and d["gate"] == "origin/fix-A origin/fix-B"
+    open(f, "w").write("{half")            # a torn file reads as empty state (fresh round), never a crash
+    assert G.state_load(f) == {}
+
+
+def test_unit_result():
+    assert G.unit_result("....\n12 passed in 3.21s", 0) == 0
+    assert G.unit_result("F.\n1 failed, 11 passed in 3.2s", 1) == 1
+    assert G.unit_result("Traceback ... robot verify: unknown group unit", 2) == 2   # old worker ran it as a verify group
+    assert G.unit_result("", 124) == 2
+
+
+def test_unit_split_and_combine():
+    files = [f"t{i}.py" for i in range(6)]
+    bins = G.unit_split(3, files, {"t0.py": 30, "t1.py": 10, "t2.py": 10, "t3.py": 5, "t4.py": 5})
+    assert sorted(f for b in bins for f in b) == sorted(files) and len(bins) == 3
+    assert ["t0.py"] in bins                       # the 30 s file alone; the rest share the other two bins
+    assert G.unit_split(8, ["a.py"], {}) == [["a.py"]]
+    d = G.unit_durations(["1.50s call     robot/tests/test_a.py::test_x\n0.20s setup robot/tests/test_a.py::test_y\n2.00s call robot/tests/test_b.py::t[1]"])
+    assert d == {"robot/tests/test_a.py": 1.7, "robot/tests/test_b.py": 2.0}
+    ok, bad, cut = ("3 passed in 1.0s", 0), ("1 failed, 2 passed in 1.0s", 1), ("12% ...", 124)
+    assert G.unit_combine([ok, ok]) == 0 and G.unit_combine([ok, bad, cut]) == 1
+    assert G.unit_combine([ok, cut]) == 2 and G.unit_combine([]) == 2

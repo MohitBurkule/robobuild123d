@@ -233,6 +233,56 @@ Whoever gets under the other wins. Full rules with rationale, thresholds and app
 12. **Keep paired supports matched** and plates loaded in their own plane (4 mm uprights printed flat).
 13. **Centre the rotor between its supports**, so both bearings and the chassis see symmetric loads.
 
+## Modelling a part from a reference STEP (lessons from review/code/MISSES.md, 2026-10)
+Read the reference with `robot/cad/blend_finder.py` (every fillet / chamfer as a tangent chain: kind, size to 0.05 mm,
+convex / concave, the faces and corners that carry it) and `robot/cad/sketch_extract.py` (a section's lines, arcs,
+relations and named dims; `section_planes` proposes where to cut). Then:
+1. **No measured coordinate tables.** A profile is lines and arcs with dims and relations (tangent, equal, concentric,
+   symmetric), never a list of (Y, Z) points read off a mesh. Take the dims from `sketch_extract`, not the vertices.
+2. **Build each outline from its own section.** Cut the reference normal to the feature's axis and model what the section
+   shows; never a convex hull of guessed circles or a shape "close enough" to an STL silhouette.
+3. **Blends go on the corners that carry them.** Apply a fillet or chamfer to exactly the edge chain `blend_finder` reports.
+   Never generalise it to every corner of a sketch, and never select blend edges with a length or position threshold.
+4. **Measure every radius; don't derive it.** A radius written as a formula of a master (`3 * SKIN / 2`) must equal the
+   radius `blend_finder` measured on that corner. If it doesn't, the measured value wins.
+5. **Size pockets from the drawn section, not the catalogue.** A nut pocket, a slot or a seat is the shape the reference
+   cuts (clearance included); the bought-in part's catalogue size is only the check that it fits.
+6. **A design change keeps the designer's blends.** When you alter a feature on purpose (a deeper pad, an opened slot),
+   keep its fillet / chamfer sizes and record the change as a `deviations` entry with its reason. Don't shrink or drop
+   the blend silently.
+
+## Sharp internal corners are opt-OUT (`mfg.sharp_internal_corner`, robot/checks/sharp_corner.py)
+Every fdm / sla / molded / cast part is scanned; nothing has to be listed (milled and cut parts: `process`). Each concave
+mesh edge is sectioned normal to its direction and its local radius measured (arc / turn; 0 = sharp).
+- BLOCKER: r < 1.0 mm in a load path: within 3 mm of a fastener, of another `structure` part it joins (mount bases,
+  bulkhead-to-deck), or of a declared `sharp_corner_loads` / `load_interfaces` entry `{part, near: [x,y,z], r_mm}`.
+- WARNING: r < 0.5 mm anywhere else. Flexible materials (TPU, rubber) cap at WARNING unless the reference is rounder at a bolt.
+- INFO "matches original": the `reference_cad` part measured at the same spot has r <= ours + 0.2 mm.
+- Opt out only with a reason: part `"sharp_corners_ok": "reason"` or spec `"sharp_ok": [{part, near, r_mm, reason}]`.
+  A missing or empty reason is a BLOCKER (`mfg.sharp_ok_reason`) and the opt-out is ignored.
+- Tune with spec `"sharp_corner": {min_r_mm, load_min_r_mm, load_dist_mm, ref_tol_mm, window_mm, grid_mm, link_mm}`.
+
+## Design intent: check what a feature is FOR (`intent.*`, `intent` list in the spec)
+A part can match the reference outline and still not work. List each purposeful feature in `intent` with a `why`; the
+probe tests the function (robot/checks/intent.py has the keys). BLOCKER unless `"severity": "warning"`.
+1. **Keyed drive** (`keyed_bore`): a hub on a D-shaft has a D in its bore over its whole length. A round printed bore slips at stall.
+2. **No supports** (`support_free`): in the declared build direction, overhang steeper than 45 deg that is wider than a
+   6 mm bridge and a 1 mm ledge is <= 2 % of the area. Use 45 deg chamfers under ledges and flanges.
+3. **Walls >= 1.8 mm** (`min_wall`, `envelope` for the outer skin): 4 perimeters at 0.45 mm.
+4. **Fillet concave load corners** (`fillet`): no sharp inside corner where a hit loads PLA. Also enforced without listing
+   anything by `mfg.sharp_internal_corner` (below); a corner declared here is reported only here.
+5. **Insert columns reach the bed** (`insert_column`): solid material from each heat-set insert back to the first layers.
+6. **Tyre retention** (`tyre_retention`): the seat crest is >= 1 mm over the relaxed tyre ID on diameter.
+7. **Captive nuts** (`captive_nut`): with the screw out, the nut moved 0.3 mm in any of 14 directions hits its pocket.
+8. **Wheels run clear** (`wheel_clearance`): >= 1 mm from every body except its own hub, axle and belt. A rub is a brake.
+9. **Flush heads** (`flush_head`): countersunk heads are no more than 0.2 mm proud of the face they sit in.
+10. **Notch bears, bolts clamp** (`notch_bears`): pushed along the hit reaction, the plate meets the chassis tab before
+    it meets any bolt shank.
+11. **Seats locate** (`seat_locates`): a gearmotor in its keyhole cannot shift 0.15 mm radially or turn 2 deg.
+12. **Small pit kit** (`tool_count`): two hex keys for the full teardown, one for the weapon-module swap.
+13. **Wires clear the rotor** (`wire_clear_rotor`): every wire (straight proxy between ports) stays >= 2 mm outside the
+    rotor's swept cylinder.
+
 ## Bought-in sizes, fit, containment, disassembly and coverage (`cots.*`, `fit.*`, `contain.*`, `disasm.*`, `coverage.*`)
 
 - **No unlisted sizes** (`cots.unlisted`, BLOCKER): every motor, ESC, battery, RX, switch, servo, bearing, insert, nut and
@@ -379,3 +429,103 @@ Extended clusters (combat_failure_modes_ext.json, uncalibrated, all warnings): *
 side or dragging on the floor when inverted; **CFX-ANTENNA** modelled antenna on the outer skin; **CFX-FRICTION** pins/tyres
 held only by friction/press fit; **CFX-TAPE** electronics held only by tape/velcro; **CFX-STATE** no answer when inverted,
 one drive side dead, weapon dead, radio failsafe, or on its side.
+
+## Design-review gates (groups `ref_map`, `cots_fidelity`, `wire_review`, `fastener_record`, `belt_wrap`, `print_orient`)
+
+From the Revron 2.0 CAD review: findings a reviewer had to spot by eye are now checks. Run them alone with
+`python3 -m robot verify spec.json --only ref_map,cots_fidelity,wire_review,fastener_record,belt_wrap,print_orient`.
+
+- **reference.unmapped_part**: every part and fastener maps to a part in the reference STEP parts index
+  (`reference_cad.dir`): a reference_cad entry, `ref_part: "<stem glob>"`, or a `reference_bom` row that cites an index
+  part (`ref_parts` globs or a role word such as `FS8`/`RV15`/`spider`). Our own BOM rows (no cited part, or "not in the
+  STEP") do not count. Otherwise write `deviation: "why"` on the part, fastener or row. WHY: disc nuts and a lock pin
+  were invented and nobody asked why.
+- **cots.fidelity**: motors carry their identifying features (outrunner bell, stator base, shaft, mount bolt circle;
+  gearmotor can and shaft) within 0.3 mm of `cots_fidelity.FEATURES` or the part's `features`. WHY: the GR1507 model had
+  no stator holes and "looked wrong". Screw drive recesses are cut by `fastener_shape`, not judged here.
+- **wire.rotating_clearance**: every fastener and nut that turns with the weapon sweeps a ring; each wire bundle
+  (`count` x (OD + 0.3)) along port -> via -> port, and the motor phase exit, keeps >= `review.wire.rotating_clearance_mm`
+  (3). WHY: the phase leads ran next to the disc nuts.
+- **wire.render_present**: every wire end resolves to a current port, and with `renders: {dir, views}` at least one
+  render draws the wires (the `<png>.json` record `robot render` writes), newer than the spec, with each drawn end
+  within 3 mm of the port now. WHY: the final renders had no wires and the only wiring view predated the switch move.
+- **fastener.hole_record**: every fastener has a `hole` record, and a screw into a printed part (not an insert or nut)
+  has length - grip >= `review.fastener.min_engagement_d` x d (2.5 d). WHY: switch screws had no hole record; M2x4 into
+  PLA strips.
+- **cots.belt_wrap**: an O-ring belt is one closed loop (Euler number 0) with a run on both sides of each pulley centre.
+  WHY: the belts were flat strips.
+- **print.orientation_declared**: every FDM part declares `print_orientation` and its overhang/bridge is judged in THAT
+  orientation (limit `review.print.max_overhang_mm2`, default 60 mm²), not the best of six. WHY: the electronics cage
+  only works deck-down, which turns the floor lugs into overhangs.
+
+## Support in every orientation (`support.loose`)
+
+Every part not held to the chassis by a declared hold (screw through/into it, press_fit, clamp, strap, glue, pin, shaft,
+fused; chains of holds count, and a group held only to itself moves as one body) is slid along all six axis directions:
+gravity with the robot upright, inverted and on each side. More than 0.2 mm of free travel before hitting another part is
+a blocker naming the part, direction and travel. WHY: robots are flipped and shaken every match, so "it rests in the
+pocket" is not retention; a part held by gravity alone drops out or hammers itself and its wires apart the first time the
+robot is upside down. `retained: pocket`, tape/kapton/velcro and `interlock` are measured, not trusted (tape peels once
+the part hammers). Joints and tensioned belts are left to `kinematics.*`/`tension.*`. Fix by closing the open side to
+<= 0.2 mm (lid, rib, clip) or adding a real hold to the chassis.
+
+## CAD authoring tools (`robot/cad`): remove recurring modelling mistakes
+
+**Holes from the fastener catalog** (`robot.cad.holes.hole`). WHY: holes sized by eye gave countersinks too small
+(head proud or clashing), counterbores the wrong depth, tap holes at clearance size and nut pockets that fall out.
+`part, rec = hole(part, at, axis, "M2x6", head="csk"|"button"|"cap", into="through"|"tapped"|"insert"|"nut", grip=...)`
+cuts ISO 273 clearance, tap drill, heat-set insert bore, ISO 10642/14581 90 deg countersink, ISO 7380/4762
+counterbore (cap: flush by default) and ISO 4032/4035 hex pockets (`nut_fit="press"` +0.05 AF, `"drop"` +0.3).
+`at` is the surface point, `axis` points head -> tip; `side="head"|"thread"` cuts one part of a two-part joint.
+`rec.to_spec(id, through=[...], threads_into=..., M=part_to_world)` gives the `fasteners[]` entry, including a
+`hole` record. The `fastener_seat.*` group then probes the real geometry: csk flush (+-0.25 mm), counterbore floor
+depth, head clash with material, head bearing, thread bite / pilot open, insert bore, nut pocket. With a `hole`
+record a mismatch is a BLOCKER; without one, only head-type defaults are checked (WARNING).
+
+**Assembly mates** (`robot.cad.mates`, applied on spec load). WHY: hand-typed world coordinates drift when the part
+they sit on moves. A part with `"mate": {"to": "plate", "constraints": [{"type": "face", "a": "top", "b": "face",
+"offset": 0}, {"type": "coaxial", "a": "bore", "b": "shaft"}]}` gets its `at`/`rot` solved from the target's
+current pose (features in each part's own frame, by name from `"features"` or inline). Types: face, coaxial (+axial
+offset), point_on_plane, point, angle. Sequential rigid solve; mates chain, so moving a part moves its dependents.
+
+**Smooth parts** (`robot.cad.smooth`). WHY: stacked extrusions at measured heights leave stair steps (90 deg creases)
+that fail section/silhouette matching. `loft_stations([Station(z, profile), ...])` lofts exact B-spline / ellipse /
+rounded-rect sections; `sweep_profile`, `fillet_all`. `smoothness(solid)` reports max crease angle, section-radius
+curvature and step count; a loft scores ~0 steps, a stack scores one per tread. Test new organic parts with it.
+
+**Curve fitting** (`robot.cad.fit`, `measure-ref --fit`). WHY: organic outlines were copied as dense polylines (a copy
+and a stair source) or guessed. `fit_bspline(points)` finds the FEWEST control points (4..8, capped) meeting RMS
+<= 0.3 mm; `segments()` splits an outline into lines and arcs; `fillet_radii()`. The ctrl lists go straight into a
+`{"type": "bspline", "ctrl": [...]}` profile for `loft_stations`.
+
+**Reference measuring** `python3 -m robot measure-ref ref.stl|step [--part NAME] [--sections N] [--fit]
+[--stations "z:2,5;x:0"] [--md]`. WHY: params were guessed from renders. Prints numbers only: bbox, per-axis section
+sizes/areas/hole counts, holes (diameter, shape round/D/hex/slot, shapes along the axis, axis, through/depth, csk
+angle + dia, cbore dia + depth), wall thickness stats, fillet radii, and with --fit low-DOF sketches. A guard
+refuses to print any point list longer than 8 (no polygons/meshes): type the numbers into params.
+
+**Incremental verify** `python3 -m robot verify spec.json --changed`. WHY: full verifies take minutes, so people
+skipped them. Each check group's actual reads of part geometry are recorded; a group is reused only if the spec
+(minus geometry fields), code, options, earlier groups' outputs and every part it read are unchanged. Equivalence with
+a full run is tested. Plain `verify` is unchanged and remains the reference.
+
+**Done gate** `python3 -m robot gate spec.json [--renders DIR] [--views iso.png,top.png]`. WHY: "matches the
+reference" was claimed on partial evidence. Prints PASS/FAIL for: full verify 0 blockers, every
+`reference_cad.diff`/`.features` passing (and present), every `intent.support_free`/`printability.*` passing (and
+present), render PNGs present and newer than the spec. Exit 0 only when all pass. Run it before claiming a match.
+
+## Parametric build code (`param.*`, group `param`, opt out with `review.param.enabled: false`)
+
+Rule: **dims come from params + relations; raw numbers only in organic tables.** Declare every dimension once as a
+named module-level constant (or spec param), then place features by relation: centre of X, offset from a corner/face of
+Y, mirror of Z. `param.literals` (BLOCKER) fires when a build function holds more than `review.param.max_literals`
+(default 3) unexplained numeric literals; trivial values (0, 1, 2, 0.5, -1, 90, 180, 360), subscript indices and
+default-argument values do not count. `param.duplicate` (WARNING) fires when one value appears in >= 3 places: make it
+one param. Genuinely organic data (B-spline control points traced from a reference) is marked
+`# param: organic <reason>` on/above the `def`, or around a region closed by `# param: end`, or in spec
+`param_exempt: [{"func": ..., "reason": ...}]`; an exemption without a reason is a BLOCKER. Metric:
+`param.literal_count`. Per-function table: `python -m robot.checks.param_lint <spec.json> [N]`.
+Structure warnings in the same group: `param.pattern` (>= 3 literal points on a row/grid/circle: use
+`GridLocations`/`PolarLocations` from a named pitch/radius/count), `param.mirror` (a `*_left`/`*_right` or `_l`/`_r`
+function pair both built from literals with no `mirror()`: build one side and mirror it), `param.placement`
+(`translate`/`moved`/`Location`/`Pos` with all-literal coords: place by Joint/mate or relative to a named feature).

@@ -23,17 +23,61 @@ from ..spec import Spec
 
 # Bumped whenever a check is added or changed. 7 = the Rust crate's revision; 8 adds belt/fork tension (python port); 9 adds
 # wheel running clearance, wheel exposure, targets, fused/key/tape/press-fit evidence, stall-current battery peak.
-CHECKS_REVISION = 12  # 12 adds threat (combat failure modes CF-*); 10 adds internal (no_contact, fastener_void, wire_in_solid); 11 adds bom (reference BOM, lock part, O-ring stock, wire cut, switch dir, doc) and connection.cover_fasteners
+CHECKS_REVISION = 19  # 19 adds visual (silhouette views + depth, holes on every axis, faceting, fillet vs reference, slivers, dangling leads) and wire.render_wires; 18 adds integrity (one closed solid, volume collapse; runs first); 17 merges fix-T; 15 adds param (raw-literal lint) and sharp_corner (opt-out mfg.sharp_internal_corner); 14 adds the design-review groups (ref_map, cots_fidelity, wire_review, fastener_record, belt_wrap, print_orient); 13 adds intent (functional design-intent probes); 12 adds threat (combat failure modes CF-*); 10 adds internal (no_contact, fastener_void, wire_in_solid); 11 adds bom (reference BOM, lock part, O-ring stock, wire cut, switch dir, doc) and connection.cover_fasteners
 
 # (module, deep_only) in run order; same order as the Rust crate, plus `tension` before `assembly`.
 GROUPS = [
+    ("integrity", False),  # integrity.solids / integrity.volume (opt-out, every part; first and cheap)
     ("wiring", True), ("mass", False), ("interference", False), ("connections", False), ("internal", False), ("ground", False),
     ("legal", False), ("fasteners", False), ("power", False), ("mfg", False), ("spinner", False), ("kinematics", False), ("tension", False), ("targets", False),
     ("shape", False), ("dynamics", False), ("strength", False), ("printability", False), ("process", False),
-    ("reference", False), ("archetype", False), ("architecture", False), ("electrical", False), ("combat", False), ("assembly", True), ("joints", False), ("material", False), ("plausibility", False), ("reference_ratios", False), ("reference_cad", False),
+    ("reference", False), ("archetype", False), ("architecture", False), ("electrical", False), ("combat", False), ("assembly", True), ("joints", False), ("material", False), ("plausibility", False), ("reference_ratios", False), ("reference_cad", False), ("intent", False),
     ("cots", False), ("fit", False), ("contain", False), ("disasm", False), ("coverage", False), ("bom", False),
+    ("support", False),  # gravity in all 6 orientations (robot/checks/support.py)
     ("threat", False),  # combat failure modes CF-* (robot/checks/threat)
+    ("fastener_seat", False),  # head/thread vs hole geometry (robot/cad/seat.py)
+    # design-review gates (CAD review of Revron 2.0): one module each
+    ("ref_map", False),  # reference.unmapped_part
+    ("cots_fidelity", False),  # cots.fidelity
+    ("wire_review", False),  # wire.rotating_clearance, wire.render_present
+    ("fastener_record", False),  # fastener.hole_record
+    ("drive_recess", False),  # fastener.drive_recess
+    ("belt_wrap", False),  # cots.belt_wrap
+    ("print_orient", False),  # print.orientation_declared
+    ("retention", False),  # retention.axial (robot/checks/retention.py)
+    ("sharp_corner", False),  # mfg.sharp_internal_corner (opt-out, every printed / moulded part)
+    ("visual", False),  # visual.* (robot/checks/visual.py): opt-out shape gates vs the reference, every mapped part
+    ("practice", False),  # practice.* (robot/checks/practice.py): best-CAD-practice gates with NO reference (MISSES.md causes)
+    ("sldprt_dump", False),  # dump.fillet / dump.hole / dump.extrude vs the SolidWorks part dumps (robot/checks/sldprt_dump.py)
+    ("asm_dump", False),  # asm.placement / asm.mass / asm.mate vs the SolidWorks assembly dump (robot/checks/asm_dump.py)
+    ("param", False),  # param.literals, param.duplicate, param.exempt_reason (opt out: review.param.enabled=false)
 ]
+
+# `--only claims` is a pseudo-group: it evaluates spec claims and pulls in the groups that measure their metrics.
+CLAIMS_GROUP = "claims"
+# metric (exact name or "prefix.") -> group that measures it
+CLAIM_METRIC_GROUPS = {"mass_": "mass", "part_mass_g.": "mass", "footprint_mm": "legal", "ground_z": "ground",
+                       "com_": "mass", "cog_height_mm": "dynamics", "tip_angle_": "dynamics", "driven_weight_share": "dynamics",
+                       "arch_": "architecture", "combat.": "combat", "archetype.": "archetype", "coverage.": "coverage"}
+
+
+def claim_groups(spec) -> list:
+    """Groups that must run so every claim's metric is measured."""
+    out = []
+    for c in spec.claims:
+        for k, g in CLAIM_METRIC_GROUPS.items():
+            if (c.metric == k or c.metric.startswith(k)) and g not in out:
+                out.append(g)
+    return out
+
+
+def effective_only(spec, only):
+    """`only` with the claim-metric groups added when the `claims` pseudo-group is requested."""
+    if not only or CLAIMS_GROUP not in only:
+        return only
+    return list(only) + [g for g in claim_groups(spec) if g not in only]
+
+MODULE = {"param": "param_lint"}  # group name -> module file when they differ
 
 
 @dataclass
@@ -68,6 +112,8 @@ def verify_resolved(r, opts: Options) -> Report:
 
     rep = Report(name=r.spec.name, profile=r.profile.name)
     findings = []
+    from .. import progress as _pg
+    _pg.reset()
     t0 = time.time()
     valid = validity.run(r, findings)
     rep.timings_s["validity"] = round(time.time() - t0, 3)
@@ -75,14 +121,15 @@ def verify_resolved(r, opts: Options) -> Report:
     base_key = _base_key(r, opts) if cache.enabled() else None
     if valid:
         ctx = Ctx(r, world_mod.World.start(r), opts)
+        only = effective_only(r.spec, opts.only)
         for name, deep_only in GROUPS:
             if deep_only and not opts.deep:
                 continue
-            if opts.only and name not in opts.only:
+            if only and name not in only:
                 continue
             t0 = time.time()
             try:
-                mod = importlib.import_module(f".{name}", __name__)
+                mod = importlib.import_module(f".{MODULE.get(name, name)}", __name__)
             except ModuleNotFoundError:
                 findings.append(fail("checks.missing", "checks", WARNING, "Check group not available",
                                      f"The `{name}` checks are not in this build; nothing in that group was judged."))
@@ -96,7 +143,7 @@ def verify_resolved(r, opts: Options) -> Report:
                 for k, v in delta.items():
                     setattr(ctx, k, v)
                 rep.timings_s[name] = round(time.time() - t0, 3)
-                _progress(name, t0, "cached")
+                _progress(name, t0, "cached", findings)
                 continue
             before = _snapshot(ctx) if gkey else None
             try:
@@ -118,17 +165,21 @@ def verify_resolved(r, opts: Options) -> Report:
                 if os.environ.get("ROBOT_DEBUG"):
                     traceback.print_exc()
             rep.timings_s[name] = round(time.time() - t0, 3)
-            _progress(name, t0, "ran")
+            _progress(name, t0, "ran", findings)
         findings.extend(validity.claims(ctx))
         rep.routes = ctx.routes
         rep.assembly = ctx.assembly
         rep.mass = getattr(ctx, "mass_lines", [])
     rep.findings = findings
+    from . import waiver as _waiver
+    waivers = _waiver.apply(r.spec, findings)
     rep.metrics = ctx.metrics if ctx else {}
     rep.checks_revision = CHECKS_REVISION
     rep.not_checked = not_checked(r, opts) + (ctx.not_checked if ctx else ["Every geometric check: the spec is not valid"])
     rep.bench_checklist = []
     rep.finish()
+    if waivers:
+        rep.summary["waivers"] = waivers
     return rep
 
 
@@ -151,7 +202,7 @@ def _snapshot(ctx) -> dict:
 def _base_key(r, opts) -> str:
     """Everything every group can read: all sources, the spec, every part's geometry key, options."""
     o = dict(vars(opts))  # includes `only`: a group's verdicts depend on which groups ran before it
-    return cache.h(cache.code_hash(), json.dumps(r.spec.raw, sort_keys=True, default=str), str(r.spec.base_dir),
+    return cache.h(cache.code_hash(), json.dumps(r.spec.raw, sort_keys=True, default=str), cache.referenced_hash(r.spec.raw, r.spec.base_dir),
                    [p.geom.key for p in r.parts], r.load_errors, json.dumps(o, sort_keys=True, default=str), r.fast)
 
 
@@ -159,7 +210,11 @@ def _group_key(name, r, opts, base_key):
     return cache.h("group", name, base_key) if base_key else None
 
 
-def _progress(name, t0, how):
+def _progress(name, t0, how, findings=()):
+    from .. import progress
+    nb = sum(1 for f in findings if not f.passed and str(f.severity).lower() == "blocker")
+    progress.log(f"check {name} {how} in {time.time() - t0:.1f}s; blockers so far {nb}")
+    progress.blockers(name, findings)
     if os.environ.get("ROBOT_TIMING") or os.environ.get("ROBOT_PROGRESS") == "1":
         print(f"  [{how}] {name} {time.time() - t0:.2f}s", file=sys.stdout, flush=True)
 

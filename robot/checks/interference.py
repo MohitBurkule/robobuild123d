@@ -117,6 +117,13 @@ def run(ctx):
             checked += 1
             o = measure.overlap(a, b, cap=allow)
             if o is not None and o.depth > allow:
+                from .asm_dump import known_interference
+
+                why = known_interference(ctx, a.id, b.id, float(o.volume))
+                if why:   # the original interferes the same way: a known waiver citing the SolidWorks report
+                    out.append(note("interference.known", G, "Overlap also present in the reference assembly",
+                                    f"`{a.id}` and `{b.id}` overlap by {o.depth:.2f} mm ({o.volume:.1f} mm3): {why}.").on(a.id, b.id).here(o.at))
+                    continue
                 bad += 1
                 out.append(fail("interference.overlap", G, BLOCKER, "Parts collide",
                                 f"`{a.id}` and `{b.id}` overlap by {o.depth:.2f} mm (about {o.volume:.1f} mm3).")
@@ -509,11 +516,16 @@ def captive(ctx):
             loose_ok += 1
             out.append(note("retention.declared", G, "Held by declared method", f"`{p.id}` is held by {p.retained}.").on(p.id))
             continue
+        wv = loose_waiver(r, w, b, p, free)
+        if wv is not None and wv[0] is True:
+            free = [x for x in free if x != wv[1]]
+            out.append(note("retention.loose_waived", G, "Play matches original", f"`{p.id}`: {wv[2]}").on(p.id))
         if not free:
             continue
+        bad = f" Invalid loose_ok: {wv[1]}." if wv is not None and wv[0] is False else ""
         out.append(fail("retention.loose", G, BLOCKER if must else WARNING, "Nothing holds this part in place",
                         f"`{p.id}` can move more than {slop:.1f} mm toward {', '.join(free)} without touching anything (captive means at most "
-                        f"{CAPTIVE_MAX_PLAY_MM:.1f} mm of play in every direction); in a hit it will fall out or rattle.")
+                        f"{CAPTIVE_MAX_PLAY_MM:.1f} mm of play in every direction); in a hit it will fall out or rattle.{bad}")
                    .on(p.id).here(b.aabb.mean(axis=0))
                    .fix("Make the pocket snug on that side (0.2 to 0.5 mm gap), add a retaining rib or strap, or declare how it is held in `retained` (tape, adhesive, velcro, press_fit)."))
     ctx.captive = cmap
@@ -521,6 +533,40 @@ def captive(ctx):
         out.append(ok("retention.captive", G, "Every loose part is held",
                       f"{checked} parts checked, {loose_ok} held by a declared method, the rest captive in their pockets."))
     return out
+
+
+LOOSE_OK_MAX_MM = 3.0
+
+
+def loose_waiver(r, w, b, p, free):
+    """Part `loose_ok: {axis: "+x", max_mm, reason}`: the original has the same play along ONE axis direction. Re-tested:
+    moved max_mm (<= LOOSE_OK_MAX_MM) that way the part must hit something; the reason must be >= 20 chars and cite the
+    reference. None when absent, (True, axis, note) when valid, else (False, why)."""
+    from .waiver import valid
+
+    wv = (getattr(p, "_extra", None) or {}).get("loose_ok")
+    if wv is None:
+        return None
+    dirs = dict(DIRS)
+    if not isinstance(wv, dict) or wv.get("axis") not in dirs or not valid(wv.get("reason")):
+        return False, "needs {axis: +x/-x/+y/-y/+z/-z, max_mm, reason} with a reason >= 20 chars citing RVRN / RVnn / FSn"
+    try:
+        mx = float(wv.get("max_mm"))
+    except (TypeError, ValueError):
+        return False, "`max_mm` is required"
+    if not 0 < mx <= LOOSE_OK_MAX_MM:
+        return False, f"max_mm must be in (0, {LOOSE_OK_MAX_MM}]"
+    if wv["axis"] not in free:
+        return False, f"`{p.id}` is not free toward {wv['axis']} (stale waiver)"
+    d = np.asarray(dirs[wv["axis"]], float)
+    grown = np.array([b.aabb[0] - mx - 0.3, b.aabb[1] + mx + 0.3])
+    for o in w.bodies:
+        if o is b or o.is_wire or not measure.aabb_overlap(o.aabb, grown):
+            continue
+        ad = allowed_depth(r, b, o)
+        if ad < 1.0e3 and measure.overlap_exceeds(b, o, ad + 0.02, d * (mx + 2 * (ad + 0.02))):
+            return True, wv["axis"], f"moves at most {mx} mm toward {wv['axis']} (stops on `{o.id}`), waived: {wv['reason']}"
+    return False, f"still free {mx} mm toward {wv['axis']}"
 
 
 def is_printed_part(r, pid) -> bool:

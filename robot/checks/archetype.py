@@ -554,6 +554,10 @@ def facts(ctx) -> dict:
         F["rotor_joint"] = (jgood, jwhy)
         # fasteners that mix rotor and static parts, or sit in the swept volume while gripping a static part
         bad = []
+        # swept slab = the rotor's own axial extent (disc, spider, spacers), not +-half of the weapon body about the origin
+        sw = [b for b in rbodies if b.kind != "shaft"] or [wb]
+        sax = np.concatenate([(b.mesh.vertices - origin) @ axis for b in sw])
+        lo, hi = float(sax.min()), float(sax.max())
         for f in spec.fasteners:
             touched = set(f.through or []) | ({f.threads_into} if f.threads_into else set())
             mot = {wpart.weapon.motor} if wpart.weapon and wpart.weapon.motor else set()
@@ -570,7 +574,7 @@ def facts(ctx) -> dict:
                 q = fb.mesh.vertices - origin
                 ax = q @ axis
                 rad = np.linalg.norm(q - np.outer(ax, axis), axis=1)
-                in_sweep = bool(np.any((np.abs(ax) < half - 0.2) & (rad < R - 0.2)))
+                in_sweep = bool(np.any((ax > lo + 0.2) & (ax < hi - 0.2) & (rad < R - 0.2)))
             if rt and st:
                 bad.append(f"`{f.id}` joins {', '.join(sorted(rt))} to {', '.join(sorted(st))}")
             elif in_sweep and st:
@@ -586,7 +590,10 @@ def facts(ctx) -> dict:
         sides = []
         # reach per side from the rotor's own face: a shaft tail (e.g. the motor shaft running on into the far bearing) is
         # not rotor face and would push the sampling past the upright
-        nsh = [b for b in rbodies if b.kind not in ("shaft", "pin")] or rbodies
+        # A split motor's rotor can is part of the motor, not rotor face (a fused weapon_motor body is never in the rotor).
+        from .kinematics import split_motors
+        cans = set(split_motors({rp.part.id: rp for rp in ctx.r.parts}))
+        nsh = [b for b in rbodies if b.kind not in ("shaft", "pin") and b.id not in cans] or rbodies
         tq = np.concatenate([(b.mesh.vertices - origin) @ axis for b in nsh])
         reach = {1.0: max(0.0, float(tq.max())), -1.0: max(0.0, float(-tq.min()))}
         for s in (1.0, -1.0):

@@ -66,15 +66,32 @@ def round_axis(body):
     lo, hi = v.min(axis=0), v.max(axis=0)
     e = hi - lo
     best = None
+    cands = []
     for i in range(3):
         j, k = [x for x in range(3) if x != i]
         if max(e[j], e[k]) < 1e-6:
             continue
         rel = abs(e[j] - e[k]) / max(e[j], e[k])
+        if rel < 0.08:
+            cands.append(i)
         if rel < 0.08 and (best is None or rel < best[0] - 1e-6 or (abs(rel - best[0]) < 1e-6 and e[i] < e[best[1]])):
             best = (rel, i)
     if best is None:
         return None
+    if len(cands) > 1:   # a near-cubic box (a 9 x 9 x 9 hub): pick the axis the outline is actually round about
+        c0 = (lo + hi) / 2
+
+        def _spread(i):
+            j, k = [x for x in range(3) if x != i]
+            q = v - c0
+            ang = np.arctan2(q[:, k], q[:, j])
+            r = np.hypot(q[:, j], q[:, k])
+            b = ((ang + np.pi) / (2 * np.pi) * 36).astype(int) % 36
+            mx = np.zeros(36)
+            np.maximum.at(mx, b, r)
+            mx = mx[mx > 0]
+            return float(mx.std() / max(mx.mean(), 1e-9)) if len(mx) > 8 else 1.0
+        best = (0.0, min(cands, key=_spread))
     ax = np.zeros(3)
     ax[best[1]] = 1.0
     c = (lo + hi) / 2
@@ -288,6 +305,33 @@ class RGroup:
         self.weapon = None
         self.cls = "other"
         self.driven = False
+
+
+MOTOR_KINDS = ("motor", "weapon_motor")
+ROTOR_SUFFIXES = ("_can", "_bell")
+
+
+def split_motors(parts):
+    """{rotor id: stator id} for motors modelled as two parts: a static stator (kind motor/weapon_motor) and its spinning can.
+    A pair is `<base>_can` (or `_bell`) next to `<base>_stator`, or a part with `role: rotor` whose catalog id extends the
+    stator's (`gr1507_can` -> `gr1507`). A single fused motor body has no entry."""
+    out = {}
+    stators = {pid: rp for pid, rp in parts.items() if rp.part.kind in MOTOR_KINDS}
+    for pid, rp in parts.items():
+        p = rp.part
+        if p.kind in MOTOR_KINDS:
+            continue
+        st = None
+        for suf in ROTOR_SUFFIXES:
+            if pid.endswith(suf) and pid[: -len(suf)] + "_stator" in stators:
+                st = pid[: -len(suf)] + "_stator"
+        if st is None and getattr(p, "_extra", {}).get("role") == "rotor" and p.catalog:
+            cands = [s for s, srp in stators.items() if srp.part.catalog and p.catalog.startswith(srp.part.catalog)]
+            if len(cands) == 1:
+                st = cands[0]
+        if st is not None:
+            out[pid] = st
+    return out
 
 
 def declared_fixed(p):
@@ -514,6 +558,16 @@ class Kin:
             for x in ps[1:]:
                 uf.union(ps[0], x)
                 edge(ps[0], x, f"both declare `rotates_with: {lab}`", "key")
+        # a split motor: its can is the rotor, joined to the stator (the motor body) through the motor's own bearings
+        self.rotor_of = split_motors(self.parts)
+        for can, st in self.rotor_of.items():
+            if self.kind(can) in BOUNDARY:
+                continue
+            # The can couples to what it drives exactly as a fused bell would: flexibly only when every join of the can
+            # is a flexible coupling and it is nobody's child.
+            rs = [(c.reason or "").lower() for c in spec.connections if can in (c.a, c.b) and st not in (c.a, c.b)]
+            flex = bool(rs) and self.parts[can].part.parent not in self.parts and all(any(w in r for w in FLEX_WORDS) for r in rs)
+            self.rotor_links.append((st, can, f"rotor can `{can}` of the split motor", "key", None, "; ".join(rs) if flex else ""))
         self.uf = uf
         # fasteners (geometry + declaration)
         self.fpierce = {}
@@ -674,6 +728,16 @@ def motor_links_from_fasteners(k):
         others = [p for p in allp if k.kind(p) not in BOUNDARY]
         for m in motors:
             entry = allp.get(m)
+            if entry is None and f.threads_into == m:
+                # declared thread target the shank sits in a tap hole of (no solid to pierce): the shank enters the motor there
+                dl = catalog.parse_designation(f.designation)
+                if dl:
+                    bb = k.body(m).aabb
+                    for t in np.arange(0.0, dl[1], 0.25):
+                        q = np.asarray(f.at, float) + unit(f.dir) * t
+                        if (q >= bb[0]).all() and (q <= bb[1]).all():
+                            entry = q   # where the shank first meets the motor: its mounting face
+                            break
             if entry is None:
                 k.skip("kin.motor_face", f"`{f.id}` does not reach `{m}` geometrically; which motor face it lands on is unknown")
                 continue
@@ -928,7 +992,8 @@ def motor_own_shaft(k, sid, m):
     ang, dist = coax(mi["o"], mi["d"], ra[0], ra[1])
     rad = float(np.max(radial(sb.mesh.vertices, ra[0], ra[1])[1]))
     sp, mp = k.parts[sid].part, k.parts[m].part
-    declared = getattr(sp, "_extra", {}).get("shaft_of") == m or bool(getattr(mp, "_extra", {}).get("motor_shaft_extended"))
+    rotors = {m} | {c for c, st in getattr(k, "rotor_of", {}).items() if st == m}
+    declared = getattr(sp, "_extra", {}).get("shaft_of") in rotors or bool(getattr(mp, "_extra", {}).get("motor_shaft_extended"))
     fits = rad <= mi["dia"] / 2 + HUB_COAX_MM
     if declared and ang <= COAX_DEG and dist <= COAX_MM and fits:
         return True, f"`{sid}` is declared the motor's own shaft"
@@ -1529,8 +1594,15 @@ def sweeps(k):
                       fix="Move or shorten it, or cut a clearance so it stays outside the swept circle with "
                           f"{gapmin} mm to spare.")
             else:
+                wv = rub_gap_waiver(k, g, bid, val, at, lr)
+                if wv is True:
+                    w_ = k.parts[bid].part._extra["rub_gap_ok"]
+                    k.info("kin.rub_gap", "Rub gap matches original",
+                           f"{label(g)} passes {val:.2f} mm from `{bid}` (class gap {gapmin} mm), waived for `{w_['with']}` at "
+                           f"{np.round(at, 1).tolist()} down to {w_['min_mm']} mm: {w_['reason']}", (bid, w_["with"]))
+                    continue
                 k.bad("kin.rub_gap", WARNING if g.cls != "weapon" else BLOCKER, "Rotating part runs too close to a static one",
-                      f"{label(g)} passes {val:.2f} mm from `{bid}` (need {gapmin} mm for a {g.cls}).", (bid, *sorted(g.members)), at=at,
+                      f"{label(g)} passes {val:.2f} mm from `{bid}` (need {gapmin} mm for a {g.cls}).{' Invalid rub_gap_ok: ' + wv + '.' if isinstance(wv, str) else ''}", (bid, *sorted(g.members)), at=at,
                       expect=(f">= {gapmin} mm", f"{val:.2f} mm"), fix="Open the clearance (flex and runout eat small gaps).")
         if g.weapon:
             wd = k.parts[g.weapon].part.weapon
@@ -1546,6 +1618,44 @@ def sweeps(k):
                               f"`{lb}` never enters the volume `{g.weapon}` sweeps; it cannot stop it turning.", (lb, g.weapon),
                               fix="Run the pin through a hole in the disc (inside its swept ring) in the locked pose.")
         bell_rub(k, g, ex)
+
+
+RUB_WAIVE_AT_MM = 1.0
+
+
+def rub_gap_waiver(k, g, bid, val, at, lr):
+    """Static part `rub_gap_ok: {with, min_mm, at, reason}`: claims ONE pair (this part and the rotating member `with`)
+    at ONE place. Valid when `with` turns in this group, the closest point lies within RUB_WAIVE_AT_MM of `at`, that
+    member's own sweep makes the gap there, the gap is >= min_mm and the reason (>= 20 chars) cites the reference.
+    None when absent, True when valid, else why not."""
+    from .waiver import valid
+
+    p = k.parts[bid].part if bid in k.parts else None
+    w = (getattr(p, "_extra", None) or {}).get("rub_gap_ok") if p is not None else None
+    if w is None:
+        return None
+    if not isinstance(w, dict) or not valid(w.get("reason")):
+        return "needs {with, min_mm, at, reason} with a reason >= 20 chars citing RVRN / RVnn / FSn"
+    m = w.get("with")
+    if m not in g.members:
+        return f"`{m}` does not turn with {label(g)}"
+    try:
+        mn, wat = float(w.get("min_mm")), np.asarray(w.get("at"), float).reshape(3)
+    except (TypeError, ValueError):
+        return "`min_mm` and `at` [x, y, z] are required"
+    if val < mn - 0.01:
+        return f"gap {val:.2f} mm is below the waived {mn} mm"
+    if float(np.linalg.norm(np.asarray(at, float) - wat)) > RUB_WAIVE_AT_MM:
+        return f"closest point {np.round(at, 1).tolist()} is not within {RUB_WAIVE_AT_MM} mm of the waived `at`"
+    mb = k.body(m)
+    P = mb.surface(k.h)[0]
+    sw = Sweep(P, g.axis[0], g.axis[1]) if lr is None else SectorSweep(P, g.axis[0], g.axis[1], *lr)
+    if lr is not None:
+        sw.bodies = [mb]
+    _, gap = sw.classify(np.atleast_2d(np.asarray(at, float)), val + 1.0)
+    if float(gap.min()) > val + 0.1:
+        return f"`{m}` is not what passes closest there"
+    return True
 
 
 def bell_rub(k, g, ex):

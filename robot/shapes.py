@@ -72,6 +72,10 @@ def validate(s, depth=0, n=None) -> None:
     elif t == "tube":
         pos("tube radius", s.get("radius"))
         pts("tube", s.get("points"), 3, 1, 4000)
+    elif t == "ring":
+        pos("ring radius", s.get("radius"))
+        if not s.get("path"):
+            raise ShapeError("ring needs a closed `path` of line/arc segments")
     elif t in ("prism", "spline_prism"):
         pos(f"{t} height", s.get("height"))
         pts(t, s.get("points"), 2, 3, 2000)
@@ -246,6 +250,18 @@ def to_solid(s, base_dir: Path | None = None):
             else:
                 faces.append(_polygon_face([[p[0], p[1], z] for p in sec["points"]]))
         return b.Solid.make_loft([f.outer_wire() for f in faces], ruled=bool(s.get("ruled", False)))
+    if t == "ring":
+        # round section swept along a closed planar path (XY plane) of ["line", p, q] / ["arc", p, mid, q] segments: an O-ring / belt loop
+        edges = []
+        for seg in s["path"]:
+            pts = [b.Vector(float(v[0]), float(v[1]), 0.0) for v in seg[1:]]
+            edges.append(b.Edge.make_line(*pts) if seg[0] == "line" else b.Edge.make_three_point_arc(*pts))
+        path = b.Wire(edges)
+        t0 = path.tangent_at(0)
+        start = path.position_at(0)
+        prof = b.Plane(origin=start, z_dir=t0)
+        circ = b.Wire(b.Edge.make_circle(float(s["radius"]), prof))
+        return b.Solid.sweep(b.Face(circ), path)
     if t == "tube":
         r = float(s["radius"])
         pts = [np.asarray(p, float) for p in s["points"]]
@@ -344,10 +360,10 @@ def model_files(s, base_dir: Path | None) -> list[Path]:
 
 def shape_key(s, base_dir: Path | None, extra: str = "") -> str:
     h = hashlib.sha256(json.dumps(s, sort_keys=True).encode())
+    from . import cache
+
     for f in model_files(s, base_dir):
-        try:
-            h.update(f.read_bytes())
-        except OSError:
-            h.update(str(f).encode())
+        # the model file and everything it imports or reads (helpers, params modules, robot.cad.*), by content only
+        h.update(cache.model_hash(f).encode())
     h.update(extra.encode())
     return h.hexdigest()[:24]

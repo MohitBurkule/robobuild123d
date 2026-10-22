@@ -92,6 +92,24 @@ def test_switch_direction():
     assert f and f.passed
 
 
+def test_switch_direction_deck_mount():
+    # deck-mounted in the middle of the lid, reached from +z: the lever slides in the deck plane, declared throw accepted
+    d = base()
+    d["parts"].append({"id": "sw", "kind": "switch", "catalog": "switch_slide_12x4", "at": [0, 0, 6], "off_dir": [0, -1, 0]})
+    f = run(d).get("electrical.switch_direction")
+    assert f and f.passed
+    d["parts"][-1]["off_dir"] = [0, 0, -1]  # pushed down into the robot to turn off: wrong
+    assert run(d).failed("electrical.switch_direction")
+
+
+def test_switch_direction_buried():
+    d = base()
+    d["parts"].append({"id": "sw", "kind": "switch", "catalog": "switch_slide_12x4", "at": [0, 0, 8], "off_dir": [0, -1, 0]})
+    d["parts"].append({"id": "cap", "kind": "plate", "material": "pla", "process": "fdm", "shape": BOX(40, 40, 30), "at": [0, 0, 8]})
+    f = run(d).get("electrical.switch_direction")
+    assert f and not f.passed and f.severity == "blocker"
+
+
 def test_doc_consistency(tmp_path):
     (tmp_path / "REF.md").write_text("Drisk on an MF85ZZ.")
     d = base(reference_doc={"path": "REF.md", "must_mention": ["MF85ZZ"], "must_not_mention": ["F683ZZ"]})
@@ -99,3 +117,23 @@ def test_doc_consistency(tmp_path):
     (tmp_path / "OLD.md").write_text("Spider on an F683ZZ.")
     d["reference_doc"]["path"] = "OLD.md"
     assert run(d, tmp_path).failed("reference.doc_consistency")
+
+
+def test_waiver_schema_unknown_key_is_blocker():
+    d = base()
+    assert not run(d).failed("spec.waiver_schema")
+    d["parts"][0]["sharp_corner_deviation"] = "RV01 blend is the tab's"
+    assert run(d).failed("spec.waiver_schema")
+    d = base(sharp_ok=[], made_up_waiver="x")
+    assert run(d).failed("spec.waiver_schema")
+    d = base()
+    d["parts"][0]["sharp_corners_ok"] = "TPU, flexes"
+    assert not run(d).failed("spec.waiver_schema")
+
+
+def test_added_part_needs_bom_row():
+    d = base(reference_bom=[dict(ROW, head="button")])
+    d["parts"][1]["deviation"] = "added foam pad, not in RVRN STEP"
+    assert run(d).failed("bom.added_parts")
+    d["reference_bom"].append({"role": "lid", "kind": "part", "match": ["lid"], "count": 1, "deviation": "added"})
+    assert not run(d).failed("bom.added_parts")

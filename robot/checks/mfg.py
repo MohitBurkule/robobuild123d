@@ -95,6 +95,8 @@ def run(ctx):
                 out.append(fail("mfg.bed", G, BLOCKER, "Part is bigger than the print bed",
                                 f"`{p.id}` is {s[0]:.0f} x {s[1]:.0f} x {s[2]:.0f} mm.").on(p.id)
                            .fix("Split it into two parts joined with screws."))
+        if (p.process or "") == "cots" or p.kind == "belt":   # bought parts have no made walls (VERIFIER_ISSUES #5)
+            continue
         if min_wall <= 0.0:
             if catalog.material(p.material) is None:
                 ctx.not_checked.append(f"Minimum wall of `{p.id}`: material `{p.material}` unknown")
@@ -109,9 +111,13 @@ def run(ctx):
         overall = min(overall, tw)
         if int(thin.sum()) >= 8:  # grid slivers are not walls: need a cluster of samples
             sev = BLOCKER if tw < min_wall * 0.7 else WARNING
+            why = str(p._extra.get("thin_wall_deviation") or "").strip()   # reasoned: the reference part is this thin too
+            if why:
+                sev = WARNING
             out.append(fail("mfg.thin_wall", G, sev, "Wall too thin to make",
                             f"`{p.id}` has walls down to {tw:.2f} mm near ({at[0]:.1f}, {at[1]:.1f}, {at[2]:.1f}); "
-                            f"{p.process or 'this process'} {p.material or ''} needs at least {min_wall:.1f} mm.")
+                            f"{p.process or 'this process'} {p.material or ''} needs at least {min_wall:.1f} mm."
+                            + (f" Deviation: {why}" if why else ""))
                        .on(p.id).here(at).expect(f">= {min_wall:.1f} mm", f"{tw:.2f} mm")
                        .fix("Thicken that wall to a multiple of the nozzle width (0.8, 1.2, 1.6 mm) or merge it into a thicker feature."))
     if np.isfinite(overall):

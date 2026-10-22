@@ -142,11 +142,13 @@ FACET_DEG = 25.0
 WEB_HARD_T = 0.75
 
 
-def _concave_edge(solid, e, f1, f2, eps=0.02):
+def _concave_edge(solid, e, f1, f2, eps=0.02, min_deg=0.0):
     mid = e.position_at(0.5)
     n1, n2 = _unit(_v(f1.normal_at(mid))), _unit(_v(f2.normal_at(mid)))
     if abs(n1 @ n2) > 1 - 1e-6:
         return None
+    if min_deg and math.degrees(math.acos(max(-1.0, min(1.0, float(n1 @ n2))))) <= min_deg:
+        return None   # facet of a tessellated arc: skip the (slow) solid classification
     p = _v(mid) + eps * (n1 - n2)
     q = _v(mid) + eps * (n2 - n1)
     return _inside(solid, p) and _inside(solid, q), n1, n2
@@ -261,7 +263,7 @@ def analyse_sheet_cut(solid, material, kerf, secondary):
         dirn = _unit(_v(e.position_at(1)) - _v(e.position_at(0)))
         if abs(abs(dirn @ n) - 1) > ANG:
             continue
-        r = _concave_edge(solid, e, fl[0], fl[1])
+        r = _concave_edge(solid, e, fl[0], fl[1], min_deg=FACET_DEG)
         if r and r[0] and math.degrees(math.acos(max(-1.0, min(1.0, float(r[1] @ r[2]))))) > FACET_DEG:
             sharp += 1
     if sharp:
@@ -524,6 +526,7 @@ def _check_part(rp, process_raw, canon, ctx):
     from .. import cache
 
     key = ("process_part", cache.source_hash(__file__), g.key, str(process_raw), canon, p.material, repr(sec),
+           repr((p._extra.get("min_web_mm"), bool(p._extra.get("min_web_reason")))),
            repr(sorted(catalog.KERF_MM.items())))
     return cache.memo("part_check", key, lambda: _analyse(solid, g, p, process_raw, canon, sec))
 
@@ -531,7 +534,11 @@ def _check_part(rp, process_raw, canon, ctx):
 def _analyse(solid, g, p, process_raw, canon, sec):
     if canon == "sheet_cut":
         kerf = catalog.KERF_MM.get(str(process_raw).lower(), 0.5)
-        return analyse_sheet_cut(solid, p.material, kerf, sec)
+        probs, info = analyse_sheet_cut(solid, p.material, kerf, sec)
+        w = p._extra.get("min_web_mm")   # proven web (e.g. measured on the reference part), with `min_web_reason`
+        if w is not None and p._extra.get("min_web_reason") and info.get("web") is not None and info["web"] >= float(w) - TOL:
+            probs = [x for x in probs if "thinnest web" not in x[2]]
+        return probs, info
     if canon == "sheet_bent":
         return analyse_sheet_bent(solid, p.material, sec)
     if canon == "turned":

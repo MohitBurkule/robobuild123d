@@ -93,8 +93,9 @@ def Part(d: dict) -> Obj:
 Fastener = _obj({
     "id": "", "designation": "", "at": lambda: [0.0, 0.0, 0.0], "dir": lambda: [0.0, 0.0, -1.0], "through": list,
     "threads_into": None, "tool": None, "removable": False, "head": None,
+    "waive": dict,  # {"<check id or prefix>": "<reason citing RVRN/RVnn/FSn>"}: see checks/waiver.py
 })
-Wire = _obj({"id": "", "from": "", "to": "", "awg": None, "kind": "signal", "slack_mm": None})
+Wire = _obj({"id": "", "from": "", "to": "", "awg": None, "kind": "signal", "slack_mm": None, "via": list})   # via: waypoints [[x,y,z],...] the route passes in order
 Electronics = _obj({"failsafe": False, "weapon_remote_disable": False, "radio": None, "cells": None})
 Connection = _obj({"a": "", "b": "", "method": "", "reason": "", "interference_mm": None, "mechanical_key": False})
 AllowOverlap = _obj({"a": "", "b": "", "max_depth_mm": None, "reason": ""})
@@ -104,6 +105,10 @@ Claim = _obj({"id": "", "text": "", "metric": "", "op": "<=", "value": 0.0})
 class Spec:
     def __init__(self, d: dict, base_dir: str | Path | None = None):
         d = dict(d or {})
+        if any(isinstance(p, dict) and p.get("mate") for p in (d.get("parts") or [])):
+            from .cad import mates  # parts placed by constraints (robot/cad/mates.py)
+
+            d = mates.apply(d)
         self.raw = d
         self.base_dir = Path(base_dir) if base_dir else Path.cwd()
         self.name = d.get("name") or ""
@@ -121,6 +126,9 @@ class Spec:
         self.start_pose = dict(d.get("start_pose") or {})
         self.ground_z = d.get("ground_z")
         self.calibration = dict(d.get("calibration") or {})
+        # declared teardown moves: [{"parts": [ids], "dir": [x, y, z], "reason": ...}] - parts that come off together
+        # (a fork pinned in a wedgelet slot) in the real service order; the assembly check tries them as one move
+        self.teardown = [dict(t) for t in (d.get("teardown") or [])]
 
     def part(self, pid):
         for p in self.parts:
@@ -140,6 +148,7 @@ class Spec:
             "can_run_inverted": self.can_run_inverted, "allow_overlap": [a.to_dict() for a in self.allow_overlap],
             "connections": [c.to_dict() for c in self.connections], "claims": [c.to_dict() for c in self.claims],
             "start_pose": self.start_pose, "ground_z": self.ground_z, "calibration": self.calibration,
+            **({"teardown": self.teardown} if self.teardown else {}),
         }
 
     def copy(self) -> "Spec":

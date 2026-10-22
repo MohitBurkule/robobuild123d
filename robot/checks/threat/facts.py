@@ -577,6 +577,82 @@ def m_weapon(ctx, s, T, F):
     T["vs06.bolts"] = min(bolts) if bolts else None
 
 
+BELT_SLOT_FRAC = 0.02  # share of a belt's outward-facing surface an attacker may see through gaps before it counts as exposed
+
+
+RAY_CHUNK = 128          # rays per intersects_location call (bounds the candidate arrays)
+OCC_TRI_CAP = 60000      # occluder triangles per (belt, direction) corridor; more are subsampled by area order
+
+
+def _perp(d):
+    a = np.array([1.0, 0, 0]) if abs(d[0]) < 0.9 else np.array([0, 1.0, 0])
+    u = np.cross(d, a)
+    u /= np.linalg.norm(u)
+    return u, np.cross(d, u)
+
+
+def _belt_slots(s, n=600):
+    """Belts seen through a gap narrower than the z-buffer cell (a 1 mm slot between tub and side panel): exact ray
+    casts from the skin directions against the other bodies. A belt sample counts when it faces the attacker and no
+    other part is hit on the way in.
+
+    Memory: only occluder triangles inside the corridor the rays travel through (the belt samples' footprint across
+    the direction, before the belt along it) are cast against, and rays go in chunks of RAY_CHUNK. Casting against
+    the whole concatenated robot with 300 mm rays built candidate arrays past 13 GB."""
+    import trimesh
+
+    belts = [i for i, b in enumerate(s.bodies) if b.kind == "belt"]
+    if not belts:
+        return []
+    out = []
+    dirs = [A.travel_dir(b, e) for b in range(0, 360, 30) for e in (0.0, 30.0)] + [A.travel_dir(0, 90.0)]
+    others = {}
+    for bi in belts:
+        m = np.flatnonzero(s.O == bi)
+        if not len(m):
+            continue
+        m = m[np.linspace(0, len(m) - 1, min(n, len(m))).astype(int)]
+        P, N = s.P[m], s.N[m]
+        if bi not in others:
+            ms = [b.mesh for j, b in enumerate(s.bodies) if j != bi and b.mesh is not None and len(b.mesh.faces)]
+            others[bi] = np.concatenate([mm.triangles for mm in ms]) if ms else np.zeros((0, 3, 3))
+        T = others[bi]
+        seen = np.zeros(len(m), bool)
+        for d in dirs:
+            d = np.asarray(d, float)
+            f = (N @ -d) > 0.3
+            if not f.any() or not len(T):
+                seen[np.flatnonzero(f)] = True
+                continue
+            u, v = _perp(d)
+            Pf = P[f]
+            pu, pv, pd = Pf @ u, Pf @ v, Pf @ d
+            tu, tv, td = T @ u, T @ v, T @ d                      # (k, 3) per vertex
+            keep = ((tu.max(1) >= pu.min() - 0.5) & (tu.min(1) <= pu.max() + 0.5) &
+                    (tv.max(1) >= pv.min() - 0.5) & (tv.min(1) <= pv.max() + 0.5) & (td.min(1) < pd.max()))
+            sub = T[keep]
+            if len(sub) > OCC_TRI_CAP:  # keep the biggest triangles (walls) first; tiny ones rarely close a slot alone
+                ar = np.linalg.norm(np.cross(sub[:, 1] - sub[:, 0], sub[:, 2] - sub[:, 0]), axis=1)
+                sub = sub[np.argsort(-ar)[:OCC_TRI_CAP]]
+            hit = np.zeros(len(Pf), bool)
+            if len(sub):
+                occ = trimesh.Trimesh(vertices=sub.reshape(-1, 3), faces=np.arange(len(sub) * 3).reshape(-1, 3), process=False)
+                start = min(td[keep].min(), pd.min()) - 5.0
+                L = pd - start                                       # ray origin on a plane before every occluder
+                o = Pf - d * L[:, None]
+                for c in range(0, len(o), RAY_CHUNK):
+                    oc = o[c:c + RAY_CHUNK]
+                    loc, idx, _ = occ.ray.intersects_location(oc, np.tile(d, (len(oc), 1)), multiple_hits=False)
+                    if len(idx):
+                        dist = np.linalg.norm(loc - oc[idx], axis=1)
+                        hit[c + idx[dist < L[c + idx] - 0.1]] = True
+                del occ
+            seen[np.flatnonzero(f)[~hit]] = True
+        if seen.mean() > BELT_SLOT_FRAC:
+            out.append(s.bodies[bi].id)
+    return out
+
+
 def m_exposure(ctx, s, T):
     """ST01/ST02/ST05, DB03, DB05: what the outer skin is made of and how thick it is."""
     fs = np.zeros(len(s.P), bool)
@@ -584,7 +660,8 @@ def m_exposure(ctx, s, T):
         fs |= view(s, brg)
     fs &= s.face & ~s.is_rotor & ~s.is_wheel & ~s.is_fast
     sk = skin(s)
-    T["db03.visible"] = sorted({s.bodies[i].id for i in np.unique(s.O[sk]) if s.bodies[i].kind in ("belt", "pulley")})
+    T["db03.visible"] = sorted({s.bodies[i].id for i in np.unique(s.O[sk]) if s.bodies[i].kind in ("belt", "pulley")}
+                               | set(_belt_slots(s)))
     T["db05.visible"] = sorted({s.bodies[i].id for i in np.unique(s.O[sk]) if s.bodies[i].kind in ("motor", "weapon_motor")})
     brittle, thin, st1 = [], [], []
     F_imp = ph.impact_n(ctx) * 0.25

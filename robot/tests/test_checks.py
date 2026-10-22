@@ -39,6 +39,16 @@ def test_thin_printed_wall_is_flagged():
 
 
 @mfg_needed
+def test_thin_wall_with_reasoned_deviation_is_only_a_warning():
+    thin = {"type": "subtract", "base": box(30, 30, 10), "cut": [box(29.2, 29.2, 12)]}
+    pt = part("shell", "structure", thin, (0, 0, 0), "petg", "fdm")
+    pt["thin_wall_deviation"] = "matches original RVRN 2.0 (0.4 mm measured in the reference)"
+    rep = run({"name": "thin", "parts": [pt]}, ["mfg"])
+    assert not [f for f in rep.findings if f.id == "mfg.thin_wall" and not f.passed and f.severity == "blocker"]
+    assert [f for f in rep.findings if f.id == "mfg.thin_wall" and "matches original" in f.message]
+
+
+@mfg_needed
 def test_thick_printed_wall_is_fine():
     ok = {"type": "subtract", "base": box(30, 30, 10), "cut": [box(27, 27, 12)]}
     d = {"name": "ok", "parts": [part("shell", "structure", ok, (0, 0, 0), "petg", "fdm")]}
@@ -73,3 +83,11 @@ def test_vertical_switch_is_flagged():
           "actuation": [0, 0, 1]}
     d = {"name": "sw", "parts": [part("base", "structure", box(30, 30, 6), (0, 0, 0), "nylon", "fdm"), sw]}
     assert failed(run(d, ["legal"]), "switch.vertical_axis")
+
+
+@mfg_needed
+def test_cots_o_ring_is_not_a_thin_wall():
+    """VERIFIER_ISSUES #5: a stock 1.0 mm O-ring (process cots, kind belt) has no made walls."""
+    ring = {"type": "subtract", "base": {"type": "cylinder", "radius": 10, "height": 1.0}, "cut": [{"type": "cylinder", "radius": 9, "height": 2}]}
+    d = {"name": "oring", "parts": [part("belt", "belt", ring, (0, 0, 0), "rubber", "cots")]}
+    assert not failed(run(d, ["mfg"]), "mfg.thin_wall")

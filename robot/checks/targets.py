@@ -16,6 +16,10 @@ ALIASES = {"length": "length_mm", "width": "width_mm", "height": "height_mm", "d
 META = {"tol_mm", "tol_pct", "source", "note"}
 
 
+def _role(p):
+    return getattr(p, "role", None) or (getattr(p, "_extra", None) or {}).get("role")
+
+
 def measure_targets(ctx):
     """Model values for every target key we know how to measure (None when it cannot be measured)."""
     r, w = ctx.r, ctx.world
@@ -36,6 +40,12 @@ def measure_targets(ctx):
         sa = spin_axis(w, r, i) if b.part_idx is not None and b.kind == "weapon" else None
         if sa is not None:
             dias.append(2.0 * rim_radius(b, *sa))
+            # a spider / hub weapon carries its blades as separate parts riding the same rotor: the disc is the biggest
+            rw = getattr(r.parts[b.part_idx].part, "rotates_with", None)
+            for o in w.bodies:
+                if o is not b and o.part_idx is not None and not o.is_wire and rw and getattr(r.parts[o.part_idx].part, "rotates_with", None) == rw \
+                        and _role(r.parts[o.part_idx].part) == "blade":
+                    dias.append(2.0 * rim_radius(o, *sa))
     vals["disc_dia_mm"] = max(dias) if dias else None
     vals["mass_g"] = ctx.metrics.get("mass_total_g")
     return vals

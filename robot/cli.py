@@ -43,7 +43,11 @@ def print_report(rep, full=False):
 
 
 def opts_from(a):
-    return checks.Options(deep=not getattr(a, "quick", False), fast=getattr(a, "fast", False))
+    o = checks.Options(deep=not getattr(a, "quick", False), fast=getattr(a, "fast", False))
+    only = getattr(a, "only", None)
+    if only:
+        o.only = [g.strip() for g in only.split(",") if g.strip()]
+    return o
 
 
 def main(argv=None):
@@ -57,12 +61,17 @@ def main(argv=None):
     t = sub.add_parser("template")
     t.add_argument("name")
     v = sub.add_parser("verify")
-    v.add_argument("spec")
+    v.add_argument("spec", nargs="?")
     v.add_argument("--full", action="store_true")
+    v.add_argument("--only", metavar="GROUP[,GROUP...]", help="run only these check groups (parts are still built and cached)")
+    v.add_argument("--list-groups", action="store_true", help="print the check group names and exit")
     v.add_argument("--fast", action="store_true", help="coarse tessellation for quick iteration")
     v.add_argument("--quick", action="store_true", help="skip the slow sweeps (wiring, assembly)")
     v.add_argument("--json", help="also write report.json here")
-    for name in ("render", "export", "gen.cli"):
+    v.add_argument("--proxy", action="store_true", help="fast proxies of the slow groups (robot/proxy); --only picks among them")
+    v.add_argument("--parts", help="with --proxy: only check these part ids (comma separated)")
+    v.add_argument("--baseline", help="with --proxy: a full report.json whose routes / assembly order the proxies replay")
+    for name in ("render", "export", "gen.cli", "cad.cli"):
         try:
             mod = __import__(f"robot.{name}", fromlist=["add_cli"])
             mod.add_cli(sub)
@@ -112,7 +121,29 @@ def main(argv=None):
             print(f"unknown template {a.name}; try `robot templates`", file=sys.stderr)
             return 1
         print(p.read_text())
+    elif a.cmd == "verify" and getattr(a, "changed", False):
+        from .cad import incremental  # incremental verify (robot/cad/incremental.py)
+
+        return incremental.cli(a)
+    elif a.cmd == "verify" and getattr(a, "proxy", False):
+        from .proxy import cli as proxy_cli
+
+        if not a.spec:
+            print("error: verify needs a spec path", file=sys.stderr)
+            return 1
+        return proxy_cli.verify(a, print_report)
     elif a.cmd == "verify":
+        names = [n for n, _ in checks.GROUPS]
+        if a.list_groups:
+            print("\n".join(names + [checks.CLAIMS_GROUP]))
+            return 0
+        if not a.spec:
+            print("error: verify needs a spec path", file=sys.stderr)
+            return 1
+        bad = [g for g in (opts_from(a).only or []) if g not in names and g != checks.CLAIMS_GROUP]
+        if bad:
+            print(f"error: unknown check group(s) {', '.join(bad)}; see `robot verify --list-groups`", file=sys.stderr)
+            return 1
         try:
             s = spec_mod.load(a.spec)
         except ValueError as e:
