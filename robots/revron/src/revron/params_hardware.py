@@ -32,6 +32,7 @@ WIRES = [("w_bat_sw", "battery.jst_rcy", "power_switch.in", AWG["power"], "power
 
 # make_spec tables: weapon shaft, web floors, hub pivots, electronics placements, press-fit interference, belt geometry
 WEB = dict(spider=0.8, disc=0.9, fork=1.05)             # min_web_mm the designer owns (STEP measures the same webs)
+HUB_SPIN_DEG = -2.45                                   # rear hubs sit this far round the D-shaft (STEP: the D-bore flat, nut slot and grub are turned 2.45 deg; the Distance/Concentric mates leave the spin free)
 HUB_PIVOT_X = dict(rear=41.6, front=34.5)               # |X| of each hub's revolute pivot
 BAT_BELOW = 5.5                                          # lipo_2s_180_turnabot catalog origin -> pack underside (STEP pack 11 thick, z 6.5..17.5 about origin z 12)
 BAT_Z = 12.0                                            # STEP/dump pack origin (RV16 xform z 11.8 ~ 12); underside 6.5, 2.0 over the base panel skin (original: no pad, pack mated to the chassis only; foam pad = variant battery_pad)
@@ -129,8 +130,9 @@ MICRO_T = {   # STEP Micro_slx_v1_0 instance placements (assembly frame), compos
 }
 
 
-SLIT_DEV_X, SLIT_DEV_R, SLIT_DEV_YZ = 25.75, 2.5, ((46.4, 2.2), (44.4, 6.0), (43.1, 6.2), (44.2, 5.9), (48.5, 2.8))   # fork-tine slit sites in the wedgelet
-TOE_DEV_YZ, TOE_DEV_R, TOE_DEV_X = (49.3, 1.4), 4.0, (19.5, 24.0, 28.0, 32.0, 36.5)                             # knife-toe land sites
+FORK_PATH_X, FORK_PATH_R, FORK_PATH_MM3 = 25.75, 3.0, 30.0   # fork tine runs through the wedgelet cheek: path capsule radius (cap 3) and the interpenetration volume (RV17 STEP: 26 mm3)
+FORK_PATH_YZ = ((50.1, 2.0), (45.0, 3.0), (41.5, 7.5))
+TOE_DEV_YZ, TOE_DEV_R, TOE_DEV_X, TOE_DEV_MM3 = (49.3, 1.4), 3.0, (19.5, 36.5), 40.0   # knife-toe land: path capsule from the first to the last x   # mm3: land volume the STEP knife has over the printable land
 
 
 # reference_cad tolerances and the reasoned-deviation sites (centres + radii of the regions allowed to differ from the STEP)

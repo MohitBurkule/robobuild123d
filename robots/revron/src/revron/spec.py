@@ -329,11 +329,10 @@ def _wedge_dev(s):
     slit = "the STEP draws the Ti fork tine inside the TPU nose (interpenetrating solids); the TPU has the 1.5 mm slit the tine slides into"
     toe = "the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
     boss = "the STEP nose tab interpenetrates the weapon mount's boss; the tab is cut by the boss outline plus the WG_MOUNT_GAP clearance, and its arc round SB stands WG_MOUNT_GAP off the chassis lug radius"
-    return ([dict(near=[s * WG_TAB_DEV["x"], *WG_TAB_DEV["yz"]], r=WG_TAB_DEV["r"], reason=boss)]
-            + [dict(near=[s * SLIT_DEV_X, y, z], r=SLIT_DEV_R, reason=slit) for y, z in SLIT_DEV_YZ]
-            + [dict(near=[s * x, TOE_DEV_YZ[0], TOE_DEV_YZ[1]], r=TOE_DEV_R, reason=toe) for x in TOE_DEV_X]
-            + [dict(near=[s * FORK_RAIL_DEV["x"], FORK_RAIL_DEV["y"], FORK_RAIL_DEV["z"]], r=FORK_RAIL_DEV["r"],
-                    reason="the fork's two rails run through the TPU cheek as closed tunnels (the STEP's solid wedgelet has no slit: the tine interpenetrates it)")])
+    return ([dict(path=[[s * WG_TAB_DEV["x"], WG_TAB_DEV["y"], z] for z in WG_TAB_DEV["z"]], r=WG_TAB_DEV["r"], max_mm3=WG_TAB_DEV["mm3"], reason="RV17 STEP: " + boss),
+             dict(path=[[s * FORK_PATH_X, y, z] for y, z in FORK_PATH_YZ], r=FORK_PATH_R, max_mm3=FORK_PATH_MM3,
+                  reason="RV17 STEP: the Ti fork tine interpenetrates the solid TPU cheek (26 mm3, y 41.5-50.1); " + slit),
+             dict(path=[[s * x, *TOE_DEV_YZ] for x in TOE_DEV_X], r=TOE_DEV_R, max_mm3=TOE_DEV_MM3, reason="RV17 STEP: " + toe)])
 
 
 def _side_dev(s):
@@ -342,7 +341,7 @@ def _side_dev(s):
 
 
 def _GRUB_DEV(s):
-    return [{"near": [s * 34.4, RY, RZ + 3.0], "r": 3.5,
+    return [] if not HUB_GRUB_PRINTABLE else [{"near": [s * 34.4, RY, RZ + 3.0], "r": 3.5,
              "reason": "grub bore is the catalog M2 tap drill (1.6, robot.cad.holes) 0.2 inboard, not the STEP 2.5 hole at |X| 34.5: "
                        "a 2.5 hole breaks into both 45 deg tyre-seat ramps and leaves knife edges (mfg.thin_wall 0.01 mm); the grub "
                        "threads the 1.6 bore and the captive nut, so it clamps the flat the same"}]
@@ -437,6 +436,7 @@ def main():
                     archetype_params=ARCHETYPE_PARAMS, targets=TARGETS, weapon_lock=WEAPON_LOCK, reference_bom=ref_bom(), reference_doc=REFERENCE_DOC,
                     electronics=ELECTRONICS, can_run_inverted=False, allow_overlap=ALLOW_OVERLAP, claims=CLAIMS, sharp_ok=SHARP_OK,
                     teardown=TEARDOWN, module_teardown=MODULE_TEARDOWN, service_pose=SERVICE_POSE, reference_cad=reference_cad(),
+                    start_pose={f"whub_r{n}": HUB_SPIN_DEG for n in "lr"},   # spin of the rear hubs on their shafts (STEP pose)
                     asm_dump={"rig": "revron.joints:RIG"},   # asm.mate: our assembly mates (joints.Rig)
                     renders={"dir": "renders", "views": ["iso.png", "top.png", "back.png", "exploded.png"]}, **body)
         spec["modules"] = [{"id": "weapon_module", "root": "mount_r", "note": MODULE_NOTE,

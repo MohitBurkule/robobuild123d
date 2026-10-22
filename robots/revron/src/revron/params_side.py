@@ -21,7 +21,7 @@ SP_MID_Z_FRONT = 13.0               # mid wall height at its front end (Loft2 sk
 SP_BEND_R = (8.0, 4.0)              # rear wall bends out round two 90 deg arcs (RV23 Revolve6, Revolve7), chassis-side radii
 SP_FRONT = dict(c=(-38.5, 26.55), r_in=10.55, w=3.0, z_top=10.0, over=5.0)   # front swing (Revolve5): axis (X, Y), chassis-side radius at the floor, radial thickness, top, lead-in deg
 BEZIER_DEG = 3                      # a cubic Bezier's handle is a third of the Hermite tangent
-SP_BEND_TENSION = 0.8               # S-bend corner-curve tangent length / chord
+SP_BEND_TENSION = 0.9               # S-bend corner-curve tangent length / chord
 SP_REAR_Y_END = -46.0               # the straight rear wall runs on past the rear round (the profile trims it)
 
 
@@ -69,67 +69,34 @@ SP_NUT_POCKET = dict(r=4.6, r2=2.1, dy=12.0, z=6.921)
 # three diagonal flutes on the outer face (STEP RV23): width / pitch / angle off the Y axis, the middle one through (Y 0, Z `z`), `depth` deep along X,
 # each from Z `z0` up to its own level top end (`top`, rear flute first)
 SP_FLUTE = dict(n=3, w=1.6, pitch=3.0, deg=30.0, y=0.0, z=10.0, z0=4.2, top=(14.1, 13.1, 12.4), depth=0.53)
-# [fix-C wedgelet] measured polyline arcs rebuilt as true arcs (sampled finer than the 6 deg facet-seam threshold)
-WG_RING_CHAMFER, WG_RING_CHAMFER_Y = 1.0, 44.96    # Chamfer7: the ring step's far edge is chamfered 45 deg round the SB side (cone) and along the floor to this Y (plane)
+# [fix-C-w7] wedgelet RV17/18 (TPU): every outline is a relation of the shared datums SA, SB, FLOOR_Z and RAMP_REACH, read off the STEP
+# faces (robot.cad.sketch_extract / blend_finder), no measured point tables. LH is built once, RH is its mirror.
+WG_RAMP_DEG = 50.0          # ramp face angle off the floor; the cheek top line K and the cap-cylinder axis are perpendicular to the ramp
+WG_TOP_Z = 15.36            # height of the cheek top corner A where K meets the ramp
+WG_SKIN_T = 2.3             # THE skin thickness master (normal to the ramp)
+WG_SKIN_RUN = 7.0           # skin plate length along the ramp below K: its hollow starts there, the cap cylinder (R = run + 1, axis 1 above K) bottoms there and the nose top stands at its foot
+WG_TAPER_DEG = 18.9         # rear face T leans this far off vertical; it is tangent to the WG_FLANK_R circle about SA
+WG_FLANK_R = 10.0           # R10 convex flank blend, also T's stand-off from SA
+WG_BORES_SA = 2.6           # radius of the 25 mm standoff bore through the wedgelet
+WG_BORE_WALL = 1.352         # TPU wall left round a standoff bore
+WG_SA_R = WG_BORES_SA + WG_BORE_WALL   # cheek bulb round the 25 mm standoff SA = its bore plus a wall (the flank's first arc)
+WG_BOSS_R = 3.5             # ring round SB (block, ring step) = clearance circle round SA in the fork bay
+WG_NOTCH = dict(depth=2.5, width=1.5)   # tail-entry notch: depth down T from the cheek corner, width back from T
+WG_BAY_Z = 8.6              # fork bay ledge height; the bay is bounded by T, this ledge and the 45 deg tangent to the lug round SB
+WG_PIN_SWING = 15.0         # the fork's pin travels this far each side of its rest angle in the kidney slot round SB (r = FK_PIN_DIST)
+WG_TOE_CHAMFER = 0.47       # toe chamfer leg (skin inner face to floor, equal legs)
+WG_RING_CHAMFER = 1.0       # Chamfer7: the ring step's far edge is chamfered this much x 45 deg round the SB side (cone) and along the floor
+WG_RING_CHAMFER_Y = SB[0] + WG_BOSS_R + WG_RING_CHAMFER   # the floor chamfer ends one chamfer width past the ring
 WG_CHAMFER_END = dict(a=6.77, b=1.68)   # Chamfer7's floor end vertex blend: (dy)^2 = a h - b h^2 (h = chamfer height at that X)
-WG_TAB_DEV = dict(x=19.5, yz=(43.7, 5.8), r=2.5)   # reference-diff deviation sphere on the nose tab where the mount boss is taken out of it
-WG_STEP_FILLET = 1.0                 # Fillet1: skin-to-ring-step blend
-WG_MOUNT_GAP = 0.1                   # clearance of the nose tab to the weapon mount boss and to the chassis lug round SB
-WG_ARC_STEP = 3   # deg per sampled chord of a wedgelet profile arc
-
-
-def _wg_arc(c, r, a0, a1, step=WG_ARC_STEP):
-    """Points round centre c (radius r) from angle a0 to a1 (deg), one chord per `step` deg, both ends included."""
-    import math as _m
-    n = max(2, int(_m.ceil(abs(a1 - a0) / step)))
-    return [(c[0] + r * _m.cos(_m.radians(a0 + (a1 - a0) * k / n)), c[1] + r * _m.sin(_m.radians(a0 + (a1 - a0) * k / n))) for k in range(n + 1)]
-
-
-def _wg_ang(c, p):
-    import math as _m
-    return _m.degrees(_m.atan2(p[1] - c[1], p[0] - c[0]))
-
-
-def _wg_flank():
-    """Cheek flank = two tangent arcs measured on the STEP section (fit residual < 0.01): a concave R4 from the wall foot, then a
-    convex R10 (centres on the line at `lean` deg), ending where the straight shoulder takes over at `end` deg."""
-    import math as _m
-    c1, r1, lean, r2, end = WG_FLANK["c"], WG_FLANK["r"], WG_FLANK["lean"], WG_FLANK["r2"], WG_FLANK["end"]
-    c2 = (c1[0] + (r1 + r2) * _m.cos(_m.radians(lean)), c1[1] + (r1 + r2) * _m.sin(_m.radians(lean)))
-    return _wg_arc(c1, r1, 180, lean)[:-1] + _wg_arc(c2, r2, lean - 180, end)
-
-
-WG_FLANK = dict(c=SA, r=3.9519, lean=105.84, r2=10.0, end=-50)   # (centre (Y, Z) of the R4, R, centre-line angle, R of the second arc, its end angle)
-WG_NOSE_ARC = dict(c=SB, r=LUG_SB_R + WG_MOUNT_GAP)                          # nose arc round (Y, Z), vertical tangent at its foot: the tab and the slot share it
-_NA = WG_NOSE_ARC
-# fork-tail entry (RV17 Cut-Extrude20, 1 mm deep from the nose face, floor edges rounded Fillet9 r0.5) opens the kidney arc slot:
-# its rear edge runs from the slot's outer wall (at `ring_end` deg) up to the notch floor `top` above SB, `width` wide, the front
-# edge tangent to the slot's upper end cap. dY (rear_dy) and `top` are measured from SB.
-WG_ENTRY = dict(ring_end=170.0, top=8.28, rear_dy=-1.9015, width=1.5, depth=1.0, fillet=0.5)
-WG_X = (-38.5, -36.5, -35.5, -29.0, -21.5, -17.5)   # slab edges along X: block | ring step | skin | cheek | nose tab
-WG_S1 = (3.5, [(40.5, 1.0), (RAMP_REACH, 1.0), (42.54, 10.0), (39.55, 10.0), (40.23, 8.0)])   # block round SB: (R, tail outline (Y, Z))
-WG_S2 = (WG_S1[0], [(40.4, 7.5), (39.55, 10.0), (41.92, 10.0), (42.29, 10.31), (RAMP_REACH, 1.0), (46.68, 1.0), (SB[0], 1.0)])   # ring step: (R of the boss round SB as the block, tail outline (Y, Z))
-WG_CHEEK = [(38.05, 15.36), (RAMP_REACH, 1.0), (26.55, 1.0), *_wg_flank(),
-            (36.62, 14.17), (SB[0] + WG_ENTRY["rear_dy"] - WG_ENTRY["width"], SB[1] + WG_ENTRY["top"]),
-            (SB[0] + WG_ENTRY["rear_dy"], SB[1] + WG_ENTRY["top"]), (37.79, 15.15)]
-WG_IN_SLOT = [(38.69, 10.9), (39.12, 11.26), (37.79, 15.15), (38.05, 15.36), (RAMP_REACH, 1.0), (43.75, 1.0), *_wg_arc(_NA["c"], _NA["r"], 0, _wg_ang(_NA["c"], (42.91, 6.68))),
-              (41.0, 8.6), (40.03, 8.6), (39.52, 10.07)]
-WG_TAB = [(42.78, 6.82), (44.32, 6.1), (44.69, 7.44), (RAMP_REACH, 1.0), (43.75, 1.0), *_wg_arc(_NA["c"], _NA["r"], 0, _wg_ang(_NA["c"], (42.78, 6.82)))[:-1]]
-WG_SKIN = [(RAMP_REACH, 1.0), (47.57, 1.0), (46.8, 1.36), (40.79, 8.52), (40.22, 8.04), WG_CHEEK[-1], WG_CHEEK[0]]   # skin tops out on the cheek's top corner
-# skin top cap: in (X, W = Z - k Y) the cap is a circular arc rising to the full skin height (vertical tangent at
-# X = centre + R); swept along (0, 1, k). Fitted on 12 STEP X sections from X -35 to -30.65 (residual < 0.03 mm)
-WG_SKIN_CAP = dict(k=0.84, c=(-41.166, -16.147), r=10.554)   # param: organic skin cap arc (slope k, centre (X, W), R) fitted to RV17
-# param: end
-# param: end
-ARC_N, ARC_MOUNT, ARC_KIDNEY, WG_MERGE_EPS = 64, 32, 24, 0.01       # circle facets per quarter; overlap that merges the toe land with the wedgelet body
-WG_TAB_FILM = 0.6                    # TPU film limit: slivers thinner than this are dropped from the nose tab
-WG_FORK_SLOT_X = (-27.0, -24.5)      # 2.5 mm fork slot through the cheek
-WG_BORES = dict(sa=2.6, sb=1.6, sb_head=2.5)   # radii of the standoff bores through the wedgelet (sb_head: block end only)
-WG_BORE_X = (-39.0, -17.0)
-WG_KIDNEY = dict(r=4.5, hw=1.0, a_lo=171.7, a_hi=140.0, x=(-29.5, -21.0))   # fork-tail kidney: an arc slot about SB (centre-line R, half width, end angles deg, X span)
-WG_TOE = [(48.6, 1.0), (RAMP_REACH, 1.0), (RAMP_REACH, 1.0 + WEDGE_TOE_H), (48.6, 1.0 + 1.5 * RAMP_SLOPE)]   # knife toe on a printable land (Y, Z)
+WG_TAB_DEV = dict(x=19.5, y=43.7, z=(1.1, 7.9), r=2.5, mm3=40.0)   # reference-diff path waiver down the nose tab where the mount boss is taken out of it (x, y of the boss axis, z span)
+WG_MOUNT_GAP = 0.1          # clearance of the nose tab to the weapon mount boss and to the chassis lug round SB
+WG_X0 = -38.5               # nose block outer face (also the cap cylinder's axis plane); the slabs follow by thickness
+WG_SLAB = (2.0, 1.0, 6.5, 7.5, 4.0)   # block | ring step | skin | cheek | nose tab thicknesses along X
+WG_BORES = dict(sa=WG_BORES_SA, sb=1.6, sb_head=2.5)   # radii of the standoff bores through the wedgelet (sb_head: from the ring step on)
+WG_TAB_FILM = 0.6           # TPU film limit: slivers thinner than this are dropped from the nose tab
+WG_MERGE_EPS = 0.01         # overlap that merges the toe land with the body
+ARC_N = 64                  # circle / arc facets per quarter turn
 QUARTER_TURN = 90   # deg, tyre shoulder arcs sweep a quarter turn
-FORK_RAIL_DEV = dict(x=25.25, y=42.0, z=5.3, r=6.0)   # reference-diff deviation sphere over the fork's rail tunnels in the wedgelet cheek
 FORK_DEV = dict(x=25.5, y=66.0, z=1.4, r=2.0)   # reference-diff deviation sphere at the fork tip land (STEP knife tip)
 SIDE_DEV_X, SIDE_DEV_R = 41.78, 4.0              # deviation sphere at the nose screw seat (STEP RV23 bore centre X, radius)
 __all__ = [n for n in dir() if not n.startswith("__")]   # last line: every name above is exported
