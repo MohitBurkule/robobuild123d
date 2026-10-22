@@ -2,7 +2,7 @@
 import json, math, os, sys
 from .params import *  # noqa: F401,F403
 from .common import *  # noqa: F401,F403
-from . import panel_base, panel_top
+from . import panel_base, panel_top, tub2_tab
 from .variants import variant
 from .tub2_params import OVER   # the squared rear corner overshoots the wall by the tub2 over-cut
 from .drisk import service_turn_deg   # [fix-B-robust] drisk service turn: a relation of SA and the disc outline
@@ -35,15 +35,16 @@ def make_spec(model_file):
 
     # ---------------------------------------------------------------- structure
     P(id="tub", kind="structure", print_orientation="-z", rotates_with="fixed", solid_fraction=SOLID["tub"], color="#2a2c30", shape=M("chassis_local"), **place("tub"), **PLA,
-      thin_wall_deviation="matches original RVRN 2.0: the switch-slot rim is 0.5 mm wide on RV01_Chassis_1 too (RV01 section y=-10: slot edge x=27.0, outer face x=27.5) and 0.65 mm between the slot front and the deck pocket (section x=25: y -12.25 to -11.6)",
+      thin_wall_deviation="matches original RVRN 2.0: the switch-slot rim is a 0.5 mm inner step at z 16.5 on RV01_Chassis_1 too (the 0.908 reading at z 19.09 is the slot chamfer) (RV01 section y=-10: slot edge x=27.0, outer face x=27.5) and 0.65 mm between the slot front and the deck pocket (section x=25: y -12.25 to -11.6)",
       label="RV01 printed chassis: closed X-ribbed deck (printed deck-down), open floor for the base panel, N10 keyhole side pockets, nut lobes, weapon-mount tabs and standoff lugs",
-      rub_gap_ok=dict(**{"with": "spider"}, min_mm=0.6, at=[-10.3, 26.05, 13.49], reason="matches original RVRN 2.0: the STEP spider_1 sweeps 0.600 mm from the RV01_Chassis_1 face at x -10.3 (swept distance, STEP meshes, tub point (-10.3, 26.05, 13.49))"))
+      rub_gap_ok=dict(**{"with": "spider"}, min_mm=SPIDER_TAB_GAP, at=list(tub2_tab.rub_point()), reason="matches original RVRN 2.0: the STEP spider_1 sweeps 0.600 mm from the RV01_Chassis_1 tab wall bevel on its inner face (swept distance, STEP meshes; the point is where the spider is closest)"))
     P(id="base_panel", kind="structure", print_orientation="+z", rotates_with="fixed", color="#2a2c30", shape=M("base_panel"), **place("base_panel"), **PLA,
       thin_wall_deviation="the 1 mm panel is shallower than the 1.2 mm M2 CSK head (STEP RV26 has the same 5 countersunk seats): a 90 deg seat cone leaves a knife wedge under the countersink rim, unavoidable at this thickness (parity with RV26)",
       sharp_corners_ok="the panel's concave corners at (+-25.1,-25.5,4.5) are where its 1 mm plate edge butts the tub floor lip; RV26 is a flat plate against the RV01 lip (reference r 0.27), a round there would lift the panel off the lip and unseat bolt_b2/b3; the RV26 Chamfer2 is 1.3 mm away from these corners and there is no fillet on them in the dump",
       label="RV26 1 mm printed base panel, 5 M2 CSK into the floor heat-sets, 0.45 mm pads preload the N10s")
     P(id="top_panel", kind="armor", material="titanium", process="laser", stock="0.9 mm Ti Gr5 sheet", secondary_ops=["countersink"], rotates_with="fixed", color="#8d939b", shape=M("top_panel"), **place("top_panel"),
-      label="0.9 mm Ti top panel: laser outline with 4 countersunk 2.2 corner holes, 4 M2 flat-head thread-forming screws into the column tops (material inferred, see REFERENCE.md)")
+      thin_wall_deviation="matches original RVRN 2.0: Chamfer1 (0.75 x 45 deg, dump Top Panel) on the 0.9 sheet leaves a 0.15 land at each d2.2 hole (STEP Top_Panel_1 section through a hole: material only z 20.25 to 20.4 at r 1.1, full 19.5 to 20.4 from r 1.9)",
+      label="0.9 mm Ti top panel: laser outline with 4 countersunk 2.2 corner holes, 4 M2 button-head thread-forming screws into the pilot webs under the column rims (material inferred, see REFERENCE.md)")
     # ---------------------------------------------------------------- weapon module
     P(id="mount_r", kind="structure", print_orientation="+x", rotates_with="fixed", solid_fraction=SOLID["mount"], color="#2a2c30", shape=M("mount_r", MNT_FRAME["r"]), **place("mount_r"), **PLA, **_MNT_THIN,
       label="RV03 XALT HD right weapon mount (8 mm): GR1507 stator on 4 M2 through the back spacer, notch on the chassis tab, 2 M3 CSK into the standoffs")
@@ -87,13 +88,13 @@ def make_spec(model_file):
         P(id=f"wedgelet_{n}", kind="armor", deviation=f"RVRN 2.0 STEP: the wedgelet is solid where the fork tine runs (x {FK_X[s][0]:g}..{FK_X[s][1]:g}); tine and TPU interpenetrate 26 mm3 in the original (allow_overlap), kept for parity; WG_SLIT_W > 0 cuts the printable slit", material="tpu", process="fdm", thin_wall_deviation="matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)", solid_fraction=SOLID["tpu"], print_orientation="-z", parent=f"so_a{n}", rotates_with="fixed", color="#3c4048",
           shape=M(f"wedgelet_{n}"), cover_fasteners_deviation="RVRN 2.0 STEP: the wedgelet is clamped between the side panel nose and the 15 mm standoff end by bolt_s?b (listed in its `through`), and located on both standoffs; bolt_s?a seats the side panel directly on the 25 mm standoff end (the STEP wedgelet stops at |X| 38.5 and never enters that stack). Kept as designed; no extra screw (coordinator decision).",
           label=f"{WEDGE_REF[s]} TPU wedgelet: 50 deg ramp over the nose, cheeks round both standoffs and the fork tail")
-        P(id=f"side_{n}", kind="armor", deviation="matches original RVRN 2.0: RV23/RV24 front leads the spider swept rim by the same amount at +-30 deg (STEP projection 64.45 mm vs ours 64.24 mm at -30 deg, within 0.5 mm)", material="tpu", process="fdm", thin_wall_deviation="matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)", solid_fraction=0.9, print_orientation="+z", parent=f"so_a{n}", rotates_with="fixed", color="#3c4048", shape=M(f"side_panel_{n}_local"),
+        P(id=f"side_{n}", kind="armor", deviation="matches original RVRN 2.0: RV23/RV24 front leads the spider swept rim by the same amount at +-30 deg (STEP projection 64.45 mm vs ours 64.24 mm at -30 deg, within 0.5 mm)", material="tpu", process="fdm", thin_wall_deviation="matches original RVRN 2.0: the sub-1.2 mm sections (ramp knife toe, SB countersink 0.2 mm off the floor, thin ribs) are measured from the STEP RV17/18/23/24 and kept for parity (user order)", solid_fraction=SIDE_SOLID_FRACTION, print_orientation="+z", parent=f"so_a{n}", rotates_with="fixed", color="#3c4048", shape=M(f"side_panel_{n}_local"),
           features=sp_spec(s, f"so_a{n}")[0], mate=sp_spec(s, f"so_a{n}")[1],
           label=f"{SIDE_REF[s]} TPU side panel: battered S-wall round the wheels, 3 M3x8 CSK (two standoff ends, one chassis nut)")
         P(id=f"nut_c{n}", kind="nut", catalog="nut_m3_thin", **place(f"nut_c{n}"), rotates_with="fixed")
         # drive
-        P(id=f"motor_{n}", kind="motor", catalog="n10_2200rpm_spicy", at=place_at(f"motor_{n}"), rot=place_rot(f"motor_{n}"), rotates_with="fixed",
-          **({} if variant("open_keyhole") else {"loose_ok": {"axis": "+x" if s < 0 else "-x", "max_mm": 2.2, "reason": f"RVRN STEP: RV12 N10 slides 2.0 mm inboard in RV01 before touching the tub; outboard it bears on the RV01 wall at x {s * 27.5:g}"}}),
+        P(id=f"motor_{n}", kind="motor", catalog=DRIVE_MOTOR, at=place_at(f"motor_{n}"), rot=place_rot(f"motor_{n}"), rotates_with="fixed",
+          loose_ok={"axis": "+x" if s < 0 else "-x", "max_mm": MOTOR_SLIDE_MAX, "reason": f"RVRN STEP: RV12 N10 slides 2.0 mm inboard in RV01 before touching the tub; outboard it bears on the RV01 wall at x {s * CH_IN_X:g}" + (" (the open_keyhole slot only opens the floor side, the inboard travel is the same)" if variant("open_keyhole") else "")},
           assembly_ok={"reason": "original RVRN 2.0: the RV01 wall solid at z 3..5.5 under the RV12 boss means the N10 goes into the keyhole tilted, shaft first, not by a straight slide"})
         P(id=f"whub_r{n}", kind="pulley", solid_fraction=SOLID["hub"], rotates_with=f"wheel_r{n}", print_orientation="+x", shape=M(f"rear_hub_{n}"), parent="tub", **place(f"whub_r{n}", "tub"),
           thin_wall_deviation="matches original RVRN 2.0: RV21 draws the 0.5 mm O-ring flange, the 0.5 mm raised lip at the free end and the 0.2 mm end recess; kept for parity (user order)",
@@ -107,7 +108,7 @@ def make_spec(model_file):
           label="RV19 micro hub 9 x 9 greased on the 25 mm standoff, O-ring groove inboard")
         P(id=f"wheel_f{n}", kind="wheel", material="rubber", process="cots", tyre_of=f"whub_f{n}", rotates_with=f"wheel_f{n}", parent=f"whub_f{n}", shape=M(f"front_tyre_{n}"), **place(f"wheel_f{n}", f"whub_f{n}"),
           color="#1b1b1b", stock="RV20 Scalextric micro SLX tyre 11 x 7 x 6", label="Scalextric micro tyre 11 x 7 x 6")
-    P(id="battery", kind="battery", catalog="lipo_2s_180_turnabot", **place("battery"), retained="press_fit",
+    P(id="battery", kind="battery", catalog=BATTERY, **place("battery"), retained="press_fit",
       no_contact_ok=None if variant("battery_pad") else {"with": "tub", "reason": "original RVRN 2.0: RV16 pack at STEP z 12.0 (underside 6.5) floats 2.0 mm over the RV26 base-panel skin (z 4.5); the assembly mates the pack to the chassis only, no pad"})
     if variant("rxesc_strap"):
         P(id="rxesc", kind="esc", catalog="malenki_nano_rvrn2", **place("rxesc"), retained="strap",
@@ -119,8 +120,6 @@ def make_spec(model_file):
       off_dir=[0, -1, 0], label="BBB ant switch hung under the deck beside the top panel: lever flush in the deck slot, 2 M2 into the deck")
     for i, (x, y) in enumerate(INS):
         P(id=f"insert_b{i}", kind="insert", catalog="heatset_m2_4", at=place_at(f"insert_b{i}"))
-    for i, (x, y) in enumerate(TOP_XY):
-        P(id=f"insert_t{i}", kind="insert", catalog="heatset_m2_4", at=place_at(f"insert_t{i}"))
     if variant("esc_tray"):   # [variant esc_tray] the original has no tray
         P(id="esc_tray", kind="other", material="tpu", process="fdm", print_orientation="+z", rotates_with="fixed", shape=M("esc_tray"),
           label="TPU weapon-ESC tray (not in the STEP): glued to the base panel, lips hold the ESC when inverted",
@@ -155,9 +154,9 @@ def make_spec(model_file):
           through=["disc_b", "dspacer", "disc_a"], threads_into="spider", hole=_stack_hole("M2x16", DR_X["disc_b"][1], dy, dz, -1, DISC_T * 2 + SPACER_T).hole,
           access_before=["tub", "mount_r", "motor_spacer"],
           reason="stack screwed into the spider from the back (heads on disc_b, 2 mm of thread in the 3 mm alu spider tapped M2): no nuts, since the STEP has none (inferred: it has the 2.2 holes but no screws)")
-    for i, (x, y) in enumerate(TOP_BOLT_XY if variant("top_screws") else ()):   # [variant top_screws] the original has no top-panel screws
-        F(id=f"bolt_t{i}", designation="M2x5", head="button", tool="hex1.3", **seat(f"bolt_t{i}"), through=["top_panel", "tub"], threads_into=f"insert_t{i}",
-          reason="M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
+    for i, (x, y) in enumerate(TOP_BOLT_XY if TOP_SCREW_WEB else ()):   # the STEP top panel has the 4 countersunk d2.8 holes over the corner columns but no screws: M2 added
+        F(id=f"bolt_t{i}", designation="M2x6", head="button", tool="hex1.3", **seat(f"bolt_t{i}"), through=["top_panel", "tub"], threads_into="tub",
+          reason="M2 button head on the panel top, thread-forming into the 1.7 pilot in the TOP_NECK web under the rim of the corner column (the STEP top panel has the 4 holes over those columns, no screws)",
           hole=panel_top.seat(i)[1].hole)
     for i, yy in enumerate(SW_SCREW_Y):
         F(id=f"bolt_sw{i}", designation="M2x3", head="button", tool="hex1.3", **seat(f"bolt_sw{i}"), through=["power_switch", "tub"], threads_into="tub", access_before=["base_panel"], hole=_switch_hole(yy)[1].hole,
@@ -199,12 +198,7 @@ def make_spec(model_file):
     C("wbearing", "mount_l", "press_fit", "MR85 pressed into the 7.9 seat", interference_mm=PRESS["bearing"], mechanical_key=True)
     C("mount_l", "mount_r", "interlock", "Both mounts tied by the standoffs and the chassis tabs")
     C("base_panel", "tub", "screw", "Base panel under the open floor, 5 M2 CSK into heat-sets")
-    if not LEAD_GROOVE:
-        C("weapon_motor_stator", "mount_r", "tape", LEAD_TAPE_WHY)
-    if variant("top_screws"):
-        C("top_panel", "tub", "screw", "Ti top panel held by 4 M2 flat-head screws through its countersunk corner holes into M2 heat-sets in the column tops (the STEP has the holes, not the screws)")
-    else:
-        C("top_panel", "tub", "glue", "Ti top panel bonded on the deck, as in the original RVRN 2.0 (STEP: countersunk corner holes, no screws)")
+    C("top_panel", "tub", "screw", "Ti top panel held by 4 M2 thread-forming screws through its corner holes into the 1.7 pilots of the column rim webs (the STEP has the holes over the columns, not the screws)")
     C("battery", "tub", "press_fit", "RV16 pack at STEP z 12.0, underside 6.5, 2.0 mm over the RV26 base-panel skin (z 4.5): the original assembly mates the pack to the chassis only, no pad. Pack between the motor wall, the insert columns and the deck", interference_mm=PRESS["pack"], mechanical_key=True)
     if variant("battery_pad"):
         C("battery", "bat_pad", "tape", "Pack underside taped to the foam pad (double-sided), which holds it against sliding")
@@ -369,7 +363,7 @@ def reference_cad():
           deviations=[dict(near=[sx * KEYHOLE_DEV[0], KEYHOLE_DEV[1], KEYHOLE_DEV[2]], r=KEYHOLE_DEV_R, reason="N10 keyhole opened into a U-slot to the floor so the gearbox boss and shaft drop in from below with the base panel off (the STEP closes the keyhole, the shaft cannot be threaded through it)")
              for sx in ((1, -1) if variant("open_keyhole") else ())]   # [variant open_keyhole] default = the STEP's closed keyhole
           + [dict(near=[SWX, yy, CH["deck"]], r=SWX_DEV_R, reason="switch pilot holes follow the switch, which sits 0.45 mm in from the STEP X 25.0 so its body clears the 27.5 inner wall face (the STEP switch penetrates the wall 0.4 mm)")
-             for yy in (SW_SCREW_Y if variant("switch_on_bolt_axis") else ())]   # [variant switch_on_bolt_axis]
+             for yy in SW_SCREW_Y]
           + [dict(near=[sx * LOBE_DEV[0], LOBE_DEV[1], LOBE_DEV[2]], r=LOBE_DEV_R, reason="lobe tail below Y -11.7 trimmed to the side-panel inner face: the STEP lobe and side panel overlap by 31 mm3, the tub does not duplicate it")
              for sx in (1, -1)]),
         R("base_panel", "RV26_Base_Panel_1.stl", tol_mm=TOL["tight"], note="RV26 1 mm panel",
