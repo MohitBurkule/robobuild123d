@@ -447,7 +447,7 @@ def facts(ctx) -> dict:
     if bat is not None and total_peak is not None:
         ports = list((bat.cat.ports if bat.cat else {}) or {}) + list(bat.part.ports or {})
         if ports:
-            name = ports[0]
+            name = (bat.part._extra or {}).get("connector") or ports[0]  # spec `connector` overrides the catalog port
             F["connector"] = (name, ratings(bat).get("connector_a", CONNECTOR_A.get(name.lower())), total_peak)
     sw = next((rp for rp in r.parts if rp.part.kind == "switch"), None)
     if sw is not None:

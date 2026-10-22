@@ -152,7 +152,16 @@ def run_job(job: dict) -> dict:
             raw, res["rebuilt"] = hybrid_spec(base_raw, new_raw, set(job.get("reads") or []), model_rel, dst / model_rel, spec_dir, geom.FINE)
         else:
             raw, spec_dir = base_raw, spec_path.parent
-        rep = verify(Spec(raw, spec_dir), Options(only=list(FAST_GROUPS)))
+        if job.get("overlay"):  # a change hypothesis: declarative spec ops on top of the (regenerated) spec
+            from ... import overlay
+
+            try:
+                raw = overlay.apply(raw, job["overlay"], overlay.load_hooks(base_raw, spec_path.parent))
+            except Exception as e:  # noqa: BLE001 - an op the spec cannot take is a result
+                res.update(error=f"overlay failed: {e}", stage="build", seconds=round(time.time() - t0, 1))
+                return res
+            res["overlaid"] = True
+        rep = verify(Spec(raw, spec_dir), Options(only=list(job.get("groups") or FAST_GROUPS)))
         res["blockers"] = blockers(rep)
         res["seconds"] = round(time.time() - t0, 1)
     return res
