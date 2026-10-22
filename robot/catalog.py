@@ -108,6 +108,16 @@ def _gr1507_bell(variant="datasheet"):
     return union([at(wall, 0.5 * (BELL_X0 + top[0]), 0, 0), minus(union([cap] + bosses), holes + vents + [at(cyl_x(SHAFT_STUB_R, tl + 0.4), top[0] + 0.5 * tl, 0, 0)])])
 
 
+def _gr1507_geom(variant="datasheet"):
+    """Mounting geometry of the GR1507 (catalog frame, +X = bell top): what a robot fits to the motor, read from the
+    same constants the shapes are drawn with. body_x = (stator base back face, bell cap top); mount_holes / top_holes
+    = [pitch circle d, count, screw d, phase deg] (base cross holes, bell-top spider screws); the shaft runs through."""
+    wall_r, top = bell_dims(variant)
+    return {"body_x": [STATOR_BACK_X, top[1]], "bell_r": wall_r[1], "base_h": STATOR_BASE_X - STATOR_BACK_X, "base_hub_r": 3.9,
+            "mount_holes": [[12.0, 4, 2.0, 0.0]], "top_holes": [[2 * BELL_SCREW_R, 4, 2.0, BELL_SCREW_PHASE]],
+            "shaft_thread_mm": 10.0 if variant == "step" else 8.0, "shaft_through": True}
+
+
 def _gr1507_stator():
     """Fixed stator: 12-slot stack (yoke ring, 12 teeth with tip shoes, windings on the teeth) standing on the base cross and
     running up into the bell with 0.5 mm of air to the magnets."""
@@ -319,17 +329,17 @@ def builtin() -> list[CatalogEntry]:
         CatalogEntry("gr1507", "weapon_motor", "GR1507 outrunner, fixed half: 4-arm cross base with 4 M2 on 12 mm, 12-slot wound stator stack, 3 phase leads (bell is `gr1507_can`)", 8.5, "datasheet",
                      minus(union([at(_gr1507_base(), -9.4, 0, 0), _gr1507_stator(), _gr1507_leads()]), [at(cyl_x(SHAFT_STUB_R + 0.1, 30.0), 0.0, 0, 0)]),
                      {"phases": [LEAD_X, 0, LEAD_Z[1]]}, {"at": [4.1, 0, 0], "dir": [1, 0, 0], "len": 14.6, "dia": 5.0},
-                     {"kv": 2850, "max_current_a": 18.0, "typ_current_a": 8.0, "bell_mass_frac": 0.0, "rotor_part": "gr1507_can"}, "#3a3d42"),
+                     {"kv": 2850, "max_current_a": 18.0, "typ_current_a": 8.0, "bell_mass_frac": 0.0, "rotor_part": "gr1507_can", **_gr1507_geom("datasheet")}, "#3a3d42"),
         CatalogEntry("gr1507_can", "other", "GR1507 outrunner, rotating half: 19.6 bell (r7.4-9.8 wall, solid r4 core, 8-rib vented top), threaded 5 mm shaft out of the bell face", 7.0, "datasheet",
                      at(_gr1507_bell(), 0.0, 0, 0),
                      {}, {"at": [4.1, 0, 0], "dir": [1, 0, 0], "len": 14.6, "dia": 5.0}, {}, "#3a3d42"),
         CatalogEntry("gr1507_step", "weapon_motor", "GR1507 outrunner, STEP-simplified fixed half (base cross and pin only, as the STEP): 4-arm cross base with 4 M2 on 12 mm, 12-slot wound stator stack, 3 phase leads (bell is `gr1507_can`)", 8.5, "datasheet",
                      minus(union([at(_gr1507_base(), -9.4, 0, 0), at(cyl_x(0.75, 1.4), -11.1, 0, 0)]), [at(cyl_x(SHAFT_STUB_R + 0.1, 30.0), 0.0, 0, 0)]),
                      {"phases": [-11.8, 0, -9.0]}, {"at": [4.1, 0, 0], "dir": [1, 0, 0], "len": 14.6, "dia": 5.0},
-                     {"kv": 2850, "max_current_a": 18.0, "typ_current_a": 8.0, "bell_mass_frac": 0.0, "rotor_part": "gr1507_step_can"}, "#3a3d42"),
+                     {"kv": 2850, "max_current_a": 18.0, "typ_current_a": 8.0, "bell_mass_frac": 0.0, "rotor_part": "gr1507_step_can", **_gr1507_geom("step")}, "#3a3d42"),
         CatalogEntry("gr1507_step_can", "other", "GR1507 outrunner, STEP-simplified rotating half: 19.6 bell (r7.4-9.8 wall, solid r4 core, 8-rib vented top), threaded 5 mm shaft out of the bell face", 7.0, "datasheet",
                      at(_gr1507_bell("step"), 0.0, 0, 0),
-                     {}, {"at": [4.1, 0, 0], "dir": [1, 0, 0], "len": 14.6, "dia": 5.0}, {}, "#3a3d42"),
+                     {}, {"at": [4.1, 0, 0], "dir": [1, 0, 0], "len": 14.6, "dia": 5.0}, {"solid_core_r": BELL_CORE_R}, "#3a3d42"),
         flat("malenki_nano_rvrn2", "Malenki Nano (Rx + 2 brushed ESC), kapton wrapped with its leads (RVRN 2.0 RV13 envelope)", "esc", 32, 20, 4.4, 4.0,
              {"bat": [-16, -6, -1.0], "m1": [16, 6, -1.0], "m2": [-16, 6, -1.0], "wpn": [16, -6, -1.0]},
              {"cont_current_a": 3.0, "burst_current_a": 6.0, "channels": 2.0}, "#e76f51"),
@@ -420,10 +430,41 @@ def research_entries(path: Path | None = None) -> list[CatalogEntry]:
     return out
 
 
+SPLIT_FIXED, SPLIT_BELL = "__fixed", "__bell"   # derived halves of a one-piece outrunner (split_outrunner)
+SPLIT_GAP = 0.2                                # axial air between the derived fixed half and the bell
+
+
+def split_outrunner(e):
+    """(fixed, bell) entries of a one-piece outrunner that declares its mounting geometry (props body_x, bell_len):
+    the fixed half is everything behind the bell (base flange, stator neck, leads), the bell is the rotating can from
+    its skirt to the cap; both are bored for the motor's own shaft (shaft_through), which the robot draws as its own
+    part. The fixed half names the bell as its `rotor_part`, like a split catalog motor (gr1507 / gr1507_can); the
+    halves are not swap candidates themselves (props `half_of`). None when the entry cannot be split."""
+    pr = e.props or {}
+    if e.kind != "weapon_motor" or pr.get("rotor_part") or pr.get("half_of") or not pr.get("body_x") or not pr.get("bell_len"):
+        return None
+    x0, x1 = pr["body_x"]
+    xs = x1 - pr["bell_len"]                                       # bell skirt
+    big = 4.0 * max(pr.get("bell_r", 10.0), pr.get("base_r", 10.0), 10.0)
+    sr = float((e.shaft or {}).get("dia", 3.0)) / 2 + 0.05
+    bore = [cyl_x(sr, 4 * big)]
+
+    def half(lo, hi):
+        return minus({"type": "intersect", "items": [e.shape, at(box(hi - lo, big, big), 0.5 * (lo + hi), 0, 0)]}, bore)
+    frac = float(pr.get("bell_mass_frac", 0.5))
+    fixed = CatalogEntry(e.id + SPLIT_FIXED, "weapon_motor", e.name + " (fixed half: base, stator, leads)", round(e.mass_g * (1 - frac), 3), e.confidence,
+                         half(x0 - big, xs - SPLIT_GAP), dict(e.ports), dict(e.shaft) if e.shaft else None,
+                         {**pr, "bell_mass_frac": 0.0, "rotor_part": e.id + SPLIT_BELL, "half_of": e.id}, e.color, e.source)
+    bell = CatalogEntry(e.id + SPLIT_BELL, "other", e.name + " (bell: rotating can)", round(e.mass_g * frac, 3), e.confidence,
+                        half(xs, x1 + 0.01), {}, dict(e.shaft) if e.shaft else None, {"half_of": e.id}, e.color, e.source)
+    return fixed, bell
+
+
 @lru_cache(maxsize=1)
 def catalog() -> tuple:
     from robot import cots_alts   # vendor-sourced alternatives (lazy: cots_alts imports this module's helpers)
-    return tuple(builtin() + cots_alts.entries() + research_entries())
+    out = builtin() + cots_alts.entries() + research_entries()
+    return tuple(out + [h for e in out for h in (split_outrunner(e) or ())])
 
 
 def find(cid: str):
@@ -626,7 +667,7 @@ ROD_STOCK_MM = {
 BEARINGS = {
     "684": (4.0, 9.0, 4.0), "mr84": (4.0, 8.0, 3.0), "mr104": (4.0, 10.0, 4.0), "694": (4.0, 11.0, 4.0),
     "604": (4.0, 12.0, 4.0), "683": (3.0, 7.0, 3.0), "mr63": (3.0, 6.0, 2.5), "623": (3.0, 10.0, 4.0),
-    "mf85": (5.0, 8.0, 2.5), "mr85": (5.0, 8.0, 2.5), "685": (5.0, 11.0, 5.0), "mr105": (5.0, 10.0, 4.0), "625": (5.0, 16.0, 5.0), "686": (6.0, 13.0, 5.0),
+    "mr52": (2.0, 5.0, 2.5), "681x": (1.5, 4.0, 2.0), "mf85": (5.0, 8.0, 2.5), "mr85": (5.0, 8.0, 2.5), "685": (5.0, 11.0, 5.0), "mr105": (5.0, 10.0, 4.0), "625": (5.0, 16.0, 5.0), "686": (6.0, 13.0, 5.0),
     "688": (8.0, 16.0, 5.0), "608": (8.0, 22.0, 7.0),
 }
 # Flange OD of flanged bearings (the drawn envelope includes the flange).

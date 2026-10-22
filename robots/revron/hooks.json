@@ -6,6 +6,11 @@
     "tub_interior_rear": {"at": [0.0, -28.0, 11.0], "rot": [0.0, 0.0, 0.0], "_why": "inside the tub between the N10s on the rear axle line"}
   },
   "hooks": {
+    "weapon.type": {"env": "REVRON_WEAPON_TYPE", "values": ["drisk", "vspin_drum", "vspin_eggbeater", "hspin_bar"], "default": "drisk",
+                    "_why": "weapon style (params_weapon.WEAPON_TYPES): drisk is built; any other value fails spec generation with the reason"},
+    "weapon.motor": {"env": "REVRON_WEAPON_MOTOR", "swap": "weapon_motor", "default": "gr1507",
+                     "values": ["gr1507", "gr1507_step", "bbb_be1806_2300kv", "brotherhobby_tc1404_3800kv", "brotherhobby_tc1404_4600kv", "repeat_2004_1400kv", "repeat_2004_2800kv", "emax_eco2207_1900kv", "bl_1806_2300kv", "bl_2306_1400kv", "be1806_bbb", "c_bbb_be1806_2300kv", "c_repeat_2004_antweight_spinner_motor"],
+                     "_why": "one catalog weapon motor id: stator, bell, shaft, RV03 stator screws, back spacer, spider screws and the outboard bearing follow from that entry (weapon_motor.describe); a weapon_motor swap is this setting"},
     "weapon.motor_variant": {"env": "REVRON_MOTOR_VARIANT", "values": ["datasheet", "step"], "default": "datasheet"},
     "weapon.mount_variant": {"env": "REVRON_MOUNT_VARIANT", "values": ["original", "printable"], "default": "original"},
     "drive.driven_wheels": {
@@ -18,7 +23,7 @@
   },
   "owners": {
     "A (tub)": ["tub*.py", "panel_*.py", "params_chassis.py"],
-    "B (weapon)": ["weapon.py", "mount.py", "params_weapon.py", "drisk.py"],
+    "B (weapon)": ["weapon.py", "weapon_motor.py", "mount.py", "params_weapon.py", "drisk.py"],
     "C (side/fork/wedgelet/hubs)": ["side*.py", "fork.py", "wedgelet.py", "hubs.py", "params_side.py", "params_drive.py"]
   }
 }

@@ -142,18 +142,23 @@ def make_spec(model_file):
         F(id=f"bolt_s{n}a", designation=SIDE_BOLT_DES["a"], head="countersunk", material="aluminium", reason="M3x10 CSK (STEP: M3x8): 8 mm bites only 4.2 mm of the standoff thread; 10 mm gives 6.2 (>= 1.5 d in aluminium)", **seat(f"bolt_s{n}a"), through=[f"side_{n}"], threads_into=f"so_a{n}", hole=_side_seat("a", SA, s)[1].hole)
         F(id=f"bolt_s{n}b", designation=SIDE_BOLT_DES["b"], head="countersunk", material="aluminium", reason="M3x10 CSK (STEP: M3x8): the head sits 5.3 mm out from the 15 mm standoff end, so 8 mm bites 2.7 mm; 10 mm bites 4.7", **seat(f"bolt_s{n}b"), through=[f"side_{n}", f"wedgelet_{n}"], threads_into=f"so_b{n}", hole=_side_seat("b", SB, s)[1].hole)
         F(id=f"bolt_s{n}c", designation=SIDE_BOLT_DES["c"], head="countersunk", material="aluminium", reason="alu M3 CSK (Build Guide: aluminium bolts for weight; the STEP draws stainless)", **seat(f"bolt_s{n}c"), through=[f"side_{n}", "tub"], threads_into=f"nut_c{n}", hole=_side_seat("c", NUT, s)[1].hole)
-    for k, (dy, dz) in enumerate((STATOR_PCD / 2 * u, STATOR_PCD / 2 * v) for u, v in STATOR_DIRS):
-        F(id=f"bolt_wm{k}", designation="M2x8", head="button", tool="hex1.3", material="titanium", **seat(f"bolt_wm{k}"), hole=_stator_hole(1, dy, dz)[1].hole, through=["mount_r", "motor_spacer"],
+    for k, i in enumerate(WM_ORDER):   # the motor's stator screw pattern (catalog mount_holes)
+        dy, dz, _ = STATOR_HOLES[i]
+        F(id=f"bolt_wm{k}", designation=WM_DES, head="button", tool="hex1.3", material="titanium", **seat(f"bolt_wm{k}"), hole=_stator_hole(1, dy, dz)[1].hole, through=["mount_r", "motor_spacer"],
           threads_into="weapon_motor_stator", reason="button heads (one hex1.3 key for every M2) sunk in the RV03 boss counterbores (inferred: the STEP shows the 4.4 counterbores, not the screws)")
-    for k, (hub_c, bolt_c) in enumerate(zip(_polar(HUB_R), _polar(BOLT_R))):
-        dy, dz = _disc_local(*hub_c)
-        F(id=f"bolt_p{k}", designation="M2x6", head="button", tool="hex1.3", material="titanium", **seat(f"bolt_p{k}"), through=["spider"], threads_into="weapon_motor_can", hole=_stack_hole("M2x6", DR_X["spider"][0], dy, dz, 1, SPIDER_T).hole,
-          access_before=["mount_l", "wbearing"], reason="spider to bell, fitted before the left mount goes on (inferred)")
-        dy, dz = _disc_local(*bolt_c)
-        F(id=f"bolt_d{k}", designation="M2x16", head="button", tool="hex1.3", material="titanium", **seat(f"bolt_d{k}"),
-          through=["disc_b", "dspacer", "disc_a"], threads_into="spider", hole=_stack_hole("M2x16", DR_X["disc_b"][1], dy, dz, -1, DISC_T * 2 + SPACER_T).hole,
-          access_before=["tub", "mount_r", "motor_spacer"],
-          reason="stack screwed into the spider from the back (heads on disc_b, 2 mm of thread in the 3 mm alu spider tapped M2): no nuts, since the STEP has none (inferred: it has the 2.2 holes but no screws)")
+    hub_des = f"M{HUB_D:g}x6"   # spider (3 mm) + 3 mm of thread in the bell
+    hubs, bolts = _polar(HUB_R, N_HUB), _polar(BOLT_R)
+    for k in range(max(N_HUB, N_STACK)):   # bell screws: the motor's bell-top pattern (catalog top_holes); stack bolts
+        if k < N_HUB:
+            dy, dz = _disc_local(*hubs[k])
+            F(id=f"bolt_p{k}", designation=hub_des, head="button", tool="hex1.3", material="titanium", **seat(f"bolt_p{k}"), through=["spider"], threads_into="weapon_motor_can", hole=_stack_hole(hub_des, DR_X["spider"][0], dy, dz, 1, SPIDER_T).hole,
+              access_before=["mount_l", "wbearing"], reason="spider to bell, fitted before the left mount goes on (inferred)")
+        if k < N_STACK:
+            dy, dz = _disc_local(*bolts[k])
+            F(id=f"bolt_d{k}", designation="M2x16", head="button", tool="hex1.3", material="titanium", **seat(f"bolt_d{k}"),
+              through=["disc_b", "dspacer", "disc_a"], threads_into="spider", hole=_stack_hole("M2x16", DR_X["disc_b"][1], dy, dz, -1, DISC_T * 2 + SPACER_T).hole,
+              access_before=["tub", "mount_r", "motor_spacer"],
+              reason="stack screwed into the spider from the back (heads on disc_b, 2 mm of thread in the 3 mm alu spider tapped M2): no nuts, since the STEP has none (inferred: it has the 2.2 holes but no screws)")
     for i, (x, y) in enumerate(TOP_BOLT_XY if TOP_SCREW_WEB else ()):   # the STEP top panel has the 4 countersunk d2.8 holes over the corner columns but no screws: M2 added
         F(id=f"bolt_t{i}", designation="M2x6", head="button", tool="hex1.3", **seat(f"bolt_t{i}"), through=["top_panel", "tub"], threads_into="tub",
           reason="M2 button head on the panel top, thread-forming into the 1.7 pilot in the TOP_NECK web under the rim of the corner column (the STEP top panel has the 4 holes over those columns, no screws)",
