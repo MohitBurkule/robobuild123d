@@ -94,6 +94,7 @@ TOP_NOTCH_X = (13.0, 21.0)           # |X| span of the front notches clearing th
 TOP_TAB_Y = 11.9                     # tab front edge
 ESC_TRAY = dict(gap=0.1, wall=1.25, lip=1.0, fuse=0.01, rail_end=1.0, rail_x=(1.4, 2.6))   # TPU ESC tray: walls >= 1.2, rails inset from the board -x / +x edges
 CHAIKIN_Q = 0.25                     # Chaikin corner-cutting ratio (side-panel spline smoothing)
+TOP_SCREW_WEB = True                 # ONE switch for the top-screw feature set: web + tap pilot under the corner columns' rim and bolt_t0..3 (off: the STEP's through-bore and no screws)
 TOP_XY = tuple(INS[i] for i in (1, 0, 3, 2))   # the four corner insert columns (+X first), screw order of bolt_t*
 
 

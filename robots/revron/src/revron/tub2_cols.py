@@ -1,6 +1,6 @@
 """[tub2] Insert columns: the rear-centre boss with its R-skin fillet, and the heat-set bores."""
 from build123d import Align, BuildSketch, Circle, Cone, Cylinder, Locations, Plane, Pos
-from .tub2_params import (INS, INS_AXIS, TOP_XY, TOP_NECK, TOP_PILOT_R, COL_R, SKIN, BORE_R, BORE_CH, CH_Z0, CH_Z1, DECK, OVER,
+from .tub2_params import (INS, INS_AXIS, TOP_XY, TOP_SCREW_WEB, TOP_NECK, TOP_PILOT_R, COL_R, SKIN, BORE_R, BORE_CH, CH_Z0, CH_Z1, DECK, OVER,
                           WALL_IN_REAR, SEAT_Z)
 from .tub2_util import box_xy, concave_filler, prism
 
@@ -22,7 +22,7 @@ def bores():
     panel screws into keep a TOP_NECK web under the rim instead (tap-drill pilot through it): the panel's d2.8 holes sit over these columns in the STEP."""
     cutters = []
     for x, y in INS:
-        top_screw = (x, y) in TOP_XY
+        top_screw = TOP_SCREW_WEB and (x, y) in TOP_XY
         z_end = CH_Z1 - TOP_NECK if top_screw else CH_Z1
         cutters.append(Pos(x, y, CH_Z0 - OVER) * Cylinder(BORE_R, z_end - CH_Z0 + OVER, align=(Align.CENTER, Align.CENTER, Align.MIN)))
         cutters.append(Pos(x, y, SEAT_Z) * Cone(BORE_R + BORE_CH, BORE_R, BORE_CH, align=(Align.CENTER, Align.CENTER, Align.MIN)))

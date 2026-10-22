@@ -153,7 +153,7 @@ def make_spec(model_file):
           through=["disc_b", "dspacer", "disc_a"], threads_into="spider", hole=_stack_hole("M2x16", DR_X["disc_b"][1], dy, dz, -1, DISC_T * 2 + SPACER_T).hole,
           access_before=["tub", "mount_r", "motor_spacer"],
           reason="stack screwed into the spider from the back (heads on disc_b, 2 mm of thread in the 3 mm alu spider tapped M2): no nuts, since the STEP has none (inferred: it has the 2.2 holes but no screws)")
-    for i, (x, y) in enumerate(TOP_BOLT_XY):   # the STEP top panel has the 4 countersunk d2.8 holes over the corner columns but no screws: M2 added
+    for i, (x, y) in enumerate(TOP_BOLT_XY if TOP_SCREW_WEB else ()):   # the STEP top panel has the 4 countersunk d2.8 holes over the corner columns but no screws: M2 added
         F(id=f"bolt_t{i}", designation="M2x6", head="button", tool="hex1.3", **seat(f"bolt_t{i}"), through=["top_panel", "tub"], threads_into="tub",
           reason="M2 button head on the panel top, thread-forming into the 1.7 pilot in the TOP_NECK web under the rim of the corner column (the STEP top panel has the 4 holes over those columns, no screws)",
           hole=panel_top.seat(i)[1].hole)

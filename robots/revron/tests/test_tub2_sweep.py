@@ -94,3 +94,8 @@ def test_tub_does_not_depend_on_the_pack(tmp_path):
     """The pack is a tenant of the bay, not a dimension of the tub."""
     over = {"params_hardware": {"BATTERY": repr("synth_pack")}}
     assert check(over, tmp_path, SYNTH_PACK % (37.0, 19.0, 12.0))[0] == check({}, tmp_path)[0]
+
+
+def test_top_screw_web_switch_off(tmp_path):
+    """TOP_SCREW_WEB off: the corner columns keep the STEP's through-bore; the tub is still one valid solid."""
+    check({"params_chassis": {"TOP_SCREW_WEB": "False"}}, tmp_path)
