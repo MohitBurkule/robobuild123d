@@ -113,6 +113,8 @@ CB_CONE_X = (CB_FLOOR_X - 0.75, CB_FLOOR_X)      # the STEP's 0.75 lead-in cone 
 CB_STEP_CONE_X = (16.4, 17.4)        # |X| span of the STEP's 45 deg cone (r1.1 -> r2.25): the stator-hole deviation waiver spans it
 # bolt_wm0..n order: a 4-hole pattern opposite pairs first (GR1507 cross arms 0, 180, 90, 270 deg)
 WM_ORDER = (0, 2, 1, 3) if len(STATOR_HOLES) == 4 else tuple(range(len(STATOR_HOLES)))
+STATOR_PCD = 2 * math.hypot(*STATOR_HOLES[0][:2])   # pitch circle of the first stator screw (GR1507 12)
+STATOR_DIRS = tuple((STATOR_HOLES[i][0] / math.hypot(*STATOR_HOLES[i][:2]), STATOR_HOLES[i][1] / math.hypot(*STATOR_HOLES[i][:2])) for i in WM_ORDER)   # unit directions, bolt_wm order
 
 
 
