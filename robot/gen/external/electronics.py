@@ -30,14 +30,29 @@ def ports_of(cid: str) -> dict:
     return {k: list(v) for k, v in (PORTS.get(cid) or catalog.find(cid).ports).items()}
 
 
-def components(h) -> list[dict]:
-    """The internal components the layout solver must place for hypothesis `h` (id, kind, catalog)."""
-    out = [dict(id="battery", kind="battery", catalog=h.battery, min_front_mm=10.0, min_side_mm=5.0),
-           dict(id="esc", kind="esc", catalog=h.drive_esc)]
+# keep-away margins from the exposed skin, strictest first: (battery front, battery side/rear, rx/esc front, rx/esc
+# side/rear). CF-GD03 battery 10 mm from any exposed face, CF-GD04 receiver/ESC 8 mm from the skin. The build tries
+# them in order and records the tier it needed (a relaxed tier is an accepted risk in the spec).
+MARGIN_TIERS = ((10.0, 10.0, 8.0, 8.0), (10.0, 8.0, 0.0, 0.0), (10.0, 5.0, 0.0, 0.0))
+MARGIN_WHY = ("CF-GD03 battery 10 mm from every exposed face; CF-GD04 receiver/ESC 8 mm from the skin",
+              "relaxed: the outline is too small for 8 mm round the ESC/receiver and 10 mm round the battery's sides; "
+              "battery keeps 10 mm front / 8 mm sides+rear, ESC and receiver sit against the inner wall (CF-GD04 accepted)",
+              "relaxed: battery 10 mm front / 5 mm sides+rear, ESC and receiver against the inner wall (CF-GD03/GD04 "
+              "accepted on the sides: the wheels and wells stand outside them)")
+
+
+def components(h, tier: int = 0) -> list[dict]:
+    """The internal components the layout solver must place for hypothesis `h` (id, kind, catalog), with the
+    keep-away margins of MARGIN_TIERS[tier]. The lifter's scoop cheeks cover its side walls: rx/ESC sides 4 mm."""
+    bf, bs, ef, es = MARGIN_TIERS[tier]
+    if h.weapon == "lifter" and es:
+        es = 4.0
+    out = [dict(id="battery", kind="battery", catalog=h.battery, min_front_mm=bf, min_side_mm=bs),
+           dict(id="esc", kind="esc", catalog=h.drive_esc, min_front_mm=ef, min_side_mm=es)]
     if h.rx != "integrated":
-        out.append(dict(id="rx", kind="receiver", catalog=h.rx))
+        out.append(dict(id="rx", kind="receiver", catalog=h.rx, min_front_mm=ef, min_side_mm=es))
     if h.weapon_esc != "none":
-        out.append(dict(id="wesc", kind="esc", catalog=h.weapon_esc))
+        out.append(dict(id="wesc", kind="esc", catalog=h.weapon_esc, min_front_mm=ef, min_side_mm=es))
     return out
 
 
