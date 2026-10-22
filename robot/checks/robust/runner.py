@@ -43,11 +43,17 @@ def key_of(b) -> tuple:
     return (b[0], b[1])
 
 
-def diff(base: dict, res: dict) -> dict:
-    """{'broken': bool, 'build_error': str|None, 'new': [blockers], 'fixed': [blocker keys]}."""
+SWAP_EXEMPT = ("integrity.volume",)  # vs the previous run's volume: a swap or variant replaces the part on purpose
+
+
+def diff(base: dict, res: dict, kind: str = "param") -> dict:
+    """{'broken': bool, 'build_error': str|None, 'new': [blockers], 'fixed': [blocker keys]}. For a switch (variant,
+    catalog choice, flag) a volume change of a rebuilt part is the intent, not a regression."""
     bk = {key_of(b) for b in base.get("blockers", [])}
     rk = {key_of(b) for b in res.get("blockers", [])}
-    new = [b for b in res.get("blockers", []) if key_of(b) not in bk]
+    rebuilt = set(res.get("rebuilt") or [])
+    new = [b for b in res.get("blockers", []) if key_of(b) not in bk
+           and not (kind != "param" and b[0] in SWAP_EXEMPT and set(b[1].split(",")) <= rebuilt)]
     err = res.get("error") if res.get("stage") != "timeout" else None
     return {"broken": bool(err or new), "build_error": err, "new": new, "fixed": sorted(bk - rk),
             "timeout": res.get("stage") == "timeout"}
@@ -125,7 +131,7 @@ def run(jobs, spec_path, model_rel, budget_s=900.0, workers=3, execute=subproces
             for fut in done:
                 j = running.pop(fut)
                 res = fut.result()
-                d = diff(base, res)
+                d = diff(base, res, j.kind)
                 if d["broken"] and j.phase == 0:
                     broke_first.add(j.target)
                 out["results"][j.id] = (j, res, d)

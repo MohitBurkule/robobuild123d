@@ -162,6 +162,9 @@ def test_diff_ignores_messages_and_counts_build_errors():
     t = RUN.diff(base, {"error": "timed out", "stage": "timeout", "blockers": []})
     assert t["timeout"] and not t["broken"]
     assert RUN.diff(base, {"blockers": []})["fixed"] == [("integrity.solids", "tub")]
+    vol = {"blockers": [["integrity.volume", "stator", "-83%"]], "rebuilt": ["stator"]}
+    assert RUN.diff({"blockers": []}, vol)["broken"]  # a +-10 % param edit that collapses a part
+    assert not RUN.diff({"blockers": []}, vol, "choice")["broken"]  # a COTS swap replaces the part on purpose
 
 
 def _jobs():
