@@ -1,7 +1,8 @@
 """Revron params: drisk stack, GR1507 motor, weapon mounts RV02/RV03, disc / spider / spacer. Re-exported by params.py."""
 from .params_chassis import *  # noqa: F401,F403
 # GR1507 catalog features the weapon mates to (robot/catalog.py, motor-local: +X = bell top, -X = stator base)
-from robot.catalog import bell_dims, STATOR_BACK_X, BELL_SCREW_R, BELL_SCREW_PHASE, BEARINGS, _gr1507_base   # noqa: E402
+from robot.catalog import bell_dims, STATOR_BACK_X, BELL_SCREW_R, BELL_SCREW_PHASE, BEARINGS, SHAFT_STUB_R, _gr1507_base   # noqa: E402
+from robot.cad import fastener_catalog as _fc   # noqa: E402
 # One switch swaps the weapon motor model: "datasheet" = real GR1507 (GEPRC drawing: 12-slot wound stator, 4-spoke chamfered cap, side wire exit, M5 thread 8 mm),
 # "step" = the simplified RVRN 2.0 STEP motor (solid r4 core, flat cap, no stator, thread 10 mm). Same part ids, mount points and screws in both.
 MOTOR_VARIANT = os.environ.get("REVRON_MOTOR_VARIANT", "datasheet")
@@ -15,7 +16,8 @@ MOTOR_PLACE_TOL = 0.8               # reference_cad placement tolerance of the m
 BELL_CAP_X = -BELL_TOP_X[1]          # world X of the bell's cap face (the flip mirrors catalog X)
 
 # master parameters of the stack: plate thicknesses; the spider's inner face sits on the bell cap and every X span below is chained from it
-SPIDER_T, DISC_T, SPACER_T = 3.0, 3.0, 6.0
+SPIDER_T, DISC_T = 3.0, 3.0
+SPACER_T = 2 * DISC_T               # the printed spacer is two disc gauges thick (STEP 6.0)
 STACK_X0 = round(BELL_CAP_X - SPIDER_T, 6)   # spider outer face: one spider thickness out from the cap
 DR_X, _x = {}, STACK_X0
 for _n, _t in (("spider", SPIDER_T), ("disc_a", DISC_T), ("spacer", SPACER_T), ("disc_b", DISC_T)):
@@ -24,9 +26,13 @@ for _n, _t in (("spider", SPIDER_T), ("disc_a", DISC_T), ("spacer", SPACER_T), (
 DR_ROT = BELL_SCREW_PHASE            # drisk phase about the axis: the spider is clocked to the bell's screw pattern (STEP Drisk_V4 placement)
 SERVICE_TURN_MARGIN_DEG = 5.0   # the drisk service turn (drisk.service_turn_deg) keeps the mount screw heads clear over +- this (hand turn)
 DISC_R, DISC_ECC, DISC_ECC_A = 16.5, 0.5, -40.0   # eccentric rim: R16.5 centred 0.5 mm towards -40 deg (balances the tooth)
-TOOTH_R, TOOTH_A = 23.0, 134.8        # tooth tip: radius and angle in the drisk frame
+TOOTH_REACH, TOOTH_A = 6.5, 134.8    # masters: tooth tip reach past the rim and its angle in the drisk frame
+TOOTH_R = DISC_R + TOOTH_REACH        # tooth tip radius (STEP 23.0)
 BOLT_R, HUB_R = 14.0, BELL_SCREW_R   # stack-bolt circle; spider-to-bell screws on the bell's own screw circle (radii about the weapon axis)
 N_STACK = 4                          # bolts / lobes / windows per stack, 90 deg apart
+STACK_BOLT_D = 2.0                   # stack screw size (M2): its tap / clearance holes come from the fastener catalog
+STACK_TAP_R, STACK_CLR_R = _fc.tap_drill(STACK_BOLT_D) / 2, _fc.clearance(STACK_BOLT_D, "close") / 2
+STACK_WALL = 1.5                     # master: material ring every stack plate keeps round a hole, bore or rim (lobes, hub ring, spacer rings)
 HALF_PITCH = 180.0 / N_STACK         # windows sit midway between the bolts
 # motor GR1507: axis X, stator base X 8.4..10.4 on the right mount via the back spacer X 11.9..13.4
 MNT_OUT, MNT_SLAB = MNT_IN + MNT_T, MNT_IN + MNT_SLAB_T
@@ -35,7 +41,7 @@ MNT_FRAME = dict(r=(MNT_IN, WY, WZ), l=(-MNT_IN, WY, WZ))   # each mount's frame
 SHAFT_CLR = 0.1                      # radial clearance round the shaft (RV03 hole, spider bore)
 BRG_RECESS, BRG_PRESS = 0.1, 0.05    # MR85 sits this far below the RV02 inner face (race clear of the spider); seat interference
 SHAFT_INTO_RECESS = 1.3              # the threaded end stands this far past the RV02 slab into the nut recess
-SHAFT_R = 2.5                        # GR1507 shaft radius (5 mm)
+SHAFT_R = SHAFT_STUB_R               # GR1507 shaft radius (5 mm, motor catalog)
 WSHAFT = dict(r=SHAFT_R, len=-STATOR_BACK_X + MNT_SLAB + SHAFT_INTO_RECESS, x_end=-(MNT_SLAB + SHAFT_INTO_RECESS), thread_pitch=0.8, thread_depth=0.3, thread_len=MOTOR["thread_len"], chamfer=0.4)   # GR1507 shaft: radius, length (back flush with the base), free end in RV02's nut recess
 SHAFT_D = 2 * SHAFT_R
 BRG_NAME = "mr85"                   # outboard bearing designation (robot.catalog.BEARINGS): bore, OD, width
@@ -107,13 +113,14 @@ DISC_BAL_PTS = [(-13.2, 4.85), (-13.2, 9.08), (-11.68, 7.65)]    # param: organi
 DISC_ROUND = dict(r_out=0.0, r_in=1.0)                           # tooth tip sharp (STEP parity) and flank root fillet
 
 
-SPIDER = dict(r=14.2, lobe_r=2.3, round_in=0.8, hub_r=6.0, win_round=CORNER_R)   # disc, stack-bolt lobes and their root fillet, hub ring round the bell screws, window corners (STEP spider_1)
+SPIDER = dict(r=14.2, lobe_r=STACK_TAP_R + STACK_WALL, round_in=0.8, hub_r=HUB_R + STACK_WALL, win_round=CORNER_R)   # disc, stack-bolt lobes and their root fillet, hub ring round the bell screws, window corners (STEP spider_1)
 SPIDER["arm"] = SPIDER["lobe_r"]               # the 4 arms run each lobe's width straight in to the hub: window sides offset one lobe radius off the arm axis
 SPIDER["win_r"] = BOLT_R - SPIDER["lobe_r"]     # window rim stops at the inner edge of the lobe circles
 SPIDER["bore_r"] = SHAFT_R + SHAFT_CLR          # bore on the shaft collar
 
 
-SPACER = dict(r=DISC_R - DISC_ECC, bore_r=BELL_WALL_R[1] + SHAFT_CLR, win_in=11.4, win_out=14.5, arm=2.0, win_round=CORNER_R)   # rim on the discs' inner rim envelope (never proud of a disc); windows: ring 11.4..14.5, sides 2.0 off the bolt axes (STEP section)
+SPACER = dict(r=DISC_R - DISC_ECC, bore_r=BELL_WALL_R[1] + SHAFT_CLR, arm=2.0, win_round=CORNER_R)
+SPACER.update(win_in=SPACER["bore_r"] + STACK_WALL, win_out=SPACER["r"] - STACK_WALL)   # rim on the discs' inner rim envelope (never proud of a disc); windows: ring 11.4..14.5, sides 2.0 off the bolt axes (STEP section)
 # weapon phase leads (fix-B-leads): RVRN 2.0 runs them free over the lug (RV03 / RV01 have no lead hole or groove). Here the 3 AWG24 leads fan out
 # flat through the 1.5 mm stator-to-spacer gap to below the back spacer, twist into one bundle and snap into a C-groove in RV03's inner face that
 # runs parallel to the boss's standoff line (so the whole groove sits in the 8 mm boss), back to the lug top, where they drop into the tub.

@@ -40,10 +40,12 @@ foot = ec + drisk._at(P.DISC_R, math.degrees(a))
 out["tangent"] = abs((tip - foot).dot(foot - ec))
 out["tip_bbox"] = drisk.disc_outline().bounding_box().max.X  # just builds
 out["spacer_in_rim"] = P.SPACER["r"] <= P.DISC_R - P.DISC_ECC + 1e-9
+out["rings"] = min(P.SPACER["win_in"] - P.SPACER["bore_r"], P.SPACER["r"] - P.SPACER["win_out"], P.SPIDER["lobe_r"] - P.STACK_TAP_R, P.SPIDER["hub_r"] - P.HUB_R)
+out["wall"] = P.STACK_WALL; out["tip"] = P.TOOTH_R - P.DISC_R - P.TOOTH_REACH
 order = ("spider", "disc_a", "spacer", "disc_b")
 out["flush"] = max(abs(P.DR_X[a][1] - P.DR_X[b][0]) for a, b in zip(order, order[1:]))
 out["on_cap"] = abs(P.DR_X["spider"][1] - P.BELL_CAP_X)
-out["t"] = [P.DR_X[k][1] - P.DR_X[k][0] for k in order] + [P.SPIDER_T, P.DISC_T, P.SPACER_T, P.DISC_T]
+out["t"] = [P.DR_X[k][1] - P.DR_X[k][0] for k in order] + [P.SPIDER_T, P.DISC_T, 2 * P.DISC_T, P.DISC_T]
 print(json.dumps(out))
 """
 
@@ -52,7 +54,10 @@ CASES = {
     "n_stack_3": ("params_weapon.py", r"^N_STACK = 4", "N_STACK = 3"),
     "n_stack_5": ("params_weapon.py", r"^N_STACK = 4", "N_STACK = 5"),
     "bolt_circle": ("params_weapon.py", r"^BOLT_R, HUB_R = 14\.0", "BOLT_R, HUB_R = 13.6"),
-    "disc_thick": ("params_weapon.py", r"^SPIDER_T, DISC_T, SPACER_T = 3\.0, 3\.0, 6\.0", "SPIDER_T, DISC_T, SPACER_T = 3.0, 4.0, 5.0"),
+    "disc_thick": ("params_weapon.py", r"^SPIDER_T, DISC_T = 3\.0, 3\.0", "SPIDER_T, DISC_T = 3.0, 4.0"),
+    "bolt_m2_5": ("params_weapon.py", r"^STACK_BOLT_D = 2\.0", "STACK_BOLT_D = 2.5"),
+    "wall": ("params_weapon.py", r"^STACK_WALL = 1\.5", "STACK_WALL = 1.2"),
+    "tooth_reach": ("params_weapon.py", r"^TOOTH_REACH, TOOTH_A = 6\.5, 134\.8", "TOOTH_REACH, TOOTH_A = 5.5, 120.0"),
     "rim": ("params_weapon.py", r"^DISC_R, DISC_ECC, DISC_ECC_A = 16\.5", "DISC_R, DISC_ECC, DISC_ECC_A = 17.0"),
     "corner": ("params_weapon.py", r"^CORNER_R = 1\.0", "CORNER_R = 0.8"),
     "motor_step": "step",
@@ -86,6 +91,7 @@ def test_stack_relations_hold(tmp_path, case):
     assert m["dogs"], case
     assert m["tangent"] < 1e-6, case
     assert m["spacer_in_rim"], case
+    assert m["rings"] == pytest.approx(m["wall"]) and abs(m["tip"]) < 1e-9, case
     assert m["flush"] < 1e-6 and m["on_cap"] < 1e-6, case
     assert m["t"][:4] == pytest.approx(m["t"][4:]), case
     if case.startswith("n_stack"):
