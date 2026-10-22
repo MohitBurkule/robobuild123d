@@ -23,10 +23,10 @@ from .worker import FAST_GROUPS
 HYP_GROUPS = FAST_GROUPS + ["electrical", "retention"]
 
 
-def resolve(changes, raw, hooks, disc, use):
+def resolve(changes, raw, hooks, disc, use, files=None):
     """(jobs, not_expressible) - each change becomes a plan.Job (overlay + optional build-setting edit) or a record."""
     from ... import overlay as O
-    from . import plan as P
+    from . import discover as D, plan as P
 
     jobs, nx = [], []
     for c in changes:
@@ -55,6 +55,10 @@ def resolve(changes, raw, hooks, disc, use):
             key = s.get("env") or s.get("variant")
             sw = next((x for x in disc.switches if x.name == key), None)
             alt = s["value"] if not s.get("variant") else bool(s["value"])
+            if s.get("env") and (sw is None or alt not in sw.alternatives):  # any value, e.g. a catalog id
+                sw = D.env_setting(files or [], s["env"]) if files is not None else sw
+                if sw is not None:
+                    sw.alternatives = [alt] if alt != sw.default else []
             sj = [j for j in P.switch_jobs(sw, use.parts_reading(sw.symbol, sw.kind == "variant"))
                   if j.value == alt] if sw else []
             if not sj:
@@ -66,7 +70,7 @@ def resolve(changes, raw, hooks, disc, use):
     return jobs, nx
 
 
-def evaluate(spec_path: Path, budget_s=3600.0, workers=3, top_n=8, log=print, execute=None):
+def evaluate(spec_path: Path, budget_s=3600.0, workers=3, top_n=8, log=print, execute=None, only=None, match=None):
     from ... import cache, overlay as O
     from ...gen import changes as C
     from . import discover as D, model_file, plan as P, runner as R, usage as U
@@ -84,10 +88,15 @@ def evaluate(spec_path: Path, budget_s=3600.0, workers=3, top_n=8, log=print, ex
     for j in pj:
         if j.phase == 0:
             changes.append(C.Change(f"dim:{j.id}", "dimension", f"{j.target} {j.base:g} -> {j.value:g} ({j.step:+.0%})", job=j))
-    jobs, nx = resolve(changes, raw, hooks, disc, use)
+    changes += C.size_changes(hooks, disc.params, use, P)
+    if only:
+        changes = [c for c in changes if c.family in only]
+    if match:
+        changes = [c for c in changes if match in c.id]
+    jobs, nx = resolve(changes, raw, hooks, disc, use, files)
     for j in (j for _, j in jobs):
         j.phase = 0
-    order = {"swap": 0, "architecture": 1, "dimension": 2}  # cheap overlay-only jobs first, rebuild-heavy params last
+    order = {"swap": 0, "architecture": 1, "size": 2, "dimension": 3}  # cheap overlay-only jobs first, rebuild-heavy params last
     jobs.sort(key=lambda cj: (order[cj[0].family], cj[1].kind != "hyp"))
     src = "" if execute else cache.h([f.read_bytes() for f in files])  # an injected executor (tests) is never cached
     kw = {"execute": execute} if execute else {}
@@ -127,7 +136,7 @@ def verdicts(ev) -> list:
     for c, why, hook in ev["nx"]:
         diff = C.estimate_diff(ev["files"], ev["graph"], ev["raw"], c.touches or {"id": []}, c.keywords, owners)
         rows.append(dict(change=c, verdict="not expressible", builds=None, blockers=[], diff=diff, hook=hook, why=why))
-    fam = {"swap": 0, "dimension": 1, "architecture": 2}
+    fam = {"swap": 0, "dimension": 1, "architecture": 2, "size": 3}
     rows.sort(key=lambda r: (fam[r["change"].family], r["change"].id))
     return rows
 
@@ -137,7 +146,7 @@ def score(rows) -> dict:
     held = sum(r["verdict"] == "holds" for r in rows)
     decided = [r for r in rows if r["verdict"] in ("holds", "breaks", "not expressible")]
     by = {}
-    for f in ("swap", "dimension", "architecture"):
+    for f in ("swap", "dimension", "architecture", "size"):
         rs = [r for r in decided if r["change"].family == f]
         by[f] = (sum(r["verdict"] == "holds" for r in rs), len(rs))
     return dict(total=n, decided=len(decided), held=held, pct=100.0 * held / len(decided) if decided else 0.0,
@@ -197,7 +206,7 @@ def markdown(ev, rows, sha="?", cfg=None) -> str:
             for k, n, ids in mh[o][:6]:
                 L.append(f"- {k}: {n} hypothesis(es), e.g. `{ids[0]}`")
             L.append("")
-    for fam in ("swap", "dimension", "architecture"):
+    for fam in ("swap", "dimension", "architecture", "size"):
         rs = [r for r in rows if r["change"].family == fam]
         if not rs:
             continue
@@ -236,8 +245,10 @@ def main(argv=None):
     ap.add_argument("--budget", type=float, default=3600.0)
     ap.add_argument("--workers", type=int, default=3)
     ap.add_argument("--top", type=int, default=8)
+    ap.add_argument("--match", help="only hypotheses whose id contains this text")
+    ap.add_argument("--only", help="comma list of families to run (swap,dimension,architecture,size)")
     a = ap.parse_args(argv)
-    ev = evaluate(Path(a.spec), a.budget, a.workers, a.top)
+    ev = evaluate(Path(a.spec), a.budget, a.workers, a.top, only=a.only.split(",") if a.only else None, match=a.match)
     rows = verdicts(ev)
     try:
         sha = subprocess.run(["git", "rev-parse", "--short", "HEAD"], capture_output=True, text=True).stdout.strip() or "?"

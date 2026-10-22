@@ -8,6 +8,10 @@ Ops (each a dict with "op"):
   set      {select, field, value}     set a (dotted) field on every match; value null deletes it
   catalog  {select, to}               swap the COTS entry: sets `catalog`, drops `shape`/`model`, and re-points
                                       wire ends on a port the new entry does not have (same port index)
+  wheel    {select, to}               swap a wheel for a catalog wheel (which carries its own hub): the model hub
+                                      the tyre sits on (`tyre_of`) is removed and the catalog wheel is re-seated on
+                                      the hub's shaft / axle frame (hub parent, composed pose, hub joint); the hub's
+                                      connections (to the motor shaft or axle) move to the wheel
   remove   {select, cascade=true}     drop the matches; cascade also drops connections / fasteners / wires /
                                       allow_overlap entries that name a removed part
   add      {part, anchor?}            add a part; `anchor` names an entry of the robot's anchors (hooks file)
@@ -50,7 +54,7 @@ class MissingHook(KeyError):
 
 def load_hooks(raw: dict | None = None, base_dir=None) -> dict:
     """The robot's hooks: spec `hooks` key merged over `<spec dir>/hooks.json`."""
-    out = {"anchors": {}, "hooks": {}, "owners": {}}
+    out = {"anchors": {}, "hooks": {}, "owners": {}, "sizes": {}}
     if base_dir is not None:
         f = Path(base_dir) / "hooks.json"
         if f.exists():
@@ -147,6 +151,63 @@ def _catalog_swap(raw, op):
                             w["connector"] = remap[port]
 
 
+def _compose(a_at, a_rot, b_at, b_rot) -> tuple:
+    """(at, rot) of pose b given in frame a, expressed in a's parent frame (R = Rz Ry Rx, degrees)."""
+    from scipy.spatial.transform import Rotation
+
+    from . import xform
+
+    M = xform.pose(a_at or [0, 0, 0], a_rot or [0, 0, 0]) @ xform.pose(b_at or [0, 0, 0], b_rot or [0, 0, 0])
+    rz, ry, rx = Rotation.from_matrix(M[:3, :3]).as_euler("ZYX", degrees=True)
+    r = lambda v: round(float(v), 6) + 0.0
+    return [r(v) for v in M[:3, 3]], [r(rx), r(ry), r(rz)]
+
+
+def _wheel_swap(raw, op):
+    hits = select(raw, op["select"])
+    if not hits:
+        raise ValueError(f"wheel: nothing matches {op['select']}")
+    parts = {p["id"]: p for p in raw.get("parts") or []}
+    gone = set()
+    for w in hits:
+        hub = parts.get(w.get("tyre_of") or (w.get("parent") if parts.get(w.get("parent"), {}).get("kind") in ("pulley", "hub") else None))
+        for k in ("shape", "model", "params", "tyre_of", "stock", "label"):
+            w.pop(k, None)
+        w["catalog"] = op["to"]
+        if hub is None:
+            continue
+        w["at"], w["rot"] = _compose(hub.get("at"), hub.get("rot"), w.get("at"), w.get("rot"))
+        if hub.get("parent"):
+            w["parent"] = hub["parent"]
+        else:
+            w.pop("parent", None)
+        for k in ("joint", "rotates_with"):
+            if hub.get(k) is not None:
+                w[k] = copy.deepcopy(hub[k])
+        hid, wid = hub["id"], w["id"]
+        conns = []
+        for c in raw.get("connections") or []:
+            ends = {c.get("a"), c.get("b")}
+            if ends == {hid, wid}:
+                continue  # tyre on hub: gone with the hub
+            if hid in ends:
+                c = dict(c, **{k: wid for k in ("a", "b") if c.get(k) == hid})
+                c["reason"] = f"[wheel swap] catalog wheel hub takes over: {c.get('reason', '')}"
+                c.pop("interference_mm", None)
+            conns.append(c)
+        raw["connections"] = conns
+        for p in raw.get("parts") or []:
+            if p.get("parent") == hid and p is not w:
+                p["at"], p["rot"] = _compose(hub.get("at"), hub.get("rot"), p.get("at"), p.get("rot"))
+                p["parent"] = hub.get("parent")
+        gone.add(hid)
+    if gone:
+        raw["parts"] = [p for p in raw["parts"] if p["id"] not in gone]
+        for lk in LISTS[1:]:
+            if raw.get(lk):
+                raw[lk] = [e for e in raw[lk] if not (isinstance(e, dict) and _names_part(e, gone))]
+
+
 def expand(op: dict, hooks: dict) -> list:
     """A `hook` op as primitive ops (raises MissingHook); other ops unchanged."""
     if op.get("op") != "hook":
@@ -186,6 +247,8 @@ def apply(raw: dict, ops: list, hooks: dict | None = None, base_dir=None) -> dic
                     _set(x, op["field"], op.get("value"))
             elif kind == "catalog":
                 _catalog_swap(raw, op)
+            elif kind == "wheel":
+                _wheel_swap(raw, op)
             elif kind == "remove":
                 key = op["select"].get("in", "parts")
                 gone = select(raw, op["select"])

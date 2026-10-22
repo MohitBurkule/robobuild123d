@@ -125,3 +125,62 @@ def test_revron_hooks_file_is_valid():
         if isinstance(h.get("values"), dict):
             for v in h["values"]:
                 O.apply(raw, [{"op": "hook", "name": name, "value": v}], hooks)
+
+
+def test_size_changes_master_proxy_and_missing():
+    from robot.checks.robust import plan as P
+    from robot.checks.robust.discover import Param
+    from robot.checks.robust.usage import Graph, Usage
+
+    params = [Param("W", "W", 30.0, Path("p.py"), 1, 4, 8), Param("Y0", "Y0", -37.6, Path("p.py"), 2, 5, 10)]
+    hooks = {"sizes": {"width": {"param": "W"}, "length": {"proxy": "Y0"}}}
+    cs = C.size_changes(hooks, params, Usage(Graph(), {}), P)
+    ids = {c.id for c in cs}
+    assert sum(i.startswith("size:width:") for i in ids) == 6  # +-10/20/30 % on the master
+    assert not any(i.startswith("size:width") and "%" in i and ":" not in i[5:] for i in ids)
+    assert sum(c.hook == "size.length" and c.job is None for c in cs) == 7  # 6 steps + short 2WD, missing hook
+    assert sum(i.startswith("size:length(proxy):") for i in ids) == 6
+    assert all(c.hook == "size.height" for c in cs if c.id.startswith("size:height"))
+
+
+def test_wheel_swap_removes_hub_and_reseats_on_axle():
+    raw = {"parts": [
+        {"id": "tub", "kind": "structure"},
+        {"id": "motor_l", "kind": "motor", "catalog": "n10_2200rpm_spicy"},
+        {"id": "whub_rl", "kind": "pulley", "parent": "tub", "at": [30.0, -30.5, 0.0], "rot": [-180.0, 0.0, 0.0],
+         "joint": {"kind": "revolute", "axis": [1, 0, 0]}, "rotates_with": "wheel_rl", "shape": {"type": "model"}},
+        {"id": "wheel_rl", "kind": "wheel", "parent": "whub_rl", "tyre_of": "whub_rl", "at": [2.5, 1.0, 0.0], "rot": [0, 0, 0],
+         "rotates_with": "wheel_rl", "shape": {"type": "model"}}],
+        "connections": [{"a": "whub_rl", "b": "motor_l", "method": "press_fit", "interference_mm": 0.05},
+                        {"a": "wheel_rl", "b": "whub_rl", "method": "press_fit"}]}
+    out = O.apply(raw, [{"op": "wheel", "select": {"id": "wheel_rl"}, "to": "wheel_20x8"}], hooks={})
+    ids = [p["id"] for p in out["parts"]]
+    assert "whub_rl" not in ids
+    w = O.select(out, {"id": "wheel_rl"})[0]
+    assert w["catalog"] == "wheel_20x8" and "shape" not in w and "tyre_of" not in w
+    assert w["parent"] == "tub" and w["joint"]["kind"] == "revolute"
+    assert w["at"] == pytest.approx([32.5, -31.5, 0.0])  # hub pose (rx 180 flips y) composed with the tyre offset
+    import numpy as np
+    from robot import xform
+    assert np.allclose(xform.euler(w["rot"]), xform.euler([-180, 0, 0]))
+    assert out["connections"] == [{"a": "wheel_rl", "b": "motor_l", "method": "press_fit",
+                                   "reason": "[wheel swap] catalog wheel hub takes over: "}]
+    assert all(c.ops[0]["op"] == "wheel" for c in C.swap_changes(json.loads(json.dumps(
+        {"parts": [dict(p, stock="tyre") for p in raw["parts"] if p["kind"] == "wheel"]}))))
+
+
+def test_swap_uses_declared_build_setting_and_any_env_value(tmp_path):
+    from robot.checks.robust import discover as D, hyp
+    from robot.checks.robust.usage import Graph, Usage
+
+    hooks = {"hooks": {"drive.motor": {"env": "X_DRIVE_MOTOR", "swaps": {"id": ["motor_l", "motor_r"]}}}}
+    cs = [c for c in C.swap_changes(_raw(), None, hooks) if c.id.startswith("swap:drive_motor:")]
+    assert cs and all(c.ops[0] == {"op": "hook", "name": "drive.motor", "value": c.ops[1]["to"]} for c in cs)
+    src = tmp_path / "params_x.py"
+    src.write_text('import os\nDRIVE_MOTOR = os.environ.get("X_DRIVE_MOTOR", "n10_2200rpm_spicy")\n')
+    sw = D.env_setting([src], "X_DRIVE_MOTOR")
+    assert sw.symbol == "DRIVE_MOTOR" and sw.default == "n10_2200rpm_spicy"
+    jobs, nx = hyp.resolve(cs[:1], _raw(), hooks, D.Discovery(), Usage(Graph(), _raw()), [src])
+    assert not nx
+    j = jobs[0][1]
+    assert j.kind == "choice" and j.new_text == repr(cs[0].ops[1]["to"]) and j.overlay[0]["op"] == "catalog"
