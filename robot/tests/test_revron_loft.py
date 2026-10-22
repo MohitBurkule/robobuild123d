@@ -17,25 +17,20 @@ def _mod():
     return m
 
 
-@pytest.mark.skipif(not SRC.exists(), reason="revron sources absent")
-def test_multi_section_loft_matches_slices():
-    from shapely.geometry import Point
+def test_chassis_lobe_root_is_one_fillet():
+    """tub2 builds the lobe root as ONE fillet of radius LOBE_ROOT_R after the unions (no slices fused): the tub is one valid solid and carries
+    cylindrical root faces of exactly that radius on the outer wall plane."""
+    import sys
 
-    br = _mod()
-    lobe = Point(0.0, 0.0).buffer(4.0, 32)
-    R = 1.95
-    hs = [R * k / 4 for k in range(5)]
-    secs = [(lobe.buffer(R - math.sqrt(R * R - (R - h) ** 2), join_style=1), h) for h in hs]
-    one = br._loft_yz_n(secs, n=64)
-    assert one.is_valid and len(one.solids()) == 1
-    slices = sum(br._loft_yz(secs[i][0], secs[i][1], secs[i + 1][0], secs[i + 1][1], n=64).volume for i in range(4))
-    assert one.volume == pytest.approx(slices, rel=1e-6)
+    sys.path.insert(0, str(SRC.parent))
+    from revron import tub2, tub2_fillets
+    from revron.tub2_params import CH_HALF_W
 
-
-@pytest.mark.skipif(not SRC.exists(), reason="revron sources absent")
-def test_chassis_lobe_fillet_is_one_loft():
-    text = SRC.read_text()
-    assert "_loft_yz_n([(lobe.buffer(" in text
+    t = tub2.chassis2()
+    assert len(t.solids()) == 1 and t.is_valid
+    roots = [f for f in t.faces() if f.geom_type.name == "CYLINDER" and abs(f.radius - tub2_fillets.LOBE_ROOT_R) < 1e-6
+             and abs(abs(f.center().X) - CH_HALF_W) < tub2_fillets.LOBE_ROOT_R + 1.0]
+    assert roots
 
 
 def test_contains_chunked_matches_whole(monkeypatch):
