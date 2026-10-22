@@ -363,8 +363,8 @@ def reference_cad():
           deviations=[dict(near=[x, y, BASE_DEV_Z], r=PANEL_DEV_R, reason="[variant base_csk_fit] R2.6 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud")
                       for x, y in (INS if variant("base_csk_fit") else ())]),   # [variant base_csk_fit] the default seat is the RV26 one
         R("top_panel", "Top_Panel_1.stl", tol_mm=TOL["tight"], note="0.9 mm top panel",
-          deviations=[{"path": [[TOP_TEXT_X[0], TOP_TEXT_Y, TOP_TEXT_DEV_Z], [TOP_TEXT_X[1], TOP_TEXT_Y, TOP_TEXT_DEV_Z]], "r": TOP_TEXT_DEV_R, "max_mm3": TOP_TEXT_MAX_MM3,
-                       "reason": "RV26 Cut-Extrude3: 0.1 mm deep engraved lettering on the top panel face (x -17.75..18.81, y -8.68..-2.53), laser-etch omitted; one capsule along the text line, cap on the volume it may excuse (~23 mm3 of engraving)"}]),
+          deviations=[{"path": [[TOP_TEXT_X[0], y, TOP_TEXT_DEV_Z], [TOP_TEXT_X[1], y, TOP_TEXT_DEV_Z]], "r": TOP_TEXT_DEV_R, "max_mm3": TOP_TEXT_MAX_MM3,
+                       "reason": "Top_Panel_1 engraved lettering, 0.1 mm deep (x -17.75..18.81, y -8.68..-2.53), laser-etch omitted; two capsules along the text, each capped on the volume it may excuse"} for y in TOP_TEXT_Y]),
         R("mount_l", "RV02_XALT_HD_left_hand_weapon_mount_1.stl", tol_mm=TOL["std"],
           deviations=[{"near": [-MNT_TIP_DEV[0], MNT_TIP_DEV[1], MNT_TIP_DEV[2]], "r": MNT_TIP_DEV_R, "reason": "the STEP notch top is a zero-thickness wedge (mfg.thin_wall); thickened to a printable wall, rearmost point unchanged"}, {"near": [-NOSE_DEV[0], NOSE_DEV[1], NOSE_DEV[2]], "r": NOSE_DEV_R,
                        "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside and front edge, so the countersink keeps a 0.9 mm wall"}]),
