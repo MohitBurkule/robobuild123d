@@ -137,7 +137,49 @@ def radius_diffs(pairs, res=RES_MM, link=LINK_MM):
         g = [bad[j] for j in np.nonzero(lab == i)[0]]
         if len(g) < MIN_PTS:
             continue
+        ro, rr = float(np.median([x[2] for x in g])), float(np.median([x[3] for x in g]))
+        if abs(ro - rr) <= max(res, REL_TOL * max(ro, rr)):   # scattered samples round a matching radius: estimator noise
+            continue
         out.append({"at": np.round(np.mean([x[0] for x in g], axis=0), 2).tolist(), "n": len(g),
                     "r_ours": round(float(np.median([x[2] for x in g])), 2), "r_ref": round(float(np.median([x[3] for x in g])), 2),
                     "turn": round(float(np.median([x[4] for x in g])), 1), "pts": np.array([x[0] for x in g])})
     return sorted(out, key=lambda c: -abs(c["r_ours"] - c["r_ref"]) * c["n"])
+
+
+GEOM_FLOOR_MM = 0.05   # meshes this close round a run show no blend change, whatever the per-section estimates say
+
+
+def confirm(diffs, model, ref, reach=1.5, dense=0.02):
+    """Keep only radius differences the surfaces themselves show. A blend change of dr on a corner turning theta moves
+    the arc midpoint by e = dr (1 / cos(theta / 2) - 1); round each run, the model surface must stand off the reference
+    (or the reference off the model) by at least max(GEOM_FLOOR_MM, e / 2). Where both meshes agree closer than that the
+    difference is the estimator reading two tessellations of one surface (a few-facet arc, a coarse STEP export)."""
+    import math
+
+    import trimesh
+    from scipy.spatial import cKDTree
+
+    if not diffs:
+        return diffs
+    out = []
+    for c in diffs:
+        lo, hi = c["pts"].min(0) - reach, c["pts"].max(0) + reach
+        dev = 0.0
+        for a, b in ((model, ref), (ref, model)):
+            ia = np.nonzero(np.all((a.triangles_center >= lo) & (a.triangles_center <= hi), axis=1))[0]
+            ib = np.nonzero(np.all((b.triangles_center >= lo - reach) & (b.triangles_center <= hi + reach), axis=1))[0]
+            if not len(ia) or not len(ib):
+                dev = math.inf
+                break
+            sa, sb = a.submesh([ia], append=True), b.submesh([ib], append=True)
+            P = trimesh.sample.sample_surface(sa, max(500, int(sa.area / dense ** 2) // 20), seed=3)[0]
+            P = P[np.min(np.linalg.norm(P[:, None, :] - c["pts"][None, :, :], axis=2), axis=1) <= reach] if len(c["pts"]) < 400 else P
+            Q = trimesh.sample.sample_surface(sb, max(2000, int(sb.area / dense ** 2)), seed=4)[0]
+            if len(P):
+                dev = max(dev, float(cKDTree(Q).query(P)[0].max()))
+        th = math.radians(min(float(c["turn"]), 179.0))
+        e = abs(c["r_ours"] - c["r_ref"]) * (1 / math.cos(th / 2) - 1)
+        c["surface_dev_mm"] = round(dev, 3)
+        if dev >= max(GEOM_FLOOR_MM, e / 2):
+            out.append(c)
+    return out
