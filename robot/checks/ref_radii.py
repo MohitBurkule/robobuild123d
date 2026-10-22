@@ -142,44 +142,37 @@ def radius_diffs(pairs, res=RES_MM, link=LINK_MM):
             continue
         out.append({"at": np.round(np.mean([x[0] for x in g], axis=0), 2).tolist(), "n": len(g),
                     "r_ours": round(float(np.median([x[2] for x in g])), 2), "r_ref": round(float(np.median([x[3] for x in g])), 2),
-                    "turn": round(float(np.median([x[4] for x in g])), 1), "pts": np.array([x[0] for x in g])})
+                    "turn": round(float(np.median([x[4] for x in g])), 1), "pts": np.array([x[0] for x in g]),
+                    "axes": np.array([x[1] for x in g], float)})
     return sorted(out, key=lambda c: -abs(c["r_ours"] - c["r_ref"]) * c["n"])
 
 
 GEOM_FLOOR_MM = 0.05   # meshes this close round a run show no blend change, whatever the per-section estimates say
 
 
-def confirm(diffs, model, ref, reach=1.5, dense=0.02):
+def confirm(diffs, model, ref, reach=1.5, samples=15):
     """Keep only radius differences the surfaces themselves show. A blend change of dr on a corner turning theta moves
-    the arc midpoint by e = dr (1 / cos(theta / 2) - 1); round each run, the model surface must stand off the reference
-    (or the reference off the model) by at least max(GEOM_FLOOR_MM, e / 2). Where both meshes agree closer than that the
-    difference is the estimator reading two tessellations of one surface (a few-facet arc, a coarse STEP export)."""
+    the arc midpoint by e = dr (1 / cos(theta / 2) - 1); at the run's samples the two sections normal to the crease
+    must stand apart by at least max(GEOM_FLOOR_MM, e / 2) (median over the samples). Measured in the crease-normal
+    section only: a surface difference beside the blend (a pocket wall, an extra fillet 1 mm off) is not this arc's
+    radius and the local surface check reports it. Where the sections agree closer than that the difference is the
+    estimator reading two tessellations of one surface (a few-facet arc, a coarse STEP export). A pair whose arcs
+    differ by less than GEOM_FLOOR_MM anywhere (e below it: a small dr on a shallow turn) is never attributed to the
+    radius, whatever else differs in the section."""
     import math
 
-    import trimesh
-    from scipy.spatial import cKDTree
+    from .sharp_corner import section_dev
 
-    if not diffs:
-        return diffs
     out = []
-    for c in diffs:
-        lo, hi = c["pts"].min(0) - reach, c["pts"].max(0) + reach
-        dev = 0.0
-        for a, b in ((model, ref), (ref, model)):
-            ia = np.nonzero(np.all((a.triangles_center >= lo) & (a.triangles_center <= hi), axis=1))[0]
-            ib = np.nonzero(np.all((b.triangles_center >= lo - reach) & (b.triangles_center <= hi + reach), axis=1))[0]
-            if not len(ia) or not len(ib):
-                dev = math.inf
-                break
-            sa, sb = a.submesh([ia], append=True), b.submesh([ib], append=True)
-            P = trimesh.sample.sample_surface(sa, max(500, int(sa.area / dense ** 2) // 20), seed=3)[0]
-            P = P[np.min(np.linalg.norm(P[:, None, :] - c["pts"][None, :, :], axis=2), axis=1) <= reach] if len(c["pts"]) < 400 else P
-            Q = trimesh.sample.sample_surface(sb, max(2000, int(sb.area / dense ** 2)), seed=4)[0]
-            if len(P):
-                dev = max(dev, float(cKDTree(Q).query(P)[0].max()))
+    for c in diffs or []:
+        P, T = c["pts"], c.get("axes")
+        idx = np.linspace(0, len(P) - 1, min(samples, len(P))).round().astype(int)
+        devs = [section_dev(model, ref, P[i], T[i], reach=reach) for i in idx] if T is not None else [math.inf]
+        dev = float(np.median(devs))
         th = math.radians(min(float(c["turn"]), 179.0))
         e = abs(c["r_ours"] - c["r_ref"]) * (1 / math.cos(th / 2) - 1)
-        c["surface_dev_mm"] = round(dev, 3)
-        if dev >= max(GEOM_FLOOR_MM, e / 2):
+        c["surface_dev_mm"] = round(dev, 3) if math.isfinite(dev) else None
+        c["arc_shift_mm"] = round(e, 3)
+        if e >= GEOM_FLOOR_MM and dev >= max(GEOM_FLOOR_MM, e / 2):   # a shift below the floor names no radius
             out.append(c)
     return out
