@@ -149,4 +149,5 @@ TOP_TEXT_X, TOP_TEXT_Y, TOP_TEXT_MAX_MM3 = (-17.75, 18.81), (-7.1, -4.1), 20.0  
 TOP_TEXT_DEV_XY = ((-3.78, -5.57), (-13.73, -5.62), (5.84, -5.26), (15.04, -5.66))
 NOSE_DEV, NOSE_DEV_R = (MNT_IN + 2.0, SB[0] + 0.6, SB[1] - 1.7), 5.0             # mount nose pad (|x|, y, z): thickened nose wall, deviation from the STEP nose
 STATOR_DEV_X, TAP_DEV_R = 16.8, 2.0                                              # stator lead-in cone site; tap-hole sites
+STACK_TAP_DEV_R = 2.5   # spider stack-hole site: the whole STEP r1.1 hole wall over the 3 mm plate (half-diagonal 2.2) lies inside it
 __all__ = [n for n in dir() if not n.startswith("__")]   # last line: every name above is exported

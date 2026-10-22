@@ -385,7 +385,7 @@ def reference_cad():
                       for dy, dz in stator_bolt_circle()] + _lead_groove_dev()),
         R("motor_spacer", "Motor_back_spacer_1.stl", tol_mm=TOL["tight"]),
         R("spider", "spider_1.stl", tol_mm=TOL["std"], ref_to_world=dt,
-          deviations=[dict(near=[sum(DR_X["spider"]) / 2, *_disc_local(*c)], r=TAP_DEV_R,
+          deviations=[dict(near=[sum(DR_X["spider"]) / 2, *_disc_local(*c)], r=STACK_TAP_DEV_R,
                            reason="r14 stack hole is the M2 tap drill (1.6) where the stack screws thread into the spider; the STEP shows the 2.2 clearance and no screw or nut")
                       for c in _polar(BOLT_R)]),
         R("disc_a", "Drisk_floating_3_1.stl", tol_mm=TOL["std"], ref_to_world=dt),
