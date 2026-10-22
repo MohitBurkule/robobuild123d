@@ -39,11 +39,14 @@ WIRES = [("w_bat_sw", "battery.jst_rcy", "power_switch.in", AWG["power"], "power
 WEB = dict(spider=0.8, disc=0.9, fork=1.05)             # min_web_mm the designer owns (STEP measures the same webs)
 HUB_SPIN_DEG = -2.45                                   # rear hubs sit this far round the D-shaft (STEP: the D-bore flat, nut slot and grub are turned 2.45 deg; the Distance/Concentric mates leave the spin free)
 HUB_PIVOT_X = dict(rear=41.6, front=34.5)               # |X| of each hub's revolute pivot
-BATTERY = "lipo_2s_180_turnabot"                          # RV16 pack, catalog id
+BATTERY = os.environ.get("REVRON_BATTERY", "lipo_2s_180_turnabot")                          # RV16 pack, catalog id
 BAT_L, BAT_W, BAT_H = hw.size(BATTERY)                    # catalog box (long side L): in the bay it is turned 90 about Z, so L runs along Y and W along X
 BAT_BELOW = BAT_H / 2                                     # catalog origin -> pack underside (STEP pack 11 thick, z 6.5..17.5 about origin z 12)
-BAT_Z = 12.0                                            # STEP/dump pack origin (RV16 xform z 11.8 ~ 12); underside 6.5, 2.0 over the base panel skin (original: no pad, pack mated to the chassis only; foam pad = variant battery_pad)
-ELEC = dict(battery=(-11.81, -5.4, BAT_Z), rxesc=(8.67, -3.0, 15.3), wesc=(8.63, -7.25, 10.6), switch_yz=(-5.6, 14.25))   # catalog origins (STEP envelopes)
+BAT_STOP_GAP = 0.0                                        # pack rear face to the stop wall front face it butts (STEP: the RV16 pack touches the RV01 stop wall)
+BAT_X = -11.81                                          # pack centre X (STEP envelope)
+BAT_Y = round(KEY_SPAN[1] + BAT_STOP_GAP + BAT_L / 2, 6)  # pack centre Y: the pack stands against the stop wall, so a wider gearmotor (stop wall further forward) pushes it forward
+BAT_Z = round(CH["deck"] - BAT_H / 2, 6)                # pack centre Z: the pack top rests against the deck underside (STEP pack 11 thick, z 6.5..17.5 about origin z 12), so a taller pack hangs lower; underside 2.0 over the base panel skin at the default (original: no pad, pack mated to the chassis only; foam pad = variant battery_pad)
+ELEC = dict(battery=(BAT_X, BAT_Y, BAT_Z), rxesc=(8.67, -3.0, 15.3), wesc=(8.63, -7.25, 10.6), switch_yz=(-5.6, 14.25))   # catalog origins (STEP envelopes)
 BAT_PAD_FRAC = 3                                         # the foam pad is this fraction of the pack footprint each way
 _bx, _by = ELEC["battery"][:2]   # pack centre
 BAT_PAD = dict(x=(_bx - BAT_W / BAT_PAD_FRAC / 2, _bx + BAT_W / BAT_PAD_FRAC / 2), y=(_by - BAT_L / BAT_PAD_FRAC / 2, _by + BAT_L / BAT_PAD_FRAC / 2))   # double-sided foam pad footprint under the pack, centred, base-panel skin top -> pack underside
@@ -94,8 +97,8 @@ REF_BOM = [   # RVRN 2.0 STEP part list (research/rvrn_step/INDEX.txt); one row 
     dict(role="Top panel 0.9 sheet", kind="part", match=["top_panel"], count=1),
     dict(role="RV15 BBB antweight switch", kind="part", match=["power_switch"], count=1, catalog="switch_bbb_ant_rvrn2"),
     dict(role="RV16 Turnabot 2S 180 mAh", kind="part", match=["battery"], count=1, catalog=BATTERY),
-    dict(role="RV13 Malenki nano", kind="part", match=["rxesc"], count=1, catalog="malenki_nano_rvrn2"),
-    dict(role="RV14 brushless ESC", kind="part", match=["wesc"], count=1, catalog="bbb_ant_esc_rvrn2"),
+    dict(role="RV13 Malenki nano", kind="part", match=["rxesc"], count=1, catalog=RXESC),
+    dict(role="RV14 brushless ESC", kind="part", match=["wesc"], count=1, catalog=WESC),
     dict(role="RV12 N10 2200 rpm x 2", kind="part", match=["motor_l", "motor_r"], count=2, catalog=DRIVE_MOTOR),
     dict(role="drisk stack: 4 x M2 into the spider (not in the STEP, holes are)", match=["bolt_d*"], count=4, designation="M2", threads_into="spider",
          deviation="the STEP leaves the r14 stack holes empty; 4 M2x14 added from the back, tapped into the spider (r0.8 tap holes there, the STEP r1.1 clearance elsewhere): no nuts, nothing invented beyond the screws"),

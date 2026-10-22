@@ -2,7 +2,7 @@
 squared rear corner behind the gearbox plates, and the stop wall's lower inner edge round."""
 from build123d import Align, Axis, BuildSketch, Circle, Locations, Mode, Plane, Pos, Rectangle, RectangleRounded, extrude, fillet
 from .tub2_params import (BASE_OUT, PRELOAD_PAD, PAD_RECESS, SEAT_Z, CH_Z0, CH_WALL,
-                          CH_IN_X, WALL_IN_REAR, PAD_Z0, OVER, SA_X0, STOP_BACK_Y, STOP_FRONT_Y, STOP_ROUND_R, SKIN, PANEL_CLEARANCE)
+                          CH_IN_X, WALL_IN_REAR, PAD_Z0, OVER, SA_X0, STOP_BACK_Y, STOP_FRONT_Y, STOP_ROUND_R, SKIN, PANEL_CLEARANCE, LAYOUT)
 from . import panel_base
 from .tub2_util import box_xy, concave_filler, mirrored, prism
 
@@ -35,4 +35,6 @@ def stop_wall_round():
 
 
 def seat_cuts():
-    return [rabbet()] + [mirrored(c) for c in pad_recess_and_corner() + [stop_wall_round()]]
+    pad, corner = pad_recess_and_corner()
+    located = [pad, stop_wall_round()] if "motor" in LAYOUT else []   # the preload pad and the stop wall's edge round exist with the motor compartment
+    return [rabbet()] + [mirrored(c) for c in [corner] + located]

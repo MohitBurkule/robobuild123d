@@ -8,6 +8,12 @@
   "hooks": {
     "weapon.motor_variant": {"env": "REVRON_MOTOR_VARIANT", "values": ["datasheet", "step"], "default": "datasheet"},
     "weapon.mount_variant": {"env": "REVRON_MOUNT_VARIANT", "values": ["original", "printable"], "default": "original"},
+    "chassis.compartments": {"env": "REVRON_COMPARTMENTS", "values": ["standard", "none", "split_battery_bay"], "default": "standard", "_why": "declared compartment layout (params_chassis.COMPARTMENTS): standard = motor pockets + stop wall/key tab/ledge and the pack bay cut from the catalog envelope; none = no compartment features; split_battery_bay = standard plus a rib between the pack bay and the electronics bay"},
+    "drive.location": {"env": "REVRON_DRIVE_LOCATION", "values": ["rear", "mid", "front"], "default": "rear", "_why": "drive axle line (params_chassis.DRIVE_LOCATIONS -> RY): the tub's keyhole, key tab, stop wall, pad recess, motor pocket, the pack bay and the rig's n10/wheel_face joints follow it; side panels, forks, hubs and belts (owner C) and the rear-only tub structure do not yet"},
+    "drive.motor": {"env": "REVRON_DRIVE_MOTOR", "_why": "catalog id of the drive gearmotor (params_chassis.DRIVE_MOTOR); the tub pockets, MOTX, key tab, stop wall, pad and rig joints are derived from it"},
+    "battery.pack": {"env": "REVRON_BATTERY", "_why": "catalog id of the pack (params_hardware.BATTERY); the bay is cut from its envelope, it stands against the stop wall and the deck"},
+    "drive.esc": {"env": "REVRON_RXESC", "_why": "catalog id of the receiver / drive ESC (params_chassis.RXESC); its bay is cut from the envelope"},
+    "weapon.esc": {"env": "REVRON_WESC", "_why": "catalog id of the weapon ESC (params_chassis.WESC); its bay is cut from the envelope"},
     "drive.driven_wheels": {
       "default": "4WD",
       "values": {
