@@ -1,7 +1,8 @@
 """[tub2] ONE master block of the RV01 tub. Shared masters (wall, skin, column radius, column/bolt pattern INS) drive every
 feature file; only the dims below are literals, everything else is a relation. World frame: X across, Y front, Z up."""
+from robot.cad.fastener_catalog import tap_drill
 from .params_chassis import (CH_HALF_W, CH_Y0, CH_Y1, CH_Z0, CH_Z1, CH_WALL, CH_IN_X, COL_R, INS, INS_Z, N10_TOP, N10_KEY,
-                             KEY_SPAN, SA_X0, WALL_IN_FRONT, WALL_IN_REAR, BASE_Z0, BASE_T, BASE_OUT, PRELOAD_PAD)
+                             KEY_SPAN, SA_X0, TOP_XY, WALL_IN_FRONT, WALL_IN_REAR, BASE_Z0, BASE_T, BASE_OUT, PRELOAD_PAD)
 
 SKIN = CH_WALL / 2                      # master: skin left under pockets; also every small fillet / rib in the tub
 DECK = CH_Z1 - CH_WALL                  # deck underside
@@ -13,6 +14,8 @@ INS_RIGHT = tuple(p for p in INS if p[0] > 0)
 INS_AXIS = tuple(p for p in INS if p[0] == 0)
 # columns
 INSERT_OD, KNURL = 3.5, 0.25            # FS1 M2 heat-set: knurled OD and knurl depth
+TOP_NECK = CH_WALL + SKIN                # web left under the rim in the top-screw columns: the deck plus a skin = 3 mm of thread bite (1.5 d for M2)
+TOP_PILOT_R = tap_drill(2.0) / 2         # M2 thread-forming pilot (catalog tap drill)
 BORE_R, BORE_CH = INSERT_OD / 2 - KNURL, 0.6   # heat-set bore = the insert's core (the knurl melts in), chamfer 0.6 at both ends
 # corner blocks: face tangent to the column, nose R = COL_R, wall-end fillet = SKIN
 # stop wall / key tab / ledge

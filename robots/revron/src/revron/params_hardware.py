@@ -64,7 +64,9 @@ FILLET_H, ROTOR_CLEAR = 10.0, 2.0                         # inside-corner fillet
 
 REF_BOM = [   # RVRN 2.0 STEP part list (research/rvrn_step/INDEX.txt); one row per joint or part family
     dict(role="FS8: base panel 5 x M2 CSK into heat-sets", match=["bolt_b*"], count=5, designation="M2x6", head="countersunk", threads_into="insert"),
-    dict(role="FS1 M2 heat-sets (floor)", kind="part", match=["insert_b*", "insert_t*"], count=9, catalog="heatset_m2_4"),
+    dict(role="top panel: 4 x M2 thread-forming (not in the STEP; its d2.8 holes over the corner columns are)", match=["bolt_t*"], count=4, designation="M2x5", threads_into="tub",
+         deviation="the STEP top panel has 4 countersunk corner holes over the corner columns' d3 bores but no screws; 4 M2x5 added, tapping a 1.7 pilot in a 3 mm web left under the column rim, so the Ti panel cannot peel off"),
+    dict(role="FS1 M2 heat-sets (floor)", kind="part", match=["insert_b*"], count=5, catalog="heatset_m2_4"),
     dict(role="FS9: mount to standoff 2 x M3x12 CSK alu (axle standoff)", match=["bolt_u?a"], count=2, designation="M3x12", head="countersunk", threads_into="standoff", material="aluminium"),
     dict(role="FS9: mount to nose standoff 2 x M3 CSK alu", match=["bolt_u?b"], count=2, designation="M3x14", head="countersunk", threads_into="standoff", material="aluminium",
          deviation="M3x14 instead of the STEP's M3x12: through mount and lug, 12 mm engages 3.9 mm of the 15 mm standoff (< 1.5 d)"),
@@ -104,10 +106,6 @@ REF_BOM = [   # RVRN 2.0 STEP part list (research/rvrn_step/INDEX.txt); one row 
 ]
 # REF_BOM extras that exist only when the named variant (variants.py) is on: spec.ref_bom() appends them
 REF_BOM_VARIANT = {
-    "top_screws": [
-    dict(role="top panel: 4 x M2 CSK thread-forming (not in the STEP; its countersunk holes are)", match=["bolt_t*"], count=4, designation="M2x5", threads_into="insert",
-         deviation="the STEP top panel has 4 countersunk corner holes but no screws; 4 M2x4 CSK thread-forming screws added so the Ti panel cannot peel off"),
-    ],
     "battery_pad": [
     dict(role="bat_pad: double-sided foam tape pad under the pack (not in the STEP)", kind="part", match=["bat_pad"], count=1, material="foam_tape",
          deviation="the STEP pack floats 2 mm over the base panel; a foam tape pad supports and retains it (adds ~0.05 g, reversible)",

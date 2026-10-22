@@ -5,7 +5,7 @@ ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
-from .variants import variant   # tub deviations (open_keyhole, pad_preload, switch_on_bolt_axis) are opt-in switches, see variants.py
+from .variants import variant   # tub deviations (open_keyhole, pad_preload) are opt-in switches, see variants.py
 
 # ======================================================================================================================
 # Measured layout (RVRN 2.0 STEP, world frame). Each number is a dimension of a feature, not a mesh coordinate list.

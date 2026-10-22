@@ -1,6 +1,6 @@
 """[tub2] Insert columns: the rear-centre boss with its R-skin fillet, and the heat-set bores."""
 from build123d import Align, BuildSketch, Circle, Cone, Cylinder, Locations, Plane, Pos
-from .tub2_params import (INS, INS_AXIS, COL_R, SKIN, BORE_R, BORE_CH, CH_Z0, CH_Z1, DECK, OVER,
+from .tub2_params import (INS, INS_AXIS, TOP_XY, TOP_NECK, TOP_PILOT_R, COL_R, SKIN, BORE_R, BORE_CH, CH_Z0, CH_Z1, DECK, OVER,
                           WALL_IN_REAR, SEAT_Z)
 from .tub2_util import box_xy, concave_filler, prism
 
@@ -18,10 +18,16 @@ def rear_boss():
 
 
 def bores():
-    """Heat-set bores through the whole column with a 45 deg chamfer at the base-panel seat and at the rim."""
+    """Heat-set bores through the column with a 45 deg chamfer at the base-panel seat and at the rim. The four corner columns the Ti top
+    panel screws into keep a TOP_NECK web under the rim instead (tap-drill pilot through it): the panel's d2.8 holes sit over these columns in the STEP."""
     cutters = []
     for x, y in INS:
-        cutters.append(Pos(x, y, CH_Z0 - OVER) * Cylinder(BORE_R, CH_Z1 - CH_Z0 + 2 * OVER, align=(Align.CENTER, Align.CENTER, Align.MIN)))
+        top_screw = (x, y) in TOP_XY
+        z_end = CH_Z1 - TOP_NECK if top_screw else CH_Z1
+        cutters.append(Pos(x, y, CH_Z0 - OVER) * Cylinder(BORE_R, z_end - CH_Z0 + OVER, align=(Align.CENTER, Align.CENTER, Align.MIN)))
         cutters.append(Pos(x, y, SEAT_Z) * Cone(BORE_R + BORE_CH, BORE_R, BORE_CH, align=(Align.CENTER, Align.CENTER, Align.MIN)))
-        cutters.append(Pos(x, y, CH_Z1) * Cone(BORE_R, BORE_R + BORE_CH, BORE_CH, align=(Align.CENTER, Align.CENTER, Align.MAX)))
+        if top_screw:
+            cutters.append(Pos(x, y, z_end - OVER) * Cylinder(TOP_PILOT_R, TOP_NECK + 2 * OVER, align=(Align.CENTER, Align.CENTER, Align.MIN)))
+        else:
+            cutters.append(Pos(x, y, CH_Z1) * Cone(BORE_R, BORE_R + BORE_CH, BORE_CH, align=(Align.CENTER, Align.CENTER, Align.MAX)))
     return sum(cutters[1:], cutters[0])

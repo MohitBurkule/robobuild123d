@@ -75,13 +75,22 @@
    "threads_into": "insert"
   },
   {
+   "role": "top panel: 4 x M2 thread-forming (not in the STEP; its d2.8 holes over the corner columns are)",
+   "match": [
+    "bolt_t*"
+   ],
+   "count": 4,
+   "designation": "M2x5",
+   "threads_into": "tub",
+   "deviation": "the STEP top panel has 4 countersunk corner holes over the corner columns' d3 bores but no screws; 4 M2x5 added, tapping a 1.7 pilot in a 3 mm web left under the column rim, so the Ti panel cannot peel off"
+  },
+  {
    "role": "FS1 M2 heat-sets (floor)",
    "kind": "part",
    "match": [
-    "insert_b*",
-    "insert_t*"
+    "insert_b*"
    ],
-   "count": 9,
+   "count": 5,
    "catalog": "heatset_m2_4"
   },
   {
@@ -723,6 +732,24 @@
     "tol_vol_frac": 0.25,
     "note": "RV01 chassis",
     "deviations": [
+     {
+      "near": [
+       24.55,
+       1.9,
+       17.5
+      ],
+      "r": 1.5,
+      "reason": "switch pilot holes follow the switch, which sits 0.45 mm in from the STEP X 25.0 so its body clears the 27.5 inner wall face (the STEP switch penetrates the wall 0.4 mm)"
+     },
+     {
+      "near": [
+       24.55,
+       -13.1,
+       17.5
+      ],
+      "r": 1.5,
+      "reason": "switch pilot holes follow the switch, which sits 0.45 mm in from the STEP X 25.0 so its body clears the 27.5 inner wall face (the STEP switch penetrates the wall 0.4 mm)"
+     },
      {
       "near": [
        32.0,
@@ -1519,7 +1546,8 @@
     0.0,
     180.0
    ],
-   "label": "0.9 mm Ti top panel: laser outline with 4 countersunk 2.2 corner holes, 4 M2 flat-head thread-forming screws into the column tops (material inferred, see REFERENCE.md)"
+   "thin_wall_deviation": "matches original RVRN 2.0: Chamfer1 (0.75 x 45 deg, dump Top Panel) on the 0.9 sheet leaves a 0.15 land at each d2.2 hole (STEP Top_Panel_1 section through a hole: material only z 20.25 to 20.4 at r 1.1, full 19.5 to 20.4 from r 1.9)",
+   "label": "0.9 mm Ti top panel: laser outline with 4 countersunk 2.2 corner holes, 4 M2 button-head thread-forming screws into the pilot webs under the column rims (material inferred, see REFERENCE.md)"
   },
   {
    "id": "mount_r",
@@ -2891,46 +2919,6 @@
    ]
   },
   {
-   "id": "insert_t0",
-   "kind": "insert",
-   "catalog": "heatset_m2_4",
-   "at": [
-    25.0,
-    10.4,
-    17.5
-   ]
-  },
-  {
-   "id": "insert_t1",
-   "kind": "insert",
-   "catalog": "heatset_m2_4",
-   "at": [
-    -25.0,
-    10.4,
-    17.5
-   ]
-  },
-  {
-   "id": "insert_t2",
-   "kind": "insert",
-   "catalog": "heatset_m2_4",
-   "at": [
-    25.0,
-    -21.6,
-    17.5
-   ]
-  },
-  {
-   "id": "insert_t3",
-   "kind": "insert",
-   "catalog": "heatset_m2_4",
-   "at": [
-    -25.0,
-    -21.6,
-    17.5
-   ]
-  },
-  {
    "id": "belt_l",
    "kind": "belt",
    "material": "rubber",
@@ -4233,6 +4221,154 @@
    "removable": true
   },
   {
+   "id": "bolt_t0",
+   "designation": "M2x5",
+   "head": "button",
+   "tool": "hex1.3",
+   "at": [
+    25.0,
+    10.4,
+    20.4
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "through": [
+    "top_panel",
+    "tub"
+   ],
+   "threads_into": "tub",
+   "reason": "M2 button head on the panel top, thread-forming into the 1.7 pilot in the TOP_NECK web under the rim of the corner column (the STEP top panel has the 4 holes over those columns, no screws)",
+   "hole": {
+    "d": 2.0,
+    "length": 5.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 0.9
+   },
+   "removable": true
+  },
+  {
+   "id": "bolt_t1",
+   "designation": "M2x5",
+   "head": "button",
+   "tool": "hex1.3",
+   "at": [
+    -25.0,
+    10.4,
+    20.4
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "through": [
+    "top_panel",
+    "tub"
+   ],
+   "threads_into": "tub",
+   "reason": "M2 button head on the panel top, thread-forming into the 1.7 pilot in the TOP_NECK web under the rim of the corner column (the STEP top panel has the 4 holes over those columns, no screws)",
+   "hole": {
+    "d": 2.0,
+    "length": 5.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 0.9
+   },
+   "removable": true
+  },
+  {
+   "id": "bolt_t2",
+   "designation": "M2x5",
+   "head": "button",
+   "tool": "hex1.3",
+   "at": [
+    25.0,
+    -21.6,
+    20.4
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "through": [
+    "top_panel",
+    "tub"
+   ],
+   "threads_into": "tub",
+   "reason": "M2 button head on the panel top, thread-forming into the 1.7 pilot in the TOP_NECK web under the rim of the corner column (the STEP top panel has the 4 holes over those columns, no screws)",
+   "hole": {
+    "d": 2.0,
+    "length": 5.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 0.9
+   },
+   "removable": true
+  },
+  {
+   "id": "bolt_t3",
+   "designation": "M2x5",
+   "head": "button",
+   "tool": "hex1.3",
+   "at": [
+    -25.0,
+    -21.6,
+    20.4
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "through": [
+    "top_panel",
+    "tub"
+   ],
+   "threads_into": "tub",
+   "reason": "M2 button head on the panel top, thread-forming into the 1.7 pilot in the TOP_NECK web under the rim of the corner column (the STEP top panel has the 4 holes over those columns, no screws)",
+   "hole": {
+    "d": 2.0,
+    "length": 5.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 0.9
+   },
+   "removable": true
+  },
+  {
    "id": "bolt_sw0",
    "designation": "M2x3",
    "head": "button",
@@ -4690,8 +4826,8 @@
   {
    "a": "top_panel",
    "b": "tub",
-   "method": "glue",
-   "reason": "Ti top panel bonded on the deck, as in the original RVRN 2.0 (STEP: countersunk corner holes, no screws)"
+   "method": "screw",
+   "reason": "Ti top panel held by 4 M2 thread-forming screws through its corner holes into the 1.7 pilots of the column rim webs (the STEP has the holes over the columns, not the screws)"
   },
   {
    "a": "battery",
