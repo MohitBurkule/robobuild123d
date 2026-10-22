@@ -65,7 +65,8 @@ def model_file(raw: dict) -> str | None:
 
 
 def describe(job, d) -> str:
-    what = f"`{job.target}` {job.base!r} -> {job.value!r}" if job.kind == "param" else f"`{job.id}`"
+    r = (lambda v: round(v, 4) if isinstance(v, float) else v)
+    what = f"`{job.target}` {r(job.base)!r} -> {r(job.value)!r}" if job.kind == "param" else f"`{job.id}`"
     if d["build_error"]:
         return f"{what}: build fails ({d['build_error']})"
     checks = sorted({b[0] for b in d["new"]})

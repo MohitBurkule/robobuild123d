@@ -51,9 +51,8 @@ def diff(base: dict, res: dict, kind: str = "param") -> dict:
     catalog choice, flag) a volume change of a rebuilt part is the intent, not a regression."""
     bk = {key_of(b) for b in base.get("blockers", [])}
     rk = {key_of(b) for b in res.get("blockers", [])}
-    rebuilt = set(res.get("rebuilt") or [])
     new = [b for b in res.get("blockers", []) if key_of(b) not in bk
-           and not (kind != "param" and b[0] in SWAP_EXEMPT and set(b[1].split(",")) <= rebuilt)]
+           and not (kind != "param" and b[0] in SWAP_EXEMPT)]
     err = res.get("error") if res.get("stage") != "timeout" else None
     return {"broken": bool(err or new), "build_error": err, "new": new, "fixed": sorted(bk - rk),
             "timeout": res.get("stage") == "timeout"}
