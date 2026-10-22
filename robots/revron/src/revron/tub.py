@@ -17,6 +17,12 @@ def chassis():
     return chassis2()
 
 
+def chassis_local():
+    """The chassis in its own part frame (as the SolidWorks part is drawn); the rig places it (joints.TUB_FRAME)."""
+    from .joints import TUB_FRAME
+    return chassis().moved(TUB_FRAME.inverse())
+
+
 def esc_tray():
     """TPU tray glued to the base panel under the weapon ESC (not in the STEP, where kapton alone holds it): two rails carry
     the board 0.1 mm off, 1 mm lips 0.1 mm off its -x / +x / +y sides (leads leave above the lips at the board mid-plane).

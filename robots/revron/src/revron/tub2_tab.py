@@ -14,7 +14,7 @@ TAB_GAP = SKIN / 10                               # tab wall stops this short of
 WALL_X = (MNT_IN - TAB_GAP - TAB_WALL_T, MNT_IN - TAB_GAP)   # tab wall X span (inboard of the mount)
 KEY_Y0, KEY_Z0, KEY_Z1 = 18.5, 5.4, 13.5          # key tab octagon (Y0 .. TAB_FRONT, Z0 .. Z1), chamfer SKIN
 KEY_X = (MNT_IN - 2 * TAB_GAP, SA_X0 + OVER)      # key tab runs from the mount's notch into the lug
-KEY_WALL, KEY_R = 3 * SKIN / 2, 0.9               # wall left round the key hole; its corner R
+KEY_WALL, KEY_R = 3 * SKIN / 2, SKIN                # wall left round the key hole; its corner R (Fillet4)
 
 
 def tab_wall_sketch(plane):
@@ -39,7 +39,10 @@ def key_sketch(plane, inset=0.0):
     with BuildSketch(plane) as sk:
         with Locations((KEY_Y0 + inset, KEY_Z0 + inset)):
             Rectangle(TAB_FRONT - KEY_Y0 - 2 * inset, KEY_Z1 - KEY_Z0 - 2 * inset, align=(Align.MIN, Align.MIN))
-        fillet(sk.vertices(), KEY_R if inset else 0.0) if inset else chamfer(sk.vertices(), SKIN)
+        if inset:
+            fillet(sk.vertices(), KEY_R)
+        else:
+            chamfer(sk.vertices(), SKIN)
     return sk
 
 

@@ -1,13 +1,13 @@
 """[tub2] Deck lightening pockets (cut from below, SKIN left): the diagonal ribs from the centre through the column centres bound the two
 X pockets and two side pockets (R = wall at every rib corner); rear boxes sit between the stop walls. Right-hand pockets are mirrored."""
-from build123d import Align, BuildSketch, Locations, Polygon, Rectangle, fillet
-from .tub2_params import (POCKET_X, SIDE_X, CENTRE_Y, DIAG_K, RIB_OFF, FRONT_RIB, STOP_GAP, POCKET_SKIN, CENTRE_Y0, REAR_R, SKIN,
+from build123d import Align, BuildSketch, Circle, Locations, Mode, Polygon, Rectangle, fillet
+from .tub2_params import (INS_AXIS, POCKET_X, SIDE_X, CENTRE_Y, DIAG_K, RIB_OFF, FRONT_RIB, STOP_GAP, POCKET_SKIN, CENTRE_Y0, REAR_R, SKIN,
                           CH_WALL, CH_IN_X, COL_R, DECK, OVER, WALL_IN_FRONT, WALL_IN_REAR, STOP_BACK_Y, STOP_FRONT_Y, SA_X0)
-from .tub2_util import box_xy, prism, mirrored
+from .tub2_util import box_xy, concave_filler, prism, mirrored
 
 
-def _cut(sk):
-    return prism(sk, DECK - SKIN, DECK + SKIN)
+def _cut(sk, below=SKIN):
+    return prism(sk, DECK - below, DECK + SKIN)
 
 
 def _rounded(pts, tips):
@@ -26,7 +26,7 @@ def x_pockets():
     face = STOP_FRONT_Y
     lo = [(0, a_lo), (x, a_lo - k * x), (x, face), (SA_X0, face), (SA_X0, face - STOP_GAP), (-SA_X0, face - STOP_GAP), (-SA_X0, face), (-x, face), (-x, a_lo - k * x)]
     tips = lambda p: [p[0], p[1], p[-1]]
-    return [_cut(_rounded(up, tips(up))), _cut(_rounded(lo, tips(lo)))]
+    return [_cut(_rounded(up, tips(up)), 0), _cut(_rounded(lo, tips(lo)), 0)]
 
 
 def side_pocket():
@@ -47,9 +47,15 @@ def _rear_layout():
 
 
 def rear_pad():
-    """Boss-Extrude10: the deck is half a skin thicker behind the stop wall, from the web's outer skin out to the side wall."""
+    """Boss-Extrude10 + Fillet20: the deck is half a skin thicker behind the stop wall, from the web's outer skin out to the side wall. R = skin on
+    the pad's free front corner (convex) and in the concave corner where its web side meets the rear wall."""
     x0, w, _, _ = _rear_layout()
-    return box_xy(x0 + w + SKIN, CH_IN_X + OVER, WALL_IN_REAR - OVER, STOP_BACK_Y, DECK - SKIN / 2, DECK + OVER)
+    xp, z0, z1 = x0 + w + SKIN, DECK - SKIN / 2, DECK + OVER
+    with BuildSketch() as sk:
+        with Locations((xp, WALL_IN_REAR - OVER)):
+            Rectangle(CH_IN_X + OVER - xp, STOP_BACK_Y - WALL_IN_REAR + OVER, align=(Align.MIN, Align.MIN))
+        fillet([v for v in sk.vertices() if abs(v.X - xp) < OVER and abs(v.Y - STOP_BACK_Y) < OVER], SKIN)
+    return [prism(g, z0, z1) for g in (sk, concave_filler((xp, WALL_IN_REAR), (-1, 1), SKIN))]
 
 
 def rear_pockets():
@@ -64,6 +70,9 @@ def rear_pockets():
         with Locations((0, CENTRE_Y0)):
             Rectangle(2 * COL_R, y1 - CENTRE_Y0, align=(Align.CENTER, Align.MIN))
         fillet(ck.vertices(), REAR_R)
+        for bx, by in INS_AXIS:                        # the boss collar (column + one skin) stands in the deck: the pocket wraps round it
+            with Locations((bx, by)):
+                Circle(COL_R + SKIN, mode=Mode.SUBTRACT)
     return _cut(sk), _cut(ck)
 
 

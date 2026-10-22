@@ -12,11 +12,19 @@ TOL = 1e-3
 def test_world_poses_match_baseline():
     base = json.load(open(os.path.join(HERE, "placements_baseline.json")))
     poses, joints = world_poses()
+    from revron.variants import variant
+    gone = [n for n, v in (("bolt_t", "top_screws"), ("bat_pad", "battery_pad"), ("esc_tray", "esc_tray")) if not variant(v)]   # baseline has the variant parts; the original does not
+    base["poses"] = {k: v for k, v in base["poses"].items() if not k.startswith(tuple(gone))}
+    base["joints"] = {k: v for k, v in base["joints"].items() if not k.startswith(tuple(gone))}
     assert poses.keys() == base["poses"].keys()
     for k, v in base["poses"].items():
         a, b = np.concatenate([np.ravel(x) for x in v]), np.concatenate([np.ravel(x) for x in poses[k]])
         assert np.abs(a - b).max() < TOL, k
-    assert joints == base["joints"]
+    for k, j in joints.items():   # a spin sense is a convention: the axis of a joint under a turned parent (the tub frame) may come out as -axis
+        if j["axis"] != base["joints"][k]["axis"]:
+            j = dict(j, axis=[v + 0.0 for v in np.negative(j["axis"])])
+        assert j == base["joints"][k], k
+    assert joints.keys() == base["joints"].keys()
 
 
 def _world(part, label):

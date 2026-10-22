@@ -7,7 +7,7 @@ from .tub2_util import mirrored
 
 def additions():
     """Material added on the shell: rear boss, switch pad, then the +X half blocks mirrored."""
-    half = (tub2_blocks.corner_blocks() + tub2_blocks.stop_wall_key_ledge() + [tub2_pockets.rear_pad()]
+    half = (tub2_blocks.corner_blocks() + tub2_blocks.stop_wall_key_ledge() + tub2_pockets.rear_pad()
             + [tub2_lug.lug(), tub2_tab.tab_wall(), tub2_tab.key_tab(), tub2_tab.wall_blend(), tub2_flange.flange()])
     return [tub2_cols.rear_boss()] + tub2_lobes.additions() + [mirrored(h) for h in half] + tub2_switch.switch_pad()
 
@@ -20,7 +20,7 @@ def mating_parts():
     """The weapon mounts and side panels seat on the chassis: their own solids are cut out of it (the assembly relation, not a drawn shape)."""
     from .weapon import weapon_mount
     from .side import side_panel
-    return [weapon_mount("l"), weapon_mount("r"), side_panel(1, pin=False), side_panel(-1, pin=False)]
+    return [weapon_mount("l", tub_cut=True), weapon_mount("r", tub_cut=True), side_panel(1, pin=False), side_panel(-1, pin=False)]
 
 
 def chassis2():

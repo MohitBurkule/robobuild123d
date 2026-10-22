@@ -318,7 +318,7 @@ def builtin() -> list[CatalogEntry]:
         # RVRN 2.0 STEP envelopes (Revron rebuild 2026-10): measured outline of the vendor models, not memory.
         CatalogEntry("gr1507", "weapon_motor", "GR1507 outrunner, fixed half: 4-arm cross base with 4 M2 on 12 mm, 12-slot wound stator stack, 3 phase leads (bell is `gr1507_can`)", 8.5, "datasheet",
                      minus(union([at(_gr1507_base(), -9.4, 0, 0), _gr1507_stator(), _gr1507_leads()]), [at(cyl_x(SHAFT_STUB_R + 0.1, 30.0), 0.0, 0, 0)]),
-                     {"phases": [-11.2, 0, -7.6]}, {"at": [4.1, 0, 0], "dir": [1, 0, 0], "len": 14.6, "dia": 5.0},
+                     {"phases": [LEAD_X, 0, LEAD_Z[1]]}, {"at": [4.1, 0, 0], "dir": [1, 0, 0], "len": 14.6, "dia": 5.0},
                      {"kv": 2850, "max_current_a": 18.0, "typ_current_a": 8.0, "bell_mass_frac": 0.0, "rotor_part": "gr1507_can"}, "#3a3d42"),
         CatalogEntry("gr1507_can", "other", "GR1507 outrunner, rotating half: 19.6 bell (r7.4-9.8 wall, solid r4 core, 8-rib vented top), threaded 5 mm shaft out of the bell face", 7.0, "datasheet",
                      at(_gr1507_bell(), 0.0, 0, 0),

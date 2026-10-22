@@ -11,7 +11,7 @@ from .panel_top import top_panel
 
 # ------------------------------------------------------------------------------------------------------------ misc
 PARTS = {
-    "base_panel": base_panel, "top_panel": top_panel, "chassis": chassis, "motor_back_spacer": motor_back_spacer,
+    "base_panel": base_panel, "top_panel": top_panel, "chassis": chassis, "chassis_local": chassis_local, "motor_back_spacer": motor_back_spacer,
     "mount_l": lambda: weapon_mount("l"), "mount_r": lambda: weapon_mount("r"),
     "fork_l": lambda: fork_local(), "fork_r": lambda: fork_local(),   # one sheet part, placed twice by the rig
     "spider": spider, "disc_a": lambda: disc("disc_a"), "disc_b": lambda: disc("disc_b"), "drisk_spacer": drisk_spacer, "weapon_shaft": weapon_shaft,
@@ -33,7 +33,7 @@ def build(part, origin=None):
     """Model-file entry point (robot.shapes `model`): one part in world coordinates, or relative to `origin` (the part's
     `at`, for rotating parts whose frame sits on their spin axis)."""
     s = _solid(PARTS[part]())
-    if part == "chassis":   # a failed panel boolean once left 413 mm3 in 7 solids and nothing passed noticed
+    if part in ("chassis", "chassis_local"):   # a failed panel boolean once left 413 mm3 in 7 solids and nothing passed noticed
         assert len(s.solids()) == 1 and s.volume > CHASSIS_MIN_VOLUME, f"chassis collapsed: {s.volume:.0f} mm3 in {len(s.solids())} solids"
     if origin:
         s = s.moved(_b().Location(tuple(-float(v) for v in origin)))

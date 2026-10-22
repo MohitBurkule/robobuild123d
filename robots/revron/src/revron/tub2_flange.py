@@ -38,10 +38,12 @@ def flange():
     f = plan()
     plate = prism(f, CH_Z0, BOT_TOP)
     web = prism(f, CH_Z0, CH_Z1) & box_xy(SB_X0 - 1, CH_HALF_W + 1, WALL_IN_FRONT - 1, FACE_Y, CH_Z0, CH_Z1)
-    blend = prism(concave_filler((SB_X0, FACE_Y), (1, 1), FACE_FIL_R), CH_Z0, CH_Z1)
     s = top_line_slope()
     z_at = lambda y: CH_Z1 + s * (y - CH_Y1)
     y0, y1 = FACE_Y - SKIN, CH_Y1 + 3 * BLEND_R
+    with BuildSketch(Plane.YZ.offset(SB_X0 - 1)) as under:        # everything under the lug's sloping top line
+        Polygon((y0, CH_Z0), (y1, CH_Z0), (y1, z_at(y1)), (y0, z_at(y0)), align=None)
+    blend = prism(concave_filler((SB_X0, FACE_Y), (1, 1), FACE_FIL_R), CH_Z0, CH_Z1) & extrude(under.sketch, CH_HALF_W - SB_X0 + 2)
     with BuildSketch(Plane.YZ.offset(SB_X0 - 1)) as sl:
         Polygon((y0, z_at(y0)), (y1, z_at(y1)), (y1, z_at(y1) - FLANGE_T), (y0, z_at(y0) - FLANGE_T), align=None)
     slab = extrude(sl.sketch, CH_HALF_W - SB_X0 + 2) & prism(f, CH_Z0, CH_Z1)

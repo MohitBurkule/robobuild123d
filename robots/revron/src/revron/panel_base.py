@@ -5,7 +5,8 @@ Part frame = reference transform: origin on the outline centre at the inner face
 180 deg about Y from the robot frame). It is placed on the tub by the `hole_0` joint (assembly_rig), not by coordinates."""
 import build123d as b
 from robot.cad.holes import hole_tool
-from .params_chassis import BASE_OUT, BASE_Z0, BASE_T, BASE_CSK_CLEAR, INS, PRELOAD_PAD
+from .variants import variant
+from .params_chassis import BASE_OUT, BASE_Z0, BASE_T, BASE_CSK_CLEAR, BASE_CSK_CLEAR_STEP, INS, PRELOAD_PAD
 
 YC = (BASE_OUT["y0"] + BASE_OUT["y1"]) / 2                 # outline centre Y: the part origin
 FRAME = b.Location((0, YC, BASE_Z0 + BASE_T), (0, 180, 0))  # part frame -> robot world (reference transform)
@@ -32,7 +33,7 @@ def seat(i, local=True):
     """(cutter, FastenerRecord) of countersink i: the M2 CSK of the bolt, head side, 4.4 head in a seat cone parallel to it."""
     x, y = INS[i]
     at, axis = ((*to_local(FRAME, (x, y, BASE_Z0))[:2], BASE_T), (0, 0, -1)) if local else ((x, y, BASE_Z0), (0, 0, 1))
-    return hole_tool(at, axis, "M2x6", head="csk", into="through", side="head", grip=BASE_T, csk_clear=BASE_CSK_CLEAR)
+    return hole_tool(at, axis, "M2x6", head="csk", into="through", side="head", grip=BASE_T, csk_clear=BASE_CSK_CLEAR if variant("base_csk_fit") else BASE_CSK_CLEAR_STEP, fit="normal" if variant("base_csk_fit") else "close")   # original RV26 seat unless the base_csk_fit variant
 
 
 def pad(sx):

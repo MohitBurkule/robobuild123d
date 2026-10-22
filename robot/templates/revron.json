@@ -108,16 +108,6 @@
    "deviation": "M3x14 instead of the STEP's M3x12: through mount and lug, 12 mm engages 3.9 mm of the 15 mm standoff (< 1.5 d)"
   },
   {
-   "role": "top panel: 4 x M2 CSK thread-forming (not in the STEP; its countersunk holes are)",
-   "match": [
-    "bolt_t*"
-   ],
-   "count": 4,
-   "designation": "M2x5",
-   "threads_into": "insert",
-   "deviation": "the STEP top panel has 4 countersunk corner holes but no screws; 4 M2x4 CSK thread-forming screws added so the Ti panel cannot peel off"
-  },
-  {
    "role": "side panel to standoff ends: 4 x M3 CSK (STEP M3x8)",
    "match": [
     "bolt_s?a",
@@ -323,28 +313,6 @@
    "count": 2
   },
   {
-   "role": "bat_pad: double-sided foam tape pad under the pack (not in the STEP)",
-   "kind": "part",
-   "match": [
-    "bat_pad"
-   ],
-   "count": 1,
-   "material": "foam_tape",
-   "deviation": "the STEP pack floats 2 mm over the base panel; a foam tape pad supports and retains it (adds ~0.05 g, reversible)",
-   "reason": "the STEP pack floats 2 mm over the base panel; a foam tape pad supports and retains it (adds ~0.05 g, reversible)"
-  },
-  {
-   "role": "esc_tray: TPU weapon-ESC tray (not in the STEP)",
-   "kind": "part",
-   "match": [
-    "esc_tray"
-   ],
-   "count": 1,
-   "material": "tpu",
-   "deviation": "the STEP holds the weapon ESC with kapton tape alone; a TPU tray with 0.1 mm lips keeps the board in if the tape fails (adds 1.1 g, reversible)",
-   "reason": "the STEP holds the weapon ESC with kapton tape alone; a TPU tray with 0.1 mm lips keeps the board in if the tape fails (adds 1.1 g, reversible)"
-  },
-  {
    "role": "battery lead: JST RCY",
    "kind": "wire",
    "match": [
@@ -405,6 +373,18 @@
  },
  "can_run_inverted": false,
  "allow_overlap": [
+  {
+   "a": "tub",
+   "b": "mount_l",
+   "max_depth_mm": 0.8,
+   "reason": "original RVRN 2.0: the STEP mount notch corners (1 mm chamfer) interpenetrate the square tub tab"
+  },
+  {
+   "a": "tub",
+   "b": "mount_r",
+   "max_depth_mm": 0.8,
+   "reason": "original RVRN 2.0: the STEP mount notch corners (1 mm chamfer) interpenetrate the square tub tab"
+  },
   {
    "a": "belt_l",
    "b": "side_l",
@@ -757,105 +737,6 @@
     "deviations": [
      {
       "near": [
-       28.5,
-       -30.5,
-       5.85
-      ],
-      "r": 5.0,
-      "reason": "N10 keyhole opened into a U-slot to the floor so the gearbox boss and shaft drop in from below with the base panel off (the STEP closes the keyhole, the shaft cannot be threaded through it)"
-     },
-     {
-      "near": [
-       -28.5,
-       -30.5,
-       5.85
-      ],
-      "r": 5.0,
-      "reason": "N10 keyhole opened into a U-slot to the floor so the gearbox boss and shaft drop in from below with the base panel off (the STEP closes the keyhole, the shaft cannot be threaded through it)"
-     },
-     {
-      "near": [
-       24.85,
-       -24.775,
-       16.5
-      ],
-      "r": 2.5,
-      "reason": "N10 key tab reaches KEY_DROP below the gearbox plate top so it keys between the plates and stops the motor inboard (the STEP tab is flush, which leaves the motor free to slide in x: retention.loose)"
-     },
-     {
-      "near": [
-       -24.85,
-       -24.775,
-       16.5
-      ],
-      "r": 2.5,
-      "reason": "N10 key tab reaches KEY_DROP below the gearbox plate top so it keys between the plates and stops the motor inboard (the STEP tab is flush, which leaves the motor free to slide in x: retention.loose)"
-     },
-     {
-      "near": [
-       24.55,
-       1.9,
-       17.5
-      ],
-      "r": 1.5,
-      "reason": "switch pilot holes follow the switch, which sits 0.45 mm in from the STEP X 25.0 so its body clears the 27.5 inner wall face (the STEP switch penetrates the wall 0.4 mm)"
-     },
-     {
-      "near": [
-       24.55,
-       -13.1,
-       17.5
-      ],
-      "r": 1.5,
-      "reason": "switch pilot holes follow the switch, which sits 0.45 mm in from the STEP X 25.0 so its body clears the 27.5 inner wall face (the STEP switch penetrates the wall 0.4 mm)"
-     },
-     {
-      "near": [
-       -25.0,
-       10.4,
-       5.0
-      ],
-      "r": 4.0,
-      "reason": "RV01 column foot is an R8 blend (RV01 Chassis.SLDPRT Fillet2, 4 edges); flared to R3.7 because the 1.0 mm base skin cannot seat a 1.2 mm M2 flat head"
-     },
-     {
-      "near": [
-       25.0,
-       10.4,
-       5.0
-      ],
-      "r": 4.0,
-      "reason": "RV01 column foot is an R8 blend (RV01 Chassis.SLDPRT Fillet2, 4 edges); flared to R3.7 because the 1.0 mm base skin cannot seat a 1.2 mm M2 flat head"
-     },
-     {
-      "near": [
-       -25.0,
-       -21.6,
-       5.0
-      ],
-      "r": 4.0,
-      "reason": "RV01 column foot is an R8 blend (RV01 Chassis.SLDPRT Fillet2, 4 edges); flared to R3.7 because the 1.0 mm base skin cannot seat a 1.2 mm M2 flat head"
-     },
-     {
-      "near": [
-       25.0,
-       -21.6,
-       5.0
-      ],
-      "r": 4.0,
-      "reason": "RV01 column foot is an R8 blend (RV01 Chassis.SLDPRT Fillet2, 4 edges); flared to R3.7 because the 1.0 mm base skin cannot seat a 1.2 mm M2 flat head"
-     },
-     {
-      "near": [
-       0.0,
-       -33.6,
-       5.0
-      ],
-      "r": 4.0,
-      "reason": "RV01 column foot is an R8 blend (RV01 Chassis.SLDPRT Fillet2, 4 edges); flared to R3.7 because the 1.0 mm base skin cannot seat a 1.2 mm M2 flat head"
-     },
-     {
-      "near": [
        32.0,
        -13.5,
        9.4
@@ -880,53 +761,7 @@
     "mode": "shape",
     "tol_mm": 0.3,
     "note": "RV26 1 mm panel",
-    "deviations": [
-     {
-      "near": [
-       -25.0,
-       10.4,
-       4.5
-      ],
-      "r": 3.5,
-      "reason": "R2.6 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
-     },
-     {
-      "near": [
-       25.0,
-       10.4,
-       4.5
-      ],
-      "r": 3.5,
-      "reason": "R2.6 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
-     },
-     {
-      "near": [
-       -25.0,
-       -21.6,
-       4.5
-      ],
-      "r": 3.5,
-      "reason": "R2.6 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
-     },
-     {
-      "near": [
-       25.0,
-       -21.6,
-       4.5
-      ],
-      "r": 3.5,
-      "reason": "R2.6 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
-     },
-     {
-      "near": [
-       0.0,
-       -33.6,
-       4.5
-      ],
-      "r": 3.5,
-      "reason": "R2.6 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud"
-     }
-    ]
+    "deviations": []
    },
    {
     "part": "top_panel",
@@ -936,76 +771,38 @@
     "note": "0.9 mm top panel",
     "deviations": [
      {
-      "near": [
-       -25.0,
-       10.4,
-       19.95
+      "path": [
+       [
+        -17.75,
+        -7.1,
+        19.57
+       ],
+       [
+        18.81,
+        -7.1,
+        19.57
+       ]
       ],
-      "r": 3.5,
-      "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
+      "r": 3.0,
+      "max_mm3": 20.0,
+      "reason": "Top_Panel_1 engraved lettering, 0.1 mm deep (x -17.75..18.81, y -8.68..-2.53), laser-etch omitted; two capsules along the text, each capped on the volume it may excuse"
      },
      {
-      "near": [
-       25.0,
-       10.4,
-       19.95
+      "path": [
+       [
+        -17.75,
+        -4.1,
+        19.57
+       ],
+       [
+        18.81,
+        -4.1,
+        19.57
+       ]
       ],
-      "r": 3.5,
-      "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
-     },
-     {
-      "near": [
-       -25.0,
-       -21.6,
-       19.95
-      ],
-      "r": 3.5,
-      "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
-     },
-     {
-      "near": [
-       25.0,
-       -21.6,
-       19.95
-      ],
-      "r": 3.5,
-      "reason": "4.5 countersink on a 3.5 hole (STEP 3.65 on 2.2) for an ISO M2 flat head, ear R2.7 (STEP 2.5) to keep 0.45 mm of Ti round it"
-     },
-     {
-      "near": [
-       -3.78,
-       -5.57,
-       19.57
-      ],
-      "r": 5.0,
-      "reason": "0.1 mm engraved lettering, laser-etch omitted"
-     },
-     {
-      "near": [
-       -13.73,
-       -5.62,
-       19.57
-      ],
-      "r": 5.0,
-      "reason": "0.1 mm engraved lettering, laser-etch omitted"
-     },
-     {
-      "near": [
-       5.84,
-       -5.26,
-       19.57
-      ],
-      "r": 5.0,
-      "reason": "0.1 mm engraved lettering, laser-etch omitted"
-     },
-     {
-      "near": [
-       15.04,
-       -5.66,
-       19.57
-      ],
-      "r": 5.0,
-      "reason": "0.1 mm engraved lettering, laser-etch omitted"
+      "r": 3.0,
+      "max_mm3": 20.0,
+      "reason": "Top_Panel_1 engraved lettering, 0.1 mm deep (x -17.75..18.81, y -8.68..-2.53), laser-etch omitted; two capsules along the text, each capped on the volume it may excuse"
      }
     ]
    },
@@ -1014,26 +811,7 @@
     "file": "RV02_XALT_HD_left_hand_weapon_mount_1.stl",
     "mode": "shape",
     "tol_mm": 0.5,
-    "deviations": [
-     {
-      "near": [
-       -15.9,
-       11.5,
-       20.4
-      ],
-      "r": 5.0,
-      "reason": "the STEP notch top is a zero-thickness wedge (mfg.thin_wall); thickened to a printable wall, rearmost point unchanged"
-     },
-     {
-      "near": [
-       -15.4,
-       41.1,
-       2.8
-      ],
-      "r": 5.0,
-      "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside and front edge, so the countersink keeps a 0.9 mm wall"
-     }
-    ]
+    "deviations": []
    },
    {
     "part": "mount_r",
@@ -1043,30 +821,12 @@
     "deviations": [
      {
       "near": [
-       15.9,
-       11.5,
-       20.4
-      ],
-      "r": 5.0,
-      "reason": "the STEP notch top is a zero-thickness wedge (mfg.thin_wall); thickened to a printable wall, rearmost point unchanged"
-     },
-     {
-      "near": [
-       15.4,
-       41.1,
-       2.8
-      ],
-      "r": 5.0,
-      "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside and front edge, so the countersink keeps a 0.9 mm wall"
-     },
-     {
-      "near": [
        16.8,
        44.5,
        23.5
       ],
       "r": 2.0,
-      "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"
+      "reason": "STEP counterbore ends in a 45 deg lead-in cone (r2.25 at |X| 17.4 down to r1.1 at 16.4); we cut a flat floor at CB_FLOOR_X instead: the inferred M2x8 button head needs a flat seat (fastener_seat.head_bearing) and its tip must bite 1.7 mm of the 2 mm stator base (fastener.engagement; the STEP floor gives 1.25)"
      },
      {
       "near": [
@@ -1075,7 +835,7 @@
        29.5
       ],
       "r": 2.0,
-      "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"
+      "reason": "STEP counterbore ends in a 45 deg lead-in cone (r2.25 at |X| 17.4 down to r1.1 at 16.4); we cut a flat floor at CB_FLOOR_X instead: the inferred M2x8 button head needs a flat seat (fastener_seat.head_bearing) and its tip must bite 1.7 mm of the 2 mm stator base (fastener.engagement; the STEP floor gives 1.25)"
      },
      {
       "near": [
@@ -1084,7 +844,7 @@
        23.5
       ],
       "r": 2.0,
-      "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"
+      "reason": "STEP counterbore ends in a 45 deg lead-in cone (r2.25 at |X| 17.4 down to r1.1 at 16.4); we cut a flat floor at CB_FLOOR_X instead: the inferred M2x8 button head needs a flat seat (fastener_seat.head_bearing) and its tip must bite 1.7 mm of the 2 mm stator base (fastener.engagement; the STEP floor gives 1.25)"
      },
      {
       "near": [
@@ -1093,24 +853,7 @@
        17.5
       ],
       "r": 2.0,
-      "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"
-     },
-     {
-      "path": [
-       [
-        15.66641639482141,
-        19.0,
-        20.329622734725216
-       ],
-       [
-        15.66641639482141,
-        38.5,
-        11.583201466831557
-       ]
-      ],
-      "r": 3.0,
-      "max_mm3": 520,
-      "reason": "phase-lead C-groove in the inner face (added, not in the STEP): the twisted 3 x AWG24 bundle snaps through a 3.0 mouth into a R2.0 channel from the stator exit to the lug top: the original RV03/STEP has no lead channel (leads run free over the lug), so the leads are retained and held clear of the disc bolt heads (wire.exterior_support, wire.rotor_clearance)"
+      "reason": "STEP counterbore ends in a 45 deg lead-in cone (r2.25 at |X| 17.4 down to r1.1 at 16.4); we cut a flat floor at CB_FLOOR_X instead: the inferred M2x8 button head needs a flat seat (fastener_seat.head_bearing) and its tip must bite 1.7 mm of the 2 mm stator base (fastener.engagement; the STEP floor gives 1.25)"
      }
     ]
    },
@@ -1158,7 +901,7 @@
        30.44772759118839,
        12.047449670300885
       ],
-      "r": 2.0,
+      "r": 2.5,
       "reason": "r14 stack hole is the M2 tap drill (1.6) where the stack screws thread into the spider; the STEP shows the 2.2 clearance and no screw or nut"
      },
      {
@@ -1167,7 +910,7 @@
        27.047449670300885,
        31.55227240881161
       ],
-      "r": 2.0,
+      "r": 2.5,
       "reason": "r14 stack hole is the M2 tap drill (1.6) where the stack screws thread into the spider; the STEP shows the 2.2 clearance and no screw or nut"
      },
      {
@@ -1176,7 +919,7 @@
        46.552272408811604,
        34.952550329699115
       ],
-      "r": 2.0,
+      "r": 2.5,
       "reason": "r14 stack hole is the M2 tap drill (1.6) where the stack screws thread into the spider; the STEP shows the 2.2 clearance and no screw or nut"
      },
      {
@@ -1185,7 +928,7 @@
        49.952550329699115,
        15.447727591188393
       ],
-      "r": 2.0,
+      "r": 2.5,
       "reason": "r14 stack hole is the M2 tap drill (1.6) where the stack screws thread into the spider; the STEP shows the 2.2 clearance and no screw or nut"
      }
     ]
@@ -1591,7 +1334,8 @@
     ],
     "tol_mm": 0.6,
     "tol_vol_frac": 0.3,
-    "note": "fixed half + rotating bell compared together; the STEP bell is empty, the real stator stack and windings sit in it (declared on the part)"
+    "placement_tol_mm": 0.8,
+    "note": "fixed half + rotating bell compared together; the STEP bell is empty, the real stator stack and windings sit in it (declared on the part); the GEPRC drawing bell is 1.5 mm taller than the STEP can (cap 6.7 vs 5.2), so the can bbox centre sits 0.75 mm off"
    },
    {
     "part": "battery",
@@ -1658,13 +1402,33 @@
     "type": "model",
     "file": "../../robots/revron/src/build_revron.py",
     "params": {
-     "part": "chassis"
+     "part": "chassis_local"
     }
    },
+   "at": [
+    0.0,
+    0.0,
+    11.0
+   ],
+   "rot": [
+    180.0,
+    0.0,
+    180.0
+   ],
    "material": "pla_st",
    "process": "fdm",
    "thin_wall_deviation": "matches original RVRN 2.0: the switch-slot rim is 0.5 mm wide on RV01_Chassis_1 too (RV01 section y=-10: slot edge x=27.0, outer face x=27.5) and 0.65 mm between the slot front and the deck pocket (section x=25: y -12.25 to -11.6)",
-   "label": "RV01 printed chassis: closed X-ribbed deck (printed deck-down), open floor for the base panel, N10 keyhole side pockets, nut lobes, weapon-mount tabs and standoff lugs"
+   "label": "RV01 printed chassis: closed X-ribbed deck (printed deck-down), open floor for the base panel, N10 keyhole side pockets, nut lobes, weapon-mount tabs and standoff lugs",
+   "rub_gap_ok": {
+    "with": "spider",
+    "min_mm": 0.6,
+    "at": [
+     -10.3,
+     26.05,
+     13.49
+    ],
+    "reason": "matches original RVRN 2.0: the STEP spider_1 sweeps 0.600 mm from the RV01_Chassis_1 face at x -10.3 (swept distance, STEP meshes, tub point (-10.3, 26.05, 13.49))"
+   }
   },
   {
    "id": "base_panel",
@@ -1756,6 +1520,7 @@
    ],
    "material": "pla_st",
    "process": "fdm",
+   "thin_wall_deviation": "matches original RVRN 2.0: RV02/RV03 end the notch top in a zero-thickness wedge and the R3.25 nose arc leaves 0.15 mm round the CSK cone (STEP sections at the notch top and y 40.5); kept for parity (user order)",
    "label": "RV03 XALT HD right weapon mount (8 mm): GR1507 stator on 4 M2 through the back spacer, notch on the chassis tab, 2 M3 CSK into the standoffs"
   },
   {
@@ -1790,6 +1555,7 @@
    ],
    "material": "pla_st",
    "process": "fdm",
+   "thin_wall_deviation": "matches original RVRN 2.0: RV02/RV03 end the notch top in a zero-thickness wedge and the R3.25 nose arc leaves 0.15 mm round the CSK cone (STEP sections at the notch top and y 40.5); kept for parity (user order)",
    "label": "RV02 XALT HD left weapon mount (8 mm): outboard MR85 bearing for the threaded shaft end, notch on the chassis tab, 2 M3 CSK into the standoffs"
   },
   {
@@ -2392,7 +2158,15 @@
     0.0,
     180.0
    ],
-   "rotates_with": "fixed"
+   "rotates_with": "fixed",
+   "loose_ok": {
+    "axis": "+x",
+    "max_mm": 2.2,
+    "reason": "RVRN STEP: RV12 N10 slides 2.0 mm inboard in RV01 before touching the tub; outboard it bears on the RV01 wall at x -27.5"
+   },
+   "assembly_ok": {
+    "reason": "original RVRN 2.0: the RV01 wall solid at z 3..5.5 under the RV12 boss means the N10 goes into the keyhole tilted, shaft first, not by a straight slide"
+   }
   },
   {
    "id": "whub_rl",
@@ -2409,14 +2183,14 @@
    },
    "parent": "tub",
    "at": [
-    -30.0,
+    30.0,
     -30.5,
-    11.0
+    0.0
    ],
    "rot": [
+    -180.0,
     0.0,
-    0.0,
-    180.0
+    0.0
    ],
    "thin_wall_deviation": "matches original RVRN 2.0: RV21 draws the 0.5 mm O-ring flange, the 0.5 mm raised lip at the free end and the 0.2 mm end recess; kept for parity (user order)",
    "joint": {
@@ -2427,9 +2201,9 @@
      0.0
     ],
     "pivot": [
-     -41.6,
+     41.6,
      -30.5,
-     11.0
+     0.0
     ],
     "min": 0,
     "max": 360,
@@ -2798,7 +2572,15 @@
     0.0,
     0.0
    ],
-   "rotates_with": "fixed"
+   "rotates_with": "fixed",
+   "loose_ok": {
+    "axis": "-x",
+    "max_mm": 2.2,
+    "reason": "RVRN STEP: RV12 N10 slides 2.0 mm inboard in RV01 before touching the tub; outboard it bears on the RV01 wall at x 27.5"
+   },
+   "assembly_ok": {
+    "reason": "original RVRN 2.0: the RV01 wall solid at z 3..5.5 under the RV12 boss means the N10 goes into the keyhole tilted, shaft first, not by a straight slide"
+   }
   },
   {
    "id": "whub_rr",
@@ -2815,14 +2597,14 @@
    },
    "parent": "tub",
    "at": [
-    30.0,
+    -30.0,
     -30.5,
-    11.0
+    0.0
    ],
    "rot": [
+    180.0,
     0.0,
-    0.0,
-    0.0
+    180.0
    ],
    "thin_wall_deviation": "matches original RVRN 2.0: RV21 draws the 0.5 mm O-ring flange, the 0.5 mm raised lip at the free end and the 0.2 mm end recess; kept for parity (user order)",
    "joint": {
@@ -2833,9 +2615,9 @@
      0.0
     ],
     "pivot": [
-     41.6,
+     -41.6,
      -30.5,
-     11.0
+     0.0
     ],
     "min": 0,
     "max": 360,
@@ -2964,7 +2746,11 @@
     0.0,
     90.0
    ],
-   "retained": "press_fit"
+   "retained": "press_fit",
+   "no_contact_ok": {
+    "with": "tub",
+    "reason": "original RVRN 2.0: RV16 pack at STEP z 12.0 (underside 6.5) floats 2.0 mm over the RV26 base-panel skin (z 4.5); the assembly mates the pack to the chassis only, no pad"
+   }
   },
   {
    "id": "rxesc",
@@ -2980,8 +2766,7 @@
     0.0,
     90.0
    ],
-   "retained": "strap",
-   "deviation": "RV01/RV13: the Malenki is taped (kapton) to the deck in the STEP; with the cage ribs gone a 6 mm TPU strap (RV01 esc_tray strap slot, glued to the chassis walls over the board) holds it instead, so it cannot slide inverted (adds ~0.3 g, reversible)"
+   "retained": "kapton"
   },
   {
    "id": "wesc",
@@ -3112,39 +2897,6 @@
     -21.6,
     17.5
    ]
-  },
-  {
-   "id": "esc_tray",
-   "kind": "other",
-   "material": "tpu",
-   "process": "fdm",
-   "print_orientation": "+z",
-   "rotates_with": "fixed",
-   "shape": {
-    "type": "model",
-    "file": "../../robots/revron/src/build_revron.py",
-    "params": {
-     "part": "esc_tray"
-    }
-   },
-   "label": "TPU weapon-ESC tray (not in the STEP): glued to the base panel, lips hold the ESC when inverted",
-   "deviation": "the STEP holds the weapon ESC with kapton tape alone; a hit that flips the robot or tears the tape would free the board, so a TPU tray with 0.1 mm lips holds it (adds 1.1 g, reversible)"
-  },
-  {
-   "id": "bat_pad",
-   "kind": "other",
-   "material": "foam_tape",
-   "process": "manual",
-   "rotates_with": "fixed",
-   "shape": {
-    "type": "model",
-    "file": "../../robots/revron/src/build_revron.py",
-    "params": {
-     "part": "bat_pad"
-    }
-   },
-   "label": "Double-sided foam tape pad under the pack (not in the STEP): carries the pack 2 mm above the base panel",
-   "deviation": "the STEP pack floats 2 mm over the base panel; a foam tape pad supports and retains it (adds ~0.05 g, reversible)"
   },
   {
    "id": "belt_l",
@@ -3341,7 +3093,7 @@
    "at": [
     -25.0,
     10.4,
-    3.5
+    2.9
    ],
    "dir": [
     0.0,
@@ -3361,14 +3113,17 @@
     "head_std": "ISO 14581",
     "head_dk": 3.8,
     "head_k": 1.2,
-    "clearance_d": 2.4,
+    "clearance_d": 2.2,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 4.5,
-    "csk_depth": 1.05,
+    "csk_d": 3.2,
+    "csk_depth": 0.5,
     "sink": 0.0,
     "grip": 1.0
+   },
+   "waive": {
+    "fastener_seat": "RV26 base panel seat is dk 3.2 x 0.5 deep in the STEP (panel volume matches the STEP to 0.03 %); the modelled ISO 10642 M2 head (4.4 x 1.2) sits proud of that seat, same as the original RVRN 2.0 assembly. The base_csk_fit variant opens the seat."
    },
    "head": "countersunk",
    "removable": true
@@ -3380,7 +3135,7 @@
    "at": [
     25.0,
     10.4,
-    3.5
+    2.9
    ],
    "dir": [
     0.0,
@@ -3400,14 +3155,17 @@
     "head_std": "ISO 14581",
     "head_dk": 3.8,
     "head_k": 1.2,
-    "clearance_d": 2.4,
+    "clearance_d": 2.2,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 4.5,
-    "csk_depth": 1.05,
+    "csk_d": 3.2,
+    "csk_depth": 0.5,
     "sink": 0.0,
     "grip": 1.0
+   },
+   "waive": {
+    "fastener_seat": "RV26 base panel seat is dk 3.2 x 0.5 deep in the STEP (panel volume matches the STEP to 0.03 %); the modelled ISO 10642 M2 head (4.4 x 1.2) sits proud of that seat, same as the original RVRN 2.0 assembly. The base_csk_fit variant opens the seat."
    },
    "head": "countersunk",
    "removable": true
@@ -3419,7 +3177,7 @@
    "at": [
     -25.0,
     -21.6,
-    3.5
+    2.9
    ],
    "dir": [
     0.0,
@@ -3439,14 +3197,17 @@
     "head_std": "ISO 14581",
     "head_dk": 3.8,
     "head_k": 1.2,
-    "clearance_d": 2.4,
+    "clearance_d": 2.2,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 4.5,
-    "csk_depth": 1.05,
+    "csk_d": 3.2,
+    "csk_depth": 0.5,
     "sink": 0.0,
     "grip": 1.0
+   },
+   "waive": {
+    "fastener_seat": "RV26 base panel seat is dk 3.2 x 0.5 deep in the STEP (panel volume matches the STEP to 0.03 %); the modelled ISO 10642 M2 head (4.4 x 1.2) sits proud of that seat, same as the original RVRN 2.0 assembly. The base_csk_fit variant opens the seat."
    },
    "head": "countersunk",
    "removable": true
@@ -3458,7 +3219,7 @@
    "at": [
     25.0,
     -21.6,
-    3.5
+    2.9
    ],
    "dir": [
     0.0,
@@ -3478,14 +3239,17 @@
     "head_std": "ISO 14581",
     "head_dk": 3.8,
     "head_k": 1.2,
-    "clearance_d": 2.4,
+    "clearance_d": 2.2,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 4.5,
-    "csk_depth": 1.05,
+    "csk_d": 3.2,
+    "csk_depth": 0.5,
     "sink": 0.0,
     "grip": 1.0
+   },
+   "waive": {
+    "fastener_seat": "RV26 base panel seat is dk 3.2 x 0.5 deep in the STEP (panel volume matches the STEP to 0.03 %); the modelled ISO 10642 M2 head (4.4 x 1.2) sits proud of that seat, same as the original RVRN 2.0 assembly. The base_csk_fit variant opens the seat."
    },
    "head": "countersunk",
    "removable": true
@@ -3497,7 +3261,7 @@
    "at": [
     0.0,
     -33.6,
-    3.5
+    2.9
    ],
    "dir": [
     0.0,
@@ -3517,14 +3281,17 @@
     "head_std": "ISO 14581",
     "head_dk": 3.8,
     "head_k": 1.2,
-    "clearance_d": 2.4,
+    "clearance_d": 2.2,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 4.5,
-    "csk_depth": 1.05,
+    "csk_d": 3.2,
+    "csk_depth": 0.5,
     "sink": 0.0,
     "grip": 1.0
+   },
+   "waive": {
+    "fastener_seat": "RV26 base panel seat is dk 3.2 x 0.5 deep in the STEP (panel volume matches the STEP to 0.03 %); the modelled ISO 10642 M2 head (4.4 x 1.2) sits proud of that seat, same as the original RVRN 2.0 assembly. The base_csk_fit variant opens the seat."
    },
    "head": "countersunk",
    "removable": true
@@ -3555,12 +3322,12 @@
     "head_std": "DIN 7991",
     "head_dk": 6.0,
     "head_k": 1.86,
-    "clearance_d": 3.6,
+    "clearance_d": 3.2,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
     "csk_d": 6.4,
-    "csk_depth": 1.4,
+    "csk_depth": 1.6,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -3596,12 +3363,12 @@
     "head_std": "DIN 7991",
     "head_dk": 6.0,
     "head_k": 1.86,
-    "clearance_d": 3.6,
+    "clearance_d": 3.2,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
     "csk_d": 6.4,
-    "csk_depth": 1.4,
+    "csk_depth": 1.6,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -3753,12 +3520,12 @@
     "head_std": "DIN 7991",
     "head_dk": 6.0,
     "head_k": 1.86,
-    "clearance_d": 3.6,
+    "clearance_d": 3.2,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
     "csk_d": 6.4,
-    "csk_depth": 1.4,
+    "csk_depth": 1.6,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -3794,12 +3561,12 @@
     "head_std": "DIN 7991",
     "head_dk": 6.0,
     "head_k": 1.86,
-    "clearance_d": 3.6,
+    "clearance_d": 3.2,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
     "csk_d": 6.4,
-    "csk_depth": 1.4,
+    "csk_depth": 1.6,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -3932,7 +3699,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    17.15,
+    16.7,
     44.5,
     23.5
    ],
@@ -3952,7 +3719,7 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
-    "cbore_depth": 1.7106,
+    "cbore_depth": 2.1606,
     "grip": 5.4606
    },
    "through": [
@@ -3970,7 +3737,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    17.15,
+    16.7,
     32.5,
     23.5
    ],
@@ -3990,7 +3757,7 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
-    "cbore_depth": 2.1954,
+    "cbore_depth": 2.6454,
     "grip": 5.9454
    },
    "through": [
@@ -4008,7 +3775,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    17.15,
+    16.7,
     38.5,
     29.5
    ],
@@ -4028,7 +3795,7 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
-    "cbore_depth": 1.029,
+    "cbore_depth": 1.479,
     "grip": 4.779
    },
    "through": [
@@ -4046,7 +3813,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    17.15,
+    16.7,
     38.5,
     17.5
    ],
@@ -4066,7 +3833,7 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
-    "cbore_depth": 2.877,
+    "cbore_depth": 3.327,
     "grip": 6.627
    },
    "through": [
@@ -4431,154 +4198,6 @@
     "motor_spacer"
    ],
    "reason": "stack screwed into the spider from the back (heads on disc_b, 2 mm of thread in the 3 mm alu spider tapped M2): no nuts, since the STEP has none (inferred: it has the 2.2 holes but no screws)",
-   "removable": true
-  },
-  {
-   "id": "bolt_t0",
-   "designation": "M2x5",
-   "head": "button",
-   "tool": "hex1.3",
-   "at": [
-    25.0,
-    10.4,
-    20.4
-   ],
-   "dir": [
-    0.0,
-    0.0,
-    -1.0
-   ],
-   "through": [
-    "top_panel",
-    "tub"
-   ],
-   "threads_into": "insert_t0",
-   "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
-   "hole": {
-    "d": 2.0,
-    "length": 5.0,
-    "head": "button",
-    "head_std": "ISO 7380-1",
-    "head_dk": 3.5,
-    "head_k": 1.3,
-    "clearance_d": 2.4,
-    "into": "through",
-    "side": "head",
-    "cbore_d": 3.9,
-    "cbore_depth": 0.0,
-    "grip": 0.9
-   },
-   "removable": true
-  },
-  {
-   "id": "bolt_t1",
-   "designation": "M2x5",
-   "head": "button",
-   "tool": "hex1.3",
-   "at": [
-    -25.0,
-    10.4,
-    20.4
-   ],
-   "dir": [
-    0.0,
-    0.0,
-    -1.0
-   ],
-   "through": [
-    "top_panel",
-    "tub"
-   ],
-   "threads_into": "insert_t1",
-   "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
-   "hole": {
-    "d": 2.0,
-    "length": 5.0,
-    "head": "button",
-    "head_std": "ISO 7380-1",
-    "head_dk": 3.5,
-    "head_k": 1.3,
-    "clearance_d": 2.4,
-    "into": "through",
-    "side": "head",
-    "cbore_d": 3.9,
-    "cbore_depth": 0.0,
-    "grip": 0.9
-   },
-   "removable": true
-  },
-  {
-   "id": "bolt_t2",
-   "designation": "M2x5",
-   "head": "button",
-   "tool": "hex1.3",
-   "at": [
-    25.0,
-    -21.6,
-    20.4
-   ],
-   "dir": [
-    0.0,
-    0.0,
-    -1.0
-   ],
-   "through": [
-    "top_panel",
-    "tub"
-   ],
-   "threads_into": "insert_t2",
-   "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
-   "hole": {
-    "d": 2.0,
-    "length": 5.0,
-    "head": "button",
-    "head_std": "ISO 7380-1",
-    "head_dk": 3.5,
-    "head_k": 1.3,
-    "clearance_d": 2.4,
-    "into": "through",
-    "side": "head",
-    "cbore_d": 3.9,
-    "cbore_depth": 0.0,
-    "grip": 0.9
-   },
-   "removable": true
-  },
-  {
-   "id": "bolt_t3",
-   "designation": "M2x5",
-   "head": "button",
-   "tool": "hex1.3",
-   "at": [
-    -25.0,
-    -21.6,
-    20.4
-   ],
-   "dir": [
-    0.0,
-    0.0,
-    -1.0
-   ],
-   "through": [
-    "top_panel",
-    "tub"
-   ],
-   "threads_into": "insert_t3",
-   "reason": "M2 flat head in the panel's 90 deg countersink, thread-forming into the 1.7 column-top pilot (inferred: the STEP top panel has the countersunk 2.2 holes but no screws)",
-   "hole": {
-    "d": 2.0,
-    "length": 5.0,
-    "head": "button",
-    "head_std": "ISO 7380-1",
-    "head_dk": 3.5,
-    "head_k": 1.3,
-    "clearance_d": 2.4,
-    "into": "through",
-    "side": "head",
-    "cbore_d": 3.9,
-    "cbore_depth": 0.0,
-    "grip": 0.9
-   },
    "removable": true
   },
   {
@@ -5039,46 +4658,28 @@
   {
    "a": "top_panel",
    "b": "tub",
-   "method": "screw",
-   "reason": "Ti top panel held by 4 M2 flat-head screws through its countersunk corner holes into M2 heat-sets in the column tops (the STEP has the holes, not the screws)"
+   "method": "glue",
+   "reason": "Ti top panel bonded on the deck, as in the original RVRN 2.0 (STEP: countersunk corner holes, no screws)"
   },
   {
    "a": "battery",
    "b": "tub",
    "method": "press_fit",
-   "reason": "Pack between the motor wall, the insert columns and the deck",
+   "reason": "RV16 pack at STEP z 12.0, underside 6.5, 2.0 mm over the RV26 base-panel skin (z 4.5): the original assembly mates the pack to the chassis only, no pad. Pack between the motor wall, the insert columns and the deck",
    "interference_mm": 0.1,
    "mechanical_key": true
   },
   {
-   "a": "battery",
-   "b": "bat_pad",
-   "method": "tape",
-   "reason": "Pack underside taped to the foam pad (double-sided), which holds it against sliding"
-  },
-  {
-   "a": "bat_pad",
-   "b": "base_panel",
-   "method": "tape",
-   "reason": "Foam pad stuck to the base panel skin; deck and top panel close the pack in from above"
-  },
-  {
    "a": "rxesc",
    "b": "tub",
-   "method": "interlock",
-   "reason": "Malenki held by a TPU strap, boxed by the front wall and the deck; the weapon ESC under it"
+   "method": "tape",
+   "reason": "Malenki kapton-taped to the deck, as in the original RVRN 2.0: revron_deconstruction.md 'Malenki+ESC kapton-wrapped, stacked'; no tray or strap"
   },
   {
    "a": "wesc",
-   "b": "esc_tray",
-   "method": "interlock",
-   "reason": "weapon ESC in the TPU tray lips (0.1 mm); lips on all four sides, the Malenki +z"
-  },
-  {
-   "a": "esc_tray",
-   "b": "base_panel",
-   "method": "glue",
-   "reason": "TPU tray contact-glued to the base panel top"
+   "b": "tub",
+   "method": "tape",
+   "reason": "weapon ESC kapton-taped, as in the original RVRN 2.0: revron_deconstruction.md 'Malenki+ESC kapton-wrapped, stacked'; no tray"
   },
   {
    "a": "power_switch",
@@ -5130,21 +4731,22 @@
      16.0
     ],
     [
-     15.66641639482141,
-     19.0,
-     20.329622734725216
+     11.8,
+     15.5,
+     18.2
     ],
     [
-     15.66641639482141,
-     38.5,
-     11.583201466831557
+     11.8,
+     27.0,
+     18.2
     ],
     [
-     12.65,
-     38.5,
-     11.583201466831557
+     11.8,
+     30.0,
+     14.5
     ]
-   ]
+   ],
+   "exposed_reason": "original RV03 / RVRN 2.0 STEP has no lead channel: the 3 phase leads run over the lug and are kapton-taped flat to it (RV03 lug top, STEP); the optional lead groove (REVRON_LEAD_GROOVE=on) replaces the tape"
   },
   {
    "id": "w_rx_wesc",
@@ -5277,7 +4879,18 @@
     11.0
    ],
    "play": 0.15,
-   "turn_deg": 2.0
+   "turn_deg": 2.0,
+   "gap_ok": [
+    {
+     "shift": [
+      0,
+      0,
+      -1
+     ],
+     "max_mm": 0.3,
+     "reason": "original RVRN 2.0: RV12 gearbox underside z 5.0 sits 0.25 above the RV26 base-panel preload pad top z 4.75 (pad 0.25 tall); the motor is held by the panel clamp, not contact (variant pad_preload closes the gap)"
+    }
+   ]
   },
   {
    "rule": "keyed_bore",
@@ -5384,7 +4997,18 @@
     11.0
    ],
    "play": 0.15,
-   "turn_deg": 2.0
+   "turn_deg": 2.0,
+   "gap_ok": [
+    {
+     "shift": [
+      0,
+      0,
+      -1
+     ],
+     "max_mm": 0.3,
+     "reason": "original RVRN 2.0: RV12 gearbox underside z 5.0 sits 0.25 above the RV26 base-panel preload pad top z 4.75 (pad 0.25 tall); the motor is held by the panel clamp, not contact (variant pad_preload closes the gap)"
+    }
+   ]
   },
   {
    "rule": "notch_bears",
@@ -5686,19 +5310,19 @@
       16.0
      ],
      [
-      15.66641639482141,
-      19.0,
-      20.329622734725216
+      11.8,
+      15.5,
+      18.2
      ],
      [
-      15.66641639482141,
-      38.5,
-      11.583201466831557
+      11.8,
+      27.0,
+      18.2
      ],
      [
-      12.65,
-      38.5,
-      11.583201466831557
+      11.8,
+      30.0,
+      14.5
      ]
     ]
    }
