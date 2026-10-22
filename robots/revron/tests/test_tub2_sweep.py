@@ -160,3 +160,27 @@ def test_standoff_sweep_tub_clears_what_sits_on_it(name, val, tmp_path):
 def test_standoff_sweep_side_panel_is_one_valid_solid(name, val, tmp_path):
     """The side panel's post, notch and screw seats follow SA / SB too (its fillet R1 and its heads sunk below the battered face)."""
     check({"params_chassis": {name: val}}, tmp_path, what="__import__('revron.assembly', fromlist=['build']).build('side_panel_l')", symmetric=False)
+
+
+def value_with(overrides, tmp_path, expr):
+    """repr-evaluated `expr` (an expression in the revron package) in a fresh interpreter with the module-level assignments overridden."""
+    dst = pathlib.Path(tempfile.mkdtemp(dir=tmp_path)) / "src"
+    shutil.copytree(SRC, dst, ignore=shutil.ignore_patterns("__pycache__"))
+    for mod, names in overrides.items():
+        f = dst / "revron" / f"{mod}.py"
+        text = f.read_text()
+        for name, e in names.items():
+            text, n = re.subn(rf"^{name} = [^#\n]*", f"{name} = {e}   ", text, count=1, flags=re.M)
+            assert n == 1
+        f.write_text(text)
+    code = f"import sys; sys.path[:0] = [{str(dst)!r}, {ROOT!r}]\nfrom revron import params\nprint('VALUE', repr({expr}))"
+    r = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True)
+    out = [ln for ln in r.stdout.splitlines() if ln.startswith("VALUE")]
+    assert out, r.stderr[-1500:]
+    return eval(out[-1][6:])
+
+
+@pytest.mark.parametrize("name,val,wz", [("SA", "(30.5, 6.05)", 24.05), ("SB", "(40.5, 4.95)", 23.95), ("SA", "(30.5, 4.95)", 23.5), ("SB", "(44.55, 4.5)", 23.5)])
+def test_rotor_axis_keeps_its_distance_to_the_mount_screws(name, val, wz, tmp_path):
+    """The weapon axis rises with the standoffs (the mount screws back out inboard past the disc) and never drops below its master WZ."""
+    assert abs(value_with({"params_chassis": {name: val}}, tmp_path, "params.WZ") - wz) < 1e-6
