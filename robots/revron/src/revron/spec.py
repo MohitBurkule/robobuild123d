@@ -330,8 +330,7 @@ def _fork_dev(s):
 def _wedge_dev(s):
     toe = "the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
     boss = "the nose tab's notch edge follows the weapon mount's notch-top wedge, which we thicken to a printable wall (MNT_TIP_DEV, RV03); the STEP edge runs (44.32, 6.10)-(44.69, 7.44), ours (44.11, 6.45)-(44.06, 8.19) at x 19.5"
-    return ([dict(path=[[s * WG_TAB_DEV["x"], WG_TAB_DEV["y"], z] for z in WG_TAB_DEV["z"]], r=WG_TAB_DEV["r"], max_mm3=WG_TAB_DEV["mm3"], reason="RV17 STEP: " + boss),
-             dict(path=[[s * x, *TOE_DEV_YZ] for x in TOE_DEV_X], r=TOE_DEV_R, max_mm3=TOE_DEV_MM3, reason="RV17 STEP: " + toe)])
+    return ([dict(path=[[s * x, *TOE_DEV_YZ] for x in TOE_DEV_X], r=TOE_DEV_R, max_mm3=TOE_DEV_MM3, reason="RV17 STEP: " + toe)])
 
 
 def _side_dev(s):

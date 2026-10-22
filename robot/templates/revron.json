@@ -1028,23 +1028,6 @@
       "path": [
        [
         -19.5,
-        44.2,
-        6.0
-       ],
-       [
-        -19.5,
-        44.2,
-        8.0
-       ]
-      ],
-      "r": 2.5,
-      "max_mm3": 20.0,
-      "reason": "RV17 STEP: the nose tab's notch edge follows the weapon mount's notch-top wedge, which we thicken to a printable wall (MNT_TIP_DEV, RV03); the STEP edge runs (44.32, 6.10)-(44.69, 7.44), ours (44.11, 6.45)-(44.06, 8.19) at x 19.5"
-     },
-     {
-      "path": [
-       [
-        -19.5,
         49.3,
         1.4
        ],
@@ -1067,23 +1050,6 @@
     "tol_mm": 0.8,
     "tol_vol_frac": 0.25,
     "deviations": [
-     {
-      "path": [
-       [
-        19.5,
-        44.2,
-        6.0
-       ],
-       [
-        19.5,
-        44.2,
-        8.0
-       ]
-      ],
-      "r": 2.5,
-      "max_mm3": 20.0,
-      "reason": "RV17 STEP: the nose tab's notch edge follows the weapon mount's notch-top wedge, which we thicken to a printable wall (MNT_TIP_DEV, RV03); the STEP edge runs (44.32, 6.10)-(44.69, 7.44), ours (44.11, 6.45)-(44.06, 8.19) at x 19.5"
-     },
      {
       "path": [
        [

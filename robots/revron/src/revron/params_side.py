@@ -94,7 +94,8 @@ WG_MOUNT_GAP = 0.02         # clearance of the nose tab to the weapon mount boss
 WG_X0 = -38.5               # nose block outer face (also the cap cylinder's axis plane); the slabs follow by thickness
 WG_SLAB = (2.0, 1.0, 6.5, 7.5, 4.0)   # block | ring step | skin | cheek | nose tab thicknesses along X
 WG_BORES = dict(sa=WG_BORES_SA, sb=1.6, sb_head=2.5)   # radii of the standoff bores through the wedgelet (sb_head: from the ring step on)
-WG_TAB_FILM = 0.6           # TPU film limit: slivers thinner than this are dropped from the nose tab
+WG_TAB_FILM = 0.0           # TPU film limit: slivers thinner than this are dropped from the nose tab (0 = the STEP keeps its thin tip)
+WG_BOSS_GAP = 0.3          # clearance of the nose tab notch to the weapon mount boss (STEP RV17: notch edge 0.37 off the RV02 boss outline)
 WG_MERGE_EPS = 0.01         # overlap that merges the toe land with the body
 ARC_N = 64                  # circle / arc facets per quarter turn
 QUARTER_TURN = 90   # deg, tyre shoulder arcs sweep a quarter turn
