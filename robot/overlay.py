@@ -54,7 +54,7 @@ class MissingHook(KeyError):
 
 def load_hooks(raw: dict | None = None, base_dir=None) -> dict:
     """The robot's hooks: spec `hooks` key merged over `<spec dir>/hooks.json`."""
-    out = {"anchors": {}, "hooks": {}, "owners": {}, "sizes": {}}
+    out = {"anchors": {}, "hooks": {}, "owners": {}, "sizes": {}, "wheel_od": {}}
     if base_dir is not None:
         f = Path(base_dir) / "hooks.json"
         if f.exists():

@@ -187,5 +187,9 @@
       "proxy": "CH_Z1",
       "why": "height is CH_Z1 - CH_Z0 with WZ, SA[1], SB[1] and the top panel set separately: no single master"
     }
+  },
+  "wheel_od": {
+    "_doc": "wheel position -> params literal of its outer diameter (axle height, nose and standoffs derive from it); a catalog wheel swap sets it to the new wheel's OD",
+    "wheel_f*": "WHEEL_OD_F"
   }
 }

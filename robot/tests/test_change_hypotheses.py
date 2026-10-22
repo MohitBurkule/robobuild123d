@@ -184,3 +184,23 @@ def test_swap_uses_declared_build_setting_and_any_env_value(tmp_path):
     assert not nx
     j = jobs[0][1]
     assert j.kind == "choice" and j.new_text == repr(cs[0].ops[1]["to"]) and j.overlay[0]["op"] == "catalog"
+
+
+def test_wheel_swap_sets_belt_none_and_wheel_od(tmp_path):
+    from robot.checks.robust import discover as D, hyp
+    from robot.checks.robust.usage import Graph, Usage
+
+    raw = {"parts": [{"id": i, "kind": "wheel", "stock": "micro tyre", "shape": {"type": "model"}} for i in ("wheel_fl", "wheel_fr")]}
+    hooks = {"hooks": {"drive.belt": {"default": "o_ring", "values": {"o_ring": [], "none": [{"op": "remove", "select": {"kind": "belt"}}]}}},
+             "wheel_od": {"wheel_f*": "WHEEL_OD_F"}}
+    cs = [c for c in C.swap_changes(raw, None, hooks) if c.id.endswith("->wheel_20x8")]
+    c = cs[0]
+    assert c.ops[0]["op"] == "wheel" and {"op": "hook", "name": "drive.belt", "value": "none"} in c.ops
+    assert c.param_set == ("WHEEL_OD_F", 20.0)
+    src = tmp_path / "params_chassis.py"
+    src.write_text("WHEEL_OD_F = 11.0\n")
+    disc = D.Discovery(params=D.params_in_file(src)[0])
+    jobs, nx = hyp.resolve([c], raw, hooks, disc, Usage(Graph(), raw), [src])
+    assert not nx
+    j = jobs[0][1]
+    assert j.kind == "param" and j.new_text == "20.0" and any(o["op"] == "remove" for o in j.overlay)

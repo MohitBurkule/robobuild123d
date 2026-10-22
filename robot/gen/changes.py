@@ -47,6 +47,7 @@ class Change:
     touches: dict = field(default_factory=dict)  # overlay selector of the parts it affects (diff estimate)
     note: str = ""
     job: object = None  # a plan.Job for dimension changes
+    param_set: tuple = ()  # (params name, value) edited together with the ops, e.g. the wheel OD the axles derive from
 
 
 def _weaponish(e) -> bool:
@@ -111,6 +112,34 @@ def swap_hook(hooks: dict, ids) -> str | None:
     return None
 
 
+def wheel_extras(hooks, ids, entry, ops) -> tuple:
+    """(ops, (param, OD), note) for a catalog wheel swap: a wheel with no belt groove (catalog wheels carry none unless
+    props.belt_groove) also sets the robot's `drive.belt` hook to "none"; the wheel OD goes to the params literal the
+    robot names for that wheel position under hooks.json `wheel_od` {id glob: PARAM}."""
+    hk = (hooks or {}).get("hooks") or {}
+    ops = list(ops)
+    notes = []
+    if not (entry.props or {}).get("belt_groove"):
+        if "none" in ((hk.get("drive.belt") or {}).get("values") or {}):
+            ops.append({"op": "hook", "name": "drive.belt", "value": "none"})
+            notes.append("groove-less wheel: drive.belt=none")
+        else:
+            notes.append("groove-less wheel; no drive.belt hook")
+    od = (entry.props or {}).get("diameter_mm")
+    pset = ()
+    for pat, param in ((hooks or {}).get("wheel_od") or {}).items():
+        if pat.startswith("_"):
+            continue
+        if od and all(fnmatch.fnmatchcase(i, pat) for i in ids):
+            pset = (param, float(od))
+            notes.append(f"{param}={od:g}")
+            break
+    else:
+        if od:
+            notes.append("no wheel_od param for these wheels: axle height not re-derived")
+    return ops, pset, "; ".join(notes)
+
+
 def swap_changes(raw, cat=None, hooks=None) -> list:
     from .. import catalog
 
@@ -122,6 +151,11 @@ def swap_changes(raw, cat=None, hooks=None) -> list:
             ops = [{"op": "wheel" if role == "wheel" else "catalog", "select": {"id": ids}, "to": e.id}]
             note = ""
             hk = swap_hook(hooks, ids)
+            if role == "wheel":
+                ops, pset, wnote = wheel_extras(hooks, ids, e, ops)
+                note = "; ".join(x for x in (note, wnote) if x)
+            else:
+                pset = ()
             if hk:
                 ops.insert(0, {"op": "hook", "name": hk, "value": e.id})
                 note = f"via build setting `{hk}`"
@@ -136,7 +170,7 @@ def swap_changes(raw, cat=None, hooks=None) -> list:
                     elif rp:
                         note = f"one-piece motor: the split rotor part {rp} has no counterpart and is kept"
             out.append(Change(f"swap:{role}:{tag}->{e.id}", "swap", f"{role.replace('_', ' ')} {cur or key} -> {e.id} ({e.name})",
-                              ops, hook=hk or "", touches={"id": ids}, note=note))
+                              ops, hook=hk or "", touches={"id": ids}, note=note, param_set=pset))
     for p in raw.get("parts") or []:  # battery connector
         e = catalog.find(p.get("catalog")) if p.get("catalog") else None
         if p.get("kind") != "battery" and not (e and e.kind == "battery"):

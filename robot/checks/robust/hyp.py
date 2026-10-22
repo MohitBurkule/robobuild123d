@@ -47,6 +47,17 @@ def resolve(changes, raw, hooks, disc, use, files=None):
             nx.append((c, f"overlay cannot apply: {e}", c.hook or "spec overlay"))
             continue
         job = P.Job(c.id, c.hook or c.id.split(":")[1], "hyp", overlay=ops)
+        if c.param_set:  # a params literal edited with the ops (e.g. the wheel OD the axle heights derive from)
+            name, val = c.param_set
+            pm = next((p for p in disc.params if p.name == name), None)
+            if pm is None:
+                c.note = "; ".join(x for x in (c.note, f"param `{name}` not found: not re-derived") if x)
+            else:
+                if sets:
+                    nx.append((c, "a params edit and a build setting in one change", c.hook))
+                    continue
+                job = P.Job(c.id, name, "param", str(pm.file), pm.line, pm.col, pm.end_col, P.fmt_num(val, pm.is_int),
+                            value=val, base=pm.value, reads=use.parts_reading(pm.symbol), overlay=ops)
         if len(sets) > 1:
             nx.append((c, "more than one build setting in one change", c.hook))
             continue
