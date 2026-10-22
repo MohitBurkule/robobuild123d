@@ -109,3 +109,17 @@ def test_flexible_capped_at_warning(tmp_path):
     raw = {"reference_cad": {"dir": str(tmp_path), "ref_to_world": np.eye(4).tolist(),
                              "parts": [{"part": "br", "file": "ref.stl"}]}}
     assert (S.CID, BLOCKER) in _fails(S.run(_ctx(bracket(0), raw=raw, others=f, material="tpu")))
+
+
+def test_rounder_reference_must_show_in_the_sections():
+    import numpy as np
+    import trimesh
+    from shapely.geometry import Point, Polygon
+    from robot.checks import sharp_corner as S
+
+    L = Polygon([(0, 0), (10, 0), (10, 2), (2, 2), (2, 10), (0, 10)])   # inside corner at (2, 2)
+    sharp = trimesh.creation.extrude_polygon(L, 5)
+    fil = trimesh.creation.extrude_polygon(L.union(Polygon([(2, 2), (3, 2), (2, 3)]).difference(Point(3, 3).buffer(1, 64))), 5)
+    p, t = np.array([2.0, 2.0, 2.5]), np.array([0, 0, 1.0])
+    assert S.ref_rounder_shown(sharp, fil, p, t, 0.0, 1.0, 90.0)              # STEP r1 where ours is sharp: real
+    assert not S.ref_rounder_shown(sharp, sharp.copy(), p, t, 0.0, 1.25, 90.0)  # same corner, estimate said 1.25: finder

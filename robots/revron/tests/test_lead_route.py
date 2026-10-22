@@ -3,6 +3,9 @@ import math
 import _poses  # noqa: F401  (puts src/ and the repo on sys.path)
 from revron import params as P
 from robot.checks import wire_review as WR
+import pytest
+
+groove_only = pytest.mark.skipif(not P.LEAD_GROOVE, reason="optional lead groove variant is off (REVRON_LEAD_GROOVE=on)")
 
 
 class _W:   # the w_wesc_m wire as wire_review sees it
@@ -13,6 +16,7 @@ def test_bundle_radius_matches_the_wire_check():
     assert abs(WR.bundle_radius(_W()) - P.LEAD_BUNDLE_R) < 1e-6
 
 
+@groove_only
 def test_bundle_fits_the_groove_and_cannot_fall_out():
     assert P.LEAD_GROOVE_R > P.LEAD_BUNDLE_R                       # room for the twist
     assert P.LEAD_MOUTH < 2 * (P.LEAD_BUNDLE_R - P.LEAD_TWIST)        # round twist wider than the mouth: retained
@@ -22,6 +26,7 @@ def test_bundle_fits_the_groove_and_cannot_fall_out():
     assert P.LEAD_GROOVE_X + P.LEAD_GROOVE_R < P.MNT_OUT - P.LEAD_LIP   # floor well inside the 8 mm boss
 
 
+@groove_only
 def test_groove_contains_the_via_points_and_stays_in_the_boss():
     (y0, z0), (y1, z1) = P.lead_groove_ends()
     for y, z in ((y0, z0), (y1, z1)):
@@ -32,6 +37,7 @@ def test_groove_contains_the_via_points_and_stays_in_the_boss():
     assert P.WZ - z1 >= P.BSP["r"] + P.LEAD_BUNDLE_R - 1e-6
 
 
+@groove_only
 def test_groove_is_cut_in_the_mount():
     from revron import mount
     m = mount.weapon_mount("r")
@@ -46,6 +52,7 @@ def test_groove_is_cut_in_the_mount():
         assert m.is_inside((P.MNT_IN + P.LEAD_LIP / 2, p[1] + k * n[1], p[2] + k * n[2])), p   # lip beside the mouth
 
 
+@groove_only
 def test_mount_r_tessellates_as_one_closed_shell():
     """integrity.solids: the groove's ball-end poles sit inside the cut, so no stray zero-area triangle shells."""
     import tempfile, trimesh

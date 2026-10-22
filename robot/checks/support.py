@@ -12,8 +12,8 @@ from __future__ import annotations
 import numpy as np
 
 from .. import measure
-from ..finding import BLOCKER, fail, ok
-from .interference import DIRS, allowed_depth
+from ..finding import BLOCKER, fail, note, ok
+from .interference import DIRS, allowed_depth, loose_waiver
 
 G = "support"
 MAX_PLAY_MM = 0.2  # more free travel than this in any direction = loose when inverted or shaken
@@ -120,6 +120,22 @@ def run(ctx):
             t = free_travel(near, d)
             if t > MAX_PLAY_MM:
                 loose.append((name, t))
+        bad = ""
+        for b in mem:   # one physical fact, one waiver: `loose_ok` (see interference.loose_waiver) covers support too
+            p = r.parts[b.part_idx].part
+            wv = loose_waiver(r, w, b, p, [n for n, _ in loose])
+            if wv is None:
+                continue
+            if wv[0] is not True:
+                bad += f" Invalid loose_ok on `{p.id}`: {wv[1]}."
+                continue
+            mx = float(p._extra["loose_ok"]["max_mm"])
+            d = np.asarray(dict(DIRS)[wv[1]], float)
+            if any(measure.overlap_exceeds(x, o, ad + 0.02, d * (mx + 2 * (ad + 0.02))) for x, o, ad in near):
+                loose = [x for x in loose if x[0] != wv[1]]
+                out.append(note("support.loose_waived", G, "Play matches original", f"`{p.id}`: {wv[2]}").on(p.id))
+            else:
+                bad += f" Invalid loose_ok on `{p.id}`: the group is still free {mx} mm toward {wv[1]}."
         if not loose:
             continue
         txt = ", ".join(f"{n} {'>=' if t >= LADDER[-1] else '~'}{t:g} mm" for n, t in loose)
@@ -127,11 +143,11 @@ def run(ctx):
         with_ = f" (moving as one with {', '.join(f'`{x}`' for x in ids[1:])})" if len(ids) > 1 else ""
         out.append(fail("support.loose", G, BLOCKER, "Part falls out when the robot is inverted or shaken",
                         f"`{ids[0]}`{with_} is not fastened, press-fit, clamped or captured to the chassis: it slides freely "
-                        f"{txt} (limit {MAX_PLAY_MM:g} mm). Upside down or in a hit it drops out or rattles.")
+                        f"{txt} (limit {MAX_PLAY_MM:g} mm). Upside down or in a hit it drops out or rattles.{bad}")
                    .on(*ids).here(np.mean([b.aabb.mean(axis=0) for b in mem], axis=0))
                    .fix("Screw or clamp it to the chassis, close the open side with a lid/rib to <= 0.2 mm, or declare a real "
                         "hold (`retained`: press_fit, clamp, strap; or a `connections` entry with that method)."))
-    if checked and not out:
+    if checked and not any(not f.passed for f in out if f.id == "support.loose"):
         out.append(ok("support.loose", G, "Every unfastened part is captured",
                       f"{checked} unfastened part group(s) move at most {MAX_PLAY_MM:g} mm in all six directions."))
     return out

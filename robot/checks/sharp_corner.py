@@ -288,6 +288,38 @@ def ref_radius(ref, p, t, window=4.0, snap=1.0):
     return r[0] if r[1] >= 20.0 else math.inf     # no concave corner there: the reference is not sharp here
 
 
+def section_dev(a, b, p, t, reach=2.0, step=0.01):
+    """Largest distance between the sections of meshes a and b (plane through p normal to t) within `reach` of p."""
+    from scipy.spatial import cKDTree
+
+    def pts(m):
+        sec = m.section(plane_origin=p, plane_normal=t)
+        if sec is None:
+            return np.zeros((0, 3))
+        out = []
+        for e in sec.entities:
+            V = sec.vertices[e.points]
+            for u, v in zip(V[:-1], V[1:]):
+                n = max(2, int(np.linalg.norm(v - u) / step))
+                out.append(u + np.linspace(0, 1, n)[:, None] * (v - u))
+        X = np.vstack(out) if out else np.zeros((0, 3))
+        return X[np.linalg.norm(X - p, axis=1) < reach]
+
+    A, B = pts(a), pts(b)
+    if not len(A) or not len(B):
+        return math.inf
+    return float(max(cKDTree(B).query(A)[0].max(), cKDTree(A).query(B)[0].max()))
+
+
+def ref_rounder_shown(m, ref, p, t, r_ours, r_ref, turn):
+    """A reference radius larger than ours counts only if the two sections show it: a fillet r at a corner turning
+    `turn` stands r (1 / sin(interior / 2) - 1) off the sharp corner, so the sections must differ by at least half the
+    change (and 0.05 mm). Two sections that agree are the same corner, whatever the reference estimate read."""
+    th = math.radians(max(1.0, 180.0 - min(float(turn), 179.0)))
+    e = (r_ref - r_ours) * (1 / math.sin(th / 2) - 1)
+    return section_dev(m, ref, p, t) >= max(0.05, e / 2)
+
+
 # ---------------------------------------------------------------- spec helpers
 def _reason(x):
     return isinstance(x, str) and bool(x.strip())
@@ -450,6 +482,9 @@ def run(ctx):
                         ref = False
                 if ref is not False:
                     r_ref = ref_radius(ref, worst[0], worst[1], prm["window_mm"])
+                    if r_ref is not None and math.isfinite(r_ref) and r_ref > r_ours + prm["ref_tol_mm"] and \
+                            not ref_rounder_shown(body.mesh, ref, worst[0], worst[1], r_ours, r_ref, worst[3]):
+                        r_ref = r_ours   # the estimate read a blend the surfaces do not show: same corner as the original
             row = {"part": p.id, "at": np.round(worst[0], 2).tolist(), "r_mm": round(r_ours, 2),
                    "turn_deg": round(worst[3], 0), "n": len(reg), "loads": loads[:3],
                    "ref_r_mm": None if r_ref is None else (round(r_ref, 2) if math.isfinite(r_ref) else "no corner"),

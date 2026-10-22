@@ -160,3 +160,15 @@ def test_radii_confirm_drops_diffs_the_surfaces_do_not_show():
     assert len(R.confirm(real, a, b)) == 4                       # R1.5 vs R1: the corner moves 0.2 mm, kept
     fake = [dict(c, r_ref=c["r_ours"] + 0.4) for c in R.radius_diffs(R.radius_pairs(a, b))]
     assert R.confirm(fake, a, a.copy()) == []                    # same surface, any estimate pair: estimator noise
+
+
+def test_radii_confirm_ignores_surface_differences_beside_the_blend():
+    # side_l / side_r on fix-C: the STEP arc matched ours in section, a pocket feature 1 mm off stood 0.5 mm apart
+    import trimesh
+    from robot.checks import ref_radii as R
+    a = _rounded_plate(1.0, 16)
+    b = trimesh.util.concatenate([a, trimesh.creation.box((1.0, 1.0, 0.5), trimesh.transformations.translation_matrix((8.5, 8.5, 5.25)))])
+    fake = [dict(c, r_ref=c["r_ours"] + 0.4) for c in R.radius_diffs(R.radius_pairs(_rounded_plate(1.5, 16), a))]
+    assert fake and R.confirm(fake, a, b) == []                  # same arc in section, extra boss nearby: not a radius
+    real = R.radius_diffs(R.radius_pairs(_rounded_plate(1.5, 16), b))
+    assert len(R.confirm(real, _rounded_plate(1.5, 16), b)) == 4  # a real R1.5 vs R1 is still kept beside it

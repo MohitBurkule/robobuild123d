@@ -75,13 +75,22 @@
    "threads_into": "insert"
   },
   {
+   "role": "top panel: 4 x M2 thread-forming (not in the STEP; its d2.8 holes over the corner columns are)",
+   "match": [
+    "bolt_t*"
+   ],
+   "count": 4,
+   "designation": "M2x6",
+   "threads_into": "tub",
+   "deviation": "the STEP top panel has 4 countersunk corner holes over the corner columns' d3 bores but no screws; 4 M2x6 added, tapping a 1.7 pilot in a 5 mm web left under the column rim, so the Ti panel cannot peel off"
+  },
+  {
    "role": "FS1 M2 heat-sets (floor)",
    "kind": "part",
    "match": [
-    "insert_b*",
-    "insert_t*"
+    "insert_b*"
    ],
-   "count": 9,
+   "count": 5,
    "catalog": "heatset_m2_4"
   },
   {
@@ -373,6 +382,18 @@
  },
  "can_run_inverted": false,
  "allow_overlap": [
+  {
+   "a": "tub",
+   "b": "mount_l",
+   "max_depth_mm": 0.8,
+   "reason": "original RVRN 2.0: the STEP mount notch corners (1 mm chamfer) interpenetrate the square tub tab"
+  },
+  {
+   "a": "tub",
+   "b": "mount_r",
+   "max_depth_mm": 0.8,
+   "reason": "original RVRN 2.0: the STEP mount notch corners (1 mm chamfer) interpenetrate the square tub tab"
+  },
   {
    "a": "belt_l",
    "b": "side_l",
@@ -713,6 +734,24 @@
     "deviations": [
      {
       "near": [
+       24.55,
+       1.9,
+       17.5
+      ],
+      "r": 1.5,
+      "reason": "switch pilot holes follow the switch, which sits 0.45 mm in from the STEP X 25.0 so its body clears the 27.5 inner wall face (the STEP switch penetrates the wall 0.4 mm)"
+     },
+     {
+      "near": [
+       24.55,
+       -13.1,
+       17.5
+      ],
+      "r": 1.5,
+      "reason": "switch pilot holes follow the switch, which sits 0.45 mm in from the STEP X 25.0 so its body clears the 27.5 inner wall face (the STEP switch penetrates the wall 0.4 mm)"
+     },
+     {
+      "near": [
        32.0,
        -13.5,
        9.4
@@ -787,26 +826,7 @@
     "file": "RV02_XALT_HD_left_hand_weapon_mount_1.stl",
     "mode": "shape",
     "tol_mm": 0.5,
-    "deviations": [
-     {
-      "near": [
-       -15.9,
-       11.5,
-       20.4
-      ],
-      "r": 5.0,
-      "reason": "the STEP notch top is a zero-thickness wedge (mfg.thin_wall); thickened to a printable wall, rearmost point unchanged"
-     },
-     {
-      "near": [
-       -15.4,
-       41.1,
-       2.8
-      ],
-      "r": 5.0,
-      "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside and front edge, so the countersink keeps a 0.9 mm wall"
-     }
-    ]
+    "deviations": []
    },
    {
     "part": "mount_r",
@@ -816,30 +836,12 @@
     "deviations": [
      {
       "near": [
-       15.9,
-       11.5,
-       20.4
-      ],
-      "r": 5.0,
-      "reason": "the STEP notch top is a zero-thickness wedge (mfg.thin_wall); thickened to a printable wall, rearmost point unchanged"
-     },
-     {
-      "near": [
-       15.4,
-       41.1,
-       2.8
-      ],
-      "r": 5.0,
-      "reason": "nose pad round the nose CSK (NOSE_PAD_R): the ISO 10642 d7 cone is wider than the STEP R3.25 nose arc and left a 0 mm knife edge (mfg.thin_wall); up to ~1 mm of added material at the nose underside and front edge, so the countersink keeps a 0.9 mm wall"
-     },
-     {
-      "near": [
        16.8,
        44.5,
        23.5
       ],
       "r": 2.0,
-      "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"
+      "reason": "STEP counterbore ends in a 45 deg lead-in cone (r2.25 at |X| 17.4 down to r1.1 at 16.4); we cut a flat floor at CB_FLOOR_X instead: the inferred M2x8 button head needs a flat seat (fastener_seat.head_bearing) and its tip must bite 1.7 mm of the 2 mm stator base (fastener.engagement; the STEP floor gives 1.25)"
      },
      {
       "near": [
@@ -848,7 +850,7 @@
        29.5
       ],
       "r": 2.0,
-      "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"
+      "reason": "STEP counterbore ends in a 45 deg lead-in cone (r2.25 at |X| 17.4 down to r1.1 at 16.4); we cut a flat floor at CB_FLOOR_X instead: the inferred M2x8 button head needs a flat seat (fastener_seat.head_bearing) and its tip must bite 1.7 mm of the 2 mm stator base (fastener.engagement; the STEP floor gives 1.25)"
      },
      {
       "near": [
@@ -857,7 +859,7 @@
        23.5
       ],
       "r": 2.0,
-      "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"
+      "reason": "STEP counterbore ends in a 45 deg lead-in cone (r2.25 at |X| 17.4 down to r1.1 at 16.4); we cut a flat floor at CB_FLOOR_X instead: the inferred M2x8 button head needs a flat seat (fastener_seat.head_bearing) and its tip must bite 1.7 mm of the 2 mm stator base (fastener.engagement; the STEP floor gives 1.25)"
      },
      {
       "near": [
@@ -866,24 +868,7 @@
        17.5
       ],
       "r": 2.0,
-      "reason": "STEP 16.4-17.15 lead-in cone under each stator counterbore left out: the d3.5 button head needs a flat seat on the 17.15 floor (fastener_seat.head_bearing)"
-     },
-     {
-      "path": [
-       [
-        15.66641639482141,
-        19.0,
-        20.329622734725216
-       ],
-       [
-        15.66641639482141,
-        38.5,
-        11.583201466831557
-       ]
-      ],
-      "r": 3.0,
-      "max_mm3": 520,
-      "reason": "phase-lead C-groove in the inner face (added, not in the STEP): the twisted 3 x AWG24 bundle snaps through a 3.0 mouth into a R2.0 channel from the stator exit to the lug top: the original RV03/STEP has no lead channel (leads run free over the lug), so the leads are retained and held clear of the disc bolt heads (wire.exterior_support, wire.rotor_clearance)"
+      "reason": "STEP counterbore ends in a 45 deg lead-in cone (r2.25 at |X| 17.4 down to r1.1 at 16.4); we cut a flat floor at CB_FLOOR_X instead: the inferred M2x8 button head needs a flat seat (fastener_seat.head_bearing) and its tip must bite 1.7 mm of the 2 mm stator base (fastener.engagement; the STEP floor gives 1.25)"
      }
     ]
    },
@@ -931,7 +916,7 @@
        30.44772759118839,
        12.047449670300885
       ],
-      "r": 2.0,
+      "r": 2.5,
       "reason": "r14 stack hole is the M2 tap drill (1.6) where the stack screws thread into the spider; the STEP shows the 2.2 clearance and no screw or nut"
      },
      {
@@ -940,7 +925,7 @@
        27.047449670300885,
        31.55227240881161
       ],
-      "r": 2.0,
+      "r": 2.5,
       "reason": "r14 stack hole is the M2 tap drill (1.6) where the stack screws thread into the spider; the STEP shows the 2.2 clearance and no screw or nut"
      },
      {
@@ -949,7 +934,7 @@
        46.552272408811604,
        34.952550329699115
       ],
-      "r": 2.0,
+      "r": 2.5,
       "reason": "r14 stack hole is the M2 tap drill (1.6) where the stack screws thread into the spider; the STEP shows the 2.2 clearance and no screw or nut"
      },
      {
@@ -958,7 +943,7 @@
        49.952550329699115,
        15.447727591188393
       ],
-      "r": 2.0,
+      "r": 2.5,
       "reason": "r14 stack hole is the M2 tap drill (1.6) where the stack screws thread into the spider; the STEP shows the 2.2 clearance and no screw or nut"
      }
     ]
@@ -1067,112 +1052,60 @@
     "tol_vol_frac": 0.25,
     "deviations": [
      {
-      "near": [
-       -19.5,
-       43.7,
-       5.8
+      "path": [
+       [
+        -19.5,
+        43.7,
+        1.1
+       ],
+       [
+        -19.5,
+        43.7,
+        7.9
+       ]
       ],
       "r": 2.5,
-      "reason": "the STEP nose tab interpenetrates the weapon mount's boss; the tab is cut by the boss outline plus the WG_MOUNT_GAP clearance, and its arc round SB stands WG_MOUNT_GAP off the chassis lug radius"
+      "max_mm3": 40.0,
+      "reason": "RV17 STEP: the STEP nose tab interpenetrates the weapon mount's boss; the tab is cut by the boss outline plus the WG_MOUNT_GAP clearance, and its arc round SB stands WG_MOUNT_GAP off the chassis lug radius"
      },
      {
-      "near": [
-       -25.75,
-       46.4,
-       2.2
+      "path": [
+       [
+        -25.75,
+        50.1,
+        2.0
+       ],
+       [
+        -25.75,
+        45.0,
+        3.0
+       ],
+       [
+        -25.75,
+        41.5,
+        7.5
+       ]
       ],
-      "r": 2.5,
-      "reason": "the STEP draws the Ti fork tine inside the TPU nose (interpenetrating solids); the TPU has the 1.5 mm slit the tine slides into"
+      "r": 3.0,
+      "max_mm3": 30.0,
+      "reason": "RV17 STEP: the Ti fork tine interpenetrates the solid TPU cheek (26 mm3, y 41.5-50.1); the STEP draws the Ti fork tine inside the TPU nose (interpenetrating solids); the TPU has the 1.5 mm slit the tine slides into"
      },
      {
-      "near": [
-       -25.75,
-       44.4,
-       6.0
+      "path": [
+       [
+        -19.5,
+        49.3,
+        1.4
+       ],
+       [
+        -36.5,
+        49.3,
+        1.4
+       ]
       ],
-      "r": 2.5,
-      "reason": "the STEP draws the Ti fork tine inside the TPU nose (interpenetrating solids); the TPU has the 1.5 mm slit the tine slides into"
-     },
-     {
-      "near": [
-       -25.75,
-       43.1,
-       6.2
-      ],
-      "r": 2.5,
-      "reason": "the STEP draws the Ti fork tine inside the TPU nose (interpenetrating solids); the TPU has the 1.5 mm slit the tine slides into"
-     },
-     {
-      "near": [
-       -25.75,
-       44.2,
-       5.9
-      ],
-      "r": 2.5,
-      "reason": "the STEP draws the Ti fork tine inside the TPU nose (interpenetrating solids); the TPU has the 1.5 mm slit the tine slides into"
-     },
-     {
-      "near": [
-       -25.75,
-       48.5,
-       2.8
-      ],
-      "r": 2.5,
-      "reason": "the STEP draws the Ti fork tine inside the TPU nose (interpenetrating solids); the TPU has the 1.5 mm slit the tine slides into"
-     },
-     {
-      "near": [
-       -19.5,
-       49.3,
-       1.4
-      ],
-      "r": 4.0,
-      "reason": "the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
-     },
-     {
-      "near": [
-       -24.0,
-       49.3,
-       1.4
-      ],
-      "r": 4.0,
-      "reason": "the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
-     },
-     {
-      "near": [
-       -28.0,
-       49.3,
-       1.4
-      ],
-      "r": 4.0,
-      "reason": "the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
-     },
-     {
-      "near": [
-       -32.0,
-       49.3,
-       1.4
-      ],
-      "r": 4.0,
-      "reason": "the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
-     },
-     {
-      "near": [
-       -36.5,
-       49.3,
-       1.4
-      ],
-      "r": 4.0,
-      "reason": "the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
-     },
-     {
-      "near": [
-       -25.25,
-       42.0,
-       5.3
-      ],
-      "r": 6.0,
-      "reason": "the fork's two rails run through the TPU cheek as closed tunnels (the STEP's solid wedgelet has no slit: the tine interpenetrates it)"
+      "r": 3.0,
+      "max_mm3": 40.0,
+      "reason": "RV17 STEP: the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
      }
     ]
    },
@@ -1184,112 +1117,60 @@
     "tol_vol_frac": 0.25,
     "deviations": [
      {
-      "near": [
-       19.5,
-       43.7,
-       5.8
+      "path": [
+       [
+        19.5,
+        43.7,
+        1.1
+       ],
+       [
+        19.5,
+        43.7,
+        7.9
+       ]
       ],
       "r": 2.5,
-      "reason": "the STEP nose tab interpenetrates the weapon mount's boss; the tab is cut by the boss outline plus the WG_MOUNT_GAP clearance, and its arc round SB stands WG_MOUNT_GAP off the chassis lug radius"
+      "max_mm3": 40.0,
+      "reason": "RV17 STEP: the STEP nose tab interpenetrates the weapon mount's boss; the tab is cut by the boss outline plus the WG_MOUNT_GAP clearance, and its arc round SB stands WG_MOUNT_GAP off the chassis lug radius"
      },
      {
-      "near": [
-       25.75,
-       46.4,
-       2.2
+      "path": [
+       [
+        25.75,
+        50.1,
+        2.0
+       ],
+       [
+        25.75,
+        45.0,
+        3.0
+       ],
+       [
+        25.75,
+        41.5,
+        7.5
+       ]
       ],
-      "r": 2.5,
-      "reason": "the STEP draws the Ti fork tine inside the TPU nose (interpenetrating solids); the TPU has the 1.5 mm slit the tine slides into"
+      "r": 3.0,
+      "max_mm3": 30.0,
+      "reason": "RV17 STEP: the Ti fork tine interpenetrates the solid TPU cheek (26 mm3, y 41.5-50.1); the STEP draws the Ti fork tine inside the TPU nose (interpenetrating solids); the TPU has the 1.5 mm slit the tine slides into"
      },
      {
-      "near": [
-       25.75,
-       44.4,
-       6.0
+      "path": [
+       [
+        19.5,
+        49.3,
+        1.4
+       ],
+       [
+        36.5,
+        49.3,
+        1.4
+       ]
       ],
-      "r": 2.5,
-      "reason": "the STEP draws the Ti fork tine inside the TPU nose (interpenetrating solids); the TPU has the 1.5 mm slit the tine slides into"
-     },
-     {
-      "near": [
-       25.75,
-       43.1,
-       6.2
-      ],
-      "r": 2.5,
-      "reason": "the STEP draws the Ti fork tine inside the TPU nose (interpenetrating solids); the TPU has the 1.5 mm slit the tine slides into"
-     },
-     {
-      "near": [
-       25.75,
-       44.2,
-       5.9
-      ],
-      "r": 2.5,
-      "reason": "the STEP draws the Ti fork tine inside the TPU nose (interpenetrating solids); the TPU has the 1.5 mm slit the tine slides into"
-     },
-     {
-      "near": [
-       25.75,
-       48.5,
-       2.8
-      ],
-      "r": 2.5,
-      "reason": "the STEP draws the Ti fork tine inside the TPU nose (interpenetrating solids); the TPU has the 1.5 mm slit the tine slides into"
-     },
-     {
-      "near": [
-       19.5,
-       49.3,
-       1.4
-      ],
-      "r": 4.0,
-      "reason": "the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
-     },
-     {
-      "near": [
-       24.0,
-       49.3,
-       1.4
-      ],
-      "r": 4.0,
-      "reason": "the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
-     },
-     {
-      "near": [
-       28.0,
-       49.3,
-       1.4
-      ],
-      "r": 4.0,
-      "reason": "the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
-     },
-     {
-      "near": [
-       32.0,
-       49.3,
-       1.4
-      ],
-      "r": 4.0,
-      "reason": "the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
-     },
-     {
-      "near": [
-       36.5,
-       49.3,
-       1.4
-      ],
-      "r": 4.0,
-      "reason": "the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
-     },
-     {
-      "near": [
-       25.25,
-       42.0,
-       5.3
-      ],
-      "r": 6.0,
-      "reason": "the fork's two rails run through the TPU cheek as closed tunnels (the STEP's solid wedgelet has no slit: the tine interpenetrates it)"
+      "r": 3.0,
+      "max_mm3": 40.0,
+      "reason": "RV17 STEP: the STEP ramp ends in a 0 mm knife toe FDM TPU cannot print; the toe stands on a 0.85 mm land at the same reach"
      }
     ]
    },
@@ -1369,17 +1250,7 @@
     "mode": "shape",
     "tol_mm": 0.5,
     "tol_vol_frac": 0.15,
-    "deviations": [
-     {
-      "near": [
-       -34.4,
-       -30.5,
-       14.0
-      ],
-      "r": 3.5,
-      "reason": "grub bore is the catalog M2 tap drill (1.6, robot.cad.holes) 0.2 inboard, not the STEP 2.5 hole at |X| 34.5: a 2.5 hole breaks into both 45 deg tyre-seat ramps and leaves knife edges (mfg.thin_wall 0.01 mm); the grub threads the 1.6 bore and the captive nut, so it clamps the flat the same"
-     }
-    ]
+    "deviations": []
    },
    {
     "part": "whub_rr",
@@ -1387,17 +1258,7 @@
     "mode": "shape",
     "tol_mm": 0.5,
     "tol_vol_frac": 0.15,
-    "deviations": [
-     {
-      "near": [
-       34.4,
-       -30.5,
-       14.0
-      ],
-      "r": 3.5,
-      "reason": "grub bore is the catalog M2 tap drill (1.6, robot.cad.holes) 0.2 inboard, not the STEP 2.5 hole at |X| 34.5: a 2.5 hole breaks into both 45 deg tyre-seat ramps and leaves knife edges (mfg.thin_wall 0.01 mm); the grub threads the 1.6 bore and the captive nut, so it clamps the flat the same"
-     }
-    ]
+    "deviations": []
    },
    {
     "part": "whub_fl",
@@ -1532,7 +1393,8 @@
     ],
     "tol_mm": 0.6,
     "tol_vol_frac": 0.3,
-    "note": "fixed half + rotating bell compared together; the STEP bell is empty, the real stator stack and windings sit in it (declared on the part)"
+    "placement_tol_mm": 0.8,
+    "note": "fixed half + rotating bell compared together; the STEP bell is empty, the real stator stack and windings sit in it (declared on the part); the GEPRC drawing bell is 1.5 mm taller than the STEP can (cap 6.7 vs 5.2), so the can bbox centre sits 0.75 mm off"
    },
    {
     "part": "battery",
@@ -1570,6 +1432,10 @@
     "tol_vol_frac": 0.3
    }
   ]
+ },
+ "start_pose": {
+  "whub_rl": -2.45,
+  "whub_rr": -2.45
  },
  "asm_dump": {
   "rig": "revron.joints:RIG"
@@ -1611,7 +1477,17 @@
    "material": "pla_st",
    "process": "fdm",
    "thin_wall_deviation": "matches original RVRN 2.0: the switch-slot rim is a 0.5 mm inner step at z 16.5 on RV01_Chassis_1 too (the 0.908 reading at z 19.09 is the slot chamfer) (RV01 section y=-10: slot edge x=27.0, outer face x=27.5) and 0.65 mm between the slot front and the deck pocket (section x=25: y -12.25 to -11.6)",
-   "label": "RV01 printed chassis: closed X-ribbed deck (printed deck-down), open floor for the base panel, N10 keyhole side pockets, nut lobes, weapon-mount tabs and standoff lugs"
+   "label": "RV01 printed chassis: closed X-ribbed deck (printed deck-down), open floor for the base panel, N10 keyhole side pockets, nut lobes, weapon-mount tabs and standoff lugs",
+   "rub_gap_ok": {
+    "with": "spider",
+    "min_mm": 0.6,
+    "at": [
+     -10.3,
+     26.05,
+     13.49
+    ],
+    "reason": "matches original RVRN 2.0: the STEP spider_1 sweeps 0.600 mm from the RV01_Chassis_1 face at x -10.3 (swept distance, STEP meshes, tub point (-10.3, 26.05, 13.49))"
+   }
   },
   {
    "id": "base_panel",
@@ -1670,7 +1546,8 @@
     0.0,
     180.0
    ],
-   "label": "0.9 mm Ti top panel: laser outline with 4 countersunk 2.2 corner holes, 4 M2 flat-head thread-forming screws into the column tops (material inferred, see REFERENCE.md)"
+   "thin_wall_deviation": "matches original RVRN 2.0: Chamfer1 (0.75 x 45 deg, dump Top Panel) on the 0.9 sheet leaves a 0.15 land at each d2.2 hole (STEP Top_Panel_1 section through a hole: material only z 20.25 to 20.4 at r 1.1, full 19.5 to 20.4 from r 1.9)",
+   "label": "0.9 mm Ti top panel: laser outline with 4 countersunk 2.2 corner holes, 4 M2 button-head thread-forming screws into the pilot webs under the column rims (material inferred, see REFERENCE.md)"
   },
   {
    "id": "mount_r",
@@ -1703,6 +1580,7 @@
    ],
    "material": "pla_st",
    "process": "fdm",
+   "thin_wall_deviation": "matches original RVRN 2.0: RV02/RV03 end the notch top in a zero-thickness wedge and the R3.25 nose arc leaves 0.15 mm round the CSK cone (STEP sections at the notch top and y 40.5); kept for parity (user order)",
    "label": "RV03 XALT HD right weapon mount (8 mm): GR1507 stator on 4 M2 through the back spacer, notch on the chassis tab, 2 M3 CSK into the standoffs"
   },
   {
@@ -1737,6 +1615,7 @@
    ],
    "material": "pla_st",
    "process": "fdm",
+   "thin_wall_deviation": "matches original RVRN 2.0: RV02/RV03 end the notch top in a zero-thickness wedge and the R3.25 nose arc leaves 0.15 mm round the CSK cone (STEP sections at the notch top and y 40.5); kept for parity (user order)",
    "label": "RV02 XALT HD left weapon mount (8 mm): outboard MR85 bearing for the threaded shaft end, notch on the chassis tab, 2 M3 CSK into the standoffs"
   },
   {
@@ -3040,46 +2919,6 @@
    ]
   },
   {
-   "id": "insert_t0",
-   "kind": "insert",
-   "catalog": "heatset_m2_4",
-   "at": [
-    25.0,
-    10.4,
-    17.5
-   ]
-  },
-  {
-   "id": "insert_t1",
-   "kind": "insert",
-   "catalog": "heatset_m2_4",
-   "at": [
-    -25.0,
-    10.4,
-    17.5
-   ]
-  },
-  {
-   "id": "insert_t2",
-   "kind": "insert",
-   "catalog": "heatset_m2_4",
-   "at": [
-    25.0,
-    -21.6,
-    17.5
-   ]
-  },
-  {
-   "id": "insert_t3",
-   "kind": "insert",
-   "catalog": "heatset_m2_4",
-   "at": [
-    -25.0,
-    -21.6,
-    17.5
-   ]
-  },
-  {
    "id": "belt_l",
    "kind": "belt",
    "material": "rubber",
@@ -3503,12 +3342,12 @@
     "head_std": "DIN 7991",
     "head_dk": 6.0,
     "head_k": 1.86,
-    "clearance_d": 3.6,
+    "clearance_d": 3.2,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
     "csk_d": 6.4,
-    "csk_depth": 1.4,
+    "csk_depth": 1.6,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -3544,12 +3383,12 @@
     "head_std": "DIN 7991",
     "head_dk": 6.0,
     "head_k": 1.86,
-    "clearance_d": 3.6,
+    "clearance_d": 3.2,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
     "csk_d": 6.4,
-    "csk_depth": 1.4,
+    "csk_depth": 1.6,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -3701,12 +3540,12 @@
     "head_std": "DIN 7991",
     "head_dk": 6.0,
     "head_k": 1.86,
-    "clearance_d": 3.6,
+    "clearance_d": 3.2,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
     "csk_d": 6.4,
-    "csk_depth": 1.4,
+    "csk_depth": 1.6,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -3742,12 +3581,12 @@
     "head_std": "DIN 7991",
     "head_dk": 6.0,
     "head_k": 1.86,
-    "clearance_d": 3.6,
+    "clearance_d": 3.2,
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
     "csk_d": 6.4,
-    "csk_depth": 1.4,
+    "csk_depth": 1.6,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -3880,7 +3719,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    17.15,
+    16.7,
     44.5,
     23.5
    ],
@@ -3900,7 +3739,7 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
-    "cbore_depth": 1.7106,
+    "cbore_depth": 2.1606,
     "grip": 5.4606
    },
    "through": [
@@ -3918,7 +3757,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    17.15,
+    16.7,
     32.5,
     23.5
    ],
@@ -3938,7 +3777,7 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
-    "cbore_depth": 2.1954,
+    "cbore_depth": 2.6454,
     "grip": 5.9454
    },
    "through": [
@@ -3956,7 +3795,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    17.15,
+    16.7,
     38.5,
     29.5
    ],
@@ -3976,7 +3815,7 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
-    "cbore_depth": 1.029,
+    "cbore_depth": 1.479,
     "grip": 4.779
    },
    "through": [
@@ -3994,7 +3833,7 @@
    "tool": "hex1.3",
    "material": "titanium",
    "at": [
-    17.15,
+    16.7,
     38.5,
     17.5
    ],
@@ -4014,7 +3853,7 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
-    "cbore_depth": 2.877,
+    "cbore_depth": 3.327,
     "grip": 6.627
    },
    "through": [
@@ -4379,6 +4218,154 @@
     "motor_spacer"
    ],
    "reason": "stack screwed into the spider from the back (heads on disc_b, 2 mm of thread in the 3 mm alu spider tapped M2): no nuts, since the STEP has none (inferred: it has the 2.2 holes but no screws)",
+   "removable": true
+  },
+  {
+   "id": "bolt_t0",
+   "designation": "M2x6",
+   "head": "button",
+   "tool": "hex1.3",
+   "at": [
+    25.0,
+    10.4,
+    20.4
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "through": [
+    "top_panel",
+    "tub"
+   ],
+   "threads_into": "tub",
+   "reason": "M2 button head on the panel top, thread-forming into the 1.7 pilot in the TOP_NECK web under the rim of the corner column (the STEP top panel has the 4 holes over those columns, no screws)",
+   "hole": {
+    "d": 2.0,
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 0.9
+   },
+   "removable": true
+  },
+  {
+   "id": "bolt_t1",
+   "designation": "M2x6",
+   "head": "button",
+   "tool": "hex1.3",
+   "at": [
+    -25.0,
+    10.4,
+    20.4
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "through": [
+    "top_panel",
+    "tub"
+   ],
+   "threads_into": "tub",
+   "reason": "M2 button head on the panel top, thread-forming into the 1.7 pilot in the TOP_NECK web under the rim of the corner column (the STEP top panel has the 4 holes over those columns, no screws)",
+   "hole": {
+    "d": 2.0,
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 0.9
+   },
+   "removable": true
+  },
+  {
+   "id": "bolt_t2",
+   "designation": "M2x6",
+   "head": "button",
+   "tool": "hex1.3",
+   "at": [
+    25.0,
+    -21.6,
+    20.4
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "through": [
+    "top_panel",
+    "tub"
+   ],
+   "threads_into": "tub",
+   "reason": "M2 button head on the panel top, thread-forming into the 1.7 pilot in the TOP_NECK web under the rim of the corner column (the STEP top panel has the 4 holes over those columns, no screws)",
+   "hole": {
+    "d": 2.0,
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 0.9
+   },
+   "removable": true
+  },
+  {
+   "id": "bolt_t3",
+   "designation": "M2x6",
+   "head": "button",
+   "tool": "hex1.3",
+   "at": [
+    -25.0,
+    -21.6,
+    20.4
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "through": [
+    "top_panel",
+    "tub"
+   ],
+   "threads_into": "tub",
+   "reason": "M2 button head on the panel top, thread-forming into the 1.7 pilot in the TOP_NECK web under the rim of the corner column (the STEP top panel has the 4 holes over those columns, no screws)",
+   "hole": {
+    "d": 2.0,
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 0.9
+   },
    "removable": true
   },
   {
@@ -4839,8 +4826,8 @@
   {
    "a": "top_panel",
    "b": "tub",
-   "method": "glue",
-   "reason": "Ti top panel bonded on the deck, as in the original RVRN 2.0 (STEP: countersunk corner holes, no screws)"
+   "method": "screw",
+   "reason": "Ti top panel held by 4 M2 thread-forming screws through its corner holes into the 1.7 pilots of the column rim webs (the STEP has the holes over the columns, not the screws)"
   },
   {
    "a": "battery",
@@ -4912,21 +4899,22 @@
      16.0
     ],
     [
-     15.66641639482141,
-     19.0,
-     20.329622734725216
+     11.8,
+     15.5,
+     18.2
     ],
     [
-     15.66641639482141,
-     38.5,
-     11.583201466831557
+     11.8,
+     27.0,
+     18.2
     ],
     [
-     12.65,
-     38.5,
-     11.583201466831557
+     11.8,
+     30.0,
+     14.5
     ]
-   ]
+   ],
+   "exposed_reason": "original RV03 / RVRN 2.0 STEP has no lead channel: the 3 phase leads run over the lug and are kapton-taped flat to it (RV03 lug top, STEP); the optional lead groove (REVRON_LEAD_GROOVE=on) replaces the tape"
   },
   {
    "id": "w_rx_wesc",
@@ -5490,19 +5478,19 @@
       16.0
      ],
      [
-      15.66641639482141,
-      19.0,
-      20.329622734725216
+      11.8,
+      15.5,
+      18.2
      ],
      [
-      15.66641639482141,
-      38.5,
-      11.583201466831557
+      11.8,
+      27.0,
+      18.2
      ],
      [
-      12.65,
-      38.5,
-      11.583201466831557
+      11.8,
+      30.0,
+      14.5
      ]
     ]
    }
