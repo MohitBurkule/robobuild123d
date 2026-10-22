@@ -65,7 +65,7 @@ def _rear_profile():
     lip = (RH_LIP_R - s) / math.tan(math.radians(RH_LIP_ANG))
     return [(0, 0), (0, f), (t, f), *_round_corner((t, f), (x0, f - g), (x1, f - g), RH_GROOVE_FILLET),
             *_round_corner((x0, f - g), (x1, f - g), (RH_BLOCK - t, f), RH_GROOVE_FILLET), (RH_BLOCK - t, f), (RH_BLOCK, f),
-            (RH_BLOCK, s + RH_ROOT_R), *_arc((RH_BLOCK + RH_ROOT_R, s + RH_ROOT_R), RH_ROOT_R, 180, 270)[1:],
+            (RH_BLOCK, s + RH_ROOT_R), *_arc((RH_BLOCK + RH_ROOT_R, s + RH_ROOT_R), RH_ROOT_R, 180, 180 + 90)[1:],
             (c - w2 - ch, s), (c - w2, s + ch), (c + w2, s + ch), (c + w2 + ch, s), (RH_LEN - lip, s), (RH_LEN, RH_LIP_R),
             (RH_LEN, RH_WALL_R), (RH_LEN - RH_WALL_T, RH_WALL_R), (RH_LEN - RH_WALL_T, 0)]
 
@@ -93,8 +93,8 @@ def front_hub():
     t, f, g, r, c = FH_FLANGE_T, FH_FLANGE_R, FH_GROOVE_W, FH_FILLET, FH_GUSSET
     x1, x2 = t, t + g   # groove walls
     seat0, seat1 = x2 + t, x2 + t + FH_SEAT_W
-    pts = [(0, FH_BORE_R), (0, f), (x1, f), (x1, FH_SEAT_R + r), *_arc((x1 + r, FH_SEAT_R + r), r, 180, 270)[1:],
-           *_arc((x2 - r, FH_SEAT_R + r), r, 270, 360)[:-1], (x2, FH_SEAT_R + r), (x2, f), (seat0, f), (seat0, FH_SEAT_R + c), (seat0 + c, FH_SEAT_R),
+    pts = [(0, FH_BORE_R), (0, f), (x1, f), (x1, FH_SEAT_R + r), *_arc((x1 + r, FH_SEAT_R + r), r, 180, 180 + 90)[1:],
+           *_arc((x2 - r, FH_SEAT_R + r), r, 180 + 90, 360)[:-1], (x2, FH_SEAT_R + r), (x2, f), (seat0, f), (seat0, FH_SEAT_R + c), (seat0 + c, FH_SEAT_R),
            (seat1 - c, FH_SEAT_R), (seat1, FH_SEAT_R + c), (seat1, f), (FH_LEN, f), (FH_LEN, FH_BORE_R)]
     return _spin(pts)
 
