@@ -63,3 +63,12 @@ def test_numeric_literal_budget():
         src = re.sub(r'""".*?"""|#.*', "", open(f).read(), flags=re.S)
         n += len(re.findall(r"(?<![\w.])\d+\.?\d*", src))
     assert n <= 130, n
+
+
+def test_tab_front_and_flange_blend_follow_the_axle_standoff():
+    """The chassis tab stops a screw head plus a skin short of SA (26.5 at the STEP's SA); the front flange blend is R8 unless SA leaves it no room."""
+    from revron import tub2_flange, tub2_tab
+    from revron.params_chassis import SA
+    from revron.params_weapon import TAB
+    assert abs(TAB["y1"] - (SA[0] - 3.0 - P.SKIN)) < 1e-9 and tub2_tab.TAB_FRONT == TAB["y1"]
+    assert tub2_flange.BLEND_R == tub2_flange.BLEND_R_STEP

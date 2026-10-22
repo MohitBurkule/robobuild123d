@@ -21,7 +21,7 @@ checkout() { # full sha -> $TMP/wt at that sha
   [ -n "$REPO" ] || { wlog "not in a git checkout"; return 1; }
   git -C "$REPO" worktree remove --force "$TMP/wt" 2>/dev/null; rm -rf "$TMP/wt"
   for d in 0 2 4 8 16; do sleep $d
-    git -C "$REPO" cat-file -e "$1^{commit}" 2>/dev/null || git -C "$REPO" fetch -q origin rvrn2 "$1" 2>/dev/null || git -C "$REPO" fetch -q origin rvrn2 2>/dev/null
+    git -C "$REPO" cat-file -e "$1^{commit}" 2>/dev/null || git -C "$REPO" fetch -q origin "$1" 2>/dev/null || git -C "$REPO" fetch -q origin "${TARGET:-dev}" rvrn2 2>/dev/null
     git -C "$REPO" cat-file -e "$1^{commit}" 2>/dev/null || git -C "$REPO" fetch -q origin '+refs/heads/ci-unit/*:refs/remotes/origin/ci-unit/*' 2>/dev/null  # gate trial merges
     git -C "$REPO" cat-file -e "$1^{commit}" 2>/dev/null && git -C "$REPO" worktree add -q --detach "$TMP/wt" "$1" 2>/dev/null && return 0
   done; wlog "cannot check out $1"; return 1

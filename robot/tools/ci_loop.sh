@@ -1,17 +1,25 @@
 #!/bin/bash
 # [fix-G] All fix-* heads pass the combined gate_all() (below) before it is merged; see robot/tools/ci_gate.py.
 # Bounded integration loop: at most MAX_ITERS passes of
-#   fetch origin; merge every fix-* head (local or origin/, whichever is newer) into rvrn2-ci
-#   (conflicts aborted and logged as `[ci] conflict fix-X`); push rvrn2-ci:rvrn2 with retries;
+#   fetch origin; merge every fix-* head (local or origin/, whichever is newer) into $CI_BRANCH (MERGE=1 only)
+#   (conflicts aborted and logged as `[ci] conflict fix-X`); push $CI_BRANCH:$TARGET with retries;
 #   regenerate the spec, full verify through /tmp/heavy.sh streaming blockers, write a [ci] summary line.
 # Renders (robot/tools/ci_render.sh) run in the background in the shared slots after each verify.
-# Stops early on 0 blockers or when $CI_STOP exists. Run from a worktree checked out on rvrn2-ci.
+# Stops early on 0 blockers or when $CI_STOP exists. Run from a worktree checked out on $CI_BRANCH (default ${TARGET}-ci).
+# TARGET (default dev): the branch verified (and, with MERGE=1, merged into and pushed). MERGE=0 (default, verify-only):
+# fixers merge their own PRs, so each round fast-forwards to origin/$TARGET's tip and verifies it as-is (no fix-* merge,
+# no gate, no spec regeneration commit, no push).
 MAX_ITERS=${MAX_ITERS:-20}
 P=${PROGRESS_DIR:-/mnt/project-files/robot-cad/b123d/progress}
 SPEC=${SPEC:-robots/revron/spec.json}
 log() { echo "$(date -Is) [ci] $*" >> "$P/builder.log"; }
-[ "$(git rev-parse --abbrev-ref HEAD)" = "rvrn2-ci" ] || { log "not on rvrn2-ci, exiting"; exit 1; }
-push() { for d in 0 2 4 8 16; do sleep $d; git push -q -u origin rvrn2-ci:rvrn2 2>>"$P/ci_push.err" && { log "pushed $(git rev-parse --short HEAD) to origin/rvrn2"; return 0; }; done; log "push FAILED after retries"; }
+TARGET=${TARGET:-dev}; CI_BRANCH=${CI_BRANCH:-$TARGET-ci}; MERGE=${MERGE:-0}
+[ "$(git rev-parse --abbrev-ref HEAD)" = "$CI_BRANCH" ] || { log "not on $CI_BRANCH, exiting"; exit 1; }
+push() { [ "$MERGE" = 1 ] || return 0
+  for d in 0 2 4 8 16; do sleep $d; git push -q -u origin "$CI_BRANCH:$TARGET" 2>>"$P/ci_push.err" && { log "pushed $(git rev-parse --short HEAD) to origin/$TARGET"; return 0; }; done; log "push FAILED after retries"; }
+sync_target() { # verify-only: move $CI_BRANCH (the loop's own branch) to origin/$TARGET's tip
+  git fetch -q origin "$TARGET" 2>>"$P/ci_push.err" || { log "fetch of $TARGET failed"; return 1; }
+  git merge -q --ff-only "origin/$TARGET" 2>/dev/null || git reset -q --hard "origin/$TARGET"; }
 heads() { # newest of local fix-X and origin/fix-X per branch
   for n in $( (git for-each-ref --format='%(refname:lstrip=2)' 'refs/heads/fix-*'; git for-each-ref --format='%(refname:lstrip=3)' 'refs/remotes/origin/fix-*') | grep -v -e '-local$' | sort -u); do
     l=refs/heads/$n; r=refs/remotes/origin/$n
@@ -260,6 +268,7 @@ render_declared() { # re-render the spec's declared `renders` views (with wire r
   done
   git add "$dir"; }
 regen_commit() { # regenerate the spec here (cached) and commit it with fresh declared renders; 1 (logged) when the build failed: do not verify
+  [ "$MERGE" = 1 ] || return 0   # verify-only: the tip is verified exactly as the fixers merged it
   spec_build . || return 1
   git add robots/revron/spec.json robot/templates/revron.json || return 0
   git diff --cached --quiet && return 0
@@ -270,7 +279,8 @@ regen_commit() { # regenerate the spec here (cached) and commit it with fresh de
 ST="$P/ci_state.json"
 sget() { $GPY state "$ST" get "$1"; }
 sset() { $GPY state "$ST" set "$@"; }
-merge_all() { # gate key = HEAD + every candidate's sha: the same candidate set on the same HEAD reuses the recorded gate result
+merge_all() { [ "$MERGE" = 1 ] || { sync_target; return 0; }  # verify-only: just follow the target's tip
+  # gate key = HEAD + every candidate's sha: the same candidate set on the same HEAD reuses the recorded gate result
   local c b k ok; c=$(cands); [ -n "$c" ] || return 0
   k="$(git rev-parse --short HEAD) $(for b in $c; do echo "$b=$(git rev-parse --short "$b")"; done | paste -sd' ')"
   if [ "$(sget gate_key)" = "$k" ]; then ok=$(sget gate); log "gate: reusing recorded result for this candidate set ($(echo ${ok:-none}))"
@@ -292,15 +302,15 @@ summarize() { # iter sha out -> 0 written here, 1 already written / not counted
   sset "iter=$1" "sha=$2" phase=done "blockers=$n" "failed=${failed# }"
   [ "$n" -eq 0 ] && [ -z "$note" ] && { log "0 blockers at $2, stopping"; exit 0; }
   return 0; }
-# resume: the state says a verify round of a sha that is still origin/rvrn2's tip -> skip merge+gate, collect its shards
+# resume: the state says a verify round of a sha that is still origin/$TARGET's tip -> skip merge+gate, collect its shards
 resume=
 if [ "${SHARD:-1}" = 1 ] && [ "$(sget phase)" = verify ]; then
-  rs=$(sget sha); git fetch -q origin rvrn2 2>>"$P/ci_push.err"
-  if [ -n "$rs" ] && [ "$(git rev-parse --short origin/rvrn2)" = "$rs" ]; then
-    [ "$(git rev-parse --short HEAD)" = "$rs" ] || git merge -q --ff-only origin/rvrn2 2>/dev/null
+  rs=$(sget sha); git fetch -q origin "$TARGET" 2>>"$P/ci_push.err"
+  if [ -n "$rs" ] && [ "$(git rev-parse --short origin/$TARGET)" = "$rs" ]; then
+    [ "$(git rev-parse --short HEAD)" = "$rs" ] || git merge -q --ff-only origin/$TARGET 2>/dev/null
     if [ "$(git rev-parse --short HEAD)" = "$rs" ]; then resume=$rs; START_ITER=$(sget iter); log "restart: resuming iter $START_ITER verify of $rs (gate skipped)"
     else log "restart: HEAD $(git rev-parse --short HEAD) is not $rs, starting a fresh round"; fi
-  else log "restart: state sha $rs is no longer origin/rvrn2's tip, starting a fresh round"; fi
+  else log "restart: state sha $rs is no longer origin/$TARGET's tip, starting a fresh round"; fi
 fi
 cands() { for b in $(heads); do git merge-base --is-ancestor "$b" HEAD || echo "$b"; done; }
 [ "${RENDER_FIRST:-0}" = 1 ] && render

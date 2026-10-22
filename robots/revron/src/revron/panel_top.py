@@ -22,7 +22,7 @@ NOTCH_X0, NOTCH_X1 = TOP_NOTCH_X                                    # tab half w
 def seat(i):
     """FastenerRecord of bolt i (world): M2 button head bearing flat on the sheet, plain clearance hole."""
     x, y = TOP_XY[i]
-    return hole_tool((x, y, TOP_Z0 + TOP_T), (0, 0, -1), "M2x5", head="button", into="through", side="head", grip=TOP_T, cbore=0)
+    return hole_tool((x, y, TOP_Z0 + TOP_T), (0, 0, -1), "M2x6", head="button", into="through", side="head", grip=TOP_T, cbore=0)
 
 
 def outline():

@@ -178,7 +178,7 @@ def verify_incremental(spec, opts=None):
     """Same pipeline and result as robot.checks.verify, with per-group reuse keyed on recorded dependencies."""
     global _rec, _all_ids
     from .. import checks
-    from ..checks import GROUPS, Ctx, Options, not_checked, validity
+    from ..checks import GROUPS, MODULE, Ctx, Options, not_checked, validity
 
     opts = opts or Options()
     r = world_mod.resolve(spec, fast=opts.fast)
@@ -204,7 +204,7 @@ def verify_incremental(spec, opts=None):
                 continue
             t0 = time.time()
             try:
-                mod = importlib.import_module(f"robot.checks.{name}")
+                mod = importlib.import_module(f"robot.checks.{MODULE.get(name, name)}")  # param -> param_lint, as verify does
             except ModuleNotFoundError:
                 findings.append(fail("checks.missing", "checks", WARNING, "Check group not available",
                                      f"The `{name}` checks are not in this build; nothing in that group was judged."))

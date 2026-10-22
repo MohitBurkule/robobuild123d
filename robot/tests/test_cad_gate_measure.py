@@ -7,7 +7,7 @@ from pathlib import Path
 import build123d as bd
 import pytest
 
-from robot.cad import gate, measure_ref
+from robot.cad import fastener_catalog, gate, measure_ref
 from robot.cad.holes import hole
 from robot.finding import BLOCKER, WARNING, Report, fail, ok
 
@@ -70,7 +70,7 @@ def test_measure_ref_numbers(ref_stl):
     hz = [h for h in d["holes"] if h["axis"] == "z"]
     csk = min(hz, key=lambda h: abs(h["centre"][0] + 10))
     assert csk["diameter"] == pytest.approx(3.4, abs=0.15) and csk["profile"] == "csk"
-    assert csk["csk_angle_deg"] == pytest.approx(90, abs=12) and csk["csk_dia"] == pytest.approx(7.0, abs=0.6)
+    assert csk["csk_angle_deg"] == pytest.approx(90, abs=12) and csk["csk_dia"] == pytest.approx(fastener_catalog.CSK[3.0][0] + 0.2, abs=0.6)  # M3 = DIN 7991 dk 6.0, cut 6.2
     assert any("hex" in h.get("shapes_along_axis", [h["shape"]]) for h in hz)
     assert any(abs(r - 3) < 0.3 for r in d["fillet_radii"]["z"])
     assert d["wall_thickness"]["median"] > 0

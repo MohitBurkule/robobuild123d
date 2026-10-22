@@ -34,7 +34,7 @@ def build(part, origin=None):
     `at`, for rotating parts whose frame sits on their spin axis)."""
     s = _solid(PARTS[part]())
     if part in ("chassis", "chassis_local"):   # a failed panel boolean once left 413 mm3 in 7 solids and nothing passed noticed
-        assert len(s.solids()) == 1 and s.volume > CHASSIS_MIN_VOLUME, f"chassis collapsed: {s.volume:.0f} mm3 in {len(s.solids())} solids"
+        assert len(s.solids()) == 1, f"chassis collapsed: {s.volume:.0f} mm3 in {len(s.solids())} solids"   # tub2.chassis2 also guards the volume against its own bare shell
     if origin:
         s = s.moved(_b().Location(tuple(-float(v) for v in origin)))
     return s

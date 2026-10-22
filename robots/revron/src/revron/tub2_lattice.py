@@ -32,9 +32,9 @@ def _pockets_2d():
 def pockets():
     """+X cutters. Faces centred on the crossing in X are the caps and are clipped to the corner posts."""
     out = []
+    post = Pos(XC, ZC) * Rectangle(2 * CAP_HALF, Z1 - Z0 + 2 * OVER)       # between the corner posts
     for f in _pockets_2d().faces():
-        s = round_floor_pocket(f, FLOOR_Y, TOP_Y, FLOOR_R)
-        if abs(f.center().X - XC) < SKIN:                  # caps: clipped after the round, so the clip cuts stay sharp
-            s = s & (Pos(XC, (FLOOR_Y + TOP_Y) / 2, ZC) * Box(2 * CAP_HALF, TOP_Y - FLOOR_Y + 2 * OVER, Z1 - Z0 + 2 * OVER))
-        out.append(s)
+        if abs(f.center().X - XC) < SKIN:                  # caps: stopped at the corner posts in plan, before the round, so the stop wall meets the ribs in the pocket's own R
+            f = (f & post).faces()[0]
+        out.append(round_floor_pocket(f, FLOOR_Y, TOP_Y, FLOOR_R))
     return out

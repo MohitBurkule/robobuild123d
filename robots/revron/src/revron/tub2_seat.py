@@ -1,8 +1,8 @@
 """[tub2] Base-panel seat: rabbet in the RV26 outline (rect, ears round the screws near the edge, R blends), N10 preload pad recess,
 squared rear corner behind the gearbox plates, and the stop wall's lower inner edge round."""
 from build123d import Align, Axis, BuildSketch, Circle, Locations, Mode, Plane, Pos, Rectangle, RectangleRounded, extrude, fillet
-from .tub2_params import (BASE_OUT, PRELOAD_PAD, PAD_MARGIN, PAD_RECESS, SEAT_Z, CH_Z0, CH_WALL,
-                          CH_IN_X, WALL_IN_REAR, DECK, OVER, SA_X0, STOP_BACK_Y, STOP_FRONT_Y, STOP_ROUND_R, SKIN, PANEL_CLEARANCE)
+from .tub2_params import (BASE_OUT, PRELOAD_PAD, PAD_RECESS, SEAT_Z, CH_Z0, CH_WALL,
+                          CH_IN_X, WALL_IN_REAR, PAD_Z0, OVER, SA_X0, STOP_BACK_Y, STOP_FRONT_Y, STOP_ROUND_R, SKIN, PANEL_CLEARANCE)
 from . import panel_base
 from .tub2_util import box_xy, concave_filler, mirrored, prism
 
@@ -18,8 +18,8 @@ def rabbet():
 def pad_recess_and_corner():
     """+X: recess for the N10 preload pad (pad + margin each side) and the squared rear corner (wall thick, from the seat to the deck)."""
     (px, py), h = PRELOAD_PAD["c"], PRELOAD_PAD["s"] / 2 + PAD_RECESS
-    pad = box_xy(px - h, px + h, py - h, py + h, SEAT_Z - OVER, SEAT_Z + max(PAD_MARGIN, PRELOAD_PAD["h"] + OVER))
-    corner = box_xy(CH_IN_X - CH_WALL, CH_IN_X, WALL_IN_REAR, WALL_IN_REAR + CH_WALL, SEAT_Z, DECK)   # flush with the wall faces: no notch into the wall
+    pad = box_xy(px - h, px + h, py - h, py + h, SEAT_Z - OVER, SEAT_Z + max(2 * PAD_RECESS, PRELOAD_PAD["h"] + OVER))
+    corner = box_xy(CH_IN_X - CH_WALL, CH_IN_X, WALL_IN_REAR, WALL_IN_REAR + CH_WALL, SEAT_Z, PAD_Z0)   # flush with the wall faces: no notch into the wall; stops under the deck pad
     return [pad, corner]
 
 
