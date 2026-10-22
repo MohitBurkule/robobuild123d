@@ -9,6 +9,9 @@
                                                          # or either log did not finish: a verifier change needs review
   python3 robot/tools/ci_gate.py ok A0 A1 I0 I1          # exit 0 if not worse, 1 if worse (no logging)
   python3 robot/tools/ci_gate.py halves B...             # print the two bisect halves, one per line
+  python3 robot/tools/ci_gate.py state FILE get KEY      # print a key of the round-state json ('' if absent)
+  python3 robot/tools/ci_gate.py state FILE set K=V...   # update keys atomically (tmp + rename; the file is on a share)
+  python3 robot/tools/ci_gate.py unitok LOG RC           # exit 0 pass, 1 tests failed, 2 infra (no pytest summary)
 """
 import datetime, json, os, re, sys
 
@@ -126,6 +129,36 @@ def report(branch, sha, a0, a1, i0, i1, pdir):
     return line
 
 
+def state_load(path):
+    try:
+        with open(path) as f:
+            d = json.load(f)
+        return d if isinstance(d, dict) else {}
+    except (OSError, ValueError):
+        return {}
+
+
+def state_set(path, pairs):
+    """Merge K=V pairs into the round-state json; written to a temp name and renamed so a kill never leaves half a file."""
+    d = state_load(path)
+    for kv in pairs:
+        k, _, v = kv.partition("=")
+        d[k] = v
+    d["t"] = datetime.datetime.now(datetime.timezone.utc).isoformat(timespec="seconds")
+    tmp = f"{path}.tmp.{os.getpid()}"
+    with open(tmp, "w") as f:
+        json.dump(d, f, indent=1, sort_keys=True)
+    os.replace(tmp, path)
+    return d
+
+
+def unit_result(text, rc):
+    """0 = unit tests passed, 1 = failed, 2 = infra (killed/timeout/not a pytest run, e.g. an old shard worker)."""
+    if not re.search(r"\b(passed|failed|errors?|no tests ran)\b.* in [0-9.]+s", text):
+        return 2
+    return 0 if int(rc) == 0 else 1
+
+
 def main(argv):
     cmd = argv[0]
     if cmd == "count":
@@ -148,6 +181,19 @@ def main(argv):
         return 0
     if cmd == "ok":
         return 0 if decide(*map(int, argv[1:5])) else 1
+    if cmd == "state":
+        if argv[2] == "get":
+            v = state_load(argv[1]).get(argv[3], "")
+            print(v)
+            return 0
+        state_set(argv[1], argv[3:])
+        return 0
+    if cmd == "unitok":
+        try:
+            text = open(argv[1], errors="replace").read()
+        except OSError:
+            return 2
+        return unit_result(text, argv[2] if argv[2].lstrip("-").isdigit() else 99)
     if cmd == "halves":
         for h in halves(argv[1:]):
             print(" ".join(h))
