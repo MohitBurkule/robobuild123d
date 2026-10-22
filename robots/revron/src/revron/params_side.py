@@ -40,7 +40,7 @@ SP_NOSE_RUN = 10.0                   # the nose is the swing's outer cone swept 
 SP_NOSE_OVER = 1.0                   # cutters overshoot the faces they open
 # nose notch (STEP RV23 sections): the standoff-end post (R3.952 round SA) stands in a pocket (floor X_POST); behind it a deeper pocket (X_B, rear corner r_round)
 # keeps the wedgelet ring round SB as a R3.5 post
-SP_NOSE_PKT = dict(x_post=-40.5, x_b=-42.5, draft_deg=2.2, r_round=1.0, r_ring=3.5, z_top=8.0, r_slot=3.65, taper_deg=18.9)   # z_top: the pocket's roof, above it a slot round the nose-run end
+SP_NOSE_PKT = dict(x_post=-40.5, x_b=-42.5, draft_deg=2.2, r_round=1.0, r_post=3.95, r_ring=3.5, z_top=8.0, r_slot=3.65, taper_deg=18.9)   # z_top: the pocket's roof, above it a slot round the nose-run end
 SP_NOSE_Z = (FLOOR_Z, 10.0)   # SP_NOSE_Z[1] is also the top of the swing and of the S-bend's front end
 SP_TOE_Y0 = 47.0                     # the ramp toe's land starts here (Y)
 SP_TOE_RUN = 3.1                     # Y run of the ramp skin the toe polygon follows
@@ -63,7 +63,6 @@ SP_BUILT_SIDE = -1
 SPEC_DP = 6                          # decimals of solved positions written to the spec (micron noise-free)
 SP_SEAT_AXIS = dict(a=SA, b=SB, c=NUT)   # (Y, Z) of each side screw: 25 mm standoff, 15 mm standoff, chassis nut
 SIDE_DEV_X, SIDE_DEV_R = 41.78, 4.0              # deviation sphere at the nose screw seat (STEP RV23 bore centre X, radius)
-CHASSIS_MIN_VOLUME = 15000.0         # mm3: the intact chassis is 15988 mm3 in one solid
 # chassis-nut relief (STEP RV23, section X -32): the hull of the R4.6 round about the nut axis NUT and a small R2.1 round `dy` further along Y at height `z`
 SP_NUT_POCKET = dict(r=4.6, r2=2.1, dy=12.0, z=6.921)
 # three diagonal flutes on the outer face (STEP RV23): width / pitch / angle off the Y axis, the middle one through (Y 0, Z `z`), `depth` deep along X,

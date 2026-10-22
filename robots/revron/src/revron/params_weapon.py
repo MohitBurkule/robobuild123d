@@ -80,7 +80,8 @@ MNT_SIDE = dict(
     r=dict(top_r=10.0, notch_y=10.17, rim_end=-14.5, batter=dict(drop=2.4084, lean=0.154, toe=0.0404)),
     l=dict(top_r=7.0, notch_y=9.0, rim_end=-5.0, batter=dict(drop=2.80265, lean=0.1701, toe=0.0158)))
 MNT_TOP_Z = CH_Z1                        # top of the rear notch: the teardrop's tangent line starts here
-TAB = dict(y0=CH_Y1, z0=5.35, h=8.2, y1=26.5, cham=1.0)   # chassis tab the notch drops over: rear Y, floor Z, height, front-face Y, front chamfer
+TAB_FRONT_SETBACK = fc.head(M3, 'csk')[0] / 2 + CH_WALL / 2   # tab front face stands short of the axle standoff axis (SA) by the M3 CSK head radius plus a skin: the mount screw into SA clears the tab
+TAB = dict(y0=CH_Y1, z0=5.35, h=8.2, y1=SA[0] - TAB_FRONT_SETBACK, cham=1.0)   # chassis tab the notch drops over: rear Y, floor Z, height, front-face Y (follows SA: 26.5 at the STEP's SA), front chamfer
 MNT_NOTCH_GAP = 0.1                     # the notch's front face stands this far ahead of the tab's front face (STEP RV02/RV03 notch at Y 26.6)
 NOSE_R = 3.25                           # nose arc round the SB standoff; it leaves the outline at the side's rim_end angle (the front edge is the common tangent of rim and nose: STEP RV02 -5, RV03 -14.5)
 MNT_HEEL = dict(z=SB[1] - NOSE_R, step=0.4, back=1.8, z_hook=2.5, z_lip=4.5)   # rear foot hooked under the tab: flat underside (tangent to the nose arc), tip step, setback, hook and lip Z

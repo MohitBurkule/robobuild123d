@@ -3,7 +3,7 @@ N10 keyhole (hull of two circles, opened into a U-slot to the floor so the gearb
 from build123d import Box, BuildSketch, Circle, Cylinder, Locations, Mode, Plane, Pos, Align, RegularPolygon, Polygon, Rectangle, Rotation, extrude, fillet, make_hull
 from .tub2_params import CH_HALF_W, CH_IN_X, CH_Z0, CH_WALL, OVER, SKIN
 from math import atan2, degrees, hypot
-from .params_chassis import NUT, RY, RZ, variant
+from .params_chassis import NUT, RY, RZ, M3, variant, fc
 from .tub2_arcs import inset_line, line_meet, outer_tangents
 from .params_hardware import PRESS
 
@@ -11,8 +11,8 @@ LOBE_R = 4.5                         # D10: lobe round about the nut (diameter 9
 CAP_R, CAP_REACH = 2.0, (12.0, -1.58)  # R of the hull's end cap towards the middle and its centre's (Y, Z) offset from the nut
 LOBE_PROUD = 3.0                     # Boss-Extrude6 depth
 HEX_CLR = 0.05                       # drawn pocket: clearance each side of the nut's flats
-NUT_AF = 5.5                         # M3 thin nut across flats; pocket circumradius = AF / sqrt(3)
-BORE_R = 1.6                         # D7: 3.2 clearance bore
+NUT_AF = fc.nut(M3, 'thin')[0]      # M3 thin nut across flats; pocket circumradius = AF / sqrt(3)
+BORE_R = fc.clearance(M3, 'close') / 2   # D7: 3.2 clearance bore
 SEAT_R, NECK_R, NECK_DZ = 2.5, SKIN, 5.0   # keyhole: boss seat round at the shaft, neck round centred NECK_DZ below it
 BOSS_R, BOSS_CLR = 2.0, 0.05        # 4 dia gearbox boss and its slot clearance each side: U-slot half width = sum
 SLIT_R, SLIT_INSET = 0.5, 2.413   # slit corner R; slit walls sit this far inside the lobe's tangent lines (leaves the snap-in wall)

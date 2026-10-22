@@ -91,10 +91,6 @@ def tub_rig(r=None, solve=True):
         r.joint("tub", f"bore_b{i}", (x, y, INS_Z[0]))
         r.joint(f"insert_b{i}", "bottom", (0, 0, -INS_LEN / 2))
         r.mate("tub", f"bore_b{i}", f"insert_b{i}", "bottom")
-    for i, (x, y) in enumerate(TOP_XY):              # rim bores: the insert top is flush with the rim the top panel sits on
-        r.joint("tub", f"bore_t{i}", (x, y, CH["z1"]))
-        r.joint(f"insert_t{i}", "top", (0, 0, INS_LEN / 2))
-        r.mate("tub", f"bore_t{i}", f"insert_t{i}", "top")
     r.joint("tub", "switch_wall", (CH["x"] - CH["wall"], ELEC["switch_yz"][0], ELEC["switch_yz"][1]), (0, 0, 90))   # inner face of the +X wall at the switch (switch turned 90 about Z)
     r.joint("power_switch", "side", (0, -(SW_HALF_W + SW_CLR), 0))                                       # its side face, the clearance off the wall
     r.mate("tub", "switch_wall", "power_switch", "side")
@@ -108,7 +104,7 @@ def tub_rig(r=None, solve=True):
         r.mate("tub", f"screw_b{i}", f"bolt_b{i}", "head")
     for i, (x, y) in enumerate(TOP_XY):              # top-panel screws: head plane on the panel top face
         r.hole("tub", f"screw_t{i}", (x, y, TOP_BOLT_Z), (0, 0, -1))   # driven down through the panel
-        if variant("top_screws"):   # the original has no top-panel screws
+        if TOP_SCREW_WEB:
             r.joint(f"bolt_t{i}", "head", (0, 0, 0))
             r.mate("tub", f"screw_t{i}", f"bolt_t{i}", "head")
     for i, sg in enumerate((1, -1)):                 # switch screws: through the ear holes (SW_PITCH apart along its length) at the body top
