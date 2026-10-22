@@ -2,7 +2,7 @@
 X pockets and two side pockets (R = wall at every rib corner); rear boxes sit between the stop walls. Right-hand pockets are mirrored."""
 from build123d import Align, BuildSketch, Circle, Locations, Mode, Polygon, Rectangle, fillet
 from .tub2_params import (INS_AXIS, POCKET_X, SIDE_X, CENTRE_Y, DIAG_K, RIB_OFF, FRONT_RIB, STOP_GAP, POCKET_SKIN, CENTRE_Y0, REAR_R, SKIN,
-                          CH_WALL, CH_IN_X, COL_R, DECK, OVER, WALL_IN_FRONT, WALL_IN_REAR, STOP_BACK_Y, STOP_FRONT_Y, SA_X0)
+                          CH_WALL, CH_IN_X, COL_R, DECK, PAD_Z0, OVER, WALL_IN_FRONT, WALL_IN_REAR, STOP_BACK_Y, STOP_FRONT_Y, SA_X0)
 from .tub2_util import box_xy, concave_filler, fit_radius, prism, mirrored
 
 
@@ -54,7 +54,7 @@ def rear_pad():
     """Boss-Extrude10 + Fillet20: the deck is half a skin thicker behind the stop wall, from the web's outer skin out to the side wall. R = skin on
     the pad's free front corner (convex) and in the concave corner where its web side meets the rear wall."""
     x0, w, _, _ = _rear_layout()
-    xp, z0, z1 = x0 + w + SKIN, DECK - SKIN / 2, DECK + OVER
+    xp, z0, z1 = x0 + w + SKIN, PAD_Z0, DECK + OVER
     with BuildSketch() as sk:
         with Locations((xp, WALL_IN_REAR - OVER)):
             Rectangle(CH_IN_X + OVER - xp, STOP_BACK_Y - WALL_IN_REAR + OVER, align=(Align.MIN, Align.MIN))

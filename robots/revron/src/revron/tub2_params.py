@@ -8,6 +8,7 @@ SKIN = CH_WALL / 2                      # master: skin left under pockets; also 
 DECK = CH_Z1 - CH_WALL                  # deck underside
 SEAT_Z = BASE_Z0 + BASE_T               # base panel top = rabbet floor
 CAVITY_R = 3 * SKIN / 2                 # inner cavity corner R
+PAD_Z0 = DECK - SKIN / 2                # underside of the deck's rear pad (half a skin thicker than the deck behind the stop wall)
 OVER = SKIN / 10                        # boolean overlap (fuse), not a dimension
 # right-hand (+X) bolt pattern; the rear-centre one sits on the axis
 INS_RIGHT = tuple(p for p in INS if p[0] > 0)

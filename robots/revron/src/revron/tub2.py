@@ -2,14 +2,15 @@
 Done natively: shell, columns, bores, corner blocks / stop wall / key / ledge, deck pockets, base seat. Still delegated to the
 old modules (organic, not yet re-derived): side lobes + keyholes + nut pocket, lugs, front flanges / lattice, switch pad + slot."""
 from . import tub2_fillets, tub2_lobes, tub2_front, tub2_switch, tub2_lug, tub2_tab, tub2_body, tub2_cols, tub2_blocks, tub2_pockets, tub2_seat, tub2_flange, tub2_lattice, tub2_mates
+from build123d import Plane
 from .tub2_util import mirrored
 
 
 def additions():
     """Material added on the shell: rear boss, switch pad, then the +X half blocks mirrored."""
     half = (tub2_blocks.corner_blocks() + tub2_blocks.stop_wall_key_ledge() + tub2_pockets.rear_pad()
-            + [tub2_lug.lug(), tub2_tab.tab_wall(), tub2_tab.key_tab(), tub2_tab.wall_blend(), tub2_flange.flange()])
-    return [tub2_cols.rear_boss()] + tub2_lobes.additions() + [mirrored(h) for h in half] + tub2_switch.switch_pad()
+            + [tub2_lug.lug(), tub2_tab.key_tab(), tub2_tab.wall_blend(), tub2_flange.flange()])
+    return [tub2_cols.rear_boss(), tub2_tab.tab_wall('+x'), tub2_tab.tab_wall('-x').mirror(Plane.YZ)] + tub2_lobes.additions() + [mirrored(h) for h in half] + tub2_switch.switch_pad()
 
 
 def cuts():
