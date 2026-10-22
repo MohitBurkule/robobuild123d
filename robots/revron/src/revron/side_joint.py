@@ -10,7 +10,7 @@ Joints (build123d RigidJoint, Z along the feature's axis):
 The panel is modelled once (SP_BUILT_SIDE, left); the right panel and its joints are its YZ mirror."""
 import os, sys
 import numpy as np
-from .params import HERE, NUT, SA, SA_X, SIDE_BOLT_X, SPEC_DP, SP_BUILT_SIDE, SP_NUT_RELIEF_X, SP_SEAT_AXIS
+from .params import HERE, NUT, SA, SA_X, SIDE_BOLT_X, SPEC_DP, SP_BUILT_SIDE, SP_NUT_RELIEF_X, SP_RH_BLEND, SP_SEAT_AXIS
 from .common import _b, _mirror_x, _solid
 from .hubs import standoff, standoff_end
 from .side import _side_body
@@ -40,6 +40,18 @@ def sp_frames(s):
     return loc if s == sb else {k: (_mx(p), _mx(z)) for k, (p, z) in loc.items()}
 
 
+def _rh_blend(body):
+    """RV24's own blend: the quarter-round filling the nose slot's roof / wall corner (a sketched fillet: the kernel's edge fillet fails at the
+    neighbouring bolt bore), built in the panel frame as the square r x r minus its inscribed circle, swept along the wall."""
+    b = _b()
+    r, d = SP_RH_BLEND["r"], _datum()
+    x, z = SP_RH_BLEND["x"] + d[0], SP_RH_BLEND["z"] - d[2]       # wall and roof in the mirrored panel frame
+    y0, y1 = SP_RH_BLEND["y"][0] - d[1], SP_RH_BLEND["y"][1] - d[1]
+    sq = b.Solid.make_box(r, y1 - y0, r).moved(b.Location((x - r, y0, z - r)))
+    cyl = b.Solid.make_cylinder(r, y1 - y0, b.Plane(origin=(x - r, y0, z - r), z_dir=(0, 1, 0)))
+    return _solid(body + _solid(sq - cyl))
+
+
 def side_panel_local(s, pin=True):
     """RV23/24 panel solid in its own frame, carrying its joints."""
     from OCP.BRepBuilderAPI import BRepBuilderAPI_Transform
@@ -47,7 +59,7 @@ def side_panel_local(s, pin=True):
     to_frame = b.Location(tuple(-v for v in _datum())).wrapped.Transformation()
     body = b.Solid(BRepBuilderAPI_Transform(_solid(_side_body(pin)).wrapped, to_frame, True).Shape())   # geometry re-based, not just located
     if s != SP_BUILT_SIDE:
-        body = _solid(_mirror_x(body))
+        body = _rh_blend(_solid(_mirror_x(body)))
     for k, (p, z) in sp_frames(s).items():
         b.RigidJoint(k, body, b.Location(b.Plane(origin=p, z_dir=z)))
     return body

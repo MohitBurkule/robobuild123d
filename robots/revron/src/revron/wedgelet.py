@@ -6,7 +6,7 @@ the nose top and the R(run + 1) cap cylinder that carves the skin's top. LH is b
 import math
 from functools import lru_cache
 
-from .params import (ARC_N, GEO_EPS, FK_PIN_ANG, FK_PIN_DIST, FK_X, FLOOR_Z, LUG_SB_R, RAMP_REACH, SA, SB, WG_BAY_Z, WG_BOSS_GAP, WG_BORES, WG_BOSS_R,
+from .params import (ARC_N, GEO_EPS, FK_PIN_ANG, FK_PIN_DIST, FK_X, FLOOR_Z, LUG_SB_R, RAMP_REACH, SA, SB, WG_BAY_Z, WG_BOSS_GAP, WG_BORES, WG_BOSS_R, WG_FAR,
                      WG_CHAMFER_END, WG_FLANK_R, WG_MERGE_EPS, WG_MOUNT_GAP, WG_NOTCH, WG_PIN_SWING, WG_RAMP_DEG, WG_RING_CHAMFER_Y,
                      WG_SA_R, WG_SKIN_RUN, WG_SLIT_W, WG_SKIN_T, WG_SLAB, WG_TAB_FILM, WG_TAPER_DEG, WG_TOE_CHAMFER, WG_TOP_Z, WG_X0)
 from .common import _I, _S, _U, _arc, _b, _box, _cyl, _ext, _mirror_x
@@ -239,5 +239,5 @@ def wedgelet(s):
     sh = _wedgelet_lh(mount)
     sh = sh if s < 0 else _mirror_x(sh)
     c = sum(FK_X[s]) / 2                                   # the slit (printable variant) is centred on the tine
-    slit = [_I(_fork_slot(s), _box(c - WG_SLIT_W / 2, c + WG_SLIT_W / 2, -200, 200, -200, 200))] if WG_SLIT_W else []
+    slit = [_I(_fork_slot(s), _box(c - WG_SLIT_W / 2, c + WG_SLIT_W / 2, *WG_FAR))] if WG_SLIT_W else []
     return _S(sh, *slit, weapon_mount(mount))
