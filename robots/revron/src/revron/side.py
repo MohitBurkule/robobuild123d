@@ -8,7 +8,6 @@ from .params import (
     SP_FRONT, SP_NOSE_PKT, SP_NOSE_OVER, SP_NOSE_RUN, SP_NOSE_Y0, SP_NOSE_Z, SP_NUT_POCKET, SP_NUT_RELIEF_X,
     SP_REAR, SP_SA_CLEAR, SP_TOE_RUN, SP_TOE_Y0, SP_Z_TOP,
     SP_TYRE_RELIEF, SP_X_IN, WEDGE_TOE_H)
-from robot.cad import fastener_catalog as fc
 from .common import _I, _S, _U, _b, _box, _cyl, _ext, _one
 from .side_wall import sp_wall, nose_body
 
@@ -194,20 +193,6 @@ def _side_blank():   # pin: kept for the chassis-cutter call (tub_lobes.panel_ma
     side_joint.side_panel_local re-bases it on its own datum and mirrors it for RV24. RV23/24 TPU side panel: an S-wall that hugs the chassis side, swings out round the rear wheel and the front
     wheel; its outer face is battered (5 mm at the floor, 2 mm at the top) so side hits ride up; the nose block
     takes the standoff ends (M3x8 CSK, flush)."""
-    b = _b()
-    cr_, cx0, cx1 = SP_SA_CLEAR
-    cuts = [_side_seat(k, at)[0] for k, at in (("a", SA), ("b", SB), ("c", NUT))] + [
-            _cyl(cr_, cx0, cx1, SA),
-            _sp_tyre_relief(b),                                                   # rear tyre relief pocket on the inner face
-            _nut_pocket(b)]                                                       # relief round the chassis nut lobe
-    # RVRN 2.0 parity: the STEP side panel has a plain inner face (no belt channel); the O-ring grazes it
-    return _S(_side_uncut(), *cuts)
-
-
-@lru_cache(maxsize=None)
-def _side_uncut():
-    """The panel before its seat bores and pockets: wall, nose, foot, post lip, nose notch, flutes. The outer face the screw heads are seated
-    below is this solid's."""
     from shapely.geometry import Polygon
     b = _b()
     wall = sp_wall(b)   # analytic wall (side_wall.py): cones / planes / one S-bend skin; the profile below trims its rear end

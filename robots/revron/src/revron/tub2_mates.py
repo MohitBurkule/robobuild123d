@@ -10,7 +10,7 @@ from . import plate as pl
 
 def mount_slab(side):
     """The mount slab in world coordinates (RV02 mirrored, then placed on its frame)."""
-    part = _prism(mount_profile(side, square_tab=True), 0.0, MNT_SLAB_T)
+    part = _prism(mount_profile(side), 0.0, MNT_SLAB_T)
     return pl.placed(part if side == "r" else part.mirror(bd.Plane.YZ), MNT_FRAME[side])
 
 
