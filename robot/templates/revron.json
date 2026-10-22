@@ -1816,7 +1816,7 @@
     "supported_both_ends": true,
     "teeth": 1
    },
-   "label": "3 mm aluminium spider: bolted to the bell (4 M2 on r4.5), carries the disc stack on 4 M2 on r14"
+   "label": "3 mm aluminium spider: bolted to the bell (4 M2 on r4.5), carries the disc stack on 4 M2 on r14 (d2.2 clearance holes as in the STEP, below the 3 mm laser minimum: laser-spotted, then drilled to size)"
   },
   {
    "id": "disc_a",
@@ -1825,6 +1825,9 @@
    "material": "hardox",
    "process": "laser",
    "stock": "3 mm Hardox 450",
+   "secondary_ops": [
+    "drilled"
+   ],
    "parent": "spider",
    "min_web_mm": 0.9,
    "min_web_reason": "0.9 mm webs beside the balance window are the designer's own (RVRN 2.0 STEP Drisk_floating_3 measures 0.9 at the same four places)",
@@ -1861,6 +1864,9 @@
    "material": "hardox",
    "process": "laser",
    "stock": "3 mm Hardox 450",
+   "secondary_ops": [
+    "drilled"
+   ],
    "parent": "spider",
    "min_web_mm": 0.9,
    "min_web_reason": "0.9 mm webs beside the balance window are the designer's own (RVRN 2.0 STEP Drisk_floating_3 measures 0.9 at the same four places)",
