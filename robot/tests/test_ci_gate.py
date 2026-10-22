@@ -97,3 +97,16 @@ def test_unit_result():
     assert G.unit_result("F.\n1 failed, 11 passed in 3.2s", 1) == 1
     assert G.unit_result("Traceback ... robot verify: unknown group unit", 2) == 2   # old worker ran it as a verify group
     assert G.unit_result("", 124) == 2
+
+
+def test_unit_split_and_combine():
+    files = [f"t{i}.py" for i in range(6)]
+    bins = G.unit_split(3, files, {"t0.py": 30, "t1.py": 10, "t2.py": 10, "t3.py": 5, "t4.py": 5})
+    assert sorted(f for b in bins for f in b) == sorted(files) and len(bins) == 3
+    assert ["t0.py"] in bins                       # the 30 s file alone; the rest share the other two bins
+    assert G.unit_split(8, ["a.py"], {}) == [["a.py"]]
+    d = G.unit_durations(["1.50s call     robot/tests/test_a.py::test_x\n0.20s setup robot/tests/test_a.py::test_y\n2.00s call robot/tests/test_b.py::t[1]"])
+    assert d == {"robot/tests/test_a.py": 1.7, "robot/tests/test_b.py": 2.0}
+    ok, bad, cut = ("3 passed in 1.0s", 0), ("1 failed, 2 passed in 1.0s", 1), ("12% ...", 124)
+    assert G.unit_combine([ok, ok]) == 0 and G.unit_combine([ok, bad, cut]) == 1
+    assert G.unit_combine([ok, cut]) == 2 and G.unit_combine([]) == 2

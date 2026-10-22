@@ -28,9 +28,14 @@ checkout() { # full sha -> $TMP/wt at that sha
 }
 
 run_group() { # worktree group -> stdout/rc
-  if [ -n "$RUN" ]; then $RUN "$1" "$2"; return; fi
+  if [ -n "$RUN" ]; then SHARD_DIR=$D $RUN "$1" "$2"; return; fi
   local h=; [ -x /tmp/heavy.sh ] && h="/tmp/heavy.sh"
-  if [ "$2" = unit ]; then (cd "$1" && timeout "${GATE_PYTEST_TIMEOUT:-3600}" python3 -m pytest robot/tests -q -p no:cacheprovider); return; fi
+  # unit / unit-K: robot/tests (unit-K: the files listed in $D/unit_files/unit-K). Timeout: $D/unit_timeout written by the
+  # loop (so it does not depend on each worker's env), else UNIT_TIMEOUT (4 h). --durations feeds the loop's shard balancing.
+  if [ "$2" = unit ] || [[ "$2" == unit-* ]]; then
+    local f=robot/tests t; [ "$2" = unit ] || f=$(cat "$D/unit_files/$2" 2>/dev/null) || { echo "no file list for $2"; return 97; }
+    t=$(cat "$D/unit_timeout" 2>/dev/null || echo "${UNIT_TIMEOUT:-14400}")
+    (cd "$1" && timeout "$t" python3 -m pytest $f -q -p no:cacheprovider --durations=0 --durations-min=0.05); return; fi
   (cd "$1" && HEAVY_CI=1 $h timeout "${GROUP_TIMEOUT:-6000}" python3 -m robot verify "${SPEC:-robots/revron/spec.json}" --full --only "$2" --jobs 1)
 }
 

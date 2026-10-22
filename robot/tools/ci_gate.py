@@ -11,6 +11,9 @@
   python3 robot/tools/ci_gate.py halves B...             # print the two bisect halves, one per line
   python3 robot/tools/ci_gate.py state FILE get KEY      # print a key of the round-state json ('' if absent)
   python3 robot/tools/ci_gate.py state FILE set K=V...   # update keys atomically (tmp + rename; the file is on a share)
+  python3 robot/tools/ci_gate.py unitsplit N DURJSON FILE...  # N lines of test files, balanced by past durations
+  python3 robot/tools/ci_gate.py unitdur DURJSON LOG...  # learn per-file durations from pytest --durations output
+  python3 robot/tools/ci_gate.py unitcombine RESDIR G=RC... # exit 0 all passed, 1 any failed, 2 otherwise (infra)
   python3 robot/tools/ci_gate.py unitok LOG RC           # exit 0 pass, 1 tests failed, 2 infra (no pytest summary)
 """
 import datetime, json, os, re, sys
@@ -159,6 +162,33 @@ def unit_result(text, rc):
     return 0 if int(rc) == 0 else 1
 
 
+def unit_split(n, files, durs):
+    """Greedy longest-first into n bins; unknown files weigh the median known duration (else 1). Empty bins dropped."""
+    known = sorted(durs.get(f) for f in files if durs.get(f))
+    dflt = known[len(known) // 2] if known else 1.0
+    bins = [[0.0, []] for _ in range(max(1, int(n)))]
+    for f in sorted(files, key=lambda f: (-(durs.get(f) or dflt), f)):
+        b = min(bins, key=lambda b: b[0])
+        b[0] += durs.get(f) or dflt
+        b[1].append(f)
+    return [sorted(b[1]) for b in bins if b[1]]
+
+
+def unit_durations(texts):
+    """Per-file seconds summed from pytest --durations lines ('1.23s call robot/tests/test_x.py::test_y')."""
+    out = {}
+    for t in texts:
+        for m in re.finditer(r"^([0-9.]+)s\s+(?:call|setup|teardown)\s+([^\s:]+\.py)::", t, re.M):
+            out[m.group(2)] = out.get(m.group(2), 0.0) + float(m.group(1))
+    return out
+
+
+def unit_combine(results):
+    """results: [(log text, rc)] -> 0 all passed, 1 any failed, 2 any unfinished and none failed."""
+    rs = [unit_result(t, rc) for t, rc in results]
+    return 1 if 1 in rs else (2 if (2 in rs or not rs) else 0)
+
+
 def main(argv):
     cmd = argv[0]
     if cmd == "count":
@@ -188,6 +218,36 @@ def main(argv):
             return 0
         state_set(argv[1], argv[3:])
         return 0
+    if cmd == "unitsplit":
+        durs = state_load(argv[2])
+        for b in unit_split(argv[1], argv[3:], durs):
+            print(" ".join(b))
+        return 0
+    if cmd == "unitdur":
+        texts = []
+        for p in argv[2:]:
+            try:
+                texts.append(open(p, errors="replace").read())
+            except OSError:
+                pass
+        new = unit_durations(texts)
+        if new:
+            d = state_load(argv[1]); d.update(new); d.pop("t", None)
+            tmp = f"{argv[1]}.tmp.{os.getpid()}"
+            with open(tmp, "w") as f:
+                json.dump(d, f, indent=1, sort_keys=True)
+            os.replace(tmp, argv[1])
+        return 0
+    if cmd == "unitcombine":
+        res = []
+        for kv in argv[2:]:
+            g, _, rc = kv.partition("=")
+            try:
+                t = open(os.path.join(argv[1], g + ".log"), errors="replace").read()
+            except OSError:
+                t = ""
+            res.append((t, int(rc) if rc.lstrip("-").isdigit() else 99))
+        return unit_combine(res)
     if cmd == "unitok":
         try:
             text = open(argv[1], errors="replace").read()
