@@ -15,7 +15,7 @@ BIG = (0.10, -0.10)
 class Job:
     id: str  # e.g. "CH_WALL+10%", "variant:esc_tray=on", "REVRON_MOTOR_VARIANT=step"
     target: str  # param / switch name the report names
-    kind: str  # "param" | "variant" | "choice" | "flag"
+    kind: str  # "param" | "variant" | "choice" | "flag" | "hyp" (overlay-only change hypothesis)
     file: str = ""  # source file (absolute) to rewrite
     line: int = 0
     col: int = 0
@@ -27,6 +27,7 @@ class Job:
     step: float = 0.0
     reads: list = field(default_factory=list)  # spec part ids whose build reads the target
     phase: int = 0  # 0 = first pass, 1 = only when the same target's first pass broke
+    overlay: list = field(default_factory=list)  # declarative spec ops (robot/overlay.py) applied after generation
 
 
 def fmt_num(v: float, is_int: bool) -> str:

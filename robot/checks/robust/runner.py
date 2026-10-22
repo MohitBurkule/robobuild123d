@@ -84,12 +84,14 @@ def job_key(job: dict, src_hash: str, spec_raw: dict) -> str:
 
 
 def run(jobs, spec_path, model_rel, budget_s=900.0, workers=3, execute=subprocess_execute, src_hash="", clock=time.time,
-        log=print) -> dict:
+        log=print, groups=None) -> dict:
     """{'baseline': result, 'results': {job id: (job, result, diff)}, 'not_run': [job ids], 'seconds': s}."""
     t0 = clock()
     spec_path = str(Path(spec_path).resolve())
     spec_raw = json.loads(Path(spec_path).read_text())
     common = {"spec": spec_path, "model_rel": model_rel}
+    if groups:  # check groups other than FAST_GROUPS: the baseline runs the same ones, so the diff stays like for like
+        common["groups"] = list(groups)
 
     ch = checks_hash() if src_hash else ""
 
