@@ -16,9 +16,9 @@ from .common import _U, _b, _m2, _polar, _tangent_line_circle
 from .params_chassis import HERE, MNT_IN, MNT_SLAB_T, MNT_T, SA, SB, WY, WZ
 from .params_weapon import (BIG, BOSS_OVER, BRG_SEAT_R, BSP, BSP_T, CB_FLOOR_X, CB_R,
                             HOLE_FACE_RISE, LEAD_FLOOR_W, LEAD_GROOVE_R, LEAD_GROOVE_X, LEAD_MOUTH, LEAD_ROUND, MNT_FRAME,
-                            MNT_HEEL, MNT_NOTCH_UP, MNT_RELIEF_R, MNT_SCREW, MNT_SCREW_FIT, MNT_CSK_CLEAR, MNT_SIDE,
-                            MNT_TIP_REACH, MNT_TIP_WALL, MNT_TOP_Z, N_STACK, NOSE_A0, NOSE_PAD_R, NOSE_R, NUT_RECESS_R,
-                            LEAD_GROOVE, SHAFT_CLR, SHAFT_R, STATOR_DIRS, STATOR_PCD, TAB, boss_line_z, lead_groove_ends)
+                            MNT_HEEL, MNT_NOTCH_GAP, MNT_NOTCH_UP, MNT_RELIEF_R, MNT_SCREW, MNT_SCREW_FIT, MNT_CSK_CLEAR, MNT_SIDE,
+                            MNT_TIP_REACH, MNT_TIP_WALL, MNT_TOP_Z, N_STACK, NOSE_PAD_R, NOSE_R, NUT_RECESS_R,
+                            LEAD_GROOVE, RV03_BORE_R, STATOR_DIRS, STATOR_PCD, STATOR_SCREW_FIT, TAB, boss_line_z, lead_groove_ends)
 
 AXIS = bd.Vector(WY, WZ)   # the weapon axis in the chassis side view (Y, Z): the mount frame's origin in that view
 
@@ -38,13 +38,12 @@ def _at(c, r, deg):
 
 
 # ------------------------------------------------------------------------------------------------- side profile
-def _tab(square=False):
-    """The chassis tab the notch drops over (side view, chassis Y, Z): rear Y0 to the front face Y1, floor Z0, height
-    h, its two front corners chamfered `cham` (STEP mount notch); `square`: the STEP tub tab itself has none."""
-    t = dict(TAB, cham=0.0) if square else TAB
+def _tab():
+    """The chassis tab the notch drops over (side view, chassis Y, Z): rear Y0 to the front face Y1 + MNT_NOTCH_GAP,
+    floor Z0, height h, its two front corners chamfered `cham` (STEP RV02/RV03 notch). The tub is cut by the real
+    mount, so its tab takes this shape (the STEP tub tab has the same chamfers)."""
+    t = dict(TAB, y1=TAB["y1"] + MNT_NOTCH_GAP)
     zt = t["z0"] + t["h"]
-    if square:
-        return bd.Polygon((t["y0"], t["z0"]), (t["y1"], t["z0"]), (t["y1"], zt), (t["y0"], zt), align=None)
     return bd.Polygon((t["y0"], t["z0"]), (t["y1"] - t["cham"], t["z0"]), (t["y1"], t["z0"] + t["cham"]), (t["y1"], zt - t["cham"]),
                       (t["y1"] - t["cham"], zt), (t["y0"], zt), align=None)
 
@@ -58,7 +57,8 @@ def _outline(m):
     t0 = _v(_tangent_line_circle((m["notch_y"], MNT_TOP_Z), (WY, WZ), m["top_r"], upper=True))
     a0 = math.degrees(math.atan2(t0.Y - AXIS.Y, t0.X - AXIS.X))
     rim1 = _at(AXIS, m["top_r"], m["rim_end"])
-    nose0, nose1 = _at(SB, NOSE_R, NOSE_A0), _at(SB, NOSE_R, -90.0)
+    nose_a0 = m["rim_end"]                               # front edge = common tangent of the rim and the nose arc: same normal angle
+    nose0, nose1 = _at(SB, NOSE_R, nose_a0), _at(SB, NOSE_R, -90.0)
     # heel lip -> tab floor: the corner relief (MNT_RELIEF_R, tangent to the lip) runs out on the tab's rear-bottom
     # corner, the lip under the tab being shorter than the relief radius
     relief = MNT_RELIEF_R > 0
@@ -70,7 +70,7 @@ def _outline(m):
     heel = [nose1, (t["y0"] + h["step"], h["z"]), (t["y0"] - h["back"], h["z_hook"]), (t["y0"] - h["back"], h["z_lip"]), lip_end]
     rear = [(t["y0"], t["z0"]), (t["y0"], MNT_TOP_Z - MNT_NOTCH_UP), (t["y0"] - MNT_NOTCH_UP, MNT_TOP_Z), top, t0]
     edges = [bd.Edge.make_three_point_arc(t0, _at(AXIS, m["top_r"], (a0 + m["rim_end"]) / 2), rim1), bd.Edge.make_line(rim1, nose0),
-             bd.Edge.make_three_point_arc(nose0, _at(SB, NOSE_R, (NOSE_A0 - 90.0) / 2), nose1)]
+             bd.Edge.make_three_point_arc(nose0, _at(SB, NOSE_R, (nose_a0 - 90.0) / 2), nose1)]
     if relief:
         a_end = math.degrees(math.atan2(t["z0"] - rc[1], t["y0"] - rc[0]))
         edges.append(bd.Edge.make_three_point_arc(_v(lip_end), _at(rc, MNT_RELIEF_R, (-90.0 + a_end) / 2), _v(rear[0])))
@@ -81,7 +81,7 @@ def _outline(m):
     return f if f.normal_at().Z > 0 else -f              # counter-clockwise, so it fuses with the pad circle
 
 
-def mount_profile(side, square_tab=False):
+def mount_profile(side):
     """Side sketch of a mount (chassis Y, Z): the outline, a pad round the nose CSK (NOSE_PAD_R = CSK cone + a printed
     wall: the STEP nose arc left the cone a 0 mm knife edge), the notch-top wedge thickened to MNT_TIP_WALL within
     MNT_TIP_REACH (rearmost point kept), concave corners relieved MNT_RELIEF_R, then the notch: the tab cut out, its
@@ -94,7 +94,7 @@ def mount_profile(side, square_tab=False):
         top = _v((m["notch_y"], MNT_TOP_Z))
         zone = (bd.Pos(*top) * bd.Circle(MNT_TIP_REACH)) & (bd.Pos(*top) * bd.Rectangle(MNT_TIP_REACH, MNT_TIP_REACH, align=bd.Align.MIN))
         p = p + (bd.offset(p, MNT_TIP_WALL / 2, kind=bd.Kind.ARC) & zone)
-    tab = _tab(square_tab)
+    tab = _tab()
     return pl.round_corners(p, r_in=MNT_RELIEF_R, keep=tab.vertices()) - tab
 
 
@@ -172,11 +172,11 @@ def lead_groove():
 
 
 # --------------------------------------------------------------------------------------------------------- the plate
-def _plate(side, square_tab=False):
+def _plate(side):
     """Mount body in the mount frame, outboard = +x: a slab (MNT_SLAB_T) carrying the
     full profile, and the boss over the rest of MNT_T on the boss zone, its outer face battered (split on _batter)."""
     m = MNT_SIDE[side]
-    prof = mount_profile(side, square_tab)
+    prof = mount_profile(side)
     slab = _prism(prof, 0.0, MNT_SLAB_T)
     boss = _prism(prof & _boss_zone(prof), MNT_SLAB_T, MNT_T + BOSS_OVER).split(_batter(m), keep=bd.Keep.BOTTOM)
     return _U(slab, boss)
@@ -222,7 +222,7 @@ def _stator_hole(s, dy, dz, world=True):
     b = MNT_SIDE["r"]["batter"]
     x = batter_x("r", dy, dz) + HOLE_FACE_RISE * math.hypot(b["lean"], b["toe"])
     cut, rec = _hole_tool()(_to_mount((x, dy, dz), "r", world), (-s, 0, 0), "M2x8", head="button", into="through", side="head",
-                            grip=x, cbore=x - (CB_FLOOR_X - MNT_IN), cbore_clear=2 * CB_R - fc.head(2.0, "button")[0], fit="normal")
+                            grip=x, cbore=x - (CB_FLOOR_X - MNT_IN), cbore_clear=2 * CB_R - fc.head(2.0, "button")[0], fit=STATOR_SCREW_FIT)
     return (cut.solids()[0] if hasattr(cut, "solids") and len(cut.solids()) == 1 else cut), rec
 
 
@@ -231,16 +231,14 @@ def _stack_hole(fastener, x, y, z, sx, grip):
     return _hole_tool()((x, y, z), (sx, 0, 0), fastener, head="button", into="tapped", side="both", grip=grip, fit="close")[1]
 
 
-def weapon_mount(side, tub_cut=False):
+def weapon_mount(side):
     """RV02 (left, shaft end) / RV03 (right, stator): 8 mm printed XALT HD plates. A slab carries the full profile; the
     boss above the standoff line has its outer face battered (leans in) so side hits glance off. The rear notch drops
-    over the chassis tab: the tab, not the screws, takes fore/aft load. Built in the mount frame (RV02 mirrored).
-    `tub_cut`: the tub cutter, notch square like the STEP tub tab (the mount's chamfered notch corners would leave a
-    1.41 mm chamfer face in the tub)."""
-    body = _plate(side, tub_cut)
+    over the chassis tab: the tab, not the screws, takes fore/aft load. Built in the mount frame (RV02 mirrored)."""
+    body = _plate(side)
     cuts = [_mount_csk(1, y, z, f, world=False)[0] for (y, z), f in zip((SA, SB), MNT_SCREW)]   # M3 CSK into the standoffs
     if side == "r":
-        cuts.append(_bore(SHAFT_R + SHAFT_CLR, -MNT_T, 2 * MNT_T))                              # shaft end clearance
+        cuts.append(_bore(RV03_BORE_R, -MNT_T, 2 * MNT_T))                                      # centre hole behind the shaft end
         cuts += [_stator_hole(1, dy, dz, world=False)[0] for dy, dz in stator_bolt_circle()]     # GR1507 stator M2
         if LEAD_GROOVE:                                                                          # optional variant: snap-in channel for the phase leads
             cuts.append(lead_groove().moved(bd.Location(tuple(-v for v in MNT_FRAME["r"]))))
