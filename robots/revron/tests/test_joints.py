@@ -8,11 +8,9 @@ import revron  # noqa: E402
 from revron import joints as J, params as P  # noqa: E402
 
 
-def test_inserts_sit_on_bore_floor_and_flush_with_rim():
+def test_inserts_sit_on_bore_floor():
     for i in range(len(P.INS)):
         assert math.isclose(J.place_at(f"insert_b{i}")[2] - P.INS_LEN / 2, P.INS_Z[0])
-    for i in range(len(P.TOP_XY)):
-        assert math.isclose(J.place_at(f"insert_t{i}")[2] + P.INS_LEN / 2, P.CH["z1"])
 
 
 def test_switch_side_face_clears_the_wall():

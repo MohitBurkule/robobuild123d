@@ -39,20 +39,29 @@ def round_floor_pocket(face, y_floor, y_open, r):
     sketch corner R = floor Fillet R = depth, so the floor corners are spheres): the plan face shrunk by r, swept by a ball of radius r.
     `face` is the plan Face drawn on the default XY sketch plane (sketch x = world X, sketch y = world Z); the floor lies at world y_floor, the pocket opens
     towards y_open."""
-    from build123d import Cylinder, Kind, Sphere, add, offset
+    from build123d import Box, Kind, add, offset
     s = 1 if y_open > y_floor else -1
     yc = y_floor + s * r
-    with BuildSketch(Plane.XZ.offset(-y_floor)) as e:
+    with BuildSketch(Plane.XZ.offset(-yc)) as e:
         add(face)
         offset(amount=-r, kind=Kind.INTERSECTION)
-    with BuildSketch(Plane.XZ.offset(-yc)) as w:
-        add(face)
-        offset(amount=-r, kind=Kind.INTERSECTION)
-        offset(amount=r, kind=Kind.ARC)
-    out = extrude(e.sketch, -s * abs(y_open - y_floor)) + extrude(w.sketch, -s * abs(y_open - yc))
-    for ed in e.sketch.edges():
-        p, q = ed.start_point(), ed.end_point()
-        d = q - p
-        out += Plane(origin=(p.X, yc, p.Z), z_dir=(d.X, 0, d.Z)) * Cylinder(r, d.length, align=(Align.CENTER, Align.CENTER, Align.MIN))
-        out += Pos(p.X, yc, p.Z) * Sphere(r)
+    # the shrunk plan swept from the ball-centre plane out through the opening, grown by r (one offset: round floor edges and plan corners,
+    # spheres at the floor corners), then clipped to the pocket's own span floor..opening
+    grown = offset(extrude(e.sketch, -s * (abs(y_open - yc) + r)), amount=r, kind=Kind.ARC)
+    bb = grown.bounding_box()
+    slab = Pos((bb.min.X + bb.max.X) / 2, (y_floor + y_open) / 2, (bb.min.Z + bb.max.Z) / 2) * Box(bb.size.X + 1, abs(y_open - y_floor), bb.size.Z + 1)
+    out = grown & slab
     return out
+
+
+def fit_radius(pts, i, r, rounded=()):
+    """Largest corner radius <= r that fits at vertex i of the closed polygon `pts`: the tangent length r / tan(half the corner angle)
+    must fit the shorter adjacent edge, half of it where the neighbour at its other end is rounded too (`rounded` = vertex indices)."""
+    from math import atan2, hypot, tan
+    n = len(pts)
+    p, a, b = pts[i], pts[i - 1], pts[(i + 1) % n]
+    va, vb = (a[0] - p[0], a[1] - p[1]), (b[0] - p[0], b[1] - p[1])
+    la, lb = hypot(*va), hypot(*vb)
+    theta = abs(atan2(va[0] * vb[1] - va[1] * vb[0], va[0] * vb[0] + va[1] * vb[1]))   # interior angle
+    room = min(la / (2 if (i - 1) % n in rounded else 1), lb / (2 if (i + 1) % n in rounded else 1))
+    return min(r, 0.98 * room * tan(theta / 2))

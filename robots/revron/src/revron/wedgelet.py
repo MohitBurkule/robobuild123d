@@ -219,12 +219,27 @@ def _tab_lean(cut):
     return Polygon([(y0, z0), (y0 + WG_TAB_LEAN_FOOT, z0), (lean(top[1]), top[1]), top])
 
 
+def _lug_poly():
+    """The chassis lug's side outline (Y, Z) as a polygon: the tub's own sketch, its edges sampled (the lug's arcs follow SA / SB)."""
+    from shapely.geometry import Polygon
+    from .tub2_lug import side_profile
+    runs = [[(p.Y, p.Z) for p in (e.position_at(i / ARC_N) for i in range(ARC_N + 1))] for e in side_profile().sketch.faces()[0].outer_wire().edges()]
+    pts = runs.pop(0)
+    while runs:                                                       # chain the edges end to end (a wire's edges may run either way)
+        d = lambda a, b: (a[0] - b[0]) ** 2 + (a[1] - b[1]) ** 2     # noqa: E731
+        k, rev = min(((i, r) for i in range(len(runs)) for r in (False, True)), key=lambda ir: d(pts[-1], runs[ir[0]][-1 if ir[1] else 0]))
+        nxt = runs.pop(k)
+        pts += (nxt[::-1] if rev else nxt)[1:]
+    return Polygon(pts).buffer(0)
+
+
 def _tab_poly(mount):
     """Nose tab: the bay's ramp side with the weapon mount's boss (plus the WG_MOUNT_GAP clearance) taken out; films thinner than a TPU wall are
     dropped by reconstruction (the surviving body keeps its own sharp tips)."""
     from .mount import _mount_clip, _mount_profile
     cut = _bay_poly().difference(_mount_profile(mount).intersection(_mount_clip()).buffer(WG_BOSS_GAP, join_style=2))
-    cut = cut.difference(_tab_lean(cut))
+    cut = cut.buffer(0)                                                                         # the mitred boss offset can leave a self-touching ring at the sweep ends
+    cut = cut.difference(_tab_lean(cut).buffer(0)).difference(_lug_poly().buffer(WG_MOUNT_GAP, ARC_N))   # the tab stands WG_MOUNT_GAP off the chassis lug wherever SA / SB put it
     return cut.intersection(cut.buffer(-WG_TAB_FILM, join_style=2).buffer(WG_TAB_FILM + WG_MERGE_EPS, join_style=2)) if WG_TAB_FILM else cut
 
 

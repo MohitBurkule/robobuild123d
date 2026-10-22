@@ -39,8 +39,10 @@ def stop_wall_key_ledge():
     top = DECK + OVER
     xo = CH_IN_X + OVER
     stop = box_xy(SA_X0, xo, STOP_BACK_Y, STOP_FRONT_Y, CH_Z0, top)
-    key = box_xy(N10_KEY[0], N10_KEY[1], KEY_SPAN[0], STOP_FRONT_Y, N10_TOP, top)
+    if N10_TOP + OVER >= top:                  # a gearbox that reaches the deck leaves no room for a ledge or a key above its plates
+        return [stop]
+    key = [box_xy(N10_KEY[0], N10_KEY[1], KEY_SPAN[0], STOP_FRONT_Y, N10_TOP, top)] if N10_KEY else []   # keys into the gap between the last two plates, if the gearbox has one
     ledge = box_xy(LEDGE_X0, xo, LEDGE_Y0, STOP_FRONT_Y, N10_TOP + OVER, top)
     fil = [prism(concave_filler(c, q, LEDGE_R), N10_TOP + OVER, top)
            for c, q in (((LEDGE_X0, STOP_BACK_Y), (-1, -1)), ((CH_IN_X, LEDGE_Y0), (-1, -1)))]
-    return [stop, key, ledge] + fil
+    return [stop, ledge] + key + fil
