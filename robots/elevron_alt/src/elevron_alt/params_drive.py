@@ -20,15 +20,25 @@ WHEEL_OUT = HUB_X0 + HUB_LEN           # outermost wheel face |X| (41.7)
 AXLES = (-AXLE_Y, AXLE_Y)              # front (standoff idler) and rear (N10) axle lines
 DRIVE_MOTOR = "n10_2200rpm_spicy"
 N10_X = IN_X - find(DRIVE_MOTOR).shaft["at"][0]   # gearbox face on the wall inner face, shaft out through the keyhole (19.6)
-# weapon stack along +X from the motor base on the left upright's inner face
-MOTOR_LEN = 20.5                       # BE1806: base to bell face (catalog)
-MOTOR_X0 = -UP_IN + 0.2                # motor base 0.2 off the upright (STEP RV08 x -13.3)
-MOTOR_X1 = MOTOR_X0 + MOTOR_LEN        # bell face (7.2)
-PROP_X1 = UP_IN + UP_T + 2.7           # prop-mount end past the right upright (STEP 22.2)
-PROP_X0 = PROP_X1 - PROP_LEN           # 8.2: the spider sits against it
-SPIDER_X = (PROP_X0 - SPIDER_T, PROP_X0)
-DISC_X = (SPIDER_X[0] - DISC_T, SPIDER_X[0])
+# weapon stack along +X: STEP RV08 base at x -13.3 on the left upright, a 15.3 mm can (6374 mm3 / pi 11.5^2), then
+# disc, spider and prop mount on the bell face
+WEAPON_MOTOR = "be1806_bbb"
+STEP_CAN_LEN = 15.5
+MOTOR_X0 = -UP_IN + 0.2                # STEP motor base, 0.2 off the upright face
+DISC_X = (MOTOR_X0 + STEP_CAN_LEN, MOTOR_X0 + STEP_CAN_LEN + DISC_T)   # disc on the bell face (STEP 2.2 .. 5.2)
+SPIDER_X = (DISC_X[1], DISC_X[1] + SPIDER_T)
+PROP_X0 = SPIDER_X[1]                  # 8.2: prop-mount flange against the spider
+PROP_X1 = PROP_X0 + PROP_LEN           # 22.2
+_sh = find(WEAPON_MOTOR).shaft         # catalog: bell face (shaft root) at local x `at`, body symmetric about its origin
+MOTOR_AT_X = DISC_X[0] - _sh["at"][0]  # catalog motor placed with its bell face on the disc
+MOTOR_BASE_X = MOTOR_AT_X - (_sh["at"][0] + _sh["len"])
+MOTOR_SINK = -UP_IN - MOTOR_BASE_X     # the catalog can is longer than the STEP one: its base sinks this far into the upright
+MOTOR_R = 11.5                         # catalog can radius
+SHAFT_D = 5.0                          # BE1806 shaft through the disc stack into the MF85
+ROT_GAP = 0.3                          # prop-mount flange stops short of the MF85 flange (rotor / fixed race)
+LEAD_Y = WY - 19.5                     # catalog stator: phase-lead stub tip (local -z 19.5), turned to point forward
 BRG = BEARINGS["mf85"]                 # FS4 MF85ZZ flanged: bore, OD, width
 BRG_X0 = UP_IN - 0.8                   # flange 0.8 proud of the right upright's inner face (STEP 12.7)
+PROP_FLANGE_X1 = BRG_X0 - ROT_GAP
 
 __all__ = [n for n in dir() if not n.startswith("__")]

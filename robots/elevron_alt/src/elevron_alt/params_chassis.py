@@ -3,6 +3,9 @@
 Part frame = the STEP assembly frame: X lateral, Y forward (weapon end), Z up from the chassis underside. Every value is a
 designer dimension from the dump (DIM lines) or a relation of those; the dump names are in the comments.
 """
+import json
+import os
+
 from robot.cad import fastener_catalog as fc
 
 # ---- MASTER DESIGN PARAMETERS ----------------------------------------------------------------------------------------
@@ -11,6 +14,8 @@ WALL = 2.0                            # Sketch2 D2/D3 (walls) = deck thickness (
 AXLE_Y, AXLE_Z = 26.2, 8.5            # Sketch2 D... (wheelbase 52.4 = 2 x 26.2), N10 shaft height
 POST_PITCH = (50.0, 32.0)             # Sketch2 D4 x D5: the 2 x 2 screw-column grid (Revron RV01 INS grid, same 32 pitch)
 M3 = 3.0
+# robustness sweeps: ELEVRON_MASTERS='{"WALL": 2.5}' overrides masters of this file before anything is derived from them
+globals().update({k: v for k, v in json.loads(os.environ.get("ELEVRON_MASTERS", "{}")).items() if k in ("CH_W", "CH_L", "CH_H", "WALL", "AXLE_Y", "AXLE_Z")})
 # -----------------------------------------------------------------------------------------------------------------------
 HX, HY = CH_W / 2, CH_L / 2           # outer half sizes (29.5, 33.3)
 IN_X, IN_Y = HX - WALL, HY - WALL     # inner wall faces (27.5, 31.3)
@@ -40,6 +45,8 @@ NUT_CLR = 0.1
 NUT_AF = fc.nut(M3)[0] + NUT_CLR      # 5.6 (Sketch7 D1): M3 nut pocket from the inside
 NUT_DEPTH = 2.5                       # Cut-Extrude5 D1
 BOSS_FILLET = 3.0
+GEOM_TOL = 1e-6                       # same-face test on edge centres
+HEX, HEX_PHASE = 6, 30                # nut pocket: flats top and bottom, as the catalog nut turned onto X
 OCC_EPS = 1e-3                        # OCC fails a round that exactly meets a neighbouring face: drawn this much under
 # boss window (Cut-Extrude15 Sketch19: D2 5 wide, D1 1.5 half slot, 4 deep, Fillet12 R1)
 WIN_W, WIN_H, WIN_DEPTH, SLOT_HALF = 5.0, 7.0, 4.0, 1.5

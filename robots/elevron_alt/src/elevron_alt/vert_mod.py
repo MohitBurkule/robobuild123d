@@ -20,14 +20,15 @@ def _slope():
 
 def shell_plan(off=0.0):
     w0, w1 = SHELL_W
-    p = Polygon([(-w0, SHELL_Y[0]), (w0, SHELL_Y[0]), (w1, FRONT_FLARE_Y), (w1, SHELL_Y[1]), (-w1, SHELL_Y[1]), (-w1, FRONT_FLARE_Y)])
+    f0, f1 = FRONT_FLARE_Y
+    p = Polygon([(-w0, SHELL_Y[0]), (w0, SHELL_Y[0]), (w0, f0), (w1, f1), (w1, SHELL_Y[1]), (-w1, SHELL_Y[1]), (-w1, f1), (-w0, f0)])
     return p.buffer(-off, join_style=2) if off else p
 
 
 def _under_slope(solid, drop=0.0):
     y0, z0, k = _slope()
     n = (0.0, -k, 1.0)
-    return _S(solid, halfspace((0, y0, z0 - drop * math.hypot(1, k)), n, 4 * (SHELL_Y[1] - SHELL_Y[0])))
+    return _S(solid, halfspace((0, y0, z0 - drop * math.hypot(1, k)), n, BIG))
 
 
 def shell():
@@ -43,10 +44,9 @@ def frame():
     w0 = SHELL_W[0]
     rim = shell_plan().difference(shell_plan(FRAME_LEG))
     legs = [LineString([(sx * w0, SHELL_Y[0]), (sx * (IN_X - FRAME_LEG / 2), -IN_Y + FRAME_LEG / 2)]).buffer(FRAME_LEG / 2) for sx in (-1, 1)]
-    pads = [LineString([p, (p[0] / abs(p[0]) * SHELL_W[0 if p[1] < FRONT_FLARE_Y else 1], p[1])]).buffer(FRAME_LEG / 2) for p in POSTS]
-    plate = unary_union([rim, *legs, *pads, *[Point(p).buffer(FRAME_LEG / 2) for p in POSTS]]).intersection(sbox(-IN_X, -IN_Y, IN_X, SHELL_Y[1]))
-    f = _ext(plate, "xy", DECK_TOP, DECK_TOP + VM_T)
-    return _S(f, *[_cyl(POST_HOLE_D / 2, DECK_TOP - 1, DECK_TOP + VM_T + 1, p, "z") for p in POSTS])
+    pads = [LineString([p, (p[0] / abs(p[0]) * SHELL_W[0], p[1])]).buffer(FRAME_LEG / 2) for p in POSTS]
+    plate = unary_union([rim, *legs, *pads, *[Point(p).buffer(POST_PAD_R) for p in POSTS]]).intersection(sbox(-IN_X, -IN_Y, IN_X, SHELL_Y[1]))
+    return _ext(plate, "xy", DECK_TOP, DECK_TOP + VM_T)
 
 
 def upright_profile():
@@ -59,16 +59,24 @@ def upright_profile():
 def upright(sx):
     """Upright plate at |X| UP_IN .. UP_IN + UP_T on side sx, with the motor PCD (left) or the bearing seat (right)."""
     prof = upright_profile()
-    win = prof.buffer(-UP_RIM).difference(Point(WY, WZ).buffer(BOSS_R)).difference(sbox(-1e3, 0, 1e3, SHELL_FRONT + VM_T))
+    win = prof.buffer(-UP_RIM).difference(Point(WY, WZ).buffer(BOSS_R)).difference(sbox(-BIG, 0, BIG, SHELL_FRONT + VM_T))
     u = _ext(prof.difference(win.buffer(-UP_WIN_R).buffer(UP_WIN_R)), "yz", UP_IN, UP_IN + UP_T)
     if sx > 0:
         cut = _cyl(BRG_SEAT_R, UP_IN - 1, UP_IN + UP_T + 1, (WY, WZ), "x")
-    else:
-        cut = _U(_cyl(BRG_SEAT_R, UP_IN - 1, UP_IN + UP_T + 1, (WY, WZ), "x"),
-                 *[_cyl(MOTOR_SCREW / 2 + 0.1, UP_IN - 1, UP_IN + UP_T + 1, (WY + MOTOR_PCD_R * math.cos(a), WZ + MOTOR_PCD_R * math.sin(a)), "x")
-                   for a in [math.radians(45 + 90 * k) for k in range(4)]])
+    else:   # the can's base sinks MOTOR_SINK into the upright; its phase leads leave through a slot under it
+        cut = _U(_cyl(MOTOR_R + MOTOR_CLR, UP_IN - 1, UP_IN + MOTOR_SINK, (WY, WZ), "x"),
+                 _box(UP_IN - 1, UP_IN + MOTOR_SINK, LEAD_Y - MOTOR_CLR, WY, WZ - LEAD_W / 2, WZ + LEAD_W / 2))
     u = _S(u, cut)
     return u if sx > 0 else _mirror_x(u)
+
+
+def duct():
+    """Phase-lead duct on the left upright's inner face: a box tube from the lead tips back through the bulkhead into
+    the shell, where the weapon ESC sits (wire.exterior_support)."""
+    w, h = DUCT
+    y0, y1 = SHELL_Y[1] - VM_T - 1, LEAD_Y
+    outer = _box(-UP_IN, -UP_IN + w + VM_T, SHELL_Y[1] - VM_T, y1, WZ - h / 2 - VM_T, WZ + h / 2 + VM_T)
+    return outer, _box(-UP_IN - 1, -UP_IN + w, y0, y1 + 1, WZ - h / 2, WZ + h / 2)
 
 
 def prongs():
@@ -79,4 +87,6 @@ def prongs():
 
 
 def vert_mod():
-    return _solid(_U(frame(), shell(), upright(1), upright(-1), prongs()))
+    from .fasteners import cutters
+    d_out, d_in = duct()
+    return _solid(_S(_U(frame(), shell(), upright(1), upright(-1), prongs(), d_out), d_in, cutters("vert_mod")))

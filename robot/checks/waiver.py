@@ -1,7 +1,7 @@
 """Per-fastener waivers: `"waive": {"<check id or prefix>": "<reason>"}` on a fastener entry.
 
 A failing BLOCKER whose id matches a waive key and whose parts list that fastener drops to WARNING with
-"waived: <reason>". The reason must be at least MIN_REASON characters and cite the reference (CITE: "RVRN", an
+"waived: <reason>". The reason must be at least MIN_REASON characters and cite the reference (CITE: "RVRN" or "ELVRN", an
 RVnn or FSn part id); otherwise the finding stays a BLOCKER with INVALID appended. Never applies to FORBIDDEN groups.
 Every waiver used is listed in the report summary under "waivers".
 """
@@ -13,7 +13,7 @@ import re
 from ..finding import BLOCKER, WARNING
 
 MIN_REASON = 20
-CITE = re.compile(r"RVRN|\bRV\d{2}\b|\bFS\d+\b")
+CITE = re.compile(r"RVRN|ELVRN|\bRV\d{2}\b|\bFS\d+\b")
 FORBIDDEN = {"assembly", "interference", "reference_cad"}
 INVALID = "invalid waiver: needs reason + reference citation"
 

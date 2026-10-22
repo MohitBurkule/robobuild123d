@@ -6,7 +6,7 @@ import math
 from shapely.geometry import Polygon
 
 from robocad.geom import _box, _cyl, _U, _S, _ext, _mirror_x, _solid
-from .params_chassis import AXLE_Z, BOSS_PITCH, HOLE_D, TAB_HOLE_Z, TAB_HOLE_DY, HY, HX
+from .params_chassis import AXLE_Z, BOSS_PITCH, HOLE_D, TAB_HOLE_Z, TAB_HOLE_DY, HY, HX, TAB_X_OUT, HEX, HEX_PHASE, M3 as NUT_D
 from .params_side import *  # noqa: F401,F403
 
 
@@ -43,23 +43,27 @@ def front_wall():
 
 
 def crossbar():
-    """Rear crossbar over the tab block: the finger beside the outer tab, out to the skin's outer face."""
-    return _box(FINGER_X[0], skin_x(CROSS_TOP, True), *CROSS_Y, 0, CROSS_TOP)
+    """Rear crossbar from the outer chassis tab's face out to the skin's outer face, behind the rear tyre."""
+    return _box(TAB_X_OUT, skin_x(CROSS_TOP, True), *CROSS_Y, SKIN_BOT_Z, CROSS_TOP)
 
 
 def fork():
     """Fork prong: from the crossbar top, falling to its floor run at FORK_KNEE_Y, out to the tip."""
     y0 = CROSS_Y[1] - SP_T
     bot = FLOOR_Z + FLOOR_CLR
-    return _yz_prism([(y0 - SP_T, 0), (y0 - SP_T, CROSS_TOP), (FORK_TIP_Y, bot), (FORK_KNEE_Y, bot), (FORK_KNEE_Y, bot), (y0, 0)], *FORK_X)
+    return _yz_prism([(y0, 0), (y0, CROSS_TOP), (FORK_TIP_Y, bot + FORK_TIP_T), (FORK_TIP_Y, bot), (FORK_KNEE_Y, bot)], *FORK_X)
 
 
 def cuts():
-    """Clearance for the outer chassis tab, the cross-bolt hole, and the two boss screw holes through the plate."""
-    tab = _box(FINGER_X[1] - TAB_CLR, HX + TAB_CLR, CROSS_Y[0] - 1, CROSS_Y[1] - SP_T, -1, CROSS_TOP + 1)
-    bolt = _cyl(HOLE_D / 2, FINGER_X[0] - 1, SKIN_TOP[0] + 1, (HY + TAB_HOLE_DY, TAB_HOLE_Z), "x")
-    screws = [_cyl(HOLE_D / 2, PLATE_X[0] - 1, PLATE_X[1] + 1, (y, AXLE_Z), "x") for y in (-BOSS_PITCH / 2, BOSS_PITCH / 2)]
-    return _U(tab, bolt, *screws)
+    """Head-side holes of the right pod (fasteners table): the two countersunk boss screws and the cross bolt."""
+    from .fasteners import cutters
+    from robot.cad import fastener_catalog as fc
+    y, z = HY + TAB_HOLE_DY, TAB_HOLE_Z
+    af, m = fc.nut(NUT_D, "thin")
+    r = (af + NUT_FIT) / math.sqrt(3)
+    hexa = _ext(Polygon([(y + r * math.cos(math.radians(a)), z + r * math.sin(math.radians(a))) for a in range(HEX_PHASE, 360, 360 // HEX)]), "yz", TAB_X_OUT - 1, TAB_X_OUT + m)
+    bolt = _cyl(HOLE_D / 2, TAB_X_OUT - 1, TAB_X_OUT + CROSS_LAND + 1, (y, z), "x")
+    return _U(cutters("side_r"), hexa, bolt)   # cross-bolt nut captive in the land, against the outer tab
 
 
 def side_panel(side=1):

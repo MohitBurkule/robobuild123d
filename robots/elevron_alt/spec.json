@@ -1,0 +1,2303 @@
+{
+ "name": "Elevron 3.0 Alt",
+ "profile": "aws2025",
+ "robot_type": "vertical_spinner",
+ "locomotion": "roller",
+ "archetype": "vertical_spinner_forks",
+ "electronics": {
+  "failsafe": true,
+  "weapon_remote_disable": true,
+  "radio": "2.4 GHz",
+  "cells": 2
+ },
+ "weapon_lock": {
+  "type": "external_pin",
+  "note": "pit safety pin through the disc and an upright, pulled before a fight (Revron convention); not part of the build"
+ },
+ "can_run_inverted": false,
+ "claims": [
+  {
+   "id": "c_mass",
+   "text": "150 g or less",
+   "metric": "mass_total_g",
+   "op": "<=",
+   "value": 150
+  }
+ ],
+ "parts": [
+  {
+   "id": "chassis",
+   "kind": "structure",
+   "print_orientation": "-z",
+   "rotates_with": "fixed",
+   "color": "#2a2c30",
+   "shape": {
+    "type": "model",
+    "file": "src/build_elevron_alt.py",
+    "params": {
+     "part": "chassis"
+    }
+   },
+   "material": "pla",
+   "process": "fdm",
+   "solid_fraction": 0.8,
+   "thin_wall_deviation": "matches ELVRN3.0 Alt chassis: Chamfer1 meets the Cut-Extrude15 boss window top at the pad face (z 12), as in the dump",
+   "sharp_corners_ok": "ELVRN3.0 Alt chassis: the dump rounds only the listed edges (Fillet1..15, Chamfer1..5); the remaining concave edges are sharp in the original too",
+   "label": "ELVRN3.0 Alt chassis: open-bottom block, 2 mm walls and deck, X-lattice deck pockets, N10 / standoff keyholes, side bosses with captive M3 nuts, rear cross-bolt tabs"
+  },
+  {
+   "id": "base_panel",
+   "kind": "structure",
+   "print_orientation": "+z",
+   "rotates_with": "fixed",
+   "color": "#2a2c30",
+   "shape": {
+    "type": "model",
+    "file": "src/build_elevron_alt.py",
+    "params": {
+     "part": "base_panel"
+    }
+   },
+   "material": "pla",
+   "process": "fdm",
+   "solid_fraction": 0.8,
+   "label": "1 mm printed base panel in the chassis rebate, 6 M2 button heads into the column heat-sets"
+  },
+  {
+   "id": "vert_mod",
+   "kind": "structure",
+   "print_orientation": "+x",
+   "rotates_with": "fixed",
+   "color": "#30343a",
+   "shape": {
+    "type": "model",
+    "file": "src/build_elevron_alt.py",
+    "params": {
+     "part": "vert_mod"
+    }
+   },
+   "material": "pla",
+   "process": "fdm",
+   "solid_fraction": 0.8,
+   "sharp_corners_ok": "vert_mod from the RVRN_revdev STEP sections (ELVRN, no dump): the frame, shell and uprights meet square as in the STEP solid",
+   "label": "vert_mod weapon module: frame on the deck (4 M2 into the column heat-sets), sloped top shell, uprights carrying the BE1806 and the MF85, prongs on the cross bolts"
+  },
+  {
+   "id": "side_l",
+   "kind": "armor",
+   "print_orientation": "+z",
+   "rotates_with": "fixed",
+   "color": "#3c4048",
+   "shape": {
+    "type": "model",
+    "file": "src/build_elevron_alt.py",
+    "params": {
+     "part": "side_l"
+    }
+   },
+   "material": "tpu",
+   "process": "fdm",
+   "solid_fraction": 0.9,
+   "deviation": "ELVRN3.0 Alt STEP: the Side_Panel_alt_sm fork prongs lead the disc (tips at y 98.6, ahead of the disc's swept front): the forks are the ground game in front of the vertical disc, kept for parity",
+   "label": "Side_Panel_alt_sm TPU pod: plate on the side boss (2 M3 CSK into captive nuts), battered skin outside the rear wheel, crossbar on the rear cross bolt, fork prong past the weapon"
+  },
+  {
+   "id": "side_r",
+   "kind": "armor",
+   "print_orientation": "+z",
+   "rotates_with": "fixed",
+   "color": "#3c4048",
+   "shape": {
+    "type": "model",
+    "file": "src/build_elevron_alt.py",
+    "params": {
+     "part": "side_r"
+    }
+   },
+   "material": "tpu",
+   "process": "fdm",
+   "solid_fraction": 0.9,
+   "deviation": "ELVRN3.0 Alt STEP: the Side_Panel_alt_sm fork prongs lead the disc (tips at y 98.6, ahead of the disc's swept front): the forks are the ground game in front of the vertical disc, kept for parity",
+   "label": "Side_Panel_alt_sm TPU pod: plate on the side boss (2 M3 CSK into captive nuts), battered skin outside the rear wheel, crossbar on the rear cross bolt, fork prong past the weapon"
+  },
+  {
+   "id": "weapon_motor_stator",
+   "kind": "weapon_motor",
+   "catalog": "be1806_stator",
+   "at": [
+    -6.05,
+    59.2,
+    25.75
+   ],
+   "rot": [
+    -90,
+    0,
+    0
+   ],
+   "rotates_with": "fixed",
+   "exposed": true,
+   "exposed_reason": "vertical spinner: the BE1806 sits between the uprights behind the disc, shielded by the disc and the uprights",
+   "label": "BBB BE1806 2300 kV (RV08), fixed half: base sunk into the left upright, 4 x M2"
+  },
+  {
+   "id": "wshaft",
+   "kind": "shaft",
+   "material": "steel",
+   "process": "turned",
+   "stock": "BE1806 5 mm shaft (part of the motor), run on into the MF85",
+   "rotates_with": "weapon",
+   "shaft_of": "weapon_motor_can",
+   "shape": {
+    "type": "model",
+    "file": "src/build_elevron_alt.py",
+    "params": {
+     "part": "wshaft",
+     "origin": [
+      0,
+      59.2,
+      25.75
+     ]
+    }
+   },
+   "parent": "disc",
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "color": "#777777",
+   "solid_fraction": 0.05,
+   "label": "5 mm shaft from the bell face through disc, spider and prop mount into the MF85 in the right upright"
+  },
+  {
+   "id": "weapon_motor_can",
+   "kind": "other",
+   "role": "rotor",
+   "catalog": "be1806_can",
+   "parent": "disc",
+   "at": [
+    -6.050000000000001,
+    0,
+    0
+   ],
+   "rot": [
+    -90,
+    0,
+    0
+   ],
+   "rotates_with": "weapon",
+   "exposed": true,
+   "exposed_reason": "vertical spinner: the BE1806 can spins between the uprights behind the disc",
+   "label": "BBB BE1806 can: spins with the shaft round the fixed stator"
+  },
+  {
+   "id": "prop_mount",
+   "kind": "other",
+   "role": "hub",
+   "material": "aluminium",
+   "process": "turned",
+   "stock": "RV07 prop mount (aluminium, part of the motor kit)",
+   "rotates_with": "weapon",
+   "parent": "disc",
+   "shape": {
+    "type": "model",
+    "file": "src/build_elevron_alt.py",
+    "params": {
+     "part": "prop_mount",
+     "origin": [
+      0,
+      59.2,
+      25.75
+     ]
+    }
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "color": "#9aa0a6",
+   "retained": "press_fit",
+   "label": "RV07 prop mount: flange clamping the spider and disc onto the bell"
+  },
+  {
+   "id": "spider",
+   "kind": "other",
+   "role": "hub",
+   "material": "aluminium",
+   "process": "waterjet",
+   "stock": "3 mm 7075 plate",
+   "parent": "disc",
+   "rotates_with": "weapon",
+   "min_web_mm": 0.8,
+   "min_web_reason": "0.8 mm webs are the designer's own (RVRN spider_1, the uploaded spider.STEP, measures 0.8 at the same four places)",
+   "shape": {
+    "type": "model",
+    "file": "src/build_elevron_alt.py",
+    "params": {
+     "part": "spider",
+     "origin": [
+      0,
+      59.2,
+      25.75
+     ]
+    }
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "color": "#b8bcc2",
+   "label": "spiderSL: 3 mm aluminium spider driving the disc (Revron spider geometry)"
+  },
+  {
+   "id": "disc",
+   "kind": "weapon",
+   "material": "hardox",
+   "process": "laser",
+   "stock": "3 mm Hardox 450",
+   "secondary_ops": [
+    "drilled"
+   ],
+   "rotates_with": "weapon",
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "pivot": [
+     0,
+     59.2,
+     25.75
+    ],
+    "min": 0,
+    "max": 360,
+    "default": 0
+   },
+   "thin_wall_deviation": "RVRN Drisk_floating_3 as drawn: the dog ramps run out to a knife edge (the Revron disc, identical part)",
+   "min_web_mm": 0.9,
+   "min_web_reason": "0.9 mm webs beside the balance window are the designer's own (RVRN Drisk_floating_3, identical part)",
+   "shape": {
+    "type": "model",
+    "file": "src/build_elevron_alt.py",
+    "params": {
+     "part": "disc",
+     "origin": [
+      0,
+      59.2,
+      25.75
+     ]
+    }
+   },
+   "at": [
+    0,
+    59.2,
+    25.75
+   ],
+   "color": "#d9dde2",
+   "weapon": {
+    "kind": "disc",
+    "motor": "weapon_motor_stator",
+    "cells": 2,
+    "reduction": 1.0,
+    "spin_axis": [
+     1,
+     0,
+     0
+    ],
+    "spin_dir": "ccw",
+    "supported_both_ends": true,
+    "teeth": 1
+   },
+   "label": "Drisk_floating_3: 3 mm Hardox single-tooth eccentric disc (the Revron disc)"
+  },
+  {
+   "id": "wbearing",
+   "kind": "bearing",
+   "material": "steel",
+   "process": "cots",
+   "stock": "FS4 MF85ZZ 5 x 8 x 2.5 flanged",
+   "rotates_with": "fixed",
+   "color": "#555555",
+   "shape": {
+    "type": "model",
+    "file": "src/build_elevron_alt.py",
+    "params": {
+     "part": "bearing"
+    }
+   },
+   "label": "FS4 MF85ZZ in the right upright: outboard support of the shaft"
+  },
+  {
+   "id": "motor_l",
+   "kind": "motor",
+   "catalog": "n10_2200rpm_spicy",
+   "at": [
+    -19.6,
+    26.2,
+    10.75
+   ],
+   "rot": [
+    0,
+    0,
+    180
+   ],
+   "rotates_with": "fixed",
+   "loose_ok": {
+    "axis": "+x",
+    "max_mm": 2.0,
+    "reason": "RV12 N10 in the ELVRN Alt keyhole as in the RVRN 2.0 tub: it bears on the wall outboard and the hub stops it inboard"
+   },
+   "label": "RV12 N10 2200 rpm in the rear keyhole, gearbox face on the wall"
+  },
+  {
+   "id": "whub_rl",
+   "kind": "pulley",
+   "print_orientation": "+x",
+   "rotates_with": "wheel_rl",
+   "color": "#333333",
+   "shape": {
+    "type": "model",
+    "file": "src/build_elevron_alt.py",
+    "params": {
+     "part": "whub_rl"
+    }
+   },
+   "parent": "chassis",
+   "material": "pla",
+   "process": "fdm",
+   "solid_fraction": 0.8,
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "pivot": [
+     -35.7,
+     26.2,
+     10.75
+    ],
+    "min": 0,
+    "max": 360,
+    "default": 0
+   },
+   "thin_wall_deviation": "RVRN RV21 hub as drawn: 0.5 mm O-ring flange and lip (the Revron part, kept for parity)",
+   "sharp_corners_ok": "RVRN RV21 hub as drawn (the Revron part): the D-bore flat meets the bore sharp",
+   "visual_ok": {
+    "ligament": "RVRN RV21 hub as drawn: the M3 grub bore breaks into the D-bore and the seat ramps (STEP Cut-Extrude4)"
+   },
+   "label": "RV21 printed hub (Revron) on the N10 D-shaft"
+  },
+  {
+   "id": "wheel_rl",
+   "kind": "wheel",
+   "material": "rubber",
+   "process": "cots",
+   "tyre_of": "whub_rl",
+   "rotates_with": "wheel_rl",
+   "parent": "whub_rl",
+   "shape": {
+    "type": "model",
+    "file": "src/build_elevron_alt.py",
+    "params": {
+     "part": "wheel_rl"
+    }
+   },
+   "color": "#1b1b1b",
+   "stock": "RV22 Scalextric F1 front tyre 21.5 x 14 x 9.5",
+   "label": "Scalextric F1 tyre 21.5 x 9.5"
+  },
+  {
+   "id": "whub_fl",
+   "kind": "pulley",
+   "print_orientation": "+x",
+   "rotates_with": "wheel_fl",
+   "color": "#333333",
+   "shape": {
+    "type": "model",
+    "file": "src/build_elevron_alt.py",
+    "params": {
+     "part": "whub_fl"
+    }
+   },
+   "parent": "chassis",
+   "material": "pla",
+   "process": "fdm",
+   "solid_fraction": 0.8,
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "pivot": [
+     -35.7,
+     -26.2,
+     10.75
+    ],
+    "min": 0,
+    "max": 360,
+    "default": 0
+   },
+   "driven": false,
+   "thin_wall_deviation": "RVRN RV21 hub as drawn: 0.5 mm O-ring flange and lip (the Revron part, kept for parity)",
+   "sharp_corners_ok": "RVRN RV21 hub as drawn (the Revron part): the D-bore flat meets the bore sharp",
+   "visual_ok": {
+    "ligament": "RVRN RV21 hub as drawn: the M3 grub bore breaks into the D-bore and the seat ramps (STEP Cut-Extrude4)"
+   },
+   "label": "RV21 printed hub (Revron), bore opened to idle on the 10 mm standoff"
+  },
+  {
+   "id": "wheel_fl",
+   "kind": "wheel",
+   "material": "rubber",
+   "process": "cots",
+   "tyre_of": "whub_fl",
+   "rotates_with": "wheel_fl",
+   "parent": "whub_fl",
+   "shape": {
+    "type": "model",
+    "file": "src/build_elevron_alt.py",
+    "params": {
+     "part": "wheel_fl"
+    }
+   },
+   "driven": false,
+   "color": "#1b1b1b",
+   "stock": "RV22 Scalextric F1 front tyre 21.5 x 14 x 9.5",
+   "label": "Scalextric F1 tyre 21.5 x 9.5"
+  },
+  {
+   "id": "so_l",
+   "kind": "pin",
+   "role": "standoff",
+   "material": "aluminium",
+   "process": "cots",
+   "stock": "M3 x 10 aluminium standoff, 5 OD",
+   "rotates_with": "fixed",
+   "color": "#b8bcc2",
+   "shape": {
+    "type": "model",
+    "file": "src/build_elevron_alt.py",
+    "params": {
+     "part": "so_l"
+    }
+   },
+   "label": "10 mm alu standoff: front idler axle, clamped across the keyhole"
+  },
+  {
+   "id": "bplate_l",
+   "kind": "other",
+   "role": "spacer",
+   "print_orientation": "+x",
+   "rotates_with": "fixed",
+   "color": "#2a2c30",
+   "shape": {
+    "type": "model",
+    "file": "src/build_elevron_alt.py",
+    "params": {
+     "part": "bplate_l"
+    }
+   },
+   "material": "pla",
+   "process": "fdm",
+   "solid_fraction": 0.8,
+   "label": "BACKING_PLATE: inside the wall behind the front keyhole, spreads the axle screw load"
+  },
+  {
+   "id": "fplate_l",
+   "kind": "other",
+   "role": "spacer",
+   "print_orientation": "+x",
+   "rotates_with": "fixed",
+   "color": "#2a2c30",
+   "shape": {
+    "type": "model",
+    "file": "src/build_elevron_alt.py",
+    "params": {
+     "part": "fplate_l"
+    }
+   },
+   "material": "pla",
+   "process": "fdm",
+   "solid_fraction": 0.8,
+   "label": "FRONT_PLATE: outside the wall, the standoff seats on it"
+  },
+  {
+   "id": "motor_r",
+   "kind": "motor",
+   "catalog": "n10_2200rpm_spicy",
+   "at": [
+    19.6,
+    26.2,
+    10.75
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "rotates_with": "fixed",
+   "loose_ok": {
+    "axis": "-x",
+    "max_mm": 2.0,
+    "reason": "RV12 N10 in the ELVRN Alt keyhole as in the RVRN 2.0 tub: it bears on the wall outboard and the hub stops it inboard"
+   },
+   "label": "RV12 N10 2200 rpm in the rear keyhole, gearbox face on the wall"
+  },
+  {
+   "id": "whub_rr",
+   "kind": "pulley",
+   "print_orientation": "+x",
+   "rotates_with": "wheel_rr",
+   "color": "#333333",
+   "shape": {
+    "type": "model",
+    "file": "src/build_elevron_alt.py",
+    "params": {
+     "part": "whub_rr"
+    }
+   },
+   "parent": "chassis",
+   "material": "pla",
+   "process": "fdm",
+   "solid_fraction": 0.8,
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "pivot": [
+     35.7,
+     26.2,
+     10.75
+    ],
+    "min": 0,
+    "max": 360,
+    "default": 0
+   },
+   "thin_wall_deviation": "RVRN RV21 hub as drawn: 0.5 mm O-ring flange and lip (the Revron part, kept for parity)",
+   "sharp_corners_ok": "RVRN RV21 hub as drawn (the Revron part): the D-bore flat meets the bore sharp",
+   "visual_ok": {
+    "ligament": "RVRN RV21 hub as drawn: the M3 grub bore breaks into the D-bore and the seat ramps (STEP Cut-Extrude4)"
+   },
+   "label": "RV21 printed hub (Revron) on the N10 D-shaft"
+  },
+  {
+   "id": "wheel_rr",
+   "kind": "wheel",
+   "material": "rubber",
+   "process": "cots",
+   "tyre_of": "whub_rr",
+   "rotates_with": "wheel_rr",
+   "parent": "whub_rr",
+   "shape": {
+    "type": "model",
+    "file": "src/build_elevron_alt.py",
+    "params": {
+     "part": "wheel_rr"
+    }
+   },
+   "color": "#1b1b1b",
+   "stock": "RV22 Scalextric F1 front tyre 21.5 x 14 x 9.5",
+   "label": "Scalextric F1 tyre 21.5 x 9.5"
+  },
+  {
+   "id": "whub_fr",
+   "kind": "pulley",
+   "print_orientation": "+x",
+   "rotates_with": "wheel_fr",
+   "color": "#333333",
+   "shape": {
+    "type": "model",
+    "file": "src/build_elevron_alt.py",
+    "params": {
+     "part": "whub_fr"
+    }
+   },
+   "parent": "chassis",
+   "material": "pla",
+   "process": "fdm",
+   "solid_fraction": 0.8,
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "pivot": [
+     35.7,
+     -26.2,
+     10.75
+    ],
+    "min": 0,
+    "max": 360,
+    "default": 0
+   },
+   "driven": false,
+   "thin_wall_deviation": "RVRN RV21 hub as drawn: 0.5 mm O-ring flange and lip (the Revron part, kept for parity)",
+   "sharp_corners_ok": "RVRN RV21 hub as drawn (the Revron part): the D-bore flat meets the bore sharp",
+   "visual_ok": {
+    "ligament": "RVRN RV21 hub as drawn: the M3 grub bore breaks into the D-bore and the seat ramps (STEP Cut-Extrude4)"
+   },
+   "label": "RV21 printed hub (Revron), bore opened to idle on the 10 mm standoff"
+  },
+  {
+   "id": "wheel_fr",
+   "kind": "wheel",
+   "material": "rubber",
+   "process": "cots",
+   "tyre_of": "whub_fr",
+   "rotates_with": "wheel_fr",
+   "parent": "whub_fr",
+   "shape": {
+    "type": "model",
+    "file": "src/build_elevron_alt.py",
+    "params": {
+     "part": "wheel_fr"
+    }
+   },
+   "driven": false,
+   "color": "#1b1b1b",
+   "stock": "RV22 Scalextric F1 front tyre 21.5 x 14 x 9.5",
+   "label": "Scalextric F1 tyre 21.5 x 9.5"
+  },
+  {
+   "id": "so_r",
+   "kind": "pin",
+   "role": "standoff",
+   "material": "aluminium",
+   "process": "cots",
+   "stock": "M3 x 10 aluminium standoff, 5 OD",
+   "rotates_with": "fixed",
+   "color": "#b8bcc2",
+   "shape": {
+    "type": "model",
+    "file": "src/build_elevron_alt.py",
+    "params": {
+     "part": "so_r"
+    }
+   },
+   "label": "10 mm alu standoff: front idler axle, clamped across the keyhole"
+  },
+  {
+   "id": "bplate_r",
+   "kind": "other",
+   "role": "spacer",
+   "print_orientation": "+x",
+   "rotates_with": "fixed",
+   "color": "#2a2c30",
+   "shape": {
+    "type": "model",
+    "file": "src/build_elevron_alt.py",
+    "params": {
+     "part": "bplate_r"
+    }
+   },
+   "material": "pla",
+   "process": "fdm",
+   "solid_fraction": 0.8,
+   "label": "BACKING_PLATE: inside the wall behind the front keyhole, spreads the axle screw load"
+  },
+  {
+   "id": "fplate_r",
+   "kind": "other",
+   "role": "spacer",
+   "print_orientation": "+x",
+   "rotates_with": "fixed",
+   "color": "#2a2c30",
+   "shape": {
+    "type": "model",
+    "file": "src/build_elevron_alt.py",
+    "params": {
+     "part": "fplate_r"
+    }
+   },
+   "material": "pla",
+   "process": "fdm",
+   "solid_fraction": 0.8,
+   "label": "FRONT_PLATE: outside the wall, the standoff seats on it"
+  },
+  {
+   "id": "nut_sl0",
+   "kind": "nut",
+   "catalog": "nut_m3_thin",
+   "at": [
+    -27.9,
+    -7.0,
+    10.75
+   ],
+   "rot": [
+    0,
+    90,
+    0
+   ],
+   "rotates_with": "fixed"
+  },
+  {
+   "id": "nut_sl1",
+   "kind": "nut",
+   "catalog": "nut_m3_thin",
+   "at": [
+    -27.9,
+    7.0,
+    10.75
+   ],
+   "rot": [
+    0,
+    90,
+    0
+   ],
+   "rotates_with": "fixed"
+  },
+  {
+   "id": "nut_xl",
+   "kind": "nut",
+   "catalog": "nut_m3_thin",
+   "at": [
+    -30.4,
+    38.2,
+    6.25
+   ],
+   "rot": [
+    0,
+    90,
+    0
+   ],
+   "rotates_with": "fixed"
+  },
+  {
+   "id": "nut_sr0",
+   "kind": "nut",
+   "catalog": "nut_m3_thin",
+   "at": [
+    27.9,
+    -7.0,
+    10.75
+   ],
+   "rot": [
+    0,
+    90,
+    0
+   ],
+   "rotates_with": "fixed"
+  },
+  {
+   "id": "nut_sr1",
+   "kind": "nut",
+   "catalog": "nut_m3_thin",
+   "at": [
+    27.9,
+    7.0,
+    10.75
+   ],
+   "rot": [
+    0,
+    90,
+    0
+   ],
+   "rotates_with": "fixed"
+  },
+  {
+   "id": "nut_xr",
+   "kind": "nut",
+   "catalog": "nut_m3_thin",
+   "at": [
+    30.4,
+    38.2,
+    6.25
+   ],
+   "rot": [
+    0,
+    90,
+    0
+   ],
+   "rotates_with": "fixed"
+  },
+  {
+   "id": "insert_b0",
+   "kind": "insert",
+   "catalog": "heatset_m2_4",
+   "at": [
+    -25.0,
+    -16.0,
+    6.25
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "rotates_with": "fixed"
+  },
+  {
+   "id": "insert_b1",
+   "kind": "insert",
+   "catalog": "heatset_m2_4",
+   "at": [
+    -25.0,
+    16.0,
+    6.25
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "rotates_with": "fixed"
+  },
+  {
+   "id": "insert_b2",
+   "kind": "insert",
+   "catalog": "heatset_m2_4",
+   "at": [
+    25.0,
+    -16.0,
+    6.25
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "rotates_with": "fixed"
+  },
+  {
+   "id": "insert_b3",
+   "kind": "insert",
+   "catalog": "heatset_m2_4",
+   "at": [
+    25.0,
+    16.0,
+    6.25
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "rotates_with": "fixed"
+  },
+  {
+   "id": "insert_b4",
+   "kind": "insert",
+   "catalog": "heatset_m2_4",
+   "at": [
+    0.0,
+    -29.0,
+    6.25
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "rotates_with": "fixed"
+  },
+  {
+   "id": "insert_b5",
+   "kind": "insert",
+   "catalog": "heatset_m2_4",
+   "at": [
+    0.0,
+    29.0,
+    6.25
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "rotates_with": "fixed"
+  },
+  {
+   "id": "insert_t0",
+   "kind": "insert",
+   "catalog": "heatset_m2_4",
+   "at": [
+    -25.0,
+    -16.0,
+    17.25
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "rotates_with": "fixed"
+  },
+  {
+   "id": "insert_t1",
+   "kind": "insert",
+   "catalog": "heatset_m2_4",
+   "at": [
+    -25.0,
+    16.0,
+    17.25
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "rotates_with": "fixed"
+  },
+  {
+   "id": "insert_t2",
+   "kind": "insert",
+   "catalog": "heatset_m2_4",
+   "at": [
+    25.0,
+    -16.0,
+    17.25
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "rotates_with": "fixed"
+  },
+  {
+   "id": "insert_t3",
+   "kind": "insert",
+   "catalog": "heatset_m2_4",
+   "at": [
+    25.0,
+    16.0,
+    17.25
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "rotates_with": "fixed"
+  },
+  {
+   "id": "battery",
+   "kind": "battery",
+   "catalog": "lipo_2s_180_turnabot",
+   "at": [
+    -12.1,
+    0,
+    9.75
+   ],
+   "rot": [
+    0,
+    0,
+    90
+   ],
+   "retained": "press_fit",
+   "label": "2S 180 mAh between the column rows, left of centre, on the base panel"
+  },
+  {
+   "id": "rxesc",
+   "kind": "esc",
+   "catalog": "malenki_nano_rvrn2",
+   "at": [
+    11.4,
+    0,
+    6.45
+   ],
+   "rot": [
+    0,
+    0,
+    90
+   ],
+   "retained": "kapton",
+   "label": "Malenki nano right of centre on the base panel"
+  },
+  {
+   "id": "wesc",
+   "kind": "esc",
+   "catalog": "bbb_ant_esc_rvrn2",
+   "at": [
+    -11.25,
+    18.75,
+    21.75
+   ],
+   "rot": [
+    0,
+    0,
+    90
+   ],
+   "retained": "kapton",
+   "label": "BBB weapon ESC on the deck under the vert_mod shell, beside the phase-lead duct"
+  },
+  {
+   "id": "power_switch",
+   "kind": "switch",
+   "catalog": "switch_bbb_ant_rvrn2",
+   "at": [
+    24.0,
+    0,
+    13.8
+   ],
+   "rot": [
+    0,
+    0,
+    90
+   ],
+   "retained": "press_fit",
+   "marked": true,
+   "tool_free": true,
+   "off_dir": [
+    0,
+    -1,
+    0
+   ],
+   "label": "BBB ant switch pressed up into the deck slot from inside, lever flush with the deck"
+  }
+ ],
+ "fasteners": [
+  {
+   "id": "bolt_b0",
+   "designation": "M2x5",
+   "at": [
+    -25.0,
+    -16.0,
+    3.25
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "through": [
+    "base_panel"
+   ],
+   "threads_into": "insert_b0",
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "length": 5.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "insert",
+    "side": "head",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 1.0
+   },
+   "tool": "hex1.5",
+   "removable": true,
+   "material": "aluminium"
+  },
+  {
+   "id": "bolt_b1",
+   "designation": "M2x5",
+   "at": [
+    -25.0,
+    16.0,
+    3.25
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "through": [
+    "base_panel"
+   ],
+   "threads_into": "insert_b1",
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "length": 5.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "insert",
+    "side": "head",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 1.0
+   },
+   "tool": "hex1.5",
+   "removable": true,
+   "material": "aluminium"
+  },
+  {
+   "id": "bolt_b2",
+   "designation": "M2x5",
+   "at": [
+    25.0,
+    -16.0,
+    3.25
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "through": [
+    "base_panel"
+   ],
+   "threads_into": "insert_b2",
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "length": 5.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "insert",
+    "side": "head",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 1.0
+   },
+   "tool": "hex1.5",
+   "removable": true,
+   "material": "aluminium"
+  },
+  {
+   "id": "bolt_b3",
+   "designation": "M2x5",
+   "at": [
+    25.0,
+    16.0,
+    3.25
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "through": [
+    "base_panel"
+   ],
+   "threads_into": "insert_b3",
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "length": 5.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "insert",
+    "side": "head",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 1.0
+   },
+   "tool": "hex1.5",
+   "removable": true,
+   "material": "aluminium"
+  },
+  {
+   "id": "bolt_b4",
+   "designation": "M2x5",
+   "at": [
+    0.0,
+    -29.0,
+    3.25
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "through": [
+    "base_panel"
+   ],
+   "threads_into": "insert_b4",
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "length": 5.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "insert",
+    "side": "head",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 1.0
+   },
+   "tool": "hex1.5",
+   "removable": true,
+   "material": "aluminium"
+  },
+  {
+   "id": "bolt_b5",
+   "designation": "M2x5",
+   "at": [
+    0.0,
+    29.0,
+    3.25
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    1.0
+   ],
+   "through": [
+    "base_panel"
+   ],
+   "threads_into": "insert_b5",
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "length": 5.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "insert",
+    "side": "head",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 1.0
+   },
+   "tool": "hex1.5",
+   "removable": true,
+   "material": "aluminium"
+  },
+  {
+   "id": "bolt_t0",
+   "designation": "M2x6",
+   "at": [
+    -25.0,
+    -16.0,
+    21.25
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "through": [
+    "vert_mod"
+   ],
+   "threads_into": "insert_t0",
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "insert",
+    "side": "head",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 2.0
+   },
+   "tool": "hex1.5",
+   "removable": true,
+   "material": "aluminium"
+  },
+  {
+   "id": "bolt_t1",
+   "designation": "M2x6",
+   "at": [
+    -25.0,
+    16.0,
+    21.25
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "through": [
+    "vert_mod"
+   ],
+   "threads_into": "insert_t1",
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "insert",
+    "side": "head",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 2.0
+   },
+   "tool": "hex1.5",
+   "removable": true,
+   "material": "aluminium"
+  },
+  {
+   "id": "bolt_t2",
+   "designation": "M2x6",
+   "at": [
+    25.0,
+    -16.0,
+    21.25
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "through": [
+    "vert_mod"
+   ],
+   "threads_into": "insert_t2",
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "insert",
+    "side": "head",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 2.0
+   },
+   "tool": "hex1.5",
+   "removable": true,
+   "material": "aluminium"
+  },
+  {
+   "id": "bolt_t3",
+   "designation": "M2x6",
+   "at": [
+    25.0,
+    16.0,
+    21.25
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "through": [
+    "vert_mod"
+   ],
+   "threads_into": "insert_t3",
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "insert",
+    "side": "head",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 2.0
+   },
+   "tool": "hex1.5",
+   "removable": true,
+   "material": "aluminium"
+  },
+  {
+   "id": "bolt_sl0",
+   "designation": "M3x10",
+   "at": [
+    -35.5,
+    -7.0,
+    10.75
+   ],
+   "dir": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "through": [
+    "side_l",
+    "chassis"
+   ],
+   "threads_into": "nut_sl0",
+   "head": "countersunk",
+   "hole": {
+    "d": 3.0,
+    "length": 10.0,
+    "head": "csk",
+    "head_std": "DIN 7991",
+    "head_dk": 6.0,
+    "head_k": 1.86,
+    "clearance_d": 3.4,
+    "into": "nut",
+    "side": "head",
+    "csk_angle": 90.0,
+    "csk_d": 6.3,
+    "csk_depth": 1.45,
+    "sink": 0.0,
+    "grip": 3.0
+   },
+   "tool": "hex2",
+   "removable": true,
+   "material": "aluminium"
+  },
+  {
+   "id": "bolt_sl1",
+   "designation": "M3x10",
+   "at": [
+    -35.5,
+    7.0,
+    10.75
+   ],
+   "dir": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "through": [
+    "side_l",
+    "chassis"
+   ],
+   "threads_into": "nut_sl1",
+   "head": "countersunk",
+   "hole": {
+    "d": 3.0,
+    "length": 10.0,
+    "head": "csk",
+    "head_std": "DIN 7991",
+    "head_dk": 6.0,
+    "head_k": 1.86,
+    "clearance_d": 3.4,
+    "into": "nut",
+    "side": "head",
+    "csk_angle": 90.0,
+    "csk_d": 6.3,
+    "csk_depth": 1.45,
+    "sink": 0.0,
+    "grip": 3.0
+   },
+   "tool": "hex2",
+   "removable": true,
+   "material": "aluminium"
+  },
+  {
+   "id": "bolt_al",
+   "designation": "M3x12",
+   "at": [
+    -24.5,
+    -26.2,
+    10.75
+   ],
+   "dir": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "through": [
+    "bplate_l",
+    "chassis",
+    "fplate_l"
+   ],
+   "threads_into": "so_l",
+   "head": null,
+   "hole": {
+    "d": 3.0,
+    "length": 12.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 5.5,
+    "head_k": 3.0,
+    "clearance_d": 3.4,
+    "into": "tapped",
+    "side": "head",
+    "cbore_d": 5.9,
+    "cbore_depth": 0.0,
+    "grip": 3.0
+   },
+   "tool": "hex2.5",
+   "removable": true,
+   "material": "aluminium"
+  },
+  {
+   "id": "bolt_xl",
+   "designation": "M3x20",
+   "at": [
+    -11.5,
+    38.2,
+    6.25
+   ],
+   "dir": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "through": [
+    "chassis",
+    "vert_mod",
+    "side_l"
+   ],
+   "threads_into": "nut_xl",
+   "head": "button",
+   "hole": {
+    "d": 3.0,
+    "length": 20.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 5.7,
+    "head_k": 1.65,
+    "clearance_d": 3.4,
+    "into": "nut",
+    "side": "head",
+    "cbore_d": 6.1,
+    "cbore_depth": 0.0,
+    "grip": 18.0
+   },
+   "tool": "hex2",
+   "removable": true,
+   "material": "aluminium",
+   "reason": "rear cross bolt is a shear pin through the pod crossbar, the chassis tabs and the module prongs: it locates the module and ties the pod's rear (nut captive in the pod land); the 4 M2 into the columns clamp the deck face"
+  },
+  {
+   "id": "bolt_sr0",
+   "designation": "M3x10",
+   "at": [
+    35.5,
+    -7.0,
+    10.75
+   ],
+   "dir": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "through": [
+    "side_r",
+    "chassis"
+   ],
+   "threads_into": "nut_sr0",
+   "head": "countersunk",
+   "hole": {
+    "d": 3.0,
+    "length": 10.0,
+    "head": "csk",
+    "head_std": "DIN 7991",
+    "head_dk": 6.0,
+    "head_k": 1.86,
+    "clearance_d": 3.4,
+    "into": "nut",
+    "side": "head",
+    "csk_angle": 90.0,
+    "csk_d": 6.3,
+    "csk_depth": 1.45,
+    "sink": 0.0,
+    "grip": 3.0
+   },
+   "tool": "hex2",
+   "removable": true,
+   "material": "aluminium"
+  },
+  {
+   "id": "bolt_sr1",
+   "designation": "M3x10",
+   "at": [
+    35.5,
+    7.0,
+    10.75
+   ],
+   "dir": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "through": [
+    "side_r",
+    "chassis"
+   ],
+   "threads_into": "nut_sr1",
+   "head": "countersunk",
+   "hole": {
+    "d": 3.0,
+    "length": 10.0,
+    "head": "csk",
+    "head_std": "DIN 7991",
+    "head_dk": 6.0,
+    "head_k": 1.86,
+    "clearance_d": 3.4,
+    "into": "nut",
+    "side": "head",
+    "csk_angle": 90.0,
+    "csk_d": 6.3,
+    "csk_depth": 1.45,
+    "sink": 0.0,
+    "grip": 3.0
+   },
+   "tool": "hex2",
+   "removable": true,
+   "material": "aluminium"
+  },
+  {
+   "id": "bolt_ar",
+   "designation": "M3x12",
+   "at": [
+    24.5,
+    -26.2,
+    10.75
+   ],
+   "dir": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "through": [
+    "bplate_r",
+    "chassis",
+    "fplate_r"
+   ],
+   "threads_into": "so_r",
+   "head": null,
+   "hole": {
+    "d": 3.0,
+    "length": 12.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 5.5,
+    "head_k": 3.0,
+    "clearance_d": 3.4,
+    "into": "tapped",
+    "side": "head",
+    "cbore_d": 5.9,
+    "cbore_depth": 0.0,
+    "grip": 3.0
+   },
+   "tool": "hex2.5",
+   "removable": true,
+   "material": "aluminium"
+  },
+  {
+   "id": "bolt_xr",
+   "designation": "M3x20",
+   "at": [
+    11.5,
+    38.2,
+    6.25
+   ],
+   "dir": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "through": [
+    "chassis",
+    "vert_mod",
+    "side_r"
+   ],
+   "threads_into": "nut_xr",
+   "head": "button",
+   "hole": {
+    "d": 3.0,
+    "length": 20.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 5.7,
+    "head_k": 1.65,
+    "clearance_d": 3.4,
+    "into": "nut",
+    "side": "head",
+    "cbore_d": 6.1,
+    "cbore_depth": 0.0,
+    "grip": 18.0
+   },
+   "tool": "hex2",
+   "removable": true,
+   "material": "aluminium",
+   "reason": "rear cross bolt is a shear pin through the pod crossbar, the chassis tabs and the module prongs: it locates the module and ties the pod's rear (nut captive in the pod land); the 4 M2 into the columns clamp the deck face"
+  },
+  {
+   "id": "bolt_m0",
+   "designation": "M2x5",
+   "at": [
+    -19.5,
+    63.6194,
+    30.1694
+   ],
+   "dir": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "through": [
+    "vert_mod"
+   ],
+   "threads_into": "weapon_motor_stator",
+   "head": null,
+   "hole": {
+    "d": 2.0,
+    "length": 5.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "clearance_d": 2.4,
+    "into": "tapped",
+    "side": "head",
+    "cbore_d": 4.2,
+    "cbore_depth": 0.0,
+    "grip": 3.2
+   },
+   "tool": "hex1.5",
+   "removable": true,
+   "material": "aluminium"
+  },
+  {
+   "id": "bolt_m1",
+   "designation": "M2x5",
+   "at": [
+    -19.5,
+    54.7806,
+    30.1694
+   ],
+   "dir": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "through": [
+    "vert_mod"
+   ],
+   "threads_into": "weapon_motor_stator",
+   "head": null,
+   "hole": {
+    "d": 2.0,
+    "length": 5.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "clearance_d": 2.4,
+    "into": "tapped",
+    "side": "head",
+    "cbore_d": 4.2,
+    "cbore_depth": 0.0,
+    "grip": 3.2
+   },
+   "tool": "hex1.5",
+   "removable": true,
+   "material": "aluminium"
+  },
+  {
+   "id": "bolt_m2",
+   "designation": "M2x5",
+   "at": [
+    -19.5,
+    54.7806,
+    21.3306
+   ],
+   "dir": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "through": [
+    "vert_mod"
+   ],
+   "threads_into": "weapon_motor_stator",
+   "head": null,
+   "hole": {
+    "d": 2.0,
+    "length": 5.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "clearance_d": 2.4,
+    "into": "tapped",
+    "side": "head",
+    "cbore_d": 4.2,
+    "cbore_depth": 0.0,
+    "grip": 3.2
+   },
+   "tool": "hex1.5",
+   "removable": true,
+   "material": "aluminium"
+  },
+  {
+   "id": "bolt_m3",
+   "designation": "M2x5",
+   "at": [
+    -19.5,
+    63.6194,
+    21.3306
+   ],
+   "dir": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "through": [
+    "vert_mod"
+   ],
+   "threads_into": "weapon_motor_stator",
+   "head": null,
+   "hole": {
+    "d": 2.0,
+    "length": 5.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "clearance_d": 2.4,
+    "into": "tapped",
+    "side": "head",
+    "cbore_d": 4.2,
+    "cbore_depth": 0.0,
+    "grip": 3.2
+   },
+   "tool": "hex1.5",
+   "removable": true,
+   "material": "aluminium"
+  }
+ ],
+ "connections": [
+  {
+   "a": "motor_l",
+   "b": "chassis",
+   "method": "interlock",
+   "reason": "N10 gearbox boss sits in the side-wall keyhole, its face bears on the wall inner face; the base panel closes the slot under it"
+  },
+  {
+   "a": "whub_rl",
+   "b": "motor_l",
+   "method": "shaft",
+   "reason": "RV21 D-bore on the N10 D-shaft, M2 grub on the flat carries the drive torque"
+  },
+  {
+   "a": "whub_fl",
+   "b": "so_l",
+   "method": "shaft",
+   "reason": "front hub runs on the 10 mm standoff as a plain bearing, held on by the screw head end"
+  },
+  {
+   "a": "wheel_rl",
+   "b": "whub_rl",
+   "method": "press_fit",
+   "reason": "F1 tyre stretched over the crowned hub seat, the centre groove keys it",
+   "interference_mm": 0.5
+  },
+  {
+   "a": "wheel_fl",
+   "b": "whub_fl",
+   "method": "press_fit",
+   "reason": "F1 tyre stretched over the crowned hub seat, the centre groove keys it",
+   "interference_mm": 0.5
+  },
+  {
+   "a": "motor_r",
+   "b": "chassis",
+   "method": "interlock",
+   "reason": "N10 gearbox boss sits in the side-wall keyhole, its face bears on the wall inner face; the base panel closes the slot under it"
+  },
+  {
+   "a": "whub_rr",
+   "b": "motor_r",
+   "method": "shaft",
+   "reason": "RV21 D-bore on the N10 D-shaft, M2 grub on the flat carries the drive torque"
+  },
+  {
+   "a": "whub_fr",
+   "b": "so_r",
+   "method": "shaft",
+   "reason": "front hub runs on the 10 mm standoff as a plain bearing, held on by the screw head end"
+  },
+  {
+   "a": "wheel_rr",
+   "b": "whub_rr",
+   "method": "press_fit",
+   "reason": "F1 tyre stretched over the crowned hub seat, the centre groove keys it",
+   "interference_mm": 0.5
+  },
+  {
+   "a": "wheel_fr",
+   "b": "whub_fr",
+   "method": "press_fit",
+   "reason": "F1 tyre stretched over the crowned hub seat, the centre groove keys it",
+   "interference_mm": 0.5
+  },
+  {
+   "a": "wbearing",
+   "b": "vert_mod",
+   "method": "press_fit",
+   "reason": "MF85ZZ pressed into the 8 mm seat of the right upright, flange against the inner face",
+   "interference_mm": 0.05
+  },
+  {
+   "a": "wshaft",
+   "b": "wbearing",
+   "method": "shaft",
+   "reason": "5 mm shaft runs in the MF85 inner race: the outboard support of the weapon"
+  },
+  {
+   "a": "weapon_motor_can",
+   "b": "wshaft",
+   "method": "press_fit",
+   "reason": "the can is the shaft's own rotor: the shaft is pressed into its cap",
+   "interference_mm": 0.05
+  },
+  {
+   "a": "prop_mount",
+   "b": "wshaft",
+   "method": "press_fit",
+   "reason": "prop-mount bore on the shaft, clamping the stack against the bell",
+   "interference_mm": 0.05
+  },
+  {
+   "a": "spider",
+   "b": "wshaft",
+   "method": "press_fit",
+   "reason": "spider bore pressed on the shaft and clamped between the prop-mount flange and the disc",
+   "interference_mm": 0.05
+  },
+  {
+   "a": "disc",
+   "b": "spider",
+   "method": "pin",
+   "reason": "floating disc dogs engage the spider's dog pockets (drive pins), the stack clamped by the prop mount"
+  },
+  {
+   "a": "wshaft",
+   "b": "disc",
+   "method": "press_fit",
+   "reason": "shaft through the disc bore, the stack clamped against the bell face",
+   "interference_mm": 0.05
+  },
+  {
+   "a": "battery",
+   "b": "base_panel",
+   "method": "press_fit",
+   "reason": "pack wedged between the column rows on the base panel, deck above it",
+   "interference_mm": 0.1
+  },
+  {
+   "a": "rxesc",
+   "b": "base_panel",
+   "method": "tape",
+   "reason": "Malenki taped to the base panel with kapton between the column rows; it only carries its own weight"
+  },
+  {
+   "a": "wesc",
+   "b": "chassis",
+   "method": "tape",
+   "reason": "weapon ESC taped to the deck top under the vert_mod shell; it only carries its own weight"
+  },
+  {
+   "a": "power_switch",
+   "b": "chassis",
+   "method": "press_fit",
+   "reason": "switch body pressed up into the 4 x 12 deck slot, the lever flush with the deck",
+   "interference_mm": 0.05
+  }
+ ],
+ "wires": [
+  {
+   "id": "w_bat_sw",
+   "from": "battery.jst_rcy",
+   "to": "power_switch.in",
+   "awg": 24,
+   "kind": "power",
+   "slack_mm": 8
+  },
+  {
+   "id": "w_sw_rx",
+   "from": "power_switch.out",
+   "to": "rxesc.bat",
+   "awg": 24,
+   "kind": "power",
+   "slack_mm": 8
+  },
+  {
+   "id": "w_sw_wesc",
+   "from": "power_switch.out",
+   "to": "wesc.bat",
+   "awg": 24,
+   "kind": "power",
+   "slack_mm": 8
+  },
+  {
+   "id": "w_m_l",
+   "from": "rxesc.m2",
+   "to": "motor_l.terminals",
+   "awg": 26,
+   "kind": "motor",
+   "slack_mm": 8
+  },
+  {
+   "id": "w_m_r",
+   "from": "rxesc.m1",
+   "to": "motor_r.terminals",
+   "awg": 26,
+   "kind": "motor",
+   "slack_mm": 8
+  },
+  {
+   "id": "w_rx_wesc",
+   "from": "rxesc.wpn",
+   "to": "wesc.rx",
+   "awg": 28,
+   "kind": "signal",
+   "slack_mm": 8
+  },
+  {
+   "id": "w_wesc_m",
+   "from": "wesc.motor",
+   "to": "weapon_motor_stator.phases",
+   "awg": 22,
+   "kind": "motor",
+   "slack_mm": 10
+  }
+ ],
+ "allow_overlap": [
+  {
+   "a": "insert_b0",
+   "b": "chassis",
+   "max_depth_mm": 0.35,
+   "reason": "M2 heat-set insert (3.5 OD) melted into the ELVRN 2.9 column bore: interference by design"
+  },
+  {
+   "a": "insert_b1",
+   "b": "chassis",
+   "max_depth_mm": 0.35,
+   "reason": "M2 heat-set insert (3.5 OD) melted into the ELVRN 2.9 column bore: interference by design"
+  },
+  {
+   "a": "insert_b2",
+   "b": "chassis",
+   "max_depth_mm": 0.35,
+   "reason": "M2 heat-set insert (3.5 OD) melted into the ELVRN 2.9 column bore: interference by design"
+  },
+  {
+   "a": "insert_b3",
+   "b": "chassis",
+   "max_depth_mm": 0.35,
+   "reason": "M2 heat-set insert (3.5 OD) melted into the ELVRN 2.9 column bore: interference by design"
+  },
+  {
+   "a": "insert_b4",
+   "b": "chassis",
+   "max_depth_mm": 0.35,
+   "reason": "M2 heat-set insert (3.5 OD) melted into the ELVRN 2.9 column bore: interference by design"
+  },
+  {
+   "a": "insert_b5",
+   "b": "chassis",
+   "max_depth_mm": 0.35,
+   "reason": "M2 heat-set insert (3.5 OD) melted into the ELVRN 2.9 column bore: interference by design"
+  },
+  {
+   "a": "insert_t0",
+   "b": "chassis",
+   "max_depth_mm": 0.35,
+   "reason": "M2 heat-set insert (3.5 OD) melted into the ELVRN 2.9 column bore: interference by design"
+  },
+  {
+   "a": "insert_t1",
+   "b": "chassis",
+   "max_depth_mm": 0.35,
+   "reason": "M2 heat-set insert (3.5 OD) melted into the ELVRN 2.9 column bore: interference by design"
+  },
+  {
+   "a": "insert_t2",
+   "b": "chassis",
+   "max_depth_mm": 0.35,
+   "reason": "M2 heat-set insert (3.5 OD) melted into the ELVRN 2.9 column bore: interference by design"
+  },
+  {
+   "a": "insert_t3",
+   "b": "chassis",
+   "max_depth_mm": 0.35,
+   "reason": "M2 heat-set insert (3.5 OD) melted into the ELVRN 2.9 column bore: interference by design"
+  },
+  {
+   "a": "wshaft",
+   "b": "wbearing",
+   "max_depth_mm": 0.3,
+   "reason": "shaft in the MF85 inner race (bearing modelled as one solid)"
+  }
+ ],
+ "reference_cad": {
+  "dir": "../../research/elevron_alt",
+  "ref_to_world": [
+   [
+    1,
+    0,
+    0,
+    0
+   ],
+   [
+    0,
+    1,
+    0,
+    0
+   ],
+   [
+    0,
+    0,
+    1,
+    2.25
+   ],
+   [
+    0,
+    0,
+    0,
+    1
+   ]
+  ],
+  "iou_min": 0.9,
+  "placement_tol_mm": 1.5,
+  "parts": [
+   {
+    "part": "chassis",
+    "file": "Alt_chassis_1.stl",
+    "mode": "shape",
+    "tol_mm": 1.5,
+    "tol_vol_frac": 0.05,
+    "note": "Alt_chassis (dump replay by relations, IoU 0.97)",
+    "deviations": [
+     {
+      "near": [
+       -11.5,
+       38.2,
+       6.25
+      ],
+      "r": 3.5,
+      "reason": "ELVRN3.0 Alt chassis Chamfer5: the 1.5 mm lead-in on the inner tab's cross-bolt hole comes within 0.34 of the tab bottom in the STEP too"
+     },
+     {
+      "near": [
+       11.5,
+       38.2,
+       6.25
+      ],
+      "r": 3.5,
+      "reason": "ELVRN3.0 Alt chassis Chamfer5: the 1.5 mm lead-in on the inner tab's cross-bolt hole comes within 0.34 of the tab bottom in the STEP too"
+     }
+    ]
+   },
+   {
+    "part": "vert_mod",
+    "file": "vert_mod_1.stl",
+    "mode": "envelope",
+    "tol_mm": 1.5,
+    "tol_vol_frac": 0.2,
+    "note": "vert_mod: no dump; relation build from STEP sections (see MISSES.md)"
+   },
+   {
+    "part": "side_r",
+    "file": "Side_Panel_alt_sm_1.stl",
+    "mode": "envelope",
+    "tol_mm": 1.5,
+    "tol_vol_frac": 0.4,
+    "note": "Side_Panel_alt_sm: no dump (see MISSES.md)"
+   },
+   {
+    "part": "side_l",
+    "file": "MirrorSide_Panel_alt_sm_1.stl",
+    "mode": "envelope",
+    "tol_mm": 1.5,
+    "tol_vol_frac": 0.4,
+    "note": "MirrorSide_Panel_alt_sm"
+   },
+   {
+    "part": "disc",
+    "file": "Drisk_floating_3_1.stl",
+    "mode": "envelope",
+    "tol_mm": 0.6,
+    "note": "the Revron disc"
+   },
+   {
+    "part": "whub_rl",
+    "file": "RV21_Rear_Wheel_1.stl",
+    "mode": "envelope",
+    "tol_mm": 0.6,
+    "deviations": [
+     {
+      "near": [
+       -35.1,
+       26.2,
+       11.32
+      ],
+      "r": 2.0,
+      "reason": "RVRN RV21 hub as drawn: the M3 grub bore breaks into the D-bore (STEP Cut-Extrude4)"
+     }
+    ]
+   },
+   {
+    "part": "whub_rr",
+    "file": "RV21_Rear_Wheel_2.stl",
+    "mode": "envelope",
+    "tol_mm": 0.6,
+    "deviations": [
+     {
+      "near": [
+       35.1,
+       26.2,
+       11.32
+      ],
+      "r": 2.0,
+      "reason": "RVRN RV21 hub as drawn: the M3 grub bore breaks into the D-bore (STEP Cut-Extrude4)"
+     }
+    ]
+   },
+   {
+    "part": "whub_fl",
+    "file": "RV21_Rear_Wheel_1.stl",
+    "mode": "envelope",
+    "tol_mm": 1.5,
+    "deviations": [
+     {
+      "near": [
+       -35.1,
+       -26.2,
+       11.32
+      ],
+      "r": 2.0,
+      "reason": "RVRN RV21 hub as drawn: the M3 grub bore breaks into the D-bore (STEP Cut-Extrude4)"
+     }
+    ]
+   },
+   {
+    "part": "whub_fr",
+    "file": "RV21_Rear_Wheel_2.stl",
+    "mode": "envelope",
+    "tol_mm": 1.5,
+    "deviations": [
+     {
+      "near": [
+       35.1,
+       -26.2,
+       11.32
+      ],
+      "r": 2.0,
+      "reason": "RVRN RV21 hub as drawn: the M3 grub bore breaks into the D-bore (STEP Cut-Extrude4)"
+     }
+    ]
+   }
+  ]
+ }
+}

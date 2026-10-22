@@ -77,7 +77,7 @@ def side_boss():
              *[_cyl(BOSS_R, HX - 1, HX + BOSS_OUT, (y, AXLE_Z), "x") for y in ys])
     body = _U(_box(HX - 2 * BOSS_FILLET, HX, -HY, HY, 0, CH_H), pad)   # a wall deep enough to carry the round
     reach = BOSS_PITCH / 2 + BOSS_R
-    root = [e for e in body.edges() if abs(e.center().X - HX) < 1e-6 and abs(e.center().Y) <= reach and abs(e.center().Z - AXLE_Z) <= BOSS_R]
+    root = [e for e in body.edges() if abs(e.center().X - HX) < GEOM_TOL and abs(e.center().Y) <= reach and abs(e.center().Z - AXLE_Z) <= BOSS_R]
     out = _S(body.fillet(BOSS_FILLET - OCC_EPS, root), _box(HX - 3 * BOSS_FILLET, HX, -CH_L, CH_L, -1, CH_H + 1))   # Fillet5: R3 root round
     pad = _U(out, _box(HX - 1, HX, -BOSS_PITCH / 2, BOSS_PITCH / 2, AXLE_Z - BOSS_R, AXLE_Z + BOSS_R))   # plus a stub keying it into the wall
     return _both(pad)
@@ -88,7 +88,7 @@ def side_boss_cuts():
     ys = (-BOSS_PITCH / 2, BOSS_PITCH / 2)
     holes = [_cyl(HOLE_D / 2, IN_X - BOSS_IN - 1, HX + BOSS_OUT + 1, (y, AXLE_Z), "x") for y in ys]
     r_hex = NUT_AF / math.sqrt(3)
-    nuts = [bd.Solid.extrude(bd.Face(bd.Wire.make_polygon([(0, y + r_hex * math.cos(math.radians(a)), AXLE_Z + r_hex * math.sin(math.radians(a))) for a in range(0, 360, 60)], close=True)),
+    nuts = [bd.Solid.extrude(bd.Face(bd.Wire.make_polygon([(0, y + r_hex * math.cos(math.radians(a)), AXLE_Z + r_hex * math.sin(math.radians(a))) for a in range(HEX_PHASE, 360, 360 // HEX)], close=True)),
                              bd.Vector(NUT_DEPTH, 0, 0)).moved(bd.Location((IN_X - BOSS_IN, 0, 0))) for y in ys]
     win = _box(HX + BOSS_OUT - WIN_DEPTH, HX + BOSS_OUT + 1, -WIN_W / 2, WIN_W / 2, AXLE_Z - WIN_H / 2, AXLE_Z + WIN_H / 2)
     slot = _box(IN_X - BOSS_IN - 1, HX + BOSS_OUT, -SLOT_HALF, SLOT_HALF, AXLE_Z - WIN_H / 2 + 1, AXLE_Z + WIN_H / 2 - 1)
