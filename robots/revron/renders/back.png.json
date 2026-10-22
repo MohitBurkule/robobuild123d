@@ -1,6 +1,6 @@
 {
- "spec": "/tmp/claude-0/-home-user/6d647ed2-7427-59f3-8ab5-ba663cdaf3d4/scratchpad/rendfix/robots/revron/spec.json",
- "rendered_at": 1792567256.4347498,
+ "spec": "/tmp/claude-0/-home-user/6d647ed2-7427-59f3-8ab5-ba663cdaf3d4/scratchpad/integ2/robots/revron/spec.json",
+ "rendered_at": 1792696358.9375305,
  "bodies": [
   "tub",
   "base_panel",
@@ -51,7 +51,6 @@
   "insert_t1",
   "insert_t2",
   "insert_t3",
-  "esc_tray",
   "belt_l",
   "belt_r",
   "bolt_b0",
@@ -81,10 +80,6 @@
   "bolt_d2",
   "bolt_p3",
   "bolt_d3",
-  "bolt_t0",
-  "bolt_t1",
-  "bolt_t2",
-  "bolt_t3",
   "bolt_sw0",
   "bolt_sw1"
  ],
@@ -120,7 +115,7 @@
     10.6
    ],
    "to": [
-    11.2,
+    9.950000000000001,
     38.5,
     15.9
    ]
