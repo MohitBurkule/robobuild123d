@@ -2,8 +2,8 @@
 the 45 deg diagonal from the chassis front corner (x + y = CH_HALF_W + CH_Y1), an R8 blend tangent to the diagonal and the lug face, and the
 R2 corner between wall and diagonal. Three layers: the base plate, the front web up to the web face, and the top flange between two
 parallel lines sloping like the lug top. Built for +X and mirrored."""
-from math import hypot, sqrt
-from build123d import BuildLine, BuildSketch, CenterArc, Line, Plane, Polygon, chamfer, extrude, fillet, make_face
+from math import sqrt
+from build123d import BuildLine, BuildSketch, CenterArc, Line, Plane, Polygon, extrude, fillet, make_face
 from .params_chassis import SA, SB_X0
 from .params_side import WG_SA_R, WG_MOUNT_GAP
 from .tub2_params import CH_HALF_W, CH_Y1, CH_Z0, CH_Z1, CH_WALL, SKIN, OVER, SEAT_Z, WALL_IN_FRONT, FRONT_RIB
@@ -19,7 +19,6 @@ FACE_FIL_R = 3 * SKIN                  # Fillet18: web face into the lug face
 FACE_Y = CH_Y1 + FRONT_RIB             # front face of the web
 BOT_TOP = SEAT_Z + SKIN / 2            # base plate top
 FLANGE_T = 2.7                         # vertical thickness of the sloping top flange
-APEX_SHY = 0.005                       # as the shell: equal chamfer and round collapse the cone apex
 
 
 def blend_centre():
@@ -58,21 +57,23 @@ def flange():
         Polygon((y0, z_at(y0)), (y1, z_at(y1)), (y1, z_at(y1) - FLANGE_T), (y0, z_at(y0) - FLANGE_T), align=None)
     slab = extrude(sl.sketch, CH_HALF_W - SB_X0 + 2) & prism(f, CH_Z0, CH_Z1)
     clipped = slab & box_xy(SB_X0 - 1, CH_HALF_W + 1, y0, y1, CH_Z0, CH_Z1)
-    web = web & (extrude(under.sketch, CH_HALF_W - SB_X0 + 2) + box_xy(SB_X0 - 1, CH_HALF_W + 1, WALL_IN_FRONT - 1, y0, CH_Z0, CH_Z1))                  # the web's front top edge follows the lug's sloping top line too
+    web = web & (extrude(under.sketch, CH_HALF_W - SB_X0 + 2) + box_xy(SB_X0 - 1, CH_HALF_W + 1, WALL_IN_FRONT - 1, y0, CH_Z0, CH_Z1))   # the web's front top edge follows the lug's sloping top line too
     body = plate + web + blend + clipped
-    return body & _chamfered_plan(f)
+    v_corner = (CH_Y1 - CH_HALF_W) / sqrt(2)                                 # diagonal coordinate of the wall corner
+    return body - _chamfer_wedge(CH_HALF_W, 0, WALL_IN_FRONT - 1, CH_Y1) - _chamfer_wedge(DIAG_S / sqrt(2), 45, v_corner, _tangent_v())
 
 
-def _chamfered_plan(f):
-    """The plan prism with the deck chamfer (CH_WALL, 45 deg) on its outer top edges: the side wall, the R-wall corner round (a cone, like the
-    shell's corners) and the diagonal. Everything the flange adds lies inside this solid, so intersecting with it chamfers all layers alike."""
-    cx, cy = CH_HALF_W - CH_WALL, DIAG_S - CH_HALF_W - CH_WALL * (sqrt(2) - 1)   # corner round centre: tangent to the wall and the diagonal
-    prism_f = prism(f, CH_Z0, CH_Z1)
+def _tangent_v():
+    """Diagonal coordinate v = (y - x) / sqrt(2) of the R8 blend's tangent point on the diagonal."""
+    cx, cy = blend_centre()
+    tx, ty = cx - BLEND_R / sqrt(2), cy - BLEND_R / sqrt(2)
+    return (ty - tx) / sqrt(2)
 
-    def outer(e):
-        pts = [e.position_at(t) for t in (0.0, 0.5, 1.0)]
-        on_wall = all(abs(p.X - CH_HALF_W) < OVER / 10 for p in pts)
-        on_diag = all(abs(p.X + p.Y - DIAG_S) < OVER / 10 for p in pts)
-        on_round = all(abs(hypot(p.X - cx, p.Y - cy) - CH_WALL) < OVER / 10 for p in pts)
-        return abs(pts[1].Z - CH_Z1) < OVER / 10 and (on_wall or on_diag or on_round)
-    return chamfer([e for e in prism_f.edges() if outer(e)], CH_WALL - APEX_SHY)
+
+def _chamfer_wedge(u0, angle, v0, v1):
+    """The deck chamfer (CH_WALL, 45 deg) on the top edge of the outer face u = u0, between v0 and v1 along the edge. u / v are the plane
+    coordinates rotated `angle` about Z (side wall: 0, diagonal: 45), so both faces share one construction."""
+    plane = Plane.XZ.rotated((0, angle, 0)).offset(-v0)
+    with BuildSketch(plane) as sk:
+        Polygon((u0 - CH_WALL, CH_Z1), (u0 + 1, CH_Z1 - CH_WALL - 1), (u0 + 1, CH_Z1 + 1), (u0 - CH_WALL - 1, CH_Z1 + 1), align=None)
+    return extrude(sk.sketch, -(v1 - v0))

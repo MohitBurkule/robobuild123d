@@ -1483,10 +1483,10 @@
     "min_mm": 0.6,
     "at": [
      -10.3,
-     26.05,
-     13.49
+     24.703156739166182,
+     15.146843260833819
     ],
-    "reason": "matches original RVRN 2.0: the STEP spider_1 sweeps 0.600 mm from the RV01_Chassis_1 face at x -10.3 (swept distance, STEP meshes, tub point (-10.3, 26.05, 13.49))"
+    "reason": "matches original RVRN 2.0: the STEP spider_1 sweeps 0.600 mm from the RV01_Chassis_1 tab wall bevel on its inner face (swept distance, STEP meshes; the point is where the spider is closest)"
    }
   },
   {

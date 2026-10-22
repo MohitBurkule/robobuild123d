@@ -78,3 +78,11 @@ def wall_blend():
 def rabbet():
     """The front wall stops at the base-panel rabbet under the key tab (from the tab wall to the lug)."""
     return box_xy(WALL_X[1], SA_X0, WALL_IN_FRONT - SKIN, CH_Y1 + OVER, CH_Z0 - OVER, SEAT_Z)
+
+
+def rub_point():
+    """Where the spider sweeps closest to the -X tab wall: its inner face (x = -WALL_X[0]) at the point the 45 deg bevel leaves the top line."""
+    s = top_line_slope()
+    zf = BEVEL_Z - BEVEL_DELTA['-x'][0]
+    y = (zf + TAB_FRONT - CH_Z1 + s * CH_Y1) / (1 + s)
+    return (-WALL_X[0], y, CH_Z1 + s * (y - CH_Y1))

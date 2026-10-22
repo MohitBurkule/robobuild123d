@@ -162,6 +162,36 @@ def test_standoff_sweep_side_panel_is_one_valid_solid(name, val, tmp_path):
     check({"params_chassis": {name: val}}, tmp_path, what="__import__('revron.assembly', fromlist=['build']).build('side_panel_l')", symmetric=False)
 
 
+MESH = """
+import sys
+sys.path[:0] = [%r, %r]
+import trimesh
+from revron import assembly as A
+from robot import geom
+from robot.checks.integrity import shells
+c = A.build("chassis")
+for nm, t in (("FINE", geom.FINE), ("FAST", geom.FAST)):
+    v, f = geom.tessellate(c, t)
+    m = trimesh.Trimesh(v, f)
+    print("MESH", nm, *shells(m))
+"""
+
+
+@pytest.mark.parametrize("name,val", [("SA", "(27.45, 5.5)"), ("SA", "(33.55, 5.5)"), ("SB", "(44.55, 4.5)"), ("SB", "(40.5, 4.05)")])
+def test_standoff_sweep_tub_mesh_is_one_closed_shell(name, val, tmp_path):
+    """The tub as the integrity check meshes it (FINE and FAST tessellation): exactly one closed shell and no open or lone-triangle pieces."""
+    dst = pathlib.Path(tempfile.mkdtemp(dir=tmp_path)) / "src"
+    shutil.copytree(SRC, dst, ignore=shutil.ignore_patterns("__pycache__"))
+    f = dst / "revron" / "params_chassis.py"
+    text, n = re.subn(rf"^{name} = [^#\n]*", f"{name} = {val}   ", f.read_text(), count=1, flags=re.M)
+    assert n == 1
+    f.write_text(text)
+    r = subprocess.run([sys.executable, "-c", MESH % (str(dst), ROOT)], capture_output=True, text=True)
+    rows = [ln.split() for ln in r.stdout.splitlines() if ln.startswith("MESH")]
+    assert len(rows) == 2, r.stderr[-1500:]
+    assert all(row[2] == "1" and row[3] == "0" for row in rows), rows
+
+
 def value_with(overrides, tmp_path, expr):
     """repr-evaluated `expr` (an expression in the revron package) in a fresh interpreter with the module-level assignments overridden."""
     dst = pathlib.Path(tempfile.mkdtemp(dir=tmp_path)) / "src"
