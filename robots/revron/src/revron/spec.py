@@ -325,6 +325,9 @@ def _GRUB_DEV(s):
                        "threads the 1.6 bore and the captive nut, so it clamps the flat the same"}]
 
 
+# the stator-hole waiver holds the whole STEP cone / counterbore difference: half its X span and the bore's corner radius
+STATOR_CONE_DEV_R = math.hypot((CB_STEP_CONE_X[1] - CB_STEP_CONE_X[0]) / 2, CB_R * math.sqrt(2)) + 0.2
+
 _MNT_THIN = {} if PRINTABLE else dict(thin_wall_deviation="matches original RVRN 2.0: RV02/RV03 end the notch top in a zero-thickness wedge and the R3.25 nose arc leaves 0.15 mm round the CSK cone (STEP sections at the notch top and y 40.5); kept for parity (user order)")
 
 
@@ -363,7 +366,7 @@ def reference_cad():
         R("mount_l", "RV02_XALT_HD_left_hand_weapon_mount_1.stl", tol_mm=TOL["std"],
           deviations=_printable_dev(-1)),
         R("mount_r", "RV03_XALT__HD_Right_hand_weapon_mount_1.stl", tol_mm=TOL["std"],
-          deviations=_printable_dev(1) + [{"near": [STATOR_DEV_X, WY + dy, WZ + dz], "r": TAP_DEV_R,
+          deviations=_printable_dev(1) + [{"near": [sum(CB_STEP_CONE_X) / 2, WY + dy, WZ + dz], "r": STATOR_CONE_DEV_R,
                        "reason": "STEP counterbore ends in a 45 deg lead-in cone (r2.25 at |X| 17.4 down to r1.1 at 16.4); we cut a flat floor at CB_FLOOR_X instead: the inferred M2x8 button head needs a flat seat (fastener_seat.head_bearing) and its tip must bite 1.7 mm of the 2 mm stator base (fastener.engagement; the STEP floor gives 1.25)"}
                       for dy, dz in stator_bolt_circle()] + _lead_groove_dev()),
         R("motor_spacer", "Motor_back_spacer_1.stl", tol_mm=TOL["tight"]),

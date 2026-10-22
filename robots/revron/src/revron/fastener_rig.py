@@ -29,8 +29,8 @@ def _weapon_frame(y, z):
 def screws(r):
     for s, n in SIDES:
         sx, mnt = (s, 0, 0), f"mount_{n}"
-        _screw(r, mnt, "csk_a", on_mount(n, (s * MNT_IN, *SA)), sx, f"bolt_u{n}a")      # mount into the 25 mm standoff
-        _screw(r, mnt, "csk_b", on_mount(n, (s * MNT_IN, *SB)), sx, f"bolt_u{n}b")      # mount + lug into the 15 mm standoff
+        _screw(r, mnt, "csk_a", on_mount(n, (s * (MNT_IN - MNT_CSK_PROUD), *SA)), sx, f"bolt_u{n}a")      # mount into the 25 mm standoff
+        _screw(r, mnt, "csk_b", on_mount(n, (s * (MNT_IN - MNT_CSK_PROUD), *SB)), sx, f"bolt_u{n}b")      # mount + lug into the 15 mm standoff
         for k, yz in (("a", SA), ("b", SB), ("c", NUT)):                    # side panel seats: two standoff ends, the nut
             _screw(r, f"side_{n}", f"seat_{k}", (s * SIDE_BOLT_X[k], *yz), (-s, 0, 0), f"bolt_s{n}{k}")
     for k, (u, v) in enumerate(STATOR_DIRS):                                # RV03 counterbores on the stator bolt circle

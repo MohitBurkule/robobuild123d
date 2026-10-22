@@ -45,6 +45,8 @@ MNT_SCREW = ("M3x12", "M3x14")           # mount-to-standoff CSK screws at SA, S
 MOUNT_VARIANT = os.environ.get("REVRON_MOUNT_VARIANT", "original")   # "original" = RV02/RV03 as the STEP draws them; "printable" = nose pad, thickened notch tip, relieved corners, loose screw holes (improvements, not parity)
 PRINTABLE = MOUNT_VARIANT == "printable"
 MNT_SCREW_FIT = "loose" if PRINTABLE else "close"   # ISO 273: loose slack so the notch face takes the hit first; close = the STEP's d3.2 holes
+RV03_BORE_R = SHAFT_R + (SHAFT_CLR if PRINTABLE else 0.0)   # RV03 centre hole: the STEP d5.0 (the shaft ends at the stator base, short of RV03); printable adds the shaft clearance
+STATOR_SCREW_FIT = "normal" if PRINTABLE else "close"   # RV03 stator M2 holes: close = the STEP d2.2 (ISO 273 close); normal = d2.4
 WEAPON_CLEAR_R = 16.0                # chassis material stays outside this radius about the weapon axis (rotor + 1 mm)
 BSP_T = 1.5                          # printed spacer between the stator base and the right mount
 BSP_X = (MNT_IN - BSP_T, MNT_IN)
@@ -53,6 +55,7 @@ WM_LEN, WM_BITE = 8.0, 1.7           # stator screw M2x8 and the thread it must 
 CB_R = 2.25                          # RV03 stator counterbore d4.5
 CB_FLOOR_X = -STATOR_BACK_X + WM_LEN - WM_BITE   # its floor |X| (the button head seats here): the screw tip lands WM_BITE inside the base (STEP 17.15 gives only 1.25: declared deviation)
 CB_CONE_X = (CB_FLOOR_X - 0.75, CB_FLOOR_X)      # the STEP's 0.75 lead-in cone under the counterbore (left out, see spec deviations)
+CB_STEP_CONE_X = (16.4, 17.4)        # |X| span of the STEP's 45 deg cone (r1.1 -> r2.25): the stator-hole deviation waiver spans it
 STATOR_ARMS_DEG = (0, 180, 90, 270)   # the GR1507 base cross arms, in bolt_wm0..3 order
 STATOR_DIRS = tuple((round(math.cos(math.radians(a))), round(math.sin(math.radians(a)))) for a in STATOR_ARMS_DEG)   # stator screw directions on the bolt circle
 
@@ -69,7 +72,8 @@ MNT_SIDE = dict(
     l=dict(top_r=7.0, notch_y=9.0, rim_end=-5.0, batter=dict(drop=2.80265, lean=0.1701, toe=0.0158)))
 MNT_TOP_Z = CH_Z1                        # top of the rear notch: the teardrop's tangent line starts here
 TAB = dict(y0=CH_Y1, z0=5.35, h=8.2, y1=26.5, cham=1.0)   # chassis tab the notch drops over: rear Y, floor Z, height, front-face Y, front chamfer
-NOSE_R, NOSE_A0 = 3.25, -16.0           # nose arc round the SB standoff and where it leaves the outline (deg)
+MNT_NOTCH_GAP = 0.1                     # the notch's front face stands this far ahead of the tab's front face (STEP RV02/RV03 notch at Y 26.6)
+NOSE_R = 3.25                           # nose arc round the SB standoff; it leaves the outline at the side's rim_end angle (the front edge is the common tangent of rim and nose: STEP RV02 -5, RV03 -14.5)
 MNT_HEEL = dict(z=SB[1] - NOSE_R, step=0.4, back=1.8, z_hook=2.5, z_lip=4.5)   # rear foot hooked under the tab: flat underside (tangent to the nose arc), tip step, setback, hook and lip Z
 MNT_NOTCH_UP = 2.0                      # the rear face above the tab leans back by this much over the last stretch to the top
 NOSE_PAD_R = 4.1 if PRINTABLE else 0.0                        # local pad round the nose CSK: CSK cone radius (3.2) + a 0.9 mm printed wall (the STEP nose leaves 0.15 mm)
@@ -77,12 +81,13 @@ BOSS_Z = 6.34                           # the boss starts above the line from th
 BOSS_NOSE_Y = 44.34
 BIG = 60.0                              # a box edge bigger than any part, for the wedgelet's 2D half-plane clip (_mount_clip)
 MNT_RELIEF_R = 1.0 if PRINTABLE else 0.0                      # concave corner relief of the profile (tub deck fillet, mfg corner relief)
-MNT_CSK_CLEAR = 0.4                     # extra cone diameter over the DIN 7991 head: the seated head floats, so the notch bears a hit before the screws do
+MNT_CSK_CLEAR = 0.4 if PRINTABLE else 0.2   # extra cone diameter over the DIN 7991 head (dk 6.0): STEP cone d6.2; printable 0.4 floats the seated head so the notch bears a hit first
+MNT_CSK_PROUD = 0.0 if PRINTABLE else 0.12   # ISO 10642 head seated on the STEP d6.2 cone stands this far out of the inner face (flush, it would cut 0.08 into the cone; flush_head allows 0.2)
 MNT_TIP_WALL, MNT_TIP_REACH = (1.5 if PRINTABLE else 0.0), 3.0    # printed wall: the wedge where the rear notch meets the rim tangent is thickened upward to this within this reach of the notch top (rearmost point and underside unchanged: the underside rides on the chassis tab)
 
 
 HOLE_FACE_RISE = 0.7                    # the battered face's highest point over a stator hole axis: the surface the hole is measured from
-BSP = dict(r=10.0, bore_r=4.0, win_in=5.5, win_out=8.5, half_deg=24.5, round_in=1.25, round_out=1.0, phase=HALF_PITCH)   # motor back spacer (Motor_back_spacer_1.stl section fit)
+BSP = dict(r=10.0, bore_r=4.0, win_in=5.5, win_out=8.5, half_deg=24.6, round_in=2.0, round_out=1.0, phase=HALF_PITCH)   # motor back spacer (Motor_back_spacer_1.stl section fit)
 
 
 DOG = dict(r=12.0, rise=1.9, t0=6.6, t1=13.1, t2=54.7, ramp_r=15.3, nose_r=2.0)   # bore dogs (90 deg pitch): straight flank t0..t1, R15.3 ramp back to t2, R2 nose (STEP section fit)
