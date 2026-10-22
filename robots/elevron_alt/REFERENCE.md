@@ -8,9 +8,9 @@ frame has the chassis underside at z 0 and the floor at z -2.25; the robot world
 
 | STEP solid | vol mm3 | dump / source | class | built by |
 |---|---|---|---|---|
-| Alt_chassis | 18686 | ELVRN3.0_Alt chassis (18686.4, 65 features) | custom PLA | `chassis.py` (relations, IoU 0.970) |
-| vert_mod | 16592 | none in the pack (unknown) | custom PLA | `vert_mod.py` (relations from STEP sections, IoU 0.47) |
-| Side_Panel_alt_sm / Mirror | 5937 / 5936 | none ("ELVRN3.0_Side Panel" is a larger family member, 8437 mm3, loft/wrap) | custom TPU | `side_panel.py` (IoU 0.45), left = mirror |
+| Alt_chassis | 18686 | ELVRN3.0_Alt chassis (18686.4, 65 features) | custom PLA | `chassis.py` (relations, IoU 0.972) |
+| vert_mod | 16592 | none in the pack (unknown) | custom PLA | `vert_mod.py` (relations from STEP sections, IoU 0.38) |
+| Side_Panel_alt_sm / Mirror | 5937 / 5936 | none ("ELVRN3.0_Side Panel" is a larger family member, 8437 mm3, loft/wrap) | custom TPU | `side_panel.py` (IoU 0.43), left = mirror |
 | RV12_N10_2200_RPM x2 | 1810 | Revron | COTS `n10_2200rpm_spicy` | catalog |
 | RV08_1806_Brushless | 6374 | Revron family | COTS `be1806_bbb` | catalog |
 | Drisk_floating_3 | 1127 | Revron | Hardox disc | `revron.drisk.disc` (1127.0, identical) |
@@ -34,18 +34,20 @@ panel, fasteners or wires are in the STEP.
   Front wheels are idlers: F1 tyres on RV21 hubs whose bore is opened to run on a 10 mm M3 standoff clamped across
   the front keyhole between BACKING_PLATE (inside) and FRONT_PLATE (outside).
 - **Weapon module (vert_mod)**: a printed frame on the deck screwed into the four corner columns, a sloped hollow top
-  shell and two uprights. The BE1806 base bolts to the left upright (4 x M2); its RV07 prop mount carries the
-  spiderSL and the Drisk_floating_3 disc and runs in an MF85ZZ in the right upright: the disc is supported both sides.
-- **Side pods (TPU)**: plate screwed sideways into the chassis side boss (2 x M3 into captive nuts), battered skin
-  outside the rear wheel, a finger beside the outer chassis tab, and a fork prong running forward past the disc to the
-  floor.
-- **Cross bolt**: one M3 through side finger, chassis tabs, vert_mod prongs and the other finger, nut at the end. It
-  ties the module, both pods and the chassis at the rear.
+  shell and two uprights. The BE1806 (split into `be1806_stator` / `be1806_can`, new catalog pair) bolts to the left
+  upright (4 x M2), its base sunk 2.8 mm into a pocket; the disc sits on the bell face, then the spiderSL and the RV07
+  prop mount; the 5 mm shaft runs on into an MF85ZZ in the right upright: the disc is supported both sides.
+- **Side pods (TPU)**: plate screwed sideways into the chassis side boss (2 x M3 CSK into captive nuts), battered skin
+  outside the rear wheel, a crossbar behind the tyre whose land sits on the outer chassis tab, and a fork prong
+  running forward past the disc to the floor.
+- **Cross bolts**: one M3x12 button head per side through the pod land and the outer chassis tab into a thin nut
+  captive in the vert_mod prong (dropped in from below). They tie the pods, the module and the chassis at the rear;
+  the driver reaches the head through a bore in the pod skin.
 
 ## Load paths
 
-Disc hit -> spider -> prop mount -> bell / MF85 -> both uprights -> vert_mod frame -> 4 M2 into the columns and the
-cross bolt through the tabs -> chassis. Fork / pod hit -> side boss screws (shear across the 2 M3) and the cross bolt.
+Disc hit -> spider / shaft -> motor bearings and MF85 -> both uprights -> vert_mod frame -> 4 M2 into the columns and
+the cross bolts through the tabs -> chassis. Fork / pod hit -> side boss screws (shear across the 2 M3) and the cross bolt.
 Ground: the four F1 tyres; forks run 0.25 mm over the floor.
 
 ## What rotates
@@ -61,12 +63,18 @@ shafts; front hubs/tyres idle on the standoffs.
   left upright into its base.
 - **Front axle**: idler on the standoff (the STEP has two N10 only).
 - **Electronics** (STEP silent): battery left of centre and Malenki right of centre on the base panel between the
-  column rows, weapon ESC on the Malenki, BBB switch hanging in the deck slot (the dump's 4 x 12 slot with 1.7 pilots
+  column rows, weapon ESC on the Malenki, BBB switch pressed into the deck slot (the dump's 4 x 12 slot with 1.7 pilots
   on 15 mm matches the RV15 switch flange). Wires run inside the chassis; the weapon phase leads go up through the
-  deck wire slot (Cut-Extrude17) under the shell.
+  deck wire slot (Cut-Extrude17), along a duct under the shell, through the bulkhead to the motor, whose leads point
+  forward into the upright's lead slot (`via` waypoints in the spec).
 - **Fasteners**: M2 (columns, motor, switch) and M3 (side pods, front axle, cross bolt): two thread sizes.
 
 ## Inherited placements
 
 Hubs/tyres (Revron RV21/RV22 parts at the Alt axle lines), disc and spider (Revron parts on the Alt axis), the
 weapon lock convention (external pin, Revron), the electronics catalog entries (Revron RV13/14/15/16).
+
+## Mass
+
+147 g nominal (verifier range 129.5 to 164.5 g, limit 150): printed parts at the Revron solid fractions (PLA 0.8,
+TPU 0.9), 7075 screws, the shaft's mass counted in the motor's catalog mass.

@@ -34,6 +34,7 @@ MOTOR_AT_X = DISC_X[0] - _sh["at"][0]  # catalog motor placed with its bell face
 MOTOR_BASE_X = MOTOR_AT_X - (_sh["at"][0] + _sh["len"])
 MOTOR_SINK = -UP_IN - MOTOR_BASE_X     # the catalog can is longer than the STEP one: its base sinks this far into the upright
 MOTOR_R = 11.5                         # catalog can radius
+BASE_SKIN = 0.5                        # the shaft stops this far inside the stator base
 SHAFT_D = 5.0                          # BE1806 shaft through the disc stack into the MF85
 ROT_GAP = 0.3                          # prop-mount flange stops short of the MF85 flange (rotor / fixed race)
 LEAD_Y = WY - 19.5                     # catalog stator: phase-lead stub tip (local -z 19.5), turned to point forward

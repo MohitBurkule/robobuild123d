@@ -347,9 +347,9 @@
    ],
    "rotates_with": "fixed",
    "loose_ok": {
-    "axis": "+z",
-    "max_mm": 0.6,
-    "reason": "RVRN_revdev STEP: RV12 N10 at z 2.5..14.5 under the ELVRN Alt deck underside at 15: 0.5 mm over the gearbox, as drawn"
+    "axis": "+x",
+    "max_mm": 2.0,
+    "reason": "RVRN_revdev STEP: RV12 N10 slides inboard in the ELVRN Alt keyhole until its hub meets the wall, as in the RVRN 2.0 tub"
    },
    "label": "RV12 N10 2200 rpm in the rear keyhole, gearbox face on the wall"
   },
@@ -357,6 +357,11 @@
    "id": "whub_rl",
    "kind": "pulley",
    "print_orientation": "+x",
+   "loose_ok": {
+    "axis": "+z",
+    "max_mm": 0.6,
+    "reason": "RVRN_revdev STEP: RV12 N10 (z 2.5..14.5) under the ELVRN Alt deck underside at 15: the drive group lifts 0.5 mm, as drawn"
+   },
    "rotates_with": "wheel_rl",
    "color": "#333333",
    "shape": {
@@ -545,9 +550,9 @@
    ],
    "rotates_with": "fixed",
    "loose_ok": {
-    "axis": "+z",
-    "max_mm": 0.6,
-    "reason": "RVRN_revdev STEP: RV12 N10 at z 2.5..14.5 under the ELVRN Alt deck underside at 15: 0.5 mm over the gearbox, as drawn"
+    "axis": "-x",
+    "max_mm": 2.0,
+    "reason": "RVRN_revdev STEP: RV12 N10 slides inboard in the ELVRN Alt keyhole until its hub meets the wall, as in the RVRN 2.0 tub"
    },
    "label": "RV12 N10 2200 rpm in the rear keyhole, gearbox face on the wall"
   },
@@ -555,6 +560,11 @@
    "id": "whub_rr",
    "kind": "pulley",
    "print_orientation": "+x",
+   "loose_ok": {
+    "axis": "+z",
+    "max_mm": 0.6,
+    "reason": "RVRN_revdev STEP: RV12 N10 (z 2.5..14.5) under the ELVRN Alt deck underside at 15: the drive group lifts 0.5 mm, as drawn"
+   },
    "rotates_with": "wheel_rr",
    "color": "#333333",
    "shape": {
@@ -764,7 +774,7 @@
    "kind": "nut",
    "catalog": "nut_m3_thin",
    "at": [
-    -30.4,
+    -20.4,
     38.2,
     6.25
    ],
@@ -812,7 +822,7 @@
    "kind": "nut",
    "catalog": "nut_m3_thin",
    "at": [
-    30.4,
+    20.4,
     38.2,
     6.25
    ],
@@ -1022,9 +1032,9 @@
    "kind": "esc",
    "catalog": "bbb_ant_esc_rvrn2",
    "at": [
-    -7.0,
-    14.75,
-    21.75
+    11.4,
+    0,
+    11.15
    ],
    "rot": [
     0,
@@ -1032,7 +1042,7 @@
     90
    ],
    "retained": "kapton",
-   "label": "BBB weapon ESC on the deck under the vert_mod shell, beside the phase-lead duct"
+   "label": "BBB weapon ESC on the Malenki"
   },
   {
    "id": "power_switch",
@@ -1538,44 +1548,42 @@
   },
   {
    "id": "bolt_xl",
-   "designation": "M3x20",
+   "designation": "M3x12",
    "at": [
-    -11.5,
+    -31.5,
     38.2,
     6.25
    ],
    "dir": [
-    -1.0,
+    1.0,
     0.0,
     0.0
    ],
    "through": [
+    "side_l",
     "chassis",
-    "vert_mod",
-    "side_l"
+    "vert_mod"
    ],
    "threads_into": "nut_xl",
-   "head": "countersunk",
+   "head": "button",
    "hole": {
     "d": 3.0,
-    "length": 20.0,
-    "head": "csk",
-    "head_std": "DIN 7991",
-    "head_dk": 6.0,
-    "head_k": 1.86,
+    "length": 12.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 5.7,
+    "head_k": 1.65,
     "clearance_d": 3.4,
     "into": "through",
     "side": "head",
-    "csk_angle": 90.0,
-    "csk_d": 6.3,
-    "csk_depth": 1.45,
-    "sink": 0.0,
-    "grip": 18.0
+    "cbore_d": 6.1,
+    "cbore_depth": 0.0,
+    "grip": 10.2
    },
    "tool": "hex2",
    "removable": true,
    "material": "aluminium",
-   "reason": "rear cross bolt is a shear pin through the pod crossbar, the chassis tabs and the module prongs: it locates the module and ties the pod's rear (nut captive in the pod land); the 4 M2 into the columns clamp the deck face"
+   "reason": "rear cross bolt is a shear pin through the pod crossbar, the chassis tabs and the module prongs: it locates the module and ties the pod's rear (nut captive in the module prong); the 4 M2 into the columns clamp the deck face"
   },
   {
    "id": "bolt_sr0",
@@ -1695,44 +1703,42 @@
   },
   {
    "id": "bolt_xr",
-   "designation": "M3x20",
+   "designation": "M3x12",
    "at": [
-    11.5,
+    31.5,
     38.2,
     6.25
    ],
    "dir": [
-    1.0,
+    -1.0,
     0.0,
     0.0
    ],
    "through": [
+    "side_r",
     "chassis",
-    "vert_mod",
-    "side_r"
+    "vert_mod"
    ],
    "threads_into": "nut_xr",
-   "head": "countersunk",
+   "head": "button",
    "hole": {
     "d": 3.0,
-    "length": 20.0,
-    "head": "csk",
-    "head_std": "DIN 7991",
-    "head_dk": 6.0,
-    "head_k": 1.86,
+    "length": 12.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 5.7,
+    "head_k": 1.65,
     "clearance_d": 3.4,
     "into": "through",
     "side": "head",
-    "csk_angle": 90.0,
-    "csk_d": 6.3,
-    "csk_depth": 1.45,
-    "sink": 0.0,
-    "grip": 18.0
+    "cbore_d": 6.1,
+    "cbore_depth": 0.0,
+    "grip": 10.2
    },
    "tool": "hex2",
    "removable": true,
    "material": "aluminium",
-   "reason": "rear cross bolt is a shear pin through the pod crossbar, the chassis tabs and the module prongs: it locates the module and ties the pod's rear (nut captive in the pod land); the 4 M2 into the columns clamp the deck face"
+   "reason": "rear cross bolt is a shear pin through the pod crossbar, the chassis tabs and the module prongs: it locates the module and ties the pod's rear (nut captive in the module prong); the 4 M2 into the columns clamp the deck face"
   },
   {
    "id": "bolt_m0",
@@ -2006,9 +2012,9 @@
   },
   {
    "a": "wesc",
-   "b": "chassis",
+   "b": "rxesc",
    "method": "tape",
-   "reason": "weapon ESC taped to the deck top under the vert_mod shell; it only carries its own weight"
+   "reason": "weapon ESC kapton-wrapped onto the Malenki; it only carries its own weight"
   },
   {
    "a": "power_switch",
@@ -2073,7 +2079,29 @@
    "to": "weapon_motor_stator.phases",
    "awg": 22,
    "kind": "motor",
-   "slack_mm": 10
+   "slack_mm": 10,
+   "via": [
+    [
+     -15.9,
+     0,
+     15.25
+    ],
+    [
+     -15.25,
+     0,
+     21.25
+    ],
+    [
+     -15.25,
+     37.7,
+     21.25
+    ],
+    [
+     -15.25,
+     39.7,
+     25.75
+    ]
+   ]
   }
  ],
  "allow_overlap": [
@@ -2227,6 +2255,42 @@
       ],
       "r": 5.0,
       "reason": "ELVRN3.0 Alt chassis Cut-Extrude2: the 1 mm base-panel rebate lip under the 2 mm wall, as in the STEP"
+     },
+     {
+      "near": [
+       24.0,
+       0,
+       17.25
+      ],
+      "r": 4.0,
+      "reason": "ELVRN3.0 Alt chassis Cut-Extrude6 / Sketch20: the switch slot and its pilots sit 0.1 mm off the deck lattice window (STEP: window edge x 21.9, slot x 22.0)"
+     },
+     {
+      "near": [
+       24.0,
+       -7.5,
+       17.25
+      ],
+      "r": 4.0,
+      "reason": "ELVRN3.0 Alt chassis Cut-Extrude6 / Sketch20: the switch slot and its pilots sit 0.1 mm off the deck lattice window (STEP: window edge x 21.9, slot x 22.0)"
+     },
+     {
+      "near": [
+       24.0,
+       7.5,
+       17.25
+      ],
+      "r": 4.0,
+      "reason": "ELVRN3.0 Alt chassis Cut-Extrude6 / Sketch20: the switch slot and its pilots sit 0.1 mm off the deck lattice window (STEP: window edge x 21.9, slot x 22.0)"
+     },
+     {
+      "near": [
+       17.9,
+       0,
+       17.25
+      ],
+      "r": 4.0,
+      "reason": "ELVRN3.0 Alt chassis Cut-Extrude6 / Sketch20: the switch slot and its pilots sit 0.1 mm off the deck lattice window (STEP: window edge x 21.9, slot x 22.0)"
      }
     ]
    },

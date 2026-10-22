@@ -11,7 +11,7 @@ from robocad.geom import _cyl, _S, _U, _box, _solid
 from . import chassis as ch, side_panel as sp, vert_mod as vm
 from .fasteners import cutters
 from .params_chassis import HX, REBATE, POSTS, END_POSTS, TAP_D, WALL, AXLE_Z, AXLE_Y, IN_X, KEY_R, HOLE_D
-from .params_drive import FLOOR_LIFT, HUB_X0, TYRE_X0, WY, WZ, DISC_X, SPIDER_X, PROP_X0, PROP_LEN, PROP_FLANGE_X1, SHAFT_D, BRG, BRG_X0, UP_IN, UP_T, HUB_LEN
+from .params_drive import FLOOR_LIFT, HUB_X0, TYRE_X0, WY, WZ, DISC_X, SPIDER_X, PROP_X0, PROP_LEN, PROP_FLANGE_X1, SHAFT_D, MOTOR_BASE_X, BASE_SKIN, BRG, BRG_X0, UP_IN, UP_T, HUB_LEN
 from .params_hw import BASE_T, BASE_CSK_D, SO_LEN, SO_D, PLATE_W, PLATE_H, BACK_T, FRONT_T, PROP_D, FH_CLR, FRONT_HUB_TRIM
 
 _REVRON_SRC = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "revron", "src"))
@@ -61,7 +61,7 @@ def prop_mount():
 
 def wshaft():
     """BE1806 shaft from the bell face through disc, spider and prop mount into the MF85 inner race."""
-    return _cyl(SHAFT_D / 2, DISC_X[0], BRG_X0 + BRG[2], (WY, WZ), "x")
+    return _cyl(SHAFT_D / 2, -UP_IN, BRG_X0 + BRG[2], (WY, WZ), "x")   # from inside the stator (its bearings) to the MF85
 
 
 def bearing():

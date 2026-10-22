@@ -54,7 +54,7 @@ def test_side_panel_is_one_solid_and_mirrors():
 
 
 def test_side_crossbar_behind_tyre():
-    assert S.CROSS_Y[0] >= C.AXLE_Y + D.TYRE_R
+    assert S.CROSS_Y[0] >= C.AXLE_Y + D.TYRE_R and S.LAND_Y0 >= C.AXLE_Y + S.HUB_R
 
 
 def test_vert_mod_prongs_in_tab_gap():

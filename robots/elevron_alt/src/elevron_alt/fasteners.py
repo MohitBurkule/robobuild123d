@@ -12,12 +12,13 @@ from .params_chassis import (HX, IN_X, WALL, CH_H, AXLE_Y, AXLE_Z, POSTS, END_PO
 from .params_drive import FLOOR_LIFT, WY, WZ, UP_IN, UP_T, MOTOR_SINK
 from .params_hw import BASE_T, BACK_T, M2, M3
 from .params_side import PLATE_X, CROSS_LAND
-from .params_vert import DECK_TOP, VM_T, MOTOR_PCD_R, MOTOR_PCD_PHASE, N_MOTOR_SCREWS
+from .params_vert import DECK_TOP, VM_T, MOTOR_PCD_R, MOTOR_PCD_PHASE, N_MOTOR_SCREWS, PRONG_X
 
 import math
 
 INSERT_LEN = 4.0
 NUT_FACE_X = IN_X - BOSS_IN + fc.nut(M3, "thin")[1]   # head-side face of the boss nut (it sits on the pocket floor from inside)
+CSK_SINK = 0.1                 # the dump's Chamfer5 seat (R3.1) is a hair under the DIN 7991 head (R3.0 + clearance): head sits 0.1 deep
 SCREW_MATERIAL = "aluminium"   # 7075 screws throughout, as Revron (mass)
 OPEN = 1e3   # head clearance that opens the head recess right through the part (a driver path)
 
@@ -37,12 +38,13 @@ class Joint:
     tool: str = "hex1.5"
     extra: dict = field(default_factory=dict)
     head_clear: float = 10.0
+    sink: float = 0.0
 
     def tool_and_record(self):
         """Head-side cutter and record (Revron convention: the head side is cut and recorded; the thread side is the
         host's own feature: a heat-set bore, nut pocket, tapped standoff or the motor's tapped base)."""
         return hole_tool(self.at, self.axis, self.fastener, head=self.head, into="through", grip=self.grip, side="head",
-                         head_clear=self.head_clear, cbore=None if self.head == "csk" else 0.0)   # heads seat on the face, no counterbore
+                         head_clear=self.head_clear, cbore=None if self.head == "csk" else 0.0, sink=self.sink)   # heads seat on the face, no counterbore
 
 
 def joints():
@@ -57,12 +59,10 @@ def joints():
                              f"nut_s{n}{k}", [f"side_{n}", "chassis"], "hex2"))
         out.append(Joint(f"bolt_a{n}", f"M{M3:g}x12", "cap", (s * (IN_X - BACK_T), -AXLE_Y, AXLE_Z), (s, 0, 0), None, BACK_T, "tapped",   # front axle stack
                          f"so_{n}", [f"bplate_{n}", "chassis", f"fplate_{n}"], "hex2.5"))
-        x_in = TAB_X_OUT - TAB_PITCH - TAB_W                    # inner face of the inner tab: head side, driven from the rear gap between the tabs
-        out.append(Joint(f"bolt_x{n}", f"M{M3:g}x20", "csk",   # head in the dump's Chamfer5 lead-in (a 90 deg seat)
-                          (s * x_in, HY + TAB_HOLE_DY, TAB_HOLE_Z), (s, 0, 0), None, TAB_X_OUT - x_in, "nut",
-                         f"nut_x{n}", ["chassis", "vert_mod", f"side_{n}"], "hex2",
+        out.append(Joint(f"bolt_x{n}", f"M{M3:g}x12", "button", (s * (TAB_X_OUT + CROSS_LAND), HY + TAB_HOLE_DY, TAB_HOLE_Z), (-s, 0, 0), f"side_{n}",
+                         TAB_X_OUT + CROSS_LAND - PRONG_X[0] - fc.nut(M3, "thin")[1], "nut", f"nut_x{n}", [f"side_{n}", "chassis", "vert_mod"], "hex2",
                          {"reason": "rear cross bolt is a shear pin through the pod crossbar, the chassis tabs and the module prongs: it locates the module and "
-                                    "ties the pod's rear (nut captive in the pod land); the 4 M2 into the columns clamp the deck face"}))
+                                    "ties the pod's rear (nut captive in the module prong); the 4 M2 into the columns clamp the deck face"}, OPEN))
     for i in range(N_MOTOR_SCREWS):                               # BE1806 base through the left upright
         a = math.radians(MOTOR_PCD_PHASE + 360 * i / N_MOTOR_SCREWS)
         out.append(Joint(f"bolt_m{i}", f"M{M2:g}x5", "cap", (-(UP_IN + UP_T), WY + MOTOR_PCD_R * math.cos(a), WZ + MOTOR_PCD_R * math.sin(a)), (1, 0, 0),

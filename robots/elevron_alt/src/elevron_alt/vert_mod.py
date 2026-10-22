@@ -9,7 +9,9 @@ from shapely.ops import unary_union
 
 from robocad.geom import _box, _cyl, _U, _S, _ext, _mirror_x, _solid
 from .chassis import halfspace
-from .params_chassis import TAB_HOLE_DY, TAB_HOLE_Z, HOLE_D, HY, TAB_LEN, EDGE_CH
+from .params_chassis import TAB_HOLE_DY, TAB_HOLE_Z, HOLE_D, HY, TAB_LEN, EDGE_CH, WIRE_SLOT_X, WIRE_SLOT_L, HEX, HEX_PHASE, M3
+from .params_side import NUT_FIT
+from robot.cad import fastener_catalog as fc
 from .params_vert import *  # noqa: F401,F403
 
 
@@ -54,6 +56,9 @@ def upright_profile():
     axis (it stands on the shell; nothing of it is under the shell top)."""
     run = [(SHELL_Y[0], SHELL_FRONT), (SHELL_Y[1], SHELL_TOP), (SHELL_Y[1], DECK_TOP)]
     hull = Polygon(run).union(Point(WY, WZ).buffer(BOSS_R)).convex_hull
+    y0, z0, k = _slope()
+    inside = Polygon([(y0, z0), (SHELL_Y[1] - VM_T, z0 + k * (SHELL_Y[1] - VM_T - y0)), (SHELL_Y[1] - VM_T, -BIG), (y0, -BIG)])
+    hull = hull.difference(inside)                          # nothing of the upright inside the shell: it stands on the slope and the bulkhead
     rear = HY + TAB_LEN                                     # stand clear of the chassis: its deck top and the rear chamfer plane over the tabs
     chassis = Polygon([(-BIG, DECK_TOP), (HY - EDGE_CH, DECK_TOP), (rear, DECK_TOP - EDGE_CH - TAB_LEN), (rear, -BIG), (-BIG, -BIG)])
     return hull.difference(chassis)
@@ -63,7 +68,11 @@ def upright(sx):
     """Upright plate at |X| UP_IN .. UP_IN + UP_T on side sx, with the motor PCD (left) or the bearing seat (right)."""
     prof = upright_profile()
     win = prof.buffer(-UP_RIM).difference(Point(WY, WZ).buffer(BOSS_R)).difference(sbox(-BIG, 0, BIG, SHELL_FRONT + VM_T))
-    u = _ext(prof.difference(win.buffer(-UP_WIN_R).buffer(UP_WIN_R)), "yz", UP_IN, UP_IN + UP_T)
+    web = _ext(prof.difference(win.buffer(-UP_WIN_R).buffer(UP_WIN_R)), "yz", UP_IN, UP_IN + UP_WEB)
+    thick = Point(WY, WZ).buffer(BOSS_R if sx < 0 else BRG_SEAT_R + 2 * VM_T)   # motor side: the can pocket; bearing side: the MF85 seat
+    if sx < 0:   # the motor side also wraps the lead slot
+        thick = thick.union(sbox(LEAD_Y - MOTOR_CLR - VM_T, WZ - LEAD_W / 2 - VM_T, WY, WZ + LEAD_W / 2 + VM_T))
+    u = _U(web, _ext(prof.intersection(thick), "yz", UP_IN, UP_IN + UP_T))   # full thickness only round the axis and the lead slot
     if sx > 0:
         cut = _cyl(BRG_SEAT_R, UP_IN - 1, UP_IN + UP_T + 1, (WY, WZ), "x")
     else:   # the can's base sinks MOTOR_SINK into the upright; its phase leads leave through a slot under it
@@ -74,18 +83,30 @@ def upright(sx):
 
 
 def duct():
-    """Phase-lead duct on the left upright's inner face: a box tube from the lead tips back through the bulkhead into
-    the shell, where the weapon ESC sits (wire.exterior_support)."""
+    """Phase-lead duct: from the chassis deck wire slot (Cut-Extrude17) along the deck under the shell, out through the
+    bulkhead to the forward-pointing lead stub in the left upright's pocket. Open at the bottom onto the deck; the
+    walls hold the lead on both sides (wire.exterior_support). Returns (walls, passage)."""
     w, h = DUCT
-    y0, y1 = SHELL_Y[1] - VM_T - 1, LEAD_Y
-    outer = _box(-UP_IN - VM_T, -UP_IN + w + VM_T, SHELL_Y[1] - VM_T, y1, WZ - h / 2 - VM_T, WZ + h / 2 + VM_T)
-    return outer, _box(-UP_IN - 1, -UP_IN + w, y0, y1 + 1, WZ - h / 2, WZ + h / 2)
+    x1 = -UP_IN                                             # flush with the upright web's inner face (no sliver of web beside it)
+    x0 = x1 - w                                             # over the deck wire slot, inside the shell side wall
+    y0, yb, y1 = -WIRE_SLOT_L / 2, SHELL_Y[1] - VM_T, LEAD_Y
+    z1 = WZ + LEAD_W / 2
+    low = _box(x0 - VM_T, x1 + VM_T, y0 - VM_T, yb, DECK_TOP, DECK_TOP + h + VM_T)   # under the shell, inside its side wall
+    rise = _box(x0 - VM_T, x1 + VM_T, yb, y1, DECK_TOP, z1 + VM_T)                  # bulkhead to the lead stub: closed round
+    hole = _U(_box(x0, x1, y0, yb + 1, 0, DECK_TOP + h), _box(x0, x1, yb - 1, y1 + 1, 0, z1))   # open below: the deck / nothing
+    return _U(low, rise), hole
 
 
 def prongs():
     """Prongs from the deck down between the chassis tabs, on the cross-bolt line."""
-    p = _box(*PRONG_X, *PRONG_Y, 0, DECK_TOP + VM_T)
-    p = _S(p, _cyl(HOLE_D / 2, PRONG_X[0] - 1, PRONG_X[1] + 1, (HY + TAB_HOLE_DY, TAB_HOLE_Z), "x"))
+    p = _U(_box(*PRONG_X, *PRONG_Y, 0, DECK_TOP + VM_T),
+           _box(UP_IN, PRONG_X[1], *PRONG_Y, DECK_TOP, DECK_TOP + VM_T))   # bridge to the upright web, above the chassis rear chamfer
+    y, z = HY + TAB_HOLE_DY, TAB_HOLE_Z
+    af, m = fc.nut(M3, "thin")
+    r = (af + NUT_FIT) / math.sqrt(3)
+    nut = _ext(Polygon([(y + r * math.cos(math.radians(a)), z + r * math.sin(math.radians(a))) for a in range(HEX_PHASE, 360, 360 // HEX)])
+               .union(sbox(y - (af + NUT_FIT) / 2, -1, y + (af + NUT_FIT) / 2, z)), "yz", PRONG_X[0] - 1, PRONG_X[0] + m)   # cross-bolt nut, dropped in from below
+    p = _S(p, _cyl(HOLE_D / 2, PRONG_X[0] - 1, PRONG_X[1] + 1, (y, z), "x"), nut)
     return _U(p, _mirror_x(p))
 
 

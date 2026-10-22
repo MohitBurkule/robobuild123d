@@ -34,7 +34,11 @@ def skin_x(z, outer=False):
 def skin():
     """Battered outer wall outside the rear wheel, SP_T thick."""
     z0, z1 = SKIN_BOT_Z, SKIN_TOP[1]
-    return _xz_prism([(skin_x(z1), z1), (skin_x(z1, True), z1), (skin_x(z0, True), z0), (skin_x(z0), z0)], *SKIN_Y)
+    yd = HY + TAB_HOLE_DY - TUNNEL_R - SP_T                 # the skin runs down with the crossbar from just ahead of the head bore
+    fore = _xz_prism([(skin_x(z1), z1), (skin_x(z1, True), z1), (skin_x(z0, True), z0), (skin_x(z0), z0)], SKIN_Y[0], yd)
+    z0 = CROSS_Z[0]
+    aft = _xz_prism([(skin_x(z1), z1), (skin_x(z1, True), z1), (skin_x(z0, True), z0), (skin_x(z0), z0)], yd, SKIN_Y[1])
+    return _U(fore, aft)
 
 
 def front_wall():
@@ -44,7 +48,8 @@ def front_wall():
 
 def crossbar():
     """Rear crossbar from the outer chassis tab's face out to the skin's outer face, behind the rear tyre."""
-    return _box(TAB_X_OUT, skin_x(CROSS_Z[0], True), *CROSS_Y, *CROSS_Z)
+    land = _box(TAB_X_OUT, TAB_X_OUT + CROSS_LAND, LAND_Y0, CROSS_Y[1], *CROSS_Z)   # the cross-bolt head's seat, inboard of the tyre
+    return _U(land, _box(TAB_X_OUT, skin_x(CROSS_Z[0], True), *CROSS_Y, *CROSS_Z))
 
 
 def fork():
@@ -57,14 +62,8 @@ def fork():
 def cuts():
     """Head-side holes of the right pod (fasteners table): the two countersunk boss screws and the cross bolt."""
     from .fasteners import cutters
-    from robot.cad import fastener_catalog as fc
-    y, z = HY + TAB_HOLE_DY, TAB_HOLE_Z
-    m = fc.nut(NUT_D, "thin")[1]
-    pts = [(y + NUT_R * math.cos(math.radians(a)), z + NUT_R * math.sin(math.radians(a))) for a in range(HEX_PHASE, 360, 360 // HEX)]
-    entry = sbox(CROSS_Y[0] - 1, z - NUT_R * math.sqrt(3) / 2, y, z + NUT_R * math.sqrt(3) / 2)   # nut slides in from the front (the tyre gap)
-    hexa = _ext(Polygon(pts).union(entry), "yz", TAB_X_OUT - 1, TAB_X_OUT + m)
-    bolt = _cyl(HOLE_D / 2, TAB_X_OUT - 1, TAB_X_OUT + CROSS_LAND + 1, (y, z), "x")
-    return _U(cutters("side_r"), hexa, bolt)   # cross-bolt nut captive in the land, against the outer tab
+    tunnel = _cyl(TUNNEL_R, TAB_X_OUT + CROSS_LAND, skin_x(CROSS_Z[0], True) + 1, (HY + TAB_HOLE_DY, TAB_HOLE_Z), "x")   # head bore out through the skin
+    return _U(cutters("side_r"), tunnel)   # boss screws and the cross bolt
 
 
 def side_panel(side=1):

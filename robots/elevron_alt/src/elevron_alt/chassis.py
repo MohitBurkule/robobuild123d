@@ -56,6 +56,9 @@ def cavity():
     keep.append(_both(_box(IN_X - BOSS_IN, IN_X, -(BOSS_PITCH / 2 + BOSS_R), BOSS_PITCH / 2 + BOSS_R, AXLE_Z - BOSS_R, AXLE_Z + BOSS_R)))
     pocket = _S(_box(-IN_X, IN_X, -IN_Y, IN_Y, -1, DECK_Z), *keep)
     rebate = _box(-(HX - REBATE), HX - REBATE, -(HY - REBATE), HY - REBATE, -1, WALL)
+    for sx in (-1, 1):   # front corners concentric with Fillet1 (STEP: the lip stays a wall thick round the corner)
+        cx, cy = sx * (HX - CORNER_R), -(HY - CORNER_R)
+        rebate = _S(rebate, _S(_box(cx, cx + sx * CORNER_R, cy, cy - CORNER_R, -1, WALL), _cyl(CORNER_R - REBATE, -1, WALL, (cx, cy), "z")))
     return _U(pocket, rebate)
 
 
