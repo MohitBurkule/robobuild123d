@@ -8,7 +8,7 @@ from functools import lru_cache
 
 from .params import (ARC_N, GEO_EPS, FK_PIN_ANG, FK_PIN_DIST, FK_X, FLOOR_Z, LUG_SB_R, RAMP_REACH, SA, SB, WG_BAY_Z, WG_BOSS_GAP, WG_BORES, WG_BOSS_R, WG_FAR,
                      WG_CHAMFER_END, WG_FLANK_R, WG_MERGE_EPS, WG_MOUNT_GAP, WG_NOTCH, WG_PIN_SWING, WG_RAMP_DEG, WG_RING_CHAMFER_Y,
-                     WG_SA_R, WG_SKIN_RUN, WG_SLIT_W, WG_SKIN_T, WG_SLAB, WG_TAB_FILM, WG_TAPER_DEG, WG_TOE_CHAMFER, WG_TOP_Z, WG_X0)
+                     WG_SA_R, WG_SKIN_RUN, WG_SLIT_W, WG_SKIN_T, WG_SLAB, WG_TAB_FILM, WG_TAB_LEAN_DEG, WG_TAB_LEAN_FOOT, WG_TAPER_DEG, WG_TOE_CHAMFER, WG_TOP_Z, WG_X0)
 from .common import _I, _S, _U, _arc, _b, _box, _cyl, _ext, _mirror_x
 
 _DOT = lambda a, c: a[0] * c[0] + a[1] * c[1]   # noqa: E731
@@ -202,11 +202,27 @@ def _kidney_entry(xc, xt):
     return kid, ent
 
 
+def _tab_lean(cut):
+    """The sliver between the tab's notch wall (the mount boss offset: near vertical) and the STEP's wall, which leans WG_TAB_LEAN_DEG off
+    vertical from the notch's foot (the bay ledge less the entry notch depth) up to the wall's top vertex."""
+    from shapely.geometry import Polygon
+    z0 = WG_BAY_Z - WG_NOTCH["depth"]
+    ring = list(cut.exterior.coords)
+    walls = [(p, q) for p, q in zip(ring, ring[1:]) if min(p[1], q[1]) < z0 < max(p[1], q[1]) and 3 * abs(q[0] - p[0]) < abs(q[1] - p[1])]   # steep edges crossing the foot level
+    y_at = lambda p, q: p[0] + (q[0] - p[0]) * (z0 - p[1]) / (q[1] - p[1])                      # noqa: E731
+    p, q = max(walls, key=lambda e: y_at(*e))                                                  # the outermost: the notch wall
+    top = max(p, q, key=lambda v: v[1])
+    y0 = y_at(p, q)
+    lean = lambda z: y0 + WG_TAB_LEAN_FOOT + (z - z0) * math.tan(math.radians(WG_TAB_LEAN_DEG))      # noqa: E731
+    return Polygon([(y0, z0), (y0 + WG_TAB_LEAN_FOOT, z0), (lean(top[1]), top[1]), top])
+
+
 def _tab_poly(mount):
     """Nose tab: the bay's ramp side with the weapon mount's boss (plus the WG_MOUNT_GAP clearance) taken out; films thinner than a TPU wall are
     dropped by reconstruction (the surviving body keeps its own sharp tips)."""
     from .mount import _mount_clip, _mount_profile
     cut = _bay_poly().difference(_mount_profile(mount).intersection(_mount_clip()).buffer(WG_BOSS_GAP, join_style=2))
+    cut = cut.difference(_tab_lean(cut))
     return cut.intersection(cut.buffer(-WG_TAB_FILM, join_style=2).buffer(WG_TAB_FILM + WG_MERGE_EPS, join_style=2)) if WG_TAB_FILM else cut
 
 
