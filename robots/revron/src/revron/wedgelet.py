@@ -55,7 +55,7 @@ def _nose_polys():
     """(Q, Qz): the wedge between floor, ramp, K and T up to the cheek top (SB's ring joins it), and its part below the nose top."""
     g = _wg()
     off = g["t"] - _DOT(g["nt"], SB)                                                      # signed distance SB -> T
-    half = math.sqrt(WG_BOSS_R ** 2 - off ** 2)
+    half = math.sqrt(max(WG_BOSS_R ** 2 - off ** 2, 0))                                   # T clear of the ring: it just touches it
     tc = (SB[0] + off * g["nt"][0] - half * g["dn"][0], SB[1] + off * g["nt"][1] - half * g["dn"][1])   # T meets the ring round SB (upper point)
     base = [(SB[0], FLOOR_Z), g["toe"]]
     top = (RAMP_REACH - (g["z_nose"] - FLOOR_Z) / math.tan(math.radians(WG_RAMP_DEG)), g["z_nose"])
@@ -76,7 +76,7 @@ def _flank():
     g = _wg()
     th = math.degrees(math.atan2(g["rh"][1], g["rh"][0]))
     r2 = WG_SA_R + WG_FLANK_R
-    phi = th - math.degrees(math.acos((g["k"] + WG_FLANK_R - _DOT(g["rh"], SA)) / r2))   # direction SA -> c2
+    phi = th - math.degrees(math.acos(min(1, (g["k"] + WG_FLANK_R - _DOT(g["rh"], SA)) / r2)))   # direction SA -> c2 (K out of reach: the arcs degenerate to the bulb)
     c2 = (SA[0] + r2 * math.cos(math.radians(phi)), SA[1] + r2 * math.sin(math.radians(phi)))
     return _arc(SA, WG_SA_R, 180, phi, ARC_N)[:-1] + _arc(c2, WG_FLANK_R, phi - 180, -WG_RAMP_DEG, ARC_N)
 

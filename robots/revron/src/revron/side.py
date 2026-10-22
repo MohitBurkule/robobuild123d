@@ -81,7 +81,7 @@ def _nose_notch(b):   # cut from the fused wall + nose
     cx, cy = SP_FRONT["c"]
     z0, z1 = SP_NOSE_Z[0] - SP_NOSE_OVER, SP_NOSE_Z[1] + SP_NOSE_OVER
     post_r = SA[0] - SP_NOSE_Y0                       # the post is as wide as the nose is long ahead of the axis: its front side is flush with the nose front face
-    y_post = SA[0] + post_r                           # the post's rear edge = the pocket B's rear wall
+    y_post = min(SA[0] + post_r, SB[0] - 2 * n["r_round"])   # the post's rear edge = the pocket B's rear wall (always room left for its rounded corner)
     a = _box(n["x_post"], cx + SP_NOSE_OVER, cy - SP_NOSE_OVER, y_post, z0, z1)
     xb = lambda z: n["x_b"] + (z - FLOOR_Z) * math.tan(math.radians(n["draft_deg"]))   # the pocket's end wall leans in towards its roof
     xz = [(cx + SP_NOSE_OVER, z0), (xb(z0), z0), (xb(n["z_top"]), n["z_top"]), (cx + SP_NOSE_OVER, n["z_top"])]
