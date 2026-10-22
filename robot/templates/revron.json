@@ -374,18 +374,6 @@
  "can_run_inverted": false,
  "allow_overlap": [
   {
-   "a": "tub",
-   "b": "mount_l",
-   "max_depth_mm": 0.8,
-   "reason": "original RVRN 2.0: the STEP mount notch corners (1 mm chamfer) interpenetrate the square tub tab"
-  },
-  {
-   "a": "tub",
-   "b": "mount_r",
-   "max_depth_mm": 0.8,
-   "reason": "original RVRN 2.0: the STEP mount notch corners (1 mm chamfer) interpenetrate the square tub tab"
-  },
-  {
    "a": "belt_l",
    "b": "side_l",
    "max_depth_mm": 0.3,
@@ -821,38 +809,38 @@
     "deviations": [
      {
       "near": [
-       16.8,
+       16.9,
        44.5,
        23.5
       ],
-      "r": 2.0,
+      "r": 3.4210246816812817,
       "reason": "STEP counterbore ends in a 45 deg lead-in cone (r2.25 at |X| 17.4 down to r1.1 at 16.4); we cut a flat floor at CB_FLOOR_X instead: the inferred M2x8 button head needs a flat seat (fastener_seat.head_bearing) and its tip must bite 1.7 mm of the 2 mm stator base (fastener.engagement; the STEP floor gives 1.25)"
      },
      {
       "near": [
-       16.8,
+       16.9,
        38.5,
        29.5
       ],
-      "r": 2.0,
+      "r": 3.4210246816812817,
       "reason": "STEP counterbore ends in a 45 deg lead-in cone (r2.25 at |X| 17.4 down to r1.1 at 16.4); we cut a flat floor at CB_FLOOR_X instead: the inferred M2x8 button head needs a flat seat (fastener_seat.head_bearing) and its tip must bite 1.7 mm of the 2 mm stator base (fastener.engagement; the STEP floor gives 1.25)"
      },
      {
       "near": [
-       16.8,
+       16.9,
        32.5,
        23.5
       ],
-      "r": 2.0,
+      "r": 3.4210246816812817,
       "reason": "STEP counterbore ends in a 45 deg lead-in cone (r2.25 at |X| 17.4 down to r1.1 at 16.4); we cut a flat floor at CB_FLOOR_X instead: the inferred M2x8 button head needs a flat seat (fastener_seat.head_bearing) and its tip must bite 1.7 mm of the 2 mm stator base (fastener.engagement; the STEP floor gives 1.25)"
      },
      {
       "near": [
-       16.8,
+       16.9,
        38.5,
        17.5
       ],
-      "r": 2.0,
+      "r": 3.4210246816812817,
       "reason": "STEP counterbore ends in a 45 deg lead-in cone (r2.25 at |X| 17.4 down to r1.1 at 16.4); we cut a flat floor at CB_FLOOR_X instead: the inferred M2x8 button head needs a flat seat (fastener_seat.head_bearing) and its tip must bite 1.7 mm of the 2 mm stator base (fastener.engagement; the STEP floor gives 1.25)"
      }
     ]
@@ -3302,7 +3290,7 @@
    "head": "countersunk",
    "material": "aluminium",
    "at": [
-    -13.4,
+    -13.28,
     30.5,
     5.5
    ],
@@ -3326,8 +3314,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 6.4,
-    "csk_depth": 1.6,
+    "csk_d": 6.2,
+    "csk_depth": 1.5,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -3342,7 +3330,7 @@
    "reason": "M3x14 CSK alu (STEP FS9 M3x12): through mount and lug, 12 mm bites only 3.9 mm of the 15 mm standoff",
    "material": "aluminium",
    "at": [
-    -13.4,
+    -13.28,
     40.5,
     4.5
    ],
@@ -3367,8 +3355,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 6.4,
-    "csk_depth": 1.6,
+    "csk_d": 6.2,
+    "csk_depth": 1.5,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -3500,7 +3488,7 @@
    "head": "countersunk",
    "material": "aluminium",
    "at": [
-    13.4,
+    13.28,
     30.5,
     5.5
    ],
@@ -3524,8 +3512,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 6.4,
-    "csk_depth": 1.6,
+    "csk_d": 6.2,
+    "csk_depth": 1.5,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -3540,7 +3528,7 @@
    "reason": "M3x14 CSK alu (STEP FS9 M3x12): through mount and lug, 12 mm bites only 3.9 mm of the 15 mm standoff",
    "material": "aluminium",
    "at": [
-    13.4,
+    13.28,
     40.5,
     4.5
    ],
@@ -3565,8 +3553,8 @@
     "into": "through",
     "side": "head",
     "csk_angle": 90.0,
-    "csk_d": 6.4,
-    "csk_depth": 1.6,
+    "csk_d": 6.2,
+    "csk_depth": 1.5,
     "sink": 0.0,
     "grip": 4.0
    },
@@ -3715,7 +3703,7 @@
     "head_std": "ISO 7380-1",
     "head_dk": 3.5,
     "head_k": 1.3,
-    "clearance_d": 2.4,
+    "clearance_d": 2.2,
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
@@ -3753,7 +3741,7 @@
     "head_std": "ISO 7380-1",
     "head_dk": 3.5,
     "head_k": 1.3,
-    "clearance_d": 2.4,
+    "clearance_d": 2.2,
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
@@ -3791,7 +3779,7 @@
     "head_std": "ISO 7380-1",
     "head_dk": 3.5,
     "head_k": 1.3,
-    "clearance_d": 2.4,
+    "clearance_d": 2.2,
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
@@ -3829,7 +3817,7 @@
     "head_std": "ISO 7380-1",
     "head_dk": 3.5,
     "head_k": 1.3,
-    "clearance_d": 2.4,
+    "clearance_d": 2.2,
     "into": "through",
     "side": "head",
     "cbore_d": 4.5,
@@ -4656,6 +4644,12 @@
    "reason": "Base panel under the open floor, 5 M2 CSK into heat-sets"
   },
   {
+   "a": "weapon_motor_stator",
+   "b": "mount_r",
+   "method": "tape",
+   "reason": "INFERRED, not in the STEP (it has no wires): the original has no lead channel, so the 3 phase leads are taped flat along the RV03 lug; the optional lead groove (REVRON_LEAD_GROOVE=on) replaces the tape"
+  },
+  {
    "a": "top_panel",
    "b": "tub",
    "method": "glue",
@@ -4746,7 +4740,7 @@
      14.5
     ]
    ],
-   "exposed_reason": "original RV03 / RVRN 2.0 STEP has no lead channel: the 3 phase leads run over the lug and are kapton-taped flat to it (RV03 lug top, STEP); the optional lead groove (REVRON_LEAD_GROOVE=on) replaces the tape"
+   "exposed_reason": "INFERRED, not in the STEP (it has no wires): the original has no lead channel, so the 3 phase leads are taped flat along the RV03 lug; the optional lead groove (REVRON_LEAD_GROOVE=on) replaces the tape"
   },
   {
    "id": "w_rx_wesc",

@@ -20,7 +20,7 @@ def mating_parts():
     """The weapon mounts and side panels seat on the chassis: their own solids are cut out of it (the assembly relation, not a drawn shape)."""
     from .weapon import weapon_mount
     from .side import side_panel
-    return [weapon_mount("l", tub_cut=True), weapon_mount("r", tub_cut=True), side_panel(1, pin=False), side_panel(-1, pin=False)]
+    return [weapon_mount("l"), weapon_mount("r"), side_panel(1, pin=False), side_panel(-1, pin=False)]
 
 
 def chassis2():
