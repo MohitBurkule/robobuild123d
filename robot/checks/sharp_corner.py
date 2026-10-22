@@ -99,9 +99,11 @@ def tri_boxes(m):
     return T.min(axis=1), T.max(axis=1)
 
 
-def local_radius(m, p, t, window=4.0, boxes=None):
+def local_radius(m, p, t, window=4.0, boxes=None, bounded=False):
     """(radius mm, turn deg) of the concave corner at p (a point on or within ~0.5 mm of m), section normal to t.
-    None when the section has no outline there."""
+    None when the section has no outline there. bounded: the arc must end in straight tangent runs inside the window
+    on both sides (a real fillet / corner between faces); an arc that runs out of the window or is cut short by a long
+    facet still turning (a bore, a cylinder face, a coarse large-R surface) is not a blend: None."""
     import trimesh
 
     p, t = np.asarray(p, float), _unit(t)
@@ -139,10 +141,32 @@ def local_radius(m, p, t, window=4.0, boxes=None):
         return None
     lo = hi = c
     step = 1.5   # longest facet of a tessellated fillet
-    while lo - 1 >= 1 and sg * turn[lo - 2] > math.radians(0.5) and L[lo - 1] <= step:
+    straight = math.radians(0.5)
+
+    def kv(j):   # curvature at vertex j (1..len-2)
+        return abs(turn[j - 1]) / max(1e-9, min(L[j - 1], L[j]))   # a tangent vertex (half turn, one flat side) reads ~0.5
+
+    def same(j):   # vertex j continues the arc at c: same sign, short facets, and (bounded) about the same curvature
+        if not (sg * turn[j - 1] > straight and min(L[j - 1], L[j]) <= step):
+            return False
+        return not bounded or 0.4 <= kv(j) / max(kv(c), 1e-9) <= 2.5
+
+    while lo - 1 >= 1 and same(lo - 1):
         lo -= 1
-    while hi + 1 <= len(P) - 2 and sg * turn[hi] > math.radians(0.5) and L[hi] <= step:
+    while hi + 1 <= len(P) - 2 and same(hi + 1):
         hi += 1
+    if bounded:
+        # a blend ends inside the window on both sides: at a flat, a sharp turn or a change of curvature (a fillet into
+        # a larger arc). It does not if the arc runs out of the window on short facets (a bore, a cylinder face seen
+        # end-on) or stops only because a facet got long while the turn went on (a coarse large-R surface).
+        def ends(j, seg):
+            if j < 1 or j > len(P) - 2:
+                return L[seg] > step
+            if abs(turn[j - 1]) <= straight or sg * turn[j - 1] < 0:
+                return True
+            return not (0.4 <= kv(j) / max(kv(c), 1e-9) <= 2.5)
+        if not (ends(lo - 1, lo - 1) and ends(hi + 1, hi)):
+            return None
     tot = float(sg * turn[lo - 1:hi].sum())
     n = hi - lo + 1
     if n == 1:

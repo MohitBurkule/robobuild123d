@@ -172,3 +172,39 @@ def test_clean_drops_sliver_shells_and_diff_is_exact():
     assert c.is_watertight and abs(c.volume - box.volume) < 1e-6
     d = ref_diff.boolean_diff(box.copy(), dirty)
     assert d["method"].startswith("brep") and d["extra_mm3"] < 0.01 and d["missing_mm3"] < 0.01
+
+
+def test_copy_needs_provenance_evidence():
+    import trimesh
+
+    from robot.checks.reference_cad import copy_evidence, is_copy
+
+    def panel(n):   # a simple plate with an off-centre 2.2 bore, like the RV26 base panel
+        hole = trimesh.creation.cylinder(1.1, 3.0, sections=n)
+        hole.apply_translation((9.0, 3.0, 0))
+        return trimesh.creation.box((56, 30, 1.0)).difference(hole)
+    ref, reb = panel(96), panel(97)                                     # faithful rebuild: its own tessellation
+    c, h = is_copy(reb, ref)
+    assert c and h > 1e-3                                               # near-identical by Hausdorff ...
+    assert copy_evidence(None, reb, ref, h) == []                       # ... but no import evidence: not copied
+    c, h = is_copy(ref.copy(), ref)
+    assert c and copy_evidence(None, ref.copy(), ref, h)                # the reference's own tessellation is evidence
+
+
+def test_copy_evidence_from_build_code(tmp_path):
+    from robot.checks.reference_cad import MESH_READ
+    assert MESH_READ.search('m = trimesh.load("RV26_Base_Panel_1.stl")')
+    assert MESH_READ.search("with open(path / 'x.STEP') as f:") and not MESH_READ.search("PAD_R = 4.75")
+
+
+def test_silhouette_ignores_float_noise_in_thickness():
+    import trimesh
+
+    from robot.checks.reference_cad import silhouette_iou
+
+    a = trimesh.creation.box((20, 10, 0.9))
+    b = trimesh.creation.box((20, 10, 0.9))
+    b.vertices[:, 2] *= 0.89999962 / 0.9
+    for m in (a, b):
+        m.apply_translation((0, 0, 19.5 + 0.45))
+    assert min(silhouette_iou(a, b)) == 1.0

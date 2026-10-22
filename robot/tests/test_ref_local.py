@@ -110,3 +110,43 @@ def test_surf_face_samples_snap_to_reference():
     f = {"type": "surf", "box": np.array([4.9, -2, -2, 5.1, 2, 2]) * 1e-3}
     P = surf_samples(f, np.eye(4), ref)
     assert P is not None and np.allclose(P[:, 0], 5.0, atol=1e-6)
+
+
+def test_split_sphere_waivers_are_capped_as_their_union():
+    from robot.checks import reference_cad as rc
+    why = "the fork rails run through the TPU cheek (RV17 STEP has the tine interpenetrating it)"
+    one = {"deviations": [{"near": [25.25, 42.0, 5.3], "r": 6.0, "reason": why}]}
+    split = {"deviations": [{"near": [25.25, 39.5, 5.3], "r": 4.5, "reason": why}, {"near": [25.25, 44.5, 5.3], "r": 4.5, "reason": why}]}
+    assert rc.deviation_findings(one, "w") and len(rc.deviation_findings(split, "w")) == 2   # both halves waive nothing
+    assert "union" in rc.deviation_findings(split, "w")[0].message
+    assert rc._covered([25.25, 39.5, 5.3], split) is None
+    # two separate features (different reasons) or a same-reason pair inside the cap stay valid
+    two = {"deviations": [split["deviations"][0], dict(split["deviations"][1], reason="RV17 nose tab boss cut out for the mount")]}
+    assert not rc.deviation_findings(two, "w") and rc._covered([25.25, 39.5, 5.3], two)
+    near = {"deviations": [{"near": [0, 0, 0], "r": 2.0, "reason": why}, {"near": [0, 2.0, 0], "r": 2.0, "reason": why}]}
+    assert not rc.deviation_findings(near, "w")
+
+
+def _rounded_plate(r, q):
+    import trimesh
+    from shapely.geometry import box
+    return trimesh.creation.extrude_polygon(box(-10, -10, 10, 10).buffer(-r).buffer(r, quad_segs=q), 5.0)
+
+
+def test_radii_ignore_bores_and_cylinder_faces_at_any_density():
+    import trimesh
+    from robot.checks import ref_radii as R
+
+    def ring(n):
+        return trimesh.creation.cylinder(16.0, 6.0, sections=n).difference(trimesh.creation.cylinder(4.95, 8.0, sections=n))
+    assert R.radius_diffs(R.radius_pairs(ring(256), ring(72))) == []   # same B-rep, two tessellations: no "R14.9 vs 12.8"
+
+
+def test_radii_tessellation_independent_but_catch_real_blend_change():
+    from robot.checks import ref_radii as R
+    for qa, qb in ((16, 3), (2, 16)):
+        assert R.radius_diffs(R.radius_pairs(_rounded_plate(1.0, qa), _rounded_plate(1.0, qb))) == []
+    assert R.radius_diffs(R.radius_pairs(_rounded_plate(3.0, 16), _rounded_plate(3.0, 4))) == []
+    for qa, qb in ((16, 16), (3, 3)):
+        d = R.radius_diffs(R.radius_pairs(_rounded_plate(1.5, qa), _rounded_plate(1.0, qb)))
+        assert len(d) == 4 and all(abs(x["r_ours"] - 1.5) < 0.05 and abs(x["r_ref"] - 1.0) < 0.05 for x in d)
