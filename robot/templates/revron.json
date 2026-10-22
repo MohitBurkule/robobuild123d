@@ -1282,13 +1282,21 @@
     "tol_vol_frac": 0.25,
     "deviations": [
      {
-      "near": [
-       -19.5,
-       43.7,
-       5.8
+      "path": [
+       [
+        -19.5,
+        43.7,
+        1.1
+       ],
+       [
+        -19.5,
+        43.7,
+        7.9
+       ]
       ],
       "r": 2.5,
-      "reason": "the STEP nose tab interpenetrates the weapon mount's boss; the tab is cut by the boss outline plus the WG_MOUNT_GAP clearance, and its arc round SB stands WG_MOUNT_GAP off the chassis lug radius"
+      "max_mm3": 40.0,
+      "reason": "RV17 STEP: the STEP nose tab interpenetrates the weapon mount's boss; the tab is cut by the boss outline plus the WG_MOUNT_GAP clearance, and its arc round SB stands WG_MOUNT_GAP off the chassis lug radius"
      },
      {
       "path": [
@@ -1339,13 +1347,21 @@
     "tol_vol_frac": 0.25,
     "deviations": [
      {
-      "near": [
-       19.5,
-       43.7,
-       5.8
+      "path": [
+       [
+        19.5,
+        43.7,
+        1.1
+       ],
+       [
+        19.5,
+        43.7,
+        7.9
+       ]
       ],
       "r": 2.5,
-      "reason": "the STEP nose tab interpenetrates the weapon mount's boss; the tab is cut by the boss outline plus the WG_MOUNT_GAP clearance, and its arc round SB stands WG_MOUNT_GAP off the chassis lug radius"
+      "max_mm3": 40.0,
+      "reason": "RV17 STEP: the STEP nose tab interpenetrates the weapon mount's boss; the tab is cut by the boss outline plus the WG_MOUNT_GAP clearance, and its arc round SB stands WG_MOUNT_GAP off the chassis lug radius"
      },
      {
       "path": [
@@ -1464,17 +1480,7 @@
     "mode": "shape",
     "tol_mm": 0.5,
     "tol_vol_frac": 0.15,
-    "deviations": [
-     {
-      "near": [
-       -34.4,
-       -30.5,
-       14.0
-      ],
-      "r": 3.5,
-      "reason": "grub bore is the catalog M2 tap drill (1.6, robot.cad.holes) 0.2 inboard, not the STEP 2.5 hole at |X| 34.5: a 2.5 hole breaks into both 45 deg tyre-seat ramps and leaves knife edges (mfg.thin_wall 0.01 mm); the grub threads the 1.6 bore and the captive nut, so it clamps the flat the same"
-     }
-    ]
+    "deviations": []
    },
    {
     "part": "whub_rr",
@@ -1482,17 +1488,7 @@
     "mode": "shape",
     "tol_mm": 0.5,
     "tol_vol_frac": 0.15,
-    "deviations": [
-     {
-      "near": [
-       34.4,
-       -30.5,
-       14.0
-      ],
-      "r": 3.5,
-      "reason": "grub bore is the catalog M2 tap drill (1.6, robot.cad.holes) 0.2 inboard, not the STEP 2.5 hole at |X| 34.5: a 2.5 hole breaks into both 45 deg tyre-seat ramps and leaves knife edges (mfg.thin_wall 0.01 mm); the grub threads the 1.6 bore and the captive nut, so it clamps the flat the same"
-     }
-    ]
+    "deviations": []
    },
    {
     "part": "whub_fl",
@@ -1665,6 +1661,10 @@
     "tol_vol_frac": 0.3
    }
   ]
+ },
+ "start_pose": {
+  "whub_rl": -2.45,
+  "whub_rr": -2.45
  },
  "asm_dump": {
   "rig": "revron.joints:RIG"

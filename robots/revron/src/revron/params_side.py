@@ -21,7 +21,7 @@ SP_MID_Z_FRONT = 13.0               # mid wall height at its front end (Loft2 sk
 SP_BEND_R = (8.0, 4.0)              # rear wall bends out round two 90 deg arcs (RV23 Revolve6, Revolve7), chassis-side radii
 SP_FRONT = dict(c=(-38.5, 26.55), r_in=10.55, w=3.0, z_top=10.0, over=5.0)   # front swing (Revolve5): axis (X, Y), chassis-side radius at the floor, radial thickness, top, lead-in deg
 BEZIER_DEG = 3                      # a cubic Bezier's handle is a third of the Hermite tangent
-SP_BEND_TENSION = 0.8               # S-bend corner-curve tangent length / chord
+SP_BEND_TENSION = 0.9               # S-bend corner-curve tangent length / chord
 SP_REAR_Y_END = -46.0               # the straight rear wall runs on past the rear round (the profile trims it)
 
 
@@ -78,7 +78,7 @@ WG_SKIN_RUN = 7.0           # skin plate length along the ramp below K: its holl
 WG_TAPER_DEG = 18.9         # rear face T leans this far off vertical; it is tangent to the WG_FLANK_R circle about SA
 WG_FLANK_R = 10.0           # R10 convex flank blend, also T's stand-off from SA
 WG_BORES_SA = 2.6           # radius of the 25 mm standoff bore through the wedgelet
-WG_BORE_WALL = 1.4          # TPU wall left round a standoff bore
+WG_BORE_WALL = 1.15         # TPU wall left round a standoff bore
 WG_SA_R = WG_BORES_SA + WG_BORE_WALL   # cheek bulb round the 25 mm standoff SA = its bore plus a wall (the flank's first arc)
 WG_BOSS_R = 3.5             # ring round SB (block, ring step) = clearance circle round SA in the fork bay
 WG_NOTCH = dict(depth=2.5, width=1.5)   # tail-entry notch: depth down T from the cheek corner, width back from T
@@ -88,7 +88,7 @@ WG_TOE_CHAMFER = 0.47       # toe chamfer leg (skin inner face to floor, equal l
 WG_RING_CHAMFER = 1.0       # Chamfer7: the ring step's far edge is chamfered this much x 45 deg round the SB side (cone) and along the floor
 WG_RING_CHAMFER_Y = SB[0] + WG_BOSS_R + WG_RING_CHAMFER   # the floor chamfer ends one chamfer width past the ring
 WG_CHAMFER_END = dict(a=6.77, b=1.68)   # Chamfer7's floor end vertex blend: (dy)^2 = a h - b h^2 (h = chamfer height at that X)
-WG_TAB_DEV = dict(x=19.5, yz=(43.7, 5.8), r=2.5)   # reference-diff deviation sphere on the nose tab where the mount boss is taken out of it
+WG_TAB_DEV = dict(x=19.5, y=43.7, z=(1.1, 7.9), r=2.5, mm3=40.0)   # reference-diff path waiver down the nose tab where the mount boss is taken out of it (x, y of the boss axis, z span)
 WG_MOUNT_GAP = 0.1          # clearance of the nose tab to the weapon mount boss and to the chassis lug round SB
 WG_X0 = -38.5               # nose block outer face (also the cap cylinder's axis plane); the slabs follow by thickness
 WG_SLAB = (2.0, 1.0, 6.5, 7.5, 4.0)   # block | ring step | skin | cheek | nose tab thicknesses along X
