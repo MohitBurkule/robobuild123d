@@ -139,7 +139,8 @@ def deviation_clusters(dev, tol=0.5, link=1.5, min_pts=1):
     """Sample points whose surface deviation exceeds `tol`, grouped into clusters (single linkage at `link` mm).
 
     Returns [{"kind": "extra" | "missing", "centroid": [x, y, z], "max_mm": d, "n": count}]: "extra" for model surface
-    farther than `tol` from the reference, "missing" for reference surface our model does not reach."""
+    farther than `tol` from the reference, "missing" for reference surface our model does not reach; "pts": the
+    cluster's sample points (a waiver must hold all of them)."""
     from scipy.sparse.csgraph import connected_components
     from scipy.spatial import cKDTree
 
@@ -159,7 +160,8 @@ def deviation_clusters(dev, tol=0.5, link=1.5, min_pts=1):
             k = lab == i
             if k.sum() < min_pts:
                 continue
-            out.append({"kind": kind, "centroid": np.round(P[k].mean(0), 2).tolist(), "max_mm": round(float(D[k].max()), 3), "n": int(k.sum())})
+            out.append({"kind": kind, "centroid": np.round(P[k].mean(0), 2).tolist(), "max_mm": round(float(D[k].max()), 3), "n": int(k.sum()),
+                        "pts": P[k]})
     return sorted(out, key=lambda c: -c["max_mm"])
 
 
