@@ -93,3 +93,26 @@ def test_gr1507_catalog_envelope_matches_step():
     ext = [h - l for h, l in zip(hi, lo)]
     assert np.allclose(ext[1:], [19.6, 19.6], atol=0.3), ext
     assert abs(ext[0] - 30.5) < 1.5, ext                             # GEPRC drawing 29.1 vs STEP 30.5 (hollow-shaft stick-out)
+
+
+def test_section_on_a_face_plane_is_moved_off_it():
+    # round 53 mount_r: the X=17.40 section lay on the counterbore face plane; d3.2 holes through that face showed in
+    # one tessellation and not the other. The section moves PLANE_SHIFT_MM off any face lying in its plane.
+    a = trimesh.creation.box((20, 20, 4)); a.apply_translation((0, 0, 2))
+    assert ref_features.off_face(1.0, 2, a) == 1.0
+    h = ref_features.off_face(4.0, 2, a)
+    assert abs(h - 4.0) == pytest.approx(ref_features.PLANE_SHIFT_MM)
+
+
+def test_one_waiver_claims_every_surface_fragment_inside_it():
+    # round 53 mount_r: one flat-floor-vs-cone change samples into 2-3 extra-surface clusters per counterbore
+    from robot.checks import reference_cad as rc
+    rng = np.random.default_rng(0)
+    frag = lambda c: {"kind": "extra", "centroid": list(c), "pts": np.asarray(c) + rng.uniform(-0.3, 0.3, (3, 3))}
+    cl = [frag((0, 1.5, 0)), frag((0, -1.5, 0)), frag((0, 0, 6.0))]
+    e = {"deviations": [{"near": [0, 0, 0], "r": 3.0, "reason": "STEP counterbore cone; we cut a flat floor"}]}
+    assert len(rc.claim(cl, e)[0]) == 1                                   # volume rule: one per kind
+    got, held = rc.claim(cl, e, fragments=True)
+    assert set(got) == {0, 1} and not held                                # both fragments inside; the far one is not
+    cl[1]["pts"] = cl[1]["pts"] + [0, -2.0, 0]                            # a fragment poking out of the sphere
+    assert set(rc.claim(cl, e, fragments=True)[0]) == {0}

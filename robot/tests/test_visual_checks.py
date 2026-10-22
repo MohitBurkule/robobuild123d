@@ -567,3 +567,12 @@ def test_slanted_extra_hole_is_located_on_its_centreline_and_waivable():
                          "reason": "lead groove added, not in the reference STEP (RV03 has no channel)"}]}
     op, wv = visual._split(e, items)
     assert not op and len(wv) == len(items)
+
+
+def test_tessellation_strip_on_reference_surface_is_not_a_sliver():
+    # round 53 mount_r: 0.002-0.004 mm strips on the STEP surface (a mesher's zig-zag), not a boolean's hair face
+    ref = _box((20, 10, 5))
+    assert visual.tess_sliver((np.array([0.0, 0.0, 2.5]), 0.001, 0.003), ref)          # on the reference, 3 um wide
+    assert not visual.tess_sliver((np.array([0.0, 0.0, 3.0]), 0.001, 0.003), ref)      # 0.5 mm off it: a real face
+    bad = _stepped(0.01)
+    assert all(not visual.tess_sliver(s, ref) for s in visual.slivers(bad))           # the 0.01 mm step still counts
