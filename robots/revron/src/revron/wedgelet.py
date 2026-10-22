@@ -207,9 +207,11 @@ def _tab_lean(cut):
     vertical from the notch's foot (the bay ledge less the entry notch depth) up to the wall's top vertex."""
     from shapely.geometry import Polygon
     z0 = WG_BAY_Z - WG_NOTCH["depth"]
-    ring = list(cut.exterior.coords)
+    ring = list(max(getattr(cut, "geoms", [cut]), key=lambda g: g.area).exterior.coords)   # a mount variant can split the tab: lean the biggest piece
     walls = [(p, q) for p, q in zip(ring, ring[1:]) if min(p[1], q[1]) < z0 < max(p[1], q[1]) and 3 * abs(q[0] - p[0]) < abs(q[1] - p[1])]   # steep edges crossing the foot level
     y_at = lambda p, q: p[0] + (q[0] - p[0]) * (z0 - p[1]) / (q[1] - p[1])                      # noqa: E731
+    if not walls:
+        return Polygon()
     p, q = max(walls, key=lambda e: y_at(*e))                                                  # the outermost: the notch wall
     top = max(p, q, key=lambda v: v[1])
     y0 = y_at(p, q)
