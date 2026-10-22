@@ -78,7 +78,7 @@ WG_SKIN_RUN = 7.0           # skin plate length along the ramp below K: its holl
 WG_TAPER_DEG = 18.9         # rear face T leans this far off vertical; it is tangent to the WG_FLANK_R circle about SA
 WG_FLANK_R = 10.0           # R10 convex flank blend, also T's stand-off from SA
 WG_BORES_SA = 2.6           # radius of the 25 mm standoff bore through the wedgelet
-WG_BORE_WALL = 1.15         # TPU wall left round a standoff bore
+WG_BORE_WALL = 1.352         # TPU wall left round a standoff bore
 WG_SA_R = WG_BORES_SA + WG_BORE_WALL   # cheek bulb round the 25 mm standoff SA = its bore plus a wall (the flank's first arc)
 WG_BOSS_R = 3.5             # ring round SB (block, ring step) = clearance circle round SA in the fork bay
 WG_NOTCH = dict(depth=2.5, width=1.5)   # tail-entry notch: depth down T from the cheek corner, width back from T
