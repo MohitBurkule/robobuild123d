@@ -251,3 +251,11 @@ def test_job_key_is_checkout_independent(tmp_path):
         keys.append(RUN.job_key(job, "src", {"name": "t"}))
     assert keys[0] == keys[1]
     assert RUN.job_key(dict(job, new_text="2.4"), "src", {"name": "t"}) != keys[1]
+
+
+def test_subprocess_execute_cleans_up_after_a_timeout(tmp_path, monkeypatch):
+    import tempfile
+
+    monkeypatch.setattr(tempfile, "tempdir", str(tmp_path))
+    res = RUN.subprocess_execute({"id": "x", "spec": str(tmp_path / "missing.json")}, timeout=0.01)
+    assert res["stage"] in ("timeout", "worker") and not list(tmp_path.glob("robust_job_*"))

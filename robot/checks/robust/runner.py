@@ -19,9 +19,13 @@ from .worker import FAST_GROUPS, TAG
 
 def subprocess_execute(job: dict, timeout: float) -> dict:
     """Run one job in a fresh interpreter (own `revron` import, ROBOT_JOBS=1 so no build pool mixes sources)."""
-    with tempfile.NamedTemporaryFile("w", suffix=".json", delete=False) as fh:
+    import shutil
+
+    td = tempfile.mkdtemp(prefix="robust_job_")  # removed here: a killed worker cannot clean up after itself
+    job = dict(job, tmpdir=td)
+    path = os.path.join(td, "job.json")
+    with open(path, "w") as fh:
         json.dump(job, fh)
-        path = fh.name
     env = dict(os.environ, ROBOT_JOBS="1", ROBOT_ROBUST_CHILD="1")
     env = {k: v for k, v in env.items() if not k.startswith("REVRON_")}
     try:
@@ -35,7 +39,7 @@ def subprocess_execute(job: dict, timeout: float) -> dict:
     except subprocess.TimeoutExpired:
         return {"id": job.get("id"), "error": f"timed out after {timeout:.0f} s", "stage": "timeout", "blockers": []}
     finally:
-        os.unlink(path)
+        shutil.rmtree(td, ignore_errors=True)
 
 
 def key_of(b) -> tuple:
@@ -69,7 +73,7 @@ def checks_hash() -> str:
 
 
 def job_key(job: dict, src_hash: str, spec_raw: dict) -> str:
-    j = {k: v for k, v in job.items() if k not in ("timeout", "reads", "phase", "spec")}
+    j = {k: v for k, v in job.items() if k not in ("timeout", "reads", "phase", "spec", "tmpdir")}
     if j.get("file") and job.get("spec"):  # checkout-independent: the edited file relative to the spec folder
         try:
             j["file"] = Path(j["file"]).resolve().relative_to(Path(job["spec"]).resolve().parent).as_posix()

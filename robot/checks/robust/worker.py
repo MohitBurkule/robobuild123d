@@ -129,7 +129,7 @@ def run_job(job: dict) -> dict:
     from .. import integrity
 
     res = {"id": job.get("id", "baseline"), "rebuilt": [], "error": None, "blockers": []}
-    with tempfile.TemporaryDirectory(prefix="robust_") as td:
+    with tempfile.TemporaryDirectory(prefix="robust_", dir=job.get("tmpdir")) as td:
         tmp = Path(td)
         store = tmp / "integrity.json"
         src_store = integrity.store_path(base_raw.get("name"))
