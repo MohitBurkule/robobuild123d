@@ -90,20 +90,23 @@ HOLE_FACE_RISE = 0.7                    # the battered face's highest point over
 BSP = dict(r=10.0, bore_r=4.0, win_in=5.5, win_out=8.5, half_deg=24.6, round_in=2.0, round_out=1.0, phase=HALF_PITCH)   # motor back spacer (Motor_back_spacer_1.stl section fit)
 
 
-DOG = dict(r=12.0, rise=1.9, t0=6.6, t1=13.1, t2=54.7, ramp_r=15.3, nose_r=2.0)   # bore dogs (90 deg pitch): straight flank t0..t1, R15.3 ramp back to t2, R2 nose (STEP section fit)
-DISC_BORE_ROUND, DISC_HOLE_R_WIN = 1.0, 0.44                    # bore dog foot fillets; balance window corner radius
+CORNER_R = 1.0                       # master: the stack's machined/printed inside-corner fillet (dog feet, spider and spacer windows)
+# param: organic bore dog ramp profile (STEP section fit, per dog pitch): base r, rise, flank t0..t1, R ramp to t2, nose
+DOG = dict(r=12.0, rise=1.9, t0=6.6, t1=13.1, t2=54.7, ramp_r=15.3, nose_r=2.0)
+# param: end
+DISC_BORE_ROUND, DISC_HOLE_R_WIN = CORNER_R, 0.44               # bore dog foot fillets; balance window corner radius
 DISC_BAL_PTS = [(-13.2, 4.85), (-13.2, 9.08), (-11.68, 7.65)]    # param: organic balance-window hull corners (measured, STEP)
 # param: end
 DISC_ROUND = dict(r_out=0.0, r_in=1.0)                           # tooth tip sharp (STEP parity) and flank root fillet
 
 
-SPIDER = dict(r=14.2, lobe_r=2.3, round_in=0.8, hub_r=6.0, win_round=1.0)   # disc, stack-bolt lobes and their root fillet, hub ring round the bell screws, window corners (STEP spider_1)
+SPIDER = dict(r=14.2, lobe_r=2.3, round_in=0.8, hub_r=6.0, win_round=CORNER_R)   # disc, stack-bolt lobes and their root fillet, hub ring round the bell screws, window corners (STEP spider_1)
 SPIDER["arm"] = SPIDER["lobe_r"]               # the 4 arms run each lobe's width straight in to the hub: window sides offset one lobe radius off the arm axis
 SPIDER["win_r"] = BOLT_R - SPIDER["lobe_r"]     # window rim stops at the inner edge of the lobe circles
 SPIDER["bore_r"] = SHAFT_R + SHAFT_CLR          # bore on the shaft collar
 
 
-SPACER = dict(r=16.0, bore_r=BELL_WALL_R[1] + SHAFT_CLR, win_in=11.4, win_out=14.5, arm=2.0, win_round=1.0)   # windows: ring 11.4..14.5, sides 2.0 off the bolt axes (STEP section)
+SPACER = dict(r=DISC_R - DISC_ECC, bore_r=BELL_WALL_R[1] + SHAFT_CLR, win_in=11.4, win_out=14.5, arm=2.0, win_round=CORNER_R)   # rim on the discs' inner rim envelope (never proud of a disc); windows: ring 11.4..14.5, sides 2.0 off the bolt axes (STEP section)
 # weapon phase leads (fix-B-leads): RVRN 2.0 runs them free over the lug (RV03 / RV01 have no lead hole or groove). Here the 3 AWG24 leads fan out
 # flat through the 1.5 mm stator-to-spacer gap to below the back spacer, twist into one bundle and snap into a C-groove in RV03's inner face that
 # runs parallel to the boss's standoff line (so the whole groove sits in the 8 mm boss), back to the lug top, where they drop into the tub.
