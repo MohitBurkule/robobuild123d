@@ -99,3 +99,88 @@ def test_tub_does_not_depend_on_the_pack(tmp_path):
 def test_top_screw_web_switch_off(tmp_path):
     """TOP_SCREW_WEB off: the corner columns keep the STEP's through-bore; the tub is still one valid solid."""
     check({"params_chassis": {"TOP_SCREW_WEB": "False"}}, tmp_path)
+
+
+# ---- the standoffs SA / SB (master params): the tub follows them -----------------------------------------------------------------
+# +-10 % of each coordinate, one at a time. The tub, and everything that sits against it, must stay valid and clear of it.
+SA_SB_CASES = [("SA", "(33.55, 5.5)"), ("SA", "(27.45, 5.5)"), ("SA", "(30.5, 6.05)"), ("SA", "(30.5, 4.95)"),
+               ("SB", "(44.55, 4.5)"), ("SB", "(36.45, 4.5)"), ("SB", "(40.5, 4.95)"), ("SB", "(40.5, 4.05)")]
+# the wedgelet (armor, params_side WG_*) does not build at SA[0] +10 % (its R10 cheek flank can no longer reach the K line) and at SB[0] -10 % (T misses the SB ring)
+WEDGELET_BUILDS = {c: c not in (("SA", "(33.55, 5.5)"), ("SB", "(36.45, 4.5)")) for c in SA_SB_CASES}
+
+OVERLAP = """
+import sys
+sys.path[:0] = [%r, %r]
+import build123d as b
+from revron import assembly as A
+from revron.params import SA, SB, MNT_IN, SA_X, SB_X, M3
+tub = A.build("chassis")
+shank = lambda yz, x0, x1: b.Pos((x0 + x1) / 2, *yz) * b.Rotation(0, 90, 0) * b.Cylinder(M3 / 2, x1 - x0)   # the M3 screw through the mount into the standoff
+tools = {"shank_a": shank(SA, MNT_IN, SA_X[0] + 3), "shank_b": shank(SB, MNT_IN, SB_X[0] + 3)}
+for p in %r:
+    try:
+        tools[p] = A.build(p)
+    except Exception as e:
+        print("BUILDFAIL", p, type(e).__name__)
+for k, v in tools.items():
+    print("OVERLAP", k, round((tub & v).volume, 4))
+"""
+
+
+def overlaps(overrides, tmp_path, parts):
+    dst = pathlib.Path(tempfile.mkdtemp(dir=tmp_path)) / "src"
+    shutil.copytree(SRC, dst, ignore=shutil.ignore_patterns("__pycache__"))
+    for mod, names in overrides.items():
+        f = dst / "revron" / f"{mod}.py"
+        text = f.read_text()
+        for name, expr in names.items():
+            text, n = re.subn(rf"^{name} = [^#\n]*", f"{name} = {expr}   ", text, count=1, flags=re.M)
+            assert n == 1
+        f.write_text(text)
+    r = subprocess.run([sys.executable, "-c", OVERLAP % (str(dst), ROOT, parts)], capture_output=True, text=True)
+    assert "OVERLAP" in r.stdout, r.stderr[-1500:]
+    return {ln.split()[1]: float(ln.split()[2]) for ln in r.stdout.splitlines() if ln.startswith("OVERLAP")}, r.stdout
+
+
+@pytest.mark.parametrize("name,val", SA_SB_CASES)
+def test_standoff_sweep_tub_is_one_valid_solid(name, val, tmp_path):
+    """SA / SB +-10 % per coordinate: the lug, tab, key and flange follow (no fillet or boolean failure, one closed solid, still symmetric)."""
+    check({"params_chassis": {name: val}}, tmp_path)
+
+
+@pytest.mark.parametrize("name,val", SA_SB_CASES)
+def test_standoff_sweep_tub_clears_what_sits_on_it(name, val, tmp_path):
+    """The mount screws through SA / SB, the standoffs, both mounts, the side panel and (where it builds) the wedgelet never overlap the tub."""
+    parts = ["so_a_l", "so_b_l", "mount_l", "mount_r", "side_panel_l"] + (["wedgelet_l"] if WEDGELET_BUILDS[(name, val)] else [])
+    vol, out = overlaps({"params_chassis": {name: val}}, tmp_path, parts)
+    assert all(v < 0.01 for v in vol.values()) and len(vol) == len(parts) + 2 and "BUILDFAIL" not in out, vol
+
+
+@pytest.mark.parametrize("name,val", SA_SB_CASES)
+def test_standoff_sweep_side_panel_is_one_valid_solid(name, val, tmp_path):
+    """The side panel's post, notch and screw seats follow SA / SB too (its fillet R1 and its heads sunk below the battered face)."""
+    check({"params_chassis": {name: val}}, tmp_path, what="__import__('revron.assembly', fromlist=['build']).build('side_panel_l')", symmetric=False)
+
+
+def value_with(overrides, tmp_path, expr):
+    """repr-evaluated `expr` (an expression in the revron package) in a fresh interpreter with the module-level assignments overridden."""
+    dst = pathlib.Path(tempfile.mkdtemp(dir=tmp_path)) / "src"
+    shutil.copytree(SRC, dst, ignore=shutil.ignore_patterns("__pycache__"))
+    for mod, names in overrides.items():
+        f = dst / "revron" / f"{mod}.py"
+        text = f.read_text()
+        for name, e in names.items():
+            text, n = re.subn(rf"^{name} = [^#\n]*", f"{name} = {e}   ", text, count=1, flags=re.M)
+            assert n == 1
+        f.write_text(text)
+    code = f"import sys; sys.path[:0] = [{str(dst)!r}, {ROOT!r}]\nfrom revron import params\nprint('VALUE', repr({expr}))"
+    r = subprocess.run([sys.executable, "-c", code], capture_output=True, text=True)
+    out = [ln for ln in r.stdout.splitlines() if ln.startswith("VALUE")]
+    assert out, r.stderr[-1500:]
+    return eval(out[-1][6:])
+
+
+@pytest.mark.parametrize("name,val,wz", [("SA", "(30.5, 6.05)", 24.05), ("SB", "(40.5, 4.95)", 23.95), ("SA", "(30.5, 4.95)", 23.5), ("SB", "(44.55, 4.5)", 23.5)])
+def test_rotor_axis_keeps_its_distance_to_the_mount_screws(name, val, wz, tmp_path):
+    """The weapon axis rises with the standoffs (the mount screws back out inboard past the disc) and never drops below its master WZ."""
+    assert abs(value_with({"params_chassis": {name: val}}, tmp_path, "params.WZ") - wz) < 1e-6

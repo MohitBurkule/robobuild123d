@@ -6,14 +6,15 @@ from .params_chassis import MNT_IN, SA_X0, SB_X0
 from .params_weapon import TAB
 from .tub2_params import CH_Y1, CH_Z0, CH_Z1, CH_WALL, SKIN, OVER, WALL_IN_FRONT, DECK, SEAT_Z
 from .tub2_lug import top_line_slope
-from .tub2_util import box_xy, concave_filler, prism
+from .tub2_util import box_xy, concave_filler, fit_radius, prism
 
 TAB_FRONT = TAB['y1']                             # tab front face (Y); also the slot's reach
 TAB_WALL_T = 3 * SKIN                             # tab wall thickness
 TAB_GAP = SKIN / 10                               # tab wall stops this short of the mount's inner face
 WALL_X = (MNT_IN - TAB_GAP - TAB_WALL_T, MNT_IN - TAB_GAP)   # tab wall X span (inboard of the mount)
 KEY_CLR = 0.05                                   # key tab to the mount notch
-KEY_Y0 = 18.5                                     # key tab octagon from here to TAB_FRONT, chamfer SKIN
+KEY_LEN = 8.0                                     # key tab octagon: this long back from TAB_FRONT (STEP 18.5 to 26.5), chamfer SKIN
+KEY_Y0 = TAB_FRONT - KEY_LEN                      # so the key rides the tab front when the tab follows the axle standoff
 KEY_Z0, KEY_Z1 = TAB['z0'] + KEY_CLR, TAB['z0'] + TAB['h'] - KEY_CLR   # between the mount notch's floor and roof (Z)
 KEY_X = (MNT_IN - 2 * TAB_GAP, SA_X0 + OVER)      # key tab runs from the mount's notch into the lug
 # The STEP's tab wall is not symmetric: its front-top corner is bevelled one way on -X (45 deg) and another on +X (steeper plane, one tab chamfer lower
@@ -48,7 +49,8 @@ def key_sketch(plane, inset=0.0):
         with Locations((KEY_Y0 + inset, KEY_Z0 + inset)):
             Rectangle(TAB_FRONT - KEY_Y0 - 2 * inset, KEY_Z1 - KEY_Z0 - 2 * inset, align=(Align.MIN, Align.MIN))
         if inset:
-            fillet(sk.vertices(), KEY_R)
+            w, h = TAB_FRONT - KEY_Y0 - 2 * inset, KEY_Z1 - KEY_Z0 - 2 * inset
+            fillet(sk.vertices(), fit_radius([(0, 0), (w, 0), (w, h), (0, h)], 0, KEY_R, rounded=(1, 2, 3)))   # R wall, or what the key hole's span allows
         else:
             chamfer(sk.vertices(), SKIN)
     return sk

@@ -22,6 +22,11 @@ WY, WZ = 38.5, 23.5                  # weapon axis (along X)
 RY, RZ = -30.5, 11.0                 # N10 shaft (rear axle)
 SA = (30.5, 5.5)                     # 25 mm standoff (RV11): front axle (Y, Z)
 SB = (40.5, 4.5)                     # 15 mm standoff (RV10): nose (Y, Z)
+# the rotor axis keeps at least its distance (WY, WZ master and the STEP's standoff positions) from each mount-screw axis: the heads back out inboard
+# past the disc, so when SA / SB rise (or close in) the rotor rises with them; at the STEP standoffs this changes nothing
+_STEP_SCREW_AXES = ((30.5, 5.5), (40.5, 4.5))
+_REACH = [math.hypot(WY - y, WZ - z) for y, z in _STEP_SCREW_AXES]
+WZ = max(WZ, *[round(p[1] + math.sqrt(r ** 2 - (WY - p[0]) ** 2), 6) for p, r in zip((SA, SB), _REACH) if r > abs(WY - p[0])])
 SA_LEN, SB_LEN = 25.0, 15.0          # catalog standoff lengths
 SA_X0, SB_X0 = 17.5, 21.5            # |X| of each standoff's inner end
 SO_R = 2.5                           # standoff radius

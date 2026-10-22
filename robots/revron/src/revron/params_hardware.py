@@ -12,9 +12,12 @@ SIDE_REF = {-1: "RV23", 1: "RV24"}
 SIDE_BOLT_X = dict(a=46.26, b=41.76, c=35.26)            # |X| of the side-panel screw heads (STEP: seated in a bore below the face; axle standoff, nose standoff, chassis nut)
 SIDE_SINK = dict(a=2.15, b=5.75, c=1.05)                 # depth of each screw head below the battered outer face, measured on the STEP side panels RV23 (LH) / RV24 (RH): outer face |X| 48.41 / 47.51 / 36.31 at the screw axes, minus the head planes above
 SIDE_FACE_X = {k: SIDE_BOLT_X[k] + SIDE_SINK[k] for k in SIDE_BOLT_X}   # |X| of the battered outer face at each screw
+SIDE_SEAT_STEP = dict(a=(30.5, 5.5))                    # (Y, Z) of the axle standoff axis where the STEP measured that face; the seat follows the face from there when SA moves (side.seat_face_x). The nose seat (b) sits on the quarter cone, whose face the heads cannot be re-seated on by one probe: it stays at the STEP plane
+SIDE_PROBE_X, SIDE_PROBE_LEN = -50.0, 40.0               # the line along X (centre, length) that finds the outer face of the left panel
 assert all(0 < d <= SP_CSK["head_clear"] for d in SIDE_SINK.values()), "a screw head must sit inside its driver bore (sink <= bore depth)"
 SIDE_BOLT_DES = dict(a="M3x10", b="M3x10", c="M3x8")
-BASE_BOLT_Z = 2.9                                        # base-panel screw head plane
+BASE_HEAD_PROUD = 0.6                                     # STEP RV26: the seat (dk 3.2, 0.5 deep) cannot take the ISO head, so the head plane stays this far outside the panel outer face (head proud)
+BASE_BOLT_Z = round(BASE_Z0 - (0.0 if variant("base_csk_fit") else BASE_HEAD_PROUD), 6)   # base-panel screw head plane: flush with the outer face once the variant opens the seat to the head
 TOP_BOLT_XY = INS[1::-1] + INS[3:1:-1]                   # top-panel screws sit on the four corner columns, right-hand first
 PCT = 100                                                # percent
 AWG = dict(power=24, rx=26, motor=28, signal=30)
