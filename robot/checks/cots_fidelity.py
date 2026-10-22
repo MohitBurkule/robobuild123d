@@ -72,7 +72,7 @@ def _slices(t, rho, step=0.25):
 
 def _radial(mesh, axis, n=60000):
     """Axial t / radius rho of surface samples on faces whose normal is mostly radial (no end caps)."""
-    pts, fi = mesh.sample(n, return_index=True)
+    pts, fi = mesh.sample(n, return_index=True, seed=0)
     nrm = mesh.face_normals[fi]
     keep = np.abs(nrm @ axis) < 0.3
     pts = pts[keep]
@@ -164,7 +164,7 @@ def _frame(rp):
 
 def profile(mesh, axis, n=4000):
     """Axial coordinate t and radius rho of surface samples (the motor's turned profile)."""
-    pts = np.vstack([mesh.vertices, mesh.sample(n)])
+    pts = np.vstack([mesh.vertices, mesh.sample(n, seed=0)])
     t = pts @ axis
     rho = np.linalg.norm(pts - np.outer(t, axis), axis=1)
     return pts, t, rho
@@ -288,7 +288,7 @@ def envelope_volume(mesh, axis=None, slice_mm=ENV_SLICE_MM, n=40000):
         k = min(range(3), key=lambda i: (abs(ext[(i + 1) % 3] - ext[(i + 2) % 3]) / max(ext.max(), 1e-9), -ext[i]))
         axis = np.eye(3)[k]
     axis = np.asarray(axis, float) / np.linalg.norm(axis)
-    pts = np.vstack([mesh.vertices, mesh.sample(n)]) - (lo + hi) / 2
+    pts = np.vstack([mesh.vertices, mesh.sample(n, seed=0)]) - (lo + hi) / 2
     t = pts @ axis
     rho = np.linalg.norm(pts - np.outer(t, axis), axis=1)
     nb = max(1, int(np.ceil((t.max() - t.min()) / slice_mm)))
