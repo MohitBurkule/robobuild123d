@@ -19,7 +19,7 @@ def pad_recess_and_corner():
     """+X: recess for the N10 preload pad (pad + margin each side) and the squared rear corner (wall thick, from the seat to the deck)."""
     (px, py), h = PRELOAD_PAD["c"], PRELOAD_PAD["s"] / 2 + PAD_RECESS
     pad = box_xy(px - h, px + h, py - h, py + h, SEAT_Z - OVER, SEAT_Z + max(PAD_MARGIN, PRELOAD_PAD["h"] + OVER))
-    corner = box_xy(CH_IN_X - CH_WALL, CH_IN_X + OVER, WALL_IN_REAR, WALL_IN_REAR + CH_WALL, SEAT_Z, DECK)
+    corner = box_xy(CH_IN_X - CH_WALL, CH_IN_X, WALL_IN_REAR, WALL_IN_REAR + CH_WALL, SEAT_Z, DECK)   # flush with the wall faces: no notch into the wall
     return [pad, corner]
 
 

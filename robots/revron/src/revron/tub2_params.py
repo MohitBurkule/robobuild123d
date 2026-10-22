@@ -34,5 +34,5 @@ CENTRE_Y0 = -30.0                                                 # centre rear 
 REAR_R = 1.5                                                      # rear box corner R
 # base seat
 PAD_MARGIN = 0.3
-PAD_RECESS = 0.45                        # tub recess half-width beyond the pad half-width (recess 10.4 as in the STEP)
+PAD_RECESS = 0.15                        # tub recess half-width beyond the pad half-width: clearance each side (recess = pad + 0.3, STEP 9.8)
 PANEL_CLEARANCE = 0.2                  # rabbet = RV26 outline offset by this (print clearance)
