@@ -1,7 +1,7 @@
 """[fix-B-vers] The weapon motor swaps as ONE catalog setting (hooks.json `weapon.motor`, env REVRON_WEAPON_MOTOR), the
 weapon style is a setting (`weapon.type`), and the weapon module follows the mount spacing MNT_IN.
 
-Sweep: weapon motor (GR1507 datasheet / STEP, a larger one-piece BE1806, a smaller one-piece TC1404) x MNT_IN (STEP,
+Sweep: weapon motor (GR1507 datasheet / STEP, a larger one-piece BE1806) x MNT_IN (STEP,
 +-10 %). Each case runs in a fresh interpreter (the params are module constants) with MNT_IN edited in
 params_chassis.py, builds RV03, the back spacer, the spider and the shaft, and checks the relations that must follow
 the motor entry and MNT_IN:
@@ -59,9 +59,9 @@ print(json.dumps(out, default=list))
 """ % ROOT
 
 MNT_IN0 = 13.4
-MOTORS = ("gr1507", "gr1507_step", "bbb_be1806_2300kv", "brotherhobby_tc1404_3800kv")
+MOTORS = ("gr1507", "gr1507_step", "bbb_be1806_2300kv")
 CASES = {f"{m}@{k}": (m, v) for m in MOTORS for k, v in (("step", None), ("+10", round(MNT_IN0 * 1.1, 6)), ("-10", round(MNT_IN0 * 0.9, 6)))
-         if not (m == "brotherhobby_tc1404_3800kv" and k == "-10")}
+         }
 # the stack does not fit between the mounts: the GR1507 at MNT_IN -10 % (2.4 mm of head room, 2.68 taken), the BE1806
 # (1.4 mm longer body) at -10 %; they must fail with the reason, not build a clash
 NO_FIT = {"gr1507@-10", "bbb_be1806_2300kv@-10"}
@@ -123,7 +123,7 @@ def test_weapon_follows_motor_and_mnt_in(case, tmp_path):
     assert abs(r["BRG"]["bore_r"] - r["SHAFT_R"]) < 1e-9 and r["SHAFT_R"] == W["shaft_r"], case
 
 
-@pytest.mark.parametrize("motor,why", [("repeat_2004_1400kv", "does not fit the disc dog bore"), ("emax_eco2207_1900kv", "does not declare top_holes"),
+@pytest.mark.parametrize("motor,why", [("repeat_2004_1400kv", "does not fit the disc dog bore"), ("brotherhobby_tc1404_3800kv", "closer than one button head"), ("emax_eco2207_1900kv", "does not declare top_holes"),
                                        ("c_bbb_be1806_2300kv", "one piece and declares no mounting geometry"), ("no_such_motor", "not a catalog weapon motor")])
 def test_unfit_motor_fails_clearly(motor, why):
     p = _run("import sys; sys.path.insert(0, sys.argv[1]); import revron.params", SRC, {"REVRON_WEAPON_MOTOR": motor})

@@ -173,7 +173,8 @@ SPIDER["bore_r"] = SHAFT_R + SHAFT_CLR          # bore on the shaft collar
 
 
 SPACER = dict(r=DISC_R - DISC_ECC, bore_r=BELL_R + SHAFT_CLR, arm=2.0, win_round=CORNER_R)
-SPACER.update(win_in=SPACER["bore_r"] + STACK_WALL, win_out=SPACER["r"] - STACK_WALL)   # rim on the discs' inner rim envelope (never proud of a disc); windows: ring 11.4..14.5, sides 2.0 off the bolt axes (STEP section)
+SPACER.update(win_in=SPACER["bore_r"] + STACK_WALL, win_out=SPACER["r"] - STACK_WALL)
+SPACER["win_round"] = min(CORNER_R, round((SPACER["win_out"] - SPACER["win_in"]) / 2 - 0.1, 6))   # a bigger bell narrows the window ring: its corners round to fit (GR1507: CORNER_R)   # rim on the discs' inner rim envelope (never proud of a disc); windows: ring 11.4..14.5, sides 2.0 off the bolt axes (STEP section)
 # weapon phase leads (fix-B-leads): RVRN 2.0 runs them free over the lug (RV03 / RV01 have no lead hole or groove). Here the 3 AWG24 leads fan out
 # flat through the 1.5 mm stator-to-spacer gap to below the back spacer, twist into one bundle and snap into a C-groove in RV03's inner face that
 # runs parallel to the boss's standoff line (so the whole groove sits in the 8 mm boss), back to the lug top, where they drop into the tub.
@@ -215,4 +216,6 @@ BELL_HEAD_CLEAR = round(MOTOR_X + DR_X["spider"][0] - _fc.head(HUB_D, "button")[
 if BELL_HEAD_CLEAR < 0.2:
     raise _wm.WeaponMotorError(f"weapon motor `{WM['id']}` at MNT_IN {MNT_IN:g}: the drisk stack does not fit between the mounts "
                                f"(bell-screw heads {BELL_HEAD_CLEAR:+.2f} mm from RV02, the motor sits {LEAD_GAP + BSP_T:g} mm off RV03)")
+if N_HUB > 1 and 2 * HUB_R * math.sin(math.pi / N_HUB) < _fc.head(HUB_D, "button")[0] + 0.5:   # heads need room to turn a key between them
+    raise _wm.WeaponMotorError(f"weapon motor `{WM['id']}`: its bell-top screws ({N_HUB} x M{HUB_D:g} on r{HUB_R:g}) are closer than one button head: the spider cannot be screwed on")
 __all__ = [n for n in dir() if not n.startswith("__")]   # last line: every name above is exported
