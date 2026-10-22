@@ -133,8 +133,19 @@ unit_tests() {
   if [ -s "$cf" ] && [ -f "$cf.log" ]; then cp "$cf.log" "$lg"; log "unit tests of tree ${tr:0:12}: cached result $(cat "$cf")"; return "$(cat "$cf")"; fi
   ref=ci-unit/${tr:0:16}
   [ "${UNIT_PUSH:-1}" = 1 ] && { git -C "$d" push -q -f origin "$c:refs/heads/$ref" 2>>"$P/ci_push.err" || log "unit: push of $ref failed (local workers only)"; }
-  : > "$lg"; RESUME=1 shard_verify "unit-${tr:0:16}" unit "$lg" "$c"
-  $GPY unitok "$lg" "$(cat "$P/shards/unit-${tr:0:16}/results/unit.rc" 2>/dev/null || echo 99)"; r=$?
+  # split into UNIT_SHARDS tickets unit-0..unit-N-1 by test file, balanced by past per-file durations
+  # ($P/ci_unit_durations.json, learned from each shard's --durations output); combined: any fail -> 1, else any infra -> 2
+  local S="$P/shards/unit-${tr:0:16}" k gs= rs=
+  if [ "$(cat "$S/sha" 2>/dev/null)" != "$c" ] || [ ! -d "$S/unit_files" ]; then
+    rm -rf "$S"; mkdir -p "$S/unit_files"; echo "$c" > "$S/sha"; echo "${UNIT_TIMEOUT:-14400}" > "$S/unit_timeout"
+    k=0; while read -r l; do [ -n "$l" ] && echo "$l" > "$S/unit_files/unit-$k" && k=$((k+1)); done \
+      < <(cd "$d" && $GPY unitsplit "${UNIT_SHARDS:-8}" "$P/ci_unit_durations.json" $(ls robot/tests/test_*.py))
+  fi
+  gs=$(ls "$S/unit_files" | sort -t- -k2 -n | paste -sd' ')
+  : > "$lg"; RESUME=1 shard_verify "unit-${tr:0:16}" "$gs" "$lg" "$c"
+  for k in $gs; do rs="$rs $k=$(cat "$S/results/$k.rc" 2>/dev/null || echo 99)"; done
+  $GPY unitdur "$P/ci_unit_durations.json" "$S"/results/unit-*.log 2>/dev/null
+  $GPY unitcombine "$S/results" $rs; r=$?; log "unit tests of tree ${tr:0:12}:$rs -> $r"
   [ $r -lt 2 ] && { mkdir -p "$P/ci_unit_cache"; cp "$lg" "$cf.log.$$" && mv -f "$cf.log.$$" "$cf.log" && echo $r > "$cf.$$" && mv -f "$cf.$$" "$cf"; }
   rm -rf "${P:?}/shards/unit-${tr:0:16}"   # collected (an infra result is retried with a fresh ticket next time)
   [ "${UNIT_PUSH:-1}" = 1 ] && git -C "$d" push -q origin ":refs/heads/$ref" 2>/dev/null

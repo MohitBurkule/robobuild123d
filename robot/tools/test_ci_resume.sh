@@ -9,7 +9,8 @@ SRC=$PWD; T=$(mktemp -d); trap 'touch "$T/p/shards/stop" "$T/stop"; pkill -9 -f 
 export P=$T/p PROGRESS_DIR=$T/p; mkdir -p "$P"
 git init -q --bare "$T/origin.git"
 git init -q "$T/w"; cd "$T/w"; git config user.email t@t; git config user.name t
-mkdir -p robot/tools robot/templates robots/revron/src
+mkdir -p robot/tools robot/templates robots/revron/src robot/tests
+for t in a b c; do echo "def test_x(): pass" > robot/tests/test_$t.py; done
 cp "$SRC"/robot/tools/{ci_loop.sh,ci_gate.py,shard_worker.sh} robot/tools/
 cat > robot/__main__.py <<'F'
 import sys
@@ -22,7 +23,8 @@ git add -A; git commit -qm init; git branch -M rvrn2-ci; git remote add origin "
 cat > "$T/fake" <<'F'
 #!/bin/bash
 echo "$2" >> "$P/runs"
-if [ "$2" = unit ]; then echo "3 passed in 0.1s"; exit 0; fi
+if [[ "$2" == unit* ]]; then echo "files: $(cat "$SHARD_DIR/unit_files/$2")"; for f in $(cat "$SHARD_DIR/unit_files/$2"); do echo "0.50s call $f::test_x"; done
+  grep -q bad "$SHARD_DIR/unit_files/$2" && { echo "1 failed, 1 passed in 0.1s"; exit 1; }; echo "2 passed in 0.1s"; exit 0; fi
 case "$2" in c|d|fastener_seat) [ -f "$P/phase1" ] && sleep 300;; esac
 sleep 1; echo "[BLOCKER] $2.x thing"; echo "done: 1 blockers, 0 warnings"; exit 2
 F
@@ -71,10 +73,17 @@ eval "$(sed -n '/^shard_verify() {/,/^}/p;/^unit_tests() {/,/^  return \$r; }/p'
 git worktree add -q --detach "$T/trial" HEAD; echo x > "$T/trial/x"; git -C "$T/trial" add x; git -C "$T/trial" commit -qm trial
 git -C "$T/trial" push -q origin HEAD:refs/heads/ci-unit-src  # stand-in for the ci-unit push (UNIT_PUSH=0 below)
 WORKER_ID=remote2 IDLE=600 setsid robot/tools/shard_worker.sh 2>>"$T/w2.log" & W2=$!
-PAR=0 UNIT_PUSH=0 unit_tests "$T/trial" "$T/u1.log"; ok [ $? = 0 ]
-ok grep -q 'claimed unit' "$T/w2.log"; ok grep -q passed "$T/u1.log"
+PAR=0 UNIT_PUSH=0 UNIT_SHARDS=2 unit_tests "$T/trial" "$T/u1.log"; ok [ $? = 0 ]
+ok grep -q 'claimed unit-0' "$T/w2.log"; ok grep -q 'claimed unit-1' "$T/w2.log"; ok grep -q passed "$T/u1.log"
+ok grep -q 'files: .*test_' "$T/u1.log"
+ok [ "$(cat "$T/u1.log" | grep -o 'robot/tests/test_[a-c].py::' | sort -u | wc -l)" = 3 ]   # every file ran, in some shard
+ok grep -q '"robot/tests/test_a.py": 0.5' "$P/ci_unit_durations.json"
 git -C "$T/trial" commit -q --amend -m "same tree, new sha"
 PAR=0 UNIT_PUSH=0 unit_tests "$T/trial" "$T/u2.log"; ok [ $? = 0 ]
-ok [ "$(grep -c -x unit "$P/runs")" = 1 ]; ok grep -q 'cached result 0' "$P/builder.log"
+ok [ "$(grep -c -x 'unit-[0-9]' "$P/runs")" = 2 ]; ok grep -q 'cached result 0' "$P/builder.log"
+# one failing shard fails the combined result (cached as a fail); timeouts/no summary are infra (2), not cached
+echo "def test_bad(): pass" > "$T/trial/robot/tests/test_bad.py"; git -C "$T/trial" add -A; git -C "$T/trial" commit -qm bad
+PAR=0 UNIT_PUSH=0 UNIT_SHARDS=2 unit_tests "$T/trial" "$T/u3.log"; ok [ $? = 1 ]
+ok [ "$(cat "$P/ci_unit_cache/$(git -C "$T/trial" rev-parse 'HEAD^{tree}')")" = 1 ]
 kill -9 $W2 2>/dev/null
 [ $fail = 0 ] && echo PASS; exit $fail
