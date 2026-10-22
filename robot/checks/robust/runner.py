@@ -53,9 +53,24 @@ def diff(base: dict, res: dict) -> dict:
             "timeout": res.get("stage") == "timeout"}
 
 
+def checks_hash() -> str:
+    """cache.code_hash minus this package: editing the sweep's own planning / report code keeps finished results."""
+    here = Path(__file__).resolve().parent
+    root = here.parents[1]
+    files = sorted(f for f in root.rglob("*") if f.is_file() and "__pycache__" not in f.parts and here not in f.parents
+                   and "tests" not in f.relative_to(root).parts and (f.suffix == ".py" or "catalog_data" in f.parts or "rules" in f.parts))
+    files.append(here / "worker.py")  # how a perturbation is built and checked does change its result
+    return cache.h(cache.VERSION, cache.lib_versions(), [(f.relative_to(root).as_posix(), cache.source_hash(f)) for f in files])
+
+
 def job_key(job: dict, src_hash: str, spec_raw: dict) -> str:
-    j = {k: v for k, v in job.items() if k not in ("timeout", "reads", "phase")}
-    return cache.h("robust", 1, json.dumps(j, sort_keys=True, default=str), src_hash, cache.code_hash(),
+    j = {k: v for k, v in job.items() if k not in ("timeout", "reads", "phase", "spec")}
+    if j.get("file") and job.get("spec"):  # checkout-independent: the edited file relative to the spec folder
+        try:
+            j["file"] = Path(j["file"]).resolve().relative_to(Path(job["spec"]).resolve().parent).as_posix()
+        except ValueError:
+            pass
+    return cache.h("robust", 1, json.dumps(j, sort_keys=True, default=str), src_hash,
                    json.dumps(spec_raw, sort_keys=True, default=str), FAST_GROUPS)
 
 
@@ -67,8 +82,10 @@ def run(jobs, spec_path, model_rel, budget_s=900.0, workers=3, execute=subproces
     spec_raw = json.loads(Path(spec_path).read_text())
     common = {"spec": spec_path, "model_rel": model_rel}
 
+    ch = checks_hash() if src_hash else ""
+
     def cached_exec(jd, timeout):
-        k = job_key(jd, src_hash, spec_raw) if src_hash else None
+        k = cache.h(job_key(jd, src_hash, spec_raw), ch) if src_hash else None
         if k:
             hit = cache.get("robust", k)
             if not cache.is_missing(hit):

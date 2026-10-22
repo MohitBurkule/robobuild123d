@@ -76,10 +76,11 @@ def rank_params(params, usage) -> list:
 
 
 def make_plan(disc, usage, top_n: int = 8, steps: str = "adaptive") -> tuple:
-    """(jobs in run order, skipped params with their reader count). Switches first (few, and swaps matter most)."""
-    jobs = []
+    """(jobs in run order, skipped params with their reader count). Switch flips and +-10 % param edits alternate, so a
+    budget cut still samples both; +-5 % edits come last."""
+    sj = []
     for s in disc.switches:
-        jobs += switch_jobs(s, usage.parts_reading(s.symbol, s.kind == "variant"))
+        sj += switch_jobs(s, usage.parts_reading(s.symbol, s.kind == "variant"))
     ranked = rank_params(disc.params, usage)
     keep, skipped = ranked[:top_n], [(p.name, len(r)) for p, r in ranked[top_n:]]
     pj = []
@@ -89,5 +90,6 @@ def make_plan(disc, usage, top_n: int = 8, steps: str = "adaptive") -> tuple:
             for j in js:
                 j.phase = 0
         pj += js
-    jobs += [j for j in pj if j.phase == 0] + [j for j in pj if j.phase == 1]
-    return jobs, skipped
+    first = [j for j in pj if j.phase == 0]
+    jobs = [j for pair in zip(sj, first) for j in pair] + sj[len(first):] + first[len(sj):]
+    return jobs + [j for j in pj if j.phase == 1], skipped

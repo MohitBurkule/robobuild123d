@@ -93,13 +93,14 @@ def test_param_jobs_steps_bounds_ints():
     assert [x.id for x in j] == ["W+10%", "W-10%", "W+5%", "W-5%"] and [x.phase for x in j] == [0, 0, 1, 1]
 
 
-def test_plan_ranks_by_readers_and_puts_switches_first(tmp_path):
+def test_plan_ranks_by_readers_and_interleaves(tmp_path):
     mf, raw = pkg(tmp_path)
     d = D.discover(mf)
     u = U.Usage(U.build_graph(D.package_files(mf)), raw)
     jobs, skipped = P.make_plan(d, u, top_n=2)
     kinds = [j.kind for j in jobs]
-    assert kinds.index("param") > max(i for i, k in enumerate(kinds) if k != "param")
+    assert kinds[0] != "param" and kinds[1] == "param"  # switch flips and +-10 % edits alternate
+    assert all(j.phase == 1 for j in jobs[len(jobs) - sum(j.phase for j in jobs):])  # +-5 % last
     assert {"UNUSED", "ZERO"}.isdisjoint({n for n, _ in skipped})  # unread params are not even ranked
     assert len({j.target for j in jobs if j.kind == "param"}) == 2 and skipped
     jobs_all, _ = P.make_plan(d, u, top_n=2, steps="all")
@@ -236,3 +237,14 @@ def test_group_registered():
     from robot import checks
 
     assert ("robust", True) in checks.GROUPS
+
+
+def test_job_key_is_checkout_independent(tmp_path):
+    a, b = tmp_path / "a", tmp_path / "b"
+    keys = []
+    for root in (a, b):
+        (root / "src").mkdir(parents=True)
+        job = {"id": "W+10%", "spec": str(root / "spec.json"), "file": str(root / "src" / "params.py"), "new_text": "2.2", "timeout": 5}
+        keys.append(RUN.job_key(job, "src", {"name": "t"}))
+    assert keys[0] == keys[1]
+    assert RUN.job_key(dict(job, new_text="2.4"), "src", {"name": "t"}) != keys[1]
