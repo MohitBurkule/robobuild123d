@@ -5,6 +5,8 @@ ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
+from .variants import variant   # tub deviations (open_keyhole, pad_preload, switch_on_bolt_axis) are opt-in switches, see variants.py
+
 # ======================================================================================================================
 # Measured layout (RVRN 2.0 STEP, world frame). Each number is a dimension of a feature, not a mesh coordinate list.
 # ======================================================================================================================
@@ -66,10 +68,11 @@ SEG, SEG_FINE = 64, 128              # shapely buffer resolution (segments per q
 BASE_HEAD_DK = 2.2 * 2.0             # modelled M2 CSK head diameter (robot.world.csk_dims: 2.2 d = 4.4, 90 deg, 1.2 deep)
 BASE_CSK_SEAT_CLR = 0.1              # diametral clearance between that head and the seat cone
 BASE_CSK_CLEAR = BASE_HEAD_DK + BASE_CSK_SEAT_CLR - 3.8   # hole_tool's csk_clear is added to the catalog dk (3.8): seat 4.5 at the face, cone parallel to the head so the 4.4 head never touches (r5 overlap 0.09)
+BASE_CSK_CLEAR_STEP = 3.2 - 3.8      # original RV26 seat: dk 3.2 (Chamfer1 0.5 on the 2.2 hole; panel volume matches the STEP to 0.03 %)
 BASE_Z0, BASE_T = 3.5, 1.0           # base panel underside Z, skin thickness
-PRELOAD_PAD = dict(c=(22.5, -30.3), s=9.8, h=0.25, r=1.0, sink=0.01)   # N10 preload pad on the base skin: centre |X|/Y, side, height (0.45 + 0.015: closes the 0.2 mm the STEP leaves under the N10, intent.seat_locates), corner R, sink into the skin (union overlap)
+PRELOAD_PAD = dict(c=(22.5, -30.3), s=9.5, h=0.465 if variant("pad_preload") else 0.25, r=0.85, sink=0.01)   # N10 preload pad on the base skin: centre |X|/Y, side, height (0.45 + 0.015: closes the 0.2 mm the STEP leaves under the N10, intent.seat_locates), corner R, sink into the skin (union overlap)
 BASE_OUT = dict(x=28.1, y0=-36.2, y1=13.0, r=0.8)   # RV26 outline 56.2 x 49.2, R0.8 corners
-TOP_Z0, TOP_T = CH["z1"], 0.9        # Ti top panel sits on the chassis rim, 0.9 thick
+TOP_Z0, TOP_T = CH["z1"], 0.9               # Ti top panel sits on the chassis rim, 0.9 thick
 TOP_X = 23.0                         # |X| of the top-panel side edges beside the switch
 TOP_SHOULDER_Y = 7.9                 # front edge between the shoulders and the tab
 TOP_NOTCH_X = (13.0, 21.0)           # |X| span of the front notches clearing the weapon-mount tabs (tab is |X| < 13)
@@ -86,9 +89,6 @@ LAT_GROW = 0.35   # mm, measured from RV01 y=-36 sections (pocket area 38.1 vs 2
 from shapely.geometry import Point, Polygon   # noqa: E402
 NUT_LOBE = Point(NUT[0], NUT[1]).buffer(4.55, 64).union(Point(1.35, 6.9).buffer(1.2, 32)).convex_hull   # chassis wall lobe round the thin nut (Y, Z)
 NUT_RELIEF_END_Y, NUT_STEP_R = -13.2, 0.0   # Y where the side-panel nut relief ends (RV23 runs on to -13.2; shared with side.py and the tub lobe tail); the lobe-tail step corner is the panel's own square edge (SHARP_OK)
-SP_NUT_RELIEF_RUN = 1.0   # the relief floor runs on past NUT_RELIEF_END_Y until it dies out in the inner face's rear sweep (RV23: floor X-32.5 meets the sweep at Y-13.37, ours at -13.45), so it ends with no step wall
-SP_NUT_RELIEF_Y1 = NUT_RELIEF_END_Y - SP_NUT_RELIEF_RUN
-SP_NUT_RELIEF = [(SP_NUT_RELIEF_Y1, 3.8), (0.5, 4.7), (2.3, 5.7), (2.3, 8.3), (0.5, 9.3), (-3.5, 11.0), (-9.5, 13.0), (SP_NUT_RELIEF_Y1, 13.8)]   # STEP RV23 diamond (Y, Z)
 PANEL_IN = 31.4   # inner face of the side panel at the nut lobe (|X|)
 LUG_FLOOR_Z, LUG_SCALLOP_R, LUG_BLEND_R, LUG_SB_R = 2.5, 4.0, 4.95, 3.25   # param: organic lug underside arcs fitted to RV01: scallop R (RV01 R4), the blend into the standoff arc (ref R4.95), standoff arc R
 LUG_SA_R = 4.5   # standoff end boss round SA (RV01 R4.5)

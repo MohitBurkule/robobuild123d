@@ -13,7 +13,7 @@ SIDE_SINK = dict(a=2.15, b=5.75, c=1.05)                 # depth of each screw h
 SIDE_FACE_X = {k: SIDE_BOLT_X[k] + SIDE_SINK[k] for k in SIDE_BOLT_X}   # |X| of the battered outer face at each screw
 assert all(0 < d <= SP_CSK["head_clear"] for d in SIDE_SINK.values()), "a screw head must sit inside its driver bore (sink <= bore depth)"
 SIDE_BOLT_DES = dict(a="M3x10", b="M3x10", c="M3x8")
-BASE_BOLT_Z = BASE_Z0                                        # base-panel screw head plane
+BASE_BOLT_Z = 2.9                                        # base-panel screw head plane
 TOP_BOLT_XY = INS[1::-1] + INS[3:1:-1]                   # top-panel screws sit on the four corner columns, right-hand first
 PCT = 100                                                # percent
 AWG = dict(power=24, rx=26, motor=28, signal=30)
@@ -33,9 +33,10 @@ WIRES = [("w_bat_sw", "battery.jst_rcy", "power_switch.in", AWG["power"], "power
 
 # make_spec tables: weapon shaft, web floors, hub pivots, electronics placements, press-fit interference, belt geometry
 WEB = dict(spider=0.8, disc=0.9, fork=1.05)             # min_web_mm the designer owns (STEP measures the same webs)
+HUB_SPIN_DEG = -2.45                                   # rear hubs sit this far round the D-shaft (STEP: the D-bore flat, nut slot and grub are turned 2.45 deg; the Distance/Concentric mates leave the spin free)
 HUB_PIVOT_X = dict(rear=41.6, front=34.5)               # |X| of each hub's revolute pivot
 BAT_BELOW = 5.5                                          # lipo_2s_180_turnabot catalog origin -> pack underside (STEP pack 11 thick, z 6.5..17.5 about origin z 12)
-BAT_Z = 12.0                                            # STEP/dump pack origin (RV16 xform z 11.8 ~ 12); underside 6.5, 2.0 over the base panel skin: carried on the foam pad
+BAT_Z = 12.0                                            # STEP/dump pack origin (RV16 xform z 11.8 ~ 12); underside 6.5, 2.0 over the base panel skin (original: no pad, pack mated to the chassis only; foam pad = variant battery_pad)
 BAT_PAD = dict(x=(-14.8, -8.8), y=(-11.4, 0.6))          # double-sided foam pad footprint under the pack, base-panel skin top -> pack underside
 ELEC = dict(battery=(-11.81, -5.4, BAT_Z), rxesc=(8.67, -3.0, 15.3), wesc=(8.63, -7.25, 10.6), switch_yz=(-5.6, 14.25))   # catalog origins (STEP envelopes)
 FILLET_REAR_X = 26.77   # |X| where the squared N10 gearbox-plate seat meets its seat arc at the rear wall (measured on our section z=10; RV01 26.5)
@@ -68,8 +69,6 @@ REF_BOM = [   # RVRN 2.0 STEP part list (research/rvrn_step/INDEX.txt); one row 
     dict(role="FS9: mount to standoff 2 x M3x12 CSK alu (axle standoff)", match=["bolt_u?a"], count=2, designation="M3x12", head="countersunk", threads_into="standoff", material="aluminium"),
     dict(role="FS9: mount to nose standoff 2 x M3 CSK alu", match=["bolt_u?b"], count=2, designation="M3x14", head="countersunk", threads_into="standoff", material="aluminium",
          deviation="M3x14 instead of the STEP's M3x12: through mount and lug, 12 mm engages 3.9 mm of the 15 mm standoff (< 1.5 d)"),
-    dict(role="top panel: 4 x M2 CSK thread-forming (not in the STEP; its countersunk holes are)", match=["bolt_t*"], count=4, designation="M2x5", threads_into="insert",
-         deviation="the STEP top panel has 4 countersunk corner holes but no screws; 4 M2x4 CSK thread-forming screws added so the Ti panel cannot peel off"),
     dict(role="side panel to standoff ends: 4 x M3 CSK (STEP M3x8)", match=["bolt_s?a", "bolt_s?b"], count=4, designation="M3x10", head="countersunk", threads_into="standoff",
          deviation="M3x10 instead of the STEP's M3x8: 8 mm engages 4.2 / 2.7 mm of standoff thread, under 1.5 d in aluminium"),
     dict(role="side panel to chassis: 2 x M3x8 CSK into thin nuts", match=["bolt_s?c"], count=2, designation="M3x8", head="countersunk", threads_into="nut"),
@@ -97,12 +96,6 @@ REF_BOM = [   # RVRN 2.0 STEP part list (research/rvrn_step/INDEX.txt); one row 
     dict(role="switch: 2 x M2 into the deck pilot holes (not in the STEP)", match=["bolt_sw*"], count=2, designation="M2",
          deviation="the STEP has the two 1.7 pilot holes but no screws"),
     dict(role="nitrile O-ring belts (not in the STEP; hub grooves are)", kind="part", match=["belt_l", "belt_r"], count=2),
-    dict(role="bat_pad: double-sided foam tape pad under the pack (not in the STEP)", kind="part", match=["bat_pad"], count=1, material="foam_tape",
-         deviation="the STEP pack floats 2 mm over the base panel; a foam tape pad supports and retains it (adds ~0.05 g, reversible)",
-         reason="the STEP pack floats 2 mm over the base panel; a foam tape pad supports and retains it (adds ~0.05 g, reversible)"),
-    dict(role="esc_tray: TPU weapon-ESC tray (not in the STEP)", kind="part", match=["esc_tray"], count=1, material="tpu",
-         deviation="the STEP holds the weapon ESC with kapton tape alone; a TPU tray with 0.1 mm lips keeps the board in if the tape fails (adds 1.1 g, reversible)",
-         reason="the STEP holds the weapon ESC with kapton tape alone; a TPU tray with 0.1 mm lips keeps the board in if the tape fails (adds 1.1 g, reversible)"),
     dict(role="battery lead: JST RCY", kind="wire", match=["w_bat_sw"], count=1, connector="jst_rcy"),
     dict(role="weapon phases: 3 x 2 mm bullets", kind="wire", match=["w_wesc_m"], count=1, connector="bullet2"),
     dict(role="MR85ZZ bearing in the RV02 seat (outboard shaft support)", kind="part", match=["wbearing"], count=1,
@@ -110,6 +103,23 @@ REF_BOM = [   # RVRN 2.0 STEP part list (research/rvrn_step/INDEX.txt); one row 
     dict(role="GR1507 5 mm threaded shaft", kind="part", match=["wshaft"], count=1,
          deviation="added: the shaft belongs to the bought GR1507, which the STEP draws as one body (INDEX.txt lists no shaft); drawn apart for the MR85 support and the spider collar, its mass stays in the motor"),
 ]
+# REF_BOM extras that exist only when the named variant (variants.py) is on: spec.ref_bom() appends them
+REF_BOM_VARIANT = {
+    "top_screws": [
+    dict(role="top panel: 4 x M2 CSK thread-forming (not in the STEP; its countersunk holes are)", match=["bolt_t*"], count=4, designation="M2x5", threads_into="insert",
+         deviation="the STEP top panel has 4 countersunk corner holes but no screws; 4 M2x4 CSK thread-forming screws added so the Ti panel cannot peel off"),
+    ],
+    "battery_pad": [
+    dict(role="bat_pad: double-sided foam tape pad under the pack (not in the STEP)", kind="part", match=["bat_pad"], count=1, material="foam_tape",
+         deviation="the STEP pack floats 2 mm over the base panel; a foam tape pad supports and retains it (adds ~0.05 g, reversible)",
+         reason="the STEP pack floats 2 mm over the base panel; a foam tape pad supports and retains it (adds ~0.05 g, reversible)"),
+    ],
+    "esc_tray": [
+    dict(role="esc_tray: TPU weapon-ESC tray (not in the STEP)", kind="part", match=["esc_tray"], count=1, material="tpu",
+         deviation="the STEP holds the weapon ESC with kapton tape alone; a TPU tray with 0.1 mm lips keeps the board in if the tape fails (adds 1.1 g, reversible)",
+         reason="the STEP holds the weapon ESC with kapton tape alone; a TPU tray with 0.1 mm lips keeps the board in if the tape fails (adds 1.1 g, reversible)"),
+    ],
+}
 
 REF_DIR = "/mnt/project-files/robot-cad/research/rvrn_step/parts"
 DRISK_T = None
@@ -121,8 +131,9 @@ MICRO_T = {   # STEP Micro_slx_v1_0 instance placements (assembly frame), compos
 }
 
 
-SLIT_DEV_X, SLIT_DEV_R, SLIT_DEV_YZ = 25.75, 2.5, ((46.4, 2.2), (44.4, 6.0), (43.1, 6.2), (44.2, 5.9), (48.5, 2.8))   # fork-tine slit sites in the wedgelet
-TOE_DEV_YZ, TOE_DEV_R, TOE_DEV_X = (49.3, 1.4), 4.0, (19.5, 24.0, 28.0, 32.0, 36.5)                             # knife-toe land sites
+FORK_PATH_X, FORK_PATH_R, FORK_PATH_MM3 = 25.75, 3.0, 30.0   # fork tine runs through the wedgelet cheek: path capsule radius (cap 3) and the interpenetration volume (RV17 STEP: 26 mm3)
+FORK_PATH_YZ = ((50.1, 2.0), (45.0, 3.0), (41.5, 7.5))
+TOE_DEV_YZ, TOE_DEV_R, TOE_DEV_X, TOE_DEV_MM3 = (49.3, 1.4), 3.0, (19.5, 36.5), 40.0   # knife-toe land: path capsule from the first to the last x   # mm3: land volume the STEP knife has over the printable land
 
 
 # reference_cad tolerances and the reasoned-deviation sites (centres + radii of the regions allowed to differ from the STEP)
@@ -136,7 +147,8 @@ LOBE_DEV, LOBE_DEV_R = (32.0, -13.5, 9.4), 3.5  # param: organic centroid of the
 BASE_DEV_Z, PANEL_DEV_R, TOP_DEV_Z = 4.5, 3.5, 19.95
 # Top Panel Cut-Extrude3 (RVRN 2.0 STEP Top_Panel_1, dumps_v2): 0.1 mm-deep engraved lettering, world x -17.75..18.81,
 # y -8.68..-2.53, top face z 19.57; four r5 spheres along the text line cover it (laser-etched, not modelled)
-TOP_TEXT_DEV_Z, TOP_TEXT_DEV_R = 19.57, 5.0
+TOP_TEXT_DEV_Z, TOP_TEXT_DEV_R = 19.57, 3.0   # path waiver radius (check cap 3)
+TOP_TEXT_X, TOP_TEXT_Y, TOP_TEXT_MAX_MM3 = (-17.75, 18.81), (-7.1, -4.1), 20.0   # lettering span in X (y -8.68..-2.53), two capsule centre lines Y (r 3 each covers the edge strokes), volume cap per capsule
 TOP_TEXT_DEV_XY = ((-3.78, -5.57), (-13.73, -5.62), (5.84, -5.26), (15.04, -5.66))
 NOSE_DEV, NOSE_DEV_R = (MNT_IN + 2.0, SB[0] + 0.6, SB[1] - 1.7), 5.0             # mount nose pad (|x|, y, z): thickened nose wall, deviation from the STEP nose
 STATOR_DEV_X, TAP_DEV_R = 16.8, 2.0                                              # stator lead-in cone site; tap-hole sites

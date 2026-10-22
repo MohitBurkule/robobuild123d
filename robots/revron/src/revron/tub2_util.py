@@ -32,3 +32,27 @@ def concave_filler(corner, quadrant, r):
 def mirrored(part):
     """The part plus its image across the X = 0 (Right) plane: the designer's Mirror feature."""
     return part + part.mirror(Plane.YZ)
+
+
+def round_floor_pocket(face, y_floor, y_open, r):
+    """Cutter of a pocket in the XZ plane whose plan corners and floor edges are all rounded R r with the pocket only r deep (SolidWorks
+    sketch corner R = floor Fillet R = depth, so the floor corners are spheres): the plan face shrunk by r, swept by a ball of radius r.
+    `face` is the plan Face drawn on the default XY sketch plane (sketch x = world X, sketch y = world Z); the floor lies at world y_floor, the pocket opens
+    towards y_open."""
+    from build123d import Cylinder, Kind, Sphere, add, offset
+    s = 1 if y_open > y_floor else -1
+    yc = y_floor + s * r
+    with BuildSketch(Plane.XZ.offset(-y_floor)) as e:
+        add(face)
+        offset(amount=-r, kind=Kind.INTERSECTION)
+    with BuildSketch(Plane.XZ.offset(-yc)) as w:
+        add(face)
+        offset(amount=-r, kind=Kind.INTERSECTION)
+        offset(amount=r, kind=Kind.ARC)
+    out = extrude(e.sketch, -s * abs(y_open - y_floor)) + extrude(w.sketch, -s * abs(y_open - yc))
+    for ed in e.sketch.edges():
+        p, q = ed.start_point(), ed.end_point()
+        d = q - p
+        out += Plane(origin=(p.X, yc, p.Z), z_dir=(d.X, 0, d.Z)) * Cylinder(r, d.length, align=(Align.CENTER, Align.CENTER, Align.MIN))
+        out += Pos(p.X, yc, p.Z) * Sphere(r)
+    return out
