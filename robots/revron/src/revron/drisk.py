@@ -43,7 +43,7 @@ def _at(r, deg):
 def disc_outline():
     """Single-tooth eccentric disc: rim DISC_R centred DISC_ECC off towards DISC_ECC_A so the rim mass balances the
     tooth. The tooth tip sits at (TOOTH_R, TOOTH_A); the leading flank runs radially in from the tip and the straight
-    back face runs from the tip down to its rim tangent point (a smooth join). Tip edge broken DISC_ROUND r_out, flank
+    back face runs from the tip down to its rim tangent point (a smooth join). Tip DISC_ROUND r_out (sharp), flank
     root r_in."""
     ec = _at(DISC_ECC, DISC_ECC_A)
     tip = _at(TOOTH_R, TOOTH_A)
