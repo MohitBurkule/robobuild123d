@@ -10,7 +10,7 @@ import build123d as bd
 from . import plate as pl
 from .common import _m2
 from .params_weapon import (BIG, BOLT_R, DISC_BAL_PTS, DISC_BORE_ROUND, DISC_ECC, DISC_ECC_A, DISC_HOLE_R_WIN, DISC_R,
-                            DISC_ROUND, DOG, DR_ROT, DR_X, HALF_PITCH, HUB_R, N_STACK, SPACER, SPIDER, TOOTH_A,
+                            DISC_ROUND, DOG, DR_ROT, DR_X, HALF_PITCH, HUB_R, N_STACK, SPACER, SPIDER, STACK_CLR_R, STACK_TAP_R, TOOTH_A,
                             TOOTH_R, W_FRAME, WSHAFT)
 from .params_chassis import WY, WZ
 
@@ -75,7 +75,7 @@ def floating_disc():
     # param: organic balance window: rounded triangle on three measured corners (STEP), corner radius DISC_HOLE_R_WIN
     win = bd.offset(bd.Polygon(*DISC_BAL_PTS, align=None), DISC_HOLE_R_WIN, kind=bd.Kind.ARC)
     # param: end
-    return disc_outline() - _dog_bore() - pl.holes(_m2()[1], BOLT_R, N_STACK) - win
+    return disc_outline() - _dog_bore() - pl.holes(STACK_CLR_R, BOLT_R, N_STACK) - win
 
 
 def disc(which):
@@ -97,9 +97,9 @@ def spider_sketch():
     quarter windows, the shaft-collar bore, M2 clearance on the bell's HUB_R screw circle and M2 tap holes on BOLT_R
     (the stack screws thread in)."""
     sp = SPIDER
-    tap_r, clr_r, _ = _m2()
+    clr_r = _m2()[1]                                                # bell screws (M2, motor catalog)
     body = pl.round_corners(bd.Circle(sp["r"]) + pl.holes(sp["lobe_r"], BOLT_R, N_STACK), r_in=sp["round_in"])
-    return body - pl.polar(_quarter_window(sp["hub_r"], sp["win_r"], sp["arm"], sp["win_round"]), N_STACK) - bd.Circle(sp["bore_r"]) - pl.holes(clr_r, HUB_R, N_STACK) - pl.holes(tap_r, BOLT_R, N_STACK)
+    return body - pl.polar(_quarter_window(sp["hub_r"], sp["win_r"], sp["arm"], sp["win_round"]), N_STACK) - bd.Circle(sp["bore_r"]) - pl.holes(clr_r, HUB_R, N_STACK) - pl.holes(STACK_TAP_R, BOLT_R, N_STACK)
 
 
 def spider():
@@ -112,7 +112,7 @@ def spacer_sketch():
     leaving a constant-width spoke (2 arm) along each bolt axis."""
     sp = SPACER
     win = _quarter_window(sp["win_in"], sp["win_out"], sp["arm"], sp["win_round"])
-    return bd.Circle(sp["r"]) - bd.Circle(sp["bore_r"]) - pl.polar(win, N_STACK) - pl.holes(_m2()[1], BOLT_R, N_STACK)
+    return bd.Circle(sp["r"]) - bd.Circle(sp["bore_r"]) - pl.polar(win, N_STACK) - pl.holes(STACK_CLR_R, BOLT_R, N_STACK)
 
 
 def drisk_spacer():
