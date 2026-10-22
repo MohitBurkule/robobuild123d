@@ -68,13 +68,14 @@ MNT_SIDE = dict(
     r=dict(top_r=10.0, notch_y=10.17, rim_end=-14.5, batter=dict(drop=2.4084, lean=0.154, toe=0.0404)),
     l=dict(top_r=7.0, notch_y=9.0, rim_end=-5.0, batter=dict(drop=2.80265, lean=0.1701, toe=0.0158)))
 MNT_TOP_Z = CH_Z1                        # top of the rear notch: the teardrop's tangent line starts here
-TAB = dict(y0=CH_Y1, z0=5.35, h=8.2, y1=26.5, cham=1.0)   # chassis tab the notch drops over: rear Y, floor Z, height, front-face Y, front chamfer
+TAB_FRONT_SETBACK = fc.head(M3, 'csk')[0] / 2 + CH_WALL / 2   # tab front face stands short of the axle standoff axis (SA) by the M3 CSK head radius plus a skin: the mount screw into SA clears the tab
+TAB = dict(y0=CH_Y1, z0=5.35, h=8.2, y1=SA[0] - TAB_FRONT_SETBACK, cham=1.0)   # chassis tab the notch drops over: rear Y, floor Z, height, front-face Y (follows SA: 26.5 at the STEP's SA), front chamfer
 NOSE_R, NOSE_A0 = 3.25, -16.0           # nose arc round the SB standoff and where it leaves the outline (deg)
 MNT_HEEL = dict(z=SB[1] - NOSE_R, step=0.4, back=1.8, z_hook=2.5, z_lip=4.5)   # rear foot hooked under the tab: flat underside (tangent to the nose arc), tip step, setback, hook and lip Z
 MNT_NOTCH_UP = 2.0                      # the rear face above the tab leans back by this much over the last stretch to the top
 NOSE_PAD_R = 4.1 if PRINTABLE else 0.0                        # local pad round the nose CSK: CSK cone radius (3.2) + a 0.9 mm printed wall (the STEP nose leaves 0.15 mm)
-BOSS_Z = 6.34                           # the boss starts above the line from the notch top to the nose, at this Z at the nose end
-BOSS_NOSE_Y = 44.34
+from .tub2_lug import top_line_slope   # noqa: E402
+BOSS_SLOPE = top_line_slope()           # the boss starts above the line from the notch top to the nose: that line is the chassis lug's top line (tangent from the front-top corner to the nose round SB; STEP: Z 6.34 at Y 44.34), so it follows SB
 BIG = 60.0                              # a box edge bigger than any part, for the wedgelet's 2D half-plane clip (_mount_clip)
 MNT_RELIEF_R = 1.0 if PRINTABLE else 0.0                      # concave corner relief of the profile (tub deck fillet, mfg corner relief)
 MNT_CSK_CLEAR = 0.4                     # extra cone diameter over the DIN 7991 head: the seated head floats, so the notch bears a hit before the screws do
@@ -118,7 +119,7 @@ LEAD_DEV_R, LEAD_DEV_MAX_MM3 = 3.0, 520                        # reference_cad c
 
 def boss_line_z(y):
     """Z of the boss's lower edge (the line from the notch top to the nose, see mount._mount_clip) at Y."""
-    return MNT_TOP_Z + (y - TAB["y0"]) * (BOSS_Z - MNT_TOP_Z) / (BOSS_NOSE_Y - TAB["y0"])
+    return MNT_TOP_Z + (y - TAB["y0"]) * BOSS_SLOPE
 
 
 def lead_groove_ends():

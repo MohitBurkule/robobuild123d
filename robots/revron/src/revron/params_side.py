@@ -40,7 +40,7 @@ SP_NOSE_RUN = 10.0                   # the nose is the swing's outer cone swept 
 SP_NOSE_OVER = 1.0                   # cutters overshoot the faces they open
 # nose notch (STEP RV23 sections): the standoff-end post (R3.952 round SA) stands in a pocket (floor X_POST); behind it a deeper pocket (X_B, rear corner r_round)
 # keeps the wedgelet ring round SB as a R3.5 post
-SP_NOSE_PKT = dict(x_post=-40.5, x_b=-42.5, draft_deg=2.2, r_round=1.0, r_ring=3.5, z_top=8.0, r_slot=3.65, taper_deg=18.9)   # z_top: the pocket's roof, above it a slot round the nose-run end
+SP_NOSE_PKT = dict(x_post=-40.5, x_b=-42.5, draft_deg=2.2, r_round=1.0, r_post=3.95, r_ring=3.5, z_top=8.0, r_slot=3.65, taper_deg=18.9)   # z_top: the pocket's roof, above it a slot round the nose-run end
 SP_NOSE_Z = (FLOOR_Z, 10.0)   # SP_NOSE_Z[1] is also the top of the swing and of the S-bend's front end
 SP_TOE_Y0 = 47.0                     # the ramp toe's land starts here (Y)
 SP_TOE_RUN = 3.1                     # Y run of the ramp skin the toe polygon follows
