@@ -14,6 +14,8 @@ from __future__ import annotations
 import numpy as np
 
 RES_MM = 0.1
+MIN_PTS = 3      # a radius difference seen at fewer edge samples is a tessellation fluke, not an edge run
+REL_TOL = 0.03   # of the radius: a large-R arc tessellated by angle carries more chord error than a small one
 GRID_MM = 0.75
 LINK_MM = 2.0
 MIN_TURN_DEG = 20.0
@@ -63,7 +65,7 @@ def _r(m, boxes, p, t):
         return None
     sub = m.submesh([idx], append=True)
     for w in (2.0, 3.0, 1.0):
-        x = local_radius(sub, p, t, w)
+        x = local_radius(sub, p, t, w, bounded=True)
         if x is not None and abs(x[1]) >= MIN_TURN_DEG:
             return x
     return None
@@ -125,7 +127,7 @@ def radius_diffs(pairs, res=RES_MM, link=LINK_MM):
     """Clusters of pairs differing by > res: [{at, n, r_ours, r_ref, turn, pts}] (median radii per cluster)."""
     from .ref_local import cluster
 
-    bad = [x for x in pairs if abs(x[2] - x[3]) > res]
+    bad = [x for x in pairs if abs(x[2] - x[3]) > max(res, REL_TOL * max(x[2], x[3]))]   # tessellation: chord error grows with R
     if not bad:
         return []
     P = np.array([x[0] for x in bad])
@@ -133,6 +135,8 @@ def radius_diffs(pairs, res=RES_MM, link=LINK_MM):
     out = []
     for i in range(k):
         g = [bad[j] for j in np.nonzero(lab == i)[0]]
+        if len(g) < MIN_PTS:
+            continue
         out.append({"at": np.round(np.mean([x[0] for x in g], axis=0), 2).tolist(), "n": len(g),
                     "r_ours": round(float(np.median([x[2] for x in g])), 2), "r_ref": round(float(np.median([x[3] for x in g])), 2),
                     "turn": round(float(np.median([x[4] for x in g])), 1), "pts": np.array([x[0] for x in g])})
