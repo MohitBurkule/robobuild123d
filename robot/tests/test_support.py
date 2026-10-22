@@ -41,3 +41,18 @@ def test_inverted_resting_part_fails_only_upward():
 def test_declared_hold_is_exempt():
     esc = box("esc", (0, 0, 0), (14, 14, 10), kind="esc", retained="strap")
     assert not loose(support.run(_ctx(WALLS[:-1] + [esc])))
+
+
+def test_loose_ok_covers_support_loose_same_axis():
+    # one physical fact, one waiver: retention.loose's `loose_ok` also clears support.loose on that axis (round 52 motor_l/r)
+    walls = WALLS[:2] + [box("w2", (10, 0, 0), (2, 30, 10))] + WALLS[3:]
+    why = "RVRN STEP: RV12 N10 slides 2.0 mm inboard in RV01 before it touches"
+    mot = lambda wv: box("mot", (0, 0, 0), (14, 14, 10), kind="motor", **({"loose_ok": wv} if wv else {}))
+    f = loose(support.run(_ctx(walls + [mot(None)])))
+    assert f and "+x" in f[0].message
+    fs = support.run(_ctx(walls + [mot({"axis": "+x", "max_mm": 2.2, "reason": why})]))
+    assert not loose(fs) and any(x.id == "support.loose_waived" for x in fs)
+    for wv, msg in (({"axis": "+x", "max_mm": 1.5, "reason": why}, "still free"),   # re-tested at max_mm: must hit
+                    ({"axis": "-x", "max_mm": 2.2, "reason": why}, "stale")):        # another axis covers nothing
+        f = loose(support.run(_ctx(walls + [mot(wv)])))
+        assert f and "+x" in f[0].message and msg in f[0].message, f[0].message if f else None
