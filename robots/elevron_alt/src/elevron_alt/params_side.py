@@ -3,7 +3,9 @@
 wheel, set from STEP sections."""
 from .params_chassis import HX, HY, AXLE_Z, DECK_Z, CH_H, BOSS_OUT, BOSS_PITCH, BOSS_R, TAB_X_OUT, TAB_W, TAB_LEN, WALL
 from .params_drive import WHEEL_OUT, FLOOR_LIFT, TYRE_R
-from .params_chassis import AXLE_Y
+from .params_chassis import AXLE_Y, TAB_HOLE_Z, M3
+import math
+from robot.cad import fastener_catalog as fc
 
 # ---- MASTER DESIGN PARAMETERS ----------------------------------------------------------------------------------------
 SP_T = WALL                            # TPU wall
@@ -27,9 +29,11 @@ PLATE_Y = BOSS_PITCH / 2 + BOSS_R + SP_T                  # half length round th
 PLATE_Z = (2 * AXLE_Z - DECK_Z, DECK_Z)                   # symmetric about the axle, top at the deck underside
 SKIN_TOP = (WHEEL_OUT + SKIN_GAP, AXLE_Z + SKIN_OVER_AXLE)   # inner top corner of the skin (x, z): the wheel top stays proud
 STRUT_Y = (PLATE_Y - SP_T, PLATE_Y)                       # front strut from the plate's rear end out to the skin, ahead of the tyre
-CROSS_Y = (AXLE_Y + TYRE_R + WHEEL_CLR, HY + TAB_LEN)      # rear crossbar on the outer tab face, behind the rear tyre
+CROSS_Y = (AXLE_Y + TYRE_R + WHEEL_CLR, HY + TAB_LEN + SP_T)   # rear crossbar on the outer tab face, behind the rear tyre, closed past the tab end
 SKIN_Y = (STRUT_Y[0], CROSS_Y[1])                       # skin from the strut to the rear of the tabs
-CROSS_TOP = AXLE_Z
+NUT_R = (fc.nut(M3, "thin")[0] + NUT_FIT) / math.sqrt(3)   # cross-bolt nut pocket corner radius
+CROSS_Z = (TAB_HOLE_Z - NUT_R - SP_T, TAB_HOLE_Z + NUT_R + SP_T)   # crossbar: a wall round the captive nut above and below
+CROSS_TOP = CROSS_Z[1]
 FORK_X = (WHEEL_OUT - FORK_W - 0.4, WHEEL_OUT - 0.4)      # prong inside the tyre's outer face line
 FLOOR_Z = -FLOOR_LIFT                                     # floor in the STEP frame
 CSK_SCREW = "M3x8"

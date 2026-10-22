@@ -3,7 +3,7 @@ crossbar whose finger sits beside the outer chassis tab on the cross bolt, and a
 weapon to the floor. Right-hand part in the STEP frame; the left panel is its mirror."""
 import math
 
-from shapely.geometry import Polygon
+from shapely.geometry import Polygon, box as sbox
 
 from robocad.geom import _box, _cyl, _U, _S, _ext, _mirror_x, _solid
 from .params_chassis import AXLE_Z, BOSS_PITCH, HOLE_D, TAB_HOLE_Z, TAB_HOLE_DY, HY, HX, TAB_X_OUT, HEX, HEX_PHASE, M3 as NUT_D
@@ -44,7 +44,7 @@ def front_wall():
 
 def crossbar():
     """Rear crossbar from the outer chassis tab's face out to the skin's outer face, behind the rear tyre."""
-    return _box(TAB_X_OUT, skin_x(CROSS_TOP, True), *CROSS_Y, SKIN_BOT_Z, CROSS_TOP)
+    return _box(TAB_X_OUT, skin_x(CROSS_Z[0], True), *CROSS_Y, *CROSS_Z)
 
 
 def fork():
@@ -59,9 +59,10 @@ def cuts():
     from .fasteners import cutters
     from robot.cad import fastener_catalog as fc
     y, z = HY + TAB_HOLE_DY, TAB_HOLE_Z
-    af, m = fc.nut(NUT_D, "thin")
-    r = (af + NUT_FIT) / math.sqrt(3)
-    hexa = _ext(Polygon([(y + r * math.cos(math.radians(a)), z + r * math.sin(math.radians(a))) for a in range(HEX_PHASE, 360, 360 // HEX)]), "yz", TAB_X_OUT - 1, TAB_X_OUT + m)
+    m = fc.nut(NUT_D, "thin")[1]
+    pts = [(y + NUT_R * math.cos(math.radians(a)), z + NUT_R * math.sin(math.radians(a))) for a in range(HEX_PHASE, 360, 360 // HEX)]
+    entry = sbox(CROSS_Y[0] - 1, z - NUT_R * math.sqrt(3) / 2, y, z + NUT_R * math.sqrt(3) / 2)   # nut slides in from the front (the tyre gap)
+    hexa = _ext(Polygon(pts).union(entry), "yz", TAB_X_OUT - 1, TAB_X_OUT + m)
     bolt = _cyl(HOLE_D / 2, TAB_X_OUT - 1, TAB_X_OUT + CROSS_LAND + 1, (y, z), "x")
     return _U(cutters("side_r"), hexa, bolt)   # cross-bolt nut captive in the land, against the outer tab
 

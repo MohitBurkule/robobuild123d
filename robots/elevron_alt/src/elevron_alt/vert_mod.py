@@ -9,7 +9,7 @@ from shapely.ops import unary_union
 
 from robocad.geom import _box, _cyl, _U, _S, _ext, _mirror_x, _solid
 from .chassis import halfspace
-from .params_chassis import TAB_HOLE_DY, TAB_HOLE_Z, HOLE_D, HY
+from .params_chassis import TAB_HOLE_DY, TAB_HOLE_Z, HOLE_D, HY, TAB_LEN, EDGE_CH
 from .params_vert import *  # noqa: F401,F403
 
 
@@ -53,7 +53,10 @@ def upright_profile():
     """(y, z) outline of an upright: the hull of its run along the shell top, the bulkhead foot and the boss on the
     axis (it stands on the shell; nothing of it is under the shell top)."""
     run = [(SHELL_Y[0], SHELL_FRONT), (SHELL_Y[1], SHELL_TOP), (SHELL_Y[1], DECK_TOP)]
-    return Polygon(run).union(Point(WY, WZ).buffer(BOSS_R)).convex_hull
+    hull = Polygon(run).union(Point(WY, WZ).buffer(BOSS_R)).convex_hull
+    rear = HY + TAB_LEN                                     # stand clear of the chassis: its deck top and the rear chamfer plane over the tabs
+    chassis = Polygon([(-BIG, DECK_TOP), (HY - EDGE_CH, DECK_TOP), (rear, DECK_TOP - EDGE_CH - TAB_LEN), (rear, -BIG), (-BIG, -BIG)])
+    return hull.difference(chassis)
 
 
 def upright(sx):
@@ -75,7 +78,7 @@ def duct():
     the shell, where the weapon ESC sits (wire.exterior_support)."""
     w, h = DUCT
     y0, y1 = SHELL_Y[1] - VM_T - 1, LEAD_Y
-    outer = _box(-UP_IN, -UP_IN + w + VM_T, SHELL_Y[1] - VM_T, y1, WZ - h / 2 - VM_T, WZ + h / 2 + VM_T)
+    outer = _box(-UP_IN - VM_T, -UP_IN + w + VM_T, SHELL_Y[1] - VM_T, y1, WZ - h / 2 - VM_T, WZ + h / 2 + VM_T)
     return outer, _box(-UP_IN - 1, -UP_IN + w, y0, y1 + 1, WZ - h / 2, WZ + h / 2)
 
 

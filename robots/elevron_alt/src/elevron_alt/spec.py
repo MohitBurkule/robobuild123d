@@ -9,11 +9,11 @@ import os
 from robot.cad import fastener_catalog as fc
 from robocad.rig import DIGITS
 from .fasteners import records, INSERT_LEN
-from .params_chassis import (IN_X, CH_H, WALL, AXLE_Y, AXLE_Z, POSTS, END_POSTS, BOSS_PITCH, BOSS_IN, COL_R, HY, TAB_HOLE_DY, TAB_HOLE_Z,
+from .params_chassis import (REBATE, IN_X, CH_H, WALL, AXLE_Y, AXLE_Z, POSTS, END_POSTS, BOSS_PITCH, BOSS_IN, COL_R, HY, TAB_HOLE_DY, TAB_HOLE_Z,
                              TAB_X_OUT, TAB_W, TAB_PITCH, SW_SLOT, SW_SLOT_IN)
-from .params_drive import FLOOR_LIFT, N10_X, DRIVE_MOTOR, WY, WZ, MOTOR_AT_X, HUB_X0, HUB_LEN
+from .params_drive import FLOOR_LIFT, N10_X, DRIVE_MOTOR, WY, WZ, MOTOR_AT_X, HUB_X0, HUB_LEN, DISC_X
 from .params_hw import INSERT_CAT, M3
-from .params_vert import DECK_TOP, VM_T, SHELL_Y, DUCT
+from .params_vert import DECK_TOP, VM_T, SHELL_Y, DUCT, FRAME_LEG
 from .params_drive import UP_IN
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -35,7 +35,7 @@ BAT_SIZE, RX_SIZE, WE_SIZE = (36.0, 18.0, 11.0), (32.0, 20.0, 4.4), (23.5, 12.0,
 BAY_GAP = 0.5
 LEADS_FORWARD = [-90, 0, 0]             # BE1806 turned about its axis so the phase leads point forward into the duct
 SHAFT_MASS_SHARE = 0.05                # the shaft's mass is in the motor's catalog mass (Revron convention)
-MOTOR_SLIDE = 2.0                      # N10 inboard play in the keyhole before the hub meets the wall
+MOTOR_LIFT = 0.6                       # N10 play up to the deck underside (STEP 0.5)
 
 
 def _w(x, y, z):
@@ -59,26 +59,27 @@ def _structure(P, M):
           label="Side_Panel_alt_sm TPU pod: plate on the side boss (2 M3 CSK into captive nuts), battered skin outside the rear wheel, crossbar on the rear cross bolt, fork prong past the weapon")
 
 
-def _weapon(P, M, axis_w):
+def _weapon(P, M, pivot):
+    """Rotor frame: on the spin axis in the disc mid-plane (the spin checks take the weapon part's origin as the centre)."""
     P(id="weapon_motor_stator", kind="weapon_motor", catalog=STATOR, at=_w(MOTOR_AT_X, WY, WZ), rot=LEADS_FORWARD, rotates_with="fixed",
       exposed=True, exposed_reason="vertical spinner: the BE1806 sits between the uprights behind the disc, shielded by the disc and the uprights",
       label="BBB BE1806 2300 kV (RV08), fixed half: base sunk into the left upright, 4 x M2")
-    joint = {"kind": "revolute", "axis": [1, 0, 0], "pivot": axis_w, "min": 0, "max": 360, "default": 0}
+    joint = {"kind": "revolute", "axis": [1, 0, 0], "pivot": pivot, "min": 0, "max": 360, "default": 0}   # pivot in the disc plane, on the shaft
     P(id="wshaft", kind="shaft", material="steel", process="turned", stock="BE1806 5 mm shaft (part of the motor), run on into the MF85", rotates_with="weapon",
-      shaft_of="weapon_motor_can", shape=M("wshaft", axis_w), parent="disc", at=[0, 0, 0], color="#777777", solid_fraction=SHAFT_MASS_SHARE,
+      shaft_of="weapon_motor_can", shape=M("wshaft", pivot), parent="disc", at=[0, 0, 0], color="#777777", solid_fraction=SHAFT_MASS_SHARE,
       label="5 mm shaft from the bell face through disc, spider and prop mount into the MF85 in the right upright")
-    P(id="weapon_motor_can", kind="other", role="rotor", catalog=CAN, parent="disc", at=[MOTOR_AT_X, 0, 0], rot=LEADS_FORWARD, rotates_with="weapon", exposed=True,
+    P(id="weapon_motor_can", kind="other", role="rotor", catalog=CAN, parent="disc", at=[MOTOR_AT_X - pivot[0], 0, 0], rot=LEADS_FORWARD, rotates_with="weapon", exposed=True,
       exposed_reason="vertical spinner: the BE1806 can spins between the uprights behind the disc",
       label="BBB BE1806 can: spins with the shaft round the fixed stator")
     P(id="prop_mount", kind="other", role="hub", material="aluminium", process="turned", stock="RV07 prop mount (aluminium, part of the motor kit)", rotates_with="weapon", parent="disc",
-      shape=M("prop_mount", axis_w), at=[0, 0, 0], color="#9aa0a6", retained="press_fit", label="RV07 prop mount: flange clamping the spider and disc onto the bell")
+      shape=M("prop_mount", pivot), at=[0, 0, 0], color="#9aa0a6", retained="press_fit", label="RV07 prop mount: flange clamping the spider and disc onto the bell")
     P(id="spider", kind="other", role="hub", material="aluminium", process="waterjet", stock="3 mm 7075 plate", parent="disc", rotates_with="weapon",
       min_web_mm=0.8, min_web_reason="0.8 mm webs are the designer's own (RVRN spider_1, the uploaded spider.STEP, measures 0.8 at the same four places)",
-      shape=M("spider", axis_w), at=[0, 0, 0], color="#b8bcc2", label="spiderSL: 3 mm aluminium spider driving the disc (Revron spider geometry)")
+      shape=M("spider", pivot), at=[0, 0, 0], color="#b8bcc2", label="spiderSL: 3 mm aluminium spider driving the disc (Revron spider geometry)")
     P(id="disc", kind="weapon", material="hardox", process="laser", stock="3 mm Hardox 450", secondary_ops=["drilled"], rotates_with="weapon", joint=joint,
       thin_wall_deviation="RVRN Drisk_floating_3 as drawn: the dog ramps run out to a knife edge (the Revron disc, identical part)",
       min_web_mm=0.9, min_web_reason="0.9 mm webs beside the balance window are the designer's own (RVRN Drisk_floating_3, identical part)",
-      shape=M("disc", axis_w), at=axis_w, color="#d9dde2",
+      shape=M("disc", pivot), at=pivot, color="#d9dde2",
       weapon={"kind": "disc", "motor": "weapon_motor_stator", "cells": 2, "reduction": 1.0, "spin_axis": [1, 0, 0], "spin_dir": "ccw", "supported_both_ends": True, "teeth": 1},
       label="Drisk_floating_3: 3 mm Hardox single-tooth eccentric disc (the Revron disc)")
     P(id="wbearing", kind="bearing", material="steel", process="cots", stock="FS4 MF85ZZ 5 x 8 x 2.5 flanged", rotates_with="fixed", color="#555555",
@@ -88,7 +89,7 @@ def _weapon(P, M, axis_w):
 def _drive(P, M):
     for s, n in SIDES:
         P(id=f"motor_{n}", kind="motor", catalog=DRIVE_MOTOR, at=_w(s * N10_X, AXLE_Y, AXLE_Z), rot=[0, 0, 0 if s > 0 else 180], rotates_with="fixed",
-          loose_ok={"axis": "+x" if s < 0 else "-x", "max_mm": MOTOR_SLIDE, "reason": "RV12 N10 in the ELVRN Alt keyhole as in the RVRN 2.0 tub: it bears on the wall outboard and the hub stops it inboard"},
+          loose_ok={"axis": "+z", "max_mm": MOTOR_LIFT, "reason": "RVRN_revdev STEP: RV12 N10 at z 2.5..14.5 under the ELVRN Alt deck underside at 15: 0.5 mm over the gearbox, as drawn"},
           label="RV12 N10 2200 rpm in the rear keyhole, gearbox face on the wall")
         for e, y in (("r", AXLE_Y), ("f", -AXLE_Y)):
             hub = f"whub_{e}{n}"
@@ -125,7 +126,7 @@ def _electronics(P):
     rx_x = POSTS[-1][0] - COL_R - BAY_GAP - RX_SIZE[1] / 2
     P(id="rxesc", kind="esc", catalog=RXESC, at=_w(rx_x, 0, WALL + RX_SIZE[2] / 2), rot=[0, 0, 90], retained="kapton",
       label="Malenki nano right of centre on the base panel")
-    P(id="wesc", kind="esc", catalog=WESC, at=_w(-(UP_IN - DUCT[0] / 2), SHELL_Y[1] - VM_T - BAY_GAP - WE_SIZE[0] / 2, DECK_TOP + WE_SIZE[2] / 2), rot=[0, 0, 90], retained="kapton",
+    P(id="wesc", kind="esc", catalog=WESC, at=_w(-(UP_IN - BAY_GAP - WE_SIZE[1] / 2), SHELL_Y[1] - FRAME_LEG - BAY_GAP - WE_SIZE[0] / 2, DECK_TOP + WE_SIZE[2] / 2), rot=[0, 0, 90], retained="kapton",
       label="BBB weapon ESC on the deck under the vert_mod shell, beside the phase-lead duct")
     P(id="power_switch", kind="switch", catalog=SWITCH, at=_w(IN_X - SW_SLOT_IN - SW_SLOT[0] / 2, 0, CH_H - SW_LEVER_TOP), rot=[0, 0, 90], retained="press_fit",
       marked=True, tool_free=True, off_dir=[0, -1, 0], label="BBB ant switch pressed up into the deck slot from inside, lever flush with the deck")
@@ -172,7 +173,7 @@ def make_spec(model_file):
     P = lambda **k: parts.append(k)
     C = lambda a, b, m, r, **k: conn.append(dict(a=a, b=b, method=m, reason=r, **k))
     _structure(P, M)
-    _weapon(P, M, _w(0, WY, WZ))
+    _weapon(P, M, _w(sum(DISC_X) / 2, WY, WZ))
     _drive(P, M)
     _hardware(P)
     _electronics(P)
@@ -190,19 +191,28 @@ REF_TO_WORLD = [[1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 1, FLOOR_LIFT], [0, 0, 0, 1]]
 TOL = dict(tight=0.3, std=0.6, loose=1.5)
 
 
+GRUB_DEV = (35.1, 0.57, 2.0)             # RV21 grub-bore break-in: |x|, z above the axle, capsule radius
+TAB_DEV_R = 3.5                        # the Chamfer5 lead-in at the inner tab face
+REBATE_DEV_R = 5.0                     # the base-panel rebate lip (the ligament check reads the rebate as a 68.5 bore)
+VOL_TOL = dict(chassis=0.05, vert=0.2, side=0.4)
+
+
 def reference_cad():
-    hub_dev = [{"near": _w(s * 35.1, AXLE_Y, AXLE_Z + 0.57), "r": 2.0, "reason": "RVRN RV21 hub as drawn: the M3 grub bore breaks into the D-bore (STEP Cut-Extrude4)"} for s in (-1, 1)]
-    tab_dev = [{"near": _w(s * (TAB_X_OUT - TAB_PITCH - TAB_W), HY + TAB_HOLE_DY, TAB_HOLE_Z), "r": 3.5,
+    gx, gz, gr = GRUB_DEV
+    hub = lambda s, y, why: {"near": _w(s * gx, y, AXLE_Z + gz), "r": gr, "reason": why}
+    hub_why = "RVRN RV21 hub as drawn: the M3 grub bore breaks into the D-bore (STEP Cut-Extrude4)"
+    tab_dev = [{"near": _w(s * (TAB_X_OUT - TAB_PITCH - TAB_W), HY + TAB_HOLE_DY, TAB_HOLE_Z), "r": TAB_DEV_R,
                 "reason": "ELVRN3.0 Alt chassis Chamfer5: the 1.5 mm lead-in on the inner tab's cross-bolt hole comes within 0.34 of the tab bottom in the STEP too"} for s in (-1, 1)]
-    rows = [dict(part="chassis", file="Alt_chassis_1.stl", mode="shape", tol_mm=TOL["loose"], tol_vol_frac=0.05, note="Alt_chassis (dump replay by relations, IoU 0.97)", deviations=tab_dev),
-            dict(part="vert_mod", file="vert_mod_1.stl", mode="envelope", tol_mm=TOL["loose"], tol_vol_frac=0.2, note="vert_mod: no dump; relation build from STEP sections (see MISSES.md)"),
-            dict(part="side_r", file="Side_Panel_alt_sm_1.stl", mode="envelope", tol_mm=TOL["loose"], tol_vol_frac=0.4, note="Side_Panel_alt_sm: no dump (see MISSES.md)"),
-            dict(part="side_l", file="MirrorSide_Panel_alt_sm_1.stl", mode="envelope", tol_mm=TOL["loose"], tol_vol_frac=0.4, note="MirrorSide_Panel_alt_sm"),
-            dict(part="disc", file="Drisk_floating_3_1.stl", mode="envelope", tol_mm=TOL["std"], note="the Revron disc"),
-            dict(part="whub_rl", file="RV21_Rear_Wheel_1.stl", mode="envelope", tol_mm=TOL["std"], deviations=hub_dev[:1]),
-            dict(part="whub_rr", file="RV21_Rear_Wheel_2.stl", mode="envelope", tol_mm=TOL["std"], deviations=hub_dev[1:]),
-            dict(part="whub_fl", file="RV21_Rear_Wheel_1.stl", mode="envelope", tol_mm=TOL["loose"], deviations=[dict(hub_dev[0], near=_w(-35.1, -AXLE_Y, AXLE_Z + 0.57))]),
-            dict(part="whub_fr", file="RV21_Rear_Wheel_2.stl", mode="envelope", tol_mm=TOL["loose"], deviations=[dict(hub_dev[1], near=_w(35.1, -AXLE_Y, AXLE_Z + 0.57))])]
+    reb_dev = [{"near": _w(0, 0, z), "r": REBATE_DEV_R, "reason": "ELVRN3.0 Alt chassis Cut-Extrude2: the 1 mm base-panel rebate lip under the 2 mm wall, as in the STEP"}
+               for z in (0, REBATE, WALL)]
+    rows = [dict(part="chassis", file="Alt_chassis_1.stl", mode="shape", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["chassis"], note="Alt_chassis (dump replay by relations)", deviations=tab_dev + reb_dev),
+            dict(part="vert_mod", file="vert_mod_1.stl", mode="envelope", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["vert"], note="vert_mod: no dump; relation build from STEP sections (see MISSES.md)"),
+            dict(part="side_r", file="Side_Panel_alt_sm_1.stl", mode="envelope", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["side"], note="Side_Panel_alt_sm: no dump (see MISSES.md)"),
+            dict(part="side_l", file="MirrorSide_Panel_alt_sm_1.stl", mode="envelope", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["side"], note="MirrorSide_Panel_alt_sm"),
+            dict(part="disc", file="Drisk_floating_3_1.stl", mode="envelope", tol_mm=TOL["std"], note="the Revron disc")]
+    for s, n, f in ((-1, "l", "RV21_Rear_Wheel_1.stl"), (1, "r", "RV21_Rear_Wheel_2.stl")):
+        for e, y in (("r", AXLE_Y), ("f", -AXLE_Y)):
+            rows.append(dict(part=f"whub_{e}{n}", file=f, mode="envelope", tol_mm=TOL["loose"], deviations=[hub(s, y, hub_why)]))
     return {"dir": REF_DIR, "ref_to_world": REF_TO_WORLD, "iou_min": 0.9, "placement_tol_mm": TOL["loose"], "parts": rows}
 
 
