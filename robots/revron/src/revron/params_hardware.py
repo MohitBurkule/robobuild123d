@@ -11,6 +11,8 @@ SIDE_REF = {-1: "RV23", 1: "RV24"}
 SIDE_BOLT_X = dict(a=46.26, b=41.76, c=35.26)            # |X| of the side-panel screw heads (STEP: seated in a bore below the face; axle standoff, nose standoff, chassis nut)
 SIDE_SINK = dict(a=2.15, b=5.75, c=1.05)                 # depth of each screw head below the battered outer face, measured on the STEP side panels RV23 (LH) / RV24 (RH): outer face |X| 48.41 / 47.51 / 36.31 at the screw axes, minus the head planes above
 SIDE_FACE_X = {k: SIDE_BOLT_X[k] + SIDE_SINK[k] for k in SIDE_BOLT_X}   # |X| of the battered outer face at each screw
+SIDE_PROBE_R, SIDE_PROBE_N = 3.9, 12                      # the ring round a screw axis on which the outer face is read (head radius + 0.8, 12 points)
+SIDE_PROBE_OFF = dict(a=0.136, b=0.051, c=0.061)   # table - probe at the default standoffs
 assert all(0 < d <= SP_CSK["head_clear"] for d in SIDE_SINK.values()), "a screw head must sit inside its driver bore (sink <= bore depth)"
 SIDE_BOLT_DES = dict(a="M3x10", b="M3x10", c="M3x8")
 BASE_BOLT_Z = 2.9                                        # base-panel screw head plane

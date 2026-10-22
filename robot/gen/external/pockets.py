@@ -26,7 +26,7 @@ def add_component(plan, cid, kind, catalog, size, x, y, z, rot_z, *, retained="a
     ret = RETAINED.get(kind) if retained == "auto" else retained
     p = plan.part(id=cid, kind=kind, catalog=catalog, at=[x, y, z], rot=[0.0, 0.0, float(rot_z)],
                   intent=I("load_path" if kind == "servo" else "wiring", f"{PURPOSE.get(kind, kind)}: {catalog}",
-                           f"chosen by the hypothesis; placed by the layout solver at ({x:g}, {y:g})"), **extra)
+                           f"chosen by the hypothesis; placed by the layout solver at ({x:g}, {y:g})", threats=["wall_slam", "flip_landing"]), **extra)
     if ret:
         p["retained"] = ret
     gap = pocket_gap(ret or "captive") if ret != "velcro" else GAP
@@ -34,7 +34,7 @@ def add_component(plan, cid, kind, catalog, size, x, y, z, rot_z, *, retained="a
                 z - sz / 2 - gap, z + sz / 2 + gap, housing,
                 intent=I("retention", f"{cid} sits in a snug pocket so it cannot shift under impact ({ret or 'captive'}); "
                          "port notches let its leads out into the channels",
-                         f"catalog box {sx:g}x{sy:g}x{sz:g} mm + {gap} mm gap; housing {housing} mm = print minimum"))
+                         f"catalog box {sx:g}x{sy:g}x{sz:g} mm + {gap} mm gap; housing {housing} mm = print minimum", threats=["wall_slam", "flip_landing", "crusher_hammer"]))
     for q in _ports_world(p, catalog, x, y, z, rot_z):
         # a small notch round each port, reaching down into the wire-channel band; the rest of the pocket stays
         # snug so the part is captive

@@ -57,7 +57,7 @@ def fork_outline(window=True):
     foot = (n_up[0] * d_up, n_up[1] * d_up)
     hu = math.sqrt(r_eye ** 2 - d_up ** 2)
     e_up = (foot[0] - ut[0] * hu, foot[1] - ut[1] * hu)
-    win = Polygon([v0, w0, e_low, (0, 0), e_up]).difference(q(r_eye))
+    win = Polygon([v0, w0, e_low, (0, 0), e_up]).buffer(0).difference(q(r_eye))   # buffer(0): a small eye makes the outline touch itself
     win = _round(win, r_out=FK_FILLET)                                     # Fillet1: r0.2 on the window's corners
     return body.difference(q(r_hole)).difference(q(r_pin, pin)).difference(win if window else Polygon())
 

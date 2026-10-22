@@ -5,12 +5,12 @@ per kind serves both sides, the left one is the right one turned half a turn abo
 D-bore, whose flat stays on top)."""
 import math
 from .params_drive import (RH_GAP, RH_D, RH_SEAT_R, RH_FLANGE_R, RH_FLANGE_T, RH_BLOCK, RH_GROOVE_DEPTH, RH_GROOVE_FLOOR, RH_GROOVE_FILLET,
-                           RH_CROWN_H, RH_CROWN_W, RH_ROOT_R, RH_LIP_R, RH_LIP_ANG, RH_LEN, RH_WALL_R, RH_WALL_T, RH_BORE_X, RH_NUT_X, RH_NUT_HALF, RH_NUT_Z, RH_GRUB_X, HUB_GRUB_PRINTABLE, RH_ORIGIN_X, RH_ROOT_X,
+                           RH_CROWN_H, RH_CROWN_W, RH_ROOT_R, RH_LIP_R, RH_LIP_ANG, RH_LEN, RH_WALL_R, RH_WALL_T, RH_BORE_X, RH_NUT_X, RH_NUT_HALF, RH_NUT_Z, RH_GRUB_X, RH_GRUB_D, HUB_GRUB_PRINTABLE, RH_ORIGIN_X, RH_ROOT_X,
                            FH_BORE_R, FH_FLANGE_R, FH_SEAT_R, FH_FLANGE_T, FH_GROOVE_W, FH_SEAT_W, FH_FILLET, FH_GUSSET, FH_LEN, FH_ORIGIN_X,
                            TY_REAR, TY_FRONT, TY_ARC_STEP, SO_R, SO_CHAMFER, SO_TAP_R, SO_PITCH, SO_THREAD_H)
 from .params_chassis import SA, RY, RZ, CH_HALF_W, SA_X
 from .params_hardware import HUB_PIVOT_X
-from .common import _b, _S, _ext, _box, _face, _revolve_x
+from .common import _b, _S, _ext, _cyl, _box, _face, _revolve_x
 
 
 def _d_outline(d=RH_D):
@@ -19,7 +19,7 @@ def _d_outline(d=RH_D):
     hx = d["r"] * math.cos(fa)
     a0, span = math.pi - fa, math.pi + 2 * fa
     arc = [(d["r"] * math.cos(a0 + span * k / (d["arc_n"] - 1)), d["r"] * math.sin(a0 + span * k / (d["arc_n"] - 1))) for k in range(d["arc_n"])]
-    n = d["flat_n"]
+    n = max(2, round(2 * hx / (d["r"] * span) * d["arc_n"]))                              # flat facets as long as the arc's
     flat = [(hx - 2 * hx * k / n, d["flat"] - d["crown"] * math.sin(math.pi * k / n)) for k in range(1, n)]
     return Polygon(arc + flat)
 
@@ -27,6 +27,8 @@ def _d_outline(d=RH_D):
 def _grub():
     from robot.cad.holes import hole_tool
     top = RH_SEAT_R
+    if not HUB_GRUB_PRINTABLE:                                                # STEP Cut-Extrude4: plain bore through all (no thread form)
+        return _cyl(RH_GRUB_D / 2, -top, top, (RH_GRUB_X - RH_ORIGIN_X, 0), "z")
     x = RH_GRUB_X - RH_ORIGIN_X - (0.2 if HUB_GRUB_PRINTABLE else 0)
     return hole_tool((x, 0, top), (0, 0, -1), "M2x5" if HUB_GRUB_PRINTABLE else "M3x5", head="cap", into="tapped", side="thread",
                      engage=top - RH_D["flat"])[0]

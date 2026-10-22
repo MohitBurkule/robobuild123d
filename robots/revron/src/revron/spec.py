@@ -5,6 +5,7 @@ from .common import *  # noqa: F401,F403
 from . import panel_base, panel_top
 from .variants import variant
 from .tub2_params import OVER   # the squared rear corner overshoots the wall by the tub2 over-cut
+from .drisk import service_turn_deg   # [fix-B-robust] drisk service turn: a relation of SA and the disc outline
 
 
 def ref_bom():
@@ -68,9 +69,9 @@ def make_spec(model_file):
       min_web_mm=WEB["spider"], min_web_reason="0.8 mm webs between the dog pockets and the rim are the designer's own (RVRN 2.0 STEP spider_1 measures 0.8 at the same four places)", rotates_with="weapon", parent="mount_r", **place("spider", "mount_r"), shape=M("spider", WO),
       joint=JT["spider"], color="#b8bcc2",
       weapon={"kind": "disc", "motor": "weapon_motor_stator", "cells": 2, "reduction": 1.0, "spin_axis": [1, 0, 0], "spin_dir": "ccw", "supported_both_ends": True, "teeth": 1},
-      label="3 mm aluminium spider: bolted to the bell (4 M2 on r4.5), carries the disc stack on 4 M2 on r14")
+      label="3 mm aluminium spider: bolted to the bell (4 M2 on r4.5), carries the disc stack on 4 M2 on r14 (d2.2 clearance holes as in the STEP, below the 3 mm laser minimum: laser-spotted, then drilled to size)")
     for nm, lab in (("disc_a", "inner"), ("disc_b", "outer")):
-        P(id=nm, kind="other", role="blade", material="hardox", process="laser", stock="3 mm Hardox 450", parent="spider",
+        P(id=nm, kind="other", role="blade", material="hardox", process="laser", stock="3 mm Hardox 450", secondary_ops=["drilled"], parent="spider",
           min_web_mm=WEB["disc"], min_web_reason="0.9 mm webs beside the balance window are the designer's own (RVRN 2.0 STEP Drisk_floating_3 measures 0.9 at the same four places)", rotates_with="weapon", shape=M(nm, WO), **place(nm, "spider"), color="#d9dde2",
           label=f"Drisk_floating_3 ({lab}): 3 mm Hardox single-tooth disc, R16.5 rim 0.5 mm eccentric against the R23 tooth, 12 mm bore with 4 ramped dogs, 4 M2 on r14")
     P(id="dspacer", kind="other", role="spacer", parent="spider", rotates_with="weapon", print_orientation="+x", shape=M("drisk_spacer", WO), **place("dspacer", "spider"), color="#2a2c30", **PLA,
@@ -436,7 +437,7 @@ def main():
         spec = dict(name="Revron", profile="aws2025", robot_type="vertical_spinner", locomotion="roller", archetype="vertical_spinner_forks",
                     archetype_params=ARCHETYPE_PARAMS, targets=TARGETS, weapon_lock=WEAPON_LOCK, reference_bom=ref_bom(), reference_doc=REFERENCE_DOC,
                     electronics=ELECTRONICS, can_run_inverted=False, allow_overlap=ALLOW_OVERLAP, claims=CLAIMS, sharp_ok=SHARP_OK,
-                    teardown=TEARDOWN, module_teardown=MODULE_TEARDOWN, service_pose=SERVICE_POSE, reference_cad=reference_cad(),
+                    teardown=TEARDOWN, module_teardown=MODULE_TEARDOWN, service_pose=[dict(e, deg=service_turn_deg()) for e in SERVICE_POSE], reference_cad=reference_cad(),
                     start_pose={f"whub_r{n}": HUB_SPIN_DEG for n in "lr"},   # spin of the rear hubs on their shafts (STEP pose)
                     asm_dump={"rig": "revron.joints:RIG"},   # asm.mate: our assembly mates (joints.Rig)
                     renders={"dir": "renders", "views": ["iso.png", "top.png", "back.png", "exploded.png"]}, **body)
