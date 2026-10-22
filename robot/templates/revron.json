@@ -1104,7 +1104,7 @@
        30.44772759118839,
        12.047449670300885
       ],
-      "r": 2.0,
+      "r": 2.5,
       "reason": "r14 stack hole is the M2 tap drill (1.6) where the stack screws thread into the spider; the STEP shows the 2.2 clearance and no screw or nut"
      },
      {
@@ -1113,7 +1113,7 @@
        27.047449670300885,
        31.55227240881161
       ],
-      "r": 2.0,
+      "r": 2.5,
       "reason": "r14 stack hole is the M2 tap drill (1.6) where the stack screws thread into the spider; the STEP shows the 2.2 clearance and no screw or nut"
      },
      {
@@ -1122,7 +1122,7 @@
        46.552272408811604,
        34.952550329699115
       ],
-      "r": 2.0,
+      "r": 2.5,
       "reason": "r14 stack hole is the M2 tap drill (1.6) where the stack screws thread into the spider; the STEP shows the 2.2 clearance and no screw or nut"
      },
      {
@@ -1131,7 +1131,7 @@
        49.952550329699115,
        15.447727591188393
       ],
-      "r": 2.0,
+      "r": 2.5,
       "reason": "r14 stack hole is the M2 tap drill (1.6) where the stack screws thread into the spider; the STEP shows the 2.2 clearance and no screw or nut"
      }
     ]
