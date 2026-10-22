@@ -750,18 +750,35 @@
       "path": [
        [
         -17.75,
-        -5.605,
+        -7.1,
         19.57
        ],
        [
         18.81,
-        -5.605,
+        -7.1,
         19.57
        ]
       ],
       "r": 3.0,
-      "max_mm3": 40.0,
-      "reason": "RV26 Cut-Extrude3: 0.1 mm deep engraved lettering on the top panel face (x -17.75..18.81, y -8.68..-2.53), laser-etch omitted; one capsule along the text line, cap on the volume it may excuse (~23 mm3 of engraving)"
+      "max_mm3": 20.0,
+      "reason": "Top_Panel_1 engraved lettering, 0.1 mm deep (x -17.75..18.81, y -8.68..-2.53), laser-etch omitted; two capsules along the text, each capped on the volume it may excuse"
+     },
+     {
+      "path": [
+       [
+        -17.75,
+        -4.1,
+        19.57
+       ],
+       [
+        18.81,
+        -4.1,
+        19.57
+       ]
+      ],
+      "r": 3.0,
+      "max_mm3": 20.0,
+      "reason": "Top_Panel_1 engraved lettering, 0.1 mm deep (x -17.75..18.81, y -8.68..-2.53), laser-etch omitted; two capsules along the text, each capped on the volume it may excuse"
      }
     ]
    },
