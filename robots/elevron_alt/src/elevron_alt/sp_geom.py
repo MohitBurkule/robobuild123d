@@ -254,11 +254,31 @@ def pocket_round():
     return _I(inside_round(((0, -k, -k), -ch * k), ((0, -1, 0), -yr), POCKET_END_R), _box(x0, x1, -BIG, BIG, -BIG, BIG))
 
 
+def strut_lofts():
+    """[(region box, lofted solid)] of the fitted strut-to-guard blends (strut_fit.json: the STEP's lofts, sectioned)."""
+    import json
+    from pathlib import Path
+    d = json.loads((Path(__file__).with_name("strut_fit.json")).read_text())
+    out = []
+    for reg in d["regions"]:
+        secs = reg["sections"]
+        W = [bd.Wire([bd.Edge.make_spline([bd.Vector(x, y, z) for y, z in Q], periodic=True)]) for x, Q in secs]
+        (y0, y1), x0, x1 = reg["y"], secs[0][0], secs[-1][0]
+        loft = bd.Solid.make_loft(W)
+        if loft.volume < 0:                                   # sections wound the other way: turn it right side out
+            loft = bd.Solid(loft.wrapped.Reversed())
+        r = 2 * FILL_REACH                                     # ours runs a hair into the loft's end caps: overlap, not shared faces
+        out.append((_box(x0 + r, x1 - r, y0 + r, y1 - r, Z_BELOW, TOOL), loft))
+    return out
+
+
 def sp():
     s = _U(guard(), plate(), rear(), fork(), struts(), rear_flare(), root_rounds())
     s = _U(_S(s, wells(), pocket(), well_top_round()), pocket_round())   # the pocket keeps its rounded corner along its whole x run
     nonfork = _S(_box(-BIG, BIG, -BIG, BIG, -BIG, 0), _box(*FORK_X, CROSS_Y0, BIG, -BIG, BIG))
     s = _S(s, under_b(), nonfork)
+    for box, loft in strut_lofts():                          # the STEP's fitted strut blends in place of ours there
+        s = _U(_S(s, box), loft)
     from .variants import variant
     if variant("clip_forks"):
         s = _S(s, _box(-BIG, BIG, -BIG, BIG, -BIG, FORK_FLOOR_CLR - FLOOR_LIFT))   # forks stop over the floor (departure)
