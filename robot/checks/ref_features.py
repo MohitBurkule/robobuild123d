@@ -43,10 +43,36 @@ def snap_segments(q, tol=SNAP_MM):
     return S[np.any(S[:, 0] != S[:, 1], axis=1)]
 
 
+def section_region(noded, min_area=1e-4):
+    """Material region bounded by a noded set of closed section outlines (None if empty).
+
+    Faces come from polygonize, and a face is material when a ray from inside it crosses the outlines an odd number of
+    times (even-odd rule). The old path (linemerge -> closed rings -> xor by area) lost outlines that touch at a vertex:
+    a deck pocket meeting the tub wall outline at z 17.65 makes degree-4 nodes, linemerge returns the wall and the pocket
+    as open lines, both were dropped and none of the pockets inside counted as holes."""
+    from shapely.geometry import LineString
+    from shapely.ops import polygonize, unary_union
+
+    faces = [f for f in polygonize(noded) if f.area >= min_area]
+    if not faces:
+        return None
+    x0, y0, x1, y1 = noded.bounds
+    far = 10.0 * (abs(x1 - x0) + abs(y1 - y0) + 1.0)
+    keep = []
+    for f in faces:
+        p = f.representative_point()
+        ray = LineString([(p.x, p.y), (p.x + far, p.y + far * 0.0123456789)])  # odd slope: never along an edge
+        hit = ray.intersection(noded)
+        n = len(getattr(hit, "geoms", [hit])) if not hit.is_empty else 0
+        if n % 2:
+            keep.append(f)
+    return unary_union(keep).buffer(0) if keep else None
+
+
 def section(m, ax, h):
     import trimesh
-    from shapely.geometry import LineString, Polygon
-    from shapely.ops import linemerge, unary_union
+    from shapely.geometry import LineString
+    from shapely.ops import unary_union
 
     n = np.zeros(3)
     n[ax] = 1.0
@@ -57,15 +83,7 @@ def section(m, ax, h):
     lines = [LineString(s) for s in snap_segments(np.asarray(segs, float)[:, :, [a, b]] if len(segs) else [])]
     if not lines:
         return None
-    mg = linemerge(unary_union(lines))
-    rings = [g for g in getattr(mg, "geoms", [mg]) if g.is_ring and len(g.coords) > 3]
-    polys = sorted((Polygon(g).buffer(0) for g in rings), key=lambda p: -p.area)
-    out = None
-    for p in polys:
-        if p.area < 1e-4:
-            continue
-        out = p if out is None else out.symmetric_difference(p)
-    return out
+    return section_region(unary_union(lines))
 
 
 def hole_shape(ring, densify=False):

@@ -38,3 +38,25 @@ def test_snap_keeps_distinct_vertices_and_drops_degenerate():
     out = snap_segments(segs)
     assert len(out) == 1 and np.allclose(out[0], [[0, 0], [0.002, 0]])   # 2 um apart stays apart; zero-length dropped
     assert len(snap_segments(np.zeros((0, 2, 2)))) == 0
+
+
+
+def test_pocket_touching_outer_outline_is_still_a_hole():
+    """tub deck pockets at z 17.65: a pocket outline touching the wall outline at a vertex makes a degree-4 node; linemerge
+    split the outer outline into two open lines there, the outer ring was lost and no pocket counted as a hole."""
+    from robot.checks.ref_features import holes, section_region
+
+    def ring(pts):
+        return [LineString([pts[i], pts[(i + 1) % len(pts)]]) for i in range(len(pts))]
+
+    outer = ring([(-20, -15), (20, -15), (20, 15), (-20, 15)])
+    pocket = ring([(-6, 15), (0, 11), (6, 15), (0, 5)])               # two vertices ON the outer outline (as at z 17.65)
+    free = ring([(-15, -9), (-9, -9), (-9, -3), (-15, -3)])
+    noded = unary_union(outer + pocket + free)
+    mg = linemerge(noded)
+    assert sum(g.is_ring for g in getattr(mg, "geoms", [mg])) == 1    # old path: outer + touching pocket lost (open lines)
+    out = section_region(noded)
+    assert abs(out.area - (1200 - 36 - 36)) < 1e-6        # both pockets cut, the wall kept
+    # the free pocket is a hole again (with the wall outline lost it was a separate solid); the chevron is cut out too
+    assert any(abs(d - 2 * (36 / 3.141592653589793) ** 0.5) < 0.01 and abs(c[0] + 12) < 0.01 for c, d, _ in holes(out))
+    assert not out.contains(__import__("shapely").geometry.Point(0, 8))
