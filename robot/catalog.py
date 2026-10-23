@@ -289,8 +289,15 @@ def builtin() -> list[CatalogEntry]:
              {"cont_current_a": 12.0, "burst_current_a": 15.0, "channels": 1.0}, "#d4af37"),
         flat("rx_fs_ia6_decased", "FlySky FS-iA6 receiver, decased", "receiver", 20, 14, 4, 4.5,
              {"esc": [0, 6.8, 0], "servo": [-5, 6.8, 0]}, {"antenna_len_mm": 80.0}, "#ff9800"),
-        flat("servo_cs07", "KingMax CS07 micro servo", "servo", 22, 11.5, 20, 6.5, {"signal": [-11.5, 0, 0]},
-             {"stall_torque_kgcm": 1.8, "nominal_v": 4.8, "stall_current_a": 0.7}, "#4a4e57"),
+        # 9 g micro-servo envelope from the TowerPro SG90 datasheet drawing ("SERVO MOTOR SG90 DATA SHEET", table A-F:
+        # B 23 body length, D 12 width, E 32 over the ears, F 19.5 bottom to ear top). No KingMax CS07 drawing is
+        # published; its 1.8 kgcm / 4.8 V rating is the SG90's, so the SG90 frame stands in. Ear 2.5 thick; the slot
+        # centres 2.25 in from the ear ends (27.5 pitch) are derived from the drawing, not dimensioned on it.
+        CatalogEntry("servo_cs07", "servo", "KingMax CS07 micro servo (SG90-class 9 g frame, 2 x M2 ear slots)", 9.0, "datasheet",
+                     union([box(23, 12, 22.7), minus(at(box(32, 12, 2.5), 0, 0, 6.9), [at(cyl(1.1, 3), x, 0, 6.9) for x in (-13.75, 13.75)])]),
+                     {"signal": [-11.5, 0, 0]}, None,
+                     {"stall_torque_kgcm": 1.8, "nominal_v": 4.8, "stall_current_a": 0.7, "mount_holes_mm": [[13.75, 0, 5.65], [-13.75, 0, 5.65]],
+                      "mount_thread": "M2", "mount_source": "TowerPro SG90 datasheet (E 32, F 19.5); pitch 27.5 derived"}, "#4a4e57"),
         flat("switch_slide_12x4", "Miniature slide switch 11.8 x 3.8 (PCB-pin body, no mounting ears: bonded)", "switch", 11.8, 3.8, 4, 0.5,
              {"in": [-4, 0, -2.5], "out": [4, 0, -2.5]}, {"mount_holes_mm": []}, "#111111"),
         CatalogEntry("switch_slide_bbb_ant", "switch", "BBB ant slide switch 11.8 x 3.8 with a front mounting ear (2 x M2 holes)", 0.6, "estimate",

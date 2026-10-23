@@ -100,7 +100,9 @@ def evaluate(spec_path: Path, budget_s=3600.0, workers=3, top_n=8, log=print, ex
     use = U.Usage(graph, raw)
     hooks = O.load_hooks(raw, Path(spec_path).resolve().parent)
     hf = Path(spec_path).resolve().parent / "hooks.json"  # exception classes the robot raises for a part it declares unfit
-    unfit_names = list((json.loads(hf.read_text()).get("declared_unfit") or []) if hf.exists() else [])
+    hj = json.loads(hf.read_text()) if hf.exists() else {}
+    unfit_names = list(hj.get("declared_unfit") or [])
+    unsupported_names = list(hj.get("unsupported") or [])  # exception classes for a feature the robot does not have yet
     changes = C.change_hypotheses(raw, hooks)
     pj, _ = P.make_plan(D.Discovery(params=disc.params), use, top_n, "adaptive")
     for j in pj:
@@ -119,20 +121,21 @@ def evaluate(spec_path: Path, budget_s=3600.0, workers=3, top_n=8, log=print, ex
     src = "" if execute else cache.h([f.read_bytes() for f in files])  # an injected executor (tests) is never cached
     kw = {"execute": execute} if execute else {}
     out = R.run([j for _, j in jobs], spec_path, mrel, budget_s, workers, src_hash=src, log=log, groups=HYP_GROUPS, **kw)
-    return dict(unfit_names=unfit_names, raw=raw, changes=changes, jobs=jobs, nx=nx, out=out, files=files, graph=graph, hooks=hooks, disc=disc)
+    return dict(unfit_names=unfit_names, unsupported_names=unsupported_names, raw=raw, changes=changes, jobs=jobs, nx=nx, out=out, files=files, graph=graph, hooks=hooks, disc=disc)
 
 
 UNFIT_MARKER = "DECLARED_UNFIT:"
+UNSUPPORTED_MARKER = "UNSUPPORTED:"
 
 
-def declared_unfit(rr: dict, d: dict, names) -> str | None:
+def declared_unfit(rr: dict, d: dict, names, marker: str = UNFIT_MARKER) -> str | None:
     """The reason when a job failed because the robot declares the change unfit (an exception class the robot lists
     under hooks.json `declared_unfit`, or a `DECLARED_UNFIT: <msg>` marker), seen in the spec-generation error or a
     part's load failure. Such a change is n/a, not a break: the design says no on purpose."""
     texts = [str(rr.get("error") or "")] + [str(b[2]) for b in d.get("new") or []]
     for t in texts:
-        if UNFIT_MARKER in t:
-            return t.split(UNFIT_MARKER, 1)[1].strip()[:200] or t[:200]
+        if marker in t:
+            return t.split(marker, 1)[1].strip()[:200] or t[:200]
         for n in names or ():
             if n and n in t:
                 return t[:200]
@@ -163,6 +166,11 @@ def verdicts(ev) -> list:
         if not d["broken"]:
             rows.append(dict(change=c, verdict="holds", builds=True, blockers=[], diff={"files": {}, "lines": 0, "by_owner": {}, "settings": settings},
                              hook=c.hook, why=""))
+            continue
+        missing = declared_unfit(rr, d, ev.get("unsupported_names"), UNSUPPORTED_MARKER)
+        if missing:  # the robot has no such feature yet (hooks.json `unsupported`): a missing hook, not a misfit
+            diff = C.estimate_diff(ev["files"], ev["graph"], ev["raw"], c.touches or {"id": []}, c.keywords, owners)
+            rows.append(dict(change=c, verdict="not expressible", builds=None, blockers=[], diff=diff, hook=c.hook, why=f"unsupported: {missing}"))
             continue
         unfit = declared_unfit(rr, d, ev.get("unfit_names"))
         if unfit:
