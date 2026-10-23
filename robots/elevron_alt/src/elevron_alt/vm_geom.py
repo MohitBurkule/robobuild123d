@@ -117,21 +117,29 @@ def hollow_front_round():
 
 
 def hollow_side_round():
-    """R HOLLOW_EDGE_R round where the hollow's ceiling meets its side walls beside the lip: each straight run of the
-    hollow plan square to x (STEP)."""
+    """R HOLLOW_EDGE_R round where the hollow's ceiling meets its side walls (STEP): along each straight run of the hollow
+    plan that is not square to y (the lip and bulkhead runs have their own rounds), the wall's plane from the run."""
     from shapely.geometry import Point as P
+    import numpy as np
     ceil = ((0, K, -1), -(ramp_z(0) - VM_T * SECK))
     h = hollow_plan()
     out = []
     for poly in getattr(h, "geoms", [h]):
         c = list(poly.exterior.coords)
-        for (xa, ya), (xb, yb) in zip(c[:-1], c[1:]):
-            if abs(xa - xb) > RUN_EPS or abs(ya - yb) < 2 * HOLLOW_EDGE_R:
+        for a, b in zip(c[:-1], c[1:]):
+            a, b = np.array(a), np.array(b)
+            t = b - a
+            L = np.linalg.norm(t)
+            if L < 2 * HOLLOW_EDGE_R or abs(t[1]) < RUN_EPS:
                 continue
-            x = (xa + xb) / 2
-            sx = -1 if h.contains(P(x + 10 * RUN_EPS, (ya + yb) / 2)) else 1    # the side the wall's material is on
-            r = inside_round(ceil, ((-sx, 0, 0), -sx * x), HOLLOW_EDGE_R, BIG)
-            out.append(_I(r, _box(-BIG, BIG, min(ya, yb), max(ya, yb), -BIG, BIG)))
+            t /= L
+            m = np.array([t[1], -t[0]])                     # plan normal; flipped to point out of the hollow (into the wall)
+            mid = (a + b) / 2
+            m = -m if h.contains(P(*(mid + 10 * RUN_EPS * m))) else m
+            wall = ((-m[0], -m[1], 0), -(m @ mid))           # outward from the wall's material, into the hollow
+            r = inside_round(ceil, wall, HOLLOW_EDGE_R, BIG)
+            span = _I(halfspace((a[0], a[1], 0), (t[0], t[1], 0), HS), halfspace((b[0], b[1], 0), (-t[0], -t[1], 0), HS))
+            out.append(_I(r, span))
     return _U(*out)
 
 
