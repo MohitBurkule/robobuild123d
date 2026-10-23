@@ -7,7 +7,7 @@ from . import hw
 from .common import _U, _one
 from .params_chassis import (DRIVE_MOTOR, MOTX, RY, RZ, LAYOUT, INS, RXESC, WESC, RX_C, WE_C, RX_X, WE_X, CH_Z0, CH_Z1)
 from .params_hardware import BATTERY, ELEC, BAT_W
-from .tub2_params import BORE_R, STOP_FRONT_Y, WALL_IN_FRONT, SEAT_Z, DECK, SKIN, OVER
+from .tub2_params import BORE_R, CH_IN_X, STOP_FRONT_Y, WALL_IN_FRONT, SEAT_Z, DECK, SKIN, OVER
 from .tub2_util import box_xy
 
 BAY_ROT = (0, 0, 90)                      # boards and the pack stand in their bays turned 90 about Z (assembly_rig._bay)
@@ -34,7 +34,7 @@ def pack_drop():
     """The way out of the pack: its footprint straight down from its underside to the tub's bottom face, less the bore sleeves. The pack leaves through the base opening, so the
     tub must not close over the footprint below it (a narrow chassis lets a column body reach in under the pack)."""
     bb = hw.placed(BATTERY, ELEC["battery"], BAY_ROT).bounding_box()
-    return _cut(box_xy(bb.min.X, bb.max.X, bb.min.Y, bb.max.Y, CH_Z0 - OVER, bb.min.Z + OVER))
+    return _cut(box_xy(max(bb.min.X, -CH_IN_X), min(bb.max.X, CH_IN_X), max(bb.min.Y, STOP_FRONT_Y), min(bb.max.Y, WALL_IN_FRONT), CH_Z0 - OVER, bb.min.Z + OVER))   # inside the cavity only: the lugs and walls outside it stay whole
 
 
 def electronics_bays():
