@@ -19,6 +19,12 @@ def size(catalog_id):
     return bb.size.X, bb.size.Y, bb.size.Z
 
 
+def reach(catalog_id):
+    """The catalog part's bounding box in its own frame: x0 / x1 and y0 / y1 (the motor's reach along the shaft and across it)."""
+    bb = _solid(catalog_id).bounding_box()
+    return dict(x0=bb.min.X, x1=bb.max.X, y0=bb.min.Y, y1=bb.max.Y)
+
+
 @lru_cache(maxsize=None)
 def gearbox(catalog_id):
     """A gearmotor's plate stack in its own frame (x along the shaft, origin on the axis): `top` and `half_w` (the plates' Z top and

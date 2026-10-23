@@ -82,7 +82,7 @@ def test_motor_plate_stack_swap(dims, tmp_path):
 @pytest.mark.parametrize("pack", [(37.0, 18.0, 11.0), (35.0, 18.0, 11.0), (36.0, 19.0, 11.0), (36.0, 17.0, 11.0), (36.0, 18.0, 12.0), (36.0, 18.0, 10.0)])
 def test_battery_size_sweep(pack, tmp_path):
     """Pack +-1 mm each way: the foam pad stays one solid, a third of the pack footprint, topped at the pack's underside."""
-    over = {"params_hardware": {"BATTERY": repr("synth_pack")}}
+    over = {"params_chassis": {"BATTERY": repr("synth_pack")}}
     _, bb = check(over, tmp_path, SYNTH_PACK % pack, what="tub.bat_pad()", symmetric=False)
     x0, x1, y0, y1, z0, z1 = bb
     L, W, H = pack
@@ -102,7 +102,9 @@ for pid, cid, at, rot in (("motor_l", DRIVE_MOTOR, (-MOTX, RY, RZ), (0, 0, 180))
                           ("battery", BATTERY, ELEC["battery"], (0, 0, 90)), ("rxesc", RXESC, RX_C, (0, 0, 90)), ("wesc", WESC, WE_C, (0, 0, 90))):
     sol = hw.placed(cid, at, rot)
     print("OVL", pid, round(((tub & sol) - keep).volume, 4), round((tub & sol).volume, 4))   # clear of the tub outside the heat-set bore sleeves
+    print("SLV", pid, round((sol & keep).volume, 4))                                          # nothing stands in a heat-set bore sleeve
 print("PACK", ELEC["battery"][1], KEY_SPAN[1] + BAT_L / 2, ELEC["battery"][2] + BAT_H / 2)
+print("WALL", CH_Y1, WALL_IN_FRONT, ELEC["battery"][1] + BAT_L / 2, INS[4][0], INS[4][1])
 """
 
 
@@ -115,6 +117,7 @@ def bays(env, tmp_path):
     assert any(x[0] == "TUB" for x in rows), r.stderr[-1500:]
     tub = next(x for x in rows if x[0] == "TUB")
     return dict(tub=(int(tub[1]), tub[2] == "True", float(tub[3])), ovl={x[1]: float(x[2]) for x in rows if x[0] == "OVL"},
+                slv={x[1]: float(x[2]) for x in rows if x[0] == "SLV"}, wall=[float(v) for v in next(x for x in rows if x[0] == "WALL")[1:]],
                 pack=[float(v) for v in next(x for x in rows if x[0] == "PACK")[1:]])
 
 
@@ -289,3 +292,65 @@ def value_with(overrides, tmp_path, expr):
 def test_rotor_axis_keeps_its_distance_to_the_mount_screws(name, val, wz, tmp_path):
     """The weapon axis rises with the standoffs (the mount screws back out inboard past the disc) and never drops below its master WZ."""
     assert abs(value_with({"params_chassis": {name: val}}, tmp_path, "params.WZ") - wz) < 1e-6
+
+
+# ---- parts that reach the heat-set bore sleeves: the rear boss, the column rows and the front wall are relations to what sits in the tub ----
+REAR_BOSS_Y = -33.6   # the default boss (one wall in front of the rear inner face)
+
+
+def test_default_boss_and_columns_unchanged(tmp_path):
+    """The shipped motor does not reach the boss: it stays one wall off the rear wall, the columns and the front wall are the stock ones."""
+    b = bays({}, tmp_path)
+    assert b["wall"][0] == 15.0 and b["wall"][3:] == [0.0, REAR_BOSS_Y] and all(v == 0 for v in b["slv"].values()), b
+
+
+@pytest.mark.parametrize("motor", ["pololu_hpcb6v_30to1", "bbb_n20_600rpm", "c_pair_of_600rpm_antweight_n20_gearmotors", "c_bbb_high_power_n20_gearmotor"])
+def test_rear_boss_moves_clear_of_a_long_gearmotor(motor, tmp_path):
+    """A motor whose stack reaches the rear boss's bore sleeve: the boss (and with it the base panel's insert hole, the lattice window and the deck pocket collars) moves out in front of the motor; the tub stays one solid and no part stands in any sleeve."""
+    b = bays({"REVRON_DRIVE_MOTOR": motor}, tmp_path)
+    assert b["tub"][:2] == (1, True) and b["wall"][4] > REAR_BOSS_Y and all(v == 0 for v in b["slv"].values()) and all(v == 0 for v in b["ovl"].values()), b
+
+
+@pytest.mark.parametrize("pack", ["gnb_2s_450_80c", "betafpv_2s_300_45c", "palmpower_2s_300_65c", "gnb_3s_300_80c_hv"])
+def test_long_pack_moves_the_front_wall_not_into_it(pack, tmp_path):
+    """A pack longer than the stock wall holds: the front wall (and the front column row with it) moves forward, as far as the weapon-mount tab allows, and no part stands in a sleeve."""
+    b = bays({"REVRON_BATTERY": pack}, tmp_path)
+    assert b["tub"][:2] == (1, True) and b["wall"][0] > 15.0 and all(v == 0 for v in b["slv"].values()), b
+
+
+@pytest.mark.parametrize("loc", ["mid", "front"])
+def test_drive_location_clears_the_sleeves(loc, tmp_path):
+    """drive.location mid / front: the motor plates and the pack stand clear of every column sleeve and the boss."""
+    b = bays({"REVRON_DRIVE_LOCATION": loc}, tmp_path)
+    assert b["tub"][:2] == (1, True) and all(v == 0 for v in b["slv"].values()) and all(v == 0 for v in b["ovl"].values()), b
+
+
+# ---- the nose and the axle heights follow the wheels --------------------------------------------------------------------------------
+@pytest.mark.parametrize("od", [18.0, 22.0, 26.0])
+def test_front_wheel_od_drives_the_nose(od, tmp_path):
+    """WHEEL_OD_F 18..26: the front axle stands at the wheel radius, the nose standoff stays a clearance outside the tyre, and the tub is one valid solid."""
+    over = {"params_chassis": {"WHEEL_OD_F": repr(od)}}
+    check(over, tmp_path)
+    sa, sb, so_r, clr = (value_with(over, tmp_path, e) for e in ("params.SA", "params.SB", "params.SO_R", "params.SB_WHEEL_CLR"))
+    assert abs(sa[1] - od / 2) < 1e-9 and abs(sb[1] - (sa[1] - 1.0)) < 1e-9
+    assert ((sb[0] - sa[0]) ** 2 + (sb[1] - sa[1]) ** 2) ** 0.5 >= od / 2 + so_r + clr - 1e-6 and sb[0] >= 40.5
+
+
+def test_front_wheel_default_nose_is_the_step(tmp_path):
+    assert value_with({}, tmp_path, "(params.SA, params.SB, params.WHEEL_OD_F)") == ((30.5, 5.5), (40.5, 4.5), 11.0)
+
+
+@pytest.mark.parametrize("rz", [9.25, 13.25])
+def test_axle_height_drives_the_drive_features(rz, tmp_path):
+    """The N10 axle height RZ (a rear wheel of OD 2 * (RZ - gap)): keyhole, key tab Z, wire slot, pockets and the motor pocket follow it; one valid solid."""
+    dst = pathlib.Path(tempfile.mkdtemp(dir=tmp_path)) / "src"
+    shutil.copytree(SRC, dst, ignore=shutil.ignore_patterns("__pycache__"))
+    f = dst / "revron" / "params_chassis.py"
+    text, n = re.subn(r"^RY, RZ = ([^#\n]*?),[^,#\n]*(?=\s*#)", lambda m: f"RY, RZ = {m.group(1)}, {rz}", f.read_text(), count=1, flags=re.M)
+    assert n == 1
+    f.write_text(text)
+    r = subprocess.run([sys.executable, "-c", BUILD % (str(dst), ROOT, "", "tub2.chassis2()")], capture_output=True, text=True)
+    out = [ln for ln in r.stdout.splitlines() if ln.startswith("RESULT")]
+    assert out, r.stderr[-1500:]
+    n, ok, vol, asym, *_ = out[-1].split()[1:]
+    assert int(n) == 1 and ok == "True" and abs(float(asym)) < 1e-3

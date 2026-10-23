@@ -17,6 +17,9 @@ def cuts():
     return tub2_pockets.deck_pockets() + tub2_seat.seat_cuts() + [tub2_cols.bores()] + tub2_lobes.cuts() + [mirrored(c) for c in (tub2_tab.rabbet(), tub2_tab.key_hole()) + tuple(tub2_lattice.pockets())] + tub2_front.wall_pockets() + [tub2_front.wire_slot()] + tub2_switch.switch_slot()
 
 
+DUST = 0.01   # solids under this fraction (together) of the tub's are offcuts of a cut, not chassis
+
+
 def chassis2():
     from .common import _U, _S
     from .params_chassis import CH
@@ -26,5 +29,11 @@ def chassis2():
     shell = tub2_body.shell()
     body = _U(shell, *adds)
     tub = _S(tub2_fillets.lobe_root(body, tub2_lobes.bounds()), *cuts(), *old_cuts)
+    if not tub.is_valid:                      # a boolean against a moved weapon mount can leave a face unsewn: heal it
+        tub = tub.clean()
+        tub = tub if tub.is_valid else tub.fix()
+    parts = sorted(tub.solids(), key=lambda p: -p.volume)
+    if len(parts) > 1 and sum(p.volume for p in parts[1:]) < DUST * parts[0].volume:   # a nose that stands off the weapon mount's slab leaves slivers of the front wall the slab used to take: scrap, not a part
+        tub = parts[0]
     assert len(tub.solids()) == 1 and tub.volume > shell.volume, f"tub2 boolean collapsed: {len(tub.solids())} solids, {tub.volume:.0f} mm3 (bare shell {shell.volume:.0f})"   # the blocks add more than the pockets take
     return tub2_bays.carve(tub)

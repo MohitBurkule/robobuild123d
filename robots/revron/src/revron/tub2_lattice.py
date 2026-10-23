@@ -4,9 +4,9 @@ diagonals crossing at the window centre; the cap pockets stop at the corner post
 from math import atan2, degrees, hypot
 from build123d import Align, Axis, BuildSketch, Locations, Mode, Plane, Pos, Rectangle, Box, extrude, fillet
 from .tub2_util import round_floor_pocket
-from .tub2_params import CH_Y0, CH_Z0, CH_Z1, CH_WALL, CH_IN_X, COL_R, SKIN, WALL_IN_REAR, OVER
+from .tub2_params import CH_Y0, CH_Z0, CH_Z1, CH_WALL, CH_IN_X, COL_R, SKIN, WALL_IN_REAR, OVER, BOSS_AT_REAR
 
-X0, X1 = COL_R + CH_WALL, CH_IN_X - SKIN              # window sides: rear boss collar .. side wall less skin
+X0, X1 = (COL_R + CH_WALL if BOSS_AT_REAR else CH_WALL), CH_IN_X - SKIN   # window sides: rear boss collar (a wall off the axis when the boss has moved forward of the motor) .. side wall less skin
 Z0, Z1 = CH_Z0 + CH_WALL + SKIN, CH_Z1 - CH_WALL - SKIN  # window floor / roof: wall + skin in from the chassis faces
 XC, ZC = (X0 + X1) / 2, (Z0 + Z1) / 2                  # crossing point of the braces
 RIB_W = CH_WALL                                        # brace thickness = wall
