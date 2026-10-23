@@ -4,14 +4,16 @@ module, measured off the RVRN_revdev STEP solid's faces (its left solid, which s
 right one is 0.25 mm inboard of its mirror)."""
 import math
 
-from .params_chassis import HX, HY, CH_H, AXLE_Y, AXLE_Z, BOSS_OUT, BOSS_R, BOSS_PITCH, TAB_X_OUT, TAB_W, TAB_PITCH, TAB_LEN, WALL
+from robot.cad import fastener_catalog as fc
+
+from .params_chassis import HX, HY, CH_H, AXLE_Y, AXLE_Z, BOSS_OUT, BOSS_R, BOSS_PITCH, TAB_X_OUT, TAB_W, TAB_PITCH, TAB_LEN, WALL, M3
 from .params_drive import TYRE_R, WHEEL_OUT, FLOOR_LIFT
 from .params_vert import TAB_GAP, PRONG_T
 
 # ---- MASTER DESIGN PARAMETERS ----------------------------------------------------------------------------------------
 SP_T = WALL                            # TPU wall
 FIT = 0.25                             # TPU running fit off the chassis tabs and the module prong
-NUT_FIT = 0.05                         # thin-nut pocket over the nut's flats
+TPU_HOLE_ALLOW = 0.1                   # TPU pilot over the tap drill (STEP tongue pilot 2.6)
 UNDER = (46.16, 0.0853)                # underside plane: z 0 at this y, rising forward (the pod rakes the forks down)
 GUARD_X = WHEEL_OUT - 2.2              # wheel-guard spine: its drafted wall leans in to an apex over this line
 GUARD_END = (9.4, 9.6)                 # guard spines end this far ahead of / behind each axle (inside the tyre circle)
@@ -55,6 +57,7 @@ LIP_IN_R = BOSS_R + LIP_CLR
 PLATE_OB = (BOSS_PITCH / 2, BOSS_R + SP_T, CH_H - PLATE_TOP_DROP, PLATE_FLAT)
 WELL_X = (LIP_X0, GUARD_X + GUARD_FACE)
 STRUT_Y1 = AXLE_Y - WELL_R             # the flanks end where the wheel wells begin
+TONGUE_PILOT = fc.tap_drill(M3) + TPU_HOLE_ALLOW   # the cross bolt cuts its thread in the TPU tongue
 TONGUE_X = (TAB_GAP[0] + PRONG_T + FIT, TAB_GAP[1] - FIT)   # between the module prong and the outer tab, a running fit off each
 TAB_POCKET = (TONGUE_X[1], POCKET_X1, HY + TAB_LEN + POCKET_END_CLR, POCKET_CH)
 FORK_X = (WHEEL_OUT - FORK_TYRE_IN - FORK_W, WHEEL_OUT - FORK_TYRE_IN)

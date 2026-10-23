@@ -124,7 +124,6 @@ def _hardware(P):
     for s, n in SIDES:
         for k, y in enumerate((-BOSS_PITCH / 2, BOSS_PITCH / 2)):   # captive in the boss's hex pockets, from the inside
             P(id=f"nut_s{n}{k}", kind="nut", catalog="nut_m3_thin", at=_w(s * (IN_X - BOSS_IN + NUT_HALF), y, AXLE_Z), rot=[0, 90, 0], rotates_with="fixed")
-        P(id=f"nut_x{n}", kind="nut", catalog="nut_m3_thin", at=_w(s * (PRONG[0] + NUT_HALF), HY + TAB_HOLE_DY, TAB_HOLE_Z), rot=[0, 90, 0], rotates_with="fixed")   # captive in the module prong
     for i, (x, y) in enumerate(list(POSTS) + list(END_POSTS)):
         P(id=f"insert_b{i}", kind="insert", catalog=INSERT_CAT, at=_w(x, y, WALL + INSERT_LEN / 2), rot=[0, 0, 0], rotates_with="fixed")
     for i, (x, y) in enumerate(POSTS):
@@ -239,8 +238,8 @@ def make_spec(model_file):
 
 TEARDOWN = [   # declared one-direction moves, in the order the sweep may need them (the reverse is the build order)
     {"parts": ["wshaft"], "dir": [1, 0, 0], "reason": "weapon shaft slides out through the right upright bearing once the side pods are off"},
-    {"parts": ["vert_mod", "nut_xl", "nut_xr", "weapon_motor_stator", "weapon_motor_can", "disc"], "dir": [0, 0, 1],
-     "reason": "the vertical module lifts off the chassis tabs as one unit: its prongs leave the tab gap with their captive cross-bolt nuts, "
+    {"parts": ["vert_mod", "weapon_motor_stator", "weapon_motor_can", "disc"], "dir": [0, 0, 1],
+     "reason": "the vertical module lifts off the chassis tabs as one unit: its prongs leave the tab gap, "
                "the BE1806 and the rotor boxed between its uprights (prop mount and spider come off first)"},
     {"parts": ["base_panel"], "dir": [0, 0, -1], "reason": "base panel drops out of the rebate once its screws are out"},
 ]
@@ -256,7 +255,6 @@ TAB_DEV_R = 3.5                        # the Chamfer5 lead-in at the inner tab f
 SLOT_DEV_R = 4.0                       # switch slot / window web
 REBATE_DEV_R = 5.0                     # the base-panel rebate lip (the ligament check reads the rebate as a 68.5 bore)
 VOL_TOL = dict(chassis=0.05, vert=0.2, side=0.4)
-NUT_DEV_R = 4.0                        # the prong nut pocket's neighbourhood
 EST_DEV_R = 3.5                        # an estimator-only flag's neighbourhood (section matches the STEP)
 BAY_DEV = (22.2, 17.4, (8.4, 9.0))     # Fillet15 rounds: |x|, |y|, mid-height of the flagged run (front, rear)
 BAY_DEV_R = 5.0                        # the whole column-height run of that round
@@ -301,9 +299,7 @@ def reference_cad():
     fork_note = "" if step_forks else ("; the forks stop over the floor (variant step_forks off), so the pod's bbox centre sits "
                                        "2.6 mm off the STEP's (its fork tips reach 2.25 mm under the wheels' floor)")
     rows = [dict(part="chassis", file="Alt_chassis_1.stl", mode="shape", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["chassis"], note="Alt_chassis (dump replay by relations)", deviations=tab_dev + reb_dev + deck_dev + est_dev),
-            dict(part="vert_mod", file="vert_mod_1.stl", mode="envelope", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["vert"], note="vert_mod: no dump; relations from the STEP solid's faces (see MISSES.md)",
-                 deviations=[{"near": _w(s * (PRONG[0] + NUT_HALF), HY + TAB_HOLE_DY, TAB_HOLE_Z), "r": NUT_DEV_R,
-                              "reason": "ours, not the STEP's: the thin cross-bolt nut captive in the prong (the STEP prong has a plain hole) leaves 0.8 mm to the prong window"} for s in (-1, 1)]),
+            dict(part="vert_mod", file="vert_mod_1.stl", mode="envelope", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["vert"], note="vert_mod: no dump; relations from the STEP solid's faces (see MISSES.md)"),
             dict(part="side_r", file="Side_Panel_alt_sm_1.stl", mode="envelope", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["side"], **side_place,
                  note="Side_Panel_alt_sm: no dump (see MISSES.md)" + fork_note),
             dict(part="side_l", file="MirrorSide_Panel_alt_sm_1.stl", mode="envelope", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["side"], **side_place,

@@ -11,7 +11,7 @@ from .params_chassis import (HX, IN_X, WALL, CH_H, AXLE_Y, AXLE_Z, POSTS, END_PO
                              TAB_X_OUT, TAB_W, TAB_PITCH, BOSS_IN, HOLE_D, TAB_LEAD)
 from .params_drive import FLOOR_LIFT, WY, WZ, UP_IN, UP_T
 from .params_hw import BASE_T, BACK_T, M2, M3
-from .params_side import PLATE_X, PLATE_CSK_SINK
+from .params_side import PLATE_X, PLATE_CSK_SINK, TONGUE_X
 from .params_vert import DECK_TOP, POST_CB_Z, MOTOR_HOLES, PRONG
 
 import math
@@ -77,11 +77,10 @@ def joints():
         out.append(Joint(f"bolt_a{n}", f"M{M3:g}x12", "cap", (s * (IN_X - BACK_T), -AXLE_Y, AXLE_Z), (s, 0, 0), None, BACK_T, "tapped",   # front axle stack
                          f"so_{n}", [f"bplate_{n}", "chassis", f"fplate_{n}"], "hex2.5"))
         x_in = TAB_X_OUT - TAB_PITCH - TAB_W                     # inner tab's inner face: its lead-in (Chamfer5) is the countersink
-        out.append(Joint(f"bolt_x{n}", f"M{M3:g}x10", "csk", (s * x_in, HY + TAB_HOLE_DY, TAB_HOLE_Z), (s, 0, 0), None,
-                         PRONG[0] - x_in, "nut", f"nut_x{n}", ["chassis", "vert_mod", f"side_{n}"], "hex2",
-                         {"reason": "rear cross bolt, driven from between the inner tabs: through the inner tab into the thin nut captive in the "
-                                    "module prong, its shank on through the pod tongue as a shear pin (the tongue sits in the tab gap); the 4 M2 "
-                                    "into the columns clamp the deck face"}, OPEN, sink=CSK_SINK))
+        out.append(Joint(f"bolt_x{n}", f"M{M3:g}x12", "csk", (s * x_in, HY + TAB_HOLE_DY, TAB_HOLE_Z), (s, 0, 0), None,
+                         TONGUE_X[0] - x_in, "tapped", f"side_{n}", ["chassis", "vert_mod", f"side_{n}"], "hex2",
+                         {"reason": "rear cross bolt as in the RVRN_revdev STEP, driven from between the inner tabs: clear through the inner tab and "
+                                    "the module prong, threaded into the TPU pod tongue (2.6 pilot); the 4 M2 into the columns clamp the deck face"}, OPEN, sink=CSK_SINK))
     for i, (dy, dz) in enumerate(MOTOR_HOLES):                   # BE1806 base through the left upright, heads in its counterbores
         from .vm_geom import taper_x
         face = _seen_face(WY + dy, WZ + dz)                     # the upright's outer face round the head; the heads sit UP_T off the motor
