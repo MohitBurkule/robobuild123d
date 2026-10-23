@@ -19,7 +19,10 @@ CH_Y0, CH_Y1 = -37.6, 15.0           # chassis rear face / front face (where the
 CH_Z0, CH_Z1 = 2.5, 19.5             # chassis floor underside / rim (top panel and mount notch sit on it)
 CH_WALL = 2.0                        # printed wall and deck thickness
 WY, WZ = 38.5, 23.5                  # weapon axis (along X)
-RY, RZ = -30.5, 11.0                 # N10 shaft (rear axle)
+from .wheel_variant import rear_wheel_dims
+REAR_GROUND_GAP = 0.25               # rear tyre bottom above the ground plane (STEP: axle 11.0, tyre OD 21.5)
+WHEEL_OD_R = rear_wheel_dims()["od"]   # rear tyre OD (mm): the stock tyre, or REVRON_REAR_WHEEL
+RY, RZ = -30.5, WHEEL_OD_R / 2 + REAR_GROUND_GAP   # N10 shaft (rear axle): the tyre radius over the ground gap
 SA = (30.5, 5.5)                     # 25 mm standoff (RV11): front axle (Y, Z)
 SB = (40.5, 4.5)                     # 15 mm standoff (RV10): nose (Y, Z)
 # the rotor axis keeps at least its distance (WY, WZ master and the STEP's standoff positions) from each mount-screw axis: the heads back out inboard

@@ -8,6 +8,7 @@
   "hooks": {
     "weapon.motor_variant": {"env": "REVRON_MOTOR_VARIANT", "values": ["datasheet", "step"], "default": "datasheet"},
     "weapon.mount_variant": {"env": "REVRON_MOUNT_VARIANT", "values": ["original", "printable"], "default": "original"},
+    "wheel.rear": {"env": "REVRON_REAR_WHEEL", "values": ["stock", "wheel_20x8", "wheel_28x10", "wheel_30x8", "bbb_wheel_22x10", "bbb_wheel_34x6_5", "durahubs_25", "durahubs_30", "durahubs_35"], "default": "stock"},
     "drive.driven_wheels": {
       "default": "4WD",
       "values": {

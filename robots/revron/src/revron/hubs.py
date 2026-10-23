@@ -27,8 +27,8 @@ def _d_outline(d=RH_D):
 def _grub():
     from robot.cad.holes import hole_tool
     top = RH_SEAT_R
-    if not HUB_GRUB_PRINTABLE:                                                # STEP Cut-Extrude4: plain bore through all (no thread form)
-        return _cyl(RH_GRUB_D / 2, -top, top, (RH_GRUB_X - RH_ORIGIN_X, 0), "z")
+    if not HUB_GRUB_PRINTABLE:                                                # STEP Cut-Extrude4: plain bore from the D-bore up through the wall (nothing below the bore)
+        return _cyl(RH_GRUB_D / 2, 0, top, (RH_GRUB_X - RH_ORIGIN_X, 0), "z")
     x = RH_GRUB_X - RH_ORIGIN_X - (0.2 if HUB_GRUB_PRINTABLE else 0)
     return hole_tool((x, 0, top), (0, 0, -1), "M2x5" if HUB_GRUB_PRINTABLE else "M3x5", head="cap", into="tapped", side="thread",
                      engage=top - RH_D["flat"])[0]
