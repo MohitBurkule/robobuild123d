@@ -100,6 +100,6 @@ ARC_N = 64                  # circle / arc facets per quarter turn
 QUARTER_TURN = 90   # deg, tyre shoulder arcs sweep a quarter turn
 FORK_DEV = dict(x=25.5, y=66.0, z=1.4, r=2.0)   # reference-diff deviation sphere at the fork tip land (STEP knife tip)
 SIDE_DEV_X, SIDE_DEV_R = 41.78, 4.0              # deviation sphere at the nose screw seat (STEP RV23 bore centre X, radius)
-SP_RH_BLEND = dict(r=0.6, x=42.23, y=(35.45, 40.5), z=8.0)   # RV24 (the mirrored panel) rounds the nose slot's roof / wall corner, r0.5-0.7 (RV23 leaves it sharp): |X| of the wall, its Y run, the roof Z
+SP_RH_BLEND = dict(r=0.6, x=42.23, y=(35.45 + SIZE_DL, 40.5 + SIZE_DL), z=8.0)   # RV24 (the mirrored panel) rounds the nose slot's roof / wall corner, r0.5-0.7 (RV23 leaves it sharp): |X| of the wall, its Y run, the roof Z
 WG_FAR = (-200, 200, -200, 200)   # Y, Z span of the slab that trims the fork tine to the slit: wider than any part
 __all__ = [n for n in dir() if not n.startswith("__")]   # last line: every name above is exported
