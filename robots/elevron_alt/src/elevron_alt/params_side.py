@@ -33,6 +33,7 @@ ROOT_TOP = (0.340, 0.940, 24.10)       # fork-root top face
 POCKET_X1, POCKET_CH = 32.25, 48.58    # pocket round the outer chassis tab: outer wall x, underside chamfer y + z
 POCKET_R = 3.0                         # pocket outer corner round
 ROOT_EDGE = (-0.707, 0.579, 0.406, 7.11)   # fork-root inner face n.(x, y, z) = d
+FLARE_MIN = 0.3                        # the blend from the fork into the rear guard ends where it is this wide
 FORK_W = 5.74                          # fork prong width, its outer face just inside the tyre's outer face
 FORK_T = 4.0                           # fork thickness over the underside
 FORK_TIP = (98.61, (0.499, 0.867, 45.26), 83.22, 84.74)   # tip y, tip top plane, tooth riser y span

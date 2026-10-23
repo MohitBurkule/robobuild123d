@@ -104,6 +104,15 @@ def rear():
     return _U(tongue, cross, root)
 
 
+def pocket():
+    """Void round the outer chassis tab: open in front and below, its rear wall at the tab end, its outer wall rounding
+    into the crossbar's front face, its roof the underside chamfer."""
+    x0, x1, yr, ch = TAB_POCKET
+    rc = POCKET_R
+    plan = sbox(x0, HY - 1, x1, yr).union(sbox(x1, HY - 1, x1 + rc, CROSS_Y0 + rc).difference(Point(x1 + rc, CROSS_Y0 + rc).buffer(rc, 64)))
+    return _S(_ext(plan, "xy", -BIG / 10, BIG / 10), halfspace((0, ch, 0), (0, 1, 1), BIG))
+
+
 def fork():
     """Fork prong: FORK_T over the underside, the root top plane carried on until it drops under that, a tooth riser
     near the tip and the tip's top plane down to the underside."""
@@ -125,9 +134,25 @@ def struts():
     return _S(blk, halfspace((xs, 0, zs), (k, 0, 1), BIG))
 
 
+def rear_flare(n=10, k=8):
+    """Concave blend from the fork's outer face down to the rear guard's end at the floor, lofted through sections."""
+    r0, gy = GUARD_R0, GUARD_Y[2]
+    y1 = gy + math.sqrt(r0 ** 2 - (FLARE_MIN + FORK_X[1] - GUARD_X) ** 2)
+    secs = []
+    for i in range(n + 1):
+        y = CROSS_Y0 + (y1 - CROSS_Y0) * i / n
+        xb = GUARD_X + math.sqrt(max(r0 ** 2 - (y - gy) ** 2, 0.0))
+        zt = min(CROSS_TOP, (ROOT_TOP[2] - ROOT_TOP[0] * y) / ROOT_TOP[1], (REAR_SLOPE[2] - REAR_SLOPE[0] * y) / REAR_SLOPE[1] if y < 41 else CROSS_TOP)
+        a = xb - FORK_X[1]
+        pts = [(FORK_X[1] - 0.01, -1.0), (xb, -1.0)] + [(xb - a * math.sin(t), zt - zt * math.cos(t)) for t in [j * math.pi / 2 / k for j in range(k + 1)]]
+        pts[-1] = (FORK_X[1] - 0.01, zt)
+        secs.append(bd.Face(bd.Wire.make_polygon([bd.Vector(x, y, z) for x, z in pts], close=True)))
+    return bd.Solid.make_loft([f.outer_wire() for f in secs], ruled=True)
+
+
 def sp():
-    s = _U(guard(), plate(), rear(), fork(), struts())
-    s = _S(s, wells())
+    s = _U(guard(), plate(), rear(), fork(), struts(), rear_flare())
+    s = _S(s, wells(), pocket())
     nonfork = _S(_box(-BIG, BIG, -BIG, BIG, -BIG, 0), _box(*FORK_X, 40, BIG, -BIG, BIG))
     s = _S(s, under_b(), nonfork)
     return _solid(s)
