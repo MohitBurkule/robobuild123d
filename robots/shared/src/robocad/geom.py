@@ -118,6 +118,14 @@ ARC3_MAX_R_MM = 2.0       # ... on a circle smaller than this
 _Circle = namedtuple("_Circle", "x y r sign")   # circle through three ring vertices; sign = turning direction
 
 
+def _even_chords(pts, i0, i1):
+    """A short run (4 vertices) is a polygonised arc only if its chords are equal: any isosceles trapezoid (a straight
+    edge between two mirrored tangents) is concyclic too."""
+    n = len(pts)
+    L = [math.dist(pts[k % n], pts[(k + 1) % n]) for k in range(i0, i1)]
+    return max(L) - min(L) < ARC3_EQ_FRAC * max(L)
+
+
 def _arc_runs(pts, max_turn=ARC_MAX_TURN_DEG, tol=ARC_CENTRE_TOL):
     """Runs of >= 4 consecutive ring vertices lying on one circle (polygonised arcs): [(i, j, mid)] vertex index ranges."""
     n = len(pts)
@@ -145,7 +153,7 @@ def _arc_runs(pts, max_turn=ARC_MAX_TURN_DEG, tol=ARC_CENTRE_TOL):
         j = i
         while j + 1 < n and same(j, j + 1):
             j += 1
-        if j > i:
+        if j > i and (j - i > 1 or _even_chords(pts, i - 1, j + 1)):
             runs.append((i, j))       # triples centred on vertices i..j: arc vertices i-1 .. j+1
         i = j + 1
     # isolated triples of a fine polygonised arc (two equal short segments, a few degrees of turn): a 3-point arc
