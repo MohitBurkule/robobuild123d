@@ -46,6 +46,8 @@ def edge_breaks():
         bd.Rectangle(CH_W, CH_L)
         bd.fillet(sk.vertices().filter_by(lambda v: v.Y < 0), CORNER_R)
     keep = bd.extrude(sk.sketch, amount=EDGE_CH, taper=EDGE_TAPER)
+    hips = [e for e in keep.edges() if e.center().Y > 0 and abs(e.tangent_at().Z) > GEOM_TOL and abs(e.tangent_at().X) > GEOM_TOL]
+    keep = keep.fillet(HIP_R, hips)                         # rear hip edges (side chamfer meets the rear plane) rounded (STEP)
     top = _S(_box(-size, size, -size, size, z0, CH_H + 1), keep)
     rear = halfspace((0, HY - EDGE_CH, CH_H), (0, 1, 1), size)
     corner = []
@@ -208,7 +210,14 @@ def lattice_profile():
             cell = Polygon([(0, sy * e), rib[0], (sx * a, sy * b), (sx * a, sy * IN_Y), (0, sy * IN_Y)]).buffer(0)
             cell = cell.difference(LineString(rib).buffer(half))
             cell = cell.difference(Point(0, sy * e).buffer(COL_R))
-            win.append(_rounded(cell.intersection(sbox(-xl, -IN_Y, xl, IN_Y)), LAT_R_CORNER[0 if sy > 0 else 1]))
+            lean = sy > 0 and sx < 0
+            cell = cell.intersection(sbox(-(xl + lean), -IN_Y, xl, IN_Y))
+            if lean:                               # the STEP's left rear pocket edge leans off the Y axis (sketch as drawn)
+                (x0, y0), (x1, y1) = LAT_EDGE_RL
+                k = (x1 - x0) / (y1 - y0)
+                cell = cell.intersection(Polygon([(x0 + k * (-CH_L - y0), -CH_L), (x0 + k * (CH_L - y0), CH_L), (0, CH_L), (0, -CH_L)]))
+            tip = Point(0, sy * e).buffer(LAT_TIP_ZONE)        # the wedge tip at the end column rounds wider than the other corners (STEP)
+            win.append(_rounded(cell, LAT_R).difference(tip).union(_rounded(cell, LAT_R_TIP[0 if sy > 0 else 1]).intersection(tip)))
     for sx in (-1, 1):   # left / right centre triangles
         win.append(_rounded(Polygon([(0, 0), (sx * a, b), (sx * a, -b)]).buffer(-LAT_RIB_C, join_style=2), LAT_R_C))
     return unary_union([_rounded(x, LAT_R) for x in win if not x.is_empty])
