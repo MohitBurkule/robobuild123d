@@ -19,14 +19,14 @@ SP_W_FLOOR = SP_W_TOP + (SP_Z_TOP - 1.0) * math.tan(math.radians(SP_BATTER_DEG))
 SP_MID_Y = (-9.5, 10.5)             # straight mid wall (RV23 Loft2) from the rear bend to the S-bend; its top rises 13 -> SP_Z_TOP
 SP_MID_Z_FRONT = 13.0               # mid wall height at its front end (Loft2 sketch at Y 10.5)
 SP_BEND_R = (8.0, 4.0)              # rear wall bends out round two 90 deg arcs (RV23 Revolve6, Revolve7), chassis-side radii
-SP_FRONT = dict(c=(-38.5, 26.55), r_in=10.55, w=3.0, z_top=10.0, over=5.0)   # front swing (Revolve5): axis (X, Y), chassis-side radius at the floor, radial thickness, top, lead-in deg
+SP_FRONT = dict(c=(-38.5, 26.55 + SIZE_DL), r_in=10.55, w=3.0, z_top=10.0, over=5.0)   # front swing (Revolve5): axis (X, Y), chassis-side radius at the floor, radial thickness, top, lead-in deg
 BEZIER_DEG = 3                      # a cubic Bezier's handle is a third of the Hermite tangent
 SP_BEND_TENSION = 0.9               # S-bend corner-curve tangent length / chord
 SP_REAR_Y_END = -46.0               # the straight rear wall runs on past the rear round (the profile trims it)
 
 
 # --- side panel + wedgelet shared / derived dimensions (outlines are organic point tables measured on RV23/RV17) ---
-RAMP_REACH = 50.1
+RAMP_REACH = 50.1 + SIZE_DL   # the nose ramp moves with the nose (size.length)
 RAMP_SLOPE = 1.187   # ramp face Z = FLOOR_Z + RAMP_SLOPE (RAMP_REACH - Y), shared by wedgelet and nose
 SLAB_X = (-60.0, -20.0)              # X slab the (Y, Z) side profile is extruded through before it is cut to the panel
 GEO_EPS = 1e-4                      # coordinate match tolerance when picking edges by position
@@ -42,7 +42,7 @@ SP_NOSE_OVER = 1.0                   # cutters overshoot the faces they open
 # keeps the wedgelet ring round SB as a R3.5 post
 SP_NOSE_PKT = dict(x_post=-40.5, x_b=-42.5, draft_deg=2.2, r_round=1.0, r_post=3.95, r_ring=3.5, z_top=8.0, r_slot=3.65, taper_deg=18.9)   # z_top: the pocket's roof, above it a slot round the nose-run end
 SP_NOSE_Z = (FLOOR_Z, 10.0)   # SP_NOSE_Z[1] is also the top of the swing and of the S-bend's front end
-SP_TOE_Y0 = 47.0                     # the ramp toe's land starts here (Y)
+SP_TOE_Y0 = 47.0 + SIZE_DL                     # the ramp toe's land starts here (Y)
 SP_TOE_RUN = 3.1                     # Y run of the ramp skin the toe polygon follows
 # M3 ISO 10642 seats (head dk 6.0 + csk_clear) + a driver bore out through the battered face, per screw. STEP RV23 nose
 # (a, b): the 90 deg seat is the dk + 0.7 cone but the driver bore is only r `drive_r` 3.10 (the cone's rim is a 0.25 mm
@@ -80,7 +80,7 @@ WG_BORES_SA = 2.6           # radius of the 25 mm standoff bore through the wedg
 WG_SLIT_W = 0.0            # width of a slit for the 1.5 mm Ti tine, centred on it. 0 = the STEP: the wedgelet is solid there and the tine runs inside it (RV17/18 interpenetrate 26 mm3, y 41.5-50.1); >0 is the printable variant (a 1.5 slit gives interference 0)
 WG_BORE_WALL = 1.352         # TPU wall left round a standoff bore
 WG_SA_R = WG_BORES_SA + WG_BORE_WALL   # cheek bulb round the 25 mm standoff SA = its bore plus a wall (the flank's first arc)
-WG_BOSS_R = 3.5             # ring round SB (block, ring step) = clearance circle round SA in the fork bay
+WG_BOSS_R = SB_RING_R             # ring round SB (block, ring step) = clearance circle round SA in the fork bay
 WG_NOTCH = dict(depth=2.5, width=1.5)   # tail-entry notch: depth down T from the cheek corner, width back from T
 WG_BAY_Z = 8.6              # fork bay ledge height; the bay is bounded by T, this ledge and the 45 deg tangent to the lug round SB
 WG_PIN_SWING = 15.0         # the fork's pin travels this far each side of its rest angle in the kidney slot round SB (r = FK_PIN_DIST)

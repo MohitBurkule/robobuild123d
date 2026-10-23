@@ -10,7 +10,7 @@ Joints (build123d RigidJoint, Z along the feature's axis):
 The panel is modelled once (SP_BUILT_SIDE, left); the right panel and its joints are its YZ mirror."""
 import os, sys
 import numpy as np
-from .params import HERE, NUT, SA, SA_X, SPEC_DP, SP_BUILT_SIDE, SP_NUT_RELIEF_X, SP_RH_BLEND, SP_SEAT_AXIS
+from .params import HERE, NUT, SA, SA_X, SA_X_STOCK, SPEC_DP, SP_BUILT_SIDE, SP_NUT_RELIEF_X, SP_RH_BLEND, SP_SEAT_AXIS
 from .common import _b, _mirror_x, _solid
 from .hubs import standoff, standoff_end
 from .side import _side_body, bolt_x
@@ -20,20 +20,21 @@ def _mx(v):
     return (-v[0], *v[1:])
 
 
-def _so_a_span(s):
-    return tuple(sorted(s * x for x in SA_X))
+def _so_a_span(s, stock=False):
+    """|X| span of the 25 mm standoff, signed by side; `stock`: at the stock chassis width (the frame the panel is drawn in)."""
+    return tuple(sorted(s * x for x in (SA_X_STOCK if stock else SA_X)))
 
 
 def _datum():
     """World point of the built panel's frame origin: its standoff's end on the SA axis."""
-    return standoff_end(_so_a_span(SP_BUILT_SIDE), SA)[0]
+    return standoff_end(_so_a_span(SP_BUILT_SIDE, stock=True), SA)[0]
 
 
 def sp_frames(s):
     """Joint frames {label: (point, z_dir)} in the panel frame of side s; the far side's are the mirror of the built one's."""
     sb, d = SP_BUILT_SIDE, _datum()
     inboard = (-sb, 0.0, 0.0)
-    raw = {"sa": (d, standoff_end(_so_a_span(sb), SA)[1]),
+    raw = {"sa": (d, standoff_end(_so_a_span(sb, stock=True), SA)[1]),
            **{f"seat_{k}": ((sb * bolt_x(k), *ax), inboard) for k, ax in SP_SEAT_AXIS.items()},
            "nut_relief": ((SP_NUT_RELIEF_X[1], *NUT), inboard)}
     loc = {k: (tuple(p - q for p, q in zip(pt, d)), z) for k, (pt, z) in raw.items()}

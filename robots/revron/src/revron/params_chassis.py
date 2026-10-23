@@ -83,15 +83,17 @@ SO_R = 2.5                           # standoff radius
 SA_Y0 = 30.5                         # front axle Y as drawn
 SA_Y, SA_Z = SA_Y0 + SIZE_DL, WHEEL_OD_F / 2    # front axle (Y, Z): axle height = wheel radius; the axle moves with the nose
 SA = (SA_Y, SA_Z)                    # 25 mm standoff (RV11): front axle (Y, Z)
-SB_DROP, SB_WHEEL_CLR = 1.0, 0.5     # nose standoff axis this far under the axle line (STEP 5.5 -> 4.5); its surface this clear of the front tyre
-SB_Y = max(40.5 + SIZE_DL, round(SA_Y + math.sqrt((WHEEL_OD_F / 2 + SO_R + SB_WHEEL_CLR) ** 2 - SB_DROP ** 2), 6))   # nose Y: at least the STEP's 40.5 (moved with the nose), and never nearer the front wheel than its radius + the standoff radius + a clearance
+SB_DROP, SB_WHEEL_CLR = 1.0, 0.5     # nose standoff axis this far under the axle line (STEP 5.5 -> 4.5); the wedgelet's ring round it this clear of the front tyre
+SB_RING_R = 3.5                      # wedgelet ring round the nose standoff (block, ring step): the standoff radius plus a TPU wall
+SB_Y = max(40.5 + SIZE_DL, round(SA_Y + math.sqrt((WHEEL_OD_F / 2 + SB_RING_R + SB_WHEEL_CLR) ** 2 - SB_DROP ** 2), 6))   # nose Y: at least the STEP's 40.5, and never nearer the front wheel than its radius + the wedgelet ring + a clearance
 SB = (SB_Y, WHEEL_OD_F / 2 - SB_DROP)   # 15 mm standoff (RV10): nose (Y, Z)
 # the rotor axis keeps at least its distance (WY, WZ master and the STEP's standoff positions) from each mount-screw axis: the heads back out inboard
 # past the disc, so when SA / SB rise (or close in) the rotor rises with them; at the STEP standoffs this changes nothing
 _STEP_SCREW_AXES = ((30.5 + SIZE_DL, 5.5), (40.5 + SIZE_DL, 4.5))   # the STEP's mount-screw axes, moved with the nose
 _REACH = [math.hypot(WY - y, WZ - z) for y, z in _STEP_SCREW_AXES]
 WZ = max(WZ, *[round(p[1] + math.sqrt(r ** 2 - (WY - p[0]) ** 2), 6) for p, r in zip((SA, SB), _REACH) if r > abs(WY - p[0])])
-SA_LEN, SB_LEN = 25.0, 15.0          # catalog standoff lengths
+SA_LEN_STOCK, SB_LEN_STOCK = 25.0, 15.0   # catalog standoff lengths (stock width)
+SA_LEN, SB_LEN = SA_LEN_STOCK + SIZE_DW, SB_LEN_STOCK + SIZE_DW   # a wider chassis lengthens both standoffs: everything outboard of the walls (side panels, wedgelets, front hubs) moves out with their ends
 M2, M3 = (float(_k[1:]) for _k in ("M2", "M3"))   # thread diameters of the screws the tub is drilled for: ISO size names, catalog keys (not dimensions to scale)
 M3_THIN_NUT_T = fc.nut(M3, 'thin')[1]   # thin M3 nut thickness (ISO 4035)
 MNT_IN, MNT_T, MNT_SLAB_T = 13.4, 8.0, 4.0   # weapon mount: inner face |X|, total thickness, slab thickness (rest = battered boss)
@@ -102,9 +104,11 @@ FLOOR_Z = 1.0                        # ground-contact plane of the ramps / side 
 # ---------------------------------------------------------------------------------------------------------------------
 CH_IN_X = CH_HALF_W - CH_WALL        # inner face of the side walls (27.5)
 REF_TO_WORLD = [[0, 0, -1, 0], [-1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1]]
-SA_X, SB_X = (SA_X0, SA_X0 + SA_LEN), (SB_X0, SB_X0 + SB_LEN)   # standoff |X| spans: inner end + catalog length
+SA_X, SB_X = (SA_X0, SA_X0 + SA_LEN), (SB_X0, SB_X0 + SB_LEN)   # standoff |X| spans: inner end + length
+SA_X_STOCK, SB_X_STOCK = (SA_X0, SA_X0 + SA_LEN_STOCK), (SB_X0, SB_X0 + SB_LEN_STOCK)   # the same at the stock width: the frame the side panel and the wedgelet are drawn in
 NUT = (-11.5, 8.5)                   # side-panel screw into a thin M3 nut in the chassis wall (Y, Z)
-NUT_X = (CH_HALF_W - M3_THIN_NUT_T, CH_HALF_W)   # nut pocket opens on the outer wall face, one nut deep
+NUT_X = (CH_HALF_W - M3_THIN_NUT_T, CH_HALF_W)
+NUT_X_STOCK = (CH_HALF_W_STOCK - M3_THIN_NUT_T, CH_HALF_W_STOCK)   # (stock frame, see SA_X_STOCK)   # nut pocket opens on the outer wall face, one nut deep
 # ---- insert columns: a 2 x 2 grid plus the rear-centre boss, placed against what sits in the tub ----------------------------------------
 COL_R = 2.75                         # insert column boss radius (corner blocks, rear boss and deck pockets are tangent to it)
 WALL_IN_REAR = CH_Y0 + CH_WALL       # inner face of the rear wall (Y)

@@ -10,29 +10,41 @@ def _cut(sk, below=SKIN):
     return prism(sk, DECK - below, DECK + SKIN)
 
 
-def _rounded(pts, tips):
+def _rounded(pts, tips, small=()):
     """Polygon through pts with R = wall at the vertices listed in `tips`, sharp elsewhere. A corner whose rib or wall edges are too
     short for the full wall radius (a thicker wall squeezes the pocket) takes the largest round that fits."""
-    tips = [min(range(len(pts)), key=lambda i: abs(pts[i][0] - x) + abs(pts[i][1] - y)) for x, y in tips]
+    near = lambda x, y: min(range(len(pts)), key=lambda i: abs(pts[i][0] - x) + abs(pts[i][1] - y))
+    small = {near(x, y) for x, y in small}                    # corners rounded R = skin instead of the wall
+    tips = [near(x, y) for x, y in tips]
     with BuildSketch() as sk:
         Polygon(*pts, align=None)
         for i in tips:
-            r = fit_radius(pts, i, CH_WALL, [j for j in tips if j != i])
+            r = fit_radius(pts, i, SKIN if i in small else CH_WALL, [j for j in tips if j != i])
             fillet([v for v in sk.vertices() if abs(v.X - pts[i][0]) + abs(v.Y - pts[i][1]) < SKIN / 10], r)
     return sk
+
+
+def _front_ribbed(up, x, top):
+    """The up pocket as the reference draws it: it runs on to the front wall, the wall-radius rounds on the rib diagonals (cut A) and the
+    R = skin rounds of the two front corners (cut B) are separate sketch fillets whose arcs cross (their tangent lengths overlap on the
+    short side edge), and the FRONT_RIB stays over the corners: the cutter ends at y = top."""
+    front = [up[2], up[3]]
+    cutter = _cut(_rounded(up, [up[0], up[1], up[-1]]), 0) & _cut(_rounded(up, front, front), 0)
+    return cutter & box_xy(-x - 1, x + 1, top - 100, top, DECK - 1, DECK + SKIN + 1)
 
 
 def x_pockets():
     """Front pocket above the front rib, rear pocket below the rear rib; both pointed on the axis."""
     x, k, top = POCKET_X, DIAG_K, WALL_IN_FRONT - FRONT_RIB
     a_up, a_lo = CENTRE_Y + RIB_OFF, CENTRE_Y - RIB_OFF
-    up = [(0, a_up), (x, a_up + k * x), (x, top), (-x, top), (-x, a_up + k * x)]
+    wall = top + FRONT_RIB                       # the reference pocket runs on to the front wall, R = skin at its two front corners, and the rib stands over them
+    up = [(0, a_up), (x, a_up + k * x), (x, wall), (-x, wall), (-x, a_up + k * x)]
     face = STOP_FRONT_Y
     lo = [(0, a_lo), (x, a_lo - k * x), (x, face), (SA_X0, face), (SA_X0, face - STOP_GAP), (-SA_X0, face - STOP_GAP), (-SA_X0, face), (-x, face), (-x, a_lo - k * x)]
     tips = lambda p: [p[0], p[1], p[-1]]
     if face >= a_lo - k * x:                    # the stop wall stands forward of the rib's lower edge at the pocket's side (drive axle moved forward): no room for the rear X pocket
-        return [_cut(_rounded(up, tips(up)), 0)]
-    return [_cut(_rounded(up, tips(up)), 0), _cut(_rounded(lo, tips(lo)), 0)]
+        return [_front_ribbed(up, x, top)]
+    return [_front_ribbed(up, x, top), _cut(_rounded(lo, tips(lo)), 0)]
 
 
 def side_pocket():

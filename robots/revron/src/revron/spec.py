@@ -362,11 +362,12 @@ def _top_screw_dev():
     why = (f"RV01 column bore is a plain d{2 * BORE_R:g} through bore from the base-panel seat ({BASE_Z0 + BASE_T:g} mm) up to the rim ({rim:g} mm) (dump Cut-Extrude14 / Boss-Extrude8) and Top_Panel_1 (d2.2 holes) has no top fasteners; "
            f"the top panel needs retention (design intent), so ours leaves a {TOP_NECK:g} mm web under the rim (from {z_web:g} up to {rim:g}) with a d{2 * TOP_PILOT_R:g} M2 thread-forming pilot (bolt_t*), "
            "a countersunk-through screw would hit the base-panel FS8 screw in the same heat-set")
-    r_web = math.hypot(math.sqrt(2) * COL_R, TOP_NECK / 2) + OVER   # holds the whole column web (half diagonal of the column square, half the web height)
+    r_web = math.hypot(BORE_R, TOP_NECK / 2) + OVER                      # the web's end spheres: the bore's own radius and half the web height
+    r_cap = math.sqrt(2) * (BORE_R + BORE_CH) + 0.02                     # capsule round the column axis: holds the web and the reference's rim chamfer (blob bbox corners), 3.0 mm radius cap, short of the deck ledge 3.3 mm from the axis
     r_floor = BORE_CH + OVER                                             # holds the first bore section above the base-panel seat
     out = []
     for x, y in (TOP_XY if TOP_SCREW_WEB else ()):
-        out += [dict(near=[x, y, z_web + TOP_NECK / 2], r=r_web, reason=f"[web] {why}"),
+        out += [dict(path=[[x, y, z_web], [x, y, rim]], r=round(r_cap, 3), max_mm3=40.0, reason=f"[web] {why}"),
                 dict(near=[x, y, rim], r=r_web, reason=f"[pilot mouth at the rim] {why}"),
                 dict(near=[x, y, z_web], r=r_web, reason=f"[web underside, bore stops] {why}"),
                 dict(near=[x, y, BASE_Z0 + BASE_T], r=r_floor, reason=f"[bore floor, reference stays d{2 * BORE_R:g}] {why}")]
@@ -380,11 +381,6 @@ def _top_screw_sharp_ok():
             for x, y in (TOP_XY if TOP_SCREW_WEB else ())]
 
 
-_FILLET_REF_WHY = ("RV01_Chassis_1.stl itself measures sharp at every flagged spot: visual.fillet_ref replaces the measured reference radius by the radius of the nearest dumped "
-                   "fillet face box (dump Fillet2/5/7/8/11/13/16/18/19/20/21/22), so a concave edge beside a convex dumped fillet counts as 'reference rounder'; "
-                   "re-measured with the check's own sections the STEP estimate equals ours (both r 0.0, 282 raw samples, 0 with a rounder reference except one noise sample), "
-                   "and sections at z 7.4 / 12 (R1 at 27.5,-18.9) and x -21.8 / y -9.35 overlay the STEP outline")
-
 
 def _sliver_dev():
     """Hair-thin faces the reference lacks: all sit where a 2.0 mm deck chamfer (the weapon-mount keepout, flange wedge, lug) meets the shell's chamfer, which stays APEX_SHY under CH_WALL so the corner cone does not collapse to a point."""
@@ -393,9 +389,7 @@ def _sliver_dev():
     out = []
     for sx in (1, -1):
         out += [dict(near=[sx * 15.4, 14.0, 18.5], r=2.5, reason=why.format(where="mount keepout slab edges x 13.4 / 17.4 on the front wall chamfer")),
-                dict(near=[sx * 22.23, 12.22, 17.5], r=1.0, reason=why.format(where="deck pocket edge at the front wall inner face")),
                 dict(near=[sx * 28.4, 13.1, 18.3], r=2.0, reason=why.format(where="flange top at the side wall chamfer start"))]
-    out.append(dict(near=[13.2, 26.47, 12.48], r=1.0, reason=why.format(where="lug / tab wall corner")))
     return out
 
 
@@ -436,8 +430,7 @@ def reference_cad():
              for yy in SW_SCREW_Y]
           + [dict(near=[sx * LOBE_DEV[0], LOBE_DEV[1], LOBE_DEV[2]], r=LOBE_DEV_R, reason="lobe tail below Y -11.7 trimmed to the side-panel inner face: the STEP lobe and side panel overlap by 31 mm3, the tub does not duplicate it")
              for sx in (1, -1)]
-          + _top_screw_dev() + _sliver_dev() + _wire_slot_dev() + _fillet14_dev(),
-          visual_ok=dict(fillet_ref=_FILLET_REF_WHY)),
+          + _top_screw_dev() + _sliver_dev() + _wire_slot_dev() + _fillet14_dev()),
         R("base_panel", "RV26_Base_Panel_1.stl", tol_mm=TOL["tight"], note="RV26 1 mm panel",
           deviations=[dict(near=[x, y, BASE_DEV_Z], r=PANEL_DEV_R, reason="[variant base_csk_fit] R2.6 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud")
                       for x, y in (INS if variant("base_csk_fit") else ())]),   # [variant base_csk_fit] the default seat is the RV26 one

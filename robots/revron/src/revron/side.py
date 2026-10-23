@@ -1,9 +1,9 @@
 """[fix-S] Side groups: the side panel (wedgelet, fork and hub groups live in their own modules)."""
 import math, os, sys
 from functools import lru_cache
-from .params import (
-    FLOOR_Z, GEO_EPS, HERE, NUT, NUT_X, RAMP_REACH, RAMP_SLOPE, SA,
-    SA_X, SB, SB_X, SIDE_BOLT_DES, SIDE_PROBE_N, SIDE_PROBE_OFF, SIDE_PROBE_R, SIDE_SINK, SLAB_X,
+from .params import (SIDE_BOLT_X, 
+    FLOOR_Z, GEO_EPS, HERE, NUT, NUT_X_STOCK, RAMP_REACH, RAMP_SLOPE, SA,
+    SA_X_STOCK, SB, SB_X_STOCK, SIDE_BOLT_DES, SIDE_PROBE_N, SIDE_PROBE_OFF, SIDE_PROBE_R, SIDE_SINK, SLAB_X,
     SP_BEND_R, SP_BOSS, SP_CSK, SP_DRIVER_SEATS, SP_FLUTE, SP_FOOT, SP_FOOT_Z,
     SP_FRONT, SP_NOSE_PKT, SP_NOSE_OVER, SP_NOSE_RUN, SP_NOSE_Y0, SP_NOSE_Z, SP_NUT_POCKET, SP_NUT_RELIEF_X,
     SP_REAR, SP_SA_CLEAR, SP_TOE_RUN, SP_TOE_Y0, SP_Z_TOP,
@@ -162,25 +162,31 @@ def face_x(key):
     return sorted(depth, reverse=True)[(SIDE_PROBE_N + 1) // 2 - 1] + SIDE_PROBE_OFF[key]
 
 
+def sink(key):
+    """Depth of the head plane of seat `key` under the outer face: SIDE_SINK. The nose head (clamping the wedgelet) never drops closer to the
+    wedgelet's outer face than the STEP leaves it, so a thinner nose wall (SB moved) shallows the bore instead of the head cone cutting into the TPU."""
+    return min(SIDE_SINK[key], round(face_x(key) - SIDE_BOLT_X[key], 2)) if key == "b" else SIDE_SINK[key]
+
+
 def bolt_x(key):
-    """|X| of the head plane of seat `key`: SIDE_SINK below the outer face."""
-    return face_x(key) - SIDE_SINK[key]
+    """|X| of the head plane of seat `key`."""
+    return face_x(key) - sink(key)
 
 
 def _side_seat(key, at, sgn=-1):
     """robot.cad.holes (cutter, FastenerRecord) of one side-panel M3 CSK (bolt_s*): the STEP seats the head SIDE_FACE_X -
     SIDE_BOLT_X below the battered outer face, in a driver bore from the face; clearance runs on through the panel (and
-    wedgelet) to the far end of the part it clamps (standoff end SA_X / SB_X, chassis nut wall NUT_X). `sgn` -1 builds the
+    wedgelet) to the far end of the part it clamps (standoff end SA_X / SB_X, chassis nut wall NUT_X, all at the stock width: the rig carries the panel out with the standoff ends). `sgn` -1 builds the
     left panel's tool, +1 the record for the right."""
     _repo = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
     if _repo not in sys.path:
         sys.path.insert(0, _repo)
     from robot.cad.holes import hole_tool
-    far = {"a": SA_X[1], "b": SB_X[1], "c": NUT_X[1]}[key]
+    far = {"a": SA_X_STOCK[1], "b": SB_X_STOCK[1], "c": NUT_X_STOCK[1]}[key]
     dr, hc = SP_CSK["drive_r"] if key in SP_DRIVER_SEATS else None, SP_CSK["head_clear"]
     tool, rec = hole_tool((sgn * face_x(key), *at), (-sgn, 0, 0), SIDE_BOLT_DES[key], head="csk", into="through", side="head",
-                          sink=SIDE_SINK[key], grip=face_x(key) - far, fit=SP_CSK["fit"], csk_clear=SP_CSK["csk_clear"],
-                          head_clear=hc if dr is None else SP_CSK["lip"] - SIDE_SINK[key])
+                          sink=sink(key), grip=face_x(key) - far, fit=SP_CSK["fit"], csk_clear=SP_CSK["csk_clear"],
+                          head_clear=hc if dr is None else SP_CSK["lip"] - sink(key))
     if dr is not None:   # the narrower driver bore from outside the face down to the seat; the csk cone is cut off where it meets it (no undercut)
         tool = _U(tool, _cyl(dr, sgn * (face_x(key) + hc), sgn * bolt_x(key), at))
         tool = _I(tool, _cyl(dr, sgn * (face_x(key) + hc), sgn * far, at))

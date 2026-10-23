@@ -576,3 +576,12 @@ def test_tessellation_strip_on_reference_surface_is_not_a_sliver():
     assert not visual.tess_sliver((np.array([0.0, 0.0, 3.0]), 0.001, 0.003), ref)      # 0.5 mm off it: a real face
     bad = _stepped(0.01)
     assert all(not visual.tess_sliver(s, ref) for s in visual.slivers(bad))           # the 0.01 mm step still counts
+
+
+def test_dumped_fillet_site_beside_a_sharp_reference_edge_is_not_rounder():
+    # round 53 tub: a dumped fillet face's box also holds the sharp edges beside it; the dumped radius was substituted
+    # on a sharp reference corner (260 hits, sections identical). The sections must show the reference rounder.
+    sharp = _l_bracket(0)
+    box = (np.array([-50.0, -50.0, -50.0]), np.array([50.0, 50.0, 50.0]), 2.0)   # every spot "on" a dumped R2 face
+    assert visual.fillet_diffs(sharp, sharp.copy(), grid=1.0, sites=[box]) == []
+    assert visual.fillet_diffs(sharp, _l_bracket(2.0), grid=1.0, sites=[box])     # a real R2 is still found

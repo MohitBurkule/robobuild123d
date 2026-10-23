@@ -324,7 +324,8 @@ def fillet_diffs(model, ref, grid=1.5, min_turn=30.0, tol=0.3, frac=0.3, snap=1.
     nearest one when within 35 % / 0.3 mm (the place comes from the estimate, the radius from the dump).
     `sites`: world boxes (lo, hi, r) of the reference's dumped fillet faces (sldprt_dump.fillet_sites). With them the
     reference is rounder only where the measured spot lies on one (within SITE_MM), and its radius is that face's:
-    an estimate picking up a neighbouring feature's arc on a sharp reference edge is not a fillet."""
+    an estimate picking up a neighbouring feature's arc on a sharp reference edge is not a fillet. Whatever radius is
+    used, the two sections normal to the edge must show the difference (sharp_corner.ref_rounder_shown)."""
     import trimesh
 
     from . import sharp_corner as sc
@@ -352,7 +353,9 @@ def fillet_diffs(model, ref, grid=1.5, min_turn=30.0, tol=0.3, frac=0.3, snap=1.
             from .sldprt_dump import snap as _snap
 
             b = (_snap(b[0], exact),) + tuple(b[1:])
-        if b[0] - a[0] > max(tol, frac * b[0]):
+        # the substituted (dumped) radius names the fillet, but only the meshes say whether this spot is rounder: a
+        # dumped face box also holds the sharp edges beside it (round 53 tub: 260 site hits, 0 the sections show)
+        if b[0] - a[0] > max(tol, frac * b[0]) and sc.ref_rounder_shown(model, ref, p, t, float(a[0]), float(b[0]), float(a[1])):
             out.append((np.asarray(p, float), float(a[0]), float(b[0])))
     return out
 
