@@ -196,7 +196,7 @@ def top_chamfer(s):
     inner = lambda e: NOTCH_X - GEOM_EPS <= e.center().X <= IN_X - GEOM_EPS and NOTCH_Y[0] - TOP_CH < e.center().Y < NOTCH_Y[1] + TOP_CH \
         and not (abs(e.center().X - (NOTCH_X - 2 * TOP_CH)) < GEOM_EPS)
     E = [e for f in top for e in f.edges() if inner(e)]
-    sliver = _S(_S(blk, blk.chamfer(TOP_CH, None, E)), _box(-BIG, BIG, NOTCH_LOW[0][1], NOTCH_CH_Y0, -BIG, BIG))   # not along the wall's front run
+    sliver = _S(_S(blk, blk.chamfer(TOP_CH, None, E)), _box(-BIG, BIG, NOTCH_LOW[0][1], BIG, -BIG, BIG))   # the mouth's front run only
     shear = bd.Matrix([[1, 0, 0, 0], [0, 1, 0, 0], [0, K, 1, K * IN_Y], [0, 0, 0, 1]])
     cut = sliver.transform_geometry(shear)
     # ahead of it the chamfer runs out to nothing at the notch's front corner: a plane through the corner's top edge
@@ -210,7 +210,33 @@ def top_chamfer(s):
     n = n if n[2] > 0 else tuple(-c for c in n)
     taper = _I(halfspace(p0, n, BIG), _box(NOTCH_X - TOP_CH - 1, NOTCH_X + 1, y0, y1, -BIG, HS))
     cut = _U(cut, taper)
-    return _S(s, cut, _mirror_x(cut))
+    return _S(s, cut, _mirror_x(cut), *[notch_rear_chamfer(sx) for sx in (-1, 1)])
+
+
+def notch_rear_chamfer(sx):
+    """Ramp edge over the notch's floor, rear round and rear wall (STEP): the floor edge an equal-distance TOP_CH chamfer,
+    the wall edge the STEP's own plane per side, the round between them a cylinder of NOTCH_R along their common line."""
+    import build123d as bd
+    import numpy as np
+    nr = np.array([0.0, -K, 1.0]) / SECK                      # ramp normal
+    nf = np.array([sx, 0.0, 0.0]) + nr
+    nf /= np.linalg.norm(nf)
+    df = nf @ np.array([sx * NOTCH_X, 0.0, ramp_z(0.0)]) - TOP_CH * math.sin(math.radians(45))
+    nw, dw = NOTCH_WALL_CH[sx]
+    nw = np.array(nw)
+    H = lambda n, d: halfspace(tuple(n * d), tuple(n), HS)  # the void side (n.p > d)
+    u = np.cross(nf, nw)
+    u /= np.linalg.norm(u)
+    axis = np.linalg.solve(np.array([nf, nw, u]), np.array([df + NOTCH_R, dw + NOTCH_R, 0.0]))
+    cyl = bd.Solid.make_cylinder(NOTCH_R, 2 * TOOL_S, bd.Plane(origin=tuple(axis - u * TOOL_S), z_dir=tuple(u)))
+    wedge = _I(H(nf, df), H(nw, dw))
+    v = np.linalg.solve(np.array([nf, nw, u]), np.array([df, dw, 0.0]))   # the sharp corner line
+    quad = [v, axis - NOTCH_R * nf, axis, axis - NOTCH_R * nw]           # corner, tangent points, round centre
+    face = bd.Face(bd.Wire.make_polygon([bd.Vector(*(q - u * TOOL_S)) for q in quad], close=True))
+    corner = bd.Solid.extrude(face, bd.Vector(*(u * 2 * TOOL_S)))         # only between the tangent lines
+    void = _S(wedge, _S(corner, cyl))
+    x0, x1 = sorted((sx * (NOTCH_X - TOP_CH - 1), sx * (IN_X + 1)))
+    return _I(void, _box(x0, x1, NOTCH_CH_Y0, NOTCH_Y[1] + 2 * TOP_CH, DECK_TOP, TOOL))
 
 
 def edge_chamfer(m, p, dh, dv, region):
