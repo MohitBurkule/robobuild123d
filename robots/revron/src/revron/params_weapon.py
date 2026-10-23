@@ -133,10 +133,17 @@ WSEG_LO, WSEG_FINE, WSEG_MID, WSEG_HI, WSEG_FN, WSEG_MAX, WSEG_ARC, WSEG_ARC_S =
 # (x out from the inner face, y, z from the weapon axis): at the axis it sits `drop` below the full plate thickness,
 # and leans in with height and towards the nose
 # param: organic per-side STEP fits (notch_y, rim_end, batter); RV02's teardrop rim is one skin round the shaft nut recess
+# notch_y is held as the STEP gap behind the top panel's front shoulder (TOP_SHOULDER_Y, 7.9 at the STEP): the part of the mount
+# above the rim rises through the panel's front notch, so it moves with size.length (hyp: mount/top_panel locked at length +10 %)
+MNT_NOTCH_SHOULDER_GAP = dict(r=2.27, l=1.1)
 MNT_SIDE = dict(
-    r=dict(top_r=10.0, notch_y=10.17, rim_end=-14.5, batter=dict(drop=2.4084, lean=0.154, toe=0.0404)),
-    l=dict(top_r=round(NUT_RECESS_R + CH_WALL / 2, 6), notch_y=9.0, rim_end=-5.0, batter=dict(drop=2.80265, lean=0.1701, toe=0.0158)))
+    r=dict(top_r=10.0, notch_y=round(TOP_SHOULDER_Y + MNT_NOTCH_SHOULDER_GAP["r"], 6), rim_end=-14.5, batter=dict(drop=2.4084, lean=0.154, toe=0.0404)),
+    l=dict(top_r=round(NUT_RECESS_R + CH_WALL / 2, 6), notch_y=round(TOP_SHOULDER_Y + MNT_NOTCH_SHOULDER_GAP["l"], 6), rim_end=-5.0, batter=dict(drop=2.80265, lean=0.1701, toe=0.0158)))
 # param: end
+# above the rim the mount passes the top panel's front notch (outer edge |X| TOP_NOTCH_X[1]): its outer face is held this far
+# inside it (the stock batter leaves RV03 0.25 inside, so the default is not cut; hyp: overlap at width -10 %)
+MNT_NOTCH_X_CLR = 0.2
+MNT_ABOVE_RIM_X = round(TOP_NOTCH_X[1] - MNT_NOTCH_X_CLR - MNT_IN, 6)   # mount-frame x limit above TOP_Z0
 MNT_TOP_Z = CH_Z1                        # top of the rear notch: the teardrop's tangent line starts here
 # TAB_FRONT_SETBACK: params_chassis (the front wall's forward limit follows it)
 TAB = dict(y0=CH_Y1, z0=5.35, h=8.2,   # param: organic tab floor Z / height (STEP RV01 notch)
