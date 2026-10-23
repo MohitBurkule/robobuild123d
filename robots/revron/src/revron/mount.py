@@ -82,14 +82,14 @@ def _outline(m):
     return f if f.normal_at().Z > 0 else -f              # counter-clockwise, so it fuses with the pad circle
 
 
-def mount_profile(side):
+def mount_profile(side, pad=True):
     """Side sketch of a mount (chassis Y, Z): the outline, a pad round the nose CSK (NOSE_PAD_R = CSK cone + a printed
     wall: the STEP nose arc left the cone a 0 mm knife edge), the notch-top wedge thickened to MNT_TIP_WALL within
     MNT_TIP_REACH (rearmost point kept), concave corners relieved MNT_RELIEF_R, then the notch: the tab cut out, its
     corners sharp as the tab's."""
     m = MNT_SIDE[side]
     p = _outline(m)
-    if NOSE_PAD_R:
+    if NOSE_PAD_R and pad:
         p = p + bd.Pos(*SB) * bd.Circle(NOSE_PAD_R)
     if MNT_TIP_WALL:
         top = _v((m["notch_y"], MNT_TOP_Z))
@@ -179,7 +179,8 @@ def _plate(side):
     m = MNT_SIDE[side]
     prof = mount_profile(side)
     slab = _prism(prof, 0.0, MNT_SLAB_T)
-    boss = _prism(prof & _boss_zone(prof), MNT_SLAB_T, MNT_T + BOSS_OVER).split(_batter(m), keep=bd.Keep.BOTTOM)
+    bprof = mount_profile(side, pad=False) if NOSE_PAD_R else prof   # the nose pad walls the CSK cone, which lies in the slab: the boss keeps the plain nose
+    boss = _prism(bprof & _boss_zone(bprof), MNT_SLAB_T, MNT_T + BOSS_OVER).split(_batter(m), keep=bd.Keep.BOTTOM)
     return _U(slab, boss)
 
 
@@ -257,6 +258,7 @@ def weapon_mount(side):
         cuts.append(_bore(NUT_RECESS_R, MNT_SLAB_T, 2 * MNT_T))                                  # shaft nut recess
     clip = _notch_clip(body)
     if clip is not None:
+        body = body.fix()   # the clip lands on RV03's batter seam: on the unfixed plate the boolean returns nothing (CH_HALF_W_STOCK -10 %)
         cuts.append(clip)
     part = body.cut(*cuts).clean()
     if clip is not None and not part.is_valid:
