@@ -4,7 +4,7 @@ the side panels seat on the lobes with no overlap and need no cut."""
 import build123d as bd
 from .mount import mount_profile, _prism
 from .params_chassis import MNT_SLAB_T
-from .params_weapon import MNT_FRAME
+from .tub2_iface import MOUNT_FRAMES as MNT_FRAME
 from . import plate as pl
 
 

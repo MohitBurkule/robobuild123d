@@ -40,10 +40,12 @@ _STEP_SCREW_AXES = ((30.5, 5.5), (40.5, 4.5))
 _REACH = [math.hypot(WY - y, WZ - z) for y, z in _STEP_SCREW_AXES]
 WZ = max(WZ, *[round(p[1] + math.sqrt(r ** 2 - (WY - p[0]) ** 2), 6) for p, r in zip((SA, SB), _REACH) if r > abs(WY - p[0])])
 SA_LEN, SB_LEN = 25.0, 15.0          # catalog standoff lengths
-SA_X0, SB_X0 = 17.5, 21.5            # |X| of each standoff's inner end
 M2, M3 = 2.0, 3.0                    # thread diameters of the screws the tub is drilled for
 M3_THIN_NUT_T = fc.nut(M3, 'thin')[1]   # thin M3 nut thickness (ISO 4035)
 MNT_IN, MNT_T, MNT_SLAB_T = 13.4, 8.0, 4.0   # weapon mount: inner face |X|, total thickness, slab thickness (rest = battered boss)
+STANDOFF_END_GAP = 0.1               # each standoff's inner end stands this far past the mount face it screws into
+SA_X0 = round(MNT_IN + MNT_SLAB_T + STANDOFF_END_GAP, 6)   # |X| of the axle standoff's inner end: past the mount slab (17.5)
+SB_X0 = round(MNT_IN + MNT_T + STANDOFF_END_GAP, 6)        # |X| of the nose standoff's inner end: past the whole mount (21.5)
 FLOOR_Z = 1.0                        # ground-contact plane of the ramps / side feet
 # ---------------------------------------------------------------------------------------------------------------------
 CH_IN_X = CH_HALF_W - CH_WALL        # inner face of the side walls (27.5)
