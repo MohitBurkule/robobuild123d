@@ -51,14 +51,14 @@ def describe(cid: str) -> dict:
     else:
         halves = C.split_outrunner(e)
         if not halves:
-            raise WeaponMotorError(f"weapon motor `{cid}` is one piece and declares no mounting geometry (props body_x, bell_len, "
+            raise WeaponMotorError(f"weapon motor `{cid}` does not fit the drisk: it is one piece and declares no mounting geometry (props body_x, bell_len, "
                                    f"mount_holes, top_holes): its fixed half and bell cannot be told apart")
         stator, can = halves[0].id, halves[1].id
     miss = [k for k in ("body_x", "bell_r", "mount_holes", "top_holes") if not pr.get(k)]
     if miss:
-        raise WeaponMotorError(f"weapon motor `{cid}` does not declare {', '.join(miss)}: the mounts and the spider cannot be drilled for it")
+        raise WeaponMotorError(f"weapon motor `{cid}` does not fit the drisk: it does not declare {', '.join(miss)}: the mounts and the spider cannot be drilled for it")
     if not e.shaft:
-        raise WeaponMotorError(f"weapon motor `{cid}` has no shaft entry")
+        raise WeaponMotorError(f"weapon motor `{cid}` does not fit the drisk: it has no shaft entry")
     tops = _holes(pr["top_holes"], "top_holes", cid)
     if len({(round(r, 6), d) for r, _, d in tops}) != 1:
         raise WeaponMotorError(f"weapon motor `{cid}`: the spider takes one bell-top screw circle, the entry has {pr['top_holes']}")

@@ -43,7 +43,6 @@ HUB_PIVOT_X = dict(rear=41.6, front=34.5)               # |X| of each hub's revo
 BAT_L, BAT_W, BAT_H = hw.size(BATTERY)                    # catalog box (long side L): in the bay it is turned 90 about Z, so L runs along Y and W along X
 BAT_BELOW = BAT_H / 2                                     # catalog origin -> pack underside (STEP pack 11 thick, z 6.5..17.5 about origin z 12)
 BAT_STOP_GAP = 0.0                                        # pack rear face to the stop wall front face it butts (STEP: the RV16 pack touches the RV01 stop wall)
-BAT_X = -11.81                                          # pack centre X (STEP envelope)
 BAT_Y = round(KEY_SPAN[1] + BAT_STOP_GAP + BAT_L / 2, 6)  # pack centre Y: the pack stands against the stop wall, so a wider gearmotor (stop wall further forward) pushes it forward
 BAT_Z = round(CH["deck"] - BAT_H / 2, 6)                # pack centre Z: the pack top rests against the deck underside (STEP pack 11 thick, z 6.5..17.5 about origin z 12), so a taller pack hangs lower; underside 2.0 over the base panel skin at the default (original: no pad, pack mated to the chassis only; foam pad = variant battery_pad)
 ELEC = dict(battery=(BAT_X, BAT_Y, BAT_Z), rxesc=(8.67, -3.0, 15.3), wesc=(8.63, -7.25, 10.6), switch_yz=(-5.6, 14.25))   # catalog origins (STEP envelopes)
