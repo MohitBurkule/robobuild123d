@@ -332,4 +332,4 @@ def grooves():
 
 def vm():
     s = _U(body(), shroud(), prongs())
-    return _solid(_S(s, side_pockets(), side_holes(), axis_cuts(), bulk_cuts(), post_holes(), grooves(), upright_chamfers()))
+    return _solid(_S(s, side_pockets(), axis_cuts(), bulk_cuts(), post_holes(), grooves(), upright_chamfers()))
