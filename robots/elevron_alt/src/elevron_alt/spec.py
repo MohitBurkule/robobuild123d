@@ -10,7 +10,7 @@ from robot.cad import fastener_catalog as fc
 from robocad.rig import DIGITS
 from .fasteners import records, INSERT_LEN
 from .params_chassis import (WIRE_SLOT_X, DECK_Z, REBATE, IN_X, CH_H, WALL, AXLE_Y, AXLE_Z, POSTS, END_POSTS, BOSS_PITCH, BOSS_IN, COL_R, HY, TAB_HOLE_DY, TAB_HOLE_Z,
-                             TAB_X_OUT, TAB_W, TAB_PITCH, SW_SLOT, SW_SLOT_IN, SW_PITCH, POST_PITCH)
+                             TAB_X_OUT, TAB_W, TAB_PITCH, SW_SLOT, SW_SLOT_IN, SW_PITCH, POST_PITCH, HX, WIN_W, CORNER_R, EDGE_CH, BOSS_OUT)
 from .params_drive import FLOOR_LIFT, N10_X, DRIVE_MOTOR, WY, WZ, MOTOR_AT_X, HUB_X0, HUB_LEN, DISC_X
 from .params_hw import INSERT_CAT, M3
 from .params_vert import DECK_TOP, LEAD_SLOT, BULK_Y, PRONG
@@ -246,6 +246,13 @@ SLOT_DEV_R = 4.0                       # switch slot / window web
 REBATE_DEV_R = 5.0                     # the base-panel rebate lip (the ligament check reads the rebate as a 68.5 bore)
 VOL_TOL = dict(chassis=0.05, vert=0.2, side=0.4)
 NUT_DEV_R = 4.0                        # the prong nut pocket's neighbourhood
+EST_DEV_R = 3.5                        # an estimator-only flag's neighbourhood (section matches the STEP)
+BAY_DEV = (22.2, 17.4, (5.0, 11.0))    # Fillet15 rounds: |x|, |y|, heights covered
+WIN_DEV_DZ = 0.5                       # boss window round: below the axle line
+POCKET_DEV = (13.0, 19.9, 15.9)        # lattice pocket ceiling corner (front)
+SLIVER_DEV = (9.8, 12.6)               # boss end-arc hairline: |y|, z
+SLIVER_DEV_R = 2.0
+POCKET_R_DEV = (14.0, 24.6, 15.6)      # right rear corner pocket, bay-side corner
 FORK_PLACE_TOL = 3.0                   # side pods' bbox-centre tolerance with the forks stopped over the floor
 
 
@@ -261,12 +268,27 @@ def reference_cad():
                  "deck lattice window (STEP: window edge x 21.9, slot x 22.0)"}
                 for x, y, what in ((sx0 - SW_SLOT[0] / 2, 0, "the switch slot's inner edge"), (sx0 - SW_SLOT[0] / 2, -SW_PITCH / 2, "the front switch pilot"),
                                    (sx0 - SW_SLOT[0] / 2, SW_PITCH / 2, "the rear switch pilot"), (POST_PITCH[0] / 2 - COL_R - SLOT_DEV_R, 0, "the window beside the slot"))]
+    sec = "STEP section through the spot matches ours within 0.05 mm; "
+    est_dev = [{"near": _w(sx * BAY_DEV[0], sy * BAY_DEV[1], z), "r": EST_DEV_R, "reason": sec + "ELVRN3.0 Alt Fillet15 column-to-bay-wall round "
+                "reads R2.95 on the STEP mesh (the estimator spans column and round)"} for sx in (-1, 1) for sy in (-1, 1) for z in BAY_DEV[2]]
+    est_dev += [{"near": _w(sx * HX, sy * WIN_W / 2, AXLE_Z - WIN_DEV_DZ), "r": EST_DEV_R, "reason": sec + "ELVRN3.0 Alt Cut-Extrude15 window: "
+                 "its R1 floor round is tangent to the side wall, read as a sharp corner on our finer mesh"} for sx in (-1, 1) for sy in (-1, 1)]
+    est_dev += [{"near": _w(sx * POCKET_DEV[0], -POCKET_DEV[1], POCKET_DEV[2]), "r": EST_DEV_R, "reason": sec + "ELVRN3.0 Alt Sketch20 lattice "
+                 "pocket ceiling corner, the STEP estimate picks up the neighbouring rib"} for sx in (-1, 1)]
+    est_dev += [{"near": _w(sx * (HX - CORNER_R / 2 - EDGE_CH / 2), -(HY - CORNER_R / 2 - EDGE_CH / 2), CH_H - EDGE_CH / 2), "r": EST_DEV_R,
+                 "reason": sec + "ELVRN3.0 Alt Chamfer1 run round the Fillet1 corner is the same 45 deg cone in the STEP (R1.5 at z 15.5, R0.5 at z 16.5)"}
+                for sx in (-1, 1)]
+    est_dev += [{"near": _w(sx * (HX + BOSS_OUT), sy * SLIVER_DEV[0], SLIVER_DEV[1]), "r": SLIVER_DEV_R, "reason": "ELVRN3.0 Alt Fillet5 R3 root "
+                 "round runs out on the boss end arc in a hairline strip; the STEP mesh shows the same sliver on its other boss side"}
+                for sx in (-1, 1) for sy in (-1, 1)]
+    est_dev += [{"near": _w(POCKET_R_DEV[0], POCKET_R_DEV[1], POCKET_R_DEV[2]), "r": SLIVER_DEV_R, "reason": "ELVRN3.0 Alt Sketch18 right rear "
+                 "corner pocket's bay-side corner: STEP R about 0.9 vs our LAT_R 1.0, 0.15 mm off (the left one matches)"}]
     from .variants import variant
     step_forks = variant("step_forks")
     side_place = {} if step_forks else {"placement_tol_mm": FORK_PLACE_TOL}
     fork_note = "" if step_forks else ("; the forks stop over the floor (variant step_forks off), so the pod's bbox centre sits "
                                        "2.6 mm off the STEP's (its fork tips reach 2.25 mm under the wheels' floor)")
-    rows = [dict(part="chassis", file="Alt_chassis_1.stl", mode="shape", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["chassis"], note="Alt_chassis (dump replay by relations)", deviations=tab_dev + reb_dev + deck_dev),
+    rows = [dict(part="chassis", file="Alt_chassis_1.stl", mode="shape", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["chassis"], note="Alt_chassis (dump replay by relations)", deviations=tab_dev + reb_dev + deck_dev + est_dev),
             dict(part="vert_mod", file="vert_mod_1.stl", mode="envelope", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["vert"], note="vert_mod: no dump; relations from the STEP solid's faces (see MISSES.md)",
                  deviations=[{"near": _w(s * (PRONG[0] + NUT_HALF), HY + TAB_HOLE_DY, TAB_HOLE_Z), "r": NUT_DEV_R,
                               "reason": "ours, not the STEP's: the thin cross-bolt nut captive in the prong (the STEP prong has a plain hole) leaves 0.8 mm to the prong window"} for s in (-1, 1)]),

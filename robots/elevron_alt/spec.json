@@ -2379,6 +2379,195 @@
       ],
       "r": 4.0,
       "reason": "ELVRN3.0 Alt chassis Cut-Extrude6 / Sketch20: the window beside the slot sits 0.1 mm off the deck lattice window (STEP: window edge x 21.9, slot x 22.0)"
+     },
+     {
+      "near": [
+       -22.2,
+       -17.4,
+       7.25
+      ],
+      "r": 3.5,
+      "reason": "STEP section through the spot matches ours within 0.05 mm; ELVRN3.0 Alt Fillet15 column-to-bay-wall round reads R2.95 on the STEP mesh (the estimator spans column and round)"
+     },
+     {
+      "near": [
+       -22.2,
+       -17.4,
+       13.25
+      ],
+      "r": 3.5,
+      "reason": "STEP section through the spot matches ours within 0.05 mm; ELVRN3.0 Alt Fillet15 column-to-bay-wall round reads R2.95 on the STEP mesh (the estimator spans column and round)"
+     },
+     {
+      "near": [
+       -22.2,
+       17.4,
+       7.25
+      ],
+      "r": 3.5,
+      "reason": "STEP section through the spot matches ours within 0.05 mm; ELVRN3.0 Alt Fillet15 column-to-bay-wall round reads R2.95 on the STEP mesh (the estimator spans column and round)"
+     },
+     {
+      "near": [
+       -22.2,
+       17.4,
+       13.25
+      ],
+      "r": 3.5,
+      "reason": "STEP section through the spot matches ours within 0.05 mm; ELVRN3.0 Alt Fillet15 column-to-bay-wall round reads R2.95 on the STEP mesh (the estimator spans column and round)"
+     },
+     {
+      "near": [
+       22.2,
+       -17.4,
+       7.25
+      ],
+      "r": 3.5,
+      "reason": "STEP section through the spot matches ours within 0.05 mm; ELVRN3.0 Alt Fillet15 column-to-bay-wall round reads R2.95 on the STEP mesh (the estimator spans column and round)"
+     },
+     {
+      "near": [
+       22.2,
+       -17.4,
+       13.25
+      ],
+      "r": 3.5,
+      "reason": "STEP section through the spot matches ours within 0.05 mm; ELVRN3.0 Alt Fillet15 column-to-bay-wall round reads R2.95 on the STEP mesh (the estimator spans column and round)"
+     },
+     {
+      "near": [
+       22.2,
+       17.4,
+       7.25
+      ],
+      "r": 3.5,
+      "reason": "STEP section through the spot matches ours within 0.05 mm; ELVRN3.0 Alt Fillet15 column-to-bay-wall round reads R2.95 on the STEP mesh (the estimator spans column and round)"
+     },
+     {
+      "near": [
+       22.2,
+       17.4,
+       13.25
+      ],
+      "r": 3.5,
+      "reason": "STEP section through the spot matches ours within 0.05 mm; ELVRN3.0 Alt Fillet15 column-to-bay-wall round reads R2.95 on the STEP mesh (the estimator spans column and round)"
+     },
+     {
+      "near": [
+       -29.5,
+       -2.5,
+       10.25
+      ],
+      "r": 3.5,
+      "reason": "STEP section through the spot matches ours within 0.05 mm; ELVRN3.0 Alt Cut-Extrude15 window: its R1 floor round is tangent to the side wall, read as a sharp corner on our finer mesh"
+     },
+     {
+      "near": [
+       -29.5,
+       2.5,
+       10.25
+      ],
+      "r": 3.5,
+      "reason": "STEP section through the spot matches ours within 0.05 mm; ELVRN3.0 Alt Cut-Extrude15 window: its R1 floor round is tangent to the side wall, read as a sharp corner on our finer mesh"
+     },
+     {
+      "near": [
+       29.5,
+       -2.5,
+       10.25
+      ],
+      "r": 3.5,
+      "reason": "STEP section through the spot matches ours within 0.05 mm; ELVRN3.0 Alt Cut-Extrude15 window: its R1 floor round is tangent to the side wall, read as a sharp corner on our finer mesh"
+     },
+     {
+      "near": [
+       29.5,
+       2.5,
+       10.25
+      ],
+      "r": 3.5,
+      "reason": "STEP section through the spot matches ours within 0.05 mm; ELVRN3.0 Alt Cut-Extrude15 window: its R1 floor round is tangent to the side wall, read as a sharp corner on our finer mesh"
+     },
+     {
+      "near": [
+       -13.0,
+       -19.9,
+       18.15
+      ],
+      "r": 3.5,
+      "reason": "STEP section through the spot matches ours within 0.05 mm; ELVRN3.0 Alt Sketch20 lattice pocket ceiling corner, the STEP estimate picks up the neighbouring rib"
+     },
+     {
+      "near": [
+       13.0,
+       -19.9,
+       18.15
+      ],
+      "r": 3.5,
+      "reason": "STEP section through the spot matches ours within 0.05 mm; ELVRN3.0 Alt Sketch20 lattice pocket ceiling corner, the STEP estimate picks up the neighbouring rib"
+     },
+     {
+      "near": [
+       -27.5,
+       -31.3,
+       18.25
+      ],
+      "r": 3.5,
+      "reason": "STEP section through the spot matches ours within 0.05 mm; ELVRN3.0 Alt Chamfer1 run round the Fillet1 corner is the same 45 deg cone in the STEP (R1.5 at z 15.5, R0.5 at z 16.5)"
+     },
+     {
+      "near": [
+       27.5,
+       -31.3,
+       18.25
+      ],
+      "r": 3.5,
+      "reason": "STEP section through the spot matches ours within 0.05 mm; ELVRN3.0 Alt Chamfer1 run round the Fillet1 corner is the same 45 deg cone in the STEP (R1.5 at z 15.5, R0.5 at z 16.5)"
+     },
+     {
+      "near": [
+       -32.5,
+       -9.8,
+       14.85
+      ],
+      "r": 2.0,
+      "reason": "ELVRN3.0 Alt Fillet5 R3 root round runs out on the boss end arc in a hairline strip; the STEP mesh shows the same sliver on its other boss side"
+     },
+     {
+      "near": [
+       -32.5,
+       9.8,
+       14.85
+      ],
+      "r": 2.0,
+      "reason": "ELVRN3.0 Alt Fillet5 R3 root round runs out on the boss end arc in a hairline strip; the STEP mesh shows the same sliver on its other boss side"
+     },
+     {
+      "near": [
+       32.5,
+       -9.8,
+       14.85
+      ],
+      "r": 2.0,
+      "reason": "ELVRN3.0 Alt Fillet5 R3 root round runs out on the boss end arc in a hairline strip; the STEP mesh shows the same sliver on its other boss side"
+     },
+     {
+      "near": [
+       32.5,
+       9.8,
+       14.85
+      ],
+      "r": 2.0,
+      "reason": "ELVRN3.0 Alt Fillet5 R3 root round runs out on the boss end arc in a hairline strip; the STEP mesh shows the same sliver on its other boss side"
+     },
+     {
+      "near": [
+       14.0,
+       24.6,
+       17.85
+      ],
+      "r": 2.0,
+      "reason": "ELVRN3.0 Alt Sketch18 right rear corner pocket's bay-side corner: STEP R about 0.9 vs our LAT_R 1.0, 0.15 mm off (the left one matches)"
      }
     ]
    },
