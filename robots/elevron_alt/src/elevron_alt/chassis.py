@@ -46,8 +46,7 @@ def edge_breaks():
         bd.Rectangle(CH_W, CH_L)
         bd.fillet(sk.vertices().filter_by(lambda v: v.Y < 0), CORNER_R)
     keep = bd.extrude(sk.sketch, amount=EDGE_CH, taper=EDGE_TAPER)
-    hips = [e for e in keep.edges() if e.center().Y > 0 and abs(e.tangent_at().Z) > GEOM_TOL and abs(e.tangent_at().X) > GEOM_TOL]
-    keep = keep.fillet(HIP_R, hips)                         # rear hip edges (side chamfer meets the rear plane) rounded (STEP)
+    keep = _S(keep, *[_hip_round(sx) for sx in (-1, 1)])    # rear hip edges (side chamfer meets the rear plane) rounded (STEP)
     top = _S(_box(-size, size, -size, size, z0, CH_H + 1), keep)
     rear = halfspace((0, HY - EDGE_CH, CH_H), (0, 1, 1), size)
     corner = []
@@ -55,6 +54,24 @@ def edge_breaks():
         cx, cy = sx * (HX - CORNER_R), -(HY - CORNER_R)
         corner.append(_S(_box(cx, cx + sx * CORNER_R, cy, cy - CORNER_R, 0, CH_H), _cyl(CORNER_R, 0, CH_H, (cx, cy), "z")))
     return _U(top, rear, *corner)
+
+
+def _hip_round(sx):
+    """Material a HIP_R round takes off the hip where the side chamfer plane meets the rear one: an exact cylinder along
+    the hip line (a fillet between two planes), cut from the wedge between its two tangent lines."""
+    import numpy as np
+    k = 1 / math.sqrt(2)
+    n1, n2 = np.array([sx * k, 0, k]), np.array([0, k, k])
+    c1, c2 = (HX - EDGE_CH + CH_H) * k, (HY - EDGE_CH + CH_H) * k
+    d = np.cross(n1, n2)
+    d /= np.linalg.norm(d)
+    q = np.linalg.solve(np.array([n1, n2, d]), np.array([c1 - HIP_R, c2 - HIP_R, 0.0]))   # axis point
+    L = 2 * (CH_L + CH_W)
+    reach = 3 * HIP_R                                       # the wedge runs well past both planes: only its part inside the block bites
+    pts = [q - d * L / 2, q - d * L / 2 + n1 * reach, q - d * L / 2 + (n1 + n2) * reach, q - d * L / 2 + n2 * reach]
+    wedge = bd.Solid.extrude(bd.Face(bd.Wire.make_polygon([tuple(v) for v in pts], close=True)), bd.Vector(*(d * L)))
+    cyl = bd.Solid.make_cylinder(HIP_R, L, bd.Plane(origin=tuple(q - d * L / 2), z_dir=tuple(d)))
+    return _S(wedge, cyl)
 
 
 def cavity():
@@ -88,6 +105,21 @@ def cavity():
 def fillet_filler(c, rc, axis, at, r, side):
     """Material of a concave round of radius r between a column (centre c, radius rc, along Z) and a wall plane
     (`axis` = at). side picks which of the two tangent rounds (-1: toward lower x / y on the free axis)."""
+    g = _filler_geom(c, rc, axis, at, r, side)
+    if g is None:
+        return None
+    poly, f = g
+    return _S(_ext(poly, "xy", 0, DECK_Z), _cyl(r, -1, DECK_Z + 1, f, "z"))   # an exact round: no facet slivers
+
+
+def filler_2d(c, rc, axis, at, r, side):
+    """fillet_filler's plan outline (shapely), None when the wall is out of the column's reach."""
+    g = _filler_geom(c, rc, axis, at, r, side)
+    return None if g is None else g[0].difference(Point(g[1]).buffer(r, quad_segs=64))
+
+
+def _filler_geom(c, rc, axis, at, r, side):
+    """(kite polygon column-tangent-wall, centre of the round) of fillet_filler, None when out of reach."""
     gap = abs(at - c[1 if axis == "y" else 0]) - r
     if gap >= rc + r:                                       # the wall is out of reach of the column: no round
         return None
@@ -102,7 +134,7 @@ def fillet_filler(c, rc, axis, at, r, side):
     k = rc / (rc + r)
     tc = (c[0] + (f[0] - c[0]) * k, c[1] + (f[1] - c[1]) * k)              # tangent point on the column
     tw, q = ((f[0], at), (c[0], at)) if axis == "y" else ((at, f[1]), (at, c[1]))   # tangent point on the wall, wall foot of the column axis
-    return _S(_ext(Polygon([c, tc, tw, q]).buffer(0), "xy", 0, DECK_Z), _cyl(r, -1, DECK_Z + 1, f, "z"))   # an exact round: no facet slivers
+    return Polygon([c, tc, tw, q]).buffer(0), f
 
 
 def keyholes():
@@ -216,11 +248,12 @@ def lattice_profile():
                 (x0, y0), (x1, y1) = LAT_EDGE_RL
                 k = (x1 - x0) / (y1 - y0)
                 cell = cell.intersection(Polygon([(x0 + k * (-CH_L - y0), -CH_L), (x0 + k * (CH_L - y0), CH_L), (0, CH_L), (0, -CH_L)]))
-            tip = Point(0, sy * e).buffer(LAT_TIP_ZONE)        # the wedge tip at the end column rounds wider than the other corners (STEP)
-            win.append(_rounded(cell, LAT_R).difference(tip).union(_rounded(cell, LAT_R_TIP[0 if sy > 0 else 1]).intersection(tip)))
+            win.append(_rounded(cell, LAT_R_TIP[0 if sy > 0 else 1]))   # corner pockets round a little wider than LAT_R (STEP fit)
     for sx in (-1, 1):   # left / right centre triangles
         win.append(_rounded(Polygon([(0, 0), (sx * a, b), (sx * a, -b)]).buffer(-LAT_RIB_C, join_style=2), LAT_R_C))
-    return unary_union([_rounded(x, LAT_R) for x in win if not x.is_empty])
+    under = unary_union([p for sy in (-1, 1) for sx in (-1, 1)              # the end-column blends under the deck: a window
+                         if (p := filler_2d((0.0, sy * e), COL_R, "y", sy * IN_Y, END_FILLET, sx)) is not None])   # edge over one leaves a step
+    return unary_union([_rounded(x, LAT_R) for x in win if not x.is_empty]).difference(under.buffer(BOOL_EPS))
 
 
 def _rounded(p, r):

@@ -85,7 +85,6 @@ LAT_END_X = 13.5                      # end triangle stops at the vert_mod uprig
 LAT_CORNER_X = (BAY_X0[0] - 1.5, BAY_X0[1])   # corner pockets stop short of the axle-bay cross walls (rear, front)
 LAT_R_TIP = (1.15, 1.2)                # corner pockets: wedge tip at the end column (STEP fit, rear / front)
 LAT_EDGE_RL = ((-14.62, 25.32), (-14.77, 30.32))   # left rear pocket outer edge, two points on it (STEP measured)
-LAT_TIP_ZONE = 8.0                     # reach of that tip round from the end column centre
 LAT_R = 1.0                           # Fillet13 R1 (end and corner windows)
 LAT_R_C = 2.0                         # Fillet6 R2 (centre windows)
 
