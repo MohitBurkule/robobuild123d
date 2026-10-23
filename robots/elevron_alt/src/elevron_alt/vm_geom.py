@@ -338,8 +338,17 @@ def _floor_rounded(prof, r):
             if e.geom_type.name == "LINE":
                 pipes.append(bd.Solid.make_cylinder(r, (p1 - p0).length, bd.Plane(origin=p0, z_dir=p1 - p0)))
             elif e.length > MIN_PIPE_ARC:                       # a corner's sliver of arc tessellates badly against its neighbours
-                pipes.append(bd.Solid.sweep(bd.Face(bd.Wire.make_circle(r, bd.Plane(origin=p0, z_dir=e.tangent_at(0)))), bd.Wire([e])))
-    return _U(up, low, *pipes)
+                c = e.arc_center
+                ang = lambda q: math.degrees(math.atan2(q.Y - c.Y, q.X - c.X))
+                a0, am, a1 = ang(p0), ang(e.position_at(0.5)), ang(p1)
+                ccw = (am - a0) % 360 < (a1 - a0) % 360                         # the mid point decides the arc's sense
+                a0, sweep = (a0, (a1 - a0) % 360) if ccw else (a1, (a0 - a1) % 360)
+                xd = (math.cos(math.radians(a0)), math.sin(math.radians(a0)), 0)
+                pipes.append(bd.Solid.make_torus(e.radius, r, bd.Plane(origin=c, x_dir=xd, z_dir=(0, 0, 1)), major_angle=sweep))   # exact torus, not a swept B-spline
+    s = _U(up, low)
+    for q in pipes:                                         # one at a time: a single many-tool fuse drops the tori
+        s = _U(s, q)
+    return s
 
 
 def _faces(poly):
