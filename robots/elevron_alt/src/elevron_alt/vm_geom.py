@@ -27,6 +27,7 @@ HS = BIG / 5                           # half-space cutters: well past the part,
 TOOL_S = BIG / 50                      # drafted tools: far enough through the ramp
 SEG = 128                              # arc segments per quarter
 GEOM_EPS = 1e-6                        # coordinate match on edges
+RUN_EPS = 1e-3                         # a straight run of a buffered (polygonised) plan: its ends drift this much
 
 K = (WZ + UP_R - DECK_TOP) / (WY + IN_Y)          # ramp: deck height at the front inner wall -> top of the tail circle
 COSK = 1 / math.hypot(1, K)
@@ -116,6 +117,25 @@ def hollow_front_round():
     return _I(inside_round(back, ceil, HOLLOW_EDGE_R), _box(-ARCH_X, ARCH_X, -BIG, BIG, -BIG, BIG))
 
 
+def hollow_side_round():
+    """R HOLLOW_EDGE_R round where the hollow's ceiling meets its side walls beside the lip: each straight run of the
+    hollow plan square to x (STEP)."""
+    from shapely.geometry import Point as P
+    ceil = ((0, K, -1), -(ramp_z(0) - VM_T * SECK))
+    h = hollow_plan()
+    out = []
+    for poly in getattr(h, "geoms", [h]):
+        c = list(poly.exterior.coords)
+        for (xa, ya), (xb, yb) in zip(c[:-1], c[1:]):
+            if abs(xa - xb) > RUN_EPS or abs(ya - yb) < 2 * HOLLOW_EDGE_R:
+                continue
+            x = (xa + xb) / 2
+            sx = -1 if h.contains(P(x + 10 * RUN_EPS, (ya + yb) / 2)) else 1    # the side the wall's material is on
+            r = inside_round(ceil, ((-sx, 0, 0), -sx * x), HOLLOW_EDGE_R, BIG)
+            out.append(_I(r, _box(-BIG, BIG, min(ya, yb), max(ya, yb), -BIG, BIG)))
+    return _U(*out)
+
+
 def hollow_rear_round():
     """R HOLLOW_EDGE_R round where the hollow's ceiling (one wall under the ramp) meets the bulkhead face (STEP)."""
     y0, r = BULK_Y[0], HOLLOW_EDGE_R
@@ -195,7 +215,7 @@ def body():
     s = _S(_U(_S(shell, ar), _S(ups, ar)), slot)        # the ramp cut before the union (OCC drops it from the fused arcs)
     hollow = _ext(hollow_plan(), "xy", DECK_TOP - 1, TOOL)
     s = _S(s, _S(hollow, above_ramp(VM_T)), leg_drafts(), arch())
-    s = _U(s, hollow_rear_round(), hollow_front_round())
+    s = _U(s, hollow_rear_round(), hollow_front_round(), hollow_side_round())
     return top_chamfer(s)
 
 
