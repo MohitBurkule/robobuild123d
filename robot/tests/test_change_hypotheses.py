@@ -111,7 +111,7 @@ def test_score_and_report_with_fake_runs():
     s = hyp.score(rows)
     assert s["decided"] == len(rows) and 0 < s["pct"] < 100
     nx = [r for r in rows if r["verdict"] == "not expressible"]
-    assert nx and all(r["diff"]["files"] for r in nx if r["hook"] in ("chassis.compartments", "weapon.type"))
+    assert all(r["diff"]["files"] for r in nx if r["hook"] in ("chassis.compartments", "weapon.type"))  # dev hooks may cover every change
     md = hyp.markdown(ev, rows)
     assert "Versatility score" in md and "Top missing hooks" in md
 
@@ -381,3 +381,31 @@ def test_env_setting_not_read_is_still_refused(tmp_path):
     cs = [c for c in C.swap_changes(raw, None, hooks) if c.id.endswith("->switch_slide_12x4")]
     _, nx = hyp.resolve(cs, raw, hooks, D.Discovery(), Usage(Graph(), raw), [f])
     assert nx and "do not read" in nx[0][1]
+
+
+def test_add_servo_screws_through_catalog_ears():
+    from robot import overlay as O
+    hooks = {"anchors": {"a": {"at": [0, 0, 10], "rot": [0, 0, 90], "face": "tub"}}}
+    raw = O.apply({"parts": [{"id": "tub", "kind": "structure"}]},
+                  [{"op": "add", "anchor": "a", "part": {"id": "sv", "kind": "servo", "catalog": "servo_cs07"}}], hooks)
+    f = [x for x in raw["fasteners"] if x["id"].startswith("sv_m")]
+    assert len(f) == 2 and all(x["threads_into"] == "tub" and x["through"] == ["sv", "tub"] for x in f)
+    assert sorted(round(x["at"][1], 3) for x in f) == [-13.75, 13.75]   # 27.5 pitch, turned 90 deg onto y
+    assert all(abs(x["at"][2] - 15.65) < 1e-6 and x["dir"] == [0.0, 0.0, -1.0] for x in f)
+    assert any(c["a"] == "sv" and c["method"] == "screw" for c in raw["connections"])
+
+
+def test_add_part_without_holes_is_bonded():
+    from robot import overlay as O
+    raw = O.apply({"parts": []}, [{"op": "add", "part": {"id": "s", "kind": "switch", "catalog": "switch_slide_12x4"}}], {})
+    assert not raw.get("fasteners")
+    assert raw["connections"] == [{"a": "s", "b": "tub", "method": "adhesive", "reason": raw["connections"][0]["reason"]}]
+    assert raw["parts"][0]["retained"] == "adhesive"
+
+
+def test_unsupported_scores_not_expressible():
+    from robot.checks.robust import hyp as H
+    rr, d = {"error": "DriveLocationError: rear-driven with front motors needs a belt"}, {"new": []}
+    assert H.declared_unfit(rr, d, ["DriveLocationError"], H.UNSUPPORTED_MARKER)
+    assert H.declared_unfit({"error": "UNSUPPORTED: no belt"}, d, [], H.UNSUPPORTED_MARKER) == "no belt"
+    assert H.declared_unfit({"error": "UNSUPPORTED: no belt"}, d, []) is None

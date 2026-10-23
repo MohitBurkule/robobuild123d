@@ -163,6 +163,37 @@ def _compose(a_at, a_rot, b_at, b_rot) -> tuple:
     return [r(v) for v in M[:3, 3]], [r(rx), r(ry), r(rz)]
 
 
+def _fasten(raw, part, op, anchor):
+    """Hold an added catalog part to a structure face: one screw per catalog `mount_holes_mm` hole (driven along the
+    part's -z through the ear into the face), or, when the entry lists no holes, a computed adhesive bond like the
+    power-switch path. The face is the op's `face`, else the anchor's `face`, else `tub`. `fasten: false` skips it."""
+    if op.get("fasten") is False or not part.get("catalog"):
+        return
+    from . import catalog, xform
+
+    face = op.get("face") or anchor.get("face") or "tub"
+    props = (catalog.find(part["catalog"]).props or {})
+    holes = props.get("mount_holes_mm") or []
+    pid = part["id"]
+    if not holes:
+        part["retained"] = "adhesive"
+        raw.setdefault("connections", []).append({"a": pid, "b": face, "method": "adhesive", "reason":
+            f"computed bond: catalog `{part['catalog']}` lists no mount holes, so it is glued to `{face}` (overlay add)"})
+        return
+    thread = props.get("mount_thread") or "M2"
+    R = xform.pose(part.get("at") or [0, 0, 0], part.get("rot") or [0, 0, 0])
+    down = [round(float(v), 6) + 0.0 for v in R[:3, :3] @ [0.0, 0.0, -1.0]]
+    for i, h in enumerate(holes):
+        at, _ = _compose(part.get("at"), part.get("rot"), list(h), None)
+        raw.setdefault("fasteners", []).append({
+            "id": f"{pid}_m{i}", "designation": f"{thread}x6", "head": "pan", "at": at, "dir": down,
+            "through": [pid, face], "threads_into": face, "removable": True,
+            "reason": f"overlay add: catalog `{part['catalog']}` mount hole {i} into `{face}` (self-tapping)"})
+    part["retained"] = "screws"
+    raw.setdefault("connections", []).append({"a": pid, "b": face, "method": "screw", "reason":
+        f"{len(holes)} x {thread} through the catalog mount ears into `{face}` (overlay add)", "mechanical_key": True})
+
+
 def _wheel_swap(raw, op):
     hits = select(raw, op["select"])
     if not hits:
@@ -270,6 +301,7 @@ def apply(raw: dict, ops: list, hooks: dict | None = None, base_dir=None) -> dic
                 if any(p.get("id") == part["id"] for p in raw.get("parts") or []):
                     raise ValueError(f"add: part `{part['id']}` exists")
                 raw.setdefault("parts", []).append(part)
+                _fasten(raw, part, op, (hooks.get("anchors") or {}).get(op.get("anchor")) or {})
             elif kind == "build_setting":
                 continue
             else:

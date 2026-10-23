@@ -12,7 +12,8 @@
         0.0,
         90.0
       ],
-      "_why": "standing on the Ti top panel (top z 20.4) behind the switch"
+      "_why": "standing on the Ti top panel (top z 20.4) behind the switch",
+      "face": "top_panel"
     },
     "rear_outside": {
       "at": [
@@ -25,7 +26,8 @@
         0.0,
         0.0
       ],
-      "_why": "behind the tub rear face (y -37.6), between the rear wheels"
+      "_why": "behind the tub rear face (y -37.6), between the rear wheels",
+      "face": "tub"
     },
     "tub_interior_rear": {
       "at": [
@@ -38,7 +40,8 @@
         0.0,
         0.0
       ],
-      "_why": "inside the tub between the N10s on the rear axle line"
+      "_why": "inside the tub between the N10s on the rear axle line",
+      "face": "tub"
     }
   },
   "hooks": {
@@ -282,7 +285,10 @@
   "declared_unfit": [
     "WeaponMotorError",
     "BatteryFitError",
-    "DriveLocationError",
     "WeaponTypeError"
-  ]
+  ],
+  "unsupported": [
+    "DriveLocationError"
+  ],
+  "_unsupported_why": "exception classes for a layout the robot cannot build yet (a missing feature, scored not expressible); declared_unfit is for parts that genuinely do not fit (n/a). DriveLocationError moved here with A's agreement (coordinator, after #51)."
 }
