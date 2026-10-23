@@ -14,13 +14,13 @@ def test_chassis_envelope_follows_masters():
     assert bb.min.X == pytest.approx(-(C.HX + C.BOSS_OUT), abs=1e-3)
     assert bb.max.X == pytest.approx(C.HX + C.BOSS_OUT, abs=1e-3)
     assert bb.min.Y == pytest.approx(-C.HY, abs=1e-3)
-    assert bb.max.Y == pytest.approx(C.HY + C.TAB_LEN, abs=1e-3)
+    assert bb.max.Y == pytest.approx(max(C.HY + C.TAB_LEN, C.HY + C.TAB_HOLE_DY + C.TAB_END_R), abs=1e-3)   # STEP: 42.51
     assert bb.max.Z == pytest.approx(C.CH_H, abs=1e-3)
 
 
 def test_chassis_volume_near_step():
-    """STEP Alt_chassis = 18686 mm3 (SolidWorks mass properties); the relation build is within 3 %."""
-    assert chassis.chassis().volume == pytest.approx(18686.4, rel=0.03)
+    """STEP Alt_chassis = 18686 mm3 (SolidWorks mass properties); the relation build is within 0.5 %."""
+    assert chassis.chassis().volume == pytest.approx(18686.4, rel=0.005)
 
 
 def test_lattice_windows_clear_ribs():

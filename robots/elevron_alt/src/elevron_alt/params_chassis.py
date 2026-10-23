@@ -47,9 +47,15 @@ NUT_DEPTH = 2.5                       # Cut-Extrude5 D1
 BOSS_FILLET = 3.0
 GEOM_TOL = 1e-6                       # same-face test on edge centres
 HEX, HEX_PHASE = 6, 30                # nut pocket: flats top and bottom, as the catalog nut turned onto X
+BOOL_EPS = 0.01                       # keeps a cut face off a coplanar one (OCC fuses badly on coincident faces)
 OCC_EPS = 1e-3                        # OCC fails a round that exactly meets a neighbouring face: drawn this much under
 # boss window (Cut-Extrude15 Sketch19: D2 5 wide, D1 1.5 half slot, 4 deep, Fillet12 R1)
-WIN_W, WIN_H, WIN_DEPTH, SLOT_HALF = 5.0, 7.0, 4.0, 1.5
+WIN_W, WIN_H, WIN_DEPTH, WIN_R = 5.0, 7.0, 4.0, 1.0
+NUT_CH = 0.4                          # Chamfer3: nut-pocket lead-in
+PAD_FILLET = 1.5                      # Fillet2: column into the boss pad
+BAY_FILLET = (1.0, 1.5)               # rear / front (Fillet15): column into the axle-bay wall
+TAB_END_R = 4.3                       # inner tabs end in a round boss round the cross-bolt hole (Fillet8 side)
+END_FILLET = 2.0                      # Fillet9: end columns into the end walls
 # rear tabs (Boss-Extrude3 Sketch11 D1 10, D2 12, D3 4.5, D4 3.2; LPattern1 2 x 12; Mirror7)
 TAB_W, TAB_PITCH, TAB_N = 6.0, 12.0, 2
 TAB_X_OUT = HX                        # outer tab flush with the side wall
@@ -65,6 +71,7 @@ WIRE_SLOT_X, WIRE_SLOT_L, WIRE_SLOT_R = -15.9, 8.0, 1.5
 # deck lattice (Cut-Extrude7/14/16: 1 mm pockets from below, Fillet6 R2): X ribs between the columns
 LAT_DEPTH = 1.0
 LAT_RIB_C = COL_R                     # centre cells: rib half-width = column radius (window edge 3.1 off each rib line)
+LAT_RIB_F = 1.5                       # front corner ribs (bay-wall corner to the end column)
 LAT_RIB_E = 2.05                      # end cells: Chamfer2 radius, the end ribs are lighter
 LAT_END_X = 13.5                      # end triangle stops at the vert_mod upright inner face
 LAT_CORNER_X = (BAY_X0[0] - 1.5, BAY_X0[1])   # corner pockets stop short of the axle-bay cross walls (rear, front)
