@@ -354,3 +354,50 @@ def test_axle_height_drives_the_drive_features(rz, tmp_path):
     assert out, r.stderr[-1500:]
     n, ok, vol, asym, *_ = out[-1].split()[1:]
     assert int(n) == 1 and ok == "True" and abs(float(asym)) < 1e-3
+
+
+# ---- weapon interface (params_weapon.tub_interface): the tab, key, slot and wall follow the weapon type and the spider seat ----------------
+WEAPON_MOTOR_BUILDS = ["gr1507", "gr1507_step", "bbb_be1806_2300kv"]    # the catalog weapon motors the drisk can be fitted with
+
+
+def test_standoff_ends_follow_the_mount(tmp_path):
+    from_p = value_with({}, tmp_path, "[params.SA_X0, params.SB_X0, params.MNT_IN, params.MNT_T, params.MNT_SLAB_T]")
+    sa, sb, mi, mt, ms = from_p
+    assert abs(sa - (mi + ms + 0.1)) < 1e-9 and abs(sb - (mi + mt + 0.1)) < 1e-9 and (sa, sb) == (17.5, 21.5)
+
+
+SPIDER_PROBE = """
+import sys
+sys.path[:0] = [%r, %r]
+import os
+os.environ['REVRON_WEAPON_MOTOR'] = %r
+from revron import tub2, tub2_tab, assembly as A
+c = tub2.chassis2()
+print("RESULT", len(c.solids()), c.is_valid, round(c.volume, 1))
+print("SPIDER", round((c & A.build("spider")).volume, 4), round((c & A.build("disc_a")).volume, 4), round((c & A.build("disc_b")).volume, 4),
+      round(tub2_tab.WALL_X[0] - tub2_tab.SPIDER_OUT, 4), round(tub2_tab.rub_point()[0], 4), round(tub2_tab.WALL_X[1], 4))
+"""
+
+
+@pytest.mark.parametrize("motor", WEAPON_MOTOR_BUILDS)
+def test_weapon_motor_swap_tub_is_valid_and_clear_of_the_spider(motor, tmp_path):
+    """Each buildable weapon.motor: one valid tub, no volume shared with the spider / discs, the tab wall stands SPIDER_TAB_GAP off the spider's outer face, inboard of the mount."""
+    dst = pathlib.Path(tempfile.mkdtemp(dir=tmp_path)) / "src"
+    shutil.copytree(SRC, dst, ignore=shutil.ignore_patterns("__pycache__"))
+    r = subprocess.run([sys.executable, "-c", SPIDER_PROBE % (str(dst), ROOT, motor)], capture_output=True, text=True)
+    res = [ln.split() for ln in r.stdout.splitlines() if ln.startswith(("RESULT", "SPIDER"))]
+    assert len(res) == 2, r.stderr[-1500:]
+    assert res[0][1:3] == ["1", "True"], res
+    sp, da, db, gap, rub, wx1 = map(float, res[1][1:])
+    assert sp < 0.01 and da < 0.01 and db < 0.01, res
+    assert gap >= 0.6 - 1e-6 and abs(rub) >= 10.3 - 1e-6 and wx1 < 13.4, res
+
+
+def test_weapon_without_a_tab_gives_a_valid_tub_with_no_tab_features(tmp_path):
+    """A weapon type that has no notch tab: empty tab / key / slot / rabbet, no rub point, still one valid closed solid."""
+    off = {"tub2_iface": {"TYPES_WITH_TAB": "()"}}
+    vol, _ = check(off, tmp_path)
+    out = value_with(off, tmp_path, "[(m := __import__('revron.tub2_tab', fromlist=['x'])).HAS_TAB, m.key_tab(), m.key_hole(), m.wall_blend(), m.rabbet(), m.rub_point(), "
+                                    "__import__('revron.tub2_front', fromlist=['x']).wire_slot()]")
+    assert out == [False, None, None, None, None, None, None], out
+    assert vol > 0
