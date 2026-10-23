@@ -2575,6 +2575,17 @@
     "mode": "shape",
     "tol_mm": 1.5,
     "tol_vol_frac": 0.4,
+    "deviations": [
+     {
+      "near": [
+       22.0,
+       38.2,
+       6.25
+      ],
+      "r": 4.0,
+      "reason": "ours, not the STEP's (variant step_cross_bolt off): the pod tongue takes the M3 clearance hole for the prong-nut bolt; the STEP's 2.6 pilot (bolt tapped into the tongue) is variant step_cross_bolt"
+     }
+    ],
     "note": "Side_Panel_alt_sm: no dump (see MISSES.md)"
    },
    {
@@ -2583,6 +2594,17 @@
     "mode": "shape",
     "tol_mm": 1.5,
     "tol_vol_frac": 0.4,
+    "deviations": [
+     {
+      "near": [
+       -22.0,
+       38.2,
+       6.25
+      ],
+      "r": 4.0,
+      "reason": "ours, not the STEP's (variant step_cross_bolt off): the pod tongue takes the M3 clearance hole for the prong-nut bolt; the STEP's 2.6 pilot (bolt tapped into the tongue) is variant step_cross_bolt"
+     }
+    ],
     "note": "MirrorSide_Panel_alt_sm"
    },
    {

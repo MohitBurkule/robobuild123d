@@ -232,7 +232,7 @@ def pocket_round():
 
 def sp():
     s = _U(guard(), plate(), rear(), fork(), struts(), rear_flare(), root_rounds())
-    s = _S(s, wells(), _S(pocket(), pocket_round()))   # the pocket void keeps its rounded corner
+    s = _U(_S(s, wells(), pocket()), pocket_round())   # the pocket keeps its rounded corner along its whole x run
     nonfork = _S(_box(-BIG, BIG, -BIG, BIG, -BIG, 0), _box(*FORK_X, CROSS_Y0, BIG, -BIG, BIG))
     s = _S(s, under_b(), nonfork)
     from .variants import variant

@@ -13,6 +13,7 @@ from .params_chassis import (WIRE_SLOT_X, DECK_Z, REBATE, IN_X, CH_H, WALL, AXLE
                              TAB_X_OUT, TAB_W, TAB_PITCH, SW_SLOT, SW_SLOT_IN, SW_PITCH, POST_PITCH, HX, WIN_W, CORNER_R, EDGE_CH, BOSS_OUT)
 from .params_drive import FLOOR_LIFT, N10_X, DRIVE_MOTOR, WY, WZ, MOTOR_AT_X, HUB_X0, HUB_LEN, DISC_X
 from .params_hw import INSERT_CAT, M3
+from .params_side import TONGUE_X
 from .params_vert import DECK_TOP, LEAD_SLOT, BULK_Y, PRONG, PRONG_T
 from .params_drive import LEAD_Y
 from .variants import variant
@@ -310,6 +311,9 @@ def reference_cad():
     side_place = {"placement_tol_mm": FORK_PLACE_TOL} if clip else {}
     fork_note = "" if not clip else ("; the forks stop over the floor (variant clip_forks on), so the pod's bbox centre sits "
                                        "2.6 mm off the STEP's (its fork tips reach 2.25 mm under the wheels' floor)")
+    tongue_dev = lambda sx: [] if variant("step_cross_bolt") else [{"near": _w(sx * sum(TONGUE_X) / 2, HY + TAB_HOLE_DY, TAB_HOLE_Z), "r": NUT_DEV_R,
+        "reason": "ours, not the STEP's (variant step_cross_bolt off): the pod tongue takes the M3 clearance hole for the prong-nut bolt; "
+                  "the STEP's 2.6 pilot (bolt tapped into the tongue) is variant step_cross_bolt"}]
     rows = [dict(part="chassis", file="Alt_chassis_1.stl", mode="shape", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["chassis"], note="Alt_chassis (dump replay by relations)", deviations=tab_dev + reb_dev + deck_dev + est_dev),
             dict(part="vert_mod", file="vert_mod_1.stl", mode="shape", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["vert"], note="vert_mod: no dump; relations from the STEP solid's faces (see MISSES.md)",
                  deviations=[] if variant("step_cross_bolt") else [{"near": _w(s * (PRONG[0] + NUT_HALF), HY + TAB_HOLE_DY, TAB_HOLE_Z), "r": NUT_DEV_R,
@@ -318,9 +322,9 @@ def reference_cad():
                  + ([] if variant("step_cross_bolt") else [{"near": _w(s * (PRONG[0] + PRONG_T / 2), *WIN_DEV), "r": NUT_DEV_R,
                     "reason": "ours, not the STEP's (variant step_cross_bolt off): the prong window's wall to the thin nut pocket is 0.8 mm "
                               "(STEP: 2.39 to its plain 3.2 hole); the window and the nut are both STEP / catalog sized"} for s in (-1, 1)])),
-            dict(part="side_r", file="Side_Panel_alt_sm_1.stl", mode="shape", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["side"], **side_place,
+            dict(part="side_r", file="Side_Panel_alt_sm_1.stl", mode="shape", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["side"], **side_place, deviations=tongue_dev(1),
                  note="Side_Panel_alt_sm: no dump (see MISSES.md)" + fork_note),
-            dict(part="side_l", file="MirrorSide_Panel_alt_sm_1.stl", mode="shape", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["side"], **side_place,
+            dict(part="side_l", file="MirrorSide_Panel_alt_sm_1.stl", mode="shape", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["side"], **side_place, deviations=tongue_dev(-1),
                  note="MirrorSide_Panel_alt_sm" + fork_note),
             dict(part="disc", file="Drisk_floating_3_1.stl", mode="envelope", tol_mm=TOL["std"], note="the Revron disc")]
     for s, n, f in ((-1, "l", "RV21_Rear_Wheel_1.stl"), (1, "r", "RV21_Rear_Wheel_2.stl")):
