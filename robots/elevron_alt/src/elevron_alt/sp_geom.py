@@ -7,7 +7,12 @@ import build123d as bd
 from shapely.geometry import Point, Polygon, LineString, box as sbox
 from shapely.ops import unary_union
 
-from robocad.geom import _box, _cyl, _U, _S, _I, _ext, _mirror_x, _solid
+from robocad.geom import _box, _cyl, _U, _S, _I, _ext as _ext_poly, _face, _mirror_x, _solid
+
+
+def _ext(poly, plane, a0, a1, arcs=True):
+    """Prism of an outline with its polygonised arcs turned back into true arcs (cylinders, not facets)."""
+    return _ext_poly(poly, plane, a0, a1, arcs=arcs)
 from .chassis import halfspace
 from .params_chassis import AXLE_Y, AXLE_Z, HY, TAB_HOLE_DY, TAB_HOLE_Z
 

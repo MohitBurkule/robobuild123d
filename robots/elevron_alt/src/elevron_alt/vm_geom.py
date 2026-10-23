@@ -9,13 +9,19 @@ from shapely.geometry import Point, Polygon, box as sbox, LineString
 from shapely.ops import unary_union
 from shapely import affinity
 
-from robocad.geom import _box, _cyl, _U, _S, _I, _ext, _mirror_x, _solid
+from robocad.geom import _box, _cyl, _U, _S, _I, _ext as _ext_poly, _face, _mirror_x, _solid
+
+
+def _ext(poly, plane, a0, a1, arcs=True):
+    """Prism of an outline with its polygonised arcs turned back into true arcs (cylinders, not facets)."""
+    return _ext_poly(poly, plane, a0, a1, arcs=arcs)
 from .chassis import halfspace
 from .params_chassis import IN_X, IN_Y, POSTS, CH_H
 from .params_drive import WY, WZ
 from .params_vert import *  # noqa: F401,F403
 
 TOOL = BIG / 10                        # cut tools reach this far
+HS = BIG / 5                           # half-space cutters: well past the part, small enough for exact booleans
 TOOL_S = BIG / 50                      # drafted tools: far enough through the ramp
 SEG = 128                              # arc segments per quarter
 GEOM_EPS = 1e-6                        # coordinate match on edges
@@ -29,7 +35,7 @@ def ramp_z(y, drop=0.0):
 
 
 def above_ramp(drop=0.0):
-    return halfspace((0, -IN_Y, DECK_TOP - drop / COSK), (0, -K, 1), BIG)
+    return halfspace((0, -IN_Y, DECK_TOP - drop / COSK), (0, -K, 1), HS)
 
 
 def _sym(p):
@@ -102,11 +108,12 @@ def upright_prof():
 
 def body():
     pl = plan()
-    shell = _ext(pl.intersection(sbox(-BIG, -BIG, BIG, BULK_Y[1])), "xy", DECK_TOP, 2 * TOOL, arcs=True)
+    shell = _ext(pl.intersection(sbox(-BIG, -BIG, BIG, BULK_Y[1])), "xy", DECK_TOP, DECK_TOP + TOOL_S)   # tall enough for the ramp, short enough for exact booleans
     side = pl.intersection(sbox(-BIG, BULK_Y[0], BIG, BIG))  # the bulkhead and the slot corners hang with the uprights (underside on the hull)
     slot = _ext(slot_plan(), "xy", -TOOL, TOOL, arcs=True)
     ups = _I(_ext(side, "xy", -1, TOOL), _ext(upright_prof(), "yz", -TOOL, TOOL))
-    s = _S(_U(shell, ups), above_ramp(), slot)
+    ar = above_ramp()
+    s = _S(_U(_S(shell, ar), _S(ups, ar)), slot)        # the ramp cut before the union (OCC drops it from the fused arcs)
     s = _S(s, _S(_ext(hollow_plan(), "xy", DECK_TOP - 1, TOOL), above_ramp(VM_T)), leg_drafts(), arch_draft())
     return top_chamfer(s)
 
@@ -122,7 +129,7 @@ def arch_draft():
     yb = ARCH_Y + VM_T / COSK
     b = (yb, ramp_z(yb))
     n = (0, -(b[1] - a[1]), b[0] - a[0])
-    lip = _I(halfspace((0, a[0], a[1]), n, BIG), _box(-xs, xs, -TOOL, TOOL, DECK_TOP, TOOL))
+    lip = _I(halfspace((0, a[0], a[1]), n, HS), _box(-xs, xs, -TOOL, TOOL, DECK_TOP, TOOL))
     f = _faces(op.intersection(sbox(-BIG, ARCH_Y - 2 * ARCH_R, BIG, BIG)))[0].moved(bd.Location((0, 0, z0)))
     corners = _S(bd.extrude(f, amount=TOOL_S, dir=(0, 0, 1), taper=-ARCH_DRAFT), _box(-xs, xs, -TOOL, TOOL, -TOOL, TOOL))
     return _U(lip, corners)
@@ -136,7 +143,7 @@ def leg_drafts():
     m = (-m[0], -m[1]) if m[0] > 0 else m
     a = math.radians(LEG_DRAFT)
     n = (m[0] * math.sin(a), m[1] * math.sin(a), math.cos(a))
-    c = _I(halfspace((ax, ay, DECK_TOP), n, BIG), _box(0, IN_X + 1, -TOOL, ARCH_Y - ARCH_R, DECK_TOP, TOOL))
+    c = _I(halfspace((ax, ay, DECK_TOP), n, HS), _box(0, IN_X + 1, -TOOL, ARCH_Y - ARCH_R, DECK_TOP, TOOL))
     return _U(c, _mirror_x(c))
 
 
@@ -166,7 +173,7 @@ def top_chamfer(s):
     v = [p2[i] - p0[i] for i in range(3)]
     n = (u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0])
     n = n if n[2] > 0 else tuple(-c for c in n)
-    taper = _I(halfspace(p0, n, BIG), _box(NOTCH_X - TOP_CH - 1, NOTCH_X + 1, y0, y1, -BIG, BIG))
+    taper = _I(halfspace(p0, n, BIG), _box(NOTCH_X - TOP_CH - 1, NOTCH_X + 1, y0, y1, -BIG, HS))
     cut = _U(cut, taper)
     return _S(s, cut, _mirror_x(cut))
 
@@ -181,7 +188,7 @@ def edge_chamfer(m, p, dh, dv, region):
     w = (b[0] - a[0], b[1] - a[1], b[2] - a[2])
     n = (e[1] * w[2] - e[2] * w[1], e[2] * w[0] - e[0] * w[2], e[0] * w[1] - e[1] * w[0])
     n = n if n[2] > 0 else tuple(-c for c in n)
-    return _I(halfspace(a, n, BIG), region)
+    return _I(halfspace(a, n, HS), region)
 
 
 def bulk_chamfer():
@@ -189,7 +196,7 @@ def bulk_chamfer():
     import build123d as bd
     x0 = UP_X0 - SLOT_R
     z0 = ramp_z(BULK_Y[1]) - TOP_CH                         # chamfer foot on the rear face
-    flat = _I(halfspace((0, BULK_Y[1], z0), (0, 1, 1), BIG), _box(-x0, x0, -TOOL, BULK_Y[1] + SLOT_R, DECK_TOP, TOOL))
+    flat = _I(halfspace((0, BULK_Y[1], z0), (0, 1, 1), HS), _box(-x0, x0, -TOOL, BULK_Y[1] + SLOT_R, DECK_TOP, TOOL))
     c = []
     for sx in (-1, 1):
         cone = bd.Solid.make_cone(0, TOOL, TOOL, bd.Plane(origin=(sx * x0, BULK_Y[1] + SLOT_R, z0 - SLOT_R), z_dir=(0, 0, 1)))
@@ -232,13 +239,7 @@ def side_pockets():
 
 
 def _faces(poly):
-    import build123d as bd
-    from shapely.geometry import MultiPolygon
-    out = []
-    for g in (poly.geoms if isinstance(poly, MultiPolygon) else [poly]):
-        w = bd.Wire.make_polygon([bd.Vector(x, y, 0) for x, y in list(g.exterior.coords)[:-1]], close=True)
-        out.append(bd.Face(w, [bd.Wire.make_polygon([bd.Vector(x, y, 0) for x, y in list(h.coords)[:-1]], close=True) for h in g.interiors]))
-    return out
+    return _face(poly, "xy", arcs=True)
 
 
 def side_holes():
@@ -277,7 +278,7 @@ def shroud():
     outer = _U(bd.Solid.make_cone(UP_R, r_out, x_r - x_tail, pl(x_tail)), _cyl(r_out, x_r, x_end, (WY, WZ), "x"))
     inner = bd.Solid.make_cone(r_in - k * (x_end - x_tail), r_in, x_end - x_tail, pl(x_tail))
     sector = _I(_box(-TOOL, TOOL, WY, TOOL, -TOOL, TOOL),
-                halfspace((0, WY, WZ), (0, 1, -1), BIG))
+                halfspace((0, WY, WZ), (0, 1, -1), HS))
     return _I(_S(outer, inner), sector)
 
 
