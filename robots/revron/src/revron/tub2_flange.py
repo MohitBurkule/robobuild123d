@@ -14,7 +14,9 @@ BLEND_R_STEP = 8.0                     # Fillet2 R8: diagonal into the lug face
 DIAG_S = CH_HALF_W + CH_Y1             # diagonal x + y = DIAG_S, 45 deg, from the front corner of the side wall
 # the concave blend meets the lug face (x = SB_X0) at y = DIAG_S - SB_X0 - R (1 - sqrt 2); the wedgelet's cheek bulb round the axle standoff SA
 # stands outboard of that face from SA - WG_SA_R, so the blend ends WG_MOUNT_GAP short of it: R8 as drawn, smaller where SA moves toward the corner
-BLEND_R = max(0.1, min(BLEND_R_STEP, (SA[0] - WG_SA_R - WG_MOUNT_GAP - (DIAG_S - SB_X0)) / (sqrt(2) - 1)))
+FLANGE_MIN_W = 2 * CH_WALL             # a flange narrower than this (side wall less the lug face) is a wall's worth of nothing: a narrow chassis leaves it out
+# the blend's tangent point on the diagonal must stay a wall in from the side wall (a narrow chassis gives the R8 less room): R fits the width
+BLEND_R = max(0.1, min(BLEND_R_STEP, (SA[0] - WG_SA_R - WG_MOUNT_GAP - (DIAG_S - SB_X0)) / (sqrt(2) - 1), (CH_HALF_W - CH_WALL - SB_X0) / (1 - 1 / sqrt(2))))
 FACE_FIL_R = 3 * SKIN                  # Fillet18: web face into the lug face
 FACE_Y = CH_Y1 + FRONT_RIB             # front face of the web
 BOT_TOP = SEAT_Z + SKIN / 2            # base plate top
@@ -43,7 +45,9 @@ def plan():
 
 
 def flange():
-    """Base plate + front web (with its R3 blend into the lug) + sloping top flange."""
+    """Base plate + front web (with its R3 blend into the lug) + sloping top flange; None where the chassis is too narrow to hold one."""
+    if CH_HALF_W - SB_X0 < FLANGE_MIN_W:
+        return None
     f = plan()
     plate = prism(f, CH_Z0, BOT_TOP)
     web = prism(f, CH_Z0, CH_Z1) & box_xy(SB_X0 - 1, CH_HALF_W + 1, WALL_IN_FRONT - 1, FACE_Y, CH_Z0, CH_Z1)

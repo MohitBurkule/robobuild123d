@@ -88,7 +88,7 @@ def test_disc_radius_follows(tmp_path, base):
 
 
 def test_plate_height_follows(tmp_path, base):
-    """The mount notch top is the chassis rim (MNT_TOP_Z = CH_Z1): lowering the rim lowers the plate's rear top."""
-    m = _build(tmp_path, ("params_chassis.py", r"^CH_Z0, CH_Z1 = 2.5, 19.5", "CH_Z0, CH_Z1 = 2.5, 19.0"))
+    """The mount notch top is the chassis rim (MNT_TOP_Z = CH_Z1): raising the rim raises the plate's rear top (a rim cannot go below the gearbox under the deck, params_chassis.CH_Z1_MIN)."""
+    m = _build(tmp_path, ("params_chassis.py", r"^CH_Z0, CH_Z1_STOCK = 2.5, 19.5", "CH_Z0, CH_Z1_STOCK = 2.5, 20.0"))
     _ok(m)
     assert m["mount_r"]["vol"] != base["mount_r"]["vol"]
