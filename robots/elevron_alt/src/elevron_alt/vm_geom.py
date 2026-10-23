@@ -3,6 +3,8 @@ round the weapon axis) tops the whole module; a planform cut from the chassis in
 two uprights whose outline is the hull of the bulkhead foot and the tail circle round the axis. STEP frame."""
 import math
 
+import build123d as bd
+
 from shapely.geometry import Point, Polygon, box as sbox, LineString
 from shapely.ops import unary_union
 from shapely import affinity
@@ -279,11 +281,28 @@ def shroud():
     return _I(_S(outer, inner), sector)
 
 
+def _floor_pipe(x0, x1, zc, rr, y, rb):
+    """A circle of radius rb swept round the stadium (centres x0, x1 at height zc, radius rr) in the plane at y."""
+    with bd.BuildPart() as bp:
+        with bd.BuildLine() as ln:                          # drawn in XY as (x, z), turned onto XZ below
+            bd.Line((x0, zc - rr), (x1, zc - rr))
+            bd.ThreePointArc((x1, zc - rr), (x1 + rr, zc), (x1, zc + rr))
+            bd.Line((x1, zc + rr), (x0, zc + rr))
+            bd.ThreePointArc((x0, zc + rr), (x0 - rr, zc), (x0, zc - rr))
+        with bd.BuildSketch(bd.Plane(origin=(x0, zc - rr, 0), z_dir=(1, 0, 0))):
+            bd.Circle(rb)
+        bd.sweep(path=ln.wires()[0])
+    return bp.part.solids()[0].rotate(bd.Axis.X, 90).moved(bd.Location((0, y, 0)))
+
+
 def bulk_cuts():
     (xa, xb), (za, zb), back = TUNNEL
     y1 = BULK_Y[1] - back
     r = (zb - za) / 2
-    t = _ext(sbox(xa + r, za, xb - r, zb).union(Point(xa + r, za + r).buffer(r)).union(Point(xb - r, za + r).buffer(r)), "xz", BULK_Y[0] - 1, y1)
+    rb = TUNNEL_FLOOR_R                                     # its blind end rounded into the walls: an exact pipe round the bore
+    stad = lambda k: LineString([(xa + r, za + r), (xb - r, za + r)]).buffer(r - k, SEG)
+    t = _U(_ext(stad(0), "xz", BULK_Y[0] - 1, y1 - rb, arcs=True), _ext(stad(rb), "xz", BULK_Y[0] - 1, y1, arcs=True),
+           _floor_pipe(xa + r, xb - r, za + r, r - rb, y1 - rb, rb))
     x, r2, (z0, z1) = LEAD_SLOT
     s = _ext(LineString([(x, z0), (x, z1)]).buffer(r2), "xz", BULK_Y[0] - 1, SLOT_R + BULK_Y[1])
     return _U(t, s)

@@ -39,6 +39,7 @@ MOTOR_PCD = (16.0, 12.0)               # BE1806 base screws: 16 x 12 on the 45 d
 MOTOR_CB_R = 2.5                       # M2 cap counterbores on the left upright's outer side
 SHROUD = (18.22, -7.22, -6.0, 17.0)    # motor-side shroud: outer radius reached at x, end face x, inner radius there
 TUNNEL = ((-7.77, 16.97), (18.5, 25.45), 1.0)   # bulkhead tunnel from the hollow: x span, z span, rear wall left
+TUNNEL_FLOOR_R = 1.0                   # tunnel's blind end rounded into its walls (STEP)
 LEAD_SLOT_R, LEAD_SLOT_H = 2.0, 5.0    # left lead slot along the upright inner face: round ends, straight height (catalog lead stub)
 PRONG_T = 3.0                          # prong: against the inner chassis tab, down to the chassis underside
 PRONG_TOE = (38.82, 5.0)               # toe round: y, radius (sits on the chassis underside)
