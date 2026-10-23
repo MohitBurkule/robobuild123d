@@ -445,11 +445,6 @@ def size_build(env, tmp_path):
 
 STEPS = ["-30%", "-20%", "-10%", "10%", "20%", "30%"]
 SIZE_ENV = {"width": "REVRON_SIZE_WIDTH", "length": "REVRON_SIZE_LENGTH", "height": "REVRON_SIZE_HEIGHT"}
-# The tub, the base panel and the top panel follow every step. The spec (every part, the side panels among them) does not yet: these steps stop in the side panel
-# (owner C: side.py `_side_seat`, whose nose block and notch are drawn at absolute Y / X in params_side SP_* and SIDE_BOLT_X, so the probe ring round the
-# standoff misses the battered face once SB moves more than ~4.5 mm along Y, or the chassis wall passes the panel's 36.3 mm screw face at ~ +4 mm each side)
-SPEC_BREAKS_IN_SIDE_PANEL = {("width", "20%"), ("width", "30%"), ("length", "10%"), ("length", "20%"), ("length", "30%")}
-
 
 @pytest.mark.parametrize("axis", ["width", "length", "height"])
 @pytest.mark.parametrize("step", STEPS)
@@ -463,10 +458,8 @@ def test_overall_size_step_holds(axis, step, tmp_path):
 
 @pytest.mark.parametrize("axis", ["width", "length", "height"])
 @pytest.mark.parametrize("step", STEPS)
-def test_overall_size_step_builds_the_spec(axis, step, tmp_path, request):
+def test_overall_size_step_builds_the_spec(axis, step, tmp_path):
     """The whole spec (all parts) builds at each step."""
-    if (axis, step) in SPEC_BREAKS_IN_SIDE_PANEL:
-        request.applymarker(pytest.mark.xfail(reason="owner C: side panel (side.py _side_seat) does not follow the chassis width / nose", strict=False))
     b = size_build({SIZE_ENV[axis]: step}, tmp_path)
     assert b["spec"].startswith("ok"), b["spec"]
 
