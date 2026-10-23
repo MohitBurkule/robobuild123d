@@ -3,7 +3,7 @@ the 45 deg diagonal from the chassis front corner (x + y = CH_HALF_W + CH_Y1), a
 R2 corner between wall and diagonal. Three layers: the base plate, the front web up to the web face, and the top flange between two
 parallel lines sloping like the lug top. Built for +X and mirrored."""
 from math import sqrt
-from build123d import BuildLine, BuildSketch, CenterArc, Line, Plane, Polygon, extrude, fillet, make_face
+from build123d import Cylinder, Pos, Rot, BuildLine, BuildSketch, CenterArc, Line, Plane, Polygon, extrude, fillet, make_face
 from .params_chassis import SA, SB_X0
 from .params_side import WG_SA_R, WG_MOUNT_GAP
 from .tub2_params import CH_HALF_W, CH_Y1, CH_Z0, CH_Z1, CH_WALL, SKIN, OVER, SEAT_Z, WALL_IN_FRONT, FRONT_RIB
@@ -64,7 +64,10 @@ def flange():
     web = web & (extrude(under.sketch, CH_HALF_W - SB_X0 + 2) + box_xy(SB_X0 - 1, CH_HALF_W + 1, WALL_IN_FRONT - 1, y0, CH_Z0, CH_Z1))   # the web's front top edge follows the lug's sloping top line too
     body = plate + web + blend + clipped
     v_corner = (CH_Y1 - CH_HALF_W) / sqrt(2)                                 # diagonal coordinate of the wall corner
-    return body - _chamfer_wedge(CH_HALF_W, 0, WALL_IN_FRONT - 1, CH_Y1) - _chamfer_wedge(DIAG_S / sqrt(2), 45, v_corner, _tangent_v())
+    body = body - _chamfer_wedge(CH_HALF_W, 0, WALL_IN_FRONT - 1, CH_Y1) - _chamfer_wedge(DIAG_S / sqrt(2), 45, v_corner, _tangent_v())
+    if DIAG_S - SB_X0 > SA[0] - WG_SA_R - WG_MOUNT_GAP:   # a wide chassis pushes the diagonal over the axle standoff even with the smallest blend: relieve the flange round it (the wedgelet's cheek stands there)
+        body = body - Pos((SB_X0 + CH_HALF_W) / 2, SA[0], SA[1]) * Rot(0, 90, 0) * Cylinder(WG_SA_R + WG_MOUNT_GAP, CH_HALF_W - SB_X0 + 2)
+    return body
 
 
 def _tangent_v():

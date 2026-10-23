@@ -30,6 +30,15 @@ BEVEL_DELTA = {'-x': (0.0, None), '+x': (TAB['cham'], 25.6)} if HAS_TAB else {} 
 KEY_WALL, KEY_R = 3 * SKIN / 2, SKIN                # wall left round the key hole; its corner R (Fillet4)
 
 
+def _bevel_pts(side):
+    """Cutter polygon of the front-top bevel of the tab wall on `side` (sketch x = world Y, y = world Z)."""
+    s = top_line_slope()
+    drop, y_top = BEVEL_DELTA[side]
+    zf = BEVEL_Z - drop
+    yt = y_top if y_top is not None else (zf + TAB_FRONT - CH_Z1 + s * CH_Y1) / (1 + s)   # 45 deg bevel: z = zf + (TAB_FRONT - y) meets the top line
+    return (yt, CH_Z1 + s * (yt - CH_Y1)), (TAB_FRONT, zf), (TAB_FRONT, CH_Z1 + 1), (yt, CH_Z1 + 1)
+
+
 def tab_wall_sketch(plane, side='+x'):
     """Tab wall profile: block under the lug's top line, chamfered at the front floor corner, clear of the rotor circle."""
     s = top_line_slope()
@@ -38,10 +47,7 @@ def tab_wall_sketch(plane, side='+x'):
         with Locations((WALL_IN_FRONT, CH_Z0)):
             Rectangle(TAB_FRONT - WALL_IN_FRONT, CH_Z1 - CH_Z0, align=(Align.MIN, Align.MIN))
         Polygon((CH_Y1, CH_Z1), (TAB_FRONT, z_at(TAB_FRONT)), (TAB_FRONT, CH_Z1 + 1), (CH_Y1, CH_Z1 + 1), mode=Mode.SUBTRACT, align=None)
-        drop, y_top = BEVEL_DELTA[side]
-        zf = BEVEL_Z - drop
-        yt = y_top if y_top is not None else (zf + TAB_FRONT - CH_Z1 + s * CH_Y1) / (1 + s)   # 45 deg bevel: z = zf + (TAB_FRONT - y) meets the top line
-        Polygon((yt, z_at(yt)), (TAB_FRONT, zf), (TAB_FRONT, CH_Z1 + 1), (yt, CH_Z1 + 1), mode=Mode.SUBTRACT, align=None)
+        Polygon(*_bevel_pts(side), mode=Mode.SUBTRACT, align=None)
         chamfer([v for v in sk.vertices() if abs(v.X - TAB_FRONT) < OVER and abs(v.Y - CH_Z0) < OVER], SKIN)
     return sk
 
@@ -52,7 +58,7 @@ def tab_wall(side='+x'):
     return extrude(tab_wall_sketch(Plane.YZ.offset(WALL_X[0]), side).sketch, TAB_WALL_T)
 
 
-def key_sketch(plane, inset=0.0):
+def key_sketch(plane, inset=0.0, side=None):
     with BuildSketch(plane) as sk:
         with Locations((KEY_Y0 + inset, KEY_Z0 + inset)):
             Rectangle(TAB_FRONT - KEY_Y0 - 2 * inset, KEY_Z1 - KEY_Z0 - 2 * inset, align=(Align.MIN, Align.MIN))
@@ -61,13 +67,15 @@ def key_sketch(plane, inset=0.0):
             fillet(sk.vertices(), fit_radius([(0, 0), (w, 0), (w, h), (0, h)], 0, KEY_R, rounded=(1, 2, 3)))   # R wall, or what the key hole's span allows
         else:
             chamfer(sk.vertices(), SKIN)
+            if side == '+x':                                   # the STEP's key shares the +X wall's steeper front-top bevel plane (one face across wall and key)
+                Polygon(*_bevel_pts(side), mode=Mode.SUBTRACT, align=None)
     return sk
 
 
-def key_tab():
+def key_tab(side='+x'):
     if not HAS_TAB:
         return None
-    return extrude(key_sketch(Plane.YZ.offset(KEY_X[0])).sketch, KEY_X[1] - KEY_X[0])
+    return extrude(key_sketch(Plane.YZ.offset(KEY_X[0]), side=side).sketch, KEY_X[1] - KEY_X[0])
 
 
 def key_hole():

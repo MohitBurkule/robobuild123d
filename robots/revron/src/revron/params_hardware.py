@@ -61,8 +61,8 @@ O_RING = (45, 1.0)                                      # stock O-ring ID x cros
 
 
 # intent-probe parameters (rear hub / tyre / nut / seat) and the TPU-print exceptions of the chassis wall
-HUB_PROBE_X = 35.0                                      # |X| of the keyed-bore probe point (inside the bore, off its centre line)
-HUB_BORE_SPAN, TYRE_SPAN = (30.5, 40.5), (32.5, 42.0)   # |X| of the hub's blind D-bore and of the tyre seat
+HUB_PROBE_X = 35.0 + SIZE_DW                                      # |X| of the keyed-bore probe point (inside the bore, off its centre line)
+HUB_BORE_SPAN, TYRE_SPAN = (30.5 + SIZE_DW, 40.5 + SIZE_DW), (32.5 + SIZE_DW, 42.0 + SIZE_DW)   # |X| of the hub's blind D-bore and of the tyre seat
 TYRE_ID, TYRE_STRETCH, NUT_MOVE, WHEEL_MIN_GAP = 13.0, 1.0, 0.3, 1.0   # relaxed F1 tyre ID, its stretch over the crown, nut play, wheel-to-armour gap
 SEAT_PLAY, SEAT_TURN_DEG = 0.15, 2.0                      # motor boss play in the keyhole, shaft turn it allows
 WALL_MIN = 1.8                                            # printed wall floor: 4+ perimeters on a 2 mm wall
