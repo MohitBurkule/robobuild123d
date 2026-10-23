@@ -573,11 +573,46 @@ Run: 7000 s (budget 7000.0 s, 3 workers); baseline 795.9 s with 12 blockers (exc
 
 ---
 
-# Addendum: whole-robot size hypotheses on dev @ c3daa39 (after #27): WITHDRAWN
+# Addendum: whole-robot size hypotheses on fix-hyp-size e98813b (dev 472ff5e + #42-#44)
 
-The earlier 19/19 "hold" result for the size scenarios was a harness bug, not a result. The size settings are read
-with os.environ in params_chassis.size_delta(), but the runner only rewrote the env default literal and rebuilt the
-parts that read the SIZE_* names, so every size job rebuilt 0 parts and checked the stock robot. Fixer A sees the full
-build fail at width +20/+30 % and length +10/+20/+30 % (side.py _side_seat, wedgelet.py:156). Fixed on fix-hyp-size:
-build settings are now passed to spec generation and the worker as real env vars, and every model part is rebuilt.
-The size scenarios are being re-run; this section will be replaced with the new results.
+Each size job sets REVRON_SIZE_* as a real env var for spec generation and the build, rebuilds all 29 model parts
+(part cache keyed on the setting), and is compared with a baseline regenerated from the same sources. The earlier
+19/19 (c3daa39) was a harness bug and was withdrawn; the run on 5d67695 had 16 breaks (length/width) that fixers A,
+B and C have since fixed. On the current code every size change holds:
+
+### Versatility score: **100 %** of decided hypotheses hold with zero code change (19 / 19; 100 % of all 19 generated)
+
+| family | hold / decided |
+|---|---|
+| swap | 0 / 0 |
+| dimension | 0 / 0 |
+| architecture | 0 / 0 |
+| size | 19 / 19 |
+
+Verdicts: holds 19
+Run: 0 s (budget 100000.0 s, 3 workers); baseline 394.3 s with 0 blockers (excluded from the diff).
+
+### Size hypotheses
+
+| hypothesis | verdict | builds | new blockers | diff needed |
+|---|---|---|---|---|
+| overall height +10% (setting size.height) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall height +20% (setting size.height) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall height +30% (setting size.height) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall height -10% (setting size.height) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall height -20% (setting size.height) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall height -30% (setting size.height) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall length +10% (setting size.length) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall length +20% (setting size.length) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall length +30% (setting size.length) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall length -10% (setting size.length) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall length -20% (setting size.length) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall length -30% (setting size.length) | holds | yes | - | 0 code lines (1 setting(s)) |
+| short 2WD: length -20 %, front wheels removed, 2 motors | holds | yes | - | 0 code lines (3 setting(s)) |
+| overall width +10% (setting size.width) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall width +20% (setting size.width) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall width +30% (setting size.width) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall width -10% (setting size.width) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall width -20% (setting size.width) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall width -30% (setting size.width) | holds | yes | - | 0 code lines (1 setting(s)) |
+
