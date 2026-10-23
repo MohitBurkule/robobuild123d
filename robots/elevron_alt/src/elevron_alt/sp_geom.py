@@ -258,11 +258,23 @@ def pocket_round():
     return _I(inside_round(((0, -k, -k), -ch * k), ((0, -1, 0), -yr), POCKET_END_R), _box(x0, x1, -BIG, BIG, -BIG, BIG))
 
 
+def strut_flanks():
+    """Material outboard of the struts' outer flanks (STRUT_FLANK planes, mirrored in y for the front), short of the guard."""
+    out = []
+    for n, d, (x0, x1) in STRUT_FLANK:
+        for sy in (1, -1):
+            m = (n[0], sy * n[1], n[2])
+            o = tuple(c * d for c in m)
+            y0, y1 = sorted((sy * (STRUT_Y1 - 2), sy * GUARD_Y[1]))
+            out.append(_I(halfspace(o, m, BIG), _box(x0, x1, y0, y1, Z_BELOW, CROSS_TOP)))
+    return _U(*out)
+
+
 def sp():
     s = _U(guard(), plate(), rear(), fork(), struts(), rear_flare(), root_rounds())
     s = _U(_S(s, wells(), pocket(), well_top_round()), pocket_round())   # the pocket keeps its rounded corner along its whole x run
     nonfork = _S(_box(-BIG, BIG, -BIG, BIG, -BIG, 0), _box(*FORK_X, CROSS_Y0, BIG, -BIG, BIG))
-    s = _S(s, under_b(), nonfork)
+    s = _S(s, under_b(), nonfork, strut_flanks())
     from .variants import variant
     if variant("clip_forks"):
         s = _S(s, _box(-BIG, BIG, -BIG, BIG, -BIG, FORK_FLOOR_CLR - FLOOR_LIFT))   # forks stop over the floor (departure)

@@ -70,4 +70,5 @@ TONGUE_X = (TAB_GAP[0] + PRONG_T + FIT, TAB_GAP[1] - FIT)   # between the module
 TAB_POCKET = (TONGUE_X[1], POCKET_X1, HY + TAB_LEN + POCKET_END_CLR, POCKET_CH)
 FORK_X = (WHEEL_OUT - FORK_TYRE_IN - FORK_W, WHEEL_OUT - FORK_TYRE_IN)
 
+STRUT_FLANK = (((-0.1841, 0.9827, -0.019), 6.9720, (31.5, 37.73)), ((-0.2514, 0.9679, 0.0), 4.5006, (37.09, GUARD_X)))   # strut outer flanks, y > 0 side (y < 0 its mirror): STEP faces fitted as planes n.p = d (part frame) over an x run (STEP: B-spline, within 0.45)
 __all__ = [n for n in dir() if not n.startswith("__")]
