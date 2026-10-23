@@ -31,8 +31,9 @@ WHEEL_OD_F = 11.0                    # front wheel outer diameter (RV20 Scalextr
 SO_R = 2.5                           # standoff radius
 SA_Y, SA_Z = 30.5, WHEEL_OD_F / 2    # front axle (Y, Z): axle height = wheel radius
 SA = (SA_Y, SA_Z)                    # 25 mm standoff (RV11): front axle (Y, Z)
-SB_DROP, SB_WHEEL_CLR = 1.0, 0.5     # nose standoff axis this far under the axle line (STEP 5.5 -> 4.5); its surface this clear of the front tyre
-SB_Y = max(40.5, round(SA_Y + math.sqrt((WHEEL_OD_F / 2 + SO_R + SB_WHEEL_CLR) ** 2 - SB_DROP ** 2), 6))   # nose Y: at least the STEP's 40.5, and never nearer the front wheel than its radius + the standoff radius + a clearance
+SB_DROP, SB_WHEEL_CLR = 1.0, 0.5     # nose standoff axis this far under the axle line (STEP 5.5 -> 4.5); the wedgelet's ring round it this clear of the front tyre
+SB_RING_R = 3.5                      # wedgelet ring round the nose standoff (block, ring step): the standoff radius plus a TPU wall
+SB_Y = max(40.5, round(SA_Y + math.sqrt((WHEEL_OD_F / 2 + SB_RING_R + SB_WHEEL_CLR) ** 2 - SB_DROP ** 2), 6))   # nose Y: at least the STEP's 40.5, and never nearer the front wheel than its radius + the wedgelet ring + a clearance
 SB = (SB_Y, WHEEL_OD_F / 2 - SB_DROP)   # 15 mm standoff (RV10): nose (Y, Z)
 # the rotor axis keeps at least its distance (WY, WZ master and the STEP's standoff positions) from each mount-screw axis: the heads back out inboard
 # past the disc, so when SA / SB rise (or close in) the rotor rises with them; at the STEP standoffs this changes nothing

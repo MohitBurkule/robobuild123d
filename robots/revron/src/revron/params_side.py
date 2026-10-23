@@ -80,7 +80,7 @@ WG_BORES_SA = 2.6           # radius of the 25 mm standoff bore through the wedg
 WG_SLIT_W = 0.0            # width of a slit for the 1.5 mm Ti tine, centred on it. 0 = the STEP: the wedgelet is solid there and the tine runs inside it (RV17/18 interpenetrate 26 mm3, y 41.5-50.1); >0 is the printable variant (a 1.5 slit gives interference 0)
 WG_BORE_WALL = 1.352         # TPU wall left round a standoff bore
 WG_SA_R = WG_BORES_SA + WG_BORE_WALL   # cheek bulb round the 25 mm standoff SA = its bore plus a wall (the flank's first arc)
-WG_BOSS_R = 3.5             # ring round SB (block, ring step) = clearance circle round SA in the fork bay
+WG_BOSS_R = SB_RING_R             # ring round SB (block, ring step) = clearance circle round SA in the fork bay
 WG_NOTCH = dict(depth=2.5, width=1.5)   # tail-entry notch: depth down T from the cheek corner, width back from T
 WG_BAY_Z = 8.6              # fork bay ledge height; the bay is bounded by T, this ledge and the 45 deg tangent to the lug round SB
 WG_PIN_SWING = 15.0         # the fork's pin travels this far each side of its rest angle in the kidney slot round SB (r = FK_PIN_DIST)
