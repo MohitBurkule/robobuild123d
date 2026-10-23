@@ -29,25 +29,26 @@ LIP_CLR = 0.3                          # lip off the boss obround
 PLATE_CSK_SINK = 1.1                         # boss screw heads sit this far down their bores under the plate flank
 PLATE_T = 1.8                          # plate on the boss under the countersunk M3 heads
 PLATE_TOP_DROP, PLATE_FLAT = 1.0, 3.0  # plate top under the chassis top, flat this far either side of the middle
-PLATE_OUT = (0.966, 0.259, 35.53)      # plate's slanted outer face n.(x, z) = d (15 deg)
+PLATE_OUT = (0.965926, 0.258819, 35.53369)      # plate's slanted outer face n.(x, z) = d (15 deg)
 STRUT_Y0 = 9.5                         # flanks from the plate's top out to each guard end start this far off the middle
 STRUT_TOP = (34.5, 15.3, 1.3)          # flank top: x, z where it leaves the plate top, outward fall dz/dx
 CROSS_Y0, CROSS_TOP = 37.8, 14.0       # crossbar front face behind the rear tyre, crossbar top
-TONGUE_FRONT = (0.997, 0.078, 33.51)   # tongue front face n.(y, z) = d
-TONGUE_TOP = (0.217, 0.976, 21.86)     # tongue top face
-REAR_SLOPE = (0.819, 0.574, 39.82)     # crossbar / tongue rear face
-ROOT_TOP = (0.340, 0.940, 24.10)       # fork-root top face
+TONGUE_FRONT = (0.996917, 0.078459, 33.51118)   # tongue front face n.(y, z) = d
+TONGUE_TOP = (0.216797, 0.976217, 21.86259)     # tongue top face
+REAR_SLOPE = (0.819152, 0.573576, 39.81555)     # crossbar / tongue rear face
+ROOT_TOP = (0.340454, 0.940261, 24.09804)       # fork-root top face
 POCKET_X1, POCKET_CH = 32.25, 48.58    # pocket round the outer chassis tab: outer wall x, underside chamfer y + z
 POCKET_R = 3.0                         # pocket outer corner round
-ROOT_EDGE = (-0.707, 0.579, 0.406, 7.11)   # fork-root inner face n.(x, y, z) = d
+ROOT_EDGE = (-0.707107, 0.579228, 0.40558, 7.10898)   # fork-root inner face n.(x, y, z) = d
 FLARE_MIN = 0.3                        # the blend from the fork into the rear guard ends where it is this wide
 FORK_FLOOR_CLR = 0.25                  # fork underside above the floor (clip_forks variant only)
 FORK_TYRE_IN = 0.2                     # fork outer face inside the tyre's outer face
 POCKET_END_CLR = 0.2                   # tab pocket's end wall past the chassis tab end
 FORK_W = 5.74                          # fork prong width, its outer face just inside the tyre's outer face
+FORK_TOP_R = 30.0                      # root top rounded into the fork top (STEP)
 FORK_T = 4.0                           # fork thickness over the underside
-FORK_TIP = (98.61, (0.499, 0.867, 45.26), 83.22, 84.74)   # tip y, tip top plane, tooth riser y span
-FORK_RISER = (0.867, 0.499)            # tooth riser face normal (-y, +z)
+FORK_TIP = (98.61, (0.498556, 0.866857, 45.25968), 83.22, 84.74)   # tip y, tip top plane, tooth riser y span
+FORK_RISER = (0.866857, 0.498556)            # tooth riser face normal (-y, +z)
 # -----------------------------------------------------------------------------------------------------------------------
 GUARD_Y = (-(AXLE_Y - GUARD_END[0]), AXLE_Y - GUARD_END[0], AXLE_Y + GUARD_END[1])
 WELL_R = TYRE_R + WELL_CLR

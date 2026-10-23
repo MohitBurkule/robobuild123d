@@ -135,7 +135,21 @@ def fork():
     thick = halfspace((0, B_Y0, FORK_T / math.cos(math.atan(B_K))), (0, B_K, 1), BIG)       # above FORK_T over the underside
     body = _I(_I(thick, _above(ROOT_TOP[:2], ROOT_TOP[2])), _box(-BIG, BIG, -BIG, ya, -BIG, BIG))
     tooth = _I(halfspace((0, ya, bottom_z(ya) + FORK_T), (0, -FORK_RISER[0], FORK_RISER[1]), BIG), _box(-BIG, BIG, ya, BIG, -BIG, BIG))
-    return _S(f, body, tooth, _above(tp[:2], tp[2]))
+    return _U(_S(f, body, tooth, _above(tp[:2], tp[2])), fork_valley())
+
+
+def fork_valley():
+    """FORK_TOP_R round in the valley where the root top plane meets the fork's top plane (STEP): exact filler."""
+    k = math.hypot(B_K, 1)
+    n1, d1 = (B_K / k, 1 / k), (B_K * B_Y0 + FORK_T * k) / k          # fork top: FORK_T over the underside
+    m = math.hypot(*ROOT_TOP[:2])
+    n2, d2 = (ROOT_TOP[0] / m, ROOT_TOP[1] / m), ROOT_TOP[2] / m
+    sol = lambda a, b: ((a * n2[1] - b * n1[1]) / (n1[0] * n2[1] - n1[1] * n2[0]), (n1[0] * b - n2[0] * a) / (n1[0] * n2[1] - n1[1] * n2[0]))
+    r = FORK_TOP_R
+    corner, c = sol(d1, d2), sol(d1 + r, d2 + r)
+    t1, t2 = (c[0] - r * n1[0], c[1] - r * n1[1]), (c[0] - r * n2[0], c[1] - r * n2[1])
+    prof = Polygon([corner, t1, c, t2]).buffer(0).difference(Point(c).buffer(r, SEG))
+    return _ext(prof, "yz", *FORK_X)
 
 
 def struts():
