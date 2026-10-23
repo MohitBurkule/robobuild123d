@@ -379,7 +379,8 @@ def _faces(poly):
 def side_holes():
     """Hole through each side wall of the hollow, square to the upright's taper face, ahead of the side pocket."""
     import build123d as bd
-    hy, hz, hr = SIDE_HOLE
+    hy, hr = SIDE_HOLE
+    hz = SIDE_POCKET[2][0] + hr                             # tangent to the side pocket's floor (STEP)
     (x0, y0), (x1, y1) = TAPER
     L = math.hypot(x1 - x0, y1 - y0)
     n = ((y1 - y0) / L, (x0 - x1) / L)
@@ -499,4 +500,4 @@ def grooves():
 
 def vm():
     s = _U(body(), shroud(), prongs())
-    return _solid(_S(s, side_pockets(), axis_cuts(), bulk_cuts(), post_holes(), grooves(), upright_chamfers()))
+    return _solid(_S(s, side_pockets(), side_holes(), axis_cuts(), bulk_cuts(), post_holes(), grooves(), upright_chamfers()))
