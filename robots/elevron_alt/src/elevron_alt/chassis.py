@@ -54,7 +54,10 @@ def cavity():
     web = IN_X - px                                         # Sketch2 D10/D11: column centre 2.5 in from the side wall
     for sy, x0, rf in ((1, BAY_X0[0], BAY_FILLET[0]), (-1, BAY_X0[1], BAY_FILLET[1])):
         y0 = sy * (IN_Y - BAY_LEN)
-        keep.append(_both(_box(x0, IN_X, y0, y0 - sy * WALL, 0, DECK_Z)))           # cross wall closing each axle bay
+        wall_ = _box(x0, IN_X, y0, y0 - sy * WALL, 0, DECK_Z)                        # cross wall closing each axle bay,
+        corner = _S(_box(x0 - 1, x0 + BAY_END_R, *sorted((y0 + sy, y0 - sy * (WALL + 1))), -1, WALL + BAY_END_R),
+                    _cyl(BAY_END_R, *sorted((y0 + sy, y0 - sy * (WALL + 1))), (x0 + BAY_END_R, WALL + BAY_END_R), "y"))
+        keep.append(_both(_S(wall_, corner)))                                         # its free end rounded into its foot over the rebate
         keep.append(_both(fillet_filler((px, sy * py), COL_R, "y", y0 - sy * WALL, rf, -1)))   # Fillet15 / Fillet3: column into the bay wall face
         keep.append(_both(fillet_filler((px, sy * py), COL_R, "x", IN_X - BOSS_IN, PAD_FILLET, -sy)))   # Fillet2: column into the boss pad
     keep += [_both(_box(px, IN_X, sy * py - COL_R, sy * py + COL_R, 0, DECK_Z)) for sy in (-1, 1)]   # each column joined to the side wall
@@ -108,9 +111,11 @@ def side_boss():
     ys = (-BOSS_PITCH / 2, BOSS_PITCH / 2)
     pad = _U(_box(HX - 1, HX + BOSS_OUT, ys[0], ys[1], AXLE_Z - BOSS_R, AXLE_Z + BOSS_R),
              *[_cyl(BOSS_R, HX - 1, HX + BOSS_OUT, (y, AXLE_Z), "x") for y in ys])
-    body = _U(_box(HX - 2 * BOSS_FILLET, HX, -HY, HY, 0, CH_H), pad)   # a wall deep enough to carry the round
+    body = _U(_S(_box(HX - 2 * BOSS_FILLET, HX, -HY, HY, 0, CH_H), edge_breaks()), pad)   # a wall deep enough to carry the round, its top edge broken
     reach = BOSS_PITCH / 2 + BOSS_R
-    root = [e for e in body.edges() if abs(e.center().X - HX) < GEOM_TOL and abs(e.center().Y) <= reach and abs(e.center().Z - AXLE_Z) <= BOSS_R]
+    on_wall = lambda c: abs(c.X - HX) < GEOM_TOL or abs(c.X + c.Z - (HX - EDGE_CH + CH_H)) < GEOM_TOL   # the wall face or the Chamfer1 plane
+    root = [e for e in body.edges() if on_wall(e.center()) and abs(e.center().Y) <= reach and abs(e.center().Z - AXLE_Z) <= BOSS_R + GEOM_TOL
+            and e.center().X > HX - GEOM_TOL - EDGE_CH]
     out = _S(body.fillet(BOSS_FILLET - OCC_EPS, root), _box(HX - 3 * BOSS_FILLET, HX, -CH_L, CH_L, -1, CH_H + 1))   # Fillet5: R3 root round
     pad = _U(out, _box(HX - 1, HX, -BOSS_PITCH / 2, BOSS_PITCH / 2, AXLE_Z - BOSS_R, AXLE_Z + BOSS_R))   # plus a stub keying it into the wall
     return _both(pad)
@@ -199,7 +204,7 @@ def lattice():
     """Cut-Extrude7/14/16: the windows pocketed LAT_DEPTH up into the deck underside."""
     w = lattice_profile()
     polys = list(w.geoms) if hasattr(w, "geoms") else [w]
-    out = [_ext(p, "xy", DECK_Z - 1, DECK_Z + LAT_DEPTH, arcs=True) for p in polys if p.area > 1]
+    out = [_ext(p, "xy", DECK_Z - BOOL_EPS, DECK_Z + LAT_DEPTH, arcs=True) for p in polys if p.area > 1]   # from the deck underside: the columns and walls under it stay whole
     return _U(*out)
 
 
@@ -217,4 +222,8 @@ def chassis():
     s = _U(_S(block(), edge_breaks()), _S(side_boss(), _I(edge_breaks(), above_pad)))
     s = _S(s, cavity(), keyholes())
     s = _S(s, side_boss_cuts(), column_holes(), deck_cuts(), lattice(), tab_holes())
-    return _solid(s)
+    s = _solid(s)
+    end = HY + TAB_LEN                                      # Fillet R2 where the outer tabs' end face meets the rear chamfer plane
+    E = [e for e in s.edges() if e.geom_type.name == "LINE" and abs(e.center().Y - end) < GEOM_TOL and abs(e.tangent_at().X) > COS_ALONG
+         and abs(e.center().X) > TAB_X_OUT - TAB_W and e.center().Z > GEOM_TOL]
+    return s.fillet(TAB_TIP_R, E)

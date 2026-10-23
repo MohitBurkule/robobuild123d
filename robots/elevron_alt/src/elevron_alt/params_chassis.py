@@ -33,6 +33,7 @@ POSTS = tuple((sx * POST_PITCH[0] / 2, sy * POST_PITCH[1] / 2) for sx in (-1, 1)
 END_POST_Y = HY - WALL - 2.3          # Boss-Extrude4 (Sketch13 D1 = 58 between the two): end columns on the centre line, 29
 END_POSTS = ((0.0, -END_POST_Y), (0.0, END_POST_Y))
 # motor-bay cross walls (Sketch2 D1 10.2 x D9 23 bays, D8 2 wall, D7 5.4 return): one wall each side of the axle bay
+BAY_END_R = WALL                       # bay cross wall: free end rounded into its foot
 BAY_LEN = 10.2                        # bay depth along Y from the end inner wall: cross wall at |y| 21.1 .. 19.1
 BAY_X0 = (16.0, 19.6)                 # inner end of the cross wall (rear: N10 gearbox side, front: standoff side)
 # axle keyholes through the side walls (Cut-Extrude3 Sketch4: D1 6 bore, D2 R1.8 slot, D3 4 drop)
@@ -61,6 +62,7 @@ END_FILLET = 2.0                      # Fillet9: end columns into the end walls
 # rear tabs (Boss-Extrude3 Sketch11 D1 10, D2 12, D3 4.5, D4 3.2; LPattern1 2 x 12; Mirror7)
 TAB_W, TAB_PITCH, TAB_N = 6.0, 12.0, 2
 TAB_X_OUT = HX                        # outer tab flush with the side wall
+TAB_TIP_R = 2.0                       # outer tabs: round where the end face meets the rear chamfer plane
 TAB_LEN = 8.0                         # beyond the rear face (to y 41.3)
 TAB_HOLE_Z, TAB_HOLE_DY = 4.0, 4.9    # cross-bolt hole height, and its distance in from the rear face (y 38.2)
 TAB_LEAD = 1.5                        # Chamfer5
