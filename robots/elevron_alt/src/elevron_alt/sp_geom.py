@@ -97,7 +97,11 @@ def grooves():
     for k in range(n):
         c = y0 + k * pitch
         bands.append(Polygon([(c - w / 2 + dydz * (za - zr), za), (c + w / 2 + dydz * (za - zr), za), (c + w / 2 + dydz * (zb - zr), zb), (c - w / 2 + dydz * (zb - zr), zb)]))
-    g = _ext(unary_union(bands).intersection(sbox(GUARD_Y[1] - pitch, -BIG, GUARD_Y[2], BIG)), "yz", GUARD_X, TOOL)
+    a = math.radians(GUARD_DRAFT)
+    n = bd.Vector(math.cos(a), 0, math.sin(a))              # the guard face's normal: the groove walls stand square to the face (STEP)
+    prof = unary_union(bands).intersection(sbox(GUARD_Y[1] - pitch, -BIG, GUARD_Y[2], BIG))
+    g = _U(*[bd.Solid.extrude(f.moved(bd.Location((GUARD_X, 0, 0))).moved(bd.Location(n * -TOOL)), n * (2 * TOOL))
+             for f in _face(prof, "yz", arcs=True)])
     return _I(skin, g)
 
 
