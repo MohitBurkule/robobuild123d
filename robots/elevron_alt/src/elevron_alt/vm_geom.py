@@ -28,6 +28,7 @@ GEOM_EPS = 1e-6                        # coordinate match on edges
 
 K = (WZ + UP_R - DECK_TOP) / (WY + IN_Y)          # ramp: deck height at the front inner wall -> top of the tail circle
 COSK = 1 / math.hypot(1, K)
+SECK = math.hypot(1, K)
 
 
 def ramp_z(y, drop=0.0):
@@ -71,12 +72,44 @@ def notch(reach=0.0):
     return _sym(unary_union([top, low, sbox(NOTCH_X, ly, IN_X + 1, cy)]))
 
 
-def front_opening():
+def front_opening(full=False):
+    """Plan opening between the legs. The arch over it is cut square to the ramp (arch()); the plan cut stops at the
+    arch corner centres' deck line. full: the whole opening as seen on the deck (the hollow keeps one wall round it)."""
     (ax, ay), (bx, by) = LEG_IN
     k = (bx - ax) / (by - ay)
-    xa, xt = ax + k * (-TOOL - ay), ax + k * (ARCH_Y - ay)
-    p = Polygon([(-xa, -TOOL), (xa, -TOOL), (xt, ARCH_Y), (-xt, ARCH_Y)])
-    return p.buffer(-ARCH_R, SEG).buffer(ARCH_R, SEG)
+    top = ARCH_Y if full else ARCH_Y - ARCH_R * SECK
+    xa, xt = ax + k * (-TOOL - ay), ax + k * (top - ay)
+    p = Polygon([(-xa, -TOOL), (xa, -TOOL), (xt, top), (-xt, top)])
+    return p.buffer(-ARCH_R, SEG).buffer(ARCH_R, SEG) if full else p
+
+
+def _ramp_plane(z):
+    """Plane square to the ramp (its normal), origin on the centre line at height z above the deck line y 0."""
+    import build123d as bd
+    return bd.Plane(origin=(0, 0, z), x_dir=(1, 0, 0), z_dir=(0, -K / SECK, 1 / SECK))
+
+
+def arch():
+    """Arch over the front opening, cut along the ramp normal: a straight top on the lip line, R ARCH_R corners
+    ARCH_X off the middle, the opening below them; its edge on the ramp chamfered TOP_CH at 45 deg (STEP)."""
+    import build123d as bd
+    vt = ARCH_Y / SECK                                      # lip line, along the ramp from the deck origin
+    vc = vt - ARCH_R
+    prof = unary_union([sbox(-ARCH_X, -TOOL_S, ARCH_X, vt), sbox(-ARCH_X - ARCH_R, -TOOL_S, ARCH_X + ARCH_R, vc),
+                        Point(-ARCH_X, vc).buffer(ARCH_R, SEG), Point(ARCH_X, vc).buffer(ARCH_R, SEG)])
+    h = (ramp_z(0) - DECK_TOP) / SECK                       # ramp surface over the deck origin, along the normal
+    pl = _ramp_plane(DECK_TOP)
+    f = _face(prof, "xy", arcs=True)[0]
+    body = bd.extrude(f.moved(bd.Location(pl.offset(-TOOL_S))), amount=TOOL_S + h - TOP_CH, dir=pl.z_dir)
+    w0, w1 = h - TOP_CH, h + 1                              # the chamfer starts TOP_CH under the ramp surface and runs out past it
+    g = (w1 - w0) * math.tan(math.radians(ARCH_CH_ANG))     # how far the profile has grown at w1
+    yz = lambda pts: bd.Face(bd.Wire.make_polygon([bd.Vector(0, v, w) for v, w in pts], close=True))
+    xw = lambda pts: bd.Face(bd.Wire.make_polygon([bd.Vector(x, 0, w) for x, w in pts], close=True))
+    top = bd.Solid.extrude(yz([(-TOOL_S, w0), (vt, w0), (vt + g, w1), (-TOOL_S, w1)]), bd.Vector(2 * ARCH_X, 0, 0)).moved(bd.Location((-ARCH_X, 0, 0)))
+    side = bd.Solid.extrude(xw([(0, w0), (ARCH_X + ARCH_R, w0), (ARCH_X + ARCH_R + g, w1), (0, w1)]), bd.Vector(0, vc + TOOL_S, 0)).moved(bd.Location((0, -TOOL_S, 0)))
+    cones = [bd.Solid.make_cone(ARCH_R, ARCH_R + g, w1 - w0, bd.Plane(origin=(sx * ARCH_X, vc, w0))) for sx in (-1, 1)]
+    ch = _U(top, side, _mirror_x(side), *cones).moved(bd.Location(pl))   # exact planes and cones (an offset profile, not a loft)
+    return _U(body, ch)
 
 
 def plan():
@@ -95,7 +128,7 @@ def slot_plan():
 def hollow_plan():
     """Under-shell hollow: the planform in by one wall, from the lip to the bulkhead, round the rear column pads."""
     p = plan().buffer(-VM_T, join_style=2).intersection(sbox(-BIG, HOLLOW_FRONT, BIG, BULK_Y[0]))
-    p = p.difference(front_opening().buffer(VM_T / COSK, SEG))   # the front lip: one wall round the arch
+    p = p.difference(front_opening(full=True).buffer(VM_T / COSK, SEG))   # the front lip: one wall round the arch
     p = p.difference(unary_union([Point(q).buffer(POST_PAD_R, SEG) for q in POSTS if q[1] > 0])).difference(slot_plan())
     return p.buffer(-HOLLOW_R, SEG).buffer(HOLLOW_R, SEG).buffer(HOLLOW_R, SEG).buffer(-HOLLOW_R, SEG)
 
@@ -114,25 +147,8 @@ def body():
     ups = _I(_ext(side, "xy", -1, TOOL), _ext(upright_prof(), "yz", -TOOL, TOOL))
     ar = above_ramp()
     s = _S(_U(_S(shell, ar), _S(ups, ar)), slot)        # the ramp cut before the union (OCC drops it from the fused arcs)
-    s = _S(s, _S(_ext(hollow_plan(), "xy", DECK_TOP - 1, TOOL), above_ramp(VM_T)), leg_drafts(), arch_draft())
+    s = _S(s, _S(_ext(hollow_plan(), "xy", DECK_TOP - 1, TOOL), above_ramp(VM_T)), leg_drafts(), arch())
     return top_chamfer(s)
-
-
-def arch_draft():
-    """Arch round the front opening: the lip's front face stands square to the ramp for one wall, then a plane runs up
-    to the hollow's front edge on the ramp; the corner rounds flare ARCH_DRAFT from one wall above the deck."""
-    import build123d as bd
-    op = front_opening()
-    xs = max(abs(x) for x, y in op.exterior.coords if abs(y - ARCH_Y) < GEOM_EPS)     # straight part of the arch
-    z0 = DECK_TOP + VM_T
-    a = (ARCH_Y - VM_T * K, z0)
-    yb = ARCH_Y + VM_T / COSK
-    b = (yb, ramp_z(yb))
-    n = (0, -(b[1] - a[1]), b[0] - a[0])
-    lip = _I(halfspace((0, a[0], a[1]), n, HS), _box(-xs, xs, -TOOL, TOOL, DECK_TOP, TOOL))
-    f = _faces(op.intersection(sbox(-BIG, ARCH_Y - 2 * ARCH_R, BIG, BIG)))[0].moved(bd.Location((0, 0, z0)))
-    corners = _S(bd.extrude(f, amount=TOOL_S, dir=(0, 0, 1), taper=-ARCH_DRAFT), _box(-xs, xs, -TOOL, TOOL, -TOOL, TOOL))
-    return _U(lip, corners)
 
 
 def leg_drafts():
