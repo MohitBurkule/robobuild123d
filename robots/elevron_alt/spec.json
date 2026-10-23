@@ -2384,87 +2384,42 @@
       "near": [
        -22.2,
        -17.4,
-       7.25
+       10.65
       ],
-      "r": 3.5,
-      "reason": "STEP section through the spot matches ours within 0.05 mm; ELVRN3.0 Alt Fillet15 column-to-bay-wall round reads R2.95 on the STEP mesh (the estimator spans column and round)"
-     },
-     {
-      "near": [
-       -22.2,
-       -17.4,
-       13.25
-      ],
-      "r": 3.5,
+      "r": 5.0,
       "reason": "STEP section through the spot matches ours within 0.05 mm; ELVRN3.0 Alt Fillet15 column-to-bay-wall round reads R2.95 on the STEP mesh (the estimator spans column and round)"
      },
      {
       "near": [
        -22.2,
        17.4,
-       7.25
+       10.65
       ],
-      "r": 3.5,
-      "reason": "STEP section through the spot matches ours within 0.05 mm; ELVRN3.0 Alt Fillet15 column-to-bay-wall round reads R2.95 on the STEP mesh (the estimator spans column and round)"
-     },
-     {
-      "near": [
-       -22.2,
-       17.4,
-       13.25
-      ],
-      "r": 3.5,
+      "r": 5.0,
       "reason": "STEP section through the spot matches ours within 0.05 mm; ELVRN3.0 Alt Fillet15 column-to-bay-wall round reads R2.95 on the STEP mesh (the estimator spans column and round)"
      },
      {
       "near": [
        22.2,
        -17.4,
-       7.25
+       10.65
       ],
-      "r": 3.5,
-      "reason": "STEP section through the spot matches ours within 0.05 mm; ELVRN3.0 Alt Fillet15 column-to-bay-wall round reads R2.95 on the STEP mesh (the estimator spans column and round)"
-     },
-     {
-      "near": [
-       22.2,
-       -17.4,
-       13.25
-      ],
-      "r": 3.5,
+      "r": 5.0,
       "reason": "STEP section through the spot matches ours within 0.05 mm; ELVRN3.0 Alt Fillet15 column-to-bay-wall round reads R2.95 on the STEP mesh (the estimator spans column and round)"
      },
      {
       "near": [
        22.2,
        17.4,
-       7.25
+       10.65
       ],
-      "r": 3.5,
-      "reason": "STEP section through the spot matches ours within 0.05 mm; ELVRN3.0 Alt Fillet15 column-to-bay-wall round reads R2.95 on the STEP mesh (the estimator spans column and round)"
-     },
-     {
-      "near": [
-       22.2,
-       17.4,
-       13.25
-      ],
-      "r": 3.5,
+      "r": 5.0,
       "reason": "STEP section through the spot matches ours within 0.05 mm; ELVRN3.0 Alt Fillet15 column-to-bay-wall round reads R2.95 on the STEP mesh (the estimator spans column and round)"
      },
      {
       "near": [
        -29.5,
-       -2.5,
-       10.25
-      ],
-      "r": 3.5,
-      "reason": "STEP section through the spot matches ours within 0.05 mm; ELVRN3.0 Alt Cut-Extrude15 window: its R1 floor round is tangent to the side wall, read as a sharp corner on our finer mesh"
-     },
-     {
-      "near": [
-       -29.5,
-       2.5,
+       0,
        10.25
       ],
       "r": 3.5,
@@ -2473,16 +2428,7 @@
      {
       "near": [
        29.5,
-       -2.5,
-       10.25
-      ],
-      "r": 3.5,
-      "reason": "STEP section through the spot matches ours within 0.05 mm; ELVRN3.0 Alt Cut-Extrude15 window: its R1 floor round is tangent to the side wall, read as a sharp corner on our finer mesh"
-     },
-     {
-      "near": [
-       29.5,
-       2.5,
+       0,
        10.25
       ],
       "r": 3.5,

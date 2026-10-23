@@ -247,7 +247,8 @@ REBATE_DEV_R = 5.0                     # the base-panel rebate lip (the ligament
 VOL_TOL = dict(chassis=0.05, vert=0.2, side=0.4)
 NUT_DEV_R = 4.0                        # the prong nut pocket's neighbourhood
 EST_DEV_R = 3.5                        # an estimator-only flag's neighbourhood (section matches the STEP)
-BAY_DEV = (22.2, 17.4, (5.0, 11.0))    # Fillet15 rounds: |x|, |y|, heights covered
+BAY_DEV = (22.2, 17.4, 8.4)            # Fillet15 rounds: |x|, |y|, mid-height of the run
+BAY_DEV_R = 5.0                        # the whole column-height run of that round
 WIN_DEV_DZ = 0.5                       # boss window round: below the axle line
 POCKET_DEV = (13.0, 19.9, 15.9)        # lattice pocket ceiling corner (front)
 SLIVER_DEV = (9.8, 12.6)               # boss end-arc hairline: |y|, z
@@ -269,10 +270,10 @@ def reference_cad():
                 for x, y, what in ((sx0 - SW_SLOT[0] / 2, 0, "the switch slot's inner edge"), (sx0 - SW_SLOT[0] / 2, -SW_PITCH / 2, "the front switch pilot"),
                                    (sx0 - SW_SLOT[0] / 2, SW_PITCH / 2, "the rear switch pilot"), (POST_PITCH[0] / 2 - COL_R - SLOT_DEV_R, 0, "the window beside the slot"))]
     sec = "STEP section through the spot matches ours within 0.05 mm; "
-    est_dev = [{"near": _w(sx * BAY_DEV[0], sy * BAY_DEV[1], z), "r": EST_DEV_R, "reason": sec + "ELVRN3.0 Alt Fillet15 column-to-bay-wall round "
-                "reads R2.95 on the STEP mesh (the estimator spans column and round)"} for sx in (-1, 1) for sy in (-1, 1) for z in BAY_DEV[2]]
-    est_dev += [{"near": _w(sx * HX, sy * WIN_W / 2, AXLE_Z - WIN_DEV_DZ), "r": EST_DEV_R, "reason": sec + "ELVRN3.0 Alt Cut-Extrude15 window: "
-                 "its R1 floor round is tangent to the side wall, read as a sharp corner on our finer mesh"} for sx in (-1, 1) for sy in (-1, 1)]
+    est_dev = [{"near": _w(sx * BAY_DEV[0], sy * BAY_DEV[1], z), "r": BAY_DEV_R, "reason": sec + "ELVRN3.0 Alt Fillet15 column-to-bay-wall round "
+                "reads R2.95 on the STEP mesh (the estimator spans column and round)"} for sx in (-1, 1) for sy in (-1, 1) for z in (BAY_DEV[2],)]
+    est_dev += [{"near": _w(sx * HX, 0, AXLE_Z - WIN_DEV_DZ), "r": EST_DEV_R, "reason": sec + "ELVRN3.0 Alt Cut-Extrude15 window: "
+                 "its R1 floor round is tangent to the side wall, read as a sharp corner on our finer mesh"} for sx in (-1, 1)]
     est_dev += [{"near": _w(sx * POCKET_DEV[0], -POCKET_DEV[1], POCKET_DEV[2]), "r": EST_DEV_R, "reason": sec + "ELVRN3.0 Alt Sketch20 lattice "
                  "pocket ceiling corner, the STEP estimate picks up the neighbouring rib"} for sx in (-1, 1)]
     est_dev += [{"near": _w(sx * (HX - CORNER_R / 2 - EDGE_CH / 2), -(HY - CORNER_R / 2 - EDGE_CH / 2), CH_H - EDGE_CH / 2), "r": EST_DEV_R,
