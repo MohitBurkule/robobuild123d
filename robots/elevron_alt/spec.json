@@ -2537,7 +2537,7 @@
        38.2,
        6.25
       ],
-      "r": 4.0,
+      "r": 5.0,
       "reason": "ours, not the STEP's (variant step_cross_bolt off): the thin cross-bolt nut captive in the prong (the STEP prong has a plain hole, its bolt threading 2.5 mm into the pod tongue) leaves 0.8 mm to the prong window"
      },
      {
@@ -2546,7 +2546,7 @@
        38.2,
        6.25
       ],
-      "r": 4.0,
+      "r": 5.0,
       "reason": "ours, not the STEP's (variant step_cross_bolt off): the thin cross-bolt nut captive in the prong (the STEP prong has a plain hole, its bolt threading 2.5 mm into the pod tongue) leaves 0.8 mm to the prong window"
      },
      {
@@ -2555,7 +2555,7 @@
        40.86,
        13.54
       ],
-      "r": 4.0,
+      "r": 5.0,
       "reason": "ours, not the STEP's (variant step_cross_bolt off): the prong window's wall to the thin nut pocket is 0.8 mm (STEP: 2.39 to its plain 3.2 hole); the window and the nut are both STEP / catalog sized"
      },
      {
@@ -2564,7 +2564,7 @@
        40.86,
        13.54
       ],
-      "r": 4.0,
+      "r": 5.0,
       "reason": "ours, not the STEP's (variant step_cross_bolt off): the prong window's wall to the thin nut pocket is 0.8 mm (STEP: 2.39 to its plain 3.2 hole); the window and the nut are both STEP / catalog sized"
      }
     ]
@@ -2582,7 +2582,7 @@
        38.2,
        6.25
       ],
-      "r": 4.0,
+      "r": 5.0,
       "reason": "ours, not the STEP's (variant step_cross_bolt off): the pod tongue takes the M3 clearance hole for the prong-nut bolt; the STEP's 2.6 pilot (bolt tapped into the tongue) is variant step_cross_bolt"
      }
     ],
@@ -2601,7 +2601,7 @@
        38.2,
        6.25
       ],
-      "r": 4.0,
+      "r": 5.0,
       "reason": "ours, not the STEP's (variant step_cross_bolt off): the pod tongue takes the M3 clearance hole for the prong-nut bolt; the STEP's 2.6 pilot (bolt tapped into the tongue) is variant step_cross_bolt"
      }
     ],

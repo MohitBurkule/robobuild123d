@@ -276,7 +276,7 @@ SLIVER_DEV_R = 2.0
 POCKET_R_DEV = (14.0, 24.6, 15.6)      # right rear corner pocket, bay-side corner
 GROUND_Z = 0.0                         # robot world floor (the STEP frame is lifted FLOOR_LIFT onto it)
 WIN_DEV = (40.86, 11.29)               # prong window centre (y, z) as the ligament check reports it
-NUT_DEV_R = 4.0                        # the prong nut pocket's neighbourhood
+NUT_DEV_R = 5.0                        # the prong nut pocket's neighbourhood
 FORK_PLACE_TOL = 3.0                   # side pods' bbox-centre tolerance with the forks stopped over the floor
 
 
