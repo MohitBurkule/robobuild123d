@@ -362,11 +362,12 @@ def _top_screw_dev():
     why = (f"RV01 column bore is a plain d{2 * BORE_R:g} through bore from the base-panel seat ({BASE_Z0 + BASE_T:g} mm) up to the rim ({rim:g} mm) (dump Cut-Extrude14 / Boss-Extrude8) and Top_Panel_1 (d2.2 holes) has no top fasteners; "
            f"the top panel needs retention (design intent), so ours leaves a {TOP_NECK:g} mm web under the rim (from {z_web:g} up to {rim:g}) with a d{2 * TOP_PILOT_R:g} M2 thread-forming pilot (bolt_t*), "
            "a countersunk-through screw would hit the base-panel FS8 screw in the same heat-set")
-    r_web = math.hypot(math.sqrt(2) * COL_R, TOP_NECK / 2) + OVER   # holds the whole column web (half diagonal of the column square, half the web height)
+    r_web = math.hypot(BORE_R, TOP_NECK / 2) + OVER                      # the web's end spheres: the bore's own radius and half the web height
+    r_cap = math.sqrt(2) * (BORE_R + BORE_CH) + 0.02                     # capsule round the column axis: holds the web and the reference's rim chamfer (blob bbox corners), 3.0 mm radius cap, short of the deck ledge 3.3 mm from the axis
     r_floor = BORE_CH + OVER                                             # holds the first bore section above the base-panel seat
     out = []
     for x, y in (TOP_XY if TOP_SCREW_WEB else ()):
-        out += [dict(near=[x, y, z_web + TOP_NECK / 2], r=r_web, reason=f"[web] {why}"),
+        out += [dict(path=[[x, y, z_web], [x, y, rim]], r=round(r_cap, 3), max_mm3=40.0, reason=f"[web] {why}"),
                 dict(near=[x, y, rim], r=r_web, reason=f"[pilot mouth at the rim] {why}"),
                 dict(near=[x, y, z_web], r=r_web, reason=f"[web underside, bore stops] {why}"),
                 dict(near=[x, y, BASE_Z0 + BASE_T], r=r_floor, reason=f"[bore floor, reference stays d{2 * BORE_R:g}] {why}")]

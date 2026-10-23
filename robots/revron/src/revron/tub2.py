@@ -9,9 +9,9 @@ from .tub2_util import mirrored
 def additions():
     """Material added on the shell: rear boss, switch pad, then the +X half blocks mirrored."""
     half = (tub2_blocks.corner_blocks() + tub2_blocks.stop_wall_key_ledge() + tub2_pockets.rear_pad()
-            + [tub2_lug.lug(), tub2_tab.key_tab(), tub2_tab.wall_blend(), tub2_flange.flange()])
+            + [tub2_lug.lug(), tub2_tab.wall_blend(), tub2_flange.flange()])
     half = [h for h in half if h is not None]
-    return [tub2_cols.rear_boss()] + ([tub2_tab.tab_wall('+x'), tub2_tab.tab_wall('-x').mirror(Plane.YZ)] if tub2_tab.HAS_TAB else []) + tub2_lobes.additions() + [mirrored(h) for h in half] + tub2_switch.switch_pad() + tub2_bays.additions()
+    return [tub2_cols.rear_boss()] + ([tub2_tab.tab_wall('+x'), tub2_tab.tab_wall('-x').mirror(Plane.YZ), tub2_tab.key_tab('+x'), tub2_tab.key_tab('-x').mirror(Plane.YZ)] if tub2_tab.HAS_TAB else []) + tub2_lobes.additions() + [mirrored(h) for h in half] + tub2_switch.switch_pad() + tub2_bays.additions()
 
 
 def cuts():

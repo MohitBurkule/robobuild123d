@@ -371,7 +371,7 @@
   ],
   "must_not_mention": [
    "through an aluminium spider",
-   "2S ≈350 mAh LiPo"
+   "2S \u2248350 mAh LiPo"
   ]
  },
  "electronics": {
@@ -809,12 +809,20 @@
       "reason": "lobe tail below Y -11.7 trimmed to the side-panel inner face: the STEP lobe and side panel overlap by 31 mm3, the tub does not duplicate it"
      },
      {
-      "near": [
-       25.0,
-       10.4,
-       17.0
+      "path": [
+       [
+        25.0,
+        10.4,
+        14.5
+       ],
+       [
+        25.0,
+        10.4,
+        19.5
+       ]
       ],
-      "r": 4.723310502226732,
+      "r": 2.99,
+      "max_mm3": 40.0,
       "reason": "[web] RV01 column bore is a plain d3 through bore from the base-panel seat (4.5 mm) up to the rim (19.5 mm) (dump Cut-Extrude14 / Boss-Extrude8) and Top_Panel_1 (d2.2 holes) has no top fasteners; the top panel needs retention (design intent), so ours leaves a 5 mm web under the rim (from 14.5 up to 19.5) with a d1.6 M2 thread-forming pilot (bolt_t*), a countersunk-through screw would hit the base-panel FS8 screw in the same heat-set"
      },
      {
@@ -823,7 +831,7 @@
        10.4,
        19.5
       ],
-      "r": 4.723310502226732,
+      "r": 3.0154759474226505,
       "reason": "[pilot mouth at the rim] RV01 column bore is a plain d3 through bore from the base-panel seat (4.5 mm) up to the rim (19.5 mm) (dump Cut-Extrude14 / Boss-Extrude8) and Top_Panel_1 (d2.2 holes) has no top fasteners; the top panel needs retention (design intent), so ours leaves a 5 mm web under the rim (from 14.5 up to 19.5) with a d1.6 M2 thread-forming pilot (bolt_t*), a countersunk-through screw would hit the base-panel FS8 screw in the same heat-set"
      },
      {
@@ -832,7 +840,7 @@
        10.4,
        14.5
       ],
-      "r": 4.723310502226732,
+      "r": 3.0154759474226505,
       "reason": "[web underside, bore stops] RV01 column bore is a plain d3 through bore from the base-panel seat (4.5 mm) up to the rim (19.5 mm) (dump Cut-Extrude14 / Boss-Extrude8) and Top_Panel_1 (d2.2 holes) has no top fasteners; the top panel needs retention (design intent), so ours leaves a 5 mm web under the rim (from 14.5 up to 19.5) with a d1.6 M2 thread-forming pilot (bolt_t*), a countersunk-through screw would hit the base-panel FS8 screw in the same heat-set"
      },
      {
@@ -845,12 +853,20 @@
       "reason": "[bore floor, reference stays d3] RV01 column bore is a plain d3 through bore from the base-panel seat (4.5 mm) up to the rim (19.5 mm) (dump Cut-Extrude14 / Boss-Extrude8) and Top_Panel_1 (d2.2 holes) has no top fasteners; the top panel needs retention (design intent), so ours leaves a 5 mm web under the rim (from 14.5 up to 19.5) with a d1.6 M2 thread-forming pilot (bolt_t*), a countersunk-through screw would hit the base-panel FS8 screw in the same heat-set"
      },
      {
-      "near": [
-       -25.0,
-       10.4,
-       17.0
+      "path": [
+       [
+        -25.0,
+        10.4,
+        14.5
+       ],
+       [
+        -25.0,
+        10.4,
+        19.5
+       ]
       ],
-      "r": 4.723310502226732,
+      "r": 2.99,
+      "max_mm3": 40.0,
       "reason": "[web] RV01 column bore is a plain d3 through bore from the base-panel seat (4.5 mm) up to the rim (19.5 mm) (dump Cut-Extrude14 / Boss-Extrude8) and Top_Panel_1 (d2.2 holes) has no top fasteners; the top panel needs retention (design intent), so ours leaves a 5 mm web under the rim (from 14.5 up to 19.5) with a d1.6 M2 thread-forming pilot (bolt_t*), a countersunk-through screw would hit the base-panel FS8 screw in the same heat-set"
      },
      {
@@ -859,7 +875,7 @@
        10.4,
        19.5
       ],
-      "r": 4.723310502226732,
+      "r": 3.0154759474226505,
       "reason": "[pilot mouth at the rim] RV01 column bore is a plain d3 through bore from the base-panel seat (4.5 mm) up to the rim (19.5 mm) (dump Cut-Extrude14 / Boss-Extrude8) and Top_Panel_1 (d2.2 holes) has no top fasteners; the top panel needs retention (design intent), so ours leaves a 5 mm web under the rim (from 14.5 up to 19.5) with a d1.6 M2 thread-forming pilot (bolt_t*), a countersunk-through screw would hit the base-panel FS8 screw in the same heat-set"
      },
      {
@@ -868,7 +884,7 @@
        10.4,
        14.5
       ],
-      "r": 4.723310502226732,
+      "r": 3.0154759474226505,
       "reason": "[web underside, bore stops] RV01 column bore is a plain d3 through bore from the base-panel seat (4.5 mm) up to the rim (19.5 mm) (dump Cut-Extrude14 / Boss-Extrude8) and Top_Panel_1 (d2.2 holes) has no top fasteners; the top panel needs retention (design intent), so ours leaves a 5 mm web under the rim (from 14.5 up to 19.5) with a d1.6 M2 thread-forming pilot (bolt_t*), a countersunk-through screw would hit the base-panel FS8 screw in the same heat-set"
      },
      {
@@ -881,12 +897,20 @@
       "reason": "[bore floor, reference stays d3] RV01 column bore is a plain d3 through bore from the base-panel seat (4.5 mm) up to the rim (19.5 mm) (dump Cut-Extrude14 / Boss-Extrude8) and Top_Panel_1 (d2.2 holes) has no top fasteners; the top panel needs retention (design intent), so ours leaves a 5 mm web under the rim (from 14.5 up to 19.5) with a d1.6 M2 thread-forming pilot (bolt_t*), a countersunk-through screw would hit the base-panel FS8 screw in the same heat-set"
      },
      {
-      "near": [
-       25.0,
-       -21.6,
-       17.0
+      "path": [
+       [
+        25.0,
+        -21.6,
+        14.5
+       ],
+       [
+        25.0,
+        -21.6,
+        19.5
+       ]
       ],
-      "r": 4.723310502226732,
+      "r": 2.99,
+      "max_mm3": 40.0,
       "reason": "[web] RV01 column bore is a plain d3 through bore from the base-panel seat (4.5 mm) up to the rim (19.5 mm) (dump Cut-Extrude14 / Boss-Extrude8) and Top_Panel_1 (d2.2 holes) has no top fasteners; the top panel needs retention (design intent), so ours leaves a 5 mm web under the rim (from 14.5 up to 19.5) with a d1.6 M2 thread-forming pilot (bolt_t*), a countersunk-through screw would hit the base-panel FS8 screw in the same heat-set"
      },
      {
@@ -895,7 +919,7 @@
        -21.6,
        19.5
       ],
-      "r": 4.723310502226732,
+      "r": 3.0154759474226505,
       "reason": "[pilot mouth at the rim] RV01 column bore is a plain d3 through bore from the base-panel seat (4.5 mm) up to the rim (19.5 mm) (dump Cut-Extrude14 / Boss-Extrude8) and Top_Panel_1 (d2.2 holes) has no top fasteners; the top panel needs retention (design intent), so ours leaves a 5 mm web under the rim (from 14.5 up to 19.5) with a d1.6 M2 thread-forming pilot (bolt_t*), a countersunk-through screw would hit the base-panel FS8 screw in the same heat-set"
      },
      {
@@ -904,7 +928,7 @@
        -21.6,
        14.5
       ],
-      "r": 4.723310502226732,
+      "r": 3.0154759474226505,
       "reason": "[web underside, bore stops] RV01 column bore is a plain d3 through bore from the base-panel seat (4.5 mm) up to the rim (19.5 mm) (dump Cut-Extrude14 / Boss-Extrude8) and Top_Panel_1 (d2.2 holes) has no top fasteners; the top panel needs retention (design intent), so ours leaves a 5 mm web under the rim (from 14.5 up to 19.5) with a d1.6 M2 thread-forming pilot (bolt_t*), a countersunk-through screw would hit the base-panel FS8 screw in the same heat-set"
      },
      {
@@ -917,12 +941,20 @@
       "reason": "[bore floor, reference stays d3] RV01 column bore is a plain d3 through bore from the base-panel seat (4.5 mm) up to the rim (19.5 mm) (dump Cut-Extrude14 / Boss-Extrude8) and Top_Panel_1 (d2.2 holes) has no top fasteners; the top panel needs retention (design intent), so ours leaves a 5 mm web under the rim (from 14.5 up to 19.5) with a d1.6 M2 thread-forming pilot (bolt_t*), a countersunk-through screw would hit the base-panel FS8 screw in the same heat-set"
      },
      {
-      "near": [
-       -25.0,
-       -21.6,
-       17.0
+      "path": [
+       [
+        -25.0,
+        -21.6,
+        14.5
+       ],
+       [
+        -25.0,
+        -21.6,
+        19.5
+       ]
       ],
-      "r": 4.723310502226732,
+      "r": 2.99,
+      "max_mm3": 40.0,
       "reason": "[web] RV01 column bore is a plain d3 through bore from the base-panel seat (4.5 mm) up to the rim (19.5 mm) (dump Cut-Extrude14 / Boss-Extrude8) and Top_Panel_1 (d2.2 holes) has no top fasteners; the top panel needs retention (design intent), so ours leaves a 5 mm web under the rim (from 14.5 up to 19.5) with a d1.6 M2 thread-forming pilot (bolt_t*), a countersunk-through screw would hit the base-panel FS8 screw in the same heat-set"
      },
      {
@@ -931,7 +963,7 @@
        -21.6,
        19.5
       ],
-      "r": 4.723310502226732,
+      "r": 3.0154759474226505,
       "reason": "[pilot mouth at the rim] RV01 column bore is a plain d3 through bore from the base-panel seat (4.5 mm) up to the rim (19.5 mm) (dump Cut-Extrude14 / Boss-Extrude8) and Top_Panel_1 (d2.2 holes) has no top fasteners; the top panel needs retention (design intent), so ours leaves a 5 mm web under the rim (from 14.5 up to 19.5) with a d1.6 M2 thread-forming pilot (bolt_t*), a countersunk-through screw would hit the base-panel FS8 screw in the same heat-set"
      },
      {
@@ -940,7 +972,7 @@
        -21.6,
        14.5
       ],
-      "r": 4.723310502226732,
+      "r": 3.0154759474226505,
       "reason": "[web underside, bore stops] RV01 column bore is a plain d3 through bore from the base-panel seat (4.5 mm) up to the rim (19.5 mm) (dump Cut-Extrude14 / Boss-Extrude8) and Top_Panel_1 (d2.2 holes) has no top fasteners; the top panel needs retention (design intent), so ours leaves a 5 mm web under the rim (from 14.5 up to 19.5) with a d1.6 M2 thread-forming pilot (bolt_t*), a countersunk-through screw would hit the base-panel FS8 screw in the same heat-set"
      },
      {
