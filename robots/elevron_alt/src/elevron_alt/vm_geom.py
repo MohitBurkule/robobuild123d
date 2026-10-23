@@ -1,0 +1,275 @@
+"""vert_mod body from relations: one ramp plane (front inner wall at deck height up to the top of the upright tail
+round the weapon axis) tops the whole module; a planform cut from the chassis inner box; a hollow under the ramp shell;
+two uprights whose outline is the hull of the bulkhead foot and the tail circle round the axis. STEP frame."""
+import math
+
+from shapely.geometry import Point, Polygon, box as sbox, LineString
+from shapely.ops import unary_union
+from shapely import affinity
+
+from robocad.geom import _box, _cyl, _U, _S, _I, _ext, _mirror_x, _solid
+from .chassis import halfspace
+from .params_chassis import IN_X, IN_Y, POSTS, CH_H
+from .params_drive import WY, WZ
+from .params_vert import *  # noqa: F401,F403
+
+K = (WZ + UP_R - DECK_TOP) / (WY + IN_Y)          # ramp: deck height at the front inner wall -> top of the tail circle
+COSK = 1 / math.hypot(1, K)
+
+
+def ramp_z(y, drop=0.0):
+    return DECK_TOP + K * (y + IN_Y) - drop / COSK
+
+
+def above_ramp(drop=0.0):
+    return halfspace((0, -IN_Y, DECK_TOP - drop / COSK), (0, -K, 1), BIG)
+
+
+def _sym(p):
+    return unary_union([p, affinity.scale(p, -1, 1, origin=(0, 0))])
+
+
+def taper_x(y):
+    (x0, y0), (x1, y1) = TAPER
+    return x0 + (x1 - x0) * (y - y0) / (y1 - y0)
+
+
+def notch():
+    (cx, cy), r = NOTCH_TOP
+    (lx, ly), rl = NOTCH_LOW
+    top = unary_union([Point(cx, cy).buffer(r), Point(IN_X, NOTCH_Y[1])]).convex_hull
+    low = unary_union([Point(lx, ly).buffer(rl), Point(IN_X, NOTCH_Y[0]), Point(IN_X, ly)]).convex_hull
+    return _sym(unary_union([top, low, sbox(NOTCH_X, ly, IN_X + 1, cy)]))
+
+
+def front_opening():
+    (ax, ay), (bx, by) = LEG_IN
+    k = (bx - ax) / (by - ay)
+    xa, xt = ax + k * (-BIG / 10 - ay), ax + k * (ARCH_Y - ay)
+    p = Polygon([(-xa, -BIG / 10), (xa, -BIG / 10), (xt, ARCH_Y), (-xt, ARCH_Y)])
+    return p.buffer(-ARCH_R).buffer(ARCH_R)
+
+
+def plan():
+    """Whole planform: chassis inner box from the front clearance to the tail, cut by the upright tapers, the leg
+    opening, the side notches and the slot between the uprights."""
+    y1 = WY + UP_R
+    half = Polygon([(0, FRONT_Y), (IN_X, FRONT_Y), (IN_X, TAPER[0][1]), (taper_x(y1), y1), (0, y1)])
+    return _sym(half).difference(front_opening()).difference(notch())
+
+
+def slot_plan():
+    """Slot between the uprights behind the bulkhead, its corners rounded SLOT_R."""
+    return sbox(-UP_X0, BULK_Y[1], UP_X0, BIG / 10).buffer(-SLOT_R).buffer(SLOT_R)
+
+
+def hollow_plan():
+    """Under-shell hollow: the planform in by one wall, from the lip to the bulkhead, round the rear column pads."""
+    p = plan().buffer(-VM_T, join_style=2).intersection(sbox(-BIG, HOLLOW_FRONT, BIG, BULK_Y[0]))
+    p = p.difference(front_opening().buffer(VM_T / COSK, 128))   # the front lip: one wall round the arch
+    p = p.difference(unary_union([Point(q).buffer(POST_PAD_R) for q in POSTS if q[1] > 0])).difference(slot_plan())
+    return p.buffer(-HOLLOW_R).buffer(HOLLOW_R).buffer(HOLLOW_R).buffer(-HOLLOW_R)
+
+
+def upright_prof():
+    """(y, z) outline: hull of the bulkhead foot and the tail circle round the weapon axis."""
+    pts = [Point(WY, WZ).buffer(UP_R, 128), Point(IN_Y, DECK_TOP), Point(BULK_Y[0], ramp_z(BULK_Y[0]))]
+    return unary_union(pts).convex_hull.union(sbox(BULK_Y[0], DECK_TOP, IN_Y, ramp_z(IN_Y)))   # flat foot to the chassis inner wall line
+
+
+def body():
+    pl = plan()
+    shell = _ext(pl.intersection(sbox(-BIG, -BIG, BIG, BULK_Y[1])), "xy", DECK_TOP, 2 * BIG / 10, arcs=True)
+    side = pl.intersection(sbox(-BIG, BULK_Y[0], BIG, BIG))  # the bulkhead and the slot corners hang with the uprights (underside on the hull)
+    slot = _ext(slot_plan(), "xy", -BIG / 10, BIG / 10, arcs=True)
+    ups = _I(_ext(side, "xy", -1, BIG / 10), _ext(upright_prof(), "yz", -BIG / 10, BIG / 10))
+    s = _S(_U(shell, ups), above_ramp(), slot)
+    s = _S(s, _S(_ext(hollow_plan(), "xy", DECK_TOP - 1, BIG / 10), above_ramp(VM_T)), leg_drafts(), arch_draft())
+    return top_chamfer(s)
+
+
+def arch_draft():
+    """The arch round the front opening flares out ARCH_DRAFT from one wall above the deck up through the ramp."""
+    import build123d as bd
+    z0 = DECK_TOP + VM_T
+    f = _faces(front_opening().intersection(sbox(-BIG, ARCH_Y - ARCH_R - ARCH_R, BIG, BIG)))[0].moved(bd.Location((0, 0, z0)))
+    return bd.extrude(f, amount=BIG / 50, dir=(0, 0, 1), taper=-ARCH_DRAFT)
+
+
+def leg_drafts():
+    """Leg inner faces lean back LEG_DRAFT from their deck line up to where the arch round starts."""
+    (ax, ay), (bx, by) = LEG_IN
+    L = math.hypot(bx - ax, by - ay)
+    m = ((by - ay) / L, (ax - bx) / L)                      # plan normal of the right leg's inner face, into the opening
+    m = (-m[0], -m[1]) if m[0] > 0 else m
+    a = math.radians(LEG_DRAFT)
+    n = (m[0] * math.sin(a), m[1] * math.sin(a), math.cos(a))
+    c = _I(halfspace((ax, ay, DECK_TOP), n, BIG), _box(0, IN_X + 1, -BIG / 10, ARCH_Y - ARCH_R, DECK_TOP, BIG / 10))
+    return _U(c, _mirror_x(c))
+
+
+def top_chamfer(s, groups=CHAMFER_GROUPS):
+    """TOP_CH x 45 deg (equal distance on the ramp and the wall) on the ramp's notch edges: chamfered on a plain slab of
+    the planform (so the chamfer chain stays on the notch) and cut from the body."""
+    import build123d as bd
+    if not groups:
+        return s
+    slab = _S(_ext(plan(), "xy", DECK_TOP, BIG / 10, arcs=True), above_ramp())
+    n = bd.Vector(0, -K, 1).normalized()
+    o = bd.Vector(0, -IN_Y, DECK_TOP)
+    top = [f for f in slab.faces() if f.geom_type.name == "PLANE" and abs(f.normal_at().dot(n) - 1) < 1e-6 and abs((f.center() - o).dot(n)) < 1e-3]
+    ys = lambda e: sorted([e.position_at(0).Y, e.position_at(1).Y])
+    pick = {"notch": lambda e: ys(e)[0] > NOTCH_Y[0] - 0.1 and ys(e)[1] < NOTCH_Y[1] + 0.1 and abs(e.center().X) > NOTCH_X - 4}
+    E = [e for f in top for e in f.edges() if any(pick[g](e) for g in groups)]
+    return _S(s, _S(slab, slab.chamfer(TOP_CH, None, E)))
+
+
+def edge_chamfer(m, p, dh, dv, region):
+    """Chamfer cut along a ramp-top edge over a vertical wall whose outward plan normal is m, through point p of that
+    edge: the plane dh in from the edge on the ramp and dv down the wall. Kept in region."""
+    t = (-m[1], m[0])
+    e = (t[0], t[1], K * t[1])
+    a = (p[0] - dh * m[0], p[1] - dh * m[1], ramp_z(p[1] - dh * m[1]))
+    b = (p[0], p[1], ramp_z(p[1]) - dv)
+    w = (b[0] - a[0], b[1] - a[1], b[2] - a[2])
+    n = (e[1] * w[2] - e[2] * w[1], e[2] * w[0] - e[0] * w[2], e[0] * w[1] - e[1] * w[0])
+    n = n if n[2] > 0 else tuple(-c for c in n)
+    return _I(halfspace(a, n, BIG), region)
+
+
+def bulk_chamfer():
+    """Bulkhead rear top edge round the slot: a 45 deg plane, coned round the slot corners."""
+    import build123d as bd
+    x0 = UP_X0 - SLOT_R
+    z0 = BULK_CH - BULK_Y[1]                                # chamfer foot on the rear face
+    flat = _I(halfspace((0, BULK_Y[1], z0), (0, 1, 1), BIG), _box(-x0, x0, -BIG / 10, BULK_Y[1] + SLOT_R, DECK_TOP, BIG / 10))
+    c = []
+    for sx in (-1, 1):
+        cone = bd.Solid.make_cone(0, BIG / 10, BIG / 10, bd.Plane(origin=(sx * x0, BULK_Y[1] + SLOT_R, z0 - SLOT_R), z_dir=(0, 0, 1)))
+        c.append(_I(cone, _box(sx * x0, sx * UP_X0, -BIG / 10, BULK_Y[1] + SLOT_R, DECK_TOP, BIG / 10)))
+    return _U(flat, *c)
+
+
+def upright_chamfers():
+    (x0, y0), (x1, y1) = TAPER
+    L = math.hypot(x1 - x0, y1 - y0)
+    m = ((y1 - y0) / L, (x0 - x1) / L)
+    yc = BULK_Y[1]
+    dh, dv = UP_IN_CH
+    c = _U(edge_chamfer(m, (taper_x(yc), yc), TOP_CH, TOP_CH, _box(0, BIG / 10, y0 - 1, UP_CH_Y[1], DECK_TOP, BIG / 10)),
+           edge_chamfer((-1, 0), (UP_X0, yc), dh, dv, _box(UP_X0 - 1, UP_X0 + dh + 1, UP_CH_Y[0], UP_CH_Y[1], DECK_TOP, BIG / 10)))
+    return _U(c, _mirror_x(c), bulk_chamfer())
+
+
+def side_pockets():
+    """Upright outer pockets: drawn on the floor plane SIDE_POCKET depth in from the taper face and cut outwards along
+    its normal; a round end on the axis, a flat floor at the front running into the hollow."""
+    import build123d as bd
+    (c, r, (z0, z1), depth) = SIDE_POCKET
+    (x0, y0), (x1, y1) = TAPER
+    L = math.hypot(x1 - x0, y1 - y0)
+    t = ((x1 - x0) / L, (y1 - y0) / L)                      # along the right taper face, rearwards
+    n = (-t[1], t[0]) if -t[1] > 0 else (t[1], -t[0])       # outward
+    o = (x0 - depth * n[0], y0 - depth * n[1])              # floor plane origin
+    u = lambda y: (y - o[1]) / t[1]                          # along-face coordinate of a point of the floor at y
+    cu = u(c[0])
+    yf = BULK_Y[0] - SIDE_POCKET_FRONT
+    prof = unary_union([Point(cu, c[1]).buffer(r, 128), Point(u(BULK_Y[0] + POCKET_STEP), z0), Point(u(BULK_Y[0]), z1)]).convex_hull
+    prof = prof.union(sbox(u(yf), z0, u(BULK_Y[0] + POCKET_STEP), z1 - K * SIDE_POCKET_FRONT))
+    pl = bd.Plane(origin=(o[0], o[1], 0), x_dir=(t[0], t[1], 0), z_dir=(n[0], n[1], 0))
+    p = None
+    for f in _faces(prof):
+        sol = bd.Solid.extrude(f.moved(bd.Location(pl)), bd.Vector(n[0], n[1], 0) * BIG / 10)
+        p = sol if p is None else p.fuse(sol)
+    return _U(p, _mirror_x(p))
+
+
+def _faces(poly):
+    import build123d as bd
+    from shapely.geometry import MultiPolygon
+    out = []
+    for g in (poly.geoms if isinstance(poly, MultiPolygon) else [poly]):
+        w = bd.Wire.make_polygon([bd.Vector(x, y, 0) for x, y in list(g.exterior.coords)[:-1]], close=True)
+        out.append(bd.Face(w, [bd.Wire.make_polygon([bd.Vector(x, y, 0) for x, y in list(h.coords)[:-1]], close=True) for h in g.interiors]))
+    return out
+
+
+def axis_cuts():
+    """Axis hole through both uprights, the bearing-side recess, the motor screws (counterbored on the motor side)."""
+    c = []
+    c.append(_cyl(AXIS_HOLE_R, -BIG / 10, BIG / 10, (WY, WZ), "x"))
+    c.append(_cyl(UP_RECESS_R, UP_RECESS_X, BIG / 10, (WY, WZ), "x"))
+    for dy, dz in MOTOR_HOLES:
+        q = (WY + dy, WZ + dz)
+        c.append(_cyl(MOTOR_HOLE_R, -BIG / 10, BIG / 10, q, "x"))
+        c.append(_cyl(MOTOR_CB_R, -BIG / 10, -MOTOR_CB_X, q, "x"))
+    return _U(*c)
+
+
+def shroud():
+    """Motor-side shroud: a conical flare off the left upright's tail circle round the rear-lower quarter of the can,
+    from straight down round to 45 deg up."""
+    import build123d as bd
+    r_out, x_r, x_end, r_in = SHROUD
+    x_tail = -TAPER[1][0]
+    k = (r_out - UP_R) / (x_r - x_tail)
+    pl = lambda x: bd.Plane(origin=(x, WY, WZ), z_dir=(1, 0, 0))
+    outer = _U(bd.Solid.make_cone(UP_R, r_out, x_r - x_tail, pl(x_tail)), _cyl(r_out, x_r, x_end, (WY, WZ), "x"))
+    inner = bd.Solid.make_cone(r_in - k * (x_end - x_tail), r_in, x_end - x_tail, pl(x_tail))
+    sector = _I(_box(-BIG / 10, BIG / 10, WY, BIG / 10, -BIG / 10, BIG / 10),
+                halfspace((0, WY, WZ), (0, 1, -1), BIG))
+    return _I(_S(outer, inner), sector)
+
+
+def bulk_cuts():
+    (xa, xb), (za, zb), y1 = TUNNEL
+    r = (zb - za) / 2
+    t = _ext(sbox(xa + r, za, xb - r, zb).union(Point(xa + r, za + r).buffer(r)).union(Point(xb - r, za + r).buffer(r)), "xz", BULK_Y[0] - 1, y1)
+    x, r2, (z0, z1) = LEAD_SLOT
+    s = _ext(LineString([(x, z0), (x, z1)]).buffer(r2), "xz", BULK_Y[0] - 1, SLOT_R + BULK_Y[1])
+    return _U(t, s)
+
+
+def prongs():
+    """Prongs down between the chassis tabs onto the cross bolt: front face just off the chassis rear face, a round toe,
+    a sloped heel filleted into the upright underside, a window above the cross-bolt boss."""
+    from .params_chassis import HY, TAB_HOLE_DY, TAB_HOLE_Z
+    x0, t, zb = PRONG
+    (tc, tr), (hn, hr) = PRONG_TOE, PRONG_HEEL
+    y0 = HY + PRONG_CLR
+    d = hn[0] * tc[0] + hn[1] * tc[1] + tr                 # heel line: tangent to the toe round
+    yz = lambda z: (d - hn[1] * z) / hn[0]
+    up = upright_prof()
+    base = Polygon([(y0, zb), (yz(zb), zb), (yz(DECK_TOP + 1), DECK_TOP + 1), (y0, DECK_TOP + 1)])
+    toe = sbox(tc[0], zb, BIG, tc[1]).difference(Point(tc).buffer(tr, 128))
+    outline = base.difference(toe).union(up).buffer(hr).buffer(-hr)   # heel fillet into the upright underside
+    outline = outline.intersection(sbox(y0, zb, yz(DECK_TOP), DECK_TOP))   # overlaps the upright above its underside
+    hole = (HY + TAB_HOLE_DY, TAB_HOLE_Z)
+    win = base.buffer(-PRONG_WEB).intersection(sbox(y0 + PRONG_FRONT, zb, BIG, BIG)).difference(up)
+    win = win.difference(Point(hole).buffer(PRONG_BOSS, 128)).buffer(-PRONG_WEB).buffer(PRONG_WEB)
+    p = _ext(outline.difference(win), "yz", x0, x0 + t)
+    p = _S(p, _cyl(TAB_HOLE_R, x0 - 1, x0 + t + 1, hole, "x"))
+    return _U(p, _mirror_x(p))
+
+
+def post_holes():
+    from .params_vert import POST_HOLE_D
+    return _U(*[_U(_cyl(POST_HOLE_D / 2, -1, BIG / 10, p, "z"), _cyl(POST_CB_R, POST_CB_Z, BIG / 10, p, "z")) for p in POSTS])
+
+
+def grooves():
+    n, (x0, x1), (cx, cy), ang, w, pitch, depth = GROOVES
+    a = math.radians(ang)
+    d, u = (math.cos(a), math.sin(a)), (-math.sin(a), math.cos(a))     # along the groove, across it
+    g = []
+    for i in range(n):
+        c = (cx + u[0] * pitch * i, cy + u[1] * pitch * i)
+        L = LineString([(c[0] - d[0] * BIG / 10, c[1] - d[1] * BIG / 10), (c[0] + d[0] * BIG / 10, c[1] + d[1] * BIG / 10)])
+        g.append(L.buffer(w / 2, cap_style=2).intersection(sbox(x0, -BIG, x1, BIG)))
+    p = _sym(unary_union(g))
+    return _S(_ext(p, "xy", DECK_TOP, BIG / 10), above_ramp(-1), _S(_box(-BIG, BIG, -BIG, BIG, -BIG, BIG), above_ramp(depth)))
+
+
+def vm():
+    s = _U(body(), shroud(), prongs())
+    return _solid(_S(s, side_pockets(), axis_cuts(), bulk_cuts(), post_holes(), grooves(), upright_chamfers()))
