@@ -52,6 +52,7 @@ PRONG_T = 3.0                          # prong: against the inner chassis tab, d
 PRONG_TOE = (38.82, 5.0)               # toe round: y, radius (sits on the chassis underside)
 PRONG_HEEL = ((0.796, -0.606), 5.0)    # heel line normal (y, z), its fillet into the upright underside
 PRONG_CLR, PRONG_FRONT = 0.1, 3.0      # off the chassis rear face; front web
+PRONG_ROOT_R = 1.5                     # prong inner face rounded into the upright underside (STEP)
 PRONG_WEB, PRONG_BOSS = 2.0, 4.0       # prong window rim, boss round the cross bolt
 GROOVES = (3, (4.54, 15.37), (9.955, 14.26), 28.31, 3.68, 5.07, 0.6)   # top grip grooves per side: n, x span, first centre, angle, width, pitch, depth
 BIG = 1e3                              # a cut tool larger than the part

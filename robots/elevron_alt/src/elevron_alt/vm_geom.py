@@ -91,7 +91,7 @@ def _ramp_plane(z):
     return bd.Plane(origin=(0, 0, z), x_dir=(1, 0, 0), z_dir=(0, -K / SECK, 1 / SECK))
 
 
-def inside_round(p1, p2, r):
+def inside_round(p1, p2, r, reach=None):
     """Material an inside round of radius r adds where two faces meet (each an outward plane (n, d), n.p = d): the corner
     wedge between the tangent lines minus the cylinder, along the planes' common line (exact)."""
     import build123d as bd
@@ -103,9 +103,10 @@ def inside_round(p1, p2, r):
     v, c = np.linalg.solve(A, [d1, d2, 0.0]), np.linalg.solve(A, [d1 + r, d2 + r, 0.0])
     e = OVERLAP                                             # reach into both faces' material so the fuse merges cleanly
     quad = (v - e * (n1 + n2), c - (r + e) * n1, c, c - (r + e) * n2)
-    face = bd.Face(bd.Wire.make_polygon([bd.Vector(*(q - u * TOOL_S)) for q in quad], close=True))
-    wedge = bd.Solid.extrude(face, bd.Vector(*(u * 2 * TOOL_S)))
-    return _S(wedge, bd.Solid.make_cylinder(r, 2 * TOOL_S, bd.Plane(origin=tuple(c - u * TOOL_S), z_dir=tuple(u))))
+    L = reach or TOOL_S                                     # half length along the common line, from its foot nearest the origin
+    face = bd.Face(bd.Wire.make_polygon([bd.Vector(*(q - u * L)) for q in quad], close=True))
+    wedge = bd.Solid.extrude(face, bd.Vector(*(u * 2 * L)))
+    return _S(wedge, bd.Solid.make_cylinder(r, 2 * L, bd.Plane(origin=tuple(c - u * L), z_dir=tuple(u))))
 
 
 def hollow_front_round():
@@ -443,7 +444,19 @@ def prongs():
     win = win.difference(Point(hole).buffer(PRONG_BOSS, SEG)).buffer(-PRONG_WEB, SEG).buffer(PRONG_WEB, SEG)
     p = _ext(outline.difference(win), "yz", x0, x0 + t)
     p = _S(p, _cyl(TAB_HOLE_R, x0 - 1, x0 + t + 1, hole, "x"))
+    p = _U(p, _I(inside_round(upright_underside(), ((-1, 0, 0), -x0), PRONG_ROOT_R, BIG),     # prong inner face into the underside
+                 _ext(outline.difference(win), "yz", x0 - PRONG_ROOT_R - OVERLAP, x0 + OVERLAP)))
     return _U(p, _mirror_x(p))
+
+
+def upright_underside():
+    """Outward plane (n, d) of the upright underside: the hull's tangent from the deck foot (IN_Y, DECK_TOP) under the tail circle."""
+    (py, pz), (cy, cz) = (IN_Y, DECK_TOP), (WY, WZ)
+    dy, dz = cy - py, cz - pz
+    L = math.hypot(dy, dz)
+    a = math.atan2(dz, dy) - math.asin(UP_R / L)            # the lower tangent's direction
+    ny, nz = math.sin(a), -math.cos(a)                      # its downward normal
+    return ((0, ny, nz), ny * py + nz * pz)
 
 
 def post_holes():
