@@ -13,8 +13,8 @@ import build123d as bd
 
 from . import plate as pl
 from .common import _U, _b, _m2, _polar, _tangent_line_circle
-from .params_chassis import HERE, MNT_IN, MNT_SLAB_T, MNT_T, SA, SB, WY, WZ
-from .params_weapon import (BIG, BOSS_OVER, BRG_SEAT_R, BSP, BSP_T, CB_FLOOR_X, CB_R,
+from .params_chassis import HERE, MNT_IN, MNT_SLAB_T, MNT_T, SA, SB, TOP_Z0, WY, WZ
+from .params_weapon import (BIG, MNT_ABOVE_RIM_X, BOSS_OVER, BRG_SEAT_R, BSP, BSP_T, CB_FLOOR_X, CB_R,
                             HOLE_FACE_RISE, LEAD_FLOOR_W, LEAD_GROOVE_R, LEAD_GROOVE_X, LEAD_MOUTH, LEAD_ROUND, MNT_FRAME,
                             MNT_HEEL, MNT_NOTCH_GAP, MNT_NOTCH_UP, MNT_RELIEF_R, MNT_SCREW, MNT_SCREW_FIT, MNT_CSK_CLEAR, MNT_SIDE,
                             MNT_TIP_REACH, MNT_TIP_WALL, MNT_TOP_Z, N_STACK, NOSE_PAD_R, NOSE_R, NUT_RECESS_R,
@@ -233,6 +233,14 @@ def _stack_hole(fastener, x, y, z, sx, grip):
     return _hole_tool()((x, y, z), (sx, 0, 0), fastener, head="button", into="tapped", side="both", grip=grip, fit="close")[1]
 
 
+def _notch_clip(body):
+    """[cut] above the rim the mount rises through the top panel's front notch: clear its outer edge (MNT_ABOVE_RIM_X, mount
+    frame) when a narrow chassis pulls the notch in (hyp: mount/top_panel overlap at width -10 %); None when nothing pokes past."""
+    z0 = TOP_Z0 - WZ
+    cut = bd.Solid.make_box(BIG, 2 * BIG, BIG, bd.Plane(origin=(MNT_ABOVE_RIM_X, -BIG, z0)))
+    return cut if (body & cut).volume > 0.01 else None   # mm3: ignore a boolean sliver on the line
+
+
 def weapon_mount(side):
     """RV02 (left, shaft end) / RV03 (right, stator): 8 mm printed XALT HD plates. A slab carries the full profile; the
     boss above the standoff line has its outer face battered (leans in) so side hits glance off. The rear notch drops
@@ -247,7 +255,12 @@ def weapon_mount(side):
     else:
         cuts.append(_bore(BRG_SEAT_R, -MNT_T, 2 * MNT_T))                                        # outboard bearing seat (MR85, pressed)
         cuts.append(_bore(NUT_RECESS_R, MNT_SLAB_T, 2 * MNT_T))                                  # shaft nut recess
+    clip = _notch_clip(body)
+    if clip is not None:
+        cuts.append(clip)
     part = body.cut(*cuts).clean()
+    if clip is not None and not part.is_valid:
+        part = part.fix()   # the clip lands on RV03's batter seam (the uncut plate is not valid on its own; the default never clips)
     part = part if side == "r" else part.mirror(bd.Plane.YZ)
     return pl.placed(part.solids()[0] if len(part.solids()) == 1 else part, MNT_FRAME[side])
 
