@@ -3,6 +3,7 @@ unset / "stock" is the original RVRN 2.0 tyre (21.5 x 9.5). Read at import, then
 import os
 
 REAR_WHEEL = os.environ.get("REVRON_REAR_WHEEL", "stock")
+REAR_WHEELS = {"stock": "", "wheel_20x8": "", "wheel_28x10": "", "wheel_30x8": "", "bbb_wheel_22x10": "", "bbb_wheel_34x6_5": "", "durahubs_25": "", "durahubs_30": "", "durahubs_35": ""}   # every wheel the setting may name (hooks.json `wheel.rear`)
 STOCK = dict(od=21.5, w=9.5)
 
 

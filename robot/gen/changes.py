@@ -101,12 +101,12 @@ def _groups(raw) -> dict:
     return g
 
 
-def swap_hook(hooks: dict | None, role: str):
+def swap_hook(hooks: dict | None, role: str, ids=None):
     """(name, hook) of the robot setting that swaps parts of `role` as one unit (a hook declaring `"swap": "<role>"`),
     else None. A robot whose build derives the fitting parts from the selected catalog entry (mount holes, shaft, bell)
     declares one, and every catalog candidate of that role becomes a setting of it instead of a bare catalog op."""
     for name, h in ((hooks or {}).get("hooks") or {}).items():
-        if isinstance(h, dict) and h.get("swap") == role:
+        if isinstance(h, dict) and h.get("swap") == role and (not h.get("parts") or set(ids or ()) <= set(h["parts"])):   # `parts`: the hook swaps only these parts of the role (the rear wheels)
             return name, h
     return None
 
@@ -120,7 +120,7 @@ def swap_changes(raw, cat=None, hooks=None) -> list:
         cur_e = catalog.find(cur) if cur else None
         cur = ((cur_e.props or {}).get("half_of") or cur) if cur_e else cur   # a derived fixed half stands for its motor
         tag = "+".join(ids) if len(ids) <= 2 else f"{ids[0]}..({len(ids)})"
-        sh = swap_hook(hooks, role)
+        sh = swap_hook(hooks, role, ids)
         for e in candidates(role, cur, cat):
             ops = [{"op": "catalog", "select": {"id": ids}, "to": e.id}]
             note = ""
