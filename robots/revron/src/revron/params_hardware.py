@@ -51,7 +51,7 @@ BAT_PAD_FRAC = 3                                         # the foam pad is this 
 _bx, _by = ELEC["battery"][:2]   # pack centre
 BAT_PAD = dict(x=(_bx - BAT_W / BAT_PAD_FRAC / 2, _bx + BAT_W / BAT_PAD_FRAC / 2), y=(_by - BAT_L / BAT_PAD_FRAC / 2, _by + BAT_L / BAT_PAD_FRAC / 2))   # double-sided foam pad footprint under the pack, centred, base-panel skin top -> pack underside
 FILLET_REAR_X = 26.77   # |X| where the squared N10 gearbox-plate seat meets its seat arc at the rear wall (measured on our section z=10; RV01 26.5)
-SWX_DEV_R = 1.5   # reference_cad deviation radius round each switch pilot (hole shifted 0.45 from the STEP)
+SWX_DEV_R = 3.0   # reference_cad deviation radius round each switch pilot (hole shifted 0.45 from the STEP); holds the whole pilot pad blob (x 23.7-26.2, deck to rim)
 SW_PITCH, SW_BODY_H = 15.0, 3.5   # BBB ant switch ear-hole pitch and body height (catalog)
 SW_SCREW_Y = tuple(round(ELEC["switch_yz"][0] + sg * SW_PITCH / 2, 6) for sg in (1, -1))   # the two ear holes straddle the switch centre
 SW_BOLT_Z, TOP_BOLT_Z = ELEC["switch_yz"][1] + SW_BODY_H / 2, TOP_Z0 + TOP_T  # switch screws (Y, head Z) and the top-panel screw head plane
@@ -157,6 +157,7 @@ BASE_DEV_Z, PANEL_DEV_R, TOP_DEV_Z = 4.5, 3.5, 19.95
 TOP_TEXT_DEV_Z, TOP_TEXT_DEV_R = 19.57, 3.0   # path waiver radius (check cap 3)
 TOP_TEXT_X, TOP_TEXT_Y, TOP_TEXT_MAX_MM3 = (-17.75, 18.81), (-7.1, -4.1), 20.0   # lettering span in X (y -8.68..-2.53), two capsule centre lines Y (r 3 each covers the edge strokes), volume cap per capsule
 TOP_SIL_R = 1.0   # waiver sphere round the top panel's bbox centre, where the silhouette IoU finding sits
+TOP_TEXT_GLYPH_X = ((-17.58, -10.12), (-7.38, -0.08), (1.99, 8.24), (11.89, 18.43))   # X span of the four engraved glyphs R V R N (Top_Panel_1 recess at z 19.55); one capsule each: a waiver claims one blob
 TOP_TEXT_DEV_XY = ((-3.78, -5.57), (-13.73, -5.62), (5.84, -5.26), (15.04, -5.66))
 NOSE_DEV, NOSE_DEV_R = (MNT_IN + 2.0, SB[0] + 0.6, SB[1] - 1.7), 5.0             # mount nose pad (|x|, y, z): thickened nose wall, deviation from the STEP nose
 STATOR_DEV_X, TAP_DEV_R = 16.8, 2.0                                              # stator lead-in cone site; tap-hole sites

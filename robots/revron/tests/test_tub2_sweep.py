@@ -118,7 +118,7 @@ def bays(env, tmp_path):
                 pack=[float(v) for v in next(x for x in rows if x[0] == "PACK")[1:]])
 
 
-DEFAULT_TUB_VOLUME = 15814.578   # mm3 at the shipped masters (the tub as the designer drew it, before the compartment pockets)
+DEFAULT_TUB_VOLUME = 15814.91   # mm3 at the shipped masters (the tub as the designer drew it, before the compartment pockets; lobe-root round trimmed at the floor in r53: +0.33 mm3)
 
 
 def test_default_tub_is_unchanged_by_the_compartment_pockets(tmp_path):

@@ -1,16 +1,16 @@
 """[tub2] Fillet3 (R2): the lobe root where each side lobe meets the outer wall face, applied the way the feature tree does (after the unions)."""
 from build123d import Plane, fillet
-from .tub2_params import CH_HALF_W, CH_WALL, CH_Z0
+from .tub2_params import CH_HALF_W, CH_WALL, CH_Z0, OVER
 from .tub2_util import box_xy
 
 LOBE_ROOT_R = CH_WALL                   # RV01 Fillet3 R2: the root round is the wall thickness
 
 
-def lobe_root(solid, lobe, below=CH_Z0 - 2 * CH_WALL):
+def lobe_root(solid, lobe, below=CH_Z0 - OVER):
     """Fillet R = wall thickness (RV01 Fillet3 R2) round the closed loop where the lobe meets the wall plane |x| = CH_HALF_W.
-    The round is made on a plain wall slab that runs on below the chassis floor (down to `below`) and added as a collar: on the real body the
-    fillet runs out at the floor and the solver answers with BSplines, whose tessellation shows as 6-25 deg faceting seams; on the slab it is
-    the analytic cylinder / torus RV01 has. The collar below the floor is cut off again by the lobe's floor relief."""
+    Made on a plain wall slab that ends `OVER` under the chassis floor and added as a collar (the floor relief cuts what hangs below): the surface
+    is the same rolling-ball round (within 0.03 mm of RV01), but cut off at the floor it is two clean faces whose tessellation shows no 6-25 deg
+    faceting seams (visual.faceting), where the round made on the whole body came out as two long BSplines."""
     bb = lobe.bounding_box()
     y0, z0, y1, z1 = bb.min.Y, bb.min.Z, bb.max.Y, bb.max.Z
     m = CH_WALL + CH_WALL / 4   # edge search margin round the lobe
