@@ -248,7 +248,11 @@ def lattice_profile():
                 (x0, y0), (x1, y1) = LAT_EDGE_RL
                 k = (x1 - x0) / (y1 - y0)
                 cell = cell.intersection(Polygon([(x0 + k * (-CH_L - y0), -CH_L), (x0 + k * (CH_L - y0), CH_L), (0, CH_L), (0, -CH_L)]))
-            win.append(_rounded(cell, LAT_R_TIP[0 if sy > 0 else 1]))   # corner pockets round a little wider than LAT_R (STEP fit)
+            base = _rounded(cell, LAT_R)                        # the wedge tip by the end column rounds wider (STEP fit): only the
+            extra = base.difference(_rounded(cell, LAT_R_TIP[0 if sy > 0 else 1]))   # crescent at that corner comes off
+            parts = list(extra.geoms) if hasattr(extra, "geoms") else [extra]
+            tip = min((g for g in parts if not g.is_empty), key=lambda g: g.distance(Point(0, sy * e)), default=None)
+            win.append(base if tip is None else base.difference(tip.buffer(BOOL_EPS)))
     for sx in (-1, 1):   # left / right centre triangles
         win.append(_rounded(Polygon([(0, 0), (sx * a, b), (sx * a, -b)]).buffer(-LAT_RIB_C, join_style=2), LAT_R_C))
     under = unary_union([p for sy in (-1, 1) for sx in (-1, 1)              # the end-column blends under the deck: a window
@@ -258,7 +262,7 @@ def lattice_profile():
 
 def _rounded(p, r):
     """Shapely polygon with every convex corner rounded r (the windows' 2D fillets)."""
-    return p.buffer(-r).buffer(r)
+    return p.buffer(-r, quad_segs=64).buffer(r, quad_segs=64)
 
 
 def lattice():
