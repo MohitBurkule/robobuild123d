@@ -54,7 +54,23 @@ def _drafted(spine, off, z0):
 
 
 def wells():
-    return _U(_cyl(WELL_R, -TOOL, TOOL, (-AXLE_Y, AXLE_Z), "x"), _cyl(WELL_R, *WELL_X, (AXLE_Y, AXLE_Z), "x"))   # front: right across
+    rear = _cyl(WELL_R, *WELL_X, (AXLE_Y, AXLE_Z), "x")
+    end = [e for e in rear.edges() if e.geom_type.name == "CIRCLE" and abs(e.center().X - WELL_X[1]) < GEOM_EPS]
+    rear = rear.fillet(WELL_END_R, end)                    # the blind end's edge rounded (STEP)
+    return _U(_cyl(WELL_R, -TOOL, TOOL, (-AXLE_Y, AXLE_Z), "x"), rear)   # front: right across
+
+
+def well_top_round():
+    """WELL_TOP_R round on the edge where the rear wheel well breaks out through the crossbar top (STEP): in (y, z) the
+    corner between the well circle and the top line, cut along the well."""
+    r, R = WELL_TOP_R, WELL_R
+    c = (AXLE_Y + math.sqrt((R + r) ** 2 - (CROSS_TOP - r - AXLE_Z) ** 2), CROSS_TOP - r)   # r off the top, R + r off the axle
+    k = R / (R + r)
+    t1 = (AXLE_Y + (c[0] - AXLE_Y) * k, AXLE_Z + (c[1] - AXLE_Z) * k)   # tangent point on the well
+    t2 = (c[0], CROSS_TOP)                                  # tangent point on the top
+    e = (AXLE_Y + math.sqrt(R ** 2 - (CROSS_TOP - AXLE_Z) ** 2), CROSS_TOP)   # the sharp edge
+    corner = Polygon([c, t1, e, t2]).difference(Point(c).buffer(r, SEG)).difference(Point(AXLE_Y, AXLE_Z).buffer(R, SEG))
+    return _ext(corner, "yz", *WELL_X)
 
 
 def guard():
@@ -232,7 +248,7 @@ def pocket_round():
 
 def sp():
     s = _U(guard(), plate(), rear(), fork(), struts(), rear_flare(), root_rounds())
-    s = _U(_S(s, wells(), pocket()), pocket_round())   # the pocket keeps its rounded corner along its whole x run
+    s = _U(_S(s, wells(), pocket(), well_top_round()), pocket_round())   # the pocket keeps its rounded corner along its whole x run
     nonfork = _S(_box(-BIG, BIG, -BIG, BIG, -BIG, 0), _box(*FORK_X, CROSS_Y0, BIG, -BIG, BIG))
     s = _S(s, under_b(), nonfork)
     from .variants import variant
