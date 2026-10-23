@@ -5,8 +5,8 @@ chassis.compartments): motor, battery, partition (a rib between the pack bay and
 from build123d import Align, Cylinder, Pos
 from . import hw
 from .common import _U, _one
-from .params_chassis import (DRIVE_MOTOR, MOTX, RY, RZ, LAYOUT, INS, RXESC, WESC, RX_C, WE_C, RX_X, WE_X, CH_Z0, CH_Z1)
-from .params_hardware import BATTERY, ELEC, BAT_W
+from .params_chassis import (SWITCH, SWX, DRIVE_MOTOR, MOTX, RY, RZ, LAYOUT, INS, RXESC, WESC, RX_C, WE_C, RX_X, WE_X, CH_Z0, CH_Z1, WALL_IN_REAR)
+from .params_hardware import BATTERY, ELEC, BAT_W, SW_SEAT_Z
 from .tub2_params import BORE_R, CH_IN_X, STOP_FRONT_Y, WALL_IN_FRONT, SEAT_Z, DECK, SKIN, OVER
 from .tub2_util import box_xy
 
@@ -30,11 +30,23 @@ def battery_bay():
     return [_cut(hw.placed(BATTERY, ELEC["battery"], BAY_ROT))]
 
 
+def switch_bay():
+    """The power switch at its seat (turned 90 about Z, its wall-facing side SW_CLR off the wall): its pad and slot are drawn for the stock switch, a bigger one gets room."""
+    return [_cut(hw.placed(SWITCH, (SWX, *ELEC["switch_yz"]), (0, 0, 90)))]
+
+
 def pack_drop():
-    """The way out of the pack: its footprint straight down from its underside to the tub's bottom face, less the bore sleeves. The pack leaves through the base opening, so the
+    """The way out of the pack: its footprint straight down from the pad underside (where its ears seat) to the tub's bottom face, less the bore sleeves. The pack leaves through the base opening, so the
     tub must not close over the footprint below it (a narrow chassis lets a column body reach in under the pack)."""
     bb = hw.placed(BATTERY, ELEC["battery"], BAY_ROT).bounding_box()
     return _cut(box_xy(max(bb.min.X, -CH_IN_X), min(bb.max.X, CH_IN_X), max(bb.min.Y, STOP_FRONT_Y), min(bb.max.Y, WALL_IN_FRONT), CH_Z0 - OVER, bb.min.Z + OVER))   # inside the cavity only: the lugs and walls outside it stay whole
+
+
+def switch_drop():
+    """The way out of the switch: its footprint straight down from the pad underside (where its ears seat) to the tub's bottom face, less the bore sleeves (the switch leaves downwards once its screws are out, so a column body
+    that reaches in under it must not close over the footprint). Inside the cavity only: the walls stay whole."""
+    bb = hw.placed(SWITCH, (SWX, *ELEC["switch_yz"]), (0, 0, 90)).bounding_box()
+    return _cut(box_xy(bb.min.X, min(bb.max.X, CH_IN_X), max(bb.min.Y, WALL_IN_REAR), min(bb.max.Y, WALL_IN_FRONT), CH_Z0 - OVER, SW_SEAT_Z))
 
 
 def electronics_bays():
@@ -55,7 +67,7 @@ def additions():
 
 
 def cuts():
-    return (motor_pockets() if "motor" in LAYOUT else []) + (battery_bay() if "battery" in LAYOUT else []) + electronics_bays()
+    return (motor_pockets() if "motor" in LAYOUT else []) + (battery_bay() if "battery" in LAYOUT else []) + electronics_bays() + switch_bay()
 
 
 def carve(tub):
@@ -66,5 +78,7 @@ def carve(tub):
         return tub
     if "battery" in LAYOUT and (tub & battery_bay()[0]).volume > TOUCH:   # the pack notches the tub: it must also be able to leave downwards
         hit.append(pack_drop())
+    if (tub & switch_bay()[0]).volume > TOUCH:   # the switch notches the tub: it must also be able to leave downwards
+        hit.append(switch_drop())
     out = _one(tub.cut(*hit).clean())
     return out if out.is_valid else _one(out.fix())

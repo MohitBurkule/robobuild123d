@@ -107,8 +107,8 @@ def tub_rig(r=None, solve=True):
         if TOP_SCREW_WEB:
             r.joint(f"bolt_t{i}", "head", (0, 0, 0))
             r.mate("tub", f"screw_t{i}", f"bolt_t{i}", "head")
-    for i, sg in enumerate((1, -1)):                 # switch screws: through the ear holes (SW_PITCH apart along its length) at the body top
-        r.joint("power_switch", f"ear{i}", (sg * SW_PITCH / 2, 0, SW_BODY_H / 2))
+    for i, (hx, hy, _) in enumerate(SW["holes"]):    # switch screws: through the ear holes (catalog mount holes, SW_PITCH apart along its length) at the ears' underside
+        r.joint("power_switch", f"ear{i}", (hx, hy, SW_EAR_H))
         r.joint(f"bolt_sw{i}", "head", (0, 0, 0))
         r.mate("power_switch", f"ear{i}", f"bolt_sw{i}", "head")
     if solve:
