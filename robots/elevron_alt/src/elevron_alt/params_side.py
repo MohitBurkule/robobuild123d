@@ -26,6 +26,7 @@ GROOVE = (16.98, 6.0, 3.0, 0.5, (2.62, 10.81), -0.857, 4, 3.0)   # diagonal grip
 WELL_TOP_R = 1.0                       # rear well's break-out edge through the crossbar top rounded (STEP)
 WELL_END_R = 0.5                       # rear wheel well's blind end edge round (STEP)
 GEOM_EPS = 1e-6                        # coordinate match on edges
+FILL_REACH = 0.05                      # exact fillers reach this far into the faces they round, so the fuse merges them
 WELL_CLR = 1.25                        # wheel wells round both axles over the tyre radius
 LIP = 1.0                              # plate lip wrapping the boss sides
 LIP_CLR = 0.1                          # lip off the boss obround

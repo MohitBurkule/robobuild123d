@@ -167,7 +167,8 @@ def fork():
     f = _box(*FORK_X, CROSS_Y0, y_tip, -TOOL, CROSS_TOP)
     thick = halfspace((0, B_Y0, FORK_T / math.cos(math.atan(B_K))), (0, B_K, 1), BIG)       # above FORK_T over the underside
     body = _I(_I(thick, _above(ROOT_TOP[:2], ROOT_TOP[2])), _box(-BIG, BIG, -BIG, ya, -BIG, BIG))
-    tooth = _I(halfspace((0, ya, bottom_z(ya) + FORK_T), (0, -FORK_RISER[0], FORK_RISER[1]), BIG), _box(-BIG, BIG, ya, BIG, -BIG, BIG))
+    tooth = _I(halfspace((0, ya, bottom_z(ya) + FORK_T / math.cos(math.atan(B_K))), (0, -FORK_RISER[0], FORK_RISER[1]), BIG),
+               _box(-BIG, BIG, ya, BIG, -BIG, BIG))   # from the fork top's own line (FORK_T square to the underside)
     return _U(_S(f, body, tooth, _above(tp[:2], tp[2])), fork_valley())
 
 
@@ -181,8 +182,15 @@ def fork_valley():
     r = FORK_TOP_R
     corner, c = sol(d1, d2), sol(d1 + r, d2 + r)
     t1, t2 = (c[0] - r * n1[0], c[1] - r * n1[1]), (c[0] - r * n2[0], c[1] - r * n2[1])
-    prof = Polygon([corner, t1, c, t2]).buffer(0).difference(Point(c).buffer(r, SEG))
-    return _ext(prof, "yz", *FORK_X)
+    e = FILL_REACH                                          # reach into both planes' material so the fuse merges it
+    q = lambda p, n, k: (p[0] - k * n[0], p[1] - k * n[1])
+    u = ((corner[0] - c[0]) / math.dist(corner, c), (corner[1] - c[1]) / math.dist(corner, c))
+    mid = (c[0] + r * u[0], c[1] + r * u[1])                # the arc's middle, towards the corner
+    P = lambda p: bd.Vector(FORK_X[0], p[0], p[1])
+    w = bd.Wire([bd.Edge.make_line(P(q(q(corner, n1, e), n2, e)), P(q(t1, n1, e))), bd.Edge.make_line(P(q(t1, n1, e)), P(t1)),
+                 bd.Edge.make_three_point_arc(P(t1), P(mid), P(t2)),           # exact: tangent at both ends
+                 bd.Edge.make_line(P(t2), P(q(t2, n2, e))), bd.Edge.make_line(P(q(t2, n2, e)), P(q(q(corner, n1, e), n2, e)))])
+    return bd.Solid.extrude(bd.Face(w), bd.Vector(FORK_X[1] - FORK_X[0], 0, 0))
 
 
 def struts():
