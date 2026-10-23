@@ -91,7 +91,24 @@ def plate():
     p = _S(_ext(ob, "yz", PLATE_X0, TOOL), halfspace((PLATE_OUT[2] / PLATE_OUT[0], 0, 0), (PLATE_OUT[0], 0, PLATE_OUT[1]), BIG))
     boss = unary_union([LineString([(-cy, AXLE_Z), (cy, AXLE_Z)]).buffer(LIP_IN_R, SEG)])
     lip = _ext(ob.difference(boss), "yz", LIP_X0, PLATE_X0)
+    band = _ext(boss.buffer(LIP, SEG).difference(boss), "yz", LIP_X0 - 1, PLATE_X0)   # the lip's free inner edge is a full
+    lip = _U(_S(lip, band), _I(_I(lip, band), _lip_pipe(cy, LIP_IN_R + LIP, LIP)))  # half-round of the lip's thickness (STEP)
     return _U(p, lip)
+
+
+def _lip_pipe(cy, rr, rb):
+    """A circle of radius rb, centred on the plate face, swept round the stadium (screw centres +-cy, radius rr)."""
+    import build123d as bd
+    with bd.BuildPart() as bp:
+        with bd.BuildLine() as ln:                          # drawn in XY as (y, z) about AXLE_Z, turned onto the plate face
+            bd.Line((-cy, -rr), (cy, -rr))
+            bd.ThreePointArc((cy, -rr), (cy + rr, 0), (cy, rr))
+            bd.Line((cy, rr), (-cy, rr))
+            bd.ThreePointArc((-cy, rr), (-cy - rr, 0), (-cy, -rr))
+        with bd.BuildSketch(bd.Plane(origin=(-cy, -rr, 0), z_dir=(1, 0, 0))):
+            bd.Circle(rb)
+        bd.sweep(path=ln.wires()[0])
+    return bp.part.solids()[0].rotate(bd.Axis.Y, -90).rotate(bd.Axis.X, 90).moved(bd.Location((PLATE_X0, 0, AXLE_Z)))
 
 
 def _above(n, d):
