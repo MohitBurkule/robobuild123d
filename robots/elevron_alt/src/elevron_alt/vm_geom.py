@@ -226,9 +226,9 @@ def upright_chamfers():
     m = ((y1 - y0) / L, (x0 - x1) / L)
     yc = BULK_Y[1]
     dh, dv = UP_IN_CH
-    c = _U(edge_chamfer(m, (taper_x(yc), yc), TOP_CH, TOP_CH, _box(0, TOOL, y0 - 1, UP_CH_Y[1], DECK_TOP, TOOL)),
-           edge_chamfer((-1, 0), (UP_X0, yc), dh, dv, _box(UP_X0 - 1, UP_X0 + dh + 1, UP_CH_Y[0], UP_CH_Y[1], DECK_TOP, TOOL)))
-    return _U(c, _mirror_x(c), bulk_chamfer())
+    out = lambda ch: edge_chamfer(m, (taper_x(yc), yc), ch[0], ch[1], _box(0, TOOL, y0 - 1, UP_CH_Y[1], DECK_TOP, TOOL))
+    inner = edge_chamfer((-1, 0), (UP_X0, yc), dh, dv, _box(UP_X0 - 1, UP_X0 + dh + 1, UP_CH_Y[0], UP_CH_Y[1], DECK_TOP, TOOL))
+    return _U(out(UP_OUT_CH[1]), _mirror_x(out(UP_OUT_CH[0])), inner, _mirror_x(inner), bulk_chamfer())
 
 
 def side_pockets():

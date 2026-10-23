@@ -29,6 +29,7 @@ POST_PAD_R = 4.0                       # pad round each rear column screw inside
 POST_CB_R, POST_CB_DEPTH = 3.0, 2.5    # column screw counterbores: radius, floor above the deck
 NOTCH_CH_Y0 = -0.69                    # the notch-wall chamfer is full size behind this y and runs out to the front corner
 TOP_CH = 3.0                           # ramp edges over the side notches: equal-distance chamfer; bulkhead rear edge 45 deg
+UP_OUT_CH = ((2.997, 2.942), (2.879, 3.063))   # upright outer top edges: (in on the ramp, down the face), left / right (STEP as drawn, TOP_CH nominal)
 UP_IN_CH = (1.95, 2.58)                # upright inner top edges: chamfer across the top, down the face
 UP_CH_END = 48.4                       # upright top chamfers run back to here
 SIDE_POCKET = ((WY - 16.61, 22.01), 4.7, (20.0, 23.9), 7.0)   # upright outer pocket: round end (centre, r), front z span, depth
