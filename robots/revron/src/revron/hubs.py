@@ -8,7 +8,7 @@ from .params_drive import (RH_GAP, RH_D, RH_SEAT_R, RH_FLANGE_R, RH_FLANGE_T, RH
                            RH_CROWN_H, RH_CROWN_W, RH_ROOT_R, RH_LIP_R, RH_LIP_ANG, RH_LEN, RH_WALL_R, RH_WALL_T, RH_BORE_X, RH_NUT_X, RH_NUT_HALF, RH_NUT_Z, RH_GRUB_X, RH_GRUB_D, HUB_GRUB_PRINTABLE, RH_ORIGIN_X, RH_ROOT_X,
                            FH_BORE_R, FH_FLANGE_R, FH_SEAT_R, FH_FLANGE_T, FH_GROOVE_W, FH_SEAT_W, FH_FILLET, FH_GUSSET, FH_LEN, FH_ORIGIN_X,
                            TY_REAR, TY_FRONT, TY_ARC_STEP, SO_R, SO_CHAMFER, SO_TAP_R, SO_PITCH, SO_THREAD_H)
-from .params_chassis import SA, RY, RZ, CH_HALF_W, SA_X
+from .params_chassis import SA, RY, RZ, CH_HALF_W, SA_X, SIZE_DW
 from .params_hardware import HUB_PIVOT_X
 from .common import _b, _S, _ext, _cyl, _box, _face, _revolve_x
 
@@ -142,7 +142,7 @@ def rig_wheels(r, s, n):
     r.mate(f"whub_r{n}", "front_plane", f"whub_f{n}", "inner_face")
     r.joint("tub", f"so_a_bore_{n}", (s * SA_X[0], *SA))                            # Concentric5: the 25 mm standoff in the chassis bore
     r.mate("tub", f"so_a_bore_{n}", f"so_a{n}", "inner_end")
-    r.joint(f"side_{n}", "wheel_axis", (s * HUB_PIVOT_X["front"], *SA), flip)           # Concentric83: the side panel's axle hole on the front hub bore
+    r.joint(f"side_{n}", "wheel_axis", (s * (HUB_PIVOT_X["front"] - SIZE_DW), *SA), flip)           # Concentric83: the side panel's axle hole on the front hub bore
     r.mate(f"side_{n}", "wheel_axis", f"whub_f{n}", "bore")
 
 
