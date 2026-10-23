@@ -95,7 +95,7 @@ def _drive(r):
         r.axis(a, "axle", (s * HUB_PIVOT_X["front"], *SA))           # micro hub greased on the 25 mm standoff
         r.joint(a, "hub_seat", (s * HUB_PIVOT_X["front"], *SA), _flip(s))
         r.mate(a, "hub_seat", f"whub_f{n}", "bore")
-        for part, so, xs, yz in ((f"side_{n}", a, SA_X, SA), (f"wedgelet_{n}", b_, SB_X, SB)):
+        for part, so, xs, yz in ((f"side_{n}", a, SA_X_STOCK, SA), (f"wedgelet_{n}", b_, SB_X_STOCK, SB)):
             r.joint(part, "standoff_seat", (s * xs[1], *yz))         # screw seat / 5.3 hole on the standoff end
             r.mate(so, "outer_end", part, "standoff_seat")
         rig_fork(r, s, n)                                            # fork_5 on the 15 mm standoff (fork.py)
