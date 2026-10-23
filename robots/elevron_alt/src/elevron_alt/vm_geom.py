@@ -195,9 +195,28 @@ def slot_plan():
     return sbox(-UP_X0, BULK_Y[1], UP_X0, TOOL).buffer(-SLOT_R, SEG).buffer(SLOT_R, SEG)
 
 
+def lip_corner():
+    """Centre of the arch's corner round on the deck (ARCH_X, ARCH_R under the arch top) and the lip's back radius round it."""
+    return (ARCH_X, ARCH_Y - ARCH_R), ARCH_R + LIP_W
+
+
+def hollow_front():
+    """Region behind the hollow's front edge: each side a line from the notch's offset front corner (NOTCH_X - VM_T,
+    NOTCH_LOW_Y) tangent onto the lip's back round (STEP), up to the bulkhead."""
+    (cx, cy), R = lip_corner()
+    px, py = NOTCH_X - VM_T, NOTCH_LOW[0][1]
+    dx, dy = cx - px, cy - py
+    D = math.hypot(dx, dy)
+    a = math.atan2(dy, dx) - math.asin(R / D)               # the tangent passing over the top of the round
+    n = (-math.sin(a), math.cos(a))
+    t = (px + (D * math.cos(math.asin(R / D))) * math.cos(a), py + (D * math.cos(math.asin(R / D))) * math.sin(a))   # tangent point
+    half = Polygon([(BIG, py), (px, py), t, (0, t[1]), (0, BULK_Y[0]), (BIG, BULK_Y[0])])
+    return _sym(half)
+
+
 def hollow_plan():
     """Under-shell hollow: the planform in by one wall, from the lip to the bulkhead, round the rear column pads."""
-    p = plan().buffer(-VM_T, join_style=2).intersection(sbox(-BIG, HOLLOW_FRONT, BIG, BULK_Y[0]))
+    p = plan().buffer(-VM_T, join_style=2).intersection(hollow_front())
     p = p.difference(front_opening(full=True).buffer(LIP_W, SEG))   # the front lip round the arch (STEP: its back face at y ARCH_Y + LIP_W)
     p = p.difference(unary_union([Point(q).buffer(POST_PAD_R, SEG) for q in POSTS if q[1] > 0])).difference(slot_plan())
     return p.buffer(-HOLLOW_R, SEG).buffer(HOLLOW_R, SEG).buffer(HOLLOW_R, SEG).buffer(-HOLLOW_R, SEG)
