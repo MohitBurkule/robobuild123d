@@ -16,7 +16,7 @@ from .params_chassis import *  # noqa: F401,F403
 
 def _both(s):
     """A right-hand feature and its mirror about the YZ plane (dump MirrorPattern)."""
-    return _U(s, _mirror_x(s))
+    return None if s is None else _U(s, _mirror_x(s))
 
 
 def block():
@@ -75,6 +75,9 @@ def cavity():
 def fillet_filler(c, rc, axis, at, r, side):
     """Material of a concave round of radius r between a column (centre c, radius rc, along Z) and a wall plane
     (`axis` = at). side picks which of the two tangent rounds (-1: toward lower x / y on the free axis)."""
+    gap = abs(at - c[1 if axis == "y" else 0]) - r
+    if gap >= rc + r:                                       # the wall is out of reach of the column: no round
+        return None
     if axis == "y":
         dy = at - c[1]
         dx = side * math.sqrt((rc + r) ** 2 - (abs(dy) - r) ** 2)
