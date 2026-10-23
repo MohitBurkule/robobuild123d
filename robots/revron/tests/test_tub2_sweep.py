@@ -503,3 +503,61 @@ def test_size_in_mm_equals_the_percentage(tmp_path):
 def test_default_size_is_the_stock_tub(tmp_path):
     b = size_build({}, tmp_path)
     assert b["tub"][:2] == (1, True) and abs(b["tub"][2] - STOCK_TUB_VOLUME) < 1e-2 and b["size"][:3] == [29.5, 15.0, 19.5], b
+
+
+# ---- [fix-A-hyp] change-hypothesis sweeps: swaps are settings the tub follows; a screw size is a name, not a dimension ----
+HOOKS_JSON = pathlib.Path(SRC).parent / "hooks.json"
+SWAP_ENV = {"drive_motor": ("REVRON_DRIVE_MOTOR", "DRIVE_MOTORS", "n10_2200rpm_spicy"), "battery": ("REVRON_BATTERY", "BATTERYS", "lipo_2s_180_turnabot"),
+            "drive_esc": ("REVRON_RXESC", "RXESCS", "malenki_nano_rvrn2"), "weapon_esc": ("REVRON_WESC", "WESCS", "bbb_ant_esc_rvrn2")}
+
+
+def test_swap_settings_list_every_catalog_candidate():
+    """The catalog candidates of each role (robot.gen.changes) are exactly the values the tub's setting names, so a catalog entry added later is a visible gap, not a silent break."""
+    import json, sys
+    sys.path[:0] = [SRC, ROOT]
+    from robot.gen import changes as C
+    from revron import params_chassis as PC
+    hooks = json.loads(HOOKS_JSON.read_text())["hooks"]
+    for role, (env, table, default) in SWAP_ENV.items():
+        h = next(h for h in hooks.values() if h.get("env") == env)
+        assert h["swap"] == role and h["default"] == default, (role, h)
+        names = {e.id for e in C.candidates(role, default)}
+        assert names | {default} == set(getattr(PC, table)), (role, names ^ set(getattr(PC, table)))
+
+
+def test_wheel_swap_setting_covers_the_rear_wheels():
+    import json, sys
+    sys.path[:0] = [SRC, ROOT]
+    from robot.gen import changes as C
+    from revron import wheel_variant as WV
+    h = json.loads(HOOKS_JSON.read_text())["hooks"]["wheel.rear"]
+    assert h["swap"] == "wheel" and set(h["parts"]) == {"wheel_rl", "wheel_rr"} and set(h["values"]) == set(WV.REAR_WHEELS)
+    assert C.swap_hook({"hooks": {"wheel.rear": h}}, "wheel", ["wheel_rl", "wheel_rr"])[0] == "wheel.rear"
+    assert C.swap_hook({"hooks": {"wheel.rear": h}}, "wheel", ["wheel_fl", "wheel_fr"]) is None   # the front wheels are not this setting's
+
+
+def test_thread_sizes_are_names_not_dimensions():
+    """M2 / M3 come from the ISO size names, so a +-10 % sweep of 'literals' cannot ask the nut table for an M3.3: no numeric literal assignment names them."""
+    import ast
+    src = (pathlib.Path(SRC) / "revron" / "params_chassis.py").read_text()
+    node = next(n for n in ast.parse(src).body if isinstance(n, ast.Assign) and ast.unparse(n.targets[0]).strip("()") == "M2, M3")
+    assert not any(isinstance(c, ast.Constant) and isinstance(c.value, float) for c in ast.walk(node.value))
+
+
+@pytest.mark.parametrize("sa_x0", ["15.75", "19.25"])
+def test_axle_standoff_start_sweep(sa_x0, tmp_path):
+    """SA_X0 +-10 %: the standoff's inner end moves, the M3 thin nut pocket (a named size) is unaffected, the tub stays one valid solid."""
+    check({"params_chassis": {"SA_X0": sa_x0}}, tmp_path)
+
+
+@pytest.mark.parametrize("half_w", ["26.55", "32.45"])
+def test_stock_half_width_sweep(half_w, tmp_path):
+    """CH_HALF_W_STOCK +-10 %: both side walls move with the nut lobes, pockets and lugs; one valid symmetric solid."""
+    check({"params_chassis": {"CH_HALF_W_STOCK": half_w}}, tmp_path)
+
+
+@pytest.mark.parametrize("env", [{"REVRON_BATTERY": "gnb_3s_300_80c_hv"}, {"REVRON_RXESC": "esc_dual_brushed"}, {"REVRON_WESC": "bbb_red_esc"},
+                                 {"REVRON_DRIVE_MOTOR": "n10_300rpm_6v"}, {"REVRON_REAR_WHEEL": "wheel_28x10"}])
+def test_swap_setting_builds_one_valid_tub(env, tmp_path):
+    b = bays(env, tmp_path)
+    assert b["tub"][:2] == (1, True) and all(v == 0 for v in b["ovl"].values()), b

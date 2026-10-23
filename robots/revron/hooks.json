@@ -92,6 +92,11 @@
     },
     "wheel.rear": {
       "env": "REVRON_REAR_WHEEL",
+      "swap": "wheel",
+      "parts": [
+        "wheel_rl",
+        "wheel_rr"
+      ],
       "values": [
         "stock",
         "wheel_20x8",
@@ -103,14 +108,7 @@
         "durahubs_30",
         "durahubs_35"
       ],
-      "default": "stock",
-      "swap": "wheel",
-      "swaps": {
-        "id": [
-          "wheel_rl",
-          "wheel_rr"
-        ]
-      }
+      "default": "stock"
     },
     "chassis.compartments": {
       "env": "REVRON_COMPARTMENTS",
@@ -173,23 +171,27 @@
     },
     "drive.motor": {
       "env": "REVRON_DRIVE_MOTOR",
-      "_why": "catalog id of the drive gearmotor (params_chassis.DRIVE_MOTOR); the tub pockets, MOTX, key tab, stop wall, pad and rig joints are derived from it",
-      "swap": "drive_motor"
+      "swap": "drive_motor",
+      "default": "n10_2200rpm_spicy",
+      "_why": "catalog id of the drive gearmotor (params_chassis.DRIVE_MOTOR); the tub pockets, MOTX, key tab, stop wall, pad and rig joints are derived from it"
     },
     "battery.pack": {
       "env": "REVRON_BATTERY",
-      "_why": "catalog id of the pack (params_hardware.BATTERY); the bay is cut from its envelope, it stands against the stop wall and the deck",
-      "swap": "battery"
+      "swap": "battery",
+      "default": "lipo_2s_180_turnabot",
+      "_why": "catalog id of the pack (params_hardware.BATTERY); the bay is cut from its envelope, it stands against the stop wall and the deck"
     },
     "drive.esc": {
       "env": "REVRON_RXESC",
-      "_why": "catalog id of the receiver / drive ESC (params_chassis.RXESC); its bay is cut from the envelope",
-      "swap": "drive_esc"
+      "swap": "drive_esc",
+      "default": "malenki_nano_rvrn2",
+      "_why": "catalog id of the receiver / drive ESC (params_chassis.RXESC); its bay is cut from the envelope"
     },
     "weapon.esc": {
       "env": "REVRON_WESC",
-      "_why": "catalog id of the weapon ESC (params_chassis.WESC); its bay is cut from the envelope",
-      "swap": "weapon_esc"
+      "swap": "weapon_esc",
+      "default": "bbb_ant_esc_rvrn2",
+      "_why": "catalog id of the weapon ESC (params_chassis.WESC); its bay is cut from the envelope"
     },
     "drive.belt": {
       "default": "o_ring",

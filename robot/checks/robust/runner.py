@@ -95,15 +95,29 @@ def run(jobs, spec_path, model_rel, budget_s=900.0, workers=3, execute=subproces
 
     ch = checks_hash() if src_hash else ""
 
+    store = Path(os.environ["ROBOT_ROBUST_RESULTS"]) if os.environ.get("ROBOT_ROBUST_RESULTS") else None
+    if store:  # per-job results kept beside the report (a shared folder): a restarted run resumes where it stopped
+        store.mkdir(parents=True, exist_ok=True)
+
     def cached_exec(jd, timeout):
         k = cache.h(job_key(jd, src_hash, spec_raw), ch) if src_hash else None
         if k:
+            f = store / f"{k}.json" if store else None
+            if f is not None and f.exists():
+                try:
+                    return json.loads(f.read_text())
+                except ValueError:
+                    pass
             hit = cache.get("robust", k)
             if not cache.is_missing(hit):
                 return hit
         res = execute(jd, timeout)
         if k and res.get("stage") not in ("timeout", "worker"):
             cache.put("robust", k, res)
+            if store:
+                tmp = store / f".{k}.tmp"
+                tmp.write_text(json.dumps(res))
+                tmp.replace(store / f"{k}.json")
         return res
 
     base = cached_exec(dict(common, id="baseline"), max(60.0, budget_s))

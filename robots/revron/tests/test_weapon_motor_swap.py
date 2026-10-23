@@ -59,7 +59,7 @@ print(json.dumps(out, default=list))
 """ % ROOT
 
 MNT_IN0 = 13.4
-MOTORS = ("gr1507", "gr1507_step", "bbb_be1806_2300kv")
+MOTORS = ("gr1507", "gr1507_step", "bbb_be1806_2300kv", "brotherhobby_tc1404_3800kv")   # TC1404: spider on every other bell screw
 CASES = {f"{m}@{k}": (m, v) for m in MOTORS for k, v in (("step", None), ("+10", round(MNT_IN0 * 1.1, 6)), ("-10", round(MNT_IN0 * 0.9, 6)))
          }
 # the stack does not fit between the mounts: the GR1507 at MNT_IN -10 % (2.4 mm of head room, 2.68 taken), the BE1806
@@ -123,7 +123,7 @@ def test_weapon_follows_motor_and_mnt_in(case, tmp_path):
     assert abs(r["BRG"]["bore_r"] - r["SHAFT_R"]) < 1e-9 and r["SHAFT_R"] == W["shaft_r"], case
 
 
-@pytest.mark.parametrize("motor,why", [("repeat_2004_1400kv", "does not fit the disc dog bore"), ("brotherhobby_tc1404_3800kv", "closer than one button head"), ("emax_eco2207_1900kv", "does not declare top_holes"),
+@pytest.mark.parametrize("motor,why", [("repeat_2004_1400kv", "is wider than the disc dog bore"), ("emax_eco2207_1900kv", "does not declare top_holes"),
                                        ("c_bbb_be1806_2300kv", "one piece and declares no mounting geometry"), ("no_such_motor", "not a catalog weapon motor")])
 def test_unfit_motor_fails_clearly(motor, why):
     p = _run("import sys; sys.path.insert(0, sys.argv[1]); import revron.params", SRC, {"REVRON_WEAPON_MOTOR": motor})

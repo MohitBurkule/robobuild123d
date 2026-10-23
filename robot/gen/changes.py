@@ -133,8 +133,9 @@ def swap_hook(hooks: dict | None, role: str, ids=None):
     declares one, and every catalog candidate of that role becomes a setting of it instead of a bare catalog op."""
     for name, h in ((hooks or {}).get("hooks") or {}).items():
         if isinstance(h, dict) and h.get("swap") == role:
-            sel = (h.get("swaps") or {}).get("id")  # optional: only these parts (e.g. the rear wheels)
-            if sel is None or ids is None or sorted(sel) == sorted(ids):
+            # optional part limit: `parts` (the hook swaps only these, e.g. the rear wheels) or `swaps: {"id": [...]}`
+            lim = h.get("parts") or (h.get("swaps") or {}).get("id")
+            if not lim or ids is None or set(ids) <= set(lim):
                 return name, h
     return None
 

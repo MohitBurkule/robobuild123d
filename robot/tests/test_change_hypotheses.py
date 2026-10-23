@@ -190,7 +190,7 @@ def test_swap_uses_declared_build_setting_and_any_env_value(tmp_path):
 def test_swap_setting_limited_to_its_parts():
     raw = {"parts": [{"id": i, "kind": "wheel", "stock": s, "shape": {"type": "model"}}
                      for i, s in (("wheel_rl", "rear"), ("wheel_rr", "rear"), ("wheel_fl", "front"), ("wheel_fr", "front"))]}
-    hooks = {"hooks": {"wheel.rear": {"env": "W", "swap": "wheel", "swaps": {"id": ["wheel_rl", "wheel_rr"]}, "values": ["stock", "wheel_20x8"]},
+    hooks = {"hooks": {"wheel.rear": {"env": "W", "swap": "wheel", "parts": ["wheel_rl", "wheel_rr"], "values": ["stock", "wheel_20x8"]},
                        "drive.belt": {"values": {"o_ring": [], "none": []}}}}
     cs = {c.id: c for c in C.swap_changes(raw, None, hooks)}
     assert cs["swap:wheel:wheel_rl+wheel_rr->wheel_20x8"].ops[0] == {"op": "hook", "name": "wheel.rear", "value": "wheel_20x8"}
@@ -242,3 +242,22 @@ def test_worker_passes_settings_to_generation(tmp_path, monkeypatch):
     monkeypatch.setenv("REVRON_X", "stale")
     assert worker.regenerate(tmp_path, "m.py", tmp_path, 60, {"REVRON_X": "30%"}) is None
     assert json.loads((tmp_path / "spec.json").read_text())["w"] == "30%"
+
+
+def test_runner_resumes_from_results_folder(tmp_path, monkeypatch):
+    from robot.checks.robust import plan as P, runner as R
+
+    spec = tmp_path / "spec.json"
+    spec.write_text("{}")
+    monkeypatch.setenv("ROBOT_ROBUST_RESULTS", str(tmp_path / "res"))
+    monkeypatch.setenv("ROBOT_NO_CACHE", "1")
+    calls = []
+
+    def ex(job, timeout):
+        calls.append(job["id"])
+        return {"id": job["id"], "blockers": [], "rebuilt": []}
+
+    jobs = [P.Job("a", "a", "hyp", overlay=[{"op": "x"}])]
+    R.run(jobs, spec, "m.py", 600, 1, execute=ex, src_hash="s", log=lambda *a: None)
+    R.run(jobs, spec, "m.py", 600, 1, execute=ex, src_hash="s", log=lambda *a: None)
+    assert calls == ["baseline", "a"]  # the second run reads every result back from the folder
