@@ -11,6 +11,7 @@ from .params_drive import WY, WZ, UP_IN, UP_T
 VM_T = WALL                            # shell / bulkhead / hollow walls
 UP_R = 12.5                            # upright tail radius round the weapon axis; the ramp runs from the chassis front
 #                                        inner wall at deck height up to the top of this circle and tops the whole module
+UP_TOP_R = 6.0                         # ramp plane rounded into the tail circle over the uprights (STEP)
 UP_TAIL_T = 3.2                        # upright outer face at the tail: this far out from the inner face
 TAPER_Y0 = 19.15                       # upright outer faces leave the chassis inner wall line here and run to the tail
 BULK_T = 4.9                           # bulkhead, from one wall inside the chassis rear inner wall line
@@ -34,8 +35,8 @@ NOTCH_WALL_CH = {1: ((0.387008, -0.724458, 0.570426), 14.19611), -1: ((-0.314194
 UP_OUT_CH = ((2.997, 2.942), (2.879, 3.063))   # upright outer top edges: (in on the ramp, down the face), left / right (STEP as drawn, TOP_CH nominal)
 UP_IN_CH = (1.95, 2.58)                # upright inner top edges: chamfer across the top, down the face
 UP_CH_END = 48.4                       # upright top chamfers run back to here
-SIDE_POCKET = ((WY - 16.61, 22.009), 4.702, (19.859, 24.0196), 7.0)   # upright outer pocket: round end (centre, r), floor / roof heights at their front points (STEP planes, tangent to the end), depth
-SIDE_POCKET_FRONT, POCKET_STEP = 2.73, 1.51   # pocket floor runs this far into the hollow wall; its slope starts behind the bulkhead face
+SIDE_POCKET = ((WY - 16.61, 22.009), 4.702, (20.0, 24.0196), 7.0)   # upright outer pocket: round end (centre, r), floor / roof heights at their front points (STEP planes, tangent to the end), depth
+SIDE_POCKET_FRONT, POCKET_STEP = 2.73, 0.8873   # pocket floor runs this far into the hollow wall; its slope starts behind the bulkhead face
 SIDE_HOLE = (26.0, 21.6, 1.6)           # hole through each hollow side wall: y, z, radius
 AXIS_HOLE_R = 4.0                      # through both uprights on the weapon axis (the MF85 OD seat on the right)
 UP_RECESS_R, UP_RECESS_X = 6.0, 17.8   # bearing side: recess round the axis from this |x| out (prop-mount nut)

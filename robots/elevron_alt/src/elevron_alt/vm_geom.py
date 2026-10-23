@@ -152,8 +152,11 @@ def hollow_plan():
 
 def upright_prof():
     """(y, z) outline: hull of the bulkhead foot and the tail circle round the weapon axis."""
-    pts = [Point(WY, WZ).buffer(UP_R, SEG), Point(IN_Y, DECK_TOP), Point(BULK_Y[0], ramp_z(BULK_Y[0]))]
-    return unary_union(pts).convex_hull.union(sbox(BULK_Y[0], DECK_TOP, IN_Y, ramp_z(IN_Y)))   # flat foot to the chassis inner wall line
+    tail = Point(WY, WZ).buffer(UP_R, SEG)
+    hull = unary_union([tail, Point(IN_Y, DECK_TOP), Point(BULK_Y[0], ramp_z(BULK_Y[0]))]).convex_hull
+    under = Polygon([(-BIG, -BIG), (BIG, -BIG), (BIG, ramp_z(BIG)), (-BIG, ramp_z(-BIG))])   # the ramp plane runs on over the uprights (STEP)
+    top = hull.intersection(under).union(tail).buffer(UP_TOP_R, SEG).buffer(-UP_TOP_R, SEG)   # rounded into the tail circle
+    return top.union(sbox(BULK_Y[0], DECK_TOP, IN_Y, ramp_z(IN_Y)))   # flat foot to the chassis inner wall line
 
 
 def body():
