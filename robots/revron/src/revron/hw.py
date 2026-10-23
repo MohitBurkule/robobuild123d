@@ -49,13 +49,16 @@ def placed(catalog_id, at, rot=(0, 0, 0)):
 def switch_mount(catalog_id):
     """How a catalog power switch is screwed down, read off its catalog entry and shape (its own frame, x along the ear row):
     `thread` (its `mount_thread`), `holes` (the catalog `mount_holes_mm`, +x first), `pitch` (their span along x), `cx` / `cy` (their centre), `top` (the face the ears seat on: the holes' z), `under` (the ears' underside: the lowest
-    material round a hole, where a screw head sits), `half_w` (the body's extent on the wall-facing -y side). A switch without catalog holes has none: it is seated by its bounding box (`pitch` its
+    material round a hole, where a screw head sits), `half_w` (the body's extent on the wall-facing -y side). A switch whose catalog entry lists no holes (`mount_holes_mm: []`, made to be bonded) has none: it is seated by its bounding box (`pitch` its
     length, `cx` / `cy` its centre, `top` / `under` its top face) and held without screws."""
     from robot import catalog
     r6 = lambda v: round(v, 6)
     s = _solid(catalog_id)
     bb = s.bounding_box()
-    holes = sorted((tuple(h) for h in (catalog.find(catalog_id).props or {}).get("mount_holes_mm", ())), reverse=True)
+    props = catalog.find(catalog_id).props or {}
+    if "mount_holes_mm" not in props:   # missing data is not "no holes": a screwed switch would silently become glued
+        raise ValueError(f"catalog switch `{catalog_id}` has no `mount_holes_mm`: list its mount holes, or [] for a switch made to be bonded")
+    holes = sorted((tuple(h) for h in props["mount_holes_mm"]), reverse=True)
     if not holes:
         return dict(thread=None, holes=(), pitch=r6(bb.size.X), cx=r6((bb.min.X + bb.max.X) / 2), cy=r6((bb.min.Y + bb.max.Y) / 2), top=r6(bb.max.Z), under=r6(bb.max.Z), half_w=r6(-bb.min.Y))
     from robot.cad.fastener_catalog import head

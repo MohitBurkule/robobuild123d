@@ -410,12 +410,37 @@ def _fillet14_dev():
             for sx in (1, -1)]
 
 
-def _printable_dev(s):
-    """reference_cad waivers of the optional 'printable' mount variant (nose pad, thickened notch tip); none for the original."""
+def _printable_dev(s, side):
+    """reference_cad waivers of the optional 'printable' mount variant (nose pad, thickened notch tip, loose CSK seats,
+    corner reliefs, RV03 stator / centre bores at their printable fits); none for the original. Each sphere sits on the
+    feature it names (relations of the mount masters), sized to the feature's extent through the slab."""
     if not PRINTABLE:
         return []
-    return [{"near": [s * MNT_TIP_DEV[0], MNT_TIP_DEV[1], MNT_TIP_DEV[2]], "r": MNT_TIP_DEV_R, "reason": "the STEP notch top is a zero-thickness wedge (mfg.thin_wall); thickened to a printable wall, rearmost point unchanged"},
-            {"near": [s * NOSE_DEV[0], NOSE_DEV[1], NOSE_DEV[2]], "r": NOSE_DEV_R, "reason": "nose pad round the nose CSK (NOSE_PAD_R): the cone is wider than the STEP R3.25 nose arc and left a 0.15 mm wall (mfg.thin_wall); up to ~1 mm of added material at the nose underside and front edge"}]
+    from robot.cad import fastener_catalog as fc
+    xs = s * (MNT_IN + MNT_SLAB_T / 2)                     # mid-slab: the slab carries the profile features
+    rm = (NOSE_R + NOSE_PAD_R) / 2                         # the nose pad ring's mid radius round SB
+    out = []
+    for (y, z), des, k in zip((SA, SB), MNT_SCREW, "ab"):
+        d = float(des[1:].split("x")[0])
+        c = fc.clearance(d, MNT_SCREW_FIT)
+        out.append({"near": [xs, y, z], "r": round(math.hypot(MNT_SLAB_T / 2, c / 2, c / 2) + 0.3, 3),
+                    "reason": f"printable CSK seat {k}: ISO 273 {MNT_SCREW_FIT} bore d{c:g} (STEP d3.2) under a d{fc.head(d, 'csk')[0] + MNT_CSK_CLEAR:g} cone (STEP d6.2), so the notch, not the screws, takes a hit"})
+    h = MNT_HEEL
+    for y, z, what in ((TAB["y0"], (h["z_lip"] + TAB["z0"]) / 2, "heel lip to tab rear face"), (TAB["y0"], MNT_TOP_Z - MNT_NOTCH_UP, "tab rear face to leaned top")):
+        out.append({"near": [xs, y, z], "r": MNT_SLAB_T / 2 + MNT_RELIEF_R + 0.5,
+                    "reason": f"printable corner relief R{MNT_RELIEF_R:g} ({what}; the STEP corner is sharp): mfg corner relief, clears the tub deck fillet"})
+    if side == "r":
+        out.append({"near": [s * (MNT_IN + MNT_SLAB_T * 0.75), WY, WZ], "r": DEV_R_MAX_MM,
+                    "reason": f"printable RV03 centre bore r{RV03_BORE_R:g} = shaft r + SHAFT_CLR (STEP d5.0)"})
+        out += [{"near": [xs, WY + dy, WZ + dz], "r": round(math.hypot(MNT_SLAB_T / 2, CB_R, CB_R) + 0.4, 3),
+                 "reason": f"printable RV03 stator hole: ISO 273 {STATOR_SCREW_FIT} fit (STEP d2.2 close) through the slab"} for dy, dz in stator_bolt_circle()]
+    out += [  # the large pads last: a waiver claims the nearest item it covers, so the seat / corner notes take theirs first
+        {"near": [s * (MNT_IN + MNT_T / 2), MNT_TIP_DEV[1], MNT_TIP_DEV[2]], "r": MNT_TIP_DEV_R, "reason": "the STEP notch top is a zero-thickness wedge (mfg.thin_wall); thickened to a printable wall, rearmost point unchanged"},
+        {"path": [[xs, SB[0] + rm * math.cos(math.radians(a)), SB[1] + rm * math.sin(math.radians(a))] for a in range(-150, 61, 15)], "r": PATH_R_MAX_MM,
+         "max_mm3": round(math.pi * (NOSE_PAD_R ** 2 - NOSE_R ** 2) * MNT_SLAB_T, 1),
+         "reason": "nose pad round the nose CSK (NOSE_PAD_R, slab only): the cone is wider than the STEP R3.25 nose arc and left a 0.15 mm wall (mfg.thin_wall); a ring of up to ~1 mm added material round the STEP nose arc (underside and front edge), capped at the ring's volume"}]
+    return out
+DEV_R_MAX_MM, PATH_R_MAX_MM = 5.0, 3.0   # robot.checks.reference_cad.DEV_R_MAX / PATH_R_MAX: a waiver is a local note
 
 
 def reference_cad():
@@ -440,9 +465,9 @@ def reference_cad():
           + [dict(near=[x, y, TOP_Z0 + TOP_T / 2], r=panel_top.EAR_R + 1.0, reason="reference Top_Panel_1.stl: R10 side arc tangent into the R2.5 ear (dump Fillet1 R10); the check's section estimate at the junction mixes both arcs and reads r 2.42 on the STEP exactly as on ours (2.4213 vs 2.4211 mm at 4 mm window) but then substitutes the dumped R10") for x, y in TOP_XY]
           + [dict(near=[0.0, sum(y for _, y in TOP_XY) / len(TOP_XY), TOP_Z0 + TOP_T / 2], r=TOP_SIL_R, reason="reference Top_Panel_1.stl front / side IoU is raster quantisation, not geometry: the STEP stores the 0.9 mm sheet as float32 z 19.5..20.39999962 while ours is 19.5..20.4, so at the 0.1 mm silhouette raster ours fills 10 pixel rows against the reference 9 (IoU 0.90 of a 0.9 mm edge-on plate); thickness TOP_T 0.9 and z 19.5 equal the STEP and the top / iso views agree at IoU 0.999")]),
         R("mount_l", "RV02_XALT_HD_left_hand_weapon_mount_1.stl", tol_mm=TOL["std"],
-          deviations=_printable_dev(-1)),
+          deviations=_printable_dev(-1, "l")),
         R("mount_r", "RV03_XALT__HD_Right_hand_weapon_mount_1.stl", tol_mm=TOL["std"],
-          deviations=_printable_dev(1) + [{"near": [sum(CB_STEP_CONE_X) / 2, WY + dy, WZ + dz], "r": STATOR_CONE_DEV_R,
+          deviations=_printable_dev(1, "r") + [{"near": [sum(CB_STEP_CONE_X) / 2, WY + dy, WZ + dz], "r": STATOR_CONE_DEV_R,
                        "reason": "STEP counterbore ends in a 45 deg lead-in cone (r2.25 at |X| 17.4 down to r1.1 at 16.4); we cut a flat floor at CB_FLOOR_X instead: the inferred M2x8 button head needs a flat seat (fastener_seat.head_bearing) and its tip must bite 1.7 mm of the 2 mm stator base (fastener.engagement; the STEP floor gives 1.25)"}
                       for dy, dz in stator_bolt_circle()] + _lead_groove_dev()),
         R("motor_spacer", "Motor_back_spacer_1.stl", tol_mm=TOL["tight"]),

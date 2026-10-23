@@ -20,6 +20,9 @@ IMPACT = {"wedge", "weapon", "armor", "fork", "locking_bar"}
 JOINT_AXIS_REACH_MM = 25.0
 
 
+BONDED = {"adhesive", "glue"}   # a declared bond needs a real contact face, like tape (no strength limit is assumed)
+
+
 def impact_part(p) -> bool:
     return p.kind in IMPACT
 
@@ -252,6 +255,12 @@ def run(ctx):
                     continue
                 if measure.min_gap(me, o, 1.0) <= 0.5:
                     linked.append(o)
+            if str(p.retained).lower() in BONDED and not any(contact_area_mm2(me, o, catalog.TAPE_CONTACT_GAP_MM) > 0 for o in linked):
+                out.append(fail("connection.bond_no_face", G, BLOCKER, "Glued part has no face to bond to",
+                                f"`{p.id}` is declared `retained: {p.retained}` but touches no structure or plate face (within "
+                                f"{catalog.TAPE_CONTACT_GAP_MM:g} mm); glue needs a contact face, so nothing holds it.").on(p.id)
+                           .fix("Seat it flat against a wall or pad (or screw it down), then declare the bond."))
+                linked = []
             if tape and linked:
                 gap = catalog.TAPE_CONTACT_GAP_MM
                 area_cm2 = sum(contact_area_mm2(me, o, gap) for o in linked) / 100.0

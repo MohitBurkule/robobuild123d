@@ -14,6 +14,7 @@ WEAPON_TYPES = {"drisk": "vertical drisk: spider on the outrunner bell driving t
 
 class WeaponTypeError(NotImplementedError):
     """weapon.type names a weapon style the generator does not build."""
+    declared_unfit = True   # a declared, reasoned refusal (the hypothesis does not fit), not a crash
 
 
 if WEAPON_TYPE not in WEAPON_TYPES:
@@ -115,7 +116,7 @@ WM_LENS = (3, 4, 5, 6, 8, 10, 12, 14, 16, 18, 20, 25)   # stock button-head leng
 WM_LEN = float(next(L for L in WM_LENS if L >= round(MNT_IN + WM_WEB - BASE_BACK_X + WM_BITE, 6) - 1e-6))   # shortest that reaches (GR1507: M2x8)
 WM_D = STATOR_HOLES[0][2]            # stator screw size (GR1507 M2)
 WM_DES = f"M{WM_D:g}x{WM_LEN:g}"
-CB_R = round(2.25 - _fc.head(2.0, "button")[0] / 2 + _fc.head(WM_D, "button")[0] / 2, 6)   # RV03 stator counterbore: the STEP d4.5 over the M2 button head, same slack for other sizes
+CB_R = round(2.25 - _fc.head(STACK_BOLT_D, "button")[0] / 2 + _fc.head(WM_D, "button")[0] / 2, 6)   # RV03 stator counterbore: the STEP d4.5 over the M2 button head, same slack for other sizes
 CB_FLOOR_X = round(BASE_BACK_X + WM_LEN - WM_BITE, 6)   # its floor |X| (the button head seats here): the screw tip lands WM_BITE inside the base (STEP 17.15 gives only 1.25: declared deviation)
 CB_CONE_X = (CB_FLOOR_X - 0.75, CB_FLOOR_X)      # the STEP's 0.75 lead-in cone under the counterbore (left out, see spec deviations)
 CB_STEP_CONE_X = (16.4, 17.4)        # |X| span of the STEP's 45 deg cone (r1.1 -> r2.25): the stator-hole deviation waiver spans it
@@ -164,7 +165,16 @@ NOSE_PAD_R = 4.1 if PRINTABLE else 0.0                        # local pad round 
 BIG = 60.0                              # a box edge bigger than any part, for the wedgelet's 2D half-plane clip (_mount_clip)
 MNT_RELIEF_R = 1.0 if PRINTABLE else 0.0                      # concave corner relief of the profile (tub deck fillet, mfg corner relief)
 MNT_CSK_CLEAR = 0.4 if PRINTABLE else 0.2   # extra cone diameter over the DIN 7991 head (dk 6.0): STEP cone d6.2; printable 0.4 floats the seated head so the notch bears a hit first
-MNT_CSK_PROUD = 0.0 if PRINTABLE else 0.12   # ISO 10642 head seated on the STEP d6.2 cone stands this far out of the inner face (flush, it would cut 0.08 into the cone; flush_head allows 0.2)
+def csk_seat_proud(d, fit, clear):
+    """How far the modelled ISO 10642 head (robot.world.fastener_shape: dk at the top, the thread d at depth k) stands out of
+    the face when it rests on a 90 deg cone of d dk + clear running down to the fit's clearance bore, so the head touches the
+    cone without cutting it: the head's radius at the cone's foot (depth h) must not exceed the bore radius."""
+    dk, k = _fc.head(d, "csk")
+    c = _fc.clearance(d, fit)
+    h = (dk + clear - c) / 2                                   # 90 deg cone depth
+    s = (dk - d) / (2 * k)                                     # head taper (radius per mm of depth)
+    return max(0.0, math.ceil(((dk - c) / (2 * s) - h) * 100 - 1e-9) / 100)
+MNT_CSK_PROUD = csk_seat_proud(float(MNT_SCREW[0][1:].split("x")[0]), MNT_SCREW_FIT, MNT_CSK_CLEAR) if PRINTABLE else 0.12   # ISO 10642 head on the cone: printable = the touching seat on its d6.4 cone + loose bore (0.09); STEP d6.2 cone + close bore keeps the 0.12 the STEP stack implies (flush_head allows 0.2)
 MNT_TIP_WALL, MNT_TIP_REACH = (1.5 if PRINTABLE else 0.0), 3.0    # printed wall: the wedge where the rear notch meets the rim tangent is thickened upward to this within this reach of the notch top (rearmost point and underside unchanged: the underside rides on the chassis tab)
 
 
@@ -246,7 +256,18 @@ def tub_interface():
     type, mount_in (mount inner face |X|), mount_frames, tab (the notch tab RV02/RV03 drop over), clear_r (chassis
     stays outside this radius about the axis), axis (Y, Z), phase_via (lead route over the lug), spider_x (world X of the spider's two faces)."""
     return dict(type=WEAPON_TYPE, mount_in=MNT_IN, mount_frames=dict(MNT_FRAME), tab=dict(TAB), clear_r=WEAPON_CLEAR_R,
-                axis=(WY, WZ), motor=WM["id"], spider_x=[round(MOTOR_X + v, 6) for v in DR_X["spider"]], phase_via=[list(p) for p in PHASE_VIA])
+                axis=(WY, WZ), motor=WM["id"], spider_x=[round(MOTOR_X + v, 6) for v in DR_X["spider"]], phase_via=[list(p) for p in PHASE_VIA],
+                rotor_x=rotor_x(), rotor_r=round(BOLT_R + _fc.head(STACK_BOLT_D, "button")[0] / 2, 6))
+
+
+def rotor_x():
+    """World X span [lo, hi] of everything that spins on the weapon axis out at the stack-bolt circle: the spider's outer face
+    to the stack-bolt (bolt_d, M2 button) heads on disc_b's outer face. With a short motor (TC1404: MOTOR_X 4.4) the stack moves
+    toward RV03 and the bolt_d heads, not the spider, are the rotor's +X end: a tub wall kept only off spider_x is swept by them
+    (hyp swap weapon_motor tc1404: bolt_d / tub at 0.10 mm). The tub should keep its tab wall off this span within rotor_r."""
+    lo = MOTOR_X + DR_X["spider"][0]
+    hi = MOTOR_X + DR_X["disc_b"][1] + _fc.head(STACK_BOLT_D, "button")[1]
+    return [round(lo, 6), round(hi, 6)]
 
 
 __all__ = [n for n in dir() if not n.startswith("__")]   # last line: every name above is exported
