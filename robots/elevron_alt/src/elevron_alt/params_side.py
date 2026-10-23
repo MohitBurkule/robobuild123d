@@ -45,6 +45,7 @@ FORK_FLOOR_CLR = 0.25                  # fork underside above the floor (clip_fo
 FORK_TYRE_IN = 0.2                     # fork outer face inside the tyre's outer face
 POCKET_END_CLR = 0.2                   # tab pocket's end wall past the chassis tab end
 FORK_W = 5.74                          # fork prong width, its outer face just inside the tyre's outer face
+POCKET_END_R = 2.2                     # tab pocket: ceiling chamfer rounded into the end wall (STEP)
 ROOT_R = 5.0                           # fork-root inner face rounded into the rear slope and the fork (STEP)
 FORK_TOP_R = 30.0                      # root top rounded into the fork top (STEP)
 FORK_T = 4.0                           # fork thickness over the underside

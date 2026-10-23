@@ -223,9 +223,16 @@ def root_rounds():
     return _S(_I(_U(inside_round(edge, slope, ROOT_R), inside_round(edge, inner, ROOT_R)), zone), _above(ROOT_TOP[:2], ROOT_TOP[2]))
 
 
+def pocket_round():
+    """POCKET_END_R inside round where the tab pocket's chamfered ceiling meets its end wall (STEP)."""
+    x0, x1, yr, ch = TAB_POCKET
+    k = 1 / math.sqrt(2)
+    return _I(inside_round(((0, -k, -k), -ch * k), ((0, -1, 0), -yr), POCKET_END_R), _box(x0, x1, -BIG, BIG, -BIG, BIG))
+
+
 def sp():
     s = _U(guard(), plate(), rear(), fork(), struts(), rear_flare(), root_rounds())
-    s = _S(s, wells(), pocket())
+    s = _S(s, wells(), _S(pocket(), pocket_round()))   # the pocket void keeps its rounded corner
     nonfork = _S(_box(-BIG, BIG, -BIG, BIG, -BIG, 0), _box(*FORK_X, CROSS_Y0, BIG, -BIG, BIG))
     s = _S(s, under_b(), nonfork)
     from .variants import variant
