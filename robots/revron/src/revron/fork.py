@@ -6,7 +6,7 @@ STEP places the same part at two X offsets and two tilts, so there is no mirror.
 import math
 from .params_drive import (FK_EYE_D, FK_PIN_D, FK_PIN_DIST, FK_PIN_ANG, FK_TIP, FK_RAIL, FK_FILLET, FK_T, FK_WEB, FK_KERF,
                            FK_BOT_ANG, FK_X0, FK_TILT, FK_RES)
-from .params_chassis import SB, SB_X
+from .params_chassis import SB, SB_X, SB_X_STOCK
 from .common import _ext, _round, _b
 
 
@@ -105,6 +105,6 @@ def rig_fork(r, s, n):
 
 def rig_nose(r, s, n):
     """Concentric82: the side panel's nose screw hole on the wedgelet's, both on the 15 mm standoff axis."""
-    r.joint(f"side_{n}", "nose_axis", (s * SB_X[1], *SB))
-    r.joint(f"wedgelet_{n}", "nose_axis", (s * SB_X[1], *SB))
+    r.joint(f"side_{n}", "nose_axis", (s * SB_X_STOCK[1], *SB))
+    r.joint(f"wedgelet_{n}", "nose_axis", (s * SB_X_STOCK[1], *SB))
     r.mate(f"side_{n}", "nose_axis", f"wedgelet_{n}", "nose_axis")
