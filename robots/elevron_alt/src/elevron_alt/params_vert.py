@@ -32,6 +32,7 @@ UP_IN_CH = (1.95, 2.58)                # upright inner top edges: chamfer across
 UP_CH_END = 48.4                       # upright top chamfers run back to here
 SIDE_POCKET = ((WY - 16.61, 22.01), 4.7, (20.0, 23.9), 7.0)   # upright outer pocket: round end (centre, r), front z span, depth
 SIDE_POCKET_FRONT, POCKET_STEP = 2.73, 1.51   # pocket floor runs this far into the hollow wall; its slope starts behind the bulkhead face
+SIDE_HOLE = (26.0, 21.6, 1.6)           # hole through each hollow side wall: y, z, radius
 AXIS_HOLE_R = 4.0                      # through both uprights on the weapon axis (the MF85 OD seat on the right)
 UP_RECESS_R, UP_RECESS_X = 6.0, 17.8   # bearing side: recess round the axis from this |x| out (prop-mount nut)
 MOTOR_PCD = (16.0, 12.0)               # BE1806 base screws: 16 x 12 on the 45 deg diagonals

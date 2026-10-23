@@ -179,7 +179,7 @@ REF_PART = {"motor_": "RV12_N10_2200_RPM*", "wheel_": "RV22_Scalextric_F1_Front_
             "prop_mount": "RV07_Prop_mount*", "wbearing": "FS4_MF85ZZ*", "so_": "10mm_standoff_3m_alu*", "bplate_": "BACKING_PLATE*",
             "fplate_": "FRONT_PLATE*", "spider": "spiderSL*"}
 NOT_IN_STEP = {
-    "whub_f": "not in the STEP: it draws the two RV21 hubs on the N10s only; the front idlers carry the same RV21 hub, its bore opened for the standoff",
+    "whub_f": "not in the STEP: it draws the two RV21 hubs on the N10s only; the front idlers carry the same RV21 hub, its bore opened for the standoff and its grub bore and nut slot filled (an idler needs no grub)",
     "base_panel": "not in the STEP (open-bottom chassis): a 1 mm printed panel in the Cut-Extrude2 rebate closes the electronics bay",
     "battery": "not in the STEP (no electronics drawn): Turnabot 2S 180 between the column rows",
     "rxesc": "not in the STEP (no electronics drawn): Malenki nano receiver / drive ESC",
@@ -238,6 +238,8 @@ TAB_DEV_R = 3.5                        # the Chamfer5 lead-in at the inner tab f
 SLOT_DEV_R = 4.0                       # switch slot / window web
 REBATE_DEV_R = 5.0                     # the base-panel rebate lip (the ligament check reads the rebate as a 68.5 bore)
 VOL_TOL = dict(chassis=0.05, vert=0.2, side=0.4)
+NUT_DEV_R = 4.0                        # the prong nut pocket's neighbourhood
+FORK_PLACE_TOL = 3.0                   # side pods' bbox-centre tolerance with the forks stopped over the floor
 
 
 def reference_cad():
@@ -252,10 +254,19 @@ def reference_cad():
                  "deck lattice window (STEP: window edge x 21.9, slot x 22.0)"}
                 for x, y, what in ((sx0 - SW_SLOT[0] / 2, 0, "the switch slot's inner edge"), (sx0 - SW_SLOT[0] / 2, -SW_PITCH / 2, "the front switch pilot"),
                                    (sx0 - SW_SLOT[0] / 2, SW_PITCH / 2, "the rear switch pilot"), (POST_PITCH[0] / 2 - COL_R - SLOT_DEV_R, 0, "the window beside the slot"))]
+    from .variants import variant
+    step_forks = variant("step_forks")
+    side_place = {} if step_forks else {"placement_tol_mm": FORK_PLACE_TOL}
+    fork_note = "" if step_forks else ("; the forks stop over the floor (variant step_forks off), so the pod's bbox centre sits "
+                                       "2.6 mm off the STEP's (its fork tips reach 2.25 mm under the wheels' floor)")
     rows = [dict(part="chassis", file="Alt_chassis_1.stl", mode="shape", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["chassis"], note="Alt_chassis (dump replay by relations)", deviations=tab_dev + reb_dev + deck_dev),
-            dict(part="vert_mod", file="vert_mod_1.stl", mode="envelope", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["vert"], note="vert_mod: no dump; relation build from STEP sections (see MISSES.md)"),
-            dict(part="side_r", file="Side_Panel_alt_sm_1.stl", mode="envelope", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["side"], note="Side_Panel_alt_sm: no dump (see MISSES.md)"),
-            dict(part="side_l", file="MirrorSide_Panel_alt_sm_1.stl", mode="envelope", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["side"], note="MirrorSide_Panel_alt_sm"),
+            dict(part="vert_mod", file="vert_mod_1.stl", mode="envelope", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["vert"], note="vert_mod: no dump; relations from the STEP solid's faces (see MISSES.md)",
+                 deviations=[{"near": _w(s * (PRONG[0] + NUT_HALF), HY + TAB_HOLE_DY, TAB_HOLE_Z), "r": NUT_DEV_R,
+                              "reason": "ours, not the STEP's: the thin cross-bolt nut captive in the prong (the STEP prong has a plain hole) leaves 0.8 mm to the prong window"} for s in (-1, 1)]),
+            dict(part="side_r", file="Side_Panel_alt_sm_1.stl", mode="envelope", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["side"], **side_place,
+                 note="Side_Panel_alt_sm: no dump (see MISSES.md)" + fork_note),
+            dict(part="side_l", file="MirrorSide_Panel_alt_sm_1.stl", mode="envelope", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["side"], **side_place,
+                 note="MirrorSide_Panel_alt_sm" + fork_note),
             dict(part="disc", file="Drisk_floating_3_1.stl", mode="envelope", tol_mm=TOL["std"], note="the Revron disc")]
     for s, n, f in ((-1, "l", "RV21_Rear_Wheel_1.stl"), (1, "r", "RV21_Rear_Wheel_2.stl")):
         rows.append(dict(part=f"whub_r{n}", file=f, mode="envelope", tol_mm=TOL["loose"], deviations=[hub(s, AXLE_Y, hub_why)]))

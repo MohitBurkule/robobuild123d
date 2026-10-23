@@ -239,6 +239,19 @@ def _faces(poly):
     return out
 
 
+def side_holes():
+    """Hole through each side wall of the hollow, square to the upright's taper face, ahead of the side pocket."""
+    import build123d as bd
+    hy, hz, hr = SIDE_HOLE
+    (x0, y0), (x1, y1) = TAPER
+    L = math.hypot(x1 - x0, y1 - y0)
+    n = ((y1 - y0) / L, (x0 - x1) / L)
+    n = n if n[0] > 0 else (-n[0], -n[1])
+    c = (taper_x(hy), hy, hz)
+    h = bd.Solid.make_cylinder(hr, 4 * VM_T, bd.Plane(origin=(c[0] - 2 * VM_T * n[0], c[1] - 2 * VM_T * n[1], hz), z_dir=(n[0], n[1], 0)))
+    return _U(h, _mirror_x(h))
+
+
 def axis_cuts():
     """Axis hole through both uprights, the bearing-side recess, the motor screws (counterbored on the motor side)."""
     c = []
@@ -292,7 +305,7 @@ def prongs():
     outline = base.difference(toe).union(up).buffer(hr).buffer(-hr)   # heel fillet into the upright underside
     outline = outline.intersection(sbox(y0, zb, yz(DECK_TOP), DECK_TOP))   # overlaps the upright above its underside
     hole = (HY + TAB_HOLE_DY, TAB_HOLE_Z)
-    win = base.buffer(-PRONG_WEB).intersection(sbox(y0 + PRONG_FRONT, zb, BIG, BIG)).difference(up)
+    win = base.buffer(-PRONG_FRONT).intersection(sbox(y0 + PRONG_FRONT, zb, BIG, DECK_TOP)).difference(up)   # webs PRONG_FRONT thick, open to the upright
     win = win.difference(Point(hole).buffer(PRONG_BOSS, SEG)).buffer(-PRONG_WEB).buffer(PRONG_WEB)
     p = _ext(outline.difference(win), "yz", x0, x0 + t)
     p = _S(p, _cyl(TAB_HOLE_R, x0 - 1, x0 + t + 1, hole, "x"))
@@ -319,4 +332,4 @@ def grooves():
 
 def vm():
     s = _U(body(), shroud(), prongs())
-    return _solid(_S(s, side_pockets(), axis_cuts(), bulk_cuts(), post_holes(), grooves(), upright_chamfers()))
+    return _solid(_S(s, side_pockets(), side_holes(), axis_cuts(), bulk_cuts(), post_holes(), grooves(), upright_chamfers()))

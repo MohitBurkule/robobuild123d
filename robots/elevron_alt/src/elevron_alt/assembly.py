@@ -7,10 +7,10 @@ import sys
 
 import build123d as bd
 
-from robocad.geom import _cyl, _S, _U, _box, _solid
+from robocad.geom import _cyl, _S, _U, _I, _box, _solid
 from . import chassis as ch, side_panel as sp, vert_mod as vm
 from .fasteners import cutters
-from .params_chassis import HX, REBATE, POSTS, END_POSTS, TAP_D, WALL, AXLE_Z, AXLE_Y, IN_X, KEY_R, HOLE_D
+from .params_chassis import HX, CORNER_R, REBATE, POSTS, END_POSTS, TAP_D, WALL, AXLE_Z, AXLE_Y, IN_X, KEY_R, HOLE_D
 from .params_drive import DISC_PHASE, FLOOR_LIFT, HUB_X0, TYRE_X0, WY, WZ, DISC_X, SPIDER_X, PROP_X0, PROP_LEN, PROP_FLANGE_X1, SHAFT_D, MOTOR_BASE_X, BASE_SKIN, BRG, BRG_X0, UP_IN, UP_T, HUB_LEN
 from .params_hw import BASE_T, BASE_CSK_D, SO_LEN, SO_D, PLATE_W, PLATE_H, BACK_T, FRONT_T, PROP_D, FH_CLR, FRONT_HUB_TRIM
 
@@ -27,6 +27,9 @@ def _lift(s):
 def base_panel():
     """1 mm panel in the chassis rebate, an M2 clearance hole under every screw column (fasteners table)."""
     p = _box(-(HX - REBATE), HX - REBATE, -(ch.HY - REBATE), ch.HY - REBATE, WALL - BASE_T, WALL)
+    for sx in (-1, 1):   # front corners round with the rebate's (concentric with Fillet1)
+        cx, cy = sx * (HX - CORNER_R), -(ch.HY - CORNER_R)
+        p = _S(p, _S(_box(cx, cx + sx * CORNER_R, cy, cy - CORNER_R, WALL - BASE_T - 1, WALL + 1), _cyl(CORNER_R - REBATE, WALL - BASE_T - 1, WALL + 1, (cx, cy), "z")))
     return _S(p, cutters("base_panel"))
 
 
@@ -39,7 +42,9 @@ def wheel_part(kind, sx, y):
     """RV21 hub / RV22 tyre (Revron frame: axis +X, inner face x = 0) on the axle line y, side sx (STEP frame).
     Front hubs idle on the 10 mm standoff: the D-bore is opened round it."""
     s = _revron_wheel("hub" if kind != "tyre" else "tyre")
-    if kind == "front_hub":   # bore opened round the standoff, inner end trimmed clear of the FRONT_PLATE
+    if kind == "front_hub":   # an idler: no grub (its nut slot and bore filled), bore opened round the standoff, inner end trimmed clear of the FRONT_PLATE
+        from revron import hubs
+        s = _U(s, _I(hubs._spin(hubs._rear_profile()), _U(hubs._nut_slot(), hubs._grub())))
         s = _S(s, _cyl(SO_D / 2 + FH_CLR, -1, HUB_LEN + 1, (0, 0), "x"), _cyl(HUB_LEN, -1, FRONT_HUB_TRIM, (0, 0), "x"))
     x0 = HUB_X0 if kind != "tyre" else TYRE_X0
     s = s.moved(bd.Location((x0, y, AXLE_Z)))

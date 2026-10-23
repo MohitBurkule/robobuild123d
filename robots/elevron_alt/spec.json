@@ -469,7 +469,7 @@
     "ligament": "RVRN RV21 hub as drawn: the M3 grub bore breaks into the D-bore and the seat ramps (STEP Cut-Extrude4)"
    },
    "label": "RV21 printed hub (Revron), bore opened to idle on the 10 mm standoff",
-   "deviation": "not in the STEP: it draws the two RV21 hubs on the N10s only; the front idlers carry the same RV21 hub, its bore opened for the standoff"
+   "deviation": "not in the STEP: it draws the two RV21 hubs on the N10s only; the front idlers carry the same RV21 hub, its bore opened for the standoff and its grub bore and nut slot filled (an idler needs no grub)"
   },
   {
    "id": "wheel_fl",
@@ -679,7 +679,7 @@
     "ligament": "RVRN RV21 hub as drawn: the M3 grub bore breaks into the D-bore and the seat ramps (STEP Cut-Extrude4)"
    },
    "label": "RV21 printed hub (Revron), bore opened to idle on the 10 mm standoff",
-   "deviation": "not in the STEP: it draws the two RV21 hubs on the N10s only; the front idlers carry the same RV21 hub, its bore opened for the standoff"
+   "deviation": "not in the STEP: it draws the two RV21 hubs on the N10s only; the front idlers carry the same RV21 hub, its bore opened for the standoff and its grub bore and nut slot filled (an idler needs no grub)"
   },
   {
    "id": "wheel_fr",
@@ -1516,8 +1516,8 @@
     "csk_angle": 90.0,
     "csk_d": 6.3,
     "csk_depth": 1.45,
-    "sink": 0.1,
-    "grip": 5.6
+    "sink": 1.1,
+    "grip": 6.6
    },
    "tool": "hex2",
    "removable": true,
@@ -1556,8 +1556,8 @@
     "csk_angle": 90.0,
     "csk_d": 6.3,
     "csk_depth": 1.45,
-    "sink": 0.1,
-    "grip": 5.6
+    "sink": 1.1,
+    "grip": 6.6
    },
    "tool": "hex2",
    "removable": true,
@@ -1607,7 +1607,7 @@
    "id": "bolt_xl",
    "designation": "M3x10",
    "at": [
-    -11.5,
+    -11.6,
     38.2,
     6.25
    ],
@@ -1636,7 +1636,7 @@
     "csk_angle": 90.0,
     "csk_d": 6.3,
     "csk_depth": 1.45,
-    "sink": 0.0,
+    "sink": 0.1,
     "grip": 6.0
    },
    "tool": "hex2",
@@ -1677,8 +1677,8 @@
     "csk_angle": 90.0,
     "csk_d": 6.3,
     "csk_depth": 1.45,
-    "sink": 0.1,
-    "grip": 5.6
+    "sink": 1.1,
+    "grip": 6.6
    },
    "tool": "hex2",
    "removable": true,
@@ -1717,8 +1717,8 @@
     "csk_angle": 90.0,
     "csk_d": 6.3,
     "csk_depth": 1.45,
-    "sink": 0.1,
-    "grip": 5.6
+    "sink": 1.1,
+    "grip": 6.6
    },
    "tool": "hex2",
    "removable": true,
@@ -1768,7 +1768,7 @@
    "id": "bolt_xr",
    "designation": "M3x10",
    "at": [
-    11.5,
+    11.6,
     38.2,
     6.25
    ],
@@ -1797,7 +1797,7 @@
     "csk_angle": 90.0,
     "csk_d": 6.3,
     "csk_depth": 1.45,
-    "sink": 0.0,
+    "sink": 0.1,
     "grip": 6.0
    },
    "tool": "hex2",
@@ -1909,8 +1909,8 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.2,
-    "cbore_depth": 0.9285,
-    "grip": 4.9285
+    "cbore_depth": 0.6459,
+    "grip": 4.6459
    },
    "tool": "hex1.5",
    "removable": true,
@@ -2315,25 +2315,7 @@
       "near": [
        0,
        0,
-       2.25
-      ],
-      "r": 5.0,
-      "reason": "ELVRN3.0 Alt chassis Cut-Extrude2: the 1 mm base-panel rebate lip under the 2 mm wall, as in the STEP"
-     },
-     {
-      "near": [
-       0,
-       0,
        3.25
-      ],
-      "r": 5.0,
-      "reason": "ELVRN3.0 Alt chassis Cut-Extrude2: the 1 mm base-panel rebate lip under the 2 mm wall, as in the STEP"
-     },
-     {
-      "near": [
-       0,
-       0,
-       4.25
       ],
       "r": 5.0,
       "reason": "ELVRN3.0 Alt chassis Cut-Extrude2: the 1 mm base-panel rebate lip under the 2 mm wall, as in the STEP"
@@ -2345,7 +2327,7 @@
        17.25
       ],
       "r": 4.0,
-      "reason": "ELVRN3.0 Alt chassis Cut-Extrude6 / Sketch20: the switch slot and its pilots sit 0.1 mm off the deck lattice window (STEP: window edge x 21.9, slot x 22.0)"
+      "reason": "ELVRN3.0 Alt chassis Cut-Extrude6 / Sketch20: the switch slot's inner edge sits 0.1 mm off the deck lattice window (STEP: window edge x 21.9, slot x 22.0)"
      },
      {
       "near": [
@@ -2354,7 +2336,7 @@
        17.25
       ],
       "r": 4.0,
-      "reason": "ELVRN3.0 Alt chassis Cut-Extrude6 / Sketch20: the switch slot and its pilots sit 0.1 mm off the deck lattice window (STEP: window edge x 21.9, slot x 22.0)"
+      "reason": "ELVRN3.0 Alt chassis Cut-Extrude6 / Sketch20: the front switch pilot sits 0.1 mm off the deck lattice window (STEP: window edge x 21.9, slot x 22.0)"
      },
      {
       "near": [
@@ -2363,7 +2345,7 @@
        17.25
       ],
       "r": 4.0,
-      "reason": "ELVRN3.0 Alt chassis Cut-Extrude6 / Sketch20: the switch slot and its pilots sit 0.1 mm off the deck lattice window (STEP: window edge x 21.9, slot x 22.0)"
+      "reason": "ELVRN3.0 Alt chassis Cut-Extrude6 / Sketch20: the rear switch pilot sits 0.1 mm off the deck lattice window (STEP: window edge x 21.9, slot x 22.0)"
      },
      {
       "near": [
@@ -2372,7 +2354,7 @@
        17.25
       ],
       "r": 4.0,
-      "reason": "ELVRN3.0 Alt chassis Cut-Extrude6 / Sketch20: the switch slot and its pilots sit 0.1 mm off the deck lattice window (STEP: window edge x 21.9, slot x 22.0)"
+      "reason": "ELVRN3.0 Alt chassis Cut-Extrude6 / Sketch20: the window beside the slot sits 0.1 mm off the deck lattice window (STEP: window edge x 21.9, slot x 22.0)"
      }
     ]
    },
@@ -2382,7 +2364,27 @@
     "mode": "envelope",
     "tol_mm": 1.5,
     "tol_vol_frac": 0.2,
-    "note": "vert_mod: no dump; relation build from STEP sections (see MISSES.md)"
+    "note": "vert_mod: no dump; relations from the STEP solid's faces (see MISSES.md)",
+    "deviations": [
+     {
+      "near": [
+       -18.4,
+       38.2,
+       6.25
+      ],
+      "r": 4.0,
+      "reason": "ours, not the STEP's: the thin cross-bolt nut captive in the prong (the STEP prong has a plain hole) leaves 0.8 mm to the prong window"
+     },
+     {
+      "near": [
+       18.4,
+       38.2,
+       6.25
+      ],
+      "r": 4.0,
+      "reason": "ours, not the STEP's: the thin cross-bolt nut captive in the prong (the STEP prong has a plain hole) leaves 0.8 mm to the prong window"
+     }
+    ]
    },
    {
     "part": "side_r",
@@ -2390,7 +2392,8 @@
     "mode": "envelope",
     "tol_mm": 1.5,
     "tol_vol_frac": 0.4,
-    "note": "Side_Panel_alt_sm: no dump (see MISSES.md)"
+    "placement_tol_mm": 3.0,
+    "note": "Side_Panel_alt_sm: no dump (see MISSES.md); the forks stop over the floor (variant step_forks off), so the pod's bbox centre sits 2.6 mm off the STEP's (its fork tips reach 2.25 mm under the wheels' floor)"
    },
    {
     "part": "side_l",
@@ -2398,7 +2401,8 @@
     "mode": "envelope",
     "tol_mm": 1.5,
     "tol_vol_frac": 0.4,
-    "note": "MirrorSide_Panel_alt_sm"
+    "placement_tol_mm": 3.0,
+    "note": "MirrorSide_Panel_alt_sm; the forks stop over the floor (variant step_forks off), so the pod's bbox centre sits 2.6 mm off the STEP's (its fork tips reach 2.25 mm under the wheels' floor)"
    },
    {
     "part": "disc",
