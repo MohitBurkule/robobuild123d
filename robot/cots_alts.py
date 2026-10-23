@@ -302,7 +302,10 @@ def outrunner(cid, s) -> CatalogEntry:
         cuts += holes_x(bolt_circle(pcd, n, spec[3] if len(spec) > 3 else 45.0), d * 0.8, x1, 2 * min(depth, bell_len / 2))
     props = {"kv": s["kv"], "max_current_a": s.get("max_current_a") or 15.0, "typ_current_a": (s.get("max_current_a") or 15.0) / 2,
              "bell_mass_frac": 0.5, "cells": s["cells"], "lead_len_mm": s.get("wires_mm"),
-             "mount_holes": [list(h) for h in s["base_holes"]], "top_holes": [list(h) for h in s["top_holes"]]}
+             "mount_holes": [list(h) for h in s["base_holes"]], "top_holes": [list(h) for h in s["top_holes"]],
+             # mounting geometry (catalog frame): stator base back / bell top, bell radius and length, base flange, shaft through the body
+             "body_x": [x0, x1], "bell_r": s["bell_d"] / 2, "bell_len": bell_len, "base_h": base_h, "base_r": s["base_d"] / 2,
+             "base_hub_r": s["shaft_d"] / 2 + 1.0, "rear_stub": s["rear_stub"], "shaft_thread_mm": 0.0, "shaft_through": True}
     if s.get("internal_resistance_mohm"):
         props["internal_resistance_mohm"] = s["internal_resistance_mohm"]
     return CatalogEntry(cid, "weapon_motor", s["name"], s["mass_g"], "datasheet", union([minus(union(parts), cuts)] + leads),

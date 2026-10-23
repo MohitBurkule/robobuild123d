@@ -173,9 +173,9 @@ def test_swap_uses_declared_build_setting_and_any_env_value(tmp_path):
     from robot.checks.robust import discover as D, hyp
     from robot.checks.robust.usage import Graph, Usage
 
-    hooks = {"hooks": {"drive.motor": {"env": "X_DRIVE_MOTOR", "swaps": {"id": ["motor_l", "motor_r"]}}}}
+    hooks = {"hooks": {"drive.motor": {"env": "X_DRIVE_MOTOR", "swap": "drive_motor"}}}
     cs = [c for c in C.swap_changes(_raw(), None, hooks) if c.id.startswith("swap:drive_motor:")]
-    assert cs and all(c.ops[0] == {"op": "hook", "name": "drive.motor", "value": c.ops[1]["to"]} for c in cs)
+    assert cs and all(c.ops == [{"op": "hook", "name": "drive.motor", "value": c.id.split("->")[1]}] for c in cs)
     src = tmp_path / "params_x.py"
     src.write_text('import os\nDRIVE_MOTOR = os.environ.get("X_DRIVE_MOTOR", "n10_2200rpm_spicy")\n')
     sw = D.env_setting([src], "X_DRIVE_MOTOR")
@@ -183,7 +183,18 @@ def test_swap_uses_declared_build_setting_and_any_env_value(tmp_path):
     jobs, nx = hyp.resolve(cs[:1], _raw(), hooks, D.Discovery(), Usage(Graph(), _raw()), [src])
     assert not nx
     j = jobs[0][1]
-    assert j.kind == "choice" and j.new_text == repr(cs[0].ops[1]["to"]) and j.overlay[0]["op"] == "catalog"
+    assert j.kind == "choice" and j.new_text == repr(cs[0].id.split("->")[1])
+
+
+def test_swap_setting_limited_to_its_parts():
+    raw = {"parts": [{"id": i, "kind": "wheel", "stock": s, "shape": {"type": "model"}}
+                     for i, s in (("wheel_rl", "rear"), ("wheel_rr", "rear"), ("wheel_fl", "front"), ("wheel_fr", "front"))]}
+    hooks = {"hooks": {"wheel.rear": {"env": "W", "swap": "wheel", "swaps": {"id": ["wheel_rl", "wheel_rr"]}, "values": ["stock", "wheel_20x8"]},
+                       "drive.belt": {"values": {"o_ring": [], "none": []}}}}
+    cs = {c.id: c for c in C.swap_changes(raw, None, hooks)}
+    assert cs["swap:wheel:wheel_rl+wheel_rr->wheel_20x8"].ops[0] == {"op": "hook", "name": "wheel.rear", "value": "wheel_20x8"}
+    assert cs["swap:wheel:wheel_rl+wheel_rr->wheel_28x10"].ops[0]["op"] == "wheel"  # not offered by the setting
+    assert cs["swap:wheel:wheel_fl+wheel_fr->wheel_20x8"].ops[0]["op"] == "wheel"
 
 
 def test_wheel_swap_sets_belt_none_and_wheel_od(tmp_path):

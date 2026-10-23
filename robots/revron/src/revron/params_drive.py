@@ -1,5 +1,6 @@
 """Revron params: wheel hubs, forks, tyres. Re-exported by params.py."""
 import math
+from .wheel_variant import rear_wheel_dims
 from .params_spec import *  # noqa: F401,F403
 
 
@@ -22,7 +23,7 @@ FH_FILLET, FH_GUSSET = 0.5, 0.4                                                 
 FH_LEN = 3 * FH_FLANGE_T + FH_GROOVE_W + FH_SEAT_W                                       # 9
 FH_ORIGIN_X = RH_ORIGIN_X                                                               # Coincident82: the front hub inner face is in the rear hub's plane
 # RV22 rear tyre (Revolve1 + Chamfer1 + Fillet1): bore with a centre groove for the hub crown; RV20 micro tyre: plain ring, 4 chamfers
-TY_REAR = dict(od=21.5, bore=12.0, groove_r=7.0, groove_w=2.5, w=9.5, chamfer=1.0, fillet=0.5)
+TY_REAR = dict(**rear_wheel_dims(), bore=12.0, groove_r=7.0, groove_w=2.5, chamfer=1.0, fillet=0.5)   # od / w from the wheel setting (stock 21.5 x 9.5)
 TY_FRONT = dict(od=11.0, id=7.0, w=6.0, chamfer=0.2)
 TY_ARC_STEP = 5                                                                          # deg per fillet segment (under the 6 deg facet seam)
 SO_TAP_R, SO_PITCH, SO_CHAMFER = 1.25, 0.5, 0.2                                        # RV10/RV11: M3 tap bore radius, thread pitch, 45 deg end chamfer (Chamfer1)

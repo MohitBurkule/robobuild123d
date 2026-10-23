@@ -1356,8 +1356,8 @@
   ]
  },
  "start_pose": {
-  "whub_rl": -2.45,
-  "whub_rr": -2.45
+  "whub_rl": 2.45,
+  "whub_rr": 2.45
  },
  "asm_dump": {
   "rig": "revron.joints:RIG"

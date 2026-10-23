@@ -78,7 +78,7 @@ def candidates(role: str, current: str | None, cat=None) -> list:
 
     out = []
     for e in cat if cat is not None else catalog.catalog():
-        if e.id == current or e.kind not in ROLES[role]:
+        if e.id == current or e.kind not in ROLES[role] or (e.props or {}).get("half_of"):   # derived motor halves swap with their motor
             continue
         if e.kind == "esc" and (role == "weapon_esc") != _weaponish(e):
             continue
@@ -100,16 +100,6 @@ def _groups(raw) -> dict:
         key = cid or p.get("stock") or p.get("label") or p["id"]
         g.setdefault((r, key), []).append(p["id"])
     return g
-
-
-def swap_hook(hooks: dict, ids) -> str | None:
-    """The robot's build-setting hook that swaps exactly these parts (`swaps` selector on an env hook), if any: the
-    build then re-derives what depends on the part (a tub pocket cut from the motor envelope), not just the spec."""
-    for name, h in ((hooks or {}).get("hooks") or {}).items():
-        sel = h.get("swaps")
-        if h.get("env") and sel and sorted(sel.get("id") or []) == sorted(ids):
-            return name
-    return None
 
 
 def wheel_extras(hooks, ids, entry, ops) -> tuple:
@@ -134,10 +124,19 @@ def wheel_extras(hooks, ids, entry, ops) -> tuple:
             pset = (param, float(od))
             notes.append(f"{param}={od:g}")
             break
-    else:
-        if od:
-            notes.append("no wheel_od param for these wheels: axle height not re-derived")
     return ops, pset, "; ".join(notes)
+
+
+def swap_hook(hooks: dict | None, role: str, ids=None):
+    """(name, hook) of the robot setting that swaps parts of `role` as one unit (a hook declaring `"swap": "<role>"`),
+    else None. A robot whose build derives the fitting parts from the selected catalog entry (mount holes, shaft, bell)
+    declares one, and every catalog candidate of that role becomes a setting of it instead of a bare catalog op."""
+    for name, h in ((hooks or {}).get("hooks") or {}).items():
+        if isinstance(h, dict) and h.get("swap") == role:
+            sel = (h.get("swaps") or {}).get("id")  # optional: only these parts (e.g. the rear wheels)
+            if sel is None or ids is None or sorted(sel) == sorted(ids):
+                return name, h
+    return None
 
 
 def swap_changes(raw, cat=None, hooks=None) -> list:
@@ -146,20 +145,27 @@ def swap_changes(raw, cat=None, hooks=None) -> list:
     out = []
     for (role, key), ids in _groups(raw).items():
         cur = key if catalog.find(key) else None
+        cur_e = catalog.find(cur) if cur else None
+        cur = ((cur_e.props or {}).get("half_of") or cur) if cur_e else cur   # a derived fixed half stands for its motor
         tag = "+".join(ids) if len(ids) <= 2 else f"{ids[0]}..({len(ids)})"
+        sh = swap_hook(hooks, role, ids)
         for e in candidates(role, cur, cat):
-            ops = [{"op": "wheel" if role == "wheel" else "catalog", "select": {"id": ids}, "to": e.id}]
-            note = ""
-            hk = swap_hook(hooks, ids)
-            if role == "wheel":
-                ops, pset, wnote = wheel_extras(hooks, ids, e, ops)
-                note = "; ".join(x for x in (note, wnote) if x)
+            vals = (sh[1].get("values") if sh else None)
+            if sh and isinstance(vals, list) and e.id not in vals:  # the setting does not offer this part
+                sh_e = None
             else:
-                pset = ()
-            if hk:
-                ops.insert(0, {"op": "hook", "name": hk, "value": e.id})
-                note = f"via build setting `{hk}`"
-            if role == "weapon_motor":
+                sh_e = sh
+            ops = [{"op": "wheel" if role == "wheel" else "catalog", "select": {"id": ids}, "to": e.id}]
+            note, pset = "", ()
+            if sh_e:
+                ops = [{"op": "hook", "name": sh_e[0], "value": e.id}]
+                note = f"one unit through the `{sh_e[0]}` setting"
+            if role == "wheel":
+                ops, pset, wn = wheel_extras(hooks, ids, e, ops)
+                if sh_e:
+                    pset = ()  # the setting sizes the wheel itself
+                note = "; ".join(x for x in (note, wn) if x)
+            if not sh_e and role == "weapon_motor":
                 cur_e = catalog.find(cur) if cur else None
                 rotor_old = (cur_e.props or {}).get("rotor_part") if cur_e else None
                 rotor_new = (e.props or {}).get("rotor_part")
@@ -170,7 +176,7 @@ def swap_changes(raw, cat=None, hooks=None) -> list:
                     elif rp:
                         note = f"one-piece motor: the split rotor part {rp} has no counterpart and is kept"
             out.append(Change(f"swap:{role}:{tag}->{e.id}", "swap", f"{role.replace('_', ' ')} {cur or key} -> {e.id} ({e.name})",
-                              ops, hook=hk or "", touches={"id": ids}, note=note, param_set=pset))
+                              ops, hook=sh_e[0] if sh_e else "", touches={"id": ids}, note=note, param_set=pset))
     for p in raw.get("parts") or []:  # battery connector
         e = catalog.find(p.get("catalog")) if p.get("catalog") else None
         if p.get("kind") != "battery" and not (e and e.kind == "battery"):
@@ -244,6 +250,8 @@ def arch_changes(raw, hooks: dict, cat=None) -> list:
                               note="generic fallback (no robot hook needed)" if fb else ""))
     known = {a["hook"] for a in ARCH}
     for name, h in hk.items():  # every other declared setting the robot offers is a hypothesis too
+        if isinstance(h, dict) and h.get("swap"):  # a swap setting: its values are the swap hypotheses
+            continue
         vals = h.get("values")
         vals = list(vals) if isinstance(vals, (list, dict)) else []
         for v in vals:

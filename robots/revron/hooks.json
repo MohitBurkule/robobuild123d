@@ -42,6 +42,38 @@
     }
   },
   "hooks": {
+    "weapon.type": {
+      "env": "REVRON_WEAPON_TYPE",
+      "values": [
+        "drisk",
+        "vspin_drum",
+        "vspin_eggbeater",
+        "hspin_bar"
+      ],
+      "default": "drisk",
+      "_why": "weapon style (params_weapon.WEAPON_TYPES): drisk is built; any other value fails spec generation with the reason"
+    },
+    "weapon.motor": {
+      "env": "REVRON_WEAPON_MOTOR",
+      "swap": "weapon_motor",
+      "default": "gr1507",
+      "values": [
+        "gr1507",
+        "gr1507_step",
+        "bbb_be1806_2300kv",
+        "brotherhobby_tc1404_3800kv",
+        "brotherhobby_tc1404_4600kv",
+        "repeat_2004_1400kv",
+        "repeat_2004_2800kv",
+        "emax_eco2207_1900kv",
+        "bl_1806_2300kv",
+        "bl_2306_1400kv",
+        "be1806_bbb",
+        "c_bbb_be1806_2300kv",
+        "c_repeat_2004_antweight_spinner_motor"
+      ],
+      "_why": "one catalog weapon motor id: stator, bell, shaft, RV03 stator screws, back spacer, spider screws and the outboard bearing follow from that entry (weapon_motor.describe); a weapon_motor swap is this setting"
+    },
     "weapon.motor_variant": {
       "env": "REVRON_MOTOR_VARIANT",
       "values": [
@@ -57,6 +89,28 @@
         "printable"
       ],
       "default": "original"
+    },
+    "wheel.rear": {
+      "env": "REVRON_REAR_WHEEL",
+      "values": [
+        "stock",
+        "wheel_20x8",
+        "wheel_28x10",
+        "wheel_30x8",
+        "bbb_wheel_22x10",
+        "bbb_wheel_34x6_5",
+        "durahubs_25",
+        "durahubs_30",
+        "durahubs_35"
+      ],
+      "default": "stock",
+      "swap": "wheel",
+      "swaps": {
+        "id": [
+          "wheel_rl",
+          "wheel_rr"
+        ]
+      }
     },
     "chassis.compartments": {
       "env": "REVRON_COMPARTMENTS",
@@ -81,39 +135,37 @@
     "drive.motor": {
       "env": "REVRON_DRIVE_MOTOR",
       "_why": "catalog id of the drive gearmotor (params_chassis.DRIVE_MOTOR); the tub pockets, MOTX, key tab, stop wall, pad and rig joints are derived from it",
-      "swaps": {
-        "id": [
-          "motor_l",
-          "motor_r"
-        ]
-      }
+      "swap": "drive_motor"
     },
     "battery.pack": {
       "env": "REVRON_BATTERY",
       "_why": "catalog id of the pack (params_hardware.BATTERY); the bay is cut from its envelope, it stands against the stop wall and the deck",
-      "swaps": {
-        "id": [
-          "battery"
-        ]
-      }
+      "swap": "battery"
     },
     "drive.esc": {
       "env": "REVRON_RXESC",
       "_why": "catalog id of the receiver / drive ESC (params_chassis.RXESC); its bay is cut from the envelope",
-      "swaps": {
-        "id": [
-          "rxesc"
-        ]
-      }
+      "swap": "drive_esc"
     },
     "weapon.esc": {
       "env": "REVRON_WESC",
       "_why": "catalog id of the weapon ESC (params_chassis.WESC); its bay is cut from the envelope",
-      "swaps": {
-        "id": [
-          "wesc"
+      "swap": "weapon_esc"
+    },
+    "drive.belt": {
+      "default": "o_ring",
+      "values": {
+        "o_ring": [],
+        "none": [
+          {
+            "op": "remove",
+            "select": {
+              "kind": "belt"
+            }
+          }
         ]
-      }
+      },
+      "_why": "belt drive between the rear hub groove and the front hub groove: o_ring = the stock O-ring belts; none = no belt, for wheels without a belt groove (catalogue wheels have none: the O-ring has nothing to ride in). The front wheels then free-wheel (same overlay as 2WD, but a different cause: the wheel, not the drive layout)"
     },
     "drive.driven_wheels": {
       "default": "4WD",
@@ -161,6 +213,7 @@
     ],
     "B (weapon)": [
       "weapon.py",
+      "weapon_motor.py",
       "mount.py",
       "params_weapon.py",
       "drisk.py"
@@ -189,7 +242,7 @@
     }
   },
   "wheel_od": {
-    "_doc": "wheel position -> params literal of its outer diameter (axle height, nose and standoffs derive from it); a catalog wheel swap sets it to the new wheel's OD",
+    "_doc": "wheel position -> params literal of its outer diameter (axle height, nose and standoffs derive from it); a catalog wheel swap without a swap setting sets it to the new wheel's OD",
     "wheel_f*": "WHEEL_OD_F"
   }
 }
