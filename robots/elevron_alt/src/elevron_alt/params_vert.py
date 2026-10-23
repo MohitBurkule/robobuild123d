@@ -24,6 +24,7 @@ ARCH_CH_ANG = 45.0                     # arch edge on the ramp: TOP_CH chamfer a
 NOTCH_R, NOTCH_RY = 8.0, 3.35         # side notch: round rear end, centred on the chassis inner wall line (its floor is tangent)
 NOTCH_LOW_R, NOTCH_LOW_Y = 2.0, -6.64  # side notch: front corner round, tangent to the floor
 NOTCH_Y = (-12.85, 12.85)              # notch mouth on the inner wall line
+HOLLOW_EDGE_R = 1.0                    # hollow ceiling into the bulkhead face (STEP)
 HOLLOW_FRONT, HOLLOW_R = -5.9, 3.0     # under-shell hollow: front edge beside the lip, corner rounds
 POST_PAD_R = 4.0                       # pad round each rear column screw inside the hollow
 POST_CB_R, POST_CB_DEPTH = 3.0, 2.5    # column screw counterbores: radius, floor above the deck

@@ -21,6 +21,7 @@ from .params_drive import WY, WZ
 from .params_vert import *  # noqa: F401,F403
 
 TOOL = BIG / 10                        # cut tools reach this far
+OVERLAP = 0.05                         # a filler's reach into the material it joins
 HS = BIG / 5                           # half-space cutters: well past the part, small enough for exact booleans
 TOOL_S = BIG / 50                      # drafted tools: far enough through the ramp
 SEG = 128                              # arc segments per quarter
@@ -89,6 +90,22 @@ def _ramp_plane(z):
     return bd.Plane(origin=(0, 0, z), x_dir=(1, 0, 0), z_dir=(0, -K / SECK, 1 / SECK))
 
 
+def hollow_rear_round():
+    """R HOLLOW_EDGE_R round where the hollow's ceiling (one wall under the ramp) meets the bulkhead face (STEP)."""
+    y0, r = BULK_Y[0], HOLLOW_EDGE_R
+    ceil = lambda y: ramp_z(y) - VM_T * SECK
+    c = (y0 - r, ceil(y0 - r) - r * SECK)                   # r off the wall and r under the ceiling
+    tw = (y0, c[1])
+    tc = (c[0] - r * K / SECK, c[1] + r / SECK)              # tangent point on the ceiling (along its normal)
+    corner = (y0, ceil(y0))
+    e = OVERLAP                                             # reach into the wall and the ceiling so the fuse merges it
+    up = (-K / SECK, 1 / SECK)
+    prof = Polygon([(corner[0] + e, corner[1] + e), (tc[0] + e * up[0], tc[1] + e * up[1]), tc, c, tw, (tw[0] + e, tw[1])])
+    prof = prof.buffer(0).difference(Point(c).buffer(r, SEG))
+    xh = max(abs(x) for x, y in hollow_plan().exterior.coords if abs(y - y0) < GEOM_EPS)   # the rear edge's straight run
+    return _ext(prof, "yz", -xh, xh)
+
+
 def arch():
     """Arch over the front opening, cut along the ramp normal: a straight top on the lip line, R ARCH_R corners
     ARCH_X off the middle, the opening below them; its edge on the ramp chamfered TOP_CH at 45 deg (STEP)."""
@@ -147,7 +164,9 @@ def body():
     ups = _I(_ext(side, "xy", -1, TOOL), _ext(upright_prof(), "yz", -TOOL, TOOL))
     ar = above_ramp()
     s = _S(_U(_S(shell, ar), _S(ups, ar)), slot)        # the ramp cut before the union (OCC drops it from the fused arcs)
-    s = _S(s, _S(_ext(hollow_plan(), "xy", DECK_TOP - 1, TOOL), above_ramp(VM_T)), leg_drafts(), arch())
+    hollow = _ext(hollow_plan(), "xy", DECK_TOP - 1, TOOL)
+    s = _S(s, _S(hollow, above_ramp(VM_T)), leg_drafts(), arch())
+    s = _U(s, hollow_rear_round())
     return top_chamfer(s)
 
 
