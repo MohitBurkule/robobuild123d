@@ -61,7 +61,7 @@ def _weapon(r):
     r.axis("weapon_motor_stator", "rotor_axis", (-_mid(DR_X["spider"]), 0, 0))   # spin axis (catalog X), pivot at the spider mid-plane
     r.joint("weapon_motor_can", "origin", (0, 0, 0))
     r.mate("weapon_motor_stator", "rotor_fit", "weapon_motor_can", "origin")
-    r.joint("weapon_motor_can", "cap_face", (BELL_TOP_X[1], 0, 0))     # bell cap face (catalog frame)
+    r.joint("weapon_motor_can", "cap_face", (BELL_TOP_X, 0, 0))        # bell cap face (catalog frame, from the motor entry)
     r.joint("spider", "bell_face", (DR_X["spider"][1], 0, 0), MOTOR_FLIP)   # spider inner face, drawn in the weapon frame
     r.mate("weapon_motor_can", "cap_face", "spider", "bell_face")      # 4 M2 on the bell's r4.5 screw circle
     r.joint("weapon_motor_can", "shaft_bore", (0, 0, 0), MOTOR_FLIP)   # shaft pressed through the bell, drawn in the weapon frame

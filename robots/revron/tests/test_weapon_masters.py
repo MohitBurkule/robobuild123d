@@ -74,11 +74,11 @@ def test_mount_thickness_follows(tmp_path, base):
 
 
 def test_stator_bolt_circle_follows(tmp_path):
-    _ok(_build(tmp_path, ("params_weapon.py", r"^STATOR_PCD = 2 \* math.hypot.*$", "STATOR_PCD = 13.0")))
+    _ok(_build(tmp_path, ("params_weapon.py", r"^STATOR_HOLES = .*$", "STATOR_HOLES = [(6.5 * u, 6.5 * v, 2.0) for u, v in ((1, 0), (0, 1), (-1, 0), (0, -1))]")))
 
 
 def test_stack_bolt_circle_follows(tmp_path):
-    _ok(_build(tmp_path, ("params_weapon.py", r"^BOLT_R, HUB_R = 14.0,", "BOLT_R, HUB_R = 13.6,")))
+    _ok(_build(tmp_path, ("params_weapon.py", r"^BOLT_R = 14.0", "BOLT_R = 13.6")))
 
 
 def test_disc_radius_follows(tmp_path, base):

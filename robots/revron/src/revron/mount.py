@@ -18,15 +18,16 @@ from .params_weapon import (BIG, BOSS_OVER, BRG_SEAT_R, BSP, BSP_T, CB_FLOOR_X, 
                             HOLE_FACE_RISE, LEAD_FLOOR_W, LEAD_GROOVE_R, LEAD_GROOVE_X, LEAD_MOUTH, LEAD_ROUND, MNT_FRAME,
                             MNT_HEEL, MNT_NOTCH_GAP, MNT_NOTCH_UP, MNT_RELIEF_R, MNT_SCREW, MNT_SCREW_FIT, MNT_CSK_CLEAR, MNT_SIDE,
                             MNT_TIP_REACH, MNT_TIP_WALL, MNT_TOP_Z, N_STACK, NOSE_PAD_R, NOSE_R, NUT_RECESS_R,
-                            LEAD_GROOVE, RV03_BORE_R, STATOR_DIRS, STATOR_PCD, STATOR_SCREW_FIT, TAB, boss_line_z, lead_groove_ends)
+                            LEAD_GROOVE, RV03_BORE_R, STATOR_HOLES, STATOR_SCREW_FIT, TAB, WM_DES, boss_line_z, lead_groove_ends)
 
 AXIS = bd.Vector(WY, WZ)   # the weapon axis in the chassis side view (Y, Z): the mount frame's origin in that view
 
 
 def stator_bolt_circle():
-    """(dY, dZ) of the GR1507 base screws about the weapon axis: one per arm of the stator cross (STATOR_DIRS) on its PCD.
-    RV03's counterbores, the back spacer's holes and the reference deviations all use this one pattern."""
-    return _polar(STATOR_PCD / 2, len(STATOR_DIRS))
+    """(dY, dZ) of the weapon motor's base screws about the weapon axis (STATOR_HOLES, from the motor catalog entry;
+    GR1507: one per arm of the stator cross on its 12 mm PCD). RV03's counterbores, the back spacer's holes and the
+    reference deviations all use this one pattern."""
+    return [(dy, dz) for dy, dz, _ in STATOR_HOLES]
 
 
 def _v(p):
@@ -214,15 +215,16 @@ def _mount_csk(s, y, z, fastener, world=True):
     return _hole_tool()(p, d, fastener, head="csk", into="through", side="head", grip=MNT_SLAB_T, fit=MNT_SCREW_FIT, csk_clear=MNT_CSK_CLEAR)
 
 
-def _stator_hole(s, dy, dz, world=True):
+def _stator_hole(s, dy, dz, world=True, des=WM_DES):
     """robot.cad.holes cutter + record for one RV03 stator screw (bolt_wm*): M2x8 button through RV03, head on the
     counterbore floor (STEP CB_FLOOR_X); the counterbore opens on the battered face, measured from its highest
     point over the hole (HOLE_FACE_RISE)."""
     from robot.cad import fastener_catalog as fc
     b = MNT_SIDE["r"]["batter"]
     x = batter_x("r", dy, dz) + HOLE_FACE_RISE * math.hypot(b["lean"], b["toe"])
-    cut, rec = _hole_tool()(_to_mount((x, dy, dz), "r", world), (-s, 0, 0), "M2x8", head="button", into="through", side="head",
-                            grip=x, cbore=x - (CB_FLOOR_X - MNT_IN), cbore_clear=2 * CB_R - fc.head(2.0, "button")[0], fit=STATOR_SCREW_FIT)
+    d = fc.parse(des).d
+    cut, rec = _hole_tool()(_to_mount((x, dy, dz), "r", world), (-s, 0, 0), des, head="button", into="through", side="head",
+                            grip=x, cbore=x - (CB_FLOOR_X - MNT_IN), cbore_clear=2 * CB_R - fc.head(d, "button")[0], fit=STATOR_SCREW_FIT)
     return (cut.solids()[0] if hasattr(cut, "solids") and len(cut.solids()) == 1 else cut), rec
 
 
@@ -252,12 +254,14 @@ def weapon_mount(side):
 
 # ----------------------------------------------------------------------------------------------- motor back spacer
 def motor_back_spacer():
-    """1.5 mm printed spacer between the GR1507 stator base and RV03 (mount frame, inboard of the inner face): clears
-    the motor's rear bearing boss and wires; stator screw holes on the stator bolt circle, N_STACK windows between them."""
+    """1.5 mm printed spacer between the weapon motor's stator base and RV03 (mount frame, inboard of the inner face):
+    clears the motor's rear bearing boss and wires; close clearance holes for the stator screws (motor catalog), N_STACK
+    windows midway between them."""
+    from robot.cad import fastener_catalog as fc
     b = BSP
     win = pl.ring_window(b["win_in"], b["win_out"], b["half_deg"], b["round_out"], b["round_in"])
     sk = (bd.Circle(b["r"]) - bd.Circle(b["bore_r"]) - pl.polar(win, N_STACK, b["phase"])
-          - [bd.Pos(dy, dz) * bd.Circle(_m2()[1]) for dy, dz in stator_bolt_circle()])
+          - [bd.Pos(dy, dz) * bd.Circle(fc.clearance(d, "close") / 2) for dy, dz, d in STATOR_HOLES])
     plane = bd.Plane(origin=(-BSP_T, 0, 0), x_dir=(0, 1, 0), z_dir=(1, 0, 0))
     return pl.placed(bd.extrude(plane * sk, amount=BSP_T), MNT_FRAME["r"])
 

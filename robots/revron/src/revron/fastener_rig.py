@@ -34,9 +34,12 @@ def screws(r):
         _screw(r, mnt, "csk_b", on_mount(n, (s * (MNT_IN - MNT_CSK_PROUD), *SB)), sx, f"bolt_u{n}b")      # mount + lug into the 15 mm standoff
         for k, yz in (("a", SA), ("b", SB), ("c", NUT)):                    # side panel seats: two standoff ends, the nut
             _screw(r, f"side_{n}", f"seat_{k}", (s * bolt_x(k), *yz), (-s, 0, 0), f"bolt_s{n}{k}")
-    for k, (u, v) in enumerate(STATOR_DIRS):                                # RV03 counterbores on the stator bolt circle
-        dy, dz = STATOR_PCD / 2 * u, STATOR_PCD / 2 * v
+    for k, i in enumerate(WM_ORDER):                                         # RV03 counterbores on the motor's stator screw pattern
+        dy, dz, _ = STATOR_HOLES[i]
         _screw(r, "mount_r", f"stator_cb{k}", on_mount("r", (CB_CONE_X[1], WY + dy, WZ + dz)), OUT_X, f"bolt_wm{k}")
-    for k, (hub_c, bolt_c) in enumerate(zip(_polar(HUB_R), _polar(BOLT_R))):
-        _screw(r, "spider", f"bell_hole{k}", (DR_X["spider"][0], *_weapon_frame(*_disc_local(*hub_c))), IN_X, f"bolt_p{k}")
-        _screw(r, "disc_b", f"stack_hole{k}", (DR_X["disc_b"][1], *_weapon_frame(*_disc_local(*bolt_c))), OUT_X, f"bolt_d{k}")
+    hubs, bolts = _polar(HUB_R, N_HUB), _polar(BOLT_R)                     # spider to bell: the motor's bell-top pattern
+    for k in range(max(N_HUB, N_STACK)):
+        if k < N_HUB:
+            _screw(r, "spider", f"bell_hole{k}", (DR_X["spider"][0], *_weapon_frame(*_disc_local(*hubs[k]))), IN_X, f"bolt_p{k}")
+        if k < N_STACK:
+            _screw(r, "disc_b", f"stack_hole{k}", (DR_X["disc_b"][1], *_weapon_frame(*_disc_local(*bolts[k]))), OUT_X, f"bolt_d{k}")
