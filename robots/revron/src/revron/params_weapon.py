@@ -74,6 +74,33 @@ DR_ROT = WM["top_holes"][0][1]       # drisk phase about the axis: the spider is
 SERVICE_TURN_MARGIN_DEG = 5.0   # the drisk service turn (drisk.service_turn_deg) keeps the mount screw heads clear over +- this (hand turn)
 DISC_R, DISC_ECC, DISC_ECC_A = 16.5, 0.5, -40.0   # eccentric rim: R16.5 centred 0.5 mm towards -40 deg (balances the tooth)
 TOOTH_REACH, TOOTH_A = 6.5, 134.8    # masters: tooth tip reach past the rim and its angle in the drisk frame
+
+
+class BatteryFitError(ValueError):
+    """The pack does not fit the bay at the current chassis size (the numbers are in the message)."""
+    declared_unfit = True   # a declared, reasoned refusal (the hypothesis does not fit), not a crash
+
+
+BAT_SWEEP_GAP = 3.0     # pack to the weapon's swept volume (robot electrical.battery_weapon_gap: >= 3 mm)
+
+
+def _battery_fit():
+    """Everything below is read off the catalogue pack and the chassis masters (no list of packs): the pack's width between the side walls (clear of the column sleeves), its length
+    between the stop wall and the front wall, and its front face behind the weapon's swept volume. A larger chassis (size.width / size.length) accepts it again."""
+    pack_front = KEY_SPAN[1] + BAT_LEN
+    sweep_rear = WY - DISC_R - DISC_ECC
+    miss = []
+    if CH_HALF_W < CH_HALF_W_MIN - 1e-6:
+        miss.append(f"width: needs a half-width of {CH_HALF_W_MIN:.1f} mm (pack {hw.size(BATTERY)[1]:.1f} wide + column sleeves + walls), the chassis has {CH_HALF_W:.1f}")
+    if CH_Y1 < KEY_SPAN[1] + BAT_LEN + PACK_FRONT_GAP + CH_WALL - 1e-6:
+        miss.append(f"length: needs the front wall at Y {KEY_SPAN[1] + BAT_LEN + PACK_FRONT_GAP + CH_WALL:.1f} mm (pack {BAT_LEN:.1f} long against the stop wall + a wall), the chassis has {CH_Y1:.1f}")
+    if pack_front + BAT_SWEEP_GAP > sweep_rear + 1e-6:
+        miss.append(f"weapon sweep: the pack front is at Y {pack_front:.1f} mm and the swept volume reaches back to Y {sweep_rear:.1f} mm, which leaves {sweep_rear - pack_front:.1f} mm, under the {BAT_SWEEP_GAP:g} mm needed")
+    if miss:
+        raise BatteryFitError(f"battery `{BATTERY}` does not fit the bay at this chassis size: " + "; ".join(miss) + ". A larger chassis (size.width / size.length) accepts it.")
+
+
+_battery_fit()
 TOOTH_R = DISC_R + TOOTH_REACH        # tooth tip radius (STEP 23.0)
 BOLT_R = 14.0                        # stack-bolt circle (radius about the weapon axis); the spider-to-bell screws sit on the bell's own circle HUB_R
 N_STACK = 4                          # bolts / lobes / windows per stack, 90 deg apart

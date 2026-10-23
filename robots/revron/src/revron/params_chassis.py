@@ -25,7 +25,17 @@ WHEEL_OD_R = rear_wheel_dims()["od"]   # rear tyre OD (mm): the stock tyre, or R
 # drive location (hook drive.location): the drive axle line Y per declared location; the tub's motor features (keyhole, key tab, stop wall, pad recess)
 # and the pack bay follow RY (the pack butts the stop wall); the rear-only structure (rear boss, lattice window) does not move with it
 DRIVE_LOCATION = os.environ.get("REVRON_DRIVE_LOCATION", "rear")
-DRIVE_LOCATIONS = {"rear": dict(ry=-30.5), "mid": dict(ry=-8.0), "front": dict(ry=5.0)}
+DRIVE_LOCATIONS = {"rear": dict(ry=-30.5), "mid": dict(ry=-8.0), "front": dict(ry=5.0)}   # axle line of the gearmotors (drive.location)
+UNBUILT_DRIVE_LOCATIONS = {"front_motors_rear_driven": "the gearmotors sit on the front axle line and drive the rear wheels by belt: the belt run (front hub to rear hub along the side panel, one per side) passes the weapon mounts and the front standoffs, and the generator routes belts only between the hubs of the wheel pair the motor drives; it builds no motor-to-remote-axle drivetrain"}
+
+
+class DriveLocationError(NotImplementedError):
+    """drive.location names a layout the generator does not build."""
+    declared_unfit = True   # a declared, reasoned refusal (the hypothesis does not fit), not a crash
+
+
+if DRIVE_LOCATION in UNBUILT_DRIVE_LOCATIONS:
+    raise DriveLocationError(f"drive.location={DRIVE_LOCATION!r} is not built: {UNBUILT_DRIVE_LOCATIONS[DRIVE_LOCATION]}; built: {sorted(DRIVE_LOCATIONS)}")
 RY, RZ = DRIVE_LOCATIONS[DRIVE_LOCATION]["ry"], WHEEL_OD_R / 2 + REAR_GROUND_GAP   # N10 shaft (rear axle at the default location): the tyre radius over the ground gap
 DRIVE_MOTOR = os.environ.get("REVRON_DRIVE_MOTOR", "n10_2200rpm_spicy")    # catalog id of the drive gearmotors (RV12): the tub is dimensioned from its plate stack
 DRIVE_MOTORS = {"n10_2200rpm_spicy": "", "n10_300rpm_6v": "", "n10_2200rpm_6v": "", "n20_1000rpm_6v": "", "pololu_hpcb6v_30to1": "", "pololu_hpcb6v_50to1": "", "pololu_hpcb6v_75to1": "", "bbb_n20_600rpm": "", "bbb_hpn20_1000rpm": "", "bbb_n10_600rpm": "", "bbb_n10_1000rpm": "", "c_pair_of_600rpm_antweight_n20_gearmotors": "", "c_bbb_high_power_n20_gearmotor": "", "c_bbbxn_b_antweight_n10_gearmotors": ""}   # every catalog gearmotor the REVRON_DRIVE_MOTOR setting may name (test_tub2_sweep keeps it in step with the catalog)

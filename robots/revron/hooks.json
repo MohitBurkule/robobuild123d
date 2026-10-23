@@ -164,7 +164,8 @@
       "values": [
         "rear",
         "mid",
-        "front"
+        "front",
+        "front_motors_rear_driven"
       ],
       "default": "rear",
       "_why": "drive axle line (params_chassis.DRIVE_LOCATIONS -> RY): the tub's keyhole, key tab, stop wall, pad recess, motor pocket, the pack bay and the rig's n10/wheel_face joints follow it; side panels, forks, hubs and belts (owner C) and the rear-only tub structure do not yet"
@@ -280,6 +281,8 @@
   },
   "declared_unfit": [
     "WeaponMotorError",
+    "BatteryFitError",
+    "DriveLocationError",
     "WeaponTypeError"
   ]
 }
