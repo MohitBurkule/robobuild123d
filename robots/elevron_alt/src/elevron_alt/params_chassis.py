@@ -38,6 +38,7 @@ BAY_LEN = 10.2                        # bay depth along Y from the end inner wal
 BAY_X0 = (16.0, 19.6)                 # inner end of the cross wall (rear: N10 gearbox side, front: standoff side)
 # axle keyholes through the side walls (Cut-Extrude3 Sketch4: D1 6 bore, D2 R1.8 slot, D3 4 drop)
 KEY_R, KEY_SLOT_R, KEY_DROP = 3.0, 1.8, 4.0
+KEY_BLEND = 1.0                       # bore-to-slot corner round (STEP R0.93 measured: a 1 mm sketch fillet)
 # side boss (Boss-Extrude2 Sketch6 R5 obround, 3 out; Sketch5 D1 14 pitch, D2 3.2 holes; Sketch7 5.6 hex 2.5 deep; Fillet5 R3)
 BOSS_R, BOSS_OUT, BOSS_PITCH = 5.0, 3.0, 14.0
 BOSS_IN = 0.5                         # the obround also stands proud of the inner wall face (27.0)

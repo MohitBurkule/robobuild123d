@@ -43,6 +43,9 @@ def edge_breaks():
     for sx in (-1, 1):
         cx, cy = sx * (HX - CORNER_R), -(HY - CORNER_R)
         corner.append(_S(_box(cx, cx + sx * CORNER_R, cy, cy - CORNER_R, 0, CH_H), _cyl(CORNER_R, 0, CH_H, (cx, cy), "z")))
+        z0 = CH_H - EDGE_CH                                  # Chamfer1 carried round Fillet1: a 45 deg cone over the corner
+        cone = bd.Solid.make_cone(CORNER_R, CORNER_R - EDGE_CH, EDGE_CH, bd.Plane(origin=(cx, cy, z0), z_dir=(0, 0, 1)))
+        corner.append(_S(_box(cx, cx + sx * (CORNER_R + 1), cy, cy - (CORNER_R + 1), z0, CH_H + 1), cone))
     return _U(*cut, *corner)
 
 
@@ -69,9 +72,10 @@ def cavity():
         keep.append(_S(fill, *[_cyl(END_FILLET, -1, DECK_Z + 1, (sx * xc, sy * (IN_Y - END_FILLET)), "z") for sx in (-1, 1)]))
     pocket = _S(_box(-IN_X, IN_X, -IN_Y, IN_Y, -1, DECK_Z), *keep)
     rebate = _box(-(HX - REBATE), HX - REBATE, -(HY - REBATE), HY - REBATE, -1, WALL)
-    for sx in (-1, 1):   # front corners concentric with Fillet1 (STEP: the lip stays a wall thick round the corner)
-        cx, cy = sx * (HX - CORNER_R), -(HY - CORNER_R)
-        rebate = _S(rebate, _S(_box(cx, cx + sx * CORNER_R, cy, cy - CORNER_R, -1, WALL), _cyl(CORNER_R - REBATE, -1, WALL, (cx, cy), "z")))
+    for sx in (-1, 1):   # every corner R1, the front ones concentric with Fillet1 (STEP: the lip stays a wall thick round the corner)
+        for sy in (-1, 1):
+            cx, cy = sx * (HX - CORNER_R), sy * (HY - CORNER_R)
+            rebate = _S(rebate, _S(_box(cx, cx + sx * CORNER_R, cy, cy + sy * CORNER_R, -1, WALL), _cyl(CORNER_R - REBATE, -1, WALL, (cx, cy), "z")))
     return _U(pocket, rebate)
 
 
@@ -96,13 +100,14 @@ def fillet_filler(c, rc, axis, at, r, side):
 
 
 def keyholes():
-    """Cut-Extrude3: a bore on each axle line through both side walls with a slot dropping KEY_DROP below it."""
+    """Cut-Extrude3: a bore on each axle line through both side walls with a slot dropping KEY_DROP below it; the
+    bore-to-slot corners rounded KEY_BLEND (STEP)."""
     out = []
     for y in (-AXLE_Y, AXLE_Y):
-        bore = _cyl(KEY_R, IN_X - 1, HX + 1, (y, AXLE_Z), "x")
-        slot = _U(_box(IN_X - 1, HX + 1, y - KEY_SLOT_R, y + KEY_SLOT_R, AXLE_Z - KEY_DROP, AXLE_Z),
-                  _cyl(KEY_SLOT_R, IN_X - 1, HX + 1, (y, AXLE_Z - KEY_DROP), "x"))
-        out.append(_both(_U(bore, slot)))
+        prof = unary_union([Point(y, AXLE_Z).buffer(KEY_R, quad_segs=64),
+                            LineString([(y, AXLE_Z), (y, AXLE_Z - KEY_DROP)]).buffer(KEY_SLOT_R, quad_segs=64)])
+        prof = prof.buffer(KEY_BLEND, quad_segs=64).buffer(-KEY_BLEND, quad_segs=64)
+        out.append(_both(_ext(prof, "yz", IN_X - 1, HX + 1, arcs=True)))
     return _U(*out)
 
 
@@ -222,8 +227,7 @@ def tab_holes():
 
 def chassis():
     """The Alt chassis in its part frame (= the STEP frame)."""
-    above_pad = _box(-CH_W, CH_W, -CH_L, CH_L, AXLE_Z + BOSS_R + BOOL_EPS, 2 * CH_H)   # Boss-Extrude2 follows Chamfer1: the chamfer trims the root round, not the pad
-    s = _U(_S(block(), edge_breaks()), _S(side_boss(), _I(edge_breaks(), above_pad)))
+    s = _U(_S(block(), edge_breaks()), side_boss())   # Fillet5 also rounds the pad top into the Chamfer1 plane
     s = _S(s, cavity(), keyholes())
     s = _S(s, side_boss_cuts(), column_holes(), deck_cuts(), lattice(), tab_holes())
     s = _solid(s)
