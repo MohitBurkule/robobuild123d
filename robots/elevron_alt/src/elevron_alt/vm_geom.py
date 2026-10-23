@@ -76,7 +76,7 @@ def front_opening():
     k = (bx - ax) / (by - ay)
     xa, xt = ax + k * (-TOOL - ay), ax + k * (ARCH_Y - ay)
     p = Polygon([(-xa, -TOOL), (xa, -TOOL), (xt, ARCH_Y), (-xt, ARCH_Y)])
-    return p.buffer(-ARCH_R).buffer(ARCH_R)
+    return p.buffer(-ARCH_R, SEG).buffer(ARCH_R, SEG)
 
 
 def plan():
@@ -89,15 +89,15 @@ def plan():
 
 def slot_plan():
     """Slot between the uprights behind the bulkhead, its corners rounded SLOT_R."""
-    return sbox(-UP_X0, BULK_Y[1], UP_X0, TOOL).buffer(-SLOT_R).buffer(SLOT_R)
+    return sbox(-UP_X0, BULK_Y[1], UP_X0, TOOL).buffer(-SLOT_R, SEG).buffer(SLOT_R, SEG)
 
 
 def hollow_plan():
     """Under-shell hollow: the planform in by one wall, from the lip to the bulkhead, round the rear column pads."""
     p = plan().buffer(-VM_T, join_style=2).intersection(sbox(-BIG, HOLLOW_FRONT, BIG, BULK_Y[0]))
     p = p.difference(front_opening().buffer(VM_T / COSK, SEG))   # the front lip: one wall round the arch
-    p = p.difference(unary_union([Point(q).buffer(POST_PAD_R) for q in POSTS if q[1] > 0])).difference(slot_plan())
-    return p.buffer(-HOLLOW_R).buffer(HOLLOW_R).buffer(HOLLOW_R).buffer(-HOLLOW_R)
+    p = p.difference(unary_union([Point(q).buffer(POST_PAD_R, SEG) for q in POSTS if q[1] > 0])).difference(slot_plan())
+    return p.buffer(-HOLLOW_R, SEG).buffer(HOLLOW_R, SEG).buffer(HOLLOW_R, SEG).buffer(-HOLLOW_R, SEG)
 
 
 def upright_prof():
@@ -305,7 +305,7 @@ def bulk_cuts():
     t = _U(_ext(stad(0), "xz", BULK_Y[0] - 1, y1 - rb, arcs=True), _ext(stad(rb), "xz", BULK_Y[0] - 1, y1, arcs=True),
            _floor_pipe(xa + r, xb - r, za + r, r - rb, y1 - rb, rb))
     x, r2, (z0, z1) = LEAD_SLOT
-    s = _ext(LineString([(x, z0), (x, z1)]).buffer(r2), "xz", BULK_Y[0] - 1, SLOT_R + BULK_Y[1])
+    s = _ext(LineString([(x, z0), (x, z1)]).buffer(r2, SEG), "xz", BULK_Y[0] - 1, SLOT_R + BULK_Y[1])
     return _U(t, s)
 
 
@@ -322,7 +322,7 @@ def prongs():
     up = upright_prof()
     base = Polygon([(y0, zb), (yz(zb), zb), (yz(DECK_TOP + 1), DECK_TOP + 1), (y0, DECK_TOP + 1)])
     toe = sbox(tc[0], zb, BIG, tc[1]).difference(Point(tc).buffer(tr, SEG))
-    outline = base.difference(toe).union(up).buffer(hr).buffer(-hr)   # heel fillet into the upright underside
+    outline = base.difference(toe).union(up).buffer(hr, SEG).buffer(-hr, SEG)   # heel fillet into the upright underside
     outline = outline.intersection(sbox(y0, zb, yz(DECK_TOP), DECK_TOP))   # overlaps the upright above its underside
     hole = (HY + TAB_HOLE_DY, TAB_HOLE_Z)
     win = base.buffer(-PRONG_FRONT).intersection(sbox(y0 + PRONG_FRONT, zb, BIG, DECK_TOP)).difference(up)   # webs PRONG_FRONT thick, open to the upright
