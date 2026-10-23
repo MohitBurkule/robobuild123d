@@ -28,10 +28,12 @@ DRIVE_LOCATION = os.environ.get("REVRON_DRIVE_LOCATION", "rear")
 DRIVE_LOCATIONS = {"rear": dict(ry=-30.5), "mid": dict(ry=-8.0), "front": dict(ry=5.0)}
 RY, RZ = DRIVE_LOCATIONS[DRIVE_LOCATION]["ry"], WHEEL_OD_R / 2 + REAR_GROUND_GAP   # N10 shaft (rear axle at the default location): the tyre radius over the ground gap
 DRIVE_MOTOR = os.environ.get("REVRON_DRIVE_MOTOR", "n10_2200rpm_spicy")    # catalog id of the drive gearmotors (RV12): the tub is dimensioned from its plate stack
+DRIVE_MOTORS = {"n10_2200rpm_spicy": "", "n10_300rpm_6v": "", "n10_2200rpm_6v": "", "n20_1000rpm_6v": "", "pololu_hpcb6v_30to1": "", "pololu_hpcb6v_50to1": "", "pololu_hpcb6v_75to1": "", "bbb_n20_600rpm": "", "bbb_hpn20_1000rpm": "", "bbb_n10_600rpm": "", "bbb_n10_1000rpm": "", "c_pair_of_600rpm_antweight_n20_gearmotors": "", "c_bbb_high_power_n20_gearmotor": "", "c_bbbxn_b_antweight_n10_gearmotors": ""}   # every catalog gearmotor the REVRON_DRIVE_MOTOR setting may name (test_tub2_sweep keeps it in step with the catalog)
 GB = hw.gearbox(DRIVE_MOTOR)         # plate stack in the motor frame: top, half_w, end, gaps
 MOTOR_WALL_GAP = 0.3                 # last gearbox plate to the chassis wall's inner face
 MOT = hw.reach(DRIVE_MOTOR)          # the gearmotor's catalog envelope in its own frame (x0..x1 along the shaft, y0..y1 across)
 BATTERY = os.environ.get("REVRON_BATTERY", "lipo_2s_180_turnabot")      # RV16 pack, catalog id
+BATTERYS = {"lipo_2s_180_turnabot": "", "lipo_2s_180": "", "lipo_2s_350": "", "lipo_1s_300": "", "palmpower_2s_180_45c": "", "palmpower_2s_300_65c": "", "tattu_2s_300_75c_hv": "", "betafpv_2s_300_45c": "", "gnb_2s_350_70c_hv": "", "gnb_2s_450_80c": "", "gnb_3s_300_80c_hv": "", "c_palm_power_2s_300mah_65c_us_ref_not_uk": "", "c_typical_2s_300mah_lipo_lihv_betafpv_tbs_": ""}   # every catalog pack the REVRON_BATTERY setting may name
 BAT_LEN = hw.size(BATTERY)[0]        # pack length: in the bay it runs along Y, butting the stop wall
 KEY_BITE, STOP_CLR = 0.65, 0.1       # key tab reaches this far behind the gearbox front face; the stop wall stands this clear of it
 KEY_SPAN = (round(RY + GB["half_w"] - KEY_BITE, 6), round(RY + GB["half_w"] + STOP_CLR + CH_WALL, 6))   # Y span of the key tab / stop wall
@@ -92,7 +94,7 @@ _REACH = [math.hypot(WY - y, WZ - z) for y, z in _STEP_SCREW_AXES]
 WZ = max(WZ, *[round(p[1] + math.sqrt(r ** 2 - (WY - p[0]) ** 2), 6) for p, r in zip((SA, SB), _REACH) if r > abs(WY - p[0])])
 SA_LEN_STOCK, SB_LEN_STOCK = 25.0, 15.0   # catalog standoff lengths (stock width)
 SA_LEN, SB_LEN = SA_LEN_STOCK + SIZE_DW, SB_LEN_STOCK + SIZE_DW   # a wider chassis lengthens both standoffs: everything outboard of the walls (side panels, wedgelets, front hubs) moves out with their ends
-M2, M3 = 2.0, 3.0                    # thread diameters of the screws the tub is drilled for
+M2, M3 = (float(_k[1:]) for _k in ("M2", "M3"))   # thread diameters of the screws the tub is drilled for: ISO size names, catalog keys (not dimensions to scale)
 M3_THIN_NUT_T = fc.nut(M3, 'thin')[1]   # thin M3 nut thickness (ISO 4035)
 MNT_IN, MNT_T, MNT_SLAB_T = 13.4, 8.0, 4.0   # weapon mount: inner face |X|, total thickness, slab thickness (rest = battered boss)
 STANDOFF_END_GAP = 0.1               # each standoff's inner end stands this far past the mount face it screws into
@@ -143,8 +145,10 @@ INS = [*INS_COLS, (0.0, BOSS_Y)]   # 5 floor inserts / base screws
 # electronics envelopes (catalog boxes at their spec placement, rot z 90): Malenki nano 32 x 20 x 4.4 at (8.67, -3.0, 15.3),
 # BBB ant ESC 23.5 x 12 x 5 at (8.63, -7.25, 10.6); the deck cage ribs are dimensioned off these
 RXESC = os.environ.get("REVRON_RXESC", "malenki_nano_rvrn2")   # receiver / drive ESC catalog id
+RXESCS = {"malenki_nano_rvrn2": "", "esc_dual_brushed": "", "malenki_nano": "", "bbb_malenki_nano": "", "bbb_dual_esc_v31": "", "c_malenki_nano_antweight_esc_receiver": "", "c_bbb_antweight_dual_esc_v3_1": "", "c_antweight_n10_n20_red_esc_motor_mounted": ""}   # every catalog receiver / drive ESC the REVRON_RXESC setting may name
 RX_SIZE, RX_C = hw.size(RXESC), (8.67, -3.0, 15.3)     # receiver catalog box (L, W, H) (32 x 20 x 4.4 at the default) and placed centre
 WESC = os.environ.get("REVRON_WESC", "bbb_ant_esc_rvrn2")   # weapon ESC catalog id
+WESCS = {"bbb_ant_esc_rvrn2": "", "esc_brushless_12a": "", "bbb_ant_esc": "", "bbb_brushless_esc_20a": "", "bbb_red_esc": "", "c_bbb_antweight_spinner_brushless_esc": ""}   # every catalog weapon ESC the REVRON_WESC setting may name
 WE_SIZE, WE_C = hw.size(WESC), (8.63, -7.25, 10.6)     # weapon ESC catalog box (23.5 x 12 x 5 at the default) and placed centre
 
 

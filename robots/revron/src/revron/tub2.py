@@ -29,7 +29,7 @@ def chassis2():
     old_cuts = tub2_mates.keepouts()
     shell = tub2_body.shell()
     body = _U(shell, *adds)
-    tub = _S(tub2_fillets.lobe_root(body, tub2_lobes.bounds()), *cuts(), *old_cuts)
+    tub = _S(tub2_fillets.lobe_root(body, tub2_lobes.lobe()), *cuts(), *old_cuts)
     if not tub.is_valid:                      # a boolean against a moved weapon mount can leave a face unsewn: heal it
         tub = tub.clean()
         tub = tub if tub.is_valid else tub.fix()
