@@ -21,9 +21,12 @@ def _both(s):
 
 def block():
     """Boss-Extrude1 with the rear tabs (Boss-Extrude3, LPattern1, Mirror7): the outer envelope before any cut."""
-    tabs = [_box(TAB_X_OUT - k * TAB_PITCH - TAB_W, TAB_X_OUT - k * TAB_PITCH, HY, HY + TAB_LEN, 0, CH_H) for k in range(TAB_N)]
-    x0, x1 = TAB_X_OUT - (TAB_N - 1) * TAB_PITCH - TAB_W, TAB_X_OUT - (TAB_N - 1) * TAB_PITCH   # inner tab: round end round the bolt hole
-    end = _I(_cyl(TAB_END_R, x0, x1, (HY + TAB_HOLE_DY, TAB_HOLE_Z), "x"), _box(x0, x1, HY, HY + TAB_LEN + TAB_END_R, 0, CH_H))
+    tabs = [_box(TAB_X_OUT - k * TAB_PITCH - TAB_W, TAB_X_OUT - k * TAB_PITCH, HY, HY + TAB_LEN, 0, CH_H) for k in range(TAB_N - 1)]
+    x0, x1 = TAB_X_OUT - (TAB_N - 1) * TAB_PITCH - TAB_W, TAB_X_OUT - (TAB_N - 1) * TAB_PITCH   # inner tab: round end round the bolt hole,
+    yh = HY + TAB_HOLE_DY                                   # square to the tab length below the hole axis; above it the round runs up tangent
+    yc = yh + TAB_END_R / math.sqrt(2)                      # into the rear chamfer plane, the straight part ending at the tangent line (STEP)
+    end = _U(_box(x0, x1, HY - BOOL_EPS, yc, 0, CH_H), _box(x0, x1, yh, HY + TAB_LEN, 0, TAB_HOLE_Z),
+             _I(_cyl(TAB_END_R, x0, x1, (yh, TAB_HOLE_Z), "x"), _box(x0, x1, HY, HY + TAB_LEN + TAB_END_R, 0, CH_H)))
     return _U(_box(-HX, HX, -HY, HY, 0, CH_H), *[_both(t) for t in tabs], _both(end))
 
 
@@ -34,19 +37,22 @@ def halfspace(point, normal, size):
 
 
 def edge_breaks():
-    """Chamfer1: C2 x 45 deg on the top outer edges; the rear plane runs on over the tabs (Chamfer3). Fillet1 rounds
-    the front vertical corners. Returned as the material to remove."""
+    """Chamfer1: C2 x 45 deg on the top outer edges, carried round the Fillet1 front corners (a cone there); the rear
+    plane runs on over the tabs (Chamfer3). Fillet1 rounds the front vertical corners. Returned as the material to remove.
+    The chamfer is the 45 deg tapered extrusion of the rounded footprint: one offset surface, no tangent seams to fuse."""
     size = 2 * (CH_L + TAB_LEN)
-    cut = [halfspace((n[0] * (HX - EDGE_CH), n[1] * (HY - EDGE_CH), CH_H), (n[0], n[1], 1), size)
-           for n in ((1, 0), (-1, 0), (0, -1), (0, 1))]
+    z0 = CH_H - EDGE_CH
+    with bd.BuildSketch(bd.Plane.XY.offset(z0)) as sk:
+        bd.Rectangle(CH_W, CH_L)
+        bd.fillet(sk.vertices().filter_by(lambda v: v.Y < 0), CORNER_R)
+    keep = bd.extrude(sk.sketch, amount=EDGE_CH, taper=EDGE_TAPER)
+    top = _S(_box(-size, size, -size, size, z0, CH_H + 1), keep)
+    rear = halfspace((0, HY - EDGE_CH, CH_H), (0, 1, 1), size)
     corner = []
     for sx in (-1, 1):
         cx, cy = sx * (HX - CORNER_R), -(HY - CORNER_R)
         corner.append(_S(_box(cx, cx + sx * CORNER_R, cy, cy - CORNER_R, 0, CH_H), _cyl(CORNER_R, 0, CH_H, (cx, cy), "z")))
-        z0 = CH_H - EDGE_CH                                  # Chamfer1 carried round Fillet1: a 45 deg cone over the corner
-        cone = bd.Solid.make_cone(CORNER_R, CORNER_R - EDGE_CH, EDGE_CH, bd.Plane(origin=(cx, cy, z0), z_dir=(0, 0, 1)))
-        corner.append(_S(_box(cx, cx + sx * (CORNER_R + 1), cy, cy - (CORNER_R + 1), z0, CH_H + 1), cone))
-    return _U(*cut, *corner)
+    return _U(top, rear, *corner)
 
 
 def cavity():
@@ -66,10 +72,8 @@ def cavity():
     keep += [_both(_box(px, IN_X, sy * py - COL_R, sy * py + COL_R, 0, DECK_Z)) for sy in (-1, 1)]   # each column joined to the side wall
     keep.append(_both(_box(IN_X - BOSS_IN, IN_X, -(py - COL_R), py - COL_R, WALL, DECK_Z)))   # inner boss pad, column to column
     for sy in (-1, 1):                                      # Fillet9 R2: the end columns blend into the end walls
-        ey = sy * END_POST_Y
-        xc = math.sqrt((COL_R + END_FILLET) ** 2 - (IN_Y - END_FILLET - END_POST_Y) ** 2)
-        fill = _box(-xc, xc, ey, sy * IN_Y, 0, DECK_Z)
-        keep.append(_S(fill, *[_cyl(END_FILLET, -1, DECK_Z + 1, (sx * xc, sy * (IN_Y - END_FILLET)), "z") for sx in (-1, 1)]))
+        c = (0.0, sy * END_POST_Y)
+        keep += [fillet_filler(c, COL_R, "y", sy * IN_Y, END_FILLET, sx) for sx in (-1, 1)]
     pocket = _S(_box(-IN_X, IN_X, -IN_Y, IN_Y, -1, DECK_Z), *keep)
     rebate = _box(-(HX - REBATE), HX - REBATE, -(HY - REBATE), HY - REBATE, -1, WALL)
     for sx in (-1, 1):   # every corner R1, the front ones concentric with Fillet1 (STEP: the lip stays a wall thick round the corner)
@@ -114,13 +118,14 @@ def keyholes():
 def side_boss():
     """Boss-Extrude2 (+ Mirror3): R5 obround pad on the outer wall face round the two side-panel screws."""
     ys = (-BOSS_PITCH / 2, BOSS_PITCH / 2)
-    pad = _obround(HX - 1, HX + BOSS_OUT)
+    pad = _obround(HX - 1, HX + BOSS_OUT + 1)               # drawn long, so the full R3 round can run out on the outer face (no needle strip)
     body = _U(_S(_box(HX - 2 * BOSS_FILLET, HX, -HY, HY, 0, CH_H), edge_breaks()), pad)   # a wall deep enough to carry the round, its top edge broken
     reach = BOSS_PITCH / 2 + BOSS_R
     on_wall = lambda c: abs(c.X - HX) < GEOM_TOL or abs(c.X + c.Z - (HX - EDGE_CH + CH_H)) < GEOM_TOL   # the wall face or the Chamfer1 plane
     root = [e for e in body.edges() if on_wall(e.center()) and abs(e.center().Y) <= reach and abs(e.center().Z - AXLE_Z) <= BOSS_R + GEOM_TOL
             and e.center().X > HX - GEOM_TOL - EDGE_CH]
-    out = _S(body.fillet(BOSS_FILLET - OCC_EPS, root), _box(HX - 3 * BOSS_FILLET, HX, -CH_L, CH_L, -1, CH_H + 1))   # Fillet5: R3 root round
+    out = _S(body.fillet(BOSS_FILLET, root), _box(HX - 3 * BOSS_FILLET, HX, -CH_L, CH_L, -1, CH_H + 1),
+             _box(HX + BOSS_OUT, HX + BOSS_OUT + 2, -CH_L, CH_L, -1, CH_H + 1))   # Fillet5: R3 root round, the pad cut back to its face
     pad = _U(out, _box(HX - 1, HX, -BOSS_PITCH / 2, BOSS_PITCH / 2, AXLE_Z - BOSS_R, AXLE_Z + BOSS_R))   # plus a stub keying it into the wall
     return _both(pad)
 
@@ -132,9 +137,13 @@ def side_boss_core():
 
 
 def _obround(x0, x1):
-    """R5 obround round the two side-panel screws, one exact-arc prism (no tangent strips between a box and two cylinders)."""
-    from shapely.geometry import LineString
-    return _ext(LineString([(-BOSS_PITCH / 2, AXLE_Z), (BOSS_PITCH / 2, AXLE_Z)]).buffer(BOSS_R, quad_segs=64), "yz", x0, x1, arcs=True)
+    """R5 obround round the two side-panel screws: one exact slot sketch (two lines, two arcs) extruded along X."""
+    pl = bd.Plane(origin=(x0, 0, AXLE_Z), x_dir=(0, 1, 0), z_dir=(1, 0, 0))
+    with bd.BuildPart() as bp:
+        with bd.BuildSketch(pl):
+            bd.SlotCenterToCenter(BOSS_PITCH, 2 * BOSS_R)
+        bd.extrude(amount=x1 - x0)
+    return bp.part.solids()[0]
 
 
 def side_boss_cuts():
@@ -188,6 +197,7 @@ def lattice_profile():
     for sy in (-1, 1):   # top / bottom centre triangles and the end triangles
         win.append(_rounded(Polygon([(0, 0), (a, sy * b), (-a, sy * b)]).buffer(-LAT_RIB_C, join_style=2), LAT_R_C))
         end = Polygon([(-a, sy * b), (a, sy * b), (0, sy * e)]).buffer(-LAT_RIB_E, join_style=2)
+        end = end.difference(Point(0, sy * e).buffer(COL_R + BOOL_EPS, quad_segs=64))   # the tip notched round the end column (STEP)
         win.append(end.intersection(sbox(-LAT_END_X, -CH_L, LAT_END_X, CH_L)))
         xl = LAT_CORNER_X[0 if sy > 0 else 1]
         for sx in (-1, 1):   # corner pockets between the end wall, a rib to the end column and the bay wall
@@ -198,7 +208,7 @@ def lattice_profile():
             cell = Polygon([(0, sy * e), rib[0], (sx * a, sy * b), (sx * a, sy * IN_Y), (0, sy * IN_Y)]).buffer(0)
             cell = cell.difference(LineString(rib).buffer(half))
             cell = cell.difference(Point(0, sy * e).buffer(COL_R))
-            win.append(cell.intersection(sbox(-xl, -IN_Y, xl, IN_Y)))
+            win.append(_rounded(cell.intersection(sbox(-xl, -IN_Y, xl, IN_Y)), LAT_R_CORNER[0 if sy > 0 else 1]))
     for sx in (-1, 1):   # left / right centre triangles
         win.append(_rounded(Polygon([(0, 0), (sx * a, b), (sx * a, -b)]).buffer(-LAT_RIB_C, join_style=2), LAT_R_C))
     return unary_union([_rounded(x, LAT_R) for x in win if not x.is_empty])

@@ -27,9 +27,10 @@ def _lift(s):
 def base_panel():
     """1 mm panel in the chassis rebate, an M2 clearance hole under every screw column (fasteners table)."""
     p = _box(-(HX - REBATE), HX - REBATE, -(ch.HY - REBATE), ch.HY - REBATE, WALL - BASE_T, WALL)
-    for sx in (-1, 1):   # front corners round with the rebate's (concentric with Fillet1)
-        cx, cy = sx * (HX - CORNER_R), -(ch.HY - CORNER_R)
-        p = _S(p, _S(_box(cx, cx + sx * CORNER_R, cy, cy - CORNER_R, WALL - BASE_T - 1, WALL + 1), _cyl(CORNER_R - REBATE, WALL - BASE_T - 1, WALL + 1, (cx, cy), "z")))
+    for sx in (-1, 1):   # every corner round with the rebate's (the front ones concentric with Fillet1)
+        for sy in (-1, 1):
+            cx, cy = sx * (HX - CORNER_R), sy * (ch.HY - CORNER_R)
+            p = _S(p, _S(_box(cx, cx + sx * CORNER_R, cy, cy + sy * CORNER_R, WALL - BASE_T - 1, WALL + 1), _cyl(CORNER_R - REBATE, WALL - BASE_T - 1, WALL + 1, (cx, cy), "z")))
     return _S(p, cutters("base_panel"))
 
 

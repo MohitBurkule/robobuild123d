@@ -21,6 +21,7 @@ HX, HY = CH_W / 2, CH_L / 2           # outer half sizes (29.5, 33.3)
 IN_X, IN_Y = HX - WALL, HY - WALL     # inner wall faces (27.5, 31.3)
 DECK_Z = CH_H - WALL                  # deck underside (15)
 EDGE_CH = WALL                        # Chamfer1: the top outer edges (and the rear plane carried over the tabs, Chamfer3)
+EDGE_TAPER = 45.0                     # Chamfer1 angle
 CORNER_R = WALL                       # Fillet1: vertical front corners
 # base-panel rebate (Cut-Extrude2 Sketch3 D1 = 1): the panel drops into a lip half a wall deep in, one wall tall
 REBATE = WALL / 2
@@ -59,7 +60,6 @@ LEAD_TAPER = 45.0                      # nut lead-in flank angle
 NUT_CH = 0.4                          # Chamfer3: nut-pocket lead-in
 PAD_FILLET = 1.5                      # Fillet2: column into the boss pad
 BAY_FILLET = (1.0, 1.5)               # rear / front (Fillet15): column into the axle-bay wall
-TAB_END_R = 4.3                       # inner tabs end in a round boss round the cross-bolt hole (Fillet8 side)
 END_FILLET = 2.0                      # Fillet9: end columns into the end walls
 # rear tabs (Boss-Extrude3 Sketch11 D1 10, D2 12, D3 4.5, D4 3.2; LPattern1 2 x 12; Mirror7)
 TAB_W, TAB_PITCH, TAB_N = 6.0, 12.0, 2
@@ -67,6 +67,7 @@ TAB_X_OUT = HX                        # outer tab flush with the side wall
 TAB_TIP_R = 2.0                       # outer tabs: round where the end face meets the rear chamfer plane
 TAB_LEN = 8.0                         # beyond the rear face (to y 41.3)
 TAB_HOLE_Z, TAB_HOLE_DY = 4.0, 4.9    # cross-bolt hole height, and its distance in from the rear face (y 38.2)
+TAB_END_R = (CH_H - EDGE_CH - TAB_HOLE_Z - TAB_HOLE_DY) / 2 ** 0.5   # inner tab round end, tangent to the rear chamfer plane (STEP R4.31)
 TAB_LEAD = 1.5                        # Chamfer5
 # deck (Cut-Extrude6 Sketch8: D1 15 screw pitch, D2 1.7 pilots, D3 4 x D5 12 switch slot, D4 3 in from the wall)
 SW_SLOT = (4.0, 12.0)
@@ -81,6 +82,7 @@ LAT_RIB_F = 1.5                       # front corner ribs (bay-wall corner to th
 LAT_RIB_E = 2.05                      # end cells: Chamfer2 radius, the end ribs are lighter
 LAT_END_X = 13.5                      # end triangle stops at the vert_mod upright inner face
 LAT_CORNER_X = (BAY_X0[0] - 1.5, BAY_X0[1])   # corner pockets stop short of the axle-bay cross walls (rear, front)
+LAT_R_CORNER = (1.14, 1.35)            # corner pockets: wall-to-rib round (STEP measured, rear / front)
 LAT_R = 1.0                           # Fillet13 R1 (end and corner windows)
 LAT_R_C = 2.0                         # Fillet6 R2 (centre windows)
 

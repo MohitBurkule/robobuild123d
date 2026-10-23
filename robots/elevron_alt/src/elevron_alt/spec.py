@@ -35,6 +35,7 @@ BAT_SIZE, RX_SIZE, WE_SIZE = (36.0, 18.0, 11.0), (32.0, 20.0, 4.4), (23.5, 12.0,
 BAY_GAP = 0.5
 LEADS_FORWARD = [-90, 0, 0]             # BE1806 turned about its axis so the phase leads point forward into the upright's lead slot
 SHAFT_MASS_SHARE = 0.05                # the shaft's mass is in the motor's catalog mass (Revron convention)
+D_FLAT_FIT = 0.4                       # catalog N10 shaft drawn round: the RV21 hub's D-flat sits on its flat (Revron's allowance)
 CSK_LEAD_OVERLAP = 0.2                 # mesh overlap allowed for a countersunk head in a matching cone
 UNDER_DECK = 1.0                       # phase leads run this far under the deck, over the battery
 LEAD_RISE = 2.0                        # phase-lead waypoints: this far off the deck faces / the lead tip
@@ -226,6 +227,8 @@ def make_spec(model_file):
                 for _, n in SIDES]
     overlap.append(dict(a="wshaft", b="weapon_motor_can", max_depth_mm=SHAFT_RACE, reason="shaft in the can's 5.1 bore (0.05 radial running fit; the meshes overlap)"))
     overlap.append(dict(a="wshaft", b="wbearing", max_depth_mm=SHAFT_RACE, reason="shaft in the MF85 inner race (bearing modelled as one solid)"))
+    overlap += [dict(a=f"motor_{n}", b=f"whub_r{n}", max_depth_mm=D_FLAT_FIT, reason="RVRN_revdev STEP: the RV21 hub turns with the RV12 N10 D-shaft; the catalog shaft is a fixed round body, so the hub's D-flat overlaps it")
+                for _, n in SIDES]
     fasteners = records()
     for f in fasteners:
         f.setdefault("deviation", FASTENER_DEV)

@@ -2264,6 +2264,18 @@
    "b": "wbearing",
    "max_depth_mm": 0.3,
    "reason": "shaft in the MF85 inner race (bearing modelled as one solid)"
+  },
+  {
+   "a": "motor_l",
+   "b": "whub_rl",
+   "max_depth_mm": 0.4,
+   "reason": "RVRN_revdev STEP: the RV21 hub turns with the RV12 N10 D-shaft; the catalog shaft is a fixed round body, so the hub's D-flat overlaps it"
+  },
+  {
+   "a": "motor_r",
+   "b": "whub_rr",
+   "max_depth_mm": 0.4,
+   "reason": "RVRN_revdev STEP: the RV21 hub turns with the RV12 N10 D-shaft; the catalog shaft is a fixed round body, so the hub's D-flat overlaps it"
   }
  ],
  "reference_cad": {
