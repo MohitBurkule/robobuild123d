@@ -54,6 +54,7 @@ OCC_EPS = 1e-3                        # OCC fails a round that exactly meets a n
 COS_ALONG = 0.9                        # an edge runs along an axis when its tangent is this close to it
 WIN_FLOOR_K = 0.999                    # window floor blend a hair under the corner radius (no degenerate sphere corner)
 WIN_W, WIN_H, WIN_DEPTH, WIN_R = 5.0, 7.0, 4.0, 1.0
+LEAD_TAPER = 45.0                      # nut lead-in flank angle
 NUT_CH = 0.4                          # Chamfer3: nut-pocket lead-in
 PAD_FILLET = 1.5                      # Fillet2: column into the boss pad
 BAY_FILLET = (1.0, 1.5)               # rear / front (Fillet15): column into the axle-bay wall

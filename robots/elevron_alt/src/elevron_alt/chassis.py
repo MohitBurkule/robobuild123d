@@ -109,8 +109,7 @@ def keyholes():
 def side_boss():
     """Boss-Extrude2 (+ Mirror3): R5 obround pad on the outer wall face round the two side-panel screws."""
     ys = (-BOSS_PITCH / 2, BOSS_PITCH / 2)
-    pad = _U(_box(HX - 1, HX + BOSS_OUT, ys[0], ys[1], AXLE_Z - BOSS_R, AXLE_Z + BOSS_R),
-             *[_cyl(BOSS_R, HX - 1, HX + BOSS_OUT, (y, AXLE_Z), "x") for y in ys])
+    pad = _obround(HX - 1, HX + BOSS_OUT)
     body = _U(_S(_box(HX - 2 * BOSS_FILLET, HX, -HY, HY, 0, CH_H), edge_breaks()), pad)   # a wall deep enough to carry the round, its top edge broken
     reach = BOSS_PITCH / 2 + BOSS_R
     on_wall = lambda c: abs(c.X - HX) < GEOM_TOL or abs(c.X + c.Z - (HX - EDGE_CH + CH_H)) < GEOM_TOL   # the wall face or the Chamfer1 plane
@@ -124,8 +123,13 @@ def side_boss():
 def side_boss_core():
     """The obround pad itself: Boss-Extrude2 comes after Chamfer1, so the edge break does not touch it."""
     ys = (-BOSS_PITCH / 2, BOSS_PITCH / 2)
-    return _both(_U(_box(HX - 1, HX + BOSS_OUT, ys[0], ys[1], AXLE_Z - BOSS_R, AXLE_Z + BOSS_R),
-                    *[_cyl(BOSS_R, HX - 1, HX + BOSS_OUT, (y, AXLE_Z), "x") for y in ys]))
+    return _both(_obround(HX - 1, HX + BOSS_OUT))
+
+
+def _obround(x0, x1):
+    """R5 obround round the two side-panel screws, one exact-arc prism (no tangent strips between a box and two cylinders)."""
+    from shapely.geometry import LineString
+    return _ext(LineString([(-BOSS_PITCH / 2, AXLE_Z), (BOSS_PITCH / 2, AXLE_Z)]).buffer(BOSS_R, quad_segs=64), "yz", x0, x1, arcs=True)
 
 
 def side_boss_cuts():
@@ -139,7 +143,7 @@ def side_boss_cuts():
     win = _box(x0, HX + BOSS_OUT + 1, -WIN_W / 2, WIN_W / 2, AXLE_Z - WIN_H / 2, AXLE_Z + WIN_H / 2)
     win = win.fillet(WIN_R, [e for e in win.edges() if e.center().X < HX + BOSS_OUT and abs(e.tangent_at().X) > COS_ALONG])   # Fillet12 R1: corners,
     win = win.fillet(WIN_R * WIN_FLOOR_K, [e for e in win.edges() if abs(e.center().X - x0) < GEOM_TOL])   # then the floor (torus blends: no sphere poles to tessellate)
-    lead = [bd.Solid.make_loft([_hex_wire(IN_X - BOSS_IN, y, NUT_AF + 2 * NUT_CH), _hex_wire(IN_X - BOSS_IN + NUT_CH, y, NUT_AF)]) for y in ys]   # Chamfer3 0.4 nut lead-in
+    lead = [bd.extrude(bd.Face(_hex_wire(IN_X - BOSS_IN, y, NUT_AF + 2 * NUT_CH)), amount=NUT_CH, dir=(1, 0, 0), taper=LEAD_TAPER) for y in ys]   # Chamfer3 0.4 nut lead-in (planar flanks)
     return _both(_U(*holes, *nuts, *lead, win))
 
 
