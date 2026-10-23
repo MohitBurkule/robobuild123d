@@ -10,11 +10,12 @@ def additions():
     """Material added on the shell: rear boss, switch pad, then the +X half blocks mirrored."""
     half = (tub2_blocks.corner_blocks() + tub2_blocks.stop_wall_key_ledge() + tub2_pockets.rear_pad()
             + [tub2_lug.lug(), tub2_tab.key_tab(), tub2_tab.wall_blend(), tub2_flange.flange()])
-    return [tub2_cols.rear_boss(), tub2_tab.tab_wall('+x'), tub2_tab.tab_wall('-x').mirror(Plane.YZ)] + tub2_lobes.additions() + [mirrored(h) for h in half] + tub2_switch.switch_pad() + tub2_bays.additions()
+    half = [h for h in half if h is not None]
+    return [tub2_cols.rear_boss()] + ([tub2_tab.tab_wall('+x'), tub2_tab.tab_wall('-x').mirror(Plane.YZ)] if tub2_tab.HAS_TAB else []) + tub2_lobes.additions() + [mirrored(h) for h in half] + tub2_switch.switch_pad() + tub2_bays.additions()
 
 
 def cuts():
-    return tub2_pockets.deck_pockets() + tub2_seat.seat_cuts() + [tub2_cols.bores()] + tub2_lobes.cuts() + [mirrored(c) for c in (tub2_tab.rabbet(), tub2_tab.key_hole()) + tuple(tub2_lattice.pockets())] + tub2_front.wall_pockets() + [tub2_front.wire_slot()] + tub2_switch.switch_slot()
+    return tub2_pockets.deck_pockets() + tub2_seat.seat_cuts() + [tub2_cols.bores()] + tub2_lobes.cuts() + [mirrored(c) for c in (tub2_tab.rabbet(), tub2_tab.key_hole()) + tuple(tub2_lattice.pockets()) if c is not None] + tub2_front.wall_pockets() + [c for c in (tub2_front.wire_slot(),) if c is not None] + tub2_switch.switch_slot()
 
 
 DUST = 0.01   # solids under this fraction (together) of the tub's are offcuts of a cut, not chassis
