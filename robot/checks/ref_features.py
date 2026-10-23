@@ -177,6 +177,22 @@ def hole_kind(profile):
 EXACT_HOLE_TOL_MM = 0.15   # hole size tolerance when the reference diameter is exact (SolidWorks dump); mesh facets
 
 
+PLANE_EPS_MM = 1e-3      # a section within this of a face lying in the plane cuts along the face: ambiguous
+PLANE_SHIFT_MM = 0.05    # moved this far off such a face (well under any feature a section compares)
+
+
+def off_face(h, ax, *meshes):
+    """h, or h +- PLANE_SHIFT_MM when a face of any mesh lies in the plane: a section on a face plane returns that face's
+    edges or not at random per tessellation, so holes through the face show in one mesh and not the other."""
+    def on(x):
+        return any(bool(np.any((np.abs(m.face_normals[:, ax]) > 0.999) & (np.abs(m.triangles_center[:, ax] - x) < PLANE_EPS_MM)))
+                   for m in meshes)
+    for x in (h, h + PLANE_SHIFT_MM, h - PLANE_SHIFT_MM, h + 2 * PLANE_SHIFT_MM, h - 2 * PLANE_SHIFT_MM):
+        if not on(x):
+            return x
+    return h
+
+
 def compare_sections(model, ref, fracs=(0.25, 0.5, 0.75), hole_tol=0.6, sec_iou_min=0.8, area_tol=0.15, corner_tol=0.6, exact_d=None):
     """Feature differences between two meshes in one frame. `exact_d`: the reference's exact hole diameters (SolidWorks
     dump): a reference hole's mesh-estimated diameter is snapped to the nearest one (within 0.3 mm / 10 %) and the size
@@ -189,7 +205,7 @@ def compare_sections(model, ref, fracs=(0.25, 0.5, 0.75), hole_tol=0.6, sec_iou_
     diffs, stats = [], {"sections": 0, "holes_ref": 0, "holes_model": 0}
     for ax in range(3):
         for f in fracs:
-            h = float(rlo[ax] + (rhi[ax] - rlo[ax]) * f)
+            h = off_face(float(rlo[ax] + (rhi[ax] - rlo[ax]) * f), ax, model, ref)
             gr, gm = section(ref, ax, h), section(model, ax, h)
             stats["sections"] += 1
             ar = gr.area if gr is not None else 0.0
