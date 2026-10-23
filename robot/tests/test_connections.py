@@ -92,3 +92,12 @@ def test_cover_fasteners_reasoned_deviation():
     d = _armour(fasteners=[s])
     d["parts"][1]["cover_fasteners_deviation"] = " "
     assert any(f.severity == "blocker" for f in run(d).findings if f.id == "connection.cover_fasteners")
+
+
+def test_glued_part_needs_a_face_to_bond_to():
+    # a declared bond is not a free pass (a switch without catalog holes was declared `adhesive` wherever it sat)
+    sw = lambda z: {"id": "sw", "kind": "switch", "material": "pla", "process": "fdm", "shape": BOX(10, 4, 4), "at": [0, 0, z], "retained": "adhesive"}
+    on = base(); on["parts"].append(sw(6.0))            # sits on the lid top (z 4)
+    assert not run(on).failed("connection.bond_no_face")
+    off = base(); off["parts"].append(sw(7.0))          # 1 mm above it: nothing to glue to
+    assert run(off).failed("connection.bond_no_face")
