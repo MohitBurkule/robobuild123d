@@ -90,8 +90,9 @@ def _battery_fit():
     pack_front = KEY_SPAN[1] + BAT_LEN
     sweep_rear = WY - DISC_R - DISC_ECC
     miss = []
-    if CH_HALF_W < CH_HALF_W_MIN - 1e-6:
-        miss.append(f"width: needs a half-width of {CH_HALF_W_MIN:.1f} mm (pack {hw.size(BATTERY)[1]:.1f} wide + column sleeves + walls), the chassis has {CH_HALF_W:.1f}")
+    need_w = abs(BAT_X) + hw.size(BATTERY)[1] / 2 + CH_WALL   # the pack's outer edge (it may notch a column sleeve, the tub pocket cuts it) and a side wall
+    if CH_HALF_W < need_w - 1e-6:
+        miss.append(f"width: needs a half-width of {need_w:.1f} mm (pack {hw.size(BATTERY)[1]:.1f} wide centred at X {BAT_X:g}, + a wall), the chassis has {CH_HALF_W:.1f}")
     if CH_Y1 < KEY_SPAN[1] + BAT_LEN + PACK_FRONT_GAP + CH_WALL - 1e-6:
         miss.append(f"length: needs the front wall at Y {KEY_SPAN[1] + BAT_LEN + PACK_FRONT_GAP + CH_WALL:.1f} mm (pack {BAT_LEN:.1f} long against the stop wall + a wall), the chassis has {CH_Y1:.1f}")
     if pack_front + BAT_SWEEP_GAP > sweep_rear + 1e-6:
