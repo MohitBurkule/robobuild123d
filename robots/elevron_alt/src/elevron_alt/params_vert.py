@@ -20,6 +20,7 @@ FRONT_CLR = 0.95                       # leg front ends off the chassis front in
 LEG_IN = ((IN_X - 5.327, -IN_Y + FRONT_CLR), (IN_X - 11.317, -15.75))   # leg inner edge (deck line): front and rear points (STEP plane)
 LEG_DRAFT = 48.48                       # leg inner faces lean back from the deck line (deg from horizontal)
 ARCH_Y, ARCH_R = -6.766, 8.0          # arch over the leg opening: its lip line on the deck, corner rounds (STEP: square to the ramp)
+LIP_W = 1.989                          # front lip: its back face this far behind the arch's deck line (STEP)
 ARCH_X = 8.056                         # arch corner centres off the middle (STEP)
 ARCH_CH_ANG = 45.0                     # arch edge on the ramp: TOP_CH chamfer at this angle
 NOTCH_R, NOTCH_RY = 8.0, 3.35         # side notch: round rear end, centred on the chassis inner wall line (its floor is tangent)

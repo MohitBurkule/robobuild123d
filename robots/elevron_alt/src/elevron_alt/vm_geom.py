@@ -90,6 +90,28 @@ def _ramp_plane(z):
     return bd.Plane(origin=(0, 0, z), x_dir=(1, 0, 0), z_dir=(0, -K / SECK, 1 / SECK))
 
 
+def inside_round(p1, p2, r):
+    """Material an inside round of radius r adds where two faces meet (each an outward plane (n, d), n.p = d): the corner
+    wedge between the tangent lines minus the cylinder, along the planes' common line (exact)."""
+    import build123d as bd
+    import numpy as np
+    (n1, d1), (n2, d2) = [(np.array(n, float) / np.linalg.norm(n), d / np.linalg.norm(n)) for n, d in (p1, p2)]
+    u = np.cross(n1, n2)
+    u /= np.linalg.norm(u)
+    A = np.array([n1, n2, u])
+    v, c = np.linalg.solve(A, [d1, d2, 0.0]), np.linalg.solve(A, [d1 + r, d2 + r, 0.0])
+    face = bd.Face(bd.Wire.make_polygon([bd.Vector(*(q - u * TOOL_S)) for q in (v, c - r * n1, c, c - r * n2)], close=True))
+    wedge = bd.Solid.extrude(face, bd.Vector(*(u * 2 * TOOL_S)))
+    return _S(wedge, bd.Solid.make_cylinder(r, 2 * TOOL_S, bd.Plane(origin=tuple(c - u * TOOL_S), z_dir=tuple(u))))
+
+
+def hollow_front_round():
+    """R HOLLOW_EDGE_R round where the hollow's ceiling meets the lip's back face, over the arch's straight run (STEP)."""
+    ceil = ((0, K, -1), -(ramp_z(0) - VM_T * SECK))
+    back = ((0, 1, 0), ARCH_Y + LIP_W)
+    return _I(inside_round(back, ceil, HOLLOW_EDGE_R), _box(-ARCH_X, ARCH_X, -BIG, BIG, -BIG, BIG))
+
+
 def hollow_rear_round():
     """R HOLLOW_EDGE_R round where the hollow's ceiling (one wall under the ramp) meets the bulkhead face (STEP)."""
     y0, r = BULK_Y[0], HOLLOW_EDGE_R
@@ -145,7 +167,7 @@ def slot_plan():
 def hollow_plan():
     """Under-shell hollow: the planform in by one wall, from the lip to the bulkhead, round the rear column pads."""
     p = plan().buffer(-VM_T, join_style=2).intersection(sbox(-BIG, HOLLOW_FRONT, BIG, BULK_Y[0]))
-    p = p.difference(front_opening(full=True).buffer(VM_T / COSK, SEG))   # the front lip: one wall round the arch
+    p = p.difference(front_opening(full=True).buffer(LIP_W, SEG))   # the front lip round the arch (STEP: its back face at y ARCH_Y + LIP_W)
     p = p.difference(unary_union([Point(q).buffer(POST_PAD_R, SEG) for q in POSTS if q[1] > 0])).difference(slot_plan())
     return p.buffer(-HOLLOW_R, SEG).buffer(HOLLOW_R, SEG).buffer(HOLLOW_R, SEG).buffer(-HOLLOW_R, SEG)
 
@@ -169,7 +191,7 @@ def body():
     s = _S(_U(_S(shell, ar), _S(ups, ar)), slot)        # the ramp cut before the union (OCC drops it from the fused arcs)
     hollow = _ext(hollow_plan(), "xy", DECK_TOP - 1, TOOL)
     s = _S(s, _S(hollow, above_ramp(VM_T)), leg_drafts(), arch())
-    s = _U(s, hollow_rear_round())
+    s = _U(s, hollow_rear_round(), hollow_front_round())
     return top_chamfer(s)
 
 
