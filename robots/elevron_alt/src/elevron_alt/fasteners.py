@@ -11,7 +11,7 @@ from .params_chassis import (HX, IN_X, WALL, CH_H, AXLE_Y, AXLE_Z, POSTS, END_PO
                              TAB_X_OUT, TAB_W, TAB_PITCH, BOSS_IN)
 from .params_drive import FLOOR_LIFT, WY, WZ, UP_IN, UP_T
 from .params_hw import BASE_T, BACK_T, M2, M3
-from .params_side import PLATE_X, CROSS_LAND
+from .params_side import PLATE_X
 from .params_vert import DECK_TOP, POST_CB_Z, MOTOR_HOLES, PRONG
 
 import math
@@ -59,19 +59,21 @@ def joints():
                              f"nut_s{n}{k}", [f"side_{n}", "chassis"], "hex2"))
         out.append(Joint(f"bolt_a{n}", f"M{M3:g}x12", "cap", (s * (IN_X - BACK_T), -AXLE_Y, AXLE_Z), (s, 0, 0), None, BACK_T, "tapped",   # front axle stack
                          f"so_{n}", [f"bplate_{n}", "chassis", f"fplate_{n}"], "hex2.5"))
-        out.append(Joint(f"bolt_x{n}", f"M{M3:g}x12", "button", (s * (TAB_X_OUT + CROSS_LAND), HY + TAB_HOLE_DY, TAB_HOLE_Z), (-s, 0, 0), f"side_{n}",
-                         TAB_X_OUT + CROSS_LAND - PRONG[0] - fc.nut(M3, "thin")[1], "nut", f"nut_x{n}", [f"side_{n}", "chassis", "vert_mod"], "hex2",
-                         {"reason": "rear cross bolt is a shear pin through the pod crossbar, the chassis tabs and the module prongs: it locates the module and "
-                                    "ties the pod's rear (nut captive in the module prong); the 4 M2 into the columns clamp the deck face"}, OPEN))
+        x_in = TAB_X_OUT - TAB_PITCH - TAB_W                     # inner tab's inner face: the head seats on its lead-in (Chamfer5)
+        out.append(Joint(f"bolt_x{n}", f"M{M3:g}x12", "button", (s * x_in, HY + TAB_HOLE_DY, TAB_HOLE_Z), (s, 0, 0), None,
+                         PRONG[0] - x_in, "nut", f"nut_x{n}", ["chassis", "vert_mod", f"side_{n}"], "hex2",
+                         {"reason": "rear cross bolt, driven from between the inner tabs: through the inner tab into the thin nut captive in the "
+                                    "module prong, its shank on through the pod tongue as a shear pin (the tongue sits in the tab gap); the 4 M2 "
+                                    "into the columns clamp the deck face"}, OPEN))
     for i, (dy, dz) in enumerate(MOTOR_HOLES):                   # BE1806 base through the left upright, heads in its counterbores
         out.append(Joint(f"bolt_m{i}", f"M{M2:g}x6", "cap", (-(UP_IN + UP_T), WY + dy, WZ + dz), (1, 0, 0),
                          "vert_mod", UP_T, "tapped", "weapon_motor_stator", ["vert_mod"]))
     return out
 
 
-def cutters(part):
-    """Union of the head-side hole tools this part carries."""
-    t = [j.tool_and_record()[0] for j in joints() if j.head_part == part]
+def cutters(part, only=None):
+    """Union of the head-side hole tools this part carries (optionally only the joints whose id starts with `only`)."""
+    t = [j.tool_and_record()[0] for j in joints() if j.head_part == part and (only is None or j.id.startswith(only))]
     out = t[0] if t else None
     for x in t[1:]:
         out = out + x

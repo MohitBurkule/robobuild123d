@@ -54,8 +54,11 @@ def test_side_panel_is_one_solid_and_mirrors():
     assert l.bounding_box().max.X == pytest.approx(-r.bounding_box().min.X, abs=1e-6)
 
 
-def test_side_crossbar_behind_tyre():
-    assert S.CROSS_Y[0] >= C.AXLE_Y + D.TYRE_R and S.LAND_Y0 >= C.AXLE_Y + S.HUB_R
+def test_side_panel_relations():
+    """The crossbar stands behind the rear tyre, the tongue fits the tab gap beside the prong, the wells clear the tyres."""
+    assert S.CROSS_Y0 >= C.AXLE_Y + D.TYRE_R
+    assert V.PRONG[0] + V.PRONG[1] < S.TONGUE_X[0] < S.TONGUE_X[1] < S.TAB_GAP[1]
+    assert S.WELL_R > D.TYRE_R and S.FORK_X[1] < D.WHEEL_OUT
 
 
 def test_vert_mod_prongs_in_tab_gap():

@@ -1,5 +1,6 @@
-"""Side_Panel_alt_sm body (TPU, right-hand part, STEP frame) from relations, measured off the RVRN_revdev STEP faces.
-Work in progress: pieces are named after the features they reproduce."""
+"""Side_Panel_alt_sm body (TPU, right-hand part, STEP frame) from relations (params_side): a drafted wheel guard round
+both tyres (solid at the front, a shell with grip grooves over the rear tyre), the plate on the side boss with its lip,
+flanks from the plate to the guard ends, tongue / crossbar / fork root round the outer chassis tab, and the fork."""
 import math
 
 import build123d as bd
@@ -10,27 +11,10 @@ from robocad.geom import _box, _cyl, _U, _S, _I, _ext, _mirror_x, _solid
 from .chassis import halfspace
 from .params_chassis import AXLE_Y, AXLE_Z, HY, TAB_HOLE_DY, TAB_HOLE_Z
 
+from .params_side import *  # noqa: F401,F403
+
 BIG = 1e3
-B_Y0, B_K = 46.16, 0.0853               # underside plane: z 0 at y B_Y0, rising forward at B_K
-GUARD_X, GUARD_Y = 39.5, (-16.8, 16.8, 35.8)   # wheel-guard spine: front point, rear segment
-GUARD_R0, GUARD_DRAFT, GUARD_T = 12.814, 35.03, 3.28
-GROOVE = (16.98, 6.0, 3.0, 0.5, (2.62, 10.81), -0.857, 4)   # first centre y at z 3, pitch, width, depth, z span, dy/dz, count
-WELL_R, WELL_X = 12.0, (31.5, 42.5)     # wheel wells round both axles: rear one from the boss lip out to the guard's inner face
-PLATE_X0, PLATE_OUT = 32.5, (0.966, 0.259, 35.53)   # plate on the boss face; slanted outer plane n.x = d
-PLATE_OB = (7.0, 7.0, 16.0, 3.0)        # plate outline: obround centres +-y, radius, top z over |y| <= ...
-LIP_X0, LIP_IN_R = 31.5, 5.3
-TONGUE_X = (20.75, 23.25)
-TONGUE_FRONT = (0.997, 0.078, 33.51)    # -n.(y,z) = -d
-TONGUE_TOP = (0.217, 0.976, 21.86)
-REAR_SLOPE = (0.819, 0.574, 39.82)      # crossbar / tongue rear face (y, z)
-ROOT_TOP = (0.340, 0.940, 24.10)        # fork root top (y, z)
-CROSS_Y0, CROSS_TOP = 37.8, 14.0
-TAB_POCKET = (23.25, 32.25, 41.5, 48.58)   # pocket round the chassis outer tab: x span, rear face y, underside chamfer y + z
-ROOT_EDGE = (-0.707, 0.579, 0.406, 7.11)   # fork-root inner face n.(x, y, z) = d
-FORK_X = (35.76, 41.5)
-FORK_T = 4.0
-FORK_TIP = (98.61, (0.499, 0.867, 45.26), 83.22, 84.74)   # tip y, tip top plane, tooth riser y span
-FORK_RISER = (0.867, 0.499)            # tooth riser face normal (-y, +z)
+B_Y0, B_K = UNDER
 
 
 def bottom_z(y):
@@ -69,9 +53,9 @@ def guard():
     off = GUARD_T / math.cos(math.radians(GUARD_DRAFT))
     out = _U(_drafted((GUARD_Y[0],), 0, z0), _drafted(GUARD_Y[1:], 0, z0))
     rear = _I(_drafted(GUARD_Y[1:], 0, z0), _box(WELL_X[0], BIG, -BIG, BIG, -BIG, CROSS_TOP))
-    rear = _S(rear, _box(-BIG, WELL_X[1], GUARD_Y[1], GUARD_Y[2], -BIG, BIG))          # over the tyre only its outer wall
-    out = _U(_drafted((GUARD_Y[0],), 0, z0), rear)
-    hollow = _I(_drafted(GUARD_Y[1:], off, z0), _box(-BIG, BIG, GUARD_Y[1], CROSS_Y0, -BIG, BIG))
+    rear = _S(rear, _box(-BIG, WELL_X[1], GUARD_Y[1] - 0.8, CROSS_Y0, -BIG, BIG))          # over the tyre only its outer wall
+    out = _U(_I(_drafted((GUARD_Y[0],), 0, z0), _box(-BIG, BIG, -BIG, BIG, -BIG, CROSS_TOP)), rear)
+    hollow = _I(_drafted(GUARD_Y[1:], off, z0), _box(-BIG, BIG, GUARD_Y[1], GUARD_Y[2], -BIG, BIG))
     return _S(out, hollow, grooves())     # the rear guard is a shell over the tyre, closed at the crossbar; the front one solid
 
 
@@ -108,7 +92,7 @@ def rear():
     front = halfspace((0, TONGUE_FRONT[2] / TONGUE_FRONT[0], 0), (0, -TONGUE_FRONT[0], -TONGUE_FRONT[1]), BIG)
     tongue = _S(_box(*TONGUE_X, 20, 70, -1, 20), ttop, slope, front)
     x0, x1, yr, ch = TAB_POCKET
-    rc = 3.0
+    rc = POCKET_R
     plan = sbox(x1, CROSS_Y0, FORK_X[1], 70).union(sbox(x0, yr, FORK_X[1], 70)).union(sbox(x1, CROSS_Y0 + rc, FORK_X[1], 70))
     plan = plan.difference(sbox(x1, CROSS_Y0, x1 + rc, CROSS_Y0 + rc)).union(Point(x1 + rc, CROSS_Y0 + rc).buffer(rc, 64))
     low = _ext(plan, "xy", -1, CROSS_TOP)
@@ -131,18 +115,19 @@ def fork():
     return _S(f, body, tooth, _above(tp[:2], tp[2]))
 
 
+def struts():
+    """Flanks between the plate's top and each wheel guard's end: under a plane falling outwards from the plate top."""
+    xs, zs, k = STRUT_TOP
+    blk = _U(*[_box(PLATE_X0, BIG / 10, *sorted((sy * STRUT_Y0, sy * STRUT_Y1)), -5, zs) for sy in (-1, 1)])
+    cy, r, top, flat = PLATE_OB
+    ob = unary_union([Point(-cy, AXLE_Z).buffer(r, 64), Point(cy, AXLE_Z).buffer(r, 64), Point(-flat, top), Point(flat, top)]).convex_hull
+    blk = _I(blk, _U(_ext(ob, "yz", PLATE_X0 - 1, xs), _box(xs, BIG, -BIG, BIG, -BIG, BIG)))   # inside the plate outline until the flank leaves it
+    return _S(blk, halfspace((xs, 0, zs), (k, 0, 1), BIG))
+
+
 def sp():
-    s = _U(guard(), plate(), rear(), fork())
+    s = _U(guard(), plate(), rear(), fork(), struts())
     s = _S(s, wells())
     nonfork = _S(_box(-BIG, BIG, -BIG, BIG, -BIG, 0), _box(*FORK_X, 40, BIG, -BIG, BIG))
     s = _S(s, under_b(), nonfork)
     return _solid(s)
-
-
-def sp_l():
-    return _solid(_mirror_x(sp()))
-
-
-def sp_ref_frame():
-    """Ours in the right STEP solid's frame (that solid sits 0.25 inboard of the mirror of the left one)."""
-    return sp().moved(bd.Location((-0.25, 0, 0)))

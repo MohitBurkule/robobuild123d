@@ -41,6 +41,7 @@ ROT_GAP = 0.3                          # prop-mount flange stops short of the MF
 LEAD_Y = WY - 19.5                     # catalog stator: phase-lead stub tip (local -z 19.5), turned to point forward
 BRG = BEARINGS["mf85"]                 # FS4 MF85ZZ flanged: bore, OD, width
 BRG_X0 = UP_IN - 0.6                   # flange 0.6 proud of the right upright's inner face (STEP 12.7)
-PROP_FLANGE_X1 = BRG_X0 - ROT_GAP
+RUB_GAP = 1.0                          # weapon parts off the module (kin.rub_gap)
+PROP_FLANGE_X1 = min(BRG_X0 - ROT_GAP, UP_IN - RUB_GAP)
 
 __all__ = [n for n in dir() if not n.startswith("__")]

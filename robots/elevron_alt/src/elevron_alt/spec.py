@@ -58,7 +58,7 @@ def _structure(P, M):
     for s, n in SIDES:
         P(id=f"side_{n}", kind="armor", print_orientation="+z", rotates_with="fixed", color="#3c4048", shape=M(f"side_{n}"), **TPU,
           deviation="ELVRN3.0 Alt STEP: the Side_Panel_alt_sm fork prongs lead the disc (tips at y 98.6, ahead of the disc's swept front): the forks are the ground game in front of the vertical disc, kept for parity",
-          label="Side_Panel_alt_sm TPU pod: plate on the side boss (2 M3 CSK into captive nuts), battered skin outside the rear wheel, crossbar on the rear cross bolt, fork prong past the weapon")
+          label="Side_Panel_alt_sm TPU pod: plate on the side boss (2 M3 CSK into captive nuts), drafted guard round both wheels, tongue on the rear cross bolt, crossbar round the outer tab, fork prong past the weapon")
 
 
 def _weapon(P, M, pivot):

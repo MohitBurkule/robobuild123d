@@ -99,7 +99,7 @@
    "process": "fdm",
    "solid_fraction": 0.9,
    "deviation": "ELVRN3.0 Alt STEP: the Side_Panel_alt_sm fork prongs lead the disc (tips at y 98.6, ahead of the disc's swept front): the forks are the ground game in front of the vertical disc, kept for parity",
-   "label": "Side_Panel_alt_sm TPU pod: plate on the side boss (2 M3 CSK into captive nuts), battered skin outside the rear wheel, crossbar on the rear cross bolt, fork prong past the weapon"
+   "label": "Side_Panel_alt_sm TPU pod: plate on the side boss (2 M3 CSK into captive nuts), drafted guard round both wheels, tongue on the rear cross bolt, crossbar round the outer tab, fork prong past the weapon"
   },
   {
    "id": "side_r",
@@ -118,7 +118,7 @@
    "process": "fdm",
    "solid_fraction": 0.9,
    "deviation": "ELVRN3.0 Alt STEP: the Side_Panel_alt_sm fork prongs lead the disc (tips at y 98.6, ahead of the disc's swept front): the forks are the ground game in front of the vertical disc, kept for parity",
-   "label": "Side_Panel_alt_sm TPU pod: plate on the side boss (2 M3 CSK into captive nuts), battered skin outside the rear wheel, crossbar on the rear cross bolt, fork prong past the weapon"
+   "label": "Side_Panel_alt_sm TPU pod: plate on the side boss (2 M3 CSK into captive nuts), drafted guard round both wheels, tongue on the rear cross bolt, crossbar round the outer tab, fork prong past the weapon"
   },
   {
    "id": "weapon_motor_stator",
@@ -1434,7 +1434,7 @@
    "id": "bolt_sl0",
    "designation": "M3x10",
    "at": [
-    -35.5,
+    -34.3,
     -7.0,
     10.75
    ],
@@ -1463,7 +1463,7 @@
     "csk_d": 6.3,
     "csk_depth": 1.45,
     "sink": 0.0,
-    "grip": 6.7
+    "grip": 5.5
    },
    "tool": "hex2",
    "removable": true,
@@ -1473,7 +1473,7 @@
    "id": "bolt_sl1",
    "designation": "M3x10",
    "at": [
-    -35.5,
+    -34.3,
     7.0,
     10.75
    ],
@@ -1502,7 +1502,7 @@
     "csk_d": 6.3,
     "csk_depth": 1.45,
     "sink": 0.0,
-    "grip": 6.7
+    "grip": 5.5
    },
    "tool": "hex2",
    "removable": true,
@@ -1550,19 +1550,19 @@
    "id": "bolt_xl",
    "designation": "M3x12",
    "at": [
-    -31.5,
+    -11.5,
     38.2,
     6.25
    ],
    "dir": [
-    1.0,
+    -1.0,
     0.0,
     0.0
    ],
    "through": [
-    "side_l",
     "chassis",
-    "vert_mod"
+    "vert_mod",
+    "side_l"
    ],
    "threads_into": "nut_xl",
    "head": "button",
@@ -1578,18 +1578,18 @@
     "side": "head",
     "cbore_d": 6.1,
     "cbore_depth": 0.0,
-    "grip": 12.2
+    "grip": 6.0
    },
    "tool": "hex2",
    "removable": true,
    "material": "aluminium",
-   "reason": "rear cross bolt is a shear pin through the pod crossbar, the chassis tabs and the module prongs: it locates the module and ties the pod's rear (nut captive in the module prong); the 4 M2 into the columns clamp the deck face"
+   "reason": "rear cross bolt, driven from between the inner tabs: through the inner tab into the thin nut captive in the module prong, its shank on through the pod tongue as a shear pin (the tongue sits in the tab gap); the 4 M2 into the columns clamp the deck face"
   },
   {
    "id": "bolt_sr0",
    "designation": "M3x10",
    "at": [
-    35.5,
+    34.3,
     -7.0,
     10.75
    ],
@@ -1618,7 +1618,7 @@
     "csk_d": 6.3,
     "csk_depth": 1.45,
     "sink": 0.0,
-    "grip": 6.7
+    "grip": 5.5
    },
    "tool": "hex2",
    "removable": true,
@@ -1628,7 +1628,7 @@
    "id": "bolt_sr1",
    "designation": "M3x10",
    "at": [
-    35.5,
+    34.3,
     7.0,
     10.75
    ],
@@ -1657,7 +1657,7 @@
     "csk_d": 6.3,
     "csk_depth": 1.45,
     "sink": 0.0,
-    "grip": 6.7
+    "grip": 5.5
    },
    "tool": "hex2",
    "removable": true,
@@ -1705,19 +1705,19 @@
    "id": "bolt_xr",
    "designation": "M3x12",
    "at": [
-    31.5,
+    11.5,
     38.2,
     6.25
    ],
    "dir": [
-    -1.0,
+    1.0,
     0.0,
     0.0
    ],
    "through": [
-    "side_r",
     "chassis",
-    "vert_mod"
+    "vert_mod",
+    "side_r"
    ],
    "threads_into": "nut_xr",
    "head": "button",
@@ -1733,12 +1733,12 @@
     "side": "head",
     "cbore_d": 6.1,
     "cbore_depth": 0.0,
-    "grip": 12.2
+    "grip": 6.0
    },
    "tool": "hex2",
    "removable": true,
    "material": "aluminium",
-   "reason": "rear cross bolt is a shear pin through the pod crossbar, the chassis tabs and the module prongs: it locates the module and ties the pod's rear (nut captive in the module prong); the 4 M2 into the columns clamp the deck face"
+   "reason": "rear cross bolt, driven from between the inner tabs: through the inner tab into the thin nut captive in the module prong, its shank on through the pod tongue as a shear pin (the tongue sits in the tab gap); the 4 M2 into the columns clamp the deck face"
   },
   {
    "id": "bolt_m0",
