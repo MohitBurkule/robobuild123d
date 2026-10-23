@@ -343,3 +343,41 @@ def test_declared_unfit_is_na_not_a_break():
     rows = [{"verdict": v, "change": C.Change(f"c{i}", "swap", "t")} for i, v in enumerate(["holds", "breaks", "n/a"])]
     s = hyp.score(rows)
     assert s["decided"] == 2 and s["pct"] == 50.0  # n/a is not decided
+
+
+@pytest.mark.parametrize("src, editable", [
+    ('import os\nSWITCH = os.environ.get("REVRON_SWITCH", "a")\n', True),
+    ('import os\nENV_SW = "REVRON_SWITCH"\nSWITCH = os.environ.get(ENV_SW, "a")\n', True),
+    ('import os\nP = "REVRON_"\nSWITCH = os.getenv(P + "SWITCH", "a")\n', True),
+    ('import os\ndef setting(name, d):\n    return os.environ.get(name, d)\nSWITCH = setting("REVRON_SWITCH", "a")\n', True),
+    ('import os\ndef switch():\n    return os.environ.get("REVRON_SWITCH", "a")\n', False),  # read at call time only
+])
+def test_env_setting_detection(tmp_path, src, editable):
+    from robot.checks.robust import discover as D, hyp
+    from robot.checks.robust.usage import Graph, Usage
+
+    f = tmp_path / "params_x.py"
+    f.write_text(src)
+    sw = D.env_setting([f], "REVRON_SWITCH")
+    assert (sw is not None) == editable and D.reads_env([f], "REVRON_SWITCH")
+    hooks = {"hooks": {"switch.power": {"env": "REVRON_SWITCH", "swap": "switch"}}}
+    raw = {"parts": [{"id": "power_switch", "kind": "switch", "catalog": "switch_bbb_ant_rvrn2"}]}
+    cs = [c for c in C.swap_changes(raw, None, hooks) if c.id.endswith("->switch_slide_12x4")]
+    jobs, nx = hyp.resolve(cs, raw, hooks, D.Discovery(), Usage(Graph(), raw), [f])
+    assert not nx, nx
+    j = jobs[0][1]
+    assert j.env == {"REVRON_SWITCH": "switch_slide_12x4"}
+    assert (j.kind, bool(j.regen)) == (("choice", False) if editable else ("env", True))
+
+
+def test_env_setting_not_read_is_still_refused(tmp_path):
+    from robot.checks.robust import discover as D, hyp
+    from robot.checks.robust.usage import Graph, Usage
+
+    f = tmp_path / "params_x.py"
+    f.write_text("X = 1\n")
+    hooks = {"hooks": {"switch.power": {"env": "REVRON_SWITCH", "swap": "switch"}}}
+    raw = {"parts": [{"id": "power_switch", "kind": "switch", "catalog": "switch_bbb_ant_rvrn2"}]}
+    cs = [c for c in C.swap_changes(raw, None, hooks) if c.id.endswith("->switch_slide_12x4")]
+    _, nx = hyp.resolve(cs, raw, hooks, D.Discovery(), Usage(Graph(), raw), [f])
+    assert nx and "do not read" in nx[0][1]

@@ -29,6 +29,7 @@ class Job:
     phase: int = 0  # 0 = first pass, 1 = only when the same target's first pass broke
     overlay: list = field(default_factory=list)  # declarative spec ops (robot/overlay.py) applied after generation
     env: dict = field(default_factory=dict)  # build-time settings (env vars) set for spec generation and the part builds
+    regen: bool = False  # regenerate the spec from the sources even with no source edit (an env-only setting)
 
 
 def fmt_num(v: float, is_int: bool) -> str:
