@@ -27,7 +27,7 @@ def subprocess_execute(job: dict, timeout: float) -> dict:
     with open(path, "w") as fh:
         json.dump(job, fh)
     env = dict(os.environ, ROBOT_JOBS="1", ROBOT_ROBUST_CHILD="1")
-    env = {k: v for k, v in env.items() if not k.startswith("REVRON_")}
+    env = {k: v for k, v in env.items() if not k.startswith("REVRON_") and k != "ROBOT_CACHE_ENV"}
     try:
         p = subprocess.run([sys.executable, "-m", "robot.checks.robust.worker", path], capture_output=True, text=True,
                            timeout=timeout, env=env, cwd=str(Path(__file__).resolve().parents[3]))

@@ -134,6 +134,8 @@ def run_job(job: dict) -> dict:
     # build-time settings: this process builds the parts too (verify imports the model), so set them here as well. A
     # setting can be read anywhere (os.environ inside a helper), so every model part is rebuilt from the edited copy.
     os.environ.update({k: str(v) for k, v in (job.get("env") or {}).items()})
+    if job.get("env"):  # and key the per-part geometry cache on them (geom.key_for)
+        os.environ["ROBOT_CACHE_ENV"] = ",".join(sorted(job["env"]))
     with tempfile.TemporaryDirectory(prefix="robust_", dir=job.get("tmpdir")) as td:
         tmp = Path(td)
         store = tmp / "integrity.json"

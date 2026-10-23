@@ -271,3 +271,18 @@ def test_disk_full_is_not_a_verdict():
         d = R.diff({"blockers": []}, res, "param")
         assert not d["broken"] and d["infra"]
     assert R.diff({"blockers": []}, {"error": "ValueError: math domain error", "stage": "build"})["broken"]
+
+
+def test_geometry_key_includes_declared_setting_env(monkeypatch, tmp_path):
+    from robot import geom
+
+    m = tmp_path / "m.py"
+    m.write_text("x = 1\n")
+    sh = {"type": "model", "file": str(m), "params": {"part": "p"}}
+    monkeypatch.delenv("ROBOT_CACHE_ENV", raising=False)
+    k0 = geom.key_for(sh, tmp_path)
+    monkeypatch.setenv("ROBOT_CACHE_ENV", "REVRON_SIZE_WIDTH")
+    monkeypatch.setenv("REVRON_SIZE_WIDTH", "10%")
+    k1 = geom.key_for(sh, tmp_path)
+    monkeypatch.setenv("REVRON_SIZE_WIDTH", "20%")
+    assert len({k0, k1, geom.key_for(sh, tmp_path)}) == 3  # a part built under another setting is another part
