@@ -35,6 +35,8 @@ BAT_SIZE, RX_SIZE, WE_SIZE = (36.0, 18.0, 11.0), (32.0, 20.0, 4.4), (23.5, 12.0,
 BAY_GAP = 0.5
 LEADS_FORWARD = [-90, 0, 0]             # BE1806 turned about its axis so the phase leads point forward into the upright's lead slot
 SHAFT_MASS_SHARE = 0.05                # the shaft's mass is in the motor's catalog mass (Revron convention)
+CSK_LEAD_OVERLAP = 0.2                 # mesh overlap allowed for a countersunk head in a matching cone
+UNDER_DECK = 1.0                       # phase leads run this far under the deck, over the battery
 LEAD_RISE = 2.0                        # phase-lead waypoints: this far off the deck faces / the lead tip
 MOTOR_LIFT = 0.6                       # N10 play up to the deck underside (STEP 0.5)
 MOTOR_SLIDE = 2.0                      # N10 inboard play in the keyhole before the hub meets the wall
@@ -126,11 +128,11 @@ def _hardware(P):
 
 
 def _electronics(P):
-    P(id="battery", kind="battery", catalog=BATTERY, at=_w(-(COL_R + BAT_SIZE[1] / 2), 0, WALL + BAT_SIZE[2] / 2), rot=[0, 0, 90], retained="press_fit",
-      label="2S 180 mAh between the column rows, left of centre, on the base panel")
-    rx_x = POSTS[-1][0] - COL_R - BAY_GAP - RX_SIZE[1] / 2
+    P(id="battery", kind="battery", catalog=BATTERY, at=_w(COL_R + BAT_SIZE[1] / 2, 0, WALL + BAT_SIZE[2] / 2), rot=[0, 0, 90], retained="press_fit",
+      label="2S 180 mAh between the column rows, right of centre, on the base panel")
+    rx_x = -(POSTS[-1][0] - COL_R - BAY_GAP - RX_SIZE[1] / 2)   # left of centre: under the deck wire slot (the phase leads go up it)
     P(id="rxesc", kind="esc", catalog=RXESC, at=_w(rx_x, 0, WALL + RX_SIZE[2] / 2), rot=[0, 0, 90], retained="kapton",
-      label="Malenki nano right of centre on the base panel")
+      label="Malenki nano left of centre on the base panel, under the deck wire slot")
     P(id="wesc", kind="esc", catalog=WESC, at=_w(rx_x, 0, WALL + RX_SIZE[2] + WE_SIZE[2] / 2), rot=[0, 0, 90], retained="kapton",
       label="BBB weapon ESC on the Malenki")
     P(id="power_switch", kind="switch", catalog=SWITCH, at=_w(IN_X - SW_SLOT_IN - SW_SLOT[0] / 2, 0, CH_H - SW_LEVER_TOP), rot=[0, 0, 90], retained="press_fit",
@@ -169,7 +171,7 @@ def _wires(wires):
     W("w_rx_wesc", "rxesc.wpn", "wesc.rx", "signal")
     sx, _, (sz0, sz1) = LEAD_SLOT                          # lead slot along the left upright's inner face
     W("w_wesc_m", "wesc.motor", "weapon_motor_stator.phases", "motor", "phase",
-      via=[_w(WIRE_SLOT_X, 0, DECK_Z - LEAD_RISE), _w(WIRE_SLOT_X, 0, DECK_TOP + LEAD_RISE), _w(sx, BULK_Y[0] - LEAD_RISE, DECK_TOP + LEAD_RISE),
+      via=[_w(WIRE_SLOT_X, 0, DECK_Z - UNDER_DECK), _w(WIRE_SLOT_X, 0, DECK_TOP + LEAD_RISE), _w(sx, BULK_Y[0] - LEAD_RISE, DECK_TOP + LEAD_RISE),
            _w(sx, BULK_Y[0], (sz0 + sz1) / 2), _w(sx, LEAD_Y - LEAD_RISE, WZ)],   # up the deck wire slot, back under the shell, along the lead slot to the stub
       exposed_reason="leaves the chassis hull only inside the vert_mod: under its closed shell (deck below, shell and walls round), then in the upright's lead slot")
 
@@ -220,6 +222,8 @@ def make_spec(model_file):
     n_ins = (len(POSTS) + len(END_POSTS), len(POSTS))
     overlap = [dict(a=f"insert_{k}{i}", b="chassis", max_depth_mm=INSERT_MELT, reason="M2 heat-set insert (3.5 OD) melted into the ELVRN 2.9 column bore: interference by design")
                for k, cnt in zip("bt", n_ins) for i in range(cnt)]
+    overlap += [dict(a=f"bolt_x{n}", b="chassis", max_depth_mm=CSK_LEAD_OVERLAP, reason="the cross bolt's countersunk head in the ELVRN Chamfer5 lead-in: a 0.05 mm radial fit, the faceted meshes overlap")
+                for _, n in SIDES]
     overlap.append(dict(a="wshaft", b="weapon_motor_can", max_depth_mm=SHAFT_RACE, reason="shaft in the can's 5.1 bore (0.05 radial running fit; the meshes overlap)"))
     overlap.append(dict(a="wshaft", b="wbearing", max_depth_mm=SHAFT_RACE, reason="shaft in the MF85 inner race (bearing modelled as one solid)"))
     fasteners = records()

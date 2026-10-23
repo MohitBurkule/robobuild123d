@@ -21,7 +21,6 @@ NUT_FACE_X = IN_X - BOSS_IN + fc.nut(M3, "thin")[1]   # head-side face of the bo
 CSK_SINK = 0.1                 # the dump's Chamfer5 seat (R3.1) is a hair under the DIN 7991 head (R3.0 + clearance): head sits 0.1 deep
 SCREW_MATERIAL = "aluminium"   # 7075 screws throughout, as Revron (mass)
 PROBE_RING = 0.8       # fastener_seat probes the face on a ring this far outside the head
-X_SINK = 0.2           # cross-bolt head a further 0.2 down the tab lead-in (clear of its cone)
 OPEN = 1e3   # head clearance that opens the head recess right through the part (a driver path)
 
 
@@ -80,7 +79,7 @@ def joints():
                          PRONG[0] - x_in, "nut", f"nut_x{n}", ["chassis", "vert_mod", f"side_{n}"], "hex2",
                          {"reason": "rear cross bolt, driven from between the inner tabs: through the inner tab into the thin nut captive in the "
                                     "module prong, its shank on through the pod tongue as a shear pin (the tongue sits in the tab gap); the 4 M2 "
-                                    "into the columns clamp the deck face"}, OPEN, sink=CSK_SINK + X_SINK))
+                                    "into the columns clamp the deck face"}, OPEN, sink=CSK_SINK))
     for i, (dy, dz) in enumerate(MOTOR_HOLES):                   # BE1806 base through the left upright, heads in its counterbores
         from .vm_geom import taper_x
         face = _seen_face(WY + dy, WZ + dz)                     # the upright's outer face round the head; the heads sit UP_T off the motor

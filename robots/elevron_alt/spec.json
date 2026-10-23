@@ -1038,7 +1038,7 @@
    "kind": "battery",
    "catalog": "lipo_2s_180_turnabot",
    "at": [
-    -12.1,
+    12.1,
     0,
     9.75
    ],
@@ -1048,7 +1048,7 @@
     90
    ],
    "retained": "press_fit",
-   "label": "2S 180 mAh between the column rows, left of centre, on the base panel",
+   "label": "2S 180 mAh between the column rows, right of centre, on the base panel",
    "deviation": "not in the STEP (no electronics drawn): Turnabot 2S 180 between the column rows"
   },
   {
@@ -1056,7 +1056,7 @@
    "kind": "esc",
    "catalog": "malenki_nano_rvrn2",
    "at": [
-    11.4,
+    -11.4,
     0,
     6.45
    ],
@@ -1066,7 +1066,7 @@
     90
    ],
    "retained": "kapton",
-   "label": "Malenki nano right of centre on the base panel",
+   "label": "Malenki nano left of centre on the base panel, under the deck wire slot",
    "deviation": "not in the STEP (no electronics drawn): Malenki nano receiver / drive ESC"
   },
   {
@@ -1074,7 +1074,7 @@
    "kind": "esc",
    "catalog": "bbb_ant_esc_rvrn2",
    "at": [
-    11.4,
+    -11.4,
     0,
     11.15
    ],
@@ -1607,7 +1607,7 @@
    "id": "bolt_xl",
    "designation": "M3x10",
    "at": [
-    -11.8,
+    -11.6,
     38.2,
     6.25
    ],
@@ -1636,7 +1636,7 @@
     "csk_angle": 90.0,
     "csk_d": 6.3,
     "csk_depth": 1.45,
-    "sink": 0.3,
+    "sink": 0.1,
     "grip": 6.0
    },
    "tool": "hex2",
@@ -1768,7 +1768,7 @@
    "id": "bolt_xr",
    "designation": "M3x10",
    "at": [
-    11.8,
+    11.6,
     38.2,
     6.25
    ],
@@ -1797,7 +1797,7 @@
     "csk_angle": 90.0,
     "csk_d": 6.3,
     "csk_depth": 1.45,
-    "sink": 0.3,
+    "sink": 0.1,
     "grip": 6.0
    },
    "tool": "hex2",
@@ -2154,7 +2154,7 @@
     [
      -15.9,
      0,
-     15.25
+     16.25
     ],
     [
      -15.9,
@@ -2240,6 +2240,18 @@
    "b": "chassis",
    "max_depth_mm": 0.35,
    "reason": "M2 heat-set insert (3.5 OD) melted into the ELVRN 2.9 column bore: interference by design"
+  },
+  {
+   "a": "bolt_xl",
+   "b": "chassis",
+   "max_depth_mm": 0.2,
+   "reason": "the cross bolt's countersunk head in the ELVRN Chamfer5 lead-in: a 0.05 mm radial fit, the faceted meshes overlap"
+  },
+  {
+   "a": "bolt_xr",
+   "b": "chassis",
+   "max_depth_mm": 0.2,
+   "reason": "the cross bolt's countersunk head in the ELVRN Chamfer5 lead-in: a 0.05 mm radial fit, the faceted meshes overlap"
   },
   {
    "a": "wshaft",
