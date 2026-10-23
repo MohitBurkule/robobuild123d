@@ -28,6 +28,7 @@ class Job:
     reads: list = field(default_factory=list)  # spec part ids whose build reads the target
     phase: int = 0  # 0 = first pass, 1 = only when the same target's first pass broke
     overlay: list = field(default_factory=list)  # declarative spec ops (robot/overlay.py) applied after generation
+    env: dict = field(default_factory=dict)  # build-time settings (env vars) set for spec generation and the part builds
 
 
 def fmt_num(v: float, is_int: bool) -> str:

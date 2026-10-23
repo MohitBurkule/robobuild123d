@@ -47,6 +47,7 @@ class Change:
     touches: dict = field(default_factory=dict)  # overlay selector of the parts it affects (diff estimate)
     note: str = ""
     job: object = None  # a plan.Job for dimension changes
+    param_set: tuple = ()  # (params name, value) edited together with the ops, e.g. the wheel OD the axles derive from
 
 
 def _weaponish(e) -> bool:
@@ -101,13 +102,41 @@ def _groups(raw) -> dict:
     return g
 
 
+def wheel_extras(hooks, ids, entry, ops) -> tuple:
+    """(ops, (param, OD), note) for a catalog wheel swap: a wheel with no belt groove (catalog wheels carry none unless
+    props.belt_groove) also sets the robot's `drive.belt` hook to "none"; the wheel OD goes to the params literal the
+    robot names for that wheel position under hooks.json `wheel_od` {id glob: PARAM}."""
+    hk = (hooks or {}).get("hooks") or {}
+    ops = list(ops)
+    notes = []
+    if not (entry.props or {}).get("belt_groove"):
+        if "none" in ((hk.get("drive.belt") or {}).get("values") or {}):
+            ops.append({"op": "hook", "name": "drive.belt", "value": "none"})
+            notes.append("groove-less wheel: drive.belt=none")
+        else:
+            notes.append("groove-less wheel; no drive.belt hook")
+    od = (entry.props or {}).get("diameter_mm")
+    pset = ()
+    for pat, param in ((hooks or {}).get("wheel_od") or {}).items():
+        if pat.startswith("_"):
+            continue
+        if od and all(fnmatch.fnmatchcase(i, pat) for i in ids):
+            pset = (param, float(od))
+            notes.append(f"{param}={od:g}")
+            break
+    return ops, pset, "; ".join(notes)
+
+
 def swap_hook(hooks: dict | None, role: str, ids=None):
     """(name, hook) of the robot setting that swaps parts of `role` as one unit (a hook declaring `"swap": "<role>"`),
     else None. A robot whose build derives the fitting parts from the selected catalog entry (mount holes, shaft, bell)
     declares one, and every catalog candidate of that role becomes a setting of it instead of a bare catalog op."""
     for name, h in ((hooks or {}).get("hooks") or {}).items():
-        if isinstance(h, dict) and h.get("swap") == role and (not h.get("parts") or set(ids or ()) <= set(h["parts"])):   # `parts`: the hook swaps only these parts of the role (the rear wheels)
-            return name, h
+        if isinstance(h, dict) and h.get("swap") == role:
+            # optional part limit: `parts` (the hook swaps only these, e.g. the rear wheels) or `swaps: {"id": [...]}`
+            lim = h.get("parts") or (h.get("swaps") or {}).get("id")
+            if not lim or ids is None or set(ids) <= set(lim):
+                return name, h
     return None
 
 
@@ -122,12 +151,22 @@ def swap_changes(raw, cat=None, hooks=None) -> list:
         tag = "+".join(ids) if len(ids) <= 2 else f"{ids[0]}..({len(ids)})"
         sh = swap_hook(hooks, role, ids)
         for e in candidates(role, cur, cat):
-            ops = [{"op": "catalog", "select": {"id": ids}, "to": e.id}]
-            note = ""
-            if sh:
-                ops = [{"op": "hook", "name": sh[0], "value": e.id}]
-                note = f"one unit through the `{sh[0]}` setting"
-            elif role == "weapon_motor":
+            vals = (sh[1].get("values") if sh else None)
+            if sh and isinstance(vals, list) and e.id not in vals:  # the setting does not offer this part
+                sh_e = None
+            else:
+                sh_e = sh
+            ops = [{"op": "wheel" if role == "wheel" else "catalog", "select": {"id": ids}, "to": e.id}]
+            note, pset = "", ()
+            if sh_e:
+                ops = [{"op": "hook", "name": sh_e[0], "value": e.id}]
+                note = f"one unit through the `{sh_e[0]}` setting"
+            if role == "wheel":
+                ops, pset, wn = wheel_extras(hooks, ids, e, ops)
+                if sh_e:
+                    pset = ()  # the setting sizes the wheel itself
+                note = "; ".join(x for x in (note, wn) if x)
+            if not sh_e and role == "weapon_motor":
                 cur_e = catalog.find(cur) if cur else None
                 rotor_old = (cur_e.props or {}).get("rotor_part") if cur_e else None
                 rotor_new = (e.props or {}).get("rotor_part")
@@ -138,7 +177,7 @@ def swap_changes(raw, cat=None, hooks=None) -> list:
                     elif rp:
                         note = f"one-piece motor: the split rotor part {rp} has no counterpart and is kept"
             out.append(Change(f"swap:{role}:{tag}->{e.id}", "swap", f"{role.replace('_', ' ')} {cur or key} -> {e.id} ({e.name})",
-                              ops, hook=sh[0] if sh else "", touches={"id": ids}, note=note))
+                              ops, hook=sh_e[0] if sh_e else "", touches={"id": ids}, note=note, param_set=pset))
     for p in raw.get("parts") or []:  # battery connector
         e = catalog.find(p.get("catalog")) if p.get("catalog") else None
         if p.get("kind") != "battery" and not (e and e.kind == "battery"):
@@ -178,7 +217,7 @@ ARCH = [
     dict(hook="chassis.compartments", values=("none", "split_battery_bay"),
          title="internal compartments: {v}", keywords=("pocket", "bay", "cage", "rib", "partition", "compartment", "lattice"),
          touches={"kind": "structure"}, fallback=None),
-    dict(hook="drive.location", values=("front_motors_rear_driven", "front_driven"),
+    dict(hook="drive.location", values=("front", "mid", "front_motors_rear_driven"),
          title="drive location: {v}", keywords=("RY", "keyhole", "motor_", "whub", "N10", "belt", "axle"),
          touches={"kind": ["motor", "pulley", "wheel", "belt", "structure"]}, fallback=None),
     dict(hook="drive.driven_wheels", values=("2WD", "4WD"), title="driven wheels: {v}",
@@ -213,6 +252,8 @@ def arch_changes(raw, hooks: dict, cat=None) -> list:
     known = {a["hook"] for a in ARCH}
     for name, h in hk.items():  # every other declared setting the robot offers is a hypothesis too
         if isinstance(h, dict) and h.get("swap"):  # a swap setting: its values are the swap hypotheses
+            continue
+        if name.startswith("size."):  # overall size settings are the size family
             continue
         vals = h.get("values")
         vals = list(vals) if isinstance(vals, (list, dict)) else []
@@ -297,3 +338,49 @@ def estimate_diff(files, graph, raw, touches: dict, keywords, owners: dict) -> d
     for fn, n in out.items():
         by_owner.setdefault(owner_of(fn, owners), {})[fn] = n
     return {"files": out, "lines": sum(out.values()), "by_owner": by_owner}
+
+
+# ------------------------------------------------------------------------------------------------- overall size
+SIZE_STEPS = (0.10, -0.10, 0.20, -0.20, 0.30, -0.30)
+SIZE_DIMS = ("length", "width", "height")
+SIZE_KEYWORDS = {"length": ("CH_Y0", "CH_Y1", "RY", "SA", "SB", "WY"), "width": ("CH_HALF_W", "CH_IN_X", "SA_X0", "SB_X0"),
+                 "height": ("CH_Z0", "CH_Z1", "WZ", "TOP_Z0")}
+
+
+def size_changes(hooks: dict, params: list, usage, plan_mod) -> list:
+    """Whole-robot size changes at +-10/20/30 %. A dimension whose `sizes` entry names a single master `param` is a
+    params edit; otherwise it is a missing hook `size.<dim>` (plus `proxy` param edits when one is declared), and a
+    "short 2WD" (shorter, front wheels off) combines size.length with the drive.short_2wd hook."""
+    sizes = hooks.get("sizes") or {}
+    hk = hooks.get("hooks") or {}
+    by = {p.name: p for p in params}
+    out = []
+    for dim in SIZE_DIMS:
+        h = hk.get(f"size.{dim}")
+        if h:  # the robot declares the overall size as a setting: every step goes through it
+            vals = h.get("values")
+            for st in SIZE_STEPS:
+                v = f"{st:+.0%}" if not isinstance(vals, list) or f"{st:+.0%}" in vals else f"{st:.0%}"
+                out.append(Change(f"size:{dim}{st:+.0%}", "size", f"overall {dim} {st:+.0%} (setting size.{dim})",
+                                  [{"op": "hook", "name": f"size.{dim}", "value": v}], hook=f"size.{dim}",
+                                  keywords=SIZE_KEYWORDS[dim], touches={"kind": "structure"}))
+            continue
+        ent = sizes.get(dim) or {}
+        master = by.get(ent.get("param"))
+        if master is None:  # no single master: say so, at every step
+            for st in SIZE_STEPS:
+                out.append(Change(f"size:{dim}{st:+.0%}", "size", f"overall {dim} {st:+.0%}",
+                                  [{"op": "hook", "name": f"size.{dim}", "value": f"{st:+.0%}", "why": ent.get("why", "")}],
+                                  hook=f"size.{dim}", keywords=SIZE_KEYWORDS[dim], touches={"kind": "structure"}))
+        for p, tag in ((master, ""), (by.get(ent.get("proxy")), " (proxy)")):
+            if p is None:
+                continue
+            for j in plan_mod.param_jobs(p, usage.parts_reading(p.symbol), SIZE_STEPS):
+                j.phase = 0
+                j.id = f"size:{dim}{tag.strip()}:{j.id}"
+                out.append(Change(j.id, "size", f"overall {dim}{tag} via {p.name} {j.base:g} -> {j.value:g} ({j.step:+.0%})", job=j))
+    short = [{"op": "hook", "name": "drive.short_2wd", "value": "no_front_wheels"}]
+    out.append(Change("size:short_2wd", "size", "short 2WD: length -20 %, front wheels removed, 2 motors",
+                      short + [{"op": "hook", "name": "size.length", "value": "-20%"}], hook="size.length",
+                      keywords=SIZE_KEYWORDS["length"] + ("whub_f", "front_hub", "belt"), touches={"kind": ["structure", "pulley", "wheel"]}))
+    return out

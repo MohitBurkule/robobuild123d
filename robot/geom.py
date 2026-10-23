@@ -103,6 +103,11 @@ def _b123d_version() -> str:
 def key_for(shape: dict, base_dir: Path | None, tess: Tess = FINE, key_extra: str = "") -> str:
     """Cache key: shape JSON + model file sources + build123d version + tessellation settings."""
     src = cache.source_hash(Path(shapes.__file__), Path(__file__))  # the shape builder itself, by content
+    # build settings read from the environment (ROBOT_CACHE_ENV="REVRON_SIZE_WIDTH,..."): a part built under another
+    # setting is another part, even when no source file differs
+    envs = sorted(n for n in os.environ.get("ROBOT_CACHE_ENV", "").split(",") if n)
+    if envs:
+        key_extra = f"{key_extra}|env:" + ",".join(f"{n}={os.environ.get(n, '')}" for n in envs)
     return shapes.shape_key(shape, base_dir, f"{CACHE_VERSION}|{_b123d_version()}|{cache.lib_versions()}|{src}|{tess.lin}|{tess.ang}|{key_extra}")
 
 

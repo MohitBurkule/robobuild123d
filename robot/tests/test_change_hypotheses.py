@@ -125,3 +125,221 @@ def test_revron_hooks_file_is_valid():
         if isinstance(h.get("values"), dict):
             for v in h["values"]:
                 O.apply(raw, [{"op": "hook", "name": name, "value": v}], hooks)
+
+
+def test_size_changes_master_proxy_and_missing():
+    from robot.checks.robust import plan as P
+    from robot.checks.robust.discover import Param
+    from robot.checks.robust.usage import Graph, Usage
+
+    params = [Param("W", "W", 30.0, Path("p.py"), 1, 4, 8), Param("Y0", "Y0", -37.6, Path("p.py"), 2, 5, 10)]
+    hooks = {"sizes": {"width": {"param": "W"}, "length": {"proxy": "Y0"}}}
+    cs = C.size_changes(hooks, params, Usage(Graph(), {}), P)
+    ids = {c.id for c in cs}
+    assert sum(i.startswith("size:width:") for i in ids) == 6  # +-10/20/30 % on the master
+    assert not any(i.startswith("size:width") and "%" in i and ":" not in i[5:] for i in ids)
+    assert sum(c.hook == "size.length" and c.job is None for c in cs) == 7  # 6 steps + short 2WD, missing hook
+    assert sum(i.startswith("size:length(proxy):") for i in ids) == 6
+    assert all(c.hook == "size.height" for c in cs if c.id.startswith("size:height"))
+
+
+def test_wheel_swap_removes_hub_and_reseats_on_axle():
+    raw = {"parts": [
+        {"id": "tub", "kind": "structure"},
+        {"id": "motor_l", "kind": "motor", "catalog": "n10_2200rpm_spicy"},
+        {"id": "whub_rl", "kind": "pulley", "parent": "tub", "at": [30.0, -30.5, 0.0], "rot": [-180.0, 0.0, 0.0],
+         "joint": {"kind": "revolute", "axis": [1, 0, 0]}, "rotates_with": "wheel_rl", "shape": {"type": "model"}},
+        {"id": "wheel_rl", "kind": "wheel", "parent": "whub_rl", "tyre_of": "whub_rl", "at": [2.5, 1.0, 0.0], "rot": [0, 0, 0],
+         "rotates_with": "wheel_rl", "shape": {"type": "model"}}],
+        "connections": [{"a": "whub_rl", "b": "motor_l", "method": "press_fit", "interference_mm": 0.05},
+                        {"a": "wheel_rl", "b": "whub_rl", "method": "press_fit"}]}
+    out = O.apply(raw, [{"op": "wheel", "select": {"id": "wheel_rl"}, "to": "wheel_20x8"}], hooks={})
+    ids = [p["id"] for p in out["parts"]]
+    assert "whub_rl" not in ids
+    w = O.select(out, {"id": "wheel_rl"})[0]
+    assert w["catalog"] == "wheel_20x8" and "shape" not in w and "tyre_of" not in w
+    assert w["parent"] == "tub" and w["joint"]["kind"] == "revolute"
+    assert w["at"] == pytest.approx([32.5, -31.5, 0.0])  # hub pose (rx 180 flips y) composed with the tyre offset
+    import numpy as np
+    from robot import xform
+    assert np.allclose(xform.euler(w["rot"]), xform.euler([-180, 0, 0]))
+    assert out["connections"] == [{"a": "wheel_rl", "b": "motor_l", "method": "press_fit",
+                                   "reason": "[wheel swap] catalog wheel hub takes over: "}]
+    assert all(c.ops[0]["op"] == "wheel" for c in C.swap_changes(json.loads(json.dumps(
+        {"parts": [dict(p, stock="tyre") for p in raw["parts"] if p["kind"] == "wheel"]}))))
+
+
+def test_swap_uses_declared_build_setting_and_any_env_value(tmp_path):
+    from robot.checks.robust import discover as D, hyp
+    from robot.checks.robust.usage import Graph, Usage
+
+    hooks = {"hooks": {"drive.motor": {"env": "X_DRIVE_MOTOR", "swap": "drive_motor"}}}
+    cs = [c for c in C.swap_changes(_raw(), None, hooks) if c.id.startswith("swap:drive_motor:")]
+    assert cs and all(c.ops == [{"op": "hook", "name": "drive.motor", "value": c.id.split("->")[1]}] for c in cs)
+    src = tmp_path / "params_x.py"
+    src.write_text('import os\nDRIVE_MOTOR = os.environ.get("X_DRIVE_MOTOR", "n10_2200rpm_spicy")\n')
+    sw = D.env_setting([src], "X_DRIVE_MOTOR")
+    assert sw.symbol == "DRIVE_MOTOR" and sw.default == "n10_2200rpm_spicy"
+    jobs, nx = hyp.resolve(cs[:1], _raw(), hooks, D.Discovery(), Usage(Graph(), _raw()), [src])
+    assert not nx
+    j = jobs[0][1]
+    assert j.kind == "choice" and j.new_text == repr(cs[0].id.split("->")[1])
+    assert j.env == {"X_DRIVE_MOTOR": cs[0].id.split("->")[1]}  # code reading os.environ itself sees the setting too
+
+
+def test_swap_setting_limited_to_its_parts():
+    raw = {"parts": [{"id": i, "kind": "wheel", "stock": s, "shape": {"type": "model"}}
+                     for i, s in (("wheel_rl", "rear"), ("wheel_rr", "rear"), ("wheel_fl", "front"), ("wheel_fr", "front"))]}
+    hooks = {"hooks": {"wheel.rear": {"env": "W", "swap": "wheel", "parts": ["wheel_rl", "wheel_rr"], "values": ["stock", "wheel_20x8"]},
+                       "drive.belt": {"values": {"o_ring": [], "none": []}}}}
+    cs = {c.id: c for c in C.swap_changes(raw, None, hooks)}
+    assert cs["swap:wheel:wheel_rl+wheel_rr->wheel_20x8"].ops[0] == {"op": "hook", "name": "wheel.rear", "value": "wheel_20x8"}
+    assert cs["swap:wheel:wheel_rl+wheel_rr->wheel_28x10"].ops[0]["op"] == "wheel"  # not offered by the setting
+    assert cs["swap:wheel:wheel_fl+wheel_fr->wheel_20x8"].ops[0]["op"] == "wheel"
+
+
+def test_wheel_swap_sets_belt_none_and_wheel_od(tmp_path):
+    from robot.checks.robust import discover as D, hyp
+    from robot.checks.robust.usage import Graph, Usage
+
+    raw = {"parts": [{"id": i, "kind": "wheel", "stock": "micro tyre", "shape": {"type": "model"}} for i in ("wheel_fl", "wheel_fr")]}
+    hooks = {"hooks": {"drive.belt": {"default": "o_ring", "values": {"o_ring": [], "none": [{"op": "remove", "select": {"kind": "belt"}}]}}},
+             "wheel_od": {"wheel_f*": "WHEEL_OD_F"}}
+    cs = [c for c in C.swap_changes(raw, None, hooks) if c.id.endswith("->wheel_20x8")]
+    c = cs[0]
+    assert c.ops[0]["op"] == "wheel" and {"op": "hook", "name": "drive.belt", "value": "none"} in c.ops
+    assert c.param_set == ("WHEEL_OD_F", 20.0)
+    src = tmp_path / "params_chassis.py"
+    src.write_text("WHEEL_OD_F = 11.0\n")
+    disc = D.Discovery(params=D.params_in_file(src)[0])
+    jobs, nx = hyp.resolve([c], raw, hooks, disc, Usage(Graph(), raw), [src])
+    assert not nx
+    j = jobs[0][1]
+    assert j.kind == "param" and j.new_text == "20.0" and any(o["op"] == "remove" for o in j.overlay)
+
+
+def test_size_changes_use_declared_size_settings():
+    from robot.checks.robust import plan as P
+    from robot.checks.robust.usage import Graph, Usage
+
+    steps = ["-30%", "-20%", "-10%", "10%", "20%", "30%"]
+    hooks = {"hooks": {f"size.{d}": {"env": f"S_{d}", "values": steps, "default": "0"} for d in ("width", "length", "height")}}
+    cs = C.size_changes(hooks, [], Usage(Graph(), {}), P)
+    vals = sorted(c.ops[0]["value"] for c in cs if c.id.startswith("size:width"))
+    assert vals == sorted(steps)  # the robot's own spelling ("10%", "-10%")
+    for c in cs:
+        for op in c.ops:
+            if op["op"] == "hook" and op["name"].startswith("size."):
+                O.expand(op, hooks)  # every step is a declared value: no MissingHook
+
+
+def test_worker_passes_settings_to_generation(tmp_path, monkeypatch):
+    """A setting read straight from os.environ (not through the edited default) must reach the spec generation."""
+    from robot.checks.robust import worker
+
+    m = tmp_path / "m.py"
+    m.write_text("import os, json, pathlib\npathlib.Path(__file__).with_name('spec.json').write_text(json.dumps({'w': os.environ.get('REVRON_X', '0')}))\n")
+    monkeypatch.setenv("REVRON_X", "stale")
+    assert worker.regenerate(tmp_path, "m.py", tmp_path, 60, {"REVRON_X": "30%"}) is None
+    assert json.loads((tmp_path / "spec.json").read_text())["w"] == "30%"
+
+
+def test_runner_resumes_from_results_folder(tmp_path, monkeypatch):
+    from robot.checks.robust import plan as P, runner as R
+
+    spec = tmp_path / "spec.json"
+    spec.write_text("{}")
+    monkeypatch.setenv("ROBOT_ROBUST_RESULTS", str(tmp_path / "res"))
+    from robot import cache
+
+    monkeypatch.setattr(cache, "_enabled", False)  # only the results folder may answer
+    calls = []
+
+    def ex(job, timeout):
+        calls.append(job["id"])
+        return {"id": job["id"], "blockers": [], "rebuilt": []}
+
+    jobs = [P.Job("a", "a", "hyp", overlay=[{"op": "x"}])]
+    R.run(jobs, spec, "m.py", 600, 1, execute=ex, src_hash="s", log=lambda *a: None)
+    R.run(jobs, spec, "m.py", 600, 1, execute=ex, src_hash="s", log=lambda *a: None)
+    assert calls == ["baseline", "a"]  # the second run reads every result back from the folder
+
+
+def test_disk_full_is_not_a_verdict():
+    from robot.checks.robust import runner as R
+
+    for res in ({"error": "spec generation failed (rc 1): OSError: [Errno 28] No space left on device", "stage": "build"},
+                {"error": "Error: [('a', 'b', \"[Errno 28] No space left on device\")]", "stage": "worker"}):
+        d = R.diff({"blockers": []}, res, "param")
+        assert not d["broken"] and d["infra"]
+    assert R.diff({"blockers": []}, {"error": "ValueError: math domain error", "stage": "build"})["broken"]
+
+
+def test_geometry_key_includes_declared_setting_env(monkeypatch, tmp_path):
+    from robot import geom
+
+    m = tmp_path / "m.py"
+    m.write_text("x = 1\n")
+    sh = {"type": "model", "file": str(m), "params": {"part": "p"}}
+    monkeypatch.delenv("ROBOT_CACHE_ENV", raising=False)
+    k0 = geom.key_for(sh, tmp_path)
+    monkeypatch.setenv("ROBOT_CACHE_ENV", "REVRON_SIZE_WIDTH")
+    monkeypatch.setenv("REVRON_SIZE_WIDTH", "10%")
+    k1 = geom.key_for(sh, tmp_path)
+    monkeypatch.setenv("REVRON_SIZE_WIDTH", "20%")
+    assert len({k0, k1, geom.key_for(sh, tmp_path)}) == 3  # a part built under another setting is another part
+
+
+def test_shared_queue_enqueue_work_report(tmp_path, monkeypatch):
+    from robot import cache
+    from robot.checks.robust import plan as P, queue as Q, runner as R
+
+    monkeypatch.setattr(cache, "_enabled", False)
+    spec = tmp_path / "spec.json"
+    spec.write_text("{}")
+    q = tmp_path / "q"
+    monkeypatch.setenv("ROBOT_ROBUST_QUEUE", str(q))
+    jobs = [P.Job("a", "a", "hyp", overlay=[{"op": "x"}]), P.Job("b", "b", "hyp", overlay=[{"op": "y"}])]
+    never = lambda job, t: (_ for _ in ()).throw(AssertionError("enqueue must not run jobs"))
+    out = R.run(jobs, spec, "m.py", 600, 1, execute=never, src_hash="s", log=lambda *a: None)
+    assert len(list((q / "tickets").glob("*.json"))) == 3  # baseline + 2
+    assert all(d.get("infra") and not d["broken"] for _, _, d in out["results"].values())  # queued = not run, not broken
+    ran = []
+
+    def fake(job, timeout):
+        ran.append(job["id"])
+        return {"id": job["id"], "blockers": [["x.y", "p", "m"]] if job["id"] == "b" else [], "rebuilt": []}
+
+    monkeypatch.setattr(Q, "code_hash", lambda spec, m: cache.h("s", R.checks_hash()))  # this checkout = the enqueuer's code
+    Q.work(q, 2, execute=fake, log=lambda *a: None)
+    assert sorted(ran) == ["a", "b", "baseline"] and not list((q / "tickets").glob("*.json"))
+    out = R.run(jobs, spec, "m.py", 600, 1, execute=never, src_hash="s", log=lambda *a: None)
+    assert not out["results"]["a"][2]["broken"] and out["results"]["b"][2]["broken"]
+
+
+def test_queue_stale_claim_is_taken_over(tmp_path):
+    from robot.checks.robust import queue as Q
+
+    Q.enqueue(tmp_path, "k1", {"id": "j"}, 60, sha="s")
+    assert Q.claim(tmp_path, "k1", "w1")
+    assert not Q.claim(tmp_path, "k1", "w2")  # fresh claim held
+    assert Q.claim(tmp_path, "k1", "w2", now=lambda: __import__("time").time() + Q.STALE_S + 5)  # its worker died
+    assert Q.next_ticket(tmp_path, "w3", "other-sha") is None  # tickets of another commit are left alone
+    Q.enqueue(tmp_path, "k2", {"id": "j", "spec": "x/spec.json", "model_rel": "m.py"}, 60, code="other-code")
+    assert Q.next_ticket(tmp_path, "w3", "s") is None  # nor tickets made from other robot / checks code
+
+
+def test_declared_unfit_is_na_not_a_break():
+    from robot.checks.robust import hyp
+
+    names = ["WeaponMotorError", "WeaponTypeError"]
+    gen = {"error": "spec generation failed (rc 1): revron.weapon_motor.WeaponMotorError: bell too big for the mount", "stage": "build"}
+    assert "WeaponMotorError" in hyp.declared_unfit(gen, {"new": []}, names)
+    load = {"error": None}
+    d = {"new": [["validity.load", "mount_r", "geometry failed: WeaponTypeError: hspin_bar has no slot"]]}
+    assert hyp.declared_unfit(load, d, names)
+    assert hyp.declared_unfit({"error": "x DECLARED_UNFIT: no room"}, {"new": []}, []) == "no room"
+    assert hyp.declared_unfit({"error": "ValueError: math domain error"}, {"new": []}, names) is None
+    rows = [{"verdict": v, "change": C.Change(f"c{i}", "swap", "t")} for i, v in enumerate(["holds", "breaks", "n/a"])]
+    s = hyp.score(rows)
+    assert s["decided"] == 2 and s["pct"] == 50.0  # n/a is not decided

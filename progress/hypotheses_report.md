@@ -1,5 +1,7 @@
 # Change hypotheses: Revron @ acdcd78
 
+> **Current result: 53 % (60/113 decided hold, 11 n/a) - see "Final results" below.** The section directly below is the first run (acdcd78, before the fixers' setting hooks) and is kept for history.
+
 Generator `robot/gen/changes.py` (swap / dimension / architecture), settings layer `robot/overlay.py` + the robot's `hooks.json`, run through the robust runner (`robot/checks/robust/hyp.py`): each change rebuilt on the per-part cache and checked with integrity, interference, connections, assembly, fastener_seat, electrical, retention. A change **holds** when it is expressible through settings, builds, and adds no blocker the baseline lacks.
 
 ## Versatility score: **23 %** of decided hypotheses hold with zero code change (23 / 101; 23 % of all 102 generated)
@@ -570,3 +572,505 @@ Run: 7000 s (budget 7000.0 s, 3 workers); baseline 795.9 s with 12 blockers (exc
 - a part swap: add the entry to `robot/catalog_data/components.json` (or the built-in catalog); it is picked up by role.
 - a layout change: append to `ARCH` in `robot/gen/changes.py` (hook name, values, keywords).
 - make one expressible: declare the hook in the robot's `hooks.json` (overlay ops per value, or an env setting the build reads), or a named location under `anchors`.
+
+---
+
+# Final results: fix-hyp-size 5912ac7 (dev 472ff5e + #42-#44), all 182 jobs
+
+Run as a shared-folder queue (robot/checks/robust/queue.py) on the local container and the fixers' containers. Every job
+with a build setting sets it as a real env var for spec generation and the build, rebuilds all 29 model parts (part cache keyed on
+the setting), and is compared with a baseline regenerated from the same sources (0 blockers). A change that the robot
+declares unfit (WeaponMotorError / WeaponTypeError, hooks.json `declared_unfit`) is **n/a**: not counted as decided.
+
+## Versatility score: **53 %** (60 of 113 decided hypotheses hold with zero code change; 11 n/a)
+
+| family | holds / decided | n/a | breaks | not expressible |
+|---|---|---|---|---|
+| size (overall width / length / height +-10/20/30 %, short 2WD) | 19 / 19 | 0 | 0 | 0 |
+| swap (catalog parts through the robot's settings) | 24 / 64 | 8 | 40 | 0 |
+| architecture (compartments, drive, belts, servo, battery, weapon type, ...) | 6 / 14 | 3 | 7 | 1 |
+| dimension (top 8 master params +-10 %) | 11 / 16 | 0 | 5 | 0 |
+
+### Fixed since this run
+A's #45 (merged 3acef9d) fixed the N10 motor seat and two of the switch fits after these jobs ran; these rows were not
+re-run and still count as breaks above: `swap:drive_motor:motor_l+motor_r->c_bbbxn_b_antweight_n10_gearmotors`, `swap:drive_motor:motor_l+motor_r->n10_2200rpm_6v`, `swap:drive_motor:motor_l+motor_r->n10_300rpm_6v`, `swap:switch:power_switch->switch_slide_12x4`, `swap:switch:power_switch->switch_slide_bbb_ant` (switch rows: the two BBB slide switches, by A's description).
+
+### Top break causes by owner (first blocked part of each breaking hypothesis)
+
+| owner | cause | hypotheses | e.g. |
+|---|---|---|---|
+| A (tub) | battery trapped in the bay (assembly.blocked) | 8 (5 swap, 3 arch) | `swap:battery:battery->betafpv_2s_300_45c`, `arch:battery.orientation=long_x` |
+| A (tub) | base panel blocked (bigger pack / interior servo) | 5 | `swap:battery:battery->gnb_2s_450_80c` |
+| A (tub) | drive ESC (rxesc) trapped in its bay | 4 | `swap:drive_esc:rxesc->bbb_dual_esc_v31` |
+| A (tub) | N10/N20 overlap or loose in the motor pocket | 6 | `swap:drive_motor:motor_l+motor_r->n10_2200rpm_6v` (fixed since #45) |
+| A (tub) | compartments=none collapses the tub (integrity.solids); added servo has no fasteners | 3 | `arch:chassis.compartments=none` |
+| B (weapon) | weapon pins bolt_p* trapped by the mount (bigger pack / wider chassis) | 7 | `swap:battery:battery->c_palm_power_2s_300mah_65c_us_ref_not_uk`, `dim:CH_HALF_W_STOCK+10%` |
+| B (weapon) | spider sweeps the chassis with a TC1404 motor (interference.spin) | 2 | `swap:weapon_motor:weapon_motor_stator->brotherhobby_tc1404_3800kv` |
+| B (weapon) | mount_r fails to build at CH_HALF_W_STOCK -10 % | 1 | `dim:CH_HALF_W_STOCK-10%` |
+| C (side/hubs) | front catalog wheels: spec generation fails (OCP construction error) | 8 | `swap:wheel:wheel_fl+wheel_fr->bbb_wheel_22x10` |
+| C (side/hubs) | switch screw bolt_sw0 trapped (other switches) | 3 | `swap:switch:power_switch->fingertech_mini_switch` |
+| C (side/hubs) | side nut nut_cr blocked at CH_WALL +10 % | 1 | `dim:CH_WALL+10%` |
+
+Electrical-only breaks: 1S pack (cells_consistent), BBB red ESC on the weapon (current rating), one N20 pair crashed a check.
+Not expressible: `drive.location=front_motors_rear_driven` (A declares rear / mid / front only).
+
+
+## Size family (report: hyp_queue/size.md)
+
+### Size hypotheses
+
+| hypothesis | verdict | builds | new blockers | diff needed |
+|---|---|---|---|---|
+| overall height +10% (setting size.height) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall height +20% (setting size.height) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall height +30% (setting size.height) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall height -10% (setting size.height) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall height -20% (setting size.height) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall height -30% (setting size.height) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall length +10% (setting size.length) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall length +20% (setting size.length) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall length +30% (setting size.length) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall length -10% (setting size.length) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall length -20% (setting size.length) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall length -30% (setting size.length) | holds | yes | - | 0 code lines (1 setting(s)) |
+| short 2WD: length -20 %, front wheels removed, 2 motors | holds | yes | - | 0 code lines (3 setting(s)) |
+| overall width +10% (setting size.width) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall width +20% (setting size.width) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall width +30% (setting size.width) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall width -10% (setting size.width) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall width -20% (setting size.width) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall width -30% (setting size.width) | holds | yes | - | 0 code lines (1 setting(s)) |
+
+
+## Swap family (report: hyp_queue/swap.md)
+
+### Top missing hooks / fixes per owner
+
+**A (tub)**
+- swap fit: build fails: 8 hypothesis(es), e.g. `swap:wheel:wheel_fl+wheel_fr->bbb_wheel_22x10`
+- swap fit: assembly.blocked, electrical.battery_weapon_gap, interference.overlap: 7 hypothesis(es), e.g. `swap:battery:battery->betafpv_2s_300_45c`
+- swap fit: interference.spin, interference.sweep: 2 hypothesis(es), e.g. `swap:weapon_motor:weapon_motor_stator->brotherhobby_tc1404_3800kv`
+- swap fit: assembly.blocked, connection.joint_pivot, interference.overlap: 2 hypothesis(es), e.g. `swap:wheel:wheel_rl+wheel_rr->durahubs_30`
+- swap fit: assembly.blocked, electrical.battery_weapon_gap, electrical.cells_consistent: 1 hypothesis(es), e.g. `swap:battery:battery->gnb_3s_300_80c_hv`
+- swap fit: assembly.blocked, fastener_seat.head_bearing, fastener_seat.head_clash: 1 hypothesis(es), e.g. `swap:switch:power_switch->fingertech_mini_switch`
+
+**B (weapon)**
+- swap fit: build fails: 8 hypothesis(es), e.g. `swap:wheel:wheel_fl+wheel_fr->bbb_wheel_22x10`
+- swap fit: assembly.blocked, electrical.battery_weapon_gap, interference.overlap: 7 hypothesis(es), e.g. `swap:battery:battery->betafpv_2s_300_45c`
+- swap fit: assembly.blocked, interference.overlap, interference.sweep: 3 hypothesis(es), e.g. `swap:wheel:wheel_rl+wheel_rr->bbb_wheel_34x6_5`
+- swap fit: interference.spin, interference.sweep: 2 hypothesis(es), e.g. `swap:weapon_motor:weapon_motor_stator->brotherhobby_tc1404_3800kv`
+- swap fit: assembly.blocked, connection.joint_pivot, interference.overlap: 2 hypothesis(es), e.g. `swap:wheel:wheel_rl+wheel_rr->durahubs_30`
+- swap fit: assembly.blocked, electrical.battery_weapon_gap, electrical.cells_consistent: 1 hypothesis(es), e.g. `swap:battery:battery->gnb_3s_300_80c_hv`
+
+**C (side/fork/wedgelet/hubs)**
+- swap fit: build fails: 8 hypothesis(es), e.g. `swap:wheel:wheel_fl+wheel_fr->bbb_wheel_22x10`
+- swap fit: assembly.blocked, electrical.battery_weapon_gap, interference.overlap: 7 hypothesis(es), e.g. `swap:battery:battery->betafpv_2s_300_45c`
+- swap fit: assembly.blocked, interference.overlap, interference.sweep: 3 hypothesis(es), e.g. `swap:wheel:wheel_rl+wheel_rr->bbb_wheel_34x6_5`
+- swap fit: assembly.blocked, connection.joint_pivot, interference.overlap: 2 hypothesis(es), e.g. `swap:wheel:wheel_rl+wheel_rr->durahubs_30`
+- swap fit: assembly.blocked, electrical.battery_weapon_gap, electrical.cells_consistent: 1 hypothesis(es), e.g. `swap:battery:battery->gnb_3s_300_80c_hv`
+- swap fit: assembly.blocked, interference.overlap: 1 hypothesis(es), e.g. `swap:battery:battery->palmpower_2s_180_45c`
+
+**spec/framework**
+- swap fit: assembly.blocked, electrical.battery_weapon_gap, interference.overlap: 7 hypothesis(es), e.g. `swap:battery:battery->betafpv_2s_300_45c`
+- swap fit: assembly.blocked, interference.overlap: 5 hypothesis(es), e.g. `swap:battery:battery->palmpower_2s_180_45c`
+- swap fit: interference.overlap: 4 hypothesis(es), e.g. `swap:drive_motor:motor_l+motor_r->c_bbb_high_power_n20_gearmotor`
+- swap fit: assembly.blocked, interference.overlap, interference.sweep: 3 hypothesis(es), e.g. `swap:wheel:wheel_rl+wheel_rr->bbb_wheel_34x6_5`
+- swap fit: retention.loose: 2 hypothesis(es), e.g. `swap:drive_motor:motor_l+motor_r->n10_2200rpm_6v`
+- swap fit: assembly.blocked, connection.joint_pivot, interference.overlap: 2 hypothesis(es), e.g. `swap:wheel:wheel_rl+wheel_rr->durahubs_30`
+
+### Swap hypotheses
+
+| hypothesis | verdict | builds | new blockers | diff needed |
+|---|---|---|---|---|
+| battery lipo_2s_180_turnabot -> betafpv_2s_300_45c (BETAFPV 2S 300 mAh 45C (XT30)) (one unit through the `battery.pack` setting) | breaks | yes | assembly.blocked x24, interference.overlap x5, interference.sweep x5 | 8 file(s): drisk.py, fork.py, hubs.py, mount.py, side_joint.py +3 more |
+| battery lipo_2s_180_turnabot -> c_palm_power_2s_300mah_65c_us_ref_not_uk (Palm Power 2S 300mAh 65C (US ref, not UK)) (one unit through the `battery.pack` setting) | breaks | yes | assembly.blocked x19, interference.sweep x10, interference.overlap x5 | 6 file(s): drisk.py, hubs.py, mount.py, tub.py, wedgelet.py +1 more |
+| battery lipo_2s_180_turnabot -> c_typical_2s_300mah_lipo_lihv_betafpv_tbs_ (Typical 2S 300mAh LiPo/LiHV (BetaFPV/TBS/RDQ class)) (one unit through the `battery.pack` setting) | breaks | yes | assembly.blocked x21, interference.sweep x15, interference.overlap x10 | 6 file(s): drisk.py, hubs.py, mount.py, tub.py, wedgelet.py +1 more |
+| battery lipo_2s_180_turnabot -> gnb_2s_350_70c_hv (GNB (Gaoneng) 2S 350 mAh 70C HV 7.6 V (XT30)) (one unit through the `battery.pack` setting) | breaks | yes | assembly.blocked x24, interference.sweep x12, interference.overlap x8 | 8 file(s): drisk.py, fork.py, hubs.py, mount.py, side_joint.py +3 more |
+| battery lipo_2s_180_turnabot -> gnb_2s_450_80c (GNB (Gaoneng) 2S 450 mAh 80C (XT30)) (one unit through the `battery.pack` setting) | breaks | yes | assembly.blocked x34, interference.sweep x21, interference.overlap x15 | 9 file(s): drisk.py, fork.py, hubs.py, mount.py, panel_base.py +4 more |
+| battery lipo_2s_180_turnabot -> gnb_3s_300_80c_hv (GNB (Gaoneng) 3S 300 mAh 80C HV 11.4 V (XT30, GNB3003S80AHV)) (one unit through the `battery.pack` setting) | breaks | yes | assembly.blocked x34, interference.sweep x16, interference.overlap x13 | 9 file(s): drisk.py, fork.py, hubs.py, mount.py, panel_base.py +4 more |
+| battery lipo_2s_180_turnabot -> lipo_1s_300 (1S 300 mAh LiPo) (one unit through the `battery.pack` setting) | breaks | yes | electrical.cells_consistent x1 | 0 code lines (1 setting(s)) |
+| battery lipo_2s_180_turnabot -> lipo_2s_180 (2S 180 mAh LiPo (nano-tech class)) (one unit through the `battery.pack` setting) | holds | yes | - | 0 code lines (1 setting(s)) |
+| battery lipo_2s_180_turnabot -> lipo_2s_350 (2S 350 mAh LiPo) (one unit through the `battery.pack` setting) | holds | yes | - | 0 code lines (1 setting(s)) |
+| battery lipo_2s_180_turnabot -> palmpower_2s_180_45c (Palm Power Gen2 2S 180 mAh 45C (JST)) (one unit through the `battery.pack` setting) | breaks | yes | assembly.blocked x20, interference.overlap x1 | 7 file(s): drisk.py, fork.py, hubs.py, mount.py, side_joint.py +2 more |
+| battery lipo_2s_180_turnabot -> palmpower_2s_300_65c (Palm Power Gen2 2S 300 mAh 65C (JST)) (one unit through the `battery.pack` setting) | breaks | yes | assembly.blocked x33, interference.sweep x10, interference.overlap x7 | 9 file(s): drisk.py, fork.py, hubs.py, mount.py, panel_base.py +4 more |
+| battery lipo_2s_180_turnabot -> tattu_2s_300_75c_hv (Tattu 2S1P 300 mAh 75C HV 7.6 V (JST-PHR)) (one unit through the `battery.pack` setting) | breaks | yes | assembly.blocked x24, interference.overlap x5, interference.sweep x5 | 8 file(s): drisk.py, fork.py, hubs.py, mount.py, side_joint.py +3 more |
+| battery connector jst_rcy -> jst_ph | holds | yes | - | 0 code lines (1 setting(s)) |
+| battery connector jst_rcy -> mr30 | holds | yes | - | 0 code lines (1 setting(s)) |
+| battery connector jst_rcy -> xt30 | holds | yes | - | 0 code lines (1 setting(s)) |
+| battery connector jst_rcy -> xt60 | holds | yes | - | 0 code lines (1 setting(s)) |
+| drive esc malenki_nano_rvrn2 -> bbb_dual_esc_v31 (BBB Antweight Dual ESC v3.1 (2x 2 A brushed, 5 V 1 A BEC)) (one unit through the `drive.esc` setting) | breaks | yes | assembly.blocked x2, interference.overlap x1 | 1 file(s): spec.py |
+| drive esc malenki_nano_rvrn2 -> bbb_malenki_nano (BBB Malenki-Nano (receiver + 3x 1 A brushed ESC + 2 PWM out)) (one unit through the `drive.esc` setting) | holds | yes | - | 0 code lines (1 setting(s)) |
+| drive esc malenki_nano_rvrn2 -> c_antweight_n10_n20_red_esc_motor_mounted (Antweight N10/N20 Red ESC (motor-mounted)) (one unit through the `drive.esc` setting) | holds | yes | - | 0 code lines (1 setting(s)) |
+| drive esc malenki_nano_rvrn2 -> c_bbb_antweight_dual_esc_v3_1 (BBB Antweight Dual ESC v3.1) (one unit through the `drive.esc` setting) | breaks | yes | assembly.blocked x2, interference.overlap x1 | 1 file(s): spec.py |
+| drive esc malenki_nano_rvrn2 -> c_malenki_nano_antweight_esc_receiver (Malenki-Nano Antweight ESC & Receiver) (one unit through the `drive.esc` setting) | holds | yes | - | 0 code lines (1 setting(s)) |
+| drive esc malenki_nano_rvrn2 -> esc_dual_brushed (Dual brushed ESC (hobby, heat-shrunk)) (one unit through the `drive.esc` setting) | breaks | yes | assembly.blocked x2, interference.overlap x1 | 1 file(s): spec.py |
+| drive esc malenki_nano_rvrn2 -> malenki_nano (Malenki Nano (Rx + 2 brushed drive ESC), kapton wrapped) (one unit through the `drive.esc` setting) | breaks | yes | assembly.blocked x2, interference.overlap x1 | 1 file(s): spec.py |
+| drive motor n10_2200rpm_spicy -> bbb_hpn20_1000rpm (BBB High Power N20 1000 rpm gearmotor (35 x 12 x 10, ~2.2 A stall at 2S)) (one unit through the `drive.motor` setting) | holds | yes | - | 0 code lines (1 setting(s)) |
+| drive motor n10_2200rpm_spicy -> bbb_n10_1000rpm (BBBxN&B N10 1000 rpm gearmotor (33 x 12 x 10, steel plates)) (one unit through the `drive.motor` setting) | holds | yes | - | 0 code lines (1 setting(s)) |
+| drive motor n10_2200rpm_spicy -> bbb_n10_600rpm (BBBxN&B N10 600 rpm gearmotor (33 x 12 x 10, steel plates)) (one unit through the `drive.motor` setting) | holds | yes | - | 0 code lines (1 setting(s)) |
+| drive motor n10_2200rpm_spicy -> bbb_n20_600rpm (BBB pair-of-N20 600 rpm gearmotor (50:1, 36 x 12 x 10)) (one unit through the `drive.motor` setting) | breaks | yes | checks.crashed x1 | 0 code lines (1 setting(s)) |
+| drive motor n10_2200rpm_spicy -> c_bbb_high_power_n20_gearmotor (BBB High Power N20 Gearmotor) (one unit through the `drive.motor` setting) | breaks | yes | interference.overlap x1 | 1 file(s): spec.py |
+| drive motor n10_2200rpm_spicy -> c_bbbxn_b_antweight_n10_gearmotors (BBBxN&B Antweight N10 Gearmotors) (one unit through the `drive.motor` setting) | breaks | yes | interference.overlap x1 | 1 file(s): spec.py |
+| drive motor n10_2200rpm_spicy -> c_pair_of_600rpm_antweight_n20_gearmotors (Pair of 600rpm Antweight N20 Gearmotors) (one unit through the `drive.motor` setting) | breaks | yes | interference.overlap x1 | 1 file(s): spec.py |
+| drive motor n10_2200rpm_spicy -> n10_2200rpm_6v (N10 micro gearmotor 6 V 2200 rpm) (one unit through the `drive.motor` setting) | breaks | yes | retention.loose x2 | 1 file(s): spec.py |
+| drive motor n10_2200rpm_spicy -> n10_300rpm_6v (N10 micro gearmotor 6 V 300 rpm) (one unit through the `drive.motor` setting) | breaks | yes | retention.loose x2 | 1 file(s): spec.py |
+| drive motor n10_2200rpm_spicy -> n20_1000rpm_6v (N20 gearmotor 6 V 1000 rpm) (one unit through the `drive.motor` setting) | holds | yes | - | 0 code lines (1 setting(s)) |
+| drive motor n10_2200rpm_spicy -> pololu_hpcb6v_30to1 (Pololu 30:1 Micro Metal Gearmotor HPCB 6V (#3062/#3072)) (one unit through the `drive.motor` setting) | holds | yes | - | 0 code lines (1 setting(s)) |
+| drive motor n10_2200rpm_spicy -> pololu_hpcb6v_50to1 (Pololu 50:1 Micro Metal Gearmotor HPCB 6V (#3063/#3073)) (one unit through the `drive.motor` setting) | holds | yes | - | 0 code lines (1 setting(s)) |
+| drive motor n10_2200rpm_spicy -> pololu_hpcb6v_75to1 (Pololu 75:1 Micro Metal Gearmotor HPCB 6V (#3064/#3074)) (one unit through the `drive.motor` setting) | holds | yes | - | 0 code lines (1 setting(s)) |
+| switch switch_bbb_ant_rvrn2 -> fingertech_mini_switch (FingerTech Mini Power Switch (12.7 cube-ish, 2 holes on 7.62, 40 A)) | breaks | yes | assembly.blocked x19, interference.overlap x7, fastener_seat.head_bearing x2 | 8 file(s): drisk.py, fork.py, hubs.py, mount.py, side_joint.py +3 more |
+| switch switch_bbb_ant_rvrn2 -> switch_slide_12x4 (Miniature slide switch 11.8 x 3.8) | breaks | yes | assembly.blocked x3, fastener_seat.head_bearing x2, interference.overlap x2 | 2 file(s): tub.py, spec.py |
+| switch switch_bbb_ant_rvrn2 -> switch_slide_bbb_ant (BBB ant slide switch 11.8 x 3.8 with a front mounting ear (2 x M2 holes)) | breaks | yes | assembly.blocked x5, interference.overlap x4, fastener_seat.head_bearing x2 | 3 file(s): panel_top.py, tub.py, spec.py |
+| weapon esc bbb_ant_esc_rvrn2 -> bbb_ant_esc (BBB brushless ant ESC (heat-shrunk)) (one unit through the `weapon.esc` setting) | holds | yes | - | 0 code lines (1 setting(s)) |
+| weapon esc bbb_ant_esc_rvrn2 -> bbb_brushless_esc_20a (BBB Antweight Spinner Brushless ESC 20 A (no BEC)) (one unit through the `weapon.esc` setting) | holds | yes | - | 0 code lines (1 setting(s)) |
+| weapon esc bbb_ant_esc_rvrn2 -> bbb_red_esc (BBB N10/N20 Red ESC (single 1 A brushed, motor mounted)) (one unit through the `weapon.esc` setting) | breaks | yes | electrical.esc_weapon_current x1 | 0 code lines (1 setting(s)) |
+| weapon esc bbb_ant_esc_rvrn2 -> c_bbb_antweight_spinner_brushless_esc (BBB Antweight Spinner Brushless ESC) (one unit through the `weapon.esc` setting) | holds | yes | - | 0 code lines (1 setting(s)) |
+| weapon esc bbb_ant_esc_rvrn2 -> esc_brushless_12a (Brushless ESC 12 A with BEC) (one unit through the `weapon.esc` setting) | holds | yes | - | 0 code lines (1 setting(s)) |
+| weapon motor gr1507 -> bbb_be1806_2300kv (BBB BE1806 2300 kV outrunner (23 mm bell, 4x M2 base on 12/16 mm, 4x M2 top on 9 mm)) (one unit through the `weapon.motor` setting) | holds | yes | - | 0 code lines (1 setting(s)) |
+| weapon motor gr1507 -> be1806_bbb (BBB BE1806 2300 kV outrunner (23 mm bell, 20.5 incl. base and shaft collar, 5 mm shaft bore)) (one unit through the `weapon.motor` setting) | n/a | - | declared unfit: spec generation failed (rc 1): revron.weapon_motor.WeaponMotorError: weapon motor `be1806_bbb` does not  | - |
+| weapon motor gr1507 -> bl_1806_2300kv (1806 2300 kV outrunner) (one unit through the `weapon.motor` setting) | n/a | - | declared unfit: spec generation failed (rc 1): revron.weapon_motor.WeaponMotorError: weapon motor `bl_1806_2300kv` does  | - |
+| weapon motor gr1507 -> bl_2306_1400kv (2306 1400 kV outrunner) (one unit through the `weapon.motor` setting) | n/a | - | declared unfit: spec generation failed (rc 1): revron.weapon_motor.WeaponMotorError: weapon motor `bl_2306_1400kv` does  | - |
+| weapon motor gr1507 -> brotherhobby_tc1404_3800kv (BrotherHobby TC 1404 3800 kV outrunner (18.2 x 16, 4x M2 on 9 mm base, 4x M2 on 5 mm bell, 1.5 mm shaft)) (one unit through the `weapon.motor` setting) | breaks | yes | interference.sweep x4, interference.spin x1 | 2 file(s): drisk.py, tub.py |
+| weapon motor gr1507 -> brotherhobby_tc1404_4600kv (BrotherHobby TC 1404 4600 kV outrunner (18.2 x 16, 4x M2 on 9 mm base, 1.5 mm shaft)) (one unit through the `weapon.motor` setting) | breaks | yes | interference.sweep x4, interference.spin x1 | 2 file(s): drisk.py, tub.py |
+| weapon motor gr1507 -> c_bbb_be1806_2300kv (BBB BE1806 2300kv) (one unit through the `weapon.motor` setting) | n/a | - | declared unfit: spec generation failed (rc 1): revron.weapon_motor.WeaponMotorError: weapon motor `c_bbb_be1806_2300kv`  | - |
+| weapon motor gr1507 -> c_repeat_2004_antweight_spinner_motor (Repeat 2004 Antweight Spinner Motor) (one unit through the `weapon.motor` setting) | n/a | - | declared unfit: spec generation failed (rc 1): revron.weapon_motor.WeaponMotorError: weapon motor `c_repeat_2004_antweig | - |
+| weapon motor gr1507 -> emax_eco2207_1900kv (EMAX ECO 2207 1900 kV outrunner (27.45 x 32.6, 4x M3 16x16, M5 prop shaft)) (one unit through the `weapon.motor` setting) | n/a | - | declared unfit: spec generation failed (rc 1): revron.weapon_motor.WeaponMotorError: weapon motor `emax_eco2207_1900kv`  | - |
+| weapon motor gr1507 -> gr1507_step (GR1507 outrunner, STEP-simplified fixed half (base cross and pin only, as the STEP): 4-arm cross base with 4 M2 on 12 mm, 12-slot wound stator stack, 3 phase leads (bell is `gr1507_can`)) (one unit through the `weapon.motor` setting) | holds | yes | - | 0 code lines (1 setting(s)) |
+| weapon motor gr1507 -> repeat_2004_1400kv (Repeat Robotics DirectDrive 2004 1400 kV outrunner (3 mm through shaft, 3x M3 on 15 mm both ends)) (one unit through the `weapon.motor` setting) | n/a | - | declared unfit: spec generation failed (rc 1): revron.weapon_motor.WeaponMotorError: weapon motor `repeat_2004_1400kv` d | - |
+| weapon motor gr1507 -> repeat_2004_2800kv (Repeat Robotics DirectDrive 2004 2800 kV outrunner (3 mm through shaft, 3x M3 on 15 mm both ends)) (one unit through the `weapon.motor` setting) | n/a | - | declared unfit: spec generation failed (rc 1): revron.weapon_motor.WeaponMotorError: weapon motor `repeat_2004_2800kv` d | - |
+| wheel RV20 Scalextric micro SLX tyre 11 x 7 x 6 -> bbb_wheel_22x10 (BBB 22 mm antweight wheel (10 mm rubber tyre, PLA+ hub)) (groove-less wheel: drive.belt=none; WHEEL_OD_F=22) | breaks | no | spec generation failed (rc 1): OCP.OCP.Standard.Standard_ConstructionError | 8 file(s): drisk.py, hubs.py, mount.py, panel_base.py, panel_top.py +3 more |
+| wheel RV20 Scalextric micro SLX tyre 11 x 7 x 6 -> bbb_wheel_34x6_5 (BBB 34 mm antweight wheel (rubber tread, plastic hub, 3 mm D)) (groove-less wheel: drive.belt=none; WHEEL_OD_F=34) | breaks | no | spec generation failed (rc 1): OCP.OCP.Standard.Standard_ConstructionError | 8 file(s): drisk.py, hubs.py, mount.py, panel_base.py, panel_top.py +3 more |
+| wheel RV20 Scalextric micro SLX tyre 11 x 7 x 6 -> durahubs_25 (DuraHubs 25 mm (silicone tread, PLA-ST hub)) (groove-less wheel: drive.belt=none; WHEEL_OD_F=25) | breaks | no | spec generation failed (rc 1): OCP.OCP.Standard.Standard_ConstructionError | 8 file(s): drisk.py, hubs.py, mount.py, panel_base.py, panel_top.py +3 more |
+| wheel RV20 Scalextric micro SLX tyre 11 x 7 x 6 -> durahubs_30 (DuraHubs 30 mm (silicone tread, PLA-ST hub)) (groove-less wheel: drive.belt=none; WHEEL_OD_F=30) | breaks | no | spec generation failed (rc 1): OCP.OCP.Standard.Standard_ConstructionError | 8 file(s): drisk.py, hubs.py, mount.py, panel_base.py, panel_top.py +3 more |
+| wheel RV20 Scalextric micro SLX tyre 11 x 7 x 6 -> durahubs_35 (DuraHubs 35 mm wide (14 mm silicone tread)) (groove-less wheel: drive.belt=none; WHEEL_OD_F=36) | breaks | no | spec generation failed (rc 1): OCP.OCP.Standard.Standard_ConstructionError | 8 file(s): drisk.py, hubs.py, mount.py, panel_base.py, panel_top.py +3 more |
+| wheel RV20 Scalextric micro SLX tyre 11 x 7 x 6 -> wheel_20x8 (20 x 8 mm wheel (printed hub, silicone tyre)) (groove-less wheel: drive.belt=none; WHEEL_OD_F=20) | breaks | no | spec generation failed (rc 1): OCP.OCP.Standard.Standard_ConstructionError | 8 file(s): drisk.py, hubs.py, mount.py, panel_base.py, panel_top.py +3 more |
+| wheel RV20 Scalextric micro SLX tyre 11 x 7 x 6 -> wheel_28x10 (28 x 10 mm wheel (printed hub, silicone tyre)) (groove-less wheel: drive.belt=none; WHEEL_OD_F=28) | breaks | no | spec generation failed (rc 1): OCP.OCP.Standard.Standard_ConstructionError | 8 file(s): drisk.py, hubs.py, mount.py, panel_base.py, panel_top.py +3 more |
+| wheel RV20 Scalextric micro SLX tyre 11 x 7 x 6 -> wheel_30x8 (30 x 8 mm wheel (printed hub, silicone tyre)) (groove-less wheel: drive.belt=none; WHEEL_OD_F=30) | breaks | no | spec generation failed (rc 1): OCP.OCP.Standard.Standard_ConstructionError | 8 file(s): drisk.py, hubs.py, mount.py, panel_base.py, panel_top.py +3 more |
+| wheel RV22 Scalextric F1 front tyre 21.5 x 14 x 9.5 -> bbb_wheel_22x10 (BBB 22 mm antweight wheel (10 mm rubber tyre, PLA+ hub)) (one unit through the `wheel.rear` setting; groove-less wheel: drive.belt=none) | holds | yes | - | 0 code lines (2 setting(s)) |
+| wheel RV22 Scalextric F1 front tyre 21.5 x 14 x 9.5 -> bbb_wheel_34x6_5 (BBB 34 mm antweight wheel (rubber tread, plastic hub, 3 mm D)) (one unit through the `wheel.rear` setting; groove-less wheel: drive.belt=none) | breaks | yes | assembly.blocked x30, interference.overlap x2, interference.sweep x2 | 7 file(s): drisk.py, fork.py, hubs.py, mount.py, side_joint.py +2 more |
+| wheel RV22 Scalextric F1 front tyre 21.5 x 14 x 9.5 -> durahubs_25 (DuraHubs 25 mm (silicone tread, PLA-ST hub)) (one unit through the `wheel.rear` setting; groove-less wheel: drive.belt=none) | holds | yes | - | 0 code lines (2 setting(s)) |
+| wheel RV22 Scalextric F1 front tyre 21.5 x 14 x 9.5 -> durahubs_30 (DuraHubs 30 mm (silicone tread, PLA-ST hub)) (one unit through the `wheel.rear` setting; groove-less wheel: drive.belt=none) | breaks | yes | assembly.blocked x30, connection.joint_pivot x2, interference.overlap x2 | 8 file(s): drisk.py, fork.py, hubs.py, mount.py, side_joint.py +3 more |
+| wheel RV22 Scalextric F1 front tyre 21.5 x 14 x 9.5 -> durahubs_35 (DuraHubs 35 mm wide (14 mm silicone tread)) (one unit through the `wheel.rear` setting; groove-less wheel: drive.belt=none) | breaks | yes | assembly.blocked x30, interference.overlap x2, interference.sweep x2 | 7 file(s): drisk.py, fork.py, hubs.py, mount.py, side_joint.py +2 more |
+| wheel RV22 Scalextric F1 front tyre 21.5 x 14 x 9.5 -> wheel_20x8 (20 x 8 mm wheel (printed hub, silicone tyre)) (one unit through the `wheel.rear` setting; groove-less wheel: drive.belt=none) | breaks | yes | interference.overlap x2 | 2 file(s): panel_base.py, spec.py |
+| wheel RV22 Scalextric F1 front tyre 21.5 x 14 x 9.5 -> wheel_28x10 (28 x 10 mm wheel (printed hub, silicone tyre)) (one unit through the `wheel.rear` setting; groove-less wheel: drive.belt=none) | breaks | yes | assembly.blocked x30, interference.overlap x2, interference.sweep x2 | 7 file(s): drisk.py, fork.py, hubs.py, mount.py, side_joint.py +2 more |
+| wheel RV22 Scalextric F1 front tyre 21.5 x 14 x 9.5 -> wheel_30x8 (30 x 8 mm wheel (printed hub, silicone tyre)) (one unit through the `wheel.rear` setting; groove-less wheel: drive.belt=none) | breaks | yes | assembly.blocked x30, connection.joint_pivot x2, interference.overlap x2 | 8 file(s): drisk.py, fork.py, hubs.py, mount.py, side_joint.py +3 more |
+
+### Breaking hypotheses: blockers
+
+- **swap:battery:battery->betafpv_2s_300_45c**
+  - `assembly.blocked` on battery: `battery` is trapped: its best way out is along (0, 0, 1), which gets 0.0 mm before it hits `side_l`.
+  - `assembly.blocked` on bolt_p0: `bolt_p0` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p1: `bolt_p1` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p2: `bolt_p2` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - ... 34 more
+- **swap:battery:battery->c_palm_power_2s_300mah_65c_us_ref_not_uk**
+  - `assembly.blocked` on bolt_p0: `bolt_p0` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p1: `bolt_p1` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p2: `bolt_p2` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p3: `bolt_p3` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - ... 34 more
+- **swap:battery:battery->c_typical_2s_300mah_lipo_lihv_betafpv_tbs_**
+  - `assembly.blocked` on battery: `battery` is trapped: its best way out is along (0, 0, 1), which gets 0.0 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p0: `bolt_p0` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p1: `bolt_p1` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p2: `bolt_p2` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - ... 46 more
+- **swap:battery:battery->gnb_2s_350_70c_hv**
+  - `assembly.blocked` on battery: `battery` is trapped: its best way out is along (0, 0, 1), which gets 0.0 mm before it hits `disc_a`.
+  - `assembly.blocked` on bolt_p0: `bolt_p0` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p1: `bolt_p1` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p2: `bolt_p2` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - ... 44 more
+- **swap:battery:battery->gnb_2s_450_80c**
+  - `assembly.blocked` on base_panel: `base_panel` is trapped: its best way out is along (0, 0, 1), which gets 0.0 mm before it hits `battery`.
+  - `assembly.blocked` on battery: `battery` is trapped: its best way out is along (0, 0, 1), which gets 0.0 mm before it hits `base_panel`.
+  - `assembly.blocked` on bolt_p0: `bolt_p0` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p1: `bolt_p1` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - ... 70 more
+- **swap:battery:battery->gnb_3s_300_80c_hv**
+  - `assembly.blocked` on base_panel: `base_panel` is trapped: its best way out is along (0, 0, 1), which gets 0.0 mm before it hits `battery`.
+  - `assembly.blocked` on battery: `battery` is trapped: its best way out is along (0, 0, 1), which gets 0.0 mm before it hits `base_panel`.
+  - `assembly.blocked` on bolt_p0: `bolt_p0` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p1: `bolt_p1` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - ... 64 more
+- **swap:battery:battery->lipo_1s_300**
+  - `electrical.cells_consistent` on -: Cell counts: battery 1S, electronics.cells 2S, spider.weapon.cells 2S.
+- **swap:battery:battery->palmpower_2s_180_45c**
+  - `assembly.blocked` on battery: `battery` is trapped: its best way out is along (0, 0, 1), which gets 0.0 mm before it hits `side_l`.
+  - `assembly.blocked` on bolt_p0: `bolt_p0` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p1: `bolt_p1` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p2: `bolt_p2` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - ... 17 more
+- **swap:battery:battery->palmpower_2s_300_65c**
+  - `assembly.blocked` on base_panel: `base_panel` is trapped: its best way out is along (0, 0, 1), which gets 0.0 mm before it hits `battery`.
+  - `assembly.blocked` on battery: `battery` is trapped: its best way out is along (0, 0, 1), which gets 0.0 mm before it hits `base_panel`.
+  - `assembly.blocked` on bolt_p0: `bolt_p0` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p1: `bolt_p1` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - ... 50 more
+- **swap:battery:battery->tattu_2s_300_75c_hv**
+  - `assembly.blocked` on battery: `battery` is trapped: its best way out is along (0, 0, 1), which gets 0.0 mm before it hits `side_l`.
+  - `assembly.blocked` on bolt_p0: `bolt_p0` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p1: `bolt_p1` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p2: `bolt_p2` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - ... 34 more
+- **swap:drive_esc:rxesc->bbb_dual_esc_v31**
+  - `assembly.blocked` on rxesc: `rxesc` is trapped: its best way out is along (0, 0, 1), which gets 0.0 mm before it hits `wesc`.
+  - `assembly.blocked` on wesc: `wesc` is trapped: its best way out is along (0, 0, 1), which gets 0.0 mm before it hits `rxesc`.
+  - `interference.overlap` on rxesc,wesc: `rxesc` and `wesc` overlap by 0.37 mm (about 139.2 mm3).
+- **swap:drive_esc:rxesc->c_bbb_antweight_dual_esc_v3_1**
+  - `assembly.blocked` on rxesc: `rxesc` is trapped: its best way out is along (0, 0, 1), which gets 0.0 mm before it hits `wesc`.
+  - `assembly.blocked` on wesc: `wesc` is trapped: its best way out is along (0, 0, 1), which gets 0.0 mm before it hits `rxesc`.
+  - `interference.overlap` on rxesc,wesc: `rxesc` and `wesc` overlap by 0.37 mm (about 139.2 mm3).
+- **swap:drive_esc:rxesc->esc_dual_brushed**
+  - `assembly.blocked` on rxesc: `rxesc` is trapped: its best way out is along (0, 0, 1), which gets 0.0 mm before it hits `wesc`.
+  - `assembly.blocked` on wesc: `wesc` is trapped: its best way out is along (0, 0, 1), which gets 0.0 mm before it hits `rxesc`.
+  - `interference.overlap` on rxesc,wesc: `rxesc` and `wesc` overlap by 0.14 mm (about 19.5 mm3).
+- **swap:drive_esc:rxesc->malenki_nano**
+  - `assembly.blocked` on rxesc: `rxesc` is trapped: its best way out is along (0, 0, 1), which gets 0.0 mm before it hits `wesc`.
+  - `assembly.blocked` on wesc: `wesc` is trapped: its best way out is along (0, 0, 1), which gets 0.0 mm before it hits `rxesc`.
+  - `interference.overlap` on rxesc,wesc: `rxesc` and `wesc` overlap by 0.14 mm (about 52.2 mm3).
+- **swap:drive_motor:motor_l+motor_r->bbb_n20_600rpm**
+  - `checks.crashed` on -: `electrical` raised TypeError: '>' not supported between instances of 'NoneType' and 'NoneType'. Its verdicts are unknown.
+- **swap:drive_motor:motor_l+motor_r->c_bbb_high_power_n20_gearmotor**
+  - `interference.overlap` on motor_l,motor_r: `motor_l` and `motor_r` overlap by 4.88 mm (about 1872.0 mm3).
+- **swap:drive_motor:motor_l+motor_r->c_bbbxn_b_antweight_n10_gearmotors**
+  - `interference.overlap` on motor_l,motor_r: `motor_l` and `motor_r` overlap by 4.88 mm (about 1392.0 mm3).
+- **swap:drive_motor:motor_l+motor_r->c_pair_of_600rpm_antweight_n20_gearmotors**
+  - `interference.overlap` on motor_l,motor_r: `motor_l` and `motor_r` overlap by 4.88 mm (about 2112.0 mm3).
+- **swap:drive_motor:motor_l+motor_r->n10_2200rpm_6v**
+  - `retention.loose` on motor_l: `motor_l` can move more than 0.5 mm toward +x without touching anything (captive means at most 0.5 mm of play in every direction); in a hit it will fa
+  - `retention.loose` on motor_r: `motor_r` can move more than 0.5 mm toward -x without touching anything (captive means at most 0.5 mm of play in every direction); in a hit it will fa
+- **swap:drive_motor:motor_l+motor_r->n10_300rpm_6v**
+  - `retention.loose` on motor_l: `motor_l` can move more than 0.5 mm toward +x without touching anything (captive means at most 0.5 mm of play in every direction); in a hit it will fa
+  - `retention.loose` on motor_r: `motor_r` can move more than 0.5 mm toward -x without touching anything (captive means at most 0.5 mm of play in every direction); in a hit it will fa
+- **swap:switch:power_switch->fingertech_mini_switch**
+  - `assembly.blocked` on bolt_sw0: `bolt_sw0` is trapped: its best way out is along (-0, -0, -1), which gets 0.0 mm before it hits `power_switch`.
+  - `assembly.blocked` on bolt_sw1: `bolt_sw1` is trapped: its best way out is along (-0, -0, -1), which gets 0.0 mm before it hits `power_switch`.
+  - `assembly.blocked` on disc_a: `disc_a` is trapped: its best way out is along (0, 0, 1), which gets 2.8 mm before it hits `weapon_motor_can`.
+  - `assembly.blocked` on disc_b: `disc_b` is trapped: its best way out is along (1, 0, 0), which gets 5.6 mm before it hits `tub`.
+  - ... 26 more
+- **swap:switch:power_switch->switch_slide_12x4**
+  - `assembly.blocked` on bolt_sw0: `bolt_sw0` is trapped: its best way out is along (-0, -0, -1), which gets 0.0 mm before it hits `power_switch`.
+  - `assembly.blocked` on bolt_sw1: `bolt_sw1` is trapped: its best way out is along (-0, -0, -1), which gets 0.0 mm before it hits `power_switch`.
+  - `assembly.blocked` on power_switch: `power_switch` is trapped: its best way out is along (0, 0, 1), which gets 0.0 mm before it hits `bolt_sw0`.
+  - `fastener_seat.head_bearing` on bolt_sw0,power_switch,tub,tub: `bolt_sw0` head bears on 0% of its seat
+  - ... 3 more
+- **swap:switch:power_switch->switch_slide_bbb_ant**
+  - `assembly.blocked` on bolt_sw0: `bolt_sw0` is trapped: its best way out is along (-0, -0, -1), which gets 0.0 mm before it hits `power_switch`.
+  - `assembly.blocked` on bolt_sw1: `bolt_sw1` is trapped: its best way out is along (-0, -0, -1), which gets 0.0 mm before it hits `power_switch`.
+  - `assembly.blocked` on bolt_t0: `bolt_t0` is trapped: its best way out is along (-0, -0, 1), which gets 0.0 mm before it hits `power_switch`.
+  - `assembly.blocked` on power_switch: `power_switch` is trapped: its best way out is along (0, 0, 1), which gets 0.0 mm before it hits `tub`.
+  - ... 8 more
+- **swap:weapon_esc:wesc->bbb_red_esc**
+  - `electrical.esc_weapon_current` on -: `wesc` burst 1.8 A vs max 18.0 A per channel.
+- **swap:weapon_motor:weapon_motor_stator->brotherhobby_tc1404_3800kv**
+  - `interference.spin` on spider,tub: `spider` (its rotor part `bolt_d0`) spinning sweeps through `tub`.
+  - `interference.sweep` on bolt_d0,tub: `bolt_d0` moving on joint `spider` runs into `tub` (depth 0.10 mm) at 81.0 deg.
+  - `interference.sweep` on bolt_d1,tub: `bolt_d1` moving on joint `spider` runs into `tub` (depth 0.10 mm) at 171.0 deg.
+  - `interference.sweep` on bolt_d2,tub: `bolt_d2` moving on joint `spider` runs into `tub` (depth 0.10 mm) at 261.0 deg.
+  - ... 1 more
+- **swap:weapon_motor:weapon_motor_stator->brotherhobby_tc1404_4600kv**
+  - `interference.spin` on spider,tub: `spider` (its rotor part `bolt_d0`) spinning sweeps through `tub`.
+  - `interference.sweep` on bolt_d0,tub: `bolt_d0` moving on joint `spider` runs into `tub` (depth 0.10 mm) at 81.0 deg.
+  - `interference.sweep` on bolt_d1,tub: `bolt_d1` moving on joint `spider` runs into `tub` (depth 0.10 mm) at 171.0 deg.
+  - `interference.sweep` on bolt_d2,tub: `bolt_d2` moving on joint `spider` runs into `tub` (depth 0.10 mm) at 261.0 deg.
+  - ... 1 more
+- **swap:wheel:wheel_fl+wheel_fr->bbb_wheel_22x10**: spec generation failed (rc 1): OCP.OCP.Standard.Standard_ConstructionError
+- **swap:wheel:wheel_fl+wheel_fr->bbb_wheel_34x6_5**: spec generation failed (rc 1): OCP.OCP.Standard.Standard_ConstructionError
+- **swap:wheel:wheel_fl+wheel_fr->durahubs_25**: spec generation failed (rc 1): OCP.OCP.Standard.Standard_ConstructionError
+- **swap:wheel:wheel_fl+wheel_fr->durahubs_30**: spec generation failed (rc 1): OCP.OCP.Standard.Standard_ConstructionError
+- **swap:wheel:wheel_fl+wheel_fr->durahubs_35**: spec generation failed (rc 1): OCP.OCP.Standard.Standard_ConstructionError
+- **swap:wheel:wheel_fl+wheel_fr->wheel_20x8**: spec generation failed (rc 1): OCP.OCP.Standard.Standard_ConstructionError
+- **swap:wheel:wheel_fl+wheel_fr->wheel_28x10**: spec generation failed (rc 1): OCP.OCP.Standard.Standard_ConstructionError
+- **swap:wheel:wheel_fl+wheel_fr->wheel_30x8**: spec generation failed (rc 1): OCP.OCP.Standard.Standard_ConstructionError
+- **swap:wheel:wheel_rl+wheel_rr->bbb_wheel_34x6_5**
+  - `assembly.blocked` on bolt_p0: `bolt_p0` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p1: `bolt_p1` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p2: `bolt_p2` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p3: `bolt_p3` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - ... 30 more
+- **swap:wheel:wheel_rl+wheel_rr->durahubs_30**
+  - `assembly.blocked` on bolt_p0: `bolt_p0` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p1: `bolt_p1` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p2: `bolt_p2` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p3: `bolt_p3` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - ... 32 more
+- **swap:wheel:wheel_rl+wheel_rr->durahubs_35**
+  - `assembly.blocked` on bolt_p0: `bolt_p0` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p1: `bolt_p1` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p2: `bolt_p2` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p3: `bolt_p3` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - ... 30 more
+- **swap:wheel:wheel_rl+wheel_rr->wheel_20x8**
+  - `interference.overlap` on base_panel,motor_l: `base_panel` and `motor_l` overlap by 0.23 mm (about 30.0 mm3).
+  - `interference.overlap` on base_panel,motor_r: `base_panel` and `motor_r` overlap by 0.23 mm (about 30.0 mm3).
+- **swap:wheel:wheel_rl+wheel_rr->wheel_28x10**
+  - `assembly.blocked` on bolt_p0: `bolt_p0` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p1: `bolt_p1` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p2: `bolt_p2` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p3: `bolt_p3` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - ... 30 more
+- **swap:wheel:wheel_rl+wheel_rr->wheel_30x8**
+  - `assembly.blocked` on bolt_p0: `bolt_p0` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p1: `bolt_p1` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p2: `bolt_p2` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p3: `bolt_p3` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - ... 32 more
+
+
+## Architecture family (report: hyp_queue/architecture.md)
+
+### Top missing hooks / fixes per owner
+
+**A (tub)**
+- architecture fit: assembly.blocked, connection.cover_fasteners, interference.overlap: 1 hypothesis(es), e.g. `arch:add_servo@tub_interior_rear`
+- architecture fit: assembly.blocked, interference.overlap: 1 hypothesis(es), e.g. `arch:battery.orientation=long_x`
+- architecture fit: integrity.solids: 1 hypothesis(es), e.g. `arch:chassis.compartments=none`
+- architecture fit: assembly.blocked, electrical.battery_weapon_gap, fastener_seat.thread_bite: 1 hypothesis(es), e.g. `arch:drive.location=front`
+- hook `drive.location=front_motors_rear_driven`: 1 hypothesis(es), e.g. `arch:drive.location=front_motors_rear_driven`
+- architecture fit: assembly.blocked, electrical.battery_weapon_gap, fastener_seat.head_clash: 1 hypothesis(es), e.g. `arch:drive.location=mid`
+
+**B (weapon)**
+- architecture fit: assembly.blocked, interference.overlap: 1 hypothesis(es), e.g. `arch:battery.orientation=long_x`
+- architecture fit: assembly.blocked, electrical.battery_weapon_gap, fastener_seat.thread_bite: 1 hypothesis(es), e.g. `arch:drive.location=front`
+- hook `drive.location=front_motors_rear_driven`: 1 hypothesis(es), e.g. `arch:drive.location=front_motors_rear_driven`
+- architecture fit: assembly.blocked, electrical.battery_weapon_gap, fastener_seat.head_clash: 1 hypothesis(es), e.g. `arch:drive.location=mid`
+
+**C (side/fork/wedgelet/hubs)**
+- architecture fit: assembly.blocked, interference.overlap: 1 hypothesis(es), e.g. `arch:battery.orientation=long_x`
+- architecture fit: assembly.blocked, electrical.battery_weapon_gap, fastener_seat.thread_bite: 1 hypothesis(es), e.g. `arch:drive.location=front`
+- hook `drive.location=front_motors_rear_driven`: 1 hypothesis(es), e.g. `arch:drive.location=front_motors_rear_driven`
+- architecture fit: assembly.blocked, electrical.battery_weapon_gap, fastener_seat.head_clash: 1 hypothesis(es), e.g. `arch:drive.location=mid`
+
+**spec/framework**
+- architecture fit: connection.cover_fasteners, connection.floating: 2 hypothesis(es), e.g. `arch:add_servo@rear_outside`
+- architecture fit: assembly.blocked, connection.cover_fasteners, interference.overlap: 1 hypothesis(es), e.g. `arch:add_servo@tub_interior_rear`
+- architecture fit: assembly.blocked, interference.overlap: 1 hypothesis(es), e.g. `arch:battery.orientation=long_x`
+- architecture fit: assembly.blocked, electrical.battery_weapon_gap, fastener_seat.thread_bite: 1 hypothesis(es), e.g. `arch:drive.location=front`
+- hook `drive.location=front_motors_rear_driven`: 1 hypothesis(es), e.g. `arch:drive.location=front_motors_rear_driven`
+- architecture fit: assembly.blocked, electrical.battery_weapon_gap, fastener_seat.head_clash: 1 hypothesis(es), e.g. `arch:drive.location=mid`
+
+### Architecture hypotheses
+
+| hypothesis | verdict | builds | new blockers | diff needed |
+|---|---|---|---|---|
+| add a servo (servo_cs07) at `rear_outside` | breaks | yes | connection.cover_fasteners x1, connection.floating x1 | 0 code lines (1 setting(s)) |
+| add a servo (servo_cs07) at `top_deck_rear` | breaks | yes | connection.cover_fasteners x1, connection.floating x1 | 0 code lines (1 setting(s)) |
+| add a servo (servo_cs07) at `tub_interior_rear` | breaks | yes | assembly.blocked x15, interference.overlap x8, connection.cover_fasteners x1 | 4 file(s): panel_base.py, panel_top.py, tub.py, spec.py |
+| battery orientation: long_x (generic fallback (no robot hook needed)) | breaks | yes | assembly.blocked x24, interference.overlap x5 | 8 file(s): drisk.py, fork.py, hubs.py, mount.py, side_joint.py +3 more |
+| internal compartments: none | breaks | yes | integrity.solids x1 | 1 file(s): tub.py |
+| internal compartments: split_battery_bay | holds | yes | - | 0 code lines (1 setting(s)) |
+| declared setting drive.belt = none | holds | yes | - | 0 code lines (1 setting(s)) |
+| driven wheels: 2WD | holds | yes | - | 0 code lines (1 setting(s)) |
+| drive location: front | breaks | yes | interference.overlap x40, assembly.blocked x38, interference.sweep x27 | 8 file(s): drisk.py, fork.py, hubs.py, mount.py, side_joint.py +3 more |
+| drive location: front_motors_rear_driven | not expressible | - | missing hook `drive.location=front_motors_rear_driven`: declared values: ['rear', 'mid', 'front'] | 5 file(s): hubs.py ~20, mount.py ~7, panel_base.py ~1, tub.py ~1, spec.py |
+| drive location: mid | breaks | yes | assembly.blocked x36, interference.overlap x35, interference.sweep x27 | 8 file(s): drisk.py, fork.py, hubs.py, mount.py, side_joint.py +3 more |
+| declared setting drive.short_2wd = no_front_wheels | holds | yes | - | 0 code lines (2 setting(s)) |
+| declared setting weapon.motor_variant = step | holds | yes | - | 0 code lines (1 setting(s)) |
+| declared setting weapon.mount_variant = printable | holds | yes | - | 0 code lines (1 setting(s)) |
+| weapon slot: hspin_bar | n/a | - | declared unfit: spec generation failed (rc 1): revron.params_weapon.WeaponTypeError: weapon.type='hspin_bar' is not impl | - |
+| weapon slot: vspin_drum | n/a | - | declared unfit: spec generation failed (rc 1): revron.params_weapon.WeaponTypeError: weapon.type='vspin_drum' is not imp | - |
+| weapon slot: vspin_eggbeater | n/a | - | declared unfit: spec generation failed (rc 1): revron.params_weapon.WeaponTypeError: weapon.type='vspin_eggbeater' is no | - |
+
+### Breaking hypotheses: blockers
+
+- **arch:add_servo@rear_outside**
+  - `connection.cover_fasteners` on servo_rear_outside: `servo_rear_outside` is an part declared `retained: screws` held by 0 fastener(s); it needs >= 2 real screws. Snap, press-fit or tape retention alone 
+  - `connection.floating` on servo_rear_outside: `servo_rear_outside` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `tub`, 0.7 
+- **arch:add_servo@top_deck_rear**
+  - `connection.cover_fasteners` on servo_top_deck_rear: `servo_top_deck_rear` is an part declared `retained: screws` held by 0 fastener(s); it needs >= 2 real screws. Snap, press-fit or tape retention alone
+  - `connection.floating` on servo_top_deck_rear: `servo_top_deck_rear` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `top_panel
+- **arch:add_servo@tub_interior_rear**
+  - `assembly.blocked` on base_panel: `base_panel` is trapped: its best way out is along (0, 0, 1), which gets 0.0 mm before it hits `servo_tub_interior_rear`.
+  - `assembly.blocked` on battery: `battery` is trapped: its best way out is along (0, 0, 1), which gets 0.0 mm before it hits `servo_tub_interior_rear`.
+  - `assembly.blocked` on bolt_b4: `bolt_b4` is trapped: its best way out is along (-0, -0, -1), which gets 0.0 mm before it hits `servo_tub_interior_rear`.
+  - `assembly.blocked` on insert_b0: `insert_b0` is trapped: its best way out is along (0, 0, 1), which gets 6.3 mm before it hits `tub`.
+  - ... 20 more
+- **arch:battery.orientation=long_x**
+  - `assembly.blocked` on battery: `battery` is trapped: its best way out is along (0, 0, 1), which gets 0.0 mm before it hits `tub`.
+  - `assembly.blocked` on bolt_p0: `bolt_p0` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p1: `bolt_p1` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p2: `bolt_p2` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - ... 25 more
+- **arch:chassis.compartments=none**
+  - `integrity.solids` on tub: `tub` has 0 closed solid(s) and 1 open/invalid shell(s), expected 1 (15316 mm3). A boolean or fillet probably collapsed the build.
+- **arch:drive.location=front**
+  - `assembly.blocked` on battery: `battery` is trapped: its best way out is along (0, 0, 1), which gets 0.0 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p0: `bolt_p0` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p1: `bolt_p1` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p2: `bolt_p2` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - ... 107 more
+- **arch:drive.location=mid**
+  - `assembly.blocked` on battery: `battery` is trapped: its best way out is along (0, 0, 1), which gets 0.0 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p0: `bolt_p0` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p1: `bolt_p1` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p2: `bolt_p2` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - ... 100 more
+
+
+## Dimension family (report: hyp_queue/dimension.md)
+
+### Top missing hooks / fixes per owner
+
+**A (tub)**
+- dimension fit: assembly.blocked, fastener_seat.head_clash, interference.overlap: 1 hypothesis(es), e.g. `dim:CH_HALF_W_STOCK+10%`
+- dimension fit: assembly.blocked, connection.joint_pivot: 1 hypothesis(es), e.g. `dim:CH_Y0-10%`
+
+**B (weapon)**
+- dimension fit: assembly.blocked, fastener_seat.head_clash, interference.overlap: 1 hypothesis(es), e.g. `dim:CH_HALF_W_STOCK+10%`
+- dimension fit: validity.load: 1 hypothesis(es), e.g. `dim:CH_HALF_W_STOCK-10%`
+
+**C (side/fork/wedgelet/hubs)**
+- dimension fit: assembly.blocked, fastener_seat.head_clash, interference.overlap: 1 hypothesis(es), e.g. `dim:CH_HALF_W_STOCK+10%`
+- dimension fit: assembly.blocked, connection.joint_pivot: 1 hypothesis(es), e.g. `dim:CH_Y0-10%`
+
+**spec/framework**
+- dimension fit: assembly.blocked, fastener_seat.head_clash, interference.overlap: 1 hypothesis(es), e.g. `dim:CH_HALF_W_STOCK+10%`
+- dimension fit: assembly.blocked: 1 hypothesis(es), e.g. `dim:CH_WALL+10%`
+- dimension fit: retention.loose: 1 hypothesis(es), e.g. `dim:CH_Y0+10%`
+- dimension fit: assembly.blocked, connection.joint_pivot: 1 hypothesis(es), e.g. `dim:CH_Y0-10%`
+
+### Dimension hypotheses
+
+| hypothesis | verdict | builds | new blockers | diff needed |
+|---|---|---|---|---|
+| CH_HALF_W_STOCK 29.5 -> 32.45 (+10%) | breaks | yes | assembly.blocked x34, interference.overlap x16, interference.sweep x8 | 9 file(s): drisk.py, fork.py, hubs.py, mount.py, panel_base.py +4 more |
+| CH_HALF_W_STOCK 29.5 -> 26.55 (-10%) | breaks | yes | validity.load x1 | 1 file(s): mount.py |
+| CH_WALL 2 -> 2.2 (+10%) | breaks | yes | assembly.blocked x2 | 1 file(s): spec.py |
+| CH_WALL 2 -> 1.8 (-10%) | holds | yes | - | 0 code lines (1 setting(s)) |
+| CH_Y0 -37.6 -> -41.36 (+10%) | breaks | yes | retention.loose x2 | 1 file(s): spec.py |
+| CH_Y0 -37.6 -> -33.84 (-10%) | breaks | yes | assembly.blocked x11, connection.joint_pivot x2 | 4 file(s): hubs.py, panel_base.py, tub.py, spec.py |
+| CH_Y1_STOCK 15 -> 16.5 (+10%) | holds | yes | - | 0 code lines (1 setting(s)) |
+| CH_Y1_STOCK 15 -> 13.5 (-10%) | holds | yes | - | 0 code lines (1 setting(s)) |
+| KEY_BITE 0.65 -> 0.715 (+10%) | holds | yes | - | 0 code lines (1 setting(s)) |
+| KEY_BITE 0.65 -> 0.585 (-10%) | holds | yes | - | 0 code lines (1 setting(s)) |
+| MOTOR_WALL_GAP 0.3 -> 0.33 (+10%) | holds | yes | - | 0 code lines (1 setting(s)) |
+| MOTOR_WALL_GAP 0.3 -> 0.27 (-10%) | holds | yes | - | 0 code lines (1 setting(s)) |
+| REAR_GROUND_GAP 0.25 -> 0.275 (+10%) | holds | yes | - | 0 code lines (1 setting(s)) |
+| REAR_GROUND_GAP 0.25 -> 0.225 (-10%) | holds | yes | - | 0 code lines (1 setting(s)) |
+| WHEEL_OD_F 11 -> 12.1 (+10%) | holds | yes | - | 0 code lines (1 setting(s)) |
+| WHEEL_OD_F 11 -> 9.9 (-10%) | holds | yes | - | 0 code lines (1 setting(s)) |
+
+### Breaking hypotheses: blockers
+
+- **dim:CH_HALF_W_STOCK+10%**
+  - `assembly.blocked` on bolt_p0: `bolt_p0` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p1: `bolt_p1` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p2: `bolt_p2` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - `assembly.blocked` on bolt_p3: `bolt_p3` is trapped: its best way out is along (-1, -0, -0), which gets 2.8 mm before it hits `mount_l`.
+  - ... 58 more
+- **dim:CH_HALF_W_STOCK-10%**
+  - `validity.load` on mount_r: geometry failed: ValueError: Cannot tessellate an empty shape
+- **dim:CH_WALL+10%**
+  - `assembly.blocked` on nut_cr: `nut_cr` is trapped: its best way out is along (-1, 0, 0), which gets 2.1 mm before it hits `power_switch`.
+  - `assembly.blocked` on power_switch: `power_switch` is trapped: its best way out is along (0, 0, 1), which gets 0.0 mm before it hits `tub`.
+- **dim:CH_Y0+10%**
+  - `retention.loose` on motor_l: `motor_l` can move more than 0.5 mm toward +x without touching anything (captive means at most 0.5 mm of play in every direction); in a hit it will fa
+  - `retention.loose` on motor_r: `motor_r` can move more than 0.5 mm toward -x without touching anything (captive means at most 0.5 mm of play in every direction); in a hit it will fa
+- **dim:CH_Y0-10%**
+  - `assembly.blocked` on base_panel: `base_panel` is trapped: its best way out is along (0, 0, 1), which gets 0.7 mm before it hits `tub`.
+  - `assembly.blocked` on battery: `battery` is trapped: its best way out is along (0, 0, -1), which gets 2.8 mm before it hits `base_panel`.
+  - `assembly.blocked` on insert_b0: `insert_b0` is trapped: its best way out is along (0, 0, 1), which gets 6.3 mm before it hits `tub`.
+  - `assembly.blocked` on insert_b1: `insert_b1` is trapped: its best way out is along (0, 0, 1), which gets 6.3 mm before it hits `tub`.
+  - ... 9 more
+

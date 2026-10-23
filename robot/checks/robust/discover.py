@@ -216,3 +216,17 @@ def discover(model_file: Path, bounds: dict | None = None) -> Discovery:
             flags += fl
     d.switches = switches_in_package(files) + flags
     return d
+
+
+def env_setting(files, env: str):
+    """A `NAME = os.environ.get("ENV", "default")` build setting as a choice Switch with no listed alternatives (any
+    value is allowed: a catalog id, say), or None."""
+    for f in files:
+        tree = ast.parse(Path(f).read_text())
+        for st in tree.body:
+            if isinstance(st, ast.Assign) and len(st.targets) == 1 and isinstance(st.targets[0], ast.Name):
+                eg = _env_get(st.value.left if isinstance(st.value, ast.Compare) else st.value)
+                if eg and eg[0] == env:
+                    d = eg[1]
+                    return Switch(env, "choice", st.targets[0].id, d.value, [], Path(f), d.lineno, d.col_offset, d.end_col_offset)
+    return None
