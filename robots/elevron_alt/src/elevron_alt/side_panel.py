@@ -4,14 +4,16 @@ the left panel is its mirror."""
 import build123d as bd
 
 from robocad.geom import _S, _cyl, _mirror_x, _solid
-from .params_chassis import HY, TAB_HOLE_DY, TAB_HOLE_Z
+from .params_chassis import HY, TAB_HOLE_DY, TAB_HOLE_Z, HOLE_D
 from .params_side import TONGUE_X, TONGUE_PILOT
 from .sp_geom import sp
 
 
 def side_panel(side=1):
     from .fasteners import cutters
-    pin = _cyl(TONGUE_PILOT / 2, TONGUE_X[0] - 1, TONGUE_X[1] + 1, (HY + TAB_HOLE_DY, TAB_HOLE_Z), "x")   # the cross bolt threads into the tongue
+    from .variants import variant
+    d = TONGUE_PILOT if variant("step_cross_bolt") else HOLE_D   # STEP: the bolt threads into the tongue; default: a clear shear-pin hole
+    pin = _cyl(d / 2, TONGUE_X[0] - 1, TONGUE_X[1] + 1, (HY + TAB_HOLE_DY, TAB_HOLE_Z), "x")
     s = _solid(_S(sp(), cutters("side_r"), pin))
     return s if side > 0 else _solid(_mirror_x(s))
 

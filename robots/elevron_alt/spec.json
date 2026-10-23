@@ -808,6 +808,23 @@
    "deviation": "not in the STEP (no hardware drawn): thin M3 nuts, captive in the side bosses' hex pockets and the module prongs"
   },
   {
+   "id": "nut_xl",
+   "kind": "nut",
+   "catalog": "nut_m3_thin",
+   "at": [
+    -18.4,
+    38.2,
+    6.25
+   ],
+   "rot": [
+    0,
+    90,
+    0
+   ],
+   "rotates_with": "fixed",
+   "deviation": "not in the STEP (no hardware drawn): thin M3 nuts, captive in the side bosses' hex pockets and the module prongs"
+  },
+  {
    "id": "nut_sr0",
    "kind": "nut",
    "catalog": "nut_m3_thin",
@@ -832,6 +849,23 @@
     27.9,
     7.0,
     10.75
+   ],
+   "rot": [
+    0,
+    90,
+    0
+   ],
+   "rotates_with": "fixed",
+   "deviation": "not in the STEP (no hardware drawn): thin M3 nuts, captive in the side bosses' hex pockets and the module prongs"
+  },
+  {
+   "id": "nut_xr",
+   "kind": "nut",
+   "catalog": "nut_m3_thin",
+   "at": [
+    18.4,
+    38.2,
+    6.25
    ],
    "rot": [
     0,
@@ -1583,7 +1617,7 @@
   },
   {
    "id": "bolt_xl",
-   "designation": "M3x12",
+   "designation": "M3x10",
    "at": [
     -11.24,
     38.2,
@@ -1599,11 +1633,11 @@
     "vert_mod",
     "side_l"
    ],
-   "threads_into": "side_l",
+   "threads_into": "nut_xl",
    "head": "countersunk",
    "hole": {
     "d": 3.0,
-    "length": 12.0,
+    "length": 10.0,
     "head": "csk",
     "head_std": "DIN 7991",
     "head_dk": 6.0,
@@ -1615,12 +1649,12 @@
     "csk_d": 6.3,
     "csk_depth": 1.45,
     "sink": -0.26,
-    "grip": 9.25
+    "grip": 6.0
    },
    "tool": "hex2",
    "removable": true,
    "material": "aluminium",
-   "reason": "rear cross bolt as in the RVRN_revdev STEP, driven from between the inner tabs: clear through the inner tab and the module prong, threaded into the TPU pod tongue (2.6 pilot); the 4 M2 into the columns clamp the deck face",
+   "reason": "rear cross bolt, driven from between the inner tabs: through the inner tab into the thin nut captive in the module prong, its shank on through the pod tongue as a shear pin (the tongue sits in the tab gap); the 4 M2 into the columns clamp the deck face",
    "deviation": "not in the STEP (the RVRN_revdev assembly draws no fasteners): every hole it does draw carries one (fasteners.py)"
   },
   {
@@ -1744,7 +1778,7 @@
   },
   {
    "id": "bolt_xr",
-   "designation": "M3x12",
+   "designation": "M3x10",
    "at": [
     11.24,
     38.2,
@@ -1760,11 +1794,11 @@
     "vert_mod",
     "side_r"
    ],
-   "threads_into": "side_r",
+   "threads_into": "nut_xr",
    "head": "countersunk",
    "hole": {
     "d": 3.0,
-    "length": 12.0,
+    "length": 10.0,
     "head": "csk",
     "head_std": "DIN 7991",
     "head_dk": 6.0,
@@ -1776,12 +1810,12 @@
     "csk_d": 6.3,
     "csk_depth": 1.45,
     "sink": -0.26,
-    "grip": 9.25
+    "grip": 6.0
    },
    "tool": "hex2",
    "removable": true,
    "material": "aluminium",
-   "reason": "rear cross bolt as in the RVRN_revdev STEP, driven from between the inner tabs: clear through the inner tab and the module prong, threaded into the TPU pod tongue (2.6 pilot); the 4 M2 into the columns clamp the deck face",
+   "reason": "rear cross bolt, driven from between the inner tabs: through the inner tab into the thin nut captive in the module prong, its shank on through the pod tongue as a shear pin (the tongue sits in the tab gap); the 4 M2 into the columns clamp the deck face",
    "deviation": "not in the STEP (the RVRN_revdev assembly draws no fasteners): every hole it does draw carries one (fasteners.py)"
   },
   {
@@ -2489,7 +2523,27 @@
     "mode": "envelope",
     "tol_mm": 1.5,
     "tol_vol_frac": 0.2,
-    "note": "vert_mod: no dump; relations from the STEP solid's faces (see MISSES.md)"
+    "note": "vert_mod: no dump; relations from the STEP solid's faces (see MISSES.md)",
+    "deviations": [
+     {
+      "near": [
+       -18.4,
+       38.2,
+       6.25
+      ],
+      "r": 4.0,
+      "reason": "ours, not the STEP's (variant step_cross_bolt off): the thin cross-bolt nut captive in the prong (the STEP prong has a plain hole, its bolt threading 2.5 mm into the pod tongue) leaves 0.8 mm to the prong window"
+     },
+     {
+      "near": [
+       18.4,
+       38.2,
+       6.25
+      ],
+      "r": 4.0,
+      "reason": "ours, not the STEP's (variant step_cross_bolt off): the thin cross-bolt nut captive in the prong (the STEP prong has a plain hole, its bolt threading 2.5 mm into the pod tongue) leaves 0.8 mm to the prong window"
+     }
+    ]
    },
    {
     "part": "side_r",
@@ -2567,6 +2621,8 @@
   {
    "parts": [
     "vert_mod",
+    "nut_xl",
+    "nut_xr",
     "weapon_motor_stator",
     "weapon_motor_can",
     "disc"
@@ -2576,7 +2632,7 @@
     0,
     1
    ],
-   "reason": "the vertical module lifts off the chassis tabs as one unit: its prongs leave the tab gap, the BE1806 and the rotor boxed between its uprights (prop mount and spider come off first)"
+   "reason": "the vertical module lifts off the chassis tabs as one unit: its prongs leave the tab gap (with their captive cross-bolt nuts unless step_cross_bolt), the BE1806 and the rotor boxed between its uprights (prop mount and spider come off first)"
   },
   {
    "parts": [

@@ -13,6 +13,7 @@ from .params_vert import TAB_GAP, PRONG_T
 # ---- MASTER DESIGN PARAMETERS ----------------------------------------------------------------------------------------
 SP_T = WALL                            # TPU wall
 FIT = 0.25                             # TPU running fit off the chassis tabs and the module prong
+NUT_FIT = 0.05                         # thin-nut pocket over the nut's flats
 TPU_HOLE_ALLOW = 0.1                   # TPU pilot over the tap drill (STEP tongue pilot 2.6)
 UNDER = (46.16, 0.0853)                # underside plane: z 0 at this y, rising forward (the pod rakes the forks down)
 GUARD_X = WHEEL_OUT - 2.2              # wheel-guard spine: its drafted wall leans in to an apex over this line

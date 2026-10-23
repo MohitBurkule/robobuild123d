@@ -101,7 +101,7 @@ def test_interfaces_keep_their_fits():
 
 
 def test_teardown_names_real_parts():
-    from elevron_alt.spec import TEARDOWN, make_spec
+    from elevron_alt.spec import teardown, make_spec
     ids = {p["id"] for p in make_spec("m.py")["parts"]}
-    for t in TEARDOWN:
+    for t in teardown():
         assert set(t["parts"]) <= ids and abs(sum(c * c for c in t["dir"]) - 1) < 1e-9

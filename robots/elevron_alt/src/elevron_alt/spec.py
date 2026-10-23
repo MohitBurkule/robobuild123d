@@ -15,6 +15,7 @@ from .params_drive import FLOOR_LIFT, N10_X, DRIVE_MOTOR, WY, WZ, MOTOR_AT_X, HU
 from .params_hw import INSERT_CAT, M3
 from .params_vert import DECK_TOP, LEAD_SLOT, BULK_Y, PRONG
 from .params_drive import LEAD_Y
+from .variants import variant
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 L = FLOOR_LIFT
@@ -124,6 +125,8 @@ def _hardware(P):
     for s, n in SIDES:
         for k, y in enumerate((-BOSS_PITCH / 2, BOSS_PITCH / 2)):   # captive in the boss's hex pockets, from the inside
             P(id=f"nut_s{n}{k}", kind="nut", catalog="nut_m3_thin", at=_w(s * (IN_X - BOSS_IN + NUT_HALF), y, AXLE_Z), rot=[0, 90, 0], rotates_with="fixed")
+        if not variant("step_cross_bolt"):
+            P(id=f"nut_x{n}", kind="nut", catalog="nut_m3_thin", at=_w(s * (PRONG[0] + NUT_HALF), HY + TAB_HOLE_DY, TAB_HOLE_Z), rot=[0, 90, 0], rotates_with="fixed")   # captive in the module prong
     for i, (x, y) in enumerate(list(POSTS) + list(END_POSTS)):
         P(id=f"insert_b{i}", kind="insert", catalog=INSERT_CAT, at=_w(x, y, WALL + INSERT_LEN / 2), rot=[0, 0, 0], rotates_with="fixed")
     for i, (x, y) in enumerate(POSTS):
@@ -233,13 +236,18 @@ def make_spec(model_file):
     for f in fasteners:
         f.setdefault("deviation", FASTENER_DEV)
     return dict(parts=parts, fasteners=fasteners, connections=conn, wires=wires, allow_overlap=overlap, reference_cad=reference_cad(),
-                teardown=TEARDOWN)
+                teardown=teardown())
+
+
+def teardown():
+    nuts = [] if variant("step_cross_bolt") else ["nut_xl", "nut_xr"]
+    return [{**t, "parts": [p for q in t["parts"] for p in (nuts if q == "@nuts" else [q])]} for t in TEARDOWN]
 
 
 TEARDOWN = [   # declared one-direction moves, in the order the sweep may need them (the reverse is the build order)
     {"parts": ["wshaft"], "dir": [1, 0, 0], "reason": "weapon shaft slides out through the right upright bearing once the side pods are off"},
-    {"parts": ["vert_mod", "weapon_motor_stator", "weapon_motor_can", "disc"], "dir": [0, 0, 1],
-     "reason": "the vertical module lifts off the chassis tabs as one unit: its prongs leave the tab gap, "
+    {"parts": ["vert_mod", "@nuts", "weapon_motor_stator", "weapon_motor_can", "disc"], "dir": [0, 0, 1],
+     "reason": "the vertical module lifts off the chassis tabs as one unit: its prongs leave the tab gap (with their captive cross-bolt nuts unless step_cross_bolt), "
                "the BE1806 and the rotor boxed between its uprights (prop mount and spider come off first)"},
     {"parts": ["base_panel"], "dir": [0, 0, -1], "reason": "base panel drops out of the rebate once its screws are out"},
 ]
@@ -263,6 +271,7 @@ POCKET_DEV = (13.0, 19.9, 15.9)        # lattice pocket ceiling corner (front)
 SLIVER_DEV = (9.8, 12.6)               # boss end-arc hairline: |y|, z
 SLIVER_DEV_R = 2.0
 POCKET_R_DEV = (14.0, 24.6, 15.6)      # right rear corner pocket, bay-side corner
+NUT_DEV_R = 4.0                        # the prong nut pocket's neighbourhood
 FORK_PLACE_TOL = 3.0                   # side pods' bbox-centre tolerance with the forks stopped over the floor
 
 
@@ -299,7 +308,10 @@ def reference_cad():
     fork_note = "" if step_forks else ("; the forks stop over the floor (variant step_forks off), so the pod's bbox centre sits "
                                        "2.6 mm off the STEP's (its fork tips reach 2.25 mm under the wheels' floor)")
     rows = [dict(part="chassis", file="Alt_chassis_1.stl", mode="shape", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["chassis"], note="Alt_chassis (dump replay by relations)", deviations=tab_dev + reb_dev + deck_dev + est_dev),
-            dict(part="vert_mod", file="vert_mod_1.stl", mode="envelope", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["vert"], note="vert_mod: no dump; relations from the STEP solid's faces (see MISSES.md)"),
+            dict(part="vert_mod", file="vert_mod_1.stl", mode="envelope", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["vert"], note="vert_mod: no dump; relations from the STEP solid's faces (see MISSES.md)",
+                 deviations=[] if variant("step_cross_bolt") else [{"near": _w(s * (PRONG[0] + NUT_HALF), HY + TAB_HOLE_DY, TAB_HOLE_Z), "r": NUT_DEV_R,
+                              "reason": "ours, not the STEP's (variant step_cross_bolt off): the thin cross-bolt nut captive in the prong (the STEP prong "
+                                        "has a plain hole, its bolt threading 2.5 mm into the pod tongue) leaves 0.8 mm to the prong window"} for s in (-1, 1)]),
             dict(part="side_r", file="Side_Panel_alt_sm_1.stl", mode="envelope", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["side"], **side_place,
                  note="Side_Panel_alt_sm: no dump (see MISSES.md)" + fork_note),
             dict(part="side_l", file="MirrorSide_Panel_alt_sm_1.stl", mode="envelope", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["side"], **side_place,
