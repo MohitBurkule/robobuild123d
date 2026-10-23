@@ -349,7 +349,7 @@ def builtin() -> list[CatalogEntry]:
         CatalogEntry("switch_bbb_ant_rvrn2", "switch", "BBB ant switch (RVRN 2.0 RV15): 10.6 x 5.8 x 3.5 body, 20 x 5.8 flange with 2.2 holes in ears on 15 mm (STEP RV15 envelope 20 long), 2.9 x 3 lever, 3 pins", 1.0, "estimate",
                      union([at(box(10.6, 5.8, 3.5), 0, 0, 0), minus(at(box(20.0, 5.8, 0.5), 0, 0, 2.0), [at(cyl(1.1, 1.0), 7.5, 0, 2.0), at(cyl(1.1, 1.0), -7.5, 0, 2.0)]), at(box(2.9, 3.0, 3.2), 1.75, 0, 3.85),
                             at(box(1.0, 3.0, 4.0), -3.0, 0, -3.75), at(box(1.0, 3.0, 4.0), 0.0, 0, -3.75), at(box(1.0, 3.0, 4.0), 3.0, 0, -3.75)]),
-                     {"in": [-3.0, 0, -5.5], "out": [0.0, 0, -5.5]}, None, {"lever_travel_mm": 3.0}, "#111111"),
+                     {"in": [-3.0, 0, -5.5], "out": [0.0, 0, -5.5]}, None, {"lever_travel_mm": 3.0, "mount_thread": "M2", "mount_holes_mm": [[-7.5, 0, 2.25], [7.5, 0, 2.25]]}, "#111111"),
         CatalogEntry("nut_m3_thin", "nut", "M3 thin hex nut BS EN 24036 (5.5 AF x 1.8)", 0.25, "datasheet",
                      hex_nut(5.5, 1.8, 3.0), {}, None, {"thread_d_mm": 3.0}, "#aaaaaa"),
         CatalogEntry("heatset_m2_4", "insert", "M2 brass heat-set insert 3.5 OD x 4 (FS1)", 0.15, "estimate", heatset(3.5, 4.0, 2.0),

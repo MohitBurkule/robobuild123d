@@ -175,6 +175,12 @@
       "default": "n10_2200rpm_spicy",
       "_why": "catalog id of the drive gearmotor (params_chassis.DRIVE_MOTOR); the tub pockets, MOTX, key tab, stop wall, pad and rig joints are derived from it"
     },
+    "switch.power": {
+      "env": "REVRON_SWITCH",
+      "swap": "switch",
+      "default": "switch_bbb_ant_rvrn2",
+      "_why": "catalog id of the power switch (params_chassis.SWITCH); the pad, pilots, screws (from its catalog mount holes, none: adhesive) and its pocket in the tub are derived from it"
+    },
     "battery.pack": {
       "env": "REVRON_BATTERY",
       "swap": "battery",

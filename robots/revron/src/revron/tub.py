@@ -1,14 +1,12 @@
 """[fix-S] Chassis tub and its panels: chassis, base_panel, top_panel, esc_tray, inserts / panel seats."""
 from .params import *  # noqa: F401,F403
 from .common import *  # noqa: F401,F403
-from robot.cad.holes import hole_tool   # the repo root is on the import path (params.py)
-
-SW_PAD_ENGAGE = 3.0   # pad material above the switch screw head seat (M2x3 thread-forming into the 1.7 pilot)
-
+from robot.cad.holes import hole_tool
+from robot.cad.fastener_catalog import parse as _parse_screw   # the repo root is on the import path (params.py)
 
 def _switch_hole(yy):
-    """robot.cad.holes record for a switch screw: M2x3 button thread-forming up into the 1.7 pilot of the deck pad (3.0 mm of pad above its 16.0 head seat)."""
-    return hole_tool((SWX, yy, SW_BOLT_Z), (0, 0, 1), "M2x3", head="button", into="tapped", side="thread", engage=SW_PAD_ENGAGE)
+    """robot.cad.holes record for a switch screw: thread-forming up into the 1.7 pilot of the deck pad (M2x3 at the default: 3.0 mm of pad above its 16.0 head seat)."""
+    return hole_tool((SW_HOLE_X, yy, SW_BOLT_Z), (0, 0, 1), SW_SCREW, head="button", into="tapped", side="thread", engage=_parse_screw(SW_SCREW).length)
 
 
 def chassis():

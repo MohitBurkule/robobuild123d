@@ -168,9 +168,14 @@ COMPARTMENTS = {"standard": ("motor", "battery"), "none": (), "split_battery_bay
 LAYOUT = COMPARTMENTS[COMPARTMENT]
 N10_TOP = round(RZ + GB["top"], 6)   # top face of the N10 gearbox plates
 # chassis RV01
-SW_HALF_W, SW_CLR = 2.9, 0.05   # power switch body half-width, its clearance to the inner wall face
+SWITCH = os.environ.get("REVRON_SWITCH", "switch_bbb_ant_rvrn2")   # catalog id of the power switch (RV15): the pad, pilots, slot and screws follow it
+SWITCHES = {"switch_bbb_ant_rvrn2": "", "switch_slide_12x4": "", "switch_slide_bbb_ant": "", "fingertech_mini_switch": ""}   # every catalog switch the REVRON_SWITCH setting may name (test_tub2_sweep keeps it in step with the catalog)
+SW = hw.switch_mount(SWITCH)         # its ears and holes in its own frame (x along the ear row)
+SW_CLR = 0.05                        # clearance of the switch's wall-facing side to the inner wall face
+SW_HALF_W = round(SW["half_w"], 6)   # power switch extent on its wall-facing side (the body half-width at the default)
 SW_HALF, SW_WALL_CLEAR = SW_HALF_W, SW_CLR   # fix-joints names (switch joint in joints.py)
 SWX = CH_IN_X - SW_CLR - SW_HALF_W   # power switch X: body side 0.05 clear of the 27.5 inner wall face (was 25.0, 0.4 into it)
+SW_HOLE_X = round(SWX - SW["cy"], 6)  # |X| of the switch screw axes (the switch is turned 90 about Z, so the holes' local y runs along -X); SWX itself at the default
 CH = dict(x=CH_HALF_W, y0=CH_Y0, y1=CH_Y1, z0=CH_Z0, z1=CH_Z1, wall=CH_WALL, deck=CH_Z1 - CH_WALL, cham=CH_WALL)
 # drisk
 
