@@ -31,3 +31,9 @@ def gearbox(catalog_id):
     spans = sorted((p.bounding_box().min.X, p.bounding_box().max.X) for p in cut.solids())
     gaps = [(a1, b0) for (_, a1), (b0, _) in zip(spans, spans[1:]) if b0 - a1 > 0.5]
     return dict(top=top, half_w=bb.size.Y / 2, end=spans[-1][1], gaps=gaps)
+
+
+def placed(catalog_id, at, rot=(0, 0, 0)):
+    """The catalog part's solid at a spec placement (`at` / `rot` as in spec.json parts), so the tub can cut its pockets from what sits in them."""
+    from robot import shapes, xform
+    return shapes.place(_solid(catalog_id), xform.pose(list(at), list(rot)))

@@ -2,7 +2,7 @@
 ledge. Each block face is tangent to its column (face x = column x - COL_R), noses are COL_R rounds, wall ends take a SKIN fillet."""
 from build123d import Align, BuildSketch, Locations, Rectangle, fillet
 from .tub2_params import (INS_RIGHT, COL_R, SKIN, CH_Z0, CH_IN_X, DECK, OVER, WALL_IN_FRONT, STOP_FRONT_Y, STOP_BACK_Y, SA_X0,
-                          N10_KEY, N10_TOP, KEY_SPAN, LEDGE_X0, LEDGE_Y0, LEDGE_R)
+                          N10_KEY, N10_TOP, KEY_SPAN, LEDGE_X0, LEDGE_Y0, LEDGE_R, LAYOUT)
 from .tub2_util import box_xy, concave_filler, prism
 
 _FRONT, _REAR = INS_RIGHT[0], INS_RIGHT[1]
@@ -36,6 +36,8 @@ def corner_blocks():
 
 def stop_wall_key_ledge():
     """Motor stop wall (one wall thick), the key tab between the N10 gearbox plates (reaches SKIN below the plate top), the ledge and its R fillets."""
+    if "motor" not in LAYOUT:                  # no motor compartment declared: nothing locates the gearmotor
+        return []
     top = DECK + OVER
     xo = CH_IN_X + OVER
     stop = box_xy(SA_X0, xo, STOP_BACK_Y, STOP_FRONT_Y, CH_Z0, top)

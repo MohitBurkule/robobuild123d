@@ -111,11 +111,11 @@ def make_spec(model_file):
     P(id="battery", kind="battery", catalog=BATTERY, **place("battery"), retained="press_fit",
       no_contact_ok=None if variant("battery_pad") else {"with": "tub", "reason": "original RVRN 2.0: RV16 pack at STEP z 12.0 (underside 6.5) floats 2.0 mm over the RV26 base-panel skin (z 4.5); the assembly mates the pack to the chassis only, no pad"})
     if variant("rxesc_strap"):
-        P(id="rxesc", kind="esc", catalog="malenki_nano_rvrn2", **place("rxesc"), retained="strap",
+        P(id="rxesc", kind="esc", catalog=RXESC, **place("rxesc"), retained="strap",
           deviation="[variant rxesc_strap] RV01/RV13: the Malenki is taped (kapton) to the deck in the STEP; a 6 mm TPU strap (RV01 esc_tray strap slot, glued to the chassis walls over the board) holds it instead, so it cannot slide inverted (adds ~0.3 g, reversible)")
     else:   # original RVRN 2.0: kapton-wrapped stack, no tray, no strap (revron_deconstruction.md: "Malenki+ESC kapton-wrapped, stacked, beside battery")
-        P(id="rxesc", kind="esc", catalog="malenki_nano_rvrn2", **place("rxesc"), retained="kapton")
-    P(id="wesc", kind="esc", catalog="bbb_ant_esc_rvrn2", **place("wesc"), retained="kapton")
+        P(id="rxesc", kind="esc", catalog=RXESC, **place("rxesc"), retained="kapton")
+    P(id="wesc", kind="esc", catalog=WESC, **place("wesc"), retained="kapton")
     P(id="power_switch", kind="switch", catalog="switch_bbb_ant_rvrn2", at=place_at("power_switch"), rot=place_rot("power_switch"), retained="screws", marked=True, tool_free=True,
       off_dir=[0, -1, 0], label="BBB ant switch hung under the deck beside the top panel: lever flush in the deck slot, 2 M2 into the deck")
     for i, (x, y) in enumerate(INS):
