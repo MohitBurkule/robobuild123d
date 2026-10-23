@@ -146,7 +146,8 @@ INS = [*INS_COLS, (0.0, BOSS_Y)]   # 5 floor inserts / base screws
 # BBB ant ESC 23.5 x 12 x 5 at (8.63, -7.25, 10.6); the deck cage ribs are dimensioned off these
 RXESC = os.environ.get("REVRON_RXESC", "malenki_nano_rvrn2")   # receiver / drive ESC catalog id
 RXESCS = {"malenki_nano_rvrn2": "", "esc_dual_brushed": "", "malenki_nano": "", "bbb_malenki_nano": "", "bbb_dual_esc_v31": "", "c_malenki_nano_antweight_esc_receiver": "", "c_bbb_antweight_dual_esc_v3_1": "", "c_antweight_n10_n20_red_esc_motor_mounted": ""}   # every catalog receiver / drive ESC the REVRON_RXESC setting may name
-RX_SIZE, RX_C = hw.size(RXESC), (8.67, -3.0, 15.3)     # receiver catalog box (L, W, H) (32 x 20 x 4.4 at the default) and placed centre
+RX_SIZE = hw.size(RXESC)                              # receiver catalog box (L, W, H) (32 x 20 x 4.4 at the default)
+RX_C = (8.67, CH_Y1 - CH_WALL - RX_SIZE[0] / 2, 15.3)   # placed centre: the board stands against the front wall (its front face on the wall's inner face), so the nose and a shorter board move it
 WESC = os.environ.get("REVRON_WESC", "bbb_ant_esc_rvrn2")   # weapon ESC catalog id
 WESCS = {"bbb_ant_esc_rvrn2": "", "esc_brushless_12a": "", "bbb_ant_esc": "", "bbb_brushless_esc_20a": "", "bbb_red_esc": "", "c_bbb_antweight_spinner_brushless_esc": ""}   # every catalog weapon ESC the REVRON_WESC setting may name
 WE_SIZE, WE_C = hw.size(WESC), (8.63, -7.25, 10.6)     # weapon ESC catalog box (23.5 x 12 x 5 at the default) and placed centre

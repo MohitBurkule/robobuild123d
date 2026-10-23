@@ -30,6 +30,13 @@ def battery_bay():
     return [_cut(hw.placed(BATTERY, ELEC["battery"], BAY_ROT))]
 
 
+def pack_drop():
+    """The way out of the pack: its footprint straight down from its underside to the tub's bottom face, less the bore sleeves. The pack leaves through the base opening, so the
+    tub must not close over the footprint below it (a narrow chassis lets a column body reach in under the pack)."""
+    bb = hw.placed(BATTERY, ELEC["battery"], BAY_ROT).bounding_box()
+    return _cut(box_xy(bb.min.X, bb.max.X, bb.min.Y, bb.max.Y, CH_Z0 - OVER, bb.min.Z + OVER))
+
+
 def electronics_bays():
     return [_cut(hw.placed(c, at, BAY_ROT)) for c, at in ((RXESC, RX_C), (WESC, WE_C))]
 
@@ -57,5 +64,7 @@ def carve(tub):
     hit = [c for c in cuts() if (tub & c).volume > TOUCH]
     if not hit:
         return tub
+    if "battery" in LAYOUT and (tub & battery_bay()[0]).volume > TOUCH:   # the pack notches the tub: it must also be able to leave downwards
+        hit.append(pack_drop())
     out = _one(tub.cut(*hit).clean())
     return out if out.is_valid else _one(out.fix())

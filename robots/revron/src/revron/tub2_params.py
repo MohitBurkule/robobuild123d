@@ -22,6 +22,7 @@ STOP_FRONT_Y = KEY_SPAN[1]              # stop wall front face is the key tab fr
 STOP_BACK_Y = STOP_FRONT_Y - CH_WALL    # one wall thick
 LEDGE_X0, LEDGE_Y0, LEDGE_R = 20.0 + SIZE_DW, -27.3, 1.5   # the ledge stands over the gearbox with the motor, which moves out with the side wall
 STOP_ROUND_R = 5.0
+STOP_X = COL_R + SIZE_DW                         # |x| of the gearmotors' inner stop: the motor ends move with the side wall, so the stop does (a narrow chassis moves the rear boss out in front of the motor and a stop block takes its place)
 FLANK_X = COL_R + max(SIZE_DW, 0.0)              # rear-boss flank half width: the gearmotor stops on it, and the motor moves out with the side wall
 # deck pockets: two diagonal ribs run from the centre (mid of the front/rear column rows) through the column centres; each rib is
 # 2 walls wide. The four regions between the ribs are the pockets (X pockets on the axis, side pockets); R = wall at every rib corner.
