@@ -6,6 +6,7 @@ import math
 
 from .params_chassis import HX, HY, CH_H, AXLE_Y, AXLE_Z, BOSS_OUT, BOSS_R, BOSS_PITCH, TAB_X_OUT, TAB_W, TAB_PITCH, TAB_LEN, WALL
 from .params_drive import TYRE_R, WHEEL_OUT, FLOOR_LIFT
+from .params_vert import TAB_GAP, PRONG_T
 
 # ---- MASTER DESIGN PARAMETERS ----------------------------------------------------------------------------------------
 SP_T = WALL                            # TPU wall
@@ -38,6 +39,8 @@ POCKET_R = 3.0                         # pocket outer corner round
 ROOT_EDGE = (-0.707, 0.579, 0.406, 7.11)   # fork-root inner face n.(x, y, z) = d
 FLARE_MIN = 0.3                        # the blend from the fork into the rear guard ends where it is this wide
 FORK_FLOOR_CLR = 0.25                  # fork underside above the floor (unless the step_forks variant)
+FORK_TYRE_IN = 0.2                     # fork outer face inside the tyre's outer face
+POCKET_END_CLR = 0.2                   # tab pocket's end wall past the chassis tab end
 FORK_W = 5.74                          # fork prong width, its outer face just inside the tyre's outer face
 FORK_T = 4.0                           # fork thickness over the underside
 FORK_TIP = (98.61, (0.499, 0.867, 45.26), 83.22, 84.74)   # tip y, tip top plane, tooth riser y span
@@ -52,9 +55,8 @@ LIP_IN_R = BOSS_R + LIP_CLR
 PLATE_OB = (BOSS_PITCH / 2, BOSS_R + SP_T, CH_H - PLATE_TOP_DROP, PLATE_FLAT)
 WELL_X = (LIP_X0, GUARD_X + GUARD_FACE)
 STRUT_Y1 = AXLE_Y - WELL_R             # the flanks end where the wheel wells begin
-TAB_GAP = (TAB_X_OUT - TAB_PITCH, TAB_X_OUT - TAB_W)
-TONGUE_X = (TAB_GAP[0] + 3.0 + FIT, TAB_GAP[1] - FIT)    # between the module prong (3 thick) and the outer tab
-TAB_POCKET = (TONGUE_X[1], POCKET_X1, HY + TAB_LEN + 0.2, POCKET_CH)
-FORK_X = (WHEEL_OUT - 0.2 - FORK_W, WHEEL_OUT - 0.2)
+TONGUE_X = (TAB_GAP[0] + PRONG_T + FIT, TAB_GAP[1] - FIT)   # between the module prong and the outer tab, a running fit off each
+TAB_POCKET = (TONGUE_X[1], POCKET_X1, HY + TAB_LEN + POCKET_END_CLR, POCKET_CH)
+FORK_X = (WHEEL_OUT - FORK_TYRE_IN - FORK_W, WHEEL_OUT - FORK_TYRE_IN)
 
 __all__ = [n for n in dir() if not n.startswith("__")]
