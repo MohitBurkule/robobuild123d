@@ -34,11 +34,27 @@ def taper_x(y):
     return x0 + (x1 - x0) * (y - y0) / (y1 - y0)
 
 
-def notch():
+def _tangent_ext(c, r, m, reach):
+    """A point `reach` past m on the line from m tangent to circle (c, r), on the +x side: kept in a hull it carries the
+    tangent line on past the notch mouth (so a chamfer along it runs out as a plane)."""
+    dx, dy = c[0] - m[0], c[1] - m[1]
+    d = math.hypot(dx, dy)
+    a = math.asin(r / d)
+    out = []
+    for sg in (1, -1):
+        ca, sa = math.cos(sg * a), math.sin(sg * a)
+        u = ((dx * ca - dy * sa) / d, (dx * sa + dy * ca) / d)
+        out.append((m[0] - reach * u[0], m[1] - reach * u[1]))
+    return max(out, key=lambda p: p[0])
+
+
+def notch(reach=0.0):
+    """Side notch in the planform: round rear end, round front corner, tangent lines out to the inner wall line."""
     (cx, cy), r = NOTCH_TOP
     (lx, ly), rl = NOTCH_LOW
-    top = unary_union([Point(cx, cy).buffer(r), Point(IN_X, NOTCH_Y[1])]).convex_hull
-    low = unary_union([Point(lx, ly).buffer(rl), Point(IN_X, NOTCH_Y[0]), Point(IN_X, ly)]).convex_hull
+    mt, ml = (IN_X, NOTCH_Y[1]), (IN_X, NOTCH_Y[0])
+    top = unary_union([Point(cx, cy).buffer(r, 128), Point(mt)] + ([Point(_tangent_ext((cx, cy), r, mt, reach))] if reach else [])).convex_hull
+    low = unary_union([Point(lx, ly).buffer(rl, 128), Point(ml), Point(IN_X, ly)] + ([Point(_tangent_ext((lx, ly), rl, ml, reach))] if reach else [])).convex_hull
     return _sym(unary_union([top, low, sbox(NOTCH_X, ly, IN_X + 1, cy)]))
 
 
@@ -89,11 +105,20 @@ def body():
 
 
 def arch_draft():
-    """The arch round the front opening flares out ARCH_DRAFT from one wall above the deck up through the ramp."""
+    """Arch round the front opening: the lip's front face stands square to the ramp for one wall, then a plane runs up
+    to the hollow's front edge on the ramp; the corner rounds flare ARCH_DRAFT from one wall above the deck."""
     import build123d as bd
+    op = front_opening()
+    xs = max(abs(x) for x, y in op.exterior.coords if abs(y - ARCH_Y) < 1e-6)     # straight part of the arch
     z0 = DECK_TOP + VM_T
-    f = _faces(front_opening().intersection(sbox(-BIG, ARCH_Y - ARCH_R - ARCH_R, BIG, BIG)))[0].moved(bd.Location((0, 0, z0)))
-    return bd.extrude(f, amount=BIG / 50, dir=(0, 0, 1), taper=-ARCH_DRAFT)
+    a = (ARCH_Y - VM_T * K, z0)
+    yb = ARCH_Y + VM_T / COSK
+    b = (yb, ramp_z(yb))
+    n = (0, -(b[1] - a[1]), b[0] - a[0])
+    lip = _I(halfspace((0, a[0], a[1]), n, BIG), _box(-xs, xs, -BIG / 10, BIG / 10, DECK_TOP, BIG / 10))
+    f = _faces(op.intersection(sbox(-BIG, ARCH_Y - 2 * ARCH_R, BIG, BIG)))[0].moved(bd.Location((0, 0, z0)))
+    corners = _S(bd.extrude(f, amount=BIG / 50, dir=(0, 0, 1), taper=-ARCH_DRAFT), _box(-xs, xs, -BIG / 10, BIG / 10, -BIG / 10, BIG / 10))
+    return _U(lip, corners)
 
 
 def leg_drafts():
@@ -108,20 +133,24 @@ def leg_drafts():
     return _U(c, _mirror_x(c))
 
 
-def top_chamfer(s, groups=CHAMFER_GROUPS):
-    """TOP_CH x 45 deg (equal distance on the ramp and the wall) on the ramp's notch edges: chamfered on a plain slab of
-    the planform (so the chamfer chain stays on the notch) and cut from the body."""
+def top_chamfer(s):
+    """TOP_CH equal-distance chamfer on the ramp edges over the side notches: chamfered on a flat-topped block round each
+    notch (the ramp flattened), the removed sliver sheared back onto the ramp and cut from the body."""
     import build123d as bd
-    if not groups:
-        return s
-    slab = _S(_ext(plan(), "xy", DECK_TOP, BIG / 10, arcs=True), above_ramp())
-    n = bd.Vector(0, -K, 1).normalized()
-    o = bd.Vector(0, -IN_Y, DECK_TOP)
-    top = [f for f in slab.faces() if f.geom_type.name == "PLANE" and abs(f.normal_at().dot(n) - 1) < 1e-6 and abs((f.center() - o).dot(n)) < 1e-3]
-    ys = lambda e: sorted([e.position_at(0).Y, e.position_at(1).Y])
-    pick = {"notch": lambda e: ys(e)[0] > NOTCH_Y[0] - 0.1 and ys(e)[1] < NOTCH_Y[1] + 0.1 and abs(e.center().X) > NOTCH_X - 4}
-    E = [e for f in top for e in f.edges() if any(pick[g](e) for g in groups)]
-    return _S(s, _S(slab, slab.chamfer(TOP_CH, None, E)))
+    (cx, cy), r = NOTCH_TOP
+    ly = NOTCH_LOW[0][1]
+    area = sbox(NOTCH_X - 2 * TOP_CH, NOTCH_Y[0] - 2 * TOP_CH, IN_X, NOTCH_Y[1] + 2 * TOP_CH)
+    ring = area.difference(notch(reach=2 * TOP_CH))
+    z0, z1 = DECK_TOP - 2 * TOP_CH, DECK_TOP
+    blk = _ext(ring, "xy", z0, z1, arcs=True)
+    top = [f for f in blk.faces() if f.geom_type.name == "PLANE" and abs(f.normal_at().Z - 1) < 1e-9]
+    inner = lambda e: NOTCH_X - 1e-6 <= e.center().X <= IN_X - 1e-6 and NOTCH_Y[0] - TOP_CH < e.center().Y < NOTCH_Y[1] + TOP_CH \
+        and not (abs(e.center().X - (NOTCH_X - 2 * TOP_CH)) < 1e-6)
+    E = [e for f in top for e in f.edges() if inner(e)]
+    sliver = _S(blk, blk.chamfer(TOP_CH, None, E))
+    shear = bd.Matrix([[1, 0, 0, 0], [0, 1, 0, 0], [0, K, 1, K * IN_Y], [0, 0, 0, 1]])
+    cut = sliver.transform_geometry(shear)
+    return _S(s, cut, _mirror_x(cut))
 
 
 def edge_chamfer(m, p, dh, dv, region):
@@ -141,7 +170,7 @@ def bulk_chamfer():
     """Bulkhead rear top edge round the slot: a 45 deg plane, coned round the slot corners."""
     import build123d as bd
     x0 = UP_X0 - SLOT_R
-    z0 = BULK_CH - BULK_Y[1]                                # chamfer foot on the rear face
+    z0 = ramp_z(BULK_Y[1]) - TOP_CH                         # chamfer foot on the rear face
     flat = _I(halfspace((0, BULK_Y[1], z0), (0, 1, 1), BIG), _box(-x0, x0, -BIG / 10, BULK_Y[1] + SLOT_R, DECK_TOP, BIG / 10))
     c = []
     for sx in (-1, 1):
@@ -222,7 +251,8 @@ def shroud():
 
 
 def bulk_cuts():
-    (xa, xb), (za, zb), y1 = TUNNEL
+    (xa, xb), (za, zb), back = TUNNEL
+    y1 = BULK_Y[1] - back
     r = (zb - za) / 2
     t = _ext(sbox(xa + r, za, xb - r, zb).union(Point(xa + r, za + r).buffer(r)).union(Point(xb - r, za + r).buffer(r)), "xz", BULK_Y[0] - 1, y1)
     x, r2, (z0, z1) = LEAD_SLOT
@@ -235,7 +265,8 @@ def prongs():
     a sloped heel filleted into the upright underside, a window above the cross-bolt boss."""
     from .params_chassis import HY, TAB_HOLE_DY, TAB_HOLE_Z
     x0, t, zb = PRONG
-    (tc, tr), (hn, hr) = PRONG_TOE, PRONG_HEEL
+    (ty, tr), (hn, hr) = PRONG_TOE, PRONG_HEEL
+    tc = (ty, zb + tr)
     y0 = HY + PRONG_CLR
     d = hn[0] * tc[0] + hn[1] * tc[1] + tr                 # heel line: tangent to the toe round
     yz = lambda z: (d - hn[1] * z) / hn[0]

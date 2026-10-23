@@ -13,8 +13,8 @@ from .params_chassis import (WIRE_SLOT_X, DECK_Z, REBATE, IN_X, CH_H, WALL, AXLE
                              TAB_X_OUT, TAB_W, TAB_PITCH, SW_SLOT, SW_SLOT_IN, SW_PITCH, POST_PITCH)
 from .params_drive import FLOOR_LIFT, N10_X, DRIVE_MOTOR, WY, WZ, MOTOR_AT_X, HUB_X0, HUB_LEN, DISC_X
 from .params_hw import INSERT_CAT, M3
-from .params_vert import DECK_TOP, VM_T, SHELL_Y, DUCT, FRAME_LEG, LEAD_Y, PRONG_X, SHELL_W
-from .params_drive import UP_IN
+from .params_vert import DECK_TOP, LEAD_SLOT, BULK_Y, PRONG
+from .params_drive import LEAD_Y
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 L = FLOOR_LIFT
@@ -33,7 +33,7 @@ SHAFT_RACE = 0.3                       # shaft-in-race overlap of the one-solid 
 # column rows, the weapon ESC on the Malenki; the switch pressed into the deck slot
 BAT_SIZE, RX_SIZE, WE_SIZE = (36.0, 18.0, 11.0), (32.0, 20.0, 4.4), (23.5, 12.0, 5.0)
 BAY_GAP = 0.5
-LEADS_FORWARD = [-90, 0, 0]             # BE1806 turned about its axis so the phase leads point forward into the duct
+LEADS_FORWARD = [-90, 0, 0]             # BE1806 turned about its axis so the phase leads point forward into the upright's lead slot
 SHAFT_MASS_SHARE = 0.05                # the shaft's mass is in the motor's catalog mass (Revron convention)
 LEAD_RISE = 2.0                        # phase-lead waypoints: this far off the deck faces / the lead tip
 MOTOR_LIFT = 0.6                       # N10 play up to the deck underside (STEP 0.5)
@@ -53,8 +53,8 @@ def _structure(P, M):
     P(id="base_panel", kind="structure", print_orientation="+z", rotates_with="fixed", color="#2a2c30", shape=M("base_panel"), **PLA,
       label="1 mm printed base panel in the chassis rebate, 6 M2 button heads into the column heat-sets")
     P(id="vert_mod", kind="structure", print_orientation="+x", rotates_with="fixed", color="#30343a", shape=M("vert_mod"), **PLA,
-      sharp_corners_ok="vert_mod from the RVRN_revdev STEP sections (ELVRN, no dump): the frame, shell and uprights meet square as in the STEP solid",
-      label="vert_mod weapon module: frame on the deck (4 M2 into the column heat-sets), sloped top shell, uprights carrying the BE1806 and the MF85, prongs on the cross bolts")
+      sharp_corners_ok="vert_mod from the RVRN_revdev STEP solid's faces (ELVRN, no dump): the shell, bulkhead and uprights meet square as in the STEP solid",
+      label="vert_mod weapon module: hollow ramp shell on the deck (4 M2 into the column heat-sets), bulkhead, uprights carrying the BE1806 and the MF85, motor shroud, prongs on the cross bolts")
     for s, n in SIDES:
         P(id=f"side_{n}", kind="armor", print_orientation="+z", rotates_with="fixed", color="#3c4048", shape=M(f"side_{n}"), **TPU,
           deviation="ELVRN3.0 Alt STEP: the Side_Panel_alt_sm fork prongs lead the disc (tips at y 98.6, ahead of the disc's swept front): the forks are the ground game in front of the vertical disc, kept for parity",
@@ -65,7 +65,7 @@ def _weapon(P, M, pivot):
     """Rotor frame: on the spin axis in the disc mid-plane (the spin checks take the weapon part's origin as the centre)."""
     P(id="weapon_motor_stator", kind="weapon_motor", catalog=STATOR, at=_w(MOTOR_AT_X, WY, WZ), rot=LEADS_FORWARD, rotates_with="fixed",
       exposed=True, exposed_reason="vertical spinner: the BE1806 sits between the uprights behind the disc, shielded by the disc and the uprights",
-      label="BBB BE1806 2300 kV (RV08), fixed half: base sunk into the left upright, 4 x M2")
+      label="BBB BE1806 2300 kV (RV08), fixed half: base flat on the left upright, 4 x M2 from outside")
     joint = {"kind": "revolute", "axis": [1, 0, 0], "pivot": pivot, "min": 0, "max": 360, "default": 0}   # pivot in the disc plane, on the shaft
     P(id="wshaft", kind="shaft", material="steel", process="turned", stock="BE1806 5 mm shaft (part of the motor), run on into the MF85", rotates_with="weapon",
       shaft_of="weapon_motor_can", shape=M("wshaft", pivot), parent="disc", at=[0, 0, 0], color="#777777", solid_fraction=SHAFT_MASS_SHARE,
@@ -116,7 +116,7 @@ def _hardware(P):
     for s, n in SIDES:
         for k, y in enumerate((-BOSS_PITCH / 2, BOSS_PITCH / 2)):   # captive in the boss's hex pockets, from the inside
             P(id=f"nut_s{n}{k}", kind="nut", catalog="nut_m3_thin", at=_w(s * (IN_X - BOSS_IN + NUT_HALF), y, AXLE_Z), rot=[0, 90, 0], rotates_with="fixed")
-        P(id=f"nut_x{n}", kind="nut", catalog="nut_m3_thin", at=_w(s * (PRONG_X[0] + NUT_HALF), HY + TAB_HOLE_DY, TAB_HOLE_Z), rot=[0, 90, 0], rotates_with="fixed")   # captive in the module prong
+        P(id=f"nut_x{n}", kind="nut", catalog="nut_m3_thin", at=_w(s * (PRONG[0] + NUT_HALF), HY + TAB_HOLE_DY, TAB_HOLE_Z), rot=[0, 90, 0], rotates_with="fixed")   # captive in the module prong
     for i, (x, y) in enumerate(list(POSTS) + list(END_POSTS)):
         P(id=f"insert_b{i}", kind="insert", catalog=INSERT_CAT, at=_w(x, y, WALL + INSERT_LEN / 2), rot=[0, 0, 0], rotates_with="fixed")
     for i, (x, y) in enumerate(POSTS):
@@ -165,10 +165,10 @@ def _wires(wires):
     W("w_m_l", "rxesc.m2", "motor_l.terminals", "motor")
     W("w_m_r", "rxesc.m1", "motor_r.terminals", "motor")
     W("w_rx_wesc", "rxesc.wpn", "wesc.rx", "signal")
-    dx = -UP_IN - DUCT[0] / 2                              # duct centre line
+    sx, _, (sz0, sz1) = LEAD_SLOT                          # lead slot along the left upright's inner face
     W("w_wesc_m", "wesc.motor", "weapon_motor_stator.phases", "motor", "phase",
-      via=[_w(WIRE_SLOT_X, 0, DECK_Z - LEAD_RISE), _w(dx, 0, DECK_TOP + LEAD_RISE), _w(dx, LEAD_Y - LEAD_RISE, DECK_TOP + LEAD_RISE),
-           _w(dx, LEAD_Y, WZ)])   # up the deck wire slot, along the duct, out through the bulkhead to the lead stub
+      via=[_w(WIRE_SLOT_X, 0, DECK_Z - LEAD_RISE), _w(WIRE_SLOT_X, 0, DECK_TOP + LEAD_RISE), _w(sx, BULK_Y[0] - LEAD_RISE, DECK_TOP + LEAD_RISE),
+           _w(sx, BULK_Y[0], (sz0 + sz1) / 2), _w(sx, LEAD_Y - LEAD_RISE, WZ)])   # up the deck wire slot, back under the shell, along the lead slot to the stub
 
 
 def make_spec(model_file):

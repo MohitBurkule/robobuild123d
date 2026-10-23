@@ -124,15 +124,18 @@ def _gr1507_stator():
     return at(union(parts), STATOR_STACK_X0 + 0.5 * h, 0, 0)
 
 
-# BE1806 halves (local X along the axis, bell face +X), the be1806_bbb envelope split: base r9.5 x 3.5 from x -10.25,
-# can r11.5 from the base to the bell face at 8.25 (15 long + 3.5 base = the 18.5 body), cap 1 mm, 5 mm bore through.
-BE1806_X0, BE1806_FACE_X = -10.25, 8.25
-BE1806_BASE_R, BE1806_BASE_L = 9.5, 3.5
+# BE1806 halves (local X along the axis, bell face +X) as the RV08_1806 STEP of the Elevron pack draws the motor: base r11.5
+# (2 mm chamfer at its back, stepped here) x 6 from x -7.25, 0.2 running gap, can r11.5 (wall r10-11.5, 1 mm cap) to the
+# bell face at +7.25 (14.5 base to face), a 4 mm X prop boss (arms 4 wide to r11.2) on the face, 5 mm bore through.
+BE1806_X0, BE1806_FACE_X = -7.25, 7.25
+BE1806_BASE_R, BE1806_BASE_L, BE1806_BASE_CH = 11.5, 6.0, 2.0
 BE1806_CAN_R, BE1806_CAN_IN_R, BE1806_CAP_T = 11.5, 10.0, 1.0
 BE1806_CAN_L = BE1806_FACE_X - (BE1806_X0 + BE1806_BASE_L) - 0.2   # 0.2 running gap over the base
 BE1806_STACK_R = BE1806_CAN_IN_R - 0.6                              # stator stack (with windings) 0.6 inside the magnets
 BE1806_STACK_L = BE1806_FACE_X - BE1806_CAP_T - 0.5 - (BE1806_X0 + BE1806_BASE_L)
 BE1806_BORE_R = 2.55
+BE1806_X_L, BE1806_X_W, BE1806_X_R = 4.0, 4.0, 11.2                 # X prop boss: thickness, arm width, tip radius
+BE1806_LEAD_X = BE1806_X0 + 2.65                                    # phase-lead stubs leave the base radially
 
 
 def _gr1507_leads():
@@ -315,17 +318,20 @@ def builtin() -> list[CatalogEntry]:
                                   at(box(1.5, 5.0, 8.0), -7.6, 0, -15.5)]), [cyl_x(2.55, 22.0)]),
                      {"phases": [-7.5, 0, -15.0]}, {"at": [8.25, 0, 0], "dir": [1, 0, 0], "len": 2.0, "dia": 5.0},
                      {"kv": 2300, "max_current_a": 15.0, "typ_current_a": 8.0, "bell_mass_frac": 0.5}, "#3a3d42"),
-        # BE1806 split into its fixed and rotating halves (Elevron Alt, cots.motor_split): same envelope as be1806_bbb (r9.5 x 3.5
-        # base, r11.5 can to the bell face at +8.25, 5 mm bore), the can's wall r10-11.5 round a wound r9.4 stator stack.
-        CatalogEntry("be1806_stator", "weapon_motor", "BBB BE1806 2300 kV, fixed half: r9.5 x 3.5 base, wound r9.4 stator stack inside the can, phase leads (bell is `be1806_can`)", 10.5, "datasheet",
-                     minus(union([at(cyl_x(BE1806_BASE_R, BE1806_BASE_L), BE1806_X0 + BE1806_BASE_L / 2, 0, 0),
+        # BE1806 split into its fixed and rotating halves (Elevron Alt, cots.motor_split), the RV08_1806 STEP envelope.
+        CatalogEntry("be1806_stator", "weapon_motor", "BBB BE1806 2300 kV, fixed half: r11.5 x 6 base (RV08 STEP), wound r9.4 stator stack inside the can, phase leads (bell is `be1806_can`)", 10.5, "datasheet",
+                     minus(union([at(cyl_x(BE1806_BASE_R - BE1806_BASE_CH, BE1806_BASE_CH / 2), BE1806_X0 + BE1806_BASE_CH / 4, 0, 0),
+                                  at(cyl_x(BE1806_BASE_R - BE1806_BASE_CH / 2, BE1806_BASE_CH / 2), BE1806_X0 + 3 * BE1806_BASE_CH / 4, 0, 0),
+                                  at(cyl_x(BE1806_BASE_R, BE1806_BASE_L - BE1806_BASE_CH), BE1806_X0 + (BE1806_BASE_L + BE1806_BASE_CH) / 2, 0, 0),
                                   at(cyl_x(BE1806_STACK_R, BE1806_STACK_L), BE1806_X0 + BE1806_BASE_L + BE1806_STACK_L / 2, 0, 0),
-                                  at(box(1.5, 5.0, 8.0), -7.6, 0, -15.5), at(box(1.5, 5.0, 6.5), -7.6, 0, -10.25)]), [cyl_x(BE1806_BORE_R, 22.0)]),
-                     {"phases": [-7.5, 0, -15.0]}, {"at": [BE1806_FACE_X, 0, 0], "dir": [1, 0, 0], "len": 2.0, "dia": 5.0},
+                                  at(box(1.5, 5.0, 8.0), BE1806_LEAD_X, 0, -15.5), at(box(1.5, 5.0, 6.5), BE1806_LEAD_X, 0, -10.25)]), [cyl_x(BE1806_BORE_R, 22.0)]),
+                     {"phases": [BE1806_LEAD_X + 0.1, 0, -15.0]}, {"at": [BE1806_FACE_X, 0, 0], "dir": [1, 0, 0], "len": 2.0, "dia": 5.0},
                      {"kv": 2300, "max_current_a": 15.0, "typ_current_a": 8.0, "bell_mass_frac": 0.0, "rotor_part": "be1806_can"}, "#3a3d42"),
-        CatalogEntry("be1806_can", "other", "BBB BE1806 2300 kV, rotating half: 23 mm can (wall r10-11.5), 1 mm cap with the 5 mm shaft bore", 8.0, "datasheet",
+        CatalogEntry("be1806_can", "other", "BBB BE1806 2300 kV, rotating half: 23 mm can (wall r10-11.5), 1 mm cap, 4 mm X prop boss with the 5 mm shaft bore", 8.0, "datasheet",
                      minus(union([at(minus(cyl_x(BE1806_CAN_R, BE1806_CAN_L), [cyl_x(BE1806_CAN_IN_R, BE1806_CAN_L + 1.0)]), BE1806_FACE_X - BE1806_CAN_L / 2, 0, 0),
-                                  at(cyl_x(BE1806_CAN_R, BE1806_CAP_T), BE1806_FACE_X - BE1806_CAP_T / 2, 0, 0)]), [cyl_x(BE1806_BORE_R, 22.0)]),
+                                  at(cyl_x(BE1806_CAN_R, BE1806_CAP_T), BE1806_FACE_X - BE1806_CAP_T / 2, 0, 0)]
+                                 + [at(rot(box(BE1806_X_L, 2 * BE1806_X_R, BE1806_X_W), [a, 0.0, 0.0]), BE1806_FACE_X + BE1806_X_L / 2, 0, 0) for a in (45.0, -45.0)]),
+                           [cyl_x(BE1806_BORE_R, 22.0)]),
                      {}, {"at": [BE1806_FACE_X, 0, 0], "dir": [1, 0, 0], "len": 2.0, "dia": 5.0}, {}, "#3a3d42"),
         lipo("lipo_2s_180_turnabot", "Turnabot 2S 180 mAh LiPo (36 x 18 x 11)", 36, 18, 11, 12.5, 2, 180, 40, conn="jst_rcy"),
         flat("malenki_nano", "Malenki Nano (Rx + 2 brushed drive ESC), kapton wrapped", "esc", 23, 16, 5, 3.5,

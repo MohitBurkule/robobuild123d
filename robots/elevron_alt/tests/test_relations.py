@@ -42,7 +42,8 @@ def test_n10_gearbox_on_wall():
 def test_weapon_stack_is_contiguous():
     assert D.DISC_X[1] == pytest.approx(D.SPIDER_X[0])
     assert D.SPIDER_X[1] == pytest.approx(D.PROP_X0)
-    assert D.MOTOR_X0 > -D.UP_IN                     # motor base inside the left upright face
+    assert D.MOTOR_X0 == pytest.approx(-D.UP_IN)     # motor base flat on the left upright's inner face
+    assert D.DISC_X[0] == pytest.approx(D.BELL_X + D.DISC_GAP)
     assert D.BRG_X0 < D.UP_IN < D.BRG_X0 + D.BRG[2]  # flange proud, race in the right upright
 
 
@@ -58,9 +59,27 @@ def test_side_crossbar_behind_tyre():
 
 
 def test_vert_mod_prongs_in_tab_gap():
-    assert V.TAB_GAP[0] < V.PRONG_X[0] < V.PRONG_X[1] < V.TAB_GAP[1]
+    assert V.TAB_GAP[0] <= V.PRONG[0] < V.PRONG[0] + V.PRONG[1] < V.TAB_GAP[1]
     s = vert_mod.vert_mod()
     assert s.is_valid and len(s.solids()) == 1
+
+
+def test_vert_mod_ramp_relations():
+    """The ramp runs from the chassis front inner wall at deck height to the top of the upright tail circle; the upright
+    underside is tangent to that circle from the chassis rear inner wall line."""
+    from elevron_alt import vm_geom as G
+    assert G.ramp_z(-C.IN_Y) == pytest.approx(C.CH_H)
+    assert G.ramp_z(D.WY) == pytest.approx(D.WZ + V.UP_R)
+    s = vert_mod.vert_mod()
+    bb = s.bounding_box()
+    assert bb.max.Z == pytest.approx(D.WZ + V.SHROUD[0] * math.sin(math.radians(45)), abs=0.05)   # shroud tip, 45 deg up
+    assert bb.max.Y == pytest.approx(D.WY + V.SHROUD[0], abs=0.05)   # the shroud flare reaches past the tail
+    assert bb.min.Z == pytest.approx(V.PRONG[2], abs=1e-3)
+
+
+def test_vert_mod_volume_near_step():
+    """STEP vert_mod = 16592 mm3; the relation build plus the hardware seats is within 2 %."""
+    assert vert_mod.vert_mod().volume == pytest.approx(16592, rel=0.02)
 
 
 def test_world_floor():

@@ -79,8 +79,8 @@
    "material": "pla",
    "process": "fdm",
    "solid_fraction": 0.8,
-   "sharp_corners_ok": "vert_mod from the RVRN_revdev STEP sections (ELVRN, no dump): the frame, shell and uprights meet square as in the STEP solid",
-   "label": "vert_mod weapon module: frame on the deck (4 M2 into the column heat-sets), sloped top shell, uprights carrying the BE1806 and the MF85, prongs on the cross bolts"
+   "sharp_corners_ok": "vert_mod from the RVRN_revdev STEP solid's faces (ELVRN, no dump): the shell, bulkhead and uprights meet square as in the STEP solid",
+   "label": "vert_mod weapon module: hollow ramp shell on the deck (4 M2 into the column heat-sets), bulkhead, uprights carrying the BE1806 and the MF85, motor shroud, prongs on the cross bolts"
   },
   {
    "id": "side_l",
@@ -137,7 +137,7 @@
    "rotates_with": "fixed",
    "exposed": true,
    "exposed_reason": "vertical spinner: the BE1806 sits between the uprights behind the disc, shielded by the disc and the uprights",
-   "label": "BBB BE1806 2300 kV (RV08), fixed half: base sunk into the left upright, 4 x M2"
+   "label": "BBB BE1806 2300 kV (RV08), fixed half: base flat on the left upright, 4 x M2 from outside"
   },
   {
    "id": "wshaft",
@@ -774,7 +774,7 @@
    "kind": "nut",
    "catalog": "nut_m3_thin",
    "at": [
-    -20.4,
+    -18.4,
     38.2,
     6.25
    ],
@@ -822,7 +822,7 @@
    "kind": "nut",
    "catalog": "nut_m3_thin",
    "at": [
-    20.4,
+    18.4,
     38.2,
     6.25
    ],
@@ -1292,7 +1292,7 @@
    "at": [
     -25.0,
     -16.0,
-    21.25
+    21.75
    ],
    "dir": [
     0.0,
@@ -1316,7 +1316,7 @@
     "side": "head",
     "cbore_d": 3.9,
     "cbore_depth": 0.0,
-    "grip": 2.0
+    "grip": 2.5
    },
    "tool": "hex1.5",
    "removable": true,
@@ -1328,7 +1328,7 @@
    "at": [
     -25.0,
     16.0,
-    21.25
+    21.75
    ],
    "dir": [
     0.0,
@@ -1352,7 +1352,7 @@
     "side": "head",
     "cbore_d": 3.9,
     "cbore_depth": 0.0,
-    "grip": 2.0
+    "grip": 2.5
    },
    "tool": "hex1.5",
    "removable": true,
@@ -1364,7 +1364,7 @@
    "at": [
     25.0,
     -16.0,
-    21.25
+    21.75
    ],
    "dir": [
     0.0,
@@ -1388,7 +1388,7 @@
     "side": "head",
     "cbore_d": 3.9,
     "cbore_depth": 0.0,
-    "grip": 2.0
+    "grip": 2.5
    },
    "tool": "hex1.5",
    "removable": true,
@@ -1400,7 +1400,7 @@
    "at": [
     25.0,
     16.0,
-    21.25
+    21.75
    ],
    "dir": [
     0.0,
@@ -1424,7 +1424,7 @@
     "side": "head",
     "cbore_d": 3.9,
     "cbore_depth": 0.0,
-    "grip": 2.0
+    "grip": 2.5
    },
    "tool": "hex1.5",
    "removable": true,
@@ -1578,7 +1578,7 @@
     "side": "head",
     "cbore_d": 6.1,
     "cbore_depth": 0.0,
-    "grip": 10.2
+    "grip": 12.2
    },
    "tool": "hex2",
    "removable": true,
@@ -1733,7 +1733,7 @@
     "side": "head",
     "cbore_d": 6.1,
     "cbore_depth": 0.0,
-    "grip": 10.2
+    "grip": 12.2
    },
    "tool": "hex2",
    "removable": true,
@@ -1742,11 +1742,11 @@
   },
   {
    "id": "bolt_m0",
-   "designation": "M2x5",
+   "designation": "M2x6",
    "at": [
-    -19.5,
-    63.6194,
-    30.1694
+    -17.3,
+    64.8569,
+    31.4069
    ],
    "dir": [
     1.0,
@@ -1760,7 +1760,7 @@
    "head": null,
    "hole": {
     "d": 2.0,
-    "length": 5.0,
+    "length": 6.0,
     "head": "cap",
     "head_std": "ISO 4762",
     "head_dk": 3.8,
@@ -1770,7 +1770,7 @@
     "side": "head",
     "cbore_d": 4.2,
     "cbore_depth": 0.0,
-    "grip": 3.2
+    "grip": 4.0
    },
    "tool": "hex1.5",
    "removable": true,
@@ -1778,11 +1778,11 @@
   },
   {
    "id": "bolt_m1",
-   "designation": "M2x5",
+   "designation": "M2x6",
    "at": [
-    -19.5,
-    54.7806,
-    30.1694
+    -17.3,
+    53.5431,
+    20.0931
    ],
    "dir": [
     1.0,
@@ -1796,7 +1796,7 @@
    "head": null,
    "hole": {
     "d": 2.0,
-    "length": 5.0,
+    "length": 6.0,
     "head": "cap",
     "head_std": "ISO 4762",
     "head_dk": 3.8,
@@ -1806,7 +1806,7 @@
     "side": "head",
     "cbore_d": 4.2,
     "cbore_depth": 0.0,
-    "grip": 3.2
+    "grip": 4.0
    },
    "tool": "hex1.5",
    "removable": true,
@@ -1814,11 +1814,11 @@
   },
   {
    "id": "bolt_m2",
-   "designation": "M2x5",
+   "designation": "M2x6",
    "at": [
-    -19.5,
-    54.7806,
-    21.3306
+    -17.3,
+    63.4426,
+    21.5074
    ],
    "dir": [
     1.0,
@@ -1832,7 +1832,7 @@
    "head": null,
    "hole": {
     "d": 2.0,
-    "length": 5.0,
+    "length": 6.0,
     "head": "cap",
     "head_std": "ISO 4762",
     "head_dk": 3.8,
@@ -1842,7 +1842,7 @@
     "side": "head",
     "cbore_d": 4.2,
     "cbore_depth": 0.0,
-    "grip": 3.2
+    "grip": 4.0
    },
    "tool": "hex1.5",
    "removable": true,
@@ -1850,11 +1850,11 @@
   },
   {
    "id": "bolt_m3",
-   "designation": "M2x5",
+   "designation": "M2x6",
    "at": [
-    -19.5,
-    63.6194,
-    21.3306
+    -17.3,
+    54.9574,
+    29.9926
    ],
    "dir": [
     1.0,
@@ -1868,7 +1868,7 @@
    "head": null,
    "hole": {
     "d": 2.0,
-    "length": 5.0,
+    "length": 6.0,
     "head": "cap",
     "head_std": "ISO 4762",
     "head_dk": 3.8,
@@ -1878,7 +1878,7 @@
     "side": "head",
     "cbore_d": 4.2,
     "cbore_depth": 0.0,
-    "grip": 3.2
+    "grip": 4.0
    },
    "tool": "hex1.5",
    "removable": true,
@@ -2087,18 +2087,23 @@
      15.25
     ],
     [
-     -15.25,
+     -15.9,
      0,
      21.25
     ],
     [
-     -15.25,
-     37.7,
+     -11.3,
+     27.3,
      21.25
     ],
     [
-     -15.25,
-     39.7,
+     -11.3,
+     29.3,
+     25.75
+    ],
+    [
+     -11.3,
+     37.7,
      25.75
     ]
    ]

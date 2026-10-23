@@ -9,10 +9,10 @@ from robot.cad.holes import hole_tool
 from robot.cad import fastener_catalog as fc
 from .params_chassis import (HX, IN_X, WALL, CH_H, AXLE_Y, AXLE_Z, POSTS, END_POSTS, BOSS_PITCH, HY, TAB_HOLE_DY, TAB_HOLE_Z,
                              TAB_X_OUT, TAB_W, TAB_PITCH, BOSS_IN)
-from .params_drive import FLOOR_LIFT, WY, WZ, UP_IN, UP_T, MOTOR_SINK
+from .params_drive import FLOOR_LIFT, WY, WZ, UP_IN, UP_T
 from .params_hw import BASE_T, BACK_T, M2, M3
 from .params_side import PLATE_X, CROSS_LAND
-from .params_vert import DECK_TOP, VM_T, MOTOR_PCD_R, MOTOR_PCD_PHASE, N_MOTOR_SCREWS, PRONG_X
+from .params_vert import DECK_TOP, POST_CB_Z, MOTOR_HOLES, PRONG
 
 import math
 
@@ -52,7 +52,7 @@ def joints():
     for i, (x, y) in enumerate(list(POSTS) + list(END_POSTS)):   # base panel into the bottom column heat-sets
         out.append(Joint(f"bolt_b{i}", f"M{M2:g}x5", "button", (x, y, WALL - BASE_T), (0, 0, 1), "base_panel", BASE_T, "insert", f"insert_b{i}", ["base_panel"]))
     for i, (x, y) in enumerate(POSTS):                            # vert_mod frame into the top column heat-sets
-        out.append(Joint(f"bolt_t{i}", f"M{M2:g}x6", "button", (x, y, DECK_TOP + VM_T), (0, 0, -1), "vert_mod", VM_T, "insert", f"insert_t{i}", ["vert_mod"]))
+        out.append(Joint(f"bolt_t{i}", f"M{M2:g}x6", "button", (x, y, POST_CB_Z), (0, 0, -1), "vert_mod", POST_CB_Z - DECK_TOP, "insert", f"insert_t{i}", ["vert_mod"]))
     for s, n in ((-1, "l"), (1, "r")):
         for k, y in enumerate((-BOSS_PITCH / 2, BOSS_PITCH / 2)):   # side pod plate into the captive boss nuts
             out.append(Joint(f"bolt_s{n}{k}", f"M{M3:g}x10", "csk", (s * PLATE_X[1], y, AXLE_Z), (-s, 0, 0), f"side_{n}", PLATE_X[1] - NUT_FACE_X, "nut",
@@ -60,13 +60,12 @@ def joints():
         out.append(Joint(f"bolt_a{n}", f"M{M3:g}x12", "cap", (s * (IN_X - BACK_T), -AXLE_Y, AXLE_Z), (s, 0, 0), None, BACK_T, "tapped",   # front axle stack
                          f"so_{n}", [f"bplate_{n}", "chassis", f"fplate_{n}"], "hex2.5"))
         out.append(Joint(f"bolt_x{n}", f"M{M3:g}x12", "button", (s * (TAB_X_OUT + CROSS_LAND), HY + TAB_HOLE_DY, TAB_HOLE_Z), (-s, 0, 0), f"side_{n}",
-                         TAB_X_OUT + CROSS_LAND - PRONG_X[0] - fc.nut(M3, "thin")[1], "nut", f"nut_x{n}", [f"side_{n}", "chassis", "vert_mod"], "hex2",
+                         TAB_X_OUT + CROSS_LAND - PRONG[0] - fc.nut(M3, "thin")[1], "nut", f"nut_x{n}", [f"side_{n}", "chassis", "vert_mod"], "hex2",
                          {"reason": "rear cross bolt is a shear pin through the pod crossbar, the chassis tabs and the module prongs: it locates the module and "
                                     "ties the pod's rear (nut captive in the module prong); the 4 M2 into the columns clamp the deck face"}, OPEN))
-    for i in range(N_MOTOR_SCREWS):                               # BE1806 base through the left upright
-        a = math.radians(MOTOR_PCD_PHASE + 360 * i / N_MOTOR_SCREWS)
-        out.append(Joint(f"bolt_m{i}", f"M{M2:g}x5", "cap", (-(UP_IN + UP_T), WY + MOTOR_PCD_R * math.cos(a), WZ + MOTOR_PCD_R * math.sin(a)), (1, 0, 0),
-                         "vert_mod", UP_T - MOTOR_SINK, "tapped", "weapon_motor_stator", ["vert_mod"]))
+    for i, (dy, dz) in enumerate(MOTOR_HOLES):                   # BE1806 base through the left upright, heads in its counterbores
+        out.append(Joint(f"bolt_m{i}", f"M{M2:g}x6", "cap", (-(UP_IN + UP_T), WY + dy, WZ + dz), (1, 0, 0),
+                         "vert_mod", UP_T, "tapped", "weapon_motor_stator", ["vert_mod"]))
     return out
 
 

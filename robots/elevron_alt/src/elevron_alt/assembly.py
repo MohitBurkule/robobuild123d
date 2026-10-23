@@ -61,7 +61,7 @@ def prop_mount():
 
 def wshaft():
     """BE1806 shaft from the bell face through disc, spider and prop mount into the MF85 inner race."""
-    return _cyl(SHAFT_D / 2, -UP_IN, BRG_X0 + BRG[2], (WY, WZ), "x")   # from inside the stator (its bearings) to the MF85
+    return _cyl(SHAFT_D / 2, MOTOR_BASE_X + BASE_SKIN, BRG_X0 + BRG[2], (WY, WZ), "x")   # from inside the stator base (its bearings) to the MF85
 
 
 def bearing():
