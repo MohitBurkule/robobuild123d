@@ -232,34 +232,43 @@ def leg_drafts():
 
 
 def top_chamfer(s):
-    """TOP_CH equal-distance chamfer on the ramp edges over the side notches: chamfered on a flat-topped block round each
-    notch (the ramp flattened), the removed sliver sheared back onto the ramp and cut from the body."""
+    """Ramp edges over the side notches (STEP): the front wall's edge one plane per side as drawn, the floor's TOP_CH
+    chamfer running out ahead of NOTCH_CH_Y0 into a NOTCH_R cylinder tangent to it, and the rear (notch_rear_chamfer)."""
+    cuts = []
+    for sx in (-1, 1):
+        n, d = NOTCH_FRONT_CH[sx]
+        x0, x1 = sorted((sx * NOTCH_X, sx * (IN_X + 1)))
+        cuts.append(_I(halfspace(tuple(c * d for c in n), n, HS), _box(x0, x1, -TOOL, NOTCH_LOW[0][1], DECK_TOP, TOOL)))
+        cuts += [notch_runout(sx), notch_rear_chamfer(sx)]
+    return _S(s, *cuts)
+
+
+def _floor_chamfer(sx):
+    """Outward plane (n, d) of the notch floor's TOP_CH equal-distance chamfer: halfway between the floor and the ramp."""
+    import numpy as np
+    nr = np.array([0.0, -K, 1.0]) / SECK                      # ramp normal
+    nf = np.array([sx, 0.0, 0.0]) + nr
+    nf /= np.linalg.norm(nf)
+    return nf, nf @ np.array([sx * NOTCH_X, 0.0, ramp_z(0.0)]) - TOP_CH * math.sin(math.radians(45))
+
+
+def notch_runout(sx):
+    """Ahead of NOTCH_CH_Y0 the floor chamfer runs out into a NOTCH_R cylinder tangent to it along the line through its
+    foot on the floor at NOTCH_CH_Y0, the axis NOTCH_RUNOUT_AX (STEP as drawn) laid into the chamfer plane."""
     import build123d as bd
-    (cx, cy), r = NOTCH_TOP
-    ly = NOTCH_LOW[0][1]
-    area = sbox(NOTCH_X - 2 * TOP_CH, NOTCH_Y[0] - 2 * TOP_CH, IN_X, NOTCH_Y[1] + 2 * TOP_CH)
-    ring = area.difference(notch(reach=2 * TOP_CH))
-    z0, z1 = DECK_TOP - 2 * TOP_CH, DECK_TOP
-    blk = _ext(ring, "xy", z0, z1, arcs=True)
-    top = [f for f in blk.faces() if f.geom_type.name == "PLANE" and abs(f.normal_at().Z - 1) < 1e-9]
-    inner = lambda e: NOTCH_X - GEOM_EPS <= e.center().X <= IN_X - GEOM_EPS and NOTCH_Y[0] - TOP_CH < e.center().Y < NOTCH_Y[1] + TOP_CH \
-        and not (abs(e.center().X - (NOTCH_X - 2 * TOP_CH)) < GEOM_EPS)
-    E = [e for f in top for e in f.edges() if inner(e)]
-    sliver = _S(_S(blk, blk.chamfer(TOP_CH, None, E)), _box(-BIG, BIG, NOTCH_LOW[0][1], BIG, -BIG, BIG))   # the mouth's front run only
-    shear = bd.Matrix([[1, 0, 0, 0], [0, 1, 0, 0], [0, K, 1, K * IN_Y], [0, 0, 0, 1]])
-    cut = sliver.transform_geometry(shear)
-    # ahead of it the chamfer runs out to nothing at the notch's front corner: a plane through the corner's top edge
-    y0, y1 = NOTCH_LOW[0][1], NOTCH_CH_Y0
-    p0 = (NOTCH_X, y0, ramp_z(y0))
-    p1 = (NOTCH_X - TOP_CH, y1, ramp_z(y1))
-    p2 = (NOTCH_X, y1, ramp_z(y1) - TOP_CH / COSK)
-    u = [p1[i] - p0[i] for i in range(3)]
-    v = [p2[i] - p0[i] for i in range(3)]
-    n = (u[1] * v[2] - u[2] * v[1], u[2] * v[0] - u[0] * v[2], u[0] * v[1] - u[1] * v[0])
-    n = n if n[2] > 0 else tuple(-c for c in n)
-    taper = _I(halfspace(p0, n, BIG), _box(NOTCH_X - TOP_CH - 1, NOTCH_X + 1, y0, y1, -BIG, HS))
-    cut = _U(cut, taper)
-    return _S(s, cut, _mirror_x(cut), *[notch_rear_chamfer(sx) for sx in (-1, 1)])
+    import numpy as np
+    nf, df = _floor_chamfer(sx)
+    a = np.array(NOTCH_RUNOUT_AX) * np.array([sx, 1, 1])
+    a = a - (a @ nf) * nf
+    a /= np.linalg.norm(a)
+    y0 = NOTCH_CH_Y0
+    q = np.array([sx * NOTCH_X, y0, (df - nf[0] * sx * NOTCH_X - nf[1] * y0) / nf[2]])   # the foot on the floor
+    o = q + NOTCH_R * nf
+    cyl = bd.Solid.make_cylinder(NOTCH_R, 2 * TOOL_S, bd.Plane(origin=tuple(o - a * TOOL_S), z_dir=tuple(a)))
+    w = np.cross(a, nf)
+    w = w if w[1] < 0 else -w                               # ahead of the tangent line
+    x0, x1 = sorted((sx * (NOTCH_X - NOTCH_R - 1), sx * NOTCH_X))
+    return _I(_I(cyl, halfspace(tuple(q), tuple(w), HS)), _box(x0, x1, NOTCH_LOW[0][1], NOTCH_Y[1], DECK_TOP, TOOL))
 
 
 def notch_rear_chamfer(sx):
@@ -267,10 +276,7 @@ def notch_rear_chamfer(sx):
     the wall edge the STEP's own plane per side, the round between them a cylinder of NOTCH_R along their common line."""
     import build123d as bd
     import numpy as np
-    nr = np.array([0.0, -K, 1.0]) / SECK                      # ramp normal
-    nf = np.array([sx, 0.0, 0.0]) + nr
-    nf /= np.linalg.norm(nf)
-    df = nf @ np.array([sx * NOTCH_X, 0.0, ramp_z(0.0)]) - TOP_CH * math.sin(math.radians(45))
+    nf, df = _floor_chamfer(sx)
     nw, dw = NOTCH_WALL_CH[sx]
     nw = np.array(nw)
     H = lambda n, d: halfspace(tuple(n * d), tuple(n), HS)  # the void side (n.p > d)

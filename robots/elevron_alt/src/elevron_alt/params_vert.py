@@ -32,6 +32,8 @@ POST_PAD_R = 4.0                       # pad round each rear column screw inside
 POST_CB_R, POST_CB_DEPTH = 3.0, 2.5    # column screw counterbores: radius, floor above the deck
 NOTCH_CH_Y0 = -0.69                    # the notch-wall chamfer is full size behind this y and runs out to the front corner
 TOP_CH = 3.0                           # ramp edges over the side notches: equal-distance chamfer; bulkhead rear edge 45 deg
+NOTCH_FRONT_CH = {1: ((0.38700782, 0.43388567, 0.81361427), 19.92835889), -1: ((-0.4481432, 0.55271203, 0.70262158), 17.76576992)}   # notch front-wall chamfer planes, right / left (STEP as drawn)
+NOTCH_RUNOUT_AX = (0.6034267429, -0.3861931154, -0.6976611237)   # floor chamfer run-out cylinder axis, right side (STEP as drawn)
 NOTCH_WALL_CH = {1: ((0.387008, -0.724458, 0.570426), 14.19611), -1: ((-0.314194, -0.63844, 0.702622), 16.77181)}   # notch rear-wall chamfer planes n.p = d, right / left (STEP as drawn)
 UP_OUT_CH = ((2.997, 2.942), (2.879, 3.063))   # upright outer top edges: (in on the ramp, down the face), left / right (STEP as drawn, TOP_CH nominal)
 UP_IN_CH = (1.95, 2.58)                # upright inner top edges: chamfer across the top, down the face
