@@ -401,3 +401,105 @@ def test_weapon_without_a_tab_gives_a_valid_tub_with_no_tab_features(tmp_path):
                                     "__import__('revron.tub2_front', fromlist=['x']).wire_slot()]")
     assert out == [False, None, None, None, None, None, None], out
     assert vol > 0
+
+
+# ---- overall size (hooks size.width / size.length / size.height): longer / wider / shorter / taller must just work ------------------------------------
+# REVRON_SIZE_* is a delta in mm or a percentage of the stock overall width / length / height. Each case builds in a fresh interpreter: the tub is ONE valid
+# solid, the base and top panels are valid, the spec builds, and the gearmotors, pack and ESCs never overlap the tub (outside the heat-set bore sleeves, which
+# no part may stand in either). A shrink saturates where the contents touch (CH_HALF_W_MIN / CH_Y1_MIN / CH_Z1_MIN): the same stock chassis, not a broken one.
+SIZE = """
+import sys
+sys.path[:0] = [%r, %r]
+from revron import tub2, tub2_bays as B, hw, panel_base, panel_top, spec as S
+from revron.params import *
+tub = tub2.chassis2()
+keep = B._U(*B.KEEP)
+print("TUB", len(tub.solids()), tub.is_valid, round(tub.volume, 3), round(tub.bounding_box().min.X + tub.bounding_box().max.X, 4))
+for pid, cid, at, rot in (("motor_l", DRIVE_MOTOR, (-MOTX, RY, RZ), (0, 0, 180)), ("motor_r", DRIVE_MOTOR, (MOTX, RY, RZ), (0, 0, 0)),
+                          ("battery", BATTERY, ELEC["battery"], (0, 0, 90)), ("rxesc", RXESC, RX_C, (0, 0, 90)), ("wesc", WESC, WE_C, (0, 0, 90))):
+    sol = hw.placed(cid, at, rot)
+    print("OVL", pid, round(((tub & sol) - keep).volume, 4), round((sol & keep).volume, 4))
+for nm, p in (("base_panel", panel_base.base_panel()), ("top_panel", panel_top.top_panel())):
+    print("PANEL", nm, len(p.solids()), p.is_valid)
+print("SIZE", CH_HALF_W, CH_Y1, CH_Z1, SA[0], SB[0], WY, WZ, SIZE_DW, SIZE_DL, SIZE_DH)
+try:
+    print("SPEC ok", len(S.make_spec("x")["parts"]))
+except Exception as e:
+    import traceback
+    fr = [f for f in traceback.extract_tb(e.__traceback__) if "revron" in f.filename][-1]
+    print("SPEC FAIL", type(e).__name__, fr.filename.split("/")[-1], fr.lineno, fr.name)
+"""
+STOCK_TUB_VOLUME = DEFAULT_TUB_VOLUME
+
+
+def size_build(env, tmp_path):
+    dst = pathlib.Path(tempfile.mkdtemp(dir=tmp_path)) / "src"
+    shutil.copytree(SRC, dst, ignore=shutil.ignore_patterns("__pycache__"))
+    r = subprocess.run([sys.executable, "-c", SIZE % (str(dst), ROOT)], capture_output=True, text=True, env={**os.environ, **env})
+    rows = [ln.split() for ln in r.stdout.splitlines()]
+    assert any(x[0] == "SIZE" for x in rows), r.stderr[-1500:]
+    tub = next(x for x in rows if x[0] == "TUB")
+    return dict(tub=(int(tub[1]), tub[2] == "True", float(tub[3]), float(tub[4])), ovl={x[1]: float(x[2]) for x in rows if x[0] == "OVL"}, slv={x[1]: float(x[3]) for x in rows if x[0] == "OVL"},
+                panel={x[1]: (int(x[2]), x[3] == "True") for x in rows if x[0] == "PANEL"}, size=[float(v) for v in next(x for x in rows if x[0] == "SIZE")[1:]], spec=" ".join(next(x for x in rows if x[0] == "SPEC")[1:]))
+
+
+STEPS = ["-30%", "-20%", "-10%", "10%", "20%", "30%"]
+SIZE_ENV = {"width": "REVRON_SIZE_WIDTH", "length": "REVRON_SIZE_LENGTH", "height": "REVRON_SIZE_HEIGHT"}
+# The tub, the base panel and the top panel follow every step. The spec (every part, the side panels among them) does not yet: these steps stop in the side panel
+# (owner C: side.py `_side_seat`, whose nose block and notch are drawn at absolute Y / X in params_side SP_* and SIDE_BOLT_X, so the probe ring round the
+# standoff misses the battered face once SB moves more than ~4.5 mm along Y, or the chassis wall passes the panel's 36.3 mm screw face at ~ +4 mm each side)
+SPEC_BREAKS_IN_SIDE_PANEL = {("width", "20%"), ("width", "30%"), ("length", "10%"), ("length", "20%"), ("length", "30%")}
+
+
+@pytest.mark.parametrize("axis", ["width", "length", "height"])
+@pytest.mark.parametrize("step", STEPS)
+def test_overall_size_step_holds(axis, step, tmp_path):
+    """Each declared step of each size hook: the tub is one valid symmetric solid, both panels are valid solids and nothing that sits in the tub overlaps it."""
+    b = size_build({SIZE_ENV[axis]: step}, tmp_path)
+    assert b["tub"][:2] == (1, True) and abs(b["tub"][3]) < 1e-3, b
+    assert all(v == 0 for v in b["ovl"].values()) and all(v == 0 for v in b["slv"].values()), b
+    assert b["panel"] == {"base_panel": (1, True), "top_panel": (1, True)}, b
+
+
+@pytest.mark.parametrize("axis", ["width", "length", "height"])
+@pytest.mark.parametrize("step", STEPS)
+def test_overall_size_step_builds_the_spec(axis, step, tmp_path, request):
+    """The whole spec (all parts) builds at each step."""
+    if (axis, step) in SPEC_BREAKS_IN_SIDE_PANEL:
+        request.applymarker(pytest.mark.xfail(reason="owner C: side panel (side.py _side_seat) does not follow the chassis width / nose", strict=False))
+    b = size_build({SIZE_ENV[axis]: step}, tmp_path)
+    assert b["spec"].startswith("ok"), b["spec"]
+
+
+def test_growth_steps_move_what_they_should(tmp_path):
+    """+30 %: the walls, nose and rim move out by 30 % of the stock overall size and the front axle, nose standoff and weapon axis come with them."""
+    w = size_build({"REVRON_SIZE_WIDTH": "30%"}, tmp_path)["size"]
+    assert abs(w[0] - 29.5 * 1.3) < 1e-6
+    ln = size_build({"REVRON_SIZE_LENGTH": "30%"}, tmp_path)["size"]
+    d = 0.3 * (15.0 + 37.6)
+    assert abs(ln[1] - (15.0 + d)) < 1e-6 and abs(ln[3] - (30.5 + d)) < 1e-6 and abs(ln[4] - (40.5 + d)) < 1e-6 and abs(ln[5] - (38.5 + d)) < 1e-6
+    h = size_build({"REVRON_SIZE_HEIGHT": "30%"}, tmp_path)["size"]
+    assert abs(h[2] - (19.5 + 0.3 * 17.0)) < 1e-6 and abs(h[6] - (23.5 + 0.3 * 17.0)) < 1e-6
+
+
+@pytest.mark.parametrize("axis,step", [("length", "-10%"), ("height", "-30%")])
+def test_shrink_past_the_contents_is_the_stock_tub(axis, step, tmp_path):
+    """The pack against the stop wall (length) and the gearbox under the deck (height) are already as tight as the STEP: a shrink saturates and gives the stock tub."""
+    b = size_build({SIZE_ENV[axis]: step}, tmp_path)
+    assert b["tub"][:2] == (1, True), b
+    if axis == "height":
+        assert abs(b["tub"][2] - STOCK_TUB_VOLUME) < 0.5 and b["size"][2] == 19.5, b
+    else:   # the nose stops 0.2 mm short of the stock (CH_Y1_MIN): the pack needs 14.8, the STEP front wall stands at 15.0
+        assert abs(b["size"][1] - 14.8) < 1e-6, b
+
+
+def test_size_in_mm_equals_the_percentage(tmp_path):
+    """'5.26' mm and '10%' of the stock length (52.6) are the same setting."""
+    a = size_build({"REVRON_SIZE_LENGTH": "5.26"}, tmp_path)
+    b = size_build({"REVRON_SIZE_LENGTH": "10%"}, tmp_path)
+    assert a["size"] == b["size"] and abs(a["tub"][2] - b["tub"][2]) < 1e-3
+
+
+def test_default_size_is_the_stock_tub(tmp_path):
+    b = size_build({}, tmp_path)
+    assert b["tub"][:2] == (1, True) and abs(b["tub"][2] - STOCK_TUB_VOLUME) < 1e-2 and b["size"][:3] == [29.5, 15.0, 19.5], b

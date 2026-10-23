@@ -252,6 +252,8 @@ def arch_changes(raw, hooks: dict, cat=None) -> list:
     for name, h in hk.items():  # every other declared setting the robot offers is a hypothesis too
         if isinstance(h, dict) and h.get("swap"):  # a swap setting: its values are the swap hypotheses
             continue
+        if name.startswith("size."):  # overall size settings are the size family
+            continue
         vals = h.get("values")
         vals = list(vals) if isinstance(vals, (list, dict)) else []
         for v in vals:
@@ -349,9 +351,19 @@ def size_changes(hooks: dict, params: list, usage, plan_mod) -> list:
     params edit; otherwise it is a missing hook `size.<dim>` (plus `proxy` param edits when one is declared), and a
     "short 2WD" (shorter, front wheels off) combines size.length with the drive.short_2wd hook."""
     sizes = hooks.get("sizes") or {}
+    hk = hooks.get("hooks") or {}
     by = {p.name: p for p in params}
     out = []
     for dim in SIZE_DIMS:
+        h = hk.get(f"size.{dim}")
+        if h:  # the robot declares the overall size as a setting: every step goes through it
+            vals = h.get("values")
+            for st in SIZE_STEPS:
+                v = f"{st:+.0%}" if not isinstance(vals, list) or f"{st:+.0%}" in vals else f"{st:.0%}"
+                out.append(Change(f"size:{dim}{st:+.0%}", "size", f"overall {dim} {st:+.0%} (setting size.{dim})",
+                                  [{"op": "hook", "name": f"size.{dim}", "value": v}], hook=f"size.{dim}",
+                                  keywords=SIZE_KEYWORDS[dim], touches={"kind": "structure"}))
+            continue
         ent = sizes.get(dim) or {}
         master = by.get(ent.get("param"))
         if master is None:  # no single master: say so, at every step

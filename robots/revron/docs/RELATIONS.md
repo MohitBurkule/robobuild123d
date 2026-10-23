@@ -5,18 +5,25 @@ Masters live at the top of `src/revron/params_chassis.py` (`params.py` re-export
 
 | Master | Value | Meaning |
 |---|---|---|
-| `CH_HALF_W` | 29.5 | chassis outer half-width (outer side-wall face) |
-| `CH_Y0`, `CH_Y1` | -37.6, 15.0 | chassis rear / front face |
-| `CH_Z0`, `CH_Z1` | 2.5, 19.5 | floor underside / rim |
+| `CH_HALF_W_STOCK` -> `CH_HALF_W` | 29.5 | chassis outer half-width (outer side-wall face) as drawn -> in use (`size.width`) |
+| `CH_Y0`, `CH_Y1_STOCK` -> `CH_Y1` | -37.6, 15.0 | chassis rear / stock front face -> front face in use (`size.length`, the pack can push it forward) |
+| `CH_Z0`, `CH_Z1_STOCK` -> `CH_Z1` | 2.5, 19.5 | floor underside / stock rim -> rim in use (`size.height`) |
 | `CH_WALL` | 2.0 | printed wall and deck thickness |
-| `WY`, `WZ` | 38.5, 23.5 | weapon axis |
+| `WY_STOCK`, `WZ_STOCK` -> `WY`, `WZ` | 38.5, 23.5 | weapon axis as drawn -> in use (moves with the nose / the rim) |
 | `RY`, `RZ` | -30.5, 11.0 | rear axle (N10 shaft) |
-| `SA`, `SB` | (30.5, 5.5), (40.5, 4.5) | front-axle / nose standoff axes (Y, Z) |
+| `SA_Y0` -> `SA`, `SB` | (30.5, 5.5), (40.5, 4.5) | front-axle / nose standoff axes (Y, Z); Y moves with the nose |
 | `SA_X0`, `SB_X0`; `SA_LEN`, `SB_LEN` | 17.5, 21.5; 25, 15 | standoff inner ends; catalog lengths |
 | `SO_R` | 2.5 | standoff radius |
 | `M3_THIN_NUT_T` | 1.8 | DIN 439 thin nut |
 | `MNT_IN`, `MNT_T`, `MNT_SLAB_T` | 13.4, 8, 4 | weapon mount inner face, thickness, slab |
 | `FLOOR_Z` | 1.0 | ground plane of ramps / feet |
+
+## Overall size (hooks `size.width`, `size.length`, `size.height`)
+
+`REVRON_SIZE_WIDTH` / `_LENGTH` / `_HEIGHT` = a delta in mm (`4`, `-3.5`) or a percentage of the stock overall width / length / height (`10%`). Width moves both side walls; length moves the nose
+(rear wall, rear axle, drive motors, stop wall stay; front wall, `SA` / `SB`, `WY`, the front column row and the top-panel tab move); height moves the rim (deck, top panel, `WZ`).
+A shrink saturates where the contents touch: `CH_HALF_W_MIN` (two gearmotors `MOTOR_PAIR_GAP` apart at the centre), `CH_Y1_MIN` (pack against the stop wall plus a wall),
+`CH_Z1_MIN` (gearbox top `MOTOR_DECK_GAP` under the deck). A larger part can raise a floor above the stock size but never lowers the stock.
 
 ## Relation tree
 

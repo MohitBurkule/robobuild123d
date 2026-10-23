@@ -215,3 +215,18 @@ def test_wheel_swap_sets_belt_none_and_wheel_od(tmp_path):
     assert not nx
     j = jobs[0][1]
     assert j.kind == "param" and j.new_text == "20.0" and any(o["op"] == "remove" for o in j.overlay)
+
+
+def test_size_changes_use_declared_size_settings():
+    from robot.checks.robust import plan as P
+    from robot.checks.robust.usage import Graph, Usage
+
+    steps = ["-30%", "-20%", "-10%", "10%", "20%", "30%"]
+    hooks = {"hooks": {f"size.{d}": {"env": f"S_{d}", "values": steps, "default": "0"} for d in ("width", "length", "height")}}
+    cs = C.size_changes(hooks, [], Usage(Graph(), {}), P)
+    vals = sorted(c.ops[0]["value"] for c in cs if c.id.startswith("size:width"))
+    assert vals == sorted(steps)  # the robot's own spelling ("10%", "-10%")
+    for c in cs:
+        for op in c.ops:
+            if op["op"] == "hook" and op["name"].startswith("size."):
+                O.expand(op, hooks)  # every step is a declared value: no MissingHook
