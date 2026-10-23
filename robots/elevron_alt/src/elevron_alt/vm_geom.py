@@ -500,8 +500,15 @@ def grooves():
         c = (cx + u[0] * pitch * i, cy + u[1] * pitch * i)
         L = LineString([(c[0] - d[0] * TOOL, c[1] - d[1] * TOOL), (c[0] + d[0] * TOOL, c[1] + d[1] * TOOL)])
         g.append(L.buffer(w / 2, cap_style=2).intersection(sbox(x0, -BIG, x1, BIG)))
-    p = _sym(unary_union(g))
-    return _S(_ext(p, "xy", DECK_TOP, TOOL), above_ramp(-1), _S(_box(-BIG, BIG, -BIG, BIG, -BIG, BIG), above_ramp(depth)))
+    p = _sym(unary_union(g))                                  # in the ramp plane: the walls square to the ramp (STEP)
+    import build123d as bd
+    return _U(*[bd.Solid.extrude(f.moved(bd.Location(_ramp_plane(ramp_z(0.0)))).moved(bd.Location(_rn() * -depth)), _rn() * (depth + 1))
+                for f in _faces(p)])
+
+
+def _rn():
+    import build123d as bd
+    return bd.Vector(0, -K / SECK, 1 / SECK)
 
 
 def vm():
