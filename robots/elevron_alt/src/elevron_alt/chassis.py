@@ -115,7 +115,7 @@ def fillet_filler(c, rc, axis, at, r, side):
 def filler_2d(c, rc, axis, at, r, side):
     """fillet_filler's plan outline (shapely), None when the wall is out of the column's reach."""
     g = _filler_geom(c, rc, axis, at, r, side)
-    return None if g is None else g[0].difference(Point(g[1]).buffer(r, quad_segs=64))
+    return None if g is None else g[0].difference(Point(g[1]).buffer(r, quad_segs=ARC_SEGS))
 
 
 def _filler_geom(c, rc, axis, at, r, side):
@@ -142,9 +142,9 @@ def keyholes():
     bore-to-slot corners rounded KEY_BLEND (STEP)."""
     out = []
     for y in (-AXLE_Y, AXLE_Y):
-        prof = unary_union([Point(y, AXLE_Z).buffer(KEY_R, quad_segs=64),
-                            LineString([(y, AXLE_Z), (y, AXLE_Z - KEY_DROP)]).buffer(KEY_SLOT_R, quad_segs=64)])
-        prof = prof.buffer(KEY_BLEND, quad_segs=64).buffer(-KEY_BLEND, quad_segs=64)
+        prof = unary_union([Point(y, AXLE_Z).buffer(KEY_R, quad_segs=ARC_SEGS),
+                            LineString([(y, AXLE_Z), (y, AXLE_Z - KEY_DROP)]).buffer(KEY_SLOT_R, quad_segs=ARC_SEGS)])
+        prof = prof.buffer(KEY_BLEND, quad_segs=ARC_SEGS).buffer(-KEY_BLEND, quad_segs=ARC_SEGS)
         out.append(_both(_ext(prof, "yz", IN_X - 1, HX + 1, arcs=True)))
     return _U(*out)
 
@@ -231,7 +231,7 @@ def lattice_profile():
     for sy in (-1, 1):   # top / bottom centre triangles and the end triangles
         win.append(_rounded(Polygon([(0, 0), (a, sy * b), (-a, sy * b)]).buffer(-LAT_RIB_C, join_style=2), LAT_R_C))
         end = Polygon([(-a, sy * b), (a, sy * b), (0, sy * e)]).buffer(-LAT_RIB_E, join_style=2)
-        end = end.difference(Point(0, sy * e).buffer(COL_R + BOOL_EPS, quad_segs=64))   # the tip notched round the end column (STEP)
+        end = end.difference(Point(0, sy * e).buffer(COL_R + BOOL_EPS, quad_segs=ARC_SEGS))   # the tip notched round the end column (STEP)
         win.append(end.intersection(sbox(-LAT_END_X, -CH_L, LAT_END_X, CH_L)))
         xl = LAT_CORNER_X[0 if sy > 0 else 1]
         for sx in (-1, 1):   # corner pockets between the end wall, a rib to the end column and the bay wall
@@ -262,7 +262,7 @@ def lattice_profile():
 
 def _rounded(p, r):
     """Shapely polygon with every convex corner rounded r (the windows' 2D fillets)."""
-    return p.buffer(-r, quad_segs=64).buffer(r, quad_segs=64)
+    return p.buffer(-r, quad_segs=ARC_SEGS).buffer(r, quad_segs=ARC_SEGS)
 
 
 def lattice():

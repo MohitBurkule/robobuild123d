@@ -51,6 +51,7 @@ NUT_DEPTH = 2.5                       # Cut-Extrude5 D1
 BOSS_FILLET = 3.0
 GEOM_TOL = 1e-6                       # same-face test on edge centres
 HEX, HEX_PHASE = 6, 30                # nut pocket: flats top and bottom, as the catalog nut turned onto X
+ARC_SEGS = 64                          # shapely arc segments per quarter: arcs fit back to exact circles
 BOOL_EPS = 0.01                       # keeps a cut face off a coplanar one (OCC fuses badly on coincident faces)
 OCC_EPS = 1e-3                        # OCC fails a round that exactly meets a neighbouring face: drawn this much under
 # boss window (Cut-Extrude15 Sketch19: D2 5 wide, D1 1.5 half slot, 4 deep, Fillet12 R1)
