@@ -36,11 +36,21 @@ BAT_LEN = hw.size(BATTERY)[0]        # pack length: in the bay it runs along Y, 
 KEY_BITE, STOP_CLR = 0.65, 0.1       # key tab reaches this far behind the gearbox front face; the stop wall stands this clear of it
 KEY_SPAN = (round(RY + GB["half_w"] - KEY_BITE, 6), round(RY + GB["half_w"] + STOP_CLR + CH_WALL, 6))   # Y span of the key tab / stop wall
 PACK_FRONT_GAP = 0.2                 # pack front face to the front wall's inner face
+# ---- insert columns' constants (the size floors below clear their sleeves) ----
+INSERT_CAT = "heatset_m2_4"          # FS1 M2 heat-set, brass, 3.5 OD x 4
+INSERT_OD, INS_LEN = hw.size(INSERT_CAT)[1:]   # knurled OD and length from the catalog
+BORE_CH = 0.6                        # chamfer of the heat-set bore at the panel seat and at the rim
+KNURL = 0.25                         # FS1 M2 heat-set: knurl depth
+BORE_R = INSERT_OD / 2 - KNURL       # heat-set bore = the insert's core (the knurl melts in)
+KEEP_R = BORE_R + CH_WALL / 4        # the bore and half a skin of plastic round it: the sleeve no part may notch, so no part may stand in it either
+SLEEVE_CLR = 0.2                     # a part stands this clear of a bore sleeve
+INS_PITCH_Y, INS_EDGE = 32.0, (2.5, 2.6)   # stock grid pitch along Y; column centre to the side wall inner face / to the front wall inner face
+BAT_X = -11.81                       # pack centre X (STEP envelope)
 # ---- overall size (hooks size.width / size.length / size.height; env REVRON_SIZE_WIDTH / _LENGTH / _HEIGHT) ---------------------------------------------
 # Each is a delta in mm ("4", "-3.5") or a percentage of the stock overall width / length / height ("10%", "-20%"). Width moves both side walls out; length
 # moves the nose (the rear wall, rear axle, drive motors and stop wall keep their place; the front wall, the front wheel axle SA / SB, the weapon axis WY and
 # the front column row move with it); height moves the rim (the deck, the top panel, the weapon axis WZ and the pack's hang move with it).
-# A chassis never closes in on what it holds: a shrink stops where the contents touch (width: the two gearmotors a wall apart at the centre; length:
+# A chassis never closes in on what it holds: a shrink stops where the contents touch (width: the two gearmotors a skin apart at the centre, the pack clear of the column sleeves; length:
 # the pack against the stop wall and a wall in front of it; height: the gearbox top under the deck), so a request past that saturates there. The floors
 # below are relations of the catalog parts: a larger part (another motor, a longer pack) can raise a floor above the stock size but never lowers the stock.
 def size_delta(env, nominal):
@@ -55,7 +65,8 @@ SIZE_HEIGHT = os.environ.get("REVRON_SIZE_HEIGHT", "0")
 SIZE_HEIGHTS = {"-30%": -0.3, "-20%": -0.2, "-10%": -0.1, "10%": 0.1, "20%": 0.2, "30%": 0.3}   # the declared steps of hook size.height (hooks.json)
 MOTOR_PAIR_GAP = CH_WALL / 2         # the two gearmotors keep at least this between their inner ends at the centre
 MOTOR_DECK_GAP = 0.5                 # gearbox top to the deck underside (STEP: deck 17.5, gearbox top 17.0)
-CH_HALF_W_MIN = round(MOTOR_PAIR_GAP / 2 - MOT["x0"] + MOTOR_WALL_GAP + GB["end"] + CH_WALL, 6)   # narrowest wall: the motors, a wall in from each wall, a gap apart
+CH_HALF_W_MIN = round(max(MOTOR_PAIR_GAP / 2 - MOT["x0"] + MOTOR_WALL_GAP + GB["end"],          # the motors, a wall in from each wall, a gap apart
+                          abs(BAT_X) + hw.size(BATTERY)[1] / 2 + SLEEVE_CLR + KEEP_R + INS_EDGE[0]) + CH_WALL, 6)   # the pack clear of the column sleeves; narrowest wall = the larger
 CH_Y1_MIN = round(KEY_SPAN[1] + BAT_LEN + PACK_FRONT_GAP + CH_WALL, 6)     # shortest nose: the pack against the stop wall and a wall in front of it
 CH_Z1_MIN = round(RZ + GB["top"] + MOTOR_DECK_GAP + CH_WALL, 6)            # lowest rim: the gearbox top under the deck
 SIZE_DW = max(size_delta("REVRON_SIZE_WIDTH", CH_HALF_W_STOCK), min(0.0, CH_HALF_W_MIN - CH_HALF_W_STOCK))   # mm each side wall moves out
@@ -93,13 +104,6 @@ SA_X, SB_X = (SA_X0, SA_X0 + SA_LEN), (SB_X0, SB_X0 + SB_LEN)   # standoff |X| s
 NUT = (-11.5, 8.5)                   # side-panel screw into a thin M3 nut in the chassis wall (Y, Z)
 NUT_X = (CH_HALF_W - M3_THIN_NUT_T, CH_HALF_W)   # nut pocket opens on the outer wall face, one nut deep
 # ---- insert columns: a 2 x 2 grid plus the rear-centre boss, placed against what sits in the tub ----------------------------------------
-INSERT_CAT = "heatset_m2_4"          # FS1 M2 heat-set, brass, 3.5 OD x 4
-INSERT_OD, INS_LEN = hw.size(INSERT_CAT)[1:]   # knurled OD and length from the catalog
-BORE_CH = 0.6                        # chamfer of the heat-set bore at the panel seat and at the rim
-KNURL = 0.25                         # FS1 M2 heat-set: knurl depth
-BORE_R = INSERT_OD / 2 - KNURL       # heat-set bore = the insert's core (the knurl melts in)
-KEEP_R = BORE_R + CH_WALL / 4        # the bore and half a skin of plastic round it: the sleeve no part may notch, so no part may stand in it either
-SLEEVE_CLR = 0.2                     # a part stands this clear of a bore sleeve
 COL_R = 2.75                         # insert column boss radius (corner blocks, rear boss and deck pockets are tangent to it)
 WALL_IN_REAR = CH_Y0 + CH_WALL       # inner face of the rear wall (Y)
 MOTX = round(CH_IN_X - MOTOR_WALL_GAP - GB["end"], 6)   # N10 catalog origin |X|: the stack ends a gap short of the wall
@@ -109,7 +113,6 @@ MOT_X, MOT_Y = (MOTX + MOT["x0"], MOTX + MOT["x1"]), (RY + MOT["y0"], RY + MOT["
 TAB_FRONT_SETBACK = fc.head(3.0, 'csk')[0] / 2 + CH_WALL / 2   # tab front face stands short of the axle standoff axis (SA) by the M3 CSK head radius plus a skin: the mount screw into SA clears the tab
 CH_Y1_MAX = SA[0] - TAB_FRONT_SETBACK - CH_WALL   # the front wall can come this far forward and still leave the weapon-mount tab one wall to stand on
 CH_Y1 = max(CH_Y1_NOM, min(CH_Y1_MAX, round(KEY_SPAN[1] + BAT_LEN + PACK_FRONT_GAP + CH_WALL, 6)))   # front face: the requested one (stock 15.0) unless the pack (against the stop wall) is longer than it holds
-INS_PITCH_Y, INS_EDGE = 32.0, (2.5, 2.6)   # stock grid pitch along Y; column centre to the side wall inner face / to the front wall inner face
 INS_X = CH_IN_X - INS_EDGE[0]        # column |X|
 ROW_FRONT = CH_Y1 - CH_WALL - INS_EDGE[1]                          # front row Y (follows the front wall)
 ROW_REAR = CH_Y1_STOCK - CH_WALL - INS_EDGE[1] - INS_PITCH_Y       # rear row Y (stays when the front wall moves forward)
@@ -181,12 +184,13 @@ BASE_OUT = dict(x=round(CH_HALF_W - BASE_IN, 6), y0=round(CH_Y0 + BASE_IN, 6), y
 TOP_Z0, TOP_T = CH["z1"], 0.9               # Ti top panel sits on the chassis rim, 0.9 thick
 TOP_COL_SETBACK = 2.0                # top-panel side edge this far in from the corner columns' axes
 TOP_X = round(INS_X - TOP_COL_SETBACK, 6)   # |X| of the top-panel side edges beside the switch: they follow the column grid (23.0 at the stock width)
-TOP_SHOULDER_SETBACK, TOP_TAB_PROUD = 2.5, 1.5   # front edge between the shoulders and the tab: this far behind the front column row; the tab front edge this far in front of it
-TOP_SHOULDER_Y = round(INS[0][1] - TOP_SHOULDER_SETBACK, 6)   # front edge between the shoulders and the tab
+TOP_SHOULDER_SETBACK, TOP_TAB_PROUD = 2.5, 1.5   # front edge between the shoulders and the tab: this far behind the requested front column row; the tab front edge this far in front of it
+TOP_ROW_FRONT = CH_Y1_NOM - CH_WALL - INS_EDGE[1]   # the front column row at the requested nose (a long pack pushing the wall forward does not move the panel's shoulder: only size.length does)
+TOP_SHOULDER_Y = round(TOP_ROW_FRONT - TOP_SHOULDER_SETBACK, 6)   # front edge between the shoulders and the tab
 TOP_TAB_CLR, TOP_NOTCH_CLR = 0.4, 0.5   # tab half width this far inside the weapon mount's inner face; notch edge this far inside the nose-standoff inner end (SB_X0)
 TOP_EAR_R, TOP_NOTCH_WEB = 2.5, 1.0      # top-panel ear radius round each screw; web left between the notch edge and the ear (a narrow chassis pulls the notch in)
 TOP_NOTCH_X = (round(MNT_IN - TOP_TAB_CLR, 6), round(min(SB_X0 - TOP_NOTCH_CLR, INS_X - TOP_EAR_R - TOP_NOTCH_WEB), 6))   # |X| span of the front notches clearing the weapon-mount tabs (tab is |X| < 13)
-TOP_TAB_Y = round(INS[0][1] + TOP_TAB_PROUD, 6)                # tab front edge
+TOP_TAB_Y = round(TOP_ROW_FRONT + TOP_TAB_PROUD, 6)                # tab front edge
 ESC_TRAY = dict(gap=0.1, wall=1.25, lip=1.0, fuse=0.01, rail_end=1.0, rail_x=(1.4, 2.6))   # TPU ESC tray: walls >= 1.2, rails inset from the board -x / +x edges
 CHAIKIN_Q = 0.25                     # Chaikin corner-cutting ratio (side-panel spline smoothing)
 TOP_SCREW_WEB = True                 # ONE switch for the top-screw feature set: web + tap pilot under the corner columns' rim and bolt_t0..3 (off: the STEP's through-bore and no screws)
