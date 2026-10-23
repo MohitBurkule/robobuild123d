@@ -239,7 +239,7 @@ def make_spec(model_file):
     for f in fasteners:
         f.setdefault("deviation", FASTENER_DEV)
     return dict(parts=parts, fasteners=fasteners, connections=conn, wires=wires, allow_overlap=overlap, reference_cad=reference_cad(),
-                teardown=teardown())
+                teardown=teardown(), ground_z=GROUND_Z)   # the wheels' floor: the TPU fork tips are drawn preloaded below it (STEP)
 
 
 def teardown():
@@ -274,6 +274,7 @@ POCKET_DEV = (13.0, 19.9, 15.9)        # lattice pocket ceiling corner (front)
 SLIVER_DEV = (9.8, 12.6)               # boss end-arc hairline: |y|, z
 SLIVER_DEV_R = 2.0
 POCKET_R_DEV = (14.0, 24.6, 15.6)      # right rear corner pocket, bay-side corner
+GROUND_Z = 0.0                         # robot world floor (the STEP frame is lifted FLOOR_LIFT onto it)
 WIN_DEV = (40.86, 11.29)               # prong window centre (y, z) as the ligament check reports it
 NUT_DEV_R = 4.0                        # the prong nut pocket's neighbourhood
 FORK_PLACE_TOL = 3.0                   # side pods' bbox-centre tolerance with the forks stopped over the floor

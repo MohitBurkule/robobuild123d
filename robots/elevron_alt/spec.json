@@ -2689,5 +2689,6 @@
    ],
    "reason": "base panel drops out of the rebate once its screws are out"
   }
- ]
+ ],
+ "ground_z": 0.0
 }
