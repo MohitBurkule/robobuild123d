@@ -36,7 +36,6 @@ BAY_GAP = 0.5
 LEADS_FORWARD = [-90, 0, 0]             # BE1806 turned about its axis so the phase leads point forward into the upright's lead slot
 SHAFT_MASS_SHARE = 0.05                # the shaft's mass is in the motor's catalog mass (Revron convention)
 D_FLAT_FIT = 0.4                       # catalog N10 shaft drawn round: the RV21 hub's D-flat sits on its flat (Revron's allowance)
-CSK_LEAD_OVERLAP = 0.2                 # mesh overlap allowed for a countersunk head in a matching cone
 UNDER_DECK = 1.0                       # phase leads run this far under the deck, over the battery
 LEAD_RISE = 2.0                        # phase-lead waypoints: this far off the deck faces / the lead tip
 MOTOR_LIFT = 0.6                       # N10 play up to the deck underside (STEP 0.5)
@@ -227,8 +226,6 @@ def make_spec(model_file):
     n_ins = (len(POSTS) + len(END_POSTS), len(POSTS))
     overlap = [dict(a=f"insert_{k}{i}", b="chassis", max_depth_mm=INSERT_MELT, reason="M2 heat-set insert (3.5 OD) melted into the ELVRN 2.9 column bore: interference by design")
                for k, cnt in zip("bt", n_ins) for i in range(cnt)]
-    overlap += [dict(a=f"bolt_x{n}", b="chassis", max_depth_mm=CSK_LEAD_OVERLAP, reason="the cross bolt's countersunk head in the ELVRN Chamfer5 lead-in: a 0.05 mm radial fit, the faceted meshes overlap")
-                for _, n in SIDES]
     overlap.append(dict(a="wshaft", b="weapon_motor_can", max_depth_mm=SHAFT_RACE, reason="shaft in the can's 5.1 bore (0.05 radial running fit; the meshes overlap)"))
     overlap.append(dict(a="wshaft", b="wbearing", max_depth_mm=SHAFT_RACE, reason="shaft in the MF85 inner race (bearing modelled as one solid)"))
     overlap += [dict(a=f"motor_{n}", b=f"whub_r{n}", max_depth_mm=D_FLAT_FIT, reason="RVRN_revdev STEP: the RV21 hub turns with the RV12 N10 D-shaft; the catalog shaft is a fixed round body, so the hub's D-flat overlaps it")

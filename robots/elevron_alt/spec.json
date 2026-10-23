@@ -1619,7 +1619,7 @@
    "id": "bolt_xl",
    "designation": "M3x10",
    "at": [
-    -11.6,
+    -11.24,
     38.2,
     6.25
    ],
@@ -1648,7 +1648,7 @@
     "csk_angle": 90.0,
     "csk_d": 6.3,
     "csk_depth": 1.45,
-    "sink": 0.1,
+    "sink": -0.26,
     "grip": 6.0
    },
    "tool": "hex2",
@@ -1780,7 +1780,7 @@
    "id": "bolt_xr",
    "designation": "M3x10",
    "at": [
-    11.6,
+    11.24,
     38.2,
     6.25
    ],
@@ -1809,7 +1809,7 @@
     "csk_angle": 90.0,
     "csk_d": 6.3,
     "csk_depth": 1.45,
-    "sink": 0.1,
+    "sink": -0.26,
     "grip": 6.0
    },
    "tool": "hex2",
@@ -2252,18 +2252,6 @@
    "b": "chassis",
    "max_depth_mm": 0.35,
    "reason": "M2 heat-set insert (3.5 OD) melted into the ELVRN 2.9 column bore: interference by design"
-  },
-  {
-   "a": "bolt_xl",
-   "b": "chassis",
-   "max_depth_mm": 0.2,
-   "reason": "the cross bolt's countersunk head in the ELVRN Chamfer5 lead-in: a 0.05 mm radial fit, the faceted meshes overlap"
-  },
-  {
-   "a": "bolt_xr",
-   "b": "chassis",
-   "max_depth_mm": 0.2,
-   "reason": "the cross bolt's countersunk head in the ELVRN Chamfer5 lead-in: a 0.05 mm radial fit, the faceted meshes overlap"
   },
   {
    "a": "wshaft",

@@ -8,7 +8,7 @@ from dataclasses import dataclass, field
 from robot.cad.holes import hole_tool
 from robot.cad import fastener_catalog as fc
 from .params_chassis import (HX, IN_X, WALL, CH_H, AXLE_Y, AXLE_Z, POSTS, END_POSTS, BOSS_PITCH, HY, TAB_HOLE_DY, TAB_HOLE_Z,
-                             TAB_X_OUT, TAB_W, TAB_PITCH, BOSS_IN)
+                             TAB_X_OUT, TAB_W, TAB_PITCH, BOSS_IN, HOLE_D, TAB_LEAD)
 from .params_drive import FLOOR_LIFT, WY, WZ, UP_IN, UP_T
 from .params_hw import BASE_T, BACK_T, M2, M3
 from .params_side import PLATE_X, PLATE_CSK_SINK
@@ -18,7 +18,9 @@ import math
 
 INSERT_LEN = 4.0
 NUT_FACE_X = IN_X - BOSS_IN + fc.nut(M3, "thin")[1]   # head-side face of the boss nut (it sits on the pocket floor from inside)
-CSK_SINK = 0.1                 # the dump's Chamfer5 seat (R3.1) is a hair under the DIN 7991 head (R3.0 + clearance): head sits 0.1 deep
+_DK, _K = fc.CSK[M3]
+_RIM = _K - (_DK - M3) / 2      # the catalog head's cylindrical rim above its 90 deg cone
+CSK_SINK = (HOLE_D / 2 + TAB_LEAD - _DK / 2) - _RIM   # head seated on the Chamfer5 cone (R3.1 at the face): its rim stands proud
 SCREW_MATERIAL = "aluminium"   # 7075 screws throughout, as Revron (mass)
 PROBE_RING = 0.8       # fastener_seat probes the face on a ring this far outside the head
 OPEN = 1e3   # head clearance that opens the head recess right through the part (a driver path)
