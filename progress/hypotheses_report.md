@@ -570,3 +570,44 @@ Run: 7000 s (budget 7000.0 s, 3 workers); baseline 795.9 s with 12 blockers (exc
 - a part swap: add the entry to `robot/catalog_data/components.json` (or the built-in catalog); it is picked up by role.
 - a layout change: append to `ARCH` in `robot/gen/changes.py` (hook name, values, keywords).
 - make one expressible: declare the hook in the robot's `hooks.json` (overlay ops per value, or an env setting the build reads), or a named location under `anchors`.
+
+---
+
+# Addendum: whole-robot size hypotheses on dev @ c3daa39 (after #27)
+
+## Versatility score: **100 %** of decided hypotheses hold with zero code change (19 / 19; 100 % of all 19 generated)
+
+| family | hold / decided |
+|---|---|
+| swap | 0 / 0 |
+| dimension | 0 / 0 |
+| architecture | 0 / 0 |
+| size | 19 / 19 |
+
+Verdicts: holds 19
+Run: 506 s (budget 7200.0 s, 3 workers); baseline 232.5 s with 0 blockers (excluded from the diff).
+
+## Size hypotheses
+
+| hypothesis | verdict | builds | new blockers | diff needed |
+|---|---|---|---|---|
+| overall height +10% (setting size.height) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall height +20% (setting size.height) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall height +30% (setting size.height) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall height -10% (setting size.height) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall height -20% (setting size.height) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall height -30% (setting size.height) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall length +10% (setting size.length) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall length +20% (setting size.length) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall length +30% (setting size.length) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall length -10% (setting size.length) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall length -20% (setting size.length) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall length -30% (setting size.length) | holds | yes | - | 0 code lines (1 setting(s)) |
+| short 2WD: length -20 %, front wheels removed, 2 motors | holds | yes | - | 0 code lines (3 setting(s)) |
+| overall width +10% (setting size.width) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall width +20% (setting size.width) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall width +30% (setting size.width) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall width -10% (setting size.width) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall width -20% (setting size.width) | holds | yes | - | 0 code lines (1 setting(s)) |
+| overall width -30% (setting size.width) | holds | yes | - | 0 code lines (1 setting(s)) |
+
