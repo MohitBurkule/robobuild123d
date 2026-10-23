@@ -389,6 +389,21 @@ def slivers(m, area=0.02, width=0.05, sharp=20.0):
     return out
 
 
+SLIVER_TESS_W_MM = 0.01   # narrower than this is below any B-rep tolerance: a tessellation fragment, not a face
+SLIVER_ON_REF_MM = 0.01   # ... when it also lies on the reference surface
+
+
+def tess_sliver(s, ref):
+    """True for a 'sliver' that is a mesher's zig-zag strip, not a B-rep face: under SLIVER_TESS_W_MM wide and lying
+    on the reference surface (round 53 mount_r: 0.002-0.004 mm strips where a curved face meets the X=17.4 plane,
+    0.0015 mm off the STEP surface)."""
+    import trimesh
+
+    if s[2] >= SLIVER_TESS_W_MM:
+        return False
+    return float(trimesh.proximity.closest_point(ref, [s[0]])[1][0]) <= SLIVER_ON_REF_MM
+
+
 # ------------------------------------------------------------------------------------------------ spec helpers
 def params(raw):
     from ._review import resolve
@@ -576,6 +591,7 @@ def run(ctx):
                     sr = slivers(ref, prm["sliver_area_mm2"], prm["sliver_w_mm"])
                     tr = cKDTree(np.array([s[0] for s in sr])) if sr else None
                     new = [s for s in sm if tr is None or tr.query(s[0])[0] > 1.0]
+                    new = [s for s in new if not tess_sliver(s, ref)]
                     row["sliver"] = {"ours": len(sm), "ref": len(sr), "new": len(new)}
                     items = [{"at": np.round(c, 2).tolist(), "msg": f"{np.round(c, 2).tolist()} area {a:.4f} mm2 width {w:.3f} mm"} for c, a, w in new]
                     op, wv = _split(e, items)

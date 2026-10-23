@@ -468,6 +468,8 @@ def _covers(d, pt, bbox=None, pts=None, vol=None):
         lo, hi = np.asarray(bbox[0], float), np.asarray(bbox[1], float)
         if np.linalg.norm(np.maximum(np.abs(lo - c), np.abs(hi - c))) > r:
             return False
+    if pts is not None and len(pts) and float(np.linalg.norm(np.asarray(pts, float) - c, axis=1).max()) > r:
+        return False
     return True
 
 
@@ -475,11 +477,13 @@ def _anchor(d):
     return np.asarray(d["near"], float) if d.get("near") is not None else np.asarray(d["path"], float).mean(0)
 
 
-def claim(items, e):
+def claim(items, e, fragments=False):
     """practice.waiver_bounds: each waiver explains at most ONE item of each kind (a blob / cluster dict with "centroid"
     or "at", optional "kind", "bbox", "pts", "volume_mm3"): the covered item nearest its centre (a changed feature is
     one extra and / or one missing blob). Other items inside the same sphere are still differences. Returns ({item index: reason}, [(index, reason)] of items a waiver's sphere held but did not
-    claim)."""
+    claim). `fragments`: the items are surface-deviation clusters, which sampling splits one changed face into (a flat
+    floor ring against a cone breaks into 2-3 clusters 1.5 mm apart); a waiver then claims every cluster of a kind
+    whose points ALL lie inside it - still bounded by its own sphere (r <= DEV_R_MAX) or capsule."""
     got, held = {}, []
     split = split_waivers(e)
     devs = [d for d in (e.get("deviations") or []) if not _dev_valid(d) and id(d) not in split]
@@ -494,7 +498,7 @@ def claim(items, e):
         taken = set()
         for _, i in sorted(cand):
             k = items[i].get("kind")
-            if k in taken:
+            if k in taken and not fragments:
                 held.append((i, d["reason"]))
                 continue
             taken.add(k)
@@ -600,7 +604,7 @@ def _frame_checks(ctx, e, cfg, pid, fn, mod, ref):
         (expl if why else open_).append(f"{b['kind']} {b['volume_mm3']} mm3 (t {b['thick_mm']}) at {b['centroid']}" + (f" [{why}]" if why else ""))
     dtol = float(e.get("dev_tol_mm", cfg.get("dev_tol_mm", 0.5)))
     cl = ref_diff.deviation_clusters(dev, dtol, min_pts=int(e.get("dev_min_pts", cfg.get("dev_min_pts", 2))))
-    cgot, chold = claim(cl, e)
+    cgot, chold = claim(cl, e, fragments=True)
     for i, c in enumerate(cl):
         why = cgot.get(i)
         (expl if why else open_).append(f"{c['kind']} surface {c['max_mm']} mm (> {dtol}, {c['n']} pts) at {c['centroid']}" + (f" [{why}]" if why else ""))
