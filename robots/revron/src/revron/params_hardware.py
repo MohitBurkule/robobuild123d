@@ -156,6 +156,7 @@ BASE_DEV_Z, PANEL_DEV_R, TOP_DEV_Z = 4.5, 3.5, 19.95
 # y -8.68..-2.53, top face z 19.57; four r5 spheres along the text line cover it (laser-etched, not modelled)
 TOP_TEXT_DEV_Z, TOP_TEXT_DEV_R = 19.57, 3.0   # path waiver radius (check cap 3)
 TOP_TEXT_X, TOP_TEXT_Y, TOP_TEXT_MAX_MM3 = (-17.75, 18.81), (-7.1, -4.1), 20.0   # lettering span in X (y -8.68..-2.53), two capsule centre lines Y (r 3 each covers the edge strokes), volume cap per capsule
+TOP_SIL_R = 1.0   # waiver sphere round the top panel's bbox centre, where the silhouette IoU finding sits
 TOP_TEXT_DEV_XY = ((-3.78, -5.57), (-13.73, -5.62), (5.84, -5.26), (15.04, -5.66))
 NOSE_DEV, NOSE_DEV_R = (MNT_IN + 2.0, SB[0] + 0.6, SB[1] - 1.7), 5.0             # mount nose pad (|x|, y, z): thickened nose wall, deviation from the STEP nose
 STATOR_DEV_X, TAP_DEV_R = 16.8, 2.0                                              # stator lead-in cone site; tap-hole sites

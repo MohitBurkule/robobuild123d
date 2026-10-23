@@ -4,7 +4,7 @@ from .params import *  # noqa: F401,F403
 from .common import *  # noqa: F401,F403
 from . import panel_base, panel_top, tub2_tab
 from .variants import variant
-from .tub2_params import OVER   # the squared rear corner overshoots the wall by the tub2 over-cut
+from .tub2_params import OVER, TOP_NECK, TOP_PILOT_R, BORE_R, INSERT_OD, BORE_CH, COL_R, TOP_SCREW_WEB   # the squared rear corner overshoots the wall by the tub2 over-cut
 from .drisk import service_turn_deg   # [fix-B-robust] drisk service turn: a relation of SA and the disc outline
 
 
@@ -346,6 +346,27 @@ STATOR_CONE_DEV_R = math.hypot((CB_STEP_CONE_X[1] - CB_STEP_CONE_X[0]) / 2, CB_R
 _MNT_THIN = {} if PRINTABLE else dict(thin_wall_deviation="matches original RVRN 2.0: RV02/RV03 end the notch top in a zero-thickness wedge and the R3.25 nose arc leaves 0.15 mm round the CSK cone (STEP sections at the notch top and y 40.5); kept for parity (user order)")
 
 
+def _top_screw_dev():
+    """[TOP_SCREW_WEB] the four corner columns the Ti top panel screws into (tub row `deviations`). RV01 has a plain d3 bore through the
+    whole column (z CH_Z0 + chamfer .. CH_Z1) and Top_Panel_1 only d2.2 + 0.75 chamfer holes over them: the STEP offers the panel no
+    retention. Ours keeps a TOP_NECK web under the rim with a tap-drill pilot for an M2 thread-forming screw (bolt_t0..3), because a
+    countersunk-through screw would collide with the base-panel FS8 screw in the same heat-set. One sphere per feature (distinct reasons,
+    so they never merge into one over-cap region): the web, the pilot's rim mouth, and the bore floor where the reference bore stays d3."""
+    rim, z_web = CH["z1"], CH["z1"] - TOP_NECK
+    why = (f"RV01 column bore is a plain d{2 * BORE_R:g} through bore z {BASE_Z0 + BASE_T:g}..{rim:g} (dump Cut-Extrude14 / Boss-Extrude8) and Top_Panel_1 (d2.2 holes) has no top fasteners; "
+           f"the top panel needs retention (design intent), so ours leaves a {TOP_NECK:g} mm web z {z_web:g}..{rim:g} with a d{2 * TOP_PILOT_R:g} M2 thread-forming pilot (bolt_t*), "
+           "a countersunk-through screw would hit the base-panel FS8 screw in the same heat-set")
+    r_web = math.hypot(math.sqrt(2) * COL_R, TOP_NECK / 2) + OVER   # holds the whole column web (half diagonal of the column square, half the web height)
+    r_floor = BORE_CH + OVER                                             # holds the first bore section above the base-panel seat
+    out = []
+    for x, y in (TOP_XY if TOP_SCREW_WEB else ()):
+        out += [dict(near=[x, y, z_web + TOP_NECK / 2], r=r_web, reason=f"[web] {why}"),
+                dict(near=[x, y, rim], r=r_web, reason=f"[pilot mouth at the rim] {why}"),
+                dict(near=[x, y, z_web], r=r_web, reason=f"[web underside, bore stops] {why}"),
+                dict(near=[x, y, BASE_Z0 + BASE_T], r=r_floor, reason=f"[bore floor, reference stays d{2 * BORE_R:g}] {why}")]
+    return out
+
+
 def _printable_dev(s):
     """reference_cad waivers of the optional 'printable' mount variant (nose pad, thickened notch tip); none for the original."""
     if not PRINTABLE:
@@ -365,13 +386,15 @@ def reference_cad():
           + [dict(near=[SWX, yy, CH["deck"]], r=SWX_DEV_R, reason="switch pilot holes follow the switch, which sits 0.45 mm in from the STEP X 25.0 so its body clears the 27.5 inner wall face (the STEP switch penetrates the wall 0.4 mm)")
              for yy in SW_SCREW_Y]
           + [dict(near=[sx * LOBE_DEV[0], LOBE_DEV[1], LOBE_DEV[2]], r=LOBE_DEV_R, reason="lobe tail below Y -11.7 trimmed to the side-panel inner face: the STEP lobe and side panel overlap by 31 mm3, the tub does not duplicate it")
-             for sx in (1, -1)]),
+             for sx in (1, -1)]
+          + _top_screw_dev()),
         R("base_panel", "RV26_Base_Panel_1.stl", tol_mm=TOL["tight"], note="RV26 1 mm panel",
           deviations=[dict(near=[x, y, BASE_DEV_Z], r=PANEL_DEV_R, reason="[variant base_csk_fit] R2.6 edge ears + 4.5 countersink on a 3.4 hole: an ISO 10642 M2 head (4.4 x 1.2) needs 1.6 mm of seat; the STEP's 3.2 x 0.5 seat leaves it proud")
                       for x, y in (INS if variant("base_csk_fit") else ())]),   # [variant base_csk_fit] the default seat is the RV26 one
         R("top_panel", "Top_Panel_1.stl", tol_mm=TOL["tight"], note="0.9 mm top panel",
           deviations=[{"path": [[TOP_TEXT_X[0], y, TOP_TEXT_DEV_Z], [TOP_TEXT_X[1], y, TOP_TEXT_DEV_Z]], "r": TOP_TEXT_DEV_R, "max_mm3": TOP_TEXT_MAX_MM3,
-                       "reason": "Top_Panel_1 engraved lettering, 0.1 mm deep (x -17.75..18.81, y -8.68..-2.53), laser-etch omitted; two capsules along the text, each capped on the volume it may excuse"} for y in TOP_TEXT_Y]),
+                       "reason": "reference RVRN Top_Panel_1.stl: 'RVRN' lettering engraved 0.1 mm deep into the underside (x -17.75..18.81, y -8.68..-2.53), a laser-etch cosmetic logo that is not modelled (design intent: one sheet thickness, no font dependency); two capsules along the text, each capped on the volume it may excuse"} for y in TOP_TEXT_Y]
+          + [dict(near=[0.0, sum(y for _, y in TOP_XY) / len(TOP_XY), TOP_Z0 + TOP_T / 2], r=TOP_SIL_R, reason="reference Top_Panel_1.stl front / side IoU is raster quantisation, not geometry: the STEP stores the 0.9 mm sheet as float32 z 19.5..20.39999962 while ours is 19.5..20.4, so at the 0.1 mm silhouette raster ours fills 10 pixel rows against the reference 9 (IoU 0.90 of a 0.9 mm edge-on plate); thickness TOP_T 0.9 and z 19.5 equal the STEP and the top / iso views agree at IoU 0.999")]),
         R("mount_l", "RV02_XALT_HD_left_hand_weapon_mount_1.stl", tol_mm=TOL["std"],
           deviations=_printable_dev(-1)),
         R("mount_r", "RV03_XALT__HD_Right_hand_weapon_mount_1.stl", tol_mm=TOL["std"],

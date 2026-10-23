@@ -13,7 +13,7 @@ BOLT = [to_local(FRAME, (x, y, 0))[:2] for x, y in TOP_XY]          # bolt patte
 DX, DY = 2 * max(abs(x) for x, _ in BOLT), 2 * max(abs(y) for _, y in BOLT)
 EAR_R, HOLE_D, CHAMFER = 2.5, 2.2, 0.75                             # ear radius, clearance hole, Chamfer1
 EDGE_Y = DY / 2 + EAR_R                                             # front / rear edge tangent to the ears
-FILL_R, FILL_YT = 10.0, 6.395                                       # Fillet1: R10 arc, tangent to the |X| TOP_X edge at Y = FILL_YT
+FILL_R = 10.0                                                       # Fillet1: R10 arc between the |X| TOP_X side edge and the ear
 FILLET = 1.0                                                        # Fillet3 / Fillet4
 SHOULDER, TAB_Y = TOP_SHOULDER_Y - YC, TOP_TAB_Y - YC               # notch floor, tab front edge (Boss-Extrude2 reaches TAB_Y)
 NOTCH_X0, NOTCH_X1 = TOP_NOTCH_X                                    # tab half width, notch half width
@@ -27,15 +27,9 @@ def seat(i):
 
 def outline():
     ears = [b.Pos(l.position.X, l.position.Y) * b.Circle(EAR_R) for l in b.GridLocations(DX, DY, 2, 2).locations]
-    sk = b.Rectangle(2 * TOP_X, 2 * EDGE_Y)
-    for sx in (1, -1):
-        for sy in (1, -1):   # concave R10 arc from the side edge into the ear, mirrored to the four ears
-            arc = b.Pos(sx * (TOP_X + FILL_R), sy * FILL_YT) * b.Circle(FILL_R)
-            xe, ye = TOP_X + (DX / 2 - TOP_X + EAR_R) / 2, (FILL_YT + DY / 2) / 2
-            wedge = b.Pos(sx * xe, sy * ye) * b.Rectangle(DX / 2 - TOP_X + EAR_R, DY / 2 - FILL_YT) - arc
-            strip = b.Pos(sx * (TOP_X + DX / 2) / 2, sy * (DY / 2 + EDGE_Y) / 2) * b.Rectangle(DX / 2 - TOP_X, EDGE_Y - DY / 2)
-            sk += wedge + strip
-    sk += ears
+    sk = b.Rectangle(2 * TOP_X, 2 * EDGE_Y) + ears
+    concave = [v for v in sk.vertices() if abs(abs(v.X) - TOP_X) < 1e-6 and abs(v.Y) < DY / 2]   # side edge meets an ear
+    sk = b.fillet(concave, FILL_R)   # Fillet1: R10 from the side edge into the ear, tangent to both
     sk -= b.Pos(0, (SHOULDER + EDGE_Y) / 2) * b.Rectangle(2 * NOTCH_X1, EDGE_Y - SHOULDER)           # front notch
     sk += b.Pos(0, (SHOULDER + TAB_Y) / 2) * b.Rectangle(2 * NOTCH_X0, TAB_Y - SHOULDER)             # Boss-Extrude2 tab
     corners = [(sx * x, y) for sx in (1, -1) for x, y in ((NOTCH_X1, SHOULDER), (NOTCH_X0, SHOULDER), (NOTCH_X0, TAB_Y), (NOTCH_X1, EDGE_Y))]

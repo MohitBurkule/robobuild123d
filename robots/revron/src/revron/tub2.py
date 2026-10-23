@@ -25,6 +25,6 @@ def chassis2():
     old_cuts = tub2_mates.keepouts()
     shell = tub2_body.shell()
     body = _U(shell, *adds)
-    tub = _S(tub2_fillets.lobe_root(body, tub2_lobes.bounds()), *cuts(), *old_cuts)
+    tub = _S(tub2_fillets.lobe_root(body, tub2_lobes.lobe()), *cuts(), *old_cuts)
     assert len(tub.solids()) == 1 and tub.volume > shell.volume, f"tub2 boolean collapsed: {len(tub.solids())} solids, {tub.volume:.0f} mm3 (bare shell {shell.volume:.0f})"   # the blocks add more than the pockets take
     return tub2_bays.carve(tub)
