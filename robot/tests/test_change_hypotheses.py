@@ -184,6 +184,7 @@ def test_swap_uses_declared_build_setting_and_any_env_value(tmp_path):
     assert not nx
     j = jobs[0][1]
     assert j.kind == "choice" and j.new_text == repr(cs[0].id.split("->")[1])
+    assert j.env == {"X_DRIVE_MOTOR": cs[0].id.split("->")[1]}  # code reading os.environ itself sees the setting too
 
 
 def test_swap_setting_limited_to_its_parts():
@@ -230,3 +231,14 @@ def test_size_changes_use_declared_size_settings():
         for op in c.ops:
             if op["op"] == "hook" and op["name"].startswith("size."):
                 O.expand(op, hooks)  # every step is a declared value: no MissingHook
+
+
+def test_worker_passes_settings_to_generation(tmp_path, monkeypatch):
+    """A setting read straight from os.environ (not through the edited default) must reach the spec generation."""
+    from robot.checks.robust import worker
+
+    m = tmp_path / "m.py"
+    m.write_text("import os, json, pathlib\npathlib.Path(__file__).with_name('spec.json').write_text(json.dumps({'w': os.environ.get('REVRON_X', '0')}))\n")
+    monkeypatch.setenv("REVRON_X", "stale")
+    assert worker.regenerate(tmp_path, "m.py", tmp_path, 60, {"REVRON_X": "30%"}) is None
+    assert json.loads((tmp_path / "spec.json").read_text())["w"] == "30%"

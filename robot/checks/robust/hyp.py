@@ -77,6 +77,8 @@ def resolve(changes, raw, hooks, disc, use, files=None):
                 continue
             job = sj[0]
             job.id, job.overlay = c.id, ops
+            if s.get("env"):  # the edit changes the default; the env var reaches code that reads os.environ itself
+                job.env = {s["env"]: str(alt)}
         jobs.append((c, job))
     return jobs, nx
 

@@ -54,9 +54,11 @@ def stage_copy(spec_path: Path, model_rel: str, tmp: Path) -> tuple:
     return spec_dir, dst
 
 
-def regenerate(dst: Path, model_rel: str, tmp: Path, timeout: float) -> str | None:
-    """Run the model file as a script (it writes spec.json next to its folder). Returns an error text or None."""
+def regenerate(dst: Path, model_rel: str, tmp: Path, timeout: float, settings: dict | None = None) -> str | None:
+    """Run the model file as a script (it writes spec.json next to its folder). Returns an error text or None.
+    `settings` are build-time env vars (a robot setting such as REVRON_SIZE_WIDTH) the generation must see."""
     env = {k: v for k, v in os.environ.items() if not k.startswith("REVRON_")}
+    env.update({k: str(v) for k, v in (settings or {}).items()})
     env["PYTHONPATH"] = str(REPO)
     try:
         p = subprocess.run([sys.executable, str(dst / model_rel)], cwd=tmp, env=env, capture_output=True, text=True, timeout=timeout)
@@ -129,6 +131,9 @@ def run_job(job: dict) -> dict:
     from .. import integrity
 
     res = {"id": job.get("id", "baseline"), "rebuilt": [], "error": None, "blockers": []}
+    # build-time settings: this process builds the parts too (verify imports the model), so set them here as well. A
+    # setting can be read anywhere (os.environ inside a helper), so every model part is rebuilt from the edited copy.
+    os.environ.update({k: str(v) for k, v in (job.get("env") or {}).items()})
     with tempfile.TemporaryDirectory(prefix="robust_", dir=job.get("tmpdir")) as td:
         tmp = Path(td)
         store = tmp / "integrity.json"
@@ -144,12 +149,15 @@ def run_job(job: dict) -> dict:
             except Exception as e:  # noqa: BLE001
                 res["error"] = f"edit failed: {e}"
                 return res
-            err = regenerate(dst, model_rel, tmp, float(job.get("timeout", 600)))
+            err = regenerate(dst, model_rel, tmp, float(job.get("timeout", 600)), job.get("env"))
             if err:
                 res.update(error=err, stage="build", seconds=round(time.time() - t0, 1))
                 return res
             new_raw = json.loads((dst / "spec.json").read_text())
-            raw, res["rebuilt"] = hybrid_spec(base_raw, new_raw, set(job.get("reads") or []), model_rel, dst / model_rel, spec_dir, geom.FINE)
+            reads = set(job.get("reads") or [])
+            if job.get("env"):
+                reads |= {p["id"] for p in new_raw.get("parts", [])}
+            raw, res["rebuilt"] = hybrid_spec(base_raw, new_raw, reads, model_rel, dst / model_rel, spec_dir, geom.FINE)
         else:
             raw, spec_dir = base_raw, spec_path.parent
         if job.get("overlay"):  # a change hypothesis: declarative spec ops on top of the (regenerated) spec
