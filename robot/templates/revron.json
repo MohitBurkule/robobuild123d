@@ -371,7 +371,7 @@
   ],
   "must_not_mention": [
    "through an aluminium spider",
-   "2S \u2248350 mAh LiPo"
+   "2S ≈350 mAh LiPo"
   ]
  },
  "electronics": {
@@ -963,15 +963,6 @@
      },
      {
       "near": [
-       22.23,
-       12.22,
-       17.5
-      ],
-      "r": 1.0,
-      "reason": "deck pocket edge at the front wall inner face: RV01 Chamfer is 2 mm; the tub shell chamfer is 2 less APEX_SHY 0.005 (equal to the corner R it collapses the corner cone: open mesh), so where the 2 mm mount keepout / flange wedge / lug meets it a 0.005 mm step face remains"
-     },
-     {
-      "near": [
        28.4,
        13.1,
        18.3
@@ -990,30 +981,12 @@
      },
      {
       "near": [
-       -22.23,
-       12.22,
-       17.5
-      ],
-      "r": 1.0,
-      "reason": "deck pocket edge at the front wall inner face: RV01 Chamfer is 2 mm; the tub shell chamfer is 2 less APEX_SHY 0.005 (equal to the corner R it collapses the corner cone: open mesh), so where the 2 mm mount keepout / flange wedge / lug meets it a 0.005 mm step face remains"
-     },
-     {
-      "near": [
        -28.4,
        13.1,
        18.3
       ],
       "r": 2.0,
       "reason": "flange top at the side wall chamfer start: RV01 Chamfer is 2 mm; the tub shell chamfer is 2 less APEX_SHY 0.005 (equal to the corner R it collapses the corner cone: open mesh), so where the 2 mm mount keepout / flange wedge / lug meets it a 0.005 mm step face remains"
-     },
-     {
-      "near": [
-       13.2,
-       26.47,
-       12.48
-      ],
-      "r": 1.0,
-      "reason": "lug / tab wall corner: RV01 Chamfer is 2 mm; the tub shell chamfer is 2 less APEX_SHY 0.005 (equal to the corner R it collapses the corner cone: open mesh), so where the 2 mm mount keepout / flange wedge / lug meets it a 0.005 mm step face remains"
      },
      {
       "near": [
@@ -1042,10 +1015,7 @@
       "r": 3.0,
       "reason": "RV01 dump Fillet14 R5 (parents Cut-Extrude8 / Boss-Extrude7) lists a cylinder face in this box, but RV01_Chassis_1.stl has no R5 round here: sections at z 7 and y -23 overlay the STEP outline (straight walls, no arc), so the face was consumed by a later feature and there is nothing to match"
      }
-    ],
-    "visual_ok": {
-     "fillet_ref": "RV01_Chassis_1.stl itself measures sharp at every flagged spot: visual.fillet_ref replaces the measured reference radius by the radius of the nearest dumped fillet face box (dump Fillet2/5/7/8/11/13/16/18/19/20/21/22), so a concave edge beside a convex dumped fillet counts as 'reference rounder'; re-measured with the check's own sections the STEP estimate equals ours (both r 0.0, 282 raw samples, 0 with a rounder reference except one noise sample), and sections at z 7.4 / 12 (R1 at 27.5,-18.9) and x -21.8 / y -9.35 overlay the STEP outline"
-    }
+    ]
    },
    {
     "part": "base_panel",
