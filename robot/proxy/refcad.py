@@ -27,7 +27,7 @@ SLICES = 24  # planes per axis across the reference span
 SECTION_DIFF_MM2 = 0.5  # outline difference allowed per slice, after the skin erosion below
 DEFAULT_MIN_THICK_MM = 0.3  # reference_cad's diff_min_thick_mm: thinner difference skins are not blobs
 DEFAULT_DEV_TOL_MM = 0.5  # same default as reference_cad's dev_tol_mm
-CACHE_VERSION = "2"
+CACHE_VERSION = "3"  # 3: section ends merged by tolerance (ref_features.snap_segments), not round(,3)
 MIN_RING_MM2 = 1e-4  # ref_features.section drops rings smaller than this
 
 
@@ -44,8 +44,9 @@ def fast_section(m, ax, h):
     if not len(segs):
         return None
     a, b = [i for i in range(3) if i != ax]
-    q = np.round(np.asarray(segs, float)[:, :, [a, b]], 3)
-    q = q[np.any(q[:, 0] != q[:, 1], axis=1)]
+    from ..checks.ref_features import snap_segments
+
+    q = snap_segments(np.asarray(segs, float)[:, :, [a, b]])   # tolerance merge, not round(,3): see snap_segments
     if not len(q):
         return None
     mg = linemerge(unary_union(shapely.linestrings(q)))
