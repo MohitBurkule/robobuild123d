@@ -554,3 +554,49 @@ def test_stock_half_width_sweep(half_w, tmp_path):
 def test_swap_setting_builds_one_valid_tub(env, tmp_path):
     b = bays(env, tmp_path)
     assert b["tub"][:2] == (1, True) and all(v == 0 for v in b["ovl"].values()), b
+
+
+# ---- what leaves / stays in the tub follows each size step (retention, assembly, fastener seat) -----------------------------------------------------------
+RELATIONS = """
+import sys
+sys.path[:0] = [%r, %r]
+import build123d as b
+from revron import tub2, tub2_bays as B, hw, panel_top
+from revron.params import *
+from revron.tub2_params import DECK, CENTRE_Y
+from revron.tub2_switch import PILOT_DEPTH
+tub = tub2.chassis2()
+def hit(sol, d, k):
+    return round((tub & sol.moved(b.Location(tuple(k * c for c in d)))).volume, 3)
+bat = hw.placed(BATTERY, ELEC["battery"], (0, 0, 90))
+print("PACK_DOWN", max(hit(bat, (0, 0, -1), k) for k in (0.3, 1, 3, 8, 15, 25)))
+ml = hw.placed(DRIVE_MOTOR, (-MOTX, RY, RZ), (0, 0, 180))
+print("MOTOR_IN", hit(ml, (1, 0, 0), MOTOR_SLIDE_MAX), hit(ml, (1, 0, 0), 0.4))
+print("RX_FRONT", round(RX_C[1] + RX_SIZE[0] / 2 - WALL_IN_FRONT, 6))
+print("SWITCH", round(ELEC["switch_yz"][0] - CENTRE_Y, 6), round(SW_BOLT_Z - DECK, 6), round(SW_BOLT_Z - (DECK - PILOT_DEPTH), 6))
+from revron.params_weapon import MNT_SIDE
+print("SHOULDER", round(panel_top.SHOULDER + panel_top.YC, 6), round(min(m["notch_y"] for m in MNT_SIDE.values()) - TOP_NOTCH_CLR, 6))
+"""
+
+
+def relation_build(env, tmp_path):
+    dst = pathlib.Path(tempfile.mkdtemp(dir=tmp_path)) / "src"
+    shutil.copytree(SRC, dst, ignore=shutil.ignore_patterns("__pycache__"))
+    r = subprocess.run([sys.executable, "-c", RELATIONS % (str(dst), ROOT)], capture_output=True, text=True, env={**os.environ, **env})
+    rows = {ln.split()[0]: [float(v) for v in ln.split()[1:]] for ln in r.stdout.splitlines() if ln.split() and ln.split()[0].isupper()}
+    assert "SHOULDER" in rows, r.stderr[-1500:]
+    return rows
+
+
+@pytest.mark.parametrize("env", [{}, {"REVRON_SIZE_WIDTH": "10%"}, {"REVRON_SIZE_WIDTH": "-10%"}, {"REVRON_SIZE_LENGTH": "10%"}, {"REVRON_SIZE_LENGTH": "-10%"},
+                                 {"REVRON_SIZE_HEIGHT": "10%"}, {"REVRON_SIZE_HEIGHT": "30%"}])
+def test_size_steps_keep_the_parts_retained_removable_and_seated(env, tmp_path):
+    """At each size step: the pack can leave downwards (the tub never closes over it), the gearmotor slides in less than MOTOR_SLIDE_MAX before it bears on the tub
+    (the stop follows the motor), the receiver stands against the front wall, the switch sits on the middle of the column rows and its screws keep the same
+    bite in the deck pilots, and the top panel's shoulder stays behind the weapon mounts' rear tips."""
+    r = relation_build(env, tmp_path)
+    assert r["PACK_DOWN"] == [0.0], r
+    assert r["MOTOR_IN"][0] > 0 and r["MOTOR_IN"][1] == 0, r
+    assert r["RX_FRONT"] == [0.0], r
+    assert r["SWITCH"] == [0.0, -1.5, -0.5], r
+    assert r["SHOULDER"][0] <= r["SHOULDER"][1] + 1e-6, r

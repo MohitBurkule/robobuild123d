@@ -27,7 +27,7 @@ SLICES = 24  # planes per axis across the reference span
 SECTION_DIFF_MM2 = 0.5  # outline difference allowed per slice, after the skin erosion below
 DEFAULT_MIN_THICK_MM = 0.3  # reference_cad's diff_min_thick_mm: thinner difference skins are not blobs
 DEFAULT_DEV_TOL_MM = 0.5  # same default as reference_cad's dev_tol_mm
-CACHE_VERSION = "2"
+CACHE_VERSION = "4"  # 3: section ends merged by tolerance (snap_segments); 4: even-odd faces by polygonize (touching outlines)
 MIN_RING_MM2 = 1e-4  # ref_features.section drops rings smaller than this
 
 
@@ -35,8 +35,7 @@ def fast_section(m, ax, h):
     """ref_features.section with the segment geometry built in one vectorised call (same rings, same result)."""
     import shapely
     import trimesh
-    from shapely.geometry import Polygon
-    from shapely.ops import linemerge, unary_union
+    from shapely.ops import unary_union
 
     n = np.zeros(3)
     n[ax] = 1.0
@@ -44,18 +43,14 @@ def fast_section(m, ax, h):
     if not len(segs):
         return None
     a, b = [i for i in range(3) if i != ax]
-    q = np.round(np.asarray(segs, float)[:, :, [a, b]], 3)
-    q = q[np.any(q[:, 0] != q[:, 1], axis=1)]
+    from ..checks.ref_features import snap_segments
+
+    q = snap_segments(np.asarray(segs, float)[:, :, [a, b]])   # tolerance merge, not round(,3): see snap_segments
     if not len(q):
         return None
-    mg = linemerge(unary_union(shapely.linestrings(q)))
-    rings = [g for g in getattr(mg, "geoms", [mg]) if g.is_ring and len(g.coords) > 3]
-    out = None
-    for p in sorted((Polygon(g).buffer(0) for g in rings), key=lambda p: -p.area):
-        if p.area < MIN_RING_MM2:
-            continue
-        out = p if out is None else out.symmetric_difference(p)
-    return out
+    from ..checks.ref_features import section_region
+
+    return section_region(unary_union(shapely.linestrings(q)), MIN_RING_MM2)
 
 
 def model_sections(mod, ax, hs):

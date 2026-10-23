@@ -45,7 +45,7 @@ BAT_BELOW = BAT_H / 2                                     # catalog origin -> pa
 BAT_STOP_GAP = 0.0                                        # pack rear face to the stop wall front face it butts (STEP: the RV16 pack touches the RV01 stop wall)
 BAT_Y = round(KEY_SPAN[1] + BAT_STOP_GAP + BAT_L / 2, 6)  # pack centre Y: the pack stands against the stop wall, so a wider gearmotor (stop wall further forward) pushes it forward
 BAT_Z = round(CH["deck"] - BAT_H / 2, 6)                # pack centre Z: the pack top rests against the deck underside (STEP pack 11 thick, z 6.5..17.5 about origin z 12), so a taller pack hangs lower; underside 2.0 over the base panel skin at the default (original: no pad, pack mated to the chassis only; foam pad = variant battery_pad)
-ELEC = dict(battery=(BAT_X, BAT_Y, BAT_Z), rxesc=(8.67, -3.0, 15.3), wesc=(8.63, -7.25, 10.6), switch_yz=(-5.6, 14.25))   # catalog origins (STEP envelopes)
+ELEC = dict(battery=(BAT_X, BAT_Y, BAT_Z), rxesc=RX_C, wesc=(8.63, -7.25, 10.6), switch_yz=(round(sum(y for x, y in INS_COLS if x > 0) / 2, 6), 14.25 + SIZE_DH))   # catalog origins (STEP envelopes); the switch sits on the middle of the column rows (it follows the nose) and under the deck (it follows the rim)
 BAT_PAD_FRAC = 3                                         # the foam pad is this fraction of the pack footprint each way
 _bx, _by = ELEC["battery"][:2]   # pack centre
 BAT_PAD = dict(x=(_bx - BAT_W / BAT_PAD_FRAC / 2, _bx + BAT_W / BAT_PAD_FRAC / 2), y=(_by - BAT_L / BAT_PAD_FRAC / 2, _by + BAT_L / BAT_PAD_FRAC / 2))   # double-sided foam pad footprint under the pack, centred, base-panel skin top -> pack underside

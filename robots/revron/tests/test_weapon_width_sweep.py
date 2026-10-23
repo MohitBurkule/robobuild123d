@@ -37,3 +37,25 @@ def test_weapon_datums_ignore_width(width):
     assert swept["ch"] != base["ch"]             # the hook really moved the side walls
     for k in ("dr_x", "motor_x", "mnt", "hub", "hubs"):
         assert swept[k] == base[k], k
+
+
+TOP = """
+import sys, json
+sys.path.insert(0, {repo!r}); sys.path.insert(0, {src!r})
+import revron.params_weapon as P
+print(json.dumps(dict(notch_x=P.TOP_NOTCH_X[1], above=P.MNT_ABOVE_RIM_X + P.MNT_IN, shoulder=P.TOP_SHOULDER_Y,
+                      notch_y=[P.MNT_SIDE[s]["notch_y"] for s in "rl"])))
+"""
+
+
+@pytest.mark.parametrize("env", [("REVRON_SIZE_WIDTH", "-10%"), ("REVRON_SIZE_LENGTH", "10%"), ("REVRON_SIZE_LENGTH", "20%")])
+def test_mount_follows_top_panel_notch(env):
+    """mount_l / mount_r rise through the top panel's front notch: above the rim they stay inside its outer edge (width -10 %:
+    overlap + mount/top_panel locked) and stay ahead of its shoulder by the STEP gap (length +10 %: both locked)."""
+    e = dict(os.environ, **{env[0]: env[1]})
+    out = subprocess.run([sys.executable, "-c", TOP.format(repo=str(REPO), src=str(SRC))], env=e, capture_output=True, text=True, timeout=300)
+    assert out.returncode == 0, out.stderr[-2000:]
+    d = json.loads(out.stdout.strip().splitlines()[-1])
+    assert d["above"] < d["notch_x"]
+    assert all(y > d["shoulder"] for y in d["notch_y"])
+    assert [round(y - d["shoulder"], 6) for y in d["notch_y"]] == [2.27, 1.1]

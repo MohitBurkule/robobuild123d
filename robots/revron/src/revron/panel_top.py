@@ -4,7 +4,8 @@ Laser-cut Ti sheet, one thickness level: the dump's 0.1 deep recess (Cut-Extrude
 Part frame = reference transform: origin on the bolt-pattern centre at the top face, z pointing down through the sheet."""
 import build123d as b
 from robot.cad.holes import hole_tool
-from .params_chassis import TOP_XY, TOP_Z0, TOP_T, TOP_X, TOP_NOTCH_X, TOP_SHOULDER_Y, TOP_TAB_Y, TOP_EAR_R
+from .params_chassis import TOP_XY, TOP_Z0, TOP_T, TOP_X, TOP_NOTCH_X, TOP_SHOULDER_Y, TOP_TAB_Y, TOP_EAR_R, TOP_NOTCH_CLR
+from .params_weapon import MNT_SIDE
 from .panel_base import to_local
 
 YC = sum(y for _, y in TOP_XY) / len(TOP_XY)
@@ -15,7 +16,8 @@ EAR_R, HOLE_D, CHAMFER = TOP_EAR_R, 2.2, 0.75                          # ear rad
 EDGE_Y = DY / 2 + EAR_R                                             # front / rear edge tangent to the ears
 FILL_R = 10.0                                                       # Fillet1: R10 arc between the |X| TOP_X side edge and the ear
 FILLET = 1.0                                                        # Fillet3 / Fillet4
-SHOULDER, TAB_Y = TOP_SHOULDER_Y - YC, TOP_TAB_Y - YC               # notch floor, tab front edge (Boss-Extrude2 reaches TAB_Y)
+MOUNT_REAR = min(m["notch_y"] for m in MNT_SIDE.values())          # rearmost point of either weapon mount's top (the notch top)
+SHOULDER, TAB_Y = min(TOP_SHOULDER_Y, MOUNT_REAR - TOP_NOTCH_CLR) - YC, TOP_TAB_Y - YC   # notch floor (behind the front column row, and never ahead of the mounts' rear tips), tab front edge (Boss-Extrude2 reaches TAB_Y)
 NOTCH_X0, NOTCH_X1 = TOP_NOTCH_X                                    # tab half width, notch half width
 
 
