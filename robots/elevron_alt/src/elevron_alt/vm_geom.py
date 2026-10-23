@@ -21,7 +21,6 @@ from .params_drive import WY, WZ
 from .params_vert import *  # noqa: F401,F403
 
 TOOL = BIG / 10                        # cut tools reach this far
-MIN_PIPE_ARC = 0.5                     # floor-round arcs shorter than this are left out
 OVERLAP = 0.05                         # a filler's reach into the material it joins
 HS = BIG / 5                           # half-space cutters: well past the part, small enough for exact booleans
 TOOL_S = BIG / 50                      # drafted tools: far enough through the ramp
@@ -355,16 +354,17 @@ def _floor_rounded(prof, r):
     """Pocket of outline `prof` (local XY) cut along +Z from its floor at z 0, every floor edge rounded r: the outline
     from r up, the outline shrunk by r from the floor, and a circle of r swept round the shrunk outline at height r."""
     import build123d as bd
-    inner = prof.buffer(-r, SEG)
-    up = _U(*[bd.Solid.extrude(f.moved(bd.Location((0, 0, r))), bd.Vector(0, 0, TOOL)) for f in _faces(prof)])
-    low = _U(*[bd.Solid.extrude(f, bd.Vector(0, 0, TOOL)) for f in _faces(inner)])
+    outer = _faces(prof)
+    inner = [bd.Face(f.outer_wire().offset_2d(-r, kind=bd.Kind.ARC)) for f in outer]   # exact offset: arcs stay concentric
+    up = _U(*[bd.Solid.extrude(f.moved(bd.Location((0, 0, r))), bd.Vector(0, 0, TOOL)) for f in outer])
+    low = _U(*[bd.Solid.extrude(f, bd.Vector(0, 0, TOOL)) for f in inner])
     pipes = []
-    for f in _faces(inner):                                 # the ball's path: a cylinder per line, a torus per arc
+    for f in inner:                                         # the ball's path: a cylinder per line, a torus per arc
         for e in f.outer_wire().moved(bd.Location((0, 0, r))).edges():
             p0, p1 = e.position_at(0), e.position_at(1)
             if e.geom_type.name == "LINE":
                 pipes.append(bd.Solid.make_cylinder(r, (p1 - p0).length, bd.Plane(origin=p0, z_dir=p1 - p0)))
-            elif e.length > MIN_PIPE_ARC:                       # a corner's sliver of arc tessellates badly against its neighbours
+            else:
                 c = e.arc_center
                 ang = lambda q: math.degrees(math.atan2(q.Y - c.Y, q.X - c.X))
                 a0, am, a1 = ang(p0), ang(e.position_at(0.5)), ang(p1)
