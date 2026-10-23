@@ -341,8 +341,9 @@ def prongs():
     outline = base.difference(toe).union(up).buffer(hr, SEG).buffer(-hr, SEG)   # heel fillet into the upright underside
     outline = outline.intersection(sbox(y0, zb, yz(DECK_TOP), DECK_TOP))   # overlaps the upright above its underside
     hole = (HY + TAB_HOLE_DY, TAB_HOLE_Z)
-    win = base.buffer(-PRONG_FRONT).intersection(sbox(y0 + PRONG_FRONT, zb, BIG, DECK_TOP)).difference(up)   # webs PRONG_FRONT thick, open to the upright
-    win = win.difference(Point(hole).buffer(PRONG_BOSS, SEG)).buffer(-PRONG_WEB).buffer(PRONG_WEB)
+    tall = Polygon([(y0, zb), (yz(zb), zb), (yz(TOOL_S), TOOL_S), (y0, TOOL_S)])   # the window's top is the upright underside itself (STEP)
+    win = tall.buffer(-PRONG_FRONT, SEG).intersection(sbox(y0 + PRONG_FRONT, zb, BIG, TOOL_S)).difference(up)   # webs PRONG_FRONT thick
+    win = win.difference(Point(hole).buffer(PRONG_BOSS, SEG)).buffer(-PRONG_WEB, SEG).buffer(PRONG_WEB, SEG)
     p = _ext(outline.difference(win), "yz", x0, x0 + t)
     p = _S(p, _cyl(TAB_HOLE_R, x0 - 1, x0 + t + 1, hole, "x"))
     return _U(p, _mirror_x(p))
