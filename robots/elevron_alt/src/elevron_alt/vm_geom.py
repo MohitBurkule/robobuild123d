@@ -26,7 +26,6 @@ HS = BIG / 5                           # half-space cutters: well past the part,
 TOOL_S = BIG / 50                      # drafted tools: far enough through the ramp
 SEG = 128                              # arc segments per quarter
 GEOM_EPS = 1e-6                        # coordinate match on edges
-RUN_EPS = 1e-3                         # a straight run of a buffered (polygonised) plan: its ends drift this much
 
 K = (WZ + UP_R - DECK_TOP) / (WY + IN_Y)          # ramp: deck height at the front inner wall -> top of the tail circle
 COSK = 1 / math.hypot(1, K)
@@ -109,56 +108,6 @@ def inside_round(p1, p2, r, reach=None):
     return _S(wedge, bd.Solid.make_cylinder(r, 2 * L, bd.Plane(origin=tuple(c - u * L), z_dir=tuple(u))))
 
 
-def hollow_front_round():
-    """R HOLLOW_EDGE_R round where the hollow's ceiling meets the lip's back face, over the arch's straight run (STEP)."""
-    ceil = ((0, K, -1), -(ramp_z(0) - VM_T * SECK))
-    back = ((0, 1, 0), ARCH_Y + LIP_W)
-    return _I(inside_round(back, ceil, HOLLOW_EDGE_R), _box(-ARCH_X, ARCH_X, -BIG, BIG, -BIG, BIG))
-
-
-def hollow_side_round():
-    """R HOLLOW_EDGE_R round where the hollow's ceiling meets its side walls (STEP): along each straight run of the hollow
-    plan that is not square to y (the lip and bulkhead runs have their own rounds), the wall's plane from the run."""
-    from shapely.geometry import Point as P
-    import numpy as np
-    ceil = ((0, K, -1), -(ramp_z(0) - VM_T * SECK))
-    h = hollow_plan()
-    out = []
-    for poly in getattr(h, "geoms", [h]):
-        c = list(poly.exterior.coords)
-        for a, b in zip(c[:-1], c[1:]):
-            a, b = np.array(a), np.array(b)
-            t = b - a
-            L = np.linalg.norm(t)
-            if L < 2 * HOLLOW_EDGE_R or abs(t[1]) < RUN_EPS:
-                continue
-            t /= L
-            m = np.array([t[1], -t[0]])                     # plan normal; flipped to point out of the hollow (into the wall)
-            mid = (a + b) / 2
-            m = -m if h.contains(P(*(mid + 10 * RUN_EPS * m))) else m
-            wall = ((-m[0], -m[1], 0), -(m @ mid))           # outward from the wall's material, into the hollow
-            r = inside_round(ceil, wall, HOLLOW_EDGE_R, BIG)
-            span = _I(halfspace((a[0], a[1], 0), (t[0], t[1], 0), HS), halfspace((b[0], b[1], 0), (-t[0], -t[1], 0), HS))
-            out.append(_I(r, span))
-    return _U(*out)
-
-
-def hollow_rear_round():
-    """R HOLLOW_EDGE_R round where the hollow's ceiling (one wall under the ramp) meets the bulkhead face (STEP)."""
-    y0, r = BULK_Y[0], HOLLOW_EDGE_R
-    ceil = lambda y: ramp_z(y) - VM_T * SECK
-    c = (y0 - r, ceil(y0 - r) - r * SECK)                   # r off the wall and r under the ceiling
-    tw = (y0, c[1])
-    tc = (c[0] - r * K / SECK, c[1] + r / SECK)              # tangent point on the ceiling (along its normal)
-    corner = (y0, ceil(y0))
-    e = OVERLAP                                             # reach into the wall and the ceiling so the fuse merges it
-    up = (-K / SECK, 1 / SECK)
-    prof = Polygon([(corner[0] + e, corner[1] + e), (tc[0] + e * up[0], tc[1] + e * up[1]), tc, c, tw, (tw[0] + e, tw[1])])
-    prof = prof.buffer(0).difference(Point(c).buffer(r, SEG))
-    xh = max(abs(x) for x, y in hollow_plan().exterior.coords if abs(y - y0) < GEOM_EPS)   # the rear edge's straight run
-    return _ext(prof, "yz", -xh, xh)
-
-
 def arch():
     """Arch over the front opening, cut along the ramp normal: a straight top on the lip line, R ARCH_R corners
     ARCH_X off the middle, the opening below them; its edge on the ramp chamfered TOP_CH at 45 deg (STEP)."""
@@ -214,12 +163,69 @@ def hollow_front():
     return _sym(half)
 
 
-def hollow_plan():
-    """Under-shell hollow: the planform in by one wall, from the lip to the bulkhead, round the rear column pads."""
-    p = plan().buffer(-VM_T, join_style=2).intersection(hollow_front())
-    p = p.difference(front_opening(full=True).buffer(LIP_W, SEG))   # the front lip round the arch (STEP: its back face at y ARCH_Y + LIP_W)
-    p = p.difference(unary_union([Point(q).buffer(POST_PAD_R, SEG) for q in POSTS if q[1] > 0])).difference(slot_plan())
-    return p.buffer(-HOLLOW_R, SEG).buffer(HOLLOW_R, SEG).buffer(HOLLOW_R, SEG).buffer(-HOLLOW_R, SEG)
+def _one(x):
+    """A single face / solid from a boolean's result."""
+    if isinstance(x, (list, bd.ShapeList)):
+        return x[0] if len(x) == 1 else bd.Compound(list(x))
+    return x
+
+
+def _bface(poly):
+    """Exact (arcs as arcs) single face of a plan outline."""
+    fs = _face(poly, "xy", arcs=True)
+    s = fs[0]
+    for f in fs[1:]:
+        s = _one(s.fuse(f))
+    return _one(s)
+
+
+def _disk(c, r):
+    return bd.Face(bd.Wire.make_circle(r, bd.Plane(origin=(c[0], c[1], 0))))
+
+
+def _cusp(c1, r1, c2, r2, r):
+    """Material between two overlapping material disks and the void round of r tangent to both (its inboard centre)."""
+    d = math.dist(c1, c2)
+    a, b = r1 + r, r2 + r
+    x = (a * a - b * b + d * d) / (2 * d)
+    y = math.sqrt(max(a * a - x * x, 0.0))
+    ux, uy = (c2[0] - c1[0]) / d, (c2[1] - c1[1]) / d
+    c = min(((c1[0] + x * ux - s * y * uy, c1[1] + x * uy + s * y * ux) for s in (1, -1)), key=lambda p: abs(p[0]))
+    deep = lambda q, R: bd.Vector(c[0] + (q[0] - c[0]) * (r + R / 2) / (R + r), c[1] + (q[1] - c[1]) * (r + R / 2) / (R + r), 0)
+    tri = bd.Face(bd.Wire.make_polygon([bd.Vector(c[0], c[1], 0), deep(c1, r1), deep(c2, r2)], close=True))
+    return _one(tri.cut(_disk(c, r)))
+
+
+def hollow_face():
+    """Under-shell hollow plan as an exact face: the planform in by one wall (mitred), behind the hollow front, ahead of
+    the bulkhead, less the lip round the arch, the rear column pads and the slot; every corner rounded HOLLOW_R (the
+    pads' corner with the notch's offset round by a void round tangent to both, as in the STEP)."""
+    inner = _one(bd.offset(_bface(plan()), -VM_T, kind=bd.Kind.INTERSECTION))
+    h = _one(_one(inner.intersect(_bface(hollow_front()))).intersect(_bface(sbox(-BIG, -BIG, BIG, BULK_Y[0]))))
+    lip = _one(bd.offset(_bface(front_opening(full=True)), LIP_W, kind=bd.Kind.ARC))
+    pads = [q for q in POSTS if q[1] > 0]
+    h = _one(h.cut(lip, *[_disk(q, POST_PAD_R) for q in pads], _bface(slot_plan())))
+    for q in pads:
+        sx = 1 if q[0] > 0 else -1
+        h = _one(h.cut(_cusp(q, POST_PAD_R, (sx * IN_X, NOTCH_RY), NOTCH_R + VM_T, HOLLOW_R)))
+    ok = []
+    for v in h.vertices():                                  # tangent joins take no round
+        try:
+            h.fillet_2d(HOLLOW_R, [v])
+            ok.append(v)
+        except Exception:  # noqa: BLE001
+            pass
+    return h.fillet_2d(HOLLOW_R, ok)
+
+
+def hollow_void():
+    """The hollow: its plan from under the deck up to one wall under the ramp, the ceiling's edges all rounded
+    HOLLOW_EDGE_R (STEP: the round runs on round the pads and corners)."""
+    v = bd.Solid.extrude(hollow_face().moved(bd.Location((0, 0, DECK_TOP - 1))), bd.Vector(0, 0, TOOL))
+    v = _S(v, above_ramp(VM_T))
+    n = bd.Vector(0, -K / SECK, 1 / SECK)
+    ceil = [f for f in v.faces() if f.geom_type.name == "PLANE" and f.normal_at().dot(n) > 1 - GEOM_EPS]
+    return v.fillet(HOLLOW_EDGE_R, [e for f in ceil for e in f.edges()])
 
 
 def upright_prof():
@@ -239,9 +245,7 @@ def body():
     ups = _I(_ext(side, "xy", -1, TOOL), _ext(upright_prof(), "yz", -TOOL, TOOL))
     ar = above_ramp()
     s = _S(_U(_S(shell, ar), _S(ups, ar)), slot)        # the ramp cut before the union (OCC drops it from the fused arcs)
-    hollow = _ext(hollow_plan(), "xy", DECK_TOP - 1, TOOL)
-    s = _S(s, _S(hollow, above_ramp(VM_T)), leg_drafts(), arch())
-    s = _U(s, hollow_rear_round(), hollow_front_round(), hollow_side_round())
+    s = _S(s, hollow_void(), leg_drafts(), arch())
     return top_chamfer(s)
 
 
