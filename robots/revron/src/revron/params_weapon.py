@@ -63,6 +63,11 @@ for _n, _t in (("spider", SPIDER_T), ("disc_a", DISC_T), ("spacer", SPACER_T), (
     DR_X[_n] = (_x, _x + _t)       # spider | disc_a | spacer | disc_b, each flush on the previous one
     _x += _t
 N_HUB = len(WM["top_holes"])          # spider-to-bell screws: the bell-top pattern of the motor entry
+# [fix-B-vers2] a bell-top circle too tight for a key between button heads takes every other screw (still a full
+# circle, e.g. TC1404 4 x M2 on d5 -> the opposite pair); only when even that cannot be keyed does the motor not fit
+_hub_room = lambda n: n < 2 or 2 * WM["top_holes"][0][0] * math.sin(math.pi / n) >= _fc.head(WM["top_holes"][0][2], "button")[0] + 0.5
+while N_HUB % 2 == 0 and N_HUB > 2 and not _hub_room(N_HUB):
+    N_HUB //= 2
 HUB_R, HUB_D = WM["top_holes"][0][0], WM["top_holes"][0][2]
 DR_ROT = WM["top_holes"][0][1]       # drisk phase about the axis: the spider is clocked to the bell's screw pattern (STEP Drisk_V4 placement)
 SERVICE_TURN_MARGIN_DEG = 5.0   # the drisk service turn (drisk.service_turn_deg) keeps the mount screw heads clear over +- this (hand turn)
@@ -167,7 +172,7 @@ CORNER_R = 1.0                       # master: the stack's machined/printed insi
 DOG = dict(r=12.0, rise=1.9, t0=6.6, t1=13.1, t2=54.7, ramp_r=15.3, nose_r=2.0)
 # param: end
 if BELL_R + SHAFT_CLR > DOG["r"]:
-    raise _wm.WeaponMotorError(f"weapon motor `{WM['id']}`: its bell (r{BELL_R:g}) does not fit the disc dog bore (r{DOG['r']:g}) of the drisk")
+    raise _wm.WeaponMotorError(f"weapon motor `{WM['id']}` does not fit the drisk: its bell (r{BELL_R:g}) is wider than the disc dog bore (r{DOG['r']:g}) of the drisk")
 DISC_BORE_ROUND, DISC_HOLE_R_WIN = CORNER_R, 0.44               # bore dog foot fillets; balance window corner radius
 DISC_BAL_PTS = [(-13.2, 4.85), (-13.2, 9.08), (-11.68, 7.65)]    # param: organic balance-window hull corners (measured, STEP)
 # param: end
@@ -224,17 +229,17 @@ BELL_HEAD_CLEAR = round(MOTOR_X + DR_X["spider"][0] - _fc.head(HUB_D, "button")[
 if BELL_HEAD_CLEAR < 0.2:
     raise _wm.WeaponMotorError(f"weapon motor `{WM['id']}` at MNT_IN {MNT_IN:g}: the drisk stack does not fit between the mounts "
                                f"(bell-screw heads {BELL_HEAD_CLEAR:+.2f} mm from RV02, the motor sits {LEAD_GAP + BSP_T:g} mm off RV03)")
-if N_HUB > 1 and 2 * HUB_R * math.sin(math.pi / N_HUB) < _fc.head(HUB_D, "button")[0] + 0.5:   # heads need room to turn a key between them
-    raise _wm.WeaponMotorError(f"weapon motor `{WM['id']}`: its bell-top screws ({N_HUB} x M{HUB_D:g} on r{HUB_R:g}) are closer than one button head: the spider cannot be screwed on")
+if not _hub_room(N_HUB):   # heads need room to turn a key between them
+    raise _wm.WeaponMotorError(f"weapon motor `{WM['id']}` does not fit the drisk: its bell-top screws ({N_HUB} x M{HUB_D:g} on r{HUB_R:g}, even every other one) are closer than one button head: the spider cannot be screwed on")
 
 
 def tub_interface():
     """[fix-B-vers] What the tub fits to the weapon module, for the selected weapon.type (only 'drisk' is built): the
     tub (A) should read these instead of the weapon constants, so another weapon style can supply its own. Keys:
     type, mount_in (mount inner face |X|), mount_frames, tab (the notch tab RV02/RV03 drop over), clear_r (chassis
-    stays outside this radius about the axis), axis (Y, Z), phase_via (lead route over the lug)."""
+    stays outside this radius about the axis), axis (Y, Z), phase_via (lead route over the lug), spider_x (world X of the spider's two faces)."""
     return dict(type=WEAPON_TYPE, mount_in=MNT_IN, mount_frames=dict(MNT_FRAME), tab=dict(TAB), clear_r=WEAPON_CLEAR_R,
-                axis=(WY, WZ), motor=WM["id"], phase_via=[list(p) for p in PHASE_VIA])
+                axis=(WY, WZ), motor=WM["id"], spider_x=[round(MOTOR_X + v, 6) for v in DR_X["spider"]], phase_via=[list(p) for p in PHASE_VIA])
 
 
 __all__ = [n for n in dir() if not n.startswith("__")]   # last line: every name above is exported

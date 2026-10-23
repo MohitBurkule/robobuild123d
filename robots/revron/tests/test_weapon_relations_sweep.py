@@ -47,3 +47,34 @@ def test_weapon_relations_follow_motor(motor):
     assert r["r"] == [1, True] and r["l"] == [1, True], r
     if motor == "gr1507":
         assert (r["recess"], r["top_l"], r["clear"], r["nose"]) == (6.0, 7.0, 16.0, 3.25)   # STEP values
+
+
+UNFIT = ["repeat_2004_1400kv", "repeat_2004_2800kv", "emax_eco2207_1900kv", "bl_1806_2300kv", "bl_2306_1400kv", "be1806_bbb",
+         "c_bbb_be1806_2300kv", "c_repeat_2004_antweight_spinner_motor"]
+FIT = ["gr1507", "bbb_be1806_2300kv", "brotherhobby_tc1404_3800kv", "brotherhobby_tc1404_4600kv"]
+CHK = r"""
+import json, sys
+sys.path.insert(0, %r); sys.path.insert(0, %r)
+try:
+    from revron import params as P
+except Exception as e:
+    print(json.dumps(dict(err=type(e).__name__, msg=str(e)))); sys.exit(0)
+from revron import drisk as D
+i = P.tub_interface()
+print(json.dumps(dict(n_hub=P.N_HUB, spider_x=i["spider_x"], exp=[P.MOTOR_X + v for v in P.DR_X["spider"]],
+                      sp=[len(D.spider().solids()), D.spider().is_valid])))
+""" % (ROOT, SRC)
+
+
+@pytest.mark.parametrize("motor", FIT + UNFIT)
+def test_weapon_motor_fits_or_says_why(motor):
+    p = subprocess.run([sys.executable, "-c", CHK], env=dict(os.environ, REVRON_WEAPON_MOTOR=motor), capture_output=True, text=True, cwd=ROOT)
+    assert p.returncode == 0, p.stderr[-3000:]
+    r = json.loads(p.stdout.strip().splitlines()[-1])
+    if motor in UNFIT:
+        assert r.get("err") == "WeaponMotorError" and "does not fit" in r["msg"], r
+        return
+    assert "err" not in r, r
+    assert all(abs(a - b) < 1e-6 for a, b in zip(r["spider_x"], r["exp"])) and r["sp"] == [1, True], r
+    if motor.startswith("brotherhobby_tc1404"):
+        assert r["n_hub"] == 2      # 4 x M2 on d5 is too tight for button heads: every other screw
