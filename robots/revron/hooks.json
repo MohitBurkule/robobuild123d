@@ -271,5 +271,9 @@
   "wheel_od": {
     "_doc": "wheel position -> params literal of its outer diameter (axle height, nose and standoffs derive from it); a catalog wheel swap without a swap setting sets it to the new wheel's OD",
     "wheel_f*": "WHEEL_OD_F"
-  }
+  },
+  "declared_unfit": [
+    "WeaponMotorError",
+    "WeaponTypeError"
+  ]
 }

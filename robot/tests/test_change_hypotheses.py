@@ -310,6 +310,7 @@ def test_shared_queue_enqueue_work_report(tmp_path, monkeypatch):
         ran.append(job["id"])
         return {"id": job["id"], "blockers": [["x.y", "p", "m"]] if job["id"] == "b" else [], "rebuilt": []}
 
+    monkeypatch.setattr(Q, "code_hash", lambda spec, m: cache.h("s", R.checks_hash()))  # this checkout = the enqueuer's code
     Q.work(q, 2, execute=fake, log=lambda *a: None)
     assert sorted(ran) == ["a", "b", "baseline"] and not list((q / "tickets").glob("*.json"))
     out = R.run(jobs, spec, "m.py", 600, 1, execute=never, src_hash="s", log=lambda *a: None)
@@ -324,3 +325,21 @@ def test_queue_stale_claim_is_taken_over(tmp_path):
     assert not Q.claim(tmp_path, "k1", "w2")  # fresh claim held
     assert Q.claim(tmp_path, "k1", "w2", now=lambda: __import__("time").time() + Q.STALE_S + 5)  # its worker died
     assert Q.next_ticket(tmp_path, "w3", "other-sha") is None  # tickets of another commit are left alone
+    Q.enqueue(tmp_path, "k2", {"id": "j", "spec": "x/spec.json", "model_rel": "m.py"}, 60, code="other-code")
+    assert Q.next_ticket(tmp_path, "w3", "s") is None  # nor tickets made from other robot / checks code
+
+
+def test_declared_unfit_is_na_not_a_break():
+    from robot.checks.robust import hyp
+
+    names = ["WeaponMotorError", "WeaponTypeError"]
+    gen = {"error": "spec generation failed (rc 1): revron.weapon_motor.WeaponMotorError: bell too big for the mount", "stage": "build"}
+    assert "WeaponMotorError" in hyp.declared_unfit(gen, {"new": []}, names)
+    load = {"error": None}
+    d = {"new": [["validity.load", "mount_r", "geometry failed: WeaponTypeError: hspin_bar has no slot"]]}
+    assert hyp.declared_unfit(load, d, names)
+    assert hyp.declared_unfit({"error": "x DECLARED_UNFIT: no room"}, {"new": []}, []) == "no room"
+    assert hyp.declared_unfit({"error": "ValueError: math domain error"}, {"new": []}, names) is None
+    rows = [{"verdict": v, "change": C.Change(f"c{i}", "swap", "t")} for i, v in enumerate(["holds", "breaks", "n/a"])]
+    s = hyp.score(rows)
+    assert s["decided"] == 2 and s["pct"] == 50.0  # n/a is not decided

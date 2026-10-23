@@ -128,7 +128,7 @@ def run(jobs, spec_path, model_rel, budget_s=900.0, workers=3, execute=subproces
         if queue and k:  # shared queue: leave a ticket for any worker; the report shows it as not run until then
             from . import queue as Q
 
-            Q.enqueue(queue, k, jd, max(timeout, 3600.0))
+            Q.enqueue(queue, k, jd, max(timeout, 3600.0), code=cache.h(src_hash, ch))
             return {"id": jd.get("id"), "error": "queued for a queue worker", "stage": "pending", "blockers": []}
         res = execute(jd, timeout)
         if k and res.get("stage") not in ("timeout", "worker") and not is_infra(res):

@@ -96,6 +96,8 @@ def evaluate(spec_path: Path, budget_s=3600.0, workers=3, top_n=8, log=print, ex
     graph = U.build_graph(files)
     use = U.Usage(graph, raw)
     hooks = O.load_hooks(raw, Path(spec_path).resolve().parent)
+    hf = Path(spec_path).resolve().parent / "hooks.json"  # exception classes the robot raises for a part it declares unfit
+    unfit_names = list((json.loads(hf.read_text()).get("declared_unfit") or []) if hf.exists() else [])
     changes = C.change_hypotheses(raw, hooks)
     pj, _ = P.make_plan(D.Discovery(params=disc.params), use, top_n, "adaptive")
     for j in pj:
@@ -114,7 +116,24 @@ def evaluate(spec_path: Path, budget_s=3600.0, workers=3, top_n=8, log=print, ex
     src = "" if execute else cache.h([f.read_bytes() for f in files])  # an injected executor (tests) is never cached
     kw = {"execute": execute} if execute else {}
     out = R.run([j for _, j in jobs], spec_path, mrel, budget_s, workers, src_hash=src, log=log, groups=HYP_GROUPS, **kw)
-    return dict(raw=raw, changes=changes, jobs=jobs, nx=nx, out=out, files=files, graph=graph, hooks=hooks, disc=disc)
+    return dict(unfit_names=unfit_names, raw=raw, changes=changes, jobs=jobs, nx=nx, out=out, files=files, graph=graph, hooks=hooks, disc=disc)
+
+
+UNFIT_MARKER = "DECLARED_UNFIT:"
+
+
+def declared_unfit(rr: dict, d: dict, names) -> str | None:
+    """The reason when a job failed because the robot declares the change unfit (an exception class the robot lists
+    under hooks.json `declared_unfit`, or a `DECLARED_UNFIT: <msg>` marker), seen in the spec-generation error or a
+    part's load failure. Such a change is n/a, not a break: the design says no on purpose."""
+    texts = [str(rr.get("error") or "")] + [str(b[2]) for b in d.get("new") or []]
+    for t in texts:
+        if UNFIT_MARKER in t:
+            return t.split(UNFIT_MARKER, 1)[1].strip()[:200] or t[:200]
+        for n in names or ():
+            if n and n in t:
+                return t[:200]
+    return None
 
 
 def verdicts(ev) -> list:
@@ -141,6 +160,10 @@ def verdicts(ev) -> list:
         if not d["broken"]:
             rows.append(dict(change=c, verdict="holds", builds=True, blockers=[], diff={"files": {}, "lines": 0, "by_owner": {}, "settings": settings},
                              hook=c.hook, why=""))
+            continue
+        unfit = declared_unfit(rr, d, ev.get("unfit_names"))
+        if unfit:
+            rows.append(dict(change=c, verdict="n/a", builds=None, blockers=[], diff=None, hook=c.hook, why=f"declared unfit: {unfit}"))
             continue
         parts = sorted({p for b in d["new"] for p in b[1].split(",") if p})
         if d["build_error"] and not parts:
@@ -231,7 +254,7 @@ def markdown(ev, rows, sha="?", cfg=None) -> str:
             c = r["change"]
             b = Counter(x[0] for x in r["blockers"])
             bl = ", ".join(f"{k} x{v}" for k, v in b.most_common(3)) or ("-" if r["verdict"] != "breaks" else r["why"][:80])
-            if r["verdict"] == "not expressible":
+            if r["verdict"] in ("not expressible", "n/a", "not run"):
                 bl = r["why"][:120]
             bu = {True: "yes", False: "no", None: "-"}[r["builds"]]
             L.append(f"| {c.title}{' (' + c.note + ')' if c.note else ''} | {r['verdict']} | {bu} | {bl} | {_diff_text(r['diff'])} |")

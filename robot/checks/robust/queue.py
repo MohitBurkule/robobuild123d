@@ -6,7 +6,8 @@
   work:    python3 -m robot.checks.robust.queue <dir> [--workers N]
            claim a ticket (<dir>/claims/<key>), run it, write <dir>/results/<key>.json, drop the ticket. A claim is
            refreshed every 60 s while its job runs; one older than STALE_S (its container died) is taken over.
-           A worker runs only tickets made from its own checkout's commit (the result key hashes the code).
+           A worker runs only tickets whose code hash (build sources + checks code, what the result key hashes) matches
+           its own checkout, so any commit with the same robot and checks code can help.
 """
 
 from __future__ import annotations
@@ -46,7 +47,23 @@ def _atomic(path: Path, text: str):
     tmp.replace(path)
 
 
-def enqueue(qdir, key: str, job: dict, timeout: float, sha: str | None = None) -> bool:
+_CODE: dict = {}
+
+
+def code_hash(spec: str, model_rel: str) -> str:
+    """cache.h(build-source hash, checks hash) of this checkout, as the runner keys results (runner.run)."""
+    k = (spec, model_rel)
+    if k not in _CODE:
+        from ... import cache
+        from . import discover as D
+        from .runner import checks_hash
+
+        files = D.package_files(Path(spec).resolve().parent / model_rel)
+        _CODE[k] = cache.h(cache.h([f.read_bytes() for f in files]), checks_hash())
+    return _CODE[k]
+
+
+def enqueue(qdir, key: str, job: dict, timeout: float, sha: str | None = None, code: str = "") -> bool:
     """Write a ticket unless the result or the ticket exists. True when a ticket was written."""
     q = Path(qdir)
     for d in ("tickets", "claims", "results"):
@@ -57,7 +74,7 @@ def enqueue(qdir, key: str, job: dict, timeout: float, sha: str | None = None) -
     for k in ("spec", "file"):
         if j.get(k):
             j[k] = _rel(j[k])
-    _atomic(q / "tickets" / f"{key}.json", json.dumps({"key": key, "sha": sha or head_sha(), "timeout": timeout, "job": j}))
+    _atomic(q / "tickets" / f"{key}.json", json.dumps({"key": key, "sha": sha or head_sha(), "code": code, "timeout": timeout, "job": j}))
     return True
 
 
@@ -90,9 +107,20 @@ def next_ticket(qdir, me: str, sha: str):
             tk = json.loads(t.read_text())
         except (ValueError, FileNotFoundError):
             continue
-        if tk.get("sha") and sha and tk["sha"] != sha:
+        if tk.get("code"):  # same robot + checks code as the enqueuer: its result is valid under the ticket's key
+            j = tk["job"]
+            try:
+                mine = code_hash(str(REPO / j["spec"]) if not Path(j["spec"]).is_absolute() else j["spec"], j["model_rel"])
+            except Exception:  # noqa: BLE001 - cannot hash here: leave it to another worker
+                continue
+            if mine != tk["code"]:
+                continue
+        elif tk.get("sha") and sha and tk["sha"] != sha:
             continue
         if claim(qdir, tk["key"], me):
+            if (q / "results" / f"{tk['key']}.json").exists() or not t.exists():  # finished while we looked
+                (q / "claims" / tk["key"]).unlink(missing_ok=True)
+                continue
             return tk
     return None
 
