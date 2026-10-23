@@ -41,7 +41,7 @@ POCKET_X1, POCKET_CH = 32.25, 48.58    # pocket round the outer chassis tab: out
 POCKET_R = 3.0                         # pocket outer corner round
 ROOT_EDGE = (-0.707, 0.579, 0.406, 7.11)   # fork-root inner face n.(x, y, z) = d
 FLARE_MIN = 0.3                        # the blend from the fork into the rear guard ends where it is this wide
-FORK_FLOOR_CLR = 0.25                  # fork underside above the floor (unless the step_forks variant)
+FORK_FLOOR_CLR = 0.25                  # fork underside above the floor (clip_forks variant only)
 FORK_TYRE_IN = 0.2                     # fork outer face inside the tyre's outer face
 POCKET_END_CLR = 0.2                   # tab pocket's end wall past the chassis tab end
 FORK_W = 5.74                          # fork prong width, its outer face just inside the tyre's outer face

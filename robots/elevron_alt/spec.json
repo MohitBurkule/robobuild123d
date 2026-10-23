@@ -100,6 +100,9 @@
    "material": "tpu",
    "process": "fdm",
    "solid_fraction": 0.9,
+   "waive": {
+    "contain.wheel_ground": "ELVRN3.0 Alt / RVRN_revdev STEP Side_Panel_alt_sm: the TPU fork tips are drawn 2.25 mm below the wheels' floor, preloaded onto it; the wheels still drive"
+   },
    "assembly_ok": {
     "reason": "RVRN_revdev STEP Side_Panel_alt_sm: its lip ring round the chassis boss frees it only along X while its tongue in the tab gap frees it only along Z; the TPU pod is sprung over the tab, not slid on in one straight move"
    },
@@ -123,6 +126,9 @@
    "material": "tpu",
    "process": "fdm",
    "solid_fraction": 0.9,
+   "waive": {
+    "contain.wheel_ground": "ELVRN3.0 Alt / RVRN_revdev STEP Side_Panel_alt_sm: the TPU fork tips are drawn 2.25 mm below the wheels' floor, preloaded onto it; the wheels still drive"
+   },
    "assembly_ok": {
     "reason": "RVRN_revdev STEP Side_Panel_alt_sm: its lip ring round the chassis boss frees it only along X while its tongue in the tab gap frees it only along Z; the TPU pod is sprung over the tab, not slid on in one straight move"
    },
@@ -2520,7 +2526,7 @@
    {
     "part": "vert_mod",
     "file": "vert_mod_1.stl",
-    "mode": "envelope",
+    "mode": "shape",
     "tol_mm": 1.5,
     "tol_vol_frac": 0.2,
     "note": "vert_mod: no dump; relations from the STEP solid's faces (see MISSES.md)",
@@ -2548,20 +2554,18 @@
    {
     "part": "side_r",
     "file": "Side_Panel_alt_sm_1.stl",
-    "mode": "envelope",
+    "mode": "shape",
     "tol_mm": 1.5,
     "tol_vol_frac": 0.4,
-    "placement_tol_mm": 3.0,
-    "note": "Side_Panel_alt_sm: no dump (see MISSES.md); the forks stop over the floor (variant step_forks off), so the pod's bbox centre sits 2.6 mm off the STEP's (its fork tips reach 2.25 mm under the wheels' floor)"
+    "note": "Side_Panel_alt_sm: no dump (see MISSES.md)"
    },
    {
     "part": "side_l",
     "file": "MirrorSide_Panel_alt_sm_1.stl",
-    "mode": "envelope",
+    "mode": "shape",
     "tol_mm": 1.5,
     "tol_vol_frac": 0.4,
-    "placement_tol_mm": 3.0,
-    "note": "MirrorSide_Panel_alt_sm; the forks stop over the floor (variant step_forks off), so the pod's bbox centre sits 2.6 mm off the STEP's (its fork tips reach 2.25 mm under the wheels' floor)"
+    "note": "MirrorSide_Panel_alt_sm"
    },
    {
     "part": "disc",

@@ -165,6 +165,6 @@ def sp():
     nonfork = _S(_box(-BIG, BIG, -BIG, BIG, -BIG, 0), _box(*FORK_X, CROSS_Y0, BIG, -BIG, BIG))
     s = _S(s, under_b(), nonfork)
     from .variants import variant
-    if not variant("step_forks"):
-        s = _S(s, _box(-BIG, BIG, -BIG, BIG, -BIG, FORK_FLOOR_CLR - FLOOR_LIFT))   # forks stop over the floor
+    if variant("clip_forks"):
+        s = _S(s, _box(-BIG, BIG, -BIG, BIG, -BIG, FORK_FLOOR_CLR - FLOOR_LIFT))   # forks stop over the floor (departure)
     return _solid(s)

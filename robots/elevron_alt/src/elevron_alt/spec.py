@@ -61,6 +61,8 @@ def _structure(P, M):
       label="vert_mod weapon module: hollow ramp shell on the deck (4 M2 into the column heat-sets), bulkhead, uprights carrying the BE1806 and the MF85, motor shroud, prongs on the cross bolts")
     for s, n in SIDES:
         P(id=f"side_{n}", kind="armor", print_orientation="+z", rotates_with="fixed", color="#3c4048", shape=M(f"side_{n}"), **TPU,
+          **({} if variant("clip_forks") else {"waive": {"contain.wheel_ground": "ELVRN3.0 Alt / RVRN_revdev STEP Side_Panel_alt_sm: the TPU fork "
+                                                      "tips are drawn 2.25 mm below the wheels' floor, preloaded onto it; the wheels still drive"}}),
           assembly_ok={"reason": "RVRN_revdev STEP Side_Panel_alt_sm: its lip ring round the chassis boss frees it only along X while its tongue in "
                                  "the tab gap frees it only along Z; the TPU pod is sprung over the tab, not slid on in one straight move"},
           thin_wall_deviation="RVRN Side_Panel_alt_sm as drawn: the front boss screw's head bore runs 0.7 mm over the raked underside",
@@ -303,18 +305,18 @@ def reference_cad():
     est_dev += [{"near": _w(POCKET_R_DEV[0], POCKET_R_DEV[1], POCKET_R_DEV[2]), "r": SLIVER_DEV_R, "reason": "ELVRN3.0 Alt Sketch18 right rear "
                  "corner pocket's bay-side corner: STEP R about 0.9 vs our LAT_R 1.0, 0.15 mm off (the left one matches)"}]
     from .variants import variant
-    step_forks = variant("step_forks")
-    side_place = {} if step_forks else {"placement_tol_mm": FORK_PLACE_TOL}
-    fork_note = "" if step_forks else ("; the forks stop over the floor (variant step_forks off), so the pod's bbox centre sits "
+    clip = variant("clip_forks")
+    side_place = {"placement_tol_mm": FORK_PLACE_TOL} if clip else {}
+    fork_note = "" if not clip else ("; the forks stop over the floor (variant clip_forks on), so the pod's bbox centre sits "
                                        "2.6 mm off the STEP's (its fork tips reach 2.25 mm under the wheels' floor)")
     rows = [dict(part="chassis", file="Alt_chassis_1.stl", mode="shape", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["chassis"], note="Alt_chassis (dump replay by relations)", deviations=tab_dev + reb_dev + deck_dev + est_dev),
-            dict(part="vert_mod", file="vert_mod_1.stl", mode="envelope", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["vert"], note="vert_mod: no dump; relations from the STEP solid's faces (see MISSES.md)",
+            dict(part="vert_mod", file="vert_mod_1.stl", mode="shape", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["vert"], note="vert_mod: no dump; relations from the STEP solid's faces (see MISSES.md)",
                  deviations=[] if variant("step_cross_bolt") else [{"near": _w(s * (PRONG[0] + NUT_HALF), HY + TAB_HOLE_DY, TAB_HOLE_Z), "r": NUT_DEV_R,
                               "reason": "ours, not the STEP's (variant step_cross_bolt off): the thin cross-bolt nut captive in the prong (the STEP prong "
                                         "has a plain hole, its bolt threading 2.5 mm into the pod tongue) leaves 0.8 mm to the prong window"} for s in (-1, 1)]),
-            dict(part="side_r", file="Side_Panel_alt_sm_1.stl", mode="envelope", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["side"], **side_place,
+            dict(part="side_r", file="Side_Panel_alt_sm_1.stl", mode="shape", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["side"], **side_place,
                  note="Side_Panel_alt_sm: no dump (see MISSES.md)" + fork_note),
-            dict(part="side_l", file="MirrorSide_Panel_alt_sm_1.stl", mode="envelope", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["side"], **side_place,
+            dict(part="side_l", file="MirrorSide_Panel_alt_sm_1.stl", mode="shape", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["side"], **side_place,
                  note="MirrorSide_Panel_alt_sm" + fork_note),
             dict(part="disc", file="Drisk_floating_3_1.stl", mode="envelope", tol_mm=TOL["std"], note="the Revron disc")]
     for s, n, f in ((-1, "l", "RV21_Rear_Wheel_1.stl"), (1, "r", "RV21_Rear_Wheel_2.stl")):
