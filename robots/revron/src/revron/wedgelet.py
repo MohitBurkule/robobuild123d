@@ -10,6 +10,7 @@ from .params import (ARC_N, GEO_EPS, FK_PIN_ANG, FK_PIN_DIST, FK_X, FLOOR_Z, LUG
                      WG_CHAMFER_END, WG_FLANK_R, WG_MERGE_EPS, WG_MOUNT_GAP, WG_NOTCH, WG_PIN_SWING, WG_RAMP_DEG, WG_RING_CHAMFER_Y,
                      WG_SA_R, WG_SKIN_RUN, WG_SLIT_W, WG_SKIN_T, WG_SLAB, WG_TAB_FILM, WG_TAB_LEAN_DEG, WG_TAB_LEAN_FOOT, WG_TAPER_DEG, WG_TOE_CHAMFER, WG_TOP_Z, WG_X0)
 from .params_chassis import SIZE_DW
+from .params import BELT_r, BELT_X, FH_LEN, FH_ORIGIN_X, O_RING
 from .common import _I, _S, _U, _arc, _b, _box, _cyl, _ext, _mirror_x
 
 _DOT = lambda a, c: a[0] * c[0] + a[1] * c[1]   # noqa: E731
@@ -271,7 +272,13 @@ def wedgelet(s):
     from .mount import weapon_mount
     mount = "l" if s < 0 else "r"
     sh = _wedgelet_lh(mount)
-    sh = sh.moved(_b().Location((-SIZE_DW, 0, 0)))             # drawn at the stock width: a wider chassis lengthens the standoffs and carries the wedgelet out with their ends
+    bb = sh.bounding_box()                                   # drawn at the stock width: a wider chassis lengthens the standoffs and carries the wedgelet out with their ends;
+    if SIZE_DW > 0:
+        sh = sh.moved(_b().Location((-SIZE_DW, 0, 0)))
+    elif SIZE_DW < 0:   # a narrower one shortens them: the outer face moves in, the inner (against the tub lug) stays
+        sh = _S(_I(sh, _box(bb.min.X - SIZE_DW, 0, -1e3, 1e3, -1e3, 1e3)),   # and the front hub, which moves in with the wall, gets its envelope (belt groove + a gap) cleared
+                _cyl(BELT_r + O_RING[1] / 2 + WG_BOSS_GAP, -FH_ORIGIN_X - FH_LEN, -FH_ORIGIN_X, SA),
+                _box(-BELT_X["centre"] - O_RING[1] / 2 - WG_BOSS_GAP, -BELT_X["centre"] + O_RING[1] / 2 + WG_BOSS_GAP, -1e3, SA[0], -1e3, SA[1]))   # and the belt's run back to the rear hub
     sh = sh if s < 0 else _mirror_x(sh)
     c = sum(FK_X[s]) / 2                                   # the slit (printable variant) is centred on the tine
     slit = [_I(_fork_slot(s), _box(c - WG_SLIT_W / 2, c + WG_SLIT_W / 2, *WG_FAR))] if WG_SLIT_W else []
