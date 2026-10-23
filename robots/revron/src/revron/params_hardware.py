@@ -38,7 +38,7 @@ WIRES = [("w_bat_sw", "battery.jst_rcy", "power_switch.in", AWG["power"], "power
 # make_spec tables: weapon shaft, web floors, hub pivots, electronics placements, press-fit interference, belt geometry
 WEB = dict(spider=0.8, disc=0.9, fork=1.05)             # min_web_mm the designer owns (STEP measures the same webs)
 HUB_SPIN_DEG = 2.45                                   # rear hubs sit this far round the D-shaft (STEP: the D-bore flat, nut slot and grub are turned 2.45 deg; the Distance/Concentric mates leave the spin free)
-HUB_PIVOT_X = dict(rear=41.6, front=34.5 + SIZE_DW)               # |X| of each hub's revolute pivot
+HUB_PIVOT_X = dict(rear=41.6 + SIZE_DW, front=34.5 + SIZE_DW)               # |X| of each hub's revolute pivot
 # BATTERY (RV16 pack catalog id) comes from params_chassis: the front wall follows the pack length
 BAT_L, BAT_W, BAT_H = hw.size(BATTERY)                    # catalog box (long side L): in the bay it is turned 90 about Z, so L runs along Y and W along X
 BAT_BELOW = BAT_H / 2                                     # catalog origin -> pack underside (STEP pack 11 thick, z 6.5..17.5 about origin z 12)
@@ -56,13 +56,13 @@ SW_SCREW_Y = tuple(round(ELEC["switch_yz"][0] + sg * SW_PITCH / 2, 6) for sg in 
 SW_BOLT_Z, TOP_BOLT_Z = ELEC["switch_yz"][1] + SW_BODY_H / 2, TOP_Z0 + TOP_T  # switch screws (Y, head Z) and the top-panel screw head plane
 PRESS = dict(hub=0.05, tyre=0.3, micro=0.2, nut=0.05, shaft=0.02, bearing=BRG_PRESS, pack=0.1)   # press-fit interference per joint, mm
 BELT_R, BELT_r = 7.95, 4.2   # O-ring centreline radii: rear / front hub groove floor (7.45, 3.7) + half the 1.0 cs
-BELT_X = dict(centre=31.25)                                              # |X| of the O-ring centreline (hub groove centre)
+BELT_X = dict(centre=31.25 + SIZE_DW)                                              # |X| of the O-ring centreline (hub groove centre)
 O_RING = (45, 1.0)                                      # stock O-ring ID x cross-section
 
 
 # intent-probe parameters (rear hub / tyre / nut / seat) and the TPU-print exceptions of the chassis wall
-HUB_PROBE_X = 35.0                                      # |X| of the keyed-bore probe point (inside the bore, off its centre line)
-HUB_BORE_SPAN, TYRE_SPAN = (30.5, 40.5), (32.5, 42.0)   # |X| of the hub's blind D-bore and of the tyre seat
+HUB_PROBE_X = 35.0 + SIZE_DW                                      # |X| of the keyed-bore probe point (inside the bore, off its centre line)
+HUB_BORE_SPAN, TYRE_SPAN = (30.5 + SIZE_DW, 40.5 + SIZE_DW), (32.5 + SIZE_DW, 42.0 + SIZE_DW)   # |X| of the hub's blind D-bore and of the tyre seat
 TYRE_ID, TYRE_STRETCH, NUT_MOVE, WHEEL_MIN_GAP = 13.0, 1.0, 0.3, 1.0   # relaxed F1 tyre ID, its stretch over the crown, nut play, wheel-to-armour gap
 SEAT_PLAY, SEAT_TURN_DEG = 0.15, 2.0                      # motor boss play in the keyhole, shaft turn it allows
 WALL_MIN = 1.8                                            # printed wall floor: 4+ perimeters on a 2 mm wall

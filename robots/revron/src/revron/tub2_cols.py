@@ -1,7 +1,7 @@
 """[tub2] Insert columns: the rear-centre boss with its R-skin fillet, and the heat-set bores."""
 from build123d import Align, BuildSketch, Circle, Cone, Cylinder, Locations, Plane, Pos
 from .tub2_params import (INS, INS_AXIS, TOP_XY, TOP_SCREW_WEB, TOP_NECK, TOP_PILOT_R, COL_R, SKIN, BORE_R, BORE_CH, CH_Z0, CH_Z1, DECK, OVER,
-                          WALL_IN_REAR, SEAT_Z, BOSS_AT_REAR)
+                          WALL_IN_REAR, SEAT_Z, BOSS_AT_REAR, FLANK_X)
 from .tub2_util import box_xy, concave_filler, prism
 
 
@@ -15,6 +15,8 @@ def rear_boss():
     if not BOSS_AT_REAR:                       # moved out in front of the gearmotor (params_chassis.BOSS_Y): a free-standing column, no flanks back to the wall
         return boss
     flank = box_xy(bx - COL_R, bx + COL_R, WALL_IN_REAR - OVER, by, CH_Z0, DECK + OVER)
+    if FLANK_X > COL_R:                        # a wider chassis moves the gearmotor out of the round column's reach: a stop block as wide as the motor has moved stands in for it
+        flank += box_xy(bx - FLANK_X, bx + FLANK_X, WALL_IN_REAR - OVER, by + COL_R, CH_Z0, DECK + OVER)
     fil = prism(concave_filler((bx + COL_R, WALL_IN_REAR), (1, 1), SKIN), CH_Z0, DECK + OVER)
     return boss + flank + fil + fil.mirror(Plane.YZ)
 
