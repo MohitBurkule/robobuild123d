@@ -250,7 +250,9 @@ def test_runner_resumes_from_results_folder(tmp_path, monkeypatch):
     spec = tmp_path / "spec.json"
     spec.write_text("{}")
     monkeypatch.setenv("ROBOT_ROBUST_RESULTS", str(tmp_path / "res"))
-    monkeypatch.setenv("ROBOT_NO_CACHE", "1")
+    from robot import cache
+
+    monkeypatch.setattr(cache, "_enabled", False)  # only the results folder may answer
     calls = []
 
     def ex(job, timeout):
