@@ -56,7 +56,7 @@ INFRA_ERRORS = ("No space left on device", "Errno 28", "Errno 12", "Cannot alloc
 def is_infra(res: dict) -> bool:
     """A job that died of the machine (disk full, out of memory), not of the change: no verdict, never cached."""
     e = str(res.get("error") or "")
-    return res.get("stage") == "infra" or any(m in e for m in INFRA_ERRORS)
+    return res.get("stage") in ("infra", "pending") or any(m in e for m in INFRA_ERRORS)
 
 
 def diff(base: dict, res: dict, kind: str = "param") -> dict:
@@ -106,7 +106,10 @@ def run(jobs, spec_path, model_rel, budget_s=900.0, workers=3, execute=subproces
 
     ch = checks_hash() if src_hash else ""
 
+    queue = os.environ.get("ROBOT_ROBUST_QUEUE")  # a shared queue dir: its results/ is the store
     store = Path(os.environ["ROBOT_ROBUST_RESULTS"]) if os.environ.get("ROBOT_ROBUST_RESULTS") else None
+    if queue:
+        store = Path(queue) / "results"
     if store:  # per-job results kept beside the report (a shared folder): a restarted run resumes where it stopped
         store.mkdir(parents=True, exist_ok=True)
 
@@ -122,6 +125,11 @@ def run(jobs, spec_path, model_rel, budget_s=900.0, workers=3, execute=subproces
             hit = cache.get("robust", k)
             if not cache.is_missing(hit):
                 return hit
+        if queue and k:  # shared queue: leave a ticket for any worker; the report shows it as not run until then
+            from . import queue as Q
+
+            Q.enqueue(queue, k, jd, max(timeout, 3600.0))
+            return {"id": jd.get("id"), "error": "queued for a queue worker", "stage": "pending", "blockers": []}
         res = execute(jd, timeout)
         if k and res.get("stage") not in ("timeout", "worker") and not is_infra(res):
             cache.put("robust", k, res)
@@ -134,7 +142,7 @@ def run(jobs, spec_path, model_rel, budget_s=900.0, workers=3, execute=subproces
     # the baseline is regenerated from the sources like every job (a committed spec.json can lag the code)
     base = cached_exec(dict(common, id="baseline", regen=bool(model_rel)), max(60.0, budget_s))
     out = {"baseline": base, "results": {}, "not_run": [], "seconds": 0.0}
-    if base.get("error"):
+    if base.get("error") and base.get("stage") != "pending":  # a queued baseline still lets every job be queued
         out["not_run"] = [j.id for j in jobs]
         out["seconds"] = round(clock() - t0, 1)
         return out

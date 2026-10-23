@@ -288,3 +288,39 @@ def test_geometry_key_includes_declared_setting_env(monkeypatch, tmp_path):
     k1 = geom.key_for(sh, tmp_path)
     monkeypatch.setenv("REVRON_SIZE_WIDTH", "20%")
     assert len({k0, k1, geom.key_for(sh, tmp_path)}) == 3  # a part built under another setting is another part
+
+
+def test_shared_queue_enqueue_work_report(tmp_path, monkeypatch):
+    from robot import cache
+    from robot.checks.robust import plan as P, queue as Q, runner as R
+
+    monkeypatch.setattr(cache, "_enabled", False)
+    spec = tmp_path / "spec.json"
+    spec.write_text("{}")
+    q = tmp_path / "q"
+    monkeypatch.setenv("ROBOT_ROBUST_QUEUE", str(q))
+    jobs = [P.Job("a", "a", "hyp", overlay=[{"op": "x"}]), P.Job("b", "b", "hyp", overlay=[{"op": "y"}])]
+    never = lambda job, t: (_ for _ in ()).throw(AssertionError("enqueue must not run jobs"))
+    out = R.run(jobs, spec, "m.py", 600, 1, execute=never, src_hash="s", log=lambda *a: None)
+    assert len(list((q / "tickets").glob("*.json"))) == 3  # baseline + 2
+    assert all(d.get("infra") and not d["broken"] for _, _, d in out["results"].values())  # queued = not run, not broken
+    ran = []
+
+    def fake(job, timeout):
+        ran.append(job["id"])
+        return {"id": job["id"], "blockers": [["x.y", "p", "m"]] if job["id"] == "b" else [], "rebuilt": []}
+
+    Q.work(q, 2, execute=fake, log=lambda *a: None)
+    assert sorted(ran) == ["a", "b", "baseline"] and not list((q / "tickets").glob("*.json"))
+    out = R.run(jobs, spec, "m.py", 600, 1, execute=never, src_hash="s", log=lambda *a: None)
+    assert not out["results"]["a"][2]["broken"] and out["results"]["b"][2]["broken"]
+
+
+def test_queue_stale_claim_is_taken_over(tmp_path):
+    from robot.checks.robust import queue as Q
+
+    Q.enqueue(tmp_path, "k1", {"id": "j"}, 60, sha="s")
+    assert Q.claim(tmp_path, "k1", "w1")
+    assert not Q.claim(tmp_path, "k1", "w2")  # fresh claim held
+    assert Q.claim(tmp_path, "k1", "w2", now=lambda: __import__("time").time() + Q.STALE_S + 5)  # its worker died
+    assert Q.next_ticket(tmp_path, "w3", "other-sha") is None  # tickets of another commit are left alone

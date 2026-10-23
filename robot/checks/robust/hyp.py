@@ -132,7 +132,7 @@ def verdicts(ev) -> list:
             continue
         _, rr, d = r
         if d.get("infra"):  # the machine failed (disk full, ...): no verdict, re-run it
-            rows.append(dict(change=c, verdict="not run", builds=None, blockers=[], diff=None, hook=c.hook, why=f"infrastructure: {d['infra'][:160]}"))
+            rows.append(dict(change=c, verdict="not run", builds=None, blockers=[], diff=None, hook=c.hook, why=("queued" if rr.get("stage") == "pending" else f"infrastructure: {d['infra'][:160]}")))
             continue
         if d["timeout"]:
             rows.append(dict(change=c, verdict="timeout", builds=None, blockers=[], diff=None, hook=c.hook, why=rr.get("error") or ""))
@@ -261,9 +261,15 @@ def main(argv=None):
     ap.add_argument("--budget", type=float, default=3600.0)
     ap.add_argument("--workers", type=int, default=3)
     ap.add_argument("--top", type=int, default=8)
+    ap.add_argument("--queue", help="shared queue dir: leave tickets for `python3 -m robot.checks.robust.queue <dir>` "
+                    "workers and report what is done (re-run to refresh)")
     ap.add_argument("--match", help="only hypotheses whose id contains this text")
     ap.add_argument("--only", help="comma list of families to run (swap,dimension,architecture,size)")
     a = ap.parse_args(argv)
+    if a.queue:
+        import os
+
+        os.environ["ROBOT_ROBUST_QUEUE"] = str(Path(a.queue).resolve())
     ev = evaluate(Path(a.spec), a.budget, a.workers, a.top, only=a.only.split(",") if a.only else None, match=a.match)
     rows = verdicts(ev)
     try:
