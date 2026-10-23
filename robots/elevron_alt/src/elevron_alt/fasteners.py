@@ -45,12 +45,14 @@ class Joint:
     head_clear: float = 10.0
     sink: float = 0.0
     cbore: float = 0.0   # counterbore depth from the host's face to the head seat
+    fit: str = "close"   # clearance class of the head-side hole (the STEP draws M3 3.2, M2 2.2 throughout)
 
     def tool_and_record(self):
         """Head-side cutter and record (Revron convention: the head side is cut and recorded; the thread side is the
         host's own feature: a heat-set bore, nut pocket, tapped standoff or the motor's tapped base)."""
         return hole_tool(self.at, self.axis, self.fastener, head=self.head, into="through", grip=self.grip, side="head",
-                         head_clear=self.head_clear, cbore=None if self.head == "csk" else self.cbore, sink=self.sink)
+                         head_clear=self.head_clear, cbore=None if self.head == "csk" else self.cbore, sink=self.sink,
+                         fit=self.fit)
 
 
 def _seen_face(y, z, n=12):
