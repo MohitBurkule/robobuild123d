@@ -59,3 +59,25 @@ def test_mount_follows_top_panel_notch(env):
     assert d["above"] < d["notch_x"]
     assert all(y > d["shoulder"] for y in d["notch_y"])
     assert [round(y - d["shoulder"], 6) for y in d["notch_y"]] == [2.27, 1.1]
+
+
+EARS = """
+import sys, json
+sys.path.insert(0, {repo!r}); sys.path.insert(0, {src!r})
+from revron.mount import weapon_mount
+from revron.panel_top import top_panel
+t = top_panel()
+print(json.dumps({{s: [(m & t).volume, m.distance_to(t)] for s, m in ((s, weapon_mount(s)) for s in "lr")}}))
+"""
+
+
+@pytest.mark.parametrize("variant", ["", "printable"])
+def test_mount_clears_top_panel_ears_narrow(variant):
+    """width -10 %: the top panel's front ears pass under the mount's notch-top tip (thickened in the printable variant);
+    mount_l / mount_r must keep a gap to top_panel, not touch it (fixer A report after #41)."""
+    e = dict(os.environ, REVRON_SIZE_WIDTH="-10%", REVRON_MOUNT_VARIANT=variant)
+    out = subprocess.run([sys.executable, "-c", EARS.format(repo=str(REPO), src=str(SRC))], env=e, capture_output=True, text=True, timeout=600)
+    assert out.returncode == 0, out.stderr[-2000:]
+    d = json.loads(out.stdout.strip().splitlines()[-1])
+    for s, (vol, gap) in d.items():
+        assert vol < 0.01 and gap > 0.2, (s, vol, gap)
