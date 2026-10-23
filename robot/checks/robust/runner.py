@@ -131,7 +131,8 @@ def run(jobs, spec_path, model_rel, budget_s=900.0, workers=3, execute=subproces
                 tmp.replace(store / f"{k}.json")
         return res
 
-    base = cached_exec(dict(common, id="baseline"), max(60.0, budget_s))
+    # the baseline is regenerated from the sources like every job (a committed spec.json can lag the code)
+    base = cached_exec(dict(common, id="baseline", regen=bool(model_rel)), max(60.0, budget_s))
     out = {"baseline": base, "results": {}, "not_run": [], "seconds": 0.0}
     if base.get("error"):
         out["not_run"] = [j.id for j in jobs]

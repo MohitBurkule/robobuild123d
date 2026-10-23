@@ -143,14 +143,15 @@ def run_job(job: dict) -> dict:
         if Path(src_store).exists():
             shutil.copy(src_store, store)
         integrity.store_path = lambda name: store  # never move the real previous-volume baseline
-        if job.get("file"):
+        if job.get("file") or job.get("regen"):  # regen: the baseline is generated from the sources too, never the committed spec.json
             spec_dir, dst = stage_copy(spec_path, model_rel, tmp)
-            target = dst / Path(job["file"]).resolve().relative_to(spec_dir)
-            try:
-                apply_edit(target, job)
-            except Exception as e:  # noqa: BLE001
-                res["error"] = f"edit failed: {e}"
-                return res
+            if job.get("file"):
+                target = dst / Path(job["file"]).resolve().relative_to(spec_dir)
+                try:
+                    apply_edit(target, job)
+                except Exception as e:  # noqa: BLE001
+                    res["error"] = f"edit failed: {e}"
+                    return res
             err = regenerate(dst, model_rel, tmp, float(job.get("timeout", 600)), job.get("env"))
             if err:
                 res.update(error=err, stage="build", seconds=round(time.time() - t0, 1))
