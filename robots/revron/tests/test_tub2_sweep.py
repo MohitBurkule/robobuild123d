@@ -646,3 +646,37 @@ def test_size_steps_keep_the_parts_retained_removable_and_seated(env, tmp_path):
     assert r["RX_FRONT"] == [0.0], r
     assert r["SWITCH"] == [0.0, -1.5, -0.5], r
     assert r["SHOULDER"][0] <= r["SHOULDER"][1] + 1e-6, r
+
+
+# ---- the tub's mesh is closed under every compartment layout / rotor span ----------------------------------------------------------
+MESH = """
+import sys
+sys.path[:0] = [%r, %r]
+import numpy as np, trimesh
+from revron import tub2, tub2_iface
+from robot.geom import tessellate, FINE
+V, F = tessellate(tub2.chassis2(), FINE)
+m = trimesh.Trimesh(V, F, process=True)
+print("MESH", m.is_watertight, m.is_winding_consistent, tub2_iface.SPIDER_OUT)
+"""
+
+
+def _mesh(env, tmp_path):
+    r = subprocess.run([sys.executable, "-c", MESH % (SRC, ROOT)], capture_output=True, text=True, env={**os.environ, **env})
+    row = [ln.split() for ln in r.stdout.splitlines() if ln.startswith("MESH")]
+    assert row, r.stderr[-1500:]
+    return row[-1]
+
+
+@pytest.mark.parametrize("layout", ["standard", "none", "split_battery_bay"])
+def test_tub_mesh_is_watertight_for_every_layout(layout, tmp_path):
+    """compartments=none: no stop wall, so the rear X pocket must not end flush with the corner blocks' faces (a hairline the mesh left open: integrity.solids)."""
+    row = _mesh({"REVRON_COMPARTMENTS": layout}, tmp_path)
+    assert row[1:3] == ["True", "True"], row
+
+
+def test_tab_wall_clears_the_whole_rotor(tmp_path):
+    """The tab wall stands off the rotor span (spider to stack-bolt heads) the weapon module reports, not only off the spider: a TC1404 moves the stack so the heads, not the spider, reach furthest."""
+    stock = _mesh({}, tmp_path)
+    short = _mesh({"REVRON_WEAPON_MOTOR": "brotherhobby_tc1404_3800kv"}, tmp_path)
+    assert float(stock[3]) == 9.7 and float(short[3]) > float(stock[3]), (stock, short)

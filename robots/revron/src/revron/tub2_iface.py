@@ -12,7 +12,9 @@ MOUNT_FRAMES = IFACE["mount_frames"]
 
 
 def _spider_out():
-    """|X| of the spider's outer face (the face nearest its mount): the interface's `spider_x` when the weapon module gives it, else the drisk stack chain."""
+    """|X| of the rotor's outer end (what spins out at the stack-bolt circle: the spider's outer face, or the stack-bolt heads when a short motor moves the stack): the interface's `rotor_x` when the weapon module gives it, else its `spider_x`, else the drisk stack chain."""
+    if IFACE.get("rotor_x"):
+        return max(abs(v) for v in IFACE["rotor_x"])
     if IFACE.get("spider_x"):
         return max(abs(v) for v in IFACE["spider_x"])
     if not HAS_TAB or not hasattr(_pw, "DR_X"):
