@@ -22,7 +22,7 @@ def test_switch_screws_straddle_the_switch_on_its_body_top():
     yc, zc = P.ELEC["switch_yz"]
     ys = sorted(J.place_at(f"bolt_sw{i}")[1] for i in range(2))
     assert math.isclose((ys[0] + ys[1]) / 2, yc) and math.isclose(ys[1] - ys[0], P.SW_PITCH)
-    assert all(math.isclose(J.place_at(f"bolt_sw{i}")[2], zc + P.SW_BODY_H / 2) for i in range(2))
+    assert all(math.isclose(J.place_at(f"bolt_sw{i}")[2], zc + P.SW_EAR_H) for i in range(2))
 
 
 def test_motors_mirror_about_the_centre_plane():

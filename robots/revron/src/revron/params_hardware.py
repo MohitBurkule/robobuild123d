@@ -45,15 +45,31 @@ BAT_BELOW = BAT_H / 2                                     # catalog origin -> pa
 BAT_STOP_GAP = 0.0                                        # pack rear face to the stop wall front face it butts (STEP: the RV16 pack touches the RV01 stop wall)
 BAT_Y = round(KEY_SPAN[1] + BAT_STOP_GAP + BAT_L / 2, 6)  # pack centre Y: the pack stands against the stop wall, so a wider gearmotor (stop wall further forward) pushes it forward
 BAT_Z = round(CH["deck"] - BAT_H / 2, 6)                # pack centre Z: the pack top rests against the deck underside (STEP pack 11 thick, z 6.5..17.5 about origin z 12), so a taller pack hangs lower; underside 2.0 over the base panel skin at the default (original: no pad, pack mated to the chassis only; foam pad = variant battery_pad)
-ELEC = dict(battery=(BAT_X, BAT_Y, BAT_Z), rxesc=RX_C, wesc=(8.63, -7.25, 10.6), switch_yz=(round(sum(y for x, y in INS_COLS if x > 0) / 2, 6), 14.25 + SIZE_DH))   # catalog origins (STEP envelopes); the switch sits on the middle of the column rows (it follows the nose) and under the deck (it follows the rim)
+SW_SEAT_Z = CH["deck"] - CH_WALL / 2                     # the switch ears seat on the deck pad's underside: one skin under the deck underside
+SW_Y = round(sum(y for x, y in INS_COLS if x > 0) / 2, 6)  # the screw row is centred on the middle of the column rows (it follows the nose)
+def _switch_y():
+    """Origin Y of the power switch: its screw row centred on the middle of the column rows (SW_Y), moved along the wall to the nearest place where its whole footprint (body and ears) stands
+    clear of the bore sleeves of the +X columns and inside the front and rear walls (a switch with ears off to one side reaches a column; the stock switch clears them and stays put)."""
+    reach, want, pad, tol = hw.reach(SWITCH), SW_Y - SW["cx"], KEEP_R + SLEEVE_CLR, 1e-6
+    cols = [y for x, y in INS_COLS if x > 0 and abs(x - SWX) < pad + max(reach["y1"], -reach["y0"])]   # columns the footprint passes
+    bad = [(y - pad - reach["x1"] + tol, y + pad - reach["x0"] - tol) for y in cols]                    # open intervals of origin Y that put the footprint in a sleeve
+    bad += [(-math.inf, WALL_IN_REAR - reach["x0"]), (WALL_IN_FRONT - reach["x1"], math.inf)]           # ... or through the rear / front wall
+    free = lambda v: not any(a < v < b for a, b in bad)
+    return min((v for v in [want] + [e for iv in bad for e in iv if abs(e) != math.inf] if free(v)), key=lambda v: abs(v - want), default=want)
+
+
+ELEC = dict(battery=(BAT_X, BAT_Y, BAT_Z), rxesc=RX_C, wesc=(8.63, -7.25, 10.6), switch_yz=(round(_switch_y(), 6), round(SW_SEAT_Z - SW["top"], 6)))   # catalog origins (STEP envelopes); the switch sits on the middle of the column rows (it follows the nose) and under the deck (it follows the rim)
 BAT_PAD_FRAC = 3                                         # the foam pad is this fraction of the pack footprint each way
 _bx, _by = ELEC["battery"][:2]   # pack centre
 BAT_PAD = dict(x=(_bx - BAT_W / BAT_PAD_FRAC / 2, _bx + BAT_W / BAT_PAD_FRAC / 2), y=(_by - BAT_L / BAT_PAD_FRAC / 2, _by + BAT_L / BAT_PAD_FRAC / 2))   # double-sided foam pad footprint under the pack, centred, base-panel skin top -> pack underside
 FILLET_REAR_X = 26.77   # |X| where the squared N10 gearbox-plate seat meets its seat arc at the rear wall (measured on our section z=10; RV01 26.5)
 SWX_DEV_R = 3.0   # reference_cad deviation radius round each switch pilot (hole shifted 0.45 from the STEP); holds the whole pilot pad blob (x 23.7-26.2, deck to rim)
-SW_PITCH, SW_BODY_H = 15.0, 3.5   # BBB ant switch ear-hole pitch and body height (catalog)
-SW_SCREW_Y = tuple(round(ELEC["switch_yz"][0] + sg * SW_PITCH / 2, 6) for sg in (1, -1))   # the two ear holes straddle the switch centre
-SW_BOLT_Z, TOP_BOLT_Z = ELEC["switch_yz"][1] + SW_BODY_H / 2, TOP_Z0 + TOP_T  # switch screws (Y, head Z) and the top-panel screw head plane
+SW_ROW_Y = round(ELEC["switch_yz"][0] + SW["cx"], 6)   # centre of the screw row (the pad is centred on it)
+SW_PITCH, SW_EAR_H = SW["pitch"], SW["under"]   # switch ear-hole pitch (catalog) and the ears' underside above the switch origin (the screw head plane)
+SW_SCREW_Y = tuple(round(ELEC["switch_yz"][0] + h[0], 6) for h in SW["holes"])   # the ear holes straddle the screw row centre; none for a switch without catalog holes
+SW_BITE = CH_WALL + CH_WALL / 4   # thread bite of a switch screw above the ears' seat: the deck and a quarter of its thickness
+SW_SCREW = f"{SW['thread']}x{math.ceil(round(SW['top'] - SW['under'] + SW_BITE, 6))}" if SW["holes"] else None   # the ears' thickness plus the bite, whole mm (M2x3 at the default)
+SW_BOLT_Z, TOP_BOLT_Z = ELEC["switch_yz"][1] + SW_EAR_H, TOP_Z0 + TOP_T  # switch screws (Y, head Z) and the top-panel screw head plane
 PRESS = dict(hub=0.05, tyre=0.3, micro=0.2, nut=0.05, shaft=0.02, bearing=BRG_PRESS, pack=0.1)   # press-fit interference per joint, mm
 BELT_R, BELT_r = 7.95, 4.2   # O-ring centreline radii: rear / front hub groove floor (7.45, 3.7) + half the 1.0 cs
 BELT_X = dict(centre=31.25 + SIZE_DW)                                              # |X| of the O-ring centreline (hub groove centre)
@@ -94,7 +110,7 @@ REF_BOM = [   # RVRN 2.0 STEP part list (research/rvrn_step/INDEX.txt); one row 
     dict(role="RV17/18 wedgelets", kind="part", match=["wedgelet_*"], count=2, material="tpu"),
     dict(role="RV23/24 side panels", kind="part", match=["side_*"], count=2, material="tpu"),
     dict(role="Top panel 0.9 sheet", kind="part", match=["top_panel"], count=1),
-    dict(role="RV15 BBB antweight switch", kind="part", match=["power_switch"], count=1, catalog="switch_bbb_ant_rvrn2"),
+    dict(role="RV15 BBB antweight switch", kind="part", match=["power_switch"], count=1, catalog=SWITCH),
     dict(role="RV16 Turnabot 2S 180 mAh", kind="part", match=["battery"], count=1, catalog=BATTERY),
     dict(role="RV13 Malenki nano", kind="part", match=["rxesc"], count=1, catalog=RXESC),
     dict(role="RV14 brushless ESC", kind="part", match=["wesc"], count=1, catalog=WESC),

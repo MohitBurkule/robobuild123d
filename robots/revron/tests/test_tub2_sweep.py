@@ -99,7 +99,8 @@ tub = tub2.chassis2()
 keep = B._U(*B.KEEP)
 print("TUB", len(tub.solids()), tub.is_valid, round(tub.volume, 3))
 for pid, cid, at, rot in (("motor_l", DRIVE_MOTOR, (-MOTX, RY, RZ), (0, 0, 180)), ("motor_r", DRIVE_MOTOR, (MOTX, RY, RZ), (0, 0, 0)),
-                          ("battery", BATTERY, ELEC["battery"], (0, 0, 90)), ("rxesc", RXESC, RX_C, (0, 0, 90)), ("wesc", WESC, WE_C, (0, 0, 90))):
+                          ("battery", BATTERY, ELEC["battery"], (0, 0, 90)), ("rxesc", RXESC, RX_C, (0, 0, 90)), ("wesc", WESC, WE_C, (0, 0, 90)),
+                          ("power_switch", SWITCH, (SWX, *ELEC["switch_yz"]), (0, 0, 90))):
     sol = hw.placed(cid, at, rot)
     print("OVL", pid, round(((tub & sol) - keep).volume, 4), round((tub & sol).volume, 4))   # clear of the tub outside the heat-set bore sleeves
     print("SLV", pid, round((sol & keep).volume, 4))                                          # nothing stands in a heat-set bore sleeve
@@ -501,7 +502,8 @@ def test_default_size_is_the_stock_tub(tmp_path):
 # ---- [fix-A-hyp] change-hypothesis sweeps: swaps are settings the tub follows; a screw size is a name, not a dimension ----
 HOOKS_JSON = pathlib.Path(SRC).parent / "hooks.json"
 SWAP_ENV = {"drive_motor": ("REVRON_DRIVE_MOTOR", "DRIVE_MOTORS", "n10_2200rpm_spicy"), "battery": ("REVRON_BATTERY", "BATTERYS", "lipo_2s_180_turnabot"),
-            "drive_esc": ("REVRON_RXESC", "RXESCS", "malenki_nano_rvrn2"), "weapon_esc": ("REVRON_WESC", "WESCS", "bbb_ant_esc_rvrn2")}
+            "drive_esc": ("REVRON_RXESC", "RXESCS", "malenki_nano_rvrn2"), "weapon_esc": ("REVRON_WESC", "WESCS", "bbb_ant_esc_rvrn2"),
+            "switch": ("REVRON_SWITCH", "SWITCHES", "switch_bbb_ant_rvrn2")}
 
 
 def test_swap_settings_list_every_catalog_candidate():
@@ -554,6 +556,50 @@ def test_stock_half_width_sweep(half_w, tmp_path):
 def test_swap_setting_builds_one_valid_tub(env, tmp_path):
     b = bays(env, tmp_path)
     assert b["tub"][:2] == (1, True) and all(v == 0 for v in b["ovl"].values()), b
+
+
+@pytest.mark.parametrize("sw", ["switch_slide_12x4", "switch_slide_bbb_ant", "fingertech_mini_switch"])
+def test_switch_swap_gets_its_pad_pilots_and_pocket(sw, tmp_path):
+    """Another catalog switch: the ears seat on the pad (their top face on the pad underside), the pilots sit on its catalog mount holes (none: no pilots), the screw is as long as the ears
+    and the bite need, and what of its envelope reaches the tub outside the bore sleeves is pocketed from its own catalog solid."""
+    b = bays({"REVRON_SWITCH": sw}, tmp_path)
+    assert b["tub"][:2] == (1, True) and b["ovl"]["power_switch"] == 0, b
+
+
+SWITCH_RELATIONS = """
+import sys
+sys.path[:0] = [%r, %r]
+from revron import hw
+from revron.params import *
+from revron.tub2_params import DECK, SKIN
+m = hw.switch_mount(SWITCH)
+print("SEAT", round(ELEC["switch_yz"][1] + m["top"] - (DECK - SKIN), 6))
+print("HOLES", len(SW_SCREW_Y), len(m["holes"]), round(SW_PITCH - m["pitch"], 6), round(SW_BOLT_Z - (DECK - SKIN) + (m["top"] - m["under"]), 6))
+print("SCREW", SW_SCREW if SW_SCREW else "none", 0 if not m["holes"] else round(int(SW_SCREW.split("x")[1]) - (m["top"] - m["under"]) - SW_BITE, 6))
+"""
+
+
+@pytest.mark.parametrize("sw", ["switch_bbb_ant_rvrn2", "switch_slide_12x4", "switch_slide_bbb_ant", "fingertech_mini_switch"])
+def test_switch_literals_follow_the_catalog_switch(sw, tmp_path):
+    """SW_PITCH / the ears' height / the screw are read off the catalog switch: its ears' top face seats on the pad underside, every catalog mount hole gets a screw, and the screw reaches
+    the bite through the ears (within a whole mm); the stock switch keeps M2x3 with the head plane 1.5 under the deck."""
+    dst = pathlib.Path(tempfile.mkdtemp(dir=tmp_path)) / "src"
+    shutil.copytree(SRC, dst, ignore=shutil.ignore_patterns("__pycache__"))
+    r = subprocess.run([sys.executable, "-c", SWITCH_RELATIONS % (str(dst), ROOT)], capture_output=True, text=True, env={**os.environ, "REVRON_SWITCH": sw})
+    rows = {ln.split()[0]: ln.split()[1:] for ln in r.stdout.splitlines() if ln.split() and ln.split()[0].isupper()}
+    assert "SCREW" in rows, r.stderr[-1500:]
+    assert float(rows["SEAT"][0]) == 0.0 and rows["HOLES"][0] == rows["HOLES"][1] and float(rows["HOLES"][2]) == 0.0 and float(rows["HOLES"][3]) == 0.0, rows
+    assert 0.0 <= float(rows["SCREW"][1]) < 1.0 or rows["SCREW"][0] == "none", rows   # rounded up to a whole mm: less than a mm over the ears + the bite
+    if sw == "switch_bbb_ant_rvrn2":
+        assert rows["SCREW"][0] == "M2x3", rows
+
+
+@pytest.mark.parametrize("motor", ["n10_300rpm_6v", "n10_2200rpm_6v", "bbb_n10_600rpm", "n20_1000rpm_6v"])
+def test_drive_motor_swap_slides_less_than_the_declared_travel(motor, tmp_path):
+    """The inboard stop follows the motor's own inboard end: a gearmotor without the stock's long can (no key gap, end further out) still bears on the tub within MOTOR_SLIDE_MAX,
+    which the spec declares as its play (retention.loose_ok)."""
+    r = relation_build({"REVRON_DRIVE_MOTOR": motor}, tmp_path)
+    assert r["MOTOR_IN"][0] > 0, r
 
 
 # ---- what leaves / stays in the tub follows each size step (retention, assembly, fastener seat) -----------------------------------------------------------
