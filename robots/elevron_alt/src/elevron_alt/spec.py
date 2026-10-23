@@ -13,7 +13,7 @@ from .params_chassis import (WIRE_SLOT_X, DECK_Z, REBATE, IN_X, CH_H, WALL, AXLE
                              TAB_X_OUT, TAB_W, TAB_PITCH, SW_SLOT, SW_SLOT_IN, SW_PITCH, POST_PITCH, HX, WIN_W, CORNER_R, EDGE_CH, BOSS_OUT)
 from .params_drive import FLOOR_LIFT, N10_X, DRIVE_MOTOR, WY, WZ, MOTOR_AT_X, HUB_X0, HUB_LEN, DISC_X
 from .params_hw import INSERT_CAT, M3
-from .params_vert import DECK_TOP, LEAD_SLOT, BULK_Y, PRONG
+from .params_vert import DECK_TOP, LEAD_SLOT, BULK_Y, PRONG, PRONG_T
 from .params_drive import LEAD_Y
 from .variants import variant
 
@@ -273,6 +273,7 @@ POCKET_DEV = (13.0, 19.9, 15.9)        # lattice pocket ceiling corner (front)
 SLIVER_DEV = (9.8, 12.6)               # boss end-arc hairline: |y|, z
 SLIVER_DEV_R = 2.0
 POCKET_R_DEV = (14.0, 24.6, 15.6)      # right rear corner pocket, bay-side corner
+WIN_DEV = (40.86, 11.29)               # prong window centre (y, z) as the ligament check reports it
 NUT_DEV_R = 4.0                        # the prong nut pocket's neighbourhood
 FORK_PLACE_TOL = 3.0                   # side pods' bbox-centre tolerance with the forks stopped over the floor
 
@@ -313,7 +314,10 @@ def reference_cad():
             dict(part="vert_mod", file="vert_mod_1.stl", mode="shape", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["vert"], note="vert_mod: no dump; relations from the STEP solid's faces (see MISSES.md)",
                  deviations=[] if variant("step_cross_bolt") else [{"near": _w(s * (PRONG[0] + NUT_HALF), HY + TAB_HOLE_DY, TAB_HOLE_Z), "r": NUT_DEV_R,
                               "reason": "ours, not the STEP's (variant step_cross_bolt off): the thin cross-bolt nut captive in the prong (the STEP prong "
-                                        "has a plain hole, its bolt threading 2.5 mm into the pod tongue) leaves 0.8 mm to the prong window"} for s in (-1, 1)]),
+                                        "has a plain hole, its bolt threading 2.5 mm into the pod tongue) leaves 0.8 mm to the prong window"} for s in (-1, 1)]
+                 + ([] if variant("step_cross_bolt") else [{"near": _w(s * (PRONG[0] + PRONG_T / 2), *WIN_DEV), "r": NUT_DEV_R,
+                    "reason": "ours, not the STEP's (variant step_cross_bolt off): the prong window's wall to the thin nut pocket is 0.8 mm "
+                              "(STEP: 2.39 to its plain 3.2 hole); the window and the nut are both STEP / catalog sized"} for s in (-1, 1)])),
             dict(part="side_r", file="Side_Panel_alt_sm_1.stl", mode="shape", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["side"], **side_place,
                  note="Side_Panel_alt_sm: no dump (see MISSES.md)" + fork_note),
             dict(part="side_l", file="MirrorSide_Panel_alt_sm_1.stl", mode="shape", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["side"], **side_place,
