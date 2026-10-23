@@ -21,6 +21,7 @@ from .params_drive import WY, WZ
 from .params_vert import *  # noqa: F401,F403
 
 TOOL = BIG / 10                        # cut tools reach this far
+MIN_PIPE_ARC = 0.5                     # floor-round arcs shorter than this are left out
 OVERLAP = 0.05                         # a filler's reach into the material it joins
 HS = BIG / 5                           # half-space cutters: well past the part, small enough for exact booleans
 TOOL_S = BIG / 50                      # drafted tools: far enough through the ramp
@@ -100,7 +101,9 @@ def inside_round(p1, p2, r):
     u /= np.linalg.norm(u)
     A = np.array([n1, n2, u])
     v, c = np.linalg.solve(A, [d1, d2, 0.0]), np.linalg.solve(A, [d1 + r, d2 + r, 0.0])
-    face = bd.Face(bd.Wire.make_polygon([bd.Vector(*(q - u * TOOL_S)) for q in (v, c - r * n1, c, c - r * n2)], close=True))
+    e = OVERLAP                                             # reach into both faces' material so the fuse merges cleanly
+    quad = (v - e * (n1 + n2), c - (r + e) * n1, c, c - (r + e) * n2)
+    face = bd.Face(bd.Wire.make_polygon([bd.Vector(*(q - u * TOOL_S)) for q in quad], close=True))
     wedge = bd.Solid.extrude(face, bd.Vector(*(u * 2 * TOOL_S)))
     return _S(wedge, bd.Solid.make_cylinder(r, 2 * TOOL_S, bd.Plane(origin=tuple(c - u * TOOL_S), z_dir=tuple(u))))
 
@@ -315,7 +318,7 @@ def side_pockets():
     cu = u(c[0])
     yf = BULK_Y[0] - SIDE_POCKET_FRONT
     prof = unary_union([Point(cu, c[1]).buffer(r, SEG), Point(u(BULK_Y[0] + POCKET_STEP), z0), Point(u(BULK_Y[0]), z1)]).convex_hull
-    prof = prof.union(sbox(u(yf), z0, u(BULK_Y[0] + POCKET_STEP), z1 - K * SIDE_POCKET_FRONT))
+    prof = prof.union(sbox(u(yf), z0, u(BULK_Y[0] + POCKET_STEP) + OVERLAP, z1 - K * SIDE_POCKET_FRONT))   # runs a hair under the slope: no coincident corner
     pl = bd.Plane(origin=(o[0], o[1], 0), x_dir=(t[0], t[1], 0), z_dir=(n[0], n[1], 0))
     p = _floor_rounded(prof, SIDE_POCKET_FLOOR_R).moved(bd.Location(pl))   # its floor edges rounded (STEP)
     return _U(p, _mirror_x(p))
@@ -334,7 +337,7 @@ def _floor_rounded(prof, r):
             p0, p1 = e.position_at(0), e.position_at(1)
             if e.geom_type.name == "LINE":
                 pipes.append(bd.Solid.make_cylinder(r, (p1 - p0).length, bd.Plane(origin=p0, z_dir=p1 - p0)))
-            else:
+            elif e.length > MIN_PIPE_ARC:                       # a corner's sliver of arc tessellates badly against its neighbours
                 pipes.append(bd.Solid.sweep(bd.Face(bd.Wire.make_circle(r, bd.Plane(origin=p0, z_dir=e.tangent_at(0)))), bd.Wire([e])))
     return _U(up, low, *pipes)
 
