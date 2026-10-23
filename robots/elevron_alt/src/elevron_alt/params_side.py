@@ -5,7 +5,7 @@ right one is 0.25 mm inboard of its mirror)."""
 import math
 
 from .params_chassis import HX, HY, CH_H, AXLE_Y, AXLE_Z, BOSS_OUT, BOSS_R, BOSS_PITCH, TAB_X_OUT, TAB_W, TAB_PITCH, TAB_LEN, WALL
-from .params_drive import TYRE_R, WHEEL_OUT
+from .params_drive import TYRE_R, WHEEL_OUT, FLOOR_LIFT
 
 # ---- MASTER DESIGN PARAMETERS ----------------------------------------------------------------------------------------
 SP_T = WALL                            # TPU wall
@@ -16,10 +16,13 @@ GUARD_X = WHEEL_OUT - 2.2              # wheel-guard spine: its drafted wall lea
 GUARD_END = (9.4, 9.6)                 # guard spines end this far ahead of / behind each axle (inside the tyre circle)
 GUARD_R0, GUARD_DRAFT, GUARD_T = 12.814, 35.03, 3.28   # guard wall: offset from the spine at z 0, draft, normal thickness
 GUARD_FACE = 3.0                       # the rear guard's inner face stands this far out from the spine above the tyre
-GROOVE = (16.98, 6.0, 3.0, 0.5, (2.62, 10.81), -0.857, 4)   # diagonal grip grooves: first centre y at z 3, pitch, width, depth, z span, dy/dz, count
+GUARD_FRONT_CLR = 0.8                  # the rear guard's inner side is cut back from just ahead of its spine
+GUARD_TIP_R = 0.5                      # round on the rear guard's top edge (its inner face meets the drafted outer face)
+GROOVE = (16.98, 6.0, 3.0, 0.5, (2.62, 10.81), -0.857, 4, 3.0)   # diagonal grip grooves: first centre y, pitch, width, depth, z span, dy/dz, count, z of the first centre
 WELL_CLR = 1.25                        # wheel wells round both axles over the tyre radius
 LIP = 1.0                              # plate lip wrapping the boss sides
 LIP_CLR = 0.3                          # lip off the boss obround
+CSK_SINK = 1.1                         # boss screw heads sit this far down their bores under the plate flank
 PLATE_T = 1.8                          # plate on the boss under the countersunk M3 heads
 PLATE_TOP_DROP, PLATE_FLAT = 1.0, 3.0  # plate top under the chassis top, flat this far either side of the middle
 PLATE_OUT = (0.966, 0.259, 35.53)      # plate's slanted outer face n.(x, z) = d (15 deg)
@@ -34,6 +37,7 @@ POCKET_X1, POCKET_CH = 32.25, 48.58    # pocket round the outer chassis tab: out
 POCKET_R = 3.0                         # pocket outer corner round
 ROOT_EDGE = (-0.707, 0.579, 0.406, 7.11)   # fork-root inner face n.(x, y, z) = d
 FLARE_MIN = 0.3                        # the blend from the fork into the rear guard ends where it is this wide
+FORK_FLOOR_CLR = 0.25                  # fork underside above the floor (unless the step_forks variant)
 FORK_W = 5.74                          # fork prong width, its outer face just inside the tyre's outer face
 FORK_T = 4.0                           # fork thickness over the underside
 FORK_TIP = (98.61, (0.499, 0.867, 45.26), 83.22, 84.74)   # tip y, tip top plane, tooth riser y span
@@ -47,7 +51,7 @@ LIP_X0 = PLATE_X0 - LIP
 LIP_IN_R = BOSS_R + LIP_CLR
 PLATE_OB = (BOSS_PITCH / 2, BOSS_R + SP_T, CH_H - PLATE_TOP_DROP, PLATE_FLAT)
 WELL_X = (LIP_X0, GUARD_X + GUARD_FACE)
-STRUT_Y1 = GUARD_Y[1]
+STRUT_Y1 = AXLE_Y - WELL_R             # the flanks end where the wheel wells begin
 TAB_GAP = (TAB_X_OUT - TAB_PITCH, TAB_X_OUT - TAB_W)
 TONGUE_X = (TAB_GAP[0] + 3.0 + FIT, TAB_GAP[1] - FIT)    # between the module prong (3 thick) and the outer tab
 TAB_POCKET = (TONGUE_X[1], POCKET_X1, HY + TAB_LEN + 0.2, POCKET_CH)

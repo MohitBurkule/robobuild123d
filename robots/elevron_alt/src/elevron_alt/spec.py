@@ -53,10 +53,12 @@ def _structure(P, M):
     P(id="base_panel", kind="structure", print_orientation="+z", rotates_with="fixed", color="#2a2c30", shape=M("base_panel"), **PLA,
       label="1 mm printed base panel in the chassis rebate, 6 M2 button heads into the column heat-sets")
     P(id="vert_mod", kind="structure", print_orientation="+x", rotates_with="fixed", color="#30343a", shape=M("vert_mod"), **PLA,
+      thin_wall_deviation="RVRN_revdev vert_mod as drawn: the four BE1806 screw counterbores break into the axis bore on the motor side",
       sharp_corners_ok="vert_mod from the RVRN_revdev STEP solid's faces (ELVRN, no dump): the shell, bulkhead and uprights meet square as in the STEP solid",
       label="vert_mod weapon module: hollow ramp shell on the deck (4 M2 into the column heat-sets), bulkhead, uprights carrying the BE1806 and the MF85, motor shroud, prongs on the cross bolts")
     for s, n in SIDES:
         P(id=f"side_{n}", kind="armor", print_orientation="+z", rotates_with="fixed", color="#3c4048", shape=M(f"side_{n}"), **TPU,
+          thin_wall_deviation="RVRN Side_Panel_alt_sm as drawn: the front boss screw's head bore runs 0.7 mm over the raked underside",
           deviation="ELVRN3.0 Alt STEP: the Side_Panel_alt_sm fork prongs lead the disc (tips at y 98.6, ahead of the disc's swept front): the forks are the ground game in front of the vertical disc, kept for parity",
           label="Side_Panel_alt_sm TPU pod: plate on the side boss (2 M3 CSK into captive nuts), drafted guard round both wheels, tongue on the rear cross bolt, crossbar round the outer tab, fork prong past the weapon")
 
@@ -156,9 +158,9 @@ def _connections(C):
 
 
 def _wires(wires):
-    def W(i, a, b, kind, size=None, via=None):
+    def W(i, a, b, kind, size=None, via=None, **k):
         awg, sl = WIRE[size or kind]
-        wires.append({"id": i, "from": a, "to": b, "awg": awg, "kind": kind, "slack_mm": sl, **({"via": via} if via else {})})
+        wires.append({"id": i, "from": a, "to": b, "awg": awg, "kind": kind, "slack_mm": sl, **({"via": via} if via else {}), **k})
     W("w_bat_sw", "battery.jst_rcy", "power_switch.in", "power")
     W("w_sw_rx", "power_switch.out", "rxesc.bat", "power")
     W("w_sw_wesc", "power_switch.out", "wesc.bat", "power")
@@ -168,7 +170,36 @@ def _wires(wires):
     sx, _, (sz0, sz1) = LEAD_SLOT                          # lead slot along the left upright's inner face
     W("w_wesc_m", "wesc.motor", "weapon_motor_stator.phases", "motor", "phase",
       via=[_w(WIRE_SLOT_X, 0, DECK_Z - LEAD_RISE), _w(WIRE_SLOT_X, 0, DECK_TOP + LEAD_RISE), _w(sx, BULK_Y[0] - LEAD_RISE, DECK_TOP + LEAD_RISE),
-           _w(sx, BULK_Y[0], (sz0 + sz1) / 2), _w(sx, LEAD_Y - LEAD_RISE, WZ)])   # up the deck wire slot, back under the shell, along the lead slot to the stub
+           _w(sx, BULK_Y[0], (sz0 + sz1) / 2), _w(sx, LEAD_Y - LEAD_RISE, WZ)],   # up the deck wire slot, back under the shell, along the lead slot to the stub
+      exposed_reason="leaves the chassis hull only inside the vert_mod: under its closed shell (deck below, shell and walls round), then in the upright's lead slot")
+
+
+# parts the RVRN_revdev STEP draws (by its solid stems) and the ones it leaves out (with why they are in the build)
+REF_PART = {"motor_": "RV12_N10_2200_RPM*", "wheel_": "RV22_Scalextric_F1_Front_tyre*", "weapon_motor_": "RV08_1806_Brushless*",
+            "prop_mount": "RV07_Prop_mount*", "wbearing": "FS4_MF85ZZ*", "so_": "10mm_standoff_3m_alu*", "bplate_": "BACKING_PLATE*",
+            "fplate_": "FRONT_PLATE*", "spider": "spiderSL*"}
+NOT_IN_STEP = {
+    "whub_f": "not in the STEP: it draws the two RV21 hubs on the N10s only; the front idlers carry the same RV21 hub, its bore opened for the standoff",
+    "base_panel": "not in the STEP (open-bottom chassis): a 1 mm printed panel in the Cut-Extrude2 rebate closes the electronics bay",
+    "battery": "not in the STEP (no electronics drawn): Turnabot 2S 180 between the column rows",
+    "rxesc": "not in the STEP (no electronics drawn): Malenki nano receiver / drive ESC",
+    "wesc": "not in the STEP (no electronics drawn): BBB ant weapon ESC on the Malenki",
+    "power_switch": "not in the STEP (no electronics drawn): BBB ant switch in the dump's 4 x 12 deck slot (Cut-Extrude6)",
+    "wshaft": "not in the STEP as its own solid: the BE1806's 5 mm shaft, run on through the stack into the MF85",
+    "insert_": "not in the STEP (no hardware drawn): M2 heat-sets in the ELVRN column bores",
+    "nut_": "not in the STEP (no hardware drawn): thin M3 nuts, captive in the side bosses' hex pockets and the module prongs",
+}
+FASTENER_DEV = "not in the STEP (the RVRN_revdev assembly draws no fasteners): every hole it does draw carries one (fasteners.py)"
+
+
+def _map_to_reference(parts):
+    for p in parts:
+        for k, g in REF_PART.items():
+            if p["id"].startswith(k):
+                p.setdefault("ref_part", g)
+        for k, why in NOT_IN_STEP.items():
+            if p["id"].startswith(k) and "ref_part" not in p:
+                p.setdefault("deviation", why)
 
 
 def make_spec(model_file):
@@ -185,11 +216,16 @@ def make_spec(model_file):
     _electronics(P)
     _connections(C)
     _wires(wires)
+    _map_to_reference(parts)
     n_ins = (len(POSTS) + len(END_POSTS), len(POSTS))
     overlap = [dict(a=f"insert_{k}{i}", b="chassis", max_depth_mm=INSERT_MELT, reason="M2 heat-set insert (3.5 OD) melted into the ELVRN 2.9 column bore: interference by design")
                for k, cnt in zip("bt", n_ins) for i in range(cnt)]
+    overlap.append(dict(a="wshaft", b="weapon_motor_can", max_depth_mm=SHAFT_RACE, reason="shaft in the can's 5.1 bore (0.05 radial running fit; the meshes overlap)"))
     overlap.append(dict(a="wshaft", b="wbearing", max_depth_mm=SHAFT_RACE, reason="shaft in the MF85 inner race (bearing modelled as one solid)"))
-    return dict(parts=parts, fasteners=records(), connections=conn, wires=wires, allow_overlap=overlap, reference_cad=reference_cad())
+    fasteners = records()
+    for f in fasteners:
+        f.setdefault("deviation", FASTENER_DEV)
+    return dict(parts=parts, fasteners=fasteners, connections=conn, wires=wires, allow_overlap=overlap, reference_cad=reference_cad())
 
 
 REF_DIR = "../../research/elevron_alt"   # RVRN_revdev STEP solids as STL (local only, never committed: .gitignore research/)
@@ -210,20 +246,19 @@ def reference_cad():
     hub_why = "RVRN RV21 hub as drawn: the M3 grub bore breaks into the D-bore (STEP Cut-Extrude4)"
     tab_dev = [{"near": _w(s * (TAB_X_OUT - TAB_PITCH - TAB_W), HY + TAB_HOLE_DY, TAB_HOLE_Z), "r": TAB_DEV_R,
                 "reason": "ELVRN3.0 Alt chassis Chamfer5: the 1.5 mm lead-in on the inner tab's cross-bolt hole comes within 0.34 of the tab bottom in the STEP too"} for s in (-1, 1)]
-    reb_dev = [{"near": _w(0, 0, z), "r": REBATE_DEV_R, "reason": "ELVRN3.0 Alt chassis Cut-Extrude2: the 1 mm base-panel rebate lip under the 2 mm wall, as in the STEP"}
-               for z in (0, REBATE, WALL)]
+    reb_dev = [{"near": _w(0, 0, REBATE), "r": REBATE_DEV_R, "reason": "ELVRN3.0 Alt chassis Cut-Extrude2: the 1 mm base-panel rebate lip under the 2 mm wall, as in the STEP"}]
     sx0 = IN_X - SW_SLOT_IN                                 # the switch slot's outer edge and the lattice window beside it
-    deck_dev = [{"near": _w(x, y, DECK_Z), "r": SLOT_DEV_R, "reason": "ELVRN3.0 Alt chassis Cut-Extrude6 / Sketch20: the switch slot and its pilots sit 0.1 mm off the "
-                 "deck lattice window (STEP: window edge x 21.9, slot x 22.0)"} for x, y in ((sx0 - SW_SLOT[0] / 2, 0), (sx0 - SW_SLOT[0] / 2, -SW_PITCH / 2),
-                                                                                        (sx0 - SW_SLOT[0] / 2, SW_PITCH / 2), (POST_PITCH[0] / 2 - COL_R - SLOT_DEV_R, 0))]
+    deck_dev = [{"near": _w(x, y, DECK_Z), "r": SLOT_DEV_R, "reason": f"ELVRN3.0 Alt chassis Cut-Extrude6 / Sketch20: {what} sits 0.1 mm off the "
+                 "deck lattice window (STEP: window edge x 21.9, slot x 22.0)"}
+                for x, y, what in ((sx0 - SW_SLOT[0] / 2, 0, "the switch slot's inner edge"), (sx0 - SW_SLOT[0] / 2, -SW_PITCH / 2, "the front switch pilot"),
+                                   (sx0 - SW_SLOT[0] / 2, SW_PITCH / 2, "the rear switch pilot"), (POST_PITCH[0] / 2 - COL_R - SLOT_DEV_R, 0, "the window beside the slot"))]
     rows = [dict(part="chassis", file="Alt_chassis_1.stl", mode="shape", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["chassis"], note="Alt_chassis (dump replay by relations)", deviations=tab_dev + reb_dev + deck_dev),
             dict(part="vert_mod", file="vert_mod_1.stl", mode="envelope", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["vert"], note="vert_mod: no dump; relation build from STEP sections (see MISSES.md)"),
             dict(part="side_r", file="Side_Panel_alt_sm_1.stl", mode="envelope", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["side"], note="Side_Panel_alt_sm: no dump (see MISSES.md)"),
             dict(part="side_l", file="MirrorSide_Panel_alt_sm_1.stl", mode="envelope", tol_mm=TOL["loose"], tol_vol_frac=VOL_TOL["side"], note="MirrorSide_Panel_alt_sm"),
             dict(part="disc", file="Drisk_floating_3_1.stl", mode="envelope", tol_mm=TOL["std"], note="the Revron disc")]
     for s, n, f in ((-1, "l", "RV21_Rear_Wheel_1.stl"), (1, "r", "RV21_Rear_Wheel_2.stl")):
-        for e, y in (("r", AXLE_Y), ("f", -AXLE_Y)):
-            rows.append(dict(part=f"whub_{e}{n}", file=f, mode="envelope", tol_mm=TOL["loose"], deviations=[hub(s, y, hub_why)]))
+        rows.append(dict(part=f"whub_r{n}", file=f, mode="envelope", tol_mm=TOL["loose"], deviations=[hub(s, AXLE_Y, hub_why)]))
     return {"dir": REF_DIR, "ref_to_world": REF_TO_WORLD, "iou_min": 0.9, "placement_tol_mm": TOL["loose"], "parts": rows}
 
 

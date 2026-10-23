@@ -1,8 +1,12 @@
 """Deliberate departures from the original Elevron 3.0 Alt, all OFF by default (parity first). Override with the env
-var ELEVRON_VARIANTS="name,..." (or "all") before import, or set_variants(...) at run time."""
+var ELEVRON_VARIANTS="name,..." (or "all") before import, or set_variants(...) at run time.
+
+One switch runs the other way: `step_forks` restores the STEP's fork underside, which reaches 2.25 mm below the
+wheels' floor (the TPU forks are preloaded onto the floor). As drawn the forks, not the wheels, would carry the robot
+(contain.wheel_ground), so the default build stops them FORK_FLOOR_CLR above the floor."""
 import os
 
-NAMES = ()
+NAMES = ("step_forks",)
 VARIANTS = {n: False for n in NAMES}
 
 

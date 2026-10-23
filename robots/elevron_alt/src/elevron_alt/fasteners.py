@@ -11,7 +11,7 @@ from .params_chassis import (HX, IN_X, WALL, CH_H, AXLE_Y, AXLE_Z, POSTS, END_PO
                              TAB_X_OUT, TAB_W, TAB_PITCH, BOSS_IN)
 from .params_drive import FLOOR_LIFT, WY, WZ, UP_IN, UP_T
 from .params_hw import BASE_T, BACK_T, M2, M3
-from .params_side import PLATE_X
+from .params_side import PLATE_X, CSK_SINK
 from .params_vert import DECK_TOP, POST_CB_Z, MOTOR_HOLES, PRONG
 
 import math
@@ -39,12 +39,13 @@ class Joint:
     extra: dict = field(default_factory=dict)
     head_clear: float = 10.0
     sink: float = 0.0
+    cbore: float = 0.0   # counterbore depth from the host's face to the head seat
 
     def tool_and_record(self):
         """Head-side cutter and record (Revron convention: the head side is cut and recorded; the thread side is the
         host's own feature: a heat-set bore, nut pocket, tapped standoff or the motor's tapped base)."""
         return hole_tool(self.at, self.axis, self.fastener, head=self.head, into="through", grip=self.grip, side="head",
-                         head_clear=self.head_clear, cbore=None if self.head == "csk" else 0.0, sink=self.sink)   # heads seat on the face, no counterbore
+                         head_clear=self.head_clear, cbore=None if self.head == "csk" else self.cbore, sink=self.sink)
 
 
 def joints():
@@ -55,19 +56,22 @@ def joints():
         out.append(Joint(f"bolt_t{i}", f"M{M2:g}x6", "button", (x, y, POST_CB_Z), (0, 0, -1), "vert_mod", POST_CB_Z - DECK_TOP, "insert", f"insert_t{i}", ["vert_mod"]))
     for s, n in ((-1, "l"), (1, "r")):
         for k, y in enumerate((-BOSS_PITCH / 2, BOSS_PITCH / 2)):   # side pod plate into the captive boss nuts
-            out.append(Joint(f"bolt_s{n}{k}", f"M{M3:g}x10", "csk", (s * PLATE_X[1], y, AXLE_Z), (-s, 0, 0), f"side_{n}", PLATE_X[1] - NUT_FACE_X, "nut",
-                             f"nut_s{n}{k}", [f"side_{n}", "chassis"], "hex2"))
+            face = PLATE_X[1] + CSK_SINK                          # the head sits CSK_SINK down its bore through the plate flank
+            out.append(Joint(f"bolt_s{n}{k}", f"M{M3:g}x10", "csk", (s * face, y, AXLE_Z), (-s, 0, 0), f"side_{n}", face - NUT_FACE_X, "nut",
+                             f"nut_s{n}{k}", [f"side_{n}", "chassis"], "hex2", sink=CSK_SINK))
         out.append(Joint(f"bolt_a{n}", f"M{M3:g}x12", "cap", (s * (IN_X - BACK_T), -AXLE_Y, AXLE_Z), (s, 0, 0), None, BACK_T, "tapped",   # front axle stack
                          f"so_{n}", [f"bplate_{n}", "chassis", f"fplate_{n}"], "hex2.5"))
-        x_in = TAB_X_OUT - TAB_PITCH - TAB_W                     # inner tab's inner face: the head seats on its lead-in (Chamfer5)
-        out.append(Joint(f"bolt_x{n}", f"M{M3:g}x12", "button", (s * x_in, HY + TAB_HOLE_DY, TAB_HOLE_Z), (s, 0, 0), None,
+        x_in = TAB_X_OUT - TAB_PITCH - TAB_W                     # inner tab's inner face: its lead-in (Chamfer5) is the countersink
+        out.append(Joint(f"bolt_x{n}", f"M{M3:g}x10", "csk", (s * x_in, HY + TAB_HOLE_DY, TAB_HOLE_Z), (s, 0, 0), None,
                          PRONG[0] - x_in, "nut", f"nut_x{n}", ["chassis", "vert_mod", f"side_{n}"], "hex2",
                          {"reason": "rear cross bolt, driven from between the inner tabs: through the inner tab into the thin nut captive in the "
                                     "module prong, its shank on through the pod tongue as a shear pin (the tongue sits in the tab gap); the 4 M2 "
                                     "into the columns clamp the deck face"}, OPEN))
     for i, (dy, dz) in enumerate(MOTOR_HOLES):                   # BE1806 base through the left upright, heads in its counterbores
-        out.append(Joint(f"bolt_m{i}", f"M{M2:g}x6", "cap", (-(UP_IN + UP_T), WY + dy, WZ + dz), (1, 0, 0),
-                         "vert_mod", UP_T, "tapped", "weapon_motor_stator", ["vert_mod"]))
+        from .vm_geom import taper_x
+        face = taper_x(WY + dy)                                   # the upright's outer face; the heads sit UP_T off the motor
+        out.append(Joint(f"bolt_m{i}", f"M{M2:g}x6", "cap", (-face, WY + dy, WZ + dz), (1, 0, 0),
+                         "vert_mod", face - UP_IN, "tapped", "weapon_motor_stator", ["vert_mod"], cbore=face - (UP_IN + UP_T)))
     return out
 
 

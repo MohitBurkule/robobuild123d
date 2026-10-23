@@ -26,6 +26,7 @@ NOTCH_Y = (-12.85, 12.85)              # notch mouth on the inner wall line
 HOLLOW_FRONT, HOLLOW_R = -5.9, 3.0     # under-shell hollow: front edge beside the lip, corner rounds
 POST_PAD_R = 4.0                       # pad round each rear column screw inside the hollow
 POST_CB_R, POST_CB_DEPTH = 3.0, 2.5    # column screw counterbores: radius, floor above the deck
+NOTCH_CH_Y0 = -0.69                    # the notch-wall chamfer is full size behind this y and runs out to the front corner
 TOP_CH = 3.0                           # ramp edges over the side notches: equal-distance chamfer; bulkhead rear edge 45 deg
 UP_IN_CH = (1.95, 2.58)                # upright inner top edges: chamfer across the top, down the face
 UP_CH_END = 48.4                       # upright top chamfers run back to here

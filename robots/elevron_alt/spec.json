@@ -61,7 +61,8 @@
    "material": "pla",
    "process": "fdm",
    "solid_fraction": 0.8,
-   "label": "1 mm printed base panel in the chassis rebate, 6 M2 button heads into the column heat-sets"
+   "label": "1 mm printed base panel in the chassis rebate, 6 M2 button heads into the column heat-sets",
+   "deviation": "not in the STEP (open-bottom chassis): a 1 mm printed panel in the Cut-Extrude2 rebate closes the electronics bay"
   },
   {
    "id": "vert_mod",
@@ -79,6 +80,7 @@
    "material": "pla",
    "process": "fdm",
    "solid_fraction": 0.8,
+   "thin_wall_deviation": "RVRN_revdev vert_mod as drawn: the four BE1806 screw counterbores break into the axis bore on the motor side",
    "sharp_corners_ok": "vert_mod from the RVRN_revdev STEP solid's faces (ELVRN, no dump): the shell, bulkhead and uprights meet square as in the STEP solid",
    "label": "vert_mod weapon module: hollow ramp shell on the deck (4 M2 into the column heat-sets), bulkhead, uprights carrying the BE1806 and the MF85, motor shroud, prongs on the cross bolts"
   },
@@ -98,6 +100,7 @@
    "material": "tpu",
    "process": "fdm",
    "solid_fraction": 0.9,
+   "thin_wall_deviation": "RVRN Side_Panel_alt_sm as drawn: the front boss screw's head bore runs 0.7 mm over the raked underside",
    "deviation": "ELVRN3.0 Alt STEP: the Side_Panel_alt_sm fork prongs lead the disc (tips at y 98.6, ahead of the disc's swept front): the forks are the ground game in front of the vertical disc, kept for parity",
    "label": "Side_Panel_alt_sm TPU pod: plate on the side boss (2 M3 CSK into captive nuts), drafted guard round both wheels, tongue on the rear cross bolt, crossbar round the outer tab, fork prong past the weapon"
   },
@@ -117,6 +120,7 @@
    "material": "tpu",
    "process": "fdm",
    "solid_fraction": 0.9,
+   "thin_wall_deviation": "RVRN Side_Panel_alt_sm as drawn: the front boss screw's head bore runs 0.7 mm over the raked underside",
    "deviation": "ELVRN3.0 Alt STEP: the Side_Panel_alt_sm fork prongs lead the disc (tips at y 98.6, ahead of the disc's swept front): the forks are the ground game in front of the vertical disc, kept for parity",
    "label": "Side_Panel_alt_sm TPU pod: plate on the side boss (2 M3 CSK into captive nuts), drafted guard round both wheels, tongue on the rear cross bolt, crossbar round the outer tab, fork prong past the weapon"
   },
@@ -137,7 +141,8 @@
    "rotates_with": "fixed",
    "exposed": true,
    "exposed_reason": "vertical spinner: the BE1806 sits between the uprights behind the disc, shielded by the disc and the uprights",
-   "label": "BBB BE1806 2300 kV (RV08), fixed half: base flat on the left upright, 4 x M2 from outside"
+   "label": "BBB BE1806 2300 kV (RV08), fixed half: base flat on the left upright, 4 x M2 from outside",
+   "ref_part": "RV08_1806_Brushless*"
   },
   {
    "id": "wshaft",
@@ -167,7 +172,8 @@
    ],
    "color": "#777777",
    "solid_fraction": 0.05,
-   "label": "5 mm shaft from the bell face through disc, spider and prop mount into the MF85 in the right upright"
+   "label": "5 mm shaft from the bell face through disc, spider and prop mount into the MF85 in the right upright",
+   "deviation": "not in the STEP as its own solid: the BE1806's 5 mm shaft, run on through the stack into the MF85"
   },
   {
    "id": "weapon_motor_can",
@@ -188,7 +194,8 @@
    "rotates_with": "weapon",
    "exposed": true,
    "exposed_reason": "vertical spinner: the BE1806 can spins between the uprights behind the disc",
-   "label": "BBB BE1806 can: spins with the shaft round the fixed stator"
+   "label": "BBB BE1806 can: spins with the shaft round the fixed stator",
+   "ref_part": "RV08_1806_Brushless*"
   },
   {
    "id": "prop_mount",
@@ -218,7 +225,8 @@
    ],
    "color": "#9aa0a6",
    "retained": "press_fit",
-   "label": "RV07 prop mount: flange clamping the spider and disc onto the bell"
+   "label": "RV07 prop mount: flange clamping the spider and disc onto the bell",
+   "ref_part": "RV07_Prop_mount*"
   },
   {
    "id": "spider",
@@ -249,7 +257,8 @@
     0
    ],
    "color": "#b8bcc2",
-   "label": "spiderSL: 3 mm aluminium spider driving the disc (Revron spider geometry)"
+   "label": "spiderSL: 3 mm aluminium spider driving the disc (Revron spider geometry)",
+   "ref_part": "spiderSL*"
   },
   {
    "id": "disc",
@@ -329,7 +338,8 @@
      "part": "bearing"
     }
    },
-   "label": "FS4 MF85ZZ in the right upright: outboard support of the shaft"
+   "label": "FS4 MF85ZZ in the right upright: outboard support of the shaft",
+   "ref_part": "FS4_MF85ZZ*"
   },
   {
    "id": "motor_l",
@@ -351,7 +361,8 @@
     "max_mm": 2.0,
     "reason": "RVRN_revdev STEP: RV12 N10 slides inboard in the ELVRN Alt keyhole until its hub meets the wall, as in the RVRN 2.0 tub"
    },
-   "label": "RV12 N10 2200 rpm in the rear keyhole, gearbox face on the wall"
+   "label": "RV12 N10 2200 rpm in the rear keyhole, gearbox face on the wall",
+   "ref_part": "RV12_N10_2200_RPM*"
   },
   {
    "id": "whub_rl",
@@ -415,7 +426,8 @@
    },
    "color": "#1b1b1b",
    "stock": "RV22 Scalextric F1 front tyre 21.5 x 14 x 9.5",
-   "label": "Scalextric F1 tyre 21.5 x 9.5"
+   "label": "Scalextric F1 tyre 21.5 x 9.5",
+   "ref_part": "RV22_Scalextric_F1_Front_tyre*"
   },
   {
    "id": "whub_fl",
@@ -456,7 +468,8 @@
    "visual_ok": {
     "ligament": "RVRN RV21 hub as drawn: the M3 grub bore breaks into the D-bore and the seat ramps (STEP Cut-Extrude4)"
    },
-   "label": "RV21 printed hub (Revron), bore opened to idle on the 10 mm standoff"
+   "label": "RV21 printed hub (Revron), bore opened to idle on the 10 mm standoff",
+   "deviation": "not in the STEP: it draws the two RV21 hubs on the N10s only; the front idlers carry the same RV21 hub, its bore opened for the standoff"
   },
   {
    "id": "wheel_fl",
@@ -476,7 +489,8 @@
    "driven": false,
    "color": "#1b1b1b",
    "stock": "RV22 Scalextric F1 front tyre 21.5 x 14 x 9.5",
-   "label": "Scalextric F1 tyre 21.5 x 9.5"
+   "label": "Scalextric F1 tyre 21.5 x 9.5",
+   "ref_part": "RV22_Scalextric_F1_Front_tyre*"
   },
   {
    "id": "so_l",
@@ -494,7 +508,8 @@
      "part": "so_l"
     }
    },
-   "label": "10 mm alu standoff: front idler axle, clamped across the keyhole"
+   "label": "10 mm alu standoff: front idler axle, clamped across the keyhole",
+   "ref_part": "10mm_standoff_3m_alu*"
   },
   {
    "id": "bplate_l",
@@ -513,7 +528,8 @@
    "material": "pla",
    "process": "fdm",
    "solid_fraction": 0.8,
-   "label": "BACKING_PLATE: inside the wall behind the front keyhole, spreads the axle screw load"
+   "label": "BACKING_PLATE: inside the wall behind the front keyhole, spreads the axle screw load",
+   "ref_part": "BACKING_PLATE*"
   },
   {
    "id": "fplate_l",
@@ -532,7 +548,8 @@
    "material": "pla",
    "process": "fdm",
    "solid_fraction": 0.8,
-   "label": "FRONT_PLATE: outside the wall, the standoff seats on it"
+   "label": "FRONT_PLATE: outside the wall, the standoff seats on it",
+   "ref_part": "FRONT_PLATE*"
   },
   {
    "id": "motor_r",
@@ -554,7 +571,8 @@
     "max_mm": 2.0,
     "reason": "RVRN_revdev STEP: RV12 N10 slides inboard in the ELVRN Alt keyhole until its hub meets the wall, as in the RVRN 2.0 tub"
    },
-   "label": "RV12 N10 2200 rpm in the rear keyhole, gearbox face on the wall"
+   "label": "RV12 N10 2200 rpm in the rear keyhole, gearbox face on the wall",
+   "ref_part": "RV12_N10_2200_RPM*"
   },
   {
    "id": "whub_rr",
@@ -618,7 +636,8 @@
    },
    "color": "#1b1b1b",
    "stock": "RV22 Scalextric F1 front tyre 21.5 x 14 x 9.5",
-   "label": "Scalextric F1 tyre 21.5 x 9.5"
+   "label": "Scalextric F1 tyre 21.5 x 9.5",
+   "ref_part": "RV22_Scalextric_F1_Front_tyre*"
   },
   {
    "id": "whub_fr",
@@ -659,7 +678,8 @@
    "visual_ok": {
     "ligament": "RVRN RV21 hub as drawn: the M3 grub bore breaks into the D-bore and the seat ramps (STEP Cut-Extrude4)"
    },
-   "label": "RV21 printed hub (Revron), bore opened to idle on the 10 mm standoff"
+   "label": "RV21 printed hub (Revron), bore opened to idle on the 10 mm standoff",
+   "deviation": "not in the STEP: it draws the two RV21 hubs on the N10s only; the front idlers carry the same RV21 hub, its bore opened for the standoff"
   },
   {
    "id": "wheel_fr",
@@ -679,7 +699,8 @@
    "driven": false,
    "color": "#1b1b1b",
    "stock": "RV22 Scalextric F1 front tyre 21.5 x 14 x 9.5",
-   "label": "Scalextric F1 tyre 21.5 x 9.5"
+   "label": "Scalextric F1 tyre 21.5 x 9.5",
+   "ref_part": "RV22_Scalextric_F1_Front_tyre*"
   },
   {
    "id": "so_r",
@@ -697,7 +718,8 @@
      "part": "so_r"
     }
    },
-   "label": "10 mm alu standoff: front idler axle, clamped across the keyhole"
+   "label": "10 mm alu standoff: front idler axle, clamped across the keyhole",
+   "ref_part": "10mm_standoff_3m_alu*"
   },
   {
    "id": "bplate_r",
@@ -716,7 +738,8 @@
    "material": "pla",
    "process": "fdm",
    "solid_fraction": 0.8,
-   "label": "BACKING_PLATE: inside the wall behind the front keyhole, spreads the axle screw load"
+   "label": "BACKING_PLATE: inside the wall behind the front keyhole, spreads the axle screw load",
+   "ref_part": "BACKING_PLATE*"
   },
   {
    "id": "fplate_r",
@@ -735,7 +758,8 @@
    "material": "pla",
    "process": "fdm",
    "solid_fraction": 0.8,
-   "label": "FRONT_PLATE: outside the wall, the standoff seats on it"
+   "label": "FRONT_PLATE: outside the wall, the standoff seats on it",
+   "ref_part": "FRONT_PLATE*"
   },
   {
    "id": "nut_sl0",
@@ -751,7 +775,8 @@
     90,
     0
    ],
-   "rotates_with": "fixed"
+   "rotates_with": "fixed",
+   "deviation": "not in the STEP (no hardware drawn): thin M3 nuts, captive in the side bosses' hex pockets and the module prongs"
   },
   {
    "id": "nut_sl1",
@@ -767,7 +792,8 @@
     90,
     0
    ],
-   "rotates_with": "fixed"
+   "rotates_with": "fixed",
+   "deviation": "not in the STEP (no hardware drawn): thin M3 nuts, captive in the side bosses' hex pockets and the module prongs"
   },
   {
    "id": "nut_xl",
@@ -783,7 +809,8 @@
     90,
     0
    ],
-   "rotates_with": "fixed"
+   "rotates_with": "fixed",
+   "deviation": "not in the STEP (no hardware drawn): thin M3 nuts, captive in the side bosses' hex pockets and the module prongs"
   },
   {
    "id": "nut_sr0",
@@ -799,7 +826,8 @@
     90,
     0
    ],
-   "rotates_with": "fixed"
+   "rotates_with": "fixed",
+   "deviation": "not in the STEP (no hardware drawn): thin M3 nuts, captive in the side bosses' hex pockets and the module prongs"
   },
   {
    "id": "nut_sr1",
@@ -815,7 +843,8 @@
     90,
     0
    ],
-   "rotates_with": "fixed"
+   "rotates_with": "fixed",
+   "deviation": "not in the STEP (no hardware drawn): thin M3 nuts, captive in the side bosses' hex pockets and the module prongs"
   },
   {
    "id": "nut_xr",
@@ -831,7 +860,8 @@
     90,
     0
    ],
-   "rotates_with": "fixed"
+   "rotates_with": "fixed",
+   "deviation": "not in the STEP (no hardware drawn): thin M3 nuts, captive in the side bosses' hex pockets and the module prongs"
   },
   {
    "id": "insert_b0",
@@ -847,7 +877,8 @@
     0,
     0
    ],
-   "rotates_with": "fixed"
+   "rotates_with": "fixed",
+   "deviation": "not in the STEP (no hardware drawn): M2 heat-sets in the ELVRN column bores"
   },
   {
    "id": "insert_b1",
@@ -863,7 +894,8 @@
     0,
     0
    ],
-   "rotates_with": "fixed"
+   "rotates_with": "fixed",
+   "deviation": "not in the STEP (no hardware drawn): M2 heat-sets in the ELVRN column bores"
   },
   {
    "id": "insert_b2",
@@ -879,7 +911,8 @@
     0,
     0
    ],
-   "rotates_with": "fixed"
+   "rotates_with": "fixed",
+   "deviation": "not in the STEP (no hardware drawn): M2 heat-sets in the ELVRN column bores"
   },
   {
    "id": "insert_b3",
@@ -895,7 +928,8 @@
     0,
     0
    ],
-   "rotates_with": "fixed"
+   "rotates_with": "fixed",
+   "deviation": "not in the STEP (no hardware drawn): M2 heat-sets in the ELVRN column bores"
   },
   {
    "id": "insert_b4",
@@ -911,7 +945,8 @@
     0,
     0
    ],
-   "rotates_with": "fixed"
+   "rotates_with": "fixed",
+   "deviation": "not in the STEP (no hardware drawn): M2 heat-sets in the ELVRN column bores"
   },
   {
    "id": "insert_b5",
@@ -927,7 +962,8 @@
     0,
     0
    ],
-   "rotates_with": "fixed"
+   "rotates_with": "fixed",
+   "deviation": "not in the STEP (no hardware drawn): M2 heat-sets in the ELVRN column bores"
   },
   {
    "id": "insert_t0",
@@ -943,7 +979,8 @@
     0,
     0
    ],
-   "rotates_with": "fixed"
+   "rotates_with": "fixed",
+   "deviation": "not in the STEP (no hardware drawn): M2 heat-sets in the ELVRN column bores"
   },
   {
    "id": "insert_t1",
@@ -959,7 +996,8 @@
     0,
     0
    ],
-   "rotates_with": "fixed"
+   "rotates_with": "fixed",
+   "deviation": "not in the STEP (no hardware drawn): M2 heat-sets in the ELVRN column bores"
   },
   {
    "id": "insert_t2",
@@ -975,7 +1013,8 @@
     0,
     0
    ],
-   "rotates_with": "fixed"
+   "rotates_with": "fixed",
+   "deviation": "not in the STEP (no hardware drawn): M2 heat-sets in the ELVRN column bores"
   },
   {
    "id": "insert_t3",
@@ -991,7 +1030,8 @@
     0,
     0
    ],
-   "rotates_with": "fixed"
+   "rotates_with": "fixed",
+   "deviation": "not in the STEP (no hardware drawn): M2 heat-sets in the ELVRN column bores"
   },
   {
    "id": "battery",
@@ -1008,7 +1048,8 @@
     90
    ],
    "retained": "press_fit",
-   "label": "2S 180 mAh between the column rows, left of centre, on the base panel"
+   "label": "2S 180 mAh between the column rows, left of centre, on the base panel",
+   "deviation": "not in the STEP (no electronics drawn): Turnabot 2S 180 between the column rows"
   },
   {
    "id": "rxesc",
@@ -1025,7 +1066,8 @@
     90
    ],
    "retained": "kapton",
-   "label": "Malenki nano right of centre on the base panel"
+   "label": "Malenki nano right of centre on the base panel",
+   "deviation": "not in the STEP (no electronics drawn): Malenki nano receiver / drive ESC"
   },
   {
    "id": "wesc",
@@ -1042,7 +1084,8 @@
     90
    ],
    "retained": "kapton",
-   "label": "BBB weapon ESC on the Malenki"
+   "label": "BBB weapon ESC on the Malenki",
+   "deviation": "not in the STEP (no electronics drawn): BBB ant weapon ESC on the Malenki"
   },
   {
    "id": "power_switch",
@@ -1066,7 +1109,8 @@
     -1,
     0
    ],
-   "label": "BBB ant switch pressed up into the deck slot from inside, lever flush with the deck"
+   "label": "BBB ant switch pressed up into the deck slot from inside, lever flush with the deck",
+   "deviation": "not in the STEP (no electronics drawn): BBB ant switch in the dump's 4 x 12 deck slot (Cut-Extrude6)"
   }
  ],
  "fasteners": [
@@ -1104,7 +1148,8 @@
    },
    "tool": "hex1.5",
    "removable": true,
-   "material": "aluminium"
+   "material": "aluminium",
+   "deviation": "not in the STEP (the RVRN_revdev assembly draws no fasteners): every hole it does draw carries one (fasteners.py)"
   },
   {
    "id": "bolt_b1",
@@ -1140,7 +1185,8 @@
    },
    "tool": "hex1.5",
    "removable": true,
-   "material": "aluminium"
+   "material": "aluminium",
+   "deviation": "not in the STEP (the RVRN_revdev assembly draws no fasteners): every hole it does draw carries one (fasteners.py)"
   },
   {
    "id": "bolt_b2",
@@ -1176,7 +1222,8 @@
    },
    "tool": "hex1.5",
    "removable": true,
-   "material": "aluminium"
+   "material": "aluminium",
+   "deviation": "not in the STEP (the RVRN_revdev assembly draws no fasteners): every hole it does draw carries one (fasteners.py)"
   },
   {
    "id": "bolt_b3",
@@ -1212,7 +1259,8 @@
    },
    "tool": "hex1.5",
    "removable": true,
-   "material": "aluminium"
+   "material": "aluminium",
+   "deviation": "not in the STEP (the RVRN_revdev assembly draws no fasteners): every hole it does draw carries one (fasteners.py)"
   },
   {
    "id": "bolt_b4",
@@ -1248,7 +1296,8 @@
    },
    "tool": "hex1.5",
    "removable": true,
-   "material": "aluminium"
+   "material": "aluminium",
+   "deviation": "not in the STEP (the RVRN_revdev assembly draws no fasteners): every hole it does draw carries one (fasteners.py)"
   },
   {
    "id": "bolt_b5",
@@ -1284,7 +1333,8 @@
    },
    "tool": "hex1.5",
    "removable": true,
-   "material": "aluminium"
+   "material": "aluminium",
+   "deviation": "not in the STEP (the RVRN_revdev assembly draws no fasteners): every hole it does draw carries one (fasteners.py)"
   },
   {
    "id": "bolt_t0",
@@ -1320,7 +1370,8 @@
    },
    "tool": "hex1.5",
    "removable": true,
-   "material": "aluminium"
+   "material": "aluminium",
+   "deviation": "not in the STEP (the RVRN_revdev assembly draws no fasteners): every hole it does draw carries one (fasteners.py)"
   },
   {
    "id": "bolt_t1",
@@ -1356,7 +1407,8 @@
    },
    "tool": "hex1.5",
    "removable": true,
-   "material": "aluminium"
+   "material": "aluminium",
+   "deviation": "not in the STEP (the RVRN_revdev assembly draws no fasteners): every hole it does draw carries one (fasteners.py)"
   },
   {
    "id": "bolt_t2",
@@ -1392,7 +1444,8 @@
    },
    "tool": "hex1.5",
    "removable": true,
-   "material": "aluminium"
+   "material": "aluminium",
+   "deviation": "not in the STEP (the RVRN_revdev assembly draws no fasteners): every hole it does draw carries one (fasteners.py)"
   },
   {
    "id": "bolt_t3",
@@ -1428,7 +1481,8 @@
    },
    "tool": "hex1.5",
    "removable": true,
-   "material": "aluminium"
+   "material": "aluminium",
+   "deviation": "not in the STEP (the RVRN_revdev assembly draws no fasteners): every hole it does draw carries one (fasteners.py)"
   },
   {
    "id": "bolt_sl0",
@@ -1462,12 +1516,13 @@
     "csk_angle": 90.0,
     "csk_d": 6.3,
     "csk_depth": 1.45,
-    "sink": 0.0,
-    "grip": 5.5
+    "sink": 0.1,
+    "grip": 5.6
    },
    "tool": "hex2",
    "removable": true,
-   "material": "aluminium"
+   "material": "aluminium",
+   "deviation": "not in the STEP (the RVRN_revdev assembly draws no fasteners): every hole it does draw carries one (fasteners.py)"
   },
   {
    "id": "bolt_sl1",
@@ -1501,12 +1556,13 @@
     "csk_angle": 90.0,
     "csk_d": 6.3,
     "csk_depth": 1.45,
-    "sink": 0.0,
-    "grip": 5.5
+    "sink": 0.1,
+    "grip": 5.6
    },
    "tool": "hex2",
    "removable": true,
-   "material": "aluminium"
+   "material": "aluminium",
+   "deviation": "not in the STEP (the RVRN_revdev assembly draws no fasteners): every hole it does draw carries one (fasteners.py)"
   },
   {
    "id": "bolt_al",
@@ -1544,11 +1600,12 @@
    },
    "tool": "hex2.5",
    "removable": true,
-   "material": "aluminium"
+   "material": "aluminium",
+   "deviation": "not in the STEP (the RVRN_revdev assembly draws no fasteners): every hole it does draw carries one (fasteners.py)"
   },
   {
    "id": "bolt_xl",
-   "designation": "M3x12",
+   "designation": "M3x10",
    "at": [
     -11.5,
     38.2,
@@ -1565,25 +1622,28 @@
     "side_l"
    ],
    "threads_into": "nut_xl",
-   "head": "button",
+   "head": "countersunk",
    "hole": {
     "d": 3.0,
-    "length": 12.0,
-    "head": "button",
-    "head_std": "ISO 7380-1",
-    "head_dk": 5.7,
-    "head_k": 1.65,
+    "length": 10.0,
+    "head": "csk",
+    "head_std": "DIN 7991",
+    "head_dk": 6.0,
+    "head_k": 1.86,
     "clearance_d": 3.4,
     "into": "through",
     "side": "head",
-    "cbore_d": 6.1,
-    "cbore_depth": 0.0,
+    "csk_angle": 90.0,
+    "csk_d": 6.3,
+    "csk_depth": 1.45,
+    "sink": 0.0,
     "grip": 6.0
    },
    "tool": "hex2",
    "removable": true,
    "material": "aluminium",
-   "reason": "rear cross bolt, driven from between the inner tabs: through the inner tab into the thin nut captive in the module prong, its shank on through the pod tongue as a shear pin (the tongue sits in the tab gap); the 4 M2 into the columns clamp the deck face"
+   "reason": "rear cross bolt, driven from between the inner tabs: through the inner tab into the thin nut captive in the module prong, its shank on through the pod tongue as a shear pin (the tongue sits in the tab gap); the 4 M2 into the columns clamp the deck face",
+   "deviation": "not in the STEP (the RVRN_revdev assembly draws no fasteners): every hole it does draw carries one (fasteners.py)"
   },
   {
    "id": "bolt_sr0",
@@ -1617,12 +1677,13 @@
     "csk_angle": 90.0,
     "csk_d": 6.3,
     "csk_depth": 1.45,
-    "sink": 0.0,
-    "grip": 5.5
+    "sink": 0.1,
+    "grip": 5.6
    },
    "tool": "hex2",
    "removable": true,
-   "material": "aluminium"
+   "material": "aluminium",
+   "deviation": "not in the STEP (the RVRN_revdev assembly draws no fasteners): every hole it does draw carries one (fasteners.py)"
   },
   {
    "id": "bolt_sr1",
@@ -1656,12 +1717,13 @@
     "csk_angle": 90.0,
     "csk_d": 6.3,
     "csk_depth": 1.45,
-    "sink": 0.0,
-    "grip": 5.5
+    "sink": 0.1,
+    "grip": 5.6
    },
    "tool": "hex2",
    "removable": true,
-   "material": "aluminium"
+   "material": "aluminium",
+   "deviation": "not in the STEP (the RVRN_revdev assembly draws no fasteners): every hole it does draw carries one (fasteners.py)"
   },
   {
    "id": "bolt_ar",
@@ -1699,11 +1761,12 @@
    },
    "tool": "hex2.5",
    "removable": true,
-   "material": "aluminium"
+   "material": "aluminium",
+   "deviation": "not in the STEP (the RVRN_revdev assembly draws no fasteners): every hole it does draw carries one (fasteners.py)"
   },
   {
    "id": "bolt_xr",
-   "designation": "M3x12",
+   "designation": "M3x10",
    "at": [
     11.5,
     38.2,
@@ -1720,25 +1783,28 @@
     "side_r"
    ],
    "threads_into": "nut_xr",
-   "head": "button",
+   "head": "countersunk",
    "hole": {
     "d": 3.0,
-    "length": 12.0,
-    "head": "button",
-    "head_std": "ISO 7380-1",
-    "head_dk": 5.7,
-    "head_k": 1.65,
+    "length": 10.0,
+    "head": "csk",
+    "head_std": "DIN 7991",
+    "head_dk": 6.0,
+    "head_k": 1.86,
     "clearance_d": 3.4,
     "into": "through",
     "side": "head",
-    "cbore_d": 6.1,
-    "cbore_depth": 0.0,
+    "csk_angle": 90.0,
+    "csk_d": 6.3,
+    "csk_depth": 1.45,
+    "sink": 0.0,
     "grip": 6.0
    },
    "tool": "hex2",
    "removable": true,
    "material": "aluminium",
-   "reason": "rear cross bolt, driven from between the inner tabs: through the inner tab into the thin nut captive in the module prong, its shank on through the pod tongue as a shear pin (the tongue sits in the tab gap); the 4 M2 into the columns clamp the deck face"
+   "reason": "rear cross bolt, driven from between the inner tabs: through the inner tab into the thin nut captive in the module prong, its shank on through the pod tongue as a shear pin (the tongue sits in the tab gap); the 4 M2 into the columns clamp the deck face",
+   "deviation": "not in the STEP (the RVRN_revdev assembly draws no fasteners): every hole it does draw carries one (fasteners.py)"
   },
   {
    "id": "bolt_m0",
@@ -1769,12 +1835,13 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.2,
-    "cbore_depth": 0.0,
-    "grip": 4.0
+    "cbore_depth": 0.6324,
+    "grip": 4.6324
    },
    "tool": "hex1.5",
    "removable": true,
-   "material": "aluminium"
+   "material": "aluminium",
+   "deviation": "not in the STEP (the RVRN_revdev assembly draws no fasteners): every hole it does draw carries one (fasteners.py)"
   },
   {
    "id": "bolt_m1",
@@ -1805,12 +1872,13 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.2,
-    "cbore_depth": 0.0,
-    "grip": 4.0
+    "cbore_depth": 3.0007,
+    "grip": 7.0007
    },
    "tool": "hex1.5",
    "removable": true,
-   "material": "aluminium"
+   "material": "aluminium",
+   "deviation": "not in the STEP (the RVRN_revdev assembly draws no fasteners): every hole it does draw carries one (fasteners.py)"
   },
   {
    "id": "bolt_m2",
@@ -1841,12 +1909,13 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.2,
-    "cbore_depth": 0.0,
-    "grip": 4.0
+    "cbore_depth": 0.9285,
+    "grip": 4.9285
    },
    "tool": "hex1.5",
    "removable": true,
-   "material": "aluminium"
+   "material": "aluminium",
+   "deviation": "not in the STEP (the RVRN_revdev assembly draws no fasteners): every hole it does draw carries one (fasteners.py)"
   },
   {
    "id": "bolt_m3",
@@ -1877,12 +1946,13 @@
     "into": "through",
     "side": "head",
     "cbore_d": 4.2,
-    "cbore_depth": 0.0,
-    "grip": 4.0
+    "cbore_depth": 2.7046,
+    "grip": 6.7046
    },
    "tool": "hex1.5",
    "removable": true,
-   "material": "aluminium"
+   "material": "aluminium",
+   "deviation": "not in the STEP (the RVRN_revdev assembly draws no fasteners): every hole it does draw carries one (fasteners.py)"
   }
  ],
  "connections": [
@@ -2106,7 +2176,8 @@
      37.7,
      25.75
     ]
-   ]
+   ],
+   "exposed_reason": "leaves the chassis hull only inside the vert_mod: under its closed shell (deck below, shell and walls round), then in the upright's lead slot"
   }
  ],
  "allow_overlap": [
@@ -2169,6 +2240,12 @@
    "b": "chassis",
    "max_depth_mm": 0.35,
    "reason": "M2 heat-set insert (3.5 OD) melted into the ELVRN 2.9 column bore: interference by design"
+  },
+  {
+   "a": "wshaft",
+   "b": "weapon_motor_can",
+   "max_depth_mm": 0.3,
+   "reason": "shaft in the can's 5.1 bore (0.05 radial running fit; the meshes overlap)"
   },
   {
    "a": "wshaft",
@@ -2348,23 +2425,6 @@
     ]
    },
    {
-    "part": "whub_fl",
-    "file": "RV21_Rear_Wheel_1.stl",
-    "mode": "envelope",
-    "tol_mm": 1.5,
-    "deviations": [
-     {
-      "near": [
-       -35.1,
-       -26.2,
-       11.32
-      ],
-      "r": 2.0,
-      "reason": "RVRN RV21 hub as drawn: the M3 grub bore breaks into the D-bore (STEP Cut-Extrude4)"
-     }
-    ]
-   },
-   {
     "part": "whub_rr",
     "file": "RV21_Rear_Wheel_2.stl",
     "mode": "envelope",
@@ -2374,23 +2434,6 @@
       "near": [
        35.1,
        26.2,
-       11.32
-      ],
-      "r": 2.0,
-      "reason": "RVRN RV21 hub as drawn: the M3 grub bore breaks into the D-bore (STEP Cut-Extrude4)"
-     }
-    ]
-   },
-   {
-    "part": "whub_fr",
-    "file": "RV21_Rear_Wheel_2.stl",
-    "mode": "envelope",
-    "tol_mm": 1.5,
-    "deviations": [
-     {
-      "near": [
-       35.1,
-       -26.2,
        11.32
       ],
       "r": 2.0,

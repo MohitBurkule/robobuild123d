@@ -11,7 +11,7 @@ from robocad.geom import _cyl, _S, _U, _box, _solid
 from . import chassis as ch, side_panel as sp, vert_mod as vm
 from .fasteners import cutters
 from .params_chassis import HX, REBATE, POSTS, END_POSTS, TAP_D, WALL, AXLE_Z, AXLE_Y, IN_X, KEY_R, HOLE_D
-from .params_drive import FLOOR_LIFT, HUB_X0, TYRE_X0, WY, WZ, DISC_X, SPIDER_X, PROP_X0, PROP_LEN, PROP_FLANGE_X1, SHAFT_D, MOTOR_BASE_X, BASE_SKIN, BRG, BRG_X0, UP_IN, UP_T, HUB_LEN
+from .params_drive import DISC_PHASE, FLOOR_LIFT, HUB_X0, TYRE_X0, WY, WZ, DISC_X, SPIDER_X, PROP_X0, PROP_LEN, PROP_FLANGE_X1, SHAFT_D, MOTOR_BASE_X, BASE_SKIN, BRG, BRG_X0, UP_IN, UP_T, HUB_LEN
 from .params_hw import BASE_T, BASE_CSK_D, SO_LEN, SO_D, PLATE_W, PLATE_H, BACK_T, FRONT_T, PROP_D, FH_CLR, FRONT_HUB_TRIM
 
 _REVRON_SRC = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "..", "revron", "src"))
@@ -51,7 +51,8 @@ def _weapon_plate(name, x_span):
     from revron import drisk
     from revron.params import DR_X, WY as R_WY, WZ as R_WZ
     s = drisk.disc(name) if name.startswith("disc") else drisk.spider()
-    return s.moved(bd.Location((x_span[0] - min(DR_X[name]), WY - R_WY, WZ - R_WZ)))
+    s = s.moved(bd.Location((x_span[0] - min(DR_X[name]), WY - R_WY, WZ - R_WZ)))
+    return s.rotate(bd.Axis((0, WY, WZ), (1, 0, 0)), DISC_PHASE)   # the tooth where the STEP has it (the joint's 0)
 
 
 def prop_mount():

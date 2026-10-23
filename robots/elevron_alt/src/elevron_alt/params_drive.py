@@ -11,6 +11,7 @@ WY, WZ = 59.2, 23.5                    # weapon spin axis (along X): spiderSL / 
 UP_IN = 13.3                           # vert_mod uprights: inner face |X| (the BE1806 base bolts flat to the left one)
 UP_T = 4.0                             # left upright under the motor screw heads (counterbore floor)
 DISC_GAP = 1.0                         # floating disc rides the bell's X boss, this far off the bell face (STEP 2.2)
+DISC_PHASE = 200.0                     # disc and spider turned about the axis from the Revron drawing to the STEP's tooth angle
 DISC_T, SPIDER_T = 3.0, 3.0            # Drisk_floating_3 Hardox, spiderSL
 PROP_LEN = 14.0                        # RV07 prop mount (15 dia x 14)
 # -----------------------------------------------------------------------------------------------------------------------

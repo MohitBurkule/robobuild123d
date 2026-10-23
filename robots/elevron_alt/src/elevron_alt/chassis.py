@@ -89,8 +89,7 @@ def fillet_filler(c, rc, axis, at, r, side):
     k = rc / (rc + r)
     tc = (c[0] + (f[0] - c[0]) * k, c[1] + (f[1] - c[1]) * k)              # tangent point on the column
     tw, q = ((f[0], at), (c[0], at)) if axis == "y" else ((at, f[1]), (at, c[1]))   # tangent point on the wall, wall foot of the column axis
-    region = Polygon([c, tc, tw, q]).buffer(0).difference(Point(f).buffer(r, quad_segs=64))
-    return _ext(region, "xy", 0, DECK_Z)
+    return _S(_ext(Polygon([c, tc, tw, q]).buffer(0), "xy", 0, DECK_Z), _cyl(r, -1, DECK_Z + 1, f, "z"))   # an exact round: no facet slivers
 
 
 def keyholes():
@@ -133,7 +132,8 @@ def side_boss_cuts():
                              bd.Vector(NUT_DEPTH, 0, 0)).moved(bd.Location((IN_X - BOSS_IN, 0, 0))) for y in ys]
     x0 = HX + BOSS_OUT - WIN_DEPTH
     win = _box(x0, HX + BOSS_OUT + 1, -WIN_W / 2, WIN_W / 2, AXLE_Z - WIN_H / 2, AXLE_Z + WIN_H / 2)
-    win = win.fillet(WIN_R, [e for e in win.edges() if e.center().X < HX + BOSS_OUT])   # Fillet12 R1: floor and corners
+    win = win.fillet(WIN_R, [e for e in win.edges() if e.center().X < HX + BOSS_OUT and abs(e.tangent_at().X) > COS_ALONG])   # Fillet12 R1: corners,
+    win = win.fillet(WIN_R * WIN_FLOOR_K, [e for e in win.edges() if abs(e.center().X - x0) < GEOM_TOL])   # then the floor (torus blends: no sphere poles to tessellate)
     lead = [bd.Solid.make_loft([_hex_wire(IN_X - BOSS_IN, y, NUT_AF + 2 * NUT_CH), _hex_wire(IN_X - BOSS_IN + NUT_CH, y, NUT_AF)]) for y in ys]   # Chamfer3 0.4 nut lead-in
     return _both(_U(*holes, *nuts, *lead, win))
 
@@ -199,7 +199,7 @@ def lattice():
     """Cut-Extrude7/14/16: the windows pocketed LAT_DEPTH up into the deck underside."""
     w = lattice_profile()
     polys = list(w.geoms) if hasattr(w, "geoms") else [w]
-    out = [_ext(p, "xy", DECK_Z - 1, DECK_Z + LAT_DEPTH) for p in polys if p.area > 1]
+    out = [_ext(p, "xy", DECK_Z - 1, DECK_Z + LAT_DEPTH, arcs=True) for p in polys if p.area > 1]
     return _U(*out)
 
 
