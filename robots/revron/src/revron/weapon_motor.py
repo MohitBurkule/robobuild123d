@@ -24,6 +24,7 @@ from robot import catalog as C
 
 class WeaponMotorError(ValueError):
     """The selected weapon motor cannot be fitted: a clear reason, raised at spec generation."""
+    declared_unfit = True   # a declared, reasoned refusal (the hypothesis does not fit), not a crash
 
 
 def _holes(rows, what, cid):
