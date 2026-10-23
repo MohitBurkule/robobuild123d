@@ -4,7 +4,7 @@ the side panels seat on the lobes with no overlap and need no cut."""
 import build123d as bd
 from .mount import mount_profile, _prism
 from .params_chassis import MNT_SLAB_T
-from .params_weapon import MNT_FRAME
+from .tub2_iface import MOUNT_FRAMES as MNT_FRAME
 from . import plate as pl
 
 
@@ -15,4 +15,5 @@ def mount_slab(side):
 
 
 def keepouts():
-    return [mount_slab("l"), mount_slab("r")]
+    """Both slabs. A mount that has moved with a taller nose (WZ follows SA / SB) can come out of the profile boolean with an empty second solid: only the real one is cut."""
+    return [max(m.solids(), key=lambda v: v.volume) if len(m.solids()) > 1 else m for m in (mount_slab("l"), mount_slab("r"))]

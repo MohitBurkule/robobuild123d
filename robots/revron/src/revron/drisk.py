@@ -8,9 +8,9 @@ import math
 import build123d as bd
 
 from . import plate as pl
-from .common import _m2
+from .common import _m2  # noqa: F401
 from .params_weapon import (BIG, BOLT_R, DISC_BAL_PTS, DISC_BORE_ROUND, DISC_ECC, DISC_ECC_A, DISC_HOLE_R_WIN, DISC_R, SERVICE_TURN_MARGIN_DEG,
-                            DISC_ROUND, DOG, DR_ROT, DR_X, HALF_PITCH, HUB_R, N_STACK, SPACER, SPIDER, STACK_CLR_R, STACK_TAP_R, TOOTH_A,
+                            DISC_ROUND, DOG, DR_ROT, DR_X, HALF_PITCH, HUB_D, HUB_R, N_HUB, N_STACK, SPACER, SPIDER, STACK_CLR_R, STACK_TAP_R, TOOTH_A,
                             TOOTH_R, W_FRAME, WSHAFT)
 from .params_chassis import WY, WZ
 
@@ -97,9 +97,10 @@ def spider_sketch():
     quarter windows, the shaft-collar bore, M2 clearance on the bell's HUB_R screw circle and M2 tap holes on BOLT_R
     (the stack screws thread in)."""
     sp = SPIDER
-    clr_r = _m2()[1]                                                # bell screws (M2, motor catalog)
+    from robot.cad import fastener_catalog as fc
+    clr_r = fc.clearance(HUB_D, "close") / 2                        # bell screws (size and circle from the motor catalog: GR1507 M2 on r4.5)
     body = pl.round_corners(bd.Circle(sp["r"]) + pl.holes(sp["lobe_r"], BOLT_R, N_STACK), r_in=sp["round_in"])
-    return body - pl.polar(_quarter_window(sp["hub_r"], sp["win_r"], sp["arm"], sp["win_round"]), N_STACK) - bd.Circle(sp["bore_r"]) - pl.holes(clr_r, HUB_R, N_STACK) - pl.holes(STACK_TAP_R, BOLT_R, N_STACK)
+    return body - pl.polar(_quarter_window(sp["hub_r"], sp["win_r"], sp["arm"], sp["win_round"]), N_STACK) - bd.Circle(sp["bore_r"]) - pl.holes(clr_r, HUB_R, N_HUB) - pl.holes(STACK_TAP_R, BOLT_R, N_STACK)
 
 
 def spider():
@@ -121,10 +122,16 @@ def drisk_spacer():
 
 # ------------------------------------------------------------------------------------------------------------ shaft
 def weapon_shaft():
-    """GR1507 5 mm shaft, revolved about the weapon axis: V-thread (pitch, depth, length from the free end) behind a
-    lead-in chamfer, then plain to the circlip end."""
+    """Weapon motor shaft (GR1507: 5 mm), revolved about the weapon axis: V-thread (pitch, depth, length from the free
+    end) behind a lead-in chamfer, then plain to the circlip end; a motor whose catalog entry has no thread
+    (shaft_thread_mm 0) gets a plain shaft with the chamfer."""
     w = WSHAFT
     p, r, dr = w["thread_pitch"], w["r"], w["thread_depth"]
+    if w["thread_len"] < w["chamfer"] + p:
+        ch = min(w["chamfer"], r / 2)
+        prof = [(0.0, 0.0), (0.0, r - ch), (ch, r), (w["len"], r), (w["len"], 0.0)]
+        face = bd.Face(bd.Wire.make_polygon([bd.Vector(w["x_end"] + x, 0, z) for x, z in prof], close=True))
+        return pl.placed(bd.Solid.revolve(face, 360, bd.Axis.X), W_FRAME)
     prof = [(0.0, 0.0), (0.0, r - dr - w["chamfer"]), (w["chamfer"], r - dr)]
     for k in range(int(round(w["thread_len"] / p))):
         x = w["chamfer"] + k * p

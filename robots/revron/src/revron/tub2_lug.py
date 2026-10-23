@@ -8,7 +8,7 @@ from math import atan2, cos, hypot, sin, sqrt
 from .tub2_arcs import angle, floor_blend, tangent_from_point
 
 BLEND_R = LUG_SCALLOP_R                         # Fillet6 R4 under the lug (the scallop R)
-NOSE_TIP_OFF, NOSE_TIP_R = (0.16, 0.2), 3.0         # top of the nose: a slightly smaller round, shifted up-front, takes the top line (STEP: R3.0 on the section)
+NOSE_TIP_OFF, NOSE_TIP_R = (0.16, 0.2), LUG_SB_R - 0.25   # top of the nose: a slightly smaller round, shifted up-front, takes the top line (STEP: R3.0 on the section, a quarter under the SB round)
 SA_HOLE_R, SB_HOLE_R = SO_R, fc.clearance(M3, 'close') / 2   # standoff end (its own radius), M3 clearance (Sketch4 D1 / D4)
 
 

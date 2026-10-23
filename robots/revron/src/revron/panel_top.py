@@ -4,14 +4,14 @@ Laser-cut Ti sheet, one thickness level: the dump's 0.1 deep recess (Cut-Extrude
 Part frame = reference transform: origin on the bolt-pattern centre at the top face, z pointing down through the sheet."""
 import build123d as b
 from robot.cad.holes import hole_tool
-from .params_chassis import TOP_XY, TOP_Z0, TOP_T, TOP_X, TOP_NOTCH_X, TOP_SHOULDER_Y, TOP_TAB_Y
+from .params_chassis import TOP_XY, TOP_Z0, TOP_T, TOP_X, TOP_NOTCH_X, TOP_SHOULDER_Y, TOP_TAB_Y, TOP_EAR_R
 from .panel_base import to_local
 
 YC = sum(y for _, y in TOP_XY) / len(TOP_XY)
 FRAME = b.Location((0, YC, TOP_Z0 + TOP_T), (0, 180, 0))
 BOLT = [to_local(FRAME, (x, y, 0))[:2] for x, y in TOP_XY]          # bolt pattern in the part frame (shared with the tub's rim bores)
 DX, DY = 2 * max(abs(x) for x, _ in BOLT), 2 * max(abs(y) for _, y in BOLT)
-EAR_R, HOLE_D, CHAMFER = 2.5, 2.2, 0.75                             # ear radius, clearance hole, Chamfer1
+EAR_R, HOLE_D, CHAMFER = TOP_EAR_R, 2.2, 0.75                          # ear radius, clearance hole, Chamfer1
 EDGE_Y = DY / 2 + EAR_R                                             # front / rear edge tangent to the ears
 FILL_R = 10.0                                                       # Fillet1: R10 arc between the |X| TOP_X side edge and the ear
 FILLET = 1.0                                                        # Fillet3 / Fillet4

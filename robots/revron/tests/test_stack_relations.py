@@ -53,7 +53,7 @@ CASES = {
     "default": None,
     "n_stack_3": ("params_weapon.py", r"^N_STACK = 4", "N_STACK = 3"),
     "n_stack_5": ("params_weapon.py", r"^N_STACK = 4", "N_STACK = 5"),
-    "bolt_circle": ("params_weapon.py", r"^BOLT_R, HUB_R = 14\.0", "BOLT_R, HUB_R = 13.6"),
+    "bolt_circle": ("params_weapon.py", r"^BOLT_R = 14\.0", "BOLT_R = 13.6"),
     "disc_thick": ("params_weapon.py", r"^SPIDER_T, DISC_T = 3\.0, 3\.0", "SPIDER_T, DISC_T = 3.0, 4.0"),
     "bolt_m2_5": ("params_weapon.py", r"^STACK_BOLT_D = 2\.0", "STACK_BOLT_D = 2.5"),
     "wall": ("params_weapon.py", r"^STACK_WALL = 1\.5", "STACK_WALL = 1.2"),

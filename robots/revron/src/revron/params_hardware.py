@@ -39,11 +39,10 @@ WIRES = [("w_bat_sw", "battery.jst_rcy", "power_switch.in", AWG["power"], "power
 WEB = dict(spider=0.8, disc=0.9, fork=1.05)             # min_web_mm the designer owns (STEP measures the same webs)
 HUB_SPIN_DEG = 2.45                                   # rear hubs sit this far round the D-shaft (STEP: the D-bore flat, nut slot and grub are turned 2.45 deg; the Distance/Concentric mates leave the spin free)
 HUB_PIVOT_X = dict(rear=41.6, front=34.5)               # |X| of each hub's revolute pivot
-BATTERY = os.environ.get("REVRON_BATTERY", "lipo_2s_180_turnabot")                          # RV16 pack, catalog id
+# BATTERY (RV16 pack catalog id) comes from params_chassis: the front wall follows the pack length
 BAT_L, BAT_W, BAT_H = hw.size(BATTERY)                    # catalog box (long side L): in the bay it is turned 90 about Z, so L runs along Y and W along X
 BAT_BELOW = BAT_H / 2                                     # catalog origin -> pack underside (STEP pack 11 thick, z 6.5..17.5 about origin z 12)
 BAT_STOP_GAP = 0.0                                        # pack rear face to the stop wall front face it butts (STEP: the RV16 pack touches the RV01 stop wall)
-BAT_X = -11.81                                          # pack centre X (STEP envelope)
 BAT_Y = round(KEY_SPAN[1] + BAT_STOP_GAP + BAT_L / 2, 6)  # pack centre Y: the pack stands against the stop wall, so a wider gearmotor (stop wall further forward) pushes it forward
 BAT_Z = round(CH["deck"] - BAT_H / 2, 6)                # pack centre Z: the pack top rests against the deck underside (STEP pack 11 thick, z 6.5..17.5 about origin z 12), so a taller pack hangs lower; underside 2.0 over the base panel skin at the default (original: no pad, pack mated to the chassis only; foam pad = variant battery_pad)
 ELEC = dict(battery=(BAT_X, BAT_Y, BAT_Z), rxesc=(8.67, -3.0, 15.3), wesc=(8.63, -7.25, 10.6), switch_yz=(-5.6, 14.25))   # catalog origins (STEP envelopes)

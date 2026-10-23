@@ -14,11 +14,11 @@ from robot.world import csk_dims
 # Measured layout (RVRN 2.0 STEP, world frame). Each number is a dimension of a feature, not a mesh coordinate list.
 # ======================================================================================================================
 # ---- MASTER DESIGN PARAMETERS (everything below is constrained to these, or is a catalog / measured organic value) ----
-CH_HALF_W = 29.5                     # chassis outer half-width |X| (outer side-wall face)
-CH_Y0, CH_Y1 = -37.6, 15.0           # chassis rear face / front face (where the weapon-mount tabs start)
-CH_Z0, CH_Z1 = 2.5, 19.5             # chassis floor underside / rim (top panel and mount notch sit on it)
+CH_HALF_W_STOCK = 29.5               # chassis outer half-width |X| (outer side-wall face) as drawn; CH_HALF_W (below) = the width in use
+CH_Y0, CH_Y1_STOCK = -37.6, 15.0     # chassis rear face / stock front face; CH_Y1 (below) = the front face, which a longer pack pushes forward
+CH_Z0, CH_Z1_STOCK = 2.5, 19.5       # chassis floor underside / stock rim; CH_Z1 (below) = the rim (top panel and mount notch sit on it)
 CH_WALL = 2.0                        # printed wall and deck thickness
-WY, WZ = 38.5, 23.5                  # weapon axis (along X)
+WY_STOCK, WZ_STOCK = 38.5, 23.5      # weapon axis (along X) as drawn
 from .wheel_variant import rear_wheel_dims
 REAR_GROUND_GAP = 0.25               # rear tyre bottom above the ground plane (STEP: axle 11.0, tyre OD 21.5)
 WHEEL_OD_R = rear_wheel_dims()["od"]   # rear tyre OD (mm): the stock tyre, or REVRON_REAR_WHEEL
@@ -27,19 +27,75 @@ WHEEL_OD_R = rear_wheel_dims()["od"]   # rear tyre OD (mm): the stock tyre, or R
 DRIVE_LOCATION = os.environ.get("REVRON_DRIVE_LOCATION", "rear")
 DRIVE_LOCATIONS = {"rear": dict(ry=-30.5), "mid": dict(ry=-8.0), "front": dict(ry=5.0)}
 RY, RZ = DRIVE_LOCATIONS[DRIVE_LOCATION]["ry"], WHEEL_OD_R / 2 + REAR_GROUND_GAP   # N10 shaft (rear axle at the default location): the tyre radius over the ground gap
-SA = (30.5, 5.5)                     # 25 mm standoff (RV11): front axle (Y, Z)
-SB = (40.5, 4.5)                     # 15 mm standoff (RV10): nose (Y, Z)
+DRIVE_MOTOR = os.environ.get("REVRON_DRIVE_MOTOR", "n10_2200rpm_spicy")    # catalog id of the drive gearmotors (RV12): the tub is dimensioned from its plate stack
+GB = hw.gearbox(DRIVE_MOTOR)         # plate stack in the motor frame: top, half_w, end, gaps
+MOTOR_WALL_GAP = 0.3                 # last gearbox plate to the chassis wall's inner face
+MOT = hw.reach(DRIVE_MOTOR)          # the gearmotor's catalog envelope in its own frame (x0..x1 along the shaft, y0..y1 across)
+BATTERY = os.environ.get("REVRON_BATTERY", "lipo_2s_180_turnabot")      # RV16 pack, catalog id
+BAT_LEN = hw.size(BATTERY)[0]        # pack length: in the bay it runs along Y, butting the stop wall
+KEY_BITE, STOP_CLR = 0.65, 0.1       # key tab reaches this far behind the gearbox front face; the stop wall stands this clear of it
+KEY_SPAN = (round(RY + GB["half_w"] - KEY_BITE, 6), round(RY + GB["half_w"] + STOP_CLR + CH_WALL, 6))   # Y span of the key tab / stop wall
+PACK_FRONT_GAP = 0.2                 # pack front face to the front wall's inner face
+# ---- insert columns' constants (the size floors below clear their sleeves) ----
+INSERT_CAT = "heatset_m2_4"          # FS1 M2 heat-set, brass, 3.5 OD x 4
+INSERT_OD, INS_LEN = hw.size(INSERT_CAT)[1:]   # knurled OD and length from the catalog
+BORE_CH = 0.6                        # chamfer of the heat-set bore at the panel seat and at the rim
+KNURL = 0.25                         # FS1 M2 heat-set: knurl depth
+BORE_R = INSERT_OD / 2 - KNURL       # heat-set bore = the insert's core (the knurl melts in)
+KEEP_R = BORE_R + CH_WALL / 4        # the bore and half a skin of plastic round it: the sleeve no part may notch, so no part may stand in it either
+SLEEVE_CLR = 0.2                     # a part stands this clear of a bore sleeve
+INS_PITCH_Y, INS_EDGE = 32.0, (2.5, 2.6)   # stock grid pitch along Y; column centre to the side wall inner face / to the front wall inner face
+BAT_X = -11.81                       # pack centre X (STEP envelope)
+# ---- overall size (hooks size.width / size.length / size.height; env REVRON_SIZE_WIDTH / _LENGTH / _HEIGHT) ---------------------------------------------
+# Each is a delta in mm ("4", "-3.5") or a percentage of the stock overall width / length / height ("10%", "-20%"). Width moves both side walls out; length
+# moves the nose (the rear wall, rear axle, drive motors and stop wall keep their place; the front wall, the front wheel axle SA / SB, the weapon axis WY and
+# the front column row move with it); height moves the rim (the deck, the top panel, the weapon axis WZ and the pack's hang move with it).
+# A chassis never closes in on what it holds: a shrink stops where the contents touch (width: the two gearmotors a skin apart at the centre, the pack clear of the column sleeves; length:
+# the pack against the stop wall and a wall in front of it; height: the gearbox top under the deck), so a request past that saturates there. The floors
+# below are relations of the catalog parts: a larger part (another motor, a longer pack) can raise a floor above the stock size but never lowers the stock.
+def size_delta(env, nominal):
+    """mm delta of an overall-size setting: '4' = 4 mm, '10%' = a tenth of `nominal`."""
+    s = os.environ.get(env, "0").strip()
+    return round(float(s[:-1]) / 100.0 * nominal if s.endswith("%") else float(s), 6)
+SIZE_WIDTH = os.environ.get("REVRON_SIZE_WIDTH", "0")
+SIZE_WIDTHS = {"-30%": -0.3, "-20%": -0.2, "-10%": -0.1, "10%": 0.1, "20%": 0.2, "30%": 0.3}   # the declared steps of hook size.width (hooks.json)
+SIZE_LENGTH = os.environ.get("REVRON_SIZE_LENGTH", "0")
+SIZE_LENGTHS = {"-30%": -0.3, "-20%": -0.2, "-10%": -0.1, "10%": 0.1, "20%": 0.2, "30%": 0.3}   # the declared steps of hook size.length (hooks.json)
+SIZE_HEIGHT = os.environ.get("REVRON_SIZE_HEIGHT", "0")
+SIZE_HEIGHTS = {"-30%": -0.3, "-20%": -0.2, "-10%": -0.1, "10%": 0.1, "20%": 0.2, "30%": 0.3}   # the declared steps of hook size.height (hooks.json)
+MOTOR_PAIR_GAP = CH_WALL / 2         # the two gearmotors keep at least this between their inner ends at the centre
+MOTOR_DECK_GAP = 0.5                 # gearbox top to the deck underside (STEP: deck 17.5, gearbox top 17.0)
+CH_HALF_W_MIN = round(max(MOTOR_PAIR_GAP / 2 - MOT["x0"] + MOTOR_WALL_GAP + GB["end"],          # the motors, a wall in from each wall, a gap apart
+                          abs(BAT_X) + hw.size(BATTERY)[1] / 2 + SLEEVE_CLR + KEEP_R + INS_EDGE[0]) + CH_WALL, 6)   # the pack clear of the column sleeves; narrowest wall = the larger
+CH_Y1_MIN = round(KEY_SPAN[1] + BAT_LEN + PACK_FRONT_GAP + CH_WALL, 6)     # shortest nose: the pack against the stop wall and a wall in front of it
+CH_Z1_MIN = round(RZ + GB["top"] + MOTOR_DECK_GAP + CH_WALL, 6)            # lowest rim: the gearbox top under the deck
+SIZE_DW = max(size_delta("REVRON_SIZE_WIDTH", CH_HALF_W_STOCK), min(0.0, CH_HALF_W_MIN - CH_HALF_W_STOCK))   # mm each side wall moves out
+SIZE_DL = max(size_delta("REVRON_SIZE_LENGTH", CH_Y1_STOCK - CH_Y0), min(0.0, CH_Y1_MIN - CH_Y1_STOCK))     # mm the nose moves forward
+SIZE_DH = max(size_delta("REVRON_SIZE_HEIGHT", CH_Z1_STOCK - CH_Z0), min(0.0, CH_Z1_MIN - CH_Z1_STOCK))    # mm the rim moves up
+CH_HALF_W = CH_HALF_W_STOCK + SIZE_DW    # chassis outer half-width in use
+CH_Y1_NOM = CH_Y1_STOCK + SIZE_DL        # requested front face (the pack and the weapon-mount tab can still push / limit it, see CH_Y1)
+CH_Z1 = CH_Z1_STOCK + SIZE_DH            # chassis rim
+WY, WZ = WY_STOCK + SIZE_DL, WZ_STOCK + SIZE_DH   # weapon axis: it moves with the nose and the rim
+WHEEL_OD_F = 11.0                    # front wheel outer diameter (RV20 Scalextric micro tyre): the front axle stands at its radius, the nose follows
+SO_R = 2.5                           # standoff radius
+SA_Y0 = 30.5                         # front axle Y as drawn
+SA_Y, SA_Z = SA_Y0 + SIZE_DL, WHEEL_OD_F / 2    # front axle (Y, Z): axle height = wheel radius; the axle moves with the nose
+SA = (SA_Y, SA_Z)                    # 25 mm standoff (RV11): front axle (Y, Z)
+SB_DROP, SB_WHEEL_CLR = 1.0, 0.5     # nose standoff axis this far under the axle line (STEP 5.5 -> 4.5); its surface this clear of the front tyre
+SB_Y = max(40.5 + SIZE_DL, round(SA_Y + math.sqrt((WHEEL_OD_F / 2 + SO_R + SB_WHEEL_CLR) ** 2 - SB_DROP ** 2), 6))   # nose Y: at least the STEP's 40.5 (moved with the nose), and never nearer the front wheel than its radius + the standoff radius + a clearance
+SB = (SB_Y, WHEEL_OD_F / 2 - SB_DROP)   # 15 mm standoff (RV10): nose (Y, Z)
 # the rotor axis keeps at least its distance (WY, WZ master and the STEP's standoff positions) from each mount-screw axis: the heads back out inboard
 # past the disc, so when SA / SB rise (or close in) the rotor rises with them; at the STEP standoffs this changes nothing
-_STEP_SCREW_AXES = ((30.5, 5.5), (40.5, 4.5))
+_STEP_SCREW_AXES = ((30.5 + SIZE_DL, 5.5), (40.5 + SIZE_DL, 4.5))   # the STEP's mount-screw axes, moved with the nose
 _REACH = [math.hypot(WY - y, WZ - z) for y, z in _STEP_SCREW_AXES]
 WZ = max(WZ, *[round(p[1] + math.sqrt(r ** 2 - (WY - p[0]) ** 2), 6) for p, r in zip((SA, SB), _REACH) if r > abs(WY - p[0])])
 SA_LEN, SB_LEN = 25.0, 15.0          # catalog standoff lengths
-SA_X0, SB_X0 = 17.5, 21.5            # |X| of each standoff's inner end
-SO_R = 2.5                           # standoff radius
 M2, M3 = 2.0, 3.0                    # thread diameters of the screws the tub is drilled for
 M3_THIN_NUT_T = fc.nut(M3, 'thin')[1]   # thin M3 nut thickness (ISO 4035)
 MNT_IN, MNT_T, MNT_SLAB_T = 13.4, 8.0, 4.0   # weapon mount: inner face |X|, total thickness, slab thickness (rest = battered boss)
+STANDOFF_END_GAP = 0.1               # each standoff's inner end stands this far past the mount face it screws into
+SA_X0 = round(MNT_IN + MNT_SLAB_T + STANDOFF_END_GAP, 6)   # |X| of the axle standoff's inner end: past the mount slab (17.5)
+SB_X0 = round(MNT_IN + MNT_T + STANDOFF_END_GAP, 6)        # |X| of the nose standoff's inner end: past the whole mount (21.5)
 FLOOR_Z = 1.0                        # ground-contact plane of the ramps / side feet
 # ---------------------------------------------------------------------------------------------------------------------
 CH_IN_X = CH_HALF_W - CH_WALL        # inner face of the side walls (27.5)
@@ -47,13 +103,39 @@ REF_TO_WORLD = [[0, 0, -1, 0], [-1, 0, 0, 0], [0, 1, 0, 0], [0, 0, 0, 1]]
 SA_X, SB_X = (SA_X0, SA_X0 + SA_LEN), (SB_X0, SB_X0 + SB_LEN)   # standoff |X| spans: inner end + catalog length
 NUT = (-11.5, 8.5)                   # side-panel screw into a thin M3 nut in the chassis wall (Y, Z)
 NUT_X = (CH_HALF_W - M3_THIN_NUT_T, CH_HALF_W)   # nut pocket opens on the outer wall face, one nut deep
-# insert columns: a 2 x 2 grid, each centre a fixed distance in from the inner wall faces, plus the rear boss one wall in front of the rear inner face
-INS_PITCH_Y, INS_EDGE = 32.0, (2.5, 2.6)   # grid pitch along Y; column centre to the side wall inner face / to the front wall inner face
-INS_COLS = tuple((sx * (CH_IN_X - INS_EDGE[0]), CH_Y1 - CH_WALL - INS_EDGE[1] - k * INS_PITCH_Y) for k in (0, 1) for sx in (-1, 1))
-INS = [*INS_COLS, (0.0, CH_Y0 + 2 * CH_WALL)]   # 5 floor inserts / base screws
-INSERT_CAT = "heatset_m2_4"          # FS1 M2 heat-set, brass, 3.5 OD x 4
-INSERT_OD, INS_LEN = hw.size(INSERT_CAT)[1:]   # knurled OD and length from the catalog
-BORE_CH = 0.6                        # chamfer of the heat-set bore at the panel seat and at the rim
+# ---- insert columns: a 2 x 2 grid plus the rear-centre boss, placed against what sits in the tub ----------------------------------------
+COL_R = 2.75                         # insert column boss radius (corner blocks, rear boss and deck pockets are tangent to it)
+WALL_IN_REAR = CH_Y0 + CH_WALL       # inner face of the rear wall (Y)
+MOTX = round(CH_IN_X - MOTOR_WALL_GAP - GB["end"], 6)   # N10 catalog origin |X|: the stack ends a gap short of the wall
+KEY_CLR = 0.15                       # chassis key tab to each gearbox plate
+N10_KEY = tuple(round(MOTX + g + s * KEY_CLR, 6) for g, s in zip(GB["gaps"][-1], (1, -1))) if GB["gaps"] else None   # |X| of the key tab: the open span between the stack's last two plates less the clearance; none when the gearbox has no such gap
+MOT_X, MOT_Y = (MOTX + MOT["x0"], MOTX + MOT["x1"]), (RY + MOT["y0"], RY + MOT["y1"])   # the +X motor's |X| and Y spans in the tub (the -X motor is its mirror)
+TAB_FRONT_SETBACK = fc.head(3.0, 'csk')[0] / 2 + CH_WALL / 2   # tab front face stands short of the axle standoff axis (SA) by the M3 CSK head radius plus a skin: the mount screw into SA clears the tab
+CH_Y1_MAX = SA[0] - TAB_FRONT_SETBACK - CH_WALL   # the front wall can come this far forward and still leave the weapon-mount tab one wall to stand on
+CH_Y1 = max(CH_Y1_NOM, min(CH_Y1_MAX, round(KEY_SPAN[1] + BAT_LEN + PACK_FRONT_GAP + CH_WALL, 6)))   # front face: the requested one (stock 15.0) unless the pack (against the stop wall) is longer than it holds
+INS_X = CH_IN_X - INS_EDGE[0]        # column |X|
+ROW_FRONT = CH_Y1 - CH_WALL - INS_EDGE[1]                          # front row Y (follows the front wall)
+ROW_REAR = CH_Y1_STOCK - CH_WALL - INS_EDGE[1] - INS_PITCH_Y       # rear row Y (stays when the front wall moves forward)
+
+
+def _clear_of_motor(y, lo, hi):
+    """Row Y moved out of the gearmotor's Y span (plus a bore sleeve and its clearance each side) when the motor's X span covers the column: to the nearer free side within lo..hi."""
+    pad = KEEP_R + SLEEVE_CLR
+    if not (MOT_X[0] - pad < INS_X < MOT_X[1] + pad and MOT_Y[0] - pad < y < MOT_Y[1] + pad):
+        return y
+    free = [v for v in (MOT_Y[0] - pad, MOT_Y[1] + pad) if lo <= v <= hi]
+    return min(free, key=lambda v: abs(v - y)) if free else y
+
+
+_front = round(_clear_of_motor(ROW_FRONT, ROW_REAR + 2 * COL_R, ROW_FRONT), 6)
+_rear = round(_clear_of_motor(ROW_REAR, WALL_IN_REAR + COL_R, _front - 2 * COL_R), 6)
+INS_COLS = tuple((sx * INS_X, y) for y in (_front, _rear) for sx in (-1, 1))
+# rear-centre boss: one wall in front of the rear inner face, unless the gearmotor's stack reaches the boss's bore sleeve (it ends short of the
+# axis, or crosses it): then the boss moves out in front of the motor, a sleeve + clearance clear of it, and stands free of the rear wall
+BOSS_REAR_Y = CH_Y0 + 2 * CH_WALL
+BOSS_AT_REAR = not (MOT_X[0] < KEEP_R + SLEEVE_CLR and MOT_Y[0] - KEEP_R - SLEEVE_CLR < BOSS_REAR_Y < MOT_Y[1] + KEEP_R + SLEEVE_CLR)
+BOSS_Y = BOSS_REAR_Y if BOSS_AT_REAR else round(MOT_Y[1] + KEEP_R + SLEEVE_CLR, 6)
+INS = [*INS_COLS, (0.0, BOSS_Y)]   # 5 floor inserts / base screws
 # electronics envelopes (catalog boxes at their spec placement, rot z 90): Malenki nano 32 x 20 x 4.4 at (8.67, -3.0, 15.3),
 # BBB ant ESC 23.5 x 12 x 5 at (8.63, -7.25, 10.6); the deck cage ribs are dimensioned off these
 RXESC = os.environ.get("REVRON_RXESC", "malenki_nano_rvrn2")   # receiver / drive ESC catalog id
@@ -69,12 +151,6 @@ def _env(c, size):
 
 
 (RX_X, RX_Y, RX_Z), (WE_X, WE_Y, WE_Z) = _env(RX_C, RX_SIZE), _env(WE_C, WE_SIZE)
-DRIVE_MOTOR = os.environ.get("REVRON_DRIVE_MOTOR", "n10_2200rpm_spicy")    # catalog id of the drive gearmotors (RV12): the tub is dimensioned from its plate stack
-GB = hw.gearbox(DRIVE_MOTOR)         # plate stack in the motor frame: top, half_w, end, gaps
-MOTOR_WALL_GAP = 0.3                 # last gearbox plate to the chassis wall's inner face
-MOTX = round(CH_IN_X - MOTOR_WALL_GAP - GB["end"], 6)   # N10 catalog origin |X|: the stack ends a gap short of the wall
-KEY_CLR = 0.15                       # chassis key tab to each gearbox plate
-N10_KEY = tuple(round(MOTX + g + s * KEY_CLR, 6) for g, s in zip(GB["gaps"][-1], (1, -1))) if GB["gaps"] else None   # |X| of the key tab: the open span between the stack's last two plates less the clearance; none when the gearbox has no such gap
 # declared compartment layout (hook chassis.compartments): the interior compartments the tub carves, by name. motor = the pocket for the gearmotor body
 # and the stop wall / key tab / ledge that locate it; battery = the bay cut from the pack's catalog envelope; partition = the rib splitting the pack bay
 # from the electronics bay beside it
@@ -82,8 +158,6 @@ COMPARTMENT = os.environ.get("REVRON_COMPARTMENTS", "standard")
 COMPARTMENTS = {"standard": ("motor", "battery"), "none": (), "split_battery_bay": ("motor", "battery", "partition")}
 LAYOUT = COMPARTMENTS[COMPARTMENT]
 N10_TOP = round(RZ + GB["top"], 6)   # top face of the N10 gearbox plates
-KEY_BITE, STOP_CLR = 0.65, 0.1       # key tab reaches this far behind the gearbox front face; the stop wall stands this clear of it
-KEY_SPAN = (round(RY + GB["half_w"] - KEY_BITE, 6), round(RY + GB["half_w"] + STOP_CLR + CH_WALL, 6))   # Y span of the key tab / stop wall
 # chassis RV01
 SW_HALF_W, SW_CLR = 2.9, 0.05   # power switch body half-width, its clearance to the inner wall face
 SW_HALF, SW_WALL_CLEAR = SW_HALF_W, SW_CLR   # fix-joints names (switch joint in joints.py)
@@ -108,10 +182,15 @@ PRELOAD_PAD = dict(c=(round(CH_IN_X - PAD_EDGE - PAD_S / 2, 6), round(RY + PAD_D
 BASE_IN = 1.4                       # RV26 outline edge in from the chassis outer face (rear and side); the front edge is the front wall inner face
 BASE_OUT = dict(x=round(CH_HALF_W - BASE_IN, 6), y0=round(CH_Y0 + BASE_IN, 6), y1=CH_Y1 - CH_WALL, r=0.8)   # RV26 outline 56.2 x 49.2, R0.8 corners
 TOP_Z0, TOP_T = CH["z1"], 0.9               # Ti top panel sits on the chassis rim, 0.9 thick
-TOP_X = 23.0                         # |X| of the top-panel side edges beside the switch
-TOP_SHOULDER_Y = 7.9                 # front edge between the shoulders and the tab
-TOP_NOTCH_X = (13.0, 21.0)           # |X| span of the front notches clearing the weapon-mount tabs (tab is |X| < 13)
-TOP_TAB_Y = 11.9                     # tab front edge
+TOP_COL_SETBACK = 2.0                # top-panel side edge this far in from the corner columns' axes
+TOP_X = round(INS_X - TOP_COL_SETBACK, 6)   # |X| of the top-panel side edges beside the switch: they follow the column grid (23.0 at the stock width)
+TOP_SHOULDER_SETBACK, TOP_TAB_PROUD = 2.5, 1.5   # front edge between the shoulders and the tab: this far behind the requested front column row; the tab front edge this far in front of it
+TOP_ROW_FRONT = CH_Y1_NOM - CH_WALL - INS_EDGE[1]   # the front column row at the requested nose (a long pack pushing the wall forward does not move the panel's shoulder: only size.length does)
+TOP_SHOULDER_Y = round(TOP_ROW_FRONT - TOP_SHOULDER_SETBACK, 6)   # front edge between the shoulders and the tab
+TOP_TAB_CLR, TOP_NOTCH_CLR = 0.4, 0.5   # tab half width this far inside the weapon mount's inner face; notch edge this far inside the nose-standoff inner end (SB_X0)
+TOP_EAR_R, TOP_NOTCH_WEB = 2.5, 1.0      # top-panel ear radius round each screw; web left between the notch edge and the ear (a narrow chassis pulls the notch in)
+TOP_NOTCH_X = (round(MNT_IN - TOP_TAB_CLR, 6), round(min(SB_X0 - TOP_NOTCH_CLR, INS_X - TOP_EAR_R - TOP_NOTCH_WEB), 6))   # |X| span of the front notches clearing the weapon-mount tabs (tab is |X| < 13)
+TOP_TAB_Y = round(TOP_ROW_FRONT + TOP_TAB_PROUD, 6)                # tab front edge
 ESC_TRAY = dict(gap=0.1, wall=1.25, lip=1.0, fuse=0.01, rail_end=1.0, rail_x=(1.4, 2.6))   # TPU ESC tray: walls >= 1.2, rails inset from the board -x / +x edges
 CHAIKIN_Q = 0.25                     # Chaikin corner-cutting ratio (side-panel spline smoothing)
 TOP_SCREW_WEB = True                 # ONE switch for the top-screw feature set: web + tap pilot under the corner columns' rim and bolt_t0..3 (off: the STEP's through-bore and no screws)
@@ -126,8 +205,9 @@ from shapely.geometry import Point, Polygon   # noqa: E402
 NUT_LOBE = Point(NUT[0], NUT[1]).buffer(4.55, 64).union(Point(1.35, 6.9).buffer(1.2, 32)).convex_hull   # chassis wall lobe round the thin nut (Y, Z)
 NUT_RELIEF_END_Y, NUT_STEP_R = -13.2, 0.0   # Y where the side-panel nut relief ends (RV23 runs on to -13.2; shared with side.py and the tub lobe tail); the lobe-tail step corner is the panel's own square edge (SHARP_OK)
 PANEL_IN = 31.4   # inner face of the side panel at the nut lobe (|X|)
-LUG_FLOOR_Z, LUG_SCALLOP_R, LUG_BLEND_R, LUG_SB_R = 2.5, 4.0, 4.95, 3.25   # param: organic lug underside arcs fitted to RV01: scallop R (RV01 R4), the blend into the standoff arc (ref R4.95), standoff arc R
-LUG_SA_R = 4.5   # standoff end boss round SA (RV01 R4.5)
+LUG_FLOOR_Z, LUG_SCALLOP_R, LUG_BLEND_R = 2.5, 4.0, 4.95   # param: organic lug underside arcs fitted to RV01: scallop R (RV01 R4), the blend into the standoff arc (ref R4.95)
+LUG_SB_R = SB[1] - LUG_FLOOR_Z + 1.25   # standoff arc R round SB (3.25 at the STEP): its underside dips this far below the axis line to a skin under the lug floor, so the blend beneath the floor exists whatever the nose height
+LUG_SA_R = SA[1] - LUG_FLOOR_Z + 1.5   # standoff end boss round SA (RV01 R4.5 at the STEP axle height): reaches the same depth under the lug floor whatever the wheel radius
 # param: end
 # the blend circle (R4.95) sits under the lug floor, tangent to it and to the standoff arc round SB: its centre follows from both
 _blend_c = (SB[0] - math.sqrt((LUG_BLEND_R + LUG_SB_R) ** 2 - (SB[1] - (LUG_FLOOR_Z - LUG_BLEND_R)) ** 2), LUG_FLOOR_Z - LUG_BLEND_R)
@@ -148,8 +228,6 @@ LUG_SCALLOP = Point(LUG_SCOOP_YT, LUG_FLOOR_Z - LUG_SCALLOP_R).buffer(LUG_SCALLO
 # param: end
 # --- tub_front/tub_shell relations ---
 WALL_IN_FRONT = CH_Y1 - CH_WALL                  # inner face of the front wall (Y)
-WALL_IN_REAR = CH_Y0 + CH_WALL                   # inner face of the rear wall (Y)
-COL_R = 2.75                                      # insert column boss radius (corner blocks, rear boss and deck pockets are tangent to it)
 LUG_FACE_X = SB_X0                                # |X| of the lug's inner face the front corner flange blends into
 SPIDER_TAB_GAP = 0.6                              # measured (STEP): the weapon spider's closest sweep to the tab wall's bevel
 MOTOR_SLIDE_MAX = 2.2                             # measured (STEP): drive motor travel inboard before it touches the tub wall, plus margin
