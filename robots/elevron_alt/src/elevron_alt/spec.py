@@ -61,6 +61,8 @@ def _structure(P, M):
       label="vert_mod weapon module: hollow ramp shell on the deck (4 M2 into the column heat-sets), bulkhead, uprights carrying the BE1806 and the MF85, motor shroud, prongs on the cross bolts")
     for s, n in SIDES:
         P(id=f"side_{n}", kind="armor", print_orientation="+z", rotates_with="fixed", color="#3c4048", shape=M(f"side_{n}"), **TPU,
+          assembly_ok={"reason": "RVRN_revdev STEP Side_Panel_alt_sm: its lip ring round the chassis boss frees it only along X while its tongue in "
+                                 "the tab gap frees it only along Z; the TPU pod is sprung over the tab, not slid on in one straight move"},
           thin_wall_deviation="RVRN Side_Panel_alt_sm as drawn: the front boss screw's head bore runs 0.7 mm over the raked underside",
           deviation="ELVRN3.0 Alt STEP: the Side_Panel_alt_sm fork prongs lead the disc (tips at y 98.6, ahead of the disc's swept front): the forks are the ground game in front of the vertical disc, kept for parity",
           label="Side_Panel_alt_sm TPU pod: plate on the side boss (2 M3 CSK into captive nuts), drafted guard round both wheels, tongue on the rear cross bolt, crossbar round the outer tab, fork prong past the weapon")
@@ -96,6 +98,8 @@ def _weapon(P, M, pivot):
 def _drive(P, M):
     for s, n in SIDES:
         P(id=f"motor_{n}", kind="motor", catalog=DRIVE_MOTOR, at=_w(s * N10_X, AXLE_Y, AXLE_Z), rot=[0, 0, 0 if s > 0 else 180], rotates_with="fixed",
+          assembly_ok={"reason": "RVRN_revdev STEP / RVRN 2.0 RV12 N10: its gearbox boss sits in the ELVRN Alt keyhole and goes in by two legs "
+                                 "(up through the open floor, then outboard into the keyhole), not by a straight slide"},
           loose_ok={"axis": "+x" if s < 0 else "-x", "max_mm": MOTOR_SLIDE, "reason": "RVRN_revdev STEP: RV12 N10 slides inboard in the ELVRN Alt keyhole until its hub meets the wall, as in the RVRN 2.0 tub"},
           label="RV12 N10 2200 rpm in the rear keyhole, gearbox face on the wall")
         for e, y in (("r", AXLE_Y), ("f", -AXLE_Y)):
@@ -232,7 +236,17 @@ def make_spec(model_file):
     fasteners = records()
     for f in fasteners:
         f.setdefault("deviation", FASTENER_DEV)
-    return dict(parts=parts, fasteners=fasteners, connections=conn, wires=wires, allow_overlap=overlap, reference_cad=reference_cad())
+    return dict(parts=parts, fasteners=fasteners, connections=conn, wires=wires, allow_overlap=overlap, reference_cad=reference_cad(),
+                teardown=TEARDOWN)
+
+
+TEARDOWN = [   # declared one-direction moves, in the order the sweep may need them (the reverse is the build order)
+    {"parts": ["wshaft"], "dir": [1, 0, 0], "reason": "weapon shaft slides out through the right upright bearing once the side pods are off"},
+    {"parts": ["vert_mod", "nut_xl", "nut_xr", "weapon_motor_stator", "weapon_motor_can", "disc"], "dir": [0, 0, 1],
+     "reason": "the vertical module lifts off the chassis tabs as one unit: its prongs leave the tab gap with their captive cross-bolt nuts, "
+               "the BE1806 and the rotor boxed between its uprights (prop mount and spider come off first)"},
+    {"parts": ["base_panel"], "dir": [0, 0, -1], "reason": "base panel drops out of the rebate once its screws are out"},
+]
 
 
 REF_DIR = "../../research/elevron_alt"   # RVRN_revdev STEP solids as STL (local only, never committed: .gitignore research/)

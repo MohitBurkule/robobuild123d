@@ -88,3 +88,20 @@ def test_vert_mod_volume_near_step():
 def test_world_floor():
     """Tyres touch the floor: the lowest tyre point is z 0 in the robot world."""
     assert assembly.build("wheel_rr").bounding_box().min.Z == pytest.approx(0.0, abs=1e-3)
+
+
+def test_interfaces_keep_their_fits():
+    """Side pod <-> chassis / module interfaces are offsets of the mating features, so a master change cannot interlock them."""
+    assert S.TONGUE_X[0] - (V.TAB_GAP[0] + V.PRONG_T) == pytest.approx(S.FIT)    # tongue off the module prong
+    assert V.TAB_GAP[1] - S.TONGUE_X[1] == pytest.approx(S.FIT)                 # and off the outer tab
+    assert S.TONGUE_X[1] > S.TONGUE_X[0]
+    assert S.LIP_IN_R - C.BOSS_R == pytest.approx(S.LIP_CLR) and S.LIP_CLR > 0  # lip ring clears the boss obround
+    assert S.TAB_POCKET[2] > C.HY + C.TAB_LEN                                     # pocket end wall past the tab end
+    assert C.TAB_END_R * math.sqrt(2) == pytest.approx(C.CH_H - C.EDGE_CH - C.TAB_HOLE_Z - C.TAB_HOLE_DY)   # tab round tangent to Chamfer3
+
+
+def test_teardown_names_real_parts():
+    from elevron_alt.spec import TEARDOWN, make_spec
+    ids = {p["id"] for p in make_spec("m.py")["parts"]}
+    for t in TEARDOWN:
+        assert set(t["parts"]) <= ids and abs(sum(c * c for c in t["dir"]) - 1) < 1e-9

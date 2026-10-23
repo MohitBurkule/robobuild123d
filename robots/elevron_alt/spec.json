@@ -100,6 +100,9 @@
    "material": "tpu",
    "process": "fdm",
    "solid_fraction": 0.9,
+   "assembly_ok": {
+    "reason": "RVRN_revdev STEP Side_Panel_alt_sm: its lip ring round the chassis boss frees it only along X while its tongue in the tab gap frees it only along Z; the TPU pod is sprung over the tab, not slid on in one straight move"
+   },
    "thin_wall_deviation": "RVRN Side_Panel_alt_sm as drawn: the front boss screw's head bore runs 0.7 mm over the raked underside",
    "deviation": "ELVRN3.0 Alt STEP: the Side_Panel_alt_sm fork prongs lead the disc (tips at y 98.6, ahead of the disc's swept front): the forks are the ground game in front of the vertical disc, kept for parity",
    "label": "Side_Panel_alt_sm TPU pod: plate on the side boss (2 M3 CSK into captive nuts), drafted guard round both wheels, tongue on the rear cross bolt, crossbar round the outer tab, fork prong past the weapon"
@@ -120,6 +123,9 @@
    "material": "tpu",
    "process": "fdm",
    "solid_fraction": 0.9,
+   "assembly_ok": {
+    "reason": "RVRN_revdev STEP Side_Panel_alt_sm: its lip ring round the chassis boss frees it only along X while its tongue in the tab gap frees it only along Z; the TPU pod is sprung over the tab, not slid on in one straight move"
+   },
    "thin_wall_deviation": "RVRN Side_Panel_alt_sm as drawn: the front boss screw's head bore runs 0.7 mm over the raked underside",
    "deviation": "ELVRN3.0 Alt STEP: the Side_Panel_alt_sm fork prongs lead the disc (tips at y 98.6, ahead of the disc's swept front): the forks are the ground game in front of the vertical disc, kept for parity",
    "label": "Side_Panel_alt_sm TPU pod: plate on the side boss (2 M3 CSK into captive nuts), drafted guard round both wheels, tongue on the rear cross bolt, crossbar round the outer tab, fork prong past the weapon"
@@ -356,6 +362,9 @@
     180
    ],
    "rotates_with": "fixed",
+   "assembly_ok": {
+    "reason": "RVRN_revdev STEP / RVRN 2.0 RV12 N10: its gearbox boss sits in the ELVRN Alt keyhole and goes in by two legs (up through the open floor, then outboard into the keyhole), not by a straight slide"
+   },
    "loose_ok": {
     "axis": "+x",
     "max_mm": 2.0,
@@ -566,6 +575,9 @@
     0
    ],
    "rotates_with": "fixed",
+   "assembly_ok": {
+    "reason": "RVRN_revdev STEP / RVRN 2.0 RV12 N10: its gearbox boss sits in the ELVRN Alt keyhole and goes in by two legs (up through the open floor, then outboard into the keyhole), not by a straight slide"
+   },
    "loose_ok": {
     "axis": "-x",
     "max_mm": 2.0,
@@ -2605,5 +2617,45 @@
     ]
    }
   ]
- }
+ },
+ "teardown": [
+  {
+   "parts": [
+    "wshaft"
+   ],
+   "dir": [
+    1,
+    0,
+    0
+   ],
+   "reason": "weapon shaft slides out through the right upright bearing once the side pods are off"
+  },
+  {
+   "parts": [
+    "vert_mod",
+    "nut_xl",
+    "nut_xr",
+    "weapon_motor_stator",
+    "weapon_motor_can",
+    "disc"
+   ],
+   "dir": [
+    0,
+    0,
+    1
+   ],
+   "reason": "the vertical module lifts off the chassis tabs as one unit: its prongs leave the tab gap with their captive cross-bolt nuts, the BE1806 and the rotor boxed between its uprights (prop mount and spider come off first)"
+  },
+  {
+   "parts": [
+    "base_panel"
+   ],
+   "dir": [
+    0,
+    0,
+    -1
+   ],
+   "reason": "base panel drops out of the rebate once its screws are out"
+  }
+ ]
 }
