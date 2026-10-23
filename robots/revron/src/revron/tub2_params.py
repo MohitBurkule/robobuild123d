@@ -2,7 +2,7 @@
 feature file; only the dims below are literals, everything else is a relation. World frame: X across, Y front, Z up."""
 from robot.cad.fastener_catalog import tap_drill
 from .params_chassis import (CH_HALF_W, CH_Y0, CH_Y1, CH_Z0, CH_Z1, CH_WALL, CH_IN_X, COL_R, INS, INS_Z, N10_TOP, N10_KEY,
-                             KEY_SPAN, SA_X0, INSERT_OD, BORE_CH, BORE_R, KEEP_R, KNURL, BOSS_AT_REAR, BOSS_Y, WALL_IN_FRONT, WALL_IN_REAR, BASE_Z0, BASE_T, BASE_OUT, PRELOAD_PAD, TOP_XY, TOP_SCREW_WEB, LAYOUT)
+                             KEY_SPAN, SA_X0, SIZE_DW, INSERT_OD, BORE_CH, BORE_R, KEEP_R, KNURL, BOSS_AT_REAR, BOSS_Y, WALL_IN_FRONT, WALL_IN_REAR, BASE_Z0, BASE_T, BASE_OUT, PRELOAD_PAD, TOP_XY, TOP_SCREW_WEB, LAYOUT)
 
 SKIN = CH_WALL / 2                      # master: skin left under pockets; also every small fillet / rib in the tub
 DECK = CH_Z1 - CH_WALL                  # deck underside
@@ -20,8 +20,9 @@ TOP_PILOT_R = tap_drill(2.0) / 2         # M2 thread-forming pilot (catalog tap 
 # stop wall / key tab / ledge
 STOP_FRONT_Y = KEY_SPAN[1]              # stop wall front face is the key tab front face
 STOP_BACK_Y = STOP_FRONT_Y - CH_WALL    # one wall thick
-LEDGE_X0, LEDGE_Y0, LEDGE_R = 20.0, -27.3, 1.5
+LEDGE_X0, LEDGE_Y0, LEDGE_R = 20.0 + SIZE_DW, -27.3, 1.5   # the ledge stands over the gearbox with the motor, which moves out with the side wall
 STOP_ROUND_R = 5.0
+FLANK_X = COL_R + max(SIZE_DW, 0.0)              # rear-boss flank half width: the gearmotor stops on it, and the motor moves out with the side wall
 # deck pockets: two diagonal ribs run from the centre (mid of the front/rear column rows) through the column centres; each rib is
 # 2 walls wide. The four regions between the ribs are the pockets (X pockets on the axis, side pockets); R = wall at every rib corner.
 CENTRE_Y = sum(y for _, y in INS_RIGHT) / len(INS_RIGHT)         # crossing point of the ribs on the axis
