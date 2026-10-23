@@ -37,6 +37,7 @@ UP_OUT_CH = ((2.997, 2.942), (2.879, 3.063))   # upright outer top edges: (in on
 UP_IN_CH = (1.95, 2.58)                # upright inner top edges: chamfer across the top, down the face
 UP_CH_END = 48.4                       # upright top chamfers run back to here
 SIDE_POCKET = ((WY - 16.61, 22.009), 4.702, (20.0, 24.0196), 7.0)   # upright outer pocket: round end (centre, r), floor / roof heights at their front points (STEP planes, tangent to the end), depth
+SIDE_POCKET_FLOOR_R = 1.0              # upright pocket floor edges rounded (STEP)
 SIDE_POCKET_FRONT, POCKET_STEP = 2.73, 0.8873   # pocket floor runs this far into the hollow wall; its slope starts behind the bulkhead face
 SIDE_HOLE = (26.0, 21.6, 1.6)           # hole through each hollow side wall: y, z, radius
 AXIS_HOLE_R = 4.0                      # through both uprights on the weapon axis (the MF85 OD seat on the right)

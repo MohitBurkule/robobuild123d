@@ -317,11 +317,26 @@ def side_pockets():
     prof = unary_union([Point(cu, c[1]).buffer(r, SEG), Point(u(BULK_Y[0] + POCKET_STEP), z0), Point(u(BULK_Y[0]), z1)]).convex_hull
     prof = prof.union(sbox(u(yf), z0, u(BULK_Y[0] + POCKET_STEP), z1 - K * SIDE_POCKET_FRONT))
     pl = bd.Plane(origin=(o[0], o[1], 0), x_dir=(t[0], t[1], 0), z_dir=(n[0], n[1], 0))
-    p = None
-    for f in _faces(prof):
-        sol = bd.Solid.extrude(f.moved(bd.Location(pl)), bd.Vector(n[0], n[1], 0) * TOOL)
-        p = sol if p is None else p.fuse(sol)
+    p = _floor_rounded(prof, SIDE_POCKET_FLOOR_R).moved(bd.Location(pl))   # its floor edges rounded (STEP)
     return _U(p, _mirror_x(p))
+
+
+def _floor_rounded(prof, r):
+    """Pocket of outline `prof` (local XY) cut along +Z from its floor at z 0, every floor edge rounded r: the outline
+    from r up, the outline shrunk by r from the floor, and a circle of r swept round the shrunk outline at height r."""
+    import build123d as bd
+    inner = prof.buffer(-r, SEG)
+    up = _U(*[bd.Solid.extrude(f.moved(bd.Location((0, 0, r))), bd.Vector(0, 0, TOOL)) for f in _faces(prof)])
+    low = _U(*[bd.Solid.extrude(f, bd.Vector(0, 0, TOOL)) for f in _faces(inner)])
+    pipes = []
+    for f in _faces(inner):                                 # the ball's path: a cylinder per line, a torus per arc
+        for e in f.outer_wire().moved(bd.Location((0, 0, r))).edges():
+            p0, p1 = e.position_at(0), e.position_at(1)
+            if e.geom_type.name == "LINE":
+                pipes.append(bd.Solid.make_cylinder(r, (p1 - p0).length, bd.Plane(origin=p0, z_dir=p1 - p0)))
+            else:
+                pipes.append(bd.Solid.sweep(bd.Face(bd.Wire.make_circle(r, bd.Plane(origin=p0, z_dir=e.tangent_at(0)))), bd.Wire([e])))
+    return _U(up, low, *pipes)
 
 
 def _faces(poly):
