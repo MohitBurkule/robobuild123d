@@ -178,8 +178,36 @@ def rear_flare(n=10, k=8):
     return bd.Solid.make_loft([f.outer_wire() for f in secs], ruled=True)
 
 
+def inside_round(p1, p2, r):
+    """Material an inside round of radius r adds where two faces meet (each an outward plane (n, d), n.p = d): the corner
+    wedge between the tangent lines minus the cylinder, along the planes' common line (exact)."""
+    import build123d as bd
+    import numpy as np
+    (n1, d1), (n2, d2) = [(np.array(n, float) / np.linalg.norm(n), d / np.linalg.norm(n)) for n, d in (p1, p2)]
+    u = np.cross(n1, n2)
+    u /= np.linalg.norm(u)
+    A = np.array([n1, n2, u])
+    v, c = np.linalg.solve(A, [d1, d2, 0.0]), np.linalg.solve(A, [d1 + r, d2 + r, 0.0])
+    quad = [v, c - r * n1, c, c - r * n2]
+    face = bd.Face(bd.Wire.make_polygon([bd.Vector(*(q - u * TOOL)) for q in quad], close=True))
+    wedge = bd.Solid.extrude(face, bd.Vector(*(u * 2 * TOOL)))
+    cyl = bd.Solid.make_cylinder(r, 2 * TOOL, bd.Plane(origin=tuple(c - u * TOOL), z_dir=tuple(u)))
+    return _S(wedge, cyl)
+
+
+def root_rounds():
+    """ROOT_R inside rounds along the fork-root inner face: into the rear slope and into the fork's inner face (STEP)."""
+    nx, ny, nz, d = ROOT_EDGE
+    edge = ((nx, ny, nz), d)
+    slope = ((0, REAR_SLOPE[0], REAR_SLOPE[1]), REAR_SLOPE[2])
+    inner = ((-1, 0, 0), -FORK_X[0])
+    x0, yr = TAB_POCKET[0], TAB_POCKET[2]
+    zone = _box(x0, FORK_X[1], yr - 1, TOOL, -1, CROSS_TOP)
+    return _S(_I(_U(inside_round(edge, slope, ROOT_R), inside_round(edge, inner, ROOT_R)), zone), _above(ROOT_TOP[:2], ROOT_TOP[2]))
+
+
 def sp():
-    s = _U(guard(), plate(), rear(), fork(), struts(), rear_flare())
+    s = _U(guard(), plate(), rear(), fork(), struts(), rear_flare(), root_rounds())
     s = _S(s, wells(), pocket())
     nonfork = _S(_box(-BIG, BIG, -BIG, BIG, -BIG, 0), _box(*FORK_X, CROSS_Y0, BIG, -BIG, BIG))
     s = _S(s, under_b(), nonfork)
