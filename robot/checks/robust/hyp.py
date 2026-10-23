@@ -72,6 +72,9 @@ def resolve(changes, raw, hooks, disc, use, files=None):
                     sw.alternatives = [alt] if alt != sw.default else []
             sj = [j for j in P.switch_jobs(sw, use.parts_reading(sw.symbol, sw.kind == "variant"))
                   if j.value == alt] if sw else []
+            if not sj and s.get("env") and files is not None and D.reads_env(files, s["env"]):
+                # read at call time (a helper, a name built from constants): no default to edit, the env var carries it
+                sj = [P.Job(c.id, s["env"], "env", value=alt, env={s["env"]: str(alt)}, regen=True, overlay=ops)]
             if not sj:
                 nx.append((c, f"hook `{c.hook}` names build setting `{key}` that the build sources do not read", c.hook))
                 continue

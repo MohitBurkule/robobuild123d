@@ -218,15 +218,57 @@ def discover(model_file: Path, bounds: dict | None = None) -> Discovery:
     return d
 
 
+def _str_consts(tree) -> dict:
+    """Module-level NAME = "string" constants (an env name kept in a constant)."""
+    out = {}
+    for st in tree.body:
+        if isinstance(st, ast.Assign) and len(st.targets) == 1 and isinstance(st.targets[0], ast.Name) \
+                and isinstance(st.value, ast.Constant) and isinstance(st.value.value, str):
+            out[st.targets[0].id] = st.value.value
+    return out
+
+
+def _str_of(node, consts):
+    """The string a node evaluates to when it is a constant, a constant name, or a +/f-string of those, else None."""
+    if isinstance(node, ast.Constant) and isinstance(node.value, str):
+        return node.value
+    if isinstance(node, ast.Name):
+        return consts.get(node.id)
+    if isinstance(node, ast.BinOp) and isinstance(node.op, ast.Add):
+        a, b = _str_of(node.left, consts), _str_of(node.right, consts)
+        return a + b if a is not None and b is not None else None
+    if isinstance(node, ast.JoinedStr):
+        parts = [v.value if isinstance(v, ast.Constant) else _str_of(v.value, consts) if isinstance(v, ast.FormattedValue) else None
+                 for v in node.values]
+        return "".join(parts) if all(isinstance(x, str) for x in parts) else None
+    return None
+
+
 def env_setting(files, env: str):
-    """A `NAME = os.environ.get("ENV", "default")` build setting as a choice Switch with no listed alternatives (any
-    value is allowed: a catalog id, say), or None."""
+    """A module-level build setting read from env var `env`, as a choice Switch whose default literal can be edited,
+    or None. The read may be os.environ.get / os.getenv / environ.get, or any helper called as
+    helper(<env>, "<default>", ...); the env name may be a literal, a module string constant or a +/f-string of them."""
     for f in files:
         tree = ast.parse(Path(f).read_text())
+        consts = _str_consts(tree)
         for st in tree.body:
-            if isinstance(st, ast.Assign) and len(st.targets) == 1 and isinstance(st.targets[0], ast.Name):
-                eg = _env_get(st.value.left if isinstance(st.value, ast.Compare) else st.value)
-                if eg and eg[0] == env:
-                    d = eg[1]
+            if not (isinstance(st, ast.Assign) and len(st.targets) == 1 and isinstance(st.targets[0], ast.Name)):
+                continue
+            for n in ast.walk(st.value):
+                if isinstance(n, ast.Call) and len(n.args) >= 2 and _str_of(n.args[0], consts) == env \
+                        and isinstance(n.args[1], ast.Constant) and isinstance(n.args[1].value, str) and _span(n.args[1]):
+                    d = n.args[1]
                     return Switch(env, "choice", st.targets[0].id, d.value, [], Path(f), d.lineno, d.col_offset, d.end_col_offset)
     return None
+
+
+def reads_env(files, env: str) -> bool:
+    """True when the build sources name env var `env` anywhere (a literal, a constant, or a +/f-string of constants),
+    e.g. inside a helper that reads os.environ at call time: the setting is real even without an editable default."""
+    for f in files:
+        tree = ast.parse(Path(f).read_text())
+        consts = _str_consts(tree)
+        for n in ast.walk(tree):
+            if isinstance(n, (ast.Constant, ast.Name, ast.BinOp, ast.JoinedStr)) and _str_of(n, consts) == env:
+                return True
+    return False
