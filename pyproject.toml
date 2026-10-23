@@ -114,7 +114,7 @@ all = [
 ]
 
 [tool.setuptools.packages.find]
-where = ["src"]
+where = ["src", "robots/shared/src"]
 # exclude build123d._dev from wheels
 exclude = ["build123d._dev"]
 

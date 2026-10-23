@@ -1,0 +1,150 @@
+{
+ "spec": "/home/user/robobuild123d/robots/elevron_alt/spec.json",
+ "rendered_at": 1792712122.3609972,
+ "bodies": [
+  "chassis",
+  "base_panel",
+  "vert_mod",
+  "side_l",
+  "side_r",
+  "weapon_motor_stator",
+  "wshaft",
+  "weapon_motor_can",
+  "prop_mount",
+  "spider",
+  "disc",
+  "wbearing",
+  "motor_l",
+  "whub_rl",
+  "wheel_rl",
+  "whub_fl",
+  "wheel_fl",
+  "so_l",
+  "bplate_l",
+  "fplate_l",
+  "motor_r",
+  "whub_rr",
+  "wheel_rr",
+  "whub_fr",
+  "wheel_fr",
+  "so_r",
+  "bplate_r",
+  "fplate_r",
+  "nut_sl0",
+  "nut_sl1",
+  "nut_xl",
+  "nut_sr0",
+  "nut_sr1",
+  "nut_xr",
+  "insert_b0",
+  "insert_b1",
+  "insert_b2",
+  "insert_b3",
+  "insert_b4",
+  "insert_b5",
+  "insert_t0",
+  "insert_t1",
+  "insert_t2",
+  "insert_t3",
+  "battery",
+  "rxesc",
+  "wesc",
+  "power_switch",
+  "bolt_b0",
+  "bolt_b1",
+  "bolt_b2",
+  "bolt_b3",
+  "bolt_b4",
+  "bolt_b5",
+  "bolt_t0",
+  "bolt_t1",
+  "bolt_t2",
+  "bolt_t3",
+  "bolt_sl0",
+  "bolt_sl1",
+  "bolt_al",
+  "bolt_xl",
+  "bolt_sr0",
+  "bolt_sr1",
+  "bolt_ar",
+  "bolt_xr",
+  "bolt_m0",
+  "bolt_m1",
+  "bolt_m2",
+  "bolt_m3"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    -23.1,
+    6.735557395310443e-16,
+    9.75
+   ],
+   "to": [
+    24.0,
+    -3.0,
+    8.3
+   ]
+  },
+  "w_sw_rx": {
+   "from": [
+    24.0,
+    0.0,
+    8.3
+   ],
+   "to": [
+    17.4,
+    -16.0,
+    5.45
+   ]
+  },
+  "w_sw_wesc": {
+   "from": [
+    24.0,
+    0.0,
+    8.3
+   ],
+   "to": [
+    14.399999999999999,
+    -11.75,
+    11.15
+   ]
+  },
+  "w_m_l": {
+   "from": [
+    5.3999999999999995,
+    -16.0,
+    5.45
+   ],
+   "to": [
+    -3.700000000000001,
+    26.199999999999996,
+    14.55
+   ]
+  },
+  "w_m_r": {
+   "from": [
+    5.400000000000001,
+    16.0,
+    5.45
+   ],
+   "to": [
+    3.700000000000001,
+    26.2,
+    14.55
+   ]
+  },
+  "w_rx_wesc": {
+   "from": [
+    17.400000000000002,
+    16.0,
+    5.45
+   ],
+   "to": [
+    8.399999999999999,
+    -11.75,
+    11.15
+   ]
+  }
+ }
+}

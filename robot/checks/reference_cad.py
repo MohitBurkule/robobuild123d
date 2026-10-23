@@ -376,7 +376,7 @@ def check_entries(ctx, frame_checks, exact=True, parts=None):
 DEV_R_MAX = 5.0   # mm: a deviation waiver is a local note, not a region of the part
 PATH_R_MAX = 3.0        # mm: a path (capsule) waiver's radius
 PATH_MM3_MAX = 600.0    # mm3: hard cap on the volume one path waiver may excuse (its `max_mm3` must be <= this)
-PATH_CITE = re.compile(r"(RV\d|RVRN|STEP|\.stl|FS\d|reference|datasheet|design[- ]intent|intent)", re.I)
+PATH_CITE = re.compile(r"(RV\d|RVRN|ELVRN|STEP|\.stl|FS\d|reference|datasheet|design[- ]intent|intent)", re.I)
 
 
 def path_dist(P, path):
