@@ -63,6 +63,11 @@ for _n, _t in (("spider", SPIDER_T), ("disc_a", DISC_T), ("spacer", SPACER_T), (
     DR_X[_n] = (_x, _x + _t)       # spider | disc_a | spacer | disc_b, each flush on the previous one
     _x += _t
 N_HUB = len(WM["top_holes"])          # spider-to-bell screws: the bell-top pattern of the motor entry
+# [fix-B-vers2] a bell-top circle too tight for a key between button heads takes every other screw (still a full
+# circle, e.g. TC1404 4 x M2 on d5 -> the opposite pair); only when even that cannot be keyed does the motor not fit
+_hub_room = lambda n: n < 2 or 2 * WM["top_holes"][0][0] * math.sin(math.pi / n) >= _fc.head(WM["top_holes"][0][2], "button")[0] + 0.5
+while N_HUB % 2 == 0 and N_HUB > 2 and not _hub_room(N_HUB):
+    N_HUB //= 2
 HUB_R, HUB_D = WM["top_holes"][0][0], WM["top_holes"][0][2]
 DR_ROT = WM["top_holes"][0][1]       # drisk phase about the axis: the spider is clocked to the bell's screw pattern (STEP Drisk_V4 placement)
 SERVICE_TURN_MARGIN_DEG = 5.0   # the drisk service turn (drisk.service_turn_deg) keeps the mount screw heads clear over +- this (hand turn)
@@ -90,7 +95,10 @@ BRG_NAME = _wm.pick_bearing(2 * SHAFT_R, BEARINGS)   # outboard bearing designat
 _bd, _bod, _bw = BEARINGS[BRG_NAME]
 BRG = dict(od_r=_bod / 2, w=_bw, bore_r=_bd / 2)   # the bearing from the catalog: the shaft runs in its bore
 BRG["x"] = -(MNT_IN + BRG_RECESS + BRG["w"] / 2)   # centred in the RV02 seat
-BRG_SEAT_R, NUT_RECESS_R = BRG["od_r"] - BRG_PRESS, 6.0   # MR85 seat (pressed: 7.9 STEP), shaft nut recess
+BRG_SEAT_R = BRG["od_r"] - BRG_PRESS   # MR85 seat (pressed: 7.9 STEP)
+SHAFT_NUT_D = min((d for d in _fc.HEX_NUT if d >= SHAFT_D - 1e-9), default=max(_fc.HEX_NUT))   # catalog nut on the shaft thread (GR1507 M5)
+NUT_SOCKET = 1.5                     # nut socket OD per across-flats width (ISO 2725 deep socket ~1.5 s): the recess takes the socket
+NUT_RECESS_R = round(NUT_SOCKET * _fc.nut(SHAFT_NUT_D)[0] / 2, 6)   # shaft nut recess radius (M5 s8: STEP r6.0)
 STATOR_HOLES = _wm.world_holes(WM["base_holes"])   # [(dY, dZ, screw d)] stator screws about the axis: the motor catalog's base holes
 BOSS_OVER = 0.01                     # boss overshoots the battered plane before it is split
 MNT_SCREW = ("M3x12", "M3x14")           # mount-to-standoff CSK screws at SA, SB
@@ -99,7 +107,7 @@ PRINTABLE = MOUNT_VARIANT == "printable"
 MNT_SCREW_FIT = "loose" if PRINTABLE else "close"   # ISO 273: loose slack so the notch face takes the hit first; close = the STEP's d3.2 holes
 RV03_BORE_R = SHAFT_R + (SHAFT_CLR if PRINTABLE else 0.0)   # RV03 centre hole: the STEP d5.0 (the shaft ends at the stator base, short of RV03); printable adds the shaft clearance
 STATOR_SCREW_FIT = "normal" if PRINTABLE else "close"   # RV03 stator M2 holes: close = the STEP d2.2 (ISO 273 close); normal = d2.4
-WEAPON_CLEAR_R = 16.0                # chassis material stays outside this radius about the weapon axis (rotor + 1 mm)
+WEAPON_CLEAR_R = DISC_R - DISC_ECC   # chassis material stays outside the discs' inner rim envelope about the weapon axis (16.0)
 WM_TIP_SHORT = 0.3                   # stator screw tip stops this short of the base's tapped depth
 WM_BITE = round(min(WM["base_h"], 3.0) - WM_TIP_SHORT, 6)   # thread the stator screw bites in the base (GR1507 2 mm base: 1.7 >= 0.8 d + 0.1)
 WM_WEB = 3.3                         # RV03 counterbore floor this far out from its inner face (STEP RV03: 16.7 - 13.4)
@@ -124,15 +132,18 @@ WSEG_LO, WSEG_FINE, WSEG_MID, WSEG_HI, WSEG_FN, WSEG_MAX, WSEG_ARC, WSEG_ARC_S =
 # leaves for the front edge, and the battered outer face x = MNT_T - drop - lean*z - toe*y in the mount frame
 # (x out from the inner face, y, z from the weapon axis): at the axis it sits `drop` below the full plate thickness,
 # and leans in with height and towards the nose
+# param: organic per-side STEP fits (notch_y, rim_end, batter); RV02's teardrop rim is one skin round the shaft nut recess
 MNT_SIDE = dict(
     r=dict(top_r=10.0, notch_y=10.17, rim_end=-14.5, batter=dict(drop=2.4084, lean=0.154, toe=0.0404)),
-    l=dict(top_r=7.0, notch_y=9.0, rim_end=-5.0, batter=dict(drop=2.80265, lean=0.1701, toe=0.0158)))
+    l=dict(top_r=round(NUT_RECESS_R + CH_WALL / 2, 6), notch_y=9.0, rim_end=-5.0, batter=dict(drop=2.80265, lean=0.1701, toe=0.0158)))
+# param: end
 MNT_TOP_Z = CH_Z1                        # top of the rear notch: the teardrop's tangent line starts here
 # TAB_FRONT_SETBACK: params_chassis (the front wall's forward limit follows it)
-TAB = dict(y0=CH_Y1, z0=5.35, h=8.2, y1=SA[0] - TAB_FRONT_SETBACK, cham=1.0)   # chassis tab the notch drops over: rear Y, floor Z, height, front-face Y (follows SA: 26.5 at the STEP's SA), front chamfer
+TAB = dict(y0=CH_Y1, z0=5.35, h=8.2,   # param: organic tab floor Z / height (STEP RV01 notch)
+            y1=SA[0] - TAB_FRONT_SETBACK, cham=1.0)   # chassis tab the notch drops over: rear Y, floor Z, height, front-face Y (follows SA: 26.5 at the STEP's SA), front chamfer
 MNT_NOTCH_GAP = 0.1                     # the notch's front face stands this far ahead of the tab's front face (STEP RV02/RV03 notch at Y 26.6)
-NOSE_R = 3.25                           # nose arc round the SB standoff; it leaves the outline at the side's rim_end angle (the front edge is the common tangent of rim and nose: STEP RV02 -5, RV03 -14.5)
-MNT_HEEL = dict(z=SB[1] - NOSE_R, step=0.4, back=1.8, z_hook=2.5, z_lip=4.5)   # rear foot hooked under the tab: flat underside (tangent to the nose arc), tip step, setback, hook and lip Z
+NOSE_R = LUG_SB_R                       # the lug's standoff arc round SB (3.25 at the STEP): nose arc round the SB standoff; it leaves the outline at the side's rim_end angle (the front edge is the common tangent of rim and nose: STEP RV02 -5, RV03 -14.5)
+MNT_HEEL = dict(z=SB[1] - NOSE_R, step=0.4, back=1.8, z_hook=CH_Z0, z_lip=CH_Z0 + CH_WALL)   # rear foot (hook at the floor underside, lip one wall up) hooked under the tab: flat underside (tangent to the nose arc), tip step, setback, hook and lip Z
 MNT_NOTCH_UP = 2.0                      # the rear face above the tab leans back by this much over the last stretch to the top
 # the boss starts above the line from the notch top to (BOSS_NOSE_Y, BOSS_Z): STEP 44.34, 6.34, it runs tangent to the nose
 # arc to 0.4 um. [fix-B-robust] That point rides on the nose standoff SB (STEP offset 3.84, 1.84 from it), so the boss
@@ -161,7 +172,7 @@ CORNER_R = 1.0                       # master: the stack's machined/printed insi
 DOG = dict(r=12.0, rise=1.9, t0=6.6, t1=13.1, t2=54.7, ramp_r=15.3, nose_r=2.0)
 # param: end
 if BELL_R + SHAFT_CLR > DOG["r"]:
-    raise _wm.WeaponMotorError(f"weapon motor `{WM['id']}`: its bell (r{BELL_R:g}) does not fit the disc dog bore (r{DOG['r']:g}) of the drisk")
+    raise _wm.WeaponMotorError(f"weapon motor `{WM['id']}` does not fit the drisk: its bell (r{BELL_R:g}) is wider than the disc dog bore (r{DOG['r']:g}) of the drisk")
 DISC_BORE_ROUND, DISC_HOLE_R_WIN = CORNER_R, 0.44               # bore dog foot fillets; balance window corner radius
 DISC_BAL_PTS = [(-13.2, 4.85), (-13.2, 9.08), (-11.68, 7.65)]    # param: organic balance-window hull corners (measured, STEP)
 # param: end
@@ -218,17 +229,17 @@ BELL_HEAD_CLEAR = round(MOTOR_X + DR_X["spider"][0] - _fc.head(HUB_D, "button")[
 if BELL_HEAD_CLEAR < 0.2:
     raise _wm.WeaponMotorError(f"weapon motor `{WM['id']}` at MNT_IN {MNT_IN:g}: the drisk stack does not fit between the mounts "
                                f"(bell-screw heads {BELL_HEAD_CLEAR:+.2f} mm from RV02, the motor sits {LEAD_GAP + BSP_T:g} mm off RV03)")
-if N_HUB > 1 and 2 * HUB_R * math.sin(math.pi / N_HUB) < _fc.head(HUB_D, "button")[0] + 0.5:   # heads need room to turn a key between them
-    raise _wm.WeaponMotorError(f"weapon motor `{WM['id']}`: its bell-top screws ({N_HUB} x M{HUB_D:g} on r{HUB_R:g}) are closer than one button head: the spider cannot be screwed on")
+if not _hub_room(N_HUB):   # heads need room to turn a key between them
+    raise _wm.WeaponMotorError(f"weapon motor `{WM['id']}` does not fit the drisk: its bell-top screws ({N_HUB} x M{HUB_D:g} on r{HUB_R:g}, even every other one) are closer than one button head: the spider cannot be screwed on")
 
 
 def tub_interface():
     """[fix-B-vers] What the tub fits to the weapon module, for the selected weapon.type (only 'drisk' is built): the
     tub (A) should read these instead of the weapon constants, so another weapon style can supply its own. Keys:
     type, mount_in (mount inner face |X|), mount_frames, tab (the notch tab RV02/RV03 drop over), clear_r (chassis
-    stays outside this radius about the axis), axis (Y, Z), phase_via (lead route over the lug)."""
+    stays outside this radius about the axis), axis (Y, Z), phase_via (lead route over the lug), spider_x (world X of the spider's two faces)."""
     return dict(type=WEAPON_TYPE, mount_in=MNT_IN, mount_frames=dict(MNT_FRAME), tab=dict(TAB), clear_r=WEAPON_CLEAR_R,
-                axis=(WY, WZ), motor=WM["id"], phase_via=[list(p) for p in PHASE_VIA])
+                axis=(WY, WZ), motor=WM["id"], spider_x=[round(MOTOR_X + v, 6) for v in DR_X["spider"]], phase_via=[list(p) for p in PHASE_VIA])
 
 
 __all__ = [n for n in dir() if not n.startswith("__")]   # last line: every name above is exported
