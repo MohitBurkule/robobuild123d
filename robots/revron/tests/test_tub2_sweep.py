@@ -2,7 +2,7 @@
 
 Each case copies the revron package, rewrites the named module-level assignment (`NAME = value`) in the copy and builds
 tub2.chassis2() there, so every module sees the new master exactly as if the designer had edited it."""
-import os, pathlib, re, shutil, subprocess, sys, tempfile, pytest
+import json, os, pathlib, re, shutil, subprocess, sys, tempfile, pytest
 
 SRC = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "src"))
 ROOT = os.path.abspath(os.path.join(SRC, "..", "..", ".."))
@@ -138,11 +138,27 @@ def test_drive_motor_swap_gets_its_pocket(motor, tmp_path):
     assert b["tub"][:2] == (1, True) and b["ovl"]["motor_l"] == 0 and b["ovl"]["motor_r"] == 0 and b["ovl"]["battery"] == 0, b
 
 
+BIG_CHASSIS = {"REVRON_SIZE_WIDTH": "20", "REVRON_SIZE_LENGTH": "20"}   # a chassis grown until the oversize catalog packs fit (BatteryFitError otherwise)
+
+
 @pytest.mark.parametrize("pack", ["betafpv_2s_300_45c", "palmpower_2s_300_65c", "tattu_2s_300_75c_hv", "gnb_3s_300_80c_hv"])
 def test_battery_swap_gets_its_bay(pack, tmp_path):
-    """Another catalog pack: it stands against the stop wall (Y) and under the deck (Z) and its bay is cut from its own envelope."""
-    b = bays({"REVRON_BATTERY": pack}, tmp_path)
+    """Another catalog pack (on a chassis grown to hold it): it stands against the stop wall (Y) and under the deck (Z) and its bay is cut from its own envelope."""
+    b = bays({"REVRON_BATTERY": pack, **BIG_CHASSIS}, tmp_path)
     assert b["tub"][:2] == (1, True) and b["ovl"]["battery"] == 0 and abs(b["pack"][0] - b["pack"][1]) < 1e-6 and abs(b["pack"][2] - 17.5) < 1e-6, b
+
+
+@pytest.mark.parametrize("pack", ["betafpv_2s_300_45c", "palmpower_2s_300_65c", "tattu_2s_300_75c_hv", "gnb_3s_300_80c_hv", "gnb_2s_450_80c"])
+def test_oversize_pack_is_declared_unfit_at_stock_size_and_fits_a_bigger_chassis(pack, tmp_path):
+    """The pack's envelope plus the side walls, the front wall and the 3 mm weapon-sweep gap is computed from the catalog and the chassis masters: at the stock size it raises the declared BatteryFitError
+    with the numbers (hooks.json declared_unfit); a chassis grown by size.width / size.length builds it."""
+    dst = pathlib.Path(tempfile.mkdtemp(dir=tmp_path)) / "src"
+    shutil.copytree(SRC, dst, ignore=shutil.ignore_patterns("__pycache__"))
+    cmd = [sys.executable, "-c", "import sys; sys.path[:0] = [%r, %r]\nfrom revron import params_weapon" % (str(dst), ROOT)]
+    r = subprocess.run(cmd, capture_output=True, text=True, env={**os.environ, "REVRON_BATTERY": pack})
+    assert "BatteryFitError" in r.stderr and "needs" in r.stderr and "mm" in r.stderr, r.stderr[-800:]
+    assert "BatteryFitError" in json.load(open(os.path.join(ROOT, "robots", "revron", "hooks.json")))["declared_unfit"]
+    assert subprocess.run(cmd, capture_output=True, text=True, env={**os.environ, "REVRON_BATTERY": pack, **BIG_CHASSIS}).returncode == 0
 
 
 def test_wider_motor_pushes_the_pack_forward(tmp_path):
@@ -168,10 +184,10 @@ def test_compartments_setting(tmp_path):
     assert all(v == 0 for v in none["ovl"].values()) and all(v == 0 for v in split["ovl"].values())
 
 
-@pytest.mark.parametrize("loc", ["mid", "front"])
+@pytest.mark.parametrize("loc", ["mid"])
 def test_drive_location_setting(loc, tmp_path):
     """drive.location: the drive axle line moves, and the keyhole, key tab, stop wall, pad recess and the pack follow it (the rear-only structure stays); still one valid solid and the pack stands against the stop wall."""
-    b = bays({"REVRON_DRIVE_LOCATION": loc}, tmp_path)
+    b = bays({"REVRON_DRIVE_LOCATION": loc, "REVRON_SIZE_LENGTH": "34"}, tmp_path)   # the stock pack at the mid / front axle line reaches the weapon sweep: it needs a nose grown 34 mm
     assert b["tub"][:2] == (1, True) and abs(b["pack"][0] - b["pack"][1]) < 1e-6 and b["tub"][2] != DEFAULT_TUB_VOLUME, b
 
 
@@ -314,15 +330,15 @@ def test_rear_boss_moves_clear_of_a_long_gearmotor(motor, tmp_path):
 
 @pytest.mark.parametrize("pack", ["gnb_2s_450_80c", "betafpv_2s_300_45c", "palmpower_2s_300_65c", "gnb_3s_300_80c_hv"])
 def test_long_pack_moves_the_front_wall_not_into_it(pack, tmp_path):
-    """A pack longer than the stock wall holds: the front wall (and the front column row with it) moves forward, as far as the weapon-mount tab allows, and no part stands in a sleeve."""
-    b = bays({"REVRON_BATTERY": pack}, tmp_path)
+    """A pack longer than the stock wall holds (on a chassis grown to hold it): the front wall (and the front column row with it) moves forward, as far as the weapon-mount tab allows, and no part stands in a sleeve."""
+    b = bays({"REVRON_BATTERY": pack, **BIG_CHASSIS}, tmp_path)
     assert b["tub"][:2] == (1, True) and b["wall"][0] > 15.0 and all(v == 0 for v in b["slv"].values()), b
 
 
-@pytest.mark.parametrize("loc", ["mid", "front"])
+@pytest.mark.parametrize("loc", ["mid"])
 def test_drive_location_clears_the_sleeves(loc, tmp_path):
     """drive.location mid / front: the motor plates and the pack stand clear of every column sleeve and the boss."""
-    b = bays({"REVRON_DRIVE_LOCATION": loc}, tmp_path)
+    b = bays({"REVRON_DRIVE_LOCATION": loc, "REVRON_SIZE_LENGTH": "34"}, tmp_path)   # the stock pack at the mid / front axle line reaches the weapon sweep: it needs a nose grown 34 mm
     assert b["tub"][:2] == (1, True) and all(v == 0 for v in b["slv"].values()) and all(v == 0 for v in b["ovl"].values()), b
 
 
@@ -551,7 +567,7 @@ def test_stock_half_width_sweep(half_w, tmp_path):
     check({"params_chassis": {"CH_HALF_W_STOCK": half_w}}, tmp_path)
 
 
-@pytest.mark.parametrize("env", [{"REVRON_BATTERY": "gnb_3s_300_80c_hv"}, {"REVRON_RXESC": "esc_dual_brushed"}, {"REVRON_WESC": "bbb_red_esc"},
+@pytest.mark.parametrize("env", [{"REVRON_BATTERY": "gnb_3s_300_80c_hv", **BIG_CHASSIS}, {"REVRON_RXESC": "esc_dual_brushed"}, {"REVRON_WESC": "bbb_red_esc"},
                                  {"REVRON_DRIVE_MOTOR": "n10_300rpm_6v"}, {"REVRON_REAR_WHEEL": "wheel_28x10"}])
 def test_swap_setting_builds_one_valid_tub(env, tmp_path):
     b = bays(env, tmp_path)
@@ -680,3 +696,23 @@ def test_tab_wall_clears_the_whole_rotor(tmp_path):
     stock = _mesh({}, tmp_path)
     short = _mesh({"REVRON_WEAPON_MOTOR": "brotherhobby_tc1404_3800kv"}, tmp_path)
     assert float(stock[3]) == 9.7 and float(short[3]) > float(stock[3]), (stock, short)
+
+
+def test_front_motors_rear_driven_is_a_declared_unfit_layout(tmp_path):
+    """drive.location=front_motors_rear_driven is a declared setting the generator refuses with the reason (hooks.json declared_unfit), not a KeyError."""
+    dst = pathlib.Path(tempfile.mkdtemp(dir=tmp_path)) / "src"
+    shutil.copytree(SRC, dst, ignore=shutil.ignore_patterns("__pycache__"))
+    r = subprocess.run([sys.executable, "-c", "import sys; sys.path[:0] = [%r, %r]\nfrom revron import params_chassis" % (str(dst), ROOT)], capture_output=True, text=True,
+                       env={**os.environ, "REVRON_DRIVE_LOCATION": "front_motors_rear_driven"})
+    hooks = json.load(open(os.path.join(ROOT, "robots", "revron", "hooks.json")))
+    assert "DriveLocationError" in r.stderr and "belt" in r.stderr and "KeyError" not in r.stderr, r.stderr[-600:]
+    assert "DriveLocationError" in hooks["declared_unfit"] and "front_motors_rear_driven" in hooks["hooks"]["drive.location"]["values"]
+
+
+def test_front_drive_location_puts_the_stock_pack_in_the_weapon_sweep(tmp_path):
+    """drive.location=front: the stock pack stands against the stop wall on the nose axle line, its front face reaches the weapon's swept volume: the declared BatteryFitError (computed), not a tub with a pack through the nose."""
+    dst = pathlib.Path(tempfile.mkdtemp(dir=tmp_path)) / "src"
+    shutil.copytree(SRC, dst, ignore=shutil.ignore_patterns("__pycache__"))
+    r = subprocess.run([sys.executable, "-c", "import sys; sys.path[:0] = [%r, %r]\nfrom revron import params_weapon" % (str(dst), ROOT)], capture_output=True, text=True,
+                       env={**os.environ, "REVRON_DRIVE_LOCATION": "front"})
+    assert "BatteryFitError" in r.stderr and "weapon sweep" in r.stderr, r.stderr[-600:]

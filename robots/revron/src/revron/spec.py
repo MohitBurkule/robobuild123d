@@ -218,7 +218,10 @@ def make_spec(model_file):
         C("esc_tray", "base_panel", "glue", "TPU tray contact-glued to the base panel top")
     else:
         C("wesc", "tub", "tape", "weapon ESC kapton-taped, as in the original RVRN 2.0: revron_deconstruction.md 'Malenki+ESC kapton-wrapped, stacked'; no tray")
-    C("power_switch", "tub", "screw", "Switch flange clamped under the deck by 2 M2", mechanical_key=True)
+    if SW["holes"]:
+        C("power_switch", "tub", "screw", "Switch flange clamped under the deck by 2 M2", mechanical_key=True)
+    else:   # a catalog switch with no mount holes (retained=adhesive above) rides on the pad under the deck, held by the glue and keyed by the slot
+        C("power_switch", "tub", "glue", "Switch body glued to the pad under the deck, in the deck slot (the catalog switch has no mount holes)")
 
     # O-ring belts (front micro hub <-> rear hub, plane |X| 31.3)
     def belt_shape(s):
