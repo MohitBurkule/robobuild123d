@@ -131,6 +131,9 @@ def verdicts(ev) -> list:
             rows.append(dict(change=c, verdict="not run", builds=None, blockers=[], diff=None, hook=c.hook, why="outside the time budget"))
             continue
         _, rr, d = r
+        if d.get("infra"):  # the machine failed (disk full, ...): no verdict, re-run it
+            rows.append(dict(change=c, verdict="not run", builds=None, blockers=[], diff=None, hook=c.hook, why=f"infrastructure: {d['infra'][:160]}"))
+            continue
         if d["timeout"]:
             rows.append(dict(change=c, verdict="timeout", builds=None, blockers=[], diff=None, hook=c.hook, why=rr.get("error") or ""))
             continue

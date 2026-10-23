@@ -261,3 +261,13 @@ def test_runner_resumes_from_results_folder(tmp_path, monkeypatch):
     R.run(jobs, spec, "m.py", 600, 1, execute=ex, src_hash="s", log=lambda *a: None)
     R.run(jobs, spec, "m.py", 600, 1, execute=ex, src_hash="s", log=lambda *a: None)
     assert calls == ["baseline", "a"]  # the second run reads every result back from the folder
+
+
+def test_disk_full_is_not_a_verdict():
+    from robot.checks.robust import runner as R
+
+    for res in ({"error": "spec generation failed (rc 1): OSError: [Errno 28] No space left on device", "stage": "build"},
+                {"error": "Error: [('a', 'b', \"[Errno 28] No space left on device\")]", "stage": "worker"}):
+        d = R.diff({"blockers": []}, res, "param")
+        assert not d["broken"] and d["infra"]
+    assert R.diff({"blockers": []}, {"error": "ValueError: math domain error", "stage": "build"})["broken"]

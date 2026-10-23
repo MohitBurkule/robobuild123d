@@ -50,6 +50,15 @@ def key_of(b) -> tuple:
 SWAP_EXEMPT = ("integrity.volume",)  # vs the previous run's volume: a swap or variant replaces the part on purpose
 
 
+INFRA_ERRORS = ("No space left on device", "Errno 28", "Errno 12", "Cannot allocate memory", "MemoryError")
+
+
+def is_infra(res: dict) -> bool:
+    """A job that died of the machine (disk full, out of memory), not of the change: no verdict, never cached."""
+    e = str(res.get("error") or "")
+    return res.get("stage") == "infra" or any(m in e for m in INFRA_ERRORS)
+
+
 def diff(base: dict, res: dict, kind: str = "param") -> dict:
     """{'broken': bool, 'build_error': str|None, 'new': [blockers], 'fixed': [blocker keys]}. For a switch (variant,
     catalog choice, flag) a volume change of a rebuilt part is the intent, not a regression."""
@@ -57,9 +66,11 @@ def diff(base: dict, res: dict, kind: str = "param") -> dict:
     rk = {key_of(b) for b in res.get("blockers", [])}
     new = [b for b in res.get("blockers", []) if key_of(b) not in bk
            and not (kind != "param" and b[0] in SWAP_EXEMPT)]
+    if is_infra(res):
+        return {"broken": False, "build_error": None, "new": [], "fixed": [], "timeout": False, "infra": res.get("error")}
     err = res.get("error") if res.get("stage") != "timeout" else None
     return {"broken": bool(err or new), "build_error": err, "new": new, "fixed": sorted(bk - rk),
-            "timeout": res.get("stage") == "timeout"}
+            "timeout": res.get("stage") == "timeout", "infra": None}
 
 
 def checks_hash() -> str:
@@ -112,7 +123,7 @@ def run(jobs, spec_path, model_rel, budget_s=900.0, workers=3, execute=subproces
             if not cache.is_missing(hit):
                 return hit
         res = execute(jd, timeout)
-        if k and res.get("stage") not in ("timeout", "worker"):
+        if k and res.get("stage") not in ("timeout", "worker") and not is_infra(res):
             cache.put("robust", k, res)
             if store:
                 tmp = store / f".{k}.tmp"
@@ -154,7 +165,7 @@ def run(jobs, spec_path, model_rel, budget_s=900.0, workers=3, execute=subproces
                 if d["broken"] and j.phase == 0:
                     broke_first.add(j.target)
                 out["results"][j.id] = (j, res, d)
-                log(f"  robust {j.id}: {'BREAKS' if d['broken'] else 'timeout' if d['timeout'] else 'ok'} "
+                log(f"  robust {j.id}: {'BREAKS' if d['broken'] else 'timeout' if d['timeout'] else 'INFRA' if d.get('infra') else 'ok'} "
                     f"({res.get('seconds', '?')} s, rebuilt {len(res.get('rebuilt') or [])})")
     out["seconds"] = round(clock() - t0, 1)
     return out
