@@ -444,7 +444,8 @@ def shroud():
     k = (r_out - UP_R) / (x_r - x_tail)
     pl = lambda x: bd.Plane(origin=(x, WY, WZ), z_dir=(1, 0, 0))
     outer = _U(bd.Solid.make_cone(UP_R, r_out, x_r - x_tail, pl(x_tail)), _cyl(r_out, x_r, x_end, (WY, WZ), "x"))
-    inner = bd.Solid.make_cone(r_in - k * (x_end - x_tail), r_in, x_end - x_tail, pl(x_tail))
+    x0 = -UP_IN                                             # behind the upright's inner face it is solid upright anyway
+    inner = bd.Solid.make_cone(r_in - k * (x_end - x0), r_in, x_end - x0, pl(x0))   # (its radius there is the tail circle's)
     sector = _I(_box(-TOOL, TOOL, WY, TOOL, -TOOL, TOOL),
                 halfspace((0, WY, WZ), (0, 1, -1), HS))
     return _I(_S(outer, inner), sector)
