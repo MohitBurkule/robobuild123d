@@ -185,6 +185,26 @@ def _ocp_version() -> str:
         return "-"
 
 
+_TRACKED: dict = {}
+
+
+def tracked(files, root) -> list:
+    """`files` that git tracks under `root` (untracked scratch, generated files and install paths drop out). Without
+    git, all of them."""
+    import subprocess
+
+    root = Path(root).resolve()
+    if root not in _TRACKED:
+        try:
+            top = Path(subprocess.run(["git", "-c", "safe.directory=*", "-C", str(root), "rev-parse", "--show-toplevel"], capture_output=True, text=True, check=True).stdout.strip())
+            ls = subprocess.run(["git", "-c", "safe.directory=*", "-C", str(top), "ls-files", "-z"], capture_output=True, text=True, check=True).stdout
+            _TRACKED[root] = {(top / f).resolve() for f in ls.split("\0") if f}
+        except (OSError, subprocess.CalledProcessError):
+            _TRACKED[root] = None
+    t = _TRACKED[root]
+    return [f for f in files if t is None or Path(f).resolve() in t]
+
+
 def lib_versions() -> str:
     """Versions of the geometry libraries verdicts depend on (a library upgrade can change a mesh or a query)."""
     global _LIBV

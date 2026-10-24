@@ -311,6 +311,7 @@ def test_shared_queue_enqueue_work_report(tmp_path, monkeypatch):
         return {"id": job["id"], "blockers": [["x.y", "p", "m"]] if job["id"] == "b" else [], "rebuilt": []}
 
     monkeypatch.setattr(Q, "code_hash", lambda spec, m: cache.h("s", R.checks_hash()))  # this checkout = the enqueuer's code
+    monkeypatch.setattr(Q, "disk_ok", lambda *a: True)
     Q.work(q, 2, execute=fake, log=lambda *a: None)
     assert sorted(ran) == ["a", "b", "baseline"] and not list((q / "tickets").glob("*.json"))
     out = R.run(jobs, spec, "m.py", 600, 1, execute=never, src_hash="s", log=lambda *a: None)

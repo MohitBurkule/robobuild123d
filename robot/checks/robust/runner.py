@@ -79,8 +79,10 @@ def checks_hash() -> str:
     root = here.parents[1]
     files = sorted(f for f in root.rglob("*") if f.is_file() and "__pycache__" not in f.parts and here not in f.parents
                    and "tests" not in f.relative_to(root).parts and (f.suffix == ".py" or "catalog_data" in f.parts or "rules" in f.parts))
-    files.append(here / "worker.py")  # how a perturbation is built and checked does change its result
-    return cache.h(cache.VERSION, cache.lib_versions(), [(f.relative_to(root).as_posix(), cache.source_hash(f)) for f in files])
+    files = cache.tracked(files, root) + [here / "worker.py"]  # worker.py: how a perturbation is built and checked
+    # git-tracked source content by repo-relative path only: no install paths, mtimes or library metadata, so every
+    # container on the same commit computes the same hash (queue tickets match on it)
+    return cache.h(cache.VERSION, [(f.relative_to(root).as_posix(), cache.source_hash(f)) for f in files])
 
 
 def job_key(job: dict, src_hash: str, spec_raw: dict) -> str:
