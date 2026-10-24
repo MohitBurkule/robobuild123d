@@ -279,3 +279,23 @@ def test_lib_versions_ignores_build123d_and_pip_ocp(monkeypatch):
     b = cache.lib_versions()
     monkeypatch.setattr(cache, "_LIBV", None)
     assert a == b and "build123d" not in a and "OCP=-" not in a
+
+
+def test_queue_purges_stale_claims_and_caps_timeout(tmp_path, monkeypatch):
+    import os
+    import time
+
+    from robot.checks.robust import queue as Q
+    (tmp_path / "claims").mkdir()
+    old, new = tmp_path / "claims" / "a", tmp_path / "claims" / "b"
+    old.write_text("x"), new.write_text("y")
+    t = time.time() - Q.STALE_S - 60
+    os.utime(old, (t, t))
+    assert Q.purge_stale_claims(tmp_path) == 1 and not old.exists() and new.exists()
+    seen = {}
+    Q.enqueue(tmp_path, "k", {"id": "j", "spec": "/s", "model_rel": "m"}, 99999.0, sha="s")
+    tk = __import__("json").loads((tmp_path / "tickets" / "k.json").read_text())
+    Q.claim(tmp_path, "k", "me")
+    Q.run_ticket(tmp_path, tk, "me", execute=lambda job, to: seen.setdefault("to", to) and {"id": "j", "blockers": []})
+    assert seen["to"] == Q.JOB_CAP_S
+    assert Q.disk_ok(0) and not Q.disk_ok(1e18)
