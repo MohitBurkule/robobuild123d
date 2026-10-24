@@ -345,3 +345,16 @@ def test_enqueued_code_equals_worker_code_hash(tmp_path, monkeypatch):
           execute=lambda j, t: {}, src_hash=src, log=lambda *a: None)
     codes = {json.loads(f.read_text())["code"] for f in (tmp_path / "tickets").glob("*.json")}
     assert codes == {Q.code_hash(spec, "src/build_revron.py")}
+
+
+def test_subprocess_execute_kills_a_stalled_child(monkeypatch):
+    import sys
+
+    from robot.checks.robust import runner as R
+    monkeypatch.setattr(R.sys, "executable", sys.executable)
+    seen = []
+    # a "worker" that sleeps (no CPU) is killed as stalled and reported as infra
+    real = R.subprocess.Popen
+    monkeypatch.setattr(R.subprocess, "Popen", lambda args, **kw: real([sys.executable, "-c", "import time; time.sleep(30)"], **kw))
+    res = R.subprocess_execute({"id": "j"}, 60, progress=seen.append, tick=0.5, stall_s=1.5)
+    assert R.is_infra(res) and "stalled" in res["error"] and seen and "idle" in seen[0]

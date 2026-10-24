@@ -17,10 +17,34 @@ from ... import cache
 from .worker import FAST_GROUPS, TAG
 
 
-def subprocess_execute(job: dict, timeout: float) -> dict:
-    """Run one job in a fresh interpreter (own `revron` import, ROBOT_JOBS=1 so no build pool mixes sources)."""
+STALL_S = 900.0  # a child that has used no CPU for this long is stuck (blocked I/O on a network mount, a dead lock)
+
+
+def _cpu_s(pid: int) -> float | None:
+    """CPU seconds of a process and its children so far (Linux /proc), None when unknown."""
+    try:
+        f = open(f"/proc/{pid}/stat").read().rsplit(")", 1)[1].split()
+        return sum(int(x) for x in f[11:15]) / os.sysconf("SC_CLK_TCK")
+    except (OSError, ValueError, IndexError):
+        return None
+
+
+def _parts_built() -> int:
+    from ...geom import cache_dir
+
+    try:
+        return sum(1 for _ in cache_dir().glob("*.json"))
+    except OSError:
+        return -1
+
+
+def subprocess_execute(job: dict, timeout: float, progress=None, tick: float = 60.0, stall_s: float | None = None) -> dict:
+    """Run one job in a fresh interpreter (own `revron` import, ROBOT_JOBS=1 so no build pool mixes sources).
+    Every `tick` s it reports progress(dict(elapsed, cpu, parts, state)); a child that uses no CPU for `stall_s` is
+    killed and reported as stalled (infrastructure: the ticket goes back to the queue)."""
     import shutil
 
+    stall_s = STALL_S if stall_s is None else stall_s
     td = tempfile.mkdtemp(prefix="robust_job_")  # removed here: a killed worker cannot clean up after itself
     job = dict(job, tmpdir=td)
     path = os.path.join(td, "job.json")
@@ -28,17 +52,49 @@ def subprocess_execute(job: dict, timeout: float) -> dict:
         json.dump(job, fh)
     env = dict(os.environ, ROBOT_JOBS="1", ROBOT_ROBUST_CHILD="1")
     env = {k: v for k, v in env.items() if not k.startswith("REVRON_") and k != "ROBOT_CACHE_ENV"}
+    t0 = time.time()
+    p = None
     try:
-        p = subprocess.run([sys.executable, "-m", "robot.checks.robust.worker", path], capture_output=True, text=True,
-                           timeout=timeout, env=env, cwd=str(Path(__file__).resolve().parents[3]))
-        for ln in reversed(p.stdout.splitlines()):
+        out_f = open(os.path.join(td, "stdout"), "w+")
+        err_f = open(os.path.join(td, "stderr"), "w+")
+        p = subprocess.Popen([sys.executable, "-m", "robot.checks.robust.worker", path], stdout=out_f, stderr=err_f, text=True,
+                             env=env, cwd=str(Path(__file__).resolve().parents[3]), start_new_session=True)
+        parts0, cpu_last, cpu_t = _parts_built(), -1.0, time.time()
+        while True:
+            try:
+                p.wait(timeout=tick)
+                break
+            except subprocess.TimeoutExpired:
+                pass
+            el = time.time() - t0
+            cpu = _cpu_s(p.pid)
+            if cpu is not None and cpu > cpu_last + 0.5:
+                cpu_last, cpu_t = cpu, time.time()
+            idle = time.time() - cpu_t
+            if progress:
+                progress(dict(elapsed=round(el), cpu=None if cpu is None else round(cpu), parts=_parts_built() - parts0, idle=round(idle)))
+            if el > timeout or (cpu is not None and idle > stall_s):
+                import signal
+
+                try:
+                    os.killpg(p.pid, signal.SIGKILL)
+                except OSError:
+                    p.kill()
+                p.wait()
+                if el > timeout:
+                    return {"id": job.get("id"), "error": f"timed out after {timeout:.0f} s", "stage": "timeout", "blockers": []}
+                return {"id": job.get("id"), "error": f"infra: stalled, no CPU for {idle:.0f} s after {el:.0f} s", "stage": "infra", "blockers": []}
+        out_f.seek(0)
+        err_f.seek(0)
+        so, se = out_f.read(), err_f.read()
+        for ln in reversed(so.splitlines()):
             if ln.startswith(TAG):
                 return json.loads(ln[len(TAG):])
-        tail = (p.stderr or p.stdout).strip().splitlines()[-1:] or ["no output"]
+        tail = (se or so).strip().splitlines()[-1:] or ["no output"]
         return {"id": job.get("id"), "error": f"worker died (rc {p.returncode}): {tail[0][:300]}", "stage": "worker", "blockers": []}
-    except subprocess.TimeoutExpired:
-        return {"id": job.get("id"), "error": f"timed out after {timeout:.0f} s", "stage": "timeout", "blockers": []}
     finally:
+        if p is not None and p.poll() is None:
+            p.kill()
         shutil.rmtree(td, ignore_errors=True)
 
 
