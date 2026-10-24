@@ -41,9 +41,15 @@ def purge_stale_claims(qdir, now=time.time) -> int:
 
 
 def disk_ok(min_free=None) -> bool:
+    """Enough free space where jobs write: the local part cache (ROBOT_CACHE) and the job folders (TMPDIR), e.g. both
+    on /dev/shm. ROBOT_MIN_FREE_GB overrides the floor (on /dev/shm keep RAM for the builds)."""
+    import tempfile
+
     from ...geom import cache_dir
 
-    return shutil.disk_usage(cache_dir()).free >= (MIN_FREE_B if min_free is None else min_free)
+    if min_free is None:
+        min_free = float(os.environ.get("ROBOT_MIN_FREE_GB") or MIN_FREE_B / 1e9) * 1e9
+    return all(shutil.disk_usage(d).free >= min_free for d in (cache_dir(), tempfile.gettempdir()))
 BEAT_S = 60.0
 REPO = Path(__file__).resolve().parents[3]
 
@@ -241,7 +247,7 @@ def work(qdir, workers=1, execute=None, log=print, once=False, poll=False) -> in
         me = f"{me0}:{i}"
         while True:
             if not disk_ok():
-                log(f"  {me}: less than {MIN_FREE_B / 1e9:.1f} GB free under the geometry cache; stopping (free disk, then re-run)")
+                log(f"  {me}: low free space under the part cache or TMPDIR; stopping (free space, then re-run)")
                 return
             why = {}
             tk = next_ticket(qdir, me, sha, why=why)
