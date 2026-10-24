@@ -244,7 +244,7 @@ def _log(*a):
 
 def work(qdir, workers=1, execute=None, log=_log, once=False, poll=False) -> int:
     sha = head_sha()
-    me0 = f"{socket.gethostname()}:{os.getpid()}"
+    me0 = f"{socket.gethostname()}:{os.getpid()}:{os.urandom(3).hex()}"  # every container is "vm" and pids repeat after a restart
     try:
         log("queue: " + describe(qdir))
     except Exception as e:  # noqa: BLE001 - diagnostics only
@@ -296,7 +296,16 @@ def main(argv=None):
     ap.add_argument("--shared-cache", default=None, help="part cache shared by all containers (default: <queue>/../../cache)")
     a = ap.parse_args(argv)
     os.environ.setdefault("ROBOT_SHARED_CACHE", a.shared_cache or str(Path(a.queue).resolve().parents[1] / "cache"))
-    work(a.queue, a.workers, poll=a.poll)
+    (Path(a.queue) / "logs").mkdir(exist_ok=True)
+    own = open(Path(a.queue) / "logs" / f"{socket.gethostname()}-{time.strftime('%m%d-%H%M%S')}-{os.getpid()}-{os.urandom(2).hex()}.log", "a")
+
+    def log(*m):  # one log file per worker process: shared files appended from several containers lose lines
+        line = " ".join([time.strftime("%H:%M:%S"), *map(str, m)])
+        print(line, flush=True)
+        own.write(line + "\n")
+        own.flush()
+
+    work(a.queue, a.workers, poll=a.poll, log=log)
     return 0
 
 
