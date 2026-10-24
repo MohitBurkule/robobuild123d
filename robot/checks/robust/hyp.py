@@ -118,7 +118,9 @@ def evaluate(spec_path: Path, budget_s=3600.0, workers=3, top_n=8, log=print, ex
         j.phase = 0
     order = {"swap": 0, "architecture": 1, "size": 2, "dimension": 3}  # cheap overlay-only jobs first, rebuild-heavy params last
     jobs.sort(key=lambda cj: (order[cj[0].family], cj[1].kind != "hyp"))
-    src = "" if execute else cache.h([f.read_bytes() for f in files])  # an injected executor (tests) is never cached
+    from . import queue as Q  # one model-source hash for result keys, tickets and workers (git-tracked, repo-relative)
+
+    src = "" if execute else Q.model_hash(str(spec_path), mrel)  # an injected executor (tests) is never cached
     kw = {"execute": execute} if execute else {}
     out = R.run([j for _, j in jobs], spec_path, mrel, budget_s, workers, src_hash=src, log=log, groups=HYP_GROUPS, **kw)
     return dict(unfit_names=unfit_names, unsupported_names=unsupported_names, raw=raw, changes=changes, jobs=jobs, nx=nx, out=out, files=files, graph=graph, hooks=hooks, disc=disc)
