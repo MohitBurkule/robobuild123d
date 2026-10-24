@@ -259,3 +259,23 @@ def test_subprocess_execute_cleans_up_after_a_timeout(tmp_path, monkeypatch):
     monkeypatch.setattr(tempfile, "tempdir", str(tmp_path))
     res = RUN.subprocess_execute({"id": "x", "spec": str(tmp_path / "missing.json")}, timeout=0.01)
     assert res["stage"] in ("timeout", "worker") and not list(tmp_path.glob("robust_job_*"))
+
+
+def test_lib_versions_ignores_build123d_and_pip_ocp(monkeypatch):
+    from importlib import metadata
+
+    from robot import cache
+    real = metadata.version
+
+    def fake(n):
+        if n in ("cadquery-ocp", "OCP"):
+            raise metadata.PackageNotFoundError(n)
+        return "0.1.dev999+gX" if n == "build123d" else real(n)
+
+    monkeypatch.setattr(cache, "_LIBV", None)
+    a = cache.lib_versions()
+    monkeypatch.setattr(cache, "_LIBV", None)
+    monkeypatch.setattr(metadata, "version", fake)
+    b = cache.lib_versions()
+    monkeypatch.setattr(cache, "_LIBV", None)
+    assert a == b and "build123d" not in a and "OCP=-" not in a

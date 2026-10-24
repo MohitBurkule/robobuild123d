@@ -171,8 +171,18 @@ def source_hash(*files) -> str:
     return h(*out)
 
 
-_LIBS = ("build123d", "OCP", "cadquery-ocp", "manifold3d", "trimesh", "numpy", "scipy", "shapely")
+_LIBS = ("manifold3d", "trimesh", "numpy", "scipy", "shapely")
 _LIBV = None
+
+
+def _ocp_version() -> str:
+    """OCCT binding version from the imported OCP module itself (pip metadata is missing on some installs)."""
+    try:
+        import OCP
+
+        return str(getattr(OCP, "__version__", "") or "-")
+    except Exception:  # noqa: BLE001 - not installed
+        return "-"
 
 
 def lib_versions() -> str:
@@ -181,7 +191,7 @@ def lib_versions() -> str:
     if _LIBV is None:
         from importlib import metadata
 
-        out = []
+        out = [f"OCP={_ocp_version()}"]  # build123d is left out: the repo code is hashed, and its scm suffix differs per install
         for n in _LIBS:
             try:
                 out.append(f"{n}={metadata.version(n)}")
