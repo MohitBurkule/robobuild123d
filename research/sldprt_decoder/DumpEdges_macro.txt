@@ -1,0 +1,308 @@
+' SolidWorks VBA macro: dump every face + edge GEOMETRY (start/end/mid points, curve type) per feature.
+' Writes <part>.edges.txt next to each part. Read-only. Run with no part open: Tools > Macro > New, paste, F5.
+' v3 (crash-safe):
+'  - every line is appended and the file closed again at once (flushed): after a hard SolidWorks crash the
+'    last line shows where it died (SECTION lines mark each risky step).
+'  - a part is finished only when its file ends with "DONE". Rerun: finished parts are skipped, unfinished
+'    ones are redone; a part that already failed once is redone in SAFE mode (all v2 extras off).
+'  - switches below turn each extra section off.
+'  - bcurve samples use Curve.Evaluate2 at fixed parameters (no tessellation call).
+Option Explicit
+
+' ---- switches (True = on)
+Const DO_SPLINES As Boolean = True        ' SPLINE / ELLIPSE / TEXT lines from sketches
+Const DO_SPLINE_CTRL As Boolean = False   ' spline parameters (GetSplineParams3: riskier, off)
+Const DO_BCURVE_SAMPLES As Boolean = True ' samp= points on bcurve edges (Evaluate2)
+Const DO_BLEND_ITEMS As Boolean = True    ' BLEND_EDGE lines (fillet / chamfer items)
+Const DO_BODY_EDGES As Boolean = True     ' BODY / BEDGE lines
+Const N_SAMPLES As Long = 9
+
+Dim swApp As Object
+Dim gOut As String
+Dim gSafe As Boolean
+
+Sub main()
+    Set swApp = Application.SldWorks
+    Dim folder As String
+    folder = InputBox("Folder with .SLDPRT files:", "Dump edges", "C:\Users\" & Environ("USERNAME") & "\Downloads\Ant\Public RVRN V2.0\revdev\")
+    If folder = "" Then Exit Sub
+    If Right(folder, 1) <> "\" Then folder = folder & "\"
+    Dim n As Long: n = DumpFolder(folder)
+    MsgBox "Done: " & n & " parts dumped this run. Zip the *.edges.txt files and send them."
+End Sub
+
+Sub W(ByVal s As String)
+    ' append one line and close the file again (flushed even if SolidWorks dies right after)
+    On Error Resume Next
+    Dim h As Integer: h = FreeFile
+    Open gOut For Append As #h
+    Print #h, s
+    Close #h
+    Err.Clear
+End Sub
+
+Function FileState(ByVal p As String, ByRef attempts As Long) As String
+    ' "" = no file, "DONE" = finished, "PARTIAL" = started but not finished (attempts = ATTEMPT lines)
+    On Error Resume Next
+    Dim h As Integer, s As String, last As String
+    FileState = "": attempts = 0
+    If Dir(p) = "" Then Exit Function
+    h = FreeFile
+    Open p For Input As #h
+    Do While Not EOF(h)
+        Line Input #h, s
+        If Left(s, 8) = "ATTEMPT " Then attempts = attempts + 1
+        If Trim(s) <> "" Then last = s
+    Loop
+    Close #h
+    If Left(last, 4) = "DONE" Then FileState = "DONE" Else FileState = "PARTIAL"
+    Err.Clear
+End Function
+
+Function DumpFolder(ByVal folder As String) As Long
+    Dim fn As String: fn = Dir(folder & "*.SLDPRT")
+    Dim lst As New Collection, k As Variant
+    Do While fn <> "": lst.Add folder & fn: fn = Dir(): Loop
+    For Each k In lst
+        If DumpRefs(CStr(k)) Then DumpFolder = DumpFolder + 1
+    Next
+End Function
+
+Function DumpRefs(ByVal path As String) As Boolean
+    On Error Resume Next
+    Dim outp As String: outp = Left(path, Len(path) - 7) & ".edges.txt"
+    Dim att As Long, st As String
+    DumpRefs = False
+    st = FileState(outp, att)
+    If st = "DONE" Then Exit Function
+    ' earlier attempts are kept as ATTEMPT lines: a part that keeps crashing is redone in SAFE mode
+    gSafe = (att >= 1)
+    gOut = outp
+    Dim h As Integer: h = FreeFile
+    Open outp For Output As #h: Close #h
+    Dim a As Long
+    For a = 1 To att: W "ATTEMPT " & a & " (earlier, did not finish)": Next
+    W "ATTEMPT " & (att + 1) & IIf(gSafe, " SAFE", "")
+    Dim errs As Long, warns As Long
+    swApp.DocumentVisible False, 1
+    Dim doc As Object: Set doc = swApp.OpenDoc6(path, 1, 1 + 2, "", errs, warns)
+    swApp.DocumentVisible True, 1
+    If doc Is Nothing Then W "ERR open failed errs=" & errs: W "DONE (not opened)": Exit Function
+    W "PART " & doc.GetTitle
+    Dim ext As Object: Set ext = doc.Extension
+    Dim feat As Object: Set feat = doc.FirstFeature
+    Dim t As String, fs As Variant, es As Variant, i As Long, j As Long, nm As String
+    Do While Not feat Is Nothing
+        t = "": nm = ""
+        t = feat.GetTypeName2: nm = feat.Name
+        W "FEATURE " & nm & " | " & t & " | id=" & feat.GetID & " | pref=" & PRef(ext, feat)
+        If Err.Number <> 0 Then W "  ERR feature " & Err.Description: Err.Clear
+        If DO_SPLINES And Not gSafe And (t = "ProfileFeature" Or t = "3DProfileFeature") Then
+            W "  SECTION sketch"
+            DumpSplines feat.GetSpecificFeature2
+            If Err.Number <> 0 Then W "  ERR sketch " & Err.Description: Err.Clear
+        End If
+        ' reset first: when GetFaces fails, v1 kept the PREVIOUS feature's faces and printed them again
+        fs = Empty
+        fs = feat.GetFaces
+        If Err.Number <> 0 Then fs = Empty: Err.Clear
+        If IsArray(fs) Then
+            For i = 0 To UBound(fs)
+                W "  FACE " & i & " fid=" & fs(i).GetFaceId & " area=" & fs(i).GetArea & " " & SurfDesc(fs(i)) & " pref=" & PRef(ext, fs(i))
+                es = Empty
+                es = fs(i).GetEdges
+                If Err.Number <> 0 Then es = Empty: Err.Clear
+                If IsArray(es) Then
+                    For j = 0 To UBound(es): W "    EDGE " & EdgeDesc(es(j)) & " pref=" & PRef(ext, es(j)): Next
+                End If
+            Next
+        End If
+        If DO_BLEND_ITEMS And (t = "Fillet" Or t = "Chamfer") Then
+            W "  SECTION blend"
+            DumpBlendEdges doc, ext, feat
+            If Err.Number <> 0 Then W "  ERR blend " & Err.Description: Err.Clear
+        End If
+        Set feat = feat.GetNextFeature
+    Loop
+    Dim bodies As Variant, b As Long, be As Variant
+    If DO_BODY_EDGES Then
+        W "SECTION bodies"
+        bodies = doc.GetBodies2(0, False)
+        If IsArray(bodies) Then
+            For b = 0 To UBound(bodies)
+                W "BODY " & b & " " & bodies(b).Name
+                be = Empty
+                be = bodies(b).GetEdges
+                If IsArray(be) Then
+                    For i = 0 To UBound(be): W "  BEDGE " & EdgeDesc(be(i)) & " pref=" & PRef(ext, be(i)): Next
+                End If
+            Next
+        End If
+        be = Empty: bodies = Empty
+    End If
+    W "SECTION close"
+    ' drop every reference before closing (crash fix)
+    Set feat = Nothing: Set ext = Nothing: fs = Empty: es = Empty
+    nm = doc.GetTitle
+    doc.ClearSelection2 True
+    Set doc = Nothing
+    swApp.CloseDoc nm
+    DoEvents
+    Err.Clear
+    W "DONE"
+    DumpRefs = True
+End Function
+
+Sub DumpBlendEdges(ByVal doc As Object, ByVal ext As Object, ByVal feat As Object)
+    On Error Resume Next
+    Dim x As Object, n As Long, i As Long, it As Object, tp As Long, isF As Boolean
+    isF = (feat.GetTypeName2 = "Fillet")
+    Set x = feat.GetDefinition
+    If x Is Nothing Then W "  ERR blend: no definition": Exit Sub
+    ' Feature has no GetModelDoc2 (v1 passed Nothing and the item count came back -1): pass the doc
+    If Not x.AccessSelections(doc, Nothing) Then W "  ERR AccessSelections failed"
+    Err.Clear
+    n = -1
+    If isF Then n = x.FilletItemsCount Else n = x.GetEdgeCount
+    Err.Clear
+    W "  BLEND_ITEMS " & n
+    For i = 0 To n - 1
+        Set it = Nothing
+        If isF Then Set it = x.GetFilletItemAtIndex2(i, tp) Else Set it = x.GetEdge(i)
+        Err.Clear
+        If Not it Is Nothing Then W "  BLEND_EDGE " & i & " " & EdgeDesc(it) & " pref=" & PRef(ext, it)
+    Next
+    Set it = Nothing
+    ' everything read from the definition happens BEFORE ReleaseSelectionAccess (v2 read x.Edges after it)
+    x.ReleaseSelectionAccess
+    Set x = Nothing
+    Err.Clear
+End Sub
+
+Function EdgeDesc(ByVal e As Object) As String
+    On Error Resume Next
+    Dim cp As Object: Set cp = e.GetCurveParams3
+    Dim sp As Variant, ep As Variant
+    sp = cp.StartPoint: ep = cp.EndPoint
+    Dim c As Object: Set c = e.GetCurve
+    Dim k As String: k = "curve"
+    If c.IsLine Then
+        k = "line"
+    ElseIf c.IsCircle Then
+        k = "circle " & JoinV(c.CircleParams)
+    ElseIf c.IsEllipse Then
+        k = "ellipse " & JoinV(c.GetEllipseParams)
+    ElseIf c.IsBcurve Then
+        k = "bcurve"
+    End If
+    Dim u0 As Double, u1 As Double, ms As String, mid As Variant, i As Long, smp As String
+    u0 = cp.UMinValue: u1 = cp.UMaxValue
+    If k = "line" Then
+        ' Evaluate2 at the mean parameter is not the edge mid point for lines: chord mid point
+        ms = " m=(" & (sp(0) + ep(0)) / 2 & "," & (sp(1) + ep(1)) / 2 & "," & (sp(2) + ep(2)) / 2 & ")"
+    Else
+        mid = Empty
+        mid = c.Evaluate2((u0 + u1) / 2, 0)
+        If IsArray(mid) Then ms = " m=(" & mid(0) & "," & mid(1) & "," & mid(2) & ")"
+    End If
+    If DO_BCURVE_SAMPLES And Not gSafe And k = "bcurve" Then
+        ' N_SAMPLES points at equal parameter steps (start .. end), x,y,z each
+        For i = 0 To N_SAMPLES - 1
+            mid = Empty
+            mid = c.Evaluate2(u0 + (u1 - u0) * i / (N_SAMPLES - 1), 0)
+            If IsArray(mid) Then smp = smp & mid(0) & "," & mid(1) & "," & mid(2) & ","
+            Err.Clear
+        Next
+        If smp <> "" Then ms = ms & " samp=" & smp
+    End If
+    EdgeDesc = k & " s=(" & sp(0) & "," & sp(1) & "," & sp(2) & ") e=(" & ep(0) & "," & ep(1) & "," & ep(2) & ")" & ms & " len=" & c.GetLength3(u0, u1)
+    Set c = Nothing: Set cp = Nothing
+    Err.Clear
+End Function
+
+Function SurfDesc(ByVal o As Object) As String
+    On Error Resume Next
+    Dim sf As Object: Set sf = o.GetSurface
+    If sf.IsPlane Then
+        SurfDesc = "plane " & JoinV(sf.PlaneParams)
+    ElseIf sf.IsCylinder Then
+        SurfDesc = "cyl " & JoinV(sf.CylinderParams)
+    ElseIf sf.IsCone Then
+        SurfDesc = "cone " & JoinV(sf.ConeParams)
+    ElseIf sf.IsTorus Then
+        SurfDesc = "torus " & JoinV(sf.TorusParams)
+    Else
+        SurfDesc = "surf " & sf.Identity
+    End If
+    SurfDesc = SurfDesc & " box=" & JoinV(o.GetBox)
+    Err.Clear
+End Function
+
+Function PRef(ByVal ext As Object, ByVal o As Object) As String
+    ' persistent reference bytes as hex: the key that links binary records to faces/edges
+    On Error Resume Next
+    Dim v As Variant: v = ext.GetPersistReference3(o)
+    If Not IsArray(v) Then PRef = "-": Exit Function
+    Dim i As Long, s As String
+    For i = LBound(v) To UBound(v): s = s & Right("0" & Hex(v(i)), 2): Next
+    PRef = s
+    Err.Clear
+End Function
+
+Function JoinV(ByVal a As Variant) As String
+    On Error Resume Next
+    Dim i As Long, s As String
+    If Not IsArray(a) Then Exit Function
+    For i = 0 To UBound(a): s = s & a(i) & ",": Next
+    JoinV = s
+End Function
+
+Function PXYZ(ByVal p As Object) As String
+    On Error Resume Next
+    PXYZ = "(" & p.X & "," & p.Y & "," & p.Z & ")"
+    Err.Clear
+End Function
+
+Sub DumpSplines(ByVal sk As Object)
+    ' spline / ellipse / text geometry in SKETCH coordinates (the feature dump only had their length).
+    ' v1 bug: GetPoints2 returns SketchPoint OBJECTS; v1 concatenated the objects into the string, the type
+    ' error was swallowed by On Error Resume Next inside the one-line If/For, so pts= stayed empty.
+    On Error Resume Next
+    If sk Is Nothing Then Exit Sub
+    Dim segs As Variant: segs = sk.GetSketchSegments
+    If Not IsArray(segs) Then Exit Sub
+    Dim i As Long, k As Long, s As Object, id As Variant, pts As Variant, ln As String, ty As Long, prm As Variant
+    For i = 0 To UBound(segs)
+        Set s = segs(i)
+        ty = -1: ty = s.GetType
+        id = Empty: id = s.GetID
+        Select Case ty
+            Case 3
+                ln = "  SPLINE " & id(0) & "_" & id(1) & " constr=" & s.ConstructionGeometry & " len=" & s.GetLength & " pts="
+                pts = Empty: pts = s.GetPoints2
+                If IsArray(pts) Then
+                    For k = 0 To UBound(pts)
+                        ln = ln & pts(k).X & "," & pts(k).Y & "," & pts(k).Z & ","
+                    Next
+                End If
+                pts = Empty
+                Err.Clear
+                W ln
+                If DO_SPLINE_CTRL Then
+                    W "  SECTION spline_params " & id(0) & "_" & id(1)
+                    prm = Empty
+                    prm = s.GetSplineParams3(False)
+                    If IsArray(prm) Then W "  SPLINE_PARAMS " & id(0) & "_" & id(1) & " " & JoinV(prm)
+                    prm = Empty
+                    Err.Clear
+                End If
+            Case 2
+                W "  ELLIPSE " & id(0) & "_" & id(1) & " c=" & PXYZ(s.GetCenterPoint2) & " maj=" & PXYZ(s.GetMajorPoint2) & " min=" & PXYZ(s.GetMinorPoint2) & " s=" & PXYZ(s.GetStartPoint2) & " e=" & PXYZ(s.GetEndPoint2)
+            Case 4
+                W "  TEXT " & id(0) & "_" & id(1) & " text=" & s.Text
+        End Select
+        Set s = Nothing
+        Err.Clear
+    Next
+    segs = Empty
+End Sub

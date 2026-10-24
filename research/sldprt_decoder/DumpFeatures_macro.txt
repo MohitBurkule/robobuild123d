@@ -1,0 +1,208 @@
+' SolidWorks VBA macro: dump the full feature tree of EVERY .SLDPRT in a folder to <part>.dump.txt.
+' Run: Tools > Macro > New (save as DumpFeatures.swp) > paste this over the code > Run (F5).
+' It asks for a folder (default = folder of the open part). Read-only: never saves the parts.
+Option Explicit
+Dim swApp As SldWorks.SldWorks
+Dim f As Integer
+
+Sub main()
+    Set swApp = Application.SldWorks
+    Dim folder As String
+    folder = InputBox("Folder with .SLDPRT files:", "Dump", "C:\Users\" & Environ("USERNAME") & "\Downloads\Ant\Public RVRN V2.0\revdev\")
+    If folder = "" Then Exit Sub
+    If Right(folder, 1) <> "\" Then folder = folder & "\"
+    Dim fn As String: fn = Dir(folder & "*.SLDPRT")
+    Dim n As Long
+    Do While fn <> ""
+        DumpFile folder & fn: n = n + 1
+        fn = Dir()
+    Loop
+    MsgBox "Done: " & n & " parts. Files *.dump.txt in " & folder
+End Sub
+
+Sub DumpFile(ByVal path As String)
+    Dim errs As Long, warns As Long
+    Dim doc As SldWorks.ModelDoc2
+    Set doc = swApp.OpenDoc6(path, 1, 1 + 2, "", errs, warns) ' part, silent+readonly
+    If doc Is Nothing Then Exit Sub
+    f = FreeFile: Open Left(path, Len(path) - 7) & ".dump.txt" For Output As #f
+    Print #f, "PART " & doc.GetTitle
+    Dim feat As Object: Set feat = doc.FirstFeature
+    Dim idx As Long
+    Do While Not feat Is Nothing
+        DumpFeature feat, idx, 0: idx = idx + 1
+        Dim s As Object: Set s = feat.GetFirstSubFeature
+        Do While Not s Is Nothing
+            DumpFeature s, -1, 1
+            Set s = s.GetNextSubFeature
+        Loop
+        Set feat = feat.GetNextFeature
+    Loop
+    Close #f
+    swApp.CloseDoc doc.GetTitle
+End Sub
+
+Sub DumpFeature(ByVal feat As Object, ByVal idx As Long, ByVal lvl As Integer)
+    On Error Resume Next
+    Dim t As String: t = feat.GetTypeName2
+    Print #f, String(lvl * 2, " ") & "FEATURE " & idx & " | " & feat.Name & " | " & t & " | id=" & feat.GetID & " | suppressed=" & feat.IsSuppressed
+    Dim d As Object: Set d = feat.GetFirstDisplayDimension
+    Do While Not d Is Nothing
+        Dim dm As Object: Set dm = d.GetDimension2(0)
+        Print #f, "  DIM " & dm.FullName & " = " & dm.SystemValue
+        Set d = feat.GetNextDisplayDimension(d)
+    Loop
+    ' parents (which sketch/plane/feature this one depends on)
+    Dim par As Variant: par = feat.GetParents
+    Dim i As Long
+    If Not IsEmpty(par) Then
+        For i = 0 To UBound(par): Print #f, "  PARENT " & par(i).Name & " | " & par(i).GetTypeName2: Next
+    End If
+    DumpFaces feat
+    Select Case t
+        Case "ProfileFeature", "3DProfileFeature": DumpSketch feat.GetSpecificFeature2
+        Case "Extrusion", "Cut", "Boss", "BossThin", "CutThin", "ICE": DumpExtrude feat
+        Case "Fillet", "Chamfer", "Chamfer2": DumpFillet feat, t
+        Case "RefPlane": DumpPlane feat
+    End Select
+    Err.Clear
+End Sub
+
+Sub DumpSketch(ByVal sk As Object)
+    On Error Resume Next
+    Dim a As Variant: a = sk.ModelToSketchTransform.Inverse.ArrayData
+    Print #f, "  SKETCH_TO_MODEL " & JoinV(a)
+    Dim pts As Variant: pts = sk.GetSketchPoints2
+    Dim i As Long
+    If Not IsEmpty(pts) Then
+        For i = 0 To UBound(pts)
+            Dim id As Variant: id = pts(i).GetID
+            Print #f, "  PT " & id(0) & "_" & id(1) & " (" & pts(i).X & "," & pts(i).Y & "," & pts(i).Z & ")"
+        Next
+    End If
+    Dim segs As Variant: segs = sk.GetSketchSegments
+    If Not IsEmpty(segs) Then
+        For i = 0 To UBound(segs)
+            Dim s As Object: Set s = segs(i)
+            id = s.GetID
+            Dim ln As String: ln = "  SEG " & id(0) & "_" & id(1) & " type=" & s.GetType & " constr=" & s.ConstructionGeometry
+            Select Case s.GetType
+                Case 0: ln = ln & " p0=" & PP(s.GetStartPoint2) & " p1=" & PP(s.GetEndPoint2)
+                Case 1: ln = ln & " c=" & PP(s.GetCenterPoint2) & " p0=" & PP(s.GetStartPoint2) & " p1=" & PP(s.GetEndPoint2) & " r=" & s.GetRadius & " dir=" & s.GetRotationDir
+                Case Else: ln = ln & " len=" & s.GetLength
+            End Select
+            Print #f, ln
+        Next
+    End If
+    ' relations with their entities
+    Dim rm As Object: Set rm = sk.RelationManager
+    Dim rels As Variant: rels = rm.GetRelations(0)
+    If Not IsEmpty(rels) Then
+        For i = 0 To UBound(rels)
+            Dim ents As Variant: ents = rels(i).GetEntities
+            Dim es As String: es = ""
+            Dim k As Long
+            If Not IsEmpty(ents) Then
+                For k = 0 To UBound(ents)
+                    Dim eid As Variant: eid = ents(k).GetID: es = es & eid(0) & "_" & eid(1) & " "
+                Next
+            End If
+            Print #f, "  REL type=" & rels(i).GetRelationType & " ents=" & es
+        Next
+    End If
+    ' closed contours (regions)
+    Dim cs As Variant: cs = sk.GetSketchContours
+    If Not IsEmpty(cs) Then
+        For i = 0 To UBound(cs)
+            Dim cseg As Variant: cseg = cs(i).GetSketchSegments
+            es = ""
+            For k = 0 To UBound(cseg): eid = cseg(k).GetID: es = es & eid(0) & "_" & eid(1) & " ": Next
+            Print #f, "  CONTOUR " & i & " closed=" & cs(i).IsClosed & " segs=" & es
+        Next
+    End If
+End Sub
+
+Sub DumpExtrude(ByVal feat As Object)
+    On Error Resume Next
+    Dim x As Object: Set x = feat.GetDefinition
+    Print #f, "  EXTRUDE end1=" & x.GetEndCondition(True) & " d1=" & x.GetDepth(True) & " both=" & x.BothDirections & _
+        " end2=" & x.GetEndCondition(False) & " d2=" & x.GetDepth(False) & " reverse=" & x.ReverseDirection & _
+        " draft1=" & x.GetDraftAngle(True) & " thin=" & x.IsThinFeature & " merge=" & x.Merge
+    x.AccessSelections feat.GetModelDoc, Nothing
+    Dim r As Object, rt As Long
+    Set r = x.GetEndConditionReference(True, rt)
+    If Not r Is Nothing Then Print #f, "  UPTO_REF1 type=" & rt & " " & RefDesc(r)
+    Set r = x.GetEndConditionReference(False, rt)
+    If Not r Is Nothing Then Print #f, "  UPTO_REF2 type=" & rt & " " & RefDesc(r)
+    x.ReleaseSelectionAccess
+End Sub
+
+Sub DumpFillet(ByVal feat As Object, ByVal t As String)
+    On Error Resume Next
+    Dim x As Object: Set x = feat.GetDefinition
+    If t = "Fillet" Then
+        Print #f, "  FILLET r=" & x.DefaultRadius & " type=" & x.Type & " items=" & x.FilletItemsCount
+    Else
+        Print #f, "  CHAMFER type=" & x.Type & " d=" & x.GetEdgeChamferDistance(0) & " angle=" & x.EdgeChamferAngle
+    End If
+    ' selected edges: endpoints
+    x.AccessSelections feat.GetModelDoc, Nothing
+    Dim it As Variant: it = x.Edges
+    Dim i As Long
+    If Not IsEmpty(it) Then
+        For i = 0 To UBound(it)
+            Dim cp As Variant: cp = it(i).GetCurveParams3
+            Print #f, "  EDGE " & i & " start=(" & cp.StartPoint(0) & "," & cp.StartPoint(1) & "," & cp.StartPoint(2) & ") end=(" & cp.EndPoint(0) & "," & cp.EndPoint(1) & "," & cp.EndPoint(2) & ")"
+        Next
+    End If
+    x.ReleaseSelectionAccess
+End Sub
+
+Sub DumpFaces(ByVal feat As Object)
+    ' every face this feature created, with exact surface params (resolves sketch regions + fillet edges)
+    On Error Resume Next
+    Dim fs As Variant: fs = feat.GetFaces
+    If IsEmpty(fs) Then Exit Sub
+    Dim i As Long
+    For i = 0 To UBound(fs)
+        Print #f, "  FACE " & RefDesc(fs(i)) & " area=" & fs(i).GetArea
+    Next
+End Sub
+
+Function RefDesc(ByVal o As Object) As String
+    On Error Resume Next
+    Dim sf As Object: Set sf = o.GetSurface
+    If sf Is Nothing Then RefDesc = TypeName(o): Exit Function
+    Dim p As Variant
+    If sf.IsPlane Then
+        p = sf.PlaneParams: RefDesc = "plane n=(" & p(0) & "," & p(1) & "," & p(2) & ") o=(" & p(3) & "," & p(4) & "," & p(5) & ")"
+    ElseIf sf.IsCylinder Then
+        p = sf.CylinderParams: RefDesc = "cyl o=(" & p(0) & "," & p(1) & "," & p(2) & ") ax=(" & p(3) & "," & p(4) & "," & p(5) & ") r=" & p(6)
+    ElseIf sf.IsCone Then
+        p = sf.ConeParams: RefDesc = "cone " & JoinV(p)
+    ElseIf sf.IsTorus Then
+        p = sf.TorusParams: RefDesc = "torus " & JoinV(p)
+    ElseIf sf.IsSphere Then
+        p = sf.SphereParams: RefDesc = "sphere " & JoinV(p)
+    Else
+        RefDesc = "surf id=" & sf.Identity
+    End If
+    Dim bb As Variant: bb = o.GetBox
+    If Not IsEmpty(bb) Then RefDesc = RefDesc & " box=" & JoinV(bb)
+End Function
+
+Sub DumpPlane(ByVal feat As Object)
+    On Error Resume Next
+    Dim p As Object: Set p = feat.GetSpecificFeature2
+    Print #f, "  PLANE " & JoinV(p.Transform.ArrayData)
+End Sub
+
+Function PP(ByVal v As Object) As String
+    PP = "(" & v.X & "," & v.Y & "," & v.Z & ")"
+End Function
+
+Function JoinV(ByVal a As Variant) As String
+    Dim i As Long, s As String
+    For i = 0 To UBound(a): s = s & a(i) & ",": Next
+    JoinV = s
+End Function

@@ -1,0 +1,1781 @@
+' ABTests_macro  (SolidWorks 2025 VBA)  - one paste, one F5.
+' Builds ~370 small A/B test parts (each = a base + exactly ONE change) in ONE folder you choose
+' (use an EMPTY folder), and for each part writes:
+'   <part>.SLDPRT   <part>.dump.txt (feature tree, dims, sketches, faces, doc data)   <part>.refs.txt (faces/edges + persistent refs)
+' plus manifest.csv and make_log.txt.  Rerun = resume (existing parts are skipped).
+' To stop safely: create a file STOP.txt in the folder; the macro ends after the current part.
+' Run with NO part open:  Tools > Macro > New > paste over everything > F5.  Then zip the folder and send it.
+Option Explicit
+Dim swApp As Object
+Dim f As Integer          ' dump/refs file
+Dim lg As Integer         ' make_log
+Dim mf As Integer         ' manifest
+Dim gErr As String        ' errors of current variant
+Dim gOK As Boolean        ' current variant result
+Dim gDir As String
+Dim gList As Collection
+Dim gN As Long
+
+Const MM As Double = 0.001
+Const DEG As Double = 0.0174532925199433
+
+' ======================================================================== main
+Sub main()
+    Set swApp = Application.SldWorks
+    Dim folder As String
+    folder = InputBox("Output folder (EMPTY folder; will be created):", "A/B tests", "C:\Users\" & Environ("USERNAME") & "\Desktop\ab_tests\")
+    If folder = "" Then Exit Sub
+    If Right(folder, 1) <> "\" Then folder = folder & "\"
+    On Error Resume Next
+    If Dir(folder, vbDirectory) = "" Then MkDir folder
+    On Error GoTo 0
+    If Dir(folder, vbDirectory) = "" Then MsgBox "Cannot create " & folder: Exit Sub
+    gDir = folder
+    lg = FreeFile: Open gDir & "make_log.txt" For Append As #lg
+    Dim newMf As Boolean: newMf = (Dir(gDir & "manifest.csv") = "")
+    mf = FreeFile: Open gDir & "manifest.csv" For Append As #mf
+    If newMf Then Print #mf, "file,group,base,change,ok,err"
+    Print #lg, "==== start " & Now & " SW " & swApp.RevisionNumber
+    swApp.SetUserPreferenceToggle 10, False   ' swInputDimValOnCreate off: no dimension dialog
+    Set gList = New Collection
+    BuildList
+    Print #lg, "variants: " & gList.Count
+    Dim k As Variant, t0 As Double: t0 = Timer
+    For Each k In gList
+        If Dir(gDir & "STOP.txt") <> "" Then Print #lg, "STOP.txt found": Exit For
+        RunVariant CStr(k)
+        DoEvents
+    Next
+    Print #lg, "==== end " & Now & " seconds=" & Round(Timer - t0)
+    Close #mf: Close #lg
+    MsgBox "Done (" & gList.Count & " variants). Zip the folder " & gDir & " and send it."
+End Sub
+
+' item = group|desc|base|code|a|b|c
+Sub AddV(ByVal grp As String, ByVal desc As String, ByVal base As String, ByVal code As String, Optional ByVal pa As Double = 0, Optional ByVal pb As Double = 0, Optional ByVal pc As Double = 0)
+    gN = gN + 1
+    gList.Add grp & "|" & desc & "|" & base & "|" & code & "|" & Str(pa) & "|" & Str(pb) & "|" & Str(pc)
+End Sub
+
+' ======================================================================== variant list
+Sub BuildList()
+    Dim i As Long, v As Variant
+    ' --- BASE: identical resaves (timestamps / GUIDs / doc classes)
+    AddV "BASE", "empty_a", "none", "empty"
+    AddV "BASE", "empty_b", "none", "empty"
+    AddV "BASE", "empty_savedtwice", "none", "empty", 1
+    AddV "BASE", "sketch_a", "none", "sketch"
+    AddV "BASE", "sketch_b", "none", "sketch"
+    AddV "BASE", "block_a", "none", "block"
+    AddV "BASE", "block_b", "none", "block"
+    AddV "BASE", "block_savedtwice", "none", "block", 1
+    AddV "BASE", "blkhole_a", "none", "blkhole"
+    AddV "BASE", "blkhole_b", "none", "blkhole"
+    ' --- DEPTH sweep (boss depth mm)
+    For Each v In Array(1, 2, 5, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 25, 30, 50, 100, 10.001, 10.5, 12.345, 0.1)
+        AddV "DEPTH", "d" & Replace(CStr(v), ".", "p"), "block", "block", 0, CDbl(v)
+    Next
+    ' --- WIDTH sweep (sketch rect width, mm; height stays 20)
+    For Each v In Array(10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30)
+        AddV "WIDTH", "w" & v, "block", "width", CDbl(v)
+    Next
+    ' --- BOSS end conditions / directions (FeatureExtrusion3)
+    AddV "BOSS", "blind", "block", "boss", 0
+    AddV "BOSS", "reverse", "block", "boss", 1
+    AddV "BOSS", "midplane", "block", "boss", 2
+    AddV "BOSS", "bothdir_d2_5", "block", "boss", 3, 5
+    AddV "BOSS", "bothdir_d2_10", "block", "boss", 3, 10
+    AddV "BOSS", "bothdir_d2_15", "block", "boss", 3, 15
+    AddV "BOSS", "startoffset2", "block", "boss", 4, 2
+    AddV "BOSS", "startoffset2_flip", "block", "boss", 5, 2
+    AddV "BOSS", "secondboss_ontop", "block", "boss", 6
+    AddV "BOSS", "secondboss_nomerge", "block", "boss", 7
+    ' --- DRAFT
+    For Each v In Array(1, 2, 3, 5, 10, 15)
+        AddV "DRAFT", "in" & v, "block", "draft", CDbl(v), 0
+        AddV "DRAFT", "out" & v, "block", "draft", CDbl(v), 1
+    Next
+    AddV "DRAFT", "bothdir_draft5", "block", "draft", 5, 0, 1
+    ' --- THIN (thin type 0..3, thickness)
+    For i = 0 To 3
+        AddV "THIN", "type" & i & "_t1", "block", "thin", i, 1
+        AddV "THIN", "type" & i & "_t2", "block", "thin", i, 2
+    Next
+    ' --- CUT end conditions: block + top-face circle r2 (swEndConditions_e)
+    AddV "CUTEND", "c00_noCut", "block", "cuttop", -1
+    AddV "CUTEND", "c01_blind5", "block", "cuttop", 0, 5
+    AddV "CUTEND", "c02_throughall", "block", "cuttop", 1
+    AddV "CUTEND", "c03_throughallboth", "block", "cuttop", 9
+    AddV "CUTEND", "c04_uptonext", "block", "cuttop", 2
+    AddV "CUTEND", "c05_uptovertex", "block", "cuttop", 3
+    AddV "CUTEND", "c06_uptosurface", "block", "cuttop", 4
+    AddV "CUTEND", "c07_offsetsurface2", "block", "cuttop", 5, 2
+    AddV "CUTEND", "c08_midplane6", "block", "cuttop", 6, 6
+    AddV "CUTEND", "c09_uptobody", "block", "cuttop", 7
+    AddV "CUTEND", "c10_blind5_flipside", "block", "cuttop", 0, 5, 1
+    AddV "CUTEND", "c11_blind5_reverse", "block", "cuttop", 0, 5, 2
+    AddV "CUTEND", "c12_startoffset1", "block", "cuttop", 0, 5, 3
+    For Each v In Array(1, 2, 3, 4, 6, 7, 8, 9)
+        AddV "CUTDEPTH", "d" & v, "block", "cuttop", 0, CDbl(v)
+    Next
+    For Each v In Array(1, 1.5, 2.5, 3, 4)
+        AddV "CUTRAD", "r" & Replace(CStr(v), ".", "p"), "block", "cutrad", CDbl(v)
+    Next
+    ' --- FILLET
+    For Each v In Array(0.5, 1, 1.5, 2, 2.5, 3, 4)
+        AddV "FILLET", "r" & Replace(CStr(v), ".", "p"), "block", "fillet", CDbl(v), 1, 0
+    Next
+    For Each v In Array(2, 3, 4, 8)
+        AddV "FILLET", "edges" & v, "block", "fillet", 1, CDbl(v), 0
+    Next
+    AddV "FILLET", "opt194", "block", "fillet", 1, 1, 1
+    AddV "FILLET", "overflow1", "block", "fillet", 1, 1, 2
+    AddV "FILLET", "overflow2", "block", "fillet", 1, 1, 3
+    AddV "FILLET", "twofillets", "block", "fillet", 1, 1, 4
+    AddV "FILLET", "face_fillet", "block", "ffillet", 1
+    AddV "FILLET", "fullround", "block", "frfillet", 0
+    ' --- CHAMFER (swChamferType_e 1 angle-dist, 2 dist-dist, 3 vertex, 4 equal dist)
+    For Each v In Array(0.5, 1, 1.5, 2, 3)
+        AddV "CHAMFER", "ad_d" & Replace(CStr(v), ".", "p"), "block", "chamfer", 1, CDbl(v), 45
+    Next
+    For Each v In Array(30, 40, 50, 60)
+        AddV "CHAMFER", "ad_ang" & v, "block", "chamfer", 1, 1, CDbl(v)
+    Next
+    For Each v In Array(1, 1.5, 2, 3)
+        AddV "CHAMFER", "dd_1x" & Replace(CStr(v), ".", "p"), "block", "chamfer", 2, 1, CDbl(v)
+    Next
+    AddV "CHAMFER", "vertex_1_1_1", "block", "chamfer", 3, 1, 1
+    AddV "CHAMFER", "vertex_1_2_3", "block", "chamfer", 3, 1, 2
+    AddV "CHAMFER", "equal_1", "block", "chamfer", 4, 1, 45
+    AddV "CHAMFER", "equal_2", "block", "chamfer", 4, 2, 45
+    AddV "CHAMFER", "ad_flip", "block", "chamfer", 5, 1, 30
+    AddV "CHAMFER", "two_edges", "block", "chamfer", 6, 1, 45
+    ' --- PATTERN tests (former PatternTests_macro P00..P06 + sweeps)
+    AddV "PAT", "P00_block_hole", "none", "blkhole"
+    AddV "PAT", "P01_linpattern3", "blkhole", "lpat", 3, 6
+    AddV "PAT", "P02_circpattern4", "blkhole", "cpat", 4, 360
+    AddV "PAT", "P03_mirror_feat", "blkhole", "mirf", 0
+    AddV "PAT", "P04_lp_count4_edit", "blkhole", "lpat", 3, 6, 9
+    AddV "PAT", "P05_prop_material", "blkhole", "lpatprop", 3, 6
+    AddV "PAT", "P06_resave", "blkhole", "lpat", 3, 6, 8
+    For i = 2 To 8
+        AddV "LPAT", "n" & i, "blkhole", "lpat", i, 6
+    Next
+    For Each v In Array(3, 4, 5, 7)
+        AddV "LPAT", "sp" & v, "blkhole", "lpat", 3, CDbl(v)
+    Next
+    AddV "LPAT", "two_dir_3x2", "blkhole", "lpat", 3, 6, 2
+    AddV "LPAT", "flipdir", "blkhole", "lpat", 3, 6, 3
+    AddV "LPAT", "api_try_old", "blkhole", "lpat", 3, 6, 4
+    AddV "LPAT", "seed_two_feats", "blkhole", "lpat", 3, 6, 5
+    AddV "LPAT", "seed_fillet", "blkhole", "lpat", 3, 6, 6
+    AddV "LPAT", "skip_instance", "blkhole", "lpat", 3, 6, 7
+    For i = 2 To 8
+        AddV "CPAT", "n" & i, "blkhole", "cpat", i, 360
+    Next
+    AddV "CPAT", "n4_90deg_noneq", "blkhole", "cpat", 4, 90, 1
+    AddV "CPAT", "n3_180", "blkhole", "cpat", 3, 180
+    AddV "CPAT", "n3_270", "blkhole", "cpat", 3, 270
+    AddV "CPAT", "reverse", "blkhole", "cpat", 4, 360, 2
+    AddV "MIRROR", "feat_right", "blkhole", "mirf", 0
+    AddV "MIRROR", "feat_top", "blkhole", "mirf", 1
+    AddV "MIRROR", "feat_two", "blkhole", "mirf", 2
+    AddV "MIRROR", "body_front_merge", "blkhole", "mirb", 1
+    AddV "MIRROR", "body_front_nomerge", "blkhole", "mirb", 0
+    AddV "MIRROR", "mirror_of_lpattern", "blkhole", "mirf", 3
+    AddV "PATGAP", "lpat_then_cpat", "blkhole", "patgap", 1
+    AddV "PATGAP", "pattern_of_pattern", "blkhole", "patgap", 2
+    AddV "PATGAP", "sketch_driven", "blkhole", "patgap", 3
+    ' --- REF PLANES / AXES / POINTS
+    For Each v In Array(1, 2, 5, 10, 15, 20)
+        AddV "PLANE", "offset_front_" & v, "block", "plane", 1, CDbl(v)
+    Next
+    AddV "PLANE", "offset_front_5_flip", "block", "plane", 2, 5
+    For Each v In Array(15, 30, 45, 60, 90)
+        AddV "PLANE", "angle_edge_" & v, "block", "plane", 3, CDbl(v)
+    Next
+    AddV "PLANE", "midplane_faces", "block", "plane", 4
+    AddV "PLANE", "parallel_at_vertex", "block", "plane", 5
+    AddV "PLANE", "three_points", "block", "plane", 6
+    AddV "PLANE", "offset_face_3", "block", "plane", 7, 3
+    AddV "PLANE", "offset_right_5", "block", "plane", 8, 5
+    AddV "PLANE", "offset_top_5", "block", "plane", 9, 5
+    AddV "PLANE", "two_planes", "block", "plane", 10, 5
+    AddV "AXIS", "two_planes", "blkhole", "axis", 1
+    AddV "AXIS", "cyl_face", "blkhole", "axis", 2
+    AddV "AXIS", "edge", "blkhole", "axis", 3
+    AddV "AXIS", "two_points", "blkhole", "axis", 4
+    AddV "AXIS", "csys", "blkhole", "axis", 5
+    AddV "AXIS", "refpoint", "blkhole", "axis", 6
+    ' --- OTHER FEATURE TYPES
+    For Each v In Array(30, 90, 180, 270, 360)
+        AddV "REV", "angle" & v, "none", "rev", CDbl(v), 0
+    Next
+    AddV "REV", "midplane180", "none", "rev", 180, 1
+    AddV "REV", "twodir_90_45", "none", "rev", 90, 2
+    AddV "REV", "thin1", "none", "rev", 360, 3
+    AddV "REV", "revcut", "none", "rev", 360, 4
+    For Each v In Array(0.5, 1, 2)
+        AddV "SHELL", "t" & Replace(CStr(v), ".", "p"), "block", "shell", CDbl(v), 0
+    Next
+    AddV "SHELL", "outward1", "block", "shell", 1, 1
+    AddV "SHELL", "twofaces1", "block", "shell", 1, 2
+    AddV "LOFT", "two_rects", "none", "loft", 0
+    AddV "SWEEP", "circle_along_line", "none", "sweep", 0
+    ' --- SPLIT / CONSUMED (wishlist 1 and 6: moFR_c paths)
+    AddV "SPLIT", "slot_splits_top", "block", "split", 0
+    AddV "SPLIT", "slot_plus_fillet", "block", "split", 1
+    AddV "SPLIT", "slot_plus_chamfer", "block", "split", 2
+    AddV "CONSUMED", "cut_side_away", "block", "consumed", 0
+    AddV "CONSUMED", "cut_side_then_fillet", "block", "consumed", 1
+    AddV "CONSUMED", "fillet_then_cut", "block", "consumed", 2
+    ' --- SKETCH ENTITIES (sketch only, Front Plane)
+    Dim sk As Variant
+    sk = Array("line", "centerline", "circle", "circle_byradius", "arc_center", "arc_3pt", "arc_tangent", "spline", "spline_5pt", "ellipse", _
+               "ellipse_partial", "parabola", "polygon6_insc", "polygon6_circ", "polygon8", "slot_straight", "slot_arc", "point", "text", "rect_corner", _
+               "rect_center", "rect_3pt", "parallelogram", "construction_line", "construction_circle", "sk_fillet", "sk_chamfer", "offset", "mirror_entities", "sketch3d_line", _
+               "rect_construction", "circle_rect_regions")
+    For i = 0 To UBound(sk)
+        AddV "SKENT", Format(i + 1, "00") & "_" & sk(i), "none", "skent", i + 1
+    Next
+    For i = 1 To 8
+        AddV "SKN", "lines" & i, "none", "skn", i
+    Next
+    ' --- RELATIONS (one per part, on a fixed free-geometry sketch)
+    Dim rl As Variant
+    rl = Array("none", "horizontal", "vertical", "fixed", "parallel", "perpendicular", "collinear", "equal_lines", "equal_circles", "concentric", _
+               "coradial", "tangent", "merge", "coincident", "midpoint", "horizpoints", "vertpoints", "symmetric", "fixed_point", "horiz_vert_two", "three_rels")
+    For i = 0 To UBound(rl)
+        AddV "REL", Format(i, "00") & "_" & rl(i), "relsk", "rel", i
+    Next
+    ' --- DIMENSIONS
+    Dim dm As Variant
+    dm = Array("none", "horizontal", "vertical", "aligned", "radial", "diameter", "angular", "point_to_point", "two_dims", "driven_ref", "line_to_circle")
+    For i = 0 To UBound(dm)
+        AddV "DIM", Format(i, "00") & "_" & dm(i), "dimsk", "dim", i
+    Next
+    For Each v In Array(10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20)
+        AddV "DIMVAL", "v" & v, "dimsk", "dimval", CDbl(v)
+    Next
+    For Each v In Array(2, 6, 12)
+        AddV "DIMPOS", "textoff" & v, "dimsk", "dimpos", CDbl(v)
+    Next
+    ' --- DOCUMENT LEVEL (ext S-97/S-146/S-105 candidates)
+    AddV "DOC", "prop_text", "block", "prop", 1
+    AddV "DOC", "prop_text_long", "block", "prop", 2
+    AddV "DOC", "prop_number", "block", "prop", 3
+    AddV "DOC", "prop_date", "block", "prop", 4
+    AddV "DOC", "prop_yesno", "block", "prop", 5
+    AddV "DOC", "prop_two", "block", "prop", 6
+    AddV "DOC", "prop_config_specific", "block", "prop", 7
+    AddV "DOC", "prop_on_empty", "none", "prop", 1
+    Dim mt As Variant
+    mt = Array("1060 Alloy", "AISI 304", "ABS", "PC High Viscosity", "Plain Carbon Steel")
+    For i = 0 To UBound(mt)
+        AddV "MAT", "m" & i & "_" & Replace(mt(i), " ", ""), "block", "mat", i
+    Next
+    AddV "MAT", "m0_on_empty", "none", "mat", 0
+    AddV "CFG", "add_config", "block", "cfg", 1
+    AddV "CFG", "add_two_configs", "block", "cfg", 2
+    AddV "CFG", "config_suppress_fillet", "block", "cfg", 3
+    AddV "CFG", "config_depth_differs", "block", "cfg", 4
+    AddV "CFG", "rename_default", "block", "cfg", 5
+    AddV "CFG", "display_state", "block", "cfg", 6
+    AddV "CFG", "derived_config", "block", "cfg", 7
+    AddV "EQN", "dim_eq_12", "block", "eqn", 1
+    AddV "EQN", "global_var", "block", "eqn", 2
+    AddV "EQN", "global_var_driving", "block", "eqn", 3
+    AddV "EQN", "two_equations", "block", "eqn", 4
+    AddV "COLOUR", "part_red", "block", "colour", 1
+    AddV "COLOUR", "part_blue", "block", "colour", 2
+    AddV "COLOUR", "part_transparent", "block", "colour", 3
+    AddV "COLOUR", "face_red", "block", "colour", 4
+    AddV "COLOUR", "feature_green", "block", "colour", 5
+    AddV "COLOUR", "body_red", "block", "colour", 6
+    AddV "UNITS", "inch", "block", "units", 1
+    AddV "UNITS", "mm_3dec", "block", "units", 2
+    AddV "VIEW", "iso_saved", "block", "view", 1
+    AddV "VIEW", "front_saved", "block", "view", 2
+    AddV "VIEW", "named_view", "block", "view", 3
+    ' --- FEATURE TREE OPS
+    AddV "OPS", "rename_feature", "chamf", "ops", 1
+    AddV "OPS", "rename_sketch", "chamf", "ops", 2
+    AddV "OPS", "rename_body", "chamf", "ops", 3
+    AddV "OPS", "suppress_chamfer", "chamf", "ops", 4
+    AddV "OPS", "suppress_fillet", "chamf", "ops", 5
+    AddV "OPS", "suppress_then_unsuppress", "chamf", "ops", 6
+    AddV "OPS", "reorder_chamfer_before_fillet", "chamf", "ops", 7
+    AddV "OPS", "delete_chamfer", "chamf", "ops", 8
+    AddV "OPS", "rollback_before_chamfer", "chamf", "ops", 9
+    AddV "OPS", "hide_body", "chamf", "ops", 10
+    AddV "OPS", "hide_sketch_shown", "chamf", "ops", 11
+    AddV "OPS", "comment_feature", "chamf", "ops", 12
+    AddV "OPS", "folder", "chamf", "ops", 13
+    AddV "OPS", "base_chamf", "chamf", "ops", 0
+    AddV "SELSET", "one_face", "block", "selset", 1
+    AddV "SELSET", "two_faces", "block", "selset", 2
+    AddV "SELSET", "one_edge", "block", "selset", 3
+    AddV "FAV", "feature_favorite", "block", "fav", 1
+    AddV "FAV", "two_favorites", "block", "fav", 2
+End Sub
+
+' ======================================================================== runner
+Sub RunVariant(ByVal item As String)
+    On Error Resume Next
+    Dim p As Variant: p = Split(item, "|")
+    Static cnt As Long
+    cnt = cnt + 1
+    Dim nm As String: nm = "AB_" & p(0) & "_" & Format(cnt, "000") & "_" & p(1)
+    Dim path As String: path = gDir & nm & ".SLDPRT"
+    If Dir(path) <> "" Then Exit Sub                       ' resume
+    gErr = "": gOK = True
+    Dim t As Double: t = Timer
+    Dim tpl As String: tpl = swApp.GetUserPreferenceStringValue(8)
+    Dim doc As Object: Set doc = swApp.NewDocument(tpl, 0, 0, 0)
+    If doc Is Nothing Then
+        Print #lg, nm & " NO DOC (template '" & tpl & "')"
+        Print #mf, nm & ".SLDPRT," & p(0) & "," & p(2) & "," & p(1) & ",False,no template"
+        Exit Sub
+    End If
+    Err.Clear
+    Apply doc, CStr(p(3)), Val(p(4)), Val(p(5)), Val(p(6)), nm
+    LogErr "apply"
+    doc.ClearSelection2 True
+    doc.ForceRebuild3 False
+    Dim e As Long, w As Long
+    doc.Extension.SaveAs3 path, 0, 3, Nothing, Nothing, e, w
+    If e <> 0 Then gErr = gErr & " saveErr=" & e: gOK = False
+    If Val(p(4)) = 1 And (p(3) = "empty" Or p(3) = "block") Then doc.Save3 1, e, w    ' saved twice
+    If p(3) = "lpat" And Val(p(6)) = 8 Then doc.Save3 1, e, w
+    LogErr "save"
+    DumpAll doc, gDir & nm
+    LogErr "dump"
+    Dim title As String: title = doc.GetTitle
+    Set doc = Nothing
+    swApp.CloseDoc title
+    If swApp.GetDocumentCount > 0 Then swApp.CloseAllDocuments True
+    DoEvents
+    Print #lg, nm & " ok=" & gOK & " s=" & Round(Timer - t, 1) & " " & gErr
+    Print #mf, nm & ".SLDPRT," & p(0) & "," & p(2) & "," & p(1) & "," & gOK & "," & Replace(Replace(gErr, ",", ";"), vbCrLf, " ")
+End Sub
+
+Sub LogErr(ByVal what As String)
+    If Err.Number <> 0 Then gErr = gErr & " [" & what & ": " & Err.Number & " " & Err.Description & "]": gOK = False
+    Err.Clear
+End Sub
+
+Sub Note(ByVal s As String)
+    gErr = gErr & " {" & s & "}"
+End Sub
+
+Sub Must(ByVal cond As Boolean, ByVal what As String)
+    If Not cond Then gOK = False: gErr = gErr & " [" & what & " failed]"
+End Sub
+
+Function Sel(ByVal doc As Object, ByVal nm As String, ByVal typ As String, ByVal x As Double, ByVal y As Double, ByVal z As Double, ByVal app As Boolean, ByVal mk As Long) As Boolean
+    On Error Resume Next
+    Sel = doc.Extension.SelectByID2(nm, typ, x, y, z, app, mk, Nothing, 0)
+End Function
+
+Function LastFeat(ByVal doc As Object) As String
+    On Error Resume Next
+    LastFeat = doc.FeatureByPositionReverse(0).Name
+End Function
+
+' ======================================================================== building blocks
+' centered rect sketch on Front Plane, returns sketch name
+Function RectSketch(ByVal doc As Object, ByVal hw As Double, ByVal hh As Double) As String
+    On Error Resume Next
+    doc.ClearSelection2 True
+    Sel doc, "Front Plane", "PLANE", 0, 0, 0, False, 0
+    doc.SketchManager.InsertSketch True
+    doc.SketchManager.CreateCenterRectangle 0, 0, 0, hw, hh, 0
+    doc.SketchManager.InsertSketch True
+    RectSketch = LastFeat(doc)
+    LogErr "rectsketch"
+End Function
+
+Function Ext(ByVal doc As Object, ByVal sk As String, ByVal sd As Boolean, ByVal flip As Boolean, ByVal dirr As Boolean, ByVal t1 As Long, ByVal t2 As Long, ByVal d1 As Double, ByVal d2 As Double, _
+             ByVal dchk1 As Boolean, ByVal dchk2 As Boolean, ByVal ddir1 As Boolean, ByVal dang1 As Double, ByVal merge As Boolean, ByVal t0 As Long, ByVal so As Double, ByVal fso As Boolean) As Object
+    On Error Resume Next
+    doc.ClearSelection2 True
+    Sel doc, sk, "SKETCH", 0, 0, 0, False, 0
+    Set Ext = doc.FeatureManager.FeatureExtrusion3(sd, flip, dirr, t1, t2, d1, d2, dchk1, dchk2, ddir1, ddir1, dang1, dang1, False, False, False, False, merge, True, True, t0, so, fso)
+    LogErr "FeatureExtrusion3"
+    Must Not Ext Is Nothing, "extrude"
+End Function
+
+Function Block(ByVal doc As Object, ByVal hw As Double, ByVal hh As Double, ByVal d As Double) As Object
+    Dim sk As String: sk = RectSketch(doc, hw, hh)
+    Set Block = Ext(doc, sk, True, False, False, 0, 0, d, 0, False, False, False, 0, True, 0, 0, False)
+End Function
+
+Function CutF(ByVal doc As Object, ByVal sk As String, ByVal sd As Boolean, ByVal flip As Boolean, ByVal dirr As Boolean, ByVal t1 As Long, ByVal t2 As Long, ByVal d1 As Double, ByVal d2 As Double, ByVal t0 As Long, ByVal so As Double, ByVal refSel As String) As Object
+    On Error Resume Next
+    doc.ClearSelection2 True
+    Sel doc, sk, "SKETCH", 0, 0, 0, False, 0
+    If refSel = "vertex" Then Sel doc, "", "VERTEX", 0.01, 0.01, 0, True, 1
+    If refSel = "face" Then Sel doc, "", "FACE", 0.005, 0.005, 0, True, 1
+    If refSel = "body" Then Sel doc, "", "SOLIDBODY", 0.005, 0.005, -0.005, True, 1
+    Set CutF = doc.FeatureManager.FeatureCut4(sd, flip, dirr, t1, t2, d1, d2, False, False, False, False, 0, 0, False, False, False, False, False, True, True, True, True, False, t0, so, False, False)
+    LogErr "FeatureCut4"
+    Must Not CutF Is Nothing, "cut"
+End Function
+
+' circle sketch on top face (z=10) of the standard block
+Function TopCircle(ByVal doc As Object, ByVal cx As Double, ByVal cy As Double, ByVal r As Double) As String
+    On Error Resume Next
+    doc.ClearSelection2 True
+    Must Sel(doc, "", "FACE", 0.008, 0.008, 0.01, False, 0), "select top face"
+    doc.SketchManager.InsertSketch True
+    doc.SketchManager.CreateCircleByRadius cx, cy, 0, r
+    doc.SketchManager.InsertSketch True
+    TopCircle = LastFeat(doc)
+    LogErr "topcircle"
+End Function
+
+' PatternTests P00: block + 3 mm hole at (-6,-6), Front Plane, through all both
+Sub BlkHole(ByVal doc As Object)
+    On Error Resume Next
+    Block doc, 0.01, 0.01, 0.01
+    doc.ClearSelection2 True
+    Sel doc, "Front Plane", "PLANE", 0, 0, 0, False, 0
+    doc.SketchManager.InsertSketch True
+    doc.SketchManager.CreateCircle -0.006, -0.006, 0, -0.0045, -0.006, 0
+    doc.SketchManager.InsertSketch True
+    CutF doc, LastFeat(doc), False, False, False, 1, 1, 0.01, 0.01, 0, 0, ""
+End Sub
+
+Function Fillet(ByVal doc As Object, ByVal r As Double, ByVal opt As Long, ByVal ovf As Long) As Object
+    On Error Resume Next
+    Dim vE As Variant
+    Set Fillet = doc.FeatureManager.FeatureFillet3(opt, r, 0, ovf, 0, 0, 0, vE, vE, vE, vE, vE, vE, vE)
+    LogErr "FeatureFillet3"
+    Must Not Fillet Is Nothing, "fillet"
+End Function
+
+' top edges of block (z=10): 0 back(y+), 1 front(y-), 2 right(x+), 3 left(x-); 4..7 vertical edges
+Function SelEdge(ByVal doc As Object, ByVal i As Long, ByVal app As Boolean, ByVal mk As Long) As Boolean
+    Dim x As Double, y As Double, z As Double
+    Select Case i
+        Case 0: x = 0: y = 0.01: z = 0.01
+        Case 1: x = 0: y = -0.01: z = 0.01
+        Case 2: x = 0.01: y = 0: z = 0.01
+        Case 3: x = -0.01: y = 0: z = 0.01
+        Case 4: x = 0.01: y = 0.01: z = 0.005
+        Case 5: x = -0.01: y = 0.01: z = 0.005
+        Case 6: x = 0.01: y = -0.01: z = 0.005
+        Case 7: x = -0.01: y = -0.01: z = 0.005
+    End Select
+    SelEdge = Sel(doc, "", "EDGE", x, y, z, app, mk)
+End Function
+
+Function Chamfer(ByVal doc As Object, ByVal typ As Long, ByVal w As Double, ByVal ang As Double, ByVal other As Double, ByVal v1 As Double, ByVal v2 As Double, ByVal v3 As Double, ByVal opt As Long) As Object
+    On Error Resume Next
+    Set Chamfer = doc.FeatureManager.InsertFeatureChamfer(opt, typ, w, ang, other, v1, v2, v3)
+    LogErr "InsertFeatureChamfer"
+    Must Not Chamfer Is Nothing, "chamfer"
+End Function
+
+Function MakeAxis(ByVal doc As Object) As String
+    On Error Resume Next
+    doc.ClearSelection2 True
+    Sel doc, "Top Plane", "PLANE", 0, 0, 0, False, 0
+    Sel doc, "Right Plane", "PLANE", 0, 0, 0, True, 0
+    doc.InsertAxis2 True
+    LogErr "InsertAxis2"
+    MakeAxis = LastFeat(doc)
+End Function
+
+' ======================================================================== dispatcher
+Sub Apply(ByVal doc As Object, ByVal code As String, ByVal a As Double, ByVal b As Double, ByVal c As Double, ByVal nm As String)
+    On Error Resume Next
+    Select Case code
+        Case "empty"
+        Case "sketch": RectSketch doc, 0.01, 0.01
+        Case "block"
+            If b = 0 Then b = 10
+            Block doc, 0.01, 0.01, b * MM
+        Case "blkhole": BlkHole doc
+        Case "width": Block doc, a * MM / 2, 0.01, 0.01
+        Case "boss": V_Boss doc, a, b
+        Case "draft": V_Draft doc, a, b, c
+        Case "thin": V_Thin doc, a, b
+        Case "cuttop": V_CutTop doc, a, b, c
+        Case "cutrad": Block doc, 0.01, 0.01, 0.01: CutF doc, TopCircle(doc, 0, 0, a * MM), True, False, False, 0, 0, 0.005, 0, 0, 0, ""
+        Case "fillet": V_Fillet doc, a, b, c
+        Case "ffillet", "frfillet": V_FaceFillet doc, code
+        Case "chamfer": V_Chamfer doc, a, b, c
+        Case "lpat", "lpatprop": V_LPat doc, a, b, c, code
+        Case "cpat": V_CPat doc, a, b, c
+        Case "mirf": V_MirF doc, a
+        Case "mirb": V_MirB doc, a
+        Case "patgap": V_PatGap doc, a
+        Case "plane": V_Plane doc, a, b
+        Case "axis": V_Axis doc, a
+        Case "rev": V_Rev doc, a, b
+        Case "shell": V_Shell doc, a, b
+        Case "loft": V_Loft doc
+        Case "sweep": V_Sweep doc
+        Case "split": V_Split doc, a
+        Case "consumed": V_Consumed doc, a
+        Case "skent": V_SkEnt doc, a
+        Case "skn": V_SkN doc, a
+        Case "rel": V_Rel doc, a
+        Case "dim", "dimval", "dimpos": V_Dim doc, code, a
+        Case "prop": V_Prop doc, a
+        Case "mat": V_Mat doc, a
+        Case "cfg": V_Cfg doc, a
+        Case "eqn": V_Eqn doc, a
+        Case "colour": V_Colour doc, a
+        Case "units": V_Units doc, a
+        Case "view": V_View doc, a
+        Case "ops": V_Ops doc, a
+        Case "selset": V_SelSet doc, a
+        Case "fav": V_Fav doc, a
+        Case Else: Note "unknown code " & code: gOK = False
+    End Select
+    LogErr "dispatch " & code
+End Sub
+
+' ======================================================================== variant subs
+Sub V_Boss(ByVal doc As Object, ByVal a As Double, ByVal b As Double)
+    On Error Resume Next
+    Dim sk As String: sk = RectSketch(doc, 0.01, 0.01)
+    Select Case a
+        Case 0: Ext doc, sk, True, False, False, 0, 0, 0.01, 0, False, False, False, 0, True, 0, 0, False
+        Case 1: Ext doc, sk, True, False, True, 0, 0, 0.01, 0, False, False, False, 0, True, 0, 0, False
+        Case 2: Ext doc, sk, True, False, False, 6, 0, 0.01, 0, False, False, False, 0, True, 0, 0, False
+        Case 3: Ext doc, sk, False, False, False, 0, 0, 0.01, b * MM, False, False, False, 0, True, 0, 0, False
+        Case 4: Ext doc, sk, True, False, False, 0, 0, 0.01, 0, False, False, False, 0, True, 3, b * MM, False
+        Case 5: Ext doc, sk, True, False, False, 0, 0, 0.01, 0, False, False, False, 0, True, 3, b * MM, True
+        Case 6, 7
+            Ext doc, sk, True, False, False, 0, 0, 0.01, 0, False, False, False, 0, True, 0, 0, False
+            Dim s2 As String: s2 = TopCircle(doc, 0, 0, 0.004)
+            Ext doc, s2, True, False, False, 0, 0, 0.005, 0, False, False, False, 0, (a = 6), 0, 0, False
+    End Select
+End Sub
+
+Sub V_Draft(ByVal doc As Object, ByVal ang As Double, ByVal outw As Double, ByVal both As Double)
+    Dim sk As String: sk = RectSketch(doc, 0.01, 0.01)
+    If both = 1 Then
+        Ext doc, sk, False, False, False, 0, 0, 0.01, 0.005, True, True, False, ang * DEG, True, 0, 0, False
+    Else
+        Ext doc, sk, True, False, False, 0, 0, 0.01, 0, True, False, (outw = 1), ang * DEG, True, 0, 0, False
+    End If
+End Sub
+
+Sub V_Thin(ByVal doc As Object, ByVal typ As Double, ByVal thk As Double)
+    On Error Resume Next
+    Dim sk As String: sk = RectSketch(doc, 0.01, 0.01)
+    doc.ClearSelection2 True
+    Sel doc, sk, "SKETCH", 0, 0, 0, False, 0
+    Dim ft As Object
+    Set ft = doc.FeatureManager.FeatureExtrusionThin2(True, False, False, 0, 0, 0.01, 0, False, False, False, False, 0, 0, False, False, False, False, True, _
+                 thk * MM, thk * MM, 0, CLng(typ), False, False, 0, True, True, 0, 0, False)
+    LogErr "FeatureExtrusionThin2"
+    If ft Is Nothing Then
+        Sel doc, sk, "SKETCH", 0, 0, 0, False, 0
+        Set ft = doc.FeatureManager.FeatureExtrusionThin(True, False, False, 0, 0, 0.01, 0, False, False, False, False, 0, 0, False, False, False, False, True, _
+                 thk * MM, thk * MM, 0, CLng(typ), False, False, 0, True, True)
+        LogErr "FeatureExtrusionThin"
+        If Not ft Is Nothing Then Note "thin via FeatureExtrusionThin"
+    End If
+    Must Not ft Is Nothing, "thin"
+End Sub
+
+Sub V_CutTop(ByVal doc As Object, ByVal t1 As Double, ByVal d As Double, ByVal c As Double)
+    On Error Resume Next
+    Block doc, 0.01, 0.01, 0.01
+    If t1 < 0 Then Exit Sub
+    Dim sk As String: sk = TopCircle(doc, 0, 0, 0.002)
+    If d = 0 Then d = 5
+    Dim r As String
+    Select Case t1
+        Case 3: r = "vertex"
+        Case 4, 5: r = "face"
+        Case 7: r = "body"
+    End Select
+    If t1 = 2 Then
+        ' up to next needs geometry beyond: add a separate floor plate first (below z=0, gap)
+        Note "uptonext: through single body, expected fail or through"
+    End If
+    Select Case c
+        Case 1: CutF doc, sk, True, True, False, CLng(t1), 0, d * MM, 0, 0, 0, r
+        Case 2: CutF doc, sk, True, False, True, CLng(t1), 0, d * MM, 0, 0, 0, r
+        Case 3: CutF doc, sk, True, False, False, CLng(t1), 0, d * MM, 0, 3, 0.001, r
+        Case Else
+            If t1 = 9 Then
+                CutF doc, sk, False, False, False, 1, 1, d * MM, d * MM, 0, 0, r
+            Else
+                CutF doc, sk, True, False, False, CLng(t1), 0, d * MM, 0, 0, 0, r
+            End If
+    End Select
+End Sub
+
+Sub V_Fillet(ByVal doc As Object, ByVal r As Double, ByVal n As Double, ByVal c As Double)
+    On Error Resume Next
+    Block doc, 0.01, 0.01, 0.01
+    doc.ClearSelection2 True
+    Dim i As Long, ok As Boolean: ok = True
+    For i = 0 To n - 1
+        ok = SelEdge(doc, i, i > 0, 1) And ok
+    Next
+    Must ok, "edge select"
+    Select Case c
+        Case 0: Fillet doc, r * MM, 195, 0
+        Case 1: Fillet doc, r * MM, 194, 0
+        Case 2: Fillet doc, r * MM, 195, 1
+        Case 3: Fillet doc, r * MM, 195, 2
+        Case 4
+            Fillet doc, r * MM, 195, 0
+            doc.ClearSelection2 True
+            SelEdge doc, 1, False, 1
+            Fillet doc, 2 * MM, 195, 0
+    End Select
+End Sub
+
+Sub V_FaceFillet(ByVal doc As Object, ByVal code As String)
+    On Error Resume Next
+    Block doc, 0.01, 0.01, 0.01
+    doc.ClearSelection2 True
+    Dim vE As Variant, ft As Object
+    If code = "ffillet" Then
+        ' face fillet between top and right face (ftyp 2, faces marks 2 and 3)
+        Sel doc, "", "FACE", 0.005, 0.005, 0.01, False, 2
+        Sel doc, "", "FACE", 0.01, 0.005, 0.005, True, 3
+        Set ft = doc.FeatureManager.FeatureFillet3(195, 0.001, 2, 0, 0, 0, 0, vE, vE, vE, vE, vE, vE, vE)
+    Else
+        ' full round: left, top, right faces (marks 2, 4, 3)
+        Sel doc, "", "FACE", -0.01, 0.005, 0.005, False, 2
+        Sel doc, "", "FACE", 0.005, 0.005, 0.01, True, 4
+        Sel doc, "", "FACE", 0.01, 0.005, 0.005, True, 3
+        Set ft = doc.FeatureManager.FeatureFillet3(195, 0.001, 3, 0, 0, 0, 0, vE, vE, vE, vE, vE, vE, vE)
+    End If
+    LogErr code
+    Must Not ft Is Nothing, code
+End Sub
+
+Sub V_Chamfer(ByVal doc As Object, ByVal typ As Double, ByVal d As Double, ByVal c As Double)
+    On Error Resume Next
+    Block doc, 0.01, 0.01, 0.01
+    doc.ClearSelection2 True
+    Select Case typ
+        Case 1: Must SelEdge(doc, 3, False, 1), "edge": Chamfer doc, 1, d * MM, c * DEG, 0, 0, 0, 0, 0
+        Case 2: Must SelEdge(doc, 3, False, 1), "edge": Chamfer doc, 2, d * MM, 0, c * MM, 0, 0, 0, 0
+        Case 3
+            Must Sel(doc, "", "VERTEX", 0.01, 0.01, 0.01, False, 1), "vertex"
+            Chamfer doc, 3, 0, 0, 0, d * MM, c * MM, IIf(c = 1, 1, 3) * MM, 0
+        Case 4: Must SelEdge(doc, 3, False, 1), "edge": Chamfer doc, 4, d * MM, c * DEG, d * MM, 0, 0, 0, 0
+        Case 5: Must SelEdge(doc, 3, False, 1), "edge": Chamfer doc, 1, d * MM, c * DEG, 0, 0, 0, 0, 1   ' opt 1 = flip
+        Case 6: SelEdge doc, 3, False, 1: SelEdge doc, 2, True, 1: Chamfer doc, 1, d * MM, c * DEG, 0, 0, 0, 0, 0
+    End Select
+End Sub
+
+Function LinPattern(ByVal doc As Object, ByVal n As Long, ByVal sp As Double, ByVal n2 As Long, ByVal flip As Boolean, ByVal seeds As String, ByVal onlyOld As Boolean) As Object
+    On Error Resume Next
+    Dim tryN As Integer, ft As Object, s As Variant, ok As Boolean
+    For tryN = 1 To 5
+        If onlyOld And tryN < 5 Then GoTo nxt
+        doc.ClearSelection2 True
+        ok = Sel(doc, "", "EDGE", 0, -0.01, 0, False, 1)
+        If n2 > 1 Then ok = Sel(doc, "", "EDGE", -0.01, 0, 0, True, 2) And ok
+        For Each s In Split(seeds, ";")
+            ok = Sel(doc, CStr(s), "BODYFEATURE", 0, 0, 0, True, 4) And ok
+        Next
+        Set ft = Nothing
+        Dim n2v As Long: n2v = IIf(n2 > 1, n2, 1)
+        Select Case tryN
+            Case 1: Set ft = doc.FeatureManager.FeatureLinearPattern5(n, sp, n2v, 0.006, flip, False, "", "", False, False, False, False, False, False, False, False, False, False, 0, 0, False, False)
+            Case 2: Set ft = doc.FeatureManager.FeatureLinearPattern4(n, sp, n2v, 0.006, flip, False, "", "", False, False, False, False, False, False, False, 0, 0, False, False)
+            Case 3: Set ft = doc.FeatureManager.FeatureLinearPattern3(n, sp, n2v, 0.006, flip, False, "", "", False, False)
+            Case 4: Set ft = doc.FeatureManager.FeatureLinearPattern2(n, sp, n2v, 0.006, flip, False, "", "", False)
+            Case 5
+                doc.FeatureLinearPattern n, sp, n2v, 0.006, flip, False, "", ""
+                If LastFeat(doc) Like "LPattern*" Then Set ft = doc.FeatureByPositionReverse(0)
+        End Select
+        LogErr "linpattern try " & tryN & " sel=" & ok
+        If Not ft Is Nothing Then
+            If LastFeat(doc) Like "LPattern*" Then Note "lpattern by try " & tryN: Exit For
+            Note "lpattern try " & tryN & " returned object but last feature=" & LastFeat(doc)
+            Set ft = Nothing
+        End If
+nxt:
+    Next
+    Set LinPattern = ft
+    Must Not ft Is Nothing, "linear pattern"
+End Function
+
+Sub V_LPat(ByVal doc As Object, ByVal n As Double, ByVal sp As Double, ByVal c As Double, ByVal code As String)
+    On Error Resume Next
+    BlkHole doc
+    Select Case c
+        Case 0, 8: LinPattern doc, n, sp * MM, 1, False, "Cut-Extrude1", False
+        Case 2: LinPattern doc, n, sp * MM, 2, False, "Cut-Extrude1", False
+        Case 3: LinPattern doc, n, sp * MM, 1, True, "Cut-Extrude1", False
+        Case 4: LinPattern doc, n, sp * MM, 1, False, "Cut-Extrude1", True
+        Case 5
+            doc.ClearSelection2 True
+            Sel doc, "Front Plane", "PLANE", 0, 0, 0, False, 0
+            doc.SketchManager.InsertSketch True
+            doc.SketchManager.CreateCircleByRadius -0.006, 0.005, 0, 0.001
+            doc.SketchManager.InsertSketch True
+            CutF doc, LastFeat(doc), False, False, False, 1, 1, 0.01, 0.01, 0, 0, ""
+            LinPattern doc, n, sp * MM, 1, False, "Cut-Extrude1;" & LastFeat(doc), False
+        Case 6
+            doc.ClearSelection2 True
+            Sel doc, "", "EDGE", -0.006, -0.006 + 0.0015, 0.01, False, 1
+            Fillet doc, 0.0003, 195, 0
+            LinPattern doc, n, sp * MM, 1, False, "Cut-Extrude1;" & LastFeat(doc), False
+        Case 7
+            Dim ft As Object: Set ft = LinPattern(doc, n, sp * MM, 1, False, "Cut-Extrude1", False)
+            Dim x As Object: Set x = ft.GetDefinition
+            x.AccessSelections doc, Nothing
+            x.SkippedItemArray = Array(2)
+            Must ft.ModifyDefinition(x, doc, Nothing), "skip instance"
+            LogErr "skip"
+        Case 9
+            LinPattern doc, n, sp * MM, 1, False, "Cut-Extrude1", False
+            doc.Parameter("D1@" & LastFeat(doc)).SystemValue = 4
+            LogErr "lp count edit"
+            doc.EditRebuild3
+    End Select
+    If code = "lpatprop" Then
+        doc.Extension.CustomPropertyManager("").Add3 "TestProp", 30, "hello", 1
+        doc.SetMaterialPropertyName2 "", "SOLIDWORKS Materials", "1060 Alloy"
+        LogErr "prop+material"
+    End If
+End Sub
+
+Function CircPattern(ByVal doc As Object, ByVal n As Long, ByVal ang As Double, ByVal eq As Boolean, ByVal rev As Boolean, ByVal seeds As String) As Object
+    On Error Resume Next
+    Dim ax As String: ax = MakeAxis(doc)
+    Dim tryN As Integer, ft As Object, s As Variant
+    For tryN = 1 To 3
+        doc.ClearSelection2 True
+        Sel doc, ax, "AXIS", 0, 0, 0, False, 1
+        For Each s In Split(seeds, ";"): Sel doc, CStr(s), "BODYFEATURE", 0, 0, 0, True, 4: Next
+        Select Case tryN
+            Case 1: Set ft = doc.FeatureManager.FeatureCircularPattern5(n, ang, rev, "NULL", False, eq, False, False, False, False, 1, 0, "NULL", False)
+            Case 2: Set ft = doc.FeatureManager.FeatureCircularPattern4(n, ang, rev, "NULL", False, eq, False)
+            Case 3: Set ft = doc.FeatureManager.FeatureCircularPattern3(n, ang, rev, "NULL", False, eq)
+        End Select
+        LogErr "circpattern try " & tryN
+        If Not ft Is Nothing Then Note "cpattern by try " & tryN: Exit For
+    Next
+    Set CircPattern = ft
+    Must Not ft Is Nothing, "circular pattern"
+End Function
+
+Sub V_CPat(ByVal doc As Object, ByVal n As Double, ByVal ang As Double, ByVal c As Double)
+    BlkHole doc
+    CircPattern doc, n, ang * DEG, (c <> 1), (c = 2), "Cut-Extrude1"
+End Sub
+
+Function MirrorFeat(ByVal doc As Object, ByVal plane As String, ByVal seeds As String) As Object
+    On Error Resume Next
+    doc.ClearSelection2 True
+    Sel doc, plane, "PLANE", 0, 0, 0, False, 2
+    Dim s As Variant
+    For Each s In Split(seeds, ";"): Sel doc, CStr(s), "BODYFEATURE", 0, 0, 0, True, 1: Next
+    Set MirrorFeat = doc.FeatureManager.InsertMirrorFeature2(False, False, False, False, 0)
+    LogErr "InsertMirrorFeature2"
+    Must Not MirrorFeat Is Nothing, "mirror"
+End Function
+
+Sub V_MirF(ByVal doc As Object, ByVal a As Double)
+    On Error Resume Next
+    BlkHole doc
+    Select Case a
+        Case 0: MirrorFeat doc, "Right Plane", "Cut-Extrude1"
+        Case 1: MirrorFeat doc, "Top Plane", "Cut-Extrude1"
+        Case 2
+            doc.ClearSelection2 True
+            Sel doc, "Front Plane", "PLANE", 0, 0, 0, False, 0
+            doc.SketchManager.InsertSketch True
+            doc.SketchManager.CreateCircleByRadius -0.006, 0.005, 0, 0.001
+            doc.SketchManager.InsertSketch True
+            CutF doc, LastFeat(doc), False, False, False, 1, 1, 0.01, 0.01, 0, 0, ""
+            MirrorFeat doc, "Right Plane", "Cut-Extrude1;" & LastFeat(doc)
+        Case 3
+            LinPattern doc, 2, 0.004, 1, False, "Cut-Extrude1", False
+            MirrorFeat doc, "Right Plane", "Cut-Extrude1;" & LastFeat(doc)
+    End Select
+End Sub
+
+Sub V_MirB(ByVal doc As Object, ByVal merge As Double)
+    On Error Resume Next
+    BlkHole doc
+    doc.ClearSelection2 True
+    Sel doc, "Front Plane", "PLANE", 0, 0, 0, False, 2
+    Must Sel(doc, "", "SOLIDBODY", 0.005, 0.005, 0.005, True, 256), "select body"
+    Dim ft As Object
+    Set ft = doc.FeatureManager.InsertMirrorFeature2(True, False, (merge = 1), False, 0)
+    LogErr "InsertMirrorFeature2 body"
+    Must Not ft Is Nothing, "mirror body"
+End Sub
+
+Sub V_PatGap(ByVal doc As Object, ByVal a As Double)
+    On Error Resume Next
+    BlkHole doc
+    Dim lp As Object: Set lp = LinPattern(doc, 3, 0.006, 1, False, "Cut-Extrude1", False)
+    Select Case a
+        Case 1
+            doc.ClearSelection2 True
+            Sel doc, "Front Plane", "PLANE", 0, 0, 0, False, 0
+            doc.SketchManager.InsertSketch True
+            doc.SketchManager.CreateCircleByRadius 0.006, 0.006, 0, 0.001
+            doc.SketchManager.InsertSketch True
+            CutF doc, LastFeat(doc), False, False, False, 1, 1, 0.01, 0.01, 0, 0, ""
+            CircPattern doc, 3, 6.283185307, True, False, LastFeat(doc)
+        Case 2: CircPattern doc, 4, 6.283185307, True, False, lp.Name
+        Case 3
+            ' sketch-driven pattern: sketch with 3 points, FeatureSketchDrivenPattern
+            doc.ClearSelection2 True
+            Sel doc, "", "FACE", 0.008, 0.008, 0.01, False, 0
+            doc.SketchManager.InsertSketch True
+            doc.SketchManager.CreatePoint 0.004, 0.004, 0
+            doc.SketchManager.CreatePoint 0.006, -0.002, 0
+            doc.SketchManager.InsertSketch True
+            Dim sk As String: sk = LastFeat(doc)
+            doc.ClearSelection2 True
+            Sel doc, sk, "SKETCH", 0, 0, 0, False, 64
+            Sel doc, "Cut-Extrude1", "BODYFEATURE", 0, 0, 0, True, 4
+            Dim ft As Object: Set ft = doc.FeatureManager.FeatureSketchDrivenPattern(True, False)
+            LogErr "FeatureSketchDrivenPattern"
+            Must Not ft Is Nothing, "sketch driven pattern"
+    End Select
+End Sub
+
+Sub V_Plane(ByVal doc As Object, ByVal a As Double, ByVal v As Double)
+    On Error Resume Next
+    Block doc, 0.01, 0.01, 0.01
+    doc.ClearSelection2 True
+    Dim fm As Object: Set fm = doc.FeatureManager
+    Dim ft As Object
+    ' swRefPlaneReferenceConstraints_e: Parallel 1, Perpendicular 2, Coincident 4, Distance 8, Angle 16, MidPlane 128, OptionFlip 256
+    Select Case a
+        Case 1: Sel doc, "Front Plane", "PLANE", 0, 0, 0, False, 0: Set ft = fm.InsertRefPlane(8, v * MM, 0, 0, 0, 0)
+        Case 2: Sel doc, "Front Plane", "PLANE", 0, 0, 0, False, 0: Set ft = fm.InsertRefPlane(8 + 256, v * MM, 0, 0, 0, 0)
+        Case 3
+            Sel doc, "", "FACE", 0.005, 0.005, 0.01, False, 0
+            SelEdge doc, 0, True, 1
+            Set ft = fm.InsertRefPlane(16, v * DEG, 4, 0, 0, 0)
+        Case 4
+            Sel doc, "", "FACE", 0.005, 0.005, 0.01, False, 0
+            Sel doc, "", "FACE", 0.005, 0.005, 0, True, 1
+            Set ft = fm.InsertRefPlane(128, 0, 128, 0, 0, 0)
+        Case 5
+            Sel doc, "Front Plane", "PLANE", 0, 0, 0, False, 0
+            Sel doc, "", "VERTEX", 0.01, 0.01, 0.01, True, 1
+            Set ft = fm.InsertRefPlane(1, 0, 4, 0, 0, 0)
+        Case 6
+            Sel doc, "", "VERTEX", 0.01, 0.01, 0.01, False, 0
+            Sel doc, "", "VERTEX", -0.01, 0.01, 0.01, True, 1
+            Sel doc, "", "VERTEX", 0.01, -0.01, 0, True, 2
+            Set ft = fm.InsertRefPlane(4, 0, 4, 0, 4, 0)
+        Case 7: Sel doc, "", "FACE", 0.005, 0.005, 0.01, False, 0: Set ft = fm.InsertRefPlane(8, v * MM, 0, 0, 0, 0)
+        Case 8: Sel doc, "Right Plane", "PLANE", 0, 0, 0, False, 0: Set ft = fm.InsertRefPlane(8, v * MM, 0, 0, 0, 0)
+        Case 9: Sel doc, "Top Plane", "PLANE", 0, 0, 0, False, 0: Set ft = fm.InsertRefPlane(8, v * MM, 0, 0, 0, 0)
+        Case 10
+            Sel doc, "Front Plane", "PLANE", 0, 0, 0, False, 0: Set ft = fm.InsertRefPlane(8, v * MM, 0, 0, 0, 0)
+            doc.ClearSelection2 True
+            Sel doc, "Front Plane", "PLANE", 0, 0, 0, False, 0: Set ft = fm.InsertRefPlane(8, 2 * v * MM, 0, 0, 0, 0)
+    End Select
+    LogErr "InsertRefPlane"
+    Must Not ft Is Nothing, "ref plane"
+End Sub
+
+Sub V_Axis(ByVal doc As Object, ByVal a As Double)
+    On Error Resume Next
+    BlkHole doc
+    doc.ClearSelection2 True
+    Dim n0 As Long: n0 = doc.FeatureManager.GetFeatureCount(True)
+    Select Case a
+        Case 1: MakeAxis doc
+        Case 2: Sel doc, "", "FACE", -0.006 + 0.0015, -0.006, 0.005, False, 0: doc.InsertAxis2 True
+        Case 3: SelEdge doc, 4, False, 0: doc.InsertAxis2 True
+        Case 4: Sel doc, "", "VERTEX", 0.01, 0.01, 0.01, False, 0: Sel doc, "", "VERTEX", -0.01, -0.01, 0, True, 0: doc.InsertAxis2 True
+        Case 5
+            Sel doc, "", "VERTEX", 0.01, 0.01, 0.01, False, 1
+            doc.FeatureManager.InsertCoordinateSystem False, False, False
+        Case 6
+            Sel doc, "", "VERTEX", 0.01, 0.01, 0.01, False, 0
+            doc.FeatureManager.InsertReferencePoint 4, 0, 0, 1   ' swRefPointType_e 4 = at vertex? (logged)
+    End Select
+    LogErr "axis/csys/point"
+    Must doc.FeatureManager.GetFeatureCount(True) > n0, "ref geometry added"
+End Sub
+
+Sub V_Rev(ByVal doc As Object, ByVal ang As Double, ByVal typ As Double)
+    On Error Resume Next
+    Dim sm As Object: Set sm = doc.SketchManager
+    If typ = 4 Then Block doc, 0.012, 0.012, 0.01
+    doc.ClearSelection2 True
+    Sel doc, "Front Plane", "PLANE", 0, 0, 0, False, 0
+    sm.InsertSketch True
+    sm.CreateCenterLine 0, -0.01, 0, 0, 0.01, 0
+    sm.CreateCornerRectangle 0.004, -0.004, 0, 0.008, 0.004, 0
+    sm.InsertSketch True
+    Dim sk As String: sk = LastFeat(doc)
+    doc.ClearSelection2 True
+    Sel doc, sk, "SKETCH", 0, 0, 0, False, 0
+    Dim ft As Object, fm As Object: Set fm = doc.FeatureManager
+    Select Case typ
+        Case 0: Set ft = fm.FeatureRevolve2(True, True, False, False, False, False, 0, 0, ang * DEG, 0, False, False, 0, 0, 0, 0, 0, True, True, True)
+        Case 1: Set ft = fm.FeatureRevolve2(True, True, False, False, False, False, 6, 0, ang * DEG, 0, False, False, 0, 0, 0, 0, 0, True, True, True)
+        Case 2: Set ft = fm.FeatureRevolve2(False, True, False, False, False, False, 0, 0, ang * DEG, 45 * DEG, False, False, 0, 0, 0, 0, 0, True, True, True)
+        Case 3: Set ft = fm.FeatureRevolve2(True, True, True, False, False, False, 0, 0, ang * DEG, 0, False, False, 0, 0, 0, 0.001, 0, True, True, True)
+        Case 4: Set ft = fm.FeatureRevolve2(True, True, False, True, False, False, 0, 0, ang * DEG, 0, False, False, 0, 0, 0, 0, 0, True, True, True)
+    End Select
+    LogErr "FeatureRevolve2"
+    Must Not ft Is Nothing, "revolve"
+End Sub
+
+Sub V_Shell(ByVal doc As Object, ByVal t As Double, ByVal b As Double)
+    On Error Resume Next
+    Block doc, 0.01, 0.01, 0.01
+    doc.ClearSelection2 True
+    Sel doc, "", "FACE", 0.005, 0.005, 0.01, False, 0
+    If b = 2 Then Sel doc, "", "FACE", 0.01, 0.005, 0.005, True, 0
+    doc.InsertFeatureShell t * MM, (b = 1)
+    LogErr "InsertFeatureShell"
+    Must LastFeat(doc) Like "Shell*", "shell"
+End Sub
+
+Sub V_Loft(ByVal doc As Object)
+    On Error Resume Next
+    Dim s1 As String: s1 = RectSketch(doc, 0.01, 0.01)
+    doc.ClearSelection2 True
+    Sel doc, "Front Plane", "PLANE", 0, 0, 0, False, 0
+    doc.FeatureManager.InsertRefPlane 8, 0.02, 0, 0, 0, 0
+    Dim pl As String: pl = LastFeat(doc)
+    doc.ClearSelection2 True
+    Sel doc, pl, "PLANE", 0, 0, 0, False, 0
+    doc.SketchManager.InsertSketch True
+    doc.SketchManager.CreateCenterRectangle 0, 0, 0, 0.005, 0.005, 0
+    doc.SketchManager.InsertSketch True
+    Dim s2 As String: s2 = LastFeat(doc)
+    doc.ClearSelection2 True
+    Sel doc, s1, "SKETCH", 0.01, 0.01, 0, False, 1
+    Sel doc, s2, "SKETCH", 0.005, 0.005, 0.02, True, 1
+    doc.FeatureManager.InsertProtrusionBlend False, True, False, 1, 0, 0, 1, 1, True, True, False, 0, 0, 0, True, True, True
+    LogErr "InsertProtrusionBlend"
+    Must LastFeat(doc) Like "Loft*", "loft"
+End Sub
+
+Sub V_Sweep(ByVal doc As Object)
+    On Error Resume Next
+    Dim sm As Object: Set sm = doc.SketchManager
+    doc.ClearSelection2 True
+    Sel doc, "Top Plane", "PLANE", 0, 0, 0, False, 0
+    sm.InsertSketch True
+    sm.CreateLine 0, 0, 0, 0, -0.03, 0
+    sm.InsertSketch True
+    Dim pth As String: pth = LastFeat(doc)
+    doc.ClearSelection2 True
+    Sel doc, "Front Plane", "PLANE", 0, 0, 0, False, 0
+    sm.InsertSketch True
+    sm.CreateCircleByRadius 0, 0, 0, 0.003
+    sm.InsertSketch True
+    Dim prof As String: prof = LastFeat(doc)
+    doc.ClearSelection2 True
+    Sel doc, prof, "SKETCH", 0, 0, 0, False, 1
+    Sel doc, pth, "SKETCH", 0, 0, 0, True, 4
+    doc.FeatureManager.InsertProtrusionSwept4 False, False, 0, False, False, 0, 0, False, 0, 0, 0, 0, True, True, True, 0, True, False, 0, 0
+    LogErr "InsertProtrusionSwept4"
+    Must LastFeat(doc) Like "Sweep*", "sweep"
+End Sub
+
+Sub V_Split(ByVal doc As Object, ByVal a As Double)
+    On Error Resume Next
+    Block doc, 0.01, 0.01, 0.01
+    doc.ClearSelection2 True
+    Sel doc, "", "FACE", 0.008, 0.008, 0.01, False, 0
+    doc.SketchManager.InsertSketch True
+    doc.SketchManager.CreateCenterRectangle 0, 0, 0, 0.001, 0.012, 0     ' 2 mm slot across the whole top
+    doc.SketchManager.InsertSketch True
+    CutF doc, LastFeat(doc), True, False, False, 0, 0, 0.003, 0, 0, 0, ""
+    doc.ClearSelection2 True
+    If a = 1 Then Sel doc, "", "EDGE", 0.001, 0.005, 0.007, False, 1: Fillet doc, 0.0005, 195, 0
+    If a = 2 Then Sel doc, "", "EDGE", 0.001, 0.005, 0.01, False, 1: Chamfer doc, 1, 0.0005, 45 * DEG, 0, 0, 0, 0, 0
+End Sub
+
+Sub V_Consumed(ByVal doc As Object, ByVal a As Double)
+    On Error Resume Next
+    Block doc, 0.01, 0.01, 0.01
+    If a = 2 Then doc.ClearSelection2 True: SelEdge doc, 2, False, 1: Fillet doc, 0.001, 195, 0
+    ' cut away the whole x>7 mm slab (removes the right side face)
+    doc.ClearSelection2 True
+    Sel doc, "Front Plane", "PLANE", 0, 0, 0, False, 0
+    doc.SketchManager.InsertSketch True
+    doc.SketchManager.CreateCornerRectangle 0.007, -0.012, 0, 0.012, 0.012, 0
+    doc.SketchManager.InsertSketch True
+    CutF doc, LastFeat(doc), False, False, False, 1, 1, 0.01, 0.01, 0, 0, ""
+    If a = 1 Then doc.ClearSelection2 True: Sel doc, "", "EDGE", 0.007, 0, 0.01, False, 1: Fillet doc, 0.001, 195, 0
+End Sub
+
+Sub V_SkEnt(ByVal doc As Object, ByVal k As Double)
+    On Error Resume Next
+    Dim sm As Object: Set sm = doc.SketchManager
+    Dim o As Variant, i As Long
+    doc.ClearSelection2 True
+    Sel doc, "Front Plane", "PLANE", 0, 0, 0, False, 0
+    If k = 30 Then
+        sm.Insert3DSketch True
+    Else
+        sm.InsertSketch True
+    End If
+    sm.AddToDB = True
+    Select Case k
+        Case 1: Set o = sm.CreateLine(0, 0, 0, 0.01, 0.005, 0)
+        Case 2: Set o = sm.CreateCenterLine(0, 0, 0, 0.01, 0.005, 0)
+        Case 3: Set o = sm.CreateCircle(0, 0, 0, 0.005, 0, 0)
+        Case 4: Set o = sm.CreateCircleByRadius(0, 0, 0, 0.005)
+        Case 5: Set o = sm.CreateArc(0, 0, 0, 0.005, 0, 0, 0, 0.005, 0, 1)
+        Case 6: Set o = sm.Create3PointArc(0, 0, 0, 0.01, 0, 0, 0.005, 0.003, 0)
+        Case 7: sm.CreateLine 0, 0, 0, 0.01, 0, 0: Set o = sm.CreateTangentArc(0.01, 0, 0, 0.015, 0.005, 0, 1)
+        Case 8, 9
+            Dim pts() As Double, np As Long: np = IIf(k = 8, 3, 5)
+            ReDim pts(3 * np - 1)
+            For i = 0 To np - 1: pts(3 * i) = i * 0.005: pts(3 * i + 1) = 0.003 * (i Mod 2): pts(3 * i + 2) = 0: Next
+            Set o = sm.CreateSpline2((pts), True)
+            If o Is Nothing Then Set o = sm.CreateSpline((pts)): Note "spline via CreateSpline"
+        Case 10: Set o = sm.CreateEllipse(0, 0, 0, 0.008, 0, 0, 0, 0.004, 0)
+        Case 11: Set o = sm.CreateEllipticalArc(0, 0, 0, 0.008, 0, 0, 0, 0.004, 0, 0.008, 0, 0, 0, 0.004, 0, 1)
+        Case 12: Set o = sm.CreateParabola(0, 0.002, 0, 0, 0, 0, -0.006, 0.0045, 0, 0.006, 0.0045, 0)
+        Case 13: o = sm.CreatePolygon(0, 0, 0, 0.005, 0, 0, 6, True)
+        Case 14: o = sm.CreatePolygon(0, 0, 0, 0.005, 0, 0, 6, False)
+        Case 15: o = sm.CreatePolygon(0, 0, 0, 0.005, 0, 0, 8, True)
+        Case 16: Set o = sm.CreateSketchSlot(0, 0, 0.004, -0.005, 0, 0, 0.005, 0, 0, 0, 0, 0, 1, False)
+        Case 17: Set o = sm.CreateSketchSlot(3, 0, 0.002, 0, 0, 0, 0.008, 0, 0, 0, 0.008, 0, 1, False)
+        Case 18: Set o = sm.CreatePoint(0.003, 0.004, 0)
+        Case 19: Set o = doc.InsertSketchText(0, 0, 0, "AB", 0, 0, 0, 100, 100)
+        Case 20: o = sm.CreateCornerRectangle(0, 0, 0, 0.01, 0.006, 0)
+        Case 21: o = sm.CreateCenterRectangle(0, 0, 0, 0.005, 0.003, 0)
+        Case 22: o = sm.Create3PointCornerRectangle(0, 0, 0, 0.01, 0.002, 0, 0.009, 0.007, 0)
+        Case 23: o = sm.CreateParallelogram(0, 0, 0, 0.01, 0, 0, 0.012, 0.006, 0)
+        Case 24: Set o = sm.CreateLine(0, 0, 0, 0.01, 0.005, 0): o.ConstructionGeometry = True
+        Case 25: Set o = sm.CreateCircleByRadius(0, 0, 0, 0.005): o.ConstructionGeometry = True
+        Case 26
+            sm.CreateLine 0, 0, 0, 0.01, 0, 0: sm.CreateLine 0.01, 0, 0, 0.01, 0.01, 0
+            doc.ClearSelection2 True
+            Sel doc, "", "SKETCHPOINT", 0.01, 0, 0, False, 0
+            Set o = sm.CreateFillet(0.002, 1)
+        Case 27
+            sm.CreateLine 0, 0, 0, 0.01, 0, 0: sm.CreateLine 0.01, 0, 0, 0.01, 0.01, 0
+            doc.ClearSelection2 True
+            Sel doc, "", "SKETCHPOINT", 0.01, 0, 0, False, 0
+            Set o = sm.CreateChamfer(0, 0.002, 0.002)
+        Case 28
+            sm.CreateCenterRectangle 0, 0, 0, 0.005, 0.003, 0
+            doc.ClearSelection2 True
+            Sel doc, "", "SKETCHSEGMENT", 0.005, 0, 0, False, 0
+            Dim okk As Boolean: okk = sm.SketchOffset2(0.001, False, True, 0, 0, True)
+            Must okk, "SketchOffset2"
+        Case 29
+            sm.CreateCenterLine 0, -0.01, 0, 0, 0.01, 0
+            sm.CreateLine 0.002, 0, 0, 0.008, 0.004, 0
+            doc.ClearSelection2 True
+            Sel doc, "", "SKETCHSEGMENT", 0.005, 0.002, 0, False, 1
+            Sel doc, "", "SKETCHSEGMENT", 0, 0.005, 0, True, 2
+            doc.SketchMirror
+        Case 30: Set o = sm.CreateLine(0, 0, 0, 0.01, 0.005, 0.008)
+        Case 31
+            sm.CreateCornerRectangle 0, 0, 0, 0.01, 0.006, 0
+            doc.ClearSelection2 True
+            Sel doc, "", "SKETCHSEGMENT", 0.005, 0, 0, False, 0
+            Sel doc, "", "SKETCHSEGMENT", 0.005, 0.006, 0, True, 0
+            Sel doc, "", "SKETCHSEGMENT", 0, 0.003, 0, True, 0
+            Sel doc, "", "SKETCHSEGMENT", 0.01, 0.003, 0, True, 0
+            doc.SketchConstructionGeometry
+        Case 32
+            sm.CreateCornerRectangle 0, 0, 0, 0.01, 0.006, 0
+            sm.CreateCircleByRadius 0.01, 0.006, 0, 0.003
+    End Select
+    LogErr "skent " & k
+    sm.AddToDB = False
+    If k = 30 Then sm.Insert3DSketch True Else sm.InsertSketch True
+    LogErr "close sketch"
+    Dim sk As Object: Set sk = doc.FeatureByPositionReverse(0).GetSpecificFeature2
+    Dim segs As Variant: segs = sk.GetSketchSegments
+    Dim pts2 As Variant: pts2 = sk.GetSketchPoints2
+    Must Not (IsEmpty(segs) And IsEmpty(pts2) And k <> 19), "entity created"
+End Sub
+
+Sub V_SkN(ByVal doc As Object, ByVal n As Double)
+    On Error Resume Next
+    Dim sm As Object: Set sm = doc.SketchManager
+    Dim i As Long
+    doc.ClearSelection2 True
+    Sel doc, "Front Plane", "PLANE", 0, 0, 0, False, 0
+    sm.InsertSketch True
+    sm.AddToDB = True
+    For i = 0 To n - 1
+        sm.CreateLine i * 0.003, 0, 0, i * 0.003 + 0.002, 0.004 + 0.0005 * i, 0
+    Next
+    sm.AddToDB = False
+    sm.InsertSketch True
+    LogErr "skn"
+End Sub
+
+' fixed free geometry (no relations): L1, L2, L3, C1, C2, CL, P1, P2
+Sub RelSketch(ByVal doc As Object)
+    Dim sm As Object: Set sm = doc.SketchManager
+    sm.CreateLine 0, 0, 0, 0.01, 0.002, 0                 ' L1
+    sm.CreateLine 0, 0.005, 0, 0.008, 0.009, 0            ' L2
+    sm.CreateLine 0.012, 0.001, 0, 0.02, 0.004, 0         ' L3
+    sm.CreateCircleByRadius 0.03, 0, 0, 0.003             ' C1
+    sm.CreateCircleByRadius 0.031, 0.001, 0, 0.005        ' C2  (overlaps C1, different center)
+    sm.CreateCenterLine 0.05, -0.01, 0, 0.05, 0.01, 0     ' CL
+    sm.CreatePoint 0.045, 0.002, 0                        ' P1
+    sm.CreatePoint 0.056, 0.004, 0                        ' P2
+End Sub
+
+Function SS(ByVal doc As Object, ByVal what As String, ByVal app As Boolean) As Boolean
+    Select Case what
+        Case "L1": SS = Sel(doc, "", "SKETCHSEGMENT", 0.005, 0.001, 0, app, 0)
+        Case "L2": SS = Sel(doc, "", "SKETCHSEGMENT", 0.004, 0.007, 0, app, 0)
+        Case "L3": SS = Sel(doc, "", "SKETCHSEGMENT", 0.016, 0.0025, 0, app, 0)
+        Case "C1": SS = Sel(doc, "", "SKETCHSEGMENT", 0.03, -0.003, 0, app, 0)
+        Case "C2": SS = Sel(doc, "", "SKETCHSEGMENT", 0.031, 0.006, 0, app, 0)
+        Case "CL": SS = Sel(doc, "", "SKETCHSEGMENT", 0.05, 0.008, 0, app, 0)
+        Case "P1": SS = Sel(doc, "", "SKETCHPOINT", 0.045, 0.002, 0, app, 0)
+        Case "P2": SS = Sel(doc, "", "SKETCHPOINT", 0.056, 0.004, 0, app, 0)
+        Case "L1e": SS = Sel(doc, "", "SKETCHPOINT", 0.01, 0.002, 0, app, 0)
+        Case "L3s": SS = Sel(doc, "", "SKETCHPOINT", 0.012, 0.001, 0, app, 0)
+    End Select
+End Function
+
+Sub AddRel(ByVal doc As Object, ByVal sels As String, ByVal rel As String)
+    On Error Resume Next
+    doc.ClearSelection2 True
+    Dim s As Variant, ok As Boolean, first As Boolean: ok = True: first = True
+    For Each s In Split(sels, " ")
+        ok = SS(doc, CStr(s), Not first) And ok: first = False
+    Next
+    Must ok, "select for " & rel
+    doc.SketchAddConstraints rel
+    LogErr "SketchAddConstraints " & rel
+End Sub
+
+Sub V_Rel(ByVal doc As Object, ByVal k As Double)
+    On Error Resume Next
+    Dim sm As Object: Set sm = doc.SketchManager
+    doc.ClearSelection2 True
+    Sel doc, "Front Plane", "PLANE", 0, 0, 0, False, 0
+    sm.InsertSketch True
+    sm.AddToDB = True
+    RelSketch doc
+    sm.AddToDB = False
+    Select Case k
+        Case 1: AddRel doc, "L1", "sgHORIZONTAL2D"
+        Case 2: AddRel doc, "L1", "sgVERTICAL2D"
+        Case 3: AddRel doc, "L1", "sgFIXED"
+        Case 4: AddRel doc, "L1 L2", "sgPARALLEL"
+        Case 5: AddRel doc, "L1 L2", "sgPERPENDICULAR"
+        Case 6: AddRel doc, "L1 L2", "sgCOLINEAR"
+        Case 7: AddRel doc, "L1 L2", "sgSAMELENGTH"
+        Case 8: AddRel doc, "C1 C2", "sgSAMELENGTH"
+        Case 9: AddRel doc, "C1 C2", "sgCONCENTRIC"
+        Case 10: AddRel doc, "C1 C2", "sgCORADIAL"
+        Case 11: AddRel doc, "L3 C1", "sgTANGENT"
+        Case 12: AddRel doc, "L1e L3s", "sgMERGEPOINTS"
+        Case 13: AddRel doc, "P1 L1", "sgCOINCIDENT"
+        Case 14: AddRel doc, "P1 L1", "sgATMIDDLE"
+        Case 15: AddRel doc, "P1 P2", "sgHORIZONTALPOINTS2D"
+        Case 16: AddRel doc, "P1 P2", "sgVERTICALPOINTS2D"
+        Case 17: AddRel doc, "P1 P2 CL", "sgSYMMETRIC"
+        Case 18: AddRel doc, "P1", "sgFIXED"
+        Case 19: AddRel doc, "L1", "sgHORIZONTAL2D": AddRel doc, "L2", "sgVERTICAL2D"
+        Case 20: AddRel doc, "L1", "sgHORIZONTAL2D": AddRel doc, "L1 L3", "sgCOLINEAR": AddRel doc, "C1 C2", "sgCONCENTRIC"
+    End Select
+    doc.ClearSelection2 True
+    sm.InsertSketch True
+    LogErr "rel close"
+End Sub
+
+' dimension sketch: same as RelSketch; dims added in edit mode
+Sub V_Dim(ByVal doc As Object, ByVal code As String, ByVal k As Double)
+    On Error Resume Next
+    Dim sm As Object: Set sm = doc.SketchManager
+    Dim d As Object
+    doc.ClearSelection2 True
+    Sel doc, "Front Plane", "PLANE", 0, 0, 0, False, 0
+    sm.InsertSketch True
+    sm.AddToDB = True
+    RelSketch doc
+    sm.AddToDB = False
+    If code = "dimval" Or code = "dimpos" Then
+        doc.ClearSelection2 True: SS doc, "L1", False
+        Dim ty As Double: ty = 0.006
+        If code = "dimpos" Then ty = k * MM
+        Set d = doc.AddHorizontalDimension2(0.005, -ty, 0)
+        LogErr "AddHorizontalDimension2"
+        If code = "dimval" Then d.SystemValue = k * MM: LogErr "set value"
+        Must Not d Is Nothing, "dim"
+    Else
+        Select Case k
+            Case 1: SS doc, "L1", False: Set d = doc.AddHorizontalDimension2(0.005, -0.006, 0)
+            Case 2: SS doc, "L1", False: Set d = doc.AddVerticalDimension2(0.014, 0.001, 0)
+            Case 3: SS doc, "L1", False: Set d = doc.AddDimension2(0.004, 0.006, 0)
+            Case 4: SS doc, "C1", False: Set d = doc.AddRadialDimension2(0.036, 0.004, 0)
+            Case 5: SS doc, "C1", False: Set d = doc.AddDiameterDimension2(0.036, 0.004, 0)
+            Case 6: SS doc, "L1", False: SS doc, "L2", True: Set d = doc.AddDimension2(0.012, 0.008, 0)
+            Case 7: SS doc, "P1", False: SS doc, "P2", True: Set d = doc.AddDimension2(0.05, 0.01, 0)
+            Case 8
+                SS doc, "L1", False: Set d = doc.AddHorizontalDimension2(0.005, -0.006, 0)
+                doc.ClearSelection2 True
+                SS doc, "C1", False: Set d = doc.AddDiameterDimension2(0.036, 0.004, 0)
+            Case 9
+                SS doc, "L1", False: Set d = doc.AddHorizontalDimension2(0.005, -0.006, 0)
+                d.DrivenState = 1     ' swDimensionDriven
+                LogErr "driven"
+            Case 10: SS doc, "L3", False: SS doc, "C1", True: Set d = doc.AddDimension2(0.025, 0.01, 0)
+        End Select
+        LogErr "dim " & k
+        If k > 0 Then Must Not d Is Nothing, "dim"
+    End If
+    doc.ClearSelection2 True
+    sm.InsertSketch True
+End Sub
+
+Sub V_Prop(ByVal doc As Object, ByVal k As Double)
+    On Error Resume Next
+    Dim cp As Object: Set cp = doc.Extension.CustomPropertyManager("")
+    Dim r As Long
+    Select Case k
+        Case 1: r = cp.Add3("TestProp", 30, "hello", 1)
+        Case 2: r = cp.Add3("TestProp", 30, String(200, "x"), 1)
+        Case 3: r = cp.Add3("TestNum", 3, "42", 1)
+        Case 4: r = cp.Add3("TestDate", 64, "2025-01-02", 1)
+        Case 5: r = cp.Add3("TestYes", 11, "Yes", 1)
+        Case 6: r = cp.Add3("TestProp", 30, "hello", 1): r = cp.Add3("Second", 30, "world", 1)
+        Case 7
+            Set cp = doc.Extension.CustomPropertyManager(doc.ConfigurationManager.ActiveConfiguration.Name)
+            r = cp.Add3("CfgProp", 30, "cfg", 1)
+    End Select
+    LogErr "Add3"
+    Note "Add3=" & r
+End Sub
+
+Sub V_Mat(ByVal doc As Object, ByVal k As Double)
+    On Error Resume Next
+    Dim mt As Variant: mt = Array("1060 Alloy", "AISI 304", "ABS", "PC High Viscosity", "Plain Carbon Steel")
+    doc.SetMaterialPropertyName2 "", "SOLIDWORKS Materials", mt(k)
+    LogErr "SetMaterialPropertyName2"
+    Dim db As String
+    Dim nmm As String: nmm = doc.GetMaterialPropertyName2("", db)
+    If nmm = "" Then
+        doc.SetMaterialPropertyName2 doc.ConfigurationManager.ActiveConfiguration.Name, "SOLIDWORKS Materials", mt(k)
+        nmm = doc.GetMaterialPropertyName2(doc.ConfigurationManager.ActiveConfiguration.Name, db)
+        LogErr "material by config name"
+    End If
+    Note "material=" & nmm
+    Must nmm <> "", "material set"
+End Sub
+
+Sub V_Cfg(ByVal doc As Object, ByVal k As Double)
+    On Error Resume Next
+    Dim cm As Object: Set cm = doc.ConfigurationManager
+    Dim cfg As Object
+    If k = 3 Then doc.ClearSelection2 True: SelEdge doc, 0, False, 1: Fillet doc, 0.001, 195, 0
+    Select Case k
+        Case 1, 3, 4
+            Set cfg = cm.AddConfiguration2("Cfg2", "", "", 0, "", "", True)
+            LogErr "AddConfiguration2"
+            If cfg Is Nothing Then Set cfg = doc.AddConfiguration3("Cfg2", "", "", 0): LogErr "AddConfiguration3"
+            If k = 3 Then
+                Dim ft As Object: Set ft = doc.FeatureByName("Fillet1")
+                ft.SetSuppression2 0, 1, Nothing        ' suppress in this config only
+                LogErr "SetSuppression2"
+            End If
+            If k = 4 Then
+                Dim dmn As Object: Set dmn = doc.Parameter("D1@Boss-Extrude1")
+                dmn.SetSystemValue3 0.015, 1, Nothing   ' this configuration
+                LogErr "SetSystemValue3"
+            End If
+        Case 2
+            Set cfg = cm.AddConfiguration2("Cfg2", "", "", 0, "", "", True)
+            Set cfg = cm.AddConfiguration2("Cfg3", "", "", 0, "", "", True)
+            LogErr "AddConfiguration2 x2"
+        Case 5
+            Set cfg = cm.ActiveConfiguration
+            cfg.Name = "Renamed"
+            LogErr "rename config"
+        Case 6
+            Set cfg = cm.ActiveConfiguration
+            Must cfg.CreateDisplayState("DS2"), "CreateDisplayState"
+            LogErr "CreateDisplayState"
+        Case 7
+            Set cfg = cm.AddConfiguration2("Child", "", "", 0, cm.ActiveConfiguration.Name, "", True)
+            LogErr "derived"
+    End Select
+    Must Not cfg Is Nothing, "config"
+    Dim nms As Variant: nms = doc.GetConfigurationNames
+    Note "configs=" & UBound(nms) + 1
+End Sub
+
+Sub V_Eqn(ByVal doc As Object, ByVal k As Double)
+    On Error Resume Next
+    Dim em As Object: Set em = doc.GetEquationMgr
+    Dim r As Long
+    Select Case k
+        Case 1: r = em.Add2(-1, """D1@Boss-Extrude1"" = 12mm", True)
+        Case 2: r = em.Add2(-1, """L"" = 15", True)
+        Case 3: r = em.Add2(-1, """L"" = 15", True): r = em.Add2(-1, """D1@Boss-Extrude1"" = ""L""", True)
+        Case 4: r = em.Add2(-1, """D1@Boss-Extrude1"" = 12mm", True): r = em.Add2(-1, """D1@Sketch1"" = 18mm", True)
+    End Select
+    LogErr "EquationMgr.Add2"
+    If r < 0 Then Note "Add2 returned " & r & ", trying Add": r = em.Add(-1, """D1@Boss-Extrude1"" = 12"): LogErr "Add"
+    Note "eqcount=" & em.GetCount
+    doc.EditRebuild3
+End Sub
+
+Sub V_Colour(ByVal doc As Object, ByVal k As Double)
+    On Error Resume Next
+    Dim mp As Variant
+    Select Case k
+        Case 1, 4, 5, 6: mp = Array(1#, 0#, 0#, 1#, 1#, 0.5, 0.4, 0#, 0#)
+        Case 2: mp = Array(0#, 0#, 1#, 1#, 1#, 0.5, 0.4, 0#, 0#)
+        Case 3: mp = Array(1#, 0#, 0#, 1#, 1#, 0.5, 0.4, 0.5, 0#)
+    End Select
+    If k = 5 Then mp(0) = 0: mp(1) = 1
+    Select Case k
+        Case 1, 2, 3: doc.MaterialPropertyValues = mp
+        Case 4
+            Sel doc, "", "FACE", 0.005, 0.005, 0.01, False, 0
+            Dim fc As Object: Set fc = doc.SelectionManager.GetSelectedObject6(1, -1)
+            fc.MaterialPropertyValues = mp
+        Case 5: doc.FeatureByName("Boss-Extrude1").SetMaterialPropertyValues2 mp, 1, Nothing
+        Case 6
+            Dim bs As Variant: bs = doc.GetBodies2(0, False)
+            bs(0).MaterialPropertyValues2 = mp
+    End Select
+    LogErr "colour " & k
+End Sub
+
+Sub V_Units(ByVal doc As Object, ByVal k As Double)
+    On Error Resume Next
+    If k = 1 Then
+        doc.SetUserPreferenceIntegerValue 51, 3              ' swUnitsLinear = swINCHES
+    Else
+        doc.SetUserPreferenceIntegerValue 52, 3              ' swUnitsLinearDecimalPlaces = 3
+    End If
+    LogErr "units"
+End Sub
+
+Sub V_View(ByVal doc As Object, ByVal k As Double)
+    On Error Resume Next
+    Select Case k
+        Case 1: doc.ShowNamedView2 "*Isometric", 7: doc.ViewZoomtofit2
+        Case 2: doc.ShowNamedView2 "*Front", 1: doc.ViewZoomtofit2
+        Case 3: doc.ShowNamedView2 "*Isometric", 7: doc.NameView "MyView"
+    End Select
+    LogErr "view"
+End Sub
+
+Sub V_Ops(ByVal doc As Object, ByVal k As Double)
+    On Error Resume Next
+    ' base "chamf": block + fillet1 on back edge + chamfer1 on left edge (like T04/T05)
+    Block doc, 0.01, 0.01, 0.01
+    doc.ClearSelection2 True: SelEdge doc, 0, False, 1: Fillet doc, 0.001, 195, 0
+    doc.ClearSelection2 True: SelEdge doc, 3, False, 1: Chamfer doc, 1, 0.001, 45 * DEG, 0, 0, 0, 0, 0
+    doc.ClearSelection2 True
+    Dim ft As Object
+    Select Case k
+        Case 1: doc.FeatureByName("Fillet1").Name = "MyFillet"
+        Case 2: doc.FeatureByName("Sketch1").Name = "MySketch"
+        Case 3
+            Dim bs As Variant: bs = doc.GetBodies2(0, False)
+            bs(0).Name = "MyBody"
+        Case 4: Sel doc, "Chamfer1", "BODYFEATURE", 0, 0, 0, False, 0: doc.EditSuppress2
+        Case 5: Sel doc, "Fillet1", "BODYFEATURE", 0, 0, 0, False, 0: doc.EditSuppress2
+        Case 6
+            Sel doc, "Chamfer1", "BODYFEATURE", 0, 0, 0, False, 0: doc.EditSuppress2
+            doc.ClearSelection2 True
+            Sel doc, "Chamfer1", "BODYFEATURE", 0, 0, 0, False, 0: doc.EditUnsuppress2
+        Case 7: Must doc.Extension.ReorderFeature("Chamfer1", "Fillet1", 2), "ReorderFeature"   ' swMoveLocation_e 2 = before?
+        Case 8: Sel doc, "Chamfer1", "BODYFEATURE", 0, 0, 0, False, 0: doc.Extension.DeleteSelection2 0
+        Case 9: Must doc.FeatureManager.EditRollback(2, "Chamfer1"), "EditRollback"
+        Case 10
+            Dim b2 As Variant: b2 = doc.GetBodies2(0, False)
+            b2(0).HideBody True
+        Case 11: Sel doc, "Sketch1", "SKETCH", 0, 0, 0, False, 0: doc.BlankSketch: doc.ClearSelection2 True: Sel doc, "Sketch1", "SKETCH", 0, 0, 0, False, 0: doc.UnblankSketch
+        Case 12: Set ft = doc.FeatureByName("Fillet1"): ft.Description = "my comment": doc.Extension.AddComment "my comment"
+        Case 13
+            Sel doc, "Fillet1", "BODYFEATURE", 0, 0, 0, False, 0
+            Sel doc, "Chamfer1", "BODYFEATURE", 0, 0, 0, True, 0
+            doc.FeatureManager.InsertFeatureTreeFolder2 1    ' swFeatureTreeFolder_Containing
+    End Select
+    LogErr "ops " & k
+End Sub
+
+Sub V_SelSet(ByVal doc As Object, ByVal k As Double)
+    On Error Resume Next
+    doc.ClearSelection2 True
+    Select Case k
+        Case 1: Sel doc, "", "FACE", 0.005, 0.005, 0.01, False, 0
+        Case 2: Sel doc, "", "FACE", 0.005, 0.005, 0.01, False, 0: Sel doc, "", "FACE", 0.01, 0.005, 0.005, True, 0
+        Case 3: SelEdge doc, 0, False, 0
+    End Select
+    Dim e As Long, ss As Object
+    Set ss = doc.Extension.SaveSelection(e)
+    LogErr "SaveSelection"
+    Note "SaveSelection err=" & e
+    Must Not ss Is Nothing, "selection set"
+End Sub
+
+Sub V_Fav(ByVal doc As Object, ByVal k As Double)
+    ' API for "Add to Favorites" is uncertain: try several, log which worked
+    On Error Resume Next
+    Dim names As Variant: names = Array("Boss-Extrude1", "Sketch1")
+    Dim i As Long
+    For i = 0 To k - 1
+        doc.ClearSelection2 True
+        Sel doc, names(i), IIf(i = 0, "BODYFEATURE", "SKETCH"), 0, 0, 0, False, 0
+        Dim ft As Object: Set ft = doc.FeatureByName(names(i))
+        CallByName doc.FeatureManager, "AddToFavorites", VbMethod: If Err.Number = 0 Then Note "FeatureManager.AddToFavorites ok" Else Err.Clear
+        CallByName doc.Extension, "AddToFavorites", VbMethod: If Err.Number = 0 Then Note "Extension.AddToFavorites ok" Else Err.Clear
+        CallByName ft, "AddToFavorites", VbMethod: If Err.Number = 0 Then Note "Feature.AddToFavorites ok" Else Err.Clear
+    Next
+    Dim fav As Object: Set fav = doc.FeatureByName("Favorites")
+    If Not fav Is Nothing Then
+        Dim s As Object, n As Long: Set s = fav.GetFirstSubFeature
+        Do While Not s Is Nothing: n = n + 1: Set s = s.GetNextSubFeature: Loop
+        Note "favorites=" & n
+        Must n > 0, "favorite added"
+    End If
+    Err.Clear
+End Sub
+
+' ======================================================================== dumps (from the open doc, right after saving)
+Sub DumpAll(ByVal doc As Object, ByVal base As String)
+    On Error Resume Next
+    f = FreeFile: Open base & ".dump.txt" For Output As #f
+    DumpFeatures doc
+    DumpDoc doc
+    Close #f
+    Err.Clear
+    f = FreeFile: Open base & ".refs.txt" For Output As #f
+    DumpRefs doc
+    Close #f
+    Err.Clear
+End Sub
+
+Sub DumpFeatures(ByVal doc As Object)
+    On Error Resume Next
+    Print #f, "PART " & doc.GetTitle
+    Dim feat As Object: Set feat = doc.FirstFeature
+    Dim idx As Long
+    Do While Not feat Is Nothing
+        DumpFeature doc, feat, idx, 0: idx = idx + 1
+        Dim s As Object: Set s = feat.GetFirstSubFeature
+        Do While Not s Is Nothing
+            DumpFeature doc, s, -1, 1
+            Set s = s.GetNextSubFeature
+        Loop
+        Set feat = feat.GetNextFeature
+    Loop
+    Set feat = Nothing: Set s = Nothing
+End Sub
+
+Sub DumpFeature(ByVal doc As Object, ByVal feat As Object, ByVal idx As Long, ByVal lvl As Integer)
+    On Error Resume Next
+    Dim t As String: t = feat.GetTypeName2
+    Print #f, String(lvl * 2, " ") & "FEATURE " & idx & " | " & feat.Name & " | " & t & " | id=" & feat.GetID & " | suppressed=" & feat.IsSuppressed
+    Dim d As Object: Set d = feat.GetFirstDisplayDimension
+    Do While Not d Is Nothing
+        Dim dm As Object: Set dm = d.GetDimension2(0)
+        Print #f, "  DIM " & dm.FullName & " = " & dm.SystemValue & " driven=" & dm.DrivenState & " type=" & d.Type2
+        Set d = feat.GetNextDisplayDimension(d)
+    Loop
+    Dim par As Variant: par = feat.GetParents
+    Dim i As Long
+    If Not IsEmpty(par) Then
+        For i = 0 To UBound(par): Print #f, "  PARENT " & par(i).Name & " | " & par(i).GetTypeName2: Next
+    End If
+    Dim fs As Variant: fs = feat.GetFaces
+    If Not IsEmpty(fs) Then
+        For i = 0 To UBound(fs): Print #f, "  FACE " & RefDesc(fs(i)) & " area=" & fs(i).GetArea: Next
+    End If
+    Select Case t
+        Case "ProfileFeature", "3DProfileFeature": DumpSketch feat.GetSpecificFeature2
+        Case "Extrusion", "Cut", "Boss", "BossThin", "CutThin", "ICE", "Extrusion Thin": DumpExtrude doc, feat
+        Case "Fillet", "Chamfer", "Chamfer2": DumpFillet doc, feat, t
+        Case "RefPlane": DumpPlane feat
+        Case "LPattern", "CirPattern", "MirrorPattern", "MirrorSolid", "SketchPattern": DumpPattern doc, feat, t
+        Case "Revolution", "RevCut", "RevolutionThin", "RevCutThin": DumpRev feat
+        Case "Shell": Print #f, "  SHELL t=" & feat.GetDefinition.Thickness & " out=" & feat.GetDefinition.ShellOutward
+    End Select
+    Err.Clear
+End Sub
+
+Sub DumpSketch(ByVal sk As Object)
+    On Error Resume Next
+    Dim a As Variant: a = sk.ModelToSketchTransform.Inverse.ArrayData
+    Print #f, "  SKETCH_TO_MODEL " & JoinV(a)
+    Dim pts As Variant: pts = sk.GetSketchPoints2
+    Dim i As Long, id As Variant
+    If Not IsEmpty(pts) Then
+        For i = 0 To UBound(pts)
+            id = pts(i).GetID
+            Print #f, "  PT " & id(0) & "_" & id(1) & " (" & pts(i).X & "," & pts(i).Y & "," & pts(i).Z & ")"
+        Next
+    End If
+    Dim segs As Variant: segs = sk.GetSketchSegments
+    If Not IsEmpty(segs) Then
+        For i = 0 To UBound(segs)
+            Dim s As Object: Set s = segs(i)
+            id = s.GetID
+            Dim ln As String: ln = "  SEG " & id(0) & "_" & id(1) & " type=" & s.GetType & " constr=" & s.ConstructionGeometry
+            Select Case s.GetType
+                Case 0: ln = ln & " p0=" & PP(s.GetStartPoint2) & " p1=" & PP(s.GetEndPoint2)
+                Case 1: ln = ln & " c=" & PP(s.GetCenterPoint2) & " p0=" & PP(s.GetStartPoint2) & " p1=" & PP(s.GetEndPoint2) & " r=" & s.GetRadius & " dir=" & s.GetRotationDir
+                Case Else: ln = ln & " len=" & s.GetLength
+            End Select
+            Print #f, ln
+        Next
+    End If
+    Dim rels As Variant: rels = sk.RelationManager.GetRelations(0)
+    Dim es As String, k As Long, ents As Variant, eid As Variant
+    If Not IsEmpty(rels) Then
+        For i = 0 To UBound(rels)
+            ents = rels(i).GetEntities: es = ""
+            If Not IsEmpty(ents) Then
+                For k = 0 To UBound(ents): eid = ents(k).GetID: es = es & eid(0) & "_" & eid(1) & " ": Next
+            End If
+            Print #f, "  REL type=" & rels(i).GetRelationType & " ents=" & es
+        Next
+    End If
+    Dim cs As Variant: cs = sk.GetSketchContours
+    If Not IsEmpty(cs) Then
+        For i = 0 To UBound(cs)
+            Dim cseg As Variant: cseg = cs(i).GetSketchSegments
+            es = ""
+            For k = 0 To UBound(cseg): eid = cseg(k).GetID: es = es & eid(0) & "_" & eid(1) & " ": Next
+            Print #f, "  CONTOUR " & i & " closed=" & cs(i).IsClosed & " segs=" & es
+        Next
+    End If
+End Sub
+
+Sub DumpExtrude(ByVal doc As Object, ByVal feat As Object)
+    On Error Resume Next
+    Dim x As Object: Set x = feat.GetDefinition
+    Print #f, "  EXTRUDE end1=" & x.GetEndCondition(True) & " d1=" & x.GetDepth(True) & " both=" & x.BothDirections & _
+        " end2=" & x.GetEndCondition(False) & " d2=" & x.GetDepth(False) & " reverse=" & x.ReverseDirection & _
+        " draft1=" & x.GetDraftAngle(True) & " draftOn1=" & x.GetDraftWhileExtruding(True) & " draftOut1=" & x.GetDraftOutward(True) & _
+        " thin=" & x.IsThinFeature & " thinType=" & x.ThinWallType & " thk1=" & x.GetWallThickness(True) & " merge=" & x.Merge & _
+        " from=" & x.FromType & " fromOff=" & x.FromOffsetDistance & " flipSide=" & x.FlipSideToCut
+    x.AccessSelections doc, Nothing
+    Dim r As Object, rt As Long
+    Set r = x.GetEndConditionReference(True, rt)
+    If Not r Is Nothing Then Print #f, "  UPTO_REF1 type=" & rt & " " & RefDesc(r)
+    Set r = x.GetEndConditionReference(False, rt)
+    If Not r Is Nothing Then Print #f, "  UPTO_REF2 type=" & rt & " " & RefDesc(r)
+    x.ReleaseSelectionAccess
+End Sub
+
+Sub DumpFillet(ByVal doc As Object, ByVal feat As Object, ByVal t As String)
+    On Error Resume Next
+    Dim x As Object: Set x = feat.GetDefinition
+    If t = "Fillet" Then
+        Print #f, "  FILLET r=" & x.DefaultRadius & " type=" & x.Type & " items=" & x.FilletItemsCount & " overflow=" & x.OverflowType & " propagate=" & x.PropagateToTangentFaces
+    Else
+        Print #f, "  CHAMFER type=" & x.Type & " d=" & x.GetEdgeChamferDistance(0) & " d2=" & x.GetEdgeChamferDistance(1) & " angle=" & x.EdgeChamferAngle & " flip=" & x.FlipDirection & _
+            " v=" & x.GetVertexChamferDistance(0) & "," & x.GetVertexChamferDistance(1) & "," & x.GetVertexChamferDistance(2)
+    End If
+    x.AccessSelections doc, Nothing
+    Dim it As Variant: it = x.Edges
+    Dim i As Long, cp As Object
+    If Not IsEmpty(it) Then
+        For i = 0 To UBound(it)
+            Set cp = it(i).GetCurveParams3
+            Print #f, "  EDGE " & i & " start=(" & cp.StartPoint(0) & "," & cp.StartPoint(1) & "," & cp.StartPoint(2) & ") end=(" & cp.EndPoint(0) & "," & cp.EndPoint(1) & "," & cp.EndPoint(2) & ")"
+        Next
+    End If
+    x.ReleaseSelectionAccess
+End Sub
+
+Sub DumpPattern(ByVal doc As Object, ByVal feat As Object, ByVal t As String)
+    On Error Resume Next
+    Dim x As Object: Set x = feat.GetDefinition
+    Select Case t
+        Case "LPattern": Print #f, "  LPATTERN n1=" & x.D1TotalInstances & " s1=" & x.D1Spacing & " n2=" & x.D2TotalInstances & " s2=" & x.D2Spacing & " rev1=" & x.D1ReverseDirection & " geom=" & x.GeometryPattern
+        Case "CirPattern": Print #f, "  CPATTERN n=" & x.TotalInstances & " spacing=" & x.Spacing & " equal=" & x.EqualSpacing & " rev=" & x.ReverseDirection
+        Case "MirrorPattern", "MirrorSolid": Print #f, "  MIRROR geom=" & x.GeometryPattern & " merge=" & x.MergeSolids
+    End Select
+    x.AccessSelections doc, Nothing
+    Dim sd As Variant: sd = x.PatternFeatureArray
+    If IsEmpty(sd) Then sd = x.FeatureArray
+    Dim i As Long
+    If Not IsEmpty(sd) Then
+        For i = 0 To UBound(sd): Print #f, "  SEED " & sd(i).Name & " id=" & sd(i).GetID: Next
+    End If
+    Dim sk As Variant: sk = x.SkippedItemArray
+    If Not IsEmpty(sk) Then Print #f, "  SKIPPED " & JoinV(sk)
+    x.ReleaseSelectionAccess
+End Sub
+
+Sub DumpRev(ByVal feat As Object)
+    On Error Resume Next
+    Dim x As Object: Set x = feat.GetDefinition
+    Print #f, "  REVOLVE type=" & x.Type & " a1=" & x.GetRevolutionAngle(True) & " a2=" & x.GetRevolutionAngle(False) & " thin=" & x.IsThinFeature & " reverse=" & x.ReverseDirection
+End Sub
+
+Sub DumpPlane(ByVal feat As Object)
+    On Error Resume Next
+    Dim p As Object: Set p = feat.GetSpecificFeature2
+    Print #f, "  PLANE " & JoinV(p.Transform.ArrayData)
+    Dim x As Object: Set x = feat.GetDefinition
+    Print #f, "  PLANEDEF type=" & x.Type2 & " c0=" & x.Constraint(0) & " c1=" & x.Constraint(1) & " c2=" & x.Constraint(2) & " dist=" & x.Distance & " angle=" & x.Angle & " flip=" & x.ReversedReferenceDirection(0)
+End Sub
+
+Sub DumpDoc(ByVal doc As Object)
+    On Error Resume Next
+    Dim i As Long, nms As Variant, vv As Variant, vt As Variant, rv As Variant
+    Print #f, "DOC"
+    nms = doc.GetConfigurationNames
+    For i = 0 To UBound(nms): Print #f, "  CONFIG " & nms(i): Next
+    Print #f, "  ACTIVE_CONFIG " & doc.ConfigurationManager.ActiveConfiguration.Name
+    Dim ds As Variant: ds = doc.ConfigurationManager.ActiveConfiguration.GetDisplayStates
+    For i = 0 To UBound(ds): Print #f, "  DISPLAY_STATE " & ds(i): Next
+    Dim cp As Object: Set cp = doc.Extension.CustomPropertyManager("")
+    Dim n As Long: n = cp.GetAll3(nms, vt, vv, rv, Empty)
+    For i = 0 To n - 1: Print #f, "  PROP " & nms(i) & " type=" & vt(i) & " = " & vv(i): Next
+    Dim db As String: Print #f, "  MATERIAL " & doc.GetMaterialPropertyName2("", db) & " db=" & db
+    Print #f, "  COLOUR " & JoinV(doc.MaterialPropertyValues)
+    Dim em As Object: Set em = doc.GetEquationMgr
+    For i = 0 To em.GetCount - 1: Print #f, "  EQN " & em.Equation(i) & " = " & em.Value(i): Next
+    Print #f, "  UNITS linear=" & doc.GetUserPreferenceIntegerValue(51) & " dec=" & doc.GetUserPreferenceIntegerValue(52)
+    Dim bs As Variant: bs = doc.GetBodies2(0, False)
+    If Not IsEmpty(bs) Then
+        For i = 0 To UBound(bs): Print #f, "  BODY " & bs(i).Name & " faces=" & bs(i).GetFaceCount & " edges=" & bs(i).GetEdgeCount & " visible=" & bs(i).Visible: Next
+    End If
+    Print #f, "  FEATURECOUNT " & doc.FeatureManager.GetFeatureCount(True)
+End Sub
+
+Sub DumpRefs(ByVal doc As Object)
+    On Error Resume Next
+    Print #f, "PART " & doc.GetTitle
+    Dim ext As Object: Set ext = doc.Extension
+    Dim feat As Object: Set feat = doc.FirstFeature
+    Dim fs As Variant, es As Variant, i As Long, j As Long, t As String
+    Do While Not feat Is Nothing
+        t = feat.GetTypeName2
+        Print #f, "FEATURE " & feat.Name & " | " & t & " | id=" & feat.GetID & " | pref=" & PRef(ext, feat)
+        fs = feat.GetFaces
+        If Not IsEmpty(fs) Then
+            For i = 0 To UBound(fs)
+                Print #f, "  FACE " & i & " fid=" & fs(i).GetFaceId & " area=" & fs(i).GetArea & " " & SurfDesc(fs(i)) & " pref=" & PRef(ext, fs(i))
+                es = fs(i).GetEdges
+                If Not IsEmpty(es) Then
+                    For j = 0 To UBound(es): Print #f, "    EDGE " & EdgeDesc(es(j)) & " pref=" & PRef(ext, es(j)): Next
+                End If
+            Next
+        End If
+        If t = "Fillet" Or t = "Chamfer" Then DumpBlendEdges doc, ext, feat
+        Set feat = feat.GetNextFeature
+    Loop
+    Dim bodies As Variant: bodies = doc.GetBodies2(0, False)
+    Dim be As Variant, b As Long
+    If Not IsEmpty(bodies) Then
+        For b = 0 To UBound(bodies)
+            Print #f, "BODY " & b & " " & bodies(b).Name
+            be = bodies(b).GetEdges
+            If Not IsEmpty(be) Then
+                For i = 0 To UBound(be): Print #f, "  BEDGE " & EdgeDesc(be(i)) & " pref=" & PRef(ext, be(i)): Next
+            End If
+        Next
+    End If
+    Set feat = Nothing: Set ext = Nothing: fs = Empty: es = Empty: bodies = Empty: be = Empty
+End Sub
+
+Sub DumpBlendEdges(ByVal doc As Object, ByVal ext As Object, ByVal feat As Object)
+    On Error Resume Next
+    Dim x As Object: Set x = feat.GetDefinition
+    x.AccessSelections doc, Nothing
+    Dim n As Long, i As Long, it As Object, tp As Long
+    If feat.GetTypeName2 = "Fillet" Then n = x.FilletItemsCount Else n = x.GetEdgeCount
+    Print #f, "  BLEND_ITEMS " & n
+    For i = 0 To n - 1
+        If feat.GetTypeName2 = "Fillet" Then Set it = x.GetFilletItemAtIndex2(i, tp) Else Set it = x.GetEdge(i)
+        If Not it Is Nothing Then Print #f, "  BLEND_EDGE " & i & " " & EdgeDesc(it) & " pref=" & PRef(ext, it)
+    Next
+    x.ReleaseSelectionAccess
+End Sub
+
+Function EdgeDesc(ByVal e As Object) As String
+    On Error Resume Next
+    Dim cp As Object: Set cp = e.GetCurveParams3
+    Dim c As Object: Set c = e.GetCurve
+    Dim k As String
+    If c.IsLine Then
+        k = "line"
+    ElseIf c.IsCircle Then
+        k = "circle " & JoinV(c.CircleParams)
+    Else
+        k = "curve"
+    End If
+    EdgeDesc = k & " s=(" & cp.StartPoint(0) & "," & cp.StartPoint(1) & "," & cp.StartPoint(2) & ") e=(" & cp.EndPoint(0) & "," & cp.EndPoint(1) & "," & cp.EndPoint(2) & ") id=" & e.GetID
+End Function
+
+Function SurfDesc(ByVal o As Object) As String
+    On Error Resume Next
+    Dim sf As Object: Set sf = o.GetSurface
+    If sf.IsPlane Then
+        SurfDesc = "plane " & JoinV(sf.PlaneParams)
+    ElseIf sf.IsCylinder Then
+        SurfDesc = "cyl " & JoinV(sf.CylinderParams)
+    ElseIf sf.IsCone Then
+        SurfDesc = "cone " & JoinV(sf.ConeParams)
+    ElseIf sf.IsTorus Then
+        SurfDesc = "torus " & JoinV(sf.TorusParams)
+    Else
+        SurfDesc = "surf " & sf.Identity
+    End If
+    SurfDesc = SurfDesc & " box=" & JoinV(o.GetBox)
+End Function
+
+Function RefDesc(ByVal o As Object) As String
+    On Error Resume Next
+    Dim sf As Object: Set sf = o.GetSurface
+    If sf Is Nothing Then RefDesc = TypeName(o): Exit Function
+    Dim p As Variant
+    If sf.IsPlane Then
+        p = sf.PlaneParams: RefDesc = "plane n=(" & p(0) & "," & p(1) & "," & p(2) & ") o=(" & p(3) & "," & p(4) & "," & p(5) & ")"
+    ElseIf sf.IsCylinder Then
+        p = sf.CylinderParams: RefDesc = "cyl o=(" & p(0) & "," & p(1) & "," & p(2) & ") ax=(" & p(3) & "," & p(4) & "," & p(5) & ") r=" & p(6)
+    ElseIf sf.IsCone Then
+        RefDesc = "cone " & JoinV(sf.ConeParams)
+    ElseIf sf.IsTorus Then
+        RefDesc = "torus " & JoinV(sf.TorusParams)
+    ElseIf sf.IsSphere Then
+        RefDesc = "sphere " & JoinV(sf.SphereParams)
+    Else
+        RefDesc = "surf id=" & sf.Identity
+    End If
+    Dim bb As Variant: bb = o.GetBox
+    If Not IsEmpty(bb) Then RefDesc = RefDesc & " box=" & JoinV(bb)
+End Function
+
+Function PRef(ByVal ext As Object, ByVal o As Object) As String
+    On Error Resume Next
+    Dim v As Variant: v = ext.GetPersistReference3(o)
+    If IsEmpty(v) Then PRef = "-": Exit Function
+    Dim i As Long, s As String
+    For i = LBound(v) To UBound(v): s = s & Right("0" & Hex(v(i)), 2): Next
+    PRef = s
+End Function
+
+Function PP(ByVal v As Object) As String
+    On Error Resume Next
+    PP = "(" & v.X & "," & v.Y & "," & v.Z & ")"
+End Function
+
+Function JoinV(ByVal a As Variant) As String
+    On Error Resume Next
+    Dim i As Long, s As String
+    For i = LBound(a) To UBound(a): s = s & a(i) & ",": Next
+    JoinV = s
+End Function

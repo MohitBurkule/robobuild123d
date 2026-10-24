@@ -1,0 +1,15 @@
+SW run pack v3 (2026-10-22). Two steps; do both in one session.
+
+1) DumpEdges_macro.txt (v3, crash-safe). SW: Tools > Macro > New, paste, save .swp, F5, pick the revdev
+   folder. You do NOT need to delete old *.edges.txt: only files ending in a "DONE" line are skipped.
+   Every line is flushed to disk as it is written, so if SolidWorks dies the file shows where
+   (SECTION lines). Just start the macro again: it redoes the unfinished part in SAFE mode (extras off)
+   and carries on. Switches at the top (DO_SPLINES, DO_BCURVE_SAMPLES, DO_BLEND_ITEMS, DO_BODY_EDGES,
+   DO_SPLINE_CTRL) turn sections off if a part keeps crashing. Zip all *.edges.txt files and send them.
+
+2) rebuild_macros/batch_rebuild.txt (v3: outline-profile arc direction fixed (first features of fork 5/6,
+   RV04, RV06, blade), revolve profiles drawn as outline + axis (RV19, FS5), edge matching by
+   line/circle geometry, fillet/chamfer edge sets from the edges dump). Tools > Macro > New, paste, F5.
+   First folder: rebuild_macros\ops. Second folder: a NEW EMPTY output folder (the batch skips parts
+   whose log there already says DONE). Send batch_summary.txt, all *_rebuild_log.txt and the
+   *_rebuilt.SLDPRT files. (Single parts: open <part>_rebuild.txt instead, same way.)

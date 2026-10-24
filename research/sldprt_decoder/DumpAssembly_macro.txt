@@ -1,0 +1,105 @@
+' SolidWorks VBA macro: dump the ACTIVE assembly (components, transforms, mates) to <asm>.asmdump.txt
+' Open "rvrn 2.0.SLDASM" first, then Tools > Macro > New, paste, F5.
+Option Explicit
+Dim f As Integer
+
+Sub main()
+    Dim swApp As Object: Set swApp = Application.SldWorks
+    Dim doc As Object: Set doc = swApp.ActiveDoc
+    If doc Is Nothing Then MsgBox "Open the assembly first": Exit Sub
+    Dim p As String: p = doc.GetPathName
+    f = FreeFile: Open Left(p, Len(p) - 7) & ".asmdump.txt" For Output As #f
+    Print #f, "ASM " & doc.GetTitle
+    Dim comps As Variant: comps = doc.GetComponents(False)
+    Dim i As Long
+    For i = 0 To UBound(comps)
+        DumpComp comps(i)
+    Next
+    Dim feat As Object: Set feat = doc.FirstFeature
+    Do While Not feat Is Nothing
+        If feat.GetTypeName2 = "MateGroup" Then
+            Dim m As Object: Set m = feat.GetFirstSubFeature
+            Do While Not m Is Nothing
+                DumpMate m
+                Set m = m.GetNextSubFeature
+            Loop
+        End If
+        Set feat = feat.GetNextFeature
+    Loop
+    ' equations of the assembly
+    DumpEqns doc
+    ' interference between components
+    On Error Resume Next
+    Dim im As Object: Set im = doc.InterferenceDetectionManager
+    im.TreatCoincidenceAsInterference = False
+    Dim ints As Variant: ints = im.GetInterferences
+    Print #f, "INTERFERENCES " & im.GetInterferenceCount
+    If Not IsEmpty(ints) Then
+        For i = 0 To UBound(ints)
+            Dim cs As Variant: cs = ints(i).Components
+            Dim nm As String: nm = "": Dim k As Long
+            For k = 0 To UBound(cs): nm = nm & cs(k).Name2 & " ; ": Next
+            Print #f, "  INT vol=" & ints(i).Volume & " comps=" & nm
+        Next
+    End If
+    im.Done
+    Close #f
+    MsgBox "Done"
+End Sub
+
+Sub DumpComp(ByVal c As Object)
+    On Error Resume Next
+    Print #f, "COMP " & c.Name2 & " | file=" & c.GetPathName & " | config=" & c.ReferencedConfiguration & " | suppressed=" & c.IsSuppressed & " | fixed=" & c.IsFixed
+    Print #f, "  XFORM " & JoinV(c.Transform2.ArrayData)
+    Dim md As Object: Set md = c.GetModelDoc2
+    If md Is Nothing Then Exit Sub
+    Dim mp As Variant: mp = md.GetMassProperties
+    If Not IsEmpty(mp) Then Print #f, "  MASS com=(" & mp(0) & "," & mp(1) & "," & mp(2) & ") vol=" & mp(3) & " area=" & mp(4) & " mass=" & mp(5)
+    Dim mat As String: mat = md.MaterialIdName
+    Print #f, "  MATERIAL " & mat
+    DumpEqns md
+    ' hole wizard + sheet metal features inside the part
+    Dim ft As Object: Set ft = md.FirstFeature
+    Do While Not ft Is Nothing
+        Dim tn As String: tn = ft.GetTypeName2
+        If tn = "HoleWzd" Or tn = "AdvHoleWzd" Then
+            Dim h As Object: Set h = ft.GetDefinition
+            Print #f, "  HOLE " & ft.Name & " type=" & h.Type & " std=" & h.Standard & " fastener=" & h.FastenerType & " size=" & h.FastenerSize & " dia=" & h.Diameter & " depth=" & h.Depth & " csk_dia=" & h.CounterSinkDiameter & " csk_ang=" & h.CounterSinkAngle & " cb_dia=" & h.CounterBoreDiameter & " cb_depth=" & h.CounterBoreDepth & " thread_dia=" & h.ThreadDiameter & " thread_depth=" & h.ThreadDepth & " end=" & h.EndCondition
+        ElseIf tn = "SheetMetal" Then
+            Dim sm As Object: Set sm = ft.GetDefinition
+            Print #f, "  SHEETMETAL t=" & sm.Thickness & " r=" & sm.BendRadius
+        End If
+        Set ft = ft.GetNextFeature
+    Loop
+End Sub
+
+Sub DumpMate(ByVal feat As Object)
+    On Error Resume Next
+    Dim m As Object: Set m = feat.GetSpecificFeature2
+    Print #f, "MATE " & feat.Name & " | type=" & m.Type & " | align=" & m.Alignment & " | flip=" & m.Flipped & " | suppressed=" & feat.IsSuppressed
+    Dim d As Object: Set d = feat.GetFirstDisplayDimension
+    Do While Not d Is Nothing
+        Print #f, "  DIM " & d.GetDimension2(0).FullName & " = " & d.GetDimension2(0).SystemValue
+        Set d = feat.GetNextDisplayDimension(d)
+    Loop
+    Dim k As Long
+    For k = 0 To m.GetMateEntityCount - 1
+        Dim e As Object: Set e = m.MateEntity(k)
+        Print #f, "  ENT " & k & " comp=" & e.ReferenceComponent.Name2 & " reftype=" & e.ReferenceType2 & " params=" & JoinV(e.EntityParams)
+    Next
+End Sub
+
+Sub DumpEqns(ByVal md As Object)
+    On Error Resume Next
+    Dim em As Object: Set em = md.GetEquationMgr
+    Dim i As Long
+    For i = 0 To em.GetCount - 1
+        Print #f, "  EQN " & em.Equation(i) & " = " & em.Value(i) & " global=" & em.GlobalVariable(i)
+    Next
+End Sub
+
+Function JoinV(ByVal a As Variant) As String
+    Dim i As Long, s As String
+    For i = 0 To UBound(a): s = s & a(i) & ",": Next
+    JoinV = s
+End Function

@@ -1,0 +1,210 @@
+' SolidWorks VBA macro v3. Does 2 jobs, read-only on your parts:
+'  A) builds tiny test parts T00..T09 (one change each) in a new folder "swtests" next to revdev, saves each
+'  B) for every .SLDPRT in revdev AND swtests writes <part>.refs.txt: every face + edge with geometry,
+'     persistent reference bytes, face ids, and the edges of every fillet/chamfer (fixes empty EDGE lines)
+' Run: Tools > Macro > New > paste over everything > F5. Then zip swtests folder + all *.refs.txt and send.
+Option Explicit
+Dim swApp As Object
+Dim f As Integer
+Dim lg As Integer
+
+Sub main()
+    Set swApp = Application.SldWorks
+    Dim folder As String
+    folder = InputBox("revdev folder:", "Dump v3", "C:\Users\" & Environ("USERNAME") & "\Downloads\Ant\Public RVRN V2.0\revdev\")
+    If folder = "" Then Exit Sub
+    If Right(folder, 1) <> "\" Then folder = folder & "\"
+    Dim tdir As String: tdir = folder & "swtests\"
+    If Dir(tdir, vbDirectory) = "" Then MkDir tdir
+    lg = FreeFile: Open tdir & "make_log.txt" For Output As #lg
+    MakeTests tdir
+    Close #lg
+    Dim n As Long
+    n = DumpFolder(tdir) + DumpFolder(folder)
+    MsgBox "Done: " & n & " parts. Zip the swtests folder and all *.refs.txt files and send them."
+End Sub
+
+' ---------------- A) test parts ----------------
+Sub Step(ByVal doc As Object, ByVal tdir As String, ByVal nm As String, ByVal ok As Boolean)
+    Dim e As Long, w As Long
+    doc.ForceRebuild3 False
+    doc.Extension.SaveAs3 tdir & nm & ".SLDPRT", 0, 3, Nothing, Nothing, e, w
+    Print #lg, nm & " ok=" & ok & " saveErr=" & e
+End Sub
+
+Function Sel(ByVal doc As Object, ByVal nm As String, ByVal typ As String, ByVal x As Double, ByVal y As Double, ByVal z As Double, ByVal app As Boolean, ByVal mk As Long) As Boolean
+    Sel = doc.Extension.SelectByID2(nm, typ, x, y, z, app, mk, Nothing, 0)
+End Function
+
+Sub MakeTests(ByVal tdir As String)
+    On Error Resume Next
+    Dim tpl As String: tpl = swApp.GetUserPreferenceStringValue(8)
+    Dim doc As Object: Set doc = swApp.NewDocument(tpl, 0, 0, 0)
+    If doc Is Nothing Then Print #lg, "no template": Exit Sub
+    Dim fm As Object: Set fm = doc.FeatureManager
+    Dim sm As Object: Set sm = doc.SketchManager
+    Dim ok As Boolean, ft As Object
+    Step doc, tdir, "T00_empty", True
+    ' T01 sketch: 20x20 mm rectangle on Front Plane
+    ok = Sel(doc, "Front Plane", "PLANE", 0, 0, 0, False, 0)
+    sm.InsertSketch True
+    sm.CreateCornerRectangle 0, 0, 0, 0.02, 0.02, 0
+    sm.InsertSketch True
+    Step doc, tdir, "T01_sketch_rect", ok
+    ' T02 extrude 10 mm
+    ok = Sel(doc, "Sketch1", "SKETCH", 0, 0, 0, False, 0)
+    Set ft = fm.FeatureExtrusion3(True, False, False, 0, 0, 0.01, 0, False, False, False, False, 0, 0, False, False, False, False, True, True, True, 0, 0, False)
+    Step doc, tdir, "T02_extrude10", Not ft Is Nothing
+    ' T03 change depth 10 -> 12 mm (only a value changes)
+    doc.Parameter("D1@Boss-Extrude1").SystemValue = 0.012
+    Step doc, tdir, "T03_depth12", True
+    ' T04 fillet 1 mm on top-back edge (along x, y=20, z=12)
+    ok = Sel(doc, "", "EDGE", 0.01, 0.02, 0.012, False, 1)
+    Dim vE As Variant
+    Set ft = fm.FeatureFillet3(195, 0.001, 0, 0, 0, 0, 0, vE, vE, vE, vE, vE, vE, vE)
+    Step doc, tdir, "T04_fillet1", ok And Not ft Is Nothing
+    ' T05 chamfer 1 mm x 45 on top-left edge (along y, x=0, z=12)
+    ok = Sel(doc, "", "EDGE", 0, 0.01, 0.012, False, 1)
+    Set ft = fm.InsertFeatureChamfer(4, 1, 0.001, 0.785398163, 0, 0, 0, 0)
+    Step doc, tdir, "T05_chamfer1", ok And Not ft Is Nothing
+    ' T06 hole: circle r1.5 at (4,4) on Front Plane, cut through all both ways
+    ok = Sel(doc, "Front Plane", "PLANE", 0, 0, 0, False, 0)
+    sm.InsertSketch True
+    sm.CreateCircle 0.004, 0.004, 0, 0.0055, 0.004, 0
+    sm.InsertSketch True
+    ok = Sel(doc, "Sketch2", "SKETCH", 0, 0, 0, False, 0)
+    Set ft = fm.FeatureCut4(False, False, False, 1, 1, 0.01, 0.01, False, False, False, False, 0, 0, False, False, False, False, False, True, True, True, True, False, 0, 0, False, False)
+    Step doc, tdir, "T06_cut_hole", ok And Not ft Is Nothing
+    ' T07 linear pattern of the hole: 3 x 5 mm along bottom edge (x)
+    ok = Sel(doc, "", "EDGE", 0.01, 0, 0, False, 1)
+    ok = ok And Sel(doc, "Cut-Extrude1", "BODYFEATURE", 0, 0, 0, True, 4)
+    Set ft = fm.FeatureLinearPattern4(3, 0.005, 1, 0.01, False, False, "", "", False, False, False, False, False, False, False, 0, 0, False, False)
+    Step doc, tdir, "T07_linpattern3", ok And Not ft Is Nothing
+    ' T08 rename a feature (only a name changes)
+    Set ft = doc.FeatureByName("Fillet1"): If Not ft Is Nothing Then ft.Name = "MyFillet"
+    Step doc, tdir, "T08_rename", Not ft Is Nothing
+    ' T09 suppress the chamfer (only a flag changes)
+    ok = Sel(doc, "Chamfer1", "BODYFEATURE", 0, 0, 0, False, 0)
+    doc.EditSuppress2
+    Step doc, tdir, "T09_suppress", ok
+    swApp.CloseDoc doc.GetTitle
+End Sub
+
+' ---------------- B) refs dump ----------------
+Function DumpFolder(ByVal folder As String) As Long
+    Dim fn As String: fn = Dir(folder & "*.SLDPRT")
+    Dim lst As New Collection, k As Variant
+    Do While fn <> "": lst.Add folder & fn: fn = Dir(): Loop
+    For Each k In lst
+        DumpRefs CStr(k): DumpFolder = DumpFolder + 1
+    Next
+End Function
+
+Sub DumpRefs(ByVal path As String)
+    On Error Resume Next
+    Dim outp As String: outp = Left(path, Len(path) - 7) & ".refs.txt"
+    If Dir(outp) <> "" Then Exit Sub ' already done: rerun resumes after a crash
+    Dim errs As Long, warns As Long
+    swApp.DocumentVisible False, 1
+    Dim doc As Object: Set doc = swApp.OpenDoc6(path, 1, 1 + 2, "", errs, warns)
+    swApp.DocumentVisible True, 1
+    If doc Is Nothing Then Exit Sub
+    f = FreeFile: Open outp For Output As #f
+    Print #f, "PART " & doc.GetTitle
+    Dim ext As Object: Set ext = doc.Extension
+    Dim feat As Object: Set feat = doc.FirstFeature
+    Do While Not feat Is Nothing
+        Dim t As String: t = feat.GetTypeName2
+        Print #f, "FEATURE " & feat.Name & " | " & t & " | id=" & feat.GetID & " | pref=" & PRef(ext, feat)
+        Dim fs As Variant: fs = feat.GetFaces
+        Dim i As Long, j As Long
+        If Not IsEmpty(fs) Then
+            For i = 0 To UBound(fs)
+                Print #f, "  FACE " & i & " fid=" & fs(i).GetFaceId & " area=" & fs(i).GetArea & " " & SurfDesc(fs(i)) & " pref=" & PRef(ext, fs(i))
+                Dim es As Variant: es = fs(i).GetEdges
+                If Not IsEmpty(es) Then
+                    For j = 0 To UBound(es): Print #f, "    EDGE " & EdgeDesc(es(j)) & " pref=" & PRef(ext, es(j)): Next
+                End If
+            Next
+        End If
+        If t = "Fillet" Or t = "Chamfer" Then DumpBlendEdges ext, feat
+        Set feat = feat.GetNextFeature
+    Loop
+    ' all body faces/edges once, with ids (body-level map)
+    Dim bodies As Variant: bodies = doc.GetBodies2(0, False)
+    If Not IsEmpty(bodies) Then
+        Dim b As Long
+        For b = 0 To UBound(bodies)
+            Print #f, "BODY " & b & " " & bodies(b).Name
+            Dim be As Variant: be = bodies(b).GetEdges
+            If Not IsEmpty(be) Then
+                For i = 0 To UBound(be): Print #f, "  BEDGE " & EdgeDesc(be(i)) & " pref=" & PRef(ext, be(i)): Next
+            End If
+        Next
+    End If
+    Close #f
+    ' drop every reference before closing (crash fix)
+    Set feat = Nothing: Set ext = Nothing: fs = Empty: es = Empty: bodies = Empty: be = Empty
+    Dim nm As String: nm = doc.GetTitle
+    doc.ClearSelection2 True
+    Set doc = Nothing
+    swApp.CloseDoc nm
+    DoEvents
+End Sub
+
+Sub DumpBlendEdges(ByVal ext As Object, ByVal feat As Object)
+    On Error Resume Next
+    Dim x As Object: Set x = feat.GetDefinition
+    x.AccessSelections feat.GetModelDoc2, Nothing
+    Dim n As Long, i As Long, it As Object, tp As Long
+    If feat.GetTypeName2 = "Fillet" Then n = x.FilletItemsCount Else n = x.GetEdgeCount
+    Print #f, "  BLEND_ITEMS " & n
+    For i = 0 To n - 1
+        If feat.GetTypeName2 = "Fillet" Then Set it = x.GetFilletItemAtIndex2(i, tp) Else Set it = x.GetEdge(i)
+        If Not it Is Nothing Then Print #f, "  BLEND_EDGE " & i & " " & EdgeDesc(it) & " pref=" & PRef(ext, it)
+    Next
+    x.ReleaseSelectionAccess
+End Sub
+
+Function EdgeDesc(ByVal e As Object) As String
+    On Error Resume Next
+    Dim cp As Object: Set cp = e.GetCurveParams3
+    Dim c As Object: Set c = e.GetCurve
+    Dim k As String
+    If c.IsLine Then k = "line" Else If c.IsCircle Then k = "circle " & JoinV(c.CircleParams) Else k = "curve"
+    EdgeDesc = k & " s=(" & cp.StartPoint(0) & "," & cp.StartPoint(1) & "," & cp.StartPoint(2) & ") e=(" & cp.EndPoint(0) & "," & cp.EndPoint(1) & "," & cp.EndPoint(2) & ") id=" & e.GetID
+End Function
+
+Function SurfDesc(ByVal o As Object) As String
+    On Error Resume Next
+    Dim sf As Object: Set sf = o.GetSurface
+    If sf.IsPlane Then
+        SurfDesc = "plane " & JoinV(sf.PlaneParams)
+    ElseIf sf.IsCylinder Then
+        SurfDesc = "cyl " & JoinV(sf.CylinderParams)
+    ElseIf sf.IsCone Then
+        SurfDesc = "cone " & JoinV(sf.ConeParams)
+    ElseIf sf.IsTorus Then
+        SurfDesc = "torus " & JoinV(sf.TorusParams)
+    Else
+        SurfDesc = "surf " & sf.Identity
+    End If
+    SurfDesc = SurfDesc & " box=" & JoinV(o.GetBox)
+End Function
+
+Function PRef(ByVal ext As Object, ByVal o As Object) As String
+    ' persistent reference bytes as hex: the key that links binary records to faces/edges
+    On Error Resume Next
+    Dim v As Variant: v = ext.GetPersistReference3(o)
+    If IsEmpty(v) Then PRef = "-": Exit Function
+    Dim i As Long, s As String
+    For i = LBound(v) To UBound(v): s = s & Right("0" & Hex(v(i)), 2): Next
+    PRef = s
+End Function
+
+Function JoinV(ByVal a As Variant) As String
+    On Error Resume Next
+    Dim i As Long, s As String
+    For i = 0 To UBound(a): s = s & a(i) & ",": Next
+    JoinV = s
+End Function
