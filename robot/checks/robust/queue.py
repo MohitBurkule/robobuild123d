@@ -175,7 +175,7 @@ def next_ticket(qdir, me: str, sha: str, log=None, why=None):
     return None
 
 
-def run_ticket(qdir, tk: dict, me: str, execute=None) -> dict:
+def run_ticket(qdir, tk: dict, me: str, execute=None, log=None) -> dict:
     from .runner import is_infra, subprocess_execute
 
     q = Path(qdir)
@@ -195,8 +195,15 @@ def run_ticket(qdir, tk: dict, me: str, execute=None) -> dict:
     for k in ("spec", "file"):
         if job.get(k) and not Path(job[k]).is_absolute():
             job[k] = str(REPO / job[k])
+    to = min(float(tk.get("timeout") or 1800), JOB_CAP_S)
+    jid = tk["job"].get("id")
+    if log:
+        log(f"  {me} {jid}: start ({tk['key'][:8]})")
     try:
-        res = (execute or subprocess_execute)(job, min(float(tk.get("timeout") or 1800), JOB_CAP_S))
+        if execute:
+            res = execute(job, to)
+        else:  # progress every minute: elapsed, child CPU, parts built, CPU-idle time (a stall shows as idle growing)
+            res = subprocess_execute(job, to, progress=(lambda d: log(f"  {me} {jid}: running " + " ".join(f"{k}={v}" for k, v in d.items()))) if log else None)
     finally:
         stop.set()
     final = res.get("stage") not in ("timeout", "worker") and not is_infra(res)
@@ -225,7 +232,11 @@ def describe(qdir) -> str:
     return "\n".join(lines)
 
 
-def work(qdir, workers=1, execute=None, log=print, once=False, poll=False) -> int:
+def _log(*a):
+    print(time.strftime("%H:%M:%S"), *a, flush=True)  # nohup'd to a file: unflushed lines only appear at exit
+
+
+def work(qdir, workers=1, execute=None, log=_log, once=False, poll=False) -> int:
     sha = head_sha()
     me0 = f"{socket.gethostname()}:{os.getpid()}"
     try:
@@ -258,7 +269,7 @@ def work(qdir, workers=1, execute=None, log=print, once=False, poll=False) -> in
                     continue
                 return
             t0 = time.time()
-            res = run_ticket(qdir, tk, me, execute)
+            res = run_ticket(qdir, tk, me, execute, log)
             done[0] += 1
             log(f"  {me} {tk['job'].get('id')}: {res.get('error') or 'ok'} ({time.time() - t0:.0f} s)")
             if once:
