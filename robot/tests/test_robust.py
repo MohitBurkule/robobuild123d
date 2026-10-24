@@ -347,6 +347,17 @@ def test_enqueued_code_equals_worker_code_hash(tmp_path, monkeypatch):
     assert codes == {Q.code_hash(spec, "src/build_revron.py")}
 
 
+def test_shared_copy_is_chunked_and_time_limited(tmp_path):
+    import pytest
+
+    from robot import geom
+    src = tmp_path / "a.npz"
+    src.write_bytes(b"x" * (3 << 20))
+    geom._copy_atomic(src, tmp_path / "b.npz")
+    assert (tmp_path / "b.npz").read_bytes() == src.read_bytes()
+    with pytest.raises(OSError):
+        geom._copy_atomic(src, tmp_path / "c.npz", limit_s=-1)
+    assert not (tmp_path / "c.npz").exists() and not list(tmp_path.glob(".*tmp"))
 def test_subprocess_execute_kills_a_stalled_child(monkeypatch):
     import sys
 

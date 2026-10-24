@@ -42,10 +42,27 @@ def shared_cache_dir() -> Path | None:
         return None
 
 
-def _copy_atomic(src: Path, dst: Path) -> None:
+COPY_LIMIT_S = 120.0  # a shared-cache copy slower than this is abandoned (the part is built locally instead)
+
+
+def _copy_atomic(src: Path, dst: Path, limit_s: float = COPY_LIMIT_S) -> None:
+    """Plain chunked copy with a time limit (no sendfile / copy_file_range: network mounts stall or refuse them)."""
+    import time
+
     tmp = dst.with_name(f".{dst.name}.{os.getpid()}.tmp")
-    shutil.copyfile(src, tmp)
-    os.replace(tmp, dst)
+    end = time.monotonic() + limit_s
+    try:
+        with open(src, "rb") as fi, open(tmp, "wb") as fo:
+            while True:
+                b = fi.read(1 << 20)
+                if not b:
+                    break
+                fo.write(b)
+                if time.monotonic() > end:
+                    raise OSError(f"copy {src.name} over {limit_s:.0f} s")
+        os.replace(tmp, dst)
+    finally:
+        tmp.unlink(missing_ok=True)
 
 
 def _fetch_shared(key: str, d: Path) -> bool:
