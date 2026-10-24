@@ -358,3 +358,14 @@ def test_shared_copy_is_chunked_and_time_limited(tmp_path):
     with pytest.raises(OSError):
         geom._copy_atomic(src, tmp_path / "c.npz", limit_s=-1)
     assert not (tmp_path / "c.npz").exists() and not list(tmp_path.glob(".*tmp"))
+def test_subprocess_execute_kills_a_stalled_child(monkeypatch):
+    import sys
+
+    from robot.checks.robust import runner as R
+    monkeypatch.setattr(R.sys, "executable", sys.executable)
+    seen = []
+    # a "worker" that sleeps (no CPU) is killed as stalled and reported as infra
+    real = R.subprocess.Popen
+    monkeypatch.setattr(R.subprocess, "Popen", lambda args, **kw: real([sys.executable, "-c", "import time; time.sleep(30)"], **kw))
+    res = R.subprocess_execute({"id": "j"}, 60, progress=seen.append, tick=0.5, stall_s=1.5)
+    assert R.is_infra(res) and "stalled" in res["error"] and seen and "idle" in seen[0]
