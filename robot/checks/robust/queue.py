@@ -15,6 +15,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import shutil
 import socket
 import subprocess
 import threading
@@ -22,7 +23,27 @@ import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
-STALE_S = 600.0
+STALE_S = 900.0   # a claim not refreshed this long belongs to a dead container; purged at startup
+JOB_CAP_S = 3600.0  # per-ticket wall-clock cap, whatever --budget the enqueuer had (a hung job must come back)
+MIN_FREE_B = 1.5e9  # do not start a job with less free disk under the geometry cache: it would fail ENOSPC and loop
+
+
+def purge_stale_claims(qdir, now=time.time) -> int:
+    n = 0
+    for c in (Path(qdir) / "claims").glob("*"):
+        try:
+            if now() - c.stat().st_mtime > STALE_S:
+                c.unlink()
+                n += 1
+        except FileNotFoundError:
+            pass
+    return n
+
+
+def disk_ok(min_free=None) -> bool:
+    from ...geom import cache_dir
+
+    return shutil.disk_usage(cache_dir()).free >= (MIN_FREE_B if min_free is None else min_free)
 BEAT_S = 60.0
 REPO = Path(__file__).resolve().parents[3]
 
@@ -102,7 +123,13 @@ def claim(qdir, key: str, me: str, now=time.time) -> bool:
 
 def next_ticket(qdir, me: str, sha: str):
     q = Path(qdir)
-    for t in sorted((q / "tickets").glob("*.json"), key=lambda p: p.stat().st_mtime if p.exists() else 0):
+    def order(p):  # baselines first: they warm the part cache every other job reuses
+        try:
+            return (0 if "baseline" in p.read_text()[:4000] else 1, p.stat().st_mtime)
+        except FileNotFoundError:
+            return (2, 0)
+
+    for t in sorted((q / "tickets").glob("*.json"), key=order):
         try:
             tk = json.loads(t.read_text())
         except (ValueError, FileNotFoundError):
@@ -146,7 +173,7 @@ def run_ticket(qdir, tk: dict, me: str, execute=None) -> dict:
         if job.get(k) and not Path(job[k]).is_absolute():
             job[k] = str(REPO / job[k])
     try:
-        res = (execute or subprocess_execute)(job, float(tk.get("timeout") or 1800))
+        res = (execute or subprocess_execute)(job, min(float(tk.get("timeout") or 1800), JOB_CAP_S))
     finally:
         stop.set()
     final = res.get("stage") not in ("timeout", "worker") and not is_infra(res)
@@ -160,11 +187,17 @@ def run_ticket(qdir, tk: dict, me: str, execute=None) -> dict:
 def work(qdir, workers=1, execute=None, log=print, once=False) -> int:
     sha = head_sha()
     me0 = f"{socket.gethostname()}:{os.getpid()}"
+    n = purge_stale_claims(qdir)
+    if n:
+        log(f"queue: dropped {n} claim(s) older than {STALE_S / 60:.0f} min")
     done = [0]
 
     def loop(i):
         me = f"{me0}:{i}"
         while True:
+            if not disk_ok():
+                log(f"  {me}: less than {MIN_FREE_B / 1e9:.1f} GB free under the geometry cache; stopping (free disk, then re-run)")
+                return
             tk = next_ticket(qdir, me, sha)
             if tk is None:
                 return
