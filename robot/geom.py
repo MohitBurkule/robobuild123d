@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import json
 import os
+import shutil
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -25,6 +26,52 @@ from scipy import ndimage
 from . import cache, shapes, xform
 
 CACHE_VERSION = "1"
+
+
+def shared_cache_dir() -> Path | None:
+    """A cache shared by every container (ROBOT_SHARED_CACHE): parts are written once, atomically, and read by anyone
+    with the same key, so a part any container built survives restarts and is never rebuilt elsewhere."""
+    v = os.environ.get("ROBOT_SHARED_CACHE")
+    if not v:
+        return None
+    try:
+        d = Path(v)
+        d.mkdir(parents=True, exist_ok=True)
+        return d
+    except OSError:
+        return None
+
+
+def _copy_atomic(src: Path, dst: Path) -> None:
+    tmp = dst.with_name(f".{dst.name}.{os.getpid()}.tmp")
+    shutil.copyfile(src, tmp)
+    os.replace(tmp, dst)
+
+
+def _fetch_shared(key: str, d: Path) -> bool:
+    """Copy a part from the shared cache into the local one (json last: it marks the entry complete)."""
+    s = shared_cache_dir()
+    if s is None or not (s / f"{key}.json").exists() or not (s / f"{key}.npz").exists():
+        return False
+    try:
+        for ext in ("npz", "brep", "json"):
+            if (s / f"{key}.{ext}").exists():
+                _copy_atomic(s / f"{key}.{ext}", d / f"{key}.{ext}")
+        return True
+    except OSError:
+        return False
+
+
+def _publish_shared(key: str, d: Path) -> None:
+    s = shared_cache_dir()
+    if s is None or (s / f"{key}.json").exists():
+        return
+    try:
+        for ext in ("npz", "brep", "json"):  # write-once; the json lands last
+            if (d / f"{key}.{ext}").exists():
+                _copy_atomic(d / f"{key}.{ext}", s / f"{key}.{ext}")
+    except OSError:
+        pass
 
 
 def cache_dir() -> Path:
@@ -108,7 +155,7 @@ def key_for(shape: dict, base_dir: Path | None, tess: Tess = FINE, key_extra: st
     envs = sorted(n for n in os.environ.get("ROBOT_CACHE_ENV", "").split(",") if n)
     if envs:
         key_extra = f"{key_extra}|env:" + ",".join(f"{n}={os.environ.get(n, '')}" for n in envs)
-    return shapes.shape_key(shape, base_dir, f"{CACHE_VERSION}|{_b123d_version()}|{cache.lib_versions()}|{src}|{tess.lin}|{tess.ang}|{key_extra}")
+    return shapes.shape_key(shape, base_dir, f"{CACHE_VERSION}|{cache.lib_versions()}|{src}|{tess.lin}|{tess.ang}|{key_extra}")
 
 
 def cached(key: str) -> bool:
@@ -127,6 +174,8 @@ def geom_for(shape: dict, base_dir: Path | None, tess: Tess = FINE, solid_factor
         return _MEM[key]
     d = cache_dir()
     npz, js, brep = d / f"{key}.npz", d / f"{key}.json", d / f"{key}.brep"
+    if use and not (npz.exists() and js.exists()):
+        _fetch_shared(key, d)
     if use and npz.exists() and js.exists():
         try:
             z = np.load(npz)
@@ -147,8 +196,14 @@ def geom_for(shape: dict, base_dir: Path | None, tess: Tess = FINE, solid_factor
         b.export_brep(solid, str(brep))
     except Exception:  # noqa: BLE001 - B-rep cache is optional
         brep = None
-    np.savez_compressed(npz, v=V, f=F)
-    js.write_text(json.dumps({"volume": vol, "centroid": cen, "inertia": I}))
+    tmp = d / f".{key}.{os.getpid()}.npz"
+    np.savez_compressed(tmp, v=V, f=F)
+    os.replace(tmp, npz)
+    tj = d / f".{key}.{os.getpid()}.json.tmp"
+    tj.write_text(json.dumps({"volume": vol, "centroid": cen, "inertia": I}))
+    os.replace(tj, js)  # each finished part is a checkpoint: a killed build resumes from it
+    if use:
+        _publish_shared(key, d)
     g = PartGeom(key, V, F, vol, cen, I, brep)
     g._solid = solid
     _MEM[key] = g

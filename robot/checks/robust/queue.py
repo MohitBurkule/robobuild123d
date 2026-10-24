@@ -71,6 +71,9 @@ def _atomic(path: Path, text: str):
 _CODE: dict = {}
 
 
+_PARTS: dict = {}
+
+
 def code_hash(spec: str, model_rel: str) -> str:
     """cache.h(build-source hash, checks hash) of this checkout, as the runner keys results (runner.run)."""
     k = (spec, model_rel)
@@ -79,8 +82,11 @@ def code_hash(spec: str, model_rel: str) -> str:
         from . import discover as D
         from .runner import checks_hash
 
-        files = D.package_files(Path(spec).resolve().parent / model_rel)
-        _CODE[k] = cache.h(cache.h([f.read_bytes() for f in files]), checks_hash())
+        pkg = (Path(spec).resolve().parent / model_rel).parent
+        files = cache.tracked(D.package_files(pkg / Path(model_rel).name), pkg)
+        _CODE[k] = cache.h(cache.h([(f.relative_to(pkg).as_posix(), f.read_bytes()) for f in files]), checks_hash())
+        _PARTS[k] = dict(model_files=len(files), model=cache.h([(f.relative_to(pkg).as_posix(), f.read_bytes()) for f in files]),
+                         checks=checks_hash())
     return _CODE[k]
 
 
@@ -121,8 +127,10 @@ def claim(qdir, key: str, me: str, now=time.time) -> bool:
             return False
 
 
-def next_ticket(qdir, me: str, sha: str):
+def next_ticket(qdir, me: str, sha: str, log=None, why=None):
+    """The next ticket this checkout may run, claimed. `why` collects the reason per skipped ticket."""
     q = Path(qdir)
+    why = why if why is not None else {}
     def order(p):  # baselines first: they warm the part cache every other job reuses
         try:
             return (0 if "baseline" in p.read_text()[:4000] else 1, p.stat().st_mtime)
@@ -138,17 +146,21 @@ def next_ticket(qdir, me: str, sha: str):
             j = tk["job"]
             try:
                 mine = code_hash(str(REPO / j["spec"]) if not Path(j["spec"]).is_absolute() else j["spec"], j["model_rel"])
-            except Exception:  # noqa: BLE001 - cannot hash here: leave it to another worker
+            except Exception as e:  # noqa: BLE001 - cannot hash here: leave it to another worker
+                why[tk["key"]] = f"cannot hash: {e}"
                 continue
             if mine != tk["code"]:
+                why[tk["key"]] = f"code {tk['code'][:8]} != mine {mine[:8]}"
                 continue
         elif tk.get("sha") and sha and tk["sha"] != sha:
+            why[tk["key"]] = f"sha {tk['sha'][:8]} != {sha[:8]}"
             continue
         if claim(qdir, tk["key"], me):
             if (q / "results" / f"{tk['key']}.json").exists() or not t.exists():  # finished while we looked
                 (q / "claims" / tk["key"]).unlink(missing_ok=True)
                 continue
             return tk
+        why[tk["key"]] = "claimed elsewhere"
     return None
 
 
@@ -184,9 +196,31 @@ def run_ticket(qdir, tk: dict, me: str, execute=None) -> dict:
     return res
 
 
-def work(qdir, workers=1, execute=None, log=print, once=False) -> int:
+POLL_S = 60.0
+
+
+def describe(qdir) -> str:
+    """This checkout's code hash and its parts, for the worker log (to compare across containers)."""
+    import sys
+
+    from ... import cache
+
+    lines = []
+    for t in sorted((Path(qdir) / "tickets").glob("*.json"))[:1]:
+        j = json.loads(t.read_text())["job"]
+        spec = str(REPO / j["spec"]) if not Path(j["spec"]).is_absolute() else j["spec"]
+        lines.append(f"code {code_hash(spec, j['model_rel'])} {_PARTS.get((spec, j['model_rel']))}")
+    lines.append(f"python {sys.version.split()[0]}; libs {cache.lib_versions()}; repo {REPO}; head {head_sha()[:12]}")
+    return "\n".join(lines)
+
+
+def work(qdir, workers=1, execute=None, log=print, once=False, poll=False) -> int:
     sha = head_sha()
     me0 = f"{socket.gethostname()}:{os.getpid()}"
+    try:
+        log("queue: " + describe(qdir))
+    except Exception as e:  # noqa: BLE001 - diagnostics only
+        log(f"queue: describe failed: {e}")
     n = purge_stale_claims(qdir)
     if n:
         log(f"queue: dropped {n} claim(s) older than {STALE_S / 60:.0f} min")
@@ -198,8 +232,19 @@ def work(qdir, workers=1, execute=None, log=print, once=False) -> int:
             if not disk_ok():
                 log(f"  {me}: less than {MIN_FREE_B / 1e9:.1f} GB free under the geometry cache; stopping (free disk, then re-run)")
                 return
-            tk = next_ticket(qdir, me, sha)
+            why = {}
+            tk = next_ticket(qdir, me, sha, why=why)
             if tk is None:
+                if not why:
+                    return  # queue empty
+                kinds = {}
+                for w in why.values():
+                    kinds[w] = kinds.get(w, 0) + 1
+                if i == 0:
+                    log(f"  {me}: nothing to take: " + "; ".join(f"{n} x {w}" for w, n in sorted(kinds.items(), key=lambda x: -x[1])[:4]))
+                if all(w == "claimed elsewhere" for w in why.values()) or poll:
+                    time.sleep(POLL_S)  # others hold them; they come back if their container dies
+                    continue
                 return
             t0 = time.time()
             res = run_ticket(qdir, tk, me, execute)
@@ -219,8 +264,11 @@ def main(argv=None):
     ap = argparse.ArgumentParser(prog="robot.checks.robust.queue")
     ap.add_argument("queue")
     ap.add_argument("--workers", type=int, default=2)
+    ap.add_argument("--poll", action="store_true", help="keep waiting for tickets this checkout can run")
+    ap.add_argument("--shared-cache", default=None, help="part cache shared by all containers (default: <queue>/../../cache)")
     a = ap.parse_args(argv)
-    work(a.queue, a.workers)
+    os.environ.setdefault("ROBOT_SHARED_CACHE", a.shared_cache or str(Path(a.queue).resolve().parents[1] / "cache"))
+    work(a.queue, a.workers, poll=a.poll)
     return 0
 
 

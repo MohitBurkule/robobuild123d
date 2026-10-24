@@ -299,3 +299,32 @@ def test_queue_purges_stale_claims_and_caps_timeout(tmp_path, monkeypatch):
     Q.run_ticket(tmp_path, tk, "me", execute=lambda job, to: seen.setdefault("to", to) and {"id": "j", "blockers": []})
     assert seen["to"] == Q.JOB_CAP_S
     assert Q.disk_ok(0) and not Q.disk_ok(1e18)
+
+
+def test_checks_hash_ignores_untracked_files(tmp_path):
+    from robot.checks.robust import runner as R
+    from robot import cache
+    root = Path(R.__file__).resolve().parents[2]
+    a = R.checks_hash()
+    f = root / "zz_untracked_probe.py"
+    f.write_text("x = 1\n")
+    try:
+        cache._TRACKED.clear()
+        assert R.checks_hash() == a
+    finally:
+        f.unlink()
+
+
+def test_shared_part_cache_roundtrip(tmp_path, monkeypatch):
+    from robot import cache, geom
+    monkeypatch.setenv("ROBOT_CACHE", str(tmp_path / "l1"))
+    monkeypatch.setenv("ROBOT_SHARED_CACHE", str(tmp_path / "shared"))
+    monkeypatch.setattr(cache, "_enabled", True)
+    shape = {"type": "box", "size": [3.0, 4.0, 5.0]}
+    g = geom.geom_for(shape, None)
+    assert (tmp_path / "shared" / f"{g.key}.json").exists()
+    geom._MEM.clear()
+    monkeypatch.setenv("ROBOT_CACHE", str(tmp_path / "l2"))   # another container: empty local cache
+    n = cache.misses["part_geom"]
+    g2 = geom.geom_for(shape, None)
+    assert cache.misses["part_geom"] == n and abs(g2.volume - 60.0) < 1e-6
