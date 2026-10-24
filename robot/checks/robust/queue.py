@@ -74,23 +74,31 @@ _CODE: dict = {}
 _PARTS: dict = {}
 
 
+def model_hash(spec: str, model_rel: str) -> str:
+    """The model's python sources: git-tracked files of its package, by path relative to it, with their content."""
+    from ... import cache
+    from . import discover as D
+
+    pkg = (Path(spec).resolve().parent / model_rel).parent
+    files = cache.tracked(D.package_files(pkg / Path(model_rel).name), pkg)
+    _PARTS[(spec, model_rel)] = dict(model_files=len(files))
+    return cache.h([(f.relative_to(pkg).as_posix(), f.read_bytes()) for f in files])
+
+
 def code_hash(spec: str, model_rel: str) -> str:
-    """cache.h(build-source hash, checks hash) of this checkout, as the runner keys results (runner.run)."""
+    """cache.h(model_hash, checks_hash) of this checkout: exactly the `code` the enqueuer (runner.run) writes."""
     k = (spec, model_rel)
     if k not in _CODE:
         from ... import cache
-        from . import discover as D
         from .runner import checks_hash
 
-        pkg = (Path(spec).resolve().parent / model_rel).parent
-        files = cache.tracked(D.package_files(pkg / Path(model_rel).name), pkg)
-        _CODE[k] = cache.h(cache.h([(f.relative_to(pkg).as_posix(), f.read_bytes()) for f in files]), checks_hash())
-        _PARTS[k] = dict(model_files=len(files), model=cache.h([(f.relative_to(pkg).as_posix(), f.read_bytes()) for f in files]),
-                         checks=checks_hash())
+        m, c = model_hash(spec, model_rel), checks_hash()
+        _CODE[k] = cache.h(m, c)
+        _PARTS[k].update(model=m, checks=c)
     return _CODE[k]
 
 
-def enqueue(qdir, key: str, job: dict, timeout: float, sha: str | None = None, code: str = "") -> bool:
+def enqueue(qdir, key: str, job: dict, timeout: float, sha: str | None = None, code: str = "", parts: dict | None = None) -> bool:
     """Write a ticket unless the result or the ticket exists. True when a ticket was written."""
     q = Path(qdir)
     for d in ("tickets", "claims", "results"):
@@ -101,7 +109,7 @@ def enqueue(qdir, key: str, job: dict, timeout: float, sha: str | None = None, c
     for k in ("spec", "file"):
         if j.get(k):
             j[k] = _rel(j[k])
-    _atomic(q / "tickets" / f"{key}.json", json.dumps({"key": key, "sha": sha or head_sha(), "code": code, "timeout": timeout, "job": j}))
+    _atomic(q / "tickets" / f"{key}.json", json.dumps({"key": key, "sha": sha or head_sha(), "code": code, "code_parts": parts or {}, "timeout": timeout, "job": j}))
     return True
 
 
@@ -150,7 +158,10 @@ def next_ticket(qdir, me: str, sha: str, log=None, why=None):
                 why[tk["key"]] = f"cannot hash: {e}"
                 continue
             if mine != tk["code"]:
-                why[tk["key"]] = f"code {tk['code'][:8]} != mine {mine[:8]}"
+                cp = tk.get("code_parts") or {}
+                mp = _PARTS.get((str(REPO / j["spec"]) if not Path(j["spec"]).is_absolute() else j["spec"], j["model_rel"])) or {}
+                diff = [n for n in ("model", "checks") if cp.get(n) and cp.get(n) != mp.get(n)]
+                why[tk["key"]] = f"code {tk['code'][:8]} != mine {mine[:8]}" + (f" ({'+'.join(diff)} differ)" if diff else "")
                 continue
         elif tk.get("sha") and sha and tk["sha"] != sha:
             why[tk["key"]] = f"sha {tk['sha'][:8]} != {sha[:8]}"

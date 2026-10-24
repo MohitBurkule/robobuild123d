@@ -328,3 +328,20 @@ def test_shared_part_cache_roundtrip(tmp_path, monkeypatch):
     n = cache.misses["part_geom"]
     g2 = geom.geom_for(shape, None)
     assert cache.misses["part_geom"] == n and abs(g2.volume - 60.0) < 1e-6
+
+
+def test_enqueued_code_equals_worker_code_hash(tmp_path, monkeypatch):
+    import json
+
+    from robot import cache
+    from robot.checks.robust import queue as Q, runner as R
+    spec = str(Path(R.__file__).resolve().parents[3] / "robots" / "revron" / "spec.json")
+    if not Path(spec).exists():
+        return
+    src = Q.model_hash(spec, "src/build_revron.py")
+    monkeypatch.setenv("ROBOT_ROBUST_QUEUE", str(tmp_path))
+    from robot.checks.robust import plan as P
+    R.run([P.Job("a", "a", "hyp", overlay=[{"op": "x"}])], spec, "src/build_revron.py", 60, 1,
+          execute=lambda j, t: {}, src_hash=src, log=lambda *a: None)
+    codes = {json.loads(f.read_text())["code"] for f in (tmp_path / "tickets").glob("*.json")}
+    assert codes == {Q.code_hash(spec, "src/build_revron.py")}
