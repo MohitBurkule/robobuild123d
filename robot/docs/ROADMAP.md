@@ -48,7 +48,22 @@ U = user experience, C = checks and physics, A = archetypes.
 | 28 | R8 | Single source of truth for choices | Three hand-kept lists drift. |
 | 29 | U8 | Gallery, fork hygiene, licence separation | `publish.yml` from upstream is a hazard. |
 
-Start now, independent of each other: L1, R1, R2, R6, U1, M2, M3.
+Checks and archetypes arrived after the table above was ranked. They slot in
+as follows:
+
+| Slot | Id | Feature | Why |
+|------|----|---------|-----|
+| 0 | C1 | Confirm size rule, square vs cube | If wrong, every passing design may be illegal. Cheap to settle. |
+| after 4 | A1 | Declarative weapon-module contract | Per-weapon `if` chains in `build.py` block every new archetype. |
+| after 7 | A2 | Belt-driven shaft spinner (drum, eggbeater, disc) | Declared in `WEAPON_CLASSES`, nothing builds them. |
+| after 7 | A3 | Weapon sizing solver | LLM cannot ask for "10 J" today. Geometry is constants. |
+| after 8 | C2 + C3 | Drive performance and weapon spin-up / bite | Decide if the robot pushes and if the weapon ever hits. |
+| after 13 | C5 + C6 | Real motor curves in sim, fight scoring | One figure of merit to rank designs. |
+| after 15 | A4, A5, A6 | 4WD for all, undercutter, linkage weapons | Widens what can be built. |
+| after 18 | C4, C7, C8, C9 | Gyro lift, dead poses, brownout, load paths | High-recall failure modes with no check today. |
+| late | C10, A7, A8 | Serviceability, non-roller, presets | |
+
+Start now, independent of each other: C1, L1, R1, R2, R6, U1, M2, M3, A1.
 Define the fix/patch JSON shape once (L1 and L7 share it) in
 `robot/design_io/patch.py`.
 
@@ -378,8 +393,158 @@ report or GLB; one rules profile.
 
 ## C. Checks and physics
 
-Pending: reviewer still reading.
+Exists already: `checks/power.py` (tip speed, energy, battery peak, runtime),
+`dynamics.py` (tip angles, invertibility, gyro vs bearing), `strength.py`
+(weapon shaft, bearing, upright, pull-out), `combat.py` (about 110 rules),
+`electrical.py`, `legal.py`, `threat/`, `sim/` (MuJoCo, flat torque cap, no
+scoring). Gaps are mostly what `combat.py NOT_CHECKED` lists itself.
+New groups go in `REGISTRY` in `robot/checks/registry.py`. Put a shared
+`motor_curve` in `robot/checks/_physics.py` for C2, C3, C5, C6.
+
+### C1. Size rule: confirm square vs cube
+- `robot/profile.py footprint_mm = 150.0` and `gen/budget.py SIZE_LIMIT_MM`
+  check an XY square only, never height.
+  `gen/data/antweight_taxonomy.json` mentions a 4-inch cube. Two reviewers
+  flagged this from memory; neither checked the rules text, and `robot/rules/`
+  has no size wording at all. Confirm against the published event rules first.
+- If a cube applies: `Profile.cube_mm`, `size_rule`; `legal.fits_cube(world,
+  side)` searching yaw and the 3 axis-up orientations; `legal.cube` blocker.
+- Accept (`robot/tests/test_legal_cube.py`): 100 cube passes; 102x50x50 fails;
+  100x100x60 rotated 30 degrees passes.
+
+### C2. Drivetrain performance model
+- New `robot/checks/drive.py`: `motor_curve(props, v)`, `drive_perf(ctx)`
+  giving `push_n = min(F_trac, F_motor)`, `slip_current_a`, `top_speed_ms`,
+  `t_1m_s`.
+- Findings `drive.traction_limited`, `drive.push` (warn under 0.6 m g),
+  `drive.accel` (warn over 0.6 s per metre), `drive.esc_current`. Feed
+  `slip_current_a` into the `power.py` peak.
+- Accept: hand-calculated `push_n` within 2%.
+
+### C3. Weapon spin-up, bite, energy and tip-speed bands
+- `power.py weapon_dynamics(...)`: `spinup_s` closed form, `bite_mm = v_close
+  / (rpm/60 * n_teeth)`, optional `weapon.teeth` spec field.
+- `power.spinup` warn over 2.0 s, block over 4.0 s; `power.bite` warn under
+  3 mm or over tooth height; upper energy warning; `power.tip_speed_low`.
+- Accept: 1806 2300 kV on 2S with a 30 g 80 mm disc gives 0.3 to 1.5 s.
+
+### C4. Hit reaction and gyro wheel-lift
+- `dynamics.py gyro_lift(ctx)`: `Omega_lift = m g (track/2) / (I omega)`,
+  warn under 0.5x turn rate, block under 0.25x. `hit_reaction(ctx)`: hop
+  height for verticals, yaw rate for horizontals (`dynamics.spin_out`).
+- Accept: `gyro_lift` flips to fail when track is halved.
+
+### C5. Real motor curves in the sim, pit and arena scene
+- `sim/model.py` `Group.stall_torque_nm`, `free_rad_s`, `gear`.
+  `sim/engine.py` uses them in place of the fixed 0.05 N m cap.
+  `sim/scene.py Scene.aws_arena(side, pit, wall_h, drop_edges)`.
+- Accept: stall push within 15% of `drive_perf.push_n`; robot over the pit
+  ends with z below 0.
+
+### C6. Fight scoring to rank designs
+- New `robot/sim/fight.py`: `fight(a, b, policy_a, policy_b, seconds=20,
+  seed=0) -> FightResult(winner, a_pts, b_pts, events)`; policies `chase`,
+  `box_rush`, `circle`; points for aggression, control, damage.
+- New `robot/sim/opponents.py`: 4 parametric reference opponents with no CAD.
+  `rank(models, n_seeds=3)`. CLI `python -m robot.sim fight|rank`.
+- Accept: deterministic per seed; dead dummy loses 100%; A/B swap flips sign.
+
+### C7. Self-righting and dead rest poses
+- New `robot/checks/rest.py`: hull faces, COM projection, energy barrier,
+  driven-wheel contact per pose. `rest.dead_pose`, `rest.side`, metric
+  `dead_pose_solid_angle_frac`.
+- Accept: flat box with proud wheels has 0 dead poses.
+
+### C8. Thermal and voltage-sag budget
+- New `robot/checks/thermal.py`: `thermal.brownout` from pack internal
+  resistance (already in `catalog.py`, unused), wire and connector
+  resistance; motor, ESC, battery heating; motor mount vs glass transition.
+- Accept: 180 mAh 2S at 20 A peak browns out; 450 mAh 75C does not.
+
+### C9. Impact load paths beyond the weapon shaft
+- `strength.py`: `wheel_axle`, `fork_bending`, `bolt_shear`,
+  `strength.hole_bearing`. Generalise `process.layer_load` to any flagged
+  printed part.
+- Accept: 3 mm axle with 12 mm overhang fails; fork printed upright fails.
+
+### C10. Pit-stop serviceability and pit edge
+- New `robot/checks/service.py`: `service_time(ctx, target_kind)` for
+  battery, blade, wheel, drive motor. `service.battery_swap`, `blade_swap`,
+  `tools`, `charge_access`, `link_access`. R122 rear overhang vs COM.
+- Accept: battery under the weapon module is a blocker.
+
+---
 
 ## A. Generator coverage and new archetypes
 
-Pending: reviewer still reading.
+`hypothesis.WEAPONS` declares 29 weapon types and 11 drive layouts.
+`hypothesis.BUILDABLE` has only pusher, wedge, lifter (servo horn, 2WD),
+`hspin_bar` (top mount, 2WD) and `vspin_drisk`.
+
+### A1. Declarative weapon-module contract
+- Each module class gains `ROBOT_TYPE`, `ARCHETYPE`, `FRAME`, `OWNS_FRONT`,
+  `ACTUATORS`, `MARGINS`, `BUILDABLE`, `WEAPON_SPEC`. `hypothesis.BUILDABLE`
+  is derived from modules. Touches `gen/external/weapon.py`, `build.py`,
+  `hypothesis.py`, `electronics.py`, `weapon_*.py`. Coordinate with the
+  `robot/modules/` owner.
+- Accept: spec byte-identical for one hypothesis per existing weapon; no
+  `h.weapon ==` left in `build.py` or `electronics.py`; a dummy module becomes
+  buildable with no other edits.
+
+### A2. Belt-driven shaft spinner (drum, eggbeater, vertical disc)
+- New `gen/external/weapon_beater.py` with `@module("vspin_eggbeater")`,
+  `("vspin_drum")`, `("vspin_disc")`. `spinner.py` gains `beater_shape`,
+  `drum_shape`, `shaft_rotor_connections`. Reuse drive belt geometry and
+  `belt_wrap`/`tension` checks.
+- User JSON `{"weapon":{"width":46,"tip_r":17,"reduction":1.0}}`.
+- Accept: eggbeater hypothesis builds, passes spinner, belt, legal checks,
+  two bearings, 150 g or less.
+
+### A3. Weapon sizing solver
+- New `robot/gen/weapon_size.py`: `size(kind, *, energy_j=None,
+  tip_speed_ms=None, max_r_mm, mass_cap_g, material, motor, cells,
+  reduction, teeth) -> WeaponDims(r_mm, t_mm, w_mm, mass_g, moi_kgm2,
+  rpm_loaded, tip_ms, energy_j, bite_mm_at, spinup_s)`.
+  Replaces `DISC_R`, `DISC_T`, `BAR_R` constants.
+- Accept: `size("disc", energy_j=10, ...)` within 5% of the energy the
+  spinner check computes; defaults reproduce today's disc.
+
+### A4. Open the drive axes
+- 4WD belt for wedge, lifter, pusher, hspin; N20 4WD; `2WD_skid` via
+  `drive.add_skid`.
+- Accept: gate passes for {wedge, lifter, hspin_bar} x {2WD, 4WD} x
+  {n10, n20}.
+
+### A5. Under-mounted horizontal weapons
+- `weapon_hspin.py` `MOUNT="under"`; `@module("undercutter")`,
+  `("hspin_disc")`.
+- Accept: bar sweep 1.0 to 3.0 mm above floor, no tyre intersection.
+
+### A6. Servo-linkage family (4-bar lifter, flipper, grabber)
+- New `gen/external/linkage.py` (`fourbar`, `synth`),
+  `weapon_fourbar.py`, `weapon_grabber.py`. `electronics.harness` takes
+  `servos: list[str]`.
+- Accept: lifts 150 g at tip with 2x torque margin at worst angle; no link
+  collision over the stroke.
+
+### A7. Non-roller locomotion
+- `to_spec` hardcodes `locomotion: "roller"` though `Profile` has a
+  non-roller limit. New `gen/external/drive_shuffle.py`. Whether shufflers
+  get the bonus is unverified: `Profile.shuffler_bonus = False` by default.
+
+### A8. Archetype presets
+- `robot/gen/data/archetypes/<name>.json`, `hypothesis.preset(name,
+  **overrides)`, `gen/cli.py --archetype NAME`. Ship drisk_4wd,
+  eggbeater_4wd, undercutter_2wd, grabber_4wd, fourbar_lifter, wedge_brick.
+
+### Candidate robots
+
+Hand estimates, not simulated. Each sums to 150 g and is drawn to fit 100 mm.
+
+| Name | Weapon | Energy | Needs |
+|------|--------|--------|-------|
+| Revron-XL | Single-tooth disc r 24 x 4 mm on hub motor, 4WD | about 11 J | A3, A8 |
+| Whisk | 46 mm eggbeater, belt 1:1, motor inside hull, 4WD, Ti forks | about 5 J | A2, A4 |
+| Skimmer | 90 x 12 x 3 mm undercutter bar, 2WD plus skid | about 13 J | A5, A4, A3 |
+| Pincer | 4WD grabber-lifter, two HV servos, 35 mm lift | control | A6, A4 |
+| Strider | Shuffler drum, only if rules allow the weight bonus | about 9 J | A7 |
