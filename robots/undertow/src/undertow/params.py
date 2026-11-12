@@ -18,10 +18,20 @@ RULES = Profile()   # aws2025: Antweight World Series 2025 (robot/profile.py, ro
 
 # ---------------------------------------------------------------------------------------------------------- rules
 MASS_LIMIT_G = RULES.mass_limit(roller=True)       # 150 g (wheeled robot)
-CUBE = 101.6                                      # AWS rules v4.3 sec 2b: fits fully inside a 4 in (101.6 mm) cube in start config (robot/profile.py footprint_mm=150 is NOT this rule)
-ENVELOPE_MARGIN = 1.0                              # per side: print / bend tolerance, skirt slop; start envelope must be <= CUBE - 2*margin
-ENVELOPE_MAX = CUBE - 2 * ENVELOPE_MARGIN
-FOOTPRINT_PROFILE = RULES.footprint_mm            # kept for the repo checker only
+# Size rule: ONE setting (settings.SETTINGS["rules"]).
+#   "aws2025" (default): robot/profile.py footprint_mm = 150 mm floor square, no overhang at any height, no height limit.
+#   "aws_v43_cube": optional older 4 in (101.6 mm) cube in start configuration (AWS v4.3 sec 2b); front starts folded up.
+RULESET = SETTINGS["rules"]
+CUBE_V43 = 101.6                                   # AWS v4.3 sec 2b cube side (only for rules="aws_v43_cube")
+ENVELOPE = dict(aws2025=dict(side=RULES.footprint_mm, height=None, start_folded=False),
+                aws_v43_cube=dict(side=CUBE_V43, height=CUBE_V43, start_folded=True))[RULESET]
+ENVELOPE_MARGIN = 1.0                              # per side: print / bend tolerance, skirt slop
+ENVELOPE_MAX = ENVELOPE["side"] - 2 * ENVELOPE_MARGIN
+HEIGHT_MAX = None if ENVELOPE["height"] is None else ENVELOPE["height"] - 2 * ENVELOPE_MARGIN
+START_FOLDED = ENVELOPE["start_folded"]             # cube: attachment folded up at start; square: forks start down on the floor
+# size masters that differ per rule set (default = the 150 mm square values; cube values squeeze inside 99.6 mm)
+SIZE = dict(aws2025=dict(WHEELBASE=56.0, SPINE_HALF=7.5, FLANK_DEG=25.0, CHEEK_REACH=7.0),
+            aws_v43_cube=dict(WHEELBASE=54.0, SPINE_HALF=5.5, FLANK_DEG=15.0, CHEEK_REACH=5.0))[RULESET]
 GROUND_MIN = RULES.min_ground_clearance_mm         # lowest non-wheel point over the floor
 WALL_TPU_MIN = RULES.min_wall_tpu_mm
 FORK_ANGLE_RANGE = RULES.wedge_angle_deg           # (min, max) wedge / fork angle the rules checker accepts
@@ -49,8 +59,8 @@ def cat_mass(cid):
 N_WHEELS = 4                       # 4WD: all the robot's weight is on driven tyres (pushing force = mu m g, not mu m g * share)
 WHEEL_PROUD = 1.5                  # tyre stands this far past BOTH plate faces: drives either way up; >= GROUND_MIN
 WHEEL_RUN = _bay.RUNNING_CLEARANCE # wheel to anything that does not turn with it (robot/cad/bay.py, checks/interference)
-WHEELBASE = 54.0                   # axle to axle: battery + ESC band between motor rows, length inside ENVELOPE_MAX
-SPINE_HALF = 5.5                   # half width of the centre spine between motor backs (sized by the cube width, see HALF_W_ALL)
+WHEELBASE = SIZE["WHEELBASE"]       # axle to axle: battery + ESC band between motor rows
+SPINE_HALF = SIZE["SPINE_HALF"]     # half width of the centre spine between motor backs
 MOTOR_FIT = _bay.PRINTED_FIT_CLEARANCE   # motor pocket clearance per side (TPU grips the plate stack)
 
 # derived drive geometry
@@ -112,14 +122,14 @@ RX_X = ESC["l"] / 2 + RIB + 10.0   # receiver beside the ESC (decased FS-iA6 is 
 PIN_SCREW_D = 3.0                  # M3 steel cap screw used as the pivot pin (nyloc at the far cheek)
 PIN_Z = Z_AXLE                     # mid-plane: same pin height either way up
 CHEEK_T = 4.0                      # TPU cheek thickness along X
-CHEEK_REACH = 5.0                  # pin axis ahead of the tub front face (5 not 7: the folded plough must fit the 101.6 cube)
+CHEEK_REACH = SIZE["CHEEK_REACH"]   # pin axis ahead of the tub front face
 CHEEK_HALF_X = HALF_W_TUB - CORNER_R          # cheeks just inside the front corner radii
 PIN_Y = HALF_L_TUB + CHEEK_REACH
 PIN_LEN_NEED = 2 * CHEEK_HALF_X + CHEEK_T     # pin length through both cheeks
 PIN_SCREW = f"M3x{int(math.ceil(PIN_LEN_NEED / 5.0) * 5 + 5)}"   # next stock length + nut
 PIN_CLEAR = fc.clearance(PIN_SCREW_D, "loose")  # fork / plough eye: free to swing
 EYE_R = PIN_CLEAR / 2 + 1.6                   # material round the pin in the eye
-UP_STOP_DEG = 90.0                            # START CONFIG: attachment folded up vertical against the front-wall stop (inside the cube); it drops onto the floor when the robot first drives/brakes
+UP_STOP_DEG = 90.0                            # front-wall stop: attachment cannot fold back past vertical; cube rule set starts it here
 FRONT_TIP_GAP = 0.3                           # tip-to-floor gap when resting (rules wedge_gap 0.2..1.5): gravity sets it at 0
 
 # fork variant
@@ -150,7 +160,7 @@ SKIRT_BEND_R = 2.0 * SKIRT_T       # rolled hinge knuckle inside radius (Ti gr5 
 SKIRT_PIN_D = 1.0                  # music-wire hinge pin
 SKIRT_GAP = 0.5                    # skirt to tub flank when swung in
 SKIRT_DROP = 0.4                   # lower edge above the floor when resting (gravity closes it to touching on a bump)
-FLANK_DEG = 15.0                   # tub flank V-faces lean this far from vertical (15 not 25: width budget of the 101.6 cube)
+FLANK_DEG = SIZE["FLANK_DEG"]       # tub flank V-faces lean this far from vertical: skirt rests sloped outward
 SKIRT_PIN_Z = Z_AXLE               # hinge on the mid-plane: the skirt hangs to whichever side is down
 SKIRT_DEPTH = (SKIRT_PIN_Z - SKIRT_DROP) / math.cos(math.radians(FLANK_DEG))   # hinge to edge along the sloped leaf
 SKIRT_SIDE_LEN = 2 * (HALF_L_TUB - CORNER_R)  # straight run of the sides; corners stay TPU (rounded)
@@ -158,15 +168,17 @@ SKIRT_REAR_LEN = 2 * (HALF_W_TUB - CORNER_R)
 
 # ------------------------------------------------------------------------------------------------- overall checks
 HALF_W_ALL = HALF_W_TUB + SKIRT_GAP + SKIRT_T + SKIRT_DEPTH * math.sin(math.radians(FLANK_DEG))
-# START configuration (what the cube rule measures): attachment folded up vertical on the pin (UP_STOP_DEG = 90)
-Y_FRONT_START = PIN_Y + max(EYE_R + FORK_T, PLOUGH_BODY_T + PLOUGH_T_STEEL)   # folded: only its thickness ahead of the pin
-Z_TOP_START = max(Z_TOP, PIN_Z + max(FORK_REACH, PLOUGH_REACH))                # folded attachment stands above the plate
-Y_FRONT_RUN = PIN_Y + max(FORK_REACH, PLOUGH_REACH)    # after it drops (running config; the cube rule is a start rule)
+Y_FRONT_RUN = PIN_Y + max(FORK_REACH, PLOUGH_REACH)    # attachment lying flat (worst case of its swing, incl. inverting)
+Y_FRONT_FOLDED = PIN_Y + max(EYE_R + FORK_T, PLOUGH_BODY_T + PLOUGH_T_STEEL)  # folded up: only its thickness ahead of the pin
+Z_TOP_FOLDED = max(Z_TOP, PIN_Z + max(FORK_REACH, PLOUGH_REACH))
+# START configuration: square rule set -> forks / plough down on the floor (no fold); cube rule set -> folded up
+Y_FRONT_START = Y_FRONT_FOLDED if START_FOLDED else Y_FRONT_RUN
+Z_TOP_START = Z_TOP_FOLDED if START_FOLDED else Z_TOP
 Y_REAR_ALL = -(HALF_L_TUB + SKIRT_GAP + SKIRT_T + SKIRT_DEPTH * math.sin(math.radians(FLANK_DEG)))
 LENGTH_START = Y_FRONT_START - Y_REAR_ALL
 WIDTH_ALL = 2 * HALF_W_ALL
-FITS_CUBE = max(LENGTH_START, WIDTH_ALL, Z_TOP_START) <= ENVELOPE_MAX
-CENTRE_Y_OFFSET = (Y_FRONT_START + Y_REAR_ALL) / 2    # robot is not centred on Y=0 in the cube: place the cube here
+FITS_ENVELOPE = (max(LENGTH_START, WIDTH_ALL) <= ENVELOPE_MAX) and (HEIGHT_MAX is None or Z_TOP_START <= HEIGHT_MAX)
+CENTRE_Y_OFFSET = (Y_FRONT_START + Y_REAR_ALL) / 2    # robot is not centred on Y=0: centre the envelope square here
 
 
 # --------------------------------------------------------------------------------------------- material densities

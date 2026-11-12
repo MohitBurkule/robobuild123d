@@ -42,7 +42,7 @@ def main():
     bd.export_step(undertow.assembly.assembly(start_config=True), os.path.join(out, "undertow_start.step"))
     p = undertow.params
     print(json.dumps(dict(width=p.WIDTH_ALL, length_start=p.LENGTH_START, height_start=p.Z_TOP_START,
-                          envelope_max=p.ENVELOPE_MAX, fits_cube=p.FITS_CUBE), indent=1))
+                          envelope_max=p.ENVELOPE_MAX, height_max=p.HEIGHT_MAX, rules=p.RULESET, fits=p.FITS_ENVELOPE), indent=1))
 
 
 if __name__ == "__main__":

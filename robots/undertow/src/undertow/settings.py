@@ -7,6 +7,7 @@ import json
 import os
 
 DEFAULTS = dict(
+    rules="aws2025",               # size rule: "aws2025" = robot/profile.py 150 mm floor square, no height limit (default) | "aws_v43_cube" = 101.6 mm start cube
     front="forks",                 # "forks" (hinged sheet-steel forks on the common pin) | "plough" (TPU wedge + steel face, same pin)
     motor="bbb_n10_1000rpm",       # robot/cots_alts.py GEARMOTORS id; "bbb_n10_600rpm" is the slower, harder-pushing variant
     wheel="bbb_wheel_22x10",       # robot/cots_alts.py WHEELS id; "durahubs_25" is the grippier, larger alternative
@@ -27,6 +28,8 @@ def current():
         if unknown:
             raise KeyError(f"unknown Undertow settings {sorted(unknown)}; known: {sorted(DEFAULTS)}")
         s.update(user)
+    if s["rules"] not in ("aws2025", "aws_v43_cube"):
+        raise ValueError(f"rules must be aws2025 | aws_v43_cube, not {s['rules']!r}")
     if s["front"] not in ("forks", "plough"):
         raise ValueError(f"front must be forks | plough, not {s['front']!r}")
     return s
