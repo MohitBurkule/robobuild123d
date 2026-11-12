@@ -99,6 +99,10 @@ REGISTRY = [
     _g("sldprt_dump", PARITY, NIGHTLY, 14.9, note="dump.* vs the SolidWorks part dumps"),
     _g("asm_dump", PARITY, NIGHTLY, 0.9, note="asm.* vs the SolidWorks assembly dump"),
     _g("param", DESIGN, FULL, 9.0, note="raw-literal lint; param.budget (vs dump dimension count) is parity"),
+    # automated-development gates (UNTESTED at registration: ref_s not measured yet). All need no reference.
+    _g("waiver_audit", DESIGN, INNER, note="waiver.*: every opt-out has a reason and an expiry, none blanket, budget"),
+    _g("geom", DESIGN, INNER, note="geom.*: tiny edges, sliver faces, near-miss steps / holes, off-axis faces"),
+    _g("dfm", DESIGN, INNER, note="dfm.*: per-process manufacturability not covered by printability / process"),
     _g("robust", DESIGN, NIGHTLY, 900.0, deep_only=True, note="one-at-a-time param / variant / COTS-swap sweep"),
 ]
 
