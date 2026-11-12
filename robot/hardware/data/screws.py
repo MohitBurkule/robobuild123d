@@ -13,7 +13,7 @@ def _r(lo, hi):
 SCREWS: list[ScrewHead] = [
     # --- socket head cap ISO 4762 ---
     *[ScrewHead("cap", "ISO 4762", d, dk, k, "hex", s, t, lengths=_r(lo, hi), b_thread=b,
-                src=Source("ISO 4762:2004", note="plain head dk max"))
+                src=Source("ISO 4762:2004", note="plain head dk max; dk/k/s/t/b verified https://www.fasteners.eu/standards/ISO/4762/"))
       for d, dk, k, s, t, b, lo, hi in [
           (1.6, 3.0, 1.6, 1.5, 0.7, 15, 2.5, 16), (2.0, 3.8, 2.0, 1.5, 1.0, 16, 3, 20),
           (2.5, 4.5, 2.5, 2.0, 1.1, 17, 4, 25), (3.0, 5.5, 3.0, 2.5, 1.3, 18, 5, 30),
@@ -26,12 +26,16 @@ SCREWS: list[ScrewHead] = [
               src=Source("vendor (ISO 7380-1 style)", note="not in ISO 7380-1; Accu/Bossard values",
                          uncertain_fields=("dk", "k", "s", "t", "lengths"))),
     *[ScrewHead("button", "ISO 7380-1", d, dk, k, "hex", s, t, lengths=_r(lo, hi),
-                src=Source("ISO 7380-1:2011"))
+                src=Source("ISO 7380-1:2011", note="M3 dk/k/s/t verified Westfield ScrewBolt-SHBtn-M.pdf + "
+                           "fasten.it/en/norms/norm/din_en_iso_7380-1; M4/M5 not re-checked",
+                           uncertain_fields=() if d == 3.0 else ("t",)))
       for d, dk, k, s, t, lo, hi in [(3.0, 5.7, 1.65, 2.0, 1.04, 6, 30), (4.0, 7.6, 2.2, 2.5, 1.3, 6, 40),
                                      (5.0, 9.5, 2.75, 3.0, 1.56, 8, 50)]],
     # --- countersunk hex socket ISO 10642 (M3+) ---
     *[ScrewHead("csk", "ISO 10642", d, dk, k, "hex", s, t, csk_angle=90, lengths=_r(lo, hi),
-                src=Source("ISO 10642:2004", note="dk = theoretical max"))
+                src=Source("ISO 10642:2004", note="dk = theoretical max; fasteners.eu/standards/ISO/10642/ shows "
+                           "DIN 7991 values (6/1.7/0.95) instead - conflict unresolved",
+                           uncertain_fields=("dk", "k", "t")))
       for d, dk, k, s, t, lo, hi in [(3.0, 6.72, 1.86, 2.0, 1.1, 8, 30), (4.0, 8.96, 2.48, 2.5, 1.5, 8, 40),
                                      (5.0, 11.2, 3.1, 3.0, 1.9, 8, 50)]],
     # --- countersunk hex socket DIN 7991 ---
@@ -40,8 +44,10 @@ SCREWS: list[ScrewHead] = [
       for d, dk, k, s, t, lo, hi, unc in [
           (2.0, 4.0, 1.2, 1.3, 0.8, 4, 16, ("dk", "k", "s", "t")),
           (2.5, 5.0, 1.5, 1.5, 1.0, 5, 20, ("dk", "k", "s", "t")),
-          (3.0, 6.0, 1.7, 2.0, 1.2, 6, 30, ()), (4.0, 8.0, 2.3, 2.5, 1.8, 8, 40, ()),
-          (5.0, 10.0, 2.8, 3.0, 2.3, 8, 50, ())]],
+          # M3-M5 dk/k/s verified https://www.fasteners.eu/standards/DIN/7991/; that page gives t min
+          # 0.95/1.5/2.05 vs our 1.2/1.8/2.3 -> t left uncertain
+          (3.0, 6.0, 1.7, 2.0, 1.2, 6, 30, ("t",)), (4.0, 8.0, 2.3, 2.5, 1.8, 8, 40, ("t",)),
+          (5.0, 10.0, 2.8, 3.0, 2.3, 8, 50, ("t",))]],
     # --- countersunk torx ISO 14581 (small sizes) ---
     *[ScrewHead("csk", "ISO 14581", d, dk, k, "torx", T, t, csk_angle=90, lengths=_r(lo, hi),
                 src=Source("ISO 14581:2013", note="dk theoretical max", uncertain_fields=("t",)))
