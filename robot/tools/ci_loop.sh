@@ -102,7 +102,7 @@ gmode() { [ $(( ${i:-1} % ${FRESH_EVERY:-3} )) -eq 0 ] && echo fresh || echo cac
 gcount() { # dir group label -> blocker count (-1 = did not finish or bad exit code); log kept at $P/ci_gate_<label>_<group>.log
   local c rc; c=$(mktemp -d "${TMPDIR:-/tmp}/ci_gate_cache.XXXX")  # c: log dir only; cache is the shared content-keyed one (fix-K)
   local fc=; [ "$(gmode)" = fresh ] && fc="ROBOT_CACHE=$c"   # base and trial of one round use the same mode
-  (cd "$1" && env $fc HEAVY_CI=1 /tmp/heavy.sh timeout "${GATE_TIMEOUT:-3000}" python3 -m robot verify "$SPEC" --full --only "$2" > "$c.log" 2>&1); rc=$?
+  (cd "$1" && env $fc HEAVY_CI=1 /tmp/heavy.sh timeout "${GATE_TIMEOUT:-3000}" python3 -m robot verify "$SPEC" --full --combined --only "$2" > "$c.log" 2>&1); rc=$?
   cp "$c.log" "$P/ci_gate_${3:-$(basename "$1")}_$2.log" 2>/dev/null   # kept so a rejected fixer can read the blocker lines
   $GPY count "$c.log" "$rc"; rm -rf "${c:?}" "${c:?}.log"; }
 gpair() { # dir label -> "assembly interference", both groups in parallel
@@ -342,7 +342,7 @@ for i in $(seq "${START_ITER:-1}" "$MAX_ITERS"); do
   if [ "${SHARD:-1}" = 1 ]; then RESUME=${resume:+1} shard_verify "$sha" "$chunks" "$out"; resume=; else
   # groups run PAR at a time (own process each, shared content-keyed cache); an OOM still only loses its own group
   mkdir -p "$out.d"; rm -f "$out.d"/*
-  printf '%s\n' $chunks | xargs -P "${PAR:-3}" -I{} sh -c 'ROBOT_RUN_SHA=$0 ROBOT_PROGRESS_LOG="$1/verify.log" timeout 6000 python3 -m robot verify "$2" --full --only {} --jobs 1 > "$3/{}.log" 2>&1; echo $? > "$3/{}.rc"' "$sha" "$P" "$SPEC" "$out.d"
+  printf '%s\n' $chunks | xargs -P "${PAR:-3}" -I{} sh -c 'ROBOT_RUN_SHA=$0 ROBOT_PROGRESS_LOG="$1/verify.log" timeout 6000 python3 -m robot verify "$2" --full --combined --only {} --jobs 1 > "$3/{}.log" 2>&1; echo $? > "$3/{}.rc"' "$sha" "$P" "$SPEC" "$out.d"
   for chunk in $chunks; do
     cat "$out.d/$chunk.log" >> "$out" 2>/dev/null
     grep -q 'blockers,' "$out.d/$chunk.log" 2>/dev/null && done_n=$((done_n+1)) || { rc=$(cat "$out.d/$chunk.rc" 2>/dev/null); failed="$failed $chunk"; }
