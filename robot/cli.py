@@ -194,6 +194,8 @@ def main(argv=None):
         print_report(rep, a.full)
         if a.json:
             Path(a.json).write_text(json.dumps(rep.to_dict(), indent=2))
+            from .fix_hints import suggest_fixes  # UNTESTED: repair summary next to the report
+            Path(a.json).with_suffix(".fixes.json").write_text(json.dumps(suggest_fixes(rep), indent=2, default=list))
         return 0 if rep.ok else 2
     elif hasattr(a, "func"):
         return a.func(a)
