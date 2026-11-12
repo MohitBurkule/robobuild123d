@@ -53,7 +53,7 @@ as follows:
 
 | Slot | Id | Feature | Why |
 |------|----|---------|-----|
-| 0 | C1 | Confirm size rule, square vs cube | If wrong, every passing design may be illegal. Cheap to settle. |
+| 0 | C1 | Retire the stale 4 inch cube wording | Current AWS 2025 rule is a 150 mm floor square. Cheap cleanup. |
 | after 4 | A1 | Declarative weapon-module contract | Per-weapon `if` chains in `build.py` block every new archetype. |
 | after 7 | A2 | Belt-driven shaft spinner (drum, eggbeater, disc) | Declared in `WEAPON_CLASSES`, nothing builds them. |
 | after 7 | A3 | Weapon sizing solver | LLM cannot ask for "10 J" today. Geometry is constants. |
@@ -401,16 +401,18 @@ scoring). Gaps are mostly what `combat.py NOT_CHECKED` lists itself.
 New groups go in `REGISTRY` in `robot/checks/registry.py`. Put a shared
 `motor_curve` in `robot/checks/_physics.py` for C2, C3, C5, C6.
 
-### C1. Size rule: confirm square vs cube
-- `robot/profile.py footprint_mm = 150.0` and `gen/budget.py SIZE_LIMIT_MM`
-  check an XY square only, never height.
-  `gen/data/antweight_taxonomy.json` mentions a 4-inch cube. Two reviewers
-  flagged this from memory; neither checked the rules text, and `robot/rules/`
-  has no size wording at all. Confirm against the published event rules first.
-- If a cube applies: `Profile.cube_mm`, `size_rule`; `legal.fits_cube(world,
-  side)` searching yaw and the 3 axis-up orientations; `legal.cube` blocker.
-- Accept (`robot/tests/test_legal_cube.py`): 100 cube passes; 102x50x50 fails;
-  100x100x60 rotated 30 degrees passes.
+### C1. Size rule: keep the 150 mm floor square, retire cube wording
+- Current AWS 2025 rule: robot must fit a 150 mm floor square, no overhang,
+  no height limit, 150 g. `robot/profile.py footprint_mm = 150.0` and
+  `gen/budget.py SIZE_LIMIT_MM` already check an XY square. The 4 inch cube is
+  the old rule and is wrong.
+- `gen/data/antweight_taxonomy.json` still mentions a 4-inch cube: remove or
+  correct it. Add the 150 mm square wording to `robot/rules/` so it is stated
+  next to the code that enforces it.
+- No `legal.cube` check and no `Profile.cube_mm`. Do not add height checks.
+- Accept (`robot/tests/test_legal_footprint.py`): 150 x 150 floor footprint
+  passes; 151 x 100 fails; a tall 100 x 100 x 200 robot passes; any overhang
+  past the square fails.
 
 ### C2. Drivetrain performance model
 - New `robot/checks/drive.py`: `motor_curve(props, v)`, `drive_perf(ctx)`
@@ -539,7 +541,8 @@ New groups go in `REGISTRY` in `robot/checks/registry.py`. Put a shared
 
 ### Candidate robots
 
-Hand estimates, not simulated. Each sums to 150 g and is drawn to fit 100 mm.
+Hand estimates, not simulated. Each sums to 150 g and is drawn to fit a
+150 mm floor square.
 
 | Name | Weapon | Energy | Needs |
 |------|--------|--------|-------|
