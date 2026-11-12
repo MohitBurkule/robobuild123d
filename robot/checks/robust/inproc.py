@@ -15,6 +15,7 @@ edit) inside this interpreter under a robot.design.Design instead of a fresh pro
 from __future__ import annotations
 
 import json
+import multiprocessing
 import os
 import time
 from concurrent.futures import ProcessPoolExecutor, as_completed
@@ -26,9 +27,9 @@ RESULTS_DIR = Path(os.environ.get("ROBOT_INPROC_RESULTS", "progress/inproc_resul
 
 
 def param_hash(job: dict, code: str = "") -> str:
-    """Stable hash of everything a settings job's result depends on."""
+    """Stable hash of everything a settings job's result depends on (incl. the code hash)."""
     return cache.h(json.dumps(dict(spec=str(job.get("spec")), env=job.get("env") or {}, overlay=job.get("overlay"),
-                                   groups=job.get("groups"), code=code or job.get("code", "")), sort_keys=True))
+                                   groups=job.get("groups"), code=code or job.get("code") or cache.code_hash()), sort_keys=True))
 
 
 def _store(key: str) -> Path:
@@ -133,7 +134,8 @@ def pool_execute(jobs, workers: int = 3, timeout: float = 900.0, log=print) -> d
         else:
             todo.append(j)
     log(f"inproc: {len(out)} cached, {len(todo)} to run on {workers} workers")
-    with ProcessPoolExecutor(max_workers=workers, max_tasks_per_child=20) as ex:
+    # spawn: max_tasks_per_child is rejected with the default fork start method on Linux
+    with ProcessPoolExecutor(max_workers=workers, max_tasks_per_child=20, mp_context=multiprocessing.get_context("spawn")) as ex:
         futs = {ex.submit(_child, j): j for j in todo}
         for f in as_completed(futs):
             j = futs[f]
