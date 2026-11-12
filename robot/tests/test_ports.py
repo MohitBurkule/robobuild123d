@@ -1,7 +1,13 @@
 """ROADMAP R1/R2 acceptance. UNTESTED: written without running."""
+import sys
+from pathlib import Path
+
 import pytest
 
-from robot import ports
+# revron is a src-layout package under robots/; robot/tests/conftest.py only adds the repo root.
+sys.path.insert(0, str(Path(__file__).resolve().parents[2] / "robots" / "revron" / "src"))
+
+from robot import ports  # noqa: E402
 
 
 def _all_ids():
