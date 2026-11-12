@@ -99,6 +99,7 @@ REGISTRY = [
     _g("sldprt_dump", PARITY, NIGHTLY, 14.9, note="dump.* vs the SolidWorks part dumps"),
     _g("asm_dump", PARITY, NIGHTLY, 0.9, note="asm.* vs the SolidWorks assembly dump"),
     _g("param", DESIGN, FULL, 9.0, note="raw-literal lint; param.budget (vs dump dimension count) is parity"),
+    _g("harness", DESIGN, FULL, None, deep_only=True, note="robot/wiring: planned harness (opt-in: spec harness.enabled)"),
     _g("robust", DESIGN, NIGHTLY, 900.0, deep_only=True, note="one-at-a-time param / variant / COTS-swap sweep"),
 ]
 

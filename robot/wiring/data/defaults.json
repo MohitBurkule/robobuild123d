@@ -1,5 +1,6 @@
 {
  "_doc": "Named settings of robot.wiring (mm, g, A). A spec overrides any of them under `harness.settings` (same nesting).",
+ "enabled": false,
  "cell_mm": 0.5,
  "clearance_mm": 0.3,
  "fastener_clearance_mm": 0.6,
