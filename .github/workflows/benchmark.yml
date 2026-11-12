@@ -27,7 +27,7 @@ jobs:
           optional-dependencies: "development"
       - name: benchmark
         run: |
-          python -m pytest --benchmark-only --benchmark-autosave
+          python -m pytest tests --benchmark-only --benchmark-autosave
           pytest-benchmark compare --csv="results.csv"
           cat results.csv
       - uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a #v7.0.1
