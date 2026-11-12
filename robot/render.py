@@ -396,10 +396,14 @@ def cli(a):
         view = with_section_z(view, a.section_z)
     s = spec_mod.load(a.spec)
     if getattr(a, "no_checks", False):  # no full verify: only the wiring group, so wire routes are still drawn and recorded
-        w, rep, _ = world_for(s, checks.Options(deep=True, fast=a.fast, only=["wiring"]))
+        w, rep, r = world_for(s, checks.Options(deep=True, fast=a.fast, only=["wiring"]))
         rep.findings = []
     else:
-        w, rep, _ = world_for(s, checks.Options(deep=not a.quick, fast=a.fast))
+        w, rep, r = world_for(s, checks.Options(deep=not a.quick, fast=a.fast))
+    if getattr(a, "harness", False):  # draw the planned harness (robot/wiring) in place of the legacy polyline routes
+        from .wiring import plan as harness_plan
+
+        w, _ = harness_plan.world_with_harness(r, w)
     if a.no_lid:
         w = without_lid(w, s)
     if a.palette == "material":
@@ -445,5 +449,7 @@ def add_cli(sub):
                    help="cut the view at height H and keep what is below (e.g. top view under a closed deck)")
     p.add_argument("--no-checks", action="store_true",
                    help="skip the full verify pass (much faster and lighter; wire routes are still computed and drawn, no markers)")
+    p.add_argument("--harness", action="store_true",
+                   help="draw the planned wiring harness (robot/wiring: bundled, coloured B-spline wires and connectors)")
     p.add_argument("--no-lid", action="store_true", help="leave out lid/cover/top-panel parts and their bolts")
     p.set_defaults(func=cli)
