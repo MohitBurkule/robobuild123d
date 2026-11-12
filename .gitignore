@@ -68,3 +68,6 @@ prof/
 !robots/**/*.stl
 !robots/**/*.step
 0/
+
+# agent worktrees must never be committed (a stray gitlink breaks actions/checkout)
+.claude/worktrees/
