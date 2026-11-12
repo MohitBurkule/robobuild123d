@@ -144,3 +144,7 @@ show_missing = true
 [tool.diff_cover]
 fail_under = 95
 show_uncovered = true
+
+[tool.pytest.ini_options]
+# upstream build123d workflows run bare `pytest`: keep them on the library tests; robot tests run in .github/workflows/robot.yml
+testpaths = ["tests"]
