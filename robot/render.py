@@ -33,6 +33,16 @@ class View:
     explode: float
 
 
+def render_scale() -> float:
+    """ROBOT_RENDER_SCALE (default 1): 0.5 gives half-width proxy renders, about 4x fewer pixels."""
+    import os
+
+    try:
+        return float(np.clip(float(os.environ.get("ROBOT_RENDER_SCALE") or 1.0), 0.1, 4.0))
+    except ValueError:
+        return 1.0
+
+
 def named(name: str, width: int = 1100) -> View | None:
     z = (0.0, 0.0, 1.0)
     table = {
@@ -50,6 +60,7 @@ def named(name: str, width: int = 1100) -> View | None:
     if name not in table:
         return None
     d, up, sec = table[name]
+    width = max(64, int(round(width * render_scale())))
     return View(name, xform.norm(np.asarray(d, float)), np.asarray(up, float), sec, width,
                 1.0 if name == "exploded" else 0.0)
 
@@ -86,6 +97,15 @@ def _clip(mesh, section):
     if section is None:
         return mesh
     n, d = section
+    if mesh.bounds is None:
+        return None
+    lo, hi = mesh.bounds
+    far = np.where(n > 0, hi, lo) @ n  # largest n . p over the bounding box
+    near = np.where(n > 0, lo, hi) @ n
+    if far <= d:  # wholly kept: nothing to cut
+        return mesh
+    if near > d:  # wholly cut away
+        return None
     try:
         m = mesh.slice_plane(n * d, -n, cap=True)
     except Exception:  # noqa: BLE001 - non-watertight pieces: cut without a cap
@@ -96,36 +116,87 @@ def _clip(mesh, section):
     return m if m is not None and len(m.faces) else None
 
 
+def _raster_one(k, tris, colors, zbuf, img, xa, xb, ya, yb, det):
+    """One (large) triangle: dense barycentric test over its pixel box."""
+    a, b, c = tris[k]
+    d = det[k]
+    X, Y = np.meshgrid(np.arange(xa[k], xb[k] + 1) + 0.5, np.arange(ya[k], yb[k] + 1) + 0.5)
+    l1 = ((b[1] - c[1]) * (X - c[0]) + (c[0] - b[0]) * (Y - c[1])) / d
+    l2 = ((c[1] - a[1]) * (X - c[0]) + (a[0] - c[0]) * (Y - c[1])) / d
+    l3 = 1 - l1 - l2
+    m = (l1 >= -1e-6) & (l2 >= -1e-6) & (l3 >= -1e-6)
+    if not m.any():
+        return
+    z = l1 * a[2] + l2 * b[2] + l3 * c[2]
+    sub = zbuf[ya[k]:yb[k] + 1, xa[k]:xb[k] + 1]
+    upd = m & (z < sub)
+    if upd.any():
+        sub[upd] = z[upd]
+        img[ya[k]:yb[k] + 1, xa[k]:xb[k] + 1][upd] = colors[k]
+
+
+def _raster_block(k, w, h, tris, colors, zf, imf, W, xa, xb, ya, yb, det):
+    """Many small triangles at once: (n, h, w) barycentric block, then one depth resolve per touched pixel
+    (nearest wins; equal depth -> lowest triangle index, as in the sequential loop)."""
+    def e(v):
+        return v[:, None, None]
+
+    A, B, C = tris[k, 0], tris[k, 1], tris[k, 2]
+    PX = e(xa[k]) + np.arange(w)[None, None, :]
+    PY = e(ya[k]) + np.arange(h)[None, :, None]
+    X, Y = PX + 0.5, PY + 0.5
+    d = e(det[k])
+    l1 = (e(B[:, 1] - C[:, 1]) * (X - e(C[:, 0])) + e(C[:, 0] - B[:, 0]) * (Y - e(C[:, 1]))) / d
+    l2 = (e(C[:, 1] - A[:, 1]) * (X - e(C[:, 0])) + e(A[:, 0] - C[:, 0]) * (Y - e(C[:, 1]))) / d
+    l3 = 1 - l1 - l2
+    m = (l1 >= -1e-6) & (l2 >= -1e-6) & (l3 >= -1e-6) & (PX <= e(xb[k])) & (PY <= e(yb[k]))
+    if not m.any():
+        return
+    z = l1 * e(A[:, 2]) + l2 * e(B[:, 2]) + l3 * e(C[:, 2])
+    ti, yi, xi = np.nonzero(m)
+    tk = k[ti]
+    pix = (ya[tk] + yi) * W + (xa[tk] + xi)
+    zz = z[ti, yi, xi]
+    o = np.lexsort((tk, zz, pix))
+    pix, zz, tk = pix[o], zz[o], tk[o]
+    first = np.ones(len(pix), bool)
+    first[1:] = pix[1:] != pix[:-1]
+    pix, zz, tk = pix[first], zz[first], tk[first]
+    upd = zz < zf[pix]
+    if upd.any():
+        zf[pix[upd]] = zz[upd]
+        imf[pix[upd]] = colors[tk[upd]]
+
+
 def _raster(cam, tris, colors, zbuf, img):
-    """Z-buffer rasterise screen-space triangles (N,3,3: x, y, depth) with flat colours (N,3)."""
+    """Z-buffer rasterise screen-space triangles (N,3,3: x, y, depth) with flat colours (N,3).
+
+    Small triangles (nearly all of a fine tessellation) are evaluated in numpy blocks grouped by pixel-box size;
+    only the few large ones take the per-triangle path."""
+    from . import _batch
+
     W, H = cam.w, cam.h
-    x0 = np.floor(tris[:, :, 0].min(1)).astype(int)
-    x1 = np.ceil(tris[:, :, 0].max(1)).astype(int)
-    y0 = np.floor(tris[:, :, 1].min(1)).astype(int)
-    y1 = np.ceil(tris[:, :, 1].max(1)).astype(int)
-    keep = (x1 >= 0) & (y1 >= 0) & (x0 < W) & (y0 < H)
-    for k in np.nonzero(keep)[0]:
-        a, b, c = tris[k]
-        xa, xb = max(x0[k], 0), min(x1[k], W - 1)
-        ya, yb = max(y0[k], 0), min(y1[k], H - 1)
-        if xb < xa or yb < ya:
-            continue
-        det = (b[1] - c[1]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[1] - c[1])
-        if abs(det) < 1e-12:
-            continue
-        X, Y = np.meshgrid(np.arange(xa, xb + 1) + 0.5, np.arange(ya, yb + 1) + 0.5)
-        l1 = ((b[1] - c[1]) * (X - c[0]) + (c[0] - b[0]) * (Y - c[1])) / det
-        l2 = ((c[1] - a[1]) * (X - c[0]) + (a[0] - c[0]) * (Y - c[1])) / det
-        l3 = 1 - l1 - l2
-        m = (l1 >= -1e-6) & (l2 >= -1e-6) & (l3 >= -1e-6)
-        if not m.any():
-            continue
-        z = l1 * a[2] + l2 * b[2] + l3 * c[2]
-        sub = zbuf[ya:yb + 1, xa:xb + 1]
-        upd = m & (z < sub)
-        if upd.any():
-            sub[upd] = z[upd]
-            img[ya:yb + 1, xa:xb + 1][upd] = colors[k]
+    if not len(tris):
+        return
+    xa = np.maximum(np.floor(tris[:, :, 0].min(1)).astype(np.int64), 0)
+    xb = np.minimum(np.ceil(tris[:, :, 0].max(1)).astype(np.int64), W - 1)
+    ya = np.maximum(np.floor(tris[:, :, 1].min(1)).astype(np.int64), 0)
+    yb = np.minimum(np.ceil(tris[:, :, 1].max(1)).astype(np.int64), H - 1)
+    a, b, c = tris[:, 0], tris[:, 1], tris[:, 2]
+    det = (b[:, 1] - c[:, 1]) * (a[:, 0] - c[:, 0]) + (c[:, 0] - b[:, 0]) * (a[:, 1] - c[:, 1])
+    idx = np.nonzero((xb >= xa) & (yb >= ya) & (np.abs(det) >= 1e-12))[0]
+    if not len(idx):
+        return
+    if not (zbuf.flags.c_contiguous and img.flags.c_contiguous):  # flat views below need contiguous buffers
+        for k in idx:
+            _raster_one(k, tris, colors, zbuf, img, xa, xb, ya, yb, det)
+        return
+    small, large = _batch.chunks(idx, (xb - xa + 1)[idx], (yb - ya + 1)[idx])
+    zf, imf = zbuf.reshape(-1), img.reshape(-1, 3)
+    for k, w, h in small:
+        _raster_block(k, w, h, tris, colors, zf, imf, W, xa, xb, ya, yb, det)
+    for k in large:
+        _raster_one(k, tris, colors, zbuf, img, xa, xb, ya, yb, det)
 
 
 def _background(cam, ground_z, view):
@@ -177,6 +248,42 @@ def _digits(img, x0, y0, n):
                             _put(img, int(x0) + (ci * 4 + rx) * s + sx, int(y0) + ry * s + sy, RED)
 
 
+def _closed(b) -> bool:
+    """Watertight, consistently wound part mesh (memoised on the shared part geometry)."""
+    g = getattr(b, "geom", None)
+    src = g.mesh if g is not None and hasattr(g, "mesh") else b.mesh
+    v = getattr(g, "_closed", None) if g is not None else None
+    if v is None:
+        try:
+            v = bool(src.is_watertight and src.is_winding_consistent and src.volume > 0)
+        except Exception:  # noqa: BLE001
+            v = False
+        if g is not None:
+            try:
+                g._closed = v
+            except Exception:  # noqa: BLE001
+                pass
+    if not v:
+        return False
+    return float(np.linalg.det(np.asarray(b.M, float)[:3, :3])) > 0 if hasattr(b, "M") else False
+
+
+def render_views(world, views, ground_z=None, markers=(), workers: int | None = None) -> list:
+    """PNG bytes for several views of one world, rendered in threads (numpy releases the GIL in the heavy steps).
+    Placed meshes are materialised once up front so the threads share them."""
+    import os
+    from concurrent.futures import ThreadPoolExecutor
+
+    views = list(views)
+    for b in world.bodies:
+        b.mesh  # noqa: B018 - fill the lazy placed-mesh cache before the threads start
+    n = workers or int(os.environ.get("ROBOT_RENDER_JOBS") or min(4, os.cpu_count() or 1))
+    if n <= 1 or len(views) <= 1:
+        return [render_png(world, v, ground_z, markers) for v in views]
+    with ThreadPoolExecutor(n) as ex:
+        return list(ex.map(lambda v: render_png(world, v, ground_z, markers), views))
+
+
 def render_array(world, view: View, ground_z=None, markers=()) -> np.ndarray | None:
     """Render `view` of the world to an (H, W, 3) uint8 array, or None for an empty world."""
     if view.explode > 0:
@@ -199,6 +306,9 @@ def render_array(world, view: View, ground_z=None, markers=()) -> np.ndarray | N
         ok = ln > 1e-12
         T, N = T[ok], N[ok] / ln[ok, None]
         facing = N @ cam.dir
+        if m is b.mesh and _closed(b):  # closed and uncut: faces pointing away are always hidden by nearer ones
+            front = facing <= 0
+            T, N, facing = T[front], N[front], facing[front]
         N = np.where((facing > 0)[:, None], -N, N)  # two-sided (caps and open meshes)
         lam = np.clip(N @ light, 0, None)
         rim = (1 - np.clip(-(N @ cam.dir), 0, 1)) ** 2 * 0.25
@@ -235,11 +345,11 @@ def png_bytes(img: np.ndarray | None) -> bytes:
 
 
 def scene_hash(world, view: View, ground_z=None, markers=()) -> str:
-    from . import cache
+    from . import _batch, cache
 
     bodies = [(b.id, cache.body_sig(b), repr(b.color)) for b in world.bodies]
     mk = [(np.asarray(m.at, float) if hasattr(m, "at") else repr(m), repr(m)) for m in markers]
-    return cache.h("render", cache.source_hash(__file__), bodies, repr(view), ground_z, mk)
+    return cache.h("render", cache.source_hash(__file__, _batch.__file__), bodies, repr(view), ground_z, mk)
 
 
 def render_png(world, view: View, ground_z=None, markers=()) -> bytes:
