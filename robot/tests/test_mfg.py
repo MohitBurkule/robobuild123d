@@ -1,59 +1,53 @@
-"""Manufacturing: wall thickness per material and process, and the print bed."""
+"""UNTESTED: written without running. Pure-data tests of robot.mfg on a tiny spec (no B-rep build)."""
 
-from robot import spec
-from robot.checks import Options, verify
-from robot.checks.mfg import min_wall_for
-from robot.profile import Profile
+import numpy as np
 
-ROOT = __import__("pathlib").Path(__file__).resolve().parents[1]
+from robot.mfg import assembly_steps, buy_list, cut_list, fastener_counts, mass_budget, print_settings
+from robot.mfg.pack import bed_matrix
+from robot.spec import Spec
 
-
-def _rep(parts):
-    return verify(spec.Spec({"name": "t", "parts": parts}), Options(only=["mfg"], deep=False, fast=True))
-
-
-def _ids(rep):
-    return {f.id: f for f in rep.findings if f.group == "mfg"}
-
-
-def test_min_wall_per_material():
-    p = Profile()
-    assert min_wall_for(p, "fdm", "pla") == 0.9
-    assert min_wall_for(p, "fdm", "tpu") == 1.2
-    assert min_wall_for(p, "resin", "resin") == 0.8
-    assert min_wall_for(p, "fdm", "pla_cf") == 1.0
-    assert min_wall_for(p, None, "hdpe") == 1.0 and min_wall_for(p, None, "pp") == 1.0
-    assert min_wall_for(p, None, "steel") == 0.3 and min_wall_for(p, None, "aluminium") == 0.5
-    assert min_wall_for(p, None, "tape") == 0.0
+SPEC = {
+    "name": "t",
+    "parts": [
+        {"id": "tub", "kind": "structure", "material": "petg", "process": "fdm", "print_orientation": "-z", "mass_g": 40},
+        {"id": "ins1", "kind": "insert", "parent": "tub", "mass_g": 0.3},
+        {"id": "lid", "kind": "panel", "material": "titanium", "process": "laser", "thickness_mm": 0.8,
+         "parent": "tub", "mass_g": 12},
+    ],
+    "fasteners": [{"id": "s1", "designation": "M2x6", "through": ["lid"], "threads_into": "ins1"},
+                  {"id": "s2", "designation": "M2x6", "through": ["lid"], "threads_into": "tub"}],
+}
 
 
-def test_thin_printed_plate_fails_and_thick_passes():
-    thin = _ids(_rep([{"id": "p", "kind": "structure", "material": "pla", "process": "fdm", "shape": {"type": "box", "size": [30, 30, 0.5]}}]))
-    assert "mfg.thin_wall" in thin and thin["mfg.thin_wall"].severity == "blocker"
-    thick = _ids(_rep([{"id": "p", "kind": "structure", "material": "pla", "process": "fdm", "shape": {"type": "box", "size": [30, 30, 3]}}]))
-    assert "mfg.thin_wall" not in thick and thick["mfg.walls"].passed
+def test_counts_and_buy():
+    s = Spec(SPEC)
+    assert fastener_counts(s)["M2x6"] == 2
+    assert any(r["name"] == "M2x6" and r["order_qty"] >= 3 for r in buy_list(s))
 
 
-def test_metal_sheet_allows_thin_wall_and_tpu_needs_more():
-    steel = _ids(_rep([{"id": "p", "kind": "plate", "material": "steel", "shape": {"type": "box", "size": [30, 30, 0.8]}}]))
-    assert "mfg.thin_wall" not in steel
-    tpu = _ids(_rep([{"id": "p", "kind": "structure", "material": "tpu", "process": "fdm", "shape": {"type": "box", "size": [30, 30, 1.0]}}]))
-    assert tpu["mfg.thin_wall"].severity == "warning"  # 1.0 >= 0.7 * 1.2
+def test_mass_budget():
+    m = mass_budget(Spec(SPEC))
+    assert abs(m["total_g"] - 52.3) < 1e-6 and m["ok"] and m["limit_g"] == 150.0
 
 
-def test_bed():
-    f = _ids(_rep([{"id": "p", "kind": "structure", "material": "pla", "process": "fdm", "shape": {"type": "box", "size": [200, 20, 5]}}]))
-    assert "mfg.bed" in f
-    f = _ids(_rep([{"id": "p", "kind": "plate", "material": "hdpe", "shape": {"type": "box", "size": [200, 20, 5]}}]))
-    assert "mfg.bed" not in f  # not printed
+def test_print_and_cut():
+    s = Spec(SPEC)
+    assert [r["id"] for r in print_settings(s)] == ["tub"]
+    assert print_settings(s)[0]["up_axis"] == "-z"
+    c = cut_list(s)
+    assert c["rows"][0]["id"] == "lid" and c["sheets"][0]["thickness_mm"] == 0.8
 
 
-def test_wedge_template_finds_real_sliver():
-    # chassis_bottom: battery pocket ends at y=17.4, wire channel starts at y=17.5 -> 0.1 mm wall (Rust's grid missed it).
-    s = spec.load(ROOT / "tests" / "fixtures_wedge_rust.json")
-    cut = s.part("chassis_bottom").shape["base"]["cut"][1]  # the template has since been fixed; re-create the sliver
-    cut["at"] = [0.0, 19.2, -2.25]
-    rep = verify(s, Options(only=["mfg"], deep=False))
-    thin = [f for f in rep.findings if f.id == "mfg.thin_wall"]
-    assert any(f.parts == ["chassis_bottom"] for f in thin)
-    assert rep.metrics["min_wall_mm"] < 0.2
+def test_steps_order():
+    st = assembly_steps(Spec(SPEC))
+    first = [s["parts"][0] for s in st if s["parts"]]
+    assert first.index("ins1") < first.index("lid")
+    closed = {f["id"] for s in st for f in s["fasteners"]}
+    assert closed == {"s1", "s2"}
+
+
+def test_bed_matrix():
+    for up in ("+x", "-x", "+y", "-y", "+z", "-z"):
+        M = bed_matrix(up)
+        a = {"+x": [1, 0, 0], "-x": [-1, 0, 0], "+y": [0, 1, 0], "-y": [0, -1, 0], "+z": [0, 0, 1], "-z": [0, 0, -1]}[up]
+        assert np.allclose(M[:3, :3] @ np.array(a, float), [0, 0, 1])
