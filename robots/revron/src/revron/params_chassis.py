@@ -5,6 +5,7 @@ ROOT = os.path.abspath(os.path.join(HERE, "..", "..", ".."))
 if ROOT not in sys.path:
     sys.path.insert(0, ROOT)
 
+from .settings import setting   # a design setting: the active robot.design.Design, else the env var, else the default
 from .variants import variant   # tub deviations (open_keyhole, pad_preload) are opt-in switches, see variants.py
 from . import hw
 from robot.cad import fastener_catalog as fc   # standard fastener / insert dimensions
@@ -24,7 +25,7 @@ REAR_GROUND_GAP = 0.25               # rear tyre bottom above the ground plane (
 WHEEL_OD_R = rear_wheel_dims()["od"]   # rear tyre OD (mm): the stock tyre, or REVRON_REAR_WHEEL
 # drive location (hook drive.location): the drive axle line Y per declared location; the tub's motor features (keyhole, key tab, stop wall, pad recess)
 # and the pack bay follow RY (the pack butts the stop wall); the rear-only structure (rear boss, lattice window) does not move with it
-DRIVE_LOCATION = os.environ.get("REVRON_DRIVE_LOCATION", "rear")
+DRIVE_LOCATION = setting("REVRON_DRIVE_LOCATION", "rear")
 DRIVE_LOCATIONS = {"rear": dict(ry=-30.5), "mid": dict(ry=-8.0), "front": dict(ry=5.0)}   # axle line of the gearmotors (drive.location)
 UNBUILT_DRIVE_LOCATIONS = {"front_motors_rear_driven": "the gearmotors sit on the front axle line and drive the rear wheels by belt: the belt run (front hub to rear hub along the side panel, one per side) passes the weapon mounts and the front standoffs, and the generator routes belts only between the hubs of the wheel pair the motor drives; it builds no motor-to-remote-axle drivetrain"}
 
@@ -37,12 +38,12 @@ class DriveLocationError(NotImplementedError):
 if DRIVE_LOCATION in UNBUILT_DRIVE_LOCATIONS:
     raise DriveLocationError(f"drive.location={DRIVE_LOCATION!r} is not built: {UNBUILT_DRIVE_LOCATIONS[DRIVE_LOCATION]}; built: {sorted(DRIVE_LOCATIONS)}")
 RY, RZ = DRIVE_LOCATIONS[DRIVE_LOCATION]["ry"], WHEEL_OD_R / 2 + REAR_GROUND_GAP   # N10 shaft (rear axle at the default location): the tyre radius over the ground gap
-DRIVE_MOTOR = os.environ.get("REVRON_DRIVE_MOTOR", "n10_2200rpm_spicy")    # catalog id of the drive gearmotors (RV12): the tub is dimensioned from its plate stack
+DRIVE_MOTOR = setting("REVRON_DRIVE_MOTOR", "n10_2200rpm_spicy")    # catalog id of the drive gearmotors (RV12): the tub is dimensioned from its plate stack
 DRIVE_MOTORS = {"n10_2200rpm_spicy": "", "n10_300rpm_6v": "", "n10_2200rpm_6v": "", "n20_1000rpm_6v": "", "pololu_hpcb6v_30to1": "", "pololu_hpcb6v_50to1": "", "pololu_hpcb6v_75to1": "", "bbb_n20_600rpm": "", "bbb_hpn20_1000rpm": "", "bbb_n10_600rpm": "", "bbb_n10_1000rpm": "", "c_pair_of_600rpm_antweight_n20_gearmotors": "", "c_bbb_high_power_n20_gearmotor": "", "c_bbbxn_b_antweight_n10_gearmotors": ""}   # every catalog gearmotor the REVRON_DRIVE_MOTOR setting may name (test_tub2_sweep keeps it in step with the catalog)
 GB = hw.gearbox(DRIVE_MOTOR)         # plate stack in the motor frame: top, half_w, end, gaps
 MOTOR_WALL_GAP = 0.3                 # last gearbox plate to the chassis wall's inner face
 MOT = hw.reach(DRIVE_MOTOR)          # the gearmotor's catalog envelope in its own frame (x0..x1 along the shaft, y0..y1 across)
-BATTERY = os.environ.get("REVRON_BATTERY", "lipo_2s_180_turnabot")      # RV16 pack, catalog id
+BATTERY = setting("REVRON_BATTERY", "lipo_2s_180_turnabot")      # RV16 pack, catalog id
 BATTERYS = {"lipo_2s_180_turnabot": "", "lipo_2s_180": "", "lipo_2s_350": "", "lipo_1s_300": "", "palmpower_2s_180_45c": "", "palmpower_2s_300_65c": "", "tattu_2s_300_75c_hv": "", "betafpv_2s_300_45c": "", "gnb_2s_350_70c_hv": "", "gnb_2s_450_80c": "", "gnb_3s_300_80c_hv": "", "c_palm_power_2s_300mah_65c_us_ref_not_uk": "", "c_typical_2s_300mah_lipo_lihv_betafpv_tbs_": ""}   # every catalog pack the REVRON_BATTERY setting may name
 BAT_LEN = hw.size(BATTERY)[0]        # pack length: in the bay it runs along Y, butting the stop wall
 KEY_BITE, STOP_CLR = 0.65, 0.1       # key tab reaches this far behind the gearbox front face; the stop wall stands this clear of it
@@ -67,13 +68,13 @@ BAT_X = -11.81                       # pack centre X (STEP envelope)
 # below are relations of the catalog parts: a larger part (another motor, a longer pack) can raise a floor above the stock size but never lowers the stock.
 def size_delta(env, nominal):
     """mm delta of an overall-size setting: '4' = 4 mm, '10%' = a tenth of `nominal`."""
-    s = os.environ.get(env, "0").strip()
+    s = setting(env, "0").strip()
     return round(float(s[:-1]) / 100.0 * nominal if s.endswith("%") else float(s), 6)
-SIZE_WIDTH = os.environ.get("REVRON_SIZE_WIDTH", "0")
+SIZE_WIDTH = setting("REVRON_SIZE_WIDTH", "0")
 SIZE_WIDTHS = {"-30%": -0.3, "-20%": -0.2, "-10%": -0.1, "10%": 0.1, "20%": 0.2, "30%": 0.3}   # the declared steps of hook size.width (hooks.json)
-SIZE_LENGTH = os.environ.get("REVRON_SIZE_LENGTH", "0")
+SIZE_LENGTH = setting("REVRON_SIZE_LENGTH", "0")
 SIZE_LENGTHS = {"-30%": -0.3, "-20%": -0.2, "-10%": -0.1, "10%": 0.1, "20%": 0.2, "30%": 0.3}   # the declared steps of hook size.length (hooks.json)
-SIZE_HEIGHT = os.environ.get("REVRON_SIZE_HEIGHT", "0")
+SIZE_HEIGHT = setting("REVRON_SIZE_HEIGHT", "0")
 SIZE_HEIGHTS = {"-30%": -0.3, "-20%": -0.2, "-10%": -0.1, "10%": 0.1, "20%": 0.2, "30%": 0.3}   # the declared steps of hook size.height (hooks.json)
 MOTOR_PAIR_GAP = CH_WALL / 2         # the two gearmotors keep at least this between their inner ends at the centre
 MOTOR_DECK_GAP = 0.5                 # gearbox top to the deck underside (STEP: deck 17.5, gearbox top 17.0)
@@ -154,11 +155,11 @@ BOSS_Y = BOSS_REAR_Y if BOSS_AT_REAR else round(MOT_Y[1] + KEEP_R + SLEEVE_CLR, 
 INS = [*INS_COLS, (0.0, BOSS_Y)]   # 5 floor inserts / base screws
 # electronics envelopes (catalog boxes at their spec placement, rot z 90): Malenki nano 32 x 20 x 4.4 at (8.67, -3.0, 15.3),
 # BBB ant ESC 23.5 x 12 x 5 at (8.63, -7.25, 10.6); the deck cage ribs are dimensioned off these
-RXESC = os.environ.get("REVRON_RXESC", "malenki_nano_rvrn2")   # receiver / drive ESC catalog id
+RXESC = setting("REVRON_RXESC", "malenki_nano_rvrn2")   # receiver / drive ESC catalog id
 RXESCS = {"malenki_nano_rvrn2": "", "esc_dual_brushed": "", "malenki_nano": "", "bbb_malenki_nano": "", "bbb_dual_esc_v31": "", "c_malenki_nano_antweight_esc_receiver": "", "c_bbb_antweight_dual_esc_v3_1": "", "c_antweight_n10_n20_red_esc_motor_mounted": ""}   # every catalog receiver / drive ESC the REVRON_RXESC setting may name
 RX_SIZE = hw.size(RXESC)                              # receiver catalog box (L, W, H) (32 x 20 x 4.4 at the default)
 RX_C = (8.67, CH_Y1 - CH_WALL - RX_SIZE[0] / 2, 15.3)   # placed centre: the board stands against the front wall (its front face on the wall's inner face), so the nose and a shorter board move it
-WESC = os.environ.get("REVRON_WESC", "bbb_ant_esc_rvrn2")   # weapon ESC catalog id
+WESC = setting("REVRON_WESC", "bbb_ant_esc_rvrn2")   # weapon ESC catalog id
 WESCS = {"bbb_ant_esc_rvrn2": "", "esc_brushless_12a": "", "bbb_ant_esc": "", "bbb_brushless_esc_20a": "", "bbb_red_esc": "", "c_bbb_antweight_spinner_brushless_esc": ""}   # every catalog weapon ESC the REVRON_WESC setting may name
 WE_SIZE, WE_C = hw.size(WESC), (8.63, -7.25, 10.6)     # weapon ESC catalog box (23.5 x 12 x 5 at the default) and placed centre
 
@@ -173,12 +174,12 @@ def _env(c, size):
 # declared compartment layout (hook chassis.compartments): the interior compartments the tub carves, by name. motor = the pocket for the gearmotor body
 # and the stop wall / key tab / ledge that locate it; battery = the bay cut from the pack's catalog envelope; partition = the rib splitting the pack bay
 # from the electronics bay beside it
-COMPARTMENT = os.environ.get("REVRON_COMPARTMENTS", "standard")
+COMPARTMENT = setting("REVRON_COMPARTMENTS", "standard")
 COMPARTMENTS = {"standard": ("motor", "battery"), "none": (), "split_battery_bay": ("motor", "battery", "partition")}
 LAYOUT = COMPARTMENTS[COMPARTMENT]
 N10_TOP = round(RZ + GB["top"], 6)   # top face of the N10 gearbox plates
 # chassis RV01
-SWITCH = os.environ.get("REVRON_SWITCH", "switch_bbb_ant_rvrn2")   # catalog id of the power switch (RV15): the pad, pilots, slot and screws follow it
+SWITCH = setting("REVRON_SWITCH", "switch_bbb_ant_rvrn2")   # catalog id of the power switch (RV15): the pad, pilots, slot and screws follow it
 SWITCHES = {"switch_bbb_ant_rvrn2": "", "switch_slide_12x4": "", "switch_slide_bbb_ant": "", "fingertech_mini_switch": ""}   # every catalog switch the REVRON_SWITCH setting may name (test_tub2_sweep keeps it in step with the catalog)
 SW = hw.switch_mount(SWITCH)         # its ears and holes in its own frame (x along the ear row)
 SW_CLR = 0.05                        # clearance of the switch's wall-facing side to the inner wall face
