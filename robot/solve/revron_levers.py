@@ -11,10 +11,19 @@ LEVERS = [
 
 
 def mass_fn(values: dict) -> float:
-    """Build Revron with lever values and return total mass g (via design + robot.measure). Hook point; UNTESTED."""
-    from robot.design import use
-    from revron.settings import SCHEMA  # noqa: assumes schema export name
-    from robot import measure
-    d = SCHEMA.design({k: str(v) for k, v in values.items()})
-    with use(d):
-        return measure.total_mass_g()  # TODO wire to real mass sum (metrics mass_total_g)
+    """Build the Revron spec with lever values and return total mass g (robot.checks mass group, metrics mass_total_g).
+
+    Lever names must be real Revron settings; until they are added to revron/settings.py, SCHEMA.design raises
+    DesignError naming the unknown setting. UNTESTED."""
+    import sys
+    from pathlib import Path
+    from robot.checks import Options, verify
+    from robot.spec import Spec
+    root = Path(__file__).resolve().parents[2] / "robots" / "revron"
+    src = str(root / "src")
+    if src not in sys.path:
+        sys.path.insert(0, src)
+    from revron.settings import build_revron
+    data = build_revron({k: str(v) for k, v in values.items()})
+    rep = verify(Spec(data, root), Options(only=["mass"]))
+    return float(rep.metrics["mass_total_g"])
