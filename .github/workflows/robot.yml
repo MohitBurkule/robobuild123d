@@ -34,6 +34,8 @@ jobs:
           optional-dependencies: "sim,development"
       - name: install robot extras
         run: uv pip install trimesh manifold3d shapely rtree networkx pillow pytest pytest-xdist pytest-timeout
+      - name: robot doctor
+        run: python -m robot doctor
       # two invocations: robot/tests and robots/revron/tests both have a test_joints.py (rootdir basename clash)
       - name: robot/tests
         run: python -m pytest robot/tests -m "not slow" -n 4 -q --timeout=600 --durations=25 -p no:cacheprovider
