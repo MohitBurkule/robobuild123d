@@ -43,7 +43,7 @@ GB = hw.gearbox(DRIVE_MOTOR)         # plate stack in the motor frame: top, half
 MOTOR_WALL_GAP = 0.3                 # last gearbox plate to the chassis wall's inner face
 MOT = hw.reach(DRIVE_MOTOR)          # the gearmotor's catalog envelope in its own frame (x0..x1 along the shaft, y0..y1 across)
 REAR_MOTOR_GAP = round(DRIVE_LOCATIONS["rear"]["ry"] + hw.reach("n10_2200rpm_spicy")["y0"] - (-37.6), 6)   # stock rear face to the stock motor envelope rear
-CH_Y0 = min(CH_Y0, round(RY + MOT["y0"] - REAR_MOTOR_GAP, 6))   # a shorter rear cannot cut into the motor bay / base-panel seat: the rear face stays a stock gap behind the motor
+CH_Y0 = min(CH_Y0, round(RY + MOT["y0"] - REAR_MOTOR_GAP, 6)) if DRIVE_LOCATION == "rear" else CH_Y0   # a shorter rear cannot cut into the motor bay / base-panel seat: the rear face stays a stock gap behind the motor
 BATTERY = os.environ.get("REVRON_BATTERY", "lipo_2s_180_turnabot")      # RV16 pack, catalog id
 BATTERYS = {"lipo_2s_180_turnabot": "", "lipo_2s_180": "", "lipo_2s_350": "", "lipo_1s_300": "", "palmpower_2s_180_45c": "", "palmpower_2s_300_65c": "", "tattu_2s_300_75c_hv": "", "betafpv_2s_300_45c": "", "gnb_2s_350_70c_hv": "", "gnb_2s_450_80c": "", "gnb_3s_300_80c_hv": "", "c_palm_power_2s_300mah_65c_us_ref_not_uk": "", "c_typical_2s_300mah_lipo_lihv_betafpv_tbs_": ""}   # every catalog pack the REVRON_BATTERY setting may name
 BAT_LEN = hw.size(BATTERY)[0]        # pack length: in the bay it runs along Y, butting the stop wall
