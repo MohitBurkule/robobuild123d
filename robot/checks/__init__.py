@@ -11,7 +11,7 @@ import importlib
 import os
 import time
 import traceback
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 import json
 import pickle
@@ -25,34 +25,12 @@ from ..spec import Spec
 # wheel running clearance, wheel exposure, targets, fused/key/tape/press-fit evidence, stall-current battery peak.
 CHECKS_REVISION = 20  # 20 adds robust (one-at-a-time param / variant / COTS-swap perturbation sweep); 19 adds visual (silhouette views + depth, holes on every axis, faceting, fillet vs reference, slivers, dangling leads) and wire.render_wires; 18 adds integrity (one closed solid, volume collapse; runs first); 17 merges fix-T; 15 adds param (raw-literal lint) and sharp_corner (opt-out mfg.sharp_internal_corner); 14 adds the design-review groups (ref_map, cots_fidelity, wire_review, fastener_record, belt_wrap, print_orient); 13 adds intent (functional design-intent probes); 12 adds threat (combat failure modes CF-*); 10 adds internal (no_contact, fastener_void, wire_in_solid); 11 adds bom (reference BOM, lock part, O-ring stock, wire cut, switch dir, doc) and connection.cover_fasteners
 
-# (module, deep_only) in run order; same order as the Rust crate, plus `tension` before `assembly`.
-GROUPS = [
-    ("integrity", False),  # integrity.solids / integrity.volume (opt-out, every part; first and cheap)
-    ("wiring", True), ("mass", False), ("interference", False), ("connections", False), ("internal", False), ("ground", False),
-    ("legal", False), ("fasteners", False), ("power", False), ("mfg", False), ("spinner", False), ("kinematics", False), ("tension", False), ("targets", False),
-    ("shape", False), ("dynamics", False), ("strength", False), ("printability", False), ("process", False),
-    ("reference", False), ("archetype", False), ("architecture", False), ("electrical", False), ("combat", False), ("assembly", True), ("joints", False), ("material", False), ("plausibility", False), ("reference_ratios", False), ("reference_cad", False), ("intent", False),
-    ("cots", False), ("fit", False), ("contain", False), ("disasm", False), ("coverage", False), ("bom", False),
-    ("support", False),  # gravity in all 6 orientations (robot/checks/support.py)
-    ("threat", False),  # combat failure modes CF-* (robot/checks/threat)
-    ("fastener_seat", False),  # head/thread vs hole geometry (robot/cad/seat.py)
-    # design-review gates (CAD review of Revron 2.0): one module each
-    ("ref_map", False),  # reference.unmapped_part
-    ("cots_fidelity", False),  # cots.fidelity
-    ("wire_review", False),  # wire.rotating_clearance, wire.render_present
-    ("fastener_record", False),  # fastener.hole_record
-    ("drive_recess", False),  # fastener.drive_recess
-    ("belt_wrap", False),  # cots.belt_wrap
-    ("print_orient", False),  # print.orientation_declared
-    ("retention", False),  # retention.axial (robot/checks/retention.py)
-    ("sharp_corner", False),  # mfg.sharp_internal_corner (opt-out, every printed / moulded part)
-    ("visual", False),  # visual.* (robot/checks/visual.py): opt-out shape gates vs the reference, every mapped part
-    ("practice", False),  # practice.* (robot/checks/practice.py): best-CAD-practice gates with NO reference (MISSES.md causes)
-    ("sldprt_dump", False),  # dump.fillet / dump.hole / dump.extrude vs the SolidWorks part dumps (robot/checks/sldprt_dump.py)
-    ("asm_dump", False),  # asm.placement / asm.mass / asm.mate vs the SolidWorks assembly dump (robot/checks/asm_dump.py)
-    ("param", False),  # param.literals, param.duplicate, param.exempt_reason (opt out: review.param.enabled=false)
-    ("robust", True),  # robust.param_breaks: +-5/10 % params, variants, COTS swaps vs the fast groups (robot/checks/robust)
-]
+# Every group, its kind (design | parity) and tier (inner | full | nightly) live in registry.py; GROUPS is the old
+# (module, deep_only) view of it, in run order (same order as the Rust crate, plus `tension` before `assembly`).
+from . import registry  # noqa: E402
+from .registry import DESIGN, PARITY, TIERS  # noqa: E402,F401
+
+GROUPS = [(g.name, g.deep_only) for g in registry.REGISTRY]
 
 # `--only claims` is a pseudo-group: it evaluates spec claims and pulls in the groups that measure their metrics.
 CLAIMS_GROUP = "claims"
@@ -87,7 +65,10 @@ class Options:
     deep: bool = True  # run the slow sweeps (joint ranges, wiring routes, disassembly)
     strict_catalog: bool = False  # estimated catalog masses count as unverified in the pass/fail decision
     fast: bool = False  # coarse tessellation and grids (quick iteration); verdicts near limits may move
-    only: list | None = None  # run only these groups (debugging)
+    only: list | None = None  # run only these groups (debugging); wins over `tier`
+    tier: str | None = None  # inner | full | nightly (registry.py); None = every group, as before tiers existed
+    parity: str = "both"  # "both" | "no" (skip parity groups) | "only" (run just the parity groups)
+    combined: bool = False  # the old gate: parity blockers flip `ok` too
 
 
 @dataclass
@@ -100,6 +81,44 @@ class Ctx:
     captive: dict = field(default_factory=dict)  # part id -> blocking part ids (from interference)
     assembly: list = field(default_factory=list)
     not_checked: list = field(default_factory=list)
+
+
+def tag(found, name):
+    """Stamp the findings of registry group `name` with their kind (design | parity); returns them."""
+    for f in found:
+        f.kind = registry.kind_of(name, f.id)
+    return found
+
+
+def group_stats(rep, owned, sel=None):
+    """Fill rep.groups (kind, tier, time, how it ran, counts) from [(group, how, findings)], and rep.not_run."""
+    for name, how, found in owned:
+        g = registry.INFO.get(name)
+        t = rep.timings_s.get(f"proxy.{name}" if how == "proxy" else name)
+        rep.groups[name] = {"kind": g.kind if g else DESIGN, "tier": g.tier if g else None, "time_s": t, "how": how,
+                            "blockers": sum(1 for f in found if not f.passed and f.severity == BLOCKER),
+                            "warnings": sum(1 for f in found if not f.passed and f.severity == WARNING),
+                            "passed": sum(1 for f in found if f.passed)}
+    if sel is not None:
+        rep.not_run = [x for x in sel.not_run if x["group"] not in rep.groups]
+
+
+def _proxy(ctx, name, rep, sel):
+    """Inner tier: judge slow group `name` with its robot.proxy stand-in. None when it cannot run (no baseline)."""
+    from .. import proxy
+
+    pg = registry.INFO[name].proxy
+    base = proxy.load_baseline(ctx.r.spec.name) if pg in ("assembly", "wiring") else {}
+    if pg in ("assembly", "wiring") and not base.get("routes" if pg == "wiring" else "assembly"):
+        if pg == "wiring" and not ctx.r.spec.wires:
+            rep.timings_s[f"proxy.{pg}"] = 0.0
+            return []  # nothing to route: the full group would judge nothing either
+        sel.not_run.append({"group": name, "kind": DESIGN, "tier": registry.INFO[name].tier,
+                            "reason": "its proxy replays the last full run and there is none yet: run --tier full once"})
+        return None
+    found, t = proxy.run(ctx, [pg], None, base)
+    rep.timings_s.update(t)
+    return found
 
 
 def verify(spec: Spec, opts: Options | None = None) -> Report:
@@ -120,13 +139,32 @@ def verify_resolved(r, opts: Options) -> Report:
     rep.timings_s["validity"] = round(time.time() - t0, 3)
     ctx = None
     base_key = _base_key(r, opts) if cache.enabled() else None
+    sel = registry.select(opts.tier, opts.parity, effective_only(r.spec, opts.only), opts.deep)
+    rep.tier, rep.gate = (None if opts.only else opts.tier), ("combined" if opts.combined else "design")
+    owned = []  # (group, how it ran, its findings) for the per-group table
+    # a group listed in GROUPS but not registered (a build without it) still runs fail-closed, as it always did
+    unregistered = {n for n, _ in GROUPS if n not in registry.INFO and (not opts.only or n in opts.only)}
+    if sel.filtered and not opts.only:  # a tier is an `only` list: claims and disasm already know how to read one
+        opts = replace(opts, only=list(sel.run))
     if valid:
         ctx = Ctx(r, world_mod.World.start(r), opts)
-        only = effective_only(r.spec, opts.only)
-        for name, deep_only in GROUPS:
-            if deep_only and not opts.deep:
+        for name, _deep_only in GROUPS:
+            if name in sel.proxies:
+                t0 = time.time()
+                try:
+                    found = _proxy(ctx, name, rep, sel)
+                except Exception as e:  # noqa: BLE001 - fail closed, as a full group does
+                    found = [fail("checks.crashed", "checks", BLOCKER, "A check crashed",
+                                  f"the fast proxy of `{name}` raised {type(e).__name__}: {e}. Its verdicts are unknown.")]
+                    rep.timings_s[f"proxy.{name}"] = round(time.time() - t0, 3)
+                if found is not None:
+                    findings.extend(tag(found, name))
+                    owned.append((name, "proxy", found))
+                    ctx.not_checked.append(f"`{name}`: judged by its fast proxy only (inner tier); a pass is a strong hint, "
+                                           f"not a verdict. Run --tier full for the real group")
+                    _progress(name, t0, "proxy", findings)
                 continue
-            if only and name not in only:
+            if name not in sel.run and name not in unregistered:
                 continue
             t0 = time.time()
             try:
@@ -140,7 +178,8 @@ def verify_resolved(r, opts: Options) -> Report:
             hit = cache.get("group", gkey) if gkey else None
             if hit is not None and not cache.is_missing(hit):
                 found, delta = hit
-                findings.extend(found)
+                findings.extend(tag(found, name))
+                owned.append((name, "cached", found))
                 for k, v in delta.items():
                     setattr(ctx, k, v)
                 rep.timings_s[name] = round(time.time() - t0, 3)
@@ -149,7 +188,8 @@ def verify_resolved(r, opts: Options) -> Report:
             before = _snapshot(ctx) if gkey else None
             try:
                 found = mod.run(ctx)
-                findings.extend(found)
+                findings.extend(tag(found, name))
+                owned.append((name, "ran", found))
                 if gkey:
                     after = _snapshot(ctx)
                     delta = {k: getattr(ctx, k) for k, v in after.items() if before.get(k) != v}
@@ -163,6 +203,8 @@ def verify_resolved(r, opts: Options) -> Report:
                                      f"`{name}` raised {type(e).__name__}: {e}. Its verdicts are unknown.")
                                 .fix("Report this; the spec may hold geometry the check cannot handle."))
                 ctx.not_checked.append(f"Check group `{name}` crashed: {type(e).__name__}")
+                tag(findings[-1:], name)  # a crashed parity group is a parity blocker, a crashed design group a design one
+                owned.append((name, "crashed", findings[-1:]))
                 if os.environ.get("ROBOT_DEBUG"):
                     traceback.print_exc()
             rep.timings_s[name] = round(time.time() - t0, 3)
@@ -178,10 +220,33 @@ def verify_resolved(r, opts: Options) -> Report:
     rep.checks_revision = CHECKS_REVISION
     rep.not_checked = not_checked(r, opts) + (ctx.not_checked if ctx else ["Every geometric check: the spec is not valid"])
     rep.bench_checklist = []
+    group_stats(rep, owned, sel if sel.filtered else None)
+    if sel.filtered and rep.not_run and not (opts.tier is None and opts.parity == "both"):
+        rep.not_checked.append(f"NOT RUN in this tier: {len(rep.not_run)} check groups (listed under `not_run`): "
+                               + ", ".join(x["group"] for x in rep.not_run))
     rep.finish()
+    if ctx is not None and (rep.routes or rep.assembly) and not r.fast and cache.enabled():
+        _store_baseline(r.spec.name, rep)
     if waivers:
         rep.summary["waivers"] = waivers
     return rep
+
+
+def _store_baseline(name, rep):
+    """Keep this run's routes / teardown order where the inner tier's proxies find them (robot.proxy.baseline_path)."""
+    from dataclasses import asdict
+
+    from .. import proxy
+
+    try:
+        p = proxy.baseline_path(name)
+        old = json.loads(p.read_text()) if p.is_file() else {}
+        new = {"routes": [asdict(x) for x in rep.routes] or old.get("routes") or [],
+               "assembly": [asdict(x) for x in rep.assembly] or old.get("assembly") or []}
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(json.dumps(new))
+    except Exception:  # noqa: BLE001 - a convenience for later inner runs, never a reason to fail this one
+        pass
 
 
 _SKIP = ("r", "world", "opts", "_hub_kin")  # _hub_kin: lazy kinematics cache, rebuilt on demand

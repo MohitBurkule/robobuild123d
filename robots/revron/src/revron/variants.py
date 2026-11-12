@@ -13,6 +13,7 @@ import, or at run time with set_variants("battery_pad", ...) / set_variants() to
   nut_press     tub: hex pocket 0.05 under the nut AF so the nut is pressed in (original: AF + 0.1 clearance, drawn pocket)
 """
 import os
+from .settings import setting
 
 NAMES = ("battery_pad", "esc_tray", "rxesc_strap", "base_csk_fit", "open_keyhole", "pad_preload", "nut_press")
 VARIANTS = {n: False for n in NAMES}
@@ -32,4 +33,4 @@ def variant(name):
     return VARIANTS[name]
 
 
-set_variants(*[t.strip() for t in os.environ.get("REVRON_VARIANTS", "").split(",") if t.strip()])
+set_variants(*[t.strip() for t in setting("REVRON_VARIANTS", "").split(",") if t.strip()])

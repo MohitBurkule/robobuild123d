@@ -36,7 +36,7 @@ run_group() { # worktree group -> stdout/rc
     local f=robot/tests t; [ "$2" = unit ] || f=$(cat "$D/unit_files/$2" 2>/dev/null) || { echo "no file list for $2"; return 97; }
     t=$(cat "$D/unit_timeout" 2>/dev/null || echo "${UNIT_TIMEOUT:-14400}")
     (cd "$1" && timeout "$t" python3 -m pytest $f -q -p no:cacheprovider --durations=0 --durations-min=0.05); return; fi
-  (cd "$1" && HEAVY_CI=1 $h timeout "${GROUP_TIMEOUT:-6000}" python3 -m robot verify "${SPEC:-robots/revron/spec.json}" --full --only "$2" --jobs 1)
+  (cd "$1" && HEAVY_CI=1 $h timeout "${GROUP_TIMEOUT:-6000}" python3 -m robot verify "${SPEC:-robots/revron/spec.json}" --full --combined --only "$2" --jobs 1)
 }
 
 beat() { echo "$(date +%s) $1" > "$C" 2>/dev/null; }  # heartbeat: content changes every HB s

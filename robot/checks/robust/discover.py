@@ -141,12 +141,12 @@ def params_in_file(f: Path, bounds: dict | None = None) -> tuple:
 
 
 def _env_get(node):
-    """('ENV', default node) for os.environ.get("ENV", "default") / os.getenv(...), else None."""
+    """('ENV', default node) for os.environ.get("ENV", "default") / os.getenv(...) / setting(...) (robot.design.value), else None."""
     if not isinstance(node, ast.Call) or len(node.args) != 2:
         return None
     fn = ast.unparse(node.func)
     a, d = node.args
-    if fn in ("os.environ.get", "os.getenv", "environ.get", "getenv") and isinstance(a, ast.Constant) and isinstance(d, ast.Constant) \
+    if fn in ("os.environ.get", "os.getenv", "environ.get", "getenv", "setting") and isinstance(a, ast.Constant) and isinstance(d, ast.Constant) \
             and isinstance(d.value, str):
         return a.value, d
     return None
