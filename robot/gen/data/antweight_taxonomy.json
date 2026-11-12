@@ -610,7 +610,7 @@
    "position": [
     "any"
    ],
-   "notes": "AWS 4-inch cube applies at start only; robots unfold after start (UK specialty). Also tribots/clusterbots, walkers.",
+   "notes": "AWS 2025 size = 150 mm floor square, no overhang at any height, no height cap (old v4.x rule was a 4-inch cube); expandabots unfold after start (UK specialty). Also tribots/clusterbots, walkers.",
    "confidence": "unverified (general UK ant community knowledge, not fetched this session)"
   }
  },
@@ -1036,7 +1036,7 @@
   "BE1806 weapon needs brushless ESC (AM32/BLHeli) + separate drive ESC => +6-10g electronics",
   "servo weapons can run off Malenki/rx channel at 2S only if HV servo",
   "horizontal shell/ring => weapon_mount full_body, wheels guarded inside shell",
-  "4-inch cube (AWS) caps wheel+weapon envelope ~100mm; expandabots unfold after start",
+  "AWS 2025 150 mm floor square (no height cap) caps wheel+weapon envelope; old v4.x was a 4-inch cube; expandabots unfold after start",
   "weapon mass fraction: spinners 25-35%, servo weapons 10-20%, pushers ~0%"
  ]
 }
