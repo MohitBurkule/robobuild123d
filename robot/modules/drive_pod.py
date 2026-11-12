@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from build123d import Box, GridLocations, Location, Plane, Pos, mirror
+from build123d import Box, Cylinder, GridLocations, Location, Plane, Pos, mirror
 
 from robot import catalog
 from robot.modules.base import Module, Mount, ModuleResult
@@ -17,7 +17,7 @@ CLAMP_WALL_MM = 2.0            # clamp wall round the motor body
 CLAMP_FIT_MM = 0.15            # clearance between body and clamp
 CLAMP_LEN_FRACTION = 0.6       # clamp covers this share of the motor body length
 SCREW_D_MM = 2.0               # M2 chassis screws
-SCREW_FASTENER_ID = "m2_screw"
+SCREW_FASTENER_ID = "nut_m2"   # catalogue has no m2_screw entry; M2 hardware id that exists
 SCREW_EDGE_FACTOR = 2.0        # screw centre this many screw diameters in from the flange edge
 FLANGE_WIDTH_FACTOR = 4.0      # flange sticks out this many screw diameters each side
 WHEEL_GAP_MM = 1.0             # wheel inner face clear of the shaft root
@@ -25,11 +25,10 @@ WHEEL_GAP_MM = 1.0             # wheel inner face clear of the shaft root
 
 def _body_bbox(entry):
     """Motor rigid body size (shaft excluded) from the catalogue solid: (len_x, w_y, h_z, shaft_root_x)."""
-    from robot.cad.bay import derive_bay   # reuse bay's rigid-body logic; local import keeps load light
-    bay = derive_bay(entry, insert_dir="+z")
-    env = bay.required_envelope()
-    bb = env.bounding_box()
-    return bb.size.X, bb.size.Y, bb.size.Z, entry.shaft["at"][0]
+    from robot.cad.bay import part_envelope   # bay's rigid-body logic (body = bbox less the shaft); local import keeps load light
+    body = part_envelope(entry).body
+    sx, sy, sz = body.size
+    return sx, sy, sz, entry.shaft["at"][0]
 
 
 @dataclass
@@ -51,7 +50,6 @@ class DrivePod(Module):
         screw_dx = clamp_len - 2 * SCREW_EDGE_FACTOR * SCREW_D_MM
         screw_dy = flange_w - 2 * SCREW_EDGE_FACTOR * SCREW_D_MM
         sites = [Pos(0, 0, -ch / 2) * loc for loc in GridLocations(screw_dx, screw_dy, 2, 2)]
-        from build123d import Cylinder
         holes = [s * Pos(0, 0, CLAMP_WALL_MM / 2) * Cylinder(SCREW_D_MM / 2, CLAMP_WALL_MM) for s in sites]
         clamp = block - pocket
         for h in holes:

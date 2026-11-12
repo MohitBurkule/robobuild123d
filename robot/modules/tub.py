@@ -18,8 +18,8 @@ from robot.modules.base import ModuleResult, Mount
 
 def _bbox(solids):
     bbs = [s.bounding_box() for s in solids]
-    lo = tuple(min(b.min[i] for b in bbs) for i in range(3))
-    hi = tuple(max(b.max[i] for b in bbs) for i in range(3))
+    lo = tuple(min(getattr(b.min, a) for b in bbs) for a in "XYZ")
+    hi = tuple(max(getattr(b.max, a) for b in bbs) for a in "XYZ")
     return lo, hi
 
 
@@ -32,9 +32,12 @@ class TubShell:
     bay_cuts: list = field(default_factory=list)   # solids to subtract (e.g. ElectronicsBay parts["cut_*"])
     pod_envelopes: list = field(default_factory=list)   # right-side (+Y) drive pod keep-ins; mirrored to -Y
     weapon_envelopes: list = field(default_factory=list)
+    mirror_pods: bool = True                       # False when both pods are already passed in
 
     def _all_cuts(self):
-        pods = list(self.pod_envelopes) + [mirror(p, Plane.XZ) for p in self.pod_envelopes]
+        pods = list(self.pod_envelopes)
+        if self.mirror_pods:
+            pods += [mirror(p, Plane.XZ) for p in self.pod_envelopes]
         return list(self.bay_cuts), pods, list(self.weapon_envelopes)
 
     def build(self) -> ModuleResult:
@@ -67,8 +70,8 @@ class TubShell:
 
         res = ModuleResult(self.name, parts={"tub": shell})
         for i, p in enumerate(pods):
-            c = p.bounding_box().center()
+            c = p.bounding_box().center   # BoundBox.center is a property, not a method
             side = "right" if c.Y >= centre[1] else "left"
-            res.mounts[f"pod_{side}_{i}"] = Mount(f"pod_{side}_{i}", Location(c))
+            res.mounts[f"pod_{side}_{i}"] = Mount(f"pod_{side}_{i}", Location((c.X, c.Y, c.Z)))
         res.envelope = Pos(*centre) * Box(*outer)
         return res

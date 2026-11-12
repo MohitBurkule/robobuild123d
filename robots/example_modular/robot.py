@@ -8,21 +8,21 @@ CONFIG = {
     "name": "example_vert_ant",
     "pods": {
         "type": "drive_pod",
-        "kwargs": {"motor": "n20_300rpm", "wheel": {"diameter": 32.0, "width": 10.0}},
+        "kwargs": {"motor_id": "n20_1000rpm_6v"},
         "at": [-15.0, 32.0, 0.0],
         "mirror": True,
     },
     "weapon": {
         "type": "weapon",
-        "kwargs": {"kind": "vertical_spinner", "disc_diameter": 60.0, "thickness": 6.0, "motor": "2204_brushless"},
+        "kwargs": {"motor": "gr1507", "shape": "disc", "orientation": "vertical", "tip_r": 30.0, "sheet_t": 3.0},
         "at": [40.0, 0.0, 18.0],
     },
     "electronics": {
         "type": "electronics_bay",
-        "kwargs": {"battery": "2s_300mah", "esc": "dual_esc_mini", "receiver": "rx_mini"},
+        "kwargs": {"part_ids": ("lipo_2s_180", "rx_fs_ia6_decased", "esc_dual_brushed")},
         "at": [-10.0, 0.0, 4.0],
     },
-    "tub": {"type": "tub", "kwargs": {"material": "tpu"}, "wall_mm": 2.5, "clearance_mm": 1.0},
+    "tub": {"type": "tub", "kwargs": {}, "wall_mm": 2.5, "clearance_mm": 1.0},
     "mass_limit_g": 150.0,
 }
 

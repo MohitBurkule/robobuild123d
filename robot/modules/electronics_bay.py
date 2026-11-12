@@ -18,7 +18,7 @@ from robot.modules.base import ModuleResult, Mount
 @dataclass
 class ElectronicsBay:
     name: str = "electronics_bay"
-    part_ids: tuple = ("battery", "rx", "esc")      # catalogue ids, packed in this order
+    part_ids: tuple = ("lipo_2s_180", "rx_fs_ia6_decased", "esc_dual_brushed")   # real catalogue ids, packed in this order
     axis: str = "x"
     insert_dir: str = "+z"                          # parts drop in from above (open face = -z ... see bay.py frames)
     wall: float = bay_lib.DEFAULT_WALL
