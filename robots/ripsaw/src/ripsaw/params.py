@@ -22,9 +22,16 @@ TIP_LIMIT_MPH = RULES.max_tip_speed_mph     # 600 mph
 MOVING_CLR = RULES.min_clearance_moving_mm  # 0.4 mm: rotating to fixed clearance floor
 MIN_WALL = RULES.min_wall_fdm_mm            # 0.9 mm printed wall floor
 ALLOWANCE_G = RULES.allowance_g             # glue, tape, solder
-CUBE_MM = 101.6           # AWS rules v4.3 section 2b: robot fits fully inside a 4 inch (101.6 mm) cube in start configuration
-ENVELOPE_MARGIN = 2.0     # print shrink / tolerance stack / fork sag kept free inside the cube (2 mm on each extent)
-ENVELOPE = CUBE_MM - ENVELOPE_MARGIN   # max length, width and height of the start configuration (incl. forks, wheels, disc)
+# Size limit: ONE setting. Default "aws2025" = robot/profile.py footprint (150 mm floor square, no overhang at any
+# height, no height limit). Optional "aws_v43_cube" = AWS rules v4.3 2b, 4 inch (101.6 mm) cube in start configuration.
+RULES_SIZE = "aws2025"
+CUBE_MM = 101.6
+ENVELOPE_MARGIN = 2.0     # print shrink / tolerance stack / fork sag kept free inside the limit, each extent
+_LIMITS = {"aws2025": (FOOTPRINT_MM, FOOTPRINT_MM, float("inf")), "aws_v43_cube": (CUBE_MM, CUBE_MM, CUBE_MM)}
+ENVELOPE_L, ENVELOPE_W, ENVELOPE_H = (v - ENVELOPE_MARGIN for v in _LIMITS[RULES_SIZE])
+# body / rail lengths per size rule (the disc is mass-limited at 60 mm and fits both); asserted against ENVELOPE below
+_SIZING = {"aws2025": dict(TUB_BODY_L=62.0, RAIL_L=24.0, WHEEL_REAR_BIAS=14.0),
+           "aws_v43_cube": dict(TUB_BODY_L=52.0, RAIL_L=18.0, WHEEL_REAR_BIAS=12.0)}[RULES_SIZE]
 
 # ------------------------------------------------------------------------------------------------ COTS settings
 WEAPON_MOTOR = "repeat_2004_2800kv"         # Repeat DirectDrive 2004: 3 mm through shaft, 3x M3 on 15 both faces
@@ -120,7 +127,7 @@ assert 360.0 / WIN_N - 2 * WIN_HALF_DEG - BAL_EXTRA_DEG >= SPOKE_MIN_DEG, "balan
 DISC_RAIL_CLR = 1.5       # disc side to right rail face (> MOVING_CLR, plus disc wobble on a 3 mm shaft)
 RAIL_T = 4.0              # printed rail plate thickness: carries the stator screws / bearing; ~4 perimeters of 0.45 nozzle
 BOSS_WALL = 1.5           # printed wall round the bearing
-RAIL_L = 18.0             # rail prong length ahead of the tub body front (sized to ENVELOPE)
+RAIL_L = _SIZING["RAIL_L"]          # rail prong length ahead of the tub body front (per size rule)
 RAIL_NOSE = 1.5           # rail material ahead of the bearing boss
 WM_X_CAP = -DISC_T / 2                    # bell face against the disc's left face
 WM_X_BACK = WM_X_CAP - WM_BODY_L          # stator base back face = left rail inner face
@@ -133,13 +140,13 @@ BOSS_R = BEAR_OD / 2 + BOSS_WALL
 RAIL_TOP = Z_AX + WM["bell_r"] + BOSS_WALL      # rails rise to cover the bell from a top-down hit
 
 # ------------------------------------------------------------------------------------------------ tub / chassis masters
-TUB_BODY_L = 52.0         # body behind the rails, sized so tub + disc fit ENVELOPE (battery lies across the body)
+TUB_BODY_L = _SIZING["TUB_BODY_L"]  # body behind the rails (per size rule); battery lies across it
 TUB_W = 80.0              # outer width; wheels inside it behind side armour
 TUB_FLOOR_Z = 3.0         # tub underside above the floor (wheels carry the robot)
 TUB_H = 24.0              # body height: below the wheel OD so the wheels stand proud both ways up
 WALL = 1.6                # side / rear wall: TPU-reinforced nylon, > MIN_WALL
 CORNER_R = 6.0            # plan-view corner radius: glancing blows slide off
-WHEEL_REAR_BIAS = 12.0    # wheel axle ahead of the rear wall (rear-biased: the disc and rails are the front mass)
+WHEEL_REAR_BIAS = _SIZING["WHEEL_REAR_BIAS"]    # wheel axle ahead of the rear wall (rear-biased: the disc and rails are the front mass)
 WHEEL_GAP = 1.0           # tyre to wheel-well wall
 PANEL_T_BASE = 1.0        # printed base panel
 PANEL_T_TOP = 1.0         # printed top panel (nylon); Ti would cost ~6 g more (BRIEF.md)
@@ -161,7 +168,7 @@ WHEEL_PROUD_TOP = WHEEL_Z + WHEEL_R - TUB_TOP_Z        # > 0: drives inverted on
 INSERT_D, INSERT_L = FC.insert(PANEL_SCREW)
 OVERALL_L = DISC_FRONT_Y - TUB_Y0
 OVERALL_H = max(RAIL_TOP, TUB_TOP_Z + PANEL_T_TOP, WHEEL_Z + WHEEL_R)
-assert OVERALL_L <= ENVELOPE and TUB_W <= ENVELOPE and OVERALL_H <= ENVELOPE, "outside the 4 inch start cube (less margin)"
+assert OVERALL_L <= ENVELOPE_L and TUB_W <= ENVELOPE_W and OVERALL_H <= ENVELOPE_H, f"outside the {RULES_SIZE} size limit"
 assert WHEEL_PROUD_TOP > 0, "wheels must stand proud of the tub top for inverted driving"
 
 # ------------------------------------------------------------------------------------------------ forks (reuse revron fork_5)
