@@ -70,9 +70,61 @@ def cuts():
     return (motor_pockets() if "motor" in LAYOUT else []) + (battery_bay() if "battery" in LAYOUT else []) + electronics_bays() + switch_bay()
 
 
+# ----------------------------------------------------------------------------- derived bays (robot/cad/bay.py)
+# "derived_bays" in LAYOUT: each pocket AND its way out come from one robot.cad.bay.Bay built off the catalogue entry, so a swapped pack /
+# motor / switch / board gets a cavity swept to the base opening (never trapped) plus its shaft / lead slots, with no *_drop patch per part.
+# UNTESTED (written without running code). Off by default until the sweep tests pass with it on.
+DERIVED = "derived_bays" in LAYOUT
+EXIT_DIR = "+z"                            # parts go in travelling +Z through the base opening, so each bay opens on -Z (the tub's bottom face)
+
+
+def _seats():
+    """(catalog id, at, rot) for every part that sits in a tub bay: same poses as the hand cutters above."""
+    rows = [(SWITCH, (SWX, *ELEC["switch_yz"]), (0, 0, 90)), (RXESC, RX_C, BAY_ROT), (WESC, WE_C, BAY_ROT)]
+    if "battery" in LAYOUT:
+        rows.append((BATTERY, ELEC["battery"], BAY_ROT))
+    if "motor" in LAYOUT:
+        rows += [(DRIVE_MOTOR, (s * MOTX, RY, RZ), (0, 0, 0 if s > 0 else 180)) for s in (1, -1)]
+    return rows
+
+
+def derived_bay(catalog_id, at, rot):
+    """One Bay for a seated part: reach = from the part's underside (less clearance) down to the tub bottom, so the cavity is open below it."""
+    from build123d import Rot
+    from robot import catalog
+    from robot.cad import bay as B
+    entry = catalog.find(catalog_id)
+    probe = B.derive_bay(entry, insert_dir=EXIT_DIR)               # part-frame cavity bottom (rotation is about Z only: z is shared)
+    reach = max(0.0, at[2] + probe.cavity.lo[2] - CH_Z0 + OVER)
+    return B.derive_bay(entry, placement=Pos(*at) * Rot(*rot), insert_dir=EXIT_DIR, reach=reach)
+
+
+def derived_bays():
+    """Every seated part's Bay; a kind bay.py does not handle (e.g. a servo before it joins BAY_KINDS) is skipped, the hand cutter covers it."""
+    from robot.cad.bay import UnsupportedPart
+    out = []
+    for cid, at, rot in _seats():
+        try:
+            out.append(derived_bay(cid, at, rot))
+        except UnsupportedPart:
+            continue
+    return out
+
+
+def derived_cuts():
+    """Cut solids of the derived bays, less the heat-set sleeves (the column bores stay whole, as with the hand cutters)."""
+    return [_cut(b.cut_solid()) for b in derived_bays()]
+
+
 def carve(tub):
     """The tub less the pockets of the parts that reach into it. A part that clears the tub (the default) leaves it untouched; the cut can leave a
     sliver where an envelope grazes a fillet, so the result is healed (the pockets are the exact catalog solids, with their own curved faces)."""
+    if DERIVED:
+        hit = [c for c in derived_cuts() if (tub & c).volume > TOUCH]   # each cut already includes its way out: no *_drop patches
+        if not hit:
+            return tub
+        out = _one(tub.cut(*hit).clean())
+        return out if out.is_valid else _one(out.fix())
     hit = [c for c in cuts() if (tub & c).volume > TOUCH]
     if not hit:
         return tub

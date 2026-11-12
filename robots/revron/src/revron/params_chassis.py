@@ -176,6 +176,7 @@ def _env(c, size):
 # from the electronics bay beside it
 COMPARTMENT = setting("REVRON_COMPARTMENTS", "standard")
 COMPARTMENTS = {"standard": ("motor", "battery"), "none": (), "split_battery_bay": ("motor", "battery", "partition")}
+COMPARTMENTS["derived_bays"] = COMPARTMENTS["standard"] + ("derived_bays",)   # same bays, cut by robot/cad/bay.py (UNTESTED)
 LAYOUT = COMPARTMENTS[COMPARTMENT]
 N10_TOP = round(RZ + GB["top"], 6)   # top face of the N10 gearbox plates
 # chassis RV01
