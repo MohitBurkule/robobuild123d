@@ -1,6 +1,6 @@
 """Group `physics`: closed-form weapon / drive / power checks from geometry metrics + catalogue (no sim).
 
-Runs after `power`, `dynamics` and `combat` and reuses their metrics (weapon_rpm, weapon_energy_j, peak_current_a, mass_g).
+Runs after `power`, `dynamics` and `combat` and reuses their metrics (weapon_rpm, weapon_energy_j, peak_current_a, mass_total_g).
 Every missing input goes to NOT CHECKED, never a silent pass. UNTESTED: written without running.
 """
 
@@ -13,6 +13,7 @@ from . import formulas as F
 from .limits import limit
 
 G = "physics"
+GCM_TO_NM = 9.80665e-5  # catalog `stall_torque_gcm` (g cm) -> N m
 
 
 def _props(rp):
@@ -23,11 +24,27 @@ def _parts(r, kind):
     return [rp for rp in r.parts if rp.part.kind == kind]
 
 
+def _wheel_geometry(ctx, m):
+    """track_mm / wheel_d_mm from the world's wheel bodies (same method as dynamics._turn_rate); nothing if there are none."""
+    try:
+        wheels = [b for b in ctx.world.bodies if b.kind == "wheel" and not b.fastener]
+    except Exception:  # noqa: BLE001 - no world / unexpected body shape: leave the metrics unset (NOT CHECKED)
+        return
+    if not wheels:
+        return
+    if "wheel_d_mm" not in m:
+        m["wheel_d_mm"] = max(float(b.aabb[1][2] - b.aabb[0][2]) for b in wheels)
+    xs = [float(b.center[0]) for b in wheels]
+    if "track_mm" not in m and len(wheels) >= 2 and max(xs) - min(xs) >= 5.0:
+        m["track_mm"] = max(xs) - min(xs)
+
+
 def run(ctx):
     r, m = ctx.r, ctx.metrics
     prof = getattr(r, "profile", None)
     out = []
     mass_kg = float(m.get("mass_g", m.get("mass_total_g", 150.0))) / 1000.0
+    _wheel_geometry(ctx, m)
     out += _weapon(ctx, r, m, prof, mass_kg)
     out += _power(ctx, r, m, prof)
     out += _drive(ctx, r, m, prof, mass_kg)
@@ -106,7 +123,7 @@ def _power(ctx, r, m, prof):
     margin = limit(prof, "esc_margin")
     for esc in _parts(r, "esc"):
         ep = _props(esc)
-        cont = ep.get("continuous_a", ep.get("max_current_a"))
+        cont = ep.get("cont_current_a", ep.get("continuous_a", ep.get("max_current_a")))
         load = ep.get("load_a")
         for tgt in (getattr(esc.part, "drives", None) or []):
             q = next((x for x in r.parts if x.part.id == tgt), None)
@@ -129,8 +146,12 @@ def _drive(ctx, r, m, prof, mass_kg):
         ctx.not_checked.append("physics drive: no drive motors or wheel_d_mm metric")
         return out
     mp = _props(motors[0])
-    rpm = mp.get("rpm", mp.get("no_load_rpm"))
+    rpm = mp.get("rpm_nominal", mp.get("no_load_rpm", mp.get("rpm")))
     stall_t = mp.get("stall_torque_nm")
+    if stall_t is None and mp.get("stall_torque_gcm"):
+        stall_t = float(mp["stall_torque_gcm"]) * GCM_TO_NM
+    if stall_t is None and mp.get("stall_torque_kgcm"):
+        stall_t = float(mp["stall_torque_kgcm"]) * 1000.0 * GCM_TO_NM
     red = float(getattr(motors[0].part, "reduction", None) or 1.0)
     d = float(wheel_d) / 1000.0
     if rpm:
@@ -157,10 +178,12 @@ def _drive(ctx, r, m, prof, mass_kg):
 
 
 def _invert(ctx, r, m):
-    inv = m.get("invertible", m.get("drive_inverted_ok"))
-    srt = getattr(r.spec, "self_right", None)
-    if inv is None and srt is None:
-        ctx.not_checked.append("physics.invert: no invertible metric or spec.self_right")
+    # dynamics writes `invert_wheel_shortfall_mm` (0 = every wheel stands proud of the top); the spec flag is `can_run_inverted`
+    short = m.get("invert_wheel_shortfall_mm")
+    inv = None if short is None else float(short) <= 0.0
+    srt = bool(getattr(r.spec, "can_run_inverted", False) or getattr(r.spec, "self_right", False))
+    if inv is None and not srt:
+        ctx.not_checked.append("physics.invert: no invert_wheel_shortfall_mm metric (dynamics did not run) and no self-righting declared")
         return []
     if inv or srt:
         return [ok("physics.invert", G, "Drives inverted or self-rights", "Robot can fight upside down or right itself.")]
