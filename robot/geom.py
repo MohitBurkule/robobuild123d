@@ -261,33 +261,53 @@ def voxelize(mesh: trimesh.Trimesh, h: float, lo=None, hi=None, max_cells: int =
     zs = lo[2] + (np.arange(nz) + 0.5) * h
     T = mesh.triangles
     counts = np.zeros((nx * ny, nz + 1), np.int32)
-    for tri in T:
-        x0, y0 = tri[:, 0].min(), tri[:, 1].min()
-        x1, y1 = tri[:, 0].max(), tri[:, 1].max()
-        i0 = max(int(np.ceil((x0 - xs[0]) / h - 1e-9)), 0) if nx else 0
-        i1 = min(int(np.floor((x1 - xs[0]) / h + 1e-9)), nx - 1)
-        j0 = max(int(np.ceil((y0 - ys[0]) / h - 1e-9)), 0)
-        j1 = min(int(np.floor((y1 - ys[0]) / h + 1e-9)), ny - 1)
-        if i1 < i0 or j1 < j0:
-            continue
-        a, b, c = tri
-        det = (b[1] - c[1]) * (a[0] - c[0]) + (c[0] - b[0]) * (a[1] - c[1])
-        if abs(det) < 1e-14:
-            continue
-        X, Y = np.meshgrid(xs[i0:i1 + 1], ys[j0:j1 + 1], indexing="ij")
-        l1 = ((b[1] - c[1]) * (X - c[0]) + (c[0] - b[0]) * (Y - c[1])) / det
-        l2 = ((c[1] - a[1]) * (X - c[0]) + (a[0] - c[0]) * (Y - c[1])) / det
-        l3 = 1 - l1 - l2
-        m = (l1 >= 0) & (l2 >= 0) & (l3 >= 0)
-        if not m.any():
-            continue
-        z = l1 * a[2] + l2 * b[2] + l3 * c[2]
-        I, J = np.nonzero(m)
-        col = (I + i0) * ny + (J + j0)
-        k = np.clip(np.searchsorted(zs, z[m], side="left"), 0, nz)
-        np.add.at(counts, (col, k), 1)
+    if len(T):
+        _voxel_columns(T, xs, ys, zs, h, counts)
     occ = (np.cumsum(counts[:, :nz], axis=1) % 2 == 1).reshape(nx, ny, nz)
     return occ, lo, h
+
+
+def _voxel_columns(T, xs, ys, zs, h, counts):
+    """Add the column/z crossings of triangles T to `counts` (in place). Same arithmetic as one dense barycentric test
+    per triangle, but run as numpy blocks over triangles grouped by cell-box size; counts are order-independent, so the
+    occupancy is identical to the per-triangle loop."""
+    from . import _batch
+
+    nx, ny, nz = len(xs), len(ys), len(zs)
+    A, B, C = T[:, 0], T[:, 1], T[:, 2]
+    i0 = np.maximum(np.ceil((T[:, :, 0].min(1) - xs[0]) / h - 1e-9).astype(np.int64), 0)
+    i1 = np.minimum(np.floor((T[:, :, 0].max(1) - xs[0]) / h + 1e-9).astype(np.int64), nx - 1)
+    j0 = np.maximum(np.ceil((T[:, :, 1].min(1) - ys[0]) / h - 1e-9).astype(np.int64), 0)
+    j1 = np.minimum(np.floor((T[:, :, 1].max(1) - ys[0]) / h + 1e-9).astype(np.int64), ny - 1)
+    det = (B[:, 1] - C[:, 1]) * (A[:, 0] - C[:, 0]) + (C[:, 0] - B[:, 0]) * (A[:, 1] - C[:, 1])
+    idx = np.nonzero((i1 >= i0) & (j1 >= j0) & (np.abs(det) >= 1e-14))[0]
+    if not len(idx):
+        return
+    small, large = _batch.chunks(idx, (i1 - i0 + 1)[idx], (j1 - j0 + 1)[idx])
+    blocks = small + [(np.array([k]), int(i1[k] - i0[k] + 1), int(j1[k] - j0[k] + 1)) for k in large]
+
+    def e(v):
+        return v[:, None, None]
+
+    for k, w, hh in blocks:
+        II = e(i0[k]) + np.arange(w)[None, :, None]  # (n, w, 1) column index along x
+        JJ = e(j0[k]) + np.arange(hh)[None, None, :]  # (n, 1, hh) column index along y
+        ok = (II <= e(i1[k])) & (JJ <= e(j1[k]))
+        X = xs[np.minimum(II, nx - 1)]
+        Y = ys[np.minimum(JJ, ny - 1)]
+        a, b, c = A[k], B[k], C[k]
+        d = e(det[k])
+        l1 = (e(b[:, 1] - c[:, 1]) * (X - e(c[:, 0])) + e(c[:, 0] - b[:, 0]) * (Y - e(c[:, 1]))) / d
+        l2 = (e(c[:, 1] - a[:, 1]) * (X - e(c[:, 0])) + e(a[:, 0] - c[:, 0]) * (Y - e(c[:, 1]))) / d
+        l3 = 1 - l1 - l2
+        m = (l1 >= 0) & (l2 >= 0) & (l3 >= 0) & ok
+        if not m.any():
+            continue
+        z = l1 * e(a[:, 2]) + l2 * e(b[:, 2]) + l3 * e(c[:, 2])
+        ti, wi, hi_ = np.nonzero(m)
+        col = (i0[k][ti] + wi) * ny + (j0[k][ti] + hi_)
+        kz = np.clip(np.searchsorted(zs, z[ti, wi, hi_], side="left"), 0, nz)
+        np.add.at(counts, (col, kz), 1)
 
 
 def inscribed_depth(m: mf.Manifold, cap: float | None = None):

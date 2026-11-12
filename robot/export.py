@@ -172,12 +172,14 @@ def write_all(slug: str, spec, out_dir, opts=None, step=True, width=1100):
     if dxf_fails:
         rep.findings += process_check.export_findings(dxf_fails)
         rep.finish()
-    for v in VIEWS:
-        view = render.named(v, width)
-        put(f"renders/{v}.png", render.render_png(world, view, None, []))
+    views = [render.named(v, width) for v in VIEWS]
+    axle = render.axle_sections(world, resolved, width)
+    pngs = render.render_views(world, views + axle, None, [])  # all views in threads, one placed mesh per body
+    for v, png in zip(VIEWS, pngs):
+        put(f"renders/{v}.png", png)
         render.write_record(root / f"renders/{v}.png", root / "spec.json", world, rep.routes or [])  # read by wire.render_wires
-    for view in render.axle_sections(world, resolved, width):
-        put(f"renders/{view.name}.png", render.render_png(world, view, None, []))
+    for view, png in zip(axle, pngs[len(views):]):
+        put(f"renders/{view.name}.png", png)
     from .checks import reference as ref_check
 
     compares = []
