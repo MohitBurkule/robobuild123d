@@ -4,7 +4,7 @@ Steps, each failing closed with a machine-readable error an LLM can act on:
   1. parse   design.json (bad_json)
   2. validate via robot.design_io.validate (codes: bad_type, unknown_key, not_configurable, bad_enum, ...)
   3. generate spec via robot.gen.build.build(hypothesis, user overrides) (build_failed)
-  4. verify  fast tier (checks.Options(fast=True, tier="fast")) -> blockers with fix hints
+  4. verify  inner tier (checks.Options(fast=True, tier="inner")) -> blockers with fix hints
   5. export  STEP/STL/DXF/renders/REPORT.md via robot.export.write_all (export_failed)
 Always writes <out>/<slug>/build_result.json: {ok, stage, errors[], blockers[], files[], next_steps[]}.
 Exit codes: 0 ok, 1 invalid design, 2 verify blockers, 3 build/export crash.
@@ -54,7 +54,7 @@ def blocker_rows(rep) -> list:
             for f in rep.findings if not f.passed and f.severity == BLOCKER]
 
 
-def run(design_path, out_dir="robots", *, export=True, step=True, tier="fast", width=900) -> dict:
+def run(design_path, out_dir="robots", *, export=True, step=True, tier="inner", width=900) -> dict:
     """Whole pipeline; never raises. Returns the build_result dict (also written to disk when possible)."""
     design_path = Path(design_path)
     try:
@@ -154,5 +154,5 @@ def add_cli(sub):
     p.add_argument("--json", action="store_true", help="print build_result.json to stdout")
     p.add_argument("--no-export", action="store_true", help="validate + generate + verify only (fast)")
     p.add_argument("--no-step", action="store_true")
-    p.add_argument("--tier", default="fast", help="verify tier (default fast)")
+    p.add_argument("--tier", default="inner", help="verify tier: inner | full | nightly (default inner)")
     p.set_defaults(func=cli)
