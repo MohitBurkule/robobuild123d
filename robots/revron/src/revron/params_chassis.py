@@ -17,6 +17,7 @@ from robot.world import csk_dims
 CH_HALF_W_STOCK = 29.5               # chassis outer half-width |X| (outer side-wall face) as drawn; CH_HALF_W (below) = the width in use
 CH_Y0, CH_Y1_STOCK = -37.6, 15.0     # chassis rear face / stock front face; CH_Y1 (below) = the front face, which a longer pack pushes forward
 CH_Z0, CH_Z1_STOCK = 2.5, 19.5       # chassis floor underside / stock rim; CH_Z1 (below) = the rim (top panel and mount notch sit on it)
+CH_WALL_STOCK = 2.0                  # stock wall (RV01): reference for relations that must keep the stock geometry
 CH_WALL = 2.0                        # printed wall and deck thickness
 WY_STOCK, WZ_STOCK = 38.5, 23.5      # weapon axis (along X) as drawn
 from .wheel_variant import rear_wheel_dims
@@ -181,7 +182,8 @@ N10_TOP = round(RZ + GB["top"], 6)   # top face of the N10 gearbox plates
 SWITCH = os.environ.get("REVRON_SWITCH", "switch_bbb_ant_rvrn2")   # catalog id of the power switch (RV15): the pad, pilots, slot and screws follow it
 SWITCHES = {"switch_bbb_ant_rvrn2": "", "switch_slide_12x4": "", "switch_slide_bbb_ant": "", "fingertech_mini_switch": ""}   # every catalog switch the REVRON_SWITCH setting may name (test_tub2_sweep keeps it in step with the catalog)
 SW = hw.switch_mount(SWITCH)         # its ears and holes in its own frame (x along the ear row)
-SW_CLR = 0.05                        # clearance of the switch's wall-facing side to the inner wall face
+SW_CLR_STOCK = 0.05                  # clearance of the switch's wall-facing side to the inner wall face (stock wall)
+SW_CLR = round(SW_CLR_STOCK + max(0.0, (CH_WALL - M3_THIN_NUT_T) - (CH_WALL_STOCK - M3_THIN_NUT_T)), 6)   # a thicker wall deepens the side-nut pocket behind the nut by as much: the switch stands off by that too, so nut_cr still slides out -X past it
 SW_HALF_W = round(SW["half_w"], 6)   # power switch extent on its wall-facing side (the body half-width at the default)
 SW_HALF, SW_WALL_CLEAR = SW_HALF_W, SW_CLR   # fix-joints names (switch joint in joints.py)
 SWX = CH_IN_X - SW_CLR - SW_HALF_W   # power switch X: body side 0.05 clear of the 27.5 inner wall face (was 25.0, 0.4 into it)
