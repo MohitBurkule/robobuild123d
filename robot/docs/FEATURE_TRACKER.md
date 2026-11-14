@@ -20,13 +20,13 @@ the plan (2026-11-14, after the 80-PR merge campaign).
 | # | Item | Status | Notes |
 |---|------|--------|-------|
 | B1 | Requirements block in design.json (`resolve`, claims, `requirements.*`) | [ ] | |
-| B2 | Compact LLM report with iteration delta (`robot verify --llm --prev`) | [ ] | |
+| B2 | Compact LLM report with iteration delta (`robot llm-report --prev`) | [x] | robot/llm_report.py + test_llm_report.py |
 | B3 | Self-repair loop (`robot/gen/repair.py`) | [ ] | |
-| B4 | Design patch language + provenance (`robot design patch/why`) | [ ] | |
+| B4 | Design patch language (`robot/design_io/patch.py`: apply/diff) | [x] | provenance (`design why`) still open |
 | B5 | `robot mcp` stdio server | [ ] | |
-| B6 | One error envelope + one JSON schema across both front doors | [ ] | |
+| B6 | One error envelope + one JSON schema across both front doors | [x] | Schema.errors/json_schema + test_design_envelope.py |
 | B7 | Generated LLM pack (SKILL.md, examples) with drift test | [ ] | |
-| B8 | `robot explain <finding-id>` | [ ] | |
+| B8 | `robot explain <finding-id>` | [x] | robot/checks/explain.py, coverage-tested vs registry + hint table |
 
 ## C. Robustness & speed
 
@@ -56,7 +56,7 @@ the plan (2026-11-14, after the 80-PR merge campaign).
 | # | Item | Status | Notes |
 |---|------|--------|-------|
 | E1 | HTML report with embedded 3D viewer (GLB) | [ ] | |
-| E2 | `robot diff A B` (exit 3 on regressions) | [ ] | |
+| E2 | `robot diff A B` (exit 3 on regressions) | [x] | robot/diffcmd.py + test_diffcmd.py |
 | E3 | Builder profile check group | [ ] | |
 | E4 | Selectable rules profiles (`robot/profiles/*.json`) | [ ] | |
 | E5 | Fork hygiene: restrict upstream publish.yml, NOTICE, path guards | [ ] | |
