@@ -113,7 +113,8 @@ def test_circlips_bearings_orings_shafts():
 
 def test_lookup_round_trips():
     for r in recs("screw"):
-        assert hw.get(f"M{r.d:g}x{r.lengths[0]:g} {r.standard} {r.family.split('_')[0]}").record == r
+        fam_word = "pt" if r.family.startswith("thread_forming") else r.family.split("_")[0]
+        assert hw.get(f"M{r.d:g}x{r.lengths[0]:g} {r.standard} {fam_word}").record == r
     for n in recs("nut"):
         assert hw.get(f"M{n.d:g} {n.family} nut {n.standard}").record == n
     for b in recs("bearing"):

@@ -196,7 +196,11 @@ _NUM = r"(\d+(?:\.\d+)?)"
 _M = re.compile(rf"^M{_NUM}(?:\s*X\s*{_NUM})?(?:\s+(.*))?$")
 
 
-def _pick(cands: list, prefer_std: str | None, what: str):
+def _pick(cands: list, prefer_std: str | None, what: str, exact: frozenset[str] = frozenset()):
+    if exact:
+        for c in cands:
+            if norm_std(getattr(c, "standard", "")) in exact:
+                return c
     if prefer_std:
         for c in cands:
             if _std_match(prefer_std, getattr(c, "standard", "")):
@@ -214,7 +218,7 @@ def _check_length(rec, L, strict, what, notes):
     notes.append(msg)
 
 
-def _screw(d, L, words, stds, notes, strict, raw):
+def _screw(d, L, words, stds, notes, strict, raw, exact=frozenset()):
     fam = None
     for w in words:
         if w in SCREW_WORDS:
@@ -233,7 +237,7 @@ def _screw(d, L, words, stds, notes, strict, raw):
         raise ValueError(f"`{raw}`: no M{_n(d)} screw matches; options at M{_n(d)}: {'; '.join(opts)}")
     fam = fam or ("cap" if any(r.family == "cap" for r in c) else c[0].family)
     c = [r for r in c if r.family == fam or r.family.startswith(fam)] or c
-    rec = _pick(c, None if stds else DEFAULT_STD.get(fam), raw)
+    rec = _pick(c, None if stds else DEFAULT_STD.get(fam), raw, exact)
     if len({r.standard for r in c}) > 1:
         notes.append(f"also available: {', '.join(sorted({r.standard for r in c} - {rec.standard}))}")
     what = f"M{_n(d)} {rec.family} {rec.standard}"
@@ -242,7 +246,7 @@ def _screw(d, L, words, stds, notes, strict, raw):
     return Part("screw", rec, L, des, "", tuple(notes))
 
 
-def _simple(kind, words_map, d, words, stds, notes, raw, default_fam):
+def _simple(kind, words_map, d, words, stds, notes, raw, default_fam, exact=frozenset()):
     fam = None
     for w in words:
         if w not in words_map:
@@ -255,7 +259,7 @@ def _simple(kind, words_map, d, words, stds, notes, raw, default_fam):
     if not c:
         opts = sorted({f"{r.family} {r.standard}" for r in at_d}) or ["none"]
         raise ValueError(f"`{raw}`: no M{_n(d)} {fam or default_fam} {kind}; options at M{_n(d)}: {'; '.join(opts)}")
-    rec = _pick(c, None if stds else DEFAULT_STD.get(c[0].family), raw)
+    rec = _pick(c, None if stds else DEFAULT_STD.get(c[0].family), raw, exact)
     return Part(kind, rec, None, f"M{_n(d)} {rec.family} {kind} {rec.standard}", "", tuple(notes))
 
 
@@ -332,11 +336,13 @@ def get(designation: str, strict: bool = True) -> Part:
         d = float(m.group(1))
         L = float(m.group(2)) if m.group(2) else None
         stds: set[str] = set()
+        exact: frozenset[str] = frozenset()
         words = []
         for tok in (m.group(3) or "").split():
             if re.match(r"^(ISO|DIN|EN|WN)\d", tok):
                 cands, note = _std_candidates(tok)
                 stds |= cands
+                exact |= {norm_std(tok)}
                 if note:
                     notes.append(note)
             else:
@@ -344,14 +350,14 @@ def get(designation: str, strict: bool = True) -> Part:
         if "thread" in words:
             return Part("thread", thread(d), None, f"M{_n(d)}")
         if any(w in NUT_WORDS and w != "hex" for w in words) or (not words and stds and _std_kind(stds) == "nut"):
-            return _simple("nut", NUT_WORDS, d, words, stds, notes, raw, "hex")
+            return _simple("nut", NUT_WORDS, d, words, stds, notes, raw, "hex", exact)
         if any(w in WASHER_WORDS and w not in ("plain",) for w in words) or (not words and stds and _std_kind(stds) == "washer"):
-            return _simple("washer", WASHER_WORDS, d, words, stds, notes, raw, "plain")
+            return _simple("washer", WASHER_WORDS, d, words, stds, notes, raw, "plain", exact)
         if "insert" in words:
             return _insert(d, L, [w for w in words if w not in ("insert", "heatset", "heat-set")], notes, raw)
         if "standoff" in words or "spacer" in words:
             return _standoff(d, L, [w for w in words if w not in ("standoff", "spacer")], notes, raw)
-        return _screw(d, L, words, stds, notes, strict, raw)
+        return _screw(d, L, words, stds, notes, strict, raw, exact)
 
     p = _bearing(s, raw)
     if p is not None:
