@@ -20,6 +20,7 @@ class Finding:
     parts: list = field(default_factory=list)
     at: list | None = None
     fix_hint: str | None = None
+    repair: list | None = None  # machine-readable fix hints (see robot/fix_hints.py); None = use the default table
     kind: str = "design"  # "design" | "parity" (compares with the reference); set by the pipeline from checks/registry.py
 
     # Builder-style helpers, like the Rust API.
@@ -40,7 +41,20 @@ class Finding:
         self.fix_hint = hint
         return self
 
+    def hint(self, param, direction, amount=None, unit="mm", why="", parts=None, kind="param"):
+        """Attach one machine-readable repair hint (an LLM can apply it without reading logs)."""
+        from .fix_hints import Hint
+        self.repair = (self.repair or []) + [Hint(kind, param, direction, amount, unit, list(parts or self.parts), why).to_dict()]
+        return self
+
     def to_dict(self):
+        d = self._to_dict()
+        if not self.passed:
+            from .fix_hints import hints_for
+            d["repair"] = hints_for(self)
+        return d
+
+    def _to_dict(self):
         return {"id": self.id, "group": self.group, "severity": self.severity, "pass": self.passed, "title": self.title,
                 "message": self.message, "expected": self.expected, "actual": self.actual, "parts": self.parts, "at": self.at,
                 "fix": self.fix_hint, "kind": self.kind}
