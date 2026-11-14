@@ -69,6 +69,8 @@ REGISTRY = [
     _g("electrical", DESIGN, INNER, 1.1),
     _g("combat", DESIGN, INNER, 2.6),
     _g("physics", DESIGN, INNER, 0.0, note="closed-form weapon/drive/power physics (robot/checks/physics), UNTESTED"),
+    _g("thermal", DESIGN, INNER, 0.0, note="thermal.*: pack sag / brownout at peak current (robot/checks/thermal)"),
+    _g("impact", DESIGN, INNER, 0.0, note="impact.*: gyro wheel-lift, hop, spin-out yaw from the weapon metrics"),
     _g("assembly", DESIGN, FULL, 145.3, deep_only=True, proxy="assembly", note="greedy take-apart search"),
     _g("joints", DESIGN, FULL, 44.9),
     _g("material", DESIGN, FULL, 5.7),

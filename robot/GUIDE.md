@@ -567,3 +567,33 @@ than `review.dfm.max_horizontal_hole_mm` (6 mm) lies in the layer plane — tear
 widen it or remove it. `dfm.undeclared_tolerance` (WARNING): a shaft/pin runs in a printed bore where neither the
 connection nor either part declares `clearance_mm`/`interference_mm` — FDM holes come out 0.1-0.3 mm small, so declare
 the fit. Parts without a mesh or a valid `print_orientation` are NOT CHECKED, never a pass.
+
+## Thermal and brownout (`thermal.*`, group `thermal`)
+
+Rule: **the pack must hold voltage at peak current.** Loaded voltage is `nominal_v - I_peak * R_pack`
+(`internal_resistance_mohm` from the catalogue battery; `I_peak` from the power group's `peak_current_a` metric, else the
+sum of the motors' rated max current - stated as a lower bound in the finding). `thermal.brownout` (BLOCKER): loaded
+cell voltage under 3.3 V - the receiver resets mid-fight and it looks like a radio failure. `thermal.sag` (WARNING):
+under 3.5 V/cell - margin is thin, a fresher charge or a higher-C pack helps. `thermal.ok` (pass): loaded voltage with
+the numbers stated. `thermal.esc_overcurrent` (WARNING): the peak current exceeds the ESC's rating. A spec without a
+catalogue battery, or missing cells / internal resistance / any current number, is NOT CHECKED, never a pass.
+
+## Hit reaction and gyroscopic wheel-lift (`impact.*`, group `impact`)
+
+Rule: **the weapon must not throw the robot around.** From the power group's weapon energy and rpm (inertia
+`I = 2E / omega^2`): `impact.gyro_lift` (BLOCKER): turning at a hard pivot (15 rad/s) demands more than 0.75x the
+gyroscopic lift threshold `Omega_lift = m g (track/2) / (I omega)` - the inside wheels lift in a turn; widen the track,
+slow the turn, or store less energy. `impact.gyro_lift_margin` (WARNING): over 0.5x of the threshold. `impact.hop`
+(WARNING): about `0.5%` of the weapon energy throws the robot more than 30 mm off the floor - wheels lose drive and
+steering mid-exchange. `impact.yaw` (WARNING): a horizontal hit yaws the robot over 720 deg/s from equal-and-opposite
+momentum (`I_w omega / I_yaw`, `I_yaw ~ m (footprint/2)^2`). `impact.ok` (pass) when every judged margin is fine. No
+weapon energy + rpm + mass, no measurable track, or no footprint for a horizontal weapon: NOT CHECKED.
+
+## Named fits (`robot/fits.py`)
+
+Printed holes come out 0.1-0.3 mm small, so a bore modelled at nominal will not take its part. A feature declares a
+named fit and `fits.cad_diameter(name, nominal, hole_process)` gives the CAD diameter: `bearing_press` (+0.10 mm FDM),
+`bearing_slip` (+0.20), `shaft_running` (+0.25), `shaft_press` (+0.05), `screw_clear_tight/_loose` (+0.20/+0.45),
+`self_tap_plastic` (-0.35 pilot), `heatset_m2/m2.5/m3` (-0.10 insert bore), `axle_dflat_n20` (+0.20), `pocket_snug`
+(+0.15), `pocket_loose` (+0.40). Processes scale the compensation: FDM 1.0x, SLA 0.5x, cast 0.75x, CNC 0. `fits.check`
+returns whether a measured diameter is inside the kind's band (press 0.06, thread 0.08, running 0.10, clearance 0.12).
