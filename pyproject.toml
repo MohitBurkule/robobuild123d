@@ -64,10 +64,33 @@ dependencies = [
 "Bug Tracker" = "https://github.com/gumyr/build123d/issues"
 "Citation" = "https://doi.org/10.5281/zenodo.14872323"
 
+[project.scripts]
+# `robot verify|build|eval|doctor ...` == `python -m robot ...` (needs the [robot] extra)
+robot = "robot.cli:main"
+
 [project.optional-dependencies]
+# antweight robot builder + verifier (robot/ package): `pip install -e .[robot]`
+robot = [
+    "trimesh>=4",
+    "manifold3d>=2.4",
+    "shapely>=2",
+    "rtree>=1.2",
+    "networkx>=3",
+    "pillow>=10",
+]
+
 # physics simulation (robot.sim)
 sim = [
     "mujoco>=3.2",
+]
+
+# robot + sim + test runner used by .github/workflows/robot.yml
+robot-dev = [
+    "build123d[robot]",
+    "build123d[sim]",
+    "pytest >= 9.1.1",
+    "pytest-xdist",
+    "pytest-timeout",
 ]
 
 # enable the optional ocp_vscode visualization package
@@ -114,9 +137,15 @@ all = [
 ]
 
 [tool.setuptools.packages.find]
-where = ["src"]
-# exclude build123d._dev from wheels
-exclude = ["build123d._dev"]
+# src/ = build123d library, . = robot/ verifier package (robots/ is output data, not packaged)
+where = ["src", "."]
+include = ["build123d*", "robot*"]
+# exclude build123d._dev and robot tests from wheels
+exclude = ["build123d._dev", "robot.tests", "robot.tests.*", "robot.robot*"]
+
+[tool.setuptools.package-data]
+# data the robot package reads at run time (guide, catalogue, rules, templates, eval prompts)
+robot = ["*.md", "**/*.md", "**/*.json", "**/*.jsonl", "**/*.sh"]
 
 [tool.setuptools_scm]
 write_to = "src/build123d/_version.py"

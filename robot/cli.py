@@ -84,6 +84,9 @@ def main(argv=None):
     ap = argparse.ArgumentParser(prog="robot", description="Antweight robot builder and verifier (build123d)")
     sub = ap.add_subparsers(dest="cmd")
     sub.add_parser("guide")
+    from . import doctor  # stdlib only: must load even when extras are missing
+
+    doctor.add_cli(sub)
     c = sub.add_parser("catalog")
     c.add_argument("id", nargs="?")
     sub.add_parser("materials")
