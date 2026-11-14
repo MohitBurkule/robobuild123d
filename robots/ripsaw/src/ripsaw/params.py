@@ -73,8 +73,8 @@ DISC_OD = 60.0            # brief: ~60 mm; energy scales ~R^4 (BRIEF.md)
 DISC_T = 3.0              # hardox stock list in robot/catalog.py STOCK_THICKNESS["hardox"] (3.0 smallest)
 DISC_MAT = "hardox"
 FLOOR_GAP = 1.5           # disc rim to floor, upright: lower than an opponent wedge lip, above arena plate seams (R114)
-TOOTH_STEP = 8.0          # radial tooth height; >= bite at own top speed (BRIEF.md, 7.0 mm), so the tooth face takes the bite
-RAMP_DEG = 90.0           # angle over which the rim spirals down into the notch in front of the tooth
+TOOTH_STEP = 7.0          # radial tooth height; >= bite at own top speed (BRIEF.md, 7.0 mm), so the tooth face takes the bite
+RAMP_DEG = 60.0           # angle over which the rim spirals down into the notch in front of the tooth (90 left the balance windows unable to counter the notch: 360/WIN_N - 2*WIN_HALF_DEG - BAL_EXTRA < SPOKE_MIN_DEG)
 RIM = 7.0                 # solid rim radial width: the tooth root and the rim carry the impact, windows stay inside it
 HUB_LAND = 3.5            # steel left round the bolt circle before the windows start
 WIN_N = 3                 # lightening windows, symmetric set
@@ -133,7 +133,7 @@ WM_X_CAP = -DISC_T / 2                    # bell face against the disc's left fa
 WM_X_BACK = WM_X_CAP - WM_BODY_L          # stator base back face = left rail inner face
 RAIL_L_X = (WM_X_BACK - RAIL_T, WM_X_BACK)
 SHAFT_END_X = WM_X_CAP + WM_SHAFT_OUT
-BEAR_BORE, BEAR_OD, BEAR_W = BEARING[0], BEARING[1], BEARING[2]
+BEAR_BORE, BEAR_OD, BEAR_W = C.BEARINGS[BEARING]   # pick_bearing returns the catalog name; dimensions come from the table
 RAIL_R_X = (DISC_T / 2 + DISC_RAIL_CLR, max(SHAFT_END_X, DISC_T / 2 + DISC_RAIL_CLR + RAIL_T) + BOSS_WALL)
 BEAR_X = (SHAFT_END_X - BEAR_W, SHAFT_END_X)   # bearing seated flush with the shaft end, blind from outside (cap BOSS_WALL)
 BOSS_R = BEAR_OD / 2 + BOSS_WALL
