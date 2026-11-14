@@ -3,7 +3,7 @@ from robot.solve import Lever, solve_mass, MassInfeasible
 
 
 def lin(v):
-    return 100 + 10 * v["a"] + 5 * v["b"]
+    return 100 + 10 * v["a"] + 5 * v.get("b", 0)
 
 
 def test_hits_limit():
