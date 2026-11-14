@@ -19,11 +19,11 @@ the plan (2026-11-14, after the 80-PR merge campaign).
 
 | # | Item | Status | Notes |
 |---|------|--------|-------|
-| B1 | Requirements block in design.json (`resolve`, claims, `requirements.*`) | [ ] | |
+| B1 | Requirements block in design.json (`resolve`, claims, `requirements.*`) | [x] | `requirements.*` check group (robot/checks/requirements.py) + `requirements` spec key |
 | B2 | Compact LLM report with iteration delta (`robot llm-report --prev`) | [x] | robot/llm_report.py + test_llm_report.py |
 | B3 | Self-repair loop (`robot/gen/repair.py`) | [ ] | |
 | B4 | Design patch language (`robot/design_io/patch.py`: apply/diff) | [x] | provenance (`design why`) still open |
-| B5 | `robot mcp` stdio server | [ ] | |
+| B5 | `robot mcp` stdio server | [x] | robot/mcp_server.py: schema, catalog, validate, explain, diff, guide tools |
 | B6 | One error envelope + one JSON schema across both front doors | [x] | Schema.errors/json_schema + test_design_envelope.py |
 | B7 | Generated LLM pack (SKILL.md, examples) with drift test | [ ] | |
 | B8 | `robot explain <finding-id>` | [x] | robot/checks/explain.py, coverage-tested vs registry + hint table |
@@ -69,7 +69,7 @@ the plan (2026-11-14, after the 80-PR merge campaign).
 | F1 | Gyro wheel-lift + hit reaction | [x] | `impact.*` group (robot/checks/impact.py): gyro_lift, hop, yaw |
 | F2 | Real motor curves in sim + fight scoring | [ ] | |
 | F3 | Rest/dead-pose analysis (`rest.*`) | [ ] | |
-| F4 | Thermal & brownout budget (`thermal.*`) | [ ] | |
+| F4 | Thermal & brownout budget (`thermal.*`) | [x] | robot/checks/thermal.py: brownout, sag, esc_overcurrent |
 | F5 | Load paths beyond the weapon shaft | [ ] | |
 | F6 | Serviceability (`service.*`) | [ ] | |
 
