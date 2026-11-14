@@ -1,6 +1,6 @@
 """LLM front door (work in progress): a small `design.json` -> validated hypothesis for `robot/gen`.
 
-Only validation and the JSON Schema exist so far; `robot build` / `robot eval` are not written yet.
+`robot build` (robot/build_cmd.py) and `robot eval` (robot/evals/run.py) wrap this (UNTESTED).
 design.json keys (all optional except weapon.type):
   name, rules ("aws2025"), weapon {type, mount, orientation, attachment, disc_stack, esc},
   drive {layout, motor, wheel_dia, transmission, wheel_guards}, front, skirts, chassis, invertible,
