@@ -55,18 +55,18 @@ the plan (2026-11-14, after the 80-PR merge campaign).
 
 | # | Item | Status | Notes |
 |---|------|--------|-------|
-| E1 | HTML report with embedded 3D viewer (GLB) | [ ] | |
+| E1 | HTML report with embedded 3D viewer (GLB) | [x] | robot/report_html.py + robot/glb.py, `robot report -o report.html` |
 | E2 | `robot diff A B` (exit 3 on regressions) | [x] | robot/diffcmd.py + test_diffcmd.py |
 | E3 | Builder profile check group | [ ] | |
 | E4 | Selectable rules profiles (`robot/profiles/*.json`) | [ ] | |
-| E5 | Fork hygiene: restrict upstream publish.yml, NOTICE, path guards | [ ] | |
+| E5 | Fork hygiene: restrict upstream publish.yml, NOTICE, path guards | [~] | publish.yml upload_pypi gated on upstream repo; NOTICE/path guards deferred |
 | E6 | Gallery page | [ ] | |
 
 ## F. Physics & verification checks
 
 | # | Item | Status | Notes |
 |---|------|--------|-------|
-| F1 | Gyro wheel-lift + hit reaction (`dynamics.*`) | [ ] | |
+| F1 | Gyro wheel-lift + hit reaction | [x] | `impact.*` group (robot/checks/impact.py): gyro_lift, hop, yaw |
 | F2 | Real motor curves in sim + fight scoring | [ ] | |
 | F3 | Rest/dead-pose analysis (`rest.*`) | [ ] | |
 | F4 | Thermal & brownout budget (`thermal.*`) | [ ] | |
@@ -94,7 +94,7 @@ the plan (2026-11-14, after the 80-PR merge campaign).
 |---|------|--------|-------|
 | H1 | Declarative weapon-module contract | [ ] | |
 | H2 | Belt-driven drum/eggbeater/disc weapons | [ ] | |
-| H3 | Weapon sizing solver (energy/tip-speed -> dims) | [ ] | |
+| H3 | Weapon sizing solver (energy/tip-speed -> dims) | [x] | robot/gen/weapon_size.py: disc sizing + inverse energy_for(); drum/eggbeater deferred |
 | H4 | 4WD for all archetypes; undercutter; linkage family; shuffler; presets | [ ] | |
 
 ## I. CI & process
