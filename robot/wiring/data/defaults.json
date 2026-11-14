@@ -1,0 +1,31 @@
+{
+ "_doc": "Named settings of robot.wiring (mm, g, A). A spec overrides any of them under `harness.settings` (same nesting).",
+ "enabled": false,
+ "cell_mm": 0.5,
+ "clearance_mm": 0.3,
+ "fastener_clearance_mm": 0.6,
+ "rotating_clearance_mm": 2.0,
+ "weapon_clearance_mm": 3.0,
+ "wire_gap_mm": 0.05,
+ "port_zone_mm": 2.5,
+ "bend_factor_fallback": 3.0,
+ "exit": {"straight_factor": 2.0, "angle_tol_deg": 15.0},
+ "slack": {"solder_mm": 3.0, "unplug_margin_mm": 2.0, "max_excess_ratio": 0.35, "max_excess_mm": 25.0, "loop_turns": 1},
+ "wall_follow": {"prefer_mm": 0.3, "weight": 0.6, "floor_weight": 0.3, "reach_mm": 6.0},
+ "bundle": {"attract_weight": 0.5, "min_shared_mm": 10.0, "flat_max_members": 3, "twist_margin_mm": 0.1},
+ "search": {"max_expansions": 2000000, "turn_weight": 1.5, "shortcut_step_mm": 0.25, "relax_iterations": 40},
+ "spline": {"sample_mm": 0.5, "degree": 3, "corner_ctrl_factor": 1.0},
+ "tie": {"pitch_mm": 25.0, "from_end_mm": 6.0, "width_mm": 2.6, "thickness_mm": 1.1, "wall_reach_mm": 1.5, "min_run_mm": 12.0},
+ "channel": {"side_clear_mm": 0.3, "depth_factor": 1.0, "min_wall_mm": 0.8, "wall_reach_mm": 1.0, "min_run_mm": 6.0},
+ "lid": {"pinch_clear_mm": 0.3, "kinds": ["plate", "armor"], "seam_reach_mm": 1.0},
+ "exposure": {"max_free_span_mm": 8.0, "rays": 96, "shield_min_mm": 0.8, "max_open_fraction": 0.05, "sample_mm": 2.0},
+ "ampacity": {"bundle_derate": [1.0, 1.0, 0.9, 0.82, 0.75], "burst_margin": 1.0, "cont_margin": 1.0, "max_drop_fraction": 0.03},
+ "default_awg": {"power": 22, "motor": 26, "signal": 30},
+ "colours": {
+  "pos": "#d02020", "neg": "#181818",
+  "phase_a": "#e8b020", "phase_b": "#2060d0", "phase_c": "#20a040",
+  "motor_a": "#d02020", "motor_b": "#2060d0",
+  "sig": "#f0f0f0", "vcc": "#d02020", "gnd": "#603818"
+ },
+ "mesh": {"sections": 12, "end_caps": true}
+}
