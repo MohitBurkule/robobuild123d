@@ -5,7 +5,7 @@ from robot.cad import fastener_catalog as _fc   # noqa: E402
 from . import weapon_motor as _wm   # noqa: E402
 # [fix-B-vers] weapon style (hooks.json `weapon.type`): the drisk is the one built here; any other value fails at spec
 # generation with the reason, not silently as a drisk
-WEAPON_TYPE = os.environ.get("REVRON_WEAPON_TYPE", "drisk")
+WEAPON_TYPE = setting("REVRON_WEAPON_TYPE", "drisk")
 WEAPON_TYPES = {"drisk": "vertical drisk: spider on the outrunner bell driving two floating single-tooth discs (RVRN 2.0)",
                 "vspin_drum": "not built: a drum needs a full-width rotor between the mounts and a belt or hub motor",
                 "vspin_eggbeater": "not built: an eggbeater needs a two-tooth beater and its own hub on the shaft",
@@ -26,7 +26,7 @@ if WEAPON_TYPE != "drisk":
 # The older switch REVRON_MOTOR_VARIANT picks the GR1507 model: "datasheet" = real GR1507 (GEPRC drawing: 12-slot wound
 # stator, 4-spoke chamfered cap, side wire exit, M5 thread 8 mm), "step" = the simplified RVRN 2.0 STEP motor (solid r4
 # core, flat cap, no stator, thread 10 mm). Same part ids, mount points and screws in both.
-WEAPON_MOTOR = os.environ.get("REVRON_WEAPON_MOTOR", "gr1507")
+WEAPON_MOTOR = setting("REVRON_WEAPON_MOTOR", "gr1507")
 WEAPON_MOTORS = {   # every catalog weapon motor the setting may name (test_weapon_motor_swap keeps it in step with the catalog)
     "gr1507": "GR1507 2850 kV (default, RVRN 2.0)", "gr1507_step": "GR1507, STEP-simplified model",
     "bbb_be1806_2300kv": "BBB BE1806 2300 kV", "brotherhobby_tc1404_3800kv": "BrotherHobby TC1404 3800 kV",
@@ -36,7 +36,7 @@ WEAPON_MOTORS = {   # every catalog weapon motor the setting may name (test_weap
     "c_bbb_be1806_2300kv": "research row (cylinder)", "c_repeat_2004_antweight_spinner_motor": "research row (cylinder)"}
 if WEAPON_MOTOR not in WEAPON_MOTORS:
     raise _wm.WeaponMotorError(f"weapon.motor={WEAPON_MOTOR!r} is not a catalog weapon motor; known: {sorted(WEAPON_MOTORS)}")
-MOTOR_VARIANT = os.environ.get("REVRON_MOTOR_VARIANT", "datasheet")
+MOTOR_VARIANT = setting("REVRON_MOTOR_VARIANT", "datasheet")
 MOTOR_VARIANTS = {"datasheet": "gr1507", "step": "gr1507_step"}
 WM = _wm.describe(MOTOR_VARIANTS[MOTOR_VARIANT] if WEAPON_MOTOR == "gr1507" else WEAPON_MOTOR)   # the motor's fitting features
 MOTOR = dict(stator=WM["stator"], can=WM["can"], thread_len=WM["thread_len"])
@@ -131,7 +131,7 @@ NUT_RECESS_R = round(NUT_SOCKET * _fc.nut(SHAFT_NUT_D)[0] / 2, 6)   # shaft nut 
 STATOR_HOLES = _wm.world_holes(WM["base_holes"])   # [(dY, dZ, screw d)] stator screws about the axis: the motor catalog's base holes
 BOSS_OVER = 0.01                     # boss overshoots the battered plane before it is split
 MNT_SCREW = ("M3x12", "M3x14")           # mount-to-standoff CSK screws at SA, SB
-MOUNT_VARIANT = os.environ.get("REVRON_MOUNT_VARIANT", "original")   # "original" = RV02/RV03 as the STEP draws them; "printable" = nose pad, thickened notch tip, relieved corners, loose screw holes (improvements, not parity)
+MOUNT_VARIANT = setting("REVRON_MOUNT_VARIANT", "original")   # "original" = RV02/RV03 as the STEP draws them; "printable" = nose pad, thickened notch tip, relieved corners, loose screw holes (improvements, not parity)
 PRINTABLE = MOUNT_VARIANT == "printable"
 MNT_SCREW_FIT = "loose" if PRINTABLE else "close"   # ISO 273: loose slack so the notch face takes the hit first; close = the STEP's d3.2 holes
 RV03_BORE_R = SHAFT_R + (SHAFT_CLR if PRINTABLE else 0.0)   # RV03 centre hole: the STEP d5.0 (the shaft ends at the stator base, short of RV03); printable adds the shaft clearance
@@ -264,7 +264,7 @@ def lead_groove_ends():
 
 _LG = lead_groove_ends()
 LEAD_VIA_X = round(BASE_BACK_X + LEAD_GAP - 0.1, 6)   # the leads leave the motor in its lead gap, 0.1 short of the back spacer (STEP layout: X 11.8)
-LEAD_GROOVE = os.environ.get("REVRON_LEAD_GROOVE", "off") == "on"   # optional RV03 variant (one setting, like MOTOR_VARIANT): "on" cuts the snap-in lead C-groove; default "off" = the original RV03, leads run free over the lug
+LEAD_GROOVE = setting("REVRON_LEAD_GROOVE", "off") == "on"   # optional RV03 variant (one setting, like MOTOR_VARIANT): "on" cuts the snap-in lead C-groove; default "off" = the original RV03, leads run free over the lug
 PHASE_VIA = ([[LEAD_VIA_X, 14.5, 16.0]] + [[LEAD_GROOVE_X, y, z] for y, z in _LG] + [[LEAD_FAN_X, WY, _LG[1][1]]] if LEAD_GROOVE   # tub inside -> groove rear -> groove front -> lead fan under the spacer
              else [[LEAD_VIA_X, 14.5, 16.0], [LEAD_VIA_X, 15.5, 18.2], [LEAD_VIA_X, 27.0, 18.2], [LEAD_VIA_X, 30.0, 14.5]])   # original: over the lug, no channel
 

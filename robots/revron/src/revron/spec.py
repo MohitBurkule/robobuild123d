@@ -517,21 +517,27 @@ def _lead_groove_dev():
                        "clear of the disc bolt heads (wire.exterior_support, wire.rotor_clearance)"}]
 
 
+def full_spec(mf):
+    """The whole spec dict (what spec.json holds) with the model parts read from model file `mf`."""
+    body = make_spec(mf)
+    spec = dict(name="Revron", profile="aws2025", robot_type="vertical_spinner", locomotion="roller", archetype="vertical_spinner_forks",
+                archetype_params=ARCHETYPE_PARAMS, targets=TARGETS, weapon_lock=WEAPON_LOCK, reference_bom=ref_bom(), reference_doc=REFERENCE_DOC,
+                electronics=ELECTRONICS, can_run_inverted=False, allow_overlap=ALLOW_OVERLAP, claims=CLAIMS, sharp_ok=SHARP_OK + _top_screw_sharp_ok(),
+                teardown=TEARDOWN, module_teardown=MODULE_TEARDOWN, service_pose=[dict(e, deg=service_turn_deg()) for e in SERVICE_POSE], reference_cad=reference_cad(),
+                start_pose={f"whub_r{n}": HUB_SPIN_DEG for n in "lr"},   # spin of the rear hubs on their shafts (STEP pose)
+                asm_dump={"rig": "revron.joints:RIG"},   # asm.mate: our assembly mates (joints.Rig)
+                renders={"dir": "renders", "views": ["iso.png", "top.png", "back.png", "exploded.png"]}, **body)
+    spec["modules"] = [{"id": "weapon_module", "root": "mount_r", "note": MODULE_NOTE,
+                        "parts": [p["id"] for p in spec["parts"] if _root(spec["parts"], p) == "mount_r" and p["id"] != "mount_r"]}]
+    return spec
+
+
 def main():
     spec_dir = os.path.join(HERE, "..")
     out_spec = os.path.join(spec_dir, "spec.json")
     out_tpl = os.path.join(ROOT, "robot/templates/revron.json")
     for out, mf in ((out_spec, "src/build_revron.py"), (out_tpl, "../../robots/revron/src/build_revron.py")):
-        body = make_spec(mf)
-        spec = dict(name="Revron", profile="aws2025", robot_type="vertical_spinner", locomotion="roller", archetype="vertical_spinner_forks",
-                    archetype_params=ARCHETYPE_PARAMS, targets=TARGETS, weapon_lock=WEAPON_LOCK, reference_bom=ref_bom(), reference_doc=REFERENCE_DOC,
-                    electronics=ELECTRONICS, can_run_inverted=False, allow_overlap=ALLOW_OVERLAP, claims=CLAIMS, sharp_ok=SHARP_OK + _top_screw_sharp_ok(),
-                    teardown=TEARDOWN, module_teardown=MODULE_TEARDOWN, service_pose=[dict(e, deg=service_turn_deg()) for e in SERVICE_POSE], reference_cad=reference_cad(),
-                    start_pose={f"whub_r{n}": HUB_SPIN_DEG for n in "lr"},   # spin of the rear hubs on their shafts (STEP pose)
-                    asm_dump={"rig": "revron.joints:RIG"},   # asm.mate: our assembly mates (joints.Rig)
-                    renders={"dir": "renders", "views": ["iso.png", "top.png", "back.png", "exploded.png"]}, **body)
-        spec["modules"] = [{"id": "weapon_module", "root": "mount_r", "note": MODULE_NOTE,
-                            "parts": [p["id"] for p in spec["parts"] if _root(spec["parts"], p) == "mount_r" and p["id"] != "mount_r"]}]
+        spec = full_spec(mf)
         json.dump(spec, open(out, "w"), indent=1)
     print("wrote", out_spec, len(spec["parts"]), "parts", len(spec["fasteners"]), "fasteners")
 
