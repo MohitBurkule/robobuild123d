@@ -699,14 +699,14 @@ def test_tab_wall_clears_the_whole_rotor(tmp_path):
 
 
 def test_front_motors_rear_driven_is_a_declared_unfit_layout(tmp_path):
-    """drive.location=front_motors_rear_driven is a declared setting the generator refuses with the reason (hooks.json declared_unfit), not a KeyError."""
+    """drive.location=front_motors_rear_driven is a declared setting the generator refuses with the reason (hooks.json unsupported: a layout not built yet, not a part that does not fit), not a KeyError."""
     dst = pathlib.Path(tempfile.mkdtemp(dir=tmp_path)) / "src"
     shutil.copytree(SRC, dst, ignore=shutil.ignore_patterns("__pycache__"))
     r = subprocess.run([sys.executable, "-c", "import sys; sys.path[:0] = [%r, %r]\nfrom revron import params_chassis" % (str(dst), ROOT)], capture_output=True, text=True,
                        env={**os.environ, "REVRON_DRIVE_LOCATION": "front_motors_rear_driven"})
     hooks = json.load(open(os.path.join(ROOT, "robots", "revron", "hooks.json")))
     assert "DriveLocationError" in r.stderr and "belt" in r.stderr and "KeyError" not in r.stderr, r.stderr[-600:]
-    assert "DriveLocationError" in hooks["declared_unfit"] and "front_motors_rear_driven" in hooks["hooks"]["drive.location"]["values"]
+    assert "DriveLocationError" in hooks["unsupported"] and "front_motors_rear_driven" in hooks["hooks"]["drive.location"]["values"]
 
 
 def test_front_drive_location_puts_the_stock_pack_in_the_weapon_sweep(tmp_path):
