@@ -87,7 +87,10 @@ def _lookup(fid):
 
 
 def hints_for(f) -> list:
-    """Hints for a finding: the check's own (Finding.repair) first, else the default table, else from fix_hint text."""
+    """Hints for a finding: the check's own (Finding.repair) first, else the default table, else from fix_hint text.
+    A passed finding needs no repair."""
+    if f.passed:
+        return []
     if getattr(f, "repair", None):
         return list(f.repair)
     fn = _lookup(f.id)
