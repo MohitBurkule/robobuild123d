@@ -597,3 +597,13 @@ named fit and `fits.cad_diameter(name, nominal, hole_process)` gives the CAD dia
 `self_tap_plastic` (-0.35 pilot), `heatset_m2/m2.5/m3` (-0.10 insert bore), `axle_dflat_n20` (+0.20), `pocket_snug`
 (+0.15), `pocket_loose` (+0.40). Processes scale the compensation: FDM 1.0x, SLA 0.5x, cast 0.75x, CNC 0. `fits.check`
 returns whether a measured diameter is inside the kind's band (press 0.06, thread 0.08, running 0.10, clearance 0.12).
+
+## Requirements block (`requirements.*`, group `requirements`)
+
+A spec may declare a top-level `requirements` object - the design's intent as numbers. Each supported key is compared
+with the metric an earlier group measured: `weapon_energy_j` (min), `weapon_tip_speed_mps` (min/max, converted from the
+power group's mph), `peak_current_a` (max), `runtime_min` (min), `mass_max_g` (max), `mass_margin_g` (min: limit minus
+worst-case mass), `footprint_max_mm` (max), `budget_gbp` (max against the BOM cost). A requirement that misses is a
+BLOCKER with expected/actual; `requirements.unknown_key` (BLOCKER) is a requirement the verifier cannot judge (silently
+ignoring intent is worse). Keys that have no metric yet (top_speed_mps, push_force_n, must_survive, invertible) and
+metrics that were not computed this run are NOT CHECKED, never a pass.

@@ -107,6 +107,7 @@ REGISTRY = [
     _g("geom", DESIGN, INNER, note="geom.*: tiny edges, sliver faces, near-miss steps / holes, off-axis faces"),
     _g("dfm", DESIGN, INNER, note="dfm.*: per-process manufacturability not covered by printability / process"),
     _g("harness", DESIGN, FULL, None, deep_only=True, note="robot/wiring: planned harness (opt-in: spec harness.enabled)"),
+    _g("requirements", DESIGN, INNER, 0.0, note="requirements.*: the spec's declared requirements vs measured metrics"),
     _g("robust", DESIGN, NIGHTLY, 900.0, deep_only=True, note="one-at-a-time param / variant / COTS-swap sweep"),
 ]
 
