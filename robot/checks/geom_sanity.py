@@ -439,10 +439,12 @@ def run(ctx):
     clean = {c: 0 for c in CHECKS}
     rows = {}
 
+    opted_rows = {c: [] for c in CHECKS}
+
     def judge(p, check, fn):
         why = opted(p, check)
         if why:
-            out.append(note(f"geom.{check}", G, "Opted out", f"`{p.id}` geom_ok.{check}: {why}").on(p.id))
+            opted_rows[check].append((p.id, why))
             return
         try:
             f = fn()
@@ -508,9 +510,34 @@ def run(ctx):
         judge(p, "near_miss_hole", faces(lambda: _hole(pid, M, solid, prm, infos)))
         judge(p, "off_axis_face", faces(lambda: _skew(pid, M, solid, prm, infos)))
 
-    for c in CHECKS:
-        if clean[c]:
-            out.append(ok(f"geom.{c}", G, TITLE_OK[c], f"{clean[c]} made part(s) judged and clean."))
+    for pid, why in opted_rows["tiny_edge"]:
+        out.append(note("geom.tiny_edge", G, "Opted out", f"`{pid}` geom_ok.tiny_edge: {why}").on(pid))
+    if clean["tiny_edge"]:
+        out.append(ok("geom.tiny_edge", G, TITLE_OK["tiny_edge"], f"{clean['tiny_edge']} made part(s) judged and clean."))
+    for pid, why in opted_rows["sliver_face"]:
+        out.append(note("geom.sliver_face", G, "Opted out", f"`{pid}` geom_ok.sliver_face: {why}").on(pid))
+    if clean["sliver_face"]:
+        out.append(ok("geom.sliver_face", G, TITLE_OK["sliver_face"], f"{clean['sliver_face']} made part(s) judged and clean."))
+    for pid, why in opted_rows["near_coplanar_step"]:
+        out.append(note("geom.near_coplanar_step", G, "Opted out", f"`{pid}` geom_ok.near_coplanar_step: {why}").on(pid))
+    if clean["near_coplanar_step"]:
+        out.append(ok("geom.near_coplanar_step", G, TITLE_OK["near_coplanar_step"], f"{clean['near_coplanar_step']} made part(s) judged and clean."))
+    for pid, why in opted_rows["near_miss_hole"]:
+        out.append(note("geom.near_miss_hole", G, "Opted out", f"`{pid}` geom_ok.near_miss_hole: {why}").on(pid))
+    if clean["near_miss_hole"]:
+        out.append(ok("geom.near_miss_hole", G, TITLE_OK["near_miss_hole"], f"{clean['near_miss_hole']} made part(s) judged and clean."))
+    for pid, why in opted_rows["off_axis_face"]:
+        out.append(note("geom.off_axis_face", G, "Opted out", f"`{pid}` geom_ok.off_axis_face: {why}").on(pid))
+    if clean["off_axis_face"]:
+        out.append(ok("geom.off_axis_face", G, TITLE_OK["off_axis_face"], f"{clean['off_axis_face']} made part(s) judged and clean."))
+    for pid, why in opted_rows["open_shell"]:
+        out.append(note("geom.open_shell", G, "Opted out", f"`{pid}` geom_ok.open_shell: {why}").on(pid))
+    if clean["open_shell"]:
+        out.append(ok("geom.open_shell", G, TITLE_OK["open_shell"], f"{clean['open_shell']} made part(s) judged and clean."))
+    for pid, why in opted_rows["zero_thickness"]:
+        out.append(note("geom.zero_thickness", G, "Opted out", f"`{pid}` geom_ok.zero_thickness: {why}").on(pid))
+    if clean["zero_thickness"]:
+        out.append(ok("geom.zero_thickness", G, TITLE_OK["zero_thickness"], f"{clean['zero_thickness']} made part(s) judged and clean."))
     metrics = getattr(ctx, "metrics", None)
     if isinstance(metrics, dict):
         metrics["geom"] = rows

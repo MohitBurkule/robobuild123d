@@ -267,6 +267,7 @@ class _Tally:
     def __init__(self):
         self.judged = {k: 0 for k in TITLES}
         self.good = {k: 0 for k in TITLES}
+        self.opted = {k: [] for k in TITLES}
         self.out = []
 
     def item(self, check, p, bad_finding):
@@ -278,14 +279,36 @@ class _Tally:
         why = opted(p, check)
         if why:
             self.good[check] += 1
-            self.out.append(ok(f"dfm.{check}", G, TITLES[check], f"`{p.id}`: opted out: {why}").on(p.id))
+            self.opted[check].append((p.id, why))
         else:
             self.out.append(bad_finding)
 
     def finish(self):
-        for k, n in self.judged.items():
-            if n and self.good[k]:
-                self.out.append(ok(f"dfm.{k}", G, TITLES[k], f"{self.good[k]} of {n} judged item(s) pass."))
+        for pid, why in self.opted["bed_contact"]:
+            self.out.append(ok("dfm.bed_contact", G, TITLES["bed_contact"], f"`{pid}`: opted out: {why}").on(pid))
+        if self.judged["bed_contact"] and self.good["bed_contact"]:
+            self.out.append(ok("dfm.bed_contact", G, TITLES["bed_contact"],
+                               f"{self.good['bed_contact']} of {self.judged['bed_contact']} judged item(s) pass."))
+        for pid, why in self.opted["tall_thin"]:
+            self.out.append(ok("dfm.tall_thin", G, TITLES["tall_thin"], f"`{pid}`: opted out: {why}").on(pid))
+        if self.judged["tall_thin"] and self.good["tall_thin"]:
+            self.out.append(ok("dfm.tall_thin", G, TITLES["tall_thin"],
+                               f"{self.good['tall_thin']} of {self.judged['tall_thin']} judged item(s) pass."))
+        for pid, why in self.opted["horizontal_hole"]:
+            self.out.append(ok("dfm.horizontal_hole", G, TITLES["horizontal_hole"], f"`{pid}`: opted out: {why}").on(pid))
+        if self.judged["horizontal_hole"] and self.good["horizontal_hole"]:
+            self.out.append(ok("dfm.horizontal_hole", G, TITLES["horizontal_hole"],
+                               f"{self.good['horizontal_hole']} of {self.judged['horizontal_hole']} judged item(s) pass."))
+        for pid, why in self.opted["sheet_tab_width"]:
+            self.out.append(ok("dfm.sheet_tab_width", G, TITLES["sheet_tab_width"], f"`{pid}`: opted out: {why}").on(pid))
+        if self.judged["sheet_tab_width"] and self.good["sheet_tab_width"]:
+            self.out.append(ok("dfm.sheet_tab_width", G, TITLES["sheet_tab_width"],
+                               f"{self.good['sheet_tab_width']} of {self.judged['sheet_tab_width']} judged item(s) pass."))
+        for pid, why in self.opted["undeclared_tolerance"]:
+            self.out.append(ok("dfm.undeclared_tolerance", G, TITLES["undeclared_tolerance"], f"`{pid}`: opted out: {why}").on(pid))
+        if self.judged["undeclared_tolerance"] and self.good["undeclared_tolerance"]:
+            self.out.append(ok("dfm.undeclared_tolerance", G, TITLES["undeclared_tolerance"],
+                               f"{self.good['undeclared_tolerance']} of {self.judged['undeclared_tolerance']} judged item(s) pass."))
         return self.out
 
 

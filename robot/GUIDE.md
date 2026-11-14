@@ -529,3 +529,41 @@ Structure warnings in the same group: `param.pattern` (>= 3 literal points on a 
 `GridLocations`/`PolarLocations` from a named pitch/radius/count), `param.mirror` (a `*_left`/`*_right` or `_l`/`_r`
 function pair both built from literals with no `mirror()`: build one side and mirror it), `param.placement`
 (`translate`/`moved`/`Location`/`Pos` with all-literal coords: place by Joint/mate or relative to a named feature).
+
+## Geometry sanity (`geom.*`, group `geom`, per check opt out with `geom_ok`)
+
+Rule: **a made part is one clean solid — no degenerate edges, slivers, near-miss steps or holes, off-axis faces, open
+shells or zero-thickness bodies.** `geom.tiny_edge` (BLOCKER) fires on an edge shorter than `review.geom.min_edge_mm`
+(default 0.05 mm, scaled by part size): a boolean left a knife edge that no cutter or printer resolves. `geom.sliver_face`
+(BLOCKER) on a face thinner than `review.geom.min_face_mm` relative to its extent: split the boolean differently.
+`geom.near_coplanar_step` (WARNING) on two nominally coplanar faces offset by less than `review.geom.step_mm`
+(default 0.02 mm): make them exactly one plane. `geom.near_miss_hole` (WARNING) on two holes closer than
+`review.geom.hole_gap_mm` (default 0.1 mm) edge to edge, or a hole within that of an edge: move or merge them.
+`geom.off_axis_face` (WARNING) on a face whose normal is a few degrees off an axis (default `review.geom.skew_deg` 0.5):
+snap the sketch or the rotation. `geom.open_shell` (BLOCKER) on a mesh with boundary or non-manifold edges: the solid is
+not closed (a missing face, or two bodies touching edge to edge). `geom.zero_thickness` (BLOCKER) on a body with (almost)
+no extent or volume: a boolean removed the whole part or an extrude had ~0 depth. Parts whose geometry did not load are
+NOT CHECKED, never a pass.
+
+## Waiver audit (`waiver.*`, group `waiver_audit`)
+
+Rule: **every opt-out is dated, individual and budgeted.** The group inventories EVERY waiver a spec carries
+(`waiver.inventory`, note, metric `waiver.count`). `waiver.no_expiry` (WARNING): a waiver without an `expires` date —
+end the reason with ` [expires YYYY-MM-DD]`. `waiver.expired` (BLOCKER): the date has passed — fix the design and delete
+the waiver, or re-argue it with a new date. `waiver.budget` (WARNING): more than `review.waiver_audit.max` (25) waivers
+in one spec, or more than `max_per_part` (4) on one part — redesign instead of waiving. `waiver.blanket` (BLOCKER for a
+reasonless group switch, WARNING otherwise): `enabled: false` for a whole group without a written reason (>= 20 chars),
+or a waive key that is a bare group prefix (`joint`, `fastener`, `*`) instead of one check id. `waiver.duplicate_reason`
+(WARNING): the same reason text pasted on >= 4 waivers — say what was measured at each place.
+
+## Manufacturability drafts (`dfm.*`, group `dfm`, per check opt out with `dfm_ok`)
+
+Rule: **a printed part must print, and a cut part must cut.** `dfm.bed_contact` (WARNING): less than
+`review.dfm.min_bed_area_mm2` (20 mm2, or 8% of the footprint) of flat face rests on the bed for the declared
+`print_orientation` — add a foot or turn the part. `dfm.tall_thin` (WARNING): taller than `review.dfm.max_aspect`
+(6x) its smallest footprint side — lay it down or widen the base. `dfm.horizontal_hole` (WARNING): a round hole wider
+than `review.dfm.max_horizontal_hole_mm` (6 mm) lies in the layer plane — teardrop it, flatten its roof, or reorient.
+`dfm.sheet_tab_width` (WARNING): a tab/neck of a cut sheet outline narrower than `tab_k` x thickness (hard sheet 0.75x) —
+widen it or remove it. `dfm.undeclared_tolerance` (WARNING): a shaft/pin runs in a printed bore where neither the
+connection nor either part declares `clearance_mm`/`interference_mm` — FDM holes come out 0.1-0.3 mm small, so declare
+the fit. Parts without a mesh or a valid `print_orientation` are NOT CHECKED, never a pass.

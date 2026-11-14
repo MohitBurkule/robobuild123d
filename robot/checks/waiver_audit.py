@@ -319,9 +319,8 @@ def audit(spec, today=None):
     out.append(note("waiver.inventory", G, "Waiver inventory",
                     inv + (f"; unparsed_sections={len(problems)}" if problems else "")))
 
-    def passed(fid, title, msg, n_before):
-        if clean and not any(not f.passed and f.id == fid for f in out[n_before:]):
-            out.append(ok(fid, G, title, msg))
+    def no_fail_since(fid, n_before):
+        return clean and not any(not f.passed and f.id == fid for f in out[n_before:])
 
     # ---- waiver.no_expiry
     n0 = len(out)
@@ -336,7 +335,8 @@ def audit(spec, today=None):
                    .on(_on(r)).expect("expires=YYYY-MM-DD", r["expires"])
                    .fix(f"At `{r['path']}` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an "
                         'object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.'))
-    passed("waiver.no_expiry", "Every waiver has an expiry date", f"dated={len(dated)} of total={len(recs)}", n0)
+    if no_fail_since("waiver.no_expiry", n0):
+        out.append(ok("waiver.no_expiry", G, "Every waiver has an expiry date", f"dated={len(dated)} of total={len(recs)}"))
 
     # ---- waiver.expired
     if today is not None:
@@ -349,7 +349,8 @@ def audit(spec, today=None):
                            .fix(f"Fix what `{r['path']}` waives and delete it, or re-argue the reason and set a new "
                                 "`expires` date."))
         if dated:   # with no dated record nothing was judged here (waiver.no_expiry reports them)
-            passed("waiver.expired", "No waiver has expired", f"dated={len(dated)} today={today.isoformat()}", n0)
+            if no_fail_since("waiver.expired", n0):
+                out.append(ok("waiver.expired", G, "No waiver has expired", f"dated={len(dated)} today={today.isoformat()}"))
 
     # ---- waiver.budget
     if can["budget"]:
@@ -374,8 +375,9 @@ def audit(spec, today=None):
                            .on(owner).expect(f"<= {cfg['max_per_part']}", n)
                            .fix(f"`{owner}` is waived {n} times: redesign it so the checks pass, and delete the waivers "
                                 "that no longer apply."))
-        passed("waiver.budget", "Waiver count within budget",
-               f"{inv}; max={cfg['max']}; max_per_part={cfg['max_per_part']}", n0)
+        if no_fail_since("waiver.budget", n0):
+            out.append(ok("waiver.budget", G, "Waiver count within budget",
+                          f"{inv}; max={cfg['max']}; max_per_part={cfg['max_per_part']}"))
 
     # ---- waiver.blanket
     n0 = len(out)
@@ -394,7 +396,8 @@ def audit(spec, today=None):
                        .on(_on(r))
                        .fix(f"At `{r['path']}` replace the key `{r['key']}` with the full id of the one check being "
                             "waived (e.g. `fastener.hole_record.length`)."))
-    passed("waiver.blanket", "Every waiver names one check", f"total={len(recs)}", n0)
+    if no_fail_since("waiver.blanket", n0):
+        out.append(ok("waiver.blanket", G, "Every waiver names one check", f"total={len(recs)}"))
 
     # ---- waiver.duplicate_reason
     n0 = len(out)
@@ -410,7 +413,8 @@ def audit(spec, today=None):
                        .on(*sorted({_on(r) for r in rs})).expect(f"< {DUP_MIN}", len(rs))
                        .fix("Write for each waiver why THAT place is acceptable (what was measured, which reference "
                             "part shows it), or fix the shared cause once and delete them."))
-    passed("waiver.duplicate_reason", "Waiver reasons are individual", f"distinct_reasons={len(same)}", n0)
+    if no_fail_since("waiver.duplicate_reason", n0):
+        out.append(ok("waiver.duplicate_reason", G, "Waiver reasons are individual", f"distinct_reasons={len(same)}"))
     return out, metrics, not_checked
 
 
