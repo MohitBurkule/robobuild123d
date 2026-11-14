@@ -170,6 +170,14 @@ def key_for(shape: dict, base_dir: Path | None, tess: Tess = FINE, key_extra: st
     # build settings read from the environment (ROBOT_CACHE_ENV="REVRON_SIZE_WIDTH,..."): a part built under another
     # setting is another part, even when no source file differs
     envs = sorted(n for n in os.environ.get("ROBOT_CACHE_ENV", "").split(",") if n)
+    try:  # in-process sweeps: the active Design is a build input too (old key lacked it, e.g. REVRON_VARIANTS)
+        from .design import current as _cur
+
+        d = _cur()
+        if d is not None and d.values:
+            key_extra = f"{key_extra}|design:{d.schema.robot}:" + ",".join(f"{k}={v}" for k, v in sorted(d.values.items()))
+    except ImportError:
+        pass
     if envs:
         key_extra = f"{key_extra}|env:" + ",".join(f"{n}={os.environ.get(n, '')}" for n in envs)
     return shapes.shape_key(shape, base_dir, f"{CACHE_VERSION}|{cache.lib_versions()}|{src}|{tess.lin}|{tess.ang}|{key_extra}")
