@@ -10,7 +10,7 @@ class Profile:
     name: str = "aws2025"
     roller_mass_g: float = 150.0
     non_roller_mass_g: float = 225.0
-    footprint_mm: float = 150.0  # side of the square floor space, no overhang at any height
+    footprint_mm: float = 150.0  # AWS 2025 rule 3a: 150 mm floor square, no overhang at any height, no height cap (see rules/aws2025_size_weight.md)
     max_tip_speed_mph: float = 600.0
     max_cell_v: float = 4.2
     require_locking_bar: bool = True
