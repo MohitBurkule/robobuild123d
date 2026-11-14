@@ -217,7 +217,7 @@ def verify_incremental(spec, opts=None):
             hit = cache.get(KIND, gkey)
             if not cache.is_missing(hit) and all(sigs.get(p) == s for p, s in hit[0].items()):
                 _, found, delta = hit
-                findings.extend(found)
+                findings.extend(checks.tag(found, name))
                 for k, v in delta.items():
                     setattr(ctx, k, v)
                 stats["reused"].append(name)
@@ -228,7 +228,7 @@ def verify_incremental(spec, opts=None):
                 with _Tracking(ctx):
                     found = mod.run(ctx)
                 deps = {p: sigs[p] for p in _rec if p in sigs}
-                findings.extend(found)
+                findings.extend(checks.tag(found, name))
                 after = _ctx_bytes(ctx)
                 delta = {k: getattr(ctx, k) for k, v in after.items() if before.get(k) != v}
                 if all(after[k] is not None for k in delta):
