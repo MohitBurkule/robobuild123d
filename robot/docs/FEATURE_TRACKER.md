@@ -43,13 +43,13 @@ the plan (2026-11-14, after the 80-PR merge campaign).
 
 | # | Item | Status | Notes |
 |---|------|--------|-------|
-| D1 | Printer/filament profiles + capability findings | [ ] | |
-| D2 | Named fits with process compensation (`robot/fits.py`) | [ ] | |
-| D3 | Build-plate export (oriented, packed 3MF/STL + plates.json) | [ ] | |
-| D4 | Purchasable BOM (UK vendors, packs, spares, order CSVs) | [ ] | |
+| D1 | Printer/filament profiles + capability findings | [x] | robot/mfg_profiles.py (capability model; report wiring pending) |
+| D2 | Named fits with process compensation (`robot/fits.py`) | [x] | library + bands; CAD-hole wiring is gen-side |
+| D3 | Build-plate export (oriented, packed STL + plates.json) | [x] | robot/plate.py |
+| D4 | Purchasable BOM (UK vendors, packs, spares, order CSVs) | [x] | robot/bom_out.py |
 | D5 | Slice-based mass & print-time estimate | [ ] | |
 | D6 | DXF sheet/turned-part order pack | [ ] | |
-| D7 | Assembly instructions (steps doc from disassembly order) | [ ] | |
+| D7 | Assembly instructions (steps doc from disassembly order) | [x] | robot/assembly_doc.py -> build.md |
 
 ## E. UX
 
