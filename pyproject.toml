@@ -138,8 +138,8 @@ all = [
 
 [tool.setuptools.packages.find]
 # src/ = build123d library, . = robot/ verifier package (robots/ is output data, not packaged)
-where = ["src", ".", "robots/shared/src"]
-include = ["build123d*", "robot*", "robocad*"]
+where = ["src", "."]
+include = ["build123d*", "robot*"]
 # exclude build123d._dev and robot tests from wheels
 exclude = ["build123d._dev", "robot.tests", "robot.tests.*", "robot.robot*"]
 
