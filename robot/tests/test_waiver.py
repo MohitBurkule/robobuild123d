@@ -38,3 +38,17 @@ def test_forbidden_group_unaffected():
     for g in sorted(waiver.FORBIDDEN):
         f, used = _run({g: GOOD}, group=g, check=f"{g}.x")
         assert f.severity == BLOCKER and not used
+
+
+def test_part_waiver_downgrades():
+    reason = "ELVRN3.0 Alt STEP: the TPU fork tips are preloaded 2.25 mm onto the floor"
+    spec = Spec({"parts": [{"id": "side_l", "kind": "armor", "waive": {"contain.wheel_ground": reason}}, {"id": "wheel_rl", "kind": "wheel"}]})
+    f = fail("contain.wheel_ground", "contain", BLOCKER, "t", "m").on("wheel_rl", "side_l")
+    used = waiver.apply(spec, [f])
+    assert f.severity == WARNING and used == [{"part": "side_l", "check": f.id, "reason": reason, "valid": True}]
+
+
+def test_part_waiver_needs_the_part():
+    spec = Spec({"parts": [{"id": "side_l", "kind": "armor", "waive": {"contain.wheel_ground": GOOD}}]})
+    f = fail("contain.wheel_ground", "contain", BLOCKER, "t", "m").on("wheel_rl")
+    assert not waiver.apply(spec, [f]) and f.severity == BLOCKER

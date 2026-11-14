@@ -55,7 +55,7 @@ VIEWS = {"front": (0, 1, 0), "top": (0, 0, 1), "side": (1, 0, 0), "iso": (1, -1,
 from ._review import BOUNDS as _RB
 _RB.setdefault("visual", BOUNDS)
 CHECKS = ("silhouette", "holes", "faceting", "fillet_ref", "sliver")
-CITE = re.compile(r"(RV\d|RVRN|STEP|\.stl|FS\d|reference)", re.I)
+CITE = re.compile(r"(RV\d|RVRN|ELVRN|STEP|\.stl|FS\d|reference)", re.I)
 LEAD_PORTS = ("phases", "terminals", "motor", "bat", "m1", "m2", "wpn", "rx", "in", "out", "jst", "xt30", "lead")
 LOAD_KINDS = ("structure",)
 

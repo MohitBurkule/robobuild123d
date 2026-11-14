@@ -78,7 +78,7 @@ def run(ctx):
         if wlo > body_lo[2] - 0.1:
             out.append(fail("contain.wheel_ground", G, BLOCKER, "Wheels do not stick out below the body",
                             f"Lowest wheel point z={wlo:.2f} is not below the body bottom z={body_lo[2]:.2f}; the body, not the wheels, rests on the floor.")
-                       .on(*[b.id for b in wheels]))
+                       .on(*[b.id for b in wheels], *[b.id for b in shell if b.aabb[0][2] <= wlo - 0.1]))   # and the body parts that reach the floor
         if r.spec.can_run_inverted and whi < body_hi[2] + 0.1:
             out.append(fail("contain.wheel_invert", G, BLOCKER, "Wheels do not reach the floor when inverted",
                             f"The robot is declared invertible but the top wheel point z={whi:.2f} is not above the body top z={body_hi[2]:.2f}.")

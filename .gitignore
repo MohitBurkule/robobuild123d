@@ -71,3 +71,4 @@ prof/
 
 # agent worktrees must never be committed (a stray gitlink breaks actions/checkout)
 .claude/worktrees/
+research/
