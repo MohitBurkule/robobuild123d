@@ -1,0 +1,24 @@
+{
+ "spec": "/workspace/github__MohitBurkule__robobuild123d/robots/ripsaw/spec.json",
+ "rendered_at": 1794701089.147534,
+ "bodies": [
+  "tub",
+  "panel_base",
+  "panel_top",
+  "weapon_motor_stator",
+  "disc",
+  "locking_pin",
+  "outboard_bearing",
+  "fork_r",
+  "fork_l",
+  "motor_r",
+  "motor_l",
+  "wheel_r",
+  "wheel_l",
+  "battery",
+  "esc_weapon",
+  "rx_drive_esc",
+  "switch"
+ ],
+ "wires": {}
+}

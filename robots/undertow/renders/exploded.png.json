@@ -1,0 +1,28 @@
+{
+ "spec": "/workspace/github__MohitBurkule__robobuild123d/robots/undertow/spec.json",
+ "rendered_at": 1794701820.5831683,
+ "bodies": [
+  "tub",
+  "top_plate",
+  "base_plate",
+  "skirt_r",
+  "skirt_l",
+  "skirt_rear",
+  "front",
+  "motor_fr",
+  "motor_fl",
+  "motor_rr",
+  "motor_rl",
+  "wheel_fr",
+  "wheel_fl",
+  "wheel_rr",
+  "wheel_rl",
+  "battery",
+  "esc",
+  "rx",
+  "switch",
+  "plate_screws",
+  "front_pin"
+ ],
+ "wires": {}
+}

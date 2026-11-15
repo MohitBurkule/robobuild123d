@@ -1,0 +1,23 @@
+{
+ "spec": "/workspace/github__MohitBurkule__robobuild123d/robots/scythe/spec.json",
+ "rendered_at": 1794701648.133082,
+ "bodies": [
+  "tub",
+  "top_panel",
+  "bar",
+  "weapon_hub",
+  "skid_foot",
+  "skid_dome",
+  "weapon_motor",
+  "drive_motor_r",
+  "drive_motor_l",
+  "wheel_r",
+  "wheel_l",
+  "battery",
+  "weapon_esc",
+  "drive_rx",
+  "switch",
+  "xt30"
+ ],
+ "wires": {}
+}
