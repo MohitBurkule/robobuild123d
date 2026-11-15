@@ -78,6 +78,8 @@ EXPLAIN = {
     "asm_dump.": "Comparison with the SolidWorks assembly dump (order, mates, counts).",
     "robust.": "Robustness sweep: a param or COTS swap variant failed to build or verify.",
     "harness.": "Planned wiring harness (robot/wiring): nets, connectors, service loops.",
+    "thermal.": "Thermal/voltage-sag budget: the pack's voltage under peak current (nominal minus I x internal resistance) must stay above 3.3 V per cell or the receiver/ESC browns out mid-fight. Bigger pack (more mAh / lower resistance) or less peak current.",
+    "impact.": "Hit reaction: gyroscopic wheel-lift when turning with a spun-up weapon (turn rate above the lift threshold rolls the robot), hop when a vertical spinner lands a hit, and yaw spin-out from a horizontal spinner. Slow the turn rate, lower the weapon speed, or widen the track.",
     "requirements.": "A requirement the user declared (speed, force, energy, budget) is not met by the design.",
     "validity.": "The spec itself is invalid (unknown part, bad placement) - fix the spec before reading other findings.",
 }

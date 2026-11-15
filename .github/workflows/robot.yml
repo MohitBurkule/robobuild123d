@@ -33,7 +33,7 @@ jobs:
           python-version: "3.12"
           optional-dependencies: "sim,development"
       - name: install robot extras
-        run: uv pip install trimesh manifold3d shapely rtree networkx pillow pytest pytest-xdist pytest-timeout
+        run: uv pip install trimesh manifold3d shapely rtree networkx pillow matplotlib pytest pytest-xdist pytest-timeout
       - name: robot doctor
         run: python -m robot doctor
       # two invocations: robot/tests and robots/revron/tests both have a test_joints.py (rootdir basename clash)
@@ -71,7 +71,7 @@ jobs:
           python-version: "3.12"
           optional-dependencies: "sim,development"
       - name: install robot extras
-        run: uv pip install trimesh manifold3d shapely rtree networkx pillow pytest pytest-xdist pytest-timeout
+        run: uv pip install trimesh manifold3d shapely rtree networkx pillow matplotlib pytest pytest-xdist pytest-timeout
       # exit code 5 = no tests selected (the SLOW list in conftest.py may be empty): not a failure
       - name: robot/tests (slow)
         run: python -m pytest robot/tests -m slow -n 4 -q --timeout=3600 --durations=0 --durations-min=5 -p no:cacheprovider || [ $? -eq 5 ]

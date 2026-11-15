@@ -11,7 +11,15 @@ import pytest
 
 # Node id prefixes relative to the repo root, e.g. "robot/tests/test_gen_integration.py" or
 # "robot/tests/test_x.py::test_y". EMPTY: the timing run was cut short, nothing has been measured yet.
-SLOW: tuple[str, ...] = ()
+SLOW: tuple[str, ...] = (
+    # full-verify equality tests: each runs the whole verifier 2-4x (15+ min even locally, and the
+    # native trimesh/rtree stack segfaults under xdist load on 2-core CI runners)
+    "robot/tests/test_cache.py::test_wedge_cached_equals_uncached_and_parallel_equals_serial",
+    "robot/tests/test_cache.py::test_one_part_change_reuses_other_queries",
+    "robot/tests/test_cad_incremental.py",
+    # end-to-end generated-robot gates: each builds and fully verifies several robots (minutes each)
+    "robot/tests/test_gen_integration.py",
+)
 
 
 def pytest_configure(config):
