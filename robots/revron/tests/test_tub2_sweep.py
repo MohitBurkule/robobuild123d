@@ -257,7 +257,7 @@ def test_standoff_sweep_side_panel_is_one_valid_solid(name, val, tmp_path):
     check({"params_chassis": {name: val}}, tmp_path, what="__import__('revron.assembly', fromlist=['build']).build('side_panel_l')", symmetric=False)
 
 
-MESH = """
+MESH_SHELLS = """
 import sys
 sys.path[:0] = [%r, %r]
 import trimesh
@@ -281,7 +281,7 @@ def test_standoff_sweep_tub_mesh_is_one_closed_shell(name, val, tmp_path):
     text, n = re.subn(rf"^{name} = [^#\n]*", f"{name} = {val}   ", f.read_text(), count=1, flags=re.M)
     assert n == 1
     f.write_text(text)
-    r = subprocess.run([sys.executable, "-c", MESH % (str(dst), ROOT)], capture_output=True, text=True)
+    r = subprocess.run([sys.executable, "-c", MESH_SHELLS % (str(dst), ROOT)], capture_output=True, text=True)
     rows = [ln.split() for ln in r.stdout.splitlines() if ln.startswith("MESH")]
     assert len(rows) == 2, r.stderr[-1500:]
     assert all(row[2] == "1" and row[3] == "0" for row in rows), rows
