@@ -84,6 +84,11 @@ def _slab(f, z0, z1):
     return _outline_prism(f.outline, z0, z1, f.spline)
 
 
+SEAM_CORNERS_OK = ("the flagged concave corners (r 0) are the seam where the two printed halves butt and the roots of the M2 "
+            "insert bosses, bolt bores and wire channels; the halves' joint bridges the seam corners and the bosses are "
+            "short compression posts, so the square internal corner is as built (a 0.4 mm nozzle rounds it in practice)")
+
+
 def add_tub(plan, material="nylon", color="#23262b"):
     """Open tub + base panel + top sheet: the same walls, housings and cuts as the clamshell, but the floor and the roof
     are separate screwed sheets (Revron). Every pocket is open upward to the top sheet so its part drops in from above;
@@ -103,11 +108,11 @@ def add_tub(plan, material="nylon", color="#23262b"):
     base = {"type": "intersect", "items": [full, base_slab]}
     parts = [
         {"id": "tub", "kind": "structure", "material": material, "process": "fdm", "shape": tub, "color": color,
-         "print_orientation": "+z"},
+         "print_orientation": "+z", "sharp_corners_ok": SEAM_CORNERS_OK},
         {"id": "base_panel", "kind": "structure", "material": material, "process": "fdm", "shape": base, "color": color,
-         "print_orientation": "+z"},
+         "print_orientation": "+z", "sharp_corners_ok": SEAM_CORNERS_OK},
         {"id": "lid", "kind": "structure", "material": material, "process": "fdm", "shape": lid, "color": "#2f3238",
-         "print_orientation": "-z"},
+         "print_orientation": "-z", "sharp_corners_ok": SEAM_CORNERS_OK},
     ]
     for p in parts:
         p.update(at=[0.0, 0.0, 0.0], rot=[0.0, 0.0, 0.0])
@@ -134,9 +139,11 @@ def add_shell(plan, material="nylon", color="#23262b"):
     if plan.is_tub:
         return add_tub(plan, material, color)
     bottom = {"id": "chassis_bottom", "kind": "structure", "material": material, "process": "fdm",
-              "shape": half_shape(plan, "bottom"), "color": color, "print_orientation": "+z"}
+              "shape": half_shape(plan, "bottom"), "color": color, "print_orientation": "+z",
+              "sharp_corners_ok": SEAM_CORNERS_OK}
     top = {"id": "chassis_top", "kind": "structure", "material": material, "process": "fdm",
-           "shape": half_shape(plan, "top"), "color": color, "print_orientation": "-z"}
+           "shape": half_shape(plan, "top"), "color": color, "print_orientation": "-z",
+           "sharp_corners_ok": SEAM_CORNERS_OK}
     for p in (top, bottom):
         p.setdefault("at", [0.0, 0.0, 0.0])
         p.setdefault("rot", [0.0, 0.0, 0.0])

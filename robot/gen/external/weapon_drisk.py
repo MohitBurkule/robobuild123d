@@ -140,6 +140,9 @@ class Drisk:
                 plan.late_cut("bottom", sh.cyl_axis(1.6, f.y1 - 4.6, f.y1 + 0.2, "y", xc, z_front), intent=bore_i)
                 plan.part(id=f"insert_{side}0", kind="insert", catalog="heatset_m2", at=[xc, f.y1 - 1.7, z_front],
                           rot=[90.0, 0.0, 0.0], retained="press_fit", intent=ins_i)
+                plan.connect(plan.body("bottom"), f"insert_{side}0", "press_fit",
+                             "the insert is heat-set into a bore behind the front wall: the knurl bites the melted plastic",
+                             interference_mm=0.15)
                 plan.screw(id=f"bolt_{side}0", designation="M2x10", at=[xc, f.y1 + FOOT_LEN, z_front], dir=[0.0, -1.0, 0.0],
                            through=[label], threads_into=f"insert_{side}0", intent=scr_i)
                 # upper front screw into an insert in the top half's front wall
@@ -149,6 +152,9 @@ class Drisk:
                 plan.late_cut("top", sh.cyl_axis(1.6, f.y1 - 4.6, f.y1 + 0.2, "y", xc, z_up), intent=bore_i)
                 plan.part(id=f"insert_{side}1", kind="insert", catalog="heatset_m2", at=[xc, f.y1 - 1.7, z_up],
                           rot=[90.0, 0.0, 0.0], retained="press_fit", intent=ins_i)
+                plan.connect(plan.body("top"), f"insert_{side}1", "press_fit",
+                             "the insert is heat-set into a bore behind the front wall: the knurl bites the melted plastic",
+                             interference_mm=0.15)
                 plan.screw(id=f"bolt_{side}1", designation="M2x10", at=[xc, f.y1 + FOOT_LEN, z_up], dir=[0.0, -1.0, 0.0],
                            through=[label], threads_into=f"insert_{side}1",
                            intent=I("load_path", "upper screw: with the low one it makes a couple that resists the disc's "
@@ -481,6 +487,9 @@ def add_forks(plan, yw):
                 plan.part(id=f"insert_f{side}{k}", kind="insert", catalog="heatset_m2", at=[xw - sgn * 1.7, yy, z],
                           rot=[0.0, 90.0, 0.0], retained="press_fit",
                           intent=I("service", f"brass thread: {kind} are consumables, swapped between fights", "M2 heat-set", threats=["vspin_front", "under_front"]))
+                plan.connect(plan.body("bottom"), f"insert_f{side}{k}", "press_fit",
+                             "the insert is heat-set into a bore in the side-wall boss: the knurl bites the melted plastic",
+                             interference_mm=0.15)
                 csk = not (thin and kind == "forks")
                 if csk:
                     cuts.append(sh.csk_cut((xw + sgn * t, yy, z), (-sgn, 0, 0), 2.0))  # flush head: no bite (CF-VS01)

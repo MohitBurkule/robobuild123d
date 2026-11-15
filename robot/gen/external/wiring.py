@@ -200,6 +200,24 @@ def add_wire(plan, wid, a, b, kind, awg=26, slack=6.0, avoid=()):
         plan.cut("bottom", sh.boxr(*r, z - sz / 2, z + sz / 2),
                  intent=I("wiring", f"channel for {wid} ({a} -> {b}) in the floor, under the parts, so no lead is pinched "
                           "between parts or crosses a moving one", f"channel {CH_W} mm wide fits {awg} AWG with room", threats=["lifter_flipper", "hazard_snag", "flip_landing", "wall_slam"]))
-    plan.wire({"id": wid, "from": a, "to": b, "awg": awg, "kind": kind, "slack_mm": slack},
+    def _at(pt, p3):
+        return abs(pt[0] - p3[0]) < 1e-6 and abs(pt[1] - p3[1]) < 1e-6
+
+    vz = -1.2  # centerline inside the channel (CH_Z spans -5..0.5) and a tube radius clear of the split face at z 0
+    mids = []
+    for px, py in path:
+        if _at((px, py), pa) or _at((px, py), pb):
+            continue
+        if mids and abs(mids[-1][0] - px) < 1e-6 and abs(mids[-1][1] - py) < 1e-6:
+            continue
+        mids.append([round(px, 2), round(py, 2), vz])
+    # drop plumb from each port to the channel centreline level and rise the same way at the far end: the port can sit
+    # off the 3 mm channel's centre, and a diagonal dive would leave the router wandering through the port-exempt zone
+    via = ([[round(pa[0], 2), round(pa[1], 2), vz]] if pa[2] > vz else []) + mids + \
+          ([[round(pb[0], 2), round(pb[1], 2), vz]] if pb[2] > vz else [])
+    via = [v for k, v in enumerate(via) if k == 0 or abs(v[0] - via[k - 1][0]) > 1e-6 or abs(v[1] - via[k - 1][1]) > 1e-6
+           or abs(v[2] - via[k - 1][2]) > 1e-6]
+    plan.wire({"id": wid, "from": a, "to": b, "awg": awg, "kind": kind, "slack_mm": slack,
+               **({"via": via} if len(via) >= 1 else {})},
               intent=I("wiring", f"{kind} lead {a} -> {b}", f"{awg} AWG for the {kind} current; {slack} mm slack to unplug", threats=["wall_slam", "flip_landing"]))
     return path

@@ -98,9 +98,11 @@ _ROT = {(1, 0, 0): (0, 90, 0), (-1, 0, 0): (0, -90, 0), (0, -1, 0): (90, 0, 0), 
 
 
 def csk_cut(at, direction, d):
-    """Countersink seat for an ISO 10642 screw (90 deg, head 2.2 d x 0.6 d) whose head is flush at `at` and whose shank
-    runs along `direction` (an axis vector): the cone + 0.15 mm, and 0.5 mm of clearance above the surface."""
-    dk, k = 2.2 * d, 0.6 * d
+    """Countersink seat for the catalog countersunk head (robot.cad.fastener_catalog: 90 deg, ISO 10642/14581 dk x k)
+    whose head is flush at `at` and whose shank runs along `direction` (an axis vector): the cone + 0.15 mm, and
+    0.5 mm of clearance above the surface."""
+    from ...cad import fastener_catalog as fc
+    dk, k = fc.head(d, "csk")
     prof = [[0.0, -0.5], [dk / 2 + 0.15, -0.5], [dk / 2 + 0.15, 0.0], [d / 2 + 0.1, k + 0.1], [0.0, k + 0.1]]
     key = tuple(int(round(v)) for v in direction)
     return place({"type": "revolve", "profile": [[r(a), r(b)] for a, b in prof]}, tuple(at), _ROT[key])

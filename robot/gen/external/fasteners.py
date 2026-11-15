@@ -67,6 +67,9 @@ def add_clamshell_screws(plan, sites, prefix="c"):
         plan.part(id=f"insert_{tag}", kind="insert", catalog="heatset_m2", at=[x, y, tip + INSERT_LEN / 2],
                   retained="press_fit", intent=I("assembly", "brass thread in the printed half: the shell is opened for "
                                                  "service, a printed thread would wear out", "M2 heat-set, 3 mm long", threats=["wall_slam", "flip_landing"]))
+        plan.connect(plan.body("bottom"), f"insert_{tag}", "press_fit",
+                     "the insert is heat-set into a bore in the bottom half: the knurl bites the melted plastic and holds it under pull",
+                     interference_mm=0.15)
         plan.screw(id=f"bolt_{tag}", designation=f"M2x{L}", at=[x, y, head_z], dir=down,
                    through=["chassis_top", "chassis_bottom"], threads_into=f"insert_{tag}",
                    intent=I("assembly", "clamps the two halves at a corner; four corners keep the split closed under a hit",
@@ -94,6 +97,9 @@ def add_tub_screws(plan, sites, prefix="c"):
                           intent=I("assembly", f"clearance hole in the {sheet} for the screw", "M2 + 0.2", threats=["flip_landing"]))
             plan.part(id=f"insert_{tag}{end}", kind="insert", catalog="heatset_m2", at=[x, y, z_ins], retained="press_fit",
                       intent=I("service", f"brass thread: the {sheet} comes off between fights", "M2 heat-set", threats=["wall_slam", "flip_landing"]))
+            plan.connect(plan.body("bottom" if d > 0 else "top"), f"insert_{tag}{end}", "press_fit",
+                         "the insert is heat-set into the column end: the knurl bites the melted plastic and holds it under pull",
+                         interference_mm=0.15)
             plan.screw(id=f"bolt_{tag}{end}", designation="M2x5", at=[x, y, z_outer], dir=screw_dir([0.0, 0.0, d]),
                        through=[sheet], threads_into=f"insert_{tag}{end}", head="button",
                        intent=I("assembly", f"the {sheet} goes on from {'above' if d < 0 else 'below'}: its screws are "
@@ -115,6 +121,9 @@ def add_front_inserts(plan, xs, z, part_id, half="top", screw_len=6, plate_t=2.4
         plan.part(id=f"insert_{tag}", kind="insert", catalog="heatset_m2", at=[x, yf - 1.7, z], rot=[90.0, 0.0, 0.0],
                   retained="press_fit", intent=I("service", f"brass thread so {part_id} can be swapped between fights",
                                                  "M2 heat-set", threats=["vspin_front", "wall_slam"]))
+        plan.connect(plan.body(half), f"insert_{tag}", "press_fit",
+                     "the insert is heat-set into a bore behind the front wall: the knurl bites the melted plastic and holds it under pull",
+                     interference_mm=0.15)
         plan.screw(id=f"bolt_{tag}", designation=f"M2x{screw_len}", at=[x, yf + plate_t, z], dir=screw_dir([0.0, -1.0, 0.0]),
                    through=[part_id], threads_into=f"insert_{tag}", head=head,
                    intent=I("assembly", f"{part_id} goes on from the front, so its screws are driven rearward into the wall",

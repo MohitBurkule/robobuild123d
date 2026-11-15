@@ -364,18 +364,19 @@ def rotor_clearance(ctx):
 
 
 def chassis_hull(ctx):
-    """Convex hull of the chassis (the largest-volume `structure` part), the wires' 'inside'."""
-    best = None
+    """Convex hull of the whole chassis (every `structure` part's mesh), the wires' 'inside'. A clamshell chassis is two
+    halves of near-equal volume; hulling only the largest one reads the other half's wire channels as 'outside'."""
+    import trimesh
+
+    vs = []
     for p in ctx.r.spec.parts:
         if p.kind != "structure":
             continue
         b = ctx.world.body(p.id)
         if b is None or b.mesh is None or not len(b.mesh.faces):
             continue
-        v = abs(float(b.mesh.volume))
-        if best is None or v > best[0]:
-            best = (v, b)
-    return None if best is None else best[1].mesh.convex_hull
+        vs.append(np.asarray(b.mesh.vertices, float))
+    return None if not vs else trimesh.Trimesh(vertices=np.vstack(vs)).convex_hull
 
 
 def enclosed(Q, inside, cloud, reach):

@@ -163,8 +163,10 @@ def gearmotor(id, name, can_len, can_dia, flats, gb_len, gb_h, shaft_len, mass, 
     can = at({"type": "intersect", "items": [cyl_x(can_dia / 2, can_len), box(can_len + 2, flats, can_dia + 2)]}, can_c, 0, 0)
     gb = at(box(gb_len, flats, gb_h), gb_c, 0, 0)
     shaft_at = total / 2
-    shaft = at(cyl_x(1.5, shaft_len), shaft_at + shaft_len / 2, 0, 0)
-    return CatalogEntry(id, "motor", name, mass, "estimate", union([can, gb, shaft]), {"terminals": [-total / 2 - 0.3, 0, 0]},
+    # micro-gearmotor output shafts carry a D-flat (same 3 mm D as the printed wheel bores, flat 1.0 from the axis)
+    dflat = {"type": "place", "shape": box(shaft_len + 2, 3.2, 2.6), "at": [0.0, 0.0, -0.3], "rot": [0.0, 0.0, 0.0]}
+    shaft = at({"type": "intersect", "items": [cyl_x(1.5, shaft_len), dflat]}, shaft_at + shaft_len / 2, 0, 0)
+    return CatalogEntry(id, "motor", name, mass, "estimate", union([can, gb, shaft]), {"terminals": [-total / 2 + 0.1, 0, 0]},
                         {"at": [shaft_at, 0, 0], "dir": [1, 0, 0], "len": shaft_len, "dia": 3.0}, dict(p), "#9aa0a6")
 
 

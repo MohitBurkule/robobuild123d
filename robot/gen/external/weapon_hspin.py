@@ -170,6 +170,9 @@ def add_bridge(plan, ya, zbb):
             iid = f"insert_b{side}{k}"
             plan.part(id=iid, kind="insert", catalog="heatset_m2", at=[xw - sgn * 1.7, ya, z], rot=[0.0, 90.0, 0.0],
                       retained="press_fit", intent=I("service", "brass thread: the bridge comes off to change the bar", "M2 heat-set", threats=["hspin_floor"]))
+            plan.connect(plan.body(half), iid, "press_fit",
+                         "the insert is heat-set into a bore in the side-wall boss: the knurl bites the melted plastic",
+                         interference_mm=0.15)
             plan.screw(id=f"bolt_b{side}{k}", designation="M2x10", at=[sgn * xo, ya, z], dir=[-sgn, 0.0, 0.0],
                        through=["top_bridge"], threads_into=iid,
                        intent=I("load_path", "post screws, two per side 4 mm apart in z: they resist the bridge peeling "
