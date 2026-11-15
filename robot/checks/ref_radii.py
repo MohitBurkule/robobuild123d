@@ -13,6 +13,8 @@ from __future__ import annotations
 
 import numpy as np
 
+from .ref_local import KD_WORKERS
+
 RES_MM = 0.1
 MIN_PTS = 3      # a radius difference seen at fewer edge samples is a tessellation fluke, not an edge run
 REL_TOL = 0.03   # of the radius: a large-R arc tessellated by angle carries more chord error than a small one
@@ -109,8 +111,8 @@ def radius_pairs(model, ref, grid=GRID_MM):
     if not S:
         return []
     P = np.array([p for p, _ in S])
-    da, ia = TA.query(P, workers=-1)
-    db, ib = TB.query(P, workers=-1)
+    da, ia = TA.query(P, workers=KD_WORKERS)
+    db, ib = TB.query(P, workers=KD_WORKERS)
     out = []
     for k, (p, t) in enumerate(S):
         if da[k] > SNAP_MM or db[k] > SNAP_MM:
