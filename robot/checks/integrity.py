@@ -144,7 +144,7 @@ def run(ctx, parts=None):
             exp["previous"] = float(prev[pid])
         if exp:
             rel = {k: (vol - v) / v for k, v in exp.items() if v > 0}
-            txt = ", ".join(f"{k} {exp[k]:.0f} ({rel[k]:+.0%})" for k in rel)
+            txt = ", ".join(f"{k} {exp[k]:.0f} ({(r if abs(r) >= 5e-3 else 0.0):+.0%})" for k, r in rel.items())
             msg = f"`{pid}` volume {vol:.0f} mm3 vs {txt}"
             if any(abs(r) <= p["tol"] for r in rel.values()):
                 out.append(ok("integrity.volume", G, "Part volume as expected", msg).on(pid))

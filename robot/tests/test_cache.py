@@ -16,6 +16,10 @@ def tmp_cache(tmp_path, monkeypatch):
     monkeypatch.setenv("ROBOT_CACHE", str(tmp_path))
     monkeypatch.setattr(cache, "_db", None)
     monkeypatch.setattr(geom, "_MEM", {})
+    # integrity.volume compares with the PREVIOUS run's volumes (a store each run rewrites), so the first run and
+    # later ones differ in those findings by design; every run here sees "no previous run" so reports stay comparable
+    from robot.checks import integrity
+    monkeypatch.setattr(integrity, "_load", lambda path: {})
     cache.set_enabled(True)
     cache.reset_stats()
     yield tmp_path
@@ -25,6 +29,9 @@ def tmp_cache(tmp_path, monkeypatch):
 def _rep(spec, opts):
     d = checks.verify(spec, opts).to_dict()
     d.pop("timings_s", None)
+    for g in (d.get("groups") or {}).values():  # wall times and ran/cached provenance differ run to run by design
+        g.pop("time_s", None)
+        g.pop("how", None)
     return json.dumps(d, sort_keys=True, default=str)
 
 
