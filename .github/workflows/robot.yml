@@ -24,8 +24,6 @@ jobs:
     if: github.event_name == 'push' || github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 45
-    env:
-      MALLOC_ARENA_MAX: "2"  # glibc arenas x OCP x xdist workers have segfaulted native code mid-run (flaky, CI-only)
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
         with:

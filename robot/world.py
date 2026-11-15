@@ -100,7 +100,9 @@ def resolve(spec: Spec, fast: bool = False) -> Resolved:
 
 
 BUILD_TIMEOUT_S = float(os.environ.get("ROBOT_BUILD_TIMEOUT") or 600)
-JOBS = int(os.environ.get("ROBOT_JOBS") or 0) or (os.cpu_count() or 1)
+# under pytest-xdist the workers already parallelize; a cpu-sized pool inside each of them
+# multiplied to 4x-cpu spawn processes (each re-importing OCP) and exhausted CI runner memory
+JOBS = int(os.environ.get("ROBOT_JOBS") or 0) or (1 if os.environ.get("PYTEST_XDIST_WORKER") else (os.cpu_count() or 1))
 
 
 def _part_shape(p):
