@@ -205,16 +205,22 @@ def geom_for(shape: dict, base_dir: Path | None, tess: Tess = FINE, solid_factor
         try:
             z = np.load(npz)
             meta = json.loads(js.read_text())
+            if not np.isfinite(z["v"]).all():  # a worker killed mid-build can persist NaN vertices; these segfault
+                raise ValueError("corrupt cache entry: non-finite vertices")  # trimesh/rtree downstream
             g = PartGeom(key, z["v"], z["f"], meta["volume"], meta["centroid"], meta["inertia"], brep)
             _MEM[key] = g
             cache.hits["part_geom"] += 1
             return g
         except (OSError, ValueError, KeyError):
-            pass
+            for bad in (npz, js):
+                bad.unlink(missing_ok=True)  # self-heal: rebuild instead of propagating the corruption
     cache.misses["part_geom"] += 1
     solid = solid_factory() if solid_factory else shapes.to_solid(shape, base_dir)
     vol, cen, I = mass_props(solid)
     V, F = tessellate(solid, tess)
+    if not np.isfinite(V).all():
+        raise ValueError(f"tessellation produced non-finite vertices for shape {shape.get('type', '?')}; "
+                         "the build123d boolean/fillet probably collapsed - this must not reach trimesh (native segfault)")
     try:
         import build123d as b
 

@@ -105,3 +105,17 @@ def test_one_part_change_reuses_other_queries(tmp_cache):
     assert cache.misses["group"] > 0 and cache.hits["overlap"] > 0
     cache.set_enabled(False)
     assert cached == _rep(s2, opts)
+
+
+def test_corrupt_nan_cache_entry_self_heals(tmp_cache):
+    """A pool worker killed mid-build can persist NaN vertices; loading them segfaults trimesh/rtree downstream, so
+    the loader must treat the entry as a miss, delete it and rebuild."""
+    shape = {"type": "box", "size": [2, 2, 2]}
+    key = geom.key_for(shape, None, geom.FINE)
+    d = tmp_cache
+    np.savez_compressed(d / f"{key}.npz", v=np.full((1, 3), np.nan), f=np.array([[0, 0, 0]]))
+    (d / f"{key}.json").write_text(json.dumps({"volume": 8.0, "centroid": [0, 0, 0], "inertia": [1.0, 1.0, 1.0]}))
+    g = geom.geom_for(shape, None)
+    assert np.isfinite(np.asarray(g.mesh.vertices)).all()
+    z = np.load(d / f"{key}.npz")
+    assert np.isfinite(z["v"]).all()
