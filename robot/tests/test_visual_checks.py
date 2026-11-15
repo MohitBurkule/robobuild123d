@@ -446,7 +446,7 @@ def test_rotor_pivot_is_in_the_parent_frame():
     M = np.eye(4)
     M[:3, 3] = (13.4, 38.5, 23.5)
     world = NS(body=lambda i: NS(M=M) if i == "mount" else None)
-    (grp, piv, ax, ids), = wire_review.rotor_groups(spec, world)
+    (grp, piv, ax, ids, rng), = wire_review.rotor_groups(spec, world)
     assert piv.tolist() == pytest.approx([-6.7, 38.5, 23.5]) and ax.tolist() == [1, 0, 0]
 
 

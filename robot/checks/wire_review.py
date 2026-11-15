@@ -287,7 +287,12 @@ def rotor_groups(spec, world=None):
         pb = world.body(p.parent) if world is not None and p.parent else None
         if pb is not None:   # a joint's pivot and axis are in its parent's frame (as kinematics.spin_axis reads them)
             a, piv = pb.M[:3, :3] @ a, pb.M[:3, :3] @ piv + pb.M[:3, 3]
-        out.append((grp, piv, a / np.linalg.norm(a), ids))
+        rng = None   # (lo, hi) deg of travel about the current pose for a joint that does not spin continuously
+        jmin, jmax = j.get("min"), j.get("max")
+        if jmin is not None and jmax is not None and abs(float(jmax) - float(jmin)) < 360.0 - 1e-6:
+            d0 = float(j.get("default") or 0.0)
+            rng = (min(float(jmin), float(jmax)) - d0, max(float(jmin), float(jmax)) - d0)
+        out.append((grp, piv, a / np.linalg.norm(a), ids, rng))
     return out
 
 
@@ -314,10 +319,20 @@ def rotor_clearance(ctx):
     if not spec.wires:
         return []
     groups = []
-    for grp, piv, ax, ids in rotor_groups(spec, w):
+    for grp, piv, ax, ids, rng in rotor_groups(spec, w):
         bodies = [b for b in (w.body(i) for i in ids) if b is not None and b.mesh is not None and len(b.mesh.faces)]
-        if bodies:
-            groups.append((grp, piv, ax, ids, swept_bands(bodies, piv, ax)))
+        if not bodies:
+            continue
+        if rng is None:
+            groups.append((grp, piv, ax, ids, swept_bands(bodies, piv, ax), None))
+        else:
+            # a limited joint (lifter scoop, flipper) does not revolve: sweep only its declared range, else the full
+            # solid of revolution would cover the whole hull behind the pivot and flag every wire through it
+            from .kinematics import SectorSweep
+            P = np.vstack([b.mesh.vertices for b in bodies] + [b.mesh.sample(600, seed=0) for b in bodies])
+            sw = SectorSweep(P, np.asarray(piv, float), np.asarray(ax, float), rng[0], rng[1])
+            sw.bodies = bodies
+            groups.append((grp, piv, ax, ids, None, sw))
     out, worst, routed = [], None, 0
     for wr in spec.wires:
         pts, real = _route_points(ctx, wr)
@@ -326,8 +341,12 @@ def rotor_clearance(ctx):
         routed += real
         Q = _samples(pts)
         rad = bundle_radius(wr)
-        for grp, piv, ax, ids, bands in groups:
-            gap, k = rotor_gaps(Q, rad, piv, ax, bands)
+        for grp, piv, ax, ids, bands, sector in groups:
+            if sector is not None:
+                _depth, g = sector.classify(Q, rad + ROTOR_MIN_MM)
+                gap, k = float(g.min() - rad), int(np.argmin(g))
+            else:
+                gap, k = rotor_gaps(Q, rad, piv, ax, bands)
             worst = gap if worst is None else min(worst, gap)
             if gap < ROTOR_MIN_MM and not str(x(wr, "rotor_ok", "") or "").strip():
                 out.append(fail("wire.rotor_clearance", G, BLOCKER, "Wire runs too close to a spinning part",
@@ -414,7 +433,7 @@ def exterior_support(ctx):
     if hull is None or not r.spec.wires:
         return []
     out, n = [], 0
-    spinning = {i for *_, ids in rotor_groups(r.spec, w) for i in ids}   # a spinning part holds nothing
+    spinning = {i for _g, _p, _a, ids, _r in rotor_groups(r.spec, w) for i in ids}   # a spinning part holds nothing
     for wr in r.spec.wires:
         pts, _ = _route_points(ctx, wr)
         if pts is None or str(x(wr, "exposed_reason", "") or "").strip():

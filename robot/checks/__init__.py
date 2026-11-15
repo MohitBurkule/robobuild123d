@@ -273,7 +273,15 @@ def _base_key(r, opts) -> str:
 
 
 def _group_key(name, r, opts, base_key):
-    return cache.h("group", name, base_key) if base_key else None
+    extra = ""
+    if name == "wire_review" and base_key:
+        from .wire_review import render_dirs
+        rr = []
+        for d in render_dirs(r.spec):
+            fs = sorted(x for x in d.rglob("*") if x.is_file())
+            rr.append((d.name, [(x.relative_to(d).as_posix(), cache.source_hash(x)) for x in fs]))
+        extra = cache.h("renders", rr)
+    return cache.h("group", name, base_key, extra) if base_key else None
 
 
 def _progress(name, t0, how, findings=()):
