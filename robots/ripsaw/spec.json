@@ -22,10 +22,10 @@
   {"id": "outboard_bearing", "kind": "bearing", "catalog": null, "label": "MR63 (from weapon_motor.pick_bearing(3.0)), pressed in the right rail", "at": [10.2, 49.0, 31.5], "rot": [0, 90, 0]},
   {"id": "fork_r", "kind": "fork", "material": "titanium", "process": "laser", "rotates_with": "fixed",
    "shape": {"type": "model", "file": "src/build_ripsaw.py", "params": {"part": "fork_r"}}, "at": [0, 0, 0], "rot": [0, 0, 0],
-   "joint": {"kind": "revolute", "axis": [1, 0, 0], "pivot": "M3 pin on right rail outer face", "min": -4, "max": 15, "default": 0}},
+   "joint": {"kind": "revolute", "axis": [1, 0, 0], "pivot": [14.95, 49.0, 4.3], "min": -4, "max": 15, "default": 0}},
   {"id": "fork_l", "kind": "fork", "material": "titanium", "process": "laser", "rotates_with": "fixed",
    "shape": {"type": "model", "file": "src/build_ripsaw.py", "params": {"part": "fork_l"}}, "at": [0, 0, 0], "rot": [0, 0, 0],
-   "joint": {"kind": "revolute", "axis": [1, 0, 0], "pivot": "M3 pin on left rail outer face", "min": -4, "max": 15, "default": 0}},
+   "joint": {"kind": "revolute", "axis": [1, 0, 0], "pivot": [-20.8, 49.0, 4.3], "min": -4, "max": 15, "default": 0}},
   {"id": "motor_r", "kind": "motor", "catalog": "bbb_n10_1000rpm", "at": [14.9, -17.0, 15.0], "rot": [0, 0, 0]},
   {"id": "motor_l", "kind": "motor", "catalog": "bbb_n10_1000rpm", "at": [-14.9, -17.0, 15.0], "rot": [0, 0, 180]},
   {"id": "wheel_r", "kind": "wheel", "catalog": "durahubs_30", "at": [34.4, -17.0, 15.0], "rot": [0, 90, 0]},
@@ -36,5 +36,5 @@
   {"id": "switch", "kind": "switch", "catalog": "fingertech_mini_switch", "at": [25.7, 18.3, 20.7], "rot": [0, 0, 0]}
  ],
  "electronics": {"failsafe": true, "weapon_remote_disable": true, "radio": "AFHDS 2A (Malenki-Nano built-in)", "cells": 2},
- "claims": ["UNTESTED: every number here is an estimate; run `robot verify` before trusting any of it"]
+ "notes": ["UNTESTED: every number here is an estimate; run `robot verify` before trusting any of it"]
 }
