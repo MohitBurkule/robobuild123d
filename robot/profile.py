@@ -2,7 +2,10 @@
 
 from __future__ import annotations
 
+import dataclasses
+import json
 from dataclasses import dataclass
+from pathlib import Path
 
 
 @dataclass
@@ -39,8 +42,44 @@ class Profile:
         return self.roller_mass_g if roller else self.non_roller_mass_g
 
 
+DIR = Path(__file__).parent / "profiles"
+META = ("description",)  # keys that are documentation, not Profile fields
+
+
+def available() -> list[str]:
+    """Profile names that exist as robot/profiles/*.json (the selectable rules profiles, E4)."""
+    return sorted(p.stem for p in DIR.glob("*.json"))
+
+
+def description(name: str) -> str:
+    return str(_load(name).get("description", ""))
+
+
+def _load(name: str) -> dict:
+    f = DIR / f"{name}.json"
+    if not f.exists():
+        raise ValueError(f"unknown rules profile `{name}`; available: {', '.join(available())}")
+    return json.loads(f.read_text())
+
+
 def named(name: str) -> Profile:
+    """The rules profile `name` (robot/profiles/<name>.json over the Profile defaults).
+
+    Empty name means the defaults (aws2025). Unknown keys and unknown profiles raise
+    ValueError: a typo'd threshold must never silently fall back to a default."""
     p = Profile()
-    if name:
-        p.name = name
+    if not name:
+        return p
+    d = _load(name)
+    fields = {f.name for f in dataclasses.fields(Profile)}
+    unknown = [k for k in d if k not in fields and k not in META]
+    if unknown:
+        raise ValueError(f"profile `{name}` has keys that are not Profile fields: {', '.join(sorted(unknown))}")
+    for k, v in d.items():
+        if k in META or k == "name":
+            continue
+        if isinstance(getattr(p, k), tuple):
+            v = tuple(v)
+        setattr(p, k, v)
+    p.name = name
     return p

@@ -1,0 +1,38 @@
+{
+  "design_before": {
+    "name": "wedge",
+    "profile": "aws2025",
+    "body": {
+      "zt": 8.0
+    },
+    "drive": {
+      "motor": "n20_1000rpm_6v"
+    }
+  },
+  "patch": [
+    {
+      "op": "set",
+      "path": "drive.motor",
+      "value": "n20_2000rpm_6v"
+    },
+    {
+      "op": "nudge",
+      "path": "body.zt",
+      "delta": 2.0
+    },
+    {
+      "op": "unset",
+      "path": "profile"
+    }
+  ],
+  "design_after": {
+    "name": "wedge",
+    "body": {
+      "zt": 10.0
+    },
+    "drive": {
+      "motor": "n20_2000rpm_6v"
+    }
+  },
+  "errors": []
+}
