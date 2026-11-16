@@ -576,6 +576,7 @@ widen it or remove it. `dfm.undeclared_tolerance` (WARNING): a shaft/pin runs in
 connection nor either part declares `clearance_mm`/`interference_mm` — FDM holes come out 0.1-0.3 mm small, so declare
 the fit. Parts without a mesh or a valid `print_orientation` are NOT CHECKED, never a pass.
 
+<<<<<<< HEAD
 ## Thermal and brownout (`thermal.*`, group `thermal`)
 
 Rule: **the pack must hold voltage at peak current.** Loaded voltage is `nominal_v - I_peak * R_pack`
@@ -732,3 +733,14 @@ on the bench. `builder.skill` (WARNING): heat-set inserts need intermediate skil
 waterjet) need expert. `builder.budget` (WARNING): the purchasable BOM cost (robot/bom_out, also published as the
 `bom_cost_gbp` metric) exceeds `budget_gbp`. `builder.unknown` (WARNING): the preset id or printer is not known.
 `builder.ok` (pass) when the whole design fits the bench. No `builder` key: NOT CHECKED, the report is unchanged.
+## Fixing collisions without hand maths (jiggle)
+
+- Read `ROOT CAUSES` first: one collision = one item; its consequences (fit, assembly.blocked, sweeps) go with it.
+- Overlap blockers state measured fixes ("move `switch` +y 0.62 mm"). Do not recompute geometry by hand.
+- Link placements to masters: spec `"params": {"P": "src/x/params.py"}` and `"at": [0, "P.switch_y()", "P.SWITCH_Z"]`.
+  Pockets, holes, slots and the part then all derive from the same master.
+- Solve over masters: `python3 -m robot jiggle spec.json --param src/x/params.py:SWITCH_BAY=4:14:0.1 --write-params`
+  (or list `"levers": [{"param": "src/x/params.py:SWITCH_BAY", "lo": 4, "hi": 14, "step": 0.1}]` in the spec).
+  It rebuilds with overridden masters (every relation re-derives), uses a finite-difference Jacobian + damped least
+  squares, and writes the new literal into params.py. Then run `robot verify`.
+>>>>>>> cc065386 (Jiggle over named params: overrides re-derive relations, spec expr placements, least-squares solver)
