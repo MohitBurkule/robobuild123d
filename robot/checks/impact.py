@@ -13,9 +13,15 @@ power group's metrics.
 
 Omega_lift = m g (track/2) / (I_w omega sin(tilt)): the yaw rate at which the
 robot lifts. Warn when the design's assumed turn rate is over half of it, block
-over 0.75. Hop: h = k E / (m g) with k = 0.25 (a low hit throws the robot, most
-energy stays in the target); warn over 20 mm. Yaw: omega_yaw = I_w omega / I_yaw
-with I_yaw ~ m (footprint/2)^2 (a disc of the footprint radius); warn over 720 deg/s.
+over 0.75 - EXCEPT for a declared vertical spinner (weapon_orientation "vspin"),
+where the same number is a WARNING: a horizontal spin axis couples every turn
+into roll, so no usable vertical weapon can sit under the 0.75x block (the
+repo's own reference vert sits ~8x over it); stutter turns are the accepted
+trade-off every real vertical spinner lives with, so the check reports the
+margin and leaves the call to the builder. Hop: h = k E / (m g) with k = 0.25
+(a low hit throws the robot, most energy stays in the target); warn over 20 mm.
+Yaw: omega_yaw = I_w omega / I_yaw with I_yaw ~ m (footprint/2)^2 (a disc of the
+footprint radius); warn over 720 deg/s.
 """
 
 from __future__ import annotations
@@ -101,7 +107,16 @@ def run(ctx):
         omega_lift = m_kg * 9.81 * (track / 2000.0 / 2) / (i_w * omega * gyro)
         frac = TURN_RATE_RAD_S / omega_lift if omega_lift > 0 else float("inf")
         ctx.metrics["gyro_lift_yaw_rad_s"] = round(omega_lift, 2)
-        if frac >= LIFT_BLOCK_X:
+        vert_kind = "v" in str(ctx.metrics.get("weapon_orientation") or "").lower()
+        if frac >= LIFT_BLOCK_X and vert_kind:
+            out.append(fail("impact.gyro_lift", G, WARNING, "Hard turns lift the wheels (the vertical-spinner stutter trade-off)",
+                            f"Turning at {TURN_RATE_RAD_S:.0f} rad/s needs {frac:.2f}x the {omega_lift:.1f} rad/s "
+                            f"lift threshold (track {track:.0f} mm, weapon I {i_w * 1000:.1f} g*m2 at {omega:.0f} rad/s, "
+                            f"spin axis {math.degrees(math.asin(min(gyro, 1.0))):.0f} deg off vertical) - a vertical "
+                            "spinner couples every turn into roll, so this is the stutter-turn trade-off, not a design error.")
+                       .fix("Widen the track or slow the turns for margin, or accept the stutter turns "
+                            "vertical spinners live with."))
+        elif frac >= LIFT_BLOCK_X:
             out.append(fail("impact.gyro_lift", G, BLOCKER, "A hard turn lifts the wheels (gyroscopic roll)",
                             f"Turning at {TURN_RATE_RAD_S:.0f} rad/s needs {frac:.2f}x the {omega_lift:.1f} rad/s "
                             f"lift threshold (track {track:.0f} mm, weapon I {i_w * 1000:.1f} g*m2 at {omega:.0f} rad/s, "

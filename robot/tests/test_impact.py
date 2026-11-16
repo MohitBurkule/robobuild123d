@@ -38,11 +38,20 @@ def test_track_from_wheel_bodies():
     assert impact.wheel_track(_ctx()) is None
 
 
-def test_heavy_weapon_fast_turn_blocks_on_gyro_lift():
-    m = _ctx(_metrics(energy=12.0, rpm=20000.0, mass=150.0), track_mm=90.0)
+def test_heavy_vertical_weapon_turn_is_the_stutter_tradeoff():
+    m = _ctx(_metrics(energy=12.0, rpm=20000.0, mass=150.0, orient="vspin"), track_mm=90.0)
     out = impact.run(m)
     ids = [f.id for f in out]
     assert "impact.gyro_lift" in ids
+    f = next(f for f in out if f.id == "impact.gyro_lift")
+    assert f.severity == "warning" and f.fix_hint
+    assert "stutter" in f.message.lower() or "stutter" in f.fix_hint.lower()
+    assert m.metrics["gyro_lift_yaw_rad_s"] > 0
+
+
+def test_heavy_weapon_unknown_orientation_still_blocks_on_gyro_lift():
+    m = _ctx(_metrics(energy=12.0, rpm=20000.0, mass=150.0, orient=""), track_mm=90.0)
+    out = impact.run(m)
     f = next(f for f in out if f.id == "impact.gyro_lift")
     assert f.severity == "blocker" and f.fix_hint
     assert m.metrics["gyro_lift_yaw_rad_s"] > 0

@@ -591,7 +591,10 @@ catalogue battery, or missing cells / internal resistance / any current number, 
 Rule: **the weapon must not throw the robot around.** From the power group's weapon energy and rpm (inertia
 `I = 2E / omega^2`): `impact.gyro_lift` (BLOCKER): turning at a hard pivot (15 rad/s) demands more than 0.75x the
 gyroscopic lift threshold `Omega_lift = m g (track/2) / (I omega)` - the inside wheels lift in a turn; widen the track,
-slow the turn, or store less energy. `impact.gyro_lift_margin` (WARNING): over 0.5x of the threshold. `impact.hop`
+slow the turn, or store less energy. For a declared vertical spinner (`weapon_orientation: vspin`) the same finding is a
+WARNING instead: a horizontal spin axis couples every turn into roll, so no usable vertical weapon sits under the block
+(the reference vert itself is ~8x over) - stutter turns are the accepted trade-off, the check reports the margin.
+`impact.gyro_lift_margin` (WARNING): over 0.5x of the threshold. `impact.hop`
 (WARNING): about `0.5%` of the weapon energy throws the robot more than 30 mm off the floor - wheels lose drive and
 steering mid-exchange. `impact.yaw` (WARNING): a horizontal hit yaws the robot over 720 deg/s from equal-and-opposite
 momentum (`I_w omega / I_yaw`, `I_yaw ~ m (footprint/2)^2`). `impact.ok` (pass) when every judged margin is fine. No
