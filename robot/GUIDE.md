@@ -51,6 +51,7 @@ JSON with `"type"`; everything is centred on its own origin, use `place` to move
 - `revolve {profile:[[r,z]..], angle (default 360)}`: profile in the r-z half plane (r >= 0) turned about z (wheels, hubs, discs).
 - `tube {points:[[x,y,z]..],radius}`: swept round bar through the points.
 - `union {items}`, `intersect {items}`, `subtract {base, cut:[..]}`, `place {shape, at, rot}`, `offset {shape, d}` (d in +-50 mm).
+- `round_inside {shape, radius, axis}`: fillet every inside (concave) corner edge parallel to `axis` (default z): pockets, channels, wall joins. Use it on printed tubs so `mfg.sharp_internal_corner` passes by construction.
 - `fillet {shape, radius}`, `chamfer {shape, length}`: round or bevel every edge of the child (keep radius below half the thinnest
   wall or the kernel fails, which becomes a `geometry failed` blocker).
 - `mirror {shape, axis:"x"|"y"|"z"}`: reflect across the plane normal to that axis.

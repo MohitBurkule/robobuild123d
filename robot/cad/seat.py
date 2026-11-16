@@ -39,6 +39,12 @@ def _frac(inside, P):
     return float(np.mean(inside(P))) if len(P) else 0.0
 
 
+def _recess(hole):
+    """robot.cad.holes measures grip / nut_z from the outer surface; the probe's t = 0 is the bearing face (rec.at),
+    which sits the counterbore depth (or csk sink) further in."""
+    return float(hole.get("cbore_depth") or hole.get("sink") or 0.0)
+
+
 def probe(f, host_inside, thread_inside=None) -> dict:
     """f: dict-like with designation, at, dir, head and optional hole; *_inside: callable(P[n,3]) -> bool[n]."""
     g = lambda k, dflt=None: (f.get(k, dflt) if isinstance(f, dict) else getattr(f, k, dflt))  # noqa: E731
@@ -89,20 +95,20 @@ def probe(f, host_inside, thread_inside=None) -> dict:
     if into == "tapped" or (thread_inside is not None and into is None):
         tap = hole.get("tap_d") or fc.tap_drill(s.d)
         tip = s.length if style == "csk" else s.length
-        t0 = (hole.get("grip") or 0.0) + 0.3
+        t0 = (hole.get("grip") or 0.0) - _recess(hole) + 0.3
         ts2 = np.linspace(t0, tip - 0.3, 6) if tip - 0.3 > t0 else np.array([t0])
         out["thread_bite"] = _frac(th, np.vstack([_ring(at, a, u, v, t, (tap / 2 + s.d / 2) / 2) for t in ts2]))
         out["pilot_open"] = 1.0 - _frac(th, np.vstack([_ring(at, a, u, v, t, max(tap / 2 - 0.25, 0.05), 6) for t in ts2]))
     if into == "insert":
         ib, il = hole.get("insert_d"), hole.get("insert_len")
-        g0 = hole.get("grip") or 0.0
+        g0 = (hole.get("grip") or 0.0) - _recess(hole)
         out["insert_open"] = 1.0 - _frac(th, np.vstack([_ring(at, a, u, v, t, ib / 2 - 0.15, 6)
                                                         for t in np.linspace(g0 + 0.3, g0 + il, 4)]))
         out["insert_wall"] = _frac(th, np.vstack([_ring(at, a, u, v, t, ib / 2 + 0.3, 6)
                                                   for t in np.linspace(g0 + 0.3, g0 + il, 4)]))
     if into == "nut":
         sf, m = hole.get("nut_af"), hole.get("nut_m")
-        z = (hole.get("nut_z") or 0.0) + m / 2
+        z = (hole.get("nut_z") or 0.0) - _recess(hole) + m / 2
         out["nut_open"] = 1.0 - _frac(th, _ring(at, a, u, v, z, sf / 2 - 0.15, 6))
         out["nut_held"] = _frac(th, _ring(at, a, u, v, z, sf / 2 + 0.35, 6) if hole.get("nut_fit") == "press"
                                 else _ring(at, a, u, v, z, sf / np.sqrt(3) + 0.6, 6))

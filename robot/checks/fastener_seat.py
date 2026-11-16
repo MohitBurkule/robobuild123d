@@ -34,7 +34,12 @@ def run(ctx):
             hb = [w.body(x) for x in (f.through or []) if w.body(x) is not None]
             tb = w.body(f.threads_into) if f.threads_into else None
             host = _inside_any(hb or [b for b in parts if b is not tb] or parts)
-            m = seat.probe(f, host, tb.inside if tb is not None else None)
+            th = tb.inside if tb is not None else None
+            if tb is not None and tb.kind == "insert":
+                # a modelled heat-set insert: the bore and its wall are in the part that holds the insert, not in the
+                # brass itself (which fills the bore)
+                th = _inside_any([b for b in parts if b is not tb and b.kind != "insert"])
+            m = seat.probe(f, host, th)
         except ValueError as e:
             ctx.not_checked.append(f"Fastener `{f.id}` seat: {e}")
             continue
