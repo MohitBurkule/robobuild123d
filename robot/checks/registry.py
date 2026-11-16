@@ -108,6 +108,9 @@ REGISTRY = [
     _g("dfm", DESIGN, INNER, note="dfm.*: per-process manufacturability not covered by printability / process"),
     _g("harness", DESIGN, FULL, None, deep_only=True, note="robot/wiring: planned harness (opt-in: spec harness.enabled)"),
     _g("requirements", DESIGN, INNER, 0.0, note="requirements.*: the spec's declared requirements vs measured metrics"),
+    _g("engagement", DESIGN, INNER, 0.0, note="engagement.*: screw length vs the clamped stack, engagement % of d (G3)"),
+    _g("tool_access", DESIGN, INNER, 0.0, note="tool_access.*: driver path for undeclared-tool screws, wrench clearance at nuts (G4)"),
+    _g("wire_care", DESIGN, INNER, 0.0, note="wire_care.*: wire chafe at hole edges, via bend radius, connector strain relief (G5)"),
     _g("robust", DESIGN, NIGHTLY, 900.0, deep_only=True, note="one-at-a-time param / variant / COTS-swap sweep"),
 ]
 
