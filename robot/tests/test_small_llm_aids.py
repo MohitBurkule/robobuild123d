@@ -101,3 +101,38 @@ def test_jiggle_solves_named_param_with_dependents(tmp_path):
     assert res["start"] > 0.2 and res["final"] <= 1e-6, res
     new = res["values"]["params.py:BAY"]
     assert 0 <= new <= 7.2   # bat clears the post; the pocket moved with it (no tub/bat overlap left)
+
+
+def test_probe_mass_and_unknown_material(tmp_path):
+    from robot import probe
+    d = {"name": "t", "parts": [box("tub", (0, 0, 0), (40, 40, 20)),
+                                {**box("skin", (0, 0, 15), (40, 40, 1)), "material": "titanium_gr5"}]}
+    p = tmp_path / "s.json"
+    p.write_text(json.dumps(d))
+    s, r, w = probe._load(p)
+    txt = probe.mass_report(s, r, w)
+    assert "solid block" in txt and "did you mean `titanium`" in txt
+
+
+def test_verify_folds_helpers_in(tmp_path):
+    from robot import checks
+    sp = _param_robot(tmp_path)
+    d = json.loads(sp.read_text())
+    d["levers"] = [{"param": "params.py:BAY", "lo": 0, "hi": 10, "step": 0.1}]
+    sp.write_text(json.dumps(d))
+    rep = checks.verify(spec.load(sp), checks.Options(fast=True, only=["interference"]))
+    prop = [f for f in rep.findings if f.id == "solve.proposal"]
+    assert prop and "BAY 8 ->" in prop[0].message
+    assert any(c.get("context") for c in rep.roots)
+    assert "FACTS" in rep.helpers["facts"]
+
+
+def test_line_of_sight_open_top():
+    from robot.checks import contain
+    walls = [box("floor", (0, 0, -6), (30, 30, 2)), box("w1", (-14, 0, 0), (2, 30, 10)), box("w2", (14, 0, 0), (2, 30, 10)),
+             box("w3", (0, -14, 0), (30, 2, 10)), box("w4", (0, 14, 0), (30, 2, 10))]
+    bat = box("bat", (0, 0, -2), (10, 10, 6), kind="battery")
+    c = _ctx(walls + [bat])
+    assert ids(contain.line_of_sight(c), "contain.line_of_sight")[0].passed is False
+    c = _ctx(walls + [box("lid", (0, 0, 6), (30, 30, 2)), bat])
+    assert ids(contain.line_of_sight(c), "contain.line_of_sight")[0].passed

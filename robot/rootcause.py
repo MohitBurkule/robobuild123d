@@ -128,11 +128,13 @@ def _merge_patterned(roots):
     return out
 
 
-def text(roots) -> str:
+def text(roots, context=False) -> str:
     """Short block printed before the per-finding list."""
     n = sum(len(c["findings"]) for c in roots)
     lines = [f"ROOT CAUSES: {len(roots)} (from {n} blockers). Fix these; the consequences go away with them."]
     for k, c in enumerate(roots, 1):
         more = f" [+{len(c['findings']) - 1} consequences: {', '.join(sorted(set(c['findings'][1:])))}]" if len(c["findings"]) > 1 else ""
         lines.append(f" {k}. {c['primary']} - {c['message']}{more}")
+        if context and c.get("context"):
+            lines += [f"      | {x}" for x in c["context"]]
     return "\n".join(lines)

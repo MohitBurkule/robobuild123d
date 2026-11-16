@@ -22,6 +22,8 @@ from ..finding import BLOCKER, INFO, WARNING, fail, note, ok
 G = "kinematics"
 SPIN_WEAPONS = ("spinner", "drum", "disc", "bar", "shell", "eggbeater")
 SPIN_KINDS = {"wheel", "pulley", "wheel_hub", "hub", "tyre"}
+PIVOT_HINT = ("A hinge / pivot pin the moving part turns on is an axle: declare that connection `method: shaft` "
+              "(locates, never holds); keep `pin` / `press_fit` only on the side that does not turn.")
 BOUNDARY = {"motor", "weapon_motor", "bearing", "belt", "locking_bar"}
 STATIC_KINDS = {"structure", "armor", "wedge", "plate", "fork", "battery", "esc", "receiver", "servo", "switch"}
 ELECTRONIC = {"battery", "esc", "receiver", "servo", "switch"}
@@ -833,9 +835,12 @@ def motion_declared(k):
             k.bad("kin.motion_declared", BLOCKER, "Part is both fixed and rotating",
                   f"`{pid}` declares `fixed` and `rotates_with: {p.rotates_with}`.", (pid,))
         if declared_fixed(p) and g is not None:
+            seed = next((m for m in sorted(g.members) if m in k.seeds), None)
+            path = chain(k, seed, pid) if seed else []
             k.bad("kin.motion_declared", BLOCKER, "Fixed part is joined to a rotating group",
-                  f"`{pid}` is declared `fixed` but is rigidly joined to rotating {label(g)}.", (pid,),
-                  fix="Break the rigid join (screw, press fit, glue, parent) between it and the spinning parts.")
+                  f"`{pid}` is declared `fixed` but is rigidly joined to rotating {label(g)}"
+                  + (f" via {' -> '.join(path)}" if path else "") + ".", (pid,),
+                  fix="Break the rigid join (screw, press fit, glue, parent) between it and the spinning parts. " + PIVOT_HINT)
         if declared_rot(p):
             if g is None and k.kind(pid) not in BOUNDARY:
                 k.bad("kin.motion_declared", BLOCKER, "Part declared rotating is not on anything that turns",
@@ -946,7 +951,7 @@ def rigid_mix(k):
             k.bad("kin.rigid_mix", BLOCKER, "Spinning part is rigidly joined to the structure",
                   f"Rigid group {label(g)} holds spinning {', '.join(f'`{s}`' for s in spin)} and static "
                   f"{', '.join(f'`{s}`' for s in static)}" + (f" via {' -> '.join(path)}" if path else "") + "; it cannot turn (or rips apart).",
-                  spin + static, fix="Break that join: the rotating group may meet the structure only through bearings, an axle or the motor stator/rotor boundary.")
+                  spin + static, fix="Break that join: the rotating group may meet the structure only through bearings, an axle or the motor stator/rotor boundary. " + PIVOT_HINT)
         if elec:
             k.bad("kin.rotating_electronics", BLOCKER, "Electronics in a rotating group",
                   f"{', '.join(f'`{e}`' for e in elec)} are rigidly joined to rotating {label(g)}; wires would wrap and tear.",
