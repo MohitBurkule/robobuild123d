@@ -50,6 +50,7 @@ MIN_GROUND_CLR = PROFILE.min_ground_clearance_mm   # 1.0 mm
 FOOTPRINT_MARGIN = 1.5                       # mm kept off each envelope face (print tolerance + sizing-box wall)
 MASS_MARGIN = 3.0                            # g kept under MASS_LIMIT (the gate limit is 150)
 MPH_PER_MS = 2.23694                         # unit conversion
+EPS = 1e-6                                   # float tolerance in check()
 
 # ---- COTS (catalogue ids; the robot/gen templates use the same ids) ----
 WEAPON_MOTOR = "bl_1806_2300kv"              # 1806 2300 kV outrunner, split pair (stator + can)
@@ -94,7 +95,7 @@ MASS_OTHER_G = {
     "weapon_motor": CAT_MASS_G[WEAPON_MOTOR], "drive_motors": 2 * CAT_MASS_G[DRIVE_MOTOR],
     "wheels": 2 * CAT_MASS_G[WHEEL], "battery": CAT_MASS_G[BATTERY], "weapon_esc": CAT_MASS_G[WEAPON_ESC],
     "drive_rx": CAT_MASS_G[DRIVE_RX], "switch": CAT_MASS_G[SWITCH],
-    "hub_7075": 2.6, "shaft_nut": CAT_MASS_G[SHAFT_NUT], "wshaft_steel": 1.4, "screws": 3.4, "wires": 2.0,
+    "hub_7075": 3.6, "shaft_nut": CAT_MASS_G[SHAFT_NUT], "wshaft_steel": 1.4, "screws": 3.4, "wires": 2.0,
     "tub": 16.0, "top_panel": 4.0, "allowance": PROFILE.allowance_g,
 }
 
@@ -117,11 +118,11 @@ BAR_TOOTH_STEP = 4.0                         # mm radial depth of the bite step 
 BAR_TOOTH_LEN = 10.0                         # mm along the bar from the tip where the step starts
 BAR_CORNER_R = 1.0                           # mm laser-cut corner round on non-cutting corners
 BAR_BORE_CLR = 0.05                          # mm radial on the shaft pilot (centres the bar on the shaft)
-BAR_BOLT_D = 2.5                             # M2.5 bar-to-hub screws (1.5d = 3.75 mm into the 4 mm hub)
+BAR_BOLT_D = 2.5                             # M2.5 bar-to-hub screws (M2.5x8: 3 mm bar + 5 mm hub, tip flush with the bell cap)
 BAR_BOLT_N = 2                               # 2x through bar into hub, on the centreline
 BAR_BOLT_PCD = 15.0                          # mm (edge distance in the hub: 11.5 - 7.5 = 4.0 >= 1.5d)
-BAR_LOCK_X = 18.0                            # mm: the weapon-lock pin hole along the +X arm (clear of the
-                                             # counterbores at 7.5 and inside the panel's disc at the top)
+BAR_LOCK_X = 17.0                            # mm: the weapon-lock pin hole along the +X arm (clear of the housing
+                                             # tube and with >= 0.9 mm ligament to the sloped wall at the hole top)
 BAR_LOCK_D = 3.2                             # mm pin hole (a 3 mm pit pin drops through panel, floor and bar)
 BAR_R_STEP = 0.5                             # mm search step of bar_r_geom()
 ENERGY_LIMIT_J = 18.0                        # J stored-energy cap: the bar hangs on the motor's own extended
@@ -132,25 +133,37 @@ ENERGY_LIMIT_J = 18.0                        # J stored-energy cap: the bar hang
 # M3 nut -> bar -> hub -> bell cap face (the motor's own shaft runs through the lot); an MR83ZZ in the boss
 # above the stator flange is the rotor's second support (the motor's own bearings are the first).
 NUT_T = 2.4                                  # mm M3 nut thickness (catalogue nut_m3_alu)
-HUB_H = 4.0                                  # mm turned spacer between bell cap and bar (>= 1.5d of the M2.5s)
+HUB_H = 5.0                                  # mm turned spacer between bell cap and bar: the M2.5x8 bar bolts pass the
+                                             # 3 mm bar and end flush with the hub top face (the bell cap), not in the bell
 HUB_OD_R = 11.5                              # mm hub outer radius (edge distance for the M2.5 taps)
 HUB_BORE_R = 1.6                             # mm hub bore on the shaft
 HUB_CUP_ID_R = 10.6                          # mm the hub's top cup pilots on the bell rim (bell r 10.5)
 HUB_CUP_H = 2.0                              # mm cup depth at the top of the hub
 WSHAFT_TIP_Z = 1.0                           # mm the shaft's lower end above the floor (threaded M3 for the nut)
-MOTOR_BELL_CLR = 1.0                         # mm radial hub to tub bore wall (spinning)
-BEARING_T = 2.5                              # mm MR83ZZ 3 x 5 x 2.5 width (the boss's bore is its press seat)
-BEARING_OD_R = 2.5                           # mm MR83ZZ outer race
-BEARING_ID_R = 1.5                            # mm MR83ZZ inner race (a slide fit on the 3 mm shaft)
+MOTOR_BELL_CLR = 1.5                         # mm radial running clearance of the biggest spinning part in the
+                                             # housing bore (the hub, r11.5) to the bore wall: kin.rub_gap needs
+                                             # 1.0 mm, so the bore is HUB_OD_R + 1.5 = r13.0
+BEARING_T = 3.0                              # mm MR83ZZ 3 x 8 x 3 width (the boss's bore is its press seat)
+BEARING_OD_R = 4.0                           # mm MR83ZZ outer race
+BEARING_ID_R = 1.5                           # mm MR83ZZ inner race (a slide fit on the 3 mm shaft)
 
 # ---- weapon motor mount (stator flange up, screwed through the panel and the printed boss) ----
-BOSS_T = 2.5                                 # mm printed boss ring between the flange top face and the panel: the
+BOSS_T = 3.0                                 # mm printed boss ring between the flange top face and the panel: the
                                              # MR83ZZ's press seat (the bearing sits directly on the flange face)
-BOSS_ID_R = 2.45                             # mm the bearing's press seat (OD 5.0 with 0.05 interference)
+BOSS_ID_R = 4.0                              # mm the bearing's press seat, line-to-line with the MR83ZZ OD 8.0 (the
+                                             # declared 0.05 mm press is within the fit tolerance, so the seat is modelled touching)
 BOSS_OD_R = 14.0                             # mm boss outer radius (merges into the housing tube wall)
-WIRE_SLOT_IN_R = 2.5                         # mm the phase-lead slot starts outside the bearing's outer race
-WIRE_SLOT_W = 3.2                            # mm the phase-lead slot through the boss ring at SLOT_ANGLE_DEG (between
-                                             # the flange tap circle)
+WIRE_SLOT_IN_R = 2.0                         # mm the phase-lead slot's inner end: inside the boss bore (r4), so the
+                                             # slot merges into the bore and no thin ligament is left between them
+WIRE_SLOT_OUT_R = BOSS_OD_R + 6.0            # mm the slot's outer end: past the disc wall above the boss, so the
+                                             # phase wire can leave the boss pocket sideways through the wall notch
+WIRE_SLOT_TUBE_Z0 = 12.0                     # mm the slot's lower end down the housing-tube wall: an internal channel
+                                             # (outer r stops just past the tube wall, inside the disc wall) the phase
+                                             # wire climbs from the pod-side annulus (wide only at low z) up into the
+                                             # boss slot
+WIRE_SLOT_W = 5.5                            # mm the phase-lead slot through the boss ring at SLOT_ANGLE_DEG (between
+                                             # the flange tap circle; wide enough for the 1.9 mm 22 AWG phase wire to
+                                             # survive the router's 0.6 mm voxel grid with clearance)
 SLOT_ANGLE_DEG = 45.0                        # deg: between the flange's 4 M2 taps (0/90/180/270)
 SCREW_ANGLES = (0.0, 90.0, 180.0, 270.0)      # deg: the bl_1806 base-flange tap phases (catalogue local y/z +-8)
 BL_SCREW_CLR_R = 1.1                         # mm: the M2 stator screw clearance bores through panel and boss
@@ -162,9 +175,10 @@ TUB_FLOOR_T = 1.6                            # mm
 TUB_SLOPE_DEG = 15.0                         # side slope from vertical: verticals glance off; shallow enough that
                                              # the pack fits under the sloped wall at its full height
 TUB_TOP_Z = WHEEL_D - 2 * MIN_GROUND_CLR - 2.0   # body top below tyre top: invertible (wheels > body both sides)
-# pod width the internals need: two N10 bodies (24.5 mm each) nested against the walls with a 6.5 mm centre gap
-# the battery lead passes through, plus the walls
-POD_W_MIN = 65.0
+# pod width master: wide enough for the two N10 bodies nested against the walls plus the centre gap for the battery
+# lead, and for the spinning bell to clear each N10 by >= 1 mm (kin.rub_gap)
+POD_W_MIN = 70.0                             # jiggle-measured (PR #84 param solve + min-gap probe): the bell needs
+                                             # 1.0 mm from each N10; 65 gave 0.64, 68 gives 1.79, 70 gives 2.57
 POD_REAR = 52.0                               # mm the pod extends behind the axle line: the N10s (6) + the ESC bay +
                                               # the battery bay + the switch bay, inside the rear envelope margin
 TOP_PANEL_T = 1.0                            # mm top panel (Revron panel_top style)
@@ -194,8 +208,19 @@ POD_POST_Y = (-12.0, -20.0)                   # mm, relative to the axle line: p
 SKID_PAD_R = 4.0                             # mm rear skid pad radius (printed with the tub, behind the sweep)
 SKID_PAD_X = 22.0                            # mm rear skid pads off the centreline (two, for the stance polygon)
 SKID_PAD_BAY = 6.0                           # mm the pads sit this far off the pod's rear wall inner face
-SWITCH_BAY = 8.0                             # mm: the switch bay centre this far off the pod's rear wall inner face
+SKID_PAD_Z0 = 0.2                            # mm pad bottom above the floor: the wheels (z=0), not the pads, rest on
+                                             # the ground (contain.wheel_ground), while 0.2 < 0.6 keeps the pads in
+                                             # the stance polygon used by arch.com_support
+SWITCH_X = -1.0                              # mm the slide switch's centre X (mid-pod, ahead of the battery bay, clear
+                                             # of the weapon ESC at +X; its ports face -X)
 SWITCH_KEY_OFF_X = 3.175                     # mm: the switch's mounting bushing sits this far +X at rot 270
+# pod layout half-depths (catalogue solids): pack 52x12x12, switch 19x12.7 at rot 270, rx 32x19, ESC 23x12
+BAT_HALF_D = 6.0
+SWITCH_HALF_D = 6.35
+RX_HALF_D = 9.5
+ESC_HALF_D = 6.0
+ESC_X = 18.0                                 # mm the weapon ESC's centre X (right of the pod; its -X face ports face
+                                             # the pod centre, clear of the switch at SWITCH_X)
 NOSE_DOWN_DEG = 5.0                          # deg: the threat model's nose-down pitch (CF-OW01 hop-on-hit)
 PITCH_CLR_MM = 0.3                           # mm the bar's front tip must still clear the floor at NOSE_DOWN_DEG
 SPINNER_ENERGY_CAP_J = 20.0                  # J: the spinner escalation threshold (energy over this makes the
@@ -205,9 +230,26 @@ MOI_TWELFTH = 12.0                          # 1/12 in I = m (L^2 + W^2) / 12
 ROTOR_REST_MOI_KGM2 = 1.0e-6                  # kg m^2: bell + hub + nut + shaft + screws near the axis
 
 
+def battery_y():
+    """Pack centre Y: against the pod's rear wall, inside it by 0.5 mm."""
+    return wheel_y() - POD_REAR + TUB_WALL + BAT_HALF_D + 0.5
+
+
 def switch_y():
-    """World Y of the slide switch (in its bay at the rear of the pod, clear of the pack bay ahead of it)."""
-    return wheel_y() - POD_REAR + TUB_WALL + SWITCH_BAY
+    """World Y of the slide switch: ahead of the pack band (the pack is taller than the switch hangs low), under
+    the panel key hole."""
+    return battery_y() + BAT_HALF_D + SWITCH_HALF_D + 0.65
+
+
+def esc_y():
+    """Weapon ESC centre Y: shares the switch's y-band (the ESC at +X is x-disjoint from the switch at SWITCH_X),
+    ahead of the pack band."""
+    return switch_y()
+
+
+def rx_y():
+    """Receiver centre Y: under the panel, ahead of the switch band, clear of the weapon boss."""
+    return switch_y() + SWITCH_HALF_D + RX_HALF_D + 0.65
 
 
 # ---- relations ----
@@ -245,7 +287,15 @@ def flange_top_z():
 
 
 def boss_bottom_z():
-    return flange_top_z() + 2.0
+    """The printed boss ring spans the whole gap between the stator flange top face and the panel underside
+    (that gap is BOSS_T): its bore (BOSS_ID_R) is the MR83ZZ press seat, so the bearing sits directly on the
+    flange face inside the boss."""
+    return flange_top_z()
+
+
+def bearing_cz():
+    """MR83ZZ centre z: the bearing sits directly on the stator flange top face, inside the boss bore."""
+    return flange_top_z() + BEARING_T / 2
 
 
 def tub_floor_z():
@@ -255,8 +305,9 @@ def tub_floor_z():
 
 
 def wshaft_top_z():
-    """The motor's own shaft, extended: from the nut thread up through the MR83ZZ in the boss, flush under the panel."""
-    return TUB_TOP_Z - TOP_PANEL_T - 0.1
+    """The motor's own shaft, extended: from the nut thread up through the MR83ZZ in the boss; its top keeps
+    1.1 mm clear of the panel underside (the weapon rub-gap rule needs 1.0 mm)."""
+    return TUB_TOP_Z - TOP_PANEL_T - 1.1
 
 
 def wshaft_len():
@@ -370,6 +421,11 @@ def bar_sweep_r():
     return BAR_L / 2
 
 
+def motor_x():
+    """Weapon-side X of a drive gearmotor's origin: the body's outboard face lands on the pod wall's inner face."""
+    return POD_W / 2 - TUB_WALL - N10_BODY_OUT
+
+
 def wheel_x():
     """Wheel centre X (right side; left is mirrored): the hub boss bears on the pod wall's outer face, so the
     tyre plane clears the wall and the wall is clamped between gearbox face and wheel."""
@@ -415,14 +471,16 @@ def bite_mm(rpm, closing_ms=2.0, teeth=2):
 def check():
     """Rule checks as asserts (call from build; nothing runs at import)."""
     x_half, yf, yr = overall_extent()
-    assert x_half <= room() + 1e-6, f"width {2 * x_half:.1f} > {2 * room():.1f}"
-    assert yf - yr <= 2 * room() + 1e-6, f"length {yf - yr:.1f} over the envelope"
+    assert x_half <= room() + EPS, f"width {2 * x_half:.1f} > {2 * room():.1f}"
+    assert yf - yr <= 2 * room() + EPS, f"length {yf - yr:.1f} over the envelope"
     if HEIGHT_LIMIT is not None:
         assert TUB_TOP_Z + MIN_GROUND_CLR <= HEIGHT_LIMIT
-    assert total_mass_g() <= MASS_LIMIT - MASS_MARGIN + 1e-6
+    assert total_mass_g() <= MASS_LIMIT - MASS_MARGIN + EPS
     assert tip_speed_ms(bar_rpm()) * MPH_PER_MS <= PROFILE.max_tip_speed_mph
     assert energy_j(bar_rpm()) <= SPINNER_ENERGY_CAP_J, "weapon energy over the cantilever escalation threshold"
     assert WSHAFT_TIP_Z >= MIN_GROUND_CLR
+    assert abs(TUB_TOP_Z - TOP_PANEL_T - boss_bottom_z() - BOSS_T) < EPS
+    assert rx_y() + RX_HALF_D <= WPN_AXIS_Y - BOSS_OD_R - 0.5, "rx band overlaps the weapon boss"
     assert bar_z0() - (WPN_AXIS_Y + bar_sweep_r() - wheel_y()) * math.tan(math.radians(NOSE_DOWN_DEG)) >= PITCH_CLR_MM
     assert TUB_TOP_Z + MIN_GROUND_CLR <= WHEEL_D, "body taller than wheels: not invertible"
     return True

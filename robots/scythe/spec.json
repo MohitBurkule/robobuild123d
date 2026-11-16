@@ -57,6 +57,7 @@
    ],
    "rotates_with": "fixed",
    "sharp_corners_ok": "the flagged concave corners are where the vertical-wall pod meets the sloped disc and the roots of the cradle ribs and panel posts on the shell: short compression ribs and a bonded seam, the same class as the hspin_bar chassis halves",
+   "thin_wall_deviation": "the 0.0x mm wall readings are boolean corner points where the diagonal wire-slot cuts and the motor-relief sector faces meet the housing bore (r13) and tube wall (r14.5) - knife edges between cuts, not walls: the tube wall is the full TUB_WALL 1.5 mm all around the housing, and the boss ring 10 mm thick",
    "label": "printed PA tub: sloped disc over the bar + vertical-wall rear pod, motor housing tube, weapon boss, N10 cradles, panel posts"
   },
   {
@@ -92,8 +93,8 @@
    "catalog": "bl_1806_stator",
    "at": [
     0.0,
-    42.0,
-    19.5
+    45.0,
+    19.0
    ],
    "rot": [
     0.0,
@@ -136,8 +137,8 @@
    },
    "at": [
     0.0,
-    42.0,
-    5.500000000000002
+    45.0,
+    4.000000000000002
    ],
    "rot": [
     0.0,
@@ -154,8 +155,8 @@
     ],
     "pivot": [
      0.0,
-     42.0,
-     7.000000000000002
+     45.0,
+     5.500000000000002
     ],
     "min": 0,
     "max": 360,
@@ -221,13 +222,13 @@
    "shape": {
     "type": "cylinder",
     "radius": 1.5,
-    "height": 27.9
+    "height": 26.9
    },
    "parent": "bar",
    "at": [
     0.0,
     0.0,
-    9.449999999999998
+    10.449999999999998
    ],
    "rot": [
     0.0,
@@ -236,6 +237,41 @@
    ],
    "rotates_with": "bar",
    "label": "the motor's own shaft, extended: press fit in the bell's bored core, down through hub and bar to the M3 nut thread"
+  },
+  {
+   "id": "wbearing",
+   "kind": "bearing",
+   "material": "steel",
+   "process": "cots",
+   "stock": "MR83ZZ 3x8x3",
+   "rotates_with": "fixed",
+   "color": "#555555",
+   "shape": {
+    "type": "subtract",
+    "base": {
+     "type": "cylinder",
+     "radius": 4.0,
+     "height": 3.0
+    },
+    "cut": [
+     {
+      "type": "cylinder",
+      "radius": 1.5,
+      "height": 7.0
+     }
+    ]
+   },
+   "at": [
+    0.0,
+    45.0,
+    27.5
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "label": "MR83ZZ (3x8x3) in the weapon boss bore: outer race pressed into the boss (the bearing seat on the stator flange face), inner race on the motor's own shaft - the rotor's second support"
   },
   {
    "id": "shaft_nut",
@@ -260,8 +296,8 @@
    "kind": "motor",
    "catalog": "bbb_n10_1000rpm",
    "at": [
-    19.25,
-    27.27756813566454,
+    21.75,
+    31.25227291513248,
     17.0
    ],
    "rot": [
@@ -279,8 +315,8 @@
    "kind": "motor",
    "catalog": "bbb_n10_1000rpm",
    "at": [
-    -19.25,
-    27.27756813566454,
+    -21.75,
+    31.25227291513248,
     17.0
    ],
    "rot": [
@@ -298,30 +334,34 @@
    "kind": "wheel",
    "catalog": "bbb_wheel_34x6_5",
    "at": [
-    37.75,
-    27.27756813566454,
+    40.25,
+    31.25227291513248,
     17.0
    ],
    "rot": [
     0.0,
     0.0,
     0.0
-   ]
+   ],
+   "retained": "clamp",
+   "retained_reason": "the wheel boss clamps the pod wall between itself and the gearmotor's gearbox face, and the D-bore keys the wheel to the 3 mm shaft: the wheel is captured with the clamped motor"
   },
   {
    "id": "wheel_l",
    "kind": "wheel",
    "catalog": "bbb_wheel_34x6_5",
    "at": [
-    -37.75,
-    27.27756813566454,
+    -40.25,
+    31.25227291513248,
     17.0
    ],
    "rot": [
     0.0,
     0.0,
     180.0
-   ]
+   ],
+   "retained": "clamp",
+   "retained_reason": "the wheel boss clamps the pod wall between itself and the gearmotor's gearbox face, and the D-bore keys the wheel to the 3 mm shaft: the wheel is captured with the clamped motor"
   },
   {
    "id": "battery",
@@ -329,7 +369,7 @@
    "catalog": "c_typical_2s_300mah_lipo_lihv_betafpv_tbs_",
    "at": [
     0.0,
-    -12.0,
+    -12.74772708486752,
     17.6
    ],
    "rot": [
@@ -338,15 +378,15 @@
     0.0
    ],
    "retained": "strap",
-   "label": "2S 300 mAh HV pack in the pod behind the motors; a poly strap through printed slots holds it down (the strap carries the inverted load)"
+   "label": "2S 300 mAh HV pack in the pod's rear bay; a poly strap through printed slots holds it down (the strap carries the inverted load)"
   },
   {
    "id": "weapon_esc",
    "kind": "esc",
    "catalog": "bbb_brushless_esc_20a",
    "at": [
-    0.0,
-    1.5,
+    18.0,
+    0.2522729151324793,
     13.6
    ],
    "rot": [
@@ -355,7 +395,7 @@
     0.0
    ],
    "retained": "adhesive",
-   "label": "20 A brushless ESC on the pod floor ahead of the motors, bonded on a foam pad"
+   "label": "20 A brushless ESC on the right of the pod floor, bonded on a foam pad"
   },
   {
    "id": "drive_rx",
@@ -363,7 +403,7 @@
    "catalog": "bbb_malenki_nano",
    "at": [
     0.0,
-    -1.0,
+    16.75227291513248,
     27.75
    ],
    "rot": [
@@ -372,15 +412,15 @@
     0.0
    ],
    "retained": "adhesive",
-   "label": "Malenki-Nano combined drive ESC + receiver, taped to the top panel's underside ahead of the weapon housing"
+   "label": "Malenki-Nano combined drive ESC + receiver, taped to the top panel's underside ahead of the switch band"
   },
   {
    "id": "switch",
    "kind": "switch",
    "catalog": "fingertech_mini_switch",
    "at": [
-    0.0,
-    -15.222431864335459,
+    -1.0,
+    0.2522729151324793,
     25.7
    ],
    "rot": [
@@ -391,7 +431,7 @@
    "retained": "clamp",
    "marked": true,
    "tool_free": true,
-   "label": "mini switch in its bay at the pod's rear, clamped to the top panel by its own bushing and nut through the 4 mm key hole"
+   "label": "mini switch mid-pod under the panel, clamped to the top panel by its own bushing and nut through the 4 mm key hole"
   }
  ],
  "fasteners": [
@@ -401,8 +441,8 @@
    "material": "steel",
    "at": [
     7.5,
-    42.0,
-    5.500000000000002
+    45.0,
+    4.000000000000002
    ],
    "dir": [
     0.0,
@@ -443,8 +483,8 @@
    "material": "steel",
    "at": [
     -7.5,
-    42.0,
-    5.500000000000002
+    45.0,
+    4.000000000000002
    ],
    "dir": [
     0.0,
@@ -485,7 +525,7 @@
    "material": "steel",
    "at": [
     8.0,
-    42.0,
+    45.0,
     30.0
    ],
    "dir": [
@@ -516,7 +556,7 @@
     "clearance_d": 2.2,
     "into": "through",
     "side": "head",
-    "grip": 3.5
+    "grip": 4.0
    }
   },
   {
@@ -525,7 +565,7 @@
    "material": "steel",
    "at": [
     4.898587196589413e-16,
-    50.0,
+    53.0,
     30.0
    ],
    "dir": [
@@ -556,7 +596,7 @@
     "clearance_d": 2.2,
     "into": "through",
     "side": "head",
-    "grip": 3.5
+    "grip": 4.0
    }
   },
   {
@@ -565,7 +605,7 @@
    "material": "steel",
    "at": [
     -8.0,
-    42.0,
+    45.0,
     30.0
    ],
    "dir": [
@@ -596,7 +636,7 @@
     "clearance_d": 2.2,
     "into": "through",
     "side": "head",
-    "grip": 3.5
+    "grip": 4.0
    }
   },
   {
@@ -605,7 +645,7 @@
    "material": "steel",
    "at": [
     -1.4695761589768238e-15,
-    34.0,
+    37.0,
     30.0
    ],
    "dir": [
@@ -636,7 +676,7 @@
     "clearance_d": 2.2,
     "into": "through",
     "side": "head",
-    "grip": 3.5
+    "grip": 4.0
    }
   },
   {
@@ -644,8 +684,8 @@
    "designation": "M2x6",
    "material": "steel",
    "at": [
-    12.186974497397031,
-    52.22608580593277,
+    12.130459475558034,
+    49.41512617707553,
     30.0
    ],
    "dir": [
@@ -678,8 +718,8 @@
    "designation": "M2x6",
    "material": "steel",
    "at": [
-    4.117543218853655,
-    57.36688049512254,
+    3.341086083546093,
+    57.46910301625533,
     30.0
    ],
    "dir": [
@@ -712,8 +752,8 @@
    "designation": "M2x6",
    "material": "steel",
    "at": [
-    -4.1175432188536565,
-    57.36688049512254,
+    -3.3410860835460943,
+    57.46910301625533,
     30.0
    ],
    "dir": [
@@ -746,8 +786,8 @@
    "designation": "M2x6",
    "material": "steel",
    "at": [
-    -12.18697449739703,
-    52.22608580593277,
+    -9.888841168040097,
+    53.29772297687315,
     30.0
    ],
    "dir": [
@@ -780,8 +820,8 @@
    "designation": "M2x6",
    "material": "steel",
    "at": [
-    29.5,
-    15.277568135664541,
+    32.0,
+    19.25227291513248,
     30.0
    ],
    "dir": [
@@ -814,8 +854,8 @@
    "designation": "M2x6",
    "material": "steel",
    "at": [
-    -29.5,
-    15.277568135664541,
+    -32.0,
+    19.25227291513248,
     30.0
    ],
    "dir": [
@@ -848,8 +888,8 @@
    "designation": "M2x6",
    "material": "steel",
    "at": [
-    29.5,
-    7.277568135664541,
+    32.0,
+    11.25227291513248,
     30.0
    ],
    "dir": [
@@ -882,8 +922,8 @@
    "designation": "M2x6",
    "material": "steel",
    "at": [
-    -29.5,
-    7.277568135664541,
+    -32.0,
+    11.25227291513248,
     30.0
    ],
    "dir": [
@@ -923,18 +963,18 @@
    "via": [
     [
      0.0,
-     -4.0,
-     24.0
+     -4.74772708486752,
+     25.5
     ],
     [
-     -28.5,
-     -4.0,
-     23.0
+     -15.5,
+     -6.74772708486752,
+     25.5
     ],
     [
-     -28.5,
-     -11.422431864335458,
-     23.0
+     -15.5,
+     4.062272915132479,
+     25.5
     ]
    ]
   },
@@ -947,24 +987,14 @@
    "slack_mm": 8.0,
    "via": [
     [
-     -28.5,
-     -19.02243186433546,
-     23.0
+     -20.0,
+     -3.557727084867521,
+     27.5
     ],
     [
-     -28.5,
-     -10.0,
-     23.0
-    ],
-    [
-     -18.0,
-     -10.0,
-     24.5
-    ],
-    [
-     -18.0,
-     -10.0,
-     27.25
+     -20.0,
+     10.75227291513248,
+     27.5
     ]
    ]
   },
@@ -977,24 +1007,19 @@
    "slack_mm": 8.0,
    "via": [
     [
-     -28.5,
-     -19.02243186433546,
-     23.0
+     -20.0,
+     -3.557727084867521,
+     20.0
     ],
     [
-     -28.5,
-     2.0,
-     23.0
+     -20.0,
+     -3.557727084867521,
+     14.0
     ],
     [
-     -14.0,
      2.0,
-     23.0
-    ],
-    [
-     -14.0,
-     2.0,
-     13.6
+     -2.747727084867521,
+     14.0
     ]
    ]
   },
@@ -1008,18 +1033,18 @@
    "via": [
     [
      16.0,
-     5.0,
+     22.75227291513248,
      24.0
     ],
     [
-     -6.5,
-     5.0,
-     24.0
+     -6.0,
+     24.0,
+     20.0
     ],
     [
-     -6.5,
-     27.27756813566454,
-     24.0
+     -7.5,
+     31.25227291513248,
+     17.0
     ]
    ]
   },
@@ -1033,18 +1058,18 @@
    "via": [
     [
      -16.0,
-     5.0,
+     22.75227291513248,
      24.0
     ],
     [
-     6.5,
-     5.0,
-     24.0
+     6.0,
+     24.0,
+     20.0
     ],
     [
-     6.5,
-     27.27756813566454,
-     24.0
+     7.5,
+     31.25227291513248,
+     17.0
     ]
    ]
   },
@@ -1058,18 +1083,18 @@
    "via": [
     [
      16.0,
-     -7.0,
+     10.75227291513248,
      24.0
     ],
     [
-     -14.0,
-     -7.0,
-     24.0
+     2.0,
+     4.0,
+     18.0
     ],
     [
-     -14.0,
-     4.5,
-     24.0
+     2.0,
+     3.252272915132479,
+     14.0
     ]
    ]
   },
@@ -1080,31 +1105,47 @@
    "awg": 22,
    "kind": "power",
    "slack_mm": 10.0,
+   "rotor_ok": "the stator's phase port is on the spin axis at the flange face (catalog bl_1806_stator port at local -7): the run climbs the housing-tube wire channel into the boss slot and ends on the axis, so the final segment is inside the swept shaft line by construction - the run itself stays in the static printed channel, 10 mm slack absorbs the bell's axial play",
    "via": [
     [
-     11.5,
-     1.5,
-     24.0
+     29.5,
+     0.2522729151324793,
+     18.0
     ],
     [
-     17.0,
-     31.0,
-     24.0
+     24.0,
+     10.0,
+     22.0
     ],
     [
-     15.6,
-     57.6,
-     26.0
+     7.0,
+     39.0,
+     22.5
     ],
     [
-     11.3,
-     53.3,
-     28.4
+     15.5,
+     41.0,
+     16.0
     ],
     [
-     3.5,
-     45.5,
-     27.2
+     11.0,
+     56.0,
+     15.5
+    ],
+    [
+     8.5,
+     53.5,
+     15.5
+    ],
+    [
+     8.5,
+     53.5,
+     25.9
+    ],
+    [
+     3.2,
+     48.2,
+     25.9
     ]
    ]
   }
@@ -1130,6 +1171,20 @@
    "reason": "the motor's own shaft, a press fit in the bell's bored rotor core (the catalogue draws the bore at r1.45); the nut clamps bar + hub to the bell cap face so the stack turns as one",
    "interference_mm": 0.05,
    "mechanical_key": true
+  },
+  {
+   "a": "wbearing",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "MR83ZZ outer race pressed into the boss bore (line-to-line at r4.0, 0.05 mm declared press): the bearing seat sits directly on the stator flange face",
+   "interference_mm": 0.05,
+   "mechanical_key": true
+  },
+  {
+   "a": "wbearing",
+   "b": "wshaft",
+   "method": "shaft",
+   "reason": "MR83ZZ inner race on the motor's own 3 mm shaft (r1.5 bore on the r1.5 shaft, a slide fit): the shaft runs through the bearing bore, the rotor's second support"
   },
   {
    "a": "weapon_hub",
@@ -1212,6 +1267,12 @@
    "b": "weapon_motor_bell",
    "max_depth_mm": 0.2,
    "reason": "the motor's own shaft is a press fit in the bell's bored core (the catalogue draws the bore at r1.45, the shaft is r1.5)"
+  },
+  {
+   "a": "wbearing",
+   "b": "tub",
+   "max_depth_mm": 0.1,
+   "reason": "the bearing's outer race is a press fit in the boss bore (r4.0 seat, modelled line-to-line)"
   },
   {
    "a": "wheel_r",

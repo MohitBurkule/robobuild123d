@@ -30,6 +30,6 @@ def top_panel():
         face -= bd.Pos(P.BL_SCREW_PCD / 2 * math.cos(a), P.WPN_AXIS_Y + P.BL_SCREW_PCD / 2 * math.sin(a)) * bd.Circle(1.1)
     for x, y in rim_xy():
         face -= bd.Pos(x, y) * bd.Circle(PANEL_SCREW_CLR_R)
-    face -= bd.Pos(SWITCH_KEY_OFF_X, P.switch_y()) * bd.Circle(SWITCH_HOLE_D / 2)
+    face -= bd.Pos(P.SWITCH_X + SWITCH_KEY_OFF_X, P.switch_y()) * bd.Circle(SWITCH_HOLE_D / 2)
     face -= bd.Pos(P.BAR_LOCK_X, P.WPN_AXIS_Y) * bd.Circle(P.BAR_LOCK_D / 2 + 0.2)
     return bd.Pos(0, 0, P.TUB_TOP_Z - P.TOP_PANEL_T) * bd.extrude(face, P.TOP_PANEL_T)

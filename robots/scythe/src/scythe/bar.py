@@ -16,6 +16,7 @@ import build123d as bd
 from . import params as P
 from ._reuse import plate
 from robot.cad import fastener_catalog as fc
+from robot.world import csk_dims
 
 
 def arm_points():
@@ -28,11 +29,11 @@ def arm_points():
 
 
 def _csk(x, y, d):
-    """Countersink cone + clearance hole cut from the underside (z = 0) of the bar."""
-    dk, _k = fc.head(d, "csk")
+    """Countersink cone + clearance hole cut from the underside (z = 0) of the bar: a 90 deg cone from the modelled
+    head diameter (robot.world.csk_dims) down to the shank, so the verifier's head solid sits in it flush."""
+    dk, _k = csk_dims(d)
     clr = fc.clearance(d) / 2
-    depth = (dk - 2 * clr) / 2
-    cone = bd.Pos(x, y, 0) * bd.Cone(dk / 2, clr, depth, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+    cone = bd.Pos(x, y, 0) * bd.Cone(dk / 2, d / 2, (dk - d) / 2, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
     hole = bd.Pos(x, y, 0) * bd.Cylinder(clr, P.BAR_T, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
     return cone + hole
 

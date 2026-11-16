@@ -84,23 +84,46 @@ def motor_housing():
 
 def weapon_boss():
     """Ring on the housing top up to the top panel: the stator's M2 screws pass through it into the flange taps.
-    Its inner pocket (BOSS_ID_R) leaves the phase leads a channel over the flange face; the 45-deg slot lets them
-    turn out (between the tap circle)."""
+    Its bore (BOSS_ID_R) is the MR83ZZ press seat (the bearing sits directly on the flange face)."""
     top = P.TUB_TOP_Z - P.TOP_PANEL_T
     z = P.boss_bottom_z()
     boss = bd.Pos(0, P.WPN_AXIS_Y, z) * bd.Cylinder(P.BOSS_OD_R, top - z,
                                                     align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN)) - \
         bd.Pos(0, P.WPN_AXIS_Y, z - 1) * bd.Cylinder(P.BOSS_ID_R, top - z + 2,
                                                      align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
-    for k in range(4):
-        a = math.radians(90.0 * k)
-        boss -= bd.Pos(P.BL_SCREW_PCD / 2 * math.cos(a), P.WPN_AXIS_Y + P.BL_SCREW_PCD / 2 * math.sin(a), z) * bd.Cylinder(
-            1.1, top - z + 1, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
-    r_mid = (P.BOSS_ID_R - 1.0 + P.BOSS_OD_R + 2.0) / 2
-    slot = bd.Pos(r_mid * math.cos(math.radians(45.0)), P.WPN_AXIS_Y + r_mid * math.sin(math.radians(45.0)), z - 0.2) * bd.Rot(
-        0, 0, 45.0) * bd.Box(P.BOSS_OD_R + 2.0 - (P.BOSS_ID_R - 1.0), P.WIRE_SLOT_W, top - z + 1.2,
-                             align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
-    return boss - slot
+    for a in P.SCREW_ANGLES:
+        r = math.radians(a)
+        boss -= bd.Pos(P.BL_SCREW_PCD / 2 * math.cos(r), P.WPN_AXIS_Y + P.BL_SCREW_PCD / 2 * math.sin(r), z) * bd.Cylinder(
+            P.BL_SCREW_CLR_R, top - z + 1, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+    return boss
+
+
+def wire_slot():
+    """The SLOT_ANGLE_DEG phase-lead channel, cut from the whole tub, in two steps: (1) an internal channel down the
+    housing-tube wall (WIRE_SLOT_TUBE_Z0 up to the boss), outer radius just past the tube wall so it stays inside the
+    disc wall - this is how the phase wire gets from the pod-side annulus into the tube's wall; (2) the boss notch from
+    inside the bore out past the disc wall (WIRE_SLOT_OUT_R), between the flange tap circle - the phase leads turn up
+    out of the pocket over the flange face and leave the boss sideways through this wall notch."""
+    top = P.TUB_TOP_Z - P.TOP_PANEL_T
+    z = P.boss_bottom_z()
+    a = math.radians(P.SLOT_ANGLE_DEG)
+    r_out = P.WIRE_SLOT_OUT_R
+    r_mid = (P.WIRE_SLOT_IN_R + r_out) / 2
+    boss_notch = bd.Pos(r_mid * math.cos(a), P.WPN_AXIS_Y + r_mid * math.sin(a), z - 0.2) * bd.Rot(
+        0, 0, P.SLOT_ANGLE_DEG) * bd.Box(r_out - P.WIRE_SLOT_IN_R, P.WIRE_SLOT_W, top - z + 1.2,
+                                         align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+    r_tube_out = P.housing_out_r() + 0.2
+    r_mid2 = (P.WIRE_SLOT_IN_R + r_tube_out) / 2
+    tube_channel = bd.Pos(r_mid2 * math.cos(a), P.WPN_AXIS_Y + r_mid2 * math.sin(a), P.WIRE_SLOT_TUBE_Z0) * bd.Rot(
+        0, 0, P.SLOT_ANGLE_DEG) * bd.Box(r_tube_out - P.WIRE_SLOT_IN_R, P.WIRE_SLOT_W, z + 0.7 - P.WIRE_SLOT_TUBE_Z0,
+                                         align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+    slot = boss_notch + tube_channel
+    # the same channel at the other three diagonals (between the flange taps, symmetric): the motor-relief sector
+    # edges land inside these cuts, so no bare wall strip is left between the two cuts
+    out = slot
+    for k in (1, 2, 3):
+        out = out + bd.Pos(0, P.WPN_AXIS_Y, 0) * bd.Rot(0, 0, 90 * k) * slot
+    return out
 
 
 def motor_bore():
@@ -117,9 +140,12 @@ def lock_holes():
 
 
 def axle_holes():
-    """N10 output shaft exits through the pod walls; one side built, mirrored."""
+    """N10 output shaft exits through the pod walls; one side built, mirrored. The hole is a U-slot open at the top
+    of the wall, so the gearmotor drops into its cradle from above (shaft entering the slot) and lifts back out."""
     one = bd.Pos(P.POD_W / 2, P.wheel_y(), P.WHEEL_CZ) * bd.Rot(0, 90, 0) * bd.Cylinder(2.0, 2 * P.TUB_WALL + 2)
-    return one + bd.mirror(one, bd.Plane.YZ)
+    slot = bd.Pos(P.POD_W / 2, P.wheel_y(), P.WHEEL_CZ) * bd.Box(
+        2 * P.TUB_WALL + 2, 4.1, P.TUB_TOP_Z - P.WHEEL_CZ, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+    return one + slot + bd.mirror(one + slot, bd.Plane.YZ)
 
 
 def _cradle(side):
@@ -140,7 +166,8 @@ def _cradle(side):
 def disc_post_angles():
     """Angles on the disc rim wall that are not swallowed by the pod rectangle.
     # param: organic four-way symmetry of the disc rim: the angles dodge the pod seam and the slope's high points."""
-    return [40.0, 75.0, 105.0, 140.0]
+    return [20.0, 75.0, 105.0, 140.0]
+    # param: end
 
 
 def post_xy():
@@ -165,6 +192,52 @@ def posts():
     return out
 
 
+def skid_pads():
+    """Rear skid pads printed with the tub (one solid), behind the weapon sweep: the rear corners of the stance
+    polygon - with the wheels alone the COM at rest sits outside the wheel contact hull. The pads bottom at
+    SKID_PAD_Z0 so the wheels, not the pads, carry the robot on the floor."""
+    y = pod_rear_y() + P.TUB_WALL + P.SKID_PAD_BAY
+    out = None
+    for sx in (-P.SKID_PAD_X, P.SKID_PAD_X):
+        p = bd.Pos(sx, y, P.SKID_PAD_Z0) * bd.Cylinder(P.SKID_PAD_R, P.tub_floor_z() + 0.2 - P.SKID_PAD_Z0,
+                                                         align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+        out = p if out is None else out + p
+    return out
+
+
+def _motor_clearance(side):
+    """Annular-sector relief in the housing-tube wall and boss ring for one N10 body's inboard corner (side +1
+    faces +X), up to the boss top so the motor lifts straight out +z. The sector's inner arc sits just inside the
+    housing bore and its outer arc is the tube wall / boss OD, so the cut merges into the bore on one side and
+    opens the wall square on the other - no straight box edge grazing the bore circle, which would leave a
+    sub-0.1 mm feather (mfg.thin_wall). Cradle ribs (r > 21), the pod walls and the disc wall are all outside the
+    sector radii."""
+    a0 = 0.0 if side > 0 else 180.0
+    half = 51.0   # sector edges (at +-51 deg, 129/231) land inside the diagonal wire-slot cuts, so no bare wall strip is left between relief and slot
+    z0 = P.CRADLE_PAD_TOP
+    r_out1 = P.housing_out_r() + 0.02
+    r_in1 = P.housing_in_r() - 0.5
+    r_in2 = 11.0
+    r_out2 = P.BOSS_OD_R + 0.02
+    out = None
+    for za, zb, ri, ro in ((z0, P.boss_bottom_z() + 0.6, r_in1, r_out1),
+                           (P.boss_bottom_z(), P.boss_bottom_z() + P.BOSS_T + 0.2, r_in2, r_out2)):
+        ring = bd.Pos(0, P.WPN_AXIS_Y, za) * (
+            bd.Cylinder(ro, zb - za, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+            - bd.Cylinder(ri, zb - za + 2, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN)))
+        # wedge box sized so its corners sit on the ring's outer arc at +-half (no poke inside the ring):
+        # cut edge lands at a0 +- half on the tube wall, inside the diagonal wire-slot cuts
+        x0 = ro * math.cos(math.radians(half))
+        x1 = ro + 0.5
+        y1 = ro * math.sin(math.radians(half)) + 0.5
+        wedge = (bd.Pos(0, P.WPN_AXIS_Y, za) * bd.Rot(0, 0, a0) * bd.Pos((x0 + x1) / 2, 0, 0)
+                 * bd.Box(x1 - x0, 2 * y1, zb - za, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN)))
+        sec = ring & wedge
+        out = sec if out is None else out + sec
+    return out
+
+
 def tub():
-    return (shell() + motor_housing() + weapon_boss() + posts() + _cradle(1) + _cradle(-1)
-            - motor_bore() - lock_holes() - axle_holes())
+    return (shell() + motor_housing() + weapon_boss() + posts() + _cradle(1) + _cradle(-1) + skid_pads()
+            - motor_bore() - lock_holes() - axle_holes() - wire_slot()
+            - _motor_clearance(1) - _motor_clearance(-1))
