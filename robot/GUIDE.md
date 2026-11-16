@@ -606,6 +606,25 @@ named fit and `fits.cad_diameter(name, nominal, hole_process)` gives the CAD dia
 (+0.15), `pocket_loose` (+0.40). Processes scale the compensation: FDM 1.0x, SLA 0.5x, cast 0.75x, CNC 0. `fits.check`
 returns whether a measured diameter is inside the kind's band (press 0.06, thread 0.08, running 0.10, clearance 0.12).
 
+## Slice-based mass & print-time estimate (`robot/slice_est.py`)
+
+A mesh's volume says what a solid part weighs; a slicer says what a printed one weighs. `slice_est.estimate(mesh)`
+slices an oriented mesh at layer height and sums the extrusion: `walls` perimeter passes at the bead section (nozzle x
+layer, nozzle from the printer profile), a solid skin (0.6 mm) at the top and bottom, and `infill_pct` of the section
+area elsewhere. Extruded volume gives `mass_g` (volume x spool density), `filament_m` (volume / 1.75 mm filament cross
+section) and `time_min` (volume / (bead section x speed) + 2 s per layer + 60 s heat-up). `slice_est.write(parts, out)`
+takes the same `(id, mesh, print_orientation)` tuples as `plate.write` and writes `slice_est.json` / `slice_est.csv`.
+`mesh_mass_g` is reported alongside for comparison; a slice that fails falls back to the mean section, never a crash.
+
+## DXF sheet/turned-part order pack (`robot/dxf_order.py`)
+
+Not every part is printed. `dxf_order.rows(spec, meshes=None)` classifies made parts by canonical process: sheet parts
+(`laser`, `waterjet`, `sheet`, `bent_sheet`) become cut blanks - thickness snapped up to the material's real stock sizes
+(`catalog.SHEET_STOCK_MM`), blank size = profile outline + 3 mm clamping margin, a DXF on layer `CUT` when a mesh is
+given; turned parts become bar orders - stock diameter snapped up to `catalog.ROD_STOCK_MM`, length + 1 mm facing
+allowance per end. A thickness or stock size that is not real is flagged in the row's `note`, never silently rounded.
+`dxf_order.write(spec, out, meshes)` writes `dxf/<id>.dxf`, `order_sheet.csv`, `order_turned.csv` and `dxf_order.json`.
+
 ## Requirements block (`requirements.*`, group `requirements`)
 
 A spec may declare a top-level `requirements` object - the design's intent as numbers. Each supported key is compared
