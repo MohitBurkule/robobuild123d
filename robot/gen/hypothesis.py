@@ -328,9 +328,11 @@ PRESETS = {
                       drive_esc="c_malenki_nano_antweight_esc_receiver", rx="integrated",
                       skirts="rear"),  # the 180 mAh pack is 3 g lighter but its xt30 lands in a dead-end wire corner
     "vspin_drisk": dict(weapon="vspin_drisk", mount="front", orientation="vertical", attachment="drisk", front="forks",
-                        drive_layout="2WD", wheel_dia=22, weapon_esc="c_bbb_antweight_spinner_brushless_esc",
-                        battery="lipo_2s_180", invertible=False, drive_esc="c_malenki_nano_antweight_esc_receiver",
-                        rx="integrated"),
+                        drive_layout="2WD", wheel_dia=18, weapon_esc="c_bbb_antweight_spinner_brushless_esc",
+                        # research-class 2S 300 mAh pack, as hspin_bar: the builtin 180 mAh browns out at the 1806's
+                        # 17 A peak and runs ~87 s of the 180 s fight (thermal.brownout / physics.runtime)
+                        battery="c_typical_2s_300mah_lipo_lihv_betafpv_tbs_", invertible=False,
+                        drive_esc="c_malenki_nano_antweight_esc_receiver", rx="integrated"),
 }
 
 
