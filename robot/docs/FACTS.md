@@ -3,6 +3,10 @@
 Small models spent most of their thinking re-deriving how the verifier behaves and doing coordinate maths by
 hand. Everything below is how the code behaves, and each line has a tool that gives you the number.
 
+## The loop
+`python3 -m robot verify spec.json --tier inner --llm` while iterating: it takes seconds, prints only root causes
+with numbers, and needs nothing else. Run the full tier (`--llm` without `--tier`) before you call it done.
+
 ## Automatic in every `verify` (nothing to remember)
 - ROOT CAUSES come first. Each one carries measured context: its parts' world boxes, ports, and gap or overlap
   to each neighbour. That is what `probe` would print.

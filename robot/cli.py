@@ -76,6 +76,32 @@ def print_report(rep, full=False):
         print(f"NOT RUN: {len(skipped)} other groups (--only)")
 
 
+LLM_ROOTS, LLM_CONTEXT = 12, 3
+
+
+def print_llm(rep):
+    """Root causes only: what is wrong, the measured numbers, the edit. A model reads this instead of 100+ findings."""
+    s = rep.summary
+    m = rep.metrics
+    head = f"{rep.name}: ok={rep.ok} {s['blockers']} blockers in {len(rep.roots)} root causes"
+    if "mass_total_g" in m:
+        head += f", mass {m['mass_total_g']:.1f}/{m.get('mass_limit_g', 150):.0f} g"
+    print(head)
+    for k, c in enumerate(rep.roots[:LLM_ROOTS], 1):
+        n = len(c["findings"]) - 1
+        print(f"{k}. [{c['primary']}] {c['message']}" + (f" (+{n} consequences)" if n else ""))
+        if c.get("fix"):
+            print(f"   fix: {c['fix']}")
+        for x in (c.get("context") or [])[:LLM_CONTEXT]:
+            print(f"   | {x}")
+    if len(rep.roots) > LLM_ROOTS:
+        print(f"... {len(rep.roots) - LLM_ROOTS} more root causes (fix these first, then re-run)")
+    from .autohelp import text as help_text
+    h = help_text(rep)
+    if h:
+        print(h)
+
+
 def opts_from(a):
     o = checks.Options(deep=not getattr(a, "quick", False), fast=getattr(a, "fast", False))
     only = getattr(a, "only", None)
@@ -110,6 +136,8 @@ def main(argv=None):
     v.add_argument("--fast", action="store_true", help="coarse tessellation for quick iteration")
     v.add_argument("--quick", action="store_true", help="skip the slow sweeps (wiring, assembly)")
     v.add_argument("--json", help="also write report.json here")
+    v.add_argument("--llm", action="store_true", help="short output for a model: root causes with measured numbers and "
+                   "the edit to make, nothing else (about 40 lines)")
     v.add_argument("--tier", choices=checks.TIERS, help="inner: cheap groups + fast proxies of the slow ones; full (default): "
                    "every design group; nightly: full + robust sweep + parity groups. --only wins over --tier")
     pg = v.add_mutually_exclusive_group()
@@ -203,7 +231,10 @@ def main(argv=None):
             print(f"error: {e}", file=sys.stderr)
             return 1
         rep = checks.verify(s, opts_from(a))
-        print_report(rep, a.full)
+        if getattr(a, "llm", False):
+            print_llm(rep)
+        else:
+            print_report(rep, a.full)
         if a.json:
             Path(a.json).write_text(json.dumps(rep.to_dict(), indent=2))
             from .fix_hints import suggest_fixes  # UNTESTED: repair summary next to the report

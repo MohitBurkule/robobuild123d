@@ -158,17 +158,27 @@ def _dirs():
     return [d for d in D if d[2] > -0.7]          # straight down is the floor
 
 
-def _seen(shield, P, dirs):
-    """(fraction of points with a clear straight line out, best direction, its fraction)."""
-    import trimesh
-    if shield is None:
+def _seen(shields, P, dirs):
+    """(fraction of points with a clear straight line out, best direction, its fraction). Casts body by body, only
+    the rays still escaping and only into bodies whose box they touch (low memory: no merged scene)."""
+    if not shields:
         return 1.0, dirs[0], 1.0
     any_out = np.zeros(len(P), bool)
     best = (0.0, dirs[0])
     for d in dirs:
+        O = P + d * 0.05
         D = np.tile(d, (len(P), 1))
-        hit = shield.ray.intersects_any(P + d * 0.05, D)
-        esc = ~hit
+        esc = np.ones(len(P), bool)
+        for sb in shields:
+            idx = np.nonzero(esc)[0]
+            if not len(idx):
+                break
+            lo, hi = sb.aabb
+            m = measure._rays_touch_box(lo, hi, O[idx], D[idx])
+            if not m.any():
+                continue
+            j = idx[m]
+            esc[j[sb.mesh.ray.intersects_any(O[j], D[j])]] = False
         any_out |= esc
         if esc.mean() > best[0]:
             best = (float(esc.mean()), d)
@@ -180,21 +190,20 @@ def line_of_sight(ctx):
     test but a hit or a pit hazard lands right on them). Rays from the part's surface in 21 directions (not down)
     must hit armour; electronics/switch/wires never shield each other. Ripsaw, 2026-11-16: top-plate window over
     battery, ESC and wires passed contain.electronics."""
-    import trimesh
     r, w = ctx.r, ctx.world
     kind = {p.id: p.kind for p in r.spec.parts}
     out, dirs = [], _dirs()
 
     def shield_for(skip):
-        ms = [b.mesh for b in w.bodies if not b.is_wire and b.id not in skip and kind.get(b.id) not in SHIELD_SKIP]
-        return trimesh.util.concatenate(ms) if ms else None
+        bs = [b for b in w.bodies if not b.is_wire and b.id not in skip and kind.get(b.id) not in SHIELD_SKIP]
+        return sorted(bs, key=lambda b: -float(np.prod(b.aabb[1] - b.aabb[0])))   # big armour first: fewer casts
 
     bad = 0
     for b in w.bodies:
         p = r.spec.part(b.id) if b.part_idx is not None else None
         if p is None or p.kind not in SIGHT_KINDS or p._extra.get("exposed"):
             continue
-        V = _sample(b, 300)
+        V = _sample(b, 200)
         c = b.mesh.centroid
         P = V + (V - c) / (np.linalg.norm(V - c, axis=1, keepdims=True) + 1e-9) * 0.1
         frac, d, fd = _seen(shield_for({b.id}), P, dirs)
