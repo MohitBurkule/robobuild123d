@@ -107,7 +107,8 @@ def run(ctx):
         omega_lift = m_kg * 9.81 * (track / 2000.0 / 2) / (i_w * omega * gyro)
         frac = TURN_RATE_RAD_S / omega_lift if omega_lift > 0 else float("inf")
         ctx.metrics["gyro_lift_yaw_rad_s"] = round(omega_lift, 2)
-        vert_kind = "v" in str(ctx.metrics.get("weapon_orientation") or "").lower()
+        fam = str(ctx.metrics.get("combat.family") or "").lower()
+        vert_kind = "vspin" in fam
         if frac >= LIFT_BLOCK_X and vert_kind:
             out.append(fail("impact.gyro_lift", G, WARNING, "Hard turns lift the wheels (the vertical-spinner stutter trade-off)",
                             f"Turning at {TURN_RATE_RAD_S:.0f} rad/s needs {frac:.2f}x the {omega_lift:.1f} rad/s "

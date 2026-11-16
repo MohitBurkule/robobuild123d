@@ -17,9 +17,12 @@ def _ctx(metrics=None, track_mm=None):
                            not_checked=[], metrics=dict(metrics or {}))
 
 
-def _metrics(energy=8.0, rpm=12000.0, mass=150.0, orient="vspin"):
-    return {"weapon_energy_j": energy, "weapon_rpm": rpm, "mass_total_g": mass, "weapon_orientation": orient,
-            "footprint_mm": 140.0}
+def _metrics(energy=8.0, rpm=12000.0, mass=150.0, orient="vspin", family=None):
+    m = {"weapon_energy_j": energy, "weapon_rpm": rpm, "mass_total_g": mass, "weapon_orientation": orient,
+         "footprint_mm": 140.0}
+    if family:
+        m["combat.family"] = family
+    return m
 
 
 def test_no_weapon_metrics_is_not_checked():
@@ -39,7 +42,7 @@ def test_track_from_wheel_bodies():
 
 
 def test_heavy_vertical_weapon_turn_is_the_stutter_tradeoff():
-    m = _ctx(_metrics(energy=12.0, rpm=20000.0, mass=150.0, orient="vspin"), track_mm=90.0)
+    m = _ctx(_metrics(energy=12.0, rpm=20000.0, mass=150.0, orient="horizontal", family="vspin"), track_mm=90.0)
     out = impact.run(m)
     ids = [f.id for f in out]
     assert "impact.gyro_lift" in ids
@@ -51,6 +54,12 @@ def test_heavy_vertical_weapon_turn_is_the_stutter_tradeoff():
 
 def test_heavy_weapon_unknown_orientation_still_blocks_on_gyro_lift():
     m = _ctx(_metrics(energy=12.0, rpm=20000.0, mass=150.0, orient=""), track_mm=90.0)
+
+
+def test_horizontal_axis_without_vspin_family_still_blocks():
+    m = _ctx(_metrics(energy=12.0, rpm=20000.0, mass=150.0, orient="horizontal"), track_mm=90.0)
+    f = next(f for f in impact.run(m) if f.id == "impact.gyro_lift")
+    assert f.severity == "blocker"
     out = impact.run(m)
     f = next(f for f in out if f.id == "impact.gyro_lift")
     assert f.severity == "blocker" and f.fix_hint
