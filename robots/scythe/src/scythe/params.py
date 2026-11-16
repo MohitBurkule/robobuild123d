@@ -161,6 +161,10 @@ WIRE_SLOT_TUBE_Z0 = 12.0                     # mm the slot's lower end down the 
                                              # (outer r stops just past the tube wall, inside the disc wall) the phase
                                              # wire climbs from the pod-side annulus (wide only at low z) up into the
                                              # boss slot
+WIRE_SLOT_Z_LO = 0.2                         # mm the boss notch starts below the boss bottom (opens into the housing pocket)
+WIRE_SLOT_TOP_OVER = 1.2                     # mm the notch runs past the panel top (through the panel skin)
+WIRE_SLOT_TUBE_OUT_MARGIN = 0.2              # mm the tube channel's outer radius sits past the tube wall
+WIRE_SLOT_TUBE_TOP_MARGIN = 0.7              # mm the tube channel tops out above the tube wall's top
 WIRE_SLOT_W = 5.5                            # mm the phase-lead slot through the boss ring at SLOT_ANGLE_DEG (between
                                              # the flange tap circle; wide enough for the 1.9 mm 22 AWG phase wire to
                                              # survive the router's 0.6 mm voxel grid with clearance)
@@ -198,6 +202,13 @@ N10_HALF_Z = 5.0                            # mm gearmotor body half height (axl
 CRADLE_RIB_T = 1.2                           # mm printed rib thickness flanking each N10
 CRADLE_RIB_H = 16.0                          # mm rib top: locates the gearbox's lower half, motor still drops out
 CRADLE_CLR = 0.4                             # mm gap motor-to-rib (assembly clearance)
+RELIEF_HALF_DEG = 55.0                       # deg half-angle of each N10 motor-relief sector: its edges land inside the
+                                             # diagonal wire-slot cuts, so no bare wall strip is left between the two
+RELIEF_OUT_MARGIN = 0.02                     # mm the relief's outer arc sits past the tube wall / boss OD
+RELIEF_BOSS_IN_R = 11.0                      # mm the relief's inner radius through the boss ring (past the motor corner,
+                                             # clear of the M2 taps at r8)
+RELIEF_TUBE_TOP_MARGIN = 0.6                 # mm the tube-level relief tops out above the tube wall's top
+RELIEF_BOSS_TOP_MARGIN = 0.2                 # mm the boss-level relief tops out past the boss ring
 CRADLE_PAD_TOP = 11.95                       # mm: the motor rests on the pad with 0.05 mm fit clearance
 POST_R = 3.0                                  # mm: printed post the panel screws thread into
 POST_Z0 = 24.0                                # mm: post base (merged with the sloped disc wall)

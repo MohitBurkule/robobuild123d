@@ -1,114 +1,93 @@
 # Scythe - 150 g horizontal undercutter bar spinner (AWS 2025)
 
-> **UNTESTED: never built, run, rendered or verified.** No code in `src/` has been executed. Every number below
-> is hand-computed from the `src/scythe/params.py` relations using research/cots/INDEX.md values. Treat all of
-> them as estimates.
+> Verified: `robot verify robots/scythe/spec.json` -> **0 blockers, 0 parity blockers** (237 warnings).
+> Not yet built or fought; printed-part masses are model-derived estimates.
 
 ## Size rule: one setting
-- **Default (`RULES = "aws2025"`):** read from `robot/profile.py`. A 150 mm floor square
-  (`Profile.footprint_mm`), no overhang at any height, no height limit, 150 g.
-- **Optional `rules="aws_v43_cube"`:** a 101.6 mm cube in the start configuration (AWS v4.3, 2b). Select it with
-  `params.use_rules(...)`, `variants.set_variants("aws_v43_cube")` or the env variable `SCYTHE_RULES`.
-- **Sizing chain** (params.py, all relations):
-  - `BAR_L = floor(2 x min(bar_r_mass, bar_r_geom, bar_r_tip))`
-  - then `POD_W` (track), `WPN_AXIS_Y` and `TUB_R` follow from `BAR_L`.
+- **Default (`RULES = "aws2025"`):** 150 mm floor square, no overhang at any height, no height limit, 150 g
+  (`robot/profile.py`).
+- **Sizing chain** (params.py, all relations): `BAR_L = 2 * min(bar_r_mass, bar_r_geom, bar_r_energy,
+  bar_r_tip, bar_r_pitch)` rounded down to 1 mm -> **57 mm** (energy/pitch limited: the cantilevered undercutter
+  must stay under the 20 J spinner escalation threshold and clear the floor at a 5 deg nose-down hop);
+  `POD_W` (track, master `POD_W_MIN` 70), `WPN_AXIS_Y` 45 and `TUB_R` 20.5 follow from `BAR_L`.
 
-| | 150 mm square (default, 2S) | 150 mm square, 3S | 101.6 mm cube, 2S |
-|---|---|---|---|
-| bar_r_geom (tyres outside the sweep, inside the envelope) | 73.5 (bar across the full 147 mm) | 73.5 | 45 |
-| bar_r_mass (150 - 6 g margin - rest) | 58.4 | 38.9 | 64 |
-| bar_r_tip (600 mph at full HV) | 129 | 86 | 129 |
-| **BAR_L** | **116 (mass limited)** | 77 | 90 (tyre limited) |
-| POD_W / track (tyre inner faces) | 52 (POD_W_MIN) | 52 | 83.6 |
-| WPN_AXIS_Y | 15.5 | 35.0 | 4.3 |
-| Extent W x L (envelope minus margin) | 116 x 142.2 (147) | - | 98.6 x 97.6 (98.6) |
+| | 150 mm square, 2S (default) |
+|---|---|
+| BAR_L | 57 (energy/pitch limited) |
+| POD_W / track | 70 |
+| WPN_AXIS_Y | 45.0 |
+| Extent W x L | 80.5 x 85.75 (footprint 85.75 mm, well inside 150) |
+| Mass (model) | 114.6 g |
+| Stored energy | 9.0 J at bar rpm (cap 18 J, spinner threshold 20 J) |
 
 ## Architecture
-- **Weapon:** 3 mm Hardox 500 two-tooth bar, 116 mm, 16 mm root tapering to 10 mm, bite step on each leading
-  edge, laser cut, constant thickness. Spins horizontally **under** the tub, underside 2 mm above the floor. Bolted
-  (2x M3) to a turned 7075 hub, which bolts to the GR1507 bell-top screws.
-- **Weapon motor:** catalogue `gr1507` (Revron's motor), shaft down, stator screwed up into a 3 mm printed boss
-  under the top panel. All fit features come from `revron/weapon_motor.py:describe()`.
-- **Drive:** 2WD `bbb_n10_1000rpm` + `bbb_wheel_34x6_5` behind the sweep. The relation `wheel_y()` puts the tyre's
-  plan footprint at bar-top height 3 mm outside the sweep circle, so the bar never touches its own tyres. At
-  150 mm the track is just the 52 mm pod. Only the cube variant forces a wide track.
-- **Front support:** a POM foot on the shaft end on the axis (it spins with the bar) when upright, and a POM dome
-  on the top panel when inverted.
-- **Invertible:** the body top is at 30 mm and the tyres are 34 mm. Inverted, the bar is at 29-32 mm and works as
-  an overhead bar.
-- **Electronics** (inside the pod walls): `tattu_2s_300_75c_hv` (variant `gnb_3s_300_80c_hv`),
-  `bbb_brushless_esc_20a`, `bbb_malenki_nano` (alt `bbb_dual_esc_v31`), `fingertech_mini_switch` (reached through
-  a top-panel key hole), XT30.
-- **Chassis:** printed PA tub: a disc (TUB_R = 50) unioned with the rear pod. Sides slope 35 deg. The teeth reach
-  8 mm past the rim. 1 mm top panel with Revron-style M2 button screws (`robot/cad/holes.py:hole_tool`).
+- **Weapon:** 3 mm Hardox two-tooth bar, 57 mm, spinning horizontally **under** the tub (nut top at z 4, floor
+  bore r13). Motor-as-hub: the `bl_1806_stator` flange is screwed up through the printed boss and top panel
+  (4x M2 on the 16 mm flange circle); the `bl_1806_can` bell carries the rotor, and the motor's own 3 mm
+  shaft (`wshaft`, press fit in the bell core) runs down through hub and bar to an M3 clamp nut. An MR83ZZ
+  (`wbearing`) in the boss bore is the rotor's second support: outer race press-fit in the boss (seat on the
+  stator flange face), inner race a slide fit on the shaft.
+- **Drive:** 2WD `bbb_n10_1000rpm` + `bbb_wheel_34x6_5` behind the sweep, nested against the pod walls at
+  (+-21.75, 31.25, 17); the wheel boss clamps the pod wall between itself and the gearbox face (U-slot axle
+  holes open at the top so the motors drop in from above). Cradle pads + side ribs locate each N10.
+- **Front/rear support:** two printed skid pads at the pod rear (bottom z 0.2) join the wheels in the stance
+  polygon; the wheels alone carry the robot on the floor.
+- **Invertible:** wheels (34 mm) protrude above the body top (30 mm) and below the floor.
+- **Electronics** (inside the pod): 2S 300 mAh HV pack in the rear bay (strap + velcro), `bbb_brushless_esc_20a`
+  on the floor, `bbb_malenki_nano` under the panel, `fingertech_mini_switch` mid-pod under a panel key hole.
+- **Chassis:** printed PA tub: sloped disc (15 deg) over the bar unioned with a vertical-wall rear pod
+  (70 mm wide), motor housing tube (bore r13) rising from the floor bore, boss ring (r4..14) to the panel,
+  4 diagonal wire slots (45/135/225/315 deg) through boss + tube + panel, panel posts, 1 mm PA-CF top panel
+  on 8x M2 button screws.
+- **Weapon lock:** a 3 mm pit pin through the panel/floor lock hole (r 1.6 at x 17) and the bar's lock hole
+  rests on the floor slab - a pit tool, made safe outside the robot with the XT30 unplugged.
 
 ## Rotating vs fixed
-| Rotating (one revolute joint, weapon axis) | Fixed |
+| Rotating (one revolute joint on the weapon axis) | Fixed |
 |---|---|
-| bar, hub, GR1507 bell + shaft, POM foot | tub, top panel, dome, stator, N10s (wheels rotate on their own axes), electronics |
+| bar, weapon_hub, wshaft, shaft_nut, weapon_motor_bell | tub, top_panel, stator, wbearing, N10s (wheels on their own axes), electronics |
 
 ## Load paths
-1. **Weapon hit (the bar strikes an opponent):** tooth -> bar root bending (16 x 3) -> 2x M3 shear plus the shaft
-   pilot -> hub -> 4x M2 bell-top screws and the shaft -> bell -> motor bearings -> stator -> 4x M2 base screws ->
-   3 mm boss -> top panel (tension skin) and the walls.
-2. **Hit to the body:** sloped wall -> deflected upward. Tyres are behind the sweep.
-3. **Landing:** wheels -> N10s -> pod. Front -> POM foot -> shaft -> axial load on the motor bearings.
+1. **Weapon hit:** tooth -> bar root -> 2x M2.5 csk (shear) + shaft pilot -> hub -> clamped bell cap face /
+   shaft press fit -> bell -> motor bearings -> stator -> 4x M2 into the printed boss -> top panel (tension
+   skin) + walls.
+2. **Hit to the body:** sloped disc wall (15 deg) deflects upward. Tyres sit behind the bar sweep.
+3. **Landing:** wheels -> N10 shafts -> gearbox faces -> pod wall (clamped); skid pads take the rear.
 
-## Masters
-- **Envelope:** `ENVELOPES` / `RULES`, `FOOTPRINT_MARGIN` 1.5, `MASS_MARGIN` 6.
-- **Bar:** `BAR_T` 3, `BAR_W_ROOT` 16, `BAR_W_TIP` 10, `BAR_TOOTH_STEP` 4, `BAR_Z0` 2.
-- **Weapon stack:** `GAP_BAR_TUB` 1.5, `HUB_OD` 17, `HUB_H` 5, `BOSS_T` 3, `BAR_BITE_REACH` 8.
-- **Body and drive:** `TUB_SLOPE_DEG` 35, `POD_W_MIN` 52, `BAR_TYRE_CLR` 3, `CELL_HV_V` 4.35.
-- **Mass:** `MASS_OTHER_G` (the table below).
+## Masters (params.py)
+- **Envelope:** `FOOTPRINT` 150, `FOOTPRINT_MARGIN` 1.5.
+- **Bar:** `BAR_T` 3, `BAR_BOLT_D` 2.5 (M2.5 csk x2 on r7.5), `BAR_LOCK_X` 17, `BAR_LOCK_D` 3.2.
+- **Weapon stack:** `BOSS_ID_R` 4 (MR83ZZ seat), `BOSS_OD_R` 14, `BOSS_T` 3, `BEARING_*` (MR83ZZ 3x8x3),
+  `SHAFT_D` 3, `HUB_OD_R` 11.5, `HUB_H` 5, `MOTOR_BELL_CLR` 1.5 (housing bore r13 = hub r11.5 + 1.5).
+- **Wire slots:** `SLOT_ANGLE_DEG` 45 (+ the other three diagonals), `WIRE_SLOT_IN_R` 2 (merges into the boss
+  bore), `WIRE_SLOT_OUT_R` 20, `WIRE_SLOT_W` 5.5, `WIRE_SLOT_TUBE_Z0` 12 (internal channel down the tube wall
+  for the phase lead).
+- **Body and drive:** `TUB_SLOPE_DEG` 15, `TUB_WALL` 1.5, `POD_W_MIN` 70 (jiggle-measured: bell clears each N10
+  by 2.57 mm, kin.rub_gap needs 1.0), `N10_*`, `CRADLE_*`, `RELIEF_*` (annular-sector motor reliefs),
+  `SKID_PAD_*`, `WHEEL_D` 34.
 
-## Mass budget (estimate, g, 150 mm default, 2S)
-| Item | g | Source |
-|---|---|---|
-| Bar (1434 mm^2 x 3 x 7.85e-3) | 33.8 | bar_mass_g |
-| gr1507 | 19.6 | INDEX.md |
-| 2x bbb_n10_1000rpm | 16.0 | INDEX.md |
-| 2x bbb_wheel_34x6_5 | 8.2 | INDEX.md |
-| tattu_2s_300_75c_hv | 16.0 | INDEX.md |
-| bbb_brushless_esc_20a | 5.0 | INDEX.md |
-| bbb_malenki_nano | 2.3 | INDEX.md |
-| fingertech_mini_switch | 2.15 | INDEX.md |
-| XT30 | 1.5 | estimate |
-| 7075 hub | 3.0 | estimate |
-| Screws + heat-sets | 3.5 | estimate |
-| Wires | 4.0 | estimate |
-| Tub (PA12, 60 % solid) | 19.0 | estimate |
-| Top panel, 1 mm PA-CF | 8.0 | estimate |
-| Skids | 0.5 | estimate |
-| Allowance (`Profile.allowance_g`) | 1.2 | profile.py |
-| **Total** | **143.8** | margin 6.2 g (the bar is sized to leave `MASS_MARGIN`) |
-With 3S the pack is 28 g, so the relation shortens the bar to 77 mm (21.8 g), for a total of about 143.8 g.
+## Mass budget (model-derived, g)
+Bar + hub + shaft + nut + bell ~ 20; stator 6.5; 2x N10 16; 2x wheels 8.2; pack 16; ESC 5; rx 2.3; switch
+2.15; tub + panel + fasteners + wires ~ 40. **Total 114.6 g** (limit 150 g).
 
-## Energy (estimates)
-- I = 1/12 m L^2 = 1/12 x 0.0338 x 0.116^2 = **3.79e-5 kg m^2** (the taper is ignored)
-- rpm = 0.8 x kV x V with kV 2850
-- **2S HV full, 8.7 V:** 19 840 rpm, w = 2077 rad/s, **E = 1/2 I w^2 = 82 J**, tip 120 m/s (270 mph, under 600)
-- 2S nominal, 7.6 V: 17 330 rpm, E = 62 J
-- 3S (77 mm bar, 13.05 V): 29 750 rpm, I = 1.08e-5, E = 52 J, tip 268 mph. **This is less than 2S**, because the
-  pack mass comes out of the bar. 2S is the default.
-- Cube variant (90 mm, 2S): E = 37.5 J
-- Bite at 2 m/s closing and 19 840 rpm: 2000 / (2 x 331) = **3.0 mm**
-- Gyro: the spin axis is vertical, so turning produces no gyroscopic lift.
+## Energy
+- I ~ 1/12 m (L^2 + W^2) with the 57 mm bar; rpm from kV 2300 at 2S HV; **E = 9.0 J** at bar rpm - under the
+  18 J self-cap and the 20 J escalation threshold, so the cantilevered undercutter stays in the normal class.
+- Bite and gyro: vertical spin axis, no gyroscopic lift; the bar clears the floor at the 5 deg hop pitch
+  (`PITCH_CLR_MM` 0.3).
 
-## Why it beats Revron (robots/revron/params.json, README)
-- Revron has 31 g of 40 mm discs. As a disc, I is about 6.2e-6 kg m^2, giving about 13 J at the same rpm.
-- Scythe has about 6x Revron's energy (82 J) with roughly the same steel mass, because the mass sits at a 58 mm
-  radius.
-- Scythe attacks at 2 mm (wheels, forks, skirt hinges) where Revron's vertical drisk can't reach.
-- There is no gyroscopic penalty, and it still fights inverted.
-- It uses the same motor, catalogue fit code, fasteners and electronics.
+## Verification workflow
+- `make_spec.py` regenerates `spec.json` from `params.py` (run from the repo root; `SCYTHE_EXPR_SPEC=...`
+  also writes an expr-placement variant for the PR #84 param jiggle).
+- `robot verify robots/scythe/spec.json` -> 0 blockers; `robot render robots/scythe/spec.json iso
+  robots/scythe/renders/iso.png` draws all 7 wires.
+- Repairs were driven by the measured solvers: `robot jiggle` part moves (PR #83) and
+  `robot jiggle --param <file>:<NAME>=lo:hi:step --write-params` (PR #84) - e.g. `POD_W_MIN` 65 -> 70 from a
+  min-gap probe of bell vs N10 (0.64 -> 2.57 mm).
 
 ## Risks
-- **Self-destabilising hits:** the reaction from 82 J hits will throw or spin a 144 g 2WD robot.
-- **Bar hitting the floor:** the gap is only 2 mm. Seams, a lost foot or a bent bar make it gouge. `BAR_Z0` is a
-  master that can go up.
-- **Shaft bending:** the M5 shaft is cantilevered below the bearings, and a 116 mm bar gives longer lever hits
-  than Revron's discs. Mitigation: the dead-shaft variant (a fixed M5 12.9 bolt with the bar and hub on MR85
-  bearings). This is not modelled.
-- **Long spin-up:** I is about 6x Revron's on a 19.6 g motor. Check the ESC current and the spin-up time.
-- **Hub clash:** the bell-top screw circle may clash with the bar M3 PCD (11 mm).
-- **Rule voltage:** `CELL_HV_V` 4.35 exceeds `Profile.max_cell_v` 4.2. Confirm whether LiHV is allowed.
+- Cantilevered bar on a 3 mm shaft: hit loads bend the shaft; the MR83ZZ second support limits runout, but a
+  hard hit on the tooth is still the peak shaft load.
+- 114 g leaves 35 g of margin - room for a thicker bar or armour if the arena allows.
+- The four diagonal wire slots and the motor-relief sectors remove part of the housing-tube wall; the boss
+  still ties the stator to the tension skin through the panel screws.

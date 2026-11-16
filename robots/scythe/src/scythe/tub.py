@@ -109,20 +109,21 @@ def wire_slot():
     a = math.radians(P.SLOT_ANGLE_DEG)
     r_out = P.WIRE_SLOT_OUT_R
     r_mid = (P.WIRE_SLOT_IN_R + r_out) / 2
-    boss_notch = bd.Pos(r_mid * math.cos(a), P.WPN_AXIS_Y + r_mid * math.sin(a), z - 0.2) * bd.Rot(
-        0, 0, P.SLOT_ANGLE_DEG) * bd.Box(r_out - P.WIRE_SLOT_IN_R, P.WIRE_SLOT_W, top - z + 1.2,
+    boss_notch = bd.Pos(r_mid * math.cos(a), P.WPN_AXIS_Y + r_mid * math.sin(a), z - P.WIRE_SLOT_Z_LO) * bd.Rot(
+        0, 0, P.SLOT_ANGLE_DEG) * bd.Box(r_out - P.WIRE_SLOT_IN_R, P.WIRE_SLOT_W, top - z + P.WIRE_SLOT_TOP_OVER,
                                          align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
-    r_tube_out = P.housing_out_r() + 0.2
+    r_tube_out = P.housing_out_r() + P.WIRE_SLOT_TUBE_OUT_MARGIN
     r_mid2 = (P.WIRE_SLOT_IN_R + r_tube_out) / 2
     tube_channel = bd.Pos(r_mid2 * math.cos(a), P.WPN_AXIS_Y + r_mid2 * math.sin(a), P.WIRE_SLOT_TUBE_Z0) * bd.Rot(
-        0, 0, P.SLOT_ANGLE_DEG) * bd.Box(r_tube_out - P.WIRE_SLOT_IN_R, P.WIRE_SLOT_W, z + 0.7 - P.WIRE_SLOT_TUBE_Z0,
+        0, 0, P.SLOT_ANGLE_DEG) * bd.Box(r_tube_out - P.WIRE_SLOT_IN_R, P.WIRE_SLOT_W,
+                                         z + P.WIRE_SLOT_TUBE_TOP_MARGIN - P.WIRE_SLOT_TUBE_Z0,
                                          align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
     slot = boss_notch + tube_channel
     # the same channel at the other three diagonals (between the flange taps, symmetric): the motor-relief sector
     # edges land inside these cuts, so no bare wall strip is left between the two cuts
     out = slot
-    for k in (1, 2, 3):
-        out = out + bd.Pos(0, P.WPN_AXIS_Y, 0) * bd.Rot(0, 0, 90 * k) * slot
+    for ang in (90.0, 180.0, 270.0):
+        out = out + bd.Pos(0, P.WPN_AXIS_Y, 0) * bd.Rot(0, 0, ang) * slot
     return out
 
 
@@ -213,25 +214,24 @@ def _motor_clearance(side):
     sub-0.1 mm feather (mfg.thin_wall). Cradle ribs (r > 21), the pod walls and the disc wall are all outside the
     sector radii."""
     a0 = 0.0 if side > 0 else 180.0
-    half = 51.0   # sector edges (at +-51 deg, 129/231) land inside the diagonal wire-slot cuts, so no bare wall strip is left between relief and slot
+    half = P.RELIEF_HALF_DEG
     z0 = P.CRADLE_PAD_TOP
-    r_out1 = P.housing_out_r() + 0.02
+    r_out1 = P.housing_out_r() + P.RELIEF_OUT_MARGIN
     r_in1 = P.housing_in_r() - 0.5
-    r_in2 = 11.0
-    r_out2 = P.BOSS_OD_R + 0.02
+    r_in2 = P.RELIEF_BOSS_IN_R
+    r_out2 = P.BOSS_OD_R + P.RELIEF_OUT_MARGIN
     out = None
-    for za, zb, ri, ro in ((z0, P.boss_bottom_z() + 0.6, r_in1, r_out1),
-                           (P.boss_bottom_z(), P.boss_bottom_z() + P.BOSS_T + 0.2, r_in2, r_out2)):
+    for za, zb, ri, ro in ((z0, P.boss_bottom_z() + P.RELIEF_TUBE_TOP_MARGIN, r_in1, r_out1),
+                           (P.boss_bottom_z(), P.boss_bottom_z() + P.BOSS_T + P.RELIEF_BOSS_TOP_MARGIN, r_in2, r_out2)):
         ring = bd.Pos(0, P.WPN_AXIS_Y, za) * (
             bd.Cylinder(ro, zb - za, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
             - bd.Cylinder(ri, zb - za + 2, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN)))
-        # wedge box sized so its corners sit on the ring's outer arc at +-half (no poke inside the ring):
-        # cut edge lands at a0 +- half on the tube wall, inside the diagonal wire-slot cuts
+        # wedge box with its corners exactly on the ring's outer arc at +-half (no poke inside the ring):
+        # the cut edge lands at a0 +- half on the tube wall, inside the diagonal wire-slot cuts
         x0 = ro * math.cos(math.radians(half))
-        x1 = ro + 0.5
-        y1 = ro * math.sin(math.radians(half)) + 0.5
-        wedge = (bd.Pos(0, P.WPN_AXIS_Y, za) * bd.Rot(0, 0, a0) * bd.Pos((x0 + x1) / 2, 0, 0)
-                 * bd.Box(x1 - x0, 2 * y1, zb - za, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN)))
+        y1 = ro * math.sin(math.radians(half))
+        wedge = (bd.Pos(0, P.WPN_AXIS_Y, za) * bd.Rot(0, 0, a0) * bd.Pos((x0 + ro) / 2, 0, 0)
+                 * bd.Box(ro - x0, 2 * y1, zb - za, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN)))
         sec = ring & wedge
         out = sec if out is None else out + sec
     return out
