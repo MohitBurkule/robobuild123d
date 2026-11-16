@@ -81,6 +81,9 @@ EXPLAIN = {
     "thermal.": "Thermal/voltage-sag budget: the pack's voltage under peak current (nominal minus I x internal resistance) must stay above 3.3 V per cell or the receiver/ESC browns out mid-fight. Bigger pack (more mAh / lower resistance) or less peak current.",
     "impact.": "Hit reaction: gyroscopic wheel-lift when turning with a spun-up weapon (turn rate above the lift threshold rolls the robot), hop when a vertical spinner lands a hit, and yaw spin-out from a horizontal spinner. Slow the turn rate, lower the weapon speed, or widen the track.",
     "requirements.": "A requirement the user declared (speed, force, energy, budget) is not met by the design.",
+    "rest.": "Dead pose: with the power cut the weapon coasts to an unknowable rest angle; if some rotation of the weapon reaches the floor the dead robot props itself on its own blade. Raise the weapon or its spin axis.",
+    "clearance.": "Clearance at rest: tyres squash under the robot's weight and a loaded wedge bends down, so a belly that cleared on the bench can scrape and a wedge tip can dig in. Raise the chassis, use firmer/bigger wheels, or stiffen the wedge.",
+    "service.": "Between-fight service: the battery, weapon and wheels must come out along at least one straight line without removing other parts, or a swap costs the match. Give the part an open hatch or slot.",
     "validity.": "The spec itself is invalid (unknown part, bad placement) - fix the spec before reading other findings.",
 }
 

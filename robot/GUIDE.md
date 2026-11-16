@@ -589,6 +589,37 @@ steering mid-exchange. `impact.yaw` (WARNING): a horizontal hit yaws the robot o
 momentum (`I_w omega / I_yaw`, `I_yaw ~ m (footprint/2)^2`). `impact.ok` (pass) when every judged margin is fine. No
 weapon energy + rpm + mass, no measurable track, or no footprint for a horizontal weapon: NOT CHECKED.
 
+## Dead pose (`rest.*`, group `rest`)
+
+Rule: **the weapon must clear the floor at every rest angle.** When power is cut the weapon coasts to an unknowable
+angle, so the check sweeps each weapon body's full rotation about its spin axis (exact: every vertex traces a circle,
+and the circle's lowest point is known in closed form). `rest.weapon_drag` (BLOCKER): some rotation reaches the floor
+plane - the dead robot props itself on its own blade, the wheels lift and the tip digs into a seam; raise the weapon
+or its spin axis. `rest.weapon_graze` (WARNING): some rotation comes within the profile's `min_ground_clearance_mm`
+of the floor - parked on a bump, the dead weapon scrapes. `rest.ok` (pass): lowest swept point with the number stated.
+A spec with no weapon body carrying a spin axis: NOT CHECKED, never a pass.
+
+## Clearance at rest (`clearance.*`, group `clearance`)
+
+Rule: **the robot must clear the floor with the tyres squashed and the wedge bent.** Tyre squash is 8 % of the wheel
+radius for elastomer tyres (TPU/silicone/rubber), 2 % for rigid wheels - override per wheel with `tire_squash_mm` on
+the part, or globally with `rest.tire_squash_mm` in the spec. `clearance.squash` (WARNING): the lowest body point has
+less than `min_ground_clearance_mm` left once the tyres carry the weight - it rides the floor at rest; raise the
+chassis, use bigger or firmer wheels. A wedge carrying part of the weight (the ground group's `wedge_load_frac`)
+bends down as a cantilever `d = f W L^3 / (3 E I)` with the root section from the wedge's own geometry.
+`clearance.wedge_deflection` (WARNING): the bent tip goes below the floor - it ploughs and the drive wheels lift;
+thicken or shorten the wedge, move its support forward, or move mass back off the tip. No wheels, no total mass, no
+wedge or no wedge load: that half is NOT CHECKED, never a pass.
+
+## Between-fight service (`service.*`, group `service`)
+
+Rule: **the battery, the weapon and the wheels must each come out along one straight line.** Rays from the part's own
+surface along the 6 axis directions and the 8 space diagonals must reach open air without hitting any other solid
+(screws included - a screw through the strap blocks the pull). `service.battery_pull`, `service.weapon_pull`,
+`service.wheel_pull` (WARNING): no straight extraction path exists, so the swap needs other parts removed first and
+costs match time; give the part an open hatch or slot on one face. `service.ok` (pass): every service part has at
+least one unobstructed direction. A spec with no battery, weapon or wheel parts built: NOT CHECKED, never a pass.
+
 ## Named fits (`robot/fits.py`)
 
 Printed holes come out 0.1-0.3 mm small, so a bore modelled at nominal will not take its part. A feature declares a
