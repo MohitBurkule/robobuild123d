@@ -114,23 +114,23 @@ def cuts():
     for side in (1, -1):           # one pedestal slot per motor: the base-panel pads rise through the shelf
         mx = side * (P.WHEEL_X - P.WHEEL_W / 2 - P.DM_L / 2)
         out.append(bd.Pos(mx - side * P.PED_SLOT_X_OFF, P.WHEEL_Y, P.PED_SLOT_Z) * bd.Box(P.PED_SLOT_L, P.PED_SLOT_W, P.PED_SLOT_T))
-    out.append(bd.Pos(P.NOTCH_X, P.TUB_Y1 - P.PAD_T / 2, P.Z_AX + 1.5)
+    out.append(bd.Pos(P.NOTCH_X, P.TUB_Y1 - P.PAD_T / 2, P.Z_AX + P.NOTCH_Z_OFF)
                * bd.Box(P.NOTCH_W, P.PAD_T + P.NOTCH_EXIT, P.NOTCH_H))   # phase-lead cable notch through the wall band
     for cx in ((P.RAIL_L_X[0] + P.RAIL_L_X[1]) / 2, (P.RAIL_R_X[0] + P.RAIL_R_X[1]) / 2):
         for z in P.PLATE_SCREW_Z:   # plate screw clearance: pad inner face through the wall band, out the far side
             out.append(bd.Pos(cx, P.TUB_Y1 - P.PAD_T / 2, z) * bd.Rot(90, 0, 0)
-                       * bd.Cylinder(P.PLATE_SCREW_CLR / 2, P.PAD_T + 1.0))
+                       * bd.Cylinder(P.PLATE_SCREW_CLR / 2, P.PAD_T + P.PLATE_HOLE_EXIT))
     for sx in (1, -1):              # panel insert bores in the side-wall bosses (top and bottom)
         for sy in P.PANEL_SCREW_Y:
             for z0 in (P.TUB_FLOOR_Z, P.TUB_TOP_Z - P.INSERT_L):
                 out.append(bd.Pos(sx * (P.TUB_W / 2 - P.WALL - P.PANEL_BOSS_T / 2), sy,
                                   z0 + P.INSERT_L / 2) * bd.Cylinder(P.INSERT_D / 2, P.INSERT_L))
-    for sx in (1, -1):              # shaft channel through the outboard axial stops: open at the bottom, so the
-        gb_face = (P.WHEEL_X - P.WHEEL_W / 2 - P.DM_L / 2) + P.GB_FACE_OFF   # motor + wheel drop out -Z as one unit
-        chan_top = P.WHEEL_Z + P.DM_SHAFT["dia"] / 2 + P.STOP_SHAFT_CLR
-        out.append(bd.Pos(sx * (gb_face + P.MOTOR_STOP_GAP + P.MOTOR_STOP_T / 2), P.WHEEL_Y,
-                          (P.TUB_FLOOR_Z - 1.0 + chan_top) / 2)
-                   * bd.Box(P.MOTOR_STOP_T + 2.0, 2 * (P.DM_SHAFT["dia"] / 2 + P.STOP_SHAFT_CLR),
+    for sx in (1, -1):              # shaft channel through the outboard axial stops and on through the shelf edge:
+        gb_face = (P.WHEEL_X - P.WHEEL_W / 2 - P.DM_L / 2) + P.GB_FACE_OFF   # open at the bottom, so the motor + wheel
+        chan_top = P.WHEEL_Z + P.DM_SHAFT["dia"] / 2 + P.STOP_SHAFT_CLR      # drop out -Z as one unit (FS2 service)
+        cx0, cx1 = gb_face - P.STOP_CHAN_BACK, P.WELL_X_IN + P.STOP_CHAN_PAST
+        out.append(bd.Pos(sx * (cx0 + cx1) / 2, P.WHEEL_Y, (P.TUB_FLOOR_Z - 1.0 + chan_top) / 2)
+                   * bd.Box(cx1 - cx0, 2 * (P.DM_SHAFT["dia"] / 2 + P.STOP_SHAFT_CLR),
                              chan_top - (P.TUB_FLOOR_Z - 1.0)))
     return out
 

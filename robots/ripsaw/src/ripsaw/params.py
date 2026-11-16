@@ -205,6 +205,8 @@ SWEEP_SLOT_Y = 5.0                    # weapon sweep slot length in the top pane
 NOTCH_EXIT = 0.5                      # cable notch overshoot past the wall outer face
 NOTCH_X = -15.3           # phase-lead cable notch through the wall band (left pad edge)
 NOTCH_W, NOTCH_H = 6.2, 4.0
+NOTCH_Z_OFF = 1.5          # notch centre height over the weapon axle (the wire corridor)
+PLATE_HOLE_EXIT = 1.0      # plate-screw clearance overshoot past the wall outer face
 
 # relations
 TUB_TOP_Z = TUB_FLOOR_Z + TUB_H
@@ -217,6 +219,9 @@ DISC_FRONT_Y = Y_AX + DISC_R
 WHEEL_R = WHEEL_OD / 2
 WHEEL_Z = WHEEL_R                               # wheel stands on the floor
 WHEEL_X = TUB_W / 2 - WALL - WHEEL_GAP - WHEEL_W / 2   # inside the tub outline, behind the side wall
+WELL_X_IN = WHEEL_X - WHEEL_W / 2 - 1.0   # shelf inner edge at the wheel wells (the well cut starts here)
+STOP_CHAN_BACK = 0.3       # shaft channel start behind the drawn gearbox face
+STOP_CHAN_PAST = 0.2       # shaft channel overshoot past the shelf edge
 WHEEL_PROUD_TOP = WHEEL_Z + WHEEL_R - TUB_TOP_Z        # 20 mm tyres sit inside the tub: not invertable on the wheels
 INSERT_D, INSERT_L = FC.insert(PANEL_SCREW)
 PLATE_SCREW_CLR = FC.clearance(PANEL_SCREW)   # clearance hole in the tub pad: the screw head seats on the pad face, threads bite the plate heel
