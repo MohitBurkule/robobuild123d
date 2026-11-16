@@ -186,42 +186,42 @@ def _bl1806_leads():
 # Repeat 2004 2800 kV outrunner split (repeat_2004_2800kv, same frame as the one-piece entry: origin at the can
 # centre, +X = bell top, bell skirt x -6.4..7.4, base back face x -7.4). A robot that bolts the stator down and spins
 # the bell with the weapon places this pair (cots.motor_split). 2004 class: 24.7 mm bell (wall r11.5-12.35) over a
-# wound stator (tooth tips r11.0 on an r7 yoke, r4.6 bore), back mounting ring r9.5 with 3 M3 taps on a 15 mm circle,
+# wound stator (tooth tips r11.0 on an r7 yoke, r4.6 bore), back mounting ring r9.5 (2.4 thick) with 3 M2.5 taps on a 15 mm circle,
 # front flange 2.0 mm with the same 3 M3 taps (the weapon bolts here), through shaft 3 mm protruding 13 mm past the
 # bell face. 0.5 mm air gap tooth tip to magnet wall.
-_R2_BASE_X0, _R2_BASE_X1 = -7.4, -6.4
-_R2_SKIRT_X0, _R2_FACE_X1 = -5.4, 7.4   # 1.0 air behind the skirt: the stator screws end clear of the spinning bell
-_R2_FLANGE_T = 2.0
+_R2_BASE_X0, _R2_BASE_X1 = -7.4, -4.8   # 2.6 mm mounting ring: M2.5x6 screws engage 2.6 = 1.04d, tips 0.6 clear of the skirt
+_R2_SKIRT_X0, _R2_FACE_X1 = -3.8, 7.4   # 1.0 air behind the skirt: the stator screws end clear of the spinning bell
+_R2_FLANGE_T = 2.6
 _R2_WALL_R = (11.5, 12.35)
 _R2_CORE_R, _R2_SHAFT_R = 4.0, 1.6   # 0.05 over the bore: the shaft fuses with the bore wall, not floating in it
 _R2_YOKE_R, _R2_TIP_R, _R2_BORE_R = 7.0, 11.0, 4.6
 _R2_STATOR_SHAFT_CLR_R = 1.75   # the stator clears the 3.2 mm drawn shaft (the real motor has a 3 mm shaft in a 3.1 bore)
-_R2_STACK_H = _R2_FACE_X1 - _R2_FLANGE_T - _R2_BASE_X1 - 0.5   # stator stack: base ring face to 1 mm clear of the face
+_R2_STACK_X0, _R2_STACK_X1 = -5.5, 3.9   # 0.9 axial air to the face flange: the M3x6 disc screws (tip 0.5 past the flange) clear the stack
+_R2_STACK_H = _R2_STACK_X1 - _R2_STACK_X0
 _R2_RING_R = 9.5
-_R2_TAP_R, _R2_TAP_HOLE_R = 7.5, 1.35
+_R2_TAP_R, _R2_TAP_HOLE_R = 7.5, 1.05   # M2.5 stator taps
+_R2_CAN_TAP_HOLE_R = 1.35   # M3 taps in the bell face flange (the weapon bolts here)
 _R2_TAP_ANGLES = (45.0, 165.0, 285.0)
 
 
-def _r2004_taps(x0, x1):
+def _r2004_taps(x0, x1, r=_R2_TAP_HOLE_R):
     import math
-    return [at(cyl_x(_R2_TAP_HOLE_R, x1 - x0 + 0.2), 0.5 * (x0 + x1), _R2_TAP_R * math.cos(math.radians(a)),
+    return [at(cyl_x(r, x1 - x0 + 0.2), 0.5 * (x0 + x1), _R2_TAP_R * math.cos(math.radians(a)),
                _R2_TAP_R * math.sin(math.radians(a))) for a in _R2_TAP_ANGLES]
 
 
 def _r2004_stator():
     import math
     h = _R2_STACK_H
+    cx = 0.5 * (_R2_STACK_X0 + _R2_STACK_X1)
     tooth_r = _R2_TIP_R - _R2_YOKE_R
     parts = [at(cyl_x(_R2_RING_R, _R2_BASE_X1 - _R2_BASE_X0), 0.5 * (_R2_BASE_X0 + _R2_BASE_X1), 0, 0),
-             at(cyl_x(4.5, 0.4), _R2_BASE_X1 + 0.2, 0, 0),
-             at(minus(cyl_x(_R2_YOKE_R, h), [cyl_x(_R2_BORE_R, h + 0.2)]), _R2_BASE_X1 + 0.5 * h, 0, 0)]
+             at(minus(cyl_x(_R2_YOKE_R, h), [cyl_x(_R2_BORE_R, h + 0.2)]), cx, 0, 0)]
     for k in range(12):
         a = [30.0 * k, 0.0, 0.0]
-        parts.append(rot(at(box(h, 1.6, tooth_r), 0, 0, _R2_YOKE_R + 0.5 * tooth_r - 0.1), a))
-        parts.append(rot(at(box(h, 2.6, 0.5), 0, 0, _R2_TIP_R - 0.25), a))
-    stack = [at(minus(cyl_x(_R2_YOKE_R, h), [cyl_x(_R2_BORE_R, h + 0.2)]), _R2_SKIRT_X0 + 0.5 * h, 0, 0)]
-    parts = parts[:2] + stack + parts[3:]
-    return minus(union(parts), [at(cyl_x(_R2_STATOR_SHAFT_CLR_R, 40.0), 0.0, 0, 0)] + _r2004_taps(_R2_BASE_X0, _R2_BASE_X1 - 0.2))
+        parts.append(rot(at(box(h, 1.6, tooth_r), cx, 0, _R2_YOKE_R + 0.5 * tooth_r - 0.1), a))
+        parts.append(rot(at(box(h, 2.6, 0.5), cx, 0, _R2_TIP_R - 0.25), a))
+    return minus(union(parts), [at(cyl_x(_R2_STATOR_SHAFT_CLR_R, 40.0), 0.0, 0, 0)] + _r2004_taps(_R2_BASE_X0, _R2_BASE_X1))
 
 
 def _r2004_leads():
@@ -236,7 +236,7 @@ def _r2004_can():
     core = at(cyl_x(_R2_CORE_R, _R2_FACE_X1 - _R2_FLANGE_T - _R2_SKIRT_X0),
               0.5 * (_R2_SKIRT_X0 + _R2_FACE_X1 - _R2_FLANGE_T), 0, 0)
     body = minus(union([wall, face, core]),
-                 [at(cyl_x(1.55, 40.0), 0.0, 0, 0)] + _r2004_taps(_R2_FACE_X1 - _R2_FLANGE_T, _R2_FACE_X1 + 0.2))
+                 [at(cyl_x(1.55, 40.0), 0.0, 0, 0)] + _r2004_taps(_R2_FACE_X1 - _R2_FLANGE_T, _R2_FACE_X1 + 0.2, _R2_CAN_TAP_HOLE_R))
     return union([body, at(cyl_x(_R2_SHAFT_R, 12.95 + 2.0), _R2_FACE_X1 - _R2_FLANGE_T + (12.95 + 2.0) / 2 - 1.0, 0, 0)])   # shaft spans 4.4..20.35, fusing with the bored bore walls
 
 

@@ -2,7 +2,7 @@
 closed by panels. Print orientation: +Z.
 
 The battery lies on the rear shelf behind the N10 cradles; the ESCs sit high on the walls; the weapon plates bolt to
-the front-wall pads (heat-set inserts along Y); the panels screw to the side-wall bosses."""
+the front-wall pads (M2 from inside, heat-set inserts in the plate heels); the panels screw to the side-wall bosses."""
 import build123d as bd
 
 from . import params as P
@@ -60,10 +60,11 @@ def motor_cradle():
 
 
 def front_pads():
-    """Pads thickening the front wall where the weapon plates bolt on (heat-set inserts along Y)."""
+    """Pads thickening the front wall band where the weapon plates bolt on: the M2 screws come from inside, through
+    pad + wall, into heat-set inserts living in the plate heels."""
     out = []
     for cx in ((P.RAIL_L_X[0] + P.RAIL_L_X[1]) / 2, (P.RAIL_R_X[0] + P.RAIL_R_X[1]) / 2):
-        out.append(bd.Pos(cx, P.TUB_Y1 - P.WALL - P.PAD_T / 2, (P.TUB_FLOOR_Z + P.TUB_TOP_Z) / 2)
+        out.append(bd.Pos(cx, P.TUB_Y1 - P.PAD_T / 2, (P.TUB_FLOOR_Z + P.TUB_TOP_Z) / 2)
                    * bd.Box(P.RAIL_L_X[1] - P.RAIL_L_X[0] + 2 * P.WALL + 2.0, P.PAD_T, P.TUB_TOP_Z - P.TUB_FLOOR_Z))
     return out
 
@@ -86,22 +87,24 @@ def cuts():
                bd.Cylinder(P.DISC_R + 4 * P.MOVING_CLR, P.DISC_T + 2 * P.MOVING_CLR))   # disc slot through the tub
     out.extend(drive.wells())
     for cx in ((P.RAIL_L_X[0] + P.RAIL_L_X[1]) / 2, (P.RAIL_R_X[0] + P.RAIL_R_X[1]) / 2):
-        for z in P.PLATE_SCREW_Z:   # plate screw clearance through the wall into the pad inserts
-            out.append(bd.Pos(cx, P.TUB_Y1, z) * bd.Rot(90, 0, 0) * bd.Cylinder(P.PLATE_SCREW_CLR / 2, P.WALL * 3))
+        for z in P.PLATE_SCREW_Z:   # plate screw clearance: pad inner face through the wall band, inserts live in the plates
+            out.append(bd.Pos(cx, P.TUB_Y1 - P.PAD_T / 2, z) * bd.Rot(90, 0, 0)
+                       * bd.Cylinder(P.PLATE_SCREW_CLR / 2, P.PAD_T + 1.0))
     for side in (1, -1):           # pedestal slots through the cradle root strip (the base-panel pads rise in)
         mx = side * (P.WHEEL_X - P.WHEEL_W / 2 - P.DM_L / 2)
         out.append(bd.Pos(mx - 5.25, P.WHEEL_Y, 4.25) * bd.Box(11.0, 11.0, 3.5))   # under the can pad
         out.append(bd.Pos(mx + 6.75, P.WHEEL_Y, 4.25) * bd.Box(9.0, 11.0, 3.5))    # under the gearbox pad
-    out.append(bd.Pos(-14.5, P.TUB_Y1 - 1.0, 26.0) * bd.Box(4.2, 3.0, 3.0))   # phase-lead cable notch, wall top (left pad)
+    out.append(bd.Pos(-14.5, P.TUB_Y1 - P.PAD_T / 2, 26.0)
+               * bd.Box(4.2, P.PAD_T + 0.5, 3.0))   # phase-lead cable notch through the wall band (left pad edge)
     for sx in (1, -1):              # panel insert bores in the side-wall bosses (top and bottom)
         for sy in (1, -1):
             for z0 in (P.TUB_FLOOR_Z, P.TUB_TOP_Z - P.INSERT_L):
                 out.append(bd.Pos(sx * (P.TUB_W / 2 - P.WALL - P.PANEL_BOSS_T / 2), sy * P.PANEL_SCREW_Y,
                                   z0 + P.INSERT_L / 2) * bd.Cylinder(P.INSERT_D / 2, P.INSERT_L))
-    for cx in ((P.RAIL_L_X[0] + P.RAIL_L_X[1]) / 2, (P.RAIL_R_X[0] + P.RAIL_R_X[1]) / 2):
-        for z in P.PLATE_SCREW_Z:   # pad insert bores (mouth at the wall outer face)
-            out.append(bd.Pos(cx, P.TUB_Y1 - P.WALL - P.PAD_T + P.INSERT_L / 2, z)
-                       * bd.Rot(90, 0, 0) * bd.Cylinder(P.INSERT_D / 2, P.INSERT_L))
+    for sx in (1, -1):              # shaft clearance through the outboard axial stops (motor axis, along X)
+        gb_face = (P.WHEEL_X - P.WHEEL_W / 2 - P.DM_L / 2) + 11.25
+        out.append(bd.Pos(sx * (gb_face + P.MOTOR_STOP_T / 2), P.WHEEL_Y, P.WHEEL_Z)
+                   * bd.Rot(0, 90, 0) * bd.Cylinder(P.DM_SHAFT["dia"] / 2 + 0.8, P.MOTOR_STOP_T + 2.0))
     return out
 
 

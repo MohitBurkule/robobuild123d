@@ -20,8 +20,8 @@
   ],
   "at": [
    -4.0,
-   64.333,
-   34.529
+   63.902,
+   34.111
   ],
   "holes": [
    "disc",
@@ -206,6 +206,13 @@
     0
    ],
    "rotates_with": "fixed",
+   "ports": {
+    "phases": [
+     -6.4,
+     -8.0,
+     0.0
+    ]
+   },
    "label": "Repeat 2004 fixed half: bolted through the mount plate; 3 phase leads back into the tub"
   },
   {
@@ -240,9 +247,9 @@
     }
    },
    "at": [
-    -1.5,
-    54.0,
-    24.5
+    7.4,
+    0,
+    0
    ],
    "rot": [
     0,
@@ -253,12 +260,12 @@
    "joint": {
     "kind": "revolute",
     "axis": [
+     1,
      0,
-     0,
-     1
+     0
     ],
     "pivot": [
-     0,
+     7.4,
      0,
      0
     ],
@@ -327,8 +334,8 @@
    },
    "at": [
     -4.0,
-    64.333,
-    34.529
+    63.902,
+    34.111
    ],
    "rot": [
     0,
@@ -369,7 +376,7 @@
     "pivot": [
      13.45,
      54.0,
-     4.3
+     5.3
     ],
     "min": -4,
     "max": 15,
@@ -409,7 +416,7 @@
     "pivot": [
      -19.8,
      54.0,
-     4.3
+     5.3
     ],
     "min": -4,
     "max": 15,
@@ -472,7 +479,7 @@
    "kind": "motor",
    "catalog": "bbb_n10_1000rpm",
    "at": [
-    12.9,
+    12.899999999999999,
     -9.0,
     15.0
    ],
@@ -483,9 +490,9 @@
    ],
    "ports": {
     "terminals": [
-     -11.25,
+     -4.5,
      0,
-     0
+     6.0
     ]
    },
    "label": "N10 gearmotor in the printed cradle, shaft out to the wheel"
@@ -495,7 +502,7 @@
    "kind": "motor",
    "catalog": "bbb_n10_1000rpm",
    "at": [
-    -12.9,
+    -12.899999999999999,
     -9.0,
     15.0
    ],
@@ -506,9 +513,9 @@
    ],
    "ports": {
     "terminals": [
-     -11.25,
+     -4.5,
      0,
-     0
+     6.0
     ]
    },
    "label": "N10 gearmotor in the printed cradle, shaft out to the wheel"
@@ -558,48 +565,38 @@
     0
    ],
    "retained": "velcro",
-   "label": "GNB 2S 450 mAh 80C on the rear shelf, XT30 forward"
+   "ports": {
+    "xt30": [
+     30.5,
+     0,
+     0
+    ]
+   },
+   "label": "GNB 2S 450 mAh 80C on the rear shelf, XT30 out the forward end"
   },
   {
    "id": "esc_weapon",
    "kind": "esc",
    "catalog": "bbb_brushless_esc_20a",
    "at": [
-    -26.4,
-    8.0,
-    23.0
+    -26.0,
+    13.5,
+    24.0
    ],
    "rot": [
     0,
     0,
-    0
+    90
    ],
-   "ports": {
-    "bat": [
-     0,
-     -6,
-     0
-    ],
-    "motor": [
-     11.5,
-     0,
-     0
-    ],
-    "rx": [
-     0,
-     6,
-     0
-    ]
-   },
    "retained": "velcro",
-   "label": "20 A brushless ESC on the left wall"
+   "label": "20 A brushless ESC rotated on the left side: bat/rx ports to the open bay, motor port forward"
   },
   {
    "id": "rx_drive_esc",
    "kind": "esc",
    "catalog": "bbb_malenki_nano",
    "at": [
-    0.0,
+    -20.0,
     -24.0,
     23.5
    ],
@@ -609,7 +606,19 @@
     0
    ],
    "retained": "velcro",
-   "label": "Malenki Nano (rx + 2x brushed ESC) over the battery"
+   "ports": {
+    "bat": [
+     16.0,
+     2.0,
+     0.0
+    ],
+    "m2": [
+     0,
+     9.5,
+     0.0
+    ]
+   },
+   "label": "Malenki Nano (rx + 2x brushed ESC) over the battery, ports to the open bay"
   },
   {
    "id": "switch",
@@ -635,8 +644,8 @@
    "kind": "insert",
    "catalog": "heatset_m2",
    "at": [
-    37.2,
-    27.0,
+    35.9,
+    20.0,
     5.0
    ],
    "rot": [
@@ -652,8 +661,8 @@
    "kind": "insert",
    "catalog": "heatset_m2",
    "at": [
-    37.2,
-    27.0,
+    35.9,
+    20.0,
     25.0
    ],
    "rot": [
@@ -669,8 +678,8 @@
    "kind": "insert",
    "catalog": "heatset_m2",
    "at": [
-    -37.2,
-    27.0,
+    -35.9,
+    20.0,
     5.0
    ],
    "rot": [
@@ -686,8 +695,8 @@
    "kind": "insert",
    "catalog": "heatset_m2",
    "at": [
-    -37.2,
-    27.0,
+    -35.9,
+    20.0,
     25.0
    ],
    "rot": [
@@ -703,8 +712,8 @@
    "kind": "insert",
    "catalog": "heatset_m2",
    "at": [
-    37.2,
-    -27.0,
+    35.9,
+    -20.0,
     5.0
    ],
    "rot": [
@@ -720,8 +729,8 @@
    "kind": "insert",
    "catalog": "heatset_m2",
    "at": [
-    37.2,
-    -27.0,
+    35.9,
+    -20.0,
     25.0
    ],
    "rot": [
@@ -737,8 +746,8 @@
    "kind": "insert",
    "catalog": "heatset_m2",
    "at": [
-    -37.2,
-    -27.0,
+    -35.9,
+    -20.0,
     5.0
    ],
    "rot": [
@@ -754,8 +763,8 @@
    "kind": "insert",
    "catalog": "heatset_m2",
    "at": [
-    -37.2,
-    -27.0,
+    -35.9,
+    -20.0,
     25.0
    ],
    "rot": [
@@ -772,7 +781,7 @@
    "catalog": "heatset_m2",
    "at": [
     -17.8,
-    32.4,
+    38.0,
     8.0
    ],
    "rot": [
@@ -781,7 +790,7 @@
     0
    ],
    "retained": "press_fit",
-   "label": "heat-set M2 insert, mount plate screws (front-wall pad)"
+   "label": "heat-set M2 insert in the mount plate heel"
   },
   {
    "id": "insert_pr0",
@@ -789,7 +798,7 @@
    "catalog": "heatset_m2",
    "at": [
     9.95,
-    32.4,
+    38.0,
     8.0
    ],
    "rot": [
@@ -798,7 +807,7 @@
     0
    ],
    "retained": "press_fit",
-   "label": "heat-set M2 insert, bearing post screws (front-wall pad)"
+   "label": "heat-set M2 insert in the bearing post heel"
   },
   {
    "id": "insert_ml1",
@@ -806,7 +815,7 @@
    "catalog": "heatset_m2",
    "at": [
     -17.8,
-    32.4,
+    38.0,
     15.0
    ],
    "rot": [
@@ -815,7 +824,7 @@
     0
    ],
    "retained": "press_fit",
-   "label": "heat-set M2 insert, mount plate screws (front-wall pad)"
+   "label": "heat-set M2 insert in the mount plate heel"
   },
   {
    "id": "insert_pr1",
@@ -823,7 +832,7 @@
    "catalog": "heatset_m2",
    "at": [
     9.95,
-    32.4,
+    38.0,
     15.0
    ],
    "rot": [
@@ -832,7 +841,7 @@
     0
    ],
    "retained": "press_fit",
-   "label": "heat-set M2 insert, bearing post screws (front-wall pad)"
+   "label": "heat-set M2 insert in the bearing post heel"
   },
   {
    "id": "insert_ml2",
@@ -840,7 +849,7 @@
    "catalog": "heatset_m2",
    "at": [
     -17.8,
-    32.4,
+    38.0,
     22.0
    ],
    "rot": [
@@ -849,7 +858,7 @@
     0
    ],
    "retained": "press_fit",
-   "label": "heat-set M2 insert, mount plate screws (front-wall pad)"
+   "label": "heat-set M2 insert in the mount plate heel"
   },
   {
    "id": "insert_pr2",
@@ -857,7 +866,7 @@
    "catalog": "heatset_m2",
    "at": [
     9.95,
-    32.4,
+    38.0,
     22.0
    ],
    "rot": [
@@ -866,17 +875,17 @@
     0
    ],
    "retained": "press_fit",
-   "label": "heat-set M2 insert, bearing post screws (front-wall pad)"
+   "label": "heat-set M2 insert in the bearing post heel"
   }
  ],
  "fasteners": [
   {
    "id": "screw_00",
-   "designation": "M2x6",
+   "designation": "M2x5",
    "material": "steel",
    "at": [
-    37.2,
-    27.0,
+    35.9,
+    20.0,
     2.0
    ],
    "dir": [
@@ -893,15 +902,15 @@
    "head": "countersunk",
    "hole": {
     "d": 2.0,
-    "length": 6.0,
+    "length": 5.0,
     "head": "csk",
     "head_std": "ISO 14581",
     "head_dk": 3.8,
     "head_k": 1.2,
-    "clearance_d": 2.4,
+    "clearance_d": 2.2,
     "into": "through",
     "side": "head",
-    "grip": 5.0,
+    "grip": 1.0,
     "csk_angle": 90.0,
     "csk_d": 4.0,
     "csk_depth": 1.0,
@@ -910,12 +919,12 @@
   },
   {
    "id": "screw_01",
-   "designation": "M2x6",
+   "designation": "M2x5",
    "material": "steel",
    "at": [
-    37.2,
-    27.0,
-    29.0
+    35.9,
+    20.0,
+    28.0
    ],
    "dir": [
     0,
@@ -931,24 +940,24 @@
    "head": "socket",
    "hole": {
     "d": 2.0,
-    "length": 6.0,
+    "length": 5.0,
     "head": "cap",
     "head_std": "ISO 4762",
     "head_dk": 3.8,
     "head_k": 2.0,
-    "clearance_d": 2.4,
+    "clearance_d": 2.2,
     "into": "through",
     "side": "head",
-    "grip": 5.0
+    "grip": 1.0
    }
   },
   {
    "id": "screw_02",
-   "designation": "M2x6",
+   "designation": "M2x5",
    "material": "steel",
    "at": [
-    -37.2,
-    27.0,
+    -35.9,
+    20.0,
     2.0
    ],
    "dir": [
@@ -965,15 +974,15 @@
    "head": "countersunk",
    "hole": {
     "d": 2.0,
-    "length": 6.0,
+    "length": 5.0,
     "head": "csk",
     "head_std": "ISO 14581",
     "head_dk": 3.8,
     "head_k": 1.2,
-    "clearance_d": 2.4,
+    "clearance_d": 2.2,
     "into": "through",
     "side": "head",
-    "grip": 5.0,
+    "grip": 1.0,
     "csk_angle": 90.0,
     "csk_d": 4.0,
     "csk_depth": 1.0,
@@ -982,12 +991,12 @@
   },
   {
    "id": "screw_03",
-   "designation": "M2x6",
+   "designation": "M2x5",
    "material": "steel",
    "at": [
-    -37.2,
-    27.0,
-    29.0
+    -35.9,
+    20.0,
+    28.0
    ],
    "dir": [
     0,
@@ -1003,24 +1012,24 @@
    "head": "socket",
    "hole": {
     "d": 2.0,
-    "length": 6.0,
+    "length": 5.0,
     "head": "cap",
     "head_std": "ISO 4762",
     "head_dk": 3.8,
     "head_k": 2.0,
-    "clearance_d": 2.4,
+    "clearance_d": 2.2,
     "into": "through",
     "side": "head",
-    "grip": 5.0
+    "grip": 1.0
    }
   },
   {
    "id": "screw_04",
-   "designation": "M2x6",
+   "designation": "M2x5",
    "material": "steel",
    "at": [
-    37.2,
-    -27.0,
+    35.9,
+    -20.0,
     2.0
    ],
    "dir": [
@@ -1037,15 +1046,15 @@
    "head": "countersunk",
    "hole": {
     "d": 2.0,
-    "length": 6.0,
+    "length": 5.0,
     "head": "csk",
     "head_std": "ISO 14581",
     "head_dk": 3.8,
     "head_k": 1.2,
-    "clearance_d": 2.4,
+    "clearance_d": 2.2,
     "into": "through",
     "side": "head",
-    "grip": 5.0,
+    "grip": 1.0,
     "csk_angle": 90.0,
     "csk_d": 4.0,
     "csk_depth": 1.0,
@@ -1054,12 +1063,12 @@
   },
   {
    "id": "screw_05",
-   "designation": "M2x6",
+   "designation": "M2x5",
    "material": "steel",
    "at": [
-    37.2,
-    -27.0,
-    29.0
+    35.9,
+    -20.0,
+    28.0
    ],
    "dir": [
     0,
@@ -1075,24 +1084,24 @@
    "head": "socket",
    "hole": {
     "d": 2.0,
-    "length": 6.0,
+    "length": 5.0,
     "head": "cap",
     "head_std": "ISO 4762",
     "head_dk": 3.8,
     "head_k": 2.0,
-    "clearance_d": 2.4,
+    "clearance_d": 2.2,
     "into": "through",
     "side": "head",
-    "grip": 5.0
+    "grip": 1.0
    }
   },
   {
    "id": "screw_06",
-   "designation": "M2x6",
+   "designation": "M2x5",
    "material": "steel",
    "at": [
-    -37.2,
-    -27.0,
+    -35.9,
+    -20.0,
     2.0
    ],
    "dir": [
@@ -1109,15 +1118,15 @@
    "head": "countersunk",
    "hole": {
     "d": 2.0,
-    "length": 6.0,
+    "length": 5.0,
     "head": "csk",
     "head_std": "ISO 14581",
     "head_dk": 3.8,
     "head_k": 1.2,
-    "clearance_d": 2.4,
+    "clearance_d": 2.2,
     "into": "through",
     "side": "head",
-    "grip": 5.0,
+    "grip": 1.0,
     "csk_angle": 90.0,
     "csk_d": 4.0,
     "csk_depth": 1.0,
@@ -1126,12 +1135,12 @@
   },
   {
    "id": "screw_07",
-   "designation": "M2x6",
+   "designation": "M2x5",
    "material": "steel",
    "at": [
-    -37.2,
-    -27.0,
-    29.0
+    -35.9,
+    -20.0,
+    28.0
    ],
    "dir": [
     0,
@@ -1147,33 +1156,33 @@
    "head": "socket",
    "hole": {
     "d": 2.0,
-    "length": 6.0,
+    "length": 5.0,
     "head": "cap",
     "head_std": "ISO 4762",
     "head_dk": 3.8,
     "head_k": 2.0,
-    "clearance_d": 2.4,
+    "clearance_d": 2.2,
     "into": "through",
     "side": "head",
-    "grip": 5.0
+    "grip": 1.0
    }
   },
   {
    "id": "screw_08",
-   "designation": "M2x8",
+   "designation": "M2x10",
    "material": "steel",
    "at": [
     -17.8,
-    41.0,
+    29.4,
     8.0
    ],
    "dir": [
     0,
-    -1,
+    1,
     0
    ],
    "through": [
-    "mount_l"
+    "tub"
    ],
    "threads_into": "insert_ml0",
    "tool": "hex1.5",
@@ -1181,12 +1190,12 @@
    "head": "socket",
    "hole": {
     "d": 2.0,
-    "length": 8.0,
+    "length": 10.0,
     "head": "cap",
     "head_std": "ISO 4762",
     "head_dk": 3.8,
     "head_k": 2.0,
-    "clearance_d": 2.4,
+    "clearance_d": 2.2,
     "into": "through",
     "side": "head",
     "grip": 6.6
@@ -1194,20 +1203,20 @@
   },
   {
    "id": "screw_09",
-   "designation": "M2x8",
+   "designation": "M2x10",
    "material": "steel",
    "at": [
     9.95,
-    41.0,
+    29.4,
     8.0
    ],
    "dir": [
     0,
-    -1,
+    1,
     0
    ],
    "through": [
-    "post_r"
+    "tub"
    ],
    "threads_into": "insert_pr0",
    "tool": "hex1.5",
@@ -1215,12 +1224,12 @@
    "head": "socket",
    "hole": {
     "d": 2.0,
-    "length": 8.0,
+    "length": 10.0,
     "head": "cap",
     "head_std": "ISO 4762",
     "head_dk": 3.8,
     "head_k": 2.0,
-    "clearance_d": 2.4,
+    "clearance_d": 2.2,
     "into": "through",
     "side": "head",
     "grip": 6.6
@@ -1228,20 +1237,20 @@
   },
   {
    "id": "screw_10",
-   "designation": "M2x8",
+   "designation": "M2x10",
    "material": "steel",
    "at": [
     -17.8,
-    41.0,
+    29.4,
     15.0
    ],
    "dir": [
     0,
-    -1,
+    1,
     0
    ],
    "through": [
-    "mount_l"
+    "tub"
    ],
    "threads_into": "insert_ml1",
    "tool": "hex1.5",
@@ -1249,12 +1258,12 @@
    "head": "socket",
    "hole": {
     "d": 2.0,
-    "length": 8.0,
+    "length": 10.0,
     "head": "cap",
     "head_std": "ISO 4762",
     "head_dk": 3.8,
     "head_k": 2.0,
-    "clearance_d": 2.4,
+    "clearance_d": 2.2,
     "into": "through",
     "side": "head",
     "grip": 6.6
@@ -1262,20 +1271,20 @@
   },
   {
    "id": "screw_11",
-   "designation": "M2x8",
+   "designation": "M2x10",
    "material": "steel",
    "at": [
     9.95,
-    41.0,
+    29.4,
     15.0
    ],
    "dir": [
     0,
-    -1,
+    1,
     0
    ],
    "through": [
-    "post_r"
+    "tub"
    ],
    "threads_into": "insert_pr1",
    "tool": "hex1.5",
@@ -1283,12 +1292,12 @@
    "head": "socket",
    "hole": {
     "d": 2.0,
-    "length": 8.0,
+    "length": 10.0,
     "head": "cap",
     "head_std": "ISO 4762",
     "head_dk": 3.8,
     "head_k": 2.0,
-    "clearance_d": 2.4,
+    "clearance_d": 2.2,
     "into": "through",
     "side": "head",
     "grip": 6.6
@@ -1296,20 +1305,20 @@
   },
   {
    "id": "screw_12",
-   "designation": "M2x8",
+   "designation": "M2x10",
    "material": "steel",
    "at": [
     -17.8,
-    41.0,
+    29.4,
     22.0
    ],
    "dir": [
     0,
-    -1,
+    1,
     0
    ],
    "through": [
-    "mount_l"
+    "tub"
    ],
    "threads_into": "insert_ml2",
    "tool": "hex1.5",
@@ -1317,12 +1326,12 @@
    "head": "socket",
    "hole": {
     "d": 2.0,
-    "length": 8.0,
+    "length": 10.0,
     "head": "cap",
     "head_std": "ISO 4762",
     "head_dk": 3.8,
     "head_k": 2.0,
-    "clearance_d": 2.4,
+    "clearance_d": 2.2,
     "into": "through",
     "side": "head",
     "grip": 6.6
@@ -1330,20 +1339,20 @@
   },
   {
    "id": "screw_13",
-   "designation": "M2x8",
+   "designation": "M2x10",
    "material": "steel",
    "at": [
     9.95,
-    41.0,
+    29.4,
     22.0
    ],
    "dir": [
     0,
-    -1,
+    1,
     0
    ],
    "through": [
-    "post_r"
+    "tub"
    ],
    "threads_into": "insert_pr2",
    "tool": "hex1.5",
@@ -1351,12 +1360,12 @@
    "head": "socket",
    "hole": {
     "d": 2.0,
-    "length": 8.0,
+    "length": 10.0,
     "head": "cap",
     "head_std": "ISO 4762",
     "head_dk": 3.8,
     "head_k": 2.0,
-    "clearance_d": 2.4,
+    "clearance_d": 2.2,
     "into": "through",
     "side": "head",
     "grip": 6.6
@@ -1364,7 +1373,7 @@
   },
   {
    "id": "screw_14",
-   "designation": "M3x4",
+   "designation": "M2.5x6",
    "material": "steel",
    "at": [
     -19.3,
@@ -1384,16 +1393,16 @@
    "removable": true,
    "head": "socket",
    "hole": {
-    "d": 3.0,
-    "length": 4.0,
+    "d": 2.5,
+    "length": 6.0,
     "head": "cap",
     "head_std": "ISO 4762",
-    "head_dk": 5.5,
-    "head_k": 3.0,
-    "clearance_d": 3.4,
+    "head_dk": 4.5,
+    "head_k": 2.5,
+    "clearance_d": 2.9,
     "into": "through",
     "side": "head",
-    "grip": 4.0
+    "grip": 3.0
    }
   },
   {
@@ -1414,7 +1423,7 @@
     "disc"
    ],
    "threads_into": "weapon_motor_bell",
-   "tool": "hex2.0",
+   "tool": "hex2.5",
    "removable": true,
    "head": "socket",
    "hole": {
@@ -1427,12 +1436,15 @@
     "clearance_d": 3.4,
     "into": "through",
     "side": "head",
-    "grip": 5.0
-   }
+    "grip": 3.0
+   },
+   "access_before": [
+    "post_r"
+   ]
   },
   {
    "id": "screw_16",
-   "designation": "M3x4",
+   "designation": "M2.5x6",
    "material": "steel",
    "at": [
     -19.3,
@@ -1452,16 +1464,16 @@
    "removable": true,
    "head": "socket",
    "hole": {
-    "d": 3.0,
-    "length": 4.0,
+    "d": 2.5,
+    "length": 6.0,
     "head": "cap",
     "head_std": "ISO 4762",
-    "head_dk": 5.5,
-    "head_k": 3.0,
-    "clearance_d": 3.4,
+    "head_dk": 4.5,
+    "head_k": 2.5,
+    "clearance_d": 2.9,
     "into": "through",
     "side": "head",
-    "grip": 4.0
+    "grip": 3.0
    }
   },
   {
@@ -1482,7 +1494,7 @@
     "disc"
    ],
    "threads_into": "weapon_motor_bell",
-   "tool": "hex2.0",
+   "tool": "hex2.5",
    "removable": true,
    "head": "socket",
    "hole": {
@@ -1495,12 +1507,15 @@
     "clearance_d": 3.4,
     "into": "through",
     "side": "head",
-    "grip": 5.0
-   }
+    "grip": 3.0
+   },
+   "access_before": [
+    "post_r"
+   ]
   },
   {
    "id": "screw_18",
-   "designation": "M3x4",
+   "designation": "M2.5x6",
    "material": "steel",
    "at": [
     -19.3,
@@ -1520,16 +1535,16 @@
    "removable": true,
    "head": "socket",
    "hole": {
-    "d": 3.0,
-    "length": 4.0,
+    "d": 2.5,
+    "length": 6.0,
     "head": "cap",
     "head_std": "ISO 4762",
-    "head_dk": 5.5,
-    "head_k": 3.0,
-    "clearance_d": 3.4,
+    "head_dk": 4.5,
+    "head_k": 2.5,
+    "clearance_d": 2.9,
     "into": "through",
     "side": "head",
-    "grip": 4.0
+    "grip": 3.0
    }
   },
   {
@@ -1550,7 +1565,7 @@
     "disc"
    ],
    "threads_into": "weapon_motor_bell",
-   "tool": "hex2.0",
+   "tool": "hex2.5",
    "removable": true,
    "head": "socket",
    "hole": {
@@ -1563,8 +1578,11 @@
     "clearance_d": 3.4,
     "into": "through",
     "side": "head",
-    "grip": 5.0
-   }
+    "grip": 3.0
+   },
+   "access_before": [
+    "post_r"
+   ]
   }
  ],
  "connections": [
@@ -1589,14 +1607,13 @@
    "b": "post_r",
    "method": "press_fit",
    "interference_mm": 0.02,
-   "reason": "MR63 outer race pressed into the post plate's 3 mm seat, flush with the outer face"
+   "reason": "MR63 outer race pressed into the post plate's 6 mm seat, flush with the outer face"
   },
   {
    "a": "weapon_motor_bell",
    "b": "outboard_bearing",
-   "method": "press_fit",
-   "interference_mm": 0.02,
-   "reason": "the 3 mm shaft stub is a light press in the MR63 inner race; the race shoulders and the disc clamp hold the rotor axially"
+   "method": "shaft",
+   "reason": "the 3 mm shaft stub turns in the MR63 inner race: the rotor's outboard support, located by the disc clamp"
   },
   {
    "a": "fork_pin_r",
@@ -1613,11 +1630,23 @@
    "reason": "M3 hinge pin press fit in the mount plate; the fork swings on it"
   },
   {
+   "a": "fork_r",
+   "b": "fork_pin_r",
+   "method": "shaft",
+   "reason": "the fork swings on the fixed M3 pin: self-levelling on its tip"
+  },
+  {
+   "a": "fork_l",
+   "b": "fork_pin_l",
+   "method": "shaft",
+   "reason": "the fork swings on the fixed M3 pin: self-levelling on its tip"
+  },
+  {
    "a": "locking_pin",
    "b": "mount_l",
    "method": "press_fit",
    "interference_mm": 0.05,
-   "reason": "the remove-before-fight lock pin is a hand press in the mount plate; it passthroughs the disc's balance window"
+   "reason": "the remove-before-fight lock pin is a hand press in the mount plate; it passes through the disc's balance window"
   },
   {
    "a": "insert_pb0",
@@ -1677,45 +1706,45 @@
   },
   {
    "a": "insert_ml0",
-   "b": "tub",
+   "b": "mount_l",
    "method": "press_fit",
    "interference_mm": 0.15,
-   "reason": "heat-set insert in the front-wall pad bore: the knurl bites the melted nylon"
+   "reason": "heat-set insert in the mount plate heel bore: the knurl bites the melted nylon"
   },
   {
    "a": "insert_pr0",
-   "b": "tub",
+   "b": "post_r",
    "method": "press_fit",
    "interference_mm": 0.15,
-   "reason": "heat-set insert in the front-wall pad bore: the knurl bites the melted nylon"
+   "reason": "heat-set insert in the post plate heel bore: the knurl bites the melted nylon"
   },
   {
    "a": "insert_ml1",
-   "b": "tub",
+   "b": "mount_l",
    "method": "press_fit",
    "interference_mm": 0.15,
-   "reason": "heat-set insert in the front-wall pad bore: the knurl bites the melted nylon"
+   "reason": "heat-set insert in the mount plate heel bore: the knurl bites the melted nylon"
   },
   {
    "a": "insert_pr1",
-   "b": "tub",
+   "b": "post_r",
    "method": "press_fit",
    "interference_mm": 0.15,
-   "reason": "heat-set insert in the front-wall pad bore: the knurl bites the melted nylon"
+   "reason": "heat-set insert in the post plate heel bore: the knurl bites the melted nylon"
   },
   {
    "a": "insert_ml2",
-   "b": "tub",
+   "b": "mount_l",
    "method": "press_fit",
    "interference_mm": 0.15,
-   "reason": "heat-set insert in the front-wall pad bore: the knurl bites the melted nylon"
+   "reason": "heat-set insert in the mount plate heel bore: the knurl bites the melted nylon"
   },
   {
    "a": "insert_pr2",
-   "b": "tub",
+   "b": "post_r",
    "method": "press_fit",
    "interference_mm": 0.15,
-   "reason": "heat-set insert in the front-wall pad bore: the knurl bites the melted nylon"
+   "reason": "heat-set insert in the post plate heel bore: the knurl bites the melted nylon"
   }
  ],
  "wires": [
@@ -1728,28 +1757,23 @@
    "slack_mm": 8,
    "via": [
     [
-     -7,
-     -13.5,
+     26,
+     -24,
+     12.4
+    ],
+    [
+     26,
+     -24,
      25.5
     ],
     [
+     26,
      27,
-     -13.5,
-     25.5
-    ],
-    [
-     27,
-     30.5,
      25.5
     ],
     [
      29.51,
-     30.5,
-     25.5
-    ],
-    [
-     29.51,
-     30.5,
+     27,
      20.65
     ]
    ]
@@ -1764,33 +1788,33 @@
    "via": [
     [
      21.89,
-     30.5,
+     27,
      20.65
     ],
     [
      21.89,
-     30.5,
+     27,
      25.5
     ],
     [
-     -32,
-     30.5,
+     -17,
+     27,
      25.5
     ],
     [
-     -32,
-     8,
+     -17,
+     0,
      25.5
     ],
     [
-     -26.4,
-     8,
-     23
+     -17,
+     0,
+     24
     ],
     [
-     -26.4,
-     10,
-     23
+     -23,
+     0,
+     24
     ]
    ]
   },
@@ -1804,32 +1828,27 @@
    "via": [
     [
      21.89,
-     30.5,
+     27,
      20.65
     ],
     [
      21.89,
-     30.5,
-     25.5
-    ],
-    [
      27,
-     30.5,
      25.5
     ],
     [
+     5,
      27,
-     -20,
      25.5
     ],
     [
-     -18,
-     -20,
+     5,
+     -22,
      25.5
     ],
     [
-     -18,
-     -30,
+     5,
+     -22,
      23.5
     ]
    ]
@@ -1843,29 +1862,34 @@
    "slack_mm": 6,
    "via": [
     [
-     18,
+     -1,
      -30,
      23.5
     ],
     [
-     18,
+     -1,
      -30,
-     25.5
+     26
     ],
     [
-     18,
-     30.5,
-     25.5
+     -14,
+     -30,
+     26
     ],
     [
-     -26.4,
-     30.5,
-     25.5
+     -14,
+     -2,
+     26
     ],
     [
-     -26.4,
-     27,
-     23
+     -29,
+     -2,
+     26
+    ],
+    [
+     -29,
+     -2,
+     24
     ]
    ]
   },
@@ -1879,14 +1903,19 @@
    "slack_mm": 10,
    "via": [
     [
-     -14.5,
-     18,
+     -26,
+     27,
+     24
+    ],
+    [
+     -26,
+     27,
      25.5
     ],
     [
      -14.5,
-     37,
-     27.5
+     31,
+     25.5
     ],
     [
      -14.5,
@@ -1894,7 +1923,7 @@
      26
     ],
     [
-     -15.8,
+     -15.3,
      44,
      24.5
     ]
@@ -1909,19 +1938,19 @@
    "slack_mm": 6,
    "via": [
     [
-     17,
-     -13.8,
-     23.5
+     2,
+     -18,
+     24
     ],
     [
-     0.5,
-     -13.8,
-     23.5
+     8.4,
+     -18,
+     24
     ],
     [
-     0.5,
-     -13.8,
-     15
+     8.4,
+     -9,
+     24
     ]
    ]
   },
@@ -1934,19 +1963,19 @@
    "slack_mm": 6,
    "via": [
     [
-     -17,
-     -13.8,
-     23.5
+     -20,
+     -13.2,
+     24
     ],
     [
-     -0.5,
-     -13.8,
-     23.5
+     -8.4,
+     -13.2,
+     24
     ],
     [
-     -0.5,
-     -13.8,
-     15
+     -8.4,
+     -9,
+     24
     ]
    ]
   }

@@ -127,7 +127,7 @@ BAL_EXTRA_DEG = _bal_extra()
 assert 360.0 / WIN_N - 2 * WIN_HALF_DEG - BAL_EXTRA_DEG >= SPOKE_MIN_DEG, "balance window eats the spokes: raise TOOTH_STEP/RAMP trade-off"
 
 # lock pin: through both plates and the balance window of the disc at rest (weapon_lock, remove-before-fight)
-LOCK_R = 0.5 * (WIN_R_IN + WIN_R_OUT)                # radius of the pin from the spin axis: mid-window
+LOCK_R = WIN_R_IN + 2.0                             # pin radius from the spin axis: inside the window, clear of the hub web
 LOCK_ANGLE = BAL_BEARING - 25.0                       # part-frame angle inside window 0, on the plates (the disc default pose aligns it)
 
 # ------------------------------------------------------------------------------------------------ weapon mount (plates)
@@ -147,7 +147,7 @@ RAIL_L_X = (WM_X_BACK - PLATE_T, WM_X_BACK)                   # left (stator) pl
 RAIL_R_X = (SHAFT_END_X - PLATE_T, SHAFT_END_X)              # right (bearing) plate: bearing flush with the shaft end
 BEAR_X = (SHAFT_END_X - BEAR_W, SHAFT_END_X)   # bearing seated flush with the plate's outer face
 BOSS_R = BEAR_OD / 2 + BOSS_WALL
-RAIL_TOP = Z_AX + WM["bell_r"] + BOSS_WALL      # plates rise to cover the bell from a top-down hit
+RAIL_TOP = Z_AX + WM["bell_r"] + BOSS_WALL + 1.2      # plates rise past the bell: cover from a top-down hit + wall above the lock hole
 
 # ------------------------------------------------------------------------------------------------ tub / chassis masters
 TUB_BODY_L = _SIZING["TUB_BODY_L"]  # body behind the plates (per size rule); battery lies across its rear shelf
@@ -161,7 +161,7 @@ WHEEL_GAP = 1.0           # tyre to wheel-well wall
 PANEL_T_BASE = 1.0        # printed base panel
 PANEL_T_TOP = 1.0         # printed top panel (nylon); Ti would cost ~6 g more (BRIEF.md)
 PANEL_SCREW = 2.0         # M2 panel screws into heat-set inserts (as Revron)
-PANEL_SCREW_Y = 27.0      # screw axes from the tub centreline (clear of the wheel wells)
+PANEL_SCREW_Y = 20.0      # screw axes from the tub centreline (>=3 mm from the rounded corner edge)
 PANEL_BOSS_T = 5.0        # side-wall boss thickness behind the inner face (insert dia 3.2 + wall)
 SHELF_T = 2.4             # rear shelf: battery seat + motor-cradle root (> MIN_WALL)
 SHELF_Y1 = 2.0            # shelf front edge (y): under both motor cradle walls
@@ -170,7 +170,7 @@ CRADLE_Y0, CRADLE_Y1 = -12.5, 1.5       # cradle walls: outside the N10 bbox (y 
 CRADLE_TOP_Z = 23.0       # top of the cradle walls
 MOTOR_BRIDGE_Z0 = 21.2    # bridge underside: 0.2 capture gap over the N10 top at 20 (support.loose limit)
 MOTOR_STOP_T = 0.5        # axial stop wall thickness at the gearbox face
-PAD_T = 5.0               # front-wall pad thickness (heat-set insert length 4.0 + wall behind)
+PAD_T = 6.6               # front-wall pad: spans the wall band (TUB_Y1-PAD_T..TUB_Y1), screws enter its inner face
 PLATE_SCREW_Z = (8.0, 15.0, 22.0)        # plate mounting screw heights (through the heel into the wall pads)
 
 # relations
@@ -188,7 +188,7 @@ WHEEL_X = TUB_W / 2 - WALL - WHEEL_GAP - WHEEL_W / 2   # inside the tub outline,
 WHEEL_PROUD_TOP = WHEEL_Z + WHEEL_R - TUB_TOP_Z        # > 0: drives inverted on the wheels (plates still taller, see risks)
 INSERT_D, INSERT_L = FC.insert(PANEL_SCREW)
 PLATE_SCREW_CLR = FC.clearance(PANEL_SCREW)            # M2 clearance through the plate heel / front wall
-STATOR_SCREW_CLR = FC.clearance(3.0)                   # M3 clearance through the mount plate
+STATOR_SCREW_CLR = FC.clearance(2.5)                   # M2.5 clearance through the mount plate
 OVERALL_L = DISC_FRONT_Y - TUB_Y0
 OVERALL_H = max(RAIL_TOP, TUB_TOP_Z + PANEL_T_TOP, WHEEL_Z + WHEEL_R)
 assert OVERALL_L <= ENVELOPE_L and TUB_W <= ENVELOPE_W and OVERALL_H <= ENVELOPE_H, f"outside the {RULES_SIZE} size limit"
@@ -203,13 +203,13 @@ assert BAT_AT[1] - BAT_W / 2 > TUB_Y0 + WALL, "battery must clear the rear wall"
 assert BAT_AT[1] + BAT_W / 2 <= WHEEL_Y - DM_W / 2 - 0.5, "battery must clear the drive motors"
 
 # electronics bays (world): ESCs high on the walls / shelf, switch under the top-panel keyway
-WESC_AT = (-26.4, 8.0, TUB_TOP_Z - WESC_H)
-DESC_AT = (0.0, -24.0, TUB_TOP_Z - PANEL_T_TOP - DESC_H)
+WESC_AT = (-26.0, 13.5, 24.0)   # rotated 90 deg in the spec: ports face the open corridors (bat/rx -y, motor +y)
+DESC_AT = (-20.0, -24.0, TUB_TOP_Z - PANEL_T_TOP - DESC_H)
 SW_AT = (25.7, 16.0, 20.65)
 
 # ------------------------------------------------------------------------------------------------ forks (reuse revron fork_5)
 FORK_PIN = 3.0            # M3 hinge pin through the plate outer face; fork free to swing: self-levelling on its tip
-FORK_TIP_GAP = 0.0        # fork tip rests ON the floor (gravity); the up-stop sits FORK_LIFT above
+FORK_TIP_GAP = 1.0        # fork tip sits 1 mm above the floor; the up-stop sits FORK_LIFT above
 FORK_LIFT = 4.0           # up-travel before the fork lands on its stop
 FORK_SIDE_CLR = 0.5       # fork sheet to plate outer face
 

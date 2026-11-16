@@ -1,10 +1,11 @@
 """Ripsaw weapon plates: two printed nylon plates bolted to the tub's front-wall pads. UNTESTED.
 
-Load path: tooth -> disc -> 3x M3 into the bell face -> bell/shaft -> (a) stator -> 3x M3 -> mount plate (left),
-(b) shaft end -> MR63 press fit in the post plate (right) -> both plates -> 3x M2 each into the front-wall pads.
+Load path: tooth -> disc -> 3x M3 into the bell face (driven with the right plate off) -> bell/shaft ->
+(a) stator -> 3x M2.5 -> mount plate (left), (b) shaft end -> MR63 press fit in the post plate (right) ->
+both plates -> 3x M2 each from INSIDE the tub, threading into heat-set inserts in the plate heels.
 Rotating: disc, bell, shaft, bearing inner race. Fixed: stator, plates, bearing outer race, tub.
 
-Service: the plates bolt on from the front (tool straight down the screw axes, open air ahead of the tub); with both
+Service: the M2 plate screws come out from inside the tub (tool straight along Y, open interior); with both
 plates off, the weapon (disc + bell + shaft) slides forward out of the disc slot, and the stator then lifts off its
 screws. Nothing is trapped by the unibody.
 """
@@ -14,11 +15,22 @@ from . import params as P
 
 
 def _screw_bosses(x0, x1):
-    """Local bosses round the plate screw holes: a 3 mm plate alone leaves 0.3 mm walls round an M2 clearance hole."""
+    """Local bosses round the plate-screw inserts: a 3 mm plate alone leaves 0.3 mm walls round the insert bore."""
     out = []
     for z in P.PLATE_SCREW_Z:
         out.append(bd.Pos((x0 + x1) / 2, P.TUB_Y1 + P.PLATE_HEEL_L / 2, z) * bd.Rot(90, 0, 0)
-                   * bd.Cylinder(2.2, P.PLATE_HEEL_L + 2.0))
+                   * bd.Cylinder(P.INSERT_D / 2 + P.WALL, P.PLATE_HEEL_L))
+    return out
+
+
+def _heel_inserts(x0, x1):
+    """Heat-set insert bores in the plate heel (mouth at the rear face, flush with the wall) + tip relief behind."""
+    out = []
+    for z in P.PLATE_SCREW_Z:
+        out.append(bd.Pos((x0 + x1) / 2, P.TUB_Y1 + P.INSERT_L / 2, z) * bd.Rot(90, 0, 0)
+                   * bd.Cylinder(P.INSERT_D / 2, P.INSERT_L))
+        out.append(bd.Pos((x0 + x1) / 2, P.TUB_Y1 + P.PLATE_HEEL_L - 0.25, z) * bd.Rot(90, 0, 0)
+                   * bd.Cylinder(1.1, 1.5))
     return out
 
 
@@ -37,11 +49,6 @@ def _plate(x0, x1):
     return heel + prong + pad
 
 
-def _y_hole(x0, x1, y, z, r):
-    """A round hole along Y (the plate mounting screws) through the plate heel."""
-    return bd.Pos((x0 + x1) / 2, y, z) * bd.Rot(90, 0, 0) * bd.Cylinder(r, P.PLATE_HEEL_L * 3)
-
-
 def mount_l():
     """Left plate: stator screws (catalogue base pattern through the plate), rear hub relief, plate screws, fork pin."""
     import math
@@ -51,8 +58,8 @@ def mount_l():
         s = s - bd.Pos((x0 + x1) / 2, P.Y_AX + r * math.cos(math.radians(a)), P.Z_AX + r * math.sin(math.radians(a))) \
             * bd.Rot(0, 90, 0) * bd.Cylinder(P.STATOR_SCREW_CLR / 2, P.PLATE_T * 3)
     s = s - bd.Pos((x0 + x1) / 2, P.Y_AX, P.Z_AX) * bd.Rot(0, 90, 0) * bd.Cylinder(3.1, P.PLATE_T * 3)  # rear hub relief
-    for z in P.PLATE_SCREW_Z:
-        s = s - _y_hole(x0, x1, P.TUB_Y1 + P.PLATE_HEEL_L / 2, z, P.PLATE_SCREW_CLR / 2)
+    for c in _heel_inserts(x0, x1):
+        s = s - c
     s = s - fork_pin_hole(x0, x1)
     s = s - lock_pin_hole(x0, x1)
     s.label = "mount_l"
@@ -66,8 +73,8 @@ def post_r():
     s = s - bd.Pos((P.BEAR_X[0] + P.BEAR_X[1]) / 2, P.Y_AX, P.Z_AX) * bd.Rot(0, 90, 0) * bd.Cylinder(P.BEAR_OD / 2, P.BEAR_W)
     s = s - bd.Pos((x0 + P.BEAR_X[0]) / 2, P.Y_AX, P.Z_AX) * bd.Rot(0, 90, 0) * bd.Cylinder(P.WM["shaft_r"] + P.MOVING_CLR / 2,
                                                                                            P.BEAR_X[0] - x0 + 0.2)
-    for z in P.PLATE_SCREW_Z:
-        s = s - _y_hole(x0, x1, P.TUB_Y1 + P.PLATE_HEEL_L / 2, z, P.PLATE_SCREW_CLR / 2)
+    for c in _heel_inserts(x0, x1):
+        s = s - c
     s = s - fork_pin_hole(x0, x1)
     s = s - lock_pin_hole(x0, x1)
     s.label = "post_r"

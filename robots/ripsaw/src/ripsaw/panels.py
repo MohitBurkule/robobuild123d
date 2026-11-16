@@ -13,10 +13,13 @@ def _screw_axes():
     return [(sx * (P.TUB_W / 2 - P.WALL - P.PANEL_BOSS_T / 2), sy * P.PANEL_SCREW_Y) for sx in (1, -1) for sy in (1, -1)]
 
 
+PANEL_HOLE_R = 1.3   # M2 clearance in the 1 mm sheet, wide enough for the countersink mouth
+
+
 def _sheet(t, z0):
     s = bd.extrude(bd.Plane.XY.offset(z0) * T._outline(), t)
     for x, y in _screw_axes():
-        s = s - bd.Pos(x, y, z0 + t / 2) * bd.Cylinder(FC.clearance(P.PANEL_SCREW) / 2, 2 * t)
+        s = s - bd.Pos(x, y, z0 + t / 2) * bd.Cylinder(PANEL_HOLE_R, 2 * t)
     return s
 
 
@@ -28,9 +31,9 @@ def motor_pedestals():
         can0, can1 = mx - 12.75, mx + 2.25          # catalogue can span in the gearmotor frame
         gb0, gb1 = mx + 2.25, mx + 11.25           # gearbox span
         out.append(bd.Pos((can0 + can1) / 2, P.WHEEL_Y, P.TUB_FLOOR_Z + (9.0 - P.TUB_FLOOR_Z) / 2)
-                   * bd.Box(can1 - can0 - 5.0, 8.0, 9.0 - P.TUB_FLOOR_Z))
+                   * bd.Box(can1 - can0 - 5.0, 4.0, 9.0 - P.TUB_FLOOR_Z))
         out.append(bd.Pos((gb0 + gb1) / 2, P.WHEEL_Y, P.TUB_FLOOR_Z + (10.0 - P.TUB_FLOOR_Z) / 2)
-                   * bd.Box(gb1 - gb0 - 1.0, 8.0, 10.0 - P.TUB_FLOOR_Z))
+                   * bd.Box(gb1 - gb0 - 1.0, 4.0, 10.0 - P.TUB_FLOOR_Z))
     return out
 
 
@@ -51,7 +54,5 @@ def top_panel():
     s = s - sweep
     s = s - bd.Pos(-14.5, P.TUB_Y1 - 1.0, P.TUB_TOP_Z + P.PANEL_T_TOP / 2) \
         * bd.Box(4.2, 3.0, 2 * P.PANEL_T_TOP + 0.4)   # phase-lead cable notch, matches the tub wall notch
-    s.label = "panel_top"
-    return s
     s.label = "panel_top"
     return s
