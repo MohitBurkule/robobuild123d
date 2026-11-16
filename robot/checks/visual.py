@@ -626,7 +626,8 @@ def leads(ctx, prm):
         cat = getattr(rp, "cat", None)
         if cat is None or not getattr(cat, "ports", None):
             continue
-        for pname in cat.ports:
+        # a part that declares its own port map replaces the catalog's (generic in/out stand-ins on research entries)
+        for pname in (rp.part.ports or cat.ports):
             if not any(pname.startswith(k) for k in LEAD_PORTS):
                 continue
             full = f"{rp.part.id}.{pname}"
@@ -830,11 +831,27 @@ def ligaments(m, n=30):
     return out
 
 
-def face_graze(m, ax, h, c, lim, step=0.25):
-    """True when a thin ring at height h is only the last slice before the bore leaves a face: one step outward
-    the ring is gone (or the section is), one step inward the wall is >= lim."""
+def face_graze(m, ax, h, c, lim, step=0.25, walk=1.2):
+    """True when a thin ring at height h is only the last slices before the bore leaves a face: one step outward
+    the ring is gone (or the section is) and walking inward up to `walk` mm the wall recovers to >= lim. The wider
+    window keeps chamfered/bevelled face edges (wall still growing back over the bevel) from reading as thin walls
+    while a genuinely thin wall, which never recovers, still fails."""
     a, b = ring_lig(m, ax, h - step, c), ring_lig(m, ax, h + step, c)
-    return (a is None and b is not None and b >= lim) or (b is None and a is not None and a >= lim)
+
+    def recovers(side):
+        for k in range(1, int(round(walk / step)) + 1):
+            lig = ring_lig(m, ax, h + side * k * step, c)
+            if lig is None:
+                return False
+            if lig >= lim:
+                return True
+        return False
+
+    if a is None and b is not None:
+        return recovers(+1)
+    if b is None and a is not None:
+        return recovers(-1)
+    return False
 
 
 def ligament_diffs(model, ref, lim=0.8, tol=0.1):

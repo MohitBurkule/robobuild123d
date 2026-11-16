@@ -1,24 +1,31 @@
 """Hit reaction and gyroscopic wheel-lift (`impact.*`, F1).
 
 WHY: a fast turn with a spinning weapon stores gyroscopic stiffness: turning the
-robot at yaw rate `Omega` needs a roll torque `I_w * omega * Omega`. When that
-exceeds the gravity restoring torque `m g (track/2)` the inside wheels lift and
-the robot rolls. And when a vertical spinner lands a hit, some of its energy
-throws the robot itself off the floor (hop), while a horizontal spinner yaws the
-robot (spin-out). Closed-form estimates from the power group's metrics.
+robot at yaw rate `Omega` needs a torque `I_w * omega * Omega * sin(tilt)` where
+tilt is the angle between the spin axis and vertical: the gyro moment is the cross
+torque `Omega x L`, which vanishes when a weapon spins about the vertical (a flat
+bar spinner yaws about the same axis it spins about) and is full for a horizontal
+spin axis (a drum). When it exceeds the gravity restoring torque `m g (track/2)`
+the inside wheels lift and the robot rolls. And when a vertical spinner lands a
+hit, some of its energy throws the robot itself off the floor (hop), while a
+horizontal spinner yaws the robot (spin-out). Closed-form estimates from the
+power group's metrics.
 
-Omega_lift = m g (track/2) / (I_w omega): the yaw rate at which the robot lifts.
-Warn when the design's assumed turn rate is over half of it, block over 0.75.
-Hop: h = k E / (m g) with k = 0.25 (a low hit throws the robot, most energy stays
-in the target); warn over 20 mm. Yaw: omega_yaw = I_w omega / I_yaw with
-I_yaw ~ m (footprint/2)^2 (a disc of the footprint radius); warn over 720 deg/s.
+Omega_lift = m g (track/2) / (I_w omega sin(tilt)): the yaw rate at which the
+robot lifts. Warn when the design's assumed turn rate is over half of it, block
+over 0.75. Hop: h = k E / (m g) with k = 0.25 (a low hit throws the robot, most
+energy stays in the target); warn over 20 mm. Yaw: omega_yaw = I_w omega / I_yaw
+with I_yaw ~ m (footprint/2)^2 (a disc of the footprint radius); warn over 720 deg/s.
 """
 
 from __future__ import annotations
 
 import math
 
+import numpy as np
+
 from ..finding import BLOCKER, WARNING, fail, ok
+from .. import xform
 
 G = "impact"
 TURN_RATE_RAD_S = 15.0  # a hard antweight pivot (same default as dynamics.GYRO_TURN_RAD_S_DEFAULT)
@@ -38,6 +45,28 @@ def weapon_inertia(ctx):
     if omega <= 0:
         return None, None
     return 2.0 * float(e) / omega ** 2, omega
+
+
+def spin_tilt(ctx):
+    """|cos| of the angle between the weapon's spin axis and world vertical (1 = vertical axis), or None when unknown.
+
+    The gyro moment of a turn is Omega x L: a vertical spin axis is parallel to the yaw axis, so turning cannot
+    roll the robot no matter how fast the weapon spins. Only the tilt's sine couples yaw into roll.
+    """
+    if ctx.r is None:
+        return None
+    for rp in ctx.r.parts:
+        if rp.part.kind != "weapon" or rp.part.weapon is None:
+            continue
+        b = ctx.world.body(rp.part.id)
+        if b is None or getattr(b, "M", None) is None:
+            continue
+        wd = rp.part.weapon
+        local = np.asarray(wd.spin_axis if wd.spin_axis is not None else [0.0, 0.0, 1.0], float)
+        a = xform.apply_dir(b.M, local)
+        n = float(np.linalg.norm(a))
+        return abs(float(a[2])) / n if n > 0 else None
+    return None
 
 
 def wheel_track(ctx):
@@ -61,14 +90,22 @@ def run(ctx):
     track = wheel_track(ctx)
     judged = []
     omega_lift = None
-    if track:
-        omega_lift = m_kg * 9.81 * (track / 2000.0 / 2) / (i_w * omega)
+    vert = spin_tilt(ctx)
+    gyro = 1.0 if vert is None else math.sqrt(max(0.0, 1.0 - vert * vert))  # sin of the axis tilt
+    if track and gyro < 1e-3:
+        out.append(ok("impact.gyro_lift", G, "No gyroscopic wheel-lift from yaw",
+                      f"The weapon spins about the vertical (axis tilt cos {vert:.3f}): a yaw rate is parallel to the "
+                      "spin angular momentum, so turning produces no gyroscopic roll (M = Omega x L)."))
+        judged.append(True)
+    elif track:
+        omega_lift = m_kg * 9.81 * (track / 2000.0 / 2) / (i_w * omega * gyro)
         frac = TURN_RATE_RAD_S / omega_lift if omega_lift > 0 else float("inf")
         ctx.metrics["gyro_lift_yaw_rad_s"] = round(omega_lift, 2)
         if frac >= LIFT_BLOCK_X:
             out.append(fail("impact.gyro_lift", G, BLOCKER, "A hard turn lifts the wheels (gyroscopic roll)",
                             f"Turning at {TURN_RATE_RAD_S:.0f} rad/s needs {frac:.2f}x the {omega_lift:.1f} rad/s "
-                            f"lift threshold (track {track:.0f} mm, weapon I {i_w * 1000:.1f} g*m2 at {omega:.0f} rad/s).")
+                            f"lift threshold (track {track:.0f} mm, weapon I {i_w * 1000:.1f} g*m2 at {omega:.0f} rad/s, "
+                            f"spin axis {math.degrees(math.asin(min(gyro, 1.0))):.0f} deg off vertical).")
                        .fix("Slow the turn, widen the track, or store less energy in the weapon "
                             "(lighter disc / lower rpm)."))
         elif frac >= LIFT_WARN_X:

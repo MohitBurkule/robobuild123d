@@ -326,7 +326,7 @@ PRESETS = {
                       wheel_dia=22, weapon_esc="c_bbb_antweight_spinner_brushless_esc",
                       battery="c_typical_2s_300mah_lipo_lihv_betafpv_tbs_",
                       drive_esc="c_malenki_nano_antweight_esc_receiver", rx="integrated",
-                      skirts="rear"),  # full side skirts put it 2 g over 150 g; the 180 mAh pack does not wire
+                      skirts="rear"),  # the 180 mAh pack is 3 g lighter but its xt30 lands in a dead-end wire corner
     "vspin_drisk": dict(weapon="vspin_drisk", mount="front", orientation="vertical", attachment="drisk", front="forks",
                         drive_layout="2WD", wheel_dia=22, weapon_esc="c_bbb_antweight_spinner_brushless_esc",
                         battery="lipo_2s_180", invertible=False, drive_esc="c_malenki_nano_antweight_esc_receiver",

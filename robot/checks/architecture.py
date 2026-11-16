@@ -238,7 +238,7 @@ class A:
                 for p in self.spec.parts:
                     if p.id in s:
                         continue
-                    rw = _extra(p, "rotates_with")
+                    rw = _extra(p, "rotates_with") or p.rotates_with
                     if rw == "fixed":
                         continue
                     if rw == wid or (p.parent in s and p.kind not in ("weapon_motor",)) or p.kind == "hub" and any(
@@ -527,9 +527,21 @@ def _hub_support(a, p, sh, origin, axis, s):
     hosts = [h for h in hosts if float(((h.mesh.vertices - origin) @ axis).mean()) * s > 0]
     if not hosts:
         return None
+    # The seat is where the motor actually surrounds the shaft (its base boss), not the middle of its extent: an
+    # outrunner's winding window is open round the shaft, so a midpoint sample lands in air and fails every motor.
     mt = (mb.mesh.vertices - origin) @ axis
-    t = 0.5 * float(mt.max() if s > 0 else mt.min())  # between the weapon plane and the stator's mounting face
-    return (t, mb, hosts[0])
+    d = a._lay["d"] if isinstance(getattr(a, "_lay", None), dict) else 3.0
+    lo, hi = sorted((0.0, float(mt.max() if s > 0 else mt.min())))
+    ts = np.arange(lo + 0.2, hi - 0.2, 0.5)
+    u_, v_ = _perp(axis)
+    rr = d / 2 + 0.5
+    P = origin + np.outer(ts, axis)
+    ring = [P + rr * (math.cos(k) * u_ + math.sin(k) * v_) for k in np.linspace(0, 2 * math.pi, 8, endpoint=False)]
+    hit = np.array([bool(mb.inside(P[i][None])[0]) or sum(bool(mb.inside(R[i][None])[0]) for R in ring) >= 5
+                    for i in range(len(ts))])
+    if not hit.any():
+        return None
+    return (float(ts[hit].mean()), mb, hosts[0])
 
 
 def weapon(a):
@@ -571,7 +583,17 @@ def weapon(a):
         tc = float(hc @ axis)
         hperp = hc - axis * tc
         both_sides_one_body = len(sup) == 2 and (sup[1.0][2] or sup[1.0][1]) is (sup[-1.0][2] or sup[-1.0][1])
-        crosses = (not both_sides_one_body) and tc * s < -2.0
+        # A support whose body reaches across the weapon plane only crosses the weapon if it does so inside the disc it
+        # sweeps: an overhead bridge's posts anchor below the plane but outside the bar circle (and below its band),
+        # which ties the chassis together instead of sweeping the disc.
+        R_w = float(ph.perp_radius(wb.mesh.vertices, origin, axis).max()) + 1.0
+        wv = (wb.mesh.vertices - origin) @ axis
+        band = (float(wv.min()) - 1.0, float(wv.max()) + 1.0)
+        v = h.mesh.vertices - origin
+        tv_ = v @ axis
+        far = v[(tv_ * s < -2.0) & (tv_ >= band[0]) & (tv_ <= band[1])]
+        through = len(far) > 0 and float(ph.perp_radius(far, origin, axis).max()) < R_w
+        crosses = (not both_sides_one_body) and tc * s < -2.0 and through
         away = np.linalg.norm(cperp) > 1 and np.linalg.norm(hperp) > 1 and float(_unit(hperp) @ _unit(cperp)) < -0.2
         msg = (f"`{h.id}` holds side {s:+.0f} at {t:.1f} mm; its body centre sits {tc:.1f} mm along the axis and points "
                f"{'away from' if away else 'toward'} the chassis from the axle.")
@@ -1113,7 +1135,10 @@ def motors(a):
                     if sf_decl:
                         sd = -np.asarray({"x": [1, 0, 0], "y": [0, 1, 0], "z": [0, 0, 1]}[sf_decl[-1]], float) * (1 if sf_decl[0] == "+" else -1)
                     half = float(np.ptp(rp.geom.mesh.vertices @ sd)) / 2 if hasattr(rp.geom, "mesh") else 7.0
-                    cen = float(rp.geom.mesh.vertices.mean(axis=0) @ sd) if hasattr(rp.geom, "mesh") else 0.0
+                    # volume centroid: a vertex mean walks with tessellation density (lead wires, rim fans) and flips
+                    # the half verdict on parts whose tip sits near the middle
+                    cen = float(np.asarray(rp.geom.centroid, float) @ sd) if hasattr(rp.geom, "centroid") else \
+                        float(rp.geom.mesh.vertices.mean(axis=0) @ sd)
                     x = float(loc @ sd) - cen  # > 0: toward the shaft output (bell) face
                     at_bell = x > 0
                     grp = {a.group_of(i) for i in a.coupled(f) if i != b.id} - {None}

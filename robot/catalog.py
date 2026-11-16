@@ -138,6 +138,51 @@ def _gr1507_leads():
     return union([at(cyl(LEAD_R, LEAD_Z[0] - LEAD_Z[1]), LEAD_X, dy * LEAD_PITCH, 0.5 * sum(LEAD_Z)) for dy in (-1, 0, 1)])
 
 
+# 1806 outrunner split (bl_1806_2300kv, robot frame +X = bell top, origin at the can centre, can -7..7): the one-piece
+# entry stands in for whole-motor placements; a robot that bolts the stator down and spins the bell places the split
+# pair (cots.motor_split). 1806 class: 18 mm stator (tooth tips r9.0, 6 mm stack) on an r9.5 base flange with 4 M2
+# taps on 16 mm; 21 mm bell (wall r9.2-10.5 over the magnets, closed cap) on a solid r4 rotor core bored for the
+# 3 mm shaft the robot draws; 0.2 mm air gap tooth tip to magnet wall. The bell skirt starts 3.5 above the base back
+# so the M2 stator screws (3.25 mm engagement) end 1.25 mm clear of the spinning skirt.
+_BL_BASE_X0, _BL_BASE_X1 = -7.0, -3.5
+_BL_BELL_X0, _BL_BELL_TOP = -2.5, 5.0
+_BL_WALL_R = (9.2, 10.5)
+_BL_CORE_R, _BL_SHAFT_R = 4.0, 1.45
+_BL_TIP_R, _BL_YOKE_R, _BL_STATOR_BORE_R = 9.0, 6.5, 4.6
+_BL_STACK_H, _BL_SLOTS = 6.0, 12
+_BL_BASE_R = 9.5
+
+
+def _bl1806_bell():
+    wl = _BL_BELL_TOP - _BL_BELL_X0
+    wall = at(minus(cyl_x(_BL_WALL_R[1], wl), [cyl_x(_BL_WALL_R[0], wl + 1.0)]),
+              0.5 * (_BL_BELL_X0 + _BL_BELL_TOP), 0, 0)
+    cap = at(cyl_x(_BL_WALL_R[1], 2.0), _BL_BELL_TOP + 1.0, 0, 0)
+    core = at(cyl_x(_BL_CORE_R, wl + 2.0), 0.5 * (_BL_BELL_X0 + _BL_BELL_TOP) + 1.0, 0, 0)
+    return minus(union([wall, cap, core]), [at(cyl_x(_BL_SHAFT_R, 14.0), 1.5, 0, 0)])
+
+
+def _bl1806_stator():
+    h = _BL_STACK_H
+    tooth_r = _BL_TIP_R - _BL_YOKE_R
+    stack = [minus(cyl_x(_BL_YOKE_R, h), [cyl_x(_BL_STATOR_BORE_R, h + 0.2)])]
+    for k in range(_BL_SLOTS):
+        a = [360.0 / _BL_SLOTS * k, 0.0, 0.0]
+        stack.append(rot(at(box(h, 1.6, tooth_r), 0, 0, _BL_YOKE_R + 0.5 * tooth_r - 0.1), a))
+        stack.append(rot(at(box(h, 2.6, 0.5), 0, 0, _BL_TIP_R - 0.25), a))
+        wl, zc = tooth_r - 0.6, 0.5 * (_BL_YOKE_R + _BL_TIP_R - 0.6)
+        stack += [rot(at(box(h + 0.4, 1.9, wl), 0, 0, zc), a), rot(at(box(h, 2.4, wl), 0, 0, zc), a)]
+    parts = [at(cyl_x(_BL_BASE_R, _BL_BASE_X1 - _BL_BASE_X0), 0.5 * (_BL_BASE_X0 + _BL_BASE_X1), 0, 0),
+             at(union(stack), _BL_BASE_X1 + 0.5 * h, 0, 0)]
+    taps = [at(cyl_x(0.85, _BL_BASE_X1 - _BL_BASE_X0 + 0.2), 0.5 * (_BL_BASE_X0 + _BL_BASE_X1), 8.0 * sy, 8.0 * sz)
+            for sy, sz in ((1, 0), (-1, 0), (0, 1), (0, -1))]
+    return minus(at(union(parts), 0.0, 0, 0), [at(cyl_x(1.55, 30.0), 0.0, 0, 0)] + taps)
+
+
+def _bl1806_leads():
+    return union([at(cyl(0.45, 2.6), -6.5, dy * 1.0, 0.0) for dy in (-1, 0, 1)])  # flush with the flange face: nothing may proud the mounting face
+
+
 @dataclass
 class CatalogEntry:
     id: str
@@ -279,6 +324,13 @@ def builtin() -> list[CatalogEntry]:
         gearmotor("n20_1000rpm_6v", "N20 gearmotor 6 V 1000 rpm", 15, 12, 10, 9, 12, 10, 10.5,
                   {"nominal_v": 6.0, "rpm_nominal": 1000.0, "stall_current_a": 0.8, "no_load_current_a": 0.07, "stall_torque_gcm": 600.0}),
         outrunner("bl_1806_2300kv", "1806 2300 kV outrunner", 21, 14, 8, 17.5, 2300, {"max_current_a": 15.0, "typ_current_a": 8.0}),
+        CatalogEntry("bl_1806_stator", "weapon_motor", "1806 2300 kV outrunner, fixed half: r9.5 base flange with 4 M2 on 16 mm, 12-slot wound 18 mm stator, 3 phase leads (bell is `bl_1806_can`)", 6.5, "estimate",
+                     minus(union([_bl1806_stator(), _bl1806_leads()]), [at(cyl_x(1.55, 30.0), 0.0, 0, 0)]),
+                     {"phases": [-7.0, 0.0, 0.0]}, {"at": [7.0, 0.0, 0.0], "dir": [1.0, 0.0, 0.0], "len": 14.0, "dia": 3.0},
+                     {"kv": 2300, "max_current_a": 15.0, "typ_current_a": 8.0, "bell_mass_frac": 0.0, "rotor_part": "bl_1806_can"}, "#3a3d42"),
+        CatalogEntry("bl_1806_can", "other", "1806 2300 kV outrunner, rotating half: 21 mm bell (r9.2-10.5 magnet wall, closed cap), solid r4 rotor core bored for the 3 mm shaft", 11.0, "estimate",
+                     _bl1806_bell(),
+                     {}, None, {"half_of": "bl_1806_2300kv"}, "#3a3d42"),
         outrunner("bl_2306_1400kv", "2306 1400 kV outrunner", 27.5, 14, 10, 29, 1400, {"max_current_a": 20.0, "typ_current_a": 10.0}),
         lipo("lipo_2s_180", "2S 180 mAh LiPo (nano-tech class)", 28, 18, 10, 12.5, 2, 180, 40),
         lipo("lipo_2s_350", "2S 350 mAh LiPo", 36, 17, 11, 21.5, 2, 350, 30),
@@ -695,6 +747,7 @@ def sheet_family(mid):
 # "-x"/"+x" in the catalog frame (shaft stub along +X). Everything else of an outrunner's can is the rotating bell.
 MOTOR_FACES = {
     "bl_1806_2300kv": {"stator_face": "-x", "depth_mm": 2.0},
+    "bl_1806_stator": {"stator_face": "-x", "depth_mm": 2.0},
     "be1806_bbb": {"stator_face": "-x", "depth_mm": 3.5},
     "gr1507": {"stator_face": "-x", "depth_mm": 2.0},
 }

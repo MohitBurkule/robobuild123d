@@ -73,6 +73,7 @@ def run(ctx):
         tip = rpm * (2.0 * rmax) * math.pi * 60.0 / 1_609_344.0
         ctx.metrics["tip_speed_mph"] = tip
         ctx.metrics["weapon_rpm"] = rpm
+        ctx.metrics["weapon_orientation"] = "vertical" if abs(float(axis[2])) > 0.7 else "horizontal"
         limit = r.profile.max_tip_speed_mph
         if tip > limit:
             out.append(fail("power.tip_speed", G, BLOCKER, "Weapon tip is too fast",
