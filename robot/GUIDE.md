@@ -607,3 +607,33 @@ worst-case mass), `footprint_max_mm` (max), `budget_gbp` (max against the BOM co
 BLOCKER with expected/actual; `requirements.unknown_key` (BLOCKER) is a requirement the verifier cannot judge (silently
 ignoring intent is worse). Keys that have no metric yet (top_speed_mps, push_force_n, must_survive, invertible) and
 metrics that were not computed this run are NOT CHECKED, never a pass.
+
+## Fastener engagement vs the clamped stack (`engagement.*`, group `engagement`)
+
+Rule: **a screw must be longer than the parts it clamps, and its thread must bite the host.** The clamped stack is
+the summed thickness of the `through` parts along the screw axis. `engagement.clamp_short` (BLOCKER): the usable
+shank is not longer than the stack - the head bottoms out on the first part and nothing is clamped. `engagement.pct_low`
+(WARNING): thread engagement under `review.engagement.plastic_x_d` (default 2) x the thread diameter in a PRINTED
+host (`fastener.engagement` blocks under 1.5 d everywhere; plastic wants 2 d). The design's minimum engagement,
+as a percent of one thread diameter, is reported in the metrics (`fastener_engagement_min_pct`). A designation the
+catalogue cannot parse is NOT CHECKED, never a pass.
+
+## Tool access for every fastener (`tool_access.*`, group `tool_access`)
+
+Rule: **every screw needs its driver, every nut needs its wrench.** `fastener.access` proves the driver path only for
+screws that declare a `tool`. `tool_access.blocked` (BLOCKER): a screw with NO declared tool (its catalogue hex key
+is assumed) whose straight driver path out of the head is blocked by another part. `tool_access.nut_blocked`
+(BLOCKER): the wrench ring around a nut (its width across flats + `profile.driver_access_radius_mm` clearance) is
+occupied by a part that is not in the joint being tightened - the nut cannot be held or torqued. Fix: open a wrench
+pocket, use a retained/slot nut, or design the joint so only the screw turns.
+
+## Wire chafe, bend radius, strain relief (`wire_care.*`, group `wire_care`)
+
+Rule: **the harness must survive vibration and hits, not just fit.** Judged from the declared harness (ports + `via`
+waypoints), no router needed. `wire_care.bend` (WARNING): a via corner tighter than `review.wire_care.bend_x_od`
+(default 2) x the wire's outer diameter work-hardens the strands. `wire_care.chafe` (WARNING): the wire passes
+through a thin wall of a part it does not terminate on (through a hole: in and out inside `wall_max_mm`, default 6,
+never inside the solid) - the hole edge saws the insulation; opt out with `grommet: true` on the wire once it is
+lined or deburred. `wire_care.strain_relief` (WARNING): a wire ending on a vibrating part (motor, weapon_motor,
+servo) has no via anchor within `relief_dist_mm` (default 12) of that end, no `slack_mm` and no `strain_relief`
+note - vibration works the crimp until it fails. A wire whose ports do not resolve is NOT CHECKED, never a pass.
