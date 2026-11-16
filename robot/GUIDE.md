@@ -1,5 +1,7 @@
 # Antweight robot builder guide
 
+> Small model? Read robot/docs/FACTS.md first: the verifier's rules and the tools that measure things for you.
+
 You design a 150 g UK antweight combat robot as a JSON file (`spec.json`). The verifier (`robot verify`) measures the solid model
 and fails anything unbuildable. Work in a loop: edit the spec, run `python3 -m robot verify spec.json`, read each failure (it names the parts,
 a position and a fix), repeat until there are no blockers. Then `robot render` and `robot export`.
@@ -732,3 +734,14 @@ on the bench. `builder.skill` (WARNING): heat-set inserts need intermediate skil
 waterjet) need expert. `builder.budget` (WARNING): the purchasable BOM cost (robot/bom_out, also published as the
 `bom_cost_gbp` metric) exceeds `budget_gbp`. `builder.unknown` (WARNING): the preset id or printer is not known.
 `builder.ok` (pass) when the whole design fits the bench. No `builder` key: NOT CHECKED, the report is unchanged.
+
+## Fixing collisions without hand maths (jiggle)
+
+- Read `ROOT CAUSES` first: one collision = one item; its consequences (fit, assembly.blocked, sweeps) go with it.
+- Overlap blockers state measured fixes ("move `switch` +y 0.62 mm"). Do not recompute geometry by hand.
+- Link placements to masters: spec `"params": {"P": "src/x/params.py"}` and `"at": [0, "P.switch_y()", "P.SWITCH_Z"]`.
+  Pockets, holes, slots and the part then all derive from the same master.
+- Solve over masters: `python3 -m robot jiggle spec.json --param src/x/params.py:SWITCH_BAY=4:14:0.1 --write-params`
+  (or list `"levers": [{"param": "src/x/params.py:SWITCH_BAY", "lo": 4, "hi": 14, "step": 0.1}]` in the spec).
+  It rebuilds with overridden masters (every relation re-derives), uses a finite-difference Jacobian + damped least
+  squares, and writes the new literal into params.py. Then run `robot verify`.

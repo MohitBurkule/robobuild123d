@@ -53,7 +53,14 @@ def run(ctx):
         ctx.metrics[f"part_mass_g.{b.id}"] = grams
         lines.append(MassLine(b.id, kind, grams, grams * tol, source))
     for pid in missing:
-        out.append(fail("mass.unknown", G, BLOCKER, "Mass cannot be determined", f"`{pid}` has no catalog entry, material or `mass_g`.").on(pid)
+        import difflib
+        mat = next((x.material for x in ctx.r.spec.parts if x.id == pid), None)
+        why = f"`{pid}` has no catalog entry, material or `mass_g`."
+        if mat:
+            near = difflib.get_close_matches(str(mat), list(catalog.MATERIALS), n=3, cutoff=0.4)
+            why = (f"`{pid}`: material `{mat}` is not a known material id" + (f" (did you mean {', '.join(f'`{n}`' for n in near)}?)" if near else "")
+                   + f"; known: {', '.join(sorted(catalog.MATERIALS))}.")
+        out.append(fail("mass.unknown", G, BLOCKER, "Mass cannot be determined", why).on(pid)
                    .fix("Set `material` (and `process`), or `slicer_mass_g` / `scale_mass_g`."))
     wire_g = ctx.metrics.get("wire_mass_g")
     if wire_g is None:
