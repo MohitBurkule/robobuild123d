@@ -1,0 +1,142 @@
+{
+ "spec": "/workspace/github__MohitBurkule__robobuild123d/robots/limpet_xxt/spec.json",
+ "rendered_at": 1794872549.1520228,
+ "bodies": [
+  "tub",
+  "lid_r",
+  "lid_l",
+  "side_r",
+  "side_l",
+  "flipper",
+  "hinge_block",
+  "hinge_pin",
+  "horn",
+  "drive_pin",
+  "wheel_fl",
+  "motor_fl",
+  "wheel_fr",
+  "motor_fr",
+  "wheel_rl",
+  "motor_rl",
+  "wheel_rr",
+  "motor_rr",
+  "servo",
+  "battery",
+  "esc",
+  "switch",
+  "insert_lid_l0",
+  "insert_lid_l1",
+  "insert_lid_r0",
+  "insert_lid_r1",
+  "insert_standoff_r00",
+  "insert_standoff_r01",
+  "insert_standoff_r10",
+  "insert_standoff_r11",
+  "insert_standoff_l00",
+  "insert_standoff_l01",
+  "insert_standoff_l10",
+  "insert_standoff_l11",
+  "insert_hb0",
+  "insert_hb1",
+  "bolt_lid_l0",
+  "bolt_lid_l1",
+  "bolt_lid_r0",
+  "bolt_lid_r1",
+  "bolt_side_r00",
+  "bolt_side_r01",
+  "bolt_side_r10",
+  "bolt_side_r11",
+  "bolt_side_l00",
+  "bolt_side_l01",
+  "bolt_side_l10",
+  "bolt_side_l11",
+  "bolt_hb0",
+  "bolt_hb1"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    -33.6,
+    11.0,
+    8.1
+   ],
+   "to": [
+    -19.0,
+    -24.25,
+    12.05
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    -16.0,
+    -24.25,
+    12.05
+   ],
+   "to": [
+    -27.5,
+    20.25,
+    5.6
+   ]
+  },
+  "w_esc_mfl": {
+   "from": [
+    -4.5,
+    28.25,
+    5.6
+   ],
+   "to": [
+    4.704999999999999,
+    14.999999999999998,
+    12.0
+   ]
+  },
+  "w_esc_mrl": {
+   "from": [
+    -4.5,
+    28.25,
+    5.6
+   ],
+   "to": [
+    -34.9,
+    14.999999999999998,
+    12.0
+   ]
+  },
+  "w_esc_mfr": {
+   "from": [
+    -27.5,
+    28.25,
+    5.6
+   ],
+   "to": [
+    4.704999999999999,
+    -14.999999999999998,
+    12.0
+   ]
+  },
+  "w_esc_mrr": {
+   "from": [
+    -27.5,
+    28.25,
+    5.6
+   ],
+   "to": [
+    -34.9,
+    -14.999999999999998,
+    12.0
+   ]
+  },
+  "w_esc_servo": {
+   "from": [
+    -4.5,
+    20.25,
+    5.6
+   ],
+   "to": [
+    -10.095,
+    0.0,
+    9.15
+   ]
+  }
+ }
+}
