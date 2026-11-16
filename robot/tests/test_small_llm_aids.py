@@ -62,3 +62,42 @@ def test_cache_hashes_dispatched_sibling(tmp_path):
     h1 = cache.model_hash(m)
     (tmp_path / "pkg" / "tub.py").write_text("X = 2\n")
     assert cache.model_hash(m) != h1
+
+
+def _param_robot(tmp_path):
+    (tmp_path / "params.py").write_text("BAY = 8.0  # battery bay x, mm\nPOCKET_X = BAY  # pocket follows the bay\nPOST_X = 14.0\n")
+    (tmp_path / "build.py").write_text(
+        "import importlib.util, pathlib, build123d as bd\n"
+        "def build(part='tub'):\n"
+        "    p = pathlib.Path(__file__).with_name('params.py')\n"
+        "    from robot import params_override as po\n"
+        "    P = po.load_file(p)\n"
+        "    plate = bd.Box(40, 40, 6) - bd.Pos(P.POCKET_X, 0, 0) * bd.Box(10, 10, 6)\n"
+        "    return plate + bd.Pos(P.POST_X, 0, 0) * bd.Box(4, 4, 6)\n")
+    d = {"name": "t", "params": {"P": "params.py"},
+         "parts": [{"id": "tub", "kind": "structure", "shape": {"type": "model", "file": "build.py", "params": {"part": "tub"}},
+                    "at": [0, 0, 0], "material": "pla"},
+                   box("bat", ["P.BAY", 0, 0], (10, 10, 6), kind="battery")]}
+    sp = tmp_path / "spec.json"
+    sp.write_text(json.dumps(d))
+    return sp
+
+
+def test_params_override_rederives(tmp_path):
+    from robot import params_override as po
+    _param_robot(tmp_path)
+    with po.active({str(tmp_path / "params.py"): {"BAY": 5.0}}):
+        assert po.load_file(tmp_path / "params.py").POCKET_X == 5.0
+    assert po.load_file(tmp_path / "params.py").POCKET_X == 8.0
+    po.write(tmp_path / "params.py", {"BAY": 6.5})
+    assert po.read(tmp_path / "params.py", "BAY") == 6.5 and "# battery bay" in (tmp_path / "params.py").read_text()
+
+
+def test_jiggle_solves_named_param_with_dependents(tmp_path):
+    from robot.solve import jiggle
+    sp = _param_robot(tmp_path)
+    lv = jiggle.parse_levers(sp, ["params.py:BAY=0:10:0.1"])
+    res = jiggle.solve_params(sp, lv, log=lambda *_: None)
+    assert res["start"] > 0.2 and res["final"] <= 1e-6, res
+    new = res["values"]["params.py:BAY"]
+    assert 0 <= new <= 7.2   # bat clears the post; the pocket moved with it (no tub/bat overlap left)

@@ -567,3 +567,14 @@ than `review.dfm.max_horizontal_hole_mm` (6 mm) lies in the layer plane — tear
 widen it or remove it. `dfm.undeclared_tolerance` (WARNING): a shaft/pin runs in a printed bore where neither the
 connection nor either part declares `clearance_mm`/`interference_mm` — FDM holes come out 0.1-0.3 mm small, so declare
 the fit. Parts without a mesh or a valid `print_orientation` are NOT CHECKED, never a pass.
+
+## Fixing collisions without hand maths (jiggle)
+
+- Read `ROOT CAUSES` first: one collision = one item; its consequences (fit, assembly.blocked, sweeps) go with it.
+- Overlap blockers state measured fixes ("move `switch` +y 0.62 mm"). Do not recompute geometry by hand.
+- Link placements to masters: spec `"params": {"P": "src/x/params.py"}` and `"at": [0, "P.switch_y()", "P.SWITCH_Z"]`.
+  Pockets, holes, slots and the part then all derive from the same master.
+- Solve over masters: `python3 -m robot jiggle spec.json --param src/x/params.py:SWITCH_BAY=4:14:0.1 --write-params`
+  (or list `"levers": [{"param": "src/x/params.py:SWITCH_BAY", "lo": 4, "hi": 14, "step": 0.1}]` in the spec).
+  It rebuilds with overridden masters (every relation re-derives), uses a finite-difference Jacobian + damped least
+  squares, and writes the new literal into params.py. Then run `robot verify`.
