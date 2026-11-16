@@ -121,6 +121,7 @@ class Report:
     parity: dict = field(default_factory=dict)  # counts and score of the parity findings (never gating unless combined)
     groups: dict = field(default_factory=dict)  # group -> {kind, tier, time_s, how, blockers, warnings, passed}
     not_run: list = field(default_factory=list)  # [{group, kind, tier, reason}] registered groups this run skipped
+    roots: list = field(default_factory=list)  # blockers grouped by root cause (robot/rootcause.py)
 
     def finish(self, combined=None):
         """Count and decide `ok`. The gate is the DESIGN findings; parity findings (kind "parity": comparisons with a
@@ -148,6 +149,10 @@ class Report:
         self.summary = count(self.findings if self.gate == "combined" else des)
         self.summary["parity_blockers"] = pc["blockers"]
         self.ok = self.summary["blockers"] == 0
+        from . import rootcause
+        gate = self.findings if self.gate == "combined" else des
+        self.roots = rootcause.group(gate)
+        self.summary["root_causes"] = len(self.roots)
 
     def failed(self, fid) -> bool:
         return any(not f.passed and f.id == fid for f in self.findings)
@@ -163,5 +168,5 @@ class Report:
             "routes": [asdict(r) for r in self.routes], "assembly": [asdict(a) for a in self.assembly],
             "not_checked": self.not_checked, "checks_revision": self.checks_revision, "engine": self.engine,
             "timings_s": self.timings_s, "gate": self.gate, "tier": self.tier, "design": self.design,
-            "parity": self.parity, "groups": self.groups, "not_run": self.not_run,
+            "parity": self.parity, "groups": self.groups, "not_run": self.not_run, "roots": self.roots,
         }

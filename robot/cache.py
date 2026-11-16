@@ -276,6 +276,9 @@ def _imports(f: Path) -> tuple[list[str], list[str]]:
     return mods, data
 
 
+MAX_SIBLING_PY = 400
+
+
 def model_closure(f, roots=()) -> list[tuple[str, Path]]:
     """Every local file a model file depends on: itself, the python modules it imports (transitively: sibling
     params/helper modules next to it and the robot package's own modules) and data files it names by a relative
@@ -306,6 +309,17 @@ def model_closure(f, roots=()) -> list[tuple[str, Path]]:
             p = (cur.parent / s)
             if p.is_file():
                 todo.append((p.resolve(), _label(p.resolve(), f.parent)))
+    # Imports the AST walk cannot see (importlib.import_module(f"pkg.{part}"), getattr dispatch, exec) still read
+    # files next to the model: hash every .py under the model's folder too, so editing tub.py always rebuilds a part
+    # built through a dispatcher (stale-cache trap seen on Scythe, 2026-11-16).
+    extra = 0
+    for p in sorted(f.parent.rglob("*.py")):
+        if extra >= MAX_SIBLING_PY or any(x in ("__pycache__", "tests", ".git") for x in p.parts):
+            continue
+        p = p.resolve()
+        if p not in seen:
+            seen[p] = _label(p, f.parent)
+            extra += 1
     return sorted(((lab, p) for p, lab in seen.items()), key=lambda t: t[0])
 
 
