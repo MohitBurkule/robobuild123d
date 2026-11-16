@@ -25,7 +25,7 @@ the plan (2026-11-14, after the 80-PR merge campaign).
 | B4 | Design patch language (`robot/design_io/patch.py`: apply/diff) | [x] | provenance (`design why`) still open |
 | B5 | `robot mcp` stdio server | [x] | robot/mcp_server.py: schema, catalog, validate, explain, diff, guide tools |
 | B6 | One error envelope + one JSON schema across both front doors | [x] | Schema.errors/json_schema + test_design_envelope.py |
-| B7 | Generated LLM pack (SKILL.md, examples) with drift test | [ ] | |
+| B7 | Generated LLM pack (SKILL.md, examples) with drift test | [x] | |
 | B8 | `robot explain <finding-id>` | [x] | robot/checks/explain.py, coverage-tested vs registry + hint table |
 
 ## C. Robustness & speed
@@ -47,8 +47,8 @@ the plan (2026-11-14, after the 80-PR merge campaign).
 | D2 | Named fits with process compensation (`robot/fits.py`) | [x] | library + bands; CAD-hole wiring is gen-side |
 | D3 | Build-plate export (oriented, packed STL + plates.json) | [x] | robot/plate.py |
 | D4 | Purchasable BOM (UK vendors, packs, spares, order CSVs) | [x] | robot/bom_out.py |
-| D5 | Slice-based mass & print-time estimate | [ ] | |
-| D6 | DXF sheet/turned-part order pack | [ ] | |
+| D5 | Slice-based mass & print-time estimate | [x] | |
+| D6 | DXF sheet/turned-part order pack | [x] | |
 | D7 | Assembly instructions (steps doc from disassembly order) | [x] | robot/assembly_doc.py -> build.md |
 
 ## E. UX
@@ -57,10 +57,10 @@ the plan (2026-11-14, after the 80-PR merge campaign).
 |---|------|--------|-------|
 | E1 | HTML report with embedded 3D viewer (GLB) | [x] | robot/report_html.py + robot/glb.py, `robot report -o report.html` |
 | E2 | `robot diff A B` (exit 3 on regressions) | [x] | robot/diffcmd.py + test_diffcmd.py |
-| E3 | Builder profile check group | [ ] | |
-| E4 | Selectable rules profiles (`robot/profiles/*.json`) | [ ] | |
+| E3 | Builder profile check group | [x] | |
+| E4 | Selectable rules profiles (`robot/profiles/*.json`) | [x] | |
 | E5 | Fork hygiene: restrict upstream publish.yml, NOTICE, path guards | [~] | publish.yml upload_pypi gated on upstream repo; NOTICE/path guards deferred |
-| E6 | Gallery page | [ ] | |
+| E6 | Gallery page | [x] | |
 
 ## F. Physics & verification checks
 
@@ -68,10 +68,10 @@ the plan (2026-11-14, after the 80-PR merge campaign).
 |---|------|--------|-------|
 | F1 | Gyro wheel-lift + hit reaction | [x] | `impact.*` group (robot/checks/impact.py): gyro_lift, hop, yaw |
 | F2 | Real motor curves in sim + fight scoring | [ ] | |
-| F3 | Rest/dead-pose analysis (`rest.*`) | [ ] | |
+| F3 | Rest/dead-pose analysis (`rest.*`) | [x] | |
 | F4 | Thermal & brownout budget (`thermal.*`) | [x] | robot/checks/thermal.py: brownout, sag, esc_overcurrent |
 | F5 | Load paths beyond the weapon shaft | [ ] | |
-| F6 | Serviceability (`service.*`) | [ ] | |
+| F6 | Serviceability (`service.*`) | [x] | |
 
 ## G. Additional verification checks
 
@@ -79,13 +79,13 @@ the plan (2026-11-14, after the 80-PR merge campaign).
 |---|------|--------|-------|
 | G1 | Tolerance stack-up chains across mating parts | [ ] | |
 | G2 | Coaxiality of bearing/bore seats across mated parts | [ ] | |
-| G3 | Fastener engagement % (length vs clamped stack) | [ ] | |
-| G4 | Driver/tool straight-line access to every fastener | [ ] | |
-| G5 | Wire chafe, bend radius, connector strain relief | [ ] | |
-| G6 | RF placement (receiver/antenna away from noise, exit path) | [ ] | |
+| G3 | Fastener engagement % (length vs clamped stack) | [x] | |
+| G4 | Driver/tool straight-line access to every fastener | [x] | |
+| G5 | Wire chafe, bend radius, connector strain relief | [x] | |
+| G6 | RF placement (receiver/antenna away from noise, exit path) | [x] | |
 | G7 | Weapon full-360° self-sweep vs own body | [ ] | |
-| G8 | Ground clearance at rest with tire squash; wedge deflection | [ ] | |
-| G9 | COM over drive contact patch (traction/push balance) | [ ] | |
+| G8 | Ground clearance at rest with tire squash; wedge deflection | [x] | |
+| G9 | COM over drive contact patch (traction/push balance) | [x] | |
 | G10 | Mesh determinism golden-hash regression (tolerance-banded) | [ ] | |
 
 ## H. Archetypes
