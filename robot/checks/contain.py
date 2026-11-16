@@ -115,22 +115,33 @@ def run(ctx):
         others = [o for o in w.bodies if o is not b and not o.is_wire]
         sc = measure.Scene(others)
         lo, hi = b.aabb
-        c = (lo + hi) / 2
-        best = None
-        for ax in range(3):
-            for s in (-1, 1):
-                d = np.zeros(3)
-                d[ax] = s
-                face = c.copy()
-                face[ax] = (hi if s > 0 else lo)[ax] + 0.05 * s
-                ax2 = [i for i in range(3) if i != ax]
-                pts = [face] + [face + np.eye(3)[i] * k for i in ax2 for k in (-0.8, 0.8)]
-                pts = np.array(pts)
-                if measure.inside_any(others, pts).any():
-                    continue
-                dist, _ = sc.first_hit(pts, np.tile(d, (len(pts), 1)), SWITCH_REACH_MM)
-                if np.all(~np.isfinite(dist)):
-                    best = "+-"[s < 0] + "xyz"[ax]
+        # aim from the part origin (the actuator body) first: the box centre is skewed by terminal tabs
+        centres = [np.clip(b.M[:3, 3], lo, hi), (lo + hi) / 2]
+        best, c, why = None, centres[0], {}
+        for c in centres:
+            for ax in range(3):
+                for s in (-1, 1):
+                    d = np.zeros(3)
+                    d[ax] = s
+                    face = c.copy()
+                    face[ax] = (hi if s > 0 else lo)[ax] + 0.05 * s
+                    ax2 = [i for i in range(3) if i != ax]
+                    pts = np.array([face] + [face + np.eye(3)[i] * k for i in ax2 for k in (-0.8, 0.8)])
+                    name = "+-"[s < 0] + "xyz"[ax]
+                    if measure.inside_any(others, pts).any():
+                        why.setdefault(name, f"starts inside another part at ({', '.join(f'{v:.1f}' for v in face)})")
+                        continue
+                    dist, _ = sc.first_hit(pts, np.tile(d, (len(pts), 1)), SWITCH_REACH_MM)
+                    if np.all(~np.isfinite(dist)):
+                        best = name
+                        break
+                    k = int(np.nanargmin(np.where(np.isfinite(dist), dist, np.inf)))
+                    hp = pts[k] + d * dist[k]
+                    who = next((o.id for o in others if o.sdf(hp[None] + d * 0.05)[0] < 0.1), "?")
+                    hole = [f"{'xyz'[i]} {face[i]:.1f}" for i in ax2]
+                    why.setdefault(name, f"hits `{who}` after {dist[k]:.1f} mm at ({', '.join(f'{v:.1f}' for v in hp)}); "
+                                         f"a hole r >= 1.2 centred at {', '.join(hole)} clears it")
+                if best:
                     break
             if best:
                 break
@@ -138,7 +149,8 @@ def run(ctx):
             out.append(ok("contain.switch_access", G, "Switch reachable from outside", f"`{b.id}` has a clear 1.6 mm tool line out along {best}."))
         else:
             out.append(fail("contain.switch_access", G, BLOCKER, "Switch cannot be reached from outside",
-                            f"No straight 1.6 mm wide tool line from `{b.id}` leaves the robot within {SWITCH_REACH_MM:.0f} mm on any axis.")
+                            f"No straight 1.6 mm wide tool line from `{b.id}` leaves the robot within {SWITCH_REACH_MM:.0f} mm on any axis. "
+                            + "; ".join(f"{k}: {v}" for k, v in why.items()))
                        .on(b.id).here(c).fix("Open a slot in the armour over the switch actuator."))
     out.extend(line_of_sight(ctx))
     return out

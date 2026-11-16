@@ -105,7 +105,9 @@ def hole_tool(at, axis, fastener="M2x6", head="cap", into="tapped", grip=None, s
     info = {"d": d, "length": L, "head": head, "head_std": fc.head_standard(d, head), "head_dk": dk, "head_k": k,
             "clearance_d": c, "into": into, "side": side}
     tools = []
-    # z of the head bearing face (where the spec `at` sits)
+    # TWO DIFFERENT `at`s: this tool's `at` argument = the part's OUTER SURFACE. `seat` = how deep the head is recessed
+    # below it (cap: k by default, button/pan: 0, csk: sink). The returned record's `at` (= the spec fastener `at`) =
+    # the head bearing face = at + axis * seat. Put rec.at in the spec, never the tool argument.
     if side == "thread":
         seat = 0.0
         grip = 0.0

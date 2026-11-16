@@ -136,3 +136,19 @@ def test_line_of_sight_open_top():
     assert ids(contain.line_of_sight(c), "contain.line_of_sight")[0].passed is False
     c = _ctx(walls + [box("lid", (0, 0, 6), (30, 30, 2)), bat])
     assert ids(contain.line_of_sight(c), "contain.line_of_sight")[0].passed
+
+
+def test_probe_place_finds_free_spot(tmp_path):
+    from robot import probe
+    # floor 60x40 with a wall block on the left; a 10x10 brick sitting inside the block must be moved right
+    d = {"name": "t", "parts": [{**box("floor", (0, 0, -1), (60, 40, 2)), "kind": "structure"},
+                                {**box("wall", (-20, 0, 6), (20, 40, 10)), "kind": "structure"},
+                                {**box("brick", (-20, 0, 6), (10, 10, 8)), "kind": "esc"}]}
+    p = tmp_path / "s.json"
+    p.write_text(json.dumps(d))
+    s, r, w = probe._load(p)
+    txt = probe.place(s, r, w, "brick", step=2.0)
+    assert "free spots" in txt
+    first = txt.splitlines()[1]
+    x = float(first.split("at (")[1].split(",")[0])
+    assert x > -5
