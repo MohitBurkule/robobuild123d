@@ -442,5 +442,17 @@
   "electrical": "n/a",
   "source": "ISO bearing standard",
   "notes": "unverified"
+ },
+ {
+  "category": "battery",
+  "name": "GNB (Gaoneng) 2S 450mAh 80C LiPo (XT30)",
+  "supplier": "racedayquads.com",
+  "url": "https://racedayquads.com/products/gaoneng-7-4v-2s-450mah-80c-lipo-whoop-micro-battery-w-xt30",
+  "price_gbp": null,
+  "mass_g": "~28.0",
+  "dimensions_mm": "~61x17x14",
+  "electrical": "7.4V 2S 450mAh 80C, XT30",
+  "source": "https://racedayquads.com/products/gaoneng-7-4v-2s-450mah-80c-lipo-whoop-micro-battery-w-xt30",
+  "notes": "UK-stock whoop pack; the 450 mAh cell holds 180 s at the 2004's average draw where the 350 mAh class does not"
  }
 ]
