@@ -576,7 +576,6 @@ widen it or remove it. `dfm.undeclared_tolerance` (WARNING): a shaft/pin runs in
 connection nor either part declares `clearance_mm`/`interference_mm` — FDM holes come out 0.1-0.3 mm small, so declare
 the fit. Parts without a mesh or a valid `print_orientation` are NOT CHECKED, never a pass.
 
-<<<<<<< HEAD
 ## Thermal and brownout (`thermal.*`, group `thermal`)
 
 Rule: **the pack must hold voltage at peak current.** Loaded voltage is `nominal_v - I_peak * R_pack`
@@ -743,4 +742,3 @@ waterjet) need expert. `builder.budget` (WARNING): the purchasable BOM cost (rob
   (or list `"levers": [{"param": "src/x/params.py:SWITCH_BAY", "lo": 4, "hi": 14, "step": 0.1}]` in the spec).
   It rebuilds with overridden masters (every relation re-derives), uses a finite-difference Jacobian + damped least
   squares, and writes the new literal into params.py. Then run `robot verify`.
->>>>>>> cc065386 (Jiggle over named params: overrides re-derive relations, spec expr placements, least-squares solver)
