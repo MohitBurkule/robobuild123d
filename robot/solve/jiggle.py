@@ -191,6 +191,29 @@ def parse_levers(spec_path, items, raw_levers=(), max_move=5.0):
     return out
 
 
+REGEN = {"script": None, "cwd": None}   # spec generator (e.g. robots/scythe/make_spec.py), set by solve_params
+
+
+def run_generator(script, cwd=None):
+    """Run a spec generator script in-process with the active param overrides (its own constants included)."""
+    from .. import params_override as po
+
+    script = Path(script).resolve()
+    vals = po.current().get(str(script), {})
+    code = po.transform(script.read_text(encoding="utf-8"), vals, str(script)) if vals else \
+        compile(script.read_text(encoding="utf-8"), str(script), "exec")
+    old = Path.cwd()
+    import os
+    import contextlib
+    import io
+    os.chdir(cwd or old)
+    try:
+        with contextlib.redirect_stdout(io.StringIO()):
+            exec(code, {"__name__": "__main__", "__file__": str(script)})  # noqa: S102  the robot's own generator
+    finally:
+        os.chdir(old)
+
+
 def _eval_params(spec_path, levers, xs, clear, fast):
     """Violations of the whole robot with the levers at xs: {(a, b, what): amount}. Rebuilds what changed (cached)."""
     from .. import measure, params_override as po, spec as spec_mod, world as world_mod
@@ -202,6 +225,8 @@ def _eval_params(spec_path, levers, xs, clear, fast):
     root = Path(spec_path).resolve().parent
     with po.active(ov, purge_root=root):
         try:
+            if REGEN["script"]:
+                run_generator(REGEN["script"], REGEN["cwd"])
             s = spec_mod.load(spec_path)
             r = world_mod.resolve(s, fast=fast)
             if getattr(r, "load_errors", None):
@@ -213,7 +238,19 @@ def _eval_params(spec_path, levers, xs, clear, fast):
     return {(a, b, what): d for a, b, d, what in vs}
 
 
-def solve_params(spec_path, levers, clear=0.0, iters=12, fast=True, log=print):
+def solve_params(spec_path, levers, clear=0.0, iters=12, fast=True, log=print, regen=None, regen_cwd=None):
+    """See _solve_params. `regen`: spec generator script re-run at every evaluation (spec.json is restored after)."""
+    sp = Path(spec_path)
+    saved = sp.read_text()
+    REGEN.update(script=regen, cwd=regen_cwd)
+    try:
+        return _solve_params(spec_path, levers, clear, iters, fast, log)
+    finally:
+        REGEN.update(script=None, cwd=None)
+        sp.write_text(saved)
+
+
+def _solve_params(spec_path, levers, clear=0.0, iters=12, fast=True, log=print):
     """Damped least squares on the violation vector over named masters (finite-difference Jacobian), with a
     backtracking line search on the total and a coordinate-search fallback. Every relation that reads a master
     (pockets, hole patterns, slots, `{"expr"}` placements) moves with it, so dependents stay consistent."""
@@ -288,6 +325,9 @@ def add_cli(sub):
     p.add_argument("--param", action="append", default=[], metavar="FILE:NAME[=lo:hi[:step]]",
                    help="solve over this model master too (repeatable); spec `levers` entries are added. Parts, pockets,"
                         " holes and slots derived from it all move together")
+    p.add_argument("--regen", help="spec generator script (python) re-run at every evaluation, e.g. make_spec.py; its"
+                   " own top-level numbers can be levers too (--param make_spec.py:BAT_Y)")
+    p.add_argument("--regen-cwd", help="working dir for --regen (default: current)")
     p.add_argument("--params-only", action="store_true", help="only solve the named params, do not move spec `at`s")
     p.add_argument("--write-params", action="store_true", help="write the solved values into the params source files")
     p.add_argument("--fine", action="store_true", help="fine tessellation (slower, exact like verify)")
@@ -302,7 +342,8 @@ def _cli(a):
     raw = spec_mod.load(a.spec).raw
     levers = parse_levers(a.spec, a.param, raw.get("levers"), a.max_move)
     if levers:
-        pr = solve_params(a.spec, levers, a.clear, max(4, a.iters // 4), fast=not a.fine)
+        pr = solve_params(a.spec, levers, a.clear, max(4, a.iters // 4), fast=not a.fine,
+                          regen=a.regen, regen_cwd=a.regen_cwd)
         print(f"params: violation {pr['start']:.3f} -> {pr['final']:.3f} mm")
         for lab, (o, n) in pr["changed"].items():
             print(f"  {lab}: {o:g} -> {n:g}")
@@ -313,6 +354,9 @@ def _cli(a):
             for f, vals in by_file.items():
                 po.write(f, vals)
                 print(f"wrote {f}")
+            if a.regen:
+                run_generator(a.regen, a.regen_cwd)
+                print(f"regenerated {a.spec}")
         if a.json:
             Path(a.json).with_suffix(".params.json").write_text(json.dumps(pr, indent=2, default=list))
         if a.params_only or pr["final"] <= 1e-6:
