@@ -135,12 +135,14 @@ def judge(f, m: dict) -> list:
     rows.append(("head_clash", m["head_clash"] <= 0.05, rec,
                  f"`{fid}` head envelope is {m['head_clash'] * 100:.0f}% inside material (recess too small or wrong place)"))
     rows.append(("head_bearing", m["head_bearing"] >= 0.6, rec,
-                 f"`{fid}` head bears on {m['head_bearing'] * 100:.0f}% of its seat"))
+                 f"`{fid}` head bears on {m['head_bearing'] * 100:.0f}% of its seat" + _at_hint(m, hole)))
     if "thread_bite" in m:
         rows.append(("thread_bite", m["thread_bite"] >= 0.6, rec,
                      f"`{fid}` thread bites material on {m['thread_bite'] * 100:.0f}% of the engagement"))
         rows.append(("pilot_open", m["pilot_open"] >= 0.8, rec,
-                     f"`{fid}` tap-drill pilot is {m['pilot_open'] * 100:.0f}% open"))
+                     f"`{fid}` tap-drill pilot is {m['pilot_open'] * 100:.0f}% open (tap drill "
+                     f"{hole.get('tap_d') or 'default'} mm; the pilot must be open over the whole thread length past the grip)"
+                     + _at_hint(m, hole)))
     if "insert_open" in m:
         rows.append(("insert_bore", m["insert_open"] >= 0.8 and m["insert_wall"] >= 0.6, rec,
                      f"`{fid}` insert bore {m['insert_open'] * 100:.0f}% open, wall {m['insert_wall'] * 100:.0f}% present"))
@@ -148,3 +150,17 @@ def judge(f, m: dict) -> list:
         rows.append(("nut_pocket", m["nut_open"] >= 0.8 and m["nut_held"] >= 0.6, rec,
                      f"`{fid}` nut pocket {m['nut_open'] * 100:.0f}% open inside the flats, walls {m['nut_held'] * 100:.0f}% present"))
     return rows
+
+
+def _at_hint(m, hole):
+    """Measured: where material starts along the screw axis relative to the spec `at` (the usual cause of a bad seat)."""
+    surf = m.get("surface_t")
+    if surf is None:
+        return ". No material found along the axis from `at`: `at` is off the part, or `dir` points the wrong way"
+    style = hole.get("head", "")
+    want = -(hole.get("sink") or 0.0) if style == "csk" else -(hole.get("cbore_depth") or 0.0)
+    if abs(surf - want) < 0.05:
+        return ""
+    return (f". Measured: the part's outer surface is at {surf:+.2f} mm along `dir` from `at` (want {want:+.2f}: `at` = the "
+            f"face the head bears on, i.e. the outer surface for a head without counterbore, the counterbore floor with one; robot.cad.holes returns it as rec.at). "
+            f"Move `at` {surf - want:+.2f} mm along `dir`")

@@ -5,6 +5,7 @@
     python3 -m robot probe spec.json --joint flipper     sweep a joint over its range (others at default, exactly
                                                           as the verifier does): closest approach per other part
     python3 -m robot probe spec.json --at 1.3,0,33.1     what is at / near a world point
+    python3 -m robot probe spec.json --place battery     free (x, y, yaw) spots for a part, checked like the verifier
 
 All numbers come from the same meshes the verifier uses (fast tessellation unless --fine).
 """
@@ -155,6 +156,121 @@ def mass_report(s, r, w):
     return "\n".join(lines)
 
 
+PLACE_STEP, PLACE_TOP, PLACE_ROTS = 2.0, 8, (0, 90, 180, 270)
+
+
+def _rot_z(deg):
+    t = np.radians(deg)
+    R = np.eye(4)
+    R[:2, :2] = [[np.cos(t), -np.sin(t)], [np.sin(t), np.cos(t)]]
+    return R
+
+
+def _occ(bodies, X, Y, Z):
+    """Occupancy grid (len X, len Y, len Z) of the union of `bodies` sampled at voxel centres."""
+    G = np.zeros((len(X), len(Y), len(Z)), bool)
+    for o in bodies:
+        lo, hi = o.aabb
+        ix = np.nonzero((X >= lo[0]) & (X <= hi[0]))[0]
+        iy = np.nonzero((Y >= lo[1]) & (Y <= hi[1]))[0]
+        iz = np.nonzero((Z >= lo[2]) & (Z <= hi[2]))[0]
+        if not (len(ix) and len(iy) and len(iz)):
+            continue
+        P = np.stack(np.meshgrid(X[ix], Y[iy], Z[iz], indexing="ij"), -1).reshape(-1, 3)
+        ins = o.inside(P).reshape(len(ix), len(iy), len(iz))
+        G[np.ix_(ix, iy, iz)] |= ins
+    return G
+
+
+def place(s, r, w, pid, step=PLACE_STEP, rots=PLACE_ROTS, z=None, top=PLACE_TOP, region=None, pitch=0.5):
+    """Free spots for one part: every x,y shift (its z kept) x extra yaw about its own origin. Collision-free shifts for
+    ALL positions at once by voxel correlation (FFT), then the best few re-checked with the verifier's own exact overlap
+    test and allowances. Wires and screws ignored; the part's children are left out and must move with it. Ranked by
+    clearance (distance to the nearest colliding shift), then distance from now. Replaces hand packing in the head."""
+    from scipy import ndimage, signal
+
+    from . import measure
+    from .checks.interference import allowed_depth, descendants
+    from .world import Body
+
+    b = w.body(pid)
+    if b is None:
+        return f"no part `{pid}`"
+    kids = descendants(r, pid)
+    obst = [o for o in w.bodies if o.id not in kids and not o.is_wire and not o.fastener]
+    structs = [o for o in obst if o.kind in ("structure", "plate", "armor", "chassis", "panel")] or obst
+    if region is None:
+        lo = np.min([o.aabb[0] for o in structs], axis=0)
+        hi = np.max([o.aabb[1] for o in structs], axis=0)
+        region = (lo[0], hi[0], lo[1], hi[1])
+    o0 = b.M[:3, 3].copy()
+    zc = o0[2] if z is None else float(z)
+    res = []
+    for deg in rots:
+        M = b.M.copy()
+        M[:3, :3] = _rot_z(deg)[:3, :3] @ b.M[:3, :3]
+        M[:3, 3] = [o0[0], o0[1], zc]
+        rb = Body(pid, b.kind, b.geom, M, b.color, b.part_idx)
+        plo, phi = rb.aabb
+        # part voxels, on a grid anchored at its own box corner
+        PX = np.arange(plo[0] + pitch / 2, phi[0], pitch)
+        PY = np.arange(plo[1] + pitch / 2, phi[1], pitch)
+        PZ = np.arange(plo[2] + pitch / 2, phi[2], pitch)
+        Pg = _occ([rb], PX, PY, PZ)
+        # world voxels over the region (part box may sit anywhere inside it), same z planes
+        X = np.arange(region[0] + pitch / 2, region[1], pitch)
+        Y = np.arange(region[2] + pitch / 2, region[3], pitch)
+        if len(X) < len(PX) or len(Y) < len(PY):
+            continue
+        Og = _occ(obst, X, Y, PZ)
+        C = sum(signal.fftconvolve(Og[:, :, k].astype(float), Pg[::-1, ::-1, k].astype(float), mode="valid")
+                for k in range(len(PZ)) if Pg[:, :, k].any())
+        free = C < 0.5
+        if not free.any():
+            continue
+        clear = ndimage.distance_transform_edt(free) * pitch
+        # shift index (i, j): part box corner at X[i]-pitch/2, Y[j]-pitch/2 -> origin position
+        ii, jj = np.nonzero(free)
+        ox = X[ii] - pitch / 2 - plo[0] + o0[0]
+        oy = Y[jj] - pitch / 2 - plo[1] + o0[1]
+        cl = clear[ii, jj]
+        dist = np.hypot(ox - o0[0], oy - o0[1])
+        # snap to the requested step so answers are round numbers, keep the best per cell
+        seen = set()
+        for k in np.lexsort((dist, -np.round(cl, 1))):
+            key = (round(ox[k] / step), round(oy[k] / step))
+            if key in seen:
+                continue
+            seen.add(key)
+            res.append((float(cl[k]), float(dist[k]), float(ox[k]), float(oy[k]), deg, rb))
+            if len(seen) > 4 * top:
+                break
+    res.sort(key=lambda t: (-round(t[0], 1), t[1]))
+    lines, n = [], 0
+    for g, dist, x, y, deg, rb in res:
+        sh = np.array([x, y, zc]) - rb.M[:3, 3]
+        bad = []
+        for o in obst:
+            if measure.aabb_overlap(rb.aabb + sh, o.aabb):
+                al = allowed_depth(r, rb, o)
+                ov = measure.overlap(rb, o, sh, cap=al)
+                if ov is not None and ov.depth > al:
+                    bad.append(o.id)
+        if bad:
+            continue
+        box = rb.aabb + sh
+        lines.append(f"  at ({x:.1f}, {y:.1f}, {zc:.2f}) yaw +{deg}: >= {g:.1f} mm free travel every way, {dist:.1f} mm from now; "
+                     f"box x {box[0][0]:.1f}..{box[1][0]:.1f} y {box[0][1]:.1f}..{box[1][1]:.1f}")
+        n += 1
+        if n >= top:
+            break
+    if not lines:
+        return (f"`{pid}`: no free spot at z {zc:.2f} with yaw {list(rots)} inside x {region[0]:.1f}..{region[1]:.1f} "
+                f"y {region[2]:.1f}..{region[3]:.1f}. Something else must move (try `probe --place` on it), or change z / the part.")
+    return "\n".join([f"`{pid}` free spots (yaw added to its current rot; spec `at` = origin; children "
+                      f"{sorted(kids - {pid}) or 'none'} move with it; exact-checked like the verifier):"] + lines)
+
+
 def overview(s, r, w):
     out = []
     for b in w.bodies:
@@ -170,6 +286,9 @@ def add_cli(sub):
     p.add_argument("part", nargs="?")
     p.add_argument("--joint", help="sweep this part's joint over its range")
     p.add_argument("--at", help="x,y,z world point: which parts contain / are near it")
+    p.add_argument("--place", metavar="PART", help="list free spots (x, y, yaw) for this part, checked like the verifier")
+    p.add_argument("--step", type=float, default=PLACE_STEP, help="--place grid step mm")
+    p.add_argument("--region", help="--place: xlo,xhi,ylo,yhi (default: the structure box)")
     p.add_argument("--mass", action="store_true", help="mass budget per part (flags solid blocks)")
     p.add_argument("--fine", action="store_true")
     p.add_argument("--json", action="store_true", help="(overview) JSON boxes")
@@ -178,7 +297,10 @@ def add_cli(sub):
 
 def _cli(a):
     s, r, w = _load(a.spec, a.fine)
-    if a.mass:
+    if a.place:
+        reg = tuple(float(v) for v in a.region.split(",")) if a.region else None
+        print(place(s, r, w, a.place, step=a.step, region=reg))
+    elif a.mass:
         print(mass_report(s, r, w))
     elif a.joint:
         print(joint_sweep(s, r, a.joint))

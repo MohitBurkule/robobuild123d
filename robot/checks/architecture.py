@@ -1003,6 +1003,32 @@ def fork_stiffness(a, origin, axis, sup):
 
 # --------------------------------------------------------------------------------------------------------------- motors
 
+WHO = {}  # (body id, direction index) -> structure id that blocks it (for messages)
+DIRS6 = ["+x", "-x", "+y", "-y", "+z", "-z"]
+
+
+def clamp_detail(b, blocked, into, gap=0.8):
+    """Per-side state and the smallest set of edits that passes, so nobody has to read this module."""
+    lo, hi = b.aabb
+    sides = []
+    for k, n in enumerate(DIRS6):
+        ax, s = k // 2, (1 if k % 2 == 0 else -1)
+        face = (hi if s > 0 else lo)[ax]
+        sides.append(f"{n} face {'xyz'[ax]}={face:.2f}: " + (f"held by `{WHO.get((b.id, k), '?')}`" if k in blocked
+                     else f"open (needs structure at {'xyz'[ax]}={face + s * gap:.2f}, within {gap} mm)"))
+    need = []
+    full = [i for i in range(3) if 2 * i in blocked and 2 * i + 1 in blocked]
+    half = [i for i in range(3) if (2 * i in blocked) != (2 * i + 1 in blocked)]
+    if len(full) < 2:
+        for i in half[: 2 - len(full)]:
+            miss = DIRS6[2 * i] if 2 * i not in blocked else DIRS6[2 * i + 1]
+            need.append(f"add structure on the {miss} face (axis {'XYZ'[i]} then held both sides)")
+    if len(into) < 2:
+        need.append(f"or {2 - len(into)} more screw(s) threading into the motor (catalogue mount holes) with >= 1 axis held")
+    return "Sides: " + "; ".join(sides) + ". Rule: structure on both sides along 2 axes, or 1 axis + 2 screws into it, or 2 screws. " \
+        + ("Cheapest: " + "; ".join(need) + "." if need else "")
+
+
 def _clamp_axes(a, b, structs, gap=0.8):
     """Axes (0..2) on which structure touches the body on both sides, and the directions blocked."""
     pts, nrm = b.surface(1.0)
@@ -1015,6 +1041,7 @@ def _clamp_axes(a, b, structs, gap=0.8):
         for s in structs:
             if measure.aabb_overlap(s.aabb, b.aabb, gap + 0.1) and s.inside(P).any():
                 blocked.add(k)
+                WHO[(b.id, k)] = s.id
                 break
     axes = [i for i in range(3) if 2 * i in blocked and 2 * i + 1 in blocked]
     return axes, blocked
@@ -1066,7 +1093,8 @@ def motors(a):
         if len(axes) >= 2 or (len(axes) >= 1 and len(into) >= 2) or len(into) >= 2:
             out.append(ok("arch.motor_clamp", G, "Motor is captured", m))
         else:
-            out.append(fail("arch.motor_clamp", G, BLOCKER if not blocked and not into else WARNING, "Motor not captured", m).on(b.id)
+            out.append(fail("arch.motor_clamp", G, BLOCKER if not blocked and not into else WARNING, "Motor not captured",
+                            m + " " + clamp_detail(b, blocked, into)).on(b.id)
                        .fix("Box the motor between walls on two axes, or screw its face."))
         # Anti-rotation about its own shaft.
         if rp.cat is not None and rp.cat.shaft is not None:
