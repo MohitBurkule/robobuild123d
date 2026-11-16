@@ -12,6 +12,7 @@ PARTS = {
     "top_panel": panels.top_panel,
     "skid_foot": skids.foot,
     "skid_dome": skids.dome,
+    "wshaft": assembly.wshaft,
 }
 
 

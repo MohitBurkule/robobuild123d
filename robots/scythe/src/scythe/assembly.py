@@ -1,7 +1,12 @@
-"""Scythe assembly with build123d joints (rigid / revolute), mirroring Revron's rig idea (joints.py). UNTESTED.
+"""Scythe assembly with build123d joints (rigid / revolute), mirroring Revron's rig idea (joints.py).
 
-Stack on the weapon axis, bottom up: foot -> bar -> hub -> GR1507 bell (shaft down) -> stator -> tub boss -> top panel.
-Rotating: foot, bar, hub, bell + shaft (one revolute joint on the axis). Fixed: everything else.
+Stack on the weapon axis, bottom up: foot (on the shaft thread) -> bar -> hub -> GR1507 bell (cap down) -> stator
+(flange up against the tub boss) -> boss -> top panel.
+Rotating: foot, bar, hub, bell (one revolute joint on the axis). Fixed: everything else.
+
+The GR1507 is split like Revron: weapon_motor_stator (catalogue gr1507, fixed, flange bolted up into the boss) and
+weapon_motor_bell (gr1507_can, spins with the bar). The catalogue motor has no output shaft, so the rotor shaft is
+modelled separately (wshaft) like Revron's: it runs from the foot thread (z 0.5) up into the bell cap.
 """
 import build123d as bd
 
@@ -27,17 +32,34 @@ def weapon_stack(angle_deg=0.0):
     return t, h, b
 
 
-def weapon_motor_solid():
-    """GR1507 catalogue solid, shaft down: catalogue +X = bell top -> world -Z; bell cap on the hub top face.
-    rot (0, 90, 0) turns +X to -Z (right-hand about +Y). describe()['cap_x'] is the bell cap in the catalogue frame."""
+def motor_pose():
+    """GR1507 shaft-down: bell cap on the hub top face. rot (0, 90, 0) turns +X to -Z (right-hand about +Y)."""
     m = weapon_motor.describe(P.WEAPON_MOTOR)
-    cap_z = P.bar_top_z() + P.HUB_H
-    return hw.placed(m["id"], (0.0, P.WPN_AXIS_Y, cap_z + m["cap_x"]), (0.0, 90.0, 0.0))
+    return (0.0, P.WPN_AXIS_Y, tub.motor_z()), (0.0, 90.0, 0.0)
+
+
+def weapon_motor_stator():
+    at, rot = motor_pose()
+    return hw.placed(weapon_motor.describe(P.WEAPON_MOTOR)["id"], at, rot)
+
+
+def weapon_motor_bell():
+    at, rot = motor_pose()
+    return hw.placed("gr1507_can", at, rot)
+
+
+def wshaft():
+    """Rotor shaft extension: from the foot thread up into the bell cap (the catalogue motor has no shaft)."""
+    m = weapon_motor.describe(P.WEAPON_MOTOR)
+    top = tub.motor_z() - m["cap_x"] + 1.7
+    return bd.Pos(0, P.WPN_AXIS_Y, 0.5) * bd.Cylinder(m["shaft_r"], top - 0.5,
+                                                      align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
 
 
 def build(angle_deg=0.0):
     t, h, b = weapon_stack(angle_deg)
-    parts = dict(tub=t, weapon_hub=h, bar=b, weapon_motor=weapon_motor_solid(), top_panel=panels.top_panel())
+    parts = dict(tub=t, weapon_hub=h, bar=b, weapon_motor_stator=weapon_motor_stator(),
+                 weapon_motor_bell=weapon_motor_bell(), wshaft=wshaft(), top_panel=panels.top_panel())
     parts.update(drive.parts())
     parts.update(skids.parts())
     return parts

@@ -1,15 +1,15 @@
-"""Printed nylon tub: sloped-side disc over the bar + rear drive pod. UNTESTED.
+"""Printed nylon tub: sloped-side disc over the bar + rear drive pod.
 
 Made as: FDM PA12 / PA-CF, printed floor-down (+Z build), no supports except the N10 keyhole roofs (bridged).
-Plan: disc of TUB_R on the weapon axis, unioned with the rear pod (POD_W x POD_L) that carries the N10s, battery,
+Plan: disc of TUB_R on the weapon axis, unioned with the rear pod (POD_W wide) that carries the N10s, battery,
 ESCs, receiver and switch. Sides slope TUB_SLOPE_DEG inward going up: a vertical disc or drum hitting the side
 glances up and off; nothing square to bite. Fragile parts (wires, pack, switch) are all inside the walls; the switch
 is reached through a top-panel hole only.
-Weapon boss: a ring round the bell bore, BOSS_T thick under the top panel; the stator's base screws (catalogue
-mount_holes from revron weapon_motor.describe) go up through the boss into the top panel line (heat-set M2), so a
+Weapon boss: a ring on the stator flange top face up to the top panel; the stator's base screws (catalogue
+mount_holes from revron weapon_motor.describe) go down through the panel and the boss into the flange, so a
 bar hit's torque and the gyro/impact shove go stator -> boss -> top panel + walls (the top panel is the tension skin).
-Bay pockets: robot/cad/bay.py fits catalogue part envelopes into the pod (see pockets()); APIs there are used only
-through part_envelope(), which is read but not confirmed for these ids.
+Drive cradles: printed pads and side ribs under and beside each N10; the gearbox face bears on the pod wall and
+the wheel boss on the shaft clamps the wall between them, so the motors cannot walk inboard.
 """
 import math
 
@@ -31,11 +31,15 @@ def height():
     return P.TUB_TOP_Z - P.TOP_PANEL_T - z0()
 
 
+def pod_rear_y():
+    """Rear face of the pod at the floor."""
+    return P.wheel_y() - P.POD_REAR
+
+
 def outline(grow=0.0):
     """Plan outline at the floor (widest section), the disc + pod, in world XY."""
     disc = bd.Pos(0, P.WPN_AXIS_Y) * bd.Circle(P.TUB_R + grow)
-    pod_y = (P.wheel_y() + P.POD_L / 2 + P.WPN_AXIS_Y) / 2
-    pod = bd.Pos(0, pod_y) * bd.Rectangle(P.POD_W + 2 * grow, P.WPN_AXIS_Y - P.wheel_y() + P.POD_L / 2)
+    pod = bd.Pos(0, (pod_rear_y() + P.WPN_AXIS_Y) / 2) * bd.Rectangle(P.POD_W + 2 * grow, P.WPN_AXIS_Y - pod_rear_y())
     return (disc + pod).clean()
 
 
@@ -51,15 +55,28 @@ def shell():
     return outer - inner
 
 
+def motor_z():
+    """Weapon motor origin z: bell cap on the hub top face (assembly.weapon_motor_solid)."""
+    m = weapon_motor.describe(P.WEAPON_MOTOR)
+    return P.bar_top_z() + P.HUB_H + m["cap_x"]
+
+
+def flange_top_z():
+    """Top face of the stator mounting flange in world z (catalogue +X = bell cap -> world -Z)."""
+    m = weapon_motor.describe(P.WEAPON_MOTOR)
+    return motor_z() - m["back_x"]
+
+
 def weapon_boss():
-    """Ring under the top panel the stator screws into; bell bore through the floor."""
+    """Ring on the stator flange top face up to the top panel; the panel screws pass through it into the flange."""
     m = weapon_motor.describe(P.WEAPON_MOTOR)
     top = P.TUB_TOP_Z - P.TOP_PANEL_T
+    thick = top - flange_top_z()
     ring_r = max(r for r, _, _ in m["base_holes"]) + 2 * P.TUB_WALL
-    boss = bd.Pos(0, P.WPN_AXIS_Y, top - P.BOSS_T) * bd.Cylinder(ring_r, P.BOSS_T, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+    boss = bd.Pos(0, P.WPN_AXIS_Y, flange_top_z()) * bd.Cylinder(ring_r, thick, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
     for r, deg, d in m["base_holes"]:
-        boss -= bd.Pos(r * math.cos(math.radians(deg)), P.WPN_AXIS_Y + r * math.sin(math.radians(deg)), top - P.BOSS_T) * bd.Cylinder(
-            d / 2, P.BOSS_T, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+        boss -= bd.Pos(r * math.cos(math.radians(deg)), P.WPN_AXIS_Y + r * math.sin(math.radians(deg)), flange_top_z()) * bd.Cylinder(
+            d / 2 + 0.1, thick, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
     return boss
 
 
@@ -75,5 +92,20 @@ def axle_holes():
     return one + bd.mirror(one, bd.Plane.YZ)
 
 
+def _cradle(side):
+    """Pad + front/rear ribs locating one N10 body against the pod wall (side +1 right, -1 left)."""
+    x_in = abs(P.POD_W / 2 - P.TUB_WALL + P.N10_BODY_IN)
+    x_out = P.POD_W / 2 - P.TUB_WALL
+    lo, hi = sorted((side * x_in, side * x_out))
+    floor = z0() + P.TUB_FLOOR_T
+    pad = bd.Pos((lo + hi) / 2, P.wheel_y(), floor) * bd.Box(hi - lo, 11.5, P.WHEEL_CZ - 5 - floor,
+                                                            align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+    rib_t = 1.5
+    for sgn in (-1, 1):
+        pad += bd.Pos((lo + hi) / 2, P.wheel_y() + sgn * (6.1 + rib_t / 2), floor) * bd.Box(
+            hi - lo, rib_t, P.WHEEL_CZ + 5 - floor, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+    return pad
+
+
 def tub():
-    return shell() + weapon_boss() - bell_bore() - axle_holes()
+    return shell() + weapon_boss() + _cradle(1) + _cradle(-1) - bell_bore() - axle_holes()

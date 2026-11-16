@@ -116,16 +116,22 @@ HUB_SHAFT_CLR = 0.02                         # mm radial slide fit on the 5 mm s
 # ---- weapon motor stack (shaft down, stator screwed up into the tub boss) ----
 GAP_BAR_TUB = 1.5                            # mm air between bar top and tub floor underside (>> MIN_CLR_MOVING)
 MOTOR_BELL_CLR = 1.0                         # mm radial bell to tub bore wall (spinning)
-BOSS_T = 3.0                                 # mm printed boss the stator screws bite into (heat-set M2)
+# printed boss the stator flange hangs from: sits on the flange top face up to the top panel (derived in tub.py,
+# from the motor describe() so it always meets the flange, whatever the stack height)
+BOSS_T = None
 
 # ---- tub (printed nylon PA12/PA-CF, FDM) ----
 BAR_BITE_REACH = 8.0                         # mm of tooth exposed beyond the tub rim, all round
-TUB_WALL = 2.0                               # mm (> PROFILE.min_wall_fdm_mm)
+TUB_WALL = 1.8                               # mm (> PROFILE.min_wall_fdm_mm 0.9; 1.8 keeps the mass budget)
 TUB_FLOOR_T = 2.0                            # mm
-TUB_SLOPE_DEG = 35.0                         # side slope from vertical: verticals glance off
+TUB_SLOPE_DEG = 15.0                         # side slope from vertical: verticals glance off; shallow enough that
+                                             # the 45 mm pack fits under the sloped wall at its full height
 TUB_TOP_Z = WHEEL_D - 2 * MIN_GROUND_CLR - 2.0   # body top below tyre top: invertible (wheels > body both sides)
-POD_W_MIN = 52.0                             # mm pod width the internals need (2x N10 33 mm side by side - overlap, pack)
-POD_L = 24.0                                 # mm rear pod length behind the axle line
+# pod width the internals need: two N10 bodies (24.5 mm each) nested against the walls with a 6.5 mm centre gap
+# the battery lead passes through, plus the walls
+POD_W_MIN = 59.0
+POD_REAR = 22.0                               # mm the pod extends behind the axle line: the N10s (6) + wall + the
+                                             # ESC/receiver bay behind them, inside the rear envelope margin
 TOP_PANEL_T = 1.0                            # mm top panel (Revron panel_top style)
 PANEL_SCREW = "M2"                           # Revron fastening: M2 button into heat-sets
 PANEL_SCREW_N = 6
@@ -133,8 +139,15 @@ PANEL_SCREW_N = 6
 # ---- drive / skids ----
 BAR_TYRE_CLR = 3.0                           # mm plan clearance bar sweep -> nearest tyre point at bar-top height
 WHEEL_CZ = WHEEL_D / 2                       # axle height
+# N10 gearmotor solid extents in the catalogue frame, x along the shaft (bbb_n10_1000rpm): body -12.75..11.75,
+# shaft stub to 20.25. The body nests against the pod wall, outboard face to wall, so the shaft still reaches
+# the wheel and the two bodies leave a 5.9 mm centre gap for the battery lead.
+N10_BODY_IN = -12.75
+N10_BODY_OUT = 11.75
 SKID_H = 1.0                                 # mm dome proud of the top panel beyond ground clearance
 SKID_D = 6.0                                 # mm POM button
+FOOT_OD = 14.0                               # mm POM foot OD: M5 thread bore + wall around the tapped POM
+FOOT_BORE_R = 2.1                            # mm: M5 tap drill in POM (4.2/2); the shaft thread engages
 
 
 # ---- relations ----
