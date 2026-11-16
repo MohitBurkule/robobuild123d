@@ -574,7 +574,7 @@ def run(ctx):
                             "molded or cast."))
             continue
         if canon is None:
-            out.append(fail("process.unknown", G, BLOCKER, "Unknown process", f"`{p.id}`: process `{raw}` is unknown.")
+            out.append(fail("process.unknown", G, BLOCKER, "Unknown process", f"`{p.id}`: process `{raw}` is unknown" + _did_you_mean(raw) + ".")
                        .on(p.id).fix("Use one of: " + ", ".join(sorted(set(catalog.PROCESS_ALIASES)))))
             continue
         if p.kind == "weapon" and canon in ("fdm", "sla"):
@@ -876,3 +876,9 @@ def export_findings(fails):
     return [fail("mfg.export", G, BLOCKER, "No flat pattern", f"DXF for `{pid}` could not be made: {why}").on(pid)
             .fix("Make the part a true 2D profile (or bent sheet with an unfoldable pattern) and re-export.")
             for pid, why in fails]
+
+
+def _did_you_mean(raw):
+    import difflib
+    near = difflib.get_close_matches(str(raw), sorted(set(catalog.PROCESS_ALIASES)), n=3, cutoff=0.3)
+    return f" (did you mean {', '.join(f'`{n}`' for n in near)}?)" if near else ""

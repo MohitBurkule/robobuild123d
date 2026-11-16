@@ -36,7 +36,11 @@ def print_report(rep, full=False):
     roots = getattr(rep, "roots", None) or []
     if roots:
         from .rootcause import text as roots_text
-        print(roots_text(roots))
+        print(roots_text(roots, context=True))
+        from .autohelp import text as help_text
+        h = help_text(rep)
+        if h:
+            print(h)
         print("ALL FINDINGS:")
     n = 0
     for f in rep.findings:
@@ -116,7 +120,7 @@ def main(argv=None):
     v.add_argument("--proxy", action="store_true", help="fast proxies of the slow groups (robot/proxy); --only picks among them")
     v.add_argument("--parts", help="with --proxy: only check these part ids (comma separated)")
     v.add_argument("--baseline", help="with --proxy: a full report.json whose routes / assembly order the proxies replay")
-    for name in ("render", "export", "gen.cli", "cad.cli", "build_cmd", "evals.run", "solve.jiggle"):
+    for name in ("render", "export", "gen.cli", "cad.cli", "build_cmd", "evals.run", "solve.jiggle", "probe"):
         try:
             mod = __import__(f"robot.{name}", fromlist=["add_cli"])
             mod.add_cli(sub)

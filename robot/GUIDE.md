@@ -1,5 +1,7 @@
 # Antweight robot builder guide
 
+> Small model? Read robot/docs/FACTS.md first: the verifier's rules and the tools that measure things for you.
+
 You design a 150 g UK antweight combat robot as a JSON file (`spec.json`). The verifier (`robot verify`) measures the solid model
 and fails anything unbuildable. Work in a loop: edit the spec, run `python3 -m robot verify spec.json`, read each failure (it names the parts,
 a position and a fix), repeat until there are no blockers. Then `robot render` and `robot export`.

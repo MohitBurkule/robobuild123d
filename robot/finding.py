@@ -122,6 +122,7 @@ class Report:
     groups: dict = field(default_factory=dict)  # group -> {kind, tier, time_s, how, blockers, warnings, passed}
     not_run: list = field(default_factory=list)  # [{group, kind, tier, reason}] registered groups this run skipped
     roots: list = field(default_factory=list)  # blockers grouped by root cause (robot/rootcause.py)
+    helpers: dict = field(default_factory=dict)  # automatic helper output (robot/autohelp.py)
 
     def finish(self, combined=None):
         """Count and decide `ok`. The gate is the DESIGN findings; parity findings (kind "parity": comparisons with a
@@ -169,4 +170,5 @@ class Report:
             "not_checked": self.not_checked, "checks_revision": self.checks_revision, "engine": self.engine,
             "timings_s": self.timings_s, "gate": self.gate, "tier": self.tier, "design": self.design,
             "parity": self.parity, "groups": self.groups, "not_run": self.not_run, "roots": self.roots,
+            "helpers": self.helpers,
         }

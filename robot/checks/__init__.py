@@ -225,6 +225,8 @@ def verify_resolved(r, opts: Options) -> Report:
         rep.not_checked.append(f"NOT RUN in this tier: {len(rep.not_run)} check groups (listed under `not_run`): "
                                + ", ".join(x["group"] for x in rep.not_run))
     rep.finish()
+    from .. import autohelp  # measured context, mass budget, jiggle proposal: always, so nobody forgets a tool
+    autohelp.enrich(rep, ctx, r)
     if ctx is not None and (rep.routes or rep.assembly) and not r.fast and cache.enabled():
         _store_baseline(r.spec.name, rep)
     if waivers:
