@@ -28,12 +28,14 @@ class Move:
     vec: list            # world-frame shift, mm
     mm: float
     new_hits: list = field(default_factory=list)   # [(other part id, depth mm)] collisions the move creates
+    note: str = ""       # e.g. "or shorten the screw by 0.9 mm" when moving a fastener along its own axis
+    vol: float = 0.0     # mover volume: smaller parts are cheaper to move
 
     def text(self) -> str:
         s = f"move `{self.part}` {self.axis} {self.mm:.2f} mm"
         if self.new_hits:
             s += " (then hits " + ", ".join(f"`{o}` {d:.2f} mm" for o, d in self.new_hits) + ")"
-        return s
+        return s + (f" {self.note}" if self.note else "")
 
     def to_dict(self):
         return {"part": self.part, "axis": self.axis, "vec": self.vec, "mm": round(self.mm, 3),
@@ -97,8 +99,14 @@ def options(world, a, b, allow, allow_fn, movers=None, max_travel=MAX_TRAVEL_MM,
             if t is None:
                 continue
             hits = new_hits(world, mover, d * t, group | {other.id}, allow_fn)
-            res.append(Move(mover.id, name, [float(x) for x in d * t], t, hits))
-    res.sort(key=lambda m: (len(m.new_hits), m.mm))
+            note = ""
+            if getattr(mover, "fastener", False):
+                ax = np.asarray(mover.M, float)[:3, 2]
+                if abs(float(ax @ d)) > 0.99:
+                    note = f"(or a screw {t:.1f} mm shorter: next stock length down)"
+            vol = float(getattr(mover.geom, "volume", 0.0) or 0.0)
+            res.append(Move(mover.id, name, [float(x) for x in d * t], t, hits, note, vol))
+    res.sort(key=lambda m: (len(m.new_hits), round(m.mm, 1), m.vol))
     return res
 
 
