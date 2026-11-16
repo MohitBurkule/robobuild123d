@@ -1,0 +1,10 @@
+{
+  "id": "club_member",
+  "name": "Club member with an enclosed printer and a soldering iron",
+  "printer": "bambu_p1p",
+  "materials": ["pla", "petg", "tpu", "abs", "nylon", "pla_cf", "petg_cf"],
+  "processes": ["fdm", "laser"],
+  "tools": ["hex_driver", "side_cutters", "soldering_iron", "drill", "tap"],
+  "budget_gbp": 150.0,
+  "skill": "intermediate"
+}

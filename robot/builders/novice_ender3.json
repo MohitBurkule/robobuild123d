@@ -1,0 +1,10 @@
+{
+  "id": "novice_ender3",
+  "name": "First-bot builder on a stock Ender 3",
+  "printer": "ender3",
+  "materials": ["pla", "petg"],
+  "processes": ["fdm"],
+  "tools": ["hex_driver", "side_cutters"],
+  "budget_gbp": 80.0,
+  "skill": "novice"
+}

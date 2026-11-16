@@ -90,13 +90,14 @@ def build(r) -> list:
         index[cid] = line
         lines.append(line)
     for f in getattr(r.spec, "fasteners", []):
-        cid = f"fastener:{f.size}"
+        size = str(getattr(f, "designation", None) or getattr(f, "size", "") or "")
+        cid = f"fastener:{size}"
         if cid in index:
             index[cid].qty += 1
         else:
-            v = _match_vendor("fastener", f.size, rows)
+            v = _match_vendor("fastener", size, rows)
             price = v.get("price_gbp")
-            index[cid] = Line(f.size, f"{f.size} screws", "fastener", 1,
+            index[cid] = Line(size, f"{size} screws", "fastener", 1,
                               float(price) if isinstance(price, (int, float)) else None,
                               str(v.get("supplier", "")), str(v.get("url", "")), 50)
             lines.append(index[cid])
