@@ -33,6 +33,11 @@ def print_report(rep, full=False):
         print(f"mass {m['mass_total_g']:.1f} g (range {m['mass_lo_g']:.1f} to {m['mass_hi_g']:.1f} g, limit {m.get('mass_limit_g', 150):.0f})")
     if "footprint_mm" in m:
         print(f"footprint {m['footprint_mm']:.1f} mm square")
+    roots = getattr(rep, "roots", None) or []
+    if roots:
+        from .rootcause import text as roots_text
+        print(roots_text(roots))
+        print("ALL FINDINGS:")
     n = 0
     for f in rep.findings:
         if f.passed and not full:
@@ -111,7 +116,7 @@ def main(argv=None):
     v.add_argument("--proxy", action="store_true", help="fast proxies of the slow groups (robot/proxy); --only picks among them")
     v.add_argument("--parts", help="with --proxy: only check these part ids (comma separated)")
     v.add_argument("--baseline", help="with --proxy: a full report.json whose routes / assembly order the proxies replay")
-    for name in ("render", "export", "gen.cli", "cad.cli", "build_cmd", "evals.run"):
+    for name in ("render", "export", "gen.cli", "cad.cli", "build_cmd", "evals.run", "solve.jiggle"):
         try:
             mod = __import__(f"robot.{name}", fromlist=["add_cli"])
             mod.add_cli(sub)
