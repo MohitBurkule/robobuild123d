@@ -81,6 +81,9 @@ EXPLAIN = {
     "thermal.": "Thermal/voltage-sag budget: the pack's voltage under peak current (nominal minus I x internal resistance) must stay above 3.3 V per cell or the receiver/ESC browns out mid-fight. Bigger pack (more mAh / lower resistance) or less peak current.",
     "impact.": "Hit reaction: gyroscopic wheel-lift when turning with a spun-up weapon (turn rate above the lift threshold rolls the robot), hop when a vertical spinner lands a hit, and yaw spin-out from a horizontal spinner. Slow the turn rate, lower the weapon speed, or widen the track.",
     "requirements.": "A requirement the user declared (speed, force, energy, budget) is not met by the design.",
+    "rf.": "RF placement: the receiver must sit away from motor/ESC switching noise (2.4 GHz swamps at close range) and its antenna must exit the top face without conductive material over it. Move the receiver to the far corner, cut a window in metal/carbon above it, or stand the antenna out.",
+    "traction.": "Traction patch: the centre of mass must project inside the polygon of the driven wheels' floor contacts, with margin, or the first push unloads the wheels and the robot pivots. Move mass over the driven wheels or widen the stance.",
+    "builder.": "Builder profile: the design does not fit the declared builder's bench - printer bed, shelf materials, processes, tools, skill or budget. Split parts, switch to stocked materials, add the tool, or raise the budget.",
     "validity.": "The spec itself is invalid (unknown part, bad placement) - fix the spec before reading other findings.",
 }
 

@@ -607,3 +607,38 @@ worst-case mass), `footprint_max_mm` (max), `budget_gbp` (max against the BOM co
 BLOCKER with expected/actual; `requirements.unknown_key` (BLOCKER) is a requirement the verifier cannot judge (silently
 ignoring intent is worse). Keys that have no metric yet (top_speed_mps, push_force_n, must_survive, invertible) and
 metrics that were not computed this run are NOT CHECKED, never a pass.
+
+## RF placement (`rf.*`, group `rf`)
+
+Rule: **the receiver must hear the transmitter.** `rf.noise_proximity` (WARNING): a receiver sits under 20 mm from a
+motor or ESC (severe) or under 30 mm (thin margin) - brushed motors and ESCs are PWM switching noise sources that swamp
+2.4 GHz at that range; move the receiver to the far corner or twist/shield the motor wires. `rf.antenna_blocked`
+(WARNING): conductive material (metal, carbon-fibre or carbon-filled plate, a motor can, a cell pouch, any fastener
+body) sits over the receiver's top face within 15 mm - the antenna exits from the top and 2.4 GHz does not pass through
+conductors; cut a window, use plastic there, or stand the antenna out through a tube. `rf.ok` (pass): nearest noise
+source and the clear exit stated. A spec with no receiver is NOT CHECKED, never a pass.
+
+## COM over the drive contact patch (`traction.*`, group `traction`)
+
+Rule: **the weight must sit on the driven wheels, with margin.** The driven wheels' floor contacts (vertices within
+2 mm of the floor, wheels not marked `driven: false` in their part extras) form a convex patch; the centre of mass from
+the mass group must project inside it. `traction.com_outside_patch` (WARNING): the COM projects outside the patch - the
+weight rests on the skid or wedge instead of the driven wheels, so they grip only with the load they have left and the
+robot pivots under a hard push; move mass over the wheels or lift the skid. `traction.patch_margin` (WARNING): the COM is inside but within max(5 mm, 10% of the patch's
+smaller half-extent) of an edge - the first hard push unloads the wheels. `traction.ok` (pass): margin stated. No COM
+from the mass group, no driven wheel touching the floor, or contacts that do not form a patch: NOT CHECKED, never a pass.
+Metrics: `drive_patch_margin_mm`, `com_in_drive_patch`.
+
+## Builder profile (`builder.*`, group `builder`)
+
+Rule: **a design is only as buildable as the bench it is built on.** A spec may declare a top-level `builder` key: a
+preset id from `robot/builders/*.json` (`novice_ender3`, `club_member`, `expert`) or the object itself (`printer` - a
+`robot/mfg_profiles.py` printer id, `materials` - catalog material ids on the shelf, `processes`, `tools`, `budget_gbp`,
+`skill` - novice | intermediate | expert). `builder.bed_fit` (WARNING): a printed part, in its declared
+`print_orientation`, is bigger than the printer's bed or Z - split it, section it, or change machine.
+`builder.material_unavailable` (WARNING): a part's material is not on the shelf. `builder.process_unavailable` (WARNING):
+a part needs a process the builder cannot run. `builder.tool_missing` (WARNING): heat-set inserts with no soldering iron
+on the bench. `builder.skill` (WARNING): heat-set inserts need intermediate skill, machined parts (cnc / turned /
+waterjet) need expert. `builder.budget` (WARNING): the purchasable BOM cost (robot/bom_out, also published as the
+`bom_cost_gbp` metric) exceeds `budget_gbp`. `builder.unknown` (WARNING): the preset id or printer is not known.
+`builder.ok` (pass) when the whole design fits the bench. No `builder` key: NOT CHECKED, the report is unchanged.

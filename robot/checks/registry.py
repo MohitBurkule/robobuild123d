@@ -108,6 +108,9 @@ REGISTRY = [
     _g("dfm", DESIGN, INNER, note="dfm.*: per-process manufacturability not covered by printability / process"),
     _g("harness", DESIGN, FULL, None, deep_only=True, note="robot/wiring: planned harness (opt-in: spec harness.enabled)"),
     _g("requirements", DESIGN, INNER, 0.0, note="requirements.*: the spec's declared requirements vs measured metrics"),
+    _g("rf", DESIGN, INNER, 0.0, note="rf.*: receiver away from motor/ESC noise, antenna exit path (G6)"),
+    _g("traction", DESIGN, INNER, 0.0, note="traction.*: COM over the drive contact patch, push balance (G9)"),
+    _g("builder", DESIGN, INNER, 0.0, note="builder.*: design vs the builder's printer bed, shelf materials, tools, budget, skill (E3)"),
     _g("robust", DESIGN, NIGHTLY, 900.0, deep_only=True, note="one-at-a-time param / variant / COTS-swap sweep"),
 ]
 
