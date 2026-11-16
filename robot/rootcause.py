@@ -79,7 +79,52 @@ def group(findings, known=None, severities=(BLOCKER,)):
                     "findings": [f.id for f in fs],
                     "consequences": [f"{f.id}: {f.message}" for f in fs[1:]],
                     "repair": list(p.repair or [])})
+    out = _absorb_trapped(out)
+    out = _merge_patterned(out)
     out.sort(key=lambda c: -len(c["findings"]))
+    return out
+
+
+_ZERO = re.compile(r"gets 0\.0 mm before it hits `([^`]+)`")
+
+
+def _absorb_trapped(roots):
+    """A part trapped at ZERO travel by a part that already collides elsewhere is a consequence of that collision."""
+    keep, trapped = [], []
+    for c in roots:
+        (trapped if c["primary"] == "assembly.blocked" and len(c["findings"]) == 1 and _ZERO.search(c["message"]) else keep).append(c)
+    for c in trapped:
+        hit = _ZERO.search(c["message"]).group(1)
+        host = next((k for k in keep if k["primary"] in COLLISION[:3] and hit in k["parts"]), None)
+        if host is None:
+            keep.append(c)
+            continue
+        host["findings"].append(c["primary"])
+        host["consequences"].append(f"{c['primary']}: {c['message']}")
+        host["parts"] += [x for x in c["parts"] if x not in host["parts"]]
+    return keep
+
+
+_IDX = re.compile(r"`([A-Za-z_]+?)_?(\d+)`")
+
+
+def _merge_patterned(roots):
+    """bolt_h0 / bolt_h1 (a hole pattern) with the same problem: one root, 'applies to all N'."""
+    seen, out = {}, []
+    for c in roots:
+        sig = (c["primary"], re.sub(r"\d+(\.\d+)?", "#", _IDX.sub(lambda m: f"`{m.group(1)}*`", c["message"])))
+        if _IDX.search(c["message"]) and sig in seen:
+            host = seen[sig]
+            host["findings"] += c["findings"]
+            host["consequences"] += [f"{c['primary']}: {c['message']}"] + c["consequences"]
+            host["parts"] += [x for x in c["parts"] if x not in host["parts"]]
+            host["pattern"] = host.get("pattern", 1) + 1
+            continue
+        seen[sig] = c
+        out.append(c)
+    for c in out:
+        if c.get("pattern"):
+            c["message"] += f" Same problem on all {c['pattern']} parts of this pattern: fix the pattern once."
     return out
 
 
