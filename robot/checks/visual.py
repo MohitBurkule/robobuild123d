@@ -627,7 +627,7 @@ def leads(ctx, prm):
         if cat is None or not getattr(cat, "ports", None):
             continue
         # a part that declares its own port map replaces the catalog's (generic in/out stand-ins on research entries)
-        for pname in (rp.part.ports or cat.ports):
+        for pname in (getattr(rp.part, "ports", None) or cat.ports):
             if not any(pname.startswith(k) for k in LEAD_PORTS):
                 continue
             full = f"{rp.part.id}.{pname}"
