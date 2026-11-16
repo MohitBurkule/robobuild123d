@@ -19,6 +19,14 @@ is the lowest wheel point.
   section_x. `--markers` draws numbered red rings on every failure that has a position (the numbers are printed).
 - `robot export spec.json <slug> <dir>` writes `<dir>/<slug>/`: spec.json, report.json, REPORT.md (with NOT CHECKED), README.md
   (iso render on top), renders/, stl/ per part, step/ per part plus step/assembly.step (exact B-rep, start pose).
+- `robot profiles` lists the rules profiles; `robot profile <name>` prints one. The spec's `profile` key selects it
+  (`robot/profiles/<name>.json`): `aws2025` (competition, the default), `dev` (loose engineering margins for the first
+  iterations - legality numbers stay strict), `strict` (tournament-hard margins). Unknown profile or unknown key in the
+  JSON fails loudly instead of falling back to a default.
+- `robot llm-pack [dir]` regenerates the LLM pack (`llm/`: SKILL.md plus examples/) from the live verifier sources;
+  the drift test (robot/tests/test_llm_pack.py) fails if the checked-in copy is stale.
+- `robot gallery [dir] [-o out.html]` writes one self-contained HTML page with a card per robot subdir that has a
+  spec.json: iso render embedded, verdict and mass from report.json when present, "not verified" when not.
 
 ## Spec layout (all keys optional except parts)
 `name, profile ("aws2025"), robot_type (wedge|horizontal_spinner|vertical_spinner|drum|lifter|flipper), locomotion (roller),
