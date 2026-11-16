@@ -178,6 +178,9 @@ def key_for(shape: dict, base_dir: Path | None, tess: Tess = FINE, key_extra: st
             key_extra = f"{key_extra}|design:{d.schema.robot}:" + ",".join(f"{k}={v}" for k, v in sorted(d.values.items()))
     except ImportError:
         pass
+    from . import params_override
+    if params_override.key():  # model params overridden (jiggle / sweeps): another part
+        key_extra = f"{key_extra}|params:{params_override.key()}"
     if envs:
         key_extra = f"{key_extra}|env:" + ",".join(f"{n}={os.environ.get(n, '')}" for n in envs)
     return shapes.shape_key(shape, base_dir, f"{CACHE_VERSION}|{cache.lib_versions()}|{src}|{tess.lin}|{tess.ang}|{key_extra}")

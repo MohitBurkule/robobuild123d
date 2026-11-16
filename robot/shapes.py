@@ -332,6 +332,8 @@ def _model(s, base_dir):
         path = (base_dir or Path.cwd()) / path
     if not path.is_file():
         raise ShapeError(f"model file {path} not found")
+    from . import params_override
+    params_override.install()  # overridden masters re-derive in the model and everything it imports
     spec = importlib.util.spec_from_file_location(f"robot_model_{hashlib.sha1(str(path).encode()).hexdigest()[:8]}", path)
     mod = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(mod)

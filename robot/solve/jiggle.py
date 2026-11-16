@@ -149,6 +149,135 @@ def _shifted(world, ids, vec):
     return w2
 
 
+# ---------------------------------------------------------------- named-param levers (variables, not positions)
+
+@dataclass
+class ParamLever:
+    file: str          # absolute path of the params module
+    name: str          # top-level master, e.g. SWITCH_BAY
+    x0: float
+    lo: float
+    hi: float
+    step: float = 0.1  # finite-difference step and output quantum
+
+    @property
+    def label(self):
+        return f"{Path(self.file).name}:{self.name}"
+
+
+def parse_levers(spec_path, items, raw_levers=(), max_move=5.0):
+    """Levers from CLI items "path/params.py:NAME[=lo:hi[:step]]" and spec "levers" entries
+    {"param": "path:NAME", "lo", "hi", "step"}; paths are relative to the spec folder."""
+    from .. import params_override as po
+
+    base = Path(spec_path).resolve().parent
+    out = []
+    rows = [(it, None) for it in items or []] + [(lv.get("param", ""), lv) for lv in raw_levers or []]
+    for txt, lv in rows:
+        ref, _, rng = txt.partition("=")
+        f, _, name = ref.rpartition(":")
+        fp = (base / f).resolve() if not Path(f).is_absolute() else Path(f)
+        x0 = po.read(fp, name)
+        if x0 is None:
+            raise ValueError(f"lever {txt}: `{name}` in {fp} is not a plain number master")
+        lo, hi, step = x0 - max_move, x0 + max_move, 0.1
+        if rng:
+            bits = [float(b) for b in rng.split(":")]
+            lo, hi = bits[0], bits[1]
+            step = bits[2] if len(bits) > 2 else step
+        if lv:
+            lo, hi, step = float(lv.get("lo", lo)), float(lv.get("hi", hi)), float(lv.get("step", step))
+        out.append(ParamLever(str(fp), name, float(x0), lo, hi, step))
+    return out
+
+
+def _eval_params(spec_path, levers, xs, clear, fast):
+    """Violations of the whole robot with the levers at xs: {(a, b, what): amount}. Rebuilds what changed (cached)."""
+    from .. import measure, params_override as po, spec as spec_mod, world as world_mod
+    from ..checks import interference as itf
+
+    ov = {}
+    for lv, x in zip(levers, xs):
+        ov.setdefault(lv.file, {})[lv.name] = float(x)
+    root = Path(spec_path).resolve().parent
+    with po.active(ov, purge_root=root):
+        try:
+            s = spec_mod.load(spec_path)
+            r = world_mod.resolve(s, fast=fast)
+            if getattr(r, "load_errors", None):
+                return None
+            w = world_mod.World.start(r)
+        except Exception:  # noqa: BLE001  a lever value that breaks the build is simply infeasible
+            return None
+        vs = _violations(w, {b.id for b in w.bodies}, lambda a, b: itf.allowed_depth(r, a, b), clear, measure)
+    return {(a, b, what): d for a, b, d, what in vs}
+
+
+def solve_params(spec_path, levers, clear=0.0, iters=12, fast=True, log=print):
+    """Damped least squares on the violation vector over named masters (finite-difference Jacobian), with a
+    backtracking line search on the total and a coordinate-search fallback. Every relation that reads a master
+    (pockets, hole patterns, slots, `{"expr"}` placements) moves with it, so dependents stay consistent."""
+    from .. import world as world_mod
+
+    world_mod.JOBS = 1   # overrides must reach the builds; in-process keeps imports purgeable
+    x = np.array([lv.x0 for lv in levers], float)
+    lo = np.array([lv.lo for lv in levers]); hi = np.array([lv.hi for lv in levers])
+    st = np.array([lv.step for lv in levers])
+    snap = lambda v: np.round(np.clip(np.round(v / st) * st, lo, hi), 6)  # noqa: E731
+    v = _eval_params(spec_path, levers, x, clear, fast)
+    if v is None:
+        raise ValueError("the robot does not build at the current param values")
+    tot = lambda vv: float("inf") if vv is None else float(sum(vv.values()))  # noqa: E731
+    start = cur = tot(v)
+    hist = []
+    for it in range(iters):
+        if cur <= 1e-6:
+            break
+        keys = sorted(v)
+        J = np.zeros((len(keys), len(levers)))
+        for j in range(len(levers)):
+            xp = x.copy(); xp[j] = min(hi[j], x[j] + st[j]) if x[j] + st[j] <= hi[j] else max(lo[j], x[j] - st[j])
+            dxj = xp[j] - x[j]
+            vp = _eval_params(spec_path, levers, xp, clear, fast)
+            if vp is None or abs(dxj) < 1e-12:
+                continue
+            for i, k in enumerate(keys):
+                J[i, j] = (vp.get(k, 0.0) - v[k]) / dxj
+        r0 = np.array([v[k] for k in keys])
+        lam = 1e-3 * (np.trace(J.T @ J) + 1e-9)
+        dx = -np.linalg.solve(J.T @ J + lam * np.eye(len(levers)), J.T @ r0) if J.any() else np.zeros(len(levers))
+        moved = False
+        for a in (1.0, 1.5, 0.5, 0.25):   # overshoot a little first: hinge losses flatten at zero
+            xn = snap(x + a * dx)
+            if np.allclose(xn, x):
+                continue
+            vn = _eval_params(spec_path, levers, xn, clear, fast)
+            if tot(vn) < cur - 1e-4:
+                x, v, cur, moved = xn, vn, tot(vn), True
+                break
+        if not moved:  # fallback: coordinate pattern search, growing steps
+            for j in range(len(levers)):
+                for k in (1, 2, 4, 8, 16):
+                    for sgn in (1, -1):
+                        xn = x.copy(); xn[j] = x[j] + sgn * k * st[j]; xn = snap(xn)
+                        vn = _eval_params(spec_path, levers, xn, clear, fast)
+                        if tot(vn) < cur - 1e-4:
+                            x, v, cur, moved = xn, vn, tot(vn), True
+                            break
+                    if moved:
+                        break
+                if moved:
+                    break
+        if not moved:
+            break
+        hist.append({lv.label: float(xi) for lv, xi in zip(levers, x)})
+        log(f"  iter {it + 1}: " + ", ".join(f"{lv.name}={xi:g}" for lv, xi in zip(levers, x)) + f" -> violation {cur:.3f} mm")
+    return {"start": start, "final": cur, "values": {lv.label: float(xi) for lv, xi in zip(levers, x)},
+            "changed": {lv.label: (lv.x0, float(xi)) for lv, xi in zip(levers, x) if abs(xi - lv.x0) > 1e-9},
+            "left": [[a, b, what, round(d, 3)] for (a, b, what), d in sorted(v.items())], "history": hist,
+            "files": {lv.label: lv.file for lv in levers}, "names": {lv.label: lv.name for lv in levers}}
+
+
 def add_cli(sub):
     p = sub.add_parser("jiggle", help="nudge movable parts until collisions/clearances clear (measured, not guessed)")
     p.add_argument("spec")
@@ -156,6 +285,11 @@ def add_cli(sub):
     p.add_argument("--max-move", type=float, default=5.0, help="max total shift per part, mm")
     p.add_argument("--clear", type=float, default=0.0, help="also open gaps smaller than this (mm) between non-touching parts")
     p.add_argument("--iters", type=int, default=40)
+    p.add_argument("--param", action="append", default=[], metavar="FILE:NAME[=lo:hi[:step]]",
+                   help="solve over this model master too (repeatable); spec `levers` entries are added. Parts, pockets,"
+                        " holes and slots derived from it all move together")
+    p.add_argument("--params-only", action="store_true", help="only solve the named params, do not move spec `at`s")
+    p.add_argument("--write-params", action="store_true", help="write the solved values into the params source files")
     p.add_argument("--fine", action="store_true", help="fine tessellation (slower, exact like verify)")
     p.add_argument("--write", help="write the moved spec here (never overwrites the input unless you pass its path)")
     p.add_argument("--json", help="write the result as JSON here")
@@ -163,6 +297,28 @@ def add_cli(sub):
 
 
 def _cli(a):
+    from .. import params_override as po, spec as spec_mod
+
+    raw = spec_mod.load(a.spec).raw
+    levers = parse_levers(a.spec, a.param, raw.get("levers"), a.max_move)
+    if levers:
+        pr = solve_params(a.spec, levers, a.clear, max(4, a.iters // 4), fast=not a.fine)
+        print(f"params: violation {pr['start']:.3f} -> {pr['final']:.3f} mm")
+        for lab, (o, n) in pr["changed"].items():
+            print(f"  {lab}: {o:g} -> {n:g}")
+        if a.write_params and pr["changed"]:
+            by_file = {}
+            for lab, (_, n) in pr["changed"].items():
+                by_file.setdefault(pr["files"][lab], {})[pr["names"][lab]] = n
+            for f, vals in by_file.items():
+                po.write(f, vals)
+                print(f"wrote {f}")
+        if a.json:
+            Path(a.json).with_suffix(".params.json").write_text(json.dumps(pr, indent=2, default=list))
+        if a.params_only or pr["final"] <= 1e-6:
+            return 0 if pr["final"] <= 1e-6 else 3
+        if pr["changed"] and not a.write_params:
+            print("note: spec moves below are computed at the ORIGINAL param values (pass --write-params to chain)")
     move = [x.strip() for x in a.move.split(",")] if a.move else None
     res = solve(a.spec, move, a.max_move, a.clear, a.iters, fast=not a.fine)
     print(res.report())
