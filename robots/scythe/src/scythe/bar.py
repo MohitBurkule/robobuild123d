@@ -1,12 +1,12 @@
 """Weapon bar: laser-cut constant-thickness hardened steel, two teeth, 180 deg symmetric.
 
 Made as: one 2D profile (one arm built, the other is the same arm turned 180 deg), extruded BAR_T, then the
-counterbores: the 2x M3 bar bolts and the 4x M2 bell screws are countersunk from the underside (the skid foot and
-the floor are under it: nothing may protrude below the bar), and the centre bore pilots the bar on the shaft.
-Part frame: axis on Z, underside at z = 0, arms along +/-X, spin CCW seen from above (+Z), so each tooth's cutting
-face is its +Y edge on the +X arm (and -Y on the -X arm).
+counterbores: the 2x M2.5 bar bolts are countersunk from the underside (nothing may protrude below the bar), the
+centre bore pilots the bar on the motor's 3 mm shaft, and the lock hole at BAR_LOCK_X takes the pit pin that makes
+the weapon safe. Part frame: axis on Z, underside at z = 0, arms along +/-X, spin CCW seen from above (+Z), so each
+tooth's cutting face is its +Y edge on the +X arm (and -Y on the -X arm).
 
-Adversarial intent: the leading-edge step bites wheels, forks and skirt hinges at 2 mm floor height, below where a
+Adversarial intent: the leading-edge step bites wheels, forks and skirt hinges at ~5 mm floor height, below where a
 vertical spinner or wedge lip can reach it; the root is widest because bending moment from a tip hit peaks at the hub.
 """
 import math
@@ -14,7 +14,7 @@ import math
 import build123d as bd
 
 from . import params as P
-from ._reuse import plate, weapon_motor
+from ._reuse import plate
 from robot.cad import fastener_catalog as fc
 
 
@@ -38,28 +38,21 @@ def _csk(x, y, d):
 
 
 def bolt_xy():
-    """World-frame (x, y) of the 2x M3 bar bolts (on the centreline) and the 4x M2 bell screws (catalogue circle)."""
-    m = weapon_motor.describe(P.WEAPON_MOTOR)
-    bar = [(P.BAR_BOLT_PCD / 2 * (1 if i == 0 else -1), 0.0) for i in range(P.BAR_BOLT_N)]
-    bell = [(r * math.cos(math.radians(deg)), r * math.sin(math.radians(deg))) for r, deg, _ in m["top_holes"]]
-    return bar, bell
+    """World-frame (x, y) of the 2x M2.5 bar bolts (on the centreline)."""
+    return [(P.BAR_BOLT_PCD / 2 * (1 if i == 0 else -1), 0.0) for i in range(P.BAR_BOLT_N)]
 
 
 def profile():
     arm = bd.Polygon(*arm_points(), align=None)
     face = (arm + bd.Rot(0, 0, 180) * arm).clean().faces()[0]
     face = plate.round_corners(face, r_out=P.BAR_CORNER_R)    # NOTE: also softens the tooth point; keep_ = tooth tips if too blunt
-    bore = bd.Circle(P.SHAFT_D / 2 + P.BAR_BORE_CLR)
-    for h in [bore]:
-        face = face - h
+    face -= bd.Circle(P.SHAFT_D / 2 + P.BAR_BORE_CLR)
+    face -= bd.Pos(P.BAR_LOCK_X, 0.0) * bd.Circle(P.BAR_LOCK_D / 2)
     return face
 
 
 def bar():
     solid = bd.extrude(profile(), P.BAR_T)
-    bar_pts, bell_pts = bolt_xy()
-    for x, y in bar_pts:
+    for x, y in bolt_xy():
         solid -= _csk(x, y, P.BAR_BOLT_D)
-    for x, y in bell_pts:
-        solid -= _csk(x, y, 2.0)
     return solid
