@@ -29,7 +29,8 @@ BASELINE = TESTS / "meta_baseline.json"
 
 # module file stem -> registry group name
 # not written yet (work stopped 2026-11-12): code_lint "code", spec_lint, swap_contract "swap", hardware
-STRICT = {"geom_sanity": "geom", "waiver_audit": "waiver_audit", "dfm": "dfm"}
+STRICT = {"geom_sanity": "geom", "waiver_audit": "waiver_audit", "dfm": "dfm",
+          "rest": "rest", "clearance": "clearance", "service": "service"}
 EMIT = ("fail", "ok", "note")
 HELPERS = {"__init__", "_review", "_physics", "registry", "waiver", "ref_diff", "ref_features", "ref_local", "ref_radii",
            "combat_ground"}   # not groups themselves: shared code used by groups
