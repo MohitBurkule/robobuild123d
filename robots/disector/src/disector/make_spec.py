@@ -43,397 +43,168 @@ def _m(part_id: str) -> dict:
     return {"type": "model", "file": MODEL_FILE, "params": {"part": part_id}}
 
 
+def _struct(pid, kind, material, color, label=None, **kw):
+    """A printed/cut part built from this package's builders (`at`/`rot` identity: shapes are placed in world coords)."""
+    d = {"id": pid, "kind": kind, "material": material, "process": kw.pop("process", "fdm"), "color": color,
+         "shape": _m(pid), "at": [0, 0, 0], "rot": [0, 0, 0]}
+    if label:
+        d["label"] = label
+    d.update(kw)
+    return d
+
+
+def _parts_chassis() -> list[dict]:
+    return [
+        _struct("tub", "structure", "nylon", P.COL_CHASSIS, print_orientation="+z", solid_fraction=P.TUB_SOLID,
+                sharp_corners_ok="Internal electronics bays and wire channels in nylon tub print with 0.4 mm nozzle corner radius; fastener bosses are in compression",
+                label="Unibody nylon chassis tub with sloped front, wheel wells, and electronics bays"),
+        _struct("panel_top", "plate", "nylon", P.COL_TOP_PANEL, print_orientation="+z", solid_fraction=P.PANEL_SOLID,
+                sharp_corners_ok="Rectangular switch and wire pass-through cutouts in 1.2 mm nylon top plate are unloaded",
+                label="Top deck cover plate"),
+        _struct("top_spine", "plate", "pla", P.COL_TOP_SPINE, print_orientation="+z", solid_fraction=P.PANEL_SOLID,
+                label="Black top front clamping strap"),
+    ]
+
+
+def _parts_front() -> list[dict]:
+    fm_note = "45-deg counterbored fastener seats and clevis slot are in compression against wedge"
+    sk_note = "45-deg counterbored fastener seats are in compression against wedge"
+    out = [_struct("wedge_front", "wedge", "aluminium", P.COL_WEDGE, process="laser",
+                   label="Aluminium sloped front wedge plate with scoop lip")]
+    for t in ("l", "r"):
+        out.append(_struct(f"fork_mount_{t}", "armor", "pla", P.COL_ORANGE, print_orientation="+z", sharp_corners_ok=fm_note))
+    for t in ("l", "r"):
+        out.append(_struct(f"fork_{t}", "fork", "titanium", P.COL_FORK, process="laser"))
+    for t in ("l", "r"):
+        out.append(_struct(f"skid_{t}", "wedge", "pla", P.COL_ORANGE, print_orientation="+x", sharp_corners_ok=sk_note))
+    for t in ("l", "r"):
+        out.append(_struct(f"guard_{t}", "armor", "pla", P.COL_ORANGE, print_orientation="+x"))
+    for t in ("l", "r"):
+        out.append(_struct(f"eye_{t}", "other", "pla", P.COL_EYE_WHITE, print_orientation="+z", retained="press_fit"))
+    return out
+
+
+def _parts_weapon() -> list[dict]:
+    tip = P.WPN_MOTOR_AT
+    spin = "weapon_motor_bell"      # rotor group label: the bell carries the shaft and the disc
+    disc_at = [P.DISC_AT[i] - tip[i] for i in range(3)]      # disc is a child of the bell: placed in the bell frame
+    return [
+        # The overhead arm is the structural carrier of the weapon motor, so it is a `structure` (wires may route along it)
+        _struct("arm", "structure", "nylon", P.COL_ARM, print_orientation="+x"),
+        {"id": "weapon_motor_stator", "exposed": True, "kind": "weapon_motor", "catalog": "gr1507", "parent": "arm",
+         "exposed_reason": "Overhead hammer-saw motor stator mounted at tip of arm", "at": tip, "rot": P.WPN_MOTOR_ROT},
+        {"id": "weapon_motor_bell", "exposed": True, "kind": "other", "catalog": "gr1507_can", "parent": "arm",
+         "rotates_with": spin, "exposed_reason": "Rotating outrunner bell carrying the saw disc at tip of overhead arm",
+         "at": tip, "rot": P.WPN_MOTOR_ROT,
+         "joint": {"kind": "revolute", "axis": [1, 0, 0], "pivot": P.BELL_PIVOT, "min": -180, "max": 180, "default": 0}},
+        {"id": "weapon_shaft", "kind": "shaft", "material": "steel", "process": "cots", "solid_fraction": P.SHAFT_SOLID,
+         "shaft_of": "weapon_motor_bell", "rotates_with": spin, "parent": "weapon_motor_bell", "exposed": True,
+         "exposed_reason": "GR1507 5 mm threaded prop shaft protruding from motor bell", "color": "#777777",
+         "shape": _m("weapon_shaft"), "at": [0, 0, 0], "rot": [0, 0, 0]},
+        {"id": "disc", "kind": "weapon", "material": "titanium", "process": "laser", "rotates_with": spin,
+         "min_web_mm": P.DISC_MIN_WEB, "min_web_reason": "GR1507 9 mm PCD M2 pattern around 5.2 mm centre bore",
+         "color": P.COL_DISC, "parent": "weapon_motor_bell", "shape": _m("disc"), "at": disc_at, "rot": P.DISC_ROT,
+         "weapon": {"kind": "overhead_saw", "motor": "weapon_motor_stator", "cells": 2, "reduction": 1.0,
+                    "spin_axis": [0, 0, 1], "locking_bar": "locking_bar"}},
+        _struct("locking_bar", "locking_bar", "pla", P.COL_LOCK, print_orientation="+x", tethered=True, parent="arm"),
+    ]
+
+
+def _parts_drive_electronics() -> list[dict]:
+    drive = []
+    for t, sx, yaw in (("l", -1.0, 180), ("r", 1.0, 0)):
+        drive.append({"id": f"motor_{t}", "kind": "motor", "catalog": "n10_2200rpm_6v",
+                      "at": [sx * P.MOTOR_X, P.WHEEL_Y, P.WHEEL_Z], "rot": [0, 0, yaw]})
+    for t, sx, yaw in (("l", -1.0, 180), ("r", 1.0, 0)):
+        drive.append({"id": f"wheel_{t}", "kind": "wheel", "catalog": "wheel_20x8",
+                      "at": [sx * P.WHEEL_X, P.WHEEL_Y, P.WHEEL_Z], "rot": [0, 0, yaw]})
+    return drive + [
+        {"id": "battery", "kind": "battery", "catalog": "lipo_2s_350", "retained": "velcro", "at": P.BAT_AT, "rot": [0, 0, 0]},
+        {"id": "malenki_rx", "kind": "esc", "catalog": "malenki_nano", "retained": "tape", "at": P.MALENKI_AT, "rot": [0, 0, 0]},
+        {"id": "weapon_esc", "kind": "esc", "catalog": "bbb_ant_esc", "retained": "tape", "at": P.WPN_ESC_AT, "rot": [0, 0, 0]},
+        {"id": "servo", "exposed": True, "kind": "servo", "catalog": "servo_cs07", "retained": "press_fit",
+         "at": P.SERVO_AT, "rot": P.SERVO_ROT},
+        {"id": "switch", "kind": "switch", "catalog": "switch_bbb_ant_rvrn2", "tool_free": True, "marked": True,
+         "label": "Power slide switch ON/OFF", "at": P.SWITCH_AT, "rot": [0, 0, 0]},
+    ]
+
+
+def _conn(a, b, method, reason, **kw):
+    return {"a": a, "b": b, "method": method, "reason": reason, **kw}
+
+
+def _connections() -> list[dict]:
+    c = [
+        _conn("panel_top", "tub", "screw", "Top deck panel closes electronics bays and clamps drive motors"),
+        _conn("top_spine", "tub", "screw", "Top front strap clamps top panel to chassis front"),
+        _conn("wedge_front", "tub", "screw", "Aluminium front wedge absorbs horizontal impacts"),
+    ]
+    for t, side in (("l", "Left"), ("r", "Right")):
+        c.append(_conn(f"fork_mount_{t}", "wedge_front", "screw", f"{side} fork clevis mount carries ground-scraping fork loads"))
+    for t, side in (("l", "Left"), ("r", "Right")):
+        c.append(_conn(f"fork_{t}", f"fork_mount_{t}", "shaft", f"{side} fork pivots freely on M2 clevis pin to follow the floor"))
+    for t, side in (("l", "Left"), ("r", "Right")):
+        c.append(_conn(f"skid_{t}", "wedge_front", "screw", f"{side} outer skid bolts to front wedge corner"))
+    for t, side in (("l", "Left"), ("r", "Right")):
+        c.append(_conn(f"guard_{t}", "tub", "screw", f"{side} wheel guard bolts to side wall to shield wheel"))
+    for t in ("l", "r"):
+        c.append(_conn(f"eye_{t}", "wedge_front", "snap", "Decorative googly eye snapped into recessed boss on front wedge"))
+    c += [
+        _conn("arm", "servo", "shaft", "Overhead hammer-saw arm pivots on servo output spline"),
+        _conn("weapon_motor_stator", "arm", "screw", "Brushless motor stator bolted to overhead arm tip"),
+        _conn("weapon_motor_bell", "weapon_motor_stator", "shaft", "Motor bell spins on stator shaft bearings"),
+        _conn("weapon_shaft", "weapon_motor_bell", "press_fit", "GR1507 5 mm steel shaft pressed into motor bell",
+              interference_mm=P.SHAFT_PRESS_MM, mechanical_key=True),
+        _conn("disc", "weapon_motor_bell", "screw", "Titanium saw disc bolted directly to motor bell"),
+        _conn("locking_bar", "arm", "pin", "Removable safety pin locks into arm and blocks saw disc rotation during pit handling"),
+    ]
+    for t, side in (("l", "Left"), ("r", "Right")):
+        c.append(_conn(f"motor_{t}", "tub", "snap", f"{side} N10 gearmotor captured in pocket under top panel"))
+    for t, side in (("l", "Left"), ("r", "Right")):
+        c.append(_conn(f"wheel_{t}", f"motor_{t}", "press_fit", f"{side} wheel press-fit onto 3 mm D-shaft", interference_mm=P.WHEEL_PRESS_MM))
+    c += [
+        _conn("battery", "tub", "snap", "LiPo battery captured in snug pocket under top panel with velcro"),
+        _conn("malenki_rx", "tub", "snap", "Malenki Nano ESC/Rx captured in snug pocket under top panel"),
+        _conn("weapon_esc", "tub", "snap", "Weapon ESC captured in snug pocket under top panel"),
+        _conn("servo", "tub", "snap", "Hammer-saw servo captured in tight rear chassis pocket"),
+        _conn("switch", "tub", "screw", "Power slide switch bolted to top chassis mounting bosses"),
+    ]
+    return c
+
+
+def _wire(wid, frm, to, kind, awg, slack, **kw):
+    return {"id": wid, "from": frm, "to": to, "via": [list(v) for v in P.WIRE_VIAS[wid]], "awg": awg, "kind": kind,
+            "slack_mm": slack, **kw}
+
+
+def _wires() -> list[dict]:
+    note = "Routed inside enclosed chassis tub; arm is a limited-angle overhead servo (-60..10 deg)"
+    arm_reason = "Motor phase leads zip-tied along moving overhead hammer-saw arm with pivot service loop"
+    return [
+        _wire("w_bat_sw", "battery.xt30", "switch.in", "power", P.AWG_POWER, P.SLACK_SHORT, rotor_ok=note),
+        _wire("w_sw_mal", "switch.out", "malenki_rx.bat", "power", P.AWG_POWER, P.SLACK_SHORT, rotor_ok=note),
+        _wire("w_sw_wesc", "switch.out", "weapon_esc.bat", "power", P.AWG_POWER, P.SLACK_LONG, rotor_ok=note),
+        _wire("w_mal_ml", "malenki_rx.m1", "motor_l.terminals", "motor", P.AWG_MOTOR, P.SLACK_SHORT, rotor_ok=note),
+        _wire("w_mal_mr", "malenki_rx.m2", "motor_r.terminals", "motor", P.AWG_MOTOR, P.SLACK_SHORT, rotor_ok=note),
+        _wire("w_mal_servo", "malenki_rx.wpn", "servo.signal", "signal", P.AWG_SIGNAL, P.SLACK_SHORT, rotor_ok=note),
+        _wire("w_mal_wesc", "malenki_rx.wpn", "weapon_esc.rx", "signal", P.AWG_SIGNAL, P.SLACK_SHORT, rotor_ok=note),
+        _wire("w_wesc_wm", "weapon_esc.motor", "weapon_motor_stator.phases", "motor", P.AWG_PHASE, P.SLACK_LOOP,
+              rotor_ok="Routed along overhead arm spine with service loop at pivot", exposed_reason=arm_reason, external=True),
+    ]
+
+
 def make_spec() -> dict:
-    parts = [
-        {
-            "id": "tub",
-            "kind": "structure",
-            "material": "nylon",
-            "process": "fdm",
-            "print_orientation": "+z",
-            "solid_fraction": 0.55,
-            "color": P.COL_CHASSIS,
-            "shape": _m("tub"),
-            "at": [0, 0, 0],
-            "rot": [0, 0, 0],
-            "sharp_corners_ok": "Internal electronics bays and wire channels in nylon tub print with 0.4 mm nozzle corner radius; fastener bosses are in compression",
-            "label": "Unibody nylon chassis tub with sloped front, wheel wells, and electronics bays",
-        },
-        {
-            "id": "panel_top",
-            "kind": "plate",
-            "material": "nylon",
-            "process": "fdm",
-            "print_orientation": "+z",
-            "solid_fraction": 0.85,
-            "color": P.COL_TOP_PANEL,
-            "shape": _m("panel_top"),
-            "at": [0, 0, 0],
-            "rot": [0, 0, 0],
-            "sharp_corners_ok": "Rectangular switch and wire pass-through cutouts in 1.2 mm nylon top plate are unloaded",
-            "label": "Top deck cover plate",
-        },
-        {
-            "id": "top_spine",
-            "kind": "plate",
-            "material": "pla",
-            "process": "fdm",
-            "print_orientation": "+z",
-            "solid_fraction": 0.85,
-            "color": P.COL_TOP_SPINE,
-            "shape": _m("top_spine"),
-            "at": [0, 0, 0],
-            "rot": [0, 0, 0],
-            "label": "Black top front clamping strap",
-        },
-        {
-            "id": "wedge_front",
-            "kind": "wedge",
-            "material": "aluminium",
-            "process": "laser",
-            "color": P.COL_WEDGE,
-            "shape": _m("wedge_front"),
-            "at": [0, 0, 0],
-            "rot": [0, 0, 0],
-            "label": "1.5 mm aluminium sloped front wedge plate",
-        },
-        {
-            "id": "fork_mount_l",
-            "kind": "armor",
-            "material": "pla",
-            "process": "fdm",
-            "print_orientation": "+z",
-            "color": P.COL_ORANGE,
-            "shape": _m("fork_mount_l"),
-            "at": [0, 0, 0],
-            "rot": [0, 0, 0],
-            "sharp_corners_ok": "45-deg counterbored fastener seats and clevis slot are in compression against wedge",
-        },
-        {
-            "id": "fork_mount_r",
-            "kind": "armor",
-            "material": "pla",
-            "process": "fdm",
-            "print_orientation": "+z",
-            "color": P.COL_ORANGE,
-            "shape": _m("fork_mount_r"),
-            "at": [0, 0, 0],
-            "rot": [0, 0, 0],
-            "sharp_corners_ok": "45-deg counterbored fastener seats and clevis slot are in compression against wedge",
-        },
-        {
-            "id": "fork_l",
-            "kind": "fork",
-            "material": "titanium",
-            "process": "laser",
-            "color": P.COL_FORK,
-            "shape": _m("fork_l"),
-            "at": [0, 0, 0],
-            "rot": [0, 0, 0],
-        },
-        {
-            "id": "fork_r",
-            "kind": "fork",
-            "material": "titanium",
-            "process": "laser",
-            "color": P.COL_FORK,
-            "shape": _m("fork_r"),
-            "at": [0, 0, 0],
-            "rot": [0, 0, 0],
-        },
-        {
-            "id": "skid_l",
-            "kind": "wedge",
-            "material": "pla",
-            "process": "fdm",
-            "print_orientation": "+x",
-            "color": P.COL_ORANGE,
-            "shape": _m("skid_l"),
-            "at": [0, 0, 0],
-            "rot": [0, 0, 0],
-            "sharp_corners_ok": "45-deg counterbored fastener seats are in compression against wedge",
-        },
-        {
-            "id": "skid_r",
-            "kind": "wedge",
-            "material": "pla",
-            "process": "fdm",
-            "print_orientation": "+x",
-            "color": P.COL_ORANGE,
-            "shape": _m("skid_r"),
-            "at": [0, 0, 0],
-            "rot": [0, 0, 0],
-            "sharp_corners_ok": "45-deg counterbored fastener seats are in compression against wedge",
-        },
-        {
-            "id": "guard_l",
-            "kind": "armor",
-            "material": "pla",
-            "process": "fdm",
-            "print_orientation": "+x",
-            "color": P.COL_ORANGE,
-            "shape": _m("guard_l"),
-            "at": [0, 0, 0],
-            "rot": [0, 0, 0],
-        },
-        {
-            "id": "guard_r",
-            "kind": "armor",
-            "material": "pla",
-            "process": "fdm",
-            "print_orientation": "+x",
-            "color": P.COL_ORANGE,
-            "shape": _m("guard_r"),
-            "at": [0, 0, 0],
-            "rot": [0, 0, 0],
-        },
-        {
-            "id": "eye_l",
-            "kind": "other",
-            "material": "pla",
-            "process": "fdm",
-            "print_orientation": "+z",
-            "color": P.COL_EYE_WHITE,
-            "shape": _m("eye_l"),
-            "at": [0, 0, 0],
-            "rot": [0, 0, 0],
-            "retained": "press_fit",
-        },
-        {
-            "id": "eye_r",
-            "kind": "other",
-            "material": "pla",
-            "process": "fdm",
-            "print_orientation": "+z",
-            "color": P.COL_EYE_WHITE,
-            "shape": _m("eye_r"),
-            "at": [0, 0, 0],
-            "rot": [0, 0, 0],
-            "retained": "press_fit",
-        },
-        # --- Overhead hammer-saw assembly ---
-        {
-            "id": "arm",
-            "kind": "other",
-            "material": "nylon",
-            "process": "fdm",
-            "print_orientation": "+x",
-            "color": P.COL_ARM,
-            "shape": _m("arm"),
-            "at": [0, 0, 0],
-            "rot": [0, 0, 0],
-        },
-        {
-            "id": "weapon_motor_stator",
-            "exposed": True,
-            "kind": "weapon_motor",
-            "catalog": "gr1507",
-            "parent": "arm",
-            "exposed": True,
-            "exposed_reason": "Overhead hammer-saw motor stator mounted at tip of arm",
-            "at": P.WPN_MOTOR_AT,
-            "rot": P.WPN_MOTOR_ROT,
-        },
-        {
-            "id": "weapon_motor_bell",
-            "exposed": True,
-            "kind": "other",
-            "catalog": "gr1507_can",
-            "parent": "arm",
-            "exposed": True,
-            "exposed_reason": "Rotating outrunner bell carrying the saw disc at tip of overhead arm",
-            "at": P.WPN_MOTOR_AT,
-            "rot": P.WPN_MOTOR_ROT,
-        },
-        {
-            "id": "weapon_shaft",
-            "kind": "shaft",
-            "material": "steel",
-            "process": "cots",
-            "solid_fraction": 0.01,
-            "shaft_of": "weapon_motor_bell",
-            "rotates_with": "disc",
-            "parent": "weapon_motor_bell",
-            "exposed": True,
-            "exposed_reason": "GR1507 5 mm threaded prop shaft protruding from motor bell",
-            "color": "#777777",
-            "shape": _m("weapon_shaft"),
-            "at": [0, 0, 0],
-            "rot": [0, 0, 0],
-        },
-        {
-            "id": "disc",
-            "kind": "weapon",
-            "material": "titanium",
-            "process": "laser",
-            "min_web_mm": 0.75,
-            "min_web_reason": "GR1507 9 mm PCD M2 pattern around 5.2 mm centre bore",
-            "color": P.COL_DISC,
-            "parent": "arm",
-            "shape": _m("disc"),
-            "at": P.DISC_AT,
-            "rot": P.DISC_ROT,
-            "joint": {
-                "kind": "revolute",
-                "axis": [1, 0, 0],
-                "pivot": [P.DISC_AT[0], P.DISC_AT[1], P.DISC_AT[2]],
-                "min": -180,
-                "max": 180,
-                "default": 0,
-            },
-            "weapon": {
-                "kind": "overhead_saw",
-                "motor": "weapon_motor_stator",
-                "cells": 2,
-                "reduction": 1.0,
-                "spin_axis": [1, 0, 0],
-                "locking_bar": "locking_bar",
-            },
-        },
-        {
-            "id": "locking_bar",
-            "kind": "locking_bar",
-            "material": "pla",
-            "process": "fdm",
-            "print_orientation": "+x",
-            "color": P.COL_LOCK,
-            "tethered": True,
-            "parent": "arm",
-            "shape": _m("locking_bar"),
-            "at": [0, 0, 0],
-            "rot": [0, 0, 0],
-        },
-        # --- Drive & Wheels ---
-        {
-            "id": "motor_l",
-            "kind": "motor",
-            "catalog": "n10_2200rpm_6v",
-            "at": [-P.MOTOR_X, P.WHEEL_Y, P.WHEEL_Z],
-            "rot": [0, 0, 180],
-        },
-        {
-            "id": "motor_r",
-            "kind": "motor",
-            "catalog": "n10_2200rpm_6v",
-            "at": [P.MOTOR_X, P.WHEEL_Y, P.WHEEL_Z],
-            "rot": [0, 0, 0],
-        },
-        {
-            "id": "wheel_l",
-            "kind": "wheel",
-            "catalog": "wheel_20x8",
-            "at": [-P.WHEEL_X, P.WHEEL_Y, P.WHEEL_Z],
-            "rot": [0, 0, 180],
-        },
-        {
-            "id": "wheel_r",
-            "kind": "wheel",
-            "catalog": "wheel_20x8",
-            "at": [P.WHEEL_X, P.WHEEL_Y, P.WHEEL_Z],
-            "rot": [0, 0, 0],
-        },
-        # --- Electronics ---
-        {
-            "id": "battery",
-            "kind": "battery",
-            "catalog": "lipo_2s_350",
-            "retained": "velcro",
-            "at": P.BAT_AT,
-            "rot": [0, 0, 0],
-        },
-        {
-            "id": "malenki_rx",
-            "kind": "esc",
-            "catalog": "malenki_nano",
-            "retained": "tape",
-            "at": P.MALENKI_AT,
-            "rot": [0, 0, 0],
-        },
-        {
-            "id": "weapon_esc",
-            "kind": "esc",
-            "catalog": "bbb_ant_esc",
-            "retained": "tape",
-            "at": P.WPN_ESC_AT,
-            "rot": [0, 0, 0],
-        },
-        {
-            "id": "servo",
-            "exposed": True,
-            "kind": "servo",
-            "catalog": "servo_cs07",
-            "retained": "press_fit",
-            "at": P.SERVO_AT,
-            "rot": P.SERVO_ROT,
-        },
-        {
-            "id": "switch",
-            "kind": "switch",
-            "catalog": "switch_bbb_ant_rvrn2",
-            "tool_free": True,
-            "marked": True,
-            "label": "Power slide switch ON/OFF",
-            "at": P.SWITCH_AT,
-            "rot": [0, 0, 0],
-        },
-    ]
-
-    connections = [
-        {"a": "panel_top", "b": "tub", "method": "screw", "reason": "Top deck panel closes electronics bays and clamps drive motors"},
-        {"a": "top_spine", "b": "tub", "method": "screw", "reason": "Top front strap clamps top panel to chassis front"},
-        {"a": "wedge_front", "b": "tub", "method": "screw", "reason": "Aluminium front wedge absorbs horizontal impacts"},
-        {"a": "fork_mount_l", "b": "wedge_front", "method": "screw", "reason": "Left fork clevis mount carries ground-scraping fork loads"},
-        {"a": "fork_mount_r", "b": "wedge_front", "method": "screw", "reason": "Right fork clevis mount carries ground-scraping fork loads"},
-        {"a": "fork_l", "b": "fork_mount_l", "method": "shaft", "reason": "Left fork pivots freely on M2 clevis pin to follow the floor"},
-        {"a": "fork_r", "b": "fork_mount_r", "method": "shaft", "reason": "Right fork pivots freely on M2 clevis pin to follow the floor"},
-        {"a": "skid_l", "b": "wedge_front", "method": "screw", "reason": "Left outer skid bolts to front wedge corner"},
-        {"a": "skid_r", "b": "wedge_front", "method": "screw", "reason": "Right outer skid bolts to front wedge corner"},
-        {"a": "guard_l", "b": "tub", "method": "screw", "reason": "Left wheel guard bolts to side wall to shield wheel"},
-        {"a": "guard_r", "b": "tub", "method": "screw", "reason": "Right wheel guard bolts to side wall to shield wheel"},
-        {"a": "eye_l", "b": "wedge_front", "method": "snap", "reason": "Decorative googly eye snapped into recessed boss on front wedge"},
-        {"a": "eye_r", "b": "wedge_front", "method": "snap", "reason": "Decorative googly eye snapped into recessed boss on front wedge"},
-        {"a": "arm", "b": "servo", "method": "shaft", "reason": "Overhead hammer-saw arm pivots on servo output spline"},
-        {"a": "weapon_motor_stator", "b": "arm", "method": "screw", "reason": "Brushless motor stator bolted to overhead arm tip"},
-        {"a": "weapon_motor_bell", "b": "weapon_motor_stator", "method": "shaft", "reason": "Motor bell spins on stator shaft bearings"},
-        {"a": "weapon_shaft", "b": "weapon_motor_bell", "method": "press_fit", "interference_mm": 0.05, "mechanical_key": True, "reason": "GR1507 5 mm steel shaft pressed into motor bell"},
-        {"a": "disc", "b": "weapon_motor_bell", "method": "screw", "reason": "Titanium saw disc bolted directly to motor bell"},
-        {"a": "locking_bar", "b": "arm", "method": "pin", "reason": "Removable safety pin locks into arm and blocks saw disc rotation during pit handling"},
-        {"a": "motor_l", "b": "tub", "method": "snap", "reason": "Left N10 gearmotor captured in pocket under top panel"},
-        {"a": "motor_r", "b": "tub", "method": "snap", "reason": "Right N10 gearmotor captured in pocket under top panel"},
-        {"a": "wheel_l", "b": "motor_l", "method": "press_fit", "interference_mm": 0.1, "reason": "Left wheel press-fit onto 3 mm D-shaft"},
-        {"a": "wheel_r", "b": "motor_r", "method": "press_fit", "interference_mm": 0.1, "reason": "Right wheel press-fit onto 3 mm D-shaft"},
-        {"a": "battery", "b": "tub", "method": "snap", "reason": "LiPo battery captured in snug pocket under top panel with velcro"},
-        {"a": "malenki_rx", "b": "tub", "method": "snap", "reason": "Malenki Nano ESC/Rx captured in snug pocket under top panel"},
-        {"a": "weapon_esc", "b": "tub", "method": "snap", "reason": "Weapon ESC captured in snug pocket under top panel"},
-        {"a": "servo", "b": "tub", "method": "snap", "reason": "Hammer-saw servo captured in tight rear chassis pocket"},
-        {"a": "switch", "b": "tub", "method": "screw", "reason": "Power slide switch bolted to top chassis mounting bosses"},
-    ]
-
-    _rotor_note = "Routed inside enclosed chassis tub; arm is a limited-angle overhead servo (-60..10 deg)"
-    wires = [
-        {"id": "w_bat_sw", "from": "battery.xt30", "to": "switch.in", "via": [[0.0, 5.5, 18.0], [12.0, -14.0, 18.0]], "awg": 20, "kind": "power", "slack_mm": 8, "rotor_ok": _rotor_note},
-        {"id": "w_sw_mal", "from": "switch.out", "to": "malenki_rx.bat", "via": [[15.0, -17.5, 13.0], [19.5, -15.5, 13.0], [19.5, -4.5, 10.0]], "awg": 20, "kind": "power", "slack_mm": 8, "rotor_ok": _rotor_note},
-        {"id": "w_sw_wesc", "from": "switch.out", "to": "weapon_esc.bat", "via": [[15.0, -17.5, 13.0], [-19.5, -10.5, 10.0], [-44.5, -10.5, 8.0], [-44.5, -4.0, 8.0]], "awg": 20, "kind": "power", "slack_mm": 10, "rotor_ok": _rotor_note},
-        {"id": "w_mal_ml", "from": "malenki_rx.m1", "to": "motor_l.terminals", "via": [[45.0, 3.5, 8.0], [45.0, -11.0, 8.0], [20.0, -16.0, 12.0], [-14.0, -16.0, 12.0], [-14.0, -22.0, 10.0]], "awg": 24, "kind": "motor", "slack_mm": 8, "rotor_ok": _rotor_note},
-        {"id": "w_mal_mr", "from": "malenki_rx.m2", "to": "motor_r.terminals", "via": [[20.0, 3.5, 12.0], [20.0, -12.0, 12.0]], "awg": 24, "kind": "motor", "slack_mm": 8, "rotor_ok": _rotor_note},
-        {"id": "w_mal_servo", "from": "malenki_rx.wpn", "to": "servo.signal", "via": [[45.0, -4.5, 8.0], [45.0, -11.0, 8.0], [20.0, -16.5, 14.0], [13.5, -18.5, 16.0], [13.5, -23.5, 36.5], [0.0, -28.0, 36.5]], "awg": 26, "kind": "signal", "slack_mm": 8, "rotor_ok": _rotor_note},
-        {"id": "w_mal_wesc", "from": "malenki_rx.wpn", "to": "weapon_esc.rx", "via": [[45.0, -4.5, 8.0], [45.0, -11.0, 8.0], [20.0, -15.5, 12.0], [-20.5, -15.5, 12.0], [-20.5, -10.5, 10.0], [-44.5, -10.5, 8.0]], "awg": 26, "kind": "signal", "slack_mm": 8, "rotor_ok": _rotor_note},
-        {"id": "w_wesc_wm", "from": "weapon_esc.motor", "to": "weapon_motor_stator.phases", "via": [[-22.0, -12.5, 12.0], [-22.0, -12.5, 26.5], [-4.0, -28.0, 35.0], [-4.0, -25.0, 58.0]], "awg": 22, "kind": "motor", "slack_mm": 15, "rotor_ok": "Routed along overhead arm spine with service loop at pivot", "exposed_reason": "Motor phase leads zip-tied along moving overhead hammer-saw arm with pivot service loop"},
-    ]
-
-    fasteners = F.build_fastener_records()
-
-    spec = {
+    return {
         "name": "Disector",
         "profile": "aws2025",
         "robot_type": "overhead_saw",
         "locomotion": "roller",
         "generator": "src/disector/make_spec.py",
         "proven_design": {"robot": "Disector", "source": "UK antweight that already fights (builder's design); servo top is open on the real robot, no added cover"},
-        "parts": parts,
-        "fasteners": fasteners,
-        "connections": connections,
-        "wires": wires,
+        "parts": _parts_chassis() + _parts_front() + _parts_weapon() + _parts_drive_electronics(),
+        "fasteners": F.build_fastener_records(),
+        "connections": _connections(),
+        "wires": _wires(),
         "electronics": {
             "failsafe": True,
             "weapon_remote_disable": True,
@@ -441,11 +212,10 @@ def make_spec() -> dict:
             "cells": 2,
         },
         "claims": [
-            {"id": "c_mass", "text": "150 g or less", "metric": "mass_total_g", "op": "<=", "value": 150.0},
-            {"id": "c_footprint", "text": "Fits 150 mm square", "metric": "footprint_mm", "op": "<=", "value": 150.0},
+            {"id": "c_mass", "text": "150 g or less", "metric": "mass_total_g", "op": "<=", "value": P.MASS_LIMIT_G},
+            {"id": "c_footprint", "text": "Fits 150 mm square", "metric": "footprint_mm", "op": "<=", "value": P.FOOTPRINT_LIMIT_MM},
         ],
     }
-    return spec
 
 
 def main() -> None:

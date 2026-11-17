@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
-from typing import Sequence
+
+import numpy as np
 
 from robot.cad.holes import hole
 from . import params as P
@@ -26,50 +28,60 @@ class FastenerSpec:
 
 def fastener_specs() -> list[FastenerSpec]:
     n_front = (0.0, -P.INV_SQRT2, -P.INV_SQRT2)
-    z_top_pt = P.Z_TOP + P.PANEL_TOP_T
-    z_top_sp = z_top_pt + P.TOP_SPINE_T
+    down, along_x = (0, 0, -1), (1, 0, 0)
+    z_pt = P.Z_TOP + P.PANEL_TOP_T
+    z_sp = z_pt + P.TOP_SPINE_T
+    out: list[FastenerSpec] = []
 
-    # Wedge outer face: Y + Z = 32 + 0.05*2 + WEDGE_T * sqrt(2)
-    wy_mid = P.WEDGE_MID_Y + 0.05 + P.WEDGE_T * P.INV_SQRT2
-    wz_mid = P.WEDGE_MID_Z + 0.05 + P.WEDGE_T * P.INV_SQRT2
+    # Top panel -> tub (4 corners)
+    for tag, sx, sy, y in (("fl", -1, 1, P.PT_Y_FRONT), ("fr", 1, 1, P.PT_Y_FRONT),
+                           ("rl", -1, -1, P.PT_Y_REAR), ("rr", 1, -1, P.PT_Y_REAR)):
+        out.append(FastenerSpec(f"f_pt_{tag}", "M2x8", (sx * P.PT_X, y, z_pt), down, ("panel_top",), "tub", grip=P.PANEL_TOP_T))
+    # Top spine -> panel_top -> tub
+    for tag, sx in (("l", -1), ("r", 1)):
+        out.append(FastenerSpec(f"f_sp_{tag}", "M2x8", (sx * P.SP_X, P.SP_Y, z_sp), down, ("top_spine", "panel_top"), "tub",
+                                grip=P.PANEL_TOP_T + P.TOP_SPINE_T))
+    # Wedge front -> tub (centre of the plate outer face)
+    for tag, sx in (("l", -1), ("r", 1)):
+        out.append(FastenerSpec(f"f_wf_{tag}", "M2x6", (sx * P.WF_X, P.WEDGE_OUT_Y, P.WEDGE_OUT_Z), n_front,
+                                ("wedge_front",), "tub", grip=P.WEDGE_T))
+    # Fork mounts and skids -> wedge_front -> tub (screws along the 45-deg pad: Y + Z = PAD_OUT_D)
+    for tag, sx in (("l", -1.0), ("r", 1.0)):
+        for k, dx in enumerate((-P.FM_DX, P.FM_DX), 1):
+            out.append(FastenerSpec(f"f_fm_{tag}{k}", "M2x10", (sx * P.FORK_MOUNT_X + dx, P.PAD_OUT_D - P.FM_Z, P.FM_Z), n_front,
+                                    (f"fork_mount_{tag}", "wedge_front"), "tub", grip=P.PAD_GRIP))
+        for k, (z, dx) in enumerate(zip(P.SK_Z, (P.SK_DX, -P.SK_DX)), 1):
+            out.append(FastenerSpec(f"f_sk_{tag}{k}", "M2x10", (sx * (P.SKID_X + dx), P.PAD_OUT_D - z, z), n_front,
+                                    (f"skid_{tag}", "wedge_front"), "tub", grip=P.PAD_GRIP))
+    # Side wheel guards -> tub (screws point inboard from the outer face)
+    for tag, sx in (("l", -1.0), ("r", 1.0)):
+        for k, (y, z) in enumerate(P.GUARD_SCREWS, 1):
+            out.append(FastenerSpec(f"f_g{tag}_{k}", "M2x8", (sx * (P.GUARD_X0 + P.GUARD_T), y, z), (-sx, 0, 0),
+                                    (f"guard_{tag}",), "tub", grip=P.GUARD_T))
+    # Switch -> tub ribs
+    for k, sx in enumerate((-1.0, 1.0), 1):
+        out.append(FastenerSpec(f"f_sw_{k}", "M2x6", (P.SWITCH_AT[0] + sx * P.SW_EAR_DX, P.SWITCH_AT[1], P.SW_SCREW_Z), down,
+                                ("switch",), "tub", grip=0.5, reason="M2 screw clamps switch mounting ear vertically onto tub rib"))
+    # GR1507 stator -> arm (12 mm PCD along +/-Y, base at the arm outer face)
+    ty, tz = P.ARM_TIP[1], P.ARM_TIP[2]
+    for k, sy in enumerate((1.0, -1.0), 1):
+        out.append(FastenerSpec(f"f_wm_{k}", "M2x8", (-P.ARM_HALF_T, ty + sy * P.STATOR_PCD_R, tz), along_x, ("arm",),
+                                "weapon_motor_stator", grip=2 * P.ARM_HALF_T, into="through"))
+    # Disc -> GR1507 bell (two of the 9 mm PCD holes, opposite each other)
+    for k, i in enumerate((0, 2), 1):
+        a = math.radians(P.DISC_HOLE_PHASE) + i * math.pi / 2
+        out.append(FastenerSpec(f"f_dc_{k}", "M2x4", (P.DISC_FACE_X, ty + P.DISC_PCD_R * math.cos(a), tz + P.DISC_PCD_R * math.sin(a)),
+                                (-1, 0, 0), ("disc",), "weapon_motor_bell", grip=P.DISC_T, into="through"))
+    return out
 
-    return [
-        # Top panel -> tub (4 corners, >= 1.35 mm inside edges, >= 0.85 mm from ESC bay)
-        FastenerSpec("f_pt_fl", "M2x8", (-45.0, 5.5, z_top_pt), (0, 0, -1), ("panel_top",), "tub", grip=1.2),
-        FastenerSpec("f_pt_fr", "M2x8", (45.0, 5.5, z_top_pt), (0, 0, -1), ("panel_top",), "tub", grip=1.2),
-        FastenerSpec("f_pt_rl", "M2x8", (-45.0, -37.0, z_top_pt), (0, 0, -1), ("panel_top",), "tub", grip=1.2),
-        FastenerSpec("f_pt_rr", "M2x8", (45.0, -37.0, z_top_pt), (0, 0, -1), ("panel_top",), "tub", grip=1.2),
-        # Top spine -> panel_top -> tub (threads into solid tub at X=+/-15, Y=5.2)
-        FastenerSpec("f_sp_l", "M2x8", (-15.0, 5.2, z_top_sp), (0, 0, -1), ("top_spine", "panel_top"), "tub", grip=2.8),
-        FastenerSpec("f_sp_r", "M2x8", (15.0, 5.2, z_top_sp), (0, 0, -1), ("top_spine", "panel_top"), "tub", grip=2.8),
-        # Wedge front -> tub
-        FastenerSpec("f_wf_l", "M2x8", (-32.0, wy_mid, wz_mid), n_front, ("wedge_front",), "tub", head="button", grip=1.0),
-        FastenerSpec("f_wf_r", "M2x8", (32.0, wy_mid, wz_mid), n_front, ("wedge_front",), "tub", head="button", grip=1.0),
-        # Fork mounts -> wedge_front -> tub (outer pad Y+Z=38.04, grip=3.2+1.0=4.2)
-        FastenerSpec("f_fm_l1", "M2x8", (-P.FORK_MOUNT_X - 4.2, 38.04 - 11.5, 11.5), n_front, ("fork_mount_l", "wedge_front"), "tub", head="cap", tool="hex1.5", grip=4.2),
-        FastenerSpec("f_fm_l2", "M2x8", (-P.FORK_MOUNT_X + 4.2, 38.04 - 11.5, 11.5), n_front, ("fork_mount_l", "wedge_front"), "tub", head="cap", tool="hex1.5", grip=4.2),
-        FastenerSpec("f_fm_r1", "M2x8", (P.FORK_MOUNT_X - 4.2, 38.04 - 11.5, 11.5), n_front, ("fork_mount_r", "wedge_front"), "tub", head="cap", tool="hex1.5", grip=4.2),
-        FastenerSpec("f_fm_r2", "M2x8", (P.FORK_MOUNT_X + 4.2, 38.04 - 11.5, 11.5), n_front, ("fork_mount_r", "wedge_front"), "tub", head="cap", tool="hex1.5", grip=4.2),
-        # Skids -> wedge_front -> tub (2 screws along 45-deg pad Y+Z=38.04)
-        FastenerSpec("f_sk_l1", "M2x10", (-P.SKID_X, 38.04 - 19.0, 19.0), n_front, ("skid_l", "wedge_front"), "tub", head="cap", tool="hex1.5", grip=4.2),
-        FastenerSpec("f_sk_l2", "M2x8", (-P.SKID_X, 38.04 - 10.5, 10.5), n_front, ("skid_l", "wedge_front"), "tub", head="cap", tool="hex1.5", grip=4.2),
-        FastenerSpec("f_sk_r1", "M2x10", (P.SKID_X, 38.04 - 19.0, 19.0), n_front, ("skid_r", "wedge_front"), "tub", head="cap", tool="hex1.5", grip=4.2),
-        FastenerSpec("f_sk_r2", "M2x8", (P.SKID_X, 38.04 - 10.5, 10.5), n_front, ("skid_r", "wedge_front"), "tub", head="cap", tool="hex1.5", grip=4.2),
-        # Side wheel guards -> tub
-        FastenerSpec("f_gl_1", "M2x8", (-(P.GUARD_X0 + P.GUARD_T), -36.5, 10.0), (1, 0, 0), ("guard_l",), "tub", grip=3.0),
-        FastenerSpec("f_gl_2", "M2x8", (-(P.GUARD_X0 + P.GUARD_T), -6.5, 13.5), (1, 0, 0), ("guard_l",), "tub", grip=3.0),
-        FastenerSpec("f_gr_1", "M2x8", (P.GUARD_X0 + P.GUARD_T, -36.5, 10.0), (-1, 0, 0), ("guard_r",), "tub", grip=3.0),
-        FastenerSpec("f_gr_2", "M2x8", (P.GUARD_X0 + P.GUARD_T, -6.5, 13.5), (-1, 0, 0), ("guard_r",), "tub", grip=3.0),
-        # Switch -> tub ribs (centered at X=15, Y=-17, flange top at Z=24.50)
-        FastenerSpec("f_sw_1", "M2x6", (7.5, -17.0, 24.50), (0, 0, -1), ("switch",), "tub", grip=0.5, reason="M2 screw clamps switch mounting ear vertically onto tub rib"),
-        FastenerSpec("f_sw_2", "M2x6", (22.5, -17.0, 24.50), (0, 0, -1), ("switch",), "tub", grip=0.5, reason="M2 screw clamps switch mounting ear vertically onto tub rib"),
-        # GR1507 stator -> arm (12 mm PCD -> r=6.0 along +/-Y, base at X=+3.00, arm at X=-3..+3)
-        FastenerSpec("f_wm_1", "M2x8", (-3.0, -16.0 + 6.0, 80.0), (1, 0, 0), ("arm",), "weapon_motor_stator", grip=6.0, into="through"),
-        FastenerSpec("f_wm_2", "M2x8", (-3.0, -16.0 - 6.0, 80.0), (1, 0, 0), ("arm",), "weapon_motor_stator", grip=6.0, into="through"),
-        # Disc -> GR1507 bell (9 mm PCD -> r=4.5 at -54.889 deg & +125.111 deg; disc X=20.10..21.10)
-        FastenerSpec("f_dc_1", "M2x4", (21.10, -16.0 + 2.588, 80.0 - 3.681), (-1, 0, 0), ("disc",), "weapon_motor_bell", grip=1.0, into="through"),
-        FastenerSpec("f_dc_2", "M2x4", (21.10, -16.0 - 2.588, 80.0 + 3.681), (-1, 0, 0), ("disc",), "weapon_motor_bell", grip=1.0, into="through"),
-    ]
+
+def _thread_depth(fs: FastenerSpec) -> float:
+    """Depth of the tap drill the hole record expects (screw tip + 0.5 mm, measured from the grip plane)."""
+    import build123d as bd
+
+    _, rec = hole(bd.Solid.make_box(1, 1, 1), at=fs.at, axis=fs.axis, fastener=fs.designation, head=fs.head,
+                  into=fs.into, grip=fs.grip or 0.0)
+    return float(rec.hole["thread_depth"])
 
 
 def apply_holes_to_part(part_id: str, solid):
@@ -87,11 +99,10 @@ def apply_holes_to_part(part_id: str, solid):
             )
         elif part_id == fs.threads_into:
             # Start thread bore behind grip along fs.axis
-            import numpy as np
             ax = np.asarray(fs.axis, float)
             ax = ax / np.linalg.norm(ax)
-            g = fs.grip or 0.0
-            at_thread = tuple(float(c) for c in (np.asarray(fs.at, float) + g * ax))
+            grip = fs.grip or 0.0
+            at_thread = tuple(float(c) for c in (np.asarray(fs.at, float) + grip * ax))
             solid, _ = hole(
                 solid,
                 at=at_thread,
@@ -101,6 +112,7 @@ def apply_holes_to_part(part_id: str, solid):
                 into=fs.into,
                 side="thread",
                 grip=0.0,
+                engage=_thread_depth(fs) - 0.5,   # tap drill only as deep as the screw actually reaches (+0.5 added by hole())
             )
     return solid
 
