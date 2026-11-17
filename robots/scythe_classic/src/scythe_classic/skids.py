@@ -78,10 +78,28 @@ def shaft_top_z():
     return P.wpn_motor_z() - MOTOR_STATOR_BELOW + 4.0
 
 
+SHAFT_OUT = 12.0       # mm the motor's shaft stands out of the bell (GR1507 drawing: 12 mm)
+THREAD_PITCH = 0.8     # mm M5 coarse pitch
+THREAD_ROOT_W = 0.4    # mm width of each turned root groove (a ring stands for the helix)
+THREAD_DEPTH = 0.4     # mm groove depth
+THREAD_N = 10          # grooves: 10 x 0.8 + 0.4 = 8.4 mm of thread (drawing: 8 mm, +0.5 / -0.2)
+
+
+def shaft_bottom_z():
+    """Shaft tip: SHAFT_OUT below the bell's output face (the hub's top is the bell's bottom)."""
+    return P.bar_top_z() + P.HUB_GAP + P.HUB_H - SHAFT_OUT
+
+
 def shaft():
-    """World frame: the 5 mm weapon shaft on the axis, from the arm underside up through the bearing, the bar bore, the hub
-    and the bell into the stator bore (the motor's own shaft extended: motor-as-hub on the top side)."""
-    return bd.Pos(0, P.WPN_AXIS_Y, ARM_CLR_FLOOR) * _z_cyl(SHAFT_R, shaft_top_z() - ARM_CLR_FLOOR)
+    """World frame: the 5 mm weapon shaft on the axis, from SHAFT_OUT below the bell, up through the bearing, the bar bore, the hub
+    and the bell into the stator bore (the motor's own shaft extended: motor-as-hub on the top side). Its lower 8 mm are threaded
+    (modelled as turned root grooves every pitch, so the bar's hub clamps on a real M5 thread)."""
+    z0 = shaft_bottom_z()
+    rod = bd.Pos(0, P.WPN_AXIS_Y, z0) * _z_cyl(SHAFT_R, shaft_top_z() - z0)
+    for k in range(THREAD_N):
+        zg = z0 + THREAD_ROOT_W + k * THREAD_PITCH
+        rod -= bd.Pos(0, P.WPN_AXIS_Y, zg) * (_z_cyl(SHAFT_R + 0.5, THREAD_ROOT_W) - _z_cyl(SHAFT_R - THREAD_DEPTH, THREAD_ROOT_W))
+    return rod
 
 
 DOME_STEM_R = 1.45     # mm: the dome's stem plugs into a 3 mm hole in the top panel (snap; no screw, the axis is the shaft's)

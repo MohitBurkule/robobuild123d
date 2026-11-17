@@ -18,8 +18,8 @@ SWITCH_HOLE_D = 4.0     # mm hex-key access to the FingerTech mini switch (tool-
 
 
 def rim_xy():
-    r = P.TUB_R - tub._slope_inset(tub.height()) - 2 * P.TUB_WALL
-    return [(loc.position.X, loc.position.Y + P.WPN_AXIS_Y) for loc in bd.PolarLocations(r, P.PANEL_SCREW_N)]
+    """Rim screw positions (tub.rim_positions): each RIM_EDGE_D in from the outline, in the middle of the tub's top flange."""
+    return tub.rim_positions()
 
 
 def seat(i):

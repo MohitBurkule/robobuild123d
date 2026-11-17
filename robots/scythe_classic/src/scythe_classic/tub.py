@@ -16,10 +16,10 @@ from . import params as P
 from ._reuse import hw, weapon_motor
 
 
-POD_FRONT_PROUD = 1.9   # mm the pod's front corners stand outside the cone's base circle
-SKIRT_INSET = 1.0   # mm the base circle sits inside TUB_R: gives the pod front corners an edge long enough to take the fillet
+SKIRT_INSET = 2.0   # mm the base circle sits inside TUB_R: gives the pod front corners an edge long enough to take the fillet
 SLOPE_STEPS = 6   # ruled-loft sections up the sloped wall (each step turns the wall by well under the 45 deg sharp-corner threshold)
-JOINT_R = 1.2   # mm inside radius where the pod front face meets the cone (outside) and at the top panel plan
+POD_CORNER_R = P.TUB_WALL + 1.1   # mm pod plan corner radius: the cavity corner (wall inside it) is then 1.3 mm
+JOINT_R = 1.3   # mm inside radius where the pod front face meets the cone (outside) and at the top panel plan
 CAVITY_EXTRA = 6.0   # mm the offset body is taller than the tub
 SKIRT_H = 2.0   # mm vertical band at the cone base: a sloped wall running into the floor underside leaves a knife edge
 TOP_BAND_H = 2.0   # mm vertical band at the cone top: the sloped wall meeting the flat rim face leaves an acute inside corner
@@ -41,9 +41,9 @@ def height():
 
 
 def pod_front_y():
-    """Y of the pod's front face: its outer corners stand POD_FRONT_PROUD outside the disc's circle, so the face runs the full height
-and meets the cone in one clean concave edge (corners exactly on the circle make that edge start at a point)."""
-    return P.WPN_AXIS_Y - math.sqrt(P.TUB_R ** 2 - (P.POD_W / 2) ** 2) - POD_FRONT_PROUD
+    """Y of the pod's front edge: on the weapon axis, so it lies inside the cone's disc at every height and the pod's side walls run
+    into the cone in one gentle concave edge (a front face outside the disc leaves an acute notch that cannot be rounded)."""
+    return P.WPN_AXIS_Y
 
 
 def pod_rear_y():
@@ -57,6 +57,22 @@ def pod_len():
 
 def pod_cy():
     return (pod_front_y() + pod_rear_y()) / 2
+
+
+RIM_EDGE_D = 4.6   # mm rim screw centre in from the outline (arch.edge_distance wants 1.5 x the 2 mm screw)
+RIM_RIB_LEN = 14.0   # mm a rib's cut-out reaches out from its post (past the wall)
+RIM_BOSS_R = 3.2   # mm radius of the post that carries a rim screw (its inner face is RIM_EDGE_D from the screw)
+RIM_RIB_H = 8.0   # mm the posts and their ribs to the wall reach down from the top
+RIM_POD_Y = (-15.0, -33.0)   # mm y of the rim screws on each pod wall (beside the receiver and the battery, clear of the wheel axle slots)
+
+
+def rim_positions():
+    """The six rim screws, each RIM_EDGE_D inside the top outline and clear of the electronics below: two on the cone's far side
+    (45 and 135 deg), four on the pod walls (y = RIM_POD_Y)."""
+    r = P.TUB_R - _slope_inset(height()) - RIM_EDGE_D
+    cone = [(r * math.cos(math.radians(a)), P.WPN_AXIS_Y + r * math.sin(math.radians(a))) for a in (45, 135)]
+    pod = [(sx * (P.POD_W / 2 - RIM_EDGE_D), y) for sx in (1, -1) for y in RIM_POD_Y]
+    return cone + pod
 
 
 def disc_face(grow=0.0):
@@ -77,8 +93,11 @@ def top_outline(inset):
     disc = bd.Pos(0, P.WPN_AXIS_Y) * bd.Circle(P.TUB_R - inset)
     pod = bd.Pos(0, pod_cy()) * bd.Rectangle(P.POD_W, pod_len())
     outline = (disc + pod).clean()
-    corners = [v for v in outline.vertices() if abs(v.Y - pod_front_y()) < 0.05 and abs(v.X) < P.POD_W / 2 - 1.0]
-    return bd.fillet(corners, JOINT_R)
+    side = [v for v in outline.vertices() if abs(abs(v.X) - P.POD_W / 2) < 0.05]
+    joint = [v for v in side if v.Y > pod_rear_y() + 1.0]
+    corners = [v for v in side if v.Y <= pod_rear_y() + 1.0]
+    outline = bd.fillet(joint, JOINT_R)
+    return bd.fillet(bd.Sketch(outline).vertices().filter_by(lambda v: abs(abs(v.X) - P.POD_W / 2) < 0.05 and v.Y <= pod_rear_y() + 1.0), POD_CORNER_R)
 
 
 def cone_loft(grow_lo, grow_hi, z_lo, z_hi):
@@ -125,26 +144,63 @@ def _inset_at(levels, z):
     return levels[-1][1]
 
 
+def rim_posts():
+    """[(x, y, ux, uy)]: each rim screw's centre and the outward direction its rib runs (radial on the cone, along x on the pod)."""
+    out = []
+    for x, y in rim_positions():
+        if y < P.WPN_AXIS_Y - 10.0:
+            out.append((x, y, math.copysign(1.0, x), 0.0))
+        else:
+            d = math.hypot(x, y - P.WPN_AXIS_Y)
+            out.append((x, y, x / d, (y - P.WPN_AXIS_Y) / d))
+    return out
+
+
+def _cavity_face(inset, wall, ribs=False):
+    """Cavity plan at one level: the outline offset in by the wall; with `ribs`, less the rim screws' posts, each a round post
+    with a rib out to the wall (their joins to the wall rounded)."""
+    face = bd.offset(top_outline(inset).faces()[0], amount=-wall, kind=bd.Kind.ARC).faces()[0]
+    if not ribs:
+        return face
+    for x, y, ux, uy in rim_posts():
+        ang = math.degrees(math.atan2(uy, ux))
+        rib = bd.Pos(x + ux * RIM_RIB_LEN / 2, y + uy * RIM_RIB_LEN / 2) * bd.Rot(0, 0, ang) * bd.Rectangle(RIM_RIB_LEN, 2 * RIM_BOSS_R)
+        face = face - rib - bd.Pos(x, y) * bd.Circle(RIM_BOSS_R)
+    posts = rim_positions()
+    joins = [(v.X, v.Y) for v in _corner_vertices(face, False) if any(math.hypot(v.X - x, v.Y - y) < RIM_RIB_LEN for x, y in posts)]
+    for jx, jy in joins:   # one at a time: the face is rebuilt after each, so the vertex is found again by position
+        v = min(face.vertices(), key=lambda q: math.hypot(q.X - jx, q.Y - jy))
+        face = face.fillet_2d(FILLET_R, [v])
+    return face
+
+
 def cavity():
     """What is hollowed out: the same stack of plan outlines, each offset inward by the wall (taken square to the sloped wall, so
     the wall is the same thickness everywhere), from the floor up and out through the open top (the top panel closes it). The floor
-    edge is rounded (FILLET_R) by three ruled steps of a quarter circle. Built from the sections, not by offsetting the solid: an
-    offset of the faceted solid leaves sliver faces."""
+    edge is rounded (FILLET_R) by four ruled steps of a quarter circle. The upper RIM_RIB_H of the wall carries the rim screws'
+    posts: they are left standing in the cavity (a separate loft stack above, so the posts have one topology all the way up).
+    Built from the sections, not by offsetting the solid: an offset of the faceted solid leaves sliver faces."""
     slope = math.radians(P.TUB_SLOPE_DEG)
     levels = _levels(CAVITY_EXTRA)
     z_floor = z0() + P.TUB_FLOOR_T
+    z_split = z0() + height() - RIM_RIB_H
+    z_skirt, z_cone_top = z0() + SKIRT_H, z0() + height() - TOP_BAND_H
+
+    def wall_at(z):
+        return P.TUB_WALL / math.cos(slope) if z_skirt + 1e-6 < z <= z_cone_top + 1e-6 else P.TUB_WALL
+
     r = FILLET_R
-    secs = []   # (z, inset, wall offset)
-    for deg in (0, 30, 60, 90):
+    low = []   # (z, inset, wall offset)
+    for deg in (0, 22.5, 45, 67.5, 90):
         a = math.radians(deg)
         z = z_floor + r * (1 - math.cos(a))
-        secs.append((z, _inset_at(levels, z), P.TUB_WALL + r * (1 - math.sin(a))))
-    for k, (z, inset) in enumerate(levels):
-        if z > z_floor + r + 1e-6:
-            sloped = z0() + SKIRT_H + 1e-6 < z <= z0() + height() - TOP_BAND_H + 1e-6
-            secs.append((z, inset, P.TUB_WALL / (math.cos(slope) if sloped else 1.0)))
-    faces = [bd.Plane.XY.offset(z) * bd.offset(top_outline(inset).faces()[0], amount=-w, kind=bd.Kind.ARC).faces()[0] for z, inset, w in secs]
-    return _stack(faces)
+        low.append((z, _inset_at(levels, z), P.TUB_WALL + r * (1 - math.sin(a))))
+    for z in sorted({z for z, _ in levels if z_floor + r + 1e-6 < z < z_split - 1e-6} | {z_split}):
+        low.append((z, _inset_at(levels, z), wall_at(z)))
+    high = [(z, _inset_at(levels, z), wall_at(z)) for z in sorted({z for z, _ in levels if z > z_split + 1e-6} | {z_split})]
+    lower = _stack([bd.Plane.XY.offset(z) * _cavity_face(inset, w) for z, inset, w in low])
+    upper = _stack([bd.Plane.XY.offset(z) * _cavity_face(inset, w, ribs=True) for z, inset, w in high])
+    return (lower + upper).clean()
 
 
 def shell():
@@ -191,21 +247,22 @@ MOTOR_HALF_W = 6.0  # mm half width of the N10 body (catalogue box 9 x 12 x 10)
 MOTOR_HALF_H = 5.0  # mm half height of the N10 body
 
 
-FILLET_R = 1.0   # mm minimum inside radius on printed concave corners (mfg.sharp_internal_corner)
-CORNER_R = 1.5   # mm radius of the cradle's vertical concave corners (larger than the base fillet, or the two blends degenerate to a point)
+FILLET_R = 1.2   # mm inside radius on printed concave corners (the sharp-corner check wants >= 1.0 measured on the facets)
+CONVEX_R = 0.5   # mm rounding of the cradle's convex plan corners (the base fillet wraps cleanly round them)
+CORNER_R = 1.8   # mm radius of the cradle's vertical concave corners (larger than the base fillet, or the two blends degenerate to a point)
 SLAB_MARGIN = 2.0   # mm the cradle's base slab runs out beyond the cradle outline: room for the base fillet
 
 
-def _concave_vertices(face):
-    """Vertices of a plan face whose interior angle is reflex (more than half the surrounding disc is inside the face)."""
+def _corner_vertices(face, concave):
+    """Vertices of a plan face that are true corners: reflex (concave) or convex, not the tangent joins between a line and an arc
+    (about half the surrounding disc inside the face)."""
     out = []
     for v in face.vertices():
         n = 0
         for k in range(8):
             a = math.radians(22.5 + 45 * k)
-            q = bd.Vector(v.X + 0.05 * math.cos(a), v.Y + 0.05 * math.sin(a), 0)
-            n += face.is_inside(q)
-        if n > 4:
+            n += face.is_inside(bd.Vector(v.X + 0.05 * math.cos(a), v.Y + 0.05 * math.sin(a), 0))
+        if (n > 4) if concave else (n < 4):
             out.append(v)
     return out
 
@@ -230,7 +287,8 @@ def cradle():
         a2, b2 = sorted((y0 + sy * (MOTOR_HALF_W + RIB_GAP), y0 + sy * (MOTOR_HALF_W + RIB_GAP - STOP_W)))
         plan += rect(rear - PAD_GAP - RIB_T, rear - PAD_GAP, a2, b2)                         # rear stop
     plan = plan.clean()
-    plan = bd.fillet(_concave_vertices(plan.faces()[0]), CORNER_R)
+    plan = bd.fillet(_corner_vertices(plan.faces()[0], True), CORNER_R)
+    plan = bd.fillet(_corner_vertices(plan.faces()[0], False), CONVEX_R)
     stand = bd.Pos(0, 0, z_lo) * bd.extrude(plan.faces()[0], z_hi - z_lo)
     slab_face = bd.offset(plan.faces()[0], amount=SLAB_MARGIN, kind=bd.Kind.ARC).faces()[0]
     slab = bd.Pos(0, 0, z0()) * bd.extrude(slab_face, P.TUB_FLOOR_T)
