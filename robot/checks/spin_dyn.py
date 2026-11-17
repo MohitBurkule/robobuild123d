@@ -243,10 +243,87 @@ def invert_weapon(ctx):
     return out
 
 
+HIT_SIDE_FRACTION = 0.3  # share of the impact force that lands out of the spin plane (glancing / floor / wall hit)
+BEARING_TILT_DEG = 0.3  # shaft tilt from bearing play and frame give under that hit
+WOBBLE_MARGIN_MM = 0.5
+
+
+def blade_wobble(ctx, floor):
+    """A hit on a wall, floor or opponent pushes the blade out of its spin plane: it bends as a cantilever from the hub
+    and the shaft tilts in its bearings. The tip then moves `delta` along the spin axis; the swept band must stay
+    clear of the floor and of every other part by delta + margin."""
+    out = []
+    F = ph.impact_n(ctx) * HIT_SIDE_FRACTION
+    for p, wb, origin, axis in ph.weapons(ctx):
+        v = wb.mesh.vertices
+        rad = ph.perp_radius(v, origin, axis)
+        R = float(rad.max())
+        ax = (v - origin) @ axis
+        t = float(ax.max() - ax.min())  # blade thickness along the spin axis
+        mech = catalog.mech(p.material)
+        if mech is None or t <= 0 or R <= 0:
+            ctx.not_checked.append(f"Blade wobble of `{p.id}`: material modulus or geometry unknown")
+            continue
+        E = mech[2] * 1e3  # N/mm^2
+        hub = R * 0.25  # clamp radius ~ hub/spider (a quarter of the reach when not modelled)
+        L = max(R - hub, 1.0)
+        width = max(wb.geom.volume / max(t * 2 * R, 1e-6), 2.0)  # mean blade width (volume / (t x full length))
+        I = width * t ** 3 / 12.0
+        flex = F * L ** 3 / (3 * E * I)
+        tilt = R * math.sin(math.radians(BEARING_TILT_DEG))
+        delta = flex + tilt
+        ctx.metrics[f"weapon_wobble_mm.{p.id}"] = delta
+        # clearance along the spin axis: floor (when the axis is near vertical) and parts inside the swept radius
+        gaps = []
+        if abs(float(axis[2])) > 0.7:
+            gaps.append(("floor", float(v[:, 2].min()) - floor))
+        a0, a1 = float(ax.min()), float(ax.max())
+        from .archetype import rotor_set
+        try:
+            rotor = set(rotor_set(ctx.r.spec, p.id))
+        except Exception:  # noqa: BLE001
+            rotor = {p.id}
+        rotor |= {q.id for q in ctx.r.spec.parts if q.parent in rotor}  # bodies carried by the rotor spin with it
+        for b in ctx.world.bodies:
+            if b is wb or b.id in rotor or b.is_wire or b.fastener or b.kind in SPINNING_KINDS or b.kind == "bearing":
+                continue
+            bv = b.mesh.vertices
+            br = ph.perp_radius(bv, origin, axis)
+            k = (br <= R) & (br >= hub)  # under the hub nothing wobbles: only the free span sweeps out of plane
+            if not k.any():
+                continue
+            ba = (bv[k] - origin) @ axis
+            above = ba[ba >= a1]
+            below = ba[ba <= a0]
+            cand = ([float(above.min() - a1)] if len(above) else []) + ([float(a0 - below.max())] if len(below) else [])
+            if not cand:
+                continue  # the part overlaps the blade band itself: interference checks own that
+            g = min(cand)
+            if g < 50:
+                gaps.append((b.id, g))
+        if not gaps:
+            continue
+        who, g = min(gaps, key=lambda q: q[1])
+        need = delta + WOBBLE_MARGIN_MM
+        msg = (f"A {F:.0f} N out-of-plane hit bends `{p.id}` ({p.material}, {t:.1f} mm thick, ~{width:.0f} mm wide, {L:.0f} mm "
+               f"free span) {flex:.2f} mm, and {BEARING_TILT_DEG} deg of shaft tilt adds {tilt:.2f} mm at the {R:.0f} mm tip: "
+               f"the tip wobbles {delta:.2f} mm along the spin axis. Nearest thing along that axis: `{who}` at {g:.2f} mm.")
+        if g < need:
+            sev = BLOCKER if g < delta else WARNING
+            out.append(fail("dynamics.blade_wobble", G, sev, "Blade can wobble into the robot or floor", msg).on(p.id, *([who] if who != "floor" else []))
+                       .expect(f">= {need:.2f} mm", f"{g:.2f} mm")
+                       .fix(f"Open the gap to `{who}` by {need - g:.2f} mm, or stiffen the blade (thicker / wider root / "
+                            "smaller free span), or support the shaft both sides closer to the blade."))
+        else:
+            out.append(ok("dynamics.blade_wobble", G, "Blade wobble stays clear", msg))
+    return out
+
+
 def run_all(ctx, floor, com):
     out = []
     for f in (lambda: brake_dive(ctx, floor, com), lambda: spinup_kick(ctx, floor, com),
-              lambda: gyro_lift(ctx, floor, com), lambda: floor_margin(ctx, floor), lambda: invert_weapon(ctx)):
+              lambda: gyro_lift(ctx, floor, com), lambda: floor_margin(ctx, floor), lambda: invert_weapon(ctx),
+              lambda: blade_wobble(ctx, floor)):
         try:
             out += f()
         except Exception as e:  # noqa: BLE001 - one broken estimate must not hide the others

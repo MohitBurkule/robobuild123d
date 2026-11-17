@@ -58,6 +58,7 @@ REGISTRY = [
     _g("kinematics", DESIGN, FULL, 179.0),
     _g("tension", DESIGN, INNER, 0.0),
     _g("targets", DESIGN, INNER, 0.2, note="the spec's own declared target dimensions"),
+    _g("craft", DESIGN, INNER, 1.0, note="designer red flags: stray parts, bricks, box corners, tiny weapon, slabs"),
     _g("shape", DESIGN, INNER, 6.5),
     _g("dynamics", DESIGN, INNER, 0.0),
     _g("strength", DESIGN, INNER, 2.6),

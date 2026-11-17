@@ -120,3 +120,11 @@ with numbers, and needs nothing else. Run the full tier (`--llm` without `--tier
 - `dynamics.floor_margin`: weapon rim within 10 mm of the floor must clear 0.5 mm tyre squash + 3 deg floor seam over its reach.
 - `dynamics.invert_weapon`: if `can_run_inverted`, the weapon must not be the highest point (it would rest on it).
 - A spinning weapon within 2 mm of the floor no longer counts as a floor contact in traction/tip checks.
+
+## craft group (designer red flags, inner tier)
+- `craft.stray_part` BLOCKER: a part > 0.5 mm below the floor or > 15 mm outside the structure box (weapons, wheels, wedges, skids exempt).
+- `craft.brick`: printed structure part > 60% of its bounding box (shell + rib it).
+- `craft.sharp_edges`: main body only; share of convex silhouette edge length with >= 60 deg corner > 60% (Revron tub 39%, block-out tubs ~100%).
+- `craft.weapon_scale`: spinner swept diameter < 0.6 x body width.
+- `craft.flat_slab`: 3-8 mm solid plate > 1500 mm2, > 85% solid.
+- `dynamics.blade_wobble`: 30% of impact out of plane bends the blade (cantilever from hub, E from material) + 0.3 deg shaft tilt; free span must clear floor and non-rotor parts along the spin axis by wobble + 0.5 mm.
