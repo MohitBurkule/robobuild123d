@@ -23,6 +23,7 @@ NA = "na"
 ALL = None
 W, V, H, L = "wedge", "vspin", "hspin", "lifter"
 LOWGAME = {W, V, L, "other"}  # robots that fight for the floor with a skirt, wedge or forks
+GROUND_BLOCKERS = ("R014", "R015")  # T-bone sides, fork gap in front (R012 stays a warning: 99 mm = unmeasured sector)
 SEAM_MM = 2.0  # arena floor seams and plate steps
 
 
@@ -749,7 +750,10 @@ def run(ctx):
         elif st:
             out.append(ok(fid, G, title, msg))
         else:
-            f = fail(fid, G, sev, title, msg).fix(fix)
+            # ground-gap rules decide fights: a low-game robot (wedge, spinner, lifter) that leaves a door open under its
+            # edge gets lifted and flipped, so these are blockers there (designer review 2026-11-17)
+            sev_eff = BLOCKER if (rid in GROUND_BLOCKERS and family in LOWGAME) else sev
+            f = fail(fid, G, sev_eff, title, msg).fix(fix)
             if exp is not None:
                 f.expect(exp, act)
             out.append(f)
