@@ -20,7 +20,7 @@ Measured mass (verifier): 125.1 g of the 150 g limit.
   countersink 6.2 mm (M3 head 6.0 + 0.1). Rule 5f lock: a removable 3 mm pin through a 3 mm hole in the +X arm at
   r = 20, seated in the tub floor (`lock_pin`, orange, tethered).
 - **Hub:** 7075, 1.0 mm washer gap above the bar (the sweep proxy touches it otherwise), 4.5 mm tall, bolts engage 4.5 mm.
-- **Weapon motor:** GR1507 shaft down, stator on the top panel, boss ring in the tub.
+- **Weapon motor:** GR1507 shaft down, stator clamped between the top panel and a printed seat plate (pocket ring, ribs to the cone wall) in the tub.
 - **Tub:** cone (TUB_R 50, 35 deg slope) with a rear pod 70.8 mm wide. Floor at z = 8.5 (2 mm floor), top panel at
   z = 29.6 to 30.6 (TUB_TOP_Z = 30.6).
 - **Drive:** 2 x N10 1000 rpm inside the pod, 34 mm wheels on the outside; wheels behind the sweep.

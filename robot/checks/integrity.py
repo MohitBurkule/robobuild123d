@@ -9,7 +9,10 @@ Catches a CAD build that silently collapsed (e.g. a fillet that made a boolean c
                               reference_cad mesh volume when mapped, and the previous passing run's volume (stored
                               per spec in <cache_dir>/integrity/<spec>.json). Within `tol` (10 %) of any -> pass;
                               below `collapse` (50 %) of every one -> BLOCKER; otherwise WARNING.
-Opt out: spec "integrity": {"enabled": false}; params "integrity": {"tol": 0.1, "collapse": 0.5}.
+  integrity.nonempty (BLOCKER) the part's shape is empty: no faces or zero volume (e.g. a boolean cut away everything, a
+                              radius that made a ring's inside larger than its outside). Judged for EVERY part,
+                              catalogue or made, even when `integrity` is opted out or `solids` is declared.
+Opt out (all but nonempty): spec "integrity": {"enabled": false}; params "integrity": {"tol": 0.1, "collapse": 0.5}.
 Cheap: mesh connected components and the B-rep volume already in the geometry cache; no booleans.
 """
 
@@ -98,21 +101,51 @@ def _mesh_and_volume(rp):
     return m, (v if v > 0 else abs(float(m.volume)))
 
 
+EMPTY_VOLUME_MM3 = 1e-6   # a shape this small has no material (mesh noise of a collapsed boolean)
+
+
+def is_empty(rp):
+    """True when the part's mesh has no faces or its volume is nil."""
+    m, vol = _mesh_and_volume(rp)
+    return len(m.faces) == 0 or vol <= EMPTY_VOLUME_MM3
+
+
+def empty_findings(ctx, parts=None):
+    """integrity.nonempty for every spec part (None-geometry parts are reported empty too); returns (findings, empty ids)."""
+    out, empty = [], set()
+    for rp in ctx.r.parts:
+        pid = rp.part.id
+        if parts is not None and pid not in parts:
+            continue
+        try:
+            gone = is_empty(rp)
+        except Exception:  # noqa: BLE001 - a part whose geometry cannot even be read has no usable shape
+            gone = True
+        if gone:
+            empty.add(pid)
+            out.append(fail("integrity.nonempty", G, BLOCKER, "Part shape is empty",
+                            f"`{pid}` has no volume: its CAD build returned an empty shape (a boolean removed everything, or a "
+                            f"ring whose inner radius is not below its outer).").on(pid)
+                       .fix("Fix the part's build so it returns a solid; print its volume and check the last boolean."))
+    return out, empty
+
+
 def run(ctx, parts=None):
     spec = ctx.r.spec
     raw = spec.raw or {}
+    out, empty = empty_findings(ctx, parts)
     if not enabled(raw):
         ctx.not_checked.append("Part integrity (solid count, volume collapse): opted out")
-        return []
+        return out
     p = params(raw)
     store = store_path(getattr(spec, "name", None))
     prev = _load(store)
     refs = ref_volumes(spec)
-    out, keep = [], dict(prev)
+    keep = dict(prev)
     for rp in ctx.r.parts:
         part = rp.part
         pid = part.id
-        if parts is not None and pid not in parts:
+        if parts is not None and pid not in parts or pid in empty:
             continue
         ex = getattr(part, "_extra", {}) or {}
         m, vol = _mesh_and_volume(rp)

@@ -1,6 +1,6 @@
 """Scythe assembly with build123d joints (rigid / revolute), mirroring Revron's rig idea (joints.py). UNTESTED.
 
-Stack on the weapon axis, bottom up: foot -> bar -> hub -> GR1507 bell (shaft down) -> stator -> tub boss -> top panel.
+Stack on the weapon axis, bottom up: foot -> bar -> hub -> GR1507 bell (shaft down) -> stator -> tub seat plate and pocket ring -> top panel.
 Rotating: foot, bar, hub, bell + shaft (one revolute joint on the axis). Fixed: everything else.
 """
 import build123d as bd

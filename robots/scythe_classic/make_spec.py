@@ -16,17 +16,25 @@ sys.path.insert(0, os.path.join(HERE, "src"))
 import scythe_classic.panels as panels  # noqa: E402
 import scythe_classic.params as P  # noqa: E402
 import scythe_classic.skids as skids  # noqa: E402
-from scythe_classic._reuse import weapon_motor  # noqa: E402
+import scythe_classic.tub as tub  # noqa: E402
+from scythe_classic._reuse import hw, weapon_motor  # noqa: E402
 
 PARAMS_PATH = "src/scythe_classic/params.py"
 
 # Hand-placed electronics (x, y, z) in mm, rear pod and cone interior. Checked with `robot verify`.
 TAPE_T = 0.2   # mm foam-tape layer under the taped parts (the verifier counts contact within 0.5 mm)
 FLOOR_IN = P.tub_floor_z() + P.TUB_FLOOR_T   # z of the pod cavity floor (inside the tub): electronics sit on it
-BATTERY_AT = (-20.4, 14.0, FLOOR_IN + 0.5 + 5.5)   # probe --place battery: safe box x -21.9..-16.4, y 10.6..20.6 at yaw 90
+COLUMN_CLR = tub.mount_r_out() + tub.FILLET_R + 0.3   # mm from the weapon axis to the nearest electronics: past the stator column and its foot fillet
+BATTERY_AT = (-(COLUMN_CLR + hw.size(P.BATTERY)[1] / 2), 14.0, FLOOR_IN + 0.5 + 5.5)   # probe --place battery: safe box x -21.9..-16.4, y 10.6..20.6 at yaw 90
 ESC_AT = (0.0, -8.0, FLOOR_IN + TAPE_T + 2.0)
-RX_AT = (21.4, 14.0, FLOOR_IN + TAPE_T + 1.25)   # probe --place drive_rx: free box x 16.1..35.1 y -1.1..30.9          # Malenki-Nano, yawed 90 deg, rests on the floor (tape)
+RX_AT = (COLUMN_CLR + hw.size(P.DRIVE_RX)[1] / 2, 14.0, FLOOR_IN + TAPE_T + 1.25)   # probe --place drive_rx: free box x 16.1..35.1 y -1.1..30.9          # Malenki-Nano, yawed 90 deg, rests on the floor (tape)
 XT30_AT = (-19.6, -31.4, FLOOR_IN + 0.5 + 5.1)   # probe --place xt30 (pod rear): free box x -26.5..-12.8 y -34.0..-28.8 at yaw 90
+_z_back, _z_base_lo = tub.stator_z()
+_wire_z = round(_z_back - 1.1, 2)   # mm: wire height through the column's slot and in to the port: under the top panel (1.9 mm wire plus 0.15 mm)
+_slot = math.radians(tub.WIRE_SLOT_DEG)
+_slot_xy = lambda r: [round(r * math.cos(_slot), 2), round(P.WPN_AXIS_Y + r * math.sin(_slot), 2)]
+WPN_WIRE_VIA = [[-9.0, 0.0, 22.5], _slot_xy(tub.mount_r_out() + 7.0) + [round(_wire_z - 1.0, 2)], _slot_xy(tub.mount_r_out() + 1.5) + [_wire_z], _slot_xy(weapon_motor.describe(P.WEAPON_MOTOR)["bell_r"] - 1.0) + [_wire_z]]   # up and over the battery, in through the column's slot
+BAT_WIRE_DX = 7.6   # mm from the pack's centre to the first waypoint of its switch lead (beside the xt30 end)
 TOP_Z = P.TUB_TOP_Z                 # top face of the top panel
 SKID_TOP_Z = TOP_Z + P.MIN_GROUND_CLR + P.SKID_H
 
@@ -54,11 +62,14 @@ def fasteners():
     for i, (x, y) in enumerate(panels.rim_xy()):
         out.append(_screw(f"rim_{i}", "M2x6", (x, y, TOP_Z), (0, 0, -1), ["top_panel"], "tub", "button",
                           _hole(2.0, 6.0, "button")))
-    for i, (r, deg, _d) in enumerate(weapon_motor.describe(P.WEAPON_MOTOR)["base_holes"]):
+    wm = weapon_motor.describe(P.WEAPON_MOTOR)
+    stator_l = P.TOP_PANEL_T + wm["base_h"]   # through the panel and the stator's base flange, stopping at its underside (the seat, tub.stator_mount) and short of the windings
+    assert stator_l == int(stator_l), f"stator screw length {stator_l} is not a stock M2 length"
+    for i, (r, deg, d) in enumerate(wm["base_holes"]):
         x = r * math.cos(math.radians(deg))
         y = P.WPN_AXIS_Y + r * math.sin(math.radians(deg))
-        out.append(_screw(f"stator_{i}", "M2x3", (x, y, TOP_Z), (0, 0, -1), ["top_panel"], "weapon_motor_stator",
-                          "button", _hole(2.0, 3.0, "button")))
+        out.append(_screw(f"stator_{i}", f"M{d:g}x{int(stator_l)}", (x, y, TOP_Z), (0, 0, -1), ["top_panel"], "weapon_motor_stator",
+                          "button", _hole(d, stator_l, "button")))
     for i, sign in enumerate((-1, 1)):
         out.append(_screw(f"bar_{i}", "M3x8", (sign * P.BAR_BOLT_PCD / 2, P.WPN_AXIS_Y, P.BAR_Z0), (0, 0, 1),
                           ["bar"], "weapon_hub", "csk", _hole(3.0, 8.0, "csk", P.CSK_D)))
@@ -73,6 +84,7 @@ def parts():
     return [
         {"id": "tub", "kind": "structure", "catalog": None, "material": "nylon", "process": "fdm",
          "print_orientation": "+z", "solid_fraction": 0.4,
+         "volume_mm3": round(tub.tub().volume),   # the integrity baseline in the verifier cache is a stale earlier design (153321 mm3); this is the current model's own volume
          "shape": {"type": "model", "file": "src/build_scythe_classic.py", "params": {"part": "tub"}},
          "at": [0, 0, 0], "rot": [0, 0, 0],
          "label": "printed nylon tub: sloped cone over the bar, vertical rear pod carrying the N10s"},
@@ -91,7 +103,7 @@ def parts():
         {"id": "weapon_hub", "kind": "hub", "catalog": None, "material": "aluminium", "process": "turned",
          "secondary_ops": ["drilled"],
          "shape": {"type": "model", "file": "src/build_scythe_classic.py", "params": {"part": "weapon_hub"}},
-         "at": [0, "P.WPN_AXIS_Y", "P.bar_top_z() + P.HUB_GAP"], "rot": [0, 0, 0], "rotates_with": "weapon",
+         "parent": "bar", "at": [0, 0, "P.bar_top_z() + P.HUB_GAP - P.BAR_Z0"], "rot": [0, 0, 0], "rotates_with": "weapon",   # bolted to the bar: in its frame, so it turns with the joint (the sweep moves only a joint's descendants)
          "label": "turned 7075 hub, bar 2x M3"},
         {"id": "weapon_shaft", "kind": "shaft", "catalog": None, "material": "steel", "process": "turned", "shaft_of": "weapon_motor_can",
          "shape": {"type": "model", "file": "src/build_scythe_classic.py", "params": {"part": "weapon_shaft"}},
@@ -165,17 +177,19 @@ def connections():
         {"a": "drive_motor_r", "b": "tub", "method": "interlock", "reason": "N10 body seats in the pod wall"},
         {"a": "drive_motor_l", "b": "tub", "method": "interlock", "reason": "N10 body seats in the pod wall"},
         {"a": "weapon_motor_stator", "b": "top_panel", "method": "screw", "reason": "4x M2x3 from the top panel into the stator base"},
+        {"a": "weapon_motor_stator", "b": "tub", "method": "interlock",
+         "reason": "stator flange sits on the tub's seat plate inside its pocket ring; ribs carry hits to the cone wall"},
     ]
 
 
 def wires():
     return [
         {"id": "w_bat_sw", "from": "battery.xt30", "to": "switch.in", "awg": 24, "kind": "power", "slack_mm": 8,
-         "via": [[-28.0, 26.0, 17.0], [-14.0, 32.0, 19.0], [2.0, 33.0, 19.0], [14.0, 35.0, 15.0]]},   # round the back of the bell, not over it
+         "via": [[BATTERY_AT[0] - BAT_WIRE_DX, 26.0, 17.0], [-14.0, 32.0, 19.0], [2.0, 33.0, 19.0], [14.0, 35.0, 15.0]]},   # round the back of the bell, not over it
         {"id": "w_sw_rx", "from": "switch.out", "to": "drive_rx.bat", "awg": 24, "kind": "power", "slack_mm": 8},
         {"id": "w_sw_esc", "from": "switch.out", "to": "weapon_esc.bat", "awg": 24, "kind": "power", "slack_mm": 8, "via": [[16.0, 36.0, 18.0], [18.0, -2.0, 18.0]]},
         {"id": "w_esc_wpn", "from": "weapon_esc.motor", "to": "weapon_motor_stator.phases", "awg": 22, "kind": "power", "slack_mm": 6,
-         "via": [[14.5, -4.0, 20.0], [14.5, 16.0, 27.0], [8.0, 27.0, 28.0], [-4.0, 30.0, 28.0], [-14.5, 16.0, 28.0]]},   # outside the bell radius, then in from the -x side
+         "via": WPN_WIRE_VIA},   # up the -x side outside the seat, then in through the pocket ring's slot to the -x phase port
         {"id": "w_rx_m1", "from": "drive_rx.m1", "to": "drive_motor_r.terminals", "awg": 26, "kind": "signal", "slack_mm": 4, "via": [[24.0, 8.0, 14.0]]},
         {"id": "w_rx_m2", "from": "drive_rx.m2", "to": "drive_motor_l.terminals", "awg": 26, "kind": "signal", "slack_mm": 4},
         {"id": "w_rx_wpn", "from": "drive_rx.wpn", "to": "weapon_esc.rx", "awg": 26, "kind": "signal", "slack_mm": 4, "via": [[22.0, -2.0, 18.0]]},

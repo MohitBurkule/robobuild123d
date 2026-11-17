@@ -27,8 +27,8 @@
 - **Weapon:** 3 mm Hardox 500 two-tooth bar, 116 mm, 16 mm root tapering to 10 mm, bite step on each leading
   edge, laser cut, constant thickness. Spins horizontally **under** the tub, underside 2 mm above the floor. Bolted
   (2x M3) to a turned 7075 hub, which bolts to the GR1507 bell-top screws.
-- **Weapon motor:** catalogue `gr1507` (Revron's motor), shaft down, stator screwed up into a 3 mm printed boss
-  under the top panel. All fit features come from `revron/weapon_motor.py:describe()`.
+- **Weapon motor:** catalogue `gr1507` (Revron's motor), shaft down, stator clamped between the top panel (4x M2x3 into its base flange) and a
+  printed seat plate with a pocket ring and ribs out to the cone wall. All fit features come from `revron/weapon_motor.py:describe()`.
 - **Drive:** 2WD `bbb_n10_1000rpm` + `bbb_wheel_34x6_5` behind the sweep. The relation `wheel_y()` puts the tyre's
   plan footprint at bar-top height 3 mm outside the sweep circle, so the bar never touches its own tyres. At
   150 mm the track is just the 52 mm pod. Only the cube variant forces a wide track.
@@ -49,8 +49,8 @@
 
 ## Load paths
 1. **Weapon hit (the bar strikes an opponent):** tooth -> bar root bending (16 x 3) -> 2x M3 shear plus the shaft
-   pilot -> hub -> 4x M2 bell-top screws and the shaft -> bell -> motor bearings -> stator -> 4x M2 base screws ->
-   3 mm boss -> top panel (tension skin) and the walls.
+   pilot -> hub -> 4x M2 bell-top screws and the shaft -> bell -> motor bearings -> stator -> stator base flange ->
+   seat plate and pocket ring -> ribs -> cone wall (the top panel clamps the stator on it).
 2. **Hit to the body:** sloped wall -> deflected upward. Tyres are behind the sweep.
 3. **Landing:** wheels -> N10s -> pod. Front -> POM foot -> shaft -> axial load on the motor bearings.
 

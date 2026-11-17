@@ -77,3 +77,20 @@ def test_opt_out_and_runs_first(tmp_path, monkeypatch):
     from robot.checks import GROUPS
     from robot.proxy import GROUPS as PG
     assert GROUPS[0][0] == "integrity" and "integrity" in PG
+
+
+def test_empty_shape_blocks(tmp_path, monkeypatch):
+    empty = trimesh.Trimesh()
+    out = I.run(_ctx(tmp_path, monkeypatch, empty, volume=0.0))
+    assert ("integrity.nonempty", BLOCKER) in _fails(out)
+    assert ("integrity.solids", BLOCKER) not in _fails(out)  # one finding for the cause, not two
+
+
+def test_zero_volume_blocks_even_when_declared_or_opted_out(tmp_path, monkeypatch):
+    flat = trimesh.creation.box([10, 10, 1e-9])
+    ctx = _ctx(tmp_path, monkeypatch, flat, volume=0.0, extra={"solids": 1, "solids_reason": "x"}, raw={"integrity": {"enabled": False}})
+    assert ("integrity.nonempty", BLOCKER) in _fails(I.run(ctx))
+
+
+def test_nonempty_part_passes_nonempty(tmp_path, monkeypatch):
+    assert not any(f.id == "integrity.nonempty" for f in I.run(_ctx(tmp_path, monkeypatch, tub())))
