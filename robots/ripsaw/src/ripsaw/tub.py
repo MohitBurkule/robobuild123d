@@ -75,13 +75,15 @@ def front_pads():
 
 
 def side_bosses():
-    """Bosses thickening the side walls where the panels screw on (heat-set inserts along Z)."""
+    """Bosses thickening the side walls where the panels screw on (heat-set inserts along Z): a band round each
+    insert seat, not the full wall height (mass)."""
     out = []
     for sx in (1, -1):
         for sy in P.PANEL_SCREW_Y:
-            out.append(bd.Pos(sx * (P.TUB_W / 2 - P.WALL - P.PANEL_BOSS_T / 2), sy,
-                              (P.TUB_FLOOR_Z + P.TUB_TOP_Z) / 2)
-                       * bd.Box(P.PANEL_BOSS_T, 2 * (P.INSERT_D / 2 + P.WALL), P.TUB_TOP_Z - P.TUB_FLOOR_Z))
+            for z0, z1 in ((P.TUB_FLOOR_Z, P.TUB_FLOOR_Z + P.INSERT_L + P.BOSS_BAND),
+                           (P.TUB_TOP_Z - P.INSERT_L - P.BOSS_BAND, P.TUB_TOP_Z)):
+                out.append(bd.Pos(sx * (P.TUB_W / 2 - P.WALL - P.PANEL_BOSS_T / 2), sy, (z0 + z1) / 2)
+                           * bd.Box(P.PANEL_BOSS_T, 2 * (P.INSERT_D / 2 + P.WALL), z1 - z0))
     return out
 
 

@@ -168,7 +168,25 @@ def add_wiring(plan, h):
 
 
 # ---------------------------------------------------------------- spec
+def _seat_inserts(plan):
+    """Every heat-set insert is melted into the half that holds it: declare that press fit (support / kinematics read
+    connections, not the `retained` tag), by construction."""
+    ids = {p["id"] for p in plan.parts}
+    have = {(c["a"], c["b"]) for c in plan.connections} | {(c["b"], c["a"]) for c in plan.connections}
+    for p in plan.parts:
+        if p.get("kind") != "insert":
+            continue
+        half = p.pop("_half", None)
+        if half is None:
+            continue
+        host = "tub" if "tub" in ids and half in ("top", "bottom") else f"chassis_{half}"
+        if host in ids and (p["id"], host) not in have:
+            plan.connections.append({"a": p["id"], "b": host, "method": "press_fit",
+                                     "reason": "heat-set insert melted into its bore"})
+
+
 def to_spec(plan, h) -> dict:
+    _seat_inserts(plan)
     weaponed = plan.extra.get("weapon_motor") or plan.extra.get("servo")
     threats_mod.answer(plan)
     cells = 1 if h.battery == "lipo_1s_300" else 2
