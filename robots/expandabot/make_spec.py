@@ -319,6 +319,7 @@ spec = {
     "name": "Expandabot (Team Bits Everywhere, 8x AWS antweight champion)",
     "profile": "aws2025",
     "robot_type": "flipper",
+    "sim": {"forward": [0, 1], "strategy": "lifter", "drive": {"max_rad_s": 150, "torque_Nm": 0.06}, "lifter": {"group": "flipper", "up_rad": 1.2, "down_rad": 0.0, "torque_Nm": 0.25, "lock": ["horn"]}, "danger": [{"deg": 0, "half_deg": 35, "reach_mm": 70}]},
     "locomotion": "wheeled",
     "size_rule": f"robot/profile.py aws2025: 150 mm floor square, no overhang at any height, no height limit. All values "
                  f"are derived by the src/expandabot/params.py relations; the start pose also fits the old 101.6 mm cube "

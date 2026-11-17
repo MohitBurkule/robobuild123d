@@ -82,6 +82,8 @@ robot = [
 # physics simulation (robot.sim)
 sim = [
     "mujoco>=3.2",
+    "imageio>=2.31",  # robot.fight videos
+    "imageio-ffmpeg>=0.5",
 ]
 
 # robot + sim + test runner used by .github/workflows/robot.yml
