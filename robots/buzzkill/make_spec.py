@@ -474,7 +474,7 @@ wires = [
     {"id": "w_desc_mr", "from": "drive_esc.m2", "to": "drive_motor_r.terminals", "awg": 26, "kind": "motor", "slack_mm": 8},
     {"id": "w_desc_sig", "from": "drive_esc.wpn", "to": "weapon_esc.rx", "awg": 28, "kind": "signal", "slack_mm": 8},
     {"id": "w_wesc_wm", "from": "weapon_esc.motor", "to": "weapon_motor.phases", "awg": 20, "kind": "motor", "slack_mm": 12,
-     "via": [[-24.0, 0.0, -5.0], [-24.0, 14.5, 5.0]], "rotor_ok": True},
+     "via": [[-24.0, 0.0, -5.0], [-24.0, 14.5, -5.0], [-24.0, 14.5, 8.0]], "rotor_ok": True},
 ]
 
 connections = [
