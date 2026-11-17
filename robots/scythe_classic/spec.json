@@ -16,6 +16,7 @@
    "process": "fdm",
    "print_orientation": "+z",
    "solid_fraction": 0.4,
+   "volume_mm3": 34481,
    "shape": {
     "type": "model",
     "file": "src/build_scythe_classic.py",
@@ -136,10 +137,11 @@
      "part": "weapon_hub"
     }
    },
+   "parent": "bar",
    "at": [
     0,
-    "P.WPN_AXIS_Y",
-    "P.bar_top_z() + P.HUB_GAP"
+    0,
+    "P.bar_top_z() + P.HUB_GAP - P.BAR_Z0"
    ],
    "rot": [
     0,
@@ -390,7 +392,7 @@
    "retained": "strap",
    "retained_reason": "hook-and-loop strap over the pack, anchored to rib pegs in the pod; undone to change the pack",
    "at": [
-    -20.4,
+    -22.3,
     14.0,
     16.3
    ],
@@ -425,7 +427,7 @@
    "retained": "adhesive",
    "retained_reason": "VHB pad under the board onto the pod floor; 2.3 g, bonded face 19 x 32 mm",
    "at": [
-    21.4,
+    23.3,
     14.0,
     11.75
    ],
@@ -1061,6 +1063,12 @@
    "b": "top_panel",
    "method": "screw",
    "reason": "4x M2x3 from the top panel into the stator base"
+  },
+  {
+   "a": "weapon_motor_stator",
+   "b": "tub",
+   "method": "interlock",
+   "reason": "stator flange sits on the tub's seat plate inside its pocket ring; ribs carry hits to the cone wall"
   }
  ],
  "wires": [
@@ -1073,7 +1081,7 @@
    "slack_mm": 8,
    "via": [
     [
-     -28.0,
+     -29.9,
      26.0,
      17.0
     ],
@@ -1131,29 +1139,24 @@
    "slack_mm": 6,
    "via": [
     [
-     14.5,
-     -4.0,
-     20.0
+     -9.0,
+     0.0,
+     22.5
     ],
     [
-     14.5,
-     16.0,
-     27.0
-    ],
-    [
-     8.0,
-     27.0,
+     -13.65,
+     29.15,
      28.0
     ],
     [
-     -4.0,
-     30.0,
-     28.0
+     -9.76,
+     25.26,
+     29.0
     ],
     [
-     -14.5,
-     16.0,
-     28.0
+     -6.22,
+     21.72,
+     29.0
     ]
    ]
   },

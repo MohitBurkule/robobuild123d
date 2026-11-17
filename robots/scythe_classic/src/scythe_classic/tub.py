@@ -4,9 +4,9 @@ Made as: FDM nylon, printed floor-down (+Z build). The cone (round, tapering up)
 slope TUB_SLOPE_DEG inward going up so a vertical hit glances off. The rear pod is a rectangular arm behind the disc
 that carries the two N10 drive motors, battery, ESC, receiver and switch. Its walls are vertical: a motor body at
 the wheel height sits inside the walls, and a sloped wall there would cut through it.
-Weapon boss: a ring from the floor to the top panel round the bell, with the stator's base screw holes (catalogue
-base_holes, weapon_motor.describe). The screws take the stator into the top panel, so a bar hit's torque goes
-stator -> boss -> top panel and walls (the top panel is the tension skin).
+Stator mount: a column from the floor to the top panel round the bell, stepped in to a lip round the stator's base flange (stator_mount).
+The stator is clamped between panel and lip, so a bar hit's load goes stator -> lip -> column -> floor and walls instead of through
+the four M2 screws into the 1 mm panel.
 """
 import math
 
@@ -208,20 +208,56 @@ def shell():
     return outer_body() - cavity()
 
 
-def weapon_boss():
-    """Printed ring from the floor to the top panel: the stator's base screws go down through it. Its inner wall is
-    the bell clearance, and the motor solid is cut out so the cross base and stator sit clear of it."""
+STATOR_POCKET_CLR = 0.5   # mm radial gap of the stator's base flange in its pocket (the rule: only the stator's back face may touch structure, with a 0.5 mm gap round the bell)
+WIRE_SLOT_W = 4.0         # mm slot in the column: three 22 AWG phase wires side by side
+WIRE_SLOT_DEG = 135.0     # deg round the weapon axis: between the stator flange's -x and +y arms, so the wire reaches the -x port from the side, clear of the arms
+WIRE_BELOW_FLANGE = 2.5   # mm the slot reaches down below the stator flange: a 22 AWG wire (1.9 mm) runs in under the flange, below the phase port
+
+
+def stator_z():
+    """(z_back, z_base_lo): world Z of the stator's back face (the screwed face, flush under the top panel) and of its base
+    flange's underside, from the catalogue features."""
     m = weapon_motor.describe(P.WEAPON_MOTOR)
-    top = P.TUB_TOP_Z - P.TOP_PANEL_T
-    z_lo = z0() + P.TUB_FLOOR_T
-    r_out = max(r for r, _, _ in m["base_holes"]) + 2 * P.TUB_WALL
-    r_in = m["bell_r"] + P.MOTOR_BELL_CLR
-    ring = bd.Pos(0, P.WPN_AXIS_Y, z_lo) * (bd.Cylinder(r_out, top - z_lo, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
-                                           - bd.Cylinder(r_in, top - z_lo, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN)))
-    for r, deg, d in m["base_holes"]:
-        ring -= bd.Pos(r * math.cos(math.radians(deg)), P.WPN_AXIS_Y + r * math.sin(math.radians(deg)), z_lo) * bd.Cylinder(
-            d / 2, top - z_lo, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
-    return ring - weapon_motor_placed()
+    z_back = P.wpn_motor_z() - m["back_x"]
+    return z_back, z_back - m["base_h"]
+
+
+def mount_r_in():
+    """Inner radius of the mount column: the bell's spinning clearance (the same radius as the floor's bell bore)."""
+    return weapon_motor.describe(P.WEAPON_MOTOR)["bell_r"] + P.MOTOR_BELL_CLR
+
+
+def mount_r_out():
+    return mount_r_in() + RIB_T
+
+
+def stator_mount():
+    """The weapon motor's printed seat, one piece with the tub: a column from the floor up to the top panel round the bell (inner
+    radius = the bell bore), outer radius one rib thickness more (a fillet where it meets the floor). At the stator's base flange
+    (the 2 mm under the top panel, the only part of the stator that may touch structure) the column steps in to a lip, 0.5 mm
+    off the flange's rim, with a 45 deg chamfer below it (no overhang, nothing within 0.5 mm of the bell). So the stator is
+    clamped between the top panel (the four M2x3 screws thread 2 mm into the flange) and located across by the lip, and a bar
+    hit's load goes stator -> lip -> column -> floor and walls, not through the screws into the 1 mm panel. A slot (WIRE_SLOT_DEG)
+    between two flange arms lets the phase wires in to the -x port."""
+    m = weapon_motor.describe(P.WEAPON_MOTOR)
+    z_back, z_lo_base = stator_z()
+    z_floor = z0() + P.TUB_FLOOR_T
+    r_in, r_out, f = mount_r_in(), mount_r_out(), FILLET_R
+    r_lip = m["bell_r"] + STATOR_POCKET_CLR
+    z_start = z0() + P.TUB_FLOOR_T / 2   # into the floor: the join is one body
+    c = (r_out + f, z_floor + f)
+    mid = (c[0] - f * math.cos(math.radians(45)), c[1] - f * math.sin(math.radians(45)))
+    with bd.BuildSketch(bd.Plane.XZ) as sk:
+        with bd.BuildLine():
+            bd.Polyline((r_in, z_start), (r_out + f, z_start), (r_out + f, z_floor))
+            bd.ThreePointArc((r_out + f, z_floor), mid, (r_out, z_floor + f))
+            bd.Polyline((r_out, z_floor + f), (r_out, z_back), (r_lip, z_back), (r_lip, z_lo_base), (r_in, z_lo_base - (r_in - r_lip)), (r_in, z_start))
+        bd.make_face()
+    column = bd.Pos(0, P.WPN_AXIS_Y, 0) * bd.revolve(sk.sketch, bd.Axis.Z)
+    r_a, r_b = r_lip - 0.5, r_out + 1.0
+    z_slot = z_lo_base - WIRE_BELOW_FLANGE
+    slot = bd.Pos(0, P.WPN_AXIS_Y, 0) * bd.Rot(0, 0, WIRE_SLOT_DEG) * bd.Pos((r_a + r_b) / 2, 0, (z_slot + z_back + 1.0) / 2) * bd.Box(r_b - r_a, WIRE_SLOT_W, z_back + 1.0 - z_slot)
+    return (column - slot).clean()
 
 
 def weapon_motor_placed():
@@ -379,4 +415,4 @@ def rim_pilots():
 
 
 def tub():
-    return shell() + weapon_boss() + drive_bays() - bell_bore() - axle_holes() - arm_holes() - rim_pilots()
+    return shell() + stator_mount() + drive_bays() - bell_bore() - axle_holes() - arm_holes() - rim_pilots()
