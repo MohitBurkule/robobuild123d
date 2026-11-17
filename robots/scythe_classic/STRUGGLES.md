@@ -33,3 +33,27 @@ One line per time I was stuck, wrong, or spent more than two tries. Each: what I
 
 - Full `wiring`, `assembly`, `physics` groups: 2 `assembly.blocked` (weapon_esc and drive_rx have no clear removal path: the switch and the tub sit in their exit line) plus `physics.runtime`. The inner tier's `proxy.wiring` and `proxy.assembly` lines are approximations; the full groups are authoritative and show the wiring clean.
 - The `assembly.blocked` fix line says "open the pocket" but does not say which neighbour to move; the exit direction (0,1,0) and the 40.6 mm clearance were the only hints. Not fixed in this pass.
+
+## Pass 3 (weapon shaft, bearings, drive) - stuck, uncommitted
+
+- **`parent` moves the child.** Setting `parent: bar` / `parent: weapon_hub` on the hub, shaft and can made their `at`
+  relative to the parent. The hub, shaft and can shifted, which showed up as `interference.spin` on the electronics,
+  `fastener.engagement` 3.0 mm on the bar bolts, and a can overlapping the tub. Removing the parents fixed the shift.
+  Nothing says that `at` is relative once `parent` is set. The fix line should name the frame change.
+- **`rotates_with` is a label, not a part id.** Using `weapon` as the group name worked, but the spec does not say so.
+- **Spin sweep is a full revolve of every rotor member.** Once the bar is a joint group, the sweep covers the cone
+  interior at the hub and can heights. Electronics inside the cone (battery, ESC, RX, switch) show as `interference.spin`
+  even when nothing is at the bar plane. The only ways out are electronics below the group's top, or a z band that
+  stays clear. The message names the rotor part but not the z band.
+- **Caster bearing.** `robot catalog --kind bearing` now lists bearings, which helped. The puck radius is limited by
+  the bar-bolt driver path (head at r 6.5, 3.7 mm wide) and by the uhmw thin-wall rule (1.0 mm). Both were needed
+  together; the puck could not meet both at the 8 mm bearing OD without a bigger bar PCD.
+- **`spinner.bearing` on the shaft (0 mm one side, 2.2 mm the other).** The bottom bearing is 2.5 mm wide inside a
+  3 mm puck, so the shaft has no 3 mm hold below the bar. The message does not say which side or where the 3 mm must sit.
+- **Stator screws.** `stator_0` ends in the bell half of `weapon_motor`, and joins `top_panel` to `tub` with no seat under
+  the head. Splitting the can (`weapon_motor_can`) did not change the stator-face result, so the stator screw length and
+  the boss footprint need a measured check that the message does not provide.
+- **Tub base wall.** The cone base still reports 0.00 mm at radius 50, z 8.5, after the cavity base was re-measured
+  from the slope. The check is at the outer edge, not where I changed it.
+- **Verify timing.** A full run without `practice` takes about 6 to 8 minutes. Monitor/poll loops returned before the
+  run finished, so I used background `until grep EXIT` waits.

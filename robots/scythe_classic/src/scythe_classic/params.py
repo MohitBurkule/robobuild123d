@@ -124,7 +124,7 @@ BAR_R_STEP = 0.5                             # mm search step of bar_r_geom()
 # ---- turned hub (7075-T6): bolts to bell top screws, carries the bar ----
 HUB_OD = 17.0                                # mm (> BAR_BOLT_PCD + M3 head)
 HUB_H = 4.5                                  # mm turned spacer between bell cap and bar
-HUB_GAP = 1.0                                 # mm washer gap between bar top and hub face (bar sweep touches the hub otherwise)
+HUB_GAP = 0.0                                 # mm: hub bolted down onto the bar (bar bolts need a contact face; hub is in the bar group)
 HUB_SHAFT_CLR = 0.02                         # mm radial slide fit on the 5 mm shaft
 
 # ---- weapon motor stack (shaft down, stator screwed up into the tub boss) ----

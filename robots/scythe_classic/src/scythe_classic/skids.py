@@ -25,12 +25,33 @@ FOOT_CLR_FLOOR = 0.5   # mm: the caster puck rests this far above the floor when
 FOOT_CLR_BAR = 0.5     # mm: and stays this far under the bar underside (bar spins over it)
 
 
+FOOT_R_OUT = 5.0       # mm caster puck outer radius (1.0 mm wall; 0.6 failed the uhmw thin-wall rule)
+BEARING_OD_R = 4.0     # mm MR85 outer radius (bearing seat in the puck)
+BEARING_W = 2.5        # mm MR85 width
+SHAFT_R = P.SHAFT_D / 2
+
+
 def foot():
     """World frame: a caster puck on the weapon axis (kind caster), bottom FOOT_CLR_FLOOR above the floor and top
-    FOOT_CLR_BAR under the bar underside. It rides the shaft end on a small bearing (bore on the shaft), so its outer
-    ring can stop turning when it touches the floor; it is not part of the rotor."""
+    FOOT_CLR_BAR under the bar underside. Its bore holds an MR85 bearing (outer ring pressed in the puck); the inner
+    ring rides the 5 mm weapon shaft, so the puck stays put on touch and the shaft turns in it. Not part of the rotor."""
     h = P.BAR_Z0 - FOOT_CLR_BAR - FOOT_CLR_FLOOR
-    return bd.Pos(0, P.WPN_AXIS_Y, FOOT_CLR_FLOOR) * _z_cyl(FOOT_R, h)
+    ring = _z_cyl(FOOT_R_OUT, h) - _z_cyl(BEARING_OD_R, h)
+    return bd.Pos(0, P.WPN_AXIS_Y, FOOT_CLR_FLOOR) * ring
+
+
+def bearing():
+    """World frame: MR85 5 x 8 x 2.5 (robot.catalog.BEARINGS 'mr85'), centred in the caster puck bore."""
+    h = P.BAR_Z0 - FOOT_CLR_BAR - FOOT_CLR_FLOOR
+    z = FOOT_CLR_FLOOR + (h - BEARING_W) / 2
+    return bd.Pos(0, P.WPN_AXIS_Y, z) * (_z_cyl(BEARING_OD_R, BEARING_W) - _z_cyl(SHAFT_R, BEARING_W))
+
+
+def shaft():
+    """World frame: the 5 mm weapon shaft on the axis, from the puck's bottom up to the hub top. It runs through the
+    bar bore, the hub bore and the bearing; the GR1507 can (rotor) sits on the hub top."""
+    top = P.bar_top_z() + P.HUB_GAP + P.HUB_H
+    return bd.Pos(0, P.WPN_AXIS_Y, FOOT_CLR_FLOOR) * _z_cyl(SHAFT_R, top - FOOT_CLR_FLOOR)
 
 
 def dome():
@@ -47,4 +68,4 @@ def lock_pin():
 
 
 def parts():
-    return {"skid_foot": foot(), "skid_dome": dome(), "lock_pin": lock_pin()}
+    return {"skid_foot": foot(), "bearing_caster": bearing(), "weapon_shaft": shaft(), "skid_dome": dome(), "lock_pin": lock_pin()}

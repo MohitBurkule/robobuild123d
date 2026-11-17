@@ -82,7 +82,10 @@ def outer_body():
 def cavity():
     """What is hollowed out: the cone inside its walls above the floor, and the pod inside its walls."""
     h = height()
-    cone = cone_loft(-P.TUB_WALL, -_slope_inset(h) - P.TUB_WALL, z0() + P.TUB_FLOOR_T, z0() + h + 0.01)
+    # the outer cone is already inset by the slope at the floor top: the wall is measured from that radius, so the base
+    # keeps TUB_WALL (a plain -TUB_WALL at the floor top left a zero-thickness wall at the cone base)
+    base_inset = P.TUB_FLOOR_T * math.tan(math.radians(P.TUB_SLOPE_DEG))
+    cone = cone_loft(-P.TUB_WALL - base_inset, -_slope_inset(h) - P.TUB_WALL, z0() + P.TUB_FLOOR_T, z0() + h + 0.01)
     pod = pod_box(-P.TUB_WALL, z0() + P.TUB_FLOOR_T, h + 0.01 - P.TUB_FLOOR_T)
     return cone + pod
 

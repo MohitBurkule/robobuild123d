@@ -84,6 +84,23 @@
     0,
     0
    ],
+   "rotates_with": "weapon",
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "pivot": [
+     0.0,
+     15.5,
+     0.0
+    ],
+    "min": 0,
+    "max": 360,
+    "default": 0
+   },
    "weapon": {
     "kind": "bar",
     "motor": "weapon_motor",
@@ -129,7 +146,60 @@
     0,
     0
    ],
+   "rotates_with": "weapon",
    "label": "turned 7075 hub, bar 2x M3"
+  },
+  {
+   "id": "weapon_shaft",
+   "kind": "shaft",
+   "catalog": null,
+   "material": "steel",
+   "process": "turned",
+   "shape": {
+    "type": "model",
+    "file": "src/build_scythe_classic.py",
+    "params": {
+     "part": "weapon_shaft"
+    }
+   },
+   "rotates_with": "weapon",
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "label": "5 mm steel weapon shaft through the bar bore, the hub and the caster bearing"
+  },
+  {
+   "id": "bearing_caster",
+   "kind": "bearing",
+   "catalog": null,
+   "material": "steel",
+   "process": "cots",
+   "stock": "MR85ZZ 5 x 8 x 2.5",
+   "shape": {
+    "type": "model",
+    "file": "src/build_scythe_classic.py",
+    "params": {
+     "part": "bearing_caster"
+    }
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "label": "MR85ZZ bearing: inner ring on the shaft, outer ring in the caster puck"
   },
   {
    "id": "lock_pin",
@@ -186,7 +256,7 @@
     0,
     0
    ],
-   "label": "caster puck on the shaft end, 2-part bearing bore (on the axis, 0.5 mm off the floor)"
+   "label": "caster puck under the bar on the axis, MR85 seat (0.5 mm off the floor)"
   },
   {
    "id": "skid_dome",
@@ -230,9 +300,28 @@
    "label": "GR1507 shaft down"
   },
   {
+   "id": "weapon_motor_can",
+   "kind": "other",
+   "role": "rotor",
+   "catalog": "gr1507_can",
+   "rotates_with": "weapon",
+   "at": [
+    "0",
+    "P.WPN_AXIS_Y",
+    "P.wpn_motor_z()"
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "label": "GR1507 bell and core: spins with the hub and shaft round the fixed stator"
+  },
+  {
    "id": "drive_motor_r",
-   "kind": "drive_motor",
+   "kind": "motor",
    "catalog": "bbb_n10_1000rpm",
+   "retained": "press_fit",
    "at": [
     "P.motor_x()",
     "P.wheel_y()",
@@ -246,8 +335,9 @@
   },
   {
    "id": "drive_motor_l",
-   "kind": "drive_motor",
+   "kind": "motor",
    "catalog": "bbb_n10_1000rpm",
+   "retained": "press_fit",
    "at": [
     "-P.motor_x()",
     "P.wheel_y()",
@@ -350,7 +440,7 @@
    "at": [
     "P.SWITCH_XY[0] + 1.2",
     "P.SWITCH_XY[1]",
-    16.0
+    13.675
    ],
    "rot": [
     0,
@@ -821,15 +911,29 @@
   },
   {
    "a": "weapon_hub",
-   "b": "weapon_motor",
-   "method": "shaft",
-   "reason": "hub bores on the 5 mm shaft, clamped by its screws"
+   "b": "weapon_motor_can",
+   "method": "press_fit",
+   "mechanical_key": true,
+   "reason": "hub clamped to the bell top by the bell screws (key: flats on the shaft)"
   },
   {
-   "a": "skid_foot",
-   "b": "bar",
-   "method": "shaft",
-   "reason": "foot turns with the bar on the shaft end, captured by the shaft nut"
+   "a": "weapon_shaft",
+   "b": "weapon_hub",
+   "method": "press_fit",
+   "mechanical_key": true,
+   "reason": "shaft pressed into the hub bore, grub screw on the flat"
+  },
+  {
+   "a": "weapon_shaft",
+   "b": "bearing_caster",
+   "method": "press_fit",
+   "reason": "MR85 inner ring pressed on the 5 mm shaft"
+  },
+  {
+   "a": "bearing_caster",
+   "b": "skid_foot",
+   "method": "press_fit",
+   "reason": "MR85 outer ring pressed in the caster puck bore"
   },
   {
    "a": "lock_pin",
@@ -858,13 +962,15 @@
   {
    "a": "wheel_r",
    "b": "drive_motor_r",
-   "method": "shaft",
+   "method": "press_fit",
+   "mechanical_key": true,
    "reason": "N10 D-shaft bore, grub screw on the flat"
   },
   {
    "a": "wheel_l",
    "b": "drive_motor_l",
-   "method": "shaft",
+   "method": "press_fit",
+   "mechanical_key": true,
    "reason": "N10 D-shaft bore, grub screw on the flat"
   },
   {

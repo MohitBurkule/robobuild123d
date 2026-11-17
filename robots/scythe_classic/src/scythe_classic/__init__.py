@@ -11,6 +11,8 @@ PARTS = {
     "weapon_hub": weapon_hub.hub,
     "top_panel": panels.top_panel,
     "skid_foot": skids.foot,
+    "bearing_caster": skids.bearing,
+    "weapon_shaft": skids.shaft,
     "skid_dome": skids.dome,
     "lock_pin": skids.lock_pin,
 }
