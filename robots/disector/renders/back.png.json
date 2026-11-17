@@ -1,10 +1,9 @@
 {
- "spec": "/home/antigravity/MohitBurkule/robobuild123d/robots/disector/spec.json",
- "rendered_at": 1794939175.0857925,
+ "spec": "/tmp/claude-0/-home-user/93b2f0da-092f-589a-8502-5dfcdf323e6d/scratchpad/wt_dis/robots/disector/spec.json",
+ "rendered_at": 1794949171.604478,
  "bodies": [
   "tub",
   "panel_top",
-  "top_cover",
   "top_spine",
   "wedge_front",
   "fork_mount_l",
@@ -38,16 +37,14 @@
   "f_pt_rr",
   "f_sp_l",
   "f_sp_r",
-  "f_tc_l",
-  "f_tc_r",
   "f_wf_l",
   "f_wf_r",
   "f_fm_l1",
   "f_fm_l2",
-  "f_fm_r1",
-  "f_fm_r2",
   "f_sk_l1",
   "f_sk_l2",
+  "f_fm_r1",
+  "f_fm_r2",
   "f_sk_r1",
   "f_sk_r2",
   "f_gl_1",
@@ -82,7 +79,7 @@
    ],
    "to": [
     20.0,
-    -4.5,
+    -5.1,
     6.5
    ]
   },
@@ -98,10 +95,22 @@
     6.0
    ]
   },
+  "w_wesc_wm": {
+   "from": [
+    -20.5,
+    -0.5,
+    6.0
+   ],
+   "to": [
+    3.4499999999999993,
+    -16.0,
+    72.4
+   ]
+  },
   "w_mal_ml": {
    "from": [
     43.0,
-    3.5,
+    2.9,
     6.5
    ],
    "to": [
@@ -113,7 +122,7 @@
   "w_mal_mr": {
    "from": [
     20.0,
-    3.5,
+    2.9,
     6.5
    ],
    "to": [
@@ -122,10 +131,22 @@
     10.0
    ]
   },
+  "w_mal_servo": {
+   "from": [
+    43.0,
+    -5.1,
+    6.5
+   ],
+   "to": [
+    -7.041719095097281e-16,
+    -28.0,
+    7.5
+   ]
+  },
   "w_mal_wesc": {
    "from": [
     43.0,
-    -4.5,
+    -5.1,
     6.5
    ],
    "to": [

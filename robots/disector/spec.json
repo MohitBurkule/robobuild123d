@@ -63,7 +63,10 @@
       "label": "Top deck cover plate",
       "print_orientation": "+z",
       "solid_fraction": 0.85,
-      "sharp_corners_ok": "Rectangular switch and wire pass-through cutouts in 1.2 mm nylon top plate are unloaded"
+      "sharp_corners_ok": "Rectangular switch and wire pass-through cutouts in 1.2 mm nylon top plate are unloaded",
+      "tags": [
+        "lid"
+      ]
     },
     {
       "id": "top_spine",

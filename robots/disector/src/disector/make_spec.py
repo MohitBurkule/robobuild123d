@@ -60,7 +60,7 @@ def _parts_chassis() -> list[dict]:
                 label="Unibody nylon chassis tub with sloped front, wheel wells, and electronics bays"),
         _struct("panel_top", "plate", "nylon", P.COL_TOP_PANEL, print_orientation="+z", solid_fraction=P.PANEL_SOLID,
                 sharp_corners_ok="Rectangular switch and wire pass-through cutouts in 1.2 mm nylon top plate are unloaded",
-                label="Top deck cover plate"),
+                label="Top deck cover plate", tags=["lid"]),   # tag only labels it as the lid for `render --no-lid`
         _struct("top_spine", "plate", "pla", P.COL_TOP_SPINE, print_orientation="+z", solid_fraction=P.PANEL_SOLID,
                 label="Black top front clamping strap"),
     ]
