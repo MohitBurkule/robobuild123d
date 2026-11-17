@@ -183,7 +183,7 @@ def _well(plan, g, sgn, y, side, kind):
              intent=I("ground_game", "slot through the belly: the tyre reaches the floor; the body rides clear of it",
                       f"wheel + 1 mm clearance each side; belly {zb} vs floor {-g.radius}", threats=["under_side", "lifter_flipper"]))
     h = plan.hyp
-    guard = getattr(h, "wheel_guards", False) and not getattr(h, "invertible", False) and h.weapon != "hspin_bar"
+    guard = getattr(h, "wheel_guards", False) and not getattr(h, "invertible", False) and h.weapon not in ("hspin_bar", "undercutter")
     z_roof = zt - plan.frame.floor
     R = g.radius
     if guard and R + 0.3 > z_roof:

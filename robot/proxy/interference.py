@@ -126,6 +126,18 @@ def _sampled(ctx, label, rng, moved, parts):
     return []
 
 
+def _coaxial_shaft(r, b, origin, axis, tol=0.2):
+    """A shaft on the spin axis turns into itself: its swept envelope is its own shape, so only the static overlap check
+    applies (rasterising a 3 mm rod on the 1 mm grid fattened it into its own bearings and bores)."""
+    p = r.parts[b.part_idx].part if b.part_idx is not None and b.part_idx < len(r.parts) else None
+    if p is None or p.kind != "shaft":
+        return False
+    q = np.asarray(b.mesh.vertices, float) - origin
+    rad = np.linalg.norm(q - np.outer(q @ axis, axis), axis=1)
+    c = np.asarray(b.center, float) - origin
+    return float(np.linalg.norm(c - (c @ axis) * axis)) < tol and float(rad.max() - rad.min()) < rad.max() + tol and rad.max() < 4.0
+
+
 def sweeps(ctx, parts=None):
     r, w = ctx.r, ctx.world
     out, grids = [], {}  # body id -> depth grid, shared by every mover
@@ -134,6 +146,7 @@ def sweeps(ctx, parts=None):
         if rng is not None and rng[2] - rng[1] < FULL_TURN_DEG:
             out += _sampled(ctx, label, rng, moved, parts)
             continue
+        mov = [m for m in mov if not _coaxial_shaft(r, m, origin, axis)]  # sweeps onto itself: the static check covers it
         revs = [(m, itf.Revolved.build(m, origin, axis, CELL_MM)) for m in mov]
         if any(rv is None for _, rv in revs):
             out.append(fail("proxy.sweep", G, BLOCKER, "Sweep envelope too large", f"{label}: cannot rasterise.").on(*moved))

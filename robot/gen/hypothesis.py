@@ -138,6 +138,7 @@ BUILDABLE = {
     "wedge": {"front": ("wedge",), "drive_layout": ("2WD",)},
     "lifter": {"front": ("forks",), "attachment": ("servo_horn",), "drive_layout": ("2WD",)},
     "hspin_bar": {"front": ("wedgelets", "skirt", "wedge"), "mount": ("top",), "attachment": ("hub_motor",), "drive_layout": ("2WD",)},
+    "undercutter": {"front": ("weapon_is_front",), "mount": ("under",), "attachment": ("hub_motor",), "drive_layout": ("2WD",)},
     "vspin_drisk": {"front": ("forks", "wedgelets"), "mount": ("front",), "attachment": ("drisk",), "drive_layout": ("2WD", "4WD"),
                     "chassis": ("clamshell",), "disc_stack": ("single", "spider_pair")},
 }
@@ -327,6 +328,10 @@ PRESETS = {
                       battery="c_typical_2s_300mah_lipo_lihv_betafpv_tbs_",
                       drive_esc="c_malenki_nano_antweight_esc_receiver", rx="integrated",
                       skirts="rear"),  # full side skirts put it 2 g over 150 g; the 180 mAh pack does not wire
+    "undercutter": dict(weapon="undercutter", mount="under", orientation="flat", attachment="hub_motor", front="weapon_is_front",
+                        wheel_dia=30, weapon_esc="c_bbb_antweight_spinner_brushless_esc",
+                        battery="c_typical_2s_300mah_lipo_lihv_betafpv_tbs_",
+                        drive_esc="c_malenki_nano_antweight_esc_receiver", rx="integrated", skirts="rear", invertible=False),
     "vspin_drisk": dict(weapon="vspin_drisk", mount="front", orientation="vertical", attachment="drisk", front="forks",
                         drive_layout="2WD", wheel_dia=22, weapon_esc="c_bbb_antweight_spinner_brushless_esc",
                         battery="lipo_2s_180", invertible=False, drive_esc="c_malenki_nano_antweight_esc_receiver",

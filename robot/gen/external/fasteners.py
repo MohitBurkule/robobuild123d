@@ -64,6 +64,9 @@ def add_clamshell_screws(plan, sites, prefix="c"):
     f = plan.frame
     head_z = f.zt - 2.2
     L = std_length(head_z - (f.zb + f.floor + 0.3))
+    need = f.split - INSERT_LEN - 0.2  # the tip must pass the whole insert (engagement >= 1.5 d)
+    if head_z - L > need:  # a body height between standard lengths: sink the head deeper instead of under-engaging
+        head_z = need + L
     tip = head_z - L
     down = screw_dir([0.0, 0.0, -1.0])  # the top half goes on from above, so its screws are driven downward
     for i, (x, y) in enumerate(sites):

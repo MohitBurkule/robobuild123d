@@ -21,7 +21,7 @@ from . import intent as intent_mod
 from . import threats as threats_mod
 from .layout import Component, Keepout, LayoutInputs, Link, solve
 
-ROBOT_TYPE = {"none_pusher": "wedge", "wedge": "wedge", "lifter": "lifter", "hspin_bar": "horizontal_spinner",
+ROBOT_TYPE = {"none_pusher": "wedge", "wedge": "wedge", "lifter": "lifter", "hspin_bar": "horizontal_spinner", "undercutter": "horizontal_spinner",
               "vspin_drisk": "vertical_spinner"}
 
 
@@ -46,6 +46,9 @@ def frame_params(h, user: dict | None = None) -> dict:
     p = {"axle_y": -16.0, "y0": -40.0, "y1": 36.0, "zb": zb, "zt": zt, "floor_z": -R}
     if h.weapon == "hspin_bar":
         p.update(axle_y=-14.0, y0=-48.0, y1=44.0, floor=1.1)
+    if h.weapon == "undercutter":
+        from .external.weapon_under import belly_z
+        p.update(axle_y=-30.0, y0=-50.0, y1=44.0, floor=1.1, zb=belly_z(-R))
     if h.weapon == "vspin_drisk":
         p.update(axle_y=-14.0, y0=-36.0, y1=44.0, floor=1.1)
     if h.weapon == "lifter":
@@ -217,8 +220,7 @@ def _seat_inserts(plan):
             continue
         host = "tub" if "tub" in ids and half in ("top", "bottom") else f"chassis_{half}"
         if host in ids and (p["id"], host) not in have:
-            plan.connections.append({"a": p["id"], "b": host, "method": "press_fit",
-                                     "reason": "heat-set insert melted into its bore"})
+            plan.connect(p["id"], host, "press_fit", "heat-set insert melted into its bore")
 
 
 def to_spec(plan, h) -> dict:
