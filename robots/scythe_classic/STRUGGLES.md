@@ -28,3 +28,8 @@ One line per time I was stuck, wrong, or spent more than two tries. Each: what I
 - **`dynamics.floor_margin`:** fixed by BAR_Z0 = 4.0 mm (3.6 mm needed).
 - **`dynamics.spinup_kick`:** not fixed. 0.10 N m spin-up at 30 A (the check's default because of the ESC key mismatch above) against 0.05 N m tyre grip. Even at the real 20 A, 0.067 N m still exceeds grip, so it needs more weight on the wheels or a wider track. Neither fits the 150 g / pod layout. A declared ESC current ramp would be the honest fix, but the check has no field for it.
 - **`dynamics.brake_dive`, `gyro_lift`, `invert_weapon`:** no blockers at the last inner run.
+
+## Final state (last run)
+
+- Full `wiring`, `assembly`, `physics` groups: 2 `assembly.blocked` (weapon_esc and drive_rx have no clear removal path: the switch and the tub sit in their exit line) plus `physics.runtime`. The inner tier's `proxy.wiring` and `proxy.assembly` lines are approximations; the full groups are authoritative and show the wiring clean.
+- The `assembly.blocked` fix line says "open the pocket" but does not say which neighbour to move; the exit direction (0,1,0) and the 40.6 mm clearance were the only hints. Not fixed in this pass.
