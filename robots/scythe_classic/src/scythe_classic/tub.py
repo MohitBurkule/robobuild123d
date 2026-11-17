@@ -117,7 +117,8 @@ def _levels(extra=0.0):
     levels = [(z0(), SKIRT_INSET), (z_skirt, SKIRT_INSET)]
     for i in range(1, SLOPE_STEPS + 1):
         levels.append((z_skirt + (z_cone_top - z_skirt) * i / SLOPE_STEPS, SKIRT_INSET + (top_inset - SKIRT_INSET) * i / SLOPE_STEPS))
-    levels.append((z0() + h, top_inset))
+    if h > height() - TOP_BAND_H + 1e-9:
+        levels.append((z0() + h, top_inset))
     return levels
 
 
@@ -235,7 +236,8 @@ def bell_bore():
 
 
 RING_LEN = 1.8      # mm the axle ring stands off the pod wall: its end stays 0.5 mm clear of the tyre's inboard face (the wheel's swept band)
-GUARD_W = 2.4       # mm (y) of the wheel-guard post at each rear pod corner
+GUARD_TAPER = 8.0   # mm the wheel-guard wing at each rear pod corner tapers back along the wall (a 13 deg turn, not a sharp corner)
+RING_FLARE_R = 1.2  # mm fillet radius where the axle ring meets the wall
 RING_OUT_R = 6.0    # mm axle ring outer radius
 RING_BORE_R = P.WHEEL_HUB_R + 0.2   # mm the wheel hub boss turns in the ring bore (0.2 running clearance)
 AXLE_SLOT_R = 2.3   # mm half width of the axle slot (shaft collar 2 mm radius, shaft 1.5 mm)
@@ -299,19 +301,41 @@ def cradle():
     return bd.fillet(edges, FILLET_R)
 
 
+def axle_ring():
+    """One axle ring, x-axis frame at the wall's outer face: a cylinder RING_OUT_R out to RING_LEN (and 0.2 into the wall) with a
+    RING_FLARE_R fillet at its foot, made as a revolved profile."""
+    f, R, L = RING_FLARE_R, RING_OUT_R, RING_LEN
+    c = (f, R + f)
+    mid = (c[0] - f * math.cos(math.radians(45)), c[1] - f * math.sin(math.radians(45)))
+    with bd.BuildSketch(bd.Plane.XY) as sk:
+        with bd.BuildLine():
+            bd.Polyline((-0.2, 0), (-0.2, R + f), (0, R + f))
+            bd.ThreePointArc((0, R + f), mid, (f, R))
+            bd.Polyline((f, R), (L, R), (L, 0), (-0.2, 0))
+        bd.make_face()
+    return bd.revolve(sk.sketch, bd.Axis.X)
+
+
+def guard_wing():
+    """The wheel-guard wing at the rear pod corner: fills the rounded corner out to the wheel's inboard side (it carries the chassis
+    hull out over the shaft tip), tapering back to the wall over GUARD_TAPER."""
+    wall_o = P.POD_W / 2
+    r = pod_rear_y()
+    poly = bd.Polygon((wall_o - 3.0, r), (wall_o + RING_LEN, r), (wall_o, r + GUARD_TAPER), (wall_o - 3.0, r + GUARD_TAPER), align=None)
+    plan = poly.faces()[0] - top_outline(SKIRT_INSET).faces()[0]
+    return bd.Pos(0, 0, z0()) * bd.extrude(plan.faces()[0], height())
+
+
 def drive_bays():
-    """Per side: the N10's cradle (see cradle) and the wheel's axle ring.
+    """Per side: the N10's cradle (see cradle), the wheel's axle ring and a guard wing at the rear corner.
     Axle ring: stands off the wall's outer face round the wheel hub boss; its end holds the shaft's 3 mm grip inside the chassis
     hull (contain.electronics_exposed) and its lips keep the wheel and motor from lifting out. A slot, open at the top, takes
-    the shaft up and out when the motor is lifted (the wheel leaves sideways first). A post at the rear pod corner carries the
+    the shaft up and out when the motor is lifted (the wheel leaves sideways first). The wing at the rear pod corner carries the
     hull out over the shaft tip."""
     wall_o = P.POD_W / 2
-    y0 = P.wheel_y()
-    box = lambda x0, x1, y_a, y_b, z_a, z_b: bd.Pos((x0 + x1) / 2, (y_a + y_b) / 2, z_a) * bd.Box(
-        x1 - x0, y_b - y_a, z_b - z_a, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
     out = cradle()
-    out += bd.Pos(wall_o - 0.2, y0, P.WHEEL_CZ) * bd.Rot(0, 90, 0) * bd.Cylinder(RING_OUT_R, RING_LEN + 0.2, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
-    out += box(wall_o - 0.4, wall_o + RING_LEN, pod_rear_y(), pod_rear_y() + GUARD_W, z0(), z0() + height())
+    out += bd.Pos(wall_o, P.wheel_y(), P.WHEEL_CZ) * axle_ring()
+    out += guard_wing()
     return out + bd.mirror(out, bd.Plane.YZ)
 
 

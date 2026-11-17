@@ -57,3 +57,24 @@ One line per time I was stuck, wrong, or spent more than two tries. Each: what I
   from the slope. The check is at the outer edge, not where I changed it.
 - **Verify timing.** A full run without `practice` takes about 6 to 8 minutes. Monitor/poll loops returned before the
   run finished, so I used background `until grep EXIT` waits.
+
+## Late-stage notes (finish pass)
+
+- **mfg.sharp_internal_corner radius reads low.** A fillet of exactly r 1.0 measures below 1.0, so use 1.1 or more.
+  Regions chain (samples under 2.5 mm apart), so one point near a joint or fastener flags a whole edge run, and the
+  message does not say which point triggered it. The check also sections the wall at the slope-to-band kink (z 28.1) and
+  reports turn 90, r 0 from the top face and the inner surface in the same polyline.
+- **3D fillets on lofted geometry.** Fillets on lofted cone/plane intersections fail or segfault. `bd.fillet(vertices)`
+  sometimes returns the parent unchanged; `face.fillet_2d(r, [vertex])` works. `face -= shape` did not work in a function,
+  `face - shape` did. Ruled lofts need faces with identical topology; an inward offset that collapses a corner arc gives garbage.
+- **arch.edge_distance.** A 1.6 mm wall never gives 3 mm for an M2 screw; a post or boss around 6 mm is needed.
+- **Wheel sweep and contain hull.** kin.sweep_static treats any static point inboard of the tyre face within r 17 of the
+  axle as swept; parts must clear by 0.5 mm. contain.electronics_exposed needs a shell vertex near the shaft tip, which
+  forced a rear guard wing.
+- **cots.drawing_dims** needs 29.1 mm can, 12 mm shaft protrusion and 8 mm of thread detected as radius dips per pitch;
+  none of this is stated in the message.
+- **Integrity baseline poisoning.** A broken intermediate run stores a bad volume as the baseline, and later correct
+  runs report `integrity.volume` as collapsed. The fix is to delete the cache file under /root/.cache/robot/integrity/;
+  the permission classifier denied my `rm`, so that blocker needs the caller to approve the delete.
+- **`--failing`/`--only` skip groups**, and parity findings (visual.terminal, the N10 terminal port 1.5 mm off) come from
+  the catalog, not the design.
