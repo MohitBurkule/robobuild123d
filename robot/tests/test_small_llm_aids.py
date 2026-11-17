@@ -169,3 +169,12 @@ def test_proxy_sweep_respects_declared_range(tmp_path):
     r = world_mod.resolve(s, fast=True)
     ctx = Ctx(r, world_mod.World.start(r), Options(fast=True))
     assert not [f for f in pi.sweeps(ctx) if not f.passed]
+
+
+def test_lever_ranges(tmp_path):
+    from robot.solve import jiggle
+    sp = _param_robot(tmp_path)
+    lv = jiggle.parse_levers(sp, [], [{"param": "params.py:BAY", "lo": -8, "hi": 10, "step": 0.5}])
+    out = jiggle.lever_ranges(sp, lv, samples=36, log=lambda *_: None)
+    clean = out["params.py:BAY"]["clean"]
+    assert clean and clean[0][1] <= 7.0 + 1e-6 and clean[0][1] >= 6.0
