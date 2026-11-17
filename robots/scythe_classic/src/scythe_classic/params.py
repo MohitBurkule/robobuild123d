@@ -123,7 +123,8 @@ BAR_R_STEP = 0.5                             # mm search step of bar_r_geom()
 
 # ---- turned hub (7075-T6): bolts to bell top screws, carries the bar ----
 HUB_OD = 17.0                                # mm (> BAR_BOLT_PCD + M3 head)
-HUB_H = 5.0                                  # mm turned spacer between bell cap and bar
+HUB_H = 4.5                                  # mm turned spacer between bell cap and bar
+HUB_GAP = 1.0                                 # mm washer gap between bar top and hub face (bar sweep touches the hub otherwise)
 HUB_SHAFT_CLR = 0.02                         # mm radial slide fit on the 5 mm shaft
 
 # ---- weapon motor stack (shaft down, stator screwed up into the tub boss) ----
@@ -135,7 +136,7 @@ BAR_BITE_REACH = 8.0                         # mm of tooth exposed beyond the tu
 TUB_WALL = 2.0                               # mm (> PROFILE.min_wall_fdm_mm)
 TUB_FLOOR_T = 2.0                            # mm
 TUB_SLOPE_DEG = 35.0                         # side slope from vertical: verticals glance off
-TUB_TOP_Z = WHEEL_D - 2 * MIN_GROUND_CLR - 2.0   # body top below tyre top: invertible (wheels > body both sides)
+TUB_TOP_Z = WHEEL_D - 2 * MIN_GROUND_CLR - 1.4   # body top below tyre top: invertible (wheels > body both sides)
 DRIVE_MOTOR_L = 33.0                         # mm N10 body length along its shaft (catalogue bbb_n10_1000rpm, hw.size)
 DRIVE_MOTOR_TIP_X = 20.25                    # mm shaft tip from the motor origin (catalogue bbox max X, origin on the axis)
 # Two N10s in the same pod, each shaft pointing outboard to its wheel: the bodies run inboard from each side wall, so
@@ -275,7 +276,7 @@ def bar_moi_kgm2():
 
 def wpn_motor_z():
     """Weapon motor origin Z (shaft down): the bell cap sits on the hub top face."""
-    return bar_top_z() + HUB_H + WPN_CAP_X
+    return bar_top_z() + HUB_GAP + HUB_H + WPN_CAP_X
 
 
 def tip_speed_ms(rpm):

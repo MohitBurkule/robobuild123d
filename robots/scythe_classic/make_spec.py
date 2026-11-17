@@ -24,7 +24,7 @@ FLOOR_IN = P.tub_floor_z() + P.TUB_FLOOR_T   # z of the pod cavity floor (inside
 BATTERY_AT = (-19.1, 15.6, FLOOR_IN + 0.5 + 5.5)   # probe --place battery: safe box x -21.9..-16.4, y 10.6..20.6 at yaw 90
 ESC_AT = (0.0, -14.0, FLOOR_IN + 0.5 + 2.0)
 RX_AT = (25.6, 14.9, FLOOR_IN + 0.5 + 1.25)   # probe --place drive_rx: free box x 16.1..35.1 y -1.1..30.9          # Malenki-Nano, yawed 90 deg, rests on the floor (tape)
-XT30_AT = (-32.0, 15.6, FLOOR_IN + 0.5 + 3.0)   # at the battery xt30 port side (port x -29.6), inside the cone
+XT30_AT = (-19.6, -31.4, FLOOR_IN + 0.5 + 5.1)   # probe --place xt30 (pod rear): free box x -26.5..-12.8 y -34.0..-28.8 at yaw 90
 TOP_Z = P.TUB_TOP_Z                 # top face of the top panel
 SKID_TOP_Z = TOP_Z + P.MIN_GROUND_CLR + P.SKID_H
 
@@ -58,8 +58,8 @@ def fasteners():
         out.append(_screw(f"stator_{i}", "M2x6", (x, y, TOP_Z), (0, 0, -1), ["top_panel", "tub"], "weapon_motor",
                           "button", _hole(2.0, 6.0, "button")))
     for i, sign in enumerate((-1, 1)):
-        out.append(_screw(f"bar_{i}", "M3x8", (sign * P.BAR_BOLT_PCD / 2, P.WPN_AXIS_Y, P.BAR_Z0), (0, 0, 1),
-                          ["bar"], "weapon_hub", "csk", _hole(3.0, 8.0, "csk", P.CSK_D)))
+        out.append(_screw(f"bar_{i}", "M3x10", (sign * P.BAR_BOLT_PCD / 2, P.WPN_AXIS_Y, P.BAR_Z0), (0, 0, 1),
+                          ["bar"], "weapon_hub", "csk", _hole(3.0, 10.0, "csk", P.CSK_D)))
     out.append(_screw("dome_0", "M2x10", (0.0, P.WPN_AXIS_Y, SKID_TOP_Z), (0, 0, -1), ["skid_dome", "top_panel"],
                       "weapon_motor", "button", _hole(2.0, 10.0, "button")))
     return out
@@ -87,7 +87,7 @@ def parts():
         {"id": "weapon_hub", "kind": "hub", "catalog": None, "material": "aluminium", "process": "turned",
          "secondary_ops": ["drilled"],
          "shape": {"type": "model", "file": "src/build_scythe_classic.py", "params": {"part": "weapon_hub"}},
-         "at": [0, "P.WPN_AXIS_Y", "P.bar_top_z()"], "rot": [0, 0, 0], "label": "turned 7075 hub, bar 2x M3"},
+         "at": [0, "P.WPN_AXIS_Y", "P.bar_top_z() + P.HUB_GAP"], "rot": [0, 0, 0], "label": "turned 7075 hub, bar 2x M3"},
         {"id": "lock_pin", "kind": "locking_bar", "catalog": None, "material": "steel", "process": "turned", "tethered": True,
          "color": [255, 90, 0], "retained": "pin",
          "shape": {"type": "model", "file": "src/build_scythe_classic.py", "params": {"part": "lock_pin"}},
@@ -120,8 +120,8 @@ def parts():
         {"id": "switch", "kind": "switch", "catalog": P.SWITCH, "retained": "velcro", "tool_free": True, "marked": True,
          "label": "power switch ON/OFF, reached through the top-panel key hole",
          "at": ["P.SWITCH_XY[0] + 1.2", "P.SWITCH_XY[1]", FLOOR_IN + 0.5 + 5.0], "rot": [0, 0, 90]},
-        {"id": "xt30", "kind": "connector", "catalog": P.CONNECTOR, "retained": "velcro",
-         "at": _fmt(XT30_AT), "rot": [0, 0, 90]},
+        {"id": "xt30", "kind": "connector", "catalog": P.CONNECTOR,
+         "at": _fmt(XT30_AT), "rot": [0, 0, 90], "retained": "snap"},
     ]
 
 
@@ -133,6 +133,7 @@ def connections():
         {"a": "skid_foot", "b": "bar", "method": "shaft", "reason": "foot turns with the bar on the shaft end, captured by the shaft nut"},
         {"a": "lock_pin", "b": "tub", "method": "pin", "reason": "pin seats in a socket in the tub floor underside; tethered to the tub"},
         {"a": "switch", "b": "tub", "method": "snap", "reason": "snaps into a moulded cradle on the tub floor"},
+        {"a": "xt30", "b": "tub", "method": "snap", "reason": "XT30 clips into a moulded holder on the pod floor"},
         {"a": "skid_dome", "b": "top_panel", "method": "screw", "reason": "M2 screw from the dome through the top panel into the stator base"},
         {"a": "wheel_r", "b": "drive_motor_r", "method": "shaft", "reason": "N10 D-shaft bore, grub screw on the flat"},
         {"a": "wheel_l", "b": "drive_motor_l", "method": "shaft", "reason": "N10 D-shaft bore, grub screw on the flat"},
@@ -146,11 +147,11 @@ def wires():
     return [
         {"id": "w_bat_sw", "from": "battery.xt30", "to": "switch.in", "awg": 24, "kind": "power", "slack_mm": 8},
         {"id": "w_sw_rx", "from": "switch.out", "to": "drive_rx.bat", "awg": 24, "kind": "power", "slack_mm": 8},
-        {"id": "w_sw_esc", "from": "switch.out", "to": "weapon_esc.bat", "awg": 24, "kind": "power", "slack_mm": 8},
+        {"id": "w_sw_esc", "from": "switch.out", "to": "weapon_esc.bat", "awg": 24, "kind": "power", "slack_mm": 8, "via": [[16.0, 36.0, 18.0], [18.0, -2.0, 18.0]]},
         {"id": "w_esc_wpn", "from": "weapon_esc.motor", "to": "weapon_motor.phases", "awg": 22, "kind": "power", "slack_mm": 6},
         {"id": "w_rx_m1", "from": "drive_rx.m1", "to": "drive_motor_r.terminals", "awg": 26, "kind": "signal", "slack_mm": 4},
         {"id": "w_rx_m2", "from": "drive_rx.m2", "to": "drive_motor_l.terminals", "awg": 26, "kind": "signal", "slack_mm": 4},
-        {"id": "w_rx_wpn", "from": "drive_rx.wpn", "to": "weapon_esc.rx", "awg": 26, "kind": "signal", "slack_mm": 4},
+        {"id": "w_rx_wpn", "from": "drive_rx.wpn", "to": "weapon_esc.rx", "awg": 26, "kind": "signal", "slack_mm": 4, "via": [[22.0, -2.0, 18.0]]},
     ]
 
 
