@@ -24,17 +24,17 @@ def build_baseplate() -> bd.Solid:
 
 
 def build_side_rail(side: int = 1) -> bd.Solid:
-    """Angled metal side armor rail (side = +1 right, -1 left)."""
+    """Low-profile angled metal side armor rail (side = +1 right, -1 left)."""
     x_pos = side * P.SIDE_RAIL_X
     with bd.BuildPart() as bp:
         with bd.BuildSketch(bd.Plane.YZ.offset(x_pos - P.SIDE_RAIL_T / 2)):
             bd.Polygon(
                 [
-                    (-46.0, 6.0),
-                    (36.0, 2.0),
-                    (38.0, 5.0),
-                    (10.0, 20.0),
-                    (-44.0, 20.0),
+                    (-45.0, 5.0),
+                    (38.0, 1.5),
+                    (40.0, 4.5),
+                    (14.0, 12.0),
+                    (-44.0, 11.5),
                 ]
             )
         bd.extrude(amount=P.SIDE_RAIL_T)

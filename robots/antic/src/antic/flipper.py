@@ -33,6 +33,10 @@ def build_flipper_plate() -> bd.Solid:
                 ]
             )
         bd.extrude(amount=P.FLIPPER_T)
+        # 4 socket-head cap screws
+        for sx, sy in ((-18.0, 14.0), (18.0, 14.0), (-20.0, 30.0), (20.0, 30.0)):
+            with bd.Locations(_wedge_plane(P.FLIPPER_T) * bd.Location((sx, sy, 0.0))):
+                bd.Cylinder(radius=1.6, height=1.2)
     return bp.part
 
 
@@ -51,6 +55,10 @@ def build_wedge_tip() -> bd.Solid:
                 ]
             )
         bd.extrude(amount=P.TIP_T)
+        # 2 countersunk screws
+        for sx, sy in ((-14.0, 39.0), (14.0, 39.0)):
+            with bd.Locations(_wedge_plane(0.2 + P.TIP_T) * bd.Location((sx, sy, 0.0))):
+                bd.Cylinder(radius=1.5, height=0.6)
     return bp.part
 
 

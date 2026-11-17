@@ -54,6 +54,6 @@ def build_gears() -> bd.Compound:
         ):
             with bd.BuildPart() as ax:
                 with bd.Locations(bd.Location((sx * P.WHEEL_X, ay, az)) * rot):
-                    bd.Cylinder(radius=P.AXLE_R - 0.1, height=P.WHEEL_W + 4.0)
+                    bd.Cylinder(radius=P.AXLE_R - 0.1, height=P.WHEEL_W)
             solids.append(ax.part)
     return bd.Compound(solids)

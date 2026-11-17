@@ -21,8 +21,8 @@ WHEEL_REAR_Y = -36.0
 WHEEL_FRONT_Y = -8.0
 WHEEL_Z = WHEEL_R    # 12.5 mm so wheels touch Z = 0
 GEAR_Y = -22.0       # central spur gear between rear & front wheels
-GEAR_Z = 14.0
-GEAR_R = 8.0
+GEAR_Z = 22.0
+GEAR_R = 4.2
 GEAR_W = 6.0
 AXLE_R = 1.5
 

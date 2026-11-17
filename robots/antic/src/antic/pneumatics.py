@@ -7,9 +7,9 @@ def build_buffer_tank() -> bd.Solid:
     """Transverse cylindrical CO2 / buffer tank."""
     with bd.BuildPart() as bp:
         with bd.Locations(bd.Location((0.0, P.TANK_Y, P.TANK_Z)) * bd.Rotation(0, 90, 0)):
-            bd.Cylinder(radius=P.TANK_R, height=P.TANK_L)
+            bd.Cylinder(radius=P.TANK_R, height=58.0)
             # End-cap recess
-            with bd.Locations((0, 0, P.TANK_L / 2 - 1.5)):
+            with bd.Locations((0, 0, 29.0 - 1.5)):
                 bd.Cylinder(radius=P.TANK_R * 0.68, height=4.0, mode=bd.Mode.SUBTRACT)
     return bp.part
 
@@ -17,7 +17,7 @@ def build_buffer_tank() -> bd.Solid:
 def build_hex_fitting() -> bd.Solid:
     """Blue anodized hex fitting / nut on the right side of the pneumatic manifold."""
     with bd.BuildPart() as bp:
-        with bd.Locations(bd.Location((36.5, -10.5, 27.5)) * bd.Rotation(0, 90, 0)):
+        with bd.Locations(bd.Location((37.8, -10.5, 32.0)) * bd.Rotation(0, 90, 0)):
             # Threaded boss
             bd.Cylinder(radius=4.2, height=10.0)
             # Hex nut head
@@ -33,10 +33,10 @@ def build_hex_fitting() -> bd.Solid:
 def build_pneumatic_ram() -> bd.Solid:
     """Forward-angled blue pneumatic actuator cylinder and piston rod."""
     with bd.BuildPart() as bp:
-        with bd.Locations(bd.Location((0.0, 4.0, 14.0)) * bd.Rotation(54, 0, 0)):
+        with bd.Locations(bd.Location((0.0, 10.0, 15.0)) * bd.Rotation(54, 0, 0)):
             # Blue cylinder barrel
-            bd.Cylinder(radius=P.RAM_R, height=P.RAM_L * 0.7)
+            bd.Cylinder(radius=P.RAM_R, height=P.RAM_L * 0.6)
             # Piston rod extending forward-upward
-            with bd.Locations((0, 0, P.RAM_L * 0.35 + 4.0)):
-                bd.Cylinder(radius=2.2, height=10.0)
+            with bd.Locations((0, 0, P.RAM_L * 0.3 + 4.0)):
+                bd.Cylinder(radius=2.2, height=8.0)
     return bp.part
