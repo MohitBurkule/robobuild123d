@@ -1,0 +1,128 @@
+{
+ "spec": "/home/antigravity/MohitBurkule/robobuild123d/robots/expandabot/spec.json",
+ "rendered_at": 1794880508.0156517,
+ "bodies": [
+  "tub",
+  "lid_r",
+  "lid_l",
+  "side_r",
+  "side_l",
+  "clamp_l",
+  "clamp_r",
+  "flipper",
+  "hinge_block",
+  "hinge_pin",
+  "horn",
+  "drive_pin",
+  "wheel_l",
+  "motor_l",
+  "wheel_r",
+  "motor_r",
+  "servo",
+  "battery",
+  "esc",
+  "switch",
+  "insert_lid_l0",
+  "insert_lid_l1",
+  "insert_lid_r0",
+  "insert_lid_r1",
+  "insert_standoff_r00",
+  "insert_standoff_r01",
+  "insert_standoff_r10",
+  "insert_standoff_r11",
+  "insert_standoff_l00",
+  "insert_standoff_l01",
+  "insert_standoff_l10",
+  "insert_standoff_l11",
+  "insert_clamp_r0",
+  "insert_clamp_r1",
+  "insert_clamp_r2",
+  "insert_clamp_l0",
+  "insert_clamp_l1",
+  "insert_clamp_l2",
+  "insert_hb0",
+  "insert_hb1",
+  "bolt_lid_l0",
+  "bolt_lid_l1",
+  "bolt_lid_r0",
+  "bolt_lid_r1",
+  "bolt_side_r00",
+  "bolt_side_r01",
+  "bolt_side_r10",
+  "bolt_side_r11",
+  "bolt_side_l00",
+  "bolt_side_l01",
+  "bolt_side_l10",
+  "bolt_side_l11",
+  "bolt_clamp_r0",
+  "bolt_clamp_r1",
+  "bolt_clamp_r2",
+  "bolt_clamp_l0",
+  "bolt_clamp_l1",
+  "bolt_clamp_l2",
+  "bolt_hb0",
+  "bolt_hb1"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    -11.0,
+    -33.1,
+    8.65
+   ],
+   "to": [
+    -23.85,
+    -17.0,
+    13.5
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    -23.85,
+    -14.0,
+    13.5
+   ],
+   "to": [
+    27.85,
+    -25.5,
+    6.15
+   ]
+  },
+  "w_esc_ml": {
+   "from": [
+    19.85,
+    -2.5,
+    6.15
+   ],
+   "to": [
+    13.799999999999997,
+    -33.4,
+    13.0
+   ]
+  },
+  "w_esc_mr": {
+   "from": [
+    19.85,
+    -25.5,
+    6.15
+   ],
+   "to": [
+    -13.799999999999997,
+    -33.4,
+    13.0
+   ]
+  },
+  "w_esc_servo": {
+   "from": [
+    27.85,
+    -2.5,
+    6.15
+   ],
+   "to": [
+    -7.041719095097281e-16,
+    -10.29,
+    9.7
+   ]
+  }
+ }
+}

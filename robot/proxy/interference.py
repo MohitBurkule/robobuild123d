@@ -78,7 +78,8 @@ def _movers(ctx):
         pb = w.body(rp.part.parent) if rp.part.parent else None
         PM = pb.M if pb is not None else np.eye(4)
         ax = PM[:3, :3] @ np.asarray(j.axis, float)
-        out.append((f"joint `{rp.part.id}`", (PM @ np.append(np.asarray(j.pivot, float), 1.0))[:3], ax / np.linalg.norm(ax), moved))
+        out.append((f"joint `{rp.part.id}`", (PM @ np.append(np.asarray(j.pivot, float), 1.0))[:3], ax / np.linalg.norm(ax), moved,
+                    (rp.part.id, float(j.min), float(j.max))))
     for i, b in enumerate(w.bodies):
         wd = r.parts[b.part_idx].part.weapon if b.part_idx is not None else None
         if wd is None or wd.kind not in ("spinner", "drum", "disc", "bar"):
@@ -87,15 +88,52 @@ def _movers(ctx):
         if sa is None:
             continue
         rotor = itf.rotor_ids(r, r.parts[b.part_idx].part)
-        out.append((f"weapon `{b.id}`", sa[0], sa[1], rotor | itf.riding_fasteners(r, rotor)))
+        out.append((f"weapon `{b.id}`", sa[0], sa[1], rotor | itf.riding_fasteners(r, rotor), None))
     return out
+
+
+FULL_TURN_DEG = 359.0
+SAMPLE_DEG = 7.5  # pose step for a limited-range joint (a hinge, flipper, lifter): exact overlap at each pose
+
+
+def _sampled(ctx, label, rng, moved, parts):
+    """A joint with a declared range (not a wheel): check the real poses over min..max, never a full revolution."""
+    from .. import measure, world as world_mod
+
+    r = ctx.r
+    jid, lo, hi = rng
+    n = max(2, int(np.ceil((hi - lo) / SAMPLE_DEG)))
+    for k in range(n + 1):
+        v = lo + (hi - lo) * k / n
+        w = world_mod.World.build(r, {jid: v})
+        for m in w.bodies:
+            if m.id not in moved or m.is_wire:
+                continue
+            for o in w.bodies:
+                if o.id in moved or o.is_wire or not measure.aabb_overlap(m.aabb, o.aabb):
+                    continue
+                if parts is not None and o.id not in parts and not (moved & set(parts)):
+                    continue
+                allow = itf.allowed_depth(r, m, o)
+                if allow >= NEVER_HITS_MM:
+                    continue
+                if measure.overlap_exceeds(m, o, allow):
+                    ov = measure.overlap(m, o)
+                    return [fail("proxy.sweep", G, BLOCKER, "Moving part hits another part",
+                                 f"{label}: `{m.id}` hits `{o.id}` {ov.depth:.2f} mm deep at {v:.1f} (declared range "
+                                 f"{lo:g}..{hi:g}; allowed {allow:.2f}). `robot probe spec.json --joint {jid}` lists the "
+                                 "closest approach to every part.").on(m.id, o.id).here(ov.at)]
+    return []
 
 
 def sweeps(ctx, parts=None):
     r, w = ctx.r, ctx.world
     out, grids = [], {}  # body id -> depth grid, shared by every mover
-    for label, origin, axis, moved in _movers(ctx):
+    for label, origin, axis, moved, rng in _movers(ctx):
         mov = [b for b in w.bodies if b.id in moved and not b.is_wire]
+        if rng is not None and rng[2] - rng[1] < FULL_TURN_DEG:
+            out += _sampled(ctx, label, rng, moved, parts)
+            continue
         revs = [(m, itf.Revolved.build(m, origin, axis, CELL_MM)) for m in mov]
         if any(rv is None for _, rv in revs):
             out.append(fail("proxy.sweep", G, BLOCKER, "Sweep envelope too large", f"{label}: cannot rasterise.").on(*moved))
