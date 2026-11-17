@@ -112,3 +112,11 @@ with numbers, and needs nothing else. Run the full tier (`--llm` without `--tier
 - Pitches the robot about the wheel contact line toward the COM; the first body to touch the floor is the rest contact.
 - Weapon/hub/weapon_motor first = BLOCKER (blade grinds floor); fix gives the max skid height at a distance: h <= s x tan(angle) - 0.5.
 - Plain structure first = WARNING (drags). Give floor-touching parts kind `skid` or `caster` (ball caster) so they count as support.
+
+## Spinner-in-motion checks (dynamics group, robot/checks/spin_dyn.py)
+- `dynamics.brake_dive`: braking/accel at 1 g shifts the COM by its height; the pitch first-contact must not be the weapon (BLOCKER).
+- `dynamics.spinup_kick`: weapon motor torque Kt*I (Kt = 60/(2 pi kv), I = ESC rating or 30 A) vs tyre grip (vertical axis: yaw) or weight x lever (horizontal axis: rock/hop).
+- `dynamics.gyro_lift`: horizontal-axis spinner, 15 rad/s turn: I w Omega vs weight x lever; lifts a wheel.
+- `dynamics.floor_margin`: weapon rim within 10 mm of the floor must clear 0.5 mm tyre squash + 3 deg floor seam over its reach.
+- `dynamics.invert_weapon`: if `can_run_inverted`, the weapon must not be the highest point (it would rest on it).
+- A spinning weapon within 2 mm of the floor no longer counts as a floor contact in traction/tip checks.
