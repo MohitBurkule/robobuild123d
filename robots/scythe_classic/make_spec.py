@@ -36,7 +36,7 @@ def _hole(d, length, head, dk=None):
     h = {"d": d, "length": length, "head": head, "clearance_d": d + 0.2, "into": "through", "side": "head",
          "grip": 1.0, "sink": 0.0}
     if head == "csk":
-        h.update(csk_angle=90.0, csk_d=dk, csk_depth=round(dk / 2, 2), head_std="ISO 14581")
+        h.update(csk_angle=90.0, csk_d=dk, csk_depth=P.CSK_DEPTH, head_std="ISO 14581")   # = bar.countersinks() depth
     return h
 
 
@@ -87,7 +87,10 @@ def parts():
          "secondary_ops": ["drilled"],
          "shape": {"type": "model", "file": "src/build_scythe_classic.py", "params": {"part": "weapon_hub"}},
          "at": [0, "P.WPN_AXIS_Y", "P.bar_top_z()"], "rot": [0, 0, 0], "label": "turned 7075 hub, bar 2x M3"},
-        {"id": "skid_foot", "kind": "structure", "catalog": None, "material": "uhmw", "process": "turned",
+        {"id": "caster", "kind": "caster", "catalog": None, "material": "uhmw", "process": "turned",
+         "shape": {"type": "model", "file": "src/build_scythe_classic.py", "params": {"part": "caster"}},
+         "at": [0, 0, 0], "rot": [0, 0, 0], "label": "ball caster under the tub front, ahead of the CoM"},
+        {"id": "skid_foot", "kind": "skid", "catalog": None, "material": "uhmw", "process": "turned",
          "shape": {"type": "model", "file": "src/build_scythe_classic.py", "params": {"part": "skid_foot"}},
          "at": [0, 0, 0], "rot": [0, 0, 0], "label": "POM-class shaft-end foot"},
         {"id": "skid_dome", "kind": "structure", "catalog": None, "material": "uhmw", "process": "turned",
@@ -124,6 +127,7 @@ def connections():
         {"a": "bar", "b": "weapon_hub", "method": "screw", "reason": "2x M3 countersunk bolts through the bar into the tapped hub"},
         {"a": "weapon_hub", "b": "weapon_motor", "method": "shaft", "reason": "hub bores on the 5 mm shaft, clamped by its screws"},
         {"a": "skid_foot", "b": "bar", "method": "shaft", "reason": "foot turns with the bar on the shaft end, captured by the shaft nut"},
+        {"a": "caster", "b": "tub", "method": "screw", "reason": "ball caster housing screwed under the tub front floor"},
         {"a": "skid_dome", "b": "top_panel", "method": "screw", "reason": "M2 screw from the dome through the top panel into the stator base"},
         {"a": "wheel_r", "b": "drive_motor_r", "method": "shaft", "reason": "N10 D-shaft bore, grub screw on the flat"},
         {"a": "wheel_l", "b": "drive_motor_l", "method": "shaft", "reason": "N10 D-shaft bore, grub screw on the flat"},
@@ -135,7 +139,7 @@ def connections():
 
 def wires():
     return [
-        {"id": "w_bat_sw", "from": "battery.jst_rcy", "to": "switch.in", "awg": 24, "kind": "power", "slack_mm": 8},
+        {"id": "w_bat_sw", "from": "battery.xt30", "to": "switch.in", "awg": 24, "kind": "power", "slack_mm": 8},
         {"id": "w_sw_rx", "from": "switch.out", "to": "drive_rx.bat", "awg": 24, "kind": "power", "slack_mm": 8},
         {"id": "w_sw_esc", "from": "switch.out", "to": "weapon_esc.bat", "awg": 24, "kind": "power", "slack_mm": 8},
         {"id": "w_esc_wpn", "from": "weapon_esc.motor", "to": "weapon_motor.phases", "awg": 22, "kind": "power", "slack_mm": 6},

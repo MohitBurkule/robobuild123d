@@ -131,8 +131,33 @@
    "label": "turned 7075 hub, bar 2x M3"
   },
   {
+   "id": "caster",
+   "kind": "caster",
+   "catalog": null,
+   "material": "uhmw",
+   "process": "turned",
+   "shape": {
+    "type": "model",
+    "file": "src/build_scythe_classic.py",
+    "params": {
+     "part": "caster"
+    }
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "label": "ball caster under the tub front, ahead of the CoM"
+  },
+  {
    "id": "skid_foot",
-   "kind": "structure",
+   "kind": "skid",
    "catalog": null,
    "material": "uhmw",
    "process": "turned",
@@ -259,7 +284,7 @@
   {
    "id": "battery",
    "kind": "battery",
-   "catalog": "lipo_2s_180_turnabot",
+   "catalog": "lipo_2s_350",
    "retained": "pocket",
    "at": [
     -0.58,
@@ -695,8 +720,8 @@
     "grip": 1.0,
     "sink": 0.0,
     "csk_angle": 90.0,
-    "csk_d": 5.5,
-    "csk_depth": 2.75,
+    "csk_d": 6.2,
+    "csk_depth": 1.75,
     "head_std": "ISO 14581"
    },
    "head": "countersunk",
@@ -731,8 +756,8 @@
     "grip": 1.0,
     "sink": 0.0,
     "csk_angle": 90.0,
-    "csk_d": 5.5,
-    "csk_depth": 2.75,
+    "csk_d": 6.2,
+    "csk_depth": 1.75,
     "head_std": "ISO 14581"
    },
    "head": "countersunk",
@@ -798,6 +823,12 @@
    "reason": "foot turns with the bar on the shaft end, captured by the shaft nut"
   },
   {
+   "a": "caster",
+   "b": "tub",
+   "method": "screw",
+   "reason": "ball caster housing screwed under the tub front floor"
+  },
+  {
    "a": "skid_dome",
    "b": "top_panel",
    "method": "screw",
@@ -837,7 +868,7 @@
  "wires": [
   {
    "id": "w_bat_sw",
-   "from": "battery.jst_rcy",
+   "from": "battery.xt30",
    "to": "switch.in",
    "awg": 24,
    "kind": "power",

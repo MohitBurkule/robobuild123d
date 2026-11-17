@@ -54,7 +54,7 @@ WEAPON_MOTOR = "gr1507"                      # Revron's motor; fit features via 
 WPN_CAP_X = 6.7                              # mm bell cap from the motor origin along the shaft (describe()['cap_x'])
 DRIVE_MOTOR = "bbb_n10_1000rpm"
 WHEEL = "bbb_wheel_34x6_5"
-BATTERY_2S = "lipo_2s_180_turnabot"          # 36 x 18 x 11 mm, 12.5 g: keeps the 116 mm bar (a 21.5 g pack shortens it to 98 mm)
+BATTERY_2S = "lipo_2s_350"                   # 36 x 17 x 11 mm, 21.5 g, 350 mAh: the 180 mAh pack fails the 3 min fight (power.runtime)
 BATTERY = os.environ.get("SCYTHE_CLASSIC_BATTERY", BATTERY_2S)
 BATTERY_3S = "gnb_3s_300_80c_hv"             # variant (variants.py)
 WEAPON_ESC = "bbb_brushless_esc_20a"
@@ -63,9 +63,15 @@ SWITCH = "fingertech_mini_switch"
 SWITCH_XY = (-26.0, -26.0)                   # mm: switch and its top-panel key hole, rear pod front (clear of the N10 bodies)
 CONNECTOR = "xt30u_m"
 
-# INDEX.md values (research/cots/INDEX.md rows)
-INDEX_MASS_G = {WEAPON_MOTOR: 19.6, DRIVE_MOTOR: 8.0, WHEEL: 4.1, BATTERY_2S: 12.5, BATTERY_3S: 28.0,
-                WEAPON_ESC: 5.0, DRIVE_RX: 2.3, SWITCH: 2.15, CONNECTOR: 1.5}
+# COTS masses (catalogue; was a stale INDEX.md copy: gr1507 19.6 g there, 8.5 g in the catalogue)
+def _cat_mass(cid):
+    """Catalogue mass (g) of a COTS id: robot.catalog is the single source, so the sizing chain cannot drift from it."""
+    from robot import catalog
+    return catalog.find(cid).mass_g
+
+
+INDEX_MASS_G = {cid: _cat_mass(cid) for cid in (WEAPON_MOTOR, DRIVE_MOTOR, WHEEL, BATTERY_2S, BATTERY_3S,
+                                                  WEAPON_ESC, DRIVE_RX, SWITCH, CONNECTOR)}
 CELLS = {BATTERY_2S: 2, BATTERY_3S: 3}       # INDEX.md names (2S1P / 3S)
 CELL_HV_V = 4.35                             # V per LiHV cell full (both packs are HV); PROFILE.max_cell_v = 4.2 is the
                                              # rule check value -> see BRIEF unsure list
@@ -106,7 +112,7 @@ BAR_CORNER_R = 1.0                           # mm laser-cut corner round on non-
 BAR_Z0 = 2.0                                 # mm underside above floor (brief: ~2 mm, > MIN_GROUND_CLR)
 BAR_BOLT = "M3"
 BAR_BOLT_D = 3.0
-CSK_D = 5.5                                  # mm M3 countersink head diameter (90 deg, flush)
+CSK_D = 6.2                                  # mm countersink diameter at the bar underside: M3 csk head dk 6.0 + 0.1 radial clear (was 5.5: head overlapped 0.15)
 CSK_DEPTH = 1.75                             # mm: the countersink cone depth; the head sits inside it with no overlap
 BAR_BOLT_N = 2                               # 2x M3 through bar into hub, PolarLocations
 BAR_BOLT_PCD = 13.0                          # mm (was 11: a 1.3 mm web to the bore failed the sheet-cut rule)
