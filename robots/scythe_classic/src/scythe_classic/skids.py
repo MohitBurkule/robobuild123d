@@ -29,16 +29,28 @@ BEARING_W = 2.5        # mm MR85 width
 SHAFT_R = P.SHAFT_D / 2
 
 
+ARM_W_BODY = 28.0      # mm: width of the stiff part of the strip (the arch.fork_stiffness check bends it sideways: I = t w^3 / 12)
+ARM_NECK_Y = (4.0, 10.0)   # mm from the axis line: where the strip narrows to the puck width (the bar-bolt driver path)
+ARM_SCREW_X = (-5.0, 5.0)   # mm: the two riser screws (M2, 10 mm apart)
+RISER_W = 16.0         # mm riser width (two M2 screws 10 mm apart)
+
+
 def foot():
-    """Skid arm (kind structure, FDM nylon, world frame): a 2.8 mm strip along the centre line from the pod floor underside
+    """Skid arm (kind structure, FDM PA-CF, world frame): a 2.8 mm strip along the centre line from the pod floor underside
     (a riser behind the bar sweep) forward UNDER the whole sweep disc to a round puck on the weapon axis. The bar passes over it
     with a 1.1 mm gap; the puck's bore holds the MR85 bearing whose inner race rides the 5 mm weapon shaft. This is the only
-    way a static part can reach the axis below the bar: it comes in under the sweep, not through it."""
+    way a static part can reach the axis below the bar: it comes in under the sweep, not through it. The body is 28 mm wide
+    because a hit loads it sideways (stiffness goes with width cubed) and narrows to the puck so the bar-bolt driver path
+    (x 5.65 .. 9.35 beside the axis) stays clear."""
     z0, z1 = ARM_CLR_FLOOR, P.BAR_Z0 - ARM_CLR_BAR
-    y0 = ARM_RISER_Y[0]
-    strip = bd.Pos(0, (y0 + P.WPN_AXIS_Y) / 2, z0) * bd.Box(ARM_W, P.WPN_AXIS_Y - y0, z1 - z0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+    y0, y1 = ARM_RISER_Y[0], P.WPN_AXIS_Y
+    hw, hn = ARM_W_BODY / 2, ARM_W / 2
+    ya, yb = P.WPN_AXIS_Y - ARM_NECK_Y[1], P.WPN_AXIS_Y - ARM_NECK_Y[0] - 0.0
+    ya, yb = P.WPN_AXIS_Y - 11.5, P.WPN_AXIS_Y - 5.5
+    pts = [(-hw, y0), (hw, y0), (hw, ya), (hn, yb), (hn, y1), (-hn, y1), (-hn, yb), (-hw, ya)]
+    strip = bd.Pos(0, 0, z0) * bd.extrude(bd.Polygon(*pts, align=None), z1 - z0)
     puck = bd.Pos(0, P.WPN_AXIS_Y, z0) * _z_cyl(ARM_W / 2, z1 - z0)
-    riser = bd.Pos(0, sum(ARM_RISER_Y) / 2, z0) * bd.Box(ARM_W, ARM_RISER_Y[1] - ARM_RISER_Y[0], P.tub_floor_z() - z0,
+    riser = bd.Pos(0, sum(ARM_RISER_Y) / 2, z0) * bd.Box(RISER_W, ARM_RISER_Y[1] - ARM_RISER_Y[0], P.tub_floor_z() - z0,
                                                        align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
     arm = strip + puck + riser
     bore = bd.Pos(0, P.WPN_AXIS_Y, z0 - 1) * _z_cyl(BEARING_OD_R, z1 - z0 + 2)
@@ -53,8 +65,8 @@ def bearing():
 
 
 def shaft_top_z():
-    """Shaft top: inside the stator bore, 1.1 mm under the stator base's top face (the motor's own bearings carry it there)."""
-    return P.wpn_motor_z() + 10.4 - 1.1
+    """Shaft top: 4 mm above the hub top, i.e. inside the bell (the motor's own bearings carry the shaft over that span)."""
+    return P.bar_top_z() + P.HUB_GAP + P.HUB_H + 4.0
 
 
 def shaft():

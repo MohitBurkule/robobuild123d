@@ -16,8 +16,12 @@ from . import params as P
 from ._reuse import hw, weapon_motor
 
 
+SKIRT_H = 2.0   # mm vertical band at the cone base: a sloped wall running into the floor underside leaves a knife edge
+
+
 def _slope_inset(h):
-    return h * math.tan(math.radians(P.TUB_SLOPE_DEG))
+    """Radial inset of the cone at height h above the floor underside: the slope starts above the vertical skirt."""
+    return max(h - SKIRT_H, 0.0) * math.tan(math.radians(P.TUB_SLOPE_DEG))
 
 
 def z0():
@@ -75,17 +79,16 @@ def cone_loft(grow_lo, grow_hi, z_lo, z_hi):
 def outer_body():
     """The solid tub outside: sloped cone plus the vertical rear pod."""
     h = height()
-    cone = cone_loft(0.0, -_slope_inset(h), z0(), z0() + h)
-    return cone + pod_box(z_lo=z0(), h=h)
+    skirt = bd.Pos(0, 0, z0()) * bd.extrude(disc_face(), SKIRT_H)
+    cone = cone_loft(0.0, -_slope_inset(h), z0() + SKIRT_H, z0() + h)
+    return skirt + cone + pod_box(z_lo=z0(), h=h)
 
 
 def cavity():
     """What is hollowed out: the cone inside its walls above the floor, and the pod inside its walls."""
     h = height()
-    # the outer cone is already inset by the slope at the floor top: the wall is measured from that radius, so the base
-    # keeps TUB_WALL (a plain -TUB_WALL at the floor top left a zero-thickness wall at the cone base)
-    base_inset = P.TUB_FLOOR_T * math.tan(math.radians(P.TUB_SLOPE_DEG))
-    cone = cone_loft(-P.TUB_WALL - base_inset, -_slope_inset(h) - P.TUB_WALL, z0() + P.TUB_FLOOR_T, z0() + h + 0.01)
+    # the skirt is as tall as the floor, so the cavity starts at the skirt radius minus the wall; above it the wall follows the slope
+    cone = cone_loft(-P.TUB_WALL, -_slope_inset(h) - P.TUB_WALL, z0() + P.TUB_FLOOR_T, z0() + h + 0.01)
     pod = pod_box(-P.TUB_WALL, z0() + P.TUB_FLOOR_T, h + 0.01 - P.TUB_FLOOR_T)
     return cone + pod
 
@@ -149,5 +152,15 @@ def motor_cradles():
     return out
 
 
+def arm_holes():
+    """M2 clearance (2.2) through the pod floor for the skid-arm screws (heads in the pod cavity, threads in the arm riser)."""
+    from . import skids
+    out = None
+    for sx in skids.ARM_SCREW_X:
+        h = bd.Pos(sx, sum(skids.ARM_RISER_Y) / 2, z0() - 0.5) * bd.Cylinder(1.1, P.TUB_FLOOR_T + 1.0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+        out = h if out is None else out + h
+    return out
+
+
 def tub():
-    return shell() + weapon_boss() + motor_cradles() - bell_bore() - axle_holes()
+    return shell() + weapon_boss() + motor_cradles() - bell_bore() - axle_holes() - arm_holes()

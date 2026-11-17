@@ -56,12 +56,12 @@ def fasteners():
     for i, (r, deg, _d) in enumerate(weapon_motor.describe(P.WEAPON_MOTOR)["base_holes"]):
         x = r * math.cos(math.radians(deg))
         y = P.WPN_AXIS_Y + r * math.sin(math.radians(deg))
-        out.append(_screw(f"stator_{i}", "M2x3", (x, y, TOP_Z), (0, 0, -1), ["top_panel"], "weapon_motor",
+        out.append(_screw(f"stator_{i}", "M2x3", (x, y, TOP_Z), (0, 0, -1), ["top_panel"], "weapon_motor_stator",
                           "button", _hole(2.0, 3.0, "button")))
     for i, sign in enumerate((-1, 1)):
         out.append(_screw(f"bar_{i}", "M3x8", (sign * P.BAR_BOLT_PCD / 2, P.WPN_AXIS_Y, P.BAR_Z0), (0, 0, 1),
                           ["bar"], "weapon_hub", "csk", _hole(3.0, 8.0, "csk", P.CSK_D)))
-    for i, sx in enumerate((-3.0, 3.0)):   # skid arm riser: M2 from the pod cavity down through the tub floor into the arm
+    for i, sx in enumerate(skids.ARM_SCREW_X):   # skid arm riser: M2 from the pod cavity down through the tub floor into the arm
         out.append(_screw(f"arm_{i}", "M2x8", (sx, sum(skids.ARM_RISER_Y) / 2, FLOOR_IN), (0, 0, -1), ["tub"], "skid_arm",
                           "button", _hole(2.0, 8.0, "button")))
     return out
@@ -83,7 +83,7 @@ def parts():
          "shape": {"type": "model", "file": "src/build_scythe_classic.py", "params": {"part": "bar"}},
          "at": [0, f"P.WPN_AXIS_Y", "P.BAR_Z0"], "rot": [0, 0, 0], "rotates_with": "weapon",
          "joint": {"kind": "revolute", "axis": [0.0, 0.0, 1.0], "pivot": [0.0, P.WPN_AXIS_Y, 0.0], "min": 0, "max": 360, "default": 0},
-         "weapon": {"kind": "bar", "motor": "weapon_motor", "cells": 2, "reduction": 1.0, "spin_axis": [0, 0, 1],
+         "weapon": {"kind": "bar", "motor": "weapon_motor_stator", "cells": 2, "reduction": 1.0, "spin_axis": [0, 0, 1],
                     "spin_dir": "ccw", "teeth": 2, "locking_bar": "lock_pin"},
          "secondary_ops": ["countersink"],
          "label": "3 mm steel two-tooth bar, 116 mm, horizontal under the tub"},
@@ -105,15 +105,15 @@ def parts():
          "shape": {"type": "model", "file": "src/build_scythe_classic.py", "params": {"part": "lock_pin"}},
          "at": [0, 0, 0], "rot": [0, 0, 0],
          "label": "rule 5f lock: removable 3 mm steel pin through the bar's lock hole into the tub floor (orange, tethered)"},
-        {"id": "skid_arm", "kind": "structure", "catalog": None, "material": "nylon", "process": "fdm", "print_orientation": "+z",
-         "solid_fraction": 0.85,
+        {"id": "skid_arm", "kind": "structure", "catalog": None, "material": "pa_cf", "process": "fdm", "print_orientation": "+z",
+         "solid_fraction": 1.0,
          "shape": {"type": "model", "file": "src/build_scythe_classic.py", "params": {"part": "skid_arm"}},
          "at": [0, 0, 0], "rot": [0, 0, 0],
          "label": "printed strip under the whole bar sweep, from the pod floor to a puck on the axis holding the MR85 (bar passes 1.1 mm over it)"},
         {"id": "skid_dome", "kind": "structure", "catalog": None, "material": "uhmw", "process": "turned",
          "shape": {"type": "model", "file": "src/build_scythe_classic.py", "params": {"part": "skid_dome"}},
          "at": [0, 0, 0], "rot": [0, 0, 0], "label": "POM button on the top panel (inverted front contact), stem plugged in a 3 mm panel hole"},
-        {"id": "weapon_motor", "kind": "weapon_motor", "catalog": "gr1507", "at": ["0", "P.WPN_AXIS_Y", "P.wpn_motor_z()"],
+        {"id": "weapon_motor_stator", "kind": "weapon_motor", "catalog": "gr1507", "at": ["0", "P.WPN_AXIS_Y", "P.wpn_motor_z()"],
          "rot": [0.0, 90.0, 0.0], "label": "GR1507 shaft down"},
         {"id": "weapon_motor_can", "kind": "other", "role": "rotor", "catalog": "gr1507_can",
          "rotates_with": "weapon", "at": ["0", "P.WPN_AXIS_Y", "P.wpn_motor_z()"], "rot": [0.0, 90.0, 0.0],
@@ -123,14 +123,15 @@ def parts():
         {"id": "drive_motor_l", "kind": "motor", "catalog": "bbb_n10_1000rpm", "retained": "press_fit",
          "at": ["-P.motor_x()", "P.wheel_y()", "P.WHEEL_CZ"], "rot": [0.0, 0.0, 180.0]},
         {"id": "wheel_r", "kind": "wheel", "catalog": "bbb_wheel_34x6_5",
-         "at": ["P.wheel_x()", "P.wheel_y()", "P.WHEEL_CZ"], "rot": [0.0, 0.0, 0.0]},
+         "at": ["P.wheel_x()", "P.wheel_y()", "P.WHEEL_CZ"], "rot": [90.0, 0.0, 0.0]},   # rx 90: the hub's D flat sits on the N10 shaft flat
         {"id": "wheel_l", "kind": "wheel", "catalog": "bbb_wheel_34x6_5",
-         "at": ["-P.wheel_x()", "P.wheel_y()", "P.WHEEL_CZ"], "rot": [0.0, 0.0, 180.0]},
+         "at": ["-P.wheel_x()", "P.wheel_y()", "P.WHEEL_CZ"], "rot": [90.0, 0.0, 180.0]},
         {"id": "battery", "kind": "battery", "catalog": P.BATTERY, "retained": "strap",
          "retained_reason": "hook-and-loop strap over the pack, anchored to rib pegs in the pod; undone to change the pack",
          "at": _fmt(BATTERY_AT), "rot": [0, 0, 90],
          "label": "2S 180 mAh pack in the rear pod (smaller than the old 300 mAh: see params)"},
-        {"id": "weapon_esc", "kind": "esc", "catalog": P.WEAPON_ESC, "retained": "velcro",
+        {"id": "weapon_esc", "kind": "esc", "catalog": P.WEAPON_ESC, "retained": "tape",
+         "retained_reason": "double-sided foam tape under the ESC onto the pod floor; the board weighs 5 g",
          "at": _fmt(ESC_AT), "rot": [0, 0, 0]},
         {"id": "drive_rx", "kind": "esc", "catalog": P.DRIVE_RX, "retained": "tape",
          "at": _fmt(RX_AT), "rot": [0, 0, 90]},
@@ -161,7 +162,7 @@ def connections():
         {"a": "wheel_l", "b": "drive_motor_l", "method": "press_fit", "mechanical_key": True, "reason": "N10 D-shaft bore, grub screw on the flat"},
         {"a": "drive_motor_r", "b": "tub", "method": "interlock", "reason": "N10 body seats in the pod wall"},
         {"a": "drive_motor_l", "b": "tub", "method": "interlock", "reason": "N10 body seats in the pod wall"},
-        {"a": "weapon_motor", "b": "top_panel", "method": "screw", "reason": "4x M2x3 from the top panel into the stator base"},
+        {"a": "weapon_motor_stator", "b": "top_panel", "method": "screw", "reason": "4x M2x3 from the top panel into the stator base"},
     ]
 
 
@@ -170,7 +171,7 @@ def wires():
         {"id": "w_bat_sw", "from": "battery.xt30", "to": "switch.in", "awg": 24, "kind": "power", "slack_mm": 8},
         {"id": "w_sw_rx", "from": "switch.out", "to": "drive_rx.bat", "awg": 24, "kind": "power", "slack_mm": 8},
         {"id": "w_sw_esc", "from": "switch.out", "to": "weapon_esc.bat", "awg": 24, "kind": "power", "slack_mm": 8, "via": [[16.0, 36.0, 18.0], [18.0, -2.0, 18.0]]},
-        {"id": "w_esc_wpn", "from": "weapon_esc.motor", "to": "weapon_motor.phases", "awg": 22, "kind": "power", "slack_mm": 6},
+        {"id": "w_esc_wpn", "from": "weapon_esc.motor", "to": "weapon_motor_stator.phases", "awg": 22, "kind": "power", "slack_mm": 6},
         {"id": "w_rx_m1", "from": "drive_rx.m1", "to": "drive_motor_r.terminals", "awg": 26, "kind": "signal", "slack_mm": 4},
         {"id": "w_rx_m2", "from": "drive_rx.m2", "to": "drive_motor_l.terminals", "awg": 26, "kind": "signal", "slack_mm": 4},
         {"id": "w_rx_wpn", "from": "drive_rx.wpn", "to": "weapon_esc.rx", "awg": 26, "kind": "signal", "slack_mm": 4, "via": [[22.0, -2.0, 18.0]]},

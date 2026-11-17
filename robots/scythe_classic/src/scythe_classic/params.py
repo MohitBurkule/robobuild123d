@@ -129,7 +129,7 @@ HUB_SHAFT_CLR = 0.02                         # mm radial slide fit on the 5 mm s
 
 # ---- weapon motor stack (shaft down, stator screwed up into the tub boss) ----
 GAP_BAR_TUB = 1.2                            # mm air between bar top and tub floor underside (>> MIN_CLR_MOVING)
-MOTOR_BELL_CLR = 1.0                         # mm radial bell to tub bore wall (spinning)
+MOTOR_BELL_CLR = 1.3                         # mm radial bell to tub bore wall (spinning)
 
 # ---- tub (printed nylon PA12/PA-CF, FDM) ----
 BAR_BITE_REACH = 8.0                         # mm of tooth exposed beyond the tub rim, all round

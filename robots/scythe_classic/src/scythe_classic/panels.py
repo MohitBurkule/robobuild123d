@@ -36,6 +36,6 @@ def top_panel():
         face -= bd.Pos(r * math.cos(math.radians(deg)), P.WPN_AXIS_Y + r * math.sin(math.radians(deg))) * bd.Circle(d / 2 + 0.1)
     for x, y in rim_xy():
         face -= bd.Pos(x, y) * bd.Circle(1.1)       # M2 normal clearance (fastener_catalog.clearance(2) = 2.2)
-    face -= bd.Pos(*P.SWITCH_XY) * bd.Circle(SWITCH_HOLE_D / 2)
+    face -= bd.Pos(P.SWITCH_XY[0] + 1.2, P.SWITCH_XY[1]) * bd.Circle(SWITCH_HOLE_D / 2)   # over the actuator (the switch sits 1.2 mm off SWITCH_XY)
     face -= bd.Pos(0, P.WPN_AXIS_Y) * bd.Circle(skids.DOME_STEM_R + 0.05)   # the dome's stem plugs in here (snap)
     return bd.Pos(0, 0, P.TUB_TOP_Z - P.TOP_PANEL_T) * bd.extrude(face, P.TOP_PANEL_T)
