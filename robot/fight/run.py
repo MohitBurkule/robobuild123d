@@ -52,7 +52,7 @@ def outcome(sim, names, t):
     return out
 
 
-def fight(spec_a, spec_b, seconds=20.0, out=None, fps=30, size=(640, 480), timestep=1e-4, seed=0, log=print, view="arena", follow=None):
+def fight(spec_a, spec_b, seconds=20.0, out=None, fps=30, size=(640, 480), timestep=5e-5, seed=0, log=print, view="arena", follow=None):
     sa, sb = spec_mod.load(spec_a), spec_mod.load(spec_b)
     ma, mb = load_model(spec_a), load_model(spec_b)
     pa, pb = profile.build(sa, ma), profile.build(sb, mb)
@@ -81,17 +81,35 @@ def fight(spec_a, spec_b, seconds=20.0, out=None, fps=30, size=(640, 480), times
         writer = imageio.get_writer(out, fps=fps, quality=7, macro_block_size=8)
         cam = mujoco.MjvCamera()
         cam.distance, cam.azimuth, cam.elevation = 0.75, 90, -58
-    n_ctrl = max(1, int(round(CONTROL_DT / timestep)))
-    n_frame = max(1, int(round(1.0 / fps / timestep)))
-    steps = int(seconds / timestep)
     t0 = time.time()
     hits = []
+    import copy
+
+    import mujoco as mujoco_
+
+    res_unstable = None
+    retries = 0
     prev_w = {n: 0.0 for n in (na, nb)}
     peak = {n: {"tilt_deg": 0.0, "lift_mm": 0.0} for n in (na, nb)}
     z0 = {n: float(sim.com(n)[2]) for n in (na, nb)}
-    for k in range(steps):
-        t = k * timestep
-        if k % n_ctrl == 0:
+    m_, d_ = sim.m, sim.d
+    spec_state = mujoco_.mjtState.mjSTATE_INTEGRATION
+    n_state = mujoco_.mj_stateSize(m_, spec_state)
+
+    def snapshot():
+        st = np.empty(n_state)
+        mujoco_.mj_getState(m_, d_, st, spec_state)
+        py = copy.deepcopy((sim.welds, len(sim.events), sim.plant, hz.tyre, hz.dead, hz.cut, hz.debris_live, hz.stall_t,
+                            hz.queue, sim.profiles, ba.__dict__, bb.__dict__, hits, prev_w, peak))
+        arr = (m_.geom_contype.copy(), m_.geom_conaffinity.copy(), m_.geom_friction.copy())
+        return st, py, arr, next_ctrl, next_plant, next_frame
+
+    next_ctrl = next_plant = next_frame = 0.0
+    snap, fine_until = snapshot(), -1.0
+    while d_.time < seconds:
+        t = float(d_.time)
+        if t >= next_ctrl:
+            next_ctrl += CONTROL_DT
             for b in (ba, bb):
                 cmd = hz.delay(b.me, t, b.act(sim, t, CONTROL_DT))  # driver reaction delay + steering noise
                 if cmd is None or hz.dead[b.me]:
@@ -113,11 +131,41 @@ def fight(spec_a, spec_b, seconds=20.0, out=None, fps=30, size=(640, 480), times
                     hits.append((round(t, 3), n, round(e, 2)))
                     sim.events.append((t, "hit", n, "weapon", round(e, 2)))
                 prev_w[n] = w
-        if k % 5 == 0:
-            hz.tick(t, 5 * timestep)
-            sim.step_plant(5 * timestep)
+            if int(t / CONTROL_DT) % 5 == 0 and t > fine_until:  # checkpoint every 20 ms
+                snap = snapshot()
+        if t >= next_plant:
+            dtp = 5 * timestep
+            next_plant += dtp
+            hz.tick(t, dtp)
+            sim.step_plant(dtp)
+        m_.opt.timestep = timestep / 4 if t < fine_until else timestep
         sim.step_damage()
-        if writer is not None and k % n_frame == 0:
+        if d_.warning[mujoco_.mjtWarning.mjWARN_BADQACC].number:
+            # adaptive step: the solver diverged on a violent contact; go back to the last checkpoint and redo that
+            # stretch at a quarter of the step (what any adaptive integrator does), instead of losing the fight
+            d_.warning[mujoco_.mjtWarning.mjWARN_BADQACC].number = 0
+            retries += 1
+            if retries > 20:
+                res_unstable = round(t, 4)
+                sim.events.append((t, "unstable", "", "solver", 0))
+                break
+            st, py, arr, next_ctrl, next_plant, next_frame = snap
+            mujoco_.mj_setState(m_, d_, st, spec_state)
+            (welds, n_ev, plant, hz.tyre, hz.dead, hz.cut, hz.debris_live, hz.stall_t, hz.queue, profs, ba_d, bb_d,
+             hits, prev_w, peak) = copy.deepcopy(py)
+            sim.welds[:] = welds
+            del sim.events[n_ev:]
+            sim.plant.clear()
+            sim.plant.update(plant)
+            sim.profiles.update(profs)
+            ba.__dict__.update(ba_d)
+            bb.__dict__.update(bb_d)
+            m_.geom_contype[:], m_.geom_conaffinity[:], m_.geom_friction[:] = arr
+            mujoco_.mj_forward(m_, d_)
+            fine_until = float(d_.time) + 0.03
+            continue
+        if writer is not None and d_.time >= next_frame:
+            next_frame += 1.0 / fps
             _aim(cam, sim, view, follow or na, nb if (follow or na) == na else na)
             renderer.update_scene(sim.d, cam)
             writer.append_data(renderer.render())
@@ -135,7 +183,9 @@ def fight(spec_a, spec_b, seconds=20.0, out=None, fps=30, size=(640, 480), times
            "electric": {n: {"battery_v": round(pl["battery"].v, 2), "soc": round(pl["battery"].soc, 3),
                             "motors": {g: {"temp_c": round(m.temp, 1), "dead": m.dead} for g, m in pl["motors"].items()}}
                         for n, pl in sim.plant.items()}}
-    res["winner"] = judge(res)
+    res["unstable_at"] = res_unstable
+    res["solver_retries"] = retries
+    res["winner"] = judge(res) if res_unstable is None else "unstable"
     log(json.dumps({k: res[k] for k in ("robots", "wall_s", "winner")}))
     return res
 

@@ -48,6 +48,30 @@ Real-world effects modelled
   - JSON `hazards`: dead (why), tyre damage, wires cut, debris live. Judge: a dead robot loses.
 - Not yet: plate bending (FEM), belt throw, radio dropouts, battery puncture/fire.
 
+Physics from data, validated (no per-robot tuning)
+- Friction and restitution per part come from its spec `material` (`materials.py`, published values, sources in the
+  file); the floor is set below every material so each part's own value touches it.
+- Exact (elliptic) Coulomb friction cone; multi-point convex contacts (thin fork tips sliding under an edge).
+- `test_ramp_lift_matches_incline_physics`: a block pushed into a ramp starts climbing exactly at
+  F = m g (sin + mu cos) / (cos - mu sin) (checked at 15/20/30 deg, mu 0.35/0.8). Forks and wedges get under opponents
+  from this physics, not from any fork-specific rule.
+- Drivers push through on contact (no back-off while touching).
+- Step 50 us with 0.3 ms contacts; on a solver blow-up (a violent pinch) the fight rolls back to the last 20 ms
+  checkpoint and redoes it at a quarter step (adaptive stepping); `solver_retries` in the JSON. Before this, blow-ups
+  silently restarted the fight from t=0.
+
+Self-audit: what is still simplified (biggest first)
+1. Collision shapes are one convex hull per part: pockets/slots in a tub are filled in (CoACD decomposition next).
+2. Parts are rigid until a joint breaks: no bending/denting (needs FEM, OpenRadioss blocked here); break limits are
+   hand values from fastener ratings.
+3. One contact stiffness (0.3 ms) for all materials: TPU should be softer/longer than steel.
+4. Robot-vs-robot friction uses the larger of the two materials (MuJoCo combine rule), not a pair table.
+5. Tyres are rigid hulls with one mu: no contact patch, no load sensitivity, no rolling resistance.
+6. Weapon losses only through the motor model: no bearing friction or air drag.
+7. Motors: no winding inductance, ESC braking or brushless timing; gearbox losses folded into the curve.
+8. Wire routes are straight lines between part centres and via points.
+9. Hits are measured from weapon speed drops; arena has no pits or hazards; drivers are scripted.
+
 Per-robot requirements (spec `sim` block; `robot verify --only fight` checks them)
 ```json
 "sim": {
