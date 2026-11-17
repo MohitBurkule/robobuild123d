@@ -260,9 +260,9 @@
    "id": "battery",
    "kind": "battery",
    "catalog": "lipo_2s_180_turnabot",
-   "retained": "velcro",
+   "retained": "pocket",
    "at": [
-    0.0,
+    -0.58,
     -30.0,
     15.5
    ],
@@ -295,7 +295,7 @@
    "catalog": "bbb_malenki_nano",
    "retained": "tape",
    "at": [
-    23.0,
+    22.49,
     -4.0,
     10.75
    ],
@@ -314,7 +314,7 @@
    "marked": true,
    "label": "power switch ON/OFF, reached through the top-panel key hole",
    "at": [
-    "P.SWITCH_XY[0]",
+    "P.SWITCH_XY[0] + 1.2",
     "P.SWITCH_XY[1]",
     12.7
    ],
@@ -330,7 +330,7 @@
    "catalog": "xt30u_m",
    "retained": "velcro",
    "at": [
-    -24.0,
+    -23.5,
     -16.0,
     15.1
    ],

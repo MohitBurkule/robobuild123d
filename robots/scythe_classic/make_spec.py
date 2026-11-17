@@ -20,10 +20,10 @@ from scythe_classic._reuse import weapon_motor  # noqa: E402
 PARAMS_PATH = "src/scythe_classic/params.py"
 
 # Hand-placed electronics (x, y, z) in mm, rear pod and cone interior. Checked with `robot verify`.
-BATTERY_AT = (0.0, -30.0, 15.5)     # 1 mm above the floor top (tub contact tolerance)
+BATTERY_AT = (-0.58, -30.0, 15.5)     # 1 mm above the floor top (tub contact tolerance)
 ESC_AT = (0.0, -14.0, 10.5)
-RX_AT = (23.0, -4.0, 10.75)          # Malenki-Nano, yawed 90 deg, rests on the floor (tape)
-XT30_AT = (-24.0, -16.0, 15.1)
+RX_AT = (22.49, -4.0, 10.75)          # Malenki-Nano, yawed 90 deg, rests on the floor (tape)
+XT30_AT = (-23.5, -16.0, 15.1)
 TOP_Z = P.TUB_TOP_Z                 # top face of the top panel
 SKID_TOP_Z = TOP_Z + P.MIN_GROUND_CLR + P.SKID_H
 
@@ -103,7 +103,7 @@ def parts():
          "at": ["P.wheel_x()", "P.wheel_y()", "P.WHEEL_CZ"], "rot": [0.0, 0.0, 0.0]},
         {"id": "wheel_l", "kind": "wheel", "catalog": "bbb_wheel_34x6_5",
          "at": ["-P.wheel_x()", "P.wheel_y()", "P.WHEEL_CZ"], "rot": [0.0, 0.0, 180.0]},
-        {"id": "battery", "kind": "battery", "catalog": P.BATTERY, "retained": "velcro",
+        {"id": "battery", "kind": "battery", "catalog": P.BATTERY, "retained": "pocket",
          "at": _fmt(BATTERY_AT), "rot": [0, 0, 0],
          "label": "2S 180 mAh pack in the rear pod (smaller than the old 300 mAh: see params)"},
         {"id": "weapon_esc", "kind": "esc", "catalog": P.WEAPON_ESC, "retained": "velcro",
@@ -112,7 +112,7 @@ def parts():
          "at": _fmt(RX_AT), "rot": [0, 0, 90]},
         {"id": "switch", "kind": "switch", "catalog": P.SWITCH, "retained": "velcro", "tool_free": True, "marked": True,
          "label": "power switch ON/OFF, reached through the top-panel key hole",
-         "at": ["P.SWITCH_XY[0]", "P.SWITCH_XY[1]", 12.7], "rot": [0, 0, 0]},
+         "at": ["P.SWITCH_XY[0] + 1.2", "P.SWITCH_XY[1]", 12.7], "rot": [0, 0, 0]},
         {"id": "xt30", "kind": "connector", "catalog": P.CONNECTOR, "retained": "velcro",
          "at": _fmt(XT30_AT), "rot": [0, 0, 0]},
     ]
