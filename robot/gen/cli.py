@@ -18,7 +18,9 @@ def add_cli(sub):
     lh.add_argument("--json", action="store_true")
 
     b = gs.add_parser("build", help="build one hypothesis into a spec that passes `robot verify` (or fail)")
-    b.add_argument("--hypothesis", required=True,
+    b.add_argument("--intent", help="intent JSON: {hypothesis, shape: box|oval|round, taper mm | profile [[t, inset]], "
+                   "outline [[x,y]..], height/y0/y1/zb/zt, name, ...}; see robot/gen/INTENT.md")
+    b.add_argument("--hypothesis",
                    help="preset name (wedge, vspin_drisk, hspin_bar, lifter, ...) or axis=value,... list")
     b.add_argument("--out", required=True, help="output directory")
     b.add_argument("--name", help="file stem (default: the weapon type)")
@@ -67,16 +69,21 @@ def run(a):
     if cmd == "build":
         from . import build as B
         from .gate import Rejected, gate
-        h = _hyp(a.hypothesis)
+        user = json.loads(Path(a.intent).read_text()) if a.intent else None
+        hyp = a.hypothesis or (user or {}).get("hypothesis")
+        if not hyp:
+            print("give --hypothesis or `hypothesis` in the intent JSON", file=sys.stderr)
+            return 1
+        h = _hyp(hyp)
         out = Path(a.out)
         out.mkdir(parents=True, exist_ok=True)
         name = a.name or h.weapon
         if a.no_gate:
-            d = B.build(h, layout_index=a.layout)
+            d = B.build(h, user=user, layout_index=a.layout)
             n_block = None
         else:
             try:
-                res = gate(h, fast=a.fast, log=print)
+                res = gate(h, user=user, fast=a.fast, log=print)
             except Rejected as e:
                 print(f"rejected: {e}", file=sys.stderr)
                 return 2

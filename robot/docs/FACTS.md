@@ -94,3 +94,9 @@ with numbers, and needs nothing else. Run the full tier (`--llm` without `--tier
   rotor's swept band along the joint axis.
 - **Electronics and wires must be shielded from every side** (contain.line_of_sight): an open window over the
   battery or wires is a blocker, even when they sit inside the chassis outline.
+
+## Generator body shape (`robot gen build --intent`)
+- `shape`: box (default) | oval | round. Round = circle through the default box corners, radius <= 74 mm (150 mm square rule).
+- `taper` mm or `profile` [[t, inset_mm]]: sloped walls (cone, dome). Shell = ruled loft of the outline shrunk at each height, resampled to 72 points.
+- Layout uses the smallest section, so parts never cut through a sloped wall. Too much taper = `no wireable layout`.
+- Spec: robot/gen/INTENT.md.

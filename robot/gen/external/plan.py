@@ -21,6 +21,34 @@ class Frame:
     floor: float = 1.0
     split: float = 0.0
     spline: bool = False  # outline drawn as a closed B-spline (organic shell)
+    # wall slope: [[t, inset_mm], ...] with t = 0 at the belly .. 1 at the roof; the outline shrinks by inset_mm at
+    # height t (a cone = [[0, 0], [1, 15]]; a dome-ish = [[0, 0], [0.5, 2], [1, 12]]). None = straight walls.
+    profile: list | None = None
+
+    def inset_at(self, z: float) -> float:
+        """How far the outline is shrunk at height z (linear between profile points, clamped at the ends)."""
+        if not self.profile:
+            return 0.0
+        t = (z - self.zb) / max(self.zt - self.zb, 1e-9)
+        pts = sorted((float(a), float(b)) for a, b in self.profile)
+        if t <= pts[0][0]:
+            return pts[0][1]
+        for (t0, d0), (t1, d1) in zip(pts, pts[1:]):
+            if t <= t1:
+                return d0 + (d1 - d0) * (t - t0) / max(t1 - t0, 1e-9)
+        return pts[-1][1]
+
+    def max_inset(self) -> float:
+        return max((float(b) for _, b in self.profile), default=0.0) if self.profile else 0.0
+
+    def breaks(self, z0: float, z1: float) -> list:
+        """Section heights for a loft from z0 to z1: the ends plus every profile point between them."""
+        zs = {z0, z1}
+        for t, _ in self.profile or ():
+            z = self.zb + float(t) * (self.zt - self.zb)
+            if z0 < z < z1:
+                zs.add(z)
+        return sorted(zs)
 
     @property
     def x0(self):
