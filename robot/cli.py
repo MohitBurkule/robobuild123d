@@ -76,7 +76,7 @@ def print_report(rep, full=False):
         print(f"NOT RUN: {len(skipped)} other groups (--only)")
 
 
-LLM_ROOTS, LLM_CONTEXT = 12, 3
+LLM_ROOTS, LLM_CONTEXT = 12, 5
 
 
 def print_llm(rep):

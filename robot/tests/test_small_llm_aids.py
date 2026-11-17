@@ -152,3 +152,20 @@ def test_probe_place_finds_free_spot(tmp_path):
     first = txt.splitlines()[1]
     x = float(first.split("at (")[1].split(",")[0])
     assert x > -5
+
+
+def test_proxy_sweep_respects_declared_range(tmp_path):
+    from robot import world as world_mod
+    from robot.checks import Ctx, Options
+    from robot.proxy import interference as pi
+    # a flap hinged at x=0 that would hit a post at +90 deg, declared range 0..30 only
+    d = {"name": "t", "parts": [{**box("base", (0, 0, -1), (60, 40, 2)), "kind": "structure"},
+                                {**box("post", (0, 0, 14), (4, 4, 4)), "kind": "structure"},
+                                {**box("flap", (10, 0, 2), (20, 4, 2)), "kind": "structure",
+                                 "joint": {"kind": "revolute", "axis": [0, 1, 0], "pivot": [0, 0, 2], "min": -30, "max": 0, "default": 0}}]}
+    p = tmp_path / "s.json"
+    p.write_text(json.dumps(d))
+    s = spec.load(p)
+    r = world_mod.resolve(s, fast=True)
+    ctx = Ctx(r, world_mod.World.start(r), Options(fast=True))
+    assert not [f for f in pi.sweeps(ctx) if not f.passed]

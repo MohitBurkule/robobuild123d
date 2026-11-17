@@ -59,6 +59,41 @@ def _context(rep, ctx, r):
             lines += part_report(r.spec, r, ctx.world, pid).splitlines()
         if lines:
             c["context"] = lines
+    try:
+        _autoplace(rep, ctx, r)
+    except Exception as e:  # noqa: BLE001
+        rep.helpers["place_error"] = str(e)
+
+
+PLACE_KINDS = ("battery", "esc", "receiver", "switch", "servo")
+MAX_PLACE = 2       # parts searched per run (each ~10-60 s)
+PLACE_TOP = 3
+
+
+def _autoplace(rep, ctx, r):
+    """A packed component (battery / ESC / receiver / switch / servo) in a collision root: run the free-spot search
+    (`probe --place`) and put the best spots in that root, so nobody packs boxes by hand. ROBOT_AUTOPLACE=0 skips."""
+    if os.environ.get("ROBOT_AUTOPLACE", "1") == "0":
+        return
+    from .probe import place
+    from .rootcause import COLLISION
+
+    kind = {p.id: p.kind for p in r.spec.parts}
+    done = {}
+    for c in (rep.roots or [])[:MAX_ROOTS]:
+        if c.get("primary") not in COLLISION and c.get("primary") != "assembly.blocked":
+            continue
+        for pid in c.get("parts", []):
+            if kind.get(pid) not in PLACE_KINDS:
+                continue
+            if pid not in done:
+                if len(done) >= MAX_PLACE:
+                    break
+                done[pid] = place(r.spec, r, ctx.world, pid, top=PLACE_TOP).splitlines()
+            c["context"] = done[pid][: PLACE_TOP + 1] + (c.get("context") or [])  # first: --llm shows the top lines
+            break
+    if done:
+        rep.helpers["placed"] = sorted(done)
 
 
 def _autojiggle(rep, ctx, r):
