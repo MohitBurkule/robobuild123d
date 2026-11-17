@@ -216,3 +216,11 @@ def test_catalog_lists_bearings(capsys):
 def test_unknown_kind_suggests_alias():
     from robot.spec import KIND_ALIASES
     assert KIND_ALIASES["drive_motor"] == "motor"
+
+
+def test_opt_outs_listed():
+    from robot.cli import opt_outs
+    spec = type("S", (), {"raw": {"parts": [{"id": "esc", "exposed": True}, {"id": "tub", "fit": None}],
+                                  "fasteners": [{"id": "b1", "waive": {"x": "y"}}]}})()
+    assert ("esc", "exposed") in opt_outs(spec) and ("b1", "waive") in opt_outs(spec)
+    assert ("tub", "fit") not in opt_outs(spec)

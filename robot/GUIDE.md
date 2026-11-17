@@ -607,3 +607,7 @@ the fit. Parts without a mesh or a valid `print_orientation` are NOT CHECKED, ne
 9. Spin-up kick: declare `weapon.esc_ramp_s` when the ESC ramps the throttle.
 10. Fix lines carry numbers (mAh needed, mm to move, skid height): apply them literally first.
 11. Do not stop to report a plan: implement it, commit, verify, repeat until 0 blockers or truly stuck.
+12. Fast loop: `robot verify SPEC --failing --llm` re-runs only the groups that blocked last time (plus integrity, mass);
+    `--except visual` runs everything else. Finish with one full run.
+13. `--llm` ends with OPT-OUTS: every exposed/waive/assembly_ok/... in the spec. Adding one to clear a blocker is cheating;
+    fix the geometry instead.
