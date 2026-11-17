@@ -236,6 +236,9 @@ def wheel():
         a = 360.0 * i / KNURL_N
         tyre = tyre - bd.Rot(a, 0, 0) * bd.Pos(0, 0, ro) * bd.Box(WHEEL_W + 2 * EPS, KNURL_W, 2 * KNURL_D)
     web = x_cyl(ri + EPS, WEB_T)
+    for i in range(3):
+        a = 360.0 * i / 3 + 30.0
+        web = web - bd.Rot(a, 0, 0) * bd.Pos(0, 0, (ri + HUB_R) / 2) * x_cyl((ri - HUB_R) * 0.36, WEB_T + 2 * EPS)
     hub = x_cyl(HUB_R, WHEEL_W)
     bore_r = MOTOR_SHAFT["dia"] / 2 + CLEAR / 3
     bore = x_cyl(bore_r, WHEEL_W + 2 * EPS) & \
