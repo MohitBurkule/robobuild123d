@@ -4,218 +4,43 @@
   "Expandabot"
  ],
  "seconds": 20.0,
- "wall_s": 205.9,
+ "wall_s": 221.9,
  "events": [
   [
-   4.268,
-   "fire",
-   "Expandabot",
-   "flipper",
-   0
-  ],
-  [
-   5.0680000000000005,
-   "fire",
-   "Expandabot",
-   "flipper",
-   0
-  ],
-  [
-   6.056,
-   "fire",
-   "Expandabot",
-   "flipper",
-   0
-  ],
-  [
-   7.0600000000000005,
-   "fire",
-   "Expandabot",
-   "flipper",
-   0
-  ],
-  [
-   7.864000000000001,
-   "fire",
-   "Expandabot",
-   "flipper",
-   0
-  ],
-  [
-   8.672,
-   "fire",
-   "Expandabot",
-   "flipper",
-   0
-  ],
-  [
-   9.700000000000001,
-   "fire",
-   "Expandabot",
-   "flipper",
-   0
-  ],
-  [
-   10.448,
-   "hit",
+   16.847499999997513,
+   "break",
    "Revron",
-   "weapon",
-   0.38
+   "fork_l",
+   164.3
   ],
   [
-   10.644,
-   "fire",
-   "Expandabot",
-   "flipper",
-   0
-  ],
-  [
-   10.792,
-   "hit",
-   "Revron",
-   "weapon",
-   0.43
-  ],
-  [
-   12.384,
-   "hit",
-   "Revron",
-   "weapon",
-   0.61
-  ],
-  [
-   13.748000000000001,
-   "hit",
-   "Revron",
-   "weapon",
-   0.55
-  ],
-  [
-   13.96,
-   "fire",
-   "Expandabot",
-   "flipper",
-   0
-  ],
-  [
-   13.976,
-   "hit",
-   "Revron",
-   "weapon",
-   0.67
-  ],
-  [
-   14.792000000000002,
-   "hit",
-   "Revron",
-   "weapon",
-   0.45
-  ],
-  [
-   14.8,
-   "fire",
-   "Expandabot",
-   "flipper",
-   0
-  ],
-  [
-   14.976,
-   "hit",
-   "Revron",
-   "weapon",
-   0.51
-  ],
-  [
-   15.892000000000001,
-   "hit",
-   "Revron",
-   "weapon",
-   0.44
-  ],
-  [
-   17.642699999972223,
+   17.073200000005006,
    "break",
    "Expandabot",
-   "lid_l",
-   817.4
+   "clamp_r",
+   757.2
   ],
   [
-   19.068,
-   "hit",
-   "Revron",
-   "weapon",
-   0.4
-  ],
-  [
-   19.424,
-   "hit",
-   "Revron",
-   "weapon",
-   0.66
+   17.131250000006933,
+   "break",
+   "Expandabot",
+   "clamp_l",
+   664.8
   ]
  ],
- "hits": [
-  [
-   10.448,
-   "Revron",
-   0.38
-  ],
-  [
-   10.792,
-   "Revron",
-   0.43
-  ],
-  [
-   12.384,
-   "Revron",
-   0.61
-  ],
-  [
-   13.748,
-   "Revron",
-   0.55
-  ],
-  [
-   13.976,
-   "Revron",
-   0.67
-  ],
-  [
-   14.792,
-   "Revron",
-   0.45
-  ],
-  [
-   14.976,
-   "Revron",
-   0.51
-  ],
-  [
-   15.892,
-   "Revron",
-   0.44
-  ],
-  [
-   19.068,
-   "Revron",
-   0.4
-  ],
-  [
-   19.424,
-   "Revron",
-   0.66
-  ]
- ],
+ "hits": [],
  "outcome": {
   "Revron": {
    "inverted": false,
    "stuck_inverted": false,
    "out_of_arena": false,
-   "parts_lost": [],
+   "parts_lost": [
+    "fork_l"
+   ],
    "pos": [
-    0.132,
-    0.333,
-    0.035
+    0.218,
+    0.172,
+    0.016
    ]
   },
   "Expandabot": {
@@ -223,23 +48,24 @@
    "stuck_inverted": false,
    "out_of_arena": false,
    "parts_lost": [
-    "lid_l"
+    "clamp_l",
+    "clamp_r"
    ],
    "pos": [
-    0.254,
-    0.41,
-    0.012
+    -0.223,
+    -0.206,
+    0.011
    ]
   }
  },
  "peak": {
   "Revron": {
-   "tilt_deg": 177.6,
-   "lift_mm": 210.8
+   "tilt_deg": 175.4,
+   "lift_mm": 66.2
   },
   "Expandabot": {
-   "tilt_deg": 179.3,
-   "lift_mm": 183.4
+   "tilt_deg": 161.4,
+   "lift_mm": 342.2
   }
  },
  "welds": [
@@ -247,92 +73,92 @@
    "robot": "Revron",
    "part": "top_panel",
    "break_N": 880.0,
-   "peak_N": 87.5,
+   "peak_N": 133.2,
    "broken_at": null
   },
   {
    "robot": "Revron",
    "part": "fork_l",
    "break_N": 120.0,
-   "peak_N": 36.3,
-   "broken_at": null
+   "peak_N": 164.3,
+   "broken_at": 16.847499999997513
   },
   {
    "robot": "Revron",
    "part": "wedgelet_l",
    "break_N": 400.0,
-   "peak_N": 148.1,
+   "peak_N": 56.3,
    "broken_at": null
   },
   {
    "robot": "Revron",
    "part": "side_l",
    "break_N": 1200.0,
-   "peak_N": 205.6,
+   "peak_N": 259.5,
    "broken_at": null
   },
   {
    "robot": "Revron",
    "part": "fork_r",
    "break_N": 120.0,
-   "peak_N": 63.8,
+   "peak_N": 27.9,
    "broken_at": null
   },
   {
    "robot": "Revron",
    "part": "wedgelet_r",
    "break_N": 400.0,
-   "peak_N": 95.3,
+   "peak_N": 89.6,
    "broken_at": null
   },
   {
    "robot": "Revron",
    "part": "side_r",
    "break_N": 1200.0,
-   "peak_N": 331.1,
+   "peak_N": 138.2,
    "broken_at": null
   },
   {
    "robot": "Expandabot",
    "part": "lid_r",
    "break_N": 440.0,
-   "peak_N": 136.2,
+   "peak_N": 426.4,
    "broken_at": null
   },
   {
    "robot": "Expandabot",
    "part": "lid_l",
    "break_N": 440.0,
-   "peak_N": 817.4,
-   "broken_at": 17.642699999972223
+   "peak_N": 418.0,
+   "broken_at": null
   },
   {
    "robot": "Expandabot",
    "part": "side_r",
    "break_N": 880.0,
-   "peak_N": 233.6,
+   "peak_N": 453.0,
    "broken_at": null
   },
   {
    "robot": "Expandabot",
    "part": "side_l",
    "break_N": 880.0,
-   "peak_N": 332.4,
+   "peak_N": 865.8,
    "broken_at": null
   },
   {
    "robot": "Expandabot",
    "part": "clamp_l",
    "break_N": 660.0,
-   "peak_N": 377.8,
-   "broken_at": null
+   "peak_N": 664.8,
+   "broken_at": 17.131250000006933
   },
   {
    "robot": "Expandabot",
    "part": "clamp_r",
    "break_N": 660.0,
-   "peak_N": 164.0,
-   "broken_at": null
+   "peak_N": 757.2,
+   "broken_at": 17.073200000005006
   }
  ],
  "defaults": {
@@ -343,47 +169,65 @@
    "breakable"
   ]
  },
+ "hazards": {
+  "dead": {
+   "Revron": null,
+   "Expandabot": null
+  },
+  "tyres": {},
+  "wires_cut": {
+   "Revron": [],
+   "Expandabot": []
+  },
+  "debris_live": [
+   "Expandabot/clamp_l",
+   "Expandabot/clamp_r",
+   "Revron/fork_l"
+  ]
+ },
  "electric": {
   "Revron": {
-   "battery_v": 7.88,
-   "soc": 0.851,
+   "battery_v": 7.7,
+   "soc": 0.833,
    "motors": {
     "weapon": {
-     "temp_c": 34.8,
+     "temp_c": 33.1,
      "dead": false
     },
     "wheel_rl": {
-     "temp_c": 41.4,
+     "temp_c": 55.0,
      "dead": false
     },
     "wheel_fl": {
-     "temp_c": 41.1,
+     "temp_c": 55.5,
      "dead": false
     },
     "wheel_rr": {
-     "temp_c": 43.3,
+     "temp_c": 56.9,
      "dead": false
     },
     "wheel_fr": {
-     "temp_c": 42.8,
+     "temp_c": 57.4,
      "dead": false
     }
    }
   },
   "Expandabot": {
-   "battery_v": 8.36,
-   "soc": 0.983,
+   "battery_v": 8.23,
+   "soc": 0.957,
    "motors": {
     "wheel_l": {
-     "temp_c": 33.4,
+     "temp_c": 56.3,
      "dead": false
     },
     "wheel_r": {
-     "temp_c": 34.3,
+     "temp_c": 55.5,
      "dead": false
     }
    }
   }
  },
+ "unstable_at": null,
+ "solver_retries": 0,
  "winner": "Revron"
 }

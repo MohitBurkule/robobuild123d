@@ -56,6 +56,7 @@ class Hazards:
         self.debris_live = set()
         self.queue = {r: deque() for r in sim.robots}
         self.mu0 = m.geom_friction[:, 0].copy()
+        self.bounds = {r: sim.robots[r].bounds() for r in sim.robots}
         sim.reaction_s = {r: self.p[r]["reaction_s"] for r in sim.robots}
 
     # ---- wires -----------------------------------------------------------
@@ -108,11 +109,29 @@ class Hazards:
             bid = m.body(f"{w.robot}/{w.part}").id
             cb = m.body(f"{w.robot}/chassis").id
             rel = d.xmat[cb].reshape(3, 3).T @ (d.xipos[bid] - d.xpos[cb])
-            if np.linalg.norm(rel - m.body_ipos[bid]) > self.p[w.robot]["debris_clear_mm"] * 1e-3:
-                for gi, o in self.owner.items():
-                    if o[0] == w.robot and o[1] == w.part:
-                        m.geom_contype[gi], m.geom_conaffinity[gi] = DEBRIS_BIT, 0xFFFF
-                self.debris_live.add((w.robot, w.part))
+            # only once it has left its own robot's envelope: switching collisions on while it still overlaps its old
+            # pocket would fire it out with a huge contact force (and blow up the solver)
+            lo, hi = self.bounds[w.robot]
+            if np.all((rel > lo - 0.002) & (rel < hi + 0.002)):
+                continue
+            for gi, o in self.owner.items():
+                if o[0] == w.robot and o[1] == w.part:
+                    m.geom_contype[gi], m.geom_conaffinity[gi] = DEBRIS_BIT, 0xFFFF
+            self.debris_live.add((w.robot, w.part))
+        # a gram-scale chip pinched between a 1500 rad/s disc and the chassis can get a non-physical kick in one 0.1 ms
+        # step (the solver's stiffness, not the impact); cap free debris at speeds no real chunk reaches (100 m/s)
+        for w in sim.welds:
+            if w.broken_at is None:
+                continue
+            j = m.joint(f"{w.robot}/{w.part}_free")
+            a = j.dofadr[0]
+            v = d.qvel[a:a + 3]
+            om = d.qvel[a + 3:a + 6]
+            sv, so = float(np.linalg.norm(v)), float(np.linalg.norm(om))
+            if sv > 100.0:
+                d.qvel[a:a + 3] = v * (100.0 / sv)
+            if so > 5000.0:
+                d.qvel[a + 3:a + 6] = om * (5000.0 / so)
         f6 = np.zeros(6)
         debris_touch = set()
         for i in range(d.ncon):

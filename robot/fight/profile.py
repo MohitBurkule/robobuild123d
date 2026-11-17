@@ -46,6 +46,7 @@ class Profile:
     breakable: dict = field(default_factory=dict)  # part id -> break force N
     can_run_inverted: bool = False
     defaults: list = field(default_factory=list)  # fields filled by a default (reported by the sim check)
+    materials: dict = field(default_factory=dict)  # part id -> (material, kind) from the spec
     raw: dict = field(default_factory=dict)  # the spec's sim block as written (motors, battery, wobble)
 
     @property
@@ -112,6 +113,8 @@ def build(spec, model=None) -> Profile:
             p.breakable[part.id] = float(o if o is not None else lim.get(part.id, UNFASTENED_N))
     p.defaults = dflt
     p.raw = sim
+    p.materials = {pt.id: ((pt.raw.get("material") if hasattr(pt, "raw") else getattr(pt, "material", None)), pt.kind)
+                   for pt in spec.parts}
     return p
 
 

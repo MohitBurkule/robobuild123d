@@ -202,3 +202,40 @@ def test_debris_collides_with_own_robot_after_breaking():
             hz.tick(k * sim.timestep, 5 * sim.timestep)
     assert ("A", "lid") in hz.debris_live
     assert all(sim.m.geom_contype[g] == hazards.DEBRIS_BIT for g in lid)
+
+
+def _ramp_climb(force, theta_deg, mu):
+    """A 100 g block pushed horizontally into a fixed ramp (angle theta, friction mu, same contact settings as fights):
+    returns how high it is after 0.5 s (m). Starts touching the ramp, at rest."""
+    from robot.fight import materials
+
+    th = math.radians(theta_deg)
+    dr = materials.damp_ratio(0.45)
+    L = 0.4
+    h = L * math.tan(th)
+    verts = " ".join(f"{x} {y} {z}" for y in (-.03, .03) for x, z in ((0, 0), (L, 0), (L, h)))
+    xml = f"""<mujoco><asset><mesh name="ramp" vertex="{verts}"/></asset><option timestep="1e-4" integrator="implicitfast" cone="elliptic"><flag multiccd="enable"/></option>
+      <worldbody>
+        <geom type="plane" size="1 1 .1" friction="0.0001 0.005 0.0001" solref="3e-4 {dr}"/>
+        <geom type="mesh" mesh="ramp" friction="{mu} 0.005 0.0001" solref="3e-4 {dr}"/>
+        <body name="b" pos="-.0102 0 .0101"><joint type="slide" axis="1 0 0"/><joint type="slide" axis="0 0 1"/>
+          <geom type="box" size=".01 .01 .01" mass=".1" friction="{mu} 0.005 0.0001" solref="3e-4 {dr}"/>
+        </body></worldbody></mujoco>"""
+    m = mujoco.MjModel.from_xml_string(xml)
+    d = mujoco.MjData(m)
+    b = m.body("b").id
+    z0 = float(d.xpos[b, 2])
+    for _ in range(5000):
+        d.xfrc_applied[b, 0] = force
+        mujoco.mj_step(m, d)
+    return float(d.xpos[b, 2]) - z0
+
+
+def test_ramp_lift_matches_incline_physics():
+    """Wedge physics check: a push climbs a ramp only above F = m g (sin + mu cos) / (cos - mu sin)."""
+    for theta, mu in ((20.0, 0.35), (30.0, 0.35), (15.0, 0.8)):
+        th = math.radians(theta)
+        f_crit = 0.1 * 9.81 * (math.sin(th) + mu * math.cos(th)) / (math.cos(th) - mu * math.sin(th))
+        base = _ramp_climb(0.5 * f_crit, theta, mu)  # where it settles against the ramp toe
+        assert _ramp_climb(0.95 * f_crit, theta, mu) - base < 0.002, (theta, mu)  # below threshold: stays
+        assert _ramp_climb(1.1 * f_crit, theta, mu) - base > 0.01, (theta, mu)  # just above: climbs

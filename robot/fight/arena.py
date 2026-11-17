@@ -32,9 +32,13 @@ class Weld:
 
 
 class FightSim(Sim):
-    def __init__(self, scene: Scene | None = None, timestep=1e-4):
+    def __init__(self, scene: Scene | None = None, timestep=5e-5):  # 1e-4 blew up on hard hits (tc/dt = 3)
         # AWS antweight arenas are closed polycarbonate boxes: walls plus a roof (robots get thrown, not lost)
         super().__init__(scene or Scene(arena_half=0.6, wall_height=0.4), timestep)
+        # elliptic friction cone (exact Coulomb, not a pyramid) and multi-point convex contacts: thin fork tips and wedge
+        # edges resting on / sliding under another body get several contact points instead of one jittering one
+        self.spec.option.cone = mujoco.mjtCone.mjCONE_ELLIPTIC
+        # (multi-point convex contact, "multiccd", is on by default since MuJoCo 4)
         self.profiles: dict[str, Profile] = {}
         self.welds: list[Weld] = []
         self._weld_spec = []  # (robot, part, eq name, break)
@@ -105,6 +109,8 @@ class FightSim(Sim):
             if g.kind == "weapon" and not self.fixed_motors:  # real discs are never balanced
                 b.ipos = list(g.com + _basis(g.axis)[1] * wobble_params(prof)["imbalance_mm"] * 1e-3)
             I = g.inertia + np.eye(3) * 1e-10
+            if loose:  # thin chips (a 0.7 g fork) spin up to huge rates in one step: floor the inertia at a 2 mm-thick plate
+                I = I + np.eye(3) * g.mass * 0.002 ** 2 / 12 * 4
             b.fullinertia = [I[0, 0], I[1, 1], I[2, 2], I[0, 1], I[0, 2], I[1, 2]]
             if loose:
                 e = self.spec.add_equality(name=pre + g.name + "_weld", type=mujoco.mjtEq.mjEQ_WELD,
@@ -170,12 +176,28 @@ class FightSim(Sim):
             wg = self.robots[r].weapon
             if wg is not None:  # blade flex: a thin disc/bar gives a little on impact -> longer, softer contact
                 blade[f"{r}/"] = (wg, max(tc, float((prof.raw.get("weapon") or {}).get("blade_tc", 4e-4))))
+        from . import materials as mat
+
+        part_of = {}
+        for r, prof in self.profiles.items():
+            for pid, (mname, kind) in prof.materials.items():
+                part_of[f"{r}/{pid}_"] = (mname, kind)
         for g in self.spec.geoms:
-            # damping ratio < 1 = some bounce: printed parts / polycarbonate walls rebound (restitution ~0.3-0.5)
-            g.solref = [tc, 0.5]
+            # friction and restitution from each part's material (materials.py); walls are polycarbonate
+            if g.name == "floor" or g.name.startswith("seam"):
+                g.friction = [mat.FLOOR_MU, 0.005, 1e-4]
+                g.solref = [tc, mat.damp_ratio(0.6)]
+                continue
+            hit = next((v for k, v in part_of.items() if g.name.startswith(k)), None)
+            if hit is None:
+                g.solref = [tc, mat.damp_ratio(0.5)]
+                continue
+            mu, e = mat.props(*hit)
+            g.friction = [mu, 0.005, 1e-4]
+            g.solref = [tc, mat.damp_ratio(e)]
             for pre, (wg, btc) in blade.items():
                 if any(g.name.startswith(pre + p.id + "_") for p in wg.parts):
-                    g.solref = [btc, 0.5]
+                    g.solref = [btc, g.solref[1]]
         super().compile()
         if not self.fixed_motors:  # own-robot geoms never collide; robots hit the world, each other and (later) debris
             bits = {r: 1 << (i + 1) for i, r in enumerate(self.robots)}

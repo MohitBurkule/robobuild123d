@@ -78,6 +78,10 @@ class Brain:
         a = oh + bearing + step
         return op + r * np.array([math.cos(a), math.sin(a)])
 
+    def _touching(self, sim):
+        return any((a.startswith(self.me + "/") and b.startswith(self.opp + "/")) or
+                   (a.startswith(self.opp + "/") and b.startswith(self.me + "/")) for a, b, _ in sim.contacts())
+
     # ---- policy ---------------------------------------------------------
     def act(self, sim, t, dt):
         bearing, dist = self._bearing_in_opp(sim)
@@ -89,7 +93,7 @@ class Brain:
             if off < 0.6 or self.t_safe > self.patience or not self._danger(sim, bearing, dist) and dist < 0.12:
                 self.state = "attack"
         elif self.state == "attack":
-            if dist > 0.3:
+            if dist > 0.3 and not self._touching(sim):
                 self.state, self.t_safe = "approach", 0.0
         if self.state == "approach" and dist < 0.5:
             l, r = self._steer(sim, self._orbit_point(sim, bearing, dist, safe), 1.0)
@@ -105,9 +109,11 @@ class SpinnerBrain(Brain):
         out["weapon"] = prof.weapon_omega
         if t < 0.6:  # spin up before engaging
             out["drive"] = (0.0, 0.0)
-        if self.state == "attack":  # back off after a hit and re-spin
+        if self.state == "attack":
+            # drive THROUGH the opponent (forks/wedge get under it, the weapon follows); only back off to re-spin when
+            # the weapon has really been stopped and we are not in contact
             w = abs(sim.weapon_omega(self.me))
-            if w < 0.5 * abs(prof.weapon_omega):
+            if w < 0.25 * abs(prof.weapon_omega) and not self._touching(sim):
                 out["drive"] = tuple(-0.6 * v for v in self._steer(sim, sim.frame(self.opp)[0], 1.0))
         return out
 
