@@ -15,6 +15,7 @@ SHELL = {"structure", "armor", "armour", "plate", "wedge", "lid", "cover", "tub"
 DRIVEN = {"wheel", "tyre", "pulley", "weapon", "shaft"}
 TOL_MM = 0.5
 SWITCH_REACH_MM = 40.0
+MOTOR_KINDS = {"motor", "weapon_motor", "servo"}
 
 
 def _hull(bodies):
@@ -41,6 +42,23 @@ def _outside(hull, P, tol):
     return ~(inside | (hull.find_simplex(Q) >= 0))
 
 
+PROVEN_KEYS = ("proven_design", "reference_cad", "reference_doc")
+
+
+def proven(spec) -> bool:
+    """A replica of a robot that already fights (its source declared): its as-built exposures are accepted as found."""
+    raw = getattr(spec, "raw", {}) or {}
+    return any(raw.get(k) for k in PROVEN_KEYS)
+
+
+def _exposed_ok(spec, p) -> bool:
+    """`exposed: true` is honoured for a motor only on a proven replica; a new design must armour its motors (user
+    2026-11-17: Disector, a real fighting robot, needs no added cover; a generated robot does)."""
+    if not p._extra.get("exposed"):
+        return False
+    return p.kind not in MOTOR_KINDS or proven(spec)
+
+
 def run(ctx):
     r, w = ctx.r, ctx.world
     out = []
@@ -55,7 +73,7 @@ def run(ctx):
     bad = 0
     for b in w.bodies:
         p = r.spec.part(b.id) if b.part_idx is not None else None
-        if p is None or p.kind not in ELECTRONICS or p._extra.get("exposed"):
+        if p is None or p.kind not in ELECTRONICS or _exposed_ok(r.spec, p):
             continue
         P = _sample(b)
         o = _outside(hull, P, TOL_MM)
@@ -66,7 +84,8 @@ def run(ctx):
             out.append(fail("contain.electronics_exposed", G, BLOCKER, "Electronics outside the armour",
                             f"`{p.id}` has {o.mean() * 100:.0f} % of its surface outside the chassis envelope; a hit lands on it directly.")
                        .on(p.id).here(P[o][0])
-                       .fix("Move it inside the chassis/armour, or declare `exposed: true` with a reason if it is a deliberately exposed drive/weapon part."))
+                       .fix("Move it inside the chassis/armour. `exposed: true` is accepted for a motor only on a replica of a robot that "
+                            "already fights (spec `proven_design: {robot, source}`); a new design must armour it."))
     if not bad:
         out.append(ok("contain.electronics", G, "Electronics are inside the armour", "Every battery, ESC, receiver and motor sits inside the chassis envelope."))
     # 2. wheels proud of the body
@@ -213,7 +232,7 @@ def line_of_sight(ctx):
     bad = 0
     for b in w.bodies:
         p = r.spec.part(b.id) if b.part_idx is not None else None
-        if p is None or p.kind not in SIGHT_KINDS or p._extra.get("exposed"):
+        if p is None or p.kind not in SIGHT_KINDS or _exposed_ok(r.spec, p):
             continue
         V = _sample(b, 200)
         c = b.mesh.centroid
