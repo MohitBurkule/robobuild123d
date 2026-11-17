@@ -129,37 +129,58 @@ def bell_bore():
                                                           align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
 
 
-def axle_holes():
-    """N10 output shaft exits through the pod walls. A slot open to the top (not a round hole) so the motor drops in from above:
-    2.3 mm radius at the axle line (shaft collar 2 mm, shaft 3 mm), straight up out of the wall. The wheel's hub covers it."""
-    z_top = z0() + height() + CAVITY_EXTRA
-    one = bd.Pos(P.POD_W / 2, P.wheel_y(), P.WHEEL_CZ) * bd.Rot(0, 90, 0) * bd.Cylinder(AXLE_SLOT_R, 2 * P.TUB_WALL + 2)
-    slot = bd.Pos(P.POD_W / 2, P.wheel_y(), (P.WHEEL_CZ + z_top) / 2) * bd.Box(2 * P.TUB_WALL + 2, 2 * AXLE_SLOT_R, z_top - P.WHEEL_CZ)
-    one = one + slot
-    return one + bd.mirror(one, bd.Plane.YZ)
+RING_LEN = 3.2      # mm the axle ring stands off the pod wall (its end keeps the 3 mm shaft grip inside the chassis hull)
+RING_OUT_R = 6.0    # mm axle ring outer radius
+RING_BORE_R = P.WHEEL_HUB_R + 0.2   # mm the wheel hub boss turns in the ring bore (0.2 running clearance)
+AXLE_SLOT_R = 2.3   # mm half width of the axle slot (shaft collar 2 mm radius, shaft 1.5 mm)
+RIB_T = 1.2         # mm cradle rib thickness (nozzle multiple)
+RIB_GAP = 0.2       # mm print clearance between the N10 flats and the ribs
+PAD_GAP = 0.1       # mm between the motor shaft-side face and the pad that stops it
+STOP_W = 2.4        # mm the rear stops reach in from each rib (they leave the solder-tab corridor free)
+MOTOR_HALF_W = 6.0  # mm half width of the N10 body (catalogue box 9 x 12 x 10)
+MOTOR_HALF_H = 5.0  # mm half height of the N10 body
 
 
-AXLE_SLOT_R = 2.3   # mm half width of the axle slot in the pod wall
-RIB_T = 1.2        # mm cradle rib thickness (nozzle multiple)
-RIB_GAP = 0.2      # mm print clearance between the N10 flats and the ribs
-
-
-def motor_cradles():
-    """Two ribs per N10 along its length (y = axle line +-(6 + gap)), from the pod floor up to the motor top, from the pod
-    wall inward over the body length. The motor drops in from the top (panel off) and is held in y by the ribs and in x by
-    the pod wall on its shaft side; the N10's flats are 12 mm wide (catalogue box 9 x 12 x 10)."""
-    out = None
+def drive_bays():
+    """Per side: the N10's cradle and the wheel's axle ring.
+    Cradle: two ribs along the motor, a pad in front of its shaft-side face (it stops the motor in x), and a rear stop on each
+    rib (not across the middle: the solder tabs and their wires leave there). The motor drops in from the top, panel off.
+    Axle ring: stands off the wall's outer face round the wheel hub boss; its end holds the shaft's 3 mm grip inside the chassis
+    hull (contain.electronics_exposed) and its lips keep the wheel and motor from lifting out. A slot, open at the top, takes
+    the shaft up and out when the motor is lifted (the wheel leaves sideways first)."""
     z_lo = z0() + P.TUB_FLOOR_T
-    z_hi = P.WHEEL_CZ + 5.0
-    x_in = P.POD_W / 2 - P.TUB_WALL                   # inner face of the pod wall
-    x_rear = x_in - (P.DRIVE_MOTOR_FACE_X - P.DRIVE_MOTOR_REAR_X) - 0.2
-    for side in (1, -1):
-        for sy in (1, -1):
-            yc = P.wheel_y() + sy * (6.0 + RIB_GAP + RIB_T / 2)
-            rib = bd.Pos(side * (x_in + x_rear) / 2, yc, z_lo) * bd.Box(
-                x_in - x_rear + 0.2, RIB_T, z_hi - z_lo, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
-            out = rib if out is None else out + rib
-    return out
+    z_hi = P.WHEEL_CZ + MOTOR_HALF_H
+    wall_o = P.POD_W / 2
+    wall_i = wall_o - P.TUB_WALL
+    face = P.motor_x() + P.DRIVE_MOTOR_FACE_X          # motor shaft-side face
+    rear = P.motor_x() + P.DRIVE_MOTOR_REAR_X          # motor rear face (solder tabs)
+    y0 = P.wheel_y()
+    half = MOTOR_HALF_W + RIB_GAP + RIB_T
+    box = lambda x0, x1, y_a, y_b, z_a, z_b: bd.Pos((x0 + x1) / 2, (y_a + y_b) / 2, z_a) * bd.Box(
+        x1 - x0, y_b - y_a, z_b - z_a, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+    out = box(face + PAD_GAP, wall_i + 0.2, y0 - half, y0 + half, z_lo, z_hi)                       # pad
+    for sy in (1, -1):
+        a, b = sorted((y0 + sy * (MOTOR_HALF_W + RIB_GAP), y0 + sy * half))
+        out += box(rear - PAD_GAP - RIB_T, face + PAD_GAP, a, b, z_lo, z_hi)                         # rib
+        a2, b2 = sorted((y0 + sy * (MOTOR_HALF_W + RIB_GAP), y0 + sy * (MOTOR_HALF_W + RIB_GAP - STOP_W)))
+        out += box(rear - PAD_GAP - RIB_T, rear - PAD_GAP, a2, b2, z_lo, z_hi)                       # rear stop
+    ring = bd.Pos(wall_o - 0.2, y0, P.WHEEL_CZ) * bd.Rot(0, 90, 0) * bd.Cylinder(RING_OUT_R, RING_LEN + 0.2, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+    out += ring
+    return out + bd.mirror(out, bd.Plane.YZ)
+
+
+def axle_holes():
+    """What the axle cuts: the bore for the wheel hub boss in each ring, and the shaft slot (2.3 mm radius at the axle line and
+    straight up out of the top) through the ring, the pod wall and the pad. The shaft leaves through the slot, so the motor
+    lifts out; the hub boss is wider than the slot, so the ring lips keep the wheel from lifting."""
+    z_top = z0() + height() + CAVITY_EXTRA
+    wall_o = P.POD_W / 2
+    x_a = P.motor_x() + P.DRIVE_MOTOR_FACE_X
+    x_b = wall_o + RING_LEN + 1.0
+    cyl = lambda r, xa, xb: bd.Pos(xa, P.wheel_y(), P.WHEEL_CZ) * bd.Rot(0, 90, 0) * bd.Cylinder(r, xb - xa, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+    one = cyl(AXLE_SLOT_R, x_a, x_b) + cyl(RING_BORE_R, wall_o, x_b)
+    one += bd.Pos((x_a + x_b) / 2, P.wheel_y(), (P.WHEEL_CZ + z_top) / 2) * bd.Box(x_b - x_a, 2 * AXLE_SLOT_R, z_top - P.WHEEL_CZ)
+    return one + bd.mirror(one, bd.Plane.YZ)
 
 
 def arm_holes():
@@ -173,4 +194,4 @@ def arm_holes():
 
 
 def tub():
-    return shell() + weapon_boss() + motor_cradles() - bell_bore() - axle_holes() - arm_holes()
+    return shell() + weapon_boss() + drive_bays() - bell_bore() - axle_holes() - arm_holes()

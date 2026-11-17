@@ -78,6 +78,9 @@ CELL_HV_V = 4.35                             # V per LiHV cell full (both packs 
 WHEEL_D = 34.0                               # INDEX.md bbb_wheel_34x6_5: 34 x 6.5 (+2 boss)
 WHEEL_W = 6.5
 WHEEL_BOSS = 1.0                             # mm hub boss proud of the tyre per side (INDEX.md "+2 boss", estimate)
+WHEEL_HUB_GAP = MIN_CLR_MOVING               # mm running gap between the pod outer face and the wheel hub inboard face
+WHEEL_SHAFT_GRIP = 3.0                       # mm of N10 shaft inside the wheel hub (kin.shaft_engagement wants >= 3)
+WHEEL_HUB_R = 3.5                            # mm wheel hub boss radius (catalogue bbb_wheel_34x6_5 hub_boss_d 7)
 WHEEL_INNER_REACH = 5.25                     # mm wheel origin -> inboard face (catalogue bbb_wheel_34x6_5 bbox, hub boss side)
 GR1507_KV = 2850                             # INDEX.md gr1507 row (kV)
 SHAFT_D = 5.0                                # INDEX.md gr1507: M5 shaft
@@ -103,7 +106,7 @@ def cots(cid):
 
 # ---- weapon: hardened steel two-tooth bar, horizontal, under the tub ----
 STEEL_DENSITY = 7.85e-3                      # g/mm^3, Hardox 500 / EN45 spring steel
-BAR_T = 3.0                                  # mm sheet stock (laser cut, Hardox as supplied)
+BAR_T = 2.5                                  # mm sheet stock (laser cut, Hardox as supplied)
 BAR_W_ROOT = 16.0                            # mm width at the hub (bending section: max moment there)
 BAR_W_TIP = 10.0                             # mm width at the tooth
 BAR_TOOTH_STEP = 4.0                         # mm radial depth of the bite step on each leading edge
@@ -123,7 +126,7 @@ BAR_R_STEP = 0.5                             # mm search step of bar_r_geom()
 
 # ---- turned hub (7075-T6): bolts to bell top screws, carries the bar ----
 HUB_OD = 20.0                                # mm (> BAR_BOLT_PCD + M3 head)
-HUB_H = 5.0                                  # mm turned spacer between bell cap and bar
+HUB_H = 5.5                                  # mm turned spacer between bell cap and bar
 HUB_GAP = 0.0                                 # mm: hub bolted down onto the bar (bar bolts need a contact face; hub is in the bar group)
 HUB_SHAFT_CLR = 0.02                         # mm radial slide fit on the 5 mm shaft
 
@@ -239,14 +242,14 @@ def bar_sweep_r():
 
 
 def motor_x():
-    """Right N10 origin X: the body's shaft-side face sits on the inner face of the pod wall, so the 9 mm shaft crosses
-    the wall (2 mm) and the 0.4 mm gap and sits 6.6 mm deep in the wheel hub bore. The left motor is mirrored (rot 180 about Z)."""
-    return POD_W / 2 - TUB_WALL - DRIVE_MOTOR_FACE_X
+    """Right N10 origin X: the shaft tip sits WHEEL_SHAFT_GRIP deep in the wheel hub (hub inboard face = pod outer face + the
+    running gap), so the 9 mm shaft crosses the pod wall and the motor body stays inside. The left motor is mirrored (rot 180 about Z)."""
+    return POD_W / 2 + WHEEL_HUB_GAP + WHEEL_SHAFT_GRIP - DRIVE_MOTOR_TIP_X
 
 
 def wheel_x():
     """Wheel centre X (right side; left is mirrored): the inboard hub face clears the pod's outer wall."""
-    return POD_W / 2 + WHEEL_INNER_REACH + MIN_CLR_MOVING
+    return POD_W / 2 + WHEEL_INNER_REACH + WHEEL_HUB_GAP
 
 
 def wheel_y():
