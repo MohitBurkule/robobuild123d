@@ -1,0 +1,143 @@
+{
+ "spec": "/home/antigravity/MohitBurkule/robobuild123d/robots/buzzkill/spec.json",
+ "rendered_at": 1794944720.6799164,
+ "bodies": [
+  "tub",
+  "lid",
+  "hoop",
+  "weapon_motor",
+  "weapon_motor_bell",
+  "wshaft",
+  "wbearing",
+  "disc",
+  "locking_bar",
+  "upright_outboard",
+  "upright_inboard",
+  "fork_l",
+  "fork_r",
+  "drive_motor_l",
+  "drive_motor_r",
+  "wheel_l",
+  "wheel_r",
+  "battery",
+  "drive_esc",
+  "weapon_esc",
+  "power_switch",
+  "ins_lid_0",
+  "ins_lid_1",
+  "ins_lid_2",
+  "ins_lid_3",
+  "ins_lid_4",
+  "ins_lid_5",
+  "ins_lid_6",
+  "ins_uout_0",
+  "ins_uout_1",
+  "ins_uin_0",
+  "ins_uin_1",
+  "ins_hoop_l",
+  "ins_hoop_r",
+  "ins_fork_l_0",
+  "ins_fork_l_1",
+  "ins_fork_r_0",
+  "ins_fork_r_1",
+  "scr_lid_0",
+  "scr_lid_1",
+  "scr_lid_2",
+  "scr_lid_3",
+  "scr_lid_4",
+  "scr_lid_5",
+  "scr_lid_6",
+  "scr_wmot_0",
+  "scr_wmot_1",
+  "scr_wmot_2",
+  "scr_wmot_3",
+  "scr_uout_0",
+  "scr_uout_1",
+  "scr_uin_0",
+  "scr_uin_1",
+  "scr_disc_0",
+  "scr_disc_1",
+  "scr_disc_2",
+  "scr_disc_3",
+  "scr_hoop_l",
+  "scr_hoop_r",
+  "scr_fork_l_0",
+  "scr_fork_l_1",
+  "scr_fork_r_0",
+  "scr_fork_r_1"
+ ],
+ "wires": {
+  "w_sw_wesc": {
+   "from": [
+    56.7,
+    11.809999999999999,
+    9.0
+   ],
+   "to": [
+    -21.0,
+    -33.5,
+    -8.3
+   ]
+  },
+  "w_wesc_wm": {
+   "from": [
+    -24.0,
+    -10.5,
+    -8.3
+   ],
+   "to": [
+    -31.5,
+    13.5,
+    15.0
+   ]
+  },
+  "w_sw_desc": {
+   "from": [
+    56.7,
+    11.809999999999999,
+    9.0
+   ],
+   "to": [
+    24.0,
+    -6.0,
+    -9.05
+   ]
+  },
+  "w_desc_ml": {
+   "from": [
+    56.0,
+    6.0,
+    -9.05
+   ],
+   "to": [
+    10.25,
+    -25.5,
+    0.0
+   ]
+  },
+  "w_desc_mr": {
+   "from": [
+    24.0,
+    6.0,
+    -9.05
+   ],
+   "to": [
+    -10.25,
+    -25.5,
+    0.0
+   ]
+  },
+  "w_desc_sig": {
+   "from": [
+    56.0,
+    -6.0,
+    -9.05
+   ],
+   "to": [
+    -27.0,
+    -33.5,
+    -8.3
+   ]
+  }
+ }
+}

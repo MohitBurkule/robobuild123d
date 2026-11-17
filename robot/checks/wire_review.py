@@ -407,9 +407,22 @@ def unsupported_runs(Q, inside, near, step=0.5):
     return out
 
 
+def _ray_enclosed(shell_mesh, Q: np.ndarray) -> np.ndarray:
+    """True for each point in Q that is hit in at least 5 of 6 axis directions (+-X, +-Y, +-Z) by `shell_mesh`."""
+    if shell_mesh is None or not len(Q):
+        return np.ones(len(Q), dtype=bool)
+    dirs = np.array([[1, 0, 0], [-1, 0, 0], [0, 1, 0], [0, -1, 0], [0, 0, 1], [0, 0, -1]], dtype=float)
+    n = len(Q)
+    origins = np.repeat(Q, 6, axis=0)
+    ray_dirs = np.tile(dirs, (n, 1))
+    hits = shell_mesh.ray.intersects_any(origins, ray_dirs)
+    return hits.reshape(n, 6).sum(axis=1) >= 5
+
+
 def exterior_support(ctx):
-    """wire.exterior_support (opt-out): a wire outside the chassis hull must lie along a body (hole wall, channel, clip)
+    """wire.exterior_support (opt-out): a wire outside the chassis hull (or not enclosed in all 6 ray directions) must lie along a body (hole wall, channel, clip)
     within SUPPORT_MM on both sides (enclosed); a span over UNSUPPORTED_MAX_MM that is not enclosed hangs loose. Exempt with `exposed_reason` on the wire."""
+    import trimesh
     from scipy.spatial import cKDTree
 
     r, w = ctx.r, ctx.world
@@ -418,12 +431,18 @@ def exterior_support(ctx):
         return []
     out, n = [], 0
     spinning = {i for *_, ids in rotor_groups(r.spec, w) for i in ids}   # a spinning part holds nothing
+    shell_meshes = [
+        b.mesh for b in w.bodies
+        if not b.is_wire and b.mesh is not None and len(b.mesh.faces) and b.id not in spinning
+        and r.spec.part(b.id) is not None and r.spec.part(b.id).kind in ("structure", "cover", "armour", "plate")
+    ]
+    shell_mesh = trimesh.util.concatenate(shell_meshes) if shell_meshes else None
     for wr in r.spec.wires:
         pts, _ = _route_points(ctx, wr)
         if pts is None or str(x(wr, "exposed_reason", "") or "").strip():
             continue
         Q = _samples(pts)
-        inside = hull.contains(Q)
+        inside = hull.contains(Q) & _ray_enclosed(shell_mesh, Q)
         if inside.all():
             continue
         n += 1
