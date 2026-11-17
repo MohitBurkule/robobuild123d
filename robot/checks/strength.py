@@ -114,7 +114,7 @@ def _host(ctx, bearing, origin, axis, t, od):
     ring = np.array([c + (od / 2 + 0.8) * (math.cos(k) * u + math.sin(k) * v) for k in np.linspace(0, 2 * math.pi, 16, endpoint=False)])
     best = None
     for b in ctx.world.bodies:
-        if b.fastener or b.kind not in ph.SUPPORT:
+        if b.fastener or b.kind not in ph.SUPPORT + ("caster",):  # a caster puck seats its own pivot bearing
             continue
         n = int(b.inside(ring).sum())
         if n and (best is None or n > best[0]):

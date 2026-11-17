@@ -48,7 +48,7 @@ def frame_params(h, user: dict | None = None) -> dict:
         p.update(axle_y=-14.0, y0=-48.0, y1=44.0, floor=1.1)
     if h.weapon == "undercutter":
         from .external.weapon_under import belly_z
-        p.update(axle_y=-30.0, y0=-50.0, y1=44.0, floor=1.1, zb=belly_z(-R))
+        p.update(axle_y=-30.0, y0=-50.0, y1=44.0, floor=1.1, zb=belly_z(-R), zt=12.5)
     if h.weapon == "vspin_drisk":
         p.update(axle_y=-14.0, y0=-36.0, y1=44.0, floor=1.1)
     if h.weapon == "lifter":

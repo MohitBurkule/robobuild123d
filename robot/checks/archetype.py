@@ -82,6 +82,9 @@ def r_disc_supported(F, P):
     if s is None:
         return None, "no spinning weapon with a spin axis"
     a, b = s
+    if (a or b) and not (a and b) and F.get("one_sided_ok"):
+        return True, (f"Horizontal rotor held on one side only, declared (supported_both_ends false) and storing "
+                      f"{F.get('energy_j', 0):.1f} J <= 20 J: legal as a cantilever (spinner.bearing still warns).")
     return (a and b), f"Static structure on the axle line: {'yes' if a else 'NO'} on one side, {'yes' if b else 'NO'} on the other (the disc must sit between two supports)."
 
 
@@ -601,6 +604,13 @@ def facts(ctx) -> dict:
             P = (origin + np.outer(s * d, axis))[:, None, :] + ring[None]
             sides.append(bool(measure.inside_any(sup, P.reshape(-1, 3)).any()))
         F["supports"] = tuple(sides)
+        # same rule as spinner.bearing: a horizontal rotor held on one side only (motor bearings, maybe a floor caster
+        # below) is legal when it declares so and stores <= 20 J; anything bigger, or a vertical disc, needs both sides
+        wd0 = next((rp.part.weapon for rp in ctx.r.parts if rp.part.weapon is not None), None)
+        e0 = ctx.metrics.get("weapon_energy_j")
+        F["one_sided_ok"] = (wd0 is not None and not getattr(wd0, "supported_both_ends", False) and e0 is not None
+                             and float(e0) <= 20.0 and abs(float(axis[2])) > 0.9)
+        F["energy_j"] = e0
         # wedges / blades: forks, wedgelets and skirts working at floor level ahead of the disc (ground game). The lead
         # rule is shared with spinner.reach and shape.weapon_leads (_physics.front_intrusions).
         front = ph.swept_front_y(wb, origin, axis)

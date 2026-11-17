@@ -25,6 +25,10 @@ BEARINGS = {
     "693": (3, 8, 4), "694": (4, 11, 4), "695": (5, 13, 4), "623": (3, 10, 4), "624": (4, 13, 5), "625": (5, 16, 5),
     "603": (3, 9, 5), "604": (4, 12, 4), "605": (5, 14, 5), "608": (8, 22, 7),
 }
+# Shielded (ZZ / 2RS) widths where they differ from the open bearing (catalogue sheets: NMB, SKF miniature).
+SHIELDED_W = {"682": 2.3, "683": 3, "684": 4, "685": 5, "686": 5, "MR52": 2.5, "MR63": 2.5, "MR74": 2.5, "MR84": 4,
+              "MR85": 2.5, "MR95": 3, "MR105": 4, "MR106": 3, "MR117": 3.5, "MR128": 3.5}
+_SHIELD = re.compile(r"(ZZ|2RS|RS)\b", re.I)
 _BRG = re.compile(r"\b((?:MF|MR|F)?\d{2,4})(?:ZZ|2RS|RS|Z)?\b", re.I)
 METRIC_D = {1.6, 2.0, 2.5, 3.0, 4.0, 5.0, 6.0}
 STD_LEN = {2, 2.5, 3, 4, 5, 6, 8, 10, 12, 14, 16, 18, 20, 22, 25, 28, 30, 35, 40, 45, 50}
@@ -88,6 +92,9 @@ def run(ctx):
                 have = _ext(rp.geom.mesh.bounds)
                 flanged = code.startswith(("F", "MF"))
                 ok_od = abs(have[1] - od) <= DIM_TOL_MM or (flanged and od <= have[1] <= od + 1.5 + DIM_TOL_MM)
+                txt = " ".join(str(x) for x in (p._extra.get("designation"), p._extra.get("model_no"), p.label, getattr(p, "stock", None)) if x)
+                if _SHIELD.search(txt) and code in SHIELDED_W:
+                    wd = SHIELDED_W[code]  # a ZZ / 2RS bearing is wider than the open one
                 if not (ok_od and abs(have[0] - wd) <= DIM_TOL_MM + (0.8 if flanged else 0)):
                     out.append(fail("cots.dims_mismatch", G, BLOCKER, "Bearing model does not match its designation",
                                     f"`{p.id}` is {code} ({bore} x {od} x {wd} mm) but is modelled {have[2]:.1f} x {have[1]:.1f} x {have[0]:.1f} mm.")

@@ -853,6 +853,11 @@ def load_path(a, p, origin, axis, sup):
     adj = _graph(a)
     ch = a.chassis.id
     for s, (t, b, host) in sup.items():
+        if host is not None and host.kind == "caster":
+            out.append(ok("arch.load_path", G, "Caster pivot rides the floor",
+                          f"Side {s:+.0f}: `{b.id}` sits in caster `{host.id}`, which bears on the arena floor, not the chassis; "
+                          "the rotor's side load is carried by the motor side (cantilever)."))
+            continue
         start = (host or b).id
         prev = {start: None}
         q = [start]
