@@ -106,3 +106,18 @@ def test_seat_probe_catches_missing_insert_bore():
     _, rec = hole(block(), (0, 0, 6), (0, 0, -1), "M3x10", "button", "insert", grip=2)
     tapped, _ = hole(block(), (0, 0, 6), (0, 0, -1), "M3x10", "button", "tapped", grip=2)
     assert "insert_bore" in _bad(rec, tapped)
+
+
+def test_seat_probe_catches_unpiloted_post_on_through_record():
+    """A screw that threads into a solid post with no pilot fails pilot_open even when its hole record says `through`
+    (scythe_classic rim posts, 2026-11-17)."""
+    panel = bd.Pos(0, 0, 6.5) * bd.Box(20, 20, 1)          # 1 mm sheet on top, drilled
+    panel -= bd.Pos(0, 0, 6.5) * bd.Cylinder(1.2, 2)
+    post = block()                                          # solid, no pilot
+    f = {"designation": "M2x6", "at": [0, 0, 7], "dir": [0, 0, -1], "head": "button",
+         "hole": {"head": "button", "into": "through", "grip": 1.0, "clearance_d": 2.4}}
+    m = seat.probe(f, mesh(panel).contains, mesh(post).contains)
+    assert "pilot_open" in m and m["pilot_open"] < 0.8
+    drilled = post - bd.Pos(0, 0, 6) * bd.Cylinder(0.85, 12)
+    m2 = seat.probe(f, mesh(panel).contains, mesh(drilled).contains)
+    assert m2["pilot_open"] >= 0.8

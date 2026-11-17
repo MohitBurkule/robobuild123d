@@ -41,10 +41,21 @@ def allowed_depth(r, a, b) -> float:
         if x.fastener:
             f = next((f for f in r.spec.fasteners if f.id == x.id), None)
             if f is not None and f.threads_into == y.id:
-                return INF
+                py = part(y)
+                if py is not None and py.kind in ("insert", "nut", "motor", "weapon_motor"):
+                    return INF  # modelled solid (brass fills its bore; COTS threads are not modelled): other checks own it
+                # threads cut only the ring between the pilot and the major diameter; a screw in solid material (no
+                # pilot) overlaps by its whole radius (scythe_classic rim posts, 2026-11-17)
+                try:
+                    from ..cad import fastener_catalog as fc
+                    d = fc.parse(f.designation).d
+                    return max(allow, (d - THREAD_PILOT_SHARE * d) / 2 + r.profile.contact_tol_mm)
+                except Exception:  # noqa: BLE001 - unknown designation: keep the old blanket allowance
+                    return INF
     return allow
 
 
+THREAD_PILOT_SHARE = 0.75  # smallest pilot / major diameter for a thread-forming screw in plastic (M2: 1.5 mm)
 BLANKET_ALLOW_MM = 2.0  # an allow_overlap deeper than this is not a fit tolerance any more
 
 

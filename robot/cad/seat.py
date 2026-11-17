@@ -92,7 +92,9 @@ def probe(f, host_inside, thread_inside=None) -> dict:
         out["head_bearing"] = _frac(host_inside, _ring(at, a, u, v, 0.15, (c / 2 + dk / 2) / 2, 16))
     into = hole.get("into")
     th = thread_inside or host_inside
-    if into == "tapped" or (thread_inside is not None and into is None):
+    # a screw that threads into a part must find a pilot and material there, whatever the hole record calls the hole
+    # ("through" on a record copied from a clearance-only seat hid unpiloted posts on scythe_classic)
+    if into == "tapped" or (thread_inside is not None and into in (None, "through", "self_tap", "thread_forming")):
         tap = hole.get("tap_d") or fc.tap_drill(s.d)
         tip = s.length if style == "csk" else s.length
         t0 = (hole.get("grip") or 0.0) - _recess(hole) + 0.3

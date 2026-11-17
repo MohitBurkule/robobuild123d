@@ -13,6 +13,7 @@ from ..cad import seat
 from ..finding import BLOCKER, WARNING, fail, ok
 
 G = "fastener_seat"
+COTS_THREAD_KINDS = ("insert", "nut", "pin", "standoff", "motor", "weapon_motor", "servo", "bearing")
 
 
 def _inside_any(bodies):
@@ -39,6 +40,10 @@ def run(ctx):
                 # a modelled heat-set insert: the bore and its wall are in the part that holds the insert, not in the
                 # brass itself (which fills the bore)
                 th = _inside_any([b for b in parts if b is not tb and b.kind != "insert"])
+            rec_into = ((getattr(f, "hole", None) or (getattr(f, "_extra", {}) or {}).get("hole") or {}).get("into"))
+            if tb is not None and rec_into in ("through", "self_tap", "thread_forming") and (
+                    tb.kind in COTS_THREAD_KINDS or getattr(r.parts[tb.part_idx].part, "process", None) == "cots"):
+                th = None  # a nut, insert, standoff or motor carries its own thread (not modelled): no pilot to probe
             m = seat.probe(f, host, th)
         except ValueError as e:
             ctx.not_checked.append(f"Fastener `{f.id}` seat: {e}")
