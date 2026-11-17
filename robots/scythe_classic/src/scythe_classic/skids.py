@@ -20,7 +20,7 @@ def _z_cyl(r, h):
     return bd.Cylinder(r, h, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
 
 
-ARM_CLR_FLOOR = 1.1    # mm: arm underside above the floor (profile ground clearance 1.0 + margin)
+ARM_CLR_FLOOR = 0.5    # mm: arm underside above the floor: within 0.6 mm it counts as a floor contact (arch.com_support), like a skid
 ARM_CLR_BAR = 1.1      # mm: arm top under the bar underside (kin.rub_gap wants 1.0 mm for a weapon)
 ARM_W = 10.0           # mm strip width = puck diameter; bar-bolt driver path (x 5.65 .. 9.35 at PCD 15) stays clear
 ARM_RISER_Y = (-54.0, -46.0)   # mm: behind the bar sweep (rearmost sweep y = axis - r = -42.5); sits on the pod floor underside
@@ -29,9 +29,9 @@ BEARING_W = 2.5        # mm MR85 width
 SHAFT_R = P.SHAFT_D / 2
 
 
-ARM_W_BODY = 28.0      # mm: width of the stiff part of the strip (the arch.fork_stiffness check bends it sideways: I = t w^3 / 12)
+ARM_W_BODY = 24.0      # mm: width of the stiff part of the strip (the arch.fork_stiffness check bends it sideways: I = t w^3 / 12)
 ARM_NECK_Y = (4.0, 10.0)   # mm from the axis line: where the strip narrows to the puck width (the bar-bolt driver path)
-ARM_SCREW_X = (-5.0, 5.0)   # mm: the two riser screws (M2, 10 mm apart)
+ARM_SCREWS = ((-5.5, -52.0), (5.5, -52.0), (-5.5, -48.0), (5.5, -48.0))   # mm xy: the four riser screws (M2)
 RISER_W = 16.0         # mm riser width (two M2 screws 10 mm apart)
 
 
@@ -53,6 +53,12 @@ def foot():
     riser = bd.Pos(0, sum(ARM_RISER_Y) / 2, z0) * bd.Box(RISER_W, ARM_RISER_Y[1] - ARM_RISER_Y[0], P.tub_floor_z() - z0,
                                                        align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
     arm = strip + puck + riser
+    r_fil = 1.0   # concave strip-to-riser corner: printed parts need >= 1 mm inside radius
+    cx = sum(ARM_RISER_Y) / 2
+    edges = [e for e in arm.edges() if abs(e.center().Z - z1) < 1e-3 and ARM_RISER_Y[0] - 1e-3 <= e.center().Y <= ARM_RISER_Y[1] + 1e-3
+             and abs(e.center().X) <= RISER_W / 2 + 1e-3 and e.length < RISER_W + 1e-3]
+    if edges:
+        arm = bd.fillet(edges, r_fil)
     bore = bd.Pos(0, P.WPN_AXIS_Y, z0 - 1) * _z_cyl(BEARING_OD_R, z1 - z0 + 2)
     return arm - bore
 
@@ -64,9 +70,12 @@ def bearing():
     return bd.Pos(0, P.WPN_AXIS_Y, z) * (_z_cyl(BEARING_OD_R, BEARING_W) - _z_cyl(SHAFT_R, BEARING_W))
 
 
+MOTOR_STATOR_BELOW = 3.7   # mm: the GR1507 stator body reaches this far below its catalogue origin (probe weapon_motor_stator, z min)
+
+
 def shaft_top_z():
-    """Shaft top: 4 mm above the hub top, i.e. inside the bell (the motor's own bearings carry the shaft over that span)."""
-    return P.bar_top_z() + P.HUB_GAP + P.HUB_H + 4.0
+    """Shaft top: 4 mm into the stator span (the motor's own bearings carry the shaft over that span)."""
+    return P.wpn_motor_z() - MOTOR_STATOR_BELOW + 4.0
 
 
 def shaft():

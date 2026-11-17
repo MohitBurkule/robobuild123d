@@ -16,12 +16,16 @@ from . import params as P
 from ._reuse import hw, weapon_motor
 
 
+CAVITY_EXTRA = 6.0   # mm the offset body is taller than the tub
 SKIRT_H = 2.0   # mm vertical band at the cone base: a sloped wall running into the floor underside leaves a knife edge
+TOP_BAND_H = 2.0   # mm vertical band at the cone top: the sloped wall meeting the flat rim face leaves an acute inside corner
 
 
 def _slope_inset(h):
-    """Radial inset of the cone at height h above the floor underside: the slope starts above the vertical skirt."""
-    return max(h - SKIRT_H, 0.0) * math.tan(math.radians(P.TUB_SLOPE_DEG))
+    """Radial inset of the cone at height h above the floor underside: the slope runs between the vertical skirt and the
+    vertical top band, and stays constant in the bands."""
+    run = min(h, height() - TOP_BAND_H) - SKIRT_H
+    return max(run, 0.0) * math.tan(math.radians(P.TUB_SLOPE_DEG))
 
 
 def z0():
@@ -76,21 +80,22 @@ def cone_loft(grow_lo, grow_hi, z_lo, z_hi):
     return bd.loft([lo * disc_face(grow_lo).faces()[0], hi * disc_face(grow_hi).faces()[0]])
 
 
-def outer_body():
-    """The solid tub outside: sloped cone plus the vertical rear pod."""
-    h = height()
+def outer_body(extra=0.0):
+    """The solid tub outside: vertical skirt, sloped cone above it, plus the vertical rear pod. `extra` makes it taller (the
+    cavity is the inward offset of a taller body, so it runs out through the open top)."""
+    h = height() + extra
     skirt = bd.Pos(0, 0, z0()) * bd.extrude(disc_face(), SKIRT_H)
-    cone = cone_loft(0.0, -_slope_inset(h), z0() + SKIRT_H, z0() + h)
-    return skirt + cone + pod_box(z_lo=z0(), h=h)
+    z_cone_top = z0() + height() - TOP_BAND_H
+    cone = cone_loft(0.0, -_slope_inset(h), z0() + SKIRT_H, z_cone_top)
+    band = bd.Pos(0, 0, z_cone_top) * bd.extrude(bd.Pos(0, P.WPN_AXIS_Y) * bd.Circle(P.TUB_R - _slope_inset(h)), h - (z_cone_top - z0()))
+    return skirt + cone + band + pod_box(z_lo=z0(), h=h)
 
 
 def cavity():
-    """What is hollowed out: the cone inside its walls above the floor, and the pod inside its walls."""
-    h = height()
-    # the skirt is as tall as the floor, so the cavity starts at the skirt radius minus the wall; above it the wall follows the slope
-    cone = cone_loft(-P.TUB_WALL, -_slope_inset(h) - P.TUB_WALL, z0() + P.TUB_FLOOR_T, z0() + h + 0.01)
-    pod = pod_box(-P.TUB_WALL, z0() + P.TUB_FLOOR_T, h + 0.01 - P.TUB_FLOOR_T)
-    return cone + pod
+    """What is hollowed out: the outer body offset inward by the wall (so the wall is the same thickness everywhere, even
+    where the pod front meets the cone: a cone cavity plus a pod-box cavity left a knife-edge wedge there), taller than the
+    tub so it leaves through the top, which the top panel closes."""
+    return bd.offset(outer_body(extra=CAVITY_EXTRA), amount=-P.TUB_WALL, kind=bd.Kind.ARC)
 
 
 def shell():
@@ -125,11 +130,16 @@ def bell_bore():
 
 
 def axle_holes():
-    """N10 output shaft exits through the pod walls; one side built, mirrored. 2.3 mm hole: the N10's 2 mm shaft collar and the 3 mm shaft pass it."""
-    one = bd.Pos(P.POD_W / 2, P.wheel_y(), P.WHEEL_CZ) * bd.Rot(0, 90, 0) * bd.Cylinder(2.3, 2 * P.TUB_WALL + 2)
+    """N10 output shaft exits through the pod walls. A slot open to the top (not a round hole) so the motor drops in from above:
+    2.3 mm radius at the axle line (shaft collar 2 mm, shaft 3 mm), straight up out of the wall. The wheel's hub covers it."""
+    z_top = z0() + height() + CAVITY_EXTRA
+    one = bd.Pos(P.POD_W / 2, P.wheel_y(), P.WHEEL_CZ) * bd.Rot(0, 90, 0) * bd.Cylinder(AXLE_SLOT_R, 2 * P.TUB_WALL + 2)
+    slot = bd.Pos(P.POD_W / 2, P.wheel_y(), (P.WHEEL_CZ + z_top) / 2) * bd.Box(2 * P.TUB_WALL + 2, 2 * AXLE_SLOT_R, z_top - P.WHEEL_CZ)
+    one = one + slot
     return one + bd.mirror(one, bd.Plane.YZ)
 
 
+AXLE_SLOT_R = 2.3   # mm half width of the axle slot in the pod wall
 RIB_T = 1.2        # mm cradle rib thickness (nozzle multiple)
 RIB_GAP = 0.2      # mm print clearance between the N10 flats and the ribs
 
@@ -156,8 +166,8 @@ def arm_holes():
     """M2 clearance (2.2) through the pod floor for the skid-arm screws (heads in the pod cavity, threads in the arm riser)."""
     from . import skids
     out = None
-    for sx in skids.ARM_SCREW_X:
-        h = bd.Pos(sx, sum(skids.ARM_RISER_Y) / 2, z0() - 0.5) * bd.Cylinder(1.1, P.TUB_FLOOR_T + 1.0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+    for sx, sy in skids.ARM_SCREWS:
+        h = bd.Pos(sx, sy, z0() - 0.5) * bd.Cylinder(1.1, P.TUB_FLOOR_T + 1.0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
         out = h if out is None else out + h
     return out
 

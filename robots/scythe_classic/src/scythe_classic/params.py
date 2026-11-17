@@ -133,8 +133,8 @@ MOTOR_BELL_CLR = 1.3                         # mm radial bell to tub bore wall (
 
 # ---- tub (printed nylon PA12/PA-CF, FDM) ----
 BAR_BITE_REACH = 8.0                         # mm of tooth exposed beyond the tub rim, all round
-TUB_WALL = 2.0                               # mm (> PROFILE.min_wall_fdm_mm)
-TUB_FLOOR_T = 2.0                            # mm
+TUB_WALL = 1.6                               # mm (> PROFILE.min_wall_fdm_mm)
+TUB_FLOOR_T = 1.6                            # mm
 TUB_SLOPE_DEG = 35.0                         # side slope from vertical: verticals glance off
 TUB_TOP_Z = WHEEL_D - 2 * MIN_GROUND_CLR - 0.9   # body top below tyre top: invertible (wheels > body both sides)
 DRIVE_MOTOR_L = 33.0                         # mm N10 body length along its shaft (catalogue bbb_n10_1000rpm, hw.size)

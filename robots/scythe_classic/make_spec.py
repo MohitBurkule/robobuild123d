@@ -21,10 +21,11 @@ from scythe_classic._reuse import weapon_motor  # noqa: E402
 PARAMS_PATH = "src/scythe_classic/params.py"
 
 # Hand-placed electronics (x, y, z) in mm, rear pod and cone interior. Checked with `robot verify`.
+TAPE_T = 0.2   # mm foam-tape layer under the taped parts (the verifier counts contact within 0.5 mm)
 FLOOR_IN = P.tub_floor_z() + P.TUB_FLOOR_T   # z of the pod cavity floor (inside the tub): electronics sit on it
-BATTERY_AT = (-19.1, 15.6, FLOOR_IN + 0.5 + 5.5)   # probe --place battery: safe box x -21.9..-16.4, y 10.6..20.6 at yaw 90
-ESC_AT = (0.0, -14.0, FLOOR_IN + 0.5 + 2.0)
-RX_AT = (25.6, 14.9, FLOOR_IN + 0.5 + 1.25)   # probe --place drive_rx: free box x 16.1..35.1 y -1.1..30.9          # Malenki-Nano, yawed 90 deg, rests on the floor (tape)
+BATTERY_AT = (-20.4, 14.0, FLOOR_IN + 0.5 + 5.5)   # probe --place battery: safe box x -21.9..-16.4, y 10.6..20.6 at yaw 90
+ESC_AT = (0.0, -8.0, FLOOR_IN + TAPE_T + 2.0)
+RX_AT = (21.4, 14.0, FLOOR_IN + TAPE_T + 1.25)   # probe --place drive_rx: free box x 16.1..35.1 y -1.1..30.9          # Malenki-Nano, yawed 90 deg, rests on the floor (tape)
 XT30_AT = (-19.6, -31.4, FLOOR_IN + 0.5 + 5.1)   # probe --place xt30 (pod rear): free box x -26.5..-12.8 y -34.0..-28.8 at yaw 90
 TOP_Z = P.TUB_TOP_Z                 # top face of the top panel
 SKID_TOP_Z = TOP_Z + P.MIN_GROUND_CLR + P.SKID_H
@@ -61,8 +62,8 @@ def fasteners():
     for i, sign in enumerate((-1, 1)):
         out.append(_screw(f"bar_{i}", "M3x8", (sign * P.BAR_BOLT_PCD / 2, P.WPN_AXIS_Y, P.BAR_Z0), (0, 0, 1),
                           ["bar"], "weapon_hub", "csk", _hole(3.0, 8.0, "csk", P.CSK_D)))
-    for i, sx in enumerate(skids.ARM_SCREW_X):   # skid arm riser: M2 from the pod cavity down through the tub floor into the arm
-        out.append(_screw(f"arm_{i}", "M2x8", (sx, sum(skids.ARM_RISER_Y) / 2, FLOOR_IN), (0, 0, -1), ["tub"], "skid_arm",
+    for i, (sx, sy) in enumerate(skids.ARM_SCREWS):   # skid arm riser: M2 from the pod cavity down through the tub floor into the arm
+        out.append(_screw(f"arm_{i}", "M2x8", (sx, sy, FLOOR_IN), (0, 0, -1), ["tub"], "skid_arm",
                           "button", _hole(2.0, 8.0, "button")))
     return out
 
@@ -133,7 +134,8 @@ def parts():
         {"id": "weapon_esc", "kind": "esc", "catalog": P.WEAPON_ESC, "retained": "tape",
          "retained_reason": "double-sided foam tape under the ESC onto the pod floor; the board weighs 5 g",
          "at": _fmt(ESC_AT), "rot": [0, 0, 0]},
-        {"id": "drive_rx", "kind": "esc", "catalog": P.DRIVE_RX, "retained": "tape",
+        {"id": "drive_rx", "kind": "esc", "catalog": P.DRIVE_RX, "retained": "adhesive",
+         "retained_reason": "VHB pad under the board onto the pod floor; 2.3 g, bonded face 19 x 32 mm",
          "at": _fmt(RX_AT), "rot": [0, 0, 90]},
         {"id": "switch", "kind": "switch", "catalog": P.SWITCH, "retained": "velcro", "tool_free": True, "marked": True,
          "label": "power switch ON/OFF, reached through the top-panel key hole",

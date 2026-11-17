@@ -390,9 +390,9 @@
    "retained": "strap",
    "retained_reason": "hook-and-loop strap over the pack, anchored to rib pegs in the pod; undone to change the pack",
    "at": [
-    -19.1,
-    15.6,
-    17.2
+    -20.4,
+    14.0,
+    16.8
    ],
    "rot": [
     0,
@@ -409,8 +409,8 @@
    "retained_reason": "double-sided foam tape under the ESC onto the pod floor; the board weighs 5 g",
    "at": [
     0.0,
-    -14.0,
-    13.7
+    -8.0,
+    13.0
    ],
    "rot": [
     0,
@@ -422,11 +422,12 @@
    "id": "drive_rx",
    "kind": "esc",
    "catalog": "bbb_malenki_nano",
-   "retained": "tape",
+   "retained": "adhesive",
+   "retained_reason": "VHB pad under the board onto the pod floor; 2.3 g, bonded face 19 x 32 mm",
    "at": [
-    25.6,
-    14.9,
-    12.95
+    21.4,
+    14.0,
+    12.25
    ],
    "rot": [
     0,
@@ -445,7 +446,7 @@
    "at": [
     "P.SWITCH_XY[0] + 1.2",
     "P.SWITCH_XY[1]",
-    14.375
+    13.974999999999998
    ],
    "rot": [
     0,
@@ -460,7 +461,7 @@
    "at": [
     -19.6,
     -31.4,
-    16.8
+    16.4
    ],
    "rot": [
     0,
@@ -476,7 +477,7 @@
    "designation": "M2x6",
    "material": "steel",
    "at": [
-    32.766,
+    34.966,
     15.5,
     31.1
    ],
@@ -508,8 +509,8 @@
    "designation": "M2x6",
    "material": "steel",
    "at": [
-    16.383,
-    43.876,
+    17.483,
+    45.782,
     31.1
    ],
    "dir": [
@@ -540,8 +541,8 @@
    "designation": "M2x6",
    "material": "steel",
    "at": [
-    -16.383,
-    43.876,
+    -17.483,
+    45.782,
     31.1
    ],
    "dir": [
@@ -572,7 +573,7 @@
    "designation": "M2x6",
    "material": "steel",
    "at": [
-    -32.766,
+    -34.966,
     15.5,
     31.1
    ],
@@ -604,8 +605,8 @@
    "designation": "M2x6",
    "material": "steel",
    "at": [
-    -16.383,
-    -12.876,
+    -17.483,
+    -14.782,
     31.1
    ],
    "dir": [
@@ -636,8 +637,8 @@
    "designation": "M2x6",
    "material": "steel",
    "at": [
-    16.383,
-    -12.876,
+    17.483,
+    -14.782,
     31.1
    ],
    "dir": [
@@ -868,9 +869,9 @@
    "designation": "M2x8",
    "material": "steel",
    "at": [
-    -5.0,
-    -50.0,
-    11.2
+    -5.5,
+    -52.0,
+    10.8
    ],
    "dir": [
     0,
@@ -900,9 +901,73 @@
    "designation": "M2x8",
    "material": "steel",
    "at": [
-    5.0,
-    -50.0,
-    11.2
+    5.5,
+    -52.0,
+    10.8
+   ],
+   "dir": [
+    0,
+    0,
+    -1
+   ],
+   "through": [
+    "tub"
+   ],
+   "threads_into": "skid_arm",
+   "tool": "hex1.3",
+   "hole": {
+    "d": 2.0,
+    "length": 8.0,
+    "head": "button",
+    "clearance_d": 2.2,
+    "into": "through",
+    "side": "head",
+    "grip": 1.0,
+    "sink": 0.0
+   },
+   "head": "button",
+   "removable": true
+  },
+  {
+   "id": "arm_2",
+   "designation": "M2x8",
+   "material": "steel",
+   "at": [
+    -5.5,
+    -48.0,
+    10.8
+   ],
+   "dir": [
+    0,
+    0,
+    -1
+   ],
+   "through": [
+    "tub"
+   ],
+   "threads_into": "skid_arm",
+   "tool": "hex1.3",
+   "hole": {
+    "d": 2.0,
+    "length": 8.0,
+    "head": "button",
+    "clearance_d": 2.2,
+    "into": "through",
+    "side": "head",
+    "grip": 1.0,
+    "sink": 0.0
+   },
+   "head": "button",
+   "removable": true
+  },
+  {
+   "id": "arm_3",
+   "designation": "M2x8",
+   "material": "steel",
+   "at": [
+    5.5,
+    -48.0,
+    10.8
    ],
    "dir": [
     0,
