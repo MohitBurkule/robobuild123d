@@ -52,6 +52,28 @@ def side_gaps(b, walls, n=5):
     return res
 
 
+MOVE_MARGIN = 0.2  # mm of fit clearance left on the far side after the suggested move
+
+
+def move_hint(pid, gaps, depth) -> str:
+    """Measured move that clears an overlap: the free side with room for depth + margin (or '' when none)."""
+    if not gaps:
+        return ""
+    need = depth + MOVE_MARGIN
+    best = None
+    for (ax, sgn), (dist, _who) in gaps.items():
+        dist = dist if np.isfinite(dist) else SEARCH_MM  # nothing within the search = at least that much room
+        if dist >= need and (best is None or dist > best[2]):
+            best = (ax, sgn, dist)
+    if best is None:
+        free = {f"{'-+'[s > 0]}{AXES[a]}": round(d, 2) for (a, s), (d, _) in gaps.items() if np.isfinite(d)}
+        return f" No side has {need:.2f} mm free (free room per side {free}): grow the pocket or pick a smaller part (`robot catalog --kind ... --fits LxWxH`)."
+    ax, sgn, dist = best
+    room = f">= {dist:.1f}" if dist >= SEARCH_MM else f"{dist:.2f}"
+    return (f" Measured fix: move `{pid}` {'-+'[sgn > 0]}{need:.2f} mm along {AXES[ax]} "
+            f"({room} mm free that side), or grow the pocket {depth:.2f} mm.")
+
+
 def run(ctx):
     r, w = ctx.r, ctx.world
     out, checked = [], 0
@@ -66,16 +88,19 @@ def run(ctx):
         walls = [o for o in walls_all if o.id != p.id and o.id != p.parent and measure.aabb_overlap(o.aabb, grown)]
         if not walls:
             continue
-        for o in walls:
-            ov = measure.overlap(b, o)
-            if ov is not None and getattr(ov, "depth", 0) > 0.05 and not _allowed(r, p.id, o.id):
-                out.append(fail("fit.interference", G, BLOCKER, "Component does not fit its pocket",
-                                f"`{p.id}` overlaps wall `{o.id}` by {ov.depth:.2f} mm: it will not go in.")
-                           .on(p.id, o.id).here(b.center).fix("Grow the pocket to the component size plus the per-side fit clearance."))
         try:
             gaps = side_gaps(b, walls)
         except Exception as e:  # noqa: BLE001
             ctx.not_checked.append(f"fit: gaps round `{p.id}` not measured ({e})")
+            gaps = None
+        for o in walls:
+            ov = measure.overlap(b, o)
+            if ov is not None and getattr(ov, "depth", 0) > 0.05 and not _allowed(r, p.id, o.id):
+                out.append(fail("fit.interference", G, BLOCKER, "Component does not fit its pocket",
+                                f"`{p.id}` overlaps wall `{o.id}` by {ov.depth:.2f} mm: it will not go in."
+                                + move_hint(p.id, gaps, ov.depth))
+                           .on(p.id, o.id).here(b.center).fix("Grow the pocket to the component size plus the per-side fit clearance."))
+        if gaps is None:
             continue
         walled = {k: v for k, v in gaps.items() if np.isfinite(v[0]) and v[0] <= SEARCH_MM}
         if len(walled) < 2:

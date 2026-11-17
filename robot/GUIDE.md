@@ -582,3 +582,10 @@ the fit. Parts without a mesh or a valid `print_orientation` are NOT CHECKED, ne
   (or list `"levers": [{"param": "src/x/params.py:SWITCH_BAY", "lo": 4, "hi": 14, "step": 0.1}]` in the spec).
   It rebuilds with overridden masters (every relation re-derives), uses a finite-difference Jacobian + damped least
   squares, and writes the new literal into params.py. Then run `robot verify`.
+
+
+## Look it up, don't guess
+- Spec field spelling/shape: `robot field NAME` (examples from verified specs + which checks read it).
+- Part does not fit: `robot probe --place PART` for the free box, then `robot catalog --kind KIND --fits LxWxH`.
+- Overlap of a few tenths of a mm: the `fit.interference` message gives the measured move; apply it, don't guess.
+- Generate spec.json from the CAD masters (`make_spec.py`); never hand-patch coordinates that a master drives.

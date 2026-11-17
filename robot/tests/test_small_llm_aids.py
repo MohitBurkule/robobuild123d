@@ -178,3 +178,25 @@ def test_lever_ranges(tmp_path):
     out = jiggle.lever_ranges(sp, lv, samples=36, log=lambda *_: None)
     clean = out["params.py:BAY"]["clean"]
     assert clean and clean[0][1] <= 7.0 + 1e-6 and clean[0][1] >= 6.0
+
+
+def test_fit_move_hint_picks_free_side():
+    import math
+    from robot.checks.fit import move_hint
+    gaps = {(0, 1): (0.0, "tub"), (0, -1): (1.5, "tub"), (1, 1): (math.inf, None)}
+    h = move_hint("battery", gaps, 0.4)
+    assert "move `battery` +0.60 mm along y" in h
+    assert "No side" in move_hint("battery", {(0, 1): (0.1, "tub")}, 0.4)
+
+
+def test_catalog_fits_filter(capsys):
+    from robot.cli import main
+    assert main(["catalog", "--kind", "battery", "--fits", "40x20x12"]) == 0
+    out = capsys.readouterr().out
+    assert "lipo_2s_180" in out and "tattu" not in out
+
+
+def test_field_help_examples_and_readers():
+    from robot import fieldhelp
+    assert any("countersink" in r for r in fieldhelp.examples("secondary_ops"))
+    assert "robot/checks/process.py" in fieldhelp.readers("secondary_ops")
