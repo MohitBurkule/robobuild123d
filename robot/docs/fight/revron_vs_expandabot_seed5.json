@@ -1,0 +1,500 @@
+{
+ "robots": [
+  "Revron",
+  "Expandabot"
+ ],
+ "seconds": 20.0,
+ "wall_s": 153.8,
+ "events": [
+  [
+   1.352,
+   "fire",
+   "Expandabot",
+   "flipper",
+   0
+  ],
+  [
+   1.7269999999998262,
+   "break",
+   "Expandabot",
+   "clamp_r",
+   748.3
+  ],
+  [
+   1.984,
+   "hit",
+   "Revron",
+   "weapon",
+   0.5
+  ],
+  [
+   2.2560000000000002,
+   "hit",
+   "Revron",
+   "weapon",
+   1.43
+  ],
+  [
+   2.54,
+   "hit",
+   "Revron",
+   "weapon",
+   1.16
+  ],
+  [
+   6.776000000000001,
+   "hit",
+   "Revron",
+   "weapon",
+   0.65
+  ],
+  [
+   7.772,
+   "hit",
+   "Revron",
+   "weapon",
+   1.66
+  ],
+  [
+   7.855099999995032,
+   "break",
+   "Revron",
+   "fork_r",
+   120.3
+  ],
+  [
+   8.264000000000001,
+   "fire",
+   "Expandabot",
+   "flipper",
+   0
+  ],
+  [
+   9.24,
+   "fire",
+   "Expandabot",
+   "flipper",
+   0
+  ],
+  [
+   10.040000000000001,
+   "fire",
+   "Expandabot",
+   "flipper",
+   0
+  ],
+  [
+   10.844000000000001,
+   "fire",
+   "Expandabot",
+   "flipper",
+   0
+  ],
+  [
+   11.532,
+   "hit",
+   "Revron",
+   "weapon",
+   1.28
+  ],
+  [
+   12.064,
+   "hit",
+   "Revron",
+   "weapon",
+   0.97
+  ],
+  [
+   12.404,
+   "hit",
+   "Revron",
+   "weapon",
+   1.61
+  ],
+  [
+   12.524000000000001,
+   "hit",
+   "Revron",
+   "weapon",
+   1.23
+  ],
+  [
+   12.928,
+   "hit",
+   "Revron",
+   "weapon",
+   1.37
+  ],
+  [
+   13.56,
+   "hit",
+   "Revron",
+   "weapon",
+   1.3
+  ],
+  [
+   14.052000000000001,
+   "hit",
+   "Revron",
+   "weapon",
+   2.2
+  ],
+  [
+   14.324,
+   "hit",
+   "Revron",
+   "weapon",
+   1.19
+  ],
+  [
+   14.892000000000001,
+   "hit",
+   "Revron",
+   "weapon",
+   1.4
+  ],
+  [
+   15.228000000000002,
+   "hit",
+   "Revron",
+   "weapon",
+   1.54
+  ],
+  [
+   15.332,
+   "hit",
+   "Revron",
+   "weapon",
+   3.46
+  ],
+  [
+   15.396,
+   "hit",
+   "Revron",
+   "weapon",
+   1.04
+  ],
+  [
+   15.473399999977277,
+   "break",
+   "Revron",
+   "fork_l",
+   317.2
+  ],
+  [
+   15.474399999977274,
+   "break",
+   "Revron",
+   "side_r",
+   1743.2
+  ],
+  [
+   16.788,
+   "fire",
+   "Expandabot",
+   "flipper",
+   0
+  ],
+  [
+   17.016000000000002,
+   "hit",
+   "Revron",
+   "weapon",
+   2.04
+  ],
+  [
+   17.092000000000002,
+   "hit",
+   "Revron",
+   "weapon",
+   1.61
+  ],
+  [
+   17.172,
+   "hit",
+   "Revron",
+   "weapon",
+   1.1
+  ],
+  [
+   17.44,
+   "hit",
+   "Revron",
+   "weapon",
+   1.75
+  ],
+  [
+   17.772000000000002,
+   "hit",
+   "Revron",
+   "weapon",
+   3.72
+  ],
+  [
+   18.048000000000002,
+   "hit",
+   "Revron",
+   "weapon",
+   1.12
+  ]
+ ],
+ "hits": [
+  [
+   1.984,
+   "Revron",
+   0.5
+  ],
+  [
+   2.256,
+   "Revron",
+   1.43
+  ],
+  [
+   2.54,
+   "Revron",
+   1.16
+  ],
+  [
+   6.776,
+   "Revron",
+   0.65
+  ],
+  [
+   7.772,
+   "Revron",
+   1.66
+  ],
+  [
+   11.532,
+   "Revron",
+   1.28
+  ],
+  [
+   12.064,
+   "Revron",
+   0.97
+  ],
+  [
+   12.404,
+   "Revron",
+   1.61
+  ],
+  [
+   12.524,
+   "Revron",
+   1.23
+  ],
+  [
+   12.928,
+   "Revron",
+   1.37
+  ],
+  [
+   13.56,
+   "Revron",
+   1.3
+  ],
+  [
+   14.052,
+   "Revron",
+   2.2
+  ],
+  [
+   14.324,
+   "Revron",
+   1.19
+  ],
+  [
+   14.892,
+   "Revron",
+   1.4
+  ],
+  [
+   15.228,
+   "Revron",
+   1.54
+  ],
+  [
+   15.332,
+   "Revron",
+   3.46
+  ],
+  [
+   15.396,
+   "Revron",
+   1.04
+  ],
+  [
+   17.016,
+   "Revron",
+   2.04
+  ],
+  [
+   17.092,
+   "Revron",
+   1.61
+  ],
+  [
+   17.172,
+   "Revron",
+   1.1
+  ],
+  [
+   17.44,
+   "Revron",
+   1.75
+  ],
+  [
+   17.772,
+   "Revron",
+   3.72
+  ],
+  [
+   18.048,
+   "Revron",
+   1.12
+  ]
+ ],
+ "outcome": {
+  "Revron": {
+   "inverted": true,
+   "stuck_inverted": true,
+   "out_of_arena": false,
+   "parts_lost": [
+    "fork_l",
+    "fork_r",
+    "side_r"
+   ],
+   "pos": [
+    -0.371,
+    0.444,
+    0.025
+   ]
+  },
+  "Expandabot": {
+   "inverted": false,
+   "stuck_inverted": false,
+   "out_of_arena": false,
+   "parts_lost": [
+    "clamp_r"
+   ],
+   "pos": [
+    -0.061,
+    0.536,
+    0.012
+   ]
+  }
+ },
+ "peak": {
+  "Revron": {
+   "tilt_deg": 177.2,
+   "lift_mm": 359.7
+  },
+  "Expandabot": {
+   "tilt_deg": 177.2,
+   "lift_mm": 359.0
+  }
+ },
+ "welds": [
+  {
+   "robot": "Revron",
+   "part": "top_panel",
+   "break_N": 880.0,
+   "peak_N": 310.9,
+   "broken_at": null
+  },
+  {
+   "robot": "Revron",
+   "part": "fork_l",
+   "break_N": 120.0,
+   "peak_N": 317.2,
+   "broken_at": 15.473399999977277
+  },
+  {
+   "robot": "Revron",
+   "part": "wedgelet_l",
+   "break_N": 400.0,
+   "peak_N": 100.0,
+   "broken_at": null
+  },
+  {
+   "robot": "Revron",
+   "part": "side_l",
+   "break_N": 1200.0,
+   "peak_N": 833.6,
+   "broken_at": null
+  },
+  {
+   "robot": "Revron",
+   "part": "fork_r",
+   "break_N": 120.0,
+   "peak_N": 120.3,
+   "broken_at": 7.855099999995032
+  },
+  {
+   "robot": "Revron",
+   "part": "wedgelet_r",
+   "break_N": 400.0,
+   "peak_N": 98.4,
+   "broken_at": null
+  },
+  {
+   "robot": "Revron",
+   "part": "side_r",
+   "break_N": 1200.0,
+   "peak_N": 1743.2,
+   "broken_at": 15.474399999977274
+  },
+  {
+   "robot": "Expandabot",
+   "part": "lid_r",
+   "break_N": 440.0,
+   "peak_N": 170.1,
+   "broken_at": null
+  },
+  {
+   "robot": "Expandabot",
+   "part": "lid_l",
+   "break_N": 440.0,
+   "peak_N": 178.4,
+   "broken_at": null
+  },
+  {
+   "robot": "Expandabot",
+   "part": "side_r",
+   "break_N": 880.0,
+   "peak_N": 155.8,
+   "broken_at": null
+  },
+  {
+   "robot": "Expandabot",
+   "part": "side_l",
+   "break_N": 880.0,
+   "peak_N": 223.0,
+   "broken_at": null
+  },
+  {
+   "robot": "Expandabot",
+   "part": "clamp_l",
+   "break_N": 660.0,
+   "peak_N": 71.6,
+   "broken_at": null
+  },
+  {
+   "robot": "Expandabot",
+   "part": "clamp_r",
+   "break_N": 660.0,
+   "peak_N": 748.3,
+   "broken_at": 1.7269999999998262
+  }
+ ],
+ "defaults": {
+  "Revron": [
+   "breakable"
+  ],
+  "Expandabot": [
+   "breakable"
+  ]
+ },
+ "winner": "Expandabot"
+}

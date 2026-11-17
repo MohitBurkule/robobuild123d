@@ -5800,5 +5800,28 @@
     "dspacer"
    ]
   }
- ]
+ ],
+ "sim": {
+  "forward": [
+   0,
+   1
+  ],
+  "strategy": "spinner",
+  "drive": {
+   "max_rad_s": 230,
+   "torque_Nm": 0.05
+  },
+  "weapon": {
+   "rpm": 15000,
+   "torque_Nm": 0.12,
+   "spin": 1
+  },
+  "danger": [
+   {
+    "deg": 0,
+    "half_deg": 60,
+    "reach_mm": 75
+   }
+  ]
+ }
 }
