@@ -1,0 +1,361 @@
+{
+ "robots": [
+  "Revron",
+  "Expandabot"
+ ],
+ "seconds": 20.0,
+ "wall_s": 155.0,
+ "events": [
+  [
+   1.228,
+   "fire",
+   "Expandabot",
+   "flipper",
+   0
+  ],
+  [
+   3.819100000003635,
+   "break",
+   "Expandabot",
+   "side_l",
+   940.1
+  ],
+  [
+   6.38,
+   "hit",
+   "Revron",
+   "weapon",
+   1.7
+  ],
+  [
+   6.716,
+   "hit",
+   "Revron",
+   "weapon",
+   1.47
+  ],
+  [
+   7.152,
+   "hit",
+   "Revron",
+   "weapon",
+   1.12
+  ],
+  [
+   7.170199999996628,
+   "break",
+   "Revron",
+   "fork_r",
+   140.3
+  ],
+  [
+   7.800000000000001,
+   "hit",
+   "Revron",
+   "weapon",
+   1.23
+  ],
+  [
+   8.22,
+   "hit",
+   "Revron",
+   "weapon",
+   1.52
+  ],
+  [
+   8.392000000000001,
+   "hit",
+   "Revron",
+   "weapon",
+   2.4
+  ],
+  [
+   11.103099999987462,
+   "break",
+   "Expandabot",
+   "side_r",
+   966.5
+  ],
+  [
+   11.864,
+   "hit",
+   "Revron",
+   "weapon",
+   2.33
+  ],
+  [
+   12.076,
+   "hit",
+   "Revron",
+   "weapon",
+   1.15
+  ],
+  [
+   12.628,
+   "hit",
+   "Revron",
+   "weapon",
+   1.05
+  ],
+  [
+   13.016,
+   "hit",
+   "Revron",
+   "weapon",
+   0.72
+  ],
+  [
+   13.42,
+   "hit",
+   "Revron",
+   "weapon",
+   1.53
+  ],
+  [
+   13.684000000000001,
+   "hit",
+   "Revron",
+   "weapon",
+   1.38
+  ],
+  [
+   13.996,
+   "hit",
+   "Revron",
+   "weapon",
+   1.09
+  ],
+  [
+   15.940000000000001,
+   "hit",
+   "Revron",
+   "weapon",
+   1.92
+  ],
+  [
+   16.112000000000002,
+   "hit",
+   "Revron",
+   "weapon",
+   1.88
+  ]
+ ],
+ "hits": [
+  [
+   6.38,
+   "Revron",
+   1.7
+  ],
+  [
+   6.716,
+   "Revron",
+   1.47
+  ],
+  [
+   7.152,
+   "Revron",
+   1.12
+  ],
+  [
+   7.8,
+   "Revron",
+   1.23
+  ],
+  [
+   8.22,
+   "Revron",
+   1.52
+  ],
+  [
+   8.392,
+   "Revron",
+   2.4
+  ],
+  [
+   11.864,
+   "Revron",
+   2.33
+  ],
+  [
+   12.076,
+   "Revron",
+   1.15
+  ],
+  [
+   12.628,
+   "Revron",
+   1.05
+  ],
+  [
+   13.016,
+   "Revron",
+   0.72
+  ],
+  [
+   13.42,
+   "Revron",
+   1.53
+  ],
+  [
+   13.684,
+   "Revron",
+   1.38
+  ],
+  [
+   13.996,
+   "Revron",
+   1.09
+  ],
+  [
+   15.94,
+   "Revron",
+   1.92
+  ],
+  [
+   16.112,
+   "Revron",
+   1.88
+  ]
+ ],
+ "outcome": {
+  "Revron": {
+   "inverted": false,
+   "stuck_inverted": false,
+   "out_of_arena": false,
+   "parts_lost": [
+    "fork_r"
+   ],
+   "pos": [
+    0.535,
+    -0.36,
+    0.055
+   ]
+  },
+  "Expandabot": {
+   "inverted": true,
+   "stuck_inverted": false,
+   "out_of_arena": false,
+   "parts_lost": [
+    "side_r",
+    "side_l"
+   ],
+   "pos": [
+    0.545,
+    -0.367,
+    0.028
+   ]
+  }
+ },
+ "peak": {
+  "Revron": {
+   "tilt_deg": 177.0,
+   "lift_mm": 340.2
+  },
+  "Expandabot": {
+   "tilt_deg": 179.7,
+   "lift_mm": 229.6
+  }
+ },
+ "welds": [
+  {
+   "robot": "Revron",
+   "part": "top_panel",
+   "break_N": 880.0,
+   "peak_N": 232.5,
+   "broken_at": null
+  },
+  {
+   "robot": "Revron",
+   "part": "fork_l",
+   "break_N": 120.0,
+   "peak_N": 118.1,
+   "broken_at": null
+  },
+  {
+   "robot": "Revron",
+   "part": "wedgelet_l",
+   "break_N": 400.0,
+   "peak_N": 88.3,
+   "broken_at": null
+  },
+  {
+   "robot": "Revron",
+   "part": "side_l",
+   "break_N": 1200.0,
+   "peak_N": 977.7,
+   "broken_at": null
+  },
+  {
+   "robot": "Revron",
+   "part": "fork_r",
+   "break_N": 120.0,
+   "peak_N": 140.3,
+   "broken_at": 7.170199999996628
+  },
+  {
+   "robot": "Revron",
+   "part": "wedgelet_r",
+   "break_N": 400.0,
+   "peak_N": 143.9,
+   "broken_at": null
+  },
+  {
+   "robot": "Revron",
+   "part": "side_r",
+   "break_N": 1200.0,
+   "peak_N": 673.3,
+   "broken_at": null
+  },
+  {
+   "robot": "Expandabot",
+   "part": "lid_r",
+   "break_N": 440.0,
+   "peak_N": 360.5,
+   "broken_at": null
+  },
+  {
+   "robot": "Expandabot",
+   "part": "lid_l",
+   "break_N": 440.0,
+   "peak_N": 112.6,
+   "broken_at": null
+  },
+  {
+   "robot": "Expandabot",
+   "part": "side_r",
+   "break_N": 880.0,
+   "peak_N": 966.5,
+   "broken_at": 11.103099999987462
+  },
+  {
+   "robot": "Expandabot",
+   "part": "side_l",
+   "break_N": 880.0,
+   "peak_N": 940.1,
+   "broken_at": 3.819100000003635
+  },
+  {
+   "robot": "Expandabot",
+   "part": "clamp_l",
+   "break_N": 660.0,
+   "peak_N": 102.2,
+   "broken_at": null
+  },
+  {
+   "robot": "Expandabot",
+   "part": "clamp_r",
+   "break_N": 660.0,
+   "peak_N": 328.8,
+   "broken_at": null
+  }
+ ],
+ "defaults": {
+  "Revron": [
+   "breakable"
+  ],
+  "Expandabot": [
+   "breakable"
+  ]
+ },
+ "winner": "Revron"
+}

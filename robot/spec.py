@@ -132,6 +132,7 @@ class Spec:
         self.start_pose = dict(d.get("start_pose") or {})
         self.ground_z = d.get("ground_z")
         self.calibration = dict(d.get("calibration") or {})
+        self.sim = dict(d.get("sim") or {})  # fight-sim description (robot/fight/profile.py)
         # declared teardown moves: [{"parts": [ids], "dir": [x, y, z], "reason": ...}] - parts that come off together
         # (a fork pinned in a wedgelet slot) in the real service order; the assembly check tries them as one move
         self.teardown = [dict(t) for t in (d.get("teardown") or [])]
@@ -155,6 +156,7 @@ class Spec:
             "connections": [c.to_dict() for c in self.connections], "claims": [c.to_dict() for c in self.claims],
             "start_pose": self.start_pose, "ground_z": self.ground_z, "calibration": self.calibration,
             **({"teardown": self.teardown} if self.teardown else {}),
+            **({"sim": self.sim} if self.sim else {}),
         }
 
     def copy(self) -> "Spec":
