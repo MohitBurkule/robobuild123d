@@ -153,6 +153,8 @@ def servo_pose():
 def tub():
     outer = bd.Pos(TUB_XC, 0, TUB_Z0 + TUB_H / 2) * bd.Box(TUB_L, TUB_W, TUB_H)
     inner = bd.Pos(TUB_XC, 0, TUB_Z0 + WALL + TUB_H / 2) * bd.Box(TUB_L - 2 * WALL, TUB_W - 2 * WALL, TUB_H)
+    inner = inner.fillet(1.2, [e for e in inner.edges()
+                               if e.bounding_box().size.X < 1e-6 and e.bounding_box().size.Y < 1e-6])
     body = outer - inner
 
     # servo tray: block filling the channel around the servo, snug cavity OPEN AT THE TOP (the servo lifts out
@@ -185,10 +187,16 @@ def tub():
 
             def _mouths(p, x=x, s=s):
                 return [e for e in p.edges()
-                        if e.geom_type == "CIRCLE"
+                        if e.geom_type == bd.GeomType.CIRCLE
                         and (abs(e.center().Z - TUB_Z1) < RIM_TOL or abs(e.center().Z - bz0) < RIM_TOL)
                         and math.hypot(e.center().X - x, e.center().Y - s * LID_PAD_Y) < 1.5]
             body = _fillet_edges(body, 1.0, _mouths)
+
+            def _pad_seams(p, x=x, s=s, pw=pw):
+                return [e for e in p.edges()
+                        if abs(e.center().Y - s * (TUB_W / 2 - WALL)) < RIM_TOL
+                        and abs(e.center().X - x) < pw / 2 + 0.5]
+            body = _fillet_edges(body, 1.0, _pad_seams)
 
     # standoff columns to the side plates (mirror pattern), insert bores through the full column
     for s in (-1, 1):

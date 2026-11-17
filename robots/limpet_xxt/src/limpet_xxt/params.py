@@ -228,7 +228,7 @@ LID_PAD_Y = 32.0                                            # pad centre |y| (in
 LID_PAD_D = 7.0                                             # pad size along Y
 LID_PAD_H = 8.0                                             # pad hangs this far down from the wall top (bottom seam >= 3 mm below the M2x6 bolt tip)
 LID_PAD_BORE_FLOOR = 2.2                                    # blind insert bore leaves this floor under the pad (mouth fillet eats 1 mm)
-LID_PADS = ((-45.5, 7.5), (13.9, 6.5))                      # (screw X, pad width X): rear pad merges into the rear wall corner
+LID_PADS = ((-45.5, 7.5), (13.9, 8.0))                      # (screw X, pad width X): rear pad merges into the rear wall corner; front pad +x face buries 0.2 past the cavity front face so the seam fillet can't collide with the cavity corner fillet
 LID_SCREWS_X_L = tuple(x for x, _w in LID_PADS)             # left lid: clear of the ESC footprint (ESC slides out +z)
 LID_SCREWS_X_R = tuple(x for x, _w in LID_PADS)             # right lid: clear of the switch tray and the lid slot
 LID_SLOT_R = 0.5                                            # corner radius on the switch slot in the right lid (>= laser kerf)
