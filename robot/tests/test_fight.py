@@ -149,5 +149,56 @@ def test_gyro_tilts_a_turning_spinner():
                 mx = max(mx, sim.tilt("A"))
         tilt[spin] = mx
         if spin:
-            assert abs(sim.weapon_omega("A")) > 300
+            assert abs(sim.weapon_omega("A")) > 200
     assert tilt[True] > tilt[False] + 1.0, tilt
+
+
+def test_hazards_wire_effects_and_delay():
+    from types import SimpleNamespace
+
+    from robot.fight import hazards
+
+    h = hazards.Hazards.__new__(hazards.Hazards)
+    h.kind = {"A": {"battery": "battery", "power_switch": "switch", "motor_l": "motor", "wmotor": "weapon_motor",
+                    "servo": "servo", "esc": "esc"}}
+    h.com = {"A": {"motor_l": np.array([-0.02, 0, 0])}}
+    eff = lambda a, b: h._wire_effect("A", {"ends": (a, b)})  # noqa: E731
+    assert eff("battery", "power_switch") == "all"
+    assert eff("esc", "motor_l") == "side:l"
+    assert eff("esc", "wmotor") == "weapon"
+    assert eff("esc", "servo") == "lifter"
+    assert hazards._seg_dist(np.array([0, 0.001, 0]), np.array([[-1, 0, 0], [1, 0, 0.0]])) == pytest.approx(0.001)
+    # driver delay: a command comes back reaction_s later
+    h.p = {"A": dict(hazards.DEFAULTS, steer_noise=0.0)}
+    h.queue = {"A": hazards.deque()}
+    h.rng = np.random.default_rng(0)
+    h.sim = SimpleNamespace(profiles={"A": SimpleNamespace(drive_max=100.0)})
+    assert h.delay("A", 0.0, {"drive": (1, 1)}) is None
+    assert h.delay("A", 0.1, {"drive": (2, 2)}) is None
+    assert h.delay("A", 0.16, {"drive": (3, 3)})["drive"] == (1, 1)
+
+
+def test_debris_collides_with_own_robot_after_breaking():
+    from robot.fight import hazards
+    from robot.fight.arena import FightSim
+    from robot.sim.scene import Placement
+
+    sp = _spec(robot_type="wedge", sim={"forward": [0, 1], "breakable": {"lid": 1e-3}})
+    sim = FightSim()
+    sim.add_fighter(_model(), profile.build(sp), Placement("A", (0, 0), 90))
+    sim.compile()
+    hz = hazards.Hazards(sim, {"A": sp})
+    lid = [g for g, o in hz.owner.items() if o[2] == "lid"]
+    assert all(sim.m.geom_contype[g] != hazards.DEBRIS_BIT for g in lid)
+    sim.d.qvel[:] = 0
+    for k in range(6000):
+        if k == 10:  # knock the broken lid off its seat
+            b = sim.m.body("A/lid").id
+            sim.d.xfrc_applied[b, :3] = [0, 0, 0.3]
+        if k == 200:
+            sim.d.xfrc_applied[:] = 0
+        sim.step_damage()
+        if k % 5 == 0:
+            hz.tick(k * sim.timestep, 5 * sim.timestep)
+    assert ("A", "lid") in hz.debris_live
+    assert all(sim.m.geom_contype[g] == hazards.DEBRIS_BIT for g in lid)

@@ -120,9 +120,10 @@ class FightSim(Sim):
                         self._add_part_geom(b, pre, g, piece, i * 100 + k)
                 else:
                     self._add_part_geom(b, pre, g, p, i)
-        for i in range(len(names)):
-            for j in range(i + 1, len(names)):
-                self.spec.add_exclude(bodyname1=names[i], bodyname2=names[j])
+        if self.fixed_motors:  # hazards mode uses contype/conaffinity bits instead, so debris can hit its own robot
+            for i in range(len(names)):
+                for j in range(i + 1, len(names)):
+                    self.spec.add_exclude(bodyname1=names[i], bodyname2=names[j])
         return name
 
     def _hinge(self, pre, g, b, prof):
@@ -164,10 +165,26 @@ class FightSim(Sim):
 
     def compile(self):
         tc = max(self.CONTACT_TC, 2.5 * self.timestep)
+        blade = {}
+        for r, prof in self.profiles.items():
+            wg = self.robots[r].weapon
+            if wg is not None:  # blade flex: a thin disc/bar gives a little on impact -> longer, softer contact
+                blade[f"{r}/"] = (wg, max(tc, float((prof.raw.get("weapon") or {}).get("blade_tc", 4e-4))))
         for g in self.spec.geoms:
             # damping ratio < 1 = some bounce: printed parts / polycarbonate walls rebound (restitution ~0.3-0.5)
             g.solref = [tc, 0.5]
+            for pre, (wg, btc) in blade.items():
+                if any(g.name.startswith(pre + p.id + "_") for p in wg.parts):
+                    g.solref = [btc, 0.5]
         super().compile()
+        if not self.fixed_motors:  # own-robot geoms never collide; robots hit the world, each other and (later) debris
+            bits = {r: 1 << (i + 1) for i, r in enumerate(self.robots)}
+            for gi in range(self.m.ngeom):
+                r = self.m.geom(gi).name.split("/")[0]
+                if r in bits:
+                    self.m.geom_contype[gi], self.m.geom_conaffinity[gi] = bits[r], 0xFFFF & ~bits[r]
+                else:
+                    self.m.geom_contype[gi], self.m.geom_conaffinity[gi] = 1, 0xFFFF
         self.welds = [Weld(r, p, self.m.equality(n).id, bn) for r, p, n, bn in self._weld_spec]
         return self
 
@@ -210,8 +227,9 @@ class FightSim(Sim):
 
     def lift(self, robot, angle):
         model = self.robots[robot]
-        g = self.profiles[robot].lifter["group"]
-        if model.group(g) is not None:
+        lf = self.profiles[robot].lifter
+        g = lf["group"] if lf else None
+        if g and model.group(g) is not None:
             self.d.ctrl[self._act(robot, g)] = angle
 
     def lifter_angle(self, robot):
@@ -255,6 +273,14 @@ class FightSim(Sim):
 
     def tilt(self, robot):
         return self.up_tilt_deg(robot)
+
+    def yaw_rate(self, robot):
+        j = self.m.joint(f"{robot}/free")
+        return float(self.d.qvel[j.dofadr[0] + 5])
+
+    def vel_xy(self, robot):
+        j = self.m.joint(f"{robot}/free")
+        return np.array(self.d.qvel[j.dofadr[0]:j.dofadr[0] + 2])
 
     def frame(self, robot):
         """(xy position, heading of the robot's forward axis in world, R) of a robot's chassis."""
