@@ -11,7 +11,7 @@ import build123d as bd
 from robot.cad.holes import hole_tool
 
 from . import params as P
-from . import tub
+from . import skids, tub
 from ._reuse import weapon_motor
 
 SWITCH_HOLE_D = 4.0     # mm hex-key access to the FingerTech mini switch (tool-free rule: key on a lanyard)
@@ -37,5 +37,5 @@ def top_panel():
     for x, y in rim_xy():
         face -= bd.Pos(x, y) * bd.Circle(1.1)       # M2 normal clearance (fastener_catalog.clearance(2) = 2.2)
     face -= bd.Pos(*P.SWITCH_XY) * bd.Circle(SWITCH_HOLE_D / 2)
-    face -= bd.Pos(0, P.WPN_AXIS_Y) * bd.Circle(P.DOME_SCREW_CLR_D / 2)   # M2 dome screw, clearance
+    face -= bd.Pos(0, P.WPN_AXIS_Y) * bd.Circle(skids.DOME_STEM_R + 0.05)   # the dome's stem plugs in here (snap)
     return bd.Pos(0, 0, P.TUB_TOP_Z - P.TOP_PANEL_T) * bd.extrude(face, P.TOP_PANEL_T)

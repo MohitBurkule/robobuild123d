@@ -155,6 +155,7 @@
    "catalog": null,
    "material": "steel",
    "process": "turned",
+   "shaft_of": "weapon_motor_can",
    "shape": {
     "type": "model",
     "file": "src/build_scythe_classic.py",
@@ -181,6 +182,7 @@
    "catalog": null,
    "material": "steel",
    "process": "cots",
+   "rotates_with": "fixed",
    "stock": "MR85ZZ 5 x 8 x 2.5",
    "shape": {
     "type": "model",
@@ -234,16 +236,18 @@
    "label": "rule 5f lock: removable 3 mm steel pin through the bar's lock hole into the tub floor (orange, tethered)"
   },
   {
-   "id": "skid_foot",
-   "kind": "caster",
+   "id": "skid_arm",
+   "kind": "structure",
    "catalog": null,
-   "material": "uhmw",
-   "process": "turned",
+   "material": "nylon",
+   "process": "fdm",
+   "print_orientation": "+z",
+   "solid_fraction": 0.85,
    "shape": {
     "type": "model",
     "file": "src/build_scythe_classic.py",
     "params": {
-     "part": "skid_foot"
+     "part": "skid_arm"
     }
    },
    "at": [
@@ -256,7 +260,7 @@
     0,
     0
    ],
-   "label": "caster puck under the bar on the axis, MR85 seat (0.5 mm off the floor)"
+   "label": "printed strip under the whole bar sweep, from the pod floor to a puck on the axis holding the MR85 (bar passes 1.1 mm over it)"
   },
   {
    "id": "skid_dome",
@@ -281,7 +285,7 @@
     0,
     0
    ],
-   "label": "POM-class dome on the top panel"
+   "label": "POM button on the top panel (inverted front contact), stem plugged in a 3 mm panel hole"
   },
   {
    "id": "weapon_motor",
@@ -388,7 +392,7 @@
    "at": [
     -19.1,
     15.6,
-    16.5
+    17.2
    ],
    "rot": [
     0,
@@ -405,7 +409,7 @@
    "at": [
     0.0,
     -14.0,
-    13.0
+    13.7
    ],
    "rot": [
     0,
@@ -421,7 +425,7 @@
    "at": [
     25.6,
     14.9,
-    12.25
+    12.95
    ],
    "rot": [
     0,
@@ -440,7 +444,7 @@
    "at": [
     "P.SWITCH_XY[0] + 1.2",
     "P.SWITCH_XY[1]",
-    13.675
+    14.375
    ],
    "rot": [
     0,
@@ -455,7 +459,7 @@
    "at": [
     -19.6,
     -31.4,
-    16.1
+    16.8
    ],
    "rot": [
     0,
@@ -471,9 +475,9 @@
    "designation": "M2x6",
    "material": "steel",
    "at": [
-    31.226,
+    31.366,
     15.5,
-    30.6
+    31.1
    ],
    "dir": [
     0,
@@ -503,9 +507,9 @@
    "designation": "M2x6",
    "material": "steel",
    "at": [
-    15.613,
-    42.542,
-    30.6
+    15.683,
+    42.663,
+    31.1
    ],
    "dir": [
     0,
@@ -535,9 +539,9 @@
    "designation": "M2x6",
    "material": "steel",
    "at": [
-    -15.613,
-    42.542,
-    30.6
+    -15.683,
+    42.663,
+    31.1
    ],
    "dir": [
     0,
@@ -567,9 +571,9 @@
    "designation": "M2x6",
    "material": "steel",
    "at": [
-    -31.226,
+    -31.366,
     15.5,
-    30.6
+    31.1
    ],
    "dir": [
     0,
@@ -599,9 +603,9 @@
    "designation": "M2x6",
    "material": "steel",
    "at": [
-    -15.613,
-    -11.542,
-    30.6
+    -15.683,
+    -11.663,
+    31.1
    ],
    "dir": [
     0,
@@ -631,9 +635,9 @@
    "designation": "M2x6",
    "material": "steel",
    "at": [
-    15.613,
-    -11.542,
-    30.6
+    15.683,
+    -11.663,
+    31.1
    ],
    "dir": [
     0,
@@ -660,12 +664,12 @@
   },
   {
    "id": "stator_0",
-   "designation": "M2x6",
+   "designation": "M2x3",
    "material": "steel",
    "at": [
     6.0,
     15.5,
-    30.6
+    31.1
    ],
    "dir": [
     0,
@@ -673,14 +677,13 @@
     -1
    ],
    "through": [
-    "top_panel",
-    "tub"
+    "top_panel"
    ],
    "threads_into": "weapon_motor",
    "tool": "hex1.3",
    "hole": {
     "d": 2.0,
-    "length": 6.0,
+    "length": 3.0,
     "head": "button",
     "clearance_d": 2.2,
     "into": "through",
@@ -693,12 +696,12 @@
   },
   {
    "id": "stator_1",
-   "designation": "M2x6",
+   "designation": "M2x3",
    "material": "steel",
    "at": [
     0.0,
     21.5,
-    30.6
+    31.1
    ],
    "dir": [
     0,
@@ -706,14 +709,13 @@
     -1
    ],
    "through": [
-    "top_panel",
-    "tub"
+    "top_panel"
    ],
    "threads_into": "weapon_motor",
    "tool": "hex1.3",
    "hole": {
     "d": 2.0,
-    "length": 6.0,
+    "length": 3.0,
     "head": "button",
     "clearance_d": 2.2,
     "into": "through",
@@ -726,12 +728,12 @@
   },
   {
    "id": "stator_2",
-   "designation": "M2x6",
+   "designation": "M2x3",
    "material": "steel",
    "at": [
     -6.0,
     15.5,
-    30.6
+    31.1
    ],
    "dir": [
     0,
@@ -739,14 +741,13 @@
     -1
    ],
    "through": [
-    "top_panel",
-    "tub"
+    "top_panel"
    ],
    "threads_into": "weapon_motor",
    "tool": "hex1.3",
    "hole": {
     "d": 2.0,
-    "length": 6.0,
+    "length": 3.0,
     "head": "button",
     "clearance_d": 2.2,
     "into": "through",
@@ -759,12 +760,12 @@
   },
   {
    "id": "stator_3",
-   "designation": "M2x6",
+   "designation": "M2x3",
    "material": "steel",
    "at": [
     -0.0,
     9.5,
-    30.6
+    31.1
    ],
    "dir": [
     0,
@@ -772,14 +773,13 @@
     -1
    ],
    "through": [
-    "top_panel",
-    "tub"
+    "top_panel"
    ],
    "threads_into": "weapon_motor",
    "tool": "hex1.3",
    "hole": {
     "d": 2.0,
-    "length": 6.0,
+    "length": 3.0,
     "head": "button",
     "clearance_d": 2.2,
     "into": "through",
@@ -792,12 +792,12 @@
   },
   {
    "id": "bar_0",
-   "designation": "M3x10",
+   "designation": "M3x8",
    "material": "steel",
    "at": [
-    -6.5,
+    -7.5,
     15.5,
-    4.0
+    5.0
    ],
    "dir": [
     0,
@@ -811,7 +811,7 @@
    "tool": "hex2.5",
    "hole": {
     "d": 3.0,
-    "length": 10.0,
+    "length": 8.0,
     "head": "csk",
     "clearance_d": 3.2,
     "into": "through",
@@ -828,12 +828,12 @@
   },
   {
    "id": "bar_1",
-   "designation": "M3x10",
+   "designation": "M3x8",
    "material": "steel",
    "at": [
-    6.5,
+    7.5,
     15.5,
-    4.0
+    5.0
    ],
    "dir": [
     0,
@@ -847,7 +847,7 @@
    "tool": "hex2.5",
    "hole": {
     "d": 3.0,
-    "length": 10.0,
+    "length": 8.0,
     "head": "csk",
     "clearance_d": 3.2,
     "into": "through",
@@ -863,13 +863,13 @@
    "removable": true
   },
   {
-   "id": "dome_0",
-   "designation": "M2x10",
+   "id": "arm_0",
+   "designation": "M2x8",
    "material": "steel",
    "at": [
-    0.0,
-    15.5,
-    32.6
+    -3.0,
+    -50.0,
+    11.2
    ],
    "dir": [
     0,
@@ -877,14 +877,45 @@
     -1
    ],
    "through": [
-    "skid_dome",
-    "top_panel"
+    "tub"
    ],
-   "threads_into": "weapon_motor",
+   "threads_into": "skid_arm",
    "tool": "hex1.3",
    "hole": {
     "d": 2.0,
-    "length": 10.0,
+    "length": 8.0,
+    "head": "button",
+    "clearance_d": 2.2,
+    "into": "through",
+    "side": "head",
+    "grip": 1.0,
+    "sink": 0.0
+   },
+   "head": "button",
+   "removable": true
+  },
+  {
+   "id": "arm_1",
+   "designation": "M2x8",
+   "material": "steel",
+   "at": [
+    3.0,
+    -50.0,
+    11.2
+   ],
+   "dir": [
+    0,
+    0,
+    -1
+   ],
+   "through": [
+    "tub"
+   ],
+   "threads_into": "skid_arm",
+   "tool": "hex1.3",
+   "hole": {
+    "d": 2.0,
+    "length": 8.0,
     "head": "button",
     "clearance_d": 2.2,
     "into": "through",
@@ -931,9 +962,15 @@
   },
   {
    "a": "bearing_caster",
-   "b": "skid_foot",
+   "b": "skid_arm",
    "method": "press_fit",
-   "reason": "MR85 outer ring pressed in the caster puck bore"
+   "reason": "MR85 outer ring pressed in the skid arm's puck bore"
+  },
+  {
+   "a": "skid_arm",
+   "b": "tub",
+   "method": "screw",
+   "reason": "2x M2 from the pod cavity through the tub floor into the arm riser"
   },
   {
    "a": "lock_pin",
@@ -956,8 +993,8 @@
   {
    "a": "skid_dome",
    "b": "top_panel",
-   "method": "screw",
-   "reason": "M2 screw from the dome through the top panel into the stator base"
+   "method": "snap",
+   "reason": "the dome's 2.9 mm stem snaps into a 3 mm top-panel hole; a hit on the dome presses it onto the panel"
   },
   {
    "a": "wheel_r",
@@ -987,9 +1024,9 @@
   },
   {
    "a": "weapon_motor",
-   "b": "tub",
+   "b": "top_panel",
    "method": "screw",
-   "reason": "stator base screws down through the top panel and boss"
+   "reason": "4x M2x3 from the top panel into the stator base"
   }
  ],
  "wires": [

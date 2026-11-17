@@ -13,7 +13,6 @@ import build123d as bd
 
 from . import params as P
 
-FOOT_R = P.SHAFT_D / 2   # mm: the shaft-end radius; M3 bar-bolt heads at r 5.5 clear it (a wider foot would not)
 DOME_H = P.MIN_GROUND_CLR + P.SKID_H   # mm proud of the top panel
 
 
@@ -21,43 +20,57 @@ def _z_cyl(r, h):
     return bd.Cylinder(r, h, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
 
 
-FOOT_CLR_FLOOR = 0.5   # mm: the caster puck rests this far above the floor when level
-FOOT_CLR_BAR = 0.5     # mm: and stays this far under the bar underside (bar spins over it)
-
-
-FOOT_R_OUT = 5.0       # mm caster puck outer radius (1.0 mm wall; 0.6 failed the uhmw thin-wall rule)
+ARM_CLR_FLOOR = 1.1    # mm: arm underside above the floor (profile ground clearance 1.0 + margin)
+ARM_CLR_BAR = 1.1      # mm: arm top under the bar underside (kin.rub_gap wants 1.0 mm for a weapon)
+ARM_W = 10.0           # mm strip width = puck diameter; bar-bolt driver path (x 5.65 .. 9.35 at PCD 15) stays clear
+ARM_RISER_Y = (-54.0, -46.0)   # mm: behind the bar sweep (rearmost sweep y = axis - r = -42.5); sits on the pod floor underside
 BEARING_OD_R = 4.0     # mm MR85 outer radius (bearing seat in the puck)
 BEARING_W = 2.5        # mm MR85 width
 SHAFT_R = P.SHAFT_D / 2
 
 
 def foot():
-    """World frame: a caster puck on the weapon axis (kind caster), bottom FOOT_CLR_FLOOR above the floor and top
-    FOOT_CLR_BAR under the bar underside. Its bore holds an MR85 bearing (outer ring pressed in the puck); the inner
-    ring rides the 5 mm weapon shaft, so the puck stays put on touch and the shaft turns in it. Not part of the rotor."""
-    h = P.BAR_Z0 - FOOT_CLR_BAR - FOOT_CLR_FLOOR
-    ring = _z_cyl(FOOT_R_OUT, h) - _z_cyl(BEARING_OD_R, h)
-    return bd.Pos(0, P.WPN_AXIS_Y, FOOT_CLR_FLOOR) * ring
+    """Skid arm (kind structure, FDM nylon, world frame): a 2.8 mm strip along the centre line from the pod floor underside
+    (a riser behind the bar sweep) forward UNDER the whole sweep disc to a round puck on the weapon axis. The bar passes over it
+    with a 1.1 mm gap; the puck's bore holds the MR85 bearing whose inner race rides the 5 mm weapon shaft. This is the only
+    way a static part can reach the axis below the bar: it comes in under the sweep, not through it."""
+    z0, z1 = ARM_CLR_FLOOR, P.BAR_Z0 - ARM_CLR_BAR
+    y0 = ARM_RISER_Y[0]
+    strip = bd.Pos(0, (y0 + P.WPN_AXIS_Y) / 2, z0) * bd.Box(ARM_W, P.WPN_AXIS_Y - y0, z1 - z0, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+    puck = bd.Pos(0, P.WPN_AXIS_Y, z0) * _z_cyl(ARM_W / 2, z1 - z0)
+    riser = bd.Pos(0, sum(ARM_RISER_Y) / 2, z0) * bd.Box(ARM_W, ARM_RISER_Y[1] - ARM_RISER_Y[0], P.tub_floor_z() - z0,
+                                                       align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+    arm = strip + puck + riser
+    bore = bd.Pos(0, P.WPN_AXIS_Y, z0 - 1) * _z_cyl(BEARING_OD_R, z1 - z0 + 2)
+    return arm - bore
 
 
 def bearing():
-    """World frame: MR85 5 x 8 x 2.5 (robot.catalog.BEARINGS 'mr85'), centred in the caster puck bore."""
-    h = P.BAR_Z0 - FOOT_CLR_BAR - FOOT_CLR_FLOOR
-    z = FOOT_CLR_FLOOR + (h - BEARING_W) / 2
+    """World frame: MR85 5 x 8 x 2.5 (robot.catalog.BEARINGS 'mr85'), centred in the arm's puck bore."""
+    z0, z1 = ARM_CLR_FLOOR, P.BAR_Z0 - ARM_CLR_BAR
+    z = z0 + (z1 - z0 - BEARING_W) / 2
     return bd.Pos(0, P.WPN_AXIS_Y, z) * (_z_cyl(BEARING_OD_R, BEARING_W) - _z_cyl(SHAFT_R, BEARING_W))
 
 
+def shaft_top_z():
+    """Shaft top: inside the stator bore, 1.1 mm under the stator base's top face (the motor's own bearings carry it there)."""
+    return P.wpn_motor_z() + 10.4 - 1.1
+
+
 def shaft():
-    """World frame: the 5 mm weapon shaft on the axis, from the puck's bottom up to the hub top. It runs through the
-    bar bore, the hub bore and the bearing; the GR1507 can (rotor) sits on the hub top."""
-    top = P.bar_top_z() + P.HUB_GAP + P.HUB_H
-    return bd.Pos(0, P.WPN_AXIS_Y, FOOT_CLR_FLOOR) * _z_cyl(SHAFT_R, top - FOOT_CLR_FLOOR)
+    """World frame: the 5 mm weapon shaft on the axis, from the arm underside up through the bearing, the bar bore, the hub
+    and the bell into the stator bore (the motor's own shaft extended: motor-as-hub on the top side)."""
+    return bd.Pos(0, P.WPN_AXIS_Y, ARM_CLR_FLOOR) * _z_cyl(SHAFT_R, shaft_top_z() - ARM_CLR_FLOOR)
+
+
+DOME_STEM_R = 1.45     # mm: the dome's stem plugs into a 3 mm hole in the top panel (snap; no screw, the axis is the shaft's)
 
 
 def dome():
-    """Turned POM button on the top panel over the weapon axis, with the M2 dome-screw clearance through it."""
+    """Turned POM button on the top panel over the weapon axis (inverted front contact), plugged into a 3 mm panel hole."""
     button = _z_cyl(P.SKID_D / 2, DOME_H)
-    return bd.Pos(0, P.WPN_AXIS_Y, P.TUB_TOP_Z) * (button - _z_cyl(P.DOME_SCREW_CLR_D / 2, DOME_H))
+    stem = bd.Pos(0, 0, -P.TOP_PANEL_T) * _z_cyl(DOME_STEM_R, P.TOP_PANEL_T)
+    return bd.Pos(0, P.WPN_AXIS_Y, P.TUB_TOP_Z) * (button + stem)
 
 
 def lock_pin():
@@ -68,4 +81,4 @@ def lock_pin():
 
 
 def parts():
-    return {"skid_foot": foot(), "bearing_caster": bearing(), "weapon_shaft": shaft(), "skid_dome": dome(), "lock_pin": lock_pin()}
+    return {"skid_arm": foot(), "bearing_caster": bearing(), "weapon_shaft": shaft(), "skid_dome": dome(), "lock_pin": lock_pin()}

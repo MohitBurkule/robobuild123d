@@ -15,6 +15,7 @@ sys.path.insert(0, os.path.join(HERE, "src"))
 
 import scythe_classic.panels as panels  # noqa: E402
 import scythe_classic.params as P  # noqa: E402
+import scythe_classic.skids as skids  # noqa: E402
 from scythe_classic._reuse import weapon_motor  # noqa: E402
 
 PARAMS_PATH = "src/scythe_classic/params.py"
@@ -55,13 +56,14 @@ def fasteners():
     for i, (r, deg, _d) in enumerate(weapon_motor.describe(P.WEAPON_MOTOR)["base_holes"]):
         x = r * math.cos(math.radians(deg))
         y = P.WPN_AXIS_Y + r * math.sin(math.radians(deg))
-        out.append(_screw(f"stator_{i}", "M2x6", (x, y, TOP_Z), (0, 0, -1), ["top_panel", "tub"], "weapon_motor",
-                          "button", _hole(2.0, 6.0, "button")))
+        out.append(_screw(f"stator_{i}", "M2x3", (x, y, TOP_Z), (0, 0, -1), ["top_panel"], "weapon_motor",
+                          "button", _hole(2.0, 3.0, "button")))
     for i, sign in enumerate((-1, 1)):
-        out.append(_screw(f"bar_{i}", "M3x10", (sign * P.BAR_BOLT_PCD / 2, P.WPN_AXIS_Y, P.BAR_Z0), (0, 0, 1),
-                          ["bar"], "weapon_hub", "csk", _hole(3.0, 10.0, "csk", P.CSK_D)))
-    out.append(_screw("dome_0", "M2x10", (0.0, P.WPN_AXIS_Y, SKID_TOP_Z), (0, 0, -1), ["skid_dome", "top_panel"],
-                      "weapon_motor", "button", _hole(2.0, 10.0, "button")))
+        out.append(_screw(f"bar_{i}", "M3x8", (sign * P.BAR_BOLT_PCD / 2, P.WPN_AXIS_Y, P.BAR_Z0), (0, 0, 1),
+                          ["bar"], "weapon_hub", "csk", _hole(3.0, 8.0, "csk", P.CSK_D)))
+    for i, sx in enumerate((-3.0, 3.0)):   # skid arm riser: M2 from the pod cavity down through the tub floor into the arm
+        out.append(_screw(f"arm_{i}", "M2x8", (sx, sum(skids.ARM_RISER_Y) / 2, FLOOR_IN), (0, 0, -1), ["tub"], "skid_arm",
+                          "button", _hole(2.0, 8.0, "button")))
     return out
 
 
@@ -90,11 +92,11 @@ def parts():
          "shape": {"type": "model", "file": "src/build_scythe_classic.py", "params": {"part": "weapon_hub"}},
          "at": [0, "P.WPN_AXIS_Y", "P.bar_top_z() + P.HUB_GAP"], "rot": [0, 0, 0], "rotates_with": "weapon",
          "label": "turned 7075 hub, bar 2x M3"},
-        {"id": "weapon_shaft", "kind": "shaft", "catalog": None, "material": "steel", "process": "turned",
+        {"id": "weapon_shaft", "kind": "shaft", "catalog": None, "material": "steel", "process": "turned", "shaft_of": "weapon_motor_can",
          "shape": {"type": "model", "file": "src/build_scythe_classic.py", "params": {"part": "weapon_shaft"}},
          "rotates_with": "weapon", "at": [0, 0, 0], "rot": [0, 0, 0],
          "label": "5 mm steel weapon shaft through the bar bore, the hub and the caster bearing"},
-        {"id": "bearing_caster", "kind": "bearing", "catalog": None, "material": "steel", "process": "cots",
+        {"id": "bearing_caster", "kind": "bearing", "catalog": None, "material": "steel", "process": "cots", "rotates_with": "fixed",
          "stock": "MR85ZZ 5 x 8 x 2.5",
          "shape": {"type": "model", "file": "src/build_scythe_classic.py", "params": {"part": "bearing_caster"}},
          "at": [0, 0, 0], "rot": [0, 0, 0], "label": "MR85ZZ bearing: inner ring on the shaft, outer ring in the caster puck"},
@@ -103,12 +105,14 @@ def parts():
          "shape": {"type": "model", "file": "src/build_scythe_classic.py", "params": {"part": "lock_pin"}},
          "at": [0, 0, 0], "rot": [0, 0, 0],
          "label": "rule 5f lock: removable 3 mm steel pin through the bar's lock hole into the tub floor (orange, tethered)"},
-        {"id": "skid_foot", "kind": "caster", "catalog": None, "material": "uhmw", "process": "turned",
-         "shape": {"type": "model", "file": "src/build_scythe_classic.py", "params": {"part": "skid_foot"}},
-         "at": [0, 0, 0], "rot": [0, 0, 0], "label": "caster puck under the bar on the axis, MR85 seat (0.5 mm off the floor)"},
+        {"id": "skid_arm", "kind": "structure", "catalog": None, "material": "nylon", "process": "fdm", "print_orientation": "+z",
+         "solid_fraction": 0.85,
+         "shape": {"type": "model", "file": "src/build_scythe_classic.py", "params": {"part": "skid_arm"}},
+         "at": [0, 0, 0], "rot": [0, 0, 0],
+         "label": "printed strip under the whole bar sweep, from the pod floor to a puck on the axis holding the MR85 (bar passes 1.1 mm over it)"},
         {"id": "skid_dome", "kind": "structure", "catalog": None, "material": "uhmw", "process": "turned",
          "shape": {"type": "model", "file": "src/build_scythe_classic.py", "params": {"part": "skid_dome"}},
-         "at": [0, 0, 0], "rot": [0, 0, 0], "label": "POM-class dome on the top panel"},
+         "at": [0, 0, 0], "rot": [0, 0, 0], "label": "POM button on the top panel (inverted front contact), stem plugged in a 3 mm panel hole"},
         {"id": "weapon_motor", "kind": "weapon_motor", "catalog": "gr1507", "at": ["0", "P.WPN_AXIS_Y", "P.wpn_motor_z()"],
          "rot": [0.0, 90.0, 0.0], "label": "GR1507 shaft down"},
         {"id": "weapon_motor_can", "kind": "other", "role": "rotor", "catalog": "gr1507_can",
@@ -147,16 +151,17 @@ def connections():
         {"a": "weapon_shaft", "b": "weapon_hub", "method": "press_fit", "mechanical_key": True,
          "reason": "shaft pressed into the hub bore, grub screw on the flat"},
         {"a": "weapon_shaft", "b": "bearing_caster", "method": "press_fit", "reason": "MR85 inner ring pressed on the 5 mm shaft"},
-        {"a": "bearing_caster", "b": "skid_foot", "method": "press_fit", "reason": "MR85 outer ring pressed in the caster puck bore"},
+        {"a": "bearing_caster", "b": "skid_arm", "method": "press_fit", "reason": "MR85 outer ring pressed in the skid arm's puck bore"},
+        {"a": "skid_arm", "b": "tub", "method": "screw", "reason": "2x M2 from the pod cavity through the tub floor into the arm riser"},
         {"a": "lock_pin", "b": "tub", "method": "pin", "reason": "pin seats in a socket in the tub floor underside; tethered to the tub"},
         {"a": "switch", "b": "tub", "method": "snap", "reason": "snaps into a moulded cradle on the tub floor"},
         {"a": "xt30", "b": "tub", "method": "snap", "reason": "XT30 clips into a moulded holder on the pod floor"},
-        {"a": "skid_dome", "b": "top_panel", "method": "screw", "reason": "M2 screw from the dome through the top panel into the stator base"},
+        {"a": "skid_dome", "b": "top_panel", "method": "snap", "reason": "the dome's 2.9 mm stem snaps into a 3 mm top-panel hole; a hit on the dome presses it onto the panel"},
         {"a": "wheel_r", "b": "drive_motor_r", "method": "press_fit", "mechanical_key": True, "reason": "N10 D-shaft bore, grub screw on the flat"},
         {"a": "wheel_l", "b": "drive_motor_l", "method": "press_fit", "mechanical_key": True, "reason": "N10 D-shaft bore, grub screw on the flat"},
         {"a": "drive_motor_r", "b": "tub", "method": "interlock", "reason": "N10 body seats in the pod wall"},
         {"a": "drive_motor_l", "b": "tub", "method": "interlock", "reason": "N10 body seats in the pod wall"},
-        {"a": "weapon_motor", "b": "tub", "method": "screw", "reason": "stator base screws down through the top panel and boss"},
+        {"a": "weapon_motor", "b": "top_panel", "method": "screw", "reason": "4x M2x3 from the top panel into the stator base"},
     ]
 
 

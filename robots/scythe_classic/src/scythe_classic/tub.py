@@ -122,10 +122,32 @@ def bell_bore():
 
 
 def axle_holes():
-    """N10 output shaft exits through the pod walls; one side built, mirrored."""
-    one = bd.Pos(P.POD_W / 2, P.wheel_y(), P.WHEEL_CZ) * bd.Rot(0, 90, 0) * bd.Cylinder(2.0, 2 * P.TUB_WALL + 2)
+    """N10 output shaft exits through the pod walls; one side built, mirrored. 2.3 mm hole: the N10's 2 mm shaft collar and the 3 mm shaft pass it."""
+    one = bd.Pos(P.POD_W / 2, P.wheel_y(), P.WHEEL_CZ) * bd.Rot(0, 90, 0) * bd.Cylinder(2.3, 2 * P.TUB_WALL + 2)
     return one + bd.mirror(one, bd.Plane.YZ)
 
 
+RIB_T = 1.2        # mm cradle rib thickness (nozzle multiple)
+RIB_GAP = 0.2      # mm print clearance between the N10 flats and the ribs
+
+
+def motor_cradles():
+    """Two ribs per N10 along its length (y = axle line +-(6 + gap)), from the pod floor up to the motor top, from the pod
+    wall inward over the body length. The motor drops in from the top (panel off) and is held in y by the ribs and in x by
+    the pod wall on its shaft side; the N10's flats are 12 mm wide (catalogue box 9 x 12 x 10)."""
+    out = None
+    z_lo = z0() + P.TUB_FLOOR_T
+    z_hi = P.WHEEL_CZ + 5.0
+    x_in = P.POD_W / 2 - P.TUB_WALL                   # inner face of the pod wall
+    x_rear = x_in - (P.DRIVE_MOTOR_FACE_X - P.DRIVE_MOTOR_REAR_X) - 0.2
+    for side in (1, -1):
+        for sy in (1, -1):
+            yc = P.wheel_y() + sy * (6.0 + RIB_GAP + RIB_T / 2)
+            rib = bd.Pos(side * (x_in + x_rear) / 2, yc, z_lo) * bd.Box(
+                x_in - x_rear + 0.2, RIB_T, z_hi - z_lo, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+            out = rib if out is None else out + rib
+    return out
+
+
 def tub():
-    return shell() + weapon_boss() - bell_bore() - axle_holes()
+    return shell() + weapon_boss() + motor_cradles() - bell_bore() - axle_holes()

@@ -10,7 +10,7 @@ PARTS = {
     "bar": bar.bar,
     "weapon_hub": weapon_hub.hub,
     "top_panel": panels.top_panel,
-    "skid_foot": skids.foot,
+    "skid_arm": skids.foot,
     "bearing_caster": skids.bearing,
     "weapon_shaft": skids.shaft,
     "skid_dome": skids.dome,

@@ -109,26 +109,26 @@ BAR_W_TIP = 10.0                             # mm width at the tooth
 BAR_TOOTH_STEP = 4.0                         # mm radial depth of the bite step on each leading edge
 BAR_TOOTH_LEN = 10.0                         # mm along the bar from the tip where the step starts
 BAR_CORNER_R = 1.0                           # mm laser-cut corner round on non-cutting corners
-BAR_Z0 = 4.0                                 # mm underside above floor: 0.5 tyre squash + 58 mm x tan 3 deg seam = 3.6 (dynamics.floor_margin)
+BAR_Z0 = 5.0                                 # mm underside above floor: 0.5 tyre squash + 58 mm x tan 3 deg seam = 3.6 (dynamics.floor_margin)
 BAR_BOLT = "M3"
 BAR_BOLT_D = 3.0
 CSK_D = 6.2                                  # mm countersink diameter at the bar underside: M3 csk head dk 6.0 + 0.1 radial clear (was 5.5: head overlapped 0.15)
 CSK_DEPTH = 1.75                             # mm: the countersink cone depth; the head sits inside it with no overlap
 BAR_BOLT_N = 2                               # 2x M3 through bar into hub, PolarLocations
-BAR_BOLT_PCD = 13.0                          # mm (was 11: a 1.3 mm web to the bore failed the sheet-cut rule)
+BAR_BOLT_PCD = 15.0                          # mm (was 11: a 1.3 mm web to the bore failed the sheet-cut rule)
 BAR_BORE_CLR = 0.1                           # mm radial on the shaft pilot (centres the bar on the shaft)
 LOCK_PIN_R = 20.0                            # mm radius of the rule 5f lock pin hole in the +X arm (clear of the hub, inside the arm)
 LOCK_PIN_D = 3.0                             # mm steel lock pin (removable, tethered; pulled before a fight)
 BAR_R_STEP = 0.5                             # mm search step of bar_r_geom()
 
 # ---- turned hub (7075-T6): bolts to bell top screws, carries the bar ----
-HUB_OD = 17.0                                # mm (> BAR_BOLT_PCD + M3 head)
-HUB_H = 4.5                                  # mm turned spacer between bell cap and bar
+HUB_OD = 20.0                                # mm (> BAR_BOLT_PCD + M3 head)
+HUB_H = 5.0                                  # mm turned spacer between bell cap and bar
 HUB_GAP = 0.0                                 # mm: hub bolted down onto the bar (bar bolts need a contact face; hub is in the bar group)
 HUB_SHAFT_CLR = 0.02                         # mm radial slide fit on the 5 mm shaft
 
 # ---- weapon motor stack (shaft down, stator screwed up into the tub boss) ----
-GAP_BAR_TUB = 1.5                            # mm air between bar top and tub floor underside (>> MIN_CLR_MOVING)
+GAP_BAR_TUB = 1.2                            # mm air between bar top and tub floor underside (>> MIN_CLR_MOVING)
 MOTOR_BELL_CLR = 1.0                         # mm radial bell to tub bore wall (spinning)
 
 # ---- tub (printed nylon PA12/PA-CF, FDM) ----
@@ -136,9 +136,11 @@ BAR_BITE_REACH = 8.0                         # mm of tooth exposed beyond the tu
 TUB_WALL = 2.0                               # mm (> PROFILE.min_wall_fdm_mm)
 TUB_FLOOR_T = 2.0                            # mm
 TUB_SLOPE_DEG = 35.0                         # side slope from vertical: verticals glance off
-TUB_TOP_Z = WHEEL_D - 2 * MIN_GROUND_CLR - 1.4   # body top below tyre top: invertible (wheels > body both sides)
+TUB_TOP_Z = WHEEL_D - 2 * MIN_GROUND_CLR - 0.9   # body top below tyre top: invertible (wheels > body both sides)
 DRIVE_MOTOR_L = 33.0                         # mm N10 body length along its shaft (catalogue bbb_n10_1000rpm, hw.size)
 DRIVE_MOTOR_TIP_X = 20.25                    # mm shaft tip from the motor origin (catalogue bbox max X, origin on the axis)
+DRIVE_MOTOR_FACE_X = 11.25                   # mm body front (shaft side) face from the motor origin (catalogue: box 9 wide at x 6.75)
+DRIVE_MOTOR_REAR_X = -12.75                  # mm rear face (solder tabs) from the motor origin
 # Two N10s in the same pod, each shaft pointing outboard to its wheel: the bodies run inboard from each side wall, so
 # they must not meet in the middle. Each body spans [wall - L, wall] from its side: width >= 2 (L + wall) + clearance.
 POD_W_MIN = 2 * (DRIVE_MOTOR_L + TUB_WALL) + 2 * MIN_CLR_MOVING   # mm (~70.8)
@@ -237,9 +239,9 @@ def bar_sweep_r():
 
 
 def motor_x():
-    """Right N10 origin X: the shaft tip sits on the inner face of the pod wall, the shaft bridging the wall to the
-    wheel. The left motor is mirrored (rot 180 about Z)."""
-    return POD_W / 2 - TUB_WALL - DRIVE_MOTOR_TIP_X
+    """Right N10 origin X: the body's shaft-side face sits on the inner face of the pod wall, so the 9 mm shaft crosses
+    the wall (2 mm) and the 0.4 mm gap and sits 6.6 mm deep in the wheel hub bore. The left motor is mirrored (rot 180 about Z)."""
+    return POD_W / 2 - TUB_WALL - DRIVE_MOTOR_FACE_X
 
 
 def wheel_x():
