@@ -82,6 +82,14 @@ def build_tub():
     )
     tub = tub - pin_bore
 
+    # Motor shaft bores through tub side walls
+    shaft_bore = (
+        Cylinder(radius=1.8, height=P.TUB_W + 2.0)
+        .rotate(Axis.Y, 90)
+        .translate((0.0, P.WHEEL_Y, P.AXLE_Z))
+    )
+    tub = tub - shaft_bore
+
     return tub
 
 

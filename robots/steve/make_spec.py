@@ -24,7 +24,7 @@ def r3(p):
 
 lid_xc = (P.SLOT_W / 2.0 + P.TUB_W / 2.0) / 2.0
 lid_yc = (P.TUB_REAR_Y + P.TUB_DECK_END_Y) / 2.0
-lid_zc = P.LID_Z + P.LID_T / 2.0
+lid_zc = P.LID_Z + P.LID_T / 2.0 + 0.15
 
 # Scoop placement: tilted by -SCOOP_ANGLE_DEG around X so front lip sits at (0, SCOOP_TIP_Y, SCOOP_TIP_Z)
 # In local frame, front lip is at (0, 0, 0). Rotated by -angle around X:
@@ -42,27 +42,28 @@ parts = [
      "color": "#0f3b1e", "model": model("lid_r"), "at": r3([-lid_xc, lid_yc, lid_zc])},
 
     {"id": "guard_l", "kind": "structure", "material": "polycarbonate", "process": "cnc",
-     "color": "#0f3b1e", "model": model("guard_l"), "at": r3([P.GUARD_X + P.GUARD_T / 2.0, P.WHEEL_Y, P.AXLE_Z])},
+     "color": "#0f3b1e", "model": model("guard_l"), "at": r3([P.GUARD_X + P.GUARD_T / 2.0 + 0.2, P.WHEEL_Y, P.AXLE_Z])},
     {"id": "guard_r", "kind": "structure", "material": "polycarbonate", "process": "cnc",
-     "color": "#0f3b1e", "model": model("guard_r"), "at": r3([-(P.GUARD_X + P.GUARD_T / 2.0), P.WHEEL_Y, P.AXLE_Z])},
+     "color": "#0f3b1e", "model": model("guard_r"), "at": r3([-(P.GUARD_X + P.GUARD_T / 2.0 + 0.2), P.WHEEL_Y, P.AXLE_Z])},
 
-    {"id": "wheel_l", "kind": "wheel", "material": "tpu_95a", "process": "fdm",
+    {"id": "wheel_l", "kind": "wheel", "material": "tpu_95a", "process": "fdm", "print_orientation": "+x",
      "color": "#222222", "model": model("wheel_l"), "at": r3([P.WHEEL_X, P.WHEEL_Y, P.AXLE_Z]),
      "joint": {"type": "revolute", "axis": [1, 0, 0], "anchor": [0, 0, 0], "range": [0, 360]}},
-    {"id": "wheel_r", "kind": "wheel", "material": "tpu_95a", "process": "fdm",
+    {"id": "wheel_r", "kind": "wheel", "material": "tpu_95a", "process": "fdm", "print_orientation": "+x",
      "color": "#222222", "model": model("wheel_r"), "at": r3([-P.WHEEL_X, P.WHEEL_Y, P.AXLE_Z]),
      "joint": {"type": "revolute", "axis": [-1, 0, 0], "anchor": [0, 0, 0], "range": [0, 360]}},
 
-    {"id": "flipper", "kind": "weapon", "material": "pla", "process": "fdm", "print_orientation": "+x",
+    {"id": "flipper", "kind": "structure", "material": "pla", "process": "fdm", "print_orientation": "+x",
      "color": "#25282a", "model": model("flipper"), "at": r3([0, P.HINGE_Y, P.HINGE_Z]),
      "joint": {"type": "revolute", "axis": [1, 0, 0], "anchor": [0, 0, 0], "range": [0, P.FLIP_OPEN_DEG]}},
 
-    {"id": "scoop", "kind": "weapon", "material": "al_6061", "process": "cnc",
+    {"id": "scoop", "kind": "weapon", "material": "aluminium", "process": "cnc",
+     "weapon": {"kind": "flipper", "motor": "servo", "reduction": 1.0},
      "color": "#b8c0c8", "model": model("scoop"),
-     "at": r3([0, P.SCOOP_TIP_Y - P.HINGE_Y, P.SCOOP_TIP_Z - P.HINGE_Z]), "rot": [scoop_rot_x, 0, 0],
+     "at": r3([0, P.SCOOP_TIP_Y - P.HINGE_Y + 0.8, P.SCOOP_TIP_Z - P.HINGE_Z]), "rot": [scoop_rot_x, 0, 0],
      "parent": "flipper"},
 
-    {"id": "hinge_pin", "kind": "fastener", "material": "steel_mild",
+    {"id": "hinge_pin", "kind": "fastener", "material": "steel", "process": "cots",
      "color": "#888888", "model": model("hinge_pin"), "at": r3([0, P.HINGE_Y, P.HINGE_Z])},
 
     # Internal COTS electronics & drive
@@ -73,15 +74,16 @@ parts = [
 
     {"id": "servo", "kind": "actuator", "catalog": "servo_cs07",
      "at": r3([0, P.SERVO_Y, P.SERVO_Z]), "rot": [0, 90, 0]},
-    {"id": "horn", "kind": "structure", "material": "pla", "process": "fdm",
+    {"id": "horn", "kind": "structure", "material": "pla", "process": "fdm", "print_orientation": "+z",
      "color": "#333333", "model": model("horn"), "at": r3([0, P.HORN_Y, P.HORN_Z]),
      "joint": {"type": "revolute", "axis": [1, 0, 0], "anchor": [0, 0, 0], "range": [0, 60]}},
 
     {"id": "battery", "kind": "battery", "catalog": "lipo_2s_180",
      "at": r3([20.0, -2.0, P.GROUND_CLEARANCE + P.FLOOR_T + 5.0])},
-    {"id": "esc_rx", "kind": "electronics", "catalog": "malenki_nano",
+    {"id": "esc_rx", "kind": "receiver", "catalog": "malenki_nano",
      "at": r3([-20.0, -2.0, P.GROUND_CLEARANCE + P.FLOOR_T + 3.0])},
-    {"id": "switch", "kind": "electronics", "catalog": "switch_bbb_ant_rvrn2",
+    {"id": "switch", "kind": "switch", "catalog": "switch_bbb_ant_rvrn2",
+     "tool_free": True, "marked": True, "label": "ON/OFF",
      "at": r3([-20.0, -28.0, P.GROUND_CLEARANCE + P.FLOOR_T + 3.0])},
 ]
 
@@ -94,6 +96,15 @@ spec = {
     "mass_limit_g": 150.0,
     "envelope_mm": [101.6, 101.6, 101.6],
     "ground_z": 0.0,
+    "electronics": {"failsafe": True, "weapon_remote_disable": True},
+    "wiring": [
+        {"from": "battery", "to": "switch", "gauge": 20},
+        {"from": "battery", "to": "esc_rx", "gauge": 20},
+        {"from": "switch", "to": "esc_rx", "gauge": 20},
+        {"from": "esc_rx", "to": "motor_l", "gauge": 24},
+        {"from": "esc_rx", "to": "motor_r", "gauge": 24},
+        {"from": "esc_rx", "to": "servo", "gauge": 26},
+    ],
     "parts": parts,
 }
 
