@@ -115,6 +115,51 @@ def opts_from(a):
     return o
 
 
+def catalog_size(e) -> tuple:
+    """Bounding box (x, y, z) mm of a catalogue entry's model, ports/leads included."""
+    from . import shapes
+    bb = shapes.to_solid(e.shape).bounding_box()
+    return (round(bb.size.X, 2), round(bb.size.Y, 2), round(bb.size.Z, 2))
+
+
+def _catalog_filter(a) -> int:
+    """`robot catalog --kind battery --fits 40x20x12 --max-mass 15`: catalogue parts that fit a measured free box
+    (e.g. a `probe --place` box), smallest first. Look parts up; don't guess and retry."""
+    box = None
+    if a.fits:
+        try:
+            box = sorted(float(v) for v in a.fits.lower().split("x"))
+        except ValueError:
+            print("--fits takes LxWxH in mm, e.g. 40x20x12", file=sys.stderr)
+            return 1
+    rows = []
+    for e in catalog.catalog():
+        if a.kind and e.kind != a.kind:
+            continue
+        if a.max_mass is not None and e.mass_g > a.max_mass:
+            continue
+        try:
+            size = catalog_size(e)
+        except Exception:  # noqa: BLE001 - an entry without a buildable model cannot be judged
+            continue
+        sx, sy, sz = size
+        fits = True
+        if box:
+            bx, by, bz = a.fits.lower().split("x")
+            bx, by, bz = float(bx), float(by), float(bz)
+            fits = sz <= bz and ((sx <= bx and sy <= by) or (sy <= bx and sx <= by))
+        if fits:
+            key = e.mass_g if a.sort == "mass" else -float((e.props or {}).get(a.sort, 0) or 0)
+            rows.append((key, e, size))
+    if not rows:
+        print("nothing in the catalogue fits; make room (`robot probe --place PART`) or relax --fits/--max-mass")
+        return 1
+    for _, e, (sx, sy, sz) in sorted(rows, key=lambda t: t[0]):
+        props = {k: v for k, v in (e.props or {}).items() if k in ("cells", "capacity_mah", "c_rating", "kv", "stall_a")}
+        print(f"{e.id} | {e.kind} | {sx} x {sy} x {sz} mm | {e.mass_g:.1f} g | {props}")
+    return 0
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(prog="robot", description="Antweight robot builder and verifier (build123d)")
     sub = ap.add_subparsers(dest="cmd")
@@ -122,8 +167,15 @@ def main(argv=None):
     from . import doctor  # stdlib only: must load even when extras are missing
 
     doctor.add_cli(sub)
+    from . import fieldhelp
+
+    fieldhelp.add_cli(sub)
     c = sub.add_parser("catalog")
     c.add_argument("id", nargs="?")
+    c.add_argument("--kind", help="only this kind (battery, motor, esc, receiver, switch, wheel, ...)")
+    c.add_argument("--fits", help="LxWxH mm box the part must fit (any yaw about z), e.g. 40x20x12")
+    c.add_argument("--max-mass", type=float, help="grams")
+    c.add_argument("--sort", default="mass", help="mass | capacity_mah | kv | any numeric prop")
     sub.add_parser("materials")
     sub.add_parser("templates")
     t = sub.add_parser("template")
@@ -180,6 +232,8 @@ def main(argv=None):
         g = HERE / "GUIDE.md"
         print(g.read_text() if g.exists() else ap.format_help())
     elif a.cmd == "catalog":
+        if a.kind or a.fits or a.max_mass is not None:
+            return _catalog_filter(a)
         for e in catalog.catalog():
             if a.id and e.id != a.id:
                 continue

@@ -100,3 +100,9 @@ with numbers, and needs nothing else. Run the full tier (`--llm` without `--tier
 - `taper` mm or `profile` [[t, inset_mm]]: sloped walls (cone, dome). Shell = ruled loft of the outline shrunk at each height, resampled to 72 points.
 - Layout uses the smallest section, so parts never cut through a sloped wall. Too much taper = `no wireable layout`.
 - Spec: robot/gen/INTENT.md.
+
+## Look it up, don't guess (small-LLM aids, 2026-11-17)
+- `robot field NAME`: real examples of a spec field from verified specs (Revron first) + the checks that read it. No name = every key.
+- `robot catalog --kind battery --fits 40x20x12 --max-mass 15 [--sort capacity_mah]`: catalogue parts that fit a measured box (any yaw). Feed it the box from `probe --place`.
+- `fit.interference` now says the measured move: "move `X` +0.6 mm along y (1.5 mm free that side)", or that no side has room (then grow the pocket or pick a smaller part).
+- Keep spec.json generated from the CAD masters (a `make_spec.py` next to it); hand-edited `at` values go stale when a master changes.
