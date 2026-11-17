@@ -1,0 +1,20 @@
+{
+ "spec": "/home/antigravity/MohitBurkule/robobuild123d/robots/antic/spec.json",
+ "rendered_at": 1794957952.4774315,
+ "bodies": [
+  "baseplate",
+  "side_rail_r",
+  "side_rail_l",
+  "bulkheads",
+  "wheels",
+  "gears",
+  "buffer_tank",
+  "hex_fitting",
+  "pneumatic_ram",
+  "flipper_arms",
+  "flipper_plate",
+  "wedge_tip",
+  "front_skirt"
+ ],
+ "wires": {}
+}

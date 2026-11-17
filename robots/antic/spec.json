@@ -1,0 +1,151 @@
+{
+  "name": "AntiC (150g antweight pneumatic flipper)",
+  "profile": "aws2025",
+  "robot_type": "flipper",
+  "locomotion": "4wd_geared",
+  "parts": [
+    {
+      "id": "baseplate",
+      "kind": "structure",
+      "catalog": null,
+      "material": "al7075",
+      "process": "laser",
+      "color": "#4a5568",
+      "shape": {"type": "model", "file": "src/build_antic.py", "params": {"part": "baseplate"}},
+      "at": [0.0, 0.0, 0.0],
+      "rot": [0.0, 0.0, 0.0]
+    },
+    {
+      "id": "side_rail_r",
+      "kind": "armor",
+      "catalog": null,
+      "material": "ti6al4v",
+      "process": "laser",
+      "color": "#5f7a61",
+      "shape": {"type": "model", "file": "src/build_antic.py", "params": {"part": "side_rail_r"}},
+      "at": [0.0, 0.0, 0.0],
+      "rot": [0.0, 0.0, 0.0]
+    },
+    {
+      "id": "side_rail_l",
+      "kind": "armor",
+      "catalog": null,
+      "material": "ti6al4v",
+      "process": "laser",
+      "color": "#5f7a61",
+      "shape": {"type": "model", "file": "src/build_antic.py", "params": {"part": "side_rail_l"}},
+      "at": [0.0, 0.0, 0.0],
+      "rot": [0.0, 0.0, 0.0]
+    },
+    {
+      "id": "bulkheads",
+      "kind": "structure",
+      "catalog": null,
+      "material": "nylon",
+      "process": "fdm",
+      "color": "#262626",
+      "shape": {"type": "model", "file": "src/build_antic.py", "params": {"part": "bulkheads"}},
+      "at": [0.0, 0.0, 0.0],
+      "rot": [0.0, 0.0, 0.0]
+    },
+    {
+      "id": "wheels",
+      "kind": "wheel",
+      "catalog": null,
+      "material": "tpu",
+      "process": "fdm",
+      "color": "#8b3a3a",
+      "shape": {"type": "model", "file": "src/build_antic.py", "params": {"part": "wheels"}},
+      "at": [0.0, 0.0, 0.0],
+      "rot": [0.0, 0.0, 0.0]
+    },
+    {
+      "id": "gears",
+      "kind": "drivetrain",
+      "catalog": null,
+      "material": "pom",
+      "process": "cnc",
+      "color": "#1f2937",
+      "shape": {"type": "model", "file": "src/build_antic.py", "params": {"part": "gears"}},
+      "at": [0.0, 0.0, 0.0],
+      "rot": [0.0, 0.0, 0.0]
+    },
+    {
+      "id": "buffer_tank",
+      "kind": "weapon",
+      "catalog": null,
+      "material": "al7075",
+      "process": "lathe",
+      "color": "#d1d5db",
+      "shape": {"type": "model", "file": "src/build_antic.py", "params": {"part": "buffer_tank"}},
+      "at": [0.0, 0.0, 0.0],
+      "rot": [0.0, 0.0, 0.0]
+    },
+    {
+      "id": "hex_fitting",
+      "kind": "weapon",
+      "catalog": null,
+      "material": "al7075",
+      "process": "cnc",
+      "color": "#0284c7",
+      "shape": {"type": "model", "file": "src/build_antic.py", "params": {"part": "hex_fitting"}},
+      "at": [0.0, 0.0, 0.0],
+      "rot": [0.0, 0.0, 0.0]
+    },
+    {
+      "id": "pneumatic_ram",
+      "kind": "weapon",
+      "catalog": null,
+      "material": "al7075",
+      "process": "cnc",
+      "color": "#2563eb",
+      "shape": {"type": "model", "file": "src/build_antic.py", "params": {"part": "pneumatic_ram"}},
+      "at": [0.0, 0.0, 0.0],
+      "rot": [0.0, 0.0, 0.0]
+    },
+    {
+      "id": "flipper_arms",
+      "kind": "weapon",
+      "catalog": null,
+      "material": "nylon",
+      "process": "fdm",
+      "color": "#e5e7eb",
+      "shape": {"type": "model", "file": "src/build_antic.py", "params": {"part": "flipper_arms"}},
+      "at": [0.0, 0.0, 0.0],
+      "rot": [0.0, 0.0, 0.0]
+    },
+    {
+      "id": "flipper_plate",
+      "kind": "weapon",
+      "catalog": null,
+      "material": "nylon",
+      "process": "fdm",
+      "color": "#2b2b2b",
+      "shape": {"type": "model", "file": "src/build_antic.py", "params": {"part": "flipper_plate"}},
+      "at": [0.0, 0.0, 0.0],
+      "rot": [0.0, 0.0, 0.0]
+    },
+    {
+      "id": "wedge_tip",
+      "kind": "armor",
+      "catalog": null,
+      "material": "al7075",
+      "process": "laser",
+      "color": "#c0567a",
+      "shape": {"type": "model", "file": "src/build_antic.py", "params": {"part": "wedge_tip"}},
+      "at": [0.0, 0.0, 0.0],
+      "rot": [0.0, 0.0, 0.0]
+    },
+    {
+      "id": "front_skirt",
+      "kind": "armor",
+      "catalog": null,
+      "material": "uhmw",
+      "process": "laser",
+      "color": "#e2e8f0",
+      "shape": {"type": "model", "file": "src/build_antic.py", "params": {"part": "front_skirt"}},
+      "at": [0.0, 0.0, 0.0],
+      "rot": [0.0, 0.0, 0.0]
+    }
+  ]
+}
