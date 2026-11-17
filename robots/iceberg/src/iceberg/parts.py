@@ -92,19 +92,19 @@ def build_tub():
         for sx in (-1.0, 1.0):
             for wy in (P.WHEEL_REAR_Y, P.WHEEL_FRONT_Y):
                 with Locations((sx * (P.TUB_X_HALF - 2.0), wy, P.AXLE_Z)):
-                    Box(10.0, 14.0, 12.0, mode=Mode.SUBTRACT)
+                    Box(12.0, 14.0, 12.4, mode=Mode.SUBTRACT)
 
         # Cut spinner disc slot through top/front of tub (z=11.5..23.5, y=-19..26)
         with Locations((P.WPN_DISC_X, 3.5, 17.5)):
             Box(8.0, 45.0, 12.0, mode=Mode.SUBTRACT)
 
-        # Lateral standoff bosses for blue TPU side guards (3 per side, stop cleanly at GUARD_X_IN)
+        # Lateral standoff bosses for blue TPU side guards (3 per side, start at 30.5 to clear corner fillet)
         for sx in (-1.0, 1.0):
-            boss_len = P.GUARD_X_IN - P.TUB_X_HALF
-            cx = sx * (P.TUB_X_HALF + 0.5 * boss_len)
+            boss_len = P.GUARD_X_IN - 30.5
+            cx = sx * (30.5 + 0.5 * boss_len)
             for gy, gz in ((P.GUARD_MOUNT_Y1, P.GUARD_MOUNT_Z), (P.GUARD_MOUNT_Y2, P.GUARD_MOUNT_Z), (P.GUARD_MOUNT_Y3, P.GUARD_MOUNT_Z3)):
                 with Locations((cx, gy, gz)):
-                    Box(boss_len, 3.0, 4.0)
+                    Box(boss_len, 2.4, 4.0)
                     Cylinder(0.85, boss_len + 2.0, rotation=(0, 90, 0), mode=Mode.SUBTRACT)
 
         # Internal bosses for middle plate screws (x=+-30.0, y=-14.0, inner edge at 28.2 clears drive_rx at -27.7)
@@ -118,56 +118,56 @@ def build_tub():
         with Locations((0.0, -10.5, P.CAVITY_Z0 + 1.25)):
             Box(62.0, 1.5, 2.5)
 
-        # Snug battery pocket ribs tied to battery bay walls (x=+-10.0)
+        # Snug battery pocket ribs tied to rear wall (y=-49) and baffle wall (y=-10.5)
         for sx in (-1.0, 1.0):
-            with Locations((sx * 9.5, -30.0, 9.5)):
-                Box(2.0, 20.0, 12.0)
+            with Locations((sx * 8.9, -29.75, 9.5)):
+                Box(0.8, 39.0, 12.0)
         for by in (-43.0, -16.0):
             with Locations((0.0, by, 18.6)):
-                Box(22.0, 3.0, 7.8)
+                Box(20.0, 3.0, 7.8)
 
-        # Snug drive_rx pocket ribs tied to left outer wall (x=-30.0)
-        with Locations((-23.5, -15.2, 6.0)):
-            Box(13.5, 3.0, 5.0)
-        with Locations((-23.5, -15.2, 18.5)):
-            Box(13.5, 3.0, 8.0)
+        # Snug drive_rx pocket ribs tied to left outer wall (x=-31.0)
+        with Locations((-24.0, -15.2, 5.75)):
+            Box(15.0, 3.0, 4.5)
+        with Locations((-24.0, -15.2, 18.75)):
+            Box(15.0, 3.0, 7.5)
 
-        # Snug weapon_esc pocket ribs tied to right outer wall (x=+30.0)
-        with Locations((23.5, -11.0, 5.45)):
-            Box(13.5, 4.0, 3.9)
-        with Locations((23.5, -11.0, 17.55)):
-            Box(13.5, 4.0, 9.9)
-        with Locations((28.4, -11.0, 10.0)):
-            Box(3.6, 6.0, 4.0)
+        # Snug weapon_esc pocket ribs tied to right outer wall (x=+31.0)
+        with Locations((24.0, -11.0, 5.45)):
+            Box(15.0, 4.0, 3.9)
+        with Locations((24.0, -11.0, 17.55)):
+            Box(15.0, 4.0, 9.9)
+        with Locations((28.8, -11.0, 10.0)):
+            Box(4.0, 6.0, 4.0)
         with Locations((20.5, 0.95, 10.0)):
-            Box(19.0, 0.3, 4.0)
+            Box(21.0, 0.3, 4.0)
 
-        # Snug xt30 pocket ribs tied to right outer wall (x=+30.0)
-        with Locations((23.5, -27.0, 4.1)):
-            Box(13.5, 3.0, 1.2)
-        with Locations((23.5, -27.0, 17.9)):
-            Box(13.5, 3.0, 9.2)
-        with Locations((27.2, -27.0, 9.0)):
-            Box(6.0, 3.0, 4.0)
+        # Snug xt30 pocket ribs tied to right outer wall (x=+31.0)
+        with Locations((24.0, -27.0, 3.8)):
+            Box(15.0, 3.0, 0.6)
+        with Locations((24.0, -27.0, 19.0)):
+            Box(15.0, 3.0, 7.0)
+        with Locations((29.0, -27.0, 9.0)):
+            Box(5.0, 3.0, 4.0)
 
         # N10 motor saddles & full-width Y walls (boxing all 4 motors along Z, Y, and inner X)
         for sx in (-1.0, 1.0):
             for wy in (P.WHEEL_REAR_Y, P.WHEEL_FRONT_Y):
                 for mx, mw in ((14.5, 3.0), (27.5, 5.0)):
-                    with Locations((sx * mx, wy, 5.75)):
-                        Box(mw, 12.0, 4.5)
-                    with Locations((sx * mx, wy, 20.25)):
-                        Box(mw, 12.0, 4.5)
-                for dy in (-6.45, 6.45):
-                    with Locations((sx * 20.5, wy + dy, P.CAVITY_Z0 + 0.5 * h)):
-                        Box(19.0, 0.9, h)
+                    with Locations((sx * mx, wy, 5.65)):
+                        Box(mw, 14.0, 4.3)
+                    with Locations((sx * mx, wy, 20.35)):
+                        Box(mw, 14.0, 4.3)
+                for dy in (-6.7, 6.7):
+                    with Locations((sx * 21.0, wy + dy, P.CAVITY_Z0 + 0.5 * h)):
+                        Box(20.0, 0.9, h)
 
-        # Front fork mount bosses + socket lip (z=3.5..16.7, pocket y=21.75..24.25)
+        # Front fork mount bosses + socket lip (z=3.5..16.7, pocket y=21.75..26.25)
         for sx in (-1.0, 1.0):
             with Locations((sx * P.FORK_X, 24.5, 10.1)):
                 Box(9.4, 3.0, 13.2)
-            with Locations((sx * P.FORK_X, 23.0, 9.75)):
-                Box(7.2, 2.5, 11.7, mode=Mode.SUBTRACT)
+            with Locations((sx * P.FORK_X, 24.0, 9.75)):
+                Box(7.2, 4.5, 11.7, mode=Mode.SUBTRACT)
             with Locations((sx * P.FORK_X, 22.0, 12.0)):
                 Cylinder(0.85, 6.0, rotation=(90, 0, 0), mode=Mode.SUBTRACT)
 
@@ -179,6 +179,12 @@ def build_tub():
             for py in (-6.0, 14.0):
                 with Locations((sx * P.UPRIGHT_TAB_X, py, P.CAVITY_Z1 - 3.0)):
                     Cylinder(0.85, 7.0, mode=Mode.SUBTRACT)
+        with Locations((-18.0, -14.6, 11.5)):
+            Box(21.0, 35.0, 4.0, mode=Mode.SUBTRACT)
+        for sx in (-1.0, 1.0):
+            for wy in (P.WHEEL_REAR_Y, P.WHEEL_FRONT_Y):
+                with Locations((sx * 12.0, wy, P.AXLE_Z)):
+                    Box(1.5, 11.0, 12.4, mode=Mode.SUBTRACT)
     return bp.part
 
 

@@ -41,7 +41,7 @@ GUARD_Z0 = 3.0
 GUARD_Z1 = 21.0
 GUARD_MOUNT_Y1 = -21.0    # rear standoff boss (clear of window -18..-12 & rear wheel <= -25)
 GUARD_MOUNT_Y2 = -10.0    # mid standoff boss (clear of window -18..-12 & front wheel >= -5)
-GUARD_MOUNT_Y3 = 21.5     # front standoff boss (ahead of front wheel, low z=5.5)
+GUARD_MOUNT_Y3 = 22.2     # front standoff boss (ahead of front wheel <= 21.0)
 GUARD_MOUNT_Z = 12.0
 GUARD_MOUNT_Z3 = 5.5
 
@@ -78,10 +78,10 @@ FORK_TIP_Z = 1.0          # 1.0 mm floor clearance at tip
 
 # ---- Electronics positions -----------------------------------------------------------------------
 BAT_AT = [0.0, -30.0, CAVITY_Z0 + 5.6]   # lipo_2s_350 (36x17x11) rotated 90 deg -> x=-8.5..8.5, y=-48..-12
-RX_AT = [-18.5, -15.2, 11.5]             # bbb_malenki_nano rotated -90 deg, clear of battery (-8.5) & tub boss (-28.2)
+RX_AT = [-17.85, -14.6, 11.5]            # bbb_malenki_nano rotated -90 deg, clear of battery
 ESC_AT = [20.5, -11.0, 10.0]             # bbb_brushless_esc_20a rotated 90 deg -> x=14.5..26.5, y=-22.5..0.5
 SW_AT = [0.0, -25.0, 19.32]             # fingertech_mini_switch -> touches top_plate (22.50), clears battery (<=14.6)
-XT30_AT = [16.5, -27.0, 9.0]             # xt30u_m -> x=9.6..23.4, y=-29.6..-24.4
+XT30_AT = [17.5, -26.5, 9.5]             # xt30u_m -> x=10.6..24.4, y=-29.1..-23.9
 
 # ---- Colors --------------------------------------------------------------------------------------
 COLOR_GREEN_PLATE = "#164226"

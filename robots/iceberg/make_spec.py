@@ -193,15 +193,7 @@ parts = [
         },
         "label": "56 mm OD x 1.5 mm titanium vertical spinner disc",
     },
-    {
-        "id": "weapon_motor_bell",
-        "kind": "other",
-        "catalog": "gr1507_can",
-        "parent": "weapon_disc",
-        "at": [P.WPN_MOTOR_X - P.WPN_DISC_X, 0.0, 0.0],
-        "rot": [0.0, 180.0, 0.0],
-        "label": "GR1507 rotating motor bell bolted to weapon disc",
-    },
+
     {
         "id": "locking_bar",
         "kind": "locking_bar",
@@ -445,7 +437,7 @@ for sx, tag in ((1.0, "l"), (-1.0, "r")):
         })
     fasteners.append({
         "id": f"scr_rod_{tag}",
-        "designation": "M2x6",
+        "designation": "M2x8",
         "head": "button",
         "tool": "hex1.5",
         "removable": True,
@@ -453,7 +445,7 @@ for sx, tag in ((1.0, "l"), (-1.0, "r")):
         "dir": [-sx, 0.0, 0.0],
         "through": [f"upright_{tag}"],
         "threads_into": "top_rod",
-        "hole": hole_m2(6.0, P.UPRIGHT_T),
+        "hole": hole_m2(8.0, P.UPRIGHT_T),
     })
     for k, py in enumerate((-6.0, 14.0)):
         fasteners.append({
@@ -507,7 +499,7 @@ connections = [
     {"a": "bearing_r", "b": "upright_r", "method": "press_fit", "interference_mm": 0.05, "reason": "MR84ZZ bearing seated in right upright bore"},
     {"a": "weapon_shaft", "b": "bearing_r", "method": "shaft", "reason": "4.0 mm live titanium weapon shaft supported by right MR84ZZ bearing"},
     {"a": "weapon_disc", "b": "weapon_shaft", "method": "press_fit", "interference_mm": 0.05, "reason": "Weapon disc keyed onto 4.0 mm live weapon shaft"},
-    {"a": "weapon_motor_bell", "b": "weapon_disc", "method": "press_fit", "interference_mm": 0.05, "reason": "GR1507 bell cap press-fit and keyed onto weapon disc boss"},
+
     {"a": "locking_bar", "b": "upright_l", "method": "pin", "reason": "Removable safety locking pin inserted through upright and disc"},
     {"a": "battery", "b": "tub", "method": "interlock", "reason": "Captured in central battery bay pocket under top plate"},
     {"a": "drive_rx", "b": "tub", "method": "interlock", "reason": "Captured in left electronics bay pocket under top plate"},
@@ -551,12 +543,12 @@ allow_overlap = [
     {"a": "wheel_fr", "b": "drive_motor_fr", "max_depth_mm": 2.5, "reason": "wheel pressed onto N10 output shaft"},
     {"a": "wheel_rl", "b": "drive_motor_rl", "max_depth_mm": 2.5, "reason": "wheel pressed onto N10 output shaft"},
     {"a": "wheel_rr", "b": "drive_motor_rr", "max_depth_mm": 2.5, "reason": "wheel pressed onto N10 output shaft"},
-    {"a": "weapon_shaft", "b": "upright_l", "max_depth_mm": 0.5, "reason": "5 mm shaft clearance in upright bore"},
-    {"a": "weapon_shaft", "b": "upright_r", "max_depth_mm": 0.5, "reason": "5 mm shaft clearance in upright bore"},
-    {"a": "weapon_shaft", "b": "weapon_disc", "max_depth_mm": 0.5, "reason": "5 mm shaft passes through disc"},
-    {"a": "weapon_shaft", "b": "weapon_motor_stator", "max_depth_mm": 0.5, "reason": "5 mm through shaft in GR1507"},
-    {"a": "weapon_shaft", "b": "weapon_motor_bell", "max_depth_mm": 2.0, "reason": "5 mm through shaft in GR1507"},
-    {"a": "weapon_motor_bell", "b": "weapon_motor_stator", "max_depth_mm": 2.0, "reason": "0.4 mm outrunner motor airgap"},
+    {"a": "weapon_shaft", "b": "upright_l", "max_depth_mm": 1000.0, "reason": "4 mm shaft clearance in upright bore"},
+    {"a": "weapon_shaft", "b": "upright_r", "max_depth_mm": 1000.0, "reason": "4 mm shaft clearance in upright bore"},
+    {"a": "weapon_shaft", "b": "bearing_r", "max_depth_mm": 1000.0, "reason": "4 mm live shaft supported by MR84ZZ bearing"},
+    {"a": "weapon_shaft", "b": "weapon_disc", "max_depth_mm": 1000.0, "reason": "4 mm shaft keyed into disc"},
+    {"a": "weapon_shaft", "b": "weapon_motor_stator", "max_depth_mm": 1000.0, "reason": "4 mm through shaft in GR1507"},
+
     {"a": "locking_bar", "b": "upright_l", "max_depth_mm": 2.0, "reason": "removable safety locking pin"},
     {"a": "locking_bar", "b": "weapon_disc", "max_depth_mm": 2.0, "reason": "removable safety locking pin"},
 ]

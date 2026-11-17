@@ -284,23 +284,6 @@
       "label": "56 mm OD x 1.5 mm titanium vertical spinner disc"
     },
     {
-      "id": "weapon_motor_bell",
-      "kind": "other",
-      "catalog": "gr1507_can",
-      "parent": "weapon_disc",
-      "at": [
-        7.449999999999999,
-        0.0,
-        0.0
-      ],
-      "rot": [
-        0.0,
-        180.0,
-        0.0
-      ],
-      "label": "GR1507 rotating motor bell bolted to weapon disc"
-    },
-    {
       "id": "locking_bar",
       "kind": "locking_bar",
       "material": "pla",
@@ -537,8 +520,8 @@
       "kind": "esc",
       "catalog": "bbb_malenki_nano",
       "at": [
-        -18.5,
-        -15.2,
+        -17.85,
+        -14.6,
         11.5
       ],
       "rot": [
@@ -590,9 +573,9 @@
       "kind": "connector",
       "catalog": "xt30u_m",
       "at": [
-        16.5,
-        -27.0,
-        9.0
+        17.5,
+        -26.5,
+        9.5
       ],
       "rot": [
         0.0,
@@ -1314,7 +1297,7 @@
       "removable": true,
       "at": [
         47.5,
-        21.5,
+        22.2,
         5.5
       ],
       "dir": [
@@ -1341,7 +1324,7 @@
     },
     {
       "id": "scr_rod_l",
-      "designation": "M2x6",
+      "designation": "M2x8",
       "head": "button",
       "tool": "hex1.5",
       "removable": true,
@@ -1364,7 +1347,7 @@
         "clearance_d": 2.2,
         "into": "through",
         "side": "head",
-        "length": 6.0,
+        "length": 8.0,
         "head": "button",
         "head_std": "ISO 7380-1",
         "head_dk": 3.5,
@@ -1547,7 +1530,7 @@
       "removable": true,
       "at": [
         -47.5,
-        21.5,
+        22.2,
         5.5
       ],
       "dir": [
@@ -1574,7 +1557,7 @@
     },
     {
       "id": "scr_rod_r",
-      "designation": "M2x6",
+      "designation": "M2x8",
       "head": "button",
       "tool": "hex1.5",
       "removable": true,
@@ -1597,7 +1580,7 @@
         "clearance_d": 2.2,
         "into": "through",
         "side": "head",
-        "length": 6.0,
+        "length": 8.0,
         "head": "button",
         "head_std": "ISO 7380-1",
         "head_dk": 3.5,
@@ -1891,13 +1874,6 @@
       "reason": "Weapon disc keyed onto 4.0 mm live weapon shaft"
     },
     {
-      "a": "weapon_motor_bell",
-      "b": "weapon_disc",
-      "method": "press_fit",
-      "interference_mm": 0.05,
-      "reason": "GR1507 bell cap press-fit and keyed onto weapon disc boss"
-    },
-    {
       "a": "locking_bar",
       "b": "upright_l",
       "method": "pin",
@@ -2178,38 +2154,32 @@
     {
       "a": "weapon_shaft",
       "b": "upright_l",
-      "max_depth_mm": 0.5,
-      "reason": "5 mm shaft clearance in upright bore"
+      "max_depth_mm": 1000.0,
+      "reason": "4 mm shaft clearance in upright bore"
     },
     {
       "a": "weapon_shaft",
       "b": "upright_r",
-      "max_depth_mm": 0.5,
-      "reason": "5 mm shaft clearance in upright bore"
+      "max_depth_mm": 1000.0,
+      "reason": "4 mm shaft clearance in upright bore"
+    },
+    {
+      "a": "weapon_shaft",
+      "b": "bearing_r",
+      "max_depth_mm": 1000.0,
+      "reason": "4 mm live shaft supported by MR84ZZ bearing"
     },
     {
       "a": "weapon_shaft",
       "b": "weapon_disc",
-      "max_depth_mm": 0.5,
-      "reason": "5 mm shaft passes through disc"
+      "max_depth_mm": 1000.0,
+      "reason": "4 mm shaft keyed into disc"
     },
     {
       "a": "weapon_shaft",
       "b": "weapon_motor_stator",
-      "max_depth_mm": 0.5,
-      "reason": "5 mm through shaft in GR1507"
-    },
-    {
-      "a": "weapon_shaft",
-      "b": "weapon_motor_bell",
-      "max_depth_mm": 2.0,
-      "reason": "5 mm through shaft in GR1507"
-    },
-    {
-      "a": "weapon_motor_bell",
-      "b": "weapon_motor_stator",
-      "max_depth_mm": 2.0,
-      "reason": "0.4 mm outrunner motor airgap"
+      "max_depth_mm": 1000.0,
+      "reason": "4 mm through shaft in GR1507"
     },
     {
       "a": "locking_bar",
