@@ -106,3 +106,9 @@ with numbers, and needs nothing else. Run the full tier (`--llm` without `--tier
 - `robot catalog --kind battery --fits 40x20x12 --max-mass 15 [--sort capacity_mah]`: catalogue parts that fit a measured box (any yaw). Feed it the box from `probe --place`.
 - `fit.interference` now says the measured move: "move `X` +0.6 mm along y (1.5 mm free that side)", or that no side has room (then grow the pocket or pick a smaller part).
 - Keep spec.json generated from the CAD masters (a `make_spec.py` next to it); hand-edited `at` values go stale when a master changes.
+
+## ground.pitch_rest (2026-11-17)
+- Runs when the support polygon is < 3 contacts or the COM is < 2 mm inside it (2-wheel robots).
+- Pitches the robot about the wheel contact line toward the COM; the first body to touch the floor is the rest contact.
+- Weapon/hub/weapon_motor first = BLOCKER (blade grinds floor); fix gives the max skid height at a distance: h <= s x tan(angle) - 0.5.
+- Plain structure first = WARNING (drags). Give floor-touching parts kind `skid` or `caster` (ball caster) so they count as support.

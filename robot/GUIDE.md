@@ -589,3 +589,5 @@ the fit. Parts without a mesh or a valid `print_orientation` are NOT CHECKED, ne
 - Part does not fit: `robot probe --place PART` for the free box, then `robot catalog --kind KIND --fits LxWxH`.
 - Overlap of a few tenths of a mm: the `fit.interference` message gives the measured move; apply it, don't guess.
 - Generate spec.json from the CAD masters (`make_spec.py`); never hand-patch coordinates that a master drives.
+
+- Two-wheel robot: add a part of kind `skid` or `caster` (ball caster) on the centre-of-mass side; `ground.pitch_rest` tells you the max height so it lands before the weapon.
