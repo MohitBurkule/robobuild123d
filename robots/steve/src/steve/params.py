@@ -54,9 +54,9 @@ FLIP_OPEN_DEG = 40.0         # deg upward travel
 SCOOP_T = 1.2                # mm brushed aluminium/titanium sheet scoop
 SCOOP_TOP_W = 54.0           # mm width at top edge
 SCOOP_BOT_W = 82.0           # mm width at front leading edge
-SCOOP_LEN = 30.0             # mm sloped length from top edge to front lip
-SCOOP_ANGLE_DEG = 24.0       # deg from horizontal (matches front slope)
-SCOOP_TIP_Y = 48.0           # mm front leading edge Y
+SCOOP_LEN = 38.0             # mm sloped length from top edge to front lip
+SCOOP_ANGLE_DEG = 28.0       # deg from horizontal (matches front slope)
+SCOOP_TIP_Y = 50.0           # mm front leading edge Y
 SCOOP_TIP_Z = 0.5            # mm front leading edge Z clearance above floor
 
 # ---- Fasteners -------------------------------------------------------------------------------
