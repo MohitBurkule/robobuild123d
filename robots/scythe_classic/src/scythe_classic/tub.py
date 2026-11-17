@@ -16,6 +16,10 @@ from . import params as P
 from ._reuse import hw, weapon_motor
 
 
+POD_FRONT_PROUD = 1.9   # mm the pod's front corners stand outside the cone's base circle
+SKIRT_INSET = 1.0   # mm the base circle sits inside TUB_R: gives the pod front corners an edge long enough to take the fillet
+SLOPE_STEPS = 6   # ruled-loft sections up the sloped wall (each step turns the wall by well under the 45 deg sharp-corner threshold)
+JOINT_R = 1.2   # mm inside radius where the pod front face meets the cone (outside) and at the top panel plan
 CAVITY_EXTRA = 6.0   # mm the offset body is taller than the tub
 SKIRT_H = 2.0   # mm vertical band at the cone base: a sloped wall running into the floor underside leaves a knife edge
 TOP_BAND_H = 2.0   # mm vertical band at the cone top: the sloped wall meeting the flat rim face leaves an acute inside corner
@@ -37,8 +41,9 @@ def height():
 
 
 def pod_front_y():
-    """Y where the pod's front edge meets the cone: its outer corners sit on the disc's circle."""
-    return P.WPN_AXIS_Y - math.sqrt(P.TUB_R ** 2 - (P.POD_W / 2) ** 2)
+    """Y of the pod's front face: its outer corners stand POD_FRONT_PROUD outside the disc's circle, so the face runs the full height
+and meets the cone in one clean concave edge (corners exactly on the circle make that edge start at a point)."""
+    return P.WPN_AXIS_Y - math.sqrt(P.TUB_R ** 2 - (P.POD_W / 2) ** 2) - POD_FRONT_PROUD
 
 
 def pod_rear_y():
@@ -67,10 +72,13 @@ def pod_box(grow=0.0, z_lo=0.0, h=None):
 
 
 def top_outline(inset):
-    """Plan outline of the top panel: the cone shrunk by the slope inset, joined to the pod's full-width top."""
+    """Plan outline at a given inset: the cone's circle shrunk by `inset`, joined to the pod's full-width rectangle, with the
+    two concave corners where the pod front meets the circle rounded (JOINT_R)."""
     disc = bd.Pos(0, P.WPN_AXIS_Y) * bd.Circle(P.TUB_R - inset)
     pod = bd.Pos(0, pod_cy()) * bd.Rectangle(P.POD_W, pod_len())
-    return (disc + pod).clean()
+    outline = (disc + pod).clean()
+    corners = [v for v in outline.vertices() if abs(v.Y - pod_front_y()) < 0.05 and abs(v.X) < P.POD_W / 2 - 1.0]
+    return bd.fillet(corners, JOINT_R)
 
 
 def cone_loft(grow_lo, grow_hi, z_lo, z_hi):
@@ -80,22 +88,63 @@ def cone_loft(grow_lo, grow_hi, z_lo, z_hi):
     return bd.loft([lo * disc_face(grow_lo).faces()[0], hi * disc_face(grow_hi).faces()[0]])
 
 
-def outer_body(extra=0.0):
-    """The solid tub outside: vertical skirt, sloped cone above it, plus the vertical rear pod. `extra` makes it taller (the
-    cavity is the inward offset of a taller body, so it runs out through the open top)."""
+def _levels(extra=0.0):
+    """[(z, inset)] plan sections of the outer wall: vertical skirt, SLOPE_STEPS up the sloped wall, vertical top band (taller by
+    `extra`)."""
     h = height() + extra
-    skirt = bd.Pos(0, 0, z0()) * bd.extrude(disc_face(), SKIRT_H)
     z_cone_top = z0() + height() - TOP_BAND_H
-    cone = cone_loft(0.0, -_slope_inset(h), z0() + SKIRT_H, z_cone_top)
-    band = bd.Pos(0, 0, z_cone_top) * bd.extrude(bd.Pos(0, P.WPN_AXIS_Y) * bd.Circle(P.TUB_R - _slope_inset(h)), h - (z_cone_top - z0()))
-    return skirt + cone + band + pod_box(z_lo=z0(), h=h)
+    z_skirt = z0() + SKIRT_H
+    top_inset = _slope_inset(height())
+    levels = [(z0(), SKIRT_INSET), (z_skirt, SKIRT_INSET)]
+    for i in range(1, SLOPE_STEPS + 1):
+        levels.append((z_skirt + (z_cone_top - z_skirt) * i / SLOPE_STEPS, SKIRT_INSET + (top_inset - SKIRT_INSET) * i / SLOPE_STEPS))
+    levels.append((z0() + h, top_inset))
+    return levels
+
+
+def _stack(sections):
+    """Ruled lofts between successive plan faces (z-placed), fused."""
+    body = None
+    for a, b in zip(sections, sections[1:]):
+        seg = bd.loft([a, b], ruled=True)
+        body = seg if body is None else body + seg
+    return body.clean()
+
+
+def outer_body(extra=0.0):
+    """The solid tub outside: a stack of ruled lofts between plan outlines (disc + pod, joint corners rounded) up a vertical
+    skirt, the sloped wall and a vertical top band. `extra` makes it taller."""
+    return _stack([bd.Plane.XY.offset(z) * top_outline(inset).faces()[0] for z, inset in _levels(extra)])
+
+
+def _inset_at(levels, z):
+    """Plan inset of the outer wall at height z (linear between the loft sections)."""
+    for (za, ia), (zb, ib) in zip(levels, levels[1:]):
+        if za - 1e-9 <= z <= zb + 1e-9:
+            return ia if zb == za else ia + (ib - ia) * (z - za) / (zb - za)
+    return levels[-1][1]
 
 
 def cavity():
-    """What is hollowed out: the outer body offset inward by the wall (so the wall is the same thickness everywhere, even
-    where the pod front meets the cone: a cone cavity plus a pod-box cavity left a knife-edge wedge there), taller than the
-    tub so it leaves through the top, which the top panel closes."""
-    return bd.offset(outer_body(extra=CAVITY_EXTRA), amount=-P.TUB_WALL, kind=bd.Kind.ARC)
+    """What is hollowed out: the same stack of plan outlines, each offset inward by the wall (taken square to the sloped wall, so
+    the wall is the same thickness everywhere), from the floor up and out through the open top (the top panel closes it). The floor
+    edge is rounded (FILLET_R) by three ruled steps of a quarter circle. Built from the sections, not by offsetting the solid: an
+    offset of the faceted solid leaves sliver faces."""
+    slope = math.radians(P.TUB_SLOPE_DEG)
+    levels = _levels(CAVITY_EXTRA)
+    z_floor = z0() + P.TUB_FLOOR_T
+    r = FILLET_R
+    secs = []   # (z, inset, wall offset)
+    for deg in (0, 30, 60, 90):
+        a = math.radians(deg)
+        z = z_floor + r * (1 - math.cos(a))
+        secs.append((z, _inset_at(levels, z), P.TUB_WALL + r * (1 - math.sin(a))))
+    for k, (z, inset) in enumerate(levels):
+        if z > z_floor + r + 1e-6:
+            sloped = z0() + SKIRT_H + 1e-6 < z <= z0() + height() - TOP_BAND_H + 1e-6
+            secs.append((z, inset, P.TUB_WALL / (math.cos(slope) if sloped else 1.0)))
+    faces = [bd.Plane.XY.offset(z) * bd.offset(top_outline(inset).faces()[0], amount=-w, kind=bd.Kind.ARC).faces()[0] for z, inset, w in secs]
+    return _stack(faces)
 
 
 def shell():
@@ -135,39 +184,76 @@ RING_OUT_R = 6.0    # mm axle ring outer radius
 RING_BORE_R = P.WHEEL_HUB_R + 0.2   # mm the wheel hub boss turns in the ring bore (0.2 running clearance)
 AXLE_SLOT_R = 2.3   # mm half width of the axle slot (shaft collar 2 mm radius, shaft 1.5 mm)
 RIB_T = 1.2         # mm cradle rib thickness (nozzle multiple)
-RIB_GAP = 0.2       # mm print clearance between the N10 flats and the ribs
-PAD_GAP = 0.1       # mm between the motor shaft-side face and the pad that stops it
+RIB_GAP = 0.45       # mm print clearance between the N10 flats and the ribs
+PAD_GAP = 0.45       # mm between the motor shaft-side face and the pad that stops it
 STOP_W = 2.4        # mm the rear stops reach in from each rib (they leave the solder-tab corridor free)
 MOTOR_HALF_W = 6.0  # mm half width of the N10 body (catalogue box 9 x 12 x 10)
 MOTOR_HALF_H = 5.0  # mm half height of the N10 body
 
 
-def drive_bays():
-    """Per side: the N10's cradle and the wheel's axle ring.
-    Cradle: two ribs along the motor, a pad in front of its shaft-side face (it stops the motor in x), and a rear stop on each
-    rib (not across the middle: the solder tabs and their wires leave there). The motor drops in from the top, panel off.
-    Axle ring: stands off the wall's outer face round the wheel hub boss; its end holds the shaft's 3 mm grip inside the chassis
-    hull (contain.electronics_exposed) and its lips keep the wheel and motor from lifting out. A slot, open at the top, takes
-    the shaft up and out when the motor is lifted (the wheel leaves sideways first)."""
+FILLET_R = 1.0   # mm minimum inside radius on printed concave corners (mfg.sharp_internal_corner)
+CORNER_R = 1.5   # mm radius of the cradle's vertical concave corners (larger than the base fillet, or the two blends degenerate to a point)
+SLAB_MARGIN = 2.0   # mm the cradle's base slab runs out beyond the cradle outline: room for the base fillet
+
+
+def _concave_vertices(face):
+    """Vertices of a plan face whose interior angle is reflex (more than half the surrounding disc is inside the face)."""
+    out = []
+    for v in face.vertices():
+        n = 0
+        for k in range(8):
+            a = math.radians(22.5 + 45 * k)
+            q = bd.Vector(v.X + 0.05 * math.cos(a), v.Y + 0.05 * math.sin(a), 0)
+            n += face.is_inside(q)
+        if n > 4:
+            out.append(v)
+    return out
+
+
+def cradle():
+    """Per side: the N10's cradle, one printed piece with its base fillets. Two ribs along the motor, a pad in front of its
+    shaft-side face (it stops the motor in x) and a rear stop on each rib (not across the middle: the solder tabs and their wires
+    leave there). The motor drops in from the top, panel off. Made as a plan outline (concave corners rounded) standing on a slab
+    the thickness of the floor, so the base edges take a fillet; the slab is cut back to just inside the pod's walls (0.4 mm into them)."""
     z_lo = z0() + P.TUB_FLOOR_T
     z_hi = P.WHEEL_CZ + MOTOR_HALF_H
-    wall_o = P.POD_W / 2
-    wall_i = wall_o - P.TUB_WALL
+    wall_i = P.POD_W / 2 - P.TUB_WALL
     face = P.motor_x() + P.DRIVE_MOTOR_FACE_X          # motor shaft-side face
     rear = P.motor_x() + P.DRIVE_MOTOR_REAR_X          # motor rear face (solder tabs)
     y0 = P.wheel_y()
     half = MOTOR_HALF_W + RIB_GAP + RIB_T
-    box = lambda x0, x1, y_a, y_b, z_a, z_b: bd.Pos((x0 + x1) / 2, (y_a + y_b) / 2, z_a) * bd.Box(
-        x1 - x0, y_b - y_a, z_b - z_a, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
-    out = box(face + PAD_GAP, wall_i + 0.2, y0 - half, y0 + half, z_lo, z_hi)                       # pad
+    rect = lambda x0, x1, y_a, y_b: bd.Pos((x0 + x1) / 2, (y_a + y_b) / 2) * bd.Rectangle(x1 - x0, y_b - y_a)
+    plan = rect(face + PAD_GAP, wall_i + 0.2, y0 - half, y0 + half)                       # pad
     for sy in (1, -1):
         a, b = sorted((y0 + sy * (MOTOR_HALF_W + RIB_GAP), y0 + sy * half))
-        out += box(rear - PAD_GAP - RIB_T, face + PAD_GAP, a, b, z_lo, z_hi)                         # rib
+        plan += rect(rear - PAD_GAP - RIB_T, face + PAD_GAP, a, b)                          # rib
         a2, b2 = sorted((y0 + sy * (MOTOR_HALF_W + RIB_GAP), y0 + sy * (MOTOR_HALF_W + RIB_GAP - STOP_W)))
-        out += box(rear - PAD_GAP - RIB_T, rear - PAD_GAP, a2, b2, z_lo, z_hi)                       # rear stop
-    ring = bd.Pos(wall_o - 0.2, y0, P.WHEEL_CZ) * bd.Rot(0, 90, 0) * bd.Cylinder(RING_OUT_R, RING_LEN + 0.2, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
-    out += ring
-    out += box(wall_o - 0.4, wall_o + RING_LEN, pod_rear_y(), pod_rear_y() + GUARD_W, z0(), z0() + height())   # rear corner post: carries the chassis hull out over the shaft tip
+        plan += rect(rear - PAD_GAP - RIB_T, rear - PAD_GAP, a2, b2)                         # rear stop
+    plan = plan.clean()
+    plan = bd.fillet(_concave_vertices(plan.faces()[0]), CORNER_R)
+    stand = bd.Pos(0, 0, z_lo) * bd.extrude(plan.faces()[0], z_hi - z_lo)
+    slab_face = bd.offset(plan.faces()[0], amount=SLAB_MARGIN, kind=bd.Kind.ARC).faces()[0]
+    slab = bd.Pos(0, 0, z0()) * bd.extrude(slab_face, P.TUB_FLOOR_T)
+    slab = slab & (bd.Pos(0, pod_cy(), z0()) * bd.Box(2 * wall_i + 0.8, pod_len() - 2 * P.TUB_WALL + 0.8, P.TUB_FLOOR_T, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN)))
+    body = stand + slab
+    edges = [e for e in body.edges() if e.center().X < wall_i - 0.01 and abs(e.bounding_box().min.Z - z_lo) < 1e-3 and abs(e.bounding_box().max.Z - z_lo) < 1e-3
+             and min(e.distance_to(bd.Pos(0, 0, z_lo) * w) for w in plan.faces()[0].wires()) < 1e-3]
+    return bd.fillet(edges, FILLET_R)
+
+
+def drive_bays():
+    """Per side: the N10's cradle (see cradle) and the wheel's axle ring.
+    Axle ring: stands off the wall's outer face round the wheel hub boss; its end holds the shaft's 3 mm grip inside the chassis
+    hull (contain.electronics_exposed) and its lips keep the wheel and motor from lifting out. A slot, open at the top, takes
+    the shaft up and out when the motor is lifted (the wheel leaves sideways first). A post at the rear pod corner carries the
+    hull out over the shaft tip."""
+    wall_o = P.POD_W / 2
+    y0 = P.wheel_y()
+    box = lambda x0, x1, y_a, y_b, z_a, z_b: bd.Pos((x0 + x1) / 2, (y_a + y_b) / 2, z_a) * bd.Box(
+        x1 - x0, y_b - y_a, z_b - z_a, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+    out = cradle()
+    out += bd.Pos(wall_o - 0.2, y0, P.WHEEL_CZ) * bd.Rot(0, 90, 0) * bd.Cylinder(RING_OUT_R, RING_LEN + 0.2, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+    out += box(wall_o - 0.4, wall_o + RING_LEN, pod_rear_y(), pod_rear_y() + GUARD_W, z0(), z0() + height())
     return out + bd.mirror(out, bd.Plane.YZ)
 
 

@@ -23,7 +23,7 @@ def _z_cyl(r, h):
 ARM_CLR_FLOOR = 0.5    # mm: arm underside above the floor: within 0.6 mm it counts as a floor contact (arch.com_support), like a skid
 ARM_CLR_BAR = 1.1      # mm: arm top under the bar underside (kin.rub_gap wants 1.0 mm for a weapon)
 ARM_W = 10.0           # mm strip width = puck diameter; bar-bolt driver path (x 5.65 .. 9.35 at PCD 15) stays clear
-ARM_RISER_Y = (-54.0, -46.0)   # mm: behind the bar sweep (rearmost sweep y = axis - r = -42.5); sits on the pod floor underside
+ARM_RISER_Y = (-58.0, -46.0)   # mm: behind the bar sweep (rearmost sweep y = axis - r = -42.5); sits on the pod floor underside
 BEARING_OD_R = 4.0     # mm MR85 outer radius (bearing seat in the puck)
 BEARING_W = 2.5        # mm MR85 width
 SHAFT_R = P.SHAFT_D / 2
@@ -31,7 +31,7 @@ SHAFT_R = P.SHAFT_D / 2
 
 ARM_W_BODY = 24.0      # mm: width of the stiff part of the strip (the arch.fork_stiffness check bends it sideways: I = t w^3 / 12)
 ARM_NECK_Y = (4.0, 10.0)   # mm from the axis line: where the strip narrows to the puck width (the bar-bolt driver path)
-ARM_SCREWS = ((-2.1, -52.0), (2.1, -52.0), (-2.1, -48.0), (2.1, -48.0))   # mm xy: the four riser screws (M2)
+ARM_SCREWS = ((0.0, -56.0), (0.0, -52.0), (0.0, -48.0))   # mm xy: the four riser screws (M2)
 RISER_W = 16.0         # mm riser width (two M2 screws 10 mm apart)
 
 
@@ -53,7 +53,7 @@ def foot():
     riser = bd.Pos(0, sum(ARM_RISER_Y) / 2, z0) * bd.Box(RISER_W, ARM_RISER_Y[1] - ARM_RISER_Y[0], P.tub_floor_z() - z0,
                                                        align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
     arm = strip + puck + riser
-    r_fil = 1.0   # concave strip-to-riser corner: printed parts need >= 1 mm inside radius
+    r_fil = 1.6   # concave strip-to-riser corner: printed parts need >= 1 mm inside radius
     cx = sum(ARM_RISER_Y) / 2
     edges = [e for e in arm.edges() if abs(e.center().Z - z1) < 1e-3 and ARM_RISER_Y[0] - 1e-3 <= e.center().Y <= ARM_RISER_Y[1] + 1e-3
              and abs(e.center().X) <= RISER_W / 2 + 1e-3 and e.length < RISER_W + 1e-3]

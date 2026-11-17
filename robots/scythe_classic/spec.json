@@ -869,8 +869,8 @@
    "designation": "M2x8",
    "material": "steel",
    "at": [
-    -2.1,
-    -52.0,
+    0.0,
+    -56.0,
     10.3
    ],
    "dir": [
@@ -901,7 +901,7 @@
    "designation": "M2x8",
    "material": "steel",
    "at": [
-    2.1,
+    0.0,
     -52.0,
     10.3
    ],
@@ -933,39 +933,7 @@
    "designation": "M2x8",
    "material": "steel",
    "at": [
-    -2.1,
-    -48.0,
-    10.3
-   ],
-   "dir": [
-    0,
-    0,
-    -1
-   ],
-   "through": [
-    "tub"
-   ],
-   "threads_into": "skid_arm",
-   "tool": "hex1.3",
-   "hole": {
-    "d": 2.0,
-    "length": 8.0,
-    "head": "button",
-    "clearance_d": 2.2,
-    "into": "through",
-    "side": "head",
-    "grip": 1.0,
-    "sink": 0.0
-   },
-   "head": "button",
-   "removable": true
-  },
-  {
-   "id": "arm_3",
-   "designation": "M2x8",
-   "material": "steel",
-   "at": [
-    2.1,
+    0.0,
     -48.0,
     10.3
    ],
