@@ -28,7 +28,6 @@ def fastener_specs() -> list[FastenerSpec]:
     n_front = (0.0, -P.INV_SQRT2, -P.INV_SQRT2)
     z_top_pt = P.Z_TOP + P.PANEL_TOP_T
     z_top_sp = z_top_pt + P.TOP_SPINE_T
-    z_top_tc = z_top_pt + 2.0
 
     # Wedge outer face: Y + Z = 32 + 0.05*2 + WEDGE_T * sqrt(2)
     wy_mid = P.WEDGE_MID_Y + 0.05 + P.WEDGE_T * P.INV_SQRT2
@@ -43,9 +42,6 @@ def fastener_specs() -> list[FastenerSpec]:
         # Top spine -> panel_top -> tub (threads into solid tub at X=+/-15, Y=5.2)
         FastenerSpec("f_sp_l", "M2x8", (-15.0, 5.2, z_top_sp), (0, 0, -1), ("top_spine", "panel_top"), "tub", grip=2.8),
         FastenerSpec("f_sp_r", "M2x8", (15.0, 5.2, z_top_sp), (0, 0, -1), ("top_spine", "panel_top"), "tub", grip=2.8),
-        # Top cover -> panel_top -> tub (on flat ears at X=+/-18.2, Y=-29.8 behind motor pockets)
-        FastenerSpec("f_tc_l", "M2x10", (-18.2, -29.8, z_top_tc), (0, 0, -1), ("top_cover", "panel_top"), "tub", grip=3.2),
-        FastenerSpec("f_tc_r", "M2x10", (18.2, -29.8, z_top_tc), (0, 0, -1), ("top_cover", "panel_top"), "tub", grip=3.2),
         # Wedge front -> tub
         FastenerSpec("f_wf_l", "M2x8", (-32.0, wy_mid, wz_mid), n_front, ("wedge_front",), "tub", head="button", grip=1.0),
         FastenerSpec("f_wf_r", "M2x8", (32.0, wy_mid, wz_mid), n_front, ("wedge_front",), "tub", head="button", grip=1.0),

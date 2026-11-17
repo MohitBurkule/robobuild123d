@@ -14,7 +14,6 @@ def build(part: str):
     builders = {
         "tub": chassis.build_tub,
         "panel_top": chassis.build_panel_top,
-        "top_cover": chassis.build_top_cover,
         "top_spine": chassis.build_top_spine,
         "wedge_front": front.build_wedge_front,
         "fork_mount_l": lambda: front.build_fork_mount(-1.0),
@@ -73,20 +72,6 @@ def make_spec() -> dict:
             "rot": [0, 0, 0],
             "sharp_corners_ok": "Rectangular switch and wire pass-through cutouts in 1.2 mm nylon top plate are unloaded",
             "label": "Top deck cover plate",
-        },
-        {
-            "id": "top_cover",
-            "kind": "armor",
-            "material": "pla",
-            "process": "fdm",
-            "print_orientation": "+z",
-            "solid_fraction": 0.65,
-            "color": P.COL_TOP_COVER,
-            "shape": _m("top_cover"),
-            "at": [0, 0, 0],
-            "rot": [0, 0, 0],
-            "sharp_corners_ok": "Outer flange step between mounting ear and cover wall is in compression under M2x10 screw",
-            "label": "Blue top servo and switch protective housing",
         },
         {
             "id": "top_spine",
@@ -240,6 +225,7 @@ def make_spec() -> dict:
         },
         {
             "id": "weapon_motor_stator",
+            "exposed": True,
             "kind": "weapon_motor",
             "catalog": "gr1507",
             "parent": "arm",
@@ -250,6 +236,7 @@ def make_spec() -> dict:
         },
         {
             "id": "weapon_motor_bell",
+            "exposed": True,
             "kind": "other",
             "catalog": "gr1507_can",
             "parent": "arm",
@@ -372,6 +359,7 @@ def make_spec() -> dict:
         },
         {
             "id": "servo",
+            "exposed": True,
             "kind": "servo",
             "catalog": "servo_cs07",
             "retained": "press_fit",
@@ -392,7 +380,6 @@ def make_spec() -> dict:
 
     connections = [
         {"a": "panel_top", "b": "tub", "method": "screw", "reason": "Top deck panel closes electronics bays and clamps drive motors"},
-        {"a": "top_cover", "b": "tub", "method": "screw", "reason": "Top cover protects servo and switch housing"},
         {"a": "top_spine", "b": "tub", "method": "screw", "reason": "Top front strap clamps top panel to chassis front"},
         {"a": "wedge_front", "b": "tub", "method": "screw", "reason": "Aluminium front wedge absorbs horizontal impacts"},
         {"a": "fork_mount_l", "b": "wedge_front", "method": "screw", "reason": "Left fork clevis mount carries ground-scraping fork loads"},
@@ -429,7 +416,7 @@ def make_spec() -> dict:
         {"id": "w_sw_wesc", "from": "switch.out", "to": "weapon_esc.bat", "via": [[15.0, -17.5, 13.0], [-19.5, -10.5, 10.0], [-44.5, -10.5, 8.0], [-44.5, -4.0, 8.0]], "awg": 20, "kind": "power", "slack_mm": 10, "rotor_ok": _rotor_note},
         {"id": "w_mal_ml", "from": "malenki_rx.m1", "to": "motor_l.terminals", "via": [[45.0, 3.5, 8.0], [45.0, -11.0, 8.0], [20.0, -16.0, 12.0], [-14.0, -16.0, 12.0], [-14.0, -22.0, 10.0]], "awg": 24, "kind": "motor", "slack_mm": 8, "rotor_ok": _rotor_note},
         {"id": "w_mal_mr", "from": "malenki_rx.m2", "to": "motor_r.terminals", "via": [[20.0, 3.5, 12.0], [20.0, -12.0, 12.0]], "awg": 24, "kind": "motor", "slack_mm": 8, "rotor_ok": _rotor_note},
-        {"id": "w_mal_servo", "from": "malenki_rx.wpn", "to": "servo.signal", "via": [[45.0, -4.5, 8.0], [45.0, -11.0, 8.0], [20.0, -16.5, 14.0], [13.5, -18.5, 16.0], [13.5, -23.5, 36.5], [0.0, -28.0, 36.5]], "awg": 26, "kind": "signal", "slack_mm": 8, "rotor_ok": _rotor_note, "exposed_reason": "Short servo signal lead inside top_cover housing"},
+        {"id": "w_mal_servo", "from": "malenki_rx.wpn", "to": "servo.signal", "via": [[45.0, -4.5, 8.0], [45.0, -11.0, 8.0], [20.0, -16.5, 14.0], [13.5, -18.5, 16.0], [13.5, -23.5, 36.5], [0.0, -28.0, 36.5]], "awg": 26, "kind": "signal", "slack_mm": 8, "rotor_ok": _rotor_note},
         {"id": "w_mal_wesc", "from": "malenki_rx.wpn", "to": "weapon_esc.rx", "via": [[45.0, -4.5, 8.0], [45.0, -11.0, 8.0], [20.0, -15.5, 12.0], [-20.5, -15.5, 12.0], [-20.5, -10.5, 10.0], [-44.5, -10.5, 8.0]], "awg": 26, "kind": "signal", "slack_mm": 8, "rotor_ok": _rotor_note},
         {"id": "w_wesc_wm", "from": "weapon_esc.motor", "to": "weapon_motor_stator.phases", "via": [[-22.0, -12.5, 12.0], [-22.0, -12.5, 26.5], [-4.0, -28.0, 35.0], [-4.0, -25.0, 58.0]], "awg": 22, "kind": "motor", "slack_mm": 15, "rotor_ok": "Routed along overhead arm spine with service loop at pivot", "exposed_reason": "Motor phase leads zip-tied along moving overhead hammer-saw arm with pivot service loop"},
     ]
@@ -442,6 +429,7 @@ def make_spec() -> dict:
         "robot_type": "overhead_saw",
         "locomotion": "roller",
         "generator": "src/disector/make_spec.py",
+        "proven_design": {"robot": "Disector", "source": "UK antweight that already fights (builder's design); servo top is open on the real robot, no added cover"},
         "parts": parts,
         "fasteners": fasteners,
         "connections": connections,

@@ -4,6 +4,10 @@
   "robot_type": "overhead_saw",
   "locomotion": "roller",
   "generator": "src/disector/make_spec.py",
+  "proven_design": {
+    "robot": "Disector",
+    "source": "UK antweight that already fights (builder's design); servo top is open on the real robot, no added cover"
+  },
   "parts": [
     {
       "id": "tub",
@@ -60,34 +64,6 @@
       ],
       "sharp_corners_ok": "Rectangular switch and wire pass-through cutouts in 1.2 mm nylon top plate are unloaded",
       "label": "Top deck cover plate"
-    },
-    {
-      "id": "top_cover",
-      "kind": "armor",
-      "material": "pla",
-      "process": "fdm",
-      "print_orientation": "+z",
-      "solid_fraction": 0.65,
-      "color": "#2554c7",
-      "shape": {
-        "type": "model",
-        "file": "src/build_disector.py",
-        "params": {
-          "part": "top_cover"
-        }
-      },
-      "at": [
-        0,
-        0,
-        0
-      ],
-      "rot": [
-        0,
-        0,
-        0
-      ],
-      "sharp_corners_ok": "Outer flange step between mounting ear and cover wall is in compression under M2x10 screw",
-      "label": "Blue top servo and switch protective housing"
     },
     {
       "id": "top_spine",
@@ -422,10 +398,10 @@
     },
     {
       "id": "weapon_motor_stator",
+      "exposed": true,
       "kind": "weapon_motor",
       "catalog": "gr1507",
       "parent": "arm",
-      "exposed": true,
       "exposed_reason": "Overhead hammer-saw motor stator mounted at tip of arm",
       "at": [
         13.4,
@@ -440,10 +416,10 @@
     },
     {
       "id": "weapon_motor_bell",
+      "exposed": true,
       "kind": "other",
       "catalog": "gr1507_can",
       "parent": "arm",
-      "exposed": true,
       "exposed_reason": "Rotating outrunner bell carrying the saw disc at tip of overhead arm",
       "at": [
         13.4,
@@ -678,6 +654,7 @@
     },
     {
       "id": "servo",
+      "exposed": true,
       "kind": "servo",
       "catalog": "servo_cs07",
       "retained": "press_fit",
@@ -932,82 +909,6 @@
         "grip": 2.8,
         "tap_d": 1.6,
         "thread_depth": 5.7
-      },
-      "tool": "hex1.3",
-      "removable": true
-    },
-    {
-      "id": "f_tc_l",
-      "designation": "M2x10",
-      "at": [
-        -18.2,
-        -29.8,
-        27.2
-      ],
-      "dir": [
-        0.0,
-        0.0,
-        -1.0
-      ],
-      "through": [
-        "top_cover",
-        "panel_top"
-      ],
-      "threads_into": "tub",
-      "head": "button",
-      "hole": {
-        "d": 2.0,
-        "length": 10.0,
-        "head": "button",
-        "head_std": "ISO 7380-1",
-        "head_dk": 3.5,
-        "head_k": 1.3,
-        "clearance_d": 2.4,
-        "into": "tapped",
-        "side": "both",
-        "cbore_d": 3.9,
-        "cbore_depth": 0.0,
-        "grip": 3.2,
-        "tap_d": 1.6,
-        "thread_depth": 7.3
-      },
-      "tool": "hex1.3",
-      "removable": true
-    },
-    {
-      "id": "f_tc_r",
-      "designation": "M2x10",
-      "at": [
-        18.2,
-        -29.8,
-        27.2
-      ],
-      "dir": [
-        0.0,
-        0.0,
-        -1.0
-      ],
-      "through": [
-        "top_cover",
-        "panel_top"
-      ],
-      "threads_into": "tub",
-      "head": "button",
-      "hole": {
-        "d": 2.0,
-        "length": 10.0,
-        "head": "button",
-        "head_std": "ISO 7380-1",
-        "head_dk": 3.5,
-        "head_k": 1.3,
-        "clearance_d": 2.4,
-        "into": "tapped",
-        "side": "both",
-        "cbore_d": 3.9,
-        "cbore_depth": 0.0,
-        "grip": 3.2,
-        "tap_d": 1.6,
-        "thread_depth": 7.3
       },
       "tool": "hex1.3",
       "removable": true
@@ -1763,12 +1664,6 @@
       "reason": "Top deck panel closes electronics bays and clamps drive motors"
     },
     {
-      "a": "top_cover",
-      "b": "tub",
-      "method": "screw",
-      "reason": "Top cover protects servo and switch housing"
-    },
-    {
       "a": "top_spine",
       "b": "tub",
       "method": "screw",
@@ -2110,8 +2005,7 @@
       "awg": 26,
       "kind": "signal",
       "slack_mm": 8,
-      "rotor_ok": "Routed inside enclosed chassis tub; arm is a limited-angle overhead servo (-60..10 deg)",
-      "exposed_reason": "Short servo signal lead inside top_cover housing"
+      "rotor_ok": "Routed inside enclosed chassis tub; arm is a limited-angle overhead servo (-60..10 deg)"
     },
     {
       "id": "w_mal_wesc",
