@@ -32,6 +32,7 @@ SHAFT_R = P.SHAFT_D / 2
 ARM_W_BODY = 24.0      # mm: width of the stiff part of the strip (the arch.fork_stiffness check bends it sideways: I = t w^3 / 12)
 ARM_NECK_Y = (4.0, 10.0)   # mm from the axis line: where the strip narrows to the puck width (the bar-bolt driver path)
 ARM_SCREWS = ((0.0, -56.0), (0.0, -52.0), (0.0, -48.0))   # mm xy: the four riser screws (M2)
+ARM_SCREW_L = 8.0      # mm M2x8 arm screws (make_spec fasteners)
 RISER_W = 16.0         # mm riser width (two M2 screws 10 mm apart)
 
 
@@ -60,6 +61,10 @@ def foot():
     if edges:
         arm = bd.fillet(edges, r_fil)
     bore = bd.Pos(0, P.WPN_AXIS_Y, z0 - 1) * _z_cyl(BEARING_OD_R, z1 - z0 + 2)
+    top = P.tub_floor_z()
+    depth = ARM_SCREW_L - P.TUB_FLOOR_T + 0.5   # M2x8 through the floor, the rest threads into the riser
+    for sx, sy in ARM_SCREWS:   # M2 thread-forming pilots in the riser
+        bore += bd.Pos(sx, sy, top - depth) * _z_cyl(0.85, depth + 0.1)   # 1.7 pilot, as tub.PILOT_R
     return arm - bore
 
 

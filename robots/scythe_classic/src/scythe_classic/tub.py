@@ -363,5 +363,20 @@ def arm_holes():
     return out
 
 
+PILOT_R = 0.85      # mm M2 thread-forming pilot in printed nylon (1.7 drill, as Revron TOP_SCREW_WEB)
+RIM_SCREW_L = 6.0   # mm M2x6 rim screw (make_spec fasteners)
+
+
+def rim_pilots():
+    """Pilot holes in the rim posts for the M2x6 top-panel screws: screw length less the panel, plus 0.5 mm tip room."""
+    top = P.TUB_TOP_Z - P.TOP_PANEL_T
+    depth = RIM_SCREW_L - P.TOP_PANEL_T + 0.5
+    out = None
+    for x, y in rim_positions():
+        h = bd.Pos(x, y, top - depth) * bd.Cylinder(PILOT_R, depth + 0.1, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
+        out = h if out is None else out + h
+    return out
+
+
 def tub():
-    return shell() + weapon_boss() + drive_bays() - bell_bore() - axle_holes() - arm_holes()
+    return shell() + weapon_boss() + drive_bays() - bell_bore() - axle_holes() - arm_holes() - rim_pilots()
