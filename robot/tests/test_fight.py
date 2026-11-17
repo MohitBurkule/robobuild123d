@@ -90,3 +90,64 @@ def test_sector_pieces_keep_tooth():
     p.verts = v
     pieces = sector_pieces(p, np.zeros(3), np.array([1.0, 0, 0]))
     assert len(pieces) >= 8
+
+
+def test_motor_curve_battery_sag_heat():
+    from robot.fight import physics
+
+    m = physics.weapon_motor({"weapon": {"motor": {"kv": 3800, "r_ohm": 0.12, "i_max_a": 30}}}, "w")
+    b = physics.battery({})
+    t_stall = m.torque(1.0, b.v, 0.0)
+    assert m.i == 30.0 and math.isclose(t_stall, m.ke * 30)  # ESC current limit at stall
+    w0 = b.v / m.ke
+    assert abs(m.torque(1.0, b.v, w0)) < 1e-9  # no torque at no-load speed
+    assert m.torque(1.0, b.v, 0.9 * w0) < t_stall
+    v0 = b.v
+    b.update(30.0, 0.1)
+    assert b.v < v0 - 2.0 and b.soc < 1.0  # sag under spin-up current, charge used
+    m.torque(1.0, 8.4, 0.0)
+    for _ in range(2000):
+        m.heat(0.01)
+    assert m.temp > 60  # stalled 20 s: hot
+    hot = physics.Motor("h", 0.0025, 0.12, 30, t_cut=50)
+    hot.torque(1.0, 8.4, 0.0)
+    for _ in range(1000):
+        hot.heat(0.01)
+    assert hot.dead and hot.torque(1.0, 8.4, 0.0) == 0.0
+
+
+def _spinner_model():
+    from robot.sim.model import Group
+
+    m = _model()
+    disc = _box_part("disc", "weapon", (-.003, .02, .005), (.003, .07, .055), .03)
+    m.groups.append(Group("weapon", "weapon", [disc], pivot=np.array([0, .045, .03]), axis=np.array([1.0, 0, 0])))
+    return m
+
+
+def test_gyro_tilts_a_turning_spinner():
+    """A vertical spinner turning on the spot tips further with its disc spinning (gyroscopic torque)."""
+    from robot.fight.arena import FightSim
+    from robot.sim.scene import Placement
+
+    sp = _spec(sim={"forward": [0, 1], "weapon": {"rpm": 12000, "imbalance_mm": 0.0}, "breakable": {"lid": 1e6}})
+    tilt = {}
+    for spin in (False, True):
+        prof = profile.build(sp)
+        sim = FightSim()
+        sim.add_fighter(_spinner_model(), prof, Placement("A", (0, 0), 90))
+        sim.compile()
+        mx = 0.0
+        for k in range(12000):
+            if k % 40 == 0:
+                sim.spin_weapon("A", prof.weapon_omega if spin else 0)
+                sim.drive("A", *((0, 0) if k < 8000 else (-230, 230)))
+            if k % 5 == 0:
+                sim.step_plant(5e-4)
+            sim.step_damage()
+            if k >= 8000:
+                mx = max(mx, sim.tilt("A"))
+        tilt[spin] = mx
+        if spin:
+            assert abs(sim.weapon_omega("A")) > 300
+    assert tilt[True] > tilt[False] + 1.0, tilt

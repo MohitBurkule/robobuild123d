@@ -107,6 +107,8 @@ def fight(spec_a, spec_b, seconds=20.0, out=None, fps=30, size=(640, 480), times
                     hits.append((round(t, 3), n, round(e, 2)))
                     sim.events.append((t, "hit", n, "weapon", round(e, 2)))
                 prev_w[n] = w
+        if k % 5 == 0:
+            sim.step_plant(5 * timestep)
         sim.step_damage()
         if writer is not None and k % n_frame == 0:
             _aim(cam, sim, view, follow or na, nb if (follow or na) == na else na)
@@ -119,7 +121,10 @@ def fight(spec_a, spec_b, seconds=20.0, out=None, fps=30, size=(640, 480), times
            "events": [list(e) for e in sim.events], "hits": hits, "outcome": outcome(sim, (na, nb), seconds), "peak": peak,
            "welds": [{"robot": w.robot, "part": w.part, "break_N": round(w.break_n, 1), "peak_N": round(w.peak_n, 1),
                       "broken_at": w.broken_at} for w in sim.welds],
-           "defaults": {na: pa.defaults, nb: pb.defaults}}
+           "defaults": {na: pa.defaults, nb: pb.defaults},
+           "electric": {n: {"battery_v": round(pl["battery"].v, 2), "soc": round(pl["battery"].soc, 3),
+                            "motors": {g: {"temp_c": round(m.temp, 1), "dead": m.dead} for g, m in pl["motors"].items()}}
+                        for n, pl in sim.plant.items()}}
     res["winner"] = judge(res)
     log(json.dumps({k: res[k] for k in ("robots", "wall_s", "winner")}))
     return res

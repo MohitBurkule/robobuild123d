@@ -58,6 +58,7 @@ REGISTRY = [
     _g("kinematics", DESIGN, FULL, 179.0),
     _g("tension", DESIGN, INNER, 0.0),
     _g("targets", DESIGN, INNER, 0.2, note="the spec's own declared target dimensions"),
+    _g("wobble", DESIGN, FULL, 45.0, note="MuJoCo weapon imbalance + mount flex + hit, real-mesh swept clearance"),
     _g("fight", DESIGN, INNER, 0.1, note="fight-sim readiness: spec `sim` block, weld break forces (robot/fight)"),
     _g("shape", DESIGN, INNER, 6.5),
     _g("dynamics", DESIGN, INNER, 0.0),

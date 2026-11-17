@@ -48,8 +48,15 @@ class FightSim(Sim):
         w.add_light(pos=[0, 0, 1.5], dir=[0, 0, -1], diffuse=[0.9, 0.9, 0.9], castshadow=True)
         w.add_light(pos=[0.6, -0.6, 1.0], dir=[-0.4, 0.4, -1], diffuse=[0.4, 0.4, 0.4])
         self.spec.visual.headlight.ambient = [0.35, 0.35, 0.35]
-        for gname in ("floor",):
-            pass
+        if h:  # steel floor sheets: 0.4 mm proud seams every 300 mm (wheels bump, wedges catch)
+            for k in range(-1, 2):
+                for ax in (0, 1):
+                    size = [h, 0.001, 0.0002] if ax == 0 else [0.001, h, 0.0002]
+                    pos = [0, k * 0.3, 0.0002] if ax == 0 else [k * 0.3, 0, 0.0002]
+                    w.add_geom(name=f"seam{ax}{k}", type=mujoco.mjtGeom.mjGEOM_BOX, size=size, pos=pos,
+                               rgba=[0.35, 0.37, 0.4, 1], friction=[0.5, 0.005, 1e-4])
+        self.plant: dict = {}  # robot -> {"battery", "motors": {group: Motor}, "duty": {group: d}}
+        self.fixed_motors = False  # True = old ideal velocity servos (no curves / sag / heat)
 
     def add_fighter(self, model: RobotModel, prof: Profile, placement: Placement):
         name = placement.name.replace(" ", "_")
@@ -75,12 +82,28 @@ class FightSim(Sim):
             elif loose:
                 b = self.spec.worldbody.add_body(name=pre + g.name, pos=list(t), quat=q)
                 b.add_freejoint(name=pre + g.name + "_free")
+            elif g.kind == "weapon" and not self.fixed_motors:
+                wp = wobble_params(prof)
+                car = chassis.add_body(name=pre + "carrier", pos=list(g.pivot))
+                car.explicitinertial = True
+                car.mass, car.ipos, car.fullinertia = 1e-4, [0, 0, 0], [1e-10, 1e-10, 1e-10, 0, 0, 0]
+                a_, u_, v_ = _basis(g.axis)
+                for nm, ax in (("ru", u_), ("rv", v_)):
+                    car.add_joint(name=f"{pre}{nm}", type=mujoco.mjtJoint.mjJNT_SLIDE, axis=list(ax),
+                                  stiffness=wp["mount_k_Npm"], damping=5.0, armature=1e-3)
+                for nm, ax in (("tu", u_), ("tv", v_)):
+                    car.add_joint(name=f"{pre}{nm}", type=mujoco.mjtJoint.mjJNT_HINGE, axis=list(ax),
+                                  stiffness=wp["tilt_k_Nm"], damping=0.01, armature=2e-6)
+                b = car.add_body(name=pre + g.name, pos=list(-np.asarray(g.pivot)))
+                names.append(pre + "carrier")
             else:
                 b = chassis.add_body(name=pre + g.name)
             names.append(pre + g.name)
             b.explicitinertial = True
             b.mass = max(g.mass, 1e-5)
             b.ipos = list(g.com)
+            if g.kind == "weapon" and not self.fixed_motors:  # real discs are never balanced
+                b.ipos = list(g.com + _basis(g.axis)[1] * wobble_params(prof)["imbalance_mm"] * 1e-3)
             I = g.inertia + np.eye(3) * 1e-10
             b.fullinertia = [I[0, 0], I[1, 1], I[2, 2], I[0, 1], I[0, 2], I[1, 2]]
             if loose:
@@ -120,11 +143,20 @@ class FightSim(Sim):
             a.biasprm[1], a.biasprm[2] = -kp, -kd
             tq = prof.lifter["torque_Nm"]
             self.lifter_joint[pre[:-1]] = jn
-        else:
+        elif self.fixed_motors:
             kv = 0.004 if g.kind == "weapon" else 0.01
             a.gainprm[0] = kv
             a.biasprm[2] = -kv
             tq = prof.weapon_torque if g.kind == "weapon" else prof.drive_torque
+        else:  # torque actuator; robot/fight/physics.py motor model sets ctrl = torque
+            from . import physics
+
+            a.gainprm[0] = 1.0
+            tq = 10.0
+            pl = self.plant.setdefault(pre[:-1], {"battery": physics.battery(prof.raw), "motors": {}, "duty": {}})
+            pl["motors"][g.name] = (physics.weapon_motor(prof.raw, g.name) if g.kind == "weapon"
+                                    else physics.drive_motor(prof.raw, g.name))
+            pl["duty"][g.name] = 0.0
         a.forcerange = [-tq, tq]
         a.forcelimited = True
 
@@ -133,7 +165,8 @@ class FightSim(Sim):
     def compile(self):
         tc = max(self.CONTACT_TC, 2.5 * self.timestep)
         for g in self.spec.geoms:
-            g.solref = [tc, 1.0]
+            # damping ratio < 1 = some bounce: printed parts / polycarbonate walls rebound (restitution ~0.3-0.5)
+            g.solref = [tc, 0.5]
         super().compile()
         self.welds = [Weld(r, p, self.m.equality(n).id, bn) for r, p, n, bn in self._weld_spec]
         return self
@@ -143,7 +176,37 @@ class FightSim(Sim):
         prof = self.profiles[robot]
         vmax = prof.drive_max
         left, right = (max(-vmax, min(vmax, v)) for v in (left, right))
-        return super().drive(robot, left, right, tuple(prof.forward))
+        super().drive(robot, left, right, tuple(prof.forward))
+        pl = self.plant.get(robot)
+        if pl:  # the brain's wheel speeds become throttle (duty), like an RC transmitter stick
+            for g in self.robots[robot].wheels:
+                pl["duty"][g.name] = float(self.d.ctrl[self._act(robot, g.name)]) / vmax
+        return self
+
+    def spin_weapon(self, robot, omega):
+        pl = self.plant.get(robot)
+        g = self.robots[robot].weapon
+        if pl and g is not None:
+            # throttle set so the no-load speed on a full pack is the declared rpm (drivers rarely run 100 %); the speed
+            # then really sags with the battery and drops on every hit
+            mot = pl["motors"][g.name]
+            pl["duty"][g.name] = max(-1.0, min(1.0, omega * mot.ke / pl["battery"].ocv())) if omega else 0.0
+            return self
+        return super().spin_weapon(robot, omega)
+
+    def step_plant(self, dt):
+        """Motor curves + battery sag + heating: set every driven hinge's torque from throttle, battery and speed."""
+        for robot, pl in self.plant.items():
+            bat = pl["battery"]
+            i_tot = 0.0
+            for gname, mot in pl["motors"].items():
+                j = self.m.joint(f"{robot}/{gname}_hinge")
+                om = float(self.d.qvel[j.dofadr[0]])
+                tq = mot.torque(pl["duty"][gname], bat.v, om)
+                self.d.ctrl[self._act(robot, gname)] = tq
+                i_tot += abs(pl["duty"][gname] * mot.i)
+                mot.heat(dt)
+            bat.update(i_tot, dt)
 
     def lift(self, robot, angle):
         model = self.robots[robot]
@@ -199,6 +262,20 @@ class FightSim(Sim):
         f = R @ np.array([*self.profiles[robot].forward, 0.0])
         c = self.com(robot)
         return c[:2], math.atan2(f[1], f[0]), R
+
+
+def _basis(axis):
+    a = np.asarray(axis, float) / np.linalg.norm(axis)
+    u = np.cross(a, [1.0, 0, 0] if abs(a[0]) < 0.9 else [0, 1.0, 0])
+    u /= np.linalg.norm(u)
+    return a, u, np.cross(a, u)
+
+
+def wobble_params(prof):
+    from .wobble import DEFAULTS
+
+    w = dict((prof.raw.get("weapon") or {}))
+    return {k: float(w.get(k, v)) for k, v in DEFAULTS.items()}
 
 
 def sector_pieces(p, pivot, axis, n=12):
