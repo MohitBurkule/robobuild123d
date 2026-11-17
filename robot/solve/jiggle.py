@@ -315,6 +315,59 @@ def _solve_params(spec_path, levers, clear=0.0, iters=12, fast=True, log=print):
             "files": {lv.label: lv.file for lv in levers}, "names": {lv.label: lv.name for lv in levers}}
 
 
+RANGE_SAMPLES = 16
+
+
+def lever_ranges(spec_path, levers, clear=0.0, fast=True, regen=None, regen_cwd=None, samples=RANGE_SAMPLES, log=print):
+    """For each lever alone (the others at their current value): the interval around its value where the whole robot
+    has no collision / clearance violation, walking out in (hi - lo) / samples steps (each step a rebuild + check).
+    If the current value already collides, the clean sub-intervals of lo..hi are listed instead."""
+    sp = Path(spec_path)
+    saved = sp.read_text()
+    REGEN.update(script=regen, cwd=regen_cwd)
+    out = {}
+    try:
+        x0s = [lv.x0 for lv in levers]
+        for k, lv in enumerate(levers):
+            h = max(lv.step, (lv.hi - lv.lo) / samples)
+            memo = {}
+
+            def bad(x):
+                x = round(x, 6)
+                if x not in memo:
+                    xs = list(x0s)
+                    xs[k] = x
+                    v = _eval_params(spec_path, levers, xs, clear, fast)
+                    memo[x] = float("inf") if v is None else sum(v.values())
+                return memo[x] > 1e-6
+
+            if not bad(lv.x0):
+                a = b = lv.x0
+                while a - h >= lv.lo - 1e-9 and not bad(a - h):
+                    a -= h
+                while b + h <= lv.hi + 1e-9 and not bad(b + h):
+                    b += h
+                out[lv.label] = {"now": lv.x0, "clean": [[round(a, 4), round(b, 4)]], "step": h}
+            else:
+                xs = [lv.lo + i * h for i in range(int(round((lv.hi - lv.lo) / h)) + 1)]
+                runs, cur = [], None
+                for x in xs:
+                    if not bad(x):
+                        cur = [x, x] if cur is None else [cur[0], x]
+                    elif cur is not None:
+                        runs.append(cur)
+                        cur = None
+                if cur is not None:
+                    runs.append(cur)
+                out[lv.label] = {"now": lv.x0, "clean": [[round(a, 4), round(b, 4)] for a, b in runs], "step": h}
+            log(f"  {lv.label} (now {lv.x0:g}): clean in " + (", ".join(f"[{a:g}, {b:g}]" for a, b in out[lv.label]["clean"])
+                                                            or "nothing in its range") + f"  (sampled every {h:g})")
+    finally:
+        REGEN.update(script=None, cwd=None)
+        sp.write_text(saved)
+    return out
+
+
 def add_cli(sub):
     p = sub.add_parser("jiggle", help="nudge movable parts until collisions/clearances clear (measured, not guessed)")
     p.add_argument("spec")
@@ -333,6 +386,8 @@ def add_cli(sub):
     p.add_argument("--fine", action="store_true", help="fine tessellation (slower, exact like verify)")
     p.add_argument("--write", help="write the moved spec here (never overwrites the input unless you pass its path)")
     p.add_argument("--json", help="write the result as JSON here")
+    p.add_argument("--ranges", action="store_true", help="with levers: print each lever's clean interval (any value inside "
+                   "keeps the robot collision-free, the other levers unchanged) instead of solving")
     p.set_defaults(func=_cli)
 
 
@@ -341,6 +396,12 @@ def _cli(a):
 
     raw = spec_mod.load(a.spec).raw
     levers = parse_levers(a.spec, a.param, raw.get("levers"), a.max_move)
+    if levers and getattr(a, "ranges", False):
+        print("lever SAFE RANGES (each alone, others unchanged; edge values are sampled, keep a step inside):")
+        lr = lever_ranges(a.spec, levers, a.clear, fast=not a.fine, regen=a.regen, regen_cwd=a.regen_cwd)
+        if a.json:
+            Path(a.json).write_text(json.dumps(lr, indent=2))
+        return 0
     if levers:
         pr = solve_params(a.spec, levers, a.clear, max(4, a.iters // 4), fast=not a.fine,
                           regen=a.regen, regen_cwd=a.regen_cwd)
