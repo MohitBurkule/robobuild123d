@@ -1,6 +1,6 @@
 {
  "spec": "/home/antigravity/MohitBurkule/robobuild123d/robots/buzzkill/spec.json",
- "rendered_at": 1794929328.472117,
+ "rendered_at": 1794944720.6799164,
  "bodies": [
   "tub",
   "lid",
@@ -69,8 +69,8 @@
  "wires": {
   "w_sw_wesc": {
    "from": [
-    60.7,
-    15.809999999999999,
+    56.7,
+    11.809999999999999,
     9.0
    ],
    "to": [
@@ -93,8 +93,8 @@
   },
   "w_sw_desc": {
    "from": [
-    60.7,
-    15.809999999999999,
+    56.7,
+    11.809999999999999,
     9.0
    ],
    "to": [
