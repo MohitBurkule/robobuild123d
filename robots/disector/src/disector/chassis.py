@@ -72,7 +72,7 @@ def build_tub() -> bd.Solid:
 
     # Wire channels (>= 4 mm wide) connecting all bays & switch pocket (centered at X=15, Y=-17)
     tub = tub.cut(_box_bounds(9.5, 20.5, -20.0, -14.0, 6.0, P.Z_TOP + 1.0))     # switch pit at X=15, Y=-17
-    tub = tub.cut(_box_bounds(-22.0, 22.0, -19.0, -14.0, 5.0, 19.0))            # transverse rear bus
+    tub = tub.cut(_box_bounds(-22.0, 20.0, -19.0, -14.0, 5.0, 19.0))            # transverse rear bus
     tub = tub.cut(_box_bounds(-22.0, 22.0, -4.0, 2.0, 6.0, 15.0))               # transverse front bus
     tub = tub.cut(_box_bounds(18.0, 23.0, -16.0, 0.0, 5.0, 16.0))               # rear bus -> malenki_rx.bat
     tub = tub.cut(_box_bounds(22.0, 46.0, -15.0, -8.0, 5.0, 16.0))              # malenki -> motor_r & +X loop
@@ -80,9 +80,9 @@ def build_tub() -> bd.Solid:
     tub = tub.cut(_box_bounds(-28.0, -22.0, -18.0, -8.0, 6.0, 16.0))            # wpn_esc -> motor_l
     tub = tub.cut(_box_bounds(-46.0, -18.0, -15.0, -8.0, 5.0, 16.0))            # rear bus -> weapon_esc
     tub = tub.cut(_box_bounds(-46.0, -43.0, -12.0, 5.0, 4.0, 10.0))             # weapon_esc -X side channel (below f_gl_2 at Z=13.5)
-    tub = tub.cut(_box_bounds(-25.0, -19.0, -15.5, -9.5, 10.0, P.Z_TOP + 1.0)) # weapon_esc -> weapon_motor vertical slot
+    tub = tub.cut(_box_bounds(-26.0, -18.0, -16.0, -9.0, 10.0, P.Z_TOP + 1.0)) # weapon_esc -> weapon_motor vertical slot
     tub = tub.cut(_box_bounds(-18.5, -13.0, -24.0, -18.0, 7.0, 14.0))          # rear bus -> motor_l.terminals
-    tub = tub.cut(_box_bounds(12.2, 18.0, -26.0, -18.0, 12.0, P.Z_TOP + 1.0))   # rear bus -> servo signal up-channel
+    tub = tub.cut(_box_bounds(12.0, 18.0, -26.0, -17.5, 12.0, P.Z_TOP + 1.0))   # rear bus -> servo signal up-channel
 
     # Switch mounting ribs at X=15 +/- [5.8, 10.2] -> [4.8, 9.2] and [20.8, 25.2], Y in [-20, -14]
     tub = tub.fuse(_box_bounds(4.8, 9.2, -20.0, -14.0, 19.0, P.Z_TOP))
@@ -99,7 +99,7 @@ def build_panel_top() -> bd.Solid:
         bd.extrude(amount=P.PANEL_TOP_T)
     panel = bp.part.solids()[0].moved(bd.Location((0.0, P.Y_REAR + 1.0, 0.0)))
     # Cutout for servo protruding up into top_cover (and servo signal wire channel at X=14.5)
-    panel = panel.cut(_box_bounds(-13.0, 15.8, -35.0, -21.5, P.Z_TOP - 1.0, P.Z_TOP + P.PANEL_TOP_T + 1.0))
+    panel = panel.cut(_box_bounds(-13.0, 16.2, -35.0, -21.5, P.Z_TOP - 1.0, P.Z_TOP + P.PANEL_TOP_T + 1.0))
     # Cutout for switch_bbb_ant_rvrn2 body and flange (centered at X=15.0, Y=-17.0)
     panel = panel.cut(_box_bounds(4.5, 25.5, -20.0, -14.0, P.Z_TOP - 1.0, P.Z_TOP + P.PANEL_TOP_T + 1.0))
     # Wire pass-through slot for weapon motor phase leads (over weapon_esc bay, clear of battery & top_cover)
@@ -126,10 +126,10 @@ def build_top_cover() -> bd.Solid:
             bd.make_face()
         bd.extrude(amount=16.2, both=True)
     cov = bp.part.solids()[0]
-    # Add flat 2 mm mounting ears at X = +/-[15.8, 20.8] for unobstructed vertical screw access
+    # Add flat 2 mm mounting ears at X = +/-[15.8, 20.8], Y in [-32.5, -22.0]
     for sx in (-1.0, 1.0):
         x0, x1 = sorted([sx * 15.8, sx * 20.8])
-        cov = cov.fuse(_box_bounds(x0, x1, -30.5, -22.0, z0, z0 + 2.0))
+        cov = cov.fuse(_box_bounds(x0, x1, -32.5, -22.0, z0, z0 + 2.0))
     # Hollow inside for servo top & arm clevis clearance (servo Y in [-34.0, -22.0])
     cov = cov.cut(_box_bounds(-12.6, 15.0, -34.5, -21.6, z0 - 0.5, z1 - 3.0))
     # Open U-slot at top for overhead arm (arm Z>=33.5 at Y>=-32, and Z>=45 at Y=-37)

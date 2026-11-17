@@ -43,22 +43,22 @@ def fastener_specs() -> list[FastenerSpec]:
         # Top spine -> panel_top -> tub (threads into solid tub at X=+/-15, Y=5.2)
         FastenerSpec("f_sp_l", "M2x8", (-15.0, 5.2, z_top_sp), (0, 0, -1), ("top_spine", "panel_top"), "tub", grip=2.8),
         FastenerSpec("f_sp_r", "M2x8", (15.0, 5.2, z_top_sp), (0, 0, -1), ("top_spine", "panel_top"), "tub", grip=2.8),
-        # Top cover -> panel_top -> tub (on flat ears at X=+/-18.2, Y=-28.5 behind motor pockets)
-        FastenerSpec("f_tc_l", "M2x10", (-18.2, -28.5, z_top_tc), (0, 0, -1), ("top_cover", "panel_top"), "tub", grip=3.2),
-        FastenerSpec("f_tc_r", "M2x10", (18.2, -28.5, z_top_tc), (0, 0, -1), ("top_cover", "panel_top"), "tub", grip=3.2),
+        # Top cover -> panel_top -> tub (on flat ears at X=+/-18.2, Y=-29.8 behind motor pockets)
+        FastenerSpec("f_tc_l", "M2x10", (-18.2, -29.8, z_top_tc), (0, 0, -1), ("top_cover", "panel_top"), "tub", grip=3.2),
+        FastenerSpec("f_tc_r", "M2x10", (18.2, -29.8, z_top_tc), (0, 0, -1), ("top_cover", "panel_top"), "tub", grip=3.2),
         # Wedge front -> tub
         FastenerSpec("f_wf_l", "M2x8", (-32.0, wy_mid, wz_mid), n_front, ("wedge_front",), "tub", head="button", grip=1.0),
         FastenerSpec("f_wf_r", "M2x8", (32.0, wy_mid, wz_mid), n_front, ("wedge_front",), "tub", head="button", grip=1.0),
         # Fork mounts -> wedge_front -> tub (outer pad Y+Z=38.04, grip=3.2+1.0=4.2)
-        FastenerSpec("f_fm_l1", "M2x8", (-P.FORK_MOUNT_X - 4.2, 38.04 - 10.2, 10.2), n_front, ("fork_mount_l", "wedge_front"), "tub", head="cap", tool="hex1.5", grip=4.2),
-        FastenerSpec("f_fm_l2", "M2x8", (-P.FORK_MOUNT_X + 4.2, 38.04 - 10.2, 10.2), n_front, ("fork_mount_l", "wedge_front"), "tub", head="cap", tool="hex1.5", grip=4.2),
-        FastenerSpec("f_fm_r1", "M2x8", (P.FORK_MOUNT_X - 4.2, 38.04 - 10.2, 10.2), n_front, ("fork_mount_r", "wedge_front"), "tub", head="cap", tool="hex1.5", grip=4.2),
-        FastenerSpec("f_fm_r2", "M2x8", (P.FORK_MOUNT_X + 4.2, 38.04 - 10.2, 10.2), n_front, ("fork_mount_r", "wedge_front"), "tub", head="cap", tool="hex1.5", grip=4.2),
+        FastenerSpec("f_fm_l1", "M2x8", (-P.FORK_MOUNT_X - 4.2, 38.04 - 11.5, 11.5), n_front, ("fork_mount_l", "wedge_front"), "tub", head="cap", tool="hex1.5", grip=4.2),
+        FastenerSpec("f_fm_l2", "M2x8", (-P.FORK_MOUNT_X + 4.2, 38.04 - 11.5, 11.5), n_front, ("fork_mount_l", "wedge_front"), "tub", head="cap", tool="hex1.5", grip=4.2),
+        FastenerSpec("f_fm_r1", "M2x8", (P.FORK_MOUNT_X - 4.2, 38.04 - 11.5, 11.5), n_front, ("fork_mount_r", "wedge_front"), "tub", head="cap", tool="hex1.5", grip=4.2),
+        FastenerSpec("f_fm_r2", "M2x8", (P.FORK_MOUNT_X + 4.2, 38.04 - 11.5, 11.5), n_front, ("fork_mount_r", "wedge_front"), "tub", head="cap", tool="hex1.5", grip=4.2),
         # Skids -> wedge_front -> tub (2 screws along 45-deg pad Y+Z=38.04)
-        FastenerSpec("f_sk_l1", "M2x10", (-P.SKID_X, 38.04 - 17.5, 17.5), n_front, ("skid_l", "wedge_front"), "tub", head="cap", tool="hex1.5", grip=4.2),
-        FastenerSpec("f_sk_l2", "M2x8", (-P.SKID_X, 38.04 - 10.0, 10.0), n_front, ("skid_l", "wedge_front"), "tub", head="cap", tool="hex1.5", grip=4.2),
-        FastenerSpec("f_sk_r1", "M2x10", (P.SKID_X, 38.04 - 17.5, 17.5), n_front, ("skid_r", "wedge_front"), "tub", head="cap", tool="hex1.5", grip=4.2),
-        FastenerSpec("f_sk_r2", "M2x8", (P.SKID_X, 38.04 - 10.0, 10.0), n_front, ("skid_r", "wedge_front"), "tub", head="cap", tool="hex1.5", grip=4.2),
+        FastenerSpec("f_sk_l1", "M2x10", (-P.SKID_X, 38.04 - 19.0, 19.0), n_front, ("skid_l", "wedge_front"), "tub", head="cap", tool="hex1.5", grip=4.2),
+        FastenerSpec("f_sk_l2", "M2x8", (-P.SKID_X, 38.04 - 10.5, 10.5), n_front, ("skid_l", "wedge_front"), "tub", head="cap", tool="hex1.5", grip=4.2),
+        FastenerSpec("f_sk_r1", "M2x10", (P.SKID_X, 38.04 - 19.0, 19.0), n_front, ("skid_r", "wedge_front"), "tub", head="cap", tool="hex1.5", grip=4.2),
+        FastenerSpec("f_sk_r2", "M2x8", (P.SKID_X, 38.04 - 10.5, 10.5), n_front, ("skid_r", "wedge_front"), "tub", head="cap", tool="hex1.5", grip=4.2),
         # Side wheel guards -> tub
         FastenerSpec("f_gl_1", "M2x8", (-(P.GUARD_X0 + P.GUARD_T), -36.5, 10.0), (1, 0, 0), ("guard_l",), "tub", grip=3.0),
         FastenerSpec("f_gl_2", "M2x8", (-(P.GUARD_X0 + P.GUARD_T), -6.5, 13.5), (1, 0, 0), ("guard_l",), "tub", grip=3.0),

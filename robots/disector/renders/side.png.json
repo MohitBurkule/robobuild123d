@@ -1,0 +1,138 @@
+{
+ "spec": "/home/antigravity/MohitBurkule/robobuild123d/robots/disector/spec.json",
+ "rendered_at": 1794939179.2281935,
+ "bodies": [
+  "tub",
+  "panel_top",
+  "top_cover",
+  "top_spine",
+  "wedge_front",
+  "fork_mount_l",
+  "fork_mount_r",
+  "fork_l",
+  "fork_r",
+  "skid_l",
+  "skid_r",
+  "guard_l",
+  "guard_r",
+  "eye_l",
+  "eye_r",
+  "arm",
+  "weapon_motor_stator",
+  "weapon_motor_bell",
+  "weapon_shaft",
+  "disc",
+  "locking_bar",
+  "motor_l",
+  "motor_r",
+  "wheel_l",
+  "wheel_r",
+  "battery",
+  "malenki_rx",
+  "weapon_esc",
+  "servo",
+  "switch",
+  "f_pt_fl",
+  "f_pt_fr",
+  "f_pt_rl",
+  "f_pt_rr",
+  "f_sp_l",
+  "f_sp_r",
+  "f_tc_l",
+  "f_tc_r",
+  "f_wf_l",
+  "f_wf_r",
+  "f_fm_l1",
+  "f_fm_l2",
+  "f_fm_r1",
+  "f_fm_r2",
+  "f_sk_l1",
+  "f_sk_l2",
+  "f_sk_r1",
+  "f_sk_r2",
+  "f_gl_1",
+  "f_gl_2",
+  "f_gr_1",
+  "f_gr_2",
+  "f_sw_1",
+  "f_sw_2",
+  "f_wm_1",
+  "f_wm_2",
+  "f_dc_1",
+  "f_dc_2"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    0.0,
+    5.5,
+    9.5
+   ],
+   "to": [
+    12.0,
+    -17.0,
+    16.75
+   ]
+  },
+  "w_sw_mal": {
+   "from": [
+    15.0,
+    -17.0,
+    16.75
+   ],
+   "to": [
+    20.0,
+    -4.5,
+    6.5
+   ]
+  },
+  "w_sw_wesc": {
+   "from": [
+    15.0,
+    -17.0,
+    16.75
+   ],
+   "to": [
+    -42.5,
+    -3.5,
+    6.0
+   ]
+  },
+  "w_mal_ml": {
+   "from": [
+    43.0,
+    3.5,
+    6.5
+   ],
+   "to": [
+    -17.099999999999998,
+    -22.0,
+    10.0
+   ]
+  },
+  "w_mal_mr": {
+   "from": [
+    20.0,
+    3.5,
+    6.5
+   ],
+   "to": [
+    17.099999999999998,
+    -22.0,
+    10.0
+   ]
+  },
+  "w_mal_wesc": {
+   "from": [
+    43.0,
+    -4.5,
+    6.5
+   ],
+   "to": [
+    -42.5,
+    2.5,
+    6.0
+   ]
+  }
+ }
+}

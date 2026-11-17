@@ -49,11 +49,11 @@ def build_fork_mount(side: float) -> bd.Solid:
         bd.extrude(amount=7.5, both=True)
     base = bp.part.solids()[0].moved(bd.Location((cx, 0.0, 0.0)))
     # Two clevis ears around X = cx +/- 1.1 (gap 2.2 mm for 1.5 mm fork)
-    ear_l = _box_bounds(cx - 4.0, cx - 1.1, 30.0, 35.5, 2.5, 9.0)
-    ear_r = _box_bounds(cx + 1.1, cx + 4.0, 30.0, 35.5, 2.5, 9.0)
+    ear_l = _box_bounds(cx - 4.0, cx - 1.1, 31.2, 37.0, 2.5, 9.0)
+    ear_r = _box_bounds(cx + 1.1, cx + 4.0, 31.2, 37.0, 2.5, 9.0)
     u = base.fuse(ear_l).fuse(ear_r)
     # Cut clevis slot so fork clears freely at all angles
-    slot = _box_bounds(cx - 1.1, cx + 1.1, 29.8, 36.0, 1.8, 10.0)
+    slot = _box_bounds(cx - 1.1, cx + 1.1, 31.2, 37.5, 3.5, 10.0)
     u = u.cut(slot)
     # Cut pivot pin bore (M2, r=1.1 mm) along X
     pin_hole = bd.Solid.make_cylinder(1.1, 10.0, bd.Plane(origin=(cx - 5.0, P.FORK_PIVOT_Y, P.FORK_PIVOT_Z), z_dir=(1, 0, 0)))
@@ -65,11 +65,11 @@ def build_fork(side: float) -> bd.Solid:
     cx = side * P.FORK_MOUNT_X
     # Profile in Y-Z plane, extruded along X by FORK_T (centered on cx)
     pts = [
-        (P.FORK_PIVOT_Y - 1.8, P.FORK_PIVOT_Z + 2.8),
+        (P.FORK_PIVOT_Y - 2.0, P.FORK_PIVOT_Z + 2.8),
         (P.FORK_PIVOT_Y + 3.0, P.FORK_PIVOT_Z + 2.8),
         (P.FORK_TIP_Y, P.FORK_TIP_Z + 0.6),
         (P.FORK_TIP_Y, P.FORK_TIP_Z),
-        (P.FORK_PIVOT_Y - 1.8, P.FORK_PIVOT_Z - 2.8),
+        (P.FORK_PIVOT_Y - 2.0, P.FORK_PIVOT_Z - 2.2),
     ]
     with bd.BuildPart() as bp:
         with bd.BuildSketch(bd.Plane.YZ):
