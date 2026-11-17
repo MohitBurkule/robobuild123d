@@ -1,0 +1,86 @@
+{
+ "spec": "/home/antigravity/MohitBurkule/robobuild123d/robots/expandabot_classic/spec.json",
+ "rendered_at": 1794926671.5154839,
+ "bodies": [
+  "tub",
+  "top_panel",
+  "side_l",
+  "side_r",
+  "wedge",
+  "crossbar",
+  "nose_pin",
+  "horn",
+  "bracket_l",
+  "wing_l",
+  "hinge_pin_l",
+  "wheel_l",
+  "motor_l",
+  "bracket_r",
+  "wing_r",
+  "hinge_pin_r",
+  "wheel_r",
+  "motor_r",
+  "servo",
+  "battery",
+  "esc",
+  "switch",
+  "insert_top_0",
+  "insert_top_1",
+  "insert_top_2",
+  "insert_top_3",
+  "insert_top_4",
+  "insert_top_5",
+  "insert_side_l0",
+  "insert_side_l1",
+  "insert_side_l2",
+  "insert_wing_l0",
+  "insert_wing_l1",
+  "insert_side_r0",
+  "insert_side_r1",
+  "insert_side_r2",
+  "insert_wing_r0",
+  "insert_wing_r1",
+  "bolt_top_0",
+  "bolt_top_1",
+  "bolt_top_2",
+  "bolt_top_3",
+  "bolt_top_4",
+  "bolt_top_5",
+  "bolt_side_l0",
+  "bolt_side_l1",
+  "bolt_side_l2",
+  "bolt_wing_l0",
+  "bolt_wing_l1",
+  "bolt_side_r0",
+  "bolt_side_r1",
+  "bolt_side_r2",
+  "bolt_wing_r0",
+  "bolt_wing_r1"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    0.0,
+    -1.0,
+    8.6
+   ],
+   "to": [
+    -22.0,
+    -18.0,
+    14.25
+   ]
+  },
+  "w_esc_mr": {
+   "from": [
+    -19.0,
+    -2.6999999999999993,
+    6.1
+   ],
+   "to": [
+    -9.599999999999998,
+    -27.9,
+    13.5
+   ]
+  }
+ }
+}
