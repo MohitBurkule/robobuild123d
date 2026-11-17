@@ -81,14 +81,32 @@ def half_shape(plan, half: str) -> dict:
                 housings.append(sh.S(sh.boxr(x0_, x1_, y0_, y1_, z0, hz0 + 0.01), sh.boxr(p.x0, p.x1, p.y0, p.y1, z0 - 1, hz0 + 1)))
             if hz1 < z1 - 1e-6:
                 housings.append(sh.S(sh.boxr(x0_, x1_, y0_, y1_, hz1 - 0.01, z1), sh.boxr(p.x0, p.x1, p.y0, p.y1, hz1 - 1, z1 + 1)))
-    # The void (everything inside the outer skin that is not material) is cut, then every vertical inside corner is
-    # filleted R (mfg.sharp_internal_corner) by construction; bolt holes are cut after, they are round already.
     cavities = [pk_mod.cavity(p) for p in plan.pockets]
-    void = sh.U(sh.S(inner, *housings, *plan.adds[half]), *cavities, *plan.cuts[half])
-    body = sh.S(sh.U(_outer_body(f, z0, z1, half == "bottom"), *housings, *plan.adds[half]), void)
+    # 1. the shell with its housings and bosses, inside corners where they meet the walls filleted R (round_inside);
+    # 2. then the pockets and channels, each box with corner reliefs (dogbones) so the part's inside corner there is
+    #    an R arc while the box still fits the component square (rounding a pocket would pinch its corners).
+    body = sh.S(sh.U(_outer_body(f, z0, z1, half == "bottom"), *housings, *plan.adds[half]), sh.S(inner, *housings, *plan.adds[half]))
     if R > 0:
         body = {"type": "round_inside", "radius": R, "axis": "z", "shape": body}
+    body = sh.S(body, *cavities, *plan.cuts[half])
     return sh.S(body, *plan.late_cuts[half])
+
+
+def _rounded_cut(c, R):
+    """Every box of a cut with all its edges filleted R: the part's inside corners round the pocket / channel are R
+    arcs by construction. A square component in a pocket with gap g keeps g*sqrt2 - R*(sqrt2 - 1) clear at its edges
+    (0.4 gap, R 1.05: 0.13 mm), so nothing pinches."""
+    if R <= 0:
+        return c
+    boxes = c["items"] if c.get("type") == "union" else [c]
+    out = []
+    for b in boxes:
+        if b.get("type") == "place" and b["shape"].get("type") == "box" and not any(b["rot"]):
+            r = min(R, min(b["shape"]["size"]) / 2 - 0.05)
+            if r >= 0.3:
+                b = {"type": "place", "shape": sh.fillet(b["shape"], r), "at": b["at"], "rot": b["rot"]}
+        out.append(b)
+    return sh.U(*out)
 
 
 def _slab(f, z0, z1):
