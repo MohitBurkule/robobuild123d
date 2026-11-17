@@ -1,6 +1,6 @@
 # Ripsaw
 
-**UNTESTED: never built or run.** The spec passes the deep gate (`robot verify --deep`: 0 blockers, mass 145.7 g against
+**UNTESTED: never built or run.** The spec passes the deep gate (`robot verify --deep`: 0 blockers, mass 148.6 g against
 the 150 g limit; warnings remain, mainly catalog mass estimates). Renders in `renders/` are verifier-generated.
 
 A 150 g AWS antweight vertical disc spinner: a 44 mm single-tooth hardox disc on a Repeat 2004 2800 kV hub motor, carried

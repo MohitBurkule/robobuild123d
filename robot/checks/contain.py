@@ -115,22 +115,33 @@ def run(ctx):
         others = [o for o in w.bodies if o is not b and not o.is_wire]
         sc = measure.Scene(others)
         lo, hi = b.aabb
-        c = (lo + hi) / 2
-        best = None
-        for ax in range(3):
-            for s in (-1, 1):
-                d = np.zeros(3)
-                d[ax] = s
-                face = c.copy()
-                face[ax] = (hi if s > 0 else lo)[ax] + 0.05 * s
-                ax2 = [i for i in range(3) if i != ax]
-                pts = [face] + [face + np.eye(3)[i] * k for i in ax2 for k in (-0.8, 0.8)]
-                pts = np.array(pts)
-                if measure.inside_any(others, pts).any():
-                    continue
-                dist, _ = sc.first_hit(pts, np.tile(d, (len(pts), 1)), SWITCH_REACH_MM)
-                if np.all(~np.isfinite(dist)):
-                    best = "+-"[s < 0] + "xyz"[ax]
+        # aim from the part origin (the actuator body) first: the box centre is skewed by terminal tabs
+        centres = [np.clip(b.M[:3, 3], lo, hi), (lo + hi) / 2]
+        best, c, why = None, centres[0], {}
+        for c in centres:
+            for ax in range(3):
+                for s in (-1, 1):
+                    d = np.zeros(3)
+                    d[ax] = s
+                    face = c.copy()
+                    face[ax] = (hi if s > 0 else lo)[ax] + 0.05 * s
+                    ax2 = [i for i in range(3) if i != ax]
+                    pts = np.array([face] + [face + np.eye(3)[i] * k for i in ax2 for k in (-0.8, 0.8)])
+                    name = "+-"[s < 0] + "xyz"[ax]
+                    if measure.inside_any(others, pts).any():
+                        why.setdefault(name, f"starts inside another part at ({', '.join(f'{v:.1f}' for v in face)})")
+                        continue
+                    dist, _ = sc.first_hit(pts, np.tile(d, (len(pts), 1)), SWITCH_REACH_MM)
+                    if np.all(~np.isfinite(dist)):
+                        best = name
+                        break
+                    k = int(np.nanargmin(np.where(np.isfinite(dist), dist, np.inf)))
+                    hp = pts[k] + d * dist[k]
+                    who = next((o.id for o in others if o.sdf(hp[None] + d * 0.05)[0] < 0.1), "?")
+                    hole = [f"{'xyz'[i]} {face[i]:.1f}" for i in ax2]
+                    why.setdefault(name, f"hits `{who}` after {dist[k]:.1f} mm at ({', '.join(f'{v:.1f}' for v in hp)}); "
+                                         f"a hole r >= 1.2 centred at {', '.join(hole)} clears it")
+                if best:
                     break
             if best:
                 break
@@ -138,6 +149,102 @@ def run(ctx):
             out.append(ok("contain.switch_access", G, "Switch reachable from outside", f"`{b.id}` has a clear 1.6 mm tool line out along {best}."))
         else:
             out.append(fail("contain.switch_access", G, BLOCKER, "Switch cannot be reached from outside",
-                            f"No straight 1.6 mm wide tool line from `{b.id}` leaves the robot within {SWITCH_REACH_MM:.0f} mm on any axis.")
+                            f"No straight 1.6 mm wide tool line from `{b.id}` leaves the robot within {SWITCH_REACH_MM:.0f} mm on any axis. "
+                            + "; ".join(f"{k}: {v}" for k, v in why.items()))
                        .on(b.id).here(c).fix("Open a slot in the armour over the switch actuator."))
+    out.extend(line_of_sight(ctx))
+    return out
+
+
+SIGHT_KINDS = {"battery", "esc", "receiver", "motor", "servo"}  # shielded from every side, not just inside the hull
+# a weapon motor is often the spinning hub itself (exposed by design); drive motors and servos are not
+SHIELD_SKIP = {"battery", "esc", "receiver", "wire"}  # never armour; motors/servos/wheels/the switch body do shield (a wire under the switch in its slot is covered)
+SIGHT_FRAC = 0.10                                  # more than this share of the surface seen straight from outside
+WIRE_FRAC = 0.15
+
+
+def _dirs():
+    D = [np.array(v, float) for v in np.ndindex(3, 3, 3)]
+    D = [d - 1 for d in D if np.any(d != 1)]
+    D = [d / np.linalg.norm(d) for d in D]
+    return [d for d in D if d[2] > -0.7]          # straight down is the floor
+
+
+def _seen(shields, P, dirs):
+    """(fraction of points with a clear straight line out, best direction, its fraction). Casts body by body, only
+    the rays still escaping and only into bodies whose box they touch (low memory: no merged scene)."""
+    if not shields:
+        return 1.0, dirs[0], 1.0
+    any_out = np.zeros(len(P), bool)
+    best = (0.0, dirs[0])
+    for d in dirs:
+        O = P + d * 0.05
+        D = np.tile(d, (len(P), 1))
+        esc = np.ones(len(P), bool)
+        for sb in shields:
+            idx = np.nonzero(esc)[0]
+            if not len(idx):
+                break
+            lo, hi = sb.aabb
+            m = measure._rays_touch_box(lo, hi, O[idx], D[idx])
+            if not m.any():
+                continue
+            j = idx[m]
+            esc[j[sb.mesh.ray.intersects_any(O[j], D[j])]] = False
+        any_out |= esc
+        if esc.mean() > best[0]:
+            best = (float(esc.mean()), d)
+    return float(any_out.mean()), best[1], best[0]
+
+
+def line_of_sight(ctx):
+    """Electronics and wires visible straight from outside through an opening (an open top window passes the hull
+    test but a hit or a pit hazard lands right on them). Rays from the part's surface in 21 directions (not down)
+    must hit armour; electronics/switch/wires never shield each other. Ripsaw, 2026-11-16: top-plate window over
+    battery, ESC and wires passed contain.electronics."""
+    r, w = ctx.r, ctx.world
+    kind = {p.id: p.kind for p in r.spec.parts}
+    out, dirs = [], _dirs()
+
+    def shield_for(skip):
+        bs = [b for b in w.bodies if not b.is_wire and b.id not in skip and kind.get(b.id) not in SHIELD_SKIP]
+        return sorted(bs, key=lambda b: -float(np.prod(b.aabb[1] - b.aabb[0])))   # big armour first: fewer casts
+
+    bad = 0
+    for b in w.bodies:
+        p = r.spec.part(b.id) if b.part_idx is not None else None
+        if p is None or p.kind not in SIGHT_KINDS or p._extra.get("exposed"):
+            continue
+        V = _sample(b, 200)
+        c = b.mesh.centroid
+        P = V + (V - c) / (np.linalg.norm(V - c, axis=1, keepdims=True) + 1e-9) * 0.1
+        frac, d, fd = _seen(shield_for({b.id}), P, dirs)
+        if fd > SIGHT_FRAC:
+            bad += 1
+            out.append(fail("contain.line_of_sight", G, BLOCKER, "Electronics visible through an opening",
+                            f"`{b.id}`: {fd * 100:.0f} % of its surface has a clear straight line out along "
+                            f"({d[0]:+.1f}, {d[1]:+.1f}, {d[2]:+.1f}) ({frac * 100:.0f} % from some direction); nothing "
+                            f"armours it there.").on(b.id).here(P[0])
+                       .fix("Close the opening over it (lid / cover plate), or move it behind a wall; a deliberately "
+                            "open bay needs `exposed: true` with a reason."))
+    routes = {rt.id: rt for rt in (ctx.routes or [])}
+    ext = {wi.id for wi in r.spec.wires if wi._extra.get("external")}
+    shield = shield_for(set()) if routes else None
+    for wid, rt in routes.items():
+        if wid in ext:
+            continue
+        P = np.asarray(rt.points, float)
+        if len(P) < 2:
+            continue
+        S = np.vstack([a + (b2 - a) * t for a, b2 in zip(P, P[1:]) for t in np.linspace(0, 1, max(int(np.linalg.norm(b2 - a) / 1.0), 1), endpoint=False)])
+        frac, d, fd = _seen(shield, S, dirs)
+        if fd > WIRE_FRAC:
+            bad += 1
+            out.append(fail("contain.wire_line_of_sight", G, BLOCKER, "Wire visible through an opening",
+                            f"Wire `{wid}`: {fd * 100:.0f} % of its run is in straight view from outside along "
+                            f"({d[0]:+.1f}, {d[1]:+.1f}, {d[2]:+.1f}).").on(wid).here(S[0])
+                       .fix("Route it under a cover or close the opening above it."))
+    if not bad:
+        out.append(ok("contain.line_of_sight", G, "Electronics and wires are shielded",
+                      "No battery, ESC, receiver or wire run is in straight view from outside."))
     return out

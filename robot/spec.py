@@ -169,7 +169,9 @@ def load(path: str | Path) -> Spec:
         raise ValueError(f"{path} is not a valid spec: {e}") from e
     if not isinstance(data, dict):
         raise ValueError(f"{path} is not a JSON object")
-    return Spec(data, path.parent)
+    s = Spec(data, path.parent)
+    s.path = path
+    return s
 
 
 def finite(v) -> bool:

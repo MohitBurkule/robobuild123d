@@ -111,6 +111,11 @@ def validate(s, depth=0, n=None) -> None:
     elif t in ("fillet", "chamfer"):
         pos(t, s.get("radius", s.get("length")))
         validate(s.get("shape"), depth + 1, n)
+    elif t == "round_inside":
+        pos(t, s.get("radius"))
+        if s.get("axis", "z") not in ("x", "y", "z"):
+            raise ShapeError("round_inside axis must be x, y or z")
+        validate(s.get("shape"), depth + 1, n)
     elif t == "mirror":
         if s.get("axis", "x") not in ("x", "y", "z"):
             raise ShapeError("mirror axis must be x, y or z")
@@ -300,6 +305,8 @@ def to_solid(s, base_dir: Path | None = None):
     if t == "fillet":
         child = to_solid(s["shape"], base_dir)
         return child.fillet(float(s["radius"]), child.edges())
+    if t == "round_inside":
+        return round_inside(to_solid(s["shape"], base_dir), float(s["radius"]), s.get("axis", "z"))
     if t == "chamfer":
         child = to_solid(s["shape"], base_dir)
         return child.chamfer(float(s.get("length", s.get("radius"))), None, child.edges())
@@ -310,6 +317,60 @@ def to_solid(s, base_dir: Path | None = None):
     if t == "model":
         return _model(s, base_dir)
     raise ShapeError(f"unknown shape type `{t}`")
+
+
+def _concave_axis_edges(solid, axis, probe=0.25):
+    """Straight edges parallel to `axis` whose neighbourhood is mostly material (inside corners)."""
+    import numpy as np
+
+    k = "xyz".index(axis)
+    e_ax = np.eye(3)[k]
+    o1, o2 = np.eye(3)[(k + 1) % 3], np.eye(3)[(k + 2) % 3]
+    out = []
+    for e in solid.edges():
+        try:
+            p0, p1 = e.position_at(0), e.position_at(1)
+            a, b = np.array([p0.X, p0.Y, p0.Z]), np.array([p1.X, p1.Y, p1.Z])
+        except Exception:
+            continue
+        d = b - a
+        L = np.linalg.norm(d)
+        if L < 0.3 or abs(abs(d @ e_ax) / L - 1) > 1e-6:
+            continue
+        m = (a + b) / 2
+        n = 0
+        for s1 in (-1, 1):
+            for s2 in (-1, 1):
+                q = m + probe * (s1 * o1 + s2 * o2)
+                n += bool(solid.is_inside(_b().Vector(*q)))
+        if n == 3:
+            out.append(e)
+    return out
+
+
+def round_inside(solid, r, axis="z"):
+    """Fillet every inside corner edge parallel to `axis` (pockets, channels, walls of printed parts), so a generated
+    part has no sharp notch by construction. All at once, else edge by edge, keeping whatever OCC can do."""
+    edges = _concave_axis_edges(solid, axis)
+    if not edges:
+        return solid
+    try:
+        return solid.fillet(r, edges)
+    except Exception:
+        pass
+    cur = solid
+    for _ in range(3):  # edges change identity after each fillet: re-find and go one by one
+        left = _concave_axis_edges(cur, axis)
+        done = False
+        for e in left:
+            try:
+                cur = cur.fillet(r, [e])
+                done = True
+            except Exception:
+                continue
+        if not done:
+            break
+    return cur
 
 
 def _offset(solid, d):

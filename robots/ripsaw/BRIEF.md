@@ -1,6 +1,6 @@
 # Ripsaw: design brief
 
-> **UNTESTED: never built or run.** The spec passes the deep gate (`robot verify --deep`, 0 blockers, mass 145.7 g);
+> **UNTESTED: never built or run.** The spec passes the deep gate (`robot verify --deep`, 0 blockers, mass 148.6 g);
 > every number below is still an estimate from `src/ripsaw/params.py` relations and catalogue values.
 
 ## Architecture
@@ -25,7 +25,9 @@
 - Ground game: two Revron fork_5 parts (1.5 mm Ti, reused unchanged), hung on M3 pins through the plates' outer faces —
   self-levelling skids, tips 0.5 mm off the floor so the wheels alone set the contact patch.
 - Tub: printed nylon unibody (wall ring, rear shelf, cradles, front-wall pads, side-wall bosses, ESC ledge, strap
-  posts), open top and bottom; printed base and top panels on M2 screws into heat-set inserts (as Revron).
+  posts), open top and bottom; printed base and top panels on M2 screws into heat-set inserts (as Revron). Both
+  panels are SOLID armour (the old lightening windows are gone: contain.line_of_sight requires every ray from the
+  electronics and wires to hit armour); the side-wall bosses are bands round the insert seats to pay for the glass.
 
 ## Load path / what rotates
 | Rotates (weapon) | Fixed |
@@ -47,9 +49,9 @@ Sizing: TUB_BODY_L 78, RAIL_L 24. Optional `"aws_v43_cube"`: the 101.6 mm cube (
 | Fork tips | y 83, behind the disc front (y 79) |
 
 ## Mass budget (2S build)
-Verifier total **145.7 g** (range 128.6-162.7; 8 g of the range is catalog estimates — weigh the real parts).
+Verifier total **148.6 g** (range 131.0-166.2; 8 g of the range is catalog estimates — weigh the real parts).
 Big items: 2004 stator 5.5 + bell 6.0, disc 26 (hardox, 3559 mm3 x 7.9), battery 28, 2x N10 16, 2x wheel 3.6,
-tub 21.4 cm3 nylon (x1.12 x0.85 about 20), panels 8.2, ESCs 7.3, switch 2.15, forks + pins 4.6, fasteners 3.5,
+tub 19.3 cm3 nylon (about 21), solid panels 12.7 cm3 (about 14.2), ESCs 7.3, switch 2.15, forks + pins 4.6, fasteners 3.5,
 wires + XT30 4, allowance 1.2.
 
 ## Energy (verifier)
