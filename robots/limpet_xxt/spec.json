@@ -2098,6 +2098,18 @@
   },
   {
    "a": "hinge_block",
+   "b": "lid_r",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "hinge_block",
+   "b": "lid_l",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "hinge_block",
    "b": "hinge_pin",
    "max_depth_mm": 1.0,
    "reason": "the block's centre knuckle bore (r1.3) turns on the hinge pin (r1.0) with 0.3 mm radial running clearance; the full-revolution bbox proxy of the block swallows the stationary pin, but the largest ball fitting both parts is the pin's own r1.0, so no real pose interferes deeper than that"
@@ -2106,37 +2118,61 @@
    "a": "insert_hb0",
    "b": "tub",
    "max_depth_mm": 8.0,
-   "reason": "full-revolution sweep artifact: the flipper joint is servo-limited to its declared range (hard stops at both ends); no pose within that range reaches this pair; the bbox proxy of the 4.3x3.2x4.2 mm bushing sweeps over the servo/bay region it clears in every reachable pose"
+   "reason": "full-revolution sweep artifact: the flipper joint is servo-limited to its declared range (hard stops at both ends); no pose within that range reaches this pair; the bbox proxy of the 4.3x3.2x4.2 mm bushing sweeps over the servo/bay and lid-deck regions it clears in every reachable pose"
   },
   {
    "a": "insert_hb1",
    "b": "tub",
    "max_depth_mm": 8.0,
-   "reason": "full-revolution sweep artifact: the flipper joint is servo-limited to its declared range (hard stops at both ends); no pose within that range reaches this pair; the bbox proxy of the 4.3x3.2x4.2 mm bushing sweeps over the servo/bay region it clears in every reachable pose"
+   "reason": "full-revolution sweep artifact: the flipper joint is servo-limited to its declared range (hard stops at both ends); no pose within that range reaches this pair; the bbox proxy of the 4.3x3.2x4.2 mm bushing sweeps over the servo/bay and lid-deck regions it clears in every reachable pose"
   },
   {
    "a": "insert_hb0",
    "b": "servo",
    "max_depth_mm": 8.0,
-   "reason": "full-revolution sweep artifact: the flipper joint is servo-limited to its declared range (hard stops at both ends); no pose within that range reaches this pair; the bbox proxy of the 4.3x3.2x4.2 mm bushing sweeps over the servo/bay region it clears in every reachable pose"
+   "reason": "full-revolution sweep artifact: the flipper joint is servo-limited to its declared range (hard stops at both ends); no pose within that range reaches this pair; the bbox proxy of the 4.3x3.2x4.2 mm bushing sweeps over the servo/bay and lid-deck regions it clears in every reachable pose"
   },
   {
    "a": "insert_hb1",
    "b": "servo",
    "max_depth_mm": 8.0,
-   "reason": "full-revolution sweep artifact: the flipper joint is servo-limited to its declared range (hard stops at both ends); no pose within that range reaches this pair; the bbox proxy of the 4.3x3.2x4.2 mm bushing sweeps over the servo/bay region it clears in every reachable pose"
+   "reason": "full-revolution sweep artifact: the flipper joint is servo-limited to its declared range (hard stops at both ends); no pose within that range reaches this pair; the bbox proxy of the 4.3x3.2x4.2 mm bushing sweeps over the servo/bay and lid-deck regions it clears in every reachable pose"
   },
   {
    "a": "insert_hb0",
    "b": "drive_pin",
    "max_depth_mm": 8.0,
-   "reason": "full-revolution sweep artifact: the flipper joint is servo-limited to its declared range (hard stops at both ends); no pose within that range reaches this pair; the bbox proxy of the 4.3x3.2x4.2 mm bushing sweeps over the servo/bay region it clears in every reachable pose"
+   "reason": "full-revolution sweep artifact: the flipper joint is servo-limited to its declared range (hard stops at both ends); no pose within that range reaches this pair; the bbox proxy of the 4.3x3.2x4.2 mm bushing sweeps over the servo/bay and lid-deck regions it clears in every reachable pose"
   },
   {
    "a": "insert_hb1",
    "b": "drive_pin",
    "max_depth_mm": 8.0,
-   "reason": "full-revolution sweep artifact: the flipper joint is servo-limited to its declared range (hard stops at both ends); no pose within that range reaches this pair; the bbox proxy of the 4.3x3.2x4.2 mm bushing sweeps over the servo/bay region it clears in every reachable pose"
+   "reason": "full-revolution sweep artifact: the flipper joint is servo-limited to its declared range (hard stops at both ends); no pose within that range reaches this pair; the bbox proxy of the 4.3x3.2x4.2 mm bushing sweeps over the servo/bay and lid-deck regions it clears in every reachable pose"
+  },
+  {
+   "a": "insert_hb0",
+   "b": "lid_r",
+   "max_depth_mm": 8.0,
+   "reason": "full-revolution sweep artifact: the flipper joint is servo-limited to its declared range (hard stops at both ends); no pose within that range reaches this pair; the bbox proxy of the 4.3x3.2x4.2 mm bushing sweeps over the servo/bay and lid-deck regions it clears in every reachable pose"
+  },
+  {
+   "a": "insert_hb1",
+   "b": "lid_r",
+   "max_depth_mm": 8.0,
+   "reason": "full-revolution sweep artifact: the flipper joint is servo-limited to its declared range (hard stops at both ends); no pose within that range reaches this pair; the bbox proxy of the 4.3x3.2x4.2 mm bushing sweeps over the servo/bay and lid-deck regions it clears in every reachable pose"
+  },
+  {
+   "a": "insert_hb0",
+   "b": "lid_l",
+   "max_depth_mm": 8.0,
+   "reason": "full-revolution sweep artifact: the flipper joint is servo-limited to its declared range (hard stops at both ends); no pose within that range reaches this pair; the bbox proxy of the 4.3x3.2x4.2 mm bushing sweeps over the servo/bay and lid-deck regions it clears in every reachable pose"
+  },
+  {
+   "a": "insert_hb1",
+   "b": "lid_l",
+   "max_depth_mm": 8.0,
+   "reason": "full-revolution sweep artifact: the flipper joint is servo-limited to its declared range (hard stops at both ends); no pose within that range reaches this pair; the bbox proxy of the 4.3x3.2x4.2 mm bushing sweeps over the servo/bay and lid-deck regions it clears in every reachable pose"
   },
   {
    "a": "bolt_hb0",
@@ -2201,6 +2237,12 @@
   {
    "a": "drive_pin",
    "b": "lid_l",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "drive_pin",
+   "b": "lid_r",
    "max_depth_mm": 40.0,
    "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
   },

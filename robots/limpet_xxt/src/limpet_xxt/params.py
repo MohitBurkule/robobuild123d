@@ -232,6 +232,9 @@ LID_PADS = ((-45.5, 7.5), (13.9, 8.0))                      # (screw X, pad widt
 LID_SCREWS_X_L = tuple(x for x, _w in LID_PADS)             # left lid: clear of the ESC footprint (ESC slides out +z)
 LID_SCREWS_X_R = tuple(x for x, _w in LID_PADS)             # right lid: clear of the switch tray and the lid slot
 LID_SLOT_R = 0.5                                            # corner radius on the switch slot in the right lid (>= laser kerf)
+LID_DECK_SLOT_Y0 = 11.3                                     # left deck edge on the horn side (horn sweep face y 11.55, 0.25 gap)
+LID_DECK_X1 = 7.0                                           # deck ends clear of the tail-lever sweep (x 7.57 at the lid plane)
+LID_DECK_NOTCH_X0 = 1.8                                     # horn corridor start: horn crosses the lid plane from x 2.31 at max lift
 
 # --- hinge block seat: thick enough for M2x8 self-tap engagement >= 2.5 d in printed plastic
 SEAT_H = 10.0

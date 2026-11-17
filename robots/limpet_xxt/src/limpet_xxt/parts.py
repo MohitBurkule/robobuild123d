@@ -261,6 +261,29 @@ def _lid(side):
     w = TUB_W / 2 - CHANNEL_HALF_W
     plate = bd.Box(LID_X1 - BODY_X0, w, LID_T)
     cx, cy = (BODY_X0 + LID_X1) / 2, s * (CHANNEL_HALF_W + w / 2)
+    # armour deck shutting the centre channel from above (motors, servo, battery and ESC otherwise
+    # have line of sight out through the open channel); ends at LID_DECK_X1 clear of the
+    # tail-lever sweep (lever crosses the lid plane at x 7.57..37.63)
+    deck = bd.Pos((BODY_X0 + LID_DECK_X1) / 2 - cx, s * CHANNEL_HALF_W / 2 - cy, 0) * \
+        bd.Box(LID_DECK_X1 - BODY_X0, CHANNEL_HALF_W, LID_T)
+    if s > 0:
+        notch = bd.Pos((LID_DECK_NOTCH_X0 + LID_X1) / 2 - cx,
+                       (LID_DECK_SLOT_Y0 + CHANNEL_HALF_W + CLEAR) / 2 - cy, 0) * \
+            bd.Box(LID_X1 - LID_DECK_NOTCH_X0 + 2 * CLEAR, CHANNEL_HALF_W + CLEAR - LID_DECK_SLOT_Y0,
+                   LID_T + 2 * EPS)
+        deck = deck - notch
+    plate = plate + deck
+    deck_corners = [(LID_DECK_X1, -CHANNEL_HALF_W)] if s < 0 else \
+        [(LID_DECK_NOTCH_X0, LID_DECK_SLOT_Y0), (LID_DECK_NOTCH_X0, CHANNEL_HALF_W)]
+    try:
+        edges = [e for e in plate.edges()
+                 if abs(e.center().Z) < 0.1
+                 and any(math.hypot(e.center().X - (px - cx), e.center().Y - (py - cy)) < 1.0
+                         for px, py in deck_corners)]
+        if edges:
+            plate = plate.fillet(LID_SLOT_R, edges)
+    except Exception as e:  # noqa: BLE001
+        print(f"lid deck corner fillet skipped: {type(e).__name__}: {e}")
     for x in (LID_SCREWS_X_L if s > 0 else LID_SCREWS_X_R):
         plate = plate - bd.Pos(x - cx, s * LID_PAD_Y - cy, 0) * screw_hole(LID_T)
     if s < 0:   # switch slot in the right lid (switch stands upright: slot long in X), corners rounded to the kerf

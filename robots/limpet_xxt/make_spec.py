@@ -265,26 +265,26 @@ for other in ("tub", "lid_r", "lid_l", "wheel_fl", "motor_fl", "wheel_fr", "moto
               "servo", "esc", "switch", "battery", "horn", "drive_pin",
               "insert_lid_l1", "insert_lid_r1", "bolt_lid_l1", "bolt_lid_r1", "hinge_pin"):
     allow_overlap.append({"a": "flipper", "b": other, "max_depth_mm": 40.0, "reason": SWEEP_WAIVER})
-for other in ("tub", "horn", "drive_pin", "servo"):
+for other in ("tub", "horn", "drive_pin", "servo", "lid_r", "lid_l"):
     allow_overlap.append({"a": "hinge_block", "b": other, "max_depth_mm": 40.0, "reason": SWEEP_WAIVER})
 allow_overlap.append({"a": "hinge_block", "b": "hinge_pin", "max_depth_mm": 1.0,
                       "reason": "the block's centre knuckle bore (r1.3) turns on the hinge pin (r1.0) with 0.3 mm "
                                 "radial running clearance; the full-revolution bbox proxy of the block swallows the "
                                 "stationary pin, but the largest ball fitting both parts is the pin's own r1.0, so "
                                 "no real pose interferes deeper than that"})
-for other in ("tub", "servo", "drive_pin"):
+for other in ("tub", "servo", "drive_pin", "lid_r", "lid_l"):
     for i in range(2):
         allow_overlap.append({"a": f"insert_hb{i}", "b": other, "max_depth_mm": 8.0,
                               "reason": "full-revolution sweep artifact: the flipper joint is servo-limited to its "
                                         "declared range (hard stops at both ends); no pose within that range reaches "
                                         "this pair; the bbox proxy of the 4.3x3.2x4.2 mm bushing sweeps over the "
-                                        "servo/bay region it clears in every reachable pose"})
+                                        "servo/bay and lid-deck regions it clears in every reachable pose"})
 for other in ("tub", "servo"):
     for i in range(2):
         allow_overlap.append({"a": f"bolt_hb{i}", "b": other, "max_depth_mm": 40.0, "reason": SWEEP_WAIVER})
 for other in ("tub", "lid_l", "hinge_pin", "servo", "bolt_hb1"):
     allow_overlap.append({"a": "horn", "b": other, "max_depth_mm": 40.0, "reason": SWEEP_WAIVER})
-for other in ("tub", "lid_l", "hinge_block", "servo", "bolt_hb1"):
+for other in ("tub", "lid_l", "lid_r", "hinge_block", "servo", "bolt_hb1"):
     allow_overlap.append({"a": "drive_pin", "b": other, "max_depth_mm": 40.0, "reason": SWEEP_WAIVER})
 
 # ---- wires (via points keep every run out of the horn's swept column and inside open bays) -------
