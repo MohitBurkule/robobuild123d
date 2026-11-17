@@ -15,8 +15,14 @@ STRUCTURAL = {"structure", "armor", "wedge", "plate"}
 PART_KINDS = {
     "structure", "armor", "wedge", "motor", "weapon_motor", "wheel", "battery", "esc", "receiver", "servo", "switch",
     "connector", "weapon", "locking_bar", "insert", "nut", "bearing", "plate", "fork", "tyre", "pulley", "belt",
-    "shaft", "pin", "spring", "other", "wedgelet", "skirt",
+    "shaft", "pin", "spring", "other", "wedgelet", "skirt", "hub", "caster", "skid", "spacer", "standoff", "axle",
 }
+# common wrong kinds -> the kind the checks key on (a silent unknown kind disables checks, e.g. drive_motor gets no
+# rotor link to its wheel)
+KIND_ALIASES = {"drive_motor": "motor", "gearmotor": "motor", "brushless": "weapon_motor", "outrunner": "weapon_motor",
+                "chassis": "structure", "tub": "structure", "lid": "structure", "panel": "plate", "blade": "weapon",
+                "bar": "weapon", "disc": "weapon", "lipo": "battery", "rx": "receiver", "tire": "tyre", "ball": "caster",
+                "foot": "skid"}
 ROBOT_TYPES = {"wedge", "horizontal_spinner", "vertical_spinner", "drum", "lifter", "flipper", "other"}
 SPINNER_TYPES = {"horizontal_spinner", "vertical_spinner", "drum"}
 

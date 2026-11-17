@@ -226,5 +226,7 @@ def test_ramp_angle_and_tyres_measured():
 def test_combat_never_blocks_the_reference_wedge():
     tpl = Path(__file__).resolve().parents[1] / "templates" / "wedge_2wd.json"
     rep = verify(spec.load(tpl), Options(only=["mass", "ground", "combat"], deep=False, fast=True))
-    assert not [f for f in rep.findings if f.group == "combat" and not f.passed and f.severity == "blocker"]
+    # since 2026-11-17 the side gap (R014) blocks low-game robots: the template's 4 mm side skirt gap is a real flaw
+    blk = [f.id for f in rep.findings if f.group == "combat" and not f.passed and f.severity == "blocker"]
+    assert set(blk) <= {"combat.R014"}
     assert any("combat.R017" in n for n in rep.not_checked)

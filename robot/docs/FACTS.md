@@ -106,3 +106,25 @@ with numbers, and needs nothing else. Run the full tier (`--llm` without `--tier
 - `robot catalog --kind battery --fits 40x20x12 --max-mass 15 [--sort capacity_mah]`: catalogue parts that fit a measured box (any yaw). Feed it the box from `probe --place`.
 - `fit.interference` now says the measured move: "move `X` +0.6 mm along y (1.5 mm free that side)", or that no side has room (then grow the pocket or pick a smaller part).
 - Keep spec.json generated from the CAD masters (a `make_spec.py` next to it); hand-edited `at` values go stale when a master changes.
+
+## ground.pitch_rest (2026-11-17)
+- Runs when the support polygon is < 3 contacts or the COM is < 2 mm inside it (2-wheel robots).
+- Pitches the robot about the wheel contact line toward the COM; the first body to touch the floor is the rest contact.
+- Weapon/hub/weapon_motor first = BLOCKER (blade grinds floor); fix gives the max skid height at a distance: h <= s x tan(angle) - 0.5.
+- Plain structure first = WARNING (drags). Give floor-touching parts kind `skid` or `caster` (ball caster) so they count as support.
+
+## Spinner-in-motion checks (dynamics group, robot/checks/spin_dyn.py)
+- `dynamics.brake_dive`: braking/accel at 1 g shifts the COM by its height; the pitch first-contact must not be the weapon (BLOCKER).
+- `dynamics.spinup_kick`: weapon motor torque Kt*I (Kt = 60/(2 pi kv), I = ESC rating or 30 A) vs tyre grip (vertical axis: yaw) or weight x lever (horizontal axis: rock/hop).
+- `dynamics.gyro_lift`: horizontal-axis spinner, 15 rad/s turn: I w Omega vs weight x lever; lifts a wheel.
+- `dynamics.floor_margin`: weapon rim within 10 mm of the floor must clear 0.5 mm tyre squash + 3 deg floor seam over its reach.
+- `dynamics.invert_weapon`: if `can_run_inverted`, the weapon must not be the highest point (it would rest on it).
+- A spinning weapon within 2 mm of the floor no longer counts as a floor contact in traction/tip checks.
+
+## craft group (designer red flags, inner tier)
+- `craft.stray_part` BLOCKER: a part > 0.5 mm below the floor or > 15 mm outside the structure box (weapons, wheels, wedges, skids exempt).
+- `craft.brick`: printed structure part > 60% of its bounding box (shell + rib it).
+- `craft.sharp_edges`: main body only; share of convex silhouette edge length with >= 60 deg corner > 60% (Revron tub 39%, block-out tubs ~100%).
+- `craft.weapon_scale`: spinner swept diameter < 0.6 x body width.
+- `craft.flat_slab`: 3-8 mm solid plate > 1500 mm2, > 85% solid.
+- `dynamics.blade_wobble`: 30% of impact out of plane bends the blade (cantilever from hub, E from material) + 0.3 deg shaft tilt; free span must clear floor and non-rotor parts along the spin axis by wobble + 0.5 mm.

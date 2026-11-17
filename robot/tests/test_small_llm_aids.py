@@ -200,3 +200,27 @@ def test_field_help_examples_and_readers():
     from robot import fieldhelp
     assert any("countersink" in r for r in fieldhelp.examples("secondary_ops"))
     assert "robot/checks/process.py" in fieldhelp.readers("secondary_ops")
+
+
+def test_field_sub_keys_show_wire_via():
+    from robot import fieldhelp
+    assert "via" in fieldhelp.sub_keys("wires")
+
+
+def test_catalog_lists_bearings(capsys):
+    from robot.cli import main
+    assert main(["catalog", "--kind", "bearing", "--fits", "8x8x3"]) == 0
+    assert "mr63" in capsys.readouterr().out
+
+
+def test_unknown_kind_suggests_alias():
+    from robot.spec import KIND_ALIASES
+    assert KIND_ALIASES["drive_motor"] == "motor"
+
+
+def test_opt_outs_listed():
+    from robot.cli import opt_outs
+    spec = type("S", (), {"raw": {"parts": [{"id": "esc", "exposed": True}, {"id": "tub", "fit": None}],
+                                  "fasteners": [{"id": "b1", "waive": {"x": "y"}}]}})()
+    assert ("esc", "exposed") in opt_outs(spec) and ("b1", "waive") in opt_outs(spec)
+    assert ("tub", "fit") not in opt_outs(spec)

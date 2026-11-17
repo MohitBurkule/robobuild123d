@@ -67,7 +67,7 @@ def run(ctx):
         if b.is_wire or b.kind in ("wheel", "tyre"):
             continue
         p = measure.lowest_point(b)
-        if b.kind in ("wedge", "fork"):
+        if b.kind in ("wedge", "fork", "skid", "caster"):
             tips.append((b, p))
             continue
         h = float(p[2]) - floor
@@ -85,6 +85,8 @@ def run(ctx):
             out.append(ok("ground.clearance", G, "Body clears the floor", f"Lowest body part is {h:.1f} mm above the floor."))
     glo, ghi = r.profile.wedge_gap_mm
     for b, p in tips:
+        if b.kind not in ("wedge", "fork"):
+            continue
         gap = float(p[2]) - floor
         if gap < glo or gap > ghi:
             out.append(fail("ground.wedge_gap", G, WARNING, "Wedge tip at the wrong height",
@@ -127,11 +129,82 @@ def run(ctx):
     cz = ctx.metrics.get("com_z", 0.0) - floor
     if m > 0.0 and cz > 0.1:
         ctx.metrics["tip_angle_deg"] = math.degrees(math.atan(m / cz))
+    if len(h) < 3 or m < 2.0:
+        out.extend(pitch_rest(ctx, lows, floor, com))
+    else:
+        out.append(ok("ground.pitch_rest", G, "Pitch test not needed",
+                      f"The robot stands on {len(h)} support points with the centre of mass {m:.1f} mm inside them, so it "
+                      "does not pitch at rest (no extra skid or caster needed for that)."))
     out.extend(wheel_exposure(ctx))
     return out
 
 
 WHEEL_EXPOSED_FRAC = 0.05  # share of a wheel's side and upward rays (above the belly line) that may reach open air
+
+
+SPINNING_KINDS = ("weapon", "hub", "weapon_motor")  # rotating with the weapon: must never be the rest contact
+REST_OK_KINDS = ("skid", "caster", "wedge", "fork")  # made to touch the floor
+CASTER_MARGIN_MM = 0.5  # the skid must touch this much before the weapon would
+
+
+def first_contact(lows, floor, com, bodies):
+    """Pitch the robot about its wheel contact line toward the centre of mass: which body touches the floor first, at
+    what angle (deg). Returns (body, angle, s) with s the distance ahead of the wheel line, or None if nothing does."""
+    import numpy as np
+    pts = np.array([[float(p[0]), float(p[1])] for _, p in lows])
+    if len(pts) >= 2:
+        i, j = max(((a, b) for a in range(len(pts)) for b in range(a + 1, len(pts))),
+                   key=lambda t: np.linalg.norm(pts[t[0]] - pts[t[1]]))
+        a, d = pts[i], pts[j] - pts[i]
+        n = np.array([-d[1], d[0]]) / max(np.linalg.norm(d), 1e-9)
+    else:
+        a, n = pts[0], np.array([0.0, 1.0])
+    c = np.array(com) - a
+    if float(c @ n) < 0:
+        n = -n
+    best = None
+    for b in bodies:
+        v = b.mesh.vertices
+        sd = (v[:, :2] - a) @ n
+        hz = v[:, 2] - floor
+        k = sd > 0.5
+        if not k.any():
+            continue
+        ang = np.degrees(np.arctan2(np.maximum(hz[k], 0.0), sd[k]))
+        i = int(np.argmin(ang))
+        if best is None or ang[i] < best[1]:
+            best = (b, float(ang[i]), float(sd[k][i]))
+    return best
+
+
+def pitch_rest(ctx, lows, floor, com):
+    """Two-wheel (or tippy) robots rest on whatever touches first when they pitch toward the centre of mass. That must
+    be a skid, caster or wedge, never the spinning weapon (it grinds the floor and drags the robot)."""
+    w = ctx.world
+    bodies = [b for b in w.bodies if not b.is_wire and b.kind not in ("wheel", "tyre")]
+    fc = first_contact(lows, floor, com, bodies)
+    if fc is None:
+        return [fail("ground.pitch_rest", G, BLOCKER, "Robot falls on its face",
+                     "Nothing ahead of the wheels can reach the floor on the centre-of-mass side; the robot pitches over.")
+                .fix("Add a skid or ball caster (kind `skid`/`caster`) ahead of the centre of mass.")]
+    b, ang, sd = fc
+    ctx.metrics["pitch_rest_deg"] = ang
+    ctx.metrics["pitch_rest_part"] = b.id
+    import math as _m
+    if b.kind in SPINNING_KINDS:
+        need = sd * _m.tan(_m.radians(ang))
+        return [fail("ground.pitch_rest", G, BLOCKER, "Robot tips onto its spinning weapon",
+                     f"With only the wheels down, the centre of mass pulls the robot forward {ang:.1f} deg until `{b.id}` "
+                     f"hits the floor {sd:.1f} mm ahead of the wheel line: the weapon grinds the floor and drags the robot.")
+                .on(b.id).here(com + (floor,))
+                .fix(f"Add a skid or ball caster (kind `skid`/`caster`) on the centre-of-mass side: at s mm ahead of the "
+                     f"wheel line its bottom must be <= s x {_m.tan(_m.radians(ang)):.3f} - {CASTER_MARGIN_MM} mm above the "
+                     f"floor (e.g. at {sd:.0f} mm: <= {max(need - CASTER_MARGIN_MM, 0):.1f} mm). Or move the battery behind the axle.")]
+    if b.kind not in REST_OK_KINDS:
+        return [fail("ground.pitch_rest", G, WARNING, "Robot rests on its body",
+                     f"The robot pitches {ang:.1f} deg forward onto `{b.id}` ({b.kind}); it drags and wears.")
+                .on(b.id).fix("Add a skid or ball caster (kind `skid`/`caster`) where it lands, or move mass behind the axle.")]
+    return [ok("ground.pitch_rest", G, "Rests on a skid", f"Pitches {ang:.1f} deg onto `{b.id}` ({b.kind}), not the weapon.")]
 
 
 def wheel_exposure(ctx):

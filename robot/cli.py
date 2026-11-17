@@ -79,7 +79,31 @@ def print_report(rep, full=False):
 LLM_ROOTS, LLM_CONTEXT = 12, 5
 
 
-def print_llm(rep):
+OPT_OUTS = ("assembly_ok", "exposed", "waive", "sharp_corners_ok", "thin_wall_deviation", "volume_mm3", "min_web_reason",
+            "rotor_ok", "fit", "integrity", "allow_overlap")
+
+
+def opt_outs(spec) -> list:
+    """Every place the spec switches a check off or declares an exception: (where, key). Clearing a blocker this way is
+    not a fix; it is listed so a reviewer (or the model itself) sees it."""
+    raw = getattr(spec, "raw", None) or {}
+    out = []
+
+    def walk(node, where):
+        if isinstance(node, dict):
+            here = node["id"] if isinstance(node.get("id"), str) else where
+            for k, v in node.items():
+                if k in OPT_OUTS and v not in (None, False, "", [], {}):
+                    out.append((here, k))
+                walk(v, here)
+        elif isinstance(node, list):
+            for x in node:
+                walk(x, where)
+    walk(raw, "spec")
+    return out
+
+
+def print_llm(rep, spec=None):
     """Root causes only: what is wrong, the measured numbers, the edit. A model reads this instead of 100+ findings."""
     s = rep.summary
     m = rep.metrics
@@ -100,6 +124,12 @@ def print_llm(rep):
     h = help_text(rep)
     if h:
         print(h)
+    if spec is not None:
+        oo = opt_outs(spec)
+        if oo:
+            shown = ", ".join(f"{w}.{k}" for w, k in oo[:8]) + (" ..." if len(oo) > 8 else "")
+            print(f"OPT-OUTS ({len(oo)}): {shown}. These switch checks off; each needs a real reason. Fix the design "
+                  "instead of adding one to clear a blocker (that is cheating and reviewers audit it).")
 
 
 def opts_from(a):
@@ -113,6 +143,29 @@ def opts_from(a):
     o.parity = "only" if getattr(a, "parity_only", False) else "no" if getattr(a, "no_parity", False) else "both"
     o.tier = getattr(a, "tier", None) or (None if o.combined or o.only or o.parity == "only" else "full")
     return o
+
+
+def _last_path(spec_path):
+    from .geom import cache_dir
+
+    p = Path(spec_path).resolve()
+    return cache_dir() / "last_groups" / (p.parent.name + "_" + p.stem + ".json")
+
+
+def _save_last(path, rep, partial=False):
+    """{group: blocker count} of the last run, for `verify --failing`. A partial run updates only its groups."""
+    try:
+        cur = json.loads(path.read_text()) if partial and path.exists() else {}
+    except (OSError, ValueError):
+        cur = {}
+    ran = {f.group for f in rep.findings}
+    for g in ran:
+        cur[g] = sum(1 for f in rep.findings if f.group == g and not f.passed and f.severity == "blocker")
+    try:
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(json.dumps(cur))
+    except OSError:
+        pass
 
 
 def catalog_size(e) -> tuple:
@@ -133,6 +186,14 @@ def _catalog_filter(a) -> int:
             print("--fits takes LxWxH in mm, e.g. 40x20x12", file=sys.stderr)
             return 1
     rows = []
+    if a.kind == "bearing":  # bearings live in a size table (id -> bore, OD, width), not as catalogue models
+        for bid, (d, od, wd) in sorted(catalog.BEARINGS.items(), key=lambda t: t[1]):
+            if box:
+                if not (sorted((od, od, wd)) <= box or (wd <= box[0] and od <= box[1])):
+                    continue
+            print(f"{bid} | bearing | bore {d:g} x OD {od:g} x {wd:g} mm | spec: kind `bearing`, "
+                  f"\"stock\": \"{bid.upper()}ZZ {d:g} x {od:g} x {wd:g}\" (copy Revron's `wbearing`: `robot field stock`)")
+        return 0
     for e in catalog.catalog():
         if a.kind and e.kind != a.kind:
             continue
@@ -185,6 +246,9 @@ def main(argv=None):
     v.add_argument("--full", action="store_true")
     v.add_argument("--only", metavar="GROUP[,GROUP...]", help="run only these check groups (parts are still built and cached)")
     v.add_argument("--list-groups", action="store_true", help="print the check group names and exit")
+    v.add_argument("--failing", action="store_true", help="re-run only the groups that had blockers in this spec's last "
+                   "run (plus integrity and mass, which others read): the fast fix loop; finish with a full run")
+    v.add_argument("--except", dest="except_", metavar="GROUP[,GROUP...]", help="run every group but these (e.g. visual)")
     v.add_argument("--fast", action="store_true", help="coarse tessellation for quick iteration")
     v.add_argument("--quick", action="store_true", help="skip the slow sweeps (wiring, assembly)")
     v.add_argument("--json", help="also write report.json here")
@@ -275,6 +339,24 @@ def main(argv=None):
         if not a.spec:
             print("error: verify needs a spec path", file=sys.stderr)
             return 1
+        last = _last_path(a.spec)
+        if getattr(a, "failing", False):
+            try:
+                prev = json.loads(last.read_text())
+            except (OSError, ValueError):
+                prev = None
+            if not prev:
+                print("no previous run of this spec: running the requested tier once (then --failing works)", file=sys.stderr)
+            else:
+                grp = [g for g, n in prev.items() if n]
+                if not grp:
+                    print("last run had no blockers: run the full tier to confirm", file=sys.stderr)
+                    return 0
+                a.only = ",".join(["integrity", "mass"] + [g for g in grp if g not in ("integrity", "mass")])
+                print(f"--failing: groups {a.only}", file=sys.stderr)
+        if getattr(a, "except_", None):
+            skip = set(a.except_.split(","))
+            a.only = ",".join(n for n in names if n not in skip)
         bad = [g for g in (opts_from(a).only or []) if g not in names and g != checks.CLAIMS_GROUP]
         if bad:
             print(f"error: unknown check group(s) {', '.join(bad)}; see `robot verify --list-groups`", file=sys.stderr)
@@ -285,8 +367,9 @@ def main(argv=None):
             print(f"error: {e}", file=sys.stderr)
             return 1
         rep = checks.verify(s, opts_from(a))
+        _save_last(last, rep, partial=bool(a.only))
         if getattr(a, "llm", False):
-            print_llm(rep)
+            print_llm(rep, s)
         else:
             print_report(rep, a.full)
         if a.json:

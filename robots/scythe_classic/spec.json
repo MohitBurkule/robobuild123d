@@ -1,0 +1,1079 @@
+{
+ "name": "Scythe Classic (horizontal undercutter bar spinner, old f363606 look)",
+ "generator": "make_spec.py",
+ "profile": "aws2025",
+ "robot_type": "horizontal_spinner",
+ "locomotion": "roller",
+ "params": {
+  "P": "src/scythe_classic/params.py"
+ },
+ "parts": [
+  {
+   "id": "tub",
+   "kind": "structure",
+   "catalog": null,
+   "material": "nylon",
+   "process": "fdm",
+   "print_orientation": "+z",
+   "solid_fraction": 0.4,
+   "shape": {
+    "type": "model",
+    "file": "src/build_scythe_classic.py",
+    "params": {
+     "part": "tub"
+    }
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "label": "printed nylon tub: sloped cone over the bar, vertical rear pod carrying the N10s"
+  },
+  {
+   "id": "top_panel",
+   "kind": "structure",
+   "catalog": null,
+   "material": "pa_cf",
+   "process": "fdm",
+   "print_orientation": "+z",
+   "shape": {
+    "type": "model",
+    "file": "src/build_scythe_classic.py",
+    "params": {
+     "part": "top_panel"
+    }
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "label": "1 mm PA-CF top skin, M2 button screws"
+  },
+  {
+   "id": "bar",
+   "kind": "weapon",
+   "catalog": null,
+   "material": "steel",
+   "process": "sheet_cut",
+   "shape": {
+    "type": "model",
+    "file": "src/build_scythe_classic.py",
+    "params": {
+     "part": "bar"
+    }
+   },
+   "at": [
+    0,
+    "P.WPN_AXIS_Y",
+    "P.BAR_Z0"
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "rotates_with": "weapon",
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "pivot": [
+     0.0,
+     15.5,
+     0.0
+    ],
+    "min": 0,
+    "max": 360,
+    "default": 0
+   },
+   "weapon": {
+    "kind": "bar",
+    "motor": "weapon_motor",
+    "cells": 2,
+    "reduction": 1.0,
+    "spin_axis": [
+     0,
+     0,
+     1
+    ],
+    "spin_dir": "ccw",
+    "teeth": 2,
+    "locking_bar": "lock_pin"
+   },
+   "secondary_ops": [
+    "countersink"
+   ],
+   "label": "3 mm steel two-tooth bar, 116 mm, horizontal under the tub"
+  },
+  {
+   "id": "weapon_hub",
+   "kind": "hub",
+   "catalog": null,
+   "material": "aluminium",
+   "process": "turned",
+   "secondary_ops": [
+    "drilled"
+   ],
+   "shape": {
+    "type": "model",
+    "file": "src/build_scythe_classic.py",
+    "params": {
+     "part": "weapon_hub"
+    }
+   },
+   "at": [
+    0,
+    "P.WPN_AXIS_Y",
+    "P.bar_top_z() + P.HUB_GAP"
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "rotates_with": "weapon",
+   "label": "turned 7075 hub, bar 2x M3"
+  },
+  {
+   "id": "weapon_shaft",
+   "kind": "shaft",
+   "catalog": null,
+   "material": "steel",
+   "process": "turned",
+   "shape": {
+    "type": "model",
+    "file": "src/build_scythe_classic.py",
+    "params": {
+     "part": "weapon_shaft"
+    }
+   },
+   "rotates_with": "weapon",
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "label": "5 mm steel weapon shaft through the bar bore, the hub and the caster bearing"
+  },
+  {
+   "id": "bearing_caster",
+   "kind": "bearing",
+   "catalog": null,
+   "material": "steel",
+   "process": "cots",
+   "stock": "MR85ZZ 5 x 8 x 2.5",
+   "shape": {
+    "type": "model",
+    "file": "src/build_scythe_classic.py",
+    "params": {
+     "part": "bearing_caster"
+    }
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "label": "MR85ZZ bearing: inner ring on the shaft, outer ring in the caster puck"
+  },
+  {
+   "id": "lock_pin",
+   "kind": "locking_bar",
+   "catalog": null,
+   "material": "steel",
+   "process": "turned",
+   "tethered": true,
+   "color": [
+    255,
+    90,
+    0
+   ],
+   "retained": "pin",
+   "shape": {
+    "type": "model",
+    "file": "src/build_scythe_classic.py",
+    "params": {
+     "part": "lock_pin"
+    }
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "label": "rule 5f lock: removable 3 mm steel pin through the bar's lock hole into the tub floor (orange, tethered)"
+  },
+  {
+   "id": "skid_foot",
+   "kind": "caster",
+   "catalog": null,
+   "material": "uhmw",
+   "process": "turned",
+   "shape": {
+    "type": "model",
+    "file": "src/build_scythe_classic.py",
+    "params": {
+     "part": "skid_foot"
+    }
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "label": "caster puck under the bar on the axis, MR85 seat (0.5 mm off the floor)"
+  },
+  {
+   "id": "skid_dome",
+   "kind": "structure",
+   "catalog": null,
+   "material": "uhmw",
+   "process": "turned",
+   "shape": {
+    "type": "model",
+    "file": "src/build_scythe_classic.py",
+    "params": {
+     "part": "skid_dome"
+    }
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "label": "POM-class dome on the top panel"
+  },
+  {
+   "id": "weapon_motor",
+   "kind": "weapon_motor",
+   "catalog": "gr1507",
+   "at": [
+    "0",
+    "P.WPN_AXIS_Y",
+    "P.wpn_motor_z()"
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "label": "GR1507 shaft down"
+  },
+  {
+   "id": "weapon_motor_can",
+   "kind": "other",
+   "role": "rotor",
+   "catalog": "gr1507_can",
+   "rotates_with": "weapon",
+   "at": [
+    "0",
+    "P.WPN_AXIS_Y",
+    "P.wpn_motor_z()"
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "label": "GR1507 bell and core: spins with the hub and shaft round the fixed stator"
+  },
+  {
+   "id": "drive_motor_r",
+   "kind": "motor",
+   "catalog": "bbb_n10_1000rpm",
+   "retained": "press_fit",
+   "at": [
+    "P.motor_x()",
+    "P.wheel_y()",
+    "P.WHEEL_CZ"
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "id": "drive_motor_l",
+   "kind": "motor",
+   "catalog": "bbb_n10_1000rpm",
+   "retained": "press_fit",
+   "at": [
+    "-P.motor_x()",
+    "P.wheel_y()",
+    "P.WHEEL_CZ"
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    180.0
+   ]
+  },
+  {
+   "id": "wheel_r",
+   "kind": "wheel",
+   "catalog": "bbb_wheel_34x6_5",
+   "at": [
+    "P.wheel_x()",
+    "P.wheel_y()",
+    "P.WHEEL_CZ"
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ]
+  },
+  {
+   "id": "wheel_l",
+   "kind": "wheel",
+   "catalog": "bbb_wheel_34x6_5",
+   "at": [
+    "-P.wheel_x()",
+    "P.wheel_y()",
+    "P.WHEEL_CZ"
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    180.0
+   ]
+  },
+  {
+   "id": "battery",
+   "kind": "battery",
+   "catalog": "lipo_2s_350",
+   "retained": "strap",
+   "retained_reason": "hook-and-loop strap over the pack, anchored to rib pegs in the pod; undone to change the pack",
+   "at": [
+    -19.1,
+    15.6,
+    16.5
+   ],
+   "rot": [
+    0,
+    0,
+    90
+   ],
+   "label": "2S 180 mAh pack in the rear pod (smaller than the old 300 mAh: see params)"
+  },
+  {
+   "id": "weapon_esc",
+   "kind": "esc",
+   "catalog": "bbb_brushless_esc_20a",
+   "retained": "velcro",
+   "at": [
+    0.0,
+    -14.0,
+    13.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "id": "drive_rx",
+   "kind": "esc",
+   "catalog": "bbb_malenki_nano",
+   "retained": "tape",
+   "at": [
+    25.6,
+    14.9,
+    12.25
+   ],
+   "rot": [
+    0,
+    0,
+    90
+   ]
+  },
+  {
+   "id": "switch",
+   "kind": "switch",
+   "catalog": "fingertech_mini_switch",
+   "retained": "velcro",
+   "tool_free": true,
+   "marked": true,
+   "label": "power switch ON/OFF, reached through the top-panel key hole",
+   "at": [
+    "P.SWITCH_XY[0] + 1.2",
+    "P.SWITCH_XY[1]",
+    13.675
+   ],
+   "rot": [
+    0,
+    0,
+    90
+   ]
+  },
+  {
+   "id": "xt30",
+   "kind": "connector",
+   "catalog": "xt30u_m",
+   "at": [
+    -19.6,
+    -31.4,
+    16.1
+   ],
+   "rot": [
+    0,
+    0,
+    90
+   ],
+   "retained": "snap"
+  }
+ ],
+ "fasteners": [
+  {
+   "id": "rim_0",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    31.226,
+    15.5,
+    30.6
+   ],
+   "dir": [
+    0,
+    0,
+    -1
+   ],
+   "through": [
+    "top_panel"
+   ],
+   "threads_into": "tub",
+   "tool": "hex1.3",
+   "hole": {
+    "d": 2.0,
+    "length": 6.0,
+    "head": "button",
+    "clearance_d": 2.2,
+    "into": "through",
+    "side": "head",
+    "grip": 1.0,
+    "sink": 0.0
+   },
+   "head": "button",
+   "removable": true
+  },
+  {
+   "id": "rim_1",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    15.613,
+    42.542,
+    30.6
+   ],
+   "dir": [
+    0,
+    0,
+    -1
+   ],
+   "through": [
+    "top_panel"
+   ],
+   "threads_into": "tub",
+   "tool": "hex1.3",
+   "hole": {
+    "d": 2.0,
+    "length": 6.0,
+    "head": "button",
+    "clearance_d": 2.2,
+    "into": "through",
+    "side": "head",
+    "grip": 1.0,
+    "sink": 0.0
+   },
+   "head": "button",
+   "removable": true
+  },
+  {
+   "id": "rim_2",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -15.613,
+    42.542,
+    30.6
+   ],
+   "dir": [
+    0,
+    0,
+    -1
+   ],
+   "through": [
+    "top_panel"
+   ],
+   "threads_into": "tub",
+   "tool": "hex1.3",
+   "hole": {
+    "d": 2.0,
+    "length": 6.0,
+    "head": "button",
+    "clearance_d": 2.2,
+    "into": "through",
+    "side": "head",
+    "grip": 1.0,
+    "sink": 0.0
+   },
+   "head": "button",
+   "removable": true
+  },
+  {
+   "id": "rim_3",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -31.226,
+    15.5,
+    30.6
+   ],
+   "dir": [
+    0,
+    0,
+    -1
+   ],
+   "through": [
+    "top_panel"
+   ],
+   "threads_into": "tub",
+   "tool": "hex1.3",
+   "hole": {
+    "d": 2.0,
+    "length": 6.0,
+    "head": "button",
+    "clearance_d": 2.2,
+    "into": "through",
+    "side": "head",
+    "grip": 1.0,
+    "sink": 0.0
+   },
+   "head": "button",
+   "removable": true
+  },
+  {
+   "id": "rim_4",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -15.613,
+    -11.542,
+    30.6
+   ],
+   "dir": [
+    0,
+    0,
+    -1
+   ],
+   "through": [
+    "top_panel"
+   ],
+   "threads_into": "tub",
+   "tool": "hex1.3",
+   "hole": {
+    "d": 2.0,
+    "length": 6.0,
+    "head": "button",
+    "clearance_d": 2.2,
+    "into": "through",
+    "side": "head",
+    "grip": 1.0,
+    "sink": 0.0
+   },
+   "head": "button",
+   "removable": true
+  },
+  {
+   "id": "rim_5",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    15.613,
+    -11.542,
+    30.6
+   ],
+   "dir": [
+    0,
+    0,
+    -1
+   ],
+   "through": [
+    "top_panel"
+   ],
+   "threads_into": "tub",
+   "tool": "hex1.3",
+   "hole": {
+    "d": 2.0,
+    "length": 6.0,
+    "head": "button",
+    "clearance_d": 2.2,
+    "into": "through",
+    "side": "head",
+    "grip": 1.0,
+    "sink": 0.0
+   },
+   "head": "button",
+   "removable": true
+  },
+  {
+   "id": "stator_0",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    6.0,
+    15.5,
+    30.6
+   ],
+   "dir": [
+    0,
+    0,
+    -1
+   ],
+   "through": [
+    "top_panel",
+    "tub"
+   ],
+   "threads_into": "weapon_motor",
+   "tool": "hex1.3",
+   "hole": {
+    "d": 2.0,
+    "length": 6.0,
+    "head": "button",
+    "clearance_d": 2.2,
+    "into": "through",
+    "side": "head",
+    "grip": 1.0,
+    "sink": 0.0
+   },
+   "head": "button",
+   "removable": true
+  },
+  {
+   "id": "stator_1",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    0.0,
+    21.5,
+    30.6
+   ],
+   "dir": [
+    0,
+    0,
+    -1
+   ],
+   "through": [
+    "top_panel",
+    "tub"
+   ],
+   "threads_into": "weapon_motor",
+   "tool": "hex1.3",
+   "hole": {
+    "d": 2.0,
+    "length": 6.0,
+    "head": "button",
+    "clearance_d": 2.2,
+    "into": "through",
+    "side": "head",
+    "grip": 1.0,
+    "sink": 0.0
+   },
+   "head": "button",
+   "removable": true
+  },
+  {
+   "id": "stator_2",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -6.0,
+    15.5,
+    30.6
+   ],
+   "dir": [
+    0,
+    0,
+    -1
+   ],
+   "through": [
+    "top_panel",
+    "tub"
+   ],
+   "threads_into": "weapon_motor",
+   "tool": "hex1.3",
+   "hole": {
+    "d": 2.0,
+    "length": 6.0,
+    "head": "button",
+    "clearance_d": 2.2,
+    "into": "through",
+    "side": "head",
+    "grip": 1.0,
+    "sink": 0.0
+   },
+   "head": "button",
+   "removable": true
+  },
+  {
+   "id": "stator_3",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -0.0,
+    9.5,
+    30.6
+   ],
+   "dir": [
+    0,
+    0,
+    -1
+   ],
+   "through": [
+    "top_panel",
+    "tub"
+   ],
+   "threads_into": "weapon_motor",
+   "tool": "hex1.3",
+   "hole": {
+    "d": 2.0,
+    "length": 6.0,
+    "head": "button",
+    "clearance_d": 2.2,
+    "into": "through",
+    "side": "head",
+    "grip": 1.0,
+    "sink": 0.0
+   },
+   "head": "button",
+   "removable": true
+  },
+  {
+   "id": "bar_0",
+   "designation": "M3x10",
+   "material": "steel",
+   "at": [
+    -6.5,
+    15.5,
+    4.0
+   ],
+   "dir": [
+    0,
+    0,
+    1
+   ],
+   "through": [
+    "bar"
+   ],
+   "threads_into": "weapon_hub",
+   "tool": "hex2.5",
+   "hole": {
+    "d": 3.0,
+    "length": 10.0,
+    "head": "csk",
+    "clearance_d": 3.2,
+    "into": "through",
+    "side": "head",
+    "grip": 1.0,
+    "sink": 0.0,
+    "csk_angle": 90.0,
+    "csk_d": 6.2,
+    "csk_depth": 1.75,
+    "head_std": "ISO 14581"
+   },
+   "head": "countersunk",
+   "removable": true
+  },
+  {
+   "id": "bar_1",
+   "designation": "M3x10",
+   "material": "steel",
+   "at": [
+    6.5,
+    15.5,
+    4.0
+   ],
+   "dir": [
+    0,
+    0,
+    1
+   ],
+   "through": [
+    "bar"
+   ],
+   "threads_into": "weapon_hub",
+   "tool": "hex2.5",
+   "hole": {
+    "d": 3.0,
+    "length": 10.0,
+    "head": "csk",
+    "clearance_d": 3.2,
+    "into": "through",
+    "side": "head",
+    "grip": 1.0,
+    "sink": 0.0,
+    "csk_angle": 90.0,
+    "csk_d": 6.2,
+    "csk_depth": 1.75,
+    "head_std": "ISO 14581"
+   },
+   "head": "countersunk",
+   "removable": true
+  },
+  {
+   "id": "dome_0",
+   "designation": "M2x10",
+   "material": "steel",
+   "at": [
+    0.0,
+    15.5,
+    32.6
+   ],
+   "dir": [
+    0,
+    0,
+    -1
+   ],
+   "through": [
+    "skid_dome",
+    "top_panel"
+   ],
+   "threads_into": "weapon_motor",
+   "tool": "hex1.3",
+   "hole": {
+    "d": 2.0,
+    "length": 10.0,
+    "head": "button",
+    "clearance_d": 2.2,
+    "into": "through",
+    "side": "head",
+    "grip": 1.0,
+    "sink": 0.0
+   },
+   "head": "button",
+   "removable": true
+  }
+ ],
+ "connections": [
+  {
+   "a": "top_panel",
+   "b": "tub",
+   "method": "screw",
+   "reason": "4x M2 rim screws into the cone wall top"
+  },
+  {
+   "a": "bar",
+   "b": "weapon_hub",
+   "method": "screw",
+   "reason": "2x M3 countersunk bolts through the bar into the tapped hub"
+  },
+  {
+   "a": "weapon_hub",
+   "b": "weapon_motor_can",
+   "method": "press_fit",
+   "mechanical_key": true,
+   "reason": "hub clamped to the bell top by the bell screws (key: flats on the shaft)"
+  },
+  {
+   "a": "weapon_shaft",
+   "b": "weapon_hub",
+   "method": "press_fit",
+   "mechanical_key": true,
+   "reason": "shaft pressed into the hub bore, grub screw on the flat"
+  },
+  {
+   "a": "weapon_shaft",
+   "b": "bearing_caster",
+   "method": "press_fit",
+   "reason": "MR85 inner ring pressed on the 5 mm shaft"
+  },
+  {
+   "a": "bearing_caster",
+   "b": "skid_foot",
+   "method": "press_fit",
+   "reason": "MR85 outer ring pressed in the caster puck bore"
+  },
+  {
+   "a": "lock_pin",
+   "b": "tub",
+   "method": "pin",
+   "reason": "pin seats in a socket in the tub floor underside; tethered to the tub"
+  },
+  {
+   "a": "switch",
+   "b": "tub",
+   "method": "snap",
+   "reason": "snaps into a moulded cradle on the tub floor"
+  },
+  {
+   "a": "xt30",
+   "b": "tub",
+   "method": "snap",
+   "reason": "XT30 clips into a moulded holder on the pod floor"
+  },
+  {
+   "a": "skid_dome",
+   "b": "top_panel",
+   "method": "screw",
+   "reason": "M2 screw from the dome through the top panel into the stator base"
+  },
+  {
+   "a": "wheel_r",
+   "b": "drive_motor_r",
+   "method": "press_fit",
+   "mechanical_key": true,
+   "reason": "N10 D-shaft bore, grub screw on the flat"
+  },
+  {
+   "a": "wheel_l",
+   "b": "drive_motor_l",
+   "method": "press_fit",
+   "mechanical_key": true,
+   "reason": "N10 D-shaft bore, grub screw on the flat"
+  },
+  {
+   "a": "drive_motor_r",
+   "b": "tub",
+   "method": "interlock",
+   "reason": "N10 body seats in the pod wall"
+  },
+  {
+   "a": "drive_motor_l",
+   "b": "tub",
+   "method": "interlock",
+   "reason": "N10 body seats in the pod wall"
+  },
+  {
+   "a": "weapon_motor",
+   "b": "tub",
+   "method": "screw",
+   "reason": "stator base screws down through the top panel and boss"
+  }
+ ],
+ "wires": [
+  {
+   "id": "w_bat_sw",
+   "from": "battery.xt30",
+   "to": "switch.in",
+   "awg": 24,
+   "kind": "power",
+   "slack_mm": 8
+  },
+  {
+   "id": "w_sw_rx",
+   "from": "switch.out",
+   "to": "drive_rx.bat",
+   "awg": 24,
+   "kind": "power",
+   "slack_mm": 8
+  },
+  {
+   "id": "w_sw_esc",
+   "from": "switch.out",
+   "to": "weapon_esc.bat",
+   "awg": 24,
+   "kind": "power",
+   "slack_mm": 8,
+   "via": [
+    [
+     16.0,
+     36.0,
+     18.0
+    ],
+    [
+     18.0,
+     -2.0,
+     18.0
+    ]
+   ]
+  },
+  {
+   "id": "w_esc_wpn",
+   "from": "weapon_esc.motor",
+   "to": "weapon_motor.phases",
+   "awg": 22,
+   "kind": "power",
+   "slack_mm": 6
+  },
+  {
+   "id": "w_rx_m1",
+   "from": "drive_rx.m1",
+   "to": "drive_motor_r.terminals",
+   "awg": 26,
+   "kind": "signal",
+   "slack_mm": 4
+  },
+  {
+   "id": "w_rx_m2",
+   "from": "drive_rx.m2",
+   "to": "drive_motor_l.terminals",
+   "awg": 26,
+   "kind": "signal",
+   "slack_mm": 4
+  },
+  {
+   "id": "w_rx_wpn",
+   "from": "drive_rx.wpn",
+   "to": "weapon_esc.rx",
+   "awg": 26,
+   "kind": "signal",
+   "slack_mm": 4,
+   "via": [
+    [
+     22.0,
+     -2.0,
+     18.0
+    ]
+   ]
+  }
+ ],
+ "electronics": {
+  "failsafe": true,
+  "weapon_remote_disable": true,
+  "radio": "2.4 GHz",
+  "cells": 2
+ },
+ "notes": "Generated by make_spec.py from scythe_classic.params. Do not edit by hand."
+}

@@ -35,6 +35,9 @@ def run(ctx):
         com = np.array([ctx.metrics["com_x"], ctx.metrics["com_y"], ctx.metrics["com_z"]])
         out += tipping(ctx, wheels, floor, com)
         out += invertible(ctx, wheels)
+        from .spin_dyn import run_all
+
+        out += run_all(ctx, floor, com)
     out += balance_and_gyro(ctx)
     return out
 
@@ -47,8 +50,8 @@ def _contacts(ctx, wheels, floor):
         if len(low):
             pts.append((b, low))
     for b in ph.solids(ctx.world):
-        if b.kind in ("wheel", "tyre") or b.fastener:
-            continue
+        if b.kind in ("wheel", "tyre", "weapon", "hub", "weapon_motor") or b.fastener:
+            continue  # a spinning weapon near the floor is not a support (it skims, it does not carry load)
         v = b.mesh.vertices
         low = v[v[:, 2] <= floor + CONTACT_MM]
         if len(low):
