@@ -66,6 +66,19 @@ def examples(name: str) -> list[str]:
     return rows
 
 
+def sub_keys(name: str) -> Counter:
+    """Keys seen inside `name` blocks (e.g. every key used in a `wires` entry, like `via`)."""
+    c = Counter()
+    for _, ents in _entries():
+        for k, v, *_ in ents:
+            if k != name:
+                continue
+            for item in (v if isinstance(v, list) else [v]):
+                if isinstance(item, dict):
+                    c.update(item.keys())
+    return c
+
+
 def all_keys() -> Counter:
     c = Counter()
     for _, ents in _entries():
@@ -92,6 +105,9 @@ def run(a) -> int:
     print(f"`{a.name}` examples (copy one):" if ex else f"`{a.name}`: no example in the reference specs.")
     for r in ex:
         print("  " + r)
+    sk = sub_keys(a.name)
+    if sk:
+        print("keys used inside it: " + ", ".join(f"{k} ({n})" for k, n in sk.most_common()))
     if rd:
         print("read by: " + ", ".join(rd))
     return 0

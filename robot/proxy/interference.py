@@ -157,7 +157,10 @@ def sweeps(ctx, parts=None):
                 P = deep_points(grids[o.id], allow)
                 if len(P) and rv.near(P, PAD_CELLS).any():
                     out.append(fail("proxy.sweep", G, BLOCKER, "Moving part may hit another part",
-                                    f"{label}: `{m.id}` turning a full revolution may reach `{o.id}`.").on(m.id, o.id))
+                                    f"{label}: `{m.id}` turning a full revolution may reach `{o.id}`. It sweeps a disc of radius "
+                                    f"{reach:.1f} mm about its axis; `{o.id}` must stay outside that radius or outside the "
+                                    "blade's thickness band along the axis (or be declared part of the rotor: same "
+                                    "`rotates_with` label, or `parent` a rotor part).").on(m.id, o.id))
                     break
     return out
 

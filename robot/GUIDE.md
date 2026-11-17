@@ -591,3 +591,19 @@ the fit. Parts without a mesh or a valid `print_orientation` are NOT CHECKED, ne
 - Generate spec.json from the CAD masters (`make_spec.py`); never hand-patch coordinates that a master drives.
 
 - Two-wheel robot: add a part of kind `skid` or `caster` (ball caster) on the centre-of-mass side; `ground.pitch_rest` tells you the max height so it lands before the weapon.
+
+
+## Small-LLM playbook (from Haiku runs, 2026-11-17)
+1. Commit after every fix step (small commits; never `git stash` a shared tree).
+2. Run `verify`, `probe --place`, `render` in the background and wait on the output file; never `sleep` loops.
+3. Inner tier `proxy.*` lines are approximations: confirm with the full group (`--only wiring,assembly`) before redesigning.
+4. Look things up, don't guess: `robot field NAME` (examples + keys used inside a block, e.g. wire `via`),
+   `robot catalog --kind battery|bearing --fits LxWxH`, `robot probe`.
+5. Use known part kinds (`craft.unknown_kind` lists them): `motor` for drive gearmotors, `weapon_motor`, `caster`, `skid`, `hub`.
+   A wrong kind silently turns checks off.
+6. Read masses and sizes from the catalogue in your params; never copy them as literals (they go stale).
+7. Rotor parts share one `rotates_with` label (a label, not a part id); a part bolted to the rotor is part of it.
+8. Things under a horizontal spinner: the bar sweeps a full disc; only parts on the axis (hub, centre caster on a bearing) can sit inside it.
+9. Spin-up kick: declare `weapon.esc_ramp_s` when the ESC ramps the throttle.
+10. Fix lines carry numbers (mAh needed, mm to move, skid height): apply them literally first.
+11. Do not stop to report a plan: implement it, commit, verify, repeat until 0 blockers or truly stuck.

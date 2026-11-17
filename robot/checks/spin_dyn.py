@@ -112,6 +112,14 @@ def spinup_kick(ctx, floor, com):
     out = []
     for p, wb, origin, axis in ph.weapons(ctx):
         tau, amps = _motor_torque_nm(ctx, p)
+        ramp = float(getattr(p.weapon, "esc_ramp_s", None) or (p.weapon._extra.get("esc_ramp_s") if hasattr(p.weapon, "_extra") else 0) or 0)
+        if tau is not None and ramp > 0:
+            # a throttle ramp limits torque to what spins the weapon up in `ramp` seconds
+            dens0 = catalog.density(p.material) or 7.8
+            Iw0 = geom.axial_inertia(wb.geom, wb.M, origin, axis) * dens0 * 1e-12
+            rpm0 = ctx.metrics.get("weapon_rpm") or 0
+            if rpm0:
+                tau = min(tau, Iw0 * rpm0 * 2 * math.pi / 60 / ramp)
         if tau is None:
             ctx.not_checked.append(f"Spin-up kick of `{p.id}`: weapon motor kv unknown")
             continue
@@ -145,7 +153,8 @@ def spinup_kick(ctx, floor, com):
                 out.append(fail("dynamics.spinup_kick", G, sev, "Robot spins when the weapon spins up",
                                 f"`{p.id}` spin-up torque {tau:.2f} N m ({amps:.0f} A) beats tyre grip {resist:.2f} N m: the robot "
                                 f"yaws the other way while the weapon gets to speed, {how}.").on(p.id)
-                           .fix("Ramp the weapon throttle (ESC ramp/current limit), widen the track, or add weight on the wheels."))
+                           .fix("Declare an ESC throttle ramp `weapon.esc_ramp_s` (seconds to full speed; the check then uses the ramped "
+                                "torque), widen the track, or add weight on the wheels."))
             else:
                 out.append(ok("dynamics.spinup_kick", G, "Tyres hold the spin-up torque",
                               f"`{p.id}` {tau:.2f} N m < grip {resist:.2f} N m."))

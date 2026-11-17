@@ -149,11 +149,29 @@ def flat_slab(ctx):
     return out
 
 
+def unknown_kinds(ctx):
+    """A part kind the checks do not know silently turns checks off (drive_motor: no motor-to-wheel link)."""
+    import difflib
+
+    from ..spec import KIND_ALIASES, PART_KINDS
+    out = []
+    for rp in ctx.r.parts:
+        k = rp.part.kind
+        if k in PART_KINDS:
+            continue
+        sug = KIND_ALIASES.get(k) or next(iter(difflib.get_close_matches(k, sorted(PART_KINDS), 1, 0.6)), None)
+        out.append(fail("craft.unknown_kind", G, WARNING, "Part kind not known to the checks",
+                        f"`{rp.part.id}` has kind `{k}`: checks that key on kind skip it silently."
+                        + (f" Use `{sug}`." if sug else "")).on(rp.part.id)
+                   .fix(f"Kinds: {', '.join(sorted(PART_KINDS))}."))
+    return out
+
+
 def run(ctx):
     floor = ph.floor_z(ctx)
     out = []
     for f in (lambda: stray(ctx, floor), lambda: brick(ctx), lambda: sharp_edges(ctx), lambda: weapon_scale(ctx),
-              lambda: flat_slab(ctx)):
+              lambda: flat_slab(ctx), lambda: unknown_kinds(ctx)):
         try:
             out += f()
         except Exception as e:  # noqa: BLE001

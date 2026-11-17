@@ -377,7 +377,8 @@ def _run(ctx):
         if worst is not None:
             t, j, d, _ = worst
             msg = (f"`{b.id}` is trapped: its best way out is along ({d[0]:.0f}, {d[1]:.0f}, {d[2]:.0f}), which gets "
-                   f"{t:.1f} mm before it hits `{w.bodies[j].id}`.")
+                   f"{t:.1f} mm before it hits `{w.bodies[j].id}`. Move or open `{w.bodies[j].id}` on that line, or give "
+                   f"`{b.id}` a lid/opening along another axis.")
         else:
             msg = f"`{b.id}` has no way out."
         bad = assembly_waiver(ctx, b.id)

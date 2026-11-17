@@ -131,6 +131,10 @@ def run(ctx):
         ctx.metrics["tip_angle_deg"] = math.degrees(math.atan(m / cz))
     if len(h) < 3 or m < 2.0:
         out.extend(pitch_rest(ctx, lows, floor, com))
+    else:
+        out.append(ok("ground.pitch_rest", G, "Pitch test not needed",
+                      f"The robot stands on {len(h)} support points with the centre of mass {m:.1f} mm inside them, so it "
+                      "does not pitch at rest (no extra skid or caster needed for that)."))
     out.extend(wheel_exposure(ctx))
     return out
 

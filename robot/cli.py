@@ -133,6 +133,14 @@ def _catalog_filter(a) -> int:
             print("--fits takes LxWxH in mm, e.g. 40x20x12", file=sys.stderr)
             return 1
     rows = []
+    if a.kind == "bearing":  # bearings live in a size table (id -> bore, OD, width), not as catalogue models
+        for bid, (d, od, wd) in sorted(catalog.BEARINGS.items(), key=lambda t: t[1]):
+            if box:
+                if not (sorted((od, od, wd)) <= box or (wd <= box[0] and od <= box[1])):
+                    continue
+            print(f"{bid} | bearing | bore {d:g} x OD {od:g} x {wd:g} mm | spec: kind `bearing`, "
+                  f"\"stock\": \"{bid.upper()}ZZ {d:g} x {od:g} x {wd:g}\" (copy Revron's `wbearing`: `robot field stock`)")
+        return 0
     for e in catalog.catalog():
         if a.kind and e.kind != a.kind:
             continue

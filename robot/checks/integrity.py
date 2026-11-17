@@ -155,7 +155,9 @@ def run(ctx, parts=None):
             else:
                 out.append(fail("integrity.volume", G, WARNING, "Part volume changed more than "
                                 f"{p['tol']:.0%}", msg).on(pid)
-                           .fix("If intended, set `volume_mm3` on the part (or rerun to accept the new baseline)."))
+                           .fix("'Previous' is the last passing run's volume, stored in "
+                                f"{store_path(getattr(spec, 'name', None))}. If the change is intended: set `volume_mm3` on the part, or "
+                                "delete that file to accept the new geometry as the baseline."))
         if not blocked:
             keep[pid] = vol
     if keep != prev:
