@@ -46,12 +46,12 @@ GUARD_MOUNT_Z = 12.0
 GUARD_MOUNT_Z3 = 5.5
 
 # ---- Weapon & uprights ---------------------------------------------------------------------------
-WPN_Y = 8.0               # weapon shaft Y
+WPN_Y = 15.0              # weapon shaft Y (overhangs front edge like image.png)
 WPN_Z = 40.0              # weapon shaft Z (clears top_plate & gives >=3.5mm battery-weapon gap)
 WPN_DISC_OD = 56.0        # 56 mm OD vertical spinner disc (bottom at z=12.0, top at z=68.0)
 WPN_DISC_R = WPN_DISC_OD / 2.0
 WPN_DISC_T = 1.5          # 1.5 mm titanium disc
-WPN_DISC_X = -3.55        # disc center (-4.30..-2.80), flush against GR1507 bell cap at -2.80
+WPN_DISC_X = -4.5         # disc center (-5.25..-3.75), >=1.5mm clear of motor stator & tub
 WPN_MOTOR_X = 3.9         # GR1507 origin (rot [0,180,0] -> base at 14.3, bell cap at -2.8)
 
 UPRIGHT_X_IN = 14.3       # inner face of each upright (28.6 mm inner gap for GR1507)
@@ -60,7 +60,7 @@ UPRIGHT_X_MID = 0.5 * (UPRIGHT_X_IN + UPRIGHT_X_OUT)  # 15.9
 UPRIGHT_T = UPRIGHT_X_OUT - UPRIGHT_X_IN              # 3.2
 UPRIGHT_TAB_X = 20.5      # outboard mounting screw X (clear of upright wall)
 UPRIGHT_Z0 = TOP_PLATE_Z1 # 23.0
-UPRIGHT_TOP_Y = -4.0
+UPRIGHT_TOP_Y = 2.0
 UPRIGHT_TOP_Z = 71.0
 UPRIGHT_TOP_R = 5.5
 
@@ -73,8 +73,8 @@ FORK_MOUNT_Y0 = 24.0      # sits flush against front of chassis (y = 24)
 FORK_MOUNT_Y1 = 35.0
 FORK_PIN_Y = 30.0
 FORK_PIN_Z = 7.5
-FORK_LEN = 38.0           # extends forward to y = 68 mm
-FORK_TIP_Z = 1.0          # 1.0 mm floor clearance at tip
+FORK_LEN = 46.0           # extends forward to y = 76 mm
+FORK_TIP_Z = 0.5          # 0.5 mm floor clearance at tip
 
 # ---- Electronics positions -----------------------------------------------------------------------
 BAT_AT = [0.0, -30.0, CAVITY_Z0 + 5.6]   # lipo_2s_350 (36x17x11) rotated 90 deg -> x=-8.5..8.5, y=-48..-12

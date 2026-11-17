@@ -183,8 +183,8 @@ def build_tub():
             Box(21.0, 35.0, 4.0, mode=Mode.SUBTRACT)
         for sx in (-1.0, 1.0):
             for wy in (P.WHEEL_REAR_Y, P.WHEEL_FRONT_Y):
-                with Locations((sx * 12.0, wy, P.AXLE_Z)):
-                    Box(1.5, 11.0, 12.4, mode=Mode.SUBTRACT)
+                with Locations((sx * 41.5, wy, P.AXLE_Z)):
+                    Box(2.0, 11.0, 12.4, mode=Mode.SUBTRACT)
     return bp.part
 
 
@@ -192,7 +192,7 @@ def build_upright(side: int = 1):
     pts = [
         (-13.0, P.UPRIGHT_Z0),
         (22.0, P.UPRIGHT_Z0),
-        (22.0, 34.0),
+        (23.5, 42.0),
         (P.UPRIGHT_TOP_Y + 4.5, P.UPRIGHT_TOP_Z + 1.0),
         (P.UPRIGHT_TOP_Y - 4.5, P.UPRIGHT_TOP_Z + 1.0),
         (-9.0, 56.0),
@@ -235,9 +235,7 @@ def build_upright(side: int = 1):
         ]
         if tab_y_edges:
             fillet(tab_y_edges, radius=1.1)
-        upper_x_edges = [e for e in bp.edges().filter_by(Axis.X) if e.center().Z > P.UPRIGHT_Z0 + 3.5]
-        if upper_x_edges:
-            fillet(upper_x_edges, radius=0.6)
+        # upper_x_edges fillet omitted to avoid tangent-edge failure when upright leans forward
     return bp.part
 
 
@@ -263,6 +261,8 @@ def build_weapon_disc():
             Circle(r_out)
             with Locations((r_out * 0.65, r_out * 0.55)):
                 Polygon((-6, -2), (10, -2), (10, 12), (-2, 12), align=None, mode=Mode.SUBTRACT)
+            with Locations((-r_out * 0.65, -r_out * 0.55)):
+                Polygon((6, 2), (-10, 2), (-10, -12), (2, -12), align=None, mode=Mode.SUBTRACT)
             Circle(P.WPN_SHAFT_R + 0.05, mode=Mode.SUBTRACT)
             for ang in (15, 105, 195, 285):
                 a = math.radians(ang)
