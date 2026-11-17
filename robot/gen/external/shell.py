@@ -12,6 +12,9 @@ from . import pockets as pk_mod
 from . import sh
 
 
+INNER_R = 1.05  # inside-corner radius of every half (load corners need >= 1.0)
+
+
 def _outline_prism(points, z0, z1, spline):
     return sh.prism(points, z1 - z0, (0, 0, (z0 + z1) / 2), spline=spline)
 
@@ -57,7 +60,10 @@ def half_shape(plan, half: str) -> dict:
         z0, z1, iz0, iz1 = f.zb, f.split, f.zb + f.floor, f.split + 0.5
     else:
         z0, z1, iz0, iz1 = f.split, f.zt, f.split - 0.5, f.zt - f.floor
-    tub = sh.S(_outer_body(f, z0, z1, half == "bottom"), _outline_prism(inner_outline(f), iz0, iz1, f.spline))
+    R = INNER_R
+    # the open side of the void runs R + 0.5 past the split so rounding never leaves a lip on the split face
+    iz0x, iz1x = (iz0, iz1 + R) if half == "bottom" else (iz0 - R, iz1)
+    inner = _outline_prism(inner_outline(f), iz0x, iz1x, f.spline)
     housings = []
     for p in plan.pockets:
         if p.housing > 0 and half in p.halves:
@@ -69,10 +75,38 @@ def half_shape(plan, half: str) -> dict:
                 hz0 = p.z0 - p.housing
             if hz1 - hz0 > 0.5:
                 housings.append(sh.boxr(x0_, x1_, y0_, y1_, hz0, hz1))
-    body = sh.U(tub, *housings, *plan.adds[half])
+            # a raised tray / short lid must still reach the shell: a hollow skirt (the housing walls continued) down
+            # to the floor or up to the roof, so the half is one solid by construction (integrity.solids)
+            if hz0 > z0 + 1e-6:
+                housings.append(sh.S(sh.boxr(x0_, x1_, y0_, y1_, z0, hz0 + 0.01), sh.boxr(p.x0, p.x1, p.y0, p.y1, z0 - 1, hz0 + 1)))
+            if hz1 < z1 - 1e-6:
+                housings.append(sh.S(sh.boxr(x0_, x1_, y0_, y1_, hz1 - 0.01, z1), sh.boxr(p.x0, p.x1, p.y0, p.y1, hz1 - 1, z1 + 1)))
     cavities = [pk_mod.cavity(p) for p in plan.pockets]
+    # 1. the shell with its housings and bosses, inside corners where they meet the walls filleted R (round_inside);
+    # 2. then the pockets and channels, each box with corner reliefs (dogbones) so the part's inside corner there is
+    #    an R arc while the box still fits the component square (rounding a pocket would pinch its corners).
+    body = sh.S(sh.U(_outer_body(f, z0, z1, half == "bottom"), *housings, *plan.adds[half]), sh.S(inner, *housings, *plan.adds[half]))
+    if R > 0:
+        body = {"type": "round_inside", "radius": R, "axis": "z", "shape": body}
     body = sh.S(body, *cavities, *plan.cuts[half])
     return sh.S(body, *plan.late_cuts[half])
+
+
+def _rounded_cut(c, R):
+    """Every box of a cut with all its edges filleted R: the part's inside corners round the pocket / channel are R
+    arcs by construction. A square component in a pocket with gap g keeps g*sqrt2 - R*(sqrt2 - 1) clear at its edges
+    (0.4 gap, R 1.05: 0.13 mm), so nothing pinches."""
+    if R <= 0:
+        return c
+    boxes = c["items"] if c.get("type") == "union" else [c]
+    out = []
+    for b in boxes:
+        if b.get("type") == "place" and b["shape"].get("type") == "box" and not any(b["rot"]):
+            r = min(R, min(b["shape"]["size"]) / 2 - 0.05)
+            if r >= 0.3:
+                b = {"type": "place", "shape": sh.fillet(b["shape"], r), "at": b["at"], "rot": b["rot"]}
+        out.append(b)
+    return sh.U(*out)
 
 
 def _slab(f, z0, z1):

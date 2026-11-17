@@ -158,7 +158,7 @@ def run(ctx):
 
 SIGHT_KINDS = {"battery", "esc", "receiver", "motor", "servo"}  # shielded from every side, not just inside the hull
 # a weapon motor is often the spinning hub itself (exposed by design); drive motors and servos are not
-SHIELD_SKIP = {"battery", "esc", "receiver", "switch", "wire"}  # never armour; motors/servos/wheels do shield others
+SHIELD_SKIP = {"battery", "esc", "receiver", "wire"}  # never armour; motors/servos/wheels/the switch body do shield (a wire under the switch in its slot is covered)
 SIGHT_FRAC = 0.10                                  # more than this share of the surface seen straight from outside
 WIRE_FRAC = 0.15
 
