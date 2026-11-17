@@ -1,0 +1,2141 @@
+{
+ "name": "Expandabot (Team Bits Everywhere, 8x AWS antweight champion)",
+ "profile": "aws2025",
+ "robot_type": "flipper",
+ "locomotion": "wheeled",
+ "size_rule": "robot/profile.py aws2025: 150 mm floor square, no overhang at any height, no height limit. All values are derived by the src/expandabot/params.py relations; the start pose also fits the old 101.6 mm cube (rest length 100.50 mm).",
+ "weapon_lock": {
+  "type": "external_pin",
+  "note": "made safe outside the robot: the XT30 is unplugged and the removable link is pulled; the flipper rests down under gravity, no stored energy"
+ },
+ "electronics": {
+  "failsafe": true,
+  "weapon_remote_disable": true,
+  "radio": "2.4 GHz",
+  "cells": 2
+ },
+ "can_run_inverted": false,
+ "claims": [
+  {
+   "id": "c_mass",
+   "text": "weighs 150 g or less",
+   "metric": "mass_total_g",
+   "op": "<=",
+   "value": 150.0
+  },
+  {
+   "id": "c_fit",
+   "text": "fits the 150 mm square",
+   "metric": "footprint_mm",
+   "op": "<=",
+   "value": 150.0
+  }
+ ],
+ "parts": [
+  {
+   "id": "tub",
+   "kind": "structure",
+   "material": "pla",
+   "process": "fdm",
+   "print_orientation": "+z",
+   "shape": {
+    "type": "model",
+    "file": "src/build_expandabot.py",
+    "params": {
+     "part": "tub"
+    }
+   },
+   "at": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "sharp_corners_ok": "the flagged concave corners are the seams where the printed lid pads, standoff columns, front clamp mounts, and servo/switch trays root into the tub walls and floor (all one FDM print, 0.4 mm nozzle rounds them in practice; short compression bosses loaded in bearing) [expires 2027-12-31]",
+   "label": "printed red PLA tub: open top, servo tray with horn slot, two closed-top rear motor pockets, standoff columns, lid pads, sloped front clamp seats, outer hinge knuckles"
+  },
+  {
+   "id": "lid_r",
+   "kind": "armor",
+   "material": "pc",
+   "process": "laser",
+   "shape": {
+    "type": "model",
+    "file": "src/build_expandabot.py",
+    "params": {
+     "part": "lid_r"
+    }
+   },
+   "at": [
+    -18.1,
+    -15.145,
+    23.2
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "1.5 mm PC right lid with the rounded switch slot"
+  },
+  {
+   "id": "lid_l",
+   "kind": "armor",
+   "material": "pc",
+   "process": "laser",
+   "shape": {
+    "type": "model",
+    "file": "src/build_expandabot.py",
+    "params": {
+     "part": "lid_l"
+    }
+   },
+   "at": [
+    18.1,
+    -15.145,
+    23.2
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "1.5 mm PC left lid (mirror of the right without the switch slot)"
+  },
+  {
+   "id": "side_r",
+   "kind": "armor",
+   "material": "pc",
+   "process": "laser",
+   "shape": {
+    "type": "model",
+    "file": "src/build_expandabot.py",
+    "params": {
+     "part": "side_r"
+    }
+   },
+   "at": [
+    -47.0,
+    -14.945,
+    13.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "2 mm PC right side guard plate (hexagon) on the standoff columns"
+  },
+  {
+   "id": "side_l",
+   "kind": "armor",
+   "material": "pc",
+   "process": "laser",
+   "shape": {
+    "type": "model",
+    "file": "src/build_expandabot.py",
+    "params": {
+     "part": "side_l"
+    }
+   },
+   "at": [
+    47.0,
+    -14.945,
+    13.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "2 mm PC left side guard plate (mirror)"
+  },
+  {
+   "id": "clamp_l",
+   "kind": "wedge",
+   "material": "pc",
+   "process": "laser",
+   "shape": {
+    "type": "model",
+    "file": "src/build_expandabot.py",
+    "params": {
+     "part": "clamp_l"
+    }
+   },
+   "at": [
+    27.0,
+    21.61,
+    22.95
+   ],
+   "rot": [
+    -36.97097530875789,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "2 mm PC left lobster-claw clamping arm bolted to the tub's left sloped front mount, tip 0.8 mm off the floor"
+  },
+  {
+   "id": "clamp_r",
+   "kind": "wedge",
+   "material": "pc",
+   "process": "laser",
+   "shape": {
+    "type": "model",
+    "file": "src/build_expandabot.py",
+    "params": {
+     "part": "clamp_r"
+    }
+   },
+   "at": [
+    -27.0,
+    21.61,
+    22.95
+   ],
+   "rot": [
+    -36.97097530875789,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "2 mm PC right lobster-claw clamping arm (mirror) bolted to the tub's right sloped front mount"
+  },
+  {
+   "id": "flipper",
+   "kind": "other",
+   "material": "pc",
+   "process": "laser",
+   "shape": {
+    "type": "model",
+    "file": "src/build_expandabot.py",
+    "params": {
+     "part": "flipper"
+    }
+   },
+   "at": [
+    0.0,
+    21.61,
+    22.95
+   ],
+   "rot": [
+    -34.5093365130558,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "flipper",
+   "actuated_by": "servo",
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1.0,
+     0.0,
+     0.0
+    ],
+    "pivot": [
+     0.0,
+     21.61,
+     22.95
+    ],
+    "min": 0.0,
+    "max": 42.0,
+    "default": 0.0
+   },
+   "label": "2 mm PC central flipper blade between the lobster claws, hinged on the M2 pin and servo-driven via the tail lever"
+  },
+  {
+   "id": "hinge_block",
+   "kind": "other",
+   "material": "pla",
+   "process": "fdm",
+   "print_orientation": "+z",
+   "shape": {
+    "type": "model",
+    "file": "src/build_expandabot.py",
+    "params": {
+     "part": "hinge_block"
+    }
+   },
+   "parent": "flipper",
+   "at": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "flipper",
+   "retained": "press_fit",
+   "sharp_corners_ok": "the flagged concave corner is where the printed centre knuckle meets the web and seat box (one FDM print, 0.4 mm nozzle rounds it; compression seat loaded in bearing) [expires 2027-12-31]",
+   "label": "printed centre knuckle + flipper seat (2x M2x8 into heat-sets) + tail lever, screwed to the flipper"
+  },
+  {
+   "id": "hinge_pin",
+   "kind": "pin",
+   "material": "steel",
+   "process": "cots",
+   "stock": "M2 x 35 dowel pin as hinge pin",
+   "shape": {
+    "type": "model",
+    "file": "src/build_expandabot.py",
+    "params": {
+     "part": "hinge_pin"
+    }
+   },
+   "at": [
+    0.0,
+    21.61,
+    22.95
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "M2 steel hinge pin through all three knuckles, pressed into the tub's outer knuckles"
+  },
+  {
+   "id": "horn",
+   "kind": "other",
+   "material": "pla",
+   "process": "fdm",
+   "print_orientation": "+x",
+   "shape": {
+    "type": "model",
+    "file": "src/build_expandabot.py",
+    "params": {
+     "part": "horn"
+    }
+   },
+   "at": [
+    12.25,
+    11.21,
+    9.7
+   ],
+   "rot": [
+    95.75177207343727,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "horn",
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1.0,
+     0.0,
+     0.0
+    ],
+    "pivot": [
+     0.0,
+     11.21,
+     9.7
+    ],
+    "min": 0.0,
+    "max": 20.0,
+    "default": 0.0
+   },
+   "label": "printed servo horn: hub on the output spline, arm out to the pin tab"
+  },
+  {
+   "id": "drive_pin",
+   "kind": "other",
+   "material": "steel",
+   "process": "cots",
+   "stock": "M2 x 16 dowel",
+   "shape": {
+    "type": "model",
+    "file": "src/build_expandabot.py",
+    "params": {
+     "part": "drive_pin"
+    }
+   },
+   "parent": "horn",
+   "at": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "horn",
+   "retained": "pin",
+   "label": "M2 drive pin through the horn tab bore; bears on the tail end face (sits in its angular shadow)"
+  },
+  {
+   "id": "wheel_l",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "print_orientation": "+x",
+   "shape": {
+    "type": "model",
+    "file": "src/build_expandabot.py",
+    "params": {
+     "part": "wheel_l"
+    }
+   },
+   "at": [
+    41.0,
+    -33.4,
+    13.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "wheel_l",
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1.0,
+     0.0,
+     0.0
+    ],
+    "pivot": [
+     41.0,
+     -33.4,
+     13.0
+    ],
+    "min": 0.0,
+    "max": 360.0,
+    "default": 0.0
+   },
+   "label": "printed hub + TPU tyre (left rear), D-bore on the N10 shaft"
+  },
+  {
+   "id": "motor_l",
+   "kind": "motor",
+   "catalog": "n10_300rpm_6v",
+   "retained": "press_fit",
+   "at": [
+    24.65,
+    -33.4,
+    13.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "N10 gearmotor in its snug closed-top left rear pocket"
+  },
+  {
+   "id": "wheel_r",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "print_orientation": "+x",
+   "shape": {
+    "type": "model",
+    "file": "src/build_expandabot.py",
+    "params": {
+     "part": "wheel_r"
+    }
+   },
+   "at": [
+    -41.0,
+    -33.4,
+    13.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "wheel_r",
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     -1.0,
+     0.0,
+     0.0
+    ],
+    "pivot": [
+     -41.0,
+     -33.4,
+     13.0
+    ],
+    "min": 0.0,
+    "max": 360.0,
+    "default": 0.0
+   },
+   "label": "printed hub + TPU tyre (right rear), D-bore on the N10 shaft"
+  },
+  {
+   "id": "motor_r",
+   "kind": "motor",
+   "catalog": "n10_300rpm_6v",
+   "retained": "press_fit",
+   "at": [
+    -24.65,
+    -33.4,
+    13.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    180.0
+   ],
+   "rotates_with": "fixed",
+   "label": "N10 gearmotor in its snug closed-top right rear pocket"
+  },
+  {
+   "id": "servo",
+   "kind": "servo",
+   "catalog": "servo_cs07",
+   "retained": "press_fit",
+   "at": [
+    0.0,
+    1.21,
+    9.7
+   ],
+   "rot": [
+    90.0,
+    0.0,
+    90.0
+   ],
+   "rotates_with": "fixed",
+   "label": "SG90-class servo lying on its side in the centre tray, output axis along +X"
+  },
+  {
+   "id": "battery",
+   "kind": "battery",
+   "catalog": "lipo_2s_180",
+   "retained": "tape",
+   "at": [
+    0.0,
+    -33.1,
+    8.65
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    90.0
+   ],
+   "rotates_with": "fixed",
+   "label": "2S 180 mAh LiPo pack in the rear of the centre channel, taped down"
+  },
+  {
+   "id": "esc",
+   "kind": "esc",
+   "catalog": "malenki_nano",
+   "retained": "tape",
+   "at": [
+    23.85,
+    -14.0,
+    6.15
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    90.0
+   ],
+   "rotates_with": "fixed",
+   "label": "Malenki Nano dual brushed ESC + receiver in the left side zone"
+  },
+  {
+   "id": "switch",
+   "kind": "switch",
+   "catalog": "switch_bbb_ant_rvrn2",
+   "tool_free": true,
+   "marked": true,
+   "at": [
+    -23.85,
+    -14.0,
+    19.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    90.0
+   ],
+   "rotates_with": "fixed",
+   "label": "BBB ant switch on its tray in the right side zone, knob through the right lid slot, marked ON/OFF"
+  },
+  {
+   "id": "insert_lid_l0",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    32.0,
+    -44.5,
+    20.95
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit",
+   "label": "M2 heat-set in the left lid pad"
+  },
+  {
+   "id": "insert_lid_l1",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    32.0,
+    12.5,
+    20.95
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit",
+   "label": "M2 heat-set in the left lid pad"
+  },
+  {
+   "id": "insert_lid_r0",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -32.0,
+    -44.5,
+    20.95
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit",
+   "label": "M2 heat-set in the right lid pad"
+  },
+  {
+   "id": "insert_lid_r1",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -32.0,
+    12.5,
+    20.95
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit",
+   "label": "M2 heat-set in the right lid pad"
+  },
+  {
+   "id": "insert_standoff_r00",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -44.5,
+    -9.0652,
+    7.525
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit",
+   "label": "M2 heat-set in the right standoff column"
+  },
+  {
+   "id": "insert_standoff_r01",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -44.5,
+    -9.0652,
+    18.475
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit",
+   "label": "M2 heat-set in the right standoff column"
+  },
+  {
+   "id": "insert_standoff_r10",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -44.5,
+    8.6516,
+    7.525
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit",
+   "label": "M2 heat-set in the right standoff column"
+  },
+  {
+   "id": "insert_standoff_r11",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -44.5,
+    8.6516,
+    18.475
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit",
+   "label": "M2 heat-set in the right standoff column"
+  },
+  {
+   "id": "insert_standoff_l00",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    44.5,
+    -9.0652,
+    7.525
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit",
+   "label": "M2 heat-set in the left standoff column"
+  },
+  {
+   "id": "insert_standoff_l01",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    44.5,
+    -9.0652,
+    18.475
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit",
+   "label": "M2 heat-set in the left standoff column"
+  },
+  {
+   "id": "insert_standoff_l10",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    44.5,
+    8.6516,
+    7.525
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit",
+   "label": "M2 heat-set in the left standoff column"
+  },
+  {
+   "id": "insert_standoff_l11",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    44.5,
+    8.6516,
+    18.475
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit",
+   "label": "M2 heat-set in the left standoff column"
+  },
+  {
+   "id": "insert_clamp_r0",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -31.2,
+    24.2188,
+    16.6054
+   ],
+   "rot": [
+    -36.97097530875789,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit",
+   "label": "M2 heat-set in the right front clamp seat"
+  },
+  {
+   "id": "insert_clamp_r1",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -22.8,
+    24.2188,
+    16.6054
+   ],
+   "rot": [
+    -36.97097530875789,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit",
+   "label": "M2 heat-set in the right front clamp seat"
+  },
+  {
+   "id": "insert_clamp_r2",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -27.0,
+    28.0537,
+    13.7186
+   ],
+   "rot": [
+    -36.97097530875789,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit",
+   "label": "M2 heat-set in the right front clamp seat"
+  },
+  {
+   "id": "insert_clamp_l0",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    22.8,
+    24.2188,
+    16.6054
+   ],
+   "rot": [
+    -36.97097530875789,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit",
+   "label": "M2 heat-set in the left front clamp seat"
+  },
+  {
+   "id": "insert_clamp_l1",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    31.2,
+    24.2188,
+    16.6054
+   ],
+   "rot": [
+    -36.97097530875789,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit",
+   "label": "M2 heat-set in the left front clamp seat"
+  },
+  {
+   "id": "insert_clamp_l2",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    27.0,
+    28.0537,
+    13.7186
+   ],
+   "rot": [
+    -36.97097530875789,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit",
+   "label": "M2 heat-set in the left front clamp seat"
+  },
+  {
+   "id": "insert_hb0",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "parent": "hinge_block",
+   "at": [
+    -3.6,
+    10.5,
+    -7.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "flipper",
+   "retained": "press_fit",
+   "label": "M2 heat-set pressed into the hinge block's flipper seat"
+  },
+  {
+   "id": "insert_hb1",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "parent": "hinge_block",
+   "at": [
+    3.6,
+    10.5,
+    -7.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "flipper",
+   "retained": "press_fit",
+   "label": "M2 heat-set pressed into the hinge block's flipper seat"
+  }
+ ],
+ "fasteners": [
+  {
+   "id": "bolt_lid_l0",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    32.0,
+    -44.5,
+    23.95
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "through": [
+    "lid_l"
+   ],
+   "threads_into": "insert_lid_l0",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 1.5
+   }
+  },
+  {
+   "id": "bolt_lid_l1",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    32.0,
+    12.5,
+    23.95
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "through": [
+    "lid_l"
+   ],
+   "threads_into": "insert_lid_l1",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 1.5
+   }
+  },
+  {
+   "id": "bolt_lid_r0",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -32.0,
+    -44.5,
+    23.95
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "through": [
+    "lid_r"
+   ],
+   "threads_into": "insert_lid_r0",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 1.5
+   }
+  },
+  {
+   "id": "bolt_lid_r1",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -32.0,
+    12.5,
+    23.95
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "through": [
+    "lid_r"
+   ],
+   "threads_into": "insert_lid_r1",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 1.5
+   }
+  },
+  {
+   "id": "bolt_side_r00",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -48.0,
+    -9.0652,
+    7.525
+   ],
+   "dir": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "through": [
+    "side_r"
+   ],
+   "threads_into": "insert_standoff_r00",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_side_r01",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -48.0,
+    -9.0652,
+    18.475
+   ],
+   "dir": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "through": [
+    "side_r"
+   ],
+   "threads_into": "insert_standoff_r01",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_side_r10",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -48.0,
+    8.6516,
+    7.525
+   ],
+   "dir": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "through": [
+    "side_r"
+   ],
+   "threads_into": "insert_standoff_r10",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_side_r11",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -48.0,
+    8.6516,
+    18.475
+   ],
+   "dir": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "through": [
+    "side_r"
+   ],
+   "threads_into": "insert_standoff_r11",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_side_l00",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    48.0,
+    -9.0652,
+    7.525
+   ],
+   "dir": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "through": [
+    "side_l"
+   ],
+   "threads_into": "insert_standoff_l00",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_side_l01",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    48.0,
+    -9.0652,
+    18.475
+   ],
+   "dir": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "through": [
+    "side_l"
+   ],
+   "threads_into": "insert_standoff_l01",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_side_l10",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    48.0,
+    8.6516,
+    7.525
+   ],
+   "dir": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "through": [
+    "side_l"
+   ],
+   "threads_into": "insert_standoff_l10",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_side_l11",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    48.0,
+    8.6516,
+    18.475
+   ],
+   "dir": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "through": [
+    "side_l"
+   ],
+   "threads_into": "insert_standoff_l11",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_clamp_r0",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -31.2,
+    26.3237,
+    19.4017
+   ],
+   "dir": [
+    0.0,
+    -0.6014,
+    -0.7989
+   ],
+   "through": [
+    "clamp_r"
+   ],
+   "threads_into": "insert_clamp_r0",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_clamp_r1",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -22.8,
+    26.3237,
+    19.4017
+   ],
+   "dir": [
+    0.0,
+    -0.6014,
+    -0.7989
+   ],
+   "through": [
+    "clamp_r"
+   ],
+   "threads_into": "insert_clamp_r1",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_clamp_r2",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -27.0,
+    30.1587,
+    16.5149
+   ],
+   "dir": [
+    0.0,
+    -0.6014,
+    -0.7989
+   ],
+   "through": [
+    "clamp_r"
+   ],
+   "threads_into": "insert_clamp_r2",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_clamp_l0",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    22.8,
+    26.3237,
+    19.4017
+   ],
+   "dir": [
+    0.0,
+    -0.6014,
+    -0.7989
+   ],
+   "through": [
+    "clamp_l"
+   ],
+   "threads_into": "insert_clamp_l0",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_clamp_l1",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    31.2,
+    26.3237,
+    19.4017
+   ],
+   "dir": [
+    0.0,
+    -0.6014,
+    -0.7989
+   ],
+   "through": [
+    "clamp_l"
+   ],
+   "threads_into": "insert_clamp_l1",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_clamp_l2",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    27.0,
+    30.1587,
+    16.5149
+   ],
+   "dir": [
+    0.0,
+    -0.6014,
+    -0.7989
+   ],
+   "through": [
+    "clamp_l"
+   ],
+   "threads_into": "insert_clamp_l2",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_hb0",
+   "designation": "M2x8",
+   "material": "steel",
+   "at": [
+    -3.6,
+    30.2624,
+    17.0013
+   ],
+   "dir": [
+    0.0,
+    -0.5665,
+    -0.824
+   ],
+   "through": [
+    "flipper"
+   ],
+   "threads_into": "insert_hb0",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 8.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_hb1",
+   "designation": "M2x8",
+   "material": "steel",
+   "at": [
+    3.6,
+    30.2624,
+    17.0013
+   ],
+   "dir": [
+    0.0,
+    -0.5665,
+    -0.824
+   ],
+   "through": [
+    "flipper"
+   ],
+   "threads_into": "insert_hb1",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 8.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 2.0
+   }
+  }
+ ],
+ "wires": [
+  {
+   "id": "w_bat_sw",
+   "from": "battery.xt30",
+   "to": "switch.in",
+   "awg": 22,
+   "kind": "power",
+   "slack_mm": 8.0,
+   "rotor_ok": "the flipper joint only rotates 0..42 deg above rest in front of the tub; the wire stays inside the rear/mid chassis tub well behind the servo tray and never enters the flipper's physical sector sweep [expires 2027-12-31]",
+   "via": [
+    [
+     -11.0,
+     -33.1,
+     8.65
+    ],
+    [
+     -11.0,
+     -17.0,
+     9.5
+    ],
+    [
+     -16.0,
+     -17.0,
+     13.8
+    ],
+    [
+     -20.5,
+     -17.0,
+     13.8
+    ]
+   ]
+  },
+  {
+   "id": "w_sw_esc",
+   "from": "switch.out",
+   "to": "esc.bat",
+   "awg": 26,
+   "kind": "power",
+   "slack_mm": 8.0,
+   "rotor_ok": "the flipper joint only rotates 0..42 deg above rest in front of the tub; the wire stays inside the rear/mid chassis tub well behind the servo tray and never enters the flipper's physical sector sweep [expires 2027-12-31]",
+   "via": [
+    [
+     -20.5,
+     -14.0,
+     13.8
+    ],
+    [
+     -16.0,
+     -17.0,
+     13.8
+    ],
+    [
+     11.0,
+     -17.0,
+     9.5
+    ],
+    [
+     18.0,
+     -25.0,
+     8.5
+    ],
+    [
+     23.85,
+     -25.5,
+     6.2
+    ]
+   ]
+  },
+  {
+   "id": "w_esc_ml",
+   "from": "esc.m1",
+   "to": "motor_l.terminals",
+   "awg": 26,
+   "kind": "motor",
+   "slack_mm": 6.0,
+   "rotor_ok": "the flipper joint only rotates 0..42 deg above rest in front of the tub; the wire stays inside the rear/mid chassis tub well behind the servo tray and never enters the flipper's physical sector sweep [expires 2027-12-31]",
+   "via": [
+    [
+     19.5,
+     -2.5,
+     6.5
+    ],
+    [
+     13.0,
+     -18.0,
+     9.5
+    ],
+    [
+     13.0,
+     -33.4,
+     11.5
+    ]
+   ]
+  },
+  {
+   "id": "w_esc_mr",
+   "from": "esc.m2",
+   "to": "motor_r.terminals",
+   "awg": 26,
+   "kind": "motor",
+   "slack_mm": 6.0,
+   "rotor_ok": "the flipper joint only rotates 0..42 deg above rest in front of the tub; the wire stays inside the rear/mid chassis tub well behind the servo tray and never enters the flipper's physical sector sweep [expires 2027-12-31]",
+   "via": [
+    [
+     19.5,
+     -25.5,
+     8.5
+    ],
+    [
+     11.0,
+     -17.0,
+     8.5
+    ],
+    [
+     -11.0,
+     -17.0,
+     10.0
+    ],
+    [
+     -13.0,
+     -33.4,
+     11.5
+    ]
+   ]
+  },
+  {
+   "id": "w_esc_servo",
+   "from": "esc.wpn",
+   "to": "servo.signal",
+   "awg": 26,
+   "kind": "signal",
+   "slack_mm": 6.0,
+   "rotor_ok": "the flipper joint only rotates 0..42 deg above rest in front of the tub; the wire stays inside the rear/mid chassis tub well behind the servo tray and never enters the flipper's physical sector sweep [expires 2027-12-31]",
+   "via": [
+    [
+     27.5,
+     -2.5,
+     7.5
+    ],
+    [
+     14.0,
+     -17.0,
+     8.5
+    ],
+    [
+     0.0,
+     -17.0,
+     9.5
+    ],
+    [
+     0.0,
+     -15.29,
+     9.5
+    ]
+   ]
+  }
+ ],
+ "connections": [
+  {
+   "a": "motor_l",
+   "b": "wheel_l",
+   "method": "press_fit",
+   "reason": "printed hub with a D-bore matching the flat of the 3 mm N10 D-shaft: the flat carries drive torque, the 0.1 mm interference stops the hub walking off",
+   "interference_mm": 0.1,
+   "mechanical_key": true
+  },
+  {
+   "a": "motor_l",
+   "b": "tub",
+   "method": "interlock",
+   "reason": "the motor is enclosed in a snug (0.05 mm/side) closed-top printed pocket that wraps it on five sides (walls, closed top, floor) with only the shaft hole open",
+   "mechanical_key": true
+  },
+  {
+   "a": "motor_r",
+   "b": "wheel_r",
+   "method": "press_fit",
+   "reason": "printed hub with a D-bore matching the flat of the 3 mm N10 D-shaft: the flat carries drive torque, the 0.1 mm interference stops the hub walking off",
+   "interference_mm": 0.1,
+   "mechanical_key": true
+  },
+  {
+   "a": "motor_r",
+   "b": "tub",
+   "method": "interlock",
+   "reason": "the motor is enclosed in a snug (0.05 mm/side) closed-top printed pocket that wraps it on five sides (walls, closed top, floor) with only the shaft hole open",
+   "mechanical_key": true
+  },
+  {
+   "a": "insert_lid_l0",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "M2 brass heat-set pressed hot into the lid pad bore",
+   "interference_mm": 0.15
+  },
+  {
+   "a": "insert_lid_l1",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "M2 brass heat-set pressed hot into the lid pad bore",
+   "interference_mm": 0.15
+  },
+  {
+   "a": "insert_lid_r0",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "M2 brass heat-set pressed hot into the lid pad bore",
+   "interference_mm": 0.15
+  },
+  {
+   "a": "insert_lid_r1",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "M2 brass heat-set pressed hot into the lid pad bore",
+   "interference_mm": 0.15
+  },
+  {
+   "a": "insert_standoff_r00",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "M2 brass heat-set pressed hot into the standoff column bore",
+   "interference_mm": 0.15
+  },
+  {
+   "a": "insert_standoff_r01",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "M2 brass heat-set pressed hot into the standoff column bore",
+   "interference_mm": 0.15
+  },
+  {
+   "a": "insert_standoff_r10",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "M2 brass heat-set pressed hot into the standoff column bore",
+   "interference_mm": 0.15
+  },
+  {
+   "a": "insert_standoff_r11",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "M2 brass heat-set pressed hot into the standoff column bore",
+   "interference_mm": 0.15
+  },
+  {
+   "a": "insert_clamp_r0",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "M2 brass heat-set pressed hot into the sloped front clamp seat bore",
+   "interference_mm": 0.15
+  },
+  {
+   "a": "insert_clamp_r1",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "M2 brass heat-set pressed hot into the sloped front clamp seat bore",
+   "interference_mm": 0.15
+  },
+  {
+   "a": "insert_clamp_r2",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "M2 brass heat-set pressed hot into the sloped front clamp seat bore",
+   "interference_mm": 0.15
+  },
+  {
+   "a": "insert_standoff_l00",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "M2 brass heat-set pressed hot into the standoff column bore",
+   "interference_mm": 0.15
+  },
+  {
+   "a": "insert_standoff_l01",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "M2 brass heat-set pressed hot into the standoff column bore",
+   "interference_mm": 0.15
+  },
+  {
+   "a": "insert_standoff_l10",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "M2 brass heat-set pressed hot into the standoff column bore",
+   "interference_mm": 0.15
+  },
+  {
+   "a": "insert_standoff_l11",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "M2 brass heat-set pressed hot into the standoff column bore",
+   "interference_mm": 0.15
+  },
+  {
+   "a": "insert_clamp_l0",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "M2 brass heat-set pressed hot into the sloped front clamp seat bore",
+   "interference_mm": 0.15
+  },
+  {
+   "a": "insert_clamp_l1",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "M2 brass heat-set pressed hot into the sloped front clamp seat bore",
+   "interference_mm": 0.15
+  },
+  {
+   "a": "insert_clamp_l2",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "M2 brass heat-set pressed hot into the sloped front clamp seat bore",
+   "interference_mm": 0.15
+  },
+  {
+   "a": "hinge_pin",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "the M2 hinge pin is pressed into the tub's two outer knuckles (0.1 mm interference)",
+   "interference_mm": 0.1,
+   "mechanical_key": true
+  },
+  {
+   "a": "hinge_block",
+   "b": "hinge_pin",
+   "method": "none",
+   "reason": "the block's centre knuckle (r1.3 bore) turns on the pin with 0.3 mm running clearance; the flipper joint locates it, the pin carries no torque"
+  },
+  {
+   "a": "horn",
+   "b": "drive_pin",
+   "method": "pin",
+   "clearance_mm": 0.05,
+   "reason": "the M2 drive pin is pressed into the horn tab's through-bore and retained by the tail"
+  },
+  {
+   "a": "servo",
+   "b": "horn",
+   "method": "shaft",
+   "clearance_mm": 0.05,
+   "reason": "the horn hub is keyed on the servo output spline; the pin on the tail carries the flipper torque",
+   "mechanical_key": true
+  },
+  {
+   "a": "servo",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.05,
+   "reason": "the servo sits in a snug printed U-channel cavity that wraps it on four sides"
+  },
+  {
+   "a": "battery",
+   "b": "tub",
+   "method": "tape",
+   "reason": "the pack is kapton/velcro-taped into its floor bay"
+  },
+  {
+   "a": "esc",
+   "b": "tub",
+   "method": "tape",
+   "reason": "the Malenki is taped into its floor bay"
+  },
+  {
+   "a": "switch",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "the BBB switch slides into its snug printed tray, captured by the tray and the screwed lid"
+  },
+  {
+   "a": "insert_hb0",
+   "b": "hinge_block",
+   "method": "press_fit",
+   "interference_mm": 0.15,
+   "reason": "M2 brass heat-set pressed hot into the block's seat bore"
+  },
+  {
+   "a": "insert_hb1",
+   "b": "hinge_block",
+   "method": "press_fit",
+   "interference_mm": 0.15,
+   "reason": "M2 brass heat-set pressed hot into the block's seat bore"
+  }
+ ],
+ "allow_overlap": [
+  {
+   "a": "motor_l",
+   "b": "wheel_l",
+   "max_depth_mm": 0.6,
+   "reason": "the wheel's D-bore is cut 0.1 mm large on the flat sides so it slides on; the round part of the bore overlaps the round stand-in of the D-shaft by up to 0.5 mm"
+  },
+  {
+   "a": "motor_r",
+   "b": "wheel_r",
+   "max_depth_mm": 0.6,
+   "reason": "the wheel's D-bore is cut 0.1 mm large on the flat sides so it slides on; the round part of the bore overlaps the round stand-in of the D-shaft by up to 0.5 mm"
+  },
+  {
+   "a": "hinge_pin",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "the pin is pressed 0.15 mm into the tub knuckle bores (r0.85)"
+  },
+  {
+   "a": "insert_hb0",
+   "b": "hinge_block",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 3.0 mm seat bore"
+  },
+  {
+   "a": "insert_hb1",
+   "b": "hinge_block",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 3.0 mm seat bore"
+  },
+  {
+   "a": "insert_lid_l0",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 3.0 mm pad bore"
+  },
+  {
+   "a": "insert_lid_l1",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 3.0 mm pad bore"
+  },
+  {
+   "a": "insert_lid_r0",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 3.0 mm pad bore"
+  },
+  {
+   "a": "insert_lid_r1",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 3.0 mm pad bore"
+  },
+  {
+   "a": "insert_standoff_r00",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 3.0 mm column bore"
+  },
+  {
+   "a": "insert_standoff_r01",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 3.0 mm column bore"
+  },
+  {
+   "a": "insert_standoff_r10",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 3.0 mm column bore"
+  },
+  {
+   "a": "insert_standoff_r11",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 3.0 mm column bore"
+  },
+  {
+   "a": "insert_clamp_r0",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 3.0 mm clamp-seat bore"
+  },
+  {
+   "a": "insert_clamp_r1",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 3.0 mm clamp-seat bore"
+  },
+  {
+   "a": "insert_clamp_r2",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 3.0 mm clamp-seat bore"
+  },
+  {
+   "a": "insert_standoff_l00",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 3.0 mm column bore"
+  },
+  {
+   "a": "insert_standoff_l01",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 3.0 mm column bore"
+  },
+  {
+   "a": "insert_standoff_l10",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 3.0 mm column bore"
+  },
+  {
+   "a": "insert_standoff_l11",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 3.0 mm column bore"
+  },
+  {
+   "a": "insert_clamp_l0",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 3.0 mm clamp-seat bore"
+  },
+  {
+   "a": "insert_clamp_l1",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 3.0 mm clamp-seat bore"
+  },
+  {
+   "a": "insert_clamp_l2",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 3.0 mm clamp-seat bore"
+  }
+ ],
+ "notes": "Generated by robots/expandabot/make_spec.py from src/expandabot/params.py. Manufactured parts are built in their own local frames by src/build_expandabot.py (build(part=...)); the central flipper joint pivots on the front hinge line between the two fixed lobster-claw clamping arms (clamp_l, clamp_r), the horn joint pivots on the servo output axis, and the two rear wheels spin free on the N10 axles."
+}
