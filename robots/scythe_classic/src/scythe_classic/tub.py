@@ -129,7 +129,8 @@ def bell_bore():
                                                           align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
 
 
-RING_LEN = 3.2      # mm the axle ring stands off the pod wall (its end keeps the 3 mm shaft grip inside the chassis hull)
+RING_LEN = 1.8      # mm the axle ring stands off the pod wall: its end stays 0.5 mm clear of the tyre's inboard face (the wheel's swept band)
+GUARD_W = 2.4       # mm (y) of the wheel-guard post at each rear pod corner
 RING_OUT_R = 6.0    # mm axle ring outer radius
 RING_BORE_R = P.WHEEL_HUB_R + 0.2   # mm the wheel hub boss turns in the ring bore (0.2 running clearance)
 AXLE_SLOT_R = 2.3   # mm half width of the axle slot (shaft collar 2 mm radius, shaft 1.5 mm)
@@ -166,6 +167,7 @@ def drive_bays():
         out += box(rear - PAD_GAP - RIB_T, rear - PAD_GAP, a2, b2, z_lo, z_hi)                       # rear stop
     ring = bd.Pos(wall_o - 0.2, y0, P.WHEEL_CZ) * bd.Rot(0, 90, 0) * bd.Cylinder(RING_OUT_R, RING_LEN + 0.2, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
     out += ring
+    out += box(wall_o - 0.4, wall_o + RING_LEN, pod_rear_y(), pod_rear_y() + GUARD_W, z0(), z0() + height())   # rear corner post: carries the chassis hull out over the shaft tip
     return out + bd.mirror(out, bd.Plane.YZ)
 
 

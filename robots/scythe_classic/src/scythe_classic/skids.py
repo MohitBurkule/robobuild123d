@@ -31,7 +31,7 @@ SHAFT_R = P.SHAFT_D / 2
 
 ARM_W_BODY = 24.0      # mm: width of the stiff part of the strip (the arch.fork_stiffness check bends it sideways: I = t w^3 / 12)
 ARM_NECK_Y = (4.0, 10.0)   # mm from the axis line: where the strip narrows to the puck width (the bar-bolt driver path)
-ARM_SCREWS = ((-2.5, -52.0), (2.5, -52.0), (-2.5, -48.0), (2.5, -48.0))   # mm xy: the four riser screws (M2)
+ARM_SCREWS = ((-2.1, -52.0), (2.1, -52.0), (-2.1, -48.0), (2.1, -48.0))   # mm xy: the four riser screws (M2)
 RISER_W = 16.0         # mm riser width (two M2 screws 10 mm apart)
 
 

@@ -869,7 +869,7 @@
    "designation": "M2x8",
    "material": "steel",
    "at": [
-    -2.5,
+    -2.1,
     -52.0,
     10.3
    ],
@@ -901,7 +901,7 @@
    "designation": "M2x8",
    "material": "steel",
    "at": [
-    2.5,
+    2.1,
     -52.0,
     10.3
    ],
@@ -933,7 +933,7 @@
    "designation": "M2x8",
    "material": "steel",
    "at": [
-    -2.5,
+    -2.1,
     -48.0,
     10.3
    ],
@@ -965,7 +965,7 @@
    "designation": "M2x8",
    "material": "steel",
    "at": [
-    2.5,
+    2.1,
     -48.0,
     10.3
    ],
