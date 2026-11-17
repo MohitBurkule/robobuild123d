@@ -22,7 +22,7 @@ with numbers, and needs nothing else. Run the full tier (`--llm` without `--tier
 |---|---|
 | Where is a part, how big, what touches it, its ports in world | `python3 -m robot probe spec.json <part>` |
 | Does a joint sweep hit anything, and where | `python3 -m robot probe spec.json --joint <part>` |
-| Where can a part go (battery/ESC/rx packing): free x, y, yaw, exact-checked | `python3 -m robot probe spec.json --place <part>` (never pack boxes in your head) |
+| Where can a part go (battery/ESC/rx packing) | `python3 -m robot probe spec.json --place <part>`: best spots + SAFE RANGES (x/y intervals, a box where every combination is clear, the free polygon incl. diagonals, z range). Verify prints these itself for packed parts in a collision. Ranges assume the other parts stay put. Never pack boxes in your head |
 | Why is a motor "not captured" | the arch.motor_clamp message lists all 6 sides, what holds each and what to add |
 | Button/pan head `at` | the bearing face = the outer surface (no counterbore). `robot.cad.holes.hole_tool(at=surface)` returns `rec.at`: put rec.at in the spec |
 | What is at a world point (e.g. a finding's `at`) | `python3 -m robot probe spec.json --at x,y,z` |

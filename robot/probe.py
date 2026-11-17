@@ -215,6 +215,50 @@ def _exact_ok(rb, sh, obst, r):
     return True
 
 
+Z_STEP, Z_REACH = 0.5, 15.0
+MAX_POLYS, POLY_TOL = 2, 0.5
+
+
+def _z_range(rb, sh, obst, r):
+    """(down, up) mm the part can move along z from `sh` and stay clear (exact checks, contiguous from 0)."""
+    def walk(sgn):
+        last = 0.0
+        t = Z_STEP
+        while t <= Z_REACH + 1e-9:
+            if not _exact_ok(rb, sh + np.array([0, 0, sgn * t]), obst, r):
+                break
+            last = t
+            t += Z_STEP
+        return last
+    return -walk(-1), walk(1)
+
+
+def _free_polygons(F, to_x, to_y, pitch):
+    """Outline(s) of the largest free regions of the shift map, as [(x, y), ...] origin positions (simplified)."""
+    from scipy import ndimage
+    from shapely.geometry import box as sbox
+    from shapely.ops import unary_union
+
+    lab, n = ndimage.label(F)
+    if not n:
+        return []
+    sizes = ndimage.sum(F, lab, range(1, n + 1))
+    out = []
+    for k in np.argsort(-sizes)[:MAX_POLYS]:
+        ii, jj = np.nonzero(lab == k + 1)
+        if len(ii) < 4:
+            continue
+        cells = [sbox(to_x(i) - pitch / 2, to_y(j) - pitch / 2, to_x(i) + pitch / 2, to_y(j) + pitch / 2) for i, j in zip(ii, jj)]
+        g = unary_union(cells).buffer(-pitch / 2).simplify(POLY_TOL)  # shrink back to cell centres: inside = sampled free
+        if g.is_empty:
+            continue
+        geoms = getattr(g, "geoms", [g])
+        big = max(geoms, key=lambda q: q.area)
+        out.append("[" + ", ".join(f"({x:.1f}, {y:.1f})" for x, y in list(big.exterior.coords)[:-1]) + "]"
+                   + (f" with {len(big.interiors)} hole(s)" if big.interiors else ""))
+    return out
+
+
 def _ranges(free, X, Y, plo, o0, zc, pitch, deg, rb, obst, r):
     """Safe x / y intervals for the part origin at one yaw, from the free-shift map eroded by one cell (margin for the
     voxel approximation); corners + centre of each interval re-checked exactly, shrunk until they pass."""
@@ -241,8 +285,11 @@ def _ranges(free, X, Y, plo, o0, zc, pitch, deg, rb, obst, r):
         d = jc
         while d < len(col) - 1 and col[d + 1]:
             d += 1
-        out.append(f"  yaw +{deg}, y kept {o0[1]:.1f}: x in [{to_x(a):.1f}, {to_x(b):.1f}];  x kept {o0[0]:.1f}: "
-                   f"y in [{to_y(c):.1f}, {to_y(d):.1f}]")
+        if b > a or d > c:
+            out.append(f"  yaw +{deg}, y kept {o0[1]:.1f}: x in [{to_x(a):.1f}, {to_x(b):.1f}];  x kept {o0[0]:.1f}: "
+                       f"y in [{to_y(c):.1f}, {to_y(d):.1f}]")
+    for poly in _free_polygons(F, to_x, to_y, pitch):
+        out.append(f"  yaw +{deg} free area (0.5 mm grid, 1 cell margin; any point inside, diagonals too): polygon {poly}")
     rect = _largest_rect(F)
     for _ in range(6):
         if rect is None:
@@ -250,8 +297,10 @@ def _ranges(free, X, Y, plo, o0, zc, pitch, deg, rb, obst, r):
         i0, i1, j0, j1 = rect
         pts = [(i0, j0), (i0, j1), (i1, j0), (i1, j1), ((i0 + i1) // 2, (j0 + j1) // 2)]
         if all(_exact_ok(rb, sh_of(to_x(i), to_y(j)), obst, r) for i, j in pts):
+            cx, cy = to_x((i0 + i1) // 2), to_y((j0 + j1) // 2)
+            zl, zh = _z_range(rb, sh_of(cx, cy), obst, r)
             out.append(f"  yaw +{deg} box: x in [{to_x(i0):.1f}, {to_x(i1):.1f}] AND y in [{to_y(j0):.1f}, {to_y(j1):.1f}] "
-                       f"(any combination)")
+                       f"(any combination); at its centre z may go {zc + zl:.1f}..{zc + zh:.1f}")
             break
         rect = (i0 + 1, i1 - 1, j0 + 1, j1 - 1) if i1 - i0 > 2 and j1 - j0 > 2 else None
     return out
