@@ -1,11 +1,21 @@
-# Undertow
+# Undertow (4WD invertible wedge / control bot)
 
-**UNTESTED: never built, run, rendered or verified.**
+![Undertow (4WD invertible wedge / control bot)](renders/iso.png)
 
-150 g UK antweight 4WD invertible control bot: four N10 direct-drive wheels inside the outline, TPU tub between
-carbon plates, gravity-hinged titanium skirts, and a one-setting front swap (`forks` | `plough`) on a shared pivot pin.
-Sized to the robot/profile.py AWS 2025 limit (150 mm floor square, no height limit; forks start down). One setting `rules=aws_v43_cube` switches to the 101.6 mm start cube (attachment folded up). See `BRIEF.md`.
+Verifier (`aws2025`): has blockers. 26 blockers, 230 warnings, 340 checks passed. 55 items NOT CHECKED (see REPORT.md).
 
-- Masters: `src/undertow/params.py`; swaps: `src/undertow/settings.py` (env `UNDERTOW_SETTINGS`).
-- Entry: `src/build_undertow.py` (`build(part=...)`, mirrors Revron's).
-- Spec: `spec.json` (hand-written, regenerate after the first real build).
+Mass 140.4 g (range 129.8 to 151.0 g).
+
+| Top | Exploded | Section |
+|---|---|---|
+| ![top](renders/top.png) | ![exploded](renders/exploded.png) | ![section](renders/section_z.png) |
+
+## Files
+
+- `spec.json`: the full editable design. Load it back with the robot tools to change and re-verify.
+- `report.json`, `REPORT.md`: verifier output (REPORT.md ends with what was NOT CHECKED).
+- `stl/`: one STL per part (mm, start pose, so they assemble when imported together; wires included).
+- `step/`: exact B-rep STEP per part in the start pose, plus `assembly.step` with every part.
+- `renders/`: iso, top, back, exploded and section views.
+
+Regenerate: `python3 -m robot export spec.json undertow <dir>`

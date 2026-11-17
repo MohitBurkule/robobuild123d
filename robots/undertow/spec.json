@@ -1,46 +1,2576 @@
 {
- "name": "Undertow",
- "status": "UNTESTED: never built, run, rendered or verified. Hand-written; positions are the params.py relations evaluated by hand (rounded) and must be regenerated from src/build_undertow.py.",
- "profile": "aws2025",
- "robot_type": "wedge",
- "locomotion": "roller",
- "archetype": "control_4wd_invertible",
- "settings": {"rules": "aws2025", "front": "forks", "motor": "bbb_n10_1000rpm", "wheel": "bbb_wheel_22x10", "esc": "bbb_dual_esc_v31", "rx": "rx_fs_ia6_decased", "battery": "tattu_2s_300_75c_hv", "switch": "fingertech_mini_switch"},
- "envelope": {"rule": "aws2025 (robot/profile.py): 150 mm floor square, no overhang at any height, no height limit; optional setting rules=aws_v43_cube (101.6 mm start cube)", "square_mm": 150.0, "margin_mm": 1.0,
-              "start_mm": {"width": 105.1, "length_forks_flat": 131.8, "length_plough_flat": 123.8, "height": 22.0},
-              "note": "default: forks start down on the floor, inside the square; only the cube variant folds them up at start"},
- "parts": [
-  {"id": "tub", "kind": "structure", "catalog": null, "material": "tpu_95a", "process": "fdm", "print_orientation": "+z",
-   "shape": {"type": "model", "file": "src/build_undertow.py", "params": {"part": "tub"}}, "at": [0, 0, 0], "rot": [0, 0, 0],
-   "label": "TPU unibody tub: derive_bay pockets for 4 motors, pack, ESC, Rx, switch; wheel wells; V flanks; skirt pin bores; front pivot cheeks"},
-  {"id": "top_plate", "kind": "structure", "catalog": null, "material": "carbon_fibre", "process": "cnc_sheet",
-   "shape": {"type": "model", "file": "src/build_undertow.py", "params": {"part": "top_plate"}}, "at": [0, 0, 0], "rot": [0, 0, 0]},
-  {"id": "base_plate", "kind": "structure", "catalog": null, "material": "carbon_fibre", "process": "cnc_sheet",
-   "shape": {"type": "model", "file": "src/build_undertow.py", "params": {"part": "base_plate"}}, "at": [0, 0, 0], "rot": [0, 0, 0]},
-  {"id": "skirt_r", "kind": "armour", "catalog": null, "material": "titanium_gr5", "process": "sheet_bend",
-   "shape": {"type": "model", "file": "src/build_undertow.py", "params": {"part": "skirt_r"}}, "at": [0, 0, 0], "rot": [0, 0, 0]},
-  {"id": "skirt_l", "kind": "armour", "catalog": null, "material": "titanium_gr5", "process": "sheet_bend",
-   "shape": {"type": "model", "file": "src/build_undertow.py", "params": {"part": "skirt_l"}}, "at": [0, 0, 0], "rot": [0, 0, 0]},
-  {"id": "skirt_rear", "kind": "armour", "catalog": null, "material": "titanium_gr5", "process": "sheet_bend",
-   "shape": {"type": "model", "file": "src/build_undertow.py", "params": {"part": "skirt_rear"}}, "at": [0, 0, 0], "rot": [0, 0, 0]},
-  {"id": "front", "kind": "attachment", "catalog": null, "material": "spring_steel", "process": "laser_sheet",
-   "shape": {"type": "model", "file": "src/build_undertow.py", "params": {"part": "fork_0"}}, "at": [0, 0, 0], "rot": [0, 0, 0],
-   "label": "forks: fork_0..fork_4 + fork_spacer_0..3; plough setting: plough_body (TPU) + plough_face (steel). One pivot pin M3x85."},
-  {"id": "motor_fr", "kind": "drive_motor", "catalog": "bbb_n10_1000rpm", "at": [19.5, 28.0, 11.0], "rot": [0, 0, 0], "label": "x origin approximate: hw.reach() x0 assumed -12 (motor centre on the back face + MOTOR_BODY/2)"},
-  {"id": "motor_fl", "kind": "drive_motor", "catalog": "bbb_n10_1000rpm", "at": [-19.5, 28.0, 11.0], "rot": [0, 0, 180]},
-  {"id": "motor_rr", "kind": "drive_motor", "catalog": "bbb_n10_1000rpm", "at": [19.5, -28.0, 11.0], "rot": [0, 0, 0]},
-  {"id": "motor_rl", "kind": "drive_motor", "catalog": "bbb_n10_1000rpm", "at": [-19.5, -28.0, 11.0], "rot": [0, 0, 180]},
-  {"id": "wheel_fr", "kind": "wheel", "catalog": "bbb_wheel_22x10", "at": [37.85, 28.0, 11.0], "rot": [0, 0, 0]},
-  {"id": "wheel_fl", "kind": "wheel", "catalog": "bbb_wheel_22x10", "at": [-37.85, 28.0, 11.0], "rot": [0, 0, 180]},
-  {"id": "wheel_rr", "kind": "wheel", "catalog": "bbb_wheel_22x10", "at": [37.85, -28.0, 11.0], "rot": [0, 0, 0]},
-  {"id": "wheel_rl", "kind": "wheel", "catalog": "bbb_wheel_22x10", "at": [-37.85, -28.0, 11.0], "rot": [0, 0, 180]},
-  {"id": "battery", "kind": "battery", "catalog": "tattu_2s_300_75c_hv", "at": [0, 9.3, 2.3], "rot": [0, 0, 0]},
-  {"id": "esc", "kind": "esc", "catalog": "bbb_dual_esc_v31", "at": [0, -10.6, 2.3], "rot": [0, 0, 0]},
-  {"id": "rx", "kind": "receiver", "catalog": "rx_fs_ia6_decased", "at": [23.1, -10.6, 2.3], "rot": [0, 0, 0]},
-  {"id": "switch", "kind": "switch", "catalog": "fingertech_mini_switch", "at": [-19.75, -10.6, 2.3], "rot": [0, 0, 0]}
- ],
- "fasteners": [
-  {"id": "plate_screws", "designation": "M2x4", "head": "countersunk", "count": 12, "into": "M2 alu standoff x6 through tub"},
-  {"id": "front_pin", "designation": "M3x85", "head": "cap", "count": 1, "into": "M3 nyloc"}
- ]
+  "name": "Undertow (4WD invertible wedge / control bot)",
+  "profile": "aws2025",
+  "robot_type": "wedge",
+  "locomotion": "roller",
+  "parts": [
+    {
+      "id": "tub",
+      "kind": "structure",
+      "catalog": null,
+      "material": "nylon",
+      "process": "fdm",
+      "shape": {
+        "type": "model",
+        "file": "src/build_undertow.py",
+        "params": {
+          "part": "tub"
+        }
+      },
+      "model": null,
+      "params": {},
+      "at": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "parent": null,
+      "joint": null,
+      "mass_g": null,
+      "slicer_mass_g": null,
+      "scale_mass_g": null,
+      "solid_fraction": null,
+      "color": null,
+      "label": "printed nylon shell: hollow cavity, 4 motor spine ribs with lead slots, 6 bolt columns, 6 skirt pads, front pivot cheeks + nyloc boss",
+      "marked": false,
+      "tool_free": false,
+      "sharp": false,
+      "cover": null,
+      "retained": null,
+      "fused_with": null,
+      "weapon": null,
+      "tensioner": null,
+      "belt": null,
+      "tyre_of": null,
+      "no_tyre_reason": null,
+      "actuation": null,
+      "tethered": false,
+      "actuated_by": null,
+      "ports": {},
+      "rotates_with": "fixed",
+      "fixed": null,
+      "print_orientation": "+z",
+      "sharp_corners_ok": "the flagged concave corners are where the lead slots and tap drills break through the rib / pad faces: knife edges between two cuts in an open cavity, not load-bearing notches; every structural wall is the full WALL 2.0 mm"
+    },
+    {
+      "id": "top_plate",
+      "kind": "structure",
+      "catalog": null,
+      "material": "carbon_fibre",
+      "process": "waterjet",
+      "shape": {
+        "type": "model",
+        "file": "src/build_undertow.py",
+        "params": {
+          "part": "top_plate"
+        }
+      },
+      "model": null,
+      "params": {},
+      "at": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "parent": null,
+      "joint": null,
+      "mass_g": null,
+      "slicer_mass_g": null,
+      "scale_mass_g": null,
+      "solid_fraction": null,
+      "color": null,
+      "label": "1 mm carbon plate: wheel windows open through the side edges, 6x M2 csk, switch access hole",
+      "marked": false,
+      "tool_free": false,
+      "sharp": false,
+      "cover": null,
+      "retained": null,
+      "fused_with": null,
+      "weapon": null,
+      "tensioner": null,
+      "belt": null,
+      "tyre_of": null,
+      "no_tyre_reason": null,
+      "actuation": null,
+      "tethered": false,
+      "actuated_by": null,
+      "ports": {},
+      "rotates_with": "fixed",
+      "fixed": null,
+      "secondary_ops": [
+        "countersink"
+      ]
+    },
+    {
+      "id": "base_plate",
+      "kind": "structure",
+      "catalog": null,
+      "material": "carbon_fibre",
+      "process": "waterjet",
+      "shape": {
+        "type": "model",
+        "file": "src/build_undertow.py",
+        "params": {
+          "part": "base_plate"
+        }
+      },
+      "model": null,
+      "params": {},
+      "at": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "parent": null,
+      "joint": null,
+      "mass_g": null,
+      "slicer_mass_g": null,
+      "scale_mass_g": null,
+      "solid_fraction": null,
+      "color": null,
+      "label": "1 mm carbon plate (same outline as the top: invertible), wheel windows through the side edges, 6x M2 csk, switch access hole",
+      "marked": false,
+      "tool_free": false,
+      "sharp": false,
+      "cover": null,
+      "retained": null,
+      "fused_with": null,
+      "weapon": null,
+      "tensioner": null,
+      "belt": null,
+      "tyre_of": null,
+      "no_tyre_reason": null,
+      "actuation": null,
+      "tethered": false,
+      "actuated_by": null,
+      "ports": {},
+      "rotates_with": "fixed",
+      "fixed": null,
+      "secondary_ops": [
+        "countersink"
+      ]
+    },
+    {
+      "id": "skirt_r",
+      "kind": "armor",
+      "catalog": null,
+      "material": "titanium",
+      "process": "sheet_bent",
+      "shape": {
+        "type": "model",
+        "file": "src/build_undertow.py",
+        "params": {
+          "part": "skirt_r"
+        }
+      },
+      "model": null,
+      "params": {},
+      "at": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "parent": null,
+      "joint": null,
+      "mass_g": null,
+      "slicer_mass_g": null,
+      "scale_mass_g": null,
+      "solid_fraction": null,
+      "color": null,
+      "label": "0.5 mm Ti gr5 side skirt, 2x M2 button into the printed flank pads",
+      "marked": false,
+      "tool_free": false,
+      "sharp": false,
+      "cover": null,
+      "retained": null,
+      "fused_with": null,
+      "weapon": null,
+      "tensioner": null,
+      "belt": null,
+      "tyre_of": null,
+      "no_tyre_reason": null,
+      "actuation": null,
+      "tethered": false,
+      "actuated_by": null,
+      "ports": {},
+      "rotates_with": "fixed",
+      "fixed": null
+    },
+    {
+      "id": "skirt_l",
+      "kind": "armor",
+      "catalog": null,
+      "material": "titanium",
+      "process": "sheet_bent",
+      "shape": {
+        "type": "model",
+        "file": "src/build_undertow.py",
+        "params": {
+          "part": "skirt_l"
+        }
+      },
+      "model": null,
+      "params": {},
+      "at": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "parent": null,
+      "joint": null,
+      "mass_g": null,
+      "slicer_mass_g": null,
+      "scale_mass_g": null,
+      "solid_fraction": null,
+      "color": null,
+      "label": "0.5 mm Ti gr5 side skirt, 2x M2 button into the printed flank pads",
+      "marked": false,
+      "tool_free": false,
+      "sharp": false,
+      "cover": null,
+      "retained": null,
+      "fused_with": null,
+      "weapon": null,
+      "tensioner": null,
+      "belt": null,
+      "tyre_of": null,
+      "no_tyre_reason": null,
+      "actuation": null,
+      "tethered": false,
+      "actuated_by": null,
+      "ports": {},
+      "rotates_with": "fixed",
+      "fixed": null
+    },
+    {
+      "id": "skirt_rear",
+      "kind": "armor",
+      "catalog": null,
+      "material": "titanium",
+      "process": "sheet_bent",
+      "shape": {
+        "type": "model",
+        "file": "src/build_undertow.py",
+        "params": {
+          "part": "skirt_rear"
+        }
+      },
+      "model": null,
+      "params": {},
+      "at": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "parent": null,
+      "joint": null,
+      "mass_g": null,
+      "slicer_mass_g": null,
+      "scale_mass_g": null,
+      "solid_fraction": null,
+      "color": null,
+      "label": "0.5 mm Ti gr5 rear skirt, 2x M2 button into the rear pads",
+      "marked": false,
+      "tool_free": false,
+      "sharp": false,
+      "cover": null,
+      "retained": null,
+      "fused_with": null,
+      "weapon": null,
+      "tensioner": null,
+      "belt": null,
+      "tyre_of": null,
+      "no_tyre_reason": null,
+      "actuation": null,
+      "tethered": false,
+      "actuated_by": null,
+      "ports": {},
+      "rotates_with": "fixed",
+      "fixed": null
+    },
+    {
+      "id": "motor_fr",
+      "kind": "motor",
+      "catalog": "bbb_n10_1000rpm",
+      "material": null,
+      "process": null,
+      "shape": null,
+      "model": null,
+      "params": {},
+      "at": [
+        20.75,
+        26.0,
+        11.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "parent": null,
+      "joint": null,
+      "mass_g": null,
+      "slicer_mass_g": null,
+      "scale_mass_g": null,
+      "solid_fraction": null,
+      "color": null,
+      "label": "N10 gearmotor in its bay, back face on the spine rib, shaft outboard",
+      "marked": false,
+      "tool_free": false,
+      "sharp": false,
+      "cover": null,
+      "retained": "clamp",
+      "fused_with": null,
+      "weapon": null,
+      "tensioner": null,
+      "belt": null,
+      "tyre_of": null,
+      "no_tyre_reason": null,
+      "actuation": null,
+      "tethered": false,
+      "actuated_by": null,
+      "ports": {
+        "terminals": [
+          -12.75,
+          3.0,
+          0.0
+        ]
+      },
+      "rotates_with": "fixed",
+      "fixed": null,
+      "retained_reason": "the wheel's D-bore is a press fit on the motor shaft and clamps the gearbox face against the spine rib; the rib carries the push load"
+    },
+    {
+      "id": "motor_fl",
+      "kind": "motor",
+      "catalog": "bbb_n10_1000rpm",
+      "material": null,
+      "process": null,
+      "shape": null,
+      "model": null,
+      "params": {},
+      "at": [
+        -20.75,
+        26.0,
+        11.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        180.0
+      ],
+      "parent": null,
+      "joint": null,
+      "mass_g": null,
+      "slicer_mass_g": null,
+      "scale_mass_g": null,
+      "solid_fraction": null,
+      "color": null,
+      "label": "N10 gearmotor in its bay, back face on the spine rib, shaft outboard",
+      "marked": false,
+      "tool_free": false,
+      "sharp": false,
+      "cover": null,
+      "retained": "clamp",
+      "fused_with": null,
+      "weapon": null,
+      "tensioner": null,
+      "belt": null,
+      "tyre_of": null,
+      "no_tyre_reason": null,
+      "actuation": null,
+      "tethered": false,
+      "actuated_by": null,
+      "ports": {
+        "terminals": [
+          -12.75,
+          3.0,
+          0.0
+        ]
+      },
+      "rotates_with": "fixed",
+      "fixed": null,
+      "retained_reason": "the wheel's D-bore is a press fit on the motor shaft and clamps the gearbox face against the spine rib; the rib carries the push load"
+    },
+    {
+      "id": "motor_rr",
+      "kind": "motor",
+      "catalog": "bbb_n10_1000rpm",
+      "material": null,
+      "process": null,
+      "shape": null,
+      "model": null,
+      "params": {},
+      "at": [
+        20.75,
+        -26.0,
+        11.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "parent": null,
+      "joint": null,
+      "mass_g": null,
+      "slicer_mass_g": null,
+      "scale_mass_g": null,
+      "solid_fraction": null,
+      "color": null,
+      "label": "N10 gearmotor in its bay, back face on the spine rib, shaft outboard",
+      "marked": false,
+      "tool_free": false,
+      "sharp": false,
+      "cover": null,
+      "retained": "clamp",
+      "fused_with": null,
+      "weapon": null,
+      "tensioner": null,
+      "belt": null,
+      "tyre_of": null,
+      "no_tyre_reason": null,
+      "actuation": null,
+      "tethered": false,
+      "actuated_by": null,
+      "ports": {
+        "terminals": [
+          -12.75,
+          3.0,
+          0.0
+        ]
+      },
+      "rotates_with": "fixed",
+      "fixed": null,
+      "retained_reason": "the wheel's D-bore is a press fit on the motor shaft and clamps the gearbox face against the spine rib; the rib carries the push load"
+    },
+    {
+      "id": "motor_rl",
+      "kind": "motor",
+      "catalog": "bbb_n10_1000rpm",
+      "material": null,
+      "process": null,
+      "shape": null,
+      "model": null,
+      "params": {},
+      "at": [
+        -20.75,
+        -26.0,
+        11.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        180.0
+      ],
+      "parent": null,
+      "joint": null,
+      "mass_g": null,
+      "slicer_mass_g": null,
+      "scale_mass_g": null,
+      "solid_fraction": null,
+      "color": null,
+      "label": "N10 gearmotor in its bay, back face on the spine rib, shaft outboard",
+      "marked": false,
+      "tool_free": false,
+      "sharp": false,
+      "cover": null,
+      "retained": "clamp",
+      "fused_with": null,
+      "weapon": null,
+      "tensioner": null,
+      "belt": null,
+      "tyre_of": null,
+      "no_tyre_reason": null,
+      "actuation": null,
+      "tethered": false,
+      "actuated_by": null,
+      "ports": {
+        "terminals": [
+          -12.75,
+          3.0,
+          0.0
+        ]
+      },
+      "rotates_with": "fixed",
+      "fixed": null,
+      "retained_reason": "the wheel's D-bore is a press fit on the motor shaft and clamps the gearbox face against the spine rib; the rib carries the push load"
+    },
+    {
+      "id": "wheel_fr",
+      "kind": "wheel",
+      "catalog": "bbb_wheel_22x10",
+      "material": null,
+      "process": null,
+      "shape": null,
+      "model": null,
+      "params": {},
+      "at": [
+        40.05,
+        26.0,
+        11.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "parent": null,
+      "joint": {
+        "kind": "revolute",
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "pivot": [
+          40.05,
+          26.0,
+          11.0
+        ],
+        "min": 0.0,
+        "max": 360.0,
+        "default": 0.0
+      },
+      "mass_g": null,
+      "slicer_mass_g": null,
+      "scale_mass_g": null,
+      "solid_fraction": null,
+      "color": null,
+      "label": "22x10 wheel on the motor shaft, proud of both plates by 1.5 mm",
+      "marked": false,
+      "tool_free": false,
+      "sharp": false,
+      "cover": null,
+      "retained": "press_fit",
+      "fused_with": null,
+      "weapon": null,
+      "tensioner": null,
+      "belt": null,
+      "tyre_of": null,
+      "no_tyre_reason": null,
+      "actuation": null,
+      "tethered": false,
+      "actuated_by": null,
+      "ports": {},
+      "rotates_with": null,
+      "fixed": null,
+      "retained_reason": "D-bore press fit (0.05 mm interference) on the 3 mm motor shaft: the flat carries the torque and the fit holds axially"
+    },
+    {
+      "id": "wheel_fl",
+      "kind": "wheel",
+      "catalog": "bbb_wheel_22x10",
+      "material": null,
+      "process": null,
+      "shape": null,
+      "model": null,
+      "params": {},
+      "at": [
+        -40.05,
+        26.0,
+        11.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        180.0
+      ],
+      "parent": null,
+      "joint": {
+        "kind": "revolute",
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "pivot": [
+          -40.05,
+          26.0,
+          11.0
+        ],
+        "min": 0.0,
+        "max": 360.0,
+        "default": 0.0
+      },
+      "mass_g": null,
+      "slicer_mass_g": null,
+      "scale_mass_g": null,
+      "solid_fraction": null,
+      "color": null,
+      "label": "22x10 wheel on the motor shaft, proud of both plates by 1.5 mm",
+      "marked": false,
+      "tool_free": false,
+      "sharp": false,
+      "cover": null,
+      "retained": "press_fit",
+      "fused_with": null,
+      "weapon": null,
+      "tensioner": null,
+      "belt": null,
+      "tyre_of": null,
+      "no_tyre_reason": null,
+      "actuation": null,
+      "tethered": false,
+      "actuated_by": null,
+      "ports": {},
+      "rotates_with": null,
+      "fixed": null,
+      "retained_reason": "D-bore press fit (0.05 mm interference) on the 3 mm motor shaft: the flat carries the torque and the fit holds axially"
+    },
+    {
+      "id": "wheel_rr",
+      "kind": "wheel",
+      "catalog": "bbb_wheel_22x10",
+      "material": null,
+      "process": null,
+      "shape": null,
+      "model": null,
+      "params": {},
+      "at": [
+        40.05,
+        -26.0,
+        11.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "parent": null,
+      "joint": {
+        "kind": "revolute",
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "pivot": [
+          40.05,
+          -26.0,
+          11.0
+        ],
+        "min": 0.0,
+        "max": 360.0,
+        "default": 0.0
+      },
+      "mass_g": null,
+      "slicer_mass_g": null,
+      "scale_mass_g": null,
+      "solid_fraction": null,
+      "color": null,
+      "label": "22x10 wheel on the motor shaft, proud of both plates by 1.5 mm",
+      "marked": false,
+      "tool_free": false,
+      "sharp": false,
+      "cover": null,
+      "retained": "press_fit",
+      "fused_with": null,
+      "weapon": null,
+      "tensioner": null,
+      "belt": null,
+      "tyre_of": null,
+      "no_tyre_reason": null,
+      "actuation": null,
+      "tethered": false,
+      "actuated_by": null,
+      "ports": {},
+      "rotates_with": null,
+      "fixed": null,
+      "retained_reason": "D-bore press fit (0.05 mm interference) on the 3 mm motor shaft: the flat carries the torque and the fit holds axially"
+    },
+    {
+      "id": "wheel_rl",
+      "kind": "wheel",
+      "catalog": "bbb_wheel_22x10",
+      "material": null,
+      "process": null,
+      "shape": null,
+      "model": null,
+      "params": {},
+      "at": [
+        -40.05,
+        -26.0,
+        11.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        180.0
+      ],
+      "parent": null,
+      "joint": {
+        "kind": "revolute",
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "pivot": [
+          -40.05,
+          -26.0,
+          11.0
+        ],
+        "min": 0.0,
+        "max": 360.0,
+        "default": 0.0
+      },
+      "mass_g": null,
+      "slicer_mass_g": null,
+      "scale_mass_g": null,
+      "solid_fraction": null,
+      "color": null,
+      "label": "22x10 wheel on the motor shaft, proud of both plates by 1.5 mm",
+      "marked": false,
+      "tool_free": false,
+      "sharp": false,
+      "cover": null,
+      "retained": "press_fit",
+      "fused_with": null,
+      "weapon": null,
+      "tensioner": null,
+      "belt": null,
+      "tyre_of": null,
+      "no_tyre_reason": null,
+      "actuation": null,
+      "tethered": false,
+      "actuated_by": null,
+      "ports": {},
+      "rotates_with": null,
+      "fixed": null,
+      "retained_reason": "D-bore press fit (0.05 mm interference) on the 3 mm motor shaft: the flat carries the torque and the fit holds axially"
+    },
+    {
+      "id": "fork_0",
+      "kind": "other",
+      "catalog": null,
+      "material": "steel",
+      "process": "laser",
+      "shape": {
+        "type": "model",
+        "file": "src/build_undertow.py",
+        "params": {
+          "part": "fork_0"
+        }
+      },
+      "model": null,
+      "params": {},
+      "at": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "parent": null,
+      "joint": {
+        "kind": "revolute",
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "pivot": [
+          -17.0,
+          48.0,
+          11.0
+        ],
+        "min": -90.0,
+        "max": 90.0,
+        "default": 0.0
+      },
+      "mass_g": null,
+      "slicer_mass_g": null,
+      "scale_mass_g": null,
+      "solid_fraction": null,
+      "color": null,
+      "label": "0.8 mm spring-steel fork tine on the M3 pivot pin, free to swing (self-levelling)",
+      "marked": false,
+      "tool_free": false,
+      "sharp": false,
+      "cover": null,
+      "retained": null,
+      "fused_with": null,
+      "weapon": null,
+      "tensioner": null,
+      "belt": null,
+      "tyre_of": null,
+      "no_tyre_reason": null,
+      "actuation": null,
+      "tethered": false,
+      "actuated_by": null,
+      "ports": {},
+      "rotates_with": "forks",
+      "fixed": null
+    },
+    {
+      "id": "fork_1",
+      "kind": "other",
+      "catalog": null,
+      "material": "steel",
+      "process": "laser",
+      "shape": {
+        "type": "model",
+        "file": "src/build_undertow.py",
+        "params": {
+          "part": "fork_1"
+        }
+      },
+      "model": null,
+      "params": {},
+      "at": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "parent": null,
+      "joint": {
+        "kind": "revolute",
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "pivot": [
+          0.0,
+          48.0,
+          11.0
+        ],
+        "min": -90.0,
+        "max": 90.0,
+        "default": 0.0
+      },
+      "mass_g": null,
+      "slicer_mass_g": null,
+      "scale_mass_g": null,
+      "solid_fraction": null,
+      "color": null,
+      "label": "0.8 mm spring-steel fork tine on the M3 pivot pin, free to swing (self-levelling)",
+      "marked": false,
+      "tool_free": false,
+      "sharp": false,
+      "cover": null,
+      "retained": null,
+      "fused_with": null,
+      "weapon": null,
+      "tensioner": null,
+      "belt": null,
+      "tyre_of": null,
+      "no_tyre_reason": null,
+      "actuation": null,
+      "tethered": false,
+      "actuated_by": null,
+      "ports": {},
+      "rotates_with": "forks",
+      "fixed": null
+    },
+    {
+      "id": "fork_2",
+      "kind": "other",
+      "catalog": null,
+      "material": "steel",
+      "process": "laser",
+      "shape": {
+        "type": "model",
+        "file": "src/build_undertow.py",
+        "params": {
+          "part": "fork_2"
+        }
+      },
+      "model": null,
+      "params": {},
+      "at": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "parent": null,
+      "joint": {
+        "kind": "revolute",
+        "axis": [
+          1.0,
+          0.0,
+          0.0
+        ],
+        "pivot": [
+          17.0,
+          48.0,
+          11.0
+        ],
+        "min": -90.0,
+        "max": 90.0,
+        "default": 0.0
+      },
+      "mass_g": null,
+      "slicer_mass_g": null,
+      "scale_mass_g": null,
+      "solid_fraction": null,
+      "color": null,
+      "label": "0.8 mm spring-steel fork tine on the M3 pivot pin, free to swing (self-levelling)",
+      "marked": false,
+      "tool_free": false,
+      "sharp": false,
+      "cover": null,
+      "retained": null,
+      "fused_with": null,
+      "weapon": null,
+      "tensioner": null,
+      "belt": null,
+      "tyre_of": null,
+      "no_tyre_reason": null,
+      "actuation": null,
+      "tethered": false,
+      "actuated_by": null,
+      "ports": {},
+      "rotates_with": "forks",
+      "fixed": null
+    },
+    {
+      "id": "pivot_pin",
+      "kind": "pin",
+      "catalog": null,
+      "material": "steel",
+      "process": "lathe",
+      "shape": {
+        "type": "union",
+        "items": [
+          {
+            "type": "place",
+            "shape": {
+              "type": "cylinder",
+              "radius": 1.5,
+              "height": 50.0
+            },
+            "at": [
+              3.0,
+              48.0,
+              11.0
+            ],
+            "rot": [
+              0.0,
+              90.0,
+              0.0
+            ]
+          },
+          {
+            "type": "place",
+            "shape": {
+              "type": "cylinder",
+              "radius": 2.75,
+              "height": 3.0
+            },
+            "at": [
+              -23.5,
+              48.0,
+              11.0
+            ],
+            "rot": [
+              0.0,
+              90.0,
+              0.0
+            ]
+          }
+        ]
+      },
+      "model": null,
+      "params": {},
+      "at": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "parent": null,
+      "joint": null,
+      "mass_g": null,
+      "slicer_mass_g": null,
+      "scale_mass_g": null,
+      "solid_fraction": null,
+      "color": null,
+      "label": "stocked M3x50 cap screw used as the pivot pin through both cheeks",
+      "marked": false,
+      "tool_free": false,
+      "sharp": false,
+      "cover": null,
+      "retained": "nut",
+      "fused_with": null,
+      "weapon": null,
+      "tensioner": null,
+      "belt": null,
+      "tyre_of": null,
+      "no_tyre_reason": null,
+      "actuation": null,
+      "tethered": false,
+      "actuated_by": null,
+      "ports": {},
+      "rotates_with": "fixed",
+      "fixed": null,
+      "stock": "6 mm steel rod, M3 thread at the tip",
+      "retained_reason": "M3 nyloc in the press-fit hex pocket of the +X cheek boss threads onto the pin's end and keys it against rotation; the cap head bears on the -X cheek"
+    },
+    {
+      "id": "battery",
+      "kind": "battery",
+      "catalog": "palmpower_2s_180_45c",
+      "material": null,
+      "process": null,
+      "shape": null,
+      "model": null,
+      "params": {},
+      "at": [
+        -14.0,
+        -10.0,
+        7.95
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "parent": null,
+      "joint": null,
+      "mass_g": null,
+      "slicer_mass_g": null,
+      "scale_mass_g": null,
+      "solid_fraction": null,
+      "color": null,
+      "label": "2S 180 mAh pack across the middle band, pigtail into the bay",
+      "marked": false,
+      "tool_free": false,
+      "sharp": false,
+      "cover": null,
+      "retained": "strap",
+      "fused_with": null,
+      "weapon": null,
+      "tensioner": null,
+      "belt": null,
+      "tyre_of": null,
+      "no_tyre_reason": null,
+      "actuation": null,
+      "tethered": false,
+      "actuated_by": null,
+      "ports": {},
+      "rotates_with": "fixed",
+      "fixed": null,
+      "retained_reason": "pack sits on a foam pad bonded to the base plate and a poly strap over it (the strap carries the inverted load); the cavity walls capture it laterally"
+    },
+    {
+      "id": "esc",
+      "kind": "esc",
+      "catalog": "bbb_dual_esc_v31",
+      "material": null,
+      "process": null,
+      "shape": null,
+      "model": null,
+      "params": {},
+      "at": [
+        20.0,
+        8.0,
+        5.8
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        90.0
+      ],
+      "parent": null,
+      "joint": null,
+      "mass_g": null,
+      "slicer_mass_g": null,
+      "scale_mass_g": null,
+      "solid_fraction": null,
+      "color": null,
+      "label": "dual brushed ESC left of centre, ports fanned out (2 channels, 4 motors as 2 parallel pairs)",
+      "marked": false,
+      "tool_free": false,
+      "sharp": false,
+      "cover": null,
+      "retained": "adhesive",
+      "fused_with": null,
+      "weapon": null,
+      "tensioner": null,
+      "belt": null,
+      "tyre_of": null,
+      "no_tyre_reason": null,
+      "actuation": null,
+      "tethered": false,
+      "actuated_by": null,
+      "ports": {},
+      "rotates_with": "fixed",
+      "fixed": null,
+      "retained_reason": "bonded on a foam pad to the base plate; the cavity walls and top plate capture it"
+    },
+    {
+      "id": "rx",
+      "kind": "receiver",
+      "catalog": "rx_fs_ia6_decased",
+      "material": null,
+      "process": null,
+      "shape": null,
+      "model": null,
+      "params": {},
+      "at": [
+        -25.0,
+        10.0,
+        4.6
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        90.0
+      ],
+      "parent": null,
+      "joint": null,
+      "mass_g": null,
+      "slicer_mass_g": null,
+      "scale_mass_g": null,
+      "solid_fraction": null,
+      "color": null,
+      "label": "decased FS-iA6 receiver flat at the left of the bay",
+      "marked": false,
+      "tool_free": false,
+      "sharp": false,
+      "cover": null,
+      "retained": "adhesive",
+      "fused_with": null,
+      "weapon": null,
+      "tensioner": null,
+      "belt": null,
+      "tyre_of": null,
+      "no_tyre_reason": null,
+      "actuation": null,
+      "tethered": false,
+      "actuated_by": null,
+      "ports": {},
+      "rotates_with": "fixed",
+      "fixed": null,
+      "retained_reason": "taped flat to the base plate at the left, antenna out along the wall away from the motors"
+    },
+    {
+      "id": "switch",
+      "kind": "switch",
+      "catalog": "fingertech_mini_switch",
+      "material": null,
+      "process": null,
+      "shape": null,
+      "model": null,
+      "params": {},
+      "at": [
+        20.0,
+        -13.0,
+        5.975
+      ],
+      "rot": [
+        0.0,
+        0.0,
+        -90.0
+      ],
+      "parent": null,
+      "joint": null,
+      "mass_g": null,
+      "slicer_mass_g": null,
+      "scale_mass_g": null,
+      "solid_fraction": null,
+      "color": null,
+      "label": "FingerTech mini switch, actuator up, reachable through the r2.6 access hole in both plates",
+      "marked": true,
+      "tool_free": true,
+      "sharp": false,
+      "cover": null,
+      "retained": "tape",
+      "fused_with": null,
+      "weapon": null,
+      "tensioner": null,
+      "belt": null,
+      "tyre_of": null,
+      "no_tyre_reason": null,
+      "actuation": null,
+      "tethered": false,
+      "actuated_by": null,
+      "ports": {},
+      "rotates_with": "fixed",
+      "fixed": null,
+      "retained_reason": "taped to the base plate; the actuator is tool-free through the access hole in both plates"
+    },
+    {
+      "id": "nut_front",
+      "kind": "nut",
+      "catalog": "nut_m3_thin",
+      "material": null,
+      "process": null,
+      "shape": null,
+      "model": null,
+      "params": {},
+      "at": [
+        26.8,
+        48.0,
+        11.0
+      ],
+      "rot": [
+        0.0,
+        90.0,
+        0.0
+      ],
+      "parent": null,
+      "joint": null,
+      "mass_g": null,
+      "slicer_mass_g": null,
+      "scale_mass_g": null,
+      "solid_fraction": null,
+      "color": null,
+      "label": "M3 nyloc in the press-fit hex pocket of the +X cheek boss, on the pivot pin",
+      "marked": false,
+      "tool_free": false,
+      "sharp": false,
+      "cover": null,
+      "retained": null,
+      "fused_with": null,
+      "weapon": null,
+      "tensioner": null,
+      "belt": null,
+      "tyre_of": null,
+      "no_tyre_reason": null,
+      "actuation": null,
+      "tethered": false,
+      "actuated_by": null,
+      "ports": {},
+      "rotates_with": "fixed",
+      "fixed": null
+    }
+  ],
+  "fasteners": [
+    {
+      "id": "bolt_t0",
+      "designation": "M2x8",
+      "at": [
+        8.0,
+        36.5,
+        20.5
+      ],
+      "dir": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "through": [
+        "top_plate"
+      ],
+      "threads_into": "tub",
+      "tool": "hex1.3",
+      "removable": true,
+      "head": "countersunk",
+      "waive": {},
+      "hole": {
+        "d": 2.0,
+        "length": 8.0,
+        "head": "csk",
+        "head_std": "ISO 14581",
+        "head_dk": 3.8,
+        "head_k": 1.2,
+        "clearance_d": 2.4,
+        "into": "tapped",
+        "side": "both",
+        "csk_angle": 90.0,
+        "csk_d": 4.1,
+        "csk_depth": 0.85,
+        "sink": 0.0,
+        "grip": 1.0,
+        "tap_d": 1.6,
+        "thread_depth": 7.5
+      },
+      "material": "steel"
+    },
+    {
+      "id": "bolt_b0",
+      "designation": "M2x8",
+      "at": [
+        8.0,
+        36.5,
+        1.5
+      ],
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "through": [
+        "base_plate"
+      ],
+      "threads_into": "tub",
+      "tool": "hex1.3",
+      "removable": true,
+      "head": "countersunk",
+      "waive": {},
+      "hole": {
+        "d": 2.0,
+        "length": 8.0,
+        "head": "csk",
+        "head_std": "ISO 14581",
+        "head_dk": 3.8,
+        "head_k": 1.2,
+        "clearance_d": 2.4,
+        "into": "tapped",
+        "side": "both",
+        "csk_angle": 90.0,
+        "csk_d": 4.1,
+        "csk_depth": 0.85,
+        "sink": 0.0,
+        "grip": 1.0,
+        "tap_d": 1.6,
+        "thread_depth": 7.5
+      },
+      "material": "steel"
+    },
+    {
+      "id": "bolt_t1",
+      "designation": "M2x8",
+      "at": [
+        8.0,
+        -36.5,
+        20.5
+      ],
+      "dir": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "through": [
+        "top_plate"
+      ],
+      "threads_into": "tub",
+      "tool": "hex1.3",
+      "removable": true,
+      "head": "countersunk",
+      "waive": {},
+      "hole": {
+        "d": 2.0,
+        "length": 8.0,
+        "head": "csk",
+        "head_std": "ISO 14581",
+        "head_dk": 3.8,
+        "head_k": 1.2,
+        "clearance_d": 2.4,
+        "into": "tapped",
+        "side": "both",
+        "csk_angle": 90.0,
+        "csk_d": 4.1,
+        "csk_depth": 0.85,
+        "sink": 0.0,
+        "grip": 1.0,
+        "tap_d": 1.6,
+        "thread_depth": 7.5
+      },
+      "material": "steel"
+    },
+    {
+      "id": "bolt_b1",
+      "designation": "M2x8",
+      "at": [
+        8.0,
+        -36.5,
+        1.5
+      ],
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "through": [
+        "base_plate"
+      ],
+      "threads_into": "tub",
+      "tool": "hex1.3",
+      "removable": true,
+      "head": "countersunk",
+      "waive": {},
+      "hole": {
+        "d": 2.0,
+        "length": 8.0,
+        "head": "csk",
+        "head_std": "ISO 14581",
+        "head_dk": 3.8,
+        "head_k": 1.2,
+        "clearance_d": 2.4,
+        "into": "tapped",
+        "side": "both",
+        "csk_angle": 90.0,
+        "csk_d": 4.1,
+        "csk_depth": 0.85,
+        "sink": 0.0,
+        "grip": 1.0,
+        "tap_d": 1.6,
+        "thread_depth": 7.5
+      },
+      "material": "steel"
+    },
+    {
+      "id": "bolt_t2",
+      "designation": "M2x8",
+      "at": [
+        -8.0,
+        36.5,
+        20.5
+      ],
+      "dir": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "through": [
+        "top_plate"
+      ],
+      "threads_into": "tub",
+      "tool": "hex1.3",
+      "removable": true,
+      "head": "countersunk",
+      "waive": {},
+      "hole": {
+        "d": 2.0,
+        "length": 8.0,
+        "head": "csk",
+        "head_std": "ISO 14581",
+        "head_dk": 3.8,
+        "head_k": 1.2,
+        "clearance_d": 2.4,
+        "into": "tapped",
+        "side": "both",
+        "csk_angle": 90.0,
+        "csk_d": 4.1,
+        "csk_depth": 0.85,
+        "sink": 0.0,
+        "grip": 1.0,
+        "tap_d": 1.6,
+        "thread_depth": 7.5
+      },
+      "material": "steel"
+    },
+    {
+      "id": "bolt_b2",
+      "designation": "M2x8",
+      "at": [
+        -8.0,
+        36.5,
+        1.5
+      ],
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "through": [
+        "base_plate"
+      ],
+      "threads_into": "tub",
+      "tool": "hex1.3",
+      "removable": true,
+      "head": "countersunk",
+      "waive": {},
+      "hole": {
+        "d": 2.0,
+        "length": 8.0,
+        "head": "csk",
+        "head_std": "ISO 14581",
+        "head_dk": 3.8,
+        "head_k": 1.2,
+        "clearance_d": 2.4,
+        "into": "tapped",
+        "side": "both",
+        "csk_angle": 90.0,
+        "csk_d": 4.1,
+        "csk_depth": 0.85,
+        "sink": 0.0,
+        "grip": 1.0,
+        "tap_d": 1.6,
+        "thread_depth": 7.5
+      },
+      "material": "steel"
+    },
+    {
+      "id": "bolt_t3",
+      "designation": "M2x8",
+      "at": [
+        -8.0,
+        -36.5,
+        20.5
+      ],
+      "dir": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "through": [
+        "top_plate"
+      ],
+      "threads_into": "tub",
+      "tool": "hex1.3",
+      "removable": true,
+      "head": "countersunk",
+      "waive": {},
+      "hole": {
+        "d": 2.0,
+        "length": 8.0,
+        "head": "csk",
+        "head_std": "ISO 14581",
+        "head_dk": 3.8,
+        "head_k": 1.2,
+        "clearance_d": 2.4,
+        "into": "tapped",
+        "side": "both",
+        "csk_angle": 90.0,
+        "csk_d": 4.1,
+        "csk_depth": 0.85,
+        "sink": 0.0,
+        "grip": 1.0,
+        "tap_d": 1.6,
+        "thread_depth": 7.5
+      },
+      "material": "steel"
+    },
+    {
+      "id": "bolt_b3",
+      "designation": "M2x8",
+      "at": [
+        -8.0,
+        -36.5,
+        1.5
+      ],
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "through": [
+        "base_plate"
+      ],
+      "threads_into": "tub",
+      "tool": "hex1.3",
+      "removable": true,
+      "head": "countersunk",
+      "waive": {},
+      "hole": {
+        "d": 2.0,
+        "length": 8.0,
+        "head": "csk",
+        "head_std": "ISO 14581",
+        "head_dk": 3.8,
+        "head_k": 1.2,
+        "clearance_d": 2.4,
+        "into": "tapped",
+        "side": "both",
+        "csk_angle": 90.0,
+        "csk_d": 4.1,
+        "csk_depth": 0.85,
+        "sink": 0.0,
+        "grip": 1.0,
+        "tap_d": 1.6,
+        "thread_depth": 7.5
+      },
+      "material": "steel"
+    },
+    {
+      "id": "bolt_t4",
+      "designation": "M2x8",
+      "at": [
+        44.9,
+        0.0,
+        20.5
+      ],
+      "dir": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "through": [
+        "top_plate"
+      ],
+      "threads_into": "tub",
+      "tool": "hex1.3",
+      "removable": true,
+      "head": "countersunk",
+      "waive": {},
+      "hole": {
+        "d": 2.0,
+        "length": 8.0,
+        "head": "csk",
+        "head_std": "ISO 14581",
+        "head_dk": 3.8,
+        "head_k": 1.2,
+        "clearance_d": 2.4,
+        "into": "tapped",
+        "side": "both",
+        "csk_angle": 90.0,
+        "csk_d": 4.1,
+        "csk_depth": 0.85,
+        "sink": 0.0,
+        "grip": 1.0,
+        "tap_d": 1.6,
+        "thread_depth": 7.5
+      },
+      "material": "steel"
+    },
+    {
+      "id": "bolt_b4",
+      "designation": "M2x8",
+      "at": [
+        44.9,
+        0.0,
+        1.5
+      ],
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "through": [
+        "base_plate"
+      ],
+      "threads_into": "tub",
+      "tool": "hex1.3",
+      "removable": true,
+      "head": "countersunk",
+      "waive": {},
+      "hole": {
+        "d": 2.0,
+        "length": 8.0,
+        "head": "csk",
+        "head_std": "ISO 14581",
+        "head_dk": 3.8,
+        "head_k": 1.2,
+        "clearance_d": 2.4,
+        "into": "tapped",
+        "side": "both",
+        "csk_angle": 90.0,
+        "csk_d": 4.1,
+        "csk_depth": 0.85,
+        "sink": 0.0,
+        "grip": 1.0,
+        "tap_d": 1.6,
+        "thread_depth": 7.5
+      },
+      "material": "steel"
+    },
+    {
+      "id": "bolt_t5",
+      "designation": "M2x8",
+      "at": [
+        -44.9,
+        0.0,
+        20.5
+      ],
+      "dir": [
+        0.0,
+        0.0,
+        -1.0
+      ],
+      "through": [
+        "top_plate"
+      ],
+      "threads_into": "tub",
+      "tool": "hex1.3",
+      "removable": true,
+      "head": "countersunk",
+      "waive": {},
+      "hole": {
+        "d": 2.0,
+        "length": 8.0,
+        "head": "csk",
+        "head_std": "ISO 14581",
+        "head_dk": 3.8,
+        "head_k": 1.2,
+        "clearance_d": 2.4,
+        "into": "tapped",
+        "side": "both",
+        "csk_angle": 90.0,
+        "csk_d": 4.1,
+        "csk_depth": 0.85,
+        "sink": 0.0,
+        "grip": 1.0,
+        "tap_d": 1.6,
+        "thread_depth": 7.5
+      },
+      "material": "steel"
+    },
+    {
+      "id": "bolt_b5",
+      "designation": "M2x8",
+      "at": [
+        -44.9,
+        0.0,
+        1.5
+      ],
+      "dir": [
+        0.0,
+        0.0,
+        1.0
+      ],
+      "through": [
+        "base_plate"
+      ],
+      "threads_into": "tub",
+      "tool": "hex1.3",
+      "removable": true,
+      "head": "countersunk",
+      "waive": {},
+      "hole": {
+        "d": 2.0,
+        "length": 8.0,
+        "head": "csk",
+        "head_std": "ISO 14581",
+        "head_dk": 3.8,
+        "head_k": 1.2,
+        "clearance_d": 2.4,
+        "into": "tapped",
+        "side": "both",
+        "csk_angle": 90.0,
+        "csk_d": 4.1,
+        "csk_depth": 0.85,
+        "sink": 0.0,
+        "grip": 1.0,
+        "tap_d": 1.6,
+        "thread_depth": 7.5
+      },
+      "material": "steel"
+    },
+    {
+      "id": "skirt_r0",
+      "designation": "M2x6",
+      "at": [
+        53.9,
+        8.0,
+        11.0
+      ],
+      "dir": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "through": [
+        "skirt_r"
+      ],
+      "threads_into": "tub",
+      "tool": "hex1.3",
+      "removable": true,
+      "head": "button",
+      "waive": {},
+      "hole": {
+        "d": 2.0,
+        "length": 6.0,
+        "head": "button",
+        "head_std": "ISO 7380-1",
+        "head_dk": 3.5,
+        "head_k": 1.3,
+        "clearance_d": 2.4,
+        "into": "tapped",
+        "side": "head",
+        "cbore_d": 3.9,
+        "cbore_depth": 0.0,
+        "grip": 0.5
+      },
+      "material": "steel"
+    },
+    {
+      "id": "skirt_l0",
+      "designation": "M2x6",
+      "at": [
+        -53.9,
+        8.0,
+        11.0
+      ],
+      "dir": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "through": [
+        "skirt_l"
+      ],
+      "threads_into": "tub",
+      "tool": "hex1.3",
+      "removable": true,
+      "head": "button",
+      "waive": {},
+      "hole": {
+        "d": 2.0,
+        "length": 6.0,
+        "head": "button",
+        "head_std": "ISO 7380-1",
+        "head_dk": 3.5,
+        "head_k": 1.3,
+        "clearance_d": 2.4,
+        "into": "tapped",
+        "side": "head",
+        "cbore_d": 3.9,
+        "cbore_depth": 0.0,
+        "grip": 0.5
+      },
+      "material": "steel"
+    },
+    {
+      "id": "skirt_r1",
+      "designation": "M2x6",
+      "at": [
+        53.9,
+        -8.0,
+        11.0
+      ],
+      "dir": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "through": [
+        "skirt_r"
+      ],
+      "threads_into": "tub",
+      "tool": "hex1.3",
+      "removable": true,
+      "head": "button",
+      "waive": {},
+      "hole": {
+        "d": 2.0,
+        "length": 6.0,
+        "head": "button",
+        "head_std": "ISO 7380-1",
+        "head_dk": 3.5,
+        "head_k": 1.3,
+        "clearance_d": 2.4,
+        "into": "tapped",
+        "side": "head",
+        "cbore_d": 3.9,
+        "cbore_depth": 0.0,
+        "grip": 0.5
+      },
+      "material": "steel"
+    },
+    {
+      "id": "skirt_l1",
+      "designation": "M2x6",
+      "at": [
+        -53.9,
+        -8.0,
+        11.0
+      ],
+      "dir": [
+        1.0,
+        0.0,
+        0.0
+      ],
+      "through": [
+        "skirt_l"
+      ],
+      "threads_into": "tub",
+      "tool": "hex1.3",
+      "removable": true,
+      "head": "button",
+      "waive": {},
+      "hole": {
+        "d": 2.0,
+        "length": 6.0,
+        "head": "button",
+        "head_std": "ISO 7380-1",
+        "head_dk": 3.5,
+        "head_k": 1.3,
+        "clearance_d": 2.4,
+        "into": "tapped",
+        "side": "head",
+        "cbore_d": 3.9,
+        "cbore_depth": 0.0,
+        "grip": 0.5
+      },
+      "material": "steel"
+    },
+    {
+      "id": "skirt_rear0",
+      "designation": "M2x6",
+      "at": [
+        14.0,
+        -45.5,
+        11.0
+      ],
+      "dir": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "through": [
+        "skirt_rear"
+      ],
+      "threads_into": "tub",
+      "tool": "hex1.3",
+      "removable": true,
+      "head": "button",
+      "waive": {},
+      "hole": {
+        "d": 2.0,
+        "length": 6.0,
+        "head": "button",
+        "head_std": "ISO 7380-1",
+        "head_dk": 3.5,
+        "head_k": 1.3,
+        "clearance_d": 2.4,
+        "into": "tapped",
+        "side": "head",
+        "cbore_d": 3.9,
+        "cbore_depth": 0.0,
+        "grip": 0.5
+      },
+      "material": "steel"
+    },
+    {
+      "id": "skirt_rear1",
+      "designation": "M2x6",
+      "at": [
+        -14.0,
+        -45.5,
+        11.0
+      ],
+      "dir": [
+        0.0,
+        1.0,
+        0.0
+      ],
+      "through": [
+        "skirt_rear"
+      ],
+      "threads_into": "tub",
+      "tool": "hex1.3",
+      "removable": true,
+      "head": "button",
+      "waive": {},
+      "hole": {
+        "d": 2.0,
+        "length": 6.0,
+        "head": "button",
+        "head_std": "ISO 7380-1",
+        "head_dk": 3.5,
+        "head_k": 1.3,
+        "clearance_d": 2.4,
+        "into": "tapped",
+        "side": "head",
+        "cbore_d": 3.9,
+        "cbore_depth": 0.0,
+        "grip": 0.5
+      },
+      "material": "steel"
+    }
+  ],
+  "wires": [
+    {
+      "id": "w_bat_sw",
+      "from": "battery.jst_rcy",
+      "to": "switch.in",
+      "awg": 24,
+      "kind": "power",
+      "slack_mm": 8.0,
+      "via": [
+        [
+          -14.0,
+          29.875,
+          7.95
+        ],
+        [
+          -14.0,
+          29.875,
+          18.0
+        ],
+        [
+          -14.0,
+          6.0,
+          18.0
+        ],
+        [
+          -6.0,
+          6.0,
+          18.0
+        ],
+        [
+          -6.0,
+          -24.0,
+          18.0
+        ],
+        [
+          5.5,
+          -24.0,
+          18.0
+        ],
+        [
+          5.5,
+          -24.0,
+          5.975
+        ],
+        [
+          7.3,
+          -9.19,
+          5.975
+        ]
+      ]
+    },
+    {
+      "id": "w_sw_esc",
+      "from": "switch.out",
+      "to": "esc.bat",
+      "awg": 24,
+      "kind": "power",
+      "slack_mm": 8.0,
+      "via": [
+        [
+          7.3,
+          -16.81,
+          5.975
+        ],
+        [
+          5.5,
+          -22.0,
+          5.975
+        ],
+        [
+          5.5,
+          -22.0,
+          18.0
+        ],
+        [
+          26.0,
+          -22.0,
+          18.0
+        ],
+        [
+          26.0,
+          -8.0,
+          18.0
+        ],
+        [
+          26.0,
+          -8.0,
+          5.8
+        ],
+        [
+          26.0,
+          -3.5,
+          5.8
+        ]
+      ]
+    },
+    {
+      "id": "w_esc_rx",
+      "from": "esc.rx",
+      "to": "rx.esc",
+      "awg": 26,
+      "kind": "signal",
+      "slack_mm": 8.0,
+      "via": [
+        [
+          14.0,
+          -3.5,
+          5.8
+        ],
+        [
+          12.0,
+          -5.0,
+          5.8
+        ],
+        [
+          12.0,
+          -5.0,
+          18.0
+        ],
+        [
+          -31.8,
+          10.0,
+          18.0
+        ],
+        [
+          -31.5,
+          10.0,
+          18.0
+        ],
+        [
+          -31.5,
+          10.0,
+          4.6
+        ],
+        [
+          -31.8,
+          10.0,
+          4.6
+        ]
+      ]
+    },
+    {
+      "id": "w_m1_fr",
+      "from": "esc.m1",
+      "to": "motor_fr.terminals",
+      "awg": 26,
+      "kind": "power",
+      "slack_mm": 8.0,
+      "via": [
+        [
+          14.0,
+          19.5,
+          5.8
+        ],
+        [
+          14.0,
+          21.0,
+          5.8
+        ],
+        [
+          14.0,
+          21.0,
+          18.0
+        ],
+        [
+          14.0,
+          12.0,
+          18.0
+        ],
+        [
+          4.0,
+          12.0,
+          18.0
+        ],
+        [
+          4.0,
+          29.0,
+          18.0
+        ],
+        [
+          4.0,
+          29.0,
+          11.0
+        ],
+        [
+          8.0,
+          29.0,
+          11.0
+        ]
+      ]
+    },
+    {
+      "id": "w_m1_fl",
+      "from": "esc.m1",
+      "to": "motor_fl.terminals",
+      "awg": 26,
+      "kind": "power",
+      "slack_mm": 8.0,
+      "via": [
+        [
+          14.0,
+          19.5,
+          5.8
+        ],
+        [
+          12.5,
+          21.0,
+          5.8
+        ],
+        [
+          12.5,
+          21.0,
+          18.0
+        ],
+        [
+          12.5,
+          10.5,
+          18.0
+        ],
+        [
+          -4.5,
+          10.5,
+          18.0
+        ],
+        [
+          -4.5,
+          23.0,
+          18.0
+        ],
+        [
+          -4.5,
+          23.0,
+          11.0
+        ],
+        [
+          -8.0,
+          23.0,
+          11.0
+        ]
+      ]
+    },
+    {
+      "id": "w_m2_rr",
+      "from": "esc.m2",
+      "to": "motor_rr.terminals",
+      "awg": 26,
+      "kind": "power",
+      "slack_mm": 8.0,
+      "via": [
+        [
+          26.0,
+          19.5,
+          5.8
+        ],
+        [
+          26.0,
+          21.0,
+          5.8
+        ],
+        [
+          26.0,
+          21.0,
+          18.0
+        ],
+        [
+          26.0,
+          12.0,
+          18.0
+        ],
+        [
+          4.0,
+          -8.0,
+          18.0
+        ],
+        [
+          4.0,
+          -23.0,
+          18.0
+        ],
+        [
+          4.0,
+          -23.0,
+          11.0
+        ],
+        [
+          8.0,
+          -23.0,
+          11.0
+        ]
+      ]
+    },
+    {
+      "id": "w_m2_rl",
+      "from": "esc.m2",
+      "to": "motor_rl.terminals",
+      "awg": 26,
+      "kind": "power",
+      "slack_mm": 8.0,
+      "via": [
+        [
+          26.0,
+          19.5,
+          5.8
+        ],
+        [
+          25.0,
+          21.0,
+          5.8
+        ],
+        [
+          25.0,
+          21.0,
+          18.0
+        ],
+        [
+          25.0,
+          9.0,
+          18.0
+        ],
+        [
+          -3.0,
+          9.0,
+          18.0
+        ],
+        [
+          -3.0,
+          -29.0,
+          18.0
+        ],
+        [
+          -3.0,
+          -29.0,
+          11.0
+        ],
+        [
+          -8.0,
+          -29.0,
+          11.0
+        ]
+      ]
+    }
+  ],
+  "electronics": {
+    "failsafe": true,
+    "weapon_remote_disable": true,
+    "radio": "2.4 GHz",
+    "cells": 2
+  },
+  "can_run_inverted": true,
+  "allow_overlap": [
+    {
+      "a": "wheel_fr",
+      "b": "motor_fr",
+      "max_depth_mm": 0.6,
+      "reason": "the motor shaft runs inside the wheel's D-bore hub (the bore is cut 0.1 mm large on the flat sides so it slides on; the D-flat keys the drive)"
+    },
+    {
+      "a": "wheel_fl",
+      "b": "motor_fl",
+      "max_depth_mm": 0.6,
+      "reason": "the motor shaft runs inside the wheel's D-bore hub (the bore is cut 0.1 mm large on the flat sides so it slides on; the D-flat keys the drive)"
+    },
+    {
+      "a": "wheel_rr",
+      "b": "motor_rr",
+      "max_depth_mm": 0.6,
+      "reason": "the motor shaft runs inside the wheel's D-bore hub (the bore is cut 0.1 mm large on the flat sides so it slides on; the D-flat keys the drive)"
+    },
+    {
+      "a": "wheel_rl",
+      "b": "motor_rl",
+      "max_depth_mm": 0.6,
+      "reason": "the motor shaft runs inside the wheel's D-bore hub (the bore is cut 0.1 mm large on the flat sides so it slides on; the D-flat keys the drive)"
+    }
+  ],
+  "connections": [
+    {
+      "a": "wheel_fr",
+      "b": "motor_fr",
+      "method": "shaft",
+      "reason": "the wheel's D-bore runs on the motor's 3 mm shaft: the flat carries the drive torque",
+      "interference_mm": null,
+      "mechanical_key": false
+    },
+    {
+      "a": "wheel_fr",
+      "b": "motor_fr",
+      "method": "press_fit",
+      "reason": "D-bore press fit on the shaft (the catalogue bore is r1.5, the shaft r1.5: 0.05 mm declared press) - holds the wheel axially",
+      "interference_mm": 0.05,
+      "mechanical_key": true
+    },
+    {
+      "a": "motor_fr",
+      "b": "tub",
+      "method": "interlock",
+      "reason": "gearmotor back face seats on the spine rib and the wheel clamp pulls the gearbox face onto the rib; the rib carries the push load into the shell",
+      "interference_mm": null,
+      "mechanical_key": false
+    },
+    {
+      "a": "wheel_fl",
+      "b": "motor_fl",
+      "method": "shaft",
+      "reason": "the wheel's D-bore runs on the motor's 3 mm shaft: the flat carries the drive torque",
+      "interference_mm": null,
+      "mechanical_key": false
+    },
+    {
+      "a": "wheel_fl",
+      "b": "motor_fl",
+      "method": "press_fit",
+      "reason": "D-bore press fit on the shaft (the catalogue bore is r1.5, the shaft r1.5: 0.05 mm declared press) - holds the wheel axially",
+      "interference_mm": 0.05,
+      "mechanical_key": true
+    },
+    {
+      "a": "motor_fl",
+      "b": "tub",
+      "method": "interlock",
+      "reason": "gearmotor back face seats on the spine rib and the wheel clamp pulls the gearbox face onto the rib; the rib carries the push load into the shell",
+      "interference_mm": null,
+      "mechanical_key": false
+    },
+    {
+      "a": "wheel_rr",
+      "b": "motor_rr",
+      "method": "shaft",
+      "reason": "the wheel's D-bore runs on the motor's 3 mm shaft: the flat carries the drive torque",
+      "interference_mm": null,
+      "mechanical_key": false
+    },
+    {
+      "a": "wheel_rr",
+      "b": "motor_rr",
+      "method": "press_fit",
+      "reason": "D-bore press fit on the shaft (the catalogue bore is r1.5, the shaft r1.5: 0.05 mm declared press) - holds the wheel axially",
+      "interference_mm": 0.05,
+      "mechanical_key": true
+    },
+    {
+      "a": "motor_rr",
+      "b": "tub",
+      "method": "interlock",
+      "reason": "gearmotor back face seats on the spine rib and the wheel clamp pulls the gearbox face onto the rib; the rib carries the push load into the shell",
+      "interference_mm": null,
+      "mechanical_key": false
+    },
+    {
+      "a": "wheel_rl",
+      "b": "motor_rl",
+      "method": "shaft",
+      "reason": "the wheel's D-bore runs on the motor's 3 mm shaft: the flat carries the drive torque",
+      "interference_mm": null,
+      "mechanical_key": false
+    },
+    {
+      "a": "wheel_rl",
+      "b": "motor_rl",
+      "method": "press_fit",
+      "reason": "D-bore press fit on the shaft (the catalogue bore is r1.5, the shaft r1.5: 0.05 mm declared press) - holds the wheel axially",
+      "interference_mm": 0.05,
+      "mechanical_key": true
+    },
+    {
+      "a": "motor_rl",
+      "b": "tub",
+      "method": "interlock",
+      "reason": "gearmotor back face seats on the spine rib and the wheel clamp pulls the gearbox face onto the rib; the rib carries the push load into the shell",
+      "interference_mm": null,
+      "mechanical_key": false
+    },
+    {
+      "a": "fork_0",
+      "b": "pivot_pin",
+      "method": "shaft",
+      "reason": "the fork eye rides on the M3 pivot pin: free to swing about it, captured axially by the nyloc in the cheek boss",
+      "interference_mm": null,
+      "mechanical_key": false
+    },
+    {
+      "a": "fork_1",
+      "b": "pivot_pin",
+      "method": "shaft",
+      "reason": "the fork eye rides on the M3 pivot pin: free to swing about it, captured axially by the nyloc in the cheek boss",
+      "interference_mm": null,
+      "mechanical_key": false
+    },
+    {
+      "a": "fork_2",
+      "b": "pivot_pin",
+      "method": "shaft",
+      "reason": "the fork eye rides on the M3 pivot pin: free to swing about it, captured axially by the nyloc in the cheek boss",
+      "interference_mm": null,
+      "mechanical_key": false
+    },
+    {
+      "a": "pivot_pin",
+      "b": "tub",
+      "method": "press_fit",
+      "reason": "the pin runs in the loose-clearance bores of both printed cheeks and is locked by the nyloc: it cannot walk",
+      "interference_mm": null,
+      "mechanical_key": false
+    },
+    {
+      "a": "nut_front",
+      "b": "pivot_pin",
+      "method": "interlock",
+      "reason": "M3 nyloc thread on the pin's end; the press-fit hex pocket in the cheek boss keys the nut",
+      "interference_mm": null,
+      "mechanical_key": false
+    },
+    {
+      "a": "nut_front",
+      "b": "tub",
+      "method": "press_fit",
+      "reason": "the nyloc sits in the press-fit hex pocket of the +X cheek boss",
+      "interference_mm": null,
+      "mechanical_key": false
+    },
+    {
+      "a": "battery",
+      "b": "base_plate",
+      "method": "velcro",
+      "reason": "foam pad bonded to the plate plus a poly strap over the pack: the strap carries the inverted load",
+      "interference_mm": null,
+      "mechanical_key": false
+    },
+    {
+      "a": "esc",
+      "b": "base_plate",
+      "method": "tape",
+      "reason": "double-sided foam tape to the base plate; cavity walls capture it laterally",
+      "interference_mm": null,
+      "mechanical_key": false
+    },
+    {
+      "a": "rx",
+      "b": "base_plate",
+      "method": "tape",
+      "reason": "taped to the base plate at the left, antenna along the wall away from the motors",
+      "interference_mm": null,
+      "mechanical_key": false
+    },
+    {
+      "a": "switch",
+      "b": "base_plate",
+      "method": "tape",
+      "reason": "taped to the base plate; actuator tool-free through the access hole in both plates",
+      "interference_mm": null,
+      "mechanical_key": false
+    }
+  ],
+  "claims": [
+    {
+      "id": "c_mass",
+      "text": "weighs 150 g or less",
+      "metric": "mass_total_g",
+      "op": "<=",
+      "value": 150.0
+    },
+    {
+      "id": "c_fit",
+      "text": "fits the 150 mm square",
+      "metric": "footprint_mm",
+      "op": "<=",
+      "value": 150.0
+    }
+  ],
+  "start_pose": {},
+  "ground_z": null,
+  "calibration": {}
 }
