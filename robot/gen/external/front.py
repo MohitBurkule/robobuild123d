@@ -53,8 +53,7 @@ def add_wedge(plan, length=46.0, material="petg_cf", pid="wedge"):
         items.append(sh.side_prism(cheek, xa, xb))
     xs = [round(s * W * k, 1) for k in (0.4, 0.8) for s in (1, -1)]
     z_ins = round(f.zt * 0.6, 2)
-    holes = [sh.cyl_axis(1.1, yf, yf + WEB_T + 1.6, "y", x, z_ins) for x in xs]
-    holes += [sh.csk_cut((x, yf + WEB_T, z_ins), (0, -1, 0), 2.0) for x in xs]  # CF-ST04 / CF-VS01: flush heads
+    holes = [fasteners.front_hole(x, yf, z_ins, WEB_T, "countersunk")[0] for x in xs]  # CF-ST04 / CF-VS01: flush heads
     trim = sh.box(width + 20, 10.0, 40.0, (0, yf - 5.0, 0))
     shape = sh.S(sh.U(*items), *holes, trim)
     from .. import threats as _th
@@ -94,8 +93,7 @@ def add_skirt(plan, length=30.0, pid="skirt", t=2.0):
              sh.boxr(-width / 2, width / 2, yf, yf + WEB_T, flange_z0, f.zt * 0.8)]
     xs = [round(s * W * k, 1) for k in (0.4, 0.8) for s in (1, -1)]
     z_ins = round(f.zt * 0.45, 2)
-    holes = [sh.cyl_axis(1.1, yf - 0.5, yf + WEB_T + 1.6, "y", x, z_ins) for x in xs]
-    holes += [sh.csk_cut((x, yf + WEB_T, z_ins), (0, -1, 0), 2.0) for x in xs]  # CF-ST04 / CF-VS01: flush heads
+    holes = [fasteners.front_hole(x, yf, z_ins, WEB_T, "countersunk")[0] for x in xs]  # CF-ST04 / CF-VS01: flush heads
     trim = sh.box(width + 20, 10.0, 40.0, (0, yf - 5.0, 0))
     from .. import threats as _th
     as_txt, as_miss = _th.lip_rules("tpu", math.degrees(ang), 0.3, 0.0, False, width, t, length, width, True, contact_mm2=width * 0.6)

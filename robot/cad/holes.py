@@ -89,10 +89,13 @@ def _hex(s, z0, z1, angle=0.0):
     return bd.Pos(0, 0, z0) * bd.extrude(sk, z1 - z0)
 
 
-def hole_tool(at, axis, fastener="M2x6", head="cap", into="tapped", grip=None, side="both", fit="normal",
+def hole_plan(at, axis, fastener="M2x6", head="cap", into="tapped", grip=None, side="both", fit="normal",
               sink=0.0, cbore=None, cbore_clear=0.4, csk_clear=0.3, csk_angle=90.0, head_clear=10.0,
               nut="hex", nut_fit="press", nut_offset=0.0, nut_entry="axial", nut_angle=0.0, engage=None):
-    """The cutter solid (part frame) and the FastenerRecord, without cutting anything. See module doc for arguments."""
+    """Backend-free hole: ([primitive, ...], FastenerRecord). Primitives are in the hole frame (z along `axis`, z = 0
+    at `at` = the part's outer surface): ("cyl", r, z0, z1), ("cone", r0, r1, z0, z1), ("hex", across_flats, z0, z1,
+    angle_deg). `hole_tool` turns them into build123d; `robot.gen` turns them into spec shape JSON (`shape_json`).
+    One rule set for every caller, so a generated hole is the hole the seat check expects."""
     if into not in ("through", "tapped", "insert", "nut"):
         raise ValueError(f"into must be through | tapped | insert | nut, not `{into}`")
     if side not in ("both", "head", "thread"):
@@ -100,12 +103,15 @@ def hole_tool(at, axis, fastener="M2x6", head="cap", into="tapped", grip=None, s
     s = fc.parse(fastener)
     d, L = s.d, s.length
     dk, k = fc.head(d, head)
-    loc, a = _frame(at, axis)
+    a = np.asarray(axis, float)
+    a = a / np.linalg.norm(a)
     c = fc.clearance(d, fit)
     info = {"d": d, "length": L, "head": head, "head_std": fc.head_standard(d, head), "head_dk": dk, "head_k": k,
             "clearance_d": c, "into": into, "side": side}
     tools = []
-    # z of the head bearing face (where the spec `at` sits)
+    # TWO DIFFERENT `at`s: this tool's `at` argument = the part's OUTER SURFACE. `seat` = how deep the head is recessed
+    # below it (cap: k by default, button/pan: 0, csk: sink). The returned record's `at` (= the spec fastener `at`) =
+    # the head bearing face = at + axis * seat. Put rec.at in the spec, never the tool argument.
     if side == "thread":
         seat = 0.0
         grip = 0.0
@@ -113,12 +119,12 @@ def hole_tool(at, axis, fastener="M2x6", head="cap", into="tapped", grip=None, s
         seat = float(sink)
         r0 = dk / 2 + csk_clear / 2
         h = (r0 - c / 2) / math.tan(math.radians(csk_angle / 2))
-        tools += [_cyl(r0, -head_clear, seat), _cone(r0, c / 2, seat, seat + h)]
+        tools += [("cyl", r0, -head_clear, seat), ("cone", r0, c / 2, seat, seat + h)]
         info.update(csk_angle=csk_angle, csk_d=2 * r0, csk_depth=round(h, 4), sink=seat)
     else:
         cb = (k if head == "cap" else 0.0) if cbore is None else float(cbore)
         seat = cb
-        tools.append(_cyl(dk / 2 + cbore_clear / 2, -head_clear, seat))
+        tools.append(("cyl", dk / 2 + cbore_clear / 2, -head_clear, seat))
         info.update(cbore_d=dk + cbore_clear, cbore_depth=cb)
     # tip: the ISO length of a countersunk screw is overall (head included); the others are measured under the head
     # screw tip: ISO length is overall for csk (seat = top of head) and under the head otherwise (seat = bearing face).
@@ -126,41 +132,76 @@ def hole_tool(at, axis, fastener="M2x6", head="cap", into="tapped", grip=None, s
     tip = (float(engage) if engage is not None else L) if side == "thread" else seat + L
     g = BIG if grip is None else float(grip)
     if side == "head":
-        tools.append(_cyl(c / 2, seat - 0.01, BIG if grip is None else g + 0.01))
+        tools.append(("cyl", c / 2, seat - 0.01, BIG if grip is None else g + 0.01))
         info["grip"] = grip
     else:
         g = float(grip or 0.0) if side == "both" else 0.0
         if g > 0:
-            tools.append(_cyl(c / 2, seat - 0.01, g + 0.01))
+            tools.append(("cyl", c / 2, seat - 0.01, g + 0.01))
         info["grip"] = g
         if into == "through":
-            tools.append(_cyl(c / 2, g, BIG))
+            tools.append(("cyl", c / 2, g, BIG))
         elif into == "tapped":
             td = fc.tap_drill(d)
-            tools.append(_cyl(td / 2, g, tip + 0.5))
+            tools.append(("cyl", td / 2, g, tip + 0.5))
             info.update(tap_d=td, thread_depth=round(tip + 0.5 - g, 4))
         elif into == "insert":
             ib, il = fc.insert(d)
-            tools.append(_cyl(ib / 2, g, g + il + 0.3))
+            tools.append(("cyl", ib / 2, g, g + il + 0.3))
             if tip + 0.5 > g + il + 0.3:
-                tools.append(_cyl(c / 2, g + il, tip + 0.5))
+                tools.append(("cyl", c / 2, g + il, tip + 0.5))
             info.update(insert_d=ib, insert_len=il, insert_depth=round(il + 0.3, 4))
         else:
             sf, m = fc.nut(d, nut)
             s_cut = sf + (0.05 if nut_fit == "press" else 0.3)
             z0 = g + nut_offset
             z1 = BIG if nut_entry == "axial" else z0 + m + (0.0 if nut_fit == "press" else 0.2)
-            tools += [_cyl(c / 2, g, BIG if nut_entry == "axial" else tip + 0.5), _hex(s_cut, z0, z1, nut_angle)]
+            tools += [("cyl", c / 2, g, BIG if nut_entry == "axial" else tip + 0.5), ("hex", s_cut, z0, z1, nut_angle)]
             info.update(nut=nut, nut_std=fc.NUTS[nut][1], nut_af=sf, nut_m=m, nut_pocket_af=s_cut, nut_z=z0,
                         nut_fit=nut_fit, nut_entry=nut_entry)
-    cutter = tools[0]
-    for t in tools[1:]:
-        cutter = cutter + t
-    cutter = loc * cutter
     bear = np.asarray(at, float) + a * seat
     rec = FastenerRecord(s.designation, tuple(map(float, bear)), tuple(map(float, a)), head, into,
                          {k2: (round(v, 4) if isinstance(v, float) else v) for k2, v in info.items()})
-    return cutter, rec
+    return tools, rec
+
+
+
+
+def hole_tool(at, axis, fastener="M2x6", head="cap", into="tapped", **kw):
+    """The cutter solid (part frame) and the FastenerRecord, without cutting anything. See module doc for arguments."""
+    prims, rec = hole_plan(at, axis, fastener, head, into, **kw)
+    loc, _ = _frame(at, axis)
+    mk = {"cyl": _cyl, "cone": _cone, "hex": _hex}
+    cutter = None
+    for p in prims:
+        t = mk[p[0]](*p[1:])
+        cutter = t if cutter is None else cutter + t
+    return loc * cutter, rec
+
+
+def shape_json(prims, at, axis):
+    """The same primitives as spec shape JSON (union, placed at `at` with +z turned onto `axis`)."""
+    a = np.asarray(axis, float)
+    a = a / np.linalg.norm(a)
+    # rotation taking +z to a: about x by -asin(a_y) ... use Euler XYZ (deg) that the spec `place` uses
+    ry = math.degrees(math.atan2(a[0], a[2]))
+    rx = -math.degrees(math.asin(max(-1.0, min(1.0, a[1]))))
+    items = []
+    for p in prims:
+        if p[0] == "cyl":
+            _, r, z0, z1 = p
+            s = {"type": "place", "shape": {"type": "cylinder", "radius": r, "height": z1 - z0}, "at": [0, 0, (z0 + z1) / 2], "rot": [0, 0, 0]}
+        elif p[0] == "cone":
+            _, r0, r1, z0, z1 = p
+            s = {"type": "revolve", "profile": [[0, z0], [r0, z0], [r1, z1], [0, z1]]}
+        else:
+            _, af, z0, z1, ang = p
+            R = af / math.sqrt(3.0)
+            pts = [[R * math.cos(math.radians(ang + 60 * k)), R * math.sin(math.radians(ang + 60 * k))] for k in range(6)]
+            s = {"type": "place", "shape": {"type": "prism", "points": pts, "height": z1 - z0}, "at": [0, 0, z0], "rot": [0, 0, 0]}
+        items.append(s)
+    u = items[0] if len(items) == 1 else {"type": "union", "items": items}
+    return {"type": "place", "shape": u, "at": [float(v) for v in at], "rot": [rx, ry, 0.0]}
 
 
 def hole(part, at, axis, fastener="M2x6", head="cap", into="tapped", **kw):

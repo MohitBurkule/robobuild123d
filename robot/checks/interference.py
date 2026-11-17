@@ -100,6 +100,25 @@ def blanket_allowances(r):
     return out
 
 
+ESCAPE_PAIRS = 16  # measured escape moves for the first N colliding pairs (each costs ~50 mesh booleans)
+
+
+def _add_escape(ctx, f, a, b, allow):
+    """Append the measured smallest clearing moves to an overlap finding (message + machine-readable hints)."""
+    from .. import escape
+
+    r = ctx.r
+    try:
+        opts = escape.options(ctx.world, a, b, allow, lambda x, y: allowed_depth(r, x, y),
+                              carry=lambda pid: descendants(r, pid))
+    except Exception as e:  # noqa: BLE001  never let the hint kill the check
+        ctx.not_checked.append(f"interference: escape moves for `{a.id}`/`{b.id}` not measured ({e})")
+        return
+    f.message += " " + escape.summary(opts)
+    for m in [m for m in opts if not m.new_hits][:3]:
+        f.hint(f"{m.part}.at", "move", round(m.mm, 2), why=f"shift {m.axis} {m.vec}", parts=[m.part], kind="move")
+
+
 def run(ctx):
     r, w = ctx.r, ctx.world
     out = blanket_allowances(r)
@@ -125,11 +144,14 @@ def run(ctx):
                                     f"`{a.id}` and `{b.id}` overlap by {o.depth:.2f} mm ({o.volume:.1f} mm3): {why}.").on(a.id, b.id).here(o.at))
                     continue
                 bad += 1
-                out.append(fail("interference.overlap", G, BLOCKER, "Parts collide",
-                                f"`{a.id}` and `{b.id}` overlap by {o.depth:.2f} mm (about {o.volume:.1f} mm3).")
-                           .on(a.id, b.id).here(o.at)
-                           .expect(f"overlap <= {allow:.2f} mm (touching is fine)", f"{o.depth:.2f} mm")
-                           .fix("Move or resize one of them, cut a pocket in the housing, or list a deliberate press fit in `allow_overlap`."))
+                f = (fail("interference.overlap", G, BLOCKER, "Parts collide",
+                          f"`{a.id}` and `{b.id}` overlap by {o.depth:.2f} mm (about {o.volume:.1f} mm3).")
+                     .on(a.id, b.id).here(o.at)
+                     .expect(f"overlap <= {allow:.2f} mm (touching is fine)", f"{o.depth:.2f} mm")
+                     .fix("Move or resize one of them, cut a pocket in the housing, or list a deliberate press fit in `allow_overlap`."))
+                if bad <= ESCAPE_PAIRS:
+                    _add_escape(ctx, f, a, b, allow)
+                out.append(f)
     if bad == 0:
         out.append(ok("interference.overlap", G, "No parts collide",
                       f"{checked} touching or overlapping pairs checked; touching is allowed, overlap deeper than "

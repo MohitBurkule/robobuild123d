@@ -421,8 +421,10 @@ def _limit_problems(where, size, host_max_size):
             if host_max_size[a] is not None and size[a] > host_max_size[a] + TOL]
 
 
-def _keep_in_for(body, clearance, wall, reach, open_face):
-    cavity = body.grown(clearance).extended(open_face, reach)
+def _keep_in_for(body, clearance, wall, reach, open_face, seat=None):
+    # `seat`: the face the part rests on (e.g. the floor under a battery). No clearance is grown there, so the cut
+    # never eats into the floor it sits on (a 0.3 mm floor sliver / membrane otherwise).
+    cavity = body.grown(clearance, skip=(seat,) if seat is not None else ()).extended(open_face, reach)
     return cavity, cavity.grown(wall, skip=(open_face,))
 
 
@@ -442,7 +444,8 @@ def _pick_direction(subject, body, clearance, wall, reach, directions, host_max_
 
 
 def derive_bay(entry, *, placement=None, clearance=None, wall=DEFAULT_WALL, insert_dir=None, allowed_dirs=None,
-               reach=0.0, host_max_size=None, lead_slot_width=LEAD_SLOT_WIDTH, lip_overhang=LIP_OVERHANG) -> Bay:
+               reach=0.0, host_max_size=None, lead_slot_width=LEAD_SLOT_WIDTH, lip_overhang=LIP_OVERHANG,
+               seat=None) -> Bay:
     """Bay for one catalogue entry.
 
     entry           `catalog.CatalogEntry` (kind in BAY_KINDS).
@@ -453,6 +456,8 @@ def derive_bay(entry, *, placement=None, clearance=None, wall=DEFAULT_WALL, inse
     allowed_dirs    used when insert_dir is None: the directions to choose from (default: all six).
     reach           extra depth from the part's open-side face to the host's open face (a deep pocket).
     host_max_size   (x, y, z) limits on the keep-in box in the part frame, None per axis = unlimited.
+    seat            face the part rests on ("-z" for a pack on the floor): no clearance there, so the cut stops
+                    exactly at the floor top. Place the part with `seat_offset(bay)` above the floor.
     Raises UnsupportedPart, BayUnfit or BayError; never a geometry crash for a catalogue part.
     """
     _check_supported(entry)
@@ -462,7 +467,8 @@ def derive_bay(entry, *, placement=None, clearance=None, wall=DEFAULT_WALL, inse
     directions = [Face.parse(insert_dir)] if insert_dir is not None else [Face.parse(d) for d in (allowed_dirs or ALL_FACES)]
     direction = _pick_direction(f"`{entry.id}`", envelope.body, clearance, wall, reach, directions, host_max_size)
     open_face = direction.opposite
-    cavity, keep_in = _keep_in_for(envelope.body, clearance, wall, reach, open_face)
+    seat_face = Face.parse(seat) if seat is not None else None
+    cavity, keep_in = _keep_in_for(envelope.body, clearance, wall, reach, open_face, seat_face)
     exits = _protrusion_exits(envelope, clearance, cavity, keep_in, open_face)
     exits += _lead_exits(entry, envelope.body, cavity, keep_in, open_face, lead_slot_width)
     retention = _retention(entry, envelope, open_face, clearance, wall, lip_overhang)
@@ -539,3 +545,10 @@ def pack_grid(bays, columns, gap=0.0, host_max_size=None) -> Packing:
     depths = [max(bay.keep_in.size[y_axis] for bay in row) for row in rows]
     corners = [(sum(widths[:c]) + c * gap, sum(depths[:r]) + r * gap, 0.0) for r, row in enumerate(rows) for c in range(len(row))]
     return _packing(bays, corners, host_max_size)
+
+
+def seat_offset(bay, face="-z") -> float:
+    """Distance from the part frame origin to its body face `face` (positive). A part resting on a floor at z=F is
+    placed at z = F + seat_offset(bay): no hand maths with half heights and clearances."""
+    f = Face.parse(face)
+    return abs(bay.envelope.body.coord(f))

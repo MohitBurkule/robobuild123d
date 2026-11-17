@@ -109,6 +109,8 @@ class Spec:
             from . import overlay as _ov
 
             d = _ov.apply(d, d["overlay"], base_dir=base_dir)
+        if d.get("params"):  # {"P": "src/x/params.py"}: `at`/`rot` entries may be expressions of model params
+            d = _eval_exprs(d, base_dir)
         if any(isinstance(p, dict) and p.get("mate") for p in (d.get("parts") or [])):
             from .cad import mates  # parts placed by constraints (robot/cad/mates.py)
 
@@ -167,7 +169,9 @@ def load(path: str | Path) -> Spec:
         raise ValueError(f"{path} is not a valid spec: {e}") from e
     if not isinstance(data, dict):
         raise ValueError(f"{path} is not a JSON object")
-    return Spec(data, path.parent)
+    s = Spec(data, path.parent)
+    s.path = path
+    return s
 
 
 def finite(v) -> bool:
@@ -175,3 +179,36 @@ def finite(v) -> bool:
         return all(math.isfinite(float(x)) for x in v)
     except (TypeError, ValueError):
         return False
+
+
+def _eval_exprs(d, base_dir):
+    """Evaluate string entries of parts[].at / rot / fasteners[].at / dir against the spec's `params` modules
+    ({"alias": "path/params.py"}), with robot.params_override active, so a part placed by `"P.switch_y()"` moves
+    together with the pocket and holes the model code derives from the same master."""
+    import copy
+    from . import params_override as po
+
+    d = copy.deepcopy(d)
+    base = Path(base_dir) if base_dir else Path.cwd()
+    ns = {"math": math}
+    for alias, f in d["params"].items():
+        fp = Path(f)
+        ns[alias] = po.load_file(fp if fp.is_absolute() else base / fp)
+
+    def ev(v, where):
+        if isinstance(v, str):
+            try:
+                return float(eval(v, {"__builtins__": {}}, ns))  # noqa: S307  spec author's own expression
+            except Exception as e:  # noqa: BLE001
+                raise ValueError(f"{where}: cannot evaluate `{v}`: {e}") from e
+        return v
+
+    for key in ("parts", "fasteners"):
+        for p in d.get(key) or []:
+            if not isinstance(p, dict):
+                continue
+            for k in ("at", "rot", "dir"):
+                if isinstance(p.get(k), list):
+                    p.setdefault("_expr", {})[k] = list(p[k])
+                    p[k] = [ev(v, f"{p.get('id')}.{k}") for v in p[k]]
+    return d
