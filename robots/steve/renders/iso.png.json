@@ -1,0 +1,24 @@
+{
+ "spec": "/home/antigravity/MohitBurkule/robobuild123d/robots/steve/spec.json",
+ "rendered_at": 1794957596.2231839,
+ "bodies": [
+  "tub",
+  "lid_l",
+  "lid_r",
+  "guard_l",
+  "guard_r",
+  "wheel_l",
+  "wheel_r",
+  "flipper",
+  "scoop",
+  "hinge_pin",
+  "motor_l",
+  "motor_r",
+  "servo",
+  "horn",
+  "battery",
+  "esc_rx",
+  "switch"
+ ],
+ "wires": {}
+}
