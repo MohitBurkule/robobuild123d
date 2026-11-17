@@ -1,47 +1,43 @@
-# Scythe
+# Scythe Classic
 
-**UNTESTED: never built, run, rendered or verified.**
+150 g horizontal undercutter for the AWS 2025 rules (150 mm floor square, no height limit). The look is kept: a
+sloped printed cone tub, a 1 mm PA-CF top disc, and a vertical rear pod carrying two N10 drive motors on 2 wheels.
+Design, load paths and the mass budget are in [BRIEF.md](BRIEF.md). `make_spec.py` writes `spec.json`; edit the
+masters in `src/scythe_classic/params.py` and regenerate, never the JSON.
 
-Scythe is a 150 g UK antweight (AWS 2025: 150 mm floor square from robot/profile.py; optional 101.6 mm cube variant) horizontal undercutter. A 116 mm (mass-limited, derived), 3 mm Hardox two-tooth bar spins 2 mm
-off the floor under a sloped printed tub. It is driven by a shaft-down GR1507 (Revron's motor). The robot has 2WD
-on N10s behind the bar sweep and is invertible: upside down, the bar becomes an overhead bar. Design, load paths,
-mass and energy are in [BRIEF.md](BRIEF.md).
+## Status (last verify, this branch)
+| tier | blockers | notes |
+|---|---|---|
+| inner | 3 | `dynamics.spinup_kick`, `physics.runtime`, and `proxy.wiring` before a full wiring re-route (wiring group itself: 0 blockers) |
+| full | 35 (27 root causes) | structural: shafts and bearings not modelled, joint topology, wheel drive coverage, motor stator face, weapon `joint` missing |
+| `--tier full --only <all groups but visual>` | run without `visual` (it hung last time) | |
 
-Code: `src/build_scythe_classic.py` provides `build(part=...)`, built from `src/scythe_classic/`:
+Measured mass (verifier): 125.1 g of the 150 g limit.
 
-| File | Contents |
-|---|---|
-| `params.py` | masters and relations |
-| `bar.py` | the bar |
-| `weapon_hub.py` | the hub |
-| `tub.py` | the tub |
-| `drive.py` | the drive |
-| `skids.py` | the skids |
-| `panels.py` | the panels |
-| `assembly.py` | the assembly, with joints |
-| `variants.py` | the variants |
-| `_reuse.py` | loads Revron's `plate.py`, `weapon_motor.py` and `hw.py` |
+## Design (from the masters)
+- **Bar:** 3 mm steel, 116 mm tip to tip, underside 4.0 mm above the floor (`BAR_Z0`; 0.5 mm tyre squash plus a 3 deg
+  seam over the 58 mm reach needs 3.6 mm, `dynamics.floor_margin`). Two M3 countersunk bolts on a 13 mm PCD into the hub,
+  countersink 6.2 mm (M3 head 6.0 + 0.1). Rule 5f lock: a removable 3 mm pin through a 3 mm hole in the +X arm at
+  r = 20, seated in the tub floor (`lock_pin`, orange, tethered).
+- **Hub:** 7075, 1.0 mm washer gap above the bar (the sweep proxy touches it otherwise), 4.5 mm tall, bolts engage 4.5 mm.
+- **Weapon motor:** GR1507 shaft down, stator on the top panel, boss ring in the tub.
+- **Tub:** cone (TUB_R 50, 35 deg slope) with a rear pod 70.8 mm wide. Floor at z = 8.5 (2 mm floor), top panel at
+  z = 29.6 to 30.6 (TUB_TOP_Z = 30.6).
+- **Drive:** 2 x N10 1000 rpm inside the pod, 34 mm wheels on the outside; wheels behind the sweep.
+- **Power:** `lipo_2s_350` (36x17x11, 21.5 g, 350 mAh; the 180 mAh pack failed the 3 min fight). Strapped in the pod
+  (`retained: strap`). Switch in the cone interior with a snap cradle (its key hole is in the top panel at
+  SWITCH_XY); ESC velcro; RX on the floor (tape); XT30 in the pod rear with a snap holder.
+- **Skid:** `skid_foot` is a caster puck on the shaft end on the axis, kind `caster`, 0.5 mm above the floor and
+  0.5 mm under the bar. It is the front contact that `ground.pitch_rest` needs (the verifier passes without any
+  caster placed elsewhere). It is modelled as riding a bearing on the shaft end; no bearing part exists in the catalogue.
 
-## Unsure
-- The build123d calls were not executed. Several need checking in a session that is allowed to run code:
-  - the `Polygon(..., align=None)` call
-  - lofting faces through `Plane * Face`
-  - `RevoluteJoint.connect_to(angle=)`
-  - `Compound(children=)`
-- `robot.shapes.place` and `xform.pose` Euler order: `hw.placed` is used for the GR1507 with rot (0, 90, 0), which
-  is assumed to turn +X to -Z.
-- The format of the `describe()['top_holes']` and `['base_holes']` tuples is read from the code: (r, deg, d).
-  Their clash with the bar's M3 circle has not been checked.
-- Pockets for the battery, ESC, receiver and switch are not cut yet. `robot/cad/bay.py` should fit them. Their
-  `at` values in `spec.json` are null.
-- `spec.json` is hand-written and partial. There is no `robot/templates/scythe_classic.json` yet, because it has not been
-  confirmed that the template engine can express a horizontal under-bar.
-- The masses of the tub, panel, wires and screws are estimates. The energy figures use the thin-bar MOI and
-  0.8 x kV x V.
-- The size envelope is one setting: `params.RULES`. The default `aws2025` takes 150 mm from
-  `robot/profile.py`; `aws_v43_cube` is 101.6 mm. Switching it reloads the module (`params.use_rules`,
-  `variants.set_variants`, env `SCYTHE_CLASSIC_RULES` / `SCYTHE_CLASSIC_BATTERY`). I have not checked that the reload reaches every
-  module.
-- `BAR_L` = 116, track = 52, axis y = 15.5 and wheels at (+-29.25, -51.72) are hand-evaluated from the relations,
-  not computed by running them.
-- `CELL_HV_V` 4.35 is above `Profile.max_cell_v` 4.2. Confirm whether LiHV packs are allowed.
+## Not done / open
+- Inner tier: `dynamics.spinup_kick` (0.10 N m spin-up beats 0.05 N m tyre grip; see STRUGGLES.md for the ESC key
+  mismatch), `physics.runtime` (about 160 s against the 180 s fight: the pack that fits the pod does not carry it on the
+  check's peak model).
+- Full tier: the 35 blockers above. They need a shaft through the bar, two bearings, a revolute `joint` on the weapon
+  group, a driven pulley or motor link for each wheel, and a stator face on the motor. That changes the look and was
+  out of scope here.
+- Renders in `renders/` were regenerated from this spec (`--no-checks`).
+
+Struggle log: [STRUGGLES.md](STRUGGLES.md).

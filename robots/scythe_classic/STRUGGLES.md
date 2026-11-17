@@ -20,3 +20,11 @@ One line per time I was stuck, wrong, or spent more than two tries. Each: what I
 
 - **Coordinator stash of my uncommitted edits.** A `git stash` by the coordinator took my scythe_classic edits for about a minute. Later writes landed on top, and some edits were reverted (the caster came back, BAR_Z0 reverted, electronics heights reverted). I restored from `stash@{0}` and dropped it after committing. Committing after each step would have made this a no-op. This is the biggest process loss of the session.
 - **Commit trailer conflict.** The attribution reminder asked for a Haiku trailer; the user's instructions asked for the Opus trailer. I used the user's trailer, as the reminder says the user's instructions take precedence.
+
+## Coordinator requests (ground.pitch_rest, dynamics, bearing caster)
+
+- **Was the `ground.pitch_rest` message clear?** Partly. The fix line gives a height formula but assumes the caster is placeable; here every spot under the tub front is inside the bar sweep. The check also does not run when the stance is fine, so "add a caster" was not needed.
+- **Bearing caster on the axis (requested).** Done as a caster puck on the shaft end, 0.5 mm off the floor and under the bar. No bearing part exists in the catalogue, and the spec cannot express "bearing on a standoff", so the spin-free behaviour is an assertion, not a check.
+- **`dynamics.floor_margin`:** fixed by BAR_Z0 = 4.0 mm (3.6 mm needed).
+- **`dynamics.spinup_kick`:** not fixed. 0.10 N m spin-up at 30 A (the check's default because of the ESC key mismatch above) against 0.05 N m tyre grip. Even at the real 20 A, 0.067 N m still exceeds grip, so it needs more weight on the wheels or a wider track. Neither fits the 150 g / pod layout. A declared ESC current ramp would be the honest fix, but the check has no field for it.
+- **`dynamics.brake_dive`, `gyro_lift`, `invert_weapon`:** no blockers at the last inner run.

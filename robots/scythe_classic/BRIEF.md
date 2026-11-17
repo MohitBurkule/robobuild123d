@@ -1,8 +1,8 @@
 # Scythe - 150 g horizontal undercutter bar spinner (AWS 2025)
 
-> **UNTESTED: never built, run, rendered or verified.** No code in `src/` has been executed. Every number below
-> is hand-computed from the `src/scythe_classic/params.py` relations using research/cots/INDEX.md values. Treat all of
-> them as estimates.
+> **Status:** the spec is generated from `make_spec.py` and verified (see README.md "Status" and STRUGGLES.md). Inner
+> tier: 3 blockers left (spin-up kick, runtime). Full tier: 35 structural blockers left. Numbers below are the masters
+> (mass estimate 137 g; the verifier measures 125 g). The first-draft numbers in this file are kept where they still hold.
 
 ## Size rule: one setting
 - **Default (`RULES = "aws2025"`):** read from `robot/profile.py`. A 150 mm floor square
