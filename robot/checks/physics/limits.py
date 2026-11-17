@@ -7,7 +7,7 @@ DEFAULTS = {
     "min_bite_mm": 2.0,           # at closing speed below
     "closing_speed_ms": 2.0,
     "min_gyro_turn_rad_s": 6.0,   # ~1 rev/s yaw without wheel lift
-    "min_runtime_s": 180.0,       # 3 min fight
+    "min_runtime_s": 120.0,       # user 2026-11-17: weapon not at full speed all 3 min; 2 min of peak-model draw is enough
     "avg_current_share": 0.35,    # average draw / peak
     "esc_margin": 1.2,            # ESC continuous >= 1.2 x motor peak
     "min_drive_speed_ms": 1.5,
