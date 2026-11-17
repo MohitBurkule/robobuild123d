@@ -36,7 +36,17 @@ Real-world effects modelled
 - **Contacts**: 0.3 ms impact time constant with damping ratio 0.5 (some bounce), tyres mu 1.2, plastic/steel 0.5.
 - **Arena**: closed box with roof, steel floor with 0.4 mm seams every 300 mm.
 - Output JSON `electric`: battery V, charge left, each motor's temperature and whether it burnt out.
-- Not yet: blade/plate flex (needs FEM), tyre wear, wire/belt damage, radio dropouts, driver reaction delay.
+- **Blade flex**: weapon contacts are softer (`sim.weapon.blade_tc`, default 0.4 ms): a thin disc gives on impact.
+- **Hazards** (`hazards.py`, thresholds in `sim.hazards`):
+  - debris: a broken-off part collides with its OWN robot too once it is 5 mm clear of its seat, so it can wedge
+    into a wheel or the weapon; a commanded driven hinge stalled 0.3 s while touching debris logs a `jam`;
+  - tyre damage: an opponent's weapon hitting a tyre over 250 N cuts it; grip falls with damage, 0.2x when destroyed;
+  - power switch: a hit over 60 N landing within ~14 mm of the switch knocks it off: robot dead, all motors cut;
+  - wires: a hit over 200 N within 6 mm of a wire's route cuts it; power line = robot dead, motor lead = that side,
+    weapon lead = weapon, servo lead = no flipper;
+  - driver: 150 ms reaction delay with steering noise; brains steer on predicted positions (own yaw rate, target v).
+  - JSON `hazards`: dead (why), tyre damage, wires cut, debris live. Judge: a dead robot loses.
+- Not yet: plate bending (FEM), belt throw, radio dropouts, battery puncture/fire.
 
 Per-robot requirements (spec `sim` block; `robot verify --only fight` checks them)
 ```json

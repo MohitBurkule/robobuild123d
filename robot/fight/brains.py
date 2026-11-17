@@ -54,6 +54,12 @@ class Brain:
 
     def _steer(self, sim, target_xy, speed=1.0, reverse_ok=False):
         mp, mh, _ = sim.frame(self.me)
+        # a real driver with reaction delay T steers where things WILL be: own heading + yaw rate * T, target + its v * T
+        T = getattr(sim, "reaction_s", {}).get(self.me, 0.0)
+        mh = mh + sim.yaw_rate(self.me) * T
+        mp = mp + sim.vel_xy(self.me) * T
+        if np.allclose(target_xy, sim.frame(self.opp)[0]):
+            target_xy = np.asarray(target_xy) + sim.vel_xy(self.opp) * T
         d = np.asarray(target_xy) - mp
         want = math.atan2(d[1], d[0])
         err = wrap(want - mh)
@@ -110,6 +116,8 @@ class LifterBrain(Brain):
     def act(self, sim, t, dt):
         out = super().act(sim, t, dt)
         lf = sim.profiles[self.me].lifter
+        if lf is None:  # servo lead cut: no flipper any more
+            return out
         mp, mh, R = sim.frame(self.me)
         cmd = lf["down_rad"]
         inverted = R[2, 2] < -0.3

@@ -67,6 +67,10 @@ def fight(spec_a, spec_b, seconds=20.0, out=None, fps=30, size=(640, 480), times
     sim.add_fighter(mb, pb, Placement(nb, (0.3, 0.05), 180 + jit[1]))
     sim.compile()
     ba, bb = brains.make(pa.strategy, na, nb), brains.make(pb.strategy, nb, na)
+    from .hazards import Hazards
+
+    hz = Hazards(sim, {na: sa, nb: sb}, seed=seed)
+    hz.setup_collision_bits()
     writer = renderer = None
     if out:
         os.environ.setdefault("MUJOCO_GL", "egl")
@@ -89,7 +93,9 @@ def fight(spec_a, spec_b, seconds=20.0, out=None, fps=30, size=(640, 480), times
         t = k * timestep
         if k % n_ctrl == 0:
             for b in (ba, bb):
-                cmd = b.act(sim, t, CONTROL_DT)
+                cmd = hz.delay(b.me, t, b.act(sim, t, CONTROL_DT))  # driver reaction delay + steering noise
+                if cmd is None or hz.dead[b.me]:
+                    continue
                 sim.drive(b.me, *cmd["drive"])
                 if "weapon" in cmd:
                     sim.spin_weapon(b.me, cmd["weapon"])
@@ -108,6 +114,7 @@ def fight(spec_a, spec_b, seconds=20.0, out=None, fps=30, size=(640, 480), times
                     sim.events.append((t, "hit", n, "weapon", round(e, 2)))
                 prev_w[n] = w
         if k % 5 == 0:
+            hz.tick(t, 5 * timestep)
             sim.step_plant(5 * timestep)
         sim.step_damage()
         if writer is not None and k % n_frame == 0:
@@ -122,6 +129,9 @@ def fight(spec_a, spec_b, seconds=20.0, out=None, fps=30, size=(640, 480), times
            "welds": [{"robot": w.robot, "part": w.part, "break_N": round(w.break_n, 1), "peak_N": round(w.peak_n, 1),
                       "broken_at": w.broken_at} for w in sim.welds],
            "defaults": {na: pa.defaults, nb: pb.defaults},
+           "hazards": {"dead": hz.dead, "tyres": {f"{r}/{g}": round(v, 2) for (r, g), v in hz.tyre.items()},
+                       "wires_cut": {r: sorted(v) for r, v in hz.cut.items()},
+                       "debris_live": sorted(f"{r}/{p}" for r, p in hz.debris_live)},
            "electric": {n: {"battery_v": round(pl["battery"].v, 2), "soc": round(pl["battery"].soc, 3),
                             "motors": {g: {"temp_c": round(m.temp, 1), "dead": m.dead} for g, m in pl["motors"].items()}}
                         for n, pl in sim.plant.items()}}
@@ -134,6 +144,9 @@ def judge(res):
     """Simple judging: a robot stuck upside down loses; else fewer parts lost and more damage dealt wins."""
     a, b = res["robots"]
     oa, ob = res["outcome"][a], res["outcome"][b]
+    dz = res.get("hazards", {}).get("dead", {})
+    if bool(dz.get(a)) != bool(dz.get(b)):  # switch knocked off / power wire cut: robot is dead
+        return b if dz.get(a) else a
     if oa["out_of_arena"] != ob["out_of_arena"]:  # thrown out of the arena: immediate loss (AWS rules)
         return b if oa["out_of_arena"] else a
     if oa["stuck_inverted"] != ob["stuck_inverted"]:
