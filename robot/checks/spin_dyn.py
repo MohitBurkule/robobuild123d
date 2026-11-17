@@ -131,9 +131,15 @@ def spinup_kick(ctx, floor, com):
                 Iw = geom.axial_inertia(wb.geom, wb.M, origin, axis) * dens * 1e-12
                 rpm = ctx.metrics.get("weapon_rpm")
                 if rpm:
-                    yaw = math.degrees(Iw * rpm * 2 * math.pi / 60 / max(Iz, 1e-9))  # momentum handed to the body
-                    how = f"up to ~{yaw:.0f} deg of free yaw (less with tyre drag)"
-                    sev = BLOCKER if yaw > 180 else WARNING
+                    Lw = Iw * rpm * 2 * math.pi / 60  # weapon angular momentum at full speed
+                    t = Lw / tau  # spin-up time at full torque
+                    # during spin-up the body gets (tau - grip); after it the grip brakes the body to a stop
+                    a1 = (tau - resist) / max(Iz, 1e-9)
+                    w1 = a1 * t
+                    yaw = math.degrees(0.5 * a1 * t * t + w1 * w1 / (2 * resist / max(Iz, 1e-9)))
+                    how = (f"about {yaw:.0f} deg over a {t:.2f} s full-throttle spin-up (an ESC ramp or current limit "
+                           "below the grip torque removes it)")
+                    sev = WARNING  # a driving fix (ramp), not a design blocker
                 else:
                     how, sev = "by an amount not judged (weapon rpm unknown)", WARNING
                 out.append(fail("dynamics.spinup_kick", G, sev, "Robot spins when the weapon spins up",
