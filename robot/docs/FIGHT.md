@@ -23,6 +23,21 @@ What it does
 - **Judging**: out of the arena loses, then stuck upside-down loses, then parts knocked off + weapon energy delivered.
 - Output: JSON with events (hit J, fire, break N), peak tilt/lift per robot, weld peaks, which spec fields were guessed.
 
+Real-world effects modelled
+- **Gyroscope**: full rigid-body dynamics, so a spinning disc resists turning and tips the robot (test: a turning
+  vertical spinner tips ~2x further with the disc spinning; Revron 15 deg -> 28 deg).
+- **Motors** (`physics.py`): DC curve per driven hinge (torque falls linearly to zero at no-load speed), ESC current limit,
+  brain commands are throttle like an RC stick. Weapon throttle = declared rpm on a full pack, so speed sags with the
+  battery and drops on each hit, then re-spins at the motor's real torque.
+- **Battery**: LiPo OCV vs charge, internal resistance sag under current, charge used (mAh).
+- **Heat**: I^2R into a thermal mass with copper resistance rise; above the cut-out temperature the motor dies.
+- **Weapon wobble**: centre-of-mass offset (imbalance), weapon on a carrier with radial and tilt springs (bearings +
+  uprights flex). Same model in `wobble.py` for the `wobble` check (spin-up, one rim hit, real-mesh swept clearance).
+- **Contacts**: 0.3 ms impact time constant with damping ratio 0.5 (some bounce), tyres mu 1.2, plastic/steel 0.5.
+- **Arena**: closed box with roof, steel floor with 0.4 mm seams every 300 mm.
+- Output JSON `electric`: battery V, charge left, each motor's temperature and whether it burnt out.
+- Not yet: blade/plate flex (needs FEM), tyre wear, wire/belt damage, radio dropouts, driver reaction delay.
+
 Per-robot requirements (spec `sim` block; `robot verify --only fight` checks them)
 ```json
 "sim": {
@@ -32,12 +47,22 @@ Per-robot requirements (spec `sim` block; `robot verify --only fight` checks the
   "weapon": {"rpm": 15000, "torque_Nm": 0.12, "spin": 1},          // spinners
   "lifter": {"group": "flipper", "up_rad": 1.2, "down_rad": 0, "torque_Nm": 0.25, "lock": ["horn"]},  // lifters
   "danger": [{"deg": 0, "half_deg": 60, "reach_mm": 75}],          // where opponents must not go (0 = forward)
-  "breakable": {"top_panel": 880}                                  // optional override of fastener-derived break N
+  "breakable": {"top_panel": 880},                                 // optional override of fastener-derived break N
+  "battery": {"cells": 2, "mAh": 180, "r_int_ohm": 0.08},
+  // weapon extras: "motor": {"kv": 3800, "r_ohm": 0.12, "i_max_a": 30}, "imbalance_mm": 0.05, "mount_k_Npm": 2e5,
+  //   "tilt_k_Nm": 20, "play_mm": 0.02, "hit_N": 1500
+  // drive extras: "motor": {"no_load_rad_s": 250, "stall_Nm": 0.06, "stall_a": 1.6}
 }
 ```
 Check group `fight` (inner tier): no block = warning (everything guessed); block present but wrong (missing weapon rpm,
 lifter group that no part rotates with, unknown breakable id, non-positive break force) = blocker; a weld weaker than
 its part's own weight at 40 g = blocker; lists every break force.
+
+Check group `wobble` (full tier, spinners): MuJoCo spin-up with imbalance + mount flex, one rim hit, then the real weapon
+meshes (every part, full detail) swept through a turn at the peak deflection and tilt; any static part touched is a
+blocker (a warning while mount stiffness / hit force are guessed). Spin frequency within 15 % of the mount's natural
+frequency = resonance warning. Revron today (guessed values): 0.09 mm steady wobble, 3.4 mm / 13.6 deg after a 1500 N hit,
+the weapon then touches mount_l and the tub.
 
 Calibration (OpenRadioss, `robot/fight/radioss.py`, `tools/openradioss/`): explicit FEM of a tooth hitting a clamped
 printed plate, swept over material/thickness/speed, written to `robot/fight/data/impact_table.json` for the weld layer.
