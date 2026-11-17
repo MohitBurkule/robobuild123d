@@ -182,6 +182,81 @@ def _occ(bodies, X, Y, Z):
     return G
 
 
+def _largest_rect(M):
+    """(i0, i1, j0, j1) inclusive of the largest all-True axis-aligned rectangle in a 2D bool array (histogram method)."""
+    n, m = M.shape
+    h = np.zeros(m, int)
+    best = (0, None)
+    for i in range(n):
+        h = np.where(M[i], h + 1, 0)
+        st = []
+        for j in range(m + 1):
+            cur = h[j] if j < m else 0
+            start = j
+            while st and st[-1][1] >= cur:
+                s0, hh = st.pop()
+                area = hh * (j - s0)
+                if area > best[0]:
+                    best = (area, (i - hh + 1, i, s0, j - 1))
+                start = s0
+            st.append((start, cur))
+    return best[1]
+
+
+def _exact_ok(rb, sh, obst, r):
+    from . import measure
+    from .checks.interference import allowed_depth
+    for o in obst:
+        if measure.aabb_overlap(rb.aabb + sh, o.aabb):
+            al = allowed_depth(r, rb, o)
+            ov = measure.overlap(rb, o, sh, cap=al)
+            if ov is not None and ov.depth > al:
+                return False
+    return True
+
+
+def _ranges(free, X, Y, plo, o0, zc, pitch, deg, rb, obst, r):
+    """Safe x / y intervals for the part origin at one yaw, from the free-shift map eroded by one cell (margin for the
+    voxel approximation); corners + centre of each interval re-checked exactly, shrunk until they pass."""
+    from scipy import ndimage
+
+    F = ndimage.binary_erosion(free, iterations=1)
+    to_x = lambda i: X[i] - pitch / 2 - plo[0] + o0[0]  # noqa: E731
+    to_y = lambda j: Y[j] - pitch / 2 - plo[1] + o0[1]  # noqa: E731
+    sh_of = lambda x, y: np.array([x, y, zc]) - rb.M[:3, 3]  # noqa: E731
+    out = []
+    ic = int(round((plo[0] + pitch / 2 - X[0]) / pitch))
+    jc = int(round((plo[1] + pitch / 2 - Y[0]) / pitch))
+    if 0 <= ic < F.shape[0] and 0 <= jc < F.shape[1] and F[ic, jc]:
+        row, col = F[:, jc], F[ic, :]
+        a = ic
+        while a > 0 and row[a - 1]:
+            a -= 1
+        b = ic
+        while b < len(row) - 1 and row[b + 1]:
+            b += 1
+        c = jc
+        while c > 0 and col[c - 1]:
+            c -= 1
+        d = jc
+        while d < len(col) - 1 and col[d + 1]:
+            d += 1
+        out.append(f"  yaw +{deg}, y kept {o0[1]:.1f}: x in [{to_x(a):.1f}, {to_x(b):.1f}];  x kept {o0[0]:.1f}: "
+                   f"y in [{to_y(c):.1f}, {to_y(d):.1f}]")
+    rect = _largest_rect(F)
+    for _ in range(6):
+        if rect is None:
+            break
+        i0, i1, j0, j1 = rect
+        pts = [(i0, j0), (i0, j1), (i1, j0), (i1, j1), ((i0 + i1) // 2, (j0 + j1) // 2)]
+        if all(_exact_ok(rb, sh_of(to_x(i), to_y(j)), obst, r) for i, j in pts):
+            out.append(f"  yaw +{deg} box: x in [{to_x(i0):.1f}, {to_x(i1):.1f}] AND y in [{to_y(j0):.1f}, {to_y(j1):.1f}] "
+                       f"(any combination)")
+            break
+        rect = (i0 + 1, i1 - 1, j0 + 1, j1 - 1) if i1 - i0 > 2 and j1 - j0 > 2 else None
+    return out
+
+
 def place(s, r, w, pid, step=PLACE_STEP, rots=PLACE_ROTS, z=None, top=PLACE_TOP, region=None, pitch=0.5):
     """Free spots for one part: every x,y shift (its z kept) x extra yaw about its own origin. Collision-free shifts for
     ALL positions at once by voxel correlation (FFT), then the best few re-checked with the verifier's own exact overlap
@@ -205,7 +280,7 @@ def place(s, r, w, pid, step=PLACE_STEP, rots=PLACE_ROTS, z=None, top=PLACE_TOP,
         region = (lo[0], hi[0], lo[1], hi[1])
     o0 = b.M[:3, 3].copy()
     zc = o0[2] if z is None else float(z)
-    res = []
+    res, rng_lines = [], []
     for deg in rots:
         M = b.M.copy()
         M[:3, :3] = _rot_z(deg)[:3, :3] @ b.M[:3, :3]
@@ -229,6 +304,10 @@ def place(s, r, w, pid, step=PLACE_STEP, rots=PLACE_ROTS, z=None, top=PLACE_TOP,
         if not free.any():
             continue
         clear = ndimage.distance_transform_edt(free) * pitch
+        try:
+            rng_lines += _ranges(free, X, Y, plo, o0, zc, pitch, deg, rb, obst, r)
+        except Exception as e:  # noqa: BLE001
+            rng_lines.append(f"  yaw +{deg}: ranges not measured ({e})")
         # shift index (i, j): part box corner at X[i]-pitch/2, Y[j]-pitch/2 -> origin position
         ii, jj = np.nonzero(free)
         ox = X[ii] - pitch / 2 - plo[0] + o0[0]
@@ -268,7 +347,9 @@ def place(s, r, w, pid, step=PLACE_STEP, rots=PLACE_ROTS, z=None, top=PLACE_TOP,
         return (f"`{pid}`: no free spot at z {zc:.2f} with yaw {list(rots)} inside x {region[0]:.1f}..{region[1]:.1f} "
                 f"y {region[2]:.1f}..{region[3]:.1f}. Something else must move (try `probe --place` on it), or change z / the part.")
     return "\n".join([f"`{pid}` free spots (yaw added to its current rot; spec `at` = origin; children "
-                      f"{sorted(kids - {pid}) or 'none'} move with it; exact-checked like the verifier):"] + lines)
+                      f"{sorted(kids - {pid}) or 'none'} move with it; exact-checked like the verifier):"] + lines
+                     + ([f"`{pid}` SAFE RANGES (any value inside is clear; assumes every other part stays put; "
+                         "re-run after moving another part):"] + rng_lines if rng_lines else []))
 
 
 def overview(s, r, w):
