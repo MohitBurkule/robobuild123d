@@ -192,13 +192,12 @@ connections += [
     {"a": "hinge_pin", "b": "tub", "method": "press_fit",
      "reason": "the M2 hinge pin is pressed into the tub's two outer knuckles (0.1 mm interference)",
      "interference_mm": 0.1, "mechanical_key": True},
-    {"a": "hinge_block", "b": "hinge_pin", "method": "none",
+    {"a": "hinge_block", "b": "hinge_pin", "method": "shaft",
      "reason": "the block's centre knuckle (r1.3 bore) turns on the pin with 0.3 mm running clearance; the flipper "
                "joint locates it, the pin carries no torque"},
-    {"a": "flipper", "b": "tub", "method": "none",
-     "reason": "the plate is journalled on the M2 hinge pin that is pressed into the tub's outer knuckles "
-               "(hinge_pin->tub press_fit above); the plate's rear edge is tangent to the knuckle faces, no "
-               "direct fastener between plate and tub"},
+    {"a": "flipper", "b": "hinge_pin", "method": "shaft",
+     "reason": "the plate's hinge bores ride the same M2 pin (pressed into the tub's outer knuckles); the plate's "
+               "rear edge is tangent to the knuckle faces, no direct fastener between plate and tub"},
     {"a": "hinge_block", "b": "flipper", "method": "interlock", "mechanical_key": True,
      "reason": "the plate's root seats on the block's top face and the two M2x8 screws (flipper->insert "
                "connections below) clamp it there, so bending bears on plastic"},
@@ -264,7 +263,7 @@ SWEEP_WAIVER = ("full-revolution sweep artifact: the flipper/horn joints are ser
                 "declared ranges (hard stops at both ends); no pose within those ranges reaches this pair")
 for other in ("tub", "lid_r", "lid_l", "wheel_fl", "motor_fl", "wheel_fr", "motor_fr",
               "servo", "esc", "switch", "battery", "horn", "drive_pin",
-              "insert_lid_l1", "insert_lid_r1", "bolt_lid_l1", "bolt_lid_r1"):
+              "insert_lid_l1", "insert_lid_r1", "bolt_lid_l1", "bolt_lid_r1", "hinge_pin"):
     allow_overlap.append({"a": "flipper", "b": other, "max_depth_mm": 40.0, "reason": SWEEP_WAIVER})
 for other in ("tub", "horn", "drive_pin", "servo"):
     allow_overlap.append({"a": "hinge_block", "b": other, "max_depth_mm": 40.0, "reason": SWEEP_WAIVER})

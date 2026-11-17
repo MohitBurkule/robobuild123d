@@ -1754,14 +1754,14 @@
   {
    "a": "hinge_block",
    "b": "hinge_pin",
-   "method": "none",
+   "method": "shaft",
    "reason": "the block's centre knuckle (r1.3 bore) turns on the pin with 0.3 mm running clearance; the flipper joint locates it, the pin carries no torque"
   },
   {
    "a": "flipper",
-   "b": "tub",
-   "method": "none",
-   "reason": "the plate is journalled on the M2 hinge pin that is pressed into the tub's outer knuckles (hinge_pin->tub press_fit above); the plate's rear edge is tangent to the knuckle faces, no direct fastener between plate and tub"
+   "b": "hinge_pin",
+   "method": "shaft",
+   "reason": "the plate's hinge bores ride the same M2 pin (pressed into the tub's outer knuckles); the plate's rear edge is tangent to the knuckle faces, no direct fastener between plate and tub"
   },
   {
    "a": "hinge_block",
@@ -2063,6 +2063,12 @@
   {
    "a": "flipper",
    "b": "bolt_lid_r1",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "flipper",
+   "b": "hinge_pin",
    "max_depth_mm": 40.0,
    "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
   },

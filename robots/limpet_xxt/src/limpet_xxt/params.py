@@ -250,6 +250,7 @@ SEAM_DZ = 0.9                                               # seam-edge filter: 
 SEAM_DZ_TOP = 0.1                                           # seam-edge filter: z window above the seat top rim
 KNUCKLE_RIM_FILLET_R = 0.6                                  # knuckle OUTER rim fillet (never the bore rim)
 RIM_TOL = 0.05                                              # edge-plane match tolerance for rim filters
+SELECT_TOL = 0.1                                            # edge-selector box slack around a feature's nominal extent
 BORE_GUARD = 0.2                                            # rim filter keeps only edges this far outside the bore radius
 KNUCKLE_BORE_R = HINGE_PIN_D / 2 + 0.3                       # block knuckle bore (running fit on the pin)
 PIN_TUB_BORE_R = HINGE_PIN_D / 2 - 0.15                      # tub knuckle bore (press fit on the pin)

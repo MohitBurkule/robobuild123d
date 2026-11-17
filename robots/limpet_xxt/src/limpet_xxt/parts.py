@@ -229,15 +229,15 @@ def tub():
     # fillet terminates transversally and the mesh stays closed.
     def _shell(p):
         return [e for e in p.edges()
-                if (TUB_XC - TUB_L / 2 + WALL - 0.1 <= e.center().X <= TUB_XC + TUB_L / 2 - WALL + 0.1
-                    and abs(e.center().Y) <= TUB_W / 2 - WALL + 0.1
-                    and TUB_Z0 + WALL - 0.1 <= e.center().Z <= TUB_Z1 + 0.1)
+                if (TUB_XC - TUB_L / 2 + WALL - SELECT_TOL <= e.center().X <= TUB_XC + TUB_L / 2 - WALL + SELECT_TOL
+                    and abs(e.center().Y) <= TUB_W / 2 - WALL + SELECT_TOL
+                    and TUB_Z0 + WALL - SELECT_TOL <= e.center().Z <= TUB_Z1 + SELECT_TOL)
                 ]
     def _notch(p):
         return [e for e in p.edges()
-                if RELIEF_X0 - 0.1 <= e.center().X <= RELIEF_X1 + 0.1
-                and abs(e.center().Y) <= RELIEF_HALF_Y + 0.1
-                and RELIEF_Z0 - 0.1 <= e.center().Z <= TUB_Z1 + 0.1]
+                if RELIEF_X0 - SELECT_TOL <= e.center().X <= RELIEF_X1 + SELECT_TOL
+                and abs(e.center().Y) <= RELIEF_HALF_Y + SELECT_TOL
+                and RELIEF_Z0 - SELECT_TOL <= e.center().Z <= TUB_Z1 + SELECT_TOL]
     body = _fillet_edges(body, 1.0, _notch)
     rim_centers = [(HINGE_X, HINGE_Z)] * 2 + [(x, z) for x in STANDOFF_XS for z in PLATE_SCREWS_Z]
     body = _fillet_near(body, 1.0, (TUB_W / 2 - WALL, TUB_W / 2), rim_centers)
