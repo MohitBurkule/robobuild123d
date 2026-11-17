@@ -114,7 +114,9 @@ def _power(ctx, r, m, prof):
         lim = limit(prof, "min_runtime_s")
         out.append(fail("physics.runtime", G, BLOCKER, "Battery dies before the fight ends",
                         f"~{t:.0f} s at ~{avg:.1f} A average from {mah} mAh; a fight is {lim:.0f} s.")
-                   .fix("Bigger pack or less current.") if t < lim else ok("physics.runtime", G, "Runtime ok", f"~{t:.0f} s."))
+                   .fix(f"Need >= {float(mah) * lim / max(t, 1e-6):.0f} mAh at this current (find one: `robot catalog --kind "
+                        f"battery --fits LxWxH`), or cut the average to <= {avg * t / lim:.1f} A (gearing, smaller weapon "
+                        "motor, ESC current limit).") if t < lim else ok("physics.runtime", G, "Runtime ok", f"~{t:.0f} s."))
         if c:
             cmax = F.battery_max_a(float(mah), float(c))
             out.append(fail("physics.c_rating", G, WARNING, "Peak exceeds battery C rating",

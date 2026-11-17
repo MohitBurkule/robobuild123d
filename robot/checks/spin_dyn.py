@@ -91,7 +91,7 @@ def _motor_torque_nm(ctx, wpart):
     amps = DEFAULT_PHASE_A
     for rp in r.parts:
         if rp.part.kind == "esc" and rp.cat is not None:
-            amps = float(rp.cat.props.get("cont_a") or rp.cat.props.get("current_a") or amps)
+            amps = float(rp.cat.props.get("cont_current_a") or rp.cat.props.get("cont_a") or rp.cat.props.get("current_a") or amps)
             break
     return 60.0 / (2 * math.pi * kv) * amps, amps
 
