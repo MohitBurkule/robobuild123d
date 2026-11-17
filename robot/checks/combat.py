@@ -208,7 +208,8 @@ def r027(F):
     bad = [d for d in fs if d["material"] not in hard]
     if any(d["material"] is None for d in fs):
         return None, "A skirt has no material.", "metal or laminate lip", "?"
-    return (not bad, f"Lip material: {', '.join(f'`{d['id']}` {d['material']}' for d in fs)}; a printed lip chips and rounds over.",
+    lips = ", ".join(f"`{d['id']}` {d['material']}" for d in fs)
+    return (not bad, f"Lip material: {lips}; a printed lip chips and rounds over.",
             "metal or laminate lip", ", ".join(d["material"] for d in fs))
 
 
