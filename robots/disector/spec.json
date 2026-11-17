@@ -1873,12 +1873,6 @@
       "reason": "Titanium saw disc bolted directly to motor bell"
     },
     {
-      "a": "locking_bar",
-      "b": "arm",
-      "method": "pin",
-      "reason": "Removable safety pin locks into arm and blocks saw disc rotation during pit handling"
-    },
-    {
       "a": "motor_l",
       "b": "tub",
       "method": "snap",

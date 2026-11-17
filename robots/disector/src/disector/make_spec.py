@@ -30,7 +30,6 @@ def build(part: str):
         "arm": weapon.build_arm,
         "weapon_shaft": weapon.build_weapon_shaft,
         "disc": weapon.build_disc,
-        "locking_bar": weapon.build_locking_bar,
     }
     if part not in builders:
         raise ValueError(f"Unknown part: {part}")
@@ -410,7 +409,6 @@ def make_spec() -> dict:
         {"a": "weapon_motor_bell", "b": "weapon_motor_stator", "method": "shaft", "reason": "Motor bell spins on stator shaft bearings"},
         {"a": "weapon_shaft", "b": "weapon_motor_bell", "method": "press_fit", "interference_mm": 0.05, "mechanical_key": True, "reason": "GR1507 5 mm steel shaft pressed into motor bell"},
         {"a": "disc", "b": "weapon_motor_bell", "method": "screw", "reason": "Titanium saw disc bolted directly to motor bell"},
-        {"a": "locking_bar", "b": "arm", "method": "pin", "reason": "Removable safety pin locks into arm and blocks saw disc rotation during pit handling"},
         {"a": "motor_l", "b": "tub", "method": "snap", "reason": "Left N10 gearmotor captured in pocket under top panel"},
         {"a": "motor_r", "b": "tub", "method": "snap", "reason": "Right N10 gearmotor captured in pocket under top panel"},
         {"a": "wheel_l", "b": "motor_l", "method": "press_fit", "interference_mm": 0.1, "reason": "Left wheel press-fit onto 3 mm D-shaft"},
