@@ -68,7 +68,6 @@ def half_shape(plan, half: str) -> dict:
     for p in plan.pockets:
         if p.housing > 0 and half in p.halves:
             x0_, x1_, y0_, y1_ = p.outer()
-            x0_, x1_, y0_, y1_ = x0_ - POCKET_GROW, x1_ + POCKET_GROW, y0_ - POCKET_GROW, y1_ + POCKET_GROW
             hz0, hz1 = z0, z1
             if half == "top" and p.z1 + p.housing < z1 - f.floor - 1.0:  # short part: a lid over it, no solid block to the roof
                 hz1 = p.z1 + p.housing
@@ -89,44 +88,24 @@ def half_shape(plan, half: str) -> dict:
     body = sh.S(sh.U(_outer_body(f, z0, z1, half == "bottom"), *housings, *plan.adds[half]), sh.S(inner, *housings, *plan.adds[half]))
     if R > 0:
         body = {"type": "round_inside", "radius": R, "axis": "z", "shape": body}
-    oz = f.split
-    up = half == "bottom"
-    body = sh.S(body, *(_rounded_cut(c, R, POCKET_GROW, oz, up) for c in cavities),
-                *(_rounded_cut(c, R, 0.0, oz, up) if c.get("_round") else c for c in plan.cuts[half]))
+    body = sh.S(body, *cavities, *plan.cuts[half])
     return sh.S(body, *plan.late_cuts[half])
 
 
-POCKET_GROW = INNER_R  # a part sits on the pocket floor, so the floor-wall round (R) would bite its bottom edge
-                       # unless the walls stand R further out; the housing wall grows by the same R
-
-
-def _rounded_cut(c, R, grow=0.0, open_z=None, up=True):
-    """A cut (box or union of boxes) with every edge of each box rounded R (offset of a box shrunk by R: a robust B-rep
-    op, unlike filleting a boolean result), so the part's inside corners round the cut are R arcs by construction.
-    `grow`: extra size on every side (pockets). `open_z`: the half's open (split) face; a box reaching it is extended R
-    past it so the rounding never leaves a lip that blocks the part's way out."""
+def _rounded_cut(c, R):
+    """Every box of a cut with all its edges filleted R: the part's inside corners round the pocket / channel are R
+    arcs by construction. A square component in a pocket with gap g keeps g*sqrt2 - R*(sqrt2 - 1) clear at its edges
+    (0.4 gap, R 1.05: 0.13 mm), so nothing pinches."""
     if R <= 0:
         return c
     boxes = c["items"] if c.get("type") == "union" else [c]
     out = []
     for b in boxes:
-        if not (b.get("type") == "place" and b["shape"].get("type") == "box" and not any(b["rot"])):
-            out.append(b)
-            continue
-        (sx, sy, sz), (x, y, z) = b["shape"]["size"], b["at"]
-        z0, z1 = z - sz / 2, z + sz / 2  # floors stay put: the part keeps its flat contact (tape / velcro)
-        if open_z is not None:
-            if up and z1 >= open_z - 0.01:
-                z1 = max(z1, open_z) + R + 0.5
-            if not up and z0 <= open_z + 0.01:
-                z0 = min(z0, open_z) - R - 0.5
-        sx, sy = sx + 2 * grow, sy + 2 * grow
-        r = min(R, sx / 2 - 0.2, sy / 2 - 0.2, (z1 - z0) / 2 - 0.2)
-        if r < 0.3:
-            out.append(b)
-            continue
-        core = {"type": "box", "size": [sh.r(sx - 2 * r), sh.r(sy - 2 * r), sh.r(z1 - z0 - 2 * r)]}
-        out.append(sh.place({"type": "offset", "d": sh.r(r), "shape": core}, (x, y, (z0 + z1) / 2)))
+        if b.get("type") == "place" and b["shape"].get("type") == "box" and not any(b["rot"]):
+            r = min(R, min(b["shape"]["size"]) / 2 - 0.05)
+            if r >= 0.3:
+                b = {"type": "place", "shape": sh.fillet(b["shape"], r), "at": b["at"], "rot": b["rot"]}
+        out.append(b)
     return sh.U(*out)
 
 
