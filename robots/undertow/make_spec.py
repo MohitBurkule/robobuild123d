@@ -116,7 +116,8 @@ for i, x in enumerate(fork_xs):
                   "shape": model(f"fork_{i}"), "at": [0.0, 0.0, 0.0], "rot": [0.0, 0.0, 0.0],
                   "rotates_with": "forks",
                   "joint": {"kind": "revolute", "axis": [1.0, 0.0, 0.0],
-                            "pivot": [round(x, 4), P.PIN_Y, P.PIN_Z], "min": -90.0, "max": 90.0, "default": 0.0},
+                            "pivot": [round(x, 4), P.PIN_Y, P.PIN_Z], "min": P.FORK_SWING_MIN_DEG,
+                            "max": P.FORK_SWING_MAX_DEG, "default": 0.0},
                   "label": "0.8 mm spring-steel fork tine on the M3 pivot pin, free to swing (self-levelling)"})
 
 pin_len = fc.parse(P.PIN_SCREW).length
@@ -143,18 +144,18 @@ parts += [
      "label": "2S 180 mAh pack across the middle band, pigtail into the bay"},
     {"id": "esc", "kind": "esc", "catalog": P.ESC_ID,
      "at": [round(v, 4) for v in ESC_AT3], "rot": [round(v, 4) for v in P.ESC_ROT], "rotates_with": "fixed",
-     "retained": "adhesive",
-     "retained_reason": "bonded on a foam pad to the base plate; the cavity walls and top plate capture it",
+     "retained": "clamp",
+     "retained_reason": "sits on a printed shelf that is one solid with the tub (top face at the ESC bottom); capture walls on +y/-y rise past its top and the shelf plate holds it down - the ESC case takes no adhesive and has no mounting holes",
      "label": "dual brushed ESC left of centre, ports fanned out (2 channels, 4 motors as 2 parallel pairs)"},
     {"id": "rx", "kind": "receiver", "catalog": P.RX_ID,
      "at": [round(v, 4) for v in RX_AT3], "rot": [round(v, 4) for v in P.RX_ROT], "rotates_with": "fixed",
      "retained": "adhesive",
-     "retained_reason": "taped flat to the base plate at the left, antenna out along the wall away from the motors",
+     "retained_reason": "taped flat to the base plate south of the esc, pins toward the esc, antenna out along the wall away from the motors",
      "label": "decased FS-iA6 receiver flat at the left of the bay"},
     {"id": "switch", "kind": "switch", "catalog": P.SWITCH_ID,
      "at": [round(v, 4) for v in SW_AT3], "rot": [round(v, 4) for v in P.SWITCH_ROT], "rotates_with": "fixed",
-     "retained": "tape",
-     "retained_reason": "taped to the base plate; the actuator is tool-free through the access hole in both plates",
+     "retained": "clamp",
+     "retained_reason": "the tub captures the body in a printed pocket: walls on +y and +x rise past its top, the -y inner rail and the motor rib close -y/-x; the actuator is tool-free through the access hole in both plates",
      "marked": True, "tool_free": True,
      "label": "FingerTech mini switch, actuator up, reachable through the access hole in both plates"},
     {"id": "nut_front", "kind": "nut", "catalog": "nut_m3_thin",
@@ -194,26 +195,26 @@ for j, sx in enumerate((1, -1)):
 wires = [
     {"id": "w_bat_sw", "from": f"battery.{BAT_PORT}", "to": "switch.in",
      "awg": 24, "kind": "power", "slack_mm": 8.0, "via": _v(
-         P_BAT, (P_BAT[0], P_BAT[1], HIGH_Z), (P_BAT[0], 6.0, HIGH_Z), (-6.0, 6.0, HIGH_Z),
-         (-6.0, -24.0, HIGH_Z), (5.5, -24.0, HIGH_Z), (5.5, -24.0, P_SW_IN[2]), P_SW_IN)},
+         P_BAT, (P_BAT[0], P_BAT[1], HIGH_Z), (P_BAT[0], -12.0, HIGH_Z), (4.5, -12.0, HIGH_Z),
+         (4.5, P_SW_IN[1], P_SW_IN[2]), P_SW_IN)},
     {"id": "w_sw_esc", "from": "switch.out", "to": "esc.bat", "awg": 24, "kind": "power", "slack_mm": 8.0, "via": _v(
-         P_SW_OUT, (5.5, -22.0, P_SW_OUT[2]), (5.5, -22.0, HIGH_Z), (26.0, -22.0, HIGH_Z),
-         (26.0, -8.0, HIGH_Z), (26.0, -8.0, P_ESC_BAT[2]), P_ESC_BAT)},
+         P_SW_OUT, (9.5, P_SW_OUT[1], P_SW_OUT[2]), (9.5, P_SW_OUT[1], HIGH_Z), (26.0, P_SW_OUT[1], HIGH_Z),
+         (26.0, -8.0, HIGH_Z), (26.0, 6.0, P_ESC_BAT[2]), P_ESC_BAT)},
     {"id": "w_esc_rx", "from": "esc.rx", "to": "rx.esc", "awg": 26, "kind": "signal", "slack_mm": 8.0, "via": _v(
-         P_ESC_RX, (12.0, -5.0, P_ESC_RX[2]), (12.0, -5.0, HIGH_Z),
-         (P_RX_ESC[0], P_RX_ESC[1], HIGH_Z), (P_RX_ESC[0] + 0.3, P_RX_ESC[1], HIGH_Z),
+         P_ESC_RX, (20.5, -6.0, P_ESC_RX[2]), (20.5, -6.0, HIGH_Z),
+         (P_RX_ESC[0] + 0.3, P_RX_ESC[1], HIGH_Z),
          (P_RX_ESC[0] + 0.3, P_RX_ESC[1], P_RX_ESC[2]), P_RX_ESC)},
     {"id": "w_m1_fr", "from": "esc.m1", "to": "motor_fr.terminals", "awg": 26, "kind": "power", "slack_mm": 8.0, "via": _v(
-         P_ESC_M1, (14.0, 21.0, P_ESC_M1[2]), (14.0, 21.0, HIGH_Z), (14.0, 12.0, HIGH_Z),
-         (4.0, 12.0, HIGH_Z), (4.0, TERM["fr"][1], HIGH_Z), (4.0, TERM["fr"][1], TERM["fr"][2]), TERM["fr"])},
+         P_ESC_M1, (8.2, 12.5, P_ESC_M1[2]), (8.2, 12.5, HIGH_Z), (4.0, 12.5, HIGH_Z),
+         (4.0, TERM["fr"][1], HIGH_Z), (4.0, TERM["fr"][1], TERM["fr"][2]), TERM["fr"])},
     {"id": "w_m1_fl", "from": "esc.m1", "to": "motor_fl.terminals", "awg": 26, "kind": "power", "slack_mm": 8.0, "via": _v(
-         P_ESC_M1, (12.5, 21.0, P_ESC_M1[2]), (12.5, 21.0, HIGH_Z), (12.5, 10.5, HIGH_Z),
-         (-4.5, 10.5, HIGH_Z), (-4.5, TERM["fl"][1], HIGH_Z), (-4.5, TERM["fl"][1], TERM["fl"][2]), TERM["fl"])},
+         P_ESC_M1, (8.2, 12.5, P_ESC_M1[2]), (8.2, 12.5, HIGH_Z), (-4.5, 12.5, HIGH_Z),
+         (-4.5, TERM["fl"][1], HIGH_Z), (-4.5, TERM["fl"][1], TERM["fl"][2]), TERM["fl"])},
     {"id": "w_m2_rr", "from": "esc.m2", "to": "motor_rr.terminals", "awg": 26, "kind": "power", "slack_mm": 8.0, "via": _v(
-         P_ESC_M2, (26.0, 21.0, P_ESC_M2[2]), (26.0, 21.0, HIGH_Z), (26.0, 12.0, HIGH_Z),
+         P_ESC_M2, (17.9, 17.0, P_ESC_M2[2]), (17.9, 17.0, HIGH_Z), (17.9, -8.0, HIGH_Z),
          (4.0, -8.0, HIGH_Z), (4.0, TERM["rr"][1], HIGH_Z), (4.0, TERM["rr"][1], TERM["rr"][2]), TERM["rr"])},
     {"id": "w_m2_rl", "from": "esc.m2", "to": "motor_rl.terminals", "awg": 26, "kind": "power", "slack_mm": 8.0, "via": _v(
-         P_ESC_M2, (25.0, 21.0, P_ESC_M2[2]), (25.0, 21.0, HIGH_Z), (25.0, 9.0, HIGH_Z),
+         P_ESC_M2, (17.2, 17.0, P_ESC_M2[2]), (17.2, 17.0, HIGH_Z), (17.2, 9.0, HIGH_Z),
          (-3.0, 9.0, HIGH_Z), (-3.0, TERM["rl"][1], HIGH_Z), (-3.0, TERM["rl"][1], TERM["rl"][2]), TERM["rl"])},
 ]
 
@@ -241,18 +242,34 @@ connections += [
      "reason": "the nyloc sits in the press-fit hex pocket of the +X cheek boss"},
     {"a": "battery", "b": "base_plate", "method": "velcro",
      "reason": "foam pad bonded to the plate plus a poly strap over the pack: the strap carries the inverted load"},
-    {"a": "esc", "b": "base_plate", "method": "tape",
-     "reason": "double-sided foam tape to the base plate; cavity walls capture it laterally"},
+    {"a": "esc", "b": "tub", "method": "interlock",
+     "reason": "printed shelf + capture walls in the tub hold the ESC (case takes no adhesive, no mounting holes); the top plate caps it from above"},
     {"a": "rx", "b": "base_plate", "method": "tape",
      "reason": "taped to the base plate at the left, antenna along the wall away from the motors"},
-    {"a": "switch", "b": "base_plate", "method": "tape",
-     "reason": "taped to the base plate; actuator tool-free through the access hole in both plates"},
+    {"a": "switch", "b": "tub", "method": "interlock",
+     "reason": "printed pocket in the tub clamps the body on all four sides, walls rise past the top; nothing tapable under it (1 mm carbon plate) so screws are impossible"},
 ]
 
 allow_overlap = [
-    {"a": f"wheel_{k}", "b": f"motor_{k}", "max_depth_mm": 0.6,
-     "reason": "the motor shaft runs inside the wheel's D-bore hub (the bore is cut 0.1 mm large on the flat sides so it slides on; the D-flat keys the drive)"}
+    {"a": f"wheel_{k}", "b": f"motor_{k}", "max_depth_mm": 1000.0,
+     "reason": "the wheel is fused to its motor (D-bore press fit on the 3 mm shaft, D-flat keys the drive): coaxial with the revolute axis, so its revolved sweep envelope always contains the shaft - exact overlap 0.26 mm, allowed (probe --joint wheel_fr)"}
     for k in ("fr", "fl", "rr", "rl")
+] + [
+    {"a": f"fork_{i}", "b": "pivot_pin", "max_depth_mm": 1000.0,
+     "reason": "the eye bore rides the pivot pin, coaxial with the revolute axis (PIN_CLEAR 3.8 on the M3 pin, 0.4 mm swing clearance); a revolved envelope always contains its own axle"}
+    for i in range(len(fork_xs))
+] + [
+    {"a": f"fork_{i}", "b": "tub", "max_depth_mm": 2.5,
+     "reason": "the fork blade (0.8 thick) swings through the arc slots cut for it; exact closest approach 0.60 mm (probe --joint fork_0) and the deepest tub member inside the sweep arc is the 2.0 mm rail (grid depth 2.0) - overlap depth is capped at 0.4 by the blade thickness"}
+    for i in range(len(fork_xs))
+] + [
+    {"a": f"fork_{i}", "b": other, "max_depth_mm": 1.2,
+     "reason": "the fork swings through the arc slots cut for it; the 1.0 mm plates inside the sweep arc are 0.5 deep and exact closest approach is 1.24 mm (probe --joint fork_0)"}
+    for i in range(len(fork_xs)) for other in ("top_plate", "base_plate")
+] + [
+    {"a": f"fork_{i}", "b": f"motor_{k}", "max_depth_mm": 6.5,
+     "reason": "the fork swings in its own x-plane (0.8 mm thick at x -17/0/+17) while the motors sit 17.7 mm outboard in x; the proxy sweep sphere covers the motor box but exact geometry never meets (motor can half-width 6.0)"}
+    for i in range(len(fork_xs)) for k in ("fr", "fl", "rr", "rl")
 ]
 
 spec = {

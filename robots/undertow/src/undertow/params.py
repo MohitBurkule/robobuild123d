@@ -66,9 +66,11 @@ WHEEL_OD, WHEEL_W = WHEEL["od"], WHEEL["width"]
 Z_AXLE = WHEEL_OD / 2                                          # axle on the robot mid-plane: identical either way up
 Y_AXLE = WHEELBASE / 2
 MOTOR_BODY = MOTOR["overall"] - MOTOR["shaft_len"]             # can + gearbox, motor back to gearbox face
+MOTOR_CAN_W = 12.0                 # N10 can cross-section from the catalogue spec (33 x 12 x 10)
+MOTOR_CAN_H = 10.0
 X_MOTOR_BACK = SPINE_HALF                                      # motor back face against the spine rib
 X_GB_FACE = X_MOTOR_BACK + MOTOR_BODY                          # shaft root (gearbox face plane; the catalogue solid ends here)
-BULKHEAD_T = 1.0                   # printed bulkhead outboard of the gearbox face: motor clamp + wheel splash wall
+BULKHEAD_T = 1.5                   # printed bulkhead outboard of the gearbox face: motor clamp + wheel splash wall (0.6 can-pocket recess + 0.9 wall behind it)
 BULKHEAD_X0 = X_GB_FACE + 0.7      # clamp gap off the gearbox face (the motor_clamp probe reaches 0.8 mm out)
 BULKHEAD_X1 = BULKHEAD_X0 + BULKHEAD_T
 X_WHEEL_IN = BULKHEAD_X1 + WHEEL_RUN                            # wheel inner face: runs clear of the bulkhead
@@ -79,7 +81,10 @@ X_WHEEL_OUT = X_WHEEL_IN + WHEEL_W
 WALL = 2.0                         # printed outer wall (>= WALL_FDM_MIN; flexes and returns under a tooth)
 RIB = 2.0                          # internal rib thickness (motor back walls)
 CORNER_R = 3.5                     # plan-view outer corner radius: small enough that the wheel rim corner clears the cavity corner by WHEEL_RUN
-PLATE_T = 1.0                      # carbon laminate plates (stock cf_plate gauge; invertible: two "tops")
+PLATE_T = 1.5                      # carbon laminate plates (stock cf_plate gauge; invertible: two "tops"). The M2 csk cone is
+                                   # 0.85 deep (dk/2 + csk_clear/2 - clearance/2 at 90 deg); the ring it leaves over the far face
+                                   # must be >= the 0.5 waterjet minimum: 1.5 - 0.85 = 0.65. A 1.0 plate leaves a 0.15 knife edge
+                                   # (mfg.thin_wall) and no flush head is shallower; 1.5 is the shallowest stock gauge that clears.
 PLATE_MATERIAL = "carbon_fibre"
 TUB_MATERIAL = "nylon"             # tough printed shell (TPU cannot be the structure: arch.tpu_structural)
 
@@ -98,52 +103,78 @@ NOTCH_X1 = HALF_W_TUB + 0.2                            # notch runs out past the
 # ------------------------------------------------------------------------------------------- bays (catalogue parts)
 # Placements are catalogue frame origins (box parts are centred), on the base plate top face, inside the tub cavity.
 # Layout map (cavity x -32.7..32.7 between the bulkheads, motors at |y| 20..32 for |x| 8..32.7, ribs x +-5.7..8 for |y| >= 14):
-# pack bottom-left with its pigtail running up the x = -14 lane, ESC centre-right (motor ports on the -y face),
-# switch lower-right (actuator up through the plate hole), receiver left-mid next to the bulkhead.
+# pack centre-left, long axis along y so it stays inside the rib-free band |y| < 14 (probe --place: no free spot
+# for the pack at its old x-spanning pose - it crossed the -x rib lane), ESC centre-right (motor ports on the -y face),
+# switch lower-right (actuator up through the plate hole), receiver left-mid ahead of the pack.
 Z_BAY = Z_TUB0                                                  # parts sit on the base plate
-BAT_AT = (-14.0, -10.0)                                         # pack x -32.1..4.1, y -19.9..-0.1; pigtail +y at x -14
-BAT_ROT = (0.0, 0.0, 0.0)
+BAT_AT = (-18.7, -1.98)                                          # pack rot -90: x -28.58..-8.83, y -26.12..10.12 (measured)
+RAIL_NOTCHES = [(-18.7, 20.4)]                                   # -y inner rail relief: pack lane only (x centre, width + 2*fit)
+BAT_ROT = (0.0, 0.0, -90.0)
 BAT_Z = Z_BAY + _bay.POUCH_CLEARANCE + BATTERY["h"] / 2
-ESC_AT = (20.0, 8.0)                                            # x 10.5..29.5, y -3.5..19.5
-ESC_ROT = (0.0, 0.0, 90.0)
-ESC_Z = Z_BAY + MOTOR_FIT + ESC["h"] / 2
-SWITCH_AT = (20.0, -13.0)                                       # x 7.3..26.4, y -19.4..-6.7
+ESC_AT = (7.1, 0.0, 13.9)                                       # measured free spot (probe --place): box x -4.4..18.6 y -9.5..9.5, shelf over the pack lane; z raised so the shelf underside clears the switch top by 0.35
+ESC_ROT = (0.0, 0.0, 180.0)
+ESC_Z = ESC_AT[2]
+SWITCH_AT = (21.0, -12.5)                                       # x 14.65..27.35, y -18.85..-6.15 (rot -90: frame x -> world -y)
 SWITCH_ROT = (0.0, 0.0, -90.0)
 SWITCH_Z = Z_BAY + MOTOR_FIT + SWITCH["body"][2] / 2
-RX_AT = (-25.0, 10.0, 4.6)                                      # x -32..-18, y 0..20; esc port on its -x face
-RX_ROT = (0.0, 0.0, 90.0)
+RX_AT = (3.6, 4.5, Z_BAY + RX_E.shape["size"][2] / 2 + 0.1)  # measured free spot (probe --place): box x -6.4..13.6 y -2.5..11.5; clear of the battery/switch wire lane that crosses y -12..-8.7
+
+                                                   # sits on the base plate through the 0.1 tape
+RX_ROT = (0.0, 0.0, 0.0)                                        # pins west-edge toward the esc; -y face keeps 0.65+ off the switch pocket wall
 SWITCH_ACCESS_R = RULES.driver_access_radius_mm                 # access hole in BOTH plates (invertible)
+
+# switch capture pocket (tub._switch_pocket): walls clamp the body on +y/+x, the -y inner rail and the motor rib
+# close the other sides; walls rise past the switch top (SWITCH_Z + bz/2 = 9.15) so it stays captured inverted
+SW_POCKET_FIT = 0.3                # wall inner face off the switch body faces (printed fit)
+SW_POCKET_T = 0.9                  # capture-wall thickness (min printed wall)
+SW_POCKET_Z1 = 10.0                # wall top: past the switch top
+SW_POCKET_MERGE = 0.5              # +x wall reach into the +y rail: one solid with the shell
+
 def switch_hole_xy():
-    """(x, y, r) of the switch access hole: the world bbox centre, radius covering the 5 tool-line rays
-    (centre +- half extents on the two horizontal axes) plus margin."""
-    from robot import shapes
-    bb = shapes.to_solid(SW.shape).bounding_box()
-    lx = (bb.max.X - bb.min.X) / 2
-    ly = (bb.max.Y - bb.min.Y) / 2
-    cx = (bb.min.X + bb.max.X) / 2
-    cy = (bb.min.Y + bb.max.Y) / 2
+    """(x, y, r) of the switch access hole in BOTH plates. One hole serves two masters: the actuator (frame
+    (0, by/4, 0) under the z rotation) for the driver, and the straight tool line from the switch centre
+    (contain.switch_access: a 1.6 mm line needs 0.8 clearance). Centre = midpoint of the two, radius covers the
+    driver disc at the actuator plus the tool line, and stays clear of the pocket walls (x_wall inner 27.65)."""
+    act_y = SWITCH["body"][1] / 4
     rz = math.radians(SWITCH_ROT[2])
-    ex = abs(lx * math.cos(rz)) + abs(ly * math.sin(rz))   # world half extents under the z rotation
-    ey = abs(lx * math.sin(rz)) + abs(ly * math.cos(rz))
-    wx = SWITCH_AT[0] + cx * math.cos(rz) - cy * math.sin(rz)
-    wy = SWITCH_AT[1] + cx * math.sin(rz) + cy * math.cos(rz)
-    return (wx, wy, max(ex, ey) / 2 + 0.4)
+    ax = SWITCH_AT[0] - act_y * math.sin(rz)
+    ay = SWITCH_AT[1] + act_y * math.cos(rz)
+    hx = (SWITCH_AT[0] + ax) / 2
+    hy = (SWITCH_AT[1] + ay) / 2
+    return (hx, hy, math.hypot(ax - hx, ay - hy) + SWITCH_ACCESS_R + 0.2)
 
 # motor back ribs: stand in the cavity, merge with the front / rear walls, back the motor pockets
 MOTOR_RIB_X0 = X_MOTOR_BACK - MOTOR_FIT - RIB                   # rib spans x MOTOR_RIB_X0 .. X_MOTOR_BACK - MOTOR_FIT
 MOTOR_RIB_Y0 = WELL["y0"]                                       # rib y range starts at the wheel pocket's y range
 MOTOR_RIB_Y1 = HALF_L_TUB                                       # ... extended into the front wall so the rib is one solid with the shell
-LEAD_SLOT = dict(w=8.0, h=3.0)                                  # wire slot through the rib at each motor's terminals (covers the tab port)
+LEAD_SLOT = dict(w=8.0, h=4.5)                                  # wire slot through the rib at each motor's terminals (3-wire bundle ~3.9 + fit 0.3/side)
+
+# esc shelf (tub._esc_shelf): the ESC sits on a printed shelf one solid with the tub; capture walls clamp it like
+# the switch pocket - the case takes no adhesive and has no mounting holes
+ESC_SHELF_T = 0.9                  # shelf plate thickness (min printed wall)
+ESC_SHELF_X0 = X_MOTOR_BACK - 0.1  # plate root merges into the rib lane: one solid with the ribs
+ESC_SHELF_X_OVER = 1.2             # ledge past the esc +x face
+ESC_SHELF_Y_OVER = 1.0             # ledge past the -y capture wall's outer face
+ESC_SHELF_MERGE = 0.5              # plate reach into the +y rail: one solid with the shell
+ESC_CAP_FIT = 0.3                  # capture-wall gap off the esc faces (printed fit)
+ESC_CAP_T = 0.9                    # capture-wall thickness
+ESC_CAP_RISE = 1.0                 # walls rise past the esc top: captured inverted
+ESC_CAP_SINK = 0.1                 # walls root into the shelf plate: no zero-thickness seam
+
+# boolean cut overshoots (tub._notches and friends): cuts pierce the faces they open
+CUT_OVER = 0.2                     # generic cut overshoot past the pierced face
+NOTCH_GAP = 0.05                   # wheel notch starts just clear of the bulkhead +x face
+FIN_TIP_BACK = 0.1                 # fin-tip cut starts just behind the WALL_FDM_MIN knife edge
 # motor side rails: clamp the gearbox plate stack from +-y (arch.motor_clamp needs structure on both sides of 2 axes)
 RAIL_T = 1.0
 RAIL_Y_IN = Y_AXLE - 6.0                                        # the N10 can is 12 mm wide (y = Y_AXLE +- 6); rails sit just outside
 RAIL_Z0, RAIL_Z1 = Z_AXLE - 5.0 - MOTOR_FIT, Z_AXLE + 5.0 + MOTOR_FIT
-SHAFT_HOLE_R = 2.0                                              # shaft clearance hole through the bulkhead
+SHAFT_HOLE_R = 2.5                                              # shaft clearance hole through the bulkhead: clears the D-shaft's flat corners (corner r 2.12) + 0.38 fit
 
 # ------------------------------------------------------------------------------------------------------ fastening
 # Plate bolts: M2 csk screws from each plate into printed columns in the tub (nylon takes a thread-forming screw).
 PLATE_SCREW = "M2x8"
-PLATE_HEAD = "csk"
+PLATE_HEAD = "csk"                 # csk head flush with the plate's outer face (sink 0): a proud button head scrapes the arena (joint.head_ground)
 COLUMN_R = 2.3                     # printed column radius around the M2 tap
 TAP_D = 1.6                        # M2 tap drill
 # sites in solid wall, >= COLUMN_R + 1.2 in from the plate edge so the csk cone leaves >= 1.2 mm of plate:
@@ -171,7 +202,7 @@ CHEEK_T = 4.0                      # printed cheek thickness along X
 CHEEK_HALF_X = 20.0                # cheek centre |x|: keeps the stocked M3x50 pin inside the cheeks
 CHEEK_REACH = 8.0                  # pin axis ahead of the tub front face
 PIN_Y = HALF_L_TUB + CHEEK_REACH
-PIN_CLEAR = fc.clearance(PIN_SCREW_D, "loose")  # fork eye: free to swing
+PIN_CLEAR = fc.clearance(PIN_SCREW_D, "loose") + 0.2  # fork eye: free to swing (3.8 on the M3 pin = 0.4 mm swing clearance, the moving-part minimum)
 EYE_R = PIN_CLEAR / 2 + 1.6                   # material round the pin in the eye
 NUT_BOSS_R = 4.5                   # nyloc boss on the far cheek outer face
 NUT_BOSS_T = 6.0                   # boss thickness (>= nyloc height + pocket floor)
@@ -189,6 +220,10 @@ FORK_REACH = 30.0                  # pin to tip along the fork
 # resting slope solved for the tine's LOWER TIP CORNER at FRONT_TIP_GAP over the floor (PIN_Z - R sin a - (TIP_W/2) cos a = gap)
 FORK_REST_DEG = math.degrees(math.asin((PIN_Z - FRONT_TIP_GAP) / math.hypot(FORK_REACH, FORK_TIP_W / 2))
                              - math.atan((FORK_TIP_W / 2) / FORK_REACH))   # in FORK_ANGLE_RANGE
+# free-swing arc, measured (verify sweep): the floor stops the down-swing at +2.6 deg (tip gap 0), the tub front
+# wall top edge stops the up-swing at about -105 deg; declare the arc just inside both stops
+FORK_SWING_MIN_DEG = -95.0
+FORK_SWING_MAX_DEG = 2.0
 
 # plough variant
 PLOUGH_T_STEEL = 0.6

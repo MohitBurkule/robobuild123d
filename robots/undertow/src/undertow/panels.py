@@ -30,7 +30,9 @@ def _sheet(t):
 
 
 def _screw_holes(plate, z_face, axis):
-    """M2 csk clearance holes in the plate at the bolt sites (the tap is in the tub column)."""
+    """M2 csk clearance holes in the plate at the bolt sites (the tap is in the tub column). The cone meets the
+    clearance cylinder exactly (no membrane ring at the far face) and the head seats 0.15 recessed - nothing
+    protrudes past the skid face (joint.head_ground; a button head is 1.3 tall and can never recess in 1.0 plate)."""
     recs = []
     for x, y in BOLT_SITES:
         cut, rec = hole_tool(at=(x, y, z_face), axis=axis, fastener=PLATE_SCREW, head=PLATE_HEAD, into="through",

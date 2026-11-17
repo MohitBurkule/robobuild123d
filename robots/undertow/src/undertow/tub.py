@@ -10,13 +10,50 @@ import build123d as bd
 from robot.cad.holes import hole_tool
 
 from . import drive
-from .params import (HALF_W_TUB, HALF_L_TUB, CORNER_R, Z_TUB0, TUB_H, WALL, BOLT_SITES, COLUMN_R,
+from .params import (HALF_W_TUB, HALF_L_TUB, CORNER_R, Z_TUB0, TUB_H, WALL, WALL_FDM_MIN, BOLT_SITES, COLUMN_R,
                      TAP_D, TAP_OVERTURN, MOTOR_RIB_X0, MOTOR_RIB_Y0, MOTOR_RIB_Y1, LEAD_SLOT,
                      RAIL_T, RAIL_Y_IN, RAIL_Z0, RAIL_Z1, BULKHEAD_X0, BULKHEAD_X1, SHAFT_HOLE_R,
                      SKIRT_PAD_EMBED, SKIRT_PAD_T, SKIRT_PAD_W, SKIRT_PAD_Z0, SKIRT_PAD_Z1, SKIRT_PAD_Y, REAR_PAD_X,
                      CHEEK_T, CHEEK_HALF_X, CHEEK_REACH, PIN_Y, PIN_Z, PIN_CLEAR, EYE_R,
                      NUT_BOSS_R, NUT_BOSS_T, PIN_SCREW, X_MOTOR_BACK, Y_AXLE, Z_AXLE,
-                     WELL, NOTCH_X1)
+                     WELL, NOTCH_X1, MOTOR_FIT, MOTOR_CAN_W, MOTOR_CAN_H, RAIL_NOTCHES,
+                     ESC, ESC_AT, ESC_Z, SWITCH, SWITCH_AT,
+                     SW_POCKET_FIT, SW_POCKET_T, SW_POCKET_Z1, SW_POCKET_MERGE,
+                     ESC_SHELF_T, ESC_SHELF_X0, ESC_SHELF_X_OVER, ESC_SHELF_Y_OVER, ESC_SHELF_MERGE,
+                     ESC_CAP_FIT, ESC_CAP_T, ESC_CAP_RISE, ESC_CAP_SINK,
+                     CUT_OVER, NOTCH_GAP, FIN_TIP_BACK)
+
+
+def _switch_pocket():
+    """Capture walls for the switch: it can't be screwed down (base_plate is 1 mm carbon, nothing to tap), so the
+    tub clamps it on +y and +x; the -y inner rail (no notch there any more) and the motor rib close the other sides.
+    Walls rise past the switch top so it stays captured inverted."""
+    z0, z1 = RAIL_Z0, SW_POCKET_Z1
+    y_in = SWITCH_AT[1] + SWITCH["body"][0] / 2 + SW_POCKET_FIT     # wall inner face: body +y face + fit
+    x_in = SWITCH_AT[0] + SWITCH["body"][1] / 2 + SW_POCKET_FIT     # ... body +x face + fit
+    y_hi = RAIL_Y_IN - RAIL_T + SW_POCKET_MERGE                     # +x wall root merges into the +y rail
+    y_wall = bd.Pos((X_MOTOR_BACK + x_in + SW_POCKET_T) / 2, y_in + SW_POCKET_T / 2, (z0 + z1) / 2) * \
+        bd.Box(x_in + SW_POCKET_T - X_MOTOR_BACK, SW_POCKET_T, z1 - z0)
+    x_wall = bd.Pos(x_in + SW_POCKET_T / 2, (y_in + y_hi) / 2, (z0 + z1) / 2) * \
+        bd.Box(SW_POCKET_T, y_hi - y_in, z1 - z0)
+    return y_wall + x_wall
+
+
+def _esc_shelf():
+    """Printed shelf carrying the ESC over the pack lane: top face at the ESC bottom, merges into the +y rail.
+    Capture walls on +y/-y (fit gap, rising past the ESC top) hold it like the switch pocket - the ESC case takes
+    no adhesive and has no mounting holes."""
+    z1 = ESC_Z - ESC["h"] / 2
+    z0 = z1 - ESC_SHELF_T
+    x1 = ESC_AT[0] + ESC["l"] / 2 + ESC_SHELF_X_OVER
+    y_lo = -(ESC_AT[1] + ESC["w"] / 2 + ESC_CAP_FIT + ESC_CAP_T + ESC_SHELF_Y_OVER)
+    y_hi = RAIL_Y_IN - RAIL_T + ESC_SHELF_MERGE
+    plate = bd.Pos((ESC_SHELF_X0 + x1) / 2, (y_lo + y_hi) / 2, (z0 + z1) / 2) * \
+        bd.Box(x1 - ESC_SHELF_X0, y_hi - y_lo, ESC_SHELF_T)
+    wz0, wz1 = z1 - ESC_CAP_SINK, ESC_Z + ESC["h"] / 2 + ESC_CAP_RISE
+    wy = bd.Pos((X_MOTOR_BACK + ESC_AT[0] + ESC["l"] / 2) / 2, ESC_AT[1] + ESC["w"] / 2 + ESC_CAP_FIT + ESC_CAP_T / 2,
+                (wz0 + wz1) / 2) * bd.Box(ESC_AT[0] + ESC["l"] / 2 - X_MOTOR_BACK, ESC_CAP_T, wz1 - wz0)
+    return plate + wy + wy.mirror(bd.Plane.XZ)
 
 
 def outline(half_w=None, half_l=None, corner=None):
@@ -50,7 +87,13 @@ def _rails():
             x1 - x0, RAIL_T, RAIL_Z1 - RAIL_Z0)
         r = blk if r is None else r + blk
     r = r + r.mirror(bd.Plane.YZ)
-    return r + r.mirror(bd.Plane.XZ)
+    r = r + r.mirror(bd.Plane.XZ)
+    # lane reliefs in the -y inner rail: the pack and the switch cross it, so the rail is interrupted there
+    # (the pack presses the can, the stubs + outer rail + ribs keep the clamp)
+    for cx, w in RAIL_NOTCHES:
+        r = r - bd.Pos(cx, -(RAIL_Y_IN - RAIL_T / 2), (RAIL_Z0 + RAIL_Z1) / 2) * bd.Box(
+            w, RAIL_T + 0.6, RAIL_Z1 - RAIL_Z0 + 2)
+    return r
 
 
 def _bulkhead():
@@ -60,19 +103,39 @@ def _bulkhead():
         BULKHEAD_X1 - BULKHEAD_X0, 2 * HALF_L_TUB, TUB_H)
     b = b + b.mirror(bd.Plane.YZ)
     for sy in (1, -1):
-        b = b - bd.Pos((BULKHEAD_X0 + BULKHEAD_X1) / 2, sy * Y_AXLE, Z_AXLE) * bd.Rot(0, 90, 0) * \
-            bd.Cylinder(SHAFT_HOLE_R, BULKHEAD_X1 - BULKHEAD_X0 + 2)
+        b = b - bd.Pos(0, sy * Y_AXLE, Z_AXLE) * bd.Rot(0, 90, 0) * \
+            bd.Cylinder(SHAFT_HOLE_R, 2 * BULKHEAD_X1 + 2)
+    # motor U-slot per motor, through the whole bulkhead (can footprint + fit, from under the can to past the
+    # top): the motor lifts out the top as the docstring promises, shaft sliding up the slot (scythe's axle_holes
+    # pattern); the rail clamp +-y and the rib clamp -x hold it in place.
+    for sy in (1, -1):
+        for sx in (1, -1):
+            z_lo = Z_AXLE - MOTOR_CAN_H / 2 - MOTOR_FIT
+            z_top = Z_TUB0 + TUB_H + 0.1
+            b = b - bd.Pos(sx * (BULKHEAD_X0 + BULKHEAD_X1) / 2, sy * Y_AXLE, (z_lo + z_top) / 2) * bd.Box(
+                BULKHEAD_X1 - BULKHEAD_X0 + 0.2, MOTOR_CAN_W + 2 * MOTOR_FIT, z_top - z_lo)
     return b
 
 
 def _notches():
     """Wheel pockets notched through the side walls (aligned with the plate windows): once a plate is off, the
-    wheels slide out sideways through the notch."""
-    x0, x1 = BULKHEAD_X1 + 0.05, NOTCH_X1
+    wheels slide out sideways through the notch. The notch ends flush with the front / rear wall inner faces; the
+    corner fin that still connects each wall to the side wall tapers to a knife edge at the outer corner radius, so
+    the tip is cut back to where the fin is WALL_FDM_MIN thick."""
+    x0, x1 = BULKHEAD_X1 + NOTCH_GAP, NOTCH_X1
     n = bd.Pos((x0 + x1) / 2, (WELL["y0"] + WELL["y1"]) / 2, Z_TUB0 + TUB_H / 2) * bd.Box(
-        x1 - x0, WELL["y1"] - WELL["y0"], TUB_H + 0.2)
+        x1 - x0, WELL["y1"] - WELL["y0"], TUB_H + CUT_OVER)
     n = n + n.mirror(bd.Plane.YZ)
-    return n + n.mirror(bd.Plane.XZ)
+    n = n + n.mirror(bd.Plane.XZ)
+    y_notch = HALF_L_TUB - WALL                                       # notch end face = wall inner face
+    fin_tip = (HALF_W_TUB - CORNER_R) - (CORNER_R ** 2 - (CORNER_R - WALL + WALL_FDM_MIN) ** 2) ** 0.5
+    x_lo = fin_tip - FIN_TIP_BACK
+    x_hi = HALF_W_TUB + CUT_OVER
+    for sx in (1, -1):
+        for sy in (1, -1):
+            n = n + bd.Pos(sx * (x_lo + x_hi) / 2, sy * (y_notch + HALF_L_TUB + CUT_OVER) / 2, Z_TUB0 + TUB_H / 2) * \
+                bd.Box(x_hi - x_lo, HALF_L_TUB + CUT_OVER - y_notch, TUB_H + CUT_OVER)
+    return n
 
 
 def _lead_slots():
@@ -131,12 +194,14 @@ def _pad_taps():
     Each drill spans from just inside the pad's inner face to past its outer face, so it covers the whole screw."""
     zc = (SKIRT_PAD_Z0 + SKIRT_PAD_Z1) / 2
     x_in = HALF_W_TUB - SKIRT_PAD_EMBED                       # side pad inner face
-    x_lo, x_hi = x_in - TAP_OVERTURN, x_in + SKIRT_PAD_T + 1.5
+    x_lo = HALF_W_TUB - WALL - TAP_OVERTURN                   # drill pierces the wall inner face: no end ligament
+    x_hi = x_in + SKIRT_PAD_T + 1.5
     side = [bd.Pos((x_lo + x_hi) / 2, sy * SKIRT_PAD_Y, zc) * bd.Rot(0, 90, 0)
             * bd.Cylinder(TAP_D / 2, x_hi - x_lo) for sy in (1, -1)]
     side = side + [c.mirror(bd.Plane.YZ) for c in side]
     y_in = -HALF_L_TUB + SKIRT_PAD_EMBED                       # rear pad inner face
-    y_lo, y_hi = -(HALF_L_TUB - SKIRT_PAD_EMBED + SKIRT_PAD_T) - 1.5, y_in + TAP_OVERTURN
+    y_lo = -(HALF_L_TUB - SKIRT_PAD_EMBED + SKIRT_PAD_T) - 1.5
+    y_hi = -HALF_L_TUB + WALL + TAP_OVERTURN                   # drill pierces the wall inner face: no end ligament
     rear = [bd.Pos(sx * REAR_PAD_X, (y_lo + y_hi) / 2, zc) * bd.Rot(90, 0, 0)
             * bd.Cylinder(TAP_D / 2, y_hi - y_lo) for sx in (1, -1)]
     out = side[0] + rear[0]
@@ -166,5 +231,5 @@ def cheeks():
 
 
 def tub():
-    body = _shell() + _ribs() + _rails() + _bulkhead() + _columns() + _pads() + cheeks()
+    body = _shell() + _ribs() + _rails() + _bulkhead() + _columns() + _pads() + cheeks() + _esc_shelf() + _switch_pocket()
     return body - _lead_slots() - _column_taps() - _pad_taps() - _notches()

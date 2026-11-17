@@ -8,7 +8,7 @@ import build123d as bd
 
 from robot import catalog
 
-import revron.hw as hw   # catalogue-derived solids / placement (robots/revron/src/revron/hw.py)
+from . import hw   # catalogue-derived solids / placement (src/undertow/hw.py)
 
 from .params import MOTOR_ID, WHEEL_ID, X_MOTOR_BACK, X_WHEEL_C, Y_AXLE, Z_AXLE
 
