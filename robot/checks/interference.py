@@ -103,6 +103,53 @@ def blanket_allowances(r):
 ESCAPE_PAIRS = 16  # measured escape moves for the first N colliding pairs (each costs ~50 mesh booleans)
 
 
+def feature_note(ctx, a, b, at):
+    """Which catalogue feature of a or b the overlap is on, measured: a shaft (with its true profile radius, a D-flat
+    shaft's corners reach past its nominal radius) or a rigid lead / connector stub ending at a port."""
+    if at is None:
+        return ""
+    P = np.asarray(at, float)
+    r = ctx.r
+    notes = []
+    for x, y in ((a, b), (b, a)):
+        if x.part_idx is None:
+            continue
+        rp = r.parts[x.part_idx]
+        cat = rp.cat
+        if cat is None:
+            continue
+        R = x.M[:3, :3]
+        if cat.shaft:
+            o = x.M[:3, 3] + R @ np.asarray(cat.shaft.get("at", [0, 0, 0]), float)
+            d = R @ np.asarray(cat.shaft["dir"], float)
+            d = d / np.linalg.norm(d)
+            t = (P - o) @ d
+            rad = np.linalg.norm((P - o) - t * d)
+            if -0.5 <= t <= float(cat.shaft.get("len", 10)) + 0.5 and rad <= float(cat.shaft.get("dia", 3)):
+                V = np.asarray(x.mesh.vertices) - o
+                tv = V @ d
+                sel = (tv > t - 1.0) & (tv < t + 1.0)
+                rv = np.linalg.norm(V[sel] - np.outer(tv[sel], d), axis=1) if sel.any() else np.array([0.0])
+                rmax = float(rv[rv <= float(cat.shaft.get("dia", 3))].max(initial=0.0))
+                notes.append(f"It is on `{x.id}`'s shaft (nominal d {cat.shaft.get('dia')} mm; its profile reaches r "
+                             f"{rmax:.2f} mm here, e.g. D-flat corners): a hole in `{y.id}` round it needs r >= {rmax + 0.3:.2f} mm "
+                             f"(profile + 0.3 fit), or a matching D shape.")
+        for pname, pl in (cat.ports or {}).items():
+            q = x.M[:3, 3] + R @ np.asarray(pl, float)
+            c = x.M[:3, 3]
+            seg = q - c
+            L = float(np.linalg.norm(seg))
+            if L < 1e-6:
+                continue
+            u = float(np.clip((P - c) @ seg / L ** 2, 0, 1))
+            if u > 0.5 and np.linalg.norm(P - (c + u * seg)) < 3.0:
+                notes.append(f"It is on `{x.id}`'s lead / connector toward port `{pname}` at ({', '.join(f'{v:.1f}' for v in q)}): "
+                             f"the lead is rigid geometry {L:.0f} mm from the part origin and turns with `rot`. Point it into "
+                             f"free space (`robot probe spec.json --place {x.id}` tries every yaw).")
+                break
+    return " ".join(notes)
+
+
 def _add_escape(ctx, f, a, b, allow):
     """Append the measured smallest clearing moves to an overlap finding (message + machine-readable hints)."""
     from .. import escape
@@ -115,6 +162,12 @@ def _add_escape(ctx, f, a, b, allow):
         ctx.not_checked.append(f"interference: escape moves for `{a.id}`/`{b.id}` not measured ({e})")
         return
     f.message += " " + escape.summary(opts)
+    try:
+        note = feature_note(ctx, a, b, f.at)
+    except Exception:  # noqa: BLE001
+        note = ""
+    if note:
+        f.message += " " + note
     for m in [m for m in opts if not m.new_hits][:3]:
         f.hint(f"{m.part}.at", "move", round(m.mm, 2), why=f"shift {m.axis} {m.vec}", parts=[m.part], kind="move")
 
