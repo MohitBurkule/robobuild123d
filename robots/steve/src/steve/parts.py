@@ -4,13 +4,17 @@ from build123d import (
     Align,
     Axis,
     Box,
+    BuildLine,
     BuildSketch,
     Cylinder,
+    Line,
     Locations,
     Mode,
     Plane,
     Polygon,
+    Spline,
     extrude,
+    make_face,
 )
 from . import params as P
 
@@ -20,15 +24,22 @@ def build_tub():
     half_w = P.TUB_W / 2.0
     # Side profile in YZ plane:
     # (y, z)
-    profile_pts = [
-        (P.TUB_REAR_Y, P.GROUND_CLEARANCE),
-        (P.TUB_FRONT_Y, P.GROUND_CLEARANCE),
+    # Smoothly curved top profile in YZ plane (matching Steve's arched shell)
+    curve_pts = [
+        (P.TUB_REAR_Y, P.TUB_TOP_Z - 3.5),
+        (-24.0, P.TUB_TOP_Z - 0.5),
+        (-8.0, P.TUB_TOP_Z),
+        (10.0, P.TUB_TOP_Z - 4.0),
+        (24.0, P.TUB_FRONT_Z + 8.0),
         (P.TUB_FRONT_Y, P.TUB_FRONT_Z),
-        (P.TUB_DECK_END_Y, P.TUB_TOP_Z),
-        (P.TUB_REAR_Y, P.TUB_TOP_Z),
     ]
     with BuildSketch(Plane.YZ) as sk:
-        Polygon(*profile_pts, align=None)
+        with BuildLine():
+            l1 = Line((P.TUB_REAR_Y, P.GROUND_CLEARANCE), (P.TUB_FRONT_Y, P.GROUND_CLEARANCE))
+            l2 = Line((P.TUB_FRONT_Y, P.GROUND_CLEARANCE), (P.TUB_FRONT_Y, P.TUB_FRONT_Z))
+            s1 = Spline(*reversed(curve_pts))
+            l3 = Line((P.TUB_REAR_Y, P.TUB_TOP_Z - 3.5), (P.TUB_REAR_Y, P.GROUND_CLEARANCE))
+        make_face()
     tub = extrude(sk.sketch, amount=half_w, both=True)
 
     # Cut central flipper slot (X in [-SLOT_W/2, +SLOT_W/2], Y from SLOT_REAR_Y to TUB_FRONT_Y+2)
@@ -75,13 +86,30 @@ def build_tub():
 
 
 def build_lid(side: int = 1):
-    """Top deck lid (+1 = left/+X, -1 = right/-X) in local frame centred at (0,0,0)."""
+    """Curved top deck lid (+1 = left/+X, -1 = right/-X) in local frame centred at (0,0,0)."""
     lid_w = (P.TUB_W / 2.0) - (P.SLOT_W / 2.0) - 0.5
-    lid_len = P.TUB_DECK_END_Y - P.TUB_REAR_Y
-    lid = Box(lid_w, lid_len, P.LID_T)
+    lid_yc = (P.TUB_REAR_Y + P.TUB_DECK_END_Y) / 2.0
+    lid_zc = P.LID_Z + P.LID_T / 2.0
+    # Local YZ coordinates relative to (lid_yc, lid_zc)
+    pts_bot = [
+        (P.TUB_REAR_Y - lid_yc, P.TUB_TOP_Z - 3.5 - lid_zc),
+        (-24.0 - lid_yc, P.TUB_TOP_Z - 0.5 - lid_zc),
+        (-8.0 - lid_yc, P.TUB_TOP_Z - lid_zc),
+        (P.TUB_DECK_END_Y - lid_yc, P.TUB_TOP_Z - 3.5 - lid_zc),
+    ]
+    pts_top = [(y, z + P.LID_T) for (y, z) in pts_bot]
+    with BuildSketch(Plane.YZ) as sk:
+        with BuildLine():
+            Line(pts_bot[0], pts_top[0])
+            Spline(*pts_top)
+            Line(pts_top[-1], pts_bot[-1])
+            Spline(*reversed(pts_bot))
+        make_face()
+    lid = extrude(sk.sketch, amount=lid_w / 2.0, both=True)
     # 2 M2 screw holes at front and rear outer corners
+    lid_len = P.TUB_DECK_END_Y - P.TUB_REAR_Y
     for dy in (-lid_len / 2.0 + 4.5, lid_len / 2.0 - 4.5):
-        hole = Cylinder(radius=P.M2_CLEAR_D / 2.0, height=P.LID_T + 1.0).translate(
+        hole = Cylinder(radius=P.M2_CLEAR_D / 2.0, height=12.0).translate(
             (side * (lid_w / 2.0 - 4.5), dy, 0.0)
         )
         lid = lid - hole
@@ -130,16 +158,21 @@ def build_flipper():
     # Local Y is forward from hinge, Z is up
     dy_front = P.ARM_FRONT_Y - P.HINGE_Y   # ~66 mm
     dz_front = P.ARM_FRONT_Z - P.HINGE_Z   # ~-15 mm
-    pts = [
-        (-4.0, -4.0),
-        (dy_front - 12.0, dz_front - 3.0),
-        (dy_front, dz_front),
-        (dy_front - 10.0, dz_front + 7.0),
-        (12.0, 4.5),
-        (-4.0, 4.5),
+    # Smooth curved top profile matching the chassis arch
+    top_pts = [
+        (-4.0, 2.0),
+        (10.0, 5.5),
+        (28.0, 5.0),
+        (46.0, 0.0),
+        (dy_front, dz_front + 2.0),
     ]
     with BuildSketch(Plane.YZ) as sk:
-        Polygon(*pts, align=None)
+        with BuildLine():
+            Line((-4.0, -4.0), (dy_front - 10.0, dz_front - 3.0))
+            Line((dy_front - 10.0, dz_front - 3.0), (dy_front, dz_front + 2.0))
+            Spline(*reversed(top_pts))
+            Line((-4.0, 2.0), (-4.0, -4.0))
+        make_face()
     arm = extrude(sk.sketch, amount=P.ARM_W / 2.0, both=True)
     # Hinge pin bore at origin
     bore = Cylinder(radius=P.HINGE_PIN_D / 2.0 + 0.1, height=P.ARM_W + 2.0).rotate(Axis.Y, 90)

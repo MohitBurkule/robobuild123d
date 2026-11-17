@@ -70,6 +70,6 @@ M2_INSERT_L = 3.5
 # N10/N20 motors along X at (WHEEL_Y, AXLE_Z)
 MOTOR_X_OFFSET = 22.0        # mm motor body inner end |X|
 SERVO_Y = -8.0               # mm flipper servo Y
-SERVO_Z = 18.0               # mm flipper servo Z
+SERVO_Z = 15.5               # mm flipper servo Z
 HORN_Y = SERVO_Y + 5.0
 HORN_Z = SERVO_Z + 4.0
