@@ -94,12 +94,22 @@ for front in (True, False):
                       "label": "printed hub + TPU tyre, D-bore on the N10 shaft"})
         parts.append({"id": f"motor_{nm[6:]}", "kind": "motor", "catalog": P.DRIVE_MOTOR_ID, "retained": "press_fit",
                       "at": r3([x, s * (P.MOTOR_ROOT_Y - P.MOTOR_SHAFT["at"][0]), P.AXLE_Z]),
-                      "rot": [0.0, 0.0, 90.0 * s], "rotates_with": "fixed",
+                      "rot": [0.0, 0.0, 90.0 * s], "rotates_with": "fixed", "exposed": True,
+                      "exposed_reason":
+                      "the N10's gearbox can sits in the wheel hub (the printed hub cups the can over its whole "
+                      "outboard end: hub y 37..45 x the can's 10x12 face, 0.00 mm gap); the only visible surface is "
+                      "the output-face annulus where the shaft enters the wheel hub, and any cover there would foul "
+                      "the spinning wheel",
                       "label": "N10 gearmotor in its snug closed-top pocket, shaft through the wall"})
 
 parts += [
     {"id": "servo", "kind": "servo", "catalog": P.SERVO_ID, "retained": "press_fit",
      "at": r3([P.SERVO_X, 0.0, P.SERVO_OUT_Z]), "rot": [-90.0, 0.0, 0.0], "rotates_with": "fixed",
+     "exposed": True,
+     "exposed_reason":
+     "the servo lies in the weapon corridor: the tail lever sweeps to z 16.6..17.8 across its exposed top band "
+     "(x 9..17.4, measured over the full -42 deg flipper stroke), only 1.4..2.6 mm above the case, so no fixed "
+     "cover can shield it without being struck by the weapon; its ends and underside are boxed by the tray and decks",
      "label": "SG90-class servo lying on its side in the tray, output axis along +Y"},
     {"id": "battery", "kind": "battery", "catalog": P.BATTERY_ID, "retained": "tape",
      "at": r3([P.BAT_X, 0.0, P.TUB_Z0 + P.WALL + P.BAT_H / 2]), "rot": [0.0, 0.0, 0.0], "rotates_with": "fixed",

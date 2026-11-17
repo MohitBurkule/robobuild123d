@@ -277,8 +277,8 @@ def _lid(side):
         [(LID_DECK_NOTCH_X0, LID_DECK_SLOT_Y0), (LID_DECK_NOTCH_X0, CHANNEL_HALF_W)]
     try:
         edges = [e for e in plate.edges()
-                 if abs(e.center().Z) < 0.1
-                 and any(math.hypot(e.center().X - (px - cx), e.center().Y - (py - cy)) < 1.0
+                 if abs(e.center().Z) < SELECT_TOL
+                 and any(math.hypot(e.center().X - (px - cx), e.center().Y - (py - cy)) < DECK_CORNER_R
                          for px, py in deck_corners)]
         if edges:
             plate = plate.fillet(LID_SLOT_R, edges)
@@ -293,9 +293,9 @@ def _lid(side):
         try:
             scx, scy = SW_X - cx, -SIDE_ZONE_Y - cy
             edges = [e for e in plate.edges()
-                     if abs(e.center().Z) < 0.1
-                     and abs(e.center().X - scx) < sw_l / 2 + 0.6
-                     and abs(e.center().Y - scy) < sw_w / 2 + 0.6]
+                     if abs(e.center().Z) < SELECT_TOL
+                     and abs(e.center().X - scx) < sw_l / 2 + SLOT_EDGE_TOL
+                     and abs(e.center().Y - scy) < sw_w / 2 + SLOT_EDGE_TOL]
             if edges:
                 plate = plate.fillet(LID_SLOT_R, edges)
         except Exception as e:  # noqa: BLE001

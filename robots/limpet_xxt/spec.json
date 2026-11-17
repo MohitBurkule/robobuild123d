@@ -380,6 +380,8 @@
     90.0
    ],
    "rotates_with": "fixed",
+   "exposed": true,
+   "exposed_reason": "the N10's gearbox can sits in the wheel hub (the printed hub cups the can over its whole outboard end: hub y 37..45 x the can's 10x12 face, 0.00 mm gap); the only visible surface is the output-face annulus where the shaft enters the wheel hub, and any cover there would foul the spinning wheel",
    "label": "N10 gearmotor in its snug closed-top pocket, shaft through the wall"
   },
   {
@@ -440,6 +442,8 @@
     -90.0
    ],
    "rotates_with": "fixed",
+   "exposed": true,
+   "exposed_reason": "the N10's gearbox can sits in the wheel hub (the printed hub cups the can over its whole outboard end: hub y 37..45 x the can's 10x12 face, 0.00 mm gap); the only visible surface is the output-face annulus where the shaft enters the wheel hub, and any cover there would foul the spinning wheel",
    "label": "N10 gearmotor in its snug closed-top pocket, shaft through the wall"
   },
   {
@@ -500,6 +504,8 @@
     90.0
    ],
    "rotates_with": "fixed",
+   "exposed": true,
+   "exposed_reason": "the N10's gearbox can sits in the wheel hub (the printed hub cups the can over its whole outboard end: hub y 37..45 x the can's 10x12 face, 0.00 mm gap); the only visible surface is the output-face annulus where the shaft enters the wheel hub, and any cover there would foul the spinning wheel",
    "label": "N10 gearmotor in its snug closed-top pocket, shaft through the wall"
   },
   {
@@ -560,6 +566,8 @@
     -90.0
    ],
    "rotates_with": "fixed",
+   "exposed": true,
+   "exposed_reason": "the N10's gearbox can sits in the wheel hub (the printed hub cups the can over its whole outboard end: hub y 37..45 x the can's 10x12 face, 0.00 mm gap); the only visible surface is the output-face annulus where the shaft enters the wheel hub, and any cover there would foul the spinning wheel",
    "label": "N10 gearmotor in its snug closed-top pocket, shaft through the wall"
   },
   {
@@ -578,6 +586,8 @@
     0.0
    ],
    "rotates_with": "fixed",
+   "exposed": true,
+   "exposed_reason": "the servo lies in the weapon corridor: the tail lever sweeps to z 16.6..17.8 across its exposed top band (x 9..17.4, measured over the full -42 deg flipper stroke), only 1.4..2.6 mm above the case, so no fixed cover can shield it without being struck by the weapon; its ends and underside are boxed by the tray and decks",
    "label": "SG90-class servo lying on its side in the tray, output axis along +Y"
   },
   {
