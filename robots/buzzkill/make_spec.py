@@ -100,16 +100,16 @@ parts = [
     {
         "id": "wshaft",
         "kind": "shaft",
-        "material": "steel",
+        "material": "titanium",
         "process": "bought",
         "stock": "4mm_rod",
-        "volume_mm3": 88.6,
+        "volume_mm3": 387.0,
         "shape": model("wshaft"),
         "at": r3([P.X_MOT, P.Y_AX, P.Z_AX]),
         "rot": [0.0, 0.0, 0.0],
         "rotates_with": "fixed",
         "retained": "press_fit",
-        "label": "4 mm steel dead-shaft running from disc into inboard MR84 bearing",
+        "label": "4 mm titanium dead-shaft running from outboard upright through bell & disc into inboard MR84 bearing",
     },
     {
         "id": "wbearing",
@@ -326,11 +326,11 @@ for i, (sx, sy) in enumerate(P.LID_SCREWS):
         "hole": _hole(6.0, P.LID_T),
     })
 
-# 4x M2x5 weapon motor base screws through outboard titanium upright
+# 4x M2x4 weapon motor base screws through outboard titanium upright
 for k, (dy, dz) in enumerate(((6.0, 0.0), (-6.0, 0.0), (0.0, 8.0), (0.0, -8.0))):
     fasteners.append({
         "id": f"scr_wmot_{k}",
-        "designation": "M2x5",
+        "designation": "M2x4",
         "at": r3([P.UPRIGHT_X0, P.Y_AX + dy, P.Z_AX + dz]),
         "dir": [1.0, 0.0, 0.0],
         "through": ["upright_outboard"],
@@ -339,7 +339,7 @@ for k, (dy, dz) in enumerate(((6.0, 0.0), (-6.0, 0.0), (0.0, 8.0), (0.0, -8.0)))
         "removable": True,
         "head": "socket",
         "washer": True,
-        "hole": _hole(5.0, 2.0),
+        "hole": _hole(4.0, 2.0),
     })
 
 # 2x M2x6 outboard upright-to-tub screws + heat-set inserts
@@ -466,7 +466,8 @@ for fname, fx, fy0 in (("fork_l", P.FORK_L_X, P.FORK_L_Y0), ("fork_r", P.FORK_R_
         })
 
 wires = [
-    {"id": "w_bat_sw", "from": "battery.xt30", "to": "power_switch.in", "awg": 18, "kind": "power", "slack_mm": 10},
+    {"id": "w_bat_sw", "from": "battery.xt30", "to": "power_switch.in", "awg": 18, "kind": "power", "slack_mm": 10,
+     "via": [[59.0, 12.9, 2.0]]},
     {"id": "w_sw_desc", "from": "power_switch.out", "to": "drive_esc.bat", "awg": 22, "kind": "power", "slack_mm": 10},
     {"id": "w_sw_wesc", "from": "power_switch.out", "to": "weapon_esc.bat", "awg": 18, "kind": "power", "slack_mm": 10},
     {"id": "w_desc_ml", "from": "drive_esc.m1", "to": "drive_motor_l.terminals", "awg": 26, "kind": "motor", "slack_mm": 8},
@@ -518,7 +519,11 @@ spec = {
         {"a": "drive_motor_r", "b": "wheel_r", "max_depth_mm": 0.3,
          "reason": "N10 3mm D-shaft press fit into DuraHubs 25mm wheel bore"},
         {"a": "wshaft", "b": "wbearing", "max_depth_mm": 0.15,
-         "reason": "2mm weapon shaft running fit inside MR52 bearing inner race"},
+         "reason": "4mm weapon shaft running fit inside MR84 bearing inner race"},
+        {"a": "wshaft", "b": "weapon_motor", "max_depth_mm": 0.5,
+         "reason": "4mm dead-shaft passes through BE1806 stator bore"},
+        {"a": "weapon_motor_bell", "b": "wshaft", "max_depth_mm": 0.5,
+         "reason": "4mm dead-shaft passes through BE1806 bell center bore"},
     ],
     "electronics": {
         "failsafe": True,

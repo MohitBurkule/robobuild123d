@@ -138,10 +138,10 @@
     {
       "id": "wshaft",
       "kind": "shaft",
-      "material": "steel",
+      "material": "titanium",
       "process": "bought",
       "stock": "4mm_rod",
-      "volume_mm3": 88.6,
+      "volume_mm3": 387.0,
       "shape": {
         "type": "model",
         "file": "src/buzzkill/parts.py",
@@ -161,7 +161,7 @@
       ],
       "rotates_with": "fixed",
       "retained": "press_fit",
-      "label": "4 mm steel dead-shaft running from disc into inboard MR84 bearing"
+      "label": "4 mm titanium dead-shaft running from outboard upright through bell & disc into inboard MR84 bearing"
     },
     {
       "id": "wbearing",
@@ -486,8 +486,8 @@
       "kind": "switch",
       "catalog": "fingertech_mini_switch",
       "at": [
-        48.0,
-        12.0,
+        44.0,
+        8.0,
         9.0
       ],
       "rot": [
@@ -1039,7 +1039,7 @@
     },
     {
       "id": "scr_wmot_0",
-      "designation": "M2x5",
+      "designation": "M2x4",
       "at": [
         -35.25,
         32.0,
@@ -1060,7 +1060,7 @@
       "washer": true,
       "hole": {
         "d": 2.0,
-        "length": 5.0,
+        "length": 4.0,
         "head": "socket",
         "head_std": "ISO 4762",
         "head_dk": 3.8,
@@ -1074,7 +1074,7 @@
     },
     {
       "id": "scr_wmot_1",
-      "designation": "M2x5",
+      "designation": "M2x4",
       "at": [
         -35.25,
         20.0,
@@ -1095,7 +1095,7 @@
       "washer": true,
       "hole": {
         "d": 2.0,
-        "length": 5.0,
+        "length": 4.0,
         "head": "socket",
         "head_std": "ISO 4762",
         "head_dk": 3.8,
@@ -1109,7 +1109,7 @@
     },
     {
       "id": "scr_wmot_2",
-      "designation": "M2x5",
+      "designation": "M2x4",
       "at": [
         -35.25,
         26.0,
@@ -1130,7 +1130,7 @@
       "washer": true,
       "hole": {
         "d": 2.0,
-        "length": 5.0,
+        "length": 4.0,
         "head": "socket",
         "head_std": "ISO 4762",
         "head_dk": 3.8,
@@ -1144,7 +1144,7 @@
     },
     {
       "id": "scr_wmot_3",
-      "designation": "M2x5",
+      "designation": "M2x4",
       "at": [
         -35.25,
         26.0,
@@ -1165,7 +1165,7 @@
       "washer": true,
       "hole": {
         "d": 2.0,
-        "length": 5.0,
+        "length": 4.0,
         "head": "socket",
         "head_std": "ISO 4762",
         "head_dk": 3.8,
@@ -1699,7 +1699,14 @@
       "to": "power_switch.in",
       "awg": 18,
       "kind": "power",
-      "slack_mm": 10
+      "slack_mm": 10,
+      "via": [
+        [
+          59.0,
+          12.9,
+          2.0
+        ]
+      ]
     },
     {
       "id": "w_sw_desc",
@@ -1863,7 +1870,19 @@
       "a": "wshaft",
       "b": "wbearing",
       "max_depth_mm": 0.15,
-      "reason": "2mm weapon shaft running fit inside MR52 bearing inner race"
+      "reason": "4mm weapon shaft running fit inside MR84 bearing inner race"
+    },
+    {
+      "a": "wshaft",
+      "b": "weapon_motor",
+      "max_depth_mm": 0.5,
+      "reason": "4mm dead-shaft passes through BE1806 stator bore"
+    },
+    {
+      "a": "weapon_motor_bell",
+      "b": "wshaft",
+      "max_depth_mm": 0.5,
+      "reason": "4mm dead-shaft passes through BE1806 bell center bore"
     }
   ],
   "electronics": {

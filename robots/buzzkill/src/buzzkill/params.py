@@ -80,9 +80,9 @@ BEARING_W = 3.0
 BEARING_X0 = -7.0
 BEARING_X1 = -4.0                           # seated in inboard plate X = -6.0 .. -4.0
 
-# Shaft (4 mm steel rod): bridges from bell/disc into inboard MR84 bearing
+# Shaft (4 mm steel rod): bridges from outboard upright through bell & disc into inboard MR84 bearing
 SHAFT_R = 2.0
-SHAFT_X0 = -11.25                           # 0.5 mm clear of BE1806 shaft end (-11.75)
+SHAFT_X0 = -35.0                            # seated in outboard upright (-35.25 .. -33.25)
 SHAFT_X1 = -4.2                             # ends inside MR84 bearing, 0.2 mm clear of tub wall
 
 # --------------------------------------------------------------------------- drive (2WD enclosed)
@@ -106,7 +106,7 @@ WESC_AT = [-24.0, -22.0, -8.3]
 WESC_ROT = [0.0, 0.0, 90.0]
 
 # Switch (FingerTech Mini): 12.7 x 12.7 x 6.35 mm. On top-left deck (like photo), recessed under lid slot:
-SW_AT = [48.0, 12.0, 9.0]
+SW_AT = [44.0, 8.0, 9.0]
 SW_ROT = [0.0, 0.0, 90.0]
 
 # --------------------------------------------------------------------------- forks / wedgelets

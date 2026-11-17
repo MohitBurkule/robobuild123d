@@ -101,12 +101,14 @@ def tub():
         ww = bd.Pos(s * P.WHEEL_X, P.DRIVE_Y, P.DRIVE_Z) * bd.Rot(0, 90, 0) * bd.Cylinder(P.WHEEL_R + 1.8, P.WHEEL_W + 2.6)
         ww_drop = bd.Pos(s * P.WHEEL_X, P.DRIVE_Y, P.TUB_FLOOR_Z) * bd.Box(P.WHEEL_W + 2.6, 2 * (P.WHEEL_R + 1.8), 10.0)
         body = body - ww - ww_drop
-        # N10 motor pocket + shaft bore
-        mp = bd.Pos(s * P.MOTOR_X, P.DRIVE_Y, P.DRIVE_Z) * bd.Box(26.0, 13.0, 11.0)
+        # N10 motor pocket (open to +Z for drop-in assembly) + shaft bore
+        mp = bd.Pos(s * P.MOTOR_X, P.DRIVE_Y, (-5.5 + P.TUB_TOP_Z + 1.0) / 2.0) * bd.Box(26.0, 13.0, P.TUB_TOP_Z + 1.0 - (-5.5))
         sb = bd.Pos(s * (P.MOTOR_X + 12.0), P.DRIVE_Y, P.DRIVE_Z) * bd.Rot(0, 90, 0) * bd.Cylinder(2.2, 16.0)
         body = body - mp - sb
 
-    # 8. Switch pocket & hoop side-mount bosses
+    # 8. Switch pocket (thin shelf at Z=4.8..6.0 bridged to +X wall, clear of drive_esc) & hoop side-mount bosses
+    sw_pad = bd.Pos(52.5, P.SW_AT[1], 5.4) * bd.Box(23.0, 17.0, 1.2)
+    body = body + sw_pad
     sw_loc = bd.Location(tuple(P.SW_AT), tuple(P.SW_ROT))
     sw_bay = derive_bay(C.find(P.SWITCH), placement=sw_loc, insert_dir="-z")
     body = body - sw_bay.cut_solid()
@@ -115,9 +117,9 @@ def tub():
     for s in (-1.0, 1.0):
         body = body - (bd.Pos(s * (P.BODY_HALF_W - 2.0), P.HOOP_Y, P.HOOP_Z_BASE) * bd.Rot(0, 90, 0) * bd.Cylinder(P.INSERT_D / 2.0, 4.5))
 
-    # 9. Front fork mount pockets & insert holes
+    # 9. Front fork mount pockets & insert holes (ceiling at Z = -10.8 flush with fork top)
     for fx, fy0 in ((P.FORK_L_X, P.FORK_L_Y0), (P.FORK_R_X, P.FORK_R_Y0)):
-        fpocket = bd.Pos(fx, (fy0 + 49.0) / 2.0, P.TUB_FLOOR_Z + 0.05) * bd.Box(6.6, 51.0 - fy0, 1.3)
+        fpocket = bd.Pos(fx, (fy0 + 49.0) / 2.0, -11.525) * bd.Box(6.6, 51.0 - fy0, 1.45)
         body = body - fpocket
         for fy in (fy0 + 3.0, fy0 + 9.0):
             fboss = bd.Pos(fx, fy, P.TUB_FLOOR_Z + 3.1) * bd.Cylinder(2.6, 4.2)
@@ -294,7 +296,7 @@ def upright_outboard():
     for dy, dz in ((6.0, 0.0), (-6.0, 0.0), (0.0, 8.0), (0.0, -8.0)):
         plate = plate - (bd.Pos(u_cx, P.Y_AX + dy, P.Z_AX + dz) * bd.Rot(0, 90, 0) * bd.Cylinder(1.15, u_thick + 2.0))
     # Shaft hole, locking bar hole, 2x tub mounting holes, and weight-relief cutouts
-    plate = plate - (bd.Pos(u_cx, P.Y_AX, P.Z_AX) * bd.Rot(0, 90, 0) * bd.Cylinder(P.SHAFT_R + 0.6, u_thick + 2.0))
+    plate = plate - (bd.Pos(u_cx, P.Y_AX, P.Z_AX) * bd.Rot(0, 90, 0) * bd.Cylinder(P.SHAFT_R + 0.05, u_thick + 2.0))
     plate = plate - (bd.Pos(u_cx, P.Y_AX - 14.0, P.Z_AX + 4.0) * bd.Rot(0, 90, 0) * bd.Cylinder(1.6, u_thick + 2.0))
     for uy in (2.0, 10.0):
         plate = plate - (bd.Pos(u_cx, uy, -5.0) * bd.Rot(0, 90, 0) * bd.Cylinder(1.15, u_thick + 2.0))
