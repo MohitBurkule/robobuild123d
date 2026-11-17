@@ -1070,7 +1070,7 @@
    "material": "steel",
    "at": [
     -18.3,
-    32.4,
+    34.0,
     8.0
    ],
    "dir": [
@@ -1095,7 +1095,7 @@
     "clearance_d": 2.2,
     "into": "through",
     "side": "head",
-    "grip": 6.6
+    "grip": 5.0
    }
   },
   {
@@ -1104,7 +1104,7 @@
    "material": "steel",
    "at": [
     9.45,
-    32.4,
+    34.0,
     8.0
    ],
    "dir": [
@@ -1129,7 +1129,7 @@
     "clearance_d": 2.2,
     "into": "through",
     "side": "head",
-    "grip": 6.6
+    "grip": 5.0
    }
   },
   {
@@ -1138,7 +1138,7 @@
    "material": "steel",
    "at": [
     -18.3,
-    32.4,
+    34.0,
     14.0
    ],
    "dir": [
@@ -1163,7 +1163,7 @@
     "clearance_d": 2.2,
     "into": "through",
     "side": "head",
-    "grip": 6.6
+    "grip": 5.0
    }
   },
   {
@@ -1172,7 +1172,7 @@
    "material": "steel",
    "at": [
     9.45,
-    32.4,
+    34.0,
     14.0
    ],
    "dir": [
@@ -1197,7 +1197,7 @@
     "clearance_d": 2.2,
     "into": "through",
     "side": "head",
-    "grip": 6.6
+    "grip": 5.0
    }
   },
   {
@@ -1206,7 +1206,7 @@
    "material": "steel",
    "at": [
     -18.3,
-    32.4,
+    34.0,
     20.0
    ],
    "dir": [
@@ -1231,7 +1231,7 @@
     "clearance_d": 2.2,
     "into": "through",
     "side": "head",
-    "grip": 6.6
+    "grip": 5.0
    }
   },
   {
@@ -1240,7 +1240,7 @@
    "material": "steel",
    "at": [
     9.45,
-    32.4,
+    34.0,
     20.0
    ],
    "dir": [
@@ -1265,7 +1265,7 @@
     "clearance_d": 2.2,
     "into": "through",
     "side": "head",
-    "grip": 6.6
+    "grip": 5.0
    }
   },
   {
@@ -1758,6 +1758,7 @@
    "to": "weapon_motor_stator.phases",
    "awg": 24,
    "kind": "motor",
+   "external": "the phase lead runs through the cable notch into the weapon bay to reach the stator, like every spinner's motor leads; the run inside the tub is under the solid top panel",
    "slack_mm": 10,
    "via": [
     [
@@ -1798,6 +1799,7 @@
    "to": "weapon_motor_stator.phases",
    "awg": 24,
    "kind": "motor",
+   "external": "the phase lead runs through the cable notch into the weapon bay to reach the stator, like every spinner's motor leads; the run inside the tub is under the solid top panel",
    "slack_mm": 10,
    "via": [
     [
@@ -1838,6 +1840,7 @@
    "to": "weapon_motor_stator.phases",
    "awg": 24,
    "kind": "motor",
+   "external": "the phase lead runs through the cable notch into the weapon bay to reach the stator, like every spinner's motor leads; the run inside the tub is under the solid top panel",
    "slack_mm": 10,
    "via": [
     [
