@@ -24,7 +24,7 @@ FLOOR_IN = P.tub_floor_z() + P.TUB_FLOOR_T   # z of the pod cavity floor (inside
 BATTERY_AT = (-19.1, 15.6, FLOOR_IN + 0.5 + 5.5)   # probe --place battery: safe box x -21.9..-16.4, y 10.6..20.6 at yaw 90
 ESC_AT = (0.0, -14.0, FLOOR_IN + 0.5 + 2.0)
 RX_AT = (25.6, 14.9, FLOOR_IN + 0.5 + 1.25)   # probe --place drive_rx: free box x 16.1..35.1 y -1.1..30.9          # Malenki-Nano, yawed 90 deg, rests on the floor (tape)
-XT30_AT = (-23.5, -16.0, FLOOR_IN + 0.5 + 3.0)
+XT30_AT = (-32.0, 15.6, FLOOR_IN + 0.5 + 3.0)   # at the battery xt30 port side (port x -29.6), inside the cone
 TOP_Z = P.TUB_TOP_Z                 # top face of the top panel
 SKID_TOP_Z = TOP_Z + P.MIN_GROUND_CLR + P.SKID_H
 
@@ -93,9 +93,9 @@ def parts():
          "shape": {"type": "model", "file": "src/build_scythe_classic.py", "params": {"part": "lock_pin"}},
          "at": [0, 0, 0], "rot": [0, 0, 0],
          "label": "rule 5f lock: removable 3 mm steel pin through the bar's lock hole into the tub floor (orange, tethered)"},
-        {"id": "skid_foot", "kind": "skid", "catalog": None, "material": "uhmw", "process": "turned",
+        {"id": "skid_foot", "kind": "caster", "catalog": None, "material": "uhmw", "process": "turned",
          "shape": {"type": "model", "file": "src/build_scythe_classic.py", "params": {"part": "skid_foot"}},
-         "at": [0, 0, 0], "rot": [0, 0, 0], "label": "POM-class shaft-end foot"},
+         "at": [0, 0, 0], "rot": [0, 0, 0], "label": "caster puck on the shaft end, 2-part bearing bore (on the axis, 0.5 mm off the floor)"},
         {"id": "skid_dome", "kind": "structure", "catalog": None, "material": "uhmw", "process": "turned",
          "shape": {"type": "model", "file": "src/build_scythe_classic.py", "params": {"part": "skid_dome"}},
          "at": [0, 0, 0], "rot": [0, 0, 0], "label": "POM-class dome on the top panel"},
@@ -121,7 +121,7 @@ def parts():
          "label": "power switch ON/OFF, reached through the top-panel key hole",
          "at": ["P.SWITCH_XY[0] + 1.2", "P.SWITCH_XY[1]", FLOOR_IN + 0.5 + 5.0], "rot": [0, 0, 90]},
         {"id": "xt30", "kind": "connector", "catalog": P.CONNECTOR, "retained": "velcro",
-         "at": _fmt(XT30_AT), "rot": [0, 0, 0]},
+         "at": _fmt(XT30_AT), "rot": [0, 0, 90]},
     ]
 
 

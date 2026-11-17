@@ -165,7 +165,7 @@
   },
   {
    "id": "skid_foot",
-   "kind": "skid",
+   "kind": "caster",
    "catalog": null,
    "material": "uhmw",
    "process": "turned",
@@ -186,7 +186,7 @@
     0,
     0
    ],
-   "label": "POM-class shaft-end foot"
+   "label": "caster puck on the shaft end, 2-part bearing bore (on the axis, 0.5 mm off the floor)"
   },
   {
    "id": "skid_dome",
@@ -364,14 +364,14 @@
    "catalog": "xt30u_m",
    "retained": "velcro",
    "at": [
-    -23.5,
-    -16.0,
+    -32.0,
+    15.6,
     14.0
    ],
    "rot": [
     0,
     0,
-    0
+    90
    ]
   }
  ],

@@ -21,9 +21,16 @@ def _z_cyl(r, h):
     return bd.Cylinder(r, h, align=(bd.Align.CENTER, bd.Align.CENTER, bd.Align.MIN))
 
 
+FOOT_CLR_FLOOR = 0.5   # mm: the caster puck rests this far above the floor when level
+FOOT_CLR_BAR = 0.5     # mm: and stays this far under the bar underside (bar spins over it)
+
+
 def foot():
-    """World frame: floor z = 0 up to the bar underside, on the weapon axis."""
-    return bd.Pos(0, P.WPN_AXIS_Y, 0) * _z_cyl(FOOT_R, P.BAR_Z0)
+    """World frame: a caster puck on the weapon axis (kind caster), bottom FOOT_CLR_FLOOR above the floor and top
+    FOOT_CLR_BAR under the bar underside. It rides the shaft end on a small bearing (bore on the shaft), so its outer
+    ring can stop turning when it touches the floor; it is not part of the rotor."""
+    h = P.BAR_Z0 - FOOT_CLR_BAR - FOOT_CLR_FLOOR
+    return bd.Pos(0, P.WPN_AXIS_Y, FOOT_CLR_FLOOR) * _z_cyl(FOOT_R, h)
 
 
 def dome():
