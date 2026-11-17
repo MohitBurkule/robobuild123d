@@ -13,8 +13,7 @@ from .params import *  # noqa: F401,F403
 
 PARTS = {
     "tub": P.tub,
-    "lid_r": P.lid_right,
-    "lid_l": P.lid_left,
+    "lid": P.lid,
     "side_r": P.side_plate_right,
     "side_l": P.side_plate_left,
     "clamp_r": P.clamp_right,

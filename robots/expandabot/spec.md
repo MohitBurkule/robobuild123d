@@ -36,7 +36,7 @@ Follows `robot/GUIDE.md` and `robot/checks/combat_ground.py`:
 | Part | Qty | Process | Notes |
 |---|---|---|---|
 | `tub` | 1 | FDM PLA (`+z`) | Open top shell with servo tray, 2 snug closed-top N10 motor pockets, battery & ESC bays (`bay.derive_bay`), switch tray, 2 outer hinge knuckles, sloped front clamp mounts (3 × M2 heat-sets per side), 8 side-plate standoff columns, and lid pads with M2 heat-sets |
-| `lid_l` / `lid_r` | 2 | 1.5 mm PC, laser | Top lids covering the left/right electronics zones; `lid_l` carries the horn slot and `lid_r` carries the rounded switch actuator slot |
+| `lid` | 1 | 1.5 mm PC, laser | One-piece top lid covering both electronics zones, with front hinge/horn notch and elongated switch travel slot |
 | `side_l` / `side_r` | 2 | 2.0 mm PC, laser | Mirrored hexagonal side guard plates mounted outboard of the rear wheels on 4 standoff columns per side |
 | `clamp_l` / `clamp_r` | 2 | 2.0 mm PC, laser | Mirrored lobster-claw clamping arms bolted to the sloped front mounts (3 × M2 into heat-sets per side) |
 | `flipper` | 1 | 2.0 mm PC, laser | Central flipper blade between the lobster claws, sloping from the front hinge to the tip |

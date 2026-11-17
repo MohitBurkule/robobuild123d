@@ -314,6 +314,7 @@ def run(ctx):
                    .on(p.id).here(at)
                    .fix("Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose."))
     out += cover_retention(r)
+    out += split_cover(r, w)
     if loose == 0:
         out.append(ok("connection.joined", G, "Every part is attached",
                       f"All {len(r.spec.parts)} parts lead back to the chassis through screws, shared prints, captive pockets, joints or declared connections."))
@@ -367,4 +368,54 @@ def cover_retention(r):
     if good and not out:
         out.append(ok("connection.cover_fasteners", G, "Panels bolted down",
                       f"All {good} armour / cover panels and screw-retained parts are held by >= {COVER_MIN_FASTENERS} fasteners."))
+    return out
+
+
+def split_cover(r, w):
+    """Horizontal top/bottom cover panels on the chassis should be a single one-piece sheet rather than split into
+    multiple coplanar panels along an unbacked seam, unless an exceptional design requirement is declared via
+    `split_cover_deviation` (with a reason >= 20 chars)."""
+    horiz = []
+    for p in r.spec.parts:
+        if not is_cover(p) or getattr(p, "parent", None) or getattr(p, "joint", None):
+            continue
+        if any(tag in p.id.lower() for tag in ("wedge", "fork", "skirt")):
+            continue
+        b = w.body(p.id)
+        if b is None:
+            continue
+        lo, hi = b.aabb
+        dx, dy, dz = [float(x) for x in (hi - lo)]
+        if dz <= 4.0 and min(dx, dy) >= 3.0 * max(dz, 0.1):
+            horiz.append((p, float((lo[2] + hi[2]) / 2), dz))
+    if not horiz:
+        return []
+    groups = []
+    for p, zc, dz in horiz:
+        for g in groups:
+            if abs(zc - g[0][1]) <= max(dz, g[0][2]) + 0.5:
+                g.append((p, zc, dz))
+                break
+        else:
+            groups.append([(p, zc, dz)])
+    out = []
+    for g in groups:
+        if len(g) < 2:
+            continue
+        pids = [p.id for p, _, _ in g]
+        z_avg = sum(zc for _, zc, _ in g) / len(g)
+        whys = [str(p._extra.get("split_cover_deviation") or "").strip() for p, _, _ in g]
+        valid_why = next((why for why in whys if len(why) >= 20), None)
+        if valid_why and all(len(why) >= 20 for why in whys):
+            out.append(fail("connection.split_cover", G, WARNING, "Horizontal cover panel split (reasoned deviation)",
+                            f"Coplanar cover panels {', '.join(f'`{i}`' for i in pids)} share z={z_avg:.1f} mm; declared deviation: {valid_why}")
+                       .on(*pids))
+        else:
+            out.append(fail("connection.split_cover", G, BLOCKER, "Top/bottom cover panel unnecessarily split",
+                            f"Coplanar horizontal cover panels {', '.join(f'`{i}`' for i in pids)} at z={z_avg:.1f} mm split one deck/belly into "
+                            f"{len(g)} pieces; an unbacked seam cuts membrane stiffness and doubles part count.")
+                       .on(*pids).fix("Combine them into a single one-piece cover panel, or declare `split_cover_deviation` (reason >= 20 chars) on each piece for exceptional design requirements."))
+    if not out:
+        out.append(ok("connection.split_cover", G, "Horizontal cover panels are one-piece",
+                      f"{len(horiz)} horizontal cover/deck panel(s) checked; none are unnecessarily split across a coplanar seam."))
     return out

@@ -65,12 +65,9 @@ parts = [
                          "[expires 2027-12-31]",
      "label": "printed red PLA tub: open top, servo tray with horn slot, two closed-top rear motor pockets, "
               "standoff columns, lid pads, sloped front clamp seats, outer hinge knuckles"},
-    {"id": "lid_r", "kind": "armor", "material": "pc", "process": "laser",
-     "shape": model("lid_r"), "at": r3(PP.lid_at(-1)), "rot": [0.0, 0.0, 0.0], "rotates_with": "fixed",
-     "label": "1.5 mm PC right lid with the rounded switch slot"},
-    {"id": "lid_l", "kind": "armor", "material": "pc", "process": "laser",
-     "shape": model("lid_l"), "at": r3(PP.lid_at(1)), "rot": [0.0, 0.0, 0.0], "rotates_with": "fixed",
-     "label": "1.5 mm PC left lid (mirror of the right without the switch slot)"},
+    {"id": "lid", "kind": "armor", "material": "pc", "process": "laser",
+     "shape": model("lid"), "at": r3(PP.lid_at()), "rot": [0.0, 0.0, 0.0], "rotates_with": "fixed",
+     "label": "1.5 mm PC one-piece top lid with front hinge/horn notch and elongated switch travel slot"},
     {"id": "side_r", "kind": "armor", "material": "pc", "process": "laser",
      "shape": model("side_r"), "at": r3(PP.side_at(-1)), "rot": [0.0, 0.0, 0.0], "rotates_with": "fixed",
      "label": "2 mm PC right side guard plate (hexagon) on the standoff columns"},
@@ -178,7 +175,7 @@ for s, ys, tag in ((1, P.LID_SCREWS_Y_L, "l"), (-1, P.LID_SCREWS_Y_R, "r")):
     for i, y in enumerate(ys):
         fasteners.append({"id": f"bolt_lid_{tag}{i}", "designation": "M2x6", "material": "steel",
                           "at": r3([s * P.LID_PAD_X, y, P.LID_Z1]), "dir": [0.0, 0.0, -1.0],
-                          "through": [f"lid_{tag}"], "threads_into": f"insert_lid_{tag}{i}", "tool": "hex1.5",
+                          "through": ["lid"], "threads_into": f"insert_lid_{tag}{i}", "tool": "hex1.5",
                           "removable": True, "head": "button",
                           "hole": {**HOLE_M2, "length": 6.0, "head": "button", "head_std": "ISO 7380-1",
                                    "head_dk": 3.5, "head_k": 1.3, "grip": P.LID_T}})

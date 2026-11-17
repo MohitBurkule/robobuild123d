@@ -60,7 +60,7 @@
    "label": "printed red PLA tub: open top, servo tray with horn slot, two closed-top rear motor pockets, standoff columns, lid pads, sloped front clamp seats, outer hinge knuckles"
   },
   {
-   "id": "lid_r",
+   "id": "lid",
    "kind": "armor",
    "material": "pc",
    "process": "laser",
@@ -68,11 +68,11 @@
     "type": "model",
     "file": "src/build_expandabot.py",
     "params": {
-     "part": "lid_r"
+     "part": "lid"
     }
    },
    "at": [
-    -18.1,
+    0.0,
     -15.145,
     23.2
    ],
@@ -82,32 +82,7 @@
     0.0
    ],
    "rotates_with": "fixed",
-   "label": "1.5 mm PC right lid with the rounded switch slot"
-  },
-  {
-   "id": "lid_l",
-   "kind": "armor",
-   "material": "pc",
-   "process": "laser",
-   "shape": {
-    "type": "model",
-    "file": "src/build_expandabot.py",
-    "params": {
-     "part": "lid_l"
-    }
-   },
-   "at": [
-    18.1,
-    -15.145,
-    23.2
-   ],
-   "rot": [
-    0.0,
-    0.0,
-    0.0
-   ],
-   "rotates_with": "fixed",
-   "label": "1.5 mm PC left lid (mirror of the right without the switch slot)"
+   "label": "1.5 mm PC one-piece top lid with front hinge/horn notch and elongated switch travel slot"
   },
   {
    "id": "side_r",
@@ -948,7 +923,7 @@
     -1.0
    ],
    "through": [
-    "lid_l"
+    "lid"
    ],
    "threads_into": "insert_lid_l0",
    "tool": "hex1.5",
@@ -982,7 +957,7 @@
     -1.0
    ],
    "through": [
-    "lid_l"
+    "lid"
    ],
    "threads_into": "insert_lid_l1",
    "tool": "hex1.5",
@@ -1016,7 +991,7 @@
     -1.0
    ],
    "through": [
-    "lid_r"
+    "lid"
    ],
    "threads_into": "insert_lid_r0",
    "tool": "hex1.5",
@@ -1050,7 +1025,7 @@
     -1.0
    ],
    "through": [
-    "lid_r"
+    "lid"
    ],
    "threads_into": "insert_lid_r1",
    "tool": "hex1.5",

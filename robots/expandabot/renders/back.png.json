@@ -1,10 +1,9 @@
 {
  "spec": "/home/antigravity/MohitBurkule/robobuild123d/robots/expandabot/spec.json",
- "rendered_at": 1794880512.051847,
+ "rendered_at": 1794919500.2025042,
  "bodies": [
   "tub",
-  "lid_r",
-  "lid_l",
+  "lid",
   "side_r",
   "side_l",
   "clamp_l",

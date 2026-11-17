@@ -60,7 +60,7 @@ PART_CHECK_DICTS = ("practice_ok", "geom_ok", "dfm_ok")
 # Part keys holding ONE waiver as an object with a `reason`.
 PART_REASON_DICTS = ("loose_ok", "assembly_ok", "no_contact_ok", "rub_gap_ok")
 # Part keys holding ONE waiver as a plain reason string.
-PART_REASON_STRINGS = ("sharp_corners_ok", "thin_wall_deviation", "cover_fasteners_deviation", "solid_reason")
+PART_REASON_STRINGS = ("sharp_corners_ok", "thin_wall_deviation", "cover_fasteners_deviation", "split_cover_deviation", "solid_reason")
 WIRE_REASON_STRINGS = ("rotor_ok", "exposed_reason")
 # review sections that are not waivers at all (this group's own settings; where the reference index lives)
 REVIEW_NOT_WAIVERS = ("waiver_audit", "reference_index")
