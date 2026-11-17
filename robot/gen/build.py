@@ -34,6 +34,9 @@ class BuildError(ValueError):
 # shared by about 4 wall strips between housings: 0.15 * 9 / (2 * 0.01) / 4 ~ 17 N; doubled for a weapon hit -> 34 N
 SIDE_HIT_N = 34.0
 
+from .external import shell as _shell
+
+
 def frame_params(h, user: dict | None = None) -> dict:
     """Default body box for a hypothesis (user `outline`/`height` override)."""
     user = user or {}
@@ -66,17 +69,54 @@ def default_outline(half_w, y0, y1, chamfer=4.0, rear_r=7.0) -> list:
     return pts[::-1]
 
 
+ROUND_MAX_R = 74.0  # a round body stays inside the 150 mm floor square (1 mm margin)
+
+
+def ellipse_outline(half_w, y0, y1, n=48) -> list:
+    """Oval body: the ellipse that holds the default box (half_w x y0..y1) inside it, capped by the size rule."""
+    import math
+    cy = (y0 + y1) / 2
+    half_w, ry = min(half_w * 2 ** 0.5, ROUND_MAX_R), min((y1 - y0) / 2 * 2 ** 0.5, ROUND_MAX_R)
+    return [[round(half_w * math.cos(2 * math.pi * i / n), 3), round(cy + ry * math.sin(2 * math.pi * i / n), 3)]
+            for i in range(n)]
+
+
+def disc_outline(half_w, y0, y1, n=48) -> list:
+    """Round body: a circle covering the front/rear span, at least as wide as the wheel track."""
+    import math
+    r = min(math.hypot(half_w, (y1 - y0) / 2), ROUND_MAX_R)  # circle through the box corners
+    cy = (y0 + y1) / 2
+    return [[round(r * math.cos(2 * math.pi * i / n), 3), round(cy + r * math.sin(2 * math.pi * i / n), 3)]
+            for i in range(n)]
+
+
+OUTLINE_SHAPES = {"default": default_outline, "box": default_outline, "oval": ellipse_outline, "round": disc_outline}
+
+
+def shell_profile(user) -> list | None:
+    """User wall slope: `profile` [[t, inset_mm], ..] (t 0 = belly, 1 = roof) or `taper` mm (straight cone to the roof)."""
+    user = user or {}
+    if user.get("profile"):
+        return [[float(t), float(d)] for t, d in user["profile"]]
+    if user.get("taper"):
+        return [[0.0, 0.0], [1.0, float(user["taper"])]]
+    return None
+
+
 def make_plan(h, user=None) -> tuple:
     fp = frame_params(h, user)
     # 4WD belt: front axle as far forward as the front well allows (longest wheelbase = most stable, longest belt)
     front_y = fp["y1"] - fp.get("wall", 1.6) - 0.2 - (h.wheel_dia + 5.8) / 2
     g = drive.geom_for(h, fp["axle_y"], front_y)
     W = round(g.half_width, 2)
-    outline = (user or {}).get("outline") or default_outline(W, fp["y0"], fp["y1"])
+    shape = (user or {}).get("shape", "default")
+    if shape not in OUTLINE_SHAPES:
+        raise ValueError(f"shape `{shape}` unknown; pick one of {sorted(OUTLINE_SHAPES)} or give `outline` points")
+    outline = (user or {}).get("outline") or OUTLINE_SHAPES[shape](W, fp["y0"], fp["y1"])
     # wall from the side load it must carry between the housings that back it (see intent.wall_for)
     wall = intent_mod.wall_for(SIDE_HIT_N, span_mm=25.0, material="nylon")
     fr = Frame(outline=[list(map(float, p)) for p in outline], zb=fp["zb"], zt=fp["zt"], floor=fp.get("floor", 1.5),
-               wall=wall)
+               wall=wall, profile=shell_profile(user))
     plan = Plan(hyp=h, frame=fr, name=(user or {}).get("name") or f"gen {h.weapon}",
                 robot_type=ROBOT_TYPE.get(h.weapon, "other"))
     plan.extra["_floor_z"] = fp["floor_z"]
@@ -114,7 +154,9 @@ def layout_inputs(plan, h, user=None) -> LayoutInputs:
     fixed_mass = [(p_mass(p), p["at"][0], p["at"][1]) for p in plan.parts]
     keep = [Keepout(*k) for k in plan.keepouts]
     f = plan.frame
-    return LayoutInputs(outline=f.outline, height=f.zt - f.zb, wall=f.wall + 0.2, components=comps, keepouts=keep,
+    # sloped shell: components must fit the smallest section (the roof of a cone), so lay out inside that
+    lay = f.outline if not f.profile else [list(p) for p in _shell.section(f.outline, f.max_inset())]
+    return LayoutInputs(outline=lay, height=f.zt - f.zb, wall=f.wall + 0.2, components=comps, keepouts=keep,
                         links=links, anchors=anchors, fixed_mass=fixed_mass,
                         cog_target=(0.0, plan.extra.get("cog_y", plan.extra.get("axle_y", 0.0) + 6.0)),
                         seed=(user or {}).get("seed", 0), avoid=[tuple(a) for a in (user or {}).get("avoid", [])])

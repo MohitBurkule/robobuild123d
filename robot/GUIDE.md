@@ -332,6 +332,7 @@ probe tests the function (robot/checks/intent.py has the keys). BLOCKER unless `
 python3 -m robot gen list-hypotheses --fix weapon=vspin_drisk --limit 5
 python3 -m robot gen build --hypothesis vspin_drisk --out out/ --fast   # gated: 0 blockers or exit 2
 python3 -m robot gen build --hypothesis "weapon=wedge,wheel_dia=25" --out out/
+python3 -m robot gen build --intent cone.json --out out/          # intent JSON: shape box|oval|round, taper/profile (robot/gen/INTENT.md)
 python3 -m robot gen layouts spec_inputs.json -k 5    # LayoutInputs JSON (outline, components, keepouts, ...)
 python3 -m robot gen layouts hspin_bar -k 3           # or the layout problem of a hypothesis
 ```

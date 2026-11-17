@@ -19,6 +19,35 @@ def _outline_prism(points, z0, z1, spline):
     return sh.prism(points, z1 - z0, (0, 0, (z0 + z1) / 2), spline=spline)
 
 
+SECTION_N = 72  # points per loft section of a sloped shell (same count on every section, so the skin is ruled cleanly)
+
+
+def section(points, d: float, n: int = SECTION_N) -> list:
+    """The outline shrunk by d, resampled to n points by arc length, starting at the +x-most point (counter-clockwise).
+    Every section of a sloped shell is resampled the same way, so section i lines up with section i+1."""
+    import math
+    poly = geom.polygon(points).buffer(-d, join_style=1) if d > 0 else geom.polygon(points)
+    if poly.is_empty or poly.geom_type != "Polygon":
+        raise ValueError(f"shell profile shrinks the outline by {d:.1f} mm: nothing left (reduce the taper)")
+    ring = poly.exterior
+    if not ring.is_ccw:
+        from shapely.geometry import LinearRing
+        ring = LinearRing(list(ring.coords)[::-1])
+    cx, cy = poly.centroid.x, poly.centroid.y
+    coords = list(ring.coords)[:-1]
+    k = min(range(len(coords)), key=lambda i: abs(math.atan2(coords[i][1] - cy, coords[i][0] - cx)))
+    start = ring.project(__import__("shapely.geometry", fromlist=["Point"]).Point(coords[k]))
+    L = ring.length
+    return [(round(p.x, 3), round(p.y, 3)) for p in (ring.interpolate((start + L * i / n) % L) for i in range(n))]
+
+
+def _sloped(f, z0, z1, extra: float = 0.0):
+    """Solid between z0 and z1 whose outline at height z is the frame outline shrunk by inset_at(z) + extra."""
+    secs = [{"z": sh.r(z), "points": [[x, y] for x, y in section(f.outline, f.inset_at(z) + extra)], "spline": False}
+            for z in f.breaks(z0, z1)]
+    return sh.loft(secs, ruled=True)
+
+
 EDGE_CHAMFER = chamfer_for("print")  # belly and roof perimeter bevel (wall 1.6 + floor >= 1.1 keeps >= 1 mm through the corner)
 
 
@@ -31,6 +60,8 @@ def _ccw(poly) -> list:
 
 def _outer_body(f, z0, z1, bevel_low: bool):
     """The half's outer solid: the outline extruded, with the outside face (belly or roof) bevelled all round."""
+    if f.profile:  # sloped walls: the slope is the ramp, no extra bevel
+        return _sloped(f, z0, z1)
     c = EDGE_CHAMFER
     if f.spline or c <= 0 or z1 - z0 < 3 * c:
         return _outline_prism(f.outline, z0, z1, f.spline)
@@ -63,7 +94,7 @@ def half_shape(plan, half: str) -> dict:
     R = INNER_R
     # the open side of the void runs R + 0.5 past the split so rounding never leaves a lip on the split face
     iz0x, iz1x = (iz0, iz1 + R) if half == "bottom" else (iz0 - R, iz1)
-    inner = _outline_prism(inner_outline(f), iz0x, iz1x, f.spline)
+    inner = _sloped(f, iz0x, iz1x, f.wall) if f.profile else _outline_prism(inner_outline(f), iz0x, iz1x, f.spline)
     housings = []
     for p in plan.pockets:
         if p.housing > 0 and half in p.halves:
@@ -125,8 +156,12 @@ def add_tub(plan, material="nylon", color="#23262b"):
     # wheel slots, and a side hit lands on the tub, not on a sheet edge
     from shapely.geometry import Polygon as _P
     inner = _ccw(_P(f.outline).buffer(-f.wall, join_style=2))
-    top_slab = _outline_prism(inner, f.zt - f.floor, f.zt + 40.0, f.spline)
-    base_slab = _outline_prism(inner, f.zb - 40.0, f.zb + f.floor, f.spline)
+    if f.profile:
+        top_slab = _sloped(f, f.zt - f.floor, f.zt + 40.0, f.wall)
+        base_slab = _sloped(f, f.zb - 40.0, f.zb + f.floor, f.wall)
+    else:
+        top_slab = _outline_prism(inner, f.zt - f.floor, f.zt + 40.0, f.spline)
+        base_slab = _outline_prism(inner, f.zb - 40.0, f.zb + f.floor, f.spline)
     tub = sh.S(full, top_slab, base_slab)
     lid = {"type": "intersect", "items": [full, top_slab]}
     base = {"type": "intersect", "items": [full, base_slab]}
