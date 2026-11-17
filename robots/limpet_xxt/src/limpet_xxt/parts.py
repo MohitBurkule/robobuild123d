@@ -154,14 +154,6 @@ def tub():
     outer = bd.Pos(TUB_XC, 0, TUB_Z0 + TUB_H / 2) * bd.Box(TUB_L, TUB_W, TUB_H)
     inner = bd.Pos(TUB_XC, 0, TUB_Z0 + WALL + TUB_H / 2) * bd.Box(TUB_L - 2 * WALL, TUB_W - 2 * WALL, TUB_H)
     body = outer - inner
-    # round the shell's inner edges (corners, floor rim, top rim) and the outer top rim while the shell is clean
-    def _shell(p):
-        return [e for e in p.edges()
-                if (TUB_XC - TUB_L / 2 + WALL - 0.1 <= e.center().X <= TUB_XC + TUB_L / 2 - WALL + 0.1
-                    and abs(e.center().Y) <= TUB_W / 2 - WALL + 0.1
-                    and TUB_Z0 + WALL - 0.1 <= e.center().Z <= TUB_Z1 + 0.1)
-                ]
-    body = _fillet_edges(body, 1.0, _shell)
 
     # servo tray: block filling the channel around the servo, snug cavity OPEN AT THE TOP (the servo lifts out
     # +z once the lids are off), horn slot piercing the +Y wall, lead slot in the -X wall for the servo wire
@@ -180,8 +172,9 @@ def tub():
     # switch tray (right zone)
     body = body + _switch_tray()
 
-    # lid pads: wall-thickening pads with blind insert bores open at the wall top; each pad's seams and bore
-    # mouths are filleted right after the pad is added, while the shape is still simple
+    # lid pads: wall-thickening pads with blind insert bores open at the wall top; each bore mouth is
+    # filleted right after the pad is added, while the shape is still simple (the pad/wall seams are
+    # left to the end-of-body fillets — post-union seam fillets here segfault OCCT)
     bz0 = TUB_Z1 - LID_PAD_H + LID_PAD_BORE_FLOOR
     for s in (1, -1):
         for x, pw in LID_PADS:
@@ -189,13 +182,6 @@ def tub():
             bore = bd.Pos(x, s * LID_PAD_Y, (bz0 + TUB_Z1 + EPS) / 2) * \
                 bd.Cylinder(INSERT_OD / 2 - CLEAR / 2, TUB_Z1 + EPS - bz0)
             body = body + pad - bore
-
-            def _seams(p, x=x, s=s):
-                return [e for e in p.edges()
-                        if abs(abs(e.center().Y) - (TUB_W / 2 - WALL)) < RIM_TOL
-                        and abs(e.center().X - x) <= pw / 2 + RIM_TOL
-                        and TUB_Z1 - LID_PAD_H - RIM_TOL <= e.center().Z <= TUB_Z1 + RIM_TOL]
-            body = _fillet_edges(body, 1.0, _seams)
 
             def _mouths(p, x=x, s=s):
                 return [e for e in p.edges()
@@ -211,8 +197,6 @@ def tub():
                 col = bd.Pos(x, s * (TUB_W / 2 + SPACER_L / 2), z) * y_cyl(STANDOFF_D / 2, SPACER_L)
                 bore = bd.Pos(x, s * (TUB_W / 2 + SPACER_L / 2), z) * y_cyl(INSERT_OD / 2 - CLEAR / 2, SPACER_L + 2 * EPS)
                 body = body + col - bore
-    rim_centers = [(HINGE_X, HINGE_Z)] * 2 + [(x, z) for x in STANDOFF_XS for z in PLATE_SCREWS_Z]
-    body = _fillet_near(body, 1.0, (TUB_W / 2 - WALL, TUB_W / 2), rim_centers)
 
     # outer hinge knuckles on the front top edge (the block's centre knuckle sits between them, 4 mm clear);
     # the wall's front-top corner is notched away over the whole hinge-block swing envelope
@@ -223,13 +207,6 @@ def tub():
     notch = bd.Pos((RELIEF_X0 + RELIEF_X1) / 2, 0, (RELIEF_Z0 + TUB_Z1 + EPS) / 2) * \
         bd.Box(RELIEF_X1 - RELIEF_X0, 2 * RELIEF_HALF_Y, TUB_Z1 + EPS - RELIEF_Z0)
     body = body - notch
-
-    def _notch(p):
-        return [e for e in p.edges()
-                if RELIEF_X0 - 0.1 <= e.center().X <= RELIEF_X1 + 0.1
-                and abs(e.center().Y) <= RELIEF_HALF_Y + 0.1
-                and RELIEF_Z0 - 0.1 <= e.center().Z <= TUB_Z1 + 0.1]
-    body = _fillet_edges(body, 1.0, _notch)
 
     # motor pockets: snug (MOTOR_FIT per side), closed top (wall above captures the motor), through the outer wall;
     # the shaft hole passes the wall into the wheel well. Motors slide in axially before the wheels go on.
@@ -246,6 +223,25 @@ def tub():
     # electronics bays (bay.py cut solids)
     for b in _bays():
         body = body - b.cut_solid()
+
+    # rim fillets LAST: a fillet applied before a later boolean gets sliced by it, and the trimmed
+    # tangent patches tessellate with T-junctions (non-watertight mesh). On the finished body every
+    # fillet terminates transversally and the mesh stays closed.
+    def _shell(p):
+        return [e for e in p.edges()
+                if (TUB_XC - TUB_L / 2 + WALL - 0.1 <= e.center().X <= TUB_XC + TUB_L / 2 - WALL + 0.1
+                    and abs(e.center().Y) <= TUB_W / 2 - WALL + 0.1
+                    and TUB_Z0 + WALL - 0.1 <= e.center().Z <= TUB_Z1 + 0.1)
+                ]
+    def _notch(p):
+        return [e for e in p.edges()
+                if RELIEF_X0 - 0.1 <= e.center().X <= RELIEF_X1 + 0.1
+                and abs(e.center().Y) <= RELIEF_HALF_Y + 0.1
+                and RELIEF_Z0 - 0.1 <= e.center().Z <= TUB_Z1 + 0.1]
+    body = _fillet_edges(body, 1.0, _notch)
+    rim_centers = [(HINGE_X, HINGE_Z)] * 2 + [(x, z) for x in STANDOFF_XS for z in PLATE_SCREWS_Z]
+    body = _fillet_near(body, 1.0, (TUB_W / 2 - WALL, TUB_W / 2), rim_centers)
+    body = _fillet_edges(body, 1.0, _shell)
 
     return body
 

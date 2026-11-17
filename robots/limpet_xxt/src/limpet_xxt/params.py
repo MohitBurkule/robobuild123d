@@ -220,12 +220,13 @@ STANDOFF_D = min(WHEEL_GAP_X / 2 - RUN_CLEAR, INSERT_OD + 2 * WALL)
 STANDOFF_XS = (TUB_XC - WHEEL_GAP_X / 4, TUB_XC + WHEEL_GAP_X / 4)  # two columns inside the clear span
 PLATE_SCREWS_Z = (AXLE_Z - PLATE_H / 4, AXLE_Z + PLATE_H / 4)
 
-# --- lid fixing: wall-thickening pads with M2 heat-sets (no separate bosses); pad corners stay >= 3 mm from the insert
+# --- lid fixing: wall-thickening pads with M2 heat-sets (no separate bosses); the pad bottom seam stays
+# >= 3 mm below the bolt tip so the sharp corner sits outside the fastener load zone
 # pad X positions sit in the free zones: rear of the rear motor pocket, and between the front pocket and the hinge
 LID_SCREW_INSET = 4.0                                       # screw centre inset from the tub outer wall face
 LID_PAD_Y = 32.0                                            # pad centre |y| (inside the wall, clear of the ESC / switch)
 LID_PAD_D = 7.0                                             # pad size along Y
-LID_PAD_H = 7.0                                             # pad hangs this far down from the wall top
+LID_PAD_H = 8.0                                             # pad hangs this far down from the wall top (bottom seam >= 3 mm below the M2x6 bolt tip)
 LID_PAD_BORE_FLOOR = 2.2                                    # blind insert bore leaves this floor under the pad (mouth fillet eats 1 mm)
 LID_PADS = ((-45.5, 7.5), (13.9, 6.5))                      # (screw X, pad width X): rear pad merges into the rear wall corner
 LID_SCREWS_X_L = tuple(x for x, _w in LID_PADS)             # left lid: clear of the ESC footprint (ESC slides out +z)
