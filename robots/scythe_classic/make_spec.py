@@ -20,10 +20,11 @@ from scythe_classic._reuse import weapon_motor  # noqa: E402
 PARAMS_PATH = "src/scythe_classic/params.py"
 
 # Hand-placed electronics (x, y, z) in mm, rear pod and cone interior. Checked with `robot verify`.
-BATTERY_AT = (-0.58, -30.0, 15.5)     # 1 mm above the floor top (tub contact tolerance)
-ESC_AT = (0.0, -14.0, 10.5)
-RX_AT = (22.49, -4.0, 10.75)          # Malenki-Nano, yawed 90 deg, rests on the floor (tape)
-XT30_AT = (-23.5, -16.0, 15.1)
+FLOOR_IN = P.tub_floor_z() + P.TUB_FLOOR_T   # z of the pod cavity floor (inside the tub): electronics sit on it
+BATTERY_AT = (-19.1, 15.6, FLOOR_IN + 0.5 + 5.5)   # probe --place battery: safe box x -21.9..-16.4, y 10.6..20.6 at yaw 90
+ESC_AT = (0.0, -14.0, FLOOR_IN + 0.5 + 2.0)
+RX_AT = (25.6, 14.9, FLOOR_IN + 0.5 + 1.25)   # probe --place drive_rx: free box x 16.1..35.1 y -1.1..30.9          # Malenki-Nano, yawed 90 deg, rests on the floor (tape)
+XT30_AT = (-23.5, -16.0, FLOOR_IN + 0.5 + 3.0)
 TOP_Z = P.TUB_TOP_Z                 # top face of the top panel
 SKID_TOP_Z = TOP_Z + P.MIN_GROUND_CLR + P.SKID_H
 
@@ -80,16 +81,18 @@ def parts():
          "shape": {"type": "model", "file": "src/build_scythe_classic.py", "params": {"part": "bar"}},
          "at": [0, f"P.WPN_AXIS_Y", "P.BAR_Z0"], "rot": [0, 0, 0],
          "weapon": {"kind": "bar", "motor": "weapon_motor", "cells": 2, "reduction": 1.0, "spin_axis": [0, 0, 1],
-                    "spin_dir": "ccw", "teeth": 2},
+                    "spin_dir": "ccw", "teeth": 2, "locking_bar": "lock_pin"},
          "secondary_ops": ["countersink"],
          "label": "3 mm steel two-tooth bar, 116 mm, horizontal under the tub"},
         {"id": "weapon_hub", "kind": "hub", "catalog": None, "material": "aluminium", "process": "turned",
          "secondary_ops": ["drilled"],
          "shape": {"type": "model", "file": "src/build_scythe_classic.py", "params": {"part": "weapon_hub"}},
          "at": [0, "P.WPN_AXIS_Y", "P.bar_top_z()"], "rot": [0, 0, 0], "label": "turned 7075 hub, bar 2x M3"},
-        {"id": "caster", "kind": "caster", "catalog": None, "material": "uhmw", "process": "turned",
-         "shape": {"type": "model", "file": "src/build_scythe_classic.py", "params": {"part": "caster"}},
-         "at": [0, 0, 0], "rot": [0, 0, 0], "label": "ball caster under the tub front, ahead of the CoM"},
+        {"id": "lock_pin", "kind": "locking_bar", "catalog": None, "material": "steel", "process": "turned", "tethered": True,
+         "color": [255, 90, 0], "retained": "pin",
+         "shape": {"type": "model", "file": "src/build_scythe_classic.py", "params": {"part": "lock_pin"}},
+         "at": [0, 0, 0], "rot": [0, 0, 0],
+         "label": "rule 5f lock: removable 3 mm steel pin through the bar's lock hole into the tub floor (orange, tethered)"},
         {"id": "skid_foot", "kind": "skid", "catalog": None, "material": "uhmw", "process": "turned",
          "shape": {"type": "model", "file": "src/build_scythe_classic.py", "params": {"part": "skid_foot"}},
          "at": [0, 0, 0], "rot": [0, 0, 0], "label": "POM-class shaft-end foot"},
@@ -106,8 +109,9 @@ def parts():
          "at": ["P.wheel_x()", "P.wheel_y()", "P.WHEEL_CZ"], "rot": [0.0, 0.0, 0.0]},
         {"id": "wheel_l", "kind": "wheel", "catalog": "bbb_wheel_34x6_5",
          "at": ["-P.wheel_x()", "P.wheel_y()", "P.WHEEL_CZ"], "rot": [0.0, 0.0, 180.0]},
-        {"id": "battery", "kind": "battery", "catalog": P.BATTERY, "retained": "pocket",
-         "at": _fmt(BATTERY_AT), "rot": [0, 0, 0],
+        {"id": "battery", "kind": "battery", "catalog": P.BATTERY, "retained": "strap",
+         "retained_reason": "hook-and-loop strap over the pack, anchored to rib pegs in the pod; undone to change the pack",
+         "at": _fmt(BATTERY_AT), "rot": [0, 0, 90],
          "label": "2S 180 mAh pack in the rear pod (smaller than the old 300 mAh: see params)"},
         {"id": "weapon_esc", "kind": "esc", "catalog": P.WEAPON_ESC, "retained": "velcro",
          "at": _fmt(ESC_AT), "rot": [0, 0, 0]},
@@ -115,7 +119,7 @@ def parts():
          "at": _fmt(RX_AT), "rot": [0, 0, 90]},
         {"id": "switch", "kind": "switch", "catalog": P.SWITCH, "retained": "velcro", "tool_free": True, "marked": True,
          "label": "power switch ON/OFF, reached through the top-panel key hole",
-         "at": ["P.SWITCH_XY[0] + 1.2", "P.SWITCH_XY[1]", 12.7], "rot": [0, 0, 0]},
+         "at": ["P.SWITCH_XY[0] + 1.2", "P.SWITCH_XY[1]", FLOOR_IN + 0.5 + 5.0], "rot": [0, 0, 90]},
         {"id": "xt30", "kind": "connector", "catalog": P.CONNECTOR, "retained": "velcro",
          "at": _fmt(XT30_AT), "rot": [0, 0, 0]},
     ]
@@ -127,7 +131,8 @@ def connections():
         {"a": "bar", "b": "weapon_hub", "method": "screw", "reason": "2x M3 countersunk bolts through the bar into the tapped hub"},
         {"a": "weapon_hub", "b": "weapon_motor", "method": "shaft", "reason": "hub bores on the 5 mm shaft, clamped by its screws"},
         {"a": "skid_foot", "b": "bar", "method": "shaft", "reason": "foot turns with the bar on the shaft end, captured by the shaft nut"},
-        {"a": "caster", "b": "tub", "method": "screw", "reason": "ball caster housing screwed under the tub front floor"},
+        {"a": "lock_pin", "b": "tub", "method": "pin", "reason": "pin seats in a socket in the tub floor underside; tethered to the tub"},
+        {"a": "switch", "b": "tub", "method": "snap", "reason": "snaps into a moulded cradle on the tub floor"},
         {"a": "skid_dome", "b": "top_panel", "method": "screw", "reason": "M2 screw from the dome through the top panel into the stator base"},
         {"a": "wheel_r", "b": "drive_motor_r", "method": "shaft", "reason": "N10 D-shaft bore, grub screw on the flat"},
         {"a": "wheel_l", "b": "drive_motor_l", "method": "shaft", "reason": "N10 D-shaft bore, grub screw on the flat"},

@@ -95,7 +95,8 @@
      1
     ],
     "spin_dir": "ccw",
-    "teeth": 2
+    "teeth": 2,
+    "locking_bar": "lock_pin"
    },
    "secondary_ops": [
     "countersink"
@@ -131,16 +132,23 @@
    "label": "turned 7075 hub, bar 2x M3"
   },
   {
-   "id": "caster",
-   "kind": "caster",
+   "id": "lock_pin",
+   "kind": "locking_bar",
    "catalog": null,
-   "material": "uhmw",
+   "material": "steel",
    "process": "turned",
+   "tethered": true,
+   "color": [
+    255,
+    90,
+    0
+   ],
+   "retained": "pin",
    "shape": {
     "type": "model",
     "file": "src/build_scythe_classic.py",
     "params": {
-     "part": "caster"
+     "part": "lock_pin"
     }
    },
    "at": [
@@ -153,7 +161,7 @@
     0,
     0
    ],
-   "label": "ball caster under the tub front, ahead of the CoM"
+   "label": "rule 5f lock: removable 3 mm steel pin through the bar's lock hole into the tub floor (orange, tethered)"
   },
   {
    "id": "skid_foot",
@@ -285,16 +293,17 @@
    "id": "battery",
    "kind": "battery",
    "catalog": "lipo_2s_350",
-   "retained": "pocket",
+   "retained": "strap",
+   "retained_reason": "hook-and-loop strap over the pack, anchored to rib pegs in the pod; undone to change the pack",
    "at": [
-    -0.58,
-    -30.0,
-    15.5
+    -19.1,
+    15.6,
+    16.5
    ],
    "rot": [
     0,
     0,
-    0
+    90
    ],
    "label": "2S 180 mAh pack in the rear pod (smaller than the old 300 mAh: see params)"
   },
@@ -306,7 +315,7 @@
    "at": [
     0.0,
     -14.0,
-    10.5
+    13.0
    ],
    "rot": [
     0,
@@ -320,9 +329,9 @@
    "catalog": "bbb_malenki_nano",
    "retained": "tape",
    "at": [
-    22.49,
-    -4.0,
-    10.75
+    25.6,
+    14.9,
+    12.25
    ],
    "rot": [
     0,
@@ -341,12 +350,12 @@
    "at": [
     "P.SWITCH_XY[0] + 1.2",
     "P.SWITCH_XY[1]",
-    12.7
+    16.0
    ],
    "rot": [
     0,
     0,
-    0
+    90
    ]
   },
   {
@@ -357,7 +366,7 @@
    "at": [
     -23.5,
     -16.0,
-    15.1
+    14.0
    ],
    "rot": [
     0,
@@ -372,7 +381,7 @@
    "designation": "M2x6",
    "material": "steel",
    "at": [
-    30.245,
+    31.646,
     15.5,
     30.0
    ],
@@ -404,8 +413,8 @@
    "designation": "M2x6",
    "material": "steel",
    "at": [
-    15.123,
-    41.693,
+    15.823,
+    42.906,
     30.0
    ],
    "dir": [
@@ -436,8 +445,8 @@
    "designation": "M2x6",
    "material": "steel",
    "at": [
-    -15.123,
-    41.693,
+    -15.823,
+    42.906,
     30.0
    ],
    "dir": [
@@ -468,7 +477,7 @@
    "designation": "M2x6",
    "material": "steel",
    "at": [
-    -30.245,
+    -31.646,
     15.5,
     30.0
    ],
@@ -500,8 +509,8 @@
    "designation": "M2x6",
    "material": "steel",
    "at": [
-    -15.123,
-    -10.693,
+    -15.823,
+    -11.906,
     30.0
    ],
    "dir": [
@@ -532,8 +541,8 @@
    "designation": "M2x6",
    "material": "steel",
    "at": [
-    15.123,
-    -10.693,
+    15.823,
+    -11.906,
     30.0
    ],
    "dir": [
@@ -698,7 +707,7 @@
    "at": [
     -6.5,
     15.5,
-    2.0
+    4.0
    ],
    "dir": [
     0,
@@ -734,7 +743,7 @@
    "at": [
     6.5,
     15.5,
-    2.0
+    4.0
    ],
    "dir": [
     0,
@@ -823,10 +832,16 @@
    "reason": "foot turns with the bar on the shaft end, captured by the shaft nut"
   },
   {
-   "a": "caster",
+   "a": "lock_pin",
    "b": "tub",
-   "method": "screw",
-   "reason": "ball caster housing screwed under the tub front floor"
+   "method": "pin",
+   "reason": "pin seats in a socket in the tub floor underside; tethered to the tub"
+  },
+  {
+   "a": "switch",
+   "b": "tub",
+   "method": "snap",
+   "reason": "snaps into a moulded cradle on the tub floor"
   },
   {
    "a": "skid_dome",

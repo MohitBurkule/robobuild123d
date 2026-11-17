@@ -27,7 +27,8 @@ def profile():
     face = plate.round_corners(face, r_out=P.BAR_CORNER_R)    # NOTE: also softens the tooth point; keep_ = tooth tips if too blunt
     bore = bd.Circle(P.SHAFT_D / 2 + P.BAR_BORE_CLR)
     bolts = plate.holes(P.BAR_BOLT_D / 2 + 0.1, P.BAR_BOLT_PCD / 2, P.BAR_BOLT_N, phase=0.0)   # on the bar centreline (16 mm root leaves 6.4 mm each side of a 3.2 hole)
-    for h in [bore] + bolts:
+    lock = bd.Pos(P.LOCK_PIN_R, 0) * bd.Circle(P.LOCK_PIN_D / 2 + 0.1)   # rule 5f lock pin passes here when the bar is locked
+    for h in [bore, lock] + bolts:
         face = face - h
     return face
 

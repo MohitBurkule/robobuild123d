@@ -60,7 +60,7 @@ BATTERY_3S = "gnb_3s_300_80c_hv"             # variant (variants.py)
 WEAPON_ESC = "bbb_brushless_esc_20a"
 DRIVE_RX = "bbb_malenki_nano"                # alt: bbb_dual_esc_v31
 SWITCH = "fingertech_mini_switch"
-SWITCH_XY = (-26.0, -26.0)                   # mm: switch and its top-panel key hole, rear pod front (clear of the N10 bodies)
+SWITCH_XY = (4.2, 38.7)                    # mm: switch (+1.2 x) and its top-panel key hole: probe --place switch, free box x -0.9..18.1 y 32.4..45.1 at yaw 90
 CONNECTOR = "xt30u_m"
 
 # COTS masses (catalogue; was a stale INDEX.md copy: gr1507 19.6 g there, 8.5 g in the catalogue)
@@ -109,7 +109,7 @@ BAR_W_TIP = 10.0                             # mm width at the tooth
 BAR_TOOTH_STEP = 4.0                         # mm radial depth of the bite step on each leading edge
 BAR_TOOTH_LEN = 10.0                         # mm along the bar from the tip where the step starts
 BAR_CORNER_R = 1.0                           # mm laser-cut corner round on non-cutting corners
-BAR_Z0 = 2.0                                 # mm underside above floor (brief: ~2 mm, > MIN_GROUND_CLR)
+BAR_Z0 = 4.0                                 # mm underside above floor: 0.5 tyre squash + 58 mm x tan 3 deg seam = 3.6 (dynamics.floor_margin)
 BAR_BOLT = "M3"
 BAR_BOLT_D = 3.0
 CSK_D = 6.2                                  # mm countersink diameter at the bar underside: M3 csk head dk 6.0 + 0.1 radial clear (was 5.5: head overlapped 0.15)
@@ -117,6 +117,8 @@ CSK_DEPTH = 1.75                             # mm: the countersink cone depth; t
 BAR_BOLT_N = 2                               # 2x M3 through bar into hub, PolarLocations
 BAR_BOLT_PCD = 13.0                          # mm (was 11: a 1.3 mm web to the bore failed the sheet-cut rule)
 BAR_BORE_CLR = 0.1                           # mm radial on the shaft pilot (centres the bar on the shaft)
+LOCK_PIN_R = 20.0                            # mm radius of the rule 5f lock pin hole in the +X arm (clear of the hub, inside the arm)
+LOCK_PIN_D = 3.0                             # mm steel lock pin (removable, tethered; pulled before a fight)
 BAR_R_STEP = 0.5                             # mm search step of bar_r_geom()
 
 # ---- turned hub (7075-T6): bolts to bell top screws, carries the bar ----

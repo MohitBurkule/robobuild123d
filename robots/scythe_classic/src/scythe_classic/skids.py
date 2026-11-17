@@ -32,17 +32,12 @@ def dome():
     return bd.Pos(0, P.WPN_AXIS_Y, P.TUB_TOP_Z) * (button - _z_cyl(P.DOME_SCREW_CLR_D / 2, DOME_H))
 
 
-CASTER_Y = P.WPN_AXIS_Y + P.TUB_R - 8.0   # mm: under the tub front, ahead of the CoM (tub front edge at WPN_AXIS_Y + TUB_R)
-CASTER_R = 4.0                            # mm: ball radius (8 mm ball caster)
-CASTER_TOP_Z = 5.0                        # mm: top of the caster housing, below the tub floor (tub_floor_z)
-
-
-def caster():
-    """Ball-caster button under the tub front: a ball of radius CASTER_R cut flat at CASTER_TOP_Z, so the bottom is the
-    floor contact and the top stays clear of the tub floor."""
-    ball = bd.Pos(0, CASTER_Y, CASTER_R) * bd.Sphere(CASTER_R)
-    return ball & bd.Pos(0, CASTER_Y, 0) * _z_cyl(CASTER_R + 1, CASTER_TOP_Z)
+def lock_pin():
+    """Rule 5f lock: a steel pin dropped down through the bar's lock hole into the tub floor's underside (removable,
+    tethered; pulled before a fight). It sits off the axis, so the hub and shaft are not involved."""
+    from . import tub
+    return bd.Pos(P.LOCK_PIN_R, P.WPN_AXIS_Y, 0) * _z_cyl(P.LOCK_PIN_D / 2, tub.z0())
 
 
 def parts():
-    return {"skid_foot": foot(), "skid_dome": dome(), "caster": caster()}
+    return {"skid_foot": foot(), "skid_dome": dome(), "lock_pin": lock_pin()}
