@@ -52,7 +52,7 @@ def outcome(sim, names, t):
     return out
 
 
-def fight(spec_a, spec_b, seconds=20.0, out=None, fps=30, size=(640, 480), timestep=1e-4, seed=0, log=print):
+def fight(spec_a, spec_b, seconds=20.0, out=None, fps=30, size=(640, 480), timestep=1e-4, seed=0, log=print, view="arena", follow=None):
     sa, sb = spec_mod.load(spec_a), spec_mod.load(spec_b)
     ma, mb = load_model(spec_a), load_model(spec_b)
     pa, pb = profile.build(sa, ma), profile.build(sb, mb)
@@ -109,8 +109,7 @@ def fight(spec_a, spec_b, seconds=20.0, out=None, fps=30, size=(640, 480), times
                 prev_w[n] = w
         sim.step_damage()
         if writer is not None and k % n_frame == 0:
-            mid = (sim.com(na) + sim.com(nb)) / 2
-            cam.lookat[:] = [mid[0] * 0.8, mid[1] * 0.8, 0.0]
+            _aim(cam, sim, view, follow or na, nb if (follow or na) == na else na)
             renderer.update_scene(sim.d, cam)
             writer.append_data(renderer.render())
     if writer is not None:
@@ -138,3 +137,23 @@ def judge(res):
     sa = len(ob["parts_lost"]) * 10 + dealt[a]
     sb = len(oa["parts_lost"]) * 10 + dealt[b]
     return a if sa > sb else b if sb > sa else "draw"
+
+
+def _aim(cam, sim, view, me, other):
+    """arena: overhead on the midpoint; chase: behind `me`, looking along its heading; fpv: from `me`'s top deck,
+    looking forward (a driver's camera bolted to the robot)."""
+    if view == "arena":
+        mid = (sim.com(me) + sim.com(other)) / 2
+        cam.distance, cam.azimuth, cam.elevation = 0.75, 90, -58
+        cam.lookat[:] = [mid[0] * 0.8, mid[1] * 0.8, 0.0]
+        return
+    c = sim.com(me)
+    _, h, _ = sim.frame(me)
+    f = np.array([math.cos(h), math.sin(h), 0.0])
+    cam.azimuth = math.degrees(h)
+    if view == "chase":
+        cam.distance, cam.elevation = 0.32, -22
+        cam.lookat[:] = c + 0.06 * f + [0, 0, 0.01]
+    else:  # fpv
+        cam.distance, cam.elevation = 0.14, -8
+        cam.lookat[:] = c + 0.14 * f + [0, 0, 0.035]
