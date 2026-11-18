@@ -15,3 +15,8 @@ Likeness: aws71 0.80 (FAIL).
 Decisions: type flipper; body box rect 110x100x52 mm, ramp 95; wheels 2 r11 inboard; weapon none; extra parts: flipper.
 
 Likeness: aws71 0.80 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type flipper; body box rect 100x100x60 mm, ramp 80; wheels 2 r11 inboard; weapon none; extra parts: flipper.
+
+Likeness: aws71 0.81 (ok).
