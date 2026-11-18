@@ -26,7 +26,7 @@ Other likeness findings: [FAIL] likeness.view: `reference/smashie_1.aws73.webp` 
 
 ## Round 4 (verification, helper 1)
 Blockers r3 -> r4: **55 -> 29** (`verify --tier inner`, full output in verify_r4.txt).
-Likeness (best silhouette IoU per photo, r3 -> r4): smashie_1.aws73.webp 0.52 -> 0.52, smashie_1.aws74.webp 0.45 -> 0.44, smashie_1.aws76.webp 0.61 -> 0.61
+Likeness (best silhouette IoU per photo, r3 -> r4): smashie_1.aws73.webp 0.521 -> 0.521, smashie_1.aws74.webp 0.444 -> 0.444, smashie_1.aws76.webp 0.611 -> 0.611
 
 What was done (script r4_h1, outside shape kept):
 - fake screw/bolt heads removed; detail mounts/arms merged into the print part they sit on; axle nuts became printed hub caps
