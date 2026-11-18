@@ -14,3 +14,9 @@ Likeness: aws67 0.81 (ok).
 Decisions: type lifter; body box pentagon 95x100x32 mm, ramp 48; wheels 2 r12 outboard; weapon none; extra parts: arm; photos skipped (cluttered): indices [0, 1].
 
 Likeness: aws67 0.81 (ok).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type lifter; body box pentagon 95x100x32 mm, ramp 48; wheels 2 r12 outboard; weapon none; extra parts: arm; photos skipped (cluttered): indices [0, 1].
+
+Likeness: aws67 0.55 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/stack_overflow.aws67.webp` is declared `front` (IoU 0.55 there) but the model matches it better from front (elevation 45, azimu

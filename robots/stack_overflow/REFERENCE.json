@@ -7,5 +7,15 @@
  },
  "photos": [
   "stack_overflow.aws67.webp"
- ]
+ ],
+ "view": {
+  "stack_overflow.aws65.webp": "rear_left_iso",
+  "stack_overflow.aws66.webp": "front",
+  "stack_overflow.aws67.webp": "front"
+ },
+ "elevation": {
+  "stack_overflow.aws65.webp": 45,
+  "stack_overflow.aws66.webp": 45,
+  "stack_overflow.aws67.webp": 25
+ }
 }

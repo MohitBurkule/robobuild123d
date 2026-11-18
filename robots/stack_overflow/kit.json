@@ -23,7 +23,15 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "skip_photos": [
+  0,
+  1
+ ],
+ "name": "stack overflow",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "side": [
     [
@@ -67,13 +75,5 @@
    "id": "arm",
    "color": "#2a2c34"
   }
- ],
- "skip_photos": [
-  0,
-  1
- ],
- "name": "stack overflow",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }
