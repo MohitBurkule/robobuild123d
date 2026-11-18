@@ -21,3 +21,12 @@ def test_kit_shape_extras_build():
             assert shapes.to_solid(p["shape"], ".").volume > 1, (plan, p["id"])
     s = kit.build({"weapon": {"kind": "bar", "radius": 40, "width": 6, "curve": 8, "tilt_deg": 10}})
     assert shapes.to_solid(next(p for p in s["parts"] if p["id"] == "weapon")["shape"], ".").volume > 1
+
+
+def test_kit_walker_and_pod_nose():
+    from robot import shapes
+    s = kit.build({"body": {"style": "twin_pods", "pod_nose": "round"}, "legs": {"n": 2}})
+    assert s["locomotion"] == "walker" and not any(p["id"].startswith("wheel") for p in s["parts"])
+    for p in s["parts"]:
+        assert shapes.to_solid(p["shape"], ".").volume > 1, p["id"]
+    assert kit.build({})["locomotion"] == "roller"
