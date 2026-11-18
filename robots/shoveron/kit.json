@@ -1,0 +1,64 @@
+{
+ "robot_type": "lifter",
+ "body": {
+  "length": 100,
+  "width": 104,
+  "height": 26,
+  "ramp": 22,
+  "style": "twin_pods",
+  "slot": 34
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 13,
+  "width": 10,
+  "y": [
+   -25
+  ],
+  "outside": false,
+  "x": 36
+ },
+ "forks": {
+  "n": 2,
+  "length": 26,
+  "width": 10,
+  "spread": 68,
+  "tilt_deg": 8
+ },
+ "colors": {
+  "body": "#f07a2c",
+  "wheel": "#22262a",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "box": [
+    32,
+    95,
+    2
+   ],
+   "at": [
+    0,
+    8,
+    22
+   ],
+   "weapon": "lifter",
+   "pivot": [
+    -35,
+    30
+   ],
+   "id": "shovel",
+   "color": "#c9cdd3",
+   "rot": [
+    -12,
+    0,
+    0
+   ]
+  }
+ ],
+ "name": "shoveron",
+ "weapon": {
+  "kind": "none"
+ }
+}

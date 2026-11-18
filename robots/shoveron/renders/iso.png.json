@@ -1,0 +1,15 @@
+{
+ "spec": "/tmp/work10_shoveron/robots/shoveron/spec.json",
+ "rendered_at": 1795022197.185109,
+ "bodies": [
+  "pod_l",
+  "pod_r",
+  "bridge",
+  "wheel_l0",
+  "wheel_r0",
+  "fork_0",
+  "fork_1",
+  "shovel"
+ ],
+ "wires": {}
+}

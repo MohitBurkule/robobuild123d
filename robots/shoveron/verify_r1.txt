@@ -1,0 +1,122 @@
+  [ran] integrity 0.01s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 0.84s
+  [ran] connections 0.01s
+  [ran] legal 0.01s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.00s
+  [ran] shape 0.14s
+  [ran] dynamics 0.01s
+  [ran] strength 0.00s
+  [ran] printability 0.36s
+  [ran] process 0.04s
+  [ran] electrical 0.02s
+  [ran] combat 0.10s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.01s
+  [ran] fastener_record 0.00s
+  [ran] likeness 3.97s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.03s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.02s
+  [ran] dfm 0.01s
+  [ran] realworld 0.01s
+shoveron: ok=False 25 blockers in 25 root causes, mass 197.7/225 g
+1. [proxy.interference] `pod_l` and `wheel_l0` overlap by 4.88 mm (allowed 0.08).
+   | pod_l: x 17.00..52.00  y -50.00..50.00  z -11.00..15.00  size 35.00 x 100.00 x 26.00 mm
+   |   centre (34.50, 0.00, 2.00), volume 81567.5 mm3
+   |   OVERLAP `wheel_l0` 4.88 mm (allowed 0.08)
+   |   OVERLAP `fork_1` 0.47 mm (allowed 0.08)
+   |   overlap allowed `bridge` 0.05 mm (allowed 0.08)
+2. [proxy.interference] `pod_l` and `fork_1` overlap by 0.47 mm (allowed 0.08).
+   | pod_l: x 17.00..52.00  y -50.00..50.00  z -11.00..15.00  size 35.00 x 100.00 x 26.00 mm
+   |   centre (34.50, 0.00, 2.00), volume 81567.5 mm3
+   |   OVERLAP `wheel_l0` 4.88 mm (allowed 0.08)
+   |   OVERLAP `fork_1` 0.47 mm (allowed 0.08)
+   |   overlap allowed `bridge` 0.05 mm (allowed 0.08)
+3. [proxy.interference] `pod_r` and `wheel_r0` overlap by 4.88 mm (allowed 0.08).
+   | pod_r: x -52.00..-17.00  y -50.00..50.00  z -11.00..15.00  size 35.00 x 100.00 x 26.00 mm
+   |   centre (-34.50, 0.00, 2.00), volume 81567.5 mm3
+   |   OVERLAP `wheel_r0` 4.88 mm (allowed 0.08)
+   |   OVERLAP `fork_0` 0.47 mm (allowed 0.08)
+   |   overlap allowed `bridge` 0.05 mm (allowed 0.08)
+4. [proxy.interference] `pod_r` and `fork_0` overlap by 0.47 mm (allowed 0.08).
+   | pod_r: x -52.00..-17.00  y -50.00..50.00  z -11.00..15.00  size 35.00 x 100.00 x 26.00 mm
+   |   centre (-34.50, 0.00, 2.00), volume 81567.5 mm3
+   |   OVERLAP `wheel_r0` 4.88 mm (allowed 0.08)
+   |   OVERLAP `fork_0` 0.47 mm (allowed 0.08)
+   |   overlap allowed `bridge` 0.05 mm (allowed 0.08)
+5. [proxy.sweep] joint `shovel`: `shovel` hits `bridge` 0.11 mm deep at 50.9 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint shovel` lists the closest approach to every part.
+   | shovel: x -16.00..16.00  y -38.67..54.67  z -1.85..19.85  size 32.00 x 93.34 x 21.71 mm
+   |   centre (0.00, 8.00, 9.00), volume 6080.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -35, 17.0] range 0..80 default 0
+   |   overlap allowed `bridge` 0.00 mm (allowed 0.08)
+   |   gap to `pod_l` 1.00 mm
+6. [connection.floating] `pod_r` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `bridge`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | pod_r: x -52.00..-17.00  y -50.00..50.00  z -11.00..15.00  size 35.00 x 100.00 x 26.00 mm
+   |   centre (-34.50, 0.00, 2.00), volume 81567.5 mm3
+   |   OVERLAP `wheel_r0` 4.88 mm (allowed 0.08)
+   |   OVERLAP `fork_0` 0.47 mm (allowed 0.08)
+   |   overlap allowed `bridge` 0.05 mm (allowed 0.08)
+7. [connection.floating] `bridge` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `pod_l`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | bridge: x -17.10..17.10  y -50.00..-25.00  z -11.00..15.00  size 34.20 x 25.00 x 26.00 mm
+   |   centre (0.00, -37.50, 2.00), volume 22230.0 mm3
+   |   overlap allowed `pod_l` 0.05 mm (allowed 0.08)
+   |   overlap allowed `pod_r` 0.05 mm (allowed 0.08)
+   |   overlap allowed `shovel` 0.00 mm (allowed 0.08)
+8. [connection.floating] `wheel_r0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `pod_r`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_r0: x -41.00..-31.00  y -38.00..-12.00  z -13.00..13.00  size 10.00 x 25.99 x 26.00 mm
+   |   centre (-36.00, -25.00, 0.00), volume 5309.3 mm3
+   |   OVERLAP `pod_r` 4.88 mm (allowed 0.08)
+   | pod_r: x -52.00..-17.00  y -50.00..50.00  z -11.00..15.00  size 35.00 x 100.00 x 26.00 mm
+   |   centre (-34.50, 0.00, 2.00), volume 81567.5 mm3
+9. [connection.floating] `fork_0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `pod_r`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | fork_0: x -39.00..-29.00  y 48.02..73.98  z -12.94..-7.84  size 10.00 x 25.96 x 5.10 mm
+   |   centre (-34.00, 61.00, -10.39), volume 390.0 mm3
+   |   OVERLAP `pod_r` 0.47 mm (allowed 0.08)
+   | pod_r: x -52.00..-17.00  y -50.00..50.00  z -11.00..15.00  size 35.00 x 100.00 x 26.00 mm
+   |   centre (-34.50, 0.00, 2.00), volume 81567.5 mm3
+10. [connection.floating] `fork_1` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `pod_l`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | fork_1: x 29.00..39.00  y 48.02..73.98  z -12.94..-7.84  size 10.00 x 25.96 x 5.10 mm
+   |   centre (34.00, 61.00, -10.39), volume 390.0 mm3
+   |   OVERLAP `pod_l` 0.47 mm (allowed 0.08)
+   | pod_l: x 17.00..52.00  y -50.00..50.00  z -11.00..15.00  size 35.00 x 100.00 x 26.00 mm
+   |   centre (34.50, 0.00, 2.00), volume 81567.5 mm3
+11. [connection.floating] `shovel` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `bridge`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | shovel: x -16.00..16.00  y -38.67..54.67  z -1.85..19.85  size 32.00 x 93.34 x 21.71 mm
+   |   centre (0.00, 8.00, 9.00), volume 6080.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -35, 17.0] range 0..80 default 0
+   |   overlap allowed `bridge` 0.00 mm (allowed 0.08)
+   |   gap to `pod_l` 1.00 mm
+12. [legal.switch] Rule 4a needs an externally accessible way to shut down that works without tools and is clearly marked on/off.
+   fix: Add a `switch` part (or removable link) with `tool_free: true` and `marked: true` and a visible ON/OFF `label`.
+... 13 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 197.7 g of 225 g (+27.3 g margin)
+    pod_l                      77.65 g  fills 90% of its box  <- solid block? a tub should be a shell
+    pod_r                      77.65 g  fills 90% of its box  <- solid block? a tub should be a shell
+    bridge                     21.16 g  fills 100% of its box  <- solid block? a tub should be a shell
+    shovel                      5.79 g  fills 9% of its box
+    wheel_l0                    5.42 g  fills 79% of its box
+    wheel_r0                    5.42 g  fills 79% of its box
+    fork_0                      1.73 g  fills 29% of its box
+    fork_1                      1.73 g  fills 29% of its box
+    mass.may_be_over: 197.7 g (range 158.4 to 237.1 g) against the 225 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 0 hit / 2 miss, group 0 hit / 31 miss, inside 0 hit / 8 miss, likeness 2 hit / 0 miss, min_gap 9 hit / 33 miss, overlap 34 hit / 43 miss, part_check 0 hit / 5 miss, part_geom 8 hit / 0 miss, ray 0 hit / 40 miss
