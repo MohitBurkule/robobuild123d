@@ -55,3 +55,9 @@ Left (and why):
 - likeness.silhouette x3: looks, not in scope for this pass.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): corsac.aws72.webp 0.66 -> 0.66; corsac.aws74.webp 0.68 -> 0.68; corsac.aws76.webp 0.63 -> 0.63
+
+## Round 3c (user angle picks applied; shape fixed per user remarks)
+Decisions: type wedge; body box rect 80x100x26 mm, ramp 0; wheels 2 r12 inboard; weapon none; 6 forks 16 mm; extra parts: face.
+
+Likeness: aws72 0.63 (FAIL), aws74 0.65 (FAIL), aws76 0.62 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/corsac.aws72.webp` is declared `front_left_iso` (IoU 0.63 there) but the model matches it better from front_right_iso (elevatio; [FAIL] likeness.view: `reference/corsac.aws74.webp` is declared `front_right_iso` (IoU 0.65 there) but the model matches it better from front_left_iso (elevatio; [FAIL] likeness.view: `reference/corsac.aws76.webp` is declared `front_left_iso` (IoU 0.62 there) but the model matches it better from front_left_iso (elevation

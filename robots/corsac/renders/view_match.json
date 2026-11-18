@@ -1,20 +1,20 @@
 {
  "corsac.aws72.webp": {
-  "view": "50,27~",
-  "azimuth": 50.0,
-  "elevation": 27.0,
-  "iou": 0.792
+  "view": "60,35!",
+  "azimuth": 60.0,
+  "elevation": 35.0,
+  "iou": 0.749
  },
  "corsac.aws74.webp": {
-  "view": "130,35",
+  "view": "120,35!",
   "azimuth": 120.0,
-  "elevation": 27.0,
-  "iou": 0.784
+  "elevation": 35.0,
+  "iou": 0.764
  },
  "corsac.aws76.webp": {
-  "view": "95,35",
-  "azimuth": 105.0,
-  "elevation": 27.0,
-  "iou": 0.809
+  "view": "120,35!",
+  "azimuth": 120.0,
+  "elevation": 35.0,
+  "iou": 0.728
  }
 }
