@@ -1,9 +1,9 @@
-"""Ripsaw forks: Revron's fork_5 laser part (1.5 mm Ti sheet) reused unchanged, hinged on an M3 pin on each rail's
-outer face, free to swing so the tip rests on the floor (self-levelling). Same part both sides, no mirror (as Revron).
-UNTESTED. Adversarial intent: forks get under wedges/forks first and feed the opponent up into the disc; a bent fork
-is a two-screw swap. Start config: tips forward on the floor, inside the 4 inch cube (tip ahead of pin by FK_TIP[0],
-the disc still leads). If a re-sized fork overhangs the cube, it may be hinged up for the size check (allowed: start
-configuration), and drops on its own when the robot moves."""
+"""Ripsaw forks: Revron's fork_5 laser part (1.5 mm Ti sheet) reused unchanged, hinged on an M3 pin through each
+weapon plate's outer face, free to swing so the tip rests on the floor (self-levelling). Same part both sides, no
+mirror (as Revron).
+Adversarial intent: forks get under wedges/forks first and feed the opponent up into the disc; a bent fork
+is a two-screw swap. Start config: tips forward on the floor, inside the size limit (tip ahead of pin by FK_TIP[0],
+the disc still leads)."""
 import build123d as bd
 
 from . import params as P
@@ -16,7 +16,7 @@ def _fork_mod():
 
 
 def pin_point(side):
-    """M3 hinge pin axis point on the rail outer face; pin height puts the fork tip FORK_TIP_GAP above the floor."""
+    """M3 hinge pin axis point on the plate outer face; pin height puts the fork tip FORK_TIP_GAP above the floor."""
     _, pd = _fork_mod()
     x_face = P.RAIL_R_X[1] if side > 0 else P.RAIL_L_X[0]
     x = x_face + side * P.FORK_SIDE_CLR + (pd.FK_T if side > 0 else 0.0)   # sheet extrudes toward -X (w), see seat_plane
@@ -36,6 +36,12 @@ def fork(side):
     return s
 
 
-def pin_holes():
-    _, pd = _fork_mod()
-    return [bd.Pos(*pin_point(s)) * bd.Rot(0, 90, 0) * bd.Cylinder(P.FORK_PIN / 2, 3 * P.RAIL_T) for s in (1, -1)]
+def pin(side):
+    """The M3 hinge pin part: through the plate and the fork sheet, press fit in the plate."""
+    x_face = P.RAIL_R_X[1] if side > 0 else P.RAIL_L_X[0]
+    x_out = x_face + side * (P.FORK_SIDE_CLR + 1.5 + 1.0)   # through the fork sheet (1.5) plus a grip land
+    x_in = x_face - side * 1.0
+    lo, hi = sorted((x_out, x_in))
+    s = bd.Pos((lo + hi) / 2, P.Y_AX, pin_point(side)[2]) * bd.Rot(0, 90, 0) * bd.Cylinder(P.FORK_PIN / 2, hi - lo)
+    s.label = f"fork_pin_{'r' if side > 0 else 'l'}"
+    return s

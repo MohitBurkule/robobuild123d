@@ -23,7 +23,8 @@ from ..spec import Spec
 
 # Bumped whenever a check is added or changed. 7 = the Rust crate's revision; 8 adds belt/fork tension (python port); 9 adds
 # wheel running clearance, wheel exposure, targets, fused/key/tape/press-fit evidence, stall-current battery peak.
-CHECKS_REVISION = 21  # 21 adds the automated-development gates (waiver_audit, geom, dfm); 20 adds robust (one-at-a-time param / variant / COTS-swap perturbation sweep); 19 adds visual (silhouette views + depth, holes on every axis, faceting, fillet vs reference, slivers, dangling leads) and wire.render_wires; 18 adds integrity (one closed solid, volume collapse; runs first); 17 merges fix-T; 15 adds param (raw-literal lint) and sharp_corner (opt-out mfg.sharp_internal_corner); 14 adds the design-review groups (ref_map, cots_fidelity, wire_review, fastener_record, belt_wrap, print_orient); 13 adds intent (functional design-intent probes); 12 adds threat (combat failure modes CF-*); 10 adds internal (no_contact, fastener_void, wire_in_solid); 11 adds bom (reference BOM, lock part, O-ring stock, wire cut, switch dir, doc) and connection.cover_fasteners
+CHECKS_REVISION = 29  # 29 refines intent first_contact to sub-step bisection (surface sampling could miss the last sub-millimetre and report the next 0.05 grid step); 26 adds rf (receiver/antenna placement, G6), traction (COM over the drive contact patch, G9) and builder (design vs the builder machine/shelf/tools/budget, E3); 25 merges batch B (engagement G3, tool_access G4, wire_care G5) and batch C (rest F3, clearance G8, service F6); 24 adds requirements; 23 adds thermal and impact; 21 adds waiver_audit, geom, dfm; 20 adds robust; 19 adds visual and wire.render_wires; 18 adds integrity; 17 merges fix-T; 15 adds param and sharp_corner; 14 adds the design-review groups; 13 adds intent; 12 adds threat; 10 adds internal; 11 adds bom and connection.cover_fasteners
+
 
 # Every group, its kind (design | parity) and tier (inner | full | nightly) live in registry.py; GROUPS is the old
 # (module, deep_only) view of it, in run order (same order as the Rust crate, plus `tension` before `assembly`).
@@ -275,7 +276,15 @@ def _base_key(r, opts) -> str:
 
 
 def _group_key(name, r, opts, base_key):
-    return cache.h("group", name, base_key) if base_key else None
+    extra = ""
+    if name == "wire_review" and base_key:
+        from .wire_review import render_dirs
+        rr = []
+        for d in render_dirs(r.spec):
+            fs = sorted(x for x in d.rglob("*") if x.is_file())
+            rr.append((d.name, [(x.relative_to(d).as_posix(), cache.source_hash(x)) for x in fs]))
+        extra = cache.h("renders", rr)
+    return cache.h("group", name, base_key, extra) if base_key else None
 
 
 def _progress(name, t0, how, findings=()):

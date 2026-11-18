@@ -1,10 +1,14 @@
-"""Ripsaw masters and derived relations. UNTESTED: never built, run, rendered or verified.
+"""Ripsaw masters and derived relations.
 
 Frame (same as Revron): X right, Y forward (weapon end), Z up, floor at Z = 0. The disc sits on X = 0.
 
 Rule: every number used by geometry lives here, either as a named master (with its source) or as a relation of
 masters and catalogue dimensions. COTS sizes come from the catalogue (robot.catalog / robot.cots_alts) through the
 reused Revron helpers hw.size() and weapon_motor.describe(); nothing is retyped from a datasheet.
+
+Weapon topology (serviceable): the stator bolts to a printed mount plate (left), the outboard MR63 rides in a printed
+post plate (right); both plates bolt to the front wall's integral pads and lift off, and the weapon (disc + bell +
+shaft) then slides forward out of the tub. The forks hang on M3 pins through the plates' outer faces.
 """
 import math
 
@@ -29,27 +33,25 @@ CUBE_MM = 101.6
 ENVELOPE_MARGIN = 2.0     # print shrink / tolerance stack / fork sag kept free inside the limit, each extent
 _LIMITS = {"aws2025": (FOOTPRINT_MM, FOOTPRINT_MM, float("inf")), "aws_v43_cube": (CUBE_MM, CUBE_MM, CUBE_MM)}
 ENVELOPE_L, ENVELOPE_W, ENVELOPE_H = (v - ENVELOPE_MARGIN for v in _LIMITS[RULES_SIZE])
-# body / rail lengths per size rule (the disc is mass-limited at 60 mm and fits both); asserted against ENVELOPE below
-_SIZING = {"aws2025": dict(TUB_BODY_L=62.0, RAIL_L=24.0, WHEEL_REAR_BIAS=14.0),
-           "aws_v43_cube": dict(TUB_BODY_L=52.0, RAIL_L=18.0, WHEEL_REAR_BIAS=12.0)}[RULES_SIZE]
+# body length per size rule; the disc is mass-limited and fits both; asserted against ENVELOPE below
+_SIZING = {"aws2025": dict(TUB_BODY_L=78.0, RAIL_L=24.0),
+           "aws_v43_cube": dict(TUB_BODY_L=52.0, RAIL_L=18.0)}[RULES_SIZE]
 
 # ------------------------------------------------------------------------------------------------ COTS settings
 WEAPON_MOTOR = "repeat_2004_2800kv"         # Repeat DirectDrive 2004: 3 mm through shaft, 3x M3 on 15 both faces
-# Battery: the brief asked for gnb_3s_300_80c_hv. The mass budget (BRIEF.md) puts the 3S build ~13 g over 150 g,
-# and 3S also rules out the Malenki-Nano (max 2 cells). Default is therefore the 2S XT30 GNB pack; the alternatives
-# are kept as settings. tattu_2s_300_75c_hv is lighter but ships on JST-PH (2 A class plug), wrong for a 20 A weapon.
-BATTERY = "gnb_2s_350_70c_hv"
-BATTERY_ALTS = ("gnb_3s_300_80c_hv", "tattu_2s_300_75c_hv")
+# Battery: the 450 mAh 2S pack. The 350 mAh class browns out at the 2004's 17 A peak (51 mOhm -> 6.5 V under 3.3 V/cell)
+# and runs ~169 s against a 180 s fight; the 450 mAh 80C pack (28 g, UK stock) holds the fight and its 40 mOhm keeps
+# the bus above 3.3 V/cell at peak (BRIEF.md mass budget re-balanced: disc 60 -> 50 mm pays for the pack).
+BATTERY = "c_gnb_gaoneng_2s_450mah_80c_lipo_xt30"
 WEAPON_ESC = "bbb_brushless_esc_20a"        # 20 A, no BEC, 2-4S
 DRIVE_ESC = "bbb_malenki_nano"              # Rx + 3x 1 A brushed ESC, 1-2S: valid only with a 2S pack
-DRIVE_ESC_3S = "bbb_dual_esc_v31"           # use with a 3S pack (2-4S, 5 V BEC) plus a separate receiver
 SWITCH = "fingertech_mini_switch"
 DRIVE_MOTOR = "bbb_n10_1000rpm"
-WHEEL = "durahubs_30"
+WHEEL = "wheel_20x8"        # 20 mm silicone tyre: the 450 mAh pack is 61 mm long and needs the bay between the wheels
 
 WM = weapon_motor.describe(WEAPON_MOTOR)    # back_x, cap_x, bell_r, base_holes, top_holes, shaft_r (catalogue frame, +X = bell)
 WM_ENTRY = C.find(WEAPON_MOTOR)
-WM_SHAFT_OUT = float(WM_ENTRY.shaft["len"])  # shaft protrusion past the bell face (catalogue: overall - body - rear stub)
+WM_SHAFT_OUT = float(WM_ENTRY.shaft["len"])  # shaft protrusion past the bell face
 WM_SHAFT_D = 2 * WM["shaft_r"]
 WM_BODY_L = WM["cap_x"] - WM["back_x"]
 BEARING = weapon_motor.pick_bearing(WM_SHAFT_D)   # outboard bearing for the 3 mm shaft (catalog BEARINGS); see risks
@@ -69,18 +71,23 @@ SW_L, SW_W, SW_H = _sorted_size(SWITCH)
 DM_SHAFT = C.find(DRIVE_MOTOR).shaft        # {"at", "dir", "len", "dia"} in the gearmotor's own frame
 
 # ------------------------------------------------------------------------------------------------ weapon (disc) masters
-DISC_OD = 60.0            # brief: ~60 mm; energy scales ~R^4 (BRIEF.md)
+DISC_OD = 44.0            # mass budget: 60 mm hardox is ~40 g; 44 mm keeps ~26 g and the balance window inside its spokes
 DISC_T = 3.0              # hardox stock list in robot/catalog.py STOCK_THICKNESS["hardox"] (3.0 smallest)
 DISC_MAT = "hardox"
 FLOOR_GAP = 1.5           # disc rim to floor, upright: lower than an opponent wedge lip, above arena plate seams (R114)
-TOOTH_STEP = 7.0          # radial tooth height; >= bite at own top speed (BRIEF.md, 7.0 mm), so the tooth face takes the bite
-RAMP_DEG = 60.0           # angle over which the rim spirals down into the notch in front of the tooth (90 left the balance windows unable to counter the notch: 360/WIN_N - 2*WIN_HALF_DEG - BAL_EXTRA < SPOKE_MIN_DEG)
-RIM = 7.0                 # solid rim radial width: the tooth root and the rim carry the impact, windows stay inside it
-HUB_LAND = 3.5            # steel left round the bolt circle before the windows start
+TOOTH_STEP = 6.0          # radial tooth height; >= bite at own top speed (BRIEF.md) so the tooth face takes the bite
+RAMP_DEG = 50.0           # angle over which the rim spirals down into the notch in front of the tooth (balance window fits)
+RIM = 6.0                 # solid rim radial width: the tooth root and the rim carry the impact, windows stay inside it
+HUB_LAND = 4.3            # steel left round the bolt circle before the windows start (web >= 0.75 x stock, mfg web)
 WIN_N = 3                 # lightening windows, symmetric set
-WIN_HALF_DEG = 28.0       # half angle of each window
+WIN_HALF_DEG = 22.0       # half angle of each window
 WIN_ROUND = 1.5           # window corner radius (laser kerf and crack start)
-SPOKE_MIN_DEG = 8.0       # narrowest spoke allowed after the balance enlargement
+SPOKE_MIN_DEG = 4.0       # narrowest spoke allowed after the balance enlargement
+TOOTH_ROOT_R = 0.6        # fillet at the tooth root (laser kerf floor; mfg sharp internal corner)
+TOOTH_FILLET_END_DEG = 2.0   # where the root fillet meets the ramp (deg back up the ramp)
+TOOTH_FILLET_MID_K = 0.45    # fillet mid control point (fraction of TOOTH_ROOT_R off the tooth face)
+TOOTH_FILLET_MID_DEG = 0.8   # fillet mid control point angle (deg)
+RAMP_SPLINE_N = 8         # spline segments approximating the spiral ramp
 
 # relations
 DISC_R = DISC_OD / 2
@@ -123,59 +130,130 @@ def _bal_extra():
 BAL_EXTRA_DEG = _bal_extra()
 assert 360.0 / WIN_N - 2 * WIN_HALF_DEG - BAL_EXTRA_DEG >= SPOKE_MIN_DEG, "balance window eats the spokes: raise TOOTH_STEP/RAMP trade-off"
 
-# ------------------------------------------------------------------------------------------------ weapon mount (rails)
-DISC_RAIL_CLR = 1.5       # disc side to right rail face (> MOVING_CLR, plus disc wobble on a 3 mm shaft)
-RAIL_T = 4.0              # printed rail plate thickness: carries the stator screws / bearing; ~4 perimeters of 0.45 nozzle
-BOSS_WALL = 1.5           # printed wall round the bearing
-RAIL_L = _SIZING["RAIL_L"]          # rail prong length ahead of the tub body front (per size rule)
-RAIL_NOSE = 1.5           # rail material ahead of the bearing boss
+# lock pin: through both plates and the balance window of the disc at rest (weapon_lock, remove-before-fight)
+LOCK_R = WIN_R_IN + 2.0                             # pin radius from the spin axis: inside the window, clear of the hub web
+LOCK_ANGLE = 130.0                       # part-frame angle inside window 0, on the plates (the disc default pose aligns it); keeps >=1.0 wall to the prong slant edge
+
+# ------------------------------------------------------------------------------------------------ weapon mount (plates)
+PLATE_T = 4.0             # printed plate thickness: carries the stator screws / bearing seat; the M2 tap holes in the
+                          # heel get 1.0 mm walls round the bore (mfg.thin_wall 0.9)
+RAIL_L = _SIZING["RAIL_L"]          # plate prong length ahead of the tub body front (per size rule)
+RAIL_NOSE = 1.5           # plate material ahead of the motor face
+BOSS_WALL = 1.5           # printed wall round the bearing seat
+DISC_RAIL_CLR = 1.5       # disc side to plate face (> MOVING_CLR, plus disc wobble on a 3 mm shaft)
+PLATE_HEEL_L = 6.0        # plate root depth: bears on the front wall face, carries the mounting screws (M2x12: 5.4 in plastic)
+PIN_PAD_R = 3.2           # printed pad round the fork hinge pin: keeps the hole clear of the plate's bottom edge
+
 WM_X_CAP = -DISC_T / 2                    # bell face against the disc's left face
-WM_X_BACK = WM_X_CAP - WM_BODY_L          # stator base back face = left rail inner face
-RAIL_L_X = (WM_X_BACK - RAIL_T, WM_X_BACK)
+WM_X_BACK = WM_X_CAP - WM_BODY_L          # stator base back face = mount plate inner face
 SHAFT_END_X = WM_X_CAP + WM_SHAFT_OUT
 BEAR_BORE, BEAR_OD, BEAR_W = C.BEARINGS[BEARING]   # pick_bearing returns the catalog name; dimensions come from the table
-RAIL_R_X = (DISC_T / 2 + DISC_RAIL_CLR, max(SHAFT_END_X, DISC_T / 2 + DISC_RAIL_CLR + RAIL_T) + BOSS_WALL)
-BEAR_X = (SHAFT_END_X - BEAR_W, SHAFT_END_X)   # bearing seated flush with the shaft end, blind from outside (cap BOSS_WALL)
+RAIL_L_X = (WM_X_BACK - PLATE_T, WM_X_BACK)                   # left (stator) plate
+RAIL_R_X = (SHAFT_END_X - PLATE_T, SHAFT_END_X)              # right (bearing) plate: bearing flush with the shaft end
+BEAR_X = (SHAFT_END_X - BEAR_W, SHAFT_END_X)   # bearing seated flush with the plate's outer face
 BOSS_R = BEAR_OD / 2 + BOSS_WALL
-RAIL_TOP = Z_AX + WM["bell_r"] + BOSS_WALL      # rails rise to cover the bell from a top-down hit
+RAIL_TOP = Z_AX + WM["bell_r"] + BOSS_WALL      # plates rise to cover the bell from a top-down hit
 
 # ------------------------------------------------------------------------------------------------ tub / chassis masters
-TUB_BODY_L = _SIZING["TUB_BODY_L"]  # body behind the rails (per size rule); battery lies across it
-TUB_W = 80.0              # outer width; wheels inside it behind side armour
+TUB_BODY_L = _SIZING["TUB_BODY_L"]  # body behind the plates (per size rule); battery lies across its rear shelf
+TUB_W = 84.0              # outer width; wheels inside it behind side armour (the 61 mm pack fits between the wells)
 TUB_FLOOR_Z = 3.0         # tub underside above the floor (wheels carry the robot)
 TUB_H = 24.0              # body height: below the wheel OD so the wheels stand proud both ways up
-WALL = 1.6                # side / rear wall: TPU-reinforced nylon, > MIN_WALL
+WALL = 1.2                # side / rear wall: TPU-reinforced nylon, > MIN_WALL
 CORNER_R = 6.0            # plan-view corner radius: glancing blows slide off
-WHEEL_REAR_BIAS = _SIZING["WHEEL_REAR_BIAS"]    # wheel axle ahead of the rear wall (rear-biased: the disc and rails are the front mass)
+WHEEL_Y = -10.0           # wheel axle: the rear bay behind the cradle holds the 61 mm pack and the rx board end to end
 WHEEL_GAP = 1.0           # tyre to wheel-well wall
 PANEL_T_BASE = 1.0        # printed base panel
 PANEL_T_TOP = 1.0         # printed top panel (nylon); Ti would cost ~6 g more (BRIEF.md)
 PANEL_SCREW = 2.0         # M2 panel screws into heat-set inserts (as Revron)
-PANEL_SCREW_N_SIDE = 3    # per long side, GridLocations
-PANEL_SCREW_INSET = 4.0   # screw axis from the outer wall
+PANEL_SCREW_Y = (25.0, -33.0)   # screw axes from the tub centreline: both outside the tyre circle (y -20 to 6)
+PANEL_BOSS_T = 5.0        # side-wall boss thickness behind the inner face (insert dia 3.2 + wall)
+BOSS_BAND = 1.5           # boss band overshoot past each insert (the bosses cover the insert seats, not the full wall)
+SHELF_T = 2.4             # rear shelf: battery seat + motor-cradle root (> MIN_WALL)
+SHELF_Y1 = -2.0           # shelf front edge (y): runs under the front cradle wall
+CRADLE_WALL_T = 1.0       # motor cradle side wall thickness (> MIN_WALL)
+CRADLE_Y0 = WHEEL_Y - DM_W / 2 - 1.2   # cradle walls 0.2 off the N10 box (support.loose limit 0.2); inner faces
+CRADLE_Y1 = WHEEL_Y + DM_W / 2 + 1.2   # flush with the pedestal slot edges, so the walls root in uncut shelf
+CRADLE_TOP_Z = 23.0       # top of the cradle walls
+MOTOR_BRIDGE_Z0 = 15.2    # capture-rib underside: 0.2 gap over the N10 can top at 15 (support.loose limit)
+MOTOR_STOP_T = 1.0        # axial stop wall thickness at the gearbox face (> MIN_WALL)
+MOTOR_STOP_GAP = 0.2      # gap between the drawn gearbox face and the stop (support.loose limit 0.2)
+STOP_Z0, STOP_H = 10.0, 10.0   # axial stop band: over the gearbox body
+CENTRAL_STOP_T = 4.7      # stop between the two can backs: 0.2 play each side (faces flush with the pedestal slot edges)
+PAD_T = 5.0               # front-wall pad: spans the wall band (TUB_Y1-PAD_T..TUB_Y1), screws enter its inner face
+PLATE_SCREW_Z = (8.0, 14.0, 20.0)        # plate mounting screw heights (through the heel into the wall pads); top hole clears the cable notch
+DISC_SLOT_HALF = DISC_T / 2 + 1.25       # weapon rub gap each side of the disc in the slot (kin.rub_gap 1.0)
+WIRE_Z = 24.5             # wire corridor height: 1.5 over the cradle tops, under the top panel
+BAT_BAR_Y0, BAT_BAR_Y1 = -37.4, -33.5   # printed retention bar over the battery / rx board rear edge
+BAT_BAR_Z0, BAT_BAR_Z1 = 21.9, 23.4      # bar band: over the rx board top (21.9), under the wire corridor
+ESC_LEDGE_X0, ESC_LEDGE_X1 = -40.8, -28.4   # printed ledge the weapon ESC sits on (against the left wall)
+ESC_LEDGE_Y0, ESC_LEDGE_Y1 = CRADLE_Y1, 21.0   # rooted against the front cradle wall (one print, no thin gap)
+ESC_LEDGE_Z = 1.0         # ledge thickness (ESC bottom face contact for the velcro)
+PED_SLOT_L = DM_L - 8.8              # slot length: rear edge flush with the central stop face, front edge flush with the
+                                     # drawn gearbox face (the axial stop roots in the shelf beyond it, un-notched)
+PED_SLOT_W = 12.4                     # slot width (y): edges flush with the cradle walls' inner faces (0.2 off the N10 box)
+PED_SLOT_T, PED_SLOT_Z = 3.5, 4.25    # slot depth band through the shelf (2.5..6)
+PED_SLOT_X_OFF = 0.85                 # slot centre offset from the motor axis (mirrored per side): edges flush as above
+GB_FACE_OFF = DM_SHAFT["at"][0]       # gearbox front face in the gearmotor's own frame (catalogue)
+STOP_SHAFT_CLR = 0.8                  # shaft clearance hole radius through the axial stops
+RIB_W, RIB_H, RIB_INSET = 4.0, 1.8, 8.0   # motor capture ribs: width, height, inset from the cradle ends
+STRAP_POST_X, STRAP_POST_W, STRAP_POST_T, STRAP_POST_H = 26.0, 3.0, 1.5, 3.0   # battery strap posts
+CAN_X0_OFF, CAN_X1_OFF = 12.75, 2.25   # N10 can span in the gearmotor's own frame (catalogue)
+PED_PAD_W = 4.0                        # pedestal pad width (y), clear of the cradle walls
+CAN_PAD_TRIM = 5.0                    # can pad shorter than the can span (rib clearance)
+GB_PAD_TRIM = 1.0                     # gearbox pad shorter than the gearbox span
+SWEEP_SLOT_Y = 5.0                    # weapon sweep slot length in the top panel (to the front edge)
+NOTCH_EXIT = 0.5                      # cable notch overshoot past the wall outer face
+NOTCH_X = -15.3           # phase-lead cable notch through the wall band (left pad edge)
+NOTCH_W, NOTCH_H = 6.2, 4.0
+NOTCH_Z_OFF = 1.5          # notch centre height over the weapon axle (the wire corridor)
+PLATE_HOLE_EXIT = 1.0      # plate-screw clearance overshoot past the wall outer face
 
 # relations
 TUB_TOP_Z = TUB_FLOOR_Z + TUB_H
 TUB_Y0 = -TUB_BODY_L / 2
 TUB_Y1 = TUB_BODY_L / 2
+PLATE_Y0 = TUB_Y1                     # plates bear on the front wall outer face
 Y_AX = TUB_Y1 + RAIL_L - RAIL_NOSE - BOSS_R     # weapon axle
+PLATE_NOSE_Y = Y_AX + WM["bell_r"] + RAIL_NOSE  # plate nose covers the bell's front face from a hit
 DISC_FRONT_Y = Y_AX + DISC_R
 WHEEL_R = WHEEL_OD / 2
 WHEEL_Z = WHEEL_R                               # wheel stands on the floor
-WHEEL_Y = TUB_Y0 + WHEEL_REAR_BIAS
 WHEEL_X = TUB_W / 2 - WALL - WHEEL_GAP - WHEEL_W / 2   # inside the tub outline, behind the side wall
-WHEEL_PROUD_TOP = WHEEL_Z + WHEEL_R - TUB_TOP_Z        # > 0: drives inverted on the wheels (rails still taller, see risks)
+WELL_X_IN = WHEEL_X - WHEEL_W / 2 - 1.0   # shelf inner edge at the wheel wells (the well cut starts here)
+STOP_CHAN_BACK = 0.3       # shaft channel start behind the drawn gearbox face
+STOP_CHAN_PAST = 0.2       # shaft channel overshoot past the shelf edge
+WHEEL_PROUD_TOP = WHEEL_Z + WHEEL_R - TUB_TOP_Z        # 20 mm tyres sit inside the tub: not invertable on the wheels
 INSERT_D, INSERT_L = FC.insert(PANEL_SCREW)
+PLATE_SCREW_CLR = FC.clearance(PANEL_SCREW)   # clearance hole in the tub pad: the screw head seats on the pad face, threads bite the plate heel
+STATOR_SCREW_CLR = FC.clearance(2.5)                   # M2.5 clearance through the mount plate
 OVERALL_L = DISC_FRONT_Y - TUB_Y0
 OVERALL_H = max(RAIL_TOP, TUB_TOP_Z + PANEL_T_TOP, WHEEL_Z + WHEEL_R)
 assert OVERALL_L <= ENVELOPE_L and TUB_W <= ENVELOPE_W and OVERALL_H <= ENVELOPE_H, f"outside the {RULES_SIZE} size limit"
-assert WHEEL_PROUD_TOP > 0, "wheels must stand proud of the tub top for inverted driving"
+assert WHEEL_Y - WHEEL_OD / 2 - WHEEL_GAP > TUB_Y0 + WALL, "wheel well cut must clear the rear wall"
+
+# battery bay (world): pack lies flat on the shelf between the wheel wells, XT30 out the forward end
+BAT_AT = (0.0, TUB_Y0 + WALL + 0.3 + DESC_W / 2, TUB_FLOOR_Z + SHELF_T + BAT_H / 2)   # the rx board (widest stack item) sets the bay
+assert BAT_AT[0] - BAT_L / 2 > -(WHEEL_X - WHEEL_W / 2) + 0.5, "battery must clear the left wheel"
+assert BAT_AT[0] + BAT_L / 2 < (WHEEL_X - WHEEL_W / 2) - 0.5, "battery must clear the right wheel"
+assert BAT_AT[1] - BAT_W / 2 > TUB_Y0 + WALL + 0.3, "battery must clear the rear wall"
+assert BAT_AT[1] + BAT_W / 2 < CRADLE_Y0 - CRADLE_WALL_T - 0.3, "battery must clear the cradle wall"
+assert BAT_AT[1] + DESC_W / 2 < CRADLE_Y0 - 0.5, "rx board must clear the cradle wall"
+STRAP_POST_Y0 = BAT_AT[1] - BAT_W / 2 - 0.3 - STRAP_POST_T / 2   # post face 0.3 off the pack rear edge (merges into the wall)
+STRAP_POST_Y1 = CRADLE_Y0 - STRAP_POST_T / 2   # front post face flush with the cradle wall's rear face (one print)
+
+# electronics bays (world): rx board on the battery, weapon ESC on a printed ledge, switch under the top-panel keyway
+DESC_AT = (BAT_AT[0] - BAT_L / 2 + DESC_L / 2, BAT_AT[1], BAT_AT[2] + BAT_H / 2 + DESC_H / 2)
+ESC_LEDGE_TOP_Z = 22.0    # ledge top face (above the wheel-well cut, z ..21): the ESC sits on it, taped, top face contact
+WESC_AT = ((ESC_LEDGE_X0 + ESC_LEDGE_X1) / 2, (ESC_LEDGE_Y0 + ESC_LEDGE_Y1) / 2,
+           ESC_LEDGE_TOP_Z + WESC_H / 2)   # on the ledge: bottom face contact for the velcro
+SW_AT = (25.7, 16.0, TUB_TOP_Z - SW_H / 2)   # switch top face against the top panel, actuator through the keyway
 
 # ------------------------------------------------------------------------------------------------ forks (reuse revron fork_5)
-FORK_PIN = 3.0            # M3 hinge pin through the rail outer face; fork free to swing: self-levelling on its tip
-FORK_TIP_GAP = 0.0        # fork tip rests ON the floor (gravity); the up-stop sits FORK_LIFT above
+FORK_PIN = 3.0            # M3 hinge pin through the plate outer face; fork free to swing: self-levelling on its tip
+FORK_TIP_GAP = 0.5        # skid clearance: wheels alone touch the floor (contain.wheel_ground); com_support counts parts within 0.6
 FORK_LIFT = 4.0           # up-travel before the fork lands on its stop
-FORK_SIDE_CLR = 0.5       # fork sheet to rail outer face
+FORK_SIDE_CLR = 0.5       # fork sheet to plate outer face
 
 # ------------------------------------------------------------------------------------------------ drive
 DRIVE_V_NOM = 6.0         # BBB N10 rpm is quoted at 6 V (cots_alts src)
@@ -187,6 +265,6 @@ KV_LOAD = 0.8             # loaded / no-load speed factor (brief: ~0.8), estimat
 DENS = {m: C.density(m) for m in ("hardox", "nylon", "titanium")}   # g/cm3 from robot/catalog.py materials
 SOLID_FRAC = 0.85         # GUIDE default for printed parts
 MASS_EST = {              # g, estimates, NOT measured; the verifier's volume x density replaces these
-    "tub": 16.0, "panel_base": 5.0, "panel_top": 5.0, "forks": 4.0, "fasteners_inserts": 3.5, "wires_xt30": 4.0,
-    "bearing": 0.3, "fork_pins": 0.6,
+    "tub": 22.0, "panel_base": 7.0, "panel_top": 5.0, "mount_l": 2.2, "post_r": 2.2, "forks": 4.0,
+    "fasteners_inserts": 3.5, "wires_xt30": 4.0, "bearing": 0.3, "fork_pins": 0.6,
 }

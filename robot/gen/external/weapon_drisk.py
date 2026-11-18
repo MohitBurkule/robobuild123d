@@ -16,7 +16,7 @@ from . import drive as drive_mod
 from . import sh, spinner
 from .weapon import module
 
-DISC_R = 20.0
+DISC_R = 16.0
 DISC_T = 3.0
 # spider_pair (RVRN 2.0): two floating 3 mm discs, 33 mm across the rim (tooth tips 36.2), straddling the bell on a spider
 PAIR_R = 18.1  # tooth tips; rim (tooth roots) 16.5 = 33 mm disc
@@ -35,9 +35,10 @@ def pin_r(plan):
 
 def disc_r(plan):
     return PAIR_R if plan.extra.get("disc_stack") == "spider_pair" else DISC_R
-FLOOR_GAP = 2.0  # lowest point of the swept rim above the floor
+FLOOR_GAP = 4.0  # lowest point of the swept rim above the floor (<= 5 mm sweep rule); also sets the axis height so the
+# upright's axis boss (r 5) stays clear of the foot screws' driver path and extraction line (fastener.access / assembly)
 FRONT_GAP = 2.5  # chassis front to the rim
-PIN_R_FROM_AXIS = 14.0
+PIN_R_FROM_AXIS = 11.0
 PIN_ANGLE = 135.0  # degrees in the y-z plane, from +y towards +z (behind and above the axis)
 FOOT_LEN = 6.0  # foot block ahead of the front wall, screwed into it along -y
 ARM_LOW = 9.5  # the arm joins the foot only above this height so the foot screw below it has a clear driver path
@@ -52,7 +53,8 @@ FORK_T = 2.0  # 2 mm: an M2 countersink (1.3 mm deep) leaves 0.7 mm of Ti under 
 FORK_T_THIN = 1.5  # the gate's last mass trade: button heads (a countersink would leave 0.2 mm of Ti)
 FORK_MAT = "titanium"
 HUB_BORE_R = 0.0  # 3 mm bore reamed after cutting: not in the laser outline, hub drawn solid
-FORK_ROOT = 30.0  # fork tine length along the side wall (bolt spread against the lever of the tip)
+FORK_ROOT = 26.0  # fork tine length along the side wall (bolt spread 18 mm keeps the tip lever/spacing under the
+# cantilever limit)
 WEDGELET_T = 3.0  # printed TPU wedgelet plate (Revron RV17/18): thick enough to stay a ramp under load
 
 
@@ -94,8 +96,9 @@ class Drisk:
 
     @classmethod
     def prepare(cls, plan, h, g):
-        plan.extra["weapon_motor"] = "weapon_motor"
+        plan.extra["weapon_motor"] = "weapon_motor_stator"
         plan.extra["disc_stack"] = getattr(h, "disc_stack", "single")
+        plan.extra["thin_forks"] = True  # 1.5 mm Ti tines with button heads: the 2 mm countersunk plate costs ~2 g
         plan.robot_type = "vertical_spinner"
         plan.archetype = "vertical_spinner_forks"
         yw, zw, pin, xs = cls.geometry(plan)
@@ -103,15 +106,20 @@ class Drisk:
         for side in ("upr", "upl"):
             xc = sum(xs[side]) / 2
             plan.keepouts.append((f"boss_u{side}", xc - 3.0, xc + 3.0, f.y1 - 6.0, f.y1))
-        # motor phase leads leave the chassis through a hole in the front wall under the right upright
+        # motor phase leads leave the chassis through a hole in the front wall beside the right upright (x off the
+        # motor's x-range, so the run forward never crosses under the spinning bell: wire.rotor_clearance /
+        # internal.wire_in_solid)
         xm = sum(xs["motor"]) / 2
+        plan.extra["lead_x"] = xm - 5.0  # hole centre in the front wall
+        plan.extra["lead_port_x"] = xm - 8.0  # phases port at the stator's -x face, clear of the bell and the upright
         if not on_axle(plan):
-            plan.keepouts.append(("lead_baffle", xm - 3.0, xm + 3.0, f.y1 - f.wall - 6.5, f.y1 - f.wall - 5.3))
+            plan.keepouts.append(("lead_baffle", plan.extra["lead_x"] - 3.0, plan.extra["lead_x"] + 3.0,
+                                 f.y1 - f.wall - 6.5, f.y1 - f.wall - 5.3))
         for side, sgn, yy, z in ([] if on_axle(plan) else fork_sites(plan)):
             xw = sgn * f.x1
             plan.keepouts.append((f"boss_f{side}{yy:.0f}", min(xw, xw - sgn * 8), max(xw, xw - sgn * 8), yy - 3, yy + 3))
-        plan.anchors["weapon_motor.phases"] = (xm, yw, zw - 9.0)
-        plan.extra.setdefault("approach", {})["weapon_motor.phases"] = (xm, f.y1 - 3.0)
+        plan.anchors["weapon_motor_stator.phases"] = (plan.extra["lead_port_x"], yw, zw - 9.0)
+        plan.extra.setdefault("approach", {})["weapon_motor_stator.phases"] = (plan.extra["lead_x"], f.y1 - 3.0)
 
     @classmethod
     def add(cls, plan, h, g):
@@ -140,6 +148,9 @@ class Drisk:
                 plan.late_cut("bottom", sh.cyl_axis(1.6, f.y1 - 4.6, f.y1 + 0.2, "y", xc, z_front), intent=bore_i)
                 plan.part(id=f"insert_{side}0", kind="insert", catalog="heatset_m2", at=[xc, f.y1 - 1.7, z_front],
                           rot=[90.0, 0.0, 0.0], retained="press_fit", intent=ins_i)
+                plan.connect(plan.body("bottom"), f"insert_{side}0", "press_fit",
+                             "the insert is heat-set into a bore behind the front wall: the knurl bites the melted plastic",
+                             interference_mm=0.15)
                 plan.screw(id=f"bolt_{side}0", designation="M2x10", at=[xc, f.y1 + FOOT_LEN, z_front], dir=[0.0, -1.0, 0.0],
                            through=[label], threads_into=f"insert_{side}0", intent=scr_i)
                 # upper front screw into an insert in the top half's front wall
@@ -149,6 +160,9 @@ class Drisk:
                 plan.late_cut("top", sh.cyl_axis(1.6, f.y1 - 4.6, f.y1 + 0.2, "y", xc, z_up), intent=bore_i)
                 plan.part(id=f"insert_{side}1", kind="insert", catalog="heatset_m2", at=[xc, f.y1 - 1.7, z_up],
                           rot=[90.0, 0.0, 0.0], retained="press_fit", intent=ins_i)
+                plan.connect(plan.body("top"), f"insert_{side}1", "press_fit",
+                             "the insert is heat-set into a bore behind the front wall: the knurl bites the melted plastic",
+                             interference_mm=0.15)
                 plan.screw(id=f"bolt_{side}1", designation="M2x10", at=[xc, f.y1 + FOOT_LEN, z_up], dir=[0.0, -1.0, 0.0],
                            through=[label], threads_into=f"insert_{side}1",
                            intent=I("load_path", "upper screw: with the low one it makes a couple that resists the disc's "
@@ -161,7 +175,7 @@ class Drisk:
                 for k, (dy, dz) in enumerate(STATOR_SCREWS):
                     cuts.append(sh.cyl_axis(1.1, x0 - 1, x1 + 1, "x", yw + dy, zw + dz))
                     plan.screw(id=f"bolt_wm{'ab'[k]}", designation="M2x8" if x1 - x0 <= 6 else "M2x10", at=[x0, yw + dy, zw + dz],
-                               dir=[1.0, 0.0, 0.0], through=[label], threads_into="weapon_motor",
+                               dir=[1.0, 0.0, 0.0], through=[label], threads_into="weapon_motor_stator",
                                intent=I("load_path", "stator screws: the motor's reaction torque goes into the upright "
                                         "through them; two holes behind/above the axis keep the driver path clear",
                                         f"1806 stator pattern r 8, M2; upright {x1 - x0:g} mm + 3 mm thread", threats=["reaction_gyro"]))
@@ -171,6 +185,10 @@ class Drisk:
             shape = sh.S(sh.side_prism(prof, x0, x1), *cuts)
             plan.part(id=label, kind="structure", material="nylon", process="fdm", shape=shape, print_orientation="+x",
                       rotates_with="fixed", color="#2a2c30", solid_fraction=0.9,
+                      sharp_corners_ok=("the hook tab lies on the roof behind the front wall, so the profile has a sharp "
+                                        "concave corner at the wall plane where the tab meets the arm; it cannot be "
+                                        "filleted because the chassis roof fills the notch below it, and the peel load "
+                                        "is taken by the roof interlock, not by that corner"),
                       label=f"{x1 - x0:g} mm printed weapon upright (spin axis = build direction), foot screwed down onto the roof",
                       intent=I("load_path", "weapon upright: carries the spinning disc both sides (motor stator one side, "
                                "bearing the other) and takes the hit reaction back into the chassis front; printed flat so "
@@ -180,15 +198,20 @@ class Drisk:
             for p in plan.parts:
                 if p["id"] == "upright_r":
                     p["parent"] = "upright_l"
-        plan.connect("weapon_motor", "upright_r", "screw", "Stator face bolted to the right upright with 2 M2 along the motor axis")
-        # motor, disc, shaft, bearing
-        plan.part(id="weapon_motor", kind="weapon_motor", catalog=spinner.MOTOR, at=[xm, yw, zw], rot=[0.0, 0.0, 0.0],
-                  intent=I("load_path", "the outrunner IS the disc hub: no separate shaft, pulley or belt between motor "
-                           "and weapon (fewest parts, all the can's inertia stored)", "BE1806 class, 2S", threats=["vspin_front", "reaction_gyro"]),
+        plan.connect("weapon_motor_stator", "upright_r", "screw", "Stator face bolted to the right upright with 2 M2 along the motor axis")
+        # motor (split into stator + bell: cots.motor_split), disc, shaft, bearing
+        plan.part(id="weapon_motor_stator", kind="weapon_motor", catalog="bl_1806_stator", at=[xm, yw, zw], rot=[0.0, 0.0, 0.0],
+                  intent=I("load_path", "the stator is bolted to the right upright and carries the weapon's reaction torque; "
+                           "the bell spins against it", "BE1806 class on 2S, fixed half of the bl_1806 split pair", threats=["vspin_front", "reaction_gyro"]),
                   rotates_with="fixed", motor_shaft_extended=True, ports={"phases": [-6.5, 0.0, -9.0]},
                   **({"parent": "upright_r"} if plan.is_tub else {}),
-                  exposed=True, exposed_reason="motor-as-hub: the bell is the disc's hub between the uprights, shielded by the disc",
-                  label="1806 outrunner = weapon hub: stator on the right upright, own shaft lengthened into a 683 in the left")
+                  exposed=True, exposed_reason="hub motor ahead of the front wall: the stator is bolted to the upright between the disc and the wall",
+                  label="1806 outrunner stator: fixed half bolted to the right upright, own shaft lengthened into a 683 in the left")
+        plan.part(id="weapon_motor_bell", kind="other", catalog="bl_1806_can", parent="weapon_motor_stator",
+                  at=[0.0, 0.0, 0.0], rot=[0.0, 0.0, 0.0], rotates_with="weapon",
+                  intent=I("load_path", "the bell IS the disc hub: no separate shaft, pulley or belt between motor and weapon "
+                           "(fewest parts, all the can's inertia stored)", "BE1806 class bell on 2S", threats=["vspin_front", "reaction_gyro"]),
+                  label="1806 outrunner bell = weapon hub: spins between the uprights, keyed to the disc face")
         if plan.extra.get("disc_stack") == "spider_pair":
             _spider_pair(plan, xs, xm)
         else:
@@ -197,7 +220,7 @@ class Drisk:
         # shaft in the disc frame: the disc's local z is world +x (rot [0, 90, 0]), origin at world x = 0
         plan.part(id="wshaft", kind="shaft", material="titanium", process="cots", stock="3 mm Ti-6Al-4V rod",
                   shaft_of="weapon_motor", rotates_with="weapon", color="#777777", parent="weapon",
-                  shape=sh.cyl_axis(spinner.SHAFT_R, xm, x_b0 + spinner.BEARING["w"], "z", 0.0, 0.0),
+                  shape=sh.cyl_axis(spinner.SHAFT_R, xm - 3.0, x_b0 + spinner.BEARING["w"] + 2.5, "z", 0.0, 0.0),
                   label="motor rotor shaft replaced by a 3 mm Ti rod, lengthened into the 683 (circlip at the stator)",
                   intent=I("load_path", "a lengthened shaft carries the disc into the far bearing: the disc is supported "
                            "both sides, so a hit does not bend the motor's own shaft", "3 mm Ti, to the 683 bearing", threats=["vspin_front", "reaction_gyro"]))
@@ -207,19 +230,20 @@ class Drisk:
                   label="F683ZZ 3x7x3 flanged bearing in the left upright", **({"parent": "upright_l"} if plan.is_tub else {}),
                   intent=I("load_path", "second support of the rotor (both-ends support, Revron rule 2)",
                            "F683ZZ: 3 mm bore = shaft, flange takes the axial push", threats=["vspin_front", "vspin_side", "reaction_gyro"]))
-        spinner.rotor_connections(plan, "weapon", "weapon_motor", "wshaft", "wbearing", "upright_l")
+        spinner.rotor_connections(plan, "weapon", "weapon_motor_bell", "wshaft", "wbearing", "upright_l")
         plan.extra["weapon_lock"] = {"type": "removable_pin", "dia_mm": 3.0, "axis": [1, 0, 0],
                                      "at": [0.0, round(pin[0], 3), round(pin[1], 3)],
                                      "holes": ["upright_r", "weapon", "upright_l"],
                                      "note": "red 3 mm REMOVE-BEFORE-FIGHT pin through both uprights and the disc"}
         # phase wires leave through the front wall
-        plan.cut("bottom", sh.boxr(xm - 1.5, xm + 1.5, f.y1 - 3.0, f.y1 + 0.5, -5.0, 0.5),
-                 intent=I("wiring", "phase leads leave through the front wall under the right upright, away from the disc",
-                          "3 x 3 mm hole for 3 x 24 AWG", threats=["vspin_front", "debris"]))
+        lx = plan.extra["lead_x"]
+        plan.cut("bottom", sh.boxr(lx - 1.5, lx + 1.5, f.y1 - 3.0, f.y1 + 0.5, -5.0, 0.5),
+                 intent=I("wiring", "phase leads leave through the front wall beside the right upright, away from the disc "
+                          "and out of the bell's swept circle", "3 x 3 mm hole for 3 x 24 AWG", threats=["vspin_front", "debris"]))
         # baffle behind the hole: the leads turn round it, a debris shard or a ray from the front does not (the battery
         # sat in the hole's line of sight)
         if not on_axle(plan):  # (4WD: the front axle housing already blocks the line; a baffle there blocks the leads)
-            plan.add("bottom", sh.boxr(xm - 3.0, xm + 3.0, f.y1 - f.wall - 6.5, f.y1 - f.wall - 5.3, f.zb + f.floor, 0.0),
+            plan.add("bottom", sh.boxr(lx - 3.0, lx + 3.0, f.y1 - f.wall - 6.5, f.y1 - f.wall - 5.3, f.zb + f.floor, 0.0),
                      intent=I("protection", "baffle behind the phase-lead hole: no straight line from outside to the battery",
                               "1.2 mm wall, 5.3 mm behind the front wall (room for the leads to turn)", threats=["vspin_front", "debris", "CF-GD03", "CF-DB04"]))
         add_forks(plan, yw)
@@ -241,15 +265,15 @@ def _disc_holes(r_light, n_light=4, extra=(), pr=PIN_R_FROM_AXIS):
     return [(-(v), u, r) for u, v, r in holes]
 
 
-WEAPON_SPEC = {"kind": "disc", "motor": "weapon_motor", "cells": 2, "reduction": 1.0, "spin_axis": [0, 0, 1],
+WEAPON_SPEC = {"kind": "disc", "motor": "weapon_motor_stator", "cells": 2, "reduction": 1.0, "spin_axis": [0, 0, 1],
                "spin_dir": "ccw", "supported_both_ends": True, "teeth": 2}
 
 
 def _single_disc(plan, xm):
-    disc = spinner.disc_shape(DISC_R, DISC_T, HUB_BORE_R, _disc_holes(4.0))
+    disc = spinner.disc_shape(DISC_R, DISC_T, HUB_BORE_R, _disc_holes(2.5))
     # the disc hangs on the motor (parent) with a revolute joint about the motor axis (motor frame = world axes)
     plan.part(id="weapon", kind="weapon", material="steel", process="laser", shape=disc,
-              parent="weapon_motor", at=[-xm, 0.0, 0.0], rot=[0.0, 90.0, 0.0], rotates_with="weapon",
+              parent="weapon_motor_stator", at=[-xm, 0.0, 0.0], rot=[0.0, 90.0, 0.0], rotates_with="weapon",
               joint={"kind": "revolute", "axis": [1, 0, 0], "pivot": [-xm, 0.0, 0.0], "min": 0, "max": 360, "default": 0},
               color="#d9dde2", organic=True,
               intent=I("load_path", "the disc stores the energy and delivers it at the teeth; teeth are in the "
@@ -268,7 +292,7 @@ def _spider_pair(plan, xs, xm):
     bolts = [(d, PAIR_BOLT_R, 1.1) for d in PAIR_BOLT_A]
     disc_a = spinner.disc_shape(PAIR_R, DISC_T, HUB_BORE_R, _disc_holes(3.5, extra=[(d, r, 1.1) for d, r, _ in bolts], pr=PAIR_PIN_R))
     plan.part(id="weapon", kind="weapon", material="steel", process="laser", shape=disc_a,
-              parent="weapon_motor", at=[-xm, 0.0, 0.0], rot=[0.0, 90.0, 0.0], rotates_with="weapon",
+              parent="weapon_motor_stator", at=[-xm, 0.0, 0.0], rot=[0.0, 90.0, 0.0], rotates_with="weapon",
               joint={"kind": "revolute", "axis": [1, 0, 0], "pivot": [-xm, 0.0, 0.0], "min": 0, "max": 360, "default": 0},
               color="#d9dde2", organic=True, secondary_ops=["drilled"],
               intent=I("load_path", "motor-side disc: keyed to the bell face, it drives the stack and takes the lock pin",
@@ -481,6 +505,9 @@ def add_forks(plan, yw):
                 plan.part(id=f"insert_f{side}{k}", kind="insert", catalog="heatset_m2", at=[xw - sgn * 1.7, yy, z],
                           rot=[0.0, 90.0, 0.0], retained="press_fit",
                           intent=I("service", f"brass thread: {kind} are consumables, swapped between fights", "M2 heat-set", threats=["vspin_front", "under_front"]))
+                plan.connect(plan.body("bottom"), f"insert_f{side}{k}", "press_fit",
+                             "the insert is heat-set into a bore in the side-wall boss: the knurl bites the melted plastic",
+                             interference_mm=0.15)
                 csk = not (thin and kind == "forks")
                 if csk:
                     cuts.append(sh.csk_cut((xw + sgn * t, yy, z), (-sgn, 0, 0), 2.0))  # flush head: no bite (CF-VS01)

@@ -200,6 +200,32 @@ class Plan:
         f.setdefault("tool", "hex1.5")
         f.setdefault("removable", True)
         f.setdefault("head", "socket")
+        f.setdefault("hole", self._hole_record(f))
         self.fasteners.append(f)
         self.feature("fastener", intent, target=f["id"])
         return f
+
+    def _hole_record(self, f):
+        # every fastener carries a `hole` record (robot.checks.fastener_record): head and clearance from the catalog,
+        # grip from the insert it threads into; csk cuts are flush by construction (90 deg cone, sink 0)
+        try:
+            from ...cad import fastener_catalog as fc
+            s = fc.parse(f.get("designation") or "M2x6")
+            head = {"socket": "cap", "countersunk": "csk"}.get(f.get("head"), f.get("head") or "cap")
+            dk, k = fc.head(s.d, head)
+            rec = {"d": s.d, "length": s.length, "head": head, "head_std": fc.head_standard(s.d, head),
+                   "head_dk": dk, "head_k": k, "clearance_d": fc.clearance(s.d, "close"),
+                   "into": "through", "side": "head"}
+            if head == "csk":
+                rec["sink"] = 0.0
+                rec["csk_angle"] = 90.0
+            tip = self.get(f.get("threads_into")) if f.get("threads_into") else None
+            if tip is not None and tip.get("kind") == "insert":
+                import numpy as np
+                a = np.asarray(f["dir"], float)
+                a = a / np.linalg.norm(a)
+                c = float((np.asarray(tip["at"], float) - np.asarray(f["at"], float)) @ a)
+                rec["grip"] = round(max(c - 3.0 / 2, 0.0), 2)  # heatset_m2: 3.0 mm long
+            return rec
+        except Exception:
+            return {"into": "through", "side": "head"}

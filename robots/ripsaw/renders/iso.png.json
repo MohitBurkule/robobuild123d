@@ -1,0 +1,165 @@
+{
+ "spec": "/workspace/github__MohitBurkule__robobuild123d/robots/ripsaw/spec.json",
+ "rendered_at": 1794873737.2313185,
+ "bodies": [
+  "tub",
+  "panel_base",
+  "panel_top",
+  "mount_l",
+  "post_r",
+  "weapon_motor_stator",
+  "weapon_motor_bell",
+  "disc",
+  "outboard_bearing",
+  "fork_r",
+  "fork_l",
+  "fork_pin_r",
+  "fork_pin_l",
+  "motor_r",
+  "motor_l",
+  "wheel_r",
+  "wheel_l",
+  "battery",
+  "esc_weapon",
+  "rx_drive_esc",
+  "switch",
+  "insert_pb0",
+  "insert_pt0",
+  "insert_pb1",
+  "insert_pt1",
+  "insert_pb2",
+  "insert_pt2",
+  "insert_pb3",
+  "insert_pt3",
+  "screw_00",
+  "screw_01",
+  "screw_02",
+  "screw_03",
+  "screw_04",
+  "screw_05",
+  "screw_06",
+  "screw_07",
+  "screw_08",
+  "screw_09",
+  "screw_10",
+  "screw_11",
+  "screw_12",
+  "screw_13",
+  "screw_14",
+  "screw_15",
+  "screw_16",
+  "screw_17",
+  "screw_18",
+  "screw_19"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    30.5,
+    -28.0,
+    12.4
+   ],
+   "to": [
+    29.51,
+    28.7,
+    23.825
+   ]
+  },
+  "w_sw_wesc": {
+   "from": [
+    21.89,
+    28.7,
+    23.825
+   ],
+   "to": [
+    -31.599999999999994,
+    -2.4000000000000004,
+    24.0
+   ]
+  },
+  "w_sw_rx": {
+   "from": [
+    21.89,
+    28.7,
+    23.825
+   ],
+   "to": [
+    1.5,
+    -26.0,
+    20.65
+   ]
+  },
+  "w_wesc_m1": {
+   "from": [
+    -34.599999999999994,
+    20.6,
+    24.0
+   ],
+   "to": [
+    -15.3,
+    49.0,
+    23.5
+   ]
+  },
+  "w_wesc_m2": {
+   "from": [
+    -34.599999999999994,
+    20.6,
+    24.0
+   ],
+   "to": [
+    -15.3,
+    49.0,
+    23.5
+   ]
+  },
+  "w_wesc_m3": {
+   "from": [
+    -34.599999999999994,
+    20.6,
+    24.0
+   ],
+   "to": [
+    -15.3,
+    49.0,
+    23.5
+   ]
+  },
+  "w_rx_mr": {
+   "from": [
+    1.5,
+    -22.0,
+    21.95
+   ],
+   "to": [
+    10.799999999999997,
+    -10.0,
+    15.0
+   ]
+  },
+  "w_rx_ml": {
+   "from": [
+    -30.5,
+    -22.0,
+    21.95
+   ],
+   "to": [
+    -10.799999999999997,
+    -10.0,
+    15.0
+   ]
+  },
+  "w_rx_wesc": {
+   "from": [
+    1.5,
+    -34.0,
+    20.65
+   ],
+   "to": [
+    -37.599999999999994,
+    -2.4000000000000004,
+    24.0
+   ]
+  }
+ }
+}

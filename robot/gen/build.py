@@ -47,7 +47,8 @@ def frame_params(h, user: dict | None = None) -> dict:
     if h.weapon == "hspin_bar":
         p.update(axle_y=-14.0, y0=-48.0, y1=44.0, floor=1.1)
     if h.weapon == "vspin_drisk":
-        p.update(axle_y=-14.0, y0=-36.0, y1=44.0, floor=1.1)
+        # y1 50: the front bay must take the 52 mm 2S research pack above the ESC (layout CSP)
+        p.update(axle_y=-14.0, y0=-36.0, y1=50.0, floor=1.1)
     if h.weapon == "lifter":
         p.update(axle_y=-18.0, y0=-42.0, y1=30.0, zb=-11.8)
     p.update({k: v for k, v in user.items() if k in p})
@@ -192,11 +193,20 @@ def component_z(plan, height) -> float:
 
 # ---------------------------------------------------------------- wiring
 def add_wiring(plan, h):
-    for wid, a, b, kind, awg in electronics.harness(h, plan.extra.get("weapon_motor"), plan.extra.get("servo")):
+    wm = plan.extra.get("weapon_motor")
+    for wid, a, b, kind, awg in electronics.harness(h, wm, plan.extra.get("servo")):
         ends = {a.split(".")[0], b.split(".")[0]}
         avoid = {"drive_mid"}
         avoid |= set(plan.extra.get("wire_avoid_ok", ()))
         wiring.add_wire(plan, wid, a, b, kind, awg=awg, slack=8.0 if kind == "power" else 6.0, avoid=avoid)
+    if wm:
+        for w in plan.wires:
+            if w.get("to") == f"{wm}.phases":
+                # the weapon motor is the front hub module: its phase leads must cross the open gap between the
+                # chassis front wall and the motor, so the span cannot run in a channel (wire.exterior_support opt-out)
+                w["exposed_reason"] = ("weapon-motor phase leads cross the open gap between the chassis front wall and the "
+                                       "front hub motor; the bundle is laced to the upright foot in the build sheet and no "
+                                       "solid spans the gap to channel through")
 
 
 # ---------------------------------------------------------------- spec
@@ -213,8 +223,9 @@ def _seat_inserts(plan):
             continue
         host = "tub" if "tub" in ids and half in ("top", "bottom") else f"chassis_{half}"
         if host in ids and (p["id"], host) not in have:
-            plan.connections.append({"a": p["id"], "b": host, "method": "press_fit",
-                                     "reason": "heat-set insert melted into its bore"})
+            plan.connect(p["id"], host, "press_fit",
+                         "heat-set insert melted into its bore: the knurl keys it and the melted plastic locks it",
+                         interference_mm=0.1)
 
 
 def to_spec(plan, h) -> dict:

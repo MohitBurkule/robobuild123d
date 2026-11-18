@@ -238,6 +238,38 @@ pip install git+https://github.com/gumyr/build123d
 
 build123d is best used with a viewer. The most popular viewer is [ocp_vscode](https://github.com/bernhard-42/vscode-ocp-cad-viewer), a Python package with a standalone viewer and VS Code extension. Other [Editors & Viewers](https://build123d.readthedocs.io/en/latest/external.html#external) are found in the documentation.
 
+## Robot builder agent loop
+
+This fork carries an antweight combat-robot builder/verifier (robot/). Autonomous agents
+(and humans in a hurry) should work in this loop:
+
+You build and fix antweight robots in MohitBurkule/robobuild123d (branch off dev).
+
+LOOP (do this, nothing else):
+1. Edit the generator / params.
+2. Regenerate spec.json.
+3. Run: python3 -m robot verify spec.json --tier inner --llm
+   Read ONLY this output. It lists root causes with measured numbers and the edit to make.
+   Fix root cause 1 first. Its "+N consequences" go away with it.
+4. Repeat. When inner is clean, run the full tier once:
+   python3 -m robot verify spec.json --llm
+
+RULES:
+- Never compute geometry in your head. Measure:
+  - where a part is, its gaps and ports: python3 -m robot probe spec.json <part>
+  - where a part can go (battery/ESC/rx packing): python3 -m robot probe spec.json --place <part>
+  - joint sweep hits: python3 -m robot probe spec.json --joint <part>
+  - mass per part: python3 -m robot probe spec.json --mass
+- Never read check source code to learn a rule. The failure message states the rule, every side and number, and the cheapest fix. robot/docs/FACTS.md explains the rest.
+- Screws: cut every hole with robot.cad.holes (hole / hole_tool / hole_plan) and put the returned rec.at and rec.hole in the spec fastener. The tool "at" is the outer surface; the spec fastener "at" is rec.at (the head bearing face).
+- Overlap / clearance between linked params: add levers (and generator) to the spec. Verify then runs jiggle by itself and prints solve.proposal with the exact new values. Apply them.
+- To move a named param safely: python3 -m robot jiggle spec.json --ranges, then pick a value inside the printed interval.
+- Printed parts: round inside corners (round_inside shape op, or fillets), min wall 0.9 mm, one solid per part.
+- Electronics and wires must not be visible from outside: close openings over them, or mark a part exposed: true with a reason.
+- Do not opt out of a check (sharp_ok, exposed_reason, waivers) unless the reason is physical and you write it.
+- Keep thinking short: one hypothesis, one edit, re-run. Do not plan more than one fix ahead.
+- Commit small, push to your branch, open a PR when verify is clean.
+
 ## Contributing
 
 build123d is a rapidly growing project and we welcome all contributions. Whether you want to share ideas, report bugs, or implement new features, your contribution is welcome! Please see our [CONTRIBUTING.md](CONTRIBUTING.md) file to get started.

@@ -323,7 +323,7 @@ def check_entries(ctx, frame_checks, exact=True, parts=None):
             msg + f" (diff {de}, tol {tol})").on(pid))
         tv = float(e.get("tol_vol_frac", 0.15))
         rv = fm["vol_cc"] / fr["vol_cc"] - 1 if fr["vol_cc"] > 0 else 0.0
-        vmsg = f"`{pid}` volume {fm['vol_cc']:.3f} vs {fr['vol_cc']:.3f} cm3 ({rv:+.0%}, tol ±{tv:.0%})"
+        vmsg = f"`{pid}` volume {fm['vol_cc']:.3f} vs {fr['vol_cc']:.3f} cm3 ({(rv if abs(rv) >= 5e-3 else 0.0):+.0%}, tol ±{tv:.0%})"
         out.append(ok("reference_cad.volume", G, "Part volume matches", vmsg).on(pid) if abs(rv) <= tv else
                    fail("reference_cad.volume", G, WARNING, "Part volume differs from the reference CAD", vmsg).on(pid)
                    .fix("Match wall thickness, pockets and lightening holes to the reference."))

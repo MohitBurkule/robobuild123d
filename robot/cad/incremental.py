@@ -188,6 +188,7 @@ def verify_incremental(spec, opts=None):
     valid = validity.run(r, findings)
     rep.timings_s["validity"] = round(time.time() - t0, 3)
     ctx = None
+    owned = []  # (group, how it ran, its findings) for the per-group table, as the full pipeline reports
     sigs = part_sigs(r)
     _all_ids = tuple(sigs)
     base = cache.h(cache.code_hash(), json.dumps(_strip(r.spec.raw), sort_keys=True, default=str), cache.referenced_hash(r.spec.raw, r.spec.base_dir),
@@ -218,6 +219,7 @@ def verify_incremental(spec, opts=None):
             if not cache.is_missing(hit) and all(sigs.get(p) == s for p, s in hit[0].items()):
                 _, found, delta = hit
                 findings.extend(checks.tag(found, name))
+                owned.append((name, "ran", found))
                 for k, v in delta.items():
                     setattr(ctx, k, v)
                 stats["reused"].append(name)
@@ -229,6 +231,7 @@ def verify_incremental(spec, opts=None):
                     found = mod.run(ctx)
                 deps = {p: sigs[p] for p in _rec if p in sigs}
                 findings.extend(checks.tag(found, name))
+                owned.append((name, "ran", found))
                 after = _ctx_bytes(ctx)
                 delta = {k: getattr(ctx, k) for k, v in after.items() if before.get(k) != v}
                 if all(after[k] is not None for k in delta):
@@ -239,6 +242,7 @@ def verify_incremental(spec, opts=None):
                                      f"`{name}` raised {type(e).__name__}: {e}. Its verdicts are unknown.")
                                 .fix("Report this; the spec may hold geometry the check cannot handle."))
                 ctx.not_checked.append(f"Check group `{name}` crashed: {type(e).__name__}")
+                owned.append((name, "crashed", findings[-1:]))
                 stats["rerun"].append(name)
                 if os.environ.get("ROBOT_DEBUG"):
                     traceback.print_exc()
@@ -250,6 +254,9 @@ def verify_incremental(spec, opts=None):
         rep.assembly = ctx.assembly
         rep.mass = getattr(ctx, "mass_lines", [])
     rep.findings = findings
+    from ..checks import group_stats
+
+    group_stats(rep, owned)  # the registry refactor moved the per-group table here; incremental needs it too
     from ..checks import waiver as _waiver
     waivers = _waiver.apply(r.spec, findings)
     rep.metrics = ctx.metrics if ctx else {}

@@ -1,0 +1,123 @@
+{
+ "spec": "/workspace/github__MohitBurkule__robobuild123d/robots/scythe/spec.json",
+ "rendered_at": 1794859227.171252,
+ "bodies": [
+  "tub",
+  "top_panel",
+  "weapon_motor_stator",
+  "weapon_motor_bell",
+  "bar",
+  "weapon_hub",
+  "wshaft",
+  "wbearing",
+  "shaft_nut",
+  "drive_motor_r",
+  "drive_motor_l",
+  "wheel_r",
+  "wheel_l",
+  "battery",
+  "weapon_esc",
+  "drive_rx",
+  "switch",
+  "bolt_h0",
+  "bolt_h1",
+  "bolt_s0",
+  "bolt_s1",
+  "bolt_s2",
+  "bolt_s3",
+  "bolt_p0",
+  "bolt_p1",
+  "bolt_p2",
+  "bolt_p3",
+  "bolt_p4",
+  "bolt_p5",
+  "bolt_p6",
+  "bolt_p7"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    0.0,
+    -4.74772708486752,
+    17.6
+   ],
+   "to": [
+    -13.7,
+    4.062272915132482,
+    25.7
+   ]
+  },
+  "w_wesc_m": {
+   "from": [
+    29.5,
+    0.2522729151324793,
+    13.6
+   ],
+   "to": [
+    -4.286263797015736e-16,
+    45.0,
+    26.0
+   ]
+  },
+  "w_sw_rx": {
+   "from": [
+    -13.7,
+    -3.5577270848675187,
+    25.7
+   ],
+   "to": [
+    -16.0,
+    10.75227291513248,
+    27.75
+   ]
+  },
+  "w_sw_wesc": {
+   "from": [
+    -13.7,
+    -3.5577270848675187,
+    25.7
+   ],
+   "to": [
+    6.5,
+    -2.747727084867521,
+    13.6
+   ]
+  },
+  "w_rx_ml": {
+   "from": [
+    16.0,
+    22.75227291513248,
+    27.75
+   ],
+   "to": [
+    -9.0,
+    31.25227291513248,
+    17.0
+   ]
+  },
+  "w_rx_mr": {
+   "from": [
+    -16.0,
+    22.75227291513248,
+    27.75
+   ],
+   "to": [
+    9.0,
+    31.25227291513248,
+    17.0
+   ]
+  },
+  "w_rx_wpn": {
+   "from": [
+    16.0,
+    10.75227291513248,
+    27.75
+   ],
+   "to": [
+    6.5,
+    3.252272915132479,
+    13.6
+   ]
+  }
+ }
+}

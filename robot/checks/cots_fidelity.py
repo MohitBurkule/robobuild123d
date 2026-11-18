@@ -45,6 +45,9 @@ FEATURES = {
     "gr1507": {"bell_d": 19.6, "stator_d": 19.6, "shaft_d": 5.0, "bolt_circle_d": 12.0, "bolt_n": 4, "bolt_d": 2.0,
                "source": "GR1507 datasheet / RVRN 2.0 STEP GR1507_1 (19.6 x 19.6 x 30.5)"},
     "n10_2200rpm_spicy": {"can_d": 12.6, "shaft_d": 3.0, "source": "N10 micro-metal gearmotor, 3 mm D shaft"},
+    "bl_1806_stator": {"stator_d": 19.0, "bolt_circle_d": 16.0, "bolt_n": 4, "bolt_d": 2.0,
+                       "source": "1806 outrunner class: 18 mm stator on an r9.5 base flange, 4 x M2 on 16 mm"},
+    "bl_1806_can": {"bell_d": 21.0, "source": "1806 outrunner class: 21 mm bell over an 18 mm stator"},
 }
 
 # Datasheet engineering drawing (research/motor_cad/geprc_site/1507.jpg, GEPRC GR1507 page): dims as (value, -tol, +tol)

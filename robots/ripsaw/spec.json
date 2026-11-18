@@ -1,40 +1,1930 @@
 {
- "name": "Ripsaw (UNTESTED: never built, run, rendered or verified)",
+ "name": "Ripsaw",
  "profile": "aws2025",
  "robot_type": "vertical_spinner",
  "locomotion": "roller",
- "frame_note": "X right, Y forward, Z up, floor Z = 0 (Revron frame). Positions are hand-derived from params.py relations, not generated.",
- "size_rule": "params.RULES_SIZE = aws2025: 150 mm floor square, no overhang, no height limit (robot/profile.py); optional aws_v43_cube (101.6 mm cube)",
- "parts": [
-  {"id": "tub", "kind": "structure", "material": "nylon", "process": "fdm", "print_orientation": "+z", "rotates_with": "fixed",
-   "shape": {"type": "model", "file": "src/build_ripsaw.py", "params": {"part": "tub"}}, "at": [0, 0, 0], "rot": [0, 0, 0],
-   "label": "Printed unibody tub with asymmetric weapon rails (stator rail left, bearing rail right)"},
-  {"id": "panel_base", "kind": "plate", "material": "nylon", "process": "fdm", "rotates_with": "fixed",
-   "shape": {"type": "model", "file": "src/build_ripsaw.py", "params": {"part": "panel_base"}}, "at": [0, 0, 0], "rot": [0, 0, 0]},
-  {"id": "panel_top", "kind": "plate", "material": "nylon", "process": "fdm", "rotates_with": "fixed",
-   "shape": {"type": "model", "file": "src/build_ripsaw.py", "params": {"part": "panel_top"}}, "at": [0, 0, 0], "rot": [0, 0, 0]},
-  {"id": "weapon_motor_stator", "kind": "weapon_motor", "catalog": "repeat_2004_2800kv", "at": [-8.9, 49.0, 31.5], "rot": [0, 0, 0], "rotates_with": "fixed"},
-  {"id": "disc", "kind": "weapon", "material": "hardox", "process": "laser", "rotates_with": "weapon",
-   "shape": {"type": "model", "file": "src/build_ripsaw.py", "params": {"part": "disc"}}, "at": [-1.5, 49.0, 31.5], "rot": [0, 90, 0],
-   "weapon": {"kind": "vertical_disc", "motor": "weapon_motor_stator", "cells": 2, "reduction": 1.0, "spin_axis": [0, 0, 1], "locking_bar": "locking_pin"}},
-  {"id": "locking_pin", "kind": "locking_bar", "material": "steel", "process": "bought", "shape": {"type": "cylinder", "r": 1.5, "h": 22.0},
-   "at": [-2.0, 49.0, 50.0], "rot": [0, 90, 0], "label": "M3 pin through both rails and a disc window (position NOT derived; check)"},
-  {"id": "outboard_bearing", "kind": "bearing", "catalog": null, "label": "MR63 (from weapon_motor.pick_bearing(3.0)), pressed in the right rail", "at": [10.2, 49.0, 31.5], "rot": [0, 90, 0]},
-  {"id": "fork_r", "kind": "fork", "material": "titanium", "process": "laser", "rotates_with": "fixed",
-   "shape": {"type": "model", "file": "src/build_ripsaw.py", "params": {"part": "fork_r"}}, "at": [0, 0, 0], "rot": [0, 0, 0],
-   "joint": {"kind": "revolute", "axis": [1, 0, 0], "pivot": "M3 pin on right rail outer face", "min": -4, "max": 15, "default": 0}},
-  {"id": "fork_l", "kind": "fork", "material": "titanium", "process": "laser", "rotates_with": "fixed",
-   "shape": {"type": "model", "file": "src/build_ripsaw.py", "params": {"part": "fork_l"}}, "at": [0, 0, 0], "rot": [0, 0, 0],
-   "joint": {"kind": "revolute", "axis": [1, 0, 0], "pivot": "M3 pin on left rail outer face", "min": -4, "max": 15, "default": 0}},
-  {"id": "motor_r", "kind": "motor", "catalog": "bbb_n10_1000rpm", "at": [14.9, -17.0, 15.0], "rot": [0, 0, 0]},
-  {"id": "motor_l", "kind": "motor", "catalog": "bbb_n10_1000rpm", "at": [-14.9, -17.0, 15.0], "rot": [0, 0, 180]},
-  {"id": "wheel_r", "kind": "wheel", "catalog": "durahubs_30", "at": [34.4, -17.0, 15.0], "rot": [0, 90, 0]},
-  {"id": "wheel_l", "kind": "wheel", "catalog": "durahubs_30", "at": [-34.4, -17.0, 15.0], "rot": [0, -90, 0]},
-  {"id": "battery", "kind": "battery", "catalog": "gnb_2s_350_70c_hv", "at": [0, -5.6, 10.0], "rot": [0, 0, 0]},
-  {"id": "esc_weapon", "kind": "esc", "catalog": "bbb_brushless_esc_20a", "at": [-26.4, 8.0, 23.0], "rot": [0, 0, 0]},
-  {"id": "rx_drive_esc", "kind": "esc", "catalog": "bbb_malenki_nano", "at": [0, -5.6, 24.5], "rot": [0, 0, 0]},
-  {"id": "switch", "kind": "switch", "catalog": "fingertech_mini_switch", "at": [25.7, 18.3, 20.7], "rot": [0, 0, 0]}
+ "can_run_inverted": false,
+ "electronics": {
+  "failsafe": true,
+  "weapon_remote_disable": true,
+  "radio": "AFHDS 2A (Malenki-Nano built-in)",
+  "cells": 2
+ },
+ "weapon_lock": {
+  "type": "removable_pin",
+  "dia_mm": 3.0,
+  "axis": [
+   1,
+   0,
+   0
+  ],
+  "at": [
+   -4.0,
+   67.571,
+   32.37
+  ],
+  "holes": [
+   "disc",
+   "mount_l",
+   "post_r"
+  ],
+  "note": "red 3 mm REMOVE-BEFORE-FIGHT pin through both plates and the disc's balance window"
+ },
+ "allow_overlap": [
+  {
+   "a": "motor_r",
+   "b": "wheel_r",
+   "max_depth_mm": 0.3,
+   "reason": "the hub bore is cut to the shaft's D-flat (flat 1.0 mm from the axis, as the drawn N10 shaft); the press fit seats the hub on the shaft's round side"
+  },
+  {
+   "a": "motor_l",
+   "b": "wheel_l",
+   "max_depth_mm": 0.3,
+   "reason": "the hub bore is cut to the shaft's D-flat (flat 1.0 mm from the axis, as the drawn N10 shaft); the press fit seats the hub on the shaft's round side"
+  }
  ],
- "electronics": {"failsafe": true, "weapon_remote_disable": true, "radio": "AFHDS 2A (Malenki-Nano built-in)", "cells": 2},
- "claims": ["UNTESTED: every number here is an estimate; run `robot verify` before trusting any of it"]
+ "claims": [
+  {
+   "id": "c_mass",
+   "text": "weighs 150 g or less",
+   "metric": "mass_total_g",
+   "op": "<=",
+   "value": 150.0
+  },
+  {
+   "id": "c_fit",
+   "text": "fits the 150 mm square",
+   "metric": "footprint_mm",
+   "op": "<=",
+   "value": 150.0
+  }
+ ],
+ "teardown": [
+  {
+   "parts": [
+    "rx_drive_esc",
+    "battery"
+   ],
+   "dir": [
+    0,
+    0,
+    1
+   ],
+   "reason": "the strap-held pack + rx board stack lifts out of the shelf bay together once the top panel is off (FS2 service)"
+  },
+  {
+   "parts": [
+    "motor_r",
+    "wheel_r"
+   ],
+   "dir": [
+    0,
+    0,
+    -1
+   ],
+   "reason": "the press fit stays engaged: the wheel + N10 drop out of the cradle together with the base panel off (FS2 service)"
+  },
+  {
+   "parts": [
+    "motor_l",
+    "wheel_l"
+   ],
+   "dir": [
+    0,
+    0,
+    -1
+   ],
+   "reason": "the press fit stays engaged: the wheel + N10 drop out of the cradle together with the base panel off (FS2 service)"
+  }
+ ],
+ "parts": [
+  {
+   "id": "tub",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "print_orientation": "+z",
+   "rotates_with": "fixed",
+   "sharp_corners_ok": "the flagged concave corners are the seams where the printed pads, bosses, cradle walls and the ESC ledge root into the wall ring and the shelf (all one print, 0.4 mm nozzle rounds them in practice); the front pads and the cradle are short compression posts loaded in bearing, not bending, so the square internal corner is as built",
+   "shape": {
+    "type": "model",
+    "file": "src/build_ripsaw.py",
+    "params": {
+     "part": "tub"
+    }
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "label": "Printed unibody tub: wall ring, rear battery shelf, N10 cradles, front-wall plate pads, side-wall panel bosses, ESC ledge, strap posts"
+  },
+  {
+   "id": "panel_base",
+   "kind": "plate",
+   "material": "nylon",
+   "process": "fdm",
+   "print_orientation": "+z",
+   "rotates_with": "fixed",
+   "shape": {
+    "type": "model",
+    "file": "src/build_ripsaw.py",
+    "params": {
+     "part": "panel_base"
+    }
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "label": "Printed base panel: N10 cradle pedestals, tyre clearances, countersunk M2 seats"
+  },
+  {
+   "id": "panel_top",
+   "kind": "plate",
+   "material": "nylon",
+   "process": "fdm",
+   "print_orientation": "+z",
+   "rotates_with": "fixed",
+   "shape": {
+    "type": "model",
+    "file": "src/build_ripsaw.py",
+    "params": {
+     "part": "panel_top"
+    }
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "label": "Printed top panel: switch keyway, weapon sweep slot, phase-lead cable notch, battery-bay window"
+  },
+  {
+   "id": "mount_l",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "print_orientation": "+x",
+   "rotates_with": "fixed",
+   "sharp_corners_ok": "the flagged concave corner is where the printed prong root meets the heel box (one print, 0.4 mm nozzle rounds it); the joint is a short compression fillet carrying the mounting screws in bearing, so the square internal corner is as built",
+   "shape": {
+    "type": "model",
+    "file": "src/build_ripsaw.py",
+    "params": {
+     "part": "mount_l"
+    }
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "label": "Stator mount plate (left): bolts to the front-wall pad; the weapon lifts out with it off"
+  },
+  {
+   "id": "post_r",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "print_orientation": "+x",
+   "rotates_with": "fixed",
+   "sharp_corners_ok": "the flagged concave corner is where the printed prong root meets the heel box (one print, 0.4 mm nozzle rounds it); the joint is a short compression fillet carrying the mounting screws in bearing, so the square internal corner is as built",
+   "shape": {
+    "type": "model",
+    "file": "src/build_ripsaw.py",
+    "params": {
+     "part": "post_r"
+    }
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "label": "Bearing post plate (right): MF63 press seat; bolts to the front-wall pad"
+  },
+  {
+   "id": "weapon_motor_stator",
+   "kind": "weapon_motor",
+   "catalog": "repeat_2004_stator",
+   "at": [
+    -8.9,
+    57.0,
+    23.5
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "rotates_with": "fixed",
+   "ports": {
+    "phases": [
+     -6.4,
+     -8.0,
+     0.0
+    ]
+   },
+   "label": "Repeat 2004 fixed half: bolted through the mount plate; 3 phase leads back into the tub"
+  },
+  {
+   "id": "weapon_motor_bell",
+   "kind": "other",
+   "catalog": "repeat_2004_can",
+   "parent": "weapon_motor_stator",
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "rotates_with": "weapon",
+   "label": "Repeat 2004 bell = the weapon hub: spins with the disc on the fixed stator"
+  },
+  {
+   "id": "disc",
+   "kind": "weapon",
+   "material": "hardox",
+   "process": "laser",
+   "rotates_with": "weapon",
+   "shape": {
+    "type": "model",
+    "file": "src/build_ripsaw.py",
+    "params": {
+     "part": "disc"
+    }
+   },
+   "at": [
+    7.4,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    90,
+    0
+   ],
+   "parent": "weapon_motor_stator",
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "pivot": [
+     8.9,
+     0,
+     0
+    ],
+    "min": 0,
+    "max": 360,
+    "default": 0
+   },
+   "weapon": {
+    "kind": "vertical_disc",
+    "motor": "weapon_motor_stator",
+    "cells": 2,
+    "reduction": 1.0,
+    "spin_axis": [
+     0,
+     0,
+     1
+    ]
+   },
+   "label": "44 mm hardox single-tooth disc, bolted to the bell face with 3x M3"
+  },
+  {
+   "id": "outboard_bearing",
+   "kind": "bearing",
+   "material": "steel",
+   "process": "cots",
+   "stock": "MR63ZZ",
+   "rotates_with": "fixed",
+   "shape": {
+    "type": "subtract",
+    "base": {
+     "type": "cylinder",
+     "radius": 3.0,
+     "height": 2.5
+    },
+    "cut": [
+     {
+      "type": "cylinder",
+      "radius": 1.61,
+      "height": 4.0
+     }
+    ]
+   },
+   "at": [
+    10.2,
+    57.0,
+    23.5
+   ],
+   "rot": [
+    0,
+    90,
+    0
+   ],
+   "retained": "press_fit",
+   "label": "MF63 flanged (MR63 ring 3 x 6 x 2.5) pressed in the post plate: the shaft's outboard support"
+  },
+  {
+   "id": "fork_r",
+   "kind": "fork",
+   "material": "titanium",
+   "process": "laser",
+   "rotates_with": "fixed",
+   "geom_ok": {
+    "tiny_edge": "reused Revron fork_5 laser part (RV22): the sub-0.05 mm edges are near-miss booleans in the reference sheet's hole fillets, present in the original STEP too"
+   },
+   "shape": {
+    "type": "model",
+    "file": "src/build_ripsaw.py",
+    "params": {
+     "part": "fork_r"
+    }
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "label": "Revron fork_5 Ti sheet hung on the M3 pin through the post plate: self-levelling skid, tip 0.5 mm off the floor"
+  },
+  {
+   "id": "fork_l",
+   "kind": "fork",
+   "material": "titanium",
+   "process": "laser",
+   "rotates_with": "fixed",
+   "geom_ok": {
+    "tiny_edge": "reused Revron fork_5 laser part (RV22): the sub-0.05 mm edges are near-miss booleans in the reference sheet's hole fillets, present in the original STEP too"
+   },
+   "shape": {
+    "type": "model",
+    "file": "src/build_ripsaw.py",
+    "params": {
+     "part": "fork_l"
+    }
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "label": "Revron fork_5 Ti sheet hung on the M3 pin through the mount plate: self-levelling skid, tip 0.5 mm off the floor"
+  },
+  {
+   "id": "fork_pin_r",
+   "kind": "pin",
+   "material": "steel",
+   "process": "bought",
+   "retained": "press_fit",
+   "shape": {
+    "type": "model",
+    "file": "src/build_ripsaw.py",
+    "params": {
+     "part": "fork_pin_r"
+    }
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "label": "M3 hinge pin, press fit in the post plate"
+  },
+  {
+   "id": "fork_pin_l",
+   "kind": "pin",
+   "material": "steel",
+   "process": "bought",
+   "retained": "press_fit",
+   "shape": {
+    "type": "model",
+    "file": "src/build_ripsaw.py",
+    "params": {
+     "part": "fork_pin_l"
+    }
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "label": "M3 hinge pin, press fit in the mount plate"
+  },
+  {
+   "id": "motor_r",
+   "kind": "motor",
+   "catalog": "bbb_n10_1000rpm",
+   "at": [
+    15.299999999999997,
+    -10.0,
+    10.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "ports": {
+    "terminals": [
+     -4.5,
+     0,
+     5.0
+    ]
+   },
+   "label": "N10 gearmotor in the printed cradle, shaft out to the wheel"
+  },
+  {
+   "id": "motor_l",
+   "kind": "motor",
+   "catalog": "bbb_n10_1000rpm",
+   "at": [
+    -15.299999999999997,
+    -10.0,
+    10.0
+   ],
+   "rot": [
+    0,
+    0,
+    180
+   ],
+   "ports": {
+    "terminals": [
+     -4.5,
+     0,
+     5.0
+    ]
+   },
+   "label": "N10 gearmotor in the printed cradle, shaft out to the wheel"
+  },
+  {
+   "id": "wheel_r",
+   "kind": "wheel",
+   "catalog": "wheel_20x8",
+   "at": [
+    35.8,
+    -10.0,
+    10.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "id": "wheel_l",
+   "kind": "wheel",
+   "catalog": "wheel_20x8",
+   "at": [
+    -35.8,
+    -10.0,
+    10.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ]
+  },
+  {
+   "id": "battery",
+   "kind": "battery",
+   "catalog": "c_gnb_gaoneng_2s_450mah_80c_lipo_xt30",
+   "at": [
+    0.0,
+    -28.0,
+    12.4
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "retained": "strap",
+   "ports": {
+    "xt30": [
+     30.5,
+     0,
+     0
+    ]
+   },
+   "label": "GNB 2S 450 mAh 80C on the rear shelf, XT30 out the forward end, one strap over the pack through the printed posts"
+  },
+  {
+   "id": "esc_weapon",
+   "kind": "esc",
+   "catalog": "bbb_brushless_esc_20a",
+   "at": [
+    -34.599999999999994,
+    9.1,
+    24.0
+   ],
+   "rot": [
+    0,
+    0,
+    90
+   ],
+   "retained": "tape",
+   "label": "20 A brushless ESC double-side-taped to the printed ledge (1.8 g/cm2), rotated: bat/rx ports to the open bay, motor port forward"
+  },
+  {
+   "id": "rx_drive_esc",
+   "kind": "esc",
+   "catalog": "bbb_malenki_nano",
+   "at": [
+    -14.5,
+    -28.0,
+    20.65
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "retained": "strap",
+   "ports": {
+    "bat": [
+     16.0,
+     2.0,
+     0.0
+    ],
+    "m1": [
+     16.0,
+     6.0,
+     1.3
+    ],
+    "m2": [
+     -16.0,
+     6.0,
+     1.3
+    ]
+   },
+   "label": "Malenki Nano (rx + 2x brushed ESC) on the pack's top face under the strap"
+  },
+  {
+   "id": "switch",
+   "kind": "switch",
+   "catalog": "fingertech_mini_switch",
+   "at": [
+    25.7,
+    16.0,
+    23.825
+   ],
+   "rot": [
+    0,
+    0,
+    180
+   ],
+   "marked": true,
+   "tool_free": true,
+   "retained": "adhesive",
+   "label": "Fingertech mini switch against the top panel underside, actuator through the keyway, marked ON/OFF, tool-free"
+  },
+  {
+   "id": "insert_pb0",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    38.3,
+    25.0,
+    5.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "retained": "press_fit",
+   "label": "heat-set M2 insert, base-panel screws (side-wall boss)"
+  },
+  {
+   "id": "insert_pt0",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    38.3,
+    25.0,
+    25.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "retained": "press_fit",
+   "label": "heat-set M2 insert, top-panel screws (side-wall boss)"
+  },
+  {
+   "id": "insert_pb1",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -38.3,
+    25.0,
+    5.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "retained": "press_fit",
+   "label": "heat-set M2 insert, base-panel screws (side-wall boss)"
+  },
+  {
+   "id": "insert_pt1",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -38.3,
+    25.0,
+    25.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "retained": "press_fit",
+   "label": "heat-set M2 insert, top-panel screws (side-wall boss)"
+  },
+  {
+   "id": "insert_pb2",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    38.3,
+    -33.0,
+    5.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "retained": "press_fit",
+   "label": "heat-set M2 insert, base-panel screws (side-wall boss)"
+  },
+  {
+   "id": "insert_pt2",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    38.3,
+    -33.0,
+    25.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "retained": "press_fit",
+   "label": "heat-set M2 insert, top-panel screws (side-wall boss)"
+  },
+  {
+   "id": "insert_pb3",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -38.3,
+    -33.0,
+    5.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "retained": "press_fit",
+   "label": "heat-set M2 insert, base-panel screws (side-wall boss)"
+  },
+  {
+   "id": "insert_pt3",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -38.3,
+    -33.0,
+    25.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "retained": "press_fit",
+   "label": "heat-set M2 insert, top-panel screws (side-wall boss)"
+  }
+ ],
+ "fasteners": [
+  {
+   "id": "screw_00",
+   "designation": "M2x5",
+   "material": "steel",
+   "at": [
+    38.3,
+    25.0,
+    2.0
+   ],
+   "dir": [
+    0,
+    0,
+    1
+   ],
+   "through": [
+    "panel_base"
+   ],
+   "threads_into": "insert_pb0",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "countersunk",
+   "hole": {
+    "d": 2.0,
+    "length": 5.0,
+    "head": "csk",
+    "head_std": "ISO 14581",
+    "head_dk": 3.8,
+    "head_k": 1.2,
+    "clearance_d": 2.2,
+    "into": "through",
+    "side": "head",
+    "grip": 1.0,
+    "csk_angle": 90.0,
+    "csk_d": 3.8,
+    "csk_depth": 0.9,
+    "sink": 0.0
+   }
+  },
+  {
+   "id": "screw_01",
+   "designation": "M2x5",
+   "material": "steel",
+   "at": [
+    38.3,
+    25.0,
+    28.0
+   ],
+   "dir": [
+    0,
+    0,
+    -1
+   ],
+   "through": [
+    "panel_top"
+   ],
+   "threads_into": "insert_pt0",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "length": 5.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "clearance_d": 2.2,
+    "into": "through",
+    "side": "head",
+    "grip": 1.0
+   }
+  },
+  {
+   "id": "screw_02",
+   "designation": "M2x5",
+   "material": "steel",
+   "at": [
+    -38.3,
+    25.0,
+    2.0
+   ],
+   "dir": [
+    0,
+    0,
+    1
+   ],
+   "through": [
+    "panel_base"
+   ],
+   "threads_into": "insert_pb1",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "countersunk",
+   "hole": {
+    "d": 2.0,
+    "length": 5.0,
+    "head": "csk",
+    "head_std": "ISO 14581",
+    "head_dk": 3.8,
+    "head_k": 1.2,
+    "clearance_d": 2.2,
+    "into": "through",
+    "side": "head",
+    "grip": 1.0,
+    "csk_angle": 90.0,
+    "csk_d": 3.8,
+    "csk_depth": 0.9,
+    "sink": 0.0
+   }
+  },
+  {
+   "id": "screw_03",
+   "designation": "M2x5",
+   "material": "steel",
+   "at": [
+    -38.3,
+    25.0,
+    28.0
+   ],
+   "dir": [
+    0,
+    0,
+    -1
+   ],
+   "through": [
+    "panel_top"
+   ],
+   "threads_into": "insert_pt1",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "length": 5.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "clearance_d": 2.2,
+    "into": "through",
+    "side": "head",
+    "grip": 1.0
+   }
+  },
+  {
+   "id": "screw_04",
+   "designation": "M2x5",
+   "material": "steel",
+   "at": [
+    38.3,
+    -33.0,
+    2.0
+   ],
+   "dir": [
+    0,
+    0,
+    1
+   ],
+   "through": [
+    "panel_base"
+   ],
+   "threads_into": "insert_pb2",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "countersunk",
+   "hole": {
+    "d": 2.0,
+    "length": 5.0,
+    "head": "csk",
+    "head_std": "ISO 14581",
+    "head_dk": 3.8,
+    "head_k": 1.2,
+    "clearance_d": 2.2,
+    "into": "through",
+    "side": "head",
+    "grip": 1.0,
+    "csk_angle": 90.0,
+    "csk_d": 3.8,
+    "csk_depth": 0.9,
+    "sink": 0.0
+   }
+  },
+  {
+   "id": "screw_05",
+   "designation": "M2x5",
+   "material": "steel",
+   "at": [
+    38.3,
+    -33.0,
+    28.0
+   ],
+   "dir": [
+    0,
+    0,
+    -1
+   ],
+   "through": [
+    "panel_top"
+   ],
+   "threads_into": "insert_pt2",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "length": 5.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "clearance_d": 2.2,
+    "into": "through",
+    "side": "head",
+    "grip": 1.0
+   }
+  },
+  {
+   "id": "screw_06",
+   "designation": "M2x5",
+   "material": "steel",
+   "at": [
+    -38.3,
+    -33.0,
+    2.0
+   ],
+   "dir": [
+    0,
+    0,
+    1
+   ],
+   "through": [
+    "panel_base"
+   ],
+   "threads_into": "insert_pb3",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "countersunk",
+   "hole": {
+    "d": 2.0,
+    "length": 5.0,
+    "head": "csk",
+    "head_std": "ISO 14581",
+    "head_dk": 3.8,
+    "head_k": 1.2,
+    "clearance_d": 2.2,
+    "into": "through",
+    "side": "head",
+    "grip": 1.0,
+    "csk_angle": 90.0,
+    "csk_d": 3.8,
+    "csk_depth": 0.9,
+    "sink": 0.0
+   }
+  },
+  {
+   "id": "screw_07",
+   "designation": "M2x5",
+   "material": "steel",
+   "at": [
+    -38.3,
+    -33.0,
+    28.0
+   ],
+   "dir": [
+    0,
+    0,
+    -1
+   ],
+   "through": [
+    "panel_top"
+   ],
+   "threads_into": "insert_pt3",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "length": 5.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "clearance_d": 2.2,
+    "into": "through",
+    "side": "head",
+    "grip": 1.0
+   }
+  },
+  {
+   "id": "screw_08",
+   "designation": "M2x12",
+   "material": "steel",
+   "at": [
+    -18.3,
+    34.0,
+    8.0
+   ],
+   "dir": [
+    0,
+    1,
+    0
+   ],
+   "through": [
+    "tub"
+   ],
+   "threads_into": "mount_l",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "length": 12.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "clearance_d": 2.2,
+    "into": "through",
+    "side": "head",
+    "grip": 5.0
+   }
+  },
+  {
+   "id": "screw_09",
+   "designation": "M2x12",
+   "material": "steel",
+   "at": [
+    9.45,
+    34.0,
+    8.0
+   ],
+   "dir": [
+    0,
+    1,
+    0
+   ],
+   "through": [
+    "tub"
+   ],
+   "threads_into": "post_r",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "length": 12.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "clearance_d": 2.2,
+    "into": "through",
+    "side": "head",
+    "grip": 5.0
+   }
+  },
+  {
+   "id": "screw_10",
+   "designation": "M2x12",
+   "material": "steel",
+   "at": [
+    -18.3,
+    34.0,
+    14.0
+   ],
+   "dir": [
+    0,
+    1,
+    0
+   ],
+   "through": [
+    "tub"
+   ],
+   "threads_into": "mount_l",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "length": 12.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "clearance_d": 2.2,
+    "into": "through",
+    "side": "head",
+    "grip": 5.0
+   }
+  },
+  {
+   "id": "screw_11",
+   "designation": "M2x12",
+   "material": "steel",
+   "at": [
+    9.45,
+    34.0,
+    14.0
+   ],
+   "dir": [
+    0,
+    1,
+    0
+   ],
+   "through": [
+    "tub"
+   ],
+   "threads_into": "post_r",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "length": 12.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "clearance_d": 2.2,
+    "into": "through",
+    "side": "head",
+    "grip": 5.0
+   }
+  },
+  {
+   "id": "screw_12",
+   "designation": "M2x12",
+   "material": "steel",
+   "at": [
+    -18.3,
+    34.0,
+    20.0
+   ],
+   "dir": [
+    0,
+    1,
+    0
+   ],
+   "through": [
+    "tub"
+   ],
+   "threads_into": "mount_l",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "length": 12.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "clearance_d": 2.2,
+    "into": "through",
+    "side": "head",
+    "grip": 5.0
+   }
+  },
+  {
+   "id": "screw_13",
+   "designation": "M2x12",
+   "material": "steel",
+   "at": [
+    9.45,
+    34.0,
+    20.0
+   ],
+   "dir": [
+    0,
+    1,
+    0
+   ],
+   "through": [
+    "tub"
+   ],
+   "threads_into": "post_r",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "length": 12.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "clearance_d": 2.2,
+    "into": "through",
+    "side": "head",
+    "grip": 5.0
+   }
+  },
+  {
+   "id": "screw_14",
+   "designation": "M2.5x6",
+   "material": "steel",
+   "at": [
+    -20.3,
+    62.303,
+    28.803
+   ],
+   "dir": [
+    1,
+    0,
+    0
+   ],
+   "through": [
+    "mount_l"
+   ],
+   "threads_into": "weapon_motor_stator",
+   "tool": "hex2.0",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.5,
+    "length": 6.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 4.5,
+    "head_k": 2.5,
+    "clearance_d": 2.9,
+    "into": "through",
+    "side": "head",
+    "grip": 4.0
+   }
+  },
+  {
+   "id": "screw_15",
+   "designation": "M3x6",
+   "material": "steel",
+   "at": [
+    1.5,
+    62.303,
+    28.803
+   ],
+   "dir": [
+    -1,
+    0,
+    0
+   ],
+   "through": [
+    "disc"
+   ],
+   "threads_into": "weapon_motor_bell",
+   "tool": "hex2.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 3.0,
+    "length": 6.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 5.5,
+    "head_k": 3.0,
+    "clearance_d": 3.4,
+    "into": "through",
+    "side": "head",
+    "grip": 3.0
+   },
+   "access_before": [
+    "post_r"
+   ]
+  },
+  {
+   "id": "screw_16",
+   "designation": "M2.5x6",
+   "material": "steel",
+   "at": [
+    -20.3,
+    49.756,
+    25.441
+   ],
+   "dir": [
+    1,
+    0,
+    0
+   ],
+   "through": [
+    "mount_l"
+   ],
+   "threads_into": "weapon_motor_stator",
+   "tool": "hex2.0",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.5,
+    "length": 6.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 4.5,
+    "head_k": 2.5,
+    "clearance_d": 2.9,
+    "into": "through",
+    "side": "head",
+    "grip": 4.0
+   }
+  },
+  {
+   "id": "screw_17",
+   "designation": "M3x6",
+   "material": "steel",
+   "at": [
+    1.5,
+    49.756,
+    25.441
+   ],
+   "dir": [
+    -1,
+    0,
+    0
+   ],
+   "through": [
+    "disc"
+   ],
+   "threads_into": "weapon_motor_bell",
+   "tool": "hex2.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 3.0,
+    "length": 6.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 5.5,
+    "head_k": 3.0,
+    "clearance_d": 3.4,
+    "into": "through",
+    "side": "head",
+    "grip": 3.0
+   },
+   "access_before": [
+    "post_r"
+   ]
+  },
+  {
+   "id": "screw_18",
+   "designation": "M2.5x6",
+   "material": "steel",
+   "at": [
+    -20.3,
+    58.941,
+    16.256
+   ],
+   "dir": [
+    1,
+    0,
+    0
+   ],
+   "through": [
+    "mount_l"
+   ],
+   "threads_into": "weapon_motor_stator",
+   "tool": "hex2.0",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.5,
+    "length": 6.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 4.5,
+    "head_k": 2.5,
+    "clearance_d": 2.9,
+    "into": "through",
+    "side": "head",
+    "grip": 4.0
+   }
+  },
+  {
+   "id": "screw_19",
+   "designation": "M3x6",
+   "material": "steel",
+   "at": [
+    1.5,
+    58.941,
+    16.256
+   ],
+   "dir": [
+    -1,
+    0,
+    0
+   ],
+   "through": [
+    "disc"
+   ],
+   "threads_into": "weapon_motor_bell",
+   "tool": "hex2.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 3.0,
+    "length": 6.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 5.5,
+    "head_k": 3.0,
+    "clearance_d": 3.4,
+    "into": "through",
+    "side": "head",
+    "grip": 3.0
+   },
+   "access_before": [
+    "post_r"
+   ]
+  }
+ ],
+ "connections": [
+  {
+   "a": "motor_r",
+   "b": "wheel_r",
+   "method": "press_fit",
+   "interference_mm": 0.05,
+   "mechanical_key": true,
+   "reason": "the wheel hub bore is a light press on the 3 mm gearmotor shaft; the motor's cradle stops set it axially"
+  },
+  {
+   "a": "motor_l",
+   "b": "wheel_l",
+   "method": "press_fit",
+   "interference_mm": 0.05,
+   "mechanical_key": true,
+   "reason": "the wheel hub bore is a light press on the 3 mm gearmotor shaft; the motor's cradle stops set it axially"
+  },
+  {
+   "a": "outboard_bearing",
+   "b": "post_r",
+   "method": "press_fit",
+   "interference_mm": 0.02,
+   "reason": "MF63 outer race pressed into the post plate's 6 mm seat, flush with the outer face"
+  },
+  {
+   "a": "weapon_motor_bell",
+   "b": "outboard_bearing",
+   "method": "shaft",
+   "reason": "the 3 mm shaft stub turns in the MF63 inner race: the rotor's outboard support, located by the disc clamp"
+  },
+  {
+   "a": "fork_pin_r",
+   "b": "post_r",
+   "method": "press_fit",
+   "interference_mm": 0.05,
+   "reason": "M3 hinge pin press fit in the post plate; the fork swings on it"
+  },
+  {
+   "a": "fork_pin_l",
+   "b": "mount_l",
+   "method": "press_fit",
+   "interference_mm": 0.05,
+   "reason": "M3 hinge pin press fit in the mount plate; the fork swings on it"
+  },
+  {
+   "a": "fork_r",
+   "b": "fork_pin_r",
+   "method": "pin",
+   "reason": "the fork hangs on the fixed M3 pin and self-levels on its tip (a few degrees, not a drive joint; RV22 pattern)"
+  },
+  {
+   "a": "fork_l",
+   "b": "fork_pin_l",
+   "method": "pin",
+   "reason": "the fork hangs on the fixed M3 pin and self-levels on its tip (a few degrees, not a drive joint; RV22 pattern)"
+  },
+  {
+   "a": "rx_drive_esc",
+   "b": "battery",
+   "method": "tape",
+   "reason": "the rx board is double-side-taped to the pack's top face (6 cm2 at 0.4 g/cm2) and the strap over the stack pins both to the shelf bay"
+  },
+  {
+   "a": "insert_pb0",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.15,
+   "reason": "heat-set insert in the side-wall boss bore: the knurl bites the melted nylon"
+  },
+  {
+   "a": "insert_pt0",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.15,
+   "reason": "heat-set insert in the side-wall boss bore: the knurl bites the melted nylon"
+  },
+  {
+   "a": "insert_pb1",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.15,
+   "reason": "heat-set insert in the side-wall boss bore: the knurl bites the melted nylon"
+  },
+  {
+   "a": "insert_pt1",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.15,
+   "reason": "heat-set insert in the side-wall boss bore: the knurl bites the melted nylon"
+  },
+  {
+   "a": "insert_pb2",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.15,
+   "reason": "heat-set insert in the side-wall boss bore: the knurl bites the melted nylon"
+  },
+  {
+   "a": "insert_pt2",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.15,
+   "reason": "heat-set insert in the side-wall boss bore: the knurl bites the melted nylon"
+  },
+  {
+   "a": "insert_pb3",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.15,
+   "reason": "heat-set insert in the side-wall boss bore: the knurl bites the melted nylon"
+  },
+  {
+   "a": "insert_pt3",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.15,
+   "reason": "heat-set insert in the side-wall boss bore: the knurl bites the melted nylon"
+  }
+ ],
+ "wires": [
+  {
+   "id": "w_bat_sw",
+   "from": "battery.xt30",
+   "to": "switch.in",
+   "awg": 22,
+   "kind": "power",
+   "slack_mm": 8,
+   "via": [
+    [
+     30.5,
+     -28.25,
+     12.4
+    ],
+    [
+     30.5,
+     -28.25,
+     23
+    ],
+    [
+     30.5,
+     27,
+     23
+    ],
+    [
+     29.51,
+     27,
+     23.825
+    ]
+   ]
+  },
+  {
+   "id": "w_sw_wesc",
+   "from": "switch.out",
+   "to": "esc_weapon.bat",
+   "awg": 22,
+   "kind": "power",
+   "slack_mm": 8,
+   "via": [
+    [
+     21.89,
+     27,
+     23.825
+    ],
+    [
+     21.89,
+     27,
+     25
+    ],
+    [
+     -17,
+     27,
+     25
+    ],
+    [
+     -17,
+     -10,
+     25
+    ],
+    [
+     -31.6,
+     -10,
+     25
+    ],
+    [
+     -31.6,
+     -4,
+     23.6
+    ]
+   ]
+  },
+  {
+   "id": "w_sw_rx",
+   "from": "switch.out",
+   "to": "rx_drive_esc.bat",
+   "awg": 24,
+   "kind": "power",
+   "slack_mm": 8,
+   "via": [
+    [
+     21.89,
+     27,
+     23.825
+    ],
+    [
+     21.89,
+     27,
+     25
+    ],
+    [
+     5,
+     27,
+     25
+    ],
+    [
+     5,
+     -26.25,
+     25
+    ],
+    [
+     5,
+     -26.25,
+     20.65
+    ]
+   ]
+  },
+  {
+   "id": "w_rx_wesc",
+   "from": "rx_drive_esc.wpn",
+   "to": "esc_weapon.rx",
+   "awg": 30,
+   "kind": "signal",
+   "slack_mm": 6,
+   "via": [
+    [
+     1.5,
+     -34.25,
+     20.65
+    ],
+    [
+     1.5,
+     -36.5,
+     23
+    ],
+    [
+     1.5,
+     -36.5,
+     25
+    ],
+    [
+     -34,
+     -36.5,
+     25
+    ],
+    [
+     -34,
+     -25,
+     25
+    ],
+    [
+     -37.6,
+     -25,
+     25
+    ],
+    [
+     -37.6,
+     -4,
+     23.6
+    ]
+   ]
+  },
+  {
+   "id": "w_wesc_m1",
+   "from": "esc_weapon.motor",
+   "to": "weapon_motor_stator.phases",
+   "awg": 24,
+   "kind": "motor",
+   "external": "the phase lead runs through the cable notch into the weapon bay to reach the stator, like every spinner's motor leads; the run inside the tub is under the solid top panel",
+   "slack_mm": 10,
+   "via": [
+    [
+     -34.6,
+     23,
+     23.6
+    ],
+    [
+     -34.6,
+     23,
+     25.5
+    ],
+    [
+     -17,
+     25,
+     25.5
+    ],
+    [
+     -17,
+     36,
+     25.5
+    ],
+    [
+     -15.2,
+     39,
+     25.5
+    ],
+    [
+     -15.2,
+     47.5,
+     25
+    ]
+   ]
+  },
+  {
+   "id": "w_wesc_m2",
+   "from": "esc_weapon.motor",
+   "to": "weapon_motor_stator.phases",
+   "awg": 24,
+   "kind": "motor",
+   "external": "the phase lead runs through the cable notch into the weapon bay to reach the stator, like every spinner's motor leads; the run inside the tub is under the solid top panel",
+   "slack_mm": 10,
+   "via": [
+    [
+     -34.6,
+     23,
+     23.6
+    ],
+    [
+     -34.6,
+     23,
+     25.5
+    ],
+    [
+     -17,
+     25,
+     25.5
+    ],
+    [
+     -17,
+     36,
+     25.5
+    ],
+    [
+     -15.2,
+     39,
+     25.5
+    ],
+    [
+     -15.2,
+     47.5,
+     25
+    ]
+   ]
+  },
+  {
+   "id": "w_wesc_m3",
+   "from": "esc_weapon.motor",
+   "to": "weapon_motor_stator.phases",
+   "awg": 24,
+   "kind": "motor",
+   "external": "the phase lead runs through the cable notch into the weapon bay to reach the stator, like every spinner's motor leads; the run inside the tub is under the solid top panel",
+   "slack_mm": 10,
+   "via": [
+    [
+     -34.6,
+     23,
+     23.6
+    ],
+    [
+     -34.6,
+     23,
+     25.5
+    ],
+    [
+     -17,
+     25,
+     25.5
+    ],
+    [
+     -17,
+     36,
+     25.5
+    ],
+    [
+     -15.2,
+     39,
+     25.5
+    ],
+    [
+     -15.2,
+     47.5,
+     25
+    ]
+   ]
+  },
+  {
+   "id": "w_rx_mr",
+   "from": "rx_drive_esc.m1",
+   "to": "motor_r.terminals",
+   "awg": 26,
+   "kind": "motor",
+   "slack_mm": 6,
+   "via": [
+    [
+     1.5,
+     -22.25,
+     23
+    ],
+    [
+     10.8,
+     -22.25,
+     23.8
+    ],
+    [
+     10.8,
+     -10,
+     23.8
+    ]
+   ]
+  },
+  {
+   "id": "w_rx_ml",
+   "from": "rx_drive_esc.m2",
+   "to": "motor_l.terminals",
+   "awg": 26,
+   "kind": "motor",
+   "slack_mm": 6,
+   "via": [
+    [
+     -30.5,
+     -22.25,
+     23
+    ],
+    [
+     -10.8,
+     -22.25,
+     23.8
+    ],
+    [
+     -10.8,
+     -10,
+     23.8
+    ]
+   ]
+  }
+ ],
+ "frame_note": "X right, Y forward, Z up, floor Z = 0 (Revron frame). Placements derive from src/ripsaw/params.py relations."
 }

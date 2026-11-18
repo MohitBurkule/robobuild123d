@@ -15,9 +15,10 @@ def wheel_pose(side=1):
 
 
 def motor_pose(side=1):
-    """Gearmotor shaft pointing outboard (+X on the right), body inside the pod; catalogue frame x along the shaft."""
-    L, _, _ = hw.size(P.DRIVE_MOTOR)
-    x = side * (P.POD_W / 2 - P.TUB_WALL - L / 2)
+    """Gearmotor shaft pointing outboard (+X on the right), body nested against the pod wall; catalogue frame x
+    along the shaft. The BODY (not the bbox: the shaft stub skews it) seats against the wall inner face, so the
+    two bodies leave a centre gap the battery lead passes through and the shaft still reaches the wheel bore."""
+    x = side * (P.POD_W / 2 - P.TUB_WALL - P.N10_BODY_OUT)
     return (x, P.wheel_y(), P.WHEEL_CZ), (0.0, 0.0, 0.0 if side > 0 else 180.0)
 
 

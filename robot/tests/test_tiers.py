@@ -47,7 +47,7 @@ def test_every_group_has_kind_and_tier():
         assert g.tier in registry.TIERS, g.name
         assert g.proxy is None or g.proxy in proxy.GROUPS, g.name
         importlib.import_module(f"robot.checks.{checks.MODULE.get(g.name, g.name)}")  # a registered group exists
-    assert {g.name: d for g in registry.REGISTRY for d in [g.deep_only] if d} == {"wiring": True, "assembly": True, "robust": True}
+    assert {g.name: d for g in registry.REGISTRY for d in [g.deep_only] if d} == {"wiring": True, "assembly": True, "robust": True, "harness": True}
 
 
 def test_reference_comparisons_are_parity_and_never_cheap_tiers():

@@ -1,0 +1,52 @@
+{
+  "ok": false,
+  "tier": "full",
+  "gate": "design",
+  "blockers": [
+    {
+      "id": "mass.over",
+      "msg": "152.4 g is over the 150 g limit",
+      "expected": "<= 150 g",
+      "actual": "152.4 g",
+      "parts": [],
+      "fixes": [
+        "Cut grams from the wedge or the chassis shell."
+      ]
+    },
+    {
+      "id": "interference.static",
+      "msg": "`battery` overlaps `chassis` by 0.6 mm",
+      "expected": "no overlap",
+      "actual": "0.6 mm",
+      "parts": [
+        "battery",
+        "chassis"
+      ],
+      "fixes": [
+        "Move battery up 1 mm or deepen the pocket."
+      ]
+    }
+  ],
+  "warnings": [
+    {
+      "id": "fastener.too_long",
+      "msg": "M2x8 screw bottoms out in a 6 mm boss",
+      "parts": [
+        "lid"
+      ]
+    }
+  ],
+  "counts": {
+    "blockers": 2,
+    "warnings": 1,
+    "passed": 0
+  },
+  "mass": {
+    "total": 152.4,
+    "lo": 150.1,
+    "hi": 154.9,
+    "limit": 150
+  },
+  "not_checked": [],
+  "not_run": []
+}

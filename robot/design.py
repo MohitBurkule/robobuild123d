@@ -152,6 +152,51 @@ class Schema:
         """A Design from a JSON file."""
         return self.design(json.loads(Path(path).read_text()))
 
+    def errors(self, values) -> list:
+        """All errors in `values` as dicts (not just the first): the same envelope keys as
+        robot/design_io (`code`, `field`, `message`, `value`, `allowed`, `suggestion`, `hint`),
+        so both front doors speak one error shape."""
+        if not isinstance(values, dict):
+            return [{"code": "bad_type", "field": "", "message": f"a design is a JSON object {{setting: value}}, got {type(values).__name__}"}]
+        raw = values.get("settings") if set(values) <= {"robot", "settings"} and isinstance(values.get("settings"), dict) else values
+        out = []
+        for k, v in raw.items():
+            try:
+                self.find(k)
+            except DesignError as e:
+                out.append({"code": "unknown_setting", "field": str(k), "message": str(e), "hint": "see `python -m robot.design schema`"})
+                continue
+            try:
+                self.find(k).parse(v)
+            except DesignError as e:
+                s = self.find(k)
+                near = difflib.get_close_matches(str(v), [str(c) for c in s.choices], n=1, cutoff=0.4) if s.choices else []
+                d = {"code": "bad_value", "field": s.name, "message": str(e), "value": v}
+                if s.choices:
+                    d["allowed"] = list(s.choices)
+                if near:
+                    d["suggestion"] = near[0]
+                out.append(d)
+        return out
+
+    def json_schema(self) -> dict:
+        """JSON Schema of a design for this schema (types per Setting.type; sets are arrays)."""
+        props = {}
+        for s in self.settings:
+            if s.type == "flag":
+                props[s.name] = {"type": "boolean"}
+            elif s.type == "set":
+                props[s.name] = {"type": "array", "items": {"type": "string", "enum": list(s.choices)}}
+            elif s.type == "size":
+                props[s.name] = {"type": ["number", "string"], "description": TYPES["size"]}
+            else:
+                p = {"type": "string"}
+                if s.choices:
+                    p["enum"] = list(s.choices)
+                props[s.name] = p
+        return {"$schema": "https://json-schema.org/draft/2020-12/schema", "title": f"{self.robot} design",
+                "type": "object", "additionalProperties": False, "properties": props}
+
     def to_dict(self) -> dict:
         return dict(robot=self.robot,
                     format="a design is a JSON object {setting name: value}; a setting left out keeps its default (or the legacy env var when that is set)",

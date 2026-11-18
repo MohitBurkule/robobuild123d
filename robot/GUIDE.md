@@ -21,6 +21,14 @@ is the lowest wheel point.
   section_x. `--markers` draws numbered red rings on every failure that has a position (the numbers are printed).
 - `robot export spec.json <slug> <dir>` writes `<dir>/<slug>/`: spec.json, report.json, REPORT.md (with NOT CHECKED), README.md
   (iso render on top), renders/, stl/ per part, step/ per part plus step/assembly.step (exact B-rep, start pose).
+- `robot profiles` lists the rules profiles; `robot profile <name>` prints one. The spec's `profile` key selects it
+  (`robot/profiles/<name>.json`): `aws2025` (competition, the default), `dev` (loose engineering margins for the first
+  iterations - legality numbers stay strict), `strict` (tournament-hard margins). Unknown profile or unknown key in the
+  JSON fails loudly instead of falling back to a default.
+- `robot llm-pack [dir]` regenerates the LLM pack (`llm/`: SKILL.md plus examples/) from the live verifier sources;
+  the drift test (robot/tests/test_llm_pack.py) fails if the checked-in copy is stale.
+- `robot gallery [dir] [-o out.html]` writes one self-contained HTML page with a card per robot subdir that has a
+  spec.json: iso render embedded, verdict and mass from report.json when present, "not verified" when not.
 
 ## Spec layout (all keys optional except parts)
 `name, profile ("aws2025"), robot_type (wedge|horizontal_spinner|vertical_spinner|drum|lifter|flipper), locomotion (roller),
@@ -571,6 +579,163 @@ than `review.dfm.max_horizontal_hole_mm` (6 mm) lies in the layer plane — tear
 widen it or remove it. `dfm.undeclared_tolerance` (WARNING): a shaft/pin runs in a printed bore where neither the
 connection nor either part declares `clearance_mm`/`interference_mm` — FDM holes come out 0.1-0.3 mm small, so declare
 the fit. Parts without a mesh or a valid `print_orientation` are NOT CHECKED, never a pass.
+
+## Thermal and brownout (`thermal.*`, group `thermal`)
+
+Rule: **the pack must hold voltage at peak current.** Loaded voltage is `nominal_v - I_peak * R_pack`
+(`internal_resistance_mohm` from the catalogue battery; `I_peak` from the power group's `peak_current_a` metric, else the
+sum of the motors' rated max current - stated as a lower bound in the finding). `thermal.brownout` (BLOCKER): loaded
+cell voltage under 3.3 V - the receiver resets mid-fight and it looks like a radio failure. `thermal.sag` (WARNING):
+under 3.5 V/cell - margin is thin, a fresher charge or a higher-C pack helps. `thermal.ok` (pass): loaded voltage with
+the numbers stated. `thermal.esc_overcurrent` (WARNING): the peak current exceeds the ESC's rating. A spec without a
+catalogue battery, or missing cells / internal resistance / any current number, is NOT CHECKED, never a pass.
+
+## Hit reaction and gyroscopic wheel-lift (`impact.*`, group `impact`)
+
+Rule: **the weapon must not throw the robot around.** From the power group's weapon energy and rpm (inertia
+`I = 2E / omega^2`): `impact.gyro_lift` (BLOCKER): turning at a hard pivot (15 rad/s) demands more than 0.75x the
+gyroscopic lift threshold `Omega_lift = m g (track/2) / (I omega)` - the inside wheels lift in a turn; widen the track,
+slow the turn, or store less energy. For a declared vertical spinner (`weapon_orientation: vspin`) the same finding is a
+WARNING instead: a horizontal spin axis couples every turn into roll, so no usable vertical weapon sits under the block
+(the reference vert itself is ~8x over) - stutter turns are the accepted trade-off, the check reports the margin.
+`impact.gyro_lift_margin` (WARNING): over 0.5x of the threshold. `impact.hop`
+(WARNING): about `0.5%` of the weapon energy throws the robot more than 30 mm off the floor - wheels lose drive and
+steering mid-exchange. `impact.yaw` (WARNING): a horizontal hit yaws the robot over 720 deg/s from equal-and-opposite
+momentum (`I_w omega / I_yaw`, `I_yaw ~ m (footprint/2)^2`). `impact.ok` (pass) when every judged margin is fine. No
+weapon energy + rpm + mass, no measurable track, or no footprint for a horizontal weapon: NOT CHECKED.
+
+## Dead pose (`rest.*`, group `rest`)
+
+Rule: **the weapon must clear the floor at every rest angle.** When power is cut the weapon coasts to an unknowable
+angle, so the check sweeps each weapon body's full rotation about its spin axis (exact: every vertex traces a circle,
+and the circle's lowest point is known in closed form). `rest.weapon_drag` (BLOCKER): some rotation reaches the floor
+plane - the dead robot props itself on its own blade, the wheels lift and the tip digs into a seam; raise the weapon
+or its spin axis. `rest.weapon_graze` (WARNING): some rotation comes within the profile's `min_ground_clearance_mm`
+of the floor - parked on a bump, the dead weapon scrapes. `rest.ok` (pass): lowest swept point with the number stated.
+A spec with no weapon body carrying a spin axis: NOT CHECKED, never a pass.
+
+## Clearance at rest (`clearance.*`, group `clearance`)
+
+Rule: **the robot must clear the floor with the tyres squashed and the wedge bent.** Tyre squash is 8 % of the wheel
+radius for elastomer tyres (TPU/silicone/rubber), 2 % for rigid wheels - override per wheel with `tire_squash_mm` on
+the part, or globally with `rest.tire_squash_mm` in the spec. `clearance.squash` (WARNING): the lowest body point has
+less than `min_ground_clearance_mm` left once the tyres carry the weight - it rides the floor at rest; raise the
+chassis, use bigger or firmer wheels. A wedge carrying part of the weight (the ground group's `wedge_load_frac`)
+bends down as a cantilever `d = f W L^3 / (3 E I)` with the root section from the wedge's own geometry.
+`clearance.wedge_deflection` (WARNING): the bent tip goes below the floor - it ploughs and the drive wheels lift;
+thicken or shorten the wedge, move its support forward, or move mass back off the tip. No wheels, no total mass, no
+wedge or no wedge load: that half is NOT CHECKED, never a pass.
+
+## Between-fight service (`service.*`, group `service`)
+
+Rule: **the battery, the weapon and the wheels must each come out along one straight line.** Rays from the part's own
+surface along the 6 axis directions and the 8 space diagonals must reach open air without hitting any other solid
+(screws included - a screw through the strap blocks the pull). `service.battery_pull`, `service.weapon_pull`,
+`service.wheel_pull` (WARNING): no straight extraction path exists, so the swap needs other parts removed first and
+costs match time; give the part an open hatch or slot on one face. `service.ok` (pass): every service part has at
+least one unobstructed direction. A spec with no battery, weapon or wheel parts built: NOT CHECKED, never a pass.
+
+## Named fits (`robot/fits.py`)
+
+Printed holes come out 0.1-0.3 mm small, so a bore modelled at nominal will not take its part. A feature declares a
+named fit and `fits.cad_diameter(name, nominal, hole_process)` gives the CAD diameter: `bearing_press` (+0.10 mm FDM),
+`bearing_slip` (+0.20), `shaft_running` (+0.25), `shaft_press` (+0.05), `screw_clear_tight/_loose` (+0.20/+0.45),
+`self_tap_plastic` (-0.35 pilot), `heatset_m2/m2.5/m3` (-0.10 insert bore), `axle_dflat_n20` (+0.20), `pocket_snug`
+(+0.15), `pocket_loose` (+0.40). Processes scale the compensation: FDM 1.0x, SLA 0.5x, cast 0.75x, CNC 0. `fits.check`
+returns whether a measured diameter is inside the kind's band (press 0.06, thread 0.08, running 0.10, clearance 0.12).
+
+## Slice-based mass & print-time estimate (`robot/slice_est.py`)
+
+A mesh's volume says what a solid part weighs; a slicer says what a printed one weighs. `slice_est.estimate(mesh)`
+slices an oriented mesh at layer height and sums the extrusion: `walls` perimeter passes at the bead section (nozzle x
+layer, nozzle from the printer profile), a solid skin (0.6 mm) at the top and bottom, and `infill_pct` of the section
+area elsewhere. Extruded volume gives `mass_g` (volume x spool density), `filament_m` (volume / 1.75 mm filament cross
+section) and `time_min` (volume / (bead section x speed) + 2 s per layer + 60 s heat-up). `slice_est.write(parts, out)`
+takes the same `(id, mesh, print_orientation)` tuples as `plate.write` and writes `slice_est.json` / `slice_est.csv`.
+`mesh_mass_g` is reported alongside for comparison; a slice that fails falls back to the mean section, never a crash.
+
+## DXF sheet/turned-part order pack (`robot/dxf_order.py`)
+
+Not every part is printed. `dxf_order.rows(spec, meshes=None)` classifies made parts by canonical process: sheet parts
+(`laser`, `waterjet`, `sheet`, `bent_sheet`) become cut blanks - thickness snapped up to the material's real stock sizes
+(`catalog.SHEET_STOCK_MM`), blank size = profile outline + 3 mm clamping margin, a DXF on layer `CUT` when a mesh is
+given; turned parts become bar orders - stock diameter snapped up to `catalog.ROD_STOCK_MM`, length + 1 mm facing
+allowance per end. A thickness or stock size that is not real is flagged in the row's `note`, never silently rounded.
+`dxf_order.write(spec, out, meshes)` writes `dxf/<id>.dxf`, `order_sheet.csv`, `order_turned.csv` and `dxf_order.json`.
+
+## Requirements block (`requirements.*`, group `requirements`)
+
+A spec may declare a top-level `requirements` object - the design's intent as numbers. Each supported key is compared
+with the metric an earlier group measured: `weapon_energy_j` (min), `weapon_tip_speed_mps` (min/max, converted from the
+power group's mph), `peak_current_a` (max), `runtime_min` (min), `mass_max_g` (max), `mass_margin_g` (min: limit minus
+worst-case mass), `footprint_max_mm` (max), `budget_gbp` (max against the BOM cost). A requirement that misses is a
+BLOCKER with expected/actual; `requirements.unknown_key` (BLOCKER) is a requirement the verifier cannot judge (silently
+ignoring intent is worse). Keys that have no metric yet (top_speed_mps, push_force_n, must_survive, invertible) and
+metrics that were not computed this run are NOT CHECKED, never a pass.
+
+## Fastener engagement vs the clamped stack (`engagement.*`, group `engagement`)
+
+Rule: **a screw must be longer than the parts it clamps, and its thread must bite the host.** The clamped stack is
+the summed thickness of the `through` parts along the screw axis. `engagement.clamp_short` (BLOCKER): the usable
+shank is not longer than the stack - the head bottoms out on the first part and nothing is clamped. `engagement.pct_low`
+(WARNING): thread engagement under `review.engagement.plastic_x_d` (default 2) x the thread diameter in a PRINTED
+host (`fastener.engagement` blocks under 1.5 d everywhere; plastic wants 2 d). The design's minimum engagement,
+as a percent of one thread diameter, is reported in the metrics (`fastener_engagement_min_pct`). A designation the
+catalogue cannot parse is NOT CHECKED, never a pass.
+
+## Tool access for every fastener (`tool_access.*`, group `tool_access`)
+
+Rule: **every screw needs its driver, every nut needs its wrench.** `fastener.access` proves the driver path only for
+screws that declare a `tool`. `tool_access.blocked` (BLOCKER): a screw with NO declared tool (its catalogue hex key
+is assumed) whose straight driver path out of the head is blocked by another part. `tool_access.nut_blocked`
+(BLOCKER): the wrench ring around a nut (its width across flats + `profile.driver_access_radius_mm` clearance) is
+occupied by a part that is not in the joint being tightened - the nut cannot be held or torqued. Fix: open a wrench
+pocket, use a retained/slot nut, or design the joint so only the screw turns.
+
+## Wire chafe, bend radius, strain relief (`wire_care.*`, group `wire_care`)
+
+Rule: **the harness must survive vibration and hits, not just fit.** Judged from the declared harness (ports + `via`
+waypoints), no router needed. `wire_care.bend` (WARNING): a via corner tighter than `review.wire_care.bend_x_od`
+(default 2) x the wire's outer diameter work-hardens the strands. `wire_care.chafe` (WARNING): the wire passes
+through a thin wall of a part it does not terminate on (through a hole: in and out inside `wall_max_mm`, default 6,
+never inside the solid) - the hole edge saws the insulation; opt out with `grommet: true` on the wire once it is
+lined or deburred. `wire_care.strain_relief` (WARNING): a wire ending on a vibrating part (motor, weapon_motor,
+servo) has no via anchor within `relief_dist_mm` (default 12) of that end, no `slack_mm` and no `strain_relief`
+note - vibration works the crimp until it fails. A wire whose ports do not resolve is NOT CHECKED, never a pass.
+## RF placement (`rf.*`, group `rf`)
+
+Rule: **the receiver must hear the transmitter.** `rf.noise_proximity` (WARNING): a receiver sits under 20 mm from a
+motor or ESC (severe) or under 30 mm (thin margin) - brushed motors and ESCs are PWM switching noise sources that swamp
+2.4 GHz at that range; move the receiver to the far corner or twist/shield the motor wires. `rf.antenna_blocked`
+(WARNING): conductive material (metal, carbon-fibre or carbon-filled plate, a motor can, a cell pouch, any fastener
+body) sits over the receiver's top face within 15 mm - the antenna exits from the top and 2.4 GHz does not pass through
+conductors; cut a window, use plastic there, or stand the antenna out through a tube. `rf.ok` (pass): nearest noise
+source and the clear exit stated. A spec with no receiver is NOT CHECKED, never a pass.
+
+## COM over the drive contact patch (`traction.*`, group `traction`)
+
+Rule: **the weight must sit on the driven wheels, with margin.** The driven wheels' floor contacts (vertices within
+2 mm of the floor, wheels not marked `driven: false` in their part extras) form a convex patch; the centre of mass from
+the mass group must project inside it. `traction.com_outside_patch` (WARNING): the COM projects outside the patch - the
+weight rests on the skid or wedge instead of the driven wheels, so they grip only with the load they have left and the
+robot pivots under a hard push; move mass over the wheels or lift the skid. `traction.patch_margin` (WARNING): the COM is inside but within max(5 mm, 10% of the patch's
+smaller half-extent) of an edge - the first hard push unloads the wheels. `traction.ok` (pass): margin stated. No COM
+from the mass group, no driven wheel touching the floor, or contacts that do not form a patch: NOT CHECKED, never a pass.
+Metrics: `drive_patch_margin_mm`, `com_in_drive_patch`.
+
+## Builder profile (`builder.*`, group `builder`)
+
+Rule: **a design is only as buildable as the bench it is built on.** A spec may declare a top-level `builder` key: a
+preset id from `robot/builders/*.json` (`novice_ender3`, `club_member`, `expert`) or the object itself (`printer` - a
+`robot/mfg_profiles.py` printer id, `materials` - catalog material ids on the shelf, `processes`, `tools`, `budget_gbp`,
+`skill` - novice | intermediate | expert). `builder.bed_fit` (WARNING): a printed part, in its declared
+`print_orientation`, is bigger than the printer's bed or Z - split it, section it, or change machine.
+`builder.material_unavailable` (WARNING): a part's material is not on the shelf. `builder.process_unavailable` (WARNING):
+a part needs a process the builder cannot run. `builder.tool_missing` (WARNING): heat-set inserts with no soldering iron
+on the bench. `builder.skill` (WARNING): heat-set inserts need intermediate skill, machined parts (cnc / turned /
+waterjet) need expert. `builder.budget` (WARNING): the purchasable BOM cost (robot/bom_out, also published as the
+`bom_cost_gbp` metric) exceeds `budget_gbp`. `builder.unknown` (WARNING): the preset id or printer is not known.
+`builder.ok` (pass) when the whole design fits the bench. No `builder` key: NOT CHECKED, the report is unchanged.
 
 ## Fixing collisions without hand maths (jiggle)
 

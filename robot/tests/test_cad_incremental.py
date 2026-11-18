@@ -29,6 +29,9 @@ def tmp_cache(tmp_path, monkeypatch):
 def _norm(rep):
     d = rep.to_dict()
     d.pop("timings_s", None)
+    for g in (d.get("groups") or {}).values():  # wall times and ran/cached provenance differ run to run by design
+        g.pop("time_s", None)
+        g.pop("how", None)
     return json.dumps(d, sort_keys=True, default=str)
 
 

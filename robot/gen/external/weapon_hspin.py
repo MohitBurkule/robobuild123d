@@ -16,13 +16,13 @@ from . import sh, spinner
 from .weapon import module
 
 BAR_R = 38.0  # half length (tip radius)
-BAR_W = 12.0
+BAR_W = 7.9  # 12 put the build ~6 g over the 150 g limit; 7.9 with the 300 mAh pack and the deeper post bosses lands ~149.9 g
 BAR_T = 3.0
-AXIS_BACK = 13.0  # axis behind the chassis front
+AXIS_BACK = 13.0  # 13.5+ leaves the battery no legal position; the d23.4 bevel graze is handled check-side
 ROOF_CLEAR = 1.8  # bar underside above the roof
 COLUMN_R = 11.0
-CAVITY_R = 11.2  # bell clearance (can r 10.5)
-PIN_R = 15.0
+CAVITY_R = 11.7  # bell clearance (can r 10.5): 1.2 mm to the roof hole, the weapon-class rub gap
+PIN_R = 17.5  # 15 put the roof recess 0.6 mm from the bell cavity's wall (visual.ligament)
 LOCK_T = 0.8  # 0.3 sunk in the roof recess
 
 
@@ -33,26 +33,26 @@ class HSpin:
         f = plan.frame
         ya = f.y1 - AXIS_BACK
         z_bar0 = f.zt + ROOF_CLEAR  # bar underside
-        zc = z_bar0 - spinner.MOTOR_L / 2 - 0.2  # motor centre (can top 0.2 under the bar)
+        zc = z_bar0 - spinner.MOTOR_L / 2  # motor centre: the bell cap's top face carries the bar (no gap to bridge)
         z_col = zc - spinner.MOTOR_L / 2  # stator face = column top
         return ya, zc, z_col, z_bar0
 
     @classmethod
     def prepare(cls, plan, h, g):
-        plan.extra["weapon_motor"] = "weapon_motor"
+        plan.extra["weapon_motor"] = "weapon_motor_stator"
         plan.robot_type = "horizontal_spinner"
         plan.extra["wedge_len"] = 30.0
         plan.extra["battery_side_mm"] = 7.5  # the long pack leaves a wire lane past it on both sides
         plan.archetype = "horizontal_spinner"
         ya, zc, z_col, _ = cls.geometry(plan)
-        r = CAVITY_R + 0.2  # cavity (+ the pocket wall the solver adds)
+        r = 11.4  # the bell's keepout: the pack may use the floor ring below it (the skirt starts 2.3 over the floor)
         plan.keepouts.append(("wmotor", -r, r, ya - r, ya + r))
         W = plan.frame.x1
         for side, sgn in (("r", 1), ("l", -1)):
             xw = sgn * W
         # phase leads leave the cavity rearward through a slot in the column top
-        plan.anchors["weapon_motor.phases"] = (0.0, ya - 9.0, z_col + 0.5)
-        plan.extra.setdefault("approach", {})["weapon_motor.phases"] = (0.0, ya - r - 1.0)
+        plan.anchors["weapon_motor_stator.phases"] = (0.0, ya - 9.0, z_col + 0.5)
+        plan.extra.setdefault("approach", {})["weapon_motor_stator.phases"] = (0.0, ya - r - 1.0)
 
     @classmethod
     def add(cls, plan, h, g):
@@ -66,7 +66,7 @@ class HSpin:
                           f"r {COLUMN_R} round the 1806 stator face", threats=["hspin_floor", "wall_slam", "reaction_gyro"]))
         cav = I("protection", "the bell turns inside a round cavity, sunk below the roof so only the bar is exposed",
                 f"bell r {spinner.MOTOR_R} + {CAVITY_R - spinner.MOTOR_R:.1f} mm running clearance", threats=["hspin_floor", "crusher_hammer", "debris"])
-        plan.cut("bottom", sh.cyl_axis(CAVITY_R, z_col, 1.0, "z", 0.0, ya), intent=cav)
+        plan.cut("bottom", sh.cyl_axis(10.4, z_col, 1.0, "z", 0.0, ya), intent=cav)  # the stator half: flange r 9.5
         plan.cut("top", sh.cyl_axis(CAVITY_R, -1.0, f.zt + 1.0, "z", 0.0, ya), intent=cav)
         # wire slot from the cavity back into the channel band
         plan.cut("bottom", sh.boxr(-1.5, 1.5, ya - COLUMN_R - 2.5, ya - 6.0, z_col - 0.5, 0.5),
@@ -83,16 +83,21 @@ class HSpin:
                           intent=I("protection", "counterbore: the head sits inside the belly, off the floor",
                                    "head 3.8 + 0.4; depth sets 3.25 mm thread engagement", threats=["lifter_flipper", "hazard_snag"]))  # counterbore
             plan.screw(id=f"bolt_wm{'ab'[k]}", designation="M2x8", at=[x, y, seat], dir=[0.0, 0.0, 1.0],
-                       through=["chassis_bottom"], threads_into="weapon_motor",
+                       through=["chassis_bottom"], threads_into="weapon_motor_stator",
                        intent=I("load_path", "stator screws from the belly: reaction torque of the weapon into the column; "
                                 "driven up because the motor drops in from above and the belly is the free face",
                                 "1806 stator r 8, M2x8 for 3.25 mm engagement", threats=["reaction_gyro"]))
-        plan.connect("weapon_motor", "chassis_bottom", "screw", "Stator face bolted onto the motor column with 2 M2 from the belly")
-        plan.part(id="weapon_motor", kind="weapon_motor", catalog=spinner.MOTOR, at=[0.0, ya, zc], rot=[0.0, -90.0, 0.0],
-                  rotates_with="fixed", motor_shaft_extended=True, ports={"phases": [-6.5, -9.0, 0.0]},
-                  label="1806 outrunner = weapon hub, bell up through the roof; own shaft lengthened up into a 683 in the bridge",
-                  intent=I("load_path", "the outrunner is the bar's hub: nothing between motor and weapon to fail",
+        plan.connect("weapon_motor_stator", "chassis_bottom", "screw", "Stator face bolted onto the motor column with 2 M2 from the belly")
+        plan.part(id="weapon_motor_stator", kind="weapon_motor", catalog="bl_1806_stator", at=[0.0, ya, zc], rot=[0.0, -90.0, 0.0],
+                  rotates_with="fixed", ports={"phases": [-6.5, -9.0, 0.0]},
+                  label="1806 outrunner, fixed half bolted to the motor column; the bell spins above it through the roof hole",
+                  intent=I("load_path", "the stator takes the weapon's reaction torque into the column and the floor",
                            "1806 class on 2S", threats=["hspin_floor", "reaction_gyro"]))
+        plan.part(id="weapon_motor_bell", kind="other", catalog="bl_1806_can", parent="weapon_motor_stator",
+                  at=[0.0, 0.0, 0.0], rot=[0.0, 0.0, 0.0], rotates_with="weapon",
+                  label="1806 bell = the weapon's hub: spins in the roof cavity round the fixed stator",
+                  intent=I("load_path", "the bell is the hub: nothing between motor and weapon to fail",
+                           "bell r 10.5 in a 11.2 cavity", threats=["hspin_floor", "reaction_gyro"]))
         # bar: local XY plane, axis local z; in the motor frame (local x = world z) with rot [0, 90, 0]
         # lock pin hole and its balancing twin; the 3 mm bore is reamed after cutting (hub drawn solid)
         bar = spinner.bar_shape(2 * BAR_R, BAR_W, BAR_T, 0.0, [(PIN_R, 0.0, 1.6), (-PIN_R, 0.0, 1.6)])
@@ -100,10 +105,10 @@ class HSpin:
         bar = sh.place(bar, (0, 0, 0), (0, 0, 90))
         xm = z_bar0 + BAR_T / 2 - zc  # bar centre along the motor axis
         plan.part(id="weapon", kind="weapon", material="steel", process="laser", shape=bar,
-                  parent="weapon_motor", at=[xm, 0.0, 0.0], rot=[0.0, 90.0, 0.0], rotates_with="weapon",
+                  parent="weapon_motor_stator", at=[xm, 0.0, 0.0], rot=[0.0, 90.0, 0.0], rotates_with="weapon",
                   joint={"kind": "revolute", "axis": [1, 0, 0], "pivot": [xm, 0.0, 0.0], "min": 0, "max": 360, "default": 0},
                   color="#d9dde2", organic=True,
-                  weapon={"kind": "bar", "motor": "weapon_motor", "cells": 2, "reduction": 1.0, "spin_axis": [0, 0, 1],
+                  weapon={"kind": "bar", "motor": "weapon_motor_stator", "cells": 2, "reduction": 1.0, "spin_axis": [0, 0, 1],
                           "spin_dir": "ccw", "supported_both_ends": False, "teeth": 2},
                   label=f"{BAR_T:g} mm steel bar, {2 * BAR_R:g} mm tip to tip, laser cut, swept tips",
                   intent=I("load_path", "a bar puts the mass at the tips: most energy per gram, two teeth",
@@ -120,7 +125,7 @@ class HSpin:
                   label="motor rotor shaft replaced by a 3 mm Ti rod, lengthened down into the 683 (circlip at the stator)",
                   intent=I("load_path", "lengthened shaft into the bridge bearing: the bar is held above and below",
                            "3 mm Ti rod", threats=["reaction_gyro", "hspin_floor"]))
-        spinner.rotor_connections(plan, "weapon", "weapon_motor", "wshaft", "wbearing", "top_bridge", hub_depth=2.6)
+        spinner.rotor_connections(plan, "weapon", "weapon_motor_bell", "wshaft", "wbearing", "top_bridge", hub_depth=2.6)
         # lock pin: through the bar's pin hole into a steel lock plate bonded on the roof under the bar
         yl = ya - PIN_R
         plan.late_cut("top", sh.boxr(-3.2, 3.2, yl - 3.2, yl + 3.2, f.zt - 0.3, f.zt + 0.1),
@@ -140,7 +145,9 @@ class HSpin:
 
 
 BRIDGE_T, BRIDGE_W, POST_T = 5.0, 8.0, 6.0
-BRIDGE_ZS = (3.0, 7.0)  # post screws, both into the top half (clear of the electronics on the floor)
+BRIDGE_ZS = (-3.5, 3.5)  # one post screw per side per half: a d3.2 melt bore needs 1.4 mm of web to the split plane
+                         # and the roof, which two bores in the 10 mm top half cannot both have; one per half also ties
+                         # the clamshell together. Bosses are clipped to their half so nothing pokes at the bar's lane.
 
 
 def add_bridge(plan, ya, zbb):
@@ -161,19 +168,24 @@ def add_bridge(plan, ya, zbb):
         for k, z in enumerate(BRIDGE_ZS):
             half = "bottom" if z < 0 else "top"
             cuts.append(sh.cyl_axis(1.1, W - 0.5, xo + 0.5, "x", ya, z) if sgn > 0 else sh.cyl_axis(1.1, -xo - 0.5, -W + 0.5, "x", ya, z))
-            boss = sh.cyl_axis(3.0, xw - sgn * 6.0, xw, "x", ya, z) if sgn > 0 else sh.cyl_axis(3.0, xw, xw + 6.0, "x", ya, z)
+            boss = sh.cyl_axis(4.0, xw - sgn * 7.0, xw, "x", ya, z) if sgn > 0 else sh.cyl_axis(4.0, xw, xw + 7.0, "x", ya, z)
+            lo, hi = (f.zb + 0.1, -0.05) if z < 0 else (0.05, f.zt - 0.1)
+            boss = sh.S(boss, sh.boxr(-200, 200, -200, 200, -200, lo), sh.boxr(-200, 200, -200, 200, hi, 200))
             plan.add(half, boss, intent=I("load_path", "boss behind the side wall for the bridge post screw: a bar hit "
-                                          "pulls the bridge up, the screw load goes into 6 mm of solid", "r 3, 6 deep", threats=["hspin_floor", "wall_slam"]))
-            bore = (xw - sgn * 4.6, xw + sgn * 0.2)
+                                          "pulls the bridge up, the screw load goes into 8 mm of solid", "r 4, 7 deep (merges with the corner clamshell boss: no thin waist), clipped to the half", threats=["hspin_floor", "wall_slam"]))
+            bore = (xw - sgn * 4.4, xw + sgn * 0.2)  # through: the M2 passes clear into the insert (grip is the insert's)
             plan.late_cut(half, sh.cyl_axis(1.6, min(bore), max(bore), "x", ya, z),
-                          intent=I("assembly", "melt bore for the M2 insert", "3.2 mm, 4.6 deep", threats=["flip_landing"]))
+                          intent=I("assembly", "melt bore for the M2 insert", "3.2 mm through the skin, insert recessed 0.2", threats=["flip_landing"]))
             iid = f"insert_b{side}{k}"
             plan.part(id=iid, kind="insert", catalog="heatset_m2", at=[xw - sgn * 1.7, ya, z], rot=[0.0, 90.0, 0.0],
                       retained="press_fit", intent=I("service", "brass thread: the bridge comes off to change the bar", "M2 heat-set", threats=["hspin_floor"]))
+            plan.connect(plan.body(half), iid, "press_fit",
+                         "the insert is heat-set into a bore in the side-wall boss: the knurl bites the melted plastic",
+                         interference_mm=0.15)
             plan.screw(id=f"bolt_b{side}{k}", designation="M2x10", at=[sgn * xo, ya, z], dir=[-sgn, 0.0, 0.0],
                        through=["top_bridge"], threads_into=iid,
-                       intent=I("load_path", "post screws, two per side 4 mm apart in z: they resist the bridge peeling "
-                                "up when the bar is hit", "post 6 mm + 4 mm thread = M2x10", threats=["hspin_floor", "reaction_gyro"]))
+                       intent=I("load_path", "post screws, one per side per half: they resist the bridge peeling "
+                                "up when the bar is hit and tie the clamshell halves together", "post 6 mm + 4 mm thread = M2x10", threats=["hspin_floor", "reaction_gyro"]))
     plan.part(id="top_bridge", kind="structure", material="nylon", process="fdm", print_orientation="-z",
               shape=sh.S(sh.U(beam, *posts), *cuts), rotates_with="fixed", color="#2a2c30", solid_fraction=0.9,
               label="printed bridge over the bar: top bearing on the spin axis, posts screwed to both side walls",

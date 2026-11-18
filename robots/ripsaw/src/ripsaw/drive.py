@@ -1,15 +1,15 @@
 """Ripsaw drive: 2WD N10 gearmotors, catalogue wheels inside the tub outline, rear-biased. Build the right side, mirror.
-UNTESTED. Adversarial intent: the side wall stands outside the tyre (WHEEL_GAP + WALL), so a horizontal spinner meets
-nylon, not tread; the gearmotor sits in a closed pocket, its shaft through a wall slot."""
+Adversarial intent: the side wall stands outside the tyre (WHEEL_GAP + WALL), so a horizontal spinner meets
+nylon, not tread; the gearmotor sits in a printed cradle (walls + bridge ribs + axial stops), inserted from below
+with the base panel off, its shaft through the wheel's D-bore."""
 import build123d as bd
 
 from . import params as P
-from ._reuse import hw
 
 
 def wheel_at(side=1):
     """World location of a wheel centre, axis along X; side +1 right, -1 left (mirror of the right)."""
-    return bd.Location((side * P.WHEEL_X, P.WHEEL_Y, P.WHEEL_Z), (0, 90 * side, 0))
+    return bd.Location((side * P.WHEEL_X, P.WHEEL_Y, P.WHEEL_Z), (0, 0, 0))
 
 
 def motor_at(side=1):
@@ -24,12 +24,5 @@ def wheel_well(side=1):
     return bd.Pos(side * P.WHEEL_X, P.WHEEL_Y, P.WHEEL_Z) * box
 
 
-def motor_pocket(side=1):
-    """Pocket for the gearmotor body (the catalogue solid, placed): tub.py subtracts it."""
-    loc = motor_at(side)
-    return hw.placed(P.DRIVE_MOTOR, tuple(loc.position), tuple(loc.orientation))
-
-
-def wells_and_pockets():
-    right = [wheel_well(1), motor_pocket(1)]
-    return right + [bd.mirror(s, about=bd.Plane.YZ) for s in right]
+def wells():
+    return [wheel_well(1), wheel_well(-1)]

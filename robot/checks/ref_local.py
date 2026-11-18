@@ -15,7 +15,12 @@ mirror_blobs(...)     the part against its own mirror (plane x = 0 by default) w
 
 from __future__ import annotations
 
+import os
+
 import numpy as np
+
+# all-core cKDTree threading inside every pytest-xdist worker segfaults on CI; keep it bounded
+KD_WORKERS = min(4, os.cpu_count() or 1)
 
 TOL_MM = 0.1
 MIN_AREA_MM2 = 2.0
@@ -33,7 +38,7 @@ def gap_field(src, dst, tol=TOL_MM, spacing=SPACING_MM, dense=DENSE_MM, seed=1):
     n = max(1000, int(src.area / spacing ** 2))
     P = trimesh.sample.sample_surface(src, n, seed=seed)[0]
     S = trimesh.sample.sample_surface(dst, max(1000, int(dst.area / dense ** 2)), seed=seed + 1)[0]
-    ub, _ = cKDTree(S).query(P, workers=-1)
+    ub, _ = cKDTree(S).query(P, workers=KD_WORKERS)
     d = ub.copy()
     m = ub > tol
     if m.any():
@@ -114,7 +119,7 @@ def mirror_blobs(model, ref, axis=0, c=0.0, tol=TOL_MM, min_area=MIN_AREA_MM2, s
     sym_pts = Pr[dr <= sym_tol]
     T = cKDTree(sym_pts)
     P, d, ap = gap_field(model, mirrored(model, axis, c), tol, spacing)
-    near_sym = T.query(P, workers=-1)[0] <= 2.0 * spacing
+    near_sym = T.query(P, workers=KD_WORKERS)[0] <= 2.0 * spacing
     # only where the reference is symmetric AND our surface is on the reference there (a deliberate waived change is
     # reported by local_blobs, not twice)
     return blobs(P, d, ap, "asymmetric", tol, min_area, spacing, mask=near_sym)

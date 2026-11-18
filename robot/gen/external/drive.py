@@ -252,8 +252,8 @@ def add_drive(plan, g: DriveGeom):
                   "torque, the 0.1 mm interference only stops the hub walking off axially")
         plan.connect(mid, wid, "press_fit", reason, interference_mm=0.1, mechanical_key=True)
         plan.allow_overlap.append({"a": mid, "b": wid, "max_depth_mm": 0.6, "reason": (
-            "The catalog shaft is modelled round; the real shaft has a D-flat 1.0 mm from the axis that the wheel's "
-            "D-bore keys onto, so the flat of the bore overlaps the round stand-in by up to 0.5 mm")})
+            "The wheel's D-bore is cut 0.1 mm large on the flat sides so the hub slides on; the shaft's D-flat keys the "
+            "drive, and the press fit along the bore stops the hub walking off axially")})
         # motor housing + cavity
         hx = sgn * (g.motor_cx + 0.2)
         housing = (m["L"] + 4.1, m["flats"] + 4.5)
@@ -264,7 +264,7 @@ def add_drive(plan, g: DriveGeom):
                               "face, so drive torque and hits go into the shell, not into a clip",
                               f"motor {m['L']} x {m['flats']} + 2 mm wall", threats=["wall_slam", "vspin_side", "vspin_front", "flip_landing"]))
         _well(plan, g, sgn, g.axle_y, side, "rear")
-        cav_h = m["h"] + 1.3
+        cav_h = m["h"] + 0.3  # 0.15 mm play per side: the closed shell captures the motor (support.loose wants <= 0.2)
         plan.cut_both(sh.box(m["L"] + 0.3, m["flats"] + 0.3, cav_h, (sgn * g.motor_cx, g.axle_y, 0.0)),
                       intent=I("retention", "motor pocket: snug on the gearbox flats (they key it against reaction torque)",
                                f"flats {m['flats']} + 0.3 mm", threats=["reaction_gyro", "wall_slam", "flip_landing"]))

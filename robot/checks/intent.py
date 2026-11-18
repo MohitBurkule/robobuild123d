@@ -288,9 +288,20 @@ def first_contact(moving, fixed, d, step=0.05, reach=1.5, skip_seated=False):
         if skip_seated:
             q = q[closest_dist_chunked(moving, q) > 0.08]
         Q.append(q)
+    def hit(s):
+        return any(len(q) and _hits(q - s * d, moving) for q in Q)
+
+    lo = 0.0
     for s in np.arange(step, reach + 1e-9, step):
-        if any(len(q) and _hits(q - s * d, moving) for q in Q):
-            return float(s)
+        if hit(s):
+            for _ in range(6):
+                mid = 0.5 * (lo + s)
+                if hit(mid):
+                    s = mid
+                else:
+                    lo = mid
+            return float(0.5 * (lo + s))
+        lo = float(s)
     return math.inf
 
 

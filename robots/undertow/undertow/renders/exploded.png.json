@@ -1,0 +1,133 @@
+{
+ "spec": "/workspace/github__MohitBurkule__robobuild123d/robots/undertow/undertow/spec.json",
+ "rendered_at": 1794993945.2844844,
+ "bodies": [
+  "tub",
+  "top_plate",
+  "base_plate",
+  "skirt_r",
+  "skirt_l",
+  "skirt_rear",
+  "motor_fr",
+  "motor_fl",
+  "motor_rr",
+  "motor_rl",
+  "wheel_fr",
+  "wheel_fl",
+  "wheel_rr",
+  "wheel_rl",
+  "fork_0",
+  "fork_1",
+  "fork_2",
+  "pivot_pin",
+  "battery",
+  "esc",
+  "rx",
+  "switch",
+  "nut_front",
+  "bolt_t0",
+  "bolt_b0",
+  "bolt_t1",
+  "bolt_b1",
+  "bolt_t2",
+  "bolt_b2",
+  "bolt_t3",
+  "bolt_b3",
+  "bolt_t4",
+  "bolt_b4",
+  "bolt_t5",
+  "bolt_b5",
+  "skirt_r0",
+  "skirt_l0",
+  "skirt_r1",
+  "skirt_l1",
+  "skirt_rear0",
+  "skirt_rear1"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    21.175,
+    -1.9799999999999975,
+    8.45
+   ],
+   "to": [
+    8.3,
+    -8.690000000000001,
+    6.475
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    8.3,
+    -16.310000000000002,
+    6.475
+   ],
+   "to": [
+    18.6,
+    5.999999999999998,
+    13.9
+   ]
+  },
+  "w_esc_rx": {
+   "from": [
+    18.6,
+    -6.000000000000002,
+    13.9
+   ],
+   "to": [
+    3.6,
+    11.3,
+    5.1
+   ]
+  },
+  "w_m1_fr": {
+   "from": [
+    -4.4,
+    -5.999999999999998,
+    13.9
+   ],
+   "to": [
+    8.0,
+    29.0,
+    11.0
+   ]
+  },
+  "w_m1_fl": {
+   "from": [
+    -4.4,
+    -5.999999999999998,
+    13.9
+   ],
+   "to": [
+    -8.0,
+    23.0,
+    11.0
+   ]
+  },
+  "w_m2_rr": {
+   "from": [
+    -4.4,
+    6.000000000000002,
+    13.9
+   ],
+   "to": [
+    8.0,
+    -23.0,
+    11.0
+   ]
+  },
+  "w_m2_rl": {
+   "from": [
+    -4.4,
+    6.000000000000002,
+    13.9
+   ],
+   "to": [
+    -8.0,
+    -29.0,
+    11.0
+   ]
+  }
+ }
+}

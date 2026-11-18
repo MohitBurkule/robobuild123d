@@ -100,7 +100,9 @@ def resolve(spec: Spec, fast: bool = False) -> Resolved:
 
 
 BUILD_TIMEOUT_S = float(os.environ.get("ROBOT_BUILD_TIMEOUT") or 600)
-JOBS = int(os.environ.get("ROBOT_JOBS") or 0) or (os.cpu_count() or 1)
+# under pytest-xdist the workers already parallelize; a cpu-sized pool inside each of them
+# multiplied to 4x-cpu spawn processes (each re-importing OCP) and exhausted CI runner memory
+JOBS = int(os.environ.get("ROBOT_JOBS") or 0) or (1 if os.environ.get("PYTEST_XDIST_WORKER") else (os.cpu_count() or 1))
 
 
 def _part_shape(p):
@@ -351,7 +353,10 @@ class World:
         return None if i is None else self.bodies[i]
 
     def bounds(self, skip_wires=False) -> np.ndarray:
-        bs = [b.aabb for b in self.bodies if not (skip_wires and b.is_wire)]
+        bs = [np.asarray(b.aabb, float) for b in self.bodies if not (skip_wires and b.is_wire)]
+        bs = [b for b in bs if np.isfinite(b).all()]  # degenerate tessellations must not poison the frame
+        if not bs:
+            return np.array([[0.0, 0.0, 0.0], [0.0, 0.0, 0.0]])
         return np.array([np.min([b[0] for b in bs], axis=0), np.max([b[1] for b in bs], axis=0)])
 
     def port(self, r: Resolved, name: str):

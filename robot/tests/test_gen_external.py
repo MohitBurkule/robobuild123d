@@ -33,7 +33,8 @@ def test_build_produces_manufacturable_parts(specs, w):
 def test_spinners_have_joint_lock_and_bearing(specs, w):
     d = specs[w]
     wp = next(p for p in d["parts"] if p["id"] == "weapon")
-    assert wp["joint"]["kind"] == "revolute" and wp["parent"] == "weapon_motor"
+    # the weapon parents its motor: the one-piece entry or the fixed stator half of a split motor
+    assert wp["joint"]["kind"] == "revolute" and wp["parent"] in ("weapon_motor", "weapon_motor_stator")
     assert wp["process"] == "laser" and wp["material"] == "steel"
     assert d["weapon_lock"]["type"] == "removable_pin"
     assert any(p["kind"] == "bearing" for p in d["parts"])

@@ -138,6 +138,109 @@ def _gr1507_leads():
     return union([at(cyl(LEAD_R, LEAD_Z[0] - LEAD_Z[1]), LEAD_X, dy * LEAD_PITCH, 0.5 * sum(LEAD_Z)) for dy in (-1, 0, 1)])
 
 
+# 1806 outrunner split (bl_1806_2300kv, robot frame +X = bell top, origin at the can centre, can -7..7): the one-piece
+# entry stands in for whole-motor placements; a robot that bolts the stator down and spins the bell places the split
+# pair (cots.motor_split). 1806 class: 18 mm stator (tooth tips r9.0, 6 mm stack) on an r9.5 base flange with 4 M2
+# taps on 16 mm; 21 mm bell (wall r9.2-10.5 over the magnets, closed cap) on a solid r4 rotor core bored for the
+# 3 mm shaft the robot draws; 0.2 mm air gap tooth tip to magnet wall. The bell skirt starts 3.5 above the base back
+# so the M2 stator screws (3.25 mm engagement) end 1.25 mm clear of the spinning skirt.
+_BL_BASE_X0, _BL_BASE_X1 = -7.0, -3.5
+_BL_BELL_X0, _BL_BELL_TOP = -2.5, 5.0
+_BL_WALL_R = (9.2, 10.5)
+_BL_CORE_R, _BL_SHAFT_R = 4.0, 1.45
+_BL_TIP_R, _BL_YOKE_R, _BL_STATOR_BORE_R = 9.0, 6.5, 4.6
+_BL_STACK_H, _BL_SLOTS = 6.0, 12
+_BL_BASE_R = 9.5
+
+
+def _bl1806_bell():
+    wl = _BL_BELL_TOP - _BL_BELL_X0
+    wall = at(minus(cyl_x(_BL_WALL_R[1], wl), [cyl_x(_BL_WALL_R[0], wl + 1.0)]),
+              0.5 * (_BL_BELL_X0 + _BL_BELL_TOP), 0, 0)
+    cap = at(cyl_x(_BL_WALL_R[1], 2.0), _BL_BELL_TOP + 1.0, 0, 0)
+    core = at(cyl_x(_BL_CORE_R, wl + 2.0), 0.5 * (_BL_BELL_X0 + _BL_BELL_TOP) + 1.0, 0, 0)
+    return minus(union([wall, cap, core]), [at(cyl_x(_BL_SHAFT_R, 14.0), 1.5, 0, 0)])
+
+
+def _bl1806_stator():
+    h = _BL_STACK_H
+    tooth_r = _BL_TIP_R - _BL_YOKE_R
+    stack = [minus(cyl_x(_BL_YOKE_R, h), [cyl_x(_BL_STATOR_BORE_R, h + 0.2)])]
+    for k in range(_BL_SLOTS):
+        a = [360.0 / _BL_SLOTS * k, 0.0, 0.0]
+        stack.append(rot(at(box(h, 1.6, tooth_r), 0, 0, _BL_YOKE_R + 0.5 * tooth_r - 0.1), a))
+        stack.append(rot(at(box(h, 2.6, 0.5), 0, 0, _BL_TIP_R - 0.25), a))
+        wl, zc = tooth_r - 0.6, 0.5 * (_BL_YOKE_R + _BL_TIP_R - 0.6)
+        stack += [rot(at(box(h + 0.4, 1.9, wl), 0, 0, zc), a), rot(at(box(h, 2.4, wl), 0, 0, zc), a)]
+    parts = [at(cyl_x(_BL_BASE_R, _BL_BASE_X1 - _BL_BASE_X0), 0.5 * (_BL_BASE_X0 + _BL_BASE_X1), 0, 0),
+             at(union(stack), _BL_BASE_X1 + 0.5 * h, 0, 0)]
+    taps = [at(cyl_x(0.85, _BL_BASE_X1 - _BL_BASE_X0 + 0.2), 0.5 * (_BL_BASE_X0 + _BL_BASE_X1), 8.0 * sy, 8.0 * sz)
+            for sy, sz in ((1, 0), (-1, 0), (0, 1), (0, -1))]
+    return minus(at(union(parts), 0.0, 0, 0), [at(cyl_x(1.55, 30.0), 0.0, 0, 0)] + taps)
+
+
+def _bl1806_leads():
+    return union([at(cyl(0.45, 2.6), -6.5, dy * 1.0, 0.0) for dy in (-1, 0, 1)])  # flush with the flange face: nothing may proud the mounting face
+
+
+# Repeat 2004 2800 kV outrunner split (repeat_2004_2800kv, same frame as the one-piece entry: origin at the can
+# centre, +X = bell top, bell skirt x -6.4..7.4, base back face x -7.4). A robot that bolts the stator down and spins
+# the bell with the weapon places this pair (cots.motor_split). 2004 class: 24.7 mm bell (wall r11.5-12.35) over a
+# wound stator (tooth tips r11.0 on an r7 yoke, r4.6 bore), back mounting ring r9.5 (2.4 thick) with 3 M2.5 taps on a 15 mm circle,
+# front flange 2.0 mm with the same 3 M3 taps (the weapon bolts here), through shaft 3 mm protruding 13 mm past the
+# bell face. 0.5 mm air gap tooth tip to magnet wall.
+_R2_BASE_X0, _R2_BASE_X1 = -7.4, -4.8   # 2.6 mm mounting ring: M2.5x6 screws engage 2.6 = 1.04d, tips 0.6 clear of the skirt
+_R2_SKIRT_X0, _R2_FACE_X1 = -3.0, 7.4   # 1.8 air behind the skirt: the M2.5x6 stator screw tips end 1.4 mm clear of it
+_R2_FLANGE_T = 2.6
+_R2_WALL_R = (11.5, 12.35)
+_R2_CORE_R, _R2_SHAFT_R = 4.0, 1.6   # 0.05 over the bore: the shaft fuses with the bore wall, not floating in it
+_R2_YOKE_R, _R2_TIP_R, _R2_BORE_R = 7.0, 11.0, 4.6
+_R2_STATOR_SHAFT_CLR_R = 1.75   # the stator clears the 3.2 mm drawn shaft (the real motor has a 3 mm shaft in a 3.1 bore)
+_R2_STACK_X0, _R2_STACK_X1 = -5.5, 3.9   # 0.9 axial air to the face flange: the M3x6 disc screws (tip 0.5 past the flange) clear the stack
+_R2_STACK_H = _R2_STACK_X1 - _R2_STACK_X0
+_R2_RING_R = 9.5
+_R2_TAP_R, _R2_TAP_HOLE_R = 7.5, 1.05   # M2.5 stator taps
+_R2_CAN_TAP_HOLE_R = 1.35   # M3 taps in the bell face flange (the weapon bolts here)
+_R2_TAP_ANGLES = (45.0, 165.0, 285.0)
+_R2_TOOTH_W = 2.6   # wound-slot width: the copper fills the slot between the teeth (cots.motor_bore fill)
+
+
+def _r2004_taps(x0, x1, r=_R2_TAP_HOLE_R):
+    import math
+    return [at(cyl_x(r, x1 - x0 + 0.2), 0.5 * (x0 + x1), _R2_TAP_R * math.cos(math.radians(a)),
+               _R2_TAP_R * math.sin(math.radians(a))) for a in _R2_TAP_ANGLES]
+
+
+def _r2004_stator():
+    import math
+    h = _R2_STACK_H
+    cx = 0.5 * (_R2_STACK_X0 + _R2_STACK_X1)
+    tooth_r = _R2_TIP_R - _R2_YOKE_R
+    parts = [at(cyl_x(_R2_RING_R, _R2_BASE_X1 - _R2_BASE_X0), 0.5 * (_R2_BASE_X0 + _R2_BASE_X1), 0, 0),
+             at(minus(cyl_x(_R2_YOKE_R, h), [cyl_x(_R2_BORE_R, h + 0.2)]), cx, 0, 0)]
+    for k in range(12):
+        a = [30.0 * k, 0.0, 0.0]
+        parts.append(rot(at(box(h, _R2_TOOTH_W, tooth_r), cx, 0, _R2_YOKE_R + 0.5 * tooth_r - 0.1), a))
+        parts.append(rot(at(box(h, _R2_TOOTH_W + 0.4, 0.5), cx, 0, _R2_TIP_R - 0.25), a))
+    return minus(union(parts), [at(cyl_x(_R2_STATOR_SHAFT_CLR_R, 40.0), 0.0, 0, 0)] + _r2004_taps(_R2_BASE_X0, _R2_BASE_X1))
+
+
+def _r2004_leads():
+    return union([at(rot(cyl(0.45, 8.0), [90, 0, 0]), _R2_BASE_X0 + 0.5, -4.0, dz * 1.4) for dz in (-1, 0, 1)])
+
+
+def _r2004_can():
+    wl = _R2_FACE_X1 - _R2_SKIRT_X0
+    wall = at(minus(cyl_x(_R2_WALL_R[1], wl), [cyl_x(_R2_WALL_R[0], wl + 1.0)]),
+              0.5 * (_R2_SKIRT_X0 + _R2_FACE_X1), 0, 0)
+    face = at(cyl_x(_R2_WALL_R[1], _R2_FLANGE_T), _R2_FACE_X1 - 0.5 * _R2_FLANGE_T, 0, 0)
+    core = at(cyl_x(_R2_CORE_R, _R2_FACE_X1 - _R2_FLANGE_T - _R2_SKIRT_X0),
+              0.5 * (_R2_SKIRT_X0 + _R2_FACE_X1 - _R2_FLANGE_T), 0, 0)
+    body = minus(union([wall, face, core]),
+                 [at(cyl_x(1.55, 40.0), 0.0, 0, 0)] + _r2004_taps(_R2_FACE_X1 - _R2_FLANGE_T, _R2_FACE_X1 + 0.2, _R2_CAN_TAP_HOLE_R))
+    return union([body, at(cyl_x(_R2_SHAFT_R, 12.95), _R2_FACE_X1 + 12.95 / 2, 0, 0)])   # drawn shaft = the declared one (face 7.4..20.35): reaches the bearing outer face, fusing with the bored bore walls
+
+
 @dataclass
 class CatalogEntry:
     id: str
@@ -163,8 +266,10 @@ def gearmotor(id, name, can_len, can_dia, flats, gb_len, gb_h, shaft_len, mass, 
     can = at({"type": "intersect", "items": [cyl_x(can_dia / 2, can_len), box(can_len + 2, flats, can_dia + 2)]}, can_c, 0, 0)
     gb = at(box(gb_len, flats, gb_h), gb_c, 0, 0)
     shaft_at = total / 2
-    shaft = at(cyl_x(1.5, shaft_len), shaft_at + shaft_len / 2, 0, 0)
-    return CatalogEntry(id, "motor", name, mass, "estimate", union([can, gb, shaft]), {"terminals": [-total / 2 - 0.3, 0, 0]},
+    # micro-gearmotor output shafts carry a D-flat (same 3 mm D as the printed wheel bores, flat 1.0 from the axis)
+    dflat = {"type": "place", "shape": box(shaft_len + 2, 3.2, 2.6), "at": [0.0, 0.0, -0.3], "rot": [0.0, 0.0, 0.0]}
+    shaft = at({"type": "intersect", "items": [cyl_x(1.5, shaft_len), dflat]}, shaft_at + shaft_len / 2, 0, 0)
+    return CatalogEntry(id, "motor", name, mass, "estimate", union([can, gb, shaft]), {"terminals": [-total / 2 + 0.1, 0, 0]},
                         {"at": [shaft_at, 0, 0], "dir": [1, 0, 0], "len": shaft_len, "dia": 3.0}, dict(p), "#9aa0a6")
 
 
@@ -187,9 +292,14 @@ def flat(id, name, kind, x, y, z, mass, pts, p, color):
     return CatalogEntry(id, kind, name, mass, "estimate", box(x, y, z), dict(pts), None, dict(p), color)
 
 
-def wheel(id, dia, width, hub, mass):
+def wheel(id, dia, width, hub, mass, d_bore=False):
     tire = minus(cyl_x(dia / 2, width), [cyl_x(hub / 2 - 0.5, width + 2)])
-    hubs = minus(cyl_x(hub / 2, width), [cyl_x(1.5, width + 2)])
+    # micro-gearmotor output shafts carry a D-flat (flat 1.0 from the axis, see gearmotor()): a d_bore wheel's
+    # hub bore is cut to the same D so the profiles mate (visual.shaft_mate)
+    bore = ({"type": "intersect", "items": [cyl_x(1.45, width + 2),
+              {"type": "place", "shape": box(width + 4, 3.2, 2.6), "at": [0.0, 0.0, -0.3], "rot": [0, 0, 0]}]}
+            if d_bore else cyl_x(1.5, width + 2))
+    hubs = minus(cyl_x(hub / 2, width), [bore])
     return CatalogEntry(id, "wheel", f"{dia:g} x {width:g} mm wheel (printed hub, silicone tyre)", mass, "estimate", union([tire, hubs]), {},
                         {"at": [-width / 2, 0, 0], "dir": [1, 0, 0], "len": width, "dia": 3.0},
                         {"diameter_mm": dia, "width_mm": width, "friction": 0.9}, "#25282c")
@@ -277,6 +387,22 @@ def builtin() -> list[CatalogEntry]:
         gearmotor("n20_1000rpm_6v", "N20 gearmotor 6 V 1000 rpm", 15, 12, 10, 9, 12, 10, 10.5,
                   {"nominal_v": 6.0, "rpm_nominal": 1000.0, "stall_current_a": 0.8, "no_load_current_a": 0.07, "stall_torque_gcm": 600.0}),
         outrunner("bl_1806_2300kv", "1806 2300 kV outrunner", 21, 14, 8, 17.5, 2300, {"max_current_a": 15.0, "typ_current_a": 8.0}),
+        CatalogEntry("bl_1806_stator", "weapon_motor", "1806 2300 kV outrunner, fixed half: r9.5 base flange with 4 M2 on 16 mm, 12-slot wound 18 mm stator, 3 phase leads (bell is `bl_1806_can`)", 6.5, "estimate",
+                     minus(union([_bl1806_stator(), _bl1806_leads()]), [at(cyl_x(1.55, 30.0), 0.0, 0, 0)]),
+                     {"phases": [-7.0, 0.0, 0.0]}, {"at": [7.0, 0.0, 0.0], "dir": [1.0, 0.0, 0.0], "len": 14.0, "dia": 3.0},
+                     {"kv": 2300, "max_current_a": 15.0, "typ_current_a": 8.0, "bell_mass_frac": 0.0, "rotor_part": "bl_1806_can"}, "#3a3d42"),
+        CatalogEntry("bl_1806_can", "other", "1806 2300 kV outrunner, rotating half: 21 mm bell (r9.2-10.5 magnet wall, closed cap), solid r4 rotor core bored for the 3 mm shaft", 11.0, "estimate",
+                     _bl1806_bell(),
+                     {}, None, {"half_of": "bl_1806_2300kv"}, "#3a3d42"),
+        CatalogEntry("repeat_2004_stator", "weapon_motor", "Repeat 2004 2800 kV outrunner, fixed half: r9.5 back mounting ring with 3 M3 taps on a 15 mm circle, 12-slot wound stator (tooth tips r11.0), 3 phase leads (bell is `repeat_2004_can`)", 5.5, "estimate",
+                     minus(union([_r2004_stator(), _r2004_leads()]), [at(cyl_x(1.55, 40.0), 0.0, 0, 0)]),
+                     {"phases": [-6.9, -8.0, 0.0]}, {"at": [7.4, 0.0, 0.0], "dir": [1.0, 0.0, 0.0], "len": 12.95, "dia": 3.0},
+                     {"kv": 2800, "max_current_a": 15.0, "typ_current_a": 7.5, "bell_mass_frac": 0.0, "rotor_part": "repeat_2004_can",
+                      "mount_holes": [[15.0, 3, 3.0]], "top_holes": [[15.0, 3, 3.0]], "body_x": [-7.4, 7.4], "bell_r": 12.35, "base_h": 1.0,
+                      "half_of": "repeat_2004_2800kv"}, "#3a3d42"),
+        CatalogEntry("repeat_2004_can", "other", "Repeat 2004 2800 kV outrunner, rotating half: 24.7 mm bell (r11.5-12.35 magnet wall) with a 2 mm front flange carrying 3 M3 taps on a 15 mm circle, r4 rotor core, 3 mm through shaft protruding 13 mm past the face", 6.0, "estimate",
+                     _r2004_can(),
+                     {}, {"at": [7.4, 0.0, 0.0], "dir": [1.0, 0.0, 0.0], "len": 12.95, "dia": 3.0}, {"half_of": "repeat_2004_2800kv"}, "#3a3d42"),
         outrunner("bl_2306_1400kv", "2306 1400 kV outrunner", 27.5, 14, 10, 29, 1400, {"max_current_a": 20.0, "typ_current_a": 10.0}),
         lipo("lipo_2s_180", "2S 180 mAh LiPo (nano-tech class)", 28, 18, 10, 12.5, 2, 180, 40),
         lipo("lipo_2s_350", "2S 350 mAh LiPo", 36, 17, 11, 21.5, 2, 350, 30),
@@ -305,7 +431,7 @@ def builtin() -> list[CatalogEntry]:
                      {"in": [-4, 0, -2.5], "out": [4, 0, -2.5]}, None, {"mount_holes_mm": [[12.1, 0.8, 3.0], [18.1, 0.8, 3.0]], "mount_thread": "M2"}, "#111111"),
         wheel("wheel_28x10", 28, 10, 19, 3.4),
         wheel("wheel_30x8", 30, 8, 19, 3.0),
-        wheel("wheel_20x8", 20, 8, 12, 1.8),
+        wheel("wheel_20x8", 20, 8, 12, 1.8, d_bore=True),
         # RVRN reference-CAD envelopes (Revron audit 2026-10): vendor/reference envelopes, not memory.
         CatalogEntry("n10_2200rpm_spicy", "motor", "Turnabot Spicy N10 2200 rpm (micro-metal 10 x 12, 33.8 incl. 9.5 mm shaft)", 9.5, "datasheet",
                      union([at({"type": "intersect", "items": [cyl_x(6.3, 13.0), box(15.0, 10.0, 12.0)]}, -6.4, 0, 0),
@@ -673,7 +799,7 @@ ROD_STOCK_MM = {
 # Ball bearings: designation -> (bore, OD, width) mm.
 BEARINGS = {
     "684": (4.0, 9.0, 4.0), "mr84": (4.0, 8.0, 3.0), "mr104": (4.0, 10.0, 4.0), "694": (4.0, 11.0, 4.0),
-    "604": (4.0, 12.0, 4.0), "683": (3.0, 7.0, 3.0), "mr63": (3.0, 6.0, 2.5), "623": (3.0, 10.0, 4.0),
+    "604": (4.0, 12.0, 4.0), "683": (3.0, 7.0, 3.0), "mr83": (3.0, 8.0, 3.0), "mr63": (3.0, 6.0, 2.5), "623": (3.0, 10.0, 4.0),
     "mr52": (2.0, 5.0, 2.5), "681x": (1.5, 4.0, 2.0), "mf85": (5.0, 8.0, 2.5), "mr85": (5.0, 8.0, 2.5), "685": (5.0, 11.0, 5.0), "mr105": (5.0, 10.0, 4.0), "625": (5.0, 16.0, 5.0), "686": (6.0, 13.0, 5.0),
     "688": (8.0, 16.0, 5.0), "608": (8.0, 22.0, 7.0),
 }
@@ -693,6 +819,7 @@ def sheet_family(mid):
 # "-x"/"+x" in the catalog frame (shaft stub along +X). Everything else of an outrunner's can is the rotating bell.
 MOTOR_FACES = {
     "bl_1806_2300kv": {"stator_face": "-x", "depth_mm": 2.0},
+    "bl_1806_stator": {"stator_face": "-x", "depth_mm": 2.0},
     "be1806_bbb": {"stator_face": "-x", "depth_mm": 3.5},
     "gr1507": {"stator_face": "-x", "depth_mm": 2.0},
 }

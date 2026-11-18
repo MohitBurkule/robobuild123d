@@ -19,8 +19,12 @@ from .pockets import GAP, HOUSING
 from .weapon import module
 
 SERVO = "servo_cs07"
-SERVO_SIZE = (22.0, 11.5, 20.0)  # catalog box (x, y, z); output along local z
-PIVOT_BACK = 14.5  # pivot behind the chassis front
+SERVO_SIZE = (23.0, 12.0, 22.7)  # catalog body box (x, y, z); output along local z; ears 32 over, local x +-16, z 5.65..8.15
+EAR_REACH = 16.0  # the mounting ears reach this far from the centre along local x (world y here)
+EAR_X_BAND = (5.35, 8.45)  # the ear plates in world x (local z 5.65..8.15 + 0.3 clearance)
+PIVOT_BACK = 14.0  # pivot behind the chassis front: rear ear (yp-16) clears the wheel sweep, and yp-13.3 (servo
+                   # keepout) keeps the wire corridor to the rx open; the front ear passes through the front wall
+                   # in its ear slot (tip 2 mm proud of the skin, between the wall and the scoop plate's back edge)
 CHEEK_T = 3.0
 HUB_R = 2.2
 SCOOP_T = 2.5
@@ -55,6 +59,10 @@ class Lifter:
         sx, sy, sz = SERVO_SIZE
         x0 = x_face - sz
         plan.keepouts.append(("servo", x0 - GAP - HOUSING, plan.frame.x1, yp - sx / 2 - GAP - HOUSING, yp + sx / 2 + GAP + HOUSING))
+        xc = x_face - sz / 2
+        # the ears reach further along y but only in their narrow x band (the signal approach at x = xc stays routable)
+        plan.keepouts.append(("servo_ears", xc + EAR_X_BAND[0] - GAP, xc + EAR_X_BAND[1] + GAP,
+                              yp - EAR_REACH - GAP - HOUSING, yp + EAR_REACH + GAP + HOUSING))
         plan.keepouts.append(("boss_pivot", -plan.frame.x1, -plan.frame.x1 + 6.5, yp - 3.5, yp + 3.5))
         plan.anchors["servo.signal"] = ((x0 + x_face) / 2, yp - sx / 2, zp)
         plan.extra.setdefault("approach", {})["servo.signal"] = ((x0 + x_face) / 2, yp - sx / 2 - GAP - HOUSING - 1.5)
@@ -78,6 +86,10 @@ class Lifter:
                              f"servo box + {GAP} mm", threats=["reaction_gyro", "wall_slam"]))
         sig_y = yp - sx / 2
         pk.notches.append((xc - 1.6, xc + 1.6, sig_y - 2.0, sig_y + 0.5, min(zp - 1.6, -1.0), max(zp + 1.6, 1.0)))
+        for s in (-1.0, 1.0):  # ear slots: the mounting ears pass through the pocket walls (M2 screws thread them)
+            ya, yb = sorted((yp + s * 10.0, yp + s * (EAR_REACH + 1.0)))
+            pk.notches.append((xc + EAR_X_BAND[0], xc + EAR_X_BAND[1], ya, yb,
+                               zp - sy / 2 - 0.5, zp + sy / 2 + 0.5))
         plan.pocket(pk)
         # window in the right wall for the servo: its output face sits just outside, in the cheek's plane, so nothing
         # of the scoop has to pass through the wall
@@ -99,7 +111,26 @@ class Lifter:
         z_tip = floor + LIP_GAP
         top_back = (y_back, zp + 1.0)
         top_tip = (y_tip, z_tip + 1.0)
-        plate = [(y_back, top_back[1] - SCOOP_T - 2.0), top_back, top_tip, (y_tip, z_tip)]
+        # the 2 mm ledge at the top-back keeps every plate corner >= 90 deg: an acute corner there reads as a
+        # zero-thickness sliver in the wall check (its inward ray leaves through the adjacent face)
+        plate = [(y_back, top_back[1] - SCOOP_T - 2.0), top_back, (y_back + 2.0, top_back[1]), top_tip, (y_tip, z_tip)]
+        # sweep relief in the top half's front lip: the plate's back edge swings up through it as the scoop lifts
+        # (annulus sector of the plate's swept band about the pivot: the plate's material all sits r >= the back edge,
+        # so the relief never reaches the pivot or cuts into the bay floor)
+        r_in = math.hypot(y_back - yp, top_back[1] - zp) - 0.6
+        r_out = max(math.hypot(yv - yp, zv - zp) for yv, zv in plate) + 1.0
+        a0 = math.degrees(math.atan2(top_back[1] - zp, y_back - yp)) - 2.0
+        a1 = a0 + RANGE_DEG + 4.0
+        n = 14
+        sec = [(yp + r_in * math.cos(math.radians(a0 + (a1 - a0) * i / n)),
+                zp + r_in * math.sin(math.radians(a0 + (a1 - a0) * i / n))) for i in range(n + 1)]
+        sec += [(yp + r_out * math.cos(math.radians(a1 - (a1 - a0) * i / n)),
+                 zp + r_out * math.sin(math.radians(a1 - (a1 - a0) * i / n))) for i in range(n + 1)]
+        plan.cut("top", sh.side_prism(sec, -xo, xo),
+                 intent=I("load_path", "sweep relief: the scoop's plate swings up through this opening in the top "
+                          "half's front lip as it lifts; the lip above the slot still carries wall loads",
+                          f"annulus sector r {r_in:.1f}-{r_out:.1f} mm about the pivot, {a0:.0f}-{a1:.0f} deg",
+                          threats=["reaction_gyro", "wall_slam"]))
         cheek = list(MultiPoint(_circle((yp, zp), 5.0) + [top_back, (y_back + 3.0, top_back[1]),
                                                           (y_back + 3.0, top_back[1] - SCOOP_T - 2.0),
                                                           (y_back, top_back[1] - SCOOP_T - 2.0)]).convex_hull.exterior.coords)[:-1]

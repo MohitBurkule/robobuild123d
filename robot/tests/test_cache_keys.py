@@ -93,6 +93,9 @@ def test_verify_same_result_and_hits_from_two_paths(tmp_cache):
     def rep(p):
         d = checks.verify(spec_mod.load(p / "spec.json"), opts).to_dict()
         d.pop("timings_s", None)
+        for g in (d.get("groups") or {}).values():  # wall times and ran/cached provenance differ by design
+            g.pop("time_s", None)
+            g.pop("how", None)
         return json.dumps(d, sort_keys=True, default=str)
 
     ra = rep(a)

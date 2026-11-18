@@ -1,0 +1,10 @@
+{
+  "id": "expert",
+  "name": "Expert builder: enclosed printer, CNC and lathe access",
+  "printer": "voron_24",
+  "materials": ["pla", "petg", "tpu", "abs", "asa", "nylon", "pla_cf", "petg_cf", "pa_cf", "hdpe", "pp", "uhmw", "pc", "cf_plate", "aluminium", "steel", "titanium"],
+  "processes": ["fdm", "laser", "cnc", "turned", "waterjet"],
+  "tools": ["hex_driver", "side_cutters", "soldering_iron", "drill", "tap", "press", "welder"],
+  "budget_gbp": 250.0,
+  "skill": "expert"
+}

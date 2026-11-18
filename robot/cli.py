@@ -178,6 +178,9 @@ def main(argv=None):
     c.add_argument("--sort", default="mass", help="mass | capacity_mah | kv | any numeric prop")
     sub.add_parser("materials")
     sub.add_parser("templates")
+    sub.add_parser("profiles")
+    pf = sub.add_parser("profile")
+    pf.add_argument("name", nargs="?")
     t = sub.add_parser("template")
     t.add_argument("name")
     v = sub.add_parser("verify")
@@ -200,7 +203,8 @@ def main(argv=None):
     v.add_argument("--proxy", action="store_true", help="fast proxies of the slow groups (robot/proxy); --only picks among them")
     v.add_argument("--parts", help="with --proxy: only check these part ids (comma separated)")
     v.add_argument("--baseline", help="with --proxy: a full report.json whose routes / assembly order the proxies replay")
-    for name in ("render", "export", "gen.cli", "cad.cli", "build_cmd", "evals.run", "solve.jiggle", "probe"):
+    for name in ("render", "export", "gen.cli", "cad.cli", "build_cmd", "evals.run", "diffcmd", "llm_report",
+                 "report_html", "mcp_server", "checks.explain", "llm_pack", "gallery", "solve.jiggle", "probe"):
         try:
             mod = __import__(f"robot.{name}", fromlist=["add_cli"])
             mod.add_cli(sub)
@@ -228,6 +232,19 @@ def main(argv=None):
                 print(json.dumps(cache.stats(), indent=2), flush=True)
 
         atexit.register(_stats)
+    if a.cmd == "profiles":
+        from . import profile as prof
+        for n in prof.available():
+            print(f"{n:12} {prof.description(n)}")
+        return
+    if a.cmd == "profile":
+        from . import profile as prof
+        if not a.name:
+            print("profiles:", ", ".join(prof.available()))
+            return
+        d = json.loads((prof.DIR / f"{a.name}.json").read_text())
+        print(json.dumps(d, indent=2))
+        return
     if a.cmd in (None, "guide"):
         g = HERE / "GUIDE.md"
         print(g.read_text() if g.exists() else ap.format_help())

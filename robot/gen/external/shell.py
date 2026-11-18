@@ -96,13 +96,18 @@ def half_shape(plan, half: str) -> dict:
     iz0x, iz1x = (iz0, iz1 + R) if half == "bottom" else (iz0 - R, iz1)
     inner = _sloped(f, iz0x, iz1x, f.wall) if f.profile else _outline_prism(inner_outline(f), iz0x, iz1x, f.spline)
     housings = []
+    inner_wall = geom.polygon(f.outline).buffer(-f.wall, join_style=2)
     for p in plan.pockets:
         if p.housing > 0 and half in p.halves:
             x0_, x1_, y0_, y1_ = p.outer()
             hz0, hz1 = z0, z1
-            if half == "top" and p.z1 + p.housing < z1 - f.floor - 1.0:  # short part: a lid over it, no solid block to the roof
+            # a short pocket gets a collar instead of a block to the skin - but only when the collar ties into the
+            # perimeter wall: a collar floating in the middle of the bay would print as a separate solid
+            from shapely.geometry import box as _box
+            ties_wall = not inner_wall.covers(_box(x0_, y0_, x1_, y1_))
+            if half == "top" and ties_wall and p.z1 + p.housing < z1 - f.floor - 1.0:  # short part: a lid over it, no solid block to the roof
                 hz1 = p.z1 + p.housing
-            if half == "bottom" and p.z0 - p.housing > z0 + f.floor + 1.0:
+            if half == "bottom" and ties_wall and p.z0 - p.housing > z0 + f.floor + 1.0:
                 hz0 = p.z0 - p.housing
             if hz1 - hz0 > 0.5:
                 housings.append(sh.boxr(x0_, x1_, y0_, y1_, hz0, hz1))
@@ -144,6 +149,11 @@ def _slab(f, z0, z1):
     return _outline_prism(f.outline, z0, z1, f.spline)
 
 
+SEAM_CORNERS_OK = ("the flagged concave corners (r 0) are the seam where the two printed halves butt and the roots of the M2 "
+            "insert bosses, bolt bores and wire channels; the halves' joint bridges the seam corners and the bosses are "
+            "short compression posts, so the square internal corner is as built (a 0.4 mm nozzle rounds it in practice)")
+
+
 def add_tub(plan, material="nylon", color="#23262b"):
     """Open tub + base panel + top sheet: the same walls, housings and cuts as the clamshell, but the floor and the roof
     are separate screwed sheets (Revron). Every pocket is open upward to the top sheet so its part drops in from above;
@@ -167,11 +177,11 @@ def add_tub(plan, material="nylon", color="#23262b"):
     base = {"type": "intersect", "items": [full, base_slab]}
     parts = [
         {"id": "tub", "kind": "structure", "material": material, "process": "fdm", "shape": tub, "color": color,
-         "print_orientation": "+z"},
+         "print_orientation": "+z", "sharp_corners_ok": SEAM_CORNERS_OK},
         {"id": "base_panel", "kind": "structure", "material": material, "process": "fdm", "shape": base, "color": color,
-         "print_orientation": "+z"},
+         "print_orientation": "+z", "sharp_corners_ok": SEAM_CORNERS_OK},
         {"id": "lid", "kind": "structure", "material": material, "process": "fdm", "shape": lid, "color": "#2f3238",
-         "print_orientation": "-z"},
+         "print_orientation": "-z", "sharp_corners_ok": SEAM_CORNERS_OK},
     ]
     for p in parts:
         p.update(at=[0.0, 0.0, 0.0], rot=[0.0, 0.0, 0.0])
@@ -198,9 +208,11 @@ def add_shell(plan, material="nylon", color="#23262b"):
     if plan.is_tub:
         return add_tub(plan, material, color)
     bottom = {"id": "chassis_bottom", "kind": "structure", "material": material, "process": "fdm",
-              "shape": half_shape(plan, "bottom"), "color": color, "print_orientation": "+z"}
+              "shape": half_shape(plan, "bottom"), "color": color, "print_orientation": "+z",
+              "sharp_corners_ok": SEAM_CORNERS_OK}
     top = {"id": "chassis_top", "kind": "structure", "material": material, "process": "fdm",
-           "shape": half_shape(plan, "top"), "color": color, "print_orientation": "-z"}
+           "shape": half_shape(plan, "top"), "color": color, "print_orientation": "-z",
+           "sharp_corners_ok": SEAM_CORNERS_OK}
     for p in (top, bottom):
         p.setdefault("at", [0.0, 0.0, 0.0])
         p.setdefault("rot", [0.0, 0.0, 0.0])

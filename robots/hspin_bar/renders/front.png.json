@@ -1,0 +1,136 @@
+{
+ "spec": "/workspace/github__MohitBurkule__robobuild123d/robots/hspin_bar/hspin_bar.json",
+ "rendered_at": 1794819532.6904082,
+ "bodies": [
+  "chassis_bottom",
+  "chassis_top",
+  "motor_l",
+  "wheel_l",
+  "motor_r",
+  "wheel_r",
+  "insert_c0",
+  "insert_c1",
+  "insert_c2",
+  "insert_c3",
+  "battery",
+  "esc",
+  "wesc",
+  "power_switch",
+  "wedge",
+  "insert_w0",
+  "insert_w1",
+  "insert_w2",
+  "insert_w3",
+  "weapon_motor_stator",
+  "weapon_motor_bell",
+  "weapon",
+  "insert_br0",
+  "insert_br1",
+  "insert_bl0",
+  "insert_bl1",
+  "top_bridge",
+  "wbearing",
+  "wshaft",
+  "lock_plate",
+  "bolt_c0",
+  "bolt_c1",
+  "bolt_c2",
+  "bolt_c3",
+  "bolt_w0",
+  "bolt_w1",
+  "bolt_w2",
+  "bolt_w3",
+  "bolt_wma",
+  "bolt_wmb",
+  "bolt_br0",
+  "bolt_br1",
+  "bolt_bl0",
+  "bolt_bl1"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    6.0,
+    16.0,
+    0.0
+   ],
+   "to": [
+    -32.0,
+    -32.0,
+    3.5
+   ]
+  },
+  "w_sw_wesc": {
+   "from": [
+    -24.0,
+    -32.0,
+    3.5
+   ],
+   "to": [
+    -25.0,
+    27.5,
+    0.0
+   ]
+  },
+  "w_wesc_m": {
+   "from": [
+    -31.0,
+    27.5,
+    0.0
+   ],
+   "to": [
+    -3.9801020972288977e-16,
+    22.0,
+    -1.6999999999999993
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    -24.0,
+    -32.0,
+    3.5
+   ],
+   "to": [
+    -16.0,
+    -40.0,
+    0.0
+   ]
+  },
+  "w_esc_ml": {
+   "from": [
+    -16.0,
+    -32.0,
+    0.0
+   ],
+   "to": [
+    5.9499999999999975,
+    -14.0,
+    0.0
+   ]
+  },
+  "w_esc_mr": {
+   "from": [
+    16.0,
+    -32.0,
+    0.0
+   ],
+   "to": [
+    -5.9499999999999975,
+    -14.000000000000002,
+    0.0
+   ]
+  },
+  "w_rx_wesc": {
+   "from": [
+    16.0,
+    -40.0,
+    0.0
+   ],
+   "to": [
+    -28.0,
+    4.5,
+    0.0
+   ]
+  }
+ }
+}
