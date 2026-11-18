@@ -1,0 +1,113 @@
+BLOCKERS: 19
+  [cached] integrity 0.00s
+  [cached] mass 0.00s
+  [proxy] interference 0.08s
+  [cached] connections 0.00s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.00s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.00s
+  [cached] physics 0.00s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [cached] likeness 0.00s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.00s
+  [cached] waiver_audit 0.00s
+  [cached] geom 0.00s
+  [cached] dfm 0.00s
+  [cached] realworld 0.00s
+tip and pit: ok=False 19 blockers in 19 root causes, mass 87.2/75 g
+1. [mass.over] 87.2 g (range 73.5 to 101.0 g) against the 75 g limit; 3.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+2. [proxy.interference] `chassis` and `plate` overlap by 0.91 mm (allowed 0.08).
+   | chassis: x -30.00..30.00  y -17.00..17.00  z -13.00..17.00  size 60.00 x 34.00 x 30.00 mm
+   |   centre (-0.00, 0.00, 2.00), volume 27706.5 mm3
+   |   OVERLAP `el_battery` 1.22 mm (allowed 0.08)
+   |   OVERLAP `plate` 0.91 mm (allowed 0.08)
+   |   gap to `el_switch` 0.10 mm
+3. [proxy.interference] `chassis` and `el_battery` overlap by 1.22 mm (allowed 0.08).
+   | chassis: x -30.00..30.00  y -17.00..17.00  z -13.00..17.00  size 60.00 x 34.00 x 30.00 mm
+   |   centre (-0.00, 0.00, 2.00), volume 27706.5 mm3
+   |   OVERLAP `el_battery` 1.22 mm (allowed 0.08)
+   |   OVERLAP `plate` 0.91 mm (allowed 0.08)
+   |   gap to `el_switch` 0.10 mm
+4. [proxy.interference] `dm_wheel_l0` and `el_battery` overlap by 3.88 mm (allowed 0.08).
+   | dm_wheel_l0: x 1.60..37.60  y -10.00..2.00  z -5.00..5.00  size 36.00 x 12.00 x 10.00 mm
+   |   centre (19.60, -4.00, 0.00), volume 2852.2 mm3
+   |   port terminals: (1.60, -4.00, 0.00)
+   |   OVERLAP `el_battery` 3.88 mm (allowed 0.08)
+   |   gap to `dt_hub_wheel_l0` 0.05 mm
+5. [proxy.interference] `dm_wheel_r0` and `el_battery` overlap by 3.88 mm (allowed 0.08).
+   | dm_wheel_r0: x -37.60..-1.60  y -10.00..2.00  z -5.00..5.00  size 36.00 x 12.00 x 10.00 mm
+   |   centre (-19.60, -4.00, 0.00), volume 2852.2 mm3
+   |   port terminals: (-1.60, -4.00, 0.00)
+   |   OVERLAP `el_battery` 3.88 mm (allowed 0.08)
+   |   gap to `dt_hub_wheel_r0` 0.05 mm
+6. [proxy.sweep] joint `plate`: `plate` hits `chassis` 0.91 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint plate` lists the closest approach to every part.
+   | plate: x -22.00..22.00  y -10.38..26.38  z 9.18..22.82  size 44.00 x 36.76 x 13.64 mm
+   |   centre (0.00, 8.00, 16.00), volume 3344.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 0, 13.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.91 mm (allowed 0.08)
+   | chassis: x -30.00..30.00  y -17.00..17.00  z -13.00..17.00  size 60.00 x 34.00 x 30.00 mm
+7. [connection.tape_overload] `el_battery` weighs 12.5 g on 1.64 cm2 of contact (7.6 g/cm2); velcro holds at most 2 g/cm2 through a hit.
+   fix: Screw it down, capture it in a pocket, or give the tape a much larger flat contact face.
+   | el_battery: x -14.00..14.00  y -9.00..9.00  z -3.00..7.00  size 28.00 x 18.00 x 10.00 mm
+   |   centre (0.00, 0.00, 2.00), volume 5040.0 mm3
+   |   port xt30: (0.00, 11.00, 2.00)
+   |   OVERLAP `dm_wheel_l0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `dm_wheel_r0` 3.88 mm (allowed 0.08)
+8. [power.weapon_motor] `plate` names motor None; it must be a catalog brushless motor so speed can be computed.
+   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
+   | plate: x -22.00..22.00  y -10.38..26.38  z 9.18..22.82  size 44.00 x 36.76 x 13.64 mm
+   |   centre (0.00, 8.00, 16.00), volume 3344.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 0, 13.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.91 mm (allowed 0.08)
+9. [process.weapon_printed] Weapon `plate` is fdm-printed with no hardened metal insert teeth.
+   fix: Make it metal (sheet_cut / turned / milled) or add hardened steel tooth parts (`parent` = the weapon).
+   | plate: x -22.00..22.00  y -10.38..26.38  z 9.18..22.82  size 44.00 x 36.76 x 13.64 mm
+   |   centre (0.00, 8.00, 16.00), volume 3344.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 0, 13.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.91 mm (allowed 0.08)
+10. [electrical.battery_weapon_gap] Battery is 2.2 mm from the weapon's swept volume (need >= 3 mm plus a wall).
+   fix: Move the battery >= 3 mm from the swept volume.
+11. [fit.interference] `el_battery` overlaps wall `chassis` by 1.22 mm: it will not go in. Measured fix: move `el_battery` -1.42 mm along x (>= 3.0 mm free that side), or grow the pocket 1.22 mm.
+   fix: Grow the pocket to the component size plus the per-side fit clearance.
+   | `el_battery`: no free spot at z 2.00 with yaw [0, 90, 180, 270] inside x -30.0..30.0 y -17.0..17.0. Something else must move (try `probe --place` on it), or change z / the part.
+   | el_battery: x -14.00..14.00  y -9.00..9.00  z -3.00..7.00  size 28.00 x 18.00 x 10.00 mm
+   |   centre (0.00, 0.00, 2.00), volume 5040.0 mm3
+   |   port xt30: (0.00, 11.00, 2.00)
+   |   OVERLAP `dm_wheel_l0` 3.88 mm (allowed 0.08)
+12. [wire.render_wires] 7 of 7 robot render(s) do not draw all 4 wires: renders/diff_tip_pit.aws63.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/iso.png: rendered without wires (checks off or no routes); renders/likeness_tip_pit.aws63_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_tip_pit.aws63.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/pick_tip_pit.aws63.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_tip_pit.aws63.png: no render record (`<png>.json`), so nothing says the wires were drawn
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+... 7 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 87.2 g of 75 g (-12.2 g margin)
+    chassis                    26.38 g  fills 45% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    dm_wheel_l0                 9.70 g  fills 66% of its box
+    dm_wheel_r0                 9.70 g  fills 66% of its box
+    wheel_l0                    7.36 g  fills 57% of its box
+    wheel_r0                    7.36 g  fills 57% of its box
+    el_rx_esc                   3.50 g  fills 100% of its box
+    plate                       3.18 g  fills 15% of its box
+    dt_hub_wheel_l0             2.73 g  fills 70% of its box
+    dt_hub_wheel_r0             2.73 g  fills 70% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    mass.over: 87.2 g (range 73.5 to 101.0 g) against the 75 g limit; 3.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 31 hit / 0 miss, inside 16 hit / 0 miss, min_gap 51 hit / 0 miss, overlap 221 hit / 0 miss, part_geom 11 hit / 0 miss
