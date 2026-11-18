@@ -1,0 +1,109 @@
+BLOCKERS: 28
+  [ran] integrity 0.02s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 0.12s
+  [ran] connections 0.01s
+  [ran] legal 0.00s
+  [ran] fasteners 0.01s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.01s
+  [ran] shape 0.03s
+  [ran] dynamics 0.01s
+  [ran] strength 0.00s
+  [ran] printability 0.98s
+  [ran] process 0.00s
+  [ran] electrical 0.00s
+  [ran] combat 0.09s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.01s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 5.95s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.04s
+  [ran] dfm 0.00s
+  [ran] realworld 0.01s
+time for crab: ok=False 28 blockers in 28 root causes, mass 192.4/150 g
+1. [mass.over] 192.4 g (range 153.6 to 231.2 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+2. [proxy.interference] `chassis` and `claw_l` overlap by 2.38 mm (allowed 0.08).
+   | chassis: x -46.00..46.00  y -30.00..30.00  z -11.00..13.00  size 92.00 x 60.00 x 24.00 mm
+   |   centre (0.00, 0.00, 1.00), volume 132480.0 mm3
+   |   OVERLAP `claw_l` 2.38 mm (allowed 0.08)
+   |   OVERLAP `claw_r` 2.38 mm (allowed 0.08)
+   |   OVERLAP `shaft` 2.38 mm (allowed 0.08)
+3. [proxy.interference] `chassis` and `claw_r` overlap by 2.38 mm (allowed 0.08).
+   | chassis: x -46.00..46.00  y -30.00..30.00  z -11.00..13.00  size 92.00 x 60.00 x 24.00 mm
+   |   centre (0.00, 0.00, 1.00), volume 132480.0 mm3
+   |   OVERLAP `claw_l` 2.38 mm (allowed 0.08)
+   |   OVERLAP `claw_r` 2.38 mm (allowed 0.08)
+   |   OVERLAP `shaft` 2.38 mm (allowed 0.08)
+4. [proxy.interference] `chassis` and `shaft` overlap by 2.38 mm (allowed 0.08).
+   | chassis: x -46.00..46.00  y -30.00..30.00  z -11.00..13.00  size 92.00 x 60.00 x 24.00 mm
+   |   centre (0.00, 0.00, 1.00), volume 132480.0 mm3
+   |   OVERLAP `claw_l` 2.38 mm (allowed 0.08)
+   |   OVERLAP `claw_r` 2.38 mm (allowed 0.08)
+   |   OVERLAP `shaft` 2.38 mm (allowed 0.08)
+5. [proxy.interference] `claw_l` and `shaft` overlap by 3.62 mm (allowed 0.08).
+   | claw_l: x 14.00..46.00  y 25.00..86.00  z -12.00..13.00  size 32.00 x 61.00 x 25.00 mm
+   |   centre (30.00, 55.50, 0.50), volume 26875.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 25, -1.0] range 0..80 default 0
+   |   OVERLAP `shaft` 3.62 mm (allowed 0.08)
+   |   OVERLAP `chassis` 2.38 mm (allowed 0.08)
+6. [proxy.interference] `claw_r` and `shaft` overlap by 3.62 mm (allowed 0.08).
+   | claw_r: x -46.00..-14.00  y 25.00..86.00  z -12.00..13.00  size 32.00 x 61.00 x 25.00 mm
+   |   centre (-30.00, 55.50, 0.50), volume 26875.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 25, -1.0] range 0..80 default 0
+   |   OVERLAP `shaft` 3.62 mm (allowed 0.08)
+   |   OVERLAP `chassis` 2.38 mm (allowed 0.08)
+7. [proxy.sweep] joint `claw_l`: `claw_l` hits `chassis` 2.38 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint claw_l` lists the closest approach to every part.
+   | claw_l: x 14.00..46.00  y 25.00..86.00  z -12.00..13.00  size 32.00 x 61.00 x 25.00 mm
+   |   centre (30.00, 55.50, 0.50), volume 26875.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 25, -1.0] range 0..80 default 0
+   |   OVERLAP `shaft` 3.62 mm (allowed 0.08)
+   |   OVERLAP `chassis` 2.38 mm (allowed 0.08)
+8. [proxy.sweep] joint `claw_r`: `claw_r` hits `chassis` 2.38 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint claw_r` lists the closest approach to every part.
+   | claw_r: x -46.00..-14.00  y 25.00..86.00  z -12.00..13.00  size 32.00 x 61.00 x 25.00 mm
+   |   centre (-30.00, 55.50, 0.50), volume 26875.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 25, -1.0] range 0..80 default 0
+   |   OVERLAP `shaft` 3.62 mm (allowed 0.08)
+   |   OVERLAP `chassis` 2.38 mm (allowed 0.08)
+9. [connection.floating] `wheel_l0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_l0: x 46.50..54.50  y -31.00..-5.00  z -13.00..13.00  size 8.00 x 25.99 x 26.00 mm
+   |   centre (50.50, -18.00, 0.00), volume 4247.4 mm3
+   |   gap to `chassis` 0.50 mm
+   | chassis: x -46.00..46.00  y -30.00..30.00  z -11.00..13.00  size 92.00 x 60.00 x 24.00 mm
+   |   centre (0.00, 0.00, 1.00), volume 132480.0 mm3
+10. [connection.floating] `wheel_r0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_r0: x -54.50..-46.50  y -31.00..-5.00  z -13.00..13.00  size 8.00 x 25.99 x 26.00 mm
+   |   centre (-50.50, -18.00, 0.00), volume 4247.4 mm3
+   |   gap to `chassis` 0.50 mm
+   | chassis: x -46.00..46.00  y -30.00..30.00  z -11.00..13.00  size 92.00 x 60.00 x 24.00 mm
+   |   centre (0.00, 0.00, 1.00), volume 132480.0 mm3
+11. [legal.switch] Rule 4a needs an externally accessible way to shut down that works without tools and is clearly marked on/off.
+   fix: Add a `switch` part (or removable link) with `tool_free: true` and `marked: true` and a visible ON/OFF `label`.
+12. [legal.failsafe] Rule 4d: the robot must stop all motion when the transmitter is off.
+   fix: Set `electronics.failsafe` to true and configure the receiver and ESC failsafe.
+... 16 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 192.4 g of 150 g (-42.4 g margin)
+    chassis                   126.12 g  fills 100% of its box  <- solid block? a tub should be a shell
+    claw_l                     25.59 g  fills 55% of its box  <- solid block? a tub should be a shell
+    claw_r                     25.59 g  fills 55% of its box  <- solid block? a tub should be a shell
+    shaft                       5.23 g  fills 79% of its box
+    wheel_l0                    4.33 g  fills 79% of its box
+    wheel_r0                    4.33 g  fills 79% of its box
+    mass.over: 192.4 g (range 153.6 to 231.2 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 0 hit / 31 miss, inside 6 hit / 0 miss, likeness 2 hit / 0 miss, min_gap 22 hit / 0 miss, overlap 95 hit / 0 miss, part_check 1 hit / 0 miss, part_geom 6 hit / 0 miss, ray 30 hit / 0 miss
