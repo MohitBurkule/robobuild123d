@@ -1,0 +1,68 @@
+{
+ "robot_type": "vertical_spinner",
+ "body": {
+  "length": 62,
+  "width": 60,
+  "height": 28,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 13,
+  "width": 10,
+  "y": [
+   -18
+  ]
+ },
+ "weapon": {
+  "kind": "disc",
+  "radius": 27,
+  "width": 2,
+  "y": 8,
+  "teeth": 8,
+  "z": 88,
+  "axis": "x"
+ },
+ "forks": {
+  "n": 2,
+  "length": 62,
+  "width": 14,
+  "spread": 58,
+  "tilt_deg": 6
+ },
+ "colors": {
+  "body": "#2a5fd0",
+  "wheel": "#202226",
+  "weapon": "#1c1d20",
+  "fork": "#1c1d20"
+ },
+ "extras": [
+  {
+   "side": [
+    [
+     -5,
+     30
+    ],
+    [
+     8,
+     30
+    ],
+    [
+     12,
+     84
+    ],
+    [
+     2,
+     86
+    ]
+   ],
+   "x": [
+    4,
+    9
+   ],
+   "id": "arm",
+   "color": "#1c1d20"
+  }
+ ],
+ "name": "i saw that"
+}

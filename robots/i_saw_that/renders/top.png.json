@@ -1,0 +1,14 @@
+{
+ "spec": "/tmp/work10_i_saw_that/robots/i_saw_that/spec.json",
+ "rendered_at": 1795022486.7619023,
+ "bodies": [
+  "chassis",
+  "weapon",
+  "wheel_l0",
+  "wheel_r0",
+  "fork_0",
+  "fork_1",
+  "arm"
+ ],
+ "wires": {}
+}

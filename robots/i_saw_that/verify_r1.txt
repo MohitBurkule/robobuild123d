@@ -1,0 +1,99 @@
+  [ran] integrity 0.02s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 0.19s
+  [ran] connections 0.03s
+  [ran] legal 0.01s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.01s
+  [ran] shape 0.14s
+  [ran] dynamics 0.01s
+  [ran] strength 0.00s
+  [ran] printability 0.33s
+  [ran] process 0.06s
+  [ran] electrical 0.01s
+  [ran] combat 0.05s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.01s
+  [ran] fastener_record 0.00s
+  [ran] likeness 3.43s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.02s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.02s
+  [ran] dfm 0.01s
+  [ran] realworld 0.01s
+i saw that: ok=False 22 blockers in 20 root causes, mass 159.4/225 g
+1. [proxy.interference] `chassis` and `fork_0` overlap by 0.66 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | chassis: x -30.00..30.00  y -31.00..31.00  z -11.00..17.00  size 60.00 x 62.00 x 28.00 mm
+   |   centre (-0.00, 0.00, 3.00), volume 104160.0 mm3
+   |   OVERLAP `fork_0` 0.66 mm (allowed 0.08)
+   |   OVERLAP `fork_1` 0.66 mm (allowed 0.08)
+   |   gap to `arm` 0.00 mm (touching)
+2. [connection.floating] `fork_0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | fork_0: x -36.00..-22.00  y 29.09..90.91  z -12.95..-4.97  size 14.00 x 61.82 x 7.97 mm
+   |   centre (-29.00, 60.00, -8.96), volume 1302.0 mm3
+   |   OVERLAP `chassis` 0.66 mm (allowed 0.08)
+   | chassis: x -30.00..30.00  y -31.00..31.00  z -11.00..17.00  size 60.00 x 62.00 x 28.00 mm
+   |   centre (-0.00, 0.00, 3.00), volume 104160.0 mm3
+3. [connection.floating] `weapon` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `arm`, 3.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | weapon: x -1.00..1.00  y -19.08..35.08  z 60.99..115.08  size 2.00 x 54.15 x 54.08 mm
+   |   centre (0.00, 8.00, 88.03), volume 4262.3 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 8.0, 88.0] range 0..360 default 0
+   | arm: x 4.00..9.00  y -5.00..12.00  z 17.00..73.00  size 5.00 x 17.00 x 56.00 mm
+   |   centre (6.50, 3.50, 45.00), volume 3190.0 mm3
+4. [connection.floating] `wheel_l0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_l0: x 30.50..40.50  y -31.00..-5.00  z -13.00..13.00  size 10.00 x 25.99 x 26.00 mm
+   |   centre (35.50, -18.00, 0.00), volume 5309.3 mm3
+   |   gap to `chassis` 0.50 mm
+   | chassis: x -30.00..30.00  y -31.00..31.00  z -11.00..17.00  size 60.00 x 62.00 x 28.00 mm
+   |   centre (-0.00, 0.00, 3.00), volume 104160.0 mm3
+5. [connection.floating] `wheel_r0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_r0: x -40.50..-30.50  y -31.00..-5.00  z -13.00..13.00  size 10.00 x 25.99 x 26.00 mm
+   |   centre (-35.50, -18.00, 0.00), volume 5309.3 mm3
+   |   gap to `chassis` 0.50 mm
+   | chassis: x -30.00..30.00  y -31.00..31.00  z -11.00..17.00  size 60.00 x 62.00 x 28.00 mm
+   |   centre (-0.00, 0.00, 3.00), volume 104160.0 mm3
+6. [connection.floating] `arm` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | arm: x 4.00..9.00  y -5.00..12.00  z 17.00..73.00  size 5.00 x 17.00 x 56.00 mm
+   |   centre (6.50, 3.50, 45.00), volume 3190.0 mm3
+   |   gap to `chassis` 0.00 mm (touching)
+   | chassis: x -30.00..30.00  y -31.00..31.00  z -11.00..17.00  size 60.00 x 62.00 x 28.00 mm
+   |   centre (-0.00, 0.00, 3.00), volume 104160.0 mm3
+7. [legal.switch] Rule 4a needs an externally accessible way to shut down that works without tools and is clearly marked on/off.
+   fix: Add a `switch` part (or removable link) with `tool_free: true` and `marked: true` and a visible ON/OFF `label`.
+8. [legal.failsafe] Rule 4d: the robot must stop all motion when the transmitter is off.
+   fix: Set `electronics.failsafe` to true and configure the receiver and ESC failsafe.
+9. [legal.weapon_disable] Rule 4c: all weaponry must be deactivatable by remote control.
+   fix: Set `electronics.weapon_remote_disable` and put the weapon on its own receiver channel.
+10. [legal.locking_bar] Rule 5f: every spinner needs a locking bar that physically stops the weapon from turning.
+   fix: Add a `locking_bar` part (a pin through the weapon into the frame), name it in `weapon.locking_bar`, give it a contrasting colour and `tethered: true`.
+   | weapon: x -1.00..1.00  y -19.08..35.08  z 60.99..115.08  size 2.00 x 54.15 x 54.08 mm
+   |   centre (0.00, 8.00, 88.03), volume 4262.3 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 8.0, 88.0] range 0..360 default 0
+11. [power.weapon_motor] `weapon` names motor None; it must be a catalog brushless motor so speed can be computed.
+   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
+   | weapon: x -1.00..1.00  y -19.08..35.08  z 60.99..115.08  size 2.00 x 54.15 x 54.08 mm
+   |   centre (0.00, 8.00, 88.03), volume 4262.3 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 8.0, 88.0] range 0..360 default 0
+12. [process.print_orientation] `wheel_l0` (fdm) has no `print_orientation`.
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_l0: x 30.50..40.50  y -31.00..-5.00  z -13.00..13.00  size 10.00 x 25.99 x 26.00 mm
+   |   centre (35.50, -18.00, 0.00), volume 5309.3 mm3
+   |   gap to `chassis` 0.50 mm
+... 8 more root causes (fix these first, then re-run)
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 0 hit / 4 miss, group 0 hit / 31 miss, inside 0 hit / 7 miss, likeness 1 hit / 0 miss, min_gap 17 hit / 34 miss, overlap 14 hit / 15 miss, part_check 0 hit / 4 miss, part_geom 7 hit / 0 miss, ray 0 hit / 35 miss
