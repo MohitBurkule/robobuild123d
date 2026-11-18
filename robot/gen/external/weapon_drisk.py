@@ -33,6 +33,11 @@ def pin_r(plan):
     return PAIR_PIN_R if plan.extra.get("disc_stack") == "spider_pair" else PIN_R_FROM_AXIS
 
 
+def disc_t(plan):
+    """Axial width of the single rotor: DISC_T for a disc, intent `drum_width` for a drum."""
+    return float(plan.extra.get("drum_w") or DISC_T)
+
+
 def disc_r(plan):
     return PAIR_R if plan.extra.get("disc_stack") == "spider_pair" else DISC_R
 FLOOR_GAP = 2.0  # lowest point of the swept rim above the floor
@@ -90,10 +95,11 @@ class Drisk:
         a = math.radians(PIN_ANGLE)
         pin = (yw + pin_r(plan) * math.cos(a), zw + pin_r(plan) * math.sin(a))
         # x stations along the axis: disc centred at 0, motor bell against it on -x, right upright on the stator face
-        xs = dict(disc=(-DISC_T / 2, DISC_T / 2), motor=(-DISC_T / 2 - spinner.MOTOR_L, -DISC_T / 2))
+        T = disc_t(plan)
+        xs = dict(disc=(-T / 2, T / 2), motor=(-T / 2 - spinner.MOTOR_L, -T / 2))
         pt = TUB_PLATE_T if plan.is_tub else spinner.PLATE_T
         xs["upr"] = (xs["motor"][0] - pt, xs["motor"][0])
-        xs["upl"] = (DISC_T / 2 + 5.0, DISC_T / 2 + 5.0 + pt)  # 1 mm past the 2.5 mm shaft boss end
+        xs["upl"] = (T / 2 + 5.0, T / 2 + 5.0 + pt)  # 1 mm past the 2.5 mm shaft boss end
         return yw, zw, pin, xs
 
     @classmethod
@@ -251,16 +257,27 @@ WEAPON_SPEC = {"kind": "disc", "motor": "weapon_motor", "cells": 2, "reduction":
 
 def _single_disc(plan, xm):
     nt = int(plan.extra.get("teeth", 2))
-    disc = spinner.disc_shape(DISC_R, DISC_T, HUB_BORE_R, _disc_holes(4.0), teeth=nt)
+    T = disc_t(plan)
+    drum = bool(plan.extra.get("drum_w"))
+    disc = spinner.disc_shape(DISC_R, T, HUB_BORE_R, _disc_holes(4.0), teeth=nt)
+    if drum:  # machined cup: 3 mm web on the motor end bolts to the bell, 4 mm wall, open at the far end (mass)
+        web, wall, hub = 3.0, 3.0, 4.5  # hub boss round the axis keeps the pivot in metal
+        h = T - web + 1.0
+        disc = sh.S(disc, sh.S(sh.cyl(DISC_R - 2.5 - wall, h, (0.0, 0.0, web / 2 + 0.5)),
+                               sh.cyl(hub, h + 2, (0.0, 0.0, web / 2 + 0.5))))
+    mat, proc = ("aluminium", "cnc") if drum else ("steel", "laser")
+    what = (f"{T:g} mm wide aluminium drum, {2 * DISC_R:g} mm, {nt} teeth machined in" if drum else
+            f"{T:g} mm steel disc, {2 * DISC_R:g} mm, {nt} hooked teeth in the outline, laser cut")
     # the disc hangs on the motor (parent) with a revolute joint about the motor axis (motor frame = world axes)
-    plan.part(id="weapon", kind="weapon", material="steel", process="laser", shape=disc,
+    plan.part(id="weapon", kind="weapon", material=mat, process=proc, shape=disc,
               parent="weapon_motor", at=[-xm, 0.0, 0.0], rot=[0.0, 90.0, 0.0], rotates_with="weapon",
               joint={"kind": "revolute", "axis": [1, 0, 0], "pivot": [-xm, 0.0, 0.0], "min": 0, "max": 360, "default": 0},
               color="#d9dde2", organic=True,
-              intent=I("load_path", "the disc stores the energy and delivers it at the teeth; teeth are in the "
-                       "laser outline (no bolted teeth to loosen)", f"r {DISC_R} x {DISC_T} mm steel, {nt} teeth, holes balanced", threats=["vspin_front", "under_front"]),
-              weapon={**WEAPON_SPEC, "teeth": nt},
-              label=f"{DISC_T:g} mm steel disc, {2 * DISC_R:g} mm, {nt} hooked teeth in the outline, laser cut")
+              intent=I("load_path", "the rotor stores the energy and delivers it at the teeth; teeth are in the "
+                       "outline (no bolted teeth to loosen)", f"r {DISC_R} x {T:g} mm {mat}, {nt} teeth, holes balanced",
+                       threats=["vspin_front", "under_front"]),
+              weapon={**WEAPON_SPEC, "teeth": nt, "kind": "drum" if drum else "disc"},
+              label=what)
 
 
 def _spider_pair(plan, xs, xm):
