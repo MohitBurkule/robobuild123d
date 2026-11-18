@@ -1,8 +1,8 @@
-BLOCKERS: 14
-  [cached] integrity 0.00s
+BLOCKERS: 13
+  [cached] integrity 0.02s
   [cached] mass 0.00s
-  [proxy] interference 0.11s
-  [cached] connections 0.00s
+  [proxy] interference 0.37s
+  [cached] connections 0.02s
   [cached] legal 0.00s
   [cached] fasteners 0.00s
   [cached] power 0.00s
@@ -15,23 +15,23 @@ BLOCKERS: 14
   [cached] printability 0.00s
   [cached] process 0.00s
   [cached] electrical 0.00s
-  [cached] combat 0.00s
+  [cached] combat 0.01s
   [cached] physics 0.00s
   [cached] plausibility 0.00s
   [cached] cots 0.00s
-  [cached] fit 0.00s
+  [cached] fit 0.01s
   [cached] bom 0.00s
-  [cached] wire_review 0.00s
+  [cached] wire_review 0.01s
   [cached] fastener_record 0.00s
-  [cached] likeness 0.00s
+  [ran] likeness 13.14s
   [cached] drive_recess 0.00s
   [cached] belt_wrap 0.00s
   [cached] retention 0.01s
   [cached] waiver_audit 0.00s
-  [cached] geom 0.00s
+  [cached] geom 0.01s
   [cached] dfm 0.00s
-  [cached] realworld 0.00s
-burning tiger: ok=False 14 blockers in 13 root causes, mass 151.2/150 g
+  [cached] realworld 0.01s
+burning tiger: ok=False 13 blockers in 12 root causes, mass 151.2/150 g
 1. [process.geometry] `fork_0` (laser): 1 face(s) (17 mm2) are neither the two plate faces nor walls perpendicular to them: 3D features (bumps, drum surfaces, raised teeth) cannot be laser/waterjet cut. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
    fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
    | fork_0: x -54.00..-32.00  y 33.60..66.40  z -13.91..-1.98  size 22.00 x 32.80 x 11.93 mm
@@ -86,11 +86,10 @@ burning tiger: ok=False 14 blockers in 13 root causes, mass 151.2/150 g
    |   joint revolute axis [1, 0, 0] pivot [0, -25, 16.0] range 0..80 default 0
    |   gap to `chassis` 0.00 mm (touching)
    |   gap to `lid` 0.00 mm (touching)
-11. [likeness.view] `reference/burning_tiger.aws74.webp` is declared `front` (IoU 0.55 there) but the model matches it better from rear_left_iso (elevation 45, azimuth 210) (IoU 0.69).
-   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
-12. [likeness.silhouette] `reference/burning_tiger.aws74.webp`: best silhouette IoU 0.55 at camera front (elevation 45, azimuth 90) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.55). Regions (photo frame, left third first) 0.36 / 0.72 / 0.55: worst = front third. Height/length 0.80 model vs 0.73 photo (too tall: lower it or lengthen it).
+11. [likeness.silhouette] `reference/burning_tiger.aws74.webp`: best silhouette IoU 0.66 at camera front_left_iso (elevation 45, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.72). Regions (photo frame, left third first) 0.56 / 0.71 / 0.66: worst = front third. Height/length 0.80 model vs 0.73 photo (too tall: lower it or lengthen it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
-... 1 more root causes (fix these first, then re-run)
+12. [likeness.silhouette] `reference/burning_tiger.aws76.webp`: best silhouette IoU 0.65 at camera front_right_iso (elevation 45, azimuth 60) (need 0.80: >= 0.8 and no worse than the closest stock template `wedge_2wd` at 0.69). Regions (photo frame, left third first) 0.74 / 0.70 / 0.45: worst = rear third. Height/length 0.80 model vs 0.73 photo (too tall: lower it or lengthen it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
   mass 151.2 g of 150 g (-1.2 g margin)
     chassis                    47.74 g  fills 37% of its box
@@ -119,4 +118,4 @@ MASS BUDGET:
     el_switch                   0.50 g  fills 100% of its box
     mass.over: 151.2 g (range 125.3 to 177.2 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: group 31 hit / 0 miss, min_gap 61 hit / 0 miss, overlap 325 hit / 0 miss, part_geom 24 hit / 0 miss
+cache: group 30 hit / 1 miss, inside 19 hit / 0 miss, likeness 0 hit / 2 miss, min_gap 61 hit / 0 miss, overlap 325 hit / 0 miss, part_geom 24 hit / 0 miss

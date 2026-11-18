@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_burning_tiger/robots/burning_tiger/spec.json",
- "rendered_at": 1795024483.0103545,
+ "rendered_at": 1795036345.201737,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -11,7 +11,21 @@
   "fork_1",
   "fork_2",
   "lid",
-  "arm"
+  "arm",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_hub_wheel_l1",
+  "dt_hub_wheel_r1",
+  "dt_mount_fork_0",
+  "dt_mount_fork_1",
+  "dt_mount_fork_2",
+  "dm_wheel_l1",
+  "dm_wheel_r1",
+  "el_battery",
+  "el_esc",
+  "el_switch"
  ],
  "wires": {}
 }

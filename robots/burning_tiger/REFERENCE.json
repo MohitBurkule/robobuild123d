@@ -10,11 +10,11 @@
   "burning_tiger.aws76.webp"
  ],
  "view": {
-  "burning_tiger.aws74.webp": "front",
-  "burning_tiger.aws76.webp": "front_left_iso"
+  "burning_tiger.aws74.webp": "front_left_iso",
+  "burning_tiger.aws76.webp": "front_right_iso"
  },
- "elevation": {
-  "burning_tiger.aws74.webp": 45,
-  "burning_tiger.aws76.webp": 45
+ "view_source": {
+  "burning_tiger.aws74.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label",
+  "burning_tiger.aws76.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label"
  }
 }
