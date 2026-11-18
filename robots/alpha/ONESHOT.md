@@ -11,3 +11,8 @@
 Decisions: type lifter; body box rect 85x92x30 mm, ramp 0; wheels 2 r12 inboard; weapon none; extra parts: scoop, link.
 
 Likeness: aws72 0.84 (ok).
+
+## Round 2 (looks)
+Decisions: type lifter; body box rect 85x92x30 mm, ramp 0; wheels 2 r12 inboard; weapon none; extra parts: scoop, link.
+
+Likeness: aws72 0.84 (ok).
