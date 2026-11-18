@@ -1,0 +1,98 @@
+  [ran] integrity 0.01s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 3.48s
+  [ran] connections 0.00s
+  [ran] legal 0.00s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.00s
+  [ran] shape 0.14s
+  [ran] dynamics 0.01s
+  [ran] strength 0.00s
+  [ran] printability 0.37s
+  [ran] process 0.01s
+  [ran] electrical 0.01s
+  [ran] combat 0.04s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.01s
+  [ran] fastener_record 0.00s
+  [ran] likeness 4.57s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.02s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.01s
+  [ran] dfm 0.01s
+  [ran] realworld 0.01s
+flik: ok=False 19 blockers in 19 root causes, mass 234.9/225 g
+1. [mass.over] 234.9 g (range 187.6 to 282.3 g) against the 225 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+2. [proxy.interference] `chassis` and `wheel_l0` overlap by 3.88 mm (allowed 0.08).
+   | chassis: x -40.00..40.00  y -35.00..35.00  z -9.00..31.00  size 80.00 x 70.00 x 40.00 mm
+   |   centre (-0.00, -0.00, 11.00), volume 224000.0 mm3
+   |   OVERLAP `wheel_l0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `flipper` 0.94 mm (allowed 0.08)
+3. [proxy.interference] `chassis` and `wheel_r0` overlap by 3.88 mm (allowed 0.08).
+   | chassis: x -40.00..40.00  y -35.00..35.00  z -9.00..31.00  size 80.00 x 70.00 x 40.00 mm
+   |   centre (-0.00, -0.00, 11.00), volume 224000.0 mm3
+   |   OVERLAP `wheel_l0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `flipper` 0.94 mm (allowed 0.08)
+4. [proxy.interference] `chassis` and `flipper` overlap by 0.94 mm (allowed 0.08).
+   | chassis: x -40.00..40.00  y -35.00..35.00  z -9.00..31.00  size 80.00 x 70.00 x 40.00 mm
+   |   centre (-0.00, -0.00, 11.00), volume 224000.0 mm3
+   |   OVERLAP `wheel_l0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `flipper` 0.94 mm (allowed 0.08)
+5. [proxy.sweep] joint `flipper`: `flipper` hits `chassis` 0.94 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint flipper` lists the closest approach to every part.
+   | flipper: x -48.00..48.00  y -3.60..63.60  z -2.51..40.51  size 96.00 x 67.21 x 43.03 mm
+   |   centre (0.00, 30.00, 19.00), volume 14976.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -5, 41.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.94 mm (allowed 0.08)
+   | chassis: x -40.00..40.00  y -35.00..35.00  z -9.00..31.00  size 80.00 x 70.00 x 40.00 mm
+6. [legal.switch] Rule 4a needs an externally accessible way to shut down that works without tools and is clearly marked on/off.
+   fix: Add a `switch` part (or removable link) with `tool_free: true` and `marked: true` and a visible ON/OFF `label`.
+7. [legal.failsafe] Rule 4d: the robot must stop all motion when the transmitter is off.
+   fix: Set `electronics.failsafe` to true and configure the receiver and ESC failsafe.
+8. [legal.weapon_disable] Rule 4c: all weaponry must be deactivatable by remote control.
+   fix: Set `electronics.weapon_remote_disable` and put the weapon on its own receiver channel.
+9. [power.weapon_motor] `flipper` names motor None; it must be a catalog brushless motor so speed can be computed.
+   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
+   | flipper: x -48.00..48.00  y -3.60..63.60  z -2.51..40.51  size 96.00 x 67.21 x 43.03 mm
+   |   centre (0.00, 30.00, 19.00), volume 14976.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -5, 41.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.94 mm (allowed 0.08)
+10. [process.print_orientation] `wheel_l0` (fdm) has no `print_orientation`.
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_l0: x 31.50..39.50  y -31.00..-9.00  z -11.00..11.00  size 8.00 x 21.99 x 22.00 mm
+   |   centre (35.50, -20.00, 0.00), volume 3041.1 mm3
+   |   OVERLAP `chassis` 3.88 mm (allowed 0.08)
+11. [process.print_orientation] `wheel_r0` (fdm) has no `print_orientation`.
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_r0: x -39.50..-31.50  y -31.00..-9.00  z -11.00..11.00  size 8.00 x 21.99 x 22.00 mm
+   |   centre (-35.50, -20.00, 0.00), volume 3041.1 mm3
+   |   OVERLAP `chassis` 3.88 mm (allowed 0.08)
+12. [process.weapon_printed] Weapon `flipper` is fdm-printed with no hardened metal insert teeth.
+   fix: Make it metal (sheet_cut / turned / milled) or add hardened steel tooth parts (`parent` = the weapon).
+   | flipper: x -48.00..48.00  y -3.60..63.60  z -2.51..40.51  size 96.00 x 67.21 x 43.03 mm
+   |   centre (0.00, 30.00, 19.00), volume 14976.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -5, 41.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.94 mm (allowed 0.08)
+... 7 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 234.9 g of 225 g (-9.9 g margin)
+    chassis                   213.25 g  fills 100% of its box  <- solid block? a tub should be a shell
+    flipper                    14.26 g  fills 5% of its box
+    wheel_l0                    3.10 g  fills 79% of its box
+    wheel_r0                    3.10 g  fills 79% of its box
+    mass.over: 234.9 g (range 187.6 to 282.3 g) against the 225 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 0 hit / 31 miss, inside 0 hit / 4 miss, likeness 2 hit / 0 miss, overlap 15 hit / 28 miss, part_check 0 hit / 1 miss, part_geom 4 hit / 0 miss, ray 0 hit / 20 miss

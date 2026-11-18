@@ -1,0 +1,57 @@
+{
+ "robot_type": "flipper",
+ "body": {
+  "length": 70,
+  "width": 80,
+  "height": 40,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 11,
+  "width": 8,
+  "y": [
+   -20
+  ],
+  "outside": false
+ },
+ "colors": {
+  "body": "#e8d81c",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "box": [
+    96,
+    78,
+    2
+   ],
+   "at": [
+    0,
+    30,
+    30
+   ],
+   "weapon": "flipper",
+   "pivot": [
+    -5,
+    52
+   ],
+   "id": "flipper",
+   "color": "#e8e01c",
+   "rot": [
+    -32,
+    0,
+    0
+   ]
+  }
+ ],
+ "skip_photos": [
+  1
+ ],
+ "name": "flik",
+ "weapon": {
+  "kind": "none"
+ }
+}

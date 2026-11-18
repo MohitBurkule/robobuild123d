@@ -1,0 +1,12 @@
+{
+ "robot_type": "flipper",
+ "wheels": 2,
+ "weapon": {
+  "kind": "flipper",
+  "axis": "x"
+ },
+ "photos": [
+  "flik.aws70.webp",
+  "flik.aws74.webp"
+ ]
+}
