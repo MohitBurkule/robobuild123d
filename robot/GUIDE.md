@@ -147,6 +147,9 @@ position front|middle|rear, width_frac, teeth}, photos: [usable files], mask_thr
 `robot mask ... --thr T --crop x0,y0,x1,y1` the file gives.
 GENERATOR INTENT KEEPS YOUR ADDITIONS: put `reference`, `robot_type`, and hand-made `extra_parts` / `extra_fasteners` /
 `extra_connections` (e.g. idler wheels) in intent.json; every `robot gen build --intent` re-adds them, so no patch scripts.
+LOOKS FIRST: `robot kit kit.json spec.json` builds a shape draft from named numbers (body box / twin pods with a centre
+slot + front ramp, weapon disc/drum/bar size+position+axis+teeth, 2 or 4 wheels anywhere, forks); see `robot/kit.py` doc.
+Only `likeness` judges it; iterate kit numbers with `robot likeness` until the photos match, then do the full build.
 FIRST PROPORTIONS: `robot fit-photo spec.json --length 120 [--weapon-axis x|z]` fits a box + front ramp + weapon
 cylinder to the photo masks (~5 s) and prints width/height/ramp/weapon radius and position in mm. Build to those.
 FAST SHAPE LOOP: `robot likeness spec.json` (~10 s) runs only this gate, names the best camera, the closest template,
