@@ -1,0 +1,13 @@
+{
+ "spec": "/tmp/work10_surprisefuthermucker/robots/surprisefuthermucker/spec.json",
+ "rendered_at": 1795022146.5610857,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "wheel_l1",
+  "wheel_r1",
+  "lid"
+ ],
+ "wires": {}
+}

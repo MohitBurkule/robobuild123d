@@ -1,0 +1,50 @@
+{
+ "robot_type": "wedge",
+ "body": {
+  "length": 85,
+  "width": 58,
+  "height": 26,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 13,
+  "width": 8,
+  "y": [
+   -28,
+   28
+  ]
+ },
+ "colors": {
+  "body": "#f08a1c",
+  "wheel": "#f07a1c",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "box": [
+    40,
+    50,
+    2
+   ],
+   "at": [
+    0,
+    -10,
+    30
+   ],
+   "kind": "plate",
+   "material": "polycarbonate",
+   "process": "laser",
+   "id": "lid",
+   "color": "#e6e6e0"
+  }
+ ],
+ "textured": [
+  0
+ ],
+ "name": "surprisefuthermucker",
+ "weapon": {
+  "kind": "none"
+ }
+}
