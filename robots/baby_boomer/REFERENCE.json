@@ -1,0 +1,11 @@
+{
+ "robot_type": "flipper",
+ "wheels": 4,
+ "weapon": {
+  "kind": "flipper",
+  "axis": "x"
+ },
+ "photos": [
+  "baby_boomer.aws72.webp"
+ ]
+}

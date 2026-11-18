@@ -1,0 +1,60 @@
+{
+ "robot_type": "flipper",
+ "body": {
+  "length": 80,
+  "width": 84,
+  "height": 24,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 11,
+  "width": 8,
+  "y": [
+   -26,
+   26
+  ]
+ },
+ "forks": {
+  "n": 2,
+  "length": 38,
+  "width": 4,
+  "spread": 50,
+  "tilt_deg": 8
+ },
+ "colors": {
+  "body": "#35c935",
+  "wheel": "#b8e04a",
+  "weapon": "#c9cdd3",
+  "fork": "#8a7a5a"
+ },
+ "extras": [
+  {
+   "box": [
+    28,
+    95,
+    5
+   ],
+   "at": [
+    0,
+    12,
+    27
+   ],
+   "weapon": "flipper",
+   "pivot": [
+    -30,
+    26
+   ],
+   "id": "flipper",
+   "color": "#d8e83a"
+  }
+ ],
+ "skip_photos": [
+  0,
+  2
+ ],
+ "name": "baby boomer",
+ "weapon": {
+  "kind": "none"
+ }
+}
