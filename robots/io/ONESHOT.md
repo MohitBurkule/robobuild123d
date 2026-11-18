@@ -10,3 +10,8 @@
 Decisions: type flipper; body box rect 90x80x20 mm, ramp 0; wheels 2 r10 inboard; weapon none; extra parts: flipper; textured masks for indices [0].
 
 Likeness: aws63 0.65 (FAIL).
+
+## Round 2 (looks)
+Decisions: type flipper; body box rect 90x80x20 mm, ramp 0; wheels 2 r10 inboard; weapon none; extra parts: flipper; textured masks for indices [0].
+
+Likeness: aws63 0.65 (FAIL).
