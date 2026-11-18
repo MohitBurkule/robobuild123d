@@ -264,6 +264,8 @@ def verify_incremental(spec, opts=None):
     rep.not_checked = not_checked(r, opts) + (ctx.not_checked if ctx else ["Every geometric check: the spec is not valid"])
     rep.bench_checklist = []
     rep.finish()
+    from .. import autohelp  # measured context, mass budget, jiggle proposal: the same enrichment the full verify does
+    autohelp.enrich(rep, ctx, r)
     if waivers:
         rep.summary["waivers"] = waivers
     return rep, stats

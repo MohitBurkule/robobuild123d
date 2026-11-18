@@ -9,7 +9,7 @@
 {"id": "e09", "prompt": "Vertical drisk, 4 wheel drive with belts.", "expected": {"weapon": {"type": "vspin_drisk", "attachment": "drisk"}, "drive": {"layout": "4WD", "transmission": "belt"}}, "expect_ok": true}
 {"id": "e10", "prompt": "Vertical spinner with two spider discs stacked.", "expected": {"weapon": {"type": "vspin_drisk", "disc_stack": "spider_pair"}}, "expect_ok": true}
 {"id": "e11", "prompt": "Revron-style drisk named 'blender'.", "expected": {"name": "blender", "weapon": {"type": "vspin_drisk"}}, "expect_ok": true}
-{"id": "e12", "prompt": "Drisk robot that runs upside down too.", "expected": {"weapon": {"type": "vspin_drisk"}, "invertible": true}, "expect_ok": true}
+{"id": "e12", "prompt": "Drisk robot that runs upside down too.", "expected": {"weapon": {"type": "vspin_drisk"}, "invertible": true, "drive": {"wheel_dia": 20}}, "expect_ok": true}
 {"id": "e13", "prompt": "Wedge, 4WD belt drive.", "expected": null, "expect_ok": false, "expect_error_codes": ["not_buildable"]}
 {"id": "e14", "prompt": "Lifter but make it experimental, thin forks.", "expected": {"weapon": {"type": "lifter"}, "front": "forks", "options": {"experimental": true, "thin_forks": true}}, "expect_ok": true}
 {"id": "e15", "prompt": "Pusher, fixed random seed 7 so builds repeat.", "expected": {"weapon": {"type": "none_pusher"}, "options": {"seed": 7}}, "expect_ok": true}
