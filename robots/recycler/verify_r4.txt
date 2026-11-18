@@ -1,0 +1,96 @@
+BLOCKERS: 16
+  [cached] integrity 0.00s
+  [proxy] wiring 0.01s
+  [cached] mass 0.00s
+  [proxy] interference 0.28s
+  [cached] connections 0.00s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.00s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.00s
+  [cached] physics 0.00s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [cached] likeness 0.00s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.00s
+  [cached] waiver_audit 0.00s
+  [cached] geom 0.00s
+  [cached] dfm 0.00s
+  [cached] realworld 0.00s
+recycler: ok=False 16 blockers in 14 root causes, mass 335.1/225 g
+1. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `chassis`. (+1 consequences)
+   | weapon: x -52.00..52.00  y 19.93..48.07  z 2.00..32.01  size 104.00 x 28.14 x 30.02 mm
+   |   centre (0.00, 34.00, 17.01), volume 64537.2 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 34.0, 17.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.33 mm (allowed 0.08)
+   |   overlap allowed `lock_pin` 0.78 mm (allowed 1000.00)
+2. [mfg.layer_load] `dt_arm_weapon_0` carries the `weapon` axle but is printed with build direction +z (world [0.0, 0.0, 1.0]), not along the spin axis [1.0, 0.0, 0.0]: impact load peels layers apart. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Print it lying flat so the spin axis is the build direction, or make it a cut metal plate.
+   | dt_arm_weapon_0: x -55.50..-52.50  y 25.00..39.00  z 9.00..22.00  size 3.00 x 14.00 x 13.00 mm
+   |   centre (-54.00, 32.00, 15.50), volume 382.3 mm3
+   |   overlap allowed `chassis` 1.39 mm (allowed inf)
+   |   gap to `dt_shaft_weapon` 0.00 mm (touching)
+   |   gap to `weapon` 0.50 mm
+3. [proxy.wiring] Wire `w_bat_sw` (`el_battery.xt30` to `el_switch.in`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+4. [proxy.wiring] Wire `w_sw_esc` (`el_switch.out` to `el_esc.bat`): its ports moved 36.40 mm since the baseline route.
+   fix: Run the full `wiring` group to re-route it.
+5. [proxy.wiring] Wire `w_m1` (`el_esc.m1` to `dm_wheel_l0.terminals`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+6. [proxy.wiring] Wire `w_m2` (`el_esc.m2` to `dm_wheel_r0.terminals`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+7. [proxy.wiring] Wire `w_sw_wesc` (`el_switch.out` to `el_wesc.bat`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+8. [proxy.wiring] Wire `w_sig_wesc` (`el_esc.wpn` to `el_wesc.rx`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+9. [proxy.wiring] Wire `w_wm` (`el_wesc.motor` to `weapon_motor.phases`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+10. [mass.over] 335.1 g (range 302.1 to 368.0 g) against the 225 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+11. [proxy.interference] `chassis` and `weapon` overlap by 1.33 mm (allowed 0.08).
+   | chassis: x -56.00..56.00  y -31.00..31.00  z -15.00..19.00  size 112.00 x 62.00 x 34.00 mm
+   |   centre (-0.00, 0.00, 2.00), volume 63411.3 mm3
+   |   overlap allowed `dt_arm_weapon_0` 1.39 mm (allowed inf)
+   |   overlap allowed `dt_arm_weapon_1` 1.39 mm (allowed inf)
+   |   OVERLAP `weapon` 1.33 mm (allowed 0.08)
+12. [wire.render_wires] 7 of 7 robot render(s) do not draw all 7 wires: renders/diff_recycler.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_recycler.aws67.webp_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_recycler.aws67_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_recycler.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/pick_recycler.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_recycler.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+... 2 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 335.1 g of 225 g (-110.1 g margin)
+    weapon                    174.25 g  fills 73% of its box  <- solid block? a tub should be a shell
+    chassis                    60.37 g  fills 27% of its box
+    el_battery                 21.50 g  fills 100% of its box  <- solid block? a tub should be a shell
+    dt_shaft_weapon            11.32 g  fills 79% of its box
+    dm_wheel_l0                 9.50 g  fills 63% of its box
+    dm_wheel_r0                 9.50 g  fills 63% of its box
+    weapon_motor                8.60 g  fills 53% of its box
+    wheel_r0                    8.30 g  fills 66% of its box
+    wheel_l0                    8.30 g  fills 66% of its box
+    lid                         7.42 g  fills 55% of its box
+    el_wesc                     5.00 g  fills 94% of its box
+    dt_hub_wheel_r0             2.50 g  fills 77% of its box
+    dt_hub_wheel_l0             2.50 g  fills 77% of its box
+    el_esc                      2.30 g  fills 99% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    lock_pin                    0.37 g  fills 79% of its box
+    dt_arm_weapon_0             0.36 g  fills 70% of its box
+    dt_arm_weapon_1             0.36 g  fills 70% of its box
+    mass.over: 335.1 g (range 302.1 to 368.0 g) against the 225 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 8 hit / 0 miss, group 31 hit / 0 miss, min_gap 37 hit / 0 miss, overlap 191 hit / 0 miss, part_geom 18 hit / 0 miss
