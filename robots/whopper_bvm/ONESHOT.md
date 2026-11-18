@@ -28,7 +28,7 @@ Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
 - catalog parts added in free space inside the printed parts with 0.25 mm pockets: `dm_wheel_l0` (pololu_hpcb6v_50to1), `dm_wheel_r0` (pololu_hpcb6v_50to1), `el_battery` (lipo_2s_180), `el_esc` (bbb_malenki_nano), `el_switch` (switch_slide_12x4)
 - overlaps resolved by cuts that keep the union of the parts (pockets, bores, wheel and spinner running clearance)
-- one print with the chassis (same material, `fused_with`): `side_fin`
+- one print with the chassis (same material, `fused_with`): `side_fin`, `dt_hub_wheel_l0`, `dt_hub_wheel_r0`, `dt_mount_fork_0`, `dt_mount_fork_1`, `dt_mount_fork_2`, `dt_mount_fork_3`
 - 4 wires declared (battery - switch - ESC - motors)
 - print orientation on every printed part, failsafe / weapon disable declared, design volumes declared where this pass changed a part on purpose
 - power switch on the floor of the body, slider facing down to a 7 x 3 mm slot in the underside (no slot on the top or sides; hollow cavities stay closed behind a wall at every outside face)
@@ -37,9 +37,9 @@ Fixed / changed (inside only, outside kept):
 - no screw line found for fork_1
 - no screw line found for fork_2
 - no screw line found for fork_3
-- rod dt_axle_wheel_l0: 2.2 mm stub clear of ['dm_wheel_l0'] printed as the wheel's hub boss
-- rod dt_axle_wheel_r0: 2.2 mm stub clear of ['dm_wheel_r0'] printed as the wheel's hub boss
-- hollowed chassis (wall 2.87, form 1): 174.7 -> 75.0 cm3
+- rod dt_axle_wheel_l0: 2.8 mm stub clear of ['dm_wheel_l0'] printed as the wheel's hub boss
+- rod dt_axle_wheel_r0: 2.8 mm stub clear of ['dm_wheel_r0'] printed as the wheel's hub boss
+- hollowed chassis (wall 2.87, form 1): 174.7 -> 79.8 cm3
 
 Left (and why):
 - connection.cover_fasteners x1: `side_fin` is an armour / cover panel held by 0 fastener(s); it needs >= 2 real screws. Snap, press-fit or tape retention alone lets it peel off on the first hit.
