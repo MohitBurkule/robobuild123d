@@ -46,7 +46,7 @@ Likeness: aws72 0.76 (FAIL), aws74 0.72 (FAIL), aws76 0.49 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/mutant.aws76.webp` is declared `front` (IoU 0.49 there) but the model matches it better from rear_right_iso (elevation 45, azim
 
 ## Round 4 (verification, helper 2)
-Blockers r3 62 -> r4 28 (`verify --tier inner`).
+Blockers r3 62 -> r4 35 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -62,26 +62,31 @@ Fixed / changed (inside only, outside kept):
 - drive_l: catalog bbb_n20_600rpm -> pololu_hpcb6v_50to1 (same N20 size, has stall current)
 - drive_r: catalog bbb_n20_600rpm -> pololu_hpcb6v_50to1 (same N20 size, has stall current)
 - weapon drive: motor not coaxial, belt drive implied
+- pod_l: a cut was not made (it would open 56 mm2 of outside face; the overlap stays as a finding)
+- pod_r: a cut was not made (it would open 41 mm2 of outside face; the overlap stays as a finding)
 - weapon: running-clearance well in bridge not carved (it would open 34 mm2 of outside face)
 - overlaps left: drive_l/drive_r 2.89, el_esc/lock_pin 1.16
 - rod cam_shaft_l shortened to 18.7 mm clear of ['drive_l']
 - rod cam_shaft_r shortened to 18.7 mm clear of ['drive_r']
-- mass estimate 272 g over 225: walls 2 mm -> 257 g
-- mass estimate 257 g over 225: walls 1.6 mm -> 245 g
-- hollowed pod_l (wall 1.6, form 0): 161.3 -> 47.4 cm3
-- hollowed pod_r (wall 1.6, form 0): 161.3 -> 48.3 cm3
+- mass estimate 277 g over 225: walls 2 mm -> 262 g
+- mass estimate 262 g over 225: walls 1.6 mm -> 250 g
+- hollowed pod_l (wall 1.6, form 0): 161.3 -> 50.0 cm3
+- hollowed pod_r (wall 1.6, form 0): 161.3 -> 50.9 cm3
 - hollowed bridge (wall 1.6, form 0): 14.4 -> 6.5 cm3
 - hollowed skirt_l (wall 1.6, form 0): 8.0 -> 5.7 cm3
 - hollowed skirt_r (wall 1.6, form 0): 8.0 -> 5.7 cm3
 
 Left (and why):
+- integrity.solids x2: `pod_l` has 0 closed solid(s) and 1 open/invalid shell(s), expected 1 (49729 mm3). A boolean or fillet probably collapsed the build.
 - mass.over x1: the photo-sized outside (steel weapon / big printed shell) is heavier than 150 g even hollowed; only a smaller outside would fix it.
-- proxy.interference x4: `pod_l` and `leg_cam_l1` overlap by 0.12 mm (allowed 0.08).
+- proxy.interference x6: `pod_l` and `leg_cam_l1` overlap by 0.12 mm (allowed 0.08).
 - proxy.sweep x10: joint `weapon`: `weapon` turning a full revolution may reach `bridge`.
 - connection.cover_fasteners x2: `front_plate_l` is an armour / cover panel held by 1 fastener(s); it needs >= 2 real screws. Snap, press-fit or tape retention alone lets it peel off on the first hit.
 - mfg.stock x2: `front_plate_l` (laser): thickness 1.30 mm is not a stock aluminium gauge (0.5, 0.8, 1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10, 12); nearest 1.2 mm.
+- fit.interference x2: `drive_l` overlaps wall `pod_l` by 4.88 mm: it will not go in. No side has 5.08 mm free (free room per side {'-x': 1.5, '+x': 0.26, '-y': 0.25, '+y': 0.25, '-z': 0.25, '+z': -0.0}): grow the pocket or
 - wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
 - wire.rotor_clearance x3: toolchain: same full-revolution assumption; wires cannot leave a cylinder that covers the chassis.
+- wire.render_count x1: iso.png: 1 routes vs 7 spec wires (missing ['w_bat_sw', 'w_m1', 'w_m2']); top.png: 1 routes vs 7 spec wires (missing ['w_bat_sw', 'w_m1', 'w_m2'])
 - likeness.silhouette x3: looks, not in scope for this pass.
 - likeness.view x1: looks, not in scope for this pass.
 - battery.rotor_gap x1: toolchain: same full-revolution assumption for a limited-range arm.

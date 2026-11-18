@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_mutant/robots/mutant/spec.json",
- "rendered_at": 1795023540.370377,
+ "rendered_at": 1795037950.2867765,
  "bodies": [
   "pod_l",
   "pod_r",
@@ -16,7 +16,33 @@
   "fin_r",
   "leg_cam_r0",
   "leg_cam_r1",
-  "switch"
+  "switch",
+  "dt_shaft_weapon",
+  "cam_shaft_l",
+  "drive_l",
+  "cam_shaft_r",
+  "drive_r",
+  "el_battery",
+  "el_esc",
+  "el_wesc",
+  "el_switch",
+  "weapon_motor",
+  "lock_pin",
+  "fs_front_plate_l_0",
+  "fs_front_plate_r_0"
  ],
- "wires": {}
+ "wires": {
+  "w_sw_wesc": {
+   "from": [
+    17.5,
+    -11.5,
+    -12.0
+   ],
+   "to": [
+    14.5,
+    2.5,
+    12.0
+   ]
+  }
+ }
 }
