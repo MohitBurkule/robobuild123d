@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_immovable_object/robots/immovable_object/spec.json",
- "rendered_at": 1795023508.1104112,
+ "rendered_at": 1795036624.893272,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -11,7 +11,22 @@
   "fork_1",
   "fork_2",
   "fork_3",
-  "shield"
+  "shield",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_hub_wheel_l1",
+  "dt_hub_wheel_r1",
+  "dt_mount_fork_0",
+  "dt_mount_fork_1",
+  "dt_mount_fork_2",
+  "dt_mount_fork_3",
+  "dm_wheel_l1",
+  "dm_wheel_r1",
+  "el_battery",
+  "el_esc",
+  "el_switch"
  ],
  "wires": {}
 }
