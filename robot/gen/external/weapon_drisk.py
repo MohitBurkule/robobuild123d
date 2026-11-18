@@ -71,6 +71,10 @@ def upright_profile(yf, zb, zt, axis_yz, pin_yz, hook=True, foot_len=None):
                      + _circle(axis_yz, AXIS_BOSS_R) + _circle(pin_yz, 4.0)
                      + [q for dy, dz in STATOR_SCREWS for q in _circle((ay + dy, az + dz), 3.5)]).convex_hull
     shape = (foot.union(arm).union(tab) if hook else foot.union(arm)).simplify(0.01)
+    if shape.geom_type != "Polygon":
+        raise ValueError(f"vspin_drisk upright: body top zt {zt:g} is too low; the upright arm starts at {ARM_LOW:g} mm (above "
+                         f"the foot screw's driver path) and must touch the foot, so zt >= {ARM_LOW - TAB_T:g}. Raise zt or "
+                         "use bigger wheels; a flatter vertical spinner needs a different upright (not in the generator yet).")
     return [(round(x, 3), round(y, 3)) for x, y in list(shape.exterior.coords)[:-1]]
 
 
@@ -246,16 +250,17 @@ WEAPON_SPEC = {"kind": "disc", "motor": "weapon_motor", "cells": 2, "reduction":
 
 
 def _single_disc(plan, xm):
-    disc = spinner.disc_shape(DISC_R, DISC_T, HUB_BORE_R, _disc_holes(4.0))
+    nt = int(plan.extra.get("teeth", 2))
+    disc = spinner.disc_shape(DISC_R, DISC_T, HUB_BORE_R, _disc_holes(4.0), teeth=nt)
     # the disc hangs on the motor (parent) with a revolute joint about the motor axis (motor frame = world axes)
     plan.part(id="weapon", kind="weapon", material="steel", process="laser", shape=disc,
               parent="weapon_motor", at=[-xm, 0.0, 0.0], rot=[0.0, 90.0, 0.0], rotates_with="weapon",
               joint={"kind": "revolute", "axis": [1, 0, 0], "pivot": [-xm, 0.0, 0.0], "min": 0, "max": 360, "default": 0},
               color="#d9dde2", organic=True,
               intent=I("load_path", "the disc stores the energy and delivers it at the teeth; teeth are in the "
-                       "laser outline (no bolted teeth to loosen)", f"r {DISC_R} x {DISC_T} mm steel, 2 teeth, holes balanced", threats=["vspin_front", "under_front"]),
-              weapon=dict(WEAPON_SPEC),
-              label=f"{DISC_T:g} mm steel disc, {2 * DISC_R:g} mm, 2 hooked teeth in the outline, laser cut")
+                       "laser outline (no bolted teeth to loosen)", f"r {DISC_R} x {DISC_T} mm steel, {nt} teeth, holes balanced", threats=["vspin_front", "under_front"]),
+              weapon={**WEAPON_SPEC, "teeth": nt},
+              label=f"{DISC_T:g} mm steel disc, {2 * DISC_R:g} mm, {nt} hooked teeth in the outline, laser cut")
 
 
 def _spider_pair(plan, xs, xm):
