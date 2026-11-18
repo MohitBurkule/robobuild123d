@@ -8,5 +8,15 @@
   "zero.aws71.webp",
   "zero.aws74.webp",
   "zero.aws76.webp"
- ]
+ ],
+ "view": {
+  "zero.aws71.webp": "front_left_iso",
+  "zero.aws74.webp": "front_left_iso",
+  "zero.aws76.webp": "front_left_iso"
+ },
+ "elevation": {
+  "zero.aws71.webp": 45,
+  "zero.aws74.webp": 25,
+  "zero.aws76.webp": 25
+ }
 }
