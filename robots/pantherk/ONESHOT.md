@@ -14,7 +14,7 @@ Decisions: type wedge; body twin_pods rect 102x86x22 mm, ramp 30; wheels 4 r12 o
 Likeness: aws66 0.71 (FAIL), aws67 0.79 (FAIL), aws68 0.66 (FAIL).
 
 ## Round 4 (verification, helper 2)
-Blockers r3 86 -> r4 32 (`verify --tier inner`).
+Blockers r3 86 -> r4 33 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -40,6 +40,7 @@ Left (and why):
 - mfg.stock x1: `picture` (laser): thickness 0.80 mm is not a stock polycarbonate gauge (0.5, 0.75, 1, 1.5, 2, 3, 4, 5, 6); nearest 0.75 mm.
 - proxy.assembly x19: `pod_r`: the baseline teardown never took it off.
 - wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
+- wire.render_count x1: iso.png: 2 routes vs 4 spec wires (missing ['w_bat_sw', 'w_m1']); top.png: 2 routes vs 4 spec wires (missing ['w_bat_sw', 'w_m1'])
 - likeness.silhouette x3: looks, not in scope for this pass.
 
-Likeness (best silhouette IoU per photo, r3 -> r4): pantherk_ii.aws66.webp 0.71 -> 0.71; pantherk_ii.aws67.webp 0.79 -> 0.79; pantherk_ii.aws68.webp 0.66 -> 0.66
+Likeness (best silhouette IoU per photo, r3 -> r4): pantherk_ii.aws66.webp 0.64 -> 0.65; pantherk_ii.aws67.webp 0.79 -> 0.79; pantherk_ii.aws68.webp 0.66 -> 0.66

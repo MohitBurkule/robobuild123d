@@ -1,39 +1,40 @@
-BLOCKERS: 32
-  [cached] integrity 0.01s
+BLOCKERS: 33
+building 2 changed part solids on 2 processes
+  [ran] integrity 0.10s
   [proxy] wiring 0.00s
-  [cached] mass 0.00s
-  [proxy] interference 0.16s
-  [cached] connections 0.00s
-  [cached] legal 0.00s
-  [cached] fasteners 0.00s
-  [cached] power 0.00s
-  [cached] tension 0.00s
-  [cached] targets 0.00s
-  [cached] fight 0.00s
-  [cached] shape 0.00s
-  [cached] dynamics 0.00s
-  [cached] strength 0.00s
-  [cached] printability 0.00s
-  [cached] process 0.00s
-  [cached] electrical 0.00s
-  [cached] combat 0.00s
-  [cached] physics 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 10.15s
+  [ran] connections 1.44s
+  [ran] legal 0.02s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.02s
+  [ran] shape 0.23s
+  [ran] dynamics 0.01s
+  [ran] strength 0.00s
+  [ran] printability 1.40s
+  [ran] process 0.00s
+  [ran] electrical 0.00s
+  [ran] combat 0.11s
+  [ran] physics 0.00s
   [proxy] assembly 0.00s
-  [cached] plausibility 0.00s
-  [cached] cots 0.00s
-  [cached] fit 0.00s
-  [cached] bom 0.00s
-  [cached] wire_review 0.00s
-  [cached] fastener_record 0.00s
-  [cached] likeness 0.00s
-  [cached] drive_recess 0.00s
-  [cached] belt_wrap 0.00s
-  [cached] retention 0.00s
-  [cached] waiver_audit 0.01s
-  [cached] geom 0.00s
-  [cached] dfm 0.00s
-  [cached] realworld 0.00s
-Pantherk II: ok=False 32 blockers in 27 root causes, mass 142.8/150 g
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.04s
+  [ran] bom 0.00s
+  [ran] wire_review 0.01s
+  [ran] fastener_record 0.00s
+  [ran] likeness 6.21s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.15s
+  [ran] dfm 0.18s
+  [ran] realworld 0.08s
+Pantherk II: ok=False 33 blockers in 28 root causes, mass 142.6/150 g
 1. [process.geometry] `top_plate` (laser): 3 planar levels along the plate normal (0.00, 0.10, 2.00 mm): a blind pocket, step or a feature standing proud of the plate; a cut part has exactly two faces. (+1 consequences)
    fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
    | top_plate: x -39.00..39.00  y -47.00..15.00  z 12.00..14.00  size 78.00 x 62.00 x 2.00 mm
@@ -98,11 +99,11 @@ Pantherk II: ok=False 32 blockers in 27 root causes, mass 142.8/150 g
    |   gap to `top_plate` 0.00 mm (touching)
    |   gap to `pod_l` 1.90 mm
    |   gap to `pod_r` 1.90 mm
-... 15 more root causes (fix these first, then re-run)
+... 16 more root causes (fix these first, then re-run)
 MASS BUDGET:
-  mass 142.8 g of 150 g (+7.2 g margin)
-    pod_r                      27.88 g  fills 41% of its box
-    pod_l                      27.45 g  fills 40% of its box
+  mass 142.6 g of 150 g (+7.4 g margin)
+    pod_r                      27.74 g  fills 41% of its box
+    pod_l                      27.39 g  fills 40% of its box
     bridge                     13.13 g  fills 47% of its box
     el_battery                 12.50 g  fills 100% of its box
     top_plate                  12.20 g  fills 97% of its box
@@ -121,6 +122,6 @@ MASS BUDGET:
     dt_axle_wheel_l0            1.09 g  fills 79% of its box
     dt_axle_wheel_r0            1.09 g  fills 79% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.may_be_over: 142.8 g (range 118.5 to 167.0 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.may_be_over: 142.6 g (range 118.4 to 166.7 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: group 31 hit / 0 miss, min_gap 46 hit / 0 miss, overlap 280 hit / 0 miss, part_geom 20 hit / 0 miss
+cache: group 0 hit / 31 miss, inside 14 hit / 3 miss, likeness 3 hit / 0 miss, min_gap 59 hit / 28 miss, overlap 171 hit / 126 miss, part_check 11 hit / 2 miss, part_geom 20 hit / 0 miss, ray 107 hit / 37 miss
