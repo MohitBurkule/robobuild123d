@@ -2,7 +2,7 @@
  "name": "slipper",
  "profile": "aws2025",
  "robot_type": "flipper",
- "locomotion": "wheels",
+ "locomotion": "roller",
  "kit_draft": true,
  "parts": [
   {
@@ -197,12 +197,6 @@
   {
    "image": "reference/slipper.aws62.webp",
    "mask": "reference/slipper.aws62_mask.png",
-   "view": "iso",
-   "approximate": true
-  },
-  {
-   "image": "reference/slipper.aws64.webp",
-   "mask": "reference/slipper.aws64_mask.png",
    "view": "iso",
    "approximate": true
   }

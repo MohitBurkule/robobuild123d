@@ -6,11 +6,9 @@
   "axis": "x"
  },
  "photos": [
-  "slipper.aws62.webp",
-  "slipper.aws64.webp"
+  "slipper.aws62.webp"
  ],
  "mask_mode": {
-  "slipper.aws62.webp": "textured",
-  "slipper.aws64.webp": "textured"
+  "slipper.aws62.webp": "textured"
  }
 }
