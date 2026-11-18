@@ -16,3 +16,8 @@ Likeness: aws72 0.84 (ok).
 Decisions: type other; body box pentagon 100x92x42 mm, ramp 40; wheels 2 r11 inboard; weapon none; extra parts: hammer_arm, hammer_head; photos skipped (cluttered): indices [0, 1].
 
 Likeness: aws72 0.84 (ok).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type other; body box pentagon 100x92x42 mm, ramp 40; wheels 2 r11 inboard; weapon none; extra parts: hammer_arm, hammer_head, skirt; photos skipped (cluttered): indices [0, 1].
+
+Likeness: aws72 0.72 (FAIL).

@@ -54,29 +54,37 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "skip_photos": [
+  0,
+  1
+ ],
+ "name": "dantomthor",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "side": [
     [
-     -5,
+     -6,
      30
     ],
     [
-     5,
+     6,
      26
     ],
     [
-     -38,
-     74
+     -62,
+     104
     ],
     [
-     -44,
-     70
+     -70,
+     98
     ]
    ],
    "x": [
-    -4,
-    4
+    -5,
+    5
    ],
    "weapon": "axe",
    "pivot": [
@@ -88,25 +96,48 @@
   },
   {
    "box": [
-    14,
-    4,
-    16
+    26,
+    5,
+    22
    ],
    "at": [
     0,
-    -42,
-    78
+    -66,
+    104
    ],
    "id": "hammer_head",
    "color": "#b9bdc2"
+  },
+  {
+   "side": [
+    [
+     44,
+     0
+    ],
+    [
+     74,
+     0
+    ],
+    [
+     74,
+     2
+    ],
+    [
+     50,
+     16
+    ],
+    [
+     44,
+     16
+    ]
+   ],
+   "x": [
+    -50,
+    50
+   ],
+   "kind": "wedge",
+   "id": "skirt",
+   "color": "#c8283a"
   }
- ],
- "skip_photos": [
-  0,
-  1
- ],
- "name": "dantomthor",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }

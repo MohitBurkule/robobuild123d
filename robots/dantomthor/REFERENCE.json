@@ -7,5 +7,15 @@
  },
  "photos": [
   "dantomthor.aws72.webp"
- ]
+ ],
+ "view": {
+  "dantomthor.aws65.webp": "front",
+  "dantomthor.aws70.webp": "front",
+  "dantomthor.aws72.webp": "front_left_iso"
+ },
+ "elevation": {
+  "dantomthor.aws65.webp": 70,
+  "dantomthor.aws70.webp": 25,
+  "dantomthor.aws72.webp": 45
+ }
 }
