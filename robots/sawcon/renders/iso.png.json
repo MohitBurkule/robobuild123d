@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_sawcon/robots/sawcon/spec.json",
- "rendered_at": 1795024638.9652545,
+ "rendered_at": 1795038102.513243,
  "bodies": [
   "pod_l",
   "pod_r",
@@ -12,7 +12,27 @@
   "wheel_r1",
   "plow",
   "plow_face",
-  "arm"
+  "arm",
+  "arm_mount",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_nut_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_nut_wheel_r0",
+  "dt_hub_wheel_l1",
+  "dt_axle_wheel_l1",
+  "dt_nut_wheel_l1",
+  "dt_hub_wheel_r1",
+  "dt_axle_wheel_r1",
+  "dt_nut_wheel_r1",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3",
+  "dt_screw_4",
+  "dt_screw_5",
+  "dt_shaft_weapon"
  ],
  "wires": {}
 }

@@ -10,13 +10,9 @@
   "sawcon.aws67.webp"
  ],
  "view": {
-  "sawcon.aws66.webp": "front",
-  "sawcon.aws67.webp": "front_left_iso",
-  "sawcon.aws70.webp": "front"
+  "sawcon.aws67.webp": "front_left_iso"
  },
- "elevation": {
-  "sawcon.aws66.webp": 25,
-  "sawcon.aws67.webp": 45,
-  "sawcon.aws70.webp": 70
+ "view_source": {
+  "sawcon.aws67.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label"
  }
 }

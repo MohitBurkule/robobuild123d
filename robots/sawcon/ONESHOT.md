@@ -56,3 +56,8 @@ Left (one line each):
 - process.geometry x1: kit weapon shape is not a pure 2D/3-axis profile for its process (look)
 - wire.render_wires x1: toolchain/process: the photo-match, diff and likeness sheets are written without a render record of the wire routes
 - likeness.silhouette x1: looks (not part of this pass; outside shape kept as round 3)
+
+## Round 3d (user camera picks batch 2 + shape remarks applied; round 4 to be re-run on the new outside)
+Decisions: type vertical_spinner; body twin_pods rect 90x96x22 mm, ramp 0; wheels 4 r11 outboard; weapon disc r17 axis x teeth 8; extra parts: plow, plow_face, arm, arm_mount; photos skipped (cluttered): indices [0, 2].
+
+Likeness: aws67 0.76 (FAIL).
