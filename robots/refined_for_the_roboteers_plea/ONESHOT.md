@@ -29,3 +29,11 @@ Looks alike: **partly**. Renders: `renders/iso.png`, `renders/top.png`.
 Toothed gear, thicker forward-leaning arm with servo saddle, longer plough with angled wings.
 
 Likeness: aws74 0.70 (FAIL), aws76 0.66 (FAIL).
+
+## Tools I wanted
+- `robot looks SPEC` (build + iso/top + likeness + diff sheets in one pass, batchable). Did instead: four CLI calls per robot, ~3-4 min wall each.
+
+## Round 2 (looks)
+Decisions: type other; body box rect 75x70x22 mm, ramp 0; wheels 2 r13 outboard; weapon disc r11 axis x teeth 6.
+
+Likeness: aws74 0.69 (FAIL), aws76 0.67 (FAIL).
