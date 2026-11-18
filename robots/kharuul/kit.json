@@ -21,7 +21,11 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "name": "kharuul",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "box": [
     110,
@@ -56,9 +60,5 @@
    "id": "label",
    "color": "#7ab8e0"
   }
- ],
- "name": "kharuul",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }

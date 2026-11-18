@@ -17,3 +17,9 @@ Likeness: aws67 0.75 (FAIL).
 Decisions: type wedge; body box rect 80x78x24 mm, ramp 0; wheels 4 r12 outboard; weapon none; extra parts: scoop, label.
 
 Likeness: aws67 0.75 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type wedge; body box rect 80x78x24 mm, ramp 0; wheels 4 r12 outboard; weapon none; extra parts: scoop, label.
+
+Likeness: aws67 0.65 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/kharuul.aws67.webp` is declared `front_left_iso` (IoU 0.65 there) but the model matches it better from rear_left_iso (elevation

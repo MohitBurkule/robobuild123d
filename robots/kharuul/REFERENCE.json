@@ -6,5 +6,11 @@
  },
  "photos": [
   "kharuul.aws67.webp"
- ]
+ ],
+ "view": {
+  "kharuul.aws67.webp": "front_left_iso"
+ },
+ "elevation": {
+  "kharuul.aws67.webp": 45
+ }
 }
