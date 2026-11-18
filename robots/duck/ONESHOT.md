@@ -30,3 +30,11 @@ Looks alike: **partly**. Renders: `renders/iso.png`, `renders/top.png`.
 Dark body with rounded tail plan, curved rear hooks, salmon front pad plus steel lip. Weapon axis restored in REFERENCE.json.
 
 Likeness: aws67 0.80 (FAIL), aws71 0.66 (FAIL), aws72 0.75 (FAIL).
+
+## Tools I wanted
+- `robot looks SPEC` (build + iso/top + likeness + diff sheets in one pass, batchable). Did instead: four CLI calls per robot, ~3-4 min wall each.
+
+## Round 2 (looks)
+Decisions: type flipper; body box rect 120x110x31 mm, ramp 85; wheels 2 r12 inboard; weapon none.
+
+Likeness: aws67 0.80 (FAIL), aws71 0.66 (FAIL), aws72 0.75 (FAIL).
