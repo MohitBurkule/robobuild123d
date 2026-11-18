@@ -1,0 +1,11 @@
+{
+ "spec": "/tmp/work10_mini_e/robots/mini_e/spec.json",
+ "rendered_at": 1795022279.5515108,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "wedge"
+ ],
+ "wires": {}
+}

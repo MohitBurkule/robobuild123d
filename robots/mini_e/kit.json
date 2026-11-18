@@ -1,0 +1,65 @@
+{
+ "robot_type": "wedge",
+ "body": {
+  "length": 72,
+  "width": 100,
+  "height": 22,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 12,
+  "width": 10,
+  "y": [
+   -10
+  ],
+  "outside": false,
+  "x": 36
+ },
+ "colors": {
+  "body": "#1f2a26",
+  "wheel": "#2a2c30",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "side": [
+    [
+     34,
+     2
+    ],
+    [
+     66,
+     0
+    ],
+    [
+     66,
+     1.5
+    ],
+    [
+     40,
+     24
+    ],
+    [
+     34,
+     24
+    ]
+   ],
+   "x": [
+    -56,
+    56
+   ],
+   "kind": "wedge",
+   "id": "wedge",
+   "color": "#e8322a"
+  }
+ ],
+ "skip_photos": [
+  0
+ ],
+ "name": "mini e",
+ "weapon": {
+  "kind": "none"
+ }
+}
