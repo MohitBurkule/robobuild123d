@@ -26,32 +26,32 @@ Decisions: type flipper; body box rect 95x100x28 mm, ramp 35; wheels 2 r14 inboa
 Likeness: aws69 0.85 (ok).
 
 ## Round 4 (verification, helper 1)
-Blockers r3 -> r4: **63 -> 12** (`verify --tier inner`, full output in verify_r4.txt).
-Likeness (best silhouette IoU per photo, r3 -> r4): flippant.aws69.webp 0.850 -> 0.849
+Blockers r3 -> r4: **63 -> 11** (`verify --tier inner`, full output in verify_r4.txt).
+Likeness (best silhouette IoU per photo, r3 -> r4): flippant.aws69.webp 0.873 -> 0.873
 
 What was done (script r4_h1, outside shape kept):
 - fake screw/bolt heads removed; detail mounts/arms merged into the print part they sit on; axle nuts became printed hub caps
 - printed parts of the chassis material declared one print (`fused_with`, a hidden 1.6 mm key where they only touched); overlaps inside the print trimmed
 - catalog parts: N20 gearmotors on the drive wheels (D-bore in the hub), LiPo, Malenki Nano (receiver + drive ESCs), brushless weapon ESC and outrunner for spinners, slide switch in a closed pocket above the belly skin, reached through an 8 x 4 mm slot underneath, steel locking pin through the weapon
 - pockets 0.25 mm per side round every bought part with 2 mm print walls, wheel/weapon running clearances <= 1.5 mm (no clearance cut where the kit rotor sits deep in the body: that would open the outside), hinge sweep clearances, shaft bores
-- big print parts hollowed (cavity = part eroded by the wall, checked >= 1 mm inside the skin, no cavity opens to the outside); wires with gauges and via points round rotors; print orientation, failsafe and weapon disable declared
+- big print parts hollowed (cavity = part eroded by the wall, checked >= 1 mm inside the skin, no cavity opens to the outside); wires with gauges; print orientation, failsafe and weapon disable declared
+- wiring channels (round 4b): one 4.8 mm channel per wire cut inside the print from port to port (axis >= 5 mm under the outer skin, so >= 1.5 mm of skin stays and the outside is unchanged), clear of bought parts and of every rotor/arm sweep, widened up to 6.8 mm where wires share a run
+- renders: `renders/iso.png` (first photo's camera) and `renders/top.png` re-rendered with the wire routes and a render record (4 of 4 wires routed and drawn); photo comparison sheets (diff/likeness/match/pick/view) moved to `compare/`
 
 Notes from the run:
 - dt_axle_wheel_l0 replaced by the gearmotor shaft
 - dt_axle_wheel_r0 replaced by the gearmotor shaft
+- el_battery: placed with 4.0 mm of lead room round it
+- el_rx_esc: placed with 4.0 mm of lead room round it
 - joint hoop_l: 0.9 mm sweep clearance cut in chassis
 - joint hoop_l: 0.9 mm sweep clearance cut in lid
 - joint hoop_r: 0.9 mm sweep clearance cut in chassis
 - joint hoop_r: 0.9 mm sweep clearance cut in lid
-- chassis: hollowed (box wall round pockets), 186793 -> 79058 mm3
-- wire w_bat_sw: no via round the rotor found
-- wire w_sw_esc: no via round the rotor found
-- wire w_m1: no via round the rotor found
-- wire w_m2: no via round the rotor found
+- chassis: hollowed (box wall round pockets), 186794 -> 79450 mm3
+- wiring channels: 4 of 4 wires have a 4.8 mm channel inside the print, every piece >= 2 mm under the outer skin
 
 Left (one line each):
 - wire.rotor_clearance x5: toolchain for lifters/flippers: the check revolves a limited-range arm a full turn, so no wire inside the chassis can clear it; for spinners: no free route found
 - power.weapon_motor x2: toolchain: a servo/arm weapon is required to have a brushless kV motor like a spinner
 - process.weapon_printed x2: toolchain: printed lifter/flipper arms are judged like spinner teeth (metal inserts required)
 - geom.tiny_edge x2: see verify_r4.txt root causes
-- wire.render_wires x1: toolchain/process: the photo-match, diff and likeness sheets are written without a render record of the wire routes
