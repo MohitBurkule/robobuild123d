@@ -8,3 +8,8 @@
 Decisions: type vertical_spinner; body box rect 75x46x24 mm, ramp 0; wheels 2 r11 inboard; weapon bar r42 axis x teeth 2; 2 forks 62 mm; extra parts: motor, upright.
 
 Likeness: aws76 0.52 (FAIL).
+
+## Round 2 (looks)
+Decisions: type vertical_spinner; body box rect 90x40x24 mm, ramp 0; wheels 2 r11 inboard; weapon bar r44 axis x teeth 2; extra parts: motor, upright, fork.
+
+Likeness: aws76 0.45 (FAIL).

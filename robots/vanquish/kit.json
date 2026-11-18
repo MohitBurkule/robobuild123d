@@ -1,8 +1,8 @@
 {
  "robot_type": "vertical_spinner",
  "body": {
-  "length": 75,
-  "width": 46,
+  "length": 90,
+  "width": 40,
   "height": 24,
   "ramp": 0
  },
@@ -17,21 +17,15 @@
  },
  "weapon": {
   "kind": "bar",
-  "radius": 42,
+  "radius": 44,
   "width": 4,
-  "y": 22,
+  "y": 26,
   "teeth": 2,
-  "x": -16,
-  "bar_width": 16,
-  "z": 44,
+  "x": -14,
+  "bar_width": 22,
+  "curve": 10,
+  "z": 46,
   "axis": "x"
- },
- "forks": {
-  "n": 2,
-  "length": 62,
-  "width": 5,
-  "spread": 62,
-  "tilt_deg": 8
  },
  "colors": {
   "body": "#1c1d20",
@@ -67,6 +61,34 @@
    ],
    "id": "upright",
    "color": "#1c1d20"
+  },
+  {
+   "top": [
+    [
+     14,
+     30
+    ],
+    [
+     22,
+     30
+    ],
+    [
+     48,
+     110
+    ],
+    [
+     44,
+     111
+    ]
+   ],
+   "z": [
+    0,
+    5
+   ],
+   "color": "#dfeee6",
+   "mirror": true,
+   "kind": "wedge",
+   "id": "fork"
   }
  ],
  "name": "vanquish"

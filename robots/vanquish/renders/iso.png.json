@@ -1,15 +1,15 @@
 {
  "spec": "/tmp/work10_vanquish/robots/vanquish/spec.json",
- "rendered_at": 1795022359.0904334,
+ "rendered_at": 1795023370.6537886,
  "bodies": [
   "chassis",
   "weapon",
   "wheel_l0",
   "wheel_r0",
-  "fork_0",
-  "fork_1",
   "motor",
-  "upright"
+  "upright",
+  "fork_l",
+  "fork_r"
  ],
  "wires": {}
 }
