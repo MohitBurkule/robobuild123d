@@ -2,7 +2,7 @@
  "name": "mutant",
  "profile": "aws2025",
  "robot_type": "vertical_spinner",
- "locomotion": "shuffler",
+ "locomotion": "walker",
  "kit_draft": true,
  "parts": [
   {
@@ -527,11 +527,11 @@
        -19
       ],
       [
-       72,
+       60,
        -21
       ],
       [
-       72,
+       60,
        -20.2
       ],
       [
@@ -673,13 +673,13 @@
     "type": "place",
     "shape": {
      "type": "cylinder",
-     "radius": 18,
+     "radius": 20,
      "height": 9
     },
     "at": [
      31,
      -9.6,
-     4
+     5
     ],
     "rot": [
      0.0,
@@ -708,13 +708,13 @@
     "type": "place",
     "shape": {
      "type": "cylinder",
-     "radius": 20,
+     "radius": 22,
      "height": 9
     },
     "at": [
      41,
      -6.0,
-     4
+     5
     ],
     "rot": [
      0.0,
@@ -749,11 +749,11 @@
        -19
       ],
       [
-       72,
+       60,
        -21
       ],
       [
-       72,
+       60,
        -20.2
       ],
       [
@@ -895,13 +895,13 @@
     "type": "place",
     "shape": {
      "type": "cylinder",
-     "radius": 18,
+     "radius": 20,
      "height": 9
     },
     "at": [
      -31,
      -9.6,
-     4
+     5
     ],
     "rot": [
      0.0,
@@ -930,13 +930,13 @@
     "type": "place",
     "shape": {
      "type": "cylinder",
-     "radius": 20,
+     "radius": 22,
      "height": 9
     },
     "at": [
      -41,
      -6.0,
-     4
+     5
     ],
     "rot": [
      0.0,

@@ -30,3 +30,11 @@ Looks alike: **yes**. Renders: `renders/iso.png`, `renders/top.png`.
 Now a shuffler: wheels removed, leg cams poke through top windows, chamfered pods, wider slot with axle housing, longer skirts, side fins, switch.
 
 Likeness: aws72 0.74 (FAIL), aws74 0.80 (ok), aws76 0.68 (FAIL).
+
+## Tools I wanted
+- `robot looks SPEC` (build + iso/top + likeness + diff sheets in one pass, batchable). Did instead: four CLI calls per robot, ~3-4 min wall each.
+
+## Round 2 (looks)
+Decisions: type vertical_spinner; body twin_pods rect 76x134x38 mm, ramp 12; wheels 2 r21 inboard; weapon disc r21 axis x teeth 2.
+
+Likeness: aws72 0.76 (FAIL), aws74 0.77 (FAIL), aws76 0.63 (FAIL).
