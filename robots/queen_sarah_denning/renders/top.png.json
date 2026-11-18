@@ -1,12 +1,26 @@
 {
  "spec": "/tmp/work10_queen_sarah_denning/robots/queen_sarah_denning/spec.json",
- "rendered_at": 1795023058.7211533,
+ "rendered_at": 1795025979.5931685,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
   "flipper",
-  "scoop"
+  "scoop",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_nut_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_nut_wheel_r0",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3",
+  "dt_screw_4",
+  "dt_screw_5",
+  "dt_screw_6",
+  "dt_screw_7"
  ],
  "wires": {}
 }

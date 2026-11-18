@@ -8,5 +8,15 @@
  "photos": [
   "queen_sarah_denning.aws70.webp",
   "queen_sarah_denning.aws71.webp"
- ]
+ ],
+ "view": {
+  "queen_sarah_denning.aws69.webp": "front",
+  "queen_sarah_denning.aws70.webp": "front",
+  "queen_sarah_denning.aws71.webp": "front"
+ },
+ "elevation": {
+  "queen_sarah_denning.aws69.webp": 70,
+  "queen_sarah_denning.aws70.webp": 25,
+  "queen_sarah_denning.aws71.webp": 25
+ }
 }

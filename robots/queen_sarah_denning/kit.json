@@ -21,7 +21,14 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "skip_photos": [
+  0
+ ],
+ "name": "queen sarah denning",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "box": [
     40,
@@ -61,12 +68,5 @@
     0
    ]
   }
- ],
- "skip_photos": [
-  0
- ],
- "name": "queen sarah denning",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }

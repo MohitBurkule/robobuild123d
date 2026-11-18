@@ -18,3 +18,9 @@ Likeness: aws70 0.72 (FAIL), aws71 0.90 (ok).
 Decisions: type flipper; body box rect 110x100x36 mm, ramp 30; wheels 2 r12 inboard; weapon none; extra parts: flipper, scoop; photos skipped (cluttered): indices [0].
 
 Likeness: aws70 0.72 (FAIL), aws71 0.90 (ok).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type flipper; body box rect 110x100x36 mm, ramp 30; wheels 2 r12 inboard; weapon none; extra parts: flipper, scoop; photos skipped (cluttered): indices [0].
+
+Likeness: aws70 0.65 (FAIL), aws71 0.89 (ok).
+Other likeness findings: [FAIL] likeness.view: `reference/queen_sarah_denning.aws70.webp` is declared `front` (IoU 0.65 there) but the model matches it better from front (elevation 45, 
