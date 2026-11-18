@@ -51,6 +51,33 @@ def measure_grip(world, f, step=0.05) -> float:
     return float(round(s[np.nonzero(ins)[0].max()] + step / 2, 2))
 
 
+def insert_len(world, f, step=0.05):
+    """Length of the modelled insert body along the screw axis (None when not modelled)."""
+    if not f.threads_into or world.index(f.threads_into) is None:
+        return None
+    b = world.body(f.threads_into)
+    d = np.asarray(f.dir, float)
+    d = d / np.linalg.norm(d)
+    ext = b.mesh.vertices @ d
+    return float(round(ext.max() - ext.min(), 2))
+
+
+def _probe(world, f, hole):
+    from types import SimpleNamespace
+    from .cad import seat
+    from .checks.fastener_seat import _inside_any
+    parts = [b for b in world.bodies if not b.fastener and not b.is_wire]
+    hb = [world.body(x) for x in (f.through or []) if world.index(x) is not None]
+    if not hb:
+        return None
+    g = SimpleNamespace(**{k: getattr(f, k, None) for k in ("id", "designation", "at", "dir", "through", "threads_into", "head")})
+    g.hole = hole
+    try:
+        return seat.probe(g, _inside_any(hb), _inside_any([b for b in parts if b.kind != "insert"]))
+    except Exception:  # noqa: BLE001 - a probe failure just means "no measured counterbore"
+        return None
+
+
 def plan(spec, world):
     from .cad.holes import hole_plan
     out = {}
@@ -62,9 +89,21 @@ def plan(spec, world):
         into = {"insert": "insert", "nut": "nut"}.get(kind, "tapped" if host is not None else "through")
         head = HEAD.get(getattr(f, "head", None), "cap")
         grip = measure_grip(world, f)
-        _, rec = hole_plan((0, 0, 0), f.dir, fastener=f.designation, head=head, into=into, grip=grip, side="head"
-                           if into != "tapped" else "both", cbore=0.0)
-        out[f.id] = rec.hole
+        side = "both"  # record the thread side too (insert_d / insert_len, tap_d, nut pocket): the seat check needs it
+        _, rec = hole_plan((0, 0, 0), f.dir, fastener=f.designation, head=head, into=into, grip=grip, side=side, cbore=0.0)
+        if head != "csk":  # measure how deep the head sits below the outer surface (the counterbore the part really has)
+            m = _probe(world, f, rec.hole)
+            cb = m.get("cbore_depth") if m else None
+            if cb is not None and cb > 0.05:
+                # grip counts from the OUTER surface (hole_plan frame), the measured run started at the head face
+                _, rec = hole_plan((0, 0, 0), f.dir, fastener=f.designation, head=head, into=into,
+                                   grip=round(grip + float(cb), 2), side=side, cbore=round(float(cb), 2))
+        h = dict(rec.hole)
+        il = insert_len(world, f) if into == "insert" else None
+        if il:  # the modelled insert's real length (catalog inserts differ: 3 vs 4 mm), so the bore check matches it
+            h["insert_len"] = il
+            h["insert_depth"] = round(il + 0.3, 4)
+        out[f.id] = h
     return out
 
 
