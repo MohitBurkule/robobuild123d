@@ -13,7 +13,8 @@ collected the photos, NOT by the builder). All findings are blockers:
                            photo mask is below 0.70, or not clearly better (+0.05) than the stock template's.
 - likeness.type            spec robot_type / wheel count differ from REFERENCE.json.
 - REFERENCE.json may also carry `photos` [usable photo file names; each needs an entry] and `mask_thr` {photo: thr}
-  (the collector's `robot mask --thr` where the default picks up the floor).
+  (the collector's `robot mask --thr` where the default picks up the floor) and `crop` {photo: [x0,y0,x1,y1] 0..1} and `mask_mode` {photo: "textured"}
+  (keep one robot when the photo shows two).
 - likeness.weapon          REFERENCE.json `weapon` {kind, axis, position, width_frac, teeth}: weapon part missing, wrong
                            kind, wrong axis, wrong place, wrong width (+-25 %), wrong tooth count.
 """
@@ -30,6 +31,7 @@ from ..finding import BLOCKER, fail, ok
 G = "likeness"
 COPY_IOU = 0.80
 SIL_MIN = 0.80  # absolute floor (stock templates already reach 0.69-0.81 on iso photos, so 0.70 let blobs pass)
+SIL_STRONG = 0.85
 SIL_MARGIN = 0.0  # at least as close to the photo as the closest stock template (copies are caught by template_copy)
 MASK_MIN = 0.85
 VOX = 2.0
@@ -181,6 +183,11 @@ def cam_name(i):
     return ["side", "front", "top"][k - 24] + (" (mirrored)" if mir else "")
 
 
+def _jaxis(j):
+    """Joint axis whether the joint is a spec Obj (attribute) or a raw dict."""
+    return j.get("axis") if isinstance(j, dict) else getattr(j, "axis", None)
+
+
 def photos(ctx):
     from . import reference as ref
     from ..mask import photo_mask
@@ -209,17 +216,22 @@ def photos(ctx):
     tsils = None
     for e in ents:
         mask = ref.load_mask(base / e["mask"])
-        auto = photo_mask(base / e["image"], float(thr.get(Path(e["image"]).name, THR)))
+        crop = (rj.get("crop") or {}).get(Path(e["image"]).name)
+        mode = (rj.get("mask_mode") or {}).get(Path(e["image"]).name, "plain")
+        auto = photo_mask(base / e["image"], float(thr.get(Path(e["image"]).name, THR)), crop=crop, mode=mode)
         mj = ref.compare(auto, mask)[0]["iou"]
         if mj < MASK_MIN:
             t = thr.get(Path(e["image"]).name, THR)
+            cs = (f" --crop {','.join(f'{v:g}' for v in crop)}" if crop else "") + (" --textured" if mode == "textured" else "")
             out.append(fail("likeness.mask_source", G, BLOCKER, "Mask is not the photo's outline",
-                            f"`{e['mask']}` matches `robot mask {e['image']} --thr {t:g}` at IoU {mj:.2f} (need {MASK_MIN}): "
-                            "it was not taken from the photo.").fix(f"Regenerate it: `robot mask {e['image']} {e['mask']} --thr {t:g}`."))
+                            f"`{e['mask']}` matches `robot mask {e['image']} --thr {t:g}{cs}` at IoU {mj:.2f} (need {MASK_MIN}): "
+                            "it was not taken from the photo.").fix(f"Regenerate it: `robot mask {e['image']} {e['mask']} --thr {t:g}{cs}`."))
             continue
         iou, st, ci = best_match(sils, mask)
         tiou, tname = _template_iou(base / e["mask"], mask)
-        need = max(SIL_MIN, tiou + SIL_MARGIN)
+        # beat the closest template only while the match is mediocre; a strong match (>= SIL_STRONG) stands on its own
+        # (literal copies are already caught by template_copy)
+        need = SIL_MIN if iou >= SIL_STRONG else max(SIL_MIN, tiou + SIL_MARGIN)
         msg = (f"`{e['image']}`: best silhouette IoU {iou:.2f} at camera {cam_name(ci)} (need {need:.2f}: >= {SIL_MIN} "
                f"and no worse than the closest stock template `{tname}` at {tiou:.2f}).")
         if st:
@@ -281,7 +293,7 @@ def template_data(rebuild=False):
             have[p.stem], changed = d, True
         sils = [np.unpackbits(b)[: sh[0] * sh[1]].reshape(sh).astype(bool) for b, sh in zip(d["sils"], d["shapes"])]
         out[p.stem] = (set(map(tuple, d["vox"])), sils)
-    if changed:
+    if changed and rebuild:
         try:
             np.savez_compressed(DATA, data=np.array(have, dtype=object))
         except OSError:
@@ -293,7 +305,7 @@ def template_data(rebuild=False):
 def _template_iou(path, mask):
     """(best IoU, template name) over the stock templates' silhouettes (cached per mask + template set)."""
     from .. import cache
-    key = ("likeness_tpl2", cache.code_hash(), Path(path).read_bytes(),
+    key = ("likeness_tpl3", Path(path).read_bytes(),  # not the code hash: template data only changes with templates
            *[_thash(p) for p in sorted(TEMPLATES.glob("*.json"))])
     return tuple(cache.memo("likeness", key, lambda: _template_iou_raw(mask)))
 
@@ -375,8 +387,8 @@ def weapon_facts(ctx, want):
         if spinner:
             sa = spin_axis(w, r, i)
             a = None if sa is None else sa[1]
-        elif p.joint and p.joint.get("axis") is not None:
-            a = np.asarray(p.joint["axis"], float)
+        elif p.joint is not None and _jaxis(p.joint) is not None:
+            a = np.asarray(_jaxis(p.joint), float)
         if a is None:
             out.append(fail("likeness.weapon", G, BLOCKER, "Weapon axis unknown",
                             f"`{p.id}` has no spin axis / joint axis; photos show a {kind} turning about {ax}.").on(p.id))
@@ -471,5 +483,10 @@ def add_cli(sub):
 
 
 if __name__ == "__main__":
+    import sys
+    if "--rebuild" not in sys.argv:
+        print("maintainers only: `python -m robot.checks.likeness --rebuild` rewrites the shipped template data after a "
+              "template change. Builders: use `robot likeness spec.json`.")
+        sys.exit(2)
     template_data(rebuild=True)
     print(f"wrote {DATA}")
