@@ -27,12 +27,13 @@ Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
 - catalog parts added in free space inside the printed parts with 0.25 mm pockets: `dm_wheel_l1` (pololu_hpcb6v_50to1), `dm_wheel_r1` (pololu_hpcb6v_50to1), `el_battery` (lipo_2s_180), `el_esc` (bbb_malenki_nano), `el_switch` (switch_slide_12x4)
 - overlaps resolved by cuts that keep the union of the parts (pockets, bores, wheel and spinner running clearance)
-- real fasteners: `fs_front_plate_0` M2x8, `fs_front_plate_1` M2x8
+- one print with the chassis (same material, `fused_with`): `dt_hub_wheel_l0`, `dt_hub_wheel_r0`, `dt_hub_wheel_l1`, `dt_hub_wheel_r1`
+- real fasteners: `fs_front_plate_0` M2x10, `fs_front_plate_1` M2x10
 - 4 wires declared (battery - switch - ESC - motors)
 - print orientation on every printed part, failsafe / weapon disable declared, design volumes declared where this pass changed a part on purpose
 - power switch on the floor of the body, slider facing down to a 7 x 3 mm slot in the underside (no slot on the top or sides; hollow cavities stay closed behind a wall at every outside face)
-- rod dt_axle_wheel_l1: 2.2 mm stub clear of ['dm_wheel_l1'] printed as the wheel's hub boss
-- rod dt_axle_wheel_r1: 2.2 mm stub clear of ['dm_wheel_r1'] printed as the wheel's hub boss
+- rod dt_axle_wheel_l1: 2.8 mm stub clear of ['dm_wheel_l1'] printed as the wheel's hub boss
+- rod dt_axle_wheel_r1: 2.8 mm stub clear of ['dm_wheel_r1'] printed as the wheel's hub boss
 - chassis: 1 of 15 cuts dropped (they broke the solid: 2)
 - hollowed chassis (wall 2.5, form 0): 105.1 -> 51.8 cm3
 

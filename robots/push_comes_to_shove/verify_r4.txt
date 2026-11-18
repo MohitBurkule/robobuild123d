@@ -1,7 +1,7 @@
 BLOCKERS: 5
-  [ran] integrity 0.10s
+  [ran] integrity 0.06s
   [ran] mass 0.00s
-  [proxy] interference 0.16s
+  [proxy] interference 0.10s
   [ran] connections 0.00s
   [ran] legal 0.01s
   [ran] fasteners 0.00s
@@ -9,10 +9,10 @@ BLOCKERS: 5
   [ran] tension 0.00s
   [ran] targets 0.00s
   [ran] fight 0.02s
-  [ran] shape 0.03s
-  [ran] dynamics 0.01s
+  [ran] shape 0.02s
+  [ran] dynamics 0.00s
   [ran] strength 0.00s
-  [ran] printability 1.63s
+  [ran] printability 1.14s
   [ran] process 0.00s
   [ran] electrical 0.00s
   [ran] combat 0.10s
@@ -23,21 +23,21 @@ BLOCKERS: 5
   [ran] bom 0.00s
   [ran] wire_review 0.01s
   [ran] fastener_record 0.00s
-  [ran] likeness 2.86s
-  [ran] drive_recess 0.01s
+  [ran] likeness 2.98s
+  [ran] drive_recess 0.02s
   [ran] belt_wrap 0.00s
   [ran] retention 0.00s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.13s
-  [ran] dfm 0.01s
-  [ran] realworld 0.09s
-push comes to shove: ok=False 5 blockers in 5 root causes, mass 126.6/150 g
+  [ran] geom 0.18s
+  [ran] dfm 0.02s
+  [ran] realworld 0.14s
+push comes to shove: ok=False 5 blockers in 5 root causes, mass 130.5/150 g
 1. [proxy.interference] `chassis` and `front_plate` overlap by 1.38 mm (allowed 0.08).
    | chassis: x -41.00..41.00  y -45.00..45.00  z -10.00..10.00  size 82.00 x 90.00 x 20.00 mm
-   |   centre (0.00, 0.00, 0.00), volume 51815.6 mm3
+   |   centre (0.00, -0.00, 0.00), volume 51844.5 mm3
    |   OVERLAP `front_plate` 1.38 mm (allowed 0.08)
-   |   overlap allowed `fs_front_plate_1` 0.88 mm (allowed inf)
-   |   overlap allowed `fs_front_plate_0` 0.81 mm (allowed inf)
+   |   overlap allowed `fs_front_plate_0` 0.88 mm (allowed inf)
+   |   overlap allowed `fs_front_plate_1` 0.81 mm (allowed inf)
 2. [process.geometry] `front_plate` (laser): thinnest web between cut features is 0.22 mm < 3.00 mm (1.00 x thickness 3.00 mm).
    fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
    | front_plate: x -43.00..43.00  y 22.92..49.08  z -11.08..15.08  size 86.00 x 26.16 x 26.16 mm
@@ -51,5 +51,27 @@ push comes to shove: ok=False 5 blockers in 5 root causes, mass 126.6/150 g
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 5. [likeness.silhouette] `reference/push_mk_2.webp`: best silhouette IoU 0.71 at camera front_left_iso (elevation 45, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.70). Regions (photo frame, left third first) 0.66 / 0.85 / 0.53: worst = rear third. Height/length 0.78 model vs 0.75 photo (proportions ok).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+MASS BUDGET:
+  mass 130.5 g of 150 g (+19.5 g margin)
+    chassis                    49.36 g  fills 35% of its box
+    front_plate                23.60 g  fills 15% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    dm_wheel_l1                 9.50 g  fills 63% of its box
+    dm_wheel_r1                 9.50 g  fills 63% of its box
+    wheel_l1                    3.66 g  fills 65% of its box
+    wheel_r1                    3.66 g  fills 65% of its box
+    wheel_l0                    3.63 g  fills 77% of its box
+    wheel_r0                    3.63 g  fills 77% of its box
+    el_esc                      2.30 g  fills 99% of its box
+    dt_hub_wheel_l1             1.10 g  fills 75% of its box
+    dt_hub_wheel_r1             1.10 g  fills 75% of its box
+    dt_hub_wheel_l0             1.08 g  fills 74% of its box
+    dt_hub_wheel_r0             1.08 g  fills 74% of its box
+    dt_axle_wheel_r0            1.04 g  fills 79% of its box
+    dt_axle_wheel_l0            1.04 g  fills 79% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    fs_front_plate_0            0.29 g  fills 10% of its box
+    fs_front_plate_1            0.29 g  fills 10% of its box
+    mass.may_be_over: 130.5 g (range 110.2 to 150.8 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: distance 1 hit / 0 miss, group 0 hit / 31 miss, inside 17 hit / 0 miss, likeness 2 hit / 0 miss, min_gap 20 hit / 0 miss, overlap 175 hit / 0 miss, part_check 6 hit / 0 miss, part_geom 15 hit / 0 miss, ray 103 hit / 0 miss
+cache: distance 1 hit / 0 miss, group 0 hit / 31 miss, inside 21 hit / 0 miss, likeness 2 hit / 0 miss, min_gap 24 hit / 0 miss, overlap 271 hit / 0 miss, part_check 10 hit / 0 miss, part_geom 19 hit / 0 miss, ray 133 hit / 0 miss

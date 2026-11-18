@@ -147,66 +147,12 @@
        "type": "place",
        "shape": {
         "type": "cylinder",
-        "radius": 13.0,
+        "radius": 7.24,
         "height": 11.2
        },
        "at": [
         36.5,
         -28.0,
-        0.0
-       ],
-       "rot": [
-        -0.0,
-        90.0,
-        0.0
-       ]
-      },
-      {
-       "type": "place",
-       "shape": {
-        "type": "cylinder",
-        "radius": 13.0,
-        "height": 11.2
-       },
-       "at": [
-        -36.5,
-        -28.0,
-        0.0
-       ],
-       "rot": [
-        -0.0,
-        90.0,
-        0.0
-       ]
-      },
-      {
-       "type": "place",
-       "shape": {
-        "type": "cylinder",
-        "radius": 13.0,
-        "height": 11.2
-       },
-       "at": [
-        36.5,
-        12.0,
-        0.0
-       ],
-       "rot": [
-        -0.0,
-        90.0,
-        0.0
-       ]
-      },
-      {
-       "type": "place",
-       "shape": {
-        "type": "cylinder",
-        "radius": 13.0,
-        "height": 11.2
-       },
-       "at": [
-        -36.5,
-        12.0,
         0.0
        ],
        "rot": [
@@ -249,6 +195,24 @@
       {
        "type": "place",
        "shape": {
+        "type": "cylinder",
+        "radius": 7.24,
+        "height": 11.2
+       },
+       "at": [
+        -36.5,
+        -28.0,
+        0.0
+       ],
+       "rot": [
+        -0.0,
+        90.0,
+        0.0
+       ]
+      },
+      {
+       "type": "place",
+       "shape": {
         "type": "place",
         "shape": {
          "type": "cylinder",
@@ -280,6 +244,42 @@
       {
        "type": "place",
        "shape": {
+        "type": "cylinder",
+        "radius": 7.24,
+        "height": 11.2
+       },
+       "at": [
+        36.5,
+        12.0,
+        0.0
+       ],
+       "rot": [
+        -0.0,
+        90.0,
+        0.0
+       ]
+      },
+      {
+       "type": "place",
+       "shape": {
+        "type": "cylinder",
+        "radius": 7.24,
+        "height": 11.2
+       },
+       "at": [
+        -36.5,
+        12.0,
+        0.0
+       ],
+       "rot": [
+        -0.0,
+        90.0,
+        0.0
+       ]
+      },
+      {
+       "type": "place",
+       "shape": {
         "type": "place",
         "shape": {
          "type": "box",
@@ -301,7 +301,7 @@
         ]
        },
        "at": [
-        17.6,
+        17.0,
         12.0,
         0.0
        ],
@@ -335,7 +335,7 @@
         ]
        },
        "at": [
-        -17.6,
+        -17.0,
         12.0,
         0.0
        ],
@@ -1329,66 +1329,12 @@
         "type": "place",
         "shape": {
          "type": "cylinder",
-         "radius": 15.5,
+         "radius": 9.74,
          "height": 16.2
         },
         "at": [
          36.5,
          -28.0,
-         0.0
-        ],
-        "rot": [
-         -0.0,
-         90.0,
-         0.0
-        ]
-       },
-       {
-        "type": "place",
-        "shape": {
-         "type": "cylinder",
-         "radius": 15.5,
-         "height": 16.2
-        },
-        "at": [
-         -36.5,
-         -28.0,
-         0.0
-        ],
-        "rot": [
-         -0.0,
-         90.0,
-         0.0
-        ]
-       },
-       {
-        "type": "place",
-        "shape": {
-         "type": "cylinder",
-         "radius": 15.5,
-         "height": 16.2
-        },
-        "at": [
-         36.5,
-         12.0,
-         0.0
-        ],
-        "rot": [
-         -0.0,
-         90.0,
-         0.0
-        ]
-       },
-       {
-        "type": "place",
-        "shape": {
-         "type": "cylinder",
-         "radius": 15.5,
-         "height": 16.2
-        },
-        "at": [
-         -36.5,
-         12.0,
          0.0
         ],
         "rot": [
@@ -1431,6 +1377,24 @@
        {
         "type": "place",
         "shape": {
+         "type": "cylinder",
+         "radius": 9.74,
+         "height": 16.2
+        },
+        "at": [
+         -36.5,
+         -28.0,
+         0.0
+        ],
+        "rot": [
+         -0.0,
+         90.0,
+         0.0
+        ]
+       },
+       {
+        "type": "place",
+        "shape": {
          "type": "place",
          "shape": {
           "type": "cylinder",
@@ -1462,6 +1426,42 @@
        {
         "type": "place",
         "shape": {
+         "type": "cylinder",
+         "radius": 9.74,
+         "height": 16.2
+        },
+        "at": [
+         36.5,
+         12.0,
+         0.0
+        ],
+        "rot": [
+         -0.0,
+         90.0,
+         0.0
+        ]
+       },
+       {
+        "type": "place",
+        "shape": {
+         "type": "cylinder",
+         "radius": 9.74,
+         "height": 16.2
+        },
+        "at": [
+         -36.5,
+         12.0,
+         0.0
+        ],
+        "rot": [
+         -0.0,
+         90.0,
+         0.0
+        ]
+       },
+       {
+        "type": "place",
+        "shape": {
          "type": "place",
          "shape": {
           "type": "box",
@@ -1483,7 +1483,7 @@
          ]
         },
         "at": [
-         17.6,
+         17.0,
          12.0,
          0.0
         ],
@@ -1517,7 +1517,7 @@
          ]
         },
         "at": [
-         -17.6,
+         -17.0,
          12.0,
          0.0
         ],
@@ -1636,12 +1636,12 @@
          "shape": {
           "type": "cylinder",
           "radius": 3.5,
-          "height": 13.0
+          "height": 15.0
          },
          "at": [
           0,
           0,
-          4.0
+          5.0
          ],
          "rot": [
           0,
@@ -1667,12 +1667,12 @@
          "shape": {
           "type": "cylinder",
           "radius": 3.5,
-          "height": 13.0
+          "height": 15.0
          },
          "at": [
           0,
           0,
-          4.0
+          5.0
          ],
          "rot": [
           0,
@@ -1728,7 +1728,7 @@
    ],
    "color": "#d9dde0",
    "print_orientation": "+z",
-   "volume_mm3": 51809.0
+   "volume_mm3": 51841.0
   },
   {
    "id": "wheel_l0",
@@ -1738,57 +1738,21 @@
    "shape": {
     "type": "subtract",
     "base": {
-     "type": "union",
-     "items": [
-      {
-       "type": "place",
-       "shape": {
-        "type": "cylinder",
-        "radius": 12.0,
-        "height": 8.0
-       },
-       "at": [
-        0,
-        0,
-        0
-       ],
-       "rot": [
-        0,
-        90,
-        0
-       ]
-      },
-      {
-       "type": "place",
-       "shape": {
-        "type": "place",
-        "shape": {
-         "type": "cylinder",
-         "radius": 6.24,
-         "height": 9.2
-        },
-        "at": [
-         36.5,
-         -28.0,
-         0.0
-        ],
-        "rot": [
-         0.0,
-         90.0,
-         0.0
-        ]
-       },
-       "at": [
-        -36.5,
-        28.0,
-        0.0
-       ],
-       "rot": [
-        0.0,
-        -0.0,
-        0.0
-       ]
-      }
+     "type": "place",
+     "shape": {
+      "type": "cylinder",
+      "radius": 12.0,
+      "height": 8.0
+     },
+     "at": [
+      0,
+      0,
+      0
+     ],
+     "rot": [
+      0,
+      90,
+      0
      ]
     },
     "cut": [
@@ -1837,7 +1801,7 @@
    ],
    "color": "#202226",
    "print_orientation": "+z",
-   "volume_mm3": 3687.0
+   "volume_mm3": 3549.0
   },
   {
    "id": "wheel_r0",
@@ -1847,57 +1811,21 @@
    "shape": {
     "type": "subtract",
     "base": {
-     "type": "union",
-     "items": [
-      {
-       "type": "place",
-       "shape": {
-        "type": "cylinder",
-        "radius": 12.0,
-        "height": 8.0
-       },
-       "at": [
-        0,
-        0,
-        0
-       ],
-       "rot": [
-        0,
-        90,
-        0
-       ]
-      },
-      {
-       "type": "place",
-       "shape": {
-        "type": "place",
-        "shape": {
-         "type": "cylinder",
-         "radius": 6.24,
-         "height": 9.2
-        },
-        "at": [
-         -36.5,
-         -28.0,
-         0.0
-        ],
-        "rot": [
-         0.0,
-         90.0,
-         0.0
-        ]
-       },
-       "at": [
-        36.5,
-        28.0,
-        0.0
-       ],
-       "rot": [
-        0.0,
-        -0.0,
-        0.0
-       ]
-      }
+     "type": "place",
+     "shape": {
+      "type": "cylinder",
+      "radius": 12.0,
+      "height": 8.0
+     },
+     "at": [
+      0,
+      0,
+      0
+     ],
+     "rot": [
+      0,
+      90,
+      0
      ]
     },
     "cut": [
@@ -1946,7 +1874,7 @@
    ],
    "color": "#202226",
    "print_orientation": "+z",
-   "volume_mm3": 3687.0
+   "volume_mm3": 3549.0
   },
   {
    "id": "wheel_l1",
@@ -1959,57 +1887,21 @@
      "type": "union",
      "items": [
       {
-       "type": "union",
-       "items": [
-        {
-         "type": "place",
-         "shape": {
-          "type": "cylinder",
-          "radius": 12.0,
-          "height": 8.0
-         },
-         "at": [
-          0,
-          0,
-          0
-         ],
-         "rot": [
-          0,
-          90,
-          0
-         ]
-        },
-        {
-         "type": "place",
-         "shape": {
-          "type": "place",
-          "shape": {
-           "type": "cylinder",
-           "radius": 6.24,
-           "height": 9.2
-          },
-          "at": [
-           36.5,
-           12.0,
-           0.0
-          ],
-          "rot": [
-           0.0,
-           90.0,
-           0.0
-          ]
-         },
-         "at": [
-          -36.5,
-          -12.0,
-          0.0
-         ],
-         "rot": [
-          0.0,
-          -0.0,
-          0.0
-         ]
-        }
+       "type": "place",
+       "shape": {
+        "type": "cylinder",
+        "radius": 12.0,
+        "height": 8.0
+       },
+       "at": [
+        0,
+        0,
+        0
+       ],
+       "rot": [
+        0,
+        90,
+        0
        ]
       },
       {
@@ -2017,10 +1909,10 @@
        "shape": {
         "type": "cylinder",
         "radius": 1.5,
-        "height": 2.24
+        "height": 2.84
        },
        "at": [
-        4.481,
+        4.178,
         -0.0,
         -0.0
        ],
@@ -2303,7 +2195,7 @@
        ]
       },
       "at": [
-       -18.9,
+       -19.5,
        0.0,
        0.0
       ],
@@ -2327,7 +2219,7 @@
    ],
    "color": "#202226",
    "print_orientation": "+z",
-   "volume_mm3": 3711.0
+   "volume_mm3": 3576.0
   },
   {
    "id": "wheel_r1",
@@ -2340,57 +2232,21 @@
      "type": "union",
      "items": [
       {
-       "type": "union",
-       "items": [
-        {
-         "type": "place",
-         "shape": {
-          "type": "cylinder",
-          "radius": 12.0,
-          "height": 8.0
-         },
-         "at": [
-          0,
-          0,
-          0
-         ],
-         "rot": [
-          0,
-          90,
-          0
-         ]
-        },
-        {
-         "type": "place",
-         "shape": {
-          "type": "place",
-          "shape": {
-           "type": "cylinder",
-           "radius": 6.24,
-           "height": 9.2
-          },
-          "at": [
-           -36.5,
-           12.0,
-           0.0
-          ],
-          "rot": [
-           0.0,
-           90.0,
-           0.0
-          ]
-         },
-         "at": [
-          36.5,
-          -12.0,
-          0.0
-         ],
-         "rot": [
-          0.0,
-          -0.0,
-          0.0
-         ]
-        }
+       "type": "place",
+       "shape": {
+        "type": "cylinder",
+        "radius": 12.0,
+        "height": 8.0
+       },
+       "at": [
+        0,
+        0,
+        0
+       ],
+       "rot": [
+        0,
+        90,
+        0
        ]
       },
       {
@@ -2398,10 +2254,10 @@
        "shape": {
         "type": "cylinder",
         "radius": 1.5,
-        "height": 2.24
+        "height": 2.84
        },
        "at": [
-        -4.481,
+        -4.178,
         0.0,
         -0.0
        ],
@@ -2684,7 +2540,7 @@
        ]
       },
       "at": [
-       18.9,
+       19.5,
        0.0,
        0.0
       ],
@@ -2708,7 +2564,7 @@
    ],
    "color": "#202226",
    "print_orientation": "+z",
-   "volume_mm3": 3711.0
+   "volume_mm3": 3576.0
   },
   {
    "id": "front_plate",
@@ -2749,12 +2605,12 @@
          "shape": {
           "type": "cylinder",
           "radius": 1.1,
-          "height": 12
+          "height": 14
          },
          "at": [
           0,
           0,
-          4.0
+          5.0
          ],
          "rot": [
           0,
@@ -2810,12 +2666,12 @@
          "shape": {
           "type": "cylinder",
           "radius": 1.1,
-          "height": 12
+          "height": 14
          },
          "at": [
           0,
           0,
-          4.0
+          5.0
          ],
          "rot": [
           0,
@@ -2880,6 +2736,80 @@
    "volume_mm3": 8741.0
   },
   {
+   "id": "dt_hub_wheel_l0",
+   "kind": "other",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "subtract",
+    "base": {
+     "type": "place",
+     "shape": {
+      "type": "cylinder",
+      "radius": 6.24,
+      "height": 9.2
+     },
+     "at": [
+      36.5,
+      -28.0,
+      0.0
+     ],
+     "rot": [
+      0.0,
+      90.0,
+      0.0
+     ]
+    },
+    "cut": [
+     {
+      "type": "place",
+      "shape": {
+       "type": "place",
+       "shape": {
+        "type": "cylinder",
+        "radius": 1.5,
+        "height": 18.6
+       },
+       "at": [
+        32.8,
+        -28.0,
+        0.0
+       ],
+       "rot": [
+        0.0,
+        90.0,
+        0.0
+       ]
+      },
+      "at": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rot": [
+       0.0,
+       -0.0,
+       0.0
+      ]
+     }
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#9a9b9d",
+   "fused_with": "wheel_l0",
+   "print_orientation": "+z",
+   "volume_mm3": 1056.0
+  },
+  {
    "id": "dt_axle_wheel_l0",
    "kind": "other",
    "material": "steel",
@@ -2913,6 +2843,80 @@
     0
    ],
    "color": "#9aa3a8"
+  },
+  {
+   "id": "dt_hub_wheel_r0",
+   "kind": "other",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "subtract",
+    "base": {
+     "type": "place",
+     "shape": {
+      "type": "cylinder",
+      "radius": 6.24,
+      "height": 9.2
+     },
+     "at": [
+      -36.5,
+      -28.0,
+      0.0
+     ],
+     "rot": [
+      0.0,
+      90.0,
+      0.0
+     ]
+    },
+    "cut": [
+     {
+      "type": "place",
+      "shape": {
+       "type": "place",
+       "shape": {
+        "type": "cylinder",
+        "radius": 1.5,
+        "height": 18.6
+       },
+       "at": [
+        -32.8,
+        -28.0,
+        0.0
+       ],
+       "rot": [
+        0.0,
+        90.0,
+        180.0
+       ]
+      },
+      "at": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rot": [
+       0.0,
+       -0.0,
+       0.0
+      ]
+     }
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#9a9b9d",
+   "fused_with": "wheel_r0",
+   "print_orientation": "+z",
+   "volume_mm3": 1056.0
   },
   {
    "id": "dt_axle_wheel_r0",
@@ -2950,10 +2954,656 @@
    "color": "#9aa3a8"
   },
   {
+   "id": "dt_hub_wheel_l1",
+   "kind": "other",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "subtract",
+    "base": {
+     "type": "place",
+     "shape": {
+      "type": "cylinder",
+      "radius": 6.24,
+      "height": 9.2
+     },
+     "at": [
+      36.5,
+      12.0,
+      0.0
+     ],
+     "rot": [
+      0.0,
+      90.0,
+      0.0
+     ]
+    },
+    "cut": [
+     {
+      "type": "place",
+      "shape": {
+       "type": "subtract",
+       "base": {
+        "type": "union",
+        "items": [
+         {
+          "type": "place",
+          "shape": {
+           "type": "intersect",
+           "items": [
+            {
+             "type": "place",
+             "shape": {
+              "type": "cylinder",
+              "radius": 6.0,
+              "height": 15.0
+             },
+             "at": [
+              0.0,
+              0.0,
+              0.0
+             ],
+             "rot": [
+              0.0,
+              90.0,
+              0.0
+             ]
+            },
+            {
+             "type": "box",
+             "size": [
+              16.0,
+              13.0,
+              10.0
+             ]
+            }
+           ]
+          },
+          "at": [
+           -4.5,
+           0,
+           0
+          ],
+          "rot": [
+           0.0,
+           0.0,
+           0.0
+          ]
+         },
+         {
+          "type": "place",
+          "shape": {
+           "type": "box",
+           "size": [
+            9.0,
+            12.0,
+            10.0
+           ]
+          },
+          "at": [
+           7.5,
+           0,
+           0
+          ],
+          "rot": [
+           0.0,
+           0.0,
+           0.0
+          ]
+         },
+         {
+          "type": "place",
+          "shape": {
+           "type": "place",
+           "shape": {
+            "type": "cylinder",
+            "radius": 2.0,
+            "height": 0.75
+           },
+           "at": [
+            0.0,
+            0.0,
+            0.0
+           ],
+           "rot": [
+            0.0,
+            90.0,
+            0.0
+           ]
+          },
+          "at": [
+           12.325,
+           0,
+           0
+          ],
+          "rot": [
+           0.0,
+           0.0,
+           0.0
+          ]
+         },
+         {
+          "type": "place",
+          "shape": {
+           "type": "subtract",
+           "base": {
+            "type": "place",
+            "shape": {
+             "type": "cylinder",
+             "radius": 1.5,
+             "height": 10.05
+            },
+            "at": [
+             0.0,
+             0.0,
+             0.0
+            ],
+            "rot": [
+             0.0,
+             90.0,
+             0.0
+            ]
+           },
+           "cut": [
+            {
+             "type": "place",
+             "shape": {
+              "type": "box",
+              "size": [
+               10.15,
+               4.0,
+               0.55
+              ]
+             },
+             "at": [
+              0,
+              0,
+              1.275
+             ],
+             "rot": [
+              0.0,
+              0.0,
+              0.0
+             ]
+            }
+           ]
+          },
+          "at": [
+           16.975,
+           0,
+           0
+          ],
+          "rot": [
+           0.0,
+           0.0,
+           0.0
+          ]
+         },
+         {
+          "type": "place",
+          "shape": {
+           "type": "box",
+           "size": [
+            1.55,
+            1.5,
+            0.3
+           ]
+          },
+          "at": [
+           -12.725,
+           -3.0,
+           0
+          ],
+          "rot": [
+           0.0,
+           0.0,
+           0.0
+          ]
+         },
+         {
+          "type": "place",
+          "shape": {
+           "type": "box",
+           "size": [
+            1.55,
+            1.5,
+            0.3
+           ]
+          },
+          "at": [
+           -12.725,
+           3.0,
+           0
+          ],
+          "rot": [
+           0.0,
+           0.0,
+           0.0
+          ]
+         }
+        ]
+       },
+       "cut": [
+        {
+         "type": "place",
+         "shape": {
+          "type": "place",
+          "shape": {
+           "type": "cylinder",
+           "radius": 0.6400000000000001,
+           "height": 6.0
+          },
+          "at": [
+           0.0,
+           0.0,
+           0.0
+          ],
+          "rot": [
+           0.0,
+           90.0,
+           0.0
+          ]
+         },
+         "at": [
+          12.0,
+          -4.5,
+          0.0
+         ],
+         "rot": [
+          0.0,
+          0.0,
+          0.0
+         ]
+        },
+        {
+         "type": "place",
+         "shape": {
+          "type": "place",
+          "shape": {
+           "type": "cylinder",
+           "radius": 0.6400000000000001,
+           "height": 6.0
+          },
+          "at": [
+           0.0,
+           0.0,
+           0.0
+          ],
+          "rot": [
+           0.0,
+           90.0,
+           0.0
+          ]
+         },
+         "at": [
+          12.0,
+          4.5,
+          0.0
+         ],
+         "rot": [
+          0.0,
+          0.0,
+          0.0
+         ]
+        }
+       ]
+      },
+      "at": [
+       17.0,
+       12.0,
+       0.0
+      ],
+      "rot": [
+       0.0,
+       -0.0,
+       0.0
+      ]
+     }
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#9a9b9d",
+   "fused_with": "wheel_l1",
+   "print_orientation": "+z",
+   "volume_mm3": 1077.0
+  },
+  {
+   "id": "dt_hub_wheel_r1",
+   "kind": "other",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "subtract",
+    "base": {
+     "type": "place",
+     "shape": {
+      "type": "cylinder",
+      "radius": 6.24,
+      "height": 9.2
+     },
+     "at": [
+      -36.5,
+      12.0,
+      0.0
+     ],
+     "rot": [
+      0.0,
+      90.0,
+      0.0
+     ]
+    },
+    "cut": [
+     {
+      "type": "place",
+      "shape": {
+       "type": "subtract",
+       "base": {
+        "type": "union",
+        "items": [
+         {
+          "type": "place",
+          "shape": {
+           "type": "intersect",
+           "items": [
+            {
+             "type": "place",
+             "shape": {
+              "type": "cylinder",
+              "radius": 6.0,
+              "height": 15.0
+             },
+             "at": [
+              0.0,
+              0.0,
+              0.0
+             ],
+             "rot": [
+              0.0,
+              90.0,
+              0.0
+             ]
+            },
+            {
+             "type": "box",
+             "size": [
+              16.0,
+              13.0,
+              10.0
+             ]
+            }
+           ]
+          },
+          "at": [
+           -4.5,
+           0,
+           0
+          ],
+          "rot": [
+           0.0,
+           0.0,
+           0.0
+          ]
+         },
+         {
+          "type": "place",
+          "shape": {
+           "type": "box",
+           "size": [
+            9.0,
+            12.0,
+            10.0
+           ]
+          },
+          "at": [
+           7.5,
+           0,
+           0
+          ],
+          "rot": [
+           0.0,
+           0.0,
+           0.0
+          ]
+         },
+         {
+          "type": "place",
+          "shape": {
+           "type": "place",
+           "shape": {
+            "type": "cylinder",
+            "radius": 2.0,
+            "height": 0.75
+           },
+           "at": [
+            0.0,
+            0.0,
+            0.0
+           ],
+           "rot": [
+            0.0,
+            90.0,
+            0.0
+           ]
+          },
+          "at": [
+           12.325,
+           0,
+           0
+          ],
+          "rot": [
+           0.0,
+           0.0,
+           0.0
+          ]
+         },
+         {
+          "type": "place",
+          "shape": {
+           "type": "subtract",
+           "base": {
+            "type": "place",
+            "shape": {
+             "type": "cylinder",
+             "radius": 1.5,
+             "height": 10.05
+            },
+            "at": [
+             0.0,
+             0.0,
+             0.0
+            ],
+            "rot": [
+             0.0,
+             90.0,
+             0.0
+            ]
+           },
+           "cut": [
+            {
+             "type": "place",
+             "shape": {
+              "type": "box",
+              "size": [
+               10.15,
+               4.0,
+               0.55
+              ]
+             },
+             "at": [
+              0,
+              0,
+              1.275
+             ],
+             "rot": [
+              0.0,
+              0.0,
+              0.0
+             ]
+            }
+           ]
+          },
+          "at": [
+           16.975,
+           0,
+           0
+          ],
+          "rot": [
+           0.0,
+           0.0,
+           0.0
+          ]
+         },
+         {
+          "type": "place",
+          "shape": {
+           "type": "box",
+           "size": [
+            1.55,
+            1.5,
+            0.3
+           ]
+          },
+          "at": [
+           -12.725,
+           -3.0,
+           0
+          ],
+          "rot": [
+           0.0,
+           0.0,
+           0.0
+          ]
+         },
+         {
+          "type": "place",
+          "shape": {
+           "type": "box",
+           "size": [
+            1.55,
+            1.5,
+            0.3
+           ]
+          },
+          "at": [
+           -12.725,
+           3.0,
+           0
+          ],
+          "rot": [
+           0.0,
+           0.0,
+           0.0
+          ]
+         }
+        ]
+       },
+       "cut": [
+        {
+         "type": "place",
+         "shape": {
+          "type": "place",
+          "shape": {
+           "type": "cylinder",
+           "radius": 0.6400000000000001,
+           "height": 6.0
+          },
+          "at": [
+           0.0,
+           0.0,
+           0.0
+          ],
+          "rot": [
+           0.0,
+           90.0,
+           0.0
+          ]
+         },
+         "at": [
+          12.0,
+          -4.5,
+          0.0
+         ],
+         "rot": [
+          0.0,
+          0.0,
+          0.0
+         ]
+        },
+        {
+         "type": "place",
+         "shape": {
+          "type": "place",
+          "shape": {
+           "type": "cylinder",
+           "radius": 0.6400000000000001,
+           "height": 6.0
+          },
+          "at": [
+           0.0,
+           0.0,
+           0.0
+          ],
+          "rot": [
+           0.0,
+           90.0,
+           0.0
+          ]
+         },
+         "at": [
+          12.0,
+          4.5,
+          0.0
+         ],
+         "rot": [
+          0.0,
+          0.0,
+          0.0
+         ]
+        }
+       ]
+      },
+      "at": [
+       -17.0,
+       12.0,
+       0.0
+      ],
+      "rot": [
+       0.0,
+       -0.0,
+       180.0
+      ]
+     }
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#9a9b9d",
+   "fused_with": "wheel_r1",
+   "print_orientation": "+z",
+   "volume_mm3": 1077.0
+  },
+  {
    "id": "dm_wheel_l1",
    "kind": "motor",
    "at": [
-    17.6,
+    17.0,
     12.0,
     0.0
    ],
@@ -2968,7 +3618,7 @@
    "id": "dm_wheel_r1",
    "kind": "motor",
    "at": [
-    -17.6,
+    -17.0,
     12.0,
     0.0
    ],
@@ -3038,7 +3688,7 @@
  "fasteners": [
   {
    "id": "fs_front_plate_0",
-   "designation": "M2x8",
+   "designation": "M2x10",
    "at": [
     1.869,
     25.389,
@@ -3059,7 +3709,7 @@
    "reason": "M2 self-tapping into the printed boss; holds the plate against the chassis face it sits on",
    "hole": {
     "d": 2.0,
-    "length": 8.0,
+    "length": 10.0,
     "head": "csk",
     "head_std": "ISO 14581",
     "head_dk": 3.8,
@@ -3073,12 +3723,12 @@
     "sink": 0.0,
     "grip": 0.0,
     "tap_d": 1.6,
-    "thread_depth": 8.5
+    "thread_depth": 10.5
    }
   },
   {
    "id": "fs_front_plate_1",
-   "designation": "M2x8",
+   "designation": "M2x10",
    "at": [
     10.212,
     25.974,
@@ -3099,7 +3749,7 @@
    "reason": "M2 self-tapping into the printed boss; holds the plate against the chassis face it sits on",
    "hole": {
     "d": 2.0,
-    "length": 8.0,
+    "length": 10.0,
     "head": "csk",
     "head_std": "ISO 14581",
     "head_dk": 3.8,
@@ -3113,7 +3763,7 @@
     "sink": 0.0,
     "grip": 0.0,
     "tap_d": 1.6,
-    "thread_depth": 8.5
+    "thread_depth": 10.5
    }
   }
  ],
