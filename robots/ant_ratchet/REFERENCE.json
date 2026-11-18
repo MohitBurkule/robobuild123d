@@ -1,0 +1,13 @@
+{
+ "robot_type": "lifter",
+ "wheels": 2,
+ "weapon": {
+  "kind": "lifter",
+  "position": "front",
+  "width_frac": 0.7
+ },
+ "photos": [
+  "ant_ratchet.aws72.webp",
+  "ant_ratchet.aws76.webp"
+ ]
+}

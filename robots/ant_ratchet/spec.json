@@ -1,0 +1,474 @@
+{
+ "name": "ant ratchet",
+ "profile": "aws2025",
+ "robot_type": "lifter",
+ "locomotion": "wheels",
+ "kit_draft": true,
+ "parts": [
+  {
+   "id": "chassis",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -50,
+       -14
+      ],
+      [
+       50,
+       -14
+      ],
+      [
+       50,
+       -11
+      ],
+      [
+       5,
+       22
+      ],
+      [
+       -50,
+       22
+      ]
+     ],
+     "height": 84
+    },
+    "at": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rot": [
+     90.0,
+     0.0,
+     90.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#b8281e",
+   "print_orientation": "+z"
+  },
+  {
+   "id": "wheel_l0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 16.0,
+     "height": 12.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    48.5,
+    -28.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e9c9c0"
+  },
+  {
+   "id": "wheel_r0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 16.0,
+     "height": 12.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -48.5,
+    -28.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e9c9c0"
+  },
+  {
+   "id": "fork_0",
+   "kind": "wedge",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      12,
+      30,
+      10
+     ]
+    },
+    "at": [
+     -50.0,
+     50,
+     -11
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#151517"
+  },
+  {
+   "id": "fork_1",
+   "kind": "wedge",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      12,
+      30,
+      10
+     ]
+    },
+    "at": [
+     50.0,
+     50,
+     -11
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#151517"
+  },
+  {
+   "id": "lifter",
+   "kind": "weapon",
+   "material": "polycarbonate",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      80,
+      60,
+      3
+     ]
+    },
+    "at": [
+     0,
+     30,
+     8
+    ],
+    "rot": [
+     -36.25383773744479,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e8a69a",
+   "weapon": {
+    "kind": "lifter"
+   },
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "pivot": [
+     0,
+     5,
+     22
+    ],
+    "min": 0,
+    "max": 70,
+    "default": 0
+   }
+  },
+  {
+   "id": "skirt_l",
+   "kind": "armor",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -8,
+       -14
+      ],
+      [
+       50,
+       -14
+      ],
+      [
+       50,
+       -11
+      ],
+      [
+       22,
+       6
+      ],
+      [
+       -8,
+       6
+      ]
+     ],
+     "height": 14
+    },
+    "at": [
+     49.0,
+     0.0,
+     0.0
+    ],
+    "rot": [
+     90.0,
+     0.0,
+     90.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#b8281e"
+  },
+  {
+   "id": "wheel_guard_l",
+   "kind": "plate",
+   "material": "polycarbonate",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      2,
+      50,
+      22
+     ]
+    },
+    "at": [
+     57,
+     -22,
+     -2
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e6ddd8"
+  },
+  {
+   "id": "skirt_r",
+   "kind": "armor",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -8,
+       -14
+      ],
+      [
+       50,
+       -14
+      ],
+      [
+       50,
+       -11
+      ],
+      [
+       22,
+       6
+      ],
+      [
+       -8,
+       6
+      ]
+     ],
+     "height": 14
+    },
+    "at": [
+     -49.0,
+     0.0,
+     0.0
+    ],
+    "rot": [
+     90.0,
+     0.0,
+     90.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#b8281e"
+  },
+  {
+   "id": "wheel_guard_r",
+   "kind": "plate",
+   "material": "polycarbonate",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      2,
+      50,
+      22
+     ]
+    },
+    "at": [
+     -57,
+     -22,
+     -2
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e6ddd8"
+  }
+ ],
+ "fasteners": [],
+ "wires": [],
+ "connections": [],
+ "reference": [
+  {
+   "image": "reference/ant_ratchet.aws72.webp",
+   "mask": "reference/ant_ratchet.aws72_mask.png",
+   "view": "iso",
+   "approximate": true
+  },
+  {
+   "image": "reference/ant_ratchet.aws76.webp",
+   "mask": "reference/ant_ratchet.aws76_mask.png",
+   "view": "iso",
+   "approximate": true
+  }
+ ]
+}
