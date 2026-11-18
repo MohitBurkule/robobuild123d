@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_flik/robots/flik/spec.json",
- "rendered_at": 1795034968.797025,
+ "rendered_at": 1795045219.697917,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -10,13 +10,74 @@
   "side_panel_r",
   "top_plate",
   "dt_hub_wheel_l0",
-  "dt_axle_wheel_l0",
-  "dt_nut_wheel_l0",
   "dt_hub_wheel_r0",
-  "dt_axle_wheel_r0",
-  "dt_nut_wheel_r0",
-  "dt_screw_0",
-  "dt_screw_1"
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_rx_esc",
+  "el_servo_flipper",
+  "el_switch"
  ],
- "wires": {}
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    0.012999999999998652,
+    -5.983,
+    -1.989
+   ],
+   "to": [
+    -4.0,
+    -31.0,
+    -3.0
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    4.0,
+    -31.0,
+    -3.0
+   ],
+   "to": [
+    -11.987,
+    1.0170000000000003,
+    7.511
+   ]
+  },
+  "w_m1": {
+   "from": [
+    11.013,
+    9.017,
+    7.511
+   ],
+   "to": [
+    0.5999999999999996,
+    -20.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -11.987,
+    9.017,
+    7.511
+   ],
+   "to": [
+    -0.5999999999999996,
+    -20.0,
+    0.0
+   ]
+  },
+  "w_sig_flipper": {
+   "from": [
+    11.013,
+    1.0170000000000003,
+    7.511
+   ],
+   "to": [
+    -11.487,
+    -1.483,
+    18.011
+   ]
+  }
+ }
 }
