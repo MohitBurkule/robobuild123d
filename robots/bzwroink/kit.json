@@ -21,7 +21,18 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "skip_photos": [
+  0,
+  1
+ ],
+ "textured": [
+  2
+ ],
+ "name": "bzwroink",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "box": [
     70,
@@ -44,16 +55,5 @@
     0
    ]
   }
- ],
- "skip_photos": [
-  0,
-  1
- ],
- "textured": [
-  2
- ],
- "name": "bzwroink",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }

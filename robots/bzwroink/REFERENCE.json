@@ -9,5 +9,15 @@
  ],
  "mask_mode": {
   "bzwroink.aws68.webp": "textured"
+ },
+ "view": {
+  "bzwroink..._and_li_llest_stoink_.aws65.webp": "left",
+  "bzwroink...aws61.webp": "left",
+  "bzwroink.aws68.webp": "front_left_iso"
+ },
+ "elevation": {
+  "bzwroink..._and_li_llest_stoink_.aws65.webp": 25,
+  "bzwroink...aws61.webp": 25,
+  "bzwroink.aws68.webp": 45
  }
 }
