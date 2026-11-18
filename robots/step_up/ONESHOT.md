@@ -24,8 +24,8 @@ Decisions: type lifter; body box rect 80x66x22 mm, ramp 0; wheels 4 r14 outboard
 Likeness: aws72 0.70 (FAIL).
 
 ## Round 4 (verification, helper 1)
-Blockers r3 -> r4: **60 -> 14** (`verify --tier inner`, full output in verify_r4.txt).
-Likeness (best silhouette IoU per photo, r3 -> r4): step_up.aws72.webp 0.70 -> 0.71
+Blockers r3 -> r4: **60 -> 15** (`verify --tier inner`, full output in verify_r4.txt).
+Likeness (best silhouette IoU per photo, r3 -> r4): step_up.aws72.webp 0.705 -> 0.706
 
 What was done (script r4_h1, outside shape kept):
 - fake screw/bolt heads removed; detail mounts/arms merged into the print part they sit on; axle nuts became printed hub caps
@@ -39,8 +39,8 @@ Notes from the run:
 - dt_axle_wheel_r0 replaced by the gearmotor shaft
 - dt_axle_wheel_l1 replaced by the gearmotor shaft
 - dt_axle_wheel_r1 replaced by the gearmotor shaft
-- joint lifter: 1.0 mm sweep clearance cut in chassis
-- chassis: hollowed (box wall round pockets), 85974 -> 56155 mm3
+- joint lifter: its sweep would cut a 8 mm deep slot into the outside of chassis (8 mm for the poses at 0..80 deg alone); left out (look kept)
+- chassis: hollowed (box wall round pockets), 86705 -> 56390 mm3
 - wire w_bat_sw: no via round the rotor found
 - wire w_sw_esc: no via round the rotor found
 - wire w_m1: no via round the rotor found
@@ -51,6 +51,7 @@ Notes from the run:
 Left (one line each):
 - wire.rotor_clearance x6: toolchain for lifters/flippers: the check revolves a limited-range arm a full turn, so no wire inside the chassis can clear it; for spinners: no free route found
 - integrity.volume x1: volume store from an earlier run differs (tool-side baseline)
+- proxy.interference x1: parts overlap in the kit shape where a cut would change the look or leave a loose piece
 - proxy.sweep x1: moving part runs into the chassis more than a running clearance can take without changing the look
 - power.weapon_motor x1: toolchain: a servo/arm weapon is required to have a brushless kV motor like a spinner
 - process.weapon_printed x1: toolchain: printed lifter/flipper arms are judged like spinner teeth (metal inserts required)
