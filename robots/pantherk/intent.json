@@ -1,7 +1,7 @@
 {
   "hypothesis": "wedge",
   "name": "Pantherk II",
-  "shape": "box",
+  "outline": [[-48, -60], [48, -60], [48, 60], [-48, 60]],
   "y0": -60, "y1": 60,
   "zb": -24, "zt": 24
 }

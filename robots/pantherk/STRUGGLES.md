@@ -53,3 +53,29 @@ Spec: `robots/pantherk/spec.json`. Intent: `robots/pantherk/intent.json`. Render
 ### Final blocker count
 - Inner tier: 33 blockers (21 root causes), plus 1 validity.load in the JSON run (negative box size, see above).
 - Likeness: 2 blockers (silhouette). Result: FAIL.
+
+## Session 2: shape from photos (new tools)
+
+Result: likeness FAIL on both photos (aws67 iso 0.70, need 0.80; aws66 front 0.73, need 0.80). Inner verify: 1 blocker (`validity.load`, negative box size on chassis_bottom). Renders: `robots/pantherk/renders/iso.png`, `top.png`.
+
+### What the tools did
+- `robot mask` + `--crop` / `--thr`: the default threshold (40) on aws66 kept the cardboard (89.7% of frame is "robot"). Cropping tighter made it worse, because the border median then samples robot white. `--thr 130` on the full frame gave a clean body silhouette. The likeness gate then rejected the default-thr mask, so `mask_thr` in REFERENCE.json is required. Note: my REFERENCE.json edit was reverted once between steps, so re-check the file before committing.
+- `robot fit-photo`: gave w 96 / h 48 / ramp 36 mm, IoU 0.76 on the coarse envelope, no weapon cylinder. Useful as a starting size. It does not model the wedge or wheels.
+- `robot likeness` loop (~10 s): fast enough. The overlays are the most useful output.
+
+### What did not help
+- The generator's `shape: box` ignored my width. The chassis stayed about 84 mm wide. An explicit `outline` in the intent fixed the width.
+- Raising zt (taller body) moved the aws66 score by about 0.03 either way. The gap is not height alone.
+- `zb -24` gives a negative box size in `chassis_bottom` (verify blocker). `zb -9` clears it but gives 39 inner blockers (mass 186 g vs 150 g). Not resolved.
+- The wedge is a fixed part on the +x side in the template, not a front plow. No intent key moves it.
+
+### Still missing
+- aws66 mask: the photo's dark wheels fall outside the threshold, so the photo-side silhouette has no wheels at the top corners. The model's wheels then count as "model only" and the IoU is capped. This is a mask-quality limit, not a shape limit. Needs a better mask (not a hand edit).
+- Four wheels: the generator has 2WD; `patch.py` adds two idlers at y=26 mm by eye. Their position was not fitted to anything.
+- Front ramp (36 mm in side view) and the split front skirts: no intent key; not patched.
+- aws68 (purple robot) has no mask or reference entry, so likeness does not check it.
+- `pip install -e .` fails in this clone with a setuptools-scm `NoneType` regex error; the robot package still imports from the clone.
+- `fasteners --fill` must be re-run after `patch.py` (it writes the hole records into spec.json). The build -> patch -> fill order is the reproducible path.
+
+### Reproduce
+`python3 -m robot gen build --intent robots/pantherk/intent.json --out out/ --no-gate && python3 robots/pantherk/patch.py out/wedge.json robots/pantherk/spec.json && python3 -m robot fasteners --fill robots/pantherk/spec.json && python3 -m robot likeness robots/pantherk/spec.json`

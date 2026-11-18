@@ -8,5 +8,8 @@
   "teeth": 0
  },
  "wheels": 4,
- "source": "read from reference photos by Sonnet"
+ "source": "read from reference photos by Sonnet",
+ "mask_thr": {
+  "pantherk_ii.aws66.webp": 130
+ }
 }
