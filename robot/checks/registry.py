@@ -92,6 +92,7 @@ REGISTRY = [
     _g("cots_fidelity", DESIGN, FULL, 14.6, note="vs catalog feature tables; cots.motor_volume (vs STEP) is parity"),
     _g("wire_review", DESIGN, INNER, 0.5),  # wire.rotating_clearance, wire.render_present
     _g("fastener_record", DESIGN, INNER, 0.0),  # fastener.hole_record
+    _g("likeness", DESIGN, INNER, 0.0, note="(inactive on Revron; ~8 s per edit, ~80 s first run) copy of a real robot: not a template, looks like its photos (robot/checks/likeness.py)"),
     _g("drive_recess", DESIGN, INNER, 0.4),  # fastener.drive_recess
     _g("belt_wrap", DESIGN, INNER, 0.3),  # cots.belt_wrap
     _g("print_orient", DESIGN, FULL, 4.7),  # print.orientation_declared
