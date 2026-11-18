@@ -4,7 +4,7 @@
  "body": {
   "length": 80,
   "width": 80,
-  "height": 28,
+  "height": 24,
   "ramp": 0,
   "clearance": 2
  },
@@ -16,7 +16,7 @@
   "radius": 16,
   "width": 16,
   "y": [
-   14
+   16
   ]
  }
 }

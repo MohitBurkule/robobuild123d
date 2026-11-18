@@ -25,3 +25,8 @@ Kit body has no plan-view taper; curved sheet scoop primitive missing.
 
 ## Verdict
 Looks alike: **yes**. Renders: `renders/iso.png`, `renders/top.png`.
+
+## Round 2 (looks)
+Lower body with chamfered tail, bigger outboard wheels, multi-facet curved scoop with upright mounting strip.
+
+Likeness: aws71 0.79 (FAIL), aws74 0.80 (FAIL), aws76 0.77 (FAIL).
