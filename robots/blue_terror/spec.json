@@ -2,7 +2,7 @@
  "name": "blue terror",
  "profile": "aws2025",
  "robot_type": "wedge",
- "locomotion": "wheels",
+ "locomotion": "roller",
  "kit_draft": true,
  "parts": [
   {
@@ -283,14 +283,14 @@
      "type": "box",
      "size": [
       86,
-      36,
+      24,
       2
      ]
     },
     "at": [
      0,
-     58,
-     0.0
+     56,
+     -3.0
     ],
     "rot": [
      -35,

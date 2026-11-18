@@ -8,3 +8,8 @@
 Decisions: type wedge; body box rect 95x54x26 mm, ramp 0; wheels 6 r12 outboard; weapon none; extra parts: scoop.
 
 Likeness: aws72 0.79 (FAIL).
+
+## Round 2 (looks)
+Decisions: type wedge; body box rect 95x54x26 mm, ramp 0; wheels 6 r12 outboard; weapon none; extra parts: scoop.
+
+Likeness: aws72 0.81 (FAIL).
