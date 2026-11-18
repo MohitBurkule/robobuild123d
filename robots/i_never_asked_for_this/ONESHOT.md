@@ -46,3 +46,9 @@ Left (and why):
 - likeness.silhouette x1: looks, not in scope for this pass.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): i_never_asked_for_this.aws71.webp 0.7 -> 0.7
+
+## Round 3c (user angle picks applied; shape fixed per user remarks)
+Decisions: type wedge; body box rect 92x80x24 mm, ramp 0; wheels 4 r12 outboard; weapon none; extra parts: front_plate.
+
+Likeness: aws71 0.64 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/i_never_asked_for_this.aws71.webp` is declared `front_left_iso` (IoU 0.64 there) but the model matches it better from front_rig

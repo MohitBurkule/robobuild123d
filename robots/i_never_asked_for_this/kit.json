@@ -27,26 +27,33 @@
  },
  "macros": [
   {
-   "box": [
-    88,
-    3,
-    46
+   "side": [
+    [
+     44,
+     26
+    ],
+    [
+     46.5,
+     27
+    ],
+    [
+     64,
+     1.5
+    ],
+    [
+     61,
+     0.5
+    ]
    ],
-   "at": [
-    0,
-    52,
-    17
+   "x": [
+    -44,
+    44
    ],
    "kind": "wedge",
    "material": "aluminium",
    "process": "laser",
    "id": "front_plate",
-   "color": "#c9cdd3",
-   "rot": [
-    -38,
-    0,
-    0
-   ]
+   "color": "#c9cdd3"
   }
  ]
 }
