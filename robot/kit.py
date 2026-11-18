@@ -259,6 +259,8 @@ def build(k: dict) -> dict:
             top.append([ty - t * sl * math.cos(a), tz + th + t * sl * math.sin(a) - cv * 4 * t * (1 - t)])
         bot = [[y, z - th] for y, z in reversed(top)]
         part("scoop", "wedge", _yz_prism(top + bot, -sw / 2, sw / 2), "titanium", "laser", color=COL["fork"])
+    from . import kitparts
+    parts += kitparts.expand(k.get("use"))
     for e in k.get("extras") or []:
         e = dict(e)
         e.setdefault("kind", "structure")
@@ -282,6 +284,15 @@ def main(src, out):
 
 def add_cli(sub):
     p = sub.add_parser("kit", help="looks-first robot from body/weapon/wheels/forks numbers (for photo matching)")
-    p.add_argument("kit")
-    p.add_argument("out")
-    p.set_defaults(func=lambda a: main(a.kit, a.out))
+    p.add_argument("kit", nargs="?")
+    p.add_argument("out", nargs="?")
+    p.add_argument("--parts", action="store_true", help="list the shared parts usable in kit.json `use`")
+    p.set_defaults(func=lambda a: _cli(a))
+
+
+def _cli(a):
+    if a.parts or not a.kit:
+        from . import kitparts
+        print(kitparts.describe())
+        return 0
+    return main(a.kit, a.out)
