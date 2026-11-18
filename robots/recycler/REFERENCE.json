@@ -1,1 +1,16 @@
-{"robot_type":"drum","weapon":{"kind":"drum","axis":"x","position":"front","width_frac":0.9,"teeth":0},"wheels":2,"source":"read from photos"}
+{
+ "robot_type": "drum",
+ "weapon": {
+  "kind": "drum",
+  "axis": "x",
+  "position": "front",
+  "width_frac": 0.9,
+  "teeth": 0
+ },
+ "wheels": 2,
+ "source": "read from photos",
+ "mask_mode": {
+  "recycler.aws65.webp": "textured",
+  "recycler.aws66.webp": "textured"
+ }
+}
