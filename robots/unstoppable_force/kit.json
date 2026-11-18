@@ -17,7 +17,8 @@
    -18
   ],
   "outside": false,
-  "x": 40
+  "x": 40,
+  "notch": true
  },
  "weapon": {
   "kind": "drum",
@@ -33,7 +34,8 @@
   "weapon": "#b9b9b4",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "name": "unstoppable force",
+ "macros": [
   {
    "side": [
     [
@@ -61,6 +63,5 @@
    "id": "drum_arm",
    "color": "#22262a"
   }
- ],
- "name": "unstoppable force"
+ ]
 }

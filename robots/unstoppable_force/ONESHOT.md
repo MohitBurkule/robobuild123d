@@ -17,3 +17,9 @@ Likeness: aws69 0.86 (ok), aws71 0.90 (ok), aws72 0.88 (ok).
 Decisions: type drum; body box round_nose 100x100x30 mm, ramp 0; wheels 2 r17 inboard; weapon drum r14 axis x teeth 2; extra parts: drum_arm.
 
 Likeness: aws69 0.86 (ok), aws71 0.90 (ok), aws72 0.88 (ok).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type drum; body box round_nose 100x100x30 mm, ramp 0; wheels 2 r17 inboard; weapon drum r14 axis x teeth 2; extra parts: drum_arm.
+
+Likeness: aws69 0.81 (ok), aws71 0.71 (FAIL), aws72 0.80 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/unstoppable_force.aws71.webp` is declared `front_left_iso` (IoU 0.71 there) but the model matches it better from front_left_iso; [FAIL] likeness.view: `reference/unstoppable_force.aws72.webp` is declared `front_left_iso` (IoU 0.80 there) but the model matches it better from front_right_is

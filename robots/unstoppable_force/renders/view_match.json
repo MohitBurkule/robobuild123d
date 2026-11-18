@@ -1,0 +1,20 @@
+{
+ "unstoppable_force.aws69.webp": {
+  "view": "front_left_iso",
+  "azimuth": 150,
+  "elevation": 60,
+  "iou": 0.831
+ },
+ "unstoppable_force.aws71.webp": {
+  "view": "front_left_iso",
+  "azimuth": 120,
+  "elevation": 25,
+  "iou": 0.881
+ },
+ "unstoppable_force.aws72.webp": {
+  "view": "front_left_iso",
+  "azimuth": 165,
+  "elevation": 25,
+  "iou": 0.822
+ }
+}

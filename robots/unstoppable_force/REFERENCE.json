@@ -10,5 +10,15 @@
   "unstoppable_force.aws69.webp",
   "unstoppable_force.aws71.webp",
   "unstoppable_force.aws72.webp"
- ]
+ ],
+ "view": {
+  "unstoppable_force.aws69.webp": "front_left_iso",
+  "unstoppable_force.aws71.webp": "front_left_iso",
+  "unstoppable_force.aws72.webp": "front_left_iso"
+ },
+ "elevation": {
+  "unstoppable_force.aws69.webp": 45,
+  "unstoppable_force.aws71.webp": 45,
+  "unstoppable_force.aws72.webp": 45
+ }
 }
