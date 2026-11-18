@@ -1,7 +1,7 @@
 BLOCKERS: 13
   [cached] integrity 0.00s
   [cached] mass 0.00s
-  [proxy] interference 0.07s
+  [proxy] interference 0.19s
   [cached] connections 0.00s
   [cached] legal 0.00s
   [cached] fasteners 0.00s
@@ -23,14 +23,14 @@ BLOCKERS: 13
   [cached] bom 0.00s
   [cached] wire_review 0.00s
   [cached] fastener_record 0.00s
-  [cached] likeness 0.00s
+  [ran] likeness 8.58s
   [cached] drive_recess 0.00s
   [cached] belt_wrap 0.00s
-  [cached] retention 0.00s
+  [cached] retention 0.01s
   [cached] waiver_audit 0.00s
   [cached] geom 0.00s
   [cached] dfm 0.00s
-  [cached] realworld 0.00s
+  [cached] realworld 0.02s
 alpha: ok=False 13 blockers in 13 root causes, mass 135.1/150 g
 1. [proxy.interference] `chassis` and `scoop` overlap by 0.91 mm (allowed 0.08).
    | chassis: x -46.00..46.00  y -42.50..42.50  z -10.00..20.00  size 92.00 x 85.00 x 30.00 mm
@@ -90,9 +90,9 @@ alpha: ok=False 13 blockers in 13 root causes, mass 135.1/150 g
    |   joint revolute axis [1, 0, 0] pivot [0, 20, 22.0] range 0..80 default 0
    |   OVERLAP `chassis` 0.91 mm (allowed 0.08)
    |   gap to `link_l` 0.00 mm (touching)
-11. [likeness.view] `reference/alpha.aws72.webp` is declared `front` (IoU 0.29 there) but the model matches it better from rear (elevation 45, azimuth 270) (IoU 0.82).
+11. [likeness.view] `reference/alpha.aws72.webp` is declared `front_left_iso` (IoU 0.61 there) but the model matches it better from rear (elevation 45, azimuth 270) (IoU 0.82).
    fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
-12. [likeness.silhouette] `reference/alpha.aws72.webp`: best silhouette IoU 0.29 at camera front (elevation 0, azimuth 90) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.31). Regions (photo frame, left third first) 0.27 / 0.31 / 0.28: worst = front third. Height/length 0.38 model vs 1.04 photo (too flat: raise it or shorten it).
+12. [likeness.silhouette] `reference/alpha.aws72.webp`: best silhouette IoU 0.61 at camera front_left_iso (elevation 45, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `wedge_2wd` at 0.60). Regions (photo frame, left third first) 0.47 / 0.81 / 0.52: worst = front third. Height/length 0.91 model vs 1.04 photo (too flat: raise it or shorten it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 ... 1 more root causes (fix these first, then re-run)
 MASS BUDGET:
@@ -112,4 +112,4 @@ MASS BUDGET:
     el_switch                   0.50 g  fills 100% of its box
     mass.may_be_over: 135.1 g (range 109.7 to 160.6 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: group 31 hit / 0 miss, min_gap 34 hit / 0 miss, overlap 198 hit / 0 miss, part_geom 13 hit / 0 miss
+cache: group 30 hit / 1 miss, inside 8 hit / 0 miss, likeness 0 hit / 1 miss, min_gap 34 hit / 0 miss, overlap 198 hit / 0 miss, part_geom 13 hit / 0 miss

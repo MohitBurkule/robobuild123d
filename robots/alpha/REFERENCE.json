@@ -9,9 +9,9 @@
   "alpha.aws72.webp"
  ],
  "view": {
-  "alpha.aws72.webp": "front"
+  "alpha.aws72.webp": "front_left_iso"
  },
- "elevation": {
-  "alpha.aws72.webp": 70
+ "view_source": {
+  "alpha.aws72.webp": "user camera pick (azimuth 105, elevation 45); replaces the automatic label"
  }
 }

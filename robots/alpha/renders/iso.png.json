@@ -1,13 +1,20 @@
 {
  "spec": "/tmp/work10_alpha/robots/alpha/spec.json",
- "rendered_at": 1795024375.0513563,
+ "rendered_at": 1795036356.2811675,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
   "scoop",
   "link_l",
-  "link_r"
+  "link_r",
+  "dt_hub_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_esc",
+  "el_switch"
  ],
  "wires": {}
 }
