@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_shark_attack/robots/shark_attack/spec.json",
- "rendered_at": 1795038124.2114298,
+ "rendered_at": 1795039013.8132746,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -15,25 +15,53 @@
   "hammer_tip",
   "hinge_block",
   "dt_hub_wheel_l0",
-  "dt_axle_wheel_l0",
-  "dt_nut_wheel_l0",
   "dt_hub_wheel_r0",
-  "dt_axle_wheel_r0",
-  "dt_nut_wheel_r0",
-  "dt_screw_0",
-  "dt_screw_1",
-  "dt_screw_2",
-  "dt_screw_3",
-  "dt_screw_4",
-  "dt_screw_5",
   "dt_mount_fork_0",
-  "dt_bolt_fork_0",
   "dt_mount_fork_1",
-  "dt_bolt_fork_1",
   "dt_mount_fork_2",
-  "dt_bolt_fork_2",
   "dt_mount_fork_3",
-  "dt_bolt_fork_3"
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_esc",
+  "el_switch"
  ],
- "wires": {}
+ "wires": {
+  "w_sw_esc": {
+   "from": [
+    -4.5,
+    -13.0,
+    -3.0
+   ],
+   "to": [
+    0.4999999999999994,
+    -18.0,
+    -1.5
+   ]
+  },
+  "w_m1": {
+   "from": [
+    0.5000000000000007,
+    14.0,
+    10.5
+   ],
+   "to": [
+    12.5,
+    -25.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    0.49999999999999867,
+    -18.0,
+    10.5
+   ],
+   "to": [
+    -12.5,
+    -25.0,
+    0.0
+   ]
+  }
+ }
 }
