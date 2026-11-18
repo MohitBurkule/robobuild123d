@@ -62,3 +62,10 @@ def test_textured_mask(tmp_path):
     gt[100:200, 140:260] = True
     f = photo_mask(p, mode="textured")
     assert (f & gt).sum() / (f | gt).sum() > 0.75
+
+
+def test_joint_axis_obj():
+    from robot.checks.likeness import _jaxis
+    from robot.spec import Joint
+    assert list(_jaxis(Joint({"axis": [0, 1, 0]}))) == [0, 1, 0]
+    assert _jaxis({"axis": [1, 0, 0]}) == [1, 0, 0]
