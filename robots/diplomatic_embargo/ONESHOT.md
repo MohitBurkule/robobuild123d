@@ -16,3 +16,9 @@ Likeness: aws72 0.85 (ok), aws76 0.70 (FAIL).
 Decisions: type wedge; body box rect 95x66x24 mm, ramp 0; wheels 4 r11 outboard as treads; weapon none; 3 forks 30 mm; extra parts: front_plate.
 
 Likeness: aws72 0.85 (ok), aws76 0.70 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type wedge; body box rect 95x66x24 mm, ramp 0; wheels 4 r11 outboard; weapon none; 3 forks 46 mm; extra parts: front_plate.
+
+Likeness: aws72 0.68 (FAIL), aws76 0.49 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/diplomatic_embargo.aws76.webp` is declared `front_left_iso` (IoU 0.49 there) but the model matches it better from rear_left_iso

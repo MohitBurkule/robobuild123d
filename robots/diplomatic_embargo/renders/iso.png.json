@@ -1,10 +1,12 @@
 {
  "spec": "/tmp/work10_diplomatic_embargo/robots/diplomatic_embargo/spec.json",
- "rendered_at": 1795023010.9208384,
+ "rendered_at": 1795024410.9404252,
  "bodies": [
   "chassis",
-  "tread_l",
-  "tread_r",
+  "wheel_l0",
+  "wheel_r0",
+  "wheel_l1",
+  "wheel_r1",
   "fork_0",
   "fork_1",
   "fork_2",

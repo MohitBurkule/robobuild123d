@@ -1,11 +1,19 @@
 {
  "robot_type": "wedge",
- "wheels": 2,
+ "wheels": 4,
  "weapon": {
   "kind": "wedge"
  },
  "photos": [
   "diplomatic_embargo.aws72.webp",
   "diplomatic_embargo.aws76.webp"
- ]
+ ],
+ "view": {
+  "diplomatic_embargo.aws72.webp": "front_left_iso",
+  "diplomatic_embargo.aws76.webp": "front_left_iso"
+ },
+ "elevation": {
+  "diplomatic_embargo.aws72.webp": 25,
+  "diplomatic_embargo.aws76.webp": 45
+ }
 }
