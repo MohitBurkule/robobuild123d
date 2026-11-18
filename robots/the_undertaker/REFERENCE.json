@@ -7,5 +7,15 @@
  },
  "photos": [
   "the_undertaker.aws67.webp"
- ]
+ ],
+ "view": {
+  "the_undertaker.aws65.webp": "front_left_iso",
+  "the_undertaker.aws66.webp": "front",
+  "the_undertaker.aws67.webp": "front"
+ },
+ "elevation": {
+  "the_undertaker.aws65.webp": 45,
+  "the_undertaker.aws66.webp": 25,
+  "the_undertaker.aws67.webp": 25
+ }
 }

@@ -32,7 +32,21 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "skip_photos": [
+  0,
+  1
+ ],
+ "drop": [],
+ "ref": {
+  "robot_type": "horizontal_spinner",
+  "wheels": 2,
+  "weapon": {
+   "kind": "ring",
+   "axis": "z"
+  }
+ },
+ "name": "the undertaker",
+ "macros": [
   {
    "box": [
     8,
@@ -76,19 +90,5 @@
    "id": "tooth",
    "color": "#c9cdd3"
   }
- ],
- "skip_photos": [
-  0,
-  1
- ],
- "drop": [],
- "ref": {
-  "robot_type": "horizontal_spinner",
-  "wheels": 2,
-  "weapon": {
-   "kind": "ring",
-   "axis": "z"
-  }
- },
- "name": "the undertaker"
+ ]
 }

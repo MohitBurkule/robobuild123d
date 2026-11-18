@@ -17,3 +17,9 @@ Likeness: aws67 0.78 (FAIL).
 Decisions: type horizontal_spinner; body box trapezoid 75x95x24 mm, ramp 0; wheels 2 r15 outboard; weapon ring r46 axis z teeth 1; extra parts: leg, spoke, tooth; photos skipped (cluttered): indices [0, 1].
 
 Likeness: aws67 0.72 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type horizontal_spinner; body box trapezoid 75x95x24 mm, ramp 0; wheels 2 r15 outboard; weapon ring r46 axis z teeth 1; extra parts: leg, spoke, tooth; photos skipped (cluttered): indices [0, 1].
+
+Likeness: aws67 0.54 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/the_undertaker.aws67.webp` is declared `front` (IoU 0.54 there) but the model matches it better from front (elevation 45, azimu
