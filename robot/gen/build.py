@@ -223,8 +223,7 @@ def _seat_inserts(plan):
             continue
         host = "tub" if "tub" in ids and half in ("top", "bottom") else f"chassis_{half}"
         if host in ids and (p["id"], host) not in have:
-            plan.connections.append({"a": p["id"], "b": host, "method": "press_fit",
-                                     "reason": "heat-set insert melted into its bore"})
+            plan.connect(p["id"], host, "press_fit", "heat-set insert melted into its bore")  # records its intent too
 
 
 def to_spec(plan, h) -> dict:
