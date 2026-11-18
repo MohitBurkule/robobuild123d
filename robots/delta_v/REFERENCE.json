@@ -1,6 +1,12 @@
 {
  "robot_type": "vertical_spinner",
- "weapon": "vertical disc on top, two front forks/blade",
+ "weapon": {
+  "kind": "disc",
+  "axis": "x",
+  "position": "middle",
+  "width_frac": 0.35,
+  "teeth": 1
+ },
  "wheels": 2,
  "source": "read from reference photos by Sonnet"
 }
