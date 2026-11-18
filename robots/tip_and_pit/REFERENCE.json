@@ -1,0 +1,14 @@
+{
+ "robot_type": "lifter",
+ "wheels": 2,
+ "weapon": {
+  "kind": "lifter",
+  "axis": "x"
+ },
+ "photos": [
+  "tip_pit.aws63.webp"
+ ],
+ "mask_mode": {
+  "tip_pit.aws63.webp": "textured"
+ }
+}
