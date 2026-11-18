@@ -1,0 +1,242 @@
+{
+ "name": "brisk",
+ "profile": "aws2025",
+ "robot_type": "flipper",
+ "locomotion": "wheels",
+ "kit_draft": true,
+ "parts": [
+  {
+   "id": "chassis",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -50.0,
+       0.0
+      ],
+      [
+       50.0,
+       0.0
+      ],
+      [
+       50.0,
+       1.5
+      ],
+      [
+       -12.0,
+       42.0
+      ],
+      [
+       -50.0,
+       42.0
+      ]
+     ],
+     "height": 100.0
+    },
+    "at": [
+     0.0,
+     0.0,
+     -10.0
+    ],
+    "rot": [
+     90.0,
+     0.0,
+     90.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e8873a",
+   "print_orientation": "+z"
+  },
+  {
+   "id": "wheel_l0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 12.0,
+     "height": 8.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    45.5,
+    -30.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "wheel_r0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 12.0,
+     "height": 8.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -45.5,
+    -30.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "lid",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      60,
+      40,
+      3
+     ]
+    },
+    "at": [
+     0,
+     -28,
+     32.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#3a7fc0"
+  },
+  {
+   "id": "flipper",
+   "kind": "weapon",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      6,
+      50,
+      3
+     ]
+    },
+    "at": [
+     0,
+     -5,
+     26.0
+    ],
+    "rot": [
+     -20,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#b8e04a",
+   "weapon": {
+    "kind": "flipper"
+   },
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "pivot": [
+     0,
+     -25,
+     32.0
+    ],
+    "min": 0,
+    "max": 80,
+    "default": 0
+   }
+  }
+ ],
+ "fasteners": [],
+ "wires": [],
+ "connections": [],
+ "reference": [
+  {
+   "image": "reference/brisk.aws76.webp",
+   "mask": "reference/brisk.aws76_mask.png",
+   "view": "iso",
+   "approximate": true
+  }
+ ]
+}

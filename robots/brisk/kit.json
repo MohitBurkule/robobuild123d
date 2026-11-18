@@ -1,0 +1,71 @@
+{
+ "robot_type": "flipper",
+ "body": {
+  "length": 100,
+  "width": 100,
+  "height": 42,
+  "ramp": 62
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 12,
+  "width": 8,
+  "y": [
+   -30
+  ],
+  "outside": false
+ },
+ "colors": {
+  "body": "#e8873a",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "box": [
+    60,
+    40,
+    3
+   ],
+   "at": [
+    0,
+    -28,
+    44
+   ],
+   "id": "lid",
+   "color": "#3a7fc0"
+  },
+  {
+   "box": [
+    6,
+    50,
+    3
+   ],
+   "at": [
+    0,
+    -5,
+    38
+   ],
+   "weapon": "flipper",
+   "pivot": [
+    -25,
+    44
+   ],
+   "id": "flipper",
+   "color": "#b8e04a",
+   "rot": [
+    -20,
+    0,
+    0
+   ]
+  }
+ ],
+ "skip_photos": [
+  1
+ ],
+ "name": "brisk",
+ "weapon": {
+  "kind": "none"
+ }
+}

@@ -1,0 +1,12 @@
+{
+ "spec": "/tmp/work10_brisk/robots/brisk/spec.json",
+ "rendered_at": 1795022361.7022953,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "lid",
+  "flipper"
+ ],
+ "wires": {}
+}
