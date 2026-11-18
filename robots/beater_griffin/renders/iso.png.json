@@ -1,0 +1,13 @@
+{
+ "spec": "/tmp/work10_beater_griffin/robots/beater_griffin/spec.json",
+ "rendered_at": 1795022220.54806,
+ "bodies": [
+  "chassis",
+  "weapon",
+  "wheel_l0",
+  "wheel_r0",
+  "bumper_l",
+  "bumper_r"
+ ],
+ "wires": {}
+}

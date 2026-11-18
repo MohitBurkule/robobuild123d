@@ -1,0 +1,72 @@
+{
+ "robot_type": "drum",
+ "body": {
+  "length": 72,
+  "width": 84,
+  "height": 32,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 14,
+  "width": 10,
+  "y": [
+   -10
+  ],
+  "outside": false,
+  "x": 40
+ },
+ "weapon": {
+  "kind": "drum",
+  "radius": 9,
+  "width": 50,
+  "y": 50,
+  "teeth": 2,
+  "z": 12,
+  "axis": "x"
+ },
+ "colors": {
+  "body": "#eeeeea",
+  "wheel": "#22262a",
+  "weapon": "#b9bdc2",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "side": [
+    [
+     -36,
+     2
+    ],
+    [
+     62,
+     2
+    ],
+    [
+     62,
+     14
+    ],
+    [
+     40,
+     30
+    ],
+    [
+     -36,
+     34
+    ]
+   ],
+   "x": [
+    46,
+    54
+   ],
+   "mirror": true,
+   "kind": "armor",
+   "id": "bumper",
+   "color": "#f07a1c"
+  }
+ ],
+ "skip_photos": [
+  1
+ ],
+ "name": "beater griffin"
+}
