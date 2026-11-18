@@ -129,6 +129,8 @@ def make_plan(h, user=None) -> tuple:
     plan.extra["wheel_r"] = h.wheel_dia / 2
     if (user or {}).get("teeth"):  # weapon tooth count from the photo (vspin_drisk single disc)
         plan.extra["teeth"] = int(user["teeth"])
+    if (user or {}).get("drum_width"):  # vspin_drisk as a drum: same mount, rotor this wide along the axis
+        plan.extra["drum_w"] = float(user["drum_width"])
     if g.belt and h.front == "wedgelets":
         plan.extra["axle_out"] = WEDGELET_T / 2  # the standoff end enters the wedgelet's bore (takes the shear); the
         # screw along its axis clamps the wedgelet to the end face (Revron RV17/18)
@@ -221,8 +223,7 @@ def _seat_inserts(plan):
             continue
         host = "tub" if "tub" in ids and half in ("top", "bottom") else f"chassis_{half}"
         if host in ids and (p["id"], host) not in have:
-            plan.connections.append({"a": p["id"], "b": host, "method": "press_fit",
-                                     "reason": "heat-set insert melted into its bore"})
+            plan.connect(p["id"], host, "press_fit", "heat-set insert melted into its bore")  # records its intent too
 
 
 def to_spec(plan, h) -> dict:
