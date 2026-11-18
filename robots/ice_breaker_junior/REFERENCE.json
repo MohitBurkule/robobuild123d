@@ -8,5 +8,13 @@
   "teeth": 3
  },
  "wheels": 2,
- "source": "read from reference photos by Sonnet"
+ "source": "read from reference photos by Sonnet",
+ "view": {
+  "ice_breaker_junior.aws76.webp": "front_left_iso",
+  "ice_breaker_junior.aws74.webp": "front_right_iso"
+ },
+ "view_source": {
+  "ice_breaker_junior.aws76.webp": "user camera pick (azimuth 135, elevation 35); replaces the automatic label",
+  "ice_breaker_junior.aws74.webp": "user camera pick (azimuth 45, elevation 35); replaces the automatic label"
+ }
 }

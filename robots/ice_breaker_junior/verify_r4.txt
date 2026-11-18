@@ -1,8 +1,8 @@
 BLOCKERS: 21
   [cached] integrity 0.00s
-  [proxy] wiring 0.00s
+  [proxy] wiring 0.01s
   [cached] mass 0.00s
-  [proxy] interference 0.17s
+  [proxy] interference 0.41s
   [cached] connections 0.00s
   [cached] legal 0.00s
   [cached] fasteners 0.00s
@@ -16,7 +16,7 @@ BLOCKERS: 21
   [cached] printability 0.00s
   [cached] process 0.00s
   [cached] electrical 0.00s
-  [cached] combat 0.00s
+  [cached] combat 0.01s
   [cached] physics 0.00s
   [cached] plausibility 0.00s
   [cached] cots 0.00s
@@ -24,7 +24,7 @@ BLOCKERS: 21
   [cached] bom 0.00s
   [cached] wire_review 0.00s
   [cached] fastener_record 0.00s
-  [cached] likeness 0.00s
+  [ran] likeness 6.44s
   [cached] drive_recess 0.00s
   [cached] belt_wrap 0.00s
   [cached] retention 0.00s
@@ -99,4 +99,4 @@ MASS BUDGET:
     lock_pin                    0.37 g  fills 79% of its box
     mass.over: 474.1 g (range 437.5 to 510.6 g) against the 225 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: distance 8 hit / 0 miss, group 31 hit / 0 miss, min_gap 48 hit / 0 miss, overlap 190 hit / 0 miss, part_geom 19 hit / 0 miss
+cache: distance 8 hit / 0 miss, group 30 hit / 1 miss, inside 12 hit / 0 miss, likeness 1 hit / 2 miss, min_gap 48 hit / 0 miss, overlap 190 hit / 0 miss, part_geom 19 hit / 0 miss
