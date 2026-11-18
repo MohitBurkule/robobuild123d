@@ -29,3 +29,9 @@ Status: rough build from the `wedge_2wd` template. It passes the inner tier with
 - Print the traceback when a check crashes (or give the file:line).
 - Make `sharp_internal_corner` a warning in rough mode, or accept a `--rough` flag.
 - Add a flipper/lifter template and a robot-type-to-template table in GUIDE.md.
+
+## Round 2 (from scratch, vspin_drisk generator)
+- Built with `gen build` (vspin_drisk, outline 104x76, teeth 3) then `patch_after_gen.py out/vspin_drisk.json spec.json 6 36 66` (shifts disc to mid-length, shortens forks, widens disc via hub, moves wheels out to rear corners, bigger wheels).
+- Likeness: FAIL (3 blockers): weapon check passes; silhouette IoU 0.70 / 0.64 / 0.69 (need 0.80). Photo forks angle downward and wheels bulge past rear; not modelled.
+- Inner verify: 82 blockers, mass 195 g vs 150 g (stock drisk is heavy). Not worked on per coordinator instruction (looks only).
+- Generator gaps: drisk always places the disc ahead of the body (80% of length, fails "middle"); no intent key for weapon position, weapon width, 2 rear outboard wheels, fork length; no way to tilt forks. likeness takes ~2 min on a loaded machine.

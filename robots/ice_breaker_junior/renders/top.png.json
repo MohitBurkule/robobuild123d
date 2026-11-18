@@ -1,0 +1,76 @@
+{
+ "spec": "/tmp/work9_ice_breaker_junior/robots/ice_breaker_junior/spec.json",
+ "rendered_at": 1795019885.2766542,
+ "bodies": [
+  "chassis_bottom",
+  "chassis_top",
+  "motor_l",
+  "wheel_l",
+  "motor_r",
+  "wheel_r",
+  "insert_c0",
+  "insert_c1",
+  "insert_c2",
+  "insert_c3",
+  "battery",
+  "esc",
+  "wesc",
+  "power_switch",
+  "insert_upr0",
+  "insert_upr1",
+  "upright_r",
+  "insert_upl0",
+  "insert_upl1",
+  "upright_l",
+  "weapon_motor",
+  "weapon",
+  "wshaft",
+  "wbearing",
+  "insert_fl0",
+  "insert_fl1",
+  "fork_l",
+  "insert_fr0",
+  "insert_fr1",
+  "fork_r",
+  "bolt_c0",
+  "bolt_c1",
+  "bolt_c2",
+  "bolt_c3",
+  "bolt_upr0",
+  "bolt_upr1",
+  "bolt_wma",
+  "bolt_wmb",
+  "bolt_upl0",
+  "bolt_upl1",
+  "bolt_fl0",
+  "bolt_fl1",
+  "bolt_fr0",
+  "bolt_fr1"
+ ],
+ "wires": {
+  "w_sw_wesc": {
+   "from": [
+    -10.0,
+    -34.0,
+    3.5
+   ],
+   "to": [
+    19.5,
+    -11.0,
+    0.0
+   ]
+  },
+  "w_esc_mr": {
+   "from": [
+    32.0,
+    17.0,
+    0.0
+   ],
+   "to": [
+    -30.549999999999997,
+    -33.0,
+    0.0
+   ]
+  }
+ }
+}
