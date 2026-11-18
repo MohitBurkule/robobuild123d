@@ -3,7 +3,9 @@
  "added": [
   "fork_bar",
   "motor_pod",
-  "pod_base"
+  "pod_base",
+  "side_plate_l",
+  "side_plate_r"
  ],
  "removed": []
 }

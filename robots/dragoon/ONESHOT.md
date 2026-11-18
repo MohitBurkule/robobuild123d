@@ -25,3 +25,8 @@ Kit weapon is always centred on x and solid; needed manual ring + x offset.
 
 ## Verdict
 Looks alike: **partly**. Renders: `renders/iso.png`, `renders/top.png`.
+
+## Round 2 (looks)
+Wider body with sloped side edges and disc slot, larger offset ring with one tooth, bigger motor pod, long angled forks, taller wheels, clear side plates.
+
+Likeness: aws72 0.71 (FAIL), aws74 0.73 (FAIL), aws76 0.71 (FAIL).

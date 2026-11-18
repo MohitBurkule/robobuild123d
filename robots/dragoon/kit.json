@@ -3,17 +3,17 @@
  "robot_type": "vertical_spinner",
  "body": {
   "length": 70,
-  "width": 96,
+  "width": 108,
   "height": 28,
   "ramp": 0,
   "clearance": 2
  },
  "weapon": {
   "kind": "disc",
-  "radius": 34,
+  "radius": 40,
   "width": 3,
-  "y": 5,
-  "z": 22,
+  "y": 10,
+  "z": 27,
   "axis": "x",
   "teeth": 1
  },
@@ -22,13 +22,14 @@
   "radius": 15,
   "width": 8,
   "y": [
-   -20
+   -24
   ]
  },
  "forks": {
   "n": 4,
-  "length": 36,
+  "length": 50,
   "width": 8,
-  "spread": 80
+  "spread": 86,
+  "tilt_deg": 12
  }
 }

@@ -18,31 +18,31 @@
       "type": "prism",
       "points": [
        [
-        -35,
+        -54,
         -13
        ],
        [
-        35,
+        54,
         -13
        ],
        [
-        35,
-        8
+        54,
+        6
        ],
        [
-        28,
+        45,
         15
        ],
        [
-        -28,
+        -45,
         15
        ],
        [
-        -35,
-        8
+        -54,
+        6
        ]
       ],
-      "height": 96
+      "height": 70
      },
      "at": [
       0.0,
@@ -52,7 +52,7 @@
      "rot": [
       90.0,
       0.0,
-      90.0
+      0.0
      ]
     },
     "cut": [
@@ -62,7 +62,7 @@
        "type": "box",
        "size": [
         8,
-        60,
+        64,
         40
        ]
       },
@@ -101,47 +101,55 @@
     "type": "union",
     "items": [
      {
-      "type": "union",
-      "items": [
+      "type": "subtract",
+      "base": {
+       "type": "cylinder",
+       "radius": 40,
+       "height": 3
+      },
+      "cut": [
        {
-        "type": "subtract",
-        "base": {
+        "type": "place",
+        "shape": {
          "type": "cylinder",
-         "radius": 34,
-         "height": 3
+         "radius": 30,
+         "height": 6
         },
-        "cut": [
-         {
-          "type": "cylinder",
-          "radius": 27,
-          "height": 5
-         }
-        ]
-       },
-       {
-        "type": "box",
-        "size": [
-         66,
-         7,
-         3
+        "at": [
+         -4,
+         0,
+         0
+        ],
+        "rot": [
+         0,
+         0,
+         0
         ]
        }
+      ]
+     },
+     {
+      "type": "box",
+      "size": [
+       70,
+       8,
+       3
       ]
      },
      {
       "type": "prism",
       "points": [
        [
-        30,
-        6
+        34,
+        8
        ],
        [
-        44,
-        10
+        50,
+        16
        ],
        [
-        33,
-        -8
+        40,
+        -6
        ]
       ],
       "height": 3
@@ -150,8 +158,8 @@
    },
    "at": [
     -14,
-    5.0,
-    22.0
+    10.0,
+    27.0
    ],
    "rot": [
     0.0,
@@ -179,8 +187,8 @@
     ],
     "pivot": [
      -14,
-     5.0,
-     22.0
+     10.0,
+     27.0
     ],
     "min": 0,
     "max": 360,
@@ -196,7 +204,7 @@
     "type": "place",
     "shape": {
      "type": "cylinder",
-     "radius": 15.0,
+     "radius": 18,
      "height": 8.0
     },
     "at": [
@@ -211,9 +219,9 @@
     ]
    },
    "at": [
-    52.5,
-    -20.0,
-    0.0
+    58.5,
+    -24.0,
+    3
    ],
    "rot": [
     0,
@@ -231,7 +239,7 @@
     "type": "place",
     "shape": {
      "type": "cylinder",
-     "radius": 15.0,
+     "radius": 18,
      "height": 8.0
     },
     "at": [
@@ -246,9 +254,9 @@
     ]
    },
    "at": [
-    -52.5,
-    -20.0,
-    0.0
+    -58.5,
+    -24.0,
+    3
    ],
    "rot": [
     0,
@@ -260,27 +268,49 @@
   {
    "id": "fork_0",
    "kind": "wedge",
-   "material": "titanium",
-   "process": "laser",
+   "material": "nylon",
+   "process": "fdm",
    "shape": {
     "type": "place",
     "shape": {
-     "type": "box",
-     "size": [
-      8.0,
-      36.0,
-      1.5
-     ]
+     "type": "prism",
+     "points": [
+      [
+       34,
+       -3
+      ],
+      [
+       56,
+       -3
+      ],
+      [
+       90,
+       -14
+      ],
+      [
+       90,
+       -15
+      ],
+      [
+       56,
+       -11
+      ],
+      [
+       34,
+       -11
+      ]
+     ],
+     "height": 8.0
     },
     "at": [
-     -40.0,
-     51.0,
-     -14.2
+     -43.0,
+     0.0,
+     0.0
     ],
     "rot": [
-     0,
-     0,
-     0
+     90.0,
+     0.0,
+     90.0
     ]
    },
    "at": [
@@ -298,27 +328,49 @@
   {
    "id": "fork_1",
    "kind": "wedge",
-   "material": "titanium",
-   "process": "laser",
+   "material": "nylon",
+   "process": "fdm",
    "shape": {
     "type": "place",
     "shape": {
-     "type": "box",
-     "size": [
-      8.0,
-      36.0,
-      1.5
-     ]
+     "type": "prism",
+     "points": [
+      [
+       34,
+       -3
+      ],
+      [
+       56,
+       -3
+      ],
+      [
+       90,
+       -14
+      ],
+      [
+       90,
+       -15
+      ],
+      [
+       56,
+       -11
+      ],
+      [
+       34,
+       -11
+      ]
+     ],
+     "height": 8.0
     },
     "at": [
-     -13.333333333333332,
-     51.0,
-     -14.2
+     -14.333333333333332,
+     0.0,
+     0.0
     ],
     "rot": [
-     0,
-     0,
-     0
+     90.0,
+     0.0,
+     90.0
     ]
    },
    "at": [
@@ -336,27 +388,49 @@
   {
    "id": "fork_2",
    "kind": "wedge",
-   "material": "titanium",
-   "process": "laser",
+   "material": "nylon",
+   "process": "fdm",
    "shape": {
     "type": "place",
     "shape": {
-     "type": "box",
-     "size": [
-      8.0,
-      36.0,
-      1.5
-     ]
+     "type": "prism",
+     "points": [
+      [
+       34,
+       -3
+      ],
+      [
+       56,
+       -3
+      ],
+      [
+       90,
+       -14
+      ],
+      [
+       90,
+       -15
+      ],
+      [
+       56,
+       -11
+      ],
+      [
+       34,
+       -11
+      ]
+     ],
+     "height": 8.0
     },
     "at": [
-     13.333333333333336,
-     51.0,
-     -14.2
+     14.333333333333336,
+     0.0,
+     0.0
     ],
     "rot": [
-     0,
-     0,
-     0
+     90.0,
+     0.0,
+     90.0
     ]
    },
    "at": [
@@ -374,27 +448,49 @@
   {
    "id": "fork_3",
    "kind": "wedge",
-   "material": "titanium",
-   "process": "laser",
+   "material": "nylon",
+   "process": "fdm",
    "shape": {
     "type": "place",
     "shape": {
-     "type": "box",
-     "size": [
-      8.0,
-      36.0,
-      1.5
-     ]
+     "type": "prism",
+     "points": [
+      [
+       34,
+       -3
+      ],
+      [
+       56,
+       -3
+      ],
+      [
+       90,
+       -14
+      ],
+      [
+       90,
+       -15
+      ],
+      [
+       56,
+       -11
+      ],
+      [
+       34,
+       -11
+      ]
+     ],
+     "height": 8.0
     },
     "at": [
-     40.0,
-     51.0,
-     -14.2
+     43.0,
+     0.0,
+     0.0
     ],
     "rot": [
-     0,
-     0,
-     0
+     90.0,
+     0.0,
+     90.0
     ]
    },
    "at": [
@@ -418,13 +514,13 @@
     "type": "place",
     "shape": {
      "type": "cylinder",
-     "radius": 13,
-     "height": 30
+     "radius": 16,
+     "height": 32
     },
     "at": [
-     5,
-     5,
-     22
+     8,
+     10,
+     27
     ],
     "rot": [
      0.0,
@@ -454,15 +550,15 @@
     "shape": {
      "type": "box",
      "size": [
-      28,
-      22,
-      12
+      32,
+      26,
+      14
      ]
     },
     "at": [
-     5,
-     5,
-     14
+     8,
+     10,
+     15
     ],
     "rot": [
      0,
@@ -492,15 +588,15 @@
     "shape": {
      "type": "box",
      "size": [
-      96,
+      108,
       8,
-      12
+      13
      ]
     },
     "at": [
      0,
      38,
-     -7
+     -6.5
     ],
     "rot": [
      0,
@@ -519,6 +615,82 @@
     0
    ],
    "color": "#1c1c1f"
+  },
+  {
+   "id": "side_plate_l",
+   "kind": "plate",
+   "material": "polycarbonate",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      1.5,
+      40,
+      22
+     ]
+    },
+    "at": [
+     55,
+     8,
+     -2
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#cfe8e0"
+  },
+  {
+   "id": "side_plate_r",
+   "kind": "plate",
+   "material": "polycarbonate",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      1.5,
+      40,
+      22
+     ]
+    },
+    "at": [
+     -55,
+     8,
+     -2
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#cfe8e0"
   }
  ],
  "fasteners": [],
