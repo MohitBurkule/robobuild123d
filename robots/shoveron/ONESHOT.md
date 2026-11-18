@@ -9,3 +9,8 @@
 Decisions: type lifter; body twin_pods rect 100x104x26 mm, ramp 22; wheels 2 r13 inboard; weapon none; 2 forks 26 mm; extra parts: shovel.
 
 Likeness: aws71 0.79 (FAIL), aws72 0.76 (FAIL).
+
+## Round 2 (looks)
+Decisions: type lifter; body twin_pods rect 100x104x26 mm, ramp 22; wheels 2 r13 inboard; weapon none; 2 forks 26 mm; extra parts: shovel.
+
+Likeness: aws71 0.79 (FAIL), aws72 0.76 (FAIL).
