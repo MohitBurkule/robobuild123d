@@ -8,20 +8,20 @@
  },
  "wheels": {
   "n": 4,
-  "radius": 10,
+  "radius": 12,
   "width": 9,
   "y": [
    -28,
    20
-  ],
-  "tread": true
+  ]
  },
  "forks": {
   "n": 6,
-  "length": 46,
+  "length": 34,
   "width": 10,
   "spread": 68,
-  "tilt_deg": 14
+  "tilt_deg": 22,
+  "z": 6
  },
  "colors": {
   "body": "#1c1d20",
@@ -29,7 +29,11 @@
   "weapon": "#c9cdd3",
   "fork": "#f0603a"
  },
- "extras": [
+ "name": "pingu",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "box": [
     56,
@@ -44,9 +48,5 @@
    "id": "lid",
    "color": "#eeeeea"
   }
- ],
- "name": "pingu",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }

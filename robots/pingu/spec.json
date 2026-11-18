@@ -41,7 +41,7 @@
     "at": [
      0.0,
      0.0,
-     -8.0
+     -10.0
     ],
     "rot": [
      90.0,
@@ -63,137 +63,32 @@
    "print_orientation": "+z"
   },
   {
-   "id": "tread_l",
+   "id": "wheel_l0",
    "kind": "wheel",
    "material": "tpu",
    "process": "fdm",
    "shape": {
     "type": "place",
     "shape": {
-     "type": "prism",
-     "points": [
-      [
-       20.0,
-       -10.0
-      ],
-      [
-       22.588190451025206,
-       -9.659258262890683
-      ],
-      [
-       25.0,
-       -8.660254037844387
-      ],
-      [
-       27.071067811865476,
-       -7.071067811865475
-      ],
-      [
-       28.660254037844386,
-       -5.0
-      ],
-      [
-       29.65925826289068,
-       -2.588190451025207
-      ],
-      [
-       30.0,
-       0.0
-      ],
-      [
-       29.65925826289068,
-       2.5881904510252083
-      ],
-      [
-       28.66025403784439,
-       4.999999999999998
-      ],
-      [
-       27.071067811865476,
-       7.071067811865475
-      ],
-      [
-       25.0,
-       8.660254037844387
-      ],
-      [
-       22.58819045102521,
-       9.659258262890681
-      ],
-      [
-       20.0,
-       10.0
-      ],
-      [
-       -28.0,
-       10.0
-      ],
-      [
-       -30.58819045102521,
-       9.659258262890683
-      ],
-      [
-       -33.0,
-       8.660254037844387
-      ],
-      [
-       -35.071067811865476,
-       7.0710678118654755
-      ],
-      [
-       -36.66025403784438,
-       5.0000000000000036
-      ],
-      [
-       -37.65925826289068,
-       2.5881904510252056
-      ],
-      [
-       -38.0,
-       1.2246467991473533e-15
-      ],
-      [
-       -37.65925826289068,
-       -2.588190451025212
-      ],
-      [
-       -36.66025403784439,
-       -4.999999999999994
-      ],
-      [
-       -35.071067811865476,
-       -7.071067811865475
-      ],
-      [
-       -33.0,
-       -8.660254037844389
-      ],
-      [
-       -30.588190451025216,
-       -9.659258262890681
-      ],
-      [
-       -28.000000000000004,
-       -10.0
-      ]
-     ],
+     "type": "cylinder",
+     "radius": 12.0,
      "height": 9.0
     },
     "at": [
-     47.0,
-     0.0,
-     0.0
+     0,
+     0,
+     0
     ],
     "rot": [
-     90.0,
-     0.0,
-     90.0
+     0,
+     90,
+     0
     ]
    },
    "at": [
-    0,
-    0,
-    0
+    47.0,
+    -28.0,
+    0.0
    ],
    "rot": [
     0,
@@ -203,137 +98,102 @@
    "color": "#22262a"
   },
   {
-   "id": "tread_r",
+   "id": "wheel_r0",
    "kind": "wheel",
    "material": "tpu",
    "process": "fdm",
    "shape": {
     "type": "place",
     "shape": {
-     "type": "prism",
-     "points": [
-      [
-       20.0,
-       -10.0
-      ],
-      [
-       22.588190451025206,
-       -9.659258262890683
-      ],
-      [
-       25.0,
-       -8.660254037844387
-      ],
-      [
-       27.071067811865476,
-       -7.071067811865475
-      ],
-      [
-       28.660254037844386,
-       -5.0
-      ],
-      [
-       29.65925826289068,
-       -2.588190451025207
-      ],
-      [
-       30.0,
-       0.0
-      ],
-      [
-       29.65925826289068,
-       2.5881904510252083
-      ],
-      [
-       28.66025403784439,
-       4.999999999999998
-      ],
-      [
-       27.071067811865476,
-       7.071067811865475
-      ],
-      [
-       25.0,
-       8.660254037844387
-      ],
-      [
-       22.58819045102521,
-       9.659258262890681
-      ],
-      [
-       20.0,
-       10.0
-      ],
-      [
-       -28.0,
-       10.0
-      ],
-      [
-       -30.58819045102521,
-       9.659258262890683
-      ],
-      [
-       -33.0,
-       8.660254037844387
-      ],
-      [
-       -35.071067811865476,
-       7.0710678118654755
-      ],
-      [
-       -36.66025403784438,
-       5.0000000000000036
-      ],
-      [
-       -37.65925826289068,
-       2.5881904510252056
-      ],
-      [
-       -38.0,
-       1.2246467991473533e-15
-      ],
-      [
-       -37.65925826289068,
-       -2.588190451025212
-      ],
-      [
-       -36.66025403784439,
-       -4.999999999999994
-      ],
-      [
-       -35.071067811865476,
-       -7.071067811865475
-      ],
-      [
-       -33.0,
-       -8.660254037844389
-      ],
-      [
-       -30.588190451025216,
-       -9.659258262890681
-      ],
-      [
-       -28.000000000000004,
-       -10.0
-      ]
-     ],
+     "type": "cylinder",
+     "radius": 12.0,
      "height": 9.0
     },
     "at": [
-     -47.0,
-     0.0,
-     0.0
+     0,
+     0,
+     0
     ],
     "rot": [
-     90.0,
-     0.0,
-     90.0
+     0,
+     90,
+     0
     ]
    },
    "at": [
+    -47.0,
+    -28.0,
+    0.0
+   ],
+   "rot": [
     0,
     0,
     0
+   ],
+   "color": "#22262a"
+  },
+  {
+   "id": "wheel_l1",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 12.0,
+     "height": 9.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    47.0,
+    20.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#22262a"
+  },
+  {
+   "id": "wheel_r1",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 12.0,
+     "height": 9.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -47.0,
+    20.0,
+    0.0
    ],
    "rot": [
     0,
@@ -353,17 +213,17 @@
      "type": "box",
      "size": [
       10.0,
-      46.0,
+      34.0,
       1.5
      ]
     },
     "at": [
      -34.0,
-     61.0,
-     -3.6357964012076414
+     55.0,
+     -4.831687911929495
     ],
     "rot": [
-     -14.0,
+     -22.0,
      0,
      0
     ]
@@ -391,17 +251,17 @@
      "type": "box",
      "size": [
       10.0,
-      46.0,
+      34.0,
       1.5
      ]
     },
     "at": [
      -20.4,
-     61.0,
-     -3.6357964012076414
+     55.0,
+     -4.831687911929495
     ],
     "rot": [
-     -14.0,
+     -22.0,
      0,
      0
     ]
@@ -429,17 +289,17 @@
      "type": "box",
      "size": [
       10.0,
-      46.0,
+      34.0,
       1.5
      ]
     },
     "at": [
      -6.800000000000001,
-     61.0,
-     -3.6357964012076414
+     55.0,
+     -4.831687911929495
     ],
     "rot": [
-     -14.0,
+     -22.0,
      0,
      0
     ]
@@ -467,17 +327,17 @@
      "type": "box",
      "size": [
       10.0,
-      46.0,
+      34.0,
       1.5
      ]
     },
     "at": [
      6.799999999999997,
-     61.0,
-     -3.6357964012076414
+     55.0,
+     -4.831687911929495
     ],
     "rot": [
-     -14.0,
+     -22.0,
      0,
      0
     ]
@@ -505,17 +365,17 @@
      "type": "box",
      "size": [
       10.0,
-      46.0,
+      34.0,
       1.5
      ]
     },
     "at": [
      20.4,
-     61.0,
-     -3.6357964012076414
+     55.0,
+     -4.831687911929495
     ],
     "rot": [
-     -14.0,
+     -22.0,
      0,
      0
     ]
@@ -543,17 +403,17 @@
      "type": "box",
      "size": [
       10.0,
-      46.0,
+      34.0,
       1.5
      ]
     },
     "at": [
      34.0,
-     61.0,
-     -3.6357964012076414
+     55.0,
+     -4.831687911929495
     ],
     "rot": [
-     -14.0,
+     -22.0,
      0,
      0
     ]
@@ -588,7 +448,7 @@
     "at": [
      0,
      -12,
-     23.0
+     21.0
     ],
     "rot": [
      0,
@@ -607,6 +467,1004 @@
     0
    ],
    "color": "#eeeeea"
+  },
+  {
+   "id": "dt_hub_wheel_l0",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 6.24,
+     "height": 10.2
+    },
+    "at": [
+     47.0,
+     -28.0,
+     0.0
+    ],
+    "rot": [
+     0.0,
+     90.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#9b9d9f"
+  },
+  {
+   "id": "dt_axle_wheel_l0",
+   "kind": "other",
+   "material": "steel",
+   "process": "cots",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 1.5,
+     "height": 19.6
+    },
+    "at": [
+     43.3,
+     -28.0,
+     0.0
+    ],
+    "rot": [
+     0.0,
+     90.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#9aa3a8"
+  },
+  {
+   "id": "dt_nut_wheel_l0",
+   "kind": "other",
+   "material": "steel",
+   "process": "cots",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 2.6,
+     "height": 1.6
+    },
+    "at": [
+     52.9,
+     -28.0,
+     0.0
+    ],
+    "rot": [
+     0.0,
+     90.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#70767c"
+  },
+  {
+   "id": "dt_hub_wheel_r0",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 6.24,
+     "height": 10.2
+    },
+    "at": [
+     -47.0,
+     -28.0,
+     0.0
+    ],
+    "rot": [
+     0.0,
+     90.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#9b9d9f"
+  },
+  {
+   "id": "dt_axle_wheel_r0",
+   "kind": "other",
+   "material": "steel",
+   "process": "cots",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 1.5,
+     "height": 19.6
+    },
+    "at": [
+     -43.3,
+     -28.0,
+     0.0
+    ],
+    "rot": [
+     0.0,
+     90.0,
+     180.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#9aa3a8"
+  },
+  {
+   "id": "dt_nut_wheel_r0",
+   "kind": "other",
+   "material": "steel",
+   "process": "cots",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 2.6,
+     "height": 1.6
+    },
+    "at": [
+     -52.9,
+     -28.0,
+     0.0
+    ],
+    "rot": [
+     0.0,
+     90.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#70767c"
+  },
+  {
+   "id": "dt_hub_wheel_l1",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 6.24,
+     "height": 10.2
+    },
+    "at": [
+     47.0,
+     20.0,
+     0.0
+    ],
+    "rot": [
+     0.0,
+     90.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#9b9d9f"
+  },
+  {
+   "id": "dt_axle_wheel_l1",
+   "kind": "other",
+   "material": "steel",
+   "process": "cots",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 1.5,
+     "height": 19.6
+    },
+    "at": [
+     43.3,
+     20.0,
+     0.0
+    ],
+    "rot": [
+     0.0,
+     90.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#9aa3a8"
+  },
+  {
+   "id": "dt_nut_wheel_l1",
+   "kind": "other",
+   "material": "steel",
+   "process": "cots",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 2.6,
+     "height": 1.6
+    },
+    "at": [
+     52.9,
+     20.0,
+     0.0
+    ],
+    "rot": [
+     0.0,
+     90.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#70767c"
+  },
+  {
+   "id": "dt_hub_wheel_r1",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 6.24,
+     "height": 10.2
+    },
+    "at": [
+     -47.0,
+     20.0,
+     0.0
+    ],
+    "rot": [
+     0.0,
+     90.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#9b9d9f"
+  },
+  {
+   "id": "dt_axle_wheel_r1",
+   "kind": "other",
+   "material": "steel",
+   "process": "cots",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 1.5,
+     "height": 19.6
+    },
+    "at": [
+     -43.3,
+     20.0,
+     0.0
+    ],
+    "rot": [
+     0.0,
+     90.0,
+     180.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#9aa3a8"
+  },
+  {
+   "id": "dt_nut_wheel_r1",
+   "kind": "other",
+   "material": "steel",
+   "process": "cots",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 2.6,
+     "height": 1.6
+    },
+    "at": [
+     -52.9,
+     20.0,
+     0.0
+    ],
+    "rot": [
+     0.0,
+     90.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#70767c"
+  },
+  {
+   "id": "dt_screw_0",
+   "kind": "fastener_head",
+   "material": "steel",
+   "process": "cots",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 1.9,
+     "height": 1.4
+    },
+    "at": [
+     -35.0,
+     -33.0,
+     20.3
+    ],
+    "rot": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#c9cdd3"
+  },
+  {
+   "id": "dt_screw_1",
+   "kind": "fastener_head",
+   "material": "steel",
+   "process": "cots",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 1.9,
+     "height": 1.4
+    },
+    "at": [
+     35.0,
+     -33.0,
+     20.3
+    ],
+    "rot": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#c9cdd3"
+  },
+  {
+   "id": "dt_screw_2",
+   "kind": "fastener_head",
+   "material": "steel",
+   "process": "cots",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 1.9,
+     "height": 1.4
+    },
+    "at": [
+     -35.0,
+     33.0,
+     -1.7
+    ],
+    "rot": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#c9cdd3"
+  },
+  {
+   "id": "dt_screw_3",
+   "kind": "fastener_head",
+   "material": "steel",
+   "process": "cots",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 1.9,
+     "height": 1.4
+    },
+    "at": [
+     35.0,
+     33.0,
+     -1.7
+    ],
+    "rot": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#c9cdd3"
+  },
+  {
+   "id": "dt_mount_fork_0",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      14.0,
+      9,
+      8.0
+     ]
+    },
+    "at": [
+     -34.0,
+     36.24,
+     1.54
+    ],
+    "rot": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#17181b"
+  },
+  {
+   "id": "dt_bolt_fork_0",
+   "kind": "fastener_head",
+   "material": "steel",
+   "process": "cots",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 1.7,
+     "height": 1.4
+    },
+    "at": [
+     -34.0,
+     36.24,
+     6.04
+    ],
+    "rot": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#c9cdd3"
+  },
+  {
+   "id": "dt_mount_fork_1",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      14.0,
+      9,
+      8.0
+     ]
+    },
+    "at": [
+     -20.4,
+     36.24,
+     1.54
+    ],
+    "rot": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#17181b"
+  },
+  {
+   "id": "dt_bolt_fork_1",
+   "kind": "fastener_head",
+   "material": "steel",
+   "process": "cots",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 1.7,
+     "height": 1.4
+    },
+    "at": [
+     -20.4,
+     36.24,
+     6.04
+    ],
+    "rot": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#c9cdd3"
+  },
+  {
+   "id": "dt_mount_fork_2",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      14.0,
+      9,
+      8.0
+     ]
+    },
+    "at": [
+     -6.8,
+     36.24,
+     1.54
+    ],
+    "rot": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#17181b"
+  },
+  {
+   "id": "dt_bolt_fork_2",
+   "kind": "fastener_head",
+   "material": "steel",
+   "process": "cots",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 1.7,
+     "height": 1.4
+    },
+    "at": [
+     -6.8,
+     36.24,
+     6.04
+    ],
+    "rot": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#c9cdd3"
+  },
+  {
+   "id": "dt_mount_fork_3",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      14.0,
+      9,
+      8.0
+     ]
+    },
+    "at": [
+     6.8,
+     36.24,
+     1.54
+    ],
+    "rot": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#17181b"
+  },
+  {
+   "id": "dt_bolt_fork_3",
+   "kind": "fastener_head",
+   "material": "steel",
+   "process": "cots",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 1.7,
+     "height": 1.4
+    },
+    "at": [
+     6.8,
+     36.24,
+     6.04
+    ],
+    "rot": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#c9cdd3"
+  },
+  {
+   "id": "dt_mount_fork_4",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      14.0,
+      9,
+      8.0
+     ]
+    },
+    "at": [
+     20.4,
+     36.24,
+     1.54
+    ],
+    "rot": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#17181b"
+  },
+  {
+   "id": "dt_bolt_fork_4",
+   "kind": "fastener_head",
+   "material": "steel",
+   "process": "cots",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 1.7,
+     "height": 1.4
+    },
+    "at": [
+     20.4,
+     36.24,
+     6.04
+    ],
+    "rot": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#c9cdd3"
+  },
+  {
+   "id": "dt_mount_fork_5",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      14.0,
+      9,
+      8.0
+     ]
+    },
+    "at": [
+     34.0,
+     36.24,
+     1.54
+    ],
+    "rot": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#17181b"
+  },
+  {
+   "id": "dt_bolt_fork_5",
+   "kind": "fastener_head",
+   "material": "steel",
+   "process": "cots",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 1.7,
+     "height": 1.4
+    },
+    "at": [
+     34.0,
+     36.24,
+     6.04
+    ],
+    "rot": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#c9cdd3"
   }
  ],
  "fasteners": [],
@@ -619,5 +1477,147 @@
    "view": "iso",
    "approximate": true
   }
+ ],
+ "_dt_connections": [
+  [
+   "dt_hub_wheel_l0",
+   "wheel_l0",
+   "press_fit"
+  ],
+  [
+   "dt_axle_wheel_l0",
+   "wheel_l0",
+   "shaft"
+  ],
+  [
+   "dt_nut_wheel_l0",
+   "dt_axle_wheel_l0",
+   "screw"
+  ],
+  [
+   "dt_hub_wheel_r0",
+   "wheel_r0",
+   "press_fit"
+  ],
+  [
+   "dt_axle_wheel_r0",
+   "wheel_r0",
+   "shaft"
+  ],
+  [
+   "dt_nut_wheel_r0",
+   "dt_axle_wheel_r0",
+   "screw"
+  ],
+  [
+   "dt_hub_wheel_l1",
+   "wheel_l1",
+   "press_fit"
+  ],
+  [
+   "dt_axle_wheel_l1",
+   "wheel_l1",
+   "shaft"
+  ],
+  [
+   "dt_nut_wheel_l1",
+   "dt_axle_wheel_l1",
+   "screw"
+  ],
+  [
+   "dt_hub_wheel_r1",
+   "wheel_r1",
+   "press_fit"
+  ],
+  [
+   "dt_axle_wheel_r1",
+   "wheel_r1",
+   "shaft"
+  ],
+  [
+   "dt_nut_wheel_r1",
+   "dt_axle_wheel_r1",
+   "screw"
+  ],
+  [
+   "dt_screw_0",
+   "chassis",
+   "screw"
+  ],
+  [
+   "dt_screw_1",
+   "chassis",
+   "screw"
+  ],
+  [
+   "dt_screw_2",
+   "chassis",
+   "screw"
+  ],
+  [
+   "dt_screw_3",
+   "chassis",
+   "screw"
+  ],
+  [
+   "dt_mount_fork_0",
+   "fork_0",
+   "screw"
+  ],
+  [
+   "dt_bolt_fork_0",
+   "dt_mount_fork_0",
+   "screw"
+  ],
+  [
+   "dt_mount_fork_1",
+   "fork_1",
+   "screw"
+  ],
+  [
+   "dt_bolt_fork_1",
+   "dt_mount_fork_1",
+   "screw"
+  ],
+  [
+   "dt_mount_fork_2",
+   "fork_2",
+   "screw"
+  ],
+  [
+   "dt_bolt_fork_2",
+   "dt_mount_fork_2",
+   "screw"
+  ],
+  [
+   "dt_mount_fork_3",
+   "fork_3",
+   "screw"
+  ],
+  [
+   "dt_bolt_fork_3",
+   "dt_mount_fork_3",
+   "screw"
+  ],
+  [
+   "dt_mount_fork_4",
+   "fork_4",
+   "screw"
+  ],
+  [
+   "dt_bolt_fork_4",
+   "dt_mount_fork_4",
+   "screw"
+  ],
+  [
+   "dt_mount_fork_5",
+   "fork_5",
+   "screw"
+  ],
+  [
+   "dt_bolt_fork_5",
+   "dt_mount_fork_5",
+   "screw"
+  ]
  ]
 }
