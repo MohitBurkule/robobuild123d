@@ -126,6 +126,21 @@ def _sampled(ctx, label, rng, moved, parts):
     return []
 
 
+def axisymmetric(b, origin, axis, tol=0.15) -> bool:
+    """True when turning `b` about the axis leaves its occupancy unchanged (a shaft, hub, round disc): its revolved
+    envelope is itself, so the static overlap check already judges it and a padded sweep only flags the bearing bore
+    or motor it sits in. Tested by rotating surface samples and measuring their distance back to the body."""
+    a = np.asarray(axis, float) / np.linalg.norm(axis)
+    V = np.asarray(b.mesh.vertices, float)
+    V = V[:: max(1, len(V) // 300)] - origin
+    for ang in (0.7, 1.9, 3.1):
+        c, s_ = np.cos(ang), np.sin(ang)
+        R = V * c + np.cross(a, V) * s_ + np.outer(V @ a, a) * (1 - c)
+        if float(np.max(b.distance(R + origin))) > tol:
+            return False
+    return True
+
+
 def sweeps(ctx, parts=None):
     r, w = ctx.r, ctx.world
     out, grids = [], {}  # body id -> depth grid, shared by every mover
@@ -133,6 +148,9 @@ def sweeps(ctx, parts=None):
         mov = [b for b in w.bodies if b.id in moved and not b.is_wire]
         if rng is not None and rng[2] - rng[1] < FULL_TURN_DEG:
             out += _sampled(ctx, label, rng, moved, parts)
+            continue
+        mov = [m for m in mov if not axisymmetric(m, np.asarray(origin, float), axis)]
+        if not mov:
             continue
         revs = [(m, itf.Revolved.build(m, origin, axis, CELL_MM)) for m in mov]
         if any(rv is None for _, rv in revs):
