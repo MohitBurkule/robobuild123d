@@ -1,0 +1,138 @@
+BLOCKERS: 78
+  [ran] integrity 0.06s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 4.13s
+  [ran] connections 1.55s
+  [ran] legal 0.00s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.01s
+  [ran] shape 0.38s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.38s
+  [ran] process 0.00s
+  [ran] electrical 0.00s
+/tmp/work10_verty_little_secret/robot/checks/combat_ground.py:200: RuntimeWarning: Mean of empty slice
+  rr = np.nanmean(rout[fb[best[1][0]]:fb[best[1][1]] + 1])
+  [ran] combat 0.08s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 1.89s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.05s
+  [ran] dfm 0.01s
+  [ran] realworld 0.02s
+verty little secret: ok=False 78 blockers in 66 root causes, mass 250.5/150 g
+1. [proxy.interference] `pod_l` and `dt_screw_0` overlap by 0.19 mm (allowed 0.08). Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   | pod_l: x 15.00..60.00  y -35.00..35.00  z -10.00..12.00  size 45.00 x 70.00 x 22.00 mm
+   |   centre (37.50, 0.00, 1.00), volume 69300.0 mm3
+   |   OVERLAP `dt_mount_fork_l` 3.38 mm (allowed 0.08)
+   |   OVERLAP `fork_l` 2.38 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
+2. [connection.floating] `dt_screw_0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `pod_l`, 0.0 mm away. Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | dt_screw_0: x 18.50..22.30  y -31.50..-27.70  z 11.60..13.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (20.40, -29.60, 12.30), volume 15.9 mm3
+   |   OVERLAP `pod_l` 0.19 mm (allowed 0.08)
+   | pod_l: x 15.00..60.00  y -35.00..35.00  z -10.00..12.00  size 45.00 x 70.00 x 22.00 mm
+   |   centre (37.50, 0.00, 1.00), volume 69300.0 mm3
+3. [mfg.stock] `dt_screw_0`: bought part with free geometry and no catalog SKU or stock rod/bearing match. Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   fix: Use a catalog part, or size it to a stock rod/bearing and name it in `stock`.
+   | dt_screw_0: x 18.50..22.30  y -31.50..-27.70  z 11.60..13.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (20.40, -29.60, 12.30), volume 15.9 mm3
+   |   OVERLAP `pod_l` 0.19 mm (allowed 0.08)
+   | dt_screw_1: x 52.70..56.50  y -31.50..-27.70  z 11.60..13.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (54.60, -29.60, 12.30), volume 15.9 mm3
+4. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `motor`. (+1 consequences)
+   | weapon: x -3.00..3.00  y -13.07..29.06  z 4.00..48.01  size 6.00 x 42.13 x 44.01 mm
+   |   centre (0.00, 8.00, 26.01), volume 8462.9 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 8.0, 26.0] range 0..360 default 0
+   |   OVERLAP `motor` 2.88 mm (allowed 0.08)
+   |   OVERLAP `dt_shaft_weapon` 1.78 mm (allowed 0.08)
+5. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `dt_shaft_weapon`. (+1 consequences)
+   | weapon: x -3.00..3.00  y -13.07..29.06  z 4.00..48.01  size 6.00 x 42.13 x 44.01 mm
+   |   centre (0.00, 8.00, 26.01), volume 8462.9 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 8.0, 26.0] range 0..360 default 0
+   |   OVERLAP `motor` 2.88 mm (allowed 0.08)
+   |   OVERLAP `dt_shaft_weapon` 1.78 mm (allowed 0.08)
+6. [connection.floating] `weapon` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `motor`, 0.0 mm away. (+1 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | weapon: x -3.00..3.00  y -13.07..29.06  z 4.00..48.01  size 6.00 x 42.13 x 44.01 mm
+   |   centre (0.00, 8.00, 26.01), volume 8462.9 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 8.0, 26.0] range 0..360 default 0
+   |   OVERLAP `motor` 2.88 mm (allowed 0.08)
+   |   OVERLAP `dt_shaft_weapon` 1.78 mm (allowed 0.08)
+7. [mass.over] 250.5 g (range 211.5 to 289.5 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+8. [proxy.interference] `pod_l` and `fork_l` overlap by 2.38 mm (allowed 0.08).
+   | pod_l: x 15.00..60.00  y -35.00..35.00  z -10.00..12.00  size 45.00 x 70.00 x 22.00 mm
+   |   centre (37.50, 0.00, 1.00), volume 69300.0 mm3
+   |   OVERLAP `dt_mount_fork_l` 3.38 mm (allowed 0.08)
+   |   OVERLAP `fork_l` 2.38 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
+9. [proxy.interference] `pod_l` and `dt_axle_wheel_l0` overlap by 1.26 mm (allowed 0.08).
+   | pod_l: x 15.00..60.00  y -35.00..35.00  z -10.00..12.00  size 45.00 x 70.00 x 22.00 mm
+   |   centre (37.50, 0.00, 1.00), volume 69300.0 mm3
+   |   OVERLAP `dt_mount_fork_l` 3.38 mm (allowed 0.08)
+   |   OVERLAP `fork_l` 2.38 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
+10. [proxy.interference] `pod_l` and `dt_mount_fork_l` overlap by 3.38 mm (allowed 0.08).
+   | pod_l: x 15.00..60.00  y -35.00..35.00  z -10.00..12.00  size 45.00 x 70.00 x 22.00 mm
+   |   centre (37.50, 0.00, 1.00), volume 69300.0 mm3
+   |   OVERLAP `dt_mount_fork_l` 3.38 mm (allowed 0.08)
+   |   OVERLAP `fork_l` 2.38 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
+11. [proxy.interference] `pod_l` and `dt_bolt_fork_l` overlap by 0.65 mm (allowed 0.08).
+   | pod_l: x 15.00..60.00  y -35.00..35.00  z -10.00..12.00  size 45.00 x 70.00 x 22.00 mm
+   |   centre (37.50, 0.00, 1.00), volume 69300.0 mm3
+   |   OVERLAP `dt_mount_fork_l` 3.38 mm (allowed 0.08)
+   |   OVERLAP `fork_l` 2.38 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
+12. [proxy.interference] `pod_r` and `fork_r` overlap by 2.38 mm (allowed 0.08).
+   | pod_r: x -60.00..-15.00  y -35.00..35.00  z -10.00..12.00  size 45.00 x 70.00 x 22.00 mm
+   |   centre (-37.50, -0.00, 1.00), volume 69300.0 mm3
+   |   OVERLAP `dt_mount_fork_r` 3.38 mm (allowed 0.08)
+   |   OVERLAP `fork_r` 2.38 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_r0` 1.26 mm (allowed 0.08)
+... 54 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 250.5 g of 150 g (-100.5 g margin)
+    weapon                     66.86 g  fills 76% of its box  <- solid block? a tub should be a shell
+    pod_l                      65.97 g  fills 100% of its box  <- solid block? a tub should be a shell
+    pod_r                      65.97 g  fills 100% of its box  <- solid block? a tub should be a shell
+    bridge                     15.81 g  fills 100% of its box  <- solid block? a tub should be a shell
+    fork_l                      5.89 g  fills 40% of its box
+    fork_r                      5.89 g  fills 40% of its box
+    motor                       5.81 g  fills 79% of its box
+    wheel_l0                    3.69 g  fills 79% of its box
+    wheel_r0                    3.69 g  fills 79% of its box
+    dt_shaft_weapon             1.59 g  fills 79% of its box
+    dt_mount_fork_l             1.32 g  fills 100% of its box
+    dt_mount_fork_r             1.32 g  fills 100% of its box
+    dt_hub_wheel_r0             1.07 g  fills 79% of its box
+    dt_hub_wheel_l0             1.07 g  fills 79% of its box
+    dt_axle_wheel_r0            1.04 g  fills 79% of its box
+    dt_axle_wheel_l0            1.04 g  fills 79% of its box
+    dt_nut_wheel_l0             0.27 g  fills 79% of its box
+    dt_nut_wheel_r0             0.27 g  fills 79% of its box
+    dt_screw_0                  0.13 g  fills 79% of its box
+    dt_screw_1                  0.13 g  fills 79% of its box
+    dt_screw_2                  0.13 g  fills 79% of its box
+    dt_screw_3                  0.13 g  fills 79% of its box
+    dt_bolt_fork_l              0.10 g  fills 79% of its box
+    dt_bolt_fork_r              0.10 g  fills 79% of its box
+    mass.over: 250.5 g (range 211.5 to 289.5 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 4 hit / 2 miss, group 0 hit / 31 miss, inside 9 hit / 15 miss, likeness 3 hit / 0 miss, min_gap 69 hit / 199 miss, overlap 94 hit / 232 miss, part_check 4 hit / 0 miss, part_geom 24 hit / 0 miss, ray 0 hit / 120 miss

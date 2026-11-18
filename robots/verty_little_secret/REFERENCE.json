@@ -1,12 +1,14 @@
 {
  "robot_type": "vertical_spinner",
+ "wheels": 2,
  "weapon": {
   "kind": "disc",
   "axis": "x",
-  "position": "middle",
-  "width_frac": 0.3,
-  "teeth": 3
+  "teeth": 2
  },
- "wheels": 2,
- "source": "read from reference photos by Sonnet"
+ "photos": [
+  "verty_little_secret.aws72.webp",
+  "verty_little_secret.aws74.webp",
+  "verty_little_secret.aws76.webp"
+ ]
 }

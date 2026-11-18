@@ -1,0 +1,2 @@
+error: robots/verty_little_secret/spec.json is not a valid spec: [Errno 2] No such file or directory: 'robots/verty_little_secret/spec.json'
+cache: no lookups
