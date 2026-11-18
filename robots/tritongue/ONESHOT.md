@@ -16,3 +16,8 @@ Likeness: aws71 0.71 (FAIL).
 Decisions: type lifter; body box rect 80x70x32 mm, ramp 0; wheels 2 r16 outboard; weapon none; extra parts: roller, claw; photos skipped (cluttered): indices [1].
 
 Likeness: aws71 0.68 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type lifter; body box rect 80x70x32 mm, ramp 0; wheels 2 r16 outboard; weapon none; extra parts: roller, claw; photos skipped (cluttered): indices [1].
+
+Likeness: aws71 0.68 (FAIL).

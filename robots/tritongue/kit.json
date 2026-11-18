@@ -42,7 +42,14 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "skip_photos": [
+  1
+ ],
+ "name": "tritongue",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "cyl": [
     15,
@@ -98,12 +105,5 @@
    "id": "claw",
    "color": "#d8322a"
   }
- ],
- "skip_photos": [
-  1
- ],
- "name": "tritongue",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }
