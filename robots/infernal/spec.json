@@ -1,0 +1,373 @@
+{
+ "name": "infernal",
+ "profile": "aws2025",
+ "robot_type": "lifter",
+ "locomotion": "wheels",
+ "kit_draft": true,
+ "parts": [
+  {
+   "id": "chassis",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -50.0,
+       0.0
+      ],
+      [
+       50.0,
+       0.0
+      ],
+      [
+       50.0,
+       1.5
+      ],
+      [
+       8.0,
+       36.0
+      ],
+      [
+       -50.0,
+       36.0
+      ]
+     ],
+     "height": 100.0
+    },
+    "at": [
+     0.0,
+     0.0,
+     -11.0
+    ],
+    "rot": [
+     90.0,
+     0.0,
+     90.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#1b1d20",
+   "print_orientation": "+z"
+  },
+  {
+   "id": "wheel_l0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 13.0,
+     "height": 14.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    42.5,
+    -22.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "wheel_r0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 13.0,
+     "height": 14.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -42.5,
+    -22.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "front_plate",
+   "kind": "armor",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      84,
+      3,
+      40
+     ]
+    },
+    "at": [
+     0,
+     36,
+     11.0
+    ],
+    "rot": [
+     -48,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#c9cdd3"
+  },
+  {
+   "id": "top_plate",
+   "kind": "plate",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      70,
+      45,
+      2
+     ]
+    },
+    "at": [
+     0,
+     -12,
+     26.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#c9cdd3"
+  },
+  {
+   "id": "horn_l",
+   "kind": "weapon",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -30,
+       25.0
+      ],
+      [
+       -20,
+       25.0
+      ],
+      [
+       5,
+       49.0
+      ],
+      [
+       0,
+       53.0
+      ],
+      [
+       -28,
+       33.0
+      ]
+     ],
+     "height": 3
+    },
+    "at": [
+     21.5,
+     0,
+     0
+    ],
+    "rot": [
+     90,
+     0,
+     90
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#dfeee6",
+   "weapon": {
+    "kind": "lifter"
+   },
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "pivot": [
+     0,
+     -25,
+     25.0
+    ],
+    "min": 0,
+    "max": 80,
+    "default": 0
+   }
+  },
+  {
+   "id": "horn_r",
+   "kind": "weapon",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -30,
+       25.0
+      ],
+      [
+       -20,
+       25.0
+      ],
+      [
+       5,
+       49.0
+      ],
+      [
+       0,
+       53.0
+      ],
+      [
+       -28,
+       33.0
+      ]
+     ],
+     "height": 3
+    },
+    "at": [
+     -21.5,
+     0,
+     0
+    ],
+    "rot": [
+     90,
+     0,
+     90
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#dfeee6",
+   "weapon": {
+    "kind": "lifter"
+   },
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "pivot": [
+     0,
+     -25,
+     25.0
+    ],
+    "min": 0,
+    "max": 80,
+    "default": 0
+   }
+  }
+ ],
+ "fasteners": [],
+ "wires": [],
+ "connections": [],
+ "reference": [
+  {
+   "image": "reference/infernal.aws71.webp",
+   "mask": "reference/infernal.aws71_mask.png",
+   "view": "iso",
+   "approximate": true
+  }
+ ]
+}
