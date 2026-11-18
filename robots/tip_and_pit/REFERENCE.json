@@ -12,11 +12,9 @@
   "tip_pit.aws63.webp": "textured"
  },
  "view": {
-  "tip_pit.aws62.webp": "front",
   "tip_pit.aws63.webp": "front"
  },
  "elevation": {
-  "tip_pit.aws62.webp": 25,
   "tip_pit.aws63.webp": 45
  }
 }
