@@ -1,0 +1,10 @@
+{
+ "robot_type": "other",
+ "wheels": 2,
+ "weapon": {
+  "kind": "wedge"
+ },
+ "photos": [
+  "grandmaster_smash.aws72.webp"
+ ]
+}
