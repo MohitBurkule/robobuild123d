@@ -63,3 +63,22 @@
 - Gap: no template or hypothesis for a central-motor vertical disc between two pods. The `robot gen` route was not tried.
 - Final state: likeness FAILS (1 template_copy + 2 silhouette blockers). Inner verify blocker count beyond likeness not
   measured in this pass. Renders not produced for this state.
+
+## Sonnet 5.5 baseline run (generator route, intent.json + tools/assemble.py)
+- Route: `gen build` vspin_drisk (only buildable vspin hypothesis; `mount` is front-only, so a centre-mounted disc is not
+  buildable: "no assembler for vspin_disc-centre"). A custom outline with a central notch -> "no wireable layout"; a plain wide
+  outline -> "no legal position for power_switch". So the intent only supplied the electronics/wheels/weapon part records; the
+  two-pod body, centre weapon, wheels, forks and weapon sleeve are rebuilt in `tools/assemble.py` (post-process of the generated
+  spec). That is the hand-edit the generator could not express.
+- Likeness: weapon check now PASSES (disc, axis x, middle, width 25% via a rotor sleeve + two 3-hook plates, 3 teeth).
+  Silhouette still FAILS: aws72 0.70, aws74 0.59, aws76 0.68 (need 0.80). Overlays show the iso photos are perspective with tall
+  thin hook blades, big gear wheels and chunky forks; I could not close the gap in the time cap. Likeness: FAIL (3 silhouette blockers).
+- Inner verify: 57 blockers in 54 root causes, mass 185.9 / 150 g (pods too heavy, no fasteners/inserts/pockets, weapon not one
+  2D profile for `laser`, wires across the gap). Not a buildable robot yet.
+- Confusing: reference `mask`/`image` paths are relative to the spec, not the repo root (FileNotFoundError doubled the path).
+  `weapon.position` uses the length incl. forks, so long forks push a "middle" weapon to "rear".
+- Missing generator tools/hints a smaller model needs: (1) `mount: centre` + `pods: 2` (split chassis with a central slot and
+  motor between uprights); (2) outline notch support in layout; (3) a `weapon: {width_mm, hooks, radius, centre_z}` intent key that
+  builds a sleeve+twin-plate weapon so width_frac passes; (4) wheel_dia / wheel position (rear-outer) intent keys; (5) fork
+  length/width/thickness keys; (6) an auto-fit command that searches intent parameters against the likeness IoU; (7) tell users the
+  silhouette floor with perspective photos is hard: per-view camera elevation hints would help.
