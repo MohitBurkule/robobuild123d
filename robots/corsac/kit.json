@@ -14,14 +14,16 @@
    -18
   ],
   "outside": false,
-  "x": 44
+  "x": 44,
+  "notch": true
  },
  "forks": {
   "n": 6,
-  "length": 14,
+  "length": 16,
   "width": 8,
-  "spread": 90,
-  "tilt_deg": 20
+  "spread": 92,
+  "tilt_deg": 20,
+  "taper": true
  },
  "colors": {
   "body": "#1f4a38",
@@ -29,44 +31,48 @@
   "weapon": "#c9cdd3",
   "fork": "#2a2c30"
  },
- "extras": [
+ "name": "corsac",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "front": [
     [
-     -50,
-     4
+     -52,
+     0
     ],
     [
-     50,
-     4
+     52,
+     0
     ],
     [
-     56,
-     30
+     58,
+     26
     ],
     [
-     46,
-     56
+     48,
+     50
     ],
     [
      30,
-     40
+     36
     ],
     [
      0,
-     34
+     32
     ],
     [
      -30,
-     40
+     36
     ],
     [
-     -46,
-     56
+     -48,
+     50
     ],
     [
-     -56,
-     30
+     -58,
+     26
     ]
    ],
    "y": [
@@ -79,9 +85,5 @@
    "process": "laser",
    "id": "face"
   }
- ],
- "name": "corsac",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }
