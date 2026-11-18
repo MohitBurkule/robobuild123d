@@ -1,8 +1,8 @@
-BLOCKERS: 28
+BLOCKERS: 12
   [cached] integrity 0.00s
   [cached] mass 0.00s
-  [proxy] interference 0.14s
-  [cached] connections 0.01s
+  [proxy] interference 0.13s
+  [cached] connections 0.00s
   [cached] legal 0.00s
   [cached] fasteners 0.00s
   [cached] power 0.00s
@@ -14,7 +14,7 @@ BLOCKERS: 28
   [cached] strength 0.00s
   [cached] printability 0.00s
   [cached] process 0.00s
-  [cached] electrical 0.01s
+  [cached] electrical 0.00s
   [cached] combat 0.00s
   [cached] physics 0.00s
   [cached] plausibility 0.00s
@@ -26,101 +26,73 @@ BLOCKERS: 28
   [cached] likeness 0.00s
   [cached] drive_recess 0.00s
   [cached] belt_wrap 0.00s
-  [cached] retention 0.01s
+  [cached] retention 0.00s
   [cached] waiver_audit 0.00s
   [cached] geom 0.01s
   [cached] dfm 0.00s
   [cached] realworld 0.00s
-failure to launch: ok=False 28 blockers in 28 root causes, mass 130.6/150 g
-1. [proxy.interference] `chassis` and `flip_arm_l` overlap by 1.61 mm (allowed 0.08).
-   | chassis: x -30.00..30.00  y -25.00..25.00  z -10.00..16.00  size 60.00 x 50.00 x 26.00 mm
-   |   centre (-0.00, 0.00, 3.00), volume 32930.6 mm3
-   |   OVERLAP `flip_arm_l` 1.61 mm (allowed 0.08)
-   |   OVERLAP `flip_arm_r` 1.61 mm (allowed 0.08)
-   |   OVERLAP `el_battery` 1.38 mm (allowed 0.08)
-2. [proxy.interference] `chassis` and `flip_arm_r` overlap by 1.61 mm (allowed 0.08).
-   | chassis: x -30.00..30.00  y -25.00..25.00  z -10.00..16.00  size 60.00 x 50.00 x 26.00 mm
-   |   centre (-0.00, 0.00, 3.00), volume 32930.6 mm3
-   |   OVERLAP `flip_arm_l` 1.61 mm (allowed 0.08)
-   |   OVERLAP `flip_arm_r` 1.61 mm (allowed 0.08)
-   |   OVERLAP `el_battery` 1.38 mm (allowed 0.08)
-3. [proxy.interference] `chassis` and `el_battery` overlap by 1.38 mm (allowed 0.08).
-   | chassis: x -30.00..30.00  y -25.00..25.00  z -10.00..16.00  size 60.00 x 50.00 x 26.00 mm
-   |   centre (-0.00, 0.00, 3.00), volume 32930.6 mm3
-   |   OVERLAP `flip_arm_l` 1.61 mm (allowed 0.08)
-   |   OVERLAP `flip_arm_r` 1.61 mm (allowed 0.08)
-   |   OVERLAP `el_battery` 1.38 mm (allowed 0.08)
-4. [proxy.interference] `chassis` and `el_rx_esc` overlap by 1.12 mm (allowed 0.08).
-   | chassis: x -30.00..30.00  y -25.00..25.00  z -10.00..16.00  size 60.00 x 50.00 x 26.00 mm
-   |   centre (-0.00, 0.00, 3.00), volume 32930.6 mm3
-   |   OVERLAP `flip_arm_l` 1.61 mm (allowed 0.08)
-   |   OVERLAP `flip_arm_r` 1.61 mm (allowed 0.08)
-   |   OVERLAP `el_battery` 1.38 mm (allowed 0.08)
-5. [proxy.interference] `top_arm` and `dt_strut_top_arm` overlap by 1.22 mm (allowed 0.08).
-   | top_arm: x -15.00..15.00  y 10.63..69.37  z 8.79..27.21  size 30.00 x 58.73 x 18.43 mm
-   |   centre (0.00, 40.00, 18.00), volume 5400.0 mm3
-   |   OVERLAP `dt_strut_top_arm` 1.22 mm (allowed 0.08)
-   | dt_strut_top_arm: x 4.67..11.31  y 20.95..29.15  z 12.81..23.33  size 6.65 x 8.20 x 10.52 mm
-   |   centre (7.99, 25.05, 18.07), volume 125.0 mm3
-6. [proxy.interference] `dm_wheel_l0` and `el_battery` overlap by 2.38 mm (allowed 0.08).
-   | dm_wheel_l0: x 1.60..37.60  y -16.00..-4.00  z -5.00..5.00  size 36.00 x 12.00 x 10.00 mm
-   |   centre (19.60, -10.00, 0.00), volume 2852.2 mm3
-   |   port terminals: (1.60, -10.00, 0.00)
-   |   OVERLAP `el_battery` 2.38 mm (allowed 0.08)
-   |   OVERLAP `el_rx_esc` 1.62 mm (allowed 0.08)
-7. [proxy.interference] `dm_wheel_l0` and `el_rx_esc` overlap by 1.62 mm (allowed 0.08).
-   | dm_wheel_l0: x 1.60..37.60  y -16.00..-4.00  z -5.00..5.00  size 36.00 x 12.00 x 10.00 mm
-   |   centre (19.60, -10.00, 0.00), volume 2852.2 mm3
-   |   port terminals: (1.60, -10.00, 0.00)
-   |   OVERLAP `el_battery` 2.38 mm (allowed 0.08)
-   |   OVERLAP `el_rx_esc` 1.62 mm (allowed 0.08)
-8. [proxy.interference] `dm_wheel_r0` and `el_battery` overlap by 2.38 mm (allowed 0.08).
-   | dm_wheel_r0: x -37.60..-1.60  y -16.00..-4.00  z -5.00..5.00  size 36.00 x 12.00 x 10.00 mm
-   |   centre (-19.60, -10.00, 0.00), volume 2852.2 mm3
-   |   port terminals: (-1.60, -10.00, 0.00)
-   |   OVERLAP `el_battery` 2.38 mm (allowed 0.08)
-   |   OVERLAP `el_rx_esc` 1.62 mm (allowed 0.08)
-9. [proxy.interference] `dm_wheel_r0` and `el_rx_esc` overlap by 1.62 mm (allowed 0.08).
-   | dm_wheel_r0: x -37.60..-1.60  y -16.00..-4.00  z -5.00..5.00  size 36.00 x 12.00 x 10.00 mm
-   |   centre (-19.60, -10.00, 0.00), volume 2852.2 mm3
-   |   port terminals: (-1.60, -10.00, 0.00)
-   |   OVERLAP `el_battery` 2.38 mm (allowed 0.08)
-   |   OVERLAP `el_rx_esc` 1.62 mm (allowed 0.08)
-10. [proxy.interference] `el_battery` and `el_rx_esc` overlap by 2.38 mm (allowed 0.08).
-   | el_battery: x -14.00..14.00  y -9.00..9.00  z -2.00..8.00  size 28.00 x 18.00 x 10.00 mm
-   |   centre (0.00, 0.00, 3.00), volume 5040.0 mm3
-   |   port xt30: (0.00, 11.00, 3.00)
-   |   OVERLAP `dm_wheel_l0` 2.38 mm (allowed 0.08)
-   |   OVERLAP `dm_wheel_r0` 2.38 mm (allowed 0.08)
-11. [proxy.sweep] joint `flip_arm_l`: `flip_arm_l` hits `chassis` 1.61 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint flip_arm_l` lists the closest approach to every part.
-   | flip_arm_l: x 8.00..30.00  y 10.00..95.00  z -12.00..12.00  size 22.00 x 85.00 x 24.00 mm
-   |   centre (19.00, 52.50, 0.00), volume 24860.0 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0, 10, 8.0] range 0..80 default 0
-   |   OVERLAP `chassis` 1.61 mm (allowed 0.08)
-   |   gap to `el_battery` 1.00 mm
-12. [proxy.sweep] joint `flip_arm_r`: `flip_arm_r` hits `chassis` 1.61 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint flip_arm_r` lists the closest approach to every part.
-   | flip_arm_r: x -30.00..-8.00  y 10.00..95.00  z -12.00..12.00  size 22.00 x 85.00 x 24.00 mm
-   |   centre (-19.00, 52.50, 0.00), volume 24860.0 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0, 10, 8.0] range 0..80 default 0
-   |   OVERLAP `chassis` 1.61 mm (allowed 0.08)
-   |   gap to `el_battery` 1.00 mm
-... 16 more root causes (fix these first, then re-run)
-MASS BUDGET:
-  mass 130.6 g of 150 g (+19.4 g margin)
-    chassis                    31.35 g  fills 42% of its box
-    flip_arm_l                 23.67 g  fills 55% of its box  <- solid block? a tub should be a shell
-    flip_arm_r                 23.67 g  fills 55% of its box  <- solid block? a tub should be a shell
-    el_battery                 12.50 g  fills 100% of its box
-    dm_wheel_l0                 9.70 g  fills 66% of its box
-    dm_wheel_r0                 9.70 g  fills 66% of its box
-    top_arm                     5.14 g  fills 17% of its box
-    el_rx_esc                   3.50 g  fills 100% of its box
-    wheel_l0                    3.03 g  fills 57% of its box
-    wheel_r0                    3.03 g  fills 57% of its box
-    dt_hub_wheel_r0             1.15 g  fills 66% of its box
-    dt_hub_wheel_l0             1.15 g  fills 66% of its box
-    dt_strut_top_arm            0.99 g  fills 22% of its box
-    el_switch                   0.50 g  fills 100% of its box
-    mass.may_be_over: 130.6 g (range 108.4 to 152.9 g) against the 150 g limit; 3.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+failure to launch: ok=False 12 blockers in 12 root causes, mass 117.6/150 g
+1. [proxy.interference] `top_arm` and `dt_strut_top_arm` overlap by 0.78 mm (allowed 0.08).
+   | top_arm: x -15.00..15.00  y 1.80..78.20  z 17.11..38.89  size 30.00 x 76.41 x 21.78 mm
+   |   centre (0.00, 40.00, 28.00), volume 7020.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 2, 18.0] range 0..80 default 0
+   |   OVERLAP `dt_strut_top_arm` 0.78 mm (allowed 0.08)
+   |   gap to `chassis` 1.11 mm
+2. [proxy.sweep] joint `top_arm`: `top_arm` hits `dt_strut_top_arm` 0.78 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint top_arm` lists the closest approach to every part.
+   | top_arm: x -15.00..15.00  y 1.80..78.20  z 17.11..38.89  size 30.00 x 76.41 x 21.78 mm
+   |   centre (0.00, 40.00, 28.00), volume 7020.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 2, 18.0] range 0..80 default 0
+   |   OVERLAP `dt_strut_top_arm` 0.78 mm (allowed 0.08)
+   |   gap to `chassis` 1.11 mm
+3. [legal.switch] Rule 4a needs an externally accessible way to shut down that works without tools and is clearly marked on/off.
+   fix: Add a `switch` part (or removable link) with `tool_free: true` and `marked: true` and a visible ON/OFF `label`.
+4. [power.weapon_motor] `top_arm` names motor None; it must be a catalog brushless motor so speed can be computed.
+   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
+   | top_arm: x -15.00..15.00  y 1.80..78.20  z 17.11..38.89  size 30.00 x 76.41 x 21.78 mm
+   |   centre (0.00, 40.00, 28.00), volume 7020.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 2, 18.0] range 0..80 default 0
+   |   OVERLAP `dt_strut_top_arm` 0.78 mm (allowed 0.08)
+   |   gap to `chassis` 1.11 mm
+5. [process.weapon_printed] Weapon `top_arm` is fdm-printed with no hardened metal insert teeth.
+   fix: Make it metal (sheet_cut / turned / milled) or add hardened steel tooth parts (`parent` = the weapon).
+   | top_arm: x -15.00..15.00  y 1.80..78.20  z 17.11..38.89  size 30.00 x 76.41 x 21.78 mm
+   |   centre (0.00, 40.00, 28.00), volume 7020.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 2, 18.0] range 0..80 default 0
+   |   OVERLAP `dt_strut_top_arm` 0.78 mm (allowed 0.08)
+   |   gap to `chassis` 1.11 mm
+6. [electrical.switch_in_series] Loads reach the battery without passing the switch: no switch part at all.
+   fix: Route every power wire through the switch.
+7. [wire.render_wires] 7 of 7 robot render(s) do not draw all 3 wires: renders/diff_ftl.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/iso.png: rendered without wires (checks off or no routes); renders/likeness_ftl_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_ftl.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/pick_ftl.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_ftl.png: no render record (`<png>.json`), so nothing says the wires were drawn
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+8. [wire.rotor_clearance] wire `w_sw_esc` passes -0.9 mm from the volume swept by the `top_arm` rotor (top_arm) at [0.0, 18.0, -3.0].
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | top_arm: x -15.00..15.00  y 1.80..78.20  z 17.11..38.89  size 30.00 x 76.41 x 21.78 mm
+   |   centre (0.00, 40.00, 28.00), volume 7020.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 2, 18.0] range 0..80 default 0
+   |   OVERLAP `dt_strut_top_arm` 0.78 mm (allowed 0.08)
+   |   gap to `chassis` 1.11 mm
+9. [wire.rotor_clearance] wire `w_m1` passes -0.7 mm from the volume swept by the `top_arm` rotor (top_arm) at [11.0, 10.0, 6.5].
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | top_arm: x -15.00..15.00  y 1.80..78.20  z 17.11..38.89  size 30.00 x 76.41 x 21.78 mm
+   |   centre (0.00, 40.00, 28.00), volume 7020.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 2, 18.0] range 0..80 default 0
+   |   OVERLAP `dt_strut_top_arm` 0.78 mm (allowed 0.08)
+   |   gap to `chassis` 1.11 mm
+10. [wire.rotor_clearance] wire `w_m2` passes -0.7 mm from the volume swept by the `top_arm` rotor (top_arm) at [-12.0, 10.0, 6.5].
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | top_arm: x -15.00..15.00  y 1.80..78.20  z 17.11..38.89  size 30.00 x 76.41 x 21.78 mm
+   |   centre (0.00, 40.00, 28.00), volume 7020.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 2, 18.0] range 0..80 default 0
+   |   OVERLAP `dt_strut_top_arm` 0.78 mm (allowed 0.08)
+   |   gap to `chassis` 1.11 mm
+11. [likeness.silhouette] `reference/ftl.webp`: best silhouette IoU 0.68 at camera front_left_iso (elevation 45, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.74). Regions (photo frame, left third first) 0.47 / 0.78 / 0.69: worst = front third. Height/length 0.96 model vs 0.96 photo (proportions ok).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+12. [battery.rotor_gap] `el_battery` is 0.0 mm from the volume swept by `top_arm`.
+   fix: Move the battery or add a wall.
+   | el_battery: x -13.99..14.01  y -1.98..16.02  z -7.99..2.01  size 28.00 x 18.00 x 10.00 mm
+   |   centre (0.01, 7.02, -2.99), volume 5040.0 mm3
+   |   port xt30: (0.01, 18.02, -2.99)
+   |   gap to `chassis` 0.25 mm
+   |   gap to `flip_arm_l` 0.25 mm
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: group 31 hit / 0 miss, min_gap 107 hit / 0 miss, overlap 395 hit / 0 miss, part_geom 14 hit / 0 miss
+cache: group 31 hit / 0 miss, min_gap 14 hit / 0 miss, overlap 209 hit / 0 miss, part_geom 13 hit / 0 miss

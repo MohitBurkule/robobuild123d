@@ -26,8 +26,8 @@ Decisions: type flipper; body box rect 50x60x26 mm, ramp 0; wheels 2 r12 outboar
 Likeness: ftl 0.70 (FAIL).
 
 ## Round 4 (verification, helper 1)
-Blockers r3 -> r4: **51 -> 28** (`verify --tier inner`, full output in verify_r4.txt).
-Likeness (best silhouette IoU per photo, r3 -> r4): ftl.webp 0.70 -> 0.70
+Blockers r3 -> r4: **47 -> 12** (`verify --tier inner`, full output in verify_r4.txt).
+Likeness (best silhouette IoU per photo, r3 -> r4): ftl.webp 0.681 -> 0.680
 
 What was done (script r4_h1, outside shape kept):
 - fake screw/bolt heads removed; detail mounts/arms merged into the print part they sit on; axle nuts became printed hub caps
@@ -39,33 +39,22 @@ What was done (script r4_h1, outside shape kept):
 Notes from the run:
 - dt_axle_wheel_l0 replaced by the gearmotor shaft
 - dt_axle_wheel_r0 replaced by the gearmotor shaft
-- el_battery: no free pocket inside the print; placed at the chassis centre (overlaps)
-- el_battery: pocket wall only 0 mm
-- el_rx_esc: no free pocket inside the print; placed at the chassis centre (overlaps)
-- el_rx_esc: pocket wall only 0 mm
-- joint flip_arm_l sweeps 7.4 mm into chassis: too deep to clear without changing the look
-- joint flip_arm_r sweeps 7.4 mm into chassis: too deep to clear without changing the look
-- chassis: hollowed (box wall round pockets), 67947 -> 32932 mm3
-- top_arm: does not sit in any print part (no overlap to cut a seat from); left without a declared joint
+- switch: no flat belly skin with room above it; switch not placed (top mounting not used: photos do not show a top switch)
+- chassis: hollowed (box wall round pockets), 60523 -> 37381 mm3
+- flip_arm_l: hollowed (exact wall round pockets), 24371 -> 15476 mm3 (9 thin spots kept solid)
+- flip_arm_r: hollowed (exact wall round pockets), 24350 -> 15369 mm3 (9 thin spots kept solid)
 - wire w_sw_esc: no via round the rotor found
 - wire w_m1: no via round the rotor found
 - wire w_m2: no via round the rotor found
 
 Left (one line each):
-- proxy.interference x10: parts overlap in the kit shape where a cut would change the look or leave a loose piece
 - wire.rotor_clearance x3: toolchain for lifters/flippers: the check revolves a limited-range arm a full turn, so no wire inside the chassis can clear it; for spinners: no free route found
-- proxy.sweep x2: moving part runs into the chassis more than a running clearance can take without changing the look
-- power.weapon_motor x2: toolchain: a servo/arm weapon is required to have a brushless kV motor like a spinner
-- process.weapon_printed x2: toolchain: printed lifter/flipper arms are judged like spinner teeth (metal inserts required)
-- fit.interference x2: catalog part pocket overlaps another body
-- battery.rotor_gap x2: toolchain for lifters: the arm's full-turn envelope is used, which covers the whole chassis
-- connection.tape_overload x1: see verify_r4.txt root causes
-- electrical.battery_weapon_gap x1: battery pocket close to the weapon envelope; no other room inside the print
-- combat.R051 x1: weapon sweep reaches the floor in the kit pose (look)
+- proxy.interference x1: parts overlap in the kit shape where a cut would change the look or leave a loose piece
+- proxy.sweep x1: moving part runs into the chassis more than a running clearance can take without changing the look
+- legal.switch x1: see verify_r4.txt root causes
+- power.weapon_motor x1: toolchain: a servo/arm weapon is required to have a brushless kV motor like a spinner
+- process.weapon_printed x1: toolchain: printed lifter/flipper arms are judged like spinner teeth (metal inserts required)
+- electrical.switch_in_series x1: see verify_r4.txt root causes
 - wire.render_wires x1: toolchain/process: the photo-match, diff and likeness sheets are written without a render record of the wire routes
 - likeness.silhouette x1: looks (not part of this pass; outside shape kept as round 3)
-
-## Round 3c (user angle picks applied; shape fixed per user remarks)
-Decisions: type flipper; body box rect 50x60x26 mm, ramp 0; wheels 2 r12 outboard; weapon none; extra parts: flip_arm, top_arm; photos skipped (cluttered): indices [0, 2]; textured masks for indices [1].
-
-Likeness: ftl 0.68 (FAIL).
+- battery.rotor_gap x1: toolchain for lifters: the arm's full-turn envelope is used, which covers the whole chassis
