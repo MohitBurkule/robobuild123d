@@ -1,0 +1,85 @@
+{
+ "robot_type": "lifter",
+ "body": {
+  "length": 80,
+  "width": 70,
+  "height": 26,
+  "ramp": 30
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 12,
+  "width": 10,
+  "y": [
+   -25
+  ]
+ },
+ "forks": {
+  "n": 2,
+  "length": 30,
+  "width": 22,
+  "spread": 50
+ },
+ "colors": {
+  "body": "#15151c",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "side": [
+    [
+     -10,
+     26
+    ],
+    [
+     5,
+     26
+    ],
+    [
+     25,
+     55
+    ],
+    [
+     50,
+     60
+    ],
+    [
+     55,
+     52
+    ],
+    [
+     30,
+     45
+    ],
+    [
+     10,
+     22
+    ]
+   ],
+   "x": [
+    -6,
+    6
+   ],
+   "weapon": "lifter",
+   "pivot": [
+    0,
+    26
+   ],
+   "id": "claw",
+   "color": "#15151c"
+  }
+ ],
+ "skip_photos": [
+  2
+ ],
+ "textured": [
+  0,
+  1
+ ],
+ "name": "nightwish",
+ "weapon": {
+  "kind": "none"
+ }
+}
