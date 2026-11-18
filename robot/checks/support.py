@@ -24,7 +24,10 @@ SKIP_KINDS = {"structure", "belt"}  # the chassis is the frame parts are held ag
 HOLD_METHODS = {"screw", "screws", "shaft", "pin", "press_fit", "glue", "adhesive", "tape", "snap", "clamp", "strap", "fused"}
 
 
-def hold_groups(r):
+EMBED_KINDS = {"insert", "nut"}  # pressed / glued INTO a host part: the hold ties them to that host
+
+
+def hold_groups(r, w=None):
     """Union-find over declared holds (screws through/into parts, holding connections, fused; a joint locates but does not hold): part id -> root."""
     up = {p.id: p.id for p in r.spec.parts}
 
@@ -48,6 +51,21 @@ def hold_groups(r):
     for p in r.spec.parts:
         if p.fused_with:
             join(p.id, p.fused_with)
+    if w is not None:  # a press-fit / glued insert or nut is held by the part it sits in: join it to that host
+        bodies = {r.parts[b.part_idx].part.id: b for b in w.bodies if b.part_idx is not None and not b.fastener}
+        for p in r.spec.parts:
+            if p.kind not in EMBED_KINDS or str(p.retained) not in HOLD_METHODS or p.id not in bodies:
+                continue
+            b = bodies[p.id]
+            best, bd = None, 0.05
+            for q, o in bodies.items():
+                if q == p.id or o.is_wire or r.spec.part(q).kind in EMBED_KINDS or not measure.aabb_overlap(o.aabb, b.aabb):
+                    continue
+                dd = float(np.min(o.distance(b.mesh.vertices[:: max(1, len(b.mesh.vertices) // 200)])))
+                if dd < bd:
+                    best, bd = q, dd
+            if best:
+                join(p.id, best)
     return find
 
 
@@ -75,7 +93,7 @@ def run(ctx):
     """Each group of parts tied together by declared holds but not to the chassis is slid as one rigid body."""
     r, w = ctx.r, ctx.world
     out = []
-    find = hold_groups(r)
+    find = hold_groups(r, w)
     anchored = {find(p.id) for p in r.spec.parts if p.kind == "structure"}
     fgroup = {}  # fastener id -> hold group of the parts it passes through (it rides with them)
     for f in r.spec.fasteners:
