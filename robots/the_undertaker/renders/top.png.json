@@ -1,13 +1,15 @@
 {
  "spec": "/tmp/work10_the_undertaker/robots/the_undertaker/spec.json",
- "rendered_at": 1795021757.8859577,
+ "rendered_at": 1795023011.0337956,
  "bodies": [
   "chassis",
   "weapon",
   "wheel_l0",
   "wheel_r0",
   "leg_l",
-  "leg_r"
+  "leg_r",
+  "spoke",
+  "tooth"
  ],
  "wires": {}
 }
