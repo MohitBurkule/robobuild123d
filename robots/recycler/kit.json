@@ -1,0 +1,4 @@
+{"name":"recycler","robot_type":"drum",
+ "body":{"length":46,"width":84,"height":30,"ramp":0,"style":"box","clearance":4},
+ "weapon":{"kind":"drum","radius":16,"width":82,"y":34,"z":2,"axis":"x","teeth":0},
+ "wheels":{"n":2,"radius":17,"width":12,"y":[-20],"outside":true}}
