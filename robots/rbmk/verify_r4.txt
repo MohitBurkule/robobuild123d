@@ -1,0 +1,123 @@
+BLOCKERS: 52
+  [cached] integrity 0.00s
+  [cached] mass 0.00s
+  [proxy] interference 0.64s
+  [cached] connections 0.00s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.00s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.00s
+  [cached] physics 0.00s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [cached] likeness 0.00s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.00s
+  [cached] waiver_audit 0.01s
+  [cached] geom 0.00s
+  [cached] dfm 0.00s
+  [cached] realworld 0.00s
+rbmk: ok=False 52 blockers in 47 root causes, mass 300.3/225 g
+1. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `chassis`. (+1 consequences)
+   | weapon: x 0.50..79.50  y 14.00..34.00  z -5.12..29.12  size 79.01 x 20.00 x 34.25 mm
+   |   centre (40.00, 24.00, 12.00), volume 4796.5 mm3
+   |   joint revolute axis [0, 0, 1] pivot [40.0, 24.0, 12.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.46 mm (allowed 0.08)
+   |   OVERLAP `motor_l` 1.46 mm (allowed 0.08)
+2. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `motor_l`. (+1 consequences)
+   | weapon: x 0.50..79.50  y 14.00..34.00  z -5.12..29.12  size 79.01 x 20.00 x 34.25 mm
+   |   centre (40.00, 24.00, 12.00), volume 4796.5 mm3
+   |   joint revolute axis [0, 0, 1] pivot [40.0, 24.0, 12.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.46 mm (allowed 0.08)
+   |   OVERLAP `motor_l` 1.46 mm (allowed 0.08)
+3. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `dt_hubw_weapon`. (+1 consequences)
+   | weapon: x 0.50..79.50  y 14.00..34.00  z -5.12..29.12  size 79.01 x 20.00 x 34.25 mm
+   |   centre (40.00, 24.00, 12.00), volume 4796.5 mm3
+   |   joint revolute axis [0, 0, 1] pivot [40.0, 24.0, 12.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.46 mm (allowed 0.08)
+   |   OVERLAP `motor_l` 1.46 mm (allowed 0.08)
+4. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `el_battery`. (+1 consequences)
+   | weapon: x 0.50..79.50  y 14.00..34.00  z -5.12..29.12  size 79.01 x 20.00 x 34.25 mm
+   |   centre (40.00, 24.00, 12.00), volume 4796.5 mm3
+   |   joint revolute axis [0, 0, 1] pivot [40.0, 24.0, 12.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.46 mm (allowed 0.08)
+   |   OVERLAP `motor_l` 1.46 mm (allowed 0.08)
+5. [proxy.sweep] joint `bar2`: `bar2` hits `chassis` 1.46 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint bar2` lists the closest approach to every part. (+1 consequences)
+   | bar2: x -79.50..-0.50  y 14.00..34.00  z -19.12..15.12  size 79.01 x 20.00 x 34.25 mm
+   |   centre (-40.00, 24.00, -2.00), volume 5040.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 0, -4.0] range 0..80 default 0
+   |   OVERLAP `chassis` 1.46 mm (allowed 0.08)
+   |   OVERLAP `motor_r` 1.35 mm (allowed 0.08)
+6. [mass.over] 300.3 g (range 252.9 to 347.7 g) against the 225 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+7. [proxy.interference] `chassis` and `weapon` overlap by 1.46 mm (allowed 0.08).
+   | chassis: x -42.00..42.00  y -37.50..37.50  z -8.00..26.00  size 84.00 x 75.00 x 34.00 mm
+   |   centre (-0.00, -0.00, 9.00), volume 184280.7 mm3
+   |   OVERLAP `el_battery` 5.38 mm (allowed 0.08)
+   |   overlap allowed `motor_l` 2.34 mm (allowed inf)
+   |   OVERLAP `el_wesc` 1.88 mm (allowed 0.08)
+8. [proxy.interference] `chassis` and `bar2` overlap by 1.46 mm (allowed 0.08).
+   | chassis: x -42.00..42.00  y -37.50..37.50  z -8.00..26.00  size 84.00 x 75.00 x 34.00 mm
+   |   centre (-0.00, -0.00, 9.00), volume 184280.7 mm3
+   |   OVERLAP `el_battery` 5.38 mm (allowed 0.08)
+   |   overlap allowed `motor_l` 2.34 mm (allowed inf)
+   |   OVERLAP `el_wesc` 1.88 mm (allowed 0.08)
+9. [proxy.interference] `chassis` and `el_battery` overlap by 5.38 mm (allowed 0.08).
+   | chassis: x -42.00..42.00  y -37.50..37.50  z -8.00..26.00  size 84.00 x 75.00 x 34.00 mm
+   |   centre (-0.00, -0.00, 9.00), volume 184280.7 mm3
+   |   OVERLAP `el_battery` 5.38 mm (allowed 0.08)
+   |   overlap allowed `motor_l` 2.34 mm (allowed inf)
+   |   OVERLAP `el_wesc` 1.88 mm (allowed 0.08)
+10. [proxy.interference] `chassis` and `el_wesc` overlap by 1.88 mm (allowed 0.08).
+   | chassis: x -42.00..42.00  y -37.50..37.50  z -8.00..26.00  size 84.00 x 75.00 x 34.00 mm
+   |   centre (-0.00, -0.00, 9.00), volume 184280.7 mm3
+   |   OVERLAP `el_battery` 5.38 mm (allowed 0.08)
+   |   overlap allowed `motor_l` 2.34 mm (allowed inf)
+   |   OVERLAP `el_wesc` 1.88 mm (allowed 0.08)
+11. [proxy.interference] `weapon` and `motor_l` overlap by 1.46 mm (allowed 0.08).
+   | weapon: x 0.50..79.50  y 14.00..34.00  z -5.12..29.12  size 79.01 x 20.00 x 34.25 mm
+   |   centre (40.00, 24.00, 12.00), volume 4796.5 mm3
+   |   joint revolute axis [0, 0, 1] pivot [40.0, 24.0, 12.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.46 mm (allowed 0.08)
+   |   OVERLAP `motor_l` 1.46 mm (allowed 0.08)
+12. [proxy.interference] `weapon` and `dt_hubw_weapon` overlap by 1.46 mm (allowed 0.08).
+   | weapon: x 0.50..79.50  y 14.00..34.00  z -5.12..29.12  size 79.01 x 20.00 x 34.25 mm
+   |   centre (40.00, 24.00, 12.00), volume 4796.5 mm3
+   |   joint revolute axis [0, 0, 1] pivot [40.0, 24.0, 12.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.46 mm (allowed 0.08)
+   |   OVERLAP `motor_l` 1.46 mm (allowed 0.08)
+... 35 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 300.3 g of 225 g (-75.3 g margin)
+    chassis                   175.44 g  fills 86% of its box  <- solid block? a tub should be a shell
+    weapon                     37.89 g  fills 9% of its box
+    el_battery                 21.50 g  fills 100% of its box  <- solid block? a tub should be a shell
+    weapon_motor               17.50 g  fills 54% of its box
+    dt_hubw_weapon             11.78 g  fills 69% of its box
+    dt_shaft_bar2               8.84 g  fills 79% of its box
+    el_wesc                     5.00 g  fills 94% of its box
+    bar2                        4.80 g  fills 9% of its box
+    dt_shaft_weapon             4.67 g  fills 79% of its box
+    el_rx_esc                   3.50 g  fills 100% of its box
+    motor_r                     2.84 g  fills 47% of its box
+    motor_l                     2.76 g  fills 45% of its box
+    skid_r                      0.58 g  fills 82% of its box
+    skid_l                      0.55 g  fills 77% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    mass.over: 300.3 g (range 252.9 to 347.7 g) against the 225 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 8 hit / 0 miss, group 31 hit / 0 miss, min_gap 55 hit / 0 miss, overlap 325 hit / 0 miss, part_geom 15 hit / 0 miss
