@@ -7536,7 +7536,7 @@
   {
    "image": "reference/mutant.aws74.webp",
    "mask": "reference/mutant.aws74_mask.png",
-   "view": "iso",
+   "view": "rear_right_iso",
    "approximate": true
   },
   {
