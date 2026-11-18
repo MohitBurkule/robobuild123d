@@ -152,6 +152,8 @@ slot + front ramp, weapon disc/drum/bar size+position+axis+teeth, 2 or 4 wheels 
 Only `likeness` judges it; iterate kit numbers with `robot likeness` until the photos match, then do the full build.
 WHAT TO CHANGE: `robot diff-photo spec.json` writes renders/diff_<photo>.png = photo | model from the matching camera |
 overlay, and (with ANTHROPIC_API_KEY) a Haiku-written list of concrete differences. Read the sheet every loop.
+CLUSTERBOTS: model ONE bot and set top-level `"cluster": N` in the spec: the mass limit becomes 150/N g per bot
+(footprint stays per bot). REFERENCE.json `crop` keeps one bot in each photo.
 FIRST PROPORTIONS: `robot fit-photo spec.json --length 120 [--weapon-axis x|z]` fits a box + front ramp + weapon
 cylinder to the photo masks (~5 s) and prints width/height/ramp/weapon radius and position in mm. Build to those.
 FAST SHAPE LOOP: `robot likeness spec.json` (~10 s) runs only this gate, names the best camera, the closest template,
