@@ -1,7 +1,7 @@
 {
  "robot_type": "flipper",
  "body": {
-  "length": 80,
+  "length": 72,
   "width": 84,
   "height": 24,
   "ramp": 0
