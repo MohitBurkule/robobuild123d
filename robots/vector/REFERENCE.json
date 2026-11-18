@@ -1,0 +1,11 @@
+{
+ "robot_type": "lifter",
+ "wheels": 2,
+ "weapon": {
+  "kind": "lifter",
+  "axis": "x"
+ },
+ "photos": [
+  "vector.aws71.webp"
+ ]
+}

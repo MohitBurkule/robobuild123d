@@ -1,0 +1,13 @@
+{
+ "spec": "/tmp/work10_vector/robots/vector/spec.json",
+ "rendered_at": 1795022520.9770436,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "fork_0",
+  "fork_1",
+  "arm"
+ ],
+ "wires": {}
+}

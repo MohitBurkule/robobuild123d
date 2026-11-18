@@ -1,0 +1,306 @@
+{
+ "name": "vector",
+ "profile": "aws2025",
+ "robot_type": "lifter",
+ "locomotion": "wheels",
+ "kit_draft": true,
+ "parts": [
+  {
+   "id": "chassis",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -36.0,
+       0.0
+      ],
+      [
+       36.0,
+       0.0
+      ],
+      [
+       36.0,
+       1.5
+      ],
+      [
+       18.0,
+       24.0
+      ],
+      [
+       -36.0,
+       24.0
+      ]
+     ],
+     "height": 70.0
+    },
+    "at": [
+     0.0,
+     0.0,
+     -14.0
+    ],
+    "rot": [
+     90.0,
+     0.0,
+     90.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e8a83a",
+   "print_orientation": "+z"
+  },
+  {
+   "id": "wheel_l0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 16.0,
+     "height": 9.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    40.0,
+    -24.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e8c84a"
+  },
+  {
+   "id": "wheel_r0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 16.0,
+     "height": 9.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -40.0,
+    -24.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e8c84a"
+  },
+  {
+   "id": "fork_0",
+   "kind": "wedge",
+   "material": "titanium",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      6.0,
+      48.0,
+      1.5
+     ]
+    },
+    "at": [
+     -37.0,
+     58.0,
+     -11.03244373599367
+    ],
+    "rot": [
+     -10.0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e8a83a"
+  },
+  {
+   "id": "fork_1",
+   "kind": "wedge",
+   "material": "titanium",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      6.0,
+      48.0,
+      1.5
+     ]
+    },
+    "at": [
+     37.0,
+     58.0,
+     -11.03244373599367
+    ],
+    "rot": [
+     -10.0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e8a83a"
+  },
+  {
+   "id": "arm",
+   "kind": "weapon",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -10,
+       10.0
+      ],
+      [
+       5,
+       10.0
+      ],
+      [
+       40,
+       0.0
+      ],
+      [
+       56,
+       6.0
+      ],
+      [
+       56,
+       18.0
+      ],
+      [
+       36,
+       14.0
+      ],
+      [
+       -10,
+       18.0
+      ]
+     ],
+     "height": 22
+    },
+    "at": [
+     0.0,
+     0,
+     0
+    ],
+    "rot": [
+     90,
+     0,
+     90
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#22262a",
+   "weapon": {
+    "kind": "lifter"
+   },
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "pivot": [
+     0,
+     -5,
+     12.0
+    ],
+    "min": 0,
+    "max": 80,
+    "default": 0
+   }
+  }
+ ],
+ "fasteners": [],
+ "wires": [],
+ "connections": [],
+ "reference": [
+  {
+   "image": "reference/vector.aws71.webp",
+   "mask": "reference/vector.aws71_mask.png",
+   "view": "iso",
+   "approximate": true
+  }
+ ]
+}
