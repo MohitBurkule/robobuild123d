@@ -1,0 +1,61 @@
+{
+ "robot_type": "flipper",
+ "body": {
+  "length": 110,
+  "width": 80,
+  "height": 48,
+  "ramp": 105
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 11,
+  "width": 8,
+  "y": [
+   -35
+  ],
+  "outside": false
+ },
+ "colors": {
+  "body": "#8a8d94",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "box": [
+    56,
+    80,
+    3
+   ],
+   "at": [
+    0,
+    0,
+    30
+   ],
+   "weapon": "flipper",
+   "pivot": [
+    -40,
+    46
+   ],
+   "id": "flipper",
+   "color": "#6c6f76",
+   "rot": [
+    -24.5,
+    0,
+    0
+   ]
+  }
+ ],
+ "skip_photos": [
+  1
+ ],
+ "textured": [
+  0,
+  2
+ ],
+ "name": "slipper",
+ "weapon": {
+  "kind": "none"
+ }
+}
