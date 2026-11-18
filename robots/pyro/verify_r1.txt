@@ -1,0 +1,118 @@
+  [ran] integrity 0.02s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 2.48s
+  [ran] connections 0.03s
+  [ran] legal 0.01s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.01s
+  [ran] shape 0.35s
+  [ran] dynamics 0.01s
+  [ran] strength 0.00s
+  [ran] printability 0.43s
+  [ran] process 0.03s
+  [ran] electrical 0.01s
+  [ran] combat 0.07s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.01s
+  [ran] fastener_record 0.00s
+  [ran] likeness 4.22s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.03s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.02s
+  [ran] dfm 0.02s
+  [ran] realworld 0.01s
+pyro: ok=False 31 blockers in 29 root causes, mass 433.7/225 g
+1. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `bridge`. (+1 consequences)
+   | weapon: x -2.00..2.00  y -37.06..37.06  z 4.00..80.01  size 4.00 x 74.13 x 76.01 mm
+   |   centre (0.00, 0.00, 42.00), volume 17379.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 0.0, 42.0] range 0..360 default 0
+   |   OVERLAP `bridge` 1.88 mm (allowed 0.08)
+   |   OVERLAP `motor` 1.88 mm (allowed 0.08)
+2. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `motor`. (+1 consequences)
+   | weapon: x -2.00..2.00  y -37.06..37.06  z 4.00..80.01  size 4.00 x 74.13 x 76.01 mm
+   |   centre (0.00, 0.00, 42.00), volume 17379.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 0.0, 42.0] range 0..360 default 0
+   |   OVERLAP `bridge` 1.88 mm (allowed 0.08)
+   |   OVERLAP `motor` 1.88 mm (allowed 0.08)
+3. [mass.over] 433.7 g (range 368.6 to 498.9 g) against the 225 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+4. [proxy.interference] `pod_l` and `motor` overlap by 2.88 mm (allowed 0.08).
+   | pod_l: x 7.00..56.00  y -45.00..45.00  z -11.00..25.00  size 49.00 x 90.00 x 36.00 mm
+   |   centre (31.50, 0.00, 7.00), volume 129176.2 mm3
+   |   OVERLAP `upright_l` 3.88 mm (allowed 0.08)
+   |   OVERLAP `motor` 2.88 mm (allowed 0.08)
+   |   overlap allowed `bridge` 0.05 mm (allowed 0.08)
+5. [proxy.interference] `pod_l` and `upright_l` overlap by 3.88 mm (allowed 0.08).
+   | pod_l: x 7.00..56.00  y -45.00..45.00  z -11.00..25.00  size 49.00 x 90.00 x 36.00 mm
+   |   centre (31.50, 0.00, 7.00), volume 129176.2 mm3
+   |   OVERLAP `upright_l` 3.88 mm (allowed 0.08)
+   |   OVERLAP `motor` 2.88 mm (allowed 0.08)
+   |   overlap allowed `bridge` 0.05 mm (allowed 0.08)
+6. [proxy.interference] `pod_r` and `motor` overlap by 2.88 mm (allowed 0.08).
+   | pod_r: x -56.00..-7.00  y -45.00..45.00  z -11.00..25.00  size 49.00 x 90.00 x 36.00 mm
+   |   centre (-31.50, 0.00, 7.00), volume 129176.2 mm3
+   |   OVERLAP `upright_r` 3.88 mm (allowed 0.08)
+   |   OVERLAP `motor` 2.88 mm (allowed 0.08)
+   |   overlap allowed `bridge` 0.05 mm (allowed 0.08)
+7. [proxy.interference] `pod_r` and `upright_r` overlap by 3.88 mm (allowed 0.08).
+   | pod_r: x -56.00..-7.00  y -45.00..45.00  z -11.00..25.00  size 49.00 x 90.00 x 36.00 mm
+   |   centre (-31.50, 0.00, 7.00), volume 129176.2 mm3
+   |   OVERLAP `upright_r` 3.88 mm (allowed 0.08)
+   |   OVERLAP `motor` 2.88 mm (allowed 0.08)
+   |   overlap allowed `bridge` 0.05 mm (allowed 0.08)
+8. [proxy.interference] `bridge` and `weapon` overlap by 1.88 mm (allowed 0.08).
+   | bridge: x -7.10..7.10  y -45.00..-20.00  z -11.00..25.00  size 14.20 x 25.00 x 36.00 mm
+   |   centre (0.00, -32.50, 7.00), volume 12780.0 mm3
+   |   OVERLAP `weapon` 1.88 mm (allowed 0.08)
+   |   overlap allowed `pod_l` 0.05 mm (allowed 0.08)
+   |   overlap allowed `pod_r` 0.05 mm (allowed 0.08)
+9. [proxy.interference] `weapon` and `motor` overlap by 1.88 mm (allowed 0.08).
+   | weapon: x -2.00..2.00  y -37.06..37.06  z 4.00..80.01  size 4.00 x 74.13 x 76.01 mm
+   |   centre (0.00, 0.00, 42.00), volume 17379.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 0.0, 42.0] range 0..360 default 0
+   |   OVERLAP `bridge` 1.88 mm (allowed 0.08)
+   |   OVERLAP `motor` 1.88 mm (allowed 0.08)
+10. [proxy.interference] `motor` and `upright_l` overlap by 3.38 mm (allowed 0.08).
+   | motor: x -17.00..17.00  y -10.00..10.00  z 19.00..39.00  size 34.00 x 19.99 x 20.00 mm
+   |   centre (0.00, -0.00, 29.00), volume 10681.4 mm3
+   |   OVERLAP `upright_l` 3.38 mm (allowed 0.08)
+   |   OVERLAP `upright_r` 3.38 mm (allowed 0.08)
+   |   OVERLAP `pod_l` 2.88 mm (allowed 0.08)
+11. [proxy.interference] `motor` and `upright_r` overlap by 3.38 mm (allowed 0.08).
+   | motor: x -17.00..17.00  y -10.00..10.00  z 19.00..39.00  size 34.00 x 19.99 x 20.00 mm
+   |   centre (0.00, -0.00, 29.00), volume 10681.4 mm3
+   |   OVERLAP `upright_l` 3.38 mm (allowed 0.08)
+   |   OVERLAP `upright_r` 3.38 mm (allowed 0.08)
+   |   OVERLAP `pod_l` 2.88 mm (allowed 0.08)
+12. [connection.floating] `wheel_l0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `pod_l`, 0.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_l0: x 56.50..64.50  y -45.00..-19.00  z -13.00..13.00  size 8.00 x 25.99 x 26.00 mm
+   |   centre (60.50, -32.00, 0.00), volume 4247.4 mm3
+   |   gap to `pod_l` 0.50 mm
+   | pod_l: x 7.00..56.00  y -45.00..45.00  z -11.00..25.00  size 49.00 x 90.00 x 36.00 mm
+   |   centre (31.50, 0.00, 7.00), volume 129176.2 mm3
+... 17 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 433.7 g of 225 g (-208.7 g margin)
+    weapon                    137.29 g  fills 77% of its box  <- solid block? a tub should be a shell
+    pod_l                     122.98 g  fills 81% of its box  <- solid block? a tub should be a shell
+    pod_r                     122.98 g  fills 81% of its box  <- solid block? a tub should be a shell
+    bridge                     12.17 g  fills 100% of its box
+    motor                      10.17 g  fills 79% of its box
+    upright_l                   9.14 g  fills 100% of its box
+    upright_r                   9.14 g  fills 100% of its box
+    wheel_l0                    4.33 g  fills 79% of its box
+    wheel_r0                    4.33 g  fills 79% of its box
+    mass.over: 433.7 g (range 368.6 to 498.9 g) against the 225 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 0 hit / 2 miss, group 0 hit / 31 miss, inside 0 hit / 9 miss, likeness 1 hit / 0 miss, min_gap 7 hit / 15 miss, overlap 47 hit / 98 miss, part_check 0 hit / 4 miss, part_geom 9 hit / 0 miss, ray 0 hit / 45 miss

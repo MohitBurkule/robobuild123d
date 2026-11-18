@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_pyro/robots/pyro/spec.json",
- "rendered_at": 1795022023.568663,
+ "rendered_at": 1795023184.7554805,
  "bodies": [
   "pod_l",
   "pod_r",
@@ -8,6 +8,8 @@
   "weapon",
   "wheel_l0",
   "wheel_r0",
+  "fork_0",
+  "fork_1",
   "motor",
   "upright_l",
   "upright_r"
