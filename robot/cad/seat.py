@@ -101,6 +101,9 @@ def probe(f, host_inside, thread_inside=None) -> dict:
         out["pilot_open"] = 1.0 - _frac(th, np.vstack([_ring(at, a, u, v, t, max(tap / 2 - 0.25, 0.05), 6) for t in ts2]))
     if into == "insert":
         ib, il = hole.get("insert_d"), hole.get("insert_len")
+        if ib is None or il is None:  # record without the bore: use the catalog insert for this size
+            cib, cil = fc.insert(s.d)
+            ib, il = ib or cib, il or cil
         g0 = (hole.get("grip") or 0.0) - _recess(hole)
         out["insert_open"] = 1.0 - _frac(th, np.vstack([_ring(at, a, u, v, t, ib / 2 - 0.15, 6)
                                                         for t in np.linspace(g0 + 0.3, g0 + il, 4)]))
@@ -108,6 +111,9 @@ def probe(f, host_inside, thread_inside=None) -> dict:
                                                   for t in np.linspace(g0 + 0.3, g0 + il, 4)]))
     if into == "nut":
         sf, m = hole.get("nut_af"), hole.get("nut_m")
+        if sf is None or m is None:
+            csf, cm = fc.nut(s.d, hole.get("nut") or "hex")
+            sf, m = sf or csf, m or cm
         z = (hole.get("nut_z") or 0.0) - _recess(hole) + m / 2
         out["nut_open"] = 1.0 - _frac(th, _ring(at, a, u, v, z, sf / 2 - 0.15, 6))
         out["nut_held"] = _frac(th, _ring(at, a, u, v, z, sf / 2 + 0.35, 6) if hole.get("nut_fit") == "press"
