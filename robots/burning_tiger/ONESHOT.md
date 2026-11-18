@@ -55,3 +55,4 @@ Left (and why):
 - likeness.silhouette x2: looks, not in scope for this pass.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): burning_tiger.aws74.webp 0.66 -> 0.66; burning_tiger.aws76.webp 0.65 -> 0.65
+S1: arm outline self-crossing fixed (2.5 mm sliver removed, integrity.solids); 2 closed 1 mm voids inside the lid plate to bring mass under 150 g.
