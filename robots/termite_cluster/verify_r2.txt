@@ -1,0 +1,110 @@
+BLOCKERS: 17
+  [ran] integrity 0.03s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 0.17s
+  [ran] connections 0.01s
+  [ran] legal 0.00s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.01s
+  [ran] shape 0.03s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 1.03s
+  [ran] process 0.00s
+  [ran] electrical 0.01s
+  [ran] combat 0.07s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.01s
+  [ran] fastener_record 0.00s
+  [ran] likeness 5.68s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.08s
+  [ran] dfm 0.00s
+  [ran] realworld 0.01s
+termite cluster: ok=False 17 blockers in 17 root causes, mass 111.7/50 g
+1. [mass.over] 111.7 g (range 89.0 to 134.4 g) against the 50 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+2. [proxy.interference] `chassis` and `scoop` overlap by 0.67 mm (allowed 0.08).
+   | chassis: x -36.00..36.00  y -35.00..35.00  z -7.00..11.00  size 72.00 x 70.00 x 18.00 mm
+   |   centre (0.00, -0.00, 2.00), volume 90720.0 mm3
+   |   OVERLAP `scoop` 0.67 mm (allowed 0.08)
+   |   gap to `lid` 0.00 mm (touching)
+   |   gap to `tread_l` 0.50 mm
+3. [connection.floating] `tread_l` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | tread_l: x 36.50..44.50  y -33.00..31.00  z -9.00..9.00  size 8.00 x 64.00 x 18.00 mm
+   |   centre (40.50, -1.00, -0.00), volume 8636.6 mm3
+   |   gap to `chassis` 0.50 mm
+   |   gap to `scoop` 2.43 mm
+   | chassis: x -36.00..36.00  y -35.00..35.00  z -7.00..11.00  size 72.00 x 70.00 x 18.00 mm
+4. [connection.floating] `tread_r` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | tread_r: x -44.50..-36.50  y -33.00..31.00  z -9.00..9.00  size 8.00 x 64.00 x 18.00 mm
+   |   centre (-40.50, -1.00, 0.00), volume 8636.6 mm3
+   |   gap to `chassis` 0.50 mm
+   |   gap to `scoop` 2.43 mm
+   | chassis: x -36.00..36.00  y -35.00..35.00  z -7.00..11.00  size 72.00 x 70.00 x 18.00 mm
+5. [connection.floating] `scoop` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | scoop: x -38.00..38.00  y 33.33..58.67  z -8.97..0.97  size 76.00 x 25.35 x 9.94 mm
+   |   centre (0.00, 46.00, -4.00), volume 3952.0 mm3
+   |   OVERLAP `chassis` 0.67 mm (allowed 0.08)
+   |   gap to `tread_l` 2.43 mm
+   |   gap to `tread_r` 2.43 mm
+6. [connection.floating] `lid` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | lid: x -20.00..20.00  y -18.00..18.00  z 11.00..13.00  size 40.00 x 36.00 x 2.00 mm
+   |   centre (0.00, 0.00, 12.00), volume 2880.0 mm3
+   |   gap to `chassis` 0.00 mm (touching)
+   | chassis: x -36.00..36.00  y -35.00..35.00  z -7.00..11.00  size 72.00 x 70.00 x 18.00 mm
+   |   centre (0.00, -0.00, 2.00), volume 90720.0 mm3
+7. [legal.switch] Rule 4a needs an externally accessible way to shut down that works without tools and is clearly marked on/off.
+   fix: Add a `switch` part (or removable link) with `tool_free: true` and `marked: true` and a visible ON/OFF `label`.
+8. [legal.failsafe] Rule 4d: the robot must stop all motion when the transmitter is off.
+   fix: Set `electronics.failsafe` to true and configure the receiver and ESC failsafe.
+9. [process.print_orientation] `tread_l` (fdm) has no `print_orientation`.
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | tread_l: x 36.50..44.50  y -33.00..31.00  z -9.00..9.00  size 8.00 x 64.00 x 18.00 mm
+   |   centre (40.50, -1.00, -0.00), volume 8636.6 mm3
+   |   gap to `chassis` 0.50 mm
+   |   gap to `scoop` 2.43 mm
+10. [process.print_orientation] `tread_r` (fdm) has no `print_orientation`.
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | tread_r: x -44.50..-36.50  y -33.00..31.00  z -9.00..9.00  size 8.00 x 64.00 x 18.00 mm
+   |   centre (-40.50, -1.00, 0.00), volume 8636.6 mm3
+   |   gap to `chassis` 0.50 mm
+   |   gap to `scoop` 2.43 mm
+11. [process.print_orientation] `scoop` (fdm) has no `print_orientation`.
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | scoop: x -38.00..38.00  y 33.33..58.67  z -8.97..0.97  size 76.00 x 25.35 x 9.94 mm
+   |   centre (0.00, 46.00, -4.00), volume 3952.0 mm3
+   |   OVERLAP `chassis` 0.67 mm (allowed 0.08)
+   |   gap to `tread_l` 2.43 mm
+   |   gap to `tread_r` 2.43 mm
+12. [process.print_orientation] `lid` (fdm) has no `print_orientation`.
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | lid: x -20.00..20.00  y -18.00..18.00  z 11.00..13.00  size 40.00 x 36.00 x 2.00 mm
+   |   centre (0.00, 0.00, 12.00), volume 2880.0 mm3
+   |   gap to `chassis` 0.00 mm (touching)
+... 5 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 111.7 g of 50 g (-61.7 g margin)
+    chassis                    86.37 g  fills 100% of its box  <- solid block? a tub should be a shell
+    tread_l                     8.81 g  fills 94% of its box
+    tread_r                     8.81 g  fills 94% of its box
+    scoop                       3.76 g  fills 21% of its box
+    lid                         2.74 g  fills 100% of its box
+    mass.over: 111.7 g (range 89.0 to 134.4 g) against the 50 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 1 hit / 0 miss, group 0 hit / 31 miss, inside 5 hit / 0 miss, likeness 2 hit / 0 miss, min_gap 45 hit / 0 miss, overlap 24 hit / 0 miss, part_check 1 hit / 0 miss, part_geom 5 hit / 0 miss, ray 25 hit / 0 miss
