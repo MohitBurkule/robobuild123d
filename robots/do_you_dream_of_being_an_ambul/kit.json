@@ -1,0 +1,62 @@
+{
+ "robot_type": "wedge",
+ "body": {
+  "length": 70,
+  "width": 66,
+  "height": 16,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 12,
+  "width": 7,
+  "y": [
+   -24,
+   20
+  ]
+ },
+ "colors": {
+  "body": "#2f9f8f",
+  "wheel": "#3fb8a0",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "top": [
+    [
+     10,
+     30
+    ],
+    [
+     34,
+     30
+    ],
+    [
+     40,
+     78
+    ],
+    [
+     26,
+     80
+    ],
+    [
+     14,
+     50
+    ]
+   ],
+   "z": [
+    1,
+    18
+   ],
+   "color": "#7a5ac8",
+   "mirror": true,
+   "kind": "wedge",
+   "id": "prong"
+  }
+ ],
+ "name": "do you dream of being an ambul",
+ "weapon": {
+  "kind": "none"
+ }
+}

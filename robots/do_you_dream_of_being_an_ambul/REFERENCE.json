@@ -1,0 +1,10 @@
+{
+ "robot_type": "wedge",
+ "wheels": 4,
+ "weapon": {
+  "kind": "wedge"
+ },
+ "photos": [
+  "do_you_dream_of_being_an_ambulance.aws71.webp"
+ ]
+}
