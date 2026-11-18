@@ -3,18 +3,19 @@
  "body": {
   "length": 90,
   "width": 82,
-  "height": 28,
-  "ramp": 30
+  "height": 20,
+  "ramp": 26
  },
  "wheels": {
   "n": 4,
-  "radius": 11,
+  "radius": 12,
   "width": 8,
   "y": [
-   -26,
-   10
+   -28,
+   12
   ],
-  "outside": false
+  "outside": false,
+  "notch": true
  },
  "colors": {
   "body": "#d9dde0",
@@ -22,7 +23,12 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "textured": [],
+ "name": "push comes to shove",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "box": [
     86,
@@ -45,10 +51,5 @@
     0
    ]
   }
- ],
- "textured": [],
- "name": "push comes to shove",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }
