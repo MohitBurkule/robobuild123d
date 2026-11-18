@@ -21,8 +21,13 @@ Decisions: type flipper; body box pentagon 85x92x42 mm, ramp 30; wheels 2 r11 in
 
 Likeness: aws72 0.85 (ok), aws77 0.85 (ok).
 
+## Round 3d (user camera picks batch 2 + shape remarks applied; round 4 to be re-run on the new outside)
+Decisions: type flipper; body box pentagon 85x92x42 mm, ramp 30; wheels 2 r11 inboard; weapon none; extra parts: scoop, flipper; photos skipped (cluttered): indices [0].
+
+Likeness: aws72 0.85 (ok), aws77 0.86 (ok).
+
 ## Round 4 (verification, helper 2)
-Blockers r3 44 -> r4 9 (`verify --tier inner`).
+Blockers r3 44 -> r4 10 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -32,11 +37,10 @@ Fixed / changed (inside only, outside kept):
 - 4 wires declared (battery - switch - ESC - motors)
 - print orientation on every printed part, failsafe / weapon disable declared, design volumes declared where this pass changed a part on purpose
 - power switch on the floor of the body, slider facing down to a 7 x 3 mm slot in the underside (no slot on the top or sides; hollow cavities stay closed behind a wall at every outside face)
-- flipper sweeps through chassis at 41 poses: not carved (would change the outside)
 - rod dt_axle_wheel_l0: 2.8 mm stub clear of ['dm_wheel_l0'] printed as the wheel's hub boss
 - rod dt_axle_wheel_r0: 2.8 mm stub clear of ['dm_wheel_r0'] printed as the wheel's hub boss
-- mass estimate 314 g over 150: walls 2 mm -> 309 g
-- mass estimate 309 g over 150: walls 1.6 mm -> 305 g
+- mass estimate 317 g over 150: walls 2 mm -> 312 g
+- mass estimate 312 g over 150: walls 1.6 mm -> 308 g
 - hollow skipped chassis: solids 2 vol 0.30
 - hollowed scoop (wall 1.6, form 0): 78.6 -> 19.7 cm3
 
@@ -46,11 +50,7 @@ Left (and why):
 - process.weapon_printed x1: toolchain: a printed lifter/flipper arm is judged like a spinner (needs hardened teeth); adding metal teeth changes the look.
 - wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
 - wire.rotor_clearance x4: toolchain: same full-revolution assumption; wires cannot leave a cylinder that covers the chassis.
+- wire.render_count x1: iso.png: 3 routes vs 4 spec wires (missing ['w_sw_esc']); top.png: 3 routes vs 4 spec wires (missing ['w_sw_esc'])
 - battery.rotor_gap x1: toolchain: same full-revolution assumption for a limited-range arm.
 
-Likeness (best silhouette IoU per photo, r3 -> r4): ripper_remix.aws72.webp 0.85 -> 0.85; ripper_remix.aws77.webp 0.85 -> 0.85
-
-## Round 3d (user camera picks batch 2 + shape remarks applied; round 4 to be re-run on the new outside)
-Decisions: type flipper; body box pentagon 85x92x42 mm, ramp 30; wheels 2 r11 inboard; weapon none; extra parts: scoop, flipper; photos skipped (cluttered): indices [0].
-
-Likeness: aws72 0.85 (ok), aws77 0.86 (ok).
+Likeness (best silhouette IoU per photo, r3 -> r4): ripper_remix.aws72.webp 0.85 -> 0.85; ripper_remix.aws77.webp 0.86 -> 0.86
