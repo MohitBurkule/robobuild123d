@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_pantherk/robots/pantherk/spec.json",
- "rendered_at": 1795026832.9709346,
+ "rendered_at": 1795032407.8853054,
  "bodies": [
   "pod_l",
   "pod_r",
@@ -9,6 +9,8 @@
   "wheel_r0",
   "wheel_l1",
   "wheel_r1",
+  "top_plate",
+  "picture",
   "dt_hub_wheel_l0",
   "dt_axle_wheel_l0",
   "dt_nut_wheel_l0",

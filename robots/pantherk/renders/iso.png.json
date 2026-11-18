@@ -1,85 +1,34 @@
 {
- "spec": "/tmp/work9_pantherk/robots/pantherk/spec.json",
- "rendered_at": 1795019540.0158236,
+ "spec": "/tmp/work10_pantherk/robots/pantherk/spec.json",
+ "rendered_at": 1795032394.1452775,
  "bodies": [
-  "chassis_bottom",
-  "chassis_top",
-  "motor_l",
-  "wheel_l",
-  "idler_l",
-  "motor_r",
-  "wheel_r",
-  "idler_r",
-  "insert_c0",
-  "insert_c1",
-  "insert_c2",
-  "insert_c3",
-  "battery",
-  "esc",
-  "rx",
-  "power_switch",
-  "wedge",
-  "insert_w0",
-  "insert_w1",
-  "insert_w2",
-  "insert_w3",
-  "bolt_c0",
-  "bolt_c1",
-  "bolt_c2",
-  "bolt_c3",
-  "bolt_w0",
-  "bolt_w1",
-  "bolt_w2",
-  "bolt_w3"
+  "pod_l",
+  "pod_r",
+  "bridge",
+  "wheel_l0",
+  "wheel_r0",
+  "wheel_l1",
+  "wheel_r1",
+  "top_plate",
+  "picture",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_nut_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_nut_wheel_r0",
+  "dt_hub_wheel_l1",
+  "dt_axle_wheel_l1",
+  "dt_nut_wheel_l1",
+  "dt_hub_wheel_r1",
+  "dt_axle_wheel_r1",
+  "dt_nut_wheel_r1",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3",
+  "dt_screw_4",
+  "dt_screw_5"
  ],
- "wires": {
-  "w_bat_sw": {
-   "from": [
-    -1.0,
-    16.0,
-    0.0
-   ],
-   "to": [
-    -40.0,
-    24.0,
-    4.5
-   ]
-  },
-  "w_sw_esc": {
-   "from": [
-    -32.0,
-    24.0,
-    4.5
-   ],
-   "to": [
-    -27.0,
-    5.0,
-    3.0
-   ]
-  },
-  "w_esc_ml": {
-   "from": [
-    -19.0,
-    11.0,
-    3.0
-   ],
-   "to": [
-    5.549999999999997,
-    -16.0,
-    0.0
-   ]
-  },
-  "w_rx_esc": {
-   "from": [
-    17.2,
-    13.0,
-    0.0
-   ],
-   "to": [
-    -27.0,
-    17.0,
-    3.0
-   ]
-  }
- }
+ "wires": {}
 }
