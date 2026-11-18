@@ -1,80 +1,80 @@
-BLOCKERS: 49
-  [ran] integrity 0.04s
+BLOCKERS: 52
+  [ran] integrity 0.43s
   [proxy] wiring 0.00s
   [ran] mass 0.00s
-  [proxy] interference 2.38s
-  [ran] connections 0.17s
-  [ran] legal 0.00s
+  [proxy] interference 6.52s
+  [ran] connections 0.67s
+  [ran] legal 0.01s
   [ran] fasteners 0.00s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
-  [ran] fight 0.01s
-  [ran] shape 0.14s
+  [ran] fight 0.02s
+  [ran] shape 1.12s
   [ran] dynamics 0.01s
   [ran] strength 0.00s
-  [ran] printability 0.51s
-  [ran] process 0.00s
+  [ran] printability 2.40s
+  [ran] process 0.02s
   [ran] electrical 0.00s
-  [ran] combat 0.05s
+  [ran] combat 0.31s
   [ran] physics 0.00s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
   [ran] fit 0.00s
-  [ran] bom 0.00s
+  [ran] bom 0.02s
   [ran] wire_review 0.00s
   [ran] fastener_record 0.00s
-  [ran] likeness 1.98s
+  [ran] likeness 14.99s
   [ran] drive_recess 0.00s
-  [ran] belt_wrap 0.00s
+  [ran] belt_wrap 0.02s
   [ran] retention 0.00s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.04s
-  [ran] dfm 0.00s
-  [ran] realworld 0.00s
-push comes to shove: ok=False 49 blockers in 28 root causes, mass 149.5/150 g
+  [ran] geom 0.23s
+  [ran] dfm 0.15s
+  [ran] realworld 0.01s
+push comes to shove: ok=False 52 blockers in 31 root causes, mass 180.7/150 g
 1. [proxy.interference] `chassis` and `dt_axle_wheel_l0` overlap by 1.26 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
-   | chassis: x -41.00..41.00  y -45.00..45.00  z -10.00..10.00  size 82.00 x 90.00 x 20.00 mm
-   |   centre (0.00, 0.00, 0.00), volume 105079.2 mm3
-   |   OVERLAP `front_plate` 1.48 mm (allowed 0.08)
+   | chassis: x -41.00..41.00  y -45.00..45.00  z -10.00..12.00  size 82.00 x 90.00 x 22.00 mm
+   |   centre (-0.00, -0.00, 1.00), volume 136840.0 mm3
    |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
    |   OVERLAP `dt_axle_wheel_r0` 1.26 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_l1` 1.26 mm (allowed 0.08)
 2. [proxy.interference] `chassis` and `dt_axle_wheel_r0` overlap by 1.26 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
-   | chassis: x -41.00..41.00  y -45.00..45.00  z -10.00..10.00  size 82.00 x 90.00 x 20.00 mm
-   |   centre (0.00, 0.00, 0.00), volume 105079.2 mm3
-   |   OVERLAP `front_plate` 1.48 mm (allowed 0.08)
+   | chassis: x -41.00..41.00  y -45.00..45.00  z -10.00..12.00  size 82.00 x 90.00 x 22.00 mm
+   |   centre (-0.00, -0.00, 1.00), volume 136840.0 mm3
    |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
    |   OVERLAP `dt_axle_wheel_r0` 1.26 mm (allowed 0.08)
-3. [proxy.interference] `wheel_l0` and `dt_hub_wheel_l0` overlap by 3.88 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   |   OVERLAP `dt_axle_wheel_l1` 1.26 mm (allowed 0.08)
+3. [proxy.interference] `chassis` and `dt_screw_0` overlap by 0.19 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | chassis: x -41.00..41.00  y -45.00..45.00  z -10.00..12.00  size 82.00 x 90.00 x 22.00 mm
+   |   centre (-0.00, -0.00, 1.00), volume 136840.0 mm3
+   |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_r0` 1.26 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_l1` 1.26 mm (allowed 0.08)
+4. [proxy.interference] `wheel_l0` and `dt_hub_wheel_l0` overlap by 3.88 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
    | wheel_l0: x 32.50..40.50  y -40.00..-16.00  z -12.00..12.00  size 8.00 x 23.99 x 24.00 mm
    |   centre (36.50, -28.00, 0.00), volume 3619.1 mm3
    |   OVERLAP `dt_hub_wheel_l0` 3.88 mm (allowed 0.08)
    |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
    |   gap to `dt_nut_wheel_l0` 0.60 mm
-4. [proxy.interference] `wheel_l0` and `dt_axle_wheel_l0` overlap by 1.26 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+5. [proxy.interference] `wheel_l0` and `dt_axle_wheel_l0` overlap by 1.26 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
    | wheel_l0: x 32.50..40.50  y -40.00..-16.00  z -12.00..12.00  size 8.00 x 23.99 x 24.00 mm
    |   centre (36.50, -28.00, 0.00), volume 3619.1 mm3
    |   OVERLAP `dt_hub_wheel_l0` 3.88 mm (allowed 0.08)
    |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
    |   gap to `dt_nut_wheel_l0` 0.60 mm
-5. [proxy.interference] `wheel_r0` and `dt_hub_wheel_r0` overlap by 3.88 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+6. [proxy.interference] `wheel_r0` and `dt_hub_wheel_r0` overlap by 3.88 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
    | wheel_r0: x -40.50..-32.50  y -40.00..-16.00  z -12.00..12.00  size 8.00 x 23.99 x 24.00 mm
    |   centre (-36.50, -28.00, 0.00), volume 3619.1 mm3
    |   OVERLAP `dt_hub_wheel_r0` 3.88 mm (allowed 0.08)
    |   OVERLAP `dt_axle_wheel_r0` 1.26 mm (allowed 0.08)
    |   gap to `dt_nut_wheel_r0` 0.60 mm
-6. [proxy.interference] `wheel_r0` and `dt_axle_wheel_r0` overlap by 1.26 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+7. [proxy.interference] `wheel_r0` and `dt_axle_wheel_r0` overlap by 1.26 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
    | wheel_r0: x -40.50..-32.50  y -40.00..-16.00  z -12.00..12.00  size 8.00 x 23.99 x 24.00 mm
    |   centre (-36.50, -28.00, 0.00), volume 3619.1 mm3
    |   OVERLAP `dt_hub_wheel_r0` 3.88 mm (allowed 0.08)
    |   OVERLAP `dt_axle_wheel_r0` 1.26 mm (allowed 0.08)
    |   gap to `dt_nut_wheel_r0` 0.60 mm
-7. [proxy.interference] `front_plate` and `dt_screw_0` overlap by 0.55 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
-   | front_plate: x -43.00..43.00  y 22.92..49.08  z -11.08..15.08  size 86.00 x 26.16 x 26.16 mm
-   |   centre (0.00, 36.00, 2.00), volume 8772.0 mm3
-   |   OVERLAP `chassis` 1.48 mm (allowed 0.08)
-   |   OVERLAP `dt_screw_0` 0.55 mm (allowed 0.08)
-   |   OVERLAP `dt_screw_1` 0.55 mm (allowed 0.08)
 8. [proxy.interference] `dt_hub_wheel_l0` and `dt_axle_wheel_l0` overlap by 1.26 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
    | dt_hub_wheel_l0: x 31.90..41.10  y -34.24..-21.76  z -6.24..6.24  size 9.20 x 12.48 x 12.48 mm
    |   centre (36.50, -28.00, 0.00), volume 1125.4 mm3
@@ -99,18 +99,18 @@ push comes to shove: ok=False 49 blockers in 28 root causes, mass 149.5/150 g
    |   OVERLAP `chassis` 1.26 mm (allowed 0.08)
    |   OVERLAP `wheel_r0` 1.26 mm (allowed 0.08)
    |   OVERLAP `dt_hub_wheel_r0` 1.26 mm (allowed 0.08)
-12. [connection.floating] `dt_screw_0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `front_plate`, 0.0 mm away. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+12. [connection.floating] `dt_screw_0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
    fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
-   | dt_screw_0: x -35.90..-32.10  y 36.10..39.90  z 6.10..7.50  size 3.80 x 3.80 x 1.40 mm
-   |   centre (-34.00, 38.00, 6.80), volume 15.9 mm3
-   |   OVERLAP `front_plate` 0.55 mm (allowed 0.08)
-   | front_plate: x -43.00..43.00  y 22.92..49.08  z -11.08..15.08  size 86.00 x 26.16 x 26.16 mm
-   |   centre (0.00, 36.00, 2.00), volume 8772.0 mm3
-... 16 more root causes (fix these first, then re-run)
+   | dt_screw_0: x -35.90..-32.10  y 36.10..39.90  z 11.60..13.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (-34.00, 38.00, 12.30), volume 15.9 mm3
+   |   OVERLAP `chassis` 0.19 mm (allowed 0.08)
+   |   gap to `front_plate` 0.10 mm
+   | chassis: x -41.00..41.00  y -45.00..45.00  z -10.00..12.00  size 82.00 x 90.00 x 22.00 mm
+... 19 more root causes (fix these first, then re-run)
 MASS BUDGET:
-  mass 149.5 g of 150 g (+0.5 g margin)
-    chassis                   100.04 g  fills 71% of its box  <- solid block? a tub should be a shell
-    front_plate                23.68 g  fills 15% of its box
+  mass 180.7 g of 150 g (-30.7 g margin)
+    chassis                   130.27 g  fills 84% of its box  <- solid block? a tub should be a shell
+    front_plate                24.72 g  fills 13% of its box
     wheel_l0                    3.69 g  fills 79% of its box
     wheel_r0                    3.69 g  fills 79% of its box
     wheel_l1                    3.69 g  fills 79% of its box
@@ -129,6 +129,6 @@ MASS BUDGET:
     dt_nut_wheel_r1             0.27 g  fills 79% of its box
     dt_screw_0                  0.13 g  fills 79% of its box
     dt_screw_1                  0.13 g  fills 79% of its box
-    mass.may_be_over: 149.5 g (range 123.9 to 175.0 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.over: 180.7 g (range 149.0 to 212.4 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: distance 1 hit / 0 miss, group 0 hit / 31 miss, inside 6 hit / 14 miss, likeness 2 hit / 0 miss, min_gap 38 hit / 49 miss, overlap 112 hit / 366 miss, part_check 2 hit / 0 miss, part_geom 20 hit / 0 miss, ray 30 hit / 62 miss
+cache: distance 0 hit / 2 miss, group 0 hit / 31 miss, inside 16 hit / 4 miss, likeness 2 hit / 0 miss, min_gap 53 hit / 42 miss, overlap 343 hit / 125 miss, part_check 0 hit / 2 miss, part_geom 20 hit / 0 miss, ray 0 hit / 88 miss

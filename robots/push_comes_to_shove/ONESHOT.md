@@ -44,3 +44,8 @@ Left (and why):
 - likeness.silhouette x2: looks, not in scope for this pass.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): push_mk_1.webp 0.69 -> 0.69; push_mk_2.webp 0.71 -> 0.71
+
+## Round 3c (user angle picks applied; shape fixed per user remarks)
+Decisions: type wedge; body box rect 90x82x22 mm, ramp 0; wheels 4 r12 inboard; weapon none; extra parts: front_plate.
+
+Likeness: push_mk_1 0.65 (FAIL), push_mk_2 0.71 (FAIL).
