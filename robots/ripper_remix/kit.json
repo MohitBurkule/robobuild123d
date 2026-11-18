@@ -24,7 +24,14 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "skip_photos": [
+  0
+ ],
+ "name": "ripper remix",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "side": [
     [
@@ -75,12 +82,5 @@
    "id": "flipper",
    "color": "#f2e21c"
   }
- ],
- "skip_photos": [
-  0
- ],
- "name": "ripper remix",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }

@@ -8,5 +8,15 @@
  "photos": [
   "ripper_remix.aws72.webp",
   "ripper_remix.aws77.webp"
- ]
+ ],
+ "view": {
+  "ripper_remix.aws70.webp": "front",
+  "ripper_remix.aws72.webp": "front_left_iso",
+  "ripper_remix.aws77.webp": "front"
+ },
+ "elevation": {
+  "ripper_remix.aws70.webp": 25,
+  "ripper_remix.aws72.webp": 45,
+  "ripper_remix.aws77.webp": 25
+ }
 }

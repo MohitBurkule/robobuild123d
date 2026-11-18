@@ -15,3 +15,8 @@ Likeness: aws72 0.85 (ok), aws77 0.87 (ok).
 Decisions: type flipper; body box pentagon 85x92x42 mm, ramp 30; wheels 2 r11 inboard; weapon none; extra parts: scoop, flipper; photos skipped (cluttered): indices [0].
 
 Likeness: aws72 0.85 (ok), aws77 0.87 (ok).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type flipper; body box pentagon 85x92x42 mm, ramp 30; wheels 2 r11 inboard; weapon none; extra parts: scoop, flipper; photos skipped (cluttered): indices [0].
+
+Likeness: aws72 0.85 (ok), aws77 0.85 (ok).
