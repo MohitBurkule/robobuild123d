@@ -21,17 +21,40 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "skip_photos": [
+  0
+ ],
+ "name": "unorthodox",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
-   "box": [
-    124,
-    56,
-    2
+   "side": [
+    [
+     28,
+     2
+    ],
+    [
+     92,
+     0
+    ],
+    [
+     92,
+     1.5
+    ],
+    [
+     31,
+     26
+    ],
+    [
+     28,
+     26
+    ]
    ],
-   "at": [
-    0,
-    56,
-    10
+   "x": [
+    -62,
+    62
    ],
    "weapon": "lifter",
    "pivot": [
@@ -39,33 +62,36 @@
     18
    ],
    "id": "scoop",
-   "color": "#2f5a44",
-   "rot": [
-    -18,
-    0,
-    0
-   ]
+   "color": "#2f5a44"
   },
   {
    "box": [
+    34,
     30,
-    26,
-    10
+    16
    ],
    "at": [
     0,
-    -5,
-    33
+    -2,
+    36
    ],
    "id": "servo",
    "color": "#16181a"
+  },
+  {
+   "box": [
+    3,
+    34,
+    18
+   ],
+   "at": [
+    20,
+    -2,
+    36
+   ],
+   "mirror": true,
+   "id": "servo_plate",
+   "color": "#d8b81c"
   }
- ],
- "skip_photos": [
-  0
- ],
- "name": "unorthodox",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }

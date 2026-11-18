@@ -1,12 +1,24 @@
 {
  "spec": "/tmp/work10_unorthodox/robots/unorthodox/spec.json",
- "rendered_at": 1795023262.5482786,
+ "rendered_at": 1795026261.0044632,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
   "scoop",
-  "servo"
+  "servo",
+  "servo_plate_l",
+  "servo_plate_r",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_nut_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_nut_wheel_r0",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3"
  ],
  "wires": {}
 }

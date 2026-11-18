@@ -8,5 +8,15 @@
  "photos": [
   "unorthodox.aws74.webp",
   "unorthodox.aws76.webp"
- ]
+ ],
+ "view": {
+  "unorthodox.aws61.webp": "front_left_iso",
+  "unorthodox.aws74.webp": "front_right_iso",
+  "unorthodox.aws76.webp": "front_left_iso"
+ },
+ "elevation": {
+  "unorthodox.aws61.webp": 45,
+  "unorthodox.aws74.webp": 45,
+  "unorthodox.aws76.webp": 45
+ }
 }
