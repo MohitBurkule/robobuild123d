@@ -1,10 +1,10 @@
 {
  "robot_type": "lifter",
  "body": {
-  "length": 90,
-  "width": 92,
-  "height": 26,
-  "ramp": 25,
+  "length": 92,
+  "width": 78,
+  "height": 20,
+  "ramp": 22,
   "plan": "pentagon",
   "front_width": 50,
   "nose": 30
