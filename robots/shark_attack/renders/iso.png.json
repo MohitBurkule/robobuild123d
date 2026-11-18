@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_shark_attack/robots/shark_attack/spec.json",
- "rendered_at": 1795023336.9748595,
+ "rendered_at": 1795036356.5771742,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -11,7 +11,18 @@
   "fork_3",
   "hump_l",
   "hump_r",
-  "fin"
+  "fin",
+  "dt_hub_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_mount_fork_0",
+  "dt_mount_fork_1",
+  "dt_mount_fork_2",
+  "dt_mount_fork_3",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_esc",
+  "el_switch"
  ],
  "wires": {}
 }
