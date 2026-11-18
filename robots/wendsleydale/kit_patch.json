@@ -1,8 +1,10 @@
 {
  "note": "ids added on top of `robot kit` output; replaced shapes are in spec.json",
  "added": [
-  "corner_l",
-  "corner_r",
+  "corner_fl",
+  "corner_fr",
+  "corner_rl",
+  "corner_rr",
   "lifter",
   "side_plate_l",
   "side_plate_r"

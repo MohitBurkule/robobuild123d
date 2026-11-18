@@ -24,3 +24,8 @@ Photos have hands/wood/arena backgrounds: needs manual crop/mask tooling beyond 
 
 ## Verdict
 Looks alike: **partly**. Renders: `renders/iso.png`, `renders/top.png`.
+
+## Round 2 (looks)
+Shorter steeper ramp, rounded tail, full-length lifter ridge with hump, orange blocks at all four corners. Axis restored.
+
+Likeness: aws65 0.35 (FAIL), aws68 0.76 (FAIL).

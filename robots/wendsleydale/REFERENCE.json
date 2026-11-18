@@ -3,8 +3,9 @@
  "wheels": 2,
  "weapon": {
   "kind": "lifter",
+  "axis": "x",
   "position": "middle",
-  "width_frac": 0.29
+  "width_frac": 0.3
  },
  "photos": [
   "wendsleydale.aws65.webp",
