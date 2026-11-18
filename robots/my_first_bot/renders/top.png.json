@@ -1,0 +1,14 @@
+{
+ "spec": "/tmp/work10_my_first_bot/robots/my_first_bot/spec.json",
+ "rendered_at": 1795021734.2944834,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "eye_l",
+  "eye_r",
+  "post",
+  "post_top"
+ ],
+ "wires": {}
+}

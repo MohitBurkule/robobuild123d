@@ -1,0 +1,81 @@
+{
+ "robot_type": "wedge",
+ "body": {
+  "length": 105,
+  "width": 100,
+  "height": 36,
+  "ramp": 95
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 10,
+  "width": 8,
+  "y": [
+   -35
+  ],
+  "outside": false
+ },
+ "colors": {
+  "body": "#e6d36a",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "sphere": 11,
+   "at": [
+    -22,
+    -10,
+    26
+   ],
+   "color": "#f4f4f4",
+   "id": "eye_l"
+  },
+  {
+   "sphere": 11,
+   "at": [
+    24,
+    -22,
+    30
+   ],
+   "color": "#f4f4f4",
+   "id": "eye_r"
+  },
+  {
+   "box": [
+    4,
+    4,
+    50
+   ],
+   "at": [
+    0,
+    -5,
+    52
+   ],
+   "id": "post",
+   "color": "#e8efe8"
+  },
+  {
+   "box": [
+    18,
+    4,
+    4
+   ],
+   "at": [
+    0,
+    -5,
+    78
+   ],
+   "id": "post_top",
+   "color": "#e8efe8"
+  }
+ ],
+ "skip_photos": [
+  0
+ ],
+ "name": "my first bot",
+ "weapon": {
+  "kind": "none"
+ }
+}

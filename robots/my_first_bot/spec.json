@@ -1,0 +1,297 @@
+{
+ "name": "my first bot",
+ "profile": "aws2025",
+ "robot_type": "wedge",
+ "locomotion": "wheels",
+ "kit_draft": true,
+ "parts": [
+  {
+   "id": "chassis",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -52.5,
+       0.0
+      ],
+      [
+       52.5,
+       0.0
+      ],
+      [
+       52.5,
+       1.5
+      ],
+      [
+       -42.5,
+       36.0
+      ],
+      [
+       -52.5,
+       36.0
+      ]
+     ],
+     "height": 100.0
+    },
+    "at": [
+     0.0,
+     0.0,
+     -8.0
+    ],
+    "rot": [
+     90.0,
+     0.0,
+     90.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e6d36a",
+   "print_orientation": "+z"
+  },
+  {
+   "id": "wheel_l0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 10.0,
+     "height": 8.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    45.5,
+    -35.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "wheel_r0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 10.0,
+     "height": 8.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -45.5,
+    -35.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "eye_l",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "sphere",
+     "radius": 11
+    },
+    "at": [
+     -22,
+     -10,
+     16.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#f4f4f4"
+  },
+  {
+   "id": "eye_r",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "sphere",
+     "radius": 11
+    },
+    "at": [
+     24,
+     -22,
+     20.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#f4f4f4"
+  },
+  {
+   "id": "post",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      4,
+      4,
+      50
+     ]
+    },
+    "at": [
+     0,
+     -5,
+     42.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e8efe8"
+  },
+  {
+   "id": "post_top",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      18,
+      4,
+      4
+     ]
+    },
+    "at": [
+     0,
+     -5,
+     68.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e8efe8"
+  }
+ ],
+ "fasteners": [],
+ "wires": [],
+ "connections": [],
+ "reference": [
+  {
+   "image": "reference/my_first_bot.aws67.webp",
+   "mask": "reference/my_first_bot.aws67_mask.png",
+   "view": "iso",
+   "approximate": true
+  },
+  {
+   "image": "reference/my_first_bot.aws71.webp",
+   "mask": "reference/my_first_bot.aws71_mask.png",
+   "view": "iso",
+   "approximate": true
+  }
+ ]
+}
