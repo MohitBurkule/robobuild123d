@@ -1,101 +1,61 @@
-BLOCKERS: 11
-  [ran] integrity 0.05s
+BLOCKERS: 7
+  [ran] integrity 0.06s
+  [proxy] wiring 1.25s
   [ran] mass 0.00s
-  [proxy] interference 11.19s
-  [ran] connections 0.96s
-  [ran] legal 0.02s
+  [proxy] interference 13.43s
+  [ran] connections 0.86s
+  [ran] legal 0.01s
   [ran] fasteners 0.00s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
   [ran] fight 0.02s
-  [ran] shape 0.59s
-  [ran] dynamics 0.01s
-  [ran] strength 0.00s
-  [ran] printability 0.58s
+  [ran] shape 0.57s
+  [ran] dynamics 0.00s
+  [ran] strength 0.01s
+  [ran] printability 1.05s
   [ran] process 0.00s
-  [ran] electrical 0.02s
-  [ran] combat 0.10s
+  [ran] electrical 0.39s
+  [ran] combat 0.09s
   [ran] physics 0.00s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
-  [ran] fit 0.06s
-  [ran] bom 0.01s
-  [ran] wire_review 0.02s
+  [ran] fit 0.09s
+  [ran] bom 0.00s
+  [ran] wire_review 0.52s
   [ran] fastener_record 0.00s
-  [ran] likeness 12.61s
+  [ran] likeness 20.75s
   [ran] drive_recess 0.00s
   [ran] belt_wrap 0.00s
-  [ran] retention 0.02s
+  [ran] retention 0.00s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.24s
-  [ran] dfm 0.08s
-  [ran] realworld 0.06s
-flippant: ok=False 11 blockers in 10 root causes, mass 133.3/150 g
-1. [wire.rotor_clearance] wire `w_m1` passes -0.7 mm from the volume swept by the `hoop_r` rotor (hoop_r) at [-15.9, -5.6, -4.2]. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
-   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
-   | hoop_r: x -16.00..-10.00  y -20.00..30.00  z 14.00..30.00  size 6.00 x 50.00 x 16.00 mm
-   |   centre (-13.00, 5.00, 22.00), volume 1944.0 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0, -25, 14.0] range 0..80 default 0
-   |   gap to `chassis` 0.00 mm (touching)
-   |   gap to `lid` 0.00 mm (touching)
-2. [power.weapon_motor] `hoop_l` names motor None; it must be a catalog brushless motor so speed can be computed.
-   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
-   | hoop_l: x 10.00..16.00  y -20.00..30.00  z 14.00..30.00  size 6.00 x 50.00 x 16.00 mm
-   |   centre (13.00, 5.00, 22.00), volume 1944.0 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0, -25, 14.0] range 0..80 default 0
-   |   gap to `chassis` 0.00 mm (touching)
-   |   gap to `lid` 0.00 mm (touching)
-3. [power.weapon_motor] `hoop_r` names motor None; it must be a catalog brushless motor so speed can be computed.
-   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
-   | hoop_r: x -16.00..-10.00  y -20.00..30.00  z 14.00..30.00  size 6.00 x 50.00 x 16.00 mm
-   |   centre (-13.00, 5.00, 22.00), volume 1944.0 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0, -25, 14.0] range 0..80 default 0
-   |   gap to `chassis` 0.00 mm (touching)
-   |   gap to `lid` 0.00 mm (touching)
-4. [process.weapon_printed] Weapon `hoop_l` is fdm-printed with no hardened metal insert teeth.
-   fix: Make it metal (sheet_cut / turned / milled) or add hardened steel tooth parts (`parent` = the weapon).
-   | hoop_l: x 10.00..16.00  y -20.00..30.00  z 14.00..30.00  size 6.00 x 50.00 x 16.00 mm
-   |   centre (13.00, 5.00, 22.00), volume 1944.0 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0, -25, 14.0] range 0..80 default 0
-   |   gap to `chassis` 0.00 mm (touching)
-   |   gap to `lid` 0.00 mm (touching)
-5. [process.weapon_printed] Weapon `hoop_r` is fdm-printed with no hardened metal insert teeth.
-   fix: Make it metal (sheet_cut / turned / milled) or add hardened steel tooth parts (`parent` = the weapon).
-   | hoop_r: x -16.00..-10.00  y -20.00..30.00  z 14.00..30.00  size 6.00 x 50.00 x 16.00 mm
-   |   centre (-13.00, 5.00, 22.00), volume 1944.0 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0, -25, 14.0] range 0..80 default 0
-   |   gap to `chassis` 0.00 mm (touching)
-   |   gap to `lid` 0.00 mm (touching)
-6. [wire.rotor_clearance] wire `w_bat_sw` passes -0.9 mm from the volume swept by the `hoop_l` rotor (hoop_l) at [15.8, -4.3, -5.3].
-   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
-   | hoop_l: x 10.00..16.00  y -20.00..30.00  z 14.00..30.00  size 6.00 x 50.00 x 16.00 mm
-   |   centre (13.00, 5.00, 22.00), volume 1944.0 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0, -25, 14.0] range 0..80 default 0
-   |   gap to `chassis` 0.00 mm (touching)
-   |   gap to `lid` 0.00 mm (touching)
-7. [wire.rotor_clearance] wire `w_sw_esc` passes -0.9 mm from the volume swept by the `hoop_r` rotor (hoop_r) at [-10.4, -20.5, -6.6].
-   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
-   | hoop_r: x -16.00..-10.00  y -20.00..30.00  z 14.00..30.00  size 6.00 x 50.00 x 16.00 mm
-   |   centre (-13.00, 5.00, 22.00), volume 1944.0 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0, -25, 14.0] range 0..80 default 0
-   |   gap to `chassis` 0.00 mm (touching)
-   |   gap to `lid` 0.00 mm (touching)
-8. [wire.rotor_clearance] wire `w_m1` passes -0.7 mm from the volume swept by the `hoop_l` rotor (hoop_l) at [10.2, -28.4, -0.3].
-   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
-   | hoop_l: x 10.00..16.00  y -20.00..30.00  z 14.00..30.00  size 6.00 x 50.00 x 16.00 mm
-   |   centre (13.00, 5.00, 22.00), volume 1944.0 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0, -25, 14.0] range 0..80 default 0
-   |   gap to `chassis` 0.00 mm (touching)
-   |   gap to `lid` 0.00 mm (touching)
-9. [geom.tiny_edge] `chassis`: 12 edge(s) shorter than 0.05 mm, shortest 0.0208 mm. World mm: [-16.0, -20.41, 15.99] 0.0208 mm; [-10.0, -20.41, 15.99] 0.0208 mm; [10.0, -20.41, 15.99] 0.0208 mm; [16.0, -20.41, 15.99] 0.0208 mm; [-10.0, -20.38, 16.0] 0.0384 mm (+7 more).
-   fix: Two feature boundaries miss each other by the edge length at each listed point. Drive both from ONE parameter or the same face / plane (not two numbers that should be equal), or extend the cutting / added body clear past the wall before the boolean, so the boundaries coincide or clearly cross.
+  [ran] geom 0.20s
+  [ran] dfm 0.11s
+  [ran] realworld 0.39s
+flippant: ok=False 7 blockers in 7 root causes, mass 157.1/150 g
+1. [proxy.wiring] Wire `w_sw_esc` (`el_switch.out` to `el_rx_esc.bat`): the baseline route is now blocked by `chassis` (5 samples).
+   fix: Run the full `wiring` group to re-route it.
    | chassis: x -50.00..50.00  y -47.50..47.50  z -12.00..16.00  size 100.00 x 95.00 x 28.00 mm
-   |   centre (-0.00, -0.00, 2.00), volume 77606.9 mm3
+   |   centre (-0.00, -0.00, 2.00), volume 83435.2 mm3
    |   overlap allowed `lid` 0.93 mm (allowed inf)
    |   gap to `hoop_l` 0.00 mm (touching)
    |   gap to `hoop_r` 0.00 mm (touching)
-10. [geom.tiny_edge] `lid`: 12 edge(s) shorter than 0.05 mm, shortest 0.0208 mm. World mm: [-16.0, -20.41, 15.99] 0.0208 mm; [-10.0, -20.41, 15.99] 0.0208 mm; [10.0, -20.41, 15.99] 0.0208 mm; [16.0, -20.41, 15.99] 0.0208 mm; [-16.0, -20.38, 16.0] 0.0384 mm (+7 more).
+2. [proxy.wiring] Wire `w_sig_hoop_r` (`el_rx_esc.wpn` to `el_servo_hoop_r.signal`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+3. [mass.over] 157.1 g (range 132.4 to 181.9 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+4. [wire.render_wires] 2 of 2 robot render(s) do not draw all 6 wires: renders/iso.png: wire `w_sig_hoop_r` not drawn; renders/top.png: wire `w_sig_hoop_r` not drawn
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+5. [wire.render_count] iso.png: 5 routes vs 6 spec wires (missing ['w_sig_hoop_r']); top.png: 5 routes vs 6 spec wires (missing ['w_sig_hoop_r'])
+   fix: Re-render: the render record must list exactly the spec's wires.
+6. [geom.tiny_edge] `chassis`: 12 edge(s) shorter than 0.05 mm, shortest 0.0208 mm. World mm: [-16.0, -20.41, 15.99] 0.0208 mm; [-10.0, -20.41, 15.99] 0.0208 mm; [10.0, -20.41, 15.99] 0.0208 mm; [16.0, -20.41, 15.99] 0.0208 mm; [-10.0, -20.38, 16.0] 0.0384 mm (+7 more).
+   fix: Two feature boundaries miss each other by the edge length at each listed point. Drive both from ONE parameter or the same face / plane (not two numbers that should be equal), or extend the cutting / added body clear past the wall before the boolean, so the boundaries coincide or clearly cross.
+   | chassis: x -50.00..50.00  y -47.50..47.50  z -12.00..16.00  size 100.00 x 95.00 x 28.00 mm
+   |   centre (-0.00, -0.00, 2.00), volume 83435.2 mm3
+   |   overlap allowed `lid` 0.93 mm (allowed inf)
+   |   gap to `hoop_l` 0.00 mm (touching)
+   |   gap to `hoop_r` 0.00 mm (touching)
+7. [geom.tiny_edge] `lid`: 12 edge(s) shorter than 0.05 mm, shortest 0.0208 mm. World mm: [-16.0, -20.41, 15.99] 0.0208 mm; [-10.0, -20.41, 15.99] 0.0208 mm; [10.0, -20.41, 15.99] 0.0208 mm; [16.0, -20.41, 15.99] 0.0208 mm; [-16.0, -20.38, 16.0] 0.0384 mm (+7 more).
    fix: Two feature boundaries miss each other by the edge length at each listed point. Drive both from ONE parameter or the same face / plane (not two numbers that should be equal), or extend the cutting / added body clear past the wall before the boolean, so the boundaries coincide or clearly cross.
    | lid: x -35.00..35.00  y -25.00..15.00  z 14.00..16.00  size 70.00 x 40.00 x 2.00 mm
    |   centre (0.00, -5.00, 15.00), volume 5427.4 mm3
@@ -103,11 +63,13 @@ flippant: ok=False 11 blockers in 10 root causes, mass 133.3/150 g
    |   gap to `hoop_l` 0.00 mm (touching)
    |   gap to `hoop_r` 0.00 mm (touching)
 MASS BUDGET:
-  mass 133.3 g of 150 g (+16.7 g margin)
-    chassis                    73.88 g  fills 29% of its box
+  mass 157.1 g of 150 g (-7.1 g margin)
+    chassis                    79.43 g  fills 31% of its box
     el_battery                 12.50 g  fills 100% of its box
     dm_wheel_l0                 9.70 g  fills 66% of its box
     dm_wheel_r0                 9.70 g  fills 66% of its box
+    el_servo_hoop_l             9.00 g  fills 75% of its box
+    el_servo_hoop_r             9.00 g  fills 75% of its box
     lid                         5.17 g  fills 97% of its box
     wheel_l0                    4.58 g  fills 57% of its box
     wheel_r0                    4.58 g  fills 57% of its box
@@ -117,6 +79,6 @@ MASS BUDGET:
     dt_hub_wheel_l0             1.74 g  fills 67% of its box
     dt_hub_wheel_r0             1.74 g  fills 67% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.may_be_over: 133.3 g (range 110.3 to 156.2 g) against the 150 g limit; 3.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.over: 157.1 g (range 132.4 to 181.9 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: part_geom 0 hit / 13 miss
+cache: part_geom 0 hit / 15 miss
