@@ -1,0 +1,6 @@
+{
+ "robot_type": "wedge",
+ "weapon": "front blades/forks on flat plate",
+ "wheels": 2,
+ "source": "read from reference photos by Sonnet"
+}
