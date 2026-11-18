@@ -1,8 +1,8 @@
 BLOCKERS: 4
-  [cached] integrity 0.00s
+  [cached] integrity 0.01s
   [cached] mass 0.00s
-  [proxy] interference 0.15s
-  [cached] connections 0.00s
+  [proxy] interference 0.47s
+  [cached] connections 0.01s
   [cached] legal 0.00s
   [cached] fasteners 0.00s
   [cached] power 0.00s
@@ -10,13 +10,13 @@ BLOCKERS: 4
   [cached] targets 0.00s
   [cached] fight 0.00s
   [cached] shape 0.00s
-  [cached] dynamics 0.00s
+  [cached] dynamics 0.01s
   [cached] strength 0.00s
-  [cached] printability 0.00s
+  [cached] printability 0.01s
   [cached] process 0.00s
   [cached] electrical 0.00s
-  [cached] combat 0.00s
-  [cached] physics 0.00s
+  [cached] combat 0.01s
+  [cached] physics 0.01s
   [cached] plausibility 0.00s
   [cached] cots 0.00s
   [cached] fit 0.00s
@@ -28,8 +28,8 @@ BLOCKERS: 4
   [cached] belt_wrap 0.00s
   [cached] retention 0.00s
   [cached] waiver_audit 0.00s
-  [cached] geom 0.00s
-  [cached] dfm 0.00s
+  [cached] geom 0.01s
+  [cached] dfm 0.01s
   [cached] realworld 0.00s
 kharuul: ok=False 4 blockers in 4 root causes, mass 149.6/150 g
 1. [integrity.solids] `label` has 1 closed solid(s) and 1 open/invalid shell(s), expected 1 (2649 mm3). A boolean or fillet probably collapsed the build.
