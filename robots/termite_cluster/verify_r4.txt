@@ -1,0 +1,81 @@
+BLOCKERS: 7
+  [cached] integrity 0.00s
+  [cached] mass 0.00s
+  [proxy] interference 0.15s
+  [cached] connections 0.00s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.00s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.00s
+  [cached] physics 0.00s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [cached] likeness 0.00s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.00s
+  [cached] waiver_audit 0.00s
+  [cached] geom 0.00s
+  [cached] dfm 0.00s
+  [cached] realworld 0.00s
+termite cluster: ok=False 7 blockers in 7 root causes, mass 110.6/50 g
+1. [mass.over] 110.6 g (range 95.6 to 125.7 g) against the 50 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+2. [proxy.interference] `lid` and `dt_strut_lid` overlap by 0.93 mm (allowed 0.08).
+   | lid: x -20.00..20.00  y -18.00..18.00  z 11.00..13.00  size 40.00 x 36.00 x 2.00 mm
+   |   centre (0.00, 0.00, 12.00), volume 2880.0 mm3
+   |   OVERLAP `dt_strut_lid` 0.93 mm (allowed 0.08)
+   |   gap to `chassis` 2.00 mm
+   | dt_strut_lid: x 7.84..14.60  y -17.13..-12.05  z 5.86..14.14  size 6.76 x 5.09 x 8.29 mm
+3. [connection.floating] `scoop` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.3 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | scoop: x -38.00..38.00  y 33.33..58.67  z -8.97..0.97  size 76.00 x 25.35 x 9.94 mm
+   |   centre (0.00, 46.00, -4.00), volume 3952.0 mm3
+   |   gap to `chassis` 0.33 mm
+   |   gap to `wheel_r1` 2.37 mm
+   |   gap to `wheel_l1` 2.37 mm
+4. [wire.render_wires] 11 of 11 robot render(s) do not draw all 6 wires: renders/diff_termite_cluster.aws68.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_termite_cluster.aws69.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_termite_cluster.aws68_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_termite_cluster.aws69_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_termite_cluster.aws68.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_termite_cluster.aws69.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/pick_termite_cluster.aws68.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/pick_termite_cluster.aws69.png: no render record (`<png>.json`), so nothing says the wires were drawn...
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+5. [likeness.silhouette] `reference/termite_cluster.aws68.webp`: best silhouette IoU 0.61 at camera top (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.62). Regions (photo frame, left third first) 0.29 / 0.78 / 0.71: worst = front third. Height/length 1.00 model vs 1.07 photo (too flat: raise it or shorten it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+6. [likeness.view] `reference/termite_cluster.aws69.webp` is declared `top` (IoU 0.61 there) but the model matches it better from rear (elevation 45, azimuth 270) (IoU 0.82).
+   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
+7. [likeness.silhouette] `reference/termite_cluster.aws69.webp`: best silhouette IoU 0.61 at camera top (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.65). Regions (photo frame, left third first) 0.48 / 0.71 / 0.63: worst = front third. Height/length 1.00 model vs 0.75 photo (too tall: lower it or lengthen it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+MASS BUDGET:
+  mass 110.6 g of 50 g (-60.6 g margin)
+    chassis                    37.76 g  fills 54% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    dm_wheel_l0                 9.70 g  fills 66% of its box
+    dm_wheel_r0                 9.70 g  fills 66% of its box
+    dm_wheel_l1                 9.70 g  fills 66% of its box
+    dm_wheel_r1                 9.70 g  fills 66% of its box
+    scoop                       3.76 g  fills 21% of its box
+    el_rx_esc                   3.50 g  fills 100% of its box
+    lid                         2.74 g  fills 100% of its box
+    wheel_l0                    1.51 g  fills 57% of its box
+    wheel_r0                    1.51 g  fills 57% of its box
+    wheel_l1                    1.51 g  fills 57% of its box
+    wheel_r1                    1.51 g  fills 57% of its box
+    dt_strut_lid                0.72 g  fills 32% of its box
+    dt_hub_wheel_l0             0.57 g  fills 63% of its box
+    dt_hub_wheel_l1             0.57 g  fills 63% of its box
+    dt_hub_wheel_r0             0.57 g  fills 63% of its box
+    dt_hub_wheel_r1             0.57 g  fills 63% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    mass.over: 110.6 g (range 95.6 to 125.7 g) against the 50 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 31 hit / 0 miss, min_gap 22 hit / 0 miss, overlap 268 hit / 0 miss, part_geom 19 hit / 0 miss
