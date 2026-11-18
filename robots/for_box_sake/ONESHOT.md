@@ -7,3 +7,8 @@
 Decisions: type wedge; body box rect 62x150x24 mm, ramp 10; wheels 4 r10 inboard; weapon none.
 
 Likeness: aws71 0.83 (FAIL).
+
+## Round 2 (looks)
+Decisions: type wedge; body box rect 62x150x24 mm, ramp 10; wheels 4 r10 inboard; weapon none.
+
+Likeness: aws71 0.83 (FAIL).
