@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_pla_st_is_a_perfectly_legitima/robots/pla_st_is_a_perfectly_legitima/spec.json",
- "rendered_at": 1795026278.781151,
+ "rendered_at": 1795035244.8052707,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -8,7 +8,9 @@
   "wheel_l1",
   "wheel_r1",
   "arm",
-  "scoop",
+  "wedge",
+  "wedge_wing_l",
+  "wedge_wing_r",
   "dt_hub_wheel_l0",
   "dt_axle_wheel_l0",
   "dt_nut_wheel_l0",

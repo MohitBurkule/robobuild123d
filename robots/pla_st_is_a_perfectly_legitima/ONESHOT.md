@@ -21,3 +21,8 @@ Decisions: type lifter; body box round_nose 95x104x28 mm, ramp 0; wheels 4 r11 i
 
 Likeness: aws67 0.72 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/pla-st_is_a_perfectly_legitimate_choice_of_material.aws67.webp` is declared `front_left_iso` (IoU 0.72 there) but the model mat
+
+## Round 3c (user angle picks applied; shape fixed per user remarks)
+Decisions: type lifter; body box round_nose 95x104x28 mm, ramp 0; wheels 4 r11 inboard; weapon none; extra parts: arm, wedge, wedge_wing; photos skipped (cluttered): indices [0, 1].
+
+Likeness: aws67 0.72 (FAIL).

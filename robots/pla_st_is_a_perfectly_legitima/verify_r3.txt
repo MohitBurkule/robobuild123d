@@ -1,40 +1,40 @@
-BLOCKERS: 95
+BLOCKERS: 96
 /usr/local/lib/python3.13/site-packages/trimesh/triangles.py:302: RuntimeWarning: invalid value encountered in divide
   center_mass = integrated[1:4] / volume
-  [ran] integrity 0.64s
-  [proxy] wiring 0.00s
+  [ran] integrity 4.30s
+  [proxy] wiring 0.01s
   [ran] mass 0.00s
-  [proxy] interference 8.65s
-  [ran] connections 31.08s
-  [ran] legal 0.13s
+  [proxy] interference 8.52s
+  [ran] connections 30.84s
+  [ran] legal 0.48s
   [ran] fasteners 0.00s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
-  [ran] fight 0.24s
-  [ran] shape 1.16s
-  [ran] dynamics 0.06s
-  [ran] strength 0.00s
-  [ran] printability 3.08s
-  [ran] process 0.01s
+  [ran] fight 1.05s
+  [ran] shape 4.92s
+  [ran] dynamics 0.17s
+  [ran] strength 0.01s
+  [ran] printability 8.90s
+  [ran] process 0.09s
   [ran] electrical 0.00s
-  [ran] combat 0.25s
-  [ran] physics 0.00s
+  [ran] combat 1.16s
+  [ran] physics 0.01s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
   [ran] fit 0.00s
   [ran] bom 0.00s
-  [ran] wire_review 0.00s
+  [ran] wire_review 0.01s
   [ran] fastener_record 0.00s
-  [ran] likeness 12.54s
+  [ran] likeness 29.30s
   [ran] drive_recess 0.00s
   [ran] belt_wrap 0.00s
-  [ran] retention 0.00s
+  [ran] retention 0.01s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.24s
-  [ran] dfm 0.00s
-  [ran] realworld 0.00s
-pla st is a perfectly legitima: ok=False 95 blockers in 50 root causes, mass 386.7/150 g
+  [ran] geom 0.59s
+  [ran] dfm 0.01s
+  [ran] realworld 0.01s
+pla st is a perfectly legitima: ok=False 96 blockers in 52 root causes, mass 343.7/150 g
 1. [mfg.stock] `dt_screw_0`: bought part with free geometry and no catalog SKU or stock rod/bearing match. Same problem on all 8 parts of this pattern: fix the pattern once. (+7 consequences)
    fix: Use a catalog part, or size it to a stock rod/bearing and name it in `stock`.
    | dt_screw_0: x -46.90..-43.10  y -42.40..-38.60  z 18.60..20.00  size 3.80 x 3.80 x 1.40 mm
@@ -45,9 +45,9 @@ pla st is a perfectly legitima: ok=False 95 blockers in 50 root causes, mass 386
 2. [proxy.interference] `chassis` and `dt_screw_0` overlap by 0.19 mm (allowed 0.08). Same problem on all 6 parts of this pattern: fix the pattern once. (+5 consequences)
    | chassis: x -52.00..52.00  y -47.50..47.50  z -9.00..19.00  size 104.00 x 95.00 x 28.00 mm
    |   centre (-0.00, -0.00, 5.00), volume 257452.4 mm3
-   |   OVERLAP `scoop` 13.73 mm (allowed 0.08)
    |   OVERLAP `wheel_l0` 5.88 mm (allowed 0.08)
    |   OVERLAP `wheel_r0` 5.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_l1` 5.88 mm (allowed 0.08)
 3. [connection.floating] `dt_screw_0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away. Same problem on all 5 parts of this pattern: fix the pattern once. (+4 consequences)
    fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
    | dt_screw_0: x -46.90..-43.10  y -42.40..-38.60  z 18.60..20.00  size 3.80 x 3.80 x 1.40 mm
@@ -55,67 +55,69 @@ pla st is a perfectly legitima: ok=False 95 blockers in 50 root causes, mass 386
    |   OVERLAP `chassis` 0.19 mm (allowed 0.08)
    | chassis: x -52.00..52.00  y -47.50..47.50  z -9.00..19.00  size 104.00 x 95.00 x 28.00 mm
    |   centre (-0.00, -0.00, 5.00), volume 257452.4 mm3
-4. [proxy.interference] `scoop` and `dt_screw_2` overlap by 0.19 mm (allowed 0.08). Same problem on all 3 parts of this pattern: fix the pattern once. (+2 consequences)
-   | scoop: x -58.00..58.00  y 20.00..60.00  z -10.00..19.00  size 116.00 x 40.00 x 29.00 mm
-   |   centre (0.00, 40.00, 4.50), volume 110432.0 mm3
-   |   OVERLAP `chassis` 13.73 mm (allowed 0.08)
-   |   OVERLAP `arm` 2.67 mm (allowed 0.08)
-   |   OVERLAP `wheel_l1` 2.38 mm (allowed 0.08)
-5. [integrity.solids] `wheel_l0` has 1 closed solid(s) and 22 open/invalid shell(s), expected 1 (3350 mm3). A boolean or fillet probably collapsed the build. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+4. [integrity.solids] `wheel_l0` has 1 closed solid(s) and 22 open/invalid shell(s), expected 1 (3350 mm3). A boolean or fillet probably collapsed the build. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
    fix: Check the last CAD op (fillet/cut order); or declare `solids` with `solids_reason`.
    | wheel_l0: x 31.92..44.08  y -36.40..-15.00  z -11.00..11.00  size 12.16 x 21.39 x 22.00 mm
    |   centre (38.00, -25.70, -0.00), volume 3350.2 mm3
    |   OVERLAP `chassis` 5.88 mm (allowed 0.08)
    |   OVERLAP `dt_hub_wheel_l0` 5.49 mm (allowed 0.08)
    |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
-6. [integrity.solids] `wheel_r0` has 1 closed solid(s) and 22 open/invalid shell(s), expected 1 (3350 mm3). A boolean or fillet probably collapsed the build. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+5. [integrity.solids] `wheel_r0` has 1 closed solid(s) and 22 open/invalid shell(s), expected 1 (3350 mm3). A boolean or fillet probably collapsed the build. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
    fix: Check the last CAD op (fillet/cut order); or declare `solids` with `solids_reason`.
    | wheel_r0: x -44.08..-31.92  y -36.40..-15.00  z -11.00..11.00  size 12.16 x 21.39 x 22.00 mm
    |   centre (-38.00, -25.70, -0.00), volume 3350.2 mm3
    |   OVERLAP `chassis` 5.88 mm (allowed 0.08)
    |   OVERLAP `dt_hub_wheel_r0` 5.49 mm (allowed 0.08)
    |   OVERLAP `dt_axle_wheel_r0` 1.26 mm (allowed 0.08)
-7. [proxy.interference] `chassis` and `wheel_l0` overlap by 5.88 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+6. [proxy.interference] `chassis` and `wheel_l0` overlap by 5.88 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
    | chassis: x -52.00..52.00  y -47.50..47.50  z -9.00..19.00  size 104.00 x 95.00 x 28.00 mm
    |   centre (-0.00, -0.00, 5.00), volume 257452.4 mm3
-   |   OVERLAP `scoop` 13.73 mm (allowed 0.08)
    |   OVERLAP `wheel_l0` 5.88 mm (allowed 0.08)
    |   OVERLAP `wheel_r0` 5.88 mm (allowed 0.08)
-8. [proxy.interference] `chassis` and `wheel_r0` overlap by 5.88 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   |   OVERLAP `wheel_l1` 5.88 mm (allowed 0.08)
+7. [proxy.interference] `chassis` and `wheel_r0` overlap by 5.88 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
    | chassis: x -52.00..52.00  y -47.50..47.50  z -9.00..19.00  size 104.00 x 95.00 x 28.00 mm
    |   centre (-0.00, -0.00, 5.00), volume 257452.4 mm3
-   |   OVERLAP `scoop` 13.73 mm (allowed 0.08)
    |   OVERLAP `wheel_l0` 5.88 mm (allowed 0.08)
    |   OVERLAP `wheel_r0` 5.88 mm (allowed 0.08)
-9. [proxy.interference] `chassis` and `dt_hub_wheel_l0` overlap by 5.49 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   |   OVERLAP `wheel_l1` 5.88 mm (allowed 0.08)
+8. [proxy.interference] `chassis` and `dt_hub_wheel_l0` overlap by 5.49 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
    | chassis: x -52.00..52.00  y -47.50..47.50  z -9.00..19.00  size 104.00 x 95.00 x 28.00 mm
    |   centre (-0.00, -0.00, 5.00), volume 257452.4 mm3
-   |   OVERLAP `scoop` 13.73 mm (allowed 0.08)
    |   OVERLAP `wheel_l0` 5.88 mm (allowed 0.08)
    |   OVERLAP `wheel_r0` 5.88 mm (allowed 0.08)
-10. [proxy.interference] `chassis` and `dt_axle_wheel_l0` overlap by 1.26 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   |   OVERLAP `wheel_l1` 5.88 mm (allowed 0.08)
+9. [proxy.interference] `chassis` and `dt_axle_wheel_l0` overlap by 1.26 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
    | chassis: x -52.00..52.00  y -47.50..47.50  z -9.00..19.00  size 104.00 x 95.00 x 28.00 mm
    |   centre (-0.00, -0.00, 5.00), volume 257452.4 mm3
-   |   OVERLAP `scoop` 13.73 mm (allowed 0.08)
    |   OVERLAP `wheel_l0` 5.88 mm (allowed 0.08)
    |   OVERLAP `wheel_r0` 5.88 mm (allowed 0.08)
-11. [proxy.interference] `chassis` and `dt_nut_wheel_l0` overlap by 0.74 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   |   OVERLAP `wheel_l1` 5.88 mm (allowed 0.08)
+10. [proxy.interference] `chassis` and `dt_nut_wheel_l0` overlap by 0.74 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
    | chassis: x -52.00..52.00  y -47.50..47.50  z -9.00..19.00  size 104.00 x 95.00 x 28.00 mm
    |   centre (-0.00, -0.00, 5.00), volume 257452.4 mm3
-   |   OVERLAP `scoop` 13.73 mm (allowed 0.08)
    |   OVERLAP `wheel_l0` 5.88 mm (allowed 0.08)
    |   OVERLAP `wheel_r0` 5.88 mm (allowed 0.08)
-12. [proxy.interference] `chassis` and `dt_hub_wheel_r0` overlap by 5.49 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   |   OVERLAP `wheel_l1` 5.88 mm (allowed 0.08)
+11. [proxy.interference] `chassis` and `dt_hub_wheel_r0` overlap by 5.49 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
    | chassis: x -52.00..52.00  y -47.50..47.50  z -9.00..19.00  size 104.00 x 95.00 x 28.00 mm
    |   centre (-0.00, -0.00, 5.00), volume 257452.4 mm3
-   |   OVERLAP `scoop` 13.73 mm (allowed 0.08)
    |   OVERLAP `wheel_l0` 5.88 mm (allowed 0.08)
    |   OVERLAP `wheel_r0` 5.88 mm (allowed 0.08)
-... 38 more root causes (fix these first, then re-run)
+   |   OVERLAP `wheel_l1` 5.88 mm (allowed 0.08)
+12. [proxy.interference] `chassis` and `dt_axle_wheel_r0` overlap by 1.26 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | chassis: x -52.00..52.00  y -47.50..47.50  z -9.00..19.00  size 104.00 x 95.00 x 28.00 mm
+   |   centre (-0.00, -0.00, 5.00), volume 257452.4 mm3
+   |   OVERLAP `wheel_l0` 5.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 5.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_l1` 5.88 mm (allowed 0.08)
+... 40 more root causes (fix these first, then re-run)
 MASS BUDGET:
-  mass 386.7 g of 150 g (-236.7 g margin)
+  mass 343.7 g of 150 g (-193.7 g margin)
     chassis                   245.09 g  fills 93% of its box  <- solid block? a tub should be a shell
-    scoop                     105.13 g  fills 82% of its box  <- solid block? a tub should be a shell
+    wedge                      36.79 g  fills 12% of its box
+    wedge_wing_l               12.67 g  fills 6% of its box
+    wedge_wing_r               12.67 g  fills 6% of its box
     arm                         9.20 g  fills 26% of its box
     wheel_l0                    3.42 g  fills 59% of its box
     wheel_r0                    3.42 g  fills 59% of its box
@@ -141,6 +143,6 @@ MASS BUDGET:
     dt_screw_5                  0.13 g  fills 79% of its box
     dt_screw_6                  0.13 g  fills 79% of its box
     dt_screw_7                  0.13 g  fills 79% of its box
-    mass.over: 386.7 g (range 310.1 to 463.2 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.over: 343.7 g (range 285.7 to 401.7 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: distance 1 hit / 3 miss, group 0 hit / 31 miss, inside 7 hit / 20 miss, likeness 1 hit / 0 miss, min_gap 16 hit / 94 miss, overlap 265 hit / 496 miss, part_check 1 hit / 0 miss, part_geom 27 hit / 0 miss, ray 28 hit / 107 miss
+cache: distance 0 hit / 4 miss, group 0 hit / 31 miss, inside 24 hit / 5 miss, likeness 1 hit / 0 miss, min_gap 100 hit / 82 miss, overlap 723 hit / 99 miss, part_check 1 hit / 3 miss, part_geom 29 hit / 0 miss, ray 0 hit / 139 miss

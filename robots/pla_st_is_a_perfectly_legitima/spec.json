@@ -1498,55 +1498,119 @@
    }
   },
   {
-   "id": "scoop",
+   "id": "wedge",
    "kind": "wedge",
-   "material": "nylon",
-   "process": "fdm",
+   "material": "aluminium",
+   "process": "laser",
    "shape": {
     "type": "place",
     "shape": {
      "type": "prism",
      "points": [
       [
-       -58,
-       20
+       40,
+       18.0
       ],
       [
-       58,
-       20
+       43,
+       19.0
       ],
       [
-       52,
-       44
+       80,
+       -9.5
       ],
       [
-       34,
-       56
-      ],
-      [
-       0,
-       60
-      ],
-      [
-       -34,
-       56
-      ],
-      [
-       -52,
-       44
+       76,
+       -10.5
       ]
      ],
-     "height": 29
+     "height": 100
     },
     "at": [
-     0,
-     0,
-     4.5
-    ],
-    "rot": [
-     0,
+     0.0,
      0,
      0
+    ],
+    "rot": [
+     90,
+     0,
+     90
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#c9cdd3"
+  },
+  {
+   "id": "wedge_wing_l",
+   "kind": "wedge",
+   "material": "aluminium",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      3,
+      46,
+      34
+     ]
+    },
+    "at": [
+     58,
+     44,
+     4.0
+    ],
+    "rot": [
+     32,
+     0,
+     28
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#c9cdd3"
+  },
+  {
+   "id": "wedge_wing_r",
+   "kind": "wedge",
+   "material": "aluminium",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      3,
+      46,
+      34
+     ]
+    },
+    "at": [
+     -58,
+     44,
+     4.0
+    ],
+    "rot": [
+     32,
+     0,
+     -28
     ]
    },
    "at": [
@@ -2066,7 +2130,7 @@
     "at": [
      -45.0,
      40.5,
-     19.3
+     18.8
     ],
     "rot": [
      0.0,
@@ -2101,7 +2165,7 @@
     "at": [
      45.0,
      40.5,
-     19.3
+     18.8
     ],
     "rot": [
      0.0,
@@ -2346,12 +2410,12 @@
   ],
   [
    "dt_screw_2",
-   "scoop",
+   "wedge",
    "screw"
   ],
   [
    "dt_screw_3",
-   "scoop",
+   "wedge",
    "screw"
   ],
   [
