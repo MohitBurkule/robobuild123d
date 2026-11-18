@@ -1,37 +1,38 @@
-BLOCKERS: 10
-  [cached] integrity 0.03s
-  [cached] mass 0.01s
-  [proxy] interference 0.19s
-  [cached] connections 0.00s
-  [cached] legal 0.00s
-  [cached] fasteners 0.00s
-  [cached] power 0.00s
-  [cached] tension 0.00s
-  [cached] targets 0.00s
-  [cached] fight 0.00s
-  [cached] shape 0.00s
-  [cached] dynamics 0.00s
-  [cached] strength 0.00s
-  [cached] printability 0.00s
-  [cached] process 0.00s
-  [cached] electrical 0.00s
-  [cached] combat 0.00s
-  [cached] physics 0.00s
-  [cached] plausibility 0.00s
-  [cached] cots 0.00s
-  [cached] fit 0.00s
-  [cached] bom 0.00s
-  [cached] wire_review 0.00s
-  [cached] fastener_record 0.00s
-  [ran] likeness 4.86s
-  [cached] drive_recess 0.00s
-  [cached] belt_wrap 0.00s
-  [cached] retention 0.00s
-  [cached] waiver_audit 0.00s
-  [cached] geom 0.01s
-  [cached] dfm 0.00s
-  [cached] realworld 0.00s
-liftoff: ok=False 10 blockers in 10 root causes, mass 135.0/150 g
+BLOCKERS: 9
+  [ran] integrity 0.12s
+  [proxy] wiring 0.27s
+  [ran] mass 0.00s
+  [proxy] interference 24.91s
+  [ran] connections 0.14s
+  [ran] legal 0.03s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.05s
+  [ran] shape 0.43s
+  [ran] dynamics 0.01s
+  [ran] strength 0.00s
+  [ran] printability 2.19s
+  [ran] process 0.00s
+  [ran] electrical 0.01s
+  [ran] combat 0.22s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.09s
+  [ran] bom 0.00s
+  [ran] wire_review 0.03s
+  [ran] fastener_record 0.00s
+  [ran] likeness 5.34s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.01s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.19s
+  [ran] dfm 0.08s
+  [ran] realworld 0.11s
+liftoff: ok=False 9 blockers in 9 root causes, mass 134.1/150 g
 1. [proxy.sweep] joint `lift_plate`: `lift_plate` hits `chassis` 0.12 mm deep at 7.3 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint lift_plate` lists the closest approach to every part.
    | lift_plate: x -12.00..12.00  y -30.00..50.00  z 12.50..15.50  size 24.00 x 80.00 x 3.00 mm
    |   centre (0.00, 10.00, 14.00), volume 5760.0 mm3
@@ -52,39 +53,37 @@ liftoff: ok=False 10 blockers in 10 root causes, mass 135.0/150 g
    |   joint revolute axis [1, 0, 0] pivot [0, -28, 13.0] range 0..80 default 0
    |   gap to `chassis` 0.00 mm (touching)
    |   gap to `wedge_l` 2.00 mm
-4. [wire.render_wires] 5 of 5 robot render(s) do not draw all 4 wires: renders/diff_liftoff.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_liftoff.aws76_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_liftoff.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_liftoff.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn
-   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
-5. [wire.rotor_clearance] wire `w_bat_sw` passes -0.9 mm from the volume swept by the `lift_plate` rotor (lift_plate) at [-0.5, 10.5, -3.5].
+4. [wire.rotor_clearance] wire `w_bat_sw` passes -0.9 mm from the volume swept by the `lift_plate` rotor (lift_plate) at [-0.5, 10.5, -3.5].
    fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
    | lift_plate: x -12.00..12.00  y -30.00..50.00  z 12.50..15.50  size 24.00 x 80.00 x 3.00 mm
    |   centre (0.00, 10.00, 14.00), volume 5760.0 mm3
    |   joint revolute axis [1, 0, 0] pivot [0, -28, 13.0] range 0..80 default 0
    |   gap to `chassis` 0.00 mm (touching)
    |   gap to `wedge_l` 2.00 mm
-6. [wire.rotor_clearance] wire `w_sw_esc` passes -0.9 mm from the volume swept by the `lift_plate` rotor (lift_plate) at [3.5, -13.5, -4.0].
+5. [wire.rotor_clearance] wire `w_sw_esc` passes -0.9 mm from the volume swept by the `lift_plate` rotor (lift_plate) at [3.5, -13.5, -4.0].
    fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
    | lift_plate: x -12.00..12.00  y -30.00..50.00  z 12.50..15.50  size 24.00 x 80.00 x 3.00 mm
    |   centre (0.00, 10.00, 14.00), volume 5760.0 mm3
    |   joint revolute axis [1, 0, 0] pivot [0, -28, 13.0] range 0..80 default 0
    |   gap to `chassis` 0.00 mm (touching)
    |   gap to `wedge_l` 2.00 mm
-7. [wire.rotor_clearance] wire `w_m1` passes -0.7 mm from the volume swept by the `lift_plate` rotor (lift_plate) at [12.0, -18.6, 0.7].
+6. [wire.rotor_clearance] wire `w_m1` passes -0.7 mm from the volume swept by the `lift_plate` rotor (lift_plate) at [12.0, -18.6, 0.7].
    fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
    | lift_plate: x -12.00..12.00  y -30.00..50.00  z 12.50..15.50  size 24.00 x 80.00 x 3.00 mm
    |   centre (0.00, 10.00, 14.00), volume 5760.0 mm3
    |   joint revolute axis [1, 0, 0] pivot [0, -28, 13.0] range 0..80 default 0
    |   gap to `chassis` 0.00 mm (touching)
    |   gap to `wedge_l` 2.00 mm
-8. [wire.rotor_clearance] wire `w_m2` passes -0.7 mm from the volume swept by the `lift_plate` rotor (lift_plate) at [-11.9, -19.6, 0.5].
+7. [wire.rotor_clearance] wire `w_m2` passes -0.7 mm from the volume swept by the `lift_plate` rotor (lift_plate) at [-11.9, -19.6, 0.5].
    fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
    | lift_plate: x -12.00..12.00  y -30.00..50.00  z 12.50..15.50  size 24.00 x 80.00 x 3.00 mm
    |   centre (0.00, 10.00, 14.00), volume 5760.0 mm3
    |   joint revolute axis [1, 0, 0] pivot [0, -28, 13.0] range 0..80 default 0
    |   gap to `chassis` 0.00 mm (touching)
    |   gap to `wedge_l` 2.00 mm
-9. [likeness.silhouette] `reference/liftoff.aws76.webp`: best silhouette IoU 0.65 at camera front_left_iso (elevation 25, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.63). Regions (photo frame, left third first) 0.58 / 0.75 / 0.57: worst = rear third. Height/length 0.61 model vs 0.58 photo (proportions ok).
+8. [likeness.silhouette] `reference/liftoff.aws76.webp`: best silhouette IoU 0.65 at camera front_left_iso (elevation 25, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.63). Regions (photo frame, left third first) 0.58 / 0.75 / 0.57: worst = rear third. Height/length 0.61 model vs 0.58 photo (proportions ok).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
-10. [battery.rotor_gap] `el_battery` is 1.5 mm from the volume swept by `lift_plate`.
+9. [battery.rotor_gap] `el_battery` is 1.5 mm from the volume swept by `lift_plate`.
    fix: Move the battery or add a wall.
    | el_battery: x -14.50..13.50  y -9.50..8.50  z -8.50..1.50  size 28.00 x 18.00 x 10.00 mm
    |   centre (-0.50, -0.50, -3.50), volume 5040.0 mm3
@@ -92,8 +91,8 @@ liftoff: ok=False 10 blockers in 10 root causes, mass 135.0/150 g
    |   gap to `chassis` 0.25 mm
    |   gap to `el_switch` 2.10 mm
 MASS BUDGET:
-  mass 135.0 g of 150 g (+15.0 g margin)
-    chassis                    61.74 g  fills 47% of its box
+  mass 134.1 g of 150 g (+15.9 g margin)
+    chassis                    60.79 g  fills 46% of its box
     el_battery                 12.50 g  fills 100% of its box
     wedge_l                    10.31 g  fills 28% of its box
     wedge_r                    10.31 g  fills 28% of its box
@@ -106,6 +105,6 @@ MASS BUDGET:
     dt_hub_wheel_l0             1.30 g  fills 76% of its box
     dt_hub_wheel_r0             1.30 g  fills 76% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.may_be_over: 135.0 g (range 109.6 to 160.5 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.may_be_over: 134.1 g (range 108.9 to 159.3 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: group 30 hit / 1 miss, inside 8 hit / 0 miss, likeness 0 hit / 1 miss, min_gap 37 hit / 0 miss, overlap 129 hit / 0 miss, part_geom 13 hit / 0 miss
+cache: distance 0 hit / 7 miss, group 0 hit / 31 miss, inside 8 hit / 7 miss, likeness 1 hit / 0 miss, min_gap 25 hit / 13 miss, overlap 64 hit / 76 miss, part_check 7 hit / 1 miss, part_geom 13 hit / 0 miss, ray 66 hit / 36 miss

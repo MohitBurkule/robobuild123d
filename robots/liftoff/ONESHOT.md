@@ -22,7 +22,7 @@ Likeness: aws76 0.37 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/liftoff.aws76.webp` is declared `front` (IoU 0.37 there) but the model matches it better from front_left_iso (elevation 25, azi
 
 ## Round 4 (verification, helper 2)
-Blockers r3 54 -> r4 11 (`verify --tier inner`).
+Blockers r3 54 -> r4 9 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -46,10 +46,8 @@ Left (and why):
 - proxy.sweep x1: joint `lift_plate`: `lift_plate` hits `chassis` 0.12 mm deep at 7.3 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint lift_plate` lists the closest approach to every part.
 - power.weapon_motor x1: toolchain: lifters/flippers are servo or gear driven; the check wants a brushless kV for every weapon.
 - process.weapon_printed x1: toolchain: a printed lifter/flipper arm is judged like a spinner (needs hardened teeth); adding metal teeth changes the look.
-- wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
 - wire.rotor_clearance x4: toolchain: same full-revolution assumption; wires cannot leave a cylinder that covers the chassis.
-- likeness.view x1: looks, not in scope for this pass.
 - likeness.silhouette x1: looks, not in scope for this pass.
 - battery.rotor_gap x1: toolchain: same full-revolution assumption for a limited-range arm.
 
-Likeness (best silhouette IoU per photo, r3 -> r4): liftoff.aws76.webp 0.37 -> 0.36
+Likeness (best silhouette IoU per photo, r3 -> r4): liftoff.aws76.webp 0.65 -> 0.65
