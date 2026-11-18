@@ -5182,21 +5182,44 @@
    "material": "nylon",
    "process": "fdm",
    "shape": {
-    "type": "place",
-    "shape": {
-     "type": "cylinder",
-     "radius": 2.4,
-     "height": 1.4
-    },
-    "at": [
-     -30,
-     51.2,
-     6.5
-    ],
-    "rot": [
-     -90,
-     0,
-     0
+    "type": "union",
+    "items": [
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 2.4,
+       "height": 1.4
+      },
+      "at": [
+       -30,
+       51.2,
+       6.5
+      ],
+      "rot": [
+       -90,
+       0,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 1.2,
+       "height": 2.0
+      },
+      "at": [
+       -30.0,
+       50.0,
+       6.5
+      ],
+      "rot": [
+       -90,
+       0,
+       0
+      ]
+     }
     ]
    },
    "at": [
@@ -5210,7 +5233,8 @@
     0
    ],
    "color": "#1c1d20",
-   "print_orientation": "+z"
+   "print_orientation": "+z",
+   "fused_with": "chassis"
   },
   {
    "id": "front_screw1",
@@ -5218,21 +5242,44 @@
    "material": "nylon",
    "process": "fdm",
    "shape": {
-    "type": "place",
-    "shape": {
-     "type": "cylinder",
-     "radius": 2.4,
-     "height": 1.4
-    },
-    "at": [
-     -10,
-     51.2,
-     6.5
-    ],
-    "rot": [
-     -90,
-     0,
-     0
+    "type": "union",
+    "items": [
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 2.4,
+       "height": 1.4
+      },
+      "at": [
+       -10,
+       51.2,
+       6.5
+      ],
+      "rot": [
+       -90,
+       0,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 1.2,
+       "height": 2.0
+      },
+      "at": [
+       -10.0,
+       50.0,
+       6.5
+      ],
+      "rot": [
+       -90,
+       0,
+       0
+      ]
+     }
     ]
    },
    "at": [
@@ -5246,7 +5293,8 @@
     0
    ],
    "color": "#1c1d20",
-   "print_orientation": "+z"
+   "print_orientation": "+z",
+   "fused_with": "chassis"
   },
   {
    "id": "front_screw2",
@@ -5254,21 +5302,44 @@
    "material": "nylon",
    "process": "fdm",
    "shape": {
-    "type": "place",
-    "shape": {
-     "type": "cylinder",
-     "radius": 2.4,
-     "height": 1.4
-    },
-    "at": [
-     10,
-     51.2,
-     6.5
-    ],
-    "rot": [
-     -90,
-     0,
-     0
+    "type": "union",
+    "items": [
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 2.4,
+       "height": 1.4
+      },
+      "at": [
+       10,
+       51.2,
+       6.5
+      ],
+      "rot": [
+       -90,
+       0,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 1.2,
+       "height": 2.0
+      },
+      "at": [
+       10.0,
+       50.0,
+       6.5
+      ],
+      "rot": [
+       -90,
+       0,
+       0
+      ]
+     }
     ]
    },
    "at": [
@@ -5282,7 +5353,8 @@
     0
    ],
    "color": "#1c1d20",
-   "print_orientation": "+z"
+   "print_orientation": "+z",
+   "fused_with": "chassis"
   },
   {
    "id": "front_screw3",
@@ -5290,21 +5362,44 @@
    "material": "nylon",
    "process": "fdm",
    "shape": {
-    "type": "place",
-    "shape": {
-     "type": "cylinder",
-     "radius": 2.4,
-     "height": 1.4
-    },
-    "at": [
-     30,
-     51.2,
-     6.5
-    ],
-    "rot": [
-     -90,
-     0,
-     0
+    "type": "union",
+    "items": [
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 2.4,
+       "height": 1.4
+      },
+      "at": [
+       30,
+       51.2,
+       6.5
+      ],
+      "rot": [
+       -90,
+       0,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 1.2,
+       "height": 2.0
+      },
+      "at": [
+       30.0,
+       50.0,
+       6.5
+      ],
+      "rot": [
+       -90,
+       0,
+       0
+      ]
+     }
     ]
    },
    "at": [
@@ -5318,7 +5413,8 @@
     0
    ],
    "color": "#1c1d20",
-   "print_orientation": "+z"
+   "print_orientation": "+z",
+   "fused_with": "chassis"
   },
   {
    "id": "dt_hub_wheel_l0",
