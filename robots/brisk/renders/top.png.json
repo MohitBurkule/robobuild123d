@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_brisk/robots/brisk/spec.json",
- "rendered_at": 1795038044.7931745,
+ "rendered_at": 1795041550.6611178,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -26,6 +26,18 @@
     -3.5,
     -15.5,
     -3.0
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    4.5,
+    -15.5,
+    -3.0
+   ],
+   "to": [
+    -15.5,
+    -5.5,
+    11.5
    ]
   },
   "w_m1": {

@@ -34,19 +34,18 @@ Fixed / changed (inside only, outside kept):
 - 4 wires declared (battery - switch - ESC - motors)
 - print orientation on every printed part, failsafe / weapon disable declared, design volumes declared where this pass changed a part on purpose
 - power switch on the floor of the body, slider facing down to a 7 x 3 mm slot in the underside (no slot on the top or sides; hollow cavities stay closed behind a wall at every outside face)
-- flipper sweeps through chassis at 41 poses: not carved (would change the outside)
-- flipper sweeps through lid at 41 poses: not carved (would change the outside)
+- flipper: heel running clearance (0.3 mm, 41 poses, within 14.4 mm of the pivot) carved in chassis; opens 0 mm2 of outside face
+- flipper: heel running clearance (0.3 mm, 41 poses, within 16.9 mm of the pivot) carved in lid; opens 11 mm2 of outside face
 - rod dt_axle_wheel_l0: 2.8 mm stub clear of ['dm_wheel_l0'] printed as the wheel's hub boss
 - rod dt_axle_wheel_r0: 2.8 mm stub clear of ['dm_wheel_r0'] printed as the wheel's hub boss
-- hollowed chassis (wall 2.5, form 0): 294.4 -> 94.5 cm3
+- hollowed chassis (wall 2.5, form 0): 294.4 -> 93.5 cm3
 
 Left (and why):
-- proxy.sweep x1: joint `flipper`: `flipper` hits `chassis` 0.23 mm deep at 7.3 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint flipper` lists the closest approach to every part.
+- proxy.interference x1: `lid` and `flipper` overlap by 0.09 mm (allowed 0.08).
+- proxy.sweep x1: joint `flipper`: `flipper` hits `lid` 0.09 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint flipper` lists the closest approach to every part.
 - power.weapon_motor x1: toolchain: lifters/flippers are servo or gear driven; the check wants a brushless kV for every weapon.
 - process.weapon_printed x1: toolchain: a printed lifter/flipper arm is judged like a spinner (needs hardened teeth); adding metal teeth changes the look.
-- wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
 - wire.rotor_clearance x2: toolchain: same full-revolution assumption; wires cannot leave a cylinder that covers the chassis.
-- wire.render_count x1: iso.png: 3 routes vs 4 spec wires (missing ['w_sw_esc']); top.png: 3 routes vs 4 spec wires (missing ['w_sw_esc'])
 - likeness.silhouette x1: looks, not in scope for this pass.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): brisk.aws76.webp 0.77 -> 0.77
