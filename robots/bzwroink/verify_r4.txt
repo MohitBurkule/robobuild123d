@@ -1,48 +1,39 @@
-BLOCKERS: 5
-  [cached] integrity 0.00s
-  [cached] mass 0.00s
-  [proxy] interference 0.16s
-  [cached] connections 0.00s
-  [cached] legal 0.00s
-  [cached] fasteners 0.00s
-  [cached] power 0.00s
-  [cached] tension 0.00s
-  [cached] targets 0.00s
-  [cached] fight 0.00s
-  [cached] shape 0.00s
-  [cached] dynamics 0.00s
-  [cached] strength 0.00s
-  [cached] printability 0.00s
-  [cached] process 0.00s
-  [cached] electrical 0.00s
-  [cached] combat 0.00s
-  [cached] physics 0.00s
-  [cached] plausibility 0.00s
-  [cached] cots 0.00s
-  [cached] fit 0.00s
-  [cached] bom 0.00s
-  [cached] wire_review 0.00s
-  [cached] fastener_record 0.00s
-  [cached] likeness 0.00s
-  [cached] drive_recess 0.00s
-  [cached] belt_wrap 0.00s
-  [cached] retention 0.00s
-  [cached] waiver_audit 0.00s
-  [cached] geom 0.00s
-  [cached] dfm 0.00s
-  [cached] realworld 0.00s
-bzwroink: ok=False 5 blockers in 4 root causes, mass 130.3/150 g
-1. [proxy.interference] `dm_wheel_l0` and `dm_wheel_r0` overlap by 0.14 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
-   | dm_wheel_l0: x -0.40..35.60  y -28.00..-16.00  z -5.00..5.00  size 36.00 x 12.00 x 10.00 mm
-   |   centre (17.60, -22.00, 0.00), volume 2852.2 mm3
-   |   port terminals: (-0.40, -22.00, 0.00)
-   |   OVERLAP `dm_wheel_r0` 0.14 mm (allowed 0.08)
-   |   gap to `dt_hub_wheel_l0` 0.05 mm
-2. [wire.render_wires] 6 of 6 robot render(s) do not draw all 6 wires: renders/diff_bzwroink.aws68.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_bzwroink.aws68_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_bzwroink.aws68.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/pick_bzwroink.aws68.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_bzwroink.aws68.png: no render record (`<png>.json`), so nothing says the wires were drawn
-   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
-3. [likeness.view] `reference/bzwroink.aws68.webp` is declared `front_left_iso` (IoU 0.33 there) but the model matches it better from rear_left_iso (elevation 25, azimuth 210) (IoU 0.52).
-   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
-4. [likeness.silhouette] `reference/bzwroink.aws68.webp`: best silhouette IoU 0.33 at camera front_left_iso (elevation 45, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `vspin_drisk` at 0.43). Regions (photo frame, left third first) 0.04 / 0.50 / 0.34: worst = front third. Height/length 0.77 model vs 0.86 photo (too flat: raise it or shorten it).
+BLOCKERS: 1
+  [ran] integrity 0.09s
+  [proxy] wiring 2.62s
+  [ran] mass 0.01s
+  [proxy] interference 14.90s
+  [ran] connections 2.58s
+  [ran] legal 0.02s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.02s
+  [ran] shape 0.47s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.79s
+  [ran] process 0.00s
+  [ran] electrical 0.00s
+  [ran] combat 0.09s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.09s
+  [ran] bom 0.01s
+  [ran] wire_review 0.01s
+  [ran] fastener_record 0.00s
+  [ran] likeness 22.35s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.23s
+  [ran] dfm 0.14s
+  [ran] realworld 0.12s
+bzwroink: ok=False 1 blockers in 1 root causes, mass 127.1/150 g
+1. [likeness.silhouette] `reference/bzwroink.aws68.webp`: best silhouette IoU 0.46 at camera rear_right_iso (elevation 25, azimuth 300) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.49). Regions (photo frame, left third first) 0.04 / 0.65 / 0.68: worst = front third. Height/length 0.53 model vs 0.86 photo (too flat: raise it or shorten it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: group 31 hit / 0 miss, min_gap 8 hit / 0 miss, overlap 272 hit / 0 miss, part_geom 17 hit / 0 miss
+cache: part_geom 0 hit / 17 miss
