@@ -20,7 +20,18 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "skip_photos": [
+  0,
+  1
+ ],
+ "textured": [
+  2
+ ],
+ "name": "jiggy sawdust",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "box": [
     80,
@@ -60,16 +71,5 @@
    "id": "saw_blade",
    "color": "#2a2a2e"
   }
- ],
- "skip_photos": [
-  0,
-  1
- ],
- "textured": [
-  2
- ],
- "name": "jiggy sawdust",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }

@@ -8,5 +8,13 @@
  "photos": [
   "jiggy_sawdust.aws63.webp"
  ],
- "mask_mode": {}
+ "mask_mode": {},
+ "view": {
+  "jiggy_sawdust.aws60.webp": "top",
+  "jiggy_sawdust.aws62.webp": "top",
+  "jiggy_sawdust.aws63.webp": "front_right_iso"
+ },
+ "elevation": {
+  "jiggy_sawdust.aws63.webp": 45
+ }
 }

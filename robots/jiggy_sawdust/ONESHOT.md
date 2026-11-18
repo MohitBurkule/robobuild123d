@@ -18,3 +18,9 @@ Likeness: likeness crashed (see STRUGGLES).
 Decisions: type other; body box rect 70x70x55 mm, ramp 0; wheels 2 r14 outboard; weapon none; extra parts: front_plate, saw_blade; photos skipped (cluttered): indices [0, 1]; textured masks for indices [2].
 
 Likeness: aws63 0.87 (ok).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type other; body box rect 70x70x55 mm, ramp 0; wheels 2 r14 outboard; weapon none; extra parts: front_plate, saw_blade; photos skipped (cluttered): indices [0, 1]; textured masks for indices [2].
+
+Likeness: aws63 0.65 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/jiggy_sawdust.aws63.webp` is declared `front_right_iso` (IoU 0.65 there) but the model matches it better from rear (elevation 2
