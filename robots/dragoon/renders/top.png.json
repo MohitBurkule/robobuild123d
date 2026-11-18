@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_dragoon/robots/dragoon/spec.json",
- "rendered_at": 1795023550.1669528,
+ "rendered_at": 1795026745.3747241,
  "bodies": [
   "chassis",
   "weapon",
@@ -15,7 +15,31 @@
   "fork_block_l",
   "fork_block_r",
   "side_plate_l",
-  "side_plate_r"
+  "side_plate_r",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_nut_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_nut_wheel_r0",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3",
+  "dt_screw_4",
+  "dt_shaft_weapon",
+  "dt_mount_fork_0",
+  "dt_bolt_fork_0",
+  "dt_mount_fork_1",
+  "dt_bolt_fork_1",
+  "dt_mount_fork_2",
+  "dt_bolt_fork_2",
+  "dt_mount_fork_3",
+  "dt_bolt_fork_3",
+  "dt_mount_fork_block_l",
+  "dt_bolt_fork_block_l",
+  "dt_mount_fork_block_r",
+  "dt_bolt_fork_block_r"
  ],
  "wires": {}
 }

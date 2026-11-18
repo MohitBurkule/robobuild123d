@@ -11,5 +11,15 @@
   "dragoon.aws72.webp",
   "dragoon.aws74.webp",
   "dragoon.aws76.webp"
- ]
+ ],
+ "view": {
+  "dragoon.aws72.webp": "front_left_iso",
+  "dragoon.aws74.webp": "front",
+  "dragoon.aws76.webp": "front_left_iso"
+ },
+ "elevation": {
+  "dragoon.aws72.webp": 45,
+  "dragoon.aws74.webp": 45,
+  "dragoon.aws76.webp": 45
+ }
 }

@@ -1,0 +1,20 @@
+{
+ "dragoon.aws72.webp": {
+  "view": "front_left_iso",
+  "azimuth": 135,
+  "elevation": 45,
+  "iou": 0.706
+ },
+ "dragoon.aws74.webp": {
+  "view": "100,30",
+  "azimuth": 110.0,
+  "elevation": 30.0,
+  "iou": 0.735
+ },
+ "dragoon.aws76.webp": {
+  "view": "45,25",
+  "azimuth": 45.0,
+  "elevation": 25.0,
+  "iou": 0.747
+ }
+}

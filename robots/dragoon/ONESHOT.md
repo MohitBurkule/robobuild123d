@@ -38,3 +38,9 @@ Likeness: aws72 0.71 (FAIL), aws74 0.73 (FAIL), aws76 0.71 (FAIL).
 Decisions: type vertical_spinner; body box rect 84x108x28 mm, ramp 0; wheels 2 r15 outboard; weapon disc r40 axis x teeth 1; 4 forks 50 mm.
 
 Likeness: aws72 0.68 (FAIL), aws74 0.76 (FAIL), aws76 0.72 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type vertical_spinner; body box rect 84x108x28 mm, ramp 0; wheels 2 r15 outboard; weapon disc r40 axis x teeth 1; 4 forks 50 mm.
+
+Likeness: aws72 0.66 (FAIL), aws74 0.43 (FAIL), aws76 0.56 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/dragoon.aws74.webp` is declared `front` (IoU 0.43 there) but the model matches it better from rear_right_iso (elevation 45, azi; [FAIL] likeness.view: `reference/dragoon.aws76.webp` is declared `front_left_iso` (IoU 0.56 there) but the model matches it better from front_right_iso (elevati
