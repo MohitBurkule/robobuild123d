@@ -30,3 +30,16 @@ def test_kit_walker_and_pod_nose():
     for p in s["parts"]:
         assert shapes.to_solid(p["shape"], ".").volume > 1, p["id"]
     assert kit.build({})["locomotion"] == "roller"
+def test_kit_wishlist_round1():
+    from robot import shapes
+    for kind in ("flipper", "lifter", "axe", "hammer"):
+        s = kit.build({"weapon": {"kind": kind}, "scoop": {"curve": 3}, "wheels": {"n": 4, "x": 50, "radius": [10, 14]},
+                       "colors": {"body": "#ff0000"},
+                       "extras": [{"id": "spine", "shape": {"type": "box", "size": [4, 60, 10]}, "at": [0, 0, 20]}]})
+        ids = {p["id"]: p for p in s["parts"]}
+        assert ids["weapon"]["weapon"]["kind"] == kind and ids["weapon"]["joint"]["axis"] == [1, 0, 0]
+        assert ids["chassis"]["color"] == "#ff0000" and "spine" in ids and "scoop" in ids
+        assert abs(ids["wheel_l0"]["at"][0] - 50) < 1e-9 and ids["wheel_l0"]["at"][2] == -4
+        for p in s["parts"]:
+            assert shapes.to_solid(p["shape"], ".").volume > 1, (kind, p["id"])
+    assert kit.build({})["parts"][0]["color"] == "#3a3d44"
