@@ -1,0 +1,84 @@
+{
+ "robot_type": "lifter",
+ "body": {
+  "length": 85,
+  "width": 80,
+  "height": 40,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 12,
+  "width": 8,
+  "y": [
+   -20
+  ],
+  "outside": false
+ },
+ "colors": {
+  "body": "#f2dc3a",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "side": [
+    [
+     38,
+     0
+    ],
+    [
+     75,
+     0
+    ],
+    [
+     75,
+     2
+    ],
+    [
+     45,
+     40
+    ],
+    [
+     38,
+     44
+    ]
+   ],
+   "x": [
+    -45,
+    45
+   ],
+   "kind": "wedge",
+   "id": "scoop",
+   "color": "#d8324a"
+  },
+  {
+   "box": [
+    50,
+    60,
+    4
+   ],
+   "at": [
+    0,
+    5,
+    44
+   ],
+   "weapon": "lifter",
+   "pivot": [
+    -25,
+    42
+   ],
+   "id": "frame",
+   "color": "#e8453a"
+  }
+ ],
+ "skip_photos": [
+  0,
+  2
+ ],
+ "name": "antomic",
+ "weapon": {
+  "kind": "none"
+ }
+}

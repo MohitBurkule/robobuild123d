@@ -1,0 +1,12 @@
+{
+ "spec": "/tmp/work10_antomic/robots/antomic/spec.json",
+ "rendered_at": 1795022080.1270862,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "scoop",
+  "frame"
+ ],
+ "wires": {}
+}
