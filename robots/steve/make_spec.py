@@ -1,0 +1,109 @@
+"""Emit robots/steve/spec.json from the parametric dimensions in src/steve/params.py."""
+import json
+import math
+import os
+import sys
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+ROOT = os.path.abspath(os.path.join(HERE, "..", ".."))
+SRC = os.path.join(HERE, "src")
+for _p in (ROOT, SRC):
+    if _p not in sys.path:
+        sys.path.insert(0, _p)
+
+from steve import params as P  # noqa: E402
+
+
+def model(part):
+    return {"file": "src/build_steve.py", "params": {"part": part}}
+
+
+def r3(p):
+    return [r3(v) if isinstance(v, (list, tuple)) else round(float(v), 4) for v in p]
+
+
+lid_xc = (P.SLOT_W / 2.0 + P.TUB_W / 2.0) / 2.0
+lid_yc = (P.TUB_REAR_Y + P.TUB_DECK_END_Y) / 2.0
+lid_zc = P.LID_Z + P.LID_T / 2.0 + 0.15
+
+parts = [
+    {"id": "tub", "kind": "structure", "material": "pla", "process": "fdm", "print_orientation": "+z",
+     "color": "#0f3b1e", "model": model("tub"), "at": [0, 0, 0]},
+
+    {"id": "lid_l", "kind": "structure", "material": "pla", "process": "fdm", "print_orientation": "+z",
+     "color": "#0f3b1e", "model": model("lid_l"), "at": r3([lid_xc, lid_yc, lid_zc])},
+    {"id": "lid_r", "kind": "structure", "material": "pla", "process": "fdm", "print_orientation": "+z",
+     "color": "#0f3b1e", "model": model("lid_r"), "at": r3([-lid_xc, lid_yc, lid_zc])},
+
+    {"id": "guard_l", "kind": "structure", "material": "polycarbonate", "process": "cnc",
+     "color": "#0f3b1e", "model": model("guard_l"), "at": r3([P.GUARD_X + P.GUARD_T / 2.0 + 0.2, P.WHEEL_Y, P.AXLE_Z])},
+    {"id": "guard_r", "kind": "structure", "material": "polycarbonate", "process": "cnc",
+     "color": "#0f3b1e", "model": model("guard_r"), "at": r3([-(P.GUARD_X + P.GUARD_T / 2.0 + 0.2), P.WHEEL_Y, P.AXLE_Z])},
+
+    {"id": "wheel_l", "kind": "wheel", "material": "tpu_95a", "process": "fdm", "print_orientation": "+x",
+     "color": "#222222", "model": model("wheel_l"), "at": r3([P.WHEEL_X, P.WHEEL_Y, P.AXLE_Z]),
+     "joint": {"type": "revolute", "axis": [1, 0, 0], "anchor": [0, 0, 0], "range": [0, 360]}},
+    {"id": "wheel_r", "kind": "wheel", "material": "tpu_95a", "process": "fdm", "print_orientation": "+x",
+     "color": "#222222", "model": model("wheel_r"), "at": r3([-P.WHEEL_X, P.WHEEL_Y, P.AXLE_Z]),
+     "joint": {"type": "revolute", "axis": [-1, 0, 0], "anchor": [0, 0, 0], "range": [0, 360]}},
+
+    {"id": "flipper", "kind": "structure", "material": "pla", "process": "fdm", "print_orientation": "+z",
+     "color": "#25282a", "model": model("flipper"), "at": r3([0, P.HINGE_Y, P.HINGE_Z]),
+     "joint": {"type": "revolute", "axis": [1, 0, 0], "anchor": [0, 0, 0], "range": [0, P.FLIP_OPEN_DEG]}},
+
+    {"id": "scoop", "kind": "weapon", "material": "aluminium", "process": "cast",
+     "solids": 3, "solids_reason": "curved sheet + 2 side cheek gussets",
+     "weapon": {"kind": "flipper", "motor": "servo", "reduction": 1.0},
+     "color": "#b8c0c8", "model": model("scoop"),
+     "at": [0, 0, 0],
+     "parent": "flipper"},
+
+    {"id": "hinge_pin", "kind": "fastener", "material": "steel", "process": "cots",
+     "color": "#888888", "model": model("hinge_pin"), "at": r3([0, P.HINGE_Y, P.HINGE_Z])},
+
+    # Internal COTS electronics & drive
+    {"id": "motor_l", "kind": "motor", "catalog": "n10_300rpm_6v",
+     "at": r3([P.MOTOR_X_OFFSET, P.WHEEL_Y, P.AXLE_Z]), "rot": [0, 0, 180]},
+    {"id": "motor_r", "kind": "motor", "catalog": "n10_300rpm_6v",
+     "at": r3([-P.MOTOR_X_OFFSET, P.WHEEL_Y, P.AXLE_Z]), "rot": [0, 0, 0]},
+
+    {"id": "servo", "kind": "actuator", "catalog": "servo_cs07",
+     "at": r3([0, P.SERVO_Y, 12.0]), "rot": [90, 0, 90]},
+    {"id": "horn", "kind": "structure", "material": "pla", "process": "fdm", "print_orientation": "+z",
+     "color": "#333333", "model": model("horn"), "at": r3([0, P.HORN_Y, P.HORN_Z]),
+     "joint": {"type": "revolute", "axis": [1, 0, 0], "anchor": [0, 0, 0], "range": [0, 60]}},
+
+    {"id": "battery", "kind": "battery", "catalog": "lipo_2s_180",
+     "at": r3([22.0, 2.0, P.GROUND_CLEARANCE + P.FLOOR_T + 5.0])},
+    {"id": "esc_rx", "kind": "esc", "catalog": "malenki_nano",
+     "at": r3([-20.0, -2.0, P.GROUND_CLEARANCE + P.FLOOR_T + 3.0])},
+    {"id": "switch", "kind": "switch", "catalog": "switch_bbb_ant_rvrn2",
+     "tool_free": True, "marked": True, "label": "ON/OFF",
+     "at": r3([-20.0, -28.0, P.GROUND_CLEARANCE + P.FLOOR_T + 3.0])},
+]
+
+spec = {
+    "schema_version": "0.1",
+    "name": "steve",
+    "description": "Steve (Stewie) — UK 150g antweight rear-hinged flipper with wide brushed-metal front scoop and outboard wheel guards.",
+    "units": "mm",
+    "class": "uk_antweight",
+    "mass_limit_g": 150.0,
+    "envelope_mm": [101.6, 101.6, 101.6],
+    "ground_z": 0.0,
+    "electronics": {"failsafe": True, "weapon_remote_disable": True},
+    "wires": [
+        {"from": "battery", "to": "switch", "gauge": 20},
+        {"from": "battery", "to": "esc_rx.bat", "gauge": 20},
+        {"from": "switch", "to": "esc_rx.bat", "gauge": 20},
+        {"from": "esc_rx", "to": "motor_l", "gauge": 24},
+        {"from": "esc_rx", "to": "motor_r", "gauge": 24},
+        {"from": "esc_rx", "to": "servo", "gauge": 26},
+    ],
+    "parts": parts,
+}
+
+out_path = os.path.join(HERE, "spec.json")
+with open(out_path, "w", encoding="utf-8") as f:
+    json.dump(spec, f, indent=2)
+print("Wrote", out_path)

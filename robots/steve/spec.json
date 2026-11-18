@@ -1,0 +1,389 @@
+{
+  "schema_version": "0.1",
+  "name": "steve",
+  "description": "Steve (Stewie) \u2014 UK 150g antweight rear-hinged flipper with wide brushed-metal front scoop and outboard wheel guards.",
+  "units": "mm",
+  "class": "uk_antweight",
+  "mass_limit_g": 150.0,
+  "envelope_mm": [
+    101.6,
+    101.6,
+    101.6
+  ],
+  "ground_z": 0.0,
+  "electronics": {
+    "failsafe": true,
+    "weapon_remote_disable": true
+  },
+  "wires": [
+    {
+      "from": "battery",
+      "to": "switch",
+      "gauge": 20
+    },
+    {
+      "from": "battery",
+      "to": "esc_rx",
+      "gauge": 20
+    },
+    {
+      "from": "switch",
+      "to": "esc_rx",
+      "gauge": 20
+    },
+    {
+      "from": "esc_rx",
+      "to": "motor_l",
+      "gauge": 24
+    },
+    {
+      "from": "esc_rx",
+      "to": "motor_r",
+      "gauge": 24
+    },
+    {
+      "from": "esc_rx",
+      "to": "servo",
+      "gauge": 26
+    }
+  ],
+  "parts": [
+    {
+      "id": "tub",
+      "kind": "structure",
+      "material": "pla",
+      "process": "fdm",
+      "print_orientation": "+z",
+      "color": "#0f3b1e",
+      "model": "src/build_steve.py",
+      "at": [
+        0,
+        0,
+        0
+      ],
+      "params": {
+        "part": "tub"
+      }
+    },
+    {
+      "id": "lid_l",
+      "kind": "structure",
+      "material": "pla",
+      "process": "fdm",
+      "print_orientation": "+z",
+      "color": "#0f3b1e",
+      "model": "src/build_steve.py",
+      "at": [
+        21.0,
+        -10.0,
+        30.9
+      ],
+      "params": {
+        "part": "lid_l"
+      }
+    },
+    {
+      "id": "lid_r",
+      "kind": "structure",
+      "material": "pla",
+      "process": "fdm",
+      "print_orientation": "+z",
+      "color": "#0f3b1e",
+      "model": "src/build_steve.py",
+      "at": [
+        -21.0,
+        -10.0,
+        30.9
+      ],
+      "params": {
+        "part": "lid_r"
+      }
+    },
+    {
+      "id": "guard_l",
+      "kind": "structure",
+      "material": "polycarbonate",
+      "process": "cnc",
+      "color": "#0f3b1e",
+      "model": "src/build_steve.py",
+      "at": [
+        46.45,
+        -20.0,
+        14.0
+      ],
+      "params": {
+        "part": "guard_l"
+      }
+    },
+    {
+      "id": "guard_r",
+      "kind": "structure",
+      "material": "polycarbonate",
+      "process": "cnc",
+      "color": "#0f3b1e",
+      "model": "src/build_steve.py",
+      "at": [
+        -46.45,
+        -20.0,
+        14.0
+      ],
+      "params": {
+        "part": "guard_r"
+      }
+    },
+    {
+      "id": "wheel_l",
+      "kind": "wheel",
+      "material": "tpu_95a",
+      "process": "fdm",
+      "print_orientation": "+x",
+      "color": "#222222",
+      "model": "src/build_steve.py",
+      "at": [
+        39.0,
+        -20.0,
+        14.0
+      ],
+      "joint": {
+        "type": "revolute",
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "anchor": [
+          0,
+          0,
+          0
+        ],
+        "range": [
+          0,
+          360
+        ]
+      },
+      "params": {
+        "part": "wheel_l"
+      }
+    },
+    {
+      "id": "wheel_r",
+      "kind": "wheel",
+      "material": "tpu_95a",
+      "process": "fdm",
+      "print_orientation": "+x",
+      "color": "#222222",
+      "model": "src/build_steve.py",
+      "at": [
+        -39.0,
+        -20.0,
+        14.0
+      ],
+      "joint": {
+        "type": "revolute",
+        "axis": [
+          -1,
+          0,
+          0
+        ],
+        "anchor": [
+          0,
+          0,
+          0
+        ],
+        "range": [
+          0,
+          360
+        ]
+      },
+      "params": {
+        "part": "wheel_r"
+      }
+    },
+    {
+      "id": "flipper",
+      "kind": "structure",
+      "material": "pla",
+      "process": "fdm",
+      "print_orientation": "+z",
+      "color": "#25282a",
+      "model": "src/build_steve.py",
+      "at": [
+        0.0,
+        -32.0,
+        25.0
+      ],
+      "joint": {
+        "type": "revolute",
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "anchor": [
+          0,
+          0,
+          0
+        ],
+        "range": [
+          0,
+          40.0
+        ]
+      },
+      "params": {
+        "part": "flipper"
+      }
+    },
+    {
+      "id": "scoop",
+      "kind": "weapon",
+      "material": "aluminium",
+      "process": "cast",
+      "solids": 3,
+      "solids_reason": "curved sheet + 2 side cheek gussets",
+      "weapon": {
+        "kind": "flipper",
+        "motor": "servo",
+        "reduction": 1.0
+      },
+      "color": "#b8c0c8",
+      "model": "src/build_steve.py",
+      "at": [
+        0,
+        0,
+        0
+      ],
+      "parent": "flipper",
+      "params": {
+        "part": "scoop"
+      }
+    },
+    {
+      "id": "hinge_pin",
+      "kind": "fastener",
+      "material": "steel",
+      "process": "cots",
+      "color": "#888888",
+      "model": "src/build_steve.py",
+      "at": [
+        0.0,
+        -32.0,
+        25.0
+      ],
+      "params": {
+        "part": "hinge_pin"
+      }
+    },
+    {
+      "id": "motor_l",
+      "kind": "motor",
+      "catalog": "n10_300rpm_6v",
+      "at": [
+        22.0,
+        -20.0,
+        14.0
+      ],
+      "rot": [
+        0,
+        0,
+        180
+      ]
+    },
+    {
+      "id": "motor_r",
+      "kind": "motor",
+      "catalog": "n10_300rpm_6v",
+      "at": [
+        -22.0,
+        -20.0,
+        14.0
+      ],
+      "rot": [
+        0,
+        0,
+        0
+      ]
+    },
+    {
+      "id": "servo",
+      "kind": "actuator",
+      "catalog": "servo_cs07",
+      "at": [
+        0.0,
+        -8.0,
+        12.0
+      ],
+      "rot": [
+        90,
+        0,
+        90
+      ]
+    },
+    {
+      "id": "horn",
+      "kind": "structure",
+      "material": "pla",
+      "process": "fdm",
+      "print_orientation": "+z",
+      "color": "#333333",
+      "model": "src/build_steve.py",
+      "at": [
+        0.0,
+        -3.0,
+        18.0
+      ],
+      "joint": {
+        "type": "revolute",
+        "axis": [
+          1,
+          0,
+          0
+        ],
+        "anchor": [
+          0,
+          0,
+          0
+        ],
+        "range": [
+          0,
+          60
+        ]
+      },
+      "params": {
+        "part": "horn"
+      }
+    },
+    {
+      "id": "battery",
+      "kind": "battery",
+      "catalog": "lipo_2s_180",
+      "at": [
+        22.0,
+        2.0,
+        9.0
+      ]
+    },
+    {
+      "id": "esc_rx",
+      "kind": "esc",
+      "catalog": "malenki_nano",
+      "at": [
+        -20.0,
+        -2.0,
+        7.0
+      ]
+    },
+    {
+      "id": "switch",
+      "kind": "switch",
+      "catalog": "switch_bbb_ant_rvrn2",
+      "tool_free": true,
+      "marked": true,
+      "label": "ON/OFF",
+      "at": [
+        -20.0,
+        -28.0,
+        7.0
+      ]
+    }
+  ]
+}
