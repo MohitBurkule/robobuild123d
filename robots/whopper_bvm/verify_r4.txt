@@ -1,8 +1,8 @@
 BLOCKERS: 14
   [cached] integrity 0.00s
   [cached] mass 0.00s
-  [proxy] interference 0.14s
-  [cached] connections 0.00s
+  [proxy] interference 0.49s
+  [cached] connections 0.02s
   [cached] legal 0.00s
   [cached] fasteners 0.00s
   [cached] power 0.00s
@@ -15,22 +15,22 @@ BLOCKERS: 14
   [cached] printability 0.00s
   [cached] process 0.00s
   [cached] electrical 0.00s
-  [cached] combat 0.01s
-  [cached] physics 0.00s
+  [cached] combat 0.02s
+  [cached] physics 0.01s
   [cached] plausibility 0.00s
   [cached] cots 0.00s
   [cached] fit 0.00s
   [cached] bom 0.00s
   [cached] wire_review 0.00s
   [cached] fastener_record 0.00s
-  [cached] likeness 0.00s
+  [cached] likeness 0.01s
   [cached] drive_recess 0.00s
   [cached] belt_wrap 0.00s
-  [cached] retention 0.00s
-  [cached] waiver_audit 0.00s
+  [cached] retention 0.01s
+  [cached] waiver_audit 0.01s
   [cached] geom 0.00s
   [cached] dfm 0.00s
-  [cached] realworld 0.00s
+  [cached] realworld 0.01s
 whopper bvm: ok=False 14 blockers in 11 root causes, mass 147.5/150 g
 1. [mfg.stock] `fork_0` (laser): thickness 2.50 mm is not a stock titanium gauge (0.5, 0.8, 0.9, 1, 1.5, 2, 3, 4, 5, 6, 8, 10); nearest 2 mm. Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
    fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
