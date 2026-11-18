@@ -1,6 +1,6 @@
 {
- "spec": "/tmp/work5_team_phyte_s_little_sytes/robots/team_phyte_s_little_sytes/spec.json",
- "rendered_at": 1795017869.605205,
+ "spec": "/tmp/work9_team_phyte/robots/team_phyte_s_little_sytes/spec.json",
+ "rendered_at": 1795019292.7211423,
  "bodies": [
   "chassis_bottom",
   "chassis_top",
@@ -33,31 +33,31 @@
  "wires": {
   "w_bat_sw": {
    "from": [
-    1.0,
+    4.0,
     34.0,
     0.0
    ],
    "to": [
-    -2.0,
-    -48.0,
-    2.5
+    8.0,
+    -43.0,
+    1.5
    ]
   },
   "w_sw_esc": {
    "from": [
-    6.0,
-    -48.0,
-    2.5
+    16.0,
+    -43.0,
+    1.5
    ],
    "to": [
-    0.0,
+    -6.0,
     -42.0,
     3.0
    ]
   },
   "w_esc_ml": {
    "from": [
-    8.0,
+    2.0,
     -36.0,
     3.0
    ],
@@ -67,14 +67,26 @@
     0.0
    ]
   },
+  "w_esc_mr": {
+   "from": [
+    -14.0,
+    -36.0,
+    3.0
+   ],
+   "to": [
+    -5.549999999999997,
+    -16.0,
+    0.0
+   ]
+  },
   "w_rx_esc": {
    "from": [
-    0.0,
+    -1.0,
     9.8,
     0.0
    ],
    "to": [
-    0.0,
+    -6.0,
     -30.0,
     3.0
    ]

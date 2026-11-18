@@ -61,3 +61,8 @@ Still missing:
 - Separate height targets per view, or a fit that uses all three photos together.
 - A footprint-aware fit so the fitted length accounts for the 150 mm limit.
 - Fix for the proxy.assembly teardown pattern (carried over from before).
+
+## Round 3 (merged dev, widened plan)
+- Intent now 140x114 plan, zb/zt +-8, taper 6. IoU aws74 0.75 (need 0.81), aws76 0.83 (pass), aws77 0.81 (need 0.85). Likeness FAIL, 2 blockers (was 3).
+- Still stuck: the generator cannot express the single front ramp plus rear-only wheels and side wings; plan-only outline with tapered walls. aws74/aws77 height disagree.
+- likeness run takes ~115 s, hits the 120 s tool timeout.
