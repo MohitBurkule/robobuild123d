@@ -19,3 +19,8 @@ Likeness: likeness crashed (see STRUGGLES).
 Decisions: type flipper; body box rect 50x60x26 mm, ramp 0; wheels 2 r12 outboard; weapon none; extra parts: flip_arm, top_arm; photos skipped (cluttered): indices [0, 2]; textured masks for indices [1].
 
 Likeness: ftl 0.70 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type flipper; body box rect 50x60x26 mm, ramp 0; wheels 2 r12 outboard; weapon none; extra parts: flip_arm, top_arm; photos skipped (cluttered): indices [0, 2]; textured masks for indices [1].
+
+Likeness: ftl 0.70 (FAIL).

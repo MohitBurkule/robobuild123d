@@ -1,0 +1,8 @@
+{
+ "ftl.webp": {
+  "view": "auto:front_left_iso",
+  "azimuth": 120,
+  "elevation": 45,
+  "iou": 0.698
+ }
+}

@@ -10,5 +10,11 @@
  ],
  "mask_mode": {
   "ftl.webp": "textured"
+ },
+ "view": {
+  "failure_to_launch.aws63.webp": "front_right_iso"
+ },
+ "elevation": {
+  "failure_to_launch.aws63.webp": 45
  }
 }

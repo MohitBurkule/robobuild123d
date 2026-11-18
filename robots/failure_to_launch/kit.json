@@ -20,7 +20,18 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "textured": [
+  1
+ ],
+ "skip_photos": [
+  0,
+  2
+ ],
+ "name": "failure to launch",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "side": [
     [
@@ -76,16 +87,5 @@
     0
    ]
   }
- ],
- "textured": [
-  1
- ],
- "skip_photos": [
-  0,
-  2
- ],
- "name": "failure to launch",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }
