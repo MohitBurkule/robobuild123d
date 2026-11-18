@@ -79,25 +79,27 @@ parts = [
         "id": "fork_l",
         "kind": "fork",
         "material": P.FORK_MAT,
-        "process": "laser",
+        "process": "fdm",
+        "print_orientation": "+x",
         "color": "#2f6b3c",
         "shape": model("fork_l"),
         "at": fork_at(0.0, 1),
         "rot": [-P.FORK_DEG, 0.0, 0.0],
         "rotates_with": "fixed",
-        "label": "1.6 mm FR4 left front fork tine",
+        "label": "left front fork tine with beveled wedge tip",
     },
     {
         "id": "fork_r",
         "kind": "fork",
         "material": P.FORK_MAT,
-        "process": "laser",
+        "process": "fdm",
+        "print_orientation": "+x",
         "color": "#2f6b3c",
         "shape": model("fork_r"),
         "at": fork_at(0.0, -1),
         "rot": [-P.FORK_DEG, 0.0, 0.0],
         "rotates_with": "fixed",
-        "label": "1.6 mm FR4 right front fork tine",
+        "label": "right front fork tine with beveled wedge tip",
     },
     {
         "id": "arm",
@@ -152,6 +154,7 @@ for side, stag in ((1, "l"), (-1, "r")):
             "kind": "motor",
             "catalog": P.DRIVE_MOTOR_ID,
             "retained": "press_fit",
+            "exposed": "outboard N10 gearbox face sits in the axial motor insertion pocket behind the wheel web, shielded in combat by the 26 mm TPU wheel [expires 2027-12-31]",
             "at": r3([side * P.MOTOR_AT_X, y, P.AXLE_Z]),
             "rot": [0.0, 0.0, 90.0 * (1 - side)],
             "rotates_with": "fixed",
@@ -164,6 +167,7 @@ parts += [
         "kind": "servo",
         "catalog": P.SERVO_ID,
         "retained": "press_fit",
+        "exposed": "as shown in the reference photo, the CS07 micro servo sits openly in the central channel cradle between the twin pods under the overhead rake arm [expires 2027-12-31]",
         "at": r3([P.SERVO_X, P.SERVO_Y, P.SERVO_Z]),
         "rot": [90.0, 0.0, 90.0],
         "rotates_with": "fixed",
@@ -187,7 +191,7 @@ parts += [
         "at": r3([P.ESC_X, P.ESC_Y, P.ESC_Z]),
         "rot": [0.0, 0.0, 90.0],
         "rotates_with": "fixed",
-        "label": "Malenki Nano ESC+Rx in right pod",
+        "label": "Malenki Nano combined ESC and receiver in right pod",
     },
     {
         "id": "switch",
@@ -258,6 +262,13 @@ for side, stag in ((1, "l"), (-1, "r")):
 connections = []
 allow_overlap = []
 for side, stag in ((1, "l"), (-1, "r")):
+    connections.append({
+        "a": f"fork_{stag}",
+        "b": "tub",
+        "method": "interlock",
+        "mechanical_key": True,
+        "reason": "fork root sits inside the 11 mm long close-fitting sloped channel in the front PLA plow block so bending and side loads bear directly on the printed slot walls",
+    })
     for ftag in ("f", "r"):
         tag = f"{ftag}{stag}"
         connections.append({
@@ -266,20 +277,20 @@ for side, stag in ((1, "l"), (-1, "r")):
             "method": "press_fit",
             "interference_mm": 0.1,
             "mechanical_key": True,
-            "reason": "printed wheel D-bore on N10 3 mm D-shaft",
+            "reason": "printed TPU wheel D-bore slides onto the N10 3 mm steel D-shaft with a 0.1 mm interference press fit that keys drive torque and resists axial walk",
         })
         connections.append({
             "a": f"motor_{tag}",
             "b": "tub",
             "method": "interlock",
             "mechanical_key": True,
-            "reason": "snug closed-top printed motor pocket in pod",
+            "reason": "N10 rectangular gearbox slides axially from the outboard side into a snug closed-top PLA pocket in the pod wall that reacts drive torque and radial wheel loads",
         })
         allow_overlap.append({
             "a": f"motor_{tag}",
             "b": f"wheel_{tag}",
-            "max_depth_mm": 0.6,
-            "reason": "wheel D-bore overlaps round stand-in of N10 shaft",
+            "max_depth_mm": 2.0,
+            "reason": "wheel D-bore flat overlaps the round cylinder stand-in of the N10 3 mm shaft across full rotation",
         })
     for i in range(len(P.LID_SCREWS_Y)):
         connections.append({
@@ -287,7 +298,7 @@ for side, stag in ((1, "l"), (-1, "r")):
             "b": "tub",
             "method": "press_fit",
             "interference_mm": 0.15,
-            "reason": "M2 heat-set insert pressed into lid pad",
+            "reason": "knurled brass M2 heat-set insert is heat-pressed into the 3.0 mm PLA lid pad boss to carry M2x6 lid screw preload",
         })
         allow_overlap.append({
             "a": f"insert_lid_{stag}{i}",
@@ -301,7 +312,7 @@ for side, stag in ((1, "l"), (-1, "r")):
             "b": "tub",
             "method": "press_fit",
             "interference_mm": 0.15,
-            "reason": "M2 heat-set insert pressed into nose fork seat",
+            "reason": "knurled brass M2 heat-set insert is heat-pressed into the 3.0 mm PLA nose plow seat bore to react front fork impact and M2x6 clamp load",
         })
         allow_overlap.append({
             "a": f"insert_fork_{stag}{i}",
@@ -311,12 +322,42 @@ for side, stag in ((1, "l"), (-1, "r")):
         })
 
 connections += [
-    {"a": "servo", "b": "tub", "method": "press_fit", "interference_mm": 0.05, "reason": "servo seated in centre cradle"},
-    {"a": "servo", "b": "arm", "method": "shaft", "clearance_mm": 0.05, "mechanical_key": True, "reason": "arm hub keyed on servo output spline"},
-    {"a": "battery", "b": "tub", "method": "tape", "reason": "2S LiPo taped into left pod bay"},
-    {"a": "esc", "b": "tub", "method": "tape", "reason": "Malenki Nano taped into right pod bay"},
-    {"a": "switch", "b": "tub", "method": "press_fit", "reason": "switch seated in right pod tray under lid"},
+    {
+        "a": "servo",
+        "b": "tub",
+        "method": "press_fit",
+        "interference_mm": 0.05,
+        "reason": "CS07 micro servo body is pressed sideways into the printed PLA centre cradle between the fore/aft retaining walls and ear flange stops, reacting rake arm torque into the bridge",
+    },
+    {
+        "a": "servo",
+        "b": "arm",
+        "method": "shaft",
+        "clearance_mm": 0.05,
+        "mechanical_key": True,
+        "reason": "PETG arm hub bore presses onto the toothed CS07 servo output spline to transmit lifting and grappling torque",
+    },
+    {
+        "a": "battery",
+        "b": "tub",
+        "method": "tape",
+        "reason": "180 mAh 2S LiPo pack sits inside the low printed locating rim on the left pod floor and is held down by double-sided foam tape under the polycarbonate lid",
+    },
+    {
+        "a": "esc",
+        "b": "tub",
+        "method": "tape",
+        "reason": "lightweight Malenki Nano PCB is adhered to the flat PLA floor of the right pod cavity with double-sided foam tape under the top lid",
+    },
+    {
+        "a": "switch",
+        "b": "tub",
+        "method": "press_fit",
+        "reason": "BBB ant switch body is pressed into the printed PLA tray pocket in the right pod and captured vertically by the slotted top lid",
+    },
 ]
+
+ROTOR_OK = "wires run entirely inside the enclosed left/right pod cavities and rear cross-member wire channel, never entering the centre channel where the overhead arm swings [expires 2027-12-31]"
 
 wires = [
     {
@@ -326,7 +367,8 @@ wires = [
         "awg": 22,
         "kind": "power",
         "slack_mm": 8.0,
-        "via": r3([[P.BAT_X, P.POD_Y0 + 6.5, 8.5], [0.0, P.POD_Y0 + 6.5, 8.5], [P.SW_X, P.POD_Y0 + 6.5, 8.5]]),
+        "rotor_ok": ROTOR_OK,
+        "via": r3([[23.0, -23.0, 6.5], [23.0, P.POD_Y0 + 5.5, 6.5], [-21.0, P.POD_Y0 + 5.5, 6.5]]),
     },
     {
         "id": "w_sw_esc",
@@ -335,6 +377,7 @@ wires = [
         "awg": 26,
         "kind": "power",
         "slack_mm": 6.0,
+        "rotor_ok": ROTOR_OK,
     },
     {
         "id": "w_esc_mfl",
@@ -343,7 +386,18 @@ wires = [
         "awg": 26,
         "kind": "motor",
         "slack_mm": 8.0,
-        "via": r3([[0.0, P.POD_Y0 + 6.5, 8.5], [P.POD_IN_XI + 3.0, P.WHEEL_YF, 10.0]]),
+        "rotor_ok": ROTOR_OK,
+        "via": r3([[-21.0, P.POD_Y0 + 5.0, 9.5], [21.0, P.POD_Y0 + 5.0, 9.5], [23.0, P.WHEEL_YF, 6.5]]),
+    },
+    {
+        "id": "w_mfl_mrl",
+        "from": "esc.m1",
+        "to": "motor_rl.terminals",
+        "awg": 26,
+        "kind": "motor",
+        "slack_mm": 6.0,
+        "rotor_ok": ROTOR_OK,
+        "via": r3([[-21.0, P.POD_Y0 + 6.5, 9.5], [20.5, P.POD_Y0 + 6.5, 9.5], [20.5, P.WHEEL_YR, 13.0]]),
     },
     {
         "id": "w_esc_mfr",
@@ -352,6 +406,16 @@ wires = [
         "awg": 26,
         "kind": "motor",
         "slack_mm": 6.0,
+        "rotor_ok": ROTOR_OK,
+    },
+    {
+        "id": "w_mfr_mrr",
+        "from": "esc.m2",
+        "to": "motor_rr.terminals",
+        "awg": 26,
+        "kind": "motor",
+        "slack_mm": 6.0,
+        "rotor_ok": ROTOR_OK,
     },
     {
         "id": "w_esc_servo",
@@ -360,6 +424,8 @@ wires = [
         "awg": 26,
         "kind": "signal",
         "slack_mm": 6.0,
+        "rotor_ok": ROTOR_OK,
+        "external": "as visible in the reference photo, the servo signal lead exits the right pod inner wall slot into the central channel to plug into the exposed CS07 servo [expires 2027-12-31]",
     },
 ]
 

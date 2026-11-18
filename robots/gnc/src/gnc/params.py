@@ -33,7 +33,7 @@ INSERT_ID = "heatset_m2"
 PRINT_MAT = "pla"             # PHOTO: black printed pods
 ARM_MAT = "petg"              # PHOTO: yellow printed arm (tough, not brittle)
 SHEET_MAT = "pc"              # lids
-FORK_MAT = "fr4"              # PHOTO: green PCB-like fork tines
+FORK_MAT = "petg"             # PHOTO: green fork tines with 3D beveled tip wedge
 
 WALL = bay_lib.DEFAULT_WALL
 CLEAR = bay_lib.PRINTED_FIT_CLEARANCE
@@ -113,45 +113,65 @@ POD_IN_XO = POD_XO - WALL
 POD_L = POD_Y1 - POD_Y0
 POD_YC = (POD_Y0 + POD_Y1) / 2
 
-# --- motor housings (closed top, open outboard face for axial insertion)
+# --- motor housings (closed top, open outboard face for axial insertion, open under-tunnel for wiring)
 HOUSE_HALF_Y = MOTOR_ENV_Y + MOTOR_FIT + WALL
-HOUSE_X0 = MOTOR_INNER_X - WALL            # inner end wall of the housing (|x|)
+HOUSE_X0 = MOTOR_INNER_X - WALL            # inner end wall of the housing (|x| = 20.05 mm)
 POCKET_HALF_Y = MOTOR_ENV_Y + MOTOR_FIT
 POCKET_HALF_Z = MOTOR_ENV_Z + MOTOR_FIT
-TERM_SLOT_H = 4.0                          # slot in the housing end wall for the motor leads
-TERM_SLOT_W = 5.0
+TERM_SLOT_H = 5.0                          # slot in the housing end wall for the motor leads
+TERM_SLOT_W = 5.5
 
-# --- nose
+# --- nose + front plow bumper
 NOSE_RUN = POD_Y1 - NOSE_Y0
 NOSE_DROP = TUB_Z1 - NOSE_Z
 NOSE_DEG = math.degrees(math.atan2(NOSE_DROP, NOSE_RUN))
 NOSE_WALL_DY = WALL / math.cos(math.radians(NOSE_DEG))  # vertical thickness of the sloped top skin
+PLOW_Y1 = POD_Y1 + 10.5
+PLOW_TIP_Z0 = 1.0
+PLOW_TIP_Z1 = 2.3
+PLOW_STEP_Y = POD_Y1 + 3.0
+PLOW_STEP_Z = 11.8
+CAV_FRONT_Y = POD_Y1 - 6.0                 # solid nose block ahead of here (fork seat)
+PLOW_POCKET_DX = (-4.2, 3.2)               # two bolt-access pockets on the sloped front plow face
+PLOW_POCKET_HW = 1.8
+PLOW_POCKET_Y0 = POD_Y1 + 1.8
+PLOW_POCKET_Y1 = POD_Y1 + 4.4
+PLOW_POCKET_Z0 = 4.0
+PLOW_POCKET_Z1 = 9.0
 
-# --- forks (FR4 tines on a sloped seat below the nose front)
+# --- forks (tines emerging from the outer-lower corner of the front plow blocks)
 FORK_T = 1.6
-FORK_W = 6.0
-FORK_TIP_W = 10.0
-FORK_TIP_L = 7.0
+FORK_W = 4.2                               # 4.2 mm wide so 2.2 mm M2 clearance holes leave >= 1.0 mm wall on each side
+FORK_TIP_W = 5.0
+FORK_TIP_L = 9.0
+FORK_TIP_PEAK_DY = 1.2
+FORK_TIP_PEAK_Z = 3.2
 FORK_TIP_GAP = 0.6                         # tine tip above the floor
-FORK_RUN = 22.0                            # horizontal reach ahead of the nose
+FORK_RUN = 36.0                            # horizontal reach ahead of the front plow
 FORK_DEG = 14.0                            # tine slope
-FORK_SEAT_L = 12.0                         # length of the sloped seat (along the slope) inside the tine root
-FORK_BOLT_S = (3.5, 9.0)                   # bolt stations along the tine from its root
-FORK_X = POD_XC
+FORK_SEAT_L = 11.0                         # length of the sloped seat inside the front plow block
+FORK_BOLT_S = (3.2, 7.6)                   # bolt stations along the tine from its root (4.4 mm apart, >= 3.2 mm from root)
+FORK_X = POD_XO - 4.5                      # PHOTO: forks emerge near the outer edge of each front plow block
 FORK_LEN = FORK_RUN / math.cos(math.radians(FORK_DEG)) + FORK_SEAT_L
 # the tine top surface passes through the tip point; root station s = 0 at the back of the seat
 _FS, _FC = math.sin(math.radians(FORK_DEG)), math.cos(math.radians(FORK_DEG))
-FORK_TIP_Y = POD_Y1 + FORK_RUN
+FORK_TIP_Y = POD_Y1 + 1.0 + FORK_RUN
 FORK_TIP_Z = FORK_TIP_GAP + FORK_T / _FC   # top surface height at the tip
 FORK_ROOT_Y = FORK_TIP_Y - FORK_LEN * _FC
 FORK_ROOT_Z = FORK_TIP_Z + FORK_LEN * _FS
 FORK_SEAT_BELLY = BELLY_Z                  # seat underside never below the belly line
-FORK_BORE_DEPTH = 4.8
+FORK_BORE_DEPTH = 5.2
+FORK_CHAN_Z_OFF = 8.0 - FORK_T - 0.1
+FORK_CHAN_H = 16.0
+FORK_CHAN_EXTRA_L = 1.0
+FORK_CBORE_R = 2.1
+FORK_CBORE_Z = 8.0
+FORK_CBORE_H = 16.0
 
 
 def fork_point(s, h=0.0):
-    """World (y, z) of a point at station s along the tine top surface (root at s = 0), offset h along its normal."""
-    return (FORK_ROOT_Y + s * _FC - h * _FS, FORK_ROOT_Z - s * _FS + h * _FC)
+    """World (y, z) of a point at station s along the tine top surface (root at s = 0), offset h along local +Z."""
+    return (FORK_ROOT_Y + s * _FC + h * _FS, FORK_ROOT_Z - s * _FS + h * _FC)
 
 
 # --- centre bridge: floor plate under the servo + rear hollow cross member with a wire channel
@@ -159,9 +179,11 @@ BRIDGE_Y0 = POD_Y0
 BRIDGE_Y1 = 2.0
 XBAR_Y1 = POD_Y0 + 9.0                     # rear cross member front face
 XBAR_Z1 = 14.0                             # cross member top
-CHAN_W = 4.0                               # wire channel (Y) through the cross member
-CHAN_H = 4.5
+CHAN_W = 5.5                               # wire channel (Y) through the cross member
+CHAN_H = 6.0
 CHAN_Z0 = FLOOR_Z + 0.5
+CHAN_Y_INSET = 1.0
+HOUSE_UNDER_W = 5.5
 
 # --- servo lying on its side against the right pod, output axis along +X
 SERVO_X = -POD_XI + CLEAR + SERVO_H / 2
@@ -176,51 +198,82 @@ CRADLE_X1 = SERVO_X + SERVO_EAR_Z0 - CLEAR  # cradle end walls stop under the ea
 CRADLE_Z1 = SERVO_Z + SERVO_T / 2 - 2.0     # cradle walls rise to 2 mm below the servo top
 
 # --- arm + rake head (built in the pivot frame: arm along local +Y, rotated to ARM_REST_DEG about X)
-ARM_REST_DEG = 135.0                        # PHOTO: arm leans back about 45 deg at rest
-ARM_MIN_DEG = -95.0                         # swing forward (hammer / grab stroke)
+# Under Rot(110, 0, 0): local +Y points UP (+Z) and slightly BACK (-Y); local -Z points FORWARD (+Y) and slightly DOWN (-Z);
+# local +Z points BACKWARD (-Y) and slightly UP (+Z).
+ARM_REST_DEG = 110.0                        # PHOTO: arm bar leans back ~20 deg from vertical
+ARM_MIN_DEG = -80.0                         # swing forward (hammer / grab stroke)
 HUB_R_ARM = 4.6
 HUB_X0 = SERVO_FACE_X + 0.3
 HUB_X1 = POD_XI - 1.2
 ARM_X = (HUB_X0 + HUB_X1) / 2
-ARM_T = HUB_X1 - HUB_X0                     # arm thickness along X
-ARM_L = 54.0                                # pivot to head centre
-ARM_W = 8.0                                 # arm width in its plane
-ARM_ROOT_W = 9.0
-HEAD_W = 94.0                               # PHOTO: rake about as wide as the robot
-HEAD_RO = 18.0
-HEAD_RI = 12.0
-HEAD_GAP_DEG = (-160.0, -70.0)              # opening facing forward/downward in rest pose
+ARM_T = HUB_X1 - HUB_X0                     # arm hub width along X
+ARM_BAR_X1 = 8.5                            # right-hand (+X) face of the central arm post
+ARM_L = 52.0                                # pivot to ring centre along local +Y
+ARM_W = 9.2                                 # PHOTO: thick sturdy arm bar in side view
+ARM_ROOT_W = 8.4
+HEAD_W = 76.0                               # PHOTO: 5-tine rake width spanning across the pods
+HEAD_RO = 20.5
+HEAD_RI = 15.0
+HEAD_DZ = -4.5                              # ring centre slightly forward of the arm bar axis so the arm bar joins the bottom-rear of the C-arch
+HEAD_GAP_DEG = (-225.0, -45.0)              # 180 deg open front-bottom mouth (-225 deg = +135 deg around to -45 deg through -135 deg)
 TINES = 5
-TINE_T = 7.0
-SPINE_DEPTH = 1.5                           # spine depth beyond the inner ring radius (towards the arm)
-TAIL_L = 13.0                               # PHOTO: pointed tail on the ring end
+TINE_T = 8.0
+SPINE_DEPTH = 4.0                           # spine depth near the arm junction
+SPINE_DY0 = -19.5
+SPINE_DY1 = -13.5
+SPINE_DZ0 = 1.0
+SPINE_DZ1 = 9.0
+TAIL_ANG0 = 105.0
+TAIL_ANG1 = 135.0
+TAIL_PTS = (
+    (-11.5, 19.5),
+    (-16.0, 22.8),
+    (-19.5, 26.2),
+    (-21.2, 28.0),
+    (-22.2, 26.5),
+    (-20.5, 16.5),
+    (-19.5, 1.0),
+    (-13.5, 1.0),
+)
+TAIL_L = 13.0                               # PHOTO: curved lower rear tail on each tine
 TAIL_TIP_W = 1.2
 SPINE_X0 = -HEAD_W / 2
+
+# --- wheel spoke cutouts
+WHEEL_SPOKES = 3
+WHEEL_SPOKE_PHASE = 30.0
+WHEEL_WIN_IN_PAD = 0.8
+WHEEL_WIN_OUT_PAD = 0.8
+WHEEL_WIN_ANG_IN = 34.0
+WHEEL_WIN_ANG_OUT = 38.0
 
 # --- electronics
 BAT_X = POD_XC
 BAT_Y = (WHEEL_YR + HOUSE_HALF_Y + WHEEL_YF - HOUSE_HALF_Y) / 2
 BAT_Z = FLOOR_Z + BAT_H / 2
+BAT_RIM_REAR_TRIM = 4.5
 ESC_X = -(POD_IN_XO - CLEAR - ESC_W / 2)
 ESC_Y = BAT_Y
 ESC_Z = FLOOR_Z + ESC_H / 2
 SW_X = -(POD_IN_XI + CLEAR + SW_W / 2)
 SW_Y = BAT_Y
+SW_TRAY_HALF_Y = 1.2
 SWITCH_POKE_Z = 0.5
 SW_Z = LID_Z1 + SWITCH_POKE_Z - SW_BB.max.Z
-BAY_WALL_H = 4.0                            # low locating walls round the battery / ESC
+BAY_WALL_H = 2.5                            # low locating walls round the battery (top at 6.0 mm, below motor wire tunnel at 6.95 mm)
 BAY_FIT = 0.25
 
-# --- lids + inserts
+# --- lids + inserts (PHOTO: button-head lid screws sit near the INNER edge of each pod lid)
 LID_INSET = 4.0
-LID_PAD_X = POD_XO - LID_INSET
+LID_PAD_X = POD_XI + LID_INSET
 LID_PAD_D = 6.5
 LID_PAD_H = 6.0
-LID_SCREWS_Y = (POD_Y0 + LID_INSET, NOSE_Y0 - LID_INSET)
+LID_BORE_EXTRA = 2.2
+LID_SCREWS_Y = (POD_Y0 + 6.0, NOSE_Y0 - 5.0)
 LID_Y0, LID_Y1 = POD_Y0, NOSE_Y0
 LID_SLOT_R = 0.5
 
-OVERALL_L = FORK_TIP_Y + FORK_TIP_L * 0  # front reference (tips) only; rear set by the arm head
+OVERALL_L = FORK_TIP_Y
 
 
 def check():
