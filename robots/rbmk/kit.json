@@ -1,0 +1,70 @@
+{
+ "robot_type": "horizontal_spinner",
+ "body": {
+  "length": 70,
+  "width": 80,
+  "height": 30,
+  "ramp": 0,
+  "plan": "pentagon",
+  "front_width": 40,
+  "nose": 25
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 11,
+  "width": 8,
+  "y": [
+   -10
+  ],
+  "outside": false
+ },
+ "weapon": {
+  "kind": "bar",
+  "radius": 34,
+  "width": 3,
+  "y": 20,
+  "teeth": 2,
+  "x": 44,
+  "bar_width": 10,
+  "z": 4,
+  "axis": "z"
+ },
+ "colors": {
+  "body": "#cfe0da",
+  "wheel": "#202226",
+  "weapon": "#1c1c1f",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "box": [
+    68,
+    10,
+    3
+   ],
+   "at": [
+    -44,
+    20,
+    15
+   ],
+   "id": "bar2",
+   "color": "#1c1c1f"
+  },
+  {
+   "cyl": [
+    9,
+    14
+   ],
+   "at": [
+    20,
+    36,
+    12
+   ],
+   "axis": "z",
+   "mirror": true,
+   "id": "motor",
+   "color": "#2a7fb8"
+  }
+ ],
+ "name": "rbmk"
+}

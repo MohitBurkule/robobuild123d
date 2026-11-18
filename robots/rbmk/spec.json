@@ -1,0 +1,410 @@
+{
+ "name": "rbmk",
+ "profile": "aws2025",
+ "robot_type": "horizontal_spinner",
+ "locomotion": "wheels",
+ "kit_draft": true,
+ "parts": [
+  {
+   "id": "chassis",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "intersect",
+    "items": [
+     {
+      "type": "place",
+      "shape": {
+       "type": "prism",
+       "points": [
+        [
+         -35.0,
+         0.0
+        ],
+        [
+         35.0,
+         0.0
+        ],
+        [
+         35.0,
+         1.5
+        ],
+        [
+         35.0,
+         30.0
+        ],
+        [
+         -35.0,
+         30.0
+        ]
+       ],
+       "height": 80.0
+      },
+      "at": [
+       0.0,
+       0.0,
+       -9.0
+      ],
+      "rot": [
+       90.0,
+       0.0,
+       90.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "prism",
+       "points": [
+        [
+         -40.0,
+         -35.0
+        ],
+        [
+         40.0,
+         -35.0
+        ],
+        [
+         40.0,
+         10.0
+        ],
+        [
+         20.0,
+         35.0
+        ],
+        [
+         -20.0,
+         35.0
+        ],
+        [
+         -40.0,
+         10.0
+        ]
+       ],
+       "height": 50.0
+      },
+      "at": [
+       0.0,
+       0.0,
+       6.0
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ]
+     }
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#cfe0da",
+   "print_orientation": "+z"
+  },
+  {
+   "id": "weapon",
+   "kind": "weapon",
+   "material": "steel",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -34.0,
+       -3.0
+      ],
+      [
+       -31.0,
+       -5.0
+      ],
+      [
+       28.0,
+       -5.0
+      ],
+      [
+       34.0,
+       -1.0
+      ],
+      [
+       34.0,
+       3.0
+      ],
+      [
+       31.0,
+       5.0
+      ],
+      [
+       -28.0,
+       5.0
+      ],
+      [
+       -34.0,
+       1.0
+      ]
+     ],
+     "height": 3.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    44.0,
+    20.0,
+    4.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "color": "#1c1c1f",
+   "weapon": {
+    "kind": "bar",
+    "spin_axis": [
+     0,
+     0,
+     1
+    ],
+    "teeth": 2,
+    "cells": 2,
+    "reduction": 1.0
+   },
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     0,
+     0,
+     1
+    ],
+    "pivot": [
+     44.0,
+     20.0,
+     4.0
+    ],
+    "min": 0,
+    "max": 360,
+    "default": 0
+   }
+  },
+  {
+   "id": "wheel_l0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 11.0,
+     "height": 8.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    35.5,
+    -10.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "wheel_r0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 11.0,
+     "height": 8.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -35.5,
+    -10.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "bar2",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      68,
+      10,
+      3
+     ]
+    },
+    "at": [
+     -44,
+     20,
+     4.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#1c1c1f"
+  },
+  {
+   "id": "motor_l",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 9,
+     "height": 14
+    },
+    "at": [
+     20,
+     36,
+     1.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#2a7fb8"
+  },
+  {
+   "id": "motor_r",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 9,
+     "height": 14
+    },
+    "at": [
+     -20,
+     36,
+     1.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#2a7fb8"
+  }
+ ],
+ "fasteners": [],
+ "wires": [],
+ "connections": [],
+ "reference": [
+  {
+   "image": "reference/rbmk.aws71.webp",
+   "mask": "reference/rbmk.aws71_mask.png",
+   "view": "iso",
+   "approximate": true
+  },
+  {
+   "image": "reference/rbmk.aws74.webp",
+   "mask": "reference/rbmk.aws74_mask.png",
+   "view": "iso",
+   "approximate": true
+  },
+  {
+   "image": "reference/rbmk.aws76.webp",
+   "mask": "reference/rbmk.aws76_mask.png",
+   "view": "iso",
+   "approximate": true
+  }
+ ]
+}
