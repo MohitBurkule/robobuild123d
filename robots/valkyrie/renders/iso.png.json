@@ -1,0 +1,16 @@
+{
+ "spec": "/tmp/work10_valkyrie/robots/valkyrie/spec.json",
+ "rendered_at": 1795020894.2038422,
+ "bodies": [
+  "chassis",
+  "weapon",
+  "wheel_l0",
+  "wheel_r0",
+  "cheek_l",
+  "hub_l",
+  "cheek_r",
+  "hub_r",
+  "top_plate"
+ ],
+ "wires": {}
+}

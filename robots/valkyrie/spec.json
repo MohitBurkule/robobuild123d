@@ -1,0 +1,653 @@
+{
+ "name": "valkyrie",
+ "profile": "aws2025",
+ "robot_type": "drum",
+ "locomotion": "wheels",
+ "kit_draft": true,
+ "parts": [
+  {
+   "id": "chassis",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -50,
+       -25
+      ],
+      [
+       -30,
+       -45
+      ],
+      [
+       30,
+       -45
+      ],
+      [
+       50,
+       -25
+      ],
+      [
+       50,
+       25
+      ],
+      [
+       -50,
+       25
+      ]
+     ],
+     "height": 22
+    },
+    "at": [
+     0,
+     0,
+     0.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#2fa77a"
+  },
+  {
+   "id": "weapon",
+   "kind": "weapon",
+   "material": "aluminium",
+   "process": "cnc",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "spline_prism",
+     "points": [
+      [
+       8.0,
+       0.0
+      ],
+      [
+       7.854,
+       1.034
+      ],
+      [
+       7.576,
+       2.03
+      ],
+      [
+       7.174,
+       2.971
+      ],
+      [
+       6.657,
+       3.843
+      ],
+      [
+       6.036,
+       4.631
+      ],
+      [
+       5.324,
+       5.324
+      ],
+      [
+       4.536,
+       5.911
+      ],
+      [
+       3.686,
+       6.385
+      ],
+      [
+       2.791,
+       6.739
+      ],
+      [
+       1.868,
+       6.97
+      ],
+      [
+       0.932,
+       7.076
+      ],
+      [
+       0.0,
+       7.059
+      ],
+      [
+       -0.911,
+       6.921
+      ],
+      [
+       -1.786,
+       6.667
+      ],
+      [
+       -2.611,
+       6.304
+      ],
+      [
+       -3.373,
+       5.841
+      ],
+      [
+       -4.058,
+       5.289
+      ],
+      [
+       -4.659,
+       4.659
+      ],
+      [
+       -5.165,
+       3.963
+      ],
+      [
+       -5.57,
+       3.216
+      ],
+      [
+       -6.159,
+       2.551
+      ],
+      [
+       -6.869,
+       1.84
+      ],
+      [
+       -7.491,
+       0.986
+      ],
+      [
+       -8.0,
+       0.0
+      ],
+      [
+       -7.854,
+       -1.034
+      ],
+      [
+       -7.576,
+       -2.03
+      ],
+      [
+       -7.174,
+       -2.971
+      ],
+      [
+       -6.657,
+       -3.843
+      ],
+      [
+       -6.036,
+       -4.631
+      ],
+      [
+       -5.324,
+       -5.324
+      ],
+      [
+       -4.536,
+       -5.911
+      ],
+      [
+       -3.686,
+       -6.385
+      ],
+      [
+       -2.791,
+       -6.739
+      ],
+      [
+       -1.868,
+       -6.97
+      ],
+      [
+       -0.932,
+       -7.076
+      ],
+      [
+       -0.0,
+       -7.059
+      ],
+      [
+       0.911,
+       -6.921
+      ],
+      [
+       1.786,
+       -6.667
+      ],
+      [
+       2.611,
+       -6.304
+      ],
+      [
+       3.373,
+       -5.841
+      ],
+      [
+       4.058,
+       -5.289
+      ],
+      [
+       4.659,
+       -4.659
+      ],
+      [
+       5.165,
+       -3.963
+      ],
+      [
+       5.57,
+       -3.216
+      ],
+      [
+       6.159,
+       -2.551
+      ],
+      [
+       6.869,
+       -1.84
+      ],
+      [
+       7.491,
+       -0.986
+      ]
+     ],
+     "height": 80.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0.0,
+    42.0,
+    -3.0
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "color": "#d9dde2",
+   "weapon": {
+    "kind": "drum",
+    "spin_axis": [
+     0,
+     0,
+     1
+    ],
+    "teeth": 2,
+    "cells": 2,
+    "reduction": 1.0
+   },
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "pivot": [
+     0.0,
+     42.0,
+     -3.0
+    ],
+    "min": 0,
+    "max": 360,
+    "default": 0
+   }
+  },
+  {
+   "id": "wheel_l0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 13.0,
+     "height": 10.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    44.5,
+    -8.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "wheel_r0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 13.0,
+     "height": 10.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -44.5,
+    -8.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "cheek_l",
+   "kind": "armor",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       25,
+       -12
+      ],
+      [
+       54,
+       -12
+      ],
+      [
+       54,
+       -1
+      ],
+      [
+       44,
+       11
+      ],
+      [
+       25,
+       11
+      ]
+     ],
+     "height": 7
+    },
+    "at": [
+     46.5,
+     0.0,
+     0.0
+    ],
+    "rot": [
+     90.0,
+     0.0,
+     90.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#2fa77a"
+  },
+  {
+   "id": "hub_l",
+   "kind": "other",
+   "material": "aluminium",
+   "process": "cnc",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 6,
+     "height": 6
+    },
+    "at": [
+     38,
+     42,
+     -3
+    ],
+    "rot": [
+     0.0,
+     90.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#2146c7"
+  },
+  {
+   "id": "cheek_r",
+   "kind": "armor",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       25,
+       -12
+      ],
+      [
+       54,
+       -12
+      ],
+      [
+       54,
+       -1
+      ],
+      [
+       44,
+       11
+      ],
+      [
+       25,
+       11
+      ]
+     ],
+     "height": 7
+    },
+    "at": [
+     -46.5,
+     0.0,
+     0.0
+    ],
+    "rot": [
+     90.0,
+     0.0,
+     90.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#2fa77a"
+  },
+  {
+   "id": "hub_r",
+   "kind": "other",
+   "material": "aluminium",
+   "process": "cnc",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 6,
+     "height": 6
+    },
+    "at": [
+     -38,
+     42,
+     -3
+    ],
+    "rot": [
+     0.0,
+     90.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#2146c7"
+  },
+  {
+   "id": "top_plate",
+   "kind": "plate",
+   "material": "polycarbonate",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -50,
+       -25
+      ],
+      [
+       -30,
+       -45
+      ],
+      [
+       30,
+       -45
+      ],
+      [
+       50,
+       -25
+      ],
+      [
+       50,
+       20
+      ],
+      [
+       -50,
+       20
+      ]
+     ],
+     "height": 1.5
+    },
+    "at": [
+     0,
+     0,
+     11.75
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#cfe8de"
+  }
+ ],
+ "fasteners": [],
+ "wires": [],
+ "connections": [],
+ "reference": [
+  {
+   "image": "reference/valkyrie.aws71.webp",
+   "mask": "reference/valkyrie.aws71_mask.png",
+   "view": "iso",
+   "approximate": true
+  },
+  {
+   "image": "reference/valkyrie.aws74.webp",
+   "mask": "reference/valkyrie.aws74_mask.png",
+   "view": "iso",
+   "approximate": true
+  }
+ ]
+}

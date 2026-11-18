@@ -1,0 +1,29 @@
+{
+ "name": "valkyrie",
+ "robot_type": "drum",
+ "body": {
+  "length": 70,
+  "width": 100,
+  "height": 22,
+  "ramp": 0,
+  "clearance": 2
+ },
+ "weapon": {
+  "kind": "drum",
+  "radius": 8,
+  "width": 80,
+  "y": 42,
+  "z": -3,
+  "axis": "x",
+  "teeth": 2
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 13,
+  "width": 10,
+  "y": [
+   -8
+  ],
+  "outside": false
+ }
+}
