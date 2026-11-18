@@ -9,3 +9,8 @@
 Decisions: type wedge; body box rect 85x58x26 mm, ramp 0; wheels 4 r13 outboard; weapon none; extra parts: lid; textured masks for indices [0].
 
 Likeness: likeness crashed (see STRUGGLES).
+
+## Round 2 (looks)
+Decisions: type wedge; body box rect 85x58x26 mm, ramp 0; wheels 4 r13 outboard; weapon none; extra parts: lid.
+
+Likeness: aws63 0.82 (FAIL).

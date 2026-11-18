@@ -2,7 +2,7 @@
  "name": "surprisefuthermucker",
  "profile": "aws2025",
  "robot_type": "wedge",
- "locomotion": "wheels",
+ "locomotion": "roller",
  "kit_draft": true,
  "parts": [
   {
