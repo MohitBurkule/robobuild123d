@@ -15,7 +15,9 @@
   "grandmaster_smash.aws73.webp": "front_left_iso"
  },
  "elevation": {
-  "grandmaster_smash.aws72.webp": 45,
   "grandmaster_smash.aws73.webp": 45
+ },
+ "view_source": {
+  "grandmaster_smash.aws72.webp": "user camera pick (azimuth 45, elevation 35); replaces the automatic label"
  }
 }
