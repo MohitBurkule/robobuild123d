@@ -24,3 +24,8 @@ Same likeness crash on weapon.axis for lifter (axis dropped). aws63 (arena backg
 
 ## Verdict
 Looks alike: **yes**. Renders: `renders/iso.png`, `renders/top.png`.
+
+## Round 2 (looks)
+Lower body with top slot, bigger outboard wheels, long black wedge skirts, smaller lifter panel with clear lip, angled clear wheel guards. Axis restored.
+
+Likeness: aws72 0.82 (FAIL), aws76 0.84 (ok).

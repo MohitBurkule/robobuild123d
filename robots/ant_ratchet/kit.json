@@ -4,7 +4,7 @@
  "body": {
   "length": 100,
   "width": 84,
-  "height": 36,
+  "height": 32,
   "ramp": 45,
   "clearance": 2
  },
@@ -23,6 +23,6 @@
   "n": 2,
   "length": 22,
   "width": 12,
-  "spread": 100
+  "spread": 104
  }
 }
