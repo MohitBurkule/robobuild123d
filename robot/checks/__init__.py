@@ -275,7 +275,12 @@ def _base_key(r, opts) -> str:
 
 
 def _group_key(name, r, opts, base_key):
-    return cache.h("group", name, base_key) if base_key else None
+    if not base_key:
+        return None
+    if name == "likeness":  # also reads the folder: reference/ photos, REFERENCE.json, sibling robots' specs
+        from . import likeness
+        return cache.h("group", name, base_key, likeness.folder_key(r.spec))
+    return cache.h("group", name, base_key)
 
 
 def _progress(name, t0, how, findings=()):
