@@ -1,19 +1,28 @@
 {
  "spec": "/tmp/work10_smart_ant_5/robots/smart_ant_5/spec.json",
- "rendered_at": 1795036444.249181,
+ "rendered_at": 1795038117.4938245,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
   "lip",
+  "battery_pack",
+  "receiver",
+  "hinge_block",
+  "hinge_pin",
   "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_nut_wheel_l0",
   "dt_hub_wheel_r0",
-  "dt_strut_lip",
-  "dm_wheel_l0",
-  "dm_wheel_r0",
-  "el_battery",
-  "el_esc",
-  "el_switch"
+  "dt_axle_wheel_r0",
+  "dt_nut_wheel_r0",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3",
+  "dt_screw_4",
+  "dt_screw_5",
+  "dt_strut_lip"
  ],
  "wires": {}
 }

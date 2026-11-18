@@ -9,12 +9,9 @@
  ],
  "mask_mode": {},
  "view": {
-  "smart_ant_5_.aws58.webp": "top",
-  "smart_ant_5_.aws61.webp": "front",
-  "smart_ant_5_.aws63.webp": "front_left_iso"
+  "smart_ant_5_.aws61.webp": "front"
  },
- "elevation": {
-  "smart_ant_5_.aws61.webp": 45,
-  "smart_ant_5_.aws63.webp": 45
+ "view_source": {
+  "smart_ant_5_.aws61.webp": "user camera pick (azimuth 90, elevation 35); replaces the automatic label"
  }
 }

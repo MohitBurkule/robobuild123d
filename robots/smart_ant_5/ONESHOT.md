@@ -40,3 +40,8 @@ Left (and why):
 - wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): smart_ant_5_.aws61.webp 0.83 -> 0.82
+
+## Round 3d (user camera picks batch 2 + shape remarks applied; round 4 to be re-run on the new outside)
+Decisions: type wedge; body box trapezoid 92x78x44 mm, ramp 82; wheels 2 r14 outboard; weapon none; extra parts: lip, slot00, slot01, slot02, slot03, slot04, slot05, slot10, slot11, slot12, slot13, slot14, slot15, slot20, slot21, slot22, slot23, slot24, slot25, bay, battery_pack, receiver, hinge_block, hinge_pin; photos skipped (cluttered): indices [0, 2]; textured masks for indices [1].
+
+Likeness: aws61 0.83 (ok).
