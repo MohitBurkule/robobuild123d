@@ -17,7 +17,7 @@
  },
  "forks": {
   "n": 4,
-  "length": 44,
+  "length": 32,
   "width": 8,
   "spread": 60,
   "tilt_deg": 12
@@ -40,19 +40,18 @@
      2
     ],
     [
-     20,
-     34
+     10,
+     40
     ],
     [
      -30,
-     34
+     40
     ]
    ],
    "x": [
     56,
     60
    ],
-   "mirror": true,
    "kind": "armor",
    "id": "side_fin",
    "color": "#1c1d20"

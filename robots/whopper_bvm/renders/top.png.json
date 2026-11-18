@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_whopper_bvm/robots/whopper_bvm/spec.json",
- "rendered_at": 1795022343.459754,
+ "rendered_at": 1795023371.472465,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -9,8 +9,7 @@
   "fork_1",
   "fork_2",
   "fork_3",
-  "side_fin_l",
-  "side_fin_r",
+  "side_fin",
   "arm"
  ],
  "wires": {}
