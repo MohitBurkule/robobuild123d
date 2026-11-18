@@ -105,3 +105,8 @@ Scope: rough CAD attempt from the three AWS photos in `reference/`, about 20 min
 - Likeness: aws63 PASS (0.82 vs 0.80), aws57 FAIL by rounding (0.83 vs hspin_bar 0.83; rear third 0.69 worst). 1 blocker.
 - Verify/fasteners not run this round (told to skip). Blocker count unknown.
 - Struggles: aws57 plateaus at 0.83 whatever the length/width; photo has open top and black bars the generator cannot express; likeness takes ~100 s per round.
+
+## Round 2 (kit, looks only)
+- Rebuilt with `robot kit` (robots/bolt/kit.json: 112x104x32 box, ramp 56, 4 wheels r14, no weapon) + reference entries.
+- Likeness: aws63 PASS 0.86; aws57 FAIL 0.80 (needs 0.83 vs hspin_bar). 1 blocker. Length/width/ramp sweeps plateau at 0.78-0.80.
+- Remaining differences: photo has open top, black side bars, clear plastic plow, rounded rear; kit gives a plain wedge block. Kit lacks open-top/bars/clear plow. diff-photo needs a key; read sheet myself. Verify not run.

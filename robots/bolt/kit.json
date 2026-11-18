@@ -1,0 +1,4 @@
+{"name":"Bolt","robot_type":"wedge",
+ "body":{"length":112,"width":104,"height":32,"ramp":56,"style":"box","clearance":2},
+ "weapon":{"kind":"none"},
+ "wheels":{"n":4,"radius":14,"width":10,"y":[-38,32],"outside":true}}
