@@ -22,5 +22,13 @@
    0.5,
    1
   ]
+ },
+ "view": {
+  "slice_and_dice.aws64.webp": "front",
+  "slice_and_dice.aws72.webp": "front"
+ },
+ "elevation": {
+  "slice_and_dice.aws64.webp": 70,
+  "slice_and_dice.aws72.webp": 70
  }
 }

@@ -23,7 +23,25 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "crop": {
+  "0": [
+   0,
+   0,
+   0.5,
+   1
+  ],
+  "1": [
+   0,
+   0,
+   0.5,
+   1
+  ]
+ },
+ "name": "slice and dice",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "box": [
     10,
@@ -63,23 +81,5 @@
    "color": "#f4f4f4",
    "id": "eye_r"
   }
- ],
- "crop": {
-  "0": [
-   0,
-   0,
-   0.5,
-   1
-  ],
-  "1": [
-   0,
-   0,
-   0.5,
-   1
-  ]
- },
- "name": "slice and dice",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }

@@ -1,0 +1,123 @@
+BLOCKERS: 45
+  [ran] integrity 0.08s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 2.01s
+  [ran] connections 1.09s
+  [ran] legal 0.01s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.02s
+  [ran] shape 0.20s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.60s
+  [ran] process 0.00s
+  [ran] electrical 0.00s
+  [ran] combat 0.04s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 2.15s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.02s
+  [ran] dfm 0.00s
+  [ran] realworld 0.00s
+slice and dice: ok=False 45 blockers in 42 root causes, mass 97.9/75 g
+1. [proxy.interference] `chassis` and `dt_screw_0` overlap by 0.19 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | chassis: x -42.00..42.00  y -35.00..35.00  z -9.00..13.00  size 84.00 x 70.00 x 22.00 mm
+   |   centre (0.00, -0.00, 2.00), volume 87780.0 mm3
+   |   OVERLAP `clamp` 2.38 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_r0` 1.26 mm (allowed 0.08)
+2. [connection.floating] `dt_screw_0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | dt_screw_0: x -36.90..-33.10  y -29.90..-26.10  z 12.60..14.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (-35.00, -28.00, 13.30), volume 15.9 mm3
+   |   OVERLAP `chassis` 0.19 mm (allowed 0.08)
+   | chassis: x -42.00..42.00  y -35.00..35.00  z -9.00..13.00  size 84.00 x 70.00 x 22.00 mm
+   |   centre (0.00, -0.00, 2.00), volume 87780.0 mm3
+3. [mfg.stock] `dt_screw_0`: bought part with free geometry and no catalog SKU or stock rod/bearing match. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Use a catalog part, or size it to a stock rod/bearing and name it in `stock`.
+   | dt_screw_0: x -36.90..-33.10  y -29.90..-26.10  z 12.60..14.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (-35.00, -28.00, 13.30), volume 15.9 mm3
+   |   OVERLAP `chassis` 0.19 mm (allowed 0.08)
+   | dt_screw_1: x 33.10..36.90  y -29.90..-26.10  z 12.60..14.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (35.00, -28.00, 13.30), volume 15.9 mm3
+4. [integrity.solids] `eye_l` has 1 closed solid(s) and 2 open/invalid shell(s), expected 1 (268 mm3). A boolean or fillet probably collapsed the build.
+   fix: Check the last CAD op (fillet/cut order); or declare `solids` with `solids_reason`.
+   | eye_l: x -14.00..-6.00  y 6.00..14.00  z 11.00..19.00  size 8.00 x 8.00 x 8.00 mm
+   |   centre (-10.00, 10.00, 15.00), volume 268.1 mm3
+   |   OVERLAP `chassis` 0.93 mm (allowed 0.08)
+5. [integrity.solids] `eye_r` has 1 closed solid(s) and 2 open/invalid shell(s), expected 1 (268 mm3). A boolean or fillet probably collapsed the build.
+   fix: Check the last CAD op (fillet/cut order); or declare `solids` with `solids_reason`.
+   | eye_r: x 6.00..14.00  y 6.00..14.00  z 11.00..19.00  size 8.00 x 8.00 x 8.00 mm
+   |   centre (10.00, 10.00, 15.00), volume 268.1 mm3
+   |   OVERLAP `chassis` 0.93 mm (allowed 0.08)
+6. [mass.over] 97.9 g (range 78.4 to 117.3 g) against the 75 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+7. [proxy.interference] `chassis` and `clamp` overlap by 2.38 mm (allowed 0.08).
+   | chassis: x -42.00..42.00  y -35.00..35.00  z -9.00..13.00  size 84.00 x 70.00 x 22.00 mm
+   |   centre (0.00, -0.00, 2.00), volume 87780.0 mm3
+   |   OVERLAP `clamp` 2.38 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_r0` 1.26 mm (allowed 0.08)
+8. [proxy.interference] `chassis` and `eye_l` overlap by 0.93 mm (allowed 0.08).
+   | chassis: x -42.00..42.00  y -35.00..35.00  z -9.00..13.00  size 84.00 x 70.00 x 22.00 mm
+   |   centre (0.00, -0.00, 2.00), volume 87780.0 mm3
+   |   OVERLAP `clamp` 2.38 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_r0` 1.26 mm (allowed 0.08)
+9. [proxy.interference] `chassis` and `eye_r` overlap by 0.93 mm (allowed 0.08).
+   | chassis: x -42.00..42.00  y -35.00..35.00  z -9.00..13.00  size 84.00 x 70.00 x 22.00 mm
+   |   centre (0.00, -0.00, 2.00), volume 87780.0 mm3
+   |   OVERLAP `clamp` 2.38 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_r0` 1.26 mm (allowed 0.08)
+10. [proxy.interference] `chassis` and `dt_axle_wheel_l0` overlap by 1.26 mm (allowed 0.08).
+   | chassis: x -42.00..42.00  y -35.00..35.00  z -9.00..13.00  size 84.00 x 70.00 x 22.00 mm
+   |   centre (0.00, -0.00, 2.00), volume 87780.0 mm3
+   |   OVERLAP `clamp` 2.38 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_r0` 1.26 mm (allowed 0.08)
+11. [proxy.interference] `chassis` and `dt_axle_wheel_r0` overlap by 1.26 mm (allowed 0.08).
+   | chassis: x -42.00..42.00  y -35.00..35.00  z -9.00..13.00  size 84.00 x 70.00 x 22.00 mm
+   |   centre (0.00, -0.00, 2.00), volume 87780.0 mm3
+   |   OVERLAP `clamp` 2.38 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_r0` 1.26 mm (allowed 0.08)
+12. [proxy.interference] `wheel_l0` and `dt_hub_wheel_l0` overlap by 3.88 mm (allowed 0.08).
+   | wheel_l0: x 42.50..50.50  y -35.00..-13.00  z -11.00..11.00  size 8.00 x 21.99 x 22.00 mm
+   |   centre (46.50, -24.00, 0.00), volume 3041.1 mm3
+   |   OVERLAP `dt_hub_wheel_l0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
+   |   gap to `chassis` 0.50 mm
+... 30 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 97.9 g of 75 g (-22.9 g margin)
+    chassis                    83.57 g  fills 68% of its box  <- solid block? a tub should be a shell
+    wheel_l0                    3.10 g  fills 79% of its box
+    wheel_r0                    3.10 g  fills 79% of its box
+    clamp                       1.71 g  fills 100% of its box
+    dt_axle_wheel_r0            1.04 g  fills 79% of its box
+    dt_axle_wheel_l0            1.04 g  fills 79% of its box
+    dt_hub_wheel_l0             0.90 g  fills 79% of its box
+    dt_hub_wheel_r0             0.90 g  fills 79% of its box
+    dt_nut_wheel_l0             0.27 g  fills 79% of its box
+    dt_nut_wheel_r0             0.27 g  fills 79% of its box
+    eye_l                       0.26 g  fills 52% of its box
+    eye_r                       0.26 g  fills 52% of its box
+    dt_screw_0                  0.13 g  fills 79% of its box
+    dt_screw_1                  0.13 g  fills 79% of its box
+    mass.over: 97.9 g (range 78.4 to 117.3 g) against the 75 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 0 hit / 31 miss, inside 6 hit / 8 miss, likeness 2 hit / 0 miss, min_gap 27 hit / 19 miss, overlap 89 hit / 180 miss, part_check 1 hit / 0 miss, part_geom 14 hit / 0 miss, ray 0 hit / 70 miss

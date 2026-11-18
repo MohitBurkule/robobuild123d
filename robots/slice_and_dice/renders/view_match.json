@@ -1,0 +1,14 @@
+{
+ "slice_and_dice.aws64.webp": {
+  "view": "front",
+  "azimuth": 105,
+  "elevation": 25,
+  "iou": 0.356
+ },
+ "slice_and_dice.aws72.webp": {
+  "view": "front",
+  "azimuth": 75,
+  "elevation": 25,
+  "iou": 0.459
+ }
+}
