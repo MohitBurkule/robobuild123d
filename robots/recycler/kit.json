@@ -1,4 +1,64 @@
-{"name":"recycler","robot_type":"drum",
- "body":{"length":50,"width":84,"height":20,"ramp":0,"style":"box","clearance":4},
- "weapon":{"kind":"drum","radius":15,"width":82,"y":36,"z":1,"axis":"x","teeth":0},
- "wheels":{"n":2,"radius":14,"width":11,"y":[-24],"outside":true}}
+{
+ "robot_type": "drum",
+ "body": {
+  "length": 62,
+  "width": 112,
+  "height": 34,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 17,
+  "width": 9,
+  "y": [
+   -12
+  ],
+  "x": 62
+ },
+ "weapon": {
+  "kind": "drum",
+  "radius": 15,
+  "width": 104,
+  "y": 34,
+  "teeth": 2,
+  "z": 17,
+  "axis": "x"
+ },
+ "colors": {
+  "body": "#22262a",
+  "wheel": "#e07a8a",
+  "weapon": "#3a3d40",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "box": [
+    60,
+    30,
+    6
+   ],
+   "at": [
+    0,
+    -5,
+    39
+   ],
+   "id": "lid",
+   "color": "#2a2e2c"
+  }
+ ],
+ "skip_photos": [
+  0,
+  1
+ ],
+ "ref": {
+  "robot_type": "drum",
+  "wheels": 2,
+  "weapon": {
+   "kind": "drum",
+   "axis": "x",
+   "position": "front",
+   "teeth": 2
+  }
+ },
+ "name": "recycler"
+}
