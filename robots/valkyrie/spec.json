@@ -348,24 +348,6 @@
        {
         "type": "place",
         "shape": {
-         "type": "cylinder",
-         "radius": 1.5,
-         "height": 20.1
-        },
-        "at": [
-         22.13,
-         29.05,
-         3.386
-        ],
-        "rot": [
-         -90.0,
-         -0.0,
-         0.0
-        ]
-       },
-       {
-        "type": "place",
-        "shape": {
          "type": "box",
          "size": [
           7.0,
@@ -1248,24 +1230,6 @@
          "rot": [
           -0.0,
           90.0,
-          0.0
-         ]
-        },
-        {
-         "type": "place",
-         "shape": {
-          "type": "cylinder",
-          "radius": 4.0,
-          "height": 25.1
-         },
-         "at": [
-          22.13,
-          29.05,
-          3.386
-         ],
-         "rot": [
-          -90.0,
-          -0.0,
           0.0
          ]
         },
@@ -2699,7 +2663,7 @@
    ],
    "color": "#2fa77a",
    "print_orientation": "+z",
-   "volume_mm3": 48309.0
+   "volume_mm3": 48317.0
   },
   {
    "id": "weapon",
@@ -2870,8 +2834,7 @@
     "teeth": 2,
     "cells": 2,
     "reduction": 1.0,
-    "motor": "weapon_motor",
-    "locking_bar": "lock_pin"
+    "motor": "weapon_motor"
    },
    "joint": {
     "kind": "revolute",
@@ -6439,31 +6402,6 @@
     0.0
    ],
    "catalog": "brotherhobby_tc1404_3800kv"
-  },
-  {
-   "id": "lock_pin",
-   "kind": "locking_bar",
-   "material": "steel",
-   "process": "cots",
-   "stock": "3 mm silver steel rod",
-   "color": "#d23a2a",
-   "tethered": true,
-   "shape": {
-    "type": "cylinder",
-    "radius": 1.5,
-    "height": 20.1
-   },
-   "at": [
-    22.13,
-    29.05,
-    3.386
-   ],
-   "rot": [
-    -90.0,
-    0.0,
-    -0.0
-   ],
-   "volume_mm3": 142.0
   }
  ],
  "fasteners": [
@@ -6648,12 +6586,6 @@
    "b": "chassis",
    "method": "interlock",
    "reason": "motor stator flange sits in a keyed printed pocket closed by the lid, so it cannot turn or pull out"
-  },
-  {
-   "a": "lock_pin",
-   "b": "chassis",
-   "method": "pin",
-   "reason": "3 mm locking pin slides in a printed bore in the frame and stops the weapon; tethered by a lanyard so it cannot be lost"
   },
   {
    "a": "weapon",

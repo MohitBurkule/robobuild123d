@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_valkyrie/robots/valkyrie/spec.json",
- "rendered_at": 1795038751.3251505,
+ "rendered_at": 1795040276.777196,
  "bodies": [
   "chassis",
   "weapon",
@@ -25,7 +25,6 @@
   "el_wesc",
   "el_switch",
   "weapon_motor",
-  "lock_pin",
   "fs_top_plate_0",
   "fs_top_plate_1"
  ],
