@@ -1,0 +1,314 @@
+{
+ "name": "ripper remix",
+ "profile": "aws2025",
+ "robot_type": "flipper",
+ "locomotion": "wheels",
+ "kit_draft": true,
+ "parts": [
+  {
+   "id": "chassis",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "intersect",
+    "items": [
+     {
+      "type": "place",
+      "shape": {
+       "type": "prism",
+       "points": [
+        [
+         -42.5,
+         0.0
+        ],
+        [
+         42.5,
+         0.0
+        ],
+        [
+         42.5,
+         1.5
+        ],
+        [
+         12.5,
+         42.0
+        ],
+        [
+         -42.5,
+         42.0
+        ]
+       ],
+       "height": 92.0
+      },
+      "at": [
+       0.0,
+       0.0,
+       -9.0
+      ],
+      "rot": [
+       90.0,
+       0.0,
+       90.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "prism",
+       "points": [
+        [
+         -46.0,
+         -42.5
+        ],
+        [
+         46.0,
+         -42.5
+        ],
+        [
+         46.0,
+         17.5
+        ],
+        [
+         35.0,
+         42.5
+        ],
+        [
+         -35.0,
+         42.5
+        ],
+        [
+         -46.0,
+         17.5
+        ]
+       ],
+       "height": 62.0
+      },
+      "at": [
+       0.0,
+       0.0,
+       12.0
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ]
+     }
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#f2e21c",
+   "print_orientation": "+z"
+  },
+  {
+   "id": "wheel_l0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 11.0,
+     "height": 8.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    41.5,
+    -25.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "wheel_r0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 11.0,
+     "height": 8.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -41.5,
+    -25.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "scoop",
+   "kind": "wedge",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       36,
+       -11.0
+      ],
+      [
+       72,
+       -11.0
+      ],
+      [
+       72,
+       -8.0
+      ],
+      [
+       60,
+       11.0
+      ],
+      [
+       36,
+       13.0
+      ]
+     ],
+     "height": 112
+    },
+    "at": [
+     0.0,
+     0,
+     0
+    ],
+    "rot": [
+     90,
+     0,
+     90
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#f2e83a"
+  },
+  {
+   "id": "flipper",
+   "kind": "weapon",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      44,
+      70,
+      4
+     ]
+    },
+    "at": [
+     0,
+     -5,
+     34.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#f2e21c",
+   "weapon": {
+    "kind": "flipper"
+   },
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "pivot": [
+     0,
+     -40,
+     33.0
+    ],
+    "min": 0,
+    "max": 80,
+    "default": 0
+   }
+  }
+ ],
+ "fasteners": [],
+ "wires": [],
+ "connections": [],
+ "reference": [
+  {
+   "image": "reference/ripper_remix.aws72.webp",
+   "mask": "reference/ripper_remix.aws72_mask.png",
+   "view": "iso",
+   "approximate": true
+  },
+  {
+   "image": "reference/ripper_remix.aws77.webp",
+   "mask": "reference/ripper_remix.aws77_mask.png",
+   "view": "iso",
+   "approximate": true
+  }
+ ]
+}
