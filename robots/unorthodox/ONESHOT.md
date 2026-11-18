@@ -11,3 +11,8 @@
 Decisions: type lifter; body box rect 62x72x26 mm, ramp 0; wheels 2 r11 inboard; weapon none; extra parts: scoop, servo; photos skipped (cluttered): indices [0].
 
 Likeness: aws74 0.77 (FAIL), aws76 0.78 (FAIL).
+
+## Round 2 (looks)
+Decisions: type lifter; body box rect 62x72x26 mm, ramp 0; wheels 2 r11 inboard; weapon none; extra parts: scoop, servo; photos skipped (cluttered): indices [0].
+
+Likeness: aws74 0.77 (FAIL), aws76 0.78 (FAIL).
