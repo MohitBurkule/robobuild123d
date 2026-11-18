@@ -43,15 +43,15 @@ Fixed / changed (inside only, outside kept):
 - hollowed chassis (wall 2.5, form 0): 216.3 -> 76.0 cm3
 
 Left (and why):
+- integrity.solids x1: `chassis` has 0 closed solid(s) and 1 open/invalid shell(s), expected 1 (75195 mm3). A boolean or fillet probably collapsed the build.
 - proxy.interference x1: `chassis` and `scoop` overlap by 0.91 mm (allowed 0.08).
 - proxy.sweep x1: joint `scoop`: `scoop` hits `chassis` 0.91 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint scoop` lists the closest approach to every part.
 - power.weapon_motor x1: toolchain: lifters/flippers are servo or gear driven; the check wants a brushless kV for every weapon.
 - process.weapon_printed x1: toolchain: a printed lifter/flipper arm is judged like a spinner (needs hardened teeth); adding metal teeth changes the look.
 - electrical.battery_weapon_gap x1: toolchain: a limited-range arm is judged as a full revolution about its pivot; that cylinder covers the whole chassis.
-- wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
 - wire.rotor_clearance x4: toolchain: same full-revolution assumption; wires cannot leave a cylinder that covers the chassis.
 - likeness.view x1: looks, not in scope for this pass.
 - likeness.silhouette x1: looks, not in scope for this pass.
 - battery.rotor_gap x1: toolchain: same full-revolution assumption for a limited-range arm.
 
-Likeness (best silhouette IoU per photo, r3 -> r4): alpha.aws72.webp 0.28 -> 0.29
+Likeness (best silhouette IoU per photo, r3 -> r4): alpha.aws72.webp 0.61 -> 0.61
