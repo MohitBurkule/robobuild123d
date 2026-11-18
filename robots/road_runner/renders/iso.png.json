@@ -1,0 +1,15 @@
+{
+ "spec": "/tmp/work10_road_runner/robots/road_runner/spec.json",
+ "rendered_at": 1795022377.6267514,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "wheel_l1",
+  "wheel_r1",
+  "rear_wall",
+  "side_wall_l",
+  "side_wall_r"
+ ],
+ "wires": {}
+}

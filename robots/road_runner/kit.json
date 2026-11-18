@@ -1,0 +1,64 @@
+{
+ "robot_type": "wedge",
+ "body": {
+  "length": 100,
+  "width": 100,
+  "height": 24,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 11,
+  "width": 9,
+  "y": [
+   -30,
+   30
+  ],
+  "outside": false,
+  "x": 40
+ },
+ "colors": {
+  "body": "#a855e0",
+  "wheel": "#22262a",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "box": [
+    104,
+    4,
+    24
+   ],
+   "at": [
+    0,
+    -52,
+    13
+   ],
+   "id": "rear_wall",
+   "color": "#4a9fe8"
+  },
+  {
+   "box": [
+    4,
+    100,
+    24
+   ],
+   "at": [
+    52,
+    0,
+    13
+   ],
+   "mirror": true,
+   "id": "side_wall",
+   "color": "#4a9fe8"
+  }
+ ],
+ "skip_photos": [
+  0
+ ],
+ "name": "road runner",
+ "weapon": {
+  "kind": "none"
+ }
+}
