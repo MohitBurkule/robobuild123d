@@ -40,3 +40,9 @@ Decisions: type vertical_spinner; body box rect 80x44x36 mm, ramp 0; wheels 2 r3
 
 Likeness: aws72 0.63 (FAIL), aws74 0.65 (FAIL), aws76 0.60 (FAIL).
 Other likeness findings: [FAIL] likeness.weapon: Photos: bar turns about y; `weapon` turns about z (axis [0.0, 0.0, 1.0]). x = across the robot (horizontal drum/vertical disc), z = up (
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type vertical_spinner; body box rect 80x44x36 mm, ramp 0; wheels 2 r32 outboard; weapon bar r76 axis z teeth 2.
+
+Likeness: aws72 0.43 (FAIL), aws74 0.51 (FAIL), aws76 0.25 (FAIL).
+Other likeness findings: [FAIL] likeness.weapon: Photos: bar turns about y; `weapon` turns about z (axis [0.0, 0.0, 1.0]). x = across the robot (horizontal drum/vertical disc), z = up (; [FAIL] likeness.view: `reference/gyronino.aws72.webp` is declared `front_right_iso` (IoU 0.43 there) but the model matches it better from right (elevation 45, a; [FAIL] likeness.view: `reference/gyronino.aws74.webp` is declared `front_right_iso` (IoU 0.51 there) but the model matches it better from right (elevation 25, a; [FAIL] likeness.view: `reference/gyronino.aws76.webp` is declared `front_right_iso` (IoU 0.25 there) but the model matches it better from rear_right_iso (elevat

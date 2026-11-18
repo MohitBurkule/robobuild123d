@@ -1,0 +1,128 @@
+BLOCKERS: 64
+  [ran] integrity 0.03s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 0.48s
+  [ran] connections 0.44s
+  [ran] legal 0.00s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.01s
+  [ran] shape 0.09s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.52s
+  [ran] process 0.00s
+  [ran] electrical 0.00s
+  [ran] combat 0.08s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 3.44s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.06s
+  [ran] dfm 0.01s
+  [ran] realworld 0.00s
+gyronino: ok=False 64 blockers in 53 root causes, mass 316.7/225 g
+1. [mfg.stock] `dt_screw_0`: bought part with free geometry and no catalog SKU or stock rod/bearing match. Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   fix: Use a catalog part, or size it to a stock rod/bearing and name it in `stock`.
+   | dt_screw_0: x -17.86..-14.06  y -64.17..-60.37  z 7.94..9.34  size 3.80 x 3.80 x 1.40 mm
+   |   centre (-15.96, -62.27, 8.64), volume 15.9 mm3
+   |   OVERLAP `chassis` 0.33 mm (allowed 0.08)
+   | dt_screw_1: x 14.06..17.86  y -64.17..-60.37  z 7.94..9.34  size 3.80 x 3.80 x 1.40 mm
+   |   centre (15.96, -62.27, 8.64), volume 15.9 mm3
+2. [proxy.interference] `chassis` and `dt_screw_0` overlap by 0.33 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | chassis: x -21.00..21.00  y -67.31..13.58  z -25.82..29.39  size 42.00 x 80.88 x 55.20 mm
+   |   centre (0.00, -26.87, 1.79), volume 105672.0 mm3
+   |   OVERLAP `gyro_ring` 1.01 mm (allowed 0.08)
+   |   OVERLAP `dt_screw_0` 0.33 mm (allowed 0.08)
+   |   OVERLAP `dt_screw_1` 0.33 mm (allowed 0.08)
+3. [proxy.interference] `gyro_block` and `dt_screw_2` overlap by 0.28 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | gyro_block: x -30.00..30.00  y 2.81..36.66  z -8.99..42.84  size 60.00 x 33.85 x 51.83 mm
+   |   centre (0.00, 19.74, 16.93), volume 53760.0 mm3
+   |   OVERLAP `foot_l` 3.45 mm (allowed 0.08)
+   |   OVERLAP `foot_r` 3.45 mm (allowed 0.08)
+   |   OVERLAP `strut_l` 0.91 mm (allowed 0.08)
+4. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `nose_hub`. (+1 consequences)
+   | weapon: x -52.77..52.77  y 19.07..73.66  z -54.51..105.67  size 105.53 x 54.60 x 160.18 mm
+   |   centre (0.00, 46.36, 25.58), volume 9394.4 mm3
+   |   joint revolute axis [0, 0.9511, 0.309] pivot [0, 46.3648, 25.5794] range 0..360 default 0
+   |   OVERLAP `foot_l` 0.66 mm (allowed 0.08)
+   |   OVERLAP `nose_hub` 0.23 mm (allowed 0.08)
+5. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `foot_l`. (+1 consequences)
+   | weapon: x -52.77..52.77  y 19.07..73.66  z -54.51..105.67  size 105.53 x 54.60 x 160.18 mm
+   |   centre (0.00, 46.36, 25.58), volume 9394.4 mm3
+   |   joint revolute axis [0, 0.9511, 0.309] pivot [0, 46.3648, 25.5794] range 0..360 default 0
+   |   OVERLAP `foot_l` 0.66 mm (allowed 0.08)
+   |   OVERLAP `nose_hub` 0.23 mm (allowed 0.08)
+6. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `foot_r`. (+1 consequences)
+   | weapon: x -52.77..52.77  y 19.07..73.66  z -54.51..105.67  size 105.53 x 54.60 x 160.18 mm
+   |   centre (0.00, 46.36, 25.58), volume 9394.4 mm3
+   |   joint revolute axis [0, 0.9511, 0.309] pivot [0, 46.3648, 25.5794] range 0..360 default 0
+   |   OVERLAP `foot_l` 0.66 mm (allowed 0.08)
+   |   OVERLAP `nose_hub` 0.23 mm (allowed 0.08)
+7. [connection.floating] `weapon` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `nose_hub`, 0.0 mm away. (+1 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | weapon: x -52.77..52.77  y 19.07..73.66  z -54.51..105.67  size 105.53 x 54.60 x 160.18 mm
+   |   centre (0.00, 46.36, 25.58), volume 9394.4 mm3
+   |   joint revolute axis [0, 0.9511, 0.309] pivot [0, 46.3648, 25.5794] range 0..360 default 0
+   |   OVERLAP `foot_l` 0.66 mm (allowed 0.08)
+   |   OVERLAP `nose_hub` 0.23 mm (allowed 0.08)
+8. [connection.floating] `dt_screw_0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | dt_screw_0: x -17.86..-14.06  y -64.17..-60.37  z 7.94..9.34  size 3.80 x 3.80 x 1.40 mm
+   |   centre (-15.96, -62.27, 8.64), volume 15.9 mm3
+   |   OVERLAP `chassis` 0.33 mm (allowed 0.08)
+   | chassis: x -21.00..21.00  y -67.31..13.58  z -25.82..29.39  size 42.00 x 80.88 x 55.20 mm
+   |   centre (0.00, -26.87, 1.79), volume 105672.0 mm3
+9. [connection.floating] `dt_screw_2` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `gyro_block`, 0.0 mm away. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | dt_screw_2: x -17.86..-14.06  y 6.64..10.44  z 38.44..39.84  size 3.80 x 3.80 x 1.40 mm
+   |   centre (-15.96, 8.54, 39.14), volume 15.9 mm3
+   |   OVERLAP `gyro_block` 0.28 mm (allowed 0.08)
+   | gyro_block: x -30.00..30.00  y 2.81..36.66  z -8.99..42.84  size 60.00 x 33.85 x 51.83 mm
+   |   centre (0.00, 19.74, 16.93), volume 53760.0 mm3
+10. [mass.over] 316.7 g (range 272.6 to 360.9 g) against the 225 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+11. [proxy.interference] `chassis` and `gyro_ring` overlap by 1.01 mm (allowed 0.08).
+   | chassis: x -21.00..21.00  y -67.31..13.58  z -25.82..29.39  size 42.00 x 80.88 x 55.20 mm
+   |   centre (0.00, -26.87, 1.79), volume 105672.0 mm3
+   |   OVERLAP `gyro_ring` 1.01 mm (allowed 0.08)
+   |   OVERLAP `dt_screw_0` 0.33 mm (allowed 0.08)
+   |   OVERLAP `dt_screw_1` 0.33 mm (allowed 0.08)
+12. [proxy.interference] `weapon` and `nose_hub` overlap by 0.23 mm (allowed 0.08).
+   | weapon: x -52.77..52.77  y 19.07..73.66  z -54.51..105.67  size 105.53 x 54.60 x 160.18 mm
+   |   centre (0.00, 46.36, 25.58), volume 9394.4 mm3
+   |   joint revolute axis [0, 0.9511, 0.309] pivot [0, 46.3648, 25.5794] range 0..360 default 0
+   |   OVERLAP `foot_l` 0.66 mm (allowed 0.08)
+   |   OVERLAP `nose_hub` 0.23 mm (allowed 0.08)
+... 41 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 316.7 g of 225 g (-91.7 g margin)
+    chassis                   100.60 g  fills 56% of its box  <- solid block? a tub should be a shell
+    weapon                     74.22 g  fills 1% of its box
+    gyro_block                 51.18 g  fills 51% of its box
+    gyro_ring                  47.32 g  fills 3% of its box
+    bevel_gear                 11.19 g  fills 30% of its box
+    tail_cap                    9.72 g  fills 47% of its box
+    foot_l                      6.69 g  fills 30% of its box
+    foot_r                      6.69 g  fills 30% of its box
+    strut_l                     2.98 g  fills 56% of its box
+    strut_r                     2.98 g  fills 56% of its box
+    nose_hub                    1.47 g  fills 48% of its box
+    dt_screw_0                  0.13 g  fills 79% of its box
+    dt_screw_1                  0.13 g  fills 79% of its box
+    dt_screw_2                  0.13 g  fills 79% of its box
+    dt_screw_3                  0.13 g  fills 79% of its box
+    mass.over: 316.7 g (range 272.6 to 360.9 g) against the 225 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 10 hit / 0 miss, group 0 hit / 31 miss, inside 11 hit / 4 miss, likeness 3 hit / 0 miss, min_gap 114 hit / 49 miss, overlap 242 hit / 64 miss, part_check 2 hit / 0 miss, part_geom 15 hit / 0 miss, ray 55 hit / 12 miss

@@ -1,0 +1,20 @@
+{
+ "gyronino.aws72.webp": {
+  "view": "front_right_iso",
+  "azimuth": 15,
+  "elevation": 25,
+  "iou": 0.532
+ },
+ "gyronino.aws74.webp": {
+  "view": "front_right_iso",
+  "azimuth": 15,
+  "elevation": 25,
+  "iou": 0.599
+ },
+ "gyronino.aws76.webp": {
+  "view": "front_right_iso",
+  "azimuth": 15,
+  "elevation": 60,
+  "iou": 0.322
+ }
+}

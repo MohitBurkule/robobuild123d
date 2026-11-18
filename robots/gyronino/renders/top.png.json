@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_gyronino/robots/gyronino/spec.json",
- "rendered_at": 1795023507.5268526,
+ "rendered_at": 1795026685.027846,
  "bodies": [
   "chassis",
   "weapon",
@@ -12,7 +12,11 @@
   "foot_l",
   "strut_l",
   "foot_r",
-  "strut_r"
+  "strut_r",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3"
  ],
  "wires": {}
 }
