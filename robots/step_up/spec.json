@@ -2,7 +2,7 @@
  "name": "step up",
  "profile": "aws2025",
  "robot_type": "lifter",
- "locomotion": "wheels",
+ "locomotion": "roller",
  "kit_draft": true,
  "parts": [
   {
@@ -212,18 +212,18 @@
     "shape": {
      "type": "box",
      "size": [
-      40,
-      3,
-      55
+      28,
+      2,
+      58
      ]
     },
     "at": [
      0,
      44,
-     28.0
+     30.0
     ],
     "rot": [
-     -15,
+     -12,
      0,
      0
     ]
