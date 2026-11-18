@@ -3194,19 +3194,19 @@
   {
    "image": "reference/smashie_1.aws73.webp",
    "mask": "reference/smashie_1.aws73_mask.png",
-   "view": "iso",
+   "view": "rear_right_iso",
    "approximate": true
   },
   {
    "image": "reference/smashie_1.aws74.webp",
    "mask": "reference/smashie_1.aws74_mask.png",
-   "view": "iso",
+   "view": "rear_right_iso",
    "approximate": true
   },
   {
    "image": "reference/smashie_1.aws76.webp",
    "mask": "reference/smashie_1.aws76_mask.png",
-   "view": "iso",
+   "view": "front_right_iso",
    "approximate": true
   }
  ],

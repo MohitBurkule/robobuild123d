@@ -32,9 +32,9 @@
   ]
  },
  "view": {
-  "smashie_1.aws73.webp": "left",
-  "smashie_1.aws74.webp": "front",
-  "smashie_1.aws76.webp": "front_left_iso"
+  "smashie_1.aws73.webp": "rear_right_iso",
+  "smashie_1.aws74.webp": "rear_right_iso",
+  "smashie_1.aws76.webp": "front_right_iso"
  },
  "elevation": {
   "smashie_1.aws73.webp": 25,
