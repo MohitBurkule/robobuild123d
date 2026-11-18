@@ -1,0 +1,120 @@
+BLOCKERS: 14
+  [cached] integrity 0.00s
+  [cached] mass 0.00s
+  [proxy] interference 0.15s
+  [cached] connections 0.00s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.00s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.00s
+  [cached] physics 0.00s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [cached] likeness 0.00s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.00s
+  [cached] waiver_audit 0.00s
+  [cached] geom 0.00s
+  [cached] dfm 0.00s
+  [cached] realworld 0.00s
+divebomb: ok=False 14 blockers in 14 root causes, mass 166.6/150 g
+1. [mass.over] 166.6 g (range 147.8 to 185.3 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+2. [proxy.interference] `chassis` and `arm` overlap by 0.93 mm (allowed 0.08).
+   | chassis: x -49.33..49.33  y -31.00..31.00  z -7.00..7.00  size 98.66 x 62.00 x 14.00 mm
+   |   centre (0.00, 0.00, 0.00), volume 39811.8 mm3
+   |   OVERLAP `arm` 0.93 mm (allowed 0.08)
+   |   gap to `fork_0` 0.00 mm (touching)
+   |   gap to `fork_1` 0.00 mm (touching)
+3. [proxy.interference] `wheel_l1` and `fork_2` overlap by 0.17 mm (allowed 0.08).
+   | wheel_l1: x 45.50..52.50  y 9.00..27.00  z -9.00..9.00  size 7.00 x 17.99 x 18.00 mm
+   |   centre (49.00, 18.00, 0.00), volume 1299.6 mm3
+   |   OVERLAP `fork_2` 0.17 mm (allowed 0.08)
+   |   gap to `dt_hub_wheel_l1` 0.00 mm (touching)
+   |   gap to `chassis` 1.49 mm
+4. [proxy.interference] `wheel_r1` and `fork_0` overlap by 0.17 mm (allowed 0.08).
+   | wheel_r1: x -52.50..-45.50  y 9.00..27.00  z -9.00..9.00  size 7.00 x 17.99 x 18.00 mm
+   |   centre (-49.00, 18.00, 0.00), volume 1299.6 mm3
+   |   OVERLAP `fork_0` 0.17 mm (allowed 0.08)
+   |   gap to `dt_hub_wheel_r1` 0.00 mm (touching)
+   |   gap to `chassis` 1.49 mm
+5. [proxy.sweep] joint `arm`: `arm` hits `chassis` 0.93 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint arm` lists the closest approach to every part.
+   | arm: x -6.00..6.00  y -24.00..10.00  z 5.00..89.00  size 12.00 x 34.00 x 84.00 mm
+   |   centre (-0.00, -7.00, 47.00), volume 17424.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 0, 7.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.93 mm (allowed 0.08)
+   | chassis: x -49.33..49.33  y -31.00..31.00  z -7.00..7.00  size 98.66 x 62.00 x 14.00 mm
+6. [power.weapon_motor] `arm` names motor None; it must be a catalog brushless motor so speed can be computed.
+   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
+   | arm: x -6.00..6.00  y -24.00..10.00  z 5.00..89.00  size 12.00 x 34.00 x 84.00 mm
+   |   centre (-0.00, -7.00, 47.00), volume 17424.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 0, 7.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.93 mm (allowed 0.08)
+7. [process.weapon_printed] Weapon `arm` is fdm-printed with no hardened metal insert teeth.
+   fix: Make it metal (sheet_cut / turned / milled) or add hardened steel tooth parts (`parent` = the weapon).
+   | arm: x -6.00..6.00  y -24.00..10.00  z 5.00..89.00  size 12.00 x 34.00 x 84.00 mm
+   |   centre (-0.00, -7.00, 47.00), volume 17424.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 0, 7.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.93 mm (allowed 0.08)
+8. [electrical.battery_weapon_gap] Battery is 1.0 mm from the weapon's swept volume (need >= 3 mm plus a wall).
+   fix: Move the battery >= 3 mm from the swept volume.
+9. [wire.render_wires] 6 of 6 robot render(s) do not draw all 6 wires: renders/diff_divebomb.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_divebomb.aws67_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_divebomb.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/pick_divebomb.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_divebomb.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+10. [wire.rotor_clearance] wire `w_bat_sw` passes -0.9 mm from the volume swept by the `arm` rotor (arm) at [5.8, -8.6, -1.0].
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | arm: x -6.00..6.00  y -24.00..10.00  z 5.00..89.00  size 12.00 x 34.00 x 84.00 mm
+   |   centre (-0.00, -7.00, 47.00), volume 17424.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 0, 7.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.93 mm (allowed 0.08)
+11. [wire.rotor_clearance] wire `w_sw_esc` passes -0.9 mm from the volume swept by the `arm` rotor (arm) at [4.0, -18.6, -1.0].
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | arm: x -6.00..6.00  y -24.00..10.00  z 5.00..89.00  size 12.00 x 34.00 x 84.00 mm
+   |   centre (-0.00, -7.00, 47.00), volume 17424.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 0, 7.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.93 mm (allowed 0.08)
+12. [wire.rotor_clearance] wire `w_m1` passes -0.7 mm from the volume swept by the `arm` rotor (arm) at [-5.8, -1.7, -1.9].
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | arm: x -6.00..6.00  y -24.00..10.00  z 5.00..89.00  size 12.00 x 34.00 x 84.00 mm
+   |   centre (-0.00, -7.00, 47.00), volume 17424.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 0, 7.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.93 mm (allowed 0.08)
+... 2 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 166.6 g of 150 g (-16.6 g margin)
+    chassis                    37.90 g  fills 46% of its box
+    arm                        16.59 g  fills 51% of its box
+    fork_1                     15.80 g  fills 20% of its box
+    fork_0                     15.80 g  fills 12% of its box
+    fork_2                     15.80 g  fills 12% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    dm_wheel_l0                 9.70 g  fills 66% of its box
+    dm_wheel_r0                 9.70 g  fills 66% of its box
+    dm_wheel_l1                 9.70 g  fills 66% of its box
+    dm_wheel_r1                 9.70 g  fills 66% of its box
+    el_rx_esc                   3.50 g  fills 100% of its box
+    wheel_l0                    1.33 g  fills 57% of its box
+    wheel_r0                    1.33 g  fills 57% of its box
+    wheel_l1                    1.33 g  fills 57% of its box
+    wheel_r1                    1.33 g  fills 57% of its box
+    dt_hub_wheel_l0             0.50 g  fills 61% of its box
+    dt_hub_wheel_r0             0.50 g  fills 61% of its box
+    dt_hub_wheel_l1             0.50 g  fills 61% of its box
+    dt_hub_wheel_r1             0.50 g  fills 61% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    mass.over: 166.6 g (range 147.8 to 185.3 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 31 hit / 0 miss, min_gap 46 hit / 0 miss, overlap 344 hit / 0 miss, part_geom 20 hit / 0 miss
