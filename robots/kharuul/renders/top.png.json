@@ -1,0 +1,14 @@
+{
+ "spec": "/tmp/work10_kharuul/robots/kharuul/spec.json",
+ "rendered_at": 1795021825.8219442,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "wheel_l1",
+  "wheel_r1",
+  "scoop",
+  "label"
+ ],
+ "wires": {}
+}

@@ -1,0 +1,64 @@
+{
+ "robot_type": "wedge",
+ "body": {
+  "length": 80,
+  "width": 78,
+  "height": 24,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 12,
+  "width": 8,
+  "y": [
+   -26,
+   24
+  ]
+ },
+ "colors": {
+  "body": "#1f3a2a",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "box": [
+    110,
+    3,
+    30
+   ],
+   "at": [
+    0,
+    50,
+    14
+   ],
+   "kind": "wedge",
+   "id": "scoop",
+   "color": "#b9b3a6",
+   "rot": [
+    -40,
+    0,
+    0
+   ]
+  },
+  {
+   "box": [
+    30,
+    22,
+    4
+   ],
+   "at": [
+    0,
+    -8,
+    28
+   ],
+   "id": "label",
+   "color": "#7ab8e0"
+  }
+ ],
+ "name": "kharuul",
+ "weapon": {
+  "kind": "none"
+ }
+}
