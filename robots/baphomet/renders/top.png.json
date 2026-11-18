@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_baphomet/robots/baphomet/spec.json",
- "rendered_at": 1795026911.9535885,
+ "rendered_at": 1795039916.8169463,
  "bodies": [
   "chassis",
   "weapon",
@@ -16,22 +16,81 @@
   "top_plate",
   "weapon_motor_can",
   "dt_hub_wheel_l0",
-  "dt_axle_wheel_l0",
-  "dt_nut_wheel_l0",
   "dt_hub_wheel_r0",
-  "dt_axle_wheel_r0",
-  "dt_nut_wheel_r0",
-  "dt_screw_0",
-  "dt_screw_1",
-  "dt_screw_2",
-  "dt_screw_3",
   "dt_shaft_weapon",
   "dt_arm_weapon_0",
   "dt_arm_weapon_1",
   "dt_mount_fork_0",
-  "dt_bolt_fork_0",
   "dt_mount_fork_1",
-  "dt_bolt_fork_1"
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_esc",
+  "el_wesc",
+  "el_switch",
+  "weapon_motor",
+  "lock_pin"
  ],
- "wires": {}
+ "wires": {
+  "w_sw_wesc": {
+   "from": [
+    4.5,
+    -12.5,
+    -8.0
+   ],
+   "to": [
+    -12.0,
+    12.5,
+    -6.5
+   ]
+  },
+  "w_wm": {
+   "from": [
+    11.0,
+    12.5,
+    -3.5
+   ],
+   "to": [
+    -0.5000000000000003,
+    23.5,
+    6.5
+   ]
+  },
+  "w_m1": {
+   "from": [
+    15.5,
+    5.5,
+    1.5
+   ],
+   "to": [
+    9.5,
+    -20.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -16.5,
+    5.5,
+    1.5
+   ],
+   "to": [
+    -9.5,
+    -20.0,
+    0.0
+   ]
+  },
+  "w_sig_wesc": {
+   "from": [
+    15.5,
+    -6.5,
+    1.5
+   ],
+   "to": [
+    -12.0,
+    12.5,
+    -0.5
+   ]
+  }
+ }
 }

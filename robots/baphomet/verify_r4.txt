@@ -1,0 +1,107 @@
+BLOCKERS: 14
+  [ran] integrity 0.36s
+  [proxy] wiring 0.52s
+  [ran] mass 0.01s
+  [proxy] interference 46.71s
+  [ran] connections 1.18s
+  [ran] legal 0.04s
+  [ran] fasteners 0.01s
+  [ran] power 0.01s
+  [ran] tension 0.01s
+  [ran] targets 0.00s
+  [ran] fight 0.10s
+  [ran] shape 1.70s
+  [ran] dynamics 0.01s
+  [ran] strength 0.01s
+  [ran] printability 3.76s
+  [ran] process 0.18s
+  [ran] electrical 0.02s
+  [ran] combat 0.47s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.83s
+  [ran] bom 0.01s
+  [ran] wire_review 0.15s
+  [ran] fastener_record 0.00s
+  [ran] likeness 39.08s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.01s
+  [ran] retention 0.03s
+  [ran] waiver_audit 0.01s
+  [ran] geom 0.38s
+  [ran] dfm 0.15s
+  [ran] realworld 0.18s
+baphomet: ok=False 14 blockers in 12 root causes, mass 222.0/150 g
+1. [mfg.stock] `fork_0` (laser): thickness 2.50 mm is not a stock titanium gauge (0.5, 0.8, 0.9, 1, 1.5, 2, 3, 4, 5, 6, 8, 10); nearest 2 mm. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
+   | fork_0: x -45.50..-40.50  y 39.78..85.52  z -16.68..-6.23  size 5.00 x 45.74 x 10.45 mm
+   |   centre (-43.00, 62.65, -11.46), volume 359.4 mm3
+   |   overlap allowed `weapon_motor_can` 0.01 mm (allowed 0.08)
+   |   overlap allowed `dt_mount_fork_0` 0.00 mm (allowed 0.08)
+   |   gap to `chassis` 1.79 mm
+2. [mfg.layer_load] `dt_arm_weapon_0` carries the `weapon` axle but is printed with build direction +z (world [0.0, 0.0, 1.0]), not along the spin axis [1.0, 0.0, 0.0]: impact load peels layers apart. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Print it lying flat so the spin axis is the build direction, or make it a cut metal plate.
+   | dt_arm_weapon_0: x -26.00..-23.00  y 37.00..67.00  z -1.00..18.00  size 3.00 x 30.00 x 19.00 mm
+   |   centre (-24.50, 52.00, 8.50), volume 862.3 mm3
+   |   overlap allowed `chassis` 1.39 mm (allowed inf)
+   |   overlap allowed `drum_flange_r` 0.46 mm (allowed inf)
+   |   gap to `weapon_arm_r` 0.00 mm (touching)
+3. [integrity.solids] `chassis` has 0 closed solid(s) and 1 open/invalid shell(s), expected 1 (63081 mm3). A boolean or fillet probably collapsed the build.
+   fix: Check the last CAD op (fillet/cut order); or declare `solids` with `solids_reason`.
+   | chassis: x -52.00..52.00  y -43.00..43.00  z -15.00..9.00  size 104.00 x 86.00 x 24.00 mm
+   |   centre (-0.00, -0.00, -3.00), volume 63080.7 mm3
+   |   overlap allowed `dt_mount_fork_0` 1.88 mm (allowed inf)
+   |   overlap allowed `dt_mount_fork_1` 1.88 mm (allowed inf)
+   |   overlap allowed `dt_arm_weapon_0` 1.39 mm (allowed inf)
+4. [proxy.wiring] Wire `w_bat_sw` (`el_battery.xt30` to `el_switch.in`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+5. [proxy.wiring] Wire `w_sw_esc` (`el_switch.out` to `el_esc.bat`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+6. [mass.over] 222.0 g (range 190.2 to 253.8 g) against the 150 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+7. [wire.render_wires] 2 of 2 robot render(s) do not draw all 7 wires: renders/iso.png: wire `w_bat_sw` not drawn (+1); renders/top.png: wire `w_bat_sw` not drawn (+1)
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+8. [wire.render_count] iso.png: 5 routes vs 7 spec wires (missing ['w_bat_sw', 'w_sw_esc']); top.png: 5 routes vs 7 spec wires (missing ['w_bat_sw', 'w_sw_esc'])
+   fix: Re-render: the render record must list exactly the spec's wires.
+9. [likeness.silhouette] `reference/baphomet.aws74.webp`: best silhouette IoU 0.69 at camera front_left_iso (elevation 45, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.72). Regions (photo frame, left third first) 0.42 / 0.79 / 0.76: worst = front third. Height/length 0.77 model vs 0.72 photo (proportions ok).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+10. [likeness.view] `reference/baphomet.aws76.webp` is declared `front_left_iso` (IoU 0.69 there) but the model matches it better from rear_left_iso (elevation 45, azimuth 240) (IoU 0.80).
+   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
+11. [likeness.silhouette] `reference/baphomet.aws76.webp`: best silhouette IoU 0.69 at camera front_left_iso (elevation 45, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.72). Regions (photo frame, left third first) 0.63 / 0.81 / 0.55: worst = rear third. Height/length 0.89 model vs 0.85 photo (proportions ok).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+12. [likeness.silhouette] `reference/baphomet.aws77.webp`: best silhouette IoU 0.76 at camera front_right_iso (elevation 45, azimuth 30) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.76). Regions (photo frame, left third first) 0.79 / 0.83 / 0.56: worst = rear third. Height/length 0.77 model vs 0.74 photo (proportions ok).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+MASS BUDGET:
+  mass 222.0 g of 150 g (-72.0 g margin)
+    chassis                    60.05 g  fills 29% of its box
+    weapon                     35.63 g  fills 71% of its box  <- solid block? a tub should be a shell
+    el_battery                 21.50 g  fills 100% of its box  <- solid block? a tub should be a shell
+    wheel_l0                   11.80 g  fills 69% of its box
+    wheel_r0                   11.80 g  fills 69% of its box
+    dm_wheel_l0                 9.50 g  fills 63% of its box
+    dm_wheel_r0                 9.50 g  fills 63% of its box
+    weapon_motor                8.60 g  fills 53% of its box
+    top_plate                   7.24 g  fills 55% of its box
+    weapon_shaft                6.95 g  fills 79% of its box
+    dt_shaft_weapon             5.16 g  fills 79% of its box
+    el_wesc                     5.00 g  fills 94% of its box
+    weapon_arm_r                3.78 g  fills 56% of its box
+    dt_hub_wheel_r0             3.24 g  fills 71% of its box
+    dt_hub_wheel_l0             3.24 g  fills 71% of its box
+    weapon_arm_l                3.19 g  fills 48% of its box
+    weapon_motor_can            2.36 g  fills 38% of its box
+    el_esc                      2.30 g  fills 99% of its box
+    fork_0                      1.59 g  fills 15% of its box
+    fork_1                      1.59 g  fills 15% of its box
+    lock_pin                    0.90 g  fills 33% of its box
+    drum_flange_l               0.84 g  fills 76% of its box
+    drum_flange_r               0.84 g  fills 76% of its box
+    dt_arm_weapon_0             0.82 g  fills 50% of its box
+    dt_arm_weapon_1             0.82 g  fills 50% of its box
+    dt_mount_fork_0             0.60 g  fills 97% of its box
+    dt_mount_fork_1             0.60 g  fills 97% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    mass.over: 222.0 g (range 190.2 to 253.8 g) against the 150 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 0 hit / 20 miss, group 0 hit / 31 miss, inside 4 hit / 25 miss, likeness 3 hit / 0 miss, min_gap 13 hit / 12 miss, overlap 22 hit / 334 miss, part_check 2 hit / 16 miss, part_geom 28 hit / 0 miss, ray 4 hit / 190 miss
