@@ -57,3 +57,9 @@ Left (one line each):
 - likeness.view x1: looks (photo view label; not part of this pass)
 - likeness.silhouette x1: looks (not part of this pass; outside shape kept as round 3)
 - battery.rotor_gap x1: toolchain for lifters: the arm's full-turn envelope is used, which covers the whole chassis
+
+## Round 3e (strict photo differences: real openings, hinge, plates, screws where the photo shows them)
+Decisions: type flipper; body box rect 110x80x48 mm, ramp 105; wheels 2 r11 inboard; weapon none; extra parts: flipper, bay, hole00, hole01, hole02, hole03, hole04, hole10, hole11, hole12, hole13, hole14, hole20, hole21, hole22, hole23, hole24, hole30, hole31, hole32, hole33, hole34, plate_screw_a, plate_screw_b, rear_slot; photos skipped (cluttered): indices [1, 2]; textured masks for indices [0, 2].
+
+Likeness: aws62 0.66 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/slipper.aws62.webp` is declared `front_right_iso` (IoU 0.66 there) but the model matches it better from front (elevation 25, az
