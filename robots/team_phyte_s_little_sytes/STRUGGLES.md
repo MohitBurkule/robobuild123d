@@ -22,3 +22,16 @@
 - No shape/size edits toward the photos (ramp, tabs, switch).
 - Wedge hold to chassis.
 - Insert and counterbore seat values.
+
+## Rebuild from scratch (generator run)
+
+Built from scratch with the chassis generator, not from a template: `robot gen build --intent intent.json --hypothesis wedge --no-gate` (intent.json: hypothesis wedge, taper 6, box shape). Spec at spec.json, intent at intent.json. Merged origin/dev (gate update #210) and pulled the ref branch REFERENCE.json (now weapon kind wedge, front, width 0.95) as the coordinator asked.
+
+Struggles:
+1. Photo masks are two-robot images. Each of the three photos shows a pair of robots side by side. `robot mask` has no crop/region option, so the mask covers both and a one-robot model cannot reach IoU 0.80. This is the main reason likeness fails; I did not hand-edit masks.
+2. Reshape is limited: taper 10 gives `no wireable layout` in the generator, so the intent could not express the deeper scoop I wanted. Only taper 6 was kept. No outline or weapon-placement edits were made (the intent has no outline override I could fit in the time cap).
+3. `robot gen build --no-gate` prints a `TypeError` from a version regex at `list-hypotheses` when run before the dev merge. Harmless, but confusing.
+4. verify inner tier: 22 blockers in 10 root causes. 6 are `proxy.assembly` (insert_c0/c1/w0/w1 and bolts; teardown never removes the inserts; the wedge and chassis_top cannot come out). 1 is `wire.render_wires` (renders lack a `.json` record; re-render with checks on). 3 are `likeness.silhouette`.
+5. Likeness renders are not checked by the wire group unless rendered with checks; the plain `render` command does not write the record.
+
+Final blocker count: inner tier 10 root causes (22 blockers). Likeness: FAIL (3 blockers: IoU 0.61 / 0.54 / 0.61 vs 0.80 needed).
