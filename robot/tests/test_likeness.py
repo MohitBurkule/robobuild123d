@@ -69,3 +69,18 @@ def test_joint_axis_obj():
     from robot.spec import Joint
     assert list(_jaxis(Joint({"axis": [0, 1, 0]}))) == [0, 1, 0]
     assert _jaxis({"axis": [1, 0, 0]}) == [1, 0, 0]
+
+
+def test_camera_views():
+    from robot.checks import likeness as L
+    assert all(i % 2 == 0 for i in L.allowed())  # never mirrored by default
+    assert not any("rear" in L.cam_name(i) for i in L.allowed())
+    assert any("rear" in L.cam_name(i) for i in L.allowed(rear_ok=True))
+    assert [L.cam_name(i) for i in L.allowed("top")] == ["top"]
+    assert [L.cam_name(i) for i in L.allowed("bottom")] == ["bottom"]
+    assert all(L.cam_name(i).startswith("front_left_iso") for i in L.allowed("front_left_iso"))
+    assert all("elevation 45" in L.cam_name(i) for i in L.allowed("front_left_iso", 45))
+    assert all(L.cam_name(i).startswith("front") for i in L.allowed("front"))
+    rj = {"view": {"a.jpg": "rear"}}
+    assert L.photo_view(rj, {"image": "reference/a.jpg"})[0] == "rear"
+    assert L.photo_view({}, {"image": "reference/b.jpg", "view": "iso"})[0] is None
