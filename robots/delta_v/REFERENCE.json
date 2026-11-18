@@ -1,0 +1,6 @@
+{
+ "robot_type": "vertical_spinner",
+ "weapon": "vertical disc on top, two front forks/blade",
+ "wheels": 2,
+ "source": "read from reference photos by Sonnet"
+}
