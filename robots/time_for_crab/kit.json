@@ -20,7 +20,14 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "skip_photos": [
+  2
+ ],
+ "name": "time for crab",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "top": [
     [
@@ -75,12 +82,5 @@
    "id": "shaft",
    "color": "#eeeeea"
   }
- ],
- "skip_photos": [
-  2
- ],
- "name": "time for crab",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }

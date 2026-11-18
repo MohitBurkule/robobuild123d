@@ -8,5 +8,15 @@
  "photos": [
   "time_for_crab_.aws67.webp",
   "time_for_crab_.aws71.webp"
- ]
+ ],
+ "view": {
+  "time_for_crab_.aws67.webp": "front_right_iso",
+  "time_for_crab_.aws71.webp": "front",
+  "time_for_crab_.aws73.webp": "rear"
+ },
+ "elevation": {
+  "time_for_crab_.aws67.webp": 45,
+  "time_for_crab_.aws71.webp": 45,
+  "time_for_crab_.aws73.webp": 45
+ }
 }

@@ -18,3 +18,9 @@ Likeness: aws67 0.72 (FAIL), aws71 0.66 (FAIL).
 Decisions: type lifter; body box rect 60x92x24 mm, ramp 0; wheels 2 r13 outboard; weapon none; extra parts: claw, shaft; photos skipped (cluttered): indices [2].
 
 Likeness: aws67 0.72 (FAIL), aws71 0.66 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type lifter; body box rect 60x92x24 mm, ramp 0; wheels 2 r13 outboard; weapon none; extra parts: claw, shaft; photos skipped (cluttered): indices [2].
+
+Likeness: aws67 0.55 (FAIL), aws71 0.38 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/time_for_crab_.aws67.webp` is declared `front_right_iso` (IoU 0.55 there) but the model matches it better from front (elevation; [FAIL] likeness.view: `reference/time_for_crab_.aws71.webp` is declared `front` (IoU 0.38 there) but the model matches it better from front (elevation 25, azimu
