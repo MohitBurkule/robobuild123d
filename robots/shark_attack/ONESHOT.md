@@ -9,3 +9,8 @@
 Decisions: type other; body box rect 85x100x30 mm, ramp 25; wheels 2 r12 inboard; weapon none; 4 forks 28 mm; extra parts: hump, fin.
 
 Likeness: aws72 0.77 (FAIL), aws74 0.72 (FAIL), aws76 0.77 (FAIL).
+
+## Round 2 (looks)
+Decisions: type other; body box rect 85x100x30 mm, ramp 25; wheels 2 r12 inboard; weapon none; 4 forks 28 mm; extra parts: hump, fin.
+
+Likeness: aws72 0.77 (FAIL), aws74 0.72 (FAIL), aws76 0.77 (FAIL).
