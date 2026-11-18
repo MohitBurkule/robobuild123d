@@ -520,7 +520,8 @@ def cli(a):
             print(f"--harness: the wiring planner is not available ({e}); drawing the legacy wire routes", file=sys.stderr)
     if a.no_lid:
         w = without_lid(w, s)
-    if a.palette == "material":
+    pal = a.palette or ("spec" if (getattr(s, "raw", {}) or {}).get("kit_draft") else "material")
+    if pal == "material":
         w = material_palette(w, s)
     marks = failure_markers(rep) if a.markers else []
     if a.markers:
@@ -557,8 +558,9 @@ def add_cli(sub):
     p.add_argument("--width", type=int, default=1100)
     p.add_argument("--fast", action="store_true")
     p.add_argument("--quick", action="store_true", help="skip slow sweeps (no wire routes drawn)")
-    p.add_argument("--palette", choices=("material", "spec"), default="material",
-                   help="material: light per-material colours (default); spec: colours as written in the spec")
+    p.add_argument("--palette", choices=("material", "spec"), default=None,
+                   help="material: light per-material colours (default); spec: colours as written in the spec "
+                        "(default for `robot kit` drafts)")
     p.add_argument("--section-z", type=float, default=None, metavar="H",
                    help="cut the view at height H and keep what is below (e.g. top view under a closed deck)")
     p.add_argument("--no-checks", action="store_true",
