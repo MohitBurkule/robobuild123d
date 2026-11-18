@@ -1,0 +1,44 @@
+{
+ "robot_type": "wedge",
+ "body": {
+  "length": 80,
+  "width": 112,
+  "height": 26,
+  "ramp": 28
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 10,
+  "width": 8,
+  "y": [
+   -22
+  ],
+  "outside": false
+ },
+ "colors": {
+  "body": "#d6d6d2",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "box": [
+    4,
+    70,
+    6
+   ],
+   "at": [
+    58,
+    -5,
+    12
+   ],
+   "id": "rail",
+   "color": "#e8c020"
+  }
+ ],
+ "name": "p s t f u",
+ "weapon": {
+  "kind": "none"
+ }
+}
