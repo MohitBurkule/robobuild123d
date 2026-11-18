@@ -1,7 +1,7 @@
 BLOCKERS: 9
   [cached] integrity 0.00s
   [cached] mass 0.00s
-  [proxy] interference 0.11s
+  [proxy] interference 0.27s
   [cached] connections 0.00s
   [cached] legal 0.00s
   [cached] fasteners 0.00s
@@ -15,7 +15,7 @@ BLOCKERS: 9
   [cached] printability 0.00s
   [cached] process 0.00s
   [cached] electrical 0.00s
-  [cached] combat 0.00s
+  [cached] combat 0.01s
   [cached] physics 0.00s
   [cached] plausibility 0.00s
   [cached] cots 0.00s
@@ -23,12 +23,12 @@ BLOCKERS: 9
   [cached] bom 0.00s
   [cached] wire_review 0.00s
   [cached] fastener_record 0.00s
-  [cached] likeness 0.00s
+  [cached] likeness 0.01s
   [cached] drive_recess 0.00s
   [cached] belt_wrap 0.00s
   [cached] retention 0.00s
   [cached] waiver_audit 0.00s
-  [cached] geom 0.00s
+  [cached] geom 0.01s
   [cached] dfm 0.00s
   [cached] realworld 0.00s
 ripper remix: ok=False 9 blockers in 9 root causes, mass 306.4/150 g

@@ -1,12 +1,19 @@
 {
  "spec": "/tmp/work10_ripper_remix/robots/ripper_remix/spec.json",
- "rendered_at": 1795023430.4199948,
+ "rendered_at": 1795036500.9171686,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
   "scoop",
-  "flipper"
+  "flipper",
+  "dt_hub_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_esc",
+  "el_switch"
  ],
  "wires": {}
 }
