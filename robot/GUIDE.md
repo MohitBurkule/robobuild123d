@@ -139,9 +139,15 @@ COPYING A REAL ROBOT (folder has `reference/` photos or `REFERENCE.json`): group
 It fails a spec that is still a stock template or another robot's spec (`likeness.template_copy`), has the wrong
 `robot_type`/wheel count vs `REFERENCE.json` (written by the photo collector, never edit it), has no photo comparison,
 uses a mask not cut from the photo (`likeness.mask_source`), or whose silhouette (best of 27 cameras, mirrored too) is
-below IoU 0.70 or worse than the closest stock template (`likeness.silhouette`). Recipe: pick the template / `robot gen
+below IoU 0.80 or worse than the closest stock template (`likeness.silhouette`). Recipe: pick the template / `robot gen
 build --hypothesis` that matches the weapon, `robot mask reference/<p> reference/<p>_mask.png` per photo, add the
 `reference` entries (view iso, approximate true), then reshape until `likeness` passes. Never edit the masks by hand.
+REFERENCE.json (collector only): {robot_type, wheels, weapon: {kind disc|drum|bar|lifter|flipper|wedge, axis x|y|z,
+position front|middle|rear, width_frac, teeth}, photos: [usable files], mask_thr: {file: thr}}. Use `robot mask ... --thr` the
+file gives.
+FAST SHAPE LOOP: `robot likeness spec.json` (~10 s) runs only this gate, names the best camera, the closest template,
+the worst third and height/length vs the photo, and writes overlays to renders/likeness_*.png (red = model only, blue =
+photo only). Run `robot` from the repo you installed (`pip install -e .` in it), or another checkout's code may run.
 
 
 Optional `reference: [{image, view, mask, scale_hint?, dir?, approximate?}]`. `view` is `side` (looking along +x, front on
