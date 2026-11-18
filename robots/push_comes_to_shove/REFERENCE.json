@@ -7,9 +7,5 @@
  "photos": [
   "push_mk_1.webp",
   "push_mk_2.webp"
- ],
- "mask_mode": {
-  "push_mk_1.webp": "textured",
-  "push_mk_2.webp": "textured"
- }
+ ]
 }

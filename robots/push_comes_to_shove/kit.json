@@ -46,10 +46,7 @@
    ]
   }
  ],
- "textured": [
-  0,
-  1
- ],
+ "textured": [],
  "name": "push comes to shove",
  "weapon": {
   "kind": "none"

@@ -9,3 +9,8 @@
 Decisions: type wedge; body box rect 90x82x28 mm, ramp 30; wheels 4 r11 inboard; weapon none; extra parts: front_plate; textured masks for indices [0, 1].
 
 Likeness: push_mk_1 0.53 (FAIL), push_mk_2 0.29 (FAIL).
+
+## Round 2 (looks)
+Decisions: type wedge; body box rect 90x82x28 mm, ramp 30; wheels 4 r11 inboard; weapon none; extra parts: front_plate.
+
+Likeness: push_mk_1 0.67 (FAIL), push_mk_2 0.68 (FAIL).
