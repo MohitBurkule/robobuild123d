@@ -30,6 +30,8 @@ def test_kit_walker_and_pod_nose():
     for p in s["parts"]:
         assert shapes.to_solid(p["shape"], ".").volume > 1, p["id"]
     assert kit.build({})["locomotion"] == "roller"
+
+
 def test_kit_wishlist_round1():
     from robot import shapes
     for kind in ("flipper", "lifter", "axe", "hammer"):
