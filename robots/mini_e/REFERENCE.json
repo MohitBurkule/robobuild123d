@@ -1,5 +1,5 @@
 {
- "robot_type": "wedge",
+ "robot_type": "other",
  "wheels": 2,
  "weapon": {
   "kind": "wedge"
@@ -9,12 +9,10 @@
   "mini_e.aws76.webp"
  ],
  "view": {
-  "mini_e.aws43.webp": "front",
   "mini_e.aws72.webp": "front_left_iso",
   "mini_e.aws76.webp": "front_right_iso"
  },
  "elevation": {
-  "mini_e.aws43.webp": 70,
   "mini_e.aws72.webp": 45,
   "mini_e.aws76.webp": 45
  }

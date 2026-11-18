@@ -1,14 +1,14 @@
 {
  "mini_e.aws72.webp": {
-  "view": "65,30",
-  "azimuth": 65.0,
-  "elevation": 38.0,
-  "iou": 0.87
+  "view": "60,35!",
+  "azimuth": 60.0,
+  "elevation": 35.0,
+  "iou": 0.873
  },
  "mini_e.aws76.webp": {
   "view": "120,30",
   "azimuth": 130.0,
   "elevation": 30.0,
-  "iou": 0.834
+  "iou": 0.842
  }
 }

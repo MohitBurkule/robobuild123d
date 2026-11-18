@@ -44,3 +44,9 @@ Left (and why):
 - likeness.silhouette x2: looks, not in scope for this pass.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): mini_e.aws72.webp 0.7 -> 0.7; mini_e.aws76.webp 0.66 -> 0.66
+
+## Round 3c (user angle picks applied; shape fixed per user remarks)
+Decisions: type other; body box rect 72x100x22 mm, ramp 0; wheels 2 r14 inboard; weapon none; extra parts: bumper, skirt; photos skipped (cluttered): indices [0].
+
+Likeness: aws72 0.69 (FAIL), aws76 0.66 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/mini_e.aws72.webp` is declared `front_left_iso` (IoU 0.69 there) but the model matches it better from front_right_iso (elevatio; [FAIL] likeness.view: `reference/mini_e.aws76.webp` is declared `front_right_iso` (IoU 0.66 there) but the model matches it better from rear_right_iso (elevatio

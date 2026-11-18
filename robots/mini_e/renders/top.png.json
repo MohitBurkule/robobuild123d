@@ -1,11 +1,12 @@
 {
  "spec": "/tmp/work10_mini_e/robots/mini_e/spec.json",
- "rendered_at": 1795026392.5531745,
+ "rendered_at": 1795035066.113253,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
-  "wedge",
+  "bumper",
+  "skirt",
   "dt_hub_wheel_l0",
   "dt_axle_wheel_l0",
   "dt_nut_wheel_l0",

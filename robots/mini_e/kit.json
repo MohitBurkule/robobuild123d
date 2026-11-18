@@ -1,5 +1,5 @@
 {
- "robot_type": "wedge",
+ "robot_type": "other",
  "body": {
   "length": 72,
   "width": 100,
@@ -32,34 +32,49 @@
  },
  "macros": [
   {
+   "box": [
+    104,
+    3,
+    14
+   ],
+   "at": [
+    0,
+    37.5,
+    15
+   ],
+   "kind": "armor",
+   "id": "bumper",
+   "material": "aluminium",
+   "process": "laser",
+   "color": "#e8322a"
+  },
+  {
    "side": [
     [
-     30,
-     2
+     36,
+     9
     ],
     [
-     72,
-     0
+     39,
+     9
     ],
     [
-     72,
-     1.5
+     52,
+     0.5
     ],
     [
-     38,
-     26
-    ],
-    [
-     30,
-     26
+     49,
+     0.5
     ]
    ],
    "x": [
-    -58,
-    58
+    -52,
+    52
    ],
    "kind": "wedge",
-   "id": "wedge",
+   "id": "skirt",
+   "material": "polycarbonate",
+   "process": "laser",
    "color": "#e8322a"
   }
  ]
