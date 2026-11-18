@@ -18,3 +18,9 @@ Likeness: aws62 0.85 (FAIL), aws64 0.06 (FAIL).
 Decisions: type flipper; body box rect 110x80x48 mm, ramp 105; wheels 2 r11 inboard; weapon none; extra parts: flipper; photos skipped (cluttered): indices [1, 2]; textured masks for indices [0, 2].
 
 Likeness: aws62 0.85 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type flipper; body box rect 110x80x48 mm, ramp 105; wheels 2 r11 inboard; weapon none; extra parts: flipper; photos skipped (cluttered): indices [1, 2]; textured masks for indices [0, 2].
+
+Likeness: aws62 0.69 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/slipper.aws62.webp` is declared `front` (IoU 0.69 there) but the model matches it better from front (elevation 25, azimuth 90) 

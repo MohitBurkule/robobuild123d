@@ -10,5 +10,14 @@
  ],
  "mask_mode": {
   "slipper.aws62.webp": "textured"
+ },
+ "view": {
+  "slipper.aws62.webp": "front",
+  "slipper.aws63.webp": "front_left_iso",
+  "slipper.aws64.webp": "top"
+ },
+ "elevation": {
+  "slipper.aws62.webp": 45,
+  "slipper.aws63.webp": 45
  }
 }

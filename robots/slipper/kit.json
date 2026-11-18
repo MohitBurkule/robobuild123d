@@ -21,17 +21,29 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "skip_photos": [
+  1,
+  2
+ ],
+ "textured": [
+  0,
+  2
+ ],
+ "name": "slipper",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "box": [
-    56,
-    80,
+    76,
+    104,
     3
    ],
    "at": [
     0,
-    0,
-    30
+    2,
+    29
    ],
    "weapon": "flipper",
    "pivot": [
@@ -46,17 +58,5 @@
     0
    ]
   }
- ],
- "skip_photos": [
-  1,
-  2
- ],
- "textured": [
-  0,
-  2
- ],
- "name": "slipper",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }
