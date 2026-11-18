@@ -26,7 +26,7 @@ Decisions: type flipper; body box rect 50x60x26 mm, ramp 0; wheels 2 r12 outboar
 Likeness: ftl 0.70 (FAIL).
 
 ## Round 4 (verification, helper 1)
-Blockers r3 -> r4: **47 -> 11** (`verify --tier inner`, full output in verify_r4.txt).
+Blockers r3 -> r4: **47 -> 10** (`verify --tier inner`, full output in verify_r4.txt).
 Likeness (best silhouette IoU per photo, r3 -> r4): ftl.webp 0.681 -> 0.681
 
 What was done (script r4_h1, outside shape kept):
@@ -36,25 +36,24 @@ What was done (script r4_h1, outside shape kept):
 - pockets 0.25 mm per side round every bought part with 2 mm print walls, wheel/weapon running clearances <= 1.5 mm (no clearance cut where the kit rotor sits deep in the body: that would open the outside), hinge sweep clearances, shaft bores
 - big print parts hollowed (cavity = part eroded by the wall, checked >= 1 mm inside the skin, no cavity opens to the outside); wires with gauges; print orientation, failsafe and weapon disable declared
 - wiring channels (round 4b): one 4.8 mm channel per wire cut inside the print from port to port (axis >= 5 mm under the outer skin, so >= 1.5 mm of skin stays and the outside is unchanged), clear of bought parts and of every rotor/arm sweep, widened up to 6.8 mm where wires share a run
-- renders: `renders/iso.png` (first photo's camera) and `renders/top.png` re-rendered with the wire routes and a render record (3 of 3 wires routed and drawn); photo comparison sheets (diff/likeness/match/pick/view) moved to `compare/`
+- renders: `renders/iso.png` (first photo's camera) and `renders/top.png` re-rendered with the wire routes and a render record (4 of 4 wires routed and drawn); photo comparison sheets (diff/likeness/match/pick/view) moved to `compare/`
 
 Notes from the run:
 - dt_axle_wheel_l0 replaced by the gearmotor shaft
 - dt_axle_wheel_r0 replaced by the gearmotor shaft
-- switch: no flat belly skin with room above it; switch not placed (top mounting not used: photos do not show a top switch)
-- chassis: hollowed (box wall round pockets), 60523 -> 37381 mm3
-- flip_arm_l: hollowed (exact wall round pockets), 24371 -> 15476 mm3 (9 thin spots kept solid)
-- flip_arm_r: hollowed (exact wall round pockets), 24350 -> 15369 mm3 (9 thin spots kept solid)
-- chassis: 1 of 14 channel pieces left out (boolean)
-- wiring channels: 3 of 3 wires have a 4.8 mm channel inside the print
+- el_battery: placed with 2.5 mm of lead room round it
+- el_rx_esc: placed with 4.0 mm of lead room round it
+- chassis: hollowed (box wall round pockets), 60276 -> 38763 mm3
+- flip_arm_l: hollowed (exact wall round pockets), 24181 -> 14264 mm3 (6 thin spots kept solid)
+- flip_arm_r: hollowed (exact wall round pockets), 24047 -> 15152 mm3 (10 thin spots kept solid)
+- wiring channels: 4 of 4 wires have a 4.8 mm channel inside the print, every piece >= 2 mm under the outer skin
+- wiring channels: a piece of ['w_bat_sw'] left out where it would come within 2 mm of the outside (port close to the skin)
 
 Left (one line each):
-- wire.rotor_clearance x3: toolchain for lifters/flippers: the check revolves a limited-range arm a full turn, so no wire inside the chassis can clear it; for spinners: no free route found
+- wire.rotor_clearance x4: toolchain for lifters/flippers: the check revolves a limited-range arm a full turn, so no wire inside the chassis can clear it; for spinners: no free route found
 - proxy.interference x1: parts overlap in the kit shape where a cut would change the look or leave a loose piece
 - proxy.sweep x1: moving part runs into the chassis more than a running clearance can take without changing the look
-- legal.switch x1: see verify_r4.txt root causes
 - power.weapon_motor x1: toolchain: a servo/arm weapon is required to have a brushless kV motor like a spinner
 - process.weapon_printed x1: toolchain: printed lifter/flipper arms are judged like spinner teeth (metal inserts required)
-- electrical.switch_in_series x1: see verify_r4.txt root causes
 - likeness.silhouette x1: looks (not part of this pass; outside shape kept as round 3)
 - battery.rotor_gap x1: toolchain for lifters: the arm's full-turn envelope is used, which covers the whole chassis
