@@ -1,0 +1,65 @@
+BLOCKERS: 3
+  [cached] integrity 0.00s
+  [cached] mass 0.00s
+  [proxy] interference 0.14s
+  [cached] connections 0.00s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.00s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.00s
+  [cached] physics 0.00s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [cached] likeness 0.00s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.00s
+  [cached] waiver_audit 0.00s
+  [cached] geom 0.01s
+  [cached] dfm 0.00s
+  [cached] realworld 0.00s
+road runner: ok=False 3 blockers in 3 root causes, mass 156.6/150 g
+1. [mass.over] 156.6 g (range 127.2 to 186.0 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+2. [retention.loose] `dm_wheel_l0` can move more than 0.5 mm toward +x without touching anything (captive means at most 0.5 mm of play in every direction); in a hit it will fall out or rattle.
+   fix: Make the pocket snug on that side (0.2 to 0.5 mm gap), add a retaining rib or strap, or declare how it is held in `retained` (tape, adhesive, velcro, press_fit).
+   | dm_wheel_l0: x 8.10..43.60  y -36.00..-24.00  z -5.00..5.00  size 35.50 x 12.00 x 10.00 mm
+   |   centre (25.85, -30.00, 0.00), volume 2702.4 mm3
+   |   port terminals: (8.10, -30.00, 0.00)
+   |   overlap allowed `wheel_l0` 0.00 mm (allowed 0.08)
+   |   gap to `chassis` 0.25 mm
+3. [wire.render_wires] 6 of 6 robot render(s) do not draw all 4 wires: renders/diff_road_runner.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/iso.png: rendered without wires (checks off or no routes); renders/likeness_road_runner.aws67_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_road_runner.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_road_runner.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+MASS BUDGET:
+  mass 156.6 g of 150 g (-6.6 g margin)
+    chassis                    76.38 g  fills 33% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    rear_wall                   9.52 g  fills 68% of its box
+    dm_wheel_l0                 9.50 g  fills 63% of its box
+    dm_wheel_r0                 9.50 g  fills 63% of its box
+    side_wall_r                 9.15 g  fills 65% of its box
+    side_wall_l                 9.15 g  fills 68% of its box
+    wheel_l0                    3.54 g  fills 70% of its box
+    wheel_r0                    3.54 g  fills 70% of its box
+    wheel_l1                    3.54 g  fills 70% of its box
+    wheel_r1                    3.54 g  fills 70% of its box
+    el_esc                      2.30 g  fills 99% of its box
+    dt_axle_wheel_r1            1.09 g  fills 79% of its box
+    dt_axle_wheel_l1            1.09 g  fills 79% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    mass.over: 156.6 g (range 127.2 to 186.0 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 31 hit / 0 miss, min_gap 1 hit / 0 miss, overlap 157 hit / 0 miss, part_geom 15 hit / 0 miss
