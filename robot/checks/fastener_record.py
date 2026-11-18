@@ -28,7 +28,10 @@ def run(ctx):
             out.append(fail("fastener.hole_record", G, BLOCKER, "Fastener has no hole record",
                             f"`{f.id}` ({f.designation}) has no `hole`, so no hole or seat check ever judged it.")
                        .on(f.id, *(f.through or [])).here(f.at)
-                       .fix("Give it a `hole` record (d, clearance_d, head seat, grip) and cut that hole in the parts."))
+                       .fix("Run `robot fasteners SPEC --fill`: it measures grip on the geometry and writes the record. "
+                            "By hand, socket head into an insert: \"hole\": {\"d\": 2.0, \"length\": 6.0, \"head\": \"cap\", "
+                            "\"head_dk\": 3.8, \"head_k\": 2.0, \"clearance_d\": 2.4, \"into\": \"insert\", "
+                            "\"side\": \"head\", \"grip\": <mm the screw runs through `through` parts>}."))
         host = spec.part(f.threads_into) if f.threads_into else None
         dl = catalog.parse_designation(f.designation)
         if host is not None and dl and host.kind not in ("nut", "insert") and catalog.part_is_printed(host.process, host.material):
