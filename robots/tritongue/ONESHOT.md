@@ -42,11 +42,11 @@ Fixed / changed (inside only, outside kept):
 - hollowed claw_r (wall 2, form 0): 4.8 -> 3.8 cm3
 
 Left (and why):
+- proxy.wiring x1: Wire `w_m1` (`el_esc.m1` to `dm_wheel_l0.terminals`): the baseline route is now blocked by `chassis` (1 samples).
 - proxy.sweep x1: joint `roller`: `roller` hits `chassis` 0.12 mm deep at 7.3 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint roller` lists the closest approach to every part.
 - power.weapon_motor x1: toolchain: lifters/flippers are servo or gear driven; the check wants a brushless kV for every weapon.
 - process.weapon_printed x1: toolchain: a printed lifter/flipper arm is judged like a spinner (needs hardened teeth); adding metal teeth changes the look.
 - electrical.battery_weapon_gap x1: toolchain: a limited-range arm is judged as a full revolution about its pivot; that cylinder covers the whole chassis.
-- wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
 - likeness.silhouette x1: looks, not in scope for this pass.
 
-Likeness (best silhouette IoU per photo, r3 -> r4): tritongue.aws71.webp 0.68 -> 0.68
+Likeness (best silhouette IoU per photo, r3 -> r4): tritongue.aws71.webp 0.66 -> 0.66
