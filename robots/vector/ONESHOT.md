@@ -20,8 +20,13 @@ Decisions: type lifter; body box rect 72x70x24 mm, ramp 18; wheels 2 r16 outboar
 Likeness: aws71 0.47 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/vector.aws71.webp` is declared `front_left_iso` (IoU 0.47 there) but the model matches it better from front_right_iso (elevatio
 
+## Round 3d (user camera picks batch 2 + shape remarks applied; round 4 to be re-run on the new outside)
+Decisions: type lifter; body box rect 72x70x24 mm, ramp 18; wheels 2 r16 outboard; weapon none; extra parts: arm, post, fork.
+
+Likeness: aws71 0.59 (FAIL).
+
 ## Round 4 (verification, helper 2)
-Blockers r3 67 -> r4 12 (`verify --tier inner`).
+Blockers r3 67 -> r4 10 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -34,7 +39,7 @@ Fixed / changed (inside only, outside kept):
 - arm sweeps through chassis at 41 poses: not carved (would change the outside)
 - rod dt_axle_wheel_l0: 2.8 mm stub clear of ['dm_wheel_l0'] printed as the wheel's hub boss
 - rod dt_axle_wheel_r0: 2.8 mm stub clear of ['dm_wheel_r0'] printed as the wheel's hub boss
-- hollowed chassis (wall 2.5, form 0): 106.8 -> 52.4 cm3
+- hollowed chassis (wall 2.5, form 0): 106.8 -> 51.8 cm3
 - post_l: not touching the chassis, left undeclared
 - post_r: not touching the chassis, left undeclared
 - dt_strut_post_l: not touching the chassis, left undeclared
@@ -45,15 +50,8 @@ Left (and why):
 - power.weapon_motor x1: toolchain: lifters/flippers are servo or gear driven; the check wants a brushless kV for every weapon.
 - process.weapon_printed x1: toolchain: a printed lifter/flipper arm is judged like a spinner (needs hardened teeth); adding metal teeth changes the look.
 - electrical.battery_weapon_gap x1: toolchain: a limited-range arm is judged as a full revolution about its pivot; that cylinder covers the whole chassis.
-- wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
 - wire.rotor_clearance x4: toolchain: same full-revolution assumption; wires cannot leave a cylinder that covers the chassis.
-- likeness.view x1: looks, not in scope for this pass.
 - likeness.silhouette x1: looks, not in scope for this pass.
 - battery.rotor_gap x1: toolchain: same full-revolution assumption for a limited-range arm.
 
-Likeness (best silhouette IoU per photo, r3 -> r4): vector.aws71.webp 0.47 -> 0.47
-
-## Round 3d (user camera picks batch 2 + shape remarks applied; round 4 to be re-run on the new outside)
-Decisions: type lifter; body box rect 72x70x24 mm, ramp 18; wheels 2 r16 outboard; weapon none; extra parts: arm, post, fork.
-
-Likeness: aws71 0.59 (FAIL).
+Likeness (best silhouette IoU per photo, r3 -> r4): vector.aws71.webp 0.59 -> 0.59
