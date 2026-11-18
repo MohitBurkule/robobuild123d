@@ -1,0 +1,115 @@
+  [ran] integrity 0.01s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 4.73s
+  [ran] connections 0.00s
+  [ran] legal 0.01s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.01s
+  [ran] shape 0.23s
+  [ran] dynamics 0.01s
+  [ran] strength 0.00s
+  [ran] printability 0.42s
+  [ran] process 0.01s
+  [ran] electrical 0.01s
+  [ran] combat 0.06s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.01s
+  [ran] fastener_record 0.00s
+  [ran] likeness 3.68s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.03s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.02s
+  [ran] dfm 0.01s
+  [ran] realworld 0.01s
+pla st is a perfectly legitima: ok=False 26 blockers in 20 root causes, mass 368.9/225 g
+1. [proxy.interference] `chassis` and `wheel_l0` overlap by 3.88 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | chassis: x -52.00..52.00  y -47.50..47.50  z -7.00..21.00  size 104.00 x 95.00 x 28.00 mm
+   |   centre (-0.00, -0.00, 7.00), volume 257452.4 mm3
+   |   OVERLAP `scoop` 13.73 mm (allowed 0.08)
+   |   OVERLAP `wheel_l0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 3.88 mm (allowed 0.08)
+2. [proxy.interference] `chassis` and `wheel_r0` overlap by 3.88 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | chassis: x -52.00..52.00  y -47.50..47.50  z -7.00..21.00  size 104.00 x 95.00 x 28.00 mm
+   |   centre (-0.00, -0.00, 7.00), volume 257452.4 mm3
+   |   OVERLAP `scoop` 13.73 mm (allowed 0.08)
+   |   OVERLAP `wheel_l0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 3.88 mm (allowed 0.08)
+3. [process.print_orientation] `wheel_l0` (fdm) has no `print_orientation`. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_l0: x 43.50..51.50  y -37.00..-19.00  z -9.00..9.00  size 8.00 x 17.99 x 18.00 mm
+   |   centre (47.50, -28.00, 0.00), volume 2035.8 mm3
+   |   OVERLAP `chassis` 3.88 mm (allowed 0.08)
+   | wheel_l1: x 43.50..51.50  y 1.00..19.00  z -9.00..9.00  size 8.00 x 17.99 x 18.00 mm
+   |   centre (47.50, 10.00, 0.00), volume 2035.8 mm3
+4. [process.print_orientation] `wheel_r0` (fdm) has no `print_orientation`. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_r0: x -51.50..-43.50  y -37.00..-19.00  z -9.00..9.00  size 8.00 x 17.99 x 18.00 mm
+   |   centre (-47.50, -28.00, 0.00), volume 2035.8 mm3
+   |   OVERLAP `chassis` 3.88 mm (allowed 0.08)
+   | wheel_r1: x -51.50..-43.50  y 1.00..19.00  z -9.00..9.00  size 8.00 x 17.99 x 18.00 mm
+   |   centre (-47.50, 10.00, 0.00), volume 2035.8 mm3
+5. [retention.axial] `wheel_l0` rotates but no fastener clamps or threads into it and it declares no reasoned press fit, pin, shaft or fuse hold. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Pass a screw through it into a thread or nut, or declare the hold that captures it with a `reason`.
+   | wheel_l0: x 43.50..51.50  y -37.00..-19.00  z -9.00..9.00  size 8.00 x 17.99 x 18.00 mm
+   |   centre (47.50, -28.00, 0.00), volume 2035.8 mm3
+   |   OVERLAP `chassis` 3.88 mm (allowed 0.08)
+   | wheel_l1: x 43.50..51.50  y 1.00..19.00  z -9.00..9.00  size 8.00 x 17.99 x 18.00 mm
+   |   centre (47.50, 10.00, 0.00), volume 2035.8 mm3
+6. [retention.axial] `wheel_r0` rotates but no fastener clamps or threads into it and it declares no reasoned press fit, pin, shaft or fuse hold. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Pass a screw through it into a thread or nut, or declare the hold that captures it with a `reason`.
+   | wheel_r0: x -51.50..-43.50  y -37.00..-19.00  z -9.00..9.00  size 8.00 x 17.99 x 18.00 mm
+   |   centre (-47.50, -28.00, 0.00), volume 2035.8 mm3
+   |   OVERLAP `chassis` 3.88 mm (allowed 0.08)
+   | wheel_r1: x -51.50..-43.50  y 1.00..19.00  z -9.00..9.00  size 8.00 x 17.99 x 18.00 mm
+   |   centre (-47.50, 10.00, 0.00), volume 2035.8 mm3
+7. [mass.over] 368.9 g (range 294.8 to 443.1 g) against the 225 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+8. [proxy.interference] `chassis` and `arm` overlap by 3.38 mm (allowed 0.08).
+   | chassis: x -52.00..52.00  y -47.50..47.50  z -7.00..21.00  size 104.00 x 95.00 x 28.00 mm
+   |   centre (-0.00, -0.00, 7.00), volume 257452.4 mm3
+   |   OVERLAP `scoop` 13.73 mm (allowed 0.08)
+   |   OVERLAP `wheel_l0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 3.88 mm (allowed 0.08)
+9. [proxy.interference] `chassis` and `scoop` overlap by 13.73 mm (allowed 0.08).
+   | chassis: x -52.00..52.00  y -47.50..47.50  z -7.00..21.00  size 104.00 x 95.00 x 28.00 mm
+   |   centre (-0.00, -0.00, 7.00), volume 257452.4 mm3
+   |   OVERLAP `scoop` 13.73 mm (allowed 0.08)
+   |   OVERLAP `wheel_l0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 3.88 mm (allowed 0.08)
+10. [proxy.interference] `arm` and `scoop` overlap by 2.67 mm (allowed 0.08).
+   | arm: x -9.00..9.00  y -45.00..48.00  z -1.00..21.00  size 18.00 x 93.00 x 22.00 mm
+   |   centre (0.00, 1.50, 10.00), volume 9666.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -40, 19.0] range 0..80 default 0
+   |   OVERLAP `chassis` 3.38 mm (allowed 0.08)
+   |   OVERLAP `scoop` 2.67 mm (allowed 0.08)
+11. [proxy.sweep] joint `arm`: `arm` hits `chassis` 3.38 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint arm` lists the closest approach to every part.
+   | arm: x -9.00..9.00  y -45.00..48.00  z -1.00..21.00  size 18.00 x 93.00 x 22.00 mm
+   |   centre (0.00, 1.50, 10.00), volume 9666.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -40, 19.0] range 0..80 default 0
+   |   OVERLAP `chassis` 3.38 mm (allowed 0.08)
+   |   OVERLAP `scoop` 2.67 mm (allowed 0.08)
+12. [legal.switch] Rule 4a needs an externally accessible way to shut down that works without tools and is clearly marked on/off.
+   fix: Add a `switch` part (or removable link) with `tool_free: true` and `marked: true` and a visible ON/OFF `label`.
+... 8 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 368.9 g of 225 g (-143.9 g margin)
+    chassis                   245.09 g  fills 93% of its box  <- solid block? a tub should be a shell
+    scoop                     105.13 g  fills 82% of its box  <- solid block? a tub should be a shell
+    arm                         9.20 g  fills 26% of its box
+    wheel_l0                    2.08 g  fills 79% of its box
+    wheel_r0                    2.08 g  fills 79% of its box
+    wheel_l1                    2.08 g  fills 79% of its box
+    wheel_r1                    2.08 g  fills 79% of its box
+    mass.over: 368.9 g (range 294.8 to 443.1 g) against the 225 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 0 hit / 1 miss, group 0 hit / 31 miss, inside 0 hit / 7 miss, likeness 1 hit / 0 miss, min_gap 4 hit / 4 miss, overlap 37 hit / 58 miss, part_check 0 hit / 1 miss, part_geom 7 hit / 0 miss, ray 0 hit / 35 miss

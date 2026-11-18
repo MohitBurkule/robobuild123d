@@ -1,0 +1,464 @@
+{
+ "name": "pla st is a perfectly legitima",
+ "profile": "aws2025",
+ "robot_type": "lifter",
+ "locomotion": "wheels",
+ "kit_draft": true,
+ "parts": [
+  {
+   "id": "chassis",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "intersect",
+    "items": [
+     {
+      "type": "place",
+      "shape": {
+       "type": "prism",
+       "points": [
+        [
+         -47.5,
+         0.0
+        ],
+        [
+         47.5,
+         0.0
+        ],
+        [
+         47.5,
+         1.5
+        ],
+        [
+         47.5,
+         28.0
+        ],
+        [
+         -47.5,
+         28.0
+        ]
+       ],
+       "height": 104.0
+      },
+      "at": [
+       0.0,
+       0.0,
+       -7.0
+      ],
+      "rot": [
+       90.0,
+       0.0,
+       90.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "prism",
+       "points": [
+        [
+         -52.0,
+         -47.5
+        ],
+        [
+         52.0,
+         -47.5
+        ],
+        [
+         52.0,
+         17.5
+        ],
+        [
+         51.00083458096798,
+         23.352709660483846
+        ],
+        [
+         48.04173569058691,
+         28.980502970952692
+        ],
+        [
+         43.23641983973235,
+         34.16710699058807
+        ],
+        [
+         36.76955262170048,
+         38.71320343559643
+        ],
+        [
+         28.88965211701932,
+         42.444088369076354
+        ],
+        [
+         19.89953848298467,
+         45.2163859753386
+        ],
+        [
+         10.144696744838674,
+         46.92355841209691
+        ],
+        [
+         3.184081677783118e-15,
+         47.5
+        ],
+        [
+         -10.144696744838665,
+         46.92355841209691
+        ],
+        [
+         -19.899538482984667,
+         45.2163859753386
+        ],
+        [
+         -28.889652117019303,
+         42.44408836907637
+        ],
+        [
+         -36.76955262170047,
+         38.71320343559643
+        ],
+        [
+         -43.236419839732356,
+         34.16710699058807
+        ],
+        [
+         -48.04173569058691,
+         28.9805029709527
+        ],
+        [
+         -51.00083458096798,
+         23.35270966048386
+        ],
+        [
+         -52.0,
+         17.500000000000004
+        ]
+       ],
+       "height": 48.0
+      },
+      "at": [
+       0.0,
+       0.0,
+       7.0
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ]
+     }
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#3a4a44",
+   "print_orientation": "+z"
+  },
+  {
+   "id": "wheel_l0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 9.0,
+     "height": 8.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    47.5,
+    -28.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "wheel_r0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 9.0,
+     "height": 8.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -47.5,
+    -28.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "wheel_l1",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 9.0,
+     "height": 8.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    47.5,
+    10.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "wheel_r1",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 9.0,
+     "height": 8.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -47.5,
+    10.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "arm",
+   "kind": "weapon",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -45,
+       21.0
+      ],
+      [
+       -35,
+       21.0
+      ],
+      [
+       40,
+       13.0
+      ],
+      [
+       48,
+       1.0
+      ],
+      [
+       44,
+       -1.0
+      ],
+      [
+       36,
+       9.0
+      ],
+      [
+       -45,
+       15.0
+      ]
+     ],
+     "height": 18
+    },
+    "at": [
+     0.0,
+     0,
+     0
+    ],
+    "rot": [
+     90,
+     0,
+     90
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#6a6f78",
+   "weapon": {
+    "kind": "lifter"
+   },
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "pivot": [
+     0,
+     -40,
+     19.0
+    ],
+    "min": 0,
+    "max": 80,
+    "default": 0
+   }
+  },
+  {
+   "id": "scoop",
+   "kind": "wedge",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -58,
+       20
+      ],
+      [
+       58,
+       20
+      ],
+      [
+       52,
+       44
+      ],
+      [
+       34,
+       56
+      ],
+      [
+       0,
+       60
+      ],
+      [
+       -34,
+       56
+      ],
+      [
+       -52,
+       44
+      ]
+     ],
+     "height": 29
+    },
+    "at": [
+     0,
+     0,
+     6.5
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#c9cdd3"
+  }
+ ],
+ "fasteners": [],
+ "wires": [],
+ "connections": [],
+ "reference": [
+  {
+   "image": "reference/pla-st_is_a_perfectly_legitimate_choice_of_material.aws67.webp",
+   "mask": "reference/pla-st_is_a_perfectly_legitimate_choice_of_material.aws67_mask.png",
+   "view": "iso",
+   "approximate": true
+  }
+ ]
+}

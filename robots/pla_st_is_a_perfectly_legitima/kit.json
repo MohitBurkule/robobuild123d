@@ -1,0 +1,119 @@
+{
+ "robot_type": "lifter",
+ "body": {
+  "length": 95,
+  "width": 104,
+  "height": 28,
+  "ramp": 0,
+  "plan": "round_nose",
+  "nose": 30
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 9,
+  "width": 8,
+  "y": [
+   -28,
+   10
+  ],
+  "outside": false
+ },
+ "colors": {
+  "body": "#3a4a44",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "side": [
+    [
+     -45,
+     30
+    ],
+    [
+     -35,
+     30
+    ],
+    [
+     40,
+     22
+    ],
+    [
+     48,
+     10
+    ],
+    [
+     44,
+     8
+    ],
+    [
+     36,
+     18
+    ],
+    [
+     -45,
+     24
+    ]
+   ],
+   "x": [
+    -9,
+    9
+   ],
+   "weapon": "lifter",
+   "pivot": [
+    -40,
+    28
+   ],
+   "id": "arm",
+   "color": "#6a6f78"
+  },
+  {
+   "top": [
+    [
+     -58,
+     20
+    ],
+    [
+     58,
+     20
+    ],
+    [
+     52,
+     44
+    ],
+    [
+     34,
+     56
+    ],
+    [
+     0,
+     60
+    ],
+    [
+     -34,
+     56
+    ],
+    [
+     -52,
+     44
+    ]
+   ],
+   "z": [
+    1,
+    30
+   ],
+   "color": "#c9cdd3",
+   "kind": "wedge",
+   "id": "scoop"
+  }
+ ],
+ "skip_photos": [
+  0,
+  1
+ ],
+ "name": "pla st is a perfectly legitima",
+ "weapon": {
+  "kind": "none"
+ }
+}
