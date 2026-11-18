@@ -24,3 +24,34 @@ Decisions: type flipper; body box rect 110x100x36 mm, ramp 30; wheels 2 r12 inbo
 
 Likeness: aws70 0.65 (FAIL), aws71 0.89 (ok).
 Other likeness findings: [FAIL] likeness.view: `reference/queen_sarah_denning.aws70.webp` is declared `front` (IoU 0.65 there) but the model matches it better from front (elevation 45, 
+
+## Round 4 (verification, helper 1)
+Blockers r3 -> r4: **65 -> 10** (`verify --tier inner`, full output in verify_r4.txt).
+Likeness (best silhouette IoU per photo, r3 -> r4): queen_sarah_denning.aws70.webp 0.650 -> 0.650, queen_sarah_denning.aws71.webp 0.887 -> 0.887
+
+What was done (script r4_h1, outside shape kept):
+- fake screw/bolt heads removed; detail mounts/arms merged into the print part they sit on; axle nuts became printed hub caps
+- printed parts of the chassis material declared one print (`fused_with`, a hidden 1.6 mm key where they only touched); overlaps inside the print trimmed
+- catalog parts: N20 gearmotors on the drive wheels (D-bore in the hub), LiPo, Malenki Nano (receiver + drive ESCs), brushless weapon ESC and outrunner for spinners, slide switch in a closed pocket above the belly skin, reached through an 8 x 4 mm slot underneath, steel locking pin through the weapon
+- pockets 0.25 mm per side round every bought part with 2 mm print walls, wheel/weapon running clearances <= 1.5 mm (no clearance cut where the kit rotor sits deep in the body: that would open the outside), hinge sweep clearances, shaft bores
+- big print parts hollowed (cavity = part eroded by the wall, checked >= 1 mm inside the skin, no cavity opens to the outside); wires with gauges and via points round rotors; print orientation, failsafe and weapon disable declared
+
+Notes from the run:
+- dt_axle_wheel_l0 replaced by the gearmotor shaft
+- dt_axle_wheel_r0 replaced by the gearmotor shaft
+- joint flipper: 1.5 mm sweep clearance cut in chassis
+- chassis: hollowed (box wall round pockets), 307804 -> 103731 mm3
+- hollow failed on scoop: [('cav', 'geometry failed: ValueError: Cannot tessellate an empty shape')]
+- wire w_bat_sw: no via round the rotor found
+- wire w_sw_esc: no via round the rotor found
+- wire w_m1: no via round the rotor found
+- wire w_m2: no via round the rotor found
+
+Left (one line each):
+- wire.rotor_clearance x4: toolchain for lifters/flippers: the check revolves a limited-range arm a full turn, so no wire inside the chassis can clear it; for spinners: no free route found
+- mass.over x1: outside shape (kept) is heavier than the class limit even with 2.5 mm shells
+- power.weapon_motor x1: toolchain: a servo/arm weapon is required to have a brushless kV motor like a spinner
+- process.weapon_printed x1: toolchain: printed lifter/flipper arms are judged like spinner teeth (metal inserts required)
+- wire.render_wires x1: toolchain/process: the photo-match, diff and likeness sheets are written without a render record of the wire routes
+- likeness.view x1: looks (photo view label; not part of this pass)
+- likeness.silhouette x1: looks (not part of this pass; outside shape kept as round 3)
