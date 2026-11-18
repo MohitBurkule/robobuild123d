@@ -11,5 +11,8 @@
  "source": "read from reference photos by Sonnet",
  "mask_thr": {
   "pantherk_ii.aws66.webp": 130
+ },
+ "mask_mode": {
+  "pantherk_ii.aws66.webp": "textured"
  }
 }
