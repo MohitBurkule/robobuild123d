@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_pla_st_is_a_perfectly_legitima/robots/pla_st_is_a_perfectly_legitima/spec.json",
- "rendered_at": 1795023724.555655,
+ "rendered_at": 1795026278.781151,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -8,7 +8,27 @@
   "wheel_l1",
   "wheel_r1",
   "arm",
-  "scoop"
+  "scoop",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_nut_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_nut_wheel_r0",
+  "dt_hub_wheel_l1",
+  "dt_axle_wheel_l1",
+  "dt_nut_wheel_l1",
+  "dt_hub_wheel_r1",
+  "dt_axle_wheel_r1",
+  "dt_nut_wheel_r1",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3",
+  "dt_screw_4",
+  "dt_screw_5",
+  "dt_screw_6",
+  "dt_screw_7"
  ],
  "wires": {}
 }

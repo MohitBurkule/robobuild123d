@@ -7,5 +7,15 @@
  },
  "photos": [
   "pla-st_is_a_perfectly_legitimate_choice_of_material.aws67.webp"
- ]
+ ],
+ "view": {
+  "pla-st_is_a_perfectly_legitimate_choice_of_material.aws63.webp": "front",
+  "pla-st_is_a_perfectly_legitimate_choice_of_material.aws65.webp": "front",
+  "pla-st_is_a_perfectly_legitimate_choice_of_material.aws67.webp": "front_left_iso"
+ },
+ "elevation": {
+  "pla-st_is_a_perfectly_legitimate_choice_of_material.aws63.webp": 45,
+  "pla-st_is_a_perfectly_legitimate_choice_of_material.aws65.webp": 45,
+  "pla-st_is_a_perfectly_legitimate_choice_of_material.aws67.webp": 45
+ }
 }

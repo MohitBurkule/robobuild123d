@@ -26,7 +26,15 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "skip_photos": [
+  0,
+  1
+ ],
+ "name": "pla st is a perfectly legitima",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "side": [
     [
@@ -109,13 +117,5 @@
    "kind": "wedge",
    "id": "scoop"
   }
- ],
- "skip_photos": [
-  0,
-  1
- ],
- "name": "pla st is a perfectly legitima",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }
