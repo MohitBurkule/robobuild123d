@@ -10,5 +10,15 @@
  "photos": [
   "refined_for_the_roboteers_pleasure.aws74.webp",
   "refined_for_the_roboteers_pleasure.aws76.webp"
- ]
+ ],
+ "view": {
+  "refined_for_the_roboteers_pleasure.aws73.webp": "front_left_iso",
+  "refined_for_the_roboteers_pleasure.aws74.webp": "front_left_iso",
+  "refined_for_the_roboteers_pleasure.aws76.webp": "front_left_iso"
+ },
+ "elevation": {
+  "refined_for_the_roboteers_pleasure.aws73.webp": 45,
+  "refined_for_the_roboteers_pleasure.aws74.webp": 25,
+  "refined_for_the_roboteers_pleasure.aws76.webp": 45
+ }
 }

@@ -37,3 +37,9 @@ Likeness: aws74 0.70 (FAIL), aws76 0.66 (FAIL).
 Decisions: type other; body box rect 75x70x22 mm, ramp 0; wheels 2 r13 outboard; weapon disc r11 axis x teeth 6.
 
 Likeness: aws74 0.69 (FAIL), aws76 0.67 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type other; body box rect 75x70x22 mm, ramp 0; wheels 2 r13 outboard; weapon disc r11 axis x teeth 6.
+
+Likeness: aws74 0.56 (FAIL), aws76 0.51 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/refined_for_the_roboteers_pleasure.aws74.webp` is declared `front_left_iso` (IoU 0.56 there) but the model matches it better fr; [FAIL] likeness.view: `reference/refined_for_the_roboteers_pleasure.aws76.webp` is declared `front_left_iso` (IoU 0.51 there) but the model matches it better fr

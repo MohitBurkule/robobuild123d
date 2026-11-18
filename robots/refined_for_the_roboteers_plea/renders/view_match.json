@@ -1,0 +1,14 @@
+{
+ "refined_for_the_roboteers_pleasure.aws74.webp": {
+  "view": "front_left_iso",
+  "azimuth": 105,
+  "elevation": 25,
+  "iou": 0.639
+ },
+ "refined_for_the_roboteers_pleasure.aws76.webp": {
+  "view": "front_left_iso",
+  "azimuth": 120,
+  "elevation": 25,
+  "iou": 0.661
+ }
+}

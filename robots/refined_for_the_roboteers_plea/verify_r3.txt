@@ -1,0 +1,132 @@
+BLOCKERS: 60
+  [ran] integrity 0.10s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 2.51s
+  [ran] connections 2.75s
+  [ran] legal 0.01s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.03s
+  [ran] shape 0.11s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.56s
+  [ran] process 0.01s
+  [ran] electrical 0.00s
+  [ran] combat 0.09s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 3.38s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.04s
+  [ran] dfm 0.01s
+  [ran] realworld 0.00s
+refined for the roboteers plea: ok=False 60 blockers in 52 root causes, mass 222.9/150 g
+1. [mfg.stock] `dt_screw_0`: bought part with free geometry and no catalog SKU or stock rod/bearing match. Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   fix: Use a catalog part, or size it to a stock rod/bearing and name it in `stock`.
+   | dt_screw_0: x -29.90..-26.10  y -44.90..-41.10  z 8.60..10.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (-28.00, -43.00, 9.30), volume 15.9 mm3
+   |   OVERLAP `chassis` 0.19 mm (allowed 0.08)
+   | dt_screw_1: x 26.10..29.90  y -44.90..-41.10  z 8.60..10.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (28.00, -43.00, 9.30), volume 15.9 mm3
+2. [proxy.interference] `chassis` and `dt_screw_0` overlap by 0.19 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | chassis: x -35.00..35.00  y -50.00..25.00  z -11.00..9.00  size 70.00 x 75.00 x 20.00 mm
+   |   centre (0.00, -12.50, -1.00), volume 105000.0 mm3
+   |   OVERLAP `plough` 5.38 mm (allowed 0.08)
+   |   OVERLAP `gear` 4.88 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
+3. [proxy.interference] `plough` and `dt_screw_2` overlap by 0.30 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | plough: x -50.00..50.00  y 14.00..62.00  z -12.60..12.00  size 100.00 x 48.00 x 24.60 mm
+   |   centre (0.00, 38.00, -0.30), volume 77296.2 mm3
+   |   OVERLAP `chassis` 5.38 mm (allowed 0.08)
+   |   OVERLAP `gear` 3.01 mm (allowed 0.08)
+   |   OVERLAP `gear_mount` 1.88 mm (allowed 0.08)
+4. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `dt_shaft_weapon`. (+1 consequences)
+   | weapon: x 5.00..7.00  y 3.78..24.22  z 92.99..115.04  size 2.00 x 20.44 x 22.04 mm
+   |   centre (6.00, 14.00, 104.01), volume 644.9 mm3
+   |   joint revolute axis [1, 0, 0] pivot [6, 14.0, 104.0] range 0..360 default 0
+   |   OVERLAP `dt_shaft_weapon` 0.93 mm (allowed 0.08)
+   |   gap to `arm` 1.00 mm
+5. [connection.floating] `dt_screw_0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | dt_screw_0: x -29.90..-26.10  y -44.90..-41.10  z 8.60..10.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (-28.00, -43.00, 9.30), volume 15.9 mm3
+   |   OVERLAP `chassis` 0.19 mm (allowed 0.08)
+   | chassis: x -35.00..35.00  y -50.00..25.00  z -11.00..9.00  size 70.00 x 75.00 x 20.00 mm
+   |   centre (0.00, -12.50, -1.00), volume 105000.0 mm3
+6. [connection.floating] `dt_screw_2` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `plough`, 0.0 mm away. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | dt_screw_2: x -29.90..-26.10  y 16.10..19.90  z 11.10..12.50  size 3.80 x 3.80 x 1.40 mm
+   |   centre (-28.00, 18.00, 11.80), volume 15.9 mm3
+   |   OVERLAP `plough` 0.30 mm (allowed 0.08)
+   |   gap to `chassis` 2.10 mm
+   | plough: x -50.00..50.00  y 14.00..62.00  z -12.60..12.00  size 100.00 x 48.00 x 24.60 mm
+7. [mass.over] 222.9 g (range 179.5 to 266.3 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+8. [proxy.interference] `chassis` and `plough` overlap by 5.38 mm (allowed 0.08).
+   | chassis: x -35.00..35.00  y -50.00..25.00  z -11.00..9.00  size 70.00 x 75.00 x 20.00 mm
+   |   centre (0.00, -12.50, -1.00), volume 105000.0 mm3
+   |   OVERLAP `plough` 5.38 mm (allowed 0.08)
+   |   OVERLAP `gear` 4.88 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
+9. [proxy.interference] `chassis` and `gear` overlap by 4.88 mm (allowed 0.08).
+   | chassis: x -35.00..35.00  y -50.00..25.00  z -11.00..9.00  size 70.00 x 75.00 x 20.00 mm
+   |   centre (0.00, -12.50, -1.00), volume 105000.0 mm3
+   |   OVERLAP `plough` 5.38 mm (allowed 0.08)
+   |   OVERLAP `gear` 4.88 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
+10. [proxy.interference] `chassis` and `gear_mount` overlap by 0.46 mm (allowed 0.08).
+   | chassis: x -35.00..35.00  y -50.00..25.00  z -11.00..9.00  size 70.00 x 75.00 x 20.00 mm
+   |   centre (0.00, -12.50, -1.00), volume 105000.0 mm3
+   |   OVERLAP `plough` 5.38 mm (allowed 0.08)
+   |   OVERLAP `gear` 4.88 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
+11. [proxy.interference] `chassis` and `dt_axle_wheel_l0` overlap by 1.26 mm (allowed 0.08).
+   | chassis: x -35.00..35.00  y -50.00..25.00  z -11.00..9.00  size 70.00 x 75.00 x 20.00 mm
+   |   centre (0.00, -12.50, -1.00), volume 105000.0 mm3
+   |   OVERLAP `plough` 5.38 mm (allowed 0.08)
+   |   OVERLAP `gear` 4.88 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
+12. [proxy.interference] `chassis` and `dt_axle_wheel_r0` overlap by 1.26 mm (allowed 0.08).
+   | chassis: x -35.00..35.00  y -50.00..25.00  z -11.00..9.00  size 70.00 x 75.00 x 20.00 mm
+   |   centre (0.00, -12.50, -1.00), volume 105000.0 mm3
+   |   OVERLAP `plough` 5.38 mm (allowed 0.08)
+   |   OVERLAP `gear` 4.88 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
+... 40 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 222.9 g of 150 g (-72.9 g margin)
+    chassis                    99.96 g  fills 100% of its box  <- solid block? a tub should be a shell
+    plough                     73.59 g  fills 65% of its box  <- solid block? a tub should be a shell
+    arm                         8.64 g  fills 57% of its box
+    gear                        7.91 g  fills 72% of its box
+    wheel_l0                    5.42 g  fills 79% of its box
+    wheel_r0                    5.42 g  fills 79% of its box
+    weapon                      5.09 g  fills 72% of its box
+    gear_mount                  4.57 g  fills 100% of its box
+    servo_saddle                3.52 g  fills 100% of its box
+    dt_hub_wheel_l0             1.53 g  fills 79% of its box
+    dt_hub_wheel_r0             1.53 g  fills 79% of its box
+    dt_shaft_weapon             1.19 g  fills 79% of its box
+    dt_axle_wheel_l0            1.15 g  fills 79% of its box
+    dt_axle_wheel_r0            1.15 g  fills 79% of its box
+    dt_nut_wheel_l0             0.27 g  fills 79% of its box
+    dt_nut_wheel_r0             0.27 g  fills 79% of its box
+    dt_screw_0                  0.13 g  fills 79% of its box
+    dt_screw_1                  0.13 g  fills 79% of its box
+    dt_screw_2                  0.13 g  fills 79% of its box
+    dt_screw_3                  0.13 g  fills 79% of its box
+    mass.over: 222.9 g (range 179.5 to 266.3 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 2 hit / 0 miss, group 0 hit / 31 miss, inside 9 hit / 11 miss, likeness 2 hit / 0 miss, min_gap 29 hit / 40 miss, overlap 139 hit / 221 miss, part_check 2 hit / 0 miss, part_geom 20 hit / 0 miss, ray 45 hit / 47 miss
