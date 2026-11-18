@@ -11,7 +11,11 @@ collected the photos, NOT by the builder). All findings are blockers:
                            was drawn to fit the model.
 - likeness.silhouette      best IoU of the model's silhouette (any camera around the robot, mirrored or not) with the
                            photo mask is below 0.70, or not clearly better (+0.05) than the stock template's.
-- likeness.type            spec robot_type / weapon / wheel count differ from REFERENCE.json.
+- likeness.type            spec robot_type / wheel count differ from REFERENCE.json.
+- REFERENCE.json may also carry `photos` [usable photo file names; each needs an entry] and `mask_thr` {photo: thr}
+  (the collector's `robot mask --thr` where the default picks up the floor).
+- likeness.weapon          REFERENCE.json `weapon` {kind, axis, position, width_frac, teeth}: weapon part missing, wrong
+                           kind, wrong axis, wrong place, wrong width (+-25 %), wrong tooth count.
 """
 
 from __future__ import annotations
@@ -25,7 +29,7 @@ from ..finding import BLOCKER, fail, ok
 
 G = "likeness"
 COPY_IOU = 0.80
-SIL_MIN = 0.70
+SIL_MIN = 0.80  # absolute floor (stock templates already reach 0.69-0.81 on iso photos, so 0.70 let blobs pass)
 SIL_MARGIN = 0.0  # at least as close to the photo as the closest stock template (copies are caught by template_copy)
 MASK_MIN = 0.85
 VOX = 2.0
@@ -182,25 +186,36 @@ def photos(ctx):
     from ..mask import photo_mask
     r, w = ctx.r, ctx.world
     base = _base(r.spec)
+    from ..mask import THR
+    rj = _refjson(r.spec)
+    thr = rj.get("mask_thr") or {}  # photo collector's per-photo `robot mask --thr`, for floors the default picks up
+    use = set(rj.get("photos") or [])  # photos the collector marked usable (clean background, whole robot)
     ents = [e for e in ref.entries(r.spec) if e.get("mask") and e.get("image")
             and (base / e["image"]).exists() and "reference" in Path(e["image"]).parts]
+    missing = sorted(use - {Path(e["image"]).name for e in ents})
+    if ents and missing:
+        out0 = [fail("likeness.no_reference", G, BLOCKER, "Usable photo not compared",
+                     f"REFERENCE.json marks {', '.join(missing)} usable but the spec has no `reference` entry for it.")]
+    else:
+        out0 = []
     if not ents:
         return [fail("likeness.no_reference", G, BLOCKER, "No photo comparison",
                      "This robot has reference photos but the spec has no `reference` entry with an `image` from "
                      "reference/ and a `mask`.")
                 .fix('Run `robot mask reference/<photo> reference/<photo>_mask.png`, then add "reference": [{"image": '
                      '"reference/<photo>", "mask": "reference/<photo>_mask.png", "view": "iso", "approximate": true}].')]
-    out = []
+    out = out0
     sils = _sils(w)
     tsils = None
     for e in ents:
         mask = ref.load_mask(base / e["mask"])
-        auto = photo_mask(base / e["image"])
+        auto = photo_mask(base / e["image"], float(thr.get(Path(e["image"]).name, THR)))
         mj = ref.compare(auto, mask)[0]["iou"]
         if mj < MASK_MIN:
+            t = thr.get(Path(e["image"]).name, THR)
             out.append(fail("likeness.mask_source", G, BLOCKER, "Mask is not the photo's outline",
-                            f"`{e['mask']}` matches `robot mask {e['image']}` at IoU {mj:.2f} (need {MASK_MIN}): it was not "
-                            "taken from the photo.").fix(f"Regenerate it: `robot mask {e['image']} {e['mask']}`."))
+                            f"`{e['mask']}` matches `robot mask {e['image']} --thr {t:g}` at IoU {mj:.2f} (need {MASK_MIN}): "
+                            "it was not taken from the photo.").fix(f"Regenerate it: `robot mask {e['image']} {e['mask']} --thr {t:g}`."))
             continue
         iou, st, ci = best_match(sils, mask)
         tiou, tname = _template_iou(base / e["mask"], mask)
@@ -292,6 +307,14 @@ def _template_iou_raw(mask):
     return best
 
 
+def _refjson(spec) -> dict:
+    p = _base(spec) / "REFERENCE.json"
+    try:
+        return json.loads(p.read_text()) if p.exists() else {}
+    except Exception:  # noqa: BLE001 - facts() reports the parse error
+        return {}
+
+
 def facts(ctx):
     spec = ctx.r.spec
     p = _base(spec) / "REFERENCE.json"
@@ -313,6 +336,82 @@ def facts(ctx):
         n = sum(1 for q in raw.get("parts") or [] if q.get("kind") == "wheel")
         if n != int(wheels):
             out.append(fail("likeness.type", G, BLOCKER, "Wrong wheel count", f"Photos show {wheels} wheels; spec has {n}."))
+    w = ref.get("weapon")
+    if isinstance(w, dict):
+        out += weapon_facts(ctx, w)
+    return out
+
+
+AXES = "xyz"
+
+
+def weapon_facts(ctx, want):
+    """REFERENCE.json `weapon`: {kind: drum|disc|bar|eggbeater|lifter|flipper|wedge|none, axis: x|y|z (spin / hinge axis),
+    position: front|middle|rear, width_frac: weapon width / robot width, teeth: N}."""
+    from .power import spin_axis
+    r, w = ctx.r, ctx.world
+    kind = str(want.get("kind") or "").lower()
+    if kind in ("", "none", "wedge"):
+        return []
+    idx = [i for i, b in enumerate(w.bodies) if b.part_idx is not None and r.parts[b.part_idx].part.kind == "weapon"]
+    if not idx:
+        return [fail("likeness.weapon", G, BLOCKER, "Weapon missing",
+                     f"Photos show a {kind} weapon; the spec has no part of kind `weapon`.")
+                .fix(f"Add the {kind} as a `weapon` part (see `robot templates`: vspin_drisk = disc, hspin_bar = bar).")]
+    out = []
+    i = max(idx, key=lambda j: float(np.prod(w.bodies[j].aabb[1] - w.bodies[j].aabb[0])))
+    b = w.bodies[i]
+    p = r.parts[b.part_idx].part
+    wd = p.weapon
+    got_kind = str(getattr(wd, "kind", None) or "").lower()
+    spinner = kind in ("drum", "disc", "bar", "eggbeater", "shell", "ring")
+    if spinner and got_kind != kind:
+        out.append(fail("likeness.weapon", G, BLOCKER, "Wrong weapon type",
+                        f"Photos show a {kind}; `{p.id}` is a `{got_kind or 'non-spinning part'}` (`weapon.kind`).")
+                   .on(p.id).fix(f"Model a {kind} and set weapon.kind = \"{kind}\"."))
+    ax = want.get("axis")
+    if ax:
+        a = None
+        if spinner:
+            sa = spin_axis(w, r, i)
+            a = None if sa is None else sa[1]
+        elif p.joint and p.joint.get("axis") is not None:
+            a = np.asarray(p.joint["axis"], float)
+        if a is None:
+            out.append(fail("likeness.weapon", G, BLOCKER, "Weapon axis unknown",
+                            f"`{p.id}` has no spin axis / joint axis; photos show a {kind} turning about {ax}.").on(p.id))
+        else:
+            g = AXES[int(np.argmax(np.abs(a)))]
+            if g != ax:
+                out.append(fail("likeness.weapon", G, BLOCKER, "Weapon turns the wrong way",
+                                f"Photos: {kind} turns about {ax}; `{p.id}` turns about {g} (axis {np.round(a, 2).tolist()}). "
+                                "x = across the robot (horizontal drum/vertical disc), z = up (horizontal spinner).").on(p.id))
+    solid = [o for o in w.bodies if not o.is_wire and not o.fastener]
+    lo = np.min([o.aabb[0] for o in solid], axis=0)
+    hi = np.max([o.aabb[1] for o in solid], axis=0)
+    pos = want.get("position")
+    if pos:
+        f = (b.center[1] - lo[1]) / max(hi[1] - lo[1], 1e-6)
+        got = "front" if f > 2 / 3 else "rear" if f < 1 / 3 else "middle"
+        if got != pos:
+            out.append(fail("likeness.weapon", G, BLOCKER, "Weapon in the wrong place",
+                            f"Photos: weapon at the {pos}; `{p.id}` centre is {f:.0%} of the length from the back ({got}).")
+                       .on(p.id).here(b.center))
+    wf = want.get("width_frac")
+    if wf:
+        got = (b.aabb[1][0] - b.aabb[0][0]) / max(hi[0] - lo[0], 1e-6)
+        if abs(got - float(wf)) > 0.25 * float(wf):
+            out.append(fail("likeness.weapon", G, BLOCKER, "Weapon the wrong size",
+                            f"Photos: weapon spans {float(wf):.0%} of the robot width; `{p.id}` spans {got:.0%} (tolerance 25 %).")
+                       .on(p.id))
+    nt = want.get("teeth")
+    if nt and spinner:
+        rawp = next((q for q in (r.spec.raw or {}).get("parts") or [] if q.get("id") == p.id), {})
+        gt = (rawp.get("weapon") or {}).get("teeth", getattr(wd, "teeth", None))
+        if gt is None or int(gt) != int(nt):
+            out.append(fail("likeness.weapon", G, BLOCKER, "Wrong tooth count",
+                            f"Photos show {nt} teeth; `{p.id}` declares {gt} (`weapon.teeth`; shape.weapon_profile measures it).")
+                       .on(p.id))
     return out
 
 
