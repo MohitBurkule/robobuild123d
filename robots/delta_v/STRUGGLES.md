@@ -27,3 +27,23 @@ Time cap ~20 min. Result is a rough template-based model, NOT a faithful Delta V
 - Kept wedge_2wd wheelbase and body; only the names changed.
 - Socket-head hole dimensions (head_dk 3.8, head_k 2.0, clearance 2.2) were guessed from ISO 4762 M2 values.
 - Did not add tines, yellow idler wheels, or the flipper plate.
+
+## Likeness attempt (Delta V, vertical spinner rebuild)
+- Result: likeness FAILS (4 blockers). Inner tier: 47 blockers in 33 root causes, 0 parity. Full tier not run (time cap; practice group alone is ~6 min).
+- Started from `robot template vspin_drisk` (robot_type vertical_spinner, matches REFERENCE.json). Renamed to "Delta V", added 3 `reference` entries (iso, approximate true) with masks from `robot mask`. Masks look right (white = robot).
+- First likeness run: `likeness.template_copy` blocker (IoU 1.00 vs vspin_drisk), so the spec is still the stock template. Silhouette IoU 0.65 / 0.69 / 0.69 for aws72 / aws74 / aws76 (need 0.74 / 0.70 / 0.81; the bar is "no worse than the closest stock template").
+- Tried `robot gen build --intent` with vspin_drisk and custom variants (taper 6, custom 5-point outline, shape oval): all three gave `no wireable layout` (channel route failures for w_bat_sw / w_wesc_m, or "components do not fit inside the outline"). No photo-shaped variant was produced.
+- Did not hand-reshape the chassis/forks/disc; the photos show a low wide body, two long forward fork tines, a vertical disc on top rear-centre, and a rear idler wheel (yellow). None of that has been modelled.
+- Fasteners `--fill` wrote 14 csk hole records (ISO 14581 guessed numbers, same as the wedge attempt).
+
+## Struggles (this attempt)
+1. `likeness.silhouette` message names only the failing photo and the bar; it does not say which region (front, rear, top) is off. The overlay PNG exists (`$ROBOT_REFERENCE_OUT`) but I did not get to it. A pointer to where the overlay is written would help.
+2. `gen build --intent` is the only reshape route in the docs and it failed on every custom outline I tried. The error names the wire that fails but not which outline edge to move. No example intent with a custom `outline` that actually lays out.
+3. `robot mask` only resolves from the repo root: run from `robots/delta_v` it errors with "invalid choice: 'mask'" because the wrong `robot` package is picked up. Not documented.
+4. `pip install -e '.[robot]'` failed once with `No such file or directory: /usr/local/bin/robot`; a second run succeeded (as the brief said).
+5. Inner verify run in background silently ended after `fastener_record` with no report on one run; the rerun with `--json` finished normally (exit 2 = blockers).
+6. `verify --tier inner` takes ~2-4 min on a cold cache (`legal` alone 120 s, `likeness` 44 s). Too slow for the 30-min cap to iterate on shape.
+7. The verifier cannot tell me the closest stock template name in the message (it says "0.81" without naming which template), so I cannot tell which template to beat.
+
+## Attribution
+Commit uses the system-reminder attribution (Claude Haiku 5.5 and the session link), replacing the older "Claude Haiku" trailer from the brief.
