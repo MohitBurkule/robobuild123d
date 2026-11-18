@@ -1,0 +1,11 @@
+{
+ "robot_type": "wedge",
+ "wheels": 2,
+ "weapon": {
+  "kind": "wedge"
+ },
+ "photos": [
+  "smart_ant_5_.aws61.webp"
+ ],
+ "mask_mode": {}
+}

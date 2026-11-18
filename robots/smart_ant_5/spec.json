@@ -1,0 +1,225 @@
+{
+ "name": "smart ant 5",
+ "profile": "aws2025",
+ "robot_type": "wedge",
+ "locomotion": "wheels",
+ "kit_draft": true,
+ "parts": [
+  {
+   "id": "chassis",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "intersect",
+    "items": [
+     {
+      "type": "place",
+      "shape": {
+       "type": "prism",
+       "points": [
+        [
+         -50.0,
+         0.0
+        ],
+        [
+         50.0,
+         0.0
+        ],
+        [
+         50.0,
+         1.5
+        ],
+        [
+         -38.0,
+         46.0
+        ],
+        [
+         -50.0,
+         46.0
+        ]
+       ],
+       "height": 84.0
+      },
+      "at": [
+       0.0,
+       0.0,
+       -12.0
+      ],
+      "rot": [
+       90.0,
+       0.0,
+       90.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "prism",
+       "points": [
+        [
+         -42.0,
+         -50.0
+        ],
+        [
+         42.0,
+         -50.0
+        ],
+        [
+         42.0,
+         50.0
+        ],
+        [
+         -42.0,
+         50.0
+        ]
+       ],
+       "height": 66.0
+      },
+      "at": [
+       0.0,
+       0.0,
+       11.0
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ]
+     }
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#f07a1c",
+   "print_orientation": "+z"
+  },
+  {
+   "id": "wheel_l0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 14.0,
+     "height": 8.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    46.5,
+    -36.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e6e6ea"
+  },
+  {
+   "id": "wheel_r0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 14.0,
+     "height": 8.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -46.5,
+    -36.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e6e6ea"
+  },
+  {
+   "id": "lip",
+   "kind": "wedge",
+   "material": "aluminium",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      90,
+      14,
+      2
+     ]
+    },
+    "at": [
+     0,
+     54,
+     -11.0
+    ],
+    "rot": [
+     -12,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#c9cdd3"
+  }
+ ],
+ "fasteners": [],
+ "wires": [],
+ "connections": [],
+ "reference": [
+  {
+   "image": "reference/smart_ant_5_.aws61.webp",
+   "mask": "reference/smart_ant_5_.aws61_mask.png",
+   "view": "iso",
+   "approximate": true
+  }
+ ]
+}

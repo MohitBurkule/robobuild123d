@@ -1,0 +1,60 @@
+{
+ "robot_type": "wedge",
+ "body": {
+  "length": 100,
+  "width": 84,
+  "height": 46,
+  "ramp": 88,
+  "plan": "trapezoid",
+  "front_width": 84
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 14,
+  "width": 8,
+  "y": [
+   -36
+  ]
+ },
+ "colors": {
+  "body": "#f07a1c",
+  "wheel": "#e6e6ea",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "box": [
+    90,
+    14,
+    2
+   ],
+   "at": [
+    0,
+    54,
+    3
+   ],
+   "kind": "wedge",
+   "material": "aluminium",
+   "process": "laser",
+   "id": "lip",
+   "color": "#c9cdd3",
+   "rot": [
+    -12,
+    0,
+    0
+   ]
+  }
+ ],
+ "skip_photos": [
+  0,
+  2
+ ],
+ "textured": [
+  1
+ ],
+ "name": "smart ant 5",
+ "weapon": {
+  "kind": "none"
+ }
+}
