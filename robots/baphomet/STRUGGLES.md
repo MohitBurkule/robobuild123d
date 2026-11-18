@@ -41,3 +41,15 @@
 ## Final blocker count
 - Verifier blockers: 0 (inner tier).
 - Photo-match gaps: several, listed above, not measured.
+
+## Likeness pass (second Haiku run, ~30 min cap)
+- Spec rewritten from `hspin_bar` (was the old wedge_2wd copy). Masks made per photo with `python3 -m robot mask` (run from repo root; from the robot folder the subcommand was not found).
+- Added three `reference` entries (aws74 iso, aws76 iso_back, aws77 iso, approximate true).
+- Changes: removed the ramp `wedge` part with its fasteners/connections/wires; removed the orphan `insert_w*` heat-set parts; stretched both chassis outlines 8% in Y. This cleared `likeness.template_copy` (overlap was 1.00, now below 0.80).
+- `likeness.silhouette` still fails: aws77 IoU 0.75, the closest stock template is 0.77. aws74 now passes. The silhouette is not matched well yet; the weapon fork, drum position and wheel layout are still the template's.
+- Inner verify: 3 blockers. Two are wire render issues (`w_sw_wesc`, `w_rx_wesc`, `w_wesc_m` not drawn on iso/top); these routes were already failing in the first copy. Third is the likeness silhouette.
+- Mass 144.9 g, under budget but `mass.may_be_over` warning range.
+- Fasteners filled (10 hole records). iso render at robots/baphomet/renders/iso.png.
+- Full tier NOT run (time cap reached).
+- Confusing: `robot verify` from inside robots/baphomet ran a different installed package in the first attempt; running from repo root avoids it.
+- Missing hint: no tool says which template is closest to the silhouette before you copy one; the template_copy message only says to rebuild.
