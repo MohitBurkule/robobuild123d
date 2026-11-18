@@ -9,9 +9,9 @@
   "liftoff.aws76.webp"
  ],
  "view": {
-  "liftoff.aws76.webp": "front"
+  "liftoff.aws76.webp": "front_left_iso"
  },
- "elevation": {
-  "liftoff.aws76.webp": 25
+ "view_source": {
+  "liftoff.aws76.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label"
  }
 }
