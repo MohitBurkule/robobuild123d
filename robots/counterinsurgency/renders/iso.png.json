@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_counterinsurgency/robots/counterinsurgency/spec.json",
- "rendered_at": 1795023197.1336324,
+ "rendered_at": 1795024724.8043423,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -9,7 +9,8 @@
   "fork_1",
   "fork_2",
   "side_arm_l",
-  "side_arm_r"
+  "side_arm_r",
+  "deck"
  ],
  "wires": {}
 }

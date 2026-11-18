@@ -6,5 +6,11 @@
  },
  "photos": [
   "counterinsurgency.aws76.webp"
- ]
+ ],
+ "view": {
+  "counterinsurgency.aws76.webp": "front_left_iso"
+ },
+ "elevation": {
+  "counterinsurgency.aws76.webp": 45
+ }
 }

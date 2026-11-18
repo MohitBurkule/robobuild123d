@@ -16,3 +16,9 @@ Likeness: aws76 0.67 (FAIL).
 Decisions: type wedge; body box rect 50x120x14 mm, ramp 0; wheels 2 r9 inboard; weapon none; 3 forks 36 mm; extra parts: side_arm.
 
 Likeness: aws76 0.61 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type wedge; body box rect 50x120x14 mm, ramp 0; wheels 2 r9 inboard; weapon none; 3 forks 36 mm; extra parts: side_arm, deck.
+
+Likeness: aws76 0.39 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/counterinsurgency.aws76.webp` is declared `front_left_iso` (IoU 0.39 there) but the model matches it better from front_right_is

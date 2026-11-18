@@ -28,46 +28,52 @@
   "weapon": "#c9cdd3",
   "fork": "#8a8d92"
  },
- "extras": [
-  {
-   "side": [
-    [
-     -25,
-     16
-    ],
-    [
-     20,
-     16
-    ],
-    [
-     95,
-     0
-    ],
-    [
-     95,
-     2
-    ],
-    [
-     25,
-     10
-    ],
-    [
-     -25,
-     4
-    ]
-   ],
-   "x": [
-    56,
-    62
-   ],
-   "mirror": true,
-   "kind": "wedge",
-   "id": "side_arm",
-   "color": "#1c1d20"
-  }
- ],
  "name": "counterinsurgency",
  "weapon": {
   "kind": "none"
- }
+ },
+ "macros": [
+  {
+   "top": [
+    [
+     52,
+     -25
+    ],
+    [
+     60,
+     -25
+    ],
+    [
+     78,
+     95
+    ],
+    [
+     70,
+     96
+    ]
+   ],
+   "z": [
+    0,
+    14
+   ],
+   "color": "#1c1d20",
+   "mirror": true,
+   "kind": "wedge",
+   "id": "side_arm"
+  },
+  {
+   "box": [
+    70,
+    30,
+    8
+   ],
+   "at": [
+    0,
+    -8,
+    20
+   ],
+   "id": "deck",
+   "color": "#1c1d20"
+  }
+ ]
 }
