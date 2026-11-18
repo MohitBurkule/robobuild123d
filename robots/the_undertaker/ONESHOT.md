@@ -23,3 +23,39 @@ Decisions: type horizontal_spinner; body box trapezoid 75x95x24 mm, ramp 0; whee
 
 Likeness: aws67 0.54 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/the_undertaker.aws67.webp` is declared `front` (IoU 0.54 there) but the model matches it better from front (elevation 45, azimu
+
+## Round 4 (verification, helper 1)
+Blockers r3 -> r4: **55 -> 11** (`verify --tier inner`, full output in verify_r4.txt).
+Likeness (best silhouette IoU per photo, r3 -> r4): the_undertaker.aws67.webp 0.54 -> 0.54
+
+What was done (script r4_h1, outside shape kept):
+- fake screw/bolt heads removed; detail mounts/arms merged into the print part they sit on; axle nuts became printed hub caps
+- printed parts of the chassis material declared one print (`fused_with`, a hidden 1.6 mm key where they only touched); overlaps inside the print trimmed
+- catalog parts: N20 gearmotors on the drive wheels (D-bore in the hub), LiPo, Malenki Nano (receiver + drive ESCs), brushless weapon ESC and outrunner for spinners, slide switch in a closed pocket above the belly skin, reached through an 8 x 4 mm slot underneath, steel locking pin through the weapon
+- pockets 0.25 mm per side round every bought part with 2 mm print walls, wheel/weapon running clearances <= 1.5 mm (no clearance cut where the kit rotor sits deep in the body: that would open the outside), hinge sweep clearances, shaft bores
+- big print parts hollowed (cavity = part eroded by the wall, checked >= 1 mm inside the skin, no cavity opens to the outside); wires with gauges and via points round rotors; print orientation, failsafe and weapon disable declared
+
+Notes from the run:
+- dt_axle_wheel_l0 replaced by the gearmotor shaft
+- dt_axle_wheel_r0 replaced by the gearmotor shaft
+- weapon: weapon motor not coaxial (no room on the axis): placed parallel to the axis in the print, belt drive NOT modelled
+- el_battery: pocket wall only 1.0 mm
+- weapon: no solid spot for a lock pin hole
+- weapon: rotor overlaps chassis 8 mm deep in the kit shape; a running clearance there would cut open the outside, so it is left out
+- spoke: cuts split it into 2 pieces, each joined to the print
+- chassis: hollowed (box wall round pockets), 120986 -> 63946 mm3
+- leg_l: does not sit in any print part (no overlap to cut a seat from); left without a declared joint
+- leg_r: does not sit in any print part (no overlap to cut a seat from); left without a declared joint
+- tooth: does not sit in any print part (no overlap to cut a seat from); left without a declared joint
+- dt_hubw_weapon: does not sit in any print part (no overlap to cut a seat from); left without a declared joint
+- dt_strut_tooth: does not sit in any print part (no overlap to cut a seat from); left without a declared joint
+- spoke: printed with the weapon axis as build direction
+
+Left (one line each):
+- proxy.interference x5: parts overlap in the kit shape where a cut would change the look or leave a loose piece
+- integrity.volume x1: volume store from an earlier run differs (tool-side baseline)
+- mass.over x1: outside shape (kept) is heavier than the class limit even with 2.5 mm shells
+- connection.floating x1: part does not touch the print anywhere (kit geometry); no honest joint to declare
+- wire.render_wires x1: toolchain/process: the photo-match, diff and likeness sheets are written without a render record of the wire routes
+- likeness.view x1: looks (photo view label; not part of this pass)
+- likeness.silhouette x1: looks (not part of this pass; outside shape kept as round 3)

@@ -1,0 +1,111 @@
+BLOCKERS: 11
+  [cached] integrity 0.01s
+  [cached] mass 0.00s
+  [proxy] interference 0.11s
+  [cached] connections 0.00s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.00s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.00s
+  [cached] physics 0.00s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [cached] likeness 0.00s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.00s
+  [cached] waiver_audit 0.00s
+  [cached] geom 0.00s
+  [cached] dfm 0.00s
+  [cached] realworld 0.00s
+the undertaker: ok=False 11 blockers in 11 root causes, mass 216.1/150 g
+1. [integrity.volume] `weapon` volume 7040 mm3 vs previous 19252 (-63%)
+   fix: The solid lost most of its material: check the last boolean/fillet.
+   | weapon: x -46.00..46.00  y -1.99..89.99  z 4.50..7.50  size 92.00 x 91.97 x 3.00 mm
+   |   centre (0.00, 44.00, 6.00), volume 7040.3 mm3
+   |   joint revolute axis [0, 0, 1] pivot [0.0, 44.0, 6.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.18 mm (allowed 0.08)
+   |   OVERLAP `leg_l` 0.70 mm (allowed 0.08)
+2. [mass.over] 216.1 g (range 188.5 to 243.7 g) against the 150 g limit; 7.8 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+3. [proxy.interference] `chassis` and `weapon` overlap by 1.18 mm (allowed 0.08).
+   | chassis: x -47.50..47.50  y -37.50..37.50  z -13.00..11.00  size 95.00 x 75.00 x 24.00 mm
+   |   centre (-0.00, 0.00, -1.00), volume 63942.3 mm3
+   |   OVERLAP `weapon` 1.18 mm (allowed 0.08)
+   |   overlap allowed `spoke` 1.18 mm (allowed inf)
+   |   gap to `dt_hubw_weapon` 0.00 mm
+4. [proxy.interference] `weapon` and `leg_l` overlap by 0.70 mm (allowed 0.08).
+   | weapon: x -46.00..46.00  y -1.99..89.99  z 4.50..7.50  size 92.00 x 91.97 x 3.00 mm
+   |   centre (0.00, 44.00, 6.00), volume 7040.3 mm3
+   |   joint revolute axis [0, 0, 1] pivot [0.0, 44.0, 6.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.18 mm (allowed 0.08)
+   |   OVERLAP `leg_l` 0.70 mm (allowed 0.08)
+5. [proxy.interference] `weapon` and `leg_r` overlap by 0.70 mm (allowed 0.08).
+   | weapon: x -46.00..46.00  y -1.99..89.99  z 4.50..7.50  size 92.00 x 91.97 x 3.00 mm
+   |   centre (0.00, 44.00, 6.00), volume 7040.3 mm3
+   |   joint revolute axis [0, 0, 1] pivot [0.0, 44.0, 6.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.18 mm (allowed 0.08)
+   |   OVERLAP `leg_l` 0.70 mm (allowed 0.08)
+6. [proxy.interference] `leg_l` and `dt_strut_tooth` overlap by 0.72 mm (allowed 0.08).
+   | leg_l: x 38.00..46.00  y 23.00..53.00  z -14.00..6.00  size 8.00 x 30.00 x 20.00 mm
+   |   centre (42.00, 38.00, -4.00), volume 4800.0 mm3
+   |   OVERLAP `dt_strut_tooth` 0.72 mm (allowed 0.08)
+   |   OVERLAP `weapon` 0.70 mm (allowed 0.08)
+   |   gap to `chassis` 0.58 mm
+7. [proxy.interference] `tooth` and `dt_strut_tooth` overlap by 1.15 mm (allowed 0.08).
+   | tooth: x 33.00..47.00  y 55.00..69.00  z -10.50..-7.50  size 14.00 x 14.00 x 3.00 mm
+   |   centre (40.00, 62.00, -9.00), volume 588.0 mm3
+   |   OVERLAP `dt_strut_tooth` 1.15 mm (allowed 0.08)
+   |   gap to `leg_l` 2.00 mm
+   | dt_strut_tooth: x 35.50..41.48  y 50.08..57.92  z -17.17..-7.07  size 5.99 x 7.85 x 10.10 mm
+8. [connection.floating] `dt_hubw_weapon` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `dt_shaft_weapon`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | dt_hubw_weapon: x -6.50..6.50  y 37.50..50.50  z 3.00..9.00  size 13.00 x 13.00 x 6.00 mm
+   |   centre (0.00, 44.00, 6.00), volume 678.6 mm3
+   |   gap to `dt_shaft_weapon` 0.00 mm (touching)
+   |   gap to `chassis` 0.00 mm
+   | dt_shaft_weapon: x -2.50..2.50  y 41.50..46.50  z -10.50..9.50  size 5.00 x 5.00 x 20.00 mm
+9. [wire.render_wires] 5 of 5 robot render(s) do not draw all 7 wires: renders/diff_the_undertaker.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_the_undertaker.aws67_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_the_undertaker.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_the_undertaker.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+10. [likeness.view] `reference/the_undertaker.aws67.webp` is declared `front` (IoU 0.54 there) but the model matches it better from front (elevation 45, azimuth 90) (IoU 0.77).
+   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
+11. [likeness.silhouette] `reference/the_undertaker.aws67.webp`: best silhouette IoU 0.54 at camera front (elevation 25, azimuth 90) (need 0.80: >= 0.8 and no worse than the closest stock template `wedge_2wd` at 0.73). Regions (photo frame, left third first) 0.46 / 0.63 / 0.52: worst = front third. Height/length 0.60 model vs 0.84 photo (too flat: raise it or shorten it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+MASS BUDGET:
+  mass 216.1 g of 150 g (-66.1 g margin)
+    chassis                    60.87 g  fills 37% of its box
+    weapon                     55.62 g  fills 28% of its box
+    el_battery                 21.50 g  fills 100% of its box  <- solid block? a tub should be a shell
+    weapon_motor               17.50 g  fills 54% of its box
+    dm_wheel_l0                 9.70 g  fills 66% of its box
+    dm_wheel_r0                 9.70 g  fills 66% of its box
+    el_wesc                     5.00 g  fills 94% of its box
+    wheel_l0                    4.73 g  fills 57% of its box
+    wheel_r0                    4.73 g  fills 57% of its box
+    leg_l                       4.57 g  fills 100% of its box
+    leg_r                       4.57 g  fills 100% of its box
+    el_rx_esc                   3.50 g  fills 100% of its box
+    dt_shaft_weapon             3.10 g  fills 79% of its box
+    dt_hubw_weapon              1.83 g  fills 67% of its box
+    dt_hub_wheel_l0             1.82 g  fills 67% of its box
+    dt_hub_wheel_r0             1.82 g  fills 67% of its box
+    spoke                       1.17 g  fills 73% of its box
+    dt_strut_tooth              0.93 g  fills 25% of its box
+    tooth                       0.56 g  fills 100% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    mass.over: 216.1 g (range 188.5 to 243.7 g) against the 150 g limit; 7.8 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 6 hit / 0 miss, group 31 hit / 0 miss, min_gap 34 hit / 0 miss, overlap 333 hit / 0 miss, part_geom 20 hit / 0 miss
