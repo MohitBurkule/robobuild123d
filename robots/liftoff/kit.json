@@ -1,0 +1,82 @@
+{
+ "robot_type": "lifter",
+ "body": {
+  "length": 72,
+  "width": 80,
+  "height": 24,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 13,
+  "width": 8,
+  "y": [
+   -22
+  ]
+ },
+ "colors": {
+  "body": "#eeeeea",
+  "wheel": "#22262a",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "side": [
+    [
+     30,
+     2
+    ],
+    [
+     80,
+     0
+    ],
+    [
+     80,
+     2
+    ],
+    [
+     36,
+     26
+    ],
+    [
+     30,
+     26
+    ]
+   ],
+   "x": [
+    14,
+    44
+   ],
+   "mirror": true,
+   "kind": "wedge",
+   "material": "polycarbonate",
+   "process": "laser",
+   "id": "wedge",
+   "color": "#dfeee6"
+  },
+  {
+   "box": [
+    24,
+    80,
+    3
+   ],
+   "at": [
+    0,
+    10,
+    27
+   ],
+   "weapon": "lifter",
+   "pivot": [
+    -28,
+    26
+   ],
+   "id": "lift_plate",
+   "color": "#16181a"
+  }
+ ],
+ "name": "liftoff",
+ "weapon": {
+  "kind": "none"
+ }
+}
