@@ -6159,19 +6159,19 @@
   {
    "image": "reference/thwack_attack.aws74.webp",
    "mask": "reference/thwack_attack.aws74_mask.png",
-   "view": "iso",
+   "view": "front_right_iso",
    "approximate": true
   },
   {
    "image": "reference/thwack_attack.aws76.webp",
    "mask": "reference/thwack_attack.aws76_mask.png",
-   "view": "iso",
+   "view": "rear_left_iso",
    "approximate": true
   },
   {
    "image": "reference/thwack_attack.aws77.webp",
    "mask": "reference/thwack_attack.aws77_mask.png",
-   "view": "iso",
+   "view": "front_left_iso",
    "approximate": true
   }
  ],

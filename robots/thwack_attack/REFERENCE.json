@@ -12,9 +12,9 @@
   "thwack_attack.aws77.webp"
  ],
  "view": {
-  "thwack_attack.aws74.webp": "front_left_iso",
-  "thwack_attack.aws76.webp": "front_right_iso",
-  "thwack_attack.aws77.webp": "front_right_iso"
+  "thwack_attack.aws74.webp": "front_right_iso",
+  "thwack_attack.aws76.webp": "rear_left_iso",
+  "thwack_attack.aws77.webp": "front_left_iso"
  },
  "elevation": {
   "thwack_attack.aws74.webp": 45,
