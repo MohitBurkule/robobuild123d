@@ -1,7 +1,7 @@
 BLOCKERS: 1
   [cached] integrity 0.00s
   [cached] mass 0.00s
-  [proxy] interference 0.08s
+  [proxy] interference 0.15s
   [cached] connections 0.00s
   [cached] legal 0.00s
   [cached] fasteners 0.00s
@@ -14,21 +14,21 @@ BLOCKERS: 1
   [cached] strength 0.00s
   [cached] printability 0.00s
   [cached] process 0.00s
-  [cached] electrical 0.00s
+  [cached] electrical 0.01s
   [cached] combat 0.01s
   [cached] physics 0.00s
   [cached] plausibility 0.00s
   [cached] cots 0.00s
   [cached] fit 0.00s
-  [cached] bom 0.00s
+  [cached] bom 0.01s
   [cached] wire_review 0.00s
   [cached] fastener_record 0.00s
-  [cached] likeness 0.00s
+  [cached] likeness 0.01s
   [cached] drive_recess 0.00s
   [cached] belt_wrap 0.00s
-  [cached] retention 0.00s
+  [cached] retention 0.01s
   [cached] waiver_audit 0.00s
-  [cached] geom 0.00s
+  [cached] geom 0.01s
   [cached] dfm 0.00s
   [cached] realworld 0.00s
 smart ant 5: ok=False 1 blockers in 1 root causes, mass 120.4/150 g
