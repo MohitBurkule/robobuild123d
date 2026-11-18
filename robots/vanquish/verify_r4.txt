@@ -1,0 +1,96 @@
+BLOCKERS: 11
+  [cached] integrity 0.00s
+  [cached] mass 0.00s
+  [proxy] interference 0.17s
+  [cached] connections 0.00s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.00s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.00s
+  [cached] physics 0.00s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [cached] likeness 0.00s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.00s
+  [cached] waiver_audit 0.00s
+  [cached] geom 0.00s
+  [cached] dfm 0.00s
+  [cached] realworld 0.00s
+vanquish: ok=False 11 blockers in 11 root causes, mass 156.2/150 g
+1. [mass.over] 156.2 g (range 134.9 to 177.5 g) against the 150 g limit; 7.0 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+2. [proxy.interference] `dm_wheel_l0` and `dm_wheel_r0` overlap by 4.88 mm (allowed 0.08).
+   | dm_wheel_l0: x -16.90..18.60  y -31.00..-19.00  z -5.00..5.00  size 35.50 x 12.00 x 10.00 mm
+   |   centre (0.85, -25.00, 0.00), volume 2702.4 mm3
+   |   port terminals: (-16.90, -25.00, 0.00)
+   |   OVERLAP `dm_wheel_r0` 4.88 mm (allowed 0.08)
+   |   gap to `wheel_l0` 0.00 mm (touching)
+3. [legal.footprint] Smallest square that holds the robot is 156.0 mm; the limit is 150 mm with no overhang at any height.
+   fix: Shorten the wedge, narrow the wheels or move parts inward.
+4. [power.weapon_motor] `weapon` names motor None; it must be a catalog brushless motor so speed can be computed.
+   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
+   | weapon: x -16.00..-12.00  y 11.50..40.50  z 2.00..106.00  size 4.00 x 29.00 x 104.00 mm
+   |   centre (-14.00, 26.00, 54.00), volume 5357.7 mm3
+   |   joint revolute axis [1, 0, 0] pivot [-14.0, 26.0, 54.0] range 0..360 default 0
+   |   overlap allowed `lock_pin` 0.70 mm (allowed 1000.00)
+   |   gap to `dt_shaft_weapon` 0.00 mm (touching)
+5. [electrical.power_path] Not connected: ESC `el_wesc` has no power wire path to the battery.
+   fix: Wire every ESC to power and every motor to an ESC.
+   | el_wesc: x 12.50..16.50  y -11.00..12.00  z -3.50..8.50  size 4.00 x 23.00 x 12.00 mm
+   |   centre (14.50, 0.50, 2.50), volume 1040.0 mm3
+   |   port bat: (14.50, -11.00, -0.50)
+   |   port motor: (14.50, 12.00, 2.50)
+   |   port rx: (14.50, -11.00, 5.50)
+6. [wire.render_wires] 6 of 6 robot render(s) do not draw all 4 wires: renders/diff_vanquish.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/iso.png: rendered without wires (checks off or no routes); renders/likeness_vanquish.aws76_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_vanquish.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_vanquish.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+7. [wire.rotor_clearance] wire `w_bat_sw` passes 1.7 mm from the volume swept by the `weapon` rotor (weapon, dt_shaft_weapon) at [-9.4, 8.1, 2.7].
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | weapon: x -16.00..-12.00  y 11.50..40.50  z 2.00..106.00  size 4.00 x 29.00 x 104.00 mm
+   |   centre (-14.00, 26.00, 54.00), volume 5357.7 mm3
+   |   joint revolute axis [1, 0, 0] pivot [-14.0, 26.0, 54.0] range 0..360 default 0
+   |   overlap allowed `lock_pin` 0.70 mm (allowed 1000.00)
+   |   gap to `dt_shaft_weapon` 0.00 mm (touching)
+8. [wire.exterior_support] wire `w_sw_esc` runs 19.5 mm outside the chassis without a hole, channel or clip round it (material within 1.5 mm on both sides) (from [4.7, 10.9, 27.5] to [6.4, -3.0, 15.0]).
+   fix: Run it through a hole or channel, or clip it; declare `exposed_reason` if it must be free.
+9. [likeness.silhouette] `reference/vanquish.aws76.webp`: best silhouette IoU 0.38 at camera front_right_iso (elevation 45, azimuth 30) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.51). Regions (photo frame, left third first) 0.30 / 0.55 / 0.13: worst = rear third. Height/length 0.93 model vs 0.84 photo (too tall: lower it or lengthen it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+10. [wire.outside] wire `w_bat_sw` (1.9 mm bundle): about 18.5 mm of its run has insulation outside the armour envelope or below the floor, worst 17.6 mm out at [-5.0, 18.2, 32.6].
+   fix: Add / move `via` points inside the chassis (or open a channel), or declare `external: true` + `exposed_reason` for a deliberate outside lead.
+11. [wire.outside] wire `w_sw_esc` (1.9 mm bundle): about 28.5 mm of its run has insulation outside the armour envelope or below the floor, worst 19.1 mm out at [4.0, 16.9, 34.1].
+   fix: Add / move `via` points inside the chassis (or open a channel), or declare `external: true` + `exposed_reason` for a deliberate outside lead.
+MASS BUDGET:
+  mass 156.2 g of 150 g (-6.2 g margin)
+    weapon                     42.33 g  fills 44% of its box
+    chassis                    41.87 g  fills 42% of its box
+    el_battery                 21.50 g  fills 100% of its box  <- solid block? a tub should be a shell
+    dm_wheel_l0                 9.50 g  fills 63% of its box
+    dm_wheel_r0                 9.50 g  fills 63% of its box
+    upright                     5.63 g  fills 82% of its box
+    el_wesc                     5.00 g  fills 94% of its box
+    motor                       4.19 g  fills 49% of its box
+    wheel_r0                    2.74 g  fills 54% of its box
+    wheel_l0                    2.74 g  fills 54% of its box
+    fork_l                      2.37 g  fills 18% of its box
+    fork_r                      2.37 g  fills 18% of its box
+    el_esc                      2.30 g  fills 99% of its box
+    dt_shaft_weapon             1.39 g  fills 79% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    lock_pin                    0.37 g  fills 79% of its box
+    mass.over: 156.2 g (range 134.9 to 177.5 g) against the 150 g limit; 7.0 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 8 hit / 0 miss, group 31 hit / 0 miss, min_gap 17 hit / 0 miss, overlap 208 hit / 0 miss, part_geom 16 hit / 0 miss
