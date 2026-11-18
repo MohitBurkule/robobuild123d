@@ -1,0 +1,112 @@
+BLOCKERS: 25
+  [ran] integrity 0.04s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 0.24s
+  [ran] connections 0.08s
+  [ran] legal 0.00s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.00s
+  [ran] shape 0.19s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.41s
+  [ran] process 0.03s
+  [ran] electrical 0.00s
+/tmp/work10_i_saw_that/robot/checks/combat_ground.py:200: RuntimeWarning: Mean of empty slice
+  rr = np.nanmean(rout[fb[best[1][0]]:fb[best[1][1]] + 1])
+  [ran] combat 0.05s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 3.48s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.02s
+  [ran] dfm 0.01s
+  [ran] realworld 0.01s
+i saw that: ok=False 25 blockers in 25 root causes, mass 170.9/150 g
+1. [mass.over] 170.9 g (range 142.2 to 199.6 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+2. [proxy.interference] `chassis` and `jaw_l` overlap by 1.39 mm (allowed 0.08).
+   | chassis: x -30.00..30.00  y -31.00..31.00  z -11.00..17.00  size 60.00 x 62.00 x 28.00 mm
+   |   centre (-0.00, 0.00, 3.00), volume 104160.0 mm3
+   |   OVERLAP `jaw_l` 1.39 mm (allowed 0.08)
+   |   OVERLAP `jaw_r` 1.39 mm (allowed 0.08)
+   |   gap to `arm` 0.00 mm (touching)
+3. [proxy.interference] `chassis` and `jaw_r` overlap by 1.39 mm (allowed 0.08).
+   | chassis: x -30.00..30.00  y -31.00..31.00  z -11.00..17.00  size 60.00 x 62.00 x 28.00 mm
+   |   centre (-0.00, 0.00, 3.00), volume 104160.0 mm3
+   |   OVERLAP `jaw_l` 1.39 mm (allowed 0.08)
+   |   OVERLAP `jaw_r` 1.39 mm (allowed 0.08)
+   |   gap to `arm` 0.00 mm (touching)
+4. [connection.floating] `weapon` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `arm`, 3.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | weapon: x -1.00..1.00  y -26.08..30.08  z 51.99..108.08  size 2.00 x 56.15 x 56.08 mm
+   |   centre (0.00, 2.00, 80.04), volume 4595.6 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 2.0, 80.0] range 0..360 default 0
+   | arm: x 4.00..9.00  y -5.00..12.00  z 17.00..73.00  size 5.00 x 17.00 x 56.00 mm
+   |   centre (6.50, 3.50, 45.00), volume 3190.0 mm3
+5. [connection.floating] `wheel_l0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_l0: x 30.50..40.50  y -31.00..-5.00  z -13.00..13.00  size 10.00 x 25.99 x 26.00 mm
+   |   centre (35.50, -18.00, 0.00), volume 5309.3 mm3
+   |   gap to `chassis` 0.50 mm
+   | chassis: x -30.00..30.00  y -31.00..31.00  z -11.00..17.00  size 60.00 x 62.00 x 28.00 mm
+   |   centre (-0.00, 0.00, 3.00), volume 104160.0 mm3
+6. [connection.floating] `wheel_r0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_r0: x -40.50..-30.50  y -31.00..-5.00  z -13.00..13.00  size 10.00 x 25.99 x 26.00 mm
+   |   centre (-35.50, -18.00, 0.00), volume 5309.3 mm3
+   |   gap to `chassis` 0.50 mm
+   | chassis: x -30.00..30.00  y -31.00..31.00  z -11.00..17.00  size 60.00 x 62.00 x 28.00 mm
+   |   centre (-0.00, 0.00, 3.00), volume 104160.0 mm3
+7. [connection.floating] `arm` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | arm: x 4.00..9.00  y -5.00..12.00  z 17.00..73.00  size 5.00 x 17.00 x 56.00 mm
+   |   centre (6.50, 3.50, 45.00), volume 3190.0 mm3
+   |   gap to `chassis` 0.00 mm (touching)
+   | chassis: x -30.00..30.00  y -31.00..31.00  z -11.00..17.00  size 60.00 x 62.00 x 28.00 mm
+   |   centre (-0.00, 0.00, 3.00), volume 104160.0 mm3
+8. [connection.floating] `jaw_l` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | jaw_l: x 6.00..42.00  y 28.00..94.00  z -13.00..-4.00  size 36.00 x 66.00 x 9.00 mm
+   |   centre (24.00, 61.00, -8.50), volume 10692.0 mm3
+   |   OVERLAP `chassis` 1.39 mm (allowed 0.08)
+   | chassis: x -30.00..30.00  y -31.00..31.00  z -11.00..17.00  size 60.00 x 62.00 x 28.00 mm
+   |   centre (-0.00, 0.00, 3.00), volume 104160.0 mm3
+9. [connection.floating] `jaw_r` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | jaw_r: x -42.00..-6.00  y 28.00..94.00  z -13.00..-4.00  size 36.00 x 66.00 x 9.00 mm
+   |   centre (-24.00, 61.00, -8.50), volume 10692.0 mm3
+   |   OVERLAP `chassis` 1.39 mm (allowed 0.08)
+   | chassis: x -30.00..30.00  y -31.00..31.00  z -11.00..17.00  size 60.00 x 62.00 x 28.00 mm
+   |   centre (-0.00, 0.00, 3.00), volume 104160.0 mm3
+10. [legal.switch] Rule 4a needs an externally accessible way to shut down that works without tools and is clearly marked on/off.
+   fix: Add a `switch` part (or removable link) with `tool_free: true` and `marked: true` and a visible ON/OFF `label`.
+11. [legal.failsafe] Rule 4d: the robot must stop all motion when the transmitter is off.
+   fix: Set `electronics.failsafe` to true and configure the receiver and ESC failsafe.
+12. [legal.weapon_disable] Rule 4c: all weaponry must be deactivatable by remote control.
+   fix: Set `electronics.weapon_remote_disable` and put the weapon on its own receiver channel.
+... 13 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 170.9 g of 150 g (-20.9 g margin)
+    chassis                    99.16 g  fills 100% of its box  <- solid block? a tub should be a shell
+    weapon                     36.30 g  fills 73% of its box  <- solid block? a tub should be a shell
+    jaw_l                      10.18 g  fills 50% of its box
+    jaw_r                      10.18 g  fills 50% of its box
+    wheel_l0                    5.42 g  fills 79% of its box
+    wheel_r0                    5.42 g  fills 79% of its box
+    arm                         3.04 g  fills 67% of its box
+    mass.over: 170.9 g (range 142.2 to 199.6 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 0 hit / 4 miss, group 0 hit / 31 miss, inside 4 hit / 3 miss, likeness 1 hit / 0 miss, min_gap 33 hit / 25 miss, overlap 31 hit / 6 miss, part_check 1 hit / 1 miss, part_geom 7 hit / 0 miss, ray 0 hit / 35 miss

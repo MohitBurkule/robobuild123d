@@ -16,19 +16,12 @@
  },
  "weapon": {
   "kind": "disc",
-  "radius": 27,
+  "radius": 28,
   "width": 2,
-  "y": 8,
+  "y": 2,
   "teeth": 8,
-  "z": 88,
+  "z": 80,
   "axis": "x"
- },
- "forks": {
-  "n": 2,
-  "length": 62,
-  "width": 14,
-  "spread": 58,
-  "tilt_deg": 6
  },
  "colors": {
   "body": "#2a5fd0",
@@ -62,6 +55,34 @@
    ],
    "id": "arm",
    "color": "#1c1d20"
+  },
+  {
+   "top": [
+    [
+     6,
+     28
+    ],
+    [
+     30,
+     28
+    ],
+    [
+     42,
+     90
+    ],
+    [
+     30,
+     94
+    ]
+   ],
+   "z": [
+    0,
+    9
+   ],
+   "color": "#1c1d20",
+   "mirror": true,
+   "kind": "wedge",
+   "id": "jaw"
   }
  ],
  "name": "i saw that"
