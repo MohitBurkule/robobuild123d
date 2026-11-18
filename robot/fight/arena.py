@@ -32,9 +32,19 @@ class Weld:
 
 
 class FightSim(Sim):
-    def __init__(self, scene: Scene | None = None, timestep=5e-5):  # 1e-4 blew up on hard hits (tc/dt = 3)
-        # AWS antweight arenas are closed polycarbonate boxes: walls plus a roof (robots get thrown, not lost)
+    def __init__(self, scene: Scene | None = None, timestep=5e-5, arena=None):  # 1e-4 blew up on hard hits (tc/dt = 3)
+        # arena=None/"closed": walled box plus a roof (robots get thrown, not lost); else a preset from arenas.py
+        # (raised platform with open edges / pits: robots can be pushed out)
+        from . import arenas
+        self.arena = arenas.get(arena)
+        if self.arena is not None:
+            scene = Scene(arena_half=0.0, wall_height=self.arena.wall_h)
         super().__init__(scene or Scene(arena_half=0.6, wall_height=0.4), timestep)
+        self.pit_covers = []
+        if self.arena is not None:
+            self.spec.geom("floor").pos = [0, 0, self.arena.drop_z]
+            self.pit_covers = self.arena.build(self.spec.worldbody)
+            self.scene.arena_half = self.arena.half
         # elliptic friction cone (exact Coulomb, not a pyramid) and multi-point convex contacts: thin fork tips and wedge
         # edges resting on / sliding under another body get several contact points instead of one jittering one
         self.spec.option.cone = mujoco.mjtCone.mjCONE_ELLIPTIC
@@ -46,13 +56,13 @@ class FightSim(Sim):
         self.lifter_joint: dict[str, str] = {}
         w = self.spec.worldbody
         h = self.scene.arena_half
-        if h:
+        if h and self.arena is None:
             w.add_geom(name="roof", type=mujoco.mjtGeom.mjGEOM_BOX, size=[h, h, 0.005], pos=[0, 0, self.scene.wall_height + 0.005],
                        rgba=[0.6, 0.7, 0.8, 0.0])
         w.add_light(pos=[0, 0, 1.5], dir=[0, 0, -1], diffuse=[0.9, 0.9, 0.9], castshadow=True)
         w.add_light(pos=[0.6, -0.6, 1.0], dir=[-0.4, 0.4, -1], diffuse=[0.4, 0.4, 0.4])
         self.spec.visual.headlight.ambient = [0.35, 0.35, 0.35]
-        if h:  # steel floor sheets: 0.4 mm proud seams every 300 mm (wheels bump, wedges catch)
+        if h and self.arena is None:  # steel floor sheets: 0.4 mm proud seams every 300 mm (wheels bump, wedges catch)
             for k in range(-1, 2):
                 for ax in (0, 1):
                     size = [h, 0.001, 0.0002] if ax == 0 else [0.001, h, 0.0002]
@@ -61,6 +71,16 @@ class FightSim(Sim):
                                rgba=[0.35, 0.37, 0.4, 1], friction=[0.5, 0.005, 1e-4])
         self.plant: dict = {}  # robot -> {"battery", "motors": {group: Motor}, "duty": {group: d}}
         self.fixed_motors = False  # True = old ideal velocity servos (no curves / sag / heat)
+    def open_pits(self, t):
+        """Drop the pit covers whose time has come (contype off, hidden). Returns names opened now."""
+        out = []
+        for name, t_open in self.pit_covers:
+            gid = mujoco.mj_name2id(self.m, mujoco.mjtObj.mjOBJ_GEOM, name)
+            if t >= t_open and self.m.geom_contype[gid]:
+                self.m.geom_contype[gid] = self.m.geom_conaffinity[gid] = 0
+                self.m.geom_rgba[gid][3] = 0.0
+                out.append(name)
+        return out
 
     def add_fighter(self, model: RobotModel, prof: Profile, placement: Placement):
         name = placement.name.replace(" ", "_")
@@ -184,7 +204,7 @@ class FightSim(Sim):
                 part_of[f"{r}/{pid}_"] = (mname, kind)
         for g in self.spec.geoms:
             # friction and restitution from each part's material (materials.py); walls are polycarbonate
-            if g.name == "floor" or g.name.startswith("seam"):
+            if g.name.startswith("floor") or g.name.startswith("seam") or g.name.startswith("pitfloor"):
                 g.friction = [mat.FLOOR_MU, 0.005, 1e-4]
                 g.solref = [tc, mat.damp_ratio(0.6)]
                 continue
@@ -378,3 +398,4 @@ def _prep(model: RobotModel, prof: Profile) -> RobotModel:
             keep.append(p)
     chassis.parts = keep
     return RobotModel(model.name, groups, model.skipped)
+
