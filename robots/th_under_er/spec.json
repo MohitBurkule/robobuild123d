@@ -8323,35 +8323,51 @@
       "points": [
        [
         -28,
-        -4
-       ],
-       [
-        22,
-        -4
-       ],
-       [
-        24,
-        -14
-       ],
-       [
-        30,
-        -26
-       ],
-       [
-        22,
         -30
        ],
        [
-        14,
-        -20
+        -20,
+        -30
        ],
        [
-        12,
-        4
+        -20,
+        -4
+       ],
+       [
+        16,
+        -4
+       ],
+       [
+        16,
+        30
+       ],
+       [
+        20,
+        60
+       ],
+       [
+        30,
+        80
+       ],
+       [
+        40,
+        72
+       ],
+       [
+        34,
+        40
+       ],
+       [
+        34,
+        -4
+       ],
+       [
+        34,
+        -8
        ],
        [
         -28,
-        4
+        -8
        ]
       ],
       "height": 3.0
@@ -8365,8 +8381,8 @@
         "height": 5.0
        },
        "at": [
-        22,
-        -16,
+        26,
+        44,
         0
        ],
        "rot": [
@@ -8435,46 +8451,6 @@
    "label": "3 mm steel bar, 76 mm tip to tip, laser cut, swept tips"
   },
   {
-   "id": "wshaft",
-   "kind": "shaft",
-   "material": "titanium",
-   "process": "cots",
-   "stock": "3 mm Ti-6Al-4V rod",
-   "shaft_of": "weapon_motor",
-   "rotates_with": "weapon",
-   "color": "#777777",
-   "parent": "weapon",
-   "shape": {
-    "type": "place",
-    "shape": {
-     "type": "cylinder",
-     "radius": 1.5,
-     "height": 18.0
-    },
-    "at": [
-     0.0,
-     0.0,
-     0.3
-    ],
-    "rot": [
-     0.0,
-     0.0,
-     0.0
-    ]
-   },
-   "label": "motor rotor shaft replaced by a 3 mm Ti rod, lengthened down into the 683 (circlip at the stator)",
-   "at": [
-    0.0,
-    0.0,
-    0.0
-   ],
-   "rot": [
-    0.0,
-    0.0,
-    0.0
-   ]
-  },
-  {
    "id": "pod_r",
    "kind": "structure",
    "material": "pla",
@@ -8484,13 +8460,13 @@
    "shape": {
     "type": "box",
     "size": [
-     20,
-     34,
-     16
+     24,
+     40,
+     18
     ]
    },
    "at": [
-    55.0,
+    58.0,
     -20.0,
     0.0
    ],
@@ -8511,13 +8487,13 @@
    "shape": {
     "type": "box",
     "size": [
-     20,
-     34,
-     16
+     24,
+     40,
+     18
     ]
    },
    "at": [
-    -55.0,
+    -58.0,
     -20.0,
     0.0
    ],
@@ -8551,67 +8527,82 @@
     0
    ],
    "label": "white centre disc cap over the weapon motor"
+  },
+  {
+   "id": "hub_boss0",
+   "kind": "structure",
+   "material": "pla",
+   "process": "fdm",
+   "color": "#e8e8ee",
+   "print_orientation": "+z",
+   "shape": {
+    "type": "cylinder",
+    "radius": 3.5,
+    "height": 2.0
+   },
+   "at": [
+    1.0409497792752501e-15,
+    35.0,
+    9.9
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "label": "hub screw boss"
+  },
+  {
+   "id": "hub_boss1",
+   "kind": "structure",
+   "material": "pla",
+   "process": "fdm",
+   "color": "#e8e8ee",
+   "print_orientation": "+z",
+   "shape": {
+    "type": "cylinder",
+    "radius": 3.5,
+    "height": 2.0
+   },
+   "at": [
+    -14.722431864335457,
+    9.499999999999998,
+    9.9
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "label": "hub screw boss"
+  },
+  {
+   "id": "hub_boss2",
+   "kind": "structure",
+   "material": "pla",
+   "process": "fdm",
+   "color": "#e8e8ee",
+   "print_orientation": "+z",
+   "shape": {
+    "type": "cylinder",
+    "radius": 3.5,
+    "height": 2.0
+   },
+   "at": [
+    14.722431864335451,
+    9.499999999999993,
+    9.9
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "label": "hub screw boss"
   }
  ],
  "fasteners": [],
- "wires": [
-  {
-   "id": "w_bat_sw",
-   "from": "battery.xt30",
-   "to": "power_switch.in",
-   "awg": 22,
-   "kind": "power",
-   "slack_mm": 8.0
-  },
-  {
-   "id": "w_sw_esc",
-   "from": "power_switch.out",
-   "to": "esc.bat",
-   "awg": 26,
-   "kind": "power",
-   "slack_mm": 8.0
-  },
-  {
-   "id": "w_esc_ml",
-   "from": "esc.m2",
-   "to": "motor_l.terminals",
-   "awg": 26,
-   "kind": "motor",
-   "slack_mm": 6.0
-  },
-  {
-   "id": "w_esc_mr",
-   "from": "esc.m1",
-   "to": "motor_r.terminals",
-   "awg": 26,
-   "kind": "motor",
-   "slack_mm": 6.0
-  },
-  {
-   "id": "w_sw_wesc",
-   "from": "power_switch.out",
-   "to": "wesc.bat",
-   "awg": 22,
-   "kind": "power",
-   "slack_mm": 8.0
-  },
-  {
-   "id": "w_wesc_m",
-   "from": "wesc.motor",
-   "to": "weapon_motor.phases",
-   "awg": 24,
-   "kind": "motor",
-   "slack_mm": 6.0
-  },
-  {
-   "id": "w_rx_wesc",
-   "from": "esc.wpn",
-   "to": "wesc.rx",
-   "awg": 30,
-   "kind": "signal",
-   "slack_mm": 6.0
-  }
- ],
+ "wires": [],
  "electronics": {
   "failsafe": true,
   "weapon_remote_disable": true,
@@ -8651,115 +8642,7 @@
    "reason": "3 mm shaft bore drilled and reamed after laser cutting (secondary op), so the hub is drawn solid"
   }
  ],
- "connections": [
-  {
-   "a": "motor_l",
-   "b": "wheel_l",
-   "method": "press_fit",
-   "reason": "Printed hub with a D-bore matching the flat of the 3 mm gearmotor D-shaft: the flat carries drive torque, the 0.1 mm interference only stops the hub walking off axially",
-   "interference_mm": 0.1,
-   "mechanical_key": true
-  },
-  {
-   "a": "motor_r",
-   "b": "wheel_r",
-   "method": "press_fit",
-   "reason": "Printed hub with a D-bore matching the flat of the 3 mm gearmotor D-shaft: the flat carries drive torque, the 0.1 mm interference only stops the hub walking off axially",
-   "interference_mm": 0.1,
-   "mechanical_key": true
-  },
-  {
-   "a": "weapon_motor",
-   "b": "chassis_bottom",
-   "method": "screw",
-   "reason": "Stator face bolted onto the motor column with 2 M2 from the belly"
-  },
-  {
-   "a": "weapon",
-   "b": "weapon_motor",
-   "method": "press_fit",
-   "reason": "Weapon hub bore pressed over the bell's shaft boss and keyed by 2 M3 grub screws on the shaft flat; 4 M2.5 screws clamp the plate to the bell face, circlip outboard",
-   "interference_mm": 0.05,
-   "mechanical_key": true
-  },
-  {
-   "a": "wshaft",
-   "b": "weapon_motor",
-   "method": "press_fit",
-   "reason": "The motor's own rotor shaft, lengthened, pressed in the bell and held by its circlip at the stator",
-   "interference_mm": 0.05,
-   "mechanical_key": true
-  },
-  {
-   "a": "wbearing",
-   "b": "top_bridge",
-   "method": "press_fit",
-   "reason": "683ZZ flanged bearing pressed into the support, flange against the inner face (shoulder)",
-   "interference_mm": 0.05,
-   "mechanical_key": true
-  },
-  {
-   "a": "wbearing",
-   "b": "wshaft",
-   "method": "shaft",
-   "reason": "683ZZ inner race on the shaft end: the second support of the rotor, located by a shoulder and circlip"
-  },
-  {
-   "a": "lock_plate",
-   "b": "chassis_top",
-   "method": "glue",
-   "reason": "Epoxied into a 0.3 mm recess in the roof (the recess takes the pin's side load)",
-   "mechanical_key": true
-  },
-  {
-   "a": "insert_c0",
-   "b": "chassis_bottom",
-   "method": "press_fit",
-   "reason": "heat-set insert melted into its bore"
-  },
-  {
-   "a": "insert_c1",
-   "b": "chassis_bottom",
-   "method": "press_fit",
-   "reason": "heat-set insert melted into its bore"
-  },
-  {
-   "a": "insert_c2",
-   "b": "chassis_bottom",
-   "method": "press_fit",
-   "reason": "heat-set insert melted into its bore"
-  },
-  {
-   "a": "insert_c3",
-   "b": "chassis_bottom",
-   "method": "press_fit",
-   "reason": "heat-set insert melted into its bore"
-  },
-  {
-   "a": "insert_w0",
-   "b": "chassis_top",
-   "method": "press_fit",
-   "reason": "heat-set insert melted into its bore"
-  },
-  {
-   "a": "insert_w1",
-   "b": "chassis_top",
-   "method": "press_fit",
-   "reason": "heat-set insert melted into its bore"
-  },
-  {
-   "a": "insert_w2",
-   "b": "chassis_top",
-   "method": "press_fit",
-   "reason": "heat-set insert melted into its bore"
-  },
-  {
-   "a": "insert_w3",
-   "b": "chassis_top",
-   "method": "press_fit",
-   "reason": "heat-set insert melted into its bore"
-  }
- ],
+ "connections": [],
  "claims": [
   {
    "id": "c_mass",

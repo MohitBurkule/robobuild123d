@@ -7,3 +7,5 @@
 ## Round 2
 - kit tool cannot do a hex/pentagon plan, so kept gen+patch. Added J-hook weapon, dropped inserts/bolts. Likeness still FAIL (IoU ~0.64/0.66; weapon centre 73% = front).
 - Unexplained floating cylinders beyond the rear corners in every render persist after dropping inserts/bolts; hook not visible in the render (hidden under plate or mis-oriented). Not resolved. No Haiku sub-agent available, read diff sheets myself.
+## Round 3
+- Added protruding hook, bigger pods, hub bosses, dropped wires/shaft. Floating posts are heat-set boss cylinders inside chassis_bottom/top shape (bridge posts at x=+-58,y=43); an intersect clip of the chassis emptied it, so they remain. Likeness FAIL (IoU 0.66/0.68). Generator needs an option to omit bridge bosses.
