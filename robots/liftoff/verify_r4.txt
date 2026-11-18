@@ -1,0 +1,111 @@
+BLOCKERS: 11
+  [cached] integrity 0.01s
+  [cached] mass 0.00s
+  [proxy] interference 0.14s
+  [cached] connections 0.00s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.00s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.00s
+  [cached] physics 0.01s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [cached] likeness 0.00s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.00s
+  [cached] waiver_audit 0.00s
+  [cached] geom 0.01s
+  [cached] dfm 0.00s
+  [cached] realworld 0.00s
+liftoff: ok=False 11 blockers in 11 root causes, mass 132.4/150 g
+1. [proxy.sweep] joint `lift_plate`: `lift_plate` hits `chassis` 0.12 mm deep at 7.3 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint lift_plate` lists the closest approach to every part.
+   | lift_plate: x -12.00..12.00  y -30.00..50.00  z 12.50..15.50  size 24.00 x 80.00 x 3.00 mm
+   |   centre (0.00, 10.00, 14.00), volume 5760.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -28, 13.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `wedge_l` 2.00 mm
+2. [power.weapon_motor] `lift_plate` names motor None; it must be a catalog brushless motor so speed can be computed.
+   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
+   | lift_plate: x -12.00..12.00  y -30.00..50.00  z 12.50..15.50  size 24.00 x 80.00 x 3.00 mm
+   |   centre (0.00, 10.00, 14.00), volume 5760.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -28, 13.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `wedge_l` 2.00 mm
+3. [process.weapon_printed] Weapon `lift_plate` is fdm-printed with no hardened metal insert teeth.
+   fix: Make it metal (sheet_cut / turned / milled) or add hardened steel tooth parts (`parent` = the weapon).
+   | lift_plate: x -12.00..12.00  y -30.00..50.00  z 12.50..15.50  size 24.00 x 80.00 x 3.00 mm
+   |   centre (0.00, 10.00, 14.00), volume 5760.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -28, 13.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `wedge_l` 2.00 mm
+4. [wire.render_wires] 6 of 6 robot render(s) do not draw all 4 wires: renders/diff_liftoff.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/iso.png: rendered without wires (checks off or no routes); renders/likeness_liftoff.aws76_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_liftoff.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_liftoff.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+5. [wire.rotor_clearance] wire `w_bat_sw` passes -0.9 mm from the volume swept by the `lift_plate` rotor (lift_plate) at [-0.5, 10.5, -3.5].
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | lift_plate: x -12.00..12.00  y -30.00..50.00  z 12.50..15.50  size 24.00 x 80.00 x 3.00 mm
+   |   centre (0.00, 10.00, 14.00), volume 5760.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -28, 13.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `wedge_l` 2.00 mm
+6. [wire.rotor_clearance] wire `w_sw_esc` passes -0.9 mm from the volume swept by the `lift_plate` rotor (lift_plate) at [3.5, -13.5, -4.0].
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | lift_plate: x -12.00..12.00  y -30.00..50.00  z 12.50..15.50  size 24.00 x 80.00 x 3.00 mm
+   |   centre (0.00, 10.00, 14.00), volume 5760.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -28, 13.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `wedge_l` 2.00 mm
+7. [wire.rotor_clearance] wire `w_m1` passes -0.5 mm from the volume swept by the `lift_plate` rotor (lift_plate) at [12.1, -22.0, 0.0].
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | lift_plate: x -12.00..12.00  y -30.00..50.00  z 12.50..15.50  size 24.00 x 80.00 x 3.00 mm
+   |   centre (0.00, 10.00, 14.00), volume 5760.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -28, 13.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `wedge_l` 2.00 mm
+8. [wire.rotor_clearance] wire `w_m2` passes -0.5 mm from the volume swept by the `lift_plate` rotor (lift_plate) at [-12.1, -22.0, 0.0].
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | lift_plate: x -12.00..12.00  y -30.00..50.00  z 12.50..15.50  size 24.00 x 80.00 x 3.00 mm
+   |   centre (0.00, 10.00, 14.00), volume 5760.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -28, 13.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `wedge_l` 2.00 mm
+9. [likeness.view] `reference/liftoff.aws76.webp` is declared `front` (IoU 0.36 there) but the model matches it better from front_left_iso (elevation 25, azimuth 120) (IoU 0.65).
+   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
+10. [likeness.silhouette] `reference/liftoff.aws76.webp`: best silhouette IoU 0.36 at camera front (elevation 25, azimuth 90) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.49). Regions (photo frame, left third first) 0.25 / 0.49 / 0.35: worst = front third. Height/length 0.72 model vs 0.58 photo (too tall: lower it or lengthen it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+11. [battery.rotor_gap] `el_battery` is 1.5 mm from the volume swept by `lift_plate`.
+   fix: Move the battery or add a wall.
+   | el_battery: x -14.50..13.50  y -9.50..8.50  z -8.50..1.50  size 28.00 x 18.00 x 10.00 mm
+   |   centre (-0.50, -0.50, -3.50), volume 5040.0 mm3
+   |   port xt30: (-0.50, 10.50, -3.50)
+   |   gap to `chassis` 0.25 mm
+   |   gap to `el_switch` 2.10 mm
+MASS BUDGET:
+  mass 132.4 g of 150 g (+17.6 g margin)
+    chassis                    61.35 g  fills 47% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    wedge_l                    10.31 g  fills 28% of its box
+    wedge_r                    10.31 g  fills 28% of its box
+    dm_wheel_l0                 9.50 g  fills 63% of its box
+    dm_wheel_r0                 9.50 g  fills 63% of its box
+    lift_plate                  5.48 g  fills 100% of its box
+    wheel_l0                    4.47 g  fills 64% of its box
+    wheel_r0                    4.47 g  fills 64% of its box
+    el_esc                      2.30 g  fills 99% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    mass.may_be_over: 132.4 g (range 107.5 to 157.3 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 31 hit / 0 miss, min_gap 35 hit / 0 miss, overlap 101 hit / 0 miss, part_geom 11 hit / 0 miss
