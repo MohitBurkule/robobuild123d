@@ -1,0 +1,13 @@
+{
+ "spec": "/tmp/work10_time_for_crab/robots/time_for_crab/spec.json",
+ "rendered_at": 1795022105.3894758,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "claw_l",
+  "claw_r",
+  "shaft"
+ ],
+ "wires": {}
+}

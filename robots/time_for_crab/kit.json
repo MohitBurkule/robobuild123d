@@ -1,0 +1,86 @@
+{
+ "robot_type": "lifter",
+ "body": {
+  "length": 60,
+  "width": 92,
+  "height": 24,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 13,
+  "width": 8,
+  "y": [
+   -18
+  ]
+ },
+ "colors": {
+  "body": "#d8453a",
+  "wheel": "#3a3a3e",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "top": [
+    [
+     46,
+     25
+    ],
+    [
+     46,
+     62
+    ],
+    [
+     30,
+     84
+    ],
+    [
+     14,
+     86
+    ],
+    [
+     26,
+     66
+    ],
+    [
+     28,
+     25
+    ]
+   ],
+   "z": [
+    1,
+    26
+   ],
+   "color": "#f08a3a",
+   "mirror": true,
+   "weapon": "lifter",
+   "pivot": [
+    25,
+    12
+   ],
+   "id": "claw"
+  },
+  {
+   "cyl": [
+    5,
+    70
+   ],
+   "at": [
+    0,
+    30,
+    12
+   ],
+   "axis": "x",
+   "id": "shaft",
+   "color": "#eeeeea"
+  }
+ ],
+ "skip_photos": [
+  2
+ ],
+ "name": "time for crab",
+ "weapon": {
+  "kind": "none"
+ }
+}
