@@ -64,6 +64,10 @@ def resolve(spec: Spec, fast: bool = False) -> Resolved:
     from . import progress
     tess = geom.FAST if fast else geom.FINE
     prof = profile.named(spec.profile)
+    n = int((spec.raw or {}).get("cluster") or 1)
+    if n > 1:  # clusterbot: this spec is ONE of n identical bots; the weight limit is shared
+        prof.roller_mass_g /= n
+        prof.non_roller_mass_g /= n
     parts, errors = [], []
     _prebuild(spec, tess)
     for p in spec.parts:
