@@ -145,6 +145,8 @@ build --hypothesis` that matches the weapon, `robot mask reference/<p> reference
 REFERENCE.json (collector only): {robot_type, wheels, weapon: {kind disc|drum|bar|lifter|flipper|wedge, axis x|y|z,
 position front|middle|rear, width_frac, teeth}, photos: [usable files], mask_thr: {file: thr}, crop: {file: [x0,y0,x1,y1] 0..1}}. Use the
 `robot mask ... --thr T --crop x0,y0,x1,y1` the file gives.
+FIRST PROPORTIONS: `robot fit-photo spec.json --length 120 [--weapon-axis x|z]` fits a box + front ramp + weapon
+cylinder to the photo masks (~5 s) and prints width/height/ramp/weapon radius and position in mm. Build to those.
 FAST SHAPE LOOP: `robot likeness spec.json` (~10 s) runs only this gate, names the best camera, the closest template,
 the worst third and height/length vs the photo, and writes overlays to renders/likeness_*.png (red = model only, blue =
 photo only). Run `robot` from the repo you installed (`pip install -e .` in it), or another checkout's code may run.
