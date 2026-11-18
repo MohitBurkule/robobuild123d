@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_upgraded_for_the_roboteers_ple/robots/upgraded_for_the_roboteers_ple/spec.json",
- "rendered_at": 1795026553.2360787,
+ "rendered_at": 1795036549.2571557,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -8,15 +8,12 @@
   "arm",
   "gear",
   "dt_hub_wheel_l0",
-  "dt_axle_wheel_l0",
-  "dt_nut_wheel_l0",
   "dt_hub_wheel_r0",
-  "dt_axle_wheel_r0",
-  "dt_nut_wheel_r0",
-  "dt_screw_0",
-  "dt_screw_1",
-  "dt_screw_2",
-  "dt_screw_3"
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_esc",
+  "el_switch"
  ],
  "wires": {}
 }

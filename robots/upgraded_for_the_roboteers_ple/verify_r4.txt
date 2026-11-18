@@ -1,9 +1,9 @@
 BLOCKERS: 10
   [cached] integrity 0.00s
   [cached] mass 0.00s
-  [proxy] interference 0.07s
+  [proxy] interference 0.24s
   [cached] connections 0.00s
-  [cached] legal 0.00s
+  [cached] legal 0.01s
   [cached] fasteners 0.00s
   [cached] power 0.00s
   [cached] tension 0.00s
@@ -27,8 +27,8 @@ BLOCKERS: 10
   [cached] drive_recess 0.00s
   [cached] belt_wrap 0.00s
   [cached] retention 0.00s
-  [cached] waiver_audit 0.00s
-  [cached] geom 0.00s
+  [cached] waiver_audit 0.20s
+  [cached] geom 0.02s
   [cached] dfm 0.00s
   [cached] realworld 0.00s
 upgraded for the roboteers ple: ok=False 10 blockers in 10 root causes, mass 144.9/150 g
