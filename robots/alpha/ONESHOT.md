@@ -33,11 +33,12 @@ Fixed / changed (inside only, outside kept):
 - one print with the chassis (same material, `fused_with`): `link_l`, `link_r`
 - 4 wires declared (battery - switch - ESC - motors)
 - print orientation on every printed part, failsafe / weapon disable declared, design volumes declared where this pass changed a part on purpose
+- power switch on the floor of the body, slider facing down to a 7 x 3 mm slot in the underside (no slot on the top or sides; hollow cavities stay closed behind a wall at every outside face)
 - scoop sweeps through link_l at 34 poses: not carved (would change the outside)
 - scoop sweeps through link_r at 35 poses: not carved (would change the outside)
 - rod dt_axle_wheel_l0: 2.2 mm stub clear of ['dm_wheel_l0'] printed as the wheel's hub boss
 - rod dt_axle_wheel_r0: 2.2 mm stub clear of ['dm_wheel_r0'] printed as the wheel's hub boss
-- hollowed chassis (wall 2.5, form 0): 216.3 -> 74.0 cm3
+- hollowed chassis (wall 2.5, form 0): 216.3 -> 73.8 cm3
 
 Left (and why):
 - proxy.sweep x1: joint `scoop`: `scoop` hits `link_l` 0.51 mm deep at 7.3 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint scoop` lists the closest approach to every part.
