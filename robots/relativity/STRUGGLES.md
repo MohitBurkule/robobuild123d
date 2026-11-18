@@ -4,3 +4,7 @@
 - Generator hspin_bar puts the bar on top with a bridge and wedge; I hand-edited the spec (edit script not kept): removed bridge/wedge/lock plate, hung the bar under the nose, clipped chassis with an outline prism because wedge hinge knuckles floated outside the outline.
 - Missing: intent options for under-nose bar, no wedge/bridge, taller rear side walls, open wheel bays (photo has them); `front=none` unsupported.
 - `robot` CLI silently skips subcommands on ImportError and a stray PYTHONPATH install exists; run from repo root.
+
+## Round 2
+- Merged dev. kit.py only does box/ramp bodies, no pointed plan outline, so I kept the hand-edited gen spec. Likeness still FAIL (3 silhouette blockers).
+- diff-photo (read by hand, no key): top lid looks missing/open tray in the model (chassis_top intersect clip likely the cause), blade too small and lacks crescent tips, nose not rounded, rear side walls/wheel pods missing, floating bolts.
