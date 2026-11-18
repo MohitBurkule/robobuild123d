@@ -18,3 +18,9 @@ Likeness: aws72 0.54 (FAIL).
 Decisions: type other; body box rect 95x52x22 mm, ramp 0; wheels 4 r10 outboard; weapon none; 4 forks 80 mm; extra parts: axe_arm, ?; photos skipped (cluttered): indices [0, 2].
 
 Likeness: aws72 0.48 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type other; body box rect 46x112x22 mm, ramp 0; wheels 2 r12 inboard; weapon none; 4 forks 60 mm; extra parts: endcap, boss_in, boss_out, servo_house, arm_a, arm_b, arm_pivot_pin, head_block, auger_motor, auger_bit; photos skipped (cluttered): indices [0, 2].
+
+Likeness: aws72 0.60 (FAIL).
+Other likeness findings: [FAIL] likeness.weapon: Photos: axe turns about x; `arm_a` turns about y (axis [0.0, 1.0, 0.0]). x = across the robot (horizontal drum/vertical disc), z = up (h

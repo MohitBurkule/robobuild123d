@@ -1,18 +1,27 @@
 {
  "spec": "/tmp/work10_auger_the_top/robots/auger_the_top/spec.json",
- "rendered_at": 1795022960.2401934,
+ "rendered_at": 1795025137.6028666,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
-  "wheel_l1",
-  "wheel_r1",
   "fork_0",
   "fork_1",
   "fork_2",
   "fork_3",
-  "axe_arm",
-  "extra1"
+  "endcap_l",
+  "endcap_r",
+  "boss_in_l",
+  "boss_in_r",
+  "boss_out_l",
+  "boss_out_r",
+  "servo_house",
+  "arm_a",
+  "arm_b",
+  "arm_pivot_pin",
+  "head_block",
+  "auger_motor",
+  "auger_bit"
  ],
  "wires": {}
 }
