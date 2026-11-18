@@ -2,7 +2,7 @@ BLOCKERS: 16
   [cached] integrity 0.00s
   [proxy] wiring 0.01s
   [cached] mass 0.00s
-  [proxy] interference 0.13s
+  [proxy] interference 0.17s
   [cached] connections 0.00s
   [cached] legal 0.00s
   [cached] fasteners 0.00s
@@ -27,8 +27,8 @@ BLOCKERS: 16
   [cached] likeness 0.00s
   [cached] drive_recess 0.00s
   [cached] belt_wrap 0.00s
-  [cached] retention 0.00s
-  [cached] waiver_audit 0.01s
+  [cached] retention 0.01s
+  [cached] waiver_audit 0.00s
   [cached] geom 0.00s
   [cached] dfm 0.00s
   [cached] realworld 0.00s
