@@ -66,3 +66,6 @@ Still missing:
 - Intent now 140x114 plan, zb/zt +-8, taper 6. IoU aws74 0.75 (need 0.81), aws76 0.83 (pass), aws77 0.81 (need 0.85). Likeness FAIL, 2 blockers (was 3).
 - Still stuck: the generator cannot express the single front ramp plus rear-only wheels and side wings; plan-only outline with tapered walls. aws74/aws77 height disagree.
 - likeness run takes ~115 s, hits the 120 s tool timeout.
+
+## Round 3 note
+Tried 140x114 plan, zb/zt +-8: likeness 0.75/0.83/0.81 (2 blockers) but verify gave 26 blockers (footprint 163.5 mm > 150, open wedge shell). Reverted to the 132x120 build (likeness FAIL, 3 blockers). Generator should clamp plan to the 150 mm square.
