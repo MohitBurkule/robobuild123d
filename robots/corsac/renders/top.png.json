@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_corsac/robots/corsac/spec.json",
- "rendered_at": 1795034930.617221,
+ "rendered_at": 1795037570.3851807,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -13,29 +13,55 @@
   "fork_5",
   "face",
   "dt_hub_wheel_l0",
-  "dt_axle_wheel_l0",
-  "dt_nut_wheel_l0",
   "dt_hub_wheel_r0",
-  "dt_axle_wheel_r0",
-  "dt_nut_wheel_r0",
-  "dt_screw_0",
-  "dt_screw_1",
-  "dt_screw_2",
-  "dt_screw_3",
-  "dt_screw_4",
-  "dt_screw_5",
   "dt_mount_fork_0",
-  "dt_bolt_fork_0",
   "dt_mount_fork_1",
-  "dt_bolt_fork_1",
   "dt_mount_fork_2",
-  "dt_bolt_fork_2",
   "dt_mount_fork_3",
-  "dt_bolt_fork_3",
   "dt_mount_fork_4",
-  "dt_bolt_fork_4",
   "dt_mount_fork_5",
-  "dt_bolt_fork_5"
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_esc",
+  "el_switch"
  ],
- "wires": {}
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    -0.5,
+    10.5,
+    -2.5
+   ],
+   "to": [
+    -4.5,
+    -13.5,
+    -3.0
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    3.5,
+    -13.5,
+    -3.0
+   ],
+   "to": [
+    -16.5,
+    -6.5,
+    6.5
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -16.5,
+    5.5,
+    6.5
+   ],
+   "to": [
+    -12.0,
+    -18.0,
+    0.0
+   ]
+  }
+ }
 }

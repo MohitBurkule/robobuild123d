@@ -1,71 +1,76 @@
-BLOCKERS: 16
-  [ran] integrity 0.04s
+BLOCKERS: 13
+building 8 changed part solids on 4 processes
+  [ran] integrity 0.09s
   [ran] mass 0.00s
-  [proxy] interference 0.06s
-  [ran] connections 0.00s
-  [ran] legal 0.00s
+  [proxy] interference 15.64s
+  [ran] connections 0.09s
+  [ran] legal 0.04s
   [ran] fasteners 0.00s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
-  [ran] fight 0.01s
-  [ran] shape 0.03s
+  [ran] fight 0.04s
+  [ran] shape 0.79s
   [ran] dynamics 0.00s
   [ran] strength 0.00s
-  [ran] printability 0.92s
-  [ran] process 0.01s
-  [ran] electrical 0.00s
-  [ran] combat 0.14s
+  [ran] printability 1.73s
+  [ran] process 0.04s
+  [ran] electrical 0.01s
+  [ran] combat 0.30s
   [ran] physics 0.00s
   [ran] plausibility 0.00s
-  [ran] cots 0.01s
-  [ran] fit 0.01s
+  [ran] cots 0.00s
+  [ran] fit 0.09s
   [ran] bom 0.00s
   [ran] wire_review 0.01s
   [ran] fastener_record 0.00s
-  [ran] likeness 2.97s
-  [ran] drive_recess 0.01s
+  [ran] likeness 10.06s
+  [ran] drive_recess 0.00s
   [ran] belt_wrap 0.00s
   [ran] retention 0.00s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.14s
-  [ran] dfm 0.02s
-  [ran] realworld 0.07s
-corsac: ok=False 16 blockers in 10 root causes, mass 150.1/150 g
+  [ran] geom 0.23s
+  [ran] dfm 0.11s
+  [ran] realworld 0.11s
+corsac: ok=False 13 blockers in 7 root causes, mass 150.8/150 g
 1. [mfg.stock] `fork_0` (laser): thickness 2.50 mm is not a stock titanium gauge (0.5, 0.8, 0.9, 1, 1.5, 2, 3, 4, 5, 6, 8, 10); nearest 2 mm. Same problem on all 6 parts of this pattern: fix the pattern once. (+5 consequences)
    fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
    | fork_0: x -50.00..-42.00  y 36.57..52.46  z -11.62..-3.80  size 8.00 x 15.89 x 7.82 mm
    |   centre (-46.00, 44.52, -7.71), volume 200.0 mm3
-   |   gap to `face` 0.00 mm (touching)
    |   gap to `dt_mount_fork_0` 0.00 mm (touching)
    |   gap to `chassis` 0.04 mm
-2. [process.geometry] `face` (laser): 24 oblique planar face(s): chamfer/bevel; declare `secondary_ops: ["chamfer"]` or remove. (+1 consequences)
+   |   gap to `face` 1.54 mm
+2. [process.geometry] `face` (laser): 16 oblique planar face(s): chamfer/bevel; declare `secondary_ops: ["chamfer"]` or remove. (+1 consequences)
    fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
-   | face: x -58.00..58.00  y 40.00..43.00  z -12.00..38.00  size 116.00 x 3.00 x 50.00 mm
-   |   centre (0.00, 41.50, 13.00), volume 12241.2 mm3
+   | face: x -45.00..45.00  y 10.20..45.27  z -10.23..52.75  size 90.00 x 35.07 x 62.98 mm
+   |   centre (0.00, 27.73, 21.26), volume 11093.7 mm3
    |   gap to `chassis` 0.00 mm (touching)
-   |   gap to `fork_0` 0.00 mm (touching)
    |   gap to `fork_1` 0.00 mm (touching)
-3. [mass.over] 150.1 g (range 127.9 to 172.3 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   |   gap to `fork_2` 0.00 mm (touching)
+3. [integrity.solids] `chassis` has 0 closed solid(s) and 1 open/invalid shell(s), expected 1 (66154 mm3). A boolean or fillet probably collapsed the build.
+   fix: Check the last CAD op (fillet/cut order); or declare `solids` with `solids_reason`.
+   | chassis: x -50.00..50.00  y -40.00..40.00  z -10.00..16.00  size 100.00 x 80.00 x 26.00 mm
+   |   centre (-0.00, -0.00, 3.00), volume 66153.6 mm3
+   |   overlap allowed `dt_mount_fork_1` 3.62 mm (allowed inf)
+   |   overlap allowed `dt_mount_fork_2` 3.62 mm (allowed inf)
+   |   overlap allowed `dt_mount_fork_3` 3.62 mm (allowed inf)
+4. [mass.over] 150.8 g (range 127.9 to 173.7 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
-4. [wire.render_wires] 13 of 13 robot render(s) do not draw all 4 wires: renders/diff_corsac.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_corsac.aws74.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_corsac.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_corsac.aws72_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_corsac.aws74_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_corsac.aws76_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_corsac.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_corsac.aws74.png: no render record (`<png>.json`), so nothing says the wires were drawn...
+5. [connection.cover_fasteners] `face` is an armour / cover panel held by 0 fastener(s); it needs >= 2 real screws. Snap, press-fit or tape retention alone lets it peel off on the first hit.
+   fix: Bolt it with >= 2 screws into inserts, nuts or tapped bosses and declare them in `fasteners`.
+   | face: x -45.00..45.00  y 10.20..45.27  z -10.23..52.75  size 90.00 x 35.07 x 62.98 mm
+   |   centre (0.00, 27.73, 21.26), volume 11093.7 mm3
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `fork_1` 0.00 mm (touching)
+   |   gap to `fork_2` 0.00 mm (touching)
+6. [wire.render_wires] 2 of 2 robot render(s) do not draw all 4 wires: renders/iso.png: wire `w_m1` not drawn; renders/top.png: wire `w_m1` not drawn
    fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
-5. [likeness.view] `reference/corsac.aws72.webp` is declared `front_left_iso` (IoU 0.66 there) but the model matches it better from rear_right_iso (elevation 25, azimuth 330) (IoU 0.81).
-   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
-6. [likeness.silhouette] `reference/corsac.aws72.webp`: best silhouette IoU 0.66 at camera front_left_iso (elevation 45, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.78). Regions (photo frame, left third first) 0.53 / 0.70 / 0.71: worst = front third. Height/length 0.81 model vs 0.67 photo (too tall: lower it or lengthen it).
-   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
-7. [likeness.view] `reference/corsac.aws74.webp` is declared `front_right_iso` (IoU 0.68 there) but the model matches it better from rear_left_iso (elevation 25, azimuth 210) (IoU 0.80).
-   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
-8. [likeness.silhouette] `reference/corsac.aws74.webp`: best silhouette IoU 0.68 at camera front_right_iso (elevation 45, azimuth 60) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.78). Regions (photo frame, left third first) 0.68 / 0.71 / 0.63: worst = rear third. Height/length 0.81 model vs 0.68 photo (too tall: lower it or lengthen it).
-   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
-9. [likeness.view] `reference/corsac.aws76.webp` is declared `front_left_iso` (IoU 0.63 there) but the model matches it better from rear_left_iso (elevation 25, azimuth 210) (IoU 0.80).
-   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
-10. [likeness.silhouette] `reference/corsac.aws76.webp`: best silhouette IoU 0.63 at camera front_left_iso (elevation 45, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.72). Regions (photo frame, left third first) 0.63 / 0.67 / 0.58: worst = rear third. Height/length 0.81 model vs 0.66 photo (too tall: lower it or lengthen it).
-   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+7. [wire.render_count] iso.png: 3 routes vs 4 spec wires (missing ['w_m1']); top.png: 3 routes vs 4 spec wires (missing ['w_m1'])
+   fix: Re-render: the render record must list exactly the spec's wires.
 MASS BUDGET:
-  mass 150.1 g of 150 g (-0.1 g margin)
-    chassis                    58.56 g  fills 30% of its box
-    face                       33.05 g  fills 70% of its box  <- solid block? a tub should be a shell
+  mass 150.8 g of 150 g (-0.8 g margin)
+    chassis                    62.98 g  fills 32% of its box
+    face                       29.95 g  fills 6% of its box
     el_battery                 12.50 g  fills 100% of its box
     dm_wheel_l0                 9.50 g  fills 63% of its box
     dm_wheel_r0                 9.50 g  fills 63% of its box
@@ -81,14 +86,12 @@ MASS BUDGET:
     fork_4                      0.89 g  fills 20% of its box
     fork_5                      0.89 g  fills 20% of its box
     dt_mount_fork_0             0.79 g  fills 96% of its box
-    dt_mount_fork_2             0.79 g  fills 96% of its box
     dt_mount_fork_5             0.79 g  fills 96% of its box
-    dt_mount_fork_3             0.79 g  fills 96% of its box
-    dt_mount_fork_4             0.79 g  fills 96% of its box
     dt_mount_fork_1             0.79 g  fills 96% of its box
+    dt_mount_fork_2             0.79 g  fills 96% of its box
+    dt_mount_fork_4             0.79 g  fills 96% of its box
+    dt_mount_fork_3             0.79 g  fills 96% of its box
     el_switch                   0.50 g  fills 100% of its box
-    fs_face_0                   0.29 g  fills 19% of its box
-    fs_face_1                   0.29 g  fills 19% of its box
-    mass.over: 150.1 g (range 127.9 to 172.3 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.over: 150.8 g (range 127.9 to 173.7 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: distance 18 hit / 0 miss, group 0 hit / 31 miss, inside 24 hit / 0 miss, likeness 3 hit / 0 miss, min_gap 22 hit / 0 miss, overlap 166 hit / 0 miss, part_check 18 hit / 0 miss, part_geom 25 hit / 0 miss, ray 163 hit / 0 miss
+cache: distance 0 hit / 18 miss, group 0 hit / 31 miss, inside 11 hit / 9 miss, likeness 3 hit / 0 miss, min_gap 15 hit / 38 miss, overlap 69 hit / 140 miss, part_check 10 hit / 8 miss, part_geom 23 hit / 0 miss, ray 57 hit / 98 miss
