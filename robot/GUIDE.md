@@ -135,6 +135,32 @@ cannot be flattened (including bent parts, unfold not yet implemented) is an `mf
 
 ## Reference photos (does it look like the real robot?)
 
+COPYING A REAL ROBOT (folder has `reference/` photos or `REFERENCE.json`): group `likeness` (inner tier, BLOCKERS) gates it.
+It fails a spec that is still a stock template or another robot's spec (`likeness.template_copy`), has the wrong
+`robot_type`/wheel count vs `REFERENCE.json` (written by the photo collector, never edit it), has no photo comparison,
+uses a mask not cut from the photo (`likeness.mask_source`), or whose silhouette (best of 27 cameras, mirrored too) is
+below IoU 0.80 or worse than the closest stock template (`likeness.silhouette`). Recipe: pick the template / `robot gen
+build --hypothesis` that matches the weapon, `robot mask reference/<p> reference/<p>_mask.png` per photo, add the
+`reference` entries (view iso, approximate true), then reshape until `likeness` passes. Never edit the masks by hand.
+REFERENCE.json (collector only): {robot_type, wheels, weapon: {kind disc|drum|bar|lifter|flipper|wedge, axis x|y|z,
+position front|middle|rear, width_frac, teeth}, photos: [usable files], mask_thr: {file: thr}, crop: {file: [x0,y0,x1,y1] 0..1}}. Use the
+`robot mask ... --thr T --crop x0,y0,x1,y1` the file gives.
+GENERATOR INTENT KEEPS YOUR ADDITIONS: put `reference`, `robot_type`, and hand-made `extra_parts` / `extra_fasteners` /
+`extra_connections` (e.g. idler wheels) in intent.json; every `robot gen build --intent` re-adds them, so no patch scripts.
+LOOKS FIRST: `robot kit kit.json spec.json` builds a shape draft from named numbers (body box / twin pods with a centre
+slot + front ramp, weapon disc/drum/bar size+position+axis+teeth, 2 or 4 wheels anywhere, forks); see `robot/kit.py` doc.
+Only `likeness` judges it; iterate kit numbers with `robot likeness` until the photos match, then do the full build.
+WHAT TO CHANGE: `robot diff-photo spec.json` writes renders/diff_<photo>.png = photo | model from the matching camera |
+overlay, and (with ANTHROPIC_API_KEY) a Haiku-written list of concrete differences. Read the sheet every loop.
+CLUSTERBOTS: model ONE bot and set top-level `"cluster": N` in the spec: the mass limit becomes 150/N g per bot
+(footprint stays per bot). REFERENCE.json `crop` keeps one bot in each photo.
+FIRST PROPORTIONS: `robot fit-photo spec.json --length 120 [--weapon-axis x|z]` fits a box + front ramp + weapon
+cylinder to the photo masks (~5 s) and prints width/height/ramp/weapon radius and position in mm. Build to those.
+FAST SHAPE LOOP: `robot likeness spec.json` (~10 s) runs only this gate, names the best camera, the closest template,
+the worst third and height/length vs the photo, and writes overlays to renders/likeness_*.png (red = model only, blue =
+photo only). Run `robot` from the repo you installed (`pip install -e .` in it), or another checkout's code may run.
+
+
 Optional `reference: [{image, view, mask, scale_hint?, dir?, approximate?}]`. `view` is `side` (looking along +x, front on
 the LEFT), `front`, `top` (front left), `iso` (front-left from above) or `iso_back`; `dir` overrides the camera direction.
 `mask` is a binary PNG traced from the photo (white = robot, holes filled), path relative to the spec; e.g.
