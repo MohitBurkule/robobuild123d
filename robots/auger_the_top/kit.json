@@ -1,0 +1,97 @@
+{
+ "robot_type": "other",
+ "body": {
+  "length": 95,
+  "width": 48,
+  "height": 24,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 10,
+  "width": 8,
+  "y": [
+   -30,
+   22
+  ]
+ },
+ "forks": {
+  "n": 4,
+  "length": 50,
+  "width": 4,
+  "spread": 70,
+  "tilt_deg": 8
+ },
+ "colors": {
+  "body": "#35c935",
+  "wheel": "#2b8f2b",
+  "weapon": "#c9cdd3",
+  "fork": "#3b4a3b"
+ },
+ "extras": [
+  {
+   "side": [
+    [
+     -30,
+     26
+    ],
+    [
+     -20,
+     26
+    ],
+    [
+     30,
+     62
+    ],
+    [
+     55,
+     58
+    ],
+    [
+     58,
+     50
+    ],
+    [
+     28,
+     52
+    ],
+    [
+     -15,
+     20
+    ]
+   ],
+   "x": [
+    -4,
+    4
+   ],
+   "weapon": "axe",
+   "pivot": [
+    -25,
+    26
+   ],
+   "id": "axe_arm",
+   "color": "#e8c020"
+  },
+  {
+   "box": [
+    60,
+    10,
+    8
+   ],
+   "at": [
+    0,
+    48,
+    10
+   ],
+   "color": "#35c935"
+  }
+ ],
+ "skip_photos": [
+  0,
+  2
+ ],
+ "name": "auger the top",
+ "weapon": {
+  "kind": "none"
+ }
+}

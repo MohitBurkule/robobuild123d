@@ -1,0 +1,18 @@
+{
+ "spec": "/tmp/work10_auger_the_top/robots/auger_the_top/spec.json",
+ "rendered_at": 1795021674.129855,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "wheel_l1",
+  "wheel_r1",
+  "fork_0",
+  "fork_1",
+  "fork_2",
+  "fork_3",
+  "axe_arm",
+  "extra1"
+ ],
+ "wires": {}
+}
