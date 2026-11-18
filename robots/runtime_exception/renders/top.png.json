@@ -1,12 +1,21 @@
 {
  "spec": "/tmp/work10_runtime_exception/robots/runtime_exception/spec.json",
- "rendered_at": 1795023261.7157242,
+ "rendered_at": 1795026225.794118,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
+  "spine",
   "scoop",
-  "spine"
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_nut_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_nut_wheel_r0",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_strut_scoop"
  ],
  "wires": {}
 }

@@ -16,3 +16,9 @@ Likeness: aws72 0.79 (FAIL), aws74 0.80 (FAIL).
 Decisions: type wedge; body box pentagon 80x92x22 mm, ramp 0; wheels 2 r13 inboard; weapon none; extra parts: scoop, spine; photos skipped (cluttered): indices [0].
 
 Likeness: aws72 0.79 (FAIL), aws74 0.80 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type wedge; body box pentagon 80x92x22 mm, ramp 0; wheels 2 r15 inboard; weapon none; extra parts: spine, scoop; photos skipped (cluttered): indices [0].
+
+Likeness: aws72 0.59 (FAIL), aws74 0.66 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/runtime_exception.aws72.webp` is declared `front_left_iso` (IoU 0.59 there) but the model matches it better from rear_left_iso ; [FAIL] likeness.view: `reference/runtime_exception.aws74.webp` is declared `front_left_iso` (IoU 0.66 there) but the model matches it better from front_left_iso

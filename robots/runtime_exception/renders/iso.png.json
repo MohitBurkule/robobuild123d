@@ -1,12 +1,12 @@
 {
  "spec": "/tmp/work10_runtime_exception/robots/runtime_exception/spec.json",
- "rendered_at": 1795023259.589137,
+ "rendered_at": 1795024348.5091846,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
-  "scoop",
-  "spine"
+  "spine",
+  "scoop"
  ],
  "wires": {}
 }
