@@ -1,117 +1,86 @@
-BLOCKERS: 15
-  [cached] integrity 0.00s
-  [cached] mass 0.00s
-  [proxy] interference 0.13s
-  [cached] connections 0.00s
-  [cached] legal 0.00s
-  [cached] fasteners 0.00s
-  [cached] power 0.00s
-  [cached] tension 0.00s
-  [cached] targets 0.00s
-  [cached] fight 0.00s
-  [cached] shape 0.00s
-  [cached] dynamics 0.00s
-  [cached] strength 0.00s
-  [cached] printability 0.00s
-  [cached] process 0.00s
-  [cached] electrical 0.00s
-  [cached] combat 0.00s
-  [cached] physics 0.00s
-  [cached] plausibility 0.00s
-  [cached] cots 0.00s
-  [cached] fit 0.00s
-  [cached] bom 0.00s
-  [cached] wire_review 0.00s
-  [cached] fastener_record 0.00s
-  [cached] likeness 0.00s
-  [cached] drive_recess 0.00s
-  [cached] belt_wrap 0.00s
-  [cached] retention 0.00s
-  [cached] waiver_audit 0.00s
-  [cached] geom 0.00s
-  [cached] dfm 0.00s
-  [cached] realworld 0.00s
-step up: ok=False 15 blockers in 13 root causes, mass 136.8/150 g
-1. [wire.rotor_clearance] wire `w_m1` passes -0.7 mm from the volume swept by the `lifter` rotor (lifter) at [11.0, 4.0, 4.5]. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
-   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
-   | lifter: x -14.00..14.00  y 36.99..51.01  z 1.43..58.57  size 28.00 x 14.02 x 57.15 mm
-   |   centre (0.00, 44.00, 30.00), volume 3248.0 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0, 38, 0.0] range 0..80 default 0
-   |   OVERLAP `chassis` 0.98 mm (allowed 0.08)
-2. [wire.rotor_clearance] wire `w_m2` passes -0.7 mm from the volume swept by the `lifter` rotor (lifter) at [-12.0, 4.0, 4.5]. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
-   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
-   | lifter: x -14.00..14.00  y 36.99..51.01  z 1.43..58.57  size 28.00 x 14.02 x 57.15 mm
-   |   centre (0.00, 44.00, 30.00), volume 3248.0 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0, 38, 0.0] range 0..80 default 0
-   |   OVERLAP `chassis` 0.98 mm (allowed 0.08)
-3. [integrity.volume] `lifter` volume 3248 mm3 vs previous 6600 (-51%)
-   fix: The solid lost most of its material: check the last boolean/fillet.
-   | lifter: x -14.00..14.00  y 36.99..51.01  z 1.43..58.57  size 28.00 x 14.02 x 57.15 mm
-   |   centre (0.00, 44.00, 30.00), volume 3248.0 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0, 38, 0.0] range 0..80 default 0
-   |   OVERLAP `chassis` 0.98 mm (allowed 0.08)
-4. [proxy.interference] `chassis` and `lifter` overlap by 0.98 mm (allowed 0.08).
+BLOCKERS: 7
+  [ran] integrity 0.09s
+  [proxy] wiring 3.01s
+  [ran] mass 0.00s
+  [proxy] interference 14.87s
+  [ran] connections 1.82s
+  [ran] legal 0.02s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.03s
+  [ran] shape 0.39s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.89s
+  [ran] process 0.00s
+  [ran] electrical 1.20s
+  [ran] combat 0.12s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.15s
+  [ran] bom 0.01s
+  [ran] wire_review 0.70s
+  [ran] fastener_record 0.00s
+  [ran] likeness 15.13s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.35s
+  [ran] dfm 0.34s
+  [ran] realworld 2.70s
+step up: ok=False 7 blockers in 7 root causes, mass 145.7/150 g
+1. [proxy.wiring] Wire `w_bat_sw` (`el_battery.xt30` to `el_switch.in`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+2. [proxy.interference] `chassis` and `lifter` overlap by 0.98 mm (allowed 0.08).
    | chassis: x -33.00..33.00  y -40.00..40.00  z -12.00..10.00  size 66.00 x 80.00 x 22.00 mm
-   |   centre (0.00, 0.00, -1.00), volume 56389.3 mm3
+   |   centre (0.00, 0.00, -1.00), volume 54452.3 mm3
    |   OVERLAP `lifter` 0.98 mm (allowed 0.08)
    |   gap to `el_switch` 0.10 mm
    |   gap to `el_rx_esc` 0.25 mm
-5. [proxy.sweep] joint `lifter`: `lifter` hits `chassis` 0.98 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint lifter` lists the closest approach to every part.
+3. [proxy.sweep] joint `lifter`: `lifter` hits `chassis` 0.98 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint lifter` lists the closest approach to every part.
    | lifter: x -14.00..14.00  y 36.99..51.01  z 1.43..58.57  size 28.00 x 14.02 x 57.15 mm
    |   centre (0.00, 44.00, 30.00), volume 3248.0 mm3
    |   joint revolute axis [1, 0, 0] pivot [0, 38, 0.0] range 0..80 default 0
    |   OVERLAP `chassis` 0.98 mm (allowed 0.08)
    | chassis: x -33.00..33.00  y -40.00..40.00  z -12.00..10.00  size 66.00 x 80.00 x 22.00 mm
-6. [power.weapon_motor] `lifter` names motor None; it must be a catalog brushless motor so speed can be computed.
-   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
-   | lifter: x -14.00..14.00  y 36.99..51.01  z 1.43..58.57  size 28.00 x 14.02 x 57.15 mm
-   |   centre (0.00, 44.00, 30.00), volume 3248.0 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0, 38, 0.0] range 0..80 default 0
-   |   OVERLAP `chassis` 0.98 mm (allowed 0.08)
-7. [process.weapon_printed] Weapon `lifter` is fdm-printed with no hardened metal insert teeth.
-   fix: Make it metal (sheet_cut / turned / milled) or add hardened steel tooth parts (`parent` = the weapon).
-   | lifter: x -14.00..14.00  y 36.99..51.01  z 1.43..58.57  size 28.00 x 14.02 x 57.15 mm
-   |   centre (0.00, 44.00, 30.00), volume 3248.0 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0, 38, 0.0] range 0..80 default 0
-   |   OVERLAP `chassis` 0.98 mm (allowed 0.08)
-8. [electrical.battery_weapon_gap] Battery is 1.4 mm from the weapon's swept volume (need >= 3 mm plus a wall).
-   fix: Move the battery >= 3 mm from the swept volume.
-9. [wire.render_wires] 6 of 6 robot render(s) do not draw all 6 wires: renders/diff_step_up.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_step_up.aws72_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_step_up.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/pick_step_up.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_step_up.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn
+4. [retention.loose] `el_act_lifter` can move more than 0.5 mm toward +x, -x, +y, -y, +z, -z without touching anything (captive means at most 0.5 mm of play in every direction); in a hit it will fall out or rattle.
+   fix: Make the pocket snug on that side (0.2 to 0.5 mm gap), add a retaining rib or strap, or declare how it is held in `retained` (tape, adhesive, velcro, press_fit).
+   | el_act_lifter: x -27.49..-17.49  y -11.53..18.57  z -9.99..2.01  size 10.00 x 30.10 x 12.00 mm
+   |   centre (-22.49, 3.52, -3.99), volume 2404.7 mm3
+   |   port terminals: (-22.49, -11.83, -3.99)
+   |   gap to `chassis` 0.50 mm
+   |   gap to `dm_wheel_r1` 2.43 mm
+5. [wire.render_wires] 2 of 2 robot render(s) do not draw all 9 wires: renders/iso.png: wire `w_bat_sw` not drawn; renders/top.png: wire `w_bat_sw` not drawn
    fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
-10. [wire.rotor_clearance] wire `w_bat_sw` passes -0.9 mm from the volume swept by the `lifter` rotor (lifter) at [0.0, 11.0, -5.0].
-   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
-   | lifter: x -14.00..14.00  y 36.99..51.01  z 1.43..58.57  size 28.00 x 14.02 x 57.15 mm
-   |   centre (0.00, 44.00, 30.00), volume 3248.0 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0, 38, 0.0] range 0..80 default 0
-   |   OVERLAP `chassis` 0.98 mm (allowed 0.08)
-11. [wire.rotor_clearance] wire `w_sw_esc` passes -0.9 mm from the volume swept by the `lifter` rotor (lifter) at [1.7, -21.1, -4.5].
-   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
-   | lifter: x -14.00..14.00  y 36.99..51.01  z 1.43..58.57  size 28.00 x 14.02 x 57.15 mm
-   |   centre (0.00, 44.00, 30.00), volume 3248.0 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0, 38, 0.0] range 0..80 default 0
-   |   OVERLAP `chassis` 0.98 mm (allowed 0.08)
-12. [likeness.silhouette] `reference/step_up.aws72.webp`: best silhouette IoU 0.71 at camera front_left_iso (elevation 45, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `wedge_2wd` at 0.64). Regions (photo frame, left third first) 0.85 / 0.74 / 0.54: worst = rear third. Height/length 0.78 model vs 1.06 photo (too flat: raise it or shorten it).
+6. [wire.render_count] iso.png: 8 routes vs 9 spec wires (missing ['w_bat_sw']); top.png: 8 routes vs 9 spec wires (missing ['w_bat_sw'])
+   fix: Re-render: the render record must list exactly the spec's wires.
+7. [likeness.silhouette] `reference/step_up.aws72.webp`: best silhouette IoU 0.77 at camera rear_right_iso (elevation 45, azimuth 300) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.74). Regions (photo frame, left third first) 0.85 / 0.79 / 0.67: worst = rear third. Height/length 1.06 model vs 1.06 photo (proportions ok).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
-... 1 more root causes (fix these first, then re-run)
 MASS BUDGET:
-  mass 136.8 g of 150 g (+13.2 g margin)
-    chassis                    53.68 g  fills 49% of its box
+  mass 145.7 g of 150 g (+4.3 g margin)
+    chassis                    51.84 g  fills 47% of its box
     el_battery                 12.50 g  fills 100% of its box
     dm_wheel_l0                 9.70 g  fills 66% of its box
     dm_wheel_r0                 9.70 g  fills 66% of its box
     dm_wheel_l1                 9.70 g  fills 66% of its box
     dm_wheel_r1                 9.70 g  fills 66% of its box
+    el_act_lifter               7.50 g  fills 67% of its box
     wheel_l0                    4.12 g  fills 57% of its box
     wheel_r0                    4.12 g  fills 57% of its box
     wheel_l1                    4.12 g  fills 57% of its box
     wheel_r1                    4.12 g  fills 57% of its box
     el_rx_esc                   3.50 g  fills 100% of its box
     lifter                      3.09 g  fills 14% of its box
+    el_lesc                     3.00 g  fills 100% of its box
     dt_hub_wheel_l0             1.58 g  fills 66% of its box
     dt_hub_wheel_l1             1.58 g  fills 66% of its box
     dt_hub_wheel_r0             1.58 g  fills 66% of its box
     dt_hub_wheel_r1             1.58 g  fills 66% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.may_be_over: 136.8 g (range 116.5 to 157.2 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.may_be_over: 145.7 g (range 124.0 to 167.3 g) against the 150 g limit; 5.8 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: group 31 hit / 0 miss, min_gap 30 hit / 0 miss, overlap 275 hit / 0 miss, part_geom 17 hit / 0 miss
+cache: part_geom 0 hit / 19 miss
