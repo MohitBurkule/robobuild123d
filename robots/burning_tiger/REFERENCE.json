@@ -1,0 +1,12 @@
+{
+ "robot_type": "lifter",
+ "wheels": 4,
+ "weapon": {
+  "kind": "lifter",
+  "axis": "x"
+ },
+ "photos": [
+  "burning_tiger.aws74.webp",
+  "burning_tiger.aws76.webp"
+ ]
+}

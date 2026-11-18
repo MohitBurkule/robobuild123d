@@ -1,0 +1,94 @@
+{
+ "robot_type": "lifter",
+ "body": {
+  "length": 70,
+  "width": 80,
+  "height": 24,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 12,
+  "width": 8,
+  "y": [
+   -24,
+   20
+  ]
+ },
+ "forks": {
+  "n": 3,
+  "length": 32,
+  "width": 20,
+  "spread": 80,
+  "tilt_deg": 14
+ },
+ "colors": {
+  "body": "#e8b81c",
+  "wheel": "#22262a",
+  "weapon": "#c9cdd3",
+  "fork": "#e6ddc8"
+ },
+ "extras": [
+  {
+   "box": [
+    64,
+    60,
+    3
+   ],
+   "at": [
+    0,
+    -2,
+    27
+   ],
+   "id": "lid",
+   "color": "#d8452a"
+  },
+  {
+   "side": [
+    [
+     -30,
+     28
+    ],
+    [
+     -20,
+     36
+    ],
+    [
+     20,
+     36
+    ],
+    [
+     42,
+     14
+    ],
+    [
+     36,
+     12
+    ],
+    [
+     18,
+     30
+    ],
+    [
+     -30,
+     30
+    ]
+   ],
+   "x": [
+    -9,
+    9
+   ],
+   "weapon": "lifter",
+   "pivot": [
+    -25,
+    30
+   ],
+   "id": "arm",
+   "color": "#d8452a"
+  }
+ ],
+ "name": "burning tiger",
+ "weapon": {
+  "kind": "none"
+ }
+}

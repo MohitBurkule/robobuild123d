@@ -1,0 +1,17 @@
+{
+ "spec": "/tmp/work10_burning_tiger/robots/burning_tiger/spec.json",
+ "rendered_at": 1795022331.6205263,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "wheel_l1",
+  "wheel_r1",
+  "fork_0",
+  "fork_1",
+  "fork_2",
+  "lid",
+  "arm"
+ ],
+ "wires": {}
+}

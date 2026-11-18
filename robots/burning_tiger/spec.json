@@ -1,0 +1,458 @@
+{
+ "name": "burning tiger",
+ "profile": "aws2025",
+ "robot_type": "lifter",
+ "locomotion": "wheels",
+ "kit_draft": true,
+ "parts": [
+  {
+   "id": "chassis",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -35.0,
+       0.0
+      ],
+      [
+       35.0,
+       0.0
+      ],
+      [
+       35.0,
+       1.5
+      ],
+      [
+       35.0,
+       24.0
+      ],
+      [
+       -35.0,
+       24.0
+      ]
+     ],
+     "height": 80.0
+    },
+    "at": [
+     0.0,
+     0.0,
+     -10.0
+    ],
+    "rot": [
+     90.0,
+     0.0,
+     90.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e8b81c",
+   "print_orientation": "+z"
+  },
+  {
+   "id": "wheel_l0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 12.0,
+     "height": 8.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    44.5,
+    -24.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#22262a"
+  },
+  {
+   "id": "wheel_r0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 12.0,
+     "height": 8.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -44.5,
+    -24.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#22262a"
+  },
+  {
+   "id": "wheel_l1",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 12.0,
+     "height": 8.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    44.5,
+    20.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#22262a"
+  },
+  {
+   "id": "wheel_r1",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 12.0,
+     "height": 8.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -44.5,
+    20.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#22262a"
+  },
+  {
+   "id": "fork_0",
+   "kind": "wedge",
+   "material": "titanium",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      20.0,
+      32.0,
+      1.5
+     ]
+    },
+    "at": [
+     -40.0,
+     49.0,
+     -7.329249670405316
+    ],
+    "rot": [
+     -14.0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e6ddc8"
+  },
+  {
+   "id": "fork_1",
+   "kind": "wedge",
+   "material": "titanium",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      20.0,
+      32.0,
+      1.5
+     ]
+    },
+    "at": [
+     0.0,
+     49.0,
+     -7.329249670405316
+    ],
+    "rot": [
+     -14.0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e6ddc8"
+  },
+  {
+   "id": "fork_2",
+   "kind": "wedge",
+   "material": "titanium",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      20.0,
+      32.0,
+      1.5
+     ]
+    },
+    "at": [
+     40.0,
+     49.0,
+     -7.329249670405316
+    ],
+    "rot": [
+     -14.0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e6ddc8"
+  },
+  {
+   "id": "lid",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      64,
+      60,
+      3
+     ]
+    },
+    "at": [
+     0,
+     -2,
+     15.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#d8452a"
+  },
+  {
+   "id": "arm",
+   "kind": "weapon",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -30,
+       16.0
+      ],
+      [
+       -20,
+       24.0
+      ],
+      [
+       20,
+       24.0
+      ],
+      [
+       42,
+       2.0
+      ],
+      [
+       36,
+       0.0
+      ],
+      [
+       18,
+       18.0
+      ],
+      [
+       -30,
+       18.0
+      ]
+     ],
+     "height": 18
+    },
+    "at": [
+     0.0,
+     0,
+     0
+    ],
+    "rot": [
+     90,
+     0,
+     90
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#d8452a",
+   "weapon": {
+    "kind": "lifter"
+   },
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "pivot": [
+     0,
+     -25,
+     18.0
+    ],
+    "min": 0,
+    "max": 80,
+    "default": 0
+   }
+  }
+ ],
+ "fasteners": [],
+ "wires": [],
+ "connections": [],
+ "reference": [
+  {
+   "image": "reference/burning_tiger.aws74.webp",
+   "mask": "reference/burning_tiger.aws74_mask.png",
+   "view": "iso",
+   "approximate": true
+  },
+  {
+   "image": "reference/burning_tiger.aws76.webp",
+   "mask": "reference/burning_tiger.aws76_mask.png",
+   "view": "iso",
+   "approximate": true
+  }
+ ]
+}
