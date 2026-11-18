@@ -21,7 +21,7 @@ Likeness: aws72 0.47 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/pingu.aws72.webp` is declared `front` (IoU 0.47 there) but the model matches it better from rear_right_iso (elevation 45, azimu
 
 ## Round 4 (verification, helper 2)
-Blockers r3 107 -> r4 3 (`verify --tier inner`).
+Blockers r3 107 -> r4 5 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -31,6 +31,8 @@ Fixed / changed (inside only, outside kept):
 - 4 wires declared (battery - switch - ESC - motors)
 - print orientation on every printed part, failsafe / weapon disable declared, design volumes declared where this pass changed a part on purpose
 - power switch on the floor of the body, slider facing down to a 7 x 3 mm slot in the underside (no slot on the top or sides; hollow cavities stay closed behind a wall at every outside face)
+- chassis: a cut was not made (it would open 40 mm2 of outside face; the overlap stays as a finding)
+- chassis: a cut was not made (it would open 32 mm2 of outside face; the overlap stays as a finding)
 - no screw line found for fork_0
 - no screw line found for fork_1
 - no screw line found for fork_2
@@ -39,11 +41,11 @@ Fixed / changed (inside only, outside kept):
 - no screw line found for fork_5
 - rod dt_axle_wheel_l1: 2.8 mm stub clear of ['dm_wheel_l1'] printed as the wheel's hub boss
 - rod dt_axle_wheel_r1: 2.8 mm stub clear of ['dm_wheel_r1'] printed as the wheel's hub boss
-- hollowed chassis (wall 2.5, form 0): 163.3 -> 60.3 cm3
+- hollowed chassis (wall 2.5, form 0): 163.3 -> 67.2 cm3
 
 Left (and why):
-- wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
-- likeness.view x1: looks, not in scope for this pass.
+- proxy.interference x2: `chassis` and `dm_wheel_l1` overlap by 4.88 mm (allowed 0.08).
+- fit.interference x2: `dm_wheel_l1` overlaps wall `chassis` by 4.88 mm: it will not go in. No side has 5.08 mm free (free room per side {'-x': 2.0, '+x': 0.0, '-y': 0.01, '+y': 0.01, '-z': 0.91, '+z': 0.75}): grow the pock
 - likeness.silhouette x1: looks, not in scope for this pass.
 
-Likeness (best silhouette IoU per photo, r3 -> r4): pingu.aws72.webp 0.47 -> 0.46
+Likeness (best silhouette IoU per photo, r3 -> r4): pingu.aws72.webp 0.64 -> 0.64

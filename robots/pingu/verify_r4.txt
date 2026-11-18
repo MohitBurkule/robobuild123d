@@ -1,44 +1,68 @@
-BLOCKERS: 2
-  [cached] integrity 0.00s
-  [cached] mass 0.00s
-  [proxy] interference 0.35s
-  [cached] connections 0.00s
-  [cached] legal 0.00s
-  [cached] fasteners 0.00s
-  [cached] power 0.00s
-  [cached] tension 0.00s
-  [cached] targets 0.01s
-  [cached] fight 0.00s
-  [cached] shape 0.00s
-  [cached] dynamics 0.00s
-  [cached] strength 0.00s
-  [cached] printability 0.00s
-  [cached] process 0.00s
-  [cached] electrical 0.00s
-  [cached] combat 0.01s
-  [cached] physics 0.00s
-  [cached] plausibility 0.00s
-  [cached] cots 0.00s
-  [cached] fit 0.00s
-  [cached] bom 0.01s
-  [cached] wire_review 0.00s
-  [cached] fastener_record 0.00s
-  [cached] likeness 0.00s
-  [cached] drive_recess 0.00s
-  [cached] belt_wrap 0.00s
-  [cached] retention 0.02s
-  [cached] waiver_audit 0.00s
-  [cached] geom 0.00s
-  [cached] dfm 0.00s
-  [cached] realworld 0.00s
-pingu: ok=False 2 blockers in 2 root causes, mass 140.4/150 g
-1. [wire.render_wires] 5 of 5 robot render(s) do not draw all 4 wires: renders/diff_pingu.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_pingu.aws72_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_pingu.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_pingu.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn
-   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
-2. [likeness.silhouette] `reference/pingu.aws72.webp`: best silhouette IoU 0.64 at camera front_left_iso (elevation 25, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.67). Regions (photo frame, left third first) 0.58 / 0.72 / 0.59: worst = front third. Height/length 0.65 model vs 0.82 photo (too flat: raise it or shorten it).
+BLOCKERS: 5
+  [ran] integrity 0.11s
+  [ran] mass 0.00s
+  [proxy] interference 10.98s
+  [ran] connections 0.88s
+  [ran] legal 0.06s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.01s
+  [ran] targets 0.00s
+  [ran] fight 0.04s
+  [ran] shape 0.41s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 1.50s
+  [ran] process 0.01s
+  [ran] electrical 0.02s
+  [ran] combat 0.21s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.21s
+  [ran] bom 0.00s
+  [ran] wire_review 0.02s
+  [ran] fastener_record 0.00s
+  [ran] likeness 16.39s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.22s
+  [ran] dfm 0.08s
+  [ran] realworld 0.11s
+pingu: ok=False 5 blockers in 5 root causes, mass 146.3/150 g
+1. [proxy.interference] `chassis` and `dm_wheel_l1` overlap by 4.88 mm (allowed 0.08).
+   | chassis: x -42.00..42.00  y -40.00..40.00  z -10.00..20.00  size 84.00 x 80.00 x 30.00 mm
+   |   centre (0.00, 0.00, 5.00), volume 66428.8 mm3
+   |   OVERLAP `dm_wheel_l1` 4.88 mm (allowed 0.08)
+   |   OVERLAP `dm_wheel_r1` 4.88 mm (allowed 0.08)
+   |   overlap allowed `lid` 0.77 mm (allowed inf)
+2. [proxy.interference] `chassis` and `dm_wheel_r1` overlap by 4.88 mm (allowed 0.08).
+   | chassis: x -42.00..42.00  y -40.00..40.00  z -10.00..20.00  size 84.00 x 80.00 x 30.00 mm
+   |   centre (0.00, 0.00, 5.00), volume 66428.8 mm3
+   |   OVERLAP `dm_wheel_l1` 4.88 mm (allowed 0.08)
+   |   OVERLAP `dm_wheel_r1` 4.88 mm (allowed 0.08)
+   |   overlap allowed `lid` 0.77 mm (allowed inf)
+3. [fit.interference] `dm_wheel_l1` overlaps wall `chassis` by 4.88 mm: it will not go in. No side has 5.08 mm free (free room per side {'-x': 2.0, '+x': 0.0, '-y': 0.01, '+y': 0.01, '-z': 0.91, '+z': 0.75}): grow the pocket or pick a smaller part (`robot catalog --kind ... --fits LxWxH`).
+   fix: Grow the pocket to the component size plus the per-side fit clearance.
+   | dm_wheel_l1: x 14.50..50.00  y 14.00..26.00  z -5.00..5.00  size 35.50 x 12.00 x 10.00 mm
+   |   centre (32.25, 20.00, 0.00), volume 2702.4 mm3
+   |   port terminals: (14.50, 20.00, 0.00)
+   |   OVERLAP `chassis` 4.88 mm (allowed 0.08)
+   |   gap to `wheel_l1` 0.00 mm (touching)
+4. [fit.interference] `dm_wheel_r1` overlaps wall `chassis` by 4.88 mm: it will not go in. No side has 5.08 mm free (free room per side {'-x': 0.0, '+x': 1.8, '-y': 0.01, '+y': 0.01, '-z': 0.91, '+z': 0.75}): grow the pocket or pick a smaller part (`robot catalog --kind ... --fits LxWxH`).
+   fix: Grow the pocket to the component size plus the per-side fit clearance.
+   | dm_wheel_r1: x -50.00..-14.50  y 14.00..26.00  z -5.00..5.00  size 35.50 x 12.00 x 10.00 mm
+   |   centre (-32.25, 20.00, 0.00), volume 2702.4 mm3
+   |   port terminals: (-14.50, 20.00, 0.00)
+   |   OVERLAP `chassis` 4.88 mm (allowed 0.08)
+   |   gap to `wheel_r1` 0.00 mm (touching)
+5. [likeness.silhouette] `reference/pingu.aws72.webp`: best silhouette IoU 0.64 at camera front_left_iso (elevation 25, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.67). Regions (photo frame, left third first) 0.58 / 0.72 / 0.59: worst = front third. Height/length 0.65 model vs 0.82 photo (too flat: raise it or shorten it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
-  mass 140.4 g of 150 g (+9.6 g margin)
-    chassis                    57.36 g  fills 30% of its box
+  mass 146.3 g of 150 g (+3.7 g margin)
+    chassis                    63.24 g  fills 33% of its box
     el_battery                 12.50 g  fills 100% of its box
     dm_wheel_l1                 9.50 g  fills 63% of its box
     dm_wheel_r1                 9.50 g  fills 63% of its box
@@ -67,6 +91,6 @@ MASS BUDGET:
     dt_mount_fork_2             0.91 g  fills 98% of its box
     dt_mount_fork_3             0.91 g  fills 98% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.may_be_over: 140.4 g (range 116.5 to 164.4 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.may_be_over: 146.3 g (range 121.2 to 171.5 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: group 31 hit / 0 miss, overlap 198 hit / 0 miss, part_geom 29 hit / 0 miss
+cache: distance 6 hit / 6 miss, group 0 hit / 31 miss, inside 24 hit / 2 miss, likeness 1 hit / 0 miss, min_gap 61 hit / 24 miss, overlap 203 hit / 121 miss, part_check 21 hit / 1 miss, part_geom 28 hit / 1 miss, ray 146 hit / 35 miss
