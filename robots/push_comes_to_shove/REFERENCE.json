@@ -7,5 +7,13 @@
  "photos": [
   "push_mk_1.webp",
   "push_mk_2.webp"
- ]
+ ],
+ "view": {
+  "push_mk_1.webp": "front_left_iso",
+  "push_mk_2.webp": "front_left_iso"
+ },
+ "view_source": {
+  "push_mk_1.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label",
+  "push_mk_2.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label"
+ }
 }

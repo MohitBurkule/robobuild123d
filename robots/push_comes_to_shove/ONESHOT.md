@@ -49,3 +49,8 @@ Likeness (best silhouette IoU per photo, r3 -> r4): push_mk_1.webp 0.69 -> 0.69;
 Decisions: type wedge; body box rect 90x82x22 mm, ramp 0; wheels 4 r12 inboard; weapon none; extra parts: front_plate.
 
 Likeness: push_mk_1 0.65 (FAIL), push_mk_2 0.71 (FAIL).
+
+## Round 3d (user camera picks batch 2 + shape remarks applied; round 4 to be re-run on the new outside)
+Decisions: type wedge; body box rect 78x72x3 mm, ramp 0; wheels 4 r12 inboard; weapon none; extra parts: side_plate, top_plate, front_plate, rear_plate, motor_rear, motor_front, battery_pack, receiver, standoff_r, standoff_f.
+
+Likeness: push_mk_1 0.69 (FAIL), push_mk_2 0.68 (FAIL).

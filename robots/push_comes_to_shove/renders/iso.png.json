@@ -1,13 +1,27 @@
 {
  "spec": "/tmp/work10_push_comes_to_shove/robots/push_comes_to_shove/spec.json",
- "rendered_at": 1795035133.2209837,
+ "rendered_at": 1795038117.0878918,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
   "wheel_l1",
   "wheel_r1",
+  "side_plate_l",
+  "side_plate_r",
+  "top_plate",
   "front_plate",
+  "rear_plate",
+  "motor_rear_l",
+  "motor_rear_r",
+  "motor_front_l",
+  "motor_front_r",
+  "battery_pack",
+  "receiver",
+  "standoff_r_l",
+  "standoff_r_r",
+  "standoff_f_l",
+  "standoff_f_r",
   "dt_hub_wheel_l0",
   "dt_axle_wheel_l0",
   "dt_nut_wheel_l0",
@@ -21,7 +35,9 @@
   "dt_axle_wheel_r1",
   "dt_nut_wheel_r1",
   "dt_screw_0",
-  "dt_screw_1"
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3"
  ],
  "wires": {}
 }

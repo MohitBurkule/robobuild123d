@@ -11,131 +11,42 @@
    "material": "nylon",
    "process": "fdm",
    "shape": {
-    "type": "subtract",
-    "base": {
-     "type": "place",
-     "shape": {
-      "type": "prism",
-      "points": [
-       [
-        -45.0,
-        0.0
-       ],
-       [
-        45.0,
-        0.0
-       ],
-       [
-        45.0,
-        1.5
-       ],
-       [
-        45.0,
-        22.0
-       ],
-       [
-        -45.0,
-        22.0
-       ]
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -39.0,
+       0.0
       ],
-      "height": 82.0
-     },
-     "at": [
-      0.0,
-      0.0,
-      -10.0
+      [
+       39.0,
+       0.0
+      ],
+      [
+       39.0,
+       1.5
+      ],
+      [
+       39.0,
+       3.0
+      ],
+      [
+       -39.0,
+       3.0
+      ]
      ],
-     "rot": [
-      90.0,
-      0.0,
-      90.0
-     ]
+     "height": 72.0
     },
-    "cut": [
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        51.0,
-        29.0,
-        200
-       ]
-      },
-      "at": [
-       56.5,
-       -28.0,
-       0
-      ],
-      "rot": [
-       0,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        51.0,
-        29.0,
-        200
-       ]
-      },
-      "at": [
-       -56.5,
-       -28.0,
-       0
-      ],
-      "rot": [
-       0,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        51.0,
-        29.0,
-        200
-       ]
-      },
-      "at": [
-       56.5,
-       12.0,
-       0
-      ],
-      "rot": [
-       0,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        51.0,
-        29.0,
-        200
-       ]
-      },
-      "at": [
-       -56.5,
-       12.0,
-       0
-      ],
-      "rot": [
-       0,
-       0,
-       0
-      ]
-     }
+    "at": [
+     0.0,
+     0.0,
+     -10.0
+    ],
+    "rot": [
+     90.0,
+     0.0,
+     90.0
     ]
    },
    "at": [
@@ -148,7 +59,7 @@
     0,
     0
    ],
-   "color": "#d9dde0",
+   "color": "#dfe8ee",
    "print_orientation": "+z"
   },
   {
@@ -175,8 +86,8 @@
     ]
    },
    "at": [
-    36.5,
-    -28.0,
+    29.0,
+    -24.0,
     0.0
    ],
    "rot": [
@@ -210,8 +121,8 @@
     ]
    },
    "at": [
-    -36.5,
-    -28.0,
+    -29.0,
+    -24.0,
     0.0
    ],
    "rot": [
@@ -245,8 +156,8 @@
     ]
    },
    "at": [
-    36.5,
-    12.0,
+    29.0,
+    16.0,
     0.0
    ],
    "rot": [
@@ -280,8 +191,8 @@
     ]
    },
    "at": [
-    -36.5,
-    12.0,
+    -29.0,
+    16.0,
     0.0
    ],
    "rot": [
@@ -290,6 +201,151 @@
     0
    ],
    "color": "#202226"
+  },
+  {
+   "id": "side_plate_l",
+   "kind": "other",
+   "material": "polycarbonate",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -40,
+       -11.0
+      ],
+      [
+       46,
+       -11.0
+      ],
+      [
+       34,
+       13.0
+      ],
+      [
+       -52,
+       13.0
+      ]
+     ],
+     "height": 2
+    },
+    "at": [
+     39.0,
+     0,
+     0
+    ],
+    "rot": [
+     90,
+     0,
+     90
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#dfe8ee",
+   "clear": true
+  },
+  {
+   "id": "side_plate_r",
+   "kind": "other",
+   "material": "polycarbonate",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -40,
+       -11.0
+      ],
+      [
+       46,
+       -11.0
+      ],
+      [
+       34,
+       13.0
+      ],
+      [
+       -52,
+       13.0
+      ]
+     ],
+     "height": 2
+    },
+    "at": [
+     -39.0,
+     0,
+     0
+    ],
+    "rot": [
+     90,
+     0,
+     90
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#dfe8ee",
+   "clear": true
+  },
+  {
+   "id": "top_plate",
+   "kind": "other",
+   "material": "polycarbonate",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      80,
+      86,
+      2
+     ]
+    },
+    "at": [
+     0,
+     -9,
+     14.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#dfe8ee",
+   "clear": true
   },
   {
    "id": "front_plate",
@@ -302,23 +358,23 @@
      "type": "prism",
      "points": [
       [
-       40,
-       12.0
-      ],
-      [
-       43,
-       13.0
-      ],
-      [
-       72,
-       -10.5
-      ],
-      [
-       69,
+       46,
        -11.5
+      ],
+      [
+       48.5,
+       -11.5
+      ],
+      [
+       36,
+       15.0
+      ],
+      [
+       33.5,
+       15.0
       ]
      ],
-     "height": 92
+     "height": 88
     },
     "at": [
      0.0,
@@ -329,6 +385,426 @@
      90,
      0,
      90
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#b9bdc2"
+  },
+  {
+   "id": "rear_plate",
+   "kind": "armor",
+   "material": "aluminium",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -40,
+       -11.5
+      ],
+      [
+       -42.5,
+       -11.5
+      ],
+      [
+       -55,
+       15.0
+      ],
+      [
+       -52.5,
+       15.0
+      ]
+     ],
+     "height": 88
+    },
+    "at": [
+     0.0,
+     0,
+     0
+    ],
+    "rot": [
+     90,
+     0,
+     90
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#b9bdc2"
+  },
+  {
+   "id": "motor_rear_l",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      22,
+      12,
+      10
+     ]
+    },
+    "at": [
+     14,
+     -24,
+     -3.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#eeeeea"
+  },
+  {
+   "id": "motor_rear_r",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      22,
+      12,
+      10
+     ]
+    },
+    "at": [
+     -14,
+     -24,
+     -3.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#eeeeea"
+  },
+  {
+   "id": "motor_front_l",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      22,
+      12,
+      10
+     ]
+    },
+    "at": [
+     14,
+     16,
+     -3.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#eeeeea"
+  },
+  {
+   "id": "motor_front_r",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      22,
+      12,
+      10
+     ]
+    },
+    "at": [
+     -14,
+     16,
+     -3.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#eeeeea"
+  },
+  {
+   "id": "battery_pack",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      34,
+      17,
+      9
+     ]
+    },
+    "at": [
+     0,
+     -4,
+     -3.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#3a3d44"
+  },
+  {
+   "id": "receiver",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      18,
+      12,
+      5
+     ]
+    },
+    "at": [
+     0,
+     -4,
+     4.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#c22a22"
+  },
+  {
+   "id": "standoff_r_l",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 2.2,
+     "height": 22
+    },
+    "at": [
+     34,
+     -34,
+     2.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#b9bdc2"
+  },
+  {
+   "id": "standoff_r_r",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 2.2,
+     "height": 22
+    },
+    "at": [
+     -34,
+     -34,
+     2.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#b9bdc2"
+  },
+  {
+   "id": "standoff_f_l",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 2.2,
+     "height": 22
+    },
+    "at": [
+     34,
+     30,
+     2.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#b9bdc2"
+  },
+  {
+   "id": "standoff_f_r",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 2.2,
+     "height": 22
+    },
+    "at": [
+     -34,
+     30,
+     2.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
     ]
    },
    "at": [
@@ -356,8 +832,8 @@
      "height": 9.2
     },
     "at": [
-     36.5,
-     -28.0,
+     29.0,
+     -24.0,
      0.0
     ],
     "rot": [
@@ -391,8 +867,8 @@
      "height": 18.6
     },
     "at": [
-     32.8,
-     -28.0,
+     25.3,
+     -24.0,
      0.0
     ],
     "rot": [
@@ -426,8 +902,8 @@
      "height": 1.6
     },
     "at": [
-     41.9,
-     -28.0,
+     34.4,
+     -24.0,
      0.0
     ],
     "rot": [
@@ -461,8 +937,8 @@
      "height": 9.2
     },
     "at": [
-     -36.5,
-     -28.0,
+     -29.0,
+     -24.0,
      0.0
     ],
     "rot": [
@@ -496,8 +972,8 @@
      "height": 18.6
     },
     "at": [
-     -32.8,
-     -28.0,
+     -25.3,
+     -24.0,
      0.0
     ],
     "rot": [
@@ -531,8 +1007,8 @@
      "height": 1.6
     },
     "at": [
-     -41.9,
-     -28.0,
+     -34.4,
+     -24.0,
      0.0
     ],
     "rot": [
@@ -566,8 +1042,8 @@
      "height": 9.2
     },
     "at": [
-     36.5,
-     12.0,
+     29.0,
+     16.0,
      0.0
     ],
     "rot": [
@@ -601,8 +1077,8 @@
      "height": 18.6
     },
     "at": [
-     32.8,
-     12.0,
+     25.3,
+     16.0,
      0.0
     ],
     "rot": [
@@ -636,8 +1112,8 @@
      "height": 1.6
     },
     "at": [
-     41.9,
-     12.0,
+     34.4,
+     16.0,
      0.0
     ],
     "rot": [
@@ -671,8 +1147,8 @@
      "height": 9.2
     },
     "at": [
-     -36.5,
-     12.0,
+     -29.0,
+     16.0,
      0.0
     ],
     "rot": [
@@ -706,8 +1182,8 @@
      "height": 18.6
     },
     "at": [
-     -32.8,
-     12.0,
+     -25.3,
+     16.0,
      0.0
     ],
     "rot": [
@@ -741,8 +1217,8 @@
      "height": 1.6
     },
     "at": [
-     -41.9,
-     12.0,
+     -34.4,
+     16.0,
      0.0
     ],
     "rot": [
@@ -776,9 +1252,9 @@
      "height": 1.4
     },
     "at": [
-     -34.0,
-     38.0,
-     12.3
+     -29.0,
+     -32.0,
+     15.3
     ],
     "rot": [
      0.0,
@@ -811,9 +1287,79 @@
      "height": 1.4
     },
     "at": [
-     34.0,
-     38.0,
-     12.3
+     29.0,
+     -32.0,
+     15.3
+    ],
+    "rot": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#2b2d31"
+  },
+  {
+   "id": "dt_screw_2",
+   "kind": "fastener_head",
+   "material": "steel",
+   "process": "cots",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 1.9,
+     "height": 1.4
+    },
+    "at": [
+     -29.0,
+     32.0,
+     15.3
+    ],
+    "rot": [
+     0.0,
+     0.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#2b2d31"
+  },
+  {
+   "id": "dt_screw_3",
+   "kind": "fastener_head",
+   "material": "steel",
+   "process": "cots",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 1.9,
+     "height": 1.4
+    },
+    "at": [
+     29.0,
+     32.0,
+     15.3
     ],
     "rot": [
      0.0,
@@ -914,12 +1460,22 @@
   ],
   [
    "dt_screw_0",
-   "chassis",
+   "top_plate",
    "screw"
   ],
   [
    "dt_screw_1",
-   "chassis",
+   "top_plate",
+   "screw"
+  ],
+  [
+   "dt_screw_2",
+   "top_plate",
+   "screw"
+  ],
+  [
+   "dt_screw_3",
+   "top_plate",
    "screw"
   ]
  ]
