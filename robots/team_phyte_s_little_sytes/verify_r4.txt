@@ -1,65 +1,75 @@
-BLOCKERS: unknown (outside rebuilt after this run; round 4 to be re-run)
-  [cached] integrity 0.00s
-  [cached] mass 0.00s
-  [proxy] interference 0.09s
-  [cached] connections 0.00s
-  [cached] legal 0.00s
-  [cached] fasteners 0.00s
-  [cached] power 0.00s
-  [cached] tension 0.00s
-  [cached] targets 0.00s
-  [cached] fight 0.00s
-  [cached] shape 0.00s
-  [cached] dynamics 0.00s
-  [cached] strength 0.00s
-  [cached] printability 0.00s
-  [cached] process 0.00s
-  [cached] electrical 0.00s
-  [cached] combat 0.00s
-  [cached] physics 0.00s
-  [cached] plausibility 0.00s
-  [cached] cots 0.00s
-  [cached] fit 0.00s
-  [cached] bom 0.00s
-  [cached] wire_review 0.00s
-  [cached] fastener_record 0.00s
-  [cached] likeness 0.00s
-  [cached] drive_recess 0.00s
-  [cached] belt_wrap 0.00s
-  [cached] retention 0.00s
-  [cached] waiver_audit 0.00s
-  [cached] geom 0.01s
-  [cached] dfm 0.00s
-  [cached] realworld 0.00s
-team phyte s little sytes: ok=False 6 blockers in 6 root causes, mass 122.6/75 g
-1. [mass.over] 122.6 g (range 99.6 to 145.6 g) against the 75 g limit; 4.9 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+BLOCKERS: 7
+building 3 changed part solids on 3 processes
+  [ran] integrity 0.05s
+  [ran] mass 0.00s
+  [proxy] interference 10.28s
+  [ran] connections 0.86s
+  [ran] legal 0.02s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.01s
+  [ran] shape 0.36s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 1.28s
+  [ran] process 0.00s
+  [ran] electrical 0.01s
+  [ran] combat 0.15s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.07s
+  [ran] bom 0.00s
+  [ran] wire_review 0.02s
+  [ran] fastener_record 0.00s
+  [ran] likeness 7.04s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.23s
+  [ran] dfm 0.07s
+  [ran] realworld 0.06s
+team phyte s little sytes: ok=False 7 blockers in 7 root causes, mass 123.1/75 g
+1. [integrity.solids] `chassis` has 0 closed solid(s) and 1 open/invalid shell(s), expected 1 (70312 mm3). A boolean or fillet probably collapsed the build.
+   fix: Check the last CAD op (fillet/cut order); or declare `solids` with `solids_reason`.
+   | chassis: x -56.00..56.00  y -42.00..54.00  z -9.00..21.00  size 112.00 x 96.00 x 30.00 mm
+   |   centre (-0.00, 6.00, 6.00), volume 70311.9 mm3
+   |   overlap allowed `fin_l` 0.93 mm (allowed inf)
+   |   overlap allowed `fin_r` 0.93 mm (allowed inf)
+   |   overlap allowed `electronics_tray` 0.46 mm (allowed inf)
+2. [mass.over] 123.1 g (range 100.0 to 146.3 g) against the 75 g limit; 4.9 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
-2. [electrical.cells_consistent] Cell counts: battery 1S, electronics.cells 2S.
+3. [electrical.cells_consistent] Cell counts: battery 1S, electronics.cells 2S.
    fix: Make electronics.cells, the battery and weapon.cells agree.
-3. [wire.render_wires] 20 of 20 robot render(s) do not draw all 4 wires: renders/diff_team_phyte_s_little_sytes.aws74.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_team_phyte_s_little_sytes.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_team_phyte_s_little_sytes.aws77.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/iso.png: rendered without wires (checks off or no routes); renders/likeness_team_phyte_s_little_sytes.aws74.webp_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_team_phyte_s_little_sytes.aws74_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_team_phyte_s_little_sytes.aws76.webp_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_team_phyte_s_little_sytes.aws76_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn...
-   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
-4. [likeness.silhouette] `reference/team_phyte_s_little_sytes.aws74.webp`: best silhouette IoU 0.63 at camera front (elevation 0, azimuth 90) (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.62). Regions (photo frame, left third first) 0.76 / 0.45 / 0.69: worst = middle third. Height/length 0.32 model vs 0.32 photo (proportions ok).
+4. [likeness.silhouette] `reference/team_phyte_s_little_sytes.aws74.webp`: best silhouette IoU 0.60 at camera front (elevation 0, azimuth 90) (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.62). Regions (photo frame, left third first) 0.70 / 0.45 / 0.64: worst = middle third. Height/length 0.42 model vs 0.32 photo (too tall: lower it or lengthen it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
-5. [likeness.silhouette] `reference/team_phyte_s_little_sytes.aws76.webp`: best silhouette IoU 0.41 at camera front_right_iso (elevation 25, azimuth 60) (need 0.80: >= 0.8 and no worse than the closest stock template `wedge_2wd` at 0.55). Regions (photo frame, left third first) 0.43 / 0.37 / 0.46: worst = middle third. Height/length 0.62 model vs 0.47 photo (too tall: lower it or lengthen it).
+5. [likeness.view] `reference/team_phyte_s_little_sytes.aws76.webp` is declared `front_left_iso` (IoU 0.40 there) but the model matches it better from rear_right_iso (elevation 25, azimuth 300) (IoU 0.54).
+   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
+6. [likeness.silhouette] `reference/team_phyte_s_little_sytes.aws76.webp`: best silhouette IoU 0.40 at camera front_left_iso (elevation 25, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.49). Regions (photo frame, left third first) 0.43 / 0.34 / 0.46: worst = middle third. Height/length 0.73 model vs 0.47 photo (too tall: lower it or lengthen it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
-6. [likeness.silhouette] `reference/team_phyte_s_little_sytes.aws77.webp`: best silhouette IoU 0.67 at camera front (elevation 0, azimuth 90) (need 0.80: >= 0.8 and no worse than the closest stock template `wedge_2wd` at 0.64). Regions (photo frame, left third first) 0.79 / 0.45 / 0.78: worst = middle third. Height/length 0.32 model vs 0.35 photo (proportions ok).
+7. [likeness.silhouette] `reference/team_phyte_s_little_sytes.aws77.webp`: best silhouette IoU 0.64 at camera front (elevation 0, azimuth 90) (need 0.80: >= 0.8 and no worse than the closest stock template `wedge_2wd` at 0.64). Regions (photo frame, left third first) 0.73 / 0.45 / 0.74: worst = middle third. Height/length 0.42 model vs 0.35 photo (too tall: lower it or lengthen it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
-  mass 122.6 g of 75 g (-47.6 g margin)
-    chassis                    68.01 g  fills 22% of its box
+  mass 123.1 g of 75 g (-48.1 g margin)
+    chassis                    66.94 g  fills 22% of its box
     dm_wheel_l0                 9.50 g  fills 63% of its box
     dm_wheel_r0                 9.50 g  fills 63% of its box
     el_battery                  8.50 g  fills 100% of its box
     electronics_tray            5.60 g  fills 100% of its box
-    fin_l                       4.41 g  fills 58% of its box
-    fin_r                       4.41 g  fills 58% of its box
+    fin_l                       4.26 g  fills 63% of its box
+    fin_r                       4.26 g  fills 63% of its box
     wheel_l0                    2.85 g  fills 66% of its box
     wheel_r0                    2.85 g  fills 66% of its box
     el_esc                      2.30 g  fills 99% of its box
+    ear_l                       0.96 g  fills 50% of its box
+    ear_r                       0.96 g  fills 50% of its box
     dt_hub_wheel_l0             0.83 g  fills 74% of its box
     dt_hub_wheel_r0             0.83 g  fills 74% of its box
     lip                         0.75 g  fills 100% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.over: 122.6 g (range 99.6 to 145.6 g) against the 75 g limit; 4.9 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.over: 123.1 g (range 100.0 to 146.3 g) against the 75 g limit; 4.9 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: group 31 hit / 0 miss, overlap 116 hit / 0 miss, part_geom 14 hit / 0 miss
+cache: distance 0 hit / 1 miss, group 0 hit / 31 miss, inside 6 hit / 6 miss, likeness 3 hit / 0 miss, min_gap 0 hit / 11 miss, overlap 56 hit / 115 miss, part_check 6 hit / 5 miss, part_geom 16 hit / 0 miss, ray 17 hit / 97 miss
