@@ -50,3 +50,9 @@ Left (one line each):
 - mass.over x1: outside shape (kept) is heavier than the class limit even with 2.5 mm shells
 - proxy.interference x1: parts overlap in the kit shape where a cut would change the look or leave a loose piece
 - wire.render_wires x1: toolchain/process: the photo-match, diff and likeness sheets are written without a render record of the wire routes
+
+## Round 3b (rebuilt by eye from the photos: parts moved to where the photo shows them, camera set per photo)
+Decisions: type horizontal_spinner; body box rect 100x112x20 mm, ramp 0; wheels 2 r12 inboard; weapon bar r72 axis z teeth 2; extra parts: hub, deck.
+
+Likeness: aws71 0.51 (FAIL), aws74 0.53 (FAIL), aws76 0.40 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/vampire.aws71.webp` is declared `top` (IoU 0.51 there) but the model matches it better from front_left_iso (elevation 25, azimu; [FAIL] likeness.view: `reference/vampire.aws74.webp` is declared `front_right_iso` (IoU 0.53 there) but the model matches it better from front_right_iso (elevat; [FAIL] likeness.view: `reference/vampire.aws76.webp` is declared `left` (IoU 0.40 there) but the model matches it better from front (elevation 25, azimuth 90) (
