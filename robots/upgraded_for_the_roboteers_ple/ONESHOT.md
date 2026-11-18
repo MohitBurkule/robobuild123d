@@ -11,3 +11,8 @@
 Decisions: type other; body box pentagon 100x110x30 mm, ramp 30; wheels 2 r12 inboard; weapon none; extra parts: arm, gear; photos skipped (cluttered): indices [0, 2].
 
 Likeness: aws67 0.84 (ok).
+
+## Round 2 (looks)
+Decisions: type other; body box pentagon 100x110x30 mm, ramp 30; wheels 2 r12 inboard; weapon none; extra parts: arm, gear; photos skipped (cluttered): indices [0, 2].
+
+Likeness: aws67 0.84 (ok).
