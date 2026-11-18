@@ -8,5 +8,11 @@
  "photos": [
   "io.aws63.webp"
  ],
- "mask_mode": {}
+ "mask_mode": {},
+ "view": {
+  "io.aws63.webp": "front"
+ },
+ "elevation": {
+  "io.aws63.webp": 45
+ }
 }

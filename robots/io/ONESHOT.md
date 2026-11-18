@@ -15,3 +15,8 @@ Likeness: aws63 0.65 (FAIL).
 Decisions: type flipper; body box rect 90x80x20 mm, ramp 0; wheels 2 r10 inboard; weapon none; extra parts: flipper; textured masks for indices [0].
 
 Likeness: aws63 0.65 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type flipper; body box rect 90x80x20 mm, ramp 0; wheels 2 r10 inboard; weapon none; extra parts: flipper; textured masks for indices [0].
+
+Likeness: aws63 0.62 (FAIL).

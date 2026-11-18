@@ -21,7 +21,14 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "textured": [
+  0
+ ],
+ "name": "io",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "box": [
     60,
@@ -46,12 +53,5 @@
     0
    ]
   }
- ],
- "textured": [
-  0
- ],
- "name": "io",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }
