@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_sawcon/robots/sawcon/spec.json",
- "rendered_at": 1795023134.2987669,
+ "rendered_at": 1795024638.9652545,
  "bodies": [
   "pod_l",
   "pod_r",
@@ -10,9 +10,9 @@
   "wheel_r0",
   "wheel_l1",
   "wheel_r1",
-  "arm",
   "plow",
-  "plow_face"
+  "plow_face",
+  "arm"
  ],
  "wires": {}
 }

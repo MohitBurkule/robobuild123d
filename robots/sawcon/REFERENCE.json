@@ -8,5 +8,15 @@
  },
  "photos": [
   "sawcon.aws67.webp"
- ]
+ ],
+ "view": {
+  "sawcon.aws66.webp": "front",
+  "sawcon.aws67.webp": "front_left_iso",
+  "sawcon.aws70.webp": "front"
+ },
+ "elevation": {
+  "sawcon.aws66.webp": 25,
+  "sawcon.aws67.webp": 45,
+  "sawcon.aws70.webp": 70
+ }
 }

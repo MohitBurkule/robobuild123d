@@ -19,11 +19,11 @@
  },
  "weapon": {
   "kind": "disc",
-  "radius": 18,
+  "radius": 17,
   "width": 3,
-  "y": 18,
+  "y": 34,
   "teeth": 8,
-  "z": 58,
+  "z": 84,
   "axis": "x"
  },
  "colors": {
@@ -32,37 +32,12 @@
   "weapon": "#8a8d92",
   "fork": "#c9cdd3"
  },
- "extras": [
-  {
-   "side": [
-    [
-     -25,
-     24
-    ],
-    [
-     -10,
-     24
-    ],
-    [
-     22,
-     60
-    ],
-    [
-     14,
-     64
-    ],
-    [
-     -20,
-     34
-    ]
-   ],
-   "x": [
-    -5,
-    5
-   ],
-   "id": "arm",
-   "color": "#eeeeea"
-  },
+ "skip_photos": [
+  0,
+  2
+ ],
+ "name": "sawcon",
+ "macros": [
   {
    "top": [
     [
@@ -112,11 +87,36 @@
    "kind": "wedge",
    "id": "plow_face",
    "color": "#2a2c30"
+  },
+  {
+   "side": [
+    [
+     -25,
+     24
+    ],
+    [
+     -8,
+     24
+    ],
+    [
+     38,
+     84
+    ],
+    [
+     28,
+     90
+    ],
+    [
+     -20,
+     36
+    ]
+   ],
+   "x": [
+    -5,
+    5
+   ],
+   "id": "arm",
+   "color": "#eeeeea"
   }
- ],
- "skip_photos": [
-  0,
-  2
- ],
- "name": "sawcon"
+ ]
 }

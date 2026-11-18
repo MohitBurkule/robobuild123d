@@ -18,3 +18,8 @@ Likeness: aws67 0.80 (ok).
 Decisions: type vertical_spinner; body twin_pods rect 90x96x22 mm, ramp 0; wheels 4 r11 outboard; weapon disc r18 axis x teeth 8; extra parts: arm, plow, plow_face; photos skipped (cluttered): indices [0, 2].
 
 Likeness: aws67 0.80 (ok).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type vertical_spinner; body twin_pods rect 90x96x22 mm, ramp 0; wheels 4 r11 outboard; weapon disc r17 axis x teeth 8; extra parts: plow, plow_face, arm; photos skipped (cluttered): indices [0, 2].
+
+Likeness: aws67 0.75 (FAIL).
