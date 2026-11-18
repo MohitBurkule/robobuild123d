@@ -2,7 +2,7 @@
  "name": "ripper remix",
  "profile": "aws2025",
  "robot_type": "flipper",
- "locomotion": "wheels",
+ "locomotion": "roller",
  "kit_draft": true,
  "parts": [
   {
