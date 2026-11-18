@@ -1,0 +1,491 @@
+{
+ "name": "wendsleydale",
+ "profile": "aws2025",
+ "robot_type": "lifter",
+ "locomotion": "wheels",
+ "kit_draft": true,
+ "parts": [
+  {
+   "id": "chassis",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "union",
+    "items": [
+     {
+      "type": "place",
+      "shape": {
+       "type": "prism",
+       "points": [
+        [
+         -50,
+         -12
+        ],
+        [
+         50,
+         -12
+        ],
+        [
+         50,
+         -10
+        ],
+        [
+         10,
+         16
+        ],
+        [
+         -50,
+         16
+        ]
+       ],
+       "height": 74
+      },
+      "at": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rot": [
+       90.0,
+       0.0,
+       90.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "prism",
+       "points": [
+        [
+         -12,
+         -12
+        ],
+        [
+         50,
+         -12
+        ],
+        [
+         50,
+         -10
+        ],
+        [
+         10,
+         16
+        ],
+        [
+         -12,
+         16
+        ]
+       ],
+       "height": 100
+      },
+      "at": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rot": [
+       90.0,
+       0.0,
+       90.0
+      ]
+     }
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#59b9e6",
+   "print_orientation": "+z"
+  },
+  {
+   "id": "wheel_l0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 14.0,
+     "height": 11.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    43.0,
+    -32.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "wheel_r0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 14.0,
+     "height": 11.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -43.0,
+    -32.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "lifter",
+   "kind": "weapon",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "union",
+    "items": [
+     {
+      "type": "place",
+      "shape": {
+       "type": "prism",
+       "points": [
+        [
+         -50,
+         16
+        ],
+        [
+         10,
+         16
+        ],
+        [
+         50,
+         -10
+        ],
+        [
+         50,
+         -6
+        ],
+        [
+         12,
+         21
+        ],
+        [
+         -30,
+         21
+        ],
+        [
+         -50,
+         19
+        ]
+       ],
+       "height": 30
+      },
+      "at": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rot": [
+       90.0,
+       0.0,
+       90.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 13,
+       "height": 30
+      },
+      "at": [
+       0,
+       -14,
+       12
+      ],
+      "rot": [
+       0.0,
+       90.0,
+       0.0
+      ]
+     }
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#59b9e6",
+   "weapon": {
+    "kind": "lifter"
+   },
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "pivot": [
+     0,
+     -14,
+     12
+    ],
+    "min": 0,
+    "max": 90,
+    "default": 0
+   }
+  },
+  {
+   "id": "side_plate_l",
+   "kind": "plate",
+   "material": "polycarbonate",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -50,
+       -12
+      ],
+      [
+       50,
+       -12
+      ],
+      [
+       50,
+       -10
+      ],
+      [
+       10,
+       16
+      ],
+      [
+       -50,
+       16
+      ]
+     ],
+     "height": 2
+    },
+    "at": [
+     51.0,
+     0.0,
+     0.0
+    ],
+    "rot": [
+     90.0,
+     0.0,
+     90.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#dfe6ea"
+  },
+  {
+   "id": "corner_l",
+   "kind": "armor",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      26,
+      10,
+      6
+     ]
+    },
+    "at": [
+     37,
+     -45,
+     13
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#f08a2c"
+  },
+  {
+   "id": "side_plate_r",
+   "kind": "plate",
+   "material": "polycarbonate",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -50,
+       -12
+      ],
+      [
+       50,
+       -12
+      ],
+      [
+       50,
+       -10
+      ],
+      [
+       10,
+       16
+      ],
+      [
+       -50,
+       16
+      ]
+     ],
+     "height": 2
+    },
+    "at": [
+     -51.0,
+     0.0,
+     0.0
+    ],
+    "rot": [
+     90.0,
+     0.0,
+     90.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#dfe6ea"
+  },
+  {
+   "id": "corner_r",
+   "kind": "armor",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      26,
+      10,
+      6
+     ]
+    },
+    "at": [
+     -37,
+     -45,
+     13
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#f08a2c"
+  }
+ ],
+ "fasteners": [],
+ "wires": [],
+ "connections": [],
+ "reference": [
+  {
+   "image": "reference/wendsleydale.aws65.webp",
+   "mask": "reference/wendsleydale.aws65_mask.png",
+   "view": "iso",
+   "approximate": true
+  },
+  {
+   "image": "reference/wendsleydale.aws68.webp",
+   "mask": "reference/wendsleydale.aws68_mask.png",
+   "view": "iso",
+   "approximate": true
+  }
+ ]
+}

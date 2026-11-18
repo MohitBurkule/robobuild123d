@@ -1,0 +1,11 @@
+{
+ "note": "ids added on top of `robot kit` output; replaced shapes are in spec.json",
+ "added": [
+  "corner_l",
+  "corner_r",
+  "lifter",
+  "side_plate_l",
+  "side_plate_r"
+ ],
+ "removed": []
+}

@@ -1,0 +1,15 @@
+{
+ "spec": "/tmp/work10_wendsleydale/robots/wendsleydale/spec.json",
+ "rendered_at": 1795020893.3136656,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "lifter",
+  "side_plate_l",
+  "corner_l",
+  "side_plate_r",
+  "corner_r"
+ ],
+ "wires": {}
+}

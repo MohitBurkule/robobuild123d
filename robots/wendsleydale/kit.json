@@ -1,0 +1,22 @@
+{
+ "name": "wendsleydale",
+ "robot_type": "lifter",
+ "body": {
+  "length": 100,
+  "width": 74,
+  "height": 28,
+  "ramp": 40,
+  "clearance": 2
+ },
+ "weapon": {
+  "kind": "none"
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 14,
+  "width": 11,
+  "y": [
+   -32
+  ]
+ }
+}

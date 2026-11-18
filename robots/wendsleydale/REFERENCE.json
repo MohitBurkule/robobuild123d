@@ -1,0 +1,17 @@
+{
+ "robot_type": "lifter",
+ "wheels": 2,
+ "weapon": {
+  "kind": "lifter",
+  "position": "middle",
+  "width_frac": 0.29
+ },
+ "photos": [
+  "wendsleydale.aws65.webp",
+  "wendsleydale.aws68.webp"
+ ],
+ "mask_mode": {
+  "wendsleydale.aws65.webp": "textured",
+  "wendsleydale.aws68.webp": "textured"
+ }
+}
