@@ -14,3 +14,9 @@ Likeness: aws74 0.71 (FAIL), aws76 0.66 (FAIL).
 Decisions: type lifter; body box rect 70x80x24 mm, ramp 0; wheels 4 r12 outboard; weapon none; 3 forks 32 mm; extra parts: lid, arm.
 
 Likeness: aws74 0.71 (FAIL), aws76 0.66 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type lifter; body box rect 70x80x24 mm, ramp 0; wheels 4 r14 outboard; weapon none; 3 forks 34 mm; extra parts: lid, arm.
+
+Likeness: aws74 0.55 (FAIL), aws76 0.62 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/burning_tiger.aws74.webp` is declared `front` (IoU 0.55 there) but the model matches it better from rear_left_iso (elevation 45

@@ -8,19 +8,20 @@
  },
  "wheels": {
   "n": 4,
-  "radius": 12,
-  "width": 8,
+  "radius": 14,
+  "width": 9,
   "y": [
    -24,
    20
-  ]
+  ],
+  "x": 47
  },
  "forks": {
   "n": 3,
-  "length": 32,
-  "width": 20,
-  "spread": 80,
-  "tilt_deg": 14
+  "length": 34,
+  "width": 22,
+  "spread": 86,
+  "tilt_deg": 18
  },
  "colors": {
   "body": "#e8b81c",
@@ -28,7 +29,11 @@
   "weapon": "#c9cdd3",
   "fork": "#e6ddc8"
  },
- "extras": [
+ "name": "burning tiger",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "box": [
     64,
@@ -86,9 +91,5 @@
    "id": "arm",
    "color": "#d8452a"
   }
- ],
- "name": "burning tiger",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }

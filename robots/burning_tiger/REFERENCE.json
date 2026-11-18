@@ -8,5 +8,13 @@
  "photos": [
   "burning_tiger.aws74.webp",
   "burning_tiger.aws76.webp"
- ]
+ ],
+ "view": {
+  "burning_tiger.aws74.webp": "front",
+  "burning_tiger.aws76.webp": "front_left_iso"
+ },
+ "elevation": {
+  "burning_tiger.aws74.webp": 45,
+  "burning_tiger.aws76.webp": 45
+ }
 }
