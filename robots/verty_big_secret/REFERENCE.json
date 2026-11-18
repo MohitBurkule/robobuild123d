@@ -10,5 +10,15 @@
   "verty_big_secret.aws72.webp",
   "verty_big_secret.aws74.webp",
   "verty_big_secret.aws76.webp"
- ]
+ ],
+ "view": {
+  "verty_big_secret.aws72.webp": "front_right_iso",
+  "verty_big_secret.aws74.webp": "front_right_iso",
+  "verty_big_secret.aws76.webp": "front_left_iso"
+ },
+ "elevation": {
+  "verty_big_secret.aws72.webp": 45,
+  "verty_big_secret.aws74.webp": 45,
+  "verty_big_secret.aws76.webp": 45
+ }
 }

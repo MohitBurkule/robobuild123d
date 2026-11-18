@@ -13,3 +13,9 @@ Likeness: aws72 0.55 (FAIL), aws74 0.58 (FAIL), aws76 0.63 (FAIL).
 Decisions: type vertical_spinner; body box rect 80x66x20 mm, ramp 0; wheels 2 r14 outboard; weapon disc r36 axis x teeth 2; extra parts: upright, fork.
 
 Likeness: aws72 0.56 (FAIL), aws74 0.54 (FAIL), aws76 0.60 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type vertical_spinner; body box rect 80x66x20 mm, ramp 0; wheels 2 r11 outboard; weapon disc r26 axis x teeth 2; extra parts: upright, fork, hook.
+
+Likeness: aws72 0.46 (FAIL), aws74 0.31 (FAIL), aws76 0.39 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/verty_big_secret.aws74.webp` is declared `front_right_iso` (IoU 0.31 there) but the model matches it better from right (elevati; [FAIL] likeness.view: `reference/verty_big_secret.aws76.webp` is declared `front_left_iso` (IoU 0.39 there) but the model matches it better from right (elevatio

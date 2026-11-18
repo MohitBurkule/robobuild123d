@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_verty_big_secret/robots/verty_big_secret/spec.json",
- "rendered_at": 1795023339.8768148,
+ "rendered_at": 1795026397.5008707,
  "bodies": [
   "chassis",
   "weapon",
@@ -9,7 +9,24 @@
   "upright_l",
   "upright_r",
   "fork_l",
-  "fork_r"
+  "fork_r",
+  "hook_l",
+  "hook_r",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_nut_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_nut_wheel_r0",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3",
+  "dt_shaft_weapon",
+  "dt_mount_fork_l",
+  "dt_bolt_fork_l",
+  "dt_mount_fork_r",
+  "dt_bolt_fork_r"
  ],
  "wires": {}
 }
