@@ -8,5 +8,15 @@
   "rbmk.aws71.webp",
   "rbmk.aws74.webp",
   "rbmk.aws76.webp"
- ]
+ ],
+ "view": {
+  "rbmk.aws71.webp": "front",
+  "rbmk.aws74.webp": "front",
+  "rbmk.aws76.webp": "front_left_iso"
+ },
+ "elevation": {
+  "rbmk.aws71.webp": 45,
+  "rbmk.aws74.webp": 25,
+  "rbmk.aws76.webp": 45
+ }
 }

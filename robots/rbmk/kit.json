@@ -21,12 +21,12 @@
  },
  "weapon": {
   "kind": "bar",
-  "radius": 46,
+  "radius": 42,
   "width": 3,
   "y": 24,
   "teeth": 2,
   "x": 40,
-  "bar_width": 10,
+  "bar_width": 20,
   "tilt_deg": -22,
   "z": 12,
   "axis": "z"
@@ -37,27 +37,15 @@
   "weapon": "#1c1c1f",
   "fork": "#c9cdd3"
  },
- "extras": [
-  {
-   "box": [
-    92,
-    10,
-    3
-   ],
-   "at": [
-    -40,
-    24,
-    12
-   ],
-   "weapon": "bar",
-   "id": "bar2",
-   "color": "#1c1c1f",
-   "rot": [
-    0,
-    22,
-    0
-   ]
-  },
+ "ref": {
+  "robot_type": "horizontal_spinner",
+  "weapon": {
+   "kind": "bar",
+   "axis": "z"
+  }
+ },
+ "name": "rbmk",
+ "macros": [
   {
    "cyl": [
     10,
@@ -87,14 +75,26 @@
    "mirror": true,
    "id": "skid",
    "color": "#8a8d92"
+  },
+  {
+   "box": [
+    84,
+    20,
+    3
+   ],
+   "at": [
+    -40,
+    24,
+    12
+   ],
+   "weapon": "bar",
+   "id": "bar2",
+   "color": "#1c1c1f",
+   "rot": [
+    0,
+    22,
+    0
+   ]
   }
- ],
- "ref": {
-  "robot_type": "horizontal_spinner",
-  "weapon": {
-   "kind": "bar",
-   "axis": "z"
-  }
- },
- "name": "rbmk"
+ ]
 }

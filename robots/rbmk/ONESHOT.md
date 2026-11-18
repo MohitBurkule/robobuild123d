@@ -18,3 +18,9 @@ Likeness: aws71 0.64 (FAIL), aws74 0.63 (FAIL), aws76 0.73 (FAIL).
 Decisions: type horizontal_spinner; body box pentagon 75x84x34 mm, ramp 0; wheels 2 r14 outboard; weapon bar r46 axis z teeth 2; extra parts: bar2, motor, skid.
 
 Likeness: aws71 0.66 (FAIL), aws74 0.60 (FAIL), aws76 0.72 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type horizontal_spinner; body box pentagon 75x84x34 mm, ramp 0; wheels 2 r14 outboard; weapon bar r42 axis z teeth 2; extra parts: motor, skid, bar2.
+
+Likeness: aws71 0.63 (FAIL), aws74 0.57 (FAIL), aws76 0.53 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/rbmk.aws76.webp` is declared `front_left_iso` (IoU 0.53 there) but the model matches it better from rear_right_iso (elevation 2

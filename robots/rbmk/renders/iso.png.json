@@ -1,14 +1,14 @@
 {
  "spec": "/tmp/work10_rbmk/robots/rbmk/spec.json",
- "rendered_at": 1795022962.9262862,
+ "rendered_at": 1795024700.2051985,
  "bodies": [
   "chassis",
   "weapon",
-  "bar2",
   "motor_l",
   "motor_r",
   "skid_l",
-  "skid_r"
+  "skid_r",
+  "bar2"
  ],
  "wires": {}
 }
