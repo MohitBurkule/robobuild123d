@@ -3041,7 +3041,7 @@
   {
    "image": "reference/gyronino.aws76.webp",
    "mask": "reference/gyronino.aws76_mask.png",
-   "view": "iso",
+   "view": "rear_right_iso",
    "approximate": true
   }
  ],

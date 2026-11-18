@@ -12,7 +12,7 @@
  "view": {
   "gyronino.aws72.webp": "front_right_iso",
   "gyronino.aws74.webp": "front_right_iso",
-  "gyronino.aws76.webp": "front_right_iso"
+  "gyronino.aws76.webp": "rear_right_iso"
  },
  "elevation": {
   "gyronino.aws72.webp": 25,
