@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 </head>
 <body>
+<meta charset="utf-8">
 <title>Antweight Camera Picker</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -278,7 +279,14 @@ function loadModel(r) {
   if (model) { scene.remove(model); model.traverse(o => { o.geometry?.dispose(); }); model = null; }
   meshes = []; selected = null; $("pickedPart").hidden = true; helpers.clear(); pins3d.clear();
   if (!r.model) { $("hud").textContent = "no model for this robot"; return Promise.resolve(); }
-  return new Promise((res) => loader.load(DATA + r.model, (g) => {
+  const fetchGltf = (url, ok, bad) => {
+    if (!url.endsWith(".txt")) return loader.load(url, ok, undefined, bad);
+    fetch(url).then(x => { if (!x.ok) throw new Error("HTTP " + x.status); return x.text(); }).then(t => {
+      const bin = atob(t.trim()); const u8 = new Uint8Array(bin.length); for (let i = 0; i < bin.length; i++) u8[i] = bin.charCodeAt(i);
+      loader.parse(u8.buffer, "", ok, bad);
+    }).catch(bad);
+  };
+  return new Promise((res) => fetchGltf(DATA + r.model, (g) => {
     if (tok !== loadToken) return res();
     model = g.scene;
     const byName = {}; (r.parts || []).forEach(p => byName[THREE.PropertyBinding.sanitizeNodeName(p.id)] = p);
@@ -298,7 +306,7 @@ function loadModel(r) {
     bb.getCenter(center); radius = bb.getSize(new THREE.Vector3()).length() / 2;
     camera.near = radius / 50; camera.far = radius * 200; camera.updateProjectionMatrix();
     buildHelpers(bb); drawPins3d(); res();
-  }, undefined, (err) => { $("hud").textContent = "model failed to load: " + (err?.message || err); res(); }));
+  }, (err) => { $("hud").textContent = "model failed to load: " + (err?.message || err); res(); }));
 }
 
 // ---------------- camera convention ----------------
