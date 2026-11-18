@@ -69,3 +69,7 @@ Still missing:
 
 ## Round 3 note
 Tried 140x114 plan, zb/zt +-8: likeness 0.75/0.83/0.81 (2 blockers) but verify gave 26 blockers (footprint 163.5 mm > 150, open wedge shell). Reverted to the 132x120 build (likeness FAIL, 3 blockers). Generator should clamp plan to the 150 mm square.
+
+## Round 2 (kit)
+- Replaced the spec with `robot kit` (kit.json): box body 116x116x26, 95 mm ramp, 2 rear wheels r10; spec "cluster": 2. aws76 passes; aws74 0.73 (need 0.81), aws77 0.80 (need 0.85). FAIL, 2 blockers. First kit try (120x110x22, ramp 80, wheels r12) was better on aws74 (0.76).
+- Remaining differences (read from diff sheet myself, no API key): photo has raised side wings/rear wall sloping in a V, wheels inset inside the wings; kit body is a plain ramp-and-box with no wings. Kit has no wing/V-notch rear option.

@@ -1,0 +1,24 @@
+{
+ "name": "Team Phyte's Little Sytes",
+ "robot_type": "wedge",
+ "body": {
+  "length": 116,
+  "width": 116,
+  "height": 26,
+  "ramp": 95,
+  "style": "box",
+  "clearance": 2
+ },
+ "weapon": {
+  "kind": "none"
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 10,
+  "width": 8,
+  "y": [
+   -42
+  ],
+  "outside": false
+ }
+}
