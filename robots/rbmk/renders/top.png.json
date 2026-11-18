@@ -1,20 +1,16 @@
 {
- "spec": "/tmp/work10_rbmk/robots/rbmk/spec.json",
- "rendered_at": 1795025853.3569613,
+ "spec": "/home/antigravity/MohitBurkule/robobuild123d/robots/rbmk/spec.json",
+ "rendered_at": 1795042876.6417735,
  "bodies": [
   "chassis",
-  "weapon",
-  "motor_l",
+  "rear_fin",
+  "front_roller",
+  "wing_r",
+  "wing_l",
   "motor_r",
-  "skid_l",
-  "skid_r",
-  "bar2",
-  "dt_screw_0",
-  "dt_screw_1",
-  "dt_screw_2",
-  "dt_shaft_weapon",
-  "dt_hubw_weapon",
-  "dt_shaft_bar2"
+  "motor_l",
+  "bar_r",
+  "bar_l"
  ],
  "wires": {}
 }
