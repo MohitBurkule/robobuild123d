@@ -2,7 +2,7 @@
  "name": "vampire",
  "profile": "aws2025",
  "robot_type": "horizontal_spinner",
- "locomotion": "wheels",
+ "locomotion": "roller",
  "kit_draft": true,
  "parts": [
   {
@@ -48,12 +48,12 @@
        25
       ]
      ],
-     "height": 22.0
+     "height": 28.0
     },
     "at": [
      0,
      0,
-     2.0
+     5.0
     ],
     "rot": [
      0,
