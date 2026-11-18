@@ -101,3 +101,31 @@ def test_glued_part_needs_a_face_to_bond_to():
     assert not run(on).failed("connection.bond_no_face")
     off = base(); off["parts"].append(sw(7.0))          # 1 mm above it: nothing to glue to
     assert run(off).failed("connection.bond_no_face")
+
+
+def test_split_cover_panel_fails_unless_waived_or_single():
+    s = lambda i, x, p: {"id": i, "designation": "M2x6", "at": [x, 0, 4], "dir": [0, 0, -1], "through": [p, "chassis"]}  # noqa: E731
+    split = {
+        "name": "t",
+        "parts": [
+            {"id": "chassis", "kind": "structure", "material": "pla", "process": "fdm", "shape": BOX(40, 40, 4)},
+            {"id": "lid_l", "kind": "armor", "material": "pc", "process": "laser", "shape": BOX(19, 40, 2), "at": [10, 0, 3]},
+            {"id": "lid_r", "kind": "armor", "material": "pc", "process": "laser", "shape": BOX(19, 40, 2), "at": [-10, 0, 3]},
+        ],
+        "fasteners": [s("s1", 5, "lid_l"), s("s2", 15, "lid_l"), s("s3", -5, "lid_r"), s("s4", -15, "lid_r")],
+        "connections": [],
+    }
+    rep = run(split)
+    assert rep.failed("connection.split_cover")
+    # Reasoned deviation downgrades to warning (not a blocker)
+    why = "two separate removable hatches are required to service the left and right weapon pods independently"
+    split["parts"][1]["split_cover_deviation"] = why
+    split["parts"][2]["split_cover_deviation"] = why
+    rep_w = run(split)
+    fs = [f for f in rep_w.findings if f.id == "connection.split_cover"]
+    assert fs and all(f.severity != "blocker" for f in fs)
+    # Single one-piece lid passes
+    one = base(fasteners=[s("s1", -10, "lid"), s("s2", 10, "lid")])
+    one["parts"][1]["kind"] = "armor"
+    assert run(one).get("connection.split_cover").passed
+

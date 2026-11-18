@@ -2,7 +2,7 @@
 
 Each part is built in its OWN local frame (the spec places it with at/rot):
   tub                     world frame (origin on the centre line, mid overall length)
-  lid_l / lid_r           plate centre
+  lid                     plate centre
   side_l / side_r         plate centre
   clamp_l / clamp_r       clamp frame (origin at (±CLAMP_X, HINGE_Y, HINGE_Z), arm along +Y, top face z = 0)
   flipper, hinge_block    hinge frame (origin at (0, HINGE_Y, HINGE_Z), plate along +Y, top face z = 0)
@@ -227,10 +227,11 @@ def tub():
     return body
 
 
-# --------------------------------------------------------------------------------------------------------- lids
-def _lid_base():
-    """Left (+X) L-shaped lid plate in its own centred frame, covering up to the midline seam behind the hinge slot."""
-    x0, x1 = LID_SEAM_X, TUB_W / 2
+# --------------------------------------------------------------------------------------------------------- lid
+def lid():
+    """One-piece 1.5 mm PC top lid in its own centred frame, with symmetric front U-notch for hinge_block,
+    narrow slot for the servo horn + drive_pin passage, and elongated slot for full switch lever travel."""
+    x0, x1 = -TUB_W / 2, TUB_W / 2
     cx, cy = (x0 + x1) / 2, (BODY_Y0 + LID_Y1) / 2
     pts = [
         (x0 - cx, BODY_Y0 - cy),
@@ -238,50 +239,49 @@ def _lid_base():
         (x1 - cx, LID_Y1 - cy),
         (LID_SLOT_HALF_X - cx, LID_Y1 - cy),
         (LID_SLOT_HALF_X - cx, LID_SLOT_Y0 - cy),
-        (x0 - cx, LID_SLOT_Y0 - cy),
+        (-LID_SLOT_HALF_X - cx, LID_SLOT_Y0 - cy),
+        (-LID_SLOT_HALF_X - cx, LID_Y1 - cy),
+        (x0 - cx, LID_Y1 - cy),
     ]
     plate = bd.Pos(0, 0, -LID_T / 2) * bd.extrude(bd.Polygon(*pts, align=None), amount=LID_T)
-    icx, icy = LID_SLOT_HALF_X - cx, LID_SLOT_Y0 - cy
+    notch_corners = [
+        (-LID_SLOT_HALF_X - cx, LID_SLOT_Y0 - cy),
+        (LID_SLOT_HALF_X - cx, LID_SLOT_Y0 - cy),
+    ]
 
-    def _notch_corner(p):
+    def _notch_edges(p):
         return [e for e in p.edges()
                 if abs(e.center().Z) < SHELL_TOL
-                and abs(e.center().X - icx) < SHELL_TOL
-                and abs(e.center().Y - icy) < SHELL_TOL]
-    plate = _fillet_edges(plate, LID_SLOT_R, _notch_corner)
-    for y in LID_SCREWS_Y_L:
-        plate = plate - bd.Pos(LID_PAD_X - cx, y - cy, 0) * screw_hole(LID_T)
-    return plate
-
-
-def lid_left():
-    """Left (+X) lid: base plate plus the rounded narrow slot for the servo horn."""
-    cx, cy = (LID_SEAM_X + TUB_W / 2) / 2, (BODY_Y0 + LID_Y1) / 2
-    plate = _lid_base()
-    hcx, hcy = HORN_X - cx, (HORN_LID_Y0 + HORN_LID_Y1) / 2 - cy
-    hw_x = 2 * (HORN_HALF_X + HORN_LID_MARGIN)
-    hl_y = HORN_LID_Y1 - HORN_LID_Y0
-    hslot = bd.Pos(hcx, hcy, 0) * bd.Box(hw_x, hl_y, LID_T + 2 * EPS)
-    plate = plate - hslot
+                and any(abs(e.center().X - nx) < SHELL_TOL and abs(e.center().Y - ny) < SHELL_TOL
+                        for nx, ny in notch_corners)]
+    plate = _fillet_edges(plate, LID_SLOT_R, _notch_edges)
+    # Horn slot + narrow drive_pin passage (so lid lifts clear along +Z without trapping drive_pin)
+    hx0 = HORN_X - (HORN_HALF_X + HORN_LID_MARGIN)
+    hx1 = LID_HORN_NOTCH_X1
+    hcx, hcy = (hx0 + hx1) / 2 - cx, (HORN_LID_Y0 + HORN_LID_Y1) / 2 - cy
+    hw_x, hl_y = hx1 - hx0, HORN_LID_Y1 - HORN_LID_Y0
+    plate = plate - bd.Pos(hcx, hcy, 0) * bd.Box(hw_x, hl_y, LID_T + 2 * EPS)
+    pin_slot_w = hx0 - LID_SLOT_HALF_X + 0.4
+    pin_slot_y = HINGE_PIN_D + 2 * 0.45
+    plate = plate - bd.Pos((LID_SLOT_HALF_X + hx0) / 2 - cx, PIN_Y - cy, 0) * bd.Box(pin_slot_w, pin_slot_y, LID_T + 2 * EPS)
 
     def _hslot_edges(p):
         return [e for e in p.edges()
                 if abs(e.center().Z) < SHELL_TOL
-                and abs(e.center().X - hcx) < hw_x / 2 + LID_SLOT_MARGIN
-                and abs(e.center().Y - hcy) < hl_y / 2 + LID_SLOT_MARGIN]
-    return _fillet_edges(plate, LID_SLOT_R, _hslot_edges)
-
-
-def lid_right():
-    """Right (-X) lid: mirror of the base lid across YZ, plus the rounded slot for the switch actuator knob."""
-    cx, cy = -(LID_SEAM_X + TUB_W / 2) / 2, (BODY_Y0 + LID_Y1) / 2
-    plate = mirror_x(_lid_base())
+                and LID_SLOT_HALF_X - 0.5 < e.center().X + cx < hx1 + 0.5
+                and HORN_LID_Y0 - 0.5 < e.center().Y + cy < HORN_LID_Y1 + 0.5]
+    plate = _fillet_edges(plate, LID_SLOT_R, _hslot_edges)
+    for s, ys in ((1, LID_SCREWS_Y_L), (-1, LID_SCREWS_Y_R)):
+        for y in ys:
+            plate = plate - bd.Pos(s * LID_PAD_X - cx, y - cy, 0) * screw_hole(LID_T)
     top_bb = (catalog_solid(SWITCH_ID).moved(switch_pose()) &
               bd.Pos(0, 0, LID_Z1) * bd.Box(OVERALL_W, OVERALL_L, 2 * LID_T)).bounding_box()
     kx = (top_bb.min.X + top_bb.max.X) / 2
-    ky = (top_bb.min.Y + top_bb.max.Y) / 2
+    y_min = top_bb.min.Y - SW_LEVER_TRAVEL - LID_SW_TRAVEL_MARGIN
+    y_max = top_bb.max.Y + LID_SW_TRAVEL_MARGIN
+    ky = (y_min + y_max) / 2
     kw = (top_bb.max.X - top_bb.min.X) + 2 * CLEAR
-    kl = (top_bb.max.Y - top_bb.min.Y) + 2 * CLEAR
+    kl = y_max - y_min
     slot = bd.Pos(kx - cx, ky - cy, 0) * bd.Box(kw, kl, LID_T + 2 * EPS)
     plate = plate - slot
     scx, scy = kx - cx, ky - cy
@@ -294,8 +294,8 @@ def lid_right():
     return _fillet_edges(plate, LID_SLOT_R, _slot_edges)
 
 
-def lid_at(side):
-    return (side * (LID_SEAM_X + TUB_W / 2) / 2, (BODY_Y0 + LID_Y1) / 2, TUB_Z1 + LID_T / 2)
+def lid_at():
+    return (0.0, (BODY_Y0 + LID_Y1) / 2, TUB_Z1 + LID_T / 2)
 
 
 # --------------------------------------------------------------------------------------------------- side plates

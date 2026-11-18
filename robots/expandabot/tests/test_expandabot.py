@@ -18,7 +18,7 @@ def test_params_relations():
 
 def test_all_parts_build_single_manifold_solids():
     made = assembly.made_parts()
-    assert len(made) == 14
+    assert len(made) == 13
     for name, (solid, _kind) in made.items():
         solids = solid.solids()
         assert len(solids) == 1, f"{name} produced {len(solids)} solids"

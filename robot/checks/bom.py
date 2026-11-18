@@ -86,7 +86,7 @@ def run(ctx):
 WAIVER_KEY = re.compile(r"deviation|waive|exempt|allow_|_ok$|^ok_|ignore|skip")
 KNOWN_WAIVERS = {
     "deviation", "deviations", "sharp_corners_ok", "sharp_ok", "ref_ok", "exempt", "waive", "waivers",
-    "cover_fasteners_deviation", "thin_wall_deviation", "param_exempt", "allow_overlap", "visual_ok",
+    "cover_fasteners_deviation", "split_cover_deviation", "thin_wall_deviation", "param_exempt", "allow_overlap", "visual_ok",
     "wire_avoid_ok", "rotor_ok", "render_ok", "offset_ok", "reference_deviation_ids", "practice_ok", "no_contact_ok",
     "assembly_ok", "rub_gap_ok", "loose_ok",
 }

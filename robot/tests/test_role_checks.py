@@ -104,6 +104,17 @@ def test_contain_switch_access():
     assert passed(run(_shell(slot=True), "contain"), "contain.switch_access")
 
 
+def test_contain_switch_travel():
+    def sw_box(slot_x):
+        cuts = [pl(BOX(36, 36, 16), (0, 0, 0)), pl(BOX(slot_x, 4.0, 6.0), (1.75 if slot_x < 5.0 else 0.25, 0, 8.0))]
+        return {"name": "t", "parts": [
+            dict(id="shell", kind="structure", shape={"type": "subtract", "base": BOX(40, 40, 20), "cut": cuts}, **PLA),
+            {"id": "sw", "kind": "switch", "catalog": "switch_bbb_ant_rvrn2", "at": [0, 0, 5.0]},
+            dict(id="wheel", kind="wheel", shape=cyl(8.0, 4, rot=(0, 90, 0)), at=[23, 0, -3], **PLA)]}
+    assert failed(run(sw_box(3.4), "contain"), "contain.switch_travel")
+    assert passed(run(sw_box(7.5), "contain"), "contain.switch_travel")
+
+
 def test_contain_wheel_invert():
     assert failed(run(_shell(inverted=True), "contain"), "contain.wheel_invert")
     assert not failed(run(_shell(inverted=True, wheel_r=14.0), "contain"), "contain.wheel_invert")

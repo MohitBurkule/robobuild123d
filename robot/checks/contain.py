@@ -152,6 +152,60 @@ def run(ctx):
                             f"No straight 1.6 mm wide tool line from `{b.id}` leaves the robot within {SWITCH_REACH_MM:.0f} mm on any axis. "
                             + "; ".join(f"{k}: {v}" for k, v in why.items()))
                        .on(b.id).here(c).fix("Open a slot in the armour over the switch actuator."))
+        # 5. switch lever throw clearance (the protruding lever must be able to slide along its throw axis)
+        rp = r.parts[b.part_idx] if b.part_idx is not None else None
+        props = (rp.cat.props or {}) if (rp is not None and rp.cat is not None) else {}
+        travel_prop = (rp.part._extra.get("lever_travel_mm") if rp is not None else None) or props.get("lever_travel_mm")
+        P_sw, _ = b.surface(0.4)
+        V_loc = (np.linalg.inv(b.M) @ np.c_[P_sw, np.ones(len(P_sw))].T).T[:, :3]
+        z_max, z_min = float(V_loc[:, 2].max()), float(V_loc[:, 2].min())
+        tip_mask = V_loc[:, 2] >= z_max - 2.0
+        tip_loc = V_loc[tip_mask]
+        tip_dx = float(tip_loc[:, 0].max() - tip_loc[:, 0].min()) if len(tip_loc) else 0.0
+        body_dx = float(V_loc[:, 0].max() - V_loc[:, 0].min())
+        if travel_prop is not None or (z_max - z_min > 4.0 and 0.0 < tip_dx < 0.6 * body_dx):
+            travel = float(travel_prop if travel_prop is not None else 2.5)
+            tip_world = P_sw[tip_mask]
+            x_mean = float(tip_loc[:, 0].mean())
+            slide_ax = b.M[:3, 0] / (np.linalg.norm(b.M[:3, 0]) or 1.0)
+            od = rp.part._extra.get("off_dir") if rp is not None else None
+            if abs(x_mean) > 0.3:
+                throw_dirs = [-np.sign(x_mean) * slide_ax]
+            elif od is not None and np.linalg.norm(od) > 1e-6:
+                od_u = np.asarray(od, float) / np.linalg.norm(od)
+                throw_dirs = [od_u]
+            else:
+                throw_dirs = [slide_ax, -slide_ax]
+            parts_others = [o for o in others if not o.fastener]
+            clear_dir, hit_info = None, None
+            for td in throw_dirs:
+                blocked = None
+                for t in np.linspace(0.5, travel, 6):
+                    pts_t = tip_world + td * float(t)
+                    p_lo, p_hi = pts_t.min(0), pts_t.max(0)
+                    for o in parts_others:
+                        if measure.aabb_overlap((p_lo, p_hi), o.aabb):
+                            ins = o.inside(pts_t)
+                            if ins.any():
+                                blocked = (o.id, float(t), pts_t[ins][0], td)
+                                break
+                    if blocked is not None:
+                        break
+                if blocked is None:
+                    clear_dir = td
+                    break
+                if hit_info is None or blocked[1] > hit_info[1]:
+                    hit_info = blocked
+            if clear_dir is not None:
+                out.append(ok("contain.switch_travel", G, "Switch actuator has room to slide",
+                              f"`{b.id}` lever can slide {travel:.1f} mm along ({', '.join(f'{v:.2f}' for v in clear_dir)}) without hitting the slot wall."))
+            elif hit_info is not None:
+                who, dist_t, hp, td = hit_info
+                out.append(fail("contain.switch_travel", G, BLOCKER, "Switch has no room to move when toggled",
+                                f"`{b.id}` lever needs {travel:.1f} mm of throw along ({', '.join(f'{v:.2f}' for v in td)}), "
+                                f"but hits `{who}` after {dist_t:.1f} mm at ({', '.join(f'{v:.1f}' for v in hp)}).")
+                           .on(b.id, who).here(hp)
+                           .fix(f"Elongate the switch slot in `{who}` along ({', '.join(f'{v:.2f}' for v in td)}) by at least {travel:.1f} mm beyond the static lever footprint."))
     out.extend(line_of_sight(ctx))
     return out
 

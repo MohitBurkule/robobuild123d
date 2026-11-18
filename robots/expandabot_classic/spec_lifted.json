@@ -1,0 +1,1926 @@
+{
+ "name": "Expandabot Classic (Team Bits Everywhere)",
+ "profile": "aws2025",
+ "robot_type": "wedge",
+ "locomotion": "wheeled",
+ "can_run_inverted": false,
+ "electronics": {
+  "failsafe": true,
+  "weapon_remote_disable": true,
+  "radio": "2.4 GHz",
+  "cells": 2
+ },
+ "parts": [
+  {
+   "id": "tub",
+   "kind": "structure",
+   "material": "pla",
+   "process": "fdm",
+   "print_orientation": "+z",
+   "color": "#1c1f22",
+   "shape": {
+    "type": "model",
+    "file": "src/build_expandabot_classic.py",
+    "params": {
+     "part": "tub"
+    }
+   },
+   "at": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "sharp_corners_ok": "Printed PLA tub internal screw bosses and lid pads meet the tub walls at 90-degree junctions; 1.6 mm wall thickness and 3.2 mm boss radii provide ample local stiffness.",
+   "label": "black 3D-printed chassis tub with front bulkhead, rear wheel cutouts, and corner wing clevises"
+  },
+  {
+   "id": "top_panel",
+   "kind": "armor",
+   "material": "cf_plate",
+   "process": "laser",
+   "color": "#1b1e23",
+   "shape": {
+    "type": "model",
+    "file": "src/build_expandabot_classic.py",
+    "params": {
+     "part": "top_panel"
+    }
+   },
+   "at": [
+    0.0,
+    -10.8,
+    22.75
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "1.5 mm carbon-fiber one-piece T-shaped top deck with wheel cutouts and switch travel slot"
+  },
+  {
+   "id": "side_l",
+   "kind": "armor",
+   "material": "pc",
+   "process": "laser",
+   "color": "#2b593a",
+   "shape": {
+    "type": "model",
+    "file": "src/build_expandabot_classic.py",
+    "params": {
+     "part": "side_l"
+    }
+   },
+   "at": [
+    47.0,
+    -12.5,
+    12.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "2 mm dark-green PC left side plate"
+  },
+  {
+   "id": "side_r",
+   "kind": "armor",
+   "material": "pc",
+   "process": "laser",
+   "color": "#2b593a",
+   "shape": {
+    "type": "model",
+    "file": "src/build_expandabot_classic.py",
+    "params": {
+     "part": "side_r"
+    }
+   },
+   "at": [
+    -47.0,
+    -12.5,
+    12.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "2 mm dark-green PC right side plate"
+  },
+  {
+   "id": "wedge",
+   "kind": "other",
+   "material": "pla",
+   "process": "fdm",
+   "print_orientation": "+z",
+   "color": "#1a1c1e",
+   "shape": {
+    "type": "model",
+    "file": "src/build_expandabot_classic.py",
+    "params": {
+     "part": "wedge"
+    }
+   },
+   "at": [
+    0.0,
+    24.4,
+    9.5
+   ],
+   "rot": [
+    12.659973827194687,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "wedge",
+   "retained": "pin",
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1.0,
+     0.0,
+     0.0
+    ],
+    "pivot": [
+     0.0,
+     24.4,
+     9.5
+    ],
+    "min": 0.0,
+    "max": 24.0,
+    "default": 0.0
+   },
+   "label": "black 3D-printed forked front lifter wedge with central window"
+  },
+  {
+   "id": "crossbar",
+   "kind": "other",
+   "material": "steel",
+   "process": "cots",
+   "stock": "3 mm steel pin",
+   "color": "#b8bec4",
+   "shape": {
+    "type": "model",
+    "file": "src/build_expandabot_classic.py",
+    "params": {
+     "part": "crossbar"
+    }
+   },
+   "parent": "wedge",
+   "at": [
+    0.0,
+    10.7424,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "wedge",
+   "retained": "press_fit",
+   "label": "steel crossbar spanning the forked wedge window"
+  },
+  {
+   "id": "nose_pin",
+   "kind": "other",
+   "material": "pla",
+   "process": "fdm",
+   "print_orientation": "+z",
+   "color": "#e6e8eb",
+   "shape": {
+    "type": "model",
+    "file": "src/build_expandabot_classic.py",
+    "params": {
+     "part": "nose_pin"
+    }
+   },
+   "at": [
+    0.0,
+    24.5,
+    14.5
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit",
+   "label": "white nylon nose stud on front bulkhead"
+  },
+  {
+   "id": "horn",
+   "kind": "other",
+   "material": "pla",
+   "process": "fdm",
+   "print_orientation": "+z",
+   "color": "#e6e8eb",
+   "shape": {
+    "type": "model",
+    "file": "src/build_expandabot_classic.py",
+    "params": {
+     "part": "horn"
+    }
+   },
+   "at": [
+    33.0,
+    9.8,
+    19.5
+   ],
+   "rot": [
+    20.0,
+    0.0,
+    -40.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit",
+   "label": "white printed servo horn extending into open front-left bay"
+  },
+  {
+   "id": "bracket_l",
+   "kind": "other",
+   "material": "pla",
+   "process": "fdm",
+   "print_orientation": "+z",
+   "color": "#4a4e54",
+   "shape": {
+    "type": "model",
+    "file": "src/build_expandabot_classic.py",
+    "params": {
+     "part": "bracket_l"
+    }
+   },
+   "at": [
+    49.3,
+    24.0,
+    11.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    -48.0
+   ],
+   "rotates_with": "bracket_l",
+   "retained": "pin",
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     0.0,
+     0.0,
+     -1.0
+    ],
+    "pivot": [
+     49.3,
+     24.0,
+     11.0
+    ],
+    "min": -65.0,
+    "max": 0.0,
+    "default": 0.0
+   },
+   "label": "dark-grey printed hinge bracket (l)"
+  },
+  {
+   "id": "wing_l",
+   "kind": "other",
+   "material": "pc",
+   "process": "laser",
+   "color": "#a7d6bd",
+   "shape": {
+    "type": "model",
+    "file": "src/build_expandabot_classic.py",
+    "params": {
+     "part": "wing_l"
+    }
+   },
+   "parent": "bracket_l",
+   "at": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "bracket_l",
+   "label": "pale-mint G10/PC expanding side wing (l)"
+  },
+  {
+   "id": "hinge_pin_l",
+   "kind": "pin",
+   "material": "steel",
+   "process": "cots",
+   "stock": "M2 x 18 dowel pin",
+   "color": "#b8bec4",
+   "shape": {
+    "type": "model",
+    "file": "src/build_expandabot_classic.py",
+    "params": {
+     "part": "hinge_pin_l"
+    }
+   },
+   "at": [
+    49.3,
+    24.0,
+    11.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "M2 steel hinge pin (l)"
+  },
+  {
+   "id": "wheel_l",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "print_orientation": "+x",
+   "color": "#8e9499",
+   "shape": {
+    "type": "model",
+    "file": "src/build_expandabot_classic.py",
+    "params": {
+     "part": "wheel_l"
+    }
+   },
+   "at": [
+    38.0,
+    -27.9,
+    13.5
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "wheel_l",
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1.0,
+     0.0,
+     0.0
+    ],
+    "pivot": [
+     38.0,
+     -27.9,
+     13.5
+    ],
+    "min": 0.0,
+    "max": 360.0,
+    "default": 0.0
+   },
+   "label": "grooved grey TPU rear wheel (l)"
+  },
+  {
+   "id": "motor_l",
+   "kind": "motor",
+   "catalog": "n10_300rpm_6v",
+   "retained": "press_fit",
+   "at": [
+    20.45,
+    -27.9,
+    13.5
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "N10 gearmotor (l)"
+  },
+  {
+   "id": "bracket_r",
+   "kind": "other",
+   "material": "pla",
+   "process": "fdm",
+   "print_orientation": "+z",
+   "color": "#4a4e54",
+   "shape": {
+    "type": "model",
+    "file": "src/build_expandabot_classic.py",
+    "params": {
+     "part": "bracket_r"
+    }
+   },
+   "at": [
+    -49.3,
+    24.0,
+    11.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    48.0
+   ],
+   "rotates_with": "bracket_r",
+   "retained": "pin",
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     0.0,
+     0.0,
+     1.0
+    ],
+    "pivot": [
+     -49.3,
+     24.0,
+     11.0
+    ],
+    "min": -65.0,
+    "max": 0.0,
+    "default": 0.0
+   },
+   "label": "dark-grey printed hinge bracket (r)"
+  },
+  {
+   "id": "wing_r",
+   "kind": "other",
+   "material": "pc",
+   "process": "laser",
+   "color": "#a7d6bd",
+   "shape": {
+    "type": "model",
+    "file": "src/build_expandabot_classic.py",
+    "params": {
+     "part": "wing_r"
+    }
+   },
+   "parent": "bracket_r",
+   "at": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "bracket_r",
+   "label": "pale-mint G10/PC expanding side wing (r)"
+  },
+  {
+   "id": "hinge_pin_r",
+   "kind": "pin",
+   "material": "steel",
+   "process": "cots",
+   "stock": "M2 x 18 dowel pin",
+   "color": "#b8bec4",
+   "shape": {
+    "type": "model",
+    "file": "src/build_expandabot_classic.py",
+    "params": {
+     "part": "hinge_pin_r"
+    }
+   },
+   "at": [
+    -49.3,
+    24.0,
+    11.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "M2 steel hinge pin (r)"
+  },
+  {
+   "id": "wheel_r",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "print_orientation": "+x",
+   "color": "#8e9499",
+   "shape": {
+    "type": "model",
+    "file": "src/build_expandabot_classic.py",
+    "params": {
+     "part": "wheel_r"
+    }
+   },
+   "at": [
+    -38.0,
+    -27.9,
+    13.5
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "wheel_r",
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     -1.0,
+     0.0,
+     0.0
+    ],
+    "pivot": [
+     -38.0,
+     -27.9,
+     13.5
+    ],
+    "min": 0.0,
+    "max": 360.0,
+    "default": 0.0
+   },
+   "label": "grooved grey TPU rear wheel (r)"
+  },
+  {
+   "id": "motor_r",
+   "kind": "motor",
+   "catalog": "n10_300rpm_6v",
+   "retained": "press_fit",
+   "at": [
+    -20.45,
+    -27.9,
+    13.5
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    180.0
+   ],
+   "rotates_with": "fixed",
+   "label": "N10 gearmotor (r)"
+  },
+  {
+   "id": "servo",
+   "kind": "servo",
+   "catalog": "servo_cs07",
+   "retained": "press_fit",
+   "exposed": true,
+   "exposed_reason": "Servo sits in the open front-left linkage bay for horn access and visual inspection, matching the classic Expandabot layout.",
+   "color": "#1e5cb3",
+   "at": [
+    23.0,
+    8.8,
+    9.8
+   ],
+   "rot": [
+    90.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "blue SG90-class servo under the CF deck"
+  },
+  {
+   "id": "battery",
+   "kind": "battery",
+   "catalog": "lipo_2s_180",
+   "retained": "clamp",
+   "at": [
+    0.0,
+    -12.0,
+    8.6
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "2S 180 mAh LiPo pack"
+  },
+  {
+   "id": "esc",
+   "kind": "esc",
+   "catalog": "malenki_nano",
+   "retained": "tape",
+   "at": [
+    -10.5,
+    8.5,
+    6.1
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "Malenki Nano dual brushed ESC + receiver"
+  },
+  {
+   "id": "switch",
+   "kind": "switch",
+   "catalog": "switch_bbb_ant_rvrn2",
+   "tool_free": true,
+   "marked": true,
+   "at": [
+    -22.0,
+    -15.0,
+    19.75
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    90.0
+   ],
+   "rotates_with": "fixed",
+   "label": "BBB ant switch under CF deck with elongated travel slot"
+  },
+  {
+   "id": "insert_top_0",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -27.0,
+    -40.0,
+    20.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit"
+  },
+  {
+   "id": "insert_top_1",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    27.0,
+    -40.0,
+    20.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit"
+  },
+  {
+   "id": "insert_top_2",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -28.0,
+    -8.0,
+    20.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit"
+  },
+  {
+   "id": "insert_top_3",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    28.0,
+    -8.0,
+    20.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit"
+  },
+  {
+   "id": "insert_top_4",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -3.6,
+    19.5,
+    20.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit"
+  },
+  {
+   "id": "insert_top_5",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    3.6,
+    19.5,
+    20.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit"
+  },
+  {
+   "id": "insert_side_l0",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    44.0,
+    -10.0,
+    12.0
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit"
+  },
+  {
+   "id": "insert_side_l1",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    44.0,
+    1.0,
+    12.0
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit"
+  },
+  {
+   "id": "insert_side_l2",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    44.0,
+    12.0,
+    12.0
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit"
+  },
+  {
+   "id": "insert_wing_l0",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "parent": "bracket_l",
+   "at": [
+    1.0,
+    7.5,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "rotates_with": "bracket_l",
+   "retained": "press_fit"
+  },
+  {
+   "id": "insert_wing_l1",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "parent": "bracket_l",
+   "at": [
+    1.0,
+    13.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "rotates_with": "bracket_l",
+   "retained": "press_fit"
+  },
+  {
+   "id": "insert_side_r0",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -44.0,
+    -10.0,
+    12.0
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit"
+  },
+  {
+   "id": "insert_side_r1",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -44.0,
+    1.0,
+    12.0
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit"
+  },
+  {
+   "id": "insert_side_r2",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -44.0,
+    12.0,
+    12.0
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit"
+  },
+  {
+   "id": "insert_wing_r0",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "parent": "bracket_r",
+   "at": [
+    -1.0,
+    7.5,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "rotates_with": "bracket_r",
+   "retained": "press_fit"
+  },
+  {
+   "id": "insert_wing_r1",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "parent": "bracket_r",
+   "at": [
+    -1.0,
+    13.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "rotates_with": "bracket_r",
+   "retained": "press_fit"
+  }
+ ],
+ "fasteners": [
+  {
+   "id": "bolt_top_0",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -27.0,
+    -40.0,
+    23.5
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "through": [
+    "top_panel"
+   ],
+   "threads_into": "insert_top_0",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 1.5
+   }
+  },
+  {
+   "id": "bolt_top_1",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    27.0,
+    -40.0,
+    23.5
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "through": [
+    "top_panel"
+   ],
+   "threads_into": "insert_top_1",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 1.5
+   }
+  },
+  {
+   "id": "bolt_top_2",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -28.0,
+    -8.0,
+    23.5
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "through": [
+    "top_panel"
+   ],
+   "threads_into": "insert_top_2",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 1.5
+   }
+  },
+  {
+   "id": "bolt_top_3",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    28.0,
+    -8.0,
+    23.5
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "through": [
+    "top_panel"
+   ],
+   "threads_into": "insert_top_3",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 1.5
+   }
+  },
+  {
+   "id": "bolt_top_4",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -3.6,
+    19.5,
+    23.5
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "through": [
+    "top_panel"
+   ],
+   "threads_into": "insert_top_4",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 1.5
+   }
+  },
+  {
+   "id": "bolt_top_5",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    3.6,
+    19.5,
+    23.5
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "through": [
+    "top_panel"
+   ],
+   "threads_into": "insert_top_5",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 1.5
+   }
+  },
+  {
+   "id": "bolt_side_l0",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    48.0,
+    -10.0,
+    12.0
+   ],
+   "dir": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "through": [
+    "side_l"
+   ],
+   "threads_into": "insert_side_l0",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_side_l1",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    48.0,
+    1.0,
+    12.0
+   ],
+   "dir": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "through": [
+    "side_l"
+   ],
+   "threads_into": "insert_side_l1",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_side_l2",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    48.0,
+    12.0,
+    12.0
+   ],
+   "dir": [
+    -1.0,
+    0.0,
+    0.0
+   ],
+   "through": [
+    "side_l"
+   ],
+   "threads_into": "insert_side_l2",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_wing_l0",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    58.2527,
+    25.2656,
+    11.0
+   ],
+   "dir": [
+    -0.6691,
+    0.7431,
+    0.0
+   ],
+   "through": [
+    "wing_l"
+   ],
+   "threads_into": "insert_wing_l0",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_wing_l1",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    62.34,
+    28.9458,
+    11.0
+   ],
+   "dir": [
+    -0.6691,
+    0.7431,
+    0.0
+   ],
+   "through": [
+    "wing_l"
+   ],
+   "threads_into": "insert_wing_l1",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_side_r0",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -48.0,
+    -10.0,
+    12.0
+   ],
+   "dir": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "through": [
+    "side_r"
+   ],
+   "threads_into": "insert_side_r0",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_side_r1",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -48.0,
+    1.0,
+    12.0
+   ],
+   "dir": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "through": [
+    "side_r"
+   ],
+   "threads_into": "insert_side_r1",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_side_r2",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -48.0,
+    12.0,
+    12.0
+   ],
+   "dir": [
+    1.0,
+    0.0,
+    0.0
+   ],
+   "through": [
+    "side_r"
+   ],
+   "threads_into": "insert_side_r2",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_wing_r0",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -58.2527,
+    25.2656,
+    11.0
+   ],
+   "dir": [
+    0.6691,
+    0.7431,
+    0.0
+   ],
+   "through": [
+    "wing_r"
+   ],
+   "threads_into": "insert_wing_r0",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_wing_r1",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -62.34,
+    28.9458,
+    11.0
+   ],
+   "dir": [
+    0.6691,
+    0.7431,
+    0.0
+   ],
+   "through": [
+    "wing_r"
+   ],
+   "threads_into": "insert_wing_r1",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 2.0
+   }
+  }
+ ],
+ "wires": [
+  {
+   "id": "w_bat_sw",
+   "from": "battery.xt30",
+   "to": "switch.in",
+   "awg": 22,
+   "kind": "power",
+   "slack_mm": 6.0,
+   "bundle": "pwr",
+   "rotor_ok": "All internal wires stay inside the chassis tub well behind the front bulkhead (Y <= 20 mm), so they never enter the external wedge or wing hinge sweep sectors [expires 2027-12-31]",
+   "via": [
+    [
+     -8.0,
+     -4.0,
+     9.5
+    ],
+    [
+     -16.0,
+     -10.0,
+     12.0
+    ]
+   ]
+  },
+  {
+   "id": "w_sw_esc",
+   "from": "switch.out",
+   "to": "esc.bat",
+   "awg": 22,
+   "kind": "power",
+   "slack_mm": 6.0,
+   "bundle": "pwr",
+   "rotor_ok": "All internal wires stay inside the chassis tub well behind the front bulkhead (Y <= 20 mm), so they never enter the external wedge or wing hinge sweep sectors [expires 2027-12-31]",
+   "via": [
+    [
+     -18.0,
+     -9.0,
+     15.0
+    ],
+    [
+     -22.5,
+     0.0,
+     10.0
+    ]
+   ]
+  },
+  {
+   "id": "w_esc_ml",
+   "from": "esc.m1",
+   "to": "motor_l.terminals",
+   "awg": 24,
+   "kind": "power",
+   "slack_mm": 6.0,
+   "bundle": "drv",
+   "rotor_ok": "All internal wires stay inside the chassis tub well behind the front bulkhead (Y <= 20 mm), so they never enter the external wedge or wing hinge sweep sectors [expires 2027-12-31]"
+  },
+  {
+   "id": "w_esc_mr",
+   "from": "esc.m2",
+   "to": "motor_r.terminals",
+   "awg": 24,
+   "kind": "power",
+   "slack_mm": 6.0,
+   "bundle": "drv",
+   "rotor_ok": "All internal wires stay inside the chassis tub well behind the front bulkhead (Y <= 20 mm), so they never enter the external wedge or wing hinge sweep sectors [expires 2027-12-31]",
+   "via": [
+    [
+     -10.0,
+     -2.0,
+     6.5
+    ],
+    [
+     -10.0,
+     -25.0,
+     10.0
+    ]
+   ]
+  },
+  {
+   "id": "w_esc_srv",
+   "from": "esc.bat",
+   "to": "servo.signal",
+   "awg": 26,
+   "kind": "signal",
+   "slack_mm": 6.0,
+   "bundle": "sig",
+   "rotor_ok": "All internal wires stay inside the chassis tub well behind the front bulkhead (Y <= 20 mm), so they never enter the external wedge or wing hinge sweep sectors [expires 2027-12-31]",
+   "via": [
+    [
+     -2.0,
+     2.0,
+     6.0
+    ],
+    [
+     8.0,
+     2.0,
+     8.0
+    ]
+   ]
+  }
+ ],
+ "connections": [
+  {
+   "a": "wedge",
+   "b": "tub",
+   "method": "shaft",
+   "reason": "Printed PLA forked wedge pivots on a front bulkhead hinge pin while resting against the tub front seat."
+  },
+  {
+   "a": "insert_top_0",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.1,
+   "reason": "Heat-set M2 brass insert anchors into the printed PLA tub lid pad to carry top-plate clamp loads."
+  },
+  {
+   "a": "insert_top_1",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.1,
+   "reason": "Heat-set M2 brass insert anchors into the printed PLA tub lid pad to carry top-plate clamp loads."
+  },
+  {
+   "a": "insert_top_2",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.1,
+   "reason": "Heat-set M2 brass insert anchors into the printed PLA tub lid pad to carry top-plate clamp loads."
+  },
+  {
+   "a": "insert_top_3",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.1,
+   "reason": "Heat-set M2 brass insert anchors into the printed PLA tub lid pad to carry top-plate clamp loads."
+  },
+  {
+   "a": "insert_top_4",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.1,
+   "reason": "Heat-set M2 brass insert anchors into the printed PLA tub lid pad to carry top-plate clamp loads."
+  },
+  {
+   "a": "insert_top_5",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.1,
+   "reason": "Heat-set M2 brass insert anchors into the printed PLA tub lid pad to carry top-plate clamp loads."
+  },
+  {
+   "a": "insert_side_l0",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.1,
+   "reason": "Heat-set M2 brass insert anchors into the printed PLA tub side boss to retain the outer PC side plate."
+  },
+  {
+   "a": "insert_side_l1",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.1,
+   "reason": "Heat-set M2 brass insert anchors into the printed PLA tub side boss to retain the outer PC side plate."
+  },
+  {
+   "a": "insert_side_l2",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.1,
+   "reason": "Heat-set M2 brass insert anchors into the printed PLA tub side boss to retain the outer PC side plate."
+  },
+  {
+   "a": "insert_wing_l0",
+   "b": "bracket_l",
+   "method": "press_fit",
+   "interference_mm": 0.1,
+   "reason": "Heat-set M2 brass insert anchors into the printed PLA hinge bracket to clamp the PC side wing."
+  },
+  {
+   "a": "insert_wing_l1",
+   "b": "bracket_l",
+   "method": "press_fit",
+   "interference_mm": 0.1,
+   "reason": "Heat-set M2 brass insert anchors into the printed PLA hinge bracket to clamp the PC side wing."
+  },
+  {
+   "a": "motor_l",
+   "b": "wheel_l",
+   "method": "press_fit",
+   "interference_mm": 0.1,
+   "mechanical_key": true,
+   "reason": "TPU wheel hub with 3 mm D-bore presses onto the steel N10 D-shaft to transmit drive torque without slipping."
+  },
+  {
+   "a": "motor_l",
+   "b": "tub",
+   "method": "interlock",
+   "mechanical_key": true,
+   "reason": "N10 gearmotor gearbox seats inside a closed-top printed PLA pocket in the tub to react drive torque and axial thrust."
+  },
+  {
+   "a": "hinge_pin_l",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.1,
+   "mechanical_key": true,
+   "reason": "Steel M2 dowel pin presses into the upper and lower PLA corner clevis ears of the tub to carry radial wing impact shear."
+  },
+  {
+   "a": "wing_l",
+   "b": "bracket_l",
+   "method": "interlock",
+   "mechanical_key": true,
+   "reason": "Laser-cut PC side wing is clamped flush against the printed PLA bracket face and retained by two M2 fasteners into heat-set inserts."
+  },
+  {
+   "a": "insert_side_r0",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.1,
+   "reason": "Heat-set M2 brass insert anchors into the printed PLA tub side boss to retain the outer PC side plate."
+  },
+  {
+   "a": "insert_side_r1",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.1,
+   "reason": "Heat-set M2 brass insert anchors into the printed PLA tub side boss to retain the outer PC side plate."
+  },
+  {
+   "a": "insert_side_r2",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.1,
+   "reason": "Heat-set M2 brass insert anchors into the printed PLA tub side boss to retain the outer PC side plate."
+  },
+  {
+   "a": "insert_wing_r0",
+   "b": "bracket_r",
+   "method": "press_fit",
+   "interference_mm": 0.1,
+   "reason": "Heat-set M2 brass insert anchors into the printed PLA hinge bracket to clamp the PC side wing."
+  },
+  {
+   "a": "insert_wing_r1",
+   "b": "bracket_r",
+   "method": "press_fit",
+   "interference_mm": 0.1,
+   "reason": "Heat-set M2 brass insert anchors into the printed PLA hinge bracket to clamp the PC side wing."
+  },
+  {
+   "a": "motor_r",
+   "b": "wheel_r",
+   "method": "press_fit",
+   "interference_mm": 0.1,
+   "mechanical_key": true,
+   "reason": "TPU wheel hub with 3 mm D-bore presses onto the steel N10 D-shaft to transmit drive torque without slipping."
+  },
+  {
+   "a": "motor_r",
+   "b": "tub",
+   "method": "interlock",
+   "mechanical_key": true,
+   "reason": "N10 gearmotor gearbox seats inside a closed-top printed PLA pocket in the tub to react drive torque and axial thrust."
+  },
+  {
+   "a": "hinge_pin_r",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.1,
+   "mechanical_key": true,
+   "reason": "Steel M2 dowel pin presses into the upper and lower PLA corner clevis ears of the tub to carry radial wing impact shear."
+  },
+  {
+   "a": "wing_r",
+   "b": "bracket_r",
+   "method": "interlock",
+   "mechanical_key": true,
+   "reason": "Laser-cut PC side wing is clamped flush against the printed PLA bracket face and retained by two M2 fasteners into heat-set inserts."
+  },
+  {
+   "a": "crossbar",
+   "b": "wedge",
+   "method": "press_fit",
+   "interference_mm": 0.1,
+   "reason": "Steel 3 mm crossbar presses into matching side bores in the PLA wedge rails to stiffen the forked prongs against lateral impacts."
+  },
+  {
+   "a": "nose_pin",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.1,
+   "reason": "Printed nylon-white nose stud presses into the 3.2 mm bore on the front PLA bulkhead for low-load visual alignment."
+  },
+  {
+   "a": "servo",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.05,
+   "reason": "CS07 servo case seats snugly in the front-left PLA bay between the floor, bulkhead, and CF top deck."
+  },
+  {
+   "a": "horn",
+   "b": "servo",
+   "method": "shaft",
+   "interference_mm": 0.05,
+   "reason": "Printed PLA servo horn keys onto the servo output spline to transmit actuation torque to the expanding wing linkage."
+  },
+  {
+   "a": "battery",
+   "b": "tub",
+   "method": "velcro",
+   "reason": "2S 180 mAh LiPo pack seats inside the central PLA battery cradle and is strapped down with a velcro wrap against the tub floor."
+  },
+  {
+   "a": "esc",
+   "b": "tub",
+   "method": "tape",
+   "reason": "Lightweight Malenki Nano ESC/Rx is secured to the flat PLA bay floor with double-sided foam tape under the CF top tongue."
+  },
+  {
+   "a": "switch",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "BBB ant switch housing seats snugly in the printed PLA switch tray under the CF deck with its lever protruding through the slot."
+  }
+ ],
+ "allow_overlap": [
+  {
+   "a": "motor_l",
+   "b": "wheel_l",
+   "max_depth_mm": 0.6,
+   "reason": "D-bore hub interference on N10 D-shaft"
+  },
+  {
+   "a": "motor_r",
+   "b": "wheel_r",
+   "max_depth_mm": 0.6,
+   "reason": "D-bore hub interference on N10 D-shaft"
+  },
+  {
+   "a": "hinge_pin_l",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "M2 hinge pin press-fit into clevis"
+  },
+  {
+   "a": "hinge_pin_r",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "M2 hinge pin press-fit into clevis"
+  },
+  {
+   "a": "nose_pin",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "nose stud press-fit into front bulkhead"
+  },
+  {
+   "a": "horn",
+   "b": "servo",
+   "max_depth_mm": 0.4,
+   "reason": "printed horn keyed onto servo output spline"
+  },
+  {
+   "a": "insert_top_0",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set press-fit"
+  },
+  {
+   "a": "insert_top_1",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set press-fit"
+  },
+  {
+   "a": "insert_top_2",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set press-fit"
+  },
+  {
+   "a": "insert_top_3",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set press-fit"
+  },
+  {
+   "a": "insert_top_4",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set press-fit"
+  },
+  {
+   "a": "insert_top_5",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set press-fit"
+  },
+  {
+   "a": "insert_side_l0",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set press-fit"
+  },
+  {
+   "a": "insert_side_l1",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set press-fit"
+  },
+  {
+   "a": "insert_side_l2",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set press-fit"
+  },
+  {
+   "a": "insert_wing_l0",
+   "b": "bracket_l",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set press-fit"
+  },
+  {
+   "a": "insert_wing_l1",
+   "b": "bracket_l",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set press-fit"
+  },
+  {
+   "a": "insert_side_r0",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set press-fit"
+  },
+  {
+   "a": "insert_side_r1",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set press-fit"
+  },
+  {
+   "a": "insert_side_r2",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set press-fit"
+  },
+  {
+   "a": "insert_wing_r0",
+   "b": "bracket_r",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set press-fit"
+  },
+  {
+   "a": "insert_wing_r1",
+   "b": "bracket_r",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set press-fit"
+  }
+ ]
+}
