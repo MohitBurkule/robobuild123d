@@ -9,3 +9,8 @@
 Decisions: type vertical_spinner; body twin_pods rect 70x130x24 mm, ramp 0; wheels 2 r11 inboard; weapon disc r28 axis x teeth 2; 4 forks 40 mm; extra parts: motor; photos skipped (cluttered): indices [1].
 
 Likeness: aws72 0.62 (FAIL).
+
+## Round 2 (looks)
+Decisions: type vertical_spinner; body twin_pods rect 60x140x24 mm, ramp 0; wheels 2 r11 inboard; weapon disc r28 axis x teeth 2; 4 forks 46 mm; extra parts: motor; photos skipped (cluttered): indices [1].
+
+Likeness: aws72 0.61 (FAIL).

@@ -1,12 +1,12 @@
 {
  "robot_type": "vertical_spinner",
  "body": {
-  "length": 70,
-  "width": 130,
+  "length": 60,
+  "width": 140,
   "height": 24,
   "ramp": 0,
   "style": "twin_pods",
-  "slot": 30
+  "slot": 36
  },
  "wheels": {
   "n": 2,
@@ -28,10 +28,10 @@
  },
  "forks": {
   "n": 4,
-  "length": 40,
-  "width": 4,
-  "spread": 100,
-  "tilt_deg": 8
+  "length": 46,
+  "width": 3,
+  "spread": 104,
+  "tilt_deg": 10
  },
  "colors": {
   "body": "#1f4a38",
