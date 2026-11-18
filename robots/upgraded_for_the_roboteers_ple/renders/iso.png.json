@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_upgraded_for_the_roboteers_ple/robots/upgraded_for_the_roboteers_ple/spec.json",
- "rendered_at": 1795036548.4971824,
+ "rendered_at": 1795039750.9452276,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -15,5 +15,54 @@
   "el_esc",
   "el_switch"
  ],
- "wires": {}
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    -29.5,
+    -0.49999999999999933,
+    -2.5
+   ],
+   "to": [
+    -4.5,
+    -15.5,
+    -3.0
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    3.5,
+    -15.5,
+    -3.0
+   ],
+   "to": [
+    8.5,
+    -16.5,
+    4.5
+   ]
+  },
+  "w_m1": {
+   "from": [
+    -3.499999999999999,
+    15.5,
+    4.5
+   ],
+   "to": [
+    17.0,
+    -30.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -3.500000000000001,
+    -16.5,
+    4.5
+   ],
+   "to": [
+    -17.0,
+    -30.0,
+    0.0
+   ]
+  }
+ }
 }
