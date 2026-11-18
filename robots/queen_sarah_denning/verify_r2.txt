@@ -1,0 +1,102 @@
+BLOCKERS: 21
+  [ran] integrity 0.01s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 0.07s
+  [ran] connections 0.00s
+  [ran] legal 0.00s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.01s
+  [ran] shape 0.02s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.55s
+  [ran] process 0.00s
+  [ran] electrical 0.00s
+  [ran] combat 0.07s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 3.72s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.01s
+  [ran] dfm 0.00s
+  [ran] realworld 0.00s
+queen sarah denning: ok=False 21 blockers in 21 root causes, mass 367.7/150 g
+1. [mass.over] 367.7 g (range 293.8 to 441.6 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+2. [proxy.interference] `chassis` and `wheel_l0` overlap by 4.88 mm (allowed 0.08).
+   | chassis: x -50.00..50.00  y -55.00..55.00  z -10.00..26.00  size 100.00 x 110.00 x 36.00 mm
+   |   centre (-0.00, -0.00, 8.00), volume 344250.0 mm3
+   |   OVERLAP `wheel_l0` 4.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 4.88 mm (allowed 0.08)
+   |   OVERLAP `flipper` 0.93 mm (allowed 0.08)
+3. [proxy.interference] `chassis` and `wheel_r0` overlap by 4.88 mm (allowed 0.08).
+   | chassis: x -50.00..50.00  y -55.00..55.00  z -10.00..26.00  size 100.00 x 110.00 x 36.00 mm
+   |   centre (-0.00, -0.00, 8.00), volume 344250.0 mm3
+   |   OVERLAP `wheel_l0` 4.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 4.88 mm (allowed 0.08)
+   |   OVERLAP `flipper` 0.93 mm (allowed 0.08)
+4. [proxy.interference] `chassis` and `flipper` overlap by 0.93 mm (allowed 0.08).
+   | chassis: x -50.00..50.00  y -55.00..55.00  z -10.00..26.00  size 100.00 x 110.00 x 36.00 mm
+   |   centre (-0.00, -0.00, 8.00), volume 344250.0 mm3
+   |   OVERLAP `wheel_l0` 4.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 4.88 mm (allowed 0.08)
+   |   OVERLAP `flipper` 0.93 mm (allowed 0.08)
+5. [proxy.interference] `chassis` and `scoop` overlap by 0.35 mm (allowed 0.08).
+   | chassis: x -50.00..50.00  y -55.00..55.00  z -10.00..26.00  size 100.00 x 110.00 x 36.00 mm
+   |   centre (-0.00, -0.00, 8.00), volume 344250.0 mm3
+   |   OVERLAP `wheel_l0` 4.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 4.88 mm (allowed 0.08)
+   |   OVERLAP `flipper` 0.93 mm (allowed 0.08)
+6. [proxy.sweep] joint `flipper`: `flipper` hits `chassis` 0.93 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint flipper` lists the closest approach to every part.
+   | flipper: x -20.00..20.00  y -48.00..32.00  z 24.00..32.00  size 40.00 x 80.00 x 8.00 mm
+   |   centre (0.00, -8.00, 28.00), volume 25600.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -45, 26.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.93 mm (allowed 0.08)
+   | chassis: x -50.00..50.00  y -55.00..55.00  z -10.00..26.00  size 100.00 x 110.00 x 36.00 mm
+7. [connection.floating] `scoop` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | scoop: x -45.00..45.00  y 47.25..76.75  z -8.85..0.85  size 90.00 x 29.50 x 9.70 mm
+   |   centre (0.00, 62.00, -4.00), volume 5400.0 mm3
+   |   OVERLAP `chassis` 0.35 mm (allowed 0.08)
+   | chassis: x -50.00..50.00  y -55.00..55.00  z -10.00..26.00  size 100.00 x 110.00 x 36.00 mm
+   |   centre (-0.00, -0.00, 8.00), volume 344250.0 mm3
+8. [legal.switch] Rule 4a needs an externally accessible way to shut down that works without tools and is clearly marked on/off.
+   fix: Add a `switch` part (or removable link) with `tool_free: true` and `marked: true` and a visible ON/OFF `label`.
+9. [legal.failsafe] Rule 4d: the robot must stop all motion when the transmitter is off.
+   fix: Set `electronics.failsafe` to true and configure the receiver and ESC failsafe.
+10. [legal.weapon_disable] Rule 4c: all weaponry must be deactivatable by remote control.
+   fix: Set `electronics.weapon_remote_disable` and put the weapon on its own receiver channel.
+11. [power.weapon_motor] `flipper` names motor None; it must be a catalog brushless motor so speed can be computed.
+   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
+   | flipper: x -20.00..20.00  y -48.00..32.00  z 24.00..32.00  size 40.00 x 80.00 x 8.00 mm
+   |   centre (0.00, -8.00, 28.00), volume 25600.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -45, 26.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.93 mm (allowed 0.08)
+12. [process.print_orientation] `wheel_l0` (fdm) has no `print_orientation`.
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_l0: x 39.50..49.50  y -42.00..-18.00  z -12.00..12.00  size 10.00 x 23.99 x 24.00 mm
+   |   centre (44.50, -30.00, 0.00), volume 4523.9 mm3
+   |   OVERLAP `chassis` 4.88 mm (allowed 0.08)
+... 9 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 367.7 g of 150 g (-217.7 g margin)
+    chassis                   327.73 g  fills 87% of its box  <- solid block? a tub should be a shell
+    flipper                    24.37 g  fills 100% of its box  <- solid block? a tub should be a shell
+    scoop                       5.14 g  fills 21% of its box
+    wheel_l0                    4.61 g  fills 79% of its box
+    wheel_r0                    4.61 g  fills 79% of its box
+    mass.over: 367.7 g (range 293.8 to 441.6 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 1 hit / 0 miss, group 0 hit / 31 miss, inside 5 hit / 0 miss, likeness 2 hit / 0 miss, min_gap 2 hit / 0 miss, overlap 56 hit / 0 miss, part_check 1 hit / 0 miss, part_geom 5 hit / 0 miss, ray 25 hit / 0 miss
