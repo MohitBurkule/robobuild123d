@@ -21,7 +21,15 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "skip_photos": [
+  0,
+  2
+ ],
+ "name": "antomic",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "side": [
     [
@@ -72,13 +80,5 @@
    "id": "frame",
    "color": "#e8453a"
   }
- ],
- "skip_photos": [
-  0,
-  2
- ],
- "name": "antomic",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }

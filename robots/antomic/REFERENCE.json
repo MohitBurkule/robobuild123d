@@ -7,5 +7,15 @@
  },
  "photos": [
   "antomic.aws67.webp"
- ]
+ ],
+ "view": {
+  "antomic.aws65.webp": "front_left_iso",
+  "antomic.aws67.webp": "front",
+  "antomic.aws68.webp": "front"
+ },
+ "elevation": {
+  "antomic.aws65.webp": 45,
+  "antomic.aws67.webp": 70,
+  "antomic.aws68.webp": 25
+ }
 }
