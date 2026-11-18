@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_gyronino/robots/gyronino/spec.json",
- "rendered_at": 1795035264.6533628,
+ "rendered_at": 1795037611.8817647,
  "bodies": [
   "chassis",
   "weapon",
@@ -15,10 +15,37 @@
   "foot_l",
   "foot_r",
   "tail_skid",
-  "dt_screw_0",
-  "dt_screw_1",
-  "dt_screw_2",
-  "dt_screw_3"
+  "el_battery",
+  "el_esc",
+  "el_wesc",
+  "el_switch",
+  "weapon_motor",
+  "lock_pin"
  ],
- "wires": {}
+ "wires": {
+  "w_sw_wesc": {
+   "from": [
+    3.5,
+    -12.0,
+    5.115
+   ],
+   "to": [
+    -12.0,
+    -3.0,
+    24.615
+   ]
+  },
+  "w_bat_sw": {
+   "from": [
+    -0.5,
+    10.5,
+    5.615
+   ],
+   "to": [
+    -4.5,
+    -12.0,
+    5.115
+   ]
+  }
+ }
 }
