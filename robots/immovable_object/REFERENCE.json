@@ -8,5 +8,15 @@
   "immovable_object.aws69.webp",
   "immovable_object.aws71.webp",
   "immovable_object.aws72.webp"
- ]
+ ],
+ "view": {
+  "immovable_object.aws69.webp": "front_right_iso",
+  "immovable_object.aws71.webp": "front",
+  "immovable_object.aws72.webp": "front_right_iso"
+ },
+ "elevation": {
+  "immovable_object.aws69.webp": 45,
+  "immovable_object.aws71.webp": 45,
+  "immovable_object.aws72.webp": 45
+ }
 }

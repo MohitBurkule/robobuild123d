@@ -38,3 +38,9 @@ Likeness: aws69 0.73 (FAIL), aws71 0.73 (FAIL), aws72 0.75 (FAIL).
 Decisions: type wedge; body box rect 85x64x26 mm, ramp 0; wheels 4 r15 outboard; weapon none; 4 forks 38 mm.
 
 Likeness: aws69 0.73 (FAIL), aws71 0.73 (FAIL), aws72 0.75 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type wedge; body box rect 85x64x26 mm, ramp 0; wheels 4 r15 outboard; weapon none; 4 forks 38 mm.
+
+Likeness: aws69 0.57 (FAIL), aws71 0.33 (FAIL), aws72 0.71 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/immovable_object.aws69.webp` is declared `front_right_iso` (IoU 0.57 there) but the model matches it better from front_left_iso; [FAIL] likeness.view: `reference/immovable_object.aws71.webp` is declared `front` (IoU 0.33 there) but the model matches it better from front_left_iso (elevatio
