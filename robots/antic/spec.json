@@ -112,8 +112,8 @@
       "material": "nylon",
       "process": "fdm",
       "color": "#e5e7eb",
-      "solids": 2,
-      "solids_reason": "Left and right internal linkage arms",
+      "solids": 8,
+      "solids_reason": "Left and right internal linkage arms + 6 silver screw heads",
       "shape": {"type": "model", "file": "src/build_antic.py", "params": {"part": "flipper_arms"}},
       "at": [0.0, 0.0, 0.0],
       "rot": [0.0, 0.0, 0.0]
