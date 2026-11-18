@@ -1,20 +1,20 @@
 {
  "ice_breaker_junior.aws74.webp": {
-  "view": "60,25~",
-  "azimuth": 60.0,
-  "elevation": 25.0,
-  "iou": 0.76
+  "view": "45,35!",
+  "azimuth": 45.0,
+  "elevation": 35.0,
+  "iou": 0.58
  },
  "ice_breaker_junior.aws76.webp": {
-  "view": "140,35",
-  "azimuth": 150.0,
-  "elevation": 27.0,
-  "iou": 0.537
+  "view": "135,35!",
+  "azimuth": 135.0,
+  "elevation": 35.0,
+  "iou": 0.349
  },
  "ice_breaker_junior.aws77.webp": {
   "view": "35,30",
   "azimuth": 35.0,
   "elevation": 30.0,
-  "iou": 0.672
+  "iou": 0.673
  }
 }
