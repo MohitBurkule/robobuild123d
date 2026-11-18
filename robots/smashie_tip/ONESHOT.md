@@ -61,3 +61,9 @@ Left (one line each):
 - electrical.battery_weapon_gap x1: battery pocket close to the weapon envelope; no other room inside the print
 - electrical.switch_in_series x1: see verify_r4.txt root causes
 - wire.render_wires x1: toolchain/process: the photo-match, diff and likeness sheets are written without a render record of the wire routes
+
+## Round 3b (rebuilt by eye from the photos: parts moved to where the photo shows them, camera set per photo)
+Decisions: type vertical_spinner; body box rect 60x44x14 mm, ramp 0; wheels 2 r8 inboard; weapon disc r13 axis x teeth 2; 2 forks 14 mm; extra parts: disc_post_a, disc_post_b, base_plate; clusterbot, one of 2 modelled (count read from photos, unsure).
+
+Likeness: aws73 0.52 (FAIL), aws74 0.45 (FAIL), aws76 0.61 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/smashie_1.aws73.webp` is declared `left` (IoU 0.52 there) but the model matches it better from front_left_iso (elevation 25, az; [FAIL] likeness.view: `reference/smashie_1.aws74.webp` is declared `front` (IoU 0.45 there) but the model matches it better from rear_right_iso (elevation 45, a; [FAIL] likeness.view: `reference/smashie_1.aws76.webp` is declared `front_left_iso` (IoU 0.61 there) but the model matches it better from front_right_iso (eleva
