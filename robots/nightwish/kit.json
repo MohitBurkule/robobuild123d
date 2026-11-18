@@ -1,10 +1,10 @@
 {
  "robot_type": "lifter",
  "body": {
-  "length": 80,
-  "width": 70,
-  "height": 26,
-  "ramp": 30
+  "length": 78,
+  "width": 62,
+  "height": 28,
+  "ramp": 26
  },
  "wheels": {
   "n": 2,
@@ -16,9 +16,11 @@
  },
  "forks": {
   "n": 2,
-  "length": 22,
-  "width": 22,
-  "spread": 50
+  "length": 24,
+  "width": 12,
+  "spread": 50,
+  "tilt_deg": 14,
+  "taper": true
  },
  "colors": {
   "body": "#15151c",
@@ -26,51 +28,6 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
-  {
-   "side": [
-    [
-     -10,
-     26
-    ],
-    [
-     5,
-     26
-    ],
-    [
-     25,
-     55
-    ],
-    [
-     50,
-     60
-    ],
-    [
-     55,
-     52
-    ],
-    [
-     30,
-     45
-    ],
-    [
-     10,
-     22
-    ]
-   ],
-   "x": [
-    -6,
-    6
-   ],
-   "weapon": "lifter",
-   "pivot": [
-    0,
-    26
-   ],
-   "id": "claw",
-   "color": "#15151c"
-  }
- ],
  "skip_photos": [
   2
  ],
@@ -81,5 +38,58 @@
  "name": "nightwish",
  "weapon": {
   "kind": "none"
- }
+ },
+ "macros": [
+  {
+   "side": [
+    [
+     -14,
+     28
+    ],
+    [
+     2,
+     28
+    ],
+    [
+     14,
+     58
+    ],
+    [
+     36,
+     78
+    ],
+    [
+     58,
+     74
+    ],
+    [
+     64,
+     62
+    ],
+    [
+     40,
+     64
+    ],
+    [
+     24,
+     50
+    ],
+    [
+     8,
+     24
+    ]
+   ],
+   "x": [
+    -6,
+    6
+   ],
+   "weapon": "lifter",
+   "pivot": [
+    0,
+    28
+   ],
+   "id": "claw",
+   "color": "#15151c"
+  }
+ ]
 }

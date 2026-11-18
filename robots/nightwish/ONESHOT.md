@@ -17,3 +17,8 @@ Likeness: aws63 0.61 (FAIL), nightwish_aws62 0.31 (FAIL).
 Decisions: type lifter; body box rect 80x70x26 mm, ramp 30; wheels 2 r12 outboard; weapon none; 2 forks 22 mm; extra parts: claw; photos skipped (cluttered): indices [2]; textured masks for indices [0, 1].
 
 Likeness: aws63 0.62 (FAIL), nightwish_aws62 0.31 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type lifter; body box rect 78x62x28 mm, ramp 26; wheels 2 r12 outboard; weapon none; 2 forks 24 mm; extra parts: claw; photos skipped (cluttered): indices [2]; textured masks for indices [0, 1].
+
+Likeness: aws63 0.54 (FAIL), nightwish_aws62 0.27 (FAIL).
