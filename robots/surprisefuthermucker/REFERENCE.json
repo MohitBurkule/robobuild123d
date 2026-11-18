@@ -6,5 +6,11 @@
  },
  "photos": [
   "surprisefuthermucker.aws63.webp"
- ]
+ ],
+ "view": {
+  "surprisefuthermucker.aws63.webp": "front_left_iso"
+ },
+ "elevation": {
+  "surprisefuthermucker.aws63.webp": 45
+ }
 }

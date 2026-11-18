@@ -1,7 +1,7 @@
 {
  "robot_type": "wedge",
  "body": {
-  "length": 85,
+  "length": 74,
   "width": 58,
   "height": 26,
   "ramp": 0
@@ -11,8 +11,8 @@
   "radius": 13,
   "width": 8,
   "y": [
-   -28,
-   28
+   -26,
+   26
   ]
  },
  "colors": {
@@ -21,7 +21,12 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "textured": [],
+ "name": "surprisefuthermucker",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "box": [
     40,
@@ -39,10 +44,5 @@
    "id": "lid",
    "color": "#e6e6e0"
   }
- ],
- "textured": [],
- "name": "surprisefuthermucker",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }

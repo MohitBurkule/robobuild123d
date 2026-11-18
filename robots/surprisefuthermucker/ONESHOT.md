@@ -14,3 +14,9 @@ Likeness: likeness crashed (see STRUGGLES).
 Decisions: type wedge; body box rect 85x58x26 mm, ramp 0; wheels 4 r13 outboard; weapon none; extra parts: lid.
 
 Likeness: aws63 0.82 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type wedge; body box rect 74x58x26 mm, ramp 0; wheels 4 r13 outboard; weapon none; extra parts: lid.
+
+Likeness: aws63 0.70 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/surprisefuthermucker.aws63.webp` is declared `front_left_iso` (IoU 0.70 there) but the model matches it better from front (elev
