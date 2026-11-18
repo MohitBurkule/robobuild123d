@@ -44,7 +44,7 @@
       "material": "nylon",
       "process": "fdm",
       "color": "#262626",
-      "solids": 3,
+      "solids": 7,
       "solids_reason": "main bulkhead frame + 2 front wedge gussets",
       "shape": {"type": "model", "file": "src/build_antic.py", "params": {"part": "bulkheads"}},
       "at": [0.0, 0.0, 0.0],

@@ -18,7 +18,7 @@ def build_hex_fitting() -> bd.Solid:
     """Angled blue threaded stem with teal/cyan hex cap on the right side."""
     with bd.BuildPart() as bp:
         # Stem points backward-upward into the tank (-Y, +Z) and outward (+X) to the hex cap
-        with bd.Locations(bd.Location((34.5, -5.5, 26.5)) * bd.Rotation(-35, 68, 15)):
+        with bd.Locations(bd.Location((37.8, -5.5, 31.0)) * bd.Rotation(-35, 68, 15)):
             # Threaded blue stem
             bd.Cylinder(radius=3.6, height=12.0)
             # Hex nut cap at the outer/lower-front end

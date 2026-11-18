@@ -17,12 +17,12 @@ SIDE_RAIL_X = 44.5  # outer face at X = +-45.5 mm
 WHEEL_R = 12.5       # 25 mm OD ribbed/toothed wheels
 WHEEL_W = 10.0
 WHEEL_X = 37.5       # wheel center X
-WHEEL_REAR_Y = -36.0
-WHEEL_FRONT_Y = -6.0
+WHEEL_REAR_Y = -38.0
+WHEEL_FRONT_Y = -4.0
 WHEEL_Z = WHEEL_R    # 12.5 mm so wheels touch Z = 0
 GEAR_Y = -21.0       # central spur gear right between rear & front wheels
 GEAR_Z = 12.5        # collinear with wheel axles!
-GEAR_R = 5.4
+GEAR_R = 4.2
 GEAR_W = 6.0
 AXLE_R = 1.6
 

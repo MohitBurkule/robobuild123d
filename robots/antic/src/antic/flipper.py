@@ -67,7 +67,7 @@ def build_front_skirt() -> bd.Solid:
     """Translucent UHMW/polycarbonate ground-scraping front lip."""
     with bd.BuildPart() as bp2:
         with bd.BuildSketch(_wedge_plane(-0.2)):
-            with bd.Locations((0.0, 61.5)):
+            with bd.Locations((0.0, 62.1)):
                 bd.Rectangle(P.WEDGE_W, 16.0, align=(bd.Align.CENTER, bd.Align.MIN))
         bd.extrude(amount=P.SKIRT_T)
     return bp2.part
