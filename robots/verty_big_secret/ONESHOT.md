@@ -30,12 +30,17 @@ Fixed / changed (inside only, outside kept):
 - one print with the chassis (same material, `fused_with`): `upright_l`, `upright_r`, `fork_l`, `fork_r`, `hook_l`, `hook_r`
 - 7 wires declared (battery - switch - ESC - motors)
 - print orientation on every printed part, failsafe / weapon disable declared, design volumes declared where this pass changed a part on purpose
+- power switch on the floor of the body, slider facing down to a 7 x 3 mm slot in the underside (no slot on the top or sides; hollow cavities stay closed behind a wall at every outside face)
 - weapon drive: motor not coaxial, belt drive implied
 - rod dt_axle_wheel_l0: 2.2 mm stub clear of ['dm_wheel_l0'] printed as the wheel's hub boss
 - rod dt_axle_wheel_r0: 2.2 mm stub clear of ['dm_wheel_r0'] printed as the wheel's hub boss
-- wheel_l0: one cut dropped (split the part into 2 solids)
-- wheel_r0: one cut dropped (split the part into 2 solids)
-- hollowed chassis (wall 2.5, form 0): 105.7 -> 55.0 cm3
+- mass estimate 198 g over 150: walls 2 mm -> 191 g
+- mass estimate 191 g over 150: walls 1.6 mm -> 186 g
+- hollowed chassis (wall 1.6, form 0): 105.7 -> 47.9 cm3
+- hollowed upright_l (wall 1.6, form 0): 6.1 -> 3.7 cm3
+- hollowed upright_r (wall 1.6, form 0): 6.1 -> 2.7 cm3
+- hollowed fork_l (wall 1.6, form 0): 4.7 -> 3.0 cm3
+- hollowed fork_r (wall 1.6, form 0): 4.7 -> 3.0 cm3
 
 Left (and why):
 - mass.over x1: the photo-sized outside (steel weapon / big printed shell) is heavier than 150 g even hollowed; only a smaller outside would fix it.

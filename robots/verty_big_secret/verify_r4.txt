@@ -1,7 +1,7 @@
 BLOCKERS: 7
   [cached] integrity 0.00s
   [cached] mass 0.00s
-  [proxy] interference 0.17s
+  [proxy] interference 0.14s
   [cached] connections 0.00s
   [cached] legal 0.00s
   [cached] fasteners 0.00s
@@ -31,8 +31,8 @@ BLOCKERS: 7
   [cached] geom 0.00s
   [cached] dfm 0.00s
   [cached] realworld 0.00s
-verty big secret: ok=False 7 blockers in 7 root causes, mass 200.7/150 g
-1. [mass.over] 200.7 g (range 175.1 to 226.2 g) against the 150 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+verty big secret: ok=False 7 blockers in 7 root causes, mass 188.0/150 g
+1. [mass.over] 188.0 g (range 165.0 to 211.0 g) against the 150 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
 2. [wire.render_wires] 14 of 14 robot render(s) do not draw all 7 wires: renders/diff_verty_big_secret.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_verty_big_secret.aws74.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_verty_big_secret.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/iso.png: rendered without wires (checks off or no routes); renders/likeness_verty_big_secret.aws72_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_verty_big_secret.aws74_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_verty_big_secret.aws76_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_verty_big_secret.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn...
    fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
@@ -47,26 +47,26 @@ verty big secret: ok=False 7 blockers in 7 root causes, mass 200.7/150 g
 7. [likeness.silhouette] `reference/verty_big_secret.aws76.webp`: best silhouette IoU 0.39 at camera front_left_iso (elevation 45, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.64). Regions (photo frame, left third first) 0.04 / 0.57 / 0.39: worst = front third. Height/length 0.73 model vs 0.82 photo (too flat: raise it or shorten it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
-  mass 200.7 g of 150 g (-50.7 g margin)
+  mass 188.0 g of 150 g (-38.0 g margin)
     weapon                     62.62 g  fills 76% of its box  <- solid block? a tub should be a shell
-    chassis                    52.37 g  fills 51% of its box
+    chassis                    45.60 g  fills 44% of its box
     el_battery                 21.50 g  fills 100% of its box  <- solid block? a tub should be a shell
     dm_wheel_l0                 9.50 g  fills 63% of its box
     dm_wheel_r0                 9.50 g  fills 63% of its box
     weapon_motor                8.60 g  fills 53% of its box
-    upright_l                   5.17 g  fills 89% of its box
     el_wesc                     5.00 g  fills 94% of its box
-    fork_l                      4.47 g  fills 22% of its box
-    fork_r                      4.47 g  fills 22% of its box
-    upright_r                   3.60 g  fills 62% of its box
+    upright_l                   3.48 g  fills 60% of its box
     wheel_l0                    3.19 g  fills 63% of its box
     wheel_r0                    3.19 g  fills 63% of its box
+    fork_l                      2.90 g  fills 15% of its box
+    fork_r                      2.90 g  fills 15% of its box
+    upright_r                   2.57 g  fills 44% of its box
     el_esc                      2.30 g  fills 99% of its box
     dt_shaft_weapon             1.39 g  fills 79% of its box
     el_switch                   0.50 g  fills 100% of its box
     lock_pin                    0.37 g  fills 79% of its box
     hook_r                      0.36 g  fills 38% of its box
     hook_l                      0.36 g  fills 38% of its box
-    mass.over: 200.7 g (range 175.1 to 226.2 g) against the 150 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.over: 188.0 g (range 165.0 to 211.0 g) against the 150 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
 cache: distance 8 hit / 0 miss, group 31 hit / 0 miss, overlap 258 hit / 0 miss, part_geom 19 hit / 0 miss
