@@ -1,0 +1,121 @@
+  [ran] integrity 0.04s
+  [proxy] wiring 0.07s
+  [ran] mass 0.00s
+  [proxy] interference 2.78s
+  [ran] connections 0.29s
+  [ran] legal 0.01s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.01s
+  [ran] targets 0.00s
+  [ran] fight 0.01s
+  [ran] shape 0.74s
+  [ran] dynamics 0.02s
+  [ran] strength 0.01s
+  [ran] printability 0.98s
+  [ran] process 0.07s
+  [ran] electrical 0.02s
+  [ran] combat 0.08s
+  [ran] physics 0.00s
+  [proxy] assembly 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.01s
+  [ran] wire_review 0.01s
+  [ran] fastener_record 0.00s
+  [ran] likeness 33.86s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.03s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.03s
+  [ran] dfm 0.02s
+  [ran] realworld 0.01s
+Delta V: ok=False 37 blockers in 35 root causes, mass 516.2/225 g
+1. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `bridge`. (+1 consequences)
+   | weapon: x -17.00..17.00  y -39.59..32.53  z 5.00..78.06  size 34.00 x 72.12 x 73.06 mm
+   |   centre (0.00, -3.53, 41.53), volume 30038.8 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, -4.0, 42.0] range 0..360 default 0
+   |   OVERLAP `bridge` 1.88 mm (allowed 0.08)
+   | bridge: x -19.10..19.10  y -60.00..-10.00  z -13.00..27.00  size 38.20 x 50.00 x 40.00 mm
+2. [proxy.assembly] `fork_0`: the baseline teardown never took it off. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Run the full `assembly` group to search other ways out.
+   | fork_0: x -40.00..-34.00  y 58.00..93.00  z -14.95..-13.45  size 6.00 x 35.00 x 1.50 mm
+   |   centre (-37.00, 75.50, -14.20), volume 315.0 mm3
+   |   gap to `pod_r` 0.45 mm
+   | fork_1: x 34.00..40.00  y 58.00..93.00  z -14.95..-13.45  size 6.00 x 35.00 x 1.50 mm
+   |   centre (37.00, 75.50, -14.20), volume 315.0 mm3
+3. [mass.over] 516.2 g (range 451.0 to 581.4 g) against the 225 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+4. [proxy.interference] `bridge` and `weapon` overlap by 1.88 mm (allowed 0.08).
+   | bridge: x -19.10..19.10  y -60.00..-10.00  z -13.00..27.00  size 38.20 x 50.00 x 40.00 mm
+   |   centre (0.00, -35.00, 7.00), volume 76400.0 mm3
+   |   OVERLAP `weapon` 1.88 mm (allowed 0.08)
+   |   overlap allowed `pod_l` 0.05 mm (allowed 0.08)
+   |   overlap allowed `pod_r` 0.05 mm (allowed 0.08)
+5. [connection.floating] `pod_r` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `bridge`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | pod_r: x -47.00..-19.00  y -60.00..60.00  z -13.00..27.00  size 28.00 x 120.00 x 40.00 mm
+   |   centre (-33.00, 0.00, 7.00), volume 99365.0 mm3
+   |   overlap allowed `bridge` 0.05 mm (allowed 0.08)
+   |   gap to `fork_0` 0.45 mm
+   |   gap to `wheel_r0` 0.50 mm
+6. [connection.floating] `bridge` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `pod_l`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | bridge: x -19.10..19.10  y -60.00..-10.00  z -13.00..27.00  size 38.20 x 50.00 x 40.00 mm
+   |   centre (0.00, -35.00, 7.00), volume 76400.0 mm3
+   |   OVERLAP `weapon` 1.88 mm (allowed 0.08)
+   |   overlap allowed `pod_l` 0.05 mm (allowed 0.08)
+   |   overlap allowed `pod_r` 0.05 mm (allowed 0.08)
+7. [connection.floating] `weapon` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `bridge`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | weapon: x -17.00..17.00  y -39.59..32.53  z 5.00..78.06  size 34.00 x 72.12 x 73.06 mm
+   |   centre (0.00, -3.53, 41.53), volume 30038.8 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, -4.0, 42.0] range 0..360 default 0
+   |   OVERLAP `bridge` 1.88 mm (allowed 0.08)
+   | bridge: x -19.10..19.10  y -60.00..-10.00  z -13.00..27.00  size 38.20 x 50.00 x 40.00 mm
+8. [connection.floating] `wheel_l0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `pod_l`, 0.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_l0: x 47.50..56.50  y -65.00..-35.00  z -7.00..23.00  size 9.00 x 29.99 x 30.00 mm
+   |   centre (52.00, -50.00, 8.00), volume 6361.7 mm3
+   |   gap to `pod_l` 0.50 mm
+   | pod_l: x 19.00..47.00  y -60.00..60.00  z -13.00..27.00  size 28.00 x 120.00 x 40.00 mm
+   |   centre (33.00, 0.00, 7.00), volume 99365.0 mm3
+9. [connection.floating] `wheel_r0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `pod_r`, 0.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_r0: x -56.50..-47.50  y -65.00..-35.00  z -7.00..23.00  size 9.00 x 29.99 x 30.00 mm
+   |   centre (-52.00, -50.00, 8.00), volume 6361.7 mm3
+   |   gap to `pod_r` 0.50 mm
+   | pod_r: x -47.00..-19.00  y -60.00..60.00  z -13.00..27.00  size 28.00 x 120.00 x 40.00 mm
+   |   centre (-33.00, 0.00, 7.00), volume 99365.0 mm3
+10. [connection.floating] `fork_0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `pod_r`, 0.4 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | fork_0: x -40.00..-34.00  y 58.00..93.00  z -14.95..-13.45  size 6.00 x 35.00 x 1.50 mm
+   |   centre (-37.00, 75.50, -14.20), volume 315.0 mm3
+   |   gap to `pod_r` 0.45 mm
+   | pod_r: x -47.00..-19.00  y -60.00..60.00  z -13.00..27.00  size 28.00 x 120.00 x 40.00 mm
+   |   centre (-33.00, 0.00, 7.00), volume 99365.0 mm3
+11. [connection.floating] `fork_1` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `pod_l`, 0.4 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | fork_1: x 34.00..40.00  y 58.00..93.00  z -14.95..-13.45  size 6.00 x 35.00 x 1.50 mm
+   |   centre (37.00, 75.50, -14.20), volume 315.0 mm3
+   |   gap to `pod_l` 0.45 mm
+   | pod_l: x 19.00..47.00  y -60.00..60.00  z -13.00..27.00  size 28.00 x 120.00 x 40.00 mm
+   |   centre (33.00, 0.00, 7.00), volume 99365.0 mm3
+12. [legal.switch] Rule 4a needs an externally accessible way to shut down that works without tools and is clearly marked on/off.
+   fix: Add a `switch` part (or removable link) with `tool_free: true` and `marked: true` and a visible ON/OFF `label`.
+... 23 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 516.2 g of 225 g (-291.2 g margin)
+    weapon                    237.31 g  fills 17% of its box
+    pod_l                      94.60 g  fills 74% of its box  <- solid block? a tub should be a shell
+    pod_r                      94.60 g  fills 74% of its box  <- solid block? a tub should be a shell
+    bridge                     72.73 g  fills 100% of its box  <- solid block? a tub should be a shell
+    wheel_l0                    6.49 g  fills 79% of its box
+    wheel_r0                    6.49 g  fills 79% of its box
+    fork_0                      1.40 g  fills 100% of its box
+    fork_1                      1.40 g  fills 100% of its box
+    mass.over: 516.2 g (range 451.0 to 581.4 g) against the 225 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 0 hit / 4 miss, group 0 hit / 31 miss, inside 0 hit / 8 miss, likeness 3 hit / 0 miss, min_gap 18 hit / 39 miss, overlap 18 hit / 17 miss, part_check 0 hit / 6 miss, part_geom 8 hit / 0 miss, ray 0 hit / 32 miss
