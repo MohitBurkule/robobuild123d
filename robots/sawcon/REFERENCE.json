@@ -1,0 +1,12 @@
+{
+ "robot_type": "vertical_spinner",
+ "wheels": 4,
+ "weapon": {
+  "kind": "disc",
+  "axis": "x",
+  "teeth": 8
+ },
+ "photos": [
+  "sawcon.aws67.webp"
+ ]
+}
