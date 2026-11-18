@@ -1,9 +1,9 @@
 {
  "zero.aws71.webp": {
-  "view": "35,40",
-  "azimuth": 45.0,
-  "elevation": 48.0,
-  "iou": 0.859
+  "view": "60,35!",
+  "azimuth": 60.0,
+  "elevation": 35.0,
+  "iou": 0.614
  },
  "zero.aws74.webp": {
   "view": "30,25",
