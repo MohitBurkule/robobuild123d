@@ -55,7 +55,50 @@ def parse(t):
         az = toward(az, FRONT, 20)
     return round(az, 1), el
 
+def exact_and_queue(refresh_dir=None):
+    """Round 3: refresh stale models (refresh_dir/{models,meta}), merge exact saved cameras from
+    refprs/user_angle_picks_3.json (az/el/roll/distance/target/quaternion win over text picks), build the needs-pick queue."""
+    rob = json.loads((V / "data/robots.json").read_text()); bys = {r["slug"]: r for r in rob["robots"]}
+    if refresh_dir:
+        rd = Path(refresh_dir)
+        for mp in sorted((rd / "meta").glob("*.json")):
+            m = json.loads(mp.read_text()); r = bys.get(m["slug"])
+            if not r or not m.get("model"): continue
+            shutil.copy(rd / "models" / f"{m['slug']}.glb", V / "data/models" / f"{m['slug']}.glb")
+            r["model"], r["bbox"], r["parts"], r["errors"] = m["model"], m["bbox"], m["parts"], m["errors"]; print("refreshed", m["slug"])
+    X = json.loads(Path("/mnt/project-files/robot-cad/refprs/user_angle_picks_3.json").read_text())
+    n = 0
+    for x in X["photos"]:
+        pk = x.get("pick")
+        if not pk: continue
+        p = next((q for q in bys[x["slug"]]["photos"] if q["name"] == x["photo"]), None)
+        if not p: print("no photo", x["slug"], x["photo"]); continue
+        prev = p.get("previous_guess") or dict(p["default"]); p["previous_guess"] = p.get("previous_guess") or prev
+        p["user_saved_pick"] = pk
+        p["default"] = {"azimuth_deg": pk["azimuth_deg"], "elevation_deg": pk["elevation_deg"], "roll_deg": pk["roll_deg"],
+                        "distance": pk["distance"], "target": pk["target"], "source": "your saved exact camera " + pk["saved_at"]}
+        n += 1
+    # queue: listed 37 first (file order), then any photo with no user pick at all
+    listed = []
+    for line in Path("/mnt/project-files/robot-cad/refprs/photos_needing_user_camera_pick.txt").read_text().splitlines():
+        if "|" not in line or ":" not in line: continue
+        sl, ph = line.split(":")[0].split("|", 1); k = re.sub(r"\.(jpg|webp|png)$", "", ph.strip())
+        listed.append((sl.strip(), k))
+    order = {k: i for i, k in enumerate(listed)}
+    for r in rob["robots"]:
+        for p in r["photos"]:
+            p.pop("needs_pick", None)
+            key = (r["slug"], p["name"])
+            if key in order and "user_saved_pick" not in p: p["needs_pick"] = {"rank": order[key], "wrong_label": True}
+            elif not any(k in p for k in ("user_pick", "user_text", "user_note", "user_saved_pick")): p["needs_pick"] = {"rank": 1000, "wrong_label": False}
+    missing = [k for k in order if k not in {(r["slug"], p["name"]) for r in rob["robots"] for p in r["photos"]}]
+    (V / "data/robots.json").write_text(json.dumps(rob, separators=(",", ":")))
+    q = [p for r in rob["robots"] for p in r["photos"] if "needs_pick" in p]
+    print(f"exact picks merged {n}; queue {len(q)} (wrong-label {sum(1 for p in q if p['needs_pick']['wrong_label'])}); listed-but-missing {missing}")
+
 def main():
+    if "--exact" in sys.argv:
+        a = [x for x in sys.argv[1:] if not x.startswith("-")]; return exact_and_queue(a[0] if a else None)
     rob = json.loads((V / "data/robots.json").read_text())
     # ---- refresh models from the re-export (out2) ----
     refreshed = []
