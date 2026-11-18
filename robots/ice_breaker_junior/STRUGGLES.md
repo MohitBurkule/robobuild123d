@@ -38,3 +38,6 @@ Status: rough build from the `wedge_2wd` template. It passes the inner tier with
 
 ## Round 3 (kit)
 Kit draft (kit.json): weapon check passes, silhouette IoU ~0.60/0.69/0.70, still FAIL. Larger wheels/forks made it worse (0.54-0.65). Remaining: downward-angled forks, wheel bulge, hub/servo-horn detail not modelled; kit has no fork tilt. Haiku not available, read diff sheets myself.
+
+## Round 4
+kit + postkit.py (forks 62 long tilted 30 deg down, wheels r17). IoU 0.76/0.61/0.63 (was 0.60-0.70 on best view); still FAIL. Not done: toothed wheel rim, two upright tabs, stepped plate, side housing lobes, fork toe-in.
