@@ -18,7 +18,7 @@ Likeness: aws67 0.72 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/recycler.aws67.webp` is declared `front_left_iso` (IoU 0.72 there) but the model matches it better from rear_right_iso (elevati
 
 ## Round 4 (verification, helper 2)
-Blockers r3 52 -> r4 16 (`verify --tier inner`).
+Blockers r3 52 -> r4 11 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -30,23 +30,26 @@ Fixed / changed (inside only, outside kept):
 - power switch on the floor of the body, slider facing down to a 7 x 3 mm slot in the underside (no slot on the top or sides; hollow cavities stay closed behind a wall at every outside face)
 - weapon drive: motor not coaxial, belt drive implied
 - weapon: running-clearance well in chassis not carved (it would open 291 mm2 of outside face)
+- chassis: dm_wheel_l0 pocketed to its own outline (0.3 mm clear); only its shaft bore passes the wall to wheel_l0
+- chassis: dm_wheel_r0 pocketed to its own outline (0.3 mm clear); only its shaft bore passes the wall to wheel_r0
 - weapon: running-clearance well in dt_arm_weapon_0 not carved (it would open 26 mm2 of outside face)
 - weapon: running-clearance well in dt_arm_weapon_1 not carved (it would open 35 mm2 of outside face)
 - rod dt_axle_wheel_l0: 2.8 mm stub clear of ['dm_wheel_l0'] printed as the wheel's hub boss
 - rod dt_axle_wheel_r0: 2.8 mm stub clear of ['dm_wheel_r0'] printed as the wheel's hub boss
-- mass estimate 350 g over 150: walls 2 mm -> 338 g
-- mass estimate 338 g over 150: walls 1.6 mm -> 330 g
-- hollowed chassis (wall 1.6, form 0): 236.1 -> 63.4 cm3
+- mass estimate 351 g over 150: walls 2 mm -> 339 g
+- mass estimate 339 g over 150: walls 1.6 mm -> 331 g
+- hollowed chassis (wall 1.6, form 0): 236.1 -> 64.4 cm3
 - hollowed lid (wall 1.97, form 1): 10.8 -> 7.8 cm3
 
 Left (and why):
-- proxy.wiring x7: Wire `w_bat_sw` (`el_battery.xt30` to `el_switch.in`): no baseline route (run the full `wiring` group once and pass its report).
+- proxy.wiring x1: Wire `w_sw_esc` (`el_switch.out` to `el_esc.bat`): no baseline route (run the full `wiring` group once and pass its report).
 - mass.over x1: the photo-sized outside (steel weapon / big printed shell) is heavier than 150 g even hollowed; only a smaller outside would fix it.
 - proxy.interference x1: `chassis` and `weapon` overlap by 1.33 mm (allowed 0.08).
 - proxy.sweep x2: joint `weapon`: `weapon` turning a full revolution may reach `chassis`.
 - mfg.layer_load x2: `dt_arm_weapon_0` carries the `weapon` axle but is printed with build direction +z (world [0.0, 0.0, 1.0]), not along the spin axis [1.0, 0.0, 0.0]: impact load peels layers apart.
 - wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
+- wire.render_count x1: iso.png: 6 routes vs 7 spec wires (missing ['w_sw_esc']); top.png: 6 routes vs 7 spec wires (missing ['w_sw_esc'])
 - likeness.view x1: looks, not in scope for this pass.
 - likeness.silhouette x1: looks, not in scope for this pass.
 
-Likeness (best silhouette IoU per photo, r3 -> r4): recycler.aws67.webp 0.72 -> 0.72
+Likeness (best silhouette IoU per photo, r3 -> r4): recycler.aws67.webp 0.59 -> 0.59
