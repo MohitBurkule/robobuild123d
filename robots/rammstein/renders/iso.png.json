@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work9_rammstein/robots/rammstein/spec.json",
- "rendered_at": 1795019869.4196703,
+ "rendered_at": 1795020194.329028,
  "bodies": [
   "chassis_bottom",
   "chassis_top",
@@ -23,6 +23,7 @@
   "insert_w3",
   "wheel_fl",
   "wheel_fr",
+  "carbon_plate",
   "bolt_c0",
   "bolt_c1",
   "bolt_c2",

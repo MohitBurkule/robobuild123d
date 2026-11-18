@@ -20,4 +20,9 @@ def walk(n):
     elif isinstance(n, list):
         for v in n: walk(v)
 walk(P["wedge"]["shape"])
+zt = float(json.load(open(f"{R}/robots/rammstein/intent.json")).get("zt", 6))
+plate = {"id": "carbon_plate", "kind": "structure", "material": "petg_cf", "process": "fdm",
+ "shape": {"type": "prism", "points": [[-27,-44],[-18,-44],[-13,-33],[13,-33],[18,-44],[27,-44],[27,38],[-27,38]], "height": 1.6},
+ "at": [0, 0, zt], "label": "carbon top plate"}
+d["parts"].append(plate)
 json.dump(d, open(f"{R}/robots/rammstein/spec.json", "w"), indent=1)

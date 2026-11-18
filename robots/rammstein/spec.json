@@ -8714,6 +8714,56 @@
     0.0,
     0.0
    ]
+  },
+  {
+   "id": "carbon_plate",
+   "kind": "structure",
+   "material": "petg_cf",
+   "process": "fdm",
+   "shape": {
+    "type": "prism",
+    "points": [
+     [
+      -27,
+      -44
+     ],
+     [
+      -18,
+      -44
+     ],
+     [
+      -13,
+      -33
+     ],
+     [
+      13,
+      -33
+     ],
+     [
+      18,
+      -44
+     ],
+     [
+      27,
+      -44
+     ],
+     [
+      27,
+      38
+     ],
+     [
+      -27,
+      38
+     ]
+    ],
+    "height": 1.6
+   },
+   "at": [
+    0,
+    0,
+    6.0
+   ],
+   "label": "carbon top plate"
   }
  ],
  "fasteners": [
@@ -11350,6 +11400,134 @@
      ]
     },
     "src": "shell.py:221"
+   },
+   {
+    "id": "connect122",
+    "op": "connect",
+    "target": "insert_c0~chassis_bottom",
+    "half": null,
+    "intent": {
+     "purpose": "assembly",
+     "reason": "heat-set insert melted into its bore",
+     "load_or_constraint": "press_fit; geometry",
+     "threats": [
+      "wall_slam",
+      "flip_landing"
+     ]
+    },
+    "src": "build.py:226"
+   },
+   {
+    "id": "connect123",
+    "op": "connect",
+    "target": "insert_c1~chassis_bottom",
+    "half": null,
+    "intent": {
+     "purpose": "assembly",
+     "reason": "heat-set insert melted into its bore",
+     "load_or_constraint": "press_fit; geometry",
+     "threats": [
+      "wall_slam",
+      "flip_landing"
+     ]
+    },
+    "src": "build.py:226"
+   },
+   {
+    "id": "connect124",
+    "op": "connect",
+    "target": "insert_c2~chassis_bottom",
+    "half": null,
+    "intent": {
+     "purpose": "assembly",
+     "reason": "heat-set insert melted into its bore",
+     "load_or_constraint": "press_fit; geometry",
+     "threats": [
+      "wall_slam",
+      "flip_landing"
+     ]
+    },
+    "src": "build.py:226"
+   },
+   {
+    "id": "connect125",
+    "op": "connect",
+    "target": "insert_c3~chassis_bottom",
+    "half": null,
+    "intent": {
+     "purpose": "assembly",
+     "reason": "heat-set insert melted into its bore",
+     "load_or_constraint": "press_fit; geometry",
+     "threats": [
+      "wall_slam",
+      "flip_landing"
+     ]
+    },
+    "src": "build.py:226"
+   },
+   {
+    "id": "connect126",
+    "op": "connect",
+    "target": "insert_w0~chassis_top",
+    "half": null,
+    "intent": {
+     "purpose": "assembly",
+     "reason": "heat-set insert melted into its bore",
+     "load_or_constraint": "press_fit; geometry",
+     "threats": [
+      "wall_slam",
+      "flip_landing"
+     ]
+    },
+    "src": "build.py:226"
+   },
+   {
+    "id": "connect127",
+    "op": "connect",
+    "target": "insert_w1~chassis_top",
+    "half": null,
+    "intent": {
+     "purpose": "assembly",
+     "reason": "heat-set insert melted into its bore",
+     "load_or_constraint": "press_fit; geometry",
+     "threats": [
+      "wall_slam",
+      "flip_landing"
+     ]
+    },
+    "src": "build.py:226"
+   },
+   {
+    "id": "connect128",
+    "op": "connect",
+    "target": "insert_w2~chassis_top",
+    "half": null,
+    "intent": {
+     "purpose": "assembly",
+     "reason": "heat-set insert melted into its bore",
+     "load_or_constraint": "press_fit; geometry",
+     "threats": [
+      "wall_slam",
+      "flip_landing"
+     ]
+    },
+    "src": "build.py:226"
+   },
+   {
+    "id": "connect129",
+    "op": "connect",
+    "target": "insert_w3~chassis_top",
+    "half": null,
+    "intent": {
+     "purpose": "assembly",
+     "reason": "heat-set insert melted into its bore",
+     "load_or_constraint": "press_fit; geometry",
+     "threats": [
+      "wall_slam",
+      "flip_landing"
+     ]
+    },
+    "src": "build.py:226"
    }
   ],
   "ground_game": {
