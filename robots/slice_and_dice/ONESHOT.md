@@ -31,3 +31,38 @@ Decisions: type lifter; body box trapezoid 70x84x22 mm, ramp 0; wheels 2 r11 out
 
 Likeness: aws64 0.10 (FAIL), aws72 0.08 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/slice_and_dice.aws64.webp` is declared `front` (IoU 0.10 there) but the model matches it better from front_left_iso (elevation ; [FAIL] likeness.view: `reference/slice_and_dice.aws72.webp` is declared `front` (IoU 0.08 there) but the model matches it better from front_right_iso (elevation
+
+## Round 4 (verification, helper 1)
+Blockers r3 -> r4: **45 -> 15** (`verify --tier inner`, full output in verify_r4.txt).
+Likeness (best silhouette IoU per photo, r3 -> r4): slice_and_dice.aws64.webp 0.101 -> 0.101, slice_and_dice.aws72.webp 0.082 -> 0.081
+
+What was done (script r4_h1, outside shape kept):
+- fake screw/bolt heads removed; detail mounts/arms merged into the print part they sit on; axle nuts became printed hub caps
+- printed parts of the chassis material declared one print (`fused_with`, a hidden 1.6 mm key where they only touched); overlaps inside the print trimmed
+- catalog parts: N20 gearmotors on the drive wheels (D-bore in the hub), LiPo, Malenki Nano (receiver + drive ESCs), brushless weapon ESC and outrunner for spinners, slide switch in a closed pocket above the belly skin, reached through an 8 x 4 mm slot underneath, steel locking pin through the weapon
+- pockets 0.25 mm per side round every bought part with 2 mm print walls, wheel/weapon running clearances <= 1.5 mm (no clearance cut where the kit rotor sits deep in the body: that would open the outside), hinge sweep clearances, shaft bores
+- big print parts hollowed (cavity = part eroded by the wall, checked >= 1 mm inside the skin, no cavity opens to the outside); wires with gauges and via points round rotors; print orientation, failsafe and weapon disable declared
+
+Notes from the run:
+- dm_wheel_l0: gearmotor pocket is only 88% inside the print (pocket opens the skin there)
+- dt_axle_wheel_l0 replaced by the gearmotor shaft
+- dm_wheel_r0: gearmotor pocket is only 88% inside the print (pocket opens the skin there)
+- dt_axle_wheel_r0 replaced by the gearmotor shaft
+- el_rx_esc: pocket wall only 1.0 mm
+- joint clamp sweeps 4.9 mm into chassis: too deep to clear without changing the look
+- chassis: hollowed (box wall round pockets), 72162 -> 42094 mm3
+- wire w_bat_sw: no via round the rotor found
+
+Left (one line each):
+- integrity.solids x2: tessellation of round/revolved shapes (open pole shells) or a boolean in the kit shape
+- likeness.view x2: looks (photo view label; not part of this pass)
+- likeness.silhouette x2: looks (not part of this pass; outside shape kept as round 3)
+- mass.over x1: outside shape (kept) is heavier than the class limit even with 2.5 mm shells
+- proxy.interference x1: parts overlap in the kit shape where a cut would change the look or leave a loose piece
+- proxy.sweep x1: moving part runs into the chassis more than a running clearance can take without changing the look
+- power.weapon_motor x1: toolchain: a servo/arm weapon is required to have a brushless kV motor like a spinner
+- process.weapon_printed x1: toolchain: printed lifter/flipper arms are judged like spinner teeth (metal inserts required)
+- electrical.battery_weapon_gap x1: battery pocket close to the weapon envelope; no other room inside the print
+- wire.render_wires x1: toolchain/process: the photo-match, diff and likeness sheets are written without a render record of the wire routes
+- wire.rotor_clearance x1: toolchain for lifters/flippers: the check revolves a limited-range arm a full turn, so no wire inside the chassis can clear it; for spinners: no free route found
+- battery.rotor_gap x1: toolchain for lifters: the arm's full-turn envelope is used, which covers the whole chassis
