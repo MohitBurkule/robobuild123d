@@ -22,7 +22,11 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "name": "blue terror",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "box": [
     86,
@@ -45,9 +49,5 @@
     0
    ]
   }
- ],
- "name": "blue terror",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }

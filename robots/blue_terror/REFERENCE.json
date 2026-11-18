@@ -6,5 +6,11 @@
  },
  "photos": [
   "blue-terror.aws72.webp"
- ]
+ ],
+ "view": {
+  "blue-terror.aws72.webp": "front_left_iso"
+ },
+ "elevation": {
+  "blue-terror.aws72.webp": 45
+ }
 }

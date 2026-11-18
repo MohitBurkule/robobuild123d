@@ -13,3 +13,9 @@ Likeness: aws72 0.79 (FAIL).
 Decisions: type wedge; body box rect 95x54x26 mm, ramp 0; wheels 6 r12 outboard; weapon none; extra parts: scoop.
 
 Likeness: aws72 0.81 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type wedge; body box rect 95x54x26 mm, ramp 0; wheels 6 r12 outboard; weapon none; extra parts: scoop.
+
+Likeness: aws72 0.60 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/blue-terror.aws72.webp` is declared `front_left_iso` (IoU 0.60 there) but the model matches it better from front_right_iso (ele
