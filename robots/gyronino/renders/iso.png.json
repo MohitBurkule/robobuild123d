@@ -1,6 +1,6 @@
 {
- "spec": "/tmp/work10_gyronino/robots/gyronino/spec.json",
- "rendered_at": 1795037611.581191,
+ "spec": "/home/antigravity/MohitBurkule/robobuild123d/robots/gyronino/spec.json",
+ "rendered_at": 1795043064.2707672,
  "bodies": [
   "chassis",
   "weapon",
@@ -23,18 +23,6 @@
   "lock_pin"
  ],
  "wires": {
-  "w_sw_wesc": {
-   "from": [
-    3.5,
-    -12.0,
-    5.115
-   ],
-   "to": [
-    -12.0,
-    -3.0,
-    24.615
-   ]
-  },
   "w_bat_sw": {
    "from": [
     -0.5,
