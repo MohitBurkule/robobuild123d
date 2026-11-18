@@ -20,20 +20,24 @@ from . import params as P
 
 
 def build_tub():
-    """Main dark-green 3D-printed chassis tub in world frame."""
+    """Main dark-green 3D-printed chassis tub with smooth curved top arch and curved front slope."""
     half_w = P.TUB_W / 2.0
-    # Side profile in YZ plane:
-    # Flat top deck from TUB_REAR_Y (-42) to TUB_DECK_END_Y (+22) at Z = TUB_TOP_Z (30),
-    # then sloped front wedge down to (TUB_FRONT_Y=34, Z=2) with a slight nose height.
-    profile_pts = [
-        (P.TUB_REAR_Y, P.GROUND_CLEARANCE),
-        (P.TUB_FRONT_Y, P.GROUND_CLEARANCE),
-        (P.TUB_FRONT_Y, 6.0),
-        (P.TUB_DECK_END_Y, P.TUB_TOP_Z),
-        (P.TUB_REAR_Y, P.TUB_TOP_Z),
+    # Smoothly curved top profile in YZ plane (matching Steve's arched green shell)
+    curve_pts = [
+        (P.TUB_REAR_Y, P.TUB_TOP_Z - 3.0),
+        (-22.0, P.TUB_TOP_Z - 0.3),
+        (-4.0, P.TUB_TOP_Z),
+        (14.0, P.TUB_TOP_Z - 2.2),
+        (26.0, P.TUB_TOP_Z - 9.0),
+        (P.TUB_FRONT_Y, 8.0),
     ]
     with BuildSketch(Plane.YZ) as sk:
-        Polygon(*profile_pts, align=None)
+        with BuildLine():
+            Line((P.TUB_REAR_Y, P.GROUND_CLEARANCE), (P.TUB_FRONT_Y, P.GROUND_CLEARANCE))
+            Line((P.TUB_FRONT_Y, P.GROUND_CLEARANCE), (P.TUB_FRONT_Y, 8.0))
+            Spline(*reversed(curve_pts))
+            Line((P.TUB_REAR_Y, P.TUB_TOP_Z - 3.0), (P.TUB_REAR_Y, P.GROUND_CLEARANCE))
+        make_face()
     tub = extrude(sk.sketch, amount=half_w, both=True)
 
     # Cut central flipper slot (X in [-SLOT_W/2, +SLOT_W/2], Y from SLOT_REAR_Y to TUB_FRONT_Y+2)
@@ -48,18 +52,17 @@ def build_tub():
     bay_w = half_w - P.SLOT_W / 2.0 - P.WALL_T * 2.0
     bay_len = (P.TUB_DECK_END_Y - 3.0) - (P.TUB_REAR_Y + P.WALL_T)
     bay_yc = (P.TUB_REAR_Y + P.WALL_T + P.TUB_DECK_END_Y - 3.0) / 2.0
-    bay_h = P.TUB_TOP_Z - P.GROUND_CLEARANCE - P.FLOOR_T + 1.0
+    bay_h = P.TUB_TOP_Z - P.GROUND_CLEARANCE - P.FLOOR_T - 4.0
     bay_zc = P.GROUND_CLEARANCE + P.FLOOR_T + bay_h / 2.0
     for s in (-1.0, 1.0):
         bay_xc = s * (P.SLOT_W / 2.0 + P.WALL_T + bay_w / 2.0)
         bay_cut = Box(bay_w, bay_len, bay_h).translate((bay_xc, bay_yc, bay_zc))
         tub = tub - bay_cut
 
-    # Wheel-guard mounting frame (boxy rear bracket + upper forward bar, matching reference.png)
+    # Wheel-guard mounting frame (standoffs + lower front wheel-arch shelf)
     boss_len = P.GUARD_X - half_w + 0.5
     boss_xc = half_w + boss_len / 2.0 - 0.25
     for s in (-1.0, 1.0):
-        # Upper and lower rear standoffs + front standoffs
         for dy in (-12.0, 12.0):
             for dz in (-8.0, 9.0):
                 boss = (
@@ -68,7 +71,6 @@ def build_tub():
                     .translate((s * boss_xc, P.WHEEL_Y + dy, P.AXLE_Z + dz))
                 )
                 tub = tub + boss
-        # Lower front wheel-arch shelf connecting chassis to guard
         shelf = Box(boss_len, 8.0, 2.5).translate(
             (s * boss_xc, P.WHEEL_Y + 11.0, P.AXLE_Z - 7.0)
         )
@@ -94,16 +96,37 @@ def build_tub():
 
 
 def build_lid(side: int = 1):
-    """Flat dark-green top deck lid (+1 = left/+X, -1 = right/-X) with 2 low-profile button-head screws."""
+    """Curved dark-green top deck lid (+1 = left/+X, -1 = right/-X) following the chassis arch with 2 screws."""
     lid_w = (P.TUB_W / 2.0) - (P.SLOT_W / 2.0) - 0.5
-    lid_len = P.TUB_DECK_END_Y - P.TUB_REAR_Y
-    lid = Box(lid_w, lid_len, P.LID_T)
-    for dy in (-lid_len / 2.0 + 4.5, lid_len / 2.0 - 4.5):
-        head = Cylinder(radius=2.3, height=0.7).translate(
-            (side * (lid_w / 2.0 - 4.5), dy, P.LID_T / 2.0 + 0.35)
+    lid_yc = (P.TUB_REAR_Y + P.TUB_DECK_END_Y) / 2.0
+    lid_zc = P.LID_Z + P.LID_T / 2.0
+    pts_bot = [
+        (P.TUB_REAR_Y - lid_yc, P.TUB_TOP_Z - 3.0 - lid_zc),
+        (-22.0 - lid_yc, P.TUB_TOP_Z - 0.3 - lid_zc),
+        (-4.0 - lid_yc, P.TUB_TOP_Z - lid_zc),
+        (14.0 - lid_yc, P.TUB_TOP_Z - 2.2 - lid_zc),
+        (P.TUB_DECK_END_Y - lid_yc, P.TUB_TOP_Z - 5.2 - lid_zc),
+    ]
+    pts_top = [(y, z + P.LID_T) for (y, z) in pts_bot]
+    with BuildSketch(Plane.YZ) as sk:
+        with BuildLine():
+            Line(pts_bot[0], pts_top[0])
+            Spline(*pts_top)
+            Line(pts_top[-1], pts_bot[-1])
+            Spline(*reversed(pts_bot))
+        make_face()
+    lid = extrude(sk.sketch, amount=lid_w / 2.0, both=True)
+    # 2 low-profile button-head screws at rear and front outer corners
+    screw_yz = [
+        (P.TUB_REAR_Y + 5.0 - lid_yc, P.TUB_TOP_Z - 2.2 - lid_zc + P.LID_T),
+        (P.TUB_DECK_END_Y - 4.5 - lid_yc, P.TUB_TOP_Z - 3.8 - lid_zc + P.LID_T),
+    ]
+    for sy, sz in screw_yz:
+        head = Cylinder(radius=2.3, height=0.9).translate(
+            (side * (lid_w / 2.0 - 4.5), sy, sz + 0.3)
         )
-        socket = Cylinder(radius=0.8, height=0.6).translate(
-            (side * (lid_w / 2.0 - 4.5), dy, P.LID_T / 2.0 + 0.6)
+        socket = Cylinder(radius=0.8, height=0.8).translate(
+            (side * (lid_w / 2.0 - 4.5), sy, sz + 0.6)
         )
         lid = lid + (head - socket)
     return lid
