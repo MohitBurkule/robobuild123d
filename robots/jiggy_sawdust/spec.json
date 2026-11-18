@@ -1,0 +1,248 @@
+{
+ "name": "jiggy sawdust",
+ "profile": "aws2025",
+ "robot_type": "other",
+ "locomotion": "wheels",
+ "kit_draft": true,
+ "parts": [
+  {
+   "id": "chassis",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -35.0,
+       0.0
+      ],
+      [
+       35.0,
+       0.0
+      ],
+      [
+       35.0,
+       1.5
+      ],
+      [
+       35.0,
+       55.0
+      ],
+      [
+       -35.0,
+       55.0
+      ]
+     ],
+     "height": 70.0
+    },
+    "at": [
+     0.0,
+     0.0,
+     -12.0
+    ],
+    "rot": [
+     90.0,
+     0.0,
+     90.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#d9dde0",
+   "print_orientation": "+z"
+  },
+  {
+   "id": "wheel_l0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 14.0,
+     "height": 8.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    39.5,
+    -10.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "wheel_r0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 14.0,
+     "height": 8.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -39.5,
+    -10.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "front_plate",
+   "kind": "wedge",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      80,
+      3,
+      30
+     ]
+    },
+    "at": [
+     0,
+     42,
+     0.0
+    ],
+    "rot": [
+     -35,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#9a9da2"
+  },
+  {
+   "id": "saw_blade",
+   "kind": "weapon",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      3,
+      70,
+      10
+     ]
+    },
+    "at": [
+     0,
+     -45,
+     26.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#2a2a2e",
+   "weapon": {
+    "kind": "saw"
+   },
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "pivot": [
+     0,
+     -20,
+     26.0
+    ],
+    "min": 0,
+    "max": 80,
+    "default": 0
+   }
+  }
+ ],
+ "fasteners": [],
+ "wires": [],
+ "connections": [],
+ "reference": [
+  {
+   "image": "reference/jiggy_sawdust.aws62.webp",
+   "mask": "reference/jiggy_sawdust.aws62_mask.png",
+   "view": "iso",
+   "approximate": true
+  },
+  {
+   "image": "reference/jiggy_sawdust.aws63.webp",
+   "mask": "reference/jiggy_sawdust.aws63_mask.png",
+   "view": "iso",
+   "approximate": true
+  }
+ ]
+}
