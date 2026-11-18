@@ -24,7 +24,7 @@ Likeness: aws72 0.28 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/alpha.aws72.webp` is declared `front` (IoU 0.28 there) but the model matches it better from rear (elevation 45, azimuth 270) (I
 
 ## Round 4 (verification, helper 2)
-Blockers r3 49 -> r4 12 (`verify --tier inner`).
+Blockers r3 49 -> r4 13 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -34,14 +34,17 @@ Fixed / changed (inside only, outside kept):
 - 4 wires declared (battery - switch - ESC - motors)
 - print orientation on every printed part, failsafe / weapon disable declared, design volumes declared where this pass changed a part on purpose
 - power switch on the floor of the body, slider facing down to a 7 x 3 mm slot in the underside (no slot on the top or sides; hollow cavities stay closed behind a wall at every outside face)
+- scoop sweeps through chassis: 9 of 12 poses not carved (they would open the outside face)
 - scoop sweeps through link_l at 34 poses: not carved (would change the outside)
 - scoop sweeps through link_r at 35 poses: not carved (would change the outside)
 - rod dt_axle_wheel_l0: 2.8 mm stub clear of ['dm_wheel_l0'] printed as the wheel's hub boss
 - rod dt_axle_wheel_r0: 2.8 mm stub clear of ['dm_wheel_r0'] printed as the wheel's hub boss
-- hollowed chassis (wall 2.5, form 0): 216.3 -> 73.8 cm3
+- chassis: 3 of 11 cuts dropped (they broke the solid: 2)
+- hollowed chassis (wall 2.5, form 0): 216.3 -> 76.0 cm3
 
 Left (and why):
-- proxy.sweep x1: joint `scoop`: `scoop` hits `link_l` 0.51 mm deep at 7.3 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint scoop` lists the closest approach to every part.
+- proxy.interference x1: `chassis` and `scoop` overlap by 0.91 mm (allowed 0.08).
+- proxy.sweep x1: joint `scoop`: `scoop` hits `chassis` 0.91 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint scoop` lists the closest approach to every part.
 - power.weapon_motor x1: toolchain: lifters/flippers are servo or gear driven; the check wants a brushless kV for every weapon.
 - process.weapon_printed x1: toolchain: a printed lifter/flipper arm is judged like a spinner (needs hardened teeth); adding metal teeth changes the look.
 - electrical.battery_weapon_gap x1: toolchain: a limited-range arm is judged as a full revolution about its pivot; that cylinder covers the whole chassis.
