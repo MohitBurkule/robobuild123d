@@ -1,0 +1,12 @@
+{
+ "robot_type": "horizontal_spinner",
+ "wheels": 2,
+ "weapon": {
+  "kind": "disc",
+  "axis": "z",
+  "teeth": 1
+ },
+ "photos": [
+  "gargantua.aws67.webp"
+ ]
+}

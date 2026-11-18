@@ -1,0 +1,12 @@
+{
+ "spec": "/tmp/work10_gargantua/robots/gargantua/spec.json",
+ "rendered_at": 1795022063.5557425,
+ "bodies": [
+  "chassis",
+  "weapon",
+  "wheel_l0",
+  "wheel_r0",
+  "lid"
+ ],
+ "wires": {}
+}
