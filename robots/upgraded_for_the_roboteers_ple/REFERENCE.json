@@ -1,0 +1,11 @@
+{
+ "robot_type": "other",
+ "wheels": 2,
+ "weapon": {
+  "kind": "axe",
+  "axis": "x"
+ },
+ "photos": [
+  "upgraded_for_the_roboteers_pleasure.aws67.webp"
+ ]
+}
