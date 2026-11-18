@@ -1,37 +1,37 @@
-BLOCKERS: 12
-  [cached] integrity 0.00s
-  [cached] mass 0.00s
-  [proxy] interference 0.13s
-  [cached] connections 0.00s
-  [cached] legal 0.00s
-  [cached] fasteners 0.00s
-  [cached] power 0.00s
-  [cached] tension 0.00s
-  [cached] targets 0.00s
-  [cached] fight 0.00s
-  [cached] shape 0.00s
-  [cached] dynamics 0.00s
-  [cached] strength 0.00s
-  [cached] printability 0.00s
-  [cached] process 0.00s
-  [cached] electrical 0.00s
-  [cached] combat 0.00s
-  [cached] physics 0.00s
-  [cached] plausibility 0.00s
-  [cached] cots 0.00s
-  [cached] fit 0.00s
-  [cached] bom 0.00s
-  [cached] wire_review 0.00s
-  [cached] fastener_record 0.00s
-  [cached] likeness 0.00s
-  [cached] drive_recess 0.00s
-  [cached] belt_wrap 0.00s
-  [cached] retention 0.00s
-  [cached] waiver_audit 0.00s
-  [cached] geom 0.01s
-  [cached] dfm 0.00s
-  [cached] realworld 0.00s
-failure to launch: ok=False 12 blockers in 12 root causes, mass 117.6/150 g
+BLOCKERS: 11
+  [ran] integrity 0.11s
+  [ran] mass 0.00s
+  [proxy] interference 103.29s
+  [ran] connections 12.33s
+  [ran] legal 0.02s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.01s
+  [ran] fight 0.06s
+  [ran] shape 3.54s
+  [ran] dynamics 0.03s
+  [ran] strength 0.00s
+  [ran] printability 4.65s
+  [ran] process 0.00s
+  [ran] electrical 0.05s
+  [ran] combat 0.36s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.61s
+  [ran] bom 0.04s
+  [ran] wire_review 0.18s
+  [ran] fastener_record 0.00s
+  [ran] likeness 79.45s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.02s
+  [ran] waiver_audit 0.00s
+  [ran] geom 2.21s
+  [ran] dfm 0.68s
+  [ran] realworld 0.41s
+failure to launch: ok=False 11 blockers in 11 root causes, mass 116.1/150 g
 1. [proxy.interference] `top_arm` and `dt_strut_top_arm` overlap by 0.78 mm (allowed 0.08).
    | top_arm: x -15.00..15.00  y 1.80..78.20  z 17.11..38.89  size 30.00 x 76.41 x 21.78 mm
    |   centre (0.00, 40.00, 28.00), volume 7020.0 mm3
@@ -62,32 +62,30 @@ failure to launch: ok=False 12 blockers in 12 root causes, mass 117.6/150 g
    |   gap to `chassis` 1.11 mm
 6. [electrical.switch_in_series] Loads reach the battery without passing the switch: no switch part at all.
    fix: Route every power wire through the switch.
-7. [wire.render_wires] 7 of 7 robot render(s) do not draw all 3 wires: renders/diff_ftl.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/iso.png: rendered without wires (checks off or no routes); renders/likeness_ftl_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_ftl.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/pick_ftl.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_ftl.png: no render record (`<png>.json`), so nothing says the wires were drawn
-   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
-8. [wire.rotor_clearance] wire `w_sw_esc` passes -0.9 mm from the volume swept by the `top_arm` rotor (top_arm) at [0.0, 18.0, -3.0].
+7. [wire.rotor_clearance] wire `w_sw_esc` passes -0.9 mm from the volume swept by the `top_arm` rotor (top_arm) at [0.0, 18.0, -3.0].
    fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
    | top_arm: x -15.00..15.00  y 1.80..78.20  z 17.11..38.89  size 30.00 x 76.41 x 21.78 mm
    |   centre (0.00, 40.00, 28.00), volume 7020.0 mm3
    |   joint revolute axis [1, 0, 0] pivot [0, 2, 18.0] range 0..80 default 0
    |   OVERLAP `dt_strut_top_arm` 0.78 mm (allowed 0.08)
    |   gap to `chassis` 1.11 mm
-9. [wire.rotor_clearance] wire `w_m1` passes -0.7 mm from the volume swept by the `top_arm` rotor (top_arm) at [11.0, 10.0, 6.5].
+8. [wire.rotor_clearance] wire `w_m1` passes -0.7 mm from the volume swept by the `top_arm` rotor (top_arm) at [11.0, 10.0, 6.5].
    fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
    | top_arm: x -15.00..15.00  y 1.80..78.20  z 17.11..38.89  size 30.00 x 76.41 x 21.78 mm
    |   centre (0.00, 40.00, 28.00), volume 7020.0 mm3
    |   joint revolute axis [1, 0, 0] pivot [0, 2, 18.0] range 0..80 default 0
    |   OVERLAP `dt_strut_top_arm` 0.78 mm (allowed 0.08)
    |   gap to `chassis` 1.11 mm
-10. [wire.rotor_clearance] wire `w_m2` passes -0.7 mm from the volume swept by the `top_arm` rotor (top_arm) at [-12.0, 10.0, 6.5].
+9. [wire.rotor_clearance] wire `w_m2` passes -0.7 mm from the volume swept by the `top_arm` rotor (top_arm) at [-12.0, 10.0, 6.5].
    fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
    | top_arm: x -15.00..15.00  y 1.80..78.20  z 17.11..38.89  size 30.00 x 76.41 x 21.78 mm
    |   centre (0.00, 40.00, 28.00), volume 7020.0 mm3
    |   joint revolute axis [1, 0, 0] pivot [0, 2, 18.0] range 0..80 default 0
    |   OVERLAP `dt_strut_top_arm` 0.78 mm (allowed 0.08)
    |   gap to `chassis` 1.11 mm
-11. [likeness.silhouette] `reference/ftl.webp`: best silhouette IoU 0.68 at camera front_left_iso (elevation 45, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.74). Regions (photo frame, left third first) 0.47 / 0.78 / 0.69: worst = front third. Height/length 0.96 model vs 0.96 photo (proportions ok).
+10. [likeness.silhouette] `reference/ftl.webp`: best silhouette IoU 0.68 at camera front_left_iso (elevation 45, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.74). Regions (photo frame, left third first) 0.47 / 0.79 / 0.69: worst = front third. Height/length 0.96 model vs 0.96 photo (proportions ok).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
-12. [battery.rotor_gap] `el_battery` is 0.0 mm from the volume swept by `top_arm`.
+11. [battery.rotor_gap] `el_battery` is 0.0 mm from the volume swept by `top_arm`.
    fix: Move the battery or add a wall.
    | el_battery: x -13.99..14.01  y -1.98..16.02  z -7.99..2.01  size 28.00 x 18.00 x 10.00 mm
    |   centre (0.01, 7.02, -2.99), volume 5040.0 mm3
@@ -95,4 +93,4 @@ failure to launch: ok=False 12 blockers in 12 root causes, mass 117.6/150 g
    |   gap to `chassis` 0.25 mm
    |   gap to `flip_arm_l` 0.25 mm
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: group 31 hit / 0 miss, min_gap 14 hit / 0 miss, overlap 209 hit / 0 miss, part_geom 13 hit / 0 miss
+cache: part_geom 0 hit / 13 miss

@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_failure_to_launch/robots/failure_to_launch/spec.json",
- "rendered_at": 1795035110.8016086,
+ "rendered_at": 1795038331.7453556,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -9,16 +9,49 @@
   "flip_arm_r",
   "top_arm",
   "dt_hub_wheel_l0",
-  "dt_axle_wheel_l0",
-  "dt_nut_wheel_l0",
   "dt_hub_wheel_r0",
-  "dt_axle_wheel_r0",
-  "dt_nut_wheel_r0",
-  "dt_screw_0",
-  "dt_screw_1",
-  "dt_screw_2",
-  "dt_screw_3",
-  "dt_strut_top_arm"
+  "dt_strut_top_arm",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_rx_esc"
  ],
- "wires": {}
+ "wires": {
+  "w_sw_esc": {
+   "from": [
+    0.013,
+    18.017,
+    -2.989
+   ],
+   "to": [
+    -11.987,
+    2.0170000000000003,
+    6.511
+   ]
+  },
+  "w_m1": {
+   "from": [
+    11.013,
+    10.017,
+    6.511
+   ],
+   "to": [
+    1.5999999999999996,
+    -10.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -11.987,
+    10.017,
+    6.511
+   ],
+   "to": [
+    -1.5999999999999996,
+    -10.000000000000002,
+    0.0
+   ]
+  }
+ }
 }
