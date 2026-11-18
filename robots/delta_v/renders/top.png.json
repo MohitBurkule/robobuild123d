@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_delta_v/robots/delta_v/spec.json",
- "rendered_at": 1795026794.5600429,
+ "rendered_at": 1795038204.905183,
  "bodies": [
   "pod_l",
   "pod_r",
@@ -11,22 +11,84 @@
   "fork_0",
   "fork_1",
   "dt_hub_wheel_l0",
-  "dt_axle_wheel_l0",
-  "dt_nut_wheel_l0",
   "dt_hub_wheel_r0",
-  "dt_axle_wheel_r0",
-  "dt_nut_wheel_r0",
-  "dt_screw_0",
-  "dt_screw_1",
-  "dt_screw_2",
-  "dt_screw_3",
-  "dt_screw_4",
-  "dt_screw_5",
   "dt_shaft_weapon",
   "dt_mount_fork_0",
-  "dt_bolt_fork_0",
   "dt_mount_fork_1",
-  "dt_bolt_fork_1"
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_esc",
+  "el_wesc",
+  "el_switch",
+  "weapon_motor",
+  "fs_bolt_fork_0",
+  "fs_bolt_fork_1",
+  "fs_screw_0",
+  "fs_screw_1",
+  "fs_screw_4",
+  "fs_screw_5"
  ],
- "wires": {}
+ "wires": {
+  "w_sw_wesc": {
+   "from": [
+    30.5,
+    -18.5,
+    -6.0
+   ],
+   "to": [
+    -23.5,
+    -3.5,
+    18.0
+   ]
+  },
+  "w_wm": {
+   "from": [
+    -23.5,
+    -0.5,
+    -5.0
+   ],
+   "to": [
+    -32.5,
+    -32.484,
+    23.5
+   ]
+  },
+  "w_m1": {
+   "from": [
+    22.5,
+    10.5,
+    11.5
+   ],
+   "to": [
+    19.5,
+    -50.0,
+    8.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    22.5,
+    -21.5,
+    11.5
+   ],
+   "to": [
+    -19.5,
+    -50.0,
+    8.0
+   ]
+  },
+  "w_sig_wesc": {
+   "from": [
+    22.5,
+    10.5,
+    -0.5
+   ],
+   "to": [
+    -23.5,
+    2.5,
+    18.0
+   ]
+  }
+ }
 }

@@ -1,39 +1,40 @@
-BLOCKERS: 42
-  [ran] integrity 0.08s
-  [proxy] wiring 0.01s
+BLOCKERS: 43
+building 3 changed part solids on 3 processes
+  [ran] integrity 0.09s
+  [proxy] wiring 0.00s
   [ran] mass 0.00s
-  [proxy] interference 0.26s
-  [ran] connections 0.00s
-  [ran] legal 0.01s
-  [ran] fasteners 0.01s
+  [proxy] interference 17.02s
+  [ran] connections 0.84s
+  [ran] legal 0.03s
+  [ran] fasteners 0.08s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
   [ran] fight 0.02s
-  [ran] shape 0.08s
+  [ran] shape 0.34s
   [ran] dynamics 0.00s
-  [ran] strength 0.00s
-  [ran] printability 1.56s
+  [ran] strength 0.03s
+  [ran] printability 1.29s
   [ran] process 0.01s
   [ran] electrical 0.01s
-  [ran] combat 0.25s
+  [ran] combat 0.21s
   [ran] physics 0.00s
-  [proxy] assembly 0.32s
+  [proxy] assembly 0.24s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
-  [ran] fit 0.02s
+  [ran] fit 0.09s
   [ran] bom 0.00s
   [ran] wire_review 0.03s
   [ran] fastener_record 0.00s
-  [ran] likeness 4.16s
+  [ran] likeness 10.39s
   [ran] drive_recess 0.03s
   [ran] belt_wrap 0.00s
   [ran] retention 0.00s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.08s
-  [ran] dfm 0.01s
-  [ran] realworld 0.13s
-Delta V: ok=False 42 blockers in 38 root causes, mass 413.6/225 g
+  [ran] geom 0.15s
+  [ran] dfm 0.18s
+  [ran] realworld 0.16s
+Delta V: ok=False 43 blockers in 39 root causes, mass 411.8/225 g
 1. [process.geometry] `weapon` (laser): 4 planar levels along the plate normal (0.00, 15.00, 19.00, 34.00 mm): a blind pocket, step or a feature standing proud of the plate; a cut part has exactly two faces. (+2 consequences)
    fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
    | weapon: x -17.00..17.00  y -39.59..32.53  z 5.00..78.06  size 34.00 x 72.12 x 73.06 mm
@@ -68,23 +69,23 @@ Delta V: ok=False 42 blockers in 38 root causes, mass 413.6/225 g
    fix: Run the full `wiring` group to re-route it.
 10. [proxy.wiring] Wire `w_wm` (`el_wesc.motor` to `weapon_motor.phases`): no baseline route (run the full `wiring` group once and pass its report).
    fix: Run the full `wiring` group to re-route it.
-11. [mass.over] 413.6 g (range 376.4 to 450.8 g) against the 225 g limit; 7.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+11. [mass.over] 411.8 g (range 374.9 to 448.6 g) against the 225 g limit; 7.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
 12. [proxy.interference] `pod_l` and `fs_bolt_fork_1` overlap by 0.84 mm (allowed 0.08).
    | pod_l: x 19.00..47.00  y -60.00..60.00  z -13.00..27.00  size 28.00 x 120.00 x 40.00 mm
-   |   centre (33.00, 0.00, 7.00), volume 31221.7 mm3
+   |   centre (33.00, 0.00, 7.00), volume 30628.6 mm3
    |   overlap allowed `dt_mount_fork_1` 2.45 mm (allowed inf)
    |   overlap allowed `fs_screw_0` 0.88 mm (allowed inf)
    |   overlap allowed `fs_screw_1` 0.88 mm (allowed inf)
-... 26 more root causes (fix these first, then re-run)
+... 27 more root causes (fix these first, then re-run)
 MASS BUDGET:
-  mass 413.6 g of 225 g (-188.6 g margin)
+  mass 411.8 g of 225 g (-186.8 g margin)
     weapon                    233.94 g  fills 17% of its box
-    pod_r                      31.64 g  fills 25% of its box
-    pod_l                      29.72 g  fills 23% of its box
+    pod_r                      30.87 g  fills 24% of its box
+    pod_l                      29.16 g  fills 23% of its box
     weapon_motor               23.00 g  fills 61% of its box  <- solid block? a tub should be a shell
     el_battery                 21.50 g  fills 100% of its box  <- solid block? a tub should be a shell
-    bridge                     17.99 g  fills 25% of its box
+    bridge                     17.47 g  fills 24% of its box
     dm_wheel_l0                 9.50 g  fills 63% of its box
     dm_wheel_r0                 9.50 g  fills 63% of its box
     wheel_r0                    6.45 g  fills 66% of its box
@@ -105,6 +106,6 @@ MASS BUDGET:
     fs_screw_1                  0.23 g  fills 29% of its box
     fs_screw_4                  0.23 g  fills 29% of its box
     fs_screw_5                  0.23 g  fills 29% of its box
-    mass.over: 413.6 g (range 376.4 to 450.8 g) against the 225 g limit; 7.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.over: 411.8 g (range 374.9 to 448.6 g) against the 225 g limit; 7.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: distance 12 hit / 0 miss, group 0 hit / 31 miss, inside 33 hit / 0 miss, likeness 3 hit / 0 miss, min_gap 25 hit / 7 miss, overlap 353 hit / 11 miss, part_check 12 hit / 0 miss, part_geom 26 hit / 0 miss, ray 162 hit / 0 miss
+cache: distance 10 hit / 2 miss, group 0 hit / 31 miss, inside 14 hit / 19 miss, likeness 3 hit / 0 miss, min_gap 12 hit / 20 miss, overlap 178 hit / 186 miss, part_check 9 hit / 3 miss, part_geom 26 hit / 0 miss, ray 96 hit / 66 miss

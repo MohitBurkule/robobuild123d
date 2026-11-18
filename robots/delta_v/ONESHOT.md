@@ -8,7 +8,7 @@ Decisions: type vertical_spinner; body twin_pods rect 120x94x40 mm, ramp 65; whe
 Likeness: aws72 0.73 (FAIL), aws74 0.68 (FAIL), aws76 0.74 (FAIL).
 
 ## Round 4 (verification, helper 2)
-Blockers r3 99 -> r4 42 (`verify --tier inner`).
+Blockers r3 99 -> r4 43 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -21,9 +21,9 @@ Fixed / changed (inside only, outside kept):
 - looks FROZEN (approved): no outside change at all; every cut that would have opened an outside face was skipped (outside-face audit: 0 mm2 opened), no switch slot, no locking pin; screw heads of the photo are now real M2 button-head screws at the same spots
 - weapon drive: motor not coaxial, belt drive implied
 - weapon: no locking pin added (looks frozen: a visible pin would change the outside)
-- pod_l: a cut was not made (looks frozen: it would open 189 mm2 of outside face)
-- pod_l: a cut was not made (looks frozen: it would open 5 mm2 of outside face)
-- pod_r: a cut was not made (looks frozen: it would open 42 mm2 of outside face)
+- pod_l: a cut was not made (it would open 189 mm2 of outside face; the overlap stays as a finding)
+- pod_l: a cut was not made (it would open 5 mm2 of outside face; the overlap stays as a finding)
+- pod_r: a cut was not made (it would open 42 mm2 of outside face; the overlap stays as a finding)
 - weapon: running-clearance well in bridge not carved (it would open 1548 mm2 of outside face)
 - dt_bolt_fork_0: real 6 mm M2 button-head screw into dt_mount_fork_0
 - dt_bolt_fork_1: real 6 mm M2 button-head screw into dt_mount_fork_1
@@ -56,13 +56,14 @@ Left (and why):
 - legal.locking_bar x1: Rule 5f: every spinner needs a locking bar that physically stops the weapon from turning.
 - legal.footprint x1: Smallest square that holds the robot is 158.0 mm; the limit is 150 mm with no overhang at any height.
 - power.runtime x1: 350 mAh x 80% usable lasts about 3.4 min of fighting (per 3 min fight: drive 49 mAh, weapon spin-ups and hold 192 mAh, electronics 5 mAh = 246 mAh). A fight is 3 min and the pack must cover it with 25
-- dynamics.balance x1: `weapon` mass centre is 0.322 mm off the spin axis: grade G651.9 at 19320 rpm, a 309 N rotating load on the bearings and frame. That is 76.0x the robot's weight. It will shake the robot and the bearin
+- dynamics.balance x1: `weapon` mass centre is 0.322 mm off the spin axis: grade G651.9 at 19320 rpm, a 309 N rotating load on the bearings and frame. That is 76.4x the robot's weight. It will shake the robot and the bearin
 - process.geometry x3: `weapon` (laser): 4 planar levels along the plate normal (0.00, 15.00, 19.00, 34.00 mm): a blind pocket, step or a feature standing proud of the plate; a cut part has exactly two faces.
 - mfg.stock x1: `weapon` (laser): thickness 34.00 mm is not a stock steel gauge (0.5, 0.8, 1, 1.2, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10); nearest 10 mm.
 - physics.runtime x1: ~160 s at ~6.3 A average from 350 mAh; a fight is 180 s.
 - proxy.assembly x10: `pod_r`: the baseline teardown never took it off.
 - wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
 - wire.rotor_clearance x3: toolchain: same full-revolution assumption; wires cannot leave a cylinder that covers the chassis.
+- wire.render_count x1: iso.png: 5 routes vs 7 spec wires (missing ['w_bat_sw', 'w_sw_esc']); top.png: 5 routes vs 7 spec wires (missing ['w_bat_sw', 'w_sw_esc'])
 - likeness.silhouette x3: looks, not in scope for this pass.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): delta_v.aws72.webp 0.73 -> 0.73; delta_v.aws74.webp 0.68 -> 0.68; delta_v.aws76.webp 0.74 -> 0.74
