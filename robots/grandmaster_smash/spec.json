@@ -2,7 +2,7 @@
  "name": "grandmaster smash",
  "profile": "aws2025",
  "robot_type": "other",
- "locomotion": "wheels",
+ "locomotion": "roller",
  "kit_draft": true,
  "parts": [
   {
