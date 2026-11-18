@@ -9,11 +9,14 @@
   "brisk.aws76.webp"
  ],
  "view": {
-  "brisk.aws76.webp": "front_left_iso",
+  "brisk.aws76.webp": "front_right_iso",
   "brisk.aws78.webp": "front_left_iso"
  },
  "elevation": {
-  "brisk.aws76.webp": 45,
+  "brisk.aws76.webp": 25,
   "brisk.aws78.webp": 45
+ },
+ "view_source": {
+  "brisk.aws76.webp": "user camera pick (azimuth 60, elevation 25); replaces the automatic label"
  }
 }

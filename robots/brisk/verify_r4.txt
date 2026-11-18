@@ -1,37 +1,37 @@
-BLOCKERS: 8
+BLOCKERS: 7
   [cached] integrity 0.00s
   [cached] mass 0.00s
-  [proxy] interference 0.08s
-  [cached] connections 0.00s
+  [proxy] interference 0.19s
+  [cached] connections 0.01s
   [cached] legal 0.00s
   [cached] fasteners 0.00s
   [cached] power 0.00s
   [cached] tension 0.00s
   [cached] targets 0.00s
   [cached] fight 0.00s
-  [cached] shape 0.00s
+  [cached] shape 0.01s
   [cached] dynamics 0.00s
   [cached] strength 0.00s
-  [cached] printability 0.00s
+  [cached] printability 0.02s
   [cached] process 0.00s
-  [cached] electrical 0.00s
+  [cached] electrical 0.02s
   [cached] combat 0.00s
   [cached] physics 0.00s
   [cached] plausibility 0.00s
   [cached] cots 0.00s
   [cached] fit 0.00s
-  [cached] bom 0.00s
+  [cached] bom 0.02s
   [cached] wire_review 0.00s
   [cached] fastener_record 0.00s
-  [cached] likeness 0.00s
+  [ran] likeness 5.73s
   [cached] drive_recess 0.00s
-  [cached] belt_wrap 0.00s
+  [cached] belt_wrap 0.01s
   [cached] retention 0.00s
   [cached] waiver_audit 0.00s
   [cached] geom 0.00s
   [cached] dfm 0.00s
-  [cached] realworld 0.00s
-brisk: ok=False 8 blockers in 8 root causes, mass 143.7/150 g
+  [cached] realworld 0.01s
+brisk: ok=False 7 blockers in 7 root causes, mass 143.7/150 g
 1. [proxy.sweep] joint `flipper`: `flipper` hits `chassis` 0.23 mm deep at 7.3 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint flipper` lists the closest approach to every part.
    | flipper: x -3.00..3.00  y -27.72..23.72  z 21.15..58.85  size 6.00 x 51.44 x 37.69 mm
    |   centre (0.00, -2.00, 40.00), volume 1440.0 mm3
@@ -68,9 +68,7 @@ brisk: ok=False 8 blockers in 8 root causes, mass 143.7/150 g
    |   joint revolute axis [1, 0, 0] pivot [0, -25, 32.0] range 0..80 default 0
    |   gap to `chassis` 0.00 mm (touching)
    |   gap to `lid` 0.00 mm (touching)
-7. [likeness.view] `reference/brisk.aws76.webp` is declared `front_left_iso` (IoU 0.58 there) but the model matches it better from front_right_iso (elevation 25, azimuth 30) (IoU 0.77).
-   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
-8. [likeness.silhouette] `reference/brisk.aws76.webp`: best silhouette IoU 0.58 at camera front_left_iso (elevation 45, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.72). Regions (photo frame, left third first) 0.58 / 0.63 / 0.48: worst = rear third. Height/length 0.93 model vs 0.59 photo (too tall: lower it or lengthen it).
+7. [likeness.silhouette] `reference/brisk.aws76.webp`: best silhouette IoU 0.77 at camera front_right_iso (elevation 25, azimuth 30) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.77). Regions (photo frame, left third first) 0.74 / 0.77 / 0.81: worst = front third. Height/length 0.70 model vs 0.59 photo (too tall: lower it or lengthen it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
   mass 143.7 g of 150 g (+6.3 g margin)
@@ -88,4 +86,4 @@ MASS BUDGET:
     el_switch                   0.50 g  fills 100% of its box
     mass.may_be_over: 143.7 g (range 116.5 to 170.9 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: group 31 hit / 0 miss, min_gap 20 hit / 0 miss, overlap 160 hit / 0 miss, part_geom 12 hit / 0 miss
+cache: group 30 hit / 1 miss, inside 7 hit / 0 miss, likeness 0 hit / 1 miss, min_gap 20 hit / 0 miss, overlap 160 hit / 0 miss, part_geom 12 hit / 0 miss
