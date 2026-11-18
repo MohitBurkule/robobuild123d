@@ -20,3 +20,9 @@ Decisions: type wedge; body box rect 74x58x26 mm, ramp 0; wheels 4 r13 outboard;
 
 Likeness: aws63 0.70 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/surprisefuthermucker.aws63.webp` is declared `front_left_iso` (IoU 0.70 there) but the model matches it better from front (elev
+
+## Round 3d (user camera picks batch 2 + shape remarks applied; round 4 to be re-run on the new outside)
+Decisions: type vertical_spinner; body box rect 74x58x26 mm, ramp 0; wheels 4 r13 outboard; weapon disc r17 axis x teeth 2; extra parts: lid.
+
+Likeness: aws63 0.71 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/surprisefuthermucker.aws63.webp` is declared `front_right_iso` (IoU 0.71 there) but the model matches it better from front (ele

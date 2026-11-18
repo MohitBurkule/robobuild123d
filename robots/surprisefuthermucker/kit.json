@@ -1,5 +1,5 @@
 {
- "robot_type": "wedge",
+ "robot_type": "vertical_spinner",
  "body": {
   "length": 74,
   "width": 58,
@@ -18,13 +18,20 @@
  "colors": {
   "body": "#f08a1c",
   "wheel": "#f07a1c",
-  "weapon": "#c9cdd3",
+  "weapon": "#3a3d44",
   "fork": "#c9cdd3"
  },
  "textured": [],
  "name": "surprisefuthermucker",
  "weapon": {
-  "kind": "none"
+  "kind": "disc",
+  "radius": 17,
+  "width": 4,
+  "y": 6,
+  "teeth": 2,
+  "z": 20,
+  "axis": "x",
+  "x": 8
  },
  "macros": [
   {

@@ -1,8 +1,9 @@
 {
  "spec": "/tmp/work10_surprisefuthermucker/robots/surprisefuthermucker/spec.json",
- "rendered_at": 1795026264.0154812,
+ "rendered_at": 1795038103.7412045,
  "bodies": [
   "chassis",
+  "weapon",
   "wheel_l0",
   "wheel_r0",
   "wheel_l1",
@@ -23,7 +24,8 @@
   "dt_screw_0",
   "dt_screw_1",
   "dt_screw_2",
-  "dt_screw_3"
+  "dt_screw_3",
+  "dt_shaft_weapon"
  ],
  "wires": {}
 }
