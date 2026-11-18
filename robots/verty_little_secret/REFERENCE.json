@@ -1,6 +1,12 @@
 {
  "robot_type": "vertical_spinner",
- "weapon": "central vertical disc on BE1806 motor",
+ "weapon": {
+  "kind": "disc",
+  "axis": "x",
+  "position": "middle",
+  "width_frac": 0.3,
+  "teeth": 3
+ },
  "wheels": 2,
  "source": "read from reference photos by Sonnet"
 }
