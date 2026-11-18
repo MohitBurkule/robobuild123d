@@ -8,11 +8,11 @@
  },
  "wheels": {
   "n": 4,
-  "radius": 13,
+  "radius": 14,
   "width": 9,
   "y": [
-   -28,
-   22
+   -30,
+   26
   ]
  },
  "colors": {
@@ -21,7 +21,11 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "name": "speed demon",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "box": [
     96,
@@ -43,8 +47,12 @@
    ]
   }
  ],
- "name": "speed demon",
- "weapon": {
-  "kind": "none"
+ "forks": {
+  "n": 2,
+  "length": 24,
+  "width": 8,
+  "spread": 60,
+  "tilt_deg": 20,
+  "taper": true
  }
 }
