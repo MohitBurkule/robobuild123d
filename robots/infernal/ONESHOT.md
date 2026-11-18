@@ -18,3 +18,9 @@ Likeness: aws71 0.83 (ok).
 Decisions: type lifter; body box rect 100x100x36 mm, ramp 42; wheels 2 r13 inboard; weapon none; extra parts: front_plate, top_plate, horn; photos skipped (cluttered): indices [0].
 
 Likeness: aws71 0.83 (ok).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type lifter; body box rect 100x100x36 mm, ramp 42; wheels 2 r13 inboard; weapon none; extra parts: front_plate, top_plate, horn; photos skipped (cluttered): indices [0].
+
+Likeness: aws71 0.60 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/infernal.aws71.webp` is declared `front_left_iso` (IoU 0.60 there) but the model matches it better from rear_right_iso (elevati

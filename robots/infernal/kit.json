@@ -21,7 +21,14 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "skip_photos": [
+  0
+ ],
+ "name": "infernal",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "box": [
     84,
@@ -93,12 +100,5 @@
    "id": "horn",
    "color": "#dfeee6"
   }
- ],
- "skip_photos": [
-  0
- ],
- "name": "infernal",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }
