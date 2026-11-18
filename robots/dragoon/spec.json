@@ -11966,7 +11966,7 @@
   {
    "image": "reference/dragoon.aws74.webp",
    "mask": "reference/dragoon.aws74_mask.png",
-   "view": "iso",
+   "view": "rear_right_iso",
    "approximate": true
   },
   {
