@@ -1,0 +1,57 @@
+{
+ "robot_type": "wedge",
+ "body": {
+  "length": 90,
+  "width": 82,
+  "height": 28,
+  "ramp": 30
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 11,
+  "width": 8,
+  "y": [
+   -26,
+   10
+  ],
+  "outside": false
+ },
+ "colors": {
+  "body": "#d9dde0",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "box": [
+    86,
+    3,
+    34
+   ],
+   "at": [
+    0,
+    36,
+    14
+   ],
+   "kind": "wedge",
+   "material": "aluminium",
+   "process": "laser",
+   "id": "front_plate",
+   "color": "#b9bdc2",
+   "rot": [
+    -45,
+    0,
+    0
+   ]
+  }
+ ],
+ "textured": [
+  0,
+  1
+ ],
+ "name": "push comes to shove",
+ "weapon": {
+  "kind": "none"
+ }
+}

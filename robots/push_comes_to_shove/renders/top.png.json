@@ -1,0 +1,13 @@
+{
+ "spec": "/tmp/work10_push_comes_to_shove/robots/push_comes_to_shove/spec.json",
+ "rendered_at": 1795022403.8144674,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "wheel_l1",
+  "wheel_r1",
+  "front_plate"
+ ],
+ "wires": {}
+}
