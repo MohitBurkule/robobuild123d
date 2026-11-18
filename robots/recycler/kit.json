@@ -30,22 +30,6 @@
   "weapon": "#3a3d40",
   "fork": "#c9cdd3"
  },
- "extras": [
-  {
-   "box": [
-    60,
-    30,
-    6
-   ],
-   "at": [
-    0,
-    -5,
-    39
-   ],
-   "id": "lid",
-   "color": "#2a2e2c"
-  }
- ],
  "skip_photos": [
   0,
   1
@@ -60,5 +44,21 @@
    "teeth": 2
   }
  },
- "name": "recycler"
+ "name": "recycler",
+ "macros": [
+  {
+   "box": [
+    60,
+    30,
+    6
+   ],
+   "at": [
+    0,
+    -5,
+    39
+   ],
+   "id": "lid",
+   "color": "#2a2e2c"
+  }
+ ]
 }

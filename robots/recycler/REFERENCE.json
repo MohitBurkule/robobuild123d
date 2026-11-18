@@ -9,5 +9,15 @@
  },
  "photos": [
   "recycler.aws67.webp"
- ]
+ ],
+ "view": {
+  "recycler.aws65.webp": "front",
+  "recycler.aws66.webp": "front",
+  "recycler.aws67.webp": "front_left_iso"
+ },
+ "elevation": {
+  "recycler.aws65.webp": 45,
+  "recycler.aws66.webp": 45,
+  "recycler.aws67.webp": 45
+ }
 }

@@ -10,3 +10,9 @@
 Decisions: type drum; body box rect 62x112x34 mm, ramp 0; wheels 2 r17 outboard; weapon drum r15 axis x teeth 2; extra parts: lid; photos skipped (cluttered): indices [0, 1].
 
 Likeness: aws67 0.82 (ok).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type drum; body box rect 62x112x34 mm, ramp 0; wheels 2 r17 outboard; weapon drum r15 axis x teeth 2; extra parts: lid; photos skipped (cluttered): indices [0, 1].
+
+Likeness: aws67 0.72 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/recycler.aws67.webp` is declared `front_left_iso` (IoU 0.72 there) but the model matches it better from rear_right_iso (elevati
