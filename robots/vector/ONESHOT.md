@@ -13,3 +13,9 @@ Likeness: aws71 0.59 (FAIL).
 Decisions: type lifter; body box rect 72x70x24 mm, ramp 18; wheels 2 r16 outboard; weapon none; extra parts: arm, fork, post.
 
 Likeness: aws71 0.55 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type lifter; body box rect 72x70x24 mm, ramp 18; wheels 2 r16 outboard; weapon none; extra parts: arm, post, fork.
+
+Likeness: aws71 0.47 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/vector.aws71.webp` is declared `front_left_iso` (IoU 0.47 there) but the model matches it better from front_right_iso (elevatio

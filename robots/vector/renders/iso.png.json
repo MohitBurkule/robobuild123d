@@ -1,15 +1,15 @@
 {
  "spec": "/tmp/work10_vector/robots/vector/spec.json",
- "rendered_at": 1795023455.3695855,
+ "rendered_at": 1795024640.3691707,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
   "arm",
-  "fork_l",
-  "fork_r",
   "post_l",
-  "post_r"
+  "post_r",
+  "fork_l",
+  "fork_r"
  ],
  "wires": {}
 }
