@@ -14,3 +14,8 @@ Likeness: aws61 0.81 (FAIL).
 Decisions: type wedge; body box trapezoid 100x84x46 mm, ramp 88; wheels 2 r14 outboard; weapon none; extra parts: lip; photos skipped (cluttered): indices [0, 2]; textured masks for indices [1].
 
 Likeness: aws61 0.81 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type wedge; body box trapezoid 92x78x44 mm, ramp 82; wheels 2 r14 outboard; weapon none; extra parts: lip; photos skipped (cluttered): indices [0, 2]; textured masks for indices [1].
+
+Likeness: aws61 0.83 (ok).

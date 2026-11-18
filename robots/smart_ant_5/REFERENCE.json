@@ -7,5 +7,14 @@
  "photos": [
   "smart_ant_5_.aws61.webp"
  ],
- "mask_mode": {}
+ "mask_mode": {},
+ "view": {
+  "smart_ant_5_.aws58.webp": "top",
+  "smart_ant_5_.aws61.webp": "front",
+  "smart_ant_5_.aws63.webp": "front_left_iso"
+ },
+ "elevation": {
+  "smart_ant_5_.aws61.webp": 45,
+  "smart_ant_5_.aws63.webp": 45
+ }
 }

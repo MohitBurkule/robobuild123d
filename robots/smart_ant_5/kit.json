@@ -1,12 +1,12 @@
 {
  "robot_type": "wedge",
  "body": {
-  "length": 100,
-  "width": 84,
-  "height": 46,
-  "ramp": 88,
+  "length": 92,
+  "width": 78,
+  "height": 44,
+  "ramp": 82,
   "plan": "trapezoid",
-  "front_width": 84
+  "front_width": 78
  },
  "wheels": {
   "n": 2,
@@ -22,7 +22,18 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "skip_photos": [
+  0,
+  2
+ ],
+ "textured": [
+  1
+ ],
+ "name": "smart ant 5",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "box": [
     90,
@@ -45,16 +56,5 @@
     0
    ]
   }
- ],
- "skip_photos": [
-  0,
-  2
- ],
- "textured": [
-  1
- ],
- "name": "smart ant 5",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }
