@@ -1,0 +1,11 @@
+{
+ "robot_type": "wedge",
+ "wheels": 4,
+ "weapon": {
+  "kind": "wedge"
+ },
+ "photos": [
+  "look_what_you_ve_done_to_our_breakfast.aws71.webp",
+  "look_what_you_ve_done_to_our_breakfast.aws74.webp"
+ ]
+}

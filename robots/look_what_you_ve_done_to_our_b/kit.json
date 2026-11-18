@@ -1,0 +1,31 @@
+{
+ "robot_type": "wedge",
+ "body": {
+  "length": 95,
+  "width": 78,
+  "height": 28,
+  "ramp": 40
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 14,
+  "width": 12,
+  "y": [
+   -28,
+   10
+  ]
+ },
+ "colors": {
+  "body": "#2f8fe0",
+  "wheel": "#b8322a",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "skip_photos": [
+  0
+ ],
+ "name": "look what you ve done to our b",
+ "weapon": {
+  "kind": "none"
+ }
+}

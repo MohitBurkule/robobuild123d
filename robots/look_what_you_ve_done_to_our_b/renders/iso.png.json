@@ -1,0 +1,12 @@
+{
+ "spec": "/tmp/work10_look_what_you_ve_done_to_our_b/robots/look_what_you_ve_done_to_our_b/spec.json",
+ "rendered_at": 1795021973.6798768,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "wheel_l1",
+  "wheel_r1"
+ ],
+ "wires": {}
+}
