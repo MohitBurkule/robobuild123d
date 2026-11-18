@@ -1,0 +1,98 @@
+{
+ "robot_type": "vertical_spinner",
+ "body": {
+  "length": 80,
+  "width": 80,
+  "height": 22,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 11,
+  "width": 9,
+  "y": [
+   -26,
+   26
+  ]
+ },
+ "weapon": {
+  "kind": "disc",
+  "radius": 15,
+  "width": 6,
+  "y": 0,
+  "teeth": 2,
+  "z": 30,
+  "axis": "x"
+ },
+ "forks": {
+  "n": 2,
+  "length": 62,
+  "width": 4,
+  "spread": 50,
+  "tilt_deg": 6
+ },
+ "colors": {
+  "body": "#f08a2c",
+  "wheel": "#5a5ac8",
+  "weapon": "#2a55c8",
+  "fork": "#8ab8a0"
+ },
+ "extras": [
+  {
+   "side": [
+    [
+     -36,
+     22
+    ],
+    [
+     -28,
+     26
+    ],
+    [
+     -62,
+     48
+    ],
+    [
+     -74,
+     50
+    ],
+    [
+     -76,
+     40
+    ],
+    [
+     -64,
+     38
+    ]
+   ],
+   "x": [
+    -3,
+    3
+   ],
+   "weapon": "axe",
+   "pivot": [
+    -34,
+    24
+   ],
+   "id": "tail_arm",
+   "color": "#1c1d20"
+  },
+  {
+   "box": [
+    12,
+    90,
+    24
+   ],
+   "at": [
+    46,
+    0,
+    13
+   ],
+   "mirror": true,
+   "kind": "armor",
+   "id": "side_pod",
+   "color": "#f0603a"
+  }
+ ],
+ "name": "thwack attack"
+}

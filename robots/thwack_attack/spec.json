@@ -1,0 +1,715 @@
+{
+ "name": "thwack attack",
+ "profile": "aws2025",
+ "robot_type": "vertical_spinner",
+ "locomotion": "wheels",
+ "kit_draft": true,
+ "parts": [
+  {
+   "id": "chassis",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -40.0,
+       0.0
+      ],
+      [
+       40.0,
+       0.0
+      ],
+      [
+       40.0,
+       1.5
+      ],
+      [
+       40.0,
+       22.0
+      ],
+      [
+       -40.0,
+       22.0
+      ]
+     ],
+     "height": 80.0
+    },
+    "at": [
+     0.0,
+     0.0,
+     -9.0
+    ],
+    "rot": [
+     90.0,
+     0.0,
+     90.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#f08a2c",
+   "print_orientation": "+z"
+  },
+  {
+   "id": "weapon",
+   "kind": "weapon",
+   "material": "steel",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "spline_prism",
+     "points": [
+      [
+       15.0,
+       0.0
+      ],
+      [
+       14.794,
+       1.948
+      ],
+      [
+       14.337,
+       3.842
+      ],
+      [
+       13.641,
+       5.65
+      ],
+      [
+       12.719,
+       7.343
+      ],
+      [
+       11.589,
+       8.893
+      ],
+      [
+       10.274,
+       10.274
+      ],
+      [
+       8.797,
+       11.465
+      ],
+      [
+       7.186,
+       12.447
+      ],
+      [
+       5.47,
+       13.206
+      ],
+      [
+       3.679,
+       13.731
+      ],
+      [
+       1.845,
+       14.016
+      ],
+      [
+       0.0,
+       14.059
+      ],
+      [
+       -1.825,
+       13.861
+      ],
+      [
+       -3.598,
+       13.428
+      ],
+      [
+       -5.29,
+       12.771
+      ],
+      [
+       -6.873,
+       11.904
+      ],
+      [
+       -8.32,
+       10.842
+      ],
+      [
+       -9.608,
+       9.608
+      ],
+      [
+       -10.718,
+       8.224
+      ],
+      [
+       -11.632,
+       6.716
+      ],
+      [
+       -12.626,
+       5.23
+      ],
+      [
+       -13.63,
+       3.652
+      ],
+      [
+       -14.431,
+       1.9
+      ],
+      [
+       -15.0,
+       0.0
+      ],
+      [
+       -14.794,
+       -1.948
+      ],
+      [
+       -14.337,
+       -3.842
+      ],
+      [
+       -13.641,
+       -5.65
+      ],
+      [
+       -12.719,
+       -7.343
+      ],
+      [
+       -11.589,
+       -8.893
+      ],
+      [
+       -10.274,
+       -10.274
+      ],
+      [
+       -8.797,
+       -11.465
+      ],
+      [
+       -7.186,
+       -12.447
+      ],
+      [
+       -5.47,
+       -13.206
+      ],
+      [
+       -3.679,
+       -13.731
+      ],
+      [
+       -1.845,
+       -14.016
+      ],
+      [
+       -0.0,
+       -14.059
+      ],
+      [
+       1.825,
+       -13.861
+      ],
+      [
+       3.598,
+       -13.428
+      ],
+      [
+       5.29,
+       -12.771
+      ],
+      [
+       6.873,
+       -11.904
+      ],
+      [
+       8.32,
+       -10.842
+      ],
+      [
+       9.608,
+       -9.608
+      ],
+      [
+       10.718,
+       -8.224
+      ],
+      [
+       11.632,
+       -6.716
+      ],
+      [
+       12.626,
+       -5.23
+      ],
+      [
+       13.63,
+       -3.652
+      ],
+      [
+       14.431,
+       -1.9
+      ]
+     ],
+     "height": 6.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0.0,
+    0.0,
+    30.0
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "color": "#2a55c8",
+   "weapon": {
+    "kind": "disc",
+    "spin_axis": [
+     0,
+     0,
+     1
+    ],
+    "teeth": 2,
+    "cells": 2,
+    "reduction": 1.0
+   },
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "pivot": [
+     0.0,
+     0.0,
+     30.0
+    ],
+    "min": 0,
+    "max": 360,
+    "default": 0
+   }
+  },
+  {
+   "id": "wheel_l0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 11.0,
+     "height": 9.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    45.0,
+    -26.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#5a5ac8"
+  },
+  {
+   "id": "wheel_r0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 11.0,
+     "height": 9.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -45.0,
+    -26.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#5a5ac8"
+  },
+  {
+   "id": "wheel_l1",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 11.0,
+     "height": 9.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    45.0,
+    26.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#5a5ac8"
+  },
+  {
+   "id": "wheel_r1",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 11.0,
+     "height": 9.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -45.0,
+    26.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#5a5ac8"
+  },
+  {
+   "id": "fork_0",
+   "kind": "wedge",
+   "material": "titanium",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      4.0,
+      62.0,
+      1.5
+     ]
+    },
+    "at": [
+     -25.0,
+     69.0,
+     -6.959617638702742
+    ],
+    "rot": [
+     -6.0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#8ab8a0"
+  },
+  {
+   "id": "fork_1",
+   "kind": "wedge",
+   "material": "titanium",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      4.0,
+      62.0,
+      1.5
+     ]
+    },
+    "at": [
+     25.0,
+     69.0,
+     -6.959617638702742
+    ],
+    "rot": [
+     -6.0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#8ab8a0"
+  },
+  {
+   "id": "tail_arm",
+   "kind": "weapon",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -36,
+       11.0
+      ],
+      [
+       -28,
+       15.0
+      ],
+      [
+       -62,
+       37.0
+      ],
+      [
+       -74,
+       39.0
+      ],
+      [
+       -76,
+       29.0
+      ],
+      [
+       -64,
+       27.0
+      ]
+     ],
+     "height": 6
+    },
+    "at": [
+     0.0,
+     0,
+     0
+    ],
+    "rot": [
+     90,
+     0,
+     90
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#1c1d20",
+   "weapon": {
+    "kind": "axe"
+   },
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "pivot": [
+     0,
+     -34,
+     13.0
+    ],
+    "min": 0,
+    "max": 80,
+    "default": 0
+   }
+  },
+  {
+   "id": "side_pod_l",
+   "kind": "armor",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      12,
+      90,
+      24
+     ]
+    },
+    "at": [
+     46,
+     0,
+     2.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#f0603a"
+  },
+  {
+   "id": "side_pod_r",
+   "kind": "armor",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      12,
+      90,
+      24
+     ]
+    },
+    "at": [
+     -46,
+     0,
+     2.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#f0603a"
+  }
+ ],
+ "fasteners": [],
+ "wires": [],
+ "connections": [],
+ "reference": [
+  {
+   "image": "reference/thwack_attack.aws74.webp",
+   "mask": "reference/thwack_attack.aws74_mask.png",
+   "view": "iso",
+   "approximate": true
+  },
+  {
+   "image": "reference/thwack_attack.aws76.webp",
+   "mask": "reference/thwack_attack.aws76_mask.png",
+   "view": "iso",
+   "approximate": true
+  },
+  {
+   "image": "reference/thwack_attack.aws77.webp",
+   "mask": "reference/thwack_attack.aws77_mask.png",
+   "view": "iso",
+   "approximate": true
+  }
+ ]
+}
