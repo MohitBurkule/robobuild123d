@@ -1,0 +1,115 @@
+  [ran] integrity 0.01s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 0.60s
+  [ran] connections 0.01s
+  [ran] legal 0.01s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.01s
+  [ran] shape 0.15s
+  [ran] dynamics 0.01s
+  [ran] strength 0.00s
+  [ran] printability 0.35s
+  [ran] process 0.02s
+  [ran] electrical 0.01s
+  [ran] combat 0.05s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.01s
+  [ran] fastener_record 0.00s
+  [ran] likeness 1.94s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.02s
+  [ran] retention 0.03s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.02s
+  [ran] dfm 0.01s
+  [ran] realworld 0.01s
+trappist 1: ok=False 34 blockers in 27 root causes, mass 167.7/225 g
+1. [proxy.interference] `chassis` and `wheel_l0` overlap by 3.88 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | chassis: x -56.00..56.00  y -35.00..35.00  z -7.00..13.00  size 112.00 x 70.00 x 20.00 mm
+   |   centre (0.00, -0.00, 3.00), volume 156800.0 mm3
+   |   OVERLAP `wheel_l0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_l1` 3.88 mm (allowed 0.08)
+2. [proxy.interference] `chassis` and `wheel_r0` overlap by 3.88 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | chassis: x -56.00..56.00  y -35.00..35.00  z -7.00..13.00  size 112.00 x 70.00 x 20.00 mm
+   |   centre (0.00, -0.00, 3.00), volume 156800.0 mm3
+   |   OVERLAP `wheel_l0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_l1` 3.88 mm (allowed 0.08)
+3. [connection.floating] `wire_l` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `wire_x`, 0.0 mm away. (+1 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wire_l: x 13.00..15.00  y -85.00..-25.00  z 14.00..16.00  size 2.00 x 60.00 x 2.00 mm
+   |   centre (14.00, -55.00, 15.00), volume 240.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -20, 13.0] range 0..80 default 0
+   |   OVERLAP `wire_x` 0.93 mm (allowed 0.08)
+   |   gap to `chassis` 1.00 mm
+4. [process.print_orientation] `wheel_l0` (fdm) has no `print_orientation`. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_l0: x 47.50..55.50  y -34.00..-16.00  z -9.00..9.00  size 8.00 x 17.99 x 18.00 mm
+   |   centre (51.50, -25.00, 0.00), volume 2035.8 mm3
+   |   OVERLAP `chassis` 3.88 mm (allowed 0.08)
+   |   gap to `front_bar` 1.00 mm
+   | wheel_l1: x 47.50..55.50  y 16.00..34.00  z -9.00..9.00  size 8.00 x 17.99 x 18.00 mm
+5. [process.print_orientation] `wheel_r0` (fdm) has no `print_orientation`. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_r0: x -55.50..-47.50  y -34.00..-16.00  z -9.00..9.00  size 8.00 x 17.99 x 18.00 mm
+   |   centre (-51.50, -25.00, 0.00), volume 2035.8 mm3
+   |   OVERLAP `chassis` 3.88 mm (allowed 0.08)
+   |   gap to `front_bar` 1.00 mm
+   | wheel_r1: x -55.50..-47.50  y 16.00..34.00  z -9.00..9.00  size 8.00 x 17.99 x 18.00 mm
+6. [retention.axial] `wheel_l0` rotates but no fastener clamps or threads into it and it declares no reasoned press fit, pin, shaft or fuse hold. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Pass a screw through it into a thread or nut, or declare the hold that captures it with a `reason`.
+   | wheel_l0: x 47.50..55.50  y -34.00..-16.00  z -9.00..9.00  size 8.00 x 17.99 x 18.00 mm
+   |   centre (51.50, -25.00, 0.00), volume 2035.8 mm3
+   |   OVERLAP `chassis` 3.88 mm (allowed 0.08)
+   |   gap to `front_bar` 1.00 mm
+   | wheel_l1: x 47.50..55.50  y 16.00..34.00  z -9.00..9.00  size 8.00 x 17.99 x 18.00 mm
+7. [retention.axial] `wheel_r0` rotates but no fastener clamps or threads into it and it declares no reasoned press fit, pin, shaft or fuse hold. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Pass a screw through it into a thread or nut, or declare the hold that captures it with a `reason`.
+   | wheel_r0: x -55.50..-47.50  y -34.00..-16.00  z -9.00..9.00  size 8.00 x 17.99 x 18.00 mm
+   |   centre (-51.50, -25.00, 0.00), volume 2035.8 mm3
+   |   OVERLAP `chassis` 3.88 mm (allowed 0.08)
+   |   gap to `front_bar` 1.00 mm
+   | wheel_r1: x -55.50..-47.50  y 16.00..34.00  z -9.00..9.00  size 8.00 x 17.99 x 18.00 mm
+8. [proxy.interference] `wire_l` and `wire_x` overlap by 0.93 mm (allowed 0.08).
+   | wire_l: x 13.00..15.00  y -85.00..-25.00  z 14.00..16.00  size 2.00 x 60.00 x 2.00 mm
+   |   centre (14.00, -55.00, 15.00), volume 240.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -20, 13.0] range 0..80 default 0
+   |   OVERLAP `wire_x` 0.93 mm (allowed 0.08)
+   |   gap to `chassis` 1.00 mm
+9. [proxy.interference] `wire_r` and `wire_x` overlap by 0.93 mm (allowed 0.08).
+   | wire_r: x -15.00..-13.00  y -85.00..-25.00  z 14.00..16.00  size 2.00 x 60.00 x 2.00 mm
+   |   centre (-14.00, -55.00, 15.00), volume 240.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -20, 13.0] range 0..80 default 0
+   |   OVERLAP `wire_x` 0.93 mm (allowed 0.08)
+   |   gap to `chassis` 1.00 mm
+10. [proxy.sweep] joint `wire_l`: `wire_l` hits `wire_x` 0.93 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint wire_l` lists the closest approach to every part.
+   | wire_l: x 13.00..15.00  y -85.00..-25.00  z 14.00..16.00  size 2.00 x 60.00 x 2.00 mm
+   |   centre (14.00, -55.00, 15.00), volume 240.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -20, 13.0] range 0..80 default 0
+   |   OVERLAP `wire_x` 0.93 mm (allowed 0.08)
+   |   gap to `chassis` 1.00 mm
+11. [proxy.sweep] joint `wire_r`: `wire_r` hits `wire_x` 0.93 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint wire_r` lists the closest approach to every part.
+   | wire_r: x -15.00..-13.00  y -85.00..-25.00  z 14.00..16.00  size 2.00 x 60.00 x 2.00 mm
+   |   centre (-14.00, -55.00, 15.00), volume 240.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -20, 13.0] range 0..80 default 0
+   |   OVERLAP `wire_x` 0.93 mm (allowed 0.08)
+   |   gap to `chassis` 1.00 mm
+12. [connection.floating] `wire_r` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `wire_x`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wire_r: x -15.00..-13.00  y -85.00..-25.00  z 14.00..16.00  size 2.00 x 60.00 x 2.00 mm
+   |   centre (-14.00, -55.00, 15.00), volume 240.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -20, 13.0] range 0..80 default 0
+   |   OVERLAP `wire_x` 0.93 mm (allowed 0.08)
+   |   gap to `chassis` 1.00 mm
+... 15 more root causes (fix these first, then re-run)
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 0 hit / 1 miss, group 0 hit / 31 miss, inside 0 hit / 9 miss, likeness 1 hit / 0 miss, min_gap 15 hit / 33 miss, overlap 29 hit / 68 miss, part_check 0 hit / 1 miss, part_geom 9 hit / 0 miss, ray 0 hit / 45 miss
