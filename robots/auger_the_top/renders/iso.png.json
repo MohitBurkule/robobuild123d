@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_auger_the_top/robots/auger_the_top/spec.json",
- "rendered_at": 1795034951.4852118,
+ "rendered_at": 1795039775.9654942,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -23,23 +23,61 @@
   "auger_motor",
   "auger_bit",
   "dt_hub_wheel_l0",
-  "dt_axle_wheel_l0",
-  "dt_nut_wheel_l0",
   "dt_hub_wheel_r0",
-  "dt_axle_wheel_r0",
-  "dt_nut_wheel_r0",
-  "dt_screw_0",
-  "dt_screw_1",
-  "dt_screw_2",
-  "dt_screw_3",
-  "dt_mount_fork_0",
-  "dt_bolt_fork_0",
-  "dt_mount_fork_1",
-  "dt_bolt_fork_1",
-  "dt_mount_fork_2",
-  "dt_bolt_fork_2",
-  "dt_mount_fork_3",
-  "dt_bolt_fork_3"
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_rx_esc",
+  "el_switch"
  ],
- "wires": {}
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    10.012999999999998,
+    0.01699999999999946,
+    4.011
+   ],
+   "to": [
+    -4.0,
+    -16.2,
+    -4.0
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    4.0,
+    -16.2,
+    -4.0
+   ],
+   "to": [
+    -3.987,
+    6.0169999999999995,
+    -5.489
+   ]
+  },
+  "w_m1": {
+   "from": [
+    19.012999999999998,
+    14.017,
+    -5.489
+   ],
+   "to": [
+    10.600000000000001,
+    -6.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -3.987,
+    14.017,
+    -5.489
+   ],
+   "to": [
+    -10.600000000000001,
+    -6.000000000000002,
+    0.0
+   ]
+  }
+ }
 }

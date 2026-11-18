@@ -1,37 +1,38 @@
-BLOCKERS: 17
-  [cached] integrity 0.00s
-  [cached] mass 0.00s
-  [proxy] interference 0.10s
-  [cached] connections 0.00s
-  [cached] legal 0.00s
-  [cached] fasteners 0.00s
-  [cached] power 0.00s
-  [cached] tension 0.00s
-  [cached] targets 0.00s
-  [cached] fight 0.00s
-  [cached] shape 0.00s
-  [cached] dynamics 0.00s
-  [cached] strength 0.00s
-  [cached] printability 0.00s
-  [cached] process 0.00s
-  [cached] electrical 0.00s
-  [cached] combat 0.01s
-  [cached] physics 0.00s
-  [cached] plausibility 0.00s
-  [cached] cots 0.00s
-  [cached] fit 0.00s
-  [cached] bom 0.00s
-  [cached] wire_review 0.00s
-  [cached] fastener_record 0.00s
-  [cached] likeness 0.00s
-  [cached] drive_recess 0.00s
-  [cached] belt_wrap 0.00s
-  [cached] retention 0.01s
-  [cached] waiver_audit 0.00s
-  [cached] geom 0.00s
-  [cached] dfm 0.00s
-  [cached] realworld 0.00s
-auger the top: ok=False 17 blockers in 17 root causes, mass 147.8/150 g
+BLOCKERS: 16
+  [ran] integrity 0.19s
+  [proxy] wiring 0.78s
+  [ran] mass 0.01s
+  [proxy] interference 42.42s
+  [ran] connections 3.65s
+  [ran] legal 0.03s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.06s
+  [ran] shape 1.92s
+  [ran] dynamics 0.01s
+  [ran] strength 0.00s
+  [ran] printability 1.92s
+  [ran] process 0.10s
+  [ran] electrical 0.02s
+  [ran] combat 0.34s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.18s
+  [ran] bom 0.02s
+  [ran] wire_review 0.05s
+  [ran] fastener_record 0.00s
+  [ran] likeness 25.78s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.01s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.62s
+  [ran] dfm 0.40s
+  [ran] realworld 0.21s
+auger the top: ok=False 16 blockers in 16 root causes, mass 146.4/150 g
 1. [integrity.solids] `arm_a` has 2 closed solid(s) and 0 open/invalid shell(s), expected 1 (2440 mm3). A boolean or fillet probably collapsed the build.
    fix: Check the last CAD op (fillet/cut order); or declare `solids` with `solids_reason`.
    | arm_a: x -12.00..-9.00  y -18.00..84.00  z 12.00..72.00  size 3.00 x 102.00 x 60.00 mm
@@ -108,10 +109,10 @@ auger the top: ok=False 17 blockers in 17 root causes, mass 147.8/150 g
    |   joint revolute axis [1, 0, 0] pivot [0, -10, 18.0] range 0..80 default 0
    |   OVERLAP `servo_house` 1.39 mm (allowed 0.08)
    |   OVERLAP `head_block` 1.39 mm (allowed 0.08)
-... 5 more root causes (fix these first, then re-run)
+... 4 more root causes (fix these first, then re-run)
 MASS BUDGET:
-  mass 147.8 g of 150 g (+2.2 g margin)
-    chassis                    45.42 g  fills 42% of its box
+  mass 146.4 g of 150 g (+3.6 g margin)
+    chassis                    44.11 g  fills 41% of its box
     servo_house                12.69 g  fills 75% of its box
     el_battery                 12.50 g  fills 100% of its box
     dm_wheel_l0                 9.70 g  fills 66% of its box
@@ -126,11 +127,11 @@ MASS BUDGET:
     arm_a                       2.93 g  fills 13% of its box
     arm_b                       2.93 g  fills 13% of its box
     auger_bit                   2.48 g  fills 79% of its box
-    boss_in_r                   2.27 g  fills 76% of its box
     boss_out_l                  2.27 g  fills 76% of its box
     boss_out_r                  2.27 g  fills 76% of its box
+    boss_in_r                   2.27 g  fills 76% of its box
     arm_pivot_pin               2.19 g  fills 79% of its box
-    boss_in_l                   1.70 g  fills 57% of its box
+    boss_in_l                   1.69 g  fills 57% of its box
     fork_0                      1.33 g  fills 12% of its box
     fork_1                      1.33 g  fills 12% of its box
     fork_2                      1.33 g  fills 12% of its box
@@ -138,6 +139,6 @@ MASS BUDGET:
     dt_hub_wheel_l0             1.15 g  fills 66% of its box
     dt_hub_wheel_r0             1.15 g  fills 66% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.may_be_over: 147.8 g (range 123.7 to 171.8 g) against the 150 g limit; 3.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.may_be_over: 146.4 g (range 122.6 to 170.2 g) against the 150 g limit; 3.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: group 31 hit / 0 miss, min_gap 32 hit / 0 miss, overlap 442 hit / 0 miss, part_geom 27 hit / 0 miss
+cache: part_geom 0 hit / 27 miss
