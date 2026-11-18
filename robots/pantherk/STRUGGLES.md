@@ -91,3 +91,6 @@ Result: likeness FAIL. aws67 iso 0.76 (need 0.80), aws66 0.78 (need 0.80). Best 
 
 ## Round 2 (kit tool)
 Switched to `robot kit` (robots/pantherk/kit.json, twin_pods, 4 wheels). Likeness FAIL: aws67 0.78, aws66 0.72 (need 0.80). Best camera for aws66 jumps between azimuths 0/90/180 and its mask has no wheels, so tuning against it is noisy. The photos disagree: aws67 (blue) has two separate front ramp blocks, aws66 (white) has one full-width front plate with only a shallow notch. Kit cannot do the thin side plates or the top photo plate with its raised strips. No Haiku subagent available; I read the diff sheets myself. Remaining diffs: front block width/length, wheel positions, side plates. Spec is a shape draft only (other verify groups not run). Note /tmp is shared with other sessions: a shared /tmp/k.sh was overwritten by another agent, giving bolt reference results; use unique script names.
+
+## Round 3
+Applied Haiku list (smaller wheels, narrower body, shallower notch, thin forks). Smaller wheels + forks + taller body dropped aws67 to 0.71 (forks are far too short to match the photo's long side plates), so kept wheels r12, body 86x102x22, no forks. Final likeness FAIL: aws67 0.79, aws66 0.74. Still different: tread on wheels, chamfered block faces, raised top plate/image panel, nameplate face, long thin side plates (kit has no such part).
