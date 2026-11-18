@@ -5,7 +5,9 @@
   "cheek_r",
   "hub_l",
   "hub_r",
-  "top_plate"
+  "top_plate",
+  "window_l",
+  "window_r"
  ],
  "removed": []
 }

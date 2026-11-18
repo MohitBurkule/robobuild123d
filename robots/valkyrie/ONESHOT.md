@@ -24,3 +24,8 @@ Kit has no 'inboard wheel in a corner notch' and no beater-bar weapon; a fit-pho
 
 ## Verdict
 Looks alike: **partly**. Renders: `renders/iso.png`, `renders/top.png`.
+
+## Round 2 (looks)
+Corner notches expose the wheels, beater bar with square windows replaces the round drum, body lower and longer, sensor windows on a clear lid.
+
+Likeness: aws71 0.74 (FAIL), aws74 0.79 (FAIL).
