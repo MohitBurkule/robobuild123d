@@ -8,7 +8,7 @@ Decisions: type wedge; body box rect 64x82x34 mm, ramp 0; wheels 2 r13 inboard; 
 Likeness: aws72 0.73 (FAIL), aws74 0.74 (FAIL), aws76 0.77 (FAIL).
 
 ## Round 4 (verification, helper 2)
-Blockers r3 76 -> r4 16 (`verify --tier inner`).
+Blockers r3 76 -> r4 14 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -35,8 +35,6 @@ Left (and why):
 - connection.floating x2: `foot_0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
 - connection.cover_fasteners x3: `arch_0` is an armour / cover panel held by 0 fastener(s); it needs >= 2 real screws. Snap, press-fit or tape retention alone lets it peel off on the first hit.
 - process.geometry x2: `fork_0` (laser): 1 sharp internal corner(s): radius 0 < kerf 0.1 mm (add a fillet >= kerf or the mating part will not seat).
-- wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
-- wire.render_count x1: iso.png: 5 routes vs 4 spec wires (extra ['w_esc_ml', 'w_esc_mr', 'w_rx_esc']) (missing ['w_m1', 'w_m2'])
 - likeness.silhouette x3: looks, not in scope for this pass.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): stronghold.aws72.webp 0.73 -> 0.73; stronghold.aws74.webp 0.74 -> 0.74; stronghold.aws76.webp 0.77 -> 0.77

@@ -1,45 +1,45 @@
-BLOCKERS: 16
-  [cached] integrity 0.00s
+BLOCKERS: 14
+  [ran] integrity 0.10s
   [proxy] wiring 0.01s
-  [cached] mass 0.00s
-  [proxy] interference 0.17s
-  [cached] connections 0.00s
-  [cached] legal 0.00s
-  [cached] fasteners 0.00s
-  [cached] power 0.00s
-  [cached] tension 0.00s
-  [cached] targets 0.00s
-  [cached] fight 0.00s
-  [cached] shape 0.00s
-  [cached] dynamics 0.00s
-  [cached] strength 0.00s
-  [cached] printability 0.00s
-  [cached] process 0.00s
-  [cached] electrical 0.00s
-  [cached] combat 0.00s
-  [cached] physics 0.00s
-  [cached] plausibility 0.00s
-  [cached] cots 0.00s
-  [cached] fit 0.00s
-  [cached] bom 0.00s
-  [cached] wire_review 0.00s
-  [cached] fastener_record 0.00s
-  [cached] likeness 0.00s
-  [cached] drive_recess 0.00s
-  [cached] belt_wrap 0.00s
-  [cached] retention 0.01s
-  [cached] waiver_audit 0.00s
-  [cached] geom 0.00s
-  [cached] dfm 0.00s
-  [cached] realworld 0.00s
-stronghold: ok=False 16 blockers in 13 root causes, mass 130.8/225 g
+  [ran] mass 0.00s
+  [proxy] interference 16.24s
+  [ran] connections 0.15s
+  [ran] legal 0.08s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.04s
+  [ran] shape 0.39s
+  [ran] dynamics 0.01s
+  [ran] strength 0.00s
+  [ran] printability 1.18s
+  [ran] process 0.01s
+  [ran] electrical 0.01s
+  [ran] combat 0.19s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.09s
+  [ran] bom 0.00s
+  [ran] wire_review 0.02s
+  [ran] fastener_record 0.00s
+  [ran] likeness 10.42s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.01s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.20s
+  [ran] dfm 0.08s
+  [ran] realworld 0.09s
+stronghold: ok=False 14 blockers in 11 root causes, mass 130.0/225 g
 1. [connection.floating] `foot_0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
    fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
    | foot_0: x -41.00..-29.00  y 32.00..54.00  z -12.50..1.00  size 12.00 x 22.00 x 13.50 mm
    |   centre (-35.00, 43.00, -5.75), volume 2106.0 mm3
    |   gap to `chassis` 0.00 mm (touching)
    | chassis: x -41.00..41.00  y -32.00..32.00  z -10.00..24.00  size 82.00 x 64.00 x 34.00 mm
-   |   centre (-0.00, 0.00, 7.00), volume 62186.5 mm3
+   |   centre (-0.00, 0.00, 7.00), volume 61297.8 mm3
 2. [connection.cover_fasteners] `arch_0` is an armour / cover panel held by 0 fastener(s); it needs >= 2 real screws. Snap, press-fit or tape retention alone lets it peel off on the first hit. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
    fix: Bolt it with >= 2 screws into inserts, nuts or tapped bosses and declare them in `fasteners`.
    | arch_0: x -26.00..-19.00  y -16.00..40.00  z 8.00..40.00  size 7.00 x 56.00 x 32.00 mm
@@ -69,14 +69,11 @@ stronghold: ok=False 16 blockers in 13 root causes, mass 130.8/225 g
    |   overlap allowed `chassis` 0.87 mm (allowed inf)
    |   gap to `arch_0` 2.00 mm
    |   gap to `arch_1` 2.00 mm
-9. [wire.render_wires] 17 of 17 robot render(s) do not draw all 4 wires: renders/diff_stronghold.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_stronghold.aws74.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_stronghold.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/iso.png: wire `w_m1` not drawn (+1); renders/likeness_stronghold.aws72_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_stronghold.aws74_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_stronghold.aws76_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_stronghold.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn...
-   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
-10. [wire.render_count] iso.png: 5 routes vs 4 spec wires (extra ['w_esc_ml', 'w_esc_mr', 'w_rx_esc']) (missing ['w_m1', 'w_m2'])
-   fix: Re-render: the render record must list exactly the spec's wires.
-11. [likeness.silhouette] `reference/stronghold.aws72.webp`: best silhouette IoU 0.73 at camera front_left_iso (elevation 25, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.69). Regions (photo frame, left third first) 0.47 / 0.83 / 0.84: worst = front third. Height/length 0.79 model vs 0.81 photo (proportions ok).
+9. [likeness.silhouette] `reference/stronghold.aws72.webp`: best silhouette IoU 0.73 at camera front_left_iso (elevation 25, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.64). Regions (photo frame, left third first) 0.47 / 0.83 / 0.84: worst = front third. Height/length 0.79 model vs 0.81 photo (proportions ok).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
-12. [likeness.silhouette] `reference/stronghold.aws74.webp`: best silhouette IoU 0.74 at camera front_left_iso (elevation 25, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.69). Regions (photo frame, left third first) 0.64 / 0.77 / 0.78: worst = front third. Height/length 0.79 model vs 0.77 photo (proportions ok).
+10. [likeness.silhouette] `reference/stronghold.aws74.webp`: best silhouette IoU 0.74 at camera front_left_iso (elevation 25, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.69). Regions (photo frame, left third first) 0.64 / 0.77 / 0.78: worst = front third. Height/length 0.79 model vs 0.77 photo (proportions ok).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
-... 1 more root causes (fix these first, then re-run)
+11. [likeness.silhouette] `reference/stronghold.aws76.webp`: best silhouette IoU 0.77 at camera front_right_iso (elevation 25, azimuth 60) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.76). Regions (photo frame, left third first) 0.83 / 0.74 / 0.72: worst = rear third. Height/length 0.80 model vs 0.69 photo (too tall: lower it or lengthen it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: group 31 hit / 0 miss, min_gap 35 hit / 0 miss, overlap 173 hit / 0 miss, part_geom 19 hit / 0 miss
+cache: distance 4 hit / 4 miss, group 0 hit / 31 miss, inside 14 hit / 2 miss, likeness 3 hit / 0 miss, min_gap 37 hit / 23 miss, overlap 85 hit / 101 miss, part_check 13 hit / 1 miss, part_geom 18 hit / 1 miss, ray 97 hit / 37 miss
