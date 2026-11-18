@@ -2,7 +2,7 @@
  "name": "nightwish",
  "profile": "aws2025",
  "robot_type": "lifter",
- "locomotion": "wheels",
+ "locomotion": "roller",
  "kit_draft": true,
  "parts": [
   {
@@ -143,13 +143,13 @@
      "type": "box",
      "size": [
       22.0,
-      30.0,
+      22.0,
       1.5
      ]
     },
     "at": [
      -25.0,
-     53.0,
+     49.0,
      -11.2
     ],
     "rot": [
@@ -181,13 +181,13 @@
      "type": "box",
      "size": [
       22.0,
-      30.0,
+      22.0,
       1.5
      ]
     },
     "at": [
      25.0,
-     53.0,
+     49.0,
      -11.2
     ],
     "rot": [

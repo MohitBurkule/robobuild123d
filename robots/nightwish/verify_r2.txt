@@ -1,0 +1,108 @@
+BLOCKERS: 20
+  [ran] integrity 0.02s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 0.07s
+  [ran] connections 0.00s
+  [ran] legal 0.00s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.00s
+  [ran] shape 0.03s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.61s
+  [ran] process 0.01s
+  [ran] electrical 0.00s
+  [ran] combat 0.05s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 2.15s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.02s
+  [ran] dfm 0.01s
+  [ran] realworld 0.00s
+nightwish: ok=False 20 blockers in 19 root causes, mass 137.3/150 g
+1. [connection.floating] `fork_0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.4 mm away. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | fork_0: x -36.00..-14.00  y 38.00..60.00  z -11.95..-10.45  size 22.00 x 22.00 x 1.50 mm
+   |   centre (-25.00, 49.00, -11.20), volume 726.0 mm3
+   |   gap to `chassis` 0.45 mm
+   | chassis: x -35.00..35.00  y -40.00..40.00  z -10.00..16.00  size 70.00 x 80.00 x 26.00 mm
+   |   centre (-0.00, -0.00, 3.00), volume 119875.0 mm3
+2. [proxy.interference] `chassis` and `claw` overlap by 2.80 mm (allowed 0.08).
+   | chassis: x -35.00..35.00  y -40.00..40.00  z -10.00..16.00  size 70.00 x 80.00 x 26.00 mm
+   |   centre (-0.00, -0.00, 3.00), volume 119875.0 mm3
+   |   OVERLAP `claw` 2.80 mm (allowed 0.08)
+   |   gap to `fork_0` 0.45 mm
+   |   gap to `fork_1` 0.45 mm
+3. [proxy.sweep] joint `claw`: `claw` hits `chassis` 2.80 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint claw` lists the closest approach to every part.
+   | claw: x -6.00..6.00  y -10.00..55.00  z 10.00..48.00  size 12.00 x 65.00 x 38.00 mm
+   |   centre (0.00, 22.50, 29.00), volume 6660.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 0, 14.0] range 0..80 default 0
+   |   OVERLAP `chassis` 2.80 mm (allowed 0.08)
+   | chassis: x -35.00..35.00  y -40.00..40.00  z -10.00..16.00  size 70.00 x 80.00 x 26.00 mm
+4. [connection.floating] `wheel_l0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_l0: x 35.50..45.50  y -37.00..-13.00  z -12.00..12.00  size 10.00 x 23.99 x 24.00 mm
+   |   centre (40.50, -25.00, 0.00), volume 4523.9 mm3
+   |   gap to `chassis` 0.50 mm
+   | chassis: x -35.00..35.00  y -40.00..40.00  z -10.00..16.00  size 70.00 x 80.00 x 26.00 mm
+   |   centre (-0.00, -0.00, 3.00), volume 119875.0 mm3
+5. [connection.floating] `wheel_r0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_r0: x -45.50..-35.50  y -37.00..-13.00  z -12.00..12.00  size 10.00 x 23.99 x 24.00 mm
+   |   centre (-40.50, -25.00, 0.00), volume 4523.9 mm3
+   |   gap to `chassis` 0.50 mm
+   | chassis: x -35.00..35.00  y -40.00..40.00  z -10.00..16.00  size 70.00 x 80.00 x 26.00 mm
+   |   centre (-0.00, -0.00, 3.00), volume 119875.0 mm3
+6. [legal.switch] Rule 4a needs an externally accessible way to shut down that works without tools and is clearly marked on/off.
+   fix: Add a `switch` part (or removable link) with `tool_free: true` and `marked: true` and a visible ON/OFF `label`.
+7. [legal.failsafe] Rule 4d: the robot must stop all motion when the transmitter is off.
+   fix: Set `electronics.failsafe` to true and configure the receiver and ESC failsafe.
+8. [legal.weapon_disable] Rule 4c: all weaponry must be deactivatable by remote control.
+   fix: Set `electronics.weapon_remote_disable` and put the weapon on its own receiver channel.
+9. [power.weapon_motor] `claw` names motor None; it must be a catalog brushless motor so speed can be computed.
+   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
+   | claw: x -6.00..6.00  y -10.00..55.00  z 10.00..48.00  size 12.00 x 65.00 x 38.00 mm
+   |   centre (0.00, 22.50, 29.00), volume 6660.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 0, 14.0] range 0..80 default 0
+   |   OVERLAP `chassis` 2.80 mm (allowed 0.08)
+10. [process.print_orientation] `wheel_l0` (fdm) has no `print_orientation`.
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_l0: x 35.50..45.50  y -37.00..-13.00  z -12.00..12.00  size 10.00 x 23.99 x 24.00 mm
+   |   centre (40.50, -25.00, 0.00), volume 4523.9 mm3
+   |   gap to `chassis` 0.50 mm
+11. [process.print_orientation] `wheel_r0` (fdm) has no `print_orientation`.
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_r0: x -45.50..-35.50  y -37.00..-13.00  z -12.00..12.00  size 10.00 x 23.99 x 24.00 mm
+   |   centre (-40.50, -25.00, 0.00), volume 4523.9 mm3
+   |   gap to `chassis` 0.50 mm
+12. [process.weapon_printed] Weapon `claw` is fdm-printed with no hardened metal insert teeth.
+   fix: Make it metal (sheet_cut / turned / milled) or add hardened steel tooth parts (`parent` = the weapon).
+   | claw: x -6.00..6.00  y -10.00..55.00  z 10.00..48.00  size 12.00 x 65.00 x 38.00 mm
+   |   centre (0.00, 22.50, 29.00), volume 6660.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 0, 14.0] range 0..80 default 0
+   |   OVERLAP `chassis` 2.80 mm (allowed 0.08)
+... 7 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 137.3 g of 150 g (+12.7 g margin)
+    chassis                   114.12 g  fills 82% of its box  <- solid block? a tub should be a shell
+    claw                        6.34 g  fills 22% of its box
+    wheel_l0                    4.61 g  fills 79% of its box
+    wheel_r0                    4.61 g  fills 79% of its box
+    fork_0                      3.22 g  fills 100% of its box
+    fork_1                      3.22 g  fills 100% of its box
+    mass.may_be_over: 137.3 g (range 110.5 to 164.1 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 0 hit / 2 miss, group 0 hit / 31 miss, inside 4 hit / 2 miss, likeness 2 hit / 0 miss, min_gap 26 hit / 9 miss, overlap 20 hit / 0 miss, part_check 1 hit / 2 miss, part_geom 6 hit / 0 miss, ray 16 hit / 6 miss
