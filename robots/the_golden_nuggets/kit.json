@@ -1,0 +1,69 @@
+{
+ "robot_type": "lifter",
+ "body": {
+  "length": 95,
+  "width": 66,
+  "height": 24,
+  "ramp": 20
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 12,
+  "width": 8,
+  "y": [
+   -30,
+   0,
+   30
+  ]
+ },
+ "colors": {
+  "body": "#3a8fe0",
+  "wheel": "#e8c81c",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "box": [
+    38,
+    80,
+    5
+   ],
+   "at": [
+    0,
+    0,
+    28
+   ],
+   "weapon": "lifter",
+   "pivot": [
+    -38,
+    26
+   ],
+   "id": "lifter",
+   "color": "#f2d21c"
+  },
+  {
+   "box": [
+    38,
+    20,
+    3
+   ],
+   "at": [
+    0,
+    46,
+    14
+   ],
+   "id": "lifter_nose",
+   "color": "#f2d21c",
+   "rot": [
+    -50,
+    0,
+    0
+   ]
+  }
+ ],
+ "name": "the golden nuggets",
+ "weapon": {
+  "kind": "none"
+ }
+}

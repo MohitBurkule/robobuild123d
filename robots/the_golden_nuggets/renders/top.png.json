@@ -1,0 +1,16 @@
+{
+ "spec": "/tmp/work10_the_golden_nuggets/robots/the_golden_nuggets/spec.json",
+ "rendered_at": 1795022441.6580977,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "wheel_l1",
+  "wheel_r1",
+  "wheel_l2",
+  "wheel_r2",
+  "lifter",
+  "lifter_nose"
+ ],
+ "wires": {}
+}

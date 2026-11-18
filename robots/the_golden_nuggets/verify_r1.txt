@@ -1,0 +1,109 @@
+  [ran] integrity 0.01s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 6.96s
+  [ran] connections 0.17s
+  [ran] legal 0.01s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.01s
+  [ran] shape 0.17s
+  [ran] dynamics 0.01s
+  [ran] strength 0.00s
+  [ran] printability 0.34s
+  [ran] process 0.01s
+  [ran] electrical 0.01s
+  [ran] combat 0.04s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.01s
+  [ran] fastener_record 0.00s
+  [ran] likeness 2.43s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.03s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.02s
+  [ran] dfm 0.01s
+  [ran] realworld 0.01s
+the golden nuggets: ok=False 32 blockers in 20 root causes, mass 169.1/225 g
+1. [connection.floating] `wheel_l0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away. Same problem on all 3 parts of this pattern: fix the pattern once. (+2 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_l0: x 33.50..41.50  y -42.00..-18.00  z -12.00..12.00  size 8.00 x 23.99 x 24.00 mm
+   |   centre (37.50, -30.00, 0.00), volume 3619.1 mm3
+   |   gap to `chassis` 0.50 mm
+   | chassis: x -33.00..33.00  y -47.50..47.50  z -10.00..14.00  size 66.00 x 95.00 x 24.00 mm
+   |   centre (-0.00, -0.00, 2.00), volume 135630.0 mm3
+2. [connection.floating] `wheel_r0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away. Same problem on all 3 parts of this pattern: fix the pattern once. (+2 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_r0: x -41.50..-33.50  y -42.00..-18.00  z -12.00..12.00  size 8.00 x 23.99 x 24.00 mm
+   |   centre (-37.50, -30.00, 0.00), volume 3619.1 mm3
+   |   gap to `chassis` 0.50 mm
+   | chassis: x -33.00..33.00  y -47.50..47.50  z -10.00..14.00  size 66.00 x 95.00 x 24.00 mm
+   |   centre (-0.00, -0.00, 2.00), volume 135630.0 mm3
+3. [process.print_orientation] `wheel_l0` (fdm) has no `print_orientation`. Same problem on all 3 parts of this pattern: fix the pattern once. (+2 consequences)
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_l0: x 33.50..41.50  y -42.00..-18.00  z -12.00..12.00  size 8.00 x 23.99 x 24.00 mm
+   |   centre (37.50, -30.00, 0.00), volume 3619.1 mm3
+   |   gap to `chassis` 0.50 mm
+   | wheel_l1: x 33.50..41.50  y -12.00..12.00  z -12.00..12.00  size 8.00 x 23.99 x 24.00 mm
+   |   centre (37.50, -0.00, 0.00), volume 3619.1 mm3
+4. [process.print_orientation] `wheel_r0` (fdm) has no `print_orientation`. Same problem on all 3 parts of this pattern: fix the pattern once. (+2 consequences)
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_r0: x -41.50..-33.50  y -42.00..-18.00  z -12.00..12.00  size 8.00 x 23.99 x 24.00 mm
+   |   centre (-37.50, -30.00, 0.00), volume 3619.1 mm3
+   |   gap to `chassis` 0.50 mm
+   | wheel_r1: x -41.50..-33.50  y -12.00..12.00  z -12.00..12.00  size 8.00 x 23.99 x 24.00 mm
+   |   centre (-37.50, -0.00, 0.00), volume 3619.1 mm3
+5. [retention.axial] `wheel_l0` rotates but no fastener clamps or threads into it and it declares no reasoned press fit, pin, shaft or fuse hold. Same problem on all 3 parts of this pattern: fix the pattern once. (+2 consequences)
+   fix: Pass a screw through it into a thread or nut, or declare the hold that captures it with a `reason`.
+   | wheel_l0: x 33.50..41.50  y -42.00..-18.00  z -12.00..12.00  size 8.00 x 23.99 x 24.00 mm
+   |   centre (37.50, -30.00, 0.00), volume 3619.1 mm3
+   |   gap to `chassis` 0.50 mm
+   | wheel_l1: x 33.50..41.50  y -12.00..12.00  z -12.00..12.00  size 8.00 x 23.99 x 24.00 mm
+   |   centre (37.50, -0.00, 0.00), volume 3619.1 mm3
+6. [retention.axial] `wheel_r0` rotates but no fastener clamps or threads into it and it declares no reasoned press fit, pin, shaft or fuse hold. Same problem on all 3 parts of this pattern: fix the pattern once. (+2 consequences)
+   fix: Pass a screw through it into a thread or nut, or declare the hold that captures it with a `reason`.
+   | wheel_r0: x -41.50..-33.50  y -42.00..-18.00  z -12.00..12.00  size 8.00 x 23.99 x 24.00 mm
+   |   centre (-37.50, -30.00, 0.00), volume 3619.1 mm3
+   |   gap to `chassis` 0.50 mm
+   | wheel_r1: x -41.50..-33.50  y -12.00..12.00  z -12.00..12.00  size 8.00 x 23.99 x 24.00 mm
+   |   centre (-37.50, -0.00, 0.00), volume 3619.1 mm3
+7. [proxy.interference] `chassis` and `lifter` overlap by 0.25 mm (allowed 0.08).
+   | chassis: x -33.00..33.00  y -47.50..47.50  z -10.00..14.00  size 66.00 x 95.00 x 24.00 mm
+   |   centre (-0.00, -0.00, 2.00), volume 135630.0 mm3
+   |   OVERLAP `lifter` 0.25 mm (allowed 0.08)
+   |   gap to `wheel_l0` 0.50 mm
+   |   gap to `wheel_r0` 0.50 mm
+8. [proxy.sweep] joint `lifter`: `lifter` hits `chassis` 0.25 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint lifter` lists the closest approach to every part.
+   | lifter: x -19.00..19.00  y -40.00..40.00  z 13.50..18.50  size 38.00 x 80.00 x 5.00 mm
+   |   centre (0.00, 0.00, 16.00), volume 15200.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -38, 14.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.25 mm (allowed 0.08)
+   |   gap to `lifter_nose` 2.96 mm
+9. [connection.floating] `lifter` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | lifter: x -19.00..19.00  y -40.00..40.00  z 13.50..18.50  size 38.00 x 80.00 x 5.00 mm
+   |   centre (0.00, 0.00, 16.00), volume 15200.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -38, 14.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.25 mm (allowed 0.08)
+   |   gap to `lifter_nose` 2.96 mm
+10. [connection.floating] `lifter_nose` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `lifter`, 3.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | lifter_nose: x -19.00..19.00  y 38.42..53.58  z -6.62..10.62  size 38.00 x 15.15 x 17.25 mm
+   |   centre (0.00, 46.00, 2.00), volume 2280.0 mm3
+   |   gap to `lifter` 2.96 mm
+   | lifter: x -19.00..19.00  y -40.00..40.00  z 13.50..18.50  size 38.00 x 80.00 x 5.00 mm
+   |   centre (0.00, 0.00, 16.00), volume 15200.0 mm3
+11. [legal.switch] Rule 4a needs an externally accessible way to shut down that works without tools and is clearly marked on/off.
+   fix: Add a `switch` part (or removable link) with `tool_free: true` and `marked: true` and a visible ON/OFF `label`.
+12. [legal.failsafe] Rule 4d: the robot must stop all motion when the transmitter is off.
+   fix: Set `electronics.failsafe` to true and configure the receiver and ESC failsafe.
+... 8 more root causes (fix these first, then re-run)
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 0 hit / 31 miss, inside 0 hit / 9 miss, likeness 1 hit / 0 miss, min_gap 37 hit / 56 miss, overlap 12 hit / 24 miss, part_check 0 hit / 1 miss, part_geom 9 hit / 0 miss, ray 0 hit / 45 miss
