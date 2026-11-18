@@ -11,3 +11,8 @@
 Decisions: type flipper; body box trapezoid 110x92x46 mm, ramp 85; wheels 2 r11 inboard; weapon none; extra parts: flipper, spring; photos skipped (cluttered): indices [0, 1].
 
 Likeness: aws72 0.74 (FAIL).
+
+## Round 2 (looks)
+Decisions: type flipper; body box trapezoid 110x92x46 mm, ramp 85; wheels 2 r11 inboard; weapon none; extra parts: flipper, spring; photos skipped (cluttered): indices [0, 1].
+
+Likeness: aws72 0.74 (FAIL).
