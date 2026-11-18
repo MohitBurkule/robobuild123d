@@ -1,10 +1,24 @@
 {
- "spec": "/tmp/work9_team_phyte/robots/team_phyte_s_little_sytes/spec.json",
- "rendered_at": 1795020549.002455,
+ "spec": "/tmp/work10_team_phyte_s_little_sytes/robots/team_phyte_s_little_sytes/spec.json",
+ "rendered_at": 1795026837.653205,
  "bodies": [
   "chassis",
   "wheel_l0",
-  "wheel_r0"
+  "wheel_r0",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_nut_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_nut_wheel_r0",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3",
+  "dt_screw_4",
+  "dt_screw_5",
+  "dt_screw_6",
+  "dt_screw_7"
  ],
  "wires": {}
 }

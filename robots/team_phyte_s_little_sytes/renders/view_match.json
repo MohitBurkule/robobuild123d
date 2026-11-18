@@ -1,0 +1,20 @@
+{
+ "team_phyte_s_little_sytes.aws74.webp": {
+  "view": "110,35",
+  "azimuth": 100.0,
+  "elevation": 27.0,
+  "iou": 0.741
+ },
+ "team_phyte_s_little_sytes.aws76.webp": {
+  "view": "auto:front_left_iso",
+  "azimuth": 120,
+  "elevation": 25,
+  "iou": 0.854
+ },
+ "team_phyte_s_little_sytes.aws77.webp": {
+  "view": "auto:rear_right_iso",
+  "azimuth": 330,
+  "elevation": 45,
+  "iou": 0.795
+ }
+}
