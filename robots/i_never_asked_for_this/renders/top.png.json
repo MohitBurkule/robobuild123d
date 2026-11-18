@@ -1,0 +1,11 @@
+{
+ "spec": "/tmp/work10_i_never_asked_for_this/robots/i_never_asked_for_this/spec.json",
+ "rendered_at": 1795022493.2917771,
+ "bodies": [
+  "chassis",
+  "tread_l",
+  "tread_r",
+  "front_plate"
+ ],
+ "wires": {}
+}

@@ -1,0 +1,53 @@
+{
+ "robot_type": "wedge",
+ "body": {
+  "length": 92,
+  "width": 80,
+  "height": 24,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 10,
+  "width": 9,
+  "y": [
+   -30,
+   22
+  ],
+  "tread": true
+ },
+ "colors": {
+  "body": "#1f4a38",
+  "wheel": "#1c3a2c",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "box": [
+    86,
+    3,
+    36
+   ],
+   "at": [
+    0,
+    50,
+    15
+   ],
+   "kind": "wedge",
+   "material": "aluminium",
+   "process": "laser",
+   "id": "front_plate",
+   "color": "#c9cdd3",
+   "rot": [
+    -35,
+    0,
+    0
+   ]
+  }
+ ],
+ "name": "i never asked for this",
+ "weapon": {
+  "kind": "none"
+ }
+}
