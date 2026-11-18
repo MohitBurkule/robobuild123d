@@ -53,3 +53,26 @@
 - Full tier NOT run (time cap reached).
 - Confusing: `robot verify` from inside robots/baphomet ran a different installed package in the first attempt; running from repo root avoids it.
 - Missing hint: no tool says which template is closest to the silhouette before you copy one; the template_copy message only says to rebuild.
+
+## Strong-model from-scratch pass (generator route, ~35 min)
+Result: likeness FAIL (silhouette only). likeness.type / likeness.weapon (drum, x axis, front, 55 % width, 4 teeth) / reference / template_copy pass.
+Silhouette IoU: aws76 0.80 (borderline), aws77 0.77 (need 0.80), aws74 0.73 (need 0.80). Not tuned around; honest fail.
+Inner verify: 15 blockers, of which 7 are `proxy.wiring ... ports moved N mm since baseline route` (stale baseline: no full wiring run), 3 wire/render, locking_bar, fork web 1.45 mm, runtime, 3 silhouette.
+Mass 146 g.
+
+How built: intent.json (hypothesis `weapon=vspin_drisk,skirts=none`, octagon outline, y0/y1/zb/zt/axle_y) -> `gen build`, then a hand-edit script that
+rewrote the weapon (disc -> hollow cast-alu drum round the outrunner bell, 4 radial fins), replaced the generator uprights with two arms fused to the tub,
+moved the forks to spike blades on the arm outsides, re-pointed fasteners/inserts/connections/weapon_lock, set robot_type and weapon.kind/teeth.
+
+Where stuck / missing generator support (what would let a small model do this):
+1. No drum / horizontal-axis-drum hypothesis that is buildable (`vspin_drum` is not buildable); only a thin disc (drisk) or z-axis bar. Needs weapon=drum with params width_mm, dia_mm, teeth, hub_motor, and arms/uprights sized from them.
+2. Intent cannot express weapon placement (y, z, width), so the drum had to be hand-rebuilt: ~120 lines of JSON surgery, 10+ cross references (fasteners, inserts, connections, allow_overlap, weapon_lock pin, wire port, joint pivot). A `weapon` block in the intent would remove all of it.
+3. Forks are fixed to the tub side walls at x=+-51; photo spikes sit at the drum ends. Need intent `fork_x`, `fork_profile` [[y,z]..] (spike length/slope) and auto-placed insert+bolt+arm bore.
+4. zb/zt: `zt 7` or `zb -9 zt 8` crash with `'MultiPolygon' object has no attribute 'exterior'` (weapon_drisk.upright_profile) - an unhelpful error; want a message naming the minimum body height. Body height cannot go below 16-18 mm so height/length stays 0.81 vs photo 0.72-0.74.
+5. `skirts=none` hypothesis key is not documented in INTENT.md (found by grepping hypothesis.py); it removes the rear flange that cost silhouette IoU.
+6. R051 floor check uses the max radius of the weapon (fin tip), not the pose; needed axle z >= tip radius - 11 + 0.3. A hint in the failure with the minimum axle z would save a loop.
+7. `joint_pivot` check: pivot is in the parent (motor) frame and must be within 1 mm of BOTH weapon material and motor (ring test); a hollow drum around the motor fails it. Fix is a web at the motor end face with pivot on the shaft bore. Not discoverable from the message.
+8. Overall footprint: 150 mm cap vs photo spike length vs `likeness.weapon` position rule (weapon centre must be >2/3 of bbox length incl. spikes) fight each other.
+9. Wire `w_wesc_m` cannot route from a weapon motor sitting outside the tub: the port needs a channel cut through the arm and front wall; no tool does this. Left as blocker.
+10. Pre-existing: python3 -m robot traceback `TypeError ... NoneType` on pip install (version regex) is harmless.
+Photo-driven gaps remaining: photo spikes are longer/thinner and chassis is flatter (wheels 22 mm are small vs photo tread wheels), no red top plate/ON-OFF, drum not recessed into the tub front.
