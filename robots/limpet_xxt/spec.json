@@ -1,0 +1,2279 @@
+{
+ "name": "Limpet XXT (Team 13, UK antweight flipper)",
+ "profile": "aws2025",
+ "robot_type": "flipper",
+ "locomotion": "roller",
+ "size_rule": "robot/profile.py aws2025: 150 mm floor square, no overhang at any height, no height limit. All values are derived by the src/limpet_xxt/params.py relations; the start pose also fits the old 101.6 mm cube (rest length 101.50 mm).",
+ "weapon_lock": {
+  "type": "external_pin",
+  "note": "made safe outside the robot: the XT30 is unplugged and the removable link is pulled; the flipper rests on the floor under gravity, no stored energy"
+ },
+ "electronics": {
+  "failsafe": true,
+  "weapon_remote_disable": true,
+  "radio": "2.4 GHz",
+  "cells": 2
+ },
+ "can_run_inverted": false,
+ "claims": [
+  {
+   "id": "c_mass",
+   "text": "weighs 150 g or less",
+   "metric": "mass_total_g",
+   "op": "<=",
+   "value": 150.0
+  },
+  {
+   "id": "c_fit",
+   "text": "fits the 150 mm square",
+   "metric": "footprint_mm",
+   "op": "<=",
+   "value": 150.0
+  }
+ ],
+ "parts": [
+  {
+   "id": "tub",
+   "kind": "structure",
+   "material": "pla",
+   "process": "fdm",
+   "print_orientation": "+z",
+   "shape": {
+    "type": "model",
+    "file": "src/build_limpet_xxt.py",
+    "params": {
+     "part": "tub"
+    }
+   },
+   "at": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "printed PLA tub: open top, servo tray with horn slot, snug closed-top motor pockets, standoff columns, lid pads with M2 heat-sets, hinge knuckles"
+  },
+  {
+   "id": "lid_r",
+   "kind": "armor",
+   "material": "pc",
+   "process": "laser",
+   "shape": {
+    "type": "model",
+    "file": "src/build_limpet_xxt.py",
+    "params": {
+     "part": "lid_r"
+    }
+   },
+   "at": [
+    -15.2975,
+    -24.65,
+    21.75
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "1.5 mm PC right lid with the rounded switch slot"
+  },
+  {
+   "id": "lid_l",
+   "kind": "armor",
+   "material": "pc",
+   "process": "laser",
+   "shape": {
+    "type": "model",
+    "file": "src/build_limpet_xxt.py",
+    "params": {
+     "part": "lid_l"
+    }
+   },
+   "at": [
+    -15.2975,
+    24.65,
+    21.75
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "1.5 mm PC left lid (mirror of the right without the switch slot)"
+  },
+  {
+   "id": "side_r",
+   "kind": "armor",
+   "material": "pc",
+   "process": "laser",
+   "shape": {
+    "type": "model",
+    "file": "src/build_limpet_xxt.py",
+    "params": {
+     "part": "side_r"
+    }
+   },
+   "at": [
+    -15.0975,
+    -47.0,
+    12.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "2 mm PC right side plate (hexagon) on the standoff columns"
+  },
+  {
+   "id": "side_l",
+   "kind": "armor",
+   "material": "pc",
+   "process": "laser",
+   "shape": {
+    "type": "model",
+    "file": "src/build_limpet_xxt.py",
+    "params": {
+     "part": "side_l"
+    }
+   },
+   "at": [
+    -15.0975,
+    47.0,
+    12.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "2 mm PC left side plate (mirror)"
+  },
+  {
+   "id": "flipper",
+   "kind": "other",
+   "material": "pc",
+   "process": "laser",
+   "shape": {
+    "type": "model",
+    "file": "src/build_limpet_xxt.py",
+    "params": {
+     "part": "flipper"
+    }
+   },
+   "at": [
+    21.805,
+    0.0,
+    21.5
+   ],
+   "rot": [
+    0.0,
+    32.04374406169351,
+    0.0
+   ],
+   "rotates_with": "flipper",
+   "actuated_by": "servo",
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     0.0,
+     1.0,
+     0.0
+    ],
+    "pivot": [
+     21.805,
+     0.0,
+     21.5
+    ],
+    "min": -42.0,
+    "max": 0.0,
+    "default": 0.0
+   },
+   "label": "2 mm PC flipper plate, hinged on the tub's front top edge (M2 pin), servo-driven via the tail lever"
+  },
+  {
+   "id": "hinge_block",
+   "kind": "other",
+   "material": "pla",
+   "process": "fdm",
+   "print_orientation": "+z",
+   "shape": {
+    "type": "model",
+    "file": "src/build_limpet_xxt.py",
+    "params": {
+     "part": "hinge_block"
+    }
+   },
+   "parent": "flipper",
+   "at": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "flipper",
+   "label": "printed centre knuckle + flipper seat (2x M2x8 into heat-sets) + tail lever, screwed to the flipper (moves with it on the flipper joint); the tail end face is the drive face"
+  },
+  {
+   "id": "hinge_pin",
+   "kind": "pin",
+   "material": "steel",
+   "process": "cots",
+   "stock": "M2 x 92 screw as hinge pin",
+   "shape": {
+    "type": "model",
+    "file": "src/build_limpet_xxt.py",
+    "params": {
+     "part": "hinge_pin"
+    }
+   },
+   "at": [
+    21.805,
+    0.0,
+    21.5
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "M2 hinge pin through all knuckles, pressed into the tub's outer knuckles"
+  },
+  {
+   "id": "horn",
+   "kind": "other",
+   "material": "pla",
+   "process": "fdm",
+   "print_orientation": "+y",
+   "shape": {
+    "type": "model",
+    "file": "src/build_limpet_xxt.py",
+    "params": {
+     "part": "horn"
+    }
+   },
+   "at": [
+    11.405,
+    12.25,
+    9.15
+   ],
+   "rot": [
+    0.0,
+    -97.153909588195,
+    0.0
+   ],
+   "rotates_with": "horn",
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     0.0,
+     1.0,
+     0.0
+    ],
+    "pivot": [
+     11.405,
+     0.0,
+     9.15
+    ],
+    "min": -20.0,
+    "max": 0.0,
+    "default": 0.0
+   },
+   "label": "printed servo horn: hub on the output, arm out to the pin tab; lift swings the pin AWAY from the tail"
+  },
+  {
+   "id": "drive_pin",
+   "kind": "other",
+   "material": "steel",
+   "process": "cots",
+   "stock": "M2 x 17 dowel",
+   "shape": {
+    "type": "model",
+    "file": "src/build_limpet_xxt.py",
+    "params": {
+     "part": "drive_pin"
+    }
+   },
+   "parent": "horn",
+   "at": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "horn",
+   "label": "M2 drive pin through the horn tab bore; bears on the tail end face (sits beyond the tail end, in its angular shadow)"
+  },
+  {
+   "id": "wheel_fl",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "print_orientation": "+x",
+   "shape": {
+    "type": "model",
+    "file": "src/build_limpet_xxt.py",
+    "params": {
+     "part": "wheel_fl"
+    }
+   },
+   "at": [
+    4.705,
+    41.0,
+    12.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    90.0
+   ],
+   "rotates_with": "wheel_fl",
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     0.0,
+     1.0,
+     0.0
+    ],
+    "pivot": [
+     4.705,
+     41.0,
+     12.0
+    ],
+    "min": 0.0,
+    "max": 360.0,
+    "default": 0.0
+   },
+   "label": "printed hub + TPU tyre, D-bore on the N10 shaft"
+  },
+  {
+   "id": "motor_fl",
+   "kind": "motor",
+   "catalog": "n10_300rpm_6v",
+   "retained": "press_fit",
+   "at": [
+    4.705,
+    25.45,
+    12.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    90.0
+   ],
+   "rotates_with": "fixed",
+   "exposed": true,
+   "exposed_reason": "the N10's gearbox can sits in the wheel hub (the printed hub cups the can over its whole outboard end: hub y 37..45 x the can's 10x12 face, 0.00 mm gap); the only visible surface is the output-face annulus where the shaft enters the wheel hub, and any cover there would foul the spinning wheel",
+   "label": "N10 gearmotor in its snug closed-top pocket, shaft through the wall"
+  },
+  {
+   "id": "wheel_fr",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "print_orientation": "+x",
+   "shape": {
+    "type": "model",
+    "file": "src/build_limpet_xxt.py",
+    "params": {
+     "part": "wheel_fr"
+    }
+   },
+   "at": [
+    4.705,
+    -41.0,
+    12.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    90.0
+   ],
+   "rotates_with": "wheel_fr",
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     0.0,
+     -1.0,
+     0.0
+    ],
+    "pivot": [
+     4.705,
+     -41.0,
+     12.0
+    ],
+    "min": 0.0,
+    "max": 360.0,
+    "default": 0.0
+   },
+   "label": "printed hub + TPU tyre, D-bore on the N10 shaft"
+  },
+  {
+   "id": "motor_fr",
+   "kind": "motor",
+   "catalog": "n10_300rpm_6v",
+   "retained": "press_fit",
+   "at": [
+    4.705,
+    -25.45,
+    12.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    -90.0
+   ],
+   "rotates_with": "fixed",
+   "exposed": true,
+   "exposed_reason": "the N10's gearbox can sits in the wheel hub (the printed hub cups the can over its whole outboard end: hub y 37..45 x the can's 10x12 face, 0.00 mm gap); the only visible surface is the output-face annulus where the shaft enters the wheel hub, and any cover there would foul the spinning wheel",
+   "label": "N10 gearmotor in its snug closed-top pocket, shaft through the wall"
+  },
+  {
+   "id": "wheel_rl",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "print_orientation": "+x",
+   "shape": {
+    "type": "model",
+    "file": "src/build_limpet_xxt.py",
+    "params": {
+     "part": "wheel_rl"
+    }
+   },
+   "at": [
+    -34.9,
+    41.0,
+    12.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    90.0
+   ],
+   "rotates_with": "wheel_rl",
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     0.0,
+     1.0,
+     0.0
+    ],
+    "pivot": [
+     -34.9,
+     41.0,
+     12.0
+    ],
+    "min": 0.0,
+    "max": 360.0,
+    "default": 0.0
+   },
+   "label": "printed hub + TPU tyre, D-bore on the N10 shaft"
+  },
+  {
+   "id": "motor_rl",
+   "kind": "motor",
+   "catalog": "n10_300rpm_6v",
+   "retained": "press_fit",
+   "at": [
+    -34.9,
+    25.45,
+    12.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    90.0
+   ],
+   "rotates_with": "fixed",
+   "exposed": true,
+   "exposed_reason": "the N10's gearbox can sits in the wheel hub (the printed hub cups the can over its whole outboard end: hub y 37..45 x the can's 10x12 face, 0.00 mm gap); the only visible surface is the output-face annulus where the shaft enters the wheel hub, and any cover there would foul the spinning wheel",
+   "label": "N10 gearmotor in its snug closed-top pocket, shaft through the wall"
+  },
+  {
+   "id": "wheel_rr",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "print_orientation": "+x",
+   "shape": {
+    "type": "model",
+    "file": "src/build_limpet_xxt.py",
+    "params": {
+     "part": "wheel_rr"
+    }
+   },
+   "at": [
+    -34.9,
+    -41.0,
+    12.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    90.0
+   ],
+   "rotates_with": "wheel_rr",
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     0.0,
+     -1.0,
+     0.0
+    ],
+    "pivot": [
+     -34.9,
+     -41.0,
+     12.0
+    ],
+    "min": 0.0,
+    "max": 360.0,
+    "default": 0.0
+   },
+   "label": "printed hub + TPU tyre, D-bore on the N10 shaft"
+  },
+  {
+   "id": "motor_rr",
+   "kind": "motor",
+   "catalog": "n10_300rpm_6v",
+   "retained": "press_fit",
+   "at": [
+    -34.9,
+    -25.45,
+    12.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    -90.0
+   ],
+   "rotates_with": "fixed",
+   "exposed": true,
+   "exposed_reason": "the N10's gearbox can sits in the wheel hub (the printed hub cups the can over its whole outboard end: hub y 37..45 x the can's 10x12 face, 0.00 mm gap); the only visible surface is the output-face annulus where the shaft enters the wheel hub, and any cover there would foul the spinning wheel",
+   "label": "N10 gearmotor in its snug closed-top pocket, shaft through the wall"
+  },
+  {
+   "id": "servo",
+   "kind": "servo",
+   "catalog": "servo_cs07",
+   "retained": "press_fit",
+   "at": [
+    1.405,
+    0.0,
+    9.15
+   ],
+   "rot": [
+    -90.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "exposed": true,
+   "exposed_reason": "the servo lies in the weapon corridor: the tail lever sweeps to z 16.6..17.8 across its exposed top band (x 9..17.4, measured over the full -42 deg flipper stroke), only 1.4..2.6 mm above the case, so no fixed cover can shield it without being struck by the weapon; its ends and underside are boxed by the tray and decks",
+   "label": "SG90-class servo lying on its side in the tray, output axis along +Y"
+  },
+  {
+   "id": "battery",
+   "kind": "battery",
+   "catalog": "lipo_2s_180",
+   "retained": "tape",
+   "at": [
+    -33.6,
+    0.0,
+    8.1
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "2S 180 mAh pack in the rear of the centre channel, taped down"
+  },
+  {
+   "id": "esc",
+   "kind": "esc",
+   "catalog": "malenki_nano",
+   "retained": "tape",
+   "at": [
+    -16.0,
+    24.25,
+    5.6
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "Malenki Nano dual brushed ESC + receiver in the left side zone"
+  },
+  {
+   "id": "switch",
+   "kind": "switch",
+   "catalog": "switch_bbb_ant_rvrn2",
+   "tool_free": true,
+   "marked": true,
+   "at": [
+    -16.0,
+    -24.25,
+    17.55
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "BBB ant switch on its tray, knob through the right lid slot, marked ON/OFF"
+  },
+  {
+   "id": "insert_lid_l0",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -45.5,
+    32.0,
+    19.5
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "M2 heat-set in the left lid pad"
+  },
+  {
+   "id": "insert_lid_l1",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    13.9,
+    32.0,
+    19.5
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "M2 heat-set in the left lid pad"
+  },
+  {
+   "id": "insert_lid_r0",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -45.5,
+    -32.0,
+    19.5
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "M2 heat-set in the right lid pad"
+  },
+  {
+   "id": "insert_lid_r1",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    13.9,
+    -32.0,
+    19.5
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "M2 heat-set in the right lid pad"
+  },
+  {
+   "id": "insert_standoff_r00",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -18.4987,
+    -44.5,
+    6.75
+   ],
+   "rot": [
+    90.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "M2 heat-set in the right standoff column"
+  },
+  {
+   "id": "insert_standoff_r01",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -18.4987,
+    -44.5,
+    17.25
+   ],
+   "rot": [
+    90.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "M2 heat-set in the right standoff column"
+  },
+  {
+   "id": "insert_standoff_r10",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -11.6962,
+    -44.5,
+    6.75
+   ],
+   "rot": [
+    90.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "M2 heat-set in the right standoff column"
+  },
+  {
+   "id": "insert_standoff_r11",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -11.6962,
+    -44.5,
+    17.25
+   ],
+   "rot": [
+    90.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "M2 heat-set in the right standoff column"
+  },
+  {
+   "id": "insert_standoff_l00",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -18.4987,
+    44.5,
+    6.75
+   ],
+   "rot": [
+    90.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "M2 heat-set in the left standoff column"
+  },
+  {
+   "id": "insert_standoff_l01",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -18.4987,
+    44.5,
+    17.25
+   ],
+   "rot": [
+    90.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "M2 heat-set in the left standoff column"
+  },
+  {
+   "id": "insert_standoff_l10",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -11.6962,
+    44.5,
+    6.75
+   ],
+   "rot": [
+    90.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "M2 heat-set in the left standoff column"
+  },
+  {
+   "id": "insert_standoff_l11",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -11.6962,
+    44.5,
+    17.25
+   ],
+   "rot": [
+    90.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "M2 heat-set in the left standoff column"
+  },
+  {
+   "id": "insert_hb0",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "retained": "press_fit",
+   "parent": "hinge_block",
+   "at": [
+    10.5,
+    -7.0,
+    -7.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "flipper",
+   "label": "M2 heat-set pressed into the hinge block's flipper seat"
+  },
+  {
+   "id": "insert_hb1",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "retained": "press_fit",
+   "parent": "hinge_block",
+   "at": [
+    10.5,
+    7.0,
+    -7.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "flipper",
+   "label": "M2 heat-set pressed into the hinge block's flipper seat"
+  }
+ ],
+ "fasteners": [
+  {
+   "id": "bolt_lid_l0",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -45.5,
+    32.0,
+    22.5
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "through": [
+    "lid_l"
+   ],
+   "threads_into": "insert_lid_l0",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 1.5
+   }
+  },
+  {
+   "id": "bolt_lid_l1",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    13.9,
+    32.0,
+    22.5
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "through": [
+    "lid_l"
+   ],
+   "threads_into": "insert_lid_l1",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 1.5
+   }
+  },
+  {
+   "id": "bolt_lid_r0",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -45.5,
+    -32.0,
+    22.5
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "through": [
+    "lid_r"
+   ],
+   "threads_into": "insert_lid_r0",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 1.5
+   }
+  },
+  {
+   "id": "bolt_lid_r1",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    13.9,
+    -32.0,
+    22.5
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "through": [
+    "lid_r"
+   ],
+   "threads_into": "insert_lid_r1",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 1.5
+   }
+  },
+  {
+   "id": "bolt_side_r00",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -18.4987,
+    -48.0,
+    6.75
+   ],
+   "dir": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "through": [
+    "side_r"
+   ],
+   "threads_into": "insert_standoff_r00",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_side_r01",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -18.4987,
+    -48.0,
+    17.25
+   ],
+   "dir": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "through": [
+    "side_r"
+   ],
+   "threads_into": "insert_standoff_r01",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_side_r10",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -11.6962,
+    -48.0,
+    6.75
+   ],
+   "dir": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "through": [
+    "side_r"
+   ],
+   "threads_into": "insert_standoff_r10",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_side_r11",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -11.6962,
+    -48.0,
+    17.25
+   ],
+   "dir": [
+    0.0,
+    1.0,
+    0.0
+   ],
+   "through": [
+    "side_r"
+   ],
+   "threads_into": "insert_standoff_r11",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_side_l00",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -18.4987,
+    48.0,
+    6.75
+   ],
+   "dir": [
+    0.0,
+    -1.0,
+    0.0
+   ],
+   "through": [
+    "side_l"
+   ],
+   "threads_into": "insert_standoff_l00",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_side_l01",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -18.4987,
+    48.0,
+    17.25
+   ],
+   "dir": [
+    0.0,
+    -1.0,
+    0.0
+   ],
+   "through": [
+    "side_l"
+   ],
+   "threads_into": "insert_standoff_l01",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_side_l10",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -11.6962,
+    48.0,
+    6.75
+   ],
+   "dir": [
+    0.0,
+    -1.0,
+    0.0
+   ],
+   "through": [
+    "side_l"
+   ],
+   "threads_into": "insert_standoff_l10",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_side_l11",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -11.6962,
+    48.0,
+    17.25
+   ],
+   "dir": [
+    0.0,
+    -1.0,
+    0.0
+   ],
+   "through": [
+    "side_l"
+   ],
+   "threads_into": "insert_standoff_l11",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "socket",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "cap",
+    "head_std": "ISO 4762",
+    "head_dk": 3.8,
+    "head_k": 2.0,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_hb0",
+   "designation": "M2x8",
+   "material": "steel",
+   "at": [
+    30.7053,
+    -7.0,
+    15.9291
+   ],
+   "dir": [
+    -0.5306,
+    0.0,
+    -0.8476
+   ],
+   "through": [
+    "flipper"
+   ],
+   "threads_into": "insert_hb0",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 8.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 2.0
+   }
+  },
+  {
+   "id": "bolt_hb1",
+   "designation": "M2x8",
+   "material": "steel",
+   "at": [
+    30.7053,
+    7.0,
+    15.9291
+   ],
+   "dir": [
+    -0.5306,
+    0.0,
+    -0.8476
+   ],
+   "through": [
+    "flipper"
+   ],
+   "threads_into": "insert_hb1",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 8.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 2.0
+   }
+  }
+ ],
+ "wires": [
+  {
+   "id": "w_bat_sw",
+   "from": "battery.xt30",
+   "to": "switch.in",
+   "awg": 22,
+   "kind": "power",
+   "slack_mm": 8.0,
+   "via": [
+    [
+     -33.6,
+     12.5,
+     8.1
+    ],
+    [
+     -19.0,
+     12.5,
+     9.0
+    ],
+    [
+     -19.0,
+     -12.0,
+     13.0
+    ],
+    [
+     -19.0,
+     -17.0,
+     13.0
+    ],
+    [
+     -16.0,
+     -17.0,
+     13.0
+    ],
+    [
+     -16.0,
+     -21.25,
+     12.05
+    ]
+   ]
+  },
+  {
+   "id": "w_sw_esc",
+   "from": "switch.out",
+   "to": "esc.bat",
+   "awg": 26,
+   "kind": "power",
+   "slack_mm": 8.0,
+   "via": [
+    [
+     -16.0,
+     -21.25,
+     13.0
+    ],
+    [
+     -16.0,
+     -17.0,
+     13.0
+    ],
+    [
+     -19.0,
+     -17.0,
+     13.0
+    ],
+    [
+     -19.0,
+     12.5,
+     9.0
+    ],
+    [
+     -29.0,
+     14.0,
+     8.5
+    ],
+    [
+     -29.0,
+     20.25,
+     6.5
+    ],
+    [
+     -27.5,
+     20.25,
+     5.6
+    ]
+   ]
+  },
+  {
+   "id": "w_esc_mfl",
+   "from": "esc.m1",
+   "to": "motor_fl.terminals",
+   "awg": 26,
+   "kind": "motor",
+   "slack_mm": 6.0,
+   "via": [
+    [
+     -2.0,
+     22.0,
+     6.0
+    ],
+    [
+     2.0,
+     17.0,
+     9.0
+    ],
+    [
+     4.705,
+     15.5,
+     11.0
+    ]
+   ]
+  },
+  {
+   "id": "w_esc_mrl",
+   "from": "esc.m1",
+   "to": "motor_rl.terminals",
+   "awg": 26,
+   "kind": "motor",
+   "slack_mm": 6.0,
+   "via": [
+    [
+     -8.0,
+     22.0,
+     6.0
+    ],
+    [
+     -29.0,
+     17.0,
+     9.0
+    ],
+    [
+     -34.9,
+     15.5,
+     11.0
+    ]
+   ]
+  },
+  {
+   "id": "w_esc_mfr",
+   "from": "esc.m2",
+   "to": "motor_fr.terminals",
+   "awg": 26,
+   "kind": "motor",
+   "slack_mm": 6.0,
+   "via": [
+    [
+     -24.0,
+     30.0,
+     9.0
+    ],
+    [
+     -19.0,
+     16.0,
+     8.0
+    ],
+    [
+     -19.0,
+     -16.0,
+     10.0
+    ],
+    [
+     0.0,
+     -15.5,
+     11.0
+    ],
+    [
+     4.705,
+     -15.5,
+     11.0
+    ]
+   ]
+  },
+  {
+   "id": "w_esc_mrr",
+   "from": "esc.m2",
+   "to": "motor_rr.terminals",
+   "awg": 26,
+   "kind": "motor",
+   "slack_mm": 6.0,
+   "via": [
+    [
+     -24.0,
+     30.0,
+     9.0
+    ],
+    [
+     -19.0,
+     16.0,
+     8.0
+    ],
+    [
+     -19.0,
+     -16.0,
+     10.0
+    ],
+    [
+     -30.0,
+     -15.5,
+     11.0
+    ],
+    [
+     -34.9,
+     -15.5,
+     11.0
+    ]
+   ]
+  },
+  {
+   "id": "w_esc_servo",
+   "from": "esc.wpn",
+   "to": "servo.signal",
+   "awg": 26,
+   "kind": "signal",
+   "slack_mm": 6.0,
+   "via": [
+    [
+     -4.5,
+     16.0,
+     7.0
+    ],
+    [
+     -19.0,
+     14.0,
+     8.0
+    ],
+    [
+     -19.0,
+     0.0,
+     9.0
+    ],
+    [
+     -16.8,
+     0.0,
+     9.3
+    ],
+    [
+     -15.095,
+     0.0,
+     9.1
+    ]
+   ]
+  }
+ ],
+ "connections": [
+  {
+   "a": "motor_fl",
+   "b": "wheel_fl",
+   "method": "press_fit",
+   "reason": "printed hub with a D-bore matching the flat of the 3 mm N10 D-shaft: the flat carries drive torque, the 0.1 mm interference only stops the hub walking off",
+   "interference_mm": 0.1,
+   "mechanical_key": true
+  },
+  {
+   "a": "motor_fl",
+   "b": "tub",
+   "method": "interlock",
+   "reason": "the motor is enclosed in a snug (0.05 mm/side) closed-top printed pocket that wraps it on five sides (walls, closed top, floor) with only the shaft hole open: the pocket keys the motor against rotation and hits",
+   "mechanical_key": true
+  },
+  {
+   "a": "motor_fr",
+   "b": "wheel_fr",
+   "method": "press_fit",
+   "reason": "printed hub with a D-bore matching the flat of the 3 mm N10 D-shaft: the flat carries drive torque, the 0.1 mm interference only stops the hub walking off",
+   "interference_mm": 0.1,
+   "mechanical_key": true
+  },
+  {
+   "a": "motor_fr",
+   "b": "tub",
+   "method": "interlock",
+   "reason": "the motor is enclosed in a snug (0.05 mm/side) closed-top printed pocket that wraps it on five sides (walls, closed top, floor) with only the shaft hole open: the pocket keys the motor against rotation and hits",
+   "mechanical_key": true
+  },
+  {
+   "a": "motor_rl",
+   "b": "wheel_rl",
+   "method": "press_fit",
+   "reason": "printed hub with a D-bore matching the flat of the 3 mm N10 D-shaft: the flat carries drive torque, the 0.1 mm interference only stops the hub walking off",
+   "interference_mm": 0.1,
+   "mechanical_key": true
+  },
+  {
+   "a": "motor_rl",
+   "b": "tub",
+   "method": "interlock",
+   "reason": "the motor is enclosed in a snug (0.05 mm/side) closed-top printed pocket that wraps it on five sides (walls, closed top, floor) with only the shaft hole open: the pocket keys the motor against rotation and hits",
+   "mechanical_key": true
+  },
+  {
+   "a": "motor_rr",
+   "b": "wheel_rr",
+   "method": "press_fit",
+   "reason": "printed hub with a D-bore matching the flat of the 3 mm N10 D-shaft: the flat carries drive torque, the 0.1 mm interference only stops the hub walking off",
+   "interference_mm": 0.1,
+   "mechanical_key": true
+  },
+  {
+   "a": "motor_rr",
+   "b": "tub",
+   "method": "interlock",
+   "reason": "the motor is enclosed in a snug (0.05 mm/side) closed-top printed pocket that wraps it on five sides (walls, closed top, floor) with only the shaft hole open: the pocket keys the motor against rotation and hits",
+   "mechanical_key": true
+  },
+  {
+   "a": "insert_lid_l0",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "M2 brass heat-set pressed hot into the through-bored lid pad",
+   "interference_mm": 0.15
+  },
+  {
+   "a": "insert_lid_l1",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "M2 brass heat-set pressed hot into the through-bored lid pad",
+   "interference_mm": 0.15
+  },
+  {
+   "a": "insert_lid_r0",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "M2 brass heat-set pressed hot into the through-bored lid pad",
+   "interference_mm": 0.15
+  },
+  {
+   "a": "insert_lid_r1",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "M2 brass heat-set pressed hot into the through-bored lid pad",
+   "interference_mm": 0.15
+  },
+  {
+   "a": "insert_standoff_r00",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "M2 brass heat-set pressed hot into the through-bored standoff column",
+   "interference_mm": 0.15
+  },
+  {
+   "a": "insert_standoff_r01",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "M2 brass heat-set pressed hot into the through-bored standoff column",
+   "interference_mm": 0.15
+  },
+  {
+   "a": "insert_standoff_r10",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "M2 brass heat-set pressed hot into the through-bored standoff column",
+   "interference_mm": 0.15
+  },
+  {
+   "a": "insert_standoff_r11",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "M2 brass heat-set pressed hot into the through-bored standoff column",
+   "interference_mm": 0.15
+  },
+  {
+   "a": "insert_standoff_l00",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "M2 brass heat-set pressed hot into the through-bored standoff column",
+   "interference_mm": 0.15
+  },
+  {
+   "a": "insert_standoff_l01",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "M2 brass heat-set pressed hot into the through-bored standoff column",
+   "interference_mm": 0.15
+  },
+  {
+   "a": "insert_standoff_l10",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "M2 brass heat-set pressed hot into the through-bored standoff column",
+   "interference_mm": 0.15
+  },
+  {
+   "a": "insert_standoff_l11",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "M2 brass heat-set pressed hot into the through-bored standoff column",
+   "interference_mm": 0.15
+  },
+  {
+   "a": "hinge_pin",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "the M2 hinge pin is pressed into the tub's two outer knuckles (0.1 mm interference)",
+   "interference_mm": 0.1,
+   "mechanical_key": true
+  },
+  {
+   "a": "hinge_block",
+   "b": "hinge_pin",
+   "method": "shaft",
+   "reason": "the block's centre knuckle (r1.3 bore) turns on the pin with 0.3 mm running clearance; the flipper joint locates it, the pin carries no torque"
+  },
+  {
+   "a": "flipper",
+   "b": "hinge_pin",
+   "method": "shaft",
+   "reason": "the plate's hinge bores ride the same M2 pin (pressed into the tub's outer knuckles); the plate's rear edge is tangent to the knuckle faces, no direct fastener between plate and tub"
+  },
+  {
+   "a": "hinge_block",
+   "b": "flipper",
+   "method": "interlock",
+   "mechanical_key": true,
+   "reason": "the plate's root seats on the block's top face and the two M2x8 screws (flipper->insert connections below) clamp it there, so bending bears on plastic"
+  },
+  {
+   "a": "horn",
+   "b": "drive_pin",
+   "method": "pin",
+   "reason": "the M2 drive pin is pressed into the horn tab's through-bore and retained by the tail slot"
+  },
+  {
+   "a": "servo",
+   "b": "horn",
+   "method": "shaft",
+   "reason": "the horn hub is keyed on the servo output spline; the pin in the tail slot carries the flipper torque",
+   "mechanical_key": true
+  },
+  {
+   "a": "servo",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.05,
+   "reason": "the servo sits in a snug (0.05 mm/side) printed U-channel cavity that wraps it on four sides; it drops in from the open top and is captured by the cavity walls and the horn"
+  },
+  {
+   "a": "battery",
+   "b": "tub",
+   "method": "tape",
+   "reason": "the pack is kapton/velcro-taped into its floor bay (the usual antweight practice)"
+  },
+  {
+   "a": "esc",
+   "b": "tub",
+   "method": "tape",
+   "reason": "the Malenki is taped into its floor bay"
+  },
+  {
+   "a": "switch",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "the BBB switch slides into its snug printed tray, captured by the tray and the screwed lid"
+  },
+  {
+   "a": "insert_hb0",
+   "b": "hinge_block",
+   "method": "press_fit",
+   "interference_mm": 0.15,
+   "reason": "M2 brass heat-set pressed hot into the block's seat bore"
+  },
+  {
+   "a": "insert_hb0",
+   "b": "flipper",
+   "method": "screw",
+   "mechanical_key": true,
+   "reason": "M2x8 button screw through the flipper plate threads into the heat-set; the plate's root seats on the block's top face so bending bears on plastic"
+  },
+  {
+   "a": "insert_hb0",
+   "b": "flipper",
+   "method": "none",
+   "reason": "the heat-set is clamped between the block's seat bore and the flipper plate by the M2x8 screw (bolt_hb0/1); it carries no load of its own beyond that clamp"
+  },
+  {
+   "a": "insert_hb1",
+   "b": "hinge_block",
+   "method": "press_fit",
+   "interference_mm": 0.15,
+   "reason": "M2 brass heat-set pressed hot into the block's seat bore"
+  },
+  {
+   "a": "insert_hb1",
+   "b": "flipper",
+   "method": "screw",
+   "mechanical_key": true,
+   "reason": "M2x8 button screw through the flipper plate threads into the heat-set; the plate's root seats on the block's top face so bending bears on plastic"
+  },
+  {
+   "a": "insert_hb1",
+   "b": "flipper",
+   "method": "none",
+   "reason": "the heat-set is clamped between the block's seat bore and the flipper plate by the M2x8 screw (bolt_hb0/1); it carries no load of its own beyond that clamp"
+  }
+ ],
+ "allow_overlap": [
+  {
+   "a": "motor_fl",
+   "b": "wheel_fl",
+   "max_depth_mm": 8.0,
+   "reason": "the wheel's D-bore is cut 0.1 mm large on the flat sides so it slides on; the round part of the bore overlaps the round stand-in of the D-shaft by up to 0.5 mm; the sweep proxy's bbox corners also pass the motor bbox (the round wheel itself clears it, probe --joint wheel_fl: 1.00 mm)"
+  },
+  {
+   "a": "motor_fr",
+   "b": "wheel_fr",
+   "max_depth_mm": 8.0,
+   "reason": "the wheel's D-bore is cut 0.1 mm large on the flat sides so it slides on; the round part of the bore overlaps the round stand-in of the D-shaft by up to 0.5 mm; the sweep proxy's bbox corners also pass the motor bbox (the round wheel itself clears it, probe --joint wheel_fl: 1.00 mm)"
+  },
+  {
+   "a": "motor_rl",
+   "b": "wheel_rl",
+   "max_depth_mm": 8.0,
+   "reason": "the wheel's D-bore is cut 0.1 mm large on the flat sides so it slides on; the round part of the bore overlaps the round stand-in of the D-shaft by up to 0.5 mm; the sweep proxy's bbox corners also pass the motor bbox (the round wheel itself clears it, probe --joint wheel_fl: 1.00 mm)"
+  },
+  {
+   "a": "motor_rr",
+   "b": "wheel_rr",
+   "max_depth_mm": 8.0,
+   "reason": "the wheel's D-bore is cut 0.1 mm large on the flat sides so it slides on; the round part of the bore overlaps the round stand-in of the D-shaft by up to 0.5 mm; the sweep proxy's bbox corners also pass the motor bbox (the round wheel itself clears it, probe --joint wheel_fl: 1.00 mm)"
+  },
+  {
+   "a": "hinge_pin",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "the pin is pressed 0.1 mm into the tub knuckle bores (r0.85)"
+  },
+  {
+   "a": "insert_hb0",
+   "b": "hinge_block",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 2.9 mm seat bore"
+  },
+  {
+   "a": "insert_hb1",
+   "b": "hinge_block",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 2.9 mm seat bore"
+  },
+  {
+   "a": "insert_lid_l0",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 2.9 mm pad bore"
+  },
+  {
+   "a": "insert_lid_l1",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 2.9 mm pad bore"
+  },
+  {
+   "a": "insert_lid_r0",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 2.9 mm pad bore"
+  },
+  {
+   "a": "insert_lid_r1",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 2.9 mm pad bore"
+  },
+  {
+   "a": "insert_standoff_r00",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 2.9 mm column bore"
+  },
+  {
+   "a": "insert_standoff_r01",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 2.9 mm column bore"
+  },
+  {
+   "a": "insert_standoff_r10",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 2.9 mm column bore"
+  },
+  {
+   "a": "insert_standoff_r11",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 2.9 mm column bore"
+  },
+  {
+   "a": "insert_standoff_l00",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 2.9 mm column bore"
+  },
+  {
+   "a": "insert_standoff_l01",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 2.9 mm column bore"
+  },
+  {
+   "a": "insert_standoff_l10",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 2.9 mm column bore"
+  },
+  {
+   "a": "insert_standoff_l11",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into the 2.9 mm column bore"
+  },
+  {
+   "a": "flipper",
+   "b": "tub",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "flipper",
+   "b": "lid_r",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "flipper",
+   "b": "lid_l",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "flipper",
+   "b": "wheel_fl",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "flipper",
+   "b": "motor_fl",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "flipper",
+   "b": "wheel_fr",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "flipper",
+   "b": "motor_fr",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "flipper",
+   "b": "servo",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "flipper",
+   "b": "esc",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "flipper",
+   "b": "switch",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "flipper",
+   "b": "battery",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "flipper",
+   "b": "horn",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "flipper",
+   "b": "drive_pin",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "flipper",
+   "b": "insert_lid_l1",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "flipper",
+   "b": "insert_lid_r1",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "flipper",
+   "b": "bolt_lid_l1",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "flipper",
+   "b": "bolt_lid_r1",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "flipper",
+   "b": "hinge_pin",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "hinge_block",
+   "b": "tub",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "hinge_block",
+   "b": "horn",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "hinge_block",
+   "b": "drive_pin",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "hinge_block",
+   "b": "servo",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "hinge_block",
+   "b": "lid_r",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "hinge_block",
+   "b": "lid_l",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "hinge_block",
+   "b": "hinge_pin",
+   "max_depth_mm": 1.0,
+   "reason": "the block's centre knuckle bore (r1.3) turns on the hinge pin (r1.0) with 0.3 mm radial running clearance; the full-revolution bbox proxy of the block swallows the stationary pin, but the largest ball fitting both parts is the pin's own r1.0, so no real pose interferes deeper than that"
+  },
+  {
+   "a": "insert_hb0",
+   "b": "tub",
+   "max_depth_mm": 8.0,
+   "reason": "full-revolution sweep artifact: the flipper joint is servo-limited to its declared range (hard stops at both ends); no pose within that range reaches this pair; the bbox proxy of the 4.3x3.2x4.2 mm bushing sweeps over the servo/bay and lid-deck regions it clears in every reachable pose"
+  },
+  {
+   "a": "insert_hb1",
+   "b": "tub",
+   "max_depth_mm": 8.0,
+   "reason": "full-revolution sweep artifact: the flipper joint is servo-limited to its declared range (hard stops at both ends); no pose within that range reaches this pair; the bbox proxy of the 4.3x3.2x4.2 mm bushing sweeps over the servo/bay and lid-deck regions it clears in every reachable pose"
+  },
+  {
+   "a": "insert_hb0",
+   "b": "servo",
+   "max_depth_mm": 8.0,
+   "reason": "full-revolution sweep artifact: the flipper joint is servo-limited to its declared range (hard stops at both ends); no pose within that range reaches this pair; the bbox proxy of the 4.3x3.2x4.2 mm bushing sweeps over the servo/bay and lid-deck regions it clears in every reachable pose"
+  },
+  {
+   "a": "insert_hb1",
+   "b": "servo",
+   "max_depth_mm": 8.0,
+   "reason": "full-revolution sweep artifact: the flipper joint is servo-limited to its declared range (hard stops at both ends); no pose within that range reaches this pair; the bbox proxy of the 4.3x3.2x4.2 mm bushing sweeps over the servo/bay and lid-deck regions it clears in every reachable pose"
+  },
+  {
+   "a": "insert_hb0",
+   "b": "drive_pin",
+   "max_depth_mm": 8.0,
+   "reason": "full-revolution sweep artifact: the flipper joint is servo-limited to its declared range (hard stops at both ends); no pose within that range reaches this pair; the bbox proxy of the 4.3x3.2x4.2 mm bushing sweeps over the servo/bay and lid-deck regions it clears in every reachable pose"
+  },
+  {
+   "a": "insert_hb1",
+   "b": "drive_pin",
+   "max_depth_mm": 8.0,
+   "reason": "full-revolution sweep artifact: the flipper joint is servo-limited to its declared range (hard stops at both ends); no pose within that range reaches this pair; the bbox proxy of the 4.3x3.2x4.2 mm bushing sweeps over the servo/bay and lid-deck regions it clears in every reachable pose"
+  },
+  {
+   "a": "insert_hb0",
+   "b": "lid_r",
+   "max_depth_mm": 8.0,
+   "reason": "full-revolution sweep artifact: the flipper joint is servo-limited to its declared range (hard stops at both ends); no pose within that range reaches this pair; the bbox proxy of the 4.3x3.2x4.2 mm bushing sweeps over the servo/bay and lid-deck regions it clears in every reachable pose"
+  },
+  {
+   "a": "insert_hb1",
+   "b": "lid_r",
+   "max_depth_mm": 8.0,
+   "reason": "full-revolution sweep artifact: the flipper joint is servo-limited to its declared range (hard stops at both ends); no pose within that range reaches this pair; the bbox proxy of the 4.3x3.2x4.2 mm bushing sweeps over the servo/bay and lid-deck regions it clears in every reachable pose"
+  },
+  {
+   "a": "insert_hb0",
+   "b": "lid_l",
+   "max_depth_mm": 8.0,
+   "reason": "full-revolution sweep artifact: the flipper joint is servo-limited to its declared range (hard stops at both ends); no pose within that range reaches this pair; the bbox proxy of the 4.3x3.2x4.2 mm bushing sweeps over the servo/bay and lid-deck regions it clears in every reachable pose"
+  },
+  {
+   "a": "insert_hb1",
+   "b": "lid_l",
+   "max_depth_mm": 8.0,
+   "reason": "full-revolution sweep artifact: the flipper joint is servo-limited to its declared range (hard stops at both ends); no pose within that range reaches this pair; the bbox proxy of the 4.3x3.2x4.2 mm bushing sweeps over the servo/bay and lid-deck regions it clears in every reachable pose"
+  },
+  {
+   "a": "bolt_hb0",
+   "b": "tub",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "bolt_hb1",
+   "b": "tub",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "bolt_hb0",
+   "b": "servo",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "bolt_hb1",
+   "b": "servo",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "horn",
+   "b": "tub",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "horn",
+   "b": "lid_l",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "horn",
+   "b": "hinge_pin",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "horn",
+   "b": "servo",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "horn",
+   "b": "bolt_hb1",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "drive_pin",
+   "b": "tub",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "drive_pin",
+   "b": "lid_l",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "drive_pin",
+   "b": "lid_r",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "drive_pin",
+   "b": "hinge_block",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "drive_pin",
+   "b": "servo",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  },
+  {
+   "a": "drive_pin",
+   "b": "bolt_hb1",
+   "max_depth_mm": 40.0,
+   "reason": "full-revolution sweep artifact: the flipper/horn joints are servo-limited to their declared ranges (hard stops at both ends); no pose within those ranges reaches this pair"
+  }
+ ],
+ "notes": "Generated by robots/limpet_xxt/make_spec.py from src/limpet_xxt/params.py. Manufactured parts are built in their own local frames by src/build_limpet_xxt.py (build(part=...)); the flipper joint pivots on the hinge line, the horn joint on the servo output axis, the wheels spin free on the axles. The drive pin sits radially beyond the tail end face (the tail's angular shadow), so no joint sweep can collide with it. The robot self-rights with the flipper, so it does not claim to drive inverted."
+}
