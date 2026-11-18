@@ -121,12 +121,14 @@ def main(spec_path, length=None, weapon=None):
         print("no `reference` entries with a mask: run `robot mask` first")
         return 1
     masks = [ref.load_mask(base / e["mask"]) for e in ents]
+    if weapon == "none":
+        weapon = False
     if weapon is None:
         rj = base / "REFERENCE.json"
         w = json.loads(rj.read_text()).get("weapon") if rj.exists() else None
         weapon = w.get("axis") if isinstance(w, dict) and w.get("kind") in ("disc", "drum", "bar") else None
     sc, p = fit(masks, weapon)
-    L = float(length or 100.0)
+    L = float(length or (148.0 / max(1.0, p["w"])))  # default: the largest robot that fits the 150 mm square
     print(f"best mean silhouette IoU {sc:.2f} (coarse envelope; the real model adds detail)")
     print(f"length {L:.0f} mm (y), width {p['w'] * L:.0f} mm (x), height {p['h'] * L:.0f} mm, front ramp {p['ramp'] * L:.0f} mm long")
     big = max(L, p["w"] * L)
@@ -142,6 +144,7 @@ def main(spec_path, length=None, weapon=None):
 def add_cli(sub):
     p = sub.add_parser("fit-photo", help="fit box/ramp/weapon proportions to the reference photo masks (prints mm)")
     p.add_argument("spec")
-    p.add_argument("--length", type=float, help="robot length in mm to scale the proportions to (default 100)")
-    p.add_argument("--weapon-axis", choices=("x", "z"), help="add a weapon cylinder turning about x or z")
+    p.add_argument("--length", type=float, help="robot length in mm (default: largest that fits the 150 mm square)")
+    p.add_argument("--weapon-axis", choices=("x", "z", "none"),
+                   help="weapon cylinder turning about x or z; none for wedges (default: REFERENCE.json weapon)")
     p.set_defaults(func=lambda a: main(a.spec, a.length, a.weapon_axis))
