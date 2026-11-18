@@ -1,17 +1,17 @@
 BLOCKERS: 14
-  [cached] integrity 0.01s
+  [cached] integrity 0.00s
   [cached] mass 0.00s
-  [proxy] interference 0.42s
+  [proxy] interference 0.16s
   [cached] connections 0.00s
   [cached] legal 0.00s
   [cached] fasteners 0.00s
   [cached] power 0.00s
-  [cached] tension 0.01s
+  [cached] tension 0.00s
   [cached] targets 0.00s
   [cached] fight 0.00s
   [cached] shape 0.00s
   [cached] dynamics 0.00s
-  [cached] strength 0.01s
+  [cached] strength 0.00s
   [cached] printability 0.00s
   [cached] process 0.00s
   [cached] electrical 0.00s
@@ -21,9 +21,9 @@ BLOCKERS: 14
   [cached] cots 0.00s
   [cached] fit 0.00s
   [cached] bom 0.00s
-  [cached] wire_review 0.01s
+  [cached] wire_review 0.00s
   [cached] fastener_record 0.00s
-  [ran] likeness 15.12s
+  [cached] likeness 0.00s
   [cached] drive_recess 0.00s
   [cached] belt_wrap 0.00s
   [cached] retention 0.00s
@@ -109,4 +109,4 @@ MASS BUDGET:
     el_switch                   0.50 g  fills 100% of its box
     mass.over: 160.6 g (range 130.4 to 190.7 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: group 30 hit / 1 miss, inside 10 hit / 0 miss, likeness 0 hit / 3 miss, min_gap 55 hit / 0 miss, overlap 188 hit / 0 miss, part_geom 15 hit / 0 miss
+cache: group 31 hit / 0 miss, min_gap 55 hit / 0 miss, overlap 188 hit / 0 miss, part_geom 15 hit / 0 miss

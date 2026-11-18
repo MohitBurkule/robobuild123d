@@ -46,7 +46,7 @@ Likeness: aws67 0.80 (FAIL), aws71 0.66 (FAIL), aws72 0.64 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/duck_ling_.aws72.webp` is declared `front_left_iso` (IoU 0.64 there) but the model matches it better from front_right_iso (elev
 
 ## Round 4 (verification, helper 2)
-Blockers r3 60 -> r4 15 (`verify --tier inner`).
+Blockers r3 60 -> r4 14 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -75,7 +75,6 @@ Left (and why):
 - wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
 - wire.rotor_clearance x4: toolchain: same full-revolution assumption; wires cannot leave a cylinder that covers the chassis.
 - likeness.silhouette x3: looks, not in scope for this pass.
-- likeness.view x1: looks, not in scope for this pass.
 - battery.rotor_gap x1: toolchain: same full-revolution assumption for a limited-range arm.
 
-Likeness (best silhouette IoU per photo, r3 -> r4): duck_ling_.aws67.webp 0.8 -> 0.8; duck_ling_.aws71.webp 0.66 -> 0.66; duck_ling_.aws72.webp 0.64 -> 0.64
+Likeness (best silhouette IoU per photo, r3 -> r4): duck_ling_.aws67.webp 0.8 -> 0.8; duck_ling_.aws71.webp 0.66 -> 0.66; duck_ling_.aws72.webp 0.76 -> 0.76
