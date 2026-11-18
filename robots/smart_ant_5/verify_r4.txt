@@ -1,0 +1,38 @@
+BLOCKERS: 1
+  [cached] integrity 0.00s
+  [cached] mass 0.00s
+  [proxy] interference 0.06s
+  [cached] connections 0.00s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.00s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.00s
+  [cached] physics 0.00s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [cached] likeness 0.00s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.00s
+  [cached] waiver_audit 0.00s
+  [cached] geom 0.00s
+  [cached] dfm 0.00s
+  [cached] realworld 0.00s
+smart ant 5: ok=False 1 blockers in 1 root causes, mass 117.5/150 g
+1. [wire.render_wires] 5 of 5 robot render(s) do not draw all 4 wires: renders/diff_smart_ant_5_.aws61.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_smart_ant_5_.aws61_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_smart_ant_5_.aws61.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_smart_ant_5_.aws61.png: no render record (`<png>.json`), so nothing says the wires were drawn
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 31 hit / 0 miss, overlap 74 hit / 0 miss, part_geom 9 hit / 0 miss

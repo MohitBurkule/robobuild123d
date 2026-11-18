@@ -19,3 +19,24 @@ Likeness: aws61 0.81 (FAIL).
 Decisions: type wedge; body box trapezoid 92x78x44 mm, ramp 82; wheels 2 r14 outboard; weapon none; extra parts: lip; photos skipped (cluttered): indices [0, 2]; textured masks for indices [1].
 
 Likeness: aws61 0.83 (ok).
+
+## Round 4 (verification, helper 2)
+Blockers r3 39 -> r4 1 (`verify --tier inner`).
+
+Fixed / changed (inside only, outside kept):
+- detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
+- catalog parts added in free space inside the printed parts with 0.25 mm pockets: `dm_wheel_l0` (pololu_hpcb6v_50to1), `dm_wheel_r0` (pololu_hpcb6v_50to1), `el_battery` (lipo_2s_180), `el_esc` (bbb_malenki_nano), `el_switch` (switch_slide_12x4)
+- overlaps resolved by cuts that keep the union of the parts (pockets, bores, wheel and spinner running clearance)
+- 4 wires declared (battery - switch - ESC - motors)
+- print orientation on every printed part, failsafe / weapon disable declared, design volumes declared where this pass changed a part on purpose
+- no screw line found for lip
+- rod dt_axle_wheel_l0: 2.2 mm stub clear of ['dm_wheel_l0'] printed as the wheel's hub boss
+- rod dt_axle_wheel_r0: 2.2 mm stub clear of ['dm_wheel_r0'] printed as the wheel's hub boss
+- wheel_l0: one cut dropped (split the part into 2 solids)
+- wheel_r0: one cut dropped (split the part into 2 solids)
+- hollowed chassis (wall 2.5, form 0): 179.9 -> 67.2 cm3
+
+Left (and why):
+- wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
+
+Likeness (best silhouette IoU per photo, r3 -> r4): smart_ant_5_.aws61.webp 0.83 -> 0.82
