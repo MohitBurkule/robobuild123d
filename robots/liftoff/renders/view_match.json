@@ -1,8 +1,8 @@
 {
  "liftoff.aws76.webp": {
-  "view": "130,27~",
-  "azimuth": 110.0,
-  "elevation": 20.0,
-  "iou": 0.662
+  "view": "120,35!",
+  "azimuth": 120.0,
+  "elevation": 35.0,
+  "iou": 0.484
  }
 }
