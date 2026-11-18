@@ -27,3 +27,5 @@ python3 -m robot gen build --intent cone.json --out out/ --no-gate   # build onl
 python3 -m robot gen build --intent cone.json --out out/ --fast      # gated: 0 blockers or exit 2
 python3 -m robot render out/hspin_bar.json iso out/iso.png --quick
 ```
+
+- `teeth`: tooth count of the vspin_drisk single disc (default 2), from the photo.

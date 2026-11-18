@@ -31,6 +31,7 @@ from ..finding import BLOCKER, fail, ok
 G = "likeness"
 COPY_IOU = 0.80
 SIL_MIN = 0.80  # absolute floor (stock templates already reach 0.69-0.81 on iso photos, so 0.70 let blobs pass)
+SIL_STRONG = 0.85
 SIL_MARGIN = 0.0  # at least as close to the photo as the closest stock template (copies are caught by template_copy)
 MASK_MIN = 0.85
 VOX = 2.0
@@ -222,7 +223,9 @@ def photos(ctx):
             continue
         iou, st, ci = best_match(sils, mask)
         tiou, tname = _template_iou(base / e["mask"], mask)
-        need = max(SIL_MIN, tiou + SIL_MARGIN)
+        # beat the closest template only while the match is mediocre; a strong match (>= SIL_STRONG) stands on its own
+        # (literal copies are already caught by template_copy)
+        need = SIL_MIN if iou >= SIL_STRONG else max(SIL_MIN, tiou + SIL_MARGIN)
         msg = (f"`{e['image']}`: best silhouette IoU {iou:.2f} at camera {cam_name(ci)} (need {need:.2f}: >= {SIL_MIN} "
                f"and no worse than the closest stock template `{tname}` at {tiou:.2f}).")
         if st:
@@ -284,7 +287,7 @@ def template_data(rebuild=False):
             have[p.stem], changed = d, True
         sils = [np.unpackbits(b)[: sh[0] * sh[1]].reshape(sh).astype(bool) for b, sh in zip(d["sils"], d["shapes"])]
         out[p.stem] = (set(map(tuple, d["vox"])), sils)
-    if changed:
+    if changed and rebuild:
         try:
             np.savez_compressed(DATA, data=np.array(have, dtype=object))
         except OSError:
@@ -474,5 +477,10 @@ def add_cli(sub):
 
 
 if __name__ == "__main__":
+    import sys
+    if "--rebuild" not in sys.argv:
+        print("maintainers only: `python -m robot.checks.likeness --rebuild` rewrites the shipped template data after a "
+              "template change. Builders: use `robot likeness spec.json`.")
+        sys.exit(2)
     template_data(rebuild=True)
     print(f"wrote {DATA}")
