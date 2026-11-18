@@ -49,3 +49,8 @@ Left (and why):
 - battery.rotor_gap x1: toolchain: same full-revolution assumption for a limited-range arm.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): ripper_remix.aws72.webp 0.85 -> 0.85; ripper_remix.aws77.webp 0.85 -> 0.85
+
+## Round 3d (user camera picks batch 2 + shape remarks applied; round 4 to be re-run on the new outside)
+Decisions: type flipper; body box pentagon 85x92x42 mm, ramp 30; wheels 2 r11 inboard; weapon none; extra parts: scoop, flipper; photos skipped (cluttered): indices [0].
+
+Likeness: aws72 0.85 (ok), aws77 0.86 (ok).

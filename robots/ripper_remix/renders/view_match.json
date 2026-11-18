@@ -1,14 +1,14 @@
 {
  "ripper_remix.aws72.webp": {
-  "view": "front_left_iso",
-  "azimuth": 120,
-  "elevation": 45,
-  "iou": 0.851
+  "view": "120,35!",
+  "azimuth": 120.0,
+  "elevation": 35.0,
+  "iou": 0.873
  },
  "ripper_remix.aws77.webp": {
   "view": "90,50",
   "azimuth": 90.0,
   "elevation": 42.0,
-  "iou": 0.891
+  "iou": 0.894
  }
 }
