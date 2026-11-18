@@ -2,7 +2,7 @@
  "name": "flik",
  "profile": "aws2025",
  "robot_type": "flipper",
- "locomotion": "wheels",
+ "locomotion": "roller",
  "kit_draft": true,
  "parts": [
   {
@@ -142,14 +142,14 @@
     "shape": {
      "type": "box",
      "size": [
-      96,
-      78,
+      86,
+      62,
       2
      ]
     },
     "at": [
      0,
-     30,
+     28,
      19.0
     ],
     "rot": [

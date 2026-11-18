@@ -10,3 +10,8 @@
 Decisions: type flipper; body box rect 70x80x40 mm, ramp 0; wheels 2 r11 inboard; weapon none; extra parts: flipper; photos skipped (cluttered): indices [1].
 
 Likeness: aws70 0.76 (FAIL), aws74 0.81 (FAIL).
+
+## Round 2 (looks)
+Decisions: type flipper; body box rect 70x80x40 mm, ramp 0; wheels 2 r11 inboard; weapon none; extra parts: flipper; photos skipped (cluttered): indices [1].
+
+Likeness: aws70 0.77 (FAIL), aws74 0.84 (FAIL).
