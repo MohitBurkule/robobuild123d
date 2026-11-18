@@ -299,7 +299,7 @@ def template_data(rebuild=False):
 def _template_iou(path, mask):
     """(best IoU, template name) over the stock templates' silhouettes (cached per mask + template set)."""
     from .. import cache
-    key = ("likeness_tpl2", cache.code_hash(), Path(path).read_bytes(),
+    key = ("likeness_tpl3", Path(path).read_bytes(),  # not the code hash: template data only changes with templates
            *[_thash(p) for p in sorted(TEMPLATES.glob("*.json"))])
     return tuple(cache.memo("likeness", key, lambda: _template_iou_raw(mask)))
 
