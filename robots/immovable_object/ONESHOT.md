@@ -25,3 +25,8 @@ Kit wheels share one radius; no arched shield primitive; forks cannot be pointed
 
 ## Verdict
 Looks alike: **partly**. Renders: `renders/iso.png`, `renders/top.png`.
+
+## Round 2 (looks)
+Arched shield (side profile intersected with a front arch), barbed arrow spikes, bigger spoked-hub wheels further outboard, top block.
+
+Likeness: aws69 0.73 (FAIL), aws71 0.73 (FAIL), aws72 0.75 (FAIL).
