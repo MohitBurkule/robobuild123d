@@ -1,0 +1,89 @@
+{
+ "robot_type": "flipper",
+ "body": {
+  "length": 50,
+  "width": 60,
+  "height": 26,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 12,
+  "width": 9,
+  "y": [
+   -10
+  ]
+ },
+ "colors": {
+  "body": "#2a7fd0",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "side": [
+    [
+     10,
+     2
+    ],
+    [
+     95,
+     0
+    ],
+    [
+     95,
+     2
+    ],
+    [
+     20,
+     24
+    ],
+    [
+     10,
+     24
+    ]
+   ],
+   "x": [
+    8,
+    30
+   ],
+   "mirror": true,
+   "weapon": "flipper",
+   "pivot": [
+    10,
+    20
+   ],
+   "id": "flip_arm",
+   "color": "#f2d21c"
+  },
+  {
+   "box": [
+    30,
+    60,
+    3
+   ],
+   "at": [
+    0,
+    40,
+    30
+   ],
+   "id": "top_arm",
+   "color": "#22252a",
+   "rot": [
+    -15,
+    0,
+    0
+   ]
+  }
+ ],
+ "textured": [
+  0,
+  1,
+  2
+ ],
+ "name": "failure to launch",
+ "weapon": {
+  "kind": "none"
+ }
+}

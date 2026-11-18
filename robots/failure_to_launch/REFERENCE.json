@@ -1,0 +1,18 @@
+{
+ "robot_type": "flipper",
+ "wheels": 2,
+ "weapon": {
+  "kind": "flipper",
+  "axis": "x"
+ },
+ "photos": [
+  "failure_to_launch.aws63.webp",
+  "ftl.webp",
+  "ftl_original.webp"
+ ],
+ "mask_mode": {
+  "failure_to_launch.aws63.webp": "textured",
+  "ftl.webp": "textured",
+  "ftl_original.webp": "textured"
+ }
+}
