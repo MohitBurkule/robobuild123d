@@ -1,44 +1,40 @@
-BLOCKERS: 4
-  [cached] integrity 0.00s
-  [cached] mass 0.00s
-  [proxy] interference 0.08s
-  [cached] connections 0.00s
-  [cached] legal 0.00s
-  [cached] fasteners 0.00s
-  [cached] power 0.00s
-  [cached] tension 0.00s
-  [cached] targets 0.00s
-  [cached] fight 0.00s
-  [cached] shape 0.00s
-  [cached] dynamics 0.00s
-  [cached] strength 0.00s
-  [cached] printability 0.00s
-  [cached] process 0.00s
-  [cached] electrical 0.00s
-  [cached] combat 0.00s
-  [cached] physics 0.00s
-  [cached] plausibility 0.00s
-  [cached] cots 0.00s
-  [cached] fit 0.00s
-  [cached] bom 0.00s
-  [cached] wire_review 0.00s
-  [cached] fastener_record 0.00s
-  [cached] likeness 0.00s
-  [cached] drive_recess 0.00s
-  [cached] belt_wrap 0.00s
-  [cached] retention 0.00s
-  [cached] waiver_audit 0.00s
-  [cached] geom 0.00s
-  [cached] dfm 0.00s
-  [cached] realworld 0.00s
-counterinsurgency: ok=False 4 blockers in 4 root causes, mass 113.6/150 g
+BLOCKERS: 2
+  [ran] integrity 0.44s
+  [ran] mass 0.00s
+  [proxy] interference 63.67s
+  [ran] connections 9.93s
+  [ran] legal 0.06s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.12s
+  [ran] shape 3.09s
+  [ran] dynamics 0.03s
+  [ran] strength 0.00s
+  [ran] printability 4.48s
+  [ran] process 0.08s
+  [ran] electrical 0.03s
+  [ran] combat 0.65s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.59s
+  [ran] bom 0.05s
+  [ran] wire_review 0.10s
+  [ran] fastener_record 0.00s
+  [ran] likeness 32.96s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.01s
+  [ran] waiver_audit 0.00s
+  [ran] geom 1.16s
+  [ran] dfm 0.73s
+  [ran] realworld 0.44s
+counterinsurgency: ok=False 2 blockers in 2 root causes, mass 112.2/150 g
 1. [legal.footprint] Smallest square that holds the robot is 154.5 mm; the limit is 150 mm with no overhang at any height.
    fix: Shorten the wedge, narrow the wheels or move parts inward.
-2. [wire.render_wires] 7 of 7 robot render(s) do not draw all 4 wires: renders/diff_counterinsurgency.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/iso.png: rendered without wires (checks off or no routes); renders/likeness_counterinsurgency.aws76_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_counterinsurgency.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/pick_counterinsurgency.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_counterinsurgency.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn
-   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
-3. [likeness.view] `reference/counterinsurgency.aws76.webp` is declared `front_left_iso` (IoU 0.39 there) but the model matches it better from front_right_iso (elevation 45, azimuth 60) (IoU 0.61).
-   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
-4. [likeness.silhouette] `reference/counterinsurgency.aws76.webp`: best silhouette IoU 0.39 at camera front_left_iso (elevation 45, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.54). Regions (photo frame, left third first) 0.26 / 0.58 / 0.29: worst = front third. Height/length 0.74 model vs 0.73 photo (proportions ok).
+2. [likeness.silhouette] `reference/counterinsurgency.aws76.webp`: best silhouette IoU 0.61 at camera front_right_iso (elevation 45, azimuth 60) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.46). Regions (photo frame, left third first) 0.83 / 0.59 / 0.30: worst = rear third. Height/length 0.74 model vs 0.73 photo (proportions ok).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: group 31 hit / 0 miss, overlap 190 hit / 0 miss, part_geom 16 hit / 0 miss
+cache: part_geom 0 hit / 16 miss
