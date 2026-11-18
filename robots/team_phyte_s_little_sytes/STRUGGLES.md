@@ -73,3 +73,6 @@ Tried 140x114 plan, zb/zt +-8: likeness 0.75/0.83/0.81 (2 blockers) but verify g
 ## Round 2 (kit)
 - Replaced the spec with `robot kit` (kit.json): box body 116x116x26, 95 mm ramp, 2 rear wheels r10; spec "cluster": 2. aws76 passes; aws74 0.73 (need 0.81), aws77 0.80 (need 0.85). FAIL, 2 blockers. First kit try (120x110x22, ramp 80, wheels r12) was better on aws74 (0.76).
 - Remaining differences (read from diff sheet myself, no API key): photo has raised side wings/rear wall sloping in a V, wheels inset inside the wings; kit body is a plain ramp-and-box with no wings. Kit has no wing/V-notch rear option.
+
+## Round 3
+Applied Haiku list items 1,2,11 (small wheels r8 raised 14 mm at rear corners, mk.py regenerates spec from kit.json). Not done: flared end walls, V rear profile, front lip, screws, switch strip (kit has no wing/detail parts). Likeness still FAIL (2 blockers); aws74 ~0.72, aws77 ~0.80.
