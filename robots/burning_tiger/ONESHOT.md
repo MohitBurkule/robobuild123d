@@ -9,3 +9,8 @@
 Decisions: type lifter; body box rect 70x80x24 mm, ramp 0; wheels 4 r12 outboard; weapon none; 3 forks 32 mm; extra parts: lid, arm.
 
 Likeness: aws74 0.71 (FAIL), aws76 0.66 (FAIL).
+
+## Round 2 (looks)
+Decisions: type lifter; body box rect 70x80x24 mm, ramp 0; wheels 4 r12 outboard; weapon none; 3 forks 32 mm; extra parts: lid, arm.
+
+Likeness: aws74 0.71 (FAIL), aws76 0.66 (FAIL).
