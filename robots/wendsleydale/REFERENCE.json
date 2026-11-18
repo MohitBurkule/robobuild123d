@@ -14,5 +14,15 @@
  "mask_mode": {
   "wendsleydale.aws65.webp": "textured",
   "wendsleydale.aws68.webp": "textured"
+ },
+ "view": {
+  "wendsleydale.aws63.webp": "front_left_iso",
+  "wendsleydale.aws65.webp": "front_right_iso",
+  "wendsleydale.aws68.webp": "rear"
+ },
+ "elevation": {
+  "wendsleydale.aws63.webp": 25,
+  "wendsleydale.aws65.webp": 45,
+  "wendsleydale.aws68.webp": 45
  }
 }

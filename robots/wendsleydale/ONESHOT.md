@@ -37,3 +37,9 @@ Likeness: aws65 0.35 (FAIL), aws68 0.76 (FAIL).
 Decisions: type lifter; body box rect 100x74x28 mm, ramp 40; wheels 2 r14 outboard; weapon none.
 
 Likeness: aws65 0.35 (FAIL), aws68 0.76 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type lifter; body box rect 100x74x28 mm, ramp 40; wheels 2 r14 outboard; weapon none.
+
+Likeness: aws65 0.16 (FAIL), aws68 0.61 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/wendsleydale.aws65.webp` is declared `front_right_iso` (IoU 0.16 there) but the model matches it better from left (elevation 0,; [FAIL] likeness.view: `reference/wendsleydale.aws68.webp` is declared `rear` (IoU 0.61 there) but the model matches it better from top (IoU 0.76).
