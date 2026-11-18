@@ -1119,7 +1119,7 @@
   {
    "image": "reference/slipper.aws62.webp",
    "mask": "reference/slipper.aws62_mask.png",
-   "view": "iso",
+   "view": "front",
    "approximate": true
   }
  ],

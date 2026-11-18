@@ -12,7 +12,7 @@
   "slipper.aws62.webp": "textured"
  },
  "view": {
-  "slipper.aws62.webp": "front_right_iso"
+  "slipper.aws62.webp": "front"
  },
  "view_source": {
   "slipper.aws62.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label"
