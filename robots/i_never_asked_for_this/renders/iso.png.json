@@ -1,10 +1,12 @@
 {
  "spec": "/tmp/work10_i_never_asked_for_this/robots/i_never_asked_for_this/spec.json",
- "rendered_at": 1795023431.757638,
+ "rendered_at": 1795024412.6214817,
  "bodies": [
   "chassis",
-  "tread_l",
-  "tread_r",
+  "wheel_l0",
+  "wheel_r0",
+  "wheel_l1",
+  "wheel_r1",
   "front_plate"
  ],
  "wires": {}

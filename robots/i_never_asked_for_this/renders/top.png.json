@@ -1,11 +1,31 @@
 {
  "spec": "/tmp/work10_i_never_asked_for_this/robots/i_never_asked_for_this/spec.json",
- "rendered_at": 1795023434.8255816,
+ "rendered_at": 1795026601.9517565,
  "bodies": [
   "chassis",
-  "tread_l",
-  "tread_r",
-  "front_plate"
+  "wheel_l0",
+  "wheel_r0",
+  "wheel_l1",
+  "wheel_r1",
+  "front_plate",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_nut_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_nut_wheel_r0",
+  "dt_hub_wheel_l1",
+  "dt_axle_wheel_l1",
+  "dt_nut_wheel_l1",
+  "dt_hub_wheel_r1",
+  "dt_axle_wheel_r1",
+  "dt_nut_wheel_r1",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3",
+  "dt_screw_4",
+  "dt_screw_5"
  ],
  "wires": {}
 }

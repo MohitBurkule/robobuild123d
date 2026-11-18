@@ -1,10 +1,16 @@
 {
  "robot_type": "wedge",
- "wheels": 2,
+ "wheels": 4,
  "weapon": {
   "kind": "wedge"
  },
  "photos": [
   "i_never_asked_for_this.aws71.webp"
- ]
+ ],
+ "view": {
+  "i_never_asked_for_this.aws71.webp": "front_left_iso"
+ },
+ "elevation": {
+  "i_never_asked_for_this.aws71.webp": 45
+ }
 }

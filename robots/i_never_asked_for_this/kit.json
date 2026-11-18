@@ -8,13 +8,12 @@
  },
  "wheels": {
   "n": 4,
-  "radius": 10,
+  "radius": 12,
   "width": 9,
   "y": [
    -30,
    22
-  ],
-  "tread": true
+  ]
  },
  "colors": {
   "body": "#1f4a38",
@@ -22,17 +21,21 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "name": "i never asked for this",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "box": [
-    86,
+    88,
     3,
-    36
+    46
    ],
    "at": [
     0,
-    50,
-    15
+    52,
+    17
    ],
    "kind": "wedge",
    "material": "aluminium",
@@ -40,14 +43,10 @@
    "id": "front_plate",
    "color": "#c9cdd3",
    "rot": [
-    -35,
+    -38,
     0,
     0
    ]
   }
- ],
- "name": "i never asked for this",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }
