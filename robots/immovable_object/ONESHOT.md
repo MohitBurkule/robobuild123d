@@ -46,7 +46,7 @@ Likeness: aws69 0.57 (FAIL), aws71 0.33 (FAIL), aws72 0.71 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/immovable_object.aws69.webp` is declared `front_right_iso` (IoU 0.57 there) but the model matches it better from front_left_iso; [FAIL] likeness.view: `reference/immovable_object.aws71.webp` is declared `front` (IoU 0.33 there) but the model matches it better from front_left_iso (elevatio
 
 ## Round 4 (verification, helper 2)
-Blockers r3 105 -> r4 12 (`verify --tier inner`).
+Blockers r3 105 -> r4 10 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -71,8 +71,7 @@ Left (and why):
 - mass.over x1: the photo-sized outside (steel weapon / big printed shell) is heavier than 150 g even hollowed; only a smaller outside would fix it.
 - connection.cover_fasteners x1: `shield` is an armour / cover panel held by 0 fastener(s); it needs >= 2 real screws. Snap, press-fit or tape retention alone lets it peel off on the first hit.
 - process.geometry x4: `fork_0` (laser): 2 sharp internal corner(s): radius 0 < kerf 0.1 mm (add a fillet >= kerf or the mating part will not seat).
-- wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
-- likeness.view x2: looks, not in scope for this pass.
 - likeness.silhouette x3: looks, not in scope for this pass.
+- likeness.view x1: looks, not in scope for this pass.
 
-Likeness (best silhouette IoU per photo, r3 -> r4): immovable_object.aws69.webp 0.57 -> 0.57; immovable_object.aws71.webp 0.33 -> 0.33; immovable_object.aws72.webp 0.71 -> 0.71
+Likeness (best silhouette IoU per photo, r3 -> r4): immovable_object.aws69.webp 0.73 -> 0.73; immovable_object.aws71.webp 0.33 -> 0.33; immovable_object.aws72.webp 0.71 -> 0.71

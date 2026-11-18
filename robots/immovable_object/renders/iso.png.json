@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_immovable_object/robots/immovable_object/spec.json",
- "rendered_at": 1795036624.893272,
+ "rendered_at": 1795040197.5650077,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -28,5 +28,54 @@
   "el_esc",
   "el_switch"
  ],
- "wires": {}
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    -0.5,
+    8.5,
+    -4.5
+   ],
+   "to": [
+    -4.5,
+    -15.5,
+    -5.0
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    3.5,
+    -15.5,
+    -5.0
+   ],
+   "to": [
+    -16.5,
+    -8.5,
+    4.5
+   ]
+  },
+  "w_m1": {
+   "from": [
+    15.5,
+    3.5,
+    4.5
+   ],
+   "to": [
+    7.5,
+    20.0,
+    -2.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -16.5,
+    3.5,
+    4.5
+   ],
+   "to": [
+    -7.5,
+    20.0,
+    -2.0
+   ]
+  }
+ }
 }
