@@ -1,0 +1,99 @@
+{
+ "spec": "/tmp/work9_stronghold/robots/stronghold/spec.json",
+ "rendered_at": 1795019881.174768,
+ "bodies": [
+  "chassis_bottom",
+  "chassis_top",
+  "motor_l",
+  "wheel_l",
+  "motor_r",
+  "wheel_r",
+  "insert_c0",
+  "insert_c1",
+  "insert_c2",
+  "insert_c3",
+  "battery",
+  "esc",
+  "rx",
+  "power_switch",
+  "wedge",
+  "insert_w0",
+  "insert_w1",
+  "insert_w2",
+  "insert_w3",
+  "fork_l",
+  "fork_r",
+  "arch_l",
+  "arch_r",
+  "bolt_c0",
+  "bolt_c1",
+  "bolt_c2",
+  "bolt_c3",
+  "bolt_w0",
+  "bolt_w1",
+  "bolt_w2",
+  "bolt_w3"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    4.0,
+    19.0,
+    0.0
+   ],
+   "to": [
+    8.0,
+    -37.0,
+    3.5
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    16.0,
+    -37.0,
+    3.5
+   ],
+   "to": [
+    -6.0,
+    -39.0,
+    3.0
+   ]
+  },
+  "w_esc_ml": {
+   "from": [
+    2.0,
+    -33.0,
+    3.0
+   ],
+   "to": [
+    5.549999999999997,
+    -13.0,
+    0.0
+   ]
+  },
+  "w_esc_mr": {
+   "from": [
+    -14.0,
+    -33.0,
+    3.0
+   ],
+   "to": [
+    -5.549999999999997,
+    -13.000000000000002,
+    0.0
+   ]
+  },
+  "w_rx_esc": {
+   "from": [
+    -26.8,
+    16.0,
+    0.0
+   ],
+   "to": [
+    -6.0,
+    -27.0,
+    3.0
+   ]
+  }
+ }
+}

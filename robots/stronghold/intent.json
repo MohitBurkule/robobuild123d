@@ -1,0 +1,276 @@
+{
+ "hypothesis": "wedge",
+ "name": "stronghold",
+ "robot_type": "wedge",
+ "reference": [
+  {
+   "image": "reference/stronghold.aws72.webp",
+   "view": "iso",
+   "mask": "reference/stronghold.aws72_mask.png",
+   "approximate": true
+  },
+  {
+   "image": "reference/stronghold.aws74.webp",
+   "view": "iso",
+   "mask": "reference/stronghold.aws74_mask.png",
+   "approximate": true
+  },
+  {
+   "image": "reference/stronghold.aws76.webp",
+   "view": "iso",
+   "mask": "reference/stronghold.aws76_mask.png",
+   "approximate": true
+  }
+ ],
+ "y0": -45,
+ "y1": 36,
+ "zb": -9,
+ "zt": 10,
+ "axle_y": -13,
+ "extra_parts": [
+  {
+   "id": "fork_l",
+   "kind": "armor",
+   "material": "steel_spring",
+   "process": "laser",
+   "at": [
+    -14,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       30,
+       -3
+      ],
+      [
+       30,
+       3
+      ],
+      [
+       80,
+       -10.5
+      ],
+      [
+       80,
+       -12.8
+      ]
+     ],
+     "height": 2.4
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     90,
+     0,
+     90
+    ]
+   }
+  },
+  {
+   "id": "fork_r",
+   "kind": "armor",
+   "material": "steel_spring",
+   "process": "laser",
+   "at": [
+    22,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       30,
+       -3
+      ],
+      [
+       30,
+       3
+      ],
+      [
+       80,
+       -10.5
+      ],
+      [
+       80,
+       -12.8
+      ]
+     ],
+     "height": 2.4
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     90,
+     0,
+     90
+    ]
+   }
+  },
+  {
+   "id": "arch_l",
+   "kind": "armor",
+   "material": "tpu",
+   "process": "fdm",
+   "at": [
+    -26,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -10,
+       8
+      ],
+      [
+       -10,
+       13
+      ],
+      [
+       34,
+       13
+      ],
+      [
+       34,
+       2
+      ],
+      [
+       44,
+       -6
+      ],
+      [
+       44,
+       -9
+      ],
+      [
+       38,
+       -9
+      ],
+      [
+       30,
+       0
+      ],
+      [
+       30,
+       8
+      ]
+     ],
+     "height": 6.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     90,
+     0,
+     90
+    ]
+   }
+  },
+  {
+   "id": "arch_r",
+   "kind": "armor",
+   "material": "tpu",
+   "process": "fdm",
+   "at": [
+    14,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -10,
+       8
+      ],
+      [
+       -10,
+       13
+      ],
+      [
+       34,
+       13
+      ],
+      [
+       34,
+       2
+      ],
+      [
+       44,
+       -6
+      ],
+      [
+       44,
+       -9
+      ],
+      [
+       38,
+       -9
+      ],
+      [
+       30,
+       0
+      ],
+      [
+       30,
+       8
+      ]
+     ],
+     "height": 6.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     90,
+     0,
+     90
+    ]
+   }
+  }
+ ]
+}

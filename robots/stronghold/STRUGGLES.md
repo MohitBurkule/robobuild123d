@@ -30,3 +30,8 @@ Scope: rough build from the three AWS photos (aws72, aws74, aws76). Not optimise
 - A one-line "fastener record needs these fields" example in the verify message.
 - Which quick tier to use for iterative runs, and how long each takes.
 - A progress line per slow group, so a 6-minute run is not silent.
+
+## Round 2 (generator build, likeness only, per coordinator: no verify/fasteners)
+- Built from `gen --hypothesis wedge` + intent (y0/y1/zt/axle_y), extra_parts (2 spring-steel forks, 2 TPU arches), post.py (replaces full ramp by 2 corner shovels; intent cannot shape the wedge).
+- Likeness: FAIL, best IoU about 0.72-0.75 per photo (need 0.80). Verify/fasteners NOT run (blockers unknown).
+- Stuck: `no wireable layout` when body is shortened or zt lowered (error does not say which limit); the wedge cannot be resized/removed from the intent; `robot mask` and likeness only work from repo root (subdir run gives a misleading "invalid choice: mask"); gen --intent writes out/wedge.json ignoring intent name; likeness takes 30-160 s.
