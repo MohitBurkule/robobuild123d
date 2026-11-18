@@ -24,8 +24,8 @@ PROMPT = ("Left: photo of a real antweight combat robot. Middle: our CAD model f
           "position, teeth), missing or extra parts. Max 8 lines. No praise.")
 
 
-def sheet(photo, render_png: bytes, overlay_png: bytes, h=360) -> bytes:
-    from PIL import Image
+def sheet(photo, render_png: bytes, overlay_png: bytes, h=360, label=None) -> bytes:
+    from PIL import Image, ImageDraw
     ims = [Image.open(photo).convert("RGB"), Image.open(io.BytesIO(render_png)).convert("RGB"),
            Image.open(io.BytesIO(overlay_png)).convert("RGB")]
     ims = [im.resize((max(1, int(im.width * h / im.height)), h)) for im in ims]
@@ -34,6 +34,10 @@ def sheet(photo, render_png: bytes, overlay_png: bytes, h=360) -> bytes:
     for im in ims:
         out.paste(im, (x, 0))
         x += im.width + 10
+    if label:
+        d = ImageDraw.Draw(out)
+        d.rectangle((0, h - 22, 9 * len(label) + 12, h), fill="black")
+        d.text((6, h - 18), label, fill="white")
     b = io.BytesIO()
     out.save(b, format="PNG")
     return b.getvalue()
@@ -72,7 +76,10 @@ def main(spec_path, out_dir=None):
         return 1
     for e in ents:
         mask = ref.load_mask(base / e["mask"])
-        _, _, ci = L.best_match(sils, mask)
+        ci = L.best_match(sils, mask, L.allowed(*L.photo_view(L._refjson(s), e)))[2]
+        if ci < 0:
+            print(f"== {e['image']}: no camera allowed for its declared view")
+            continue
         k, mir = divmod(ci, 2)
         d = np.asarray(dirs[k], float)
         up = np.array([0, 1.0, 0]) if abs(d[2]) > 0.99 else np.array([0, 0, 1.0])
@@ -83,7 +90,7 @@ def main(spec_path, out_dir=None):
             ImageOps.mirror(Image.open(io.BytesIO(png))).save(b, format="PNG")
             png = b.getvalue()
         _, a, bm = ref.compare(sils[ci], mask)
-        sh = sheet(base / e["image"], png, ref.overlay_png(a, bm))
+        sh = sheet(base / e["image"], png, ref.overlay_png(a, bm), label=f"camera: {L.cam_name(ci)}")
         p = od / f"diff_{Path(e['image']).stem}.png"
         p.write_bytes(sh)
         print(f"== {e['image']}: sheet {p} (camera {L.cam_name(ci)})")
