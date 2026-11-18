@@ -22,6 +22,10 @@ Shape extras (all optional):
  weapon.kind "ring": a band ring (radius, width = band height, `thick` wall), axis z; weapon.tilt_deg tilts the weapon
    about y (angled blade); weapon.kind "bar" + `curve` mm bends the bar tips (S-blade)
  forks.tilt_deg: forks pitched down at the nose
+ body.pod_nose: "round" rounds each twin pod's nose
+ "legs": {"n": 2, "length": .., "width": 8, "thick": 4, "foot": 14, "y": [..]} per side: walker / shuffler, no wheels
+   (locomotion "walker": 225 g non-roller limit, as AWS; set "locomotion" yourself to override)
+ wheeled kits are "roller" (150 g)
 `twin_pods`: two pods either side of a `slot` mm wide centre gap open at the front (centre disc / drum sits in it),
 joined behind the slot.
 """
@@ -96,7 +100,12 @@ def build(k: dict) -> dict:
         back = float(b.get("bridge", 25))
         for sgn, side in ((1, "l"), (-1, "r")):
             xa, xb = sorted((sgn * slot / 2, sgn * W / 2))
-            part(f"pod_{side}", "structure", _clip(_ramp_body(xa, xb, y0, y1, zb, H, ramp), _plan(b, W, y0, y1), zb, H),
+            pl = _plan(b, W, y0, y1)
+            if b.get("pod_nose") == "round":  # each pod gets its own rounded nose
+                pw2 = xb - xa
+                pl = [[x + (xa + xb) / 2, y] for x, y in _plan({"plan": "round_nose", "nose": b.get("nose", pw2 / 2)},
+                                                                  pw2, y0, y1)]
+            part(f"pod_{side}", "structure", _clip(_ramp_body(xa, xb, y0, y1, zb, H, ramp), pl, zb, H),
                  "nylon", "fdm",
                  color=COL["body"], print_orientation="+z")
         part("bridge", "structure", {"type": "place", "shape": {"type": "box", "size": [slot + 0.2, back, H]},
@@ -145,9 +154,23 @@ def build(k: dict) -> dict:
              joint={"kind": "revolute", "axis": axis, "pivot": [0.0, yw, zw], "min": 0, "max": 360, "default": 0})
         parts[-1]["at"], parts[-1]["rot"] = [0.0, yw, zw], rot
 
+    lg = k.get("legs") or {}
+    if lg:  # walker / shuffler: legs with foot pads instead of wheels (AWS walkers get the non-roller mass limit)
+        nl, ll = int(lg.get("n", 2)), float(lg.get("length", R + zb + 6))
+        lw, lt, ft = float(lg.get("width", 8)), float(lg.get("thick", 4)), float(lg.get("foot", 14))
+        lys = lg.get("y") or [y0 + L * (i + 0.5) / nl for i in range(nl)]
+        for i, yy in enumerate(lys):
+            for sgn, side in ((1, "l"), (-1, "r")):
+                xl = sgn * (W / 2 + lt / 2 + 0.5)
+                leg = {"type": "union", "items": [
+                    {"type": "place", "shape": {"type": "box", "size": [lt, lw, ll]}, "at": [0, 0, ll / 2], "rot": [0, 0, 0]},
+                    {"type": "place", "shape": {"type": "box", "size": [ft, ft, 2.0]}, "at": [0, 0, 1.0], "rot": [0, 0, 0]}]}
+                part(f"leg_{side}{i}", "structure", {"type": "place", "shape": leg, "at": [xl, float(yy), -R],
+                                                     "rot": [0, 0, 0]}, "nylon", "fdm", color=COL["wheel"])
+        wh = {**wh, "n": 0, "y": []}
     n = int(wh.get("n", 2))
     ww = float(wh.get("width", 10))
-    ys = wh.get("y") or ([-L / 4] if n == 2 else [-L / 4, L / 4])
+    ys = [] if n == 0 else (wh.get("y") or ([-L / 4] if n == 2 else [-L / 4, L / 4]))
     xw = xo + ww / 2 + 0.5 if wh.get("outside", True) else xo - ww / 2 - 0.5
     i = 0
     if wh.get("tread"):
@@ -200,7 +223,7 @@ def build(k: dict) -> dict:
         sw = float(sh.get("width", W))
         part("shield", "armor", _yz_prism(pts, -sw / 2, sw / 2), "tpu", "fdm", color=COL["body"])
     return {"name": k.get("name", "kit robot"), "profile": "aws2025", "robot_type": k.get("robot_type", "other"),
-            "locomotion": "wheels", "kit_draft": True, "parts": parts, "fasteners": [], "wires": [], "connections": [],
+            "locomotion": k.get("locomotion") or ("walker" if lg else "roller"), "kit_draft": True, "parts": parts, "fasteners": [], "wires": [], "connections": [],
             **({"reference": k["reference"]} if k.get("reference") else {})}
 
 
