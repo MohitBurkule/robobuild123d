@@ -1,0 +1,60 @@
+{
+ "robot_type": "vertical_spinner",
+ "cluster": 2,
+ "body": {
+  "length": 55,
+  "width": 42,
+  "height": 18,
+  "ramp": 8
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 9,
+  "width": 7,
+  "y": [
+   -12
+  ]
+ },
+ "weapon": {
+  "kind": "disc",
+  "radius": 12,
+  "width": 3,
+  "y": 5,
+  "teeth": 2,
+  "z": 20,
+  "axis": "x"
+ },
+ "forks": {
+  "n": 2,
+  "length": 25,
+  "width": 6,
+  "spread": 36
+ },
+ "colors": {
+  "body": "#f08a2c",
+  "wheel": "#2a3fa0",
+  "weapon": "#e6e6e6",
+  "fork": "#2a3fa0"
+ },
+ "crop": {
+  "0": [
+   0,
+   0,
+   0.5,
+   1
+  ],
+  "1": [
+   0,
+   0,
+   0.5,
+   1
+  ],
+  "2": [
+   0,
+   0,
+   0.5,
+   1
+  ]
+ },
+ "name": "smashie tip"
+}
