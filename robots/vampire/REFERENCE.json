@@ -9,5 +9,14 @@
   "vampire.aws71.webp",
   "vampire.aws74.webp",
   "vampire.aws76.webp"
- ]
+ ],
+ "view": {
+  "vampire.aws71.webp": "top",
+  "vampire.aws74.webp": "front_right_iso",
+  "vampire.aws76.webp": "left"
+ },
+ "elevation": {
+  "vampire.aws74.webp": 45,
+  "vampire.aws76.webp": 25
+ }
 }

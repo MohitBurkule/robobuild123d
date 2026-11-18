@@ -42,12 +42,14 @@
  },
  "wheels": {
   "n": 2,
-  "radius": 11,
+  "radius": 14,
   "width": 9,
   "y": [
-   0
+   -28
   ],
-  "outside": false
+  "outside": false,
+  "notch": true,
+  "x": 44
  },
  "weapon": {
   "kind": "bar",
@@ -65,7 +67,8 @@
   "weapon": "#b9bdc2",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "name": "vampire",
+ "macros": [
   {
    "cyl": [
     14,
@@ -80,6 +83,5 @@
    "id": "hub",
    "color": "#1c1c1f"
   }
- ],
- "name": "vampire"
+ ]
 }
