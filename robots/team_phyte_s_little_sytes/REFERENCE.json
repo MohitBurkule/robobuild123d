@@ -1,6 +1,12 @@
 {
  "robot_type": "wedge",
- "weapon": "front scoop wedge",
+ "weapon": {
+  "kind": "wedge",
+  "axis": "x",
+  "position": "front",
+  "width_frac": 0.95,
+  "teeth": 0
+ },
  "wheels": 2,
  "source": "read from reference photos by Sonnet"
 }
