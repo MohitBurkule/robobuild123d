@@ -30,12 +30,11 @@ Fixed / changed (inside only, outside kept):
 - real fasteners: `fs_front_plate_0` M2x8, `fs_front_plate_1` M2x8
 - 4 wires declared (battery - switch - ESC - motors)
 - print orientation on every printed part, failsafe / weapon disable declared, design volumes declared where this pass changed a part on purpose
+- power switch on the floor of the body, slider facing down to a 7 x 3 mm slot in the underside (no slot on the top or sides; hollow cavities stay closed behind a wall at every outside face)
 - rod dt_axle_wheel_l1: 2.2 mm stub clear of ['dm_wheel_l1'] printed as the wheel's hub boss
 - rod dt_axle_wheel_r1: 2.2 mm stub clear of ['dm_wheel_r1'] printed as the wheel's hub boss
-- chassis: one cut dropped (split the part into 2 solids)
-- wheel_l1: one cut dropped (split the part into 2 solids)
-- wheel_r1: one cut dropped (split the part into 2 solids)
-- hollowed chassis (wall 2.5, form 0): 105.1 -> 51.6 cm3
+- chassis: 1 of 15 cuts dropped (they broke the solid: 2)
+- hollowed chassis (wall 2.5, form 0): 105.1 -> 51.8 cm3
 
 Left (and why):
 - proxy.interference x1: `chassis` and `front_plate` overlap by 1.38 mm (allowed 0.08).
