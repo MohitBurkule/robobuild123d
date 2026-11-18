@@ -71,6 +71,10 @@ def upright_profile(yf, zb, zt, axis_yz, pin_yz, hook=True, foot_len=None):
                      + _circle(axis_yz, AXIS_BOSS_R) + _circle(pin_yz, 4.0)
                      + [q for dy, dz in STATOR_SCREWS for q in _circle((ay + dy, az + dz), 3.5)]).convex_hull
     shape = (foot.union(arm).union(tab) if hook else foot.union(arm)).simplify(0.01)
+    if shape.geom_type != "Polygon":
+        raise ValueError(f"vspin_drisk upright: body top zt {zt:g} is too low; the upright arm starts at {ARM_LOW:g} mm (above "
+                         f"the foot screw's driver path) and must touch the foot, so zt >= {ARM_LOW - TAB_T:g}. Raise zt or "
+                         "use bigger wheels; a flatter vertical spinner needs a different upright (not in the generator yet).")
     return [(round(x, 3), round(y, 3)) for x, y in list(shape.exterior.coords)[:-1]]
 
 
