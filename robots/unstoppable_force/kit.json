@@ -1,0 +1,66 @@
+{
+ "robot_type": "drum",
+ "body": {
+  "length": 100,
+  "width": 100,
+  "height": 30,
+  "ramp": 0,
+  "plan": "round_nose",
+  "nose": 30,
+  "top": null
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 17,
+  "width": 10,
+  "y": [
+   -18
+  ],
+  "outside": false,
+  "x": 40
+ },
+ "weapon": {
+  "kind": "drum",
+  "radius": 14,
+  "width": 50,
+  "y": 38,
+  "teeth": 2,
+  "axis": "x"
+ },
+ "colors": {
+  "body": "#22262a",
+  "wheel": "#e07a6a",
+  "weapon": "#b9b9b4",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "side": [
+    [
+     20,
+     2
+    ],
+    [
+     52,
+     2
+    ],
+    [
+     52,
+     30
+    ],
+    [
+     20,
+     32
+    ]
+   ],
+   "x": [
+    27,
+    36
+   ],
+   "mirror": true,
+   "id": "drum_arm",
+   "color": "#22262a"
+  }
+ ],
+ "name": "unstoppable force"
+}

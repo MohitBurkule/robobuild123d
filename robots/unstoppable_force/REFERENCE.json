@@ -1,0 +1,14 @@
+{
+ "robot_type": "drum",
+ "wheels": 2,
+ "weapon": {
+  "kind": "drum",
+  "axis": "x",
+  "teeth": 2
+ },
+ "photos": [
+  "unstoppable_force.aws69.webp",
+  "unstoppable_force.aws71.webp",
+  "unstoppable_force.aws72.webp"
+ ]
+}

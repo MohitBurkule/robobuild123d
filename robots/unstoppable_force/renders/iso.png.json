@@ -1,0 +1,13 @@
+{
+ "spec": "/tmp/work10_unstoppable_force/robots/unstoppable_force/spec.json",
+ "rendered_at": 1795021673.5894473,
+ "bodies": [
+  "chassis",
+  "weapon",
+  "wheel_l0",
+  "wheel_r0",
+  "drum_arm_l",
+  "drum_arm_r"
+ ],
+ "wires": {}
+}
