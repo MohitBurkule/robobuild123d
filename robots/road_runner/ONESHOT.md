@@ -10,3 +10,8 @@
 Decisions: type wedge; body box rect 100x100x24 mm, ramp 0; wheels 4 r11 inboard; weapon none; extra parts: rear_wall, side_wall; photos skipped (cluttered): indices [0].
 
 Likeness: aws67 0.87 (ok).
+
+## Round 2 (looks)
+Decisions: type wedge; body box rect 100x100x24 mm, ramp 0; wheels 4 r11 inboard; weapon none; extra parts: rear_wall, side_wall; photos skipped (cluttered): indices [0].
+
+Likeness: aws67 0.87 (ok).
