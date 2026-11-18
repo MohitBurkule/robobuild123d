@@ -1,0 +1,100 @@
+BLOCKERS: 16
+  [ran] integrity 0.02s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 2.99s
+  [ran] connections 0.02s
+  [ran] legal 0.00s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.01s
+  [ran] fight 0.00s
+  [ran] shape 0.28s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 1.05s
+  [ran] process 0.00s
+  [ran] electrical 0.00s
+  [ran] combat 0.05s
+  [ran] physics 0.02s
+  [ran] plausibility 0.01s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 7.67s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.02s
+  [ran] dfm 0.00s
+  [ran] realworld 0.00s
+goobers: ok=False 16 blockers in 16 root causes, mass 86.5/38 g
+1. [mass.over] 86.5 g (range 68.9 to 104.2 g) against the 38 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+2. [proxy.interference] `chassis` and `ear_l` overlap by 1.88 mm (allowed 0.08).
+   | chassis: x -38.00..38.00  y -31.00..31.00  z -13.00..15.00  size 76.00 x 62.00 x 28.00 mm
+   |   centre (-0.00, 0.00, 1.00), volume 79572.0 mm3
+   |   OVERLAP `ear_l` 1.88 mm (allowed 0.08)
+   |   OVERLAP `ear_r` 1.88 mm (allowed 0.08)
+   |   gap to `wheel_l0` 0.50 mm
+3. [proxy.interference] `chassis` and `ear_r` overlap by 1.88 mm (allowed 0.08).
+   | chassis: x -38.00..38.00  y -31.00..31.00  z -13.00..15.00  size 76.00 x 62.00 x 28.00 mm
+   |   centre (-0.00, 0.00, 1.00), volume 79572.0 mm3
+   |   OVERLAP `ear_l` 1.88 mm (allowed 0.08)
+   |   OVERLAP `ear_r` 1.88 mm (allowed 0.08)
+   |   gap to `wheel_l0` 0.50 mm
+4. [connection.floating] `wheel_l0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_l0: x 38.50..44.50  y -33.00..-3.00  z -15.00..15.00  size 6.00 x 29.99 x 30.00 mm
+   |   centre (41.50, -18.00, 0.00), volume 4241.2 mm3
+   |   gap to `chassis` 0.50 mm
+   | chassis: x -38.00..38.00  y -31.00..31.00  z -13.00..15.00  size 76.00 x 62.00 x 28.00 mm
+   |   centre (-0.00, 0.00, 1.00), volume 79572.0 mm3
+5. [connection.floating] `wheel_r0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_r0: x -44.50..-38.50  y -33.00..-3.00  z -15.00..15.00  size 6.00 x 29.99 x 30.00 mm
+   |   centre (-41.50, -18.00, 0.00), volume 4241.2 mm3
+   |   gap to `chassis` 0.50 mm
+   | chassis: x -38.00..38.00  y -31.00..31.00  z -13.00..15.00  size 76.00 x 62.00 x 28.00 mm
+   |   centre (-0.00, 0.00, 1.00), volume 79572.0 mm3
+6. [legal.switch] Rule 4a needs an externally accessible way to shut down that works without tools and is clearly marked on/off.
+   fix: Add a `switch` part (or removable link) with `tool_free: true` and `marked: true` and a visible ON/OFF `label`.
+7. [legal.failsafe] Rule 4d: the robot must stop all motion when the transmitter is off.
+   fix: Set `electronics.failsafe` to true and configure the receiver and ESC failsafe.
+8. [process.print_orientation] `wheel_l0` (fdm) has no `print_orientation`.
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_l0: x 38.50..44.50  y -33.00..-3.00  z -15.00..15.00  size 6.00 x 29.99 x 30.00 mm
+   |   centre (41.50, -18.00, 0.00), volume 4241.2 mm3
+   |   gap to `chassis` 0.50 mm
+9. [process.print_orientation] `wheel_r0` (fdm) has no `print_orientation`.
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_r0: x -44.50..-38.50  y -33.00..-3.00  z -15.00..15.00  size 6.00 x 29.99 x 30.00 mm
+   |   centre (-41.50, -18.00, 0.00), volume 4241.2 mm3
+   |   gap to `chassis` 0.50 mm
+10. [process.print_orientation] `ear_l` (fdm) has no `print_orientation`.
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | ear_l: x 13.00..23.00  y -25.00..-19.00  z 11.00..19.00  size 10.00 x 6.00 x 8.00 mm
+   |   centre (18.00, -22.00, 15.00), volume 480.0 mm3
+   |   OVERLAP `chassis` 1.88 mm (allowed 0.08)
+11. [process.print_orientation] `ear_r` (fdm) has no `print_orientation`.
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | ear_r: x -23.00..-13.00  y -25.00..-19.00  z 11.00..19.00  size 10.00 x 6.00 x 8.00 mm
+   |   centre (-18.00, -22.00, 15.00), volume 480.0 mm3
+   |   OVERLAP `chassis` 1.88 mm (allowed 0.08)
+12. [electrical.receiver_supply] No receiver: no part of kind `receiver` and no combined ESC/receiver.
+   fix: Wire the receiver to an ESC with a BEC.
+... 4 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 86.5 g of 38 g (-49.0 g margin)
+    chassis                    75.75 g  fills 60% of its box  <- solid block? a tub should be a shell
+    wheel_l0                    4.33 g  fills 79% of its box
+    wheel_r0                    4.33 g  fills 79% of its box
+    ear_l                       0.46 g  fills 100% of its box
+    ear_r                       0.46 g  fills 100% of its box
+    mass.over: 86.5 g (range 68.9 to 104.2 g) against the 38 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 0 hit / 31 miss, inside 0 hit / 5 miss, likeness 2 hit / 0 miss, min_gap 8 hit / 8 miss, overlap 8 hit / 20 miss, part_check 0 hit / 1 miss, part_geom 5 hit / 0 miss, ray 0 hit / 25 miss
