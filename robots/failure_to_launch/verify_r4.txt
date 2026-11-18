@@ -1,100 +1,65 @@
-BLOCKERS: 10
-  [ran] integrity 0.05s
-  [proxy] wiring 0.81s
+BLOCKERS: 5
+  [ran] integrity 0.07s
+  [proxy] wiring 1.79s
   [ran] mass 0.00s
-  [proxy] interference 12.48s
-  [ran] connections 1.58s
-  [ran] legal 0.01s
-  [ran] fasteners 0.00s
+  [proxy] interference 16.38s
+  [ran] connections 1.09s
+  [ran] legal 0.02s
+  [ran] fasteners 0.01s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
-  [ran] fight 0.01s
-  [ran] shape 0.56s
-  [ran] dynamics 0.01s
+  [ran] fight 0.03s
+  [ran] shape 0.34s
+  [ran] dynamics 0.00s
   [ran] strength 0.00s
-  [ran] printability 0.64s
+  [ran] printability 0.67s
   [ran] process 0.00s
-  [ran] electrical 0.02s
-  [ran] combat 0.10s
-  [ran] physics 0.01s
+  [ran] electrical 1.32s
+  [ran] combat 0.09s
+  [ran] physics 0.00s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
-  [ran] fit 0.09s
+  [ran] fit 0.11s
   [ran] bom 0.01s
-  [ran] wire_review 0.02s
+  [ran] wire_review 0.65s
   [ran] fastener_record 0.00s
-  [ran] likeness 21.22s
-  [ran] drive_recess 0.00s
+  [ran] likeness 14.31s
+  [ran] drive_recess 0.01s
   [ran] belt_wrap 0.00s
-  [ran] retention 0.05s
-  [ran] waiver_audit 0.01s
-  [ran] geom 0.22s
-  [ran] dfm 0.09s
-  [ran] realworld 0.09s
-failure to launch: ok=False 10 blockers in 10 root causes, mass 115.4/150 g
-1. [proxy.interference] `top_arm` and `dt_strut_top_arm` overlap by 0.78 mm (allowed 0.08).
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.42s
+  [ran] dfm 0.24s
+  [ran] realworld 1.69s
+failure to launch: ok=False 5 blockers in 5 root causes, mass 126.3/150 g
+1. [proxy.wiring] Wire `w_lesc_bat` (`el_switch.out` to `el_lesc.bat`): the baseline route is now blocked by `chassis` (12 samples).
+   fix: Run the full `wiring` group to re-route it.
+   | chassis: x -30.00..30.00  y -25.00..25.00  z -10.00..16.00  size 60.00 x 50.00 x 26.00 mm
+   |   centre (-0.00, 0.00, 3.00), volume 34809.1 mm3
+   |   overlap allowed `flip_arm_l` 1.92 mm (allowed inf)
+   |   overlap allowed `flip_arm_r` 1.64 mm (allowed inf)
+   |   overlap allowed `dt_strut_top_arm` 0.02 mm (allowed 0.08)
+2. [proxy.interference] `top_arm` and `dt_strut_top_arm` overlap by 0.78 mm (allowed 0.08).
    | top_arm: x -15.00..15.00  y 1.80..78.20  z 17.11..38.89  size 30.00 x 76.41 x 21.78 mm
    |   centre (0.00, 40.00, 28.00), volume 7020.0 mm3
    |   joint revolute axis [1, 0, 0] pivot [0, 2, 18.0] range 0..80 default 0
    |   OVERLAP `dt_strut_top_arm` 0.78 mm (allowed 0.08)
    |   gap to `chassis` 1.11 mm
-2. [proxy.sweep] joint `top_arm`: `top_arm` hits `dt_strut_top_arm` 0.78 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint top_arm` lists the closest approach to every part.
+3. [proxy.sweep] joint `top_arm`: `top_arm` hits `dt_strut_top_arm` 0.78 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint top_arm` lists the closest approach to every part.
    | top_arm: x -15.00..15.00  y 1.80..78.20  z 17.11..38.89  size 30.00 x 76.41 x 21.78 mm
    |   centre (0.00, 40.00, 28.00), volume 7020.0 mm3
    |   joint revolute axis [1, 0, 0] pivot [0, 2, 18.0] range 0..80 default 0
    |   OVERLAP `dt_strut_top_arm` 0.78 mm (allowed 0.08)
    |   gap to `chassis` 1.11 mm
-3. [power.weapon_motor] `top_arm` names motor None; it must be a catalog brushless motor so speed can be computed.
-   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
-   | top_arm: x -15.00..15.00  y 1.80..78.20  z 17.11..38.89  size 30.00 x 76.41 x 21.78 mm
-   |   centre (0.00, 40.00, 28.00), volume 7020.0 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0, 2, 18.0] range 0..80 default 0
-   |   OVERLAP `dt_strut_top_arm` 0.78 mm (allowed 0.08)
-   |   gap to `chassis` 1.11 mm
-4. [process.weapon_printed] Weapon `top_arm` is fdm-printed with no hardened metal insert teeth.
-   fix: Make it metal (sheet_cut / turned / milled) or add hardened steel tooth parts (`parent` = the weapon).
-   | top_arm: x -15.00..15.00  y 1.80..78.20  z 17.11..38.89  size 30.00 x 76.41 x 21.78 mm
-   |   centre (0.00, 40.00, 28.00), volume 7020.0 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0, 2, 18.0] range 0..80 default 0
-   |   OVERLAP `dt_strut_top_arm` 0.78 mm (allowed 0.08)
-   |   gap to `chassis` 1.11 mm
-5. [wire.rotor_clearance] wire `w_bat_sw` passes -0.9 mm from the volume swept by the `top_arm` rotor (top_arm) at [-0.5, -1.5, -3.0].
-   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
-   | top_arm: x -15.00..15.00  y 1.80..78.20  z 17.11..38.89  size 30.00 x 76.41 x 21.78 mm
-   |   centre (0.00, 40.00, 28.00), volume 7020.0 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0, 2, 18.0] range 0..80 default 0
-   |   OVERLAP `dt_strut_top_arm` 0.78 mm (allowed 0.08)
-   |   gap to `chassis` 1.11 mm
-6. [wire.rotor_clearance] wire `w_sw_esc` passes -0.9 mm from the volume swept by the `top_arm` rotor (top_arm) at [14.6, 1.7, -1.0].
-   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
-   | top_arm: x -15.00..15.00  y 1.80..78.20  z 17.11..38.89  size 30.00 x 76.41 x 21.78 mm
-   |   centre (0.00, 40.00, 28.00), volume 7020.0 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0, 2, 18.0] range 0..80 default 0
-   |   OVERLAP `dt_strut_top_arm` 0.78 mm (allowed 0.08)
-   |   gap to `chassis` 1.11 mm
-7. [wire.rotor_clearance] wire `w_m1` passes -0.7 mm from the volume swept by the `top_arm` rotor (top_arm) at [11.0, 14.0, 6.5].
-   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
-   | top_arm: x -15.00..15.00  y 1.80..78.20  z 17.11..38.89  size 30.00 x 76.41 x 21.78 mm
-   |   centre (0.00, 40.00, 28.00), volume 7020.0 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0, 2, 18.0] range 0..80 default 0
-   |   OVERLAP `dt_strut_top_arm` 0.78 mm (allowed 0.08)
-   |   gap to `chassis` 1.11 mm
-8. [wire.rotor_clearance] wire `w_m2` passes -0.7 mm from the volume swept by the `top_arm` rotor (top_arm) at [-12.0, 14.0, 6.5].
-   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
-   | top_arm: x -15.00..15.00  y 1.80..78.20  z 17.11..38.89  size 30.00 x 76.41 x 21.78 mm
-   |   centre (0.00, 40.00, 28.00), volume 7020.0 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0, 2, 18.0] range 0..80 default 0
-   |   OVERLAP `dt_strut_top_arm` 0.78 mm (allowed 0.08)
-   |   gap to `chassis` 1.11 mm
-9. [likeness.silhouette] `reference/ftl.webp`: best silhouette IoU 0.68 at camera front_left_iso (elevation 45, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.74). Regions (photo frame, left third first) 0.47 / 0.79 / 0.69: worst = front third. Height/length 0.96 model vs 0.96 photo (proportions ok).
+4. [retention.loose] `el_act_top_arm` can move more than 0.5 mm toward +x, -x, +y, -y, +z, -z without touching anything (captive means at most 0.5 mm of play in every direction); in a hit it will fall out or rattle.
+   fix: Make the pocket snug on that side (0.2 to 0.5 mm gap), add a retaining rib or strap, or declare how it is held in `retained` (tape, adhesive, velcro, press_fit).
+   | el_act_top_arm: x 16.51..26.51  y 4.47..34.57  z -8.99..3.01  size 10.00 x 30.10 x 12.00 mm
+   |   centre (21.51, 19.52, -2.99), volume 2404.7 mm3
+   |   port terminals: (21.51, 4.17, -2.99)
+   |   gap to `chassis` 0.50 mm
+   |   gap to `flip_arm_l` 0.50 mm
+5. [likeness.silhouette] `reference/ftl.webp`: best silhouette IoU 0.68 at camera front_left_iso (elevation 45, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.74). Regions (photo frame, left third first) 0.47 / 0.79 / 0.69: worst = front third. Height/length 0.96 model vs 0.96 photo (proportions ok).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
-10. [battery.rotor_gap] `el_battery` is 0.0 mm from the volume swept by `top_arm`.
-   fix: Move the battery or add a wall.
-   | el_battery: x -14.49..13.51  y 0.52..18.52  z -7.99..2.01  size 28.00 x 18.00 x 10.00 mm
-   |   centre (-0.49, 9.52, -2.99), volume 5040.0 mm3
-   |   port xt30: (-0.49, -1.48, -2.99)
-   |   gap to `chassis` 0.25 mm
-   |   gap to `flip_arm_l` 0.25 mm
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: part_geom 0 hit / 14 miss
+cache: part_geom 0 hit / 16 miss
