@@ -1,61 +1,56 @@
 BLOCKERS: 8
-  [ran] integrity 0.12s
-  [ran] mass 0.00s
-  [proxy] interference 22.08s
-  [ran] connections 0.07s
-  [ran] legal 0.05s
+  [ran] integrity 0.16s
+  [proxy] wiring 0.81s
+  [ran] mass 0.01s
+  [proxy] interference 21.60s
+  [ran] connections 0.09s
+  [ran] legal 0.02s
   [ran] fasteners 0.00s
-  [ran] power 0.01s
+  [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
-  [ran] fight 0.03s
-  [ran] shape 0.37s
+  [ran] fight 0.04s
+  [ran] shape 0.41s
   [ran] dynamics 0.00s
-  [ran] strength 0.00s
-  [ran] printability 1.74s
-  [ran] process 0.02s
+  [ran] strength 0.01s
+  [ran] printability 2.94s
+  [ran] process 0.01s
   [ran] electrical 0.01s
 /tmp/work10_i_saw_that/robot/checks/combat_ground.py:200: RuntimeWarning: Mean of empty slice
   rr = np.nanmean(rout[fb[best[1][0]]:fb[best[1][1]] + 1])
-  [ran] combat 0.27s
+  [ran] combat 0.35s
   [ran] physics 0.00s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
-  [ran] fit 0.16s
+  [ran] fit 0.20s
   [ran] bom 0.00s
-  [ran] wire_review 0.02s
-  [ran] fastener_record 0.00s
-  [ran] likeness 11.78s
+  [ran] wire_review 0.04s
+  [ran] fastener_record 0.01s
+  [ran] likeness 10.97s
   [ran] drive_recess 0.00s
   [ran] belt_wrap 0.00s
   [ran] retention 0.01s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.21s
-  [ran] dfm 0.10s
-  [ran] realworld 0.19s
-i saw that: ok=False 8 blockers in 8 root causes, mass 191.7/150 g
-1. [mass.over] 191.7 g (range 166.8 to 216.5 g) against the 150 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+  [ran] geom 0.43s
+  [ran] dfm 0.20s
+  [ran] realworld 0.32s
+i saw that: ok=False 8 blockers in 8 root causes, mass 186.7/150 g
+1. [proxy.wiring] Wire `w_sw_esc` (`el_switch.out` to `el_esc.bat`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+2. [mass.over] 186.7 g (range 162.5 to 210.9 g) against the 150 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
-2. [proxy.interference] `chassis` and `dm_wheel_l0` overlap by 4.88 mm (allowed 0.08).
-   | chassis: x -30.00..30.00  y -31.00..31.00  z -11.00..17.00  size 60.00 x 62.00 x 28.00 mm
-   |   centre (0.00, 0.00, 3.00), volume 44818.5 mm3
-   |   OVERLAP `dm_wheel_l0` 4.88 mm (allowed 0.08)
-   |   overlap allowed `jaw_l` 1.38 mm (allowed inf)
-   |   overlap allowed `jaw_r` 0.91 mm (allowed inf)
-3. [dynamics.balance] `weapon` mass centre is 0.104 mm off the spin axis: grade G346.4 at 31920 rpm, a 63 N rotating load on the bearings and frame. That is 33.4x the robot's weight. It will shake the robot and the bearings apart.
+3. [legal.locking_bar] Rule 5f: every spinner needs a locking bar that physically stops the weapon from turning.
+   fix: Add a `locking_bar` part (a pin through the weapon into the frame), name it in `weapon.locking_bar`, give it a contrasting colour and `tethered: true`.
+   | weapon: x -9.00..-7.00  y -34.08..34.08  z 49.99..118.08  size 2.00 x 68.16 x 68.08 mm
+   |   centre (-8.00, -0.00, 84.04), volume 6863.1 mm3
+   |   joint revolute axis [1, 0, 0] pivot [-8.0, 0.0, 84.0] range 0..360 default 0
+   |   gap to `dt_shaft_weapon` 0.00 mm (touching)
+4. [dynamics.balance] `weapon` mass centre is 0.104 mm off the spin axis: grade G346.4 at 31920 rpm, a 63 N rotating load on the bearings and frame. That is 34.3x the robot's weight. It will shake the robot and the bearings apart.
    fix: Make the weapon symmetric about its axis, add a counterweight, or drill the heavy side.
    | weapon: x -9.00..-7.00  y -34.08..34.08  z 49.99..118.08  size 2.00 x 68.16 x 68.08 mm
    |   centre (-8.00, -0.00, 84.04), volume 6863.1 mm3
    |   joint revolute axis [1, 0, 0] pivot [-8.0, 0.0, 84.0] range 0..360 default 0
-   |   overlap allowed `lock_pin` 0.28 mm (allowed 1000.00)
    |   gap to `dt_shaft_weapon` 0.00 mm (touching)
-4. [fit.interference] `dm_wheel_l0` overlaps wall `chassis` by 4.88 mm: it will not go in. No side has 5.08 mm free (free room per side {'-x': 2.0, '+x': 0.0, '-y': 0.55, '+y': 0.55, '-z': 0.45, '+z': 0.45}): grow the pocket or pick a smaller part (`robot catalog --kind ... --fits LxWxH`).
-   fix: Grow the pocket to the component size plus the per-side fit clearance.
-   | dm_wheel_l0: x 3.50..39.00  y -24.00..-12.00  z -5.00..5.00  size 35.50 x 12.00 x 10.00 mm
-   |   centre (21.25, -18.00, 0.00), volume 2702.4 mm3
-   |   port terminals: (3.50, -18.00, 0.00)
-   |   OVERLAP `chassis` 4.88 mm (allowed 0.08)
-   |   gap to `wheel_l0` 0.00 mm (touching)
 5. [wire.render_wires] 2 of 2 robot render(s) do not draw all 7 wires: renders/iso.png: wire `w_sw_esc` not drawn; renders/top.png: wire `w_sw_esc` not drawn
    fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
 6. [wire.render_count] iso.png: 6 routes vs 7 spec wires (missing ['w_sw_esc']); top.png: 6 routes vs 7 spec wires (missing ['w_sw_esc'])
@@ -65,9 +60,9 @@ i saw that: ok=False 8 blockers in 8 root causes, mass 191.7/150 g
 8. [likeness.silhouette] `reference/i_saw_that_.aws76.webp`: best silhouette IoU 0.41 at camera front_left_iso (elevation 25, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.55). Regions (photo frame, left third first) 0.19 / 0.48 / 0.42: worst = front third. Height/length 1.00 model vs 0.92 photo (too tall: lower it or lengthen it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
-  mass 191.7 g of 150 g (-41.7 g margin)
+  mass 186.7 g of 150 g (-36.7 g margin)
     weapon                     54.22 g  fills 74% of its box  <- solid block? a tub should be a shell
-    chassis                    42.67 g  fills 43% of its box
+    chassis                    39.93 g  fills 40% of its box
     el_battery                 21.50 g  fills 100% of its box  <- solid block? a tub should be a shell
     dm_wheel_l0                 9.50 g  fills 63% of its box
     dm_wheel_r0                 9.50 g  fills 63% of its box
@@ -79,11 +74,10 @@ MASS BUDGET:
     el_wesc                     5.00 g  fills 94% of its box
     el_esc                      2.30 g  fills 99% of its box
     arm                         2.30 g  fills 49% of its box
-    lock_pin                    2.21 g  fills 79% of its box
     dt_hub_wheel_r0             1.58 g  fills 76% of its box
     dt_hub_wheel_l0             1.58 g  fills 76% of its box
     dt_shaft_weapon             1.19 g  fills 79% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.over: 191.7 g (range 166.8 to 216.5 g) against the 150 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.over: 186.7 g (range 162.5 to 210.9 g) against the 150 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: distance 9 hit / 2 miss, group 0 hit / 31 miss, inside 10 hit / 2 miss, likeness 1 hit / 0 miss, min_gap 17 hit / 17 miss, overlap 103 hit / 94 miss, part_check 8 hit / 1 miss, part_geom 17 hit / 1 miss, ray 95 hit / 48 miss
+cache: distance 9 hit / 9 miss, group 0 hit / 31 miss, inside 10 hit / 9 miss, likeness 1 hit / 0 miss, min_gap 2 hit / 1 miss, overlap 83 hit / 73 miss, part_check 8 hit / 1 miss, part_geom 17 hit / 0 miss, ray 90 hit / 48 miss

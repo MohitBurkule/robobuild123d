@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_i_saw_that/robots/i_saw_that/spec.json",
- "rendered_at": 1795038465.4126546,
+ "rendered_at": 1795040129.977128,
  "bodies": [
   "chassis",
   "weapon",
@@ -18,8 +18,7 @@
   "el_esc",
   "el_wesc",
   "el_switch",
-  "weapon_motor",
-  "lock_pin"
+  "weapon_motor"
  ],
  "wires": {
   "w_sw_wesc": {
