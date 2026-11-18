@@ -14,3 +14,9 @@ Likeness: aws72 0.77 (FAIL), aws74 0.72 (FAIL), aws76 0.77 (FAIL).
 Decisions: type other; body box rect 85x100x30 mm, ramp 25; wheels 2 r12 inboard; weapon none; 4 forks 28 mm; extra parts: hump, fin.
 
 Likeness: aws72 0.77 (FAIL), aws74 0.72 (FAIL), aws76 0.77 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type other; body box rect 85x100x30 mm, ramp 25; wheels 2 r12 inboard; weapon none; 4 forks 28 mm; extra parts: hump, fin.
+
+Likeness: aws72 0.77 (FAIL), aws74 0.69 (FAIL), aws76 0.68 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/shark_attack.aws76.webp` is declared `front_right_iso` (IoU 0.68 there) but the model matches it better from front_right_iso (e

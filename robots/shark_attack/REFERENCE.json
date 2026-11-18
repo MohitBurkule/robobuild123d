@@ -9,5 +9,15 @@
   "shark_attack.aws72.webp",
   "shark_attack.aws74.webp",
   "shark_attack.aws76.webp"
- ]
+ ],
+ "view": {
+  "shark_attack.aws72.webp": "front_left_iso",
+  "shark_attack.aws74.webp": "front_right_iso",
+  "shark_attack.aws76.webp": "front_right_iso"
+ },
+ "elevation": {
+  "shark_attack.aws72.webp": 45,
+  "shark_attack.aws74.webp": 45,
+  "shark_attack.aws76.webp": 45
+ }
 }

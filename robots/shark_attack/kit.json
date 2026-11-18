@@ -28,7 +28,11 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "name": "shark attack",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "box": [
     36,
@@ -83,9 +87,5 @@
    "id": "fin",
    "color": "#2a6fe0"
   }
- ],
- "name": "shark attack",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }
