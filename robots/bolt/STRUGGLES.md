@@ -110,3 +110,6 @@ Scope: rough CAD attempt from the three AWS photos in `reference/`, about 20 min
 - Rebuilt with `robot kit` (robots/bolt/kit.json: 112x104x32 box, ramp 56, 4 wheels r14, no weapon) + reference entries.
 - Likeness: aws63 PASS 0.86; aws57 FAIL 0.80 (needs 0.83 vs hspin_bar). 1 blocker. Length/width/ramp sweeps plateau at 0.78-0.80.
 - Remaining differences: photo has open top, black side bars, clear plastic plow, rounded rear; kit gives a plain wedge block. Kit lacks open-top/bars/clear plow. diff-photo needs a key; read sheet myself. Verify not run.
+
+## Round 3
+- Applied Haiku list: lower body (26), smaller wheels r11 moved inboard, ramp 44, front plate via 2 wide forks. Likeness: aws57 0.81 (FAIL, needs 0.83), aws63 0.81 pass. Still different: open top/rails, rear branded plate, trapezoid plan (kit box is rectangular).
