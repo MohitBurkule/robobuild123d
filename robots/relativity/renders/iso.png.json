@@ -1,6 +1,6 @@
 {
- "spec": "/tmp/work9_relativity/robots/relativity/spec.json",
- "rendered_at": 1795020547.5211983,
+ "spec": "/tmp/work10_relativity/robots/relativity/spec.json",
+ "rendered_at": 1795039207.7331586,
  "bodies": [
   "chassis_bottom",
   "motor_l",
@@ -20,7 +20,14 @@
   "wall_r",
   "eye_l",
   "eye_r",
-  "hub"
+  "hub",
+  "dt_hub_wheel_l",
+  "dt_hub_wheel_r",
+  "dt_shaft_weapon",
+  "dt_hubw_weapon",
+  "dt_strut_eye_l",
+  "dt_strut_eye_r",
+  "lock_pin"
  ],
  "wires": {}
 }

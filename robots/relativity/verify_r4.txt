@@ -1,0 +1,112 @@
+BLOCKERS: 46
+building 2 changed part solids on 2 processes
+  [ran] integrity 0.10s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 9.94s
+  [ran] connections 3.77s
+  [ran] legal 0.01s
+  [ran] fasteners 0.00s
+  [ran] power 0.01s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.03s
+  [ran] shape 0.36s
+  [ran] dynamics 0.01s
+  [ran] strength 0.00s
+  [ran] printability 1.46s
+  [ran] process 0.01s
+  [ran] electrical 0.01s
+  [ran] combat 0.14s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.20s
+  [ran] bom 0.01s
+  [ran] wire_review 0.04s
+  [ran] fastener_record 0.00s
+  [ran] likeness 7.06s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.14s
+  [ran] dfm 0.07s
+  [ran] realworld 0.21s
+Relativity: ok=False 46 blockers in 41 root causes, mass 163.6/150 g
+1. [proxy.sweep] joint `weapon`: `dt_shaft_weapon` turning a full revolution may reach `chassis_bottom`. (+1 consequences)
+   | dt_shaft_weapon: x -2.50..2.50  y -2.50..2.50  z -15.00..13.00  size 5.00 x 5.00 x 28.00 mm
+   |   centre (0.00, -0.00, -1.00), volume 549.8 mm3
+   |   parent weapon (moves with it)
+   |   OVERLAP `battery` 0.70 mm (allowed 0.08)
+   |   overlap allowed `chassis_bottom` 0.00 mm (allowed 0.08)
+2. [proxy.sweep] joint `weapon`: `dt_shaft_weapon` turning a full revolution may reach `battery`. (+1 consequences)
+   | dt_shaft_weapon: x -2.50..2.50  y -2.50..2.50  z -15.00..13.00  size 5.00 x 5.00 x 28.00 mm
+   |   centre (0.00, -0.00, -1.00), volume 549.8 mm3
+   |   parent weapon (moves with it)
+   |   OVERLAP `battery` 0.70 mm (allowed 0.08)
+   |   overlap allowed `chassis_bottom` 0.00 mm (allowed 0.08)
+3. [proxy.sweep] joint `weapon`: `dt_shaft_weapon` turning a full revolution may reach `esc`. (+1 consequences)
+   | dt_shaft_weapon: x -2.50..2.50  y -2.50..2.50  z -15.00..13.00  size 5.00 x 5.00 x 28.00 mm
+   |   centre (0.00, -0.00, -1.00), volume 549.8 mm3
+   |   parent weapon (moves with it)
+   |   OVERLAP `battery` 0.70 mm (allowed 0.08)
+   |   overlap allowed `chassis_bottom` 0.00 mm (allowed 0.08)
+4. [proxy.sweep] joint `weapon`: `dt_shaft_weapon` turning a full revolution may reach `power_switch`. (+1 consequences)
+   | dt_shaft_weapon: x -2.50..2.50  y -2.50..2.50  z -15.00..13.00  size 5.00 x 5.00 x 28.00 mm
+   |   centre (0.00, -0.00, -1.00), volume 549.8 mm3
+   |   parent weapon (moves with it)
+   |   OVERLAP `battery` 0.70 mm (allowed 0.08)
+   |   overlap allowed `chassis_bottom` 0.00 mm (allowed 0.08)
+5. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `hub`. (+1 consequences)
+   | weapon: x -30.00..30.00  y 41.00..63.00  z -13.00..-10.00  size 60.00 x 22.00 x 3.00 mm
+   |   centre (0.00, 52.00, -11.50), volume 2239.4 mm3
+   |   joint revolute axis [0, 0, 1] pivot [0, 0, -2.5] range 0..360 default 0
+   |   parent weapon_motor (moves with it)
+   |   overlap allowed `weapon_motor` 1.39 mm (allowed 1000.00)
+6. [proxy.wiring] Wire `w_bat_sw` (`battery.xt30` to `power_switch.in`): its ports moved 63.92 mm since the baseline route.
+   fix: Run the full `wiring` group to re-route it.
+7. [proxy.wiring] Wire `w_sw_esc` (`power_switch.out` to `esc.bat`): its ports moved 63.92 mm since the baseline route.
+   fix: Run the full `wiring` group to re-route it.
+8. [proxy.wiring] Wire `w_esc_ml` (`esc.m2` to `motor_l.terminals`): its ports moved 36.89 mm since the baseline route.
+   fix: Run the full `wiring` group to re-route it.
+9. [proxy.wiring] Wire `w_esc_mr` (`esc.m1` to `motor_r.terminals`): its ports moved 52.01 mm since the baseline route.
+   fix: Run the full `wiring` group to re-route it.
+10. [proxy.wiring] Wire `w_sw_wesc` (`power_switch.out` to `wesc.bat`): its ports moved 63.92 mm since the baseline route.
+   fix: Run the full `wiring` group to re-route it.
+11. [proxy.wiring] Wire `w_wesc_m` (`wesc.motor` to `weapon_motor.phases`): its ports moved 28.07 mm since the baseline route.
+   fix: Run the full `wiring` group to re-route it.
+12. [proxy.wiring] Wire `w_rx_wesc` (`esc.wpn` to `wesc.rx`): its ports moved 44.91 mm since the baseline route.
+   fix: Run the full `wiring` group to re-route it.
+... 29 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 163.6 g of 150 g (-13.6 g margin)
+    chassis_bottom             60.10 g  fills 32% of its box
+    weapon                     17.69 g  fills 57% of its box  <- solid block? a tub should be a shell
+    weapon_motor               17.50 g  fills 54% of its box
+    battery                    15.80 g  fills 100% of its box  <- solid block? a tub should be a shell
+    motor_l                     7.50 g  fills 67% of its box
+    motor_r                     7.50 g  fills 67% of its box
+    wesc                        5.00 g  fills 100% of its box
+    dt_shaft_weapon             4.34 g  fills 79% of its box
+    hub                         4.04 g  fills 78% of its box
+    wheel_l                     3.17 g  fills 65% of its box
+    wheel_r                     3.17 g  fills 65% of its box
+    wall_l                      2.74 g  fills 100% of its box
+    wall_r                      2.69 g  fills 98% of its box
+    esc                         2.30 g  fills 100% of its box
+    dt_hubw_weapon              1.83 g  fills 67% of its box
+    handle_bar                  1.68 g  fills 98% of its box
+    dt_hub_wheel_l              0.94 g  fills 74% of its box
+    dt_hub_wheel_r              0.94 g  fills 74% of its box
+    lock_pin                    0.70 g  fills 79% of its box
+    power_switch                0.50 g  fills 100% of its box
+    handle_l                    0.47 g  fills 79% of its box
+    handle_r                    0.47 g  fills 79% of its box
+    dt_strut_eye_r              0.09 g  fills 31% of its box
+    dt_strut_eye_l              0.09 g  fills 23% of its box
+    eye_l                       0.07 g  fills 79% of its box
+    eye_r                       0.07 g  fills 79% of its box
+    mass.over: 163.6 g (range 137.1 to 190.0 g) against the 150 g limit; 9.0 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 40 hit / 4 miss, group 0 hit / 31 miss, inside 17 hit / 2 miss, likeness 3 hit / 0 miss, min_gap 12 hit / 19 miss, overlap 129 hit / 149 miss, part_check 15 hit / 2 miss, part_geom 26 hit / 0 miss, ray 123 hit / 49 miss

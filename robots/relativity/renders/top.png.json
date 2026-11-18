@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_relativity/robots/relativity/spec.json",
- "rendered_at": 1795026886.5012612,
+ "rendered_at": 1795039207.9811082,
  "bodies": [
   "chassis_bottom",
   "motor_l",
@@ -22,21 +22,12 @@
   "eye_r",
   "hub",
   "dt_hub_wheel_l",
-  "dt_axle_wheel_l",
-  "dt_nut_wheel_l",
   "dt_hub_wheel_r",
-  "dt_axle_wheel_r",
-  "dt_nut_wheel_r",
-  "dt_screw_0",
-  "dt_screw_1",
-  "dt_screw_2",
-  "dt_screw_3",
-  "dt_screw_4",
-  "dt_screw_5",
   "dt_shaft_weapon",
   "dt_hubw_weapon",
   "dt_strut_eye_l",
-  "dt_strut_eye_r"
+  "dt_strut_eye_r",
+  "lock_pin"
  ],
  "wires": {}
 }

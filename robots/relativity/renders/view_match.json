@@ -1,9 +1,9 @@
 {
  "relativity.aws72.webp": {
-  "view": "40,40",
-  "azimuth": 30.0,
-  "elevation": 32.0,
-  "iou": 0.688
+  "view": "45,35!",
+  "azimuth": 45.0,
+  "elevation": 35.0,
+  "iou": 0.629
  },
  "relativity.aws74.webp": {
   "view": "60,45",
@@ -12,9 +12,9 @@
   "iou": 0.738
  },
  "relativity.aws76.webp": {
-  "view": "auto:front_left_iso",
-  "azimuth": 150,
-  "elevation": 25,
-  "iou": 0.844
+  "view": "120,35!",
+  "azimuth": 120.0,
+  "elevation": 35.0,
+  "iou": 0.442
  }
 }
