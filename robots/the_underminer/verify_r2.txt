@@ -1,0 +1,127 @@
+BLOCKERS: 30
+  [ran] integrity 0.01s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 0.06s
+  [ran] connections 0.00s
+  [ran] legal 0.00s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.00s
+  [ran] shape 0.01s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.54s
+  [ran] process 0.00s
+  [ran] electrical 0.01s
+  [ran] combat 0.07s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 2.23s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.02s
+  [ran] dfm 0.00s
+  [ran] realworld 0.00s
+the underminer: ok=False 30 blockers in 24 root causes, mass 222.8/150 g
+1. [connection.floating] `wheel_l0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_l0: x 35.50..43.50  y -38.00..-18.00  z -10.00..10.00  size 8.00 x 19.99 x 20.00 mm
+   |   centre (39.50, -28.00, 0.00), volume 2513.3 mm3
+   |   gap to `chassis` 0.50 mm
+   | chassis: x -35.00..35.00  y -40.00..40.00  z -8.00..14.00  size 70.00 x 80.00 x 22.00 mm
+   |   centre (-0.00, -0.00, 3.00), volume 123200.0 mm3
+2. [connection.floating] `wheel_r0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_r0: x -43.50..-35.50  y -38.00..-18.00  z -10.00..10.00  size 8.00 x 19.99 x 20.00 mm
+   |   centre (-39.50, -28.00, 0.00), volume 2513.3 mm3
+   |   gap to `chassis` 0.50 mm
+   | chassis: x -35.00..35.00  y -40.00..40.00  z -8.00..14.00  size 70.00 x 80.00 x 22.00 mm
+   |   centre (-0.00, -0.00, 3.00), volume 123200.0 mm3
+3. [process.print_orientation] `wheel_l0` (fdm) has no `print_orientation`. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_l0: x 35.50..43.50  y -38.00..-18.00  z -10.00..10.00  size 8.00 x 19.99 x 20.00 mm
+   |   centre (39.50, -28.00, 0.00), volume 2513.3 mm3
+   |   gap to `chassis` 0.50 mm
+   | wheel_l1: x 35.50..43.50  y 8.00..28.00  z -10.00..10.00  size 8.00 x 19.99 x 20.00 mm
+   |   centre (39.50, 18.00, 0.00), volume 2513.3 mm3
+4. [process.print_orientation] `wheel_r0` (fdm) has no `print_orientation`. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_r0: x -43.50..-35.50  y -38.00..-18.00  z -10.00..10.00  size 8.00 x 19.99 x 20.00 mm
+   |   centre (-39.50, -28.00, 0.00), volume 2513.3 mm3
+   |   gap to `chassis` 0.50 mm
+   | wheel_r1: x -43.50..-35.50  y 8.00..28.00  z -10.00..10.00  size 8.00 x 19.99 x 20.00 mm
+   |   centre (-39.50, 18.00, 0.00), volume 2513.3 mm3
+5. [retention.axial] `wheel_l0` rotates but no fastener clamps or threads into it and it declares no reasoned press fit, pin, shaft or fuse hold. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Pass a screw through it into a thread or nut, or declare the hold that captures it with a `reason`.
+   | wheel_l0: x 35.50..43.50  y -38.00..-18.00  z -10.00..10.00  size 8.00 x 19.99 x 20.00 mm
+   |   centre (39.50, -28.00, 0.00), volume 2513.3 mm3
+   |   gap to `chassis` 0.50 mm
+   | wheel_l1: x 35.50..43.50  y 8.00..28.00  z -10.00..10.00  size 8.00 x 19.99 x 20.00 mm
+   |   centre (39.50, 18.00, 0.00), volume 2513.3 mm3
+6. [retention.axial] `wheel_r0` rotates but no fastener clamps or threads into it and it declares no reasoned press fit, pin, shaft or fuse hold. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Pass a screw through it into a thread or nut, or declare the hold that captures it with a `reason`.
+   | wheel_r0: x -43.50..-35.50  y -38.00..-18.00  z -10.00..10.00  size 8.00 x 19.99 x 20.00 mm
+   |   centre (-39.50, -28.00, 0.00), volume 2513.3 mm3
+   |   gap to `chassis` 0.50 mm
+   | wheel_r1: x -43.50..-35.50  y 8.00..28.00  z -10.00..10.00  size 8.00 x 19.99 x 20.00 mm
+   |   centre (-39.50, 18.00, 0.00), volume 2513.3 mm3
+7. [mass.over] 222.8 g (range 177.9 to 267.8 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+8. [proxy.interference] `chassis` and `scoop` overlap by 0.93 mm (allowed 0.08).
+   | chassis: x -35.00..35.00  y -40.00..40.00  z -8.00..14.00  size 70.00 x 80.00 x 22.00 mm
+   |   centre (-0.00, -0.00, 3.00), volume 123200.0 mm3
+   |   OVERLAP `scoop` 0.93 mm (allowed 0.08)
+   |   gap to `lid` 0.00 mm (touching)
+   |   gap to `wheel_l0` 0.50 mm
+9. [proxy.sweep] joint `lid`: `lid` hits `chassis` 0.14 mm deep at 7.3 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint lid` lists the closest approach to every part.
+   | lid: x -3.00..27.00  y -32.50..12.50  z 14.00..22.00  size 30.00 x 45.00 x 8.00 mm
+   |   centre (12.00, -10.00, 18.00), volume 10800.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -30, 16.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+   | chassis: x -35.00..35.00  y -40.00..40.00  z -8.00..14.00  size 70.00 x 80.00 x 22.00 mm
+10. [connection.floating] `scoop` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | scoop: x -29.00..29.00  y 38.00..74.00  z -9.00..19.00  size 58.00 x 36.00 x 28.00 mm
+   |   centre (0.00, 56.00, 5.00), volume 58464.0 mm3
+   |   OVERLAP `chassis` 0.93 mm (allowed 0.08)
+   | chassis: x -35.00..35.00  y -40.00..40.00  z -8.00..14.00  size 70.00 x 80.00 x 22.00 mm
+   |   centre (-0.00, -0.00, 3.00), volume 123200.0 mm3
+11. [connection.floating] `pod_l` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 2.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | pod_l: x 33.00..55.00  y 42.00..70.00  z -9.00..15.00  size 22.00 x 28.00 x 24.00 mm
+   |   centre (44.00, 56.00, 3.00), volume 14784.0 mm3
+   |   gap to `chassis` 2.00 mm
+   | chassis: x -35.00..35.00  y -40.00..40.00  z -8.00..14.00  size 70.00 x 80.00 x 22.00 mm
+   |   centre (-0.00, -0.00, 3.00), volume 123200.0 mm3
+12. [connection.floating] `pod_r` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 2.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | pod_r: x -55.00..-33.00  y 42.00..70.00  z -9.00..15.00  size 22.00 x 28.00 x 24.00 mm
+   |   centre (-44.00, 56.00, 3.00), volume 14784.0 mm3
+   |   gap to `chassis` 2.00 mm
+   | chassis: x -35.00..35.00  y -40.00..40.00  z -8.00..14.00  size 70.00 x 80.00 x 22.00 mm
+   |   centre (-0.00, -0.00, 3.00), volume 123200.0 mm3
+... 12 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 222.8 g of 150 g (-72.8 g margin)
+    chassis                   117.29 g  fills 100% of its box  <- solid block? a tub should be a shell
+    scoop                      55.66 g  fills 100% of its box  <- solid block? a tub should be a shell
+    pod_l                      14.07 g  fills 100% of its box
+    pod_r                      14.07 g  fills 100% of its box
+    lid                        10.28 g  fills 100% of its box
+    wheel_l0                    2.56 g  fills 79% of its box
+    wheel_r0                    2.56 g  fills 79% of its box
+    wheel_l1                    2.56 g  fills 79% of its box
+    wheel_r1                    2.56 g  fills 79% of its box
+    mass.over: 222.8 g (range 177.9 to 267.8 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 1 hit / 0 miss, group 0 hit / 31 miss, inside 9 hit / 0 miss, likeness 1 hit / 0 miss, min_gap 100 hit / 0 miss, overlap 31 hit / 0 miss, part_check 1 hit / 0 miss, part_geom 9 hit / 0 miss, ray 45 hit / 0 miss

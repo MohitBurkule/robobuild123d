@@ -2,7 +2,7 @@
  "name": "the underminer",
  "profile": "aws2025",
  "robot_type": "lifter",
- "locomotion": "wheels",
+ "locomotion": "roller",
  "kit_draft": true,
  "parts": [
   {
