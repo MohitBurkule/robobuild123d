@@ -1,0 +1,5 @@
+{"name":"Ice Breaker Junior","robot_type":"vertical_spinner",
+ "body":{"length":80,"width":90,"height":22,"ramp":12,"style":"box","clearance":3},
+ "weapon":{"kind":"disc","radius":20,"width":36,"y":12,"z":8,"axis":"x","teeth":3},
+ "wheels":{"n":2,"radius":14,"width":10,"y":[-30],"outside":true},
+ "forks":{"n":2,"length":45,"width":8,"spread":90}}

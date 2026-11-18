@@ -35,3 +35,6 @@ Status: rough build from the `wedge_2wd` template. It passes the inner tier with
 - Likeness: FAIL (3 blockers): weapon check passes; silhouette IoU 0.70 / 0.64 / 0.69 (need 0.80). Photo forks angle downward and wheels bulge past rear; not modelled.
 - Inner verify: 82 blockers, mass 195 g vs 150 g (stock drisk is heavy). Not worked on per coordinator instruction (looks only).
 - Generator gaps: drisk always places the disc ahead of the body (80% of length, fails "middle"); no intent key for weapon position, weapon width, 2 rear outboard wheels, fork length; no way to tilt forks. likeness takes ~2 min on a loaded machine.
+
+## Round 3 (kit)
+Kit draft (kit.json): weapon check passes, silhouette IoU ~0.60/0.69/0.70, still FAIL. Larger wheels/forks made it worse (0.54-0.65). Remaining: downward-angled forks, wheel bulge, hub/servo-horn detail not modelled; kit has no fork tilt. Haiku not available, read diff sheets myself.
