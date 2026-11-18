@@ -45,7 +45,7 @@ Likeness: aws71 0.60 (FAIL), aws74 0.62 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/valkyrie.aws71.webp` is declared `left` (IoU 0.60 there) but the model matches it better from front_right_iso (elevation 45, az; [FAIL] likeness.view: `reference/valkyrie.aws74.webp` is declared `front_left_iso` (IoU 0.62 there) but the model matches it better from rear_right_iso (elevati
 
 ## Round 4 (verification, helper 2)
-Blockers r3 83 -> r4 24 (`verify --tier inner`).
+Blockers r3 83 -> r4 25 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -73,6 +73,7 @@ Fixed / changed (inside only, outside kept):
 - window_r: not touching the chassis, left undeclared
 
 Left (and why):
+- integrity.solids x1: `chassis` has 0 closed solid(s) and 1 open/invalid shell(s), expected 1 (48309 mm3). A boolean or fillet probably collapsed the build.
 - mass.over x1: the photo-sized outside (steel weapon / big printed shell) is heavier than 150 g even hollowed; only a smaller outside would fix it.
 - proxy.interference x5: `weapon` and `hub_l` overlap by 1.39 mm (allowed 0.08).
 - proxy.sweep x4: joint `weapon`: `weapon` turning a full revolution may reach `hub_l`.
@@ -82,7 +83,8 @@ Left (and why):
 - mfg.layer_load x2: `dt_arm_weapon_0` carries the `weapon` axle but is printed with build direction +z (world [0.0, 0.0, 1.0]), not along the spin axis [1.0, 0.0, 0.0]: impact load peels layers apart.
 - combat.R051 x1: `weapon`: Weapon sweep above the floor is -0.66 mm (needs 0.3 mm).
 - wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
-- likeness.view x2: looks, not in scope for this pass.
+- wire.render_count x1: iso.png: 4 routes vs 7 spec wires (missing ['w_bat_sw', 'w_m2', 'w_sw_esc']); top.png: 4 routes vs 7 spec wires (missing ['w_bat_sw', 'w_m2', 'w_sw_esc'])
 - likeness.silhouette x2: looks, not in scope for this pass.
+- likeness.view x1: looks, not in scope for this pass.
 
-Likeness (best silhouette IoU per photo, r3 -> r4): valkyrie.aws71.webp 0.6 -> 0.6; valkyrie.aws74.webp 0.62 -> 0.62
+Likeness (best silhouette IoU per photo, r3 -> r4): valkyrie.aws71.webp 0.74 -> 0.74; valkyrie.aws74.webp 0.62 -> 0.62
