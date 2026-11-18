@@ -1,0 +1,66 @@
+{
+ "hypothesis": "hspin_bar",
+ "name": "Th'UNDER'er",
+ "outline": [
+  [
+   -55,
+   -35
+  ],
+  [
+   55,
+   -35
+  ],
+  [
+   55,
+   -12
+  ],
+  [
+   42,
+   -8
+  ],
+  [
+   46,
+   30
+  ],
+  [
+   24,
+   56
+  ],
+  [
+   -24,
+   56
+  ],
+  [
+   -46,
+   30
+  ],
+  [
+   -42,
+   -8
+  ],
+  [
+   -55,
+   -12
+  ]
+ ],
+ "y0": -35,
+ "y1": 56,
+ "zb": -9,
+ "zt": 9,
+ "axle_y": -24,
+ "robot_type": "hspin_bar",
+ "reference": [
+  {
+   "image": "reference/th_under_er.aws71.webp.png",
+   "view": "iso",
+   "mask": "reference/th_under_er.aws71.webp_mask.png",
+   "approximate": true
+  },
+  {
+   "image": "reference/th_under_er.aws72.webp.png",
+   "view": "iso",
+   "mask": "reference/th_under_er.aws72.webp_mask.png",
+   "approximate": true
+  }
+ ]
+}
