@@ -31,3 +31,12 @@ Whole robot pitched 18 deg tail-down, S-curved bar with hooked axe heads (kit ba
 
 Likeness: aws72 0.64 (FAIL), aws74 0.64 (FAIL), aws76 0.62 (FAIL).
 Other likeness findings: [FAIL] likeness.weapon: Photos: bar turns about y; `weapon` turns about z (axis [0.0, 0.0, 1.0]). x = across the robot (horizontal drum/vertical disc), z = up (
+
+## Tools I wanted
+- `robot looks SPEC` (build + iso/top + likeness + diff sheets in one pass, batchable). Did instead: four CLI calls per robot, ~3-4 min wall each.
+
+## Round 2 (looks)
+Decisions: type vertical_spinner; body box rect 80x44x36 mm, ramp 0; wheels 2 r32 outboard; weapon bar r76 axis z teeth 2.
+
+Likeness: aws72 0.63 (FAIL), aws74 0.65 (FAIL), aws76 0.60 (FAIL).
+Other likeness findings: [FAIL] likeness.weapon: Photos: bar turns about y; `weapon` turns about z (axis [0.0, 0.0, 1.0]). x = across the robot (horizontal drum/vertical disc), z = up (

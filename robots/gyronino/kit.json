@@ -10,10 +10,10 @@
  },
  "weapon": {
   "kind": "bar",
-  "radius": 64,
+  "radius": 76,
   "width": 3,
-  "bar_width": 13,
-  "curve": 14,
+  "bar_width": 14,
+  "curve": 16,
   "y": 52,
   "z": 10,
   "axis": "z",
