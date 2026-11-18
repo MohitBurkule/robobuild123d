@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_ablation/robots/ablation/spec.json",
- "rendered_at": 1795026936.7391257,
+ "rendered_at": 1795037854.2252526,
  "bodies": [
   "chassis",
   "weapon",
@@ -16,33 +16,103 @@
   "arm_base",
   "dt_hub_wheel_l0",
   "dt_axle_wheel_l0",
-  "dt_nut_wheel_l0",
   "dt_hub_wheel_r0",
   "dt_axle_wheel_r0",
-  "dt_nut_wheel_r0",
   "dt_hub_wheel_l1",
-  "dt_axle_wheel_l1",
-  "dt_nut_wheel_l1",
   "dt_hub_wheel_r1",
-  "dt_axle_wheel_r1",
-  "dt_nut_wheel_r1",
-  "dt_screw_0",
-  "dt_screw_1",
-  "dt_screw_2",
-  "dt_screw_3",
-  "dt_screw_4",
-  "dt_screw_5",
   "dt_shaft_weapon",
   "dt_arm_weapon_0",
   "dt_arm_weapon_1",
   "dt_mount_fork_0",
-  "dt_bolt_fork_0",
   "dt_mount_fork_1",
-  "dt_bolt_fork_1",
   "dt_mount_fork_2",
-  "dt_bolt_fork_2",
   "dt_mount_fork_3",
-  "dt_bolt_fork_3"
+  "dm_wheel_l1",
+  "dm_wheel_r1",
+  "el_battery",
+  "el_esc",
+  "el_wesc",
+  "el_switch",
+  "weapon_motor",
+  "fs_screw_0",
+  "fs_screw_1",
+  "fs_screw_2",
+  "fs_screw_3",
+  "fs_screw_4",
+  "fs_screw_5"
  ],
- "wires": {}
+ "wires": {
+  "w_sw_wesc": {
+   "from": [
+    3.5,
+    -22.5,
+    -2.0
+   ],
+   "to": [
+    -12.0,
+    -3.5,
+    12.5
+   ]
+  },
+  "w_wm": {
+   "from": [
+    11.0,
+    -0.5,
+    12.5
+   ],
+   "to": [
+    -29.5,
+    3.5159999999999982,
+    13.5
+   ]
+  },
+  "w_bat_sw": {
+   "from": [
+    -11.0,
+    -0.49999999999999933,
+    -1.5
+   ],
+   "to": [
+    -4.5,
+    -22.5,
+    -2.0
+   ]
+  },
+  "w_m1": {
+   "from": [
+    16.5,
+    5.5,
+    7.5
+   ],
+   "to": [
+    17.5,
+    -4.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -15.5,
+    5.5,
+    7.5
+   ],
+   "to": [
+    -17.5,
+    -4.000000000000002,
+    0.0
+   ]
+  },
+  "w_sig_wesc": {
+   "from": [
+    16.5,
+    -6.5,
+    7.5
+   ],
+   "to": [
+    -12.0,
+    2.5,
+    12.5
+   ]
+  }
+ }
 }

@@ -1,38 +1,38 @@
-BLOCKERS: 10
-  [ran] integrity 0.17s
+BLOCKERS: 11
+  [ran] integrity 0.10s
   [ran] mass 0.00s
-  [proxy] interference 0.27s
-  [ran] connections 0.00s
-  [ran] legal 0.01s
-  [ran] fasteners 0.02s
+  [proxy] interference 18.75s
+  [ran] connections 0.11s
+  [ran] legal 0.07s
+  [ran] fasteners 0.05s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
-  [ran] fight 0.03s
-  [ran] shape 0.11s
+  [ran] fight 0.04s
+  [ran] shape 0.40s
   [ran] dynamics 0.00s
-  [ran] strength 0.00s
-  [ran] printability 1.69s
+  [ran] strength 0.07s
+  [ran] printability 1.52s
   [ran] process 0.01s
-  [ran] electrical 0.00s
-  [ran] combat 0.19s
+  [ran] electrical 0.01s
+  [ran] combat 0.16s
   [ran] physics 0.00s
-  [ran] plausibility 0.01s
+  [ran] plausibility 0.00s
   [ran] cots 0.00s
-  [ran] fit 0.04s
-  [ran] bom 0.01s
-  [ran] wire_review 0.03s
+  [ran] fit 0.10s
+  [ran] bom 0.00s
+  [ran] wire_review 0.02s
   [ran] fastener_record 0.00s
-  [ran] likeness 4.27s
-  [ran] drive_recess 0.04s
+  [ran] likeness 13.30s
+  [ran] drive_recess 0.05s
   [ran] belt_wrap 0.00s
   [ran] retention 0.00s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.19s
-  [ran] dfm 0.03s
-  [ran] realworld 0.19s
-ablation: ok=False 10 blockers in 10 root causes, mass 174.8/150 g
-1. [mass.over] 174.8 g (range 149.3 to 200.3 g) against the 150 g limit; 7.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+  [ran] geom 0.23s
+  [ran] dfm 0.09s
+  [ran] realworld 0.15s
+ablation: ok=False 11 blockers in 11 root causes, mass 173.5/150 g
+1. [mass.over] 173.5 g (range 148.3 to 198.7 g) against the 150 g limit; 7.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
 2. [proxy.interference] `arm` and `arm_base` overlap by 0.88 mm (allowed 0.08).
    | arm: x -5.00..4.00  y -60.00..5.00  z 15.03..51.00  size 9.00 x 65.00 x 35.97 mm
@@ -52,17 +52,19 @@ ablation: ok=False 10 blockers in 10 root causes, mass 174.8/150 g
    fix: Shorten the wedge, narrow the wheels or move parts inward.
 6. [physics.runtime] ~160 s at ~6.3 A average from 350 mAh; a fight is 180 s.
    fix: Bigger pack or less current.
-7. [wire.render_wires] 16 of 16 robot render(s) do not draw all 7 wires: renders/diff_ablation.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_ablation.aws74.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_ablation.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_ablation.aws72_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_ablation.aws74_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_ablation.aws76_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_ablation.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_ablation.aws74.png: no render record (`<png>.json`), so nothing says the wires were drawn...
+7. [wire.render_wires] 2 of 2 robot render(s) do not draw all 7 wires: renders/iso.png: wire `w_sw_esc` not drawn; renders/top.png: wire `w_sw_esc` not drawn
    fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
-8. [likeness.silhouette] `reference/ablation.aws72.webp`: best silhouette IoU 0.65 at camera front_right_iso (elevation 45, azimuth 30) (need 0.80: >= 0.8 and no worse than the closest stock template `vspin_drisk` at 0.67). Regions (photo frame, left third first) 0.59 / 0.84 / 0.24: worst = rear third. Height/length 0.84 model vs 0.86 photo (proportions ok).
+8. [wire.render_count] iso.png: 6 routes vs 7 spec wires (missing ['w_sw_esc']); top.png: 6 routes vs 7 spec wires (missing ['w_sw_esc'])
+   fix: Re-render: the render record must list exactly the spec's wires.
+9. [likeness.silhouette] `reference/ablation.aws72.webp`: best silhouette IoU 0.65 at camera front_right_iso (elevation 45, azimuth 30) (need 0.80: >= 0.8 and no worse than the closest stock template `vspin_drisk` at 0.67). Regions (photo frame, left third first) 0.59 / 0.84 / 0.24: worst = rear third. Height/length 0.84 model vs 0.86 photo (proportions ok).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
-9. [likeness.silhouette] `reference/ablation.aws74.webp`: best silhouette IoU 0.61 at camera front_right_iso (elevation 45, azimuth 30) (need 0.80: >= 0.8 and no worse than the closest stock template `vspin_drisk` at 0.66). Regions (photo frame, left third first) 0.56 / 0.77 / 0.27: worst = rear third. Height/length 0.84 model vs 0.78 photo (too tall: lower it or lengthen it).
+10. [likeness.silhouette] `reference/ablation.aws74.webp`: best silhouette IoU 0.61 at camera front_right_iso (elevation 45, azimuth 30) (need 0.80: >= 0.8 and no worse than the closest stock template `vspin_drisk` at 0.66). Regions (photo frame, left third first) 0.56 / 0.77 / 0.27: worst = rear third. Height/length 0.84 model vs 0.78 photo (too tall: lower it or lengthen it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
-10. [likeness.silhouette] `reference/ablation.aws76.webp`: best silhouette IoU 0.53 at camera left (elevation 45, azimuth 180) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.50). Regions (photo frame, left third first) 0.20 / 0.71 / 0.40: worst = front third. Height/length 0.59 model vs 0.63 photo (proportions ok).
+11. [likeness.silhouette] `reference/ablation.aws76.webp`: best silhouette IoU 0.53 at camera left (elevation 45, azimuth 180) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.50). Regions (photo frame, left third first) 0.20 / 0.71 / 0.40: worst = front third. Height/length 0.59 model vs 0.63 photo (proportions ok).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
-  mass 174.8 g of 150 g (-24.8 g margin)
-    chassis                    58.89 g  fills 36% of its box
+  mass 173.5 g of 150 g (-23.5 g margin)
+    chassis                    57.62 g  fills 35% of its box
     weapon_motor               23.00 g  fills 61% of its box  <- solid block? a tub should be a shell
     el_battery                 21.50 g  fills 100% of its box  <- solid block? a tub should be a shell
     dm_wheel_l1                 9.50 g  fills 63% of its box
@@ -100,6 +102,6 @@ MASS BUDGET:
     fs_screw_3                  0.23 g  fills 29% of its box
     fs_screw_4                  0.23 g  fills 29% of its box
     fs_screw_5                  0.23 g  fills 29% of its box
-    mass.over: 174.8 g (range 149.3 to 200.3 g) against the 150 g limit; 7.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.over: 173.5 g (range 148.3 to 198.7 g) against the 150 g limit; 7.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: distance 16 hit / 0 miss, group 0 hit / 31 miss, inside 40 hit / 0 miss, likeness 3 hit / 0 miss, min_gap 8 hit / 0 miss, overlap 305 hit / 0 miss, part_check 22 hit / 0 miss, part_geom 38 hit / 0 miss, ray 238 hit / 0 miss
+cache: distance 12 hit / 4 miss, group 0 hit / 31 miss, inside 28 hit / 12 miss, likeness 3 hit / 0 miss, min_gap 7 hit / 1 miss, overlap 193 hit / 112 miss, part_check 21 hit / 1 miss, part_geom 37 hit / 1 miss, ray 190 hit / 48 miss

@@ -10,7 +10,7 @@ Decisions: type vertical_spinner; body box rect 72x92x26 mm, ramp 0; wheels 4 r1
 Likeness: aws72 0.65 (FAIL), aws74 0.61 (FAIL), aws76 0.53 (FAIL).
 
 ## Round 4 (verification, helper 2)
-Blockers r3 110 -> r4 10 (`verify --tier inner`).
+Blockers r3 110 -> r4 11 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -23,10 +23,10 @@ Fixed / changed (inside only, outside kept):
 - looks FROZEN (approved): no outside change at all; every cut that would have opened an outside face was skipped (outside-face audit: 0 mm2 opened), no switch slot, no locking pin; screw heads of the photo are now real M2 button-head screws at the same spots
 - weapon drive: motor not coaxial, belt drive implied
 - weapon: no locking pin added (looks frozen: a visible pin would change the outside)
-- chassis: a cut was not made (looks frozen: it would open 35 mm2 of outside face)
-- chassis: a cut was not made (looks frozen: it would open 37 mm2 of outside face)
-- chassis: a cut was not made (looks frozen: it would open 31 mm2 of outside face)
-- chassis: a cut was not made (looks frozen: it would open 26 mm2 of outside face)
+- chassis: a cut was not made (it would open 35 mm2 of outside face; the overlap stays as a finding)
+- chassis: a cut was not made (it would open 37 mm2 of outside face; the overlap stays as a finding)
+- chassis: a cut was not made (it would open 31 mm2 of outside face; the overlap stays as a finding)
+- chassis: a cut was not made (it would open 26 mm2 of outside face; the overlap stays as a finding)
 - dt_bolt_fork_0: head has nothing under it, dropped
 - dt_bolt_fork_1: head has nothing under it, dropped
 - dt_bolt_fork_2: head has nothing under it, dropped
@@ -59,6 +59,7 @@ Left (and why):
 - legal.footprint x1: Smallest square that holds the robot is 156.9 mm; the limit is 150 mm with no overhang at any height.
 - physics.runtime x1: ~160 s at ~6.3 A average from 350 mAh; a fight is 180 s.
 - wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
+- wire.render_count x1: iso.png: 6 routes vs 7 spec wires (missing ['w_sw_esc']); top.png: 6 routes vs 7 spec wires (missing ['w_sw_esc'])
 - likeness.silhouette x3: looks, not in scope for this pass.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): ablation.aws72.webp 0.65 -> 0.65; ablation.aws74.webp 0.61 -> 0.61; ablation.aws76.webp 0.53 -> 0.53
