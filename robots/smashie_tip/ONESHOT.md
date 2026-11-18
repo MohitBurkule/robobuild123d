@@ -25,8 +25,8 @@ Likeness: aws73 0.52 (FAIL), aws74 0.44 (FAIL), aws76 0.52 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/smashie_1.aws73.webp` is declared `left` (IoU 0.52 there) but the model matches it better from front_left_iso (elevation 45, az; [FAIL] likeness.view: `reference/smashie_1.aws74.webp` is declared `front` (IoU 0.44 there) but the model matches it better from front_left_iso (elevation 25, a; [FAIL] likeness.view: `reference/smashie_1.aws76.webp` is declared `front_left_iso` (IoU 0.52 there) but the model matches it better from rear_right_iso (elevat
 
 ## Round 4 (verification, helper 1)
-Blockers r3 -> r4: **55 -> 25** (`verify --tier inner`, full output in verify_r4.txt).
-Likeness (best silhouette IoU per photo, r3 -> r4): smashie_1.aws73.webp 0.52 -> 0.52, smashie_1.aws74.webp 0.45 -> 0.44, smashie_1.aws76.webp 0.61 -> 0.52
+Blockers r3 -> r4: **55 -> 29** (`verify --tier inner`, full output in verify_r4.txt).
+Likeness (best silhouette IoU per photo, r3 -> r4): smashie_1.aws73.webp 0.52 -> 0.52, smashie_1.aws74.webp 0.45 -> 0.44, smashie_1.aws76.webp 0.61 -> 0.61
 
 What was done (script r4_h1, outside shape kept):
 - fake screw/bolt heads removed; detail mounts/arms merged into the print part they sit on; axle nuts became printed hub caps
@@ -41,21 +41,23 @@ Notes from the run:
 - weapon: no room for a weapon motor inside the print; weapon.motor left empty
 - el_battery: no free pocket inside the print; placed at the chassis centre (overlaps)
 - el_battery: pocket wall only 0 mm
-- el_rx_esc: no free pocket inside the print; placed at the chassis centre (overlaps)
-- el_rx_esc: pocket wall only 0 mm
-- el_wesc: no free pocket inside the print; placed at the chassis centre (overlaps)
-- el_wesc: pocket wall only 0 mm
-- chassis: hollowed (exact wall round pockets), 27434 -> 24175 mm3 (46 thin spots kept solid)
+- el_rx_esc: pocket wall only 1.0 mm
+- el_wesc: pocket wall only 1.0 mm
+- switch: no flat belly skin with room above it; switch not placed (top mounting not used: photos do not show a top switch)
+- chassis: hollowed (box wall round pockets), 23949 -> 17723 mm3
 
 Left (one line each):
-- proxy.interference x8: parts overlap in the kit shape where a cut would change the look or leave a loose piece
-- fit.interference x3: catalog part pocket overlaps another body
+- proxy.interference x7: parts overlap in the kit shape where a cut would change the look or leave a loose piece
+- fit.interference x5: catalog part pocket overlaps another body
 - likeness.view x3: looks (photo view label; not part of this pass)
 - likeness.silhouette x3: looks (not part of this pass; outside shape kept as round 3)
 - proxy.sweep x2: moving part runs into the chassis more than a running clearance can take without changing the look
+- integrity.volume x1: volume store from an earlier run differs (tool-side baseline)
 - mass.over x1: outside shape (kept) is heavier than the class limit even with 2.5 mm shells
 - connection.tape_overload x1: see verify_r4.txt root causes
+- legal.switch x1: see verify_r4.txt root causes
 - power.weapon_motor x1: toolchain: a servo/arm weapon is required to have a brushless kV motor like a spinner
 - process.geometry x1: kit weapon shape is not a pure 2D/3-axis profile for its process (look)
 - electrical.battery_weapon_gap x1: battery pocket close to the weapon envelope; no other room inside the print
+- electrical.switch_in_series x1: see verify_r4.txt root causes
 - wire.render_wires x1: toolchain/process: the photo-match, diff and likeness sheets are written without a render record of the wire routes
