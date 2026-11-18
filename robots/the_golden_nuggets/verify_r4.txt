@@ -1,15 +1,15 @@
-BLOCKERS: 13
-  [cached] integrity 0.01s
+BLOCKERS: 14
+  [cached] integrity 0.00s
   [cached] mass 0.00s
-  [proxy] interference 0.55s
-  [cached] connections 0.01s
+  [proxy] interference 0.19s
+  [cached] connections 0.00s
   [cached] legal 0.00s
   [cached] fasteners 0.00s
   [cached] power 0.00s
   [cached] tension 0.00s
   [cached] targets 0.00s
   [cached] fight 0.00s
-  [cached] shape 0.01s
+  [cached] shape 0.00s
   [cached] dynamics 0.00s
   [cached] strength 0.00s
   [cached] printability 0.00s
@@ -26,12 +26,12 @@ BLOCKERS: 13
   [cached] likeness 0.00s
   [cached] drive_recess 0.00s
   [cached] belt_wrap 0.00s
-  [cached] retention 0.02s
-  [cached] waiver_audit 0.01s
+  [cached] retention 0.01s
+  [cached] waiver_audit 0.00s
   [cached] geom 0.00s
   [cached] dfm 0.00s
   [cached] realworld 0.00s
-the golden nuggets: ok=False 13 blockers in 13 root causes, mass 138.9/150 g
+the golden nuggets: ok=False 14 blockers in 14 root causes, mass 138.3/150 g
 1. [proxy.sweep] joint `lifter`: `lifter` hits `chassis` 0.12 mm deep at 7.3 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint lifter` lists the closest approach to every part.
    | lifter: x -19.00..19.00  y -40.00..40.00  z 13.50..18.50  size 38.00 x 80.00 x 5.00 mm
    |   centre (0.00, 0.00, 16.00), volume 15200.0 mm3
@@ -66,7 +66,7 @@ the golden nuggets: ok=False 13 blockers in 13 root causes, mass 138.9/150 g
    |   joint revolute axis [1, 0, 0] pivot [0, -38, 14.0] range 0..80 default 0
    |   gap to `chassis` 0.00 mm (touching)
    |   gap to `dt_strut_lifter_nose` 0.00 mm (touching)
-6. [wire.render_wires] 5 of 5 robot render(s) do not draw all 4 wires: renders/diff_the_golden_nugget.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_the_golden_nugget.aws67_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_the_golden_nugget.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_the_golden_nugget.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn
+6. [wire.render_wires] 2 of 2 robot render(s) do not draw all 4 wires: renders/iso.png: wire `w_m2` not drawn; renders/top.png: wire `w_m2` not drawn
    fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
 7. [wire.rotor_clearance] wire `w_bat_sw` passes -0.9 mm from the volume swept by the `lifter` rotor (lifter) at [-0.5, 27.0, -2.5].
    fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
@@ -96,14 +96,14 @@ the golden nuggets: ok=False 13 blockers in 13 root causes, mass 138.9/150 g
    |   joint revolute axis [1, 0, 0] pivot [0, -38, 14.0] range 0..80 default 0
    |   gap to `chassis` 0.00 mm (touching)
    |   gap to `dt_strut_lifter_nose` 0.00 mm (touching)
-11. [likeness.view] `reference/the_golden_nugget.aws67.webp` is declared `front_right_iso` (IoU 0.69 there) but the model matches it better from front_right_iso (elevation 25, azimuth 60) (IoU 0.79).
+11. [wire.render_count] iso.png: 3 routes vs 4 spec wires (missing ['w_m2']); top.png: 3 routes vs 4 spec wires (missing ['w_m2'])
+   fix: Re-render: the render record must list exactly the spec's wires.
+12. [likeness.view] `reference/the_golden_nugget.aws67.webp` is declared `front_right_iso` (IoU 0.69 there) but the model matches it better from front_right_iso (elevation 25, azimuth 60) (IoU 0.79).
    fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
-12. [likeness.silhouette] `reference/the_golden_nugget.aws67.webp`: best silhouette IoU 0.69 at camera front_right_iso (elevation 45, azimuth 30) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.77). Regions (photo frame, left third first) 0.64 / 0.77 / 0.61: worst = rear third. Height/length 0.80 model vs 0.65 photo (too tall: lower it or lengthen it).
-   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
-... 1 more root causes (fix these first, then re-run)
+... 2 more root causes (fix these first, then re-run)
 MASS BUDGET:
-  mass 138.9 g of 150 g (+11.1 g margin)
-    chassis                    53.70 g  fills 37% of its box
+  mass 138.3 g of 150 g (+11.7 g margin)
+    chassis                    53.07 g  fills 37% of its box
     lifter                     14.47 g  fills 100% of its box
     el_battery                 12.50 g  fills 100% of its box
     dm_wheel_l1                 9.50 g  fills 63% of its box
@@ -128,6 +128,6 @@ MASS BUDGET:
     dt_axle_wheel_l2            1.04 g  fills 79% of its box
     el_switch                   0.50 g  fills 100% of its box
     dt_strut_lifter_nose        0.09 g  fills 45% of its box
-    mass.may_be_over: 138.9 g (range 113.4 to 164.4 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.may_be_over: 138.3 g (range 112.9 to 163.7 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
 cache: group 31 hit / 0 miss, min_gap 62 hit / 0 miss, overlap 353 hit / 0 miss, part_geom 25 hit / 0 miss

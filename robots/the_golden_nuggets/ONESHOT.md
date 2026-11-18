@@ -22,7 +22,7 @@ Likeness: aws67 0.69 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/the_golden_nugget.aws67.webp` is declared `front_right_iso` (IoU 0.69 there) but the model matches it better from front_right_i
 
 ## Round 4 (verification, helper 2)
-Blockers r3 87 -> r4 13 (`verify --tier inner`).
+Blockers r3 87 -> r4 14 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -47,6 +47,7 @@ Left (and why):
 - process.weapon_printed x1: toolchain: a printed lifter/flipper arm is judged like a spinner (needs hardened teeth); adding metal teeth changes the look.
 - wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
 - wire.rotor_clearance x4: toolchain: same full-revolution assumption; wires cannot leave a cylinder that covers the chassis.
+- wire.render_count x1: iso.png: 3 routes vs 4 spec wires (missing ['w_m2']); top.png: 3 routes vs 4 spec wires (missing ['w_m2'])
 - likeness.view x1: looks, not in scope for this pass.
 - likeness.silhouette x1: looks, not in scope for this pass.
 - battery.rotor_gap x1: toolchain: same full-revolution assumption for a limited-range arm.
