@@ -1,0 +1,131 @@
+BLOCKERS: 20
+  [cached] integrity 0.00s
+  [cached] mass 0.00s
+  [proxy] interference 0.14s
+  [cached] connections 0.00s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.00s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.00s
+  [cached] physics 0.00s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [cached] likeness 0.00s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.00s
+  [cached] waiver_audit 0.01s
+  [cached] geom 0.00s
+  [cached] dfm 0.00s
+  [cached] realworld 0.00s
+elevron red: ok=False 20 blockers in 18 root causes, mass 178.5/150 g
+1. [wire.rotor_clearance] wire `w_m1` passes -0.7 mm from the volume swept by the `lift_arm` rotor (lift_arm) at [8.0, 5.4, -3.1]. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | lift_arm: x -8.00..8.00  y -40.00..88.00  z -11.00..28.00  size 16.00 x 128.00 x 39.00 mm
+   |   centre (0.00, 24.00, 8.50), volume 21568.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -35, 18.0] range 0..80 default 0
+   |   OVERLAP `chassis` 2.38 mm (allowed 0.08)
+   |   OVERLAP `dm_wheel_l1` 0.10 mm (allowed 0.08)
+2. [wire.rotor_clearance] wire `w_m2` passes -0.7 mm from the volume swept by the `lift_arm` rotor (lift_arm) at [-8.0, 1.5, -2.7]. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | lift_arm: x -8.00..8.00  y -40.00..88.00  z -11.00..28.00  size 16.00 x 128.00 x 39.00 mm
+   |   centre (0.00, 24.00, 8.50), volume 21568.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -35, 18.0] range 0..80 default 0
+   |   OVERLAP `chassis` 2.38 mm (allowed 0.08)
+   |   OVERLAP `dm_wheel_l1` 0.10 mm (allowed 0.08)
+3. [mass.over] 178.5 g (range 151.7 to 205.4 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+4. [proxy.interference] `chassis` and `lift_arm` overlap by 2.38 mm (allowed 0.08).
+   | chassis: x -39.00..39.00  y -46.00..46.00  z -10.00..10.00  size 78.00 x 92.00 x 20.00 mm
+   |   centre (-0.00, 0.00, 0.00), volume 59277.5 mm3
+   |   OVERLAP `lift_arm` 2.38 mm (allowed 0.08)
+   |   gap to `fork_0` 0.00 mm (touching)
+   |   gap to `fork_1` 0.00 mm (touching)
+5. [proxy.interference] `lift_arm` and `dm_wheel_l1` overlap by 0.10 mm (allowed 0.08).
+   | lift_arm: x -8.00..8.00  y -40.00..88.00  z -11.00..28.00  size 16.00 x 128.00 x 39.00 mm
+   |   centre (0.00, 24.00, 8.50), volume 21568.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -35, 18.0] range 0..80 default 0
+   |   OVERLAP `chassis` 2.38 mm (allowed 0.08)
+   |   OVERLAP `dm_wheel_l1` 0.10 mm (allowed 0.08)
+6. [proxy.interference] `lift_arm` and `dm_wheel_r1` overlap by 0.10 mm (allowed 0.08).
+   | lift_arm: x -8.00..8.00  y -40.00..88.00  z -11.00..28.00  size 16.00 x 128.00 x 39.00 mm
+   |   centre (0.00, 24.00, 8.50), volume 21568.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -35, 18.0] range 0..80 default 0
+   |   OVERLAP `chassis` 2.38 mm (allowed 0.08)
+   |   OVERLAP `dm_wheel_l1` 0.10 mm (allowed 0.08)
+7. [proxy.sweep] joint `lift_arm`: `lift_arm` hits `chassis` 2.38 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint lift_arm` lists the closest approach to every part.
+   | lift_arm: x -8.00..8.00  y -40.00..88.00  z -11.00..28.00  size 16.00 x 128.00 x 39.00 mm
+   |   centre (0.00, 24.00, 8.50), volume 21568.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -35, 18.0] range 0..80 default 0
+   |   OVERLAP `chassis` 2.38 mm (allowed 0.08)
+   |   OVERLAP `dm_wheel_l1` 0.10 mm (allowed 0.08)
+8. [connection.floating] `pod_l` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `wheel_l0`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | pod_l: x 20.00..40.00  y -30.00..0.00  z 12.00..24.00  size 20.00 x 30.00 x 12.00 mm
+   |   centre (30.00, -15.00, 18.00), volume 7200.0 mm3
+   |   gap to `wheel_l0` 0.00 mm (touching)
+   |   gap to `chassis` 2.00 mm
+   | wheel_l0: x 33.00..43.00  y -38.00..-14.00  z -12.00..12.00  size 10.00 x 23.99 x 24.00 mm
+9. [connection.floating] `pod_r` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `wheel_r0`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | pod_r: x -40.00..-20.00  y -30.00..0.00  z 12.00..24.00  size 20.00 x 30.00 x 12.00 mm
+   |   centre (-30.00, -15.00, 18.00), volume 7200.0 mm3
+   |   gap to `wheel_r0` 0.00 mm (touching)
+   |   gap to `chassis` 2.00 mm
+   | wheel_r0: x -43.00..-33.00  y -38.00..-14.00  z -12.00..12.00  size 10.00 x 23.99 x 24.00 mm
+10. [power.weapon_motor] `lift_arm` names motor None; it must be a catalog brushless motor so speed can be computed.
+   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
+   | lift_arm: x -8.00..8.00  y -40.00..88.00  z -11.00..28.00  size 16.00 x 128.00 x 39.00 mm
+   |   centre (0.00, 24.00, 8.50), volume 21568.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -35, 18.0] range 0..80 default 0
+   |   OVERLAP `chassis` 2.38 mm (allowed 0.08)
+   |   OVERLAP `dm_wheel_l1` 0.10 mm (allowed 0.08)
+11. [process.weapon_printed] Weapon `lift_arm` is fdm-printed with no hardened metal insert teeth.
+   fix: Make it metal (sheet_cut / turned / milled) or add hardened steel tooth parts (`parent` = the weapon).
+   | lift_arm: x -8.00..8.00  y -40.00..88.00  z -11.00..28.00  size 16.00 x 128.00 x 39.00 mm
+   |   centre (0.00, 24.00, 8.50), volume 21568.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -35, 18.0] range 0..80 default 0
+   |   OVERLAP `chassis` 2.38 mm (allowed 0.08)
+   |   OVERLAP `dm_wheel_l1` 0.10 mm (allowed 0.08)
+12. [electrical.battery_weapon_gap] Battery is -13.0 mm from the weapon's swept volume (need >= 3 mm plus a wall).
+   fix: Move the battery >= 3 mm from the swept volume.
+... 6 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 178.5 g of 150 g (-28.5 g margin)
+    chassis                    56.43 g  fills 41% of its box
+    lift_arm                   20.53 g  fills 27% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    dm_wheel_l0                 9.70 g  fills 66% of its box
+    dm_wheel_r0                 9.70 g  fills 66% of its box
+    dm_wheel_l1                 9.70 g  fills 66% of its box
+    dm_wheel_r1                 9.70 g  fills 66% of its box
+    pod_l                       6.85 g  fills 100% of its box
+    pod_r                       6.85 g  fills 100% of its box
+    fork_0                      5.93 g  fills 17% of its box
+    fork_1                      5.93 g  fills 17% of its box
+    el_rx_esc                   3.50 g  fills 100% of its box
+    wheel_l0                    3.37 g  fills 57% of its box
+    wheel_r0                    3.37 g  fills 57% of its box
+    wheel_l1                    3.37 g  fills 57% of its box
+    wheel_r1                    3.37 g  fills 57% of its box
+    dt_hub_wheel_l0             1.27 g  fills 67% of its box
+    dt_hub_wheel_l1             1.27 g  fills 67% of its box
+    dt_hub_wheel_r0             1.27 g  fills 67% of its box
+    dt_hub_wheel_r1             1.27 g  fills 67% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    mass.over: 178.5 g (range 151.7 to 205.4 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 31 hit / 0 miss, min_gap 102 hit / 0 miss, overlap 527 hit / 0 miss, part_geom 21 hit / 0 miss
