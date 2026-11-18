@@ -1,0 +1,114 @@
+BLOCKERS: 94
+  [ran] integrity 0.05s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 3.94s
+  [ran] connections 1.80s
+  [ran] legal 0.00s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.01s
+  [ran] shape 0.22s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.46s
+  [ran] process 0.00s
+  [ran] electrical 0.00s
+  [ran] combat 0.06s
+  [ran] physics 0.00s
+  [proxy] assembly 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 1.22s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.05s
+  [ran] dfm 0.00s
+  [ran] realworld 0.00s
+Pantherk II: ok=False 94 blockers in 44 root causes, mass 174.7/225 g
+1. [proxy.interference] `pod_r` and `dt_screw_0` overlap by 0.19 mm (allowed 0.08). Same problem on all 6 parts of this pattern: fix the pattern once. (+5 consequences)
+   | pod_r: x -43.00..-11.00  y -51.00..51.00  z -10.00..12.00  size 32.00 x 102.00 x 22.00 mm
+   |   centre (-27.00, 0.00, 1.00), volume 61968.0 mm3
+   |   OVERLAP `dt_axle_wheel_r0` 1.26 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_r1` 1.26 mm (allowed 0.08)
+   |   OVERLAP `dt_screw_3` 0.42 mm (allowed 0.08)
+2. [connection.floating] `dt_screw_0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `pod_r`, 0.0 mm away. Same problem on all 6 parts of this pattern: fix the pattern once. (+5 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | dt_screw_0: x -41.06..-37.26  y -49.06..-45.26  z 11.60..13.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (-39.16, -47.16, 12.30), volume 15.9 mm3
+   |   OVERLAP `pod_r` 0.19 mm (allowed 0.08)
+   | pod_r: x -43.00..-11.00  y -51.00..51.00  z -10.00..12.00  size 32.00 x 102.00 x 22.00 mm
+   |   centre (-27.00, 0.00, 1.00), volume 61968.0 mm3
+3. [mfg.stock] `dt_screw_0`: bought part with free geometry and no catalog SKU or stock rod/bearing match. Same problem on all 6 parts of this pattern: fix the pattern once. (+5 consequences)
+   fix: Use a catalog part, or size it to a stock rod/bearing and name it in `stock`.
+   | dt_screw_0: x -41.06..-37.26  y -49.06..-45.26  z 11.60..13.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (-39.16, -47.16, 12.30), volume 15.9 mm3
+   |   OVERLAP `pod_r` 0.19 mm (allowed 0.08)
+   | dt_screw_1: x -16.74..-12.94  y -49.06..-45.26  z 11.60..13.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (-14.84, -47.16, 12.30), volume 15.9 mm3
+4. [proxy.assembly] `dt_screw_0`: the baseline teardown never took it off. Same problem on all 6 parts of this pattern: fix the pattern once. (+5 consequences)
+   fix: Run the full `assembly` group to search other ways out.
+   | dt_screw_0: x -41.06..-37.26  y -49.06..-45.26  z 11.60..13.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (-39.16, -47.16, 12.30), volume 15.9 mm3
+   |   OVERLAP `pod_r` 0.19 mm (allowed 0.08)
+   | dt_screw_1: x -16.74..-12.94  y -49.06..-45.26  z 11.60..13.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (-14.84, -47.16, 12.30), volume 15.9 mm3
+5. [proxy.interference] `pod_l` and `dt_axle_wheel_l0` overlap by 1.26 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | pod_l: x 11.00..43.00  y -51.00..51.00  z -10.00..12.00  size 32.00 x 102.00 x 22.00 mm
+   |   centre (27.00, 0.00, 1.00), volume 61968.0 mm3
+   |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_l1` 1.26 mm (allowed 0.08)
+   |   overlap allowed `bridge` 0.05 mm (allowed 0.08)
+6. [proxy.interference] `pod_r` and `dt_axle_wheel_r0` overlap by 1.26 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | pod_r: x -43.00..-11.00  y -51.00..51.00  z -10.00..12.00  size 32.00 x 102.00 x 22.00 mm
+   |   centre (-27.00, 0.00, 1.00), volume 61968.0 mm3
+   |   OVERLAP `dt_axle_wheel_r0` 1.26 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_r1` 1.26 mm (allowed 0.08)
+   |   OVERLAP `dt_screw_3` 0.42 mm (allowed 0.08)
+7. [proxy.interference] `wheel_l0` and `dt_hub_wheel_l0` overlap by 4.38 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | wheel_l0: x 43.50..52.50  y -48.00..-24.00  z -12.00..12.00  size 9.00 x 23.99 x 24.00 mm
+   |   centre (48.00, -36.00, 0.00), volume 4071.5 mm3
+   |   OVERLAP `dt_hub_wheel_l0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
+   |   gap to `pod_l` 0.50 mm
+8. [proxy.interference] `wheel_l0` and `dt_axle_wheel_l0` overlap by 1.26 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | wheel_l0: x 43.50..52.50  y -48.00..-24.00  z -12.00..12.00  size 9.00 x 23.99 x 24.00 mm
+   |   centre (48.00, -36.00, 0.00), volume 4071.5 mm3
+   |   OVERLAP `dt_hub_wheel_l0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
+   |   gap to `pod_l` 0.50 mm
+9. [proxy.interference] `wheel_r0` and `dt_hub_wheel_r0` overlap by 4.38 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | wheel_r0: x -52.50..-43.50  y -48.00..-24.00  z -12.00..12.00  size 9.00 x 23.99 x 24.00 mm
+   |   centre (-48.00, -36.00, 0.00), volume 4071.5 mm3
+   |   OVERLAP `dt_hub_wheel_r0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_r0` 1.26 mm (allowed 0.08)
+   |   gap to `pod_r` 0.50 mm
+10. [proxy.interference] `wheel_r0` and `dt_axle_wheel_r0` overlap by 1.26 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | wheel_r0: x -52.50..-43.50  y -48.00..-24.00  z -12.00..12.00  size 9.00 x 23.99 x 24.00 mm
+   |   centre (-48.00, -36.00, 0.00), volume 4071.5 mm3
+   |   OVERLAP `dt_hub_wheel_r0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_r0` 1.26 mm (allowed 0.08)
+   |   gap to `pod_r` 0.50 mm
+11. [proxy.interference] `dt_hub_wheel_l0` and `dt_axle_wheel_l0` overlap by 1.26 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | dt_hub_wheel_l0: x 42.90..53.10  y -42.24..-29.76  z -6.24..6.24  size 10.20 x 12.48 x 12.48 mm
+   |   centre (48.00, -36.00, 0.00), volume 1247.7 mm3
+   |   OVERLAP `wheel_l0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
+   |   overlap allowed `pod_l` 0.05 mm (allowed 0.08)
+12. [proxy.interference] `dt_axle_wheel_l0` and `dt_nut_wheel_l0` overlap by 0.46 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | dt_axle_wheel_l0: x 34.50..54.10  y -37.50..-34.50  z -1.50..1.50  size 19.60 x 3.00 x 3.00 mm
+   |   centre (44.30, -36.00, -0.00), volume 138.5 mm3
+   |   OVERLAP `pod_l` 1.26 mm (allowed 0.08)
+   |   OVERLAP `wheel_l0` 1.26 mm (allowed 0.08)
+   |   OVERLAP `dt_hub_wheel_l0` 1.26 mm (allowed 0.08)
+... 32 more root causes (fix these first, then re-run)
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 0 hit / 31 miss, inside 7 hit / 18 miss, likeness 1 hit / 0 miss, min_gap 36 hit / 221 miss, overlap 57 hit / 368 miss, part_check 3 hit / 0 miss, part_geom 25 hit / 0 miss, ray 0 hit / 117 miss

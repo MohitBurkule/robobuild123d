@@ -1,0 +1,113 @@
+building 3 changed part solids on 3 processes
+  [ran] integrity 0.03s
+  [proxy] wiring 0.06s
+  [ran] mass 0.00s
+  [proxy] interference 2.85s
+  [ran] connections 0.04s
+  [ran] legal 0.01s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.00s
+  [ran] shape 0.18s
+  [ran] dynamics 0.01s
+  [ran] strength 0.00s
+  [ran] printability 0.56s
+  [ran] process 0.01s
+  [ran] electrical 0.01s
+  [ran] combat 0.04s
+  [ran] physics 0.00s
+  [proxy] assembly 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.01s
+  [ran] fastener_record 0.00s
+  [ran] likeness 4.23s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.04s
+  [ran] waiver_audit 0.01s
+  [ran] geom 0.03s
+  [ran] dfm 0.01s
+  [ran] realworld 0.01s
+Pantherk II: ok=False 26 blockers in 18 root causes, mass 163.7/225 g
+1. [connection.floating] `wheel_l0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `pod_l`, 0.5 mm away. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_l0: x 43.50..52.50  y -48.00..-24.00  z -12.00..12.00  size 9.00 x 23.99 x 24.00 mm
+   |   centre (48.00, -36.00, 0.00), volume 4071.5 mm3
+   |   gap to `pod_l` 0.50 mm
+   | pod_l: x 11.00..43.00  y -51.00..51.00  z -10.00..12.00  size 32.00 x 102.00 x 22.00 mm
+   |   centre (27.00, 0.00, 1.00), volume 61968.0 mm3
+2. [connection.floating] `wheel_r0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `pod_r`, 0.5 mm away. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_r0: x -52.50..-43.50  y -48.00..-24.00  z -12.00..12.00  size 9.00 x 23.99 x 24.00 mm
+   |   centre (-48.00, -36.00, 0.00), volume 4071.5 mm3
+   |   gap to `pod_r` 0.50 mm
+   | pod_r: x -43.00..-11.00  y -51.00..51.00  z -10.00..12.00  size 32.00 x 102.00 x 22.00 mm
+   |   centre (-27.00, 0.00, 1.00), volume 61968.0 mm3
+3. [process.print_orientation] `wheel_l0` (fdm) has no `print_orientation`. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_l0: x 43.50..52.50  y -48.00..-24.00  z -12.00..12.00  size 9.00 x 23.99 x 24.00 mm
+   |   centre (48.00, -36.00, 0.00), volume 4071.5 mm3
+   |   gap to `pod_l` 0.50 mm
+   | wheel_l1: x 43.50..52.50  y 4.00..28.00  z -12.00..12.00  size 9.00 x 23.99 x 24.00 mm
+   |   centre (48.00, 16.00, 0.00), volume 4071.5 mm3
+4. [process.print_orientation] `wheel_r0` (fdm) has no `print_orientation`. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_r0: x -52.50..-43.50  y -48.00..-24.00  z -12.00..12.00  size 9.00 x 23.99 x 24.00 mm
+   |   centre (-48.00, -36.00, 0.00), volume 4071.5 mm3
+   |   gap to `pod_r` 0.50 mm
+   | wheel_r1: x -52.50..-43.50  y 4.00..28.00  z -12.00..12.00  size 9.00 x 23.99 x 24.00 mm
+   |   centre (-48.00, 16.00, 0.00), volume 4071.5 mm3
+5. [proxy.assembly] `wheel_l0`: the baseline teardown never took it off. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Run the full `assembly` group to search other ways out.
+   | wheel_l0: x 43.50..52.50  y -48.00..-24.00  z -12.00..12.00  size 9.00 x 23.99 x 24.00 mm
+   |   centre (48.00, -36.00, 0.00), volume 4071.5 mm3
+   |   gap to `pod_l` 0.50 mm
+   | wheel_l1: x 43.50..52.50  y 4.00..28.00  z -12.00..12.00  size 9.00 x 23.99 x 24.00 mm
+   |   centre (48.00, 16.00, 0.00), volume 4071.5 mm3
+6. [proxy.assembly] `wheel_r0`: the baseline teardown never took it off. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Run the full `assembly` group to search other ways out.
+   | wheel_r0: x -52.50..-43.50  y -48.00..-24.00  z -12.00..12.00  size 9.00 x 23.99 x 24.00 mm
+   |   centre (-48.00, -36.00, 0.00), volume 4071.5 mm3
+   |   gap to `pod_r` 0.50 mm
+   | wheel_r1: x -52.50..-43.50  y 4.00..28.00  z -12.00..12.00  size 9.00 x 23.99 x 24.00 mm
+   |   centre (-48.00, 16.00, 0.00), volume 4071.5 mm3
+7. [retention.axial] `wheel_l0` rotates but no fastener clamps or threads into it and it declares no reasoned press fit, pin, shaft or fuse hold. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Pass a screw through it into a thread or nut, or declare the hold that captures it with a `reason`.
+   | wheel_l0: x 43.50..52.50  y -48.00..-24.00  z -12.00..12.00  size 9.00 x 23.99 x 24.00 mm
+   |   centre (48.00, -36.00, 0.00), volume 4071.5 mm3
+   |   gap to `pod_l` 0.50 mm
+   | wheel_l1: x 43.50..52.50  y 4.00..28.00  z -12.00..12.00  size 9.00 x 23.99 x 24.00 mm
+   |   centre (48.00, 16.00, 0.00), volume 4071.5 mm3
+8. [retention.axial] `wheel_r0` rotates but no fastener clamps or threads into it and it declares no reasoned press fit, pin, shaft or fuse hold. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Pass a screw through it into a thread or nut, or declare the hold that captures it with a `reason`.
+   | wheel_r0: x -52.50..-43.50  y -48.00..-24.00  z -12.00..12.00  size 9.00 x 23.99 x 24.00 mm
+   |   centre (-48.00, -36.00, 0.00), volume 4071.5 mm3
+   |   gap to `pod_r` 0.50 mm
+   | wheel_r1: x -52.50..-43.50  y 4.00..28.00  z -12.00..12.00  size 9.00 x 23.99 x 24.00 mm
+   |   centre (-48.00, 16.00, 0.00), volume 4071.5 mm3
+9. [connection.floating] `pod_r` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `bridge`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | pod_r: x -43.00..-11.00  y -51.00..51.00  z -10.00..12.00  size 32.00 x 102.00 x 22.00 mm
+   |   centre (-27.00, 0.00, 1.00), volume 61968.0 mm3
+   |   overlap allowed `bridge` 0.05 mm (allowed 0.08)
+   |   gap to `wheel_r0` 0.50 mm
+   |   gap to `wheel_r1` 0.50 mm
+10. [connection.floating] `bridge` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `pod_l`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | bridge: x -11.10..11.10  y -51.00..9.00  z -10.00..12.00  size 22.20 x 60.00 x 22.00 mm
+   |   centre (0.00, -21.00, 1.00), volume 29304.0 mm3
+   |   overlap allowed `pod_l` 0.05 mm (allowed 0.08)
+   |   overlap allowed `pod_r` 0.05 mm (allowed 0.08)
+   | pod_l: x 11.00..43.00  y -51.00..51.00  z -10.00..12.00  size 32.00 x 102.00 x 22.00 mm
+11. [legal.switch] Rule 4a needs an externally accessible way to shut down that works without tools and is clearly marked on/off.
+   fix: Add a `switch` part (or removable link) with `tool_free: true` and `marked: true` and a visible ON/OFF `label`.
+12. [legal.failsafe] Rule 4d: the robot must stop all motion when the transmitter is off.
+   fix: Set `electronics.failsafe` to true and configure the receiver and ESC failsafe.
+... 6 more root causes (fix these first, then re-run)
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 0 hit / 31 miss, inside 0 hit / 7 miss, likeness 2 hit / 0 miss, min_gap 14 hit / 30 miss, overlap 4 hit / 10 miss, part_check 0 hit / 3 miss, part_geom 7 hit / 0 miss, ray 0 hit / 35 miss
