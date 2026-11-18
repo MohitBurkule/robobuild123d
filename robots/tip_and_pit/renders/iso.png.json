@@ -1,11 +1,21 @@
 {
  "spec": "/tmp/work10_tip_and_pit/robots/tip_and_pit/spec.json",
- "rendered_at": 1795024609.4000752,
+ "rendered_at": 1795032577.1132202,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
-  "plate"
+  "plate",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_nut_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_nut_wheel_r0",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3"
  ],
  "wires": {}
 }
