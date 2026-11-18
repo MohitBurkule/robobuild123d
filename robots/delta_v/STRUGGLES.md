@@ -47,3 +47,9 @@ Time cap ~20 min. Result is a rough template-based model, NOT a faithful Delta V
 
 ## Attribution
 Commit uses the system-reminder attribution (Claude Haiku 5.5 and the session link), replacing the older "Claude Haiku" trailer from the brief.
+
+## Round 9 (vspin_drisk generator rebuild, outer look only)
+- intent.json: vspin_drisk, teeth 1, wide wedge outline (132 mm wide), reference entries. Spec was then hand-patched: disc group moved from front to middle (dy -52, raised 24 mm, uprights re-spaced, hub collar for width_frac), forks shortened.
+- likeness: FAIL (3 blockers, silhouette only; weapon position/size/teeth/type pass). IoU 0.69 / 0.62 / 0.72 vs need 0.80 and stock-template bars 0.74 / 0.69 / 0.81. Worst: rear third; the photo's long sloped front ramp with notch and blade is not modelled (forks only on the side walls).
+- Not done by instruction: verify blockers and fasteners were not cleared (verify was started and abandoned; the spec was patched by hand after generation, so the mid-mounted uprights have no valid chassis hook or inserts).
+- Struggles: generator cannot place the weapon in the middle (no position parameter); extra_parts cannot replace the generated weapon, so hand-patching is needed and re-running gen build discards it. A front wedge/blade plate option is missing. likeness takes 40-180 s per run.
