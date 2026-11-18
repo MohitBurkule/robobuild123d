@@ -22,7 +22,7 @@ Decisions: type flipper; body box rect 90x80x20 mm, ramp 0; wheels 2 r10 inboard
 Likeness: aws63 0.62 (FAIL).
 
 ## Round 4 (verification, helper 2)
-Blockers r3 52 -> r4 11 (`verify --tier inner`).
+Blockers r3 52 -> r4 12 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -46,6 +46,7 @@ Left (and why):
 - electrical.battery_weapon_gap x1: toolchain: a limited-range arm is judged as a full revolution about its pivot; that cylinder covers the whole chassis.
 - wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
 - wire.rotor_clearance x4: toolchain: same full-revolution assumption; wires cannot leave a cylinder that covers the chassis.
+- wire.render_count x1: iso.png: 1 routes vs 4 spec wires (missing ['w_m1', 'w_m2', 'w_sw_esc']); top.png: 1 routes vs 4 spec wires (missing ['w_m1', 'w_m2', 'w_sw_esc'])
 - likeness.silhouette x1: looks, not in scope for this pass.
 - battery.rotor_gap x1: toolchain: same full-revolution assumption for a limited-range arm.
 
