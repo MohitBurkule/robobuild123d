@@ -1,6 +1,6 @@
 {
- "spec": "/tmp/work9_rammstein/robots/rammstein/spec.json",
- "rendered_at": 1795019872.734722,
+ "spec": "/tmp/work10_rammstein/robots/rammstein/spec.json",
+ "rendered_at": 1795026935.0596406,
  "bodies": [
   "chassis_bottom",
   "chassis_top",
@@ -23,6 +23,25 @@
   "insert_w3",
   "wheel_fl",
   "wheel_fr",
+  "carbon_plate",
+  "dt_hub_wheel_l",
+  "dt_axle_wheel_l",
+  "dt_nut_wheel_l",
+  "dt_hub_wheel_r",
+  "dt_axle_wheel_r",
+  "dt_nut_wheel_r",
+  "dt_hub_wheel_fl",
+  "dt_axle_wheel_fl",
+  "dt_nut_wheel_fl",
+  "dt_hub_wheel_fr",
+  "dt_axle_wheel_fr",
+  "dt_nut_wheel_fr",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3",
+  "dt_screw_4",
+  "dt_screw_5",
   "bolt_c0",
   "bolt_c1",
   "bolt_c2",
@@ -35,32 +54,44 @@
  "wires": {
   "w_bat_sw": {
    "from": [
-    5.0,
-    2.000000000000001,
+    -4.0,
+    8.0,
     -0.9
    ],
    "to": [
-    -27.0,
-    5.0,
+    19.0,
+    -4.0,
     -0.5
    ]
   },
   "w_sw_esc": {
    "from": [
-    -19.0,
-    5.0,
+    27.0,
+    -4.0,
     -0.5
    ],
    "to": [
-    -1.0,
-    -2.0000000000000004,
+    27.0,
+    10.0,
     3.0
+   ]
+  },
+  "w_esc_ml": {
+   "from": [
+    21.0,
+    18.0,
+    3.0
+   ],
+   "to": [
+    5.549999999999997,
+    -24.0,
+    0.0
    ]
   },
   "w_esc_mr": {
    "from": [
-    -7.000000000000001,
-    -10.0,
+    21.0,
+    2.0,
     3.0
    ],
    "to": [
@@ -71,13 +102,13 @@
   },
   "w_rx_esc": {
    "from": [
-    -9.0,
-    25.8,
+    0.0,
+    26.8,
     0.0
    ],
    "to": [
-    -13.0,
-    -1.9999999999999996,
+    15.0,
+    10.0,
     3.0
    ]
   }

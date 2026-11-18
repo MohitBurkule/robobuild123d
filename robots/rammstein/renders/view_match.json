@@ -1,0 +1,14 @@
+{
+ "rammstein.aws71.png": {
+  "view": "auto:rear",
+  "azimuth": 270,
+  "elevation": 45,
+  "iou": 0.842
+ },
+ "rammstein.aws72.png": {
+  "view": "auto:rear_right_iso",
+  "azimuth": 330,
+  "elevation": 45,
+  "iou": 0.859
+ }
+}
