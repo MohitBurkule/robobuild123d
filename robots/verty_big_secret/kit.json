@@ -8,27 +8,20 @@
  },
  "wheels": {
   "n": 2,
-  "radius": 13,
+  "radius": 14,
   "width": 8,
   "y": [
-   -28
+   -30
   ]
  },
  "weapon": {
   "kind": "disc",
-  "radius": 30,
+  "radius": 36,
   "width": 4,
-  "y": 18,
+  "y": 24,
   "teeth": 2,
-  "z": 34,
+  "z": 40,
   "axis": "x"
- },
- "forks": {
-  "n": 2,
-  "length": 55,
-  "width": 6,
-  "spread": 74,
-  "tilt_deg": 10
  },
  "colors": {
   "body": "#1f4a38",
@@ -51,6 +44,34 @@
    "mirror": true,
    "id": "upright",
    "color": "#1f4a38"
+  },
+  {
+   "top": [
+    [
+     18,
+     30
+    ],
+    [
+     32,
+     30
+    ],
+    [
+     62,
+     96
+    ],
+    [
+     57,
+     98
+    ]
+   ],
+   "z": [
+    0,
+    7
+   ],
+   "color": "#1f4a38",
+   "mirror": true,
+   "kind": "wedge",
+   "id": "fork"
   }
  ],
  "name": "verty big secret"

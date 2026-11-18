@@ -1,0 +1,117 @@
+BLOCKERS: 31
+  [ran] integrity 0.02s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 1.66s
+  [ran] connections 0.05s
+  [ran] legal 0.00s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.01s
+  [ran] shape 0.40s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.37s
+  [ran] process 0.02s
+  [ran] electrical 0.00s
+  [ran] combat 0.05s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 6.87s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.02s
+  [ran] dfm 0.01s
+  [ran] realworld 0.00s
+verty big secret: ok=False 31 blockers in 30 root causes, mass 255.3/150 g
+1. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `chassis`. (+1 consequences)
+   | weapon: x -2.00..2.00  y -11.06..59.06  z 4.00..76.01  size 4.00 x 70.13 x 72.01 mm
+   |   centre (0.00, 24.00, 40.00), volume 15559.6 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 24.0, 40.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.88 mm (allowed 0.08)
+   | chassis: x -33.00..33.00  y -40.00..40.00  z -12.00..8.00  size 66.00 x 80.00 x 20.00 mm
+2. [mass.over] 255.3 g (range 223.5 to 287.0 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+3. [proxy.interference] `chassis` and `weapon` overlap by 1.88 mm (allowed 0.08).
+   | chassis: x -33.00..33.00  y -40.00..40.00  z -12.00..8.00  size 66.00 x 80.00 x 20.00 mm
+   |   centre (-0.00, -0.00, -2.00), volume 105600.0 mm3
+   |   OVERLAP `upright_l` 2.88 mm (allowed 0.08)
+   |   OVERLAP `upright_r` 2.88 mm (allowed 0.08)
+   |   OVERLAP `fork_l` 2.38 mm (allowed 0.08)
+4. [proxy.interference] `chassis` and `upright_l` overlap by 2.88 mm (allowed 0.08).
+   | chassis: x -33.00..33.00  y -40.00..40.00  z -12.00..8.00  size 66.00 x 80.00 x 20.00 mm
+   |   centre (-0.00, -0.00, -2.00), volume 105600.0 mm3
+   |   OVERLAP `upright_l` 2.88 mm (allowed 0.08)
+   |   OVERLAP `upright_r` 2.88 mm (allowed 0.08)
+   |   OVERLAP `fork_l` 2.38 mm (allowed 0.08)
+5. [proxy.interference] `chassis` and `upright_r` overlap by 2.88 mm (allowed 0.08).
+   | chassis: x -33.00..33.00  y -40.00..40.00  z -12.00..8.00  size 66.00 x 80.00 x 20.00 mm
+   |   centre (-0.00, -0.00, -2.00), volume 105600.0 mm3
+   |   OVERLAP `upright_l` 2.88 mm (allowed 0.08)
+   |   OVERLAP `upright_r` 2.88 mm (allowed 0.08)
+   |   OVERLAP `fork_l` 2.38 mm (allowed 0.08)
+6. [proxy.interference] `chassis` and `fork_l` overlap by 2.38 mm (allowed 0.08).
+   | chassis: x -33.00..33.00  y -40.00..40.00  z -12.00..8.00  size 66.00 x 80.00 x 20.00 mm
+   |   centre (-0.00, -0.00, -2.00), volume 105600.0 mm3
+   |   OVERLAP `upright_l` 2.88 mm (allowed 0.08)
+   |   OVERLAP `upright_r` 2.88 mm (allowed 0.08)
+   |   OVERLAP `fork_l` 2.38 mm (allowed 0.08)
+7. [proxy.interference] `chassis` and `fork_r` overlap by 2.38 mm (allowed 0.08).
+   | chassis: x -33.00..33.00  y -40.00..40.00  z -12.00..8.00  size 66.00 x 80.00 x 20.00 mm
+   |   centre (-0.00, -0.00, -2.00), volume 105600.0 mm3
+   |   OVERLAP `upright_l` 2.88 mm (allowed 0.08)
+   |   OVERLAP `upright_r` 2.88 mm (allowed 0.08)
+   |   OVERLAP `fork_l` 2.38 mm (allowed 0.08)
+8. [connection.floating] `wheel_l0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_l0: x 33.50..41.50  y -44.00..-16.00  z -14.00..14.00  size 8.00 x 27.99 x 28.00 mm
+   |   centre (37.50, -30.00, 0.00), volume 4926.0 mm3
+   |   gap to `chassis` 0.50 mm
+   | chassis: x -33.00..33.00  y -40.00..40.00  z -12.00..8.00  size 66.00 x 80.00 x 20.00 mm
+   |   centre (-0.00, -0.00, -2.00), volume 105600.0 mm3
+9. [connection.floating] `wheel_r0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_r0: x -41.50..-33.50  y -44.00..-16.00  z -14.00..14.00  size 8.00 x 27.99 x 28.00 mm
+   |   centre (-37.50, -30.00, 0.00), volume 4926.0 mm3
+   |   gap to `chassis` 0.50 mm
+   | chassis: x -33.00..33.00  y -40.00..40.00  z -12.00..8.00  size 66.00 x 80.00 x 20.00 mm
+   |   centre (-0.00, -0.00, -2.00), volume 105600.0 mm3
+10. [connection.floating] `fork_l` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | fork_l: x 18.00..62.00  y 30.00..98.00  z -14.00..-7.00  size 44.00 x 68.00 x 7.00 mm
+   |   centre (40.00, 64.00, -10.50), volume 4697.0 mm3
+   |   OVERLAP `chassis` 2.38 mm (allowed 0.08)
+   | chassis: x -33.00..33.00  y -40.00..40.00  z -12.00..8.00  size 66.00 x 80.00 x 20.00 mm
+   |   centre (-0.00, -0.00, -2.00), volume 105600.0 mm3
+11. [connection.floating] `fork_r` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | fork_r: x -62.00..-18.00  y 30.00..98.00  z -14.00..-7.00  size 44.00 x 68.00 x 7.00 mm
+   |   centre (-40.00, 64.00, -10.50), volume 4697.0 mm3
+   |   OVERLAP `chassis` 2.38 mm (allowed 0.08)
+   | chassis: x -33.00..33.00  y -40.00..40.00  z -12.00..8.00  size 66.00 x 80.00 x 20.00 mm
+   |   centre (-0.00, -0.00, -2.00), volume 105600.0 mm3
+12. [legal.switch] Rule 4a needs an externally accessible way to shut down that works without tools and is clearly marked on/off.
+   fix: Add a `switch` part (or removable link) with `tool_free: true` and `marked: true` and a visible ON/OFF `label`.
+... 18 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 255.3 g of 150 g (-105.3 g margin)
+    weapon                    122.92 g  fills 77% of its box  <- solid block? a tub should be a shell
+    chassis                   100.53 g  fills 100% of its box  <- solid block? a tub should be a shell
+    upright_l                   5.83 g  fills 100% of its box
+    upright_r                   5.83 g  fills 100% of its box
+    wheel_l0                    5.02 g  fills 79% of its box
+    wheel_r0                    5.02 g  fills 79% of its box
+    fork_l                      4.47 g  fills 22% of its box
+    fork_r                      4.47 g  fills 22% of its box
+    mass.over: 255.3 g (range 223.5 to 287.0 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 0 hit / 4 miss, group 0 hit / 31 miss, inside 0 hit / 8 miss, likeness 3 hit / 0 miss, min_gap 18 hit / 26 miss, overlap 48 hit / 35 miss, part_check 0 hit / 2 miss, part_geom 8 hit / 0 miss, ray 0 hit / 40 miss
