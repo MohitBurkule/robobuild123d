@@ -506,7 +506,7 @@ def cli(a):
     if getattr(a, "section_z", None) is not None:
         view = with_section_z(view, a.section_z)
     s = spec_mod.load(a.spec)
-    if getattr(a, "no_checks", False):  # no full verify: only the wiring group, so wire routes are still drawn and recorded
+    if getattr(a, "no_checks", False) or not (a.markers or getattr(a, "checks", False)):  # no full verify: only the wiring group, so wire routes are still drawn and recorded
         w, rep, r = world_for(s, checks.Options(deep=True, fast=a.fast, only=["wiring"]))
         rep.findings = []
     else:
@@ -562,7 +562,8 @@ def add_cli(sub):
     p.add_argument("--section-z", type=float, default=None, metavar="H",
                    help="cut the view at height H and keep what is below (e.g. top view under a closed deck)")
     p.add_argument("--no-checks", action="store_true",
-                   help="skip the full verify pass (much faster and lighter; wire routes are still computed and drawn, no markers)")
+                   help="(default unless --markers/--checks) skip the full verify pass: ~5 s instead of minutes; wire routes still drawn")
+    p.add_argument("--checks", action="store_true", help="run the full verify pass first (slow; needed only for --markers)")
     p.add_argument("--harness", action="store_true",
                    help="draw the planned wiring harness (robot/wiring: bundled, coloured B-spline wires and connectors)")
     p.add_argument("--no-lid", action="store_true", help="leave out lid/cover/top-panel parts and their bolts")

@@ -17,7 +17,12 @@ is the lowest wheel point.
 - `robot template <name>` prints a spec.  `robot verify spec.json [--full]` checks it (default shows failures only).
 - `--fast` coarse tessellation for quick iteration (verdicts near limits may move); `--quick` skips the slow sweeps (wiring, assembly);
   `--json report.json` also writes the report.
-- `robot render spec.json <view> out.png [--markers]` views: iso, iso_back, top, bottom, front, back, side, exploded, section_z,
+- FAST LOOP (use this while editing): `robot verify spec.json --tier inner --llm` (~30 s cold, ~5 s cached). The default full
+  tier takes ~7 min (`practice` alone ~6 min); run it once at the end. `--only GROUP` reruns one group (`--list-tiers` for times).
+  Each part build and group prints a `[ran]`/`[cached]` line; cache lives in `ROBOT_CACHE` (default per-user), so reruns are fast.
+- `robot fasteners spec.json --fill` writes a measured `hole` record (grip from the geometry) for every fastener missing one
+  (fixes `fastener.hole_record`). Without `--fill` it only prints them.
+- `robot render spec.json <view> out.png [--markers]` (~5 s; skips verify unless `--markers`/`--checks`) views: iso, iso_back, top, bottom, front, back, side, exploded, section_z,
   section_x. `--markers` draws numbered red rings on every failure that has a position (the numbers are printed).
 - `robot export spec.json <slug> <dir>` writes `<dir>/<slug>/`: spec.json, report.json, REPORT.md (with NOT CHECKED), README.md
   (iso render on top), renders/, stl/ per part, step/ per part plus step/assembly.step (exact B-rep, start pose).
@@ -51,7 +56,8 @@ JSON with `"type"`; everything is centred on its own origin, use `place` to move
 - `revolve {profile:[[r,z]..], angle (default 360)}`: profile in the r-z half plane (r >= 0) turned about z (wheels, hubs, discs).
 - `tube {points:[[x,y,z]..],radius}`: swept round bar through the points.
 - `union {items}`, `intersect {items}`, `subtract {base, cut:[..]}`, `place {shape, at, rot}`, `offset {shape, d}` (d in +-50 mm).
-- `round_inside {shape, radius, axis}`: fillet every inside (concave) corner edge parallel to `axis` (default z): pockets, channels, wall joins. Use it on printed tubs so `mfg.sharp_internal_corner` passes by construction.
+- `round_inside {shape, radius, axis}`: fillet every inside (concave) corner edge parallel to `axis` (default z): pockets, channels, wall joins. Use it on printed tubs to cut `mfg.sharp_internal_corner` regions. CAUTION: wrapping a big union of boxes can ADD regions
+  (wedge_2wd chassis: 15 -> 21); re-run `--only sharp_corner` and keep it only if the count drops.
 - `fillet {shape, radius}`, `chamfer {shape, length}`: round or bevel every edge of the child (keep radius below half the thinnest
   wall or the kernel fails, which becomes a `geometry failed` blocker).
 - `mirror {shape, axis:"x"|"y"|"z"}`: reflect across the plane normal to that axis.
