@@ -11,7 +11,7 @@ the plan (2026-11-14, after the 80-PR merge campaign).
 |---|------|--------|-------|
 | A1 | Wiring harness implementation (channels, netlist, router, solids, checks) | [ ] | #80 shipped the data model only |
 | A2 | Elevron Alt (#22) remediation: rebase, `_floor_rounded` fix, module-list conflict | [ ] | needs gen work; tracked separately |
-| A3 | Limpet XXT (#81) completion | [ ] | |
+| A3 | Limpet XXT (#81) completion | [x] | deep gate 0 blockers, 127.9 g; servo-lift flipper, 9 renders, README/BRIEF |
 | A4 | Promote DFM drafts (#78) to blockers once calibrated | [ ] | |
 | A5 | Wire real motor curves into #72 physics + sim | [~] | `physics` group landed closed-form; curves pending |
 
