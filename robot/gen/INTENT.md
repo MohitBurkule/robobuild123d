@@ -27,3 +27,6 @@ python3 -m robot gen build --intent cone.json --out out/ --no-gate   # build onl
 python3 -m robot gen build --intent cone.json --out out/ --fast      # gated: 0 blockers or exit 2
 python3 -m robot render out/hspin_bar.json iso out/iso.png --quick
 ```
+
+- `teeth`: tooth count of the vspin_drisk single disc (default 2), from the photo.
+- `drum_width`: mm. Turns the vspin_drisk rotor into a hollow aluminium drum this wide (3 mm web on the motor end, 3 mm wall, hub boss), same uprights; `teeth` sets its tooth count. weapon.kind becomes "drum".
