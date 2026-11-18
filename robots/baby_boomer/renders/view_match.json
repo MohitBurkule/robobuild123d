@@ -1,8 +1,8 @@
 {
  "baby_boomer.aws72.webp": {
-  "view": "60,45",
+  "view": "60,35!",
   "azimuth": 60.0,
-  "elevation": 45.0,
-  "iou": 0.791
+  "elevation": 35.0,
+  "iou": 0.691
  }
 }
