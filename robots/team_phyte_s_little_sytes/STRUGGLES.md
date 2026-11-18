@@ -35,3 +35,29 @@ Struggles:
 5. Likeness renders are not checked by the wire group unless rendered with checks; the plain `render` command does not write the record.
 
 Final blocker count: inner tier 10 root causes (22 blockers). Likeness: FAIL (3 blockers: IoU 0.61 / 0.54 / 0.61 vs 0.80 needed).
+
+## Photo-fit pass (new tools: mask --crop, fit-photo)
+
+What the new tools did:
+- `mask --crop` fixed the two-robot problem. Each photo is cropped to its left robot in REFERENCE.json (`crop`, one box per file). Checked the aws76 mask visually: one robot only. likeness.mask_source now passes on all three photos.
+- `fit-photo --length 120 --weapon-axis x` gave: width 132 mm, height 18 mm, front ramp 54 mm, weapon radius 18 mm at 60 mm from the back. Its own IoU estimate was 0.82. Those numbers went into intent.json (outline 132x120 box, y -60..60, zb -9, zt 9, taper 6).
+
+What did not help:
+- Silhouette IoU at the real build: aws74 0.76 (need 0.81), aws76 0.82 (need 0.82, pass), aws77 0.81 (need 0.85). The fit's 0.82 was a coarse envelope; the generated box does not reproduce the front ramp. The intent has no way to express a front ramp (outline is plan only, profile slopes all walls), so the 54 mm ramp is not in the model.
+- Height disagrees between views: aws74 says the model is too tall (0.71 vs 0.63), aws77 says too flat (0.67 vs 0.73). Fit height 18 mm kept; no single height satisfies both.
+- taper 8 scored slightly worse than taper 6 (aws76 0.81, aws77 0.80). Kept taper 6.
+- The generator output has no `reference` block, so patch.py adds it (reproducible). Fasteners --fill then wrote 8 hole records.
+- The fit's weapon is a cylinder; the real weapon is the wedge blade. Weapon stays `kind: wedge` in REFERENCE.json; the fitted cylinder was not modelled.
+
+Verify (inner tier, after fasteners --fill): 31 blockers in 19 root causes. Main ones:
+- proxy.assembly: insert/bolt teardown and wedge/chassis way-out blocked (the same pattern as the last build).
+- mass.over: 152.5 g against 150 g.
+- legal.footprint: 169.5 mm square against the 150 mm limit. The wedge blade and wheels overhang the 132x120 body.
+- wire.render_wires: renders lack the `.json` record.
+- proxy.wiring: one wire has no baseline route.
+
+Still missing:
+- A front-ramp / blade primitive in intent (outline or profile cannot express a wedge that tapers toward the floor at the front).
+- Separate height targets per view, or a fit that uses all three photos together.
+- A footprint-aware fit so the fitted length accounts for the 150 mm limit.
+- Fix for the proxy.assembly teardown pattern (carried over from before).

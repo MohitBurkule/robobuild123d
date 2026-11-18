@@ -8,5 +8,25 @@
   "teeth": 0
  },
  "wheels": 2,
- "source": "read from reference photos by Sonnet"
+ "source": "read from reference photos by Sonnet",
+ "crop": {
+  "team_phyte_s_little_sytes.aws74.webp": [
+   0.02,
+   0.1,
+   0.485,
+   0.92
+  ],
+  "team_phyte_s_little_sytes.aws76.webp": [
+   0.03,
+   0.04,
+   0.48,
+   0.53
+  ],
+  "team_phyte_s_little_sytes.aws77.webp": [
+   0.02,
+   0.04,
+   0.5,
+   0.92
+  ]
+ }
 }
