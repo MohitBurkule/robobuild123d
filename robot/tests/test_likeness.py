@@ -31,3 +31,16 @@ def test_inactive_without_photos(tmp_path):
     p = tmp_path / "spec.json"
     p.write_text(TPL.read_text())
     assert not [f for f in _verify(p).findings if f.group == "likeness"]
+
+
+def test_weapon_facts(tmp_path):
+    d = tmp_path / "robots" / "y"
+    (d / "reference").mkdir(parents=True)
+    (d / "spec.json").write_text((TPL.parent / "vspin_drisk.json").read_text())
+    (d / "REFERENCE.json").write_text(json.dumps({"robot_type": "vertical_spinner", "wheels": 2,
+                                                  "weapon": {"kind": "drum", "axis": "z", "position": "rear"}}))
+    msgs = [f.message for f in _verify(d / "spec.json").findings if f.id == "likeness.weapon" and not f.passed]
+    assert len(msgs) == 3
+    (d / "REFERENCE.json").write_text(json.dumps({"robot_type": "vertical_spinner", "wheels": 2,
+                                                  "weapon": {"kind": "disc", "axis": "x", "position": "front", "teeth": 2}}))
+    assert not [f for f in _verify(d / "spec.json").findings if f.id == "likeness.weapon" and not f.passed]
