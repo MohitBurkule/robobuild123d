@@ -1,0 +1,12 @@
+{
+ "robot_type": "flipper",
+ "wheels": 2,
+ "weapon": {
+  "kind": "flipper",
+  "axis": "x"
+ },
+ "photos": [
+  "queen_sarah_denning.aws70.webp",
+  "queen_sarah_denning.aws71.webp"
+ ]
+}
