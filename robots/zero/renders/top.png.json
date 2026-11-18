@@ -1,19 +1,18 @@
 {
  "spec": "/tmp/work10_zero/robots/zero/spec.json",
- "rendered_at": 1795026748.0586383,
+ "rendered_at": 1795036659.8845553,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
   "scoop",
   "dt_hub_wheel_l0",
-  "dt_axle_wheel_l0",
-  "dt_nut_wheel_l0",
   "dt_hub_wheel_r0",
-  "dt_axle_wheel_r0",
-  "dt_nut_wheel_r0",
-  "dt_screw_0",
-  "dt_screw_1"
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_esc",
+  "el_switch"
  ],
  "wires": {}
 }
