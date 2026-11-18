@@ -16,3 +16,9 @@ Likeness: aws67 0.84 (ok).
 Decisions: type other; body box pentagon 100x110x30 mm, ramp 30; wheels 2 r12 inboard; weapon none; extra parts: arm, gear; photos skipped (cluttered): indices [0, 2].
 
 Likeness: aws67 0.84 (ok).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type other; body box rect 100x110x30 mm, ramp 30; wheels 2 r12 inboard; weapon none; extra parts: arm, gear; photos skipped (cluttered): indices [0, 2].
+
+Likeness: aws67 0.56 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/upgraded_for_the_roboteers_pleasure.aws67.webp` is declared `top` (IoU 0.56 there) but the model matches it better from rear_ri
