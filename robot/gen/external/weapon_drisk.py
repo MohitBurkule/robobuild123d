@@ -250,16 +250,17 @@ WEAPON_SPEC = {"kind": "disc", "motor": "weapon_motor", "cells": 2, "reduction":
 
 
 def _single_disc(plan, xm):
-    disc = spinner.disc_shape(DISC_R, DISC_T, HUB_BORE_R, _disc_holes(4.0))
+    nt = int(plan.extra.get("teeth", 2))
+    disc = spinner.disc_shape(DISC_R, DISC_T, HUB_BORE_R, _disc_holes(4.0), teeth=nt)
     # the disc hangs on the motor (parent) with a revolute joint about the motor axis (motor frame = world axes)
     plan.part(id="weapon", kind="weapon", material="steel", process="laser", shape=disc,
               parent="weapon_motor", at=[-xm, 0.0, 0.0], rot=[0.0, 90.0, 0.0], rotates_with="weapon",
               joint={"kind": "revolute", "axis": [1, 0, 0], "pivot": [-xm, 0.0, 0.0], "min": 0, "max": 360, "default": 0},
               color="#d9dde2", organic=True,
               intent=I("load_path", "the disc stores the energy and delivers it at the teeth; teeth are in the "
-                       "laser outline (no bolted teeth to loosen)", f"r {DISC_R} x {DISC_T} mm steel, 2 teeth, holes balanced", threats=["vspin_front", "under_front"]),
-              weapon=dict(WEAPON_SPEC),
-              label=f"{DISC_T:g} mm steel disc, {2 * DISC_R:g} mm, 2 hooked teeth in the outline, laser cut")
+                       "laser outline (no bolted teeth to loosen)", f"r {DISC_R} x {DISC_T} mm steel, {nt} teeth, holes balanced", threats=["vspin_front", "under_front"]),
+              weapon={**WEAPON_SPEC, "teeth": nt},
+              label=f"{DISC_T:g} mm steel disc, {2 * DISC_R:g} mm, {nt} hooked teeth in the outline, laser cut")
 
 
 def _spider_pair(plan, xs, xm):
