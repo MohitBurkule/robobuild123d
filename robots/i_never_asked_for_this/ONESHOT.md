@@ -27,7 +27,7 @@ Likeness: aws71 0.64 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/i_never_asked_for_this.aws71.webp` is declared `front_left_iso` (IoU 0.64 there) but the model matches it better from front_rig
 
 ## Round 4 (verification, helper 2)
-Blockers r3 64 -> r4 3 (`verify --tier inner`).
+Blockers r3 64 -> r4 1 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -44,8 +44,6 @@ Fixed / changed (inside only, outside kept):
 - hollow skipped front_plate: solids 1 vol 1.00
 
 Left (and why):
-- wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
-- wire.render_count x1: iso.png: 3 routes vs 4 spec wires (missing ['w_m1']); top.png: 3 routes vs 4 spec wires (missing ['w_m1'])
 - likeness.silhouette x1: looks, not in scope for this pass.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): i_never_asked_for_this.aws71.webp 0.72 -> 0.72
