@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_refined_for_the_roboteers_plea/robots/refined_for_the_roboteers_plea/spec.json",
- "rendered_at": 1795026778.7126894,
+ "rendered_at": 1795036681.989218,
  "bodies": [
   "chassis",
   "weapon",
@@ -12,16 +12,16 @@
   "gear_mount",
   "servo_saddle",
   "dt_hub_wheel_l0",
-  "dt_axle_wheel_l0",
-  "dt_nut_wheel_l0",
   "dt_hub_wheel_r0",
-  "dt_axle_wheel_r0",
-  "dt_nut_wheel_r0",
-  "dt_screw_0",
-  "dt_screw_1",
-  "dt_screw_2",
-  "dt_screw_3",
-  "dt_shaft_weapon"
+  "dt_shaft_weapon",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_esc",
+  "el_wesc",
+  "el_switch",
+  "weapon_motor",
+  "lock_pin"
  ],
  "wires": {}
 }
