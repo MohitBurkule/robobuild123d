@@ -135,6 +135,15 @@ cannot be flattened (including bent parts, unfold not yet implemented) is an `mf
 
 ## Reference photos (does it look like the real robot?)
 
+COPYING A REAL ROBOT (folder has `reference/` photos or `REFERENCE.json`): group `likeness` (inner tier, BLOCKERS) gates it.
+It fails a spec that is still a stock template or another robot's spec (`likeness.template_copy`), has the wrong
+`robot_type`/wheel count vs `REFERENCE.json` (written by the photo collector, never edit it), has no photo comparison,
+uses a mask not cut from the photo (`likeness.mask_source`), or whose silhouette (best of 27 cameras, mirrored too) is
+below IoU 0.70 or worse than the closest stock template (`likeness.silhouette`). Recipe: pick the template / `robot gen
+build --hypothesis` that matches the weapon, `robot mask reference/<p> reference/<p>_mask.png` per photo, add the
+`reference` entries (view iso, approximate true), then reshape until `likeness` passes. Never edit the masks by hand.
+
+
 Optional `reference: [{image, view, mask, scale_hint?, dir?, approximate?}]`. `view` is `side` (looking along +x, front on
 the LEFT), `front`, `top` (front left), `iso` (front-left from above) or `iso_back`; `dir` overrides the camera direction.
 `mask` is a binary PNG traced from the photo (white = robot, holes filled), path relative to the spec; e.g.
