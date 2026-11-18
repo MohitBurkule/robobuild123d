@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_vector/robots/vector/spec.json",
- "rendered_at": 1795036526.2491307,
+ "rendered_at": 1795038130.8572252,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -11,16 +11,21 @@
   "fork_l",
   "fork_r",
   "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_nut_wheel_l0",
   "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_nut_wheel_r0",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3",
   "dt_mount_fork_l",
+  "dt_bolt_fork_l",
   "dt_mount_fork_r",
+  "dt_bolt_fork_r",
   "dt_strut_post_l",
-  "dt_strut_post_r",
-  "dm_wheel_l0",
-  "dm_wheel_r0",
-  "el_battery",
-  "el_esc",
-  "el_switch"
+  "dt_strut_post_r"
  ],
  "wires": {}
 }

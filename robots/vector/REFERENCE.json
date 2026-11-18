@@ -9,9 +9,9 @@
   "vector.aws71.webp"
  ],
  "view": {
-  "vector.aws71.webp": "front_left_iso"
+  "vector.aws71.webp": "front_right_iso"
  },
- "elevation": {
-  "vector.aws71.webp": 45
+ "view_source": {
+  "vector.aws71.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label"
  }
 }

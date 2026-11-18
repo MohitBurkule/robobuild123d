@@ -52,3 +52,8 @@ Left (and why):
 - battery.rotor_gap x1: toolchain: same full-revolution assumption for a limited-range arm.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): vector.aws71.webp 0.47 -> 0.47
+
+## Round 3d (user camera picks batch 2 + shape remarks applied; round 4 to be re-run on the new outside)
+Decisions: type lifter; body box rect 72x70x24 mm, ramp 18; wheels 2 r16 outboard; weapon none; extra parts: arm, post, fork.
+
+Likeness: aws71 0.59 (FAIL).
