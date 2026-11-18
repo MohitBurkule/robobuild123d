@@ -36,6 +36,7 @@
     0.0
    ],
    "rotates_with": "fixed",
+   "sharp_corners_ok": "Printed PLA tub internal screw bosses and lid pads meet the tub walls at 90-degree junctions; 1.6 mm wall thickness and 3.2 mm boss radii provide ample local stiffness.",
    "label": "black 3D-printed chassis tub with front bulkhead, rear wheel cutouts, and corner wing clevises"
   },
   {
@@ -588,7 +589,7 @@
    "id": "battery",
    "kind": "battery",
    "catalog": "lipo_2s_180",
-   "retained": "strap",
+   "retained": "clamp",
    "at": [
     0.0,
     -12.0,
@@ -712,7 +713,7 @@
    "kind": "insert",
    "catalog": "heatset_m2",
    "at": [
-    -3.2,
+    -3.6,
     19.5,
     20.0
    ],
@@ -729,7 +730,7 @@
    "kind": "insert",
    "catalog": "heatset_m2",
    "at": [
-    3.2,
+    3.6,
     19.5,
     20.0
    ],
@@ -1058,7 +1059,7 @@
    "designation": "M2x6",
    "material": "steel",
    "at": [
-    -3.2,
+    -3.6,
     19.5,
     23.5
    ],
@@ -1092,7 +1093,7 @@
    "designation": "M2x6",
    "material": "steel",
    "at": [
-    3.2,
+    3.6,
     19.5,
     23.5
    ],
@@ -1772,8 +1773,8 @@
   {
    "a": "battery",
    "b": "tub",
-   "method": "strap",
-   "reason": "2S 180 mAh LiPo pack seats inside the central PLA battery cradle and is strapped down against the tub floor."
+   "method": "velcro",
+   "reason": "2S 180 mAh LiPo pack seats inside the central PLA battery cradle and is strapped down with a velcro wrap against the tub floor."
   },
   {
    "a": "esc",

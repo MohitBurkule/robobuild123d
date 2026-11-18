@@ -78,25 +78,29 @@ def tub():
     # Closed-top N10 motor pockets on +X and -X
     for left in (True, False):
         s = 1 if left else -1
-        # Carve motor pocket (open inboard for motor slide-out, closed top/front/rear/outboard)
+        # Carve motor pocket (U-channel open on +Z for top-down drop-in, covered by top_panel)
         bx0 = s * MOTOR_INNER_X
         bx1 = s * (WHEEL_X - WHEEL_W / 2 - RUN_CLEAR)
-        m_blk = bd.Pos((bx0 + bx1) / 2, WHEEL_Y, (TUB_Z0 + TUB_Z1) / 2) * \
-            bd.Box(abs(bx1 - bx0), 2 * (MOTOR_ENV_Y + WALL), TUB_H)
+        m_blk_h = AXLE_Z - TUB_Z0 + MOTOR_ENV_Z
+        m_blk = bd.Pos((bx0 + bx1) / 2, WHEEL_Y, TUB_Z0 + m_blk_h / 2) * \
+            bd.Box(abs(bx1 - bx0), 2 * (MOTOR_ENV_Y + WALL), m_blk_h)
         body = body + m_blk
         mx0 = s * (MOTOR_INNER_X - MOTOR_FIT)
         mx1 = s * (MOTOR_ROOT_X - MOTOR_FIT)
-        m_cav = bd.Pos((mx0 + mx1) / 2, WHEEL_Y, AXLE_Z) * \
-            bd.Box(abs(mx1 - mx0), 2 * (MOTOR_ENV_Y + MOTOR_FIT), 2 * (MOTOR_ENV_Z + MOTOR_FIT))
+        m_cav = bd.Pos((mx0 + mx1) / 2, WHEEL_Y, AXLE_Z + MOTOR_ENV_Z / 2) * \
+            bd.Box(abs(mx1 - mx0), 2 * (MOTOR_ENV_Y + MOTOR_FIT), 3 * MOTOR_ENV_Z)
         body = body - m_cav
         wire_slot = bd.Pos(s * (MOTOR_INNER_X - WALL / 2), WHEEL_Y, TUB_Z0 + WALL + WIRE_SLOT_H / 2) * \
             bd.Box(WALL + TUB_Z0, WIRE_SLOT_W, WIRE_SLOT_H)
         body = body - wire_slot
-        shaft_bore = bd.Pos(s * (WHEEL_X - WHEEL_W / 2 - RUN_CLEAR), WHEEL_Y, AXLE_Z) * x_cyl(MOTOR_SHAFT["dia"] / 2 + RUN_CLEAR / 2, WIRE_SLOT_H)
-        body = body - shaft_bore
+        shaft_r = MOTOR_SHAFT["dia"] / 2 + RUN_CLEAR / 2
+        shaft_bore = bd.Pos(s * (WHEEL_X - WHEEL_W / 2 - RUN_CLEAR), WHEEL_Y, AXLE_Z) * x_cyl(shaft_r, WIRE_SLOT_H)
+        shaft_slot = bd.Pos(s * (WHEEL_X - WHEEL_W / 2 - RUN_CLEAR), WHEEL_Y, (AXLE_Z + TUB_Z1) / 2) * \
+            bd.Box(WIRE_SLOT_H, 2 * shaft_r - CLEAR, TUB_Z1 - AXLE_Z + EPS)
+        body = body - shaft_bore - shaft_slot
 
     # Internal bay divider wall on -X (separates ESC/battery from open front-right bay)
-    div_y0 = TOP_BAY_Y0 - SIDE_BOSS_L
+    div_y0 = TOP_BAY_Y0 - CLEVIS_Z_GAP
     div_r = bd.Pos(-TOP_TONGUE_HALF_X - WALL / 2, (div_y0 + BODY_Y1 - WALL) / 2, TUB_Z0 + TUB_H / 2) * \
         bd.Box(WALL, BODY_Y1 - WALL - div_y0, TUB_H)
     body = body + div_r

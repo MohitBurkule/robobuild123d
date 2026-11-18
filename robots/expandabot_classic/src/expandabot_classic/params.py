@@ -122,7 +122,7 @@ TOP_WHEEL_SLOT_Y1 = WHEEL_Y + WHEEL_D / 2 + RUN_CLEAR
 TOP_SCREWS_XY = (
     (-27.0, -40.0), (27.0, -40.0),
     (-28.0, -8.0), (28.0, -8.0),
-    (-3.2, 19.5), (3.2, 19.5),
+    (-3.6, 19.5), (3.6, 19.5),
 )
 
 # --- internal electronics
