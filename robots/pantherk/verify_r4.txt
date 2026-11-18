@@ -1,0 +1,126 @@
+BLOCKERS: 32
+  [cached] integrity 0.01s
+  [proxy] wiring 0.00s
+  [cached] mass 0.00s
+  [proxy] interference 0.16s
+  [cached] connections 0.00s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.00s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.00s
+  [cached] physics 0.00s
+  [proxy] assembly 0.00s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [cached] likeness 0.00s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.00s
+  [cached] waiver_audit 0.01s
+  [cached] geom 0.00s
+  [cached] dfm 0.00s
+  [cached] realworld 0.00s
+Pantherk II: ok=False 32 blockers in 27 root causes, mass 142.8/150 g
+1. [process.geometry] `top_plate` (laser): 3 planar levels along the plate normal (0.00, 0.10, 2.00 mm): a blind pocket, step or a feature standing proud of the plate; a cut part has exactly two faces. (+1 consequences)
+   fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
+   | top_plate: x -39.00..39.00  y -47.00..15.00  z 12.00..14.00  size 78.00 x 62.00 x 2.00 mm
+   |   centre (0.00, -16.00, 13.00), volume 9384.0 mm3
+   |   gap to `pod_l` 0.00 mm (touching)
+   |   gap to `pod_r` 0.00 mm (touching)
+   |   gap to `bridge` 0.00 mm (touching)
+2. [proxy.assembly] `wheel_l0`: the baseline teardown never took it off. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Run the full `assembly` group to search other ways out.
+   | wheel_l0: x 43.50..52.50  y -48.00..-24.00  z -12.00..12.00  size 9.00 x 23.99 x 24.00 mm
+   |   centre (48.00, -36.00, 0.00), volume 4007.9 mm3
+   |   overlap allowed `dt_hub_wheel_l0` 2.38 mm (allowed inf)
+   |   gap to `dt_axle_wheel_l0` 0.00 mm (touching)
+   |   gap to `pod_l` 1.00 mm
+3. [proxy.assembly] `wheel_r0`: the baseline teardown never took it off. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Run the full `assembly` group to search other ways out.
+   | wheel_r0: x -52.50..-43.50  y -48.00..-24.00  z -12.00..12.00  size 9.00 x 23.99 x 24.00 mm
+   |   centre (-48.00, -36.00, 0.00), volume 4007.9 mm3
+   |   overlap allowed `dt_hub_wheel_r0` 2.38 mm (allowed inf)
+   |   gap to `dt_axle_wheel_r0` 0.00 mm (touching)
+   |   gap to `pod_r` 1.00 mm
+4. [proxy.assembly] `dt_hub_wheel_l0`: the baseline teardown never took it off. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Run the full `assembly` group to search other ways out.
+   | dt_hub_wheel_l0: x 42.90..53.10  y -42.24..-29.76  z -6.24..6.24  size 10.20 x 12.48 x 12.48 mm
+   |   centre (48.00, -36.00, 0.00), volume 1175.6 mm3
+   |   overlap allowed `wheel_l0` 2.38 mm (allowed inf)
+   |   gap to `dt_axle_wheel_l0` 0.00 mm (touching)
+   |   gap to `pod_l` 1.00 mm
+5. [proxy.assembly] `dt_hub_wheel_r0`: the baseline teardown never took it off. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Run the full `assembly` group to search other ways out.
+   | dt_hub_wheel_r0: x -53.10..-42.90  y -42.24..-29.76  z -6.24..6.24  size 10.20 x 12.48 x 12.48 mm
+   |   centre (-48.00, -36.00, 0.00), volume 1175.6 mm3
+   |   overlap allowed `wheel_r0` 2.38 mm (allowed inf)
+   |   gap to `dt_axle_wheel_r0` 0.00 mm (touching)
+   |   gap to `pod_r` 1.00 mm
+6. [proxy.wiring] Wire `w_bat_sw` (`el_battery.xt30` to `el_switch.in`): its ports moved 43.85 mm since the baseline route.
+   fix: Run the full `wiring` group to re-route it.
+7. [proxy.wiring] Wire `w_sw_esc` (`el_switch.out` to `el_esc.bat`): its ports moved 43.85 mm since the baseline route.
+   fix: Run the full `wiring` group to re-route it.
+8. [proxy.wiring] Wire `w_m1` (`el_esc.m1` to `dm_wheel_l1.terminals`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+9. [proxy.wiring] Wire `w_m2` (`el_esc.m2` to `dm_wheel_r1.terminals`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+10. [connection.floating] `top_plate` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `pod_l`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | top_plate: x -39.00..39.00  y -47.00..15.00  z 12.00..14.00  size 78.00 x 62.00 x 2.00 mm
+   |   centre (0.00, -16.00, 13.00), volume 9384.0 mm3
+   |   gap to `pod_l` 0.00 mm (touching)
+   |   gap to `pod_r` 0.00 mm (touching)
+   |   gap to `bridge` 0.00 mm (touching)
+11. [connection.floating] `picture` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `top_plate`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | picture: x -30.00..30.00  y -40.00..8.00  z 13.90..14.70  size 60.00 x 48.00 x 0.80 mm
+   |   centre (0.00, -16.00, 14.30), volume 2304.0 mm3
+   |   gap to `top_plate` 0.00 mm (touching)
+   |   gap to `pod_l` 1.90 mm
+   |   gap to `pod_r` 1.90 mm
+12. [mfg.stock] `picture` (laser): thickness 0.80 mm is not a stock polycarbonate gauge (0.5, 0.75, 1, 1.5, 2, 3, 4, 5, 6); nearest 0.75 mm.
+   fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
+   | picture: x -30.00..30.00  y -40.00..8.00  z 13.90..14.70  size 60.00 x 48.00 x 0.80 mm
+   |   centre (0.00, -16.00, 14.30), volume 2304.0 mm3
+   |   gap to `top_plate` 0.00 mm (touching)
+   |   gap to `pod_l` 1.90 mm
+   |   gap to `pod_r` 1.90 mm
+... 15 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 142.8 g of 150 g (+7.2 g margin)
+    pod_r                      27.88 g  fills 41% of its box
+    pod_l                      27.45 g  fills 40% of its box
+    bridge                     13.13 g  fills 47% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    top_plate                  12.20 g  fills 97% of its box
+    dm_wheel_l1                 9.50 g  fills 63% of its box
+    dm_wheel_r1                 9.50 g  fills 63% of its box
+    wheel_l1                    4.12 g  fills 66% of its box
+    wheel_r1                    4.12 g  fills 66% of its box
+    wheel_l0                    4.09 g  fills 77% of its box
+    wheel_r0                    4.09 g  fills 77% of its box
+    picture                     2.76 g  fills 100% of its box
+    el_esc                      2.30 g  fills 99% of its box
+    dt_hub_wheel_l1             1.22 g  fills 75% of its box
+    dt_hub_wheel_r1             1.22 g  fills 75% of its box
+    dt_hub_wheel_l0             1.20 g  fills 74% of its box
+    dt_hub_wheel_r0             1.20 g  fills 74% of its box
+    dt_axle_wheel_l0            1.09 g  fills 79% of its box
+    dt_axle_wheel_r0            1.09 g  fills 79% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    mass.may_be_over: 142.8 g (range 118.5 to 167.0 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 31 hit / 0 miss, min_gap 46 hit / 0 miss, overlap 280 hit / 0 miss, part_geom 20 hit / 0 miss
