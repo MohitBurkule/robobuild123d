@@ -6,5 +6,13 @@
  },
  "photos": [
   "road_runner.aws67.webp"
- ]
+ ],
+ "view": {
+  "road_runner.aws63.webp": "front_left_iso",
+  "road_runner.aws67.webp": "left"
+ },
+ "elevation": {
+  "road_runner.aws63.webp": 45,
+  "road_runner.aws67.webp": 25
+ }
 }

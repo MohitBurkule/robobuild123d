@@ -15,7 +15,8 @@
    30
   ],
   "outside": false,
-  "x": 40
+  "x": 40,
+  "notch": true
  },
  "colors": {
   "body": "#a855e0",
@@ -23,7 +24,14 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "skip_photos": [
+  0
+ ],
+ "name": "road runner",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "box": [
     104,
@@ -53,12 +61,5 @@
    "id": "side_wall",
    "color": "#4a9fe8"
   }
- ],
- "skip_photos": [
-  0
- ],
- "name": "road runner",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }
