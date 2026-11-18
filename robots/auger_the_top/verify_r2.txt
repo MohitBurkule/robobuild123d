@@ -1,0 +1,131 @@
+BLOCKERS: 32
+  [ran] integrity 0.02s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 0.36s
+  [ran] connections 0.05s
+  [ran] legal 0.00s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.00s
+  [ran] shape 0.30s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.42s
+  [ran] process 0.03s
+  [ran] electrical 0.00s
+  [ran] combat 0.06s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 3.04s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.02s
+  [ran] dfm 0.01s
+  [ran] realworld 0.00s
+auger the top: ok=False 32 blockers in 23 root causes, mass 137.3/150 g
+1. [proxy.interference] `chassis` and `fork_1` overlap by 0.66 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | chassis: x -26.00..26.00  y -47.50..47.50  z -8.00..14.00  size 52.00 x 95.00 x 22.00 mm
+   |   centre (-0.00, 0.00, 3.00), volume 108680.0 mm3
+   |   OVERLAP `axe_arm` 2.70 mm (allowed 0.08)
+   |   OVERLAP `extra1` 2.12 mm (allowed 0.08)
+   |   OVERLAP `fork_1` 0.66 mm (allowed 0.08)
+2. [proxy.interference] `fork_1` and `extra1` overlap by 0.73 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | fork_1: x -16.00..-12.00  y 45.64..125.36  z -9.95..-0.09  size 4.00 x 79.72 x 9.85 mm
+   |   centre (-14.00, 85.50, -5.02), volume 480.0 mm3
+   |   OVERLAP `extra1` 0.73 mm (allowed 0.08)
+   |   OVERLAP `chassis` 0.66 mm (allowed 0.08)
+   | extra1: x -30.00..30.00  y 43.00..53.00  z -4.00..4.00  size 60.00 x 10.00 x 8.00 mm
+3. [connection.floating] `wheel_l0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_l0: x 26.50..34.50  y -40.00..-20.00  z -10.00..10.00  size 8.00 x 19.99 x 20.00 mm
+   |   centre (30.50, -30.00, 0.00), volume 2513.3 mm3
+   |   gap to `chassis` 0.50 mm
+   | chassis: x -26.00..26.00  y -47.50..47.50  z -8.00..14.00  size 52.00 x 95.00 x 22.00 mm
+   |   centre (-0.00, 0.00, 3.00), volume 108680.0 mm3
+4. [connection.floating] `wheel_r0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_r0: x -34.50..-26.50  y -40.00..-20.00  z -10.00..10.00  size 8.00 x 19.99 x 20.00 mm
+   |   centre (-30.50, -30.00, 0.00), volume 2513.3 mm3
+   |   gap to `chassis` 0.50 mm
+   | chassis: x -26.00..26.00  y -47.50..47.50  z -8.00..14.00  size 52.00 x 95.00 x 22.00 mm
+   |   centre (-0.00, 0.00, 3.00), volume 108680.0 mm3
+5. [connection.floating] `fork_0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `extra1`, 10.0 mm away. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | fork_0: x -44.00..-40.00  y 45.64..125.36  z -9.95..-0.09  size 4.00 x 79.72 x 9.85 mm
+   |   centre (-42.00, 85.50, -5.02), volume 480.0 mm3
+   | extra1: x -30.00..30.00  y 43.00..53.00  z -4.00..4.00  size 60.00 x 10.00 x 8.00 mm
+   |   centre (0.00, 48.00, 0.00), volume 4800.0 mm3
+   |   OVERLAP `chassis` 2.12 mm (allowed 0.08)
+6. [process.print_orientation] `wheel_l0` (fdm) has no `print_orientation`. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_l0: x 26.50..34.50  y -40.00..-20.00  z -10.00..10.00  size 8.00 x 19.99 x 20.00 mm
+   |   centre (30.50, -30.00, 0.00), volume 2513.3 mm3
+   |   gap to `chassis` 0.50 mm
+   | wheel_l1: x 26.50..34.50  y 12.00..32.00  z -10.00..10.00  size 8.00 x 19.99 x 20.00 mm
+   |   centre (30.50, 22.00, 0.00), volume 2513.3 mm3
+7. [process.print_orientation] `wheel_r0` (fdm) has no `print_orientation`. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_r0: x -34.50..-26.50  y -40.00..-20.00  z -10.00..10.00  size 8.00 x 19.99 x 20.00 mm
+   |   centre (-30.50, -30.00, 0.00), volume 2513.3 mm3
+   |   gap to `chassis` 0.50 mm
+   | wheel_r1: x -34.50..-26.50  y 12.00..32.00  z -10.00..10.00  size 8.00 x 19.99 x 20.00 mm
+   |   centre (-30.50, 22.00, 0.00), volume 2513.3 mm3
+8. [retention.axial] `wheel_l0` rotates but no fastener clamps or threads into it and it declares no reasoned press fit, pin, shaft or fuse hold. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Pass a screw through it into a thread or nut, or declare the hold that captures it with a `reason`.
+   | wheel_l0: x 26.50..34.50  y -40.00..-20.00  z -10.00..10.00  size 8.00 x 19.99 x 20.00 mm
+   |   centre (30.50, -30.00, 0.00), volume 2513.3 mm3
+   |   gap to `chassis` 0.50 mm
+   | wheel_l1: x 26.50..34.50  y 12.00..32.00  z -10.00..10.00  size 8.00 x 19.99 x 20.00 mm
+   |   centre (30.50, 22.00, 0.00), volume 2513.3 mm3
+9. [retention.axial] `wheel_r0` rotates but no fastener clamps or threads into it and it declares no reasoned press fit, pin, shaft or fuse hold. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Pass a screw through it into a thread or nut, or declare the hold that captures it with a `reason`.
+   | wheel_r0: x -34.50..-26.50  y -40.00..-20.00  z -10.00..10.00  size 8.00 x 19.99 x 20.00 mm
+   |   centre (-30.50, -30.00, 0.00), volume 2513.3 mm3
+   |   gap to `chassis` 0.50 mm
+   | wheel_r1: x -34.50..-26.50  y 12.00..32.00  z -10.00..10.00  size 8.00 x 19.99 x 20.00 mm
+   |   centre (-30.50, 22.00, 0.00), volume 2513.3 mm3
+10. [proxy.interference] `chassis` and `axe_arm` overlap by 2.70 mm (allowed 0.08).
+   | chassis: x -26.00..26.00  y -47.50..47.50  z -8.00..14.00  size 52.00 x 95.00 x 22.00 mm
+   |   centre (-0.00, 0.00, 3.00), volume 108680.0 mm3
+   |   OVERLAP `axe_arm` 2.70 mm (allowed 0.08)
+   |   OVERLAP `extra1` 2.12 mm (allowed 0.08)
+   |   OVERLAP `fork_1` 0.66 mm (allowed 0.08)
+11. [proxy.interference] `chassis` and `extra1` overlap by 2.12 mm (allowed 0.08).
+   | chassis: x -26.00..26.00  y -47.50..47.50  z -8.00..14.00  size 52.00 x 95.00 x 22.00 mm
+   |   centre (-0.00, 0.00, 3.00), volume 108680.0 mm3
+   |   OVERLAP `axe_arm` 2.70 mm (allowed 0.08)
+   |   OVERLAP `extra1` 2.12 mm (allowed 0.08)
+   |   OVERLAP `fork_1` 0.66 mm (allowed 0.08)
+12. [proxy.sweep] joint `axe_arm`: `axe_arm` hits `chassis` 2.70 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint axe_arm` lists the closest approach to every part.
+   | axe_arm: x -5.00..5.00  y -36.00..66.00  z 8.00..60.00  size 10.00 x 102.00 x 52.00 mm
+   |   centre (-0.00, 15.00, 34.00), volume 9780.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -25, 16.0] range 0..80 default 0
+   |   OVERLAP `chassis` 2.70 mm (allowed 0.08)
+   | chassis: x -26.00..26.00  y -47.50..47.50  z -8.00..14.00  size 52.00 x 95.00 x 22.00 mm
+... 11 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 137.3 g of 150 g (+12.7 g margin)
+    chassis                   103.46 g  fills 100% of its box  <- solid block? a tub should be a shell
+    axe_arm                     9.31 g  fills 18% of its box
+    extra1                      4.57 g  fills 100% of its box
+    wheel_l0                    2.56 g  fills 79% of its box
+    wheel_r0                    2.56 g  fills 79% of its box
+    wheel_l1                    2.56 g  fills 79% of its box
+    wheel_r1                    2.56 g  fills 79% of its box
+    fork_0                      2.13 g  fills 15% of its box
+    fork_1                      2.13 g  fills 15% of its box
+    fork_2                      2.13 g  fills 15% of its box
+    fork_3                      2.13 g  fills 15% of its box
+    mass.may_be_over: 137.3 g (range 110.8 to 163.8 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 0 hit / 4 miss, group 0 hit / 31 miss, inside 1 hit / 10 miss, likeness 1 hit / 0 miss, min_gap 26 hit / 38 miss, overlap 30 hit / 45 miss, part_check 0 hit / 5 miss, part_geom 11 hit / 0 miss, ray 0 hit / 55 miss
