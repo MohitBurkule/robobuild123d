@@ -7,5 +7,15 @@
  },
  "photos": [
   "baby_boomer.aws72.webp"
- ]
+ ],
+ "view": {
+  "baby_boomer.aws69.webp": "front",
+  "baby_boomer.aws72.webp": "front",
+  "baby_boomer.aws73.webp": "front_left_iso"
+ },
+ "elevation": {
+  "baby_boomer.aws69.webp": 45,
+  "baby_boomer.aws72.webp": 25,
+  "baby_boomer.aws73.webp": 45
+ }
 }

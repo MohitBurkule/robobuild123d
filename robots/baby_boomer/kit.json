@@ -17,10 +17,12 @@
  },
  "forks": {
   "n": 2,
-  "length": 38,
-  "width": 4,
-  "spread": 50,
-  "tilt_deg": 8
+  "length": 40,
+  "width": 5,
+  "spread": 60,
+  "tilt_deg": 10,
+  "splay_deg": 18,
+  "taper": true
  },
  "colors": {
   "body": "#35c935",
@@ -28,7 +30,15 @@
   "weapon": "#c9cdd3",
   "fork": "#8a7a5a"
  },
- "extras": [
+ "skip_photos": [
+  0,
+  2
+ ],
+ "name": "baby boomer",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "box": [
     28,
@@ -48,13 +58,5 @@
    "id": "flipper",
    "color": "#d8e83a"
   }
- ],
- "skip_photos": [
-  0,
-  2
- ],
- "name": "baby boomer",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }
