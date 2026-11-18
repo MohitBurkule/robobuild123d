@@ -1,0 +1,93 @@
+BLOCKERS: 17
+  [cached] integrity 0.00s
+  [cached] mass 0.00s
+  [proxy] interference 0.09s
+  [cached] connections 0.00s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.00s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.00s
+  [cached] physics 0.00s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [cached] likeness 0.00s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.00s
+  [cached] waiver_audit 0.00s
+  [cached] geom 0.00s
+  [cached] dfm 0.00s
+  [cached] realworld 0.00s
+nightwish: ok=False 17 blockers in 12 root causes, mass 127.0/150 g
+1. [connection.floating] `fork_0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `dt_mount_fork_0`, 0.0 mm away. Same problem on all 2 parts of this pattern: fix the pattern once. (+3 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | fork_0: x -32.00..-14.00  y 38.42..75.58  z -11.89..5.75  size 18.00 x 37.15 x 17.64 mm
+   |   centre (-23.00, 57.00, -3.07), volume 1080.0 mm3
+   |   OVERLAP `dt_mount_fork_0` 0.69 mm (allowed 0.08)
+   | dt_mount_fork_0: x -34.00..-12.00  y 31.23..40.23  z 1.07..9.07  size 22.00 x 9.00 x 8.00 mm
+   |   centre (-23.00, 35.73, 5.07), volume 1584.0 mm3
+2. [proxy.interference] `fork_0` and `dt_mount_fork_0` overlap by 0.69 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | fork_0: x -32.00..-14.00  y 38.42..75.58  z -11.89..5.75  size 18.00 x 37.15 x 17.64 mm
+   |   centre (-23.00, 57.00, -3.07), volume 1080.0 mm3
+   |   OVERLAP `dt_mount_fork_0` 0.69 mm (allowed 0.08)
+   | dt_mount_fork_0: x -34.00..-12.00  y 31.23..40.23  z 1.07..9.07  size 22.00 x 9.00 x 8.00 mm
+   |   centre (-23.00, 35.73, 5.07), volume 1584.0 mm3
+3. [wire.rotor_clearance] wire `w_m1` passes -0.7 mm from the volume swept by the `claw` rotor (claw) at [-5.9, -13.5, -1.7]. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | claw: x -6.00..6.00  y -14.00..64.00  z 12.00..66.00  size 12.00 x 78.00 x 54.00 mm
+   |   centre (-0.00, 25.00, 39.00), volume 11424.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 0, 16.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+4. [proxy.sweep] joint `claw`: `claw` hits `chassis` 0.11 mm deep at 21.8 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint claw` lists the closest approach to every part.
+   | claw: x -6.00..6.00  y -14.00..64.00  z 12.00..66.00  size 12.00 x 78.00 x 54.00 mm
+   |   centre (-0.00, 25.00, 39.00), volume 11424.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 0, 16.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+   | chassis: x -31.00..31.00  y -39.00..39.00  z -10.00..18.00  size 62.00 x 78.00 x 28.00 mm
+5. [power.weapon_motor] `claw` names motor None; it must be a catalog brushless motor so speed can be computed.
+   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
+   | claw: x -6.00..6.00  y -14.00..64.00  z 12.00..66.00  size 12.00 x 78.00 x 54.00 mm
+   |   centre (-0.00, 25.00, 39.00), volume 11424.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 0, 16.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+6. [process.weapon_printed] Weapon `claw` is fdm-printed with no hardened metal insert teeth.
+   fix: Make it metal (sheet_cut / turned / milled) or add hardened steel tooth parts (`parent` = the weapon).
+   | claw: x -6.00..6.00  y -14.00..64.00  z 12.00..66.00  size 12.00 x 78.00 x 54.00 mm
+   |   centre (-0.00, 25.00, 39.00), volume 11424.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 0, 16.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+7. [wire.render_wires] 12 of 12 robot render(s) do not draw all 4 wires: renders/diff_nightwish.aws63.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_nightwish_aws62.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/iso.png: rendered without wires (checks off or no routes); renders/likeness_nightwish.aws63_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_nightwish_aws62_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_nightwish.aws63.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_nightwish_aws62.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/pick_nightwish.aws63.png: no render record (`<png>.json`), so nothing says the wires were drawn...
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+8. [wire.rotor_clearance] wire `w_bat_sw` passes -0.9 mm from the volume swept by the `claw` rotor (claw) at [6.0, -5.9, -4.0].
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | claw: x -6.00..6.00  y -14.00..64.00  z 12.00..66.00  size 12.00 x 78.00 x 54.00 mm
+   |   centre (-0.00, 25.00, 39.00), volume 11424.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 0, 16.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+9. [wire.rotor_clearance] wire `w_sw_esc` passes -0.9 mm from the volume swept by the `claw` rotor (claw) at [4.0, -35.7, -4.0].
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | claw: x -6.00..6.00  y -14.00..64.00  z 12.00..66.00  size 12.00 x 78.00 x 54.00 mm
+   |   centre (-0.00, 25.00, 39.00), volume 11424.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 0, 16.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+10. [likeness.view] `reference/nightwish.aws63.webp` is declared `top` (IoU 0.47 there) but the model matches it better from front (elevation 25, azimuth 90) (IoU 0.57).
+   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
+11. [likeness.silhouette] `reference/nightwish.aws63.webp`: best silhouette IoU 0.47 at camera top (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.61). Regions (photo frame, left third first) 0.21 / 0.72 / 0.44: worst = front third. Height/length 1.31 model vs 0.98 photo (too tall: lower it or lengthen it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+12. [likeness.silhouette] `reference/nightwish_aws62.webp`: best silhouette IoU 0.27 at camera front_left_iso (elevation 25, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.33). Regions (photo frame, left third first) 0.11 / 0.26 / 0.40: worst = front third. Height/length 0.69 model vs 0.68 photo (proportions ok).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 31 hit / 0 miss, min_gap 24 hit / 0 miss, overlap 171 hit / 0 miss, part_geom 15 hit / 0 miss

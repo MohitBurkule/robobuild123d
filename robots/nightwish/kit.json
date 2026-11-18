@@ -16,11 +16,11 @@
  },
  "forks": {
   "n": 2,
-  "length": 24,
-  "width": 12,
-  "spread": 50,
-  "tilt_deg": 14,
-  "taper": true
+  "length": 40,
+  "width": 18,
+  "spread": 46,
+  "tilt_deg": 24,
+  "thick": 2
  },
  "colors": {
   "body": "#15151c",

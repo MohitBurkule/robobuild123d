@@ -22,3 +22,9 @@ Likeness: aws63 0.62 (FAIL), nightwish_aws62 0.31 (FAIL).
 Decisions: type lifter; body box rect 78x62x28 mm, ramp 26; wheels 2 r12 outboard; weapon none; 2 forks 24 mm; extra parts: claw; photos skipped (cluttered): indices [2]; textured masks for indices [0, 1].
 
 Likeness: aws63 0.54 (FAIL), nightwish_aws62 0.27 (FAIL).
+
+## Round 3b (rebuilt by eye from the photos: parts moved to where the photo shows them, camera set per photo)
+Decisions: type lifter; body box rect 78x62x28 mm, ramp 26; wheels 2 r12 outboard; weapon none; 2 forks 40 mm; extra parts: claw; photos skipped (cluttered): indices [2]; textured masks for indices [0, 1].
+
+Likeness: aws63 0.47 (FAIL), nightwish_aws62 0.27 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/nightwish.aws63.webp` is declared `top` (IoU 0.47 there) but the model matches it better from front (elevation 25, azimuth 90) 
