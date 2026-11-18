@@ -1,0 +1,84 @@
+{
+ "robot_type": "lifter",
+ "body": {
+  "length": 60,
+  "width": 112,
+  "height": 26,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 11,
+  "width": 8,
+  "y": [
+   -12
+  ],
+  "outside": false
+ },
+ "forks": {
+  "n": 4,
+  "length": 44,
+  "width": 8,
+  "spread": 60,
+  "tilt_deg": 12
+ },
+ "colors": {
+  "body": "#1c1d20",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#1c1d20"
+ },
+ "extras": [
+  {
+   "side": [
+    [
+     -30,
+     2
+    ],
+    [
+     45,
+     2
+    ],
+    [
+     20,
+     34
+    ],
+    [
+     -30,
+     34
+    ]
+   ],
+   "x": [
+    56,
+    60
+   ],
+   "mirror": true,
+   "kind": "armor",
+   "id": "side_fin",
+   "color": "#1c1d20"
+  },
+  {
+   "box": [
+    30,
+    40,
+    8
+   ],
+   "at": [
+    0,
+    5,
+    30
+   ],
+   "weapon": "lifter",
+   "pivot": [
+    -15,
+    28
+   ],
+   "id": "arm",
+   "color": "#1c1d20"
+  }
+ ],
+ "name": "whopper bvm",
+ "weapon": {
+  "kind": "none"
+ }
+}
