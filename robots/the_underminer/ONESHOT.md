@@ -19,3 +19,9 @@ Likeness: aws67 0.88 (ok).
 Decisions: type lifter; body box rect 80x70x22 mm, ramp 0; wheels 4 r10 outboard; weapon none; extra parts: scoop, pod, lid; photos skipped (cluttered): indices [0, 1].
 
 Likeness: aws67 0.88 (ok).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type lifter; body box rect 80x70x22 mm, ramp 0; wheels 4 r10 outboard; weapon none; extra parts: scoop, pod, lid; photos skipped (cluttered): indices [0, 1].
+
+Likeness: aws67 0.68 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/the_underminer.aws67.webp` is declared `front` (IoU 0.68 there) but the model matches it better from front (elevation 45, azimu

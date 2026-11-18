@@ -7,5 +7,15 @@
  },
  "photos": [
   "the_underminer.aws67.webp"
- ]
+ ],
+ "view": {
+  "the_underminer.aws64.webp": "front_right_iso",
+  "the_underminer.aws66.webp": "front",
+  "the_underminer.aws67.webp": "front"
+ },
+ "elevation": {
+  "the_underminer.aws64.webp": 45,
+  "the_underminer.aws66.webp": 25,
+  "the_underminer.aws67.webp": 25
+ }
 }

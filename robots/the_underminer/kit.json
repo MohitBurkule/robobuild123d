@@ -21,7 +21,15 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "skip_photos": [
+  0,
+  1
+ ],
+ "name": "the underminer",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "box": [
     58,
@@ -72,13 +80,5 @@
    "id": "lid",
    "color": "#1c1d20"
   }
- ],
- "skip_photos": [
-  0,
-  1
- ],
- "name": "the underminer",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }

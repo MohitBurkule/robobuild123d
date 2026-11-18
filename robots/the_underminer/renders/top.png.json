@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_the_underminer/robots/the_underminer/spec.json",
- "rendered_at": 1795023112.9251552,
+ "rendered_at": 1795026072.2612467,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -10,7 +10,25 @@
   "scoop",
   "pod_l",
   "pod_r",
-  "lid"
+  "lid",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_nut_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_nut_wheel_r0",
+  "dt_hub_wheel_l1",
+  "dt_axle_wheel_l1",
+  "dt_nut_wheel_l1",
+  "dt_hub_wheel_r1",
+  "dt_axle_wheel_r1",
+  "dt_nut_wheel_r1",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3",
+  "dt_strut_pod_l",
+  "dt_strut_pod_r"
  ],
  "wires": {}
 }
