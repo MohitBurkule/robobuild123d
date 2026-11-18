@@ -21,7 +21,15 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "skip_photos": [
+  0,
+  1
+ ],
+ "name": "step up",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "box": [
     28,
@@ -46,13 +54,5 @@
     0
    ]
   }
- ],
- "skip_photos": [
-  0,
-  1
- ],
- "name": "step up",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }

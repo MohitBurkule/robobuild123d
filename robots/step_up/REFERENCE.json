@@ -7,5 +7,15 @@
  },
  "photos": [
   "step_up.aws72.webp"
- ]
+ ],
+ "view": {
+  "step_up.aws64.webp": "front_right_iso",
+  "step_up.aws65.webp": "front",
+  "step_up.aws72.webp": "front_left_iso"
+ },
+ "elevation": {
+  "step_up.aws64.webp": 45,
+  "step_up.aws65.webp": 45,
+  "step_up.aws72.webp": 45
+ }
 }
