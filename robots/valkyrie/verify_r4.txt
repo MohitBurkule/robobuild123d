@@ -1,36 +1,36 @@
 BLOCKERS: 24
-  [ran] integrity 0.09s
-  [ran] mass 0.00s
-  [proxy] interference 0.21s
-  [ran] connections 0.01s
-  [ran] legal 0.01s
-  [ran] fasteners 0.01s
-  [ran] power 0.00s
-  [ran] tension 0.00s
-  [ran] targets 0.00s
-  [ran] fight 0.02s
-  [ran] shape 0.04s
-  [ran] dynamics 0.00s
-  [ran] strength 0.00s
-  [ran] printability 1.20s
-  [ran] process 0.01s
-  [ran] electrical 0.00s
-  [ran] combat 0.17s
-  [ran] physics 0.00s
-  [ran] plausibility 0.00s
-  [ran] cots 0.00s
-  [ran] fit 0.02s
-  [ran] bom 0.00s
-  [ran] wire_review 0.03s
-  [ran] fastener_record 0.00s
-  [ran] likeness 2.93s
-  [ran] drive_recess 0.01s
-  [ran] belt_wrap 0.00s
-  [ran] retention 0.00s
-  [ran] waiver_audit 0.00s
-  [ran] geom 0.11s
-  [ran] dfm 0.01s
-  [ran] realworld 0.10s
+  [cached] integrity 0.01s
+  [cached] mass 0.00s
+  [proxy] interference 0.84s
+  [cached] connections 0.00s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.01s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.00s
+  [cached] physics 0.01s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [cached] likeness 0.00s
+  [cached] drive_recess 0.01s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.02s
+  [cached] waiver_audit 0.00s
+  [cached] geom 0.00s
+  [cached] dfm 0.00s
+  [cached] realworld 0.00s
 valkyrie: ok=False 24 blockers in 21 root causes, mass 175.0/150 g
 1. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `hub_l`. (+1 consequences)
    | weapon: x -40.00..40.00  y 38.50..45.50  z -13.00..5.00  size 80.00 x 7.00 x 18.00 mm
@@ -135,4 +135,4 @@ MASS BUDGET:
     window_r                    0.19 g  fills 100% of its box
     mass.over: 175.0 g (range 151.8 to 198.1 g) against the 150 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: distance 8 hit / 0 miss, group 0 hit / 31 miss, inside 21 hit / 0 miss, likeness 2 hit / 0 miss, min_gap 119 hit / 4 miss, overlap 403 hit / 3 miss, part_check 15 hit / 0 miss, part_geom 26 hit / 0 miss, ray 176 hit / 0 miss
+cache: distance 8 hit / 0 miss, group 31 hit / 0 miss, min_gap 84 hit / 0 miss, overlap 390 hit / 0 miss, part_geom 26 hit / 0 miss
