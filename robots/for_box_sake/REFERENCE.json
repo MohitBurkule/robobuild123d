@@ -6,5 +6,11 @@
  },
  "photos": [
   "for_box_sake.aws71.webp"
- ]
+ ],
+ "view": {
+  "for_box_sake.aws71.webp": "front"
+ },
+ "elevation": {
+  "for_box_sake.aws71.webp": 25
+ }
 }
