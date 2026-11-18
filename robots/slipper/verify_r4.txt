@@ -1,0 +1,107 @@
+BLOCKERS: 13
+  [cached] integrity 0.00s
+  [cached] mass 0.00s
+  [proxy] interference 0.17s
+  [cached] connections 0.00s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.01s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.00s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.00s
+  [cached] physics 0.00s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [cached] likeness 0.00s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.00s
+  [cached] waiver_audit 0.00s
+  [cached] geom 0.01s
+  [cached] dfm 0.00s
+  [cached] realworld 0.00s
+slipper: ok=False 13 blockers in 13 root causes, mass 140.6/150 g
+1. [proxy.interference] `chassis` and `flipper` overlap by 0.12 mm (allowed 0.08).
+   | chassis: x -40.00..40.00  y -55.00..55.00  z -9.00..39.00  size 80.00 x 110.00 x 48.00 mm
+   |   centre (-0.00, 0.00, 15.00), volume 77868.2 mm3
+   |   OVERLAP `flipper` 0.12 mm (allowed 0.08)
+   |   gap to `el_switch` 0.10 mm
+   |   gap to `dm_wheel_l0` 0.25 mm
+2. [proxy.sweep] joint `flipper`: `flipper` hits `chassis` 0.12 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint flipper` lists the closest approach to every part.
+   | flipper: x -38.00..38.00  y -45.94..49.94  z -4.93..40.93  size 76.00 x 95.88 x 45.86 mm
+   |   centre (0.00, 2.00, 18.00), volume 23712.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -40, 35.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.12 mm (allowed 0.08)
+   | chassis: x -40.00..40.00  y -55.00..55.00  z -9.00..39.00  size 80.00 x 110.00 x 48.00 mm
+3. [power.weapon_motor] `flipper` names motor None; it must be a catalog brushless motor so speed can be computed.
+   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
+   | flipper: x -38.00..38.00  y -45.94..49.94  z -4.93..40.93  size 76.00 x 95.88 x 45.86 mm
+   |   centre (0.00, 2.00, 18.00), volume 23712.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -40, 35.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.12 mm (allowed 0.08)
+4. [process.weapon_printed] Weapon `flipper` is fdm-printed with no hardened metal insert teeth.
+   fix: Make it metal (sheet_cut / turned / milled) or add hardened steel tooth parts (`parent` = the weapon).
+   | flipper: x -38.00..38.00  y -45.94..49.94  z -4.93..40.93  size 76.00 x 95.88 x 45.86 mm
+   |   centre (0.00, 2.00, 18.00), volume 23712.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -40, 35.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.12 mm (allowed 0.08)
+5. [electrical.battery_weapon_gap] Battery is -7.9 mm from the weapon's swept volume (need >= 3 mm plus a wall).
+   fix: Move the battery >= 3 mm from the swept volume.
+6. [wire.render_wires] 8 of 8 robot render(s) do not draw all 4 wires: renders/diff_slipper.aws62.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_slipper.aws64.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_slipper.aws62_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_slipper.aws64_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_slipper.aws62.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/pick_slipper.aws62.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_slipper.aws62.png: no render record (`<png>.json`), so nothing says the wires were drawn
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+7. [wire.rotor_clearance] wire `w_bat_sw` passes -0.9 mm from the volume swept by the `flipper` rotor (flipper) at [0.0, 11.0, -2.0].
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | flipper: x -38.00..38.00  y -45.94..49.94  z -4.93..40.93  size 76.00 x 95.88 x 45.86 mm
+   |   centre (0.00, 2.00, 18.00), volume 23712.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -40, 35.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.12 mm (allowed 0.08)
+8. [wire.rotor_clearance] wire `w_sw_esc` passes -0.9 mm from the volume swept by the `flipper` rotor (flipper) at [4.0, -49.5, -3.0].
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | flipper: x -38.00..38.00  y -45.94..49.94  z -4.93..40.93  size 76.00 x 95.88 x 45.86 mm
+   |   centre (0.00, 2.00, 18.00), volume 23712.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -40, 35.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.12 mm (allowed 0.08)
+9. [wire.rotor_clearance] wire `w_m1` passes -0.7 mm from the volume swept by the `flipper` rotor (flipper) at [11.0, -15.0, -4.5].
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | flipper: x -38.00..38.00  y -45.94..49.94  z -4.93..40.93  size 76.00 x 95.88 x 45.86 mm
+   |   centre (0.00, 2.00, 18.00), volume 23712.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -40, 35.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.12 mm (allowed 0.08)
+10. [wire.rotor_clearance] wire `w_m2` passes -0.7 mm from the volume swept by the `flipper` rotor (flipper) at [-12.0, -15.0, -4.5].
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | flipper: x -38.00..38.00  y -45.94..49.94  z -4.93..40.93  size 76.00 x 95.88 x 45.86 mm
+   |   centre (0.00, 2.00, 18.00), volume 23712.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -40, 35.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.12 mm (allowed 0.08)
+11. [likeness.view] `reference/slipper.aws62.webp` is declared `front` (IoU 0.69 there) but the model matches it better from front (elevation 25, azimuth 90) (IoU 0.86).
+   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
+12. [likeness.silhouette] `reference/slipper.aws62.webp`: best silhouette IoU 0.69 at camera front (elevation 45, azimuth 90) (need 0.87: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.87). Regions (photo frame, left third first) 0.60 / 0.76 / 0.72: worst = front third. Height/length 1.34 model vs 1.05 photo (too tall: lower it or lengthen it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+... 1 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 140.6 g of 150 g (+9.4 g margin)
+    chassis                    74.13 g  fills 18% of its box
+    flipper                    22.57 g  fills 7% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    dm_wheel_l0                 9.70 g  fills 66% of its box
+    dm_wheel_r0                 9.70 g  fills 66% of its box
+    el_rx_esc                   3.50 g  fills 100% of its box
+    wheel_l0                    2.26 g  fills 57% of its box
+    wheel_r0                    2.26 g  fills 57% of its box
+    dt_hub_wheel_r0             0.86 g  fills 64% of its box
+    dt_hub_wheel_l0             0.86 g  fills 64% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    mass.may_be_over: 140.6 g (range 116.2 to 165.0 g) against the 150 g limit; 3.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 31 hit / 0 miss, min_gap 90 hit / 0 miss, overlap 346 hit / 0 miss, part_geom 11 hit / 0 miss
