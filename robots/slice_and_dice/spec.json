@@ -1,0 +1,319 @@
+{
+ "name": "slice and dice",
+ "profile": "aws2025",
+ "robot_type": "lifter",
+ "locomotion": "wheels",
+ "kit_draft": true,
+ "parts": [
+  {
+   "id": "chassis",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "intersect",
+    "items": [
+     {
+      "type": "place",
+      "shape": {
+       "type": "prism",
+       "points": [
+        [
+         -35.0,
+         0.0
+        ],
+        [
+         35.0,
+         0.0
+        ],
+        [
+         35.0,
+         1.5
+        ],
+        [
+         35.0,
+         22.0
+        ],
+        [
+         -35.0,
+         22.0
+        ]
+       ],
+       "height": 84.0
+      },
+      "at": [
+       0.0,
+       0.0,
+       -9.0
+      ],
+      "rot": [
+       90.0,
+       0.0,
+       90.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "prism",
+       "points": [
+        [
+         -42.0,
+         -35.0
+        ],
+        [
+         42.0,
+         -35.0
+        ],
+        [
+         15.0,
+         35.0
+        ],
+        [
+         -15.0,
+         35.0
+        ]
+       ],
+       "height": 42.0
+      },
+      "at": [
+       0.0,
+       0.0,
+       2.0
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ]
+     }
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#2a2a34",
+   "print_orientation": "+z"
+  },
+  {
+   "id": "wheel_l0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 11.0,
+     "height": 8.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    46.5,
+    -24.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#1c1c1f"
+  },
+  {
+   "id": "wheel_r0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 11.0,
+     "height": 8.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -46.5,
+    -24.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#1c1c1f"
+  },
+  {
+   "id": "clamp",
+   "kind": "weapon",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      10,
+      30,
+      6
+     ]
+    },
+    "at": [
+     0,
+     45,
+     -5.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#1c1c1f",
+   "weapon": {
+    "kind": "lifter"
+   },
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "pivot": [
+     0,
+     30,
+     -5.0
+    ],
+    "min": 0,
+    "max": 80,
+    "default": 0
+   }
+  },
+  {
+   "id": "eye_l",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "sphere",
+     "radius": 4
+    },
+    "at": [
+     -10,
+     10,
+     15.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#f4f4f4"
+  },
+  {
+   "id": "eye_r",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "sphere",
+     "radius": 4
+    },
+    "at": [
+     10,
+     10,
+     15.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#f4f4f4"
+  }
+ ],
+ "fasteners": [],
+ "wires": [],
+ "connections": [],
+ "cluster": 2,
+ "reference": [
+  {
+   "image": "reference/slice_and_dice.aws64.webp",
+   "mask": "reference/slice_and_dice.aws64_mask.png",
+   "view": "iso",
+   "approximate": true
+  },
+  {
+   "image": "reference/slice_and_dice.aws72.webp",
+   "mask": "reference/slice_and_dice.aws72_mask.png",
+   "view": "iso",
+   "approximate": true
+  }
+ ]
+}
