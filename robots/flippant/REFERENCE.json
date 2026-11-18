@@ -7,5 +7,15 @@
  },
  "photos": [
   "flippant.aws69.webp"
- ]
+ ],
+ "view": {
+  "flippant.aws65.webp": "front_right_iso",
+  "flippant.aws68.webp": "front",
+  "flippant.aws69.webp": "front_left_iso"
+ },
+ "elevation": {
+  "flippant.aws65.webp": 45,
+  "flippant.aws68.webp": 45,
+  "flippant.aws69.webp": 45
+ }
 }

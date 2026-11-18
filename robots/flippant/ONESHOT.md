@@ -19,3 +19,8 @@ Likeness: aws69 0.88 (ok).
 Decisions: type flipper; body box rect 95x100x28 mm, ramp 35; wheels 2 r14 inboard; weapon none; extra parts: hoop, lid; photos skipped (cluttered): indices [0, 1].
 
 Likeness: aws69 0.88 (ok).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type flipper; body box rect 95x100x28 mm, ramp 35; wheels 2 r14 inboard; weapon none; extra parts: hoop, lid; photos skipped (cluttered): indices [0, 1].
+
+Likeness: aws69 0.85 (ok).

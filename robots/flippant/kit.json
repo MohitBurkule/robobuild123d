@@ -22,7 +22,15 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "skip_photos": [
+  0,
+  1
+ ],
+ "name": "flippant",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "side": [
     [
@@ -89,13 +97,5 @@
    "id": "lid",
    "color": "#22252a"
   }
- ],
- "skip_photos": [
-  0,
-  1
- ],
- "name": "flippant",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }
