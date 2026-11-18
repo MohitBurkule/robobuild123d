@@ -1,56 +1,73 @@
-BLOCKERS: 5
-  [cached] integrity 0.01s
-  [cached] mass 0.00s
-  [proxy] interference 0.55s
-  [cached] connections 0.00s
-  [cached] legal 0.00s
-  [cached] fasteners 0.00s
-  [cached] power 0.00s
-  [cached] tension 0.00s
-  [cached] targets 0.00s
-  [cached] fight 0.00s
-  [cached] shape 0.01s
-  [cached] dynamics 0.01s
-  [cached] strength 0.00s
-  [cached] printability 0.00s
-  [cached] process 0.00s
-  [cached] electrical 0.00s
-  [cached] combat 0.01s
-  [cached] physics 0.00s
-  [cached] plausibility 0.00s
-  [cached] cots 0.00s
-  [cached] fit 0.00s
-  [cached] bom 0.00s
-  [cached] wire_review 0.01s
-  [cached] fastener_record 0.00s
-  [ran] likeness 7.71s
-  [cached] drive_recess 0.01s
-  [cached] belt_wrap 0.00s
-  [cached] retention 0.01s
-  [cached] waiver_audit 0.00s
-  [cached] geom 0.00s
-  [cached] dfm 0.00s
-  [cached] realworld 0.00s
-i saw that: ok=False 5 blockers in 5 root causes, mass 190.2/150 g
-1. [mass.over] 190.2 g (range 165.7 to 214.7 g) against the 150 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+BLOCKERS: 8
+  [ran] integrity 0.12s
+  [ran] mass 0.00s
+  [proxy] interference 22.08s
+  [ran] connections 0.07s
+  [ran] legal 0.05s
+  [ran] fasteners 0.00s
+  [ran] power 0.01s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.03s
+  [ran] shape 0.37s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 1.74s
+  [ran] process 0.02s
+  [ran] electrical 0.01s
+/tmp/work10_i_saw_that/robot/checks/combat_ground.py:200: RuntimeWarning: Mean of empty slice
+  rr = np.nanmean(rout[fb[best[1][0]]:fb[best[1][1]] + 1])
+  [ran] combat 0.27s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.16s
+  [ran] bom 0.00s
+  [ran] wire_review 0.02s
+  [ran] fastener_record 0.00s
+  [ran] likeness 11.78s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.01s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.21s
+  [ran] dfm 0.10s
+  [ran] realworld 0.19s
+i saw that: ok=False 8 blockers in 8 root causes, mass 191.7/150 g
+1. [mass.over] 191.7 g (range 166.8 to 216.5 g) against the 150 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
-2. [dynamics.balance] `weapon` mass centre is 0.104 mm off the spin axis: grade G346.4 at 31920 rpm, a 63 N rotating load on the bearings and frame. That is 33.6x the robot's weight. It will shake the robot and the bearings apart.
+2. [proxy.interference] `chassis` and `dm_wheel_l0` overlap by 4.88 mm (allowed 0.08).
+   | chassis: x -30.00..30.00  y -31.00..31.00  z -11.00..17.00  size 60.00 x 62.00 x 28.00 mm
+   |   centre (0.00, 0.00, 3.00), volume 44818.5 mm3
+   |   OVERLAP `dm_wheel_l0` 4.88 mm (allowed 0.08)
+   |   overlap allowed `jaw_l` 1.38 mm (allowed inf)
+   |   overlap allowed `jaw_r` 0.91 mm (allowed inf)
+3. [dynamics.balance] `weapon` mass centre is 0.104 mm off the spin axis: grade G346.4 at 31920 rpm, a 63 N rotating load on the bearings and frame. That is 33.4x the robot's weight. It will shake the robot and the bearings apart.
    fix: Make the weapon symmetric about its axis, add a counterweight, or drill the heavy side.
    | weapon: x -9.00..-7.00  y -34.08..34.08  z 49.99..118.08  size 2.00 x 68.16 x 68.08 mm
    |   centre (-8.00, -0.00, 84.04), volume 6863.1 mm3
    |   joint revolute axis [1, 0, 0] pivot [-8.0, 0.0, 84.0] range 0..360 default 0
    |   overlap allowed `lock_pin` 0.28 mm (allowed 1000.00)
    |   gap to `dt_shaft_weapon` 0.00 mm (touching)
-3. [wire.render_wires] 5 of 5 robot render(s) do not draw all 7 wires: renders/diff_i_saw_that_.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_i_saw_that_.aws76_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_i_saw_that_.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_i_saw_that_.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn
+4. [fit.interference] `dm_wheel_l0` overlaps wall `chassis` by 4.88 mm: it will not go in. No side has 5.08 mm free (free room per side {'-x': 2.0, '+x': 0.0, '-y': 0.55, '+y': 0.55, '-z': 0.45, '+z': 0.45}): grow the pocket or pick a smaller part (`robot catalog --kind ... --fits LxWxH`).
+   fix: Grow the pocket to the component size plus the per-side fit clearance.
+   | dm_wheel_l0: x 3.50..39.00  y -24.00..-12.00  z -5.00..5.00  size 35.50 x 12.00 x 10.00 mm
+   |   centre (21.25, -18.00, 0.00), volume 2702.4 mm3
+   |   port terminals: (3.50, -18.00, 0.00)
+   |   OVERLAP `chassis` 4.88 mm (allowed 0.08)
+   |   gap to `wheel_l0` 0.00 mm (touching)
+5. [wire.render_wires] 2 of 2 robot render(s) do not draw all 7 wires: renders/iso.png: wire `w_sw_esc` not drawn; renders/top.png: wire `w_sw_esc` not drawn
    fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
-4. [likeness.view] `reference/i_saw_that_.aws76.webp` is declared `front_left_iso` (IoU 0.41 there) but the model matches it better from rear_left_iso (elevation 45, azimuth 240) (IoU 0.54).
+6. [wire.render_count] iso.png: 6 routes vs 7 spec wires (missing ['w_sw_esc']); top.png: 6 routes vs 7 spec wires (missing ['w_sw_esc'])
+   fix: Re-render: the render record must list exactly the spec's wires.
+7. [likeness.view] `reference/i_saw_that_.aws76.webp` is declared `front_left_iso` (IoU 0.41 there) but the model matches it better from rear_left_iso (elevation 45, azimuth 240) (IoU 0.54).
    fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
-5. [likeness.silhouette] `reference/i_saw_that_.aws76.webp`: best silhouette IoU 0.41 at camera front_left_iso (elevation 25, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.55). Regions (photo frame, left third first) 0.19 / 0.48 / 0.42: worst = front third. Height/length 1.00 model vs 0.92 photo (too tall: lower it or lengthen it).
+8. [likeness.silhouette] `reference/i_saw_that_.aws76.webp`: best silhouette IoU 0.41 at camera front_left_iso (elevation 25, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.55). Regions (photo frame, left third first) 0.19 / 0.48 / 0.42: worst = front third. Height/length 1.00 model vs 0.92 photo (too tall: lower it or lengthen it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
-  mass 190.2 g of 150 g (-40.2 g margin)
+  mass 191.7 g of 150 g (-41.7 g margin)
     weapon                     54.22 g  fills 74% of its box  <- solid block? a tub should be a shell
-    chassis                    41.18 g  fills 42% of its box
+    chassis                    42.67 g  fills 43% of its box
     el_battery                 21.50 g  fills 100% of its box  <- solid block? a tub should be a shell
     dm_wheel_l0                 9.50 g  fills 63% of its box
     dm_wheel_r0                 9.50 g  fills 63% of its box
@@ -67,6 +84,6 @@ MASS BUDGET:
     dt_hub_wheel_l0             1.58 g  fills 76% of its box
     dt_shaft_weapon             1.19 g  fills 79% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.over: 190.2 g (range 165.7 to 214.7 g) against the 150 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.over: 191.7 g (range 166.8 to 216.5 g) against the 150 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: distance 8 hit / 0 miss, group 30 hit / 1 miss, inside 11 hit / 0 miss, likeness 0 hit / 1 miss, min_gap 1 hit / 0 miss, overlap 149 hit / 0 miss, part_geom 18 hit / 0 miss
+cache: distance 9 hit / 2 miss, group 0 hit / 31 miss, inside 10 hit / 2 miss, likeness 1 hit / 0 miss, min_gap 17 hit / 17 miss, overlap 103 hit / 94 miss, part_check 8 hit / 1 miss, part_geom 17 hit / 1 miss, ray 95 hit / 48 miss
