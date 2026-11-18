@@ -8,8 +8,8 @@
  },
  "wheels": {
   "n": 4,
-  "radius": 11,
-  "width": 9,
+  "radius": 13.5,
+  "width": 10,
   "y": [
    -30,
    30
@@ -60,6 +60,270 @@
    "mirror": true,
    "id": "side_wall",
    "color": "#4a9fe8"
+  },
+  {
+   "box": [
+    64,
+    96,
+    1.6
+   ],
+   "at": [
+    0,
+    -1,
+    26.8
+   ],
+   "id": "lid",
+   "color": "#9a4ad6"
+  },
+  {
+   "box": [
+    12,
+    10,
+    6
+   ],
+   "at": [
+    10,
+    -6,
+    25
+   ],
+   "cut": "lid",
+   "id": "sw_hole"
+  },
+  {
+   "cyl": [
+    3,
+    6
+   ],
+   "at": [
+    4,
+    -22,
+    25
+   ],
+   "axis": "z",
+   "cut": "lid",
+   "id": "link_hole"
+  },
+  {
+   "box": [
+    12,
+    10,
+    3
+   ],
+   "at": [
+    10,
+    -6,
+    24.5
+   ],
+   "cut": true,
+   "id": "sw_well"
+  },
+  {
+   "cyl": [
+    3,
+    3
+   ],
+   "at": [
+    4,
+    -22,
+    24.5
+   ],
+   "axis": "z",
+   "cut": true,
+   "id": "link_well"
+  },
+  {
+   "cyl": [
+    2.2,
+    7
+   ],
+   "at": [
+    38,
+    46,
+    29
+   ],
+   "axis": "z",
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "id": "horn",
+   "mirror": true,
+   "color": "#a855e0"
+  },
+  {
+   "cyl": [
+    2.6,
+    1.4
+   ],
+   "at": [
+    -28,
+    -44,
+    28.2
+   ],
+   "axis": "z",
+   "id": "lid_screw0",
+   "material": "steel",
+   "process": "cots",
+   "color": "#1c1d20"
+  },
+  {
+   "cyl": [
+    2.6,
+    1.4
+   ],
+   "at": [
+    28,
+    -44,
+    28.2
+   ],
+   "axis": "z",
+   "id": "lid_screw1",
+   "material": "steel",
+   "process": "cots",
+   "color": "#1c1d20"
+  },
+  {
+   "cyl": [
+    2.6,
+    1.4
+   ],
+   "at": [
+    -28,
+    42,
+    28.2
+   ],
+   "axis": "z",
+   "id": "lid_screw2",
+   "material": "steel",
+   "process": "cots",
+   "color": "#1c1d20"
+  },
+  {
+   "cyl": [
+    2.6,
+    1.4
+   ],
+   "at": [
+    28,
+    42,
+    28.2
+   ],
+   "axis": "z",
+   "id": "lid_screw3",
+   "material": "steel",
+   "process": "cots",
+   "color": "#1c1d20"
+  },
+  {
+   "cyl": [
+    2.6,
+    1.4
+   ],
+   "at": [
+    -28,
+    0,
+    28.2
+   ],
+   "axis": "z",
+   "id": "lid_screw4",
+   "material": "steel",
+   "process": "cots",
+   "color": "#1c1d20"
+  },
+  {
+   "cyl": [
+    2.6,
+    1.4
+   ],
+   "at": [
+    28,
+    0,
+    28.2
+   ],
+   "axis": "z",
+   "id": "lid_screw5",
+   "material": "steel",
+   "process": "cots",
+   "color": "#1c1d20"
+  },
+  {
+   "cyl": [
+    2.4,
+    1.4
+   ],
+   "at": [
+    -30,
+    51.2,
+    20
+   ],
+   "axis": "y",
+   "id": "front_screw0",
+   "material": "steel",
+   "process": "cots",
+   "color": "#1c1d20"
+  },
+  {
+   "cyl": [
+    2.4,
+    1.4
+   ],
+   "at": [
+    -10,
+    51.2,
+    20
+   ],
+   "axis": "y",
+   "id": "front_screw1",
+   "material": "steel",
+   "process": "cots",
+   "color": "#1c1d20"
+  },
+  {
+   "cyl": [
+    2.4,
+    1.4
+   ],
+   "at": [
+    10,
+    51.2,
+    20
+   ],
+   "axis": "y",
+   "id": "front_screw2",
+   "material": "steel",
+   "process": "cots",
+   "color": "#1c1d20"
+  },
+  {
+   "cyl": [
+    2.4,
+    1.4
+   ],
+   "at": [
+    30,
+    51.2,
+    20
+   ],
+   "axis": "y",
+   "id": "front_screw3",
+   "material": "steel",
+   "process": "cots",
+   "color": "#1c1d20"
+  },
+  {
+   "box": [
+    70,
+    7,
+    13
+   ],
+   "at": [
+    0,
+    47,
+    9
+   ],
+   "cut": true,
+   "id": "scoop_gap"
   }
  ]
 }

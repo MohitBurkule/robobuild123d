@@ -42,3 +42,8 @@ Left (and why):
 - wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): road_runner.aws67.webp 0.87 -> 0.87
+
+## Round 3d (user camera picks batch 2 + shape remarks applied; round 4 to be re-run on the new outside)
+Decisions: type wedge; body box rect 100x100x24 mm, ramp 0; wheels 4 r13.5 inboard; weapon none; extra parts: rear_wall, side_wall, lid, sw_hole, link_hole, sw_well, link_well, horn, lid_screw0, lid_screw1, lid_screw2, lid_screw3, lid_screw4, lid_screw5, front_screw0, front_screw1, front_screw2, front_screw3, scoop_gap; photos skipped (cluttered): indices [0].
+
+Likeness: aws67 0.84 (ok).
