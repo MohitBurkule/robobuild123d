@@ -1,16 +1,16 @@
 BLOCKERS: 11
-  [cached] integrity 0.00s
+  [cached] integrity 0.01s
   [cached] mass 0.00s
-  [proxy] interference 0.09s
+  [proxy] interference 0.33s
   [cached] connections 0.00s
-  [cached] legal 0.00s
+  [cached] legal 0.01s
   [cached] fasteners 0.00s
   [cached] power 0.00s
   [cached] tension 0.00s
   [cached] targets 0.00s
   [cached] fight 0.00s
-  [cached] shape 0.00s
-  [cached] dynamics 0.00s
+  [cached] shape 0.01s
+  [cached] dynamics 0.01s
   [cached] strength 0.00s
   [cached] printability 0.00s
   [cached] process 0.00s
@@ -23,14 +23,14 @@ BLOCKERS: 11
   [cached] bom 0.00s
   [cached] wire_review 0.00s
   [cached] fastener_record 0.00s
-  [cached] likeness 0.00s
+  [cached] likeness 0.03s
   [cached] drive_recess 0.00s
   [cached] belt_wrap 0.00s
   [cached] retention 0.00s
-  [cached] waiver_audit 0.00s
-  [cached] geom 0.00s
+  [cached] waiver_audit 0.02s
+  [cached] geom 0.02s
   [cached] dfm 0.00s
-  [cached] realworld 0.00s
+  [cached] realworld 0.01s
 io: ok=False 11 blockers in 11 root causes, mass 165.6/150 g
 1. [mass.over] 165.6 g (range 134.0 to 197.1 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
