@@ -1,0 +1,12 @@
+{
+ "robot_type": "wedge",
+ "wheels": 4,
+ "weapon": {
+  "kind": "wedge"
+ },
+ "photos": [
+  "immovable_object.aws69.webp",
+  "immovable_object.aws71.webp",
+  "immovable_object.aws72.webp"
+ ]
+}

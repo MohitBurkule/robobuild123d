@@ -1,0 +1,29 @@
+{
+ "name": "immovable object",
+ "robot_type": "wedge",
+ "body": {
+  "length": 85,
+  "width": 64,
+  "height": 26,
+  "ramp": 0,
+  "clearance": 3
+ },
+ "weapon": {
+  "kind": "none"
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 15,
+  "width": 8,
+  "y": [
+   -28,
+   20
+  ]
+ },
+ "forks": {
+  "n": 4,
+  "length": 38,
+  "width": 5,
+  "spread": 84
+ }
+}
