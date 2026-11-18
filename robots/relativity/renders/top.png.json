@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_relativity/robots/relativity/spec.json",
- "rendered_at": 1795039207.9811082,
+ "rendered_at": 1795040998.9813023,
  "bodies": [
   "chassis_bottom",
   "motor_l",
@@ -26,8 +26,80 @@
   "dt_shaft_weapon",
   "dt_hubw_weapon",
   "dt_strut_eye_l",
-  "dt_strut_eye_r",
-  "lock_pin"
+  "dt_strut_eye_r"
  ],
- "wires": {}
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    17.0,
+    1.0,
+    0.0
+   ],
+   "to": [
+    27.0,
+    11.0,
+    9.5
+   ]
+  },
+  "w_sw_wesc": {
+   "from": [
+    35.0,
+    11.0,
+    9.5
+   ],
+   "to": [
+    16.5,
+    9.0,
+    0.0
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    35.0,
+    11.0,
+    9.5
+   ],
+   "to": [
+    -17.0,
+    -12.0,
+    0.0
+   ]
+  },
+  "w_esc_ml": {
+   "from": [
+    -25.0,
+    -12.0,
+    0.0
+   ],
+   "to": [
+    5.549999999999997,
+    -30.0,
+    0.0
+   ]
+  },
+  "w_esc_mr": {
+   "from": [
+    -25.0,
+    20.0,
+    0.0
+   ],
+   "to": [
+    -5.549999999999997,
+    -30.0,
+    0.0
+   ]
+  },
+  "w_rx_wesc": {
+   "from": [
+    -17.0,
+    20.0,
+    0.0
+   ],
+   "to": [
+    -6.5,
+    12.0,
+    0.0
+   ]
+  }
+ }
 }
