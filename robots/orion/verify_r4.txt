@@ -1,0 +1,117 @@
+BLOCKERS: 12
+  [cached] integrity 0.00s
+  [cached] mass 0.00s
+  [proxy] interference 0.08s
+  [cached] connections 0.00s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.00s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.00s
+  [cached] physics 0.00s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [cached] likeness 0.00s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.00s
+  [cached] waiver_audit 0.00s
+  [cached] geom 0.00s
+  [cached] dfm 0.00s
+  [cached] realworld 0.00s
+orion: ok=False 12 blockers in 12 root causes, mass 138.9/150 g
+1. [proxy.sweep] joint `flipper`: `flipper` hits `chassis` 0.58 mm deep at 7.3 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint flipper` lists the closest approach to every part.
+   | flipper: x -17.00..17.00  y -40.64..44.64  z -6.62..40.62  size 34.00 x 85.29 x 47.25 mm
+   |   centre (0.00, 2.00, 17.00), volume 9690.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -40, 37.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `el_esc` 2.67 mm
+2. [power.weapon_motor] `flipper` names motor None; it must be a catalog brushless motor so speed can be computed.
+   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
+   | flipper: x -17.00..17.00  y -40.64..44.64  z -6.62..40.62  size 34.00 x 85.29 x 47.25 mm
+   |   centre (0.00, 2.00, 17.00), volume 9690.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -40, 37.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `el_esc` 2.67 mm
+3. [process.weapon_printed] Weapon `flipper` is fdm-printed with no hardened metal insert teeth.
+   fix: Make it metal (sheet_cut / turned / milled) or add hardened steel tooth parts (`parent` = the weapon).
+   | flipper: x -17.00..17.00  y -40.64..44.64  z -6.62..40.62  size 34.00 x 85.29 x 47.25 mm
+   |   centre (0.00, 2.00, 17.00), volume 9690.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -40, 37.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `el_esc` 2.67 mm
+4. [electrical.battery_weapon_gap] Battery is -10.1 mm from the weapon's swept volume (need >= 3 mm plus a wall).
+   fix: Move the battery >= 3 mm from the swept volume.
+5. [wire.render_wires] 5 of 5 robot render(s) do not draw all 4 wires: renders/diff_orion.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_orion.aws72_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_orion.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_orion.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+6. [wire.rotor_clearance] wire `w_bat_sw` passes -0.9 mm from the volume swept by the `flipper` rotor (flipper) at [-0.5, 10.5, -1.5].
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | flipper: x -17.00..17.00  y -40.64..44.64  z -6.62..40.62  size 34.00 x 85.29 x 47.25 mm
+   |   centre (0.00, 2.00, 17.00), volume 9690.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -40, 37.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `el_esc` 2.67 mm
+7. [wire.rotor_clearance] wire `w_sw_esc` passes -0.9 mm from the volume swept by the `flipper` rotor (flipper) at [3.5, -16.5, -2.0].
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | flipper: x -17.00..17.00  y -40.64..44.64  z -6.62..40.62  size 34.00 x 85.29 x 47.25 mm
+   |   centre (0.00, 2.00, 17.00), volume 9690.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -40, 37.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `el_esc` 2.67 mm
+8. [wire.rotor_clearance] wire `w_m1` passes -0.7 mm from the volume swept by the `flipper` rotor (flipper) at [15.5, -0.5, 10.5].
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | flipper: x -17.00..17.00  y -40.64..44.64  z -6.62..40.62  size 34.00 x 85.29 x 47.25 mm
+   |   centre (0.00, 2.00, 17.00), volume 9690.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -40, 37.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `el_esc` 2.67 mm
+9. [wire.rotor_clearance] wire `w_m2` passes -0.7 mm from the volume swept by the `flipper` rotor (flipper) at [-16.5, -0.5, 10.5].
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | flipper: x -17.00..17.00  y -40.64..44.64  z -6.62..40.62  size 34.00 x 85.29 x 47.25 mm
+   |   centre (0.00, 2.00, 17.00), volume 9690.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -40, 37.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+   |   gap to `el_esc` 2.67 mm
+10. [likeness.view] `reference/orion.aws72.webp` is declared `front_right_iso` (IoU 0.57 there) but the model matches it better from front_left_iso (elevation 25, azimuth 120) (IoU 0.74).
+   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
+11. [likeness.silhouette] `reference/orion.aws72.webp`: best silhouette IoU 0.57 at camera front_right_iso (elevation 45, azimuth 30) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.62). Regions (photo frame, left third first) 0.64 / 0.62 / 0.43: worst = rear third. Height/length 0.88 model vs 0.82 photo (too tall: lower it or lengthen it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+12. [battery.rotor_gap] `el_battery` is 0.0 mm from the volume swept by `flipper`.
+   fix: Move the battery or add a wall.
+   | el_battery: x -14.50..13.50  y -9.50..8.50  z -6.50..3.50  size 28.00 x 18.00 x 10.00 mm
+   |   centre (-0.50, -0.50, -1.50), volume 5040.0 mm3
+   |   port xt30: (-0.50, 10.50, -1.50)
+   |   gap to `chassis` 0.25 mm
+   | flipper: x -17.00..17.00  y -40.64..44.64  z -6.62..40.62  size 34.00 x 85.29 x 47.25 mm
+MASS BUDGET:
+  mass 138.9 g of 150 g (+11.1 g margin)
+    chassis                    83.75 g  fills 19% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    dm_wheel_l0                 9.50 g  fills 63% of its box
+    dm_wheel_r0                 9.50 g  fills 63% of its box
+    flipper                     9.22 g  fills 7% of its box
+    wheel_l0                    3.07 g  fills 65% of its box
+    wheel_r0                    3.07 g  fills 65% of its box
+    el_esc                      2.30 g  fills 99% of its box
+    dt_hub_wheel_r0             0.92 g  fills 75% of its box
+    dt_hub_wheel_l0             0.92 g  fills 75% of its box
+    spring_l                    0.88 g  fills 79% of its box
+    spring_r                    0.88 g  fills 79% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    dt_strut_spring_r           0.05 g  fills 21% of its box
+    dt_strut_spring_l           0.05 g  fills 17% of its box
+    mass.may_be_over: 138.9 g (range 112.7 to 165.1 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 31 hit / 0 miss, min_gap 62 hit / 0 miss, overlap 307 hit / 0 miss, part_geom 15 hit / 0 miss
