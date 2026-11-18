@@ -1,37 +1,37 @@
-BLOCKERS: 9
-  [cached] integrity 0.00s
-  [cached] mass 0.00s
-  [proxy] interference 0.26s
-  [cached] connections 0.00s
-  [cached] legal 0.01s
-  [cached] fasteners 0.00s
-  [cached] power 0.00s
-  [cached] tension 0.00s
-  [cached] targets 0.00s
-  [cached] fight 0.00s
-  [cached] shape 0.00s
-  [cached] dynamics 0.00s
-  [cached] strength 0.00s
-  [cached] printability 0.00s
-  [cached] process 0.00s
-  [cached] electrical 0.01s
-  [cached] combat 0.00s
-  [cached] physics 0.00s
-  [cached] plausibility 0.00s
-  [cached] cots 0.00s
-  [cached] fit 0.00s
-  [cached] bom 0.01s
-  [cached] wire_review 0.00s
-  [cached] fastener_record 0.00s
-  [cached] likeness 0.00s
-  [cached] drive_recess 0.00s
-  [cached] belt_wrap 0.00s
-  [cached] retention 0.00s
-  [cached] waiver_audit 0.01s
-  [cached] geom 0.00s
-  [cached] dfm 0.01s
-  [cached] realworld 0.00s
-my first bot: ok=False 9 blockers in 8 root causes, mass 132.7/150 g
+BLOCKERS: 11
+  [ran] integrity 0.08s
+  [ran] mass 0.00s
+  [proxy] interference 10.12s
+  [ran] connections 1.78s
+  [ran] legal 0.04s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.01s
+  [ran] targets 0.00s
+  [ran] fight 0.06s
+  [ran] shape 1.19s
+  [ran] dynamics 0.01s
+  [ran] strength 0.01s
+  [ran] printability 0.62s
+  [ran] process 0.02s
+  [ran] electrical 0.03s
+  [ran] combat 0.11s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.08s
+  [ran] bom 0.01s
+  [ran] wire_review 0.02s
+  [ran] fastener_record 0.00s
+  [ran] likeness 26.86s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.03s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.13s
+  [ran] dfm 0.07s
+  [ran] realworld 0.07s
+my first bot: ok=False 11 blockers in 10 root causes, mass 131.5/150 g
 1. [connection.floating] `post` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `post_top`, 0.0 mm away. (+1 consequences)
    fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
    | post: x -2.00..2.00  y -7.00..-3.00  z 17.00..67.00  size 4.00 x 4.00 x 50.00 mm
@@ -55,17 +55,26 @@ my first bot: ok=False 9 blockers in 8 root causes, mass 132.7/150 g
    |   OVERLAP `post_top` 0.46 mm (allowed 0.08)
    |   gap to `chassis` 1.78 mm
    | post_top: x -9.00..9.00  y -7.00..-3.00  z 66.00..70.00  size 18.00 x 4.00 x 4.00 mm
-5. [wire.render_wires] 10 of 10 robot render(s) do not draw all 4 wires: renders/diff_my_first_bot.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_my_first_bot.aws71.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/iso.png: rendered without wires (checks off or no routes); renders/likeness_my_first_bot.aws67_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_my_first_bot.aws71_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_my_first_bot.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_my_first_bot.aws71.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes)...
+5. [wire.render_wires] 2 of 2 robot render(s) do not draw all 4 wires: renders/iso.png: wire `w_m1` not drawn; renders/top.png: wire `w_m1` not drawn
    fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
-6. [likeness.silhouette] `reference/my_first_bot.aws67.webp`: best silhouette IoU 0.80 at camera front_right_iso (elevation 45, azimuth 60) (need 0.82: >= 0.8 and no worse than the closest stock template `revron` at 0.82). Regions (photo frame, left third first) 0.77 / 0.84 / 0.72: worst = rear third. Height/length 0.90 model vs 0.89 photo (proportions ok).
+6. [wire.render_count] iso.png: 3 routes vs 4 spec wires (missing ['w_m1']); top.png: 3 routes vs 4 spec wires (missing ['w_m1'])
+   fix: Re-render: the render record must list exactly the spec's wires.
+7. [likeness.silhouette] `reference/my_first_bot.aws67.webp`: best silhouette IoU 0.80 at camera front_right_iso (elevation 45, azimuth 60) (need 0.82: >= 0.8 and no worse than the closest stock template `revron` at 0.82). Regions (photo frame, left third first) 0.77 / 0.84 / 0.72: worst = rear third. Height/length 0.90 model vs 0.89 photo (proportions ok).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
-7. [likeness.view] `reference/my_first_bot.aws71.webp` is declared `front` (IoU 0.46 there) but the model matches it better from rear_left_iso (elevation 45, azimuth 240) (IoU 0.84).
+8. [likeness.view] `reference/my_first_bot.aws71.webp` is declared `front` (IoU 0.46 there) but the model matches it better from rear_left_iso (elevation 45, azimuth 240) (IoU 0.84).
    fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
-8. [likeness.silhouette] `reference/my_first_bot.aws71.webp`: best silhouette IoU 0.46 at camera front (elevation 45, azimuth 90) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.52). Regions (photo frame, left third first) 0.32 / 0.71 / 0.34: worst = front third. Height/length 0.96 model vs 0.89 photo (too tall: lower it or lengthen it).
+9. [likeness.silhouette] `reference/my_first_bot.aws71.webp`: best silhouette IoU 0.46 at camera front (elevation 45, azimuth 90) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.52). Regions (photo frame, left third first) 0.32 / 0.71 / 0.34: worst = front third. Height/length 0.96 model vs 0.89 photo (too tall: lower it or lengthen it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+10. [geom.tiny_edge] `chassis`: 11 edge(s) shorter than 0.05 mm, shortest 0.0060 mm. World mm: [-2.61, -36.0, 0.1] 0.0060 mm; [-8.33, -28.75, -5.24] 0.0141 mm; [-12.95, -26.25, -4.9] 0.0213 mm; [-2.61, -36.0, 0.09] 0.0258 mm; [-2.61, -36.0, 0.09] 0.0264 mm (+6 more).
+   fix: Two feature boundaries miss each other by the edge length at each listed point. Drive both from ONE parameter or the same face / plane (not two numbers that should be equal), or extend the cutting / added body clear past the wall before the boolean, so the boundaries coincide or clearly cross.
+   | chassis: x -50.00..50.00  y -52.50..52.50  z -8.00..28.00  size 100.00 x 105.00 x 36.00 mm
+   |   centre (-0.00, -0.00, 10.00), volume 80654.4 mm3
+   |   overlap allowed `eye_l` 1.12 mm (allowed inf)
+   |   overlap allowed `eye_r` 1.12 mm (allowed inf)
+   |   gap to `el_switch` 0.10 mm
 MASS BUDGET:
-  mass 132.7 g of 150 g (+17.3 g margin)
-    chassis                    78.16 g  fills 22% of its box
+  mass 131.5 g of 150 g (+18.5 g margin)
+    chassis                    76.78 g  fills 21% of its box
     el_battery                 12.50 g  fills 100% of its box
     dm_wheel_l0                 9.70 g  fills 66% of its box
     dm_wheel_r0                 9.70 g  fills 66% of its box
@@ -79,6 +88,6 @@ MASS BUDGET:
     dt_hub_wheel_r0             0.71 g  fills 64% of its box
     el_switch                   0.50 g  fills 100% of its box
     post_top                    0.27 g  fills 100% of its box
-    mass.may_be_over: 132.7 g (range 109.9 to 155.6 g) against the 150 g limit; 3.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.may_be_over: 131.5 g (range 108.9 to 154.1 g) against the 150 g limit; 3.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: group 31 hit / 0 miss, min_gap 3 hit / 0 miss, overlap 169 hit / 0 miss, part_geom 14 hit / 0 miss
+cache: part_geom 0 hit / 14 miss
