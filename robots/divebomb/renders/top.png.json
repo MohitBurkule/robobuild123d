@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_divebomb/robots/divebomb/spec.json",
- "rendered_at": 1795023280.11525,
+ "rendered_at": 1795026296.3375175,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -10,7 +10,31 @@
   "fork_0",
   "fork_1",
   "fork_2",
-  "arm"
+  "arm",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_nut_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_nut_wheel_r0",
+  "dt_hub_wheel_l1",
+  "dt_axle_wheel_l1",
+  "dt_nut_wheel_l1",
+  "dt_hub_wheel_r1",
+  "dt_axle_wheel_r1",
+  "dt_nut_wheel_r1",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3",
+  "dt_screw_4",
+  "dt_screw_5",
+  "dt_mount_fork_0",
+  "dt_bolt_fork_0",
+  "dt_mount_fork_1",
+  "dt_bolt_fork_1",
+  "dt_mount_fork_2",
+  "dt_bolt_fork_2"
  ],
  "wires": {}
 }

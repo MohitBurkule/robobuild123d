@@ -17,10 +17,11 @@
  },
  "forks": {
   "n": 3,
-  "length": 48,
-  "width": 14,
-  "spread": 70,
-  "tilt_deg": 10
+  "length": 50,
+  "width": 16,
+  "spread": 76,
+  "tilt_deg": 12,
+  "splay_deg": 12
  },
  "colors": {
   "body": "#1f2226",
@@ -28,45 +29,49 @@
   "weapon": "#c9cdd3",
   "fork": "#2a2c30"
  },
- "extras": [
+ "name": "divebomb",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "side": [
     [
-     -10,
+     -12,
      14
     ],
     [
-     4,
+     6,
      14
     ],
     [
-     8,
-     45
-    ],
-    [
-     -2,
-     70
-    ],
-    [
-     -14,
-     72
-    ],
-    [
-     -18,
+     10,
      60
     ],
     [
-     -8,
-     56
+     -2,
+     96
     ],
     [
-     -4,
-     44
+     -18,
+     98
+    ],
+    [
+     -24,
+     82
+    ],
+    [
+     -10,
+     78
+    ],
+    [
+     -6,
+     58
     ]
    ],
    "x": [
-    -5,
-    5
+    -6,
+    6
    ],
    "weapon": "axe",
    "pivot": [
@@ -74,11 +79,7 @@
     16
    ],
    "id": "arm",
-   "color": "#1f2226"
+   "color": "#1c1d20"
   }
- ],
- "name": "divebomb",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }

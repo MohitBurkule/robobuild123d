@@ -1,0 +1,151 @@
+BLOCKERS: 101
+  [ran] integrity 0.06s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 6.81s
+  [ran] connections 1.31s
+  [ran] legal 0.01s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.02s
+  [ran] shape 0.23s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.55s
+  [ran] process 0.01s
+  [ran] electrical 0.00s
+  [ran] combat 0.10s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 1.93s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.08s
+  [ran] dfm 0.01s
+  [ran] realworld 0.00s
+divebomb: ok=False 101 blockers in 53 root causes, mass 136.5/150 g
+1. [proxy.interference] `chassis` and `dt_screw_0` overlap by 0.19 mm (allowed 0.08). Same problem on all 6 parts of this pattern: fix the pattern once. (+5 consequences)
+   | chassis: x -45.00..45.00  y -31.00..31.00  z -7.00..7.00  size 90.00 x 62.00 x 14.00 mm
+   |   centre (0.00, 0.00, 0.00), volume 78120.0 mm3
+   |   OVERLAP `dt_mount_fork_1` 3.88 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_r0` 1.26 mm (allowed 0.08)
+2. [mfg.stock] `dt_screw_0`: bought part with free geometry and no catalog SKU or stock rod/bearing match. Same problem on all 6 parts of this pattern: fix the pattern once. (+5 consequences)
+   fix: Use a catalog part, or size it to a stock rod/bearing and name it in `stock`.
+   | dt_screw_0: x -39.90..-36.10  y -25.90..-22.10  z 6.60..8.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (-38.00, -24.00, 7.30), volume 15.9 mm3
+   |   OVERLAP `chassis` 0.19 mm (allowed 0.08)
+   | dt_screw_1: x 36.10..39.90  y -25.90..-22.10  z 6.60..8.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (38.00, -24.00, 7.30), volume 15.9 mm3
+3. [connection.floating] `dt_screw_0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away. Same problem on all 5 parts of this pattern: fix the pattern once. (+4 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | dt_screw_0: x -39.90..-36.10  y -25.90..-22.10  z 6.60..8.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (-38.00, -24.00, 7.30), volume 15.9 mm3
+   |   OVERLAP `chassis` 0.19 mm (allowed 0.08)
+   | chassis: x -45.00..45.00  y -31.00..31.00  z -7.00..7.00  size 90.00 x 62.00 x 14.00 mm
+   |   centre (0.00, 0.00, 0.00), volume 78120.0 mm3
+4. [proxy.interference] `chassis` and `fork_0` overlap by 1.13 mm (allowed 0.08). Same problem on all 3 parts of this pattern: fix the pattern once. (+2 consequences)
+   | chassis: x -45.00..45.00  y -31.00..31.00  z -7.00..7.00  size 90.00 x 62.00 x 14.00 mm
+   |   centre (0.00, 0.00, 0.00), volume 78120.0 mm3
+   |   OVERLAP `dt_mount_fork_1` 3.88 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_r0` 1.26 mm (allowed 0.08)
+5. [proxy.interference] `chassis` and `dt_mount_fork_0` overlap by 1.24 mm (allowed 0.08). Same problem on all 3 parts of this pattern: fix the pattern once. (+2 consequences)
+   | chassis: x -45.00..45.00  y -31.00..31.00  z -7.00..7.00  size 90.00 x 62.00 x 14.00 mm
+   |   centre (0.00, 0.00, 0.00), volume 78120.0 mm3
+   |   OVERLAP `dt_mount_fork_1` 3.88 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_r0` 1.26 mm (allowed 0.08)
+6. [proxy.interference] `chassis` and `dt_bolt_fork_0` overlap by 0.12 mm (allowed 0.08). Same problem on all 3 parts of this pattern: fix the pattern once. (+2 consequences)
+   | chassis: x -45.00..45.00  y -31.00..31.00  z -7.00..7.00  size 90.00 x 62.00 x 14.00 mm
+   |   centre (0.00, 0.00, 0.00), volume 78120.0 mm3
+   |   OVERLAP `dt_mount_fork_1` 3.88 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_r0` 1.26 mm (allowed 0.08)
+7. [proxy.interference] `fork_0` and `dt_mount_fork_0` overlap by 0.69 mm (allowed 0.08). Same problem on all 3 parts of this pattern: fix the pattern once. (+2 consequences)
+   | fork_0: x -56.05..-30.12  y 26.08..77.76  z -8.67..4.17  size 25.93 x 51.67 x 12.84 mm
+   |   centre (-43.08, 51.92, -2.25), volume 2000.0 mm3
+   |   OVERLAP `chassis` 1.13 mm (allowed 0.08)
+   |   OVERLAP `dt_mount_fork_0` 0.69 mm (allowed 0.08)
+   |   OVERLAP `wheel_r1` 0.17 mm (allowed 0.08)
+8. [proxy.interference] `dt_mount_fork_0` and `dt_bolt_fork_0` overlap by 0.09 mm (allowed 0.08). Same problem on all 3 parts of this pattern: fix the pattern once. (+2 consequences)
+   | dt_mount_fork_0: x -49.33..-42.33  y 18.84..27.84  z -1.05..6.95  size 7.00 x 9.00 x 8.00 mm
+   |   centre (-45.83, 23.34, 2.95), volume 504.0 mm3
+   |   OVERLAP `wheel_r1` 1.88 mm (allowed 0.08)
+   |   OVERLAP `dt_hub_wheel_r1` 1.78 mm (allowed 0.08)
+   |   OVERLAP `chassis` 1.24 mm (allowed 0.08)
+9. [mfg.stock] `fork_0` (laser): thickness 2.50 mm is not a stock titanium gauge (0.5, 0.8, 0.9, 1, 1.5, 2, 3, 4, 5, 6, 8, 10); nearest 2 mm. Same problem on all 3 parts of this pattern: fix the pattern once. (+2 consequences)
+   fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
+   | fork_0: x -56.05..-30.12  y 26.08..77.76  z -8.67..4.17  size 25.93 x 51.67 x 12.84 mm
+   |   centre (-43.08, 51.92, -2.25), volume 2000.0 mm3
+   |   OVERLAP `chassis` 1.13 mm (allowed 0.08)
+   |   OVERLAP `dt_mount_fork_0` 0.69 mm (allowed 0.08)
+   |   OVERLAP `wheel_r1` 0.17 mm (allowed 0.08)
+10. [process.print_orientation] `dt_mount_fork_0` (fdm) has no `print_orientation`. Same problem on all 3 parts of this pattern: fix the pattern once. (+2 consequences)
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | dt_mount_fork_0: x -49.33..-42.33  y 18.84..27.84  z -1.05..6.95  size 7.00 x 9.00 x 8.00 mm
+   |   centre (-45.83, 23.34, 2.95), volume 504.0 mm3
+   |   OVERLAP `wheel_r1` 1.88 mm (allowed 0.08)
+   |   OVERLAP `dt_hub_wheel_r1` 1.78 mm (allowed 0.08)
+   |   OVERLAP `chassis` 1.24 mm (allowed 0.08)
+11. [mfg.stock] `dt_bolt_fork_0`: bought part with free geometry and no catalog SKU or stock rod/bearing match. Same problem on all 3 parts of this pattern: fix the pattern once. (+2 consequences)
+   fix: Use a catalog part, or size it to a stock rod/bearing and name it in `stock`.
+   | dt_bolt_fork_0: x -47.53..-44.13  y 21.64..25.04  z 6.75..8.15  size 3.40 x 3.40 x 1.40 mm
+   |   centre (-45.83, 23.34, 7.45), volume 12.7 mm3
+   |   OVERLAP `wheel_r1` 0.49 mm (allowed 0.08)
+   |   OVERLAP `chassis` 0.12 mm (allowed 0.08)
+   |   OVERLAP `dt_mount_fork_0` 0.09 mm (allowed 0.08)
+12. [proxy.interference] `chassis` and `dt_axle_wheel_l0` overlap by 1.26 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | chassis: x -45.00..45.00  y -31.00..31.00  z -7.00..7.00  size 90.00 x 62.00 x 14.00 mm
+   |   centre (0.00, 0.00, 0.00), volume 78120.0 mm3
+   |   OVERLAP `dt_mount_fork_1` 3.88 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
+   |   OVERLAP `dt_axle_wheel_r0` 1.26 mm (allowed 0.08)
+... 41 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 136.5 g of 150 g (+13.5 g margin)
+    chassis                    74.37 g  fills 100% of its box  <- solid block? a tub should be a shell
+    arm                        16.59 g  fills 51% of its box
+    fork_1                      8.86 g  fills 20% of its box
+    fork_0                      8.86 g  fills 12% of its box
+    fork_2                      8.86 g  fills 12% of its box
+    wheel_l0                    1.82 g  fills 79% of its box
+    wheel_r0                    1.82 g  fills 79% of its box
+    wheel_l1                    1.82 g  fills 79% of its box
+    wheel_r1                    1.82 g  fills 79% of its box
+    dt_mount_fork_1             1.37 g  fills 100% of its box
+    dt_axle_wheel_r0            0.98 g  fills 79% of its box
+    dt_axle_wheel_r1            0.98 g  fills 79% of its box
+    dt_axle_wheel_l0            0.98 g  fills 79% of its box
+    dt_axle_wheel_l1            0.98 g  fills 79% of its box
+    dt_hub_wheel_l0             0.54 g  fills 79% of its box
+    dt_hub_wheel_r0             0.54 g  fills 79% of its box
+    dt_hub_wheel_l1             0.54 g  fills 79% of its box
+    dt_hub_wheel_r1             0.54 g  fills 79% of its box
+    dt_mount_fork_0             0.48 g  fills 100% of its box
+    dt_mount_fork_2             0.48 g  fills 100% of its box
+    dt_nut_wheel_l0             0.27 g  fills 79% of its box
+    dt_nut_wheel_r0             0.27 g  fills 79% of its box
+    dt_nut_wheel_l1             0.27 g  fills 79% of its box
+    dt_nut_wheel_r1             0.27 g  fills 79% of its box
+    dt_screw_0                  0.13 g  fills 79% of its box
+    dt_screw_1                  0.13 g  fills 79% of its box
+    dt_screw_2                  0.13 g  fills 79% of its box
+    dt_screw_3                  0.13 g  fills 79% of its box
+    dt_screw_4                  0.13 g  fills 79% of its box
+    dt_screw_5                  0.13 g  fills 79% of its box
+    dt_bolt_fork_0              0.10 g  fills 79% of its box
+    dt_bolt_fork_1              0.10 g  fills 79% of its box
+    dt_bolt_fork_2              0.10 g  fills 79% of its box
+    mass.may_be_over: 136.5 g (range 114.1 to 159.0 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 3 hit / 3 miss, group 0 hit / 31 miss, inside 9 hit / 24 miss, likeness 1 hit / 0 miss, min_gap 43 hit / 136 miss, overlap 189 hit / 514 miss, part_check 4 hit / 0 miss, part_geom 33 hit / 0 miss, ray 45 hit / 108 miss

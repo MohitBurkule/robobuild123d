@@ -7,5 +7,11 @@
  },
  "photos": [
   "divebomb.aws67.webp"
- ]
+ ],
+ "view": {
+  "divebomb.aws67.webp": "front_left_iso"
+ },
+ "elevation": {
+  "divebomb.aws67.webp": 45
+ }
 }
