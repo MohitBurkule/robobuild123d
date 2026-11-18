@@ -1,7 +1,7 @@
 BLOCKERS: 6
   [cached] integrity 0.00s
   [cached] mass 0.00s
-  [proxy] interference 0.12s
+  [proxy] interference 0.09s
   [cached] connections 0.00s
   [cached] legal 0.00s
   [cached] fasteners 0.00s
@@ -31,8 +31,8 @@ BLOCKERS: 6
   [cached] geom 0.00s
   [cached] dfm 0.00s
   [cached] realworld 0.00s
-zero: ok=False 6 blockers in 6 root causes, mass 126.2/150 g
-1. [wire.render_wires] 13 of 13 robot render(s) do not draw all 4 wires: renders/diff_zero.aws71.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_zero.aws74.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_zero.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_zero.aws71_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_zero.aws74_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_zero.aws76_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_zero.aws71.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_zero.aws74.png: no render record (`<png>.json`), so nothing says the wires were drawn...
+zero: ok=False 6 blockers in 6 root causes, mass 135.4/150 g
+1. [wire.render_wires] 16 of 16 robot render(s) do not draw all 4 wires: renders/diff_zero.aws71.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_zero.aws74.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_zero.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_zero.aws71_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_zero.aws74_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_zero.aws76_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_zero.aws71.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_zero.aws74.png: no render record (`<png>.json`), so nothing says the wires were drawn...
    fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
 2. [likeness.view] `reference/zero.aws71.webp` is declared `front_left_iso` (IoU 0.69 there) but the model matches it better from front_right_iso (elevation 45, azimuth 60) (IoU 0.79).
    fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
@@ -44,5 +44,19 @@ zero: ok=False 6 blockers in 6 root causes, mass 126.2/150 g
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 6. [likeness.silhouette] `reference/zero.aws76.webp`: best silhouette IoU 0.73 at camera front_left_iso (elevation 25, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.74). Regions (photo frame, left third first) 0.62 / 0.86 / 0.64: worst = front third. Height/length 0.65 model vs 0.61 photo (proportions ok).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+MASS BUDGET:
+  mass 135.4 g of 150 g (+14.6 g margin)
+    chassis                    45.44 g  fills 33% of its box
+    wheel_l0                   17.91 g  fills 69% of its box  <- solid block? a tub should be a shell
+    wheel_r0                   17.91 g  fills 69% of its box  <- solid block? a tub should be a shell
+    el_battery                 12.50 g  fills 100% of its box
+    dm_wheel_l0                 9.50 g  fills 63% of its box
+    dm_wheel_r0                 9.50 g  fills 63% of its box
+    scoop                       8.86 g  fills 8% of its box
+    dt_hub_wheel_r0             4.70 g  fills 69% of its box
+    dt_hub_wheel_l0             4.70 g  fills 69% of its box
+    el_esc                      2.30 g  fills 99% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    mass.may_be_over: 135.4 g (range 109.9 to 160.9 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: group 31 hit / 0 miss, overlap 65 hit / 0 miss, part_geom 9 hit / 0 miss
+cache: group 31 hit / 0 miss, overlap 91 hit / 0 miss, part_geom 11 hit / 0 miss
