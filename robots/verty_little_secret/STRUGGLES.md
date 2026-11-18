@@ -41,3 +41,25 @@
 - Full tier: 14 root causes (12 printed by verify: 8 fastener_seat.insert_bore, 4 fastener_seat.cbore_depth, plus
   2 sharp-corner and/or insert-related lines not individually shown). Mass 114.5 / 150 g.
 - Shape, size and weapon do NOT match the photos. This is a template with fastener fixes only.
+
+## Likeness pass (second Haiku run, branch ref/verty_little_secret)
+- Setup: `pip install -e '.[robot]'` failed once with the same OSError as before; second run worked. Running `python3 -m robot`
+  from `/tmp` picked up a different package (`/tmp/work_pantherk/robot`), so always run from the repo root.
+- Masks: `python3 -m robot mask <photo> <out.png>` worked for all 3 webp photos (`reference/*_mask.png`). Outputs look clean.
+  NOTE: the mask command's usage line is not in the error list when run from the robot folder; run from repo root.
+- Spec: overwrote spec.json with a copy of `robot/templates/vspin_drisk.json` plus name and 3 `reference` entries (iso, approximate).
+  I did NOT reshape anything yet, so this is still a template copy.
+- `verify --only likeness` took ~280 s cold (8 cache misses). That is slow for a loop; `--tier inner` would be better to document.
+- Likeness result (blockers, 3 root causes):
+  1. `likeness.template_copy`: made parts overlap `vspin_drisk` at voxel IoU 1.00 (limit 0.80).
+  2. `likeness.silhouette` aws72: best IoU 0.56 (need 0.70 and >= template 0.62).
+  3. `likeness.silhouette` aws76: best IoU 0.61 (need 0.70 and >= template 0.66).
+- Photo facts that the reshape needs: two separate pods (not one chassis), a central BE1806 outrunner with a vertical
+  curved-blade disc between the pods, two gear-toothed wheels on the outer ends, tapered forked skids at front and rear,
+  two upright blades above the pods, a top rocker switch. The template has a single continuous chassis.
+- Where I got stuck: the time cap ran out before the reshape. The chassis is one union of lofts and boxes (chassis_bottom,
+  chassis_top), so splitting it into pods means editing many nested `place`/`box` entries. A helper that splits a chassis
+  into two pods, or a `robot gen` hypothesis for a central-motor spinner, would make this much quicker.
+- Gap: no template or hypothesis for a central-motor vertical disc between two pods. The `robot gen` route was not tried.
+- Final state: likeness FAILS (1 template_copy + 2 silhouette blockers). Inner verify blocker count beyond likeness not
+  measured in this pass. Renders not produced for this state.
