@@ -14,3 +14,8 @@ Likeness: aws72 0.62 (FAIL).
 Decisions: type vertical_spinner; body twin_pods rect 60x140x24 mm, ramp 0; wheels 2 r11 inboard; weapon disc r28 axis x teeth 2; 4 forks 46 mm; extra parts: motor; photos skipped (cluttered): indices [1].
 
 Likeness: aws72 0.61 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type vertical_spinner; body twin_pods rect 60x126x24 mm, ramp 0; wheels 2 r11 inboard; weapon disc r28 axis x teeth 2; 4 forks 46 mm; extra parts: motor; photos skipped (cluttered): indices [1].
+
+Likeness: aws72 0.59 (FAIL).

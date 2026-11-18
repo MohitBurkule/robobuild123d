@@ -2,7 +2,7 @@
  "robot_type": "vertical_spinner",
  "body": {
   "length": 60,
-  "width": 140,
+  "width": 126,
   "height": 24,
   "ramp": 0,
   "style": "twin_pods",
@@ -29,9 +29,11 @@
  "forks": {
   "n": 4,
   "length": 46,
-  "width": 3,
-  "spread": 104,
-  "tilt_deg": 10
+  "width": 5,
+  "spread": 96,
+  "tilt_deg": 14,
+  "splay_deg": 14,
+  "taper": true
  },
  "colors": {
   "body": "#1f4a38",
@@ -39,7 +41,11 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "skip_photos": [
+  1
+ ],
+ "name": "boss baby",
+ "macros": [
   {
    "cyl": [
     9,
@@ -54,9 +60,5 @@
    "id": "motor",
    "color": "#d8324a"
   }
- ],
- "skip_photos": [
-  1
- ],
- "name": "boss baby"
+ ]
 }
