@@ -89,19 +89,6 @@ def _jac(a, b):
     return len(a & b) / u if u else 0.0
 
 
-def _template_worlds():
-    from .. import spec as spec_mod, world as world_mod
-    out = []
-    for p in sorted(TEMPLATES.glob("*.json")):
-        try:
-            s = spec_mod.load(p)
-            r = world_mod.resolve(s, fast=True)
-            out.append((p.stem, r, world_mod.World.build(r)))
-        except Exception:  # noqa: BLE001 - a template that does not build cannot be copied either
-            continue
-    return out
-
-
 def _fp(raw):
     """Rounded (1 mm) canonical JSON of every made part's shape + pose: survives renames and id changes."""
     out = set()
@@ -119,10 +106,7 @@ def copies(ctx, tws=None):
     r, w = ctx.r, ctx.world
     out = []
     mine = _vox(_made(w, r))
-    from .. import cache
-    for name, tr, tw in tws:
-        tv = cache.memo("likeness", ("likeness_vox", cache.code_hash(), (TEMPLATES / f"{name}.json").read_bytes()),
-                        lambda: _vox(_made(tw, tr)))
+    for name, (tv, _) in template_data().items():
         j = _jac(mine, tv)
         if j >= COPY_IOU:
             out.append(fail("likeness.template_copy", G, BLOCKER, "Robot is a stock template",
@@ -169,9 +153,28 @@ def _sils(world):
     return out
 
 
-def best_iou(sils, mask):
+def best_match(sils, mask):
+    """(iou, stats, index) of the silhouette that best matches the mask."""
     from . import reference as ref
-    return max((ref.compare(s, mask)[0]["iou"] for s in sils), default=0.0)
+    best = (0.0, None, -1)
+    for i, s in enumerate(sils):
+        st = ref.compare(s, mask)[0]
+        if st["iou"] > best[0]:
+            best = (st["iou"], st, i)
+    return best
+
+
+def best_iou(sils, mask):
+    return best_match(sils, mask)[0]
+
+
+def cam_name(i):
+    d = _dirs()
+    k, mir = divmod(i, 2)
+    if k < 24:
+        el, az = (25, 45)[k // 12], (k % 12) * 30
+        return f"elevation {el} deg, azimuth {az} deg{' (mirrored)' if mir else ''}"
+    return ["side", "front", "top"][k - 24] + (" (mirrored)" if mir else "")
 
 
 def photos(ctx):
@@ -199,11 +202,17 @@ def photos(ctx):
                             f"`{e['mask']}` matches `robot mask {e['image']}` at IoU {mj:.2f} (need {MASK_MIN}): it was not "
                             "taken from the photo.").fix(f"Regenerate it: `robot mask {e['image']} {e['mask']}`."))
             continue
-        iou = best_iou(sils, mask)
-        tiou = _template_iou(base / e["mask"], mask)
+        iou, st, ci = best_match(sils, mask)
+        tiou, tname = _template_iou(base / e["mask"], mask)
         need = max(SIL_MIN, tiou + SIL_MARGIN)
-        msg = (f"`{e['image']}`: best silhouette IoU {iou:.2f} over all cameras (need {need:.2f}: >= {SIL_MIN} and "
-               f"no worse than the closest stock template, {tiou:.2f}).")
+        msg = (f"`{e['image']}`: best silhouette IoU {iou:.2f} at camera {cam_name(ci)} (need {need:.2f}: >= {SIL_MIN} "
+               f"and no worse than the closest stock template `{tname}` at {tiou:.2f}).")
+        if st:
+            reg = st["regions"]
+            worst = min(reg, key=reg.get)
+            msg += (f" Regions (photo frame, left third first) {reg['front']:.2f} / {reg['middle']:.2f} / {reg['rear']:.2f}:"
+                    f" worst = {worst} third. Height/length {st['aspect_model']:.2f} model vs {st['aspect_ref']:.2f} photo"
+                    f" ({'too tall: lower it or lengthen it' if st['aspect_model'] > st['aspect_ref'] + 0.05 else 'too flat: raise it or shorten it' if st['aspect_model'] < st['aspect_ref'] - 0.05 else 'proportions ok'}).")
         if iou < need:
             out.append(fail("likeness.silhouette", G, BLOCKER, "Does not look like the photo", msg)
                        .fix("Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; "
@@ -216,41 +225,71 @@ def photos(ctx):
 _TW = None
 
 
-class _LazyTemplates:
-    """Template (name, resolved, world) list, built only when a cached voxel set is missing."""
-
-    def __iter__(self):
-        for p in sorted(TEMPLATES.glob("*.json")):
-            yield p.stem, _Lazy(p.stem, 1), _Lazy(p.stem, 2)
+DATA = TEMPLATES / "likeness_data.npz"  # shipped: per template voxels + silhouettes (rebuild: python -m robot.checks.likeness)
+_TD = None
 
 
-class _Lazy:
-    def __init__(self, name, i):
-        self.name, self.i = name, i
+def _thash(p):
+    import hashlib
+    return hashlib.sha256(p.read_bytes()).hexdigest()[:16]
 
-    def __getattr__(self, k):
-        for t in _template_worlds_cached():
-            if t[0] == self.name:
-                return getattr(t[self.i], k)
-        raise AttributeError(k)
+
+def _compute_template(name):
+    from .. import spec as spec_mod, world as world_mod
+    s = spec_mod.load(TEMPLATES / f"{name}.json")
+    r = world_mod.resolve(s, fast=True)
+    w = world_mod.World.build(r)
+    v = np.array(sorted(_vox(_made(w, r))), int).reshape(-1, 3)
+    return v, _sils(w)
+
+
+def template_data(rebuild=False):
+    """{name: (voxel set, [silhouettes])} for every bundled template, from the shipped npz when its hash matches."""
+    global _TD
+    if _TD is not None and not rebuild:
+        return _TD
+    have = {}
+    if DATA.exists() and not rebuild:
+        z = np.load(DATA, allow_pickle=True)
+        have = z["data"].item()
+    out, changed = {}, False
+    for p in sorted(TEMPLATES.glob("*.json")):
+        h = _thash(p)
+        if p.stem in have and have[p.stem]["hash"] == h:
+            d = have[p.stem]
+        else:
+            try:
+                v, sl = _compute_template(p.stem)
+            except Exception:  # noqa: BLE001 - a template that does not build cannot be copied either
+                continue
+            d = {"hash": h, "vox": v, "sils": [np.packbits(x, axis=None) for x in sl], "shapes": [x.shape for x in sl]}
+            have[p.stem], changed = d, True
+        sils = [np.unpackbits(b)[: sh[0] * sh[1]].reshape(sh).astype(bool) for b, sh in zip(d["sils"], d["shapes"])]
+        out[p.stem] = (set(map(tuple, d["vox"])), sils)
+    if changed:
+        try:
+            np.savez_compressed(DATA, data=np.array(have, dtype=object))
+        except OSError:
+            pass
+    _TD = out
+    return out
 
 
 def _template_iou(path, mask):
-    """Best stock-template IoU with this mask, cached on (templates, mask bytes, code)."""
+    """(best IoU, template name) over the stock templates' silhouettes (cached per mask + template set)."""
     from .. import cache
-    key = ("likeness_tpl", cache.code_hash(), Path(path).read_bytes(),
-           *[p.read_bytes() for p in sorted(TEMPLATES.glob("*.json"))])
-
-    def compute():
-        return best_iou([s for _, _, tw in _template_worlds_cached() for s in _sils(tw)], mask)
-    return cache.memo("likeness", key, compute)
+    key = ("likeness_tpl2", cache.code_hash(), Path(path).read_bytes(),
+           *[_thash(p) for p in sorted(TEMPLATES.glob("*.json"))])
+    return tuple(cache.memo("likeness", key, lambda: _template_iou_raw(mask)))
 
 
-def _template_worlds_cached():
-    global _TW
-    if _TW is None:
-        _TW = _template_worlds()
-    return _TW
+def _template_iou_raw(mask):
+    best = (0.0, None)
+    for name, (_, sils) in template_data().items():
+        i = best_match(sils, mask)[0]
+        if i > best[0]:
+            best = (i, name)
+    return best
 
 
 def facts(ctx):
@@ -281,7 +320,57 @@ def run(ctx):
     spec = ctx.r.spec
     if not active(spec):
         return []
-    out = facts(ctx) + copies(ctx, _LazyTemplates()) + photos(ctx)
+    out = facts(ctx) + copies(ctx) + photos(ctx)
     if not any(not f.passed and f.severity == BLOCKER for f in out):
         out.append(ok("likeness.template_copy", G, "Own design", "Differs from every template and sibling robot."))
     return out
+
+
+def cli_main(path, out_dir=None):
+    """`robot likeness SPEC`: only this gate, in seconds; writes model-vs-photo overlays (red model, blue photo)."""
+    import time
+    from types import SimpleNamespace
+
+    from .. import spec as spec_mod, world as world_mod
+    from . import reference as ref
+    t0 = time.time()
+    s = spec_mod.load(path)
+    if not active(s):
+        print("likeness: inactive (no reference/ photos or REFERENCE.json next to the spec)")
+        return 0
+    r = world_mod.resolve(s, fast=True)
+    w = world_mod.World.build(r)
+    ctx = SimpleNamespace(r=r, world=w, metrics={}, not_checked=[])
+    out = facts(ctx) + copies(ctx) + photos(ctx)
+    od = Path(out_dir or (_base(s) / "renders"))
+    od.mkdir(parents=True, exist_ok=True)
+    sils = _sils(w)
+    for e in ref.entries(s):
+        if not e.get("mask"):
+            continue
+        mask = ref.load_mask(_base(s) / e["mask"])
+        _, _, ci = best_match(sils, mask)
+        if ci >= 0:
+            _, a, b = ref.compare(sils[ci], mask)
+            png = od / f"likeness_{Path(e['mask']).stem}.png"
+            png.write_bytes(ref.overlay_png(a, b))
+            print(f"overlay {png} (red = model only, blue = photo only, purple = both)")
+    bad = [f for f in out if not f.passed]
+    for f in out:
+        print(f"[{'FAIL' if not f.passed else 'ok'}] {f.id}: {f.message}")
+        if not f.passed and f.fix_hint:
+            print(f"   fix: {f.fix_hint}")
+    print(f"likeness: {'FAIL' if bad else 'PASS'} ({len(bad)} blockers) in {time.time() - t0:.1f}s")
+    return 1 if bad else 0
+
+
+def add_cli(sub):
+    p = sub.add_parser("likeness", help="fast copy-of-real-robot gate: template copy, type, silhouette vs photos + overlays")
+    p.add_argument("spec")
+    p.add_argument("--out", help="overlay dir (default <spec dir>/renders)")
+    p.set_defaults(func=lambda a: cli_main(a.spec, a.out))
+
+
+if __name__ == "__main__":
+    template_data(rebuild=True)
+    print(f"wrote {DATA}")
