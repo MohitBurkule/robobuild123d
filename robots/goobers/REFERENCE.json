@@ -21,5 +21,13 @@
    0.5,
    1
   ]
+ },
+ "view": {
+  "goobers.aws71.webp": "front",
+  "goobers.aws72.webp": "front"
+ },
+ "elevation": {
+  "goobers.aws71.webp": 25,
+  "goobers.aws72.webp": 25
  }
 }

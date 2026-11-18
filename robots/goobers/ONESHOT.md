@@ -18,3 +18,9 @@ Likeness: aws71 0.77 (FAIL), aws72 0.76 (FAIL).
 Decisions: type wedge; body box rect 62x76x28 mm, ramp 52; wheels 2 r15 outboard; weapon none; extra parts: ear; clusterbot, one of 4 modelled (count read from photos, unsure).
 
 Likeness: aws71 0.80 (FAIL), aws72 0.74 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type wedge; body box rect 62x76x28 mm, ramp 56; wheels 2 r17 outboard; weapon none; extra parts: ear; clusterbot, one of 4 modelled (count read from photos, unsure).
+
+Likeness: aws71 0.81 (ok), aws72 0.66 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/goobers.aws72.webp` is declared `front` (IoU 0.66 there) but the model matches it better from front_right_iso (elevation 45, az

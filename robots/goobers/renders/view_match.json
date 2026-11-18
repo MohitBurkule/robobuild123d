@@ -1,0 +1,14 @@
+{
+ "goobers.aws71.webp": {
+  "view": "front",
+  "azimuth": 75,
+  "elevation": 25,
+  "iou": 0.878
+ },
+ "goobers.aws72.webp": {
+  "view": "front",
+  "azimuth": 75,
+  "elevation": 25,
+  "iou": 0.749
+ }
+}
