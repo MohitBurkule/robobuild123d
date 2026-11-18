@@ -87,7 +87,9 @@ header .grow { flex: 1 1 auto; }
 .cm .txt { white-space: pre-wrap; overflow-wrap: anywhere; }
 .cm .del { padding: 0 7px; line-height: 1.5; }
 .tag { font: 600 10px var(--mono); text-transform: uppercase; padding: 0 5px; border-radius: 4px; margin-right: 6px; border: 1px solid currentColor; }
-.tag.ok { color: var(--ok); } .tag.wrong { color: var(--bad); } .tag.missing { color: var(--warn); }
+.tag.ok { color: var(--ok); } .tag.wrong { color: var(--bad); } .tag.missing { color: var(--warn); } .tag.user-remark { color: var(--sel); }
+.userline { padding: 5px 8px; border-bottom: 1px solid var(--line); font-size: 12.5px; line-height: 1.35; overflow-wrap: anywhere; }
+.userline b { color: var(--sel); font-weight: 600; } .userline .warn { color: var(--warn); font-weight: 600; } .userline .muted { font: 11.5px var(--mono); }
 #toast { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); background: var(--fg); color: var(--bg); padding: 8px 12px; border-radius: 6px; opacity: 0; transition: opacity .2s; pointer-events: none; }
 #toast.show { opacity: 1; }
 #jsonDlg { position: fixed; inset: 10% max(16px, env(safe-area-inset-left, 0px)); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px; display: grid; grid-template-rows: auto 1fr auto; gap: 8px; z-index: 20; }
@@ -139,7 +141,7 @@ kbd { font: 11px var(--mono); border: 1px solid var(--line); border-bottom-width
   <section class="pane" aria-label="3D model">
     <div class="bar">
       <button id="savePose" class="primary" title="Save this camera for the current photo (S)">Save view</button>
-      <button id="resetGuess" title="Camera back to the current best guess for this photo">Reset to default guess</button>
+      <button id="resetGuess" title="Camera back to the default for this photo (your written pick where you gave one)">Reset to default</button>
       <button id="toSaved" title="Camera back to your saved view">Saved view</button>
       <button id="rollL" title="Roll left (Q)">&#8634; roll</button>
       <button id="rollR" title="Roll right (E)">roll &#8635;</button>
@@ -151,6 +153,7 @@ kbd { font: 11px var(--mono); border: 1px solid var(--line); border-bottom-width
       <label class="muted" style="font-size:12px;display:flex;gap:4px;align-items:center">Photo overlay <input type="range" id="ovl" min="0" max="80" value="0" style="width:70px"></label>
       <span id="saveState"></span>
     </div>
+    <div class="userline" id="userLine" hidden></div>
     <div class="stage" id="stage3">
       <div id="three"></div>
       <img id="overlay" alt="">
@@ -207,7 +210,7 @@ const D2R = Math.PI / 180, R2D = 180 / Math.PI;
 
 // ---------------- state ----------------
 let robots = [], ri = 0, pi = 0;
-let state = { picks: {}, comments: [], last: null };
+let state = { picks: {}, comments: [], last: null, dismissed: [] };
 try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s && s.picks) state = Object.assign(state, s); } catch (e) {}
 function persist() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
 const pkey = (slug, photo) => slug + "|" + photo;
@@ -453,7 +456,7 @@ function renderComments() {
     if (c.tag) { const t = document.createElement("span"); t.className = "tag " + c.tag; t.textContent = c.tag; txt.appendChild(t); }
     txt.appendChild(document.createTextNode(c.text || ""));
     const del = document.createElement("button"); del.className = "del"; del.textContent = "×"; del.title = "Delete comment"; del.setAttribute("aria-label", "Delete comment");
-    del.onclick = () => { state.comments = state.comments.filter(x => x.id !== c.id); persist(); renderComments(); drawPins3d(); drawPhotoPins(); renderList(); };
+    del.onclick = () => { state.comments = state.comments.filter(x => x.id !== c.id); if (c.preloaded) state.dismissed = [...(state.dismissed || []), c.id]; persist(); renderComments(); drawPins3d(); drawPhotoPins(); renderList(); };
     row.append(who, txt, del); box.appendChild(row);
   });
 }
@@ -514,7 +517,17 @@ function updateSaveState() {
   if (s) t.style.color = "var(--ok)";
   $("saveState").appendChild(t);
   $("toSaved").disabled = !s;
-  $("saveState").title = g ? `default guess: az ${g.azimuth_deg}, el ${g.elevation_deg} (${g.source})` : "";
+  $("saveState").title = g ? `default: az ${g.azimuth_deg}, el ${g.elevation_deg} (${g.source})` : "";
+  const u = $("userLine"), p = P(); u.innerHTML = ""; u.hidden = !p;
+  if (p) {
+    const add = (cls, t) => { const e = document.createElement(cls ? "span" : "b"); if (cls) e.className = cls; e.textContent = t; u.appendChild(e); };
+    if (p.user_pick) {
+      add("", "Default = your pick: "); u.appendChild(document.createTextNode(`“${p.user_text}” → az ${p.user_pick.azimuth_deg}°, el ${p.user_pick.elevation_deg}°` + (p.user_pick.parse_note ? ` (read as: ${p.user_pick.parse_note})` : "") + " "));
+      if (p.previous_guess) add("muted", `· previous guess ${p.previous_guess.azimuth_deg}°/${p.previous_guess.elevation_deg}°`);
+    } else if (p.user_note) {
+      add("warn", p.user_note + " "); add("muted", `· default kept at the previous guess ${g.azimuth_deg}°/${g.elevation_deg}°`);
+    } else add("muted", `No pick from you yet · default is Fable's guess az ${g?.azimuth_deg}°, el ${g?.elevation_deg}°`);
+  }
 }
 $("prev").onclick = () => showRobot(ri - 1); $("next").onclick = () => showRobot(ri + 1);
 $("resetGuess").onclick = () => { resetGuess(); toast("Camera at the default guess"); };
@@ -549,7 +562,8 @@ function results() {
   const photos = [];
   robots.forEach(r => r.photos.forEach(p => {
     const s = state.picks[pkey(r.slug, p.name)] || null;
-    photos.push({ slug: r.slug, photo: p.name, photo_file: p.orig, default_guess: p.default, pick: s });
+    photos.push({ slug: r.slug, photo: p.name, photo_file: p.orig, default_guess: p.default, previous_guess: p.previous_guess || null,
+      user_pick: p.user_pick || null, user_text: p.user_text || null, user_note: p.user_note || null, pick: s });
   }));
   return { schema: "antweight-camera-picks/1", exported_at: new Date().toISOString(),
     convention: { frame: "model coordinates, mm, Z up, front = +y, right = +x", azimuth_deg: "camera position around the model, 0 = +x (right), 90 = +y (front)",
@@ -592,6 +606,9 @@ $("loadFile").onchange = async (e) => {
   if (R() && P()) { const c = readCamera(); $("hud").innerHTML = `az <b>${c.azimuth_deg.toFixed(1)}</b>° · el <b>${c.elevation_deg.toFixed(1)}</b>° · roll <b>${c.roll_deg.toFixed(1)}</b>° · d ${c.distance.toFixed(0)} mm`; } })();
 fetch(DATA + "robots.json").then(r => r.json()).then(j => {
   robots = j.robots; const h = location.hash.slice(1);
+  const ids = new Set(state.comments.map(c => c.id)), gone = new Set(state.dismissed || []);
+  (j.user_remarks || []).forEach(c => { if (!ids.has(c.id) && !gone.has(c.id)) state.comments.push(Object.assign({}, c)); });
+  persist();
   const i = Math.max(0, robots.findIndex(r => r.slug === (h || state.last)));
   resize(); showRobot(i);
 }).catch(e => { $("robotName").textContent = "could not load data/robots.json"; });

@@ -41,7 +41,7 @@ for p in photos:
     src, az, el = None, None, None
     keys = [k for k in ov if re.search(r"(^|[._])" + re.escape(k) + r"($|[._])", stem)]
     if keys:
-        v = ov[keys[-1]]; a, e = v.rstrip("~").split(","); az, el, src = float(a), float(e), f"ov_table {v}"
+        v = ov[keys[-1]]; a, e = v.rstrip("~!").split(","); az, el, src = float(a), float(e), f"ov_table {v}"
     elif p in vm and vm[p].get("azimuth") is not None:
         az, el, src = float(vm[p]["azimuth"]), float(vm[p]["elevation"]), f"view_match ({vm[p].get('view')})"
     else:
