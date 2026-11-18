@@ -29,3 +29,11 @@ Looks alike: **yes**. Renders: `renders/iso.png`, `renders/top.png`.
 Lower body with top slot, bigger outboard wheels, long black wedge skirts, smaller lifter panel with clear lip, angled clear wheel guards. Axis restored.
 
 Likeness: aws72 0.82 (FAIL), aws76 0.84 (ok).
+
+## Tools I wanted
+- `robot looks SPEC` (build + iso/top + likeness + diff sheets in one pass, batchable). Did instead: four CLI calls per robot, ~3-4 min wall each.
+
+## Round 2 (looks)
+Decisions: type lifter; body box rect 100x84x32 mm, ramp 45; wheels 2 r16 outboard; weapon none; 2 forks 22 mm.
+
+Likeness: aws72 0.82 (FAIL), aws76 0.84 (ok).
