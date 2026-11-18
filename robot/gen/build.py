@@ -51,6 +51,12 @@ def frame_params(h, user: dict | None = None) -> dict:
     if h.weapon == "lifter":
         p.update(axle_y=-18.0, y0=-42.0, y1=30.0, zb=-11.8)
     p.update({k: v for k, v in user.items() if k in p})
+    lim = -R + 2.0  # body bottom must clear the floor (wheel bottom) by >= 2 mm, or the chassis cuts go negative
+    if p["zb"] < lim:
+        raise ValueError(f"intent zb {p['zb']:g} is below the floor: wheels are {h.wheel_dia:g} mm (floor at z = {-R:g}), "
+                         f"so zb must be >= {lim:g}. Raise zb, or pick bigger wheels (hypothesis wheel axis) for a taller body.")
+    if p["zt"] <= p["zb"] + 6.0:
+        raise ValueError(f"intent zt {p['zt']:g} must be > zb + 6 = {p['zb'] + 6:g} (room for the floor, lid and parts).")
     if "y0" not in user:  # room behind the wheels for the rear clamshell screws
         p["y0"] = min(p["y0"], p["axle_y"] - R - 16.5)
     return p
@@ -121,6 +127,10 @@ def make_plan(h, user=None) -> tuple:
                 robot_type=ROBOT_TYPE.get(h.weapon, "other"))
     plan.extra["_floor_z"] = fp["floor_z"]
     plan.extra["wheel_r"] = h.wheel_dia / 2
+    if (user or {}).get("teeth"):  # weapon tooth count from the photo (vspin_drisk single disc)
+        plan.extra["teeth"] = int(user["teeth"])
+    if (user or {}).get("drum_width"):  # vspin_drisk as a drum: same mount, rotor this wide along the axis
+        plan.extra["drum_w"] = float(user["drum_width"])
     if g.belt and h.front == "wedgelets":
         plan.extra["axle_out"] = WEDGELET_T / 2  # the standoff end enters the wedgelet's bore (takes the shear); the
         # screw along its axis clamps the wedgelet to the end face (Revron RV17/18)
@@ -213,8 +223,7 @@ def _seat_inserts(plan):
             continue
         host = "tub" if "tub" in ids and half in ("top", "bottom") else f"chassis_{half}"
         if host in ids and (p["id"], host) not in have:
-            plan.connections.append({"a": p["id"], "b": host, "method": "press_fit",
-                                     "reason": "heat-set insert melted into its bore"})
+            plan.connect(p["id"], host, "press_fit", "heat-set insert melted into its bore")  # records its intent too
 
 
 def to_spec(plan, h) -> dict:
