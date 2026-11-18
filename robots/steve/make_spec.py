@@ -26,12 +26,6 @@ lid_xc = (P.SLOT_W / 2.0 + P.TUB_W / 2.0) / 2.0
 lid_yc = (P.TUB_REAR_Y + P.TUB_DECK_END_Y) / 2.0
 lid_zc = P.LID_Z + P.LID_T / 2.0 + 0.15
 
-# Scoop placement: tilted by -SCOOP_ANGLE_DEG around X so front lip sits at (0, SCOOP_TIP_Y, SCOOP_TIP_Z)
-# In local frame, front lip is at (0, 0, 0). Rotated by -angle around X:
-# local (0, 0, 0) -> world (0, SCOOP_TIP_Y, SCOOP_TIP_Z)
-# local (0, SCOOP_LEN, 0) -> world (0, SCOOP_TIP_Y - SCOOP_LEN*cos(a), SCOOP_TIP_Z + SCOOP_LEN*sin(a))
-scoop_rot_x = -P.SCOOP_ANGLE_DEG
-
 parts = [
     {"id": "tub", "kind": "structure", "material": "pla", "process": "fdm", "print_orientation": "+z",
      "color": "#0f3b1e", "model": model("tub"), "at": [0, 0, 0]},
@@ -60,7 +54,7 @@ parts = [
     {"id": "scoop", "kind": "weapon", "material": "aluminium", "process": "cnc",
      "weapon": {"kind": "flipper", "motor": "servo", "reduction": 1.0},
      "color": "#b8c0c8", "model": model("scoop"),
-     "at": r3([0, P.SCOOP_TIP_Y - P.HINGE_Y + 0.8, P.SCOOP_TIP_Z - P.HINGE_Z]), "rot": [scoop_rot_x, 0, 0],
+     "at": [0, 0, 0],
      "parent": "flipper"},
 
     {"id": "hinge_pin", "kind": "fastener", "material": "steel", "process": "cots",
@@ -73,7 +67,7 @@ parts = [
      "at": r3([-P.MOTOR_X_OFFSET, P.WHEEL_Y, P.AXLE_Z]), "rot": [0, 0, 0]},
 
     {"id": "servo", "kind": "actuator", "catalog": "servo_cs07",
-     "at": r3([0, P.SERVO_Y, P.SERVO_Z]), "rot": [0, 90, 0]},
+     "at": r3([0, P.SERVO_Y, 12.0]), "rot": [90, 0, 90]},
     {"id": "horn", "kind": "structure", "material": "pla", "process": "fdm", "print_orientation": "+z",
      "color": "#333333", "model": model("horn"), "at": r3([0, P.HORN_Y, P.HORN_Z]),
      "joint": {"type": "revolute", "axis": [1, 0, 0], "anchor": [0, 0, 0], "range": [0, 60]}},

@@ -23,23 +23,17 @@ def build_tub():
     """Main dark-green 3D-printed chassis tub in world frame."""
     half_w = P.TUB_W / 2.0
     # Side profile in YZ plane:
-    # (y, z)
-    # Smoothly curved top profile in YZ plane (matching Steve's arched shell)
-    curve_pts = [
-        (P.TUB_REAR_Y, P.TUB_TOP_Z - 3.5),
-        (-24.0, P.TUB_TOP_Z - 0.5),
-        (-8.0, P.TUB_TOP_Z),
-        (10.0, P.TUB_TOP_Z - 4.0),
-        (24.0, P.TUB_FRONT_Z + 8.0),
-        (P.TUB_FRONT_Y, P.TUB_FRONT_Z),
+    # Flat top deck from TUB_REAR_Y (-42) to TUB_DECK_END_Y (+22) at Z = TUB_TOP_Z (30),
+    # then sloped front wedge down to (TUB_FRONT_Y=34, Z=2) with a slight nose height.
+    profile_pts = [
+        (P.TUB_REAR_Y, P.GROUND_CLEARANCE),
+        (P.TUB_FRONT_Y, P.GROUND_CLEARANCE),
+        (P.TUB_FRONT_Y, 6.0),
+        (P.TUB_DECK_END_Y, P.TUB_TOP_Z),
+        (P.TUB_REAR_Y, P.TUB_TOP_Z),
     ]
     with BuildSketch(Plane.YZ) as sk:
-        with BuildLine():
-            l1 = Line((P.TUB_REAR_Y, P.GROUND_CLEARANCE), (P.TUB_FRONT_Y, P.GROUND_CLEARANCE))
-            l2 = Line((P.TUB_FRONT_Y, P.GROUND_CLEARANCE), (P.TUB_FRONT_Y, P.TUB_FRONT_Z))
-            s1 = Spline(*reversed(curve_pts))
-            l3 = Line((P.TUB_REAR_Y, P.TUB_TOP_Z - 3.5), (P.TUB_REAR_Y, P.GROUND_CLEARANCE))
-        make_face()
+        Polygon(*profile_pts, align=None)
     tub = extrude(sk.sketch, amount=half_w, both=True)
 
     # Cut central flipper slot (X in [-SLOT_W/2, +SLOT_W/2], Y from SLOT_REAR_Y to TUB_FRONT_Y+2)
@@ -52,8 +46,8 @@ def build_tub():
 
     # Cut left & right internal electronics bays (under lids)
     bay_w = half_w - P.SLOT_W / 2.0 - P.WALL_T * 2.0
-    bay_len = (P.TUB_DECK_END_Y - 2.0) - (P.TUB_REAR_Y + P.WALL_T)
-    bay_yc = (P.TUB_REAR_Y + P.WALL_T + P.TUB_DECK_END_Y - 2.0) / 2.0
+    bay_len = (P.TUB_DECK_END_Y - 3.0) - (P.TUB_REAR_Y + P.WALL_T)
+    bay_yc = (P.TUB_REAR_Y + P.WALL_T + P.TUB_DECK_END_Y - 3.0) / 2.0
     bay_h = P.TUB_TOP_Z - P.GROUND_CLEARANCE - P.FLOOR_T + 1.0
     bay_zc = P.GROUND_CLEARANCE + P.FLOOR_T + bay_h / 2.0
     for s in (-1.0, 1.0):
@@ -61,18 +55,24 @@ def build_tub():
         bay_cut = Box(bay_w, bay_len, bay_h).translate((bay_xc, bay_yc, bay_zc))
         tub = tub - bay_cut
 
-    # Wheel-guard mounting standoffs (4 corners per side)
+    # Wheel-guard mounting frame (boxy rear bracket + upper forward bar, matching reference.png)
     boss_len = P.GUARD_X - half_w + 0.5
     boss_xc = half_w + boss_len / 2.0 - 0.25
     for s in (-1.0, 1.0):
-        for dy in (-11.0, 11.0):
-            for dz in (-8.0, 8.0):
+        # Upper and lower rear standoffs + front standoffs
+        for dy in (-12.0, 12.0):
+            for dz in (-8.0, 9.0):
                 boss = (
                     Cylinder(radius=2.2, height=boss_len)
                     .rotate(Axis.Y, 90)
                     .translate((s * boss_xc, P.WHEEL_Y + dy, P.AXLE_Z + dz))
                 )
                 tub = tub + boss
+        # Lower front wheel-arch shelf connecting chassis to guard
+        shelf = Box(boss_len, 8.0, 2.5).translate(
+            (s * boss_xc, P.WHEEL_Y + 11.0, P.AXLE_Z - 7.0)
+        )
+        tub = tub + shelf
 
     # Hinge pin bores through central slot walls
     pin_bore = (
@@ -94,53 +94,41 @@ def build_tub():
 
 
 def build_lid(side: int = 1):
-    """Curved top deck lid (+1 = left/+X, -1 = right/-X) in local frame centred at (0,0,0)."""
+    """Flat dark-green top deck lid (+1 = left/+X, -1 = right/-X) with 2 low-profile button-head screws."""
     lid_w = (P.TUB_W / 2.0) - (P.SLOT_W / 2.0) - 0.5
-    lid_yc = (P.TUB_REAR_Y + P.TUB_DECK_END_Y) / 2.0
-    lid_zc = P.LID_Z + P.LID_T / 2.0
-    # Local YZ coordinates relative to (lid_yc, lid_zc)
-    pts_bot = [
-        (P.TUB_REAR_Y - lid_yc, P.TUB_TOP_Z - 3.5 - lid_zc),
-        (-24.0 - lid_yc, P.TUB_TOP_Z - 0.5 - lid_zc),
-        (-8.0 - lid_yc, P.TUB_TOP_Z - lid_zc),
-        (P.TUB_DECK_END_Y - lid_yc, P.TUB_TOP_Z - 3.5 - lid_zc),
-    ]
-    pts_top = [(y, z + P.LID_T) for (y, z) in pts_bot]
-    with BuildSketch(Plane.YZ) as sk:
-        with BuildLine():
-            Line(pts_bot[0], pts_top[0])
-            Spline(*pts_top)
-            Line(pts_top[-1], pts_bot[-1])
-            Spline(*reversed(pts_bot))
-        make_face()
-    lid = extrude(sk.sketch, amount=lid_w / 2.0, both=True)
-    # 2 M2 screw holes at front and rear outer corners
     lid_len = P.TUB_DECK_END_Y - P.TUB_REAR_Y
+    lid = Box(lid_w, lid_len, P.LID_T)
     for dy in (-lid_len / 2.0 + 4.5, lid_len / 2.0 - 4.5):
-        hole = Cylinder(radius=P.M2_CLEAR_D / 2.0, height=12.0).translate(
-            (side * (lid_w / 2.0 - 4.5), dy, 0.0)
+        head = Cylinder(radius=2.3, height=0.7).translate(
+            (side * (lid_w / 2.0 - 4.5), dy, P.LID_T / 2.0 + 0.35)
         )
-        lid = lid - hole
+        socket = Cylinder(radius=0.8, height=0.6).translate(
+            (side * (lid_w / 2.0 - 4.5), dy, P.LID_T / 2.0 + 0.6)
+        )
+        lid = lid + (head - socket)
     return lid
 
 
 def build_guard():
-    """Outboard wheel guard plate in local YZ-aligned frame (thickness along X)."""
+    """Outboard wheel guard plate in local YZ-aligned frame (curved front edge, flat rear edge)."""
     hw = P.GUARD_L / 2.0
     hh = P.GUARD_H / 2.0
-    ch = 5.0
-    pts = [
-        (-hw + ch, -hh),
-        (hw - ch, -hh),
-        (hw, -hh + ch),
-        (hw, hh - ch),
-        (hw - ch, hh),
-        (-hw + ch, hh),
-        (-hw, hh - ch),
-        (-hw, -hh + ch),
+    pts_curve = [
+        (-hw + 3.0, hh),
+        (2.0, hh),
+        (hw - 2.0, hh - 5.0),
+        (hw, 0.0),
+        (hw - 3.0, -hh + 5.0),
+        (0.0, -hh),
+        (-hw + 3.0, -hh),
     ]
     with BuildSketch(Plane.YZ) as sk:
-        Polygon(*pts, align=None)
+        with BuildLine():
+            Spline(*pts_curve)
+            Line((-hw + 3.0, -hh), (-hw, -hh + 3.0))
+            Line((-hw, -hh + 3.0), (-hw, hh - 3.0))
+            Line((-hw, hh - 3.0), (-hw + 3.0, hh))
+        make_face()
     plate = extrude(sk.sketch, amount=P.GUARD_T / 2.0, both=True)
     return plate
 
@@ -150,12 +138,10 @@ def build_wheel():
     r = P.WHEEL_D / 2.0
     w = P.WHEEL_W
     wheel = Cylinder(radius=r, height=w).rotate(Axis.Y, 90)
-    # Circumferential tread grooves
     for dx in (-2.2, 0.0, 2.2):
         groove_outer = Cylinder(radius=r + 0.5, height=0.8).rotate(Axis.Y, 90).translate((dx, 0, 0))
         groove_inner = Cylinder(radius=r - 0.8, height=1.0).rotate(Axis.Y, 90).translate((dx, 0, 0))
         wheel = wheel - (groove_outer - groove_inner)
-    # Axle bore
     bore = Cylinder(radius=1.5, height=w + 2.0).rotate(Axis.Y, 90)
     wheel = wheel - bore
     return wheel
@@ -163,51 +149,114 @@ def build_wheel():
 
 def build_flipper():
     """Black 3D-printed central flipper arm in local frame (hinge at origin (0,0,0))."""
-    # Local Y is forward from hinge, Z is up
-    dy_front = P.ARM_FRONT_Y - P.HINGE_Y   # ~66 mm
-    dz_front = P.ARM_FRONT_Z - P.HINGE_Z   # ~-15 mm
-    # Smooth curved top profile matching the chassis arch
     top_pts = [
-        (-4.0, 2.0),
-        (10.0, 5.5),
-        (28.0, 5.0),
-        (46.0, 0.0),
-        (dy_front, dz_front + 2.0),
+        (-3.0, 3.0),
+        (12.0, 7.2),
+        (30.0, 7.5),
+        (46.0, 3.5),
+        (54.0, -1.8),
+        (65.0, -6.5),
+    ]
+    bot_pts = [
+        (65.0, -11.0),
+        (50.0, -4.5),
+        (26.0, 1.0),
+        (-3.0, -3.5),
     ]
     with BuildSketch(Plane.YZ) as sk:
         with BuildLine():
-            Line((-4.0, -4.0), (dy_front - 10.0, dz_front - 3.0))
-            Line((dy_front - 10.0, dz_front - 3.0), (dy_front, dz_front + 2.0))
-            Spline(*reversed(top_pts))
-            Line((-4.0, 2.0), (-4.0, -4.0))
+            Spline(*top_pts)
+            Line(top_pts[-1], bot_pts[0])
+            Spline(*bot_pts)
+            Line(bot_pts[-1], top_pts[0])
         make_face()
     arm = extrude(sk.sketch, amount=P.ARM_W / 2.0, both=True)
-    # Hinge pin bore at origin
     bore = Cylinder(radius=P.HINGE_PIN_D / 2.0 + 0.1, height=P.ARM_W + 2.0).rotate(Axis.Y, 90)
     arm = arm - bore
     return arm
 
 
 def build_scoop():
-    """Brushed metal trapezoidal front flipper scoop in local frame (flat in XY, thickness Z)."""
-    # Local Y: 0 = front leading edge, -SCOOP_LEN = top edge
+    """Curved brushed-metal front flipper scoop with side cheek gussets and 4 top bolts, in flipper-hinge local frame."""
+    y_top = P.SCOOP_TOP_Y - P.HINGE_Y      # 54.0
+    z_top = P.SCOOP_TOP_Z - P.HINGE_Z      # -0.5
+    y_tip = P.SCOOP_TIP_Y - P.HINGE_Y      # 86.0
+    z_tip = P.SCOOP_TIP_Z - P.HINGE_Z      # -24.5
+
+    # Exact spline points for upper surface of curved scoop
+    curve_upper = [
+        (y_top, z_top),
+        (y_top + 8.0, z_top - 3.5),
+        (y_top + 18.0, z_top - 10.0),
+        (y_top + 27.0, z_top - 18.0),
+        (y_tip, z_tip),
+    ]
+    curve_lower = [(y, z - P.SCOOP_T) for (y, z) in curve_upper]
+
+    with BuildSketch(Plane.YZ) as sk_yz:
+        with BuildLine():
+            Spline(*curve_upper)
+            Line(curve_upper[-1], curve_lower[-1])
+            Spline(*reversed(curve_lower))
+            Line(curve_lower[0], curve_upper[0])
+        make_face()
+    raw_sheet = extrude(sk_yz.sketch, amount=P.SCOOP_BOT_W / 2.0, both=True)
+
+    # Trim to trapezoidal planform in XY with slightly curved outer side edges
     hw_bot = P.SCOOP_BOT_W / 2.0
     hw_top = P.SCOOP_TOP_W / 2.0
-    pts = [
-        (-hw_bot, 0.0),
-        (hw_bot, 0.0),
-        (hw_top, -P.SCOOP_LEN),
-        (-hw_top, -P.SCOOP_LEN),
-    ]
-    sk = Polygon(*pts, align=None)
-    scoop = extrude(sk, amount=P.SCOOP_T / 2.0, both=True)
+    for s in (-1.0, 1.0):
+        cut_pts = [
+            (s * hw_top, y_top - 5.0),
+            (s * (hw_bot + 15.0), y_top - 5.0),
+            (s * (hw_bot + 15.0), y_tip + 5.0),
+            (s * hw_bot, y_tip + 5.0),
+        ]
+        with BuildSketch(Plane.XY) as sk_cut:
+            Polygon(*cut_pts, align=None)
+        cutter = extrude(sk_cut.sketch, amount=40.0, both=True)
+        raw_sheet = raw_sheet - cutter
 
-    # 4 mounting holes in a 2x2 diamond cluster near top-center (matching reference.png)
-    for dx, dy in [(-4.0, -P.SCOOP_LEN + 5.0), (4.0, -P.SCOOP_LEN + 5.0),
-                   (-3.5, -P.SCOOP_LEN + 11.0), (3.5, -P.SCOOP_LEN + 11.0)]:
-        hole = Cylinder(radius=P.M2_CLEAR_D / 2.0, height=P.SCOOP_T + 1.0).translate((dx, dy, 0.0))
-        scoop = scoop - hole
-    return scoop
+    # Triangular side cheek gussets flush under the outer wings of the scoop (visible in reference.png)
+    for s in (-1.0, 1.0):
+        cheek_pts = [
+            (y_top + 13.0, z_top - 7.5),
+            (y_tip - 1.5, z_tip + 0.5),
+            (y_top + 19.0, z_tip + 0.5),
+        ]
+        with BuildSketch(Plane.YZ) as sk_ch:
+            Polygon(*cheek_pts, align=None)
+        cheek = extrude(sk_ch.sketch, amount=0.8, both=True).translate((s * (hw_top + 6.5), 0.0, 0.0))
+        raw_sheet = raw_sheet + cheek
+
+    # 4 protruding bolts + washers + nuts in a 2x2 cluster at top center (matching reference.png)
+    # At dy_off=3.5 -> z on curve is z_top - 1.5; at dy_off=8.5 -> z on curve is z_top - 3.7
+    bolt_specs = [
+        (-3.2, 3.5, z_top - 1.4),
+        (3.2, 3.5, z_top - 1.4),
+        (-3.0, 8.5, z_top - 3.6),
+        (3.0, 8.5, z_top - 3.6),
+    ]
+    for dx, dy_off, bz in bolt_specs:
+        by = y_top + dy_off
+        washer = (
+            Cylinder(radius=2.6, height=0.8)
+            .rotate(Axis.X, -28)
+            .translate((dx, by, bz + 0.4))
+        )
+        nut = (
+            Cylinder(radius=1.8, height=1.4)
+            .rotate(Axis.X, -28)
+            .translate((dx, by + 0.5, bz + 1.1))
+        )
+        stud = (
+            Cylinder(radius=0.9, height=2.6)
+            .rotate(Axis.X, -28)
+            .translate((dx, by + 0.9, bz + 1.8))
+        )
+        raw_sheet = raw_sheet + washer + nut + stud
+
+    return raw_sheet
 
 
 def build_hinge_pin():
@@ -217,4 +266,4 @@ def build_hinge_pin():
 
 def build_horn():
     """Printed servo horn."""
-    return Box(6.0, 14.0, 3.0).translate((0.0, 5.0, 0.0))
+    return Box(6.0, 10.0, 3.0).translate((0.0, 3.0, 0.0))
