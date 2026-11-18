@@ -29,3 +29,11 @@ Looks alike: **partly**. Renders: `renders/iso.png`, `renders/top.png`.
 Shorter steeper ramp, rounded tail, full-length lifter ridge with hump, orange blocks at all four corners. Axis restored.
 
 Likeness: aws65 0.35 (FAIL), aws68 0.76 (FAIL).
+
+## Tools I wanted
+- `robot looks SPEC` (build + iso/top + likeness + diff sheets in one pass, batchable). Did instead: four CLI calls per robot, ~3-4 min wall each.
+
+## Round 2 (looks)
+Decisions: type lifter; body box rect 100x74x28 mm, ramp 40; wheels 2 r14 outboard; weapon none.
+
+Likeness: aws65 0.35 (FAIL), aws68 0.76 (FAIL).
