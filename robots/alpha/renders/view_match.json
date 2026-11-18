@@ -1,8 +1,8 @@
 {
  "alpha.aws72.webp": {
-  "view": "90,50",
-  "azimuth": 100.0,
-  "elevation": 42.0,
-  "iou": 0.87
+  "view": "105,45!",
+  "azimuth": 105.0,
+  "elevation": 45.0,
+  "iou": 0.806
  }
 }
