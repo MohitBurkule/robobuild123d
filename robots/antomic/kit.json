@@ -62,23 +62,229 @@
    "color": "#d8324a"
   },
   {
-   "box": [
-    50,
-    60,
-    4
+   "top": [
+    [
+     -26,
+     -25
+    ],
+    [
+     26,
+     -25
+    ],
+    [
+     26,
+     38
+    ],
+    [
+     18,
+     38
+    ],
+    [
+     18,
+     -11
+    ],
+    [
+     -18,
+     -11
+    ],
+    [
+     -18,
+     38
+    ],
+    [
+     -26,
+     38
+    ]
    ],
-   "at": [
-    0,
-    5,
-    44
+   "z": [
+    42,
+    47
    ],
+   "color": "#e8453a",
    "weapon": "lifter",
    "pivot": [
     -25,
     42
    ],
-   "id": "frame",
-   "color": "#e8453a"
+   "id": "frame"
+  },
+  {
+   "box": [
+    30,
+    40,
+    10
+   ],
+   "at": [
+    0,
+    14,
+    38
+   ],
+   "cut": true,
+   "id": "centre_opening"
+  },
+  {
+   "cyl": [
+    2.4,
+    1.4
+   ],
+   "at": [
+    -20,
+    -20,
+    47.7
+   ],
+   "axis": "z",
+   "id": "fs0",
+   "color": "#1c1d20",
+   "material": "steel",
+   "process": "cots"
+  },
+  {
+   "cyl": [
+    2.4,
+    1.4
+   ],
+   "at": [
+    20,
+    -20,
+    47.7
+   ],
+   "axis": "z",
+   "id": "fs1",
+   "color": "#1c1d20",
+   "material": "steel",
+   "process": "cots"
+  },
+  {
+   "cyl": [
+    2.4,
+    1.4
+   ],
+   "at": [
+    -8,
+    -16,
+    47.7
+   ],
+   "axis": "z",
+   "id": "fs2",
+   "color": "#1c1d20",
+   "material": "steel",
+   "process": "cots"
+  },
+  {
+   "cyl": [
+    2.4,
+    1.4
+   ],
+   "at": [
+    8,
+    -16,
+    47.7
+   ],
+   "axis": "z",
+   "id": "fs3",
+   "color": "#1c1d20",
+   "material": "steel",
+   "process": "cots"
+  },
+  {
+   "cyl": [
+    2.4,
+    1.4
+   ],
+   "at": [
+    -30,
+    60.8,
+    21.6
+   ],
+   "axis": "z",
+   "id": "ws0",
+   "color": "#1c1d20",
+   "material": "steel",
+   "process": "cots",
+   "rot": [
+    -51.7,
+    0,
+    0
+   ]
+  },
+  {
+   "cyl": [
+    2.4,
+    1.4
+   ],
+   "at": [
+    30,
+    60.8,
+    21.6
+   ],
+   "axis": "z",
+   "id": "ws1",
+   "color": "#1c1d20",
+   "material": "steel",
+   "process": "cots",
+   "rot": [
+    -51.7,
+    0,
+    0
+   ]
+  },
+  {
+   "cyl": [
+    2.4,
+    1.4
+   ],
+   "at": [
+    -14,
+    52.8,
+    31.7
+   ],
+   "axis": "z",
+   "id": "ws2",
+   "color": "#1c1d20",
+   "material": "steel",
+   "process": "cots",
+   "rot": [
+    -51.7,
+    0,
+    0
+   ]
+  },
+  {
+   "cyl": [
+    2.4,
+    1.4
+   ],
+   "at": [
+    14,
+    52.8,
+    31.7
+   ],
+   "axis": "z",
+   "id": "ws3",
+   "color": "#1c1d20",
+   "material": "steel",
+   "process": "cots",
+   "rot": [
+    -51.7,
+    0,
+    0
+   ]
+  },
+  {
+   "box": [
+    88,
+    6,
+    1.5
+   ],
+   "at": [
+    0,
+    77,
+    1.2
+   ],
+   "id": "clear_strip",
+   "material": "polycarbonate",
+   "process": "laser",
+   "color": "#dfe8ee"
   }
  ]
 }

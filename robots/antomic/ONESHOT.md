@@ -56,3 +56,8 @@ Left (one line each):
 - wire.render_wires x1: toolchain/process: the photo-match, diff and likeness sheets are written without a render record of the wire routes
 - likeness.view x1: looks (photo view label; not part of this pass)
 - likeness.silhouette x1: looks (not part of this pass; outside shape kept as round 3)
+
+## Round 3e (strict photo differences: real openings, hinge, plates, screws where the photo shows them)
+Decisions: type lifter; body box rect 85x80x40 mm, ramp 0; wheels 2 r12 inboard; weapon none; extra parts: scoop, frame, centre_opening, fs0, fs1, fs2, fs3, ws0, ws1, ws2, ws3, clear_strip; photos skipped (cluttered): indices [0, 2].
+
+Likeness: aws67 0.79 (FAIL).
