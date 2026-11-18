@@ -1,6 +1,6 @@
 {
  "robot_type": "lifter",
- "wheels": 2,
+ "wheels": 4,
  "weapon": {
   "kind": "lifter",
   "axis": "x"
@@ -8,5 +8,13 @@
  "photos": [
   "elevron_red.aws72.webp",
   "elevron_red.aws74.webp"
- ]
+ ],
+ "view": {
+  "elevron_red.aws72.webp": "front_right_iso",
+  "elevron_red.aws74.webp": "front_right_iso"
+ },
+ "elevation": {
+  "elevron_red.aws72.webp": 45,
+  "elevron_red.aws74.webp": 45
+ }
 }

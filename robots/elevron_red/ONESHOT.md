@@ -18,3 +18,9 @@ Likeness: aws72 0.70 (FAIL), aws74 0.70 (FAIL).
 Decisions: type lifter; body box pentagon 92x78x20 mm, ramp 22; wheels 2 r13 inboard; weapon none; 2 forks 30 mm; extra parts: lift_arm, pod.
 
 Likeness: aws72 0.69 (FAIL), aws74 0.64 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type lifter; body box pentagon 92x78x20 mm, ramp 22; wheels 4 r12 inboard; weapon none; 2 forks 48 mm; extra parts: lift_arm, pod.
+
+Likeness: aws72 0.70 (FAIL), aws74 0.54 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/elevron_red.aws74.webp` is declared `front_right_iso` (IoU 0.54 there) but the model matches it better from front_right_iso (el

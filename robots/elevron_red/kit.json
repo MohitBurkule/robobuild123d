@@ -10,21 +10,24 @@
   "nose": 30
  },
  "wheels": {
-  "n": 2,
-  "radius": 13,
-  "width": 12,
+  "n": 4,
+  "radius": 12,
+  "width": 10,
   "y": [
-   -18
+   -26,
+   10
   ],
   "outside": false,
-  "x": 38
+  "x": 38,
+  "notch": true
  },
  "forks": {
   "n": 2,
-  "length": 30,
-  "width": 12,
-  "spread": 60,
-  "tilt_deg": 6
+  "length": 48,
+  "width": 10,
+  "spread": 58,
+  "tilt_deg": 8,
+  "taper": true
  },
  "colors": {
   "body": "#e8453a",
@@ -32,7 +35,11 @@
   "weapon": "#c9cdd3",
   "fork": "#e8453a"
  },
- "extras": [
+ "name": "elevron red",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "side": [
     [
@@ -95,9 +102,5 @@
    "id": "pod",
    "color": "#22262a"
   }
- ],
- "name": "elevron red",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }

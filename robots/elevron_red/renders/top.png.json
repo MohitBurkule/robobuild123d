@@ -1,15 +1,33 @@
 {
  "spec": "/tmp/work10_elevron_red/robots/elevron_red/spec.json",
- "rendered_at": 1795023626.7948346,
+ "rendered_at": 1795026171.5862303,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
+  "wheel_l1",
+  "wheel_r1",
   "fork_0",
   "fork_1",
   "lift_arm",
   "pod_l",
-  "pod_r"
+  "pod_r",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_nut_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_nut_wheel_r0",
+  "dt_hub_wheel_l1",
+  "dt_axle_wheel_l1",
+  "dt_nut_wheel_l1",
+  "dt_hub_wheel_r1",
+  "dt_axle_wheel_r1",
+  "dt_nut_wheel_r1",
+  "dt_mount_fork_0",
+  "dt_bolt_fork_0",
+  "dt_mount_fork_1",
+  "dt_bolt_fork_1"
  ],
  "wires": {}
 }
