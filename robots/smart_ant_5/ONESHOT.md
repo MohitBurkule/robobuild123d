@@ -9,3 +9,8 @@
 Decisions: type wedge; body box trapezoid 100x84x46 mm, ramp 88; wheels 2 r14 outboard; weapon none; extra parts: lip; photos skipped (cluttered): indices [0, 2]; textured masks for indices [1].
 
 Likeness: aws61 0.81 (FAIL).
+
+## Round 2 (looks)
+Decisions: type wedge; body box trapezoid 100x84x46 mm, ramp 88; wheels 2 r14 outboard; weapon none; extra parts: lip; photos skipped (cluttered): indices [0, 2]; textured masks for indices [1].
+
+Likeness: aws61 0.81 (FAIL).
