@@ -11,5 +11,15 @@
   "duck_ling_.aws67.webp",
   "duck_ling_.aws71.webp",
   "duck_ling_.aws72.webp"
- ]
+ ],
+ "view": {
+  "duck_ling_.aws67.webp": "front_left_iso",
+  "duck_ling_.aws71.webp": "front_left_iso",
+  "duck_ling_.aws72.webp": "front_left_iso"
+ },
+ "elevation": {
+  "duck_ling_.aws67.webp": 45,
+  "duck_ling_.aws71.webp": 45,
+  "duck_ling_.aws72.webp": 45
+ }
 }

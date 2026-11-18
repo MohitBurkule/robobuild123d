@@ -38,3 +38,9 @@ Likeness: aws67 0.80 (FAIL), aws71 0.66 (FAIL), aws72 0.75 (FAIL).
 Decisions: type flipper; body box rect 120x110x31 mm, ramp 85; wheels 2 r12 inboard; weapon none.
 
 Likeness: aws67 0.80 (FAIL), aws71 0.66 (FAIL), aws72 0.75 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type flipper; body box rect 120x110x31 mm, ramp 85; wheels 2 r12 inboard; weapon none.
+
+Likeness: aws67 0.80 (FAIL), aws71 0.66 (FAIL), aws72 0.64 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/duck_ling_.aws72.webp` is declared `front_left_iso` (IoU 0.64 there) but the model matches it better from front_right_iso (elev
