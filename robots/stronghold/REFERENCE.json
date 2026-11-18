@@ -1,6 +1,12 @@
 {
  "robot_type": "wedge",
- "weapon": "front blades/forks on flat plate",
+ "weapon": {
+  "kind": "wedge",
+  "axis": "x",
+  "position": "front",
+  "width_frac": 0.8,
+  "teeth": 2
+ },
  "wheels": 2,
  "source": "read from reference photos by Sonnet"
 }
