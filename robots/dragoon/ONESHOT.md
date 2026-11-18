@@ -30,3 +30,11 @@ Looks alike: **partly**. Renders: `renders/iso.png`, `renders/top.png`.
 Wider body with sloped side edges and disc slot, larger offset ring with one tooth, bigger motor pod, long angled forks, taller wheels, clear side plates.
 
 Likeness: aws72 0.71 (FAIL), aws74 0.73 (FAIL), aws76 0.71 (FAIL).
+
+## Tools I wanted
+- `robot looks SPEC` (build + iso/top + likeness + diff sheets in one pass, batchable). Did instead: four CLI calls per robot, ~3-4 min wall each.
+
+## Round 2 (looks)
+Decisions: type vertical_spinner; body box rect 84x108x28 mm, ramp 0; wheels 2 r15 outboard; weapon disc r40 axis x teeth 1; 4 forks 50 mm.
+
+Likeness: aws72 0.68 (FAIL), aws74 0.76 (FAIL), aws76 0.72 (FAIL).

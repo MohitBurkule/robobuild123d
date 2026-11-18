@@ -1,7 +1,8 @@
 {
  "note": "ids added on top of `robot kit` output; replaced shapes are in spec.json",
  "added": [
-  "fork_bar",
+  "fork_block_l",
+  "fork_block_r",
   "motor_pod",
   "pod_base",
   "side_plate_l",

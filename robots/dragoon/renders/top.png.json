@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_dragoon/robots/dragoon/spec.json",
- "rendered_at": 1795021494.4524262,
+ "rendered_at": 1795023550.1669528,
  "bodies": [
   "chassis",
   "weapon",
@@ -12,7 +12,8 @@
   "fork_3",
   "motor_pod",
   "pod_base",
-  "fork_bar",
+  "fork_block_l",
+  "fork_block_r",
   "side_plate_l",
   "side_plate_r"
  ],

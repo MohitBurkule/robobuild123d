@@ -2,7 +2,7 @@
  "name": "dragoon",
  "profile": "aws2025",
  "robot_type": "vertical_spinner",
- "locomotion": "wheels",
+ "locomotion": "roller",
  "kit_draft": true,
  "parts": [
   {
@@ -42,11 +42,11 @@
         6
        ]
       ],
-      "height": 70
+      "height": 84
      },
      "at": [
       0.0,
-      0.0,
+      -4.0,
       0.0
      ],
      "rot": [
@@ -69,6 +69,27 @@
       "at": [
        -14,
        15,
+       0
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        26,
+        30,
+        40
+       ]
+      },
+      "at": [
+       0,
+       30,
        0
       ],
       "rot": [
@@ -579,7 +600,7 @@
    "color": "#1c1c1f"
   },
   {
-   "id": "fork_bar",
+   "id": "fork_block_l",
    "kind": "structure",
    "material": "nylon",
    "process": "fdm",
@@ -588,15 +609,53 @@
     "shape": {
      "type": "box",
      "size": [
-      108,
-      8,
-      13
+      40,
+      10,
+      14
      ]
     },
     "at": [
+     34,
+     42,
+     -6
+    ],
+    "rot": [
      0,
-     38,
-     -6.5
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#1c1c1f"
+  },
+  {
+   "id": "fork_block_r",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      40,
+      10,
+      14
+     ]
+    },
+    "at": [
+     -34,
+     42,
+     -6
     ],
     "rot": [
      0,

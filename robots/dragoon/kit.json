@@ -2,7 +2,7 @@
  "name": "dragoon",
  "robot_type": "vertical_spinner",
  "body": {
-  "length": 70,
+  "length": 84,
   "width": 108,
   "height": 28,
   "ramp": 0,

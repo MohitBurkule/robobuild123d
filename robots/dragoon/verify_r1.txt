@@ -1,0 +1,123 @@
+  [ran] integrity 0.02s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 2.86s
+  [ran] connections 0.07s
+  [ran] legal 0.01s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.01s
+  [ran] shape 0.30s
+  [ran] dynamics 0.01s
+  [ran] strength 0.00s
+  [ran] printability 0.40s
+  [ran] process 0.04s
+  [ran] electrical 0.01s
+  [ran] combat 0.21s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.01s
+  [ran] fastener_record 0.00s
+  [ran] likeness 7.17s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.04s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.04s
+  [ran] dfm 0.02s
+  [ran] realworld 0.01s
+dragoon: ok=False 53 blockers in 39 root causes, mass 327.9/225 g
+1. [proxy.interference] `chassis` and `fork_0` overlap by 0.46 mm (allowed 0.08). Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   | chassis: x -54.00..54.00  y -35.00..35.00  z -13.00..15.00  size 108.00 x 70.00 x 28.00 mm
+   |   centre (0.00, 0.00, 1.00), volume 194362.0 mm3
+   |   OVERLAP `pod_base` 3.38 mm (allowed 0.08)
+   |   OVERLAP `motor_pod` 1.88 mm (allowed 0.08)
+   |   OVERLAP `weapon` 1.39 mm (allowed 0.08)
+2. [proxy.interference] `fork_0` and `fork_bar` overlap by 3.88 mm (allowed 0.08). Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   | fork_0: x -47.00..-39.00  y 34.00..90.00  z -15.00..-3.00  size 8.00 x 56.00 x 12.00 mm
+   |   centre (-43.00, 62.00, -9.00), volume 2632.0 mm3
+   |   OVERLAP `fork_bar` 3.88 mm (allowed 0.08)
+   |   OVERLAP `chassis` 0.46 mm (allowed 0.08)
+   | fork_bar: x -54.00..54.00  y 34.00..42.00  z -13.00..0.00  size 108.00 x 8.00 x 13.00 mm
+3. [process.print_orientation] `fork_0` (fdm) has no `print_orientation`. Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | fork_0: x -47.00..-39.00  y 34.00..90.00  z -15.00..-3.00  size 8.00 x 56.00 x 12.00 mm
+   |   centre (-43.00, 62.00, -9.00), volume 2632.0 mm3
+   |   OVERLAP `fork_bar` 3.88 mm (allowed 0.08)
+   |   OVERLAP `chassis` 0.46 mm (allowed 0.08)
+   | fork_1: x -18.33..-10.33  y 34.00..90.00  z -15.00..-3.00  size 8.00 x 56.00 x 12.00 mm
+4. [connection.floating] `fork_0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away. Same problem on all 3 parts of this pattern: fix the pattern once. (+2 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | fork_0: x -47.00..-39.00  y 34.00..90.00  z -15.00..-3.00  size 8.00 x 56.00 x 12.00 mm
+   |   centre (-43.00, 62.00, -9.00), volume 2632.0 mm3
+   |   OVERLAP `fork_bar` 3.88 mm (allowed 0.08)
+   |   OVERLAP `chassis` 0.46 mm (allowed 0.08)
+   | chassis: x -54.00..54.00  y -35.00..35.00  z -13.00..15.00  size 108.00 x 70.00 x 28.00 mm
+5. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `chassis`. (+1 consequences)
+   | weapon: x -15.50..-12.50  y -30.00..50.00  z -23.00..67.00  size 3.00 x 80.00 x 90.00 mm
+   |   centre (-14.00, 10.00, 22.00), volume 8305.5 mm3
+   |   joint revolute axis [1, 0, 0] pivot [-14, 10.0, 27.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.39 mm (allowed 0.08)
+   |   OVERLAP `fork_bar` 1.39 mm (allowed 0.08)
+6. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `fork_1`. (+1 consequences)
+   | weapon: x -15.50..-12.50  y -30.00..50.00  z -23.00..67.00  size 3.00 x 80.00 x 90.00 mm
+   |   centre (-14.00, 10.00, 22.00), volume 8305.5 mm3
+   |   joint revolute axis [1, 0, 0] pivot [-14, 10.0, 27.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.39 mm (allowed 0.08)
+   |   OVERLAP `fork_bar` 1.39 mm (allowed 0.08)
+7. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `fork_bar`. (+1 consequences)
+   | weapon: x -15.50..-12.50  y -30.00..50.00  z -23.00..67.00  size 3.00 x 80.00 x 90.00 mm
+   |   centre (-14.00, 10.00, 22.00), volume 8305.5 mm3
+   |   joint revolute axis [1, 0, 0] pivot [-14, 10.0, 27.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.39 mm (allowed 0.08)
+   |   OVERLAP `fork_bar` 1.39 mm (allowed 0.08)
+8. [mass.over] 327.9 g (range 273.0 to 382.9 g) against the 225 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+9. [proxy.interference] `chassis` and `weapon` overlap by 1.39 mm (allowed 0.08).
+   | chassis: x -54.00..54.00  y -35.00..35.00  z -13.00..15.00  size 108.00 x 70.00 x 28.00 mm
+   |   centre (0.00, 0.00, 1.00), volume 194362.0 mm3
+   |   OVERLAP `pod_base` 3.38 mm (allowed 0.08)
+   |   OVERLAP `motor_pod` 1.88 mm (allowed 0.08)
+   |   OVERLAP `weapon` 1.39 mm (allowed 0.08)
+10. [proxy.interference] `chassis` and `motor_pod` overlap by 1.88 mm (allowed 0.08).
+   | chassis: x -54.00..54.00  y -35.00..35.00  z -13.00..15.00  size 108.00 x 70.00 x 28.00 mm
+   |   centre (0.00, 0.00, 1.00), volume 194362.0 mm3
+   |   OVERLAP `pod_base` 3.38 mm (allowed 0.08)
+   |   OVERLAP `motor_pod` 1.88 mm (allowed 0.08)
+   |   OVERLAP `weapon` 1.39 mm (allowed 0.08)
+11. [proxy.interference] `chassis` and `pod_base` overlap by 3.38 mm (allowed 0.08).
+   | chassis: x -54.00..54.00  y -35.00..35.00  z -13.00..15.00  size 108.00 x 70.00 x 28.00 mm
+   |   centre (0.00, 0.00, 1.00), volume 194362.0 mm3
+   |   OVERLAP `pod_base` 3.38 mm (allowed 0.08)
+   |   OVERLAP `motor_pod` 1.88 mm (allowed 0.08)
+   |   OVERLAP `weapon` 1.39 mm (allowed 0.08)
+12. [proxy.interference] `chassis` and `fork_bar` overlap by 0.46 mm (allowed 0.08).
+   | chassis: x -54.00..54.00  y -35.00..35.00  z -13.00..15.00  size 108.00 x 70.00 x 28.00 mm
+   |   centre (0.00, 0.00, 1.00), volume 194362.0 mm3
+   |   OVERLAP `pod_base` 3.38 mm (allowed 0.08)
+   |   OVERLAP `motor_pod` 1.88 mm (allowed 0.08)
+   |   OVERLAP `weapon` 1.39 mm (allowed 0.08)
+... 27 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 327.9 g of 225 g (-102.9 g margin)
+    chassis                   185.03 g  fills 92% of its box  <- solid block? a tub should be a shell
+    weapon                     65.61 g  fills 38% of its box
+    motor_pod                  24.50 g  fills 79% of its box  <- solid block? a tub should be a shell
+    pod_base                   11.09 g  fills 100% of its box
+    fork_bar                   10.69 g  fills 100% of its box
+    wheel_l0                    8.31 g  fills 79% of its box
+    wheel_r0                    8.31 g  fills 79% of its box
+    fork_0                      2.51 g  fills 49% of its box
+    fork_1                      2.51 g  fills 49% of its box
+    fork_2                      2.51 g  fills 49% of its box
+    fork_3                      2.51 g  fills 49% of its box
+    side_plate_l                1.58 g  fills 100% of its box
+    side_plate_r                1.58 g  fills 100% of its box
+    mass.over: 327.9 g (range 273.0 to 382.9 g) against the 225 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 0 hit / 10 miss, group 0 hit / 31 miss, inside 0 hit / 13 miss, likeness 3 hit / 0 miss, min_gap 24 hit / 55 miss, overlap 78 hit / 75 miss, part_check 0 hit / 4 miss, part_geom 13 hit / 0 miss, ray 0 hit / 65 miss
