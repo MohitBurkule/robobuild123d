@@ -41,9 +41,9 @@ Notes from the run:
 - dt_axle_wheel_l0 replaced by the gearmotor shaft
 - dt_axle_wheel_r0 replaced by the gearmotor shaft
 - joint horn_l: 0.9 mm sweep clearance cut in top_plate
-- joint horn_l: its sweep would cut a 4 mm deep slot into the outside of chassis; left out (look kept)
+- joint horn_l: its sweep would cut a 4 mm deep slot into the outside of chassis (4 mm for the poses at 5..80 deg alone); left out (look kept)
 - joint horn_r: 0.9 mm sweep clearance cut in top_plate
-- joint horn_r: its sweep would cut a 4 mm deep slot into the outside of chassis; left out (look kept)
+- joint horn_r: its sweep would cut a 4 mm deep slot into the outside of chassis (4 mm for the poses at 5..80 deg alone); left out (look kept)
 - chassis: hollowed (box wall round pockets), 250341 -> 91543 mm3
 - hollow failed on front_plate: [('cav', 'geometry failed: ValueError: Cannot tessellate an empty shape')]
 

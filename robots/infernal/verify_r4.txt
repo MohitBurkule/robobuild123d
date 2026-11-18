@@ -1,7 +1,7 @@
 BLOCKERS: 11
   [cached] integrity 0.00s
   [cached] mass 0.00s
-  [proxy] interference 0.13s
+  [proxy] interference 0.11s
   [cached] connections 0.00s
   [cached] legal 0.00s
   [cached] fasteners 0.00s
