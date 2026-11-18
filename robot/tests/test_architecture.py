@@ -633,3 +633,25 @@ def test_blade_still_triggers_orientation_next_to_a_ramp_wedge():
     m_blade_orientation(d)
     res, _ = run(d)
     assert any(not f.passed and "blade_l" in f.message for f in res["arch.blade_orientation"])
+
+
+def _clamshell(d):
+    """Split the tub into two 5 mm halves on the z=0 plane; both carry a bore tangent to the seam at x=25."""
+    d["parts"] = [p for p in d["parts"] if p["id"] != "tub"]
+    d["parts"].append(P("tub", "structure", sub(box(60, 60, 5, (0, 0, -2.5)), cyl(2, 12, (25, 0, 0), (0, 90, 0)))))
+    d["parts"].append(P("tub_lid", "structure", sub(box(60, 60, 5, (0, 0, 2.5)), cyl(2, 12, (25, 0, 0), (0, 90, 0)))))
+    return d
+
+
+def test_cut_breakout_ignores_a_bore_the_mating_half_carries_across_the_seam():
+    g, _ = run(_clamshell(spinner()))
+    assert passed(g, "arch.cut_breakout"), [(f.severity, f.message) for f in g.get("arch.cut_breakout", [])]
+
+
+def test_cut_breakout_still_fails_at_a_free_edge():
+    d = _clamshell(spinner())
+    for p in d["parts"]:
+        if p["id"] == "tub_lid":
+            p["shape"] = sub(box(60, 60, 5, (0, 0, 2.5)), cyl(2, 12, (27.5, 0, 3.5), (0, 90, 0)), cyl(2, 12, (25, 0, 0), (0, 90, 0)))
+    res, _ = run(d)
+    assert failed(res, "arch.cut_breakout"), [(f.severity, f.message) for f in res.get("arch.cut_breakout", [])]

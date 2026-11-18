@@ -2043,6 +2043,37 @@ def _base_of(shape):
     return shape
 
 
+def _seam_carries(mates, b, cc, ax, u, r, lim, piece):
+    """True when the material this piece lacks around the hole is supplied across an assembly seam by a mating structural part.
+
+    Samples the ring at radius r + lim (where web material is required): points inside this piece are fine; every point
+    outside it must land inside the part itself (another lobe) or a mating structural solid, else the hole genuinely
+    breaks out of the assembly.
+    """
+    v = np.cross(ax, u)
+    ang = np.linspace(0, 2 * np.pi, 24, endpoint=False)
+    pts2 = np.stack([np.cos(ang), np.sin(ang)], axis=-1) * (r + lim)
+    inside = [piece.buffer(1e-6).contains(Point(p)) for p in pts2]
+    need = pts2[~np.array(inside, bool)]
+    if not len(need):
+        return True
+    pts3 = cc + np.outer(need[:, 0], u) + np.outer(need[:, 1], v)
+    pts3 = pts3[~b.inside(pts3)]
+    if not len(pts3):
+        return True
+    o = np.array([(x, y, z) for x in (-1, 0, 1) for y in (-1, 0, 1) for z in (-1, 0, 1) if (x, y, z) != (0, 0, 0)]) * 0.05
+    for m in mates:
+        hit = m.inside(pts3)
+        rest = np.atleast_2d(pts3[~hit])
+        if len(rest):
+            skin = (rest[:, None, :] + o[None, :, :]).reshape(-1, 3)
+            hit[np.flatnonzero(~hit)] = m.inside(skin).reshape(len(rest), -1).any(axis=1)
+        pts3 = pts3[~hit]
+        if not len(pts3):
+            return True
+    return False
+
+
 def cut_breakout(a):
     from .. import geom as geom_mod
 
@@ -2069,6 +2100,7 @@ def cut_breakout(a):
         wall = mat.min_wall_mm if mat else 0.9
         # An elastomer (TPU) web stretches instead of cracking out: 1 mm holds a screw or a standoff bore (RVRN wedglet).
         lim = 1.0 if (mat is not None and mat.cls == "elastomer") else max(1.0, 1.5 * wall)
+        mates = [s for s in a.solids if s is not b and s.kind in STRUCT and measure.aabb_overlap(s.aabb, b.aabb, 2.0)]
         for Mc, r, hgt in cuts:
             W = b.M @ Mc
             c, ax = W[:3, 3], _unit(W[:3, 2])
@@ -2091,9 +2123,12 @@ def cut_breakout(a):
                     continue
                 hole = Point(0, 0).buffer(r, 32)
                 if not piece.buffer(1e-6).contains(hole):
-                    web = 0.0
-                    break
-                web = min(web, float(piece.boundary.distance(Point(0, 0))) - r)
+                    w = 0.0
+                else:
+                    w = float(piece.boundary.distance(Point(0, 0))) - r
+                if w < lim and _seam_carries(mates, b, cc, ax, u, r, lim, piece):
+                    continue
+                web = min(web, w)
             if web >= 1e8:
                 continue
             if web < lim:
