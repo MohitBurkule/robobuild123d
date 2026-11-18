@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_thwack_attack/robots/thwack_attack/spec.json",
- "rendered_at": 1795023485.205858,
+ "rendered_at": 1795024523.0709305,
  "bodies": [
   "chassis",
   "weapon",
@@ -10,9 +10,9 @@
   "wheel_r1",
   "fork_0",
   "fork_1",
-  "tail_arm",
   "side_pod_l",
-  "side_pod_r"
+  "side_pod_r",
+  "tail_arm"
  ],
  "wires": {}
 }
