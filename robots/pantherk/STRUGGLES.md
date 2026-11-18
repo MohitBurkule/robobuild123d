@@ -79,3 +79,12 @@ Result: likeness FAIL on both photos (aws67 iso 0.70, need 0.80; aws66 front 0.7
 
 ### Reproduce
 `python3 -m robot gen build --intent robots/pantherk/intent.json --out out/ --no-gate && python3 robots/pantherk/patch.py out/wedge.json robots/pantherk/spec.json && python3 -m robot fasteners --fill robots/pantherk/spec.json && python3 -m robot likeness robots/pantherk/spec.json`
+
+## Session 3: 4-wheel + split front blocks (brief9)
+Result: likeness FAIL. aws67 iso 0.76 (need 0.80), aws66 0.78 (need 0.80). Best camera flips between azimuths from run to run, so the score is noisy. Inner verify: 29 blockers (17 root causes). Renders: `robots/pantherk/renders/iso.png`, `top.png`.
+- Intent: smaller 92x92 body, zb -10 / zt 11 (low, as in the photos). patch.py now puts all four wheels outboard at the corners (x +-51, y -20 / 32), and turns the generator's full-width wedge into two short ramp blocks with a centre notch (cut boxes in `patch.py`).
+- Wedge offsets in patch.py are relative to y1 (46). They must be re-tuned if the intent length changes; the generator has no "two skirts / notch" key.
+- Missing generator support: 4WD, wheel x/y outboard of the shell, split wedge. All done by script on the output.
+- Moving wheels outboard leaves the generator's chassis wheel-clearance cuts and baseline teardown stale. That causes the new integrity.volume, proxy.assembly (idlers never taken off), proxy.wiring and chassis/idler overlap blockers. Not fixed.
+- aws66 mask lacks the wheels (cardboard background beats every --thr), so the model's wheels always count as red there. Mask limit.
+- Remaining shape gaps: thin side flipper plates, wheel size/position, rear half of body in the iso view.
