@@ -1,0 +1,125 @@
+BLOCKERS: 14
+  [cached] integrity 0.00s
+  [cached] mass 0.00s
+  [proxy] interference 0.15s
+  [cached] connections 0.00s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.00s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.00s
+  [cached] physics 0.00s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [cached] likeness 0.00s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.00s
+  [cached] waiver_audit 0.00s
+  [cached] geom 0.00s
+  [cached] dfm 0.00s
+  [cached] realworld 0.00s
+gargantua: ok=False 14 blockers in 14 root causes, mass 175.9/150 g
+1. [integrity.volume] `weapon` volume 7238 mm3 vs previous 30832 (-77%)
+   fix: The solid lost most of its material: check the last boolean/fillet.
+   | weapon: x -52.00..52.00  y -25.98..77.98  z 3.50..6.50  size 104.00 x 103.97 x 3.00 mm
+   |   centre (0.00, 26.00, 5.00), volume 7238.2 mm3
+   |   joint revolute axis [0, 0, 1] pivot [0.0, 26.0, 5.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.39 mm (allowed 0.08)
+   |   OVERLAP `dt_strut_tooth` 1.24 mm (allowed 0.08)
+2. [mass.over] 175.9 g (range 155.6 to 196.1 g) against the 150 g limit; 5.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+3. [proxy.interference] `chassis` and `weapon` overlap by 1.39 mm (allowed 0.08).
+   | chassis: x -32.00..32.00  y -31.00..31.00  z -12.00..14.00  size 64.00 x 62.00 x 26.00 mm
+   |   centre (0.00, 0.00, 1.00), volume 41864.6 mm3
+   |   OVERLAP `weapon` 1.39 mm (allowed 0.08)
+   |   overlap allowed `spoke2` 1.39 mm (allowed inf)
+   |   overlap allowed `spoke` 0.82 mm (allowed inf)
+4. [proxy.interference] `chassis` and `dt_hubw_weapon` overlap by 0.09 mm (allowed 0.08).
+   | chassis: x -32.00..32.00  y -31.00..31.00  z -12.00..14.00  size 64.00 x 62.00 x 26.00 mm
+   |   centre (0.00, 0.00, 1.00), volume 41864.6 mm3
+   |   OVERLAP `weapon` 1.39 mm (allowed 0.08)
+   |   overlap allowed `spoke2` 1.39 mm (allowed inf)
+   |   overlap allowed `spoke` 0.82 mm (allowed inf)
+5. [proxy.interference] `weapon` and `wheel_l0` overlap by 0.55 mm (allowed 0.08).
+   | weapon: x -52.00..52.00  y -25.98..77.98  z 3.50..6.50  size 104.00 x 103.97 x 3.00 mm
+   |   centre (0.00, 26.00, 5.00), volume 7238.2 mm3
+   |   joint revolute axis [0, 0, 1] pivot [0.0, 26.0, 5.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.39 mm (allowed 0.08)
+   |   OVERLAP `dt_strut_tooth` 1.24 mm (allowed 0.08)
+6. [proxy.interference] `weapon` and `wheel_r0` overlap by 0.54 mm (allowed 0.08).
+   | weapon: x -52.00..52.00  y -25.98..77.98  z 3.50..6.50  size 104.00 x 103.97 x 3.00 mm
+   |   centre (0.00, 26.00, 5.00), volume 7238.2 mm3
+   |   joint revolute axis [0, 0, 1] pivot [0.0, 26.0, 5.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.39 mm (allowed 0.08)
+   |   OVERLAP `dt_strut_tooth` 1.24 mm (allowed 0.08)
+7. [proxy.interference] `weapon` and `dt_strut_tooth` overlap by 1.24 mm (allowed 0.08).
+   | weapon: x -52.00..52.00  y -25.98..77.98  z 3.50..6.50  size 104.00 x 103.97 x 3.00 mm
+   |   centre (0.00, 26.00, 5.00), volume 7238.2 mm3
+   |   joint revolute axis [0, 0, 1] pivot [0.0, 26.0, 5.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.39 mm (allowed 0.08)
+   |   OVERLAP `dt_strut_tooth` 1.24 mm (allowed 0.08)
+8. [proxy.interference] `weapon` and `dm_wheel_l0` overlap by 0.70 mm (allowed 0.08).
+   | weapon: x -52.00..52.00  y -25.98..77.98  z 3.50..6.50  size 104.00 x 103.97 x 3.00 mm
+   |   centre (0.00, 26.00, 5.00), volume 7238.2 mm3
+   |   joint revolute axis [0, 0, 1] pivot [0.0, 26.0, 5.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.39 mm (allowed 0.08)
+   |   OVERLAP `dt_strut_tooth` 1.24 mm (allowed 0.08)
+9. [proxy.interference] `weapon` and `dm_wheel_r0` overlap by 0.70 mm (allowed 0.08).
+   | weapon: x -52.00..52.00  y -25.98..77.98  z 3.50..6.50  size 104.00 x 103.97 x 3.00 mm
+   |   centre (0.00, 26.00, 5.00), volume 7238.2 mm3
+   |   joint revolute axis [0, 0, 1] pivot [0.0, 26.0, 5.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.39 mm (allowed 0.08)
+   |   OVERLAP `dt_strut_tooth` 1.24 mm (allowed 0.08)
+10. [proxy.interference] `tooth` and `dt_strut_tooth` overlap by 0.84 mm (allowed 0.08).
+   | tooth: x 42.00..58.00  y 54.00..70.00  z -10.50..-7.50  size 16.00 x 16.00 x 3.00 mm
+   |   centre (50.00, 62.00, -9.00), volume 768.0 mm3
+   |   OVERLAP `dt_strut_tooth` 0.84 mm (allowed 0.08)
+   | dt_strut_tooth: x 39.20..44.14  y 51.16..56.16  z -10.16..6.16  size 4.95 x 4.99 x 16.33 mm
+   |   centre (41.67, 53.66, -2.00), volume 201.6 mm3
+11. [power.weapon_motor] `weapon` names motor None; it must be a catalog brushless motor so speed can be computed.
+   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
+   | weapon: x -52.00..52.00  y -25.98..77.98  z 3.50..6.50  size 104.00 x 103.97 x 3.00 mm
+   |   centre (0.00, 26.00, 5.00), volume 7238.2 mm3
+   |   joint revolute axis [0, 0, 1] pivot [0.0, 26.0, 5.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.39 mm (allowed 0.08)
+   |   OVERLAP `dt_strut_tooth` 1.24 mm (allowed 0.08)
+12. [wire.render_wires] 6 of 6 robot render(s) do not draw all 6 wires: renders/diff_gargantua.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_gargantua.aws67_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_gargantua.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/pick_gargantua.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_gargantua.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+... 2 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 175.9 g of 150 g (-25.9 g margin)
+    weapon                     57.18 g  fills 22% of its box
+    chassis                    39.86 g  fills 41% of its box
+    el_battery                 21.50 g  fills 100% of its box  <- solid block? a tub should be a shell
+    dm_wheel_l0                 9.70 g  fills 66% of its box
+    dm_wheel_r0                 9.70 g  fills 66% of its box
+    lid                         6.01 g  fills 62% of its box
+    el_wesc                     5.00 g  fills 94% of its box
+    wheel_l0                    4.12 g  fills 57% of its box
+    wheel_r0                    4.12 g  fills 57% of its box
+    el_rx_esc                   3.50 g  fills 100% of its box
+    spoke2                      2.50 g  fills 99% of its box
+    dt_hubw_weapon              1.83 g  fills 67% of its box
+    dt_strut_tooth              1.59 g  fills 50% of its box
+    dt_hub_wheel_l0             1.58 g  fills 66% of its box
+    dt_hub_wheel_r0             1.58 g  fills 66% of its box
+    dt_shaft_weapon             1.47 g  fills 79% of its box
+    spoke                       1.31 g  fills 52% of its box
+    tooth                       0.73 g  fills 100% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    mass.over: 175.9 g (range 155.6 to 196.1 g) against the 150 g limit; 5.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 6 hit / 0 miss, group 31 hit / 0 miss, min_gap 73 hit / 0 miss, overlap 491 hit / 0 miss, part_geom 19 hit / 0 miss
