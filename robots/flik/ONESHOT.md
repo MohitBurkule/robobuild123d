@@ -15,3 +15,9 @@ Likeness: aws70 0.76 (FAIL), aws74 0.81 (FAIL).
 Decisions: type flipper; body box rect 70x80x40 mm, ramp 0; wheels 2 r11 inboard; weapon none; extra parts: flipper; photos skipped (cluttered): indices [1].
 
 Likeness: aws70 0.77 (FAIL), aws74 0.84 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type flipper; body box rect 70x80x40 mm, ramp 0; wheels 2 r11 inboard; weapon none; extra parts: flipper; photos skipped (cluttered): indices [1].
+
+Likeness: aws70 0.74 (FAIL), aws74 0.67 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/flik.aws74.webp` is declared `front_left_iso` (IoU 0.67 there) but the model matches it better from front_right_iso (elevation 

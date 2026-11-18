@@ -8,5 +8,15 @@
  "photos": [
   "flik.aws70.webp",
   "flik.aws74.webp"
- ]
+ ],
+ "view": {
+  "flik.aws70.webp": "front_right_iso",
+  "flik.aws73.webp": "front_right_iso",
+  "flik.aws74.webp": "front_left_iso"
+ },
+ "elevation": {
+  "flik.aws70.webp": 45,
+  "flik.aws73.webp": 45,
+  "flik.aws74.webp": 45
+ }
 }

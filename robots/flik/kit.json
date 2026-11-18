@@ -21,7 +21,14 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "skip_photos": [
+  1
+ ],
+ "name": "flik",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "box": [
     86,
@@ -46,12 +53,5 @@
     0
    ]
   }
- ],
- "skip_photos": [
-  1
- ],
- "name": "flik",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }
