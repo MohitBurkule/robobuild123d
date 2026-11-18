@@ -8,3 +8,8 @@
 Decisions: type wedge; body box rect 92x80x24 mm, ramp 0; wheels 4 r10 outboard as treads; weapon none; extra parts: front_plate.
 
 Likeness: aws71 0.83 (ok).
+
+## Round 2 (looks)
+Decisions: type wedge; body box rect 92x80x24 mm, ramp 0; wheels 4 r10 outboard as treads; weapon none; extra parts: front_plate.
+
+Likeness: aws71 0.83 (ok).
