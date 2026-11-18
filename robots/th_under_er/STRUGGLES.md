@@ -4,3 +4,6 @@
 - Generator emits a top bridge, wedge and a bar above the roof; hspin_bar with under-body hook needs hand edits (patch.py strips them, moves the bar below, adds pods and hub disc).
 - Missing: intent keys for pods/centre disc/bar below the body, 4-wheel-free pods; likeness weapon width reads the default pose (joint default 90 needed to lay bar across x).
 - Floating insert-like cylinders appear outside the hex in iso render (not diagnosed).
+## Round 2
+- kit tool cannot do a hex/pentagon plan, so kept gen+patch. Added J-hook weapon, dropped inserts/bolts. Likeness still FAIL (IoU ~0.64/0.66; weapon centre 73% = front).
+- Unexplained floating cylinders beyond the rear corners in every render persist after dropping inserts/bolts; hook not visible in the render (hidden under plate or mis-oriented). Not resolved. No Haiku sub-agent available, read diff sheets myself.

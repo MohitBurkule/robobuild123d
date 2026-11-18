@@ -8179,70 +8179,6 @@
    ]
   },
   {
-   "id": "insert_c0",
-   "kind": "insert",
-   "catalog": "heatset_m2",
-   "at": [
-    19.9,
-    48.9,
-    -2.0
-   ],
-   "retained": "press_fit",
-   "rot": [
-    0.0,
-    0.0,
-    0.0
-   ]
-  },
-  {
-   "id": "insert_c1",
-   "kind": "insert",
-   "catalog": "heatset_m2",
-   "at": [
-    -19.9,
-    48.9,
-    -2.0
-   ],
-   "retained": "press_fit",
-   "rot": [
-    0.0,
-    0.0,
-    0.0
-   ]
-  },
-  {
-   "id": "insert_c2",
-   "kind": "insert",
-   "catalog": "heatset_m2",
-   "at": [
-    35.9,
-    -7.899999999999999,
-    -2.0
-   ],
-   "retained": "press_fit",
-   "rot": [
-    0.0,
-    0.0,
-    0.0
-   ]
-  },
-  {
-   "id": "insert_c3",
-   "kind": "insert",
-   "catalog": "heatset_m2",
-   "at": [
-    -35.9,
-    -7.899999999999999,
-    -2.0
-   ],
-   "retained": "press_fit",
-   "rot": [
-    0.0,
-    0.0,
-    0.0
-   ]
-  },
-  {
    "id": "battery",
    "kind": "battery",
    "catalog": "c_typical_2s_300mah_lipo_lihv_betafpv_tbs_",
@@ -8386,36 +8322,36 @@
       "type": "prism",
       "points": [
        [
-        -28.12,
-        -3.6
+        -28,
+        -4
        ],
        [
-        -25.9,
-        -6.0
+        22,
+        -4
        ],
        [
-        23.68,
-        -6.0
+        24,
+        -14
        ],
        [
-        28.12,
-        -1.2
+        30,
+        -26
        ],
        [
-        28.12,
-        3.6
+        22,
+        -30
        ],
        [
-        25.9,
-        6.0
+        14,
+        -20
        ],
        [
-        -23.68,
-        6.0
+        12,
+        4
        ],
        [
-        -28.12,
-        1.2
+        -28,
+        4
        ]
       ],
       "height": 3.0
@@ -8425,36 +8361,18 @@
        "type": "place",
        "shape": {
         "type": "cylinder",
-        "radius": 1.6,
+        "radius": 3.0,
         "height": 5.0
        },
        "at": [
-        11.1,
-        0.0,
-        0.0
+        22,
+        -16,
+        0
        ],
        "rot": [
-        0.0,
-        0.0,
-        0.0
-       ]
-      },
-      {
-       "type": "place",
-       "shape": {
-        "type": "cylinder",
-        "radius": 1.6,
-        "height": 5.0
-       },
-       "at": [
-        -11.1,
-        0.0,
-        0.0
-       ],
-       "rot": [
-        0.0,
-        0.0,
-        0.0
+        0,
+        0,
+        0
        ]
       }
      ]
@@ -8635,206 +8553,7 @@
    "label": "white centre disc cap over the weapon motor"
   }
  ],
- "fasteners": [
-  {
-   "id": "bolt_c0",
-   "designation": "M2x12",
-   "at": [
-    19.9,
-    48.9,
-    6.8
-   ],
-   "dir": [
-    0.0,
-    0.0,
-    -1.0
-   ],
-   "hole": {
-    "d": 2.0,
-    "length": 12.0,
-    "head": "cap",
-    "head_std": "ISO 4762",
-    "head_dk": 3.8,
-    "head_k": 2.0,
-    "clearance_d": 2.4,
-    "into": "insert",
-    "side": "both",
-    "cbore_d": 4.2,
-    "cbore_depth": 2.2,
-    "grip": 9.0,
-    "insert_d": 3.2,
-    "insert_len": 4.0,
-    "insert_depth": 4.3
-   },
-   "through": [
-    "chassis_top",
-    "chassis_bottom"
-   ],
-   "threads_into": "insert_c0",
-   "tool": "hex1.5",
-   "removable": true,
-   "head": "socket"
-  },
-  {
-   "id": "bolt_c1",
-   "designation": "M2x12",
-   "at": [
-    -19.9,
-    48.9,
-    6.8
-   ],
-   "dir": [
-    0.0,
-    0.0,
-    -1.0
-   ],
-   "hole": {
-    "d": 2.0,
-    "length": 12.0,
-    "head": "cap",
-    "head_std": "ISO 4762",
-    "head_dk": 3.8,
-    "head_k": 2.0,
-    "clearance_d": 2.4,
-    "into": "insert",
-    "side": "both",
-    "cbore_d": 4.2,
-    "cbore_depth": 2.2,
-    "grip": 9.0,
-    "insert_d": 3.2,
-    "insert_len": 4.0,
-    "insert_depth": 4.3
-   },
-   "through": [
-    "chassis_top",
-    "chassis_bottom"
-   ],
-   "threads_into": "insert_c1",
-   "tool": "hex1.5",
-   "removable": true,
-   "head": "socket"
-  },
-  {
-   "id": "bolt_c2",
-   "designation": "M2x12",
-   "at": [
-    35.9,
-    -7.899999999999999,
-    6.8
-   ],
-   "dir": [
-    0.0,
-    0.0,
-    -1.0
-   ],
-   "hole": {
-    "d": 2.0,
-    "length": 12.0,
-    "head": "cap",
-    "head_std": "ISO 4762",
-    "head_dk": 3.8,
-    "head_k": 2.0,
-    "clearance_d": 2.4,
-    "into": "insert",
-    "side": "both",
-    "cbore_d": 4.2,
-    "cbore_depth": 2.2,
-    "grip": 9.0,
-    "insert_d": 3.2,
-    "insert_len": 4.0,
-    "insert_depth": 4.3
-   },
-   "through": [
-    "chassis_top",
-    "chassis_bottom"
-   ],
-   "threads_into": "insert_c2",
-   "tool": "hex1.5",
-   "removable": true,
-   "head": "socket"
-  },
-  {
-   "id": "bolt_c3",
-   "designation": "M2x12",
-   "at": [
-    -35.9,
-    -7.899999999999999,
-    6.8
-   ],
-   "dir": [
-    0.0,
-    0.0,
-    -1.0
-   ],
-   "hole": {
-    "d": 2.0,
-    "length": 12.0,
-    "head": "cap",
-    "head_std": "ISO 4762",
-    "head_dk": 3.8,
-    "head_k": 2.0,
-    "clearance_d": 2.4,
-    "into": "insert",
-    "side": "both",
-    "cbore_d": 4.2,
-    "cbore_depth": 2.2,
-    "grip": 9.0,
-    "insert_d": 3.2,
-    "insert_len": 4.0,
-    "insert_depth": 4.3
-   },
-   "through": [
-    "chassis_top",
-    "chassis_bottom"
-   ],
-   "threads_into": "insert_c3",
-   "tool": "hex1.5",
-   "removable": true,
-   "head": "socket"
-  },
-  {
-   "id": "bolt_wma",
-   "designation": "M2x8",
-   "at": [
-    4.898587196589413e-16,
-    51.0,
-    -8.149999999999999
-   ],
-   "dir": [
-    0.0,
-    0.0,
-    1.0
-   ],
-   "through": [
-    "chassis_bottom"
-   ],
-   "threads_into": "weapon_motor",
-   "tool": "hex1.5",
-   "removable": true,
-   "head": "socket"
-  },
-  {
-   "id": "bolt_wmb",
-   "designation": "M2x8",
-   "at": [
-    -1.4695761589768238e-15,
-    35.0,
-    -8.149999999999999
-   ],
-   "dir": [
-    0.0,
-    0.0,
-    1.0
-   ],
-   "through": [
-    "chassis_bottom"
-   ],
-   "threads_into": "weapon_motor",
-   "tool": "hex1.5",
-   "removable": true,
-   "head": "socket"
-  }
- ],
+ "fasteners": [],
  "wires": [
   {
    "id": "w_bat_sw",
