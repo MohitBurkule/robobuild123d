@@ -1,12 +1,13 @@
 {
  "spec": "/tmp/work10_jiggy_sawdust/robots/jiggy_sawdust/spec.json",
- "rendered_at": 1795026047.484776,
+ "rendered_at": 1795033477.2750816,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
   "front_plate",
   "saw_blade",
+  "saw_body",
   "dt_hub_wheel_l0",
   "dt_axle_wheel_l0",
   "dt_nut_wheel_l0",

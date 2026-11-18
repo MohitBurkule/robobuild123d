@@ -11,7 +11,7 @@
   "radius": 14,
   "width": 8,
   "y": [
-   -10
+   -18
   ]
  },
  "colors": {
@@ -54,22 +54,38 @@
   },
   {
    "box": [
-    3,
-    70,
-    10
+    2,
+    80,
+    9
    ],
    "at": [
-    0,
-    -45,
-    40
+    10,
+    62,
+    38
    ],
    "weapon": "saw",
    "pivot": [
-    -20,
-    40
+    30,
+    38
    ],
    "id": "saw_blade",
-   "color": "#2a2a2e"
+   "color": "#2a2a2e",
+   "material": "steel",
+   "process": "laser"
+  },
+  {
+   "box": [
+    14,
+    30,
+    16
+   ],
+   "at": [
+    10,
+    22,
+    40
+   ],
+   "id": "saw_body",
+   "color": "#3a3d44"
   }
  ]
 }
