@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_valkyrie/robots/valkyrie/spec.json",
- "rendered_at": 1795023488.9220355,
+ "rendered_at": 1795026686.0382247,
  "bodies": [
   "chassis",
   "weapon",
@@ -12,7 +12,20 @@
   "cheek_r",
   "hub_r",
   "window_r",
-  "top_plate"
+  "top_plate",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_nut_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_nut_wheel_r0",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3",
+  "dt_shaft_weapon",
+  "dt_arm_weapon_0",
+  "dt_arm_weapon_1"
  ],
  "wires": {}
 }

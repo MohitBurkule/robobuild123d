@@ -11,5 +11,15 @@
  "photos": [
   "valkyrie.aws71.webp",
   "valkyrie.aws74.webp"
- ]
+ ],
+ "view": {
+  "valkyrie.aws70.webp": "front_left_iso",
+  "valkyrie.aws71.webp": "left",
+  "valkyrie.aws74.webp": "front_left_iso"
+ },
+ "elevation": {
+  "valkyrie.aws70.webp": 45,
+  "valkyrie.aws71.webp": 25,
+  "valkyrie.aws74.webp": 45
+ }
 }
