@@ -1,0 +1,70 @@
+{
+ "robot_type": "lifter",
+ "body": {
+  "length": 85,
+  "width": 92,
+  "height": 30,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 12,
+  "width": 10,
+  "y": [
+   -22
+  ],
+  "outside": false,
+  "x": 42
+ },
+ "colors": {
+  "body": "#1f4a38",
+  "wheel": "#22262a",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "box": [
+    92,
+    62,
+    2
+   ],
+   "at": [
+    0,
+    52,
+    18
+   ],
+   "weapon": "lifter",
+   "pivot": [
+    20,
+    34
+   ],
+   "id": "scoop",
+   "color": "#2a2c30",
+   "rot": [
+    -28,
+    0,
+    0
+   ]
+  },
+  {
+   "box": [
+    6,
+    60,
+    6
+   ],
+   "at": [
+    28,
+    0,
+    34
+   ],
+   "mirror": true,
+   "id": "link",
+   "color": "#1f4a38"
+  }
+ ],
+ "name": "alpha",
+ "weapon": {
+  "kind": "none"
+ }
+}
