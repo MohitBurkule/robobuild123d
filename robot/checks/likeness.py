@@ -9,8 +9,13 @@ collected the photos, NOT by the builder). All findings are blockers:
 - likeness.no_reference    no `reference` entry with a photo from reference/ and a mask.
 - likeness.mask_source     the mask is not the photo's own silhouette (`robot mask` of that photo, IoU < 0.85), so it
                            was drawn to fit the model.
-- likeness.silhouette      best IoU of the model's silhouette (any camera around the robot, mirrored or not) with the
-                           photo mask is below 0.70, or not clearly better (+0.05) than the stock template's.
+- likeness.silhouette      best IoU of the model's silhouette with the photo mask is below 0.80, or not better than the
+                           stock template's. Cameras: never mirrored (a photo is not a mirror image). With REFERENCE.json
+                           `view` {photo: top|front|rear|left|right|front_left_iso|front_right_iso|rear_left_iso|
+                           rear_right_iso|bottom} (+ optional `elevation` {photo: 25|45}) ONLY that camera; else any
+                           front or side camera (rear only with `rear_ok` [photos]).
+- likeness.view            a declared view whose camera matches clearly worse (-0.08) than another camera: the model
+                           faces the wrong way (built backwards / mirrored) or the declared view is wrong.
 - likeness.type            spec robot_type / wheel count differ from REFERENCE.json.
 - REFERENCE.json may also carry `photos` [usable photo file names; each needs an entry] and `mask_thr` {photo: thr}
   (the collector's `robot mask --thr` where the default picks up the floor) and `crop` {photo: [x0,y0,x1,y1] 0..1} and `mask_mode` {photo: "textured"}
@@ -156,14 +161,69 @@ def _sils(world):
         m, _ = ref.silhouette(world, d, up, px_mm=0.6)
         if m is not None and m.any():
             out += [m, m[:, ::-1]]
+        else:  # keep indices aligned with _dirs() (cam_name / allowed rely on it)
+            out += [None, None]
     return out
 
 
-def best_match(sils, mask):
-    """(iou, stats, index) of the silhouette that best matches the mask."""
+VIEWS = ("top", "front", "rear", "left", "right", "front_left_iso", "front_right_iso", "rear_left_iso",
+         "rear_right_iso", "bottom")
+
+
+def _cam(k):
+    """(elevation, azimuth of the camera position; 0 = robot's right (+x), 90 = front (+y)) for _dirs()[k]."""
+    if k < 24:
+        return (25, 45)[k // 12], (k % 12) * 30
+    return {24: (0, 180), 25: (0, 90), 26: (90, None)}[k]
+
+
+def allowed(view=None, elevation=None, rear_ok=False):
+    """Indices into _sils() (2 per camera: plain, mirrored) usable for a photo. Mirrored only for `bottom` (= top seen
+    from below)."""
+    out = []
+    for k in range(len(_dirs())):
+        el, az = _cam(k)
+        if elevation and el not in (elevation, 0, 90):
+            continue
+        if view in (None, ""):
+            ok_ = az is None or (rear_ok or not (180 < az < 360))
+        elif view == "top":
+            ok_ = az is None
+        elif view == "bottom":
+            if az is None:
+                out.append(2 * k + 1)
+            continue
+        else:
+            ranges = {"front": (90, 90), "rear": (270, 270), "right": (0, 0), "left": (180, 180),
+                      "front_right_iso": (30, 60), "front_left_iso": (120, 150), "rear_left_iso": (210, 240),
+                      "rear_right_iso": (300, 330)}
+            lo, hi = ranges[view]
+            ok_ = az is not None and lo <= az <= hi
+        if ok_:
+            out.append(2 * k)
+    return out
+
+
+def photo_view(rj, entry):
+    """(view, elevation, rear_ok) for a reference entry from REFERENCE.json (`view`, `elevation`, `rear_ok`), falling
+    back to the entry's own `view` when it is one of VIEWS."""
+    n = Path(entry["image"]).name
+    v = (rj.get("view") or {}).get(n) or (entry.get("view") if entry.get("view") in VIEWS else None)
+    if v and v not in VIEWS:
+        v = None
+    return v, (rj.get("elevation") or {}).get(n), n in (rj.get("rear_ok") or []) or v in ("rear", "rear_left_iso",
+                                                                                           "rear_right_iso")
+
+
+def best_match(sils, mask, allow=None):
+    """(iou, stats, index) of the silhouette that best matches the mask, over the `allow` indices (default: all
+    non-mirrored front / side / top cameras)."""
     from . import reference as ref
     best = (0.0, None, -1)
+    allow = set(allowed() if allow is None else allow)
     for i, s in enumerate(sils):
+        if i not in allow or s is None:
+            continue
         st = ref.compare(s, mask)[0]
         if st["iou"] > best[0]:
             best = (st["iou"], st, i)
@@ -175,12 +235,15 @@ def best_iou(sils, mask):
 
 
 def cam_name(i):
-    d = _dirs()
+    if i < 0:
+        return "none"
     k, mir = divmod(i, 2)
-    if k < 24:
-        el, az = (25, 45)[k // 12], (k % 12) * 30
-        return f"elevation {el} deg, azimuth {az} deg{' (mirrored)' if mir else ''}"
-    return ["side", "front", "top"][k - 24] + (" (mirrored)" if mir else "")
+    el, az = _cam(k)
+    if az is None:
+        return "bottom" if mir else "top"
+    side = {0: "right", 30: "front_right", 60: "front_right", 90: "front", 120: "front_left", 150: "front_left",
+            180: "left", 210: "rear_left", 240: "rear_left", 270: "rear", 300: "rear_right", 330: "rear_right"}[az]
+    return f"{side}{'_iso' if az % 90 else ''} (elevation {el}, azimuth {az})"
 
 
 def _jaxis(j):
@@ -227,8 +290,18 @@ def photos(ctx):
                             f"`{e['mask']}` matches `robot mask {e['image']} --thr {t:g}{cs}` at IoU {mj:.2f} (need {MASK_MIN}): "
                             "it was not taken from the photo.").fix(f"Regenerate it: `robot mask {e['image']} {e['mask']} --thr {t:g}{cs}`."))
             continue
-        iou, st, ci = best_match(sils, mask)
-        tiou, tname = _template_iou(base / e["mask"], mask)
+        view, elev, rear_ok = photo_view(rj, e)
+        allow = allowed(view, elev, rear_ok)
+        iou, st, ci = best_match(sils, mask, allow)
+        if view:
+            free = best_match(sils, mask, allowed(None, None, True))
+            if free[0] > iou + 0.08:
+                out.append(fail("likeness.view", G, BLOCKER, "Model faces the wrong way",
+                                f"`{e['image']}` is declared `{view}` (IoU {iou:.2f} there) but the model matches it "
+                                f"better from {cam_name(free[2])} (IoU {free[0]:.2f}).")
+                           .fix("Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or "
+                                "correct the photo's `view` in REFERENCE.json if the declared view is wrong."))
+        tiou, tname = _template_iou(base / e["mask"], mask, allow)
         # beat the closest template only while the match is mediocre; a strong match (>= SIL_STRONG) stands on its own
         # (literal copies are already caught by template_copy)
         need = SIL_MIN if iou >= SIL_STRONG else max(SIL_MIN, tiou + SIL_MARGIN)
@@ -289,6 +362,7 @@ def template_data(rebuild=False):
                 v, sl = _compute_template(p.stem)
             except Exception:  # noqa: BLE001 - a template that does not build cannot be copied either
                 continue
+            sl = [np.zeros((1, 1), bool) if x is None else x for x in sl]
             d = {"hash": h, "vox": v, "sils": [np.packbits(x, axis=None) for x in sl], "shapes": [x.shape for x in sl]}
             have[p.stem], changed = d, True
         sils = [np.unpackbits(b)[: sh[0] * sh[1]].reshape(sh).astype(bool) for b, sh in zip(d["sils"], d["shapes"])]
@@ -302,18 +376,20 @@ def template_data(rebuild=False):
     return out
 
 
-def _template_iou(path, mask):
-    """(best IoU, template name) over the stock templates' silhouettes (cached per mask + template set)."""
+def _template_iou(path, mask, allow=None):
+    """(best IoU, template name) over the stock templates' silhouettes, same cameras as the model (cached per mask +
+    cameras + template set)."""
     from .. import cache
-    key = ("likeness_tpl3", Path(path).read_bytes(),  # not the code hash: template data only changes with templates
+    allow = sorted(allowed() if allow is None else allow)
+    key = ("likeness_tpl4", Path(path).read_bytes(), tuple(allow),  # not the code hash: data only changes with templates
            *[_thash(p) for p in sorted(TEMPLATES.glob("*.json"))])
-    return tuple(cache.memo("likeness", key, lambda: _template_iou_raw(mask)))
+    return tuple(cache.memo("likeness", key, lambda: _template_iou_raw(mask, allow)))
 
 
-def _template_iou_raw(mask):
+def _template_iou_raw(mask, allow=None):
     best = (0.0, None)
     for name, (_, sils) in template_data().items():
-        i = best_match(sils, mask)[0]
+        i = best_match(sils, mask, allow)[0]
         if i > best[0]:
             best = (i, name)
     return best
@@ -456,16 +532,17 @@ def cli_main(path, out_dir=None):
     od = Path(out_dir or (_base(s) / "renders"))
     od.mkdir(parents=True, exist_ok=True)
     sils = _sils(w)
+    rj = _refjson(s)
     for e in ref.entries(s):
-        if not e.get("mask"):
+        if not e.get("mask") or not e.get("image"):
             continue
         mask = ref.load_mask(_base(s) / e["mask"])
-        _, _, ci = best_match(sils, mask)
+        _, _, ci = best_match(sils, mask, allowed(*photo_view(rj, e)))
         if ci >= 0:
             _, a, b = ref.compare(sils[ci], mask)
             png = od / f"likeness_{Path(e['mask']).stem}.png"
             png.write_bytes(ref.overlay_png(a, b))
-            print(f"overlay {png} (red = model only, blue = photo only, purple = both)")
+            print(f"overlay {png} camera {cam_name(ci)} (red = model only, blue = photo only, purple = both)")
     bad = [f for f in out if not f.passed]
     for f in out:
         print(f"[{'FAIL' if not f.passed else 'ok'}] {f.id}: {f.message}")
