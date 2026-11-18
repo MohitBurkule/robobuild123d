@@ -24,7 +24,7 @@ Likeness: aws72 0.57 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/orion.aws72.webp` is declared `front_right_iso` (IoU 0.57 there) but the model matches it better from front_left_iso (elevation
 
 ## Round 4 (verification, helper 2)
-Blockers r3 56 -> r4 12 (`verify --tier inner`).
+Blockers r3 56 -> r4 11 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -46,8 +46,7 @@ Left (and why):
 - electrical.battery_weapon_gap x1: toolchain: a limited-range arm is judged as a full revolution about its pivot; that cylinder covers the whole chassis.
 - wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
 - wire.rotor_clearance x4: toolchain: same full-revolution assumption; wires cannot leave a cylinder that covers the chassis.
-- likeness.view x1: looks, not in scope for this pass.
 - likeness.silhouette x1: looks, not in scope for this pass.
 - battery.rotor_gap x1: toolchain: same full-revolution assumption for a limited-range arm.
 
-Likeness (best silhouette IoU per photo, r3 -> r4): orion.aws72.webp 0.57 -> 0.57
+Likeness (best silhouette IoU per photo, r3 -> r4): orion.aws72.webp 0.74 -> 0.74
