@@ -19,3 +19,33 @@ Decisions: type vertical_spinner; body box rect 62x60x28 mm, ramp 0; wheels 2 r1
 
 Likeness: aws76 0.36 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/i_saw_that_.aws76.webp` is declared `front_left_iso` (IoU 0.36 there) but the model matches it better from rear_left_iso (eleva
+
+## Round 4 (verification, helper 2)
+Blockers r3 54 -> r4 5 (`verify --tier inner`).
+
+Fixed / changed (inside only, outside kept):
+- detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
+- catalog parts added in free space inside the printed parts with 0.25 mm pockets: `dm_wheel_l0` (pololu_hpcb6v_50to1), `dm_wheel_r0` (pololu_hpcb6v_50to1), `el_battery` (lipo_2s_350), `el_esc` (bbb_malenki_nano), `el_wesc` (bbb_brushless_esc_20a), `el_switch` (switch_slide_12x4), `weapon_motor` (brotherhobby_tc1404_3800kv), `lock_pin` (made)
+- overlaps resolved by cuts that keep the union of the parts (pockets, bores, wheel and spinner running clearance)
+- one print with the chassis (same material, `fused_with`): `arm`, `jaw_l`, `jaw_r`, `dt_hub_wheel_l0`, `dt_hub_wheel_r0`
+- 7 wires declared (battery - switch - ESC - motors)
+- print orientation on every printed part, failsafe / weapon disable declared, design volumes declared where this pass changed a part on purpose
+- power switch on the floor of the body, slider facing down to a 7 x 3 mm slot in the underside (no slot on the top or sides; hollow cavities stay closed behind a wall at every outside face)
+- weapon drive: motor not coaxial, belt drive implied
+- rod dt_axle_wheel_l0: 2.8 mm stub clear of ['dm_wheel_l0'] printed as the wheel's hub boss
+- rod dt_axle_wheel_r0: 2.8 mm stub clear of ['dm_wheel_r0'] printed as the wheel's hub boss
+- mass estimate 203 g over 150: walls 2 mm -> 195 g
+- mass estimate 195 g over 150: walls 1.6 mm -> 188 g
+- hollowed chassis (wall 1.6, form 0): 104.2 -> 43.3 cm3
+- hollowed arm (wall 1.6, form 0): 3.2 -> 2.4 cm3
+- hollowed jaw_l (wall 1.6, form 0): 22.7 -> 8.6 cm3
+- hollowed jaw_r (wall 1.6, form 0): 22.7 -> 8.3 cm3
+
+Left (and why):
+- mass.over x1: the photo-sized outside (steel weapon / big printed shell) is heavier than 150 g even hollowed; only a smaller outside would fix it.
+- dynamics.balance x1: `weapon` mass centre is 0.104 mm off the spin axis: grade G346.4 at 31920 rpm, a 63 N rotating load on the bearings and frame. That is 33.6x the robot's weight. It will shake the robot and the bearing
+- wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
+- likeness.view x1: looks, not in scope for this pass.
+- likeness.silhouette x1: looks, not in scope for this pass.
+
+Likeness (best silhouette IoU per photo, r3 -> r4): i_saw_that_.aws76.webp 0.36 -> 0.36
