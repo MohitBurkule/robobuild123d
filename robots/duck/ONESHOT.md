@@ -25,3 +25,8 @@ likeness crashed on REFERENCE weapon.axis for a non-spinner weapon (`p.joint.get
 
 ## Verdict
 Looks alike: **partly**. Renders: `renders/iso.png`, `renders/top.png`.
+
+## Round 2 (looks)
+Dark body with rounded tail plan, curved rear hooks, salmon front pad plus steel lip. Weapon axis restored in REFERENCE.json.
+
+Likeness: aws67 0.80 (FAIL), aws71 0.66 (FAIL), aws72 0.75 (FAIL).

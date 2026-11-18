@@ -3,8 +3,9 @@
  "wheels": 2,
  "weapon": {
   "kind": "flipper",
+  "axis": "x",
   "position": "middle",
-  "width_frac": 0.55
+  "width_frac": 0.53
  },
  "photos": [
   "duck_ling_.aws67.webp",
