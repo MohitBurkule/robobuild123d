@@ -31,16 +31,16 @@ Likeness (best silhouette IoU per photo, r3 -> r4): unstoppable_force.aws69.webp
 What was done (script r4_h1, outside shape kept):
 - fake screw/bolt heads removed; detail mounts/arms merged into the print part they sit on; axle nuts became printed hub caps
 - printed parts of the chassis material declared one print (`fused_with`, a hidden 1.6 mm key where they only touched); overlaps inside the print trimmed
-- catalog parts: N20 gearmotors on the drive wheels (D-bore in the hub), LiPo, Malenki Nano (receiver + drive ESCs), brushless weapon ESC and outrunner for spinners, slide switch sunk in the top skin, steel locking pin through the weapon
-- pockets 0.25 mm per side round every bought part with 2 mm print walls, wheel/weapon running clearances <= 1.5 mm, hinge sweep clearances, shaft bores
-- big print parts hollowed (cavity = part eroded by the wall, checked >= 1 mm inside the skin); wires with gauges and via points round rotors; print orientation, failsafe and weapon disable declared
+- catalog parts: N20 gearmotors on the drive wheels (D-bore in the hub), LiPo, Malenki Nano (receiver + drive ESCs), brushless weapon ESC and outrunner for spinners, slide switch in a closed pocket above the belly skin, reached through an 8 x 4 mm slot underneath, steel locking pin through the weapon
+- pockets 0.25 mm per side round every bought part with 2 mm print walls, wheel/weapon running clearances <= 1.5 mm (no clearance cut where the kit rotor sits deep in the body: that would open the outside), hinge sweep clearances, shaft bores
+- big print parts hollowed (cavity = part eroded by the wall, checked >= 1 mm inside the skin, no cavity opens to the outside); wires with gauges and via points round rotors; print orientation, failsafe and weapon disable declared
 
 Notes from the run:
 - dt_axle_wheel_l0 replaced by the gearmotor shaft
 - dt_axle_wheel_r0 replaced by the gearmotor shaft
 - weapon motor inside weapon (outrunner-in-drum), bore cut
 - dt_shaft_weapon: split into two stub axles round the in-drum motor
-- chassis: hollowed (box wall round pockets), 184895 -> 83133 mm3
+- chassis: hollowed (box wall round pockets), 184917 -> 82741 mm3
 - drum_arm_l: hollowed (exact wall round pockets), 8314 -> 7166 mm3 (4 thin spots kept solid)
 - drum_arm_r: hollowed (exact wall round pockets), 8298 -> 7201 mm3 (5 thin spots kept solid)
 - wire w_phases: no via round the rotor found

@@ -390,8 +390,8 @@
        },
        "at": [
         -0.0,
-        -25.5,
-        11.5
+        -45.9,
+        -11.5
        ],
        "rot": [
         0.0,
@@ -404,15 +404,15 @@
        "shape": {
         "type": "box",
         "size": [
-         12.0,
+         8.0,
          4.0,
-         5.5
+         4.5
         ]
        },
        "at": [
-        -0.0,
-        -25.5,
-        15.25
+        -2.1,
+        -45.9,
+        -13.75
        ],
        "rot": [
         0.0,
@@ -1845,8 +1845,8 @@
         },
         "at": [
          0.0,
-         -25.5,
-         11.5
+         -45.9,
+         -11.5
         ],
         "rot": [
          0.0,
@@ -1859,15 +1859,15 @@
         "shape": {
          "type": "box",
          "size": [
-          17.0,
+          13.0,
           9.0,
-          10.5
+          9.5
          ]
         },
         "at": [
-         0.0,
-         -25.5,
-         15.25
+         -2.1,
+         -45.9,
+         -13.75
         ],
         "rot": [
          0.0,
@@ -1996,7 +1996,7 @@
    ],
    "color": "#22262a",
    "print_orientation": "+z",
-   "volume_mm3": 83202.0
+   "volume_mm3": 82809.0
   },
   {
    "id": "weapon",
@@ -4958,11 +4958,11 @@
    "kind": "switch",
    "at": [
     -0.0,
-    -25.5,
-    11.5
+    -45.9,
+    -11.5
    ],
    "rot": [
-    0,
+    180,
     0,
     0
    ],
@@ -4976,7 +4976,7 @@
     0
    ],
    "retained": "pocket",
-   "retained_reason": "switch body sits in a 0.1 mm-per-side printed slot under the top skin; the slot walls capture it"
+   "retained_reason": "switch body sits in a 0.1 mm-per-side printed pocket above the belly skin; the pocket walls capture it"
   },
   {
    "id": "lock_pin",
@@ -5107,7 +5107,7 @@
    "a": "el_switch",
    "b": "chassis",
    "method": "interlock",
-   "reason": "slide switch sits in a printed slot sunk 1.5 mm into the top skin, slot walls hold it on four sides, the top lip on the fifth"
+   "reason": "slide switch sits in a printed pocket 1.5 mm above the belly skin, reached through an 8 x 4 mm slot; the pocket walls hold it on every side"
   },
   {
    "a": "lock_pin",
