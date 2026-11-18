@@ -13,7 +13,7 @@ collected the photos, NOT by the builder). All findings are blockers:
                            photo mask is below 0.70, or not clearly better (+0.05) than the stock template's.
 - likeness.type            spec robot_type / wheel count differ from REFERENCE.json.
 - REFERENCE.json may also carry `photos` [usable photo file names; each needs an entry] and `mask_thr` {photo: thr}
-  (the collector's `robot mask --thr` where the default picks up the floor) and `crop` {photo: [x0,y0,x1,y1] 0..1}
+  (the collector's `robot mask --thr` where the default picks up the floor) and `crop` {photo: [x0,y0,x1,y1] 0..1} and `mask_mode` {photo: "textured"}
   (keep one robot when the photo shows two).
 - likeness.weapon          REFERENCE.json `weapon` {kind, axis, position, width_frac, teeth}: weapon part missing, wrong
                            kind, wrong axis, wrong place, wrong width (+-25 %), wrong tooth count.
@@ -212,11 +212,12 @@ def photos(ctx):
     for e in ents:
         mask = ref.load_mask(base / e["mask"])
         crop = (rj.get("crop") or {}).get(Path(e["image"]).name)
-        auto = photo_mask(base / e["image"], float(thr.get(Path(e["image"]).name, THR)), crop=crop)
+        mode = (rj.get("mask_mode") or {}).get(Path(e["image"]).name, "plain")
+        auto = photo_mask(base / e["image"], float(thr.get(Path(e["image"]).name, THR)), crop=crop, mode=mode)
         mj = ref.compare(auto, mask)[0]["iou"]
         if mj < MASK_MIN:
             t = thr.get(Path(e["image"]).name, THR)
-            cs = f" --crop {','.join(f'{v:g}' for v in crop)}" if crop else ""
+            cs = (f" --crop {','.join(f'{v:g}' for v in crop)}" if crop else "") + (" --textured" if mode == "textured" else "")
             out.append(fail("likeness.mask_source", G, BLOCKER, "Mask is not the photo's outline",
                             f"`{e['mask']}` matches `robot mask {e['image']} --thr {t:g}{cs}` at IoU {mj:.2f} (need {MASK_MIN}): "
                             "it was not taken from the photo.").fix(f"Regenerate it: `robot mask {e['image']} {e['mask']} --thr {t:g}{cs}`."))
