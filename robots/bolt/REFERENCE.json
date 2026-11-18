@@ -12,5 +12,13 @@
  "photos": [
   "bolt.aws57.webp",
   "bolt.aws63.webp"
- ]
+ ],
+ "crop": {
+  "bolt.aws63.webp": [
+   0.04,
+   0,
+   1,
+   1
+  ]
+ }
 }

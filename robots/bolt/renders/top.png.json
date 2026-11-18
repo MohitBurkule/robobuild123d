@@ -1,0 +1,97 @@
+{
+ "spec": "/tmp/work5_bolt/robots/bolt/spec.json",
+ "rendered_at": 1795017928.4650357,
+ "bodies": [
+  "chassis_bottom",
+  "chassis_top",
+  "motor_l",
+  "wheel_l",
+  "motor_r",
+  "wheel_r",
+  "insert_c0",
+  "insert_c1",
+  "insert_c2",
+  "insert_c3",
+  "battery",
+  "esc",
+  "rx",
+  "power_switch",
+  "wedge",
+  "insert_w0",
+  "insert_w1",
+  "insert_w2",
+  "insert_w3",
+  "idler_l",
+  "idler_r",
+  "bolt_c0",
+  "bolt_c1",
+  "bolt_c2",
+  "bolt_c3",
+  "bolt_w0",
+  "bolt_w1",
+  "bolt_w2",
+  "bolt_w3"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    -4.0,
+    34.0,
+    0.0
+   ],
+   "to": [
+    -20.0,
+    -42.0,
+    19.5
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    -12.0,
+    -42.0,
+    19.5
+   ],
+   "to": [
+    2.0,
+    -42.0,
+    3.0
+   ]
+  },
+  "w_esc_ml": {
+   "from": [
+    10.0,
+    -36.0,
+    3.0
+   ],
+   "to": [
+    5.549999999999997,
+    -16.0,
+    0.0
+   ]
+  },
+  "w_esc_mr": {
+   "from": [
+    -6.0,
+    -36.0,
+    3.0
+   ],
+   "to": [
+    -5.549999999999997,
+    -16.0,
+    0.0
+   ]
+  },
+  "w_rx_esc": {
+   "from": [
+    1.0,
+    9.8,
+    0.0
+   ],
+   "to": [
+    2.0,
+    -30.0,
+    3.0
+   ]
+  }
+ }
+}

@@ -81,3 +81,21 @@ Scope: rough CAD attempt from the three AWS photos in `reference/`, about 20 min
 
 ### Likeness
 - FAIL.
+
+## Round: photo fit tools (robot mask --crop, fit-photo, likeness loop)
+
+### What the new tools did
+- `robot mask --crop`: aws63 had a second object (another robot's wheel) at the left edge. `crop: {"bolt.aws63.webp": [0.04,0,1,1]}` in REFERENCE.json removed it. The mask was checked by eye (Read) and holds one robot. aws57 needed no crop.
+- `robot fit-photo --length 120 --weapon-axis x`: gave width 114, height 36, front ramp 54, length 120, weapon-like cylinder r36 at 108 mm from the back (IoU 0.85 coarse envelope). The body was set from these numbers via an explicit outline (x +-57, y -50..70), zb -10, zt 26.
+- The fit-driven build was much closer than the default box (aws57 0.80, aws63 0.78 after idler patch).
+
+### What it did not help with
+- The fit's weapon cylinder (r36 along x) does not describe a wedge. The weapon stays `kind: wedge`, so the fitted cylinder is ignored. The weapon check is not clean.
+- Taller bodies made it worse: zt 30 gave 0.78 / 0.79, zt 34 gave 0.78 / 0.79. The "too flat" hint is not fixed by height alone.
+- A fresh `gen build` drops idler wheels and the reference block. `robots/bolt/patch.py` re-adds them (reproducible, do not hand-edit spec.json).
+
+### Still missing
+- Likeness FAILS: aws57 0.80 (needs 0.83, the stock `hspin_bar` template); aws63 0.78 (needs 0.80). Both are below the bar.
+- Verify inner: 16 blockers / 13 root causes, mass 203.7 g over 150 g, footprint 169.5 mm over 150 mm, screws `bolt_c*` engage 0 mm in `insert_c*` (the insert sits 3 mm below the chassis top), idler overlap 0.70 mm with `chassis_bottom`, wiring routes stale (proxy.wiring) and two likeness overlays lack render records.
+- The generator has no wedge-ramp option tied to the fitted ramp (54 mm). The outline is still a box.
+- `fasteners --fill` added 8 hole records (`bolt_w*`, `insert_*`). The engagement issue was not fixed.
