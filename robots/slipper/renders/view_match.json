@@ -1,8 +1,8 @@
 {
  "slipper.aws62.webp": {
-  "view": "120,60",
-  "azimuth": 110.0,
-  "elevation": 52.0,
-  "iou": 0.718
+  "view": "105,42~",
+  "azimuth": 85.0,
+  "elevation": 27.0,
+  "iou": 0.886
  }
 }
