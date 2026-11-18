@@ -8,7 +8,7 @@
   {
    "id": "chassis",
    "kind": "structure",
-   "material": "nylon",
+   "material": "abs",
    "process": "fdm",
    "shape": {
     "type": "subtract",
@@ -2329,27 +2329,53 @@
   {
    "id": "flipper",
    "kind": "weapon",
-   "material": "nylon",
+   "material": "abs",
    "process": "fdm",
    "shape": {
-    "type": "place",
-    "shape": {
-     "type": "box",
-     "size": [
-      58,
-      70,
-      5
+    "type": "subtract",
+    "base": {
+     "type": "place",
+     "shape": {
+      "type": "box",
+      "size": [
+       58,
+       70,
+       5
+      ]
+     },
+     "at": [
+      0,
+      14,
+      11.5
+     ],
+     "rot": [
+      -20.2,
+      0,
+      0
      ]
     },
-    "at": [
-     0,
-     14,
-     11.5
-    ],
-    "rot": [
-     -20.2,
-     0,
-     0
+    "cut": [
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        50,
+        62,
+        2.2
+       ]
+      },
+      "at": [
+       0,
+       14,
+       11.5
+      ],
+      "rot": [
+       -20.2,
+       0,
+       0
+      ]
+     }
     ]
    },
    "at": [
@@ -2387,7 +2413,7 @@
   {
    "id": "front_plate",
    "kind": "wedge",
-   "material": "nylon",
+   "material": "abs",
    "process": "fdm",
    "shape": {
     "type": "subtract",
@@ -3138,13 +3164,13 @@
      "size": [
       110,
       4,
-      1.2
+      1.0
      ]
     },
     "at": [
      0,
      76,
-     -11.3
+     -11.4
     ],
     "rot": [
      0,
@@ -3167,7 +3193,7 @@
   {
    "id": "hook_l",
    "kind": "other",
-   "material": "nylon",
+   "material": "abs",
    "process": "fdm",
    "shape": {
     "type": "subtract",
@@ -3632,7 +3658,7 @@
   {
    "id": "hook_r",
    "kind": "other",
-   "material": "nylon",
+   "material": "abs",
    "process": "fdm",
    "shape": {
     "type": "subtract",

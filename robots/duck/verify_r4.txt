@@ -1,112 +1,113 @@
-BLOCKERS: 14
-  [cached] integrity 0.00s
-  [cached] mass 0.00s
-  [proxy] interference 0.16s
-  [cached] connections 0.00s
-  [cached] legal 0.00s
-  [cached] fasteners 0.00s
-  [cached] power 0.00s
-  [cached] tension 0.00s
-  [cached] targets 0.00s
-  [cached] fight 0.00s
-  [cached] shape 0.00s
-  [cached] dynamics 0.00s
-  [cached] strength 0.00s
-  [cached] printability 0.00s
-  [cached] process 0.00s
-  [cached] electrical 0.00s
-  [cached] combat 0.00s
-  [cached] physics 0.00s
-  [cached] plausibility 0.00s
-  [cached] cots 0.00s
-  [cached] fit 0.00s
-  [cached] bom 0.00s
-  [cached] wire_review 0.00s
-  [cached] fastener_record 0.00s
-  [cached] likeness 0.00s
-  [cached] drive_recess 0.00s
-  [cached] belt_wrap 0.00s
-  [cached] retention 0.00s
-  [cached] waiver_audit 0.01s
-  [cached] geom 0.00s
-  [cached] dfm 0.00s
-  [cached] realworld 0.00s
-duck: ok=False 14 blockers in 14 root causes, mass 160.6/150 g
-1. [mass.over] 160.6 g (range 130.4 to 190.7 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
-   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
-2. [power.weapon_motor] `flipper` names motor None; it must be a catalog brushless motor so speed can be computed.
+BLOCKERS: 12
+  [ran] integrity 0.08s
+  [ran] mass 0.00s
+  [proxy] interference 29.53s
+  [ran] connections 0.18s
+  [ran] legal 0.05s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.03s
+  [ran] shape 1.35s
+  [ran] dynamics 0.01s
+  [ran] strength 0.00s
+  [ran] printability 1.06s
+  [ran] process 0.01s
+  [ran] electrical 0.01s
+  [ran] combat 0.28s
+  [ran] physics 0.01s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.14s
+  [ran] bom 0.00s
+  [ran] wire_review 0.03s
+  [ran] fastener_record 0.00s
+  [ran] likeness 25.56s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.01s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.28s
+  [ran] dfm 0.06s
+  [ran] realworld 0.09s
+duck: ok=False 12 blockers in 12 root causes, mass 147.2/150 g
+1. [power.weapon_motor] `flipper` names motor None; it must be a catalog brushless motor so speed can be computed.
    fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
    | flipper: x -29.00..29.00  y -19.71..47.71  z -2.93..25.93  size 58.00 x 67.42 x 28.86 mm
-   |   centre (0.00, 14.00, 11.50), volume 20300.0 mm3
+   |   centre (0.00, 14.00, 11.50), volume 13480.0 mm3
    |   joint revolute axis [1, 0, 0] pivot [0, -20, 24] range 0..60 default 0
    |   gap to `chassis` 0.00 mm (touching)
    |   gap to `front_plate` 0.00 mm (touching)
-3. [process.weapon_printed] Weapon `flipper` is fdm-printed with no hardened metal insert teeth.
+2. [process.weapon_printed] Weapon `flipper` is fdm-printed with no hardened metal insert teeth.
    fix: Make it metal (sheet_cut / turned / milled) or add hardened steel tooth parts (`parent` = the weapon).
    | flipper: x -29.00..29.00  y -19.71..47.71  z -2.93..25.93  size 58.00 x 67.42 x 28.86 mm
-   |   centre (0.00, 14.00, 11.50), volume 20300.0 mm3
+   |   centre (0.00, 14.00, 11.50), volume 13480.0 mm3
    |   joint revolute axis [1, 0, 0] pivot [0, -20, 24] range 0..60 default 0
    |   gap to `chassis` 0.00 mm (touching)
    |   gap to `front_plate` 0.00 mm (touching)
-4. [mfg.stock] `front_lip` (laser): thickness 1.20 mm is not a stock titanium gauge (0.5, 0.8, 0.9, 1, 1.5, 2, 3, 4, 5, 6, 8, 10); nearest 1 mm.
-   fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
-   | front_lip: x -55.00..55.00  y 74.00..78.00  z -11.90..-10.70  size 110.00 x 4.00 x 1.20 mm
-   |   centre (0.00, 76.00, -11.30), volume 528.0 mm3
-   |   gap to `front_plate` 0.00 mm (touching)
-5. [electrical.battery_weapon_gap] Battery is -4.7 mm from the weapon's swept volume (need >= 3 mm plus a wall).
+3. [electrical.battery_weapon_gap] Battery is -4.7 mm from the weapon's swept volume (need >= 3 mm plus a wall).
    fix: Move the battery >= 3 mm from the swept volume.
-6. [wire.render_wires] 14 of 14 robot render(s) do not draw all 4 wires: renders/diff_duck_ling_.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_duck_ling_.aws71.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_duck_ling_.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/iso.png: rendered without wires (checks off or no routes); renders/likeness_duck_ling_.aws67_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_duck_ling_.aws71_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_duck_ling_.aws72_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_duck_ling_.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn...
+4. [wire.render_wires] 2 of 2 robot render(s) do not draw all 4 wires: renders/iso.png: rendered without wires (checks off or no routes); renders/top.png: rendered without wires (checks off or no routes)
    fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
-7. [wire.rotor_clearance] wire `w_bat_sw` passes -0.9 mm from the volume swept by the `flipper` rotor (flipper) at [-0.5, 15.5, -3.3].
+5. [wire.rotor_clearance] wire `w_bat_sw` passes -0.9 mm from the volume swept by the `flipper` rotor (flipper) at [-0.5, 15.5, -3.3].
    fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
    | flipper: x -29.00..29.00  y -19.71..47.71  z -2.93..25.93  size 58.00 x 67.42 x 28.86 mm
-   |   centre (0.00, 14.00, 11.50), volume 20300.0 mm3
+   |   centre (0.00, 14.00, 11.50), volume 13480.0 mm3
    |   joint revolute axis [1, 0, 0] pivot [0, -20, 24] range 0..60 default 0
    |   gap to `chassis` 0.00 mm (touching)
    |   gap to `front_plate` 0.00 mm (touching)
-8. [wire.rotor_clearance] wire `w_sw_esc` passes -0.9 mm from the volume swept by the `flipper` rotor (flipper) at [4.5, -13.5, -3.8].
+6. [wire.rotor_clearance] wire `w_sw_esc` passes -0.9 mm from the volume swept by the `flipper` rotor (flipper) at [4.5, -13.5, -3.8].
    fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
    | flipper: x -29.00..29.00  y -19.71..47.71  z -2.93..25.93  size 58.00 x 67.42 x 28.86 mm
-   |   centre (0.00, 14.00, 11.50), volume 20300.0 mm3
+   |   centre (0.00, 14.00, 11.50), volume 13480.0 mm3
    |   joint revolute axis [1, 0, 0] pivot [0, -20, 24] range 0..60 default 0
    |   gap to `chassis` 0.00 mm (touching)
    |   gap to `front_plate` 0.00 mm (touching)
-9. [wire.rotor_clearance] wire `w_m1` passes -0.7 mm from the volume swept by the `flipper` rotor (flipper) at [16.5, 8.5, 5.7].
+7. [wire.rotor_clearance] wire `w_m1` passes -0.7 mm from the volume swept by the `flipper` rotor (flipper) at [16.5, 8.5, 5.7].
    fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
    | flipper: x -29.00..29.00  y -19.71..47.71  z -2.93..25.93  size 58.00 x 67.42 x 28.86 mm
-   |   centre (0.00, 14.00, 11.50), volume 20300.0 mm3
+   |   centre (0.00, 14.00, 11.50), volume 13480.0 mm3
    |   joint revolute axis [1, 0, 0] pivot [0, -20, 24] range 0..60 default 0
    |   gap to `chassis` 0.00 mm (touching)
    |   gap to `front_plate` 0.00 mm (touching)
-10. [wire.rotor_clearance] wire `w_m2` passes -0.7 mm from the volume swept by the `flipper` rotor (flipper) at [-15.5, 8.5, 5.7].
+8. [wire.rotor_clearance] wire `w_m2` passes -0.7 mm from the volume swept by the `flipper` rotor (flipper) at [-15.5, 8.5, 5.7].
    fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
    | flipper: x -29.00..29.00  y -19.71..47.71  z -2.93..25.93  size 58.00 x 67.42 x 28.86 mm
-   |   centre (0.00, 14.00, 11.50), volume 20300.0 mm3
+   |   centre (0.00, 14.00, 11.50), volume 13480.0 mm3
    |   joint revolute axis [1, 0, 0] pivot [0, -20, 24] range 0..60 default 0
    |   gap to `chassis` 0.00 mm (touching)
    |   gap to `front_plate` 0.00 mm (touching)
-11. [likeness.silhouette] `reference/duck_ling_.aws67.webp`: best silhouette IoU 0.80 at camera front_left_iso (elevation 45, azimuth 120) (need 0.85: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.85). Regions (photo frame, left third first) 0.79 / 0.92 / 0.60: worst = rear third. Height/length 0.89 model vs 0.93 photo (proportions ok).
+9. [likeness.silhouette] `reference/duck_ling_.aws67.webp`: best silhouette IoU 0.80 at camera front_left_iso (elevation 45, azimuth 120) (need 0.85: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.85). Regions (photo frame, left third first) 0.79 / 0.92 / 0.60: worst = rear third. Height/length 0.89 model vs 0.93 photo (proportions ok).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
-12. [likeness.silhouette] `reference/duck_ling_.aws71.webp`: best silhouette IoU 0.66 at camera front_left_iso (elevation 45, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `vspin_drisk` at 0.78). Regions (photo frame, left third first) 0.42 / 0.78 / 0.65: worst = front third. Height/length 0.80 model vs 0.70 photo (too tall: lower it or lengthen it).
+10. [likeness.silhouette] `reference/duck_ling_.aws71.webp`: best silhouette IoU 0.66 at camera front_left_iso (elevation 45, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `vspin_drisk` at 0.78). Regions (photo frame, left third first) 0.42 / 0.78 / 0.65: worst = front third. Height/length 0.80 model vs 0.70 photo (too tall: lower it or lengthen it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
-... 2 more root causes (fix these first, then re-run)
+11. [likeness.silhouette] `reference/duck_ling_.aws72.webp`: best silhouette IoU 0.76 at camera front_right_iso (elevation 45, azimuth 30) (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.76). Regions (photo frame, left third first) 0.61 / 0.90 / 0.66: worst = front third. Height/length 0.80 model vs 0.78 photo (proportions ok).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+12. [battery.rotor_gap] `el_battery` is 0.0 mm from the volume swept by `flipper`.
+   fix: Move the battery or add a wall.
+   | el_battery: x -14.50..13.50  y -4.50..13.50  z -8.25..1.75  size 28.00 x 18.00 x 10.00 mm
+   |   centre (-0.50, 4.50, -3.25), volume 5040.0 mm3
+   |   port xt30: (-0.50, 15.50, -3.25)
+   |   gap to `chassis` 0.25 mm
+   |   gap to `el_esc` 2.75 mm
 MASS BUDGET:
-  mass 160.6 g of 150 g (-10.6 g margin)
-    chassis                    80.05 g  fills 21% of its box
-    flipper                    19.33 g  fills 18% of its box
+  mass 147.2 g of 150 g (+2.8 g margin)
+    chassis                    75.04 g  fills 21% of its box
     el_battery                 12.50 g  fills 100% of its box
+    flipper                    12.03 g  fills 12% of its box
     dm_wheel_l0                 9.50 g  fills 63% of its box
     dm_wheel_r0                 9.50 g  fills 63% of its box
-    front_plate                 6.78 g  fills 12% of its box
+    front_plate                 6.36 g  fills 12% of its box
     wheel_l0                    4.57 g  fills 67% of its box
     wheel_r0                    4.57 g  fills 67% of its box
-    front_lip                   2.34 g  fills 100% of its box
     el_esc                      2.30 g  fills 99% of its box
-    hook_l                      2.11 g  fills 35% of its box
-    hook_r                      2.11 g  fills 35% of its box
+    hook_l                      1.98 g  fills 35% of its box
+    hook_r                      1.98 g  fills 35% of its box
+    front_lip                   1.95 g  fills 100% of its box
     dt_hub_wheel_l0             1.34 g  fills 75% of its box
     dt_hub_wheel_r0             1.34 g  fills 75% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.over: 160.6 g (range 130.4 to 190.7 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.may_be_over: 147.2 g (range 119.6 to 174.7 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: group 31 hit / 0 miss, min_gap 55 hit / 0 miss, overlap 188 hit / 0 miss, part_geom 15 hit / 0 miss
+cache: part_geom 0 hit / 15 miss

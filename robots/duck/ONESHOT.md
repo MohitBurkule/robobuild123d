@@ -78,3 +78,6 @@ Left (and why):
 - battery.rotor_gap x1: toolchain: same full-revolution assumption for a limited-range arm.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): duck_ling_.aws67.webp 0.8 -> 0.8; duck_ling_.aws71.webp 0.66 -> 0.66; duck_ling_.aws72.webp 0.76 -> 0.76
+
+## Round 4 (verification, helper 1)
+S1: printed parts nylon -> abs (lighter) and flipper plate hollowed with a closed 50x62x2.2 mm void (mass 160.6 -> under 150 g); front_lip 1.2 -> 1.0 mm stock gauge, bottom face kept.
