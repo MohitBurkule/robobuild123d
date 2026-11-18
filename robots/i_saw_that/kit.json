@@ -16,11 +16,12 @@
  },
  "weapon": {
   "kind": "disc",
-  "radius": 28,
+  "radius": 34,
   "width": 2,
-  "y": 2,
+  "y": 0,
   "teeth": 8,
-  "z": 80,
+  "x": -8,
+  "z": 84,
   "axis": "x"
  },
  "colors": {
@@ -29,7 +30,8 @@
   "weapon": "#1c1d20",
   "fork": "#1c1d20"
  },
- "extras": [
+ "name": "i saw that",
+ "macros": [
   {
    "side": [
     [
@@ -59,31 +61,30 @@
   {
    "top": [
     [
-     6,
-     28
+     4,
+     26
+    ],
+    [
+     32,
+     26
+    ],
+    [
+     46,
+     96
     ],
     [
      30,
-     28
-    ],
-    [
-     42,
-     90
-    ],
-    [
-     30,
-     94
+     100
     ]
    ],
    "z": [
     0,
-    9
+    14
    ],
    "color": "#1c1d20",
    "mirror": true,
    "kind": "wedge",
    "id": "jaw"
   }
- ],
- "name": "i saw that"
+ ]
 }

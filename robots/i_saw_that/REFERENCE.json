@@ -8,5 +8,11 @@
  },
  "photos": [
   "i_saw_that_.aws76.webp"
- ]
+ ],
+ "view": {
+  "i_saw_that_.aws76.webp": "front_left_iso"
+ },
+ "elevation": {
+  "i_saw_that_.aws76.webp": 45
+ }
 }
