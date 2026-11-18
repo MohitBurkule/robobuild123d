@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_gyronino/robots/gyronino/spec.json",
- "rendered_at": 1795020904.172751,
+ "rendered_at": 1795021495.9857512,
  "bodies": [
   "chassis",
   "weapon",
@@ -8,6 +8,7 @@
   "gyro_block",
   "gyro_ring",
   "bevel_gear",
+  "nose_hub",
   "foot_l",
   "strut_l",
   "foot_r",

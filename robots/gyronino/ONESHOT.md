@@ -25,3 +25,9 @@ Kit cannot do wheel-less walkers, y-axis weapons, rings or a pitched body; needs
 
 ## Verdict
 Looks alike: **partly**. Renders: `renders/iso.png`, `renders/top.png`.
+
+## Round 2 (looks)
+Whole robot pitched 18 deg tail-down, S-curved bar with hooked axe heads (kit bar curve), bevel gear as a cone, steeper feet, tapered tail cap.
+
+Likeness: aws72 0.64 (FAIL), aws74 0.64 (FAIL), aws76 0.62 (FAIL).
+Other likeness findings: [FAIL] likeness.weapon: Photos: bar turns about y; `weapon` turns about z (axis [0.0, 0.0, 1.0]). x = across the robot (horizontal drum/vertical disc), z = up (
