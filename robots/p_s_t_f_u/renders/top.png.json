@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_p_s_t_f_u/robots/p_s_t_f_u/spec.json",
- "rendered_at": 1795040929.9663513,
+ "rendered_at": 1795042009.2091908,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -19,7 +19,10 @@
   "dm_wheel_r1",
   "el_battery",
   "el_rx_esc",
-  "el_switch"
+  "el_switch",
+  "fs_front_plate_0",
+  "fs_front_plate_1",
+  "fs_front_plate_2"
  ],
  "wires": {
   "w_bat_sw": {

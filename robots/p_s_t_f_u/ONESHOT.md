@@ -23,7 +23,7 @@ Decisions: type wedge; body box rect 80x112x20 mm, ramp 22; wheels 4 r11 inboard
 Likeness: aws69 0.76 (FAIL).
 
 ## Round 4 (verification, helper 1)
-Blockers r3 -> r4: **59 -> 2** (`verify --tier inner`, full output in verify_r4.txt).
+Blockers r3 -> r4: **59 -> 1** (`verify --tier inner`, full output in verify_r4.txt).
 Likeness (best silhouette IoU per photo, r3 -> r4): p.s.t.f.u..aws69.webp 0.760 -> 0.759
 
 What was done (script r4_h1, outside shape kept):
@@ -47,7 +47,7 @@ Notes from the run:
 - hollow failed on front_plate: [('cav', 'geometry failed: ValueError: Cannot tessellate an empty shape')]
 - wiring channels: 6 of 6 wires have a 4.8 mm channel inside the print, every piece >= 2 mm under the outer skin
 - wiring channels: a piece of ['w_bat_sw'] left out where it would come within 2 mm of the outside (port close to the skin)
+- front_plate (the front blade): a separate nylon print bolted to the chassis nose with 3 M2x12 button-head screws into tapped bosses (photo shows screw heads on the blade); 2.4 mm clearance holes in the blade under the heads; chassis trimmed 0.06 mm clear of the blade
 
 Left (one line each):
-- connection.cover_fasteners x1: see verify_r4.txt root causes
 - likeness.silhouette x1: looks (not part of this pass; outside shape kept as round 3)
