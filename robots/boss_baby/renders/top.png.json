@@ -1,0 +1,18 @@
+{
+ "spec": "/tmp/work10_boss_baby/robots/boss_baby/spec.json",
+ "rendered_at": 1795022264.053873,
+ "bodies": [
+  "pod_l",
+  "pod_r",
+  "bridge",
+  "weapon",
+  "wheel_l0",
+  "wheel_r0",
+  "fork_0",
+  "fork_1",
+  "fork_2",
+  "fork_3",
+  "motor"
+ ],
+ "wires": {}
+}
