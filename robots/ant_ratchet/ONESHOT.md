@@ -45,7 +45,7 @@ Likeness: aws72 0.78 (FAIL), aws76 0.62 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/ant_ratchet.aws76.webp` is declared `front_right_iso` (IoU 0.62 there) but the model matches it better from rear_left_iso (elev
 
 ## Round 4 (verification, helper 2)
-Blockers r3 80 -> r4 15 (`verify --tier inner`).
+Blockers r3 80 -> r4 13 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -75,8 +75,7 @@ Left (and why):
 - electrical.battery_weapon_gap x1: toolchain: a limited-range arm is judged as a full revolution about its pivot; that cylinder covers the whole chassis.
 - wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
 - wire.rotor_clearance x4: toolchain: same full-revolution assumption; wires cannot leave a cylinder that covers the chassis.
-- likeness.silhouette x2: looks, not in scope for this pass.
-- likeness.view x1: looks, not in scope for this pass.
+- wire.render_count x1: iso.png: 3 routes vs 4 spec wires (missing ['w_bat_sw']); top.png: 3 routes vs 4 spec wires (missing ['w_bat_sw'])
 - battery.rotor_gap x1: toolchain: same full-revolution assumption for a limited-range arm.
 
-Likeness (best silhouette IoU per photo, r3 -> r4): ant_ratchet.aws72.webp 0.78 -> 0.79; ant_ratchet.aws76.webp 0.62 -> 0.62
+Likeness (best silhouette IoU per photo, r3 -> r4): ant_ratchet.aws72.webp 0.83 -> 0.83; ant_ratchet.aws76.webp 0.82 -> 0.82
