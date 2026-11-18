@@ -1,0 +1,74 @@
+BLOCKERS: 3
+  [cached] integrity 0.00s
+  [cached] mass 0.00s
+  [proxy] interference 0.09s
+  [cached] connections 0.00s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.00s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.00s
+  [cached] physics 0.00s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [cached] likeness 0.00s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.00s
+  [cached] waiver_audit 0.00s
+  [cached] geom 0.00s
+  [cached] dfm 0.00s
+  [cached] realworld 0.00s
+pingu: ok=False 3 blockers in 3 root causes, mass 140.4/150 g
+1. [wire.render_wires] 5 of 5 robot render(s) do not draw all 4 wires: renders/diff_pingu.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_pingu.aws72_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_pingu.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_pingu.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+2. [likeness.view] `reference/pingu.aws72.webp` is declared `front` (IoU 0.46 there) but the model matches it better from rear_right_iso (elevation 45, azimuth 300) (IoU 0.69).
+   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
+3. [likeness.silhouette] `reference/pingu.aws72.webp`: best silhouette IoU 0.46 at camera front (elevation 45, azimuth 90) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.49). Regions (photo frame, left third first) 0.45 / 0.52 / 0.39: worst = rear third. Height/length 0.94 model vs 0.82 photo (too tall: lower it or lengthen it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+MASS BUDGET:
+  mass 140.4 g of 150 g (+9.6 g margin)
+    chassis                    57.36 g  fills 30% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    dm_wheel_l1                 9.50 g  fills 63% of its box
+    dm_wheel_r1                 9.50 g  fills 63% of its box
+    lid                         4.70 g  fills 55% of its box
+    wheel_l1                    4.12 g  fills 66% of its box
+    wheel_r1                    4.12 g  fills 66% of its box
+    wheel_l0                    4.09 g  fills 77% of its box
+    wheel_r0                    4.09 g  fills 77% of its box
+    el_esc                      2.30 g  fills 99% of its box
+    fork_1                      2.26 g  fills 11% of its box
+    fork_2                      2.26 g  fills 11% of its box
+    fork_3                      2.26 g  fills 11% of its box
+    fork_4                      2.26 g  fills 11% of its box
+    fork_0                      2.26 g  fills 11% of its box
+    fork_5                      2.26 g  fills 11% of its box
+    dt_hub_wheel_l1             1.22 g  fills 75% of its box
+    dt_hub_wheel_r1             1.22 g  fills 75% of its box
+    dt_hub_wheel_l0             1.20 g  fills 74% of its box
+    dt_hub_wheel_r0             1.20 g  fills 74% of its box
+    dt_axle_wheel_r0            1.09 g  fills 79% of its box
+    dt_axle_wheel_l0            1.09 g  fills 79% of its box
+    dt_mount_fork_5             0.94 g  fills 98% of its box
+    dt_mount_fork_0             0.91 g  fills 98% of its box
+    dt_mount_fork_4             0.91 g  fills 98% of its box
+    dt_mount_fork_1             0.91 g  fills 98% of its box
+    dt_mount_fork_2             0.91 g  fills 98% of its box
+    dt_mount_fork_3             0.91 g  fills 98% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    mass.may_be_over: 140.4 g (range 116.5 to 164.4 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 31 hit / 0 miss, overlap 198 hit / 0 miss, part_geom 29 hit / 0 miss
