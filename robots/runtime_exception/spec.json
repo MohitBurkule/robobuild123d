@@ -1,0 +1,291 @@
+{
+ "name": "runtime exception",
+ "profile": "aws2025",
+ "robot_type": "wedge",
+ "locomotion": "wheels",
+ "kit_draft": true,
+ "parts": [
+  {
+   "id": "chassis",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "intersect",
+    "items": [
+     {
+      "type": "place",
+      "shape": {
+       "type": "prism",
+       "points": [
+        [
+         -40.0,
+         0.0
+        ],
+        [
+         40.0,
+         0.0
+        ],
+        [
+         40.0,
+         1.5
+        ],
+        [
+         40.0,
+         22.0
+        ],
+        [
+         -40.0,
+         22.0
+        ]
+       ],
+       "height": 92.0
+      },
+      "at": [
+       0.0,
+       0.0,
+       -11.0
+      ],
+      "rot": [
+       90.0,
+       0.0,
+       90.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "prism",
+       "points": [
+        [
+         -46.0,
+         -40.0
+        ],
+        [
+         46.0,
+         -40.0
+        ],
+        [
+         46.0,
+         20.0
+        ],
+        [
+         30.0,
+         40.0
+        ],
+        [
+         -30.0,
+         40.0
+        ],
+        [
+         -46.0,
+         20.0
+        ]
+       ],
+       "height": 42.0
+      },
+      "at": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ]
+     }
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#1f4a38",
+   "print_orientation": "+z"
+  },
+  {
+   "id": "wheel_l0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 13.0,
+     "height": 10.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    40.0,
+    -22.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#3a3d40"
+  },
+  {
+   "id": "wheel_r0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 13.0,
+     "height": 10.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -40.0,
+    -22.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#3a3d40"
+  },
+  {
+   "id": "scoop",
+   "kind": "wedge",
+   "material": "aluminium",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -58,
+       -13.0
+      ],
+      [
+       58,
+       -13.0
+      ],
+      [
+       44,
+       25.0
+      ],
+      [
+       -44,
+       25.0
+      ]
+     ],
+     "height": 3
+    },
+    "at": [
+     0,
+     45.5,
+     0
+    ],
+    "rot": [
+     90,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#c9cdd3"
+  },
+  {
+   "id": "spine",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      20,
+      60,
+      3
+     ]
+    },
+    "at": [
+     0,
+     -5,
+     13.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#16181a"
+  }
+ ],
+ "fasteners": [],
+ "wires": [],
+ "connections": [],
+ "reference": [
+  {
+   "image": "reference/runtime_exception.aws72.webp",
+   "mask": "reference/runtime_exception.aws72_mask.png",
+   "view": "iso",
+   "approximate": true
+  },
+  {
+   "image": "reference/runtime_exception.aws74.webp",
+   "mask": "reference/runtime_exception.aws74_mask.png",
+   "view": "iso",
+   "approximate": true
+  }
+ ]
+}

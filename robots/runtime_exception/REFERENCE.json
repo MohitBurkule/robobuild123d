@@ -1,0 +1,11 @@
+{
+ "robot_type": "wedge",
+ "wheels": 2,
+ "weapon": {
+  "kind": "wedge"
+ },
+ "photos": [
+  "runtime_exception.aws72.webp",
+  "runtime_exception.aws74.webp"
+ ]
+}
