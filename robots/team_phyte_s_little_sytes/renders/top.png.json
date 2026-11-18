@@ -1,10 +1,14 @@
 {
  "spec": "/tmp/work10_team_phyte_s_little_sytes/robots/team_phyte_s_little_sytes/spec.json",
- "rendered_at": 1795026837.653205,
+ "rendered_at": 1795033478.8503358,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
+  "fin_l",
+  "fin_r",
+  "lip",
+  "electronics_tray",
   "dt_hub_wheel_l0",
   "dt_axle_wheel_l0",
   "dt_nut_wheel_l0",
