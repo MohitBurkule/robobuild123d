@@ -1,20 +1,20 @@
 {
  "duck_ling_.aws67.webp": {
-  "view": "120,60~",
-  "azimuth": 130.0,
-  "elevation": 53.0,
-  "iou": 0.869
+  "view": "120,35!",
+  "azimuth": 120.0,
+  "elevation": 35.0,
+  "iou": 0.633
  },
  "duck_ling_.aws71.webp": {
-  "view": "310,45",
-  "azimuth": 300.0,
-  "elevation": 45.0,
-  "iou": 0.632
+  "view": "120,35!",
+  "azimuth": 120.0,
+  "elevation": 35.0,
+  "iou": 0.647
  },
  "duck_ling_.aws72.webp": {
-  "view": "45,47~",
-  "azimuth": 45.0,
-  "elevation": 40.0,
-  "iou": 0.846
+  "view": "60,35!",
+  "azimuth": 60.0,
+  "elevation": 35.0,
+  "iou": 0.782
  }
 }
