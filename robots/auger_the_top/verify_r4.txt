@@ -1,0 +1,133 @@
+BLOCKERS: 16
+  [cached] integrity 0.00s
+  [cached] mass 0.00s
+  [proxy] interference 0.12s
+  [cached] connections 0.00s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.00s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.00s
+  [cached] physics 0.00s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [cached] likeness 0.00s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.01s
+  [cached] waiver_audit 0.00s
+  [cached] geom 0.00s
+  [cached] dfm 0.00s
+  [cached] realworld 0.00s
+auger the top: ok=False 16 blockers in 16 root causes, mass 148.8/150 g
+1. [proxy.interference] `servo_house` and `arm_a` overlap by 1.39 mm (allowed 0.08).
+   | servo_house: x -28.00..16.00  y -17.00..13.00  z 10.50..24.00  size 44.00 x 30.00 x 13.50 mm
+   |   centre (-6.00, -2.00, 17.25), volume 10224.1 mm3
+   |   OVERLAP `arm_a` 1.39 mm (allowed 0.08)
+   |   overlap allowed `chassis` 0.70 mm (allowed inf)
+   |   gap to `arm_b` 0.00 mm (touching)
+2. [proxy.interference] `arm_a` and `arm_pivot_pin` overlap by 1.39 mm (allowed 0.08).
+   | arm_a: x -44.00..82.00  y -12.00..-9.00  z 12.00..72.00  size 126.00 x 3.00 x 60.00 mm
+   |   centre (19.00, -10.50, 42.00), volume 5370.0 mm3
+   |   joint revolute axis [0, 1, 0] pivot [-34, -12, 18.0] range 0..80 default 0
+   |   OVERLAP `servo_house` 1.39 mm (allowed 0.08)
+   |   OVERLAP `arm_pivot_pin` 1.39 mm (allowed 0.08)
+3. [proxy.interference] `arm_a` and `head_block` overlap by 1.39 mm (allowed 0.08).
+   | arm_a: x -44.00..82.00  y -12.00..-9.00  z 12.00..72.00  size 126.00 x 3.00 x 60.00 mm
+   |   centre (19.00, -10.50, 42.00), volume 5370.0 mm3
+   |   joint revolute axis [0, 1, 0] pivot [-34, -12, 18.0] range 0..80 default 0
+   |   OVERLAP `servo_house` 1.39 mm (allowed 0.08)
+   |   OVERLAP `arm_pivot_pin` 1.39 mm (allowed 0.08)
+4. [proxy.interference] `arm_a` and `auger_motor` overlap by 0.46 mm (allowed 0.08).
+   | arm_a: x -44.00..82.00  y -12.00..-9.00  z 12.00..72.00  size 126.00 x 3.00 x 60.00 mm
+   |   centre (19.00, -10.50, 42.00), volume 5370.0 mm3
+   |   joint revolute axis [0, 1, 0] pivot [-34, -12, 18.0] range 0..80 default 0
+   |   OVERLAP `servo_house` 1.39 mm (allowed 0.08)
+   |   OVERLAP `arm_pivot_pin` 1.39 mm (allowed 0.08)
+5. [proxy.interference] `arm_b` and `arm_pivot_pin` overlap by 1.39 mm (allowed 0.08).
+   | arm_b: x -44.00..82.00  y 9.00..12.00  z 12.00..72.00  size 126.00 x 3.00 x 60.00 mm
+   |   centre (19.00, 10.50, 42.00), volume 5370.0 mm3
+   |   OVERLAP `arm_pivot_pin` 1.39 mm (allowed 0.08)
+   |   OVERLAP `head_block` 1.39 mm (allowed 0.08)
+   |   OVERLAP `auger_motor` 0.46 mm (allowed 0.08)
+6. [proxy.interference] `arm_b` and `head_block` overlap by 1.39 mm (allowed 0.08).
+   | arm_b: x -44.00..82.00  y 9.00..12.00  z 12.00..72.00  size 126.00 x 3.00 x 60.00 mm
+   |   centre (19.00, 10.50, 42.00), volume 5370.0 mm3
+   |   OVERLAP `arm_pivot_pin` 1.39 mm (allowed 0.08)
+   |   OVERLAP `head_block` 1.39 mm (allowed 0.08)
+   |   OVERLAP `auger_motor` 0.46 mm (allowed 0.08)
+7. [proxy.interference] `arm_b` and `auger_motor` overlap by 0.46 mm (allowed 0.08).
+   | arm_b: x -44.00..82.00  y 9.00..12.00  z 12.00..72.00  size 126.00 x 3.00 x 60.00 mm
+   |   centre (19.00, 10.50, 42.00), volume 5370.0 mm3
+   |   OVERLAP `arm_pivot_pin` 1.39 mm (allowed 0.08)
+   |   OVERLAP `head_block` 1.39 mm (allowed 0.08)
+   |   OVERLAP `auger_motor` 0.46 mm (allowed 0.08)
+8. [proxy.sweep] joint `arm_a`: `arm_a` hits `servo_house` 1.39 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint arm_a` lists the closest approach to every part.
+   | arm_a: x -44.00..82.00  y -12.00..-9.00  z 12.00..72.00  size 126.00 x 3.00 x 60.00 mm
+   |   centre (19.00, -10.50, 42.00), volume 5370.0 mm3
+   |   joint revolute axis [0, 1, 0] pivot [-34, -12, 18.0] range 0..80 default 0
+   |   OVERLAP `servo_house` 1.39 mm (allowed 0.08)
+   |   OVERLAP `arm_pivot_pin` 1.39 mm (allowed 0.08)
+9. [power.weapon_motor] `arm_a` names motor None; it must be a catalog brushless motor so speed can be computed.
+   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
+   | arm_a: x -44.00..82.00  y -12.00..-9.00  z 12.00..72.00  size 126.00 x 3.00 x 60.00 mm
+   |   centre (19.00, -10.50, 42.00), volume 5370.0 mm3
+   |   joint revolute axis [0, 1, 0] pivot [-34, -12, 18.0] range 0..80 default 0
+   |   OVERLAP `servo_house` 1.39 mm (allowed 0.08)
+   |   OVERLAP `arm_pivot_pin` 1.39 mm (allowed 0.08)
+10. [process.weapon_printed] Weapon `arm_a` is fdm-printed with no hardened metal insert teeth.
+   fix: Make it metal (sheet_cut / turned / milled) or add hardened steel tooth parts (`parent` = the weapon).
+   | arm_a: x -44.00..82.00  y -12.00..-9.00  z 12.00..72.00  size 126.00 x 3.00 x 60.00 mm
+   |   centre (19.00, -10.50, 42.00), volume 5370.0 mm3
+   |   joint revolute axis [0, 1, 0] pivot [-34, -12, 18.0] range 0..80 default 0
+   |   OVERLAP `servo_house` 1.39 mm (allowed 0.08)
+   |   OVERLAP `arm_pivot_pin` 1.39 mm (allowed 0.08)
+11. [electrical.battery_weapon_gap] Battery is 3.0 mm from the weapon's swept volume (need >= 3 mm plus a wall).
+   fix: Move the battery >= 3 mm from the swept volume.
+12. [wire.render_wires] 7 of 7 robot render(s) do not draw all 4 wires: renders/diff_auger_the_top.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/iso.png: rendered without wires (checks off or no routes); renders/likeness_auger_the_top.aws72_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_auger_the_top.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/pick_auger_the_top.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_auger_the_top.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+... 4 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 148.8 g of 150 g (+1.2 g margin)
+    chassis                    44.65 g  fills 41% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    servo_house                 9.73 g  fills 57% of its box
+    dm_wheel_l0                 9.70 g  fills 66% of its box
+    dm_wheel_r0                 9.70 g  fills 66% of its box
+    endcap_r                    5.79 g  fills 80% of its box
+    arm_a                       5.48 g  fills 24% of its box
+    arm_b                       5.48 g  fills 24% of its box
+    endcap_l                    5.42 g  fills 75% of its box
+    auger_motor                 4.19 g  fills 79% of its box
+    head_block                  3.56 g  fills 100% of its box
+    el_rx_esc                   3.50 g  fills 100% of its box
+    wheel_l0                    3.03 g  fills 57% of its box
+    wheel_r0                    3.03 g  fills 57% of its box
+    auger_bit                   2.48 g  fills 79% of its box
+    boss_out_l                  2.27 g  fills 76% of its box
+    boss_out_r                  2.27 g  fills 76% of its box
+    arm_pivot_pin               2.19 g  fills 79% of its box
+    boss_in_l                   2.03 g  fills 68% of its box
+    boss_in_r                   2.01 g  fills 67% of its box
+    fork_0                      1.33 g  fills 12% of its box
+    fork_1                      1.33 g  fills 12% of its box
+    fork_2                      1.33 g  fills 12% of its box
+    fork_3                      1.33 g  fills 12% of its box
+    dt_hub_wheel_l0             1.15 g  fills 66% of its box
+    dt_hub_wheel_r0             1.15 g  fills 66% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    mass.may_be_over: 148.8 g (range 123.6 to 174.0 g) against the 150 g limit; 3.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 31 hit / 0 miss, min_gap 50 hit / 0 miss, overlap 513 hit / 0 miss, part_geom 27 hit / 0 miss
