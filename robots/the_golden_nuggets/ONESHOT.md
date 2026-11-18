@@ -9,3 +9,8 @@
 Decisions: type lifter; body box rect 95x66x24 mm, ramp 20; wheels 6 r12 outboard; weapon none; extra parts: lifter, lifter_nose.
 
 Likeness: aws67 0.80 (FAIL).
+
+## Round 2 (looks)
+Decisions: type lifter; body box rect 95x66x24 mm, ramp 20; wheels 6 r12 outboard; weapon none; extra parts: lifter, lifter_nose.
+
+Likeness: aws67 0.80 (FAIL).
