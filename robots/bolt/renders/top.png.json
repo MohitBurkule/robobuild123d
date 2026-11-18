@@ -1,14 +1,19 @@
 {
  "spec": "/tmp/work10_bolt/robots/bolt/spec.json",
- "rendered_at": 1795026818.7613132,
+ "rendered_at": 1795032634.9211874,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
   "wheel_l1",
   "wheel_r1",
-  "fork_0",
-  "fork_1",
+  "front_flap",
+  "cheek_l",
+  "cheek_r",
+  "rail_a",
+  "rail_b",
+  "rail_c",
+  "rear_bar",
   "dt_hub_wheel_l0",
   "dt_axle_wheel_l0",
   "dt_nut_wheel_l0",
@@ -24,15 +29,7 @@
   "dt_screw_0",
   "dt_screw_1",
   "dt_screw_2",
-  "dt_screw_3",
-  "dt_screw_4",
-  "dt_screw_5",
-  "dt_screw_6",
-  "dt_screw_7",
-  "dt_mount_fork_0",
-  "dt_bolt_fork_0",
-  "dt_mount_fork_1",
-  "dt_bolt_fork_1"
+  "dt_screw_3"
  ],
  "wires": {}
 }
