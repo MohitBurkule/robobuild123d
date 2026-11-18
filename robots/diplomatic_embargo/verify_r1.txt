@@ -1,0 +1,117 @@
+  [ran] integrity 0.02s
+  [proxy] wiring 0.01s
+  [ran] mass 0.00s
+  [proxy] interference 0.97s
+  [ran] connections 0.01s
+  [ran] legal 0.00s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.00s
+  [ran] shape 0.12s
+  [ran] dynamics 0.01s
+  [ran] strength 0.00s
+  [ran] printability 0.32s
+  [ran] process 0.02s
+  [ran] electrical 0.01s
+  [ran] combat 0.05s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.01s
+  [ran] fastener_record 0.00s
+  [ran] likeness 3.84s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.03s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.04s
+  [ran] dfm 0.01s
+  [ran] realworld 0.01s
+diplomatic embargo: ok=False 20 blockers in 16 root causes, mass 192.7/225 g
+1. [proxy.interference] `chassis` and `fork_0` overlap by 0.71 mm (allowed 0.08). Same problem on all 3 parts of this pattern: fix the pattern once. (+2 consequences)
+   | chassis: x -33.00..33.00  y -47.50..47.50  z -9.00..15.00  size 66.00 x 95.00 x 24.00 mm
+   |   centre (-0.00, -0.00, 3.00), volume 150480.0 mm3
+   |   OVERLAP `front_plate` 1.46 mm (allowed 0.08)
+   |   OVERLAP `fork_0` 0.71 mm (allowed 0.08)
+   |   OVERLAP `fork_1` 0.71 mm (allowed 0.08)
+2. [connection.floating] `fork_0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away. Same problem on all 3 parts of this pattern: fix the pattern once. (+2 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | fork_0: x -32.50..-27.50  y 45.60..75.40  z -10.94..-4.25  size 5.00 x 29.80 x 6.69 mm
+   |   centre (-30.00, 60.50, -7.60), volume 225.0 mm3
+   |   OVERLAP `chassis` 0.71 mm (allowed 0.08)
+   |   gap to `front_plate` 0.35 mm
+   | chassis: x -33.00..33.00  y -47.50..47.50  z -9.00..15.00  size 66.00 x 95.00 x 24.00 mm
+3. [proxy.interference] `chassis` and `front_plate` overlap by 1.46 mm (allowed 0.08).
+   | chassis: x -33.00..33.00  y -47.50..47.50  z -9.00..15.00  size 66.00 x 95.00 x 24.00 mm
+   |   centre (-0.00, -0.00, 3.00), volume 150480.0 mm3
+   |   OVERLAP `front_plate` 1.46 mm (allowed 0.08)
+   |   OVERLAP `fork_0` 0.71 mm (allowed 0.08)
+   |   OVERLAP `fork_1` 0.71 mm (allowed 0.08)
+4. [connection.floating] `tread_l` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `front_plate`, 0.1 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | tread_l: x 33.50..43.50  y -43.00..43.00  z -11.00..11.00  size 10.00 x 86.00 x 22.00 mm
+   |   centre (38.50, 0.00, 0.00), volume 17838.1 mm3
+   |   gap to `front_plate` 0.05 mm
+   |   gap to `chassis` 0.50 mm
+   | front_plate: x -43.00..43.00  y 41.03..58.97  z -7.95..25.95  size 86.00 x 17.93 x 33.89 mm
+5. [connection.floating] `tread_r` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `front_plate`, 0.1 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | tread_r: x -43.50..-33.50  y -43.00..43.00  z -11.00..11.00  size 10.00 x 86.00 x 22.00 mm
+   |   centre (-38.50, 0.00, 0.00), volume 17838.1 mm3
+   |   gap to `front_plate` 0.05 mm
+   |   gap to `chassis` 0.50 mm
+   | front_plate: x -43.00..43.00  y 41.03..58.97  z -7.95..25.95  size 86.00 x 17.93 x 33.89 mm
+6. [connection.floating] `front_plate` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | front_plate: x -43.00..43.00  y 41.03..58.97  z -7.95..25.95  size 86.00 x 17.93 x 33.89 mm
+   |   centre (0.00, 50.00, 9.00), volume 9288.0 mm3
+   |   OVERLAP `chassis` 1.46 mm (allowed 0.08)
+   |   gap to `tread_l` 0.05 mm
+   |   gap to `tread_r` 0.05 mm
+7. [connection.cover_fasteners] `front_plate` is an armour / cover panel held by 0 fastener(s); it needs >= 2 real screws. Snap, press-fit or tape retention alone lets it peel off on the first hit.
+   fix: Bolt it with >= 2 screws into inserts, nuts or tapped bosses and declare them in `fasteners`.
+   | front_plate: x -43.00..43.00  y 41.03..58.97  z -7.95..25.95  size 86.00 x 17.93 x 33.89 mm
+   |   centre (0.00, 50.00, 9.00), volume 9288.0 mm3
+   |   OVERLAP `chassis` 1.46 mm (allowed 0.08)
+   |   gap to `tread_l` 0.05 mm
+   |   gap to `tread_r` 0.05 mm
+8. [legal.switch] Rule 4a needs an externally accessible way to shut down that works without tools and is clearly marked on/off.
+   fix: Add a `switch` part (or removable link) with `tool_free: true` and `marked: true` and a visible ON/OFF `label`.
+9. [legal.failsafe] Rule 4d: the robot must stop all motion when the transmitter is off.
+   fix: Set `electronics.failsafe` to true and configure the receiver and ESC failsafe.
+10. [process.print_orientation] `tread_l` (fdm) has no `print_orientation`.
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | tread_l: x 33.50..43.50  y -43.00..43.00  z -11.00..11.00  size 10.00 x 86.00 x 22.00 mm
+   |   centre (38.50, 0.00, 0.00), volume 17838.1 mm3
+   |   gap to `front_plate` 0.05 mm
+   |   gap to `chassis` 0.50 mm
+11. [process.print_orientation] `tread_r` (fdm) has no `print_orientation`.
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | tread_r: x -43.50..-33.50  y -43.00..43.00  z -11.00..11.00  size 10.00 x 86.00 x 22.00 mm
+   |   centre (-38.50, 0.00, 0.00), volume 17838.1 mm3
+   |   gap to `front_plate` 0.05 mm
+   |   gap to `chassis` 0.50 mm
+12. [process.print_orientation] `front_plate` (fdm) has no `print_orientation`.
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | front_plate: x -43.00..43.00  y 41.03..58.97  z -7.95..25.95  size 86.00 x 17.93 x 33.89 mm
+   |   centre (0.00, 50.00, 9.00), volume 9288.0 mm3
+   |   OVERLAP `chassis` 1.46 mm (allowed 0.08)
+   |   gap to `tread_l` 0.05 mm
+   |   gap to `tread_r` 0.05 mm
+... 4 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 192.7 g of 225 g (+32.3 g margin)
+    chassis                   143.26 g  fills 100% of its box  <- solid block? a tub should be a shell
+    tread_l                    18.19 g  fills 94% of its box  <- solid block? a tub should be a shell
+    tread_r                    18.19 g  fills 94% of its box  <- solid block? a tub should be a shell
+    front_plate                 8.84 g  fills 18% of its box
+    fork_0                      1.00 g  fills 23% of its box
+    fork_1                      1.00 g  fills 23% of its box
+    fork_2                      1.00 g  fills 23% of its box
+    mass.may_be_over: 192.7 g (range 154.3 to 231.1 g) against the 225 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 0 hit / 6 miss, group 0 hit / 31 miss, inside 0 hit / 7 miss, likeness 2 hit / 0 miss, min_gap 39 hit / 43 miss, overlap 46 hit / 37 miss, part_check 0 hit / 4 miss, part_geom 7 hit / 0 miss, ray 0 hit / 35 miss
