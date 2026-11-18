@@ -1,20 +1,20 @@
 {
  "smashie_1.aws73.webp": {
-  "view": "left",
-  "azimuth": 180,
-  "elevation": 25,
-  "iou": 0.523
+  "view": "130,45",
+  "azimuth": 140.0,
+  "elevation": 37.0,
+  "iou": 0.623
  },
  "smashie_1.aws74.webp": {
-  "view": "front",
-  "azimuth": 105,
-  "elevation": 10,
-  "iou": 0.68
+  "view": "170,30",
+  "azimuth": 160.0,
+  "elevation": 38.0,
+  "iou": 0.699
  },
  "smashie_1.aws76.webp": {
-  "view": "front_left_iso",
-  "azimuth": 120,
-  "elevation": 25,
-  "iou": 0.639
+  "view": "180,20",
+  "azimuth": 170.0,
+  "elevation": 28.0,
+  "iou": 0.457
  }
 }

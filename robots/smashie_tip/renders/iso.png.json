@@ -1,12 +1,31 @@
 {
  "spec": "/tmp/work10_smashie_tip/robots/smashie_tip/spec.json",
- "rendered_at": 1795024607.3011284,
+ "rendered_at": 1795032604.4932992,
  "bodies": [
   "chassis",
   "weapon",
   "wheel_l0",
   "wheel_r0",
-  "fork_0"
+  "fork_0",
+  "fork_1",
+  "disc_post_a",
+  "disc_post_b",
+  "base_plate",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_nut_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_nut_wheel_r0",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3",
+  "dt_shaft_weapon",
+  "dt_mount_fork_0",
+  "dt_bolt_fork_0",
+  "dt_mount_fork_1",
+  "dt_bolt_fork_1"
  ],
  "wires": {}
 }

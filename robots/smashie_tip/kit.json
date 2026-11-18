@@ -2,34 +2,36 @@
  "robot_type": "vertical_spinner",
  "cluster": 2,
  "body": {
-  "length": 55,
-  "width": 42,
-  "height": 18,
-  "ramp": 24
+  "length": 60,
+  "width": 44,
+  "height": 14,
+  "ramp": 0
  },
  "wheels": {
   "n": 2,
   "radius": 8,
   "width": 7,
   "y": [
-   -16
-  ]
+   -18
+  ],
+  "outside": false,
+  "notch": true
  },
  "weapon": {
   "kind": "disc",
-  "radius": 12,
+  "radius": 13,
   "width": 3,
-  "y": 5,
+  "y": 2,
   "teeth": 2,
-  "z": 20,
+  "z": 17,
   "axis": "x"
  },
  "forks": {
-  "n": 1,
-  "length": 22,
-  "width": 24,
-  "spread": 0,
-  "tilt_deg": 14
+  "n": 2,
+  "length": 14,
+  "width": 6,
+  "spread": 30,
+  "tilt_deg": 10
  },
  "colors": {
   "body": "#f08a2c",
@@ -57,5 +59,49 @@
    1
   ]
  },
- "name": "smashie tip"
+ "name": "smashie tip",
+ "macros": [
+  {
+   "box": [
+    4,
+    16,
+    14
+   ],
+   "at": [
+    -5,
+    2,
+    14
+   ],
+   "id": "disc_post_a",
+   "color": "#2a3fa0"
+  },
+  {
+   "box": [
+    4,
+    16,
+    14
+   ],
+   "at": [
+    5,
+    2,
+    14
+   ],
+   "id": "disc_post_b",
+   "color": "#2a3fa0"
+  },
+  {
+   "box": [
+    40,
+    56,
+    2
+   ],
+   "at": [
+    0,
+    0,
+    1.5
+   ],
+   "id": "base_plate",
+   "color": "#2a3fa0"
+  }
+ ]
 }

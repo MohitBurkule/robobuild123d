@@ -23,3 +23,39 @@ Decisions: type vertical_spinner; body box rect 55x42x18 mm, ramp 24; wheels 2 r
 
 Likeness: aws73 0.52 (FAIL), aws74 0.44 (FAIL), aws76 0.52 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/smashie_1.aws73.webp` is declared `left` (IoU 0.52 there) but the model matches it better from front_left_iso (elevation 45, az; [FAIL] likeness.view: `reference/smashie_1.aws74.webp` is declared `front` (IoU 0.44 there) but the model matches it better from front_left_iso (elevation 25, a; [FAIL] likeness.view: `reference/smashie_1.aws76.webp` is declared `front_left_iso` (IoU 0.52 there) but the model matches it better from rear_right_iso (elevat
+
+## Round 4 (verification, helper 1)
+Blockers r3 -> r4: **55 -> 25** (`verify --tier inner`, full output in verify_r4.txt).
+Likeness (best silhouette IoU per photo, r3 -> r4): smashie_1.aws73.webp 0.52 -> 0.52, smashie_1.aws74.webp 0.45 -> 0.44, smashie_1.aws76.webp 0.61 -> 0.52
+
+What was done (script r4_h1, outside shape kept):
+- fake screw/bolt heads removed; detail mounts/arms merged into the print part they sit on; axle nuts became printed hub caps
+- printed parts of the chassis material declared one print (`fused_with`, a hidden 1.6 mm key where they only touched); overlaps inside the print trimmed
+- catalog parts: N20 gearmotors on the drive wheels (D-bore in the hub), LiPo, Malenki Nano (receiver + drive ESCs), brushless weapon ESC and outrunner for spinners, slide switch in a closed pocket above the belly skin, reached through an 8 x 4 mm slot underneath, steel locking pin through the weapon
+- pockets 0.25 mm per side round every bought part with 2 mm print walls, wheel/weapon running clearances <= 1.5 mm (no clearance cut where the kit rotor sits deep in the body: that would open the outside), hinge sweep clearances, shaft bores
+- big print parts hollowed (cavity = part eroded by the wall, checked >= 1 mm inside the skin, no cavity opens to the outside); wires with gauges and via points round rotors; print orientation, failsafe and weapon disable declared
+
+Notes from the run:
+- dt_axle_wheel_l0 replaced by the gearmotor shaft
+- dt_axle_wheel_r0 replaced by the gearmotor shaft
+- weapon: no room for a weapon motor inside the print; weapon.motor left empty
+- el_battery: no free pocket inside the print; placed at the chassis centre (overlaps)
+- el_battery: pocket wall only 0 mm
+- el_rx_esc: no free pocket inside the print; placed at the chassis centre (overlaps)
+- el_rx_esc: pocket wall only 0 mm
+- el_wesc: no free pocket inside the print; placed at the chassis centre (overlaps)
+- el_wesc: pocket wall only 0 mm
+- chassis: hollowed (exact wall round pockets), 27434 -> 24175 mm3 (46 thin spots kept solid)
+
+Left (one line each):
+- proxy.interference x8: parts overlap in the kit shape where a cut would change the look or leave a loose piece
+- fit.interference x3: catalog part pocket overlaps another body
+- likeness.view x3: looks (photo view label; not part of this pass)
+- likeness.silhouette x3: looks (not part of this pass; outside shape kept as round 3)
+- proxy.sweep x2: moving part runs into the chassis more than a running clearance can take without changing the look
+- mass.over x1: outside shape (kept) is heavier than the class limit even with 2.5 mm shells
+- connection.tape_overload x1: see verify_r4.txt root causes
+- power.weapon_motor x1: toolchain: a servo/arm weapon is required to have a brushless kV motor like a spinner
+- process.geometry x1: kit weapon shape is not a pure 2D/3-axis profile for its process (look)
+- electrical.battery_weapon_gap x1: battery pocket close to the weapon envelope; no other room inside the print
+- wire.render_wires x1: toolchain/process: the photo-match, diff and likeness sheets are written without a render record of the wire routes
