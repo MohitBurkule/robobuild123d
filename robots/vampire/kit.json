@@ -3,7 +3,7 @@
  "body": {
   "length": 100,
   "width": 112,
-  "height": 28,
+  "height": 20,
   "ramp": 0,
   "top": [
    [
@@ -42,23 +42,23 @@
  },
  "wheels": {
   "n": 2,
-  "radius": 14,
+  "radius": 12,
   "width": 9,
   "y": [
-   -28
+   0
   ],
   "outside": false,
   "notch": true,
-  "x": 44
+  "x": 40
  },
  "weapon": {
   "kind": "bar",
-  "radius": 64,
+  "radius": 72,
   "width": 3,
   "y": 0,
   "teeth": 2,
-  "bar_width": 14,
-  "z": 30,
+  "bar_width": 13,
+  "z": 26,
   "axis": "z"
  },
  "colors": {
@@ -71,17 +71,33 @@
  "macros": [
   {
    "cyl": [
-    14,
-    8
+    13,
+    7
    ],
    "at": [
     0,
     0,
-    24
+    21
    ],
    "axis": "z",
    "id": "hub",
    "color": "#1c1c1f"
+  },
+  {
+   "box": [
+    60,
+    50,
+    1.5
+   ],
+   "at": [
+    0,
+    0,
+    22.5
+   ],
+   "id": "deck",
+   "material": "carbon",
+   "process": "laser",
+   "color": "#2a2c30"
   }
  ]
 }
