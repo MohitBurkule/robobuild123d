@@ -25,3 +25,9 @@ Decisions: type lifter; body box trapezoid 70x84x22 mm, ramp 0; wheels 2 r11 out
 
 Likeness: aws64 0.10 (FAIL), aws72 0.08 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/slice_and_dice.aws64.webp` is declared `front` (IoU 0.10 there) but the model matches it better from front_left_iso (elevation ; [FAIL] likeness.view: `reference/slice_and_dice.aws72.webp` is declared `front` (IoU 0.08 there) but the model matches it better from front_right_iso (elevation
+
+## Round 3b (rebuilt by eye from the photos: parts moved to where the photo shows them, camera set per photo)
+Decisions: type lifter; body box trapezoid 70x84x22 mm, ramp 0; wheels 2 r11 outboard; weapon none; extra parts: clamp, eye_l, eye_r; clusterbot, one of 2 modelled (count read from photos, unsure).
+
+Likeness: aws64 0.10 (FAIL), aws72 0.08 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/slice_and_dice.aws64.webp` is declared `front` (IoU 0.10 there) but the model matches it better from front_left_iso (elevation ; [FAIL] likeness.view: `reference/slice_and_dice.aws72.webp` is declared `front` (IoU 0.08 there) but the model matches it better from front_right_iso (elevation
