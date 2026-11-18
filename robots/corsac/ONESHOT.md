@@ -28,7 +28,7 @@ Likeness: aws72 0.63 (FAIL), aws74 0.65 (FAIL), aws76 0.62 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/corsac.aws72.webp` is declared `front_left_iso` (IoU 0.63 there) but the model matches it better from front_right_iso (elevatio; [FAIL] likeness.view: `reference/corsac.aws74.webp` is declared `front_right_iso` (IoU 0.65 there) but the model matches it better from front_left_iso (elevatio; [FAIL] likeness.view: `reference/corsac.aws76.webp` is declared `front_left_iso` (IoU 0.62 there) but the model matches it better from front_left_iso (elevation
 
 ## Round 4 (verification, helper 2)
-Blockers r3 113 -> r4 13 (`verify --tier inner`).
+Blockers r3 113 -> r4 11 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -53,12 +53,10 @@ Fixed / changed (inside only, outside kept):
 - hollowed chassis (wall 1.6, form 0): 189.2 -> 66.4 cm3
 
 Left (and why):
-- integrity.solids x1: `chassis` has 0 closed solid(s) and 1 open/invalid shell(s), expected 1 (66154 mm3). A boolean or fillet probably collapsed the build.
+- integrity.solids x1: `chassis` has 0 closed solid(s) and 1 open/invalid shell(s), expected 1 (65597 mm3). A boolean or fillet probably collapsed the build.
 - mass.over x1: the photo-sized outside (steel weapon / big printed shell) is heavier than 150 g even hollowed; only a smaller outside would fix it.
 - connection.cover_fasteners x1: `face` is an armour / cover panel held by 0 fastener(s); it needs >= 2 real screws. Snap, press-fit or tape retention alone lets it peel off on the first hit.
 - mfg.stock x6: `fork_0` (laser): thickness 2.50 mm is not a stock titanium gauge (0.5, 0.8, 0.9, 1, 1.5, 2, 3, 4, 5, 6, 8, 10); nearest 2 mm.
 - process.geometry x2: `face` (laser): 16 oblique planar face(s): chamfer/bevel; declare `secondary_ops: ["chamfer"]` or remove.
-- wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
-- wire.render_count x1: iso.png: 3 routes vs 4 spec wires (missing ['w_m1']); top.png: 3 routes vs 4 spec wires (missing ['w_m1'])
 
 Likeness (best silhouette IoU per photo, r3 -> r4): corsac.aws72.webp 0.81 -> 0.81; corsac.aws74.webp 0.82 -> 0.82; corsac.aws76.webp 0.83 -> 0.83
