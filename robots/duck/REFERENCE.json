@@ -1,0 +1,14 @@
+{
+ "robot_type": "flipper",
+ "wheels": 2,
+ "weapon": {
+  "kind": "flipper",
+  "position": "middle",
+  "width_frac": 0.55
+ },
+ "photos": [
+  "duck_ling_.aws67.webp",
+  "duck_ling_.aws71.webp",
+  "duck_ling_.aws72.webp"
+ ]
+}

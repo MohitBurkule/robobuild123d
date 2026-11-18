@@ -1,0 +1,23 @@
+{
+ "name": "duck",
+ "robot_type": "flipper",
+ "body": {
+  "length": 120,
+  "width": 110,
+  "height": 31,
+  "ramp": 85,
+  "clearance": 1
+ },
+ "weapon": {
+  "kind": "none"
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 12,
+  "width": 10,
+  "y": [
+   -28
+  ],
+  "outside": false
+ }
+}

@@ -1,0 +1,370 @@
+{
+ "name": "duck",
+ "profile": "aws2025",
+ "robot_type": "flipper",
+ "locomotion": "wheels",
+ "kit_draft": true,
+ "parts": [
+  {
+   "id": "chassis",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -55,
+       -11
+      ],
+      [
+       65,
+       -11
+      ],
+      [
+       65,
+       -9.5
+      ],
+      [
+       -20,
+       20
+      ],
+      [
+       -45,
+       20
+      ],
+      [
+       -55,
+       10
+      ]
+     ],
+     "height": 110
+    },
+    "at": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rot": [
+     90.0,
+     0.0,
+     90.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#f07a1c",
+   "print_orientation": "+z"
+  },
+  {
+   "id": "wheel_l0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 12.0,
+     "height": 10.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    49.5,
+    -28.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "wheel_r0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 12.0,
+     "height": 10.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -49.5,
+    -28.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "flipper",
+   "kind": "weapon",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      60,
+      72,
+      4
+     ]
+    },
+    "at": [
+     0,
+     12,
+     11.3
+    ],
+    "rot": [
+     -19.1,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#f2f2ee",
+   "weapon": {
+    "kind": "flipper"
+   },
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "pivot": [
+     0,
+     -22,
+     22
+    ],
+    "min": 0,
+    "max": 60,
+    "default": 0
+   }
+  },
+  {
+   "id": "front_plate",
+   "kind": "wedge",
+   "material": "titanium",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      110,
+      34,
+      1.5
+     ]
+    },
+    "at": [
+     0,
+     60,
+     -6.7
+    ],
+    "rot": [
+     -19.1,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#c9cdd3"
+  },
+  {
+   "id": "hook_l",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -48,
+       20
+      ],
+      [
+       -22,
+       20
+      ],
+      [
+       -18,
+       24
+      ],
+      [
+       -24,
+       30
+      ],
+      [
+       -48,
+       26
+      ]
+     ],
+     "height": 10
+    },
+    "at": [
+     29.0,
+     0.0,
+     0.0
+    ],
+    "rot": [
+     90.0,
+     0.0,
+     90.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#2a55d8"
+  },
+  {
+   "id": "hook_r",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -48,
+       20
+      ],
+      [
+       -22,
+       20
+      ],
+      [
+       -18,
+       24
+      ],
+      [
+       -24,
+       30
+      ],
+      [
+       -48,
+       26
+      ]
+     ],
+     "height": 10
+    },
+    "at": [
+     -29.0,
+     0.0,
+     0.0
+    ],
+    "rot": [
+     90.0,
+     0.0,
+     90.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#2a55d8"
+  }
+ ],
+ "fasteners": [],
+ "wires": [],
+ "connections": [],
+ "reference": [
+  {
+   "image": "reference/duck_ling_.aws67.webp",
+   "mask": "reference/duck_ling_.aws67_mask.png",
+   "view": "iso",
+   "approximate": true
+  },
+  {
+   "image": "reference/duck_ling_.aws71.webp",
+   "mask": "reference/duck_ling_.aws71_mask.png",
+   "view": "iso",
+   "approximate": true
+  },
+  {
+   "image": "reference/duck_ling_.aws72.webp",
+   "mask": "reference/duck_ling_.aws72_mask.png",
+   "view": "iso",
+   "approximate": true
+  }
+ ]
+}
