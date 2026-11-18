@@ -3699,10 +3699,13 @@
         "head_k": 2.0,
         "clearance_d": 2.4,
         "into": "insert",
-        "side": "head",
+        "side": "both",
         "cbore_d": 4.2,
         "cbore_depth": 0.0,
-        "grip": 2.4
+        "grip": 2.4,
+        "insert_d": 3.2,
+        "insert_len": 3.0,
+        "insert_depth": 3.3
       }
     },
     {
@@ -3734,10 +3737,13 @@
         "head_k": 2.0,
         "clearance_d": 2.4,
         "into": "insert",
-        "side": "head",
+        "side": "both",
         "cbore_d": 4.2,
         "cbore_depth": 0.0,
-        "grip": 2.4
+        "grip": 2.4,
+        "insert_d": 3.2,
+        "insert_len": 3.0,
+        "insert_depth": 3.3
       }
     },
     {
@@ -3769,10 +3775,13 @@
         "head_k": 2.0,
         "clearance_d": 2.4,
         "into": "insert",
-        "side": "head",
+        "side": "both",
         "cbore_d": 4.2,
         "cbore_depth": 0.0,
-        "grip": 2.4
+        "grip": 2.4,
+        "insert_d": 3.2,
+        "insert_len": 3.0,
+        "insert_depth": 3.3
       }
     },
     {
@@ -3804,10 +3813,13 @@
         "head_k": 2.0,
         "clearance_d": 2.4,
         "into": "insert",
-        "side": "head",
+        "side": "both",
         "cbore_d": 4.2,
         "cbore_depth": 0.0,
-        "grip": 2.4
+        "grip": 2.4,
+        "insert_d": 3.2,
+        "insert_len": 3.0,
+        "insert_depth": 3.3
       }
     },
     {
@@ -3840,10 +3852,13 @@
         "head_k": 2.0,
         "clearance_d": 2.4,
         "into": "insert",
-        "side": "head",
+        "side": "both",
         "cbore_d": 4.2,
-        "cbore_depth": 0.0,
-        "grip": 13.0
+        "cbore_depth": 2.2,
+        "grip": 15.2,
+        "insert_d": 3.2,
+        "insert_len": 3.0,
+        "insert_depth": 3.3
       }
     },
     {
@@ -3876,10 +3891,13 @@
         "head_k": 2.0,
         "clearance_d": 2.4,
         "into": "insert",
-        "side": "head",
+        "side": "both",
         "cbore_d": 4.2,
-        "cbore_depth": 0.0,
-        "grip": 13.0
+        "cbore_depth": 2.2,
+        "grip": 15.2,
+        "insert_d": 3.2,
+        "insert_len": 3.0,
+        "insert_depth": 3.3
       }
     },
     {
@@ -3912,10 +3930,13 @@
         "head_k": 2.0,
         "clearance_d": 2.4,
         "into": "insert",
-        "side": "head",
+        "side": "both",
         "cbore_d": 4.2,
-        "cbore_depth": 0.0,
-        "grip": 13.0
+        "cbore_depth": 2.2,
+        "grip": 15.2,
+        "insert_d": 3.2,
+        "insert_len": 3.0,
+        "insert_depth": 3.3
       }
     },
     {
@@ -3948,10 +3969,13 @@
         "head_k": 2.0,
         "clearance_d": 2.4,
         "into": "insert",
-        "side": "head",
+        "side": "both",
         "cbore_d": 4.2,
-        "cbore_depth": 0.0,
-        "grip": 13.0
+        "cbore_depth": 2.2,
+        "grip": 15.2,
+        "insert_d": 3.2,
+        "insert_len": 3.0,
+        "insert_depth": 3.3
       }
     }
   ],
