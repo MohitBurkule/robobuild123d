@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_gargantua/robots/gargantua/spec.json",
- "rendered_at": 1795023234.6972108,
+ "rendered_at": 1795026170.941273,
  "bodies": [
   "chassis",
   "weapon",
@@ -9,7 +9,20 @@
   "lid",
   "spoke",
   "spoke2",
-  "tooth"
+  "tooth",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_nut_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_nut_wheel_r0",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3",
+  "dt_shaft_weapon",
+  "dt_hubw_weapon",
+  "dt_strut_tooth"
  ],
  "wires": {}
 }

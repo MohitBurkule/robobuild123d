@@ -7,5 +7,14 @@
  },
  "photos": [
   "gargantua.aws67.webp"
- ]
+ ],
+ "view": {
+  "gargantua.aws65.webp": "top",
+  "gargantua.aws66.webp": "front_right_iso",
+  "gargantua.aws67.webp": "front"
+ },
+ "elevation": {
+  "gargantua.aws66.webp": 45,
+  "gargantua.aws67.webp": 45
+ }
 }

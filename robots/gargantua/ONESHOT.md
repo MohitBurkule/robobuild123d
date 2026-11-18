@@ -17,3 +17,9 @@ Likeness: aws67 0.80 (FAIL).
 Decisions: type horizontal_spinner; body box rect 70x72x26 mm, ramp 0; wheels 2 r14 outboard; weapon ring r58 axis z teeth 1; extra parts: lid, spoke, spoke2, tooth; photos skipped (cluttered): indices [0, 1].
 
 Likeness: aws67 0.81 (ok).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type horizontal_spinner; body box rect 62x64x26 mm, ramp 0; wheels 2 r14 outboard; weapon ring r52 axis z teeth 1; extra parts: lid, spoke, spoke2, tooth; photos skipped (cluttered): indices [0, 1].
+
+Likeness: aws67 0.72 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/gargantua.aws67.webp` is declared `front` (IoU 0.72 there) but the model matches it better from top (IoU 0.80).
