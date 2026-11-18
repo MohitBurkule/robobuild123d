@@ -16,37 +16,37 @@
      "type": "prism",
      "points": [
       [
-       -35.0,
-       0.0
+       -35,
+       -9.0
       ],
       [
-       35.0,
-       0.0
+       45,
+       -9.0
       ],
       [
-       35.0,
-       1.5
+       45,
+       -5.0
       ],
       [
-       35.0,
-       40.0
+       8,
+       29.0
       ],
       [
-       -35.0,
-       40.0
+       -35,
+       29.0
       ]
      ],
-     "height": 80.0
+     "height": 76.0
     },
     "at": [
      0.0,
-     0.0,
-     -9.0
+     0,
+     0
     ],
     "rot": [
-     90.0,
-     0.0,
-     90.0
+     90,
+     0,
+     90
     ]
    },
    "at": [
@@ -59,7 +59,7 @@
     0,
     0
    ],
-   "color": "#e8d81c",
+   "color": "#26282c",
    "print_orientation": "+z"
   },
   {
@@ -86,7 +86,7 @@
     ]
    },
    "at": [
-    35.5,
+    33.5,
     -20.0,
     0.0
    ],
@@ -121,7 +121,7 @@
     ]
    },
    "at": [
-    -35.5,
+    -33.5,
     -20.0,
     0.0
    ],
@@ -135,27 +135,41 @@
   {
    "id": "flipper",
    "kind": "weapon",
-   "material": "nylon",
-   "process": "fdm",
+   "material": "polycarbonate",
+   "process": "laser",
    "shape": {
     "type": "place",
     "shape": {
-     "type": "box",
-     "size": [
-      86,
-      62,
-      2
-     ]
+     "type": "prism",
+     "points": [
+      [
+       51,
+       -10.5
+      ],
+      [
+       53,
+       -9.0
+      ],
+      [
+       4,
+       34.0
+      ],
+      [
+       2,
+       32.5
+      ]
+     ],
+     "height": 92
     },
     "at": [
-     0,
-     28,
-     19.0
-    ],
-    "rot": [
-     -32,
+     0.0,
      0,
      0
+    ],
+    "rot": [
+     90,
+     0,
+     90
     ]
    },
    "at": [
@@ -181,13 +195,155 @@
     ],
     "pivot": [
      0,
-     -5,
-     41.0
+     3,
+     33.0
     ],
     "min": 0,
     "max": 80,
     "default": 0
    }
+  },
+  {
+   "id": "side_panel_l",
+   "kind": "other",
+   "material": "polycarbonate",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -35,
+       -9.0
+      ],
+      [
+       47,
+       -9.0
+      ],
+      [
+       8,
+       29.0
+      ],
+      [
+       -35,
+       29.0
+      ]
+     ],
+     "height": 2
+    },
+    "at": [
+     39.0,
+     0,
+     0
+    ],
+    "rot": [
+     90,
+     0,
+     90
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e8e01c"
+  },
+  {
+   "id": "side_panel_r",
+   "kind": "other",
+   "material": "polycarbonate",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -35,
+       -9.0
+      ],
+      [
+       47,
+       -9.0
+      ],
+      [
+       8,
+       29.0
+      ],
+      [
+       -35,
+       29.0
+      ]
+     ],
+     "height": 2
+    },
+    "at": [
+     -39.0,
+     0,
+     0
+    ],
+    "rot": [
+     90,
+     0,
+     90
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e8e01c"
+  },
+  {
+   "id": "top_plate",
+   "kind": "other",
+   "material": "polycarbonate",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      72,
+      34,
+      2
+     ]
+    },
+    "at": [
+     0,
+     -17,
+     30.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e8e01c"
   },
   {
    "id": "dt_hub_wheel_l0",
@@ -202,7 +358,7 @@
      "height": 9.2
     },
     "at": [
-     35.5,
+     33.5,
      -20.0,
      0.0
     ],
@@ -237,7 +393,7 @@
      "height": 18.6
     },
     "at": [
-     31.8,
+     29.8,
      -20.0,
      0.0
     ],
@@ -272,7 +428,7 @@
      "height": 1.6
     },
     "at": [
-     40.9,
+     38.9,
      -20.0,
      0.0
     ],
@@ -307,7 +463,7 @@
      "height": 9.2
     },
     "at": [
-     -35.5,
+     -33.5,
      -20.0,
      0.0
     ],
@@ -342,7 +498,7 @@
      "height": 18.6
     },
     "at": [
-     -31.8,
+     -29.8,
      -20.0,
      0.0
     ],
@@ -377,7 +533,7 @@
      "height": 1.6
     },
     "at": [
-     -40.9,
+     -38.9,
      -20.0,
      0.0
     ],
@@ -412,7 +568,7 @@
      "height": 1.4
     },
     "at": [
-     -33.0,
+     -31.0,
      -28.0,
      31.3
     ],
@@ -432,7 +588,7 @@
     0,
     0
    ],
-   "color": "#2b2d31"
+   "color": "#c9cdd3"
   },
   {
    "id": "dt_screw_1",
@@ -447,7 +603,7 @@
      "height": 1.4
     },
     "at": [
-     33.0,
+     31.0,
      -28.0,
      31.3
     ],
@@ -467,77 +623,7 @@
     0,
     0
    ],
-   "color": "#2b2d31"
-  },
-  {
-   "id": "dt_screw_2",
-   "kind": "fastener_head",
-   "material": "steel",
-   "process": "cots",
-   "shape": {
-    "type": "place",
-    "shape": {
-     "type": "cylinder",
-     "radius": 1.9,
-     "height": 1.4
-    },
-    "at": [
-     -33.0,
-     28.0,
-     31.3
-    ],
-    "rot": [
-     0.0,
-     0.0,
-     0.0
-    ]
-   },
-   "at": [
-    0,
-    0,
-    0
-   ],
-   "rot": [
-    0,
-    0,
-    0
-   ],
-   "color": "#2b2d31"
-  },
-  {
-   "id": "dt_screw_3",
-   "kind": "fastener_head",
-   "material": "steel",
-   "process": "cots",
-   "shape": {
-    "type": "place",
-    "shape": {
-     "type": "cylinder",
-     "radius": 1.9,
-     "height": 1.4
-    },
-    "at": [
-     33.0,
-     28.0,
-     31.3
-    ],
-    "rot": [
-     0.0,
-     0.0,
-     0.0
-    ]
-   },
-   "at": [
-    0,
-    0,
-    0
-   ],
-   "rot": [
-    0,
-    0,
-    0
-   ],
-   "color": "#2b2d31"
+   "color": "#c9cdd3"
   }
  ],
  "fasteners": [],
@@ -590,22 +676,12 @@
   ],
   [
    "dt_screw_0",
-   "chassis",
+   "top_plate",
    "screw"
   ],
   [
    "dt_screw_1",
-   "chassis",
-   "screw"
-  ],
-  [
-   "dt_screw_2",
-   "chassis",
-   "screw"
-  ],
-  [
-   "dt_screw_3",
-   "chassis",
+   "top_plate",
    "screw"
   ]
  ]

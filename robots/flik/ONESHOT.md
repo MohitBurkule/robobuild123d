@@ -21,3 +21,9 @@ Decisions: type flipper; body box rect 70x80x40 mm, ramp 0; wheels 2 r11 inboard
 
 Likeness: aws70 0.74 (FAIL), aws74 0.67 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/flik.aws74.webp` is declared `front_left_iso` (IoU 0.67 there) but the model matches it better from front_right_iso (elevation 
+
+## Round 3c (user angle picks applied; shape fixed per user remarks)
+Decisions: type flipper; body box rect 80x76x40 mm, ramp 0; wheels 2 r11 inboard; weapon none; extra parts: flipper, side_panel, top_plate; photos skipped (cluttered): indices [1].
+
+Likeness: aws70 0.67 (FAIL), aws74 0.56 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/flik.aws70.webp` is declared `front_right_iso` (IoU 0.67 there) but the model matches it better from front_right_iso (elevation; [FAIL] likeness.view: `reference/flik.aws74.webp` is declared `front_left_iso` (IoU 0.56 there) but the model matches it better from front_right_iso (elevation 

@@ -1,11 +1,14 @@
 {
  "spec": "/tmp/work10_flik/robots/flik/spec.json",
- "rendered_at": 1795026306.0045211,
+ "rendered_at": 1795034968.797025,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
   "flipper",
+  "side_panel_l",
+  "side_panel_r",
+  "top_plate",
   "dt_hub_wheel_l0",
   "dt_axle_wheel_l0",
   "dt_nut_wheel_l0",
@@ -13,9 +16,7 @@
   "dt_axle_wheel_r0",
   "dt_nut_wheel_r0",
   "dt_screw_0",
-  "dt_screw_1",
-  "dt_screw_2",
-  "dt_screw_3"
+  "dt_screw_1"
  ],
  "wires": {}
 }
