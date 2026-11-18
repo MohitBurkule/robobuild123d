@@ -12,11 +12,11 @@
   "ant_ratchet.aws76.webp"
  ],
  "view": {
-  "ant_ratchet.aws72.webp": "front_left_iso",
-  "ant_ratchet.aws76.webp": "front_right_iso"
+  "ant_ratchet.aws72.webp": "front_right_iso",
+  "ant_ratchet.aws76.webp": "front_left_iso"
  },
- "elevation": {
-  "ant_ratchet.aws72.webp": 45,
-  "ant_ratchet.aws76.webp": 45
+ "view_source": {
+  "ant_ratchet.aws72.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label",
+  "ant_ratchet.aws76.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label"
  }
 }

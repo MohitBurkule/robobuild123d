@@ -1,37 +1,37 @@
-BLOCKERS: 15
-  [cached] integrity 0.00s
+BLOCKERS: 12
+  [cached] integrity 0.01s
   [cached] mass 0.00s
-  [proxy] interference 0.15s
+  [proxy] interference 0.67s
   [cached] connections 0.00s
-  [cached] legal 0.00s
+  [cached] legal 0.01s
   [cached] fasteners 0.00s
   [cached] power 0.00s
   [cached] tension 0.00s
   [cached] targets 0.00s
   [cached] fight 0.00s
   [cached] shape 0.00s
-  [cached] dynamics 0.00s
+  [cached] dynamics 0.01s
   [cached] strength 0.00s
   [cached] printability 0.00s
   [cached] process 0.00s
   [cached] electrical 0.00s
-  [cached] combat 0.00s
+  [cached] combat 0.01s
   [cached] physics 0.00s
   [cached] plausibility 0.00s
   [cached] cots 0.00s
-  [cached] fit 0.00s
+  [cached] fit 0.01s
   [cached] bom 0.00s
   [cached] wire_review 0.00s
   [cached] fastener_record 0.00s
-  [cached] likeness 0.00s
-  [cached] drive_recess 0.00s
+  [ran] likeness 13.19s
+  [cached] drive_recess 0.01s
   [cached] belt_wrap 0.00s
-  [cached] retention 0.01s
-  [cached] waiver_audit 0.00s
+  [cached] retention 0.00s
+  [cached] waiver_audit 0.01s
   [cached] geom 0.00s
-  [cached] dfm 0.00s
+  [cached] dfm 0.01s
   [cached] realworld 0.00s
-ant ratchet: ok=False 15 blockers in 15 root causes, mass 295.5/150 g
+ant ratchet: ok=False 12 blockers in 12 root causes, mass 295.5/150 g
 1. [mass.over] 295.5 g (range 240.4 to 350.7 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
 2. [proxy.sweep] joint `lifter`: `lifter` hits `dt_strut_lifter` 0.14 mm deep at 7.0 (declared range 0..70; allowed 0.08). `robot probe spec.json --joint lifter` lists the closest approach to every part.
@@ -93,9 +93,13 @@ ant ratchet: ok=False 15 blockers in 15 root causes, mass 295.5/150 g
    |   joint revolute axis [1, 0, 0] pivot [0, 8, 18] range 0..70 default 0
    |   gap to `dt_strut_lifter` 0.00 mm (touching)
    |   gap to `chassis` 1.03 mm
-12. [likeness.silhouette] `reference/ant_ratchet.aws72.webp`: best silhouette IoU 0.78 at camera front_left_iso (elevation 45, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.71). Regions (photo frame, left third first) 0.79 / 0.86 / 0.67: worst = rear third. Height/length 0.86 model vs 0.78 photo (too tall: lower it or lengthen it).
-   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
-... 3 more root causes (fix these first, then re-run)
+12. [battery.rotor_gap] `el_battery` is 0.0 mm from the volume swept by `lifter`.
+   fix: Move the battery or add a wall.
+   | el_battery: x -14.50..13.50  y -9.50..8.50  z -11.50..-1.50  size 28.00 x 18.00 x 10.00 mm
+   |   centre (-0.50, -0.50, -6.50), volume 5040.0 mm3
+   |   port xt30: (-0.50, 10.50, -6.50)
+   |   gap to `chassis` 0.25 mm
+   |   gap to `el_esc` 2.75 mm
 MASS BUDGET:
   mass 295.5 g of 150 g (-145.5 g margin)
     chassis                   192.81 g  fills 75% of its box  <- solid block? a tub should be a shell
@@ -121,4 +125,4 @@ MASS BUDGET:
     dt_strut_lifter             0.06 g  fills 29% of its box
     mass.over: 295.5 g (range 240.4 to 350.7 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: group 31 hit / 0 miss, min_gap 51 hit / 0 miss, overlap 191 hit / 0 miss, part_geom 21 hit / 0 miss
+cache: group 30 hit / 1 miss, inside 16 hit / 0 miss, likeness 0 hit / 2 miss, min_gap 59 hit / 2 miss, overlap 194 hit / 0 miss, part_geom 21 hit / 0 miss
