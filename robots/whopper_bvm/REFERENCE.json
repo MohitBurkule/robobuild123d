@@ -7,5 +7,11 @@
  },
  "photos": [
   "whopper.aws76.webp"
- ]
+ ],
+ "view": {
+  "whopper.aws76.webp": "front_right_iso"
+ },
+ "elevation": {
+  "whopper.aws76.webp": 45
+ }
 }
