@@ -1,13 +1,13 @@
-BLOCKERS: 3
+BLOCKERS: 2
   [cached] integrity 0.00s
   [cached] mass 0.00s
-  [proxy] interference 0.09s
+  [proxy] interference 0.35s
   [cached] connections 0.00s
   [cached] legal 0.00s
   [cached] fasteners 0.00s
   [cached] power 0.00s
   [cached] tension 0.00s
-  [cached] targets 0.00s
+  [cached] targets 0.01s
   [cached] fight 0.00s
   [cached] shape 0.00s
   [cached] dynamics 0.00s
@@ -15,28 +15,26 @@ BLOCKERS: 3
   [cached] printability 0.00s
   [cached] process 0.00s
   [cached] electrical 0.00s
-  [cached] combat 0.00s
+  [cached] combat 0.01s
   [cached] physics 0.00s
   [cached] plausibility 0.00s
   [cached] cots 0.00s
   [cached] fit 0.00s
-  [cached] bom 0.00s
+  [cached] bom 0.01s
   [cached] wire_review 0.00s
   [cached] fastener_record 0.00s
   [cached] likeness 0.00s
   [cached] drive_recess 0.00s
   [cached] belt_wrap 0.00s
-  [cached] retention 0.00s
+  [cached] retention 0.02s
   [cached] waiver_audit 0.00s
   [cached] geom 0.00s
   [cached] dfm 0.00s
   [cached] realworld 0.00s
-pingu: ok=False 3 blockers in 3 root causes, mass 140.4/150 g
+pingu: ok=False 2 blockers in 2 root causes, mass 140.4/150 g
 1. [wire.render_wires] 5 of 5 robot render(s) do not draw all 4 wires: renders/diff_pingu.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_pingu.aws72_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_pingu.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_pingu.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn
    fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
-2. [likeness.view] `reference/pingu.aws72.webp` is declared `front` (IoU 0.46 there) but the model matches it better from rear_right_iso (elevation 45, azimuth 300) (IoU 0.69).
-   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
-3. [likeness.silhouette] `reference/pingu.aws72.webp`: best silhouette IoU 0.46 at camera front (elevation 45, azimuth 90) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.49). Regions (photo frame, left third first) 0.45 / 0.52 / 0.39: worst = rear third. Height/length 0.94 model vs 0.82 photo (too tall: lower it or lengthen it).
+2. [likeness.silhouette] `reference/pingu.aws72.webp`: best silhouette IoU 0.64 at camera front_left_iso (elevation 25, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.67). Regions (photo frame, left third first) 0.58 / 0.72 / 0.59: worst = front third. Height/length 0.65 model vs 0.82 photo (too flat: raise it or shorten it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
   mass 140.4 g of 150 g (+9.6 g margin)
