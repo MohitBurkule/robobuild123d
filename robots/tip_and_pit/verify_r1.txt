@@ -1,0 +1,104 @@
+  [ran] integrity 0.01s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 1.71s
+  [ran] connections 0.01s
+  [ran] legal 0.00s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.00s
+  [ran] shape 0.09s
+  [ran] dynamics 0.01s
+  [ran] strength 0.00s
+  [ran] printability 0.33s
+  [ran] process 0.01s
+  [ran] electrical 0.01s
+  [ran] combat 0.03s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.01s
+  [ran] fastener_record 0.00s
+  [ran] likeness 1.88s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.03s
+  [ran] waiver_audit 0.01s
+  [ran] geom 0.01s
+  [ran] dfm 0.01s
+  [ran] realworld 0.01s
+tip and pit: ok=False 17 blockers in 17 root causes, mass 97.7/112 g
+1. [proxy.interference] `chassis` and `plate` overlap by 0.91 mm (allowed 0.08).
+   | chassis: x -35.00..35.00  y -20.00..20.00  z -14.00..12.00  size 70.00 x 40.00 x 26.00 mm
+   |   centre (0.00, 0.00, -1.00), volume 72800.0 mm3
+   |   OVERLAP `plate` 0.91 mm (allowed 0.08)
+   |   gap to `wheel_l0` 0.50 mm
+   |   gap to `wheel_r0` 0.50 mm
+2. [proxy.sweep] joint `plate`: `plate` hits `chassis` 0.91 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint plate` lists the closest approach to every part.
+   | plate: x -22.00..22.00  y -3.08..43.08  z -7.47..15.47  size 44.00 x 46.16 x 22.94 mm
+   |   centre (0.00, 20.00, 4.00), volume 4400.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 0, 12.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.91 mm (allowed 0.08)
+   | chassis: x -35.00..35.00  y -20.00..20.00  z -14.00..12.00  size 70.00 x 40.00 x 26.00 mm
+3. [connection.floating] `wheel_l0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_l0: x 35.50..49.50  y -16.00..16.00  z -16.00..16.00  size 14.00 x 31.99 x 32.00 mm
+   |   centre (42.50, -0.00, 0.00), volume 11259.5 mm3
+   |   gap to `chassis` 0.50 mm
+   | chassis: x -35.00..35.00  y -20.00..20.00  z -14.00..12.00  size 70.00 x 40.00 x 26.00 mm
+   |   centre (0.00, 0.00, -1.00), volume 72800.0 mm3
+4. [connection.floating] `wheel_r0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_r0: x -49.50..-35.50  y -16.00..16.00  z -16.00..16.00  size 14.00 x 31.99 x 32.00 mm
+   |   centre (-42.50, -0.00, 0.00), volume 11259.5 mm3
+   |   gap to `chassis` 0.50 mm
+   | chassis: x -35.00..35.00  y -20.00..20.00  z -14.00..12.00  size 70.00 x 40.00 x 26.00 mm
+   |   centre (0.00, 0.00, -1.00), volume 72800.0 mm3
+5. [legal.switch] Rule 4a needs an externally accessible way to shut down that works without tools and is clearly marked on/off.
+   fix: Add a `switch` part (or removable link) with `tool_free: true` and `marked: true` and a visible ON/OFF `label`.
+6. [legal.failsafe] Rule 4d: the robot must stop all motion when the transmitter is off.
+   fix: Set `electronics.failsafe` to true and configure the receiver and ESC failsafe.
+7. [legal.weapon_disable] Rule 4c: all weaponry must be deactivatable by remote control.
+   fix: Set `electronics.weapon_remote_disable` and put the weapon on its own receiver channel.
+8. [power.weapon_motor] `plate` names motor None; it must be a catalog brushless motor so speed can be computed.
+   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
+   | plate: x -22.00..22.00  y -3.08..43.08  z -7.47..15.47  size 44.00 x 46.16 x 22.94 mm
+   |   centre (0.00, 20.00, 4.00), volume 4400.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 0, 12.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.91 mm (allowed 0.08)
+9. [process.print_orientation] `wheel_l0` (fdm) has no `print_orientation`.
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_l0: x 35.50..49.50  y -16.00..16.00  z -16.00..16.00  size 14.00 x 31.99 x 32.00 mm
+   |   centre (42.50, -0.00, 0.00), volume 11259.5 mm3
+   |   gap to `chassis` 0.50 mm
+10. [process.print_orientation] `wheel_r0` (fdm) has no `print_orientation`.
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_r0: x -49.50..-35.50  y -16.00..16.00  z -16.00..16.00  size 14.00 x 31.99 x 32.00 mm
+   |   centre (-42.50, -0.00, 0.00), volume 11259.5 mm3
+   |   gap to `chassis` 0.50 mm
+11. [process.weapon_printed] Weapon `plate` is fdm-printed with no hardened metal insert teeth.
+   fix: Make it metal (sheet_cut / turned / milled) or add hardened steel tooth parts (`parent` = the weapon).
+   | plate: x -22.00..22.00  y -3.08..43.08  z -7.47..15.47  size 44.00 x 46.16 x 22.94 mm
+   |   centre (0.00, 20.00, 4.00), volume 4400.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 0, 12.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.91 mm (allowed 0.08)
+12. [process.print_orientation] `plate` (fdm) has no `print_orientation`.
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | plate: x -22.00..22.00  y -3.08..43.08  z -7.47..15.47  size 44.00 x 46.16 x 22.94 mm
+   |   centre (0.00, 20.00, 4.00), volume 4400.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 0, 12.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.91 mm (allowed 0.08)
+... 5 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 97.7 g of 112 g (+14.8 g margin)
+    chassis                    69.31 g  fills 100% of its box  <- solid block? a tub should be a shell
+    wheel_l0                   11.48 g  fills 79% of its box
+    wheel_r0                   11.48 g  fills 79% of its box
+    plate                       4.19 g  fills 9% of its box
+    mass.may_be_over: 97.7 g (range 77.8 to 117.6 g) against the 112 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 0 hit / 31 miss, inside 0 hit / 4 miss, likeness 1 hit / 0 miss, min_gap 8 hit / 8 miss, overlap 8 hit / 12 miss, part_check 0 hit / 1 miss, part_geom 4 hit / 0 miss, ray 0 hit / 20 miss

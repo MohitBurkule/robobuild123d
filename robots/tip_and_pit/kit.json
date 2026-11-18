@@ -2,15 +2,15 @@
  "robot_type": "lifter",
  "cluster": 2,
  "body": {
-  "length": 40,
-  "width": 70,
-  "height": 26,
+  "length": 34,
+  "width": 60,
+  "height": 30,
   "ramp": 0
  },
  "wheels": {
   "n": 2,
-  "radius": 16,
-  "width": 14,
+  "radius": 17,
+  "width": 12,
   "y": [
    0
   ]
@@ -24,14 +24,14 @@
  "extras": [
   {
    "box": [
-    44,
     50,
+    55,
     2
    ],
    "at": [
     0,
-    20,
-    20
+    25,
+    24
    ],
    "weapon": "lifter",
    "pivot": [
@@ -41,7 +41,7 @@
    "id": "plate",
    "color": "#b9bdc2",
    "rot": [
-    -25,
+    -15,
     0,
     0
    ]
