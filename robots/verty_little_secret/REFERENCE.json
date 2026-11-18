@@ -1,0 +1,6 @@
+{
+ "robot_type": "vertical_spinner",
+ "weapon": "central vertical disc on BE1806 motor",
+ "wheels": 2,
+ "source": "read from reference photos by Sonnet"
+}
