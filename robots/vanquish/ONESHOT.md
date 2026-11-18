@@ -51,3 +51,9 @@ Left (and why):
 - wire.outside x2: wire `w_bat_sw` (1.9 mm bundle): about 18.5 mm of its run has insulation outside the armour envelope or below the floor, worst 17.6 mm out at [-5.0, 18.2, 32.6].
 
 Likeness (best silhouette IoU per photo, r3 -> r4): vanquish.aws76.webp 0.38 -> 0.38
+
+## Round 3b (rebuilt by eye from the photos: parts moved to where the photo shows them, camera set per photo)
+Decisions: type vertical_spinner; body box rect 90x40x24 mm, ramp 0; wheels 2 r11 inboard; weapon bar r52 axis x teeth 2; extra parts: motor, upright, fork.
+
+Likeness: aws76 0.33 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/vanquish.aws76.webp` is declared `front_right_iso` (IoU 0.33 there) but the model matches it better from rear_left_iso (elevati

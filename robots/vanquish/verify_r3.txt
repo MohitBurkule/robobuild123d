@@ -1,38 +1,38 @@
-BLOCKERS: 85
-  [ran] integrity 0.06s
+BLOCKERS: 89
+  [ran] integrity 0.13s
   [proxy] wiring 0.00s
-  [ran] mass 0.00s
-  [proxy] interference 5.19s
-  [ran] connections 1.41s
-  [ran] legal 0.00s
-  [ran] fasteners 0.00s
+  [ran] mass 0.01s
+  [proxy] interference 8.83s
+  [ran] connections 0.37s
+  [ran] legal 0.01s
+  [ran] fasteners 0.01s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
-  [ran] fight 0.01s
-  [ran] shape 0.24s
-  [ran] dynamics 0.00s
-  [ran] strength 0.00s
-  [ran] printability 0.40s
-  [ran] process 0.00s
-  [ran] electrical 0.00s
-  [ran] combat 0.06s
-  [ran] physics 0.00s
-  [ran] plausibility 0.00s
-  [ran] cots 0.00s
+  [ran] fight 0.04s
+  [ran] shape 1.00s
+  [ran] dynamics 0.01s
+  [ran] strength 0.01s
+  [ran] printability 2.05s
+  [ran] process 0.03s
+  [ran] electrical 0.02s
+  [ran] combat 0.25s
+  [ran] physics 0.01s
+  [ran] plausibility 0.01s
+  [ran] cots 0.01s
   [ran] fit 0.00s
   [ran] bom 0.00s
-  [ran] wire_review 0.00s
+  [ran] wire_review 0.01s
   [ran] fastener_record 0.00s
-  [ran] likeness 1.37s
-  [ran] drive_recess 0.00s
+  [ran] likeness 5.88s
+  [ran] drive_recess 0.01s
   [ran] belt_wrap 0.00s
-  [ran] retention 0.00s
+  [ran] retention 0.03s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.06s
-  [ran] dfm 0.00s
-  [ran] realworld 0.00s
-vanquish: ok=False 85 blockers in 64 root causes, mass 159.3/150 g
+  [ran] geom 0.17s
+  [ran] dfm 0.02s
+  [ran] realworld 0.01s
+vanquish: ok=False 89 blockers in 68 root causes, mass 158.5/150 g
 1. [proxy.interference] `chassis` and `dt_screw_0` overlap by 0.19 mm (allowed 0.08). Same problem on all 6 parts of this pattern: fix the pattern once. (+5 consequences)
    | chassis: x -20.00..20.00  y -45.00..45.00  z -9.00..15.00  size 40.00 x 90.00 x 24.00 mm
    |   centre (-0.00, 0.00, 3.00), volume 86400.0 mm3
@@ -77,7 +77,7 @@ vanquish: ok=False 85 blockers in 64 root causes, mass 159.3/150 g
    |   joint revolute axis [1, 0, 0] pivot [-14.0, 26.0, 54.0] range 0..360 default 0
    |   OVERLAP `chassis` 1.88 mm (allowed 0.08)
    |   OVERLAP `dt_shaft_weapon` 1.78 mm (allowed 0.08)
-8. [mass.over] 159.3 g (range 134.7 to 183.9 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+8. [mass.over] 158.5 g (range 134.0 to 182.9 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
 9. [proxy.interference] `chassis` and `weapon` overlap by 1.88 mm (allowed 0.08).
    | chassis: x -20.00..20.00  y -45.00..45.00  z -9.00..15.00  size 40.00 x 90.00 x 24.00 mm
@@ -103,17 +103,17 @@ vanquish: ok=False 85 blockers in 64 root causes, mass 159.3/150 g
    |   OVERLAP `dt_hub_wheel_l0` 4.38 mm (allowed 0.08)
    |   OVERLAP `dt_hub_wheel_r0` 4.38 mm (allowed 0.08)
    |   OVERLAP `wheel_l0` 3.88 mm (allowed 0.08)
-... 52 more root causes (fix these first, then re-run)
+... 56 more root causes (fix these first, then re-run)
 MASS BUDGET:
-  mass 159.3 g of 150 g (-9.3 g margin)
+  mass 158.5 g of 150 g (-8.5 g margin)
     chassis                    82.25 g  fills 100% of its box  <- solid block? a tub should be a shell
     weapon                     42.72 g  fills 45% of its box
     motor                       7.18 g  fills 79% of its box
     upright                     6.85 g  fills 100% of its box
     wheel_l0                    3.10 g  fills 79% of its box
     wheel_r0                    3.10 g  fills 79% of its box
-    fork_l                      2.37 g  fills 18% of its box
-    fork_r                      2.37 g  fills 18% of its box
+    fork_l                      1.92 g  fills 15% of its box
+    fork_r                      1.92 g  fills 15% of its box
     dt_shaft_weapon             1.39 g  fills 79% of its box
     dt_axle_wheel_r0            1.04 g  fills 79% of its box
     dt_axle_wheel_l0            1.04 g  fills 79% of its box
@@ -131,6 +131,6 @@ MASS BUDGET:
     dt_screw_5                  0.13 g  fills 79% of its box
     dt_bolt_fork_l              0.10 g  fills 79% of its box
     dt_bolt_fork_r              0.10 g  fills 79% of its box
-    mass.over: 159.3 g (range 134.7 to 183.9 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.over: 158.5 g (range 134.0 to 182.9 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: distance 4 hit / 2 miss, group 0 hit / 31 miss, inside 8 hit / 17 miss, likeness 1 hit / 0 miss, min_gap 47 hit / 134 miss, overlap 206 hit / 277 miss, part_check 2 hit / 0 miss, part_geom 25 hit / 0 miss, ray 40 hit / 85 miss
+cache: distance 2 hit / 4 miss, group 0 hit / 31 miss, inside 19 hit / 6 miss, likeness 1 hit / 0 miss, min_gap 116 hit / 83 miss, overlap 445 hit / 78 miss, part_check 2 hit / 0 miss, part_geom 25 hit / 0 miss, ray 38 hit / 87 miss

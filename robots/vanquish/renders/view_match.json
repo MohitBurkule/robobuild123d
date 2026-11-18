@@ -1,8 +1,8 @@
 {
  "vanquish.aws76.webp": {
-  "view": "160,27~",
-  "azimuth": 180.0,
-  "elevation": 42.0,
-  "iou": 0.423
+  "view": "155,35",
+  "azimuth": 155.0,
+  "elevation": 27.0,
+  "iou": 0.485
  }
 }
