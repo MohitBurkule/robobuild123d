@@ -1,36 +1,36 @@
 BLOCKERS: 3
-  [ran] integrity 0.07s
-  [ran] mass 0.00s
-  [proxy] interference 9.22s
-  [ran] connections 0.03s
-  [ran] legal 0.04s
-  [ran] fasteners 0.00s
-  [ran] power 0.00s
-  [ran] tension 0.00s
-  [ran] targets 0.00s
-  [ran] fight 0.02s
-  [ran] shape 0.34s
-  [ran] dynamics 0.00s
-  [ran] strength 0.00s
-  [ran] printability 0.78s
-  [ran] process 0.00s
-  [ran] electrical 0.01s
-  [ran] combat 0.12s
-  [ran] physics 0.00s
-  [ran] plausibility 0.00s
-  [ran] cots 0.00s
-  [ran] fit 0.06s
-  [ran] bom 0.00s
-  [ran] wire_review 0.01s
-  [ran] fastener_record 0.00s
-  [ran] likeness 7.55s
-  [ran] drive_recess 0.00s
-  [ran] belt_wrap 0.00s
-  [ran] retention 0.00s
-  [ran] waiver_audit 0.00s
-  [ran] geom 0.15s
-  [ran] dfm 0.07s
-  [ran] realworld 0.11s
+  [cached] integrity 0.00s
+  [cached] mass 0.00s
+  [proxy] interference 0.14s
+  [cached] connections 0.00s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.00s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.01s
+  [cached] physics 0.00s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [cached] likeness 0.00s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.00s
+  [cached] waiver_audit 0.01s
+  [cached] geom 0.00s
+  [cached] dfm 0.00s
+  [cached] realworld 0.00s
 i never asked for this: ok=False 3 blockers in 3 root causes, mass 135.4/150 g
 1. [wire.render_wires] 2 of 2 robot render(s) do not draw all 4 wires: renders/iso.png: wire `w_m1` not drawn; renders/top.png: wire `w_m1` not drawn
    fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
@@ -59,4 +59,4 @@ MASS BUDGET:
     el_switch                   0.50 g  fills 100% of its box
     mass.may_be_over: 135.4 g (range 110.3 to 160.6 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: distance 0 hit / 1 miss, group 0 hit / 31 miss, inside 11 hit / 3 miss, likeness 1 hit / 0 miss, min_gap 0 hit / 1 miss, overlap 110 hit / 83 miss, part_check 8 hit / 2 miss, part_geom 16 hit / 1 miss, ray 46 hit / 75 miss
+cache: group 31 hit / 0 miss, overlap 181 hit / 0 miss, part_geom 17 hit / 0 miss
