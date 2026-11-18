@@ -1,13 +1,12 @@
 {
  "spec": "/tmp/work10_smashie_tip/robots/smashie_tip/spec.json",
- "rendered_at": 1795022986.4343917,
+ "rendered_at": 1795024607.3011284,
  "bodies": [
   "chassis",
   "weapon",
   "wheel_l0",
   "wheel_r0",
-  "fork_0",
-  "fork_1"
+  "fork_0"
  ],
  "wires": {}
 }

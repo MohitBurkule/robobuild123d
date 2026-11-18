@@ -17,3 +17,9 @@ Likeness: aws73 0.61 (FAIL), aws74 0.63 (FAIL), aws76 0.73 (FAIL).
 Decisions: type vertical_spinner; body box rect 55x42x18 mm, ramp 8; wheels 2 r9 outboard; weapon disc r12 axis x teeth 2; 2 forks 25 mm; clusterbot, one of 2 modelled (count read from photos, unsure).
 
 Likeness: aws73 0.61 (FAIL), aws74 0.63 (FAIL), aws76 0.73 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type vertical_spinner; body box rect 55x42x18 mm, ramp 24; wheels 2 r8 outboard; weapon disc r12 axis x teeth 2; 1 forks 22 mm; clusterbot, one of 2 modelled (count read from photos, unsure).
+
+Likeness: aws73 0.52 (FAIL), aws74 0.44 (FAIL), aws76 0.52 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/smashie_1.aws73.webp` is declared `left` (IoU 0.52 there) but the model matches it better from front_left_iso (elevation 45, az; [FAIL] likeness.view: `reference/smashie_1.aws74.webp` is declared `front` (IoU 0.44 there) but the model matches it better from front_left_iso (elevation 25, a; [FAIL] likeness.view: `reference/smashie_1.aws76.webp` is declared `front_left_iso` (IoU 0.52 there) but the model matches it better from rear_right_iso (elevat

@@ -30,5 +30,15 @@
    0.5,
    1
   ]
+ },
+ "view": {
+  "smashie_1.aws73.webp": "left",
+  "smashie_1.aws74.webp": "front",
+  "smashie_1.aws76.webp": "front_left_iso"
+ },
+ "elevation": {
+  "smashie_1.aws73.webp": 25,
+  "smashie_1.aws74.webp": 25,
+  "smashie_1.aws76.webp": 45
  }
 }

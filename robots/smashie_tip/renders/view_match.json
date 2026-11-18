@@ -1,0 +1,20 @@
+{
+ "smashie_1.aws73.webp": {
+  "view": "left",
+  "azimuth": 180,
+  "elevation": 25,
+  "iou": 0.523
+ },
+ "smashie_1.aws74.webp": {
+  "view": "front",
+  "azimuth": 105,
+  "elevation": 10,
+  "iou": 0.68
+ },
+ "smashie_1.aws76.webp": {
+  "view": "front_left_iso",
+  "azimuth": 120,
+  "elevation": 25,
+  "iou": 0.639
+ }
+}
