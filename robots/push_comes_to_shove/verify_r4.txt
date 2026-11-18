@@ -1,88 +1,118 @@
-BLOCKERS: unknown (outside rebuilt after this run; round 4 to be re-run)
-  [ran] integrity 0.06s
+BLOCKERS: 18
+building 21 changed part solids on 4 processes
+  [ran] integrity 0.08s
+  [proxy] wiring 0.00s
   [ran] mass 0.00s
-  [proxy] interference 5.57s
-  [ran] connections 0.02s
+  [proxy] interference 7.24s
+  [ran] connections 1.62s
   [ran] legal 0.03s
   [ran] fasteners 0.00s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
-  [ran] fight 0.02s
-  [ran] shape 0.38s
+  [ran] fight 0.03s
+  [ran] shape 0.69s
   [ran] dynamics 0.00s
   [ran] strength 0.00s
-  [ran] printability 0.80s
-  [ran] process 0.00s
+  [ran] printability 1.21s
+  [ran] process 0.02s
   [ran] electrical 0.00s
-  [ran] combat 0.11s
+  [ran] combat 0.15s
   [ran] physics 0.00s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
-  [ran] fit 0.12s
+  [ran] fit 0.17s
   [ran] bom 0.00s
-  [ran] wire_review 0.01s
+  [ran] wire_review 0.00s
   [ran] fastener_record 0.00s
-  [ran] likeness 6.04s
+  [ran] likeness 6.26s
   [ran] drive_recess 0.00s
   [ran] belt_wrap 0.00s
   [ran] retention 0.00s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.10s
-  [ran] dfm 0.05s
-  [ran] realworld 0.09s
-push comes to shove: ok=False 7 blockers in 7 root causes, mass 136.2/150 g
-1. [proxy.interference] `chassis` and `dm_wheel_l1` overlap by 4.88 mm (allowed 0.08).
-   | chassis: x -41.00..41.00  y -45.00..45.00  z -10.00..12.00  size 82.00 x 90.00 x 22.00 mm
-   |   centre (0.00, -0.00, 1.00), volume 74062.7 mm3
-   |   OVERLAP `dm_wheel_l1` 4.88 mm (allowed 0.08)
-   |   OVERLAP `dm_wheel_r1` 4.88 mm (allowed 0.08)
-   |   overlap allowed `front_plate` 1.12 mm (allowed inf)
-2. [proxy.interference] `chassis` and `dm_wheel_r1` overlap by 4.88 mm (allowed 0.08).
-   | chassis: x -41.00..41.00  y -45.00..45.00  z -10.00..12.00  size 82.00 x 90.00 x 22.00 mm
-   |   centre (0.00, -0.00, 1.00), volume 74062.7 mm3
-   |   OVERLAP `dm_wheel_l1` 4.88 mm (allowed 0.08)
-   |   OVERLAP `dm_wheel_r1` 4.88 mm (allowed 0.08)
-   |   overlap allowed `front_plate` 1.12 mm (allowed inf)
-3. [fit.interference] `dm_wheel_l1` overlaps wall `chassis` by 4.88 mm: it will not go in. No side has 5.08 mm free (free room per side {'-x': 2.0, '+x': 0.0, '-y': 0.01, '+y': 0.01, '-z': 0.91, '+z': 0.91}): grow the pocket or pick a smaller part (`robot catalog --kind ... --fits LxWxH`).
-   fix: Grow the pocket to the component size plus the per-side fit clearance.
-   | dm_wheel_l1: x 3.50..39.00  y 6.00..18.00  z -5.00..5.00  size 35.50 x 12.00 x 10.00 mm
-   |   centre (21.25, 12.00, 0.00), volume 2702.4 mm3
-   |   port terminals: (3.50, 12.00, 0.00)
-   |   OVERLAP `chassis` 4.88 mm (allowed 0.08)
-   |   gap to `wheel_l1` 0.00 mm (touching)
-4. [fit.interference] `dm_wheel_r1` overlaps wall `chassis` by 4.88 mm: it will not go in. No side has 5.08 mm free (free room per side {'-x': 0.0, '+x': 1.8, '-y': 0.01, '+y': 0.01, '-z': 0.91, '+z': 0.91}): grow the pocket or pick a smaller part (`robot catalog --kind ... --fits LxWxH`).
-   fix: Grow the pocket to the component size plus the per-side fit clearance.
-   | dm_wheel_r1: x -39.00..-3.50  y 6.00..18.00  z -5.00..5.00  size 35.50 x 12.00 x 10.00 mm
-   |   centre (-21.25, 12.00, 0.00), volume 2702.4 mm3
-   |   port terminals: (-3.50, 12.00, 0.00)
-   |   OVERLAP `chassis` 4.88 mm (allowed 0.08)
-   |   gap to `wheel_r1` 0.00 mm (touching)
-5. [wire.render_wires] 2 of 2 robot render(s) do not draw all 4 wires: renders/iso.png: rendered without wires (checks off or no routes); renders/top.png: rendered without wires (checks off or no routes)
-   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
-6. [likeness.silhouette] `reference/push_mk_1.webp`: best silhouette IoU 0.65 at camera front_left_iso (elevation 45, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.65). Regions (photo frame, left third first) 0.59 / 0.84 / 0.42: worst = rear third. Height/length 0.76 model vs 0.72 photo (proportions ok).
-   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
-7. [likeness.silhouette] `reference/push_mk_2.webp`: best silhouette IoU 0.71 at camera front_left_iso (elevation 45, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.70). Regions (photo frame, left third first) 0.62 / 0.86 / 0.56: worst = rear third. Height/length 0.76 model vs 0.75 photo (proportions ok).
-   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
-MASS BUDGET:
-  mass 136.2 g of 150 g (+13.8 g margin)
-    chassis                    70.51 g  fills 46% of its box
-    el_battery                 12.50 g  fills 100% of its box
-    dm_wheel_l1                 9.50 g  fills 63% of its box
-    dm_wheel_r1                 9.50 g  fills 63% of its box
-    front_plate                 8.71 g  fills 13% of its box
-    wheel_l1                    3.66 g  fills 65% of its box
-    wheel_r1                    3.66 g  fills 65% of its box
-    wheel_l0                    3.63 g  fills 77% of its box
-    wheel_r0                    3.63 g  fills 77% of its box
-    el_esc                      2.30 g  fills 99% of its box
-    dt_hub_wheel_l1             1.10 g  fills 75% of its box
-    dt_hub_wheel_r1             1.10 g  fills 75% of its box
-    dt_hub_wheel_l0             1.08 g  fills 74% of its box
-    dt_hub_wheel_r0             1.08 g  fills 74% of its box
-    dt_axle_wheel_r0            1.04 g  fills 79% of its box
-    dt_axle_wheel_l0            1.04 g  fills 79% of its box
-    el_switch                   0.50 g  fills 100% of its box
-    mass.may_be_over: 136.2 g (range 110.9 to 161.5 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+  [ran] geom 0.18s
+  [ran] dfm 0.11s
+  [ran] realworld 0.01s
+push comes to shove: ok=False 18 blockers in 17 root causes, mass 104.4/150 g
+1. [connection.floating] `side_plate_l` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `top_plate`, 0.0 mm away. (+1 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | side_plate_l: x 38.00..40.00  y -52.00..46.00  z -11.00..13.00  size 2.00 x 98.00 x 24.00 mm
+   |   centre (39.00, -3.00, 1.00), volume 4128.0 mm3
+   |   gap to `top_plate` 0.00 mm (touching)
+   |   gap to `front_plate` 0.00 mm (touching)
+   |   gap to `rear_plate` 0.00 mm (touching)
+2. [integrity.solids] `wheel_l1` has 2 closed solid(s) and 0 open/invalid shell(s), expected 1 (3630 mm3). A boolean or fillet probably collapsed the build.
+   fix: Check the last CAD op (fillet/cut order); or declare `solids` with `solids_reason`.
+   | wheel_l1: x 25.00..34.60  y 4.00..28.00  z -12.00..12.00  size 9.60 x 23.99 x 24.00 mm
+   |   centre (29.80, 16.00, 0.00), volume 3630.0 mm3
+   |   overlap allowed `dt_hub_wheel_l1` 2.62 mm (allowed inf)
+   |   OVERLAP `dm_wheel_l1` 1.16 mm (allowed 0.08)
+   |   gap to `chassis` 1.00 mm
+3. [integrity.solids] `wheel_r1` has 2 closed solid(s) and 0 open/invalid shell(s), expected 1 (3630 mm3). A boolean or fillet probably collapsed the build.
+   fix: Check the last CAD op (fillet/cut order); or declare `solids` with `solids_reason`.
+   | wheel_r1: x -34.60..-25.00  y 4.00..28.00  z -12.00..12.00  size 9.60 x 23.99 x 24.00 mm
+   |   centre (-29.80, 16.00, 0.00), volume 3630.0 mm3
+   |   overlap allowed `dt_hub_wheel_r1` 2.62 mm (allowed inf)
+   |   OVERLAP `dm_wheel_r1` 1.16 mm (allowed 0.08)
+   |   gap to `chassis` 1.00 mm
+4. [proxy.interference] `wheel_l1` and `dm_wheel_l1` overlap by 1.16 mm (allowed 0.08).
+   | wheel_l1: x 25.00..34.60  y 4.00..28.00  z -12.00..12.00  size 9.60 x 23.99 x 24.00 mm
+   |   centre (29.80, 16.00, 0.00), volume 3630.0 mm3
+   |   overlap allowed `dt_hub_wheel_l1` 2.62 mm (allowed inf)
+   |   OVERLAP `dm_wheel_l1` 1.16 mm (allowed 0.08)
+   |   gap to `chassis` 1.00 mm
+5. [proxy.interference] `wheel_r1` and `dm_wheel_r1` overlap by 1.16 mm (allowed 0.08).
+   | wheel_r1: x -34.60..-25.00  y 4.00..28.00  z -12.00..12.00  size 9.60 x 23.99 x 24.00 mm
+   |   centre (-29.80, 16.00, 0.00), volume 3630.0 mm3
+   |   overlap allowed `dt_hub_wheel_r1` 2.62 mm (allowed inf)
+   |   OVERLAP `dm_wheel_r1` 1.16 mm (allowed 0.08)
+   |   gap to `chassis` 1.00 mm
+6. [proxy.interference] `motor_front_l` and `dm_wheel_l1` overlap by 3.38 mm (allowed 0.08).
+   | motor_front_l: x 3.00..24.00  y 10.00..22.00  z -8.00..2.00  size 21.00 x 12.00 x 10.00 mm
+   |   centre (13.50, 16.00, -3.00), volume 2460.3 mm3
+   |   OVERLAP `dm_wheel_l1` 3.38 mm (allowed 0.08)
+   |   overlap allowed `chassis` 0.46 mm (allowed inf)
+   |   gap to `wheel_l1` 1.00 mm
+7. [proxy.interference] `motor_front_r` and `dm_wheel_r1` overlap by 3.38 mm (allowed 0.08).
+   | motor_front_r: x -24.00..-3.00  y 10.00..22.00  z -8.00..2.00  size 21.00 x 12.00 x 10.00 mm
+   |   centre (-13.50, 16.00, -3.00), volume 2460.3 mm3
+   |   OVERLAP `dm_wheel_r1` 3.38 mm (allowed 0.08)
+   |   overlap allowed `chassis` 0.46 mm (allowed inf)
+   |   gap to `wheel_r1` 1.00 mm
+8. [proxy.interference] `dm_wheel_l1` and `dm_wheel_r1` overlap by 0.14 mm (allowed 0.08).
+   | dm_wheel_l1: x -0.20..32.80  y 10.00..22.00  z -5.00..5.00  size 33.00 x 12.00 x 10.00 mm
+   |   centre (16.30, 16.00, 0.00), volume 2539.9 mm3
+   |   port terminals: (-0.20, 16.00, 0.00)
+   |   OVERLAP `motor_front_l` 3.38 mm (allowed 0.08)
+   |   OVERLAP `wheel_l1` 1.16 mm (allowed 0.08)
+9. [connection.floating] `side_plate_r` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `top_plate`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | side_plate_r: x -40.00..-38.00  y -52.00..46.00  z -11.00..13.00  size 2.00 x 98.00 x 24.00 mm
+   |   centre (-39.00, -3.00, 1.00), volume 4128.0 mm3
+   |   gap to `top_plate` 0.00 mm (touching)
+   |   gap to `front_plate` 0.00 mm (touching)
+   |   gap to `rear_plate` 0.00 mm (touching)
+10. [connection.floating] `front_plate` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `side_plate_l`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | front_plate: x -44.00..44.00  y 33.50..48.50  z -11.50..15.00  size 88.00 x 15.00 x 26.50 mm
+   |   centre (0.00, 41.00, 1.75), volume 5804.9 mm3
+   |   gap to `side_plate_l` 0.00 mm (touching)
+   |   gap to `side_plate_r` 0.00 mm (touching)
+   |   gap to `top_plate` 0.00 mm (touching)
+11. [connection.floating] `rear_plate` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `side_plate_l`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | rear_plate: x -44.00..44.00  y -55.00..-40.00  z -11.50..15.00  size 88.00 x 15.00 x 26.50 mm
+   |   centre (-0.00, -47.50, 1.75), volume 5799.4 mm3
+   |   gap to `side_plate_l` 0.00 mm (touching)
+   |   gap to `side_plate_r` 0.00 mm (touching)
+   |   gap to `top_plate` 0.00 mm (touching)
+12. [connection.cover_fasteners] `rear_plate` is an armour / cover panel held by 0 fastener(s); it needs >= 2 real screws. Snap, press-fit or tape retention alone lets it peel off on the first hit.
+   fix: Bolt it with >= 2 screws into inserts, nuts or tapped bosses and declare them in `fasteners`.
+   | rear_plate: x -44.00..44.00  y -55.00..-40.00  z -11.50..15.00  size 88.00 x 15.00 x 26.50 mm
+   |   centre (-0.00, -47.50, 1.75), volume 5799.4 mm3
+   |   gap to `side_plate_l` 0.00 mm (touching)
+   |   gap to `side_plate_r` 0.00 mm (touching)
+   |   gap to `top_plate` 0.00 mm (touching)
+... 5 more root causes (fix these first, then re-run)
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: distance 0 hit / 1 miss, group 0 hit / 31 miss, inside 11 hit / 3 miss, likeness 2 hit / 0 miss, min_gap 47 hit / 22 miss, overlap 168 hit / 129 miss, part_check 8 hit / 2 miss, part_geom 16 hit / 1 miss, ray 25 hit / 98 miss
+cache: distance 0 hit / 3 miss, group 0 hit / 31 miss, inside 0 hit / 27 miss, likeness 2 hit / 0 miss, min_gap 48 hit / 166 miss, overlap 45 hit / 435 miss, part_check 0 hit / 24 miss, part_geom 29 hit / 0 miss, ray 0 hit / 171 miss
