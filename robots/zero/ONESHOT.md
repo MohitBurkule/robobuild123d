@@ -44,3 +44,25 @@ Decisions: type wedge; body box rect 80x80x24 mm, ramp 0; wheels 2 r16 outboard;
 
 Likeness: aws71 0.69 (FAIL), aws74 0.65 (FAIL), aws76 0.73 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/zero.aws71.webp` is declared `front_left_iso` (IoU 0.69 there) but the model matches it better from front_right_iso (elevation ; [FAIL] likeness.view: `reference/zero.aws74.webp` is declared `front_left_iso` (IoU 0.65 there) but the model matches it better from front_right_iso (elevation 
+
+## Round 4 (verification, helper 2)
+Blockers r3 39 -> r4 6 (`verify --tier inner`).
+
+Fixed / changed (inside only, outside kept):
+- detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
+- catalog electronics placed in free space inside the printed parts with 0.25 mm pockets: battery (velcro), Malenki Nano ESC/receiver, slide switch (tool-free, marked, finger slot), Pololu HPCB 50:1 drive gearmotors; spinners get a brushless ESC, a catalog weapon motor and a tethered 3 mm locking pin
+- overlaps resolved by cuts that keep the union of the parts (pockets, bores, 1.0 mm wheel and 1.5 mm spinner running clearance, arm sweep clearance)
+- printed static parts of one material fused into one print with the chassis; other plates screwed with real M2 fasteners where a screw line exists
+- printed parts hollowed by an erosion cavity (2.5 mm walls, kept off every pocket), wires declared, print orientation, failsafe / weapon disable, declared design volumes
+- chassis: aluminium laser is not a flat plate -> printed nylon
+- scoop: aluminium laser is not a flat plate -> printed nylon
+- rod dt_axle_wheel_l0: 2.2 mm stub clear of ['dm_wheel_l0'] printed as the wheel's hub boss
+- rod dt_axle_wheel_r0: 2.2 mm stub clear of ['dm_wheel_r0'] printed as the wheel's hub boss
+- hollowed chassis: 112.5 -> 47.6 cm3
+
+Left (and why):
+- wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
+- likeness.view x2: looks, not in scope for this pass.
+- likeness.silhouette x3: looks, not in scope for this pass.
+
+Likeness (best silhouette IoU per photo, r3 -> r4): zero.aws71.webp 0.69 -> 0.69; zero.aws74.webp 0.65 -> 0.65; zero.aws76.webp 0.73 -> 0.73
