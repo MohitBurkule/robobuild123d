@@ -6,7 +6,7 @@
   "iou": 0.706
  },
  "dragoon.aws74.webp": {
-  "view": "100,30",
+  "view": "110,30~",
   "azimuth": 110.0,
   "elevation": 30.0,
   "iou": 0.735
