@@ -66,7 +66,7 @@ def run(a):
             print(json.dumps(h.to_dict()) if a.json else h.slug)
             shown += 1
         return 0
-    if cmd == "build":
+    if cmd == "build":  # noqa: SIM102
         from . import build as B
         from .gate import Rejected, gate
         user = json.loads(Path(a.intent).read_text()) if a.intent else None
@@ -89,9 +89,12 @@ def run(a):
                 return 2
             d = res.spec
             n_block = 0
+        d = _carry(d, user or {})
         p = out / f"{name}.json"
         p.write_text(json.dumps(d, indent=1))
-        print(f"wrote {p}" + ("" if n_block is None else " (verify: 0 blockers)"))
+        extra = any((user or {}).get(k) for k in ("extra_parts", "extra_fasteners", "extra_connections"))
+        print(f"wrote {p}" + ("" if n_block is None else " (verify: 0 blockers" + (" BEFORE your extra_* parts were "
+                                                                                  "added: run `robot verify`)" if extra else ")")))
         return 0
     if cmd == "layouts":
         from .layout import solve
@@ -113,3 +116,21 @@ def run(a):
         return 0
     print("usage: robot gen {list-hypotheses,build,layouts} ...", file=sys.stderr)
     return 1
+
+
+CARRY = ("reference", "reference_features", "robot_type")
+
+
+def _carry(d: dict, user: dict) -> dict:
+    """Intent keys that survive every rebuild: `reference` (photo entries), `reference_features`, `robot_type`, and
+    `extra_parts` / `extra_fasteners` / `extra_connections` (hand-made parts such as idler wheels, appended as-is),
+    so a fresh `gen build` does not drop them."""
+    for k in CARRY:
+        if k in user:
+            d[k] = user[k]
+    for k, dst in (("extra_parts", "parts"), ("extra_fasteners", "fasteners"), ("extra_connections", "connections")):
+        if user.get(k):
+            have = {x.get("id") for x in d.get(dst) or []}
+            d.setdefault(dst, [])
+            d[dst] += [x for x in user[k] if x.get("id") not in have]
+    return d
