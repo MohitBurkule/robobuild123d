@@ -2,7 +2,7 @@
  "name": "Pantherk II",
  "profile": "aws2025",
  "robot_type": "wedge",
- "locomotion": "wheels",
+ "locomotion": "roller",
  "kit_draft": true,
  "parts": [
   {
@@ -59,7 +59,7 @@
     0,
     0
    ],
-   "color": "#3a3d44",
+   "color": "#2a7fe0",
    "print_orientation": "+z"
   },
   {
@@ -116,7 +116,7 @@
     0,
     0
    ],
-   "color": "#3a3d44",
+   "color": "#2a7fe0",
    "print_orientation": "+z"
   },
   {
@@ -155,7 +155,7 @@
     0,
     0
    ],
-   "color": "#3a3d44",
+   "color": "#2a7fe0",
    "print_orientation": "+z"
   },
   {
@@ -297,6 +297,82 @@
     0
    ],
    "color": "#202226"
+  },
+  {
+   "id": "top_plate",
+   "kind": "other",
+   "material": "carbon",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      78,
+      62,
+      2
+     ]
+    },
+    "at": [
+     0,
+     -16,
+     13.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#2a2c30"
+  },
+  {
+   "id": "picture",
+   "kind": "other",
+   "material": "polycarbonate",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      60,
+      48,
+      0.8
+     ]
+    },
+    "at": [
+     0,
+     -16,
+     14.3
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#8a6a5a"
   },
   {
    "id": "dt_hub_wheel_l0",
@@ -908,7 +984,7 @@
     "at": [
      -14.84,
      0.0,
-     12.3
+     15.3
     ],
     "rot": [
      0.0,
@@ -934,15 +1010,21 @@
  "connections": [],
  "reference": [
   {
-   "image": "reference/pantherk_ii.aws67.webp",
+   "image": "reference/pantherk_ii.aws66.webp",
+   "mask": "reference/pantherk_ii.aws66_mask.png",
    "view": "iso",
-   "mask": "reference/pantherk_ii.aws67.webp_mask.png",
    "approximate": true
   },
   {
-   "image": "reference/pantherk_ii.aws66.webp",
-   "view": "front",
-   "mask": "reference/pantherk_ii.aws66.webp_mask.png",
+   "image": "reference/pantherk_ii.aws67.webp",
+   "mask": "reference/pantherk_ii.aws67_mask.png",
+   "view": "iso",
+   "approximate": true
+  },
+  {
+   "image": "reference/pantherk_ii.aws68.webp",
+   "mask": "reference/pantherk_ii.aws68_mask.png",
+   "view": "iso",
    "approximate": true
   }
  ],
@@ -1034,7 +1116,7 @@
   ],
   [
    "dt_screw_5",
-   "pod_r",
+   "picture",
    "screw"
   ]
  ]

@@ -7,3 +7,8 @@ Decisions: type wedge; body twin_pods rect 102x86x22 mm, ramp 30; wheels 4 r12 o
 
 Likeness: aws67 0.79 (FAIL).
 Other likeness findings: [FAIL] likeness.mask_source: `reference/pantherk_ii.aws66.webp_mask.png` matches `robot mask reference/pantherk_ii.aws66.webp --thr 130 --textured` at IoU 0.26 
+
+## Round 3b (rebuilt by eye from the photos: parts moved to where the photo shows them, camera set per photo)
+Decisions: type wedge; body twin_pods rect 102x86x22 mm, ramp 30; wheels 4 r12 outboard; weapon none; extra parts: top_plate, picture.
+
+Likeness: aws66 0.71 (FAIL), aws67 0.79 (FAIL), aws68 0.66 (FAIL).

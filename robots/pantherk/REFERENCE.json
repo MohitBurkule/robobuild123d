@@ -1,18 +1,12 @@
 {
  "robot_type": "wedge",
- "weapon": {
-  "kind": "wedge",
-  "axis": "x",
-  "position": "front",
-  "width_frac": 0.9,
-  "teeth": 0
- },
  "wheels": 4,
- "source": "read from reference photos by Sonnet",
- "mask_thr": {
-  "pantherk_ii.aws66.webp": 130
+ "weapon": {
+  "kind": "wedge"
  },
- "mask_mode": {
-  "pantherk_ii.aws66.webp": "textured"
- }
+ "photos": [
+  "pantherk_ii.aws66.webp",
+  "pantherk_ii.aws67.webp",
+  "pantherk_ii.aws68.webp"
+ ]
 }

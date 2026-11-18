@@ -1,4 +1,67 @@
-{"name":"Pantherk II","robot_type":"wedge",
- "body":{"length":102,"width":86,"height":22,"ramp":30,"style":"twin_pods","slot":22,"bridge":60,"clearance":2},
- "weapon":{"kind":"none"},
- "wheels":{"n":4,"radius":12,"width":9,"y":[-36,16],"outside":true}}
+{
+ "name": "Pantherk II",
+ "robot_type": "wedge",
+ "body": {
+  "length": 102,
+  "width": 86,
+  "height": 22,
+  "ramp": 30,
+  "style": "twin_pods",
+  "slot": 22,
+  "bridge": 60,
+  "clearance": 2
+ },
+ "weapon": {
+  "kind": "none"
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 12,
+  "width": 9,
+  "y": [
+   -36,
+   16
+  ],
+  "outside": true
+ },
+ "colors": {
+  "body": "#2a7fe0",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#2a7fe0"
+ },
+ "macros": [
+  {
+   "box": [
+    78,
+    62,
+    2
+   ],
+   "at": [
+    0,
+    -16,
+    25
+   ],
+   "id": "top_plate",
+   "material": "carbon",
+   "process": "laser",
+   "color": "#2a2c30"
+  },
+  {
+   "box": [
+    60,
+    48,
+    0.8
+   ],
+   "at": [
+    0,
+    -16,
+    26.3
+   ],
+   "id": "picture",
+   "material": "polycarbonate",
+   "process": "laser",
+   "color": "#8a6a5a"
+  }
+ ]
+}
