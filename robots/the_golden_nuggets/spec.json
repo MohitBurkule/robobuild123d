@@ -5460,6 +5460,18 @@
    "method": "press_fit",
    "reason": "3 mm steel axle pressed into a 2.9 mm printed bore in the side wall carries the wheel load",
    "interference_mm": 0.1
+  },
+  {
+   "a": "lifter_nose",
+   "b": "lifter",
+   "method": "interlock",
+   "reason": "nose wedge is printed as one body with the lifter plate: its root is fused to the plate's front edge so both lift together"
+  },
+  {
+   "a": "dt_strut_lifter_nose",
+   "b": "lifter",
+   "method": "interlock",
+   "reason": "3 mm printed strut is a hidden pin through the nose root into the lifter plate; the plate bore captures it"
   }
  ],
  "reference": [

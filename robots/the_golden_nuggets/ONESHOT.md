@@ -23,6 +23,7 @@ Other likeness findings: [FAIL] likeness.view: `reference/the_golden_nugget.aws6
 
 ## Round 4 (verification, helper 2)
 Blockers r3 87 -> r4 14 (`verify --tier inner`).
+S3: connection.floating fixed (lifter_nose and dt_strut_lifter_nose connected to lifter, 15 -> 13 blockers).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
