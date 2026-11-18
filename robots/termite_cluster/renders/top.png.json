@@ -1,0 +1,12 @@
+{
+ "spec": "/tmp/work10_termite_cluster/robots/termite_cluster/spec.json",
+ "rendered_at": 1795022076.1380675,
+ "bodies": [
+  "chassis",
+  "tread_l",
+  "tread_r",
+  "scoop",
+  "lid"
+ ],
+ "wires": {}
+}

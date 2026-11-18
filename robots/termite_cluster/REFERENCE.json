@@ -1,0 +1,25 @@
+{
+ "robot_type": "wedge",
+ "wheels": 2,
+ "weapon": {
+  "kind": "wedge"
+ },
+ "photos": [
+  "termite_cluster.aws68.webp",
+  "termite_cluster.aws69.webp"
+ ],
+ "crop": {
+  "termite_cluster.aws68.webp": [
+   0,
+   0,
+   0.5,
+   1
+  ],
+  "termite_cluster.aws69.webp": [
+   0,
+   0,
+   0.5,
+   1
+  ]
+ }
+}
