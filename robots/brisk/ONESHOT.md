@@ -46,7 +46,7 @@ Left (and why):
 - process.weapon_printed x1: toolchain: a printed lifter/flipper arm is judged like a spinner (needs hardened teeth); adding metal teeth changes the look.
 - wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
 - wire.rotor_clearance x2: toolchain: same full-revolution assumption; wires cannot leave a cylinder that covers the chassis.
-- likeness.view x1: looks, not in scope for this pass.
+- wire.render_count x1: iso.png: 3 routes vs 4 spec wires (missing ['w_sw_esc']); top.png: 3 routes vs 4 spec wires (missing ['w_sw_esc'])
 - likeness.silhouette x1: looks, not in scope for this pass.
 
-Likeness (best silhouette IoU per photo, r3 -> r4): brisk.aws76.webp 0.58 -> 0.58
+Likeness (best silhouette IoU per photo, r3 -> r4): brisk.aws76.webp 0.77 -> 0.77

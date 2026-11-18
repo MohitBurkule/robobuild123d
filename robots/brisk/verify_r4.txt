@@ -1,37 +1,37 @@
-BLOCKERS: 7
-  [cached] integrity 0.00s
-  [cached] mass 0.00s
-  [proxy] interference 0.19s
-  [cached] connections 0.01s
-  [cached] legal 0.00s
-  [cached] fasteners 0.00s
-  [cached] power 0.00s
-  [cached] tension 0.00s
-  [cached] targets 0.00s
-  [cached] fight 0.00s
-  [cached] shape 0.01s
-  [cached] dynamics 0.00s
-  [cached] strength 0.00s
-  [cached] printability 0.02s
-  [cached] process 0.00s
-  [cached] electrical 0.02s
-  [cached] combat 0.00s
-  [cached] physics 0.00s
-  [cached] plausibility 0.00s
-  [cached] cots 0.00s
-  [cached] fit 0.00s
-  [cached] bom 0.02s
-  [cached] wire_review 0.00s
-  [cached] fastener_record 0.00s
-  [ran] likeness 5.73s
-  [cached] drive_recess 0.00s
-  [cached] belt_wrap 0.01s
-  [cached] retention 0.00s
-  [cached] waiver_audit 0.00s
-  [cached] geom 0.00s
-  [cached] dfm 0.00s
-  [cached] realworld 0.01s
-brisk: ok=False 7 blockers in 7 root causes, mass 143.7/150 g
+BLOCKERS: 8
+  [ran] integrity 0.05s
+  [ran] mass 0.00s
+  [proxy] interference 10.37s
+  [ran] connections 0.65s
+  [ran] legal 0.02s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.02s
+  [ran] shape 0.62s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 1.07s
+  [ran] process 0.00s
+  [ran] electrical 0.01s
+  [ran] combat 0.23s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.08s
+  [ran] bom 0.00s
+  [ran] wire_review 0.02s
+  [ran] fastener_record 0.00s
+  [ran] likeness 14.67s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.09s
+  [ran] dfm 0.07s
+  [ran] realworld 0.07s
+brisk: ok=False 8 blockers in 8 root causes, mass 143.3/150 g
 1. [proxy.sweep] joint `flipper`: `flipper` hits `chassis` 0.23 mm deep at 7.3 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint flipper` lists the closest approach to every part.
    | flipper: x -3.00..3.00  y -27.72..23.72  z 21.15..58.85  size 6.00 x 51.44 x 37.69 mm
    |   centre (0.00, -2.00, 40.00), volume 1440.0 mm3
@@ -52,7 +52,7 @@ brisk: ok=False 7 blockers in 7 root causes, mass 143.7/150 g
    |   joint revolute axis [1, 0, 0] pivot [0, -25, 32.0] range 0..80 default 0
    |   gap to `chassis` 0.00 mm (touching)
    |   gap to `lid` 0.00 mm (touching)
-4. [wire.render_wires] 5 of 5 robot render(s) do not draw all 4 wires: renders/diff_brisk.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_brisk.aws76_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_brisk.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_brisk.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn
+4. [wire.render_wires] 2 of 2 robot render(s) do not draw all 4 wires: renders/iso.png: wire `w_sw_esc` not drawn; renders/top.png: wire `w_sw_esc` not drawn
    fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
 5. [wire.rotor_clearance] wire `w_bat_sw` passes -0.9 mm from the volume swept by the `flipper` rotor (flipper) at [3.0, -5.8, -2.7].
    fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
@@ -68,11 +68,13 @@ brisk: ok=False 7 blockers in 7 root causes, mass 143.7/150 g
    |   joint revolute axis [1, 0, 0] pivot [0, -25, 32.0] range 0..80 default 0
    |   gap to `chassis` 0.00 mm (touching)
    |   gap to `lid` 0.00 mm (touching)
-7. [likeness.silhouette] `reference/brisk.aws76.webp`: best silhouette IoU 0.77 at camera front_right_iso (elevation 25, azimuth 30) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.77). Regions (photo frame, left third first) 0.74 / 0.77 / 0.81: worst = front third. Height/length 0.70 model vs 0.59 photo (too tall: lower it or lengthen it).
+7. [wire.render_count] iso.png: 3 routes vs 4 spec wires (missing ['w_sw_esc']); top.png: 3 routes vs 4 spec wires (missing ['w_sw_esc'])
+   fix: Re-render: the render record must list exactly the spec's wires.
+8. [likeness.silhouette] `reference/brisk.aws76.webp`: best silhouette IoU 0.77 at camera front_right_iso (elevation 25, azimuth 30) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.77). Regions (photo frame, left third first) 0.74 / 0.77 / 0.81: worst = front third. Height/length 0.70 model vs 0.59 photo (too tall: lower it or lengthen it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
-  mass 143.7 g of 150 g (+6.3 g margin)
-    chassis                    90.01 g  fills 23% of its box
+  mass 143.3 g of 150 g (+6.7 g margin)
+    chassis                    89.58 g  fills 22% of its box
     el_battery                 12.50 g  fills 100% of its box
     dm_wheel_l0                 9.50 g  fills 63% of its box
     dm_wheel_r0                 9.50 g  fills 63% of its box
@@ -84,6 +86,6 @@ MASS BUDGET:
     dt_hub_wheel_l0             1.10 g  fills 75% of its box
     dt_hub_wheel_r0             1.10 g  fills 75% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.may_be_over: 143.7 g (range 116.5 to 170.9 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.may_be_over: 143.3 g (range 116.2 to 170.4 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: group 30 hit / 1 miss, inside 7 hit / 0 miss, likeness 0 hit / 1 miss, min_gap 20 hit / 0 miss, overlap 160 hit / 0 miss, part_geom 12 hit / 0 miss
+cache: group 0 hit / 31 miss, inside 6 hit / 2 miss, likeness 1 hit / 0 miss, min_gap 9 hit / 12 miss, overlap 79 hit / 91 miss, part_check 6 hit / 1 miss, part_geom 11 hit / 1 miss, ray 20 hit / 78 miss
