@@ -12,7 +12,9 @@
   render made without routes (render_present only needed ONE render with wires) is a BLOCKER; `render_ok` exempts a file.
 - wire.render_count: each render record lists exactly the spec's wires (count and ids).
 - wire.rotor_clearance (opt-out): every routed wire keeps >= 2 mm from the revolved volume of every revolute group (the
-  whole weapon rotor and each wheel+hub, not only rotating fasteners); `rotor_ok: reason` on a wire exempts it.
+  whole weapon rotor and each wheel+hub, not only rotating fasteners); a hinged weapon (lifter, flipper, axe, hammer:
+  `arm_sweep.ARM_KINDS`) on a joint under a full turn counts only the volume it sweeps over its declared min..max.
+  `rotor_ok: reason` on a wire exempts it.
 - wire.exterior_support (opt-out): a wire outside the chassis hull must run along a hole wall / channel / clip (material within 1.5 mm on BOTH sides of the run; lying along one face is not retention); a free span over 8 mm is a BLOCKER unless the wire declares `exposed_reason`.
 """
 
@@ -291,6 +293,35 @@ def rotor_groups(spec, world=None):
     return out
 
 
+class Revolution:
+    """Solid of revolution of a rotor group (a spinner or a wheel): `dist` and `label` like `arm_sweep.ArcSweep`."""
+
+    def __init__(self, bodies, origin, axis):
+        self.o, self.a = np.asarray(origin, float), np.asarray(axis, float)
+        self.bands = swept_bands(bodies, self.o, self.a)
+
+    def label(self):
+        return "full revolution"
+
+    def dist(self, P, cap=None):
+        return band_dist(P, self.o, self.a, self.bands)
+
+
+def rotor_sweeps(spec, world):
+    """[(group, pivot, axis, ids, sweep)] for every revolute group with bodies: a hinged weapon on a limited joint
+    sweeps only its declared range (`arm_sweep.ArcSweep`); spinners, wheels and anything else revolve fully."""
+    from .arm_sweep import ArcSweep, arm_range
+
+    out = []
+    for grp, piv, ax, ids in rotor_groups(spec, world):
+        bodies = [b for b in (world.body(i) for i in ids) if b is not None and b.mesh is not None and len(b.mesh.faces)]
+        if not bodies:
+            continue
+        rng = arm_range(spec, world, grp, ids)
+        out.append((grp, piv, ax, ids, Revolution(bodies, piv, ax) if rng is None else ArcSweep(bodies, piv, ax, *rng)))
+    return out
+
+
 def rotor_gaps(Q, rad, origin, axis, bands):
     """Clearance of a wire (sample points Q, bundle radius rad) to the swept bands: (gap, index of the worst point)."""
     d = band_dist(Q, origin, axis, bands) - rad
@@ -313,11 +344,7 @@ def rotor_clearance(ctx):
     spec = r.spec
     if not spec.wires:
         return []
-    groups = []
-    for grp, piv, ax, ids in rotor_groups(spec, w):
-        bodies = [b for b in (w.body(i) for i in ids) if b is not None and b.mesh is not None and len(b.mesh.faces)]
-        if bodies:
-            groups.append((grp, piv, ax, ids, swept_bands(bodies, piv, ax)))
+    groups = rotor_sweeps(spec, w)
     out, worst, routed = [], None, 0
     for wr in spec.wires:
         pts, real = _route_points(ctx, wr)
@@ -326,13 +353,15 @@ def rotor_clearance(ctx):
         routed += real
         Q = _samples(pts)
         rad = bundle_radius(wr)
-        for grp, piv, ax, ids, bands in groups:
-            gap, k = rotor_gaps(Q, rad, piv, ax, bands)
+        for grp, piv, ax, ids, sw in groups:
+            d = sw.dist(Q, cap=ROTOR_MIN_MM + rad + 2.0) - rad
+            k = int(np.argmin(d))
+            gap = float(d[k])
             worst = gap if worst is None else min(worst, gap)
             if gap < ROTOR_MIN_MM and not str(x(wr, "rotor_ok", "") or "").strip():
-                out.append(fail("wire.rotor_clearance", G, BLOCKER, "Wire runs too close to a spinning part",
+                out.append(fail("wire.rotor_clearance", G, BLOCKER, "Wire runs too close to a moving weapon or wheel",
                                 f"wire `{wr.id}` passes {gap:.1f} mm from the volume swept by the `{grp}` rotor "
-                                f"({', '.join(ids[:4])}{'...' if len(ids) > 4 else ''}) at {np.round(Q[k], 1).tolist()}.")
+                                f"({', '.join(ids[:4])}{'...' if len(ids) > 4 else ''}; {sw.label()}) at {np.round(Q[k], 1).tolist()}.")
                            .on(wr.id, *ids[:2]).here(Q[k]).expect(f">= {ROTOR_MIN_MM:g} mm", f"{gap:.1f} mm")
                            .fix("Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`."))
     if not routed and spec.wires:
