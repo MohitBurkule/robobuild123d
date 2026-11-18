@@ -8,3 +8,8 @@
 Decisions: type other; body box rect 62x90x14 mm, ramp 0; wheels 4 r9 outboard; weapon none; 3 forks 48 mm; extra parts: arm.
 
 Likeness: aws67 0.65 (FAIL).
+
+## Round 2 (looks)
+Decisions: type other; body box rect 62x90x14 mm, ramp 0; wheels 4 r9 outboard; weapon none; 3 forks 48 mm; extra parts: arm.
+
+Likeness: aws67 0.65 (FAIL).
