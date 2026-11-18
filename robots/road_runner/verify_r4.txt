@@ -1,60 +1,81 @@
-BLOCKERS: unknown (outside rebuilt after this run; round 4 to be re-run)
-  [cached] integrity 0.00s
-  [cached] mass 0.00s
-  [proxy] interference 0.26s
-  [cached] connections 0.00s
-  [cached] legal 0.00s
-  [cached] fasteners 0.01s
-  [cached] power 0.00s
-  [cached] tension 0.00s
-  [cached] targets 0.00s
-  [cached] fight 0.00s
-  [cached] shape 0.00s
-  [cached] dynamics 0.00s
-  [cached] strength 0.00s
-  [cached] printability 0.01s
-  [cached] process 0.00s
-  [cached] electrical 0.00s
-  [cached] combat 0.00s
-  [cached] physics 0.01s
-  [cached] plausibility 0.00s
-  [cached] cots 0.00s
-  [cached] fit 0.00s
-  [cached] bom 0.00s
-  [cached] wire_review 0.00s
-  [cached] fastener_record 0.00s
-  [cached] likeness 0.00s
-  [cached] drive_recess 0.00s
-  [cached] belt_wrap 0.00s
-  [cached] retention 0.01s
-  [cached] waiver_audit 0.01s
-  [cached] geom 0.01s
-  [cached] dfm 0.00s
-  [cached] realworld 0.00s
-road runner: ok=False 1 blockers in 1 root causes, mass 142.3/150 g
-1. [wire.render_wires] 5 of 5 robot render(s) do not draw all 4 wires: renders/diff_road_runner.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_road_runner.aws67_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_road_runner.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_road_runner.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn
-   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+BLOCKERS: 5
+building 13 changed part solids on 4 processes
+  [ran] integrity 0.15s
+  [ran] mass 0.00s
+  [proxy] interference 27.65s
+  [ran] connections 12.13s
+  [ran] legal 0.03s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.03s
+  [ran] shape 1.02s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 2.09s
+  [ran] process 0.00s
+  [ran] electrical 0.01s
+  [ran] combat 0.18s
+  [ran] physics 0.12s
+  [ran] plausibility 0.01s
+  [ran] cots 0.00s
+  [ran] fit 0.11s
+  [ran] bom 0.00s
+  [ran] wire_review 0.01s
+  [ran] fastener_record 0.00s
+  [ran] likeness 10.81s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.15s
+  [ran] dfm 0.09s
+  [ran] realworld 0.08s
+road runner: ok=False 5 blockers in 2 root causes, mass 264.5/150 g
+1. [connection.floating] `front_screw0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away. Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | front_screw0: x -32.40..-27.60  y 50.50..51.90  z 4.10..8.90  size 4.80 x 1.40 x 4.80 mm
+   |   centre (-30.00, 51.20, 6.50), volume 25.3 mm3
+   |   gap to `chassis` 0.50 mm
+   | chassis: x -50.00..50.00  y -50.00..50.00  z -11.50..12.50  size 100.00 x 100.00 x 24.00 mm
+   |   centre (0.00, -0.00, 0.50), volume 166781.2 mm3
+2. [mass.over] 264.5 g (range 213.5 to 315.4 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
 MASS BUDGET:
-  mass 142.3 g of 150 g (+7.7 g margin)
-    chassis                    58.49 g  fills 26% of its box
+  mass 264.5 g of 150 g (-114.5 g margin)
+    chassis                   158.78 g  fills 69% of its box  <- solid block? a tub should be a shell
     el_battery                 12.50 g  fills 100% of its box
-    rear_wall                   9.52 g  fills 68% of its box
+    rear_wall                   9.51 g  fills 69% of its box
     dm_wheel_l0                 9.50 g  fills 63% of its box
     dm_wheel_r0                 9.50 g  fills 63% of its box
-    side_wall_r                 9.15 g  fills 65% of its box
+    side_wall_r                 9.15 g  fills 68% of its box
     side_wall_l                 9.15 g  fills 68% of its box
-    wheel_l0                    3.45 g  fills 66% of its box
-    wheel_r0                    3.45 g  fills 66% of its box
-    wheel_l1                    3.42 g  fills 77% of its box
-    wheel_r1                    3.42 g  fills 77% of its box
+    lid                         9.14 g  fills 49% of its box
+    wheel_r0                    5.80 g  fills 67% of its box
+    wheel_l0                    5.80 g  fills 67% of its box
+    wheel_l1                    5.77 g  fills 78% of its box
+    wheel_r1                    5.77 g  fills 78% of its box
     el_esc                      2.30 g  fills 99% of its box
-    dt_axle_wheel_r1            1.09 g  fills 79% of its box
-    dt_axle_wheel_l1            1.09 g  fills 79% of its box
-    dt_hub_wheel_l0             1.02 g  fills 75% of its box
-    dt_hub_wheel_r0             1.02 g  fills 75% of its box
-    dt_hub_wheel_l1             1.00 g  fills 73% of its box
-    dt_hub_wheel_r1             1.00 g  fills 73% of its box
+    dt_hub_wheel_l0             1.71 g  fills 76% of its box
+    dt_hub_wheel_r0             1.71 g  fills 76% of its box
+    dt_hub_wheel_l1             1.69 g  fills 75% of its box
+    dt_hub_wheel_r1             1.69 g  fills 75% of its box
+    dt_axle_wheel_r1            1.15 g  fills 79% of its box
+    dt_axle_wheel_l1            1.15 g  fills 79% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.may_be_over: 142.3 g (range 115.8 to 168.9 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    horn_l                      0.10 g  fills 79% of its box
+    horn_r                      0.10 g  fills 79% of its box
+    lid_screw0                  0.03 g  fills 79% of its box
+    lid_screw2                  0.03 g  fills 79% of its box
+    lid_screw4                  0.03 g  fills 79% of its box
+    lid_screw5                  0.03 g  fills 79% of its box
+    lid_screw1                  0.03 g  fills 79% of its box
+    lid_screw3                  0.03 g  fills 79% of its box
+    front_screw0                0.02 g  fills 79% of its box
+    front_screw1                0.02 g  fills 79% of its box
+    front_screw2                0.02 g  fills 79% of its box
+    front_screw3                0.02 g  fills 79% of its box
+    mass.over: 264.5 g (range 213.5 to 315.4 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: group 31 hit / 0 miss, overlap 235 hit / 0 miss, part_geom 19 hit / 0 miss
+cache: group 0 hit / 31 miss, inside 0 hit / 28 miss, likeness 1 hit / 0 miss, min_gap 0 hit / 93 miss, overlap 0 hit / 298 miss, part_check 0 hit / 25 miss, part_geom 32 hit / 0 miss, ray 0 hit / 197 miss

@@ -21,29 +21,34 @@ Decisions: type wedge; body box rect 100x100x24 mm, ramp 0; wheels 4 r11 inboard
 
 Likeness: aws67 0.87 (ok).
 
+## Round 3d (user camera picks batch 2 + shape remarks applied; round 4 to be re-run on the new outside)
+Decisions: type wedge; body box rect 100x100x24 mm, ramp 0; wheels 4 r13.5 inboard; weapon none; extra parts: rear_wall, side_wall, lid, sw_hole, link_hole, sw_well, link_well, horn, lid_screw0, lid_screw1, lid_screw2, lid_screw3, lid_screw4, lid_screw5, front_screw0, front_screw1, front_screw2, front_screw3, scoop_gap; photos skipped (cluttered): indices [0].
+
+Likeness: aws67 0.84 (ok).
+
 ## Round 4 (verification, helper 2)
-Blockers r3 58 -> r4 1 (`verify --tier inner`).
+Blockers r3 58 -> r4 5 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
 - catalog parts added in free space inside the printed parts with 0.25 mm pockets: `dm_wheel_l0` (pololu_hpcb6v_50to1), `dm_wheel_r0` (pololu_hpcb6v_50to1), `el_battery` (lipo_2s_180), `el_esc` (bbb_malenki_nano), `el_switch` (switch_slide_12x4)
 - overlaps resolved by cuts that keep the union of the parts (pockets, bores, wheel and spinner running clearance)
-- one print with the chassis (same material, `fused_with`): `rear_wall`, `side_wall_l`, `side_wall_r`, `dt_hub_wheel_l0`, `dt_hub_wheel_r0`, `dt_hub_wheel_l1`, `dt_hub_wheel_r1`
+- one print with the chassis (same material, `fused_with`): `rear_wall`, `side_wall_l`, `side_wall_r`, `lid`, `horn_l`, `horn_r`, `lid_screw0`, `lid_screw1`, `lid_screw2`, `lid_screw3`, `lid_screw4`, `lid_screw5`, `dt_hub_wheel_l0`, `dt_hub_wheel_r0`, `dt_hub_wheel_l1`, `dt_hub_wheel_r1`
 - 4 wires declared (battery - switch - ESC - motors)
 - print orientation on every printed part, failsafe / weapon disable declared, design volumes declared where this pass changed a part on purpose
 - power switch on the floor of the body, slider facing down to a 7 x 3 mm slot in the underside (no slot on the top or sides; hollow cavities stay closed behind a wall at every outside face)
 - rod dt_axle_wheel_l0: 2.8 mm stub clear of ['dm_wheel_l0'] printed as the wheel's hub boss
 - rod dt_axle_wheel_r0: 2.8 mm stub clear of ['dm_wheel_r0'] printed as the wheel's hub boss
-- mass estimate 159 g over 150: walls 2 mm -> 149 g
-- mass estimate 149 g over 150: walls 1.6 mm -> 140 g
-- hollowed chassis (wall 1.6, form 0): 198.5 -> 61.4 cm3
+- mass estimate 193 g over 150: walls 2 mm -> 264 g
+- mass estimate 264 g over 150: walls 1.6 mm -> 264 g
+- hollow skipped chassis: solids -30 vol 0.43
+- front_screw0: not touching the chassis, left undeclared
+- front_screw1: not touching the chassis, left undeclared
+- front_screw2: not touching the chassis, left undeclared
+- front_screw3: not touching the chassis, left undeclared
 
 Left (and why):
-- wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
+- mass.over x1: the photo-sized outside (steel weapon / big printed shell) is heavier than 150 g even hollowed; only a smaller outside would fix it.
+- connection.floating x4: `front_screw0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away.
 
-Likeness (best silhouette IoU per photo, r3 -> r4): road_runner.aws67.webp 0.87 -> 0.87
-
-## Round 3d (user camera picks batch 2 + shape remarks applied; round 4 to be re-run on the new outside)
-Decisions: type wedge; body box rect 100x100x24 mm, ramp 0; wheels 4 r13.5 inboard; weapon none; extra parts: rear_wall, side_wall, lid, sw_hole, link_hole, sw_well, link_well, horn, lid_screw0, lid_screw1, lid_screw2, lid_screw3, lid_screw4, lid_screw5, front_screw0, front_screw1, front_screw2, front_screw3, scoop_gap; photos skipped (cluttered): indices [0].
-
-Likeness: aws67 0.84 (ok).
+Likeness (best silhouette IoU per photo, r3 -> r4): road_runner.aws67.webp 0.84 -> 0.84

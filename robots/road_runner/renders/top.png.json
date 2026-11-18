@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_road_runner/robots/road_runner/spec.json",
- "rendered_at": 1795038115.5572348,
+ "rendered_at": 1795038441.5611365,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -24,21 +24,65 @@
   "front_screw2",
   "front_screw3",
   "dt_hub_wheel_l0",
-  "dt_axle_wheel_l0",
-  "dt_nut_wheel_l0",
   "dt_hub_wheel_r0",
-  "dt_axle_wheel_r0",
-  "dt_nut_wheel_r0",
   "dt_hub_wheel_l1",
   "dt_axle_wheel_l1",
-  "dt_nut_wheel_l1",
   "dt_hub_wheel_r1",
   "dt_axle_wheel_r1",
-  "dt_nut_wheel_r1",
-  "dt_screw_0",
-  "dt_screw_1",
-  "dt_screw_2",
-  "dt_screw_3"
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_esc",
+  "el_switch"
  ],
- "wires": {}
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    -0.5,
+    10.5,
+    -4.0
+   ],
+   "to": [
+    -4.5,
+    -15.5,
+    -4.5
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    3.5,
+    -15.5,
+    -4.5
+   ],
+   "to": [
+    -16.5,
+    -6.5,
+    5.0
+   ]
+  },
+  "w_m1": {
+   "from": [
+    15.5,
+    5.5,
+    5.0
+   ],
+   "to": [
+    8.0,
+    -30.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -16.5,
+    5.5,
+    5.0
+   ],
+   "to": [
+    -8.0,
+    -30.0,
+    0.0
+   ]
+  }
+ }
 }
