@@ -22,7 +22,14 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "textured": [
+  0
+ ],
+ "name": "trappist 1",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "box": [
     2,
@@ -72,12 +79,5 @@
    "id": "front_bar",
    "color": "#c9cdd3"
   }
- ],
- "textured": [
-  0
- ],
- "name": "trappist 1",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }

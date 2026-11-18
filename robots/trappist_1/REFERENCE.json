@@ -10,5 +10,11 @@
  ],
  "mask_mode": {
   "trappist_1.aws63.webp": "textured"
+ },
+ "view": {
+  "trappist_1.aws63.webp": "rear"
+ },
+ "elevation": {
+  "trappist_1.aws63.webp": 70
  }
 }

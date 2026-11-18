@@ -18,3 +18,9 @@ Likeness: aws63 0.78 (FAIL).
 Decisions: type lifter; body box rect 70x112x20 mm, ramp 0; wheels 4 r9 inboard; weapon none; extra parts: wire, wire_x, front_bar; textured masks for indices [0].
 
 Likeness: aws63 0.78 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type lifter; body box rect 70x112x20 mm, ramp 0; wheels 4 r9 inboard; weapon none; extra parts: wire, wire_x, front_bar; textured masks for indices [0].
+
+Likeness: aws63 0.00 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/trappist_1.aws63.webp` is declared `rear` (IoU 0.00 there) but the model matches it better from front (elevation 45, azimuth 90
