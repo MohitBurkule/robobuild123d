@@ -1,6 +1,6 @@
 {
- "spec": "/tmp/work9_rammstein/robots/rammstein/spec.json",
- "rendered_at": 1795020591.2079544,
+ "spec": "/tmp/work10_rammstein/robots/rammstein/spec.json",
+ "rendered_at": 1795040831.4331346,
  "bodies": [
   "chassis_bottom",
   "chassis_top",
@@ -24,6 +24,14 @@
   "wheel_fl",
   "wheel_fr",
   "carbon_plate",
+  "dt_hub_wheel_l",
+  "dt_axle_wheel_l",
+  "dt_hub_wheel_r",
+  "dt_axle_wheel_r",
+  "dt_hub_wheel_fl",
+  "dt_axle_wheel_fl",
+  "dt_hub_wheel_fr",
+  "dt_axle_wheel_fr",
   "bolt_c0",
   "bolt_c1",
   "bolt_c2",

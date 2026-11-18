@@ -1,0 +1,116 @@
+BLOCKERS: 21
+  [ran] integrity 0.19s
+  [proxy] wiring 0.27s
+  [ran] mass 0.01s
+  [proxy] interference 7.92s
+  [ran] connections 0.69s
+  [ran] legal 0.04s
+  [ran] fasteners 0.69s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.06s
+  [ran] shape 0.50s
+  [ran] dynamics 0.01s
+  [ran] strength 0.22s
+  [ran] printability 3.02s
+  [ran] process 0.02s
+  [ran] electrical 0.03s
+  [ran] combat 0.21s
+  [ran] physics 0.01s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.18s
+  [ran] bom 0.01s
+  [ran] wire_review 0.03s
+  [ran] fastener_record 0.00s
+  [ran] likeness 11.48s
+  [ran] drive_recess 0.04s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.03s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.54s
+  [ran] dfm 0.24s
+  [ran] realworld 0.20s
+rammstein: ok=False 21 blockers in 15 root causes, mass 112.5/150 g
+1. [proxy.interference] `carbon_plate` and `bolt_c0` overlap by 0.28 mm (allowed 0.08). Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   | carbon_plate: x -27.00..27.00  y -44.00..38.00  z 5.20..6.80  size 54.00 x 82.00 x 1.60 mm
+   |   centre (0.00, -3.00, 6.00), volume 6539.2 mm3
+   |   OVERLAP `motor_l` 0.37 mm (allowed 0.08)
+   |   OVERLAP `motor_r` 0.37 mm (allowed 0.08)
+   |   OVERLAP `bolt_c0` 0.28 mm (allowed 0.08)
+2. [fastener.access] `bolt_c0` (hex1.5) is blocked by `carbon_plate` 0.0 mm above the head; the driver needs a clear 2.5 mm wide, 14 mm long path straight out of the head. Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   fix: Open a straight access hole or move the screw out from under the overhang; counterbores need to be wider than the head.
+   | bolt_c0: x 25.00..28.80  y 32.00..35.80  z -4.20..5.80  size 3.80 x 3.80 x 10.00 mm
+   |   centre (26.90, 33.90, 0.80), volume 45.9 mm3
+   |   OVERLAP `carbon_plate` 0.28 mm (allowed 0.08)
+   |   gap to `insert_c0` 0.00 mm (touching)
+   |   gap to `chassis_bottom` 0.22 mm
+3. [integrity.solids] `chassis_top` has 0 closed solid(s) and 1 open/invalid shell(s), expected 1 (15338 mm3). A boolean or fillet probably collapsed the build.
+   fix: Check the last CAD op (fillet/cut order); or declare `solids` with `solids_reason`.
+   | chassis_top: x -41.90..41.90  y -46.00..40.00  z -0.00..15.40  size 83.80 x 86.00 x 15.40 mm
+   |   centre (0.00, -3.00, 7.70), volume 15338.2 mm3
+4. [integrity.solids] `wedge` has 0 closed solid(s) and 1 open/invalid shell(s), expected 1 (6613 mm3). A boolean or fillet probably collapsed the build.
+   fix: Check the last CAD op (fillet/cut order); or declare `solids` with `solids_reason`.
+   | wedge: x -35.60..35.60  y 37.99..86.00  z -11.90..5.65  size 71.20 x 48.01 x 17.55 mm
+   |   centre (0.00, 61.99, -3.12), volume 6612.8 mm3
+   |   overlap allowed `chassis_bottom` 0.83 mm (allowed inf)
+   |   overlap allowed `bolt_w2` 0.07 mm (allowed 0.08)
+   |   overlap allowed `bolt_w3` 0.07 mm (allowed 0.08)
+5. [proxy.interference] `motor_l` and `carbon_plate` overlap by 0.37 mm (allowed 0.08).
+   | motor_l: x 5.85..35.95  y -29.00..-19.00  z -6.00..6.00  size 30.10 x 10.00 x 12.00 mm
+   |   centre (20.90, -24.00, 0.00), volume 2404.7 mm3
+   |   port terminals: (5.55, -24.00, 0.00)
+   |   OVERLAP `carbon_plate` 0.37 mm (allowed 0.08)
+   |   overlap allowed `wheel_l` 0.00 mm (allowed 0.60)
+6. [proxy.interference] `motor_r` and `carbon_plate` overlap by 0.37 mm (allowed 0.08).
+   | motor_r: x -35.95..-5.85  y -29.00..-19.00  z -6.00..6.00  size 30.10 x 10.00 x 12.00 mm
+   |   centre (-20.90, -24.00, 0.00), volume 2404.7 mm3
+   |   port terminals: (-5.55, -24.00, 0.00)
+   |   OVERLAP `carbon_plate` 0.37 mm (allowed 0.08)
+   |   overlap allowed `wheel_r` 0.00 mm (allowed 0.60)
+7. [connection.fused_mismatch] `chassis_bottom` is fused to `chassis_top` but they share 0.00 mm3 (need >= 1 mm3); faces that only touch print as two pieces or a paper-thin seam.
+   fix: Overlap the two bodies by at least a wall thickness so they print as one solid, or bolt them.
+   | chassis_bottom: x -41.90..41.90  y -49.00..43.00  z -12.00..1.29  size 83.80 x 92.00 x 13.29 mm
+   |   centre (0.00, -3.00, -5.36), volume 16507.1 mm3
+   |   overlap allowed `wedge` 0.94 mm (allowed inf)
+   |   overlap allowed `insert_c0` 0.00 mm (allowed 0.08)
+   |   overlap allowed `insert_c1` 0.00 mm (allowed 0.08)
+8. [connection.fused_mismatch] `carbon_plate` is fused to `chassis_top` but they share 0.00 mm3 (need >= 1 mm3); faces that only touch print as two pieces or a paper-thin seam.
+   fix: Overlap the two bodies by at least a wall thickness so they print as one solid, or bolt them.
+   | carbon_plate: x -27.00..27.00  y -44.00..38.00  z 5.20..6.80  size 54.00 x 82.00 x 1.60 mm
+   |   centre (0.00, -3.00, 6.00), volume 6539.2 mm3
+   |   OVERLAP `motor_l` 0.37 mm (allowed 0.08)
+   |   OVERLAP `motor_r` 0.37 mm (allowed 0.08)
+   |   OVERLAP `bolt_c0` 0.28 mm (allowed 0.08)
+9. [connection.tape_overload] `battery` weighs 12.5 g on 4.15 cm2 of contact (3.0 g/cm2); velcro holds at most 2 g/cm2 through a hit.
+   fix: Screw it down, capture it in a pocket, or give the tape a much larger flat contact face.
+   | battery: x -18.00..10.00  y -12.00..6.00  z -5.90..4.10  size 28.00 x 18.00 x 10.00 mm
+   |   centre (-4.00, -3.00, -0.90), volume 5040.0 mm3
+   |   port xt30: (-4.00, 8.00, -0.90)
+   |   gap to `chassis_bottom` 0.40 mm
+   |   gap to `carbon_plate` 1.10 mm
+10. [connection.floating] `battery` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis_bottom`, 0.4 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | battery: x -18.00..10.00  y -12.00..6.00  z -5.90..4.10  size 28.00 x 18.00 x 10.00 mm
+   |   centre (-4.00, -3.00, -0.90), volume 5040.0 mm3
+   |   port xt30: (-4.00, 8.00, -0.90)
+   |   gap to `chassis_bottom` 0.40 mm
+   |   gap to `carbon_plate` 1.10 mm
+11. [fit.interference] `motor_l` overlaps wall `carbon_plate` by 0.37 mm: it will not go in. No side has 0.57 mm free (free room per side {'-x': 0.15, '+x': 0.25, '-y': 0.11, '+y': 0.12, '-z': 0.28, '+z': 0.28}): grow the pocket or pick a smaller part (`robot catalog --kind ... --fits LxWxH`).
+   fix: Grow the pocket to the component size plus the per-side fit clearance.
+   | motor_l: x 5.85..35.95  y -29.00..-19.00  z -6.00..6.00  size 30.10 x 10.00 x 12.00 mm
+   |   centre (20.90, -24.00, 0.00), volume 2404.7 mm3
+   |   port terminals: (5.55, -24.00, 0.00)
+   |   OVERLAP `carbon_plate` 0.37 mm (allowed 0.08)
+   |   overlap allowed `wheel_l` 0.00 mm (allowed 0.60)
+12. [fit.interference] `motor_r` overlaps wall `carbon_plate` by 0.37 mm: it will not go in. No side has 0.57 mm free (free room per side {'-x': 0.25, '+x': 0.15, '-y': 0.12, '+y': 0.12, '-z': 0.28, '+z': 0.28}): grow the pocket or pick a smaller part (`robot catalog --kind ... --fits LxWxH`).
+   fix: Grow the pocket to the component size plus the per-side fit clearance.
+   | motor_r: x -35.95..-5.85  y -29.00..-19.00  z -6.00..6.00  size 30.10 x 10.00 x 12.00 mm
+   |   centre (-20.90, -24.00, 0.00), volume 2404.7 mm3
+   |   port terminals: (-5.55, -24.00, 0.00)
+   |   OVERLAP `carbon_plate` 0.37 mm (allowed 0.08)
+   |   overlap allowed `wheel_r` 0.00 mm (allowed 0.60)
+... 3 more root causes (fix these first, then re-run)
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 0 hit / 15 miss, group 0 hit / 31 miss, inside 9 hit / 51 miss, likeness 2 hit / 0 miss, min_gap 285 hit / 142 miss, overlap 256 hit / 635 miss, part_check 0 hit / 12 miss, part_geom 38 hit / 0 miss, ray 126 hit / 141 miss
