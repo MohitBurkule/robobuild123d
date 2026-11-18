@@ -1,0 +1,17 @@
+{
+ "spec": "/tmp/work10_shark_attack/robots/shark_attack/spec.json",
+ "rendered_at": 1795022294.5024762,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "fork_0",
+  "fork_1",
+  "fork_2",
+  "fork_3",
+  "hump_l",
+  "hump_r",
+  "fin"
+ ],
+ "wires": {}
+}

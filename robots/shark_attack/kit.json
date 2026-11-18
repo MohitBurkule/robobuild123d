@@ -1,0 +1,91 @@
+{
+ "robot_type": "other",
+ "body": {
+  "length": 85,
+  "width": 100,
+  "height": 30,
+  "ramp": 25
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 12,
+  "width": 8,
+  "y": [
+   -25
+  ],
+  "outside": false
+ },
+ "forks": {
+  "n": 4,
+  "length": 28,
+  "width": 12,
+  "spread": 78,
+  "tilt_deg": 8
+ },
+ "colors": {
+  "body": "#2a6fe0",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "box": [
+    36,
+    40,
+    10
+   ],
+   "at": [
+    26,
+    -12,
+    37
+   ],
+   "mirror": true,
+   "id": "hump",
+   "color": "#2a6fe0"
+  },
+  {
+   "side": [
+    [
+     -20,
+     32
+    ],
+    [
+     -8,
+     32
+    ],
+    [
+     2,
+     48
+    ],
+    [
+     -2,
+     62
+    ],
+    [
+     -8,
+     60
+    ],
+    [
+     -6,
+     48
+    ]
+   ],
+   "x": [
+    -3,
+    3
+   ],
+   "weapon": "axe",
+   "pivot": [
+    -12,
+    34
+   ],
+   "id": "fin",
+   "color": "#2a6fe0"
+  }
+ ],
+ "name": "shark attack",
+ "weapon": {
+  "kind": "none"
+ }
+}

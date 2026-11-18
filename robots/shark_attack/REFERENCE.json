@@ -1,0 +1,13 @@
+{
+ "robot_type": "other",
+ "wheels": 2,
+ "weapon": {
+  "kind": "axe",
+  "axis": "x"
+ },
+ "photos": [
+  "shark_attack.aws72.webp",
+  "shark_attack.aws74.webp",
+  "shark_attack.aws76.webp"
+ ]
+}
