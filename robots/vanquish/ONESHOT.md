@@ -66,3 +66,8 @@ Left (and why):
 - likeness.silhouette x1: looks, not in scope for this pass.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): vanquish.aws76.webp 0.33 -> 0.33
+
+## Round 3d (user camera picks batch 2 + shape remarks applied; round 4 to be re-run on the new outside)
+Decisions: type vertical_spinner; body box rect 90x62x24 mm, ramp 0; wheels 2 r11 inboard; weapon bar r52 axis x teeth 2; extra parts: motor, upright, fork.
+
+Likeness: aws76 0.41 (FAIL).

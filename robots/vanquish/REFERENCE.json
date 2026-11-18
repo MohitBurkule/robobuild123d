@@ -9,9 +9,9 @@
   "vanquish.aws76.webp"
  ],
  "view": {
-  "vanquish.aws76.webp": "front_right_iso"
+  "vanquish.aws76.webp": "front_left_iso"
  },
- "elevation": {
-  "vanquish.aws76.webp": 45
+ "view_source": {
+  "vanquish.aws76.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label"
  }
 }
