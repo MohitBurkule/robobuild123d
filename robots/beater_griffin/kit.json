@@ -31,7 +31,11 @@
   "weapon": "#b9bdc2",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "skip_photos": [
+  1
+ ],
+ "name": "beater griffin",
+ "macros": [
   {
    "side": [
     [
@@ -64,9 +68,5 @@
    "id": "bumper",
    "color": "#f07a1c"
   }
- ],
- "skip_photos": [
-  1
- ],
- "name": "beater griffin"
+ ]
 }

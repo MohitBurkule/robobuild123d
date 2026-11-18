@@ -15,3 +15,8 @@ Likeness: aws67 0.75 (FAIL).
 Decisions: type drum; body box rect 72x84x32 mm, ramp 0; wheels 2 r14 inboard; weapon drum r9 axis x teeth 2; extra parts: bumper; photos skipped (cluttered): indices [1].
 
 Likeness: aws67 0.75 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type drum; body box rect 72x84x32 mm, ramp 0; wheels 2 r14 inboard; weapon drum r9 axis x teeth 2; extra parts: bumper; photos skipped (cluttered): indices [1].
+
+Likeness: aws67 0.74 (FAIL).
