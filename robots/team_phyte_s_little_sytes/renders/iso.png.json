@@ -1,0 +1,95 @@
+{
+ "spec": "/tmp/work8/robots/team_phyte_s_little_sytes/spec.json",
+ "rendered_at": 1795018094.811501,
+ "bodies": [
+  "chassis_bottom",
+  "chassis_top",
+  "motor_l",
+  "wheel_l",
+  "motor_r",
+  "wheel_r",
+  "insert_c0",
+  "insert_c1",
+  "insert_c2",
+  "insert_c3",
+  "battery",
+  "esc",
+  "rx",
+  "power_switch",
+  "wedge",
+  "insert_w0",
+  "insert_w1",
+  "insert_w2",
+  "insert_w3",
+  "bolt_c0",
+  "bolt_c1",
+  "bolt_c2",
+  "bolt_c3",
+  "bolt_w0",
+  "bolt_w1",
+  "bolt_w2",
+  "bolt_w3"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    -4.0,
+    16.0,
+    0.0
+   ],
+   "to": [
+    26.0,
+    5.0,
+    5.5
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    34.0,
+    5.0,
+    5.5
+   ],
+   "to": [
+    23.0,
+    11.0,
+    3.0
+   ]
+  },
+  "w_esc_ml": {
+   "from": [
+    31.0,
+    17.0,
+    3.0
+   ],
+   "to": [
+    5.549999999999997,
+    -16.0,
+    0.0
+   ]
+  },
+  "w_esc_mr": {
+   "from": [
+    15.0,
+    17.0,
+    3.0
+   ],
+   "to": [
+    -5.549999999999997,
+    -16.0,
+    0.0
+   ]
+  },
+  "w_rx_esc": {
+   "from": [
+    -33.8,
+    13.0,
+    0.0
+   ],
+   "to": [
+    23.0,
+    23.0,
+    3.0
+   ]
+  }
+ }
+}

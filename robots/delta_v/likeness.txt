@@ -1,0 +1,8 @@
+[FAIL] likeness.weapon: Photos show 1 teeth; `weapon` declares 2 (`weapon.teeth`; shape.weapon_profile measures it).
+[FAIL] likeness.silhouette: `reference/delta_v.aws72.webp`: best silhouette IoU 0.65 at camera elevation 45 deg, azimuth 30 deg (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.74). Regions (photo frame, left third first) 0.71 / 0.67 / 0.51: worst = rear third. Height/length 0.70 model vs 0.80 photo (too flat: raise it or shorten it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+[FAIL] likeness.silhouette: `reference/delta_v.aws74.webp`: best silhouette IoU 0.66 at camera elevation 45 deg, azimuth 30 deg (need 0.80: >= 0.8 and no worse than the closest stock template `vspin_drisk` at 0.69). Regions (photo frame, left third first) 0.73 / 0.73 / 0.29: worst = rear third. Height/length 0.70 model vs 0.68 photo (proportions ok).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+[FAIL] likeness.silhouette: `reference/delta_v.aws76.webp`: best silhouette IoU 0.70 at camera elevation 25 deg, azimuth 120 deg (need 0.81: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.81). Regions (photo frame, left third first) 0.47 / 0.71 / 0.89: worst = front third. Height/length 0.63 model vs 0.82 photo (too flat: raise it or shorten it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+likeness: FAIL (6 blockers) in 94.4s

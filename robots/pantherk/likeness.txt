@@ -1,0 +1,6 @@
+building 3 changed part solids on 3 processes
+overlay robots/pantherk/renders/likeness_pantherk_ii.aws67_mask.png (red = model only, blue = photo only, purple = both)
+[FAIL] likeness.type: Photos show 4 wheels; spec has 2.
+[FAIL] likeness.silhouette: `reference/pantherk_ii.aws67.webp`: best silhouette IoU 0.69 at camera elevation 45 deg, azimuth 240 deg (mirrored) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.74). Regions (photo frame, left third first) 0.45 / 0.82 / 0.71: worst = front third. Height/length 0.82 model vs 0.82 photo (proportions ok).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+likeness: FAIL (2 blockers) in 32.7s

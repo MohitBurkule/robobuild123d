@@ -1,0 +1,8 @@
+[FAIL] likeness.weapon: Photos show 4 teeth; `weapon` declares 2 (`weapon.teeth`; shape.weapon_profile measures it).
+[FAIL] likeness.silhouette: `reference/baphomet.aws74.webp`: best silhouette IoU 0.66 at camera elevation 45 deg, azimuth 240 deg (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.74). Regions (photo frame, left third first) 0.48 / 0.75 / 0.65: worst = front third. Height/length 0.82 model vs 0.72 photo (too tall: lower it or lengthen it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+[FAIL] likeness.silhouette: `reference/baphomet.aws76.webp`: best silhouette IoU 0.70 at camera elevation 45 deg, azimuth 300 deg (mirrored) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.80). Regions (photo frame, left third first) 0.40 / 0.87 / 0.64: worst = front third. Height/length 0.82 model vs 0.85 photo (proportions ok).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+[FAIL] likeness.silhouette: `reference/baphomet.aws77.webp`: best silhouette IoU 0.68 at camera elevation 45 deg, azimuth 300 deg (need 0.80: >= 0.8 and no worse than the closest stock template `wedge_2wd` at 0.77). Regions (photo frame, left third first) 0.64 / 0.80 / 0.46: worst = rear third. Height/length 0.82 model vs 0.74 photo (too tall: lower it or lengthen it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+likeness: FAIL (7 blockers) in 63.0s

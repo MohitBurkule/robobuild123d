@@ -1,0 +1,8 @@
+overlay robots/team_phyte_s_little_sytes/renders/likeness_team_phyte_s_little_sytes.aws77.webp_mask.png (red = model only, blue = photo only, purple = both)
+[FAIL] likeness.mask_source: `reference/team_phyte_s_little_sytes.aws74.webp_mask.png` matches `robot mask reference/team_phyte_s_little_sytes.aws74.webp --thr 40` at IoU 0.29 (need 0.85): it was not taken from the photo.
+   fix: Regenerate it: `robot mask reference/team_phyte_s_little_sytes.aws74.webp reference/team_phyte_s_little_sytes.aws74.webp_mask.png --thr 40`.
+[FAIL] likeness.mask_source: `reference/team_phyte_s_little_sytes.aws76.webp_mask.png` matches `robot mask reference/team_phyte_s_little_sytes.aws76.webp --thr 40` at IoU 0.42 (need 0.85): it was not taken from the photo.
+   fix: Regenerate it: `robot mask reference/team_phyte_s_little_sytes.aws76.webp reference/team_phyte_s_little_sytes.aws76.webp_mask.png --thr 40`.
+[FAIL] likeness.mask_source: `reference/team_phyte_s_little_sytes.aws77.webp_mask.png` matches `robot mask reference/team_phyte_s_little_sytes.aws77.webp --thr 40` at IoU 0.25 (need 0.85): it was not taken from the photo.
+   fix: Regenerate it: `robot mask reference/team_phyte_s_little_sytes.aws77.webp reference/team_phyte_s_little_sytes.aws77.webp_mask.png --thr 40`.
+likeness: FAIL (3 blockers) in 29.6s
