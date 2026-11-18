@@ -1,0 +1,127 @@
+  [ran] integrity 0.03s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 2.11s
+  [ran] connections 0.38s
+  [ran] legal 0.01s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.01s
+  [ran] shape 0.24s
+  [ran] dynamics 0.01s
+  [ran] strength 0.00s
+  [ran] printability 0.46s
+  [ran] process 0.04s
+  [ran] electrical 0.01s
+  [ran] combat 0.09s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.01s
+  [ran] fastener_record 0.00s
+  [ran] likeness 5.06s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.03s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.03s
+  [ran] dfm 0.02s
+  [ran] realworld 0.01s
+sawcon: ok=False 35 blockers in 28 root causes, mass 235.0/225 g
+1. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `arm`. (+1 consequences)
+   | weapon: x -1.50..1.50  y -0.06..36.06  z 39.99..76.06  size 3.00 x 36.13 x 36.07 mm
+   |   centre (0.00, 18.00, 58.03), volume 2740.7 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 18.0, 58.0] range 0..360 default 0
+   |   OVERLAP `arm` 1.39 mm (allowed 0.08)
+   | arm: x -5.00..5.00  y -25.00..22.00  z 13.00..53.00  size 10.00 x 47.00 x 40.00 mm
+2. [connection.floating] `wheel_l0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `pod_l`, 0.5 mm away. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_l0: x 48.50..56.50  y -41.00..-19.00  z -11.00..11.00  size 8.00 x 21.99 x 22.00 mm
+   |   centre (52.50, -30.00, 0.00), volume 3041.1 mm3
+   |   gap to `pod_l` 0.50 mm
+   | pod_l: x 8.00..48.00  y -45.00..45.00  z -9.00..13.00  size 40.00 x 90.00 x 22.00 mm
+   |   centre (28.00, 0.00, 2.00), volume 79200.0 mm3
+3. [connection.floating] `wheel_r0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `pod_r`, 0.5 mm away. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_r0: x -56.50..-48.50  y -41.00..-19.00  z -11.00..11.00  size 8.00 x 21.99 x 22.00 mm
+   |   centre (-52.50, -30.00, 0.00), volume 3041.1 mm3
+   |   gap to `pod_r` 0.50 mm
+   | pod_r: x -48.00..-8.00  y -45.00..45.00  z -9.00..13.00  size 40.00 x 90.00 x 22.00 mm
+   |   centre (-28.00, 0.00, 2.00), volume 79200.0 mm3
+4. [process.print_orientation] `wheel_l0` (fdm) has no `print_orientation`. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_l0: x 48.50..56.50  y -41.00..-19.00  z -11.00..11.00  size 8.00 x 21.99 x 22.00 mm
+   |   centre (52.50, -30.00, 0.00), volume 3041.1 mm3
+   |   gap to `pod_l` 0.50 mm
+   | wheel_l1: x 48.50..56.50  y 14.00..36.00  z -11.00..11.00  size 8.00 x 21.99 x 22.00 mm
+   |   centre (52.50, 25.00, 0.00), volume 3041.1 mm3
+5. [process.print_orientation] `wheel_r0` (fdm) has no `print_orientation`. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_r0: x -56.50..-48.50  y -41.00..-19.00  z -11.00..11.00  size 8.00 x 21.99 x 22.00 mm
+   |   centre (-52.50, -30.00, 0.00), volume 3041.1 mm3
+   |   gap to `pod_r` 0.50 mm
+   | wheel_r1: x -56.50..-48.50  y 14.00..36.00  z -11.00..11.00  size 8.00 x 21.99 x 22.00 mm
+   |   centre (-52.50, 25.00, 0.00), volume 3041.1 mm3
+6. [retention.axial] `wheel_l0` rotates but no fastener clamps or threads into it and it declares no reasoned press fit, pin, shaft or fuse hold. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Pass a screw through it into a thread or nut, or declare the hold that captures it with a `reason`.
+   | wheel_l0: x 48.50..56.50  y -41.00..-19.00  z -11.00..11.00  size 8.00 x 21.99 x 22.00 mm
+   |   centre (52.50, -30.00, 0.00), volume 3041.1 mm3
+   |   gap to `pod_l` 0.50 mm
+   | wheel_l1: x 48.50..56.50  y 14.00..36.00  z -11.00..11.00  size 8.00 x 21.99 x 22.00 mm
+   |   centre (52.50, 25.00, 0.00), volume 3041.1 mm3
+7. [retention.axial] `wheel_r0` rotates but no fastener clamps or threads into it and it declares no reasoned press fit, pin, shaft or fuse hold. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Pass a screw through it into a thread or nut, or declare the hold that captures it with a `reason`.
+   | wheel_r0: x -56.50..-48.50  y -41.00..-19.00  z -11.00..11.00  size 8.00 x 21.99 x 22.00 mm
+   |   centre (-52.50, -30.00, 0.00), volume 3041.1 mm3
+   |   gap to `pod_r` 0.50 mm
+   | wheel_r1: x -56.50..-48.50  y 14.00..36.00  z -11.00..11.00  size 8.00 x 21.99 x 22.00 mm
+   |   centre (-52.50, 25.00, 0.00), volume 3041.1 mm3
+8. [mass.over] 235.0 g (range 191.1 to 278.9 g) against the 225 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+9. [proxy.interference] `weapon` and `arm` overlap by 1.39 mm (allowed 0.08).
+   | weapon: x -1.50..1.50  y -0.06..36.06  z 39.99..76.06  size 3.00 x 36.13 x 36.07 mm
+   |   centre (0.00, 18.00, 58.03), volume 2740.7 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 18.0, 58.0] range 0..360 default 0
+   |   OVERLAP `arm` 1.39 mm (allowed 0.08)
+   | arm: x -5.00..5.00  y -25.00..22.00  z 13.00..53.00  size 10.00 x 47.00 x 40.00 mm
+10. [proxy.interference] `plow` and `plow_face` overlap by 1.39 mm (allowed 0.08).
+   | plow: x -60.00..60.00  y 45.00..75.00  z -11.00..-8.00  size 120.00 x 30.00 x 3.00 mm
+   |   centre (0.00, 60.00, -9.50), volume 9450.0 mm3
+   |   OVERLAP `plow_face` 1.39 mm (allowed 0.08)
+   |   gap to `pod_l` 0.00 mm (touching)
+   |   gap to `pod_r` 0.00 mm (touching)
+11. [connection.floating] `pod_r` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `bridge`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | pod_r: x -48.00..-8.00  y -45.00..45.00  z -9.00..13.00  size 40.00 x 90.00 x 22.00 mm
+   |   centre (-28.00, 0.00, 2.00), volume 79200.0 mm3
+   |   overlap allowed `bridge` 0.05 mm (allowed 0.08)
+   |   gap to `plow` 0.00 mm (touching)
+   |   gap to `plow_face` 0.00 mm (touching)
+12. [connection.floating] `bridge` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `pod_l`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | bridge: x -8.10..8.10  y -45.00..-20.00  z -9.00..13.00  size 16.20 x 25.00 x 22.00 mm
+   |   centre (0.00, -32.50, 2.00), volume 8910.0 mm3
+   |   overlap allowed `pod_l` 0.05 mm (allowed 0.08)
+   |   overlap allowed `pod_r` 0.05 mm (allowed 0.08)
+   |   gap to `arm` 0.00 mm (touching)
+... 16 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 235.0 g of 225 g (-10.0 g margin)
+    pod_l                      75.40 g  fills 100% of its box  <- solid block? a tub should be a shell
+    pod_r                      75.40 g  fills 100% of its box  <- solid block? a tub should be a shell
+    plow_face                  25.70 g  fills 50% of its box
+    weapon                     21.65 g  fills 70% of its box  <- solid block? a tub should be a shell
+    plow                        9.00 g  fills 88% of its box
+    bridge                      8.48 g  fills 100% of its box
+    arm                         5.74 g  fills 32% of its box
+    wheel_l0                    3.10 g  fills 79% of its box
+    wheel_r0                    3.10 g  fills 79% of its box
+    wheel_l1                    3.10 g  fills 79% of its box
+    wheel_r1                    3.10 g  fills 79% of its box
+    mass.over: 235.0 g (range 191.1 to 278.9 g) against the 225 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 0 hit / 6 miss, group 0 hit / 31 miss, inside 0 hit / 11 miss, likeness 1 hit / 0 miss, min_gap 20 hit / 96 miss, overlap 12 hit / 48 miss, part_check 0 hit / 4 miss, part_geom 11 hit / 0 miss, ray 0 hit / 55 miss
