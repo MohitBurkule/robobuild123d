@@ -1,7 +1,7 @@
 BLOCKERS: 5
-  [cached] integrity 0.01s
+  [cached] integrity 0.00s
   [cached] mass 0.00s
-  [proxy] interference 0.08s
+  [proxy] interference 0.07s
   [cached] connections 0.00s
   [cached] legal 0.00s
   [cached] fasteners 0.00s
@@ -31,7 +31,7 @@ BLOCKERS: 5
   [cached] geom 0.00s
   [cached] dfm 0.00s
   [cached] realworld 0.00s
-mini e: ok=False 5 blockers in 5 root causes, mass 143.2/150 g
+mini e: ok=False 5 blockers in 5 root causes, mass 143.4/150 g
 1. [wire.render_wires] 9 of 9 robot render(s) do not draw all 4 wires: renders/diff_mini_e.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_mini_e.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_mini_e.aws72_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_mini_e.aws76_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_mini_e.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_mini_e.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_mini_e.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn...
    fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
 2. [likeness.view] `reference/mini_e.aws72.webp` is declared `front_left_iso` (IoU 0.70 there) but the model matches it better from rear_right_iso (elevation 45, azimuth 330) (IoU 0.81).
@@ -43,16 +43,16 @@ mini e: ok=False 5 blockers in 5 root causes, mass 143.2/150 g
 5. [likeness.silhouette] `reference/mini_e.aws76.webp`: best silhouette IoU 0.66 at camera front_right_iso (elevation 45, azimuth 30) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.78). Regions (photo frame, left third first) 0.61 / 0.78 / 0.52: worst = rear third. Height/length 0.82 model vs 0.62 photo (too tall: lower it or lengthen it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
-  mass 143.2 g of 150 g (+6.8 g margin)
-    chassis                    65.07 g  fills 43% of its box
+  mass 143.4 g of 150 g (+6.6 g margin)
+    chassis                    65.22 g  fills 43% of its box
     wedge                      29.28 g  fills 24% of its box
     el_battery                 12.50 g  fills 100% of its box
     dm_wheel_l0                 9.50 g  fills 63% of its box
     dm_wheel_r0                 9.50 g  fills 63% of its box
-    wheel_l0                    6.40 g  fills 71% of its box
-    wheel_r0                    6.40 g  fills 71% of its box
+    wheel_r0                    6.43 g  fills 66% of its box
+    wheel_l0                    6.43 g  fills 66% of its box
     el_esc                      2.30 g  fills 99% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.may_be_over: 143.2 g (range 116.1 to 170.3 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.may_be_over: 143.4 g (range 116.3 to 170.5 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
 cache: group 31 hit / 0 miss, overlap 79 hit / 0 miss, part_geom 9 hit / 0 miss
