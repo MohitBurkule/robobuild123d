@@ -8,13 +8,14 @@
  },
  "wheels": {
   "n": 2,
-  "radius": 12,
+  "radius": 14,
   "width": 10,
   "y": [
-   -10
+   -12
   ],
   "outside": false,
-  "x": 36
+  "x": 36,
+  "notch": true
  },
  "colors": {
   "body": "#1f2a26",
@@ -22,44 +23,44 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
-  {
-   "side": [
-    [
-     34,
-     2
-    ],
-    [
-     66,
-     0
-    ],
-    [
-     66,
-     1.5
-    ],
-    [
-     40,
-     24
-    ],
-    [
-     34,
-     24
-    ]
-   ],
-   "x": [
-    -56,
-    56
-   ],
-   "kind": "wedge",
-   "id": "wedge",
-   "color": "#e8322a"
-  }
- ],
  "skip_photos": [
   0
  ],
  "name": "mini e",
  "weapon": {
   "kind": "none"
- }
+ },
+ "macros": [
+  {
+   "side": [
+    [
+     30,
+     2
+    ],
+    [
+     72,
+     0
+    ],
+    [
+     72,
+     1.5
+    ],
+    [
+     38,
+     26
+    ],
+    [
+     30,
+     26
+    ]
+   ],
+   "x": [
+    -58,
+    58
+   ],
+   "kind": "wedge",
+   "id": "wedge",
+   "color": "#e8322a"
+  }
+ ]
 }
