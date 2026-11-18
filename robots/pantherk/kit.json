@@ -1,0 +1,4 @@
+{"name":"Pantherk II","robot_type":"wedge",
+ "body":{"length":104,"width":90,"height":22,"ramp":30,"style":"twin_pods","slot":26,"bridge":56,"clearance":2},
+ "weapon":{"kind":"none"},
+ "wheels":{"n":4,"radius":12,"width":10,"y":[-36,16],"outside":true}}
