@@ -1,0 +1,70 @@
+BLOCKERS: 4
+  [ran] integrity 0.06s
+  [ran] mass 0.00s
+  [proxy] interference 0.10s
+  [ran] connections 0.00s
+  [ran] legal 0.01s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.02s
+  [ran] shape 0.02s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 1.09s
+  [ran] process 0.00s
+  [ran] electrical 0.00s
+  [ran] combat 0.10s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.01s
+  [ran] bom 0.00s
+  [ran] wire_review 0.01s
+  [ran] fastener_record 0.00s
+  [ran] likeness 2.00s
+  [ran] drive_recess 0.01s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.10s
+  [ran] dfm 0.01s
+  [ran] realworld 0.08s
+i never asked for this: ok=False 4 blockers in 4 root causes, mass 145.2/150 g
+1. [proxy.interference] `chassis` and `front_plate` overlap by 1.12 mm (allowed 0.08).
+   | chassis: x -40.00..40.00  y -46.00..46.00  z -10.00..14.00  size 80.00 x 92.00 x 24.00 mm
+   |   centre (0.00, 0.00, 2.00), volume 55217.7 mm3
+   |   OVERLAP `front_plate` 1.12 mm (allowed 0.08)
+   |   overlap allowed `fs_front_plate_0` 0.88 mm (allowed inf)
+   |   overlap allowed `fs_front_plate_1` 0.88 mm (allowed inf)
+2. [wire.render_wires] 5 of 5 robot render(s) do not draw all 4 wires: renders/diff_i_never_asked_for_this.aws71.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_i_never_asked_for_this.aws71_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_i_never_asked_for_this.aws71.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_i_never_asked_for_this.aws71.png: no render record (`<png>.json`), so nothing says the wires were drawn
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+3. [likeness.view] `reference/i_never_asked_for_this.aws71.webp` is declared `front_left_iso` (IoU 0.70 there) but the model matches it better from rear_left_iso (elevation 25, azimuth 210) (IoU 0.83).
+   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
+4. [likeness.silhouette] `reference/i_never_asked_for_this.aws71.webp`: best silhouette IoU 0.70 at camera front_left_iso (elevation 45, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.67). Regions (photo frame, left third first) 0.66 / 0.78 / 0.61: worst = rear third. Height/length 0.72 model vs 0.61 photo (too tall: lower it or lengthen it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+MASS BUDGET:
+  mass 145.2 g of 150 g (+4.8 g margin)
+    chassis                    52.57 g  fills 31% of its box
+    front_plate                32.69 g  fills 12% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    dm_wheel_l1                 9.50 g  fills 63% of its box
+    dm_wheel_r1                 9.50 g  fills 63% of its box
+    wheel_l1                    4.12 g  fills 66% of its box
+    wheel_r1                    4.12 g  fills 66% of its box
+    wheel_l0                    4.09 g  fills 77% of its box
+    wheel_r0                    4.09 g  fills 77% of its box
+    el_esc                      2.30 g  fills 99% of its box
+    dt_hub_wheel_l1             1.22 g  fills 75% of its box
+    dt_hub_wheel_r1             1.22 g  fills 75% of its box
+    dt_hub_wheel_l0             1.20 g  fills 74% of its box
+    dt_hub_wheel_r0             1.20 g  fills 74% of its box
+    dt_axle_wheel_r0            1.09 g  fills 79% of its box
+    dt_axle_wheel_l0            1.09 g  fills 79% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    fs_front_plate_0            0.29 g  fills 10% of its box
+    fs_front_plate_1            0.29 g  fills 10% of its box
+    mass.may_be_over: 145.2 g (range 123.4 to 167.0 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 1 hit / 0 miss, group 0 hit / 31 miss, inside 22 hit / 0 miss, likeness 1 hit / 0 miss, min_gap 20 hit / 0 miss, overlap 212 hit / 0 miss, part_check 10 hit / 0 miss, part_geom 19 hit / 0 miss, ray 131 hit / 0 miss
