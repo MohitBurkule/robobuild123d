@@ -1,0 +1,22 @@
+{
+ "name": "zero",
+ "robot_type": "wedge",
+ "body": {
+  "length": 80,
+  "width": 80,
+  "height": 28,
+  "ramp": 0,
+  "clearance": 2
+ },
+ "weapon": {
+  "kind": "none"
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 16,
+  "width": 16,
+  "y": [
+   14
+  ]
+ }
+}

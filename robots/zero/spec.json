@@ -1,0 +1,259 @@
+{
+ "name": "zero",
+ "profile": "aws2025",
+ "robot_type": "wedge",
+ "locomotion": "wheels",
+ "kit_draft": true,
+ "parts": [
+  {
+   "id": "chassis",
+   "kind": "structure",
+   "material": "aluminium",
+   "process": "laser",
+   "shape": {
+    "type": "intersect",
+    "items": [
+     {
+      "type": "place",
+      "shape": {
+       "type": "prism",
+       "points": [
+        [
+         -20,
+         -45
+        ],
+        [
+         20,
+         -45
+        ],
+        [
+         38,
+         35
+        ],
+        [
+         -38,
+         35
+        ]
+       ],
+       "height": 28
+      },
+      "at": [
+       0,
+       0,
+       0.0
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "prism",
+       "points": [
+        [
+         -45,
+         -14
+        ],
+        [
+         35,
+         -14
+        ],
+        [
+         35,
+         14
+        ],
+        [
+         -30,
+         14
+        ],
+        [
+         -45,
+         2
+        ]
+       ],
+       "height": 80
+      },
+      "at": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rot": [
+       90.0,
+       0.0,
+       90.0
+      ]
+     }
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#b9bcc0",
+   "print_orientation": "+z"
+  },
+  {
+   "id": "wheel_l0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 16.0,
+     "height": 16.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    44,
+    14.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "wheel_r0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 16.0,
+     "height": 16.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -44,
+    14.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "scoop",
+   "kind": "wedge",
+   "material": "aluminium",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       34,
+       12
+      ],
+      [
+       36,
+       13
+      ],
+      [
+       48,
+       -4
+      ],
+      [
+       66,
+       -15
+      ],
+      [
+       65,
+       -16
+      ],
+      [
+       46,
+       -6
+      ]
+     ],
+     "height": 124
+    },
+    "at": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rot": [
+     90.0,
+     0.0,
+     90.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#c9cdd3"
+  }
+ ],
+ "fasteners": [],
+ "wires": [],
+ "connections": [],
+ "reference": [
+  {
+   "image": "reference/zero.aws71.webp",
+   "mask": "reference/zero.aws71_mask.png",
+   "view": "iso",
+   "approximate": true
+  },
+  {
+   "image": "reference/zero.aws74.webp",
+   "mask": "reference/zero.aws74_mask.png",
+   "view": "iso",
+   "approximate": true
+  },
+  {
+   "image": "reference/zero.aws76.webp",
+   "mask": "reference/zero.aws76_mask.png",
+   "view": "iso",
+   "approximate": true
+  }
+ ]
+}
