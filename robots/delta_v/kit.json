@@ -1,0 +1,5 @@
+{"name":"Delta V","robot_type":"vertical_spinner",
+ "body":{"length":120,"width":94,"height":36,"ramp":65,"style":"twin_pods","slot":38,"bridge":50,"clearance":2},
+ "weapon":{"kind":"disc","radius":34,"width":34,"y":6,"z":38,"axis":"x","teeth":1},
+ "wheels":{"n":2,"radius":15,"width":9,"y":[-48],"outside":true},
+ "forks":{"n":2,"length":35,"width":6,"spread":74}}

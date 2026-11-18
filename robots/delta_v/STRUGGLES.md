@@ -53,3 +53,8 @@ Commit uses the system-reminder attribution (Claude Haiku 5.5 and the session li
 - likeness: FAIL (3 blockers, silhouette only; weapon position/size/teeth/type pass). IoU 0.69 / 0.62 / 0.72 vs need 0.80 and stock-template bars 0.74 / 0.69 / 0.81. Worst: rear third; the photo's long sloped front ramp with notch and blade is not modelled (forks only on the side walls).
 - Not done by instruction: verify blockers and fasteners were not cleared (verify was started and abandoned; the spec was patched by hand after generation, so the mid-mounted uprights have no valid chassis hook or inserts).
 - Struggles: generator cannot place the weapon in the middle (no position parameter); extra_parts cannot replace the generated weapon, so hand-patching is needed and re-running gen build discards it. A front wedge/blade plate option is missing. likeness takes 40-180 s per run.
+
+## Round 2 (kit.json, looks only)
+- Rebuilt with `robot kit robots/delta_v/kit.json` (twin_pods, slot 38, ramp 65, disc r34 w34, 2 wheels, 2 forks) + reference entries. Weapon facts pass; silhouette IoU 0.72 / 0.69 / 0.77 (need 0.80 / bars 0.74 / 0.69 / 0.81): FAIL, 3 blockers. Best of 4 kit rounds, gains of ~0.02 each.
+- Remaining differences (read from diff sheets, no API key): kit disc is a thick drum (width must be 35% of robot width for likeness.weapon, photo disc is thin with a big hub); photo wheels are large, high on the rear corners, kit wheels sit on the ground at axle z=0; photo has 3 mm blade tines on pod noses and a stepped (two-slope) ramp; aws74 perspective pose is hard to match with an orthographic camera.
+- Kit wants: separate hub width vs disc thickness, wheel z, stepped ramp.
