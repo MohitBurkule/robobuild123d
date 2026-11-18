@@ -17,12 +17,12 @@
       "z": -4,
       "points": [
        [
-        -40,
-        -42
+        -42,
+        -48
        ],
        [
-        40,
-        -42
+        42,
+        -48
        ],
        [
         50,
@@ -63,12 +63,12 @@
       "z": 4,
       "points": [
        [
-        -40,
-        -42
+        -42,
+        -48
        ],
        [
-        40,
-        -42
+        42,
+        -48
        ],
        [
         50,
@@ -106,15 +106,15 @@
       "spline": false
      },
      {
-      "z": 18,
+      "z": 16,
       "points": [
        [
-        -40.0,
-        -42
+        -42.47747368421052,
+        -48
        ],
        [
-        40.0,
-        -42
+        42.47747368421052,
+        -48
        ],
        [
         46.968421052631584,
@@ -618,7 +618,7 @@
        ],
        [
         10.5,
-        -7
+        -9
        ],
        [
         24.0,
@@ -630,15 +630,15 @@
        ],
        [
         27.0,
-        5
+        8
        ],
        [
         21.0,
-        9
+        13
        ],
        [
         16.5,
-        3
+        0
        ],
        [
         9.0,
@@ -650,15 +650,15 @@
        ],
        [
         -16.5,
-        3
+        0
        ],
        [
         -21.0,
-        9
+        13
        ],
        [
         -27.0,
-        5
+        8
        ]
       ],
       "height": 3.0
@@ -668,7 +668,7 @@
        "type": "place",
        "shape": {
         "type": "cylinder",
-        "radius": 3.2,
+        "radius": 4.5,
         "height": 5.0
        },
        "at": [
@@ -740,6 +740,262 @@
     "teeth": 2
    },
    "label": "3 mm steel bar, 76 mm tip to tip, laser cut, swept tips"
+  },
+  {
+   "id": "handle_bar",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      60,
+      5,
+      6
+     ]
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    14,
+    20
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#2a2d33"
+  },
+  {
+   "id": "handle_l",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      5,
+      16,
+      6
+     ]
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    -30,
+    6,
+    19
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#2a2d33"
+  },
+  {
+   "id": "handle_r",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      5,
+      16,
+      6
+     ]
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    30,
+    6,
+    19
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#2a2d33"
+  },
+  {
+   "id": "wall_l",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      3,
+      40,
+      24
+     ]
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    -44,
+    -26,
+    8
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#2a2d33"
+  },
+  {
+   "id": "wall_r",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      3,
+      40,
+      24
+     ]
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    44,
+    -26,
+    8
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#2a2d33"
+  },
+  {
+   "id": "eye_l",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "cylinder",
+    "radius": 5,
+    "height": 1
+   },
+   "at": [
+    -8,
+    26,
+    17.5
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#f2f2f2"
+  },
+  {
+   "id": "eye_r",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "cylinder",
+    "radius": 5,
+    "height": 1
+   },
+   "at": [
+    8,
+    28,
+    17.5
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#f2f2f2"
+  },
+  {
+   "id": "hub",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "cylinder",
+    "radius": 13,
+    "height": 8
+   },
+   "at": [
+    0,
+    50,
+    -14
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#555a60"
   }
  ],
  "fasteners": [],

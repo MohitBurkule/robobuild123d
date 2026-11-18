@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work9_relativity/robots/relativity/spec.json",
- "rendered_at": 1795020365.5596619,
+ "rendered_at": 1795020547.5211983,
  "bodies": [
   "chassis_bottom",
   "motor_l",
@@ -12,7 +12,15 @@
   "wesc",
   "power_switch",
   "weapon_motor",
-  "weapon"
+  "weapon",
+  "handle_bar",
+  "handle_l",
+  "handle_r",
+  "wall_l",
+  "wall_r",
+  "eye_l",
+  "eye_r",
+  "hub"
  ],
  "wires": {}
 }
