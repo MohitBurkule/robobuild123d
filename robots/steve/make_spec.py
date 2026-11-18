@@ -30,9 +30,9 @@ parts = [
     {"id": "tub", "kind": "structure", "material": "pla", "process": "fdm", "print_orientation": "+z",
      "color": "#0f3b1e", "model": model("tub"), "at": [0, 0, 0]},
 
-    {"id": "lid_l", "kind": "structure", "material": "polycarbonate", "process": "cnc",
+    {"id": "lid_l", "kind": "structure", "material": "pla", "process": "fdm", "print_orientation": "+z",
      "color": "#0f3b1e", "model": model("lid_l"), "at": r3([lid_xc, lid_yc, lid_zc])},
-    {"id": "lid_r", "kind": "structure", "material": "polycarbonate", "process": "cnc",
+    {"id": "lid_r", "kind": "structure", "material": "pla", "process": "fdm", "print_orientation": "+z",
      "color": "#0f3b1e", "model": model("lid_r"), "at": r3([-lid_xc, lid_yc, lid_zc])},
 
     {"id": "guard_l", "kind": "structure", "material": "polycarbonate", "process": "cnc",
@@ -47,11 +47,12 @@ parts = [
      "color": "#222222", "model": model("wheel_r"), "at": r3([-P.WHEEL_X, P.WHEEL_Y, P.AXLE_Z]),
      "joint": {"type": "revolute", "axis": [-1, 0, 0], "anchor": [0, 0, 0], "range": [0, 360]}},
 
-    {"id": "flipper", "kind": "structure", "material": "pla", "process": "fdm", "print_orientation": "+x",
+    {"id": "flipper", "kind": "structure", "material": "pla", "process": "fdm", "print_orientation": "+z",
      "color": "#25282a", "model": model("flipper"), "at": r3([0, P.HINGE_Y, P.HINGE_Z]),
      "joint": {"type": "revolute", "axis": [1, 0, 0], "anchor": [0, 0, 0], "range": [0, P.FLIP_OPEN_DEG]}},
 
-    {"id": "scoop", "kind": "weapon", "material": "aluminium", "process": "cnc",
+    {"id": "scoop", "kind": "weapon", "material": "aluminium", "process": "cast",
+     "solids": 3, "solids_reason": "curved sheet + 2 side cheek gussets",
      "weapon": {"kind": "flipper", "motor": "servo", "reduction": 1.0},
      "color": "#b8c0c8", "model": model("scoop"),
      "at": [0, 0, 0],
@@ -73,8 +74,8 @@ parts = [
      "joint": {"type": "revolute", "axis": [1, 0, 0], "anchor": [0, 0, 0], "range": [0, 60]}},
 
     {"id": "battery", "kind": "battery", "catalog": "lipo_2s_180",
-     "at": r3([20.0, -2.0, P.GROUND_CLEARANCE + P.FLOOR_T + 5.0])},
-    {"id": "esc_rx", "kind": "receiver", "catalog": "malenki_nano",
+     "at": r3([22.0, 2.0, P.GROUND_CLEARANCE + P.FLOOR_T + 5.0])},
+    {"id": "esc_rx", "kind": "esc", "catalog": "malenki_nano",
      "at": r3([-20.0, -2.0, P.GROUND_CLEARANCE + P.FLOOR_T + 3.0])},
     {"id": "switch", "kind": "switch", "catalog": "switch_bbb_ant_rvrn2",
      "tool_free": True, "marked": True, "label": "ON/OFF",
@@ -91,10 +92,10 @@ spec = {
     "envelope_mm": [101.6, 101.6, 101.6],
     "ground_z": 0.0,
     "electronics": {"failsafe": True, "weapon_remote_disable": True},
-    "wiring": [
+    "wires": [
         {"from": "battery", "to": "switch", "gauge": 20},
-        {"from": "battery", "to": "esc_rx", "gauge": 20},
-        {"from": "switch", "to": "esc_rx", "gauge": 20},
+        {"from": "battery", "to": "esc_rx.bat", "gauge": 20},
+        {"from": "switch", "to": "esc_rx.bat", "gauge": 20},
         {"from": "esc_rx", "to": "motor_l", "gauge": 24},
         {"from": "esc_rx", "to": "motor_r", "gauge": 24},
         {"from": "esc_rx", "to": "servo", "gauge": 26},

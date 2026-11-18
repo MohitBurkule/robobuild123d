@@ -15,7 +15,7 @@
     "failsafe": true,
     "weapon_remote_disable": true
   },
-  "wiring": [
+  "wires": [
     {
       "from": "battery",
       "to": "switch",
@@ -68,8 +68,9 @@
     {
       "id": "lid_l",
       "kind": "structure",
-      "material": "polycarbonate",
-      "process": "cnc",
+      "material": "pla",
+      "process": "fdm",
+      "print_orientation": "+z",
       "color": "#0f3b1e",
       "model": "src/build_steve.py",
       "at": [
@@ -84,8 +85,9 @@
     {
       "id": "lid_r",
       "kind": "structure",
-      "material": "polycarbonate",
-      "process": "cnc",
+      "material": "pla",
+      "process": "fdm",
+      "print_orientation": "+z",
       "color": "#0f3b1e",
       "model": "src/build_steve.py",
       "at": [
@@ -202,7 +204,7 @@
       "kind": "structure",
       "material": "pla",
       "process": "fdm",
-      "print_orientation": "+x",
+      "print_orientation": "+z",
       "color": "#25282a",
       "model": "src/build_steve.py",
       "at": [
@@ -235,7 +237,9 @@
       "id": "scoop",
       "kind": "weapon",
       "material": "aluminium",
-      "process": "cnc",
+      "process": "cast",
+      "solids": 3,
+      "solids_reason": "curved sheet + 2 side cheek gussets",
       "weapon": {
         "kind": "flipper",
         "motor": "servo",
@@ -353,14 +357,14 @@
       "kind": "battery",
       "catalog": "lipo_2s_180",
       "at": [
-        20.0,
-        -2.0,
+        22.0,
+        2.0,
         9.0
       ]
     },
     {
       "id": "esc_rx",
-      "kind": "receiver",
+      "kind": "esc",
       "catalog": "malenki_nano",
       "at": [
         -20.0,

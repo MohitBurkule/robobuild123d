@@ -240,16 +240,16 @@ def build_scoop():
         cutter = extrude(sk_cut.sketch, amount=40.0, both=True)
         raw_sheet = raw_sheet - cutter
 
-    # Triangular side cheek gussets flush under the outer wings of the scoop (visible in reference.png)
+    # Triangular side cheek gussets flush under the outer wings of the scoop (fused into 1 solid)
     for s in (-1.0, 1.0):
         cheek_pts = [
-            (y_top + 13.0, z_top - 7.5),
+            (y_top + 13.0, z_top - 5.5),
             (y_tip - 1.5, z_tip + 0.5),
             (y_top + 19.0, z_tip + 0.5),
         ]
         with BuildSketch(Plane.YZ) as sk_ch:
             Polygon(*cheek_pts, align=None)
-        cheek = extrude(sk_ch.sketch, amount=0.8, both=True).translate((s * (hw_top + 6.5), 0.0, 0.0))
+        cheek = extrude(sk_ch.sketch, amount=0.8, both=True).translate((s * (hw_top + 2.5), 0.0, 0.0))
         raw_sheet = raw_sheet + cheek
 
     # 4 protruding bolts + washers + nuts in a 2x2 cluster at top center (matching reference.png)
