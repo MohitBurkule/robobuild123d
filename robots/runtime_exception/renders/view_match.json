@@ -1,14 +1,14 @@
 {
  "runtime_exception.aws72.webp": {
-  "view": "120,42~",
-  "azimuth": 110.0,
-  "elevation": 27.0,
-  "iou": 0.74
+  "view": "120,35!",
+  "azimuth": 120.0,
+  "elevation": 35.0,
+  "iou": 0.685
  },
  "runtime_exception.aws74.webp": {
-  "view": "70,35",
-  "azimuth": 70.0,
+  "view": "60,35!",
+  "azimuth": 60.0,
   "elevation": 35.0,
-  "iou": 0.792
+  "iou": 0.786
  }
 }
