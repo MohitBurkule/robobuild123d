@@ -1,0 +1,14 @@
+{
+ "robot_type": "vertical_spinner",
+ "wheels": 2,
+ "weapon": {
+  "kind": "disc",
+  "axis": "x",
+  "teeth": 2
+ },
+ "photos": [
+  "verty_big_secret.aws72.webp",
+  "verty_big_secret.aws74.webp",
+  "verty_big_secret.aws76.webp"
+ ]
+}

@@ -1,0 +1,57 @@
+{
+ "robot_type": "vertical_spinner",
+ "body": {
+  "length": 80,
+  "width": 66,
+  "height": 20,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 13,
+  "width": 8,
+  "y": [
+   -28
+  ]
+ },
+ "weapon": {
+  "kind": "disc",
+  "radius": 30,
+  "width": 4,
+  "y": 18,
+  "teeth": 2,
+  "z": 34,
+  "axis": "x"
+ },
+ "forks": {
+  "n": 2,
+  "length": 55,
+  "width": 6,
+  "spread": 74,
+  "tilt_deg": 10
+ },
+ "colors": {
+  "body": "#1f4a38",
+  "wheel": "#1c3a2c",
+  "weapon": "#1c3a2c",
+  "fork": "#1c3a2c"
+ },
+ "extras": [
+  {
+   "box": [
+    6,
+    30,
+    34
+   ],
+   "at": [
+    10,
+    18,
+    22
+   ],
+   "mirror": true,
+   "id": "upright",
+   "color": "#1f4a38"
+  }
+ ],
+ "name": "verty big secret"
+}

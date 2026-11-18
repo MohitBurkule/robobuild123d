@@ -1,0 +1,15 @@
+{
+ "spec": "/tmp/work10_verty_big_secret/robots/verty_big_secret/spec.json",
+ "rendered_at": 1795022291.927992,
+ "bodies": [
+  "chassis",
+  "weapon",
+  "wheel_l0",
+  "wheel_r0",
+  "fork_0",
+  "fork_1",
+  "upright_l",
+  "upright_r"
+ ],
+ "wires": {}
+}

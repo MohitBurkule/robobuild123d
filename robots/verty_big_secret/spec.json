@@ -1,0 +1,566 @@
+{
+ "name": "verty big secret",
+ "profile": "aws2025",
+ "robot_type": "vertical_spinner",
+ "locomotion": "wheels",
+ "kit_draft": true,
+ "parts": [
+  {
+   "id": "chassis",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -40.0,
+       0.0
+      ],
+      [
+       40.0,
+       0.0
+      ],
+      [
+       40.0,
+       1.5
+      ],
+      [
+       40.0,
+       20.0
+      ],
+      [
+       -40.0,
+       20.0
+      ]
+     ],
+     "height": 66.0
+    },
+    "at": [
+     0.0,
+     0.0,
+     -11.0
+    ],
+    "rot": [
+     90.0,
+     0.0,
+     90.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#1f4a38",
+   "print_orientation": "+z"
+  },
+  {
+   "id": "weapon",
+   "kind": "weapon",
+   "material": "steel",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "spline_prism",
+     "points": [
+      [
+       30.0,
+       0.0
+      ],
+      [
+       29.666,
+       3.906
+      ],
+      [
+       28.826,
+       7.724
+      ],
+      [
+       27.499,
+       11.39
+      ],
+      [
+       25.709,
+       14.843
+      ],
+      [
+       23.489,
+       18.024
+      ],
+      [
+       20.88,
+       20.88
+      ],
+      [
+       17.929,
+       23.365
+      ],
+      [
+       14.686,
+       25.437
+      ],
+      [
+       11.21,
+       27.064
+      ],
+      [
+       7.562,
+       28.22
+      ],
+      [
+       3.803,
+       28.888
+      ],
+      [
+       0.0,
+       29.059
+      ],
+      [
+       -3.783,
+       28.732
+      ],
+      [
+       -7.48,
+       27.917
+      ],
+      [
+       -11.03,
+       26.629
+      ],
+      [
+       -14.373,
+       24.894
+      ],
+      [
+       -17.451,
+       22.743
+      ],
+      [
+       -20.215,
+       20.215
+      ],
+      [
+       -22.618,
+       17.356
+      ],
+      [
+       -24.622,
+       14.216
+      ],
+      [
+       -26.485,
+       10.97
+      ],
+      [
+       -28.119,
+       7.535
+      ],
+      [
+       -29.303,
+       3.858
+      ],
+      [
+       -30.0,
+       0.0
+      ],
+      [
+       -29.666,
+       -3.906
+      ],
+      [
+       -28.826,
+       -7.724
+      ],
+      [
+       -27.499,
+       -11.39
+      ],
+      [
+       -25.709,
+       -14.843
+      ],
+      [
+       -23.489,
+       -18.024
+      ],
+      [
+       -20.88,
+       -20.88
+      ],
+      [
+       -17.929,
+       -23.365
+      ],
+      [
+       -14.686,
+       -25.437
+      ],
+      [
+       -11.21,
+       -27.064
+      ],
+      [
+       -7.562,
+       -28.22
+      ],
+      [
+       -3.803,
+       -28.888
+      ],
+      [
+       -0.0,
+       -29.059
+      ],
+      [
+       3.783,
+       -28.732
+      ],
+      [
+       7.48,
+       -27.917
+      ],
+      [
+       11.03,
+       -26.629
+      ],
+      [
+       14.373,
+       -24.894
+      ],
+      [
+       17.451,
+       -22.743
+      ],
+      [
+       20.215,
+       -20.215
+      ],
+      [
+       22.618,
+       -17.356
+      ],
+      [
+       24.622,
+       -14.216
+      ],
+      [
+       26.485,
+       -10.97
+      ],
+      [
+       28.119,
+       -7.535
+      ],
+      [
+       29.303,
+       -3.858
+      ]
+     ],
+     "height": 4.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0.0,
+    18.0,
+    34.0
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "color": "#1c3a2c",
+   "weapon": {
+    "kind": "disc",
+    "spin_axis": [
+     0,
+     0,
+     1
+    ],
+    "teeth": 2,
+    "cells": 2,
+    "reduction": 1.0
+   },
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "pivot": [
+     0.0,
+     18.0,
+     34.0
+    ],
+    "min": 0,
+    "max": 360,
+    "default": 0
+   }
+  },
+  {
+   "id": "wheel_l0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 13.0,
+     "height": 8.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    37.5,
+    -28.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#1c3a2c"
+  },
+  {
+   "id": "wheel_r0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 13.0,
+     "height": 8.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -37.5,
+    -28.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#1c3a2c"
+  },
+  {
+   "id": "fork_0",
+   "kind": "wedge",
+   "material": "titanium",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      6.0,
+      55.0,
+      1.5
+     ]
+    },
+    "at": [
+     -37.0,
+     65.5,
+     -7.424675114159415
+    ],
+    "rot": [
+     -10.0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#1c3a2c"
+  },
+  {
+   "id": "fork_1",
+   "kind": "wedge",
+   "material": "titanium",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      6.0,
+      55.0,
+      1.5
+     ]
+    },
+    "at": [
+     37.0,
+     65.5,
+     -7.424675114159415
+    ],
+    "rot": [
+     -10.0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#1c3a2c"
+  },
+  {
+   "id": "upright_l",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      6,
+      30,
+      34
+     ]
+    },
+    "at": [
+     10,
+     18,
+     9.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#1f4a38"
+  },
+  {
+   "id": "upright_r",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      6,
+      30,
+      34
+     ]
+    },
+    "at": [
+     -10,
+     18,
+     9.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#1f4a38"
+  }
+ ],
+ "fasteners": [],
+ "wires": [],
+ "connections": [],
+ "reference": [
+  {
+   "image": "reference/verty_big_secret.aws72.webp",
+   "mask": "reference/verty_big_secret.aws72_mask.png",
+   "view": "iso",
+   "approximate": true
+  },
+  {
+   "image": "reference/verty_big_secret.aws74.webp",
+   "mask": "reference/verty_big_secret.aws74_mask.png",
+   "view": "iso",
+   "approximate": true
+  },
+  {
+   "image": "reference/verty_big_secret.aws76.webp",
+   "mask": "reference/verty_big_secret.aws76_mask.png",
+   "view": "iso",
+   "approximate": true
+  }
+ ]
+}
