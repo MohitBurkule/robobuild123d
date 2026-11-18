@@ -2466,24 +2466,50 @@
    "material": "nylon",
    "process": "fdm",
    "shape": {
-    "type": "place",
-    "shape": {
-     "type": "box",
-     "size": [
-      60,
-      112,
-      12
+    "type": "subtract",
+    "base": {
+     "type": "place",
+     "shape": {
+      "type": "box",
+      "size": [
+       60,
+       112,
+       12
+      ]
+     },
+     "at": [
+      0,
+      5,
+      38.0
+     ],
+     "rot": [
+      32,
+      0,
+      0
      ]
     },
-    "at": [
-     0,
-     5,
-     38.0
-    ],
-    "rot": [
-     32,
-     0,
-     0
+    "cut": [
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        48,
+        100,
+        5
+       ]
+      },
+      "at": [
+       0,
+       5,
+       38.0
+      ],
+      "rot": [
+       32,
+       0,
+       0
+      ]
+     }
     ]
    },
    "at": [

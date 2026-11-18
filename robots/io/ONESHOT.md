@@ -51,3 +51,6 @@ Left (and why):
 - battery.rotor_gap x1: toolchain: same full-revolution assumption for a limited-range arm.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): io.aws63.webp 0.62 -> 0.63
+
+## Round 4 (verification, helper 1)
+S1: flipper hollowed with a closed internal 48x100x5 mm cavity (3.5 mm walls), mass 165 -> ~142 g.
