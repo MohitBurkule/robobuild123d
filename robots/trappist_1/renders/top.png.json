@@ -1,0 +1,16 @@
+{
+ "spec": "/tmp/work10_trappist_1/robots/trappist_1/spec.json",
+ "rendered_at": 1795022078.271971,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "wheel_l1",
+  "wheel_r1",
+  "wire_l",
+  "wire_r",
+  "wire_x",
+  "front_bar"
+ ],
+ "wires": {}
+}

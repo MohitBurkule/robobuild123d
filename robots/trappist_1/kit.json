@@ -1,0 +1,83 @@
+{
+ "robot_type": "lifter",
+ "body": {
+  "length": 70,
+  "width": 112,
+  "height": 20,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 9,
+  "width": 8,
+  "y": [
+   -25,
+   25
+  ],
+  "outside": false
+ },
+ "colors": {
+  "body": "#1c1d20",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "box": [
+    2,
+    60,
+    2
+   ],
+   "at": [
+    14,
+    -55,
+    24
+   ],
+   "mirror": true,
+   "weapon": "lifter",
+   "pivot": [
+    -20,
+    22
+   ],
+   "id": "wire",
+   "color": "#2a2a2e"
+  },
+  {
+   "box": [
+    34,
+    2,
+    2
+   ],
+   "at": [
+    0,
+    -48,
+    24
+   ],
+   "id": "wire_x",
+   "color": "#2a2a2e"
+  },
+  {
+   "box": [
+    110,
+    4,
+    20
+   ],
+   "at": [
+    0,
+    -37,
+    12
+   ],
+   "kind": "wedge",
+   "id": "front_bar",
+   "color": "#c9cdd3"
+  }
+ ],
+ "textured": [
+  0
+ ],
+ "name": "trappist 1",
+ "weapon": {
+  "kind": "none"
+ }
+}
