@@ -1,52 +1,45 @@
-BLOCKERS: 4
-  [cached] integrity 0.01s
-  [cached] mass 0.00s
-  [proxy] interference 0.47s
-  [cached] connections 0.01s
-  [cached] legal 0.00s
-  [cached] fasteners 0.00s
-  [cached] power 0.00s
-  [cached] tension 0.00s
-  [cached] targets 0.00s
-  [cached] fight 0.00s
-  [cached] shape 0.00s
-  [cached] dynamics 0.01s
-  [cached] strength 0.00s
-  [cached] printability 0.01s
-  [cached] process 0.00s
-  [cached] electrical 0.00s
-  [cached] combat 0.01s
-  [cached] physics 0.01s
-  [cached] plausibility 0.00s
-  [cached] cots 0.00s
-  [cached] fit 0.00s
-  [cached] bom 0.00s
-  [cached] wire_review 0.00s
-  [cached] fastener_record 0.00s
-  [cached] likeness 0.00s
-  [cached] drive_recess 0.00s
-  [cached] belt_wrap 0.00s
-  [cached] retention 0.00s
-  [cached] waiver_audit 0.00s
-  [cached] geom 0.01s
-  [cached] dfm 0.01s
-  [cached] realworld 0.00s
-kharuul: ok=False 4 blockers in 4 root causes, mass 149.6/150 g
-1. [integrity.solids] `label` has 1 closed solid(s) and 1 open/invalid shell(s), expected 1 (2649 mm3). A boolean or fillet probably collapsed the build.
-   fix: Check the last CAD op (fillet/cut order); or declare `solids` with `solids_reason`.
-   | label: x -15.00..15.00  y -19.00..3.00  z 12.40..18.00  size 30.00 x 22.00 x 5.60 mm
-   |   centre (0.00, -8.00, 15.20), volume 2648.6 mm3
-   |   overlap allowed `chassis` 0.74 mm (allowed inf)
-   |   gap to `el_rx_esc` 2.84 mm
-2. [wire.render_wires] 5 of 5 robot render(s) do not draw all 6 wires: renders/diff_kharuul.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_kharuul.aws67_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_kharuul.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_kharuul.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn
-   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
-3. [likeness.view] `reference/kharuul.aws67.webp` is declared `front_left_iso` (IoU 0.65 there) but the model matches it better from rear_left_iso (elevation 45, azimuth 210) (IoU 0.74).
+BLOCKERS: 2
+  [ran] integrity 0.14s
+  [proxy] wiring 1.16s
+  [ran] mass 0.00s
+  [proxy] interference 17.87s
+  [ran] connections 2.91s
+  [ran] legal 0.02s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.02s
+  [ran] shape 0.53s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.80s
+  [ran] process 0.00s
+  [ran] electrical 0.00s
+  [ran] combat 0.09s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.08s
+  [ran] bom 0.00s
+  [ran] wire_review 0.01s
+  [ran] fastener_record 0.00s
+  [ran] likeness 24.14s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.19s
+  [ran] dfm 0.11s
+  [ran] realworld 0.14s
+kharuul: ok=False 2 blockers in 2 root causes, mass 147.3/150 g
+1. [likeness.view] `reference/kharuul.aws67.webp` is declared `front_left_iso` (IoU 0.65 there) but the model matches it better from rear_left_iso (elevation 45, azimuth 210) (IoU 0.74).
    fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
-4. [likeness.silhouette] `reference/kharuul.aws67.webp`: best silhouette IoU 0.65 at camera front_left_iso (elevation 45, azimuth 150) (need 0.82: >= 0.8 and no worse than the closest stock template `wedge_2wd` at 0.82). Regions (photo frame, left third first) 0.51 / 0.81 / 0.51: worst = rear third. Height/length 0.76 model vs 0.84 photo (too flat: raise it or shorten it).
+2. [likeness.silhouette] `reference/kharuul.aws67.webp`: best silhouette IoU 0.65 at camera front_left_iso (elevation 45, azimuth 150) (need 0.82: >= 0.8 and no worse than the closest stock template `wedge_2wd` at 0.82). Regions (photo frame, left third first) 0.51 / 0.81 / 0.51: worst = rear third. Height/length 0.76 model vs 0.84 photo (too flat: raise it or shorten it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
-  mass 149.6 g of 150 g (+0.4 g margin)
-    chassis                    65.56 g  fills 46% of its box
+  mass 147.3 g of 150 g (+2.7 g margin)
+    chassis                    63.27 g  fills 44% of its box
     el_battery                 12.50 g  fills 100% of its box
     dm_wheel_l0                 9.70 g  fills 66% of its box
     dm_wheel_r0                 9.70 g  fills 66% of its box
@@ -58,12 +51,12 @@ MASS BUDGET:
     wheel_r0                    2.69 g  fills 57% of its box
     wheel_l1                    2.69 g  fills 57% of its box
     wheel_r1                    2.69 g  fills 57% of its box
-    label                       2.52 g  fills 72% of its box
+    label                       2.53 g  fills 73% of its box
     dt_hub_wheel_l0             1.04 g  fills 65% of its box
     dt_hub_wheel_r0             1.04 g  fills 65% of its box
     dt_hub_wheel_l1             1.04 g  fills 65% of its box
     dt_hub_wheel_r1             1.04 g  fills 65% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.may_be_over: 149.6 g (range 126.6 to 172.5 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.may_be_over: 147.3 g (range 124.8 to 169.7 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: group 31 hit / 0 miss, min_gap 1 hit / 0 miss, overlap 234 hit / 0 miss, part_geom 18 hit / 0 miss
+cache: part_geom 0 hit / 18 miss
