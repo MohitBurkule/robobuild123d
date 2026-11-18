@@ -8,5 +8,13 @@
  "photos": [
   "shoveron.aws71.webp",
   "shoveron.aws72.webp"
- ]
+ ],
+ "view": {
+  "shoveron.aws71.webp": "front",
+  "shoveron.aws72.webp": "front"
+ },
+ "elevation": {
+  "shoveron.aws71.webp": 45,
+  "shoveron.aws72.webp": 70
+ }
 }

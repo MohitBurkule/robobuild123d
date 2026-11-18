@@ -10,20 +10,22 @@
  },
  "wheels": {
   "n": 2,
-  "radius": 13,
+  "radius": 16,
   "width": 10,
   "y": [
    -25
   ],
   "outside": false,
-  "x": 36
+  "x": 40,
+  "notch": true
  },
  "forks": {
   "n": 2,
-  "length": 26,
-  "width": 10,
-  "spread": 68,
-  "tilt_deg": 8
+  "length": 34,
+  "width": 8,
+  "spread": 30,
+  "tilt_deg": 14,
+  "taper": true
  },
  "colors": {
   "body": "#f07a2c",
@@ -31,7 +33,11 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "name": "shoveron",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "box": [
     32,
@@ -56,9 +62,5 @@
     0
    ]
   }
- ],
- "name": "shoveron",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }
