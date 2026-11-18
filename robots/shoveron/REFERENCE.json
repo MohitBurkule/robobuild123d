@@ -6,15 +6,12 @@
   "axis": "x"
  },
  "photos": [
-  "shoveron.aws71.webp",
-  "shoveron.aws72.webp"
+  "shoveron.aws71.webp"
  ],
  "view": {
-  "shoveron.aws71.webp": "front",
-  "shoveron.aws72.webp": "front"
+  "shoveron.aws71.webp": "front_left_iso"
  },
- "elevation": {
-  "shoveron.aws71.webp": 45,
-  "shoveron.aws72.webp": 70
+ "view_source": {
+  "shoveron.aws71.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label"
  }
 }

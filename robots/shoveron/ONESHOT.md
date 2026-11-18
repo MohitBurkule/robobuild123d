@@ -20,3 +20,9 @@ Decisions: type lifter; body twin_pods rect 100x104x26 mm, ramp 22; wheels 2 r16
 
 Likeness: aws71 0.37 (FAIL), aws72 0.19 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/shoveron.aws71.webp` is declared `front` (IoU 0.37 there) but the model matches it better from rear_left_iso (elevation 45, azi; [FAIL] likeness.view: `reference/shoveron.aws72.webp` is declared `front` (IoU 0.19 there) but the model matches it better from front (elevation 25, azimuth 90)
+
+## Round 3d (user camera picks batch 2 + shape remarks applied; round 4 to be re-run on the new outside)
+Decisions: type lifter; body twin_pods rect 100x104x26 mm, ramp 22; wheels 2 r16 inboard; weapon none; 2 forks 34 mm; extra parts: shovel; photos skipped (cluttered): indices [1].
+
+Likeness: aws71 0.72 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/shoveron.aws71.webp` is declared `front_left_iso` (IoU 0.72 there) but the model matches it better from rear_left_iso (elevatio
