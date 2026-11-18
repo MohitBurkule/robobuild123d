@@ -12,7 +12,7 @@
  "view": {
   "i_saw_that_.aws76.webp": "front_left_iso"
  },
- "elevation": {
-  "i_saw_that_.aws76.webp": 45
+ "view_source": {
+  "i_saw_that_.aws76.webp": "user camera pick (azimuth 135, elevation 35); replaces the automatic label"
  }
 }

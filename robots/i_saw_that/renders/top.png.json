@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_i_saw_that/robots/i_saw_that/spec.json",
- "rendered_at": 1795026596.621121,
+ "rendered_at": 1795036507.5373182,
  "bodies": [
   "chassis",
   "weapon",
@@ -10,16 +10,29 @@
   "jaw_l",
   "jaw_r",
   "dt_hub_wheel_l0",
-  "dt_axle_wheel_l0",
-  "dt_nut_wheel_l0",
   "dt_hub_wheel_r0",
-  "dt_axle_wheel_r0",
-  "dt_nut_wheel_r0",
-  "dt_screw_0",
-  "dt_screw_1",
-  "dt_screw_2",
-  "dt_screw_3",
-  "dt_shaft_weapon"
+  "dt_shaft_weapon",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_esc",
+  "el_wesc",
+  "el_switch",
+  "weapon_motor",
+  "lock_pin"
  ],
- "wires": {}
+ "wires": {
+  "w_wm": {
+   "from": [
+    11.0,
+    13.5,
+    2.5
+   ],
+   "to": [
+    13.5,
+    11.5,
+    6.5
+   ]
+  }
+ }
 }
