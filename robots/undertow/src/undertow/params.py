@@ -183,6 +183,7 @@ ESC_SHELF_X0 = X_MOTOR_BACK - 0.1  # plate root merges into the rib lane: one so
 ESC_SHELF_X_OVER = 1.2             # ledge past the esc +x face
 ESC_SHELF_Y_OVER = 1.0             # ledge past the -y capture wall's outer face
 ESC_SHELF_MERGE = 0.5              # plate reach into the +y rail: one solid with the shell
+SHELF_NOTCH_R = 2.2                # esc-shelf SE sky notch: clears the switch aabb's +y offset ray column
 ESC_CAP_SOUTH_X1 = ESC_AT[0] + ESC["l"] / 2 + 2.9   # south capture wall runs past the battery's east arm (x1 21.5):
                                                     # its full-height band walls off the battery tip from the plate hole
                                                     # (contain.line_of_sight: the 45-deg up-sight rays cross y -5.5 east of the ESC)

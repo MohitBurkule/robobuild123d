@@ -20,7 +20,7 @@ from .params import (HALF_W_TUB, HALF_L_TUB, CORNER_R, Z_TUB0, TUB_H, WALL, WALL
                      ESC, ESC_AT, ESC_Z, SWITCH, SWITCH_AT,
                      SW_POCKET_FIT, SW_POCKET_T, SW_POCKET_Z1, SW_POCKET_MERGE,
                      ESC_SHELF_T, ESC_SHELF_X0, ESC_SHELF_X_OVER, ESC_SHELF_Y_OVER, ESC_SHELF_MERGE,
-                     ESC_CAP_SOUTH_X1,
+                     ESC_CAP_SOUTH_X1, SHELF_NOTCH_R,
                      ESC_CAP_FIT, ESC_CAP_T, ESC_CAP_RISE, ESC_CAP_SINK,
                      CUT_OVER, NOTCH_GAP, FIN_TIP_BACK)
 
@@ -58,6 +58,10 @@ def _esc_shelf():
     # up-sight rays off the switch access hole (ray band crosses y -5.5 in free air otherwise)
     wy_s = bd.Pos((X_MOTOR_BACK + ESC_CAP_SOUTH_X1) / 2, -(ESC_AT[1] + ESC["w"] / 2 + ESC_CAP_FIT + ESC_CAP_T / 2),
                   (wz0 + wz1) / 2) * bd.Box(ESC_CAP_SOUTH_X1 - X_MOTOR_BACK, ESC_CAP_T, wz1 - wz0)
+    # south-east corner notch: the switch aabb's +y offset column (18.06, -9.32) rises straight up to the sky
+    # hole (archetype switch_access); without the notch the shelf's SE corner blocks that column at z 10.0.
+    # The esc still rests over x 15.8..17.6 of the shelf; only its SE 1 mm corner overhangs the notch.
+    plate -= bd.Pos(18.06, -9.0, (z0 + z1) / 2) * bd.Cylinder(SHELF_NOTCH_R, ESC_SHELF_T + 0.4)
     return plate + wy + wy_s
 
 

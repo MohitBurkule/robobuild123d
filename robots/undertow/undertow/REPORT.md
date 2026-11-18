@@ -1,0 +1,1081 @@
+# Verifier report: Undertow (4WD invertible wedge / control bot)
+
+Profile `aws2025`. 0 blockers, 291 warnings, 367 checks passed. Check set revision 24 (engine build123d).
+
+Mass 148.8 g (range 138.1 to 159.5 g, limit 150 g).
+
+## Findings
+
+- **pass** `validity.ok`: Spec is well formed 23 parts, 18 fasteners, 7 wires.
+- **pass** `integrity.solids`: Part is one valid closed solid `tub`: 1 closed solid(s)
+- **pass** `integrity.volume`: Part volume as expected `tub` volume 26151 mm3 vs previous 26151 (+0%)
+- **pass** `integrity.solids`: Part is one valid closed solid `top_plate`: 1 closed solid(s)
+- **pass** `integrity.volume`: Part volume as expected `top_plate` volume 9338 mm3 vs previous 9338 (+0%)
+- **pass** `integrity.solids`: Part is one valid closed solid `base_plate`: 1 closed solid(s)
+- **pass** `integrity.volume`: Part volume as expected `base_plate` volume 9338 mm3 vs previous 9338 (+0%)
+- **pass** `integrity.solids`: Part is one valid closed solid `skirt_r`: 1 closed solid(s)
+- **pass** `integrity.volume`: Part volume as expected `skirt_r` volume 634 mm3 vs previous 634 (+0%)
+- **pass** `integrity.solids`: Part is one valid closed solid `skirt_l`: 1 closed solid(s)
+- **pass** `integrity.volume`: Part volume as expected `skirt_l` volume 634 mm3 vs previous 634 (+0%)
+- **pass** `integrity.solids`: Part is one valid closed solid `skirt_rear`: 1 closed solid(s)
+- **pass** `integrity.volume`: Part volume as expected `skirt_rear` volume 795 mm3 vs previous 795 (+0%)
+- **pass** `integrity.solids`: Part is one valid closed solid `motor_fr`: 1 closed solid(s)
+- **pass** `integrity.volume`: Part volume as expected `motor_fr` volume 2540 mm3 vs previous 2540 (+0%)
+- **pass** `integrity.solids`: Part is one valid closed solid `motor_fl`: 1 closed solid(s)
+- **pass** `integrity.volume`: Part volume as expected `motor_fl` volume 2540 mm3 vs previous 2540 (+0%)
+- **pass** `integrity.solids`: Part is one valid closed solid `motor_rr`: 1 closed solid(s)
+- **pass** `integrity.volume`: Part volume as expected `motor_rr` volume 2540 mm3 vs previous 2540 (+0%)
+- **pass** `integrity.solids`: Part is one valid closed solid `motor_rl`: 1 closed solid(s)
+- **pass** `integrity.volume`: Part volume as expected `motor_rl` volume 2540 mm3 vs previous 2540 (+0%)
+- **pass** `integrity.solids`: Part is one valid closed solid `wheel_fr`: 1 closed solid(s)
+- **pass** `integrity.volume`: Part volume as expected `wheel_fr` volume 3256 mm3 vs previous 3256 (+0%)
+- **pass** `integrity.solids`: Part is one valid closed solid `wheel_fl`: 1 closed solid(s)
+- **pass** `integrity.volume`: Part volume as expected `wheel_fl` volume 3256 mm3 vs previous 3256 (+0%)
+- **pass** `integrity.solids`: Part is one valid closed solid `wheel_rr`: 1 closed solid(s)
+- **pass** `integrity.volume`: Part volume as expected `wheel_rr` volume 3256 mm3 vs previous 3256 (+0%)
+- **pass** `integrity.solids`: Part is one valid closed solid `wheel_rl`: 1 closed solid(s)
+- **pass** `integrity.volume`: Part volume as expected `wheel_rl` volume 3256 mm3 vs previous 3256 (+0%)
+- **pass** `integrity.solids`: Part is one valid closed solid `fork_0`: 1 closed solid(s)
+- **pass** `integrity.volume`: Part volume as expected `fork_0` volume 103 mm3 vs previous 103 (+0%)
+- **pass** `integrity.solids`: Part is one valid closed solid `fork_1`: 1 closed solid(s)
+- **pass** `integrity.volume`: Part volume as expected `fork_1` volume 103 mm3 vs previous 103 (+0%)
+- **pass** `integrity.solids`: Part is one valid closed solid `fork_2`: 1 closed solid(s)
+- **pass** `integrity.volume`: Part volume as expected `fork_2` volume 103 mm3 vs previous 103 (+0%)
+- **pass** `integrity.solids`: Part is one valid closed solid `pivot_pin`: 1 closed solid(s)
+- **pass** `integrity.volume`: Part volume as expected `pivot_pin` volume 425 mm3 vs previous 425 (+0%)
+- **pass** `integrity.solids`: Part is one valid closed solid `battery`: 1 closed solid(s)
+- **pass** `integrity.volume`: Part volume as expected `battery` volume 7086 mm3 vs previous 7086 (+0%)
+- **pass** `integrity.solids`: Part is one valid closed solid `esc`: 1 closed solid(s)
+- **pass** `integrity.volume`: Part volume as expected `esc` volume 2406 mm3 vs previous 2406 (+0%)
+- **pass** `integrity.solids`: Part is one valid closed solid `rx`: 1 closed solid(s)
+- **pass** `integrity.volume`: Part volume as expected `rx` volume 1120 mm3 vs previous 1120 (+0%)
+- **pass** `integrity.solids`: Part is one valid closed solid `switch`: 1 closed solid(s)
+- **pass** `integrity.volume`: Part volume as expected `switch` volume 975 mm3 vs previous 975 (+0%)
+- **pass** `integrity.solids`: Part is one valid closed solid `nut_front`: 1 closed solid(s)
+- **pass** `integrity.volume`: Part volume as expected `nut_front` volume 34 mm3 vs previous 34 (+0%)
+- **warning** `wiring.bend`: Wire bends too tightly Wire `w_bat_sw` turns 90 degrees with less than 3.2 mm bend radius; it will kink or pull off its solder joint.
+  - Fix: Widen the channel at the corner or route it in a straighter line.
+- **warning** `wiring.bend`: Wire bends too tightly Wire `w_sw_esc` turns 90 degrees with less than 3.2 mm bend radius; it will kink or pull off its solder joint.
+  - Fix: Widen the channel at the corner or route it in a straighter line.
+- **warning** `wiring.bend`: Wire bends too tightly Wire `w_esc_rx` turns 90 degrees with less than 2.6 mm bend radius; it will kink or pull off its solder joint.
+  - Fix: Widen the channel at the corner or route it in a straighter line.
+- **warning** `wiring.bend`: Wire bends too tightly Wire `w_m1_fr` turns 90 degrees with less than 2.6 mm bend radius; it will kink or pull off its solder joint.
+  - Fix: Widen the channel at the corner or route it in a straighter line.
+- **warning** `wiring.bend`: Wire bends too tightly Wire `w_m1_fl` turns 90 degrees with less than 2.6 mm bend radius; it will kink or pull off its solder joint.
+  - Fix: Widen the channel at the corner or route it in a straighter line.
+- **warning** `wiring.bend`: Wire bends too tightly Wire `w_m2_rr` turns 90 degrees with less than 2.6 mm bend radius; it will kink or pull off its solder joint.
+  - Fix: Widen the channel at the corner or route it in a straighter line.
+- **warning** `wiring.bend`: Wire bends too tightly Wire `w_m2_rl` turns 90 degrees with less than 2.6 mm bend radius; it will kink or pull off its solder joint.
+  - Fix: Widen the channel at the corner or route it in a straighter line.
+- **warning** `mass.may_be_over`: May be over the weight limit 148.8 g (range 138.1 to 159.5 g) against the 150 g limit; 3.3 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+  - Fix: Weigh real parts and set `scale_mass_g`, or remove mass until the upper bound fits.
+- **warning** `interference.blanket_allow`: Blanket overlap allowance hides real collisions `allow_overlap` lets `wheel_fr` and `motor_fr` overlap by up to 1000 mm (the wheel is fused to its motor (D-bore press fit on the 3 mm shaft, D-flat keys the drive): coaxial with the revolute axis, so its revolved sweep envelope always contains the shaft - exact overlap 0.26 mm, allowed (probe --joint wheel_fr)); anything up to that depth between them is never reported.
+  - Fix: Model the real fit (bore, pocket, clearance hole) so the parts only touch, or keep the allowance to a press-fit depth.
+- **warning** `interference.blanket_allow`: Blanket overlap allowance hides real collisions `allow_overlap` lets `wheel_fl` and `motor_fl` overlap by up to 1000 mm (the wheel is fused to its motor (D-bore press fit on the 3 mm shaft, D-flat keys the drive): coaxial with the revolute axis, so its revolved sweep envelope always contains the shaft - exact overlap 0.26 mm, allowed (probe --joint wheel_fr)); anything up to that depth between them is never reported.
+  - Fix: Model the real fit (bore, pocket, clearance hole) so the parts only touch, or keep the allowance to a press-fit depth.
+- **warning** `interference.blanket_allow`: Blanket overlap allowance hides real collisions `allow_overlap` lets `wheel_rr` and `motor_rr` overlap by up to 1000 mm (the wheel is fused to its motor (D-bore press fit on the 3 mm shaft, D-flat keys the drive): coaxial with the revolute axis, so its revolved sweep envelope always contains the shaft - exact overlap 0.26 mm, allowed (probe --joint wheel_fr)); anything up to that depth between them is never reported.
+  - Fix: Model the real fit (bore, pocket, clearance hole) so the parts only touch, or keep the allowance to a press-fit depth.
+- **warning** `interference.blanket_allow`: Blanket overlap allowance hides real collisions `allow_overlap` lets `wheel_rl` and `motor_rl` overlap by up to 1000 mm (the wheel is fused to its motor (D-bore press fit on the 3 mm shaft, D-flat keys the drive): coaxial with the revolute axis, so its revolved sweep envelope always contains the shaft - exact overlap 0.26 mm, allowed (probe --joint wheel_fr)); anything up to that depth between them is never reported.
+  - Fix: Model the real fit (bore, pocket, clearance hole) so the parts only touch, or keep the allowance to a press-fit depth.
+- **warning** `interference.blanket_allow`: Blanket overlap allowance hides real collisions `allow_overlap` lets `fork_0` and `pivot_pin` overlap by up to 1000 mm (the eye bore rides the pivot pin, coaxial with the revolute axis (PIN_CLEAR 3.8 on the M3 pin, 0.4 mm swing clearance); a revolved envelope always contains its own axle); anything up to that depth between them is never reported.
+  - Fix: Model the real fit (bore, pocket, clearance hole) so the parts only touch, or keep the allowance to a press-fit depth.
+- **warning** `interference.blanket_allow`: Blanket overlap allowance hides real collisions `allow_overlap` lets `fork_1` and `pivot_pin` overlap by up to 1000 mm (the eye bore rides the pivot pin, coaxial with the revolute axis (PIN_CLEAR 3.8 on the M3 pin, 0.4 mm swing clearance); a revolved envelope always contains its own axle); anything up to that depth between them is never reported.
+  - Fix: Model the real fit (bore, pocket, clearance hole) so the parts only touch, or keep the allowance to a press-fit depth.
+- **warning** `interference.blanket_allow`: Blanket overlap allowance hides real collisions `allow_overlap` lets `fork_2` and `pivot_pin` overlap by up to 1000 mm (the eye bore rides the pivot pin, coaxial with the revolute axis (PIN_CLEAR 3.8 on the M3 pin, 0.4 mm swing clearance); a revolved envelope always contains its own axle); anything up to that depth between them is never reported.
+  - Fix: Model the real fit (bore, pocket, clearance hole) so the parts only touch, or keep the allowance to a press-fit depth.
+- **warning** `interference.blanket_allow`: Blanket overlap allowance hides real collisions `allow_overlap` lets `fork_0` and `tub` overlap by up to 2.5 mm (the fork blade (0.8 thick) swings through the arc slots cut for it; exact closest approach 0.60 mm (probe --joint fork_0) and the deepest tub member inside the sweep arc is the 2.0 mm rail (grid depth 2.0) - overlap depth is capped at 0.4 by the blade thickness); anything up to that depth between them is never reported.
+  - Fix: Model the real fit (bore, pocket, clearance hole) so the parts only touch, or keep the allowance to a press-fit depth.
+- **warning** `interference.blanket_allow`: Blanket overlap allowance hides real collisions `allow_overlap` lets `fork_1` and `tub` overlap by up to 2.5 mm (the fork blade (0.8 thick) swings through the arc slots cut for it; exact closest approach 0.60 mm (probe --joint fork_0) and the deepest tub member inside the sweep arc is the 2.0 mm rail (grid depth 2.0) - overlap depth is capped at 0.4 by the blade thickness); anything up to that depth between them is never reported.
+  - Fix: Model the real fit (bore, pocket, clearance hole) so the parts only touch, or keep the allowance to a press-fit depth.
+- **warning** `interference.blanket_allow`: Blanket overlap allowance hides real collisions `allow_overlap` lets `fork_2` and `tub` overlap by up to 2.5 mm (the fork blade (0.8 thick) swings through the arc slots cut for it; exact closest approach 0.60 mm (probe --joint fork_0) and the deepest tub member inside the sweep arc is the 2.0 mm rail (grid depth 2.0) - overlap depth is capped at 0.4 by the blade thickness); anything up to that depth between them is never reported.
+  - Fix: Model the real fit (bore, pocket, clearance hole) so the parts only touch, or keep the allowance to a press-fit depth.
+- **warning** `interference.blanket_allow`: Blanket overlap allowance hides real collisions `allow_overlap` lets `fork_0` and `motor_fr` overlap by up to 6.5 mm (the fork swings in its own x-plane (0.8 mm thick at x -17/0/+17) while the motors sit 17.7 mm outboard in x; the proxy sweep sphere covers the motor box but exact geometry never meets (motor can half-width 6.0)); anything up to that depth between them is never reported.
+  - Fix: Model the real fit (bore, pocket, clearance hole) so the parts only touch, or keep the allowance to a press-fit depth.
+- **warning** `interference.blanket_allow`: Blanket overlap allowance hides real collisions `allow_overlap` lets `fork_0` and `motor_fl` overlap by up to 6.5 mm (the fork swings in its own x-plane (0.8 mm thick at x -17/0/+17) while the motors sit 17.7 mm outboard in x; the proxy sweep sphere covers the motor box but exact geometry never meets (motor can half-width 6.0)); anything up to that depth between them is never reported.
+  - Fix: Model the real fit (bore, pocket, clearance hole) so the parts only touch, or keep the allowance to a press-fit depth.
+- **warning** `interference.blanket_allow`: Blanket overlap allowance hides real collisions `allow_overlap` lets `fork_0` and `motor_rr` overlap by up to 6.5 mm (the fork swings in its own x-plane (0.8 mm thick at x -17/0/+17) while the motors sit 17.7 mm outboard in x; the proxy sweep sphere covers the motor box but exact geometry never meets (motor can half-width 6.0)); anything up to that depth between them is never reported.
+  - Fix: Model the real fit (bore, pocket, clearance hole) so the parts only touch, or keep the allowance to a press-fit depth.
+- **warning** `interference.blanket_allow`: Blanket overlap allowance hides real collisions `allow_overlap` lets `fork_0` and `motor_rl` overlap by up to 6.5 mm (the fork swings in its own x-plane (0.8 mm thick at x -17/0/+17) while the motors sit 17.7 mm outboard in x; the proxy sweep sphere covers the motor box but exact geometry never meets (motor can half-width 6.0)); anything up to that depth between them is never reported.
+  - Fix: Model the real fit (bore, pocket, clearance hole) so the parts only touch, or keep the allowance to a press-fit depth.
+- **warning** `interference.blanket_allow`: Blanket overlap allowance hides real collisions `allow_overlap` lets `fork_1` and `motor_fr` overlap by up to 6.5 mm (the fork swings in its own x-plane (0.8 mm thick at x -17/0/+17) while the motors sit 17.7 mm outboard in x; the proxy sweep sphere covers the motor box but exact geometry never meets (motor can half-width 6.0)); anything up to that depth between them is never reported.
+  - Fix: Model the real fit (bore, pocket, clearance hole) so the parts only touch, or keep the allowance to a press-fit depth.
+- **warning** `interference.blanket_allow`: Blanket overlap allowance hides real collisions `allow_overlap` lets `fork_1` and `motor_fl` overlap by up to 6.5 mm (the fork swings in its own x-plane (0.8 mm thick at x -17/0/+17) while the motors sit 17.7 mm outboard in x; the proxy sweep sphere covers the motor box but exact geometry never meets (motor can half-width 6.0)); anything up to that depth between them is never reported.
+  - Fix: Model the real fit (bore, pocket, clearance hole) so the parts only touch, or keep the allowance to a press-fit depth.
+- **warning** `interference.blanket_allow`: Blanket overlap allowance hides real collisions `allow_overlap` lets `fork_1` and `motor_rr` overlap by up to 6.5 mm (the fork swings in its own x-plane (0.8 mm thick at x -17/0/+17) while the motors sit 17.7 mm outboard in x; the proxy sweep sphere covers the motor box but exact geometry never meets (motor can half-width 6.0)); anything up to that depth between them is never reported.
+  - Fix: Model the real fit (bore, pocket, clearance hole) so the parts only touch, or keep the allowance to a press-fit depth.
+- **warning** `interference.blanket_allow`: Blanket overlap allowance hides real collisions `allow_overlap` lets `fork_1` and `motor_rl` overlap by up to 6.5 mm (the fork swings in its own x-plane (0.8 mm thick at x -17/0/+17) while the motors sit 17.7 mm outboard in x; the proxy sweep sphere covers the motor box but exact geometry never meets (motor can half-width 6.0)); anything up to that depth between them is never reported.
+  - Fix: Model the real fit (bore, pocket, clearance hole) so the parts only touch, or keep the allowance to a press-fit depth.
+- **warning** `interference.blanket_allow`: Blanket overlap allowance hides real collisions `allow_overlap` lets `fork_2` and `motor_fr` overlap by up to 6.5 mm (the fork swings in its own x-plane (0.8 mm thick at x -17/0/+17) while the motors sit 17.7 mm outboard in x; the proxy sweep sphere covers the motor box but exact geometry never meets (motor can half-width 6.0)); anything up to that depth between them is never reported.
+  - Fix: Model the real fit (bore, pocket, clearance hole) so the parts only touch, or keep the allowance to a press-fit depth.
+- **warning** `interference.blanket_allow`: Blanket overlap allowance hides real collisions `allow_overlap` lets `fork_2` and `motor_fl` overlap by up to 6.5 mm (the fork swings in its own x-plane (0.8 mm thick at x -17/0/+17) while the motors sit 17.7 mm outboard in x; the proxy sweep sphere covers the motor box but exact geometry never meets (motor can half-width 6.0)); anything up to that depth between them is never reported.
+  - Fix: Model the real fit (bore, pocket, clearance hole) so the parts only touch, or keep the allowance to a press-fit depth.
+- **warning** `interference.blanket_allow`: Blanket overlap allowance hides real collisions `allow_overlap` lets `fork_2` and `motor_rr` overlap by up to 6.5 mm (the fork swings in its own x-plane (0.8 mm thick at x -17/0/+17) while the motors sit 17.7 mm outboard in x; the proxy sweep sphere covers the motor box but exact geometry never meets (motor can half-width 6.0)); anything up to that depth between them is never reported.
+  - Fix: Model the real fit (bore, pocket, clearance hole) so the parts only touch, or keep the allowance to a press-fit depth.
+- **warning** `interference.blanket_allow`: Blanket overlap allowance hides real collisions `allow_overlap` lets `fork_2` and `motor_rl` overlap by up to 6.5 mm (the fork swings in its own x-plane (0.8 mm thick at x -17/0/+17) while the motors sit 17.7 mm outboard in x; the proxy sweep sphere covers the motor box but exact geometry never meets (motor can half-width 6.0)); anything up to that depth between them is never reported.
+  - Fix: Model the real fit (bore, pocket, clearance hole) so the parts only touch, or keep the allowance to a press-fit depth.
+- **pass** `interference.overlap`: No parts collide 61 touching or overlapping pairs checked; touching is allowed, overlap deeper than 0.08 mm is not.
+- **pass** `interference.sweep`: Joint sweep is clear `wheel_fr` swept 0..360 deg in 80 steps without hitting anything.
+- **pass** `interference.sweep`: Joint sweep is clear `wheel_fl` swept 0..360 deg in 80 steps without hitting anything.
+- **pass** `interference.sweep`: Joint sweep is clear `wheel_rr` swept 0..360 deg in 80 steps without hitting anything.
+- **pass** `interference.sweep`: Joint sweep is clear `wheel_rl` swept 0..360 deg in 80 steps without hitting anything.
+- **pass** `interference.sweep`: Joint sweep is clear `fork_0` swept -95..2 deg in 33 steps without hitting anything.
+- **pass** `interference.sweep`: Joint sweep is clear `fork_1` swept -95..2 deg in 33 steps without hitting anything.
+- **pass** `interference.sweep`: Joint sweep is clear `fork_2` swept -95..2 deg in 33 steps without hitting anything.
+- **pass** `interference.wheel_clearance`: Wheels run clear 4 wheels and tyres keep at least 1.0 mm from every part that does not turn with them.
+- **pass** `retention.declared`: Held by declared method `motor_fr` is held by clamp.
+- **pass** `retention.declared`: Held by declared method `motor_fl` is held by clamp.
+- **pass** `retention.declared`: Held by declared method `motor_rr` is held by clamp.
+- **pass** `retention.declared`: Held by declared method `motor_rl` is held by clamp.
+- **pass** `retention.declared`: Held by declared method `pivot_pin` is held by nut.
+- **pass** `retention.declared`: Held by declared method `battery` is held by strap.
+- **pass** `retention.declared`: Held by declared method `esc` is held by clamp.
+- **pass** `retention.declared`: Held by declared method `rx` is held by adhesive.
+- **pass** `retention.declared`: Held by declared method `switch` is held by clamp.
+- **warning** `retention.loose`: Nothing holds this part in place `nut_front` can move more than 0.5 mm toward +x, -x without touching anything (captive means at most 0.5 mm of play in every direction); in a hit it will fall out or rattle.
+  - Fix: Make the pocket snug on that side (0.2 to 0.5 mm gap), add a retaining rib or strap, or declare how it is held in `retained` (tape, adhesive, velcro, press_fit).
+- **warning** `connection.press_fit_interference`: Press fit has no sensible interference `pivot_pin`-`tub`: give `interference_mm` between 0.05 and 0.4 for a metal/printed press fit.
+- **warning** `connection.press_fit_interference`: Press fit has no sensible interference `nut_front`-`tub`: give `interference_mm` between 0.05 and 0.4 for a unknown material press fit.
+- **pass** `connection.cover_fasteners`: Panels bolted down All 3 armour / cover panels and screw-retained parts are held by >= 2 fasteners.
+- **pass** `connection.joined`: Every part is attached All 23 parts lead back to the chassis through screws, shared prints, captive pockets, joints or declared connections.
+- **pass** `internal.solid_invalid`: Every part is a valid solid All bodies are closed, outward-facing manifolds.
+- **pass** `internal.no_contact`: Every part touches something 23 parts each touch at least one other solid.
+- **pass** `internal.fastener_void`: Screw shanks pass through parts 18 screws each run at least 40 % through drawn solids.
+- **pass** `internal.wire_in_solid`: Wires stay in free space 7 routed wires sampled every 0.5 mm stay out of every solid away from their ports.
+- **pass** `ground.wheels_touch`: Wheels touch the floor All 4 wheels reach the floor plane (z = 0.00 mm).
+- **warning** `ground.clearance`: Body is close to the floor `fork_0` is 0.30 mm above the floor; it will scrape on arena seams and ride on the ground when a tyre compresses.
+  - Fix: Raise the chassis or use a bigger wheel; wedges and forks may go lower.
+- **pass** `ground.stance`: Stable on the floor Centre of mass is 25.3 mm inside the support polygon of wheels and wedge.
+- **warning** `ground.wheel_exposed`: Wheel sticks out of the body `wheel_fr` reaches open air from 27% of its side and upward rays above the belly line (allowed 5%); a spinner or a wall hits the tyre first.
+  - Fix: Pull the wheel inside the outline, or add a side wall or guard over the exposed tread.
+- **warning** `ground.wheel_exposed`: Wheel sticks out of the body `wheel_fl` reaches open air from 29% of its side and upward rays above the belly line (allowed 5%); a spinner or a wall hits the tyre first.
+  - Fix: Pull the wheel inside the outline, or add a side wall or guard over the exposed tread.
+- **warning** `ground.wheel_exposed`: Wheel sticks out of the body `wheel_rr` reaches open air from 29% of its side and upward rays above the belly line (allowed 5%); a spinner or a wall hits the tyre first.
+  - Fix: Pull the wheel inside the outline, or add a side wall or guard over the exposed tread.
+- **warning** `ground.wheel_exposed`: Wheel sticks out of the body `wheel_rl` reaches open air from 26% of its side and upward rays above the belly line (allowed 5%); a spinner or a wall hits the tyre first.
+  - Fix: Pull the wheel inside the outline, or add a side wall or guard over the exposed tread.
+- **pass** `legal.switch`: Marked tool-free power switch `switch` is a marked, tool-free power switch.
+- **warning** `switch.drive_axis`: Switch slides along the drive direction `switch` moves forward and back: hard acceleration, braking and head-on hits push the slider.
+  - Fix: Orient the slider across the robot (x axis), or add a detent plus a guard rib on both ends.
+- **pass** `legal.failsafe`: Failsafe declared The robot stops when the transmitter is switched off.
+- **pass** `legal.footprint`: Fits the square Fits a 123.3 mm square (limit 150 mm).
+- **warning** `fastener.head_seat`: Screw head sits on nothing Nothing is under the head of `bolt_t0`; it cannot clamp the parts.
+  - Fix: Move `at` to the surface the head presses on, or cut a counterbore whose floor is at `at`.
+- **warning** `fastener.head_seat`: Screw head sits on nothing Nothing is under the head of `bolt_b0`; it cannot clamp the parts.
+  - Fix: Move `at` to the surface the head presses on, or cut a counterbore whose floor is at `at`.
+- **warning** `fastener.head_seat`: Screw head sits on nothing Nothing is under the head of `bolt_t1`; it cannot clamp the parts.
+  - Fix: Move `at` to the surface the head presses on, or cut a counterbore whose floor is at `at`.
+- **warning** `fastener.head_seat`: Screw head sits on nothing Nothing is under the head of `bolt_b1`; it cannot clamp the parts.
+  - Fix: Move `at` to the surface the head presses on, or cut a counterbore whose floor is at `at`.
+- **warning** `fastener.head_seat`: Screw head sits on nothing Nothing is under the head of `bolt_t2`; it cannot clamp the parts.
+  - Fix: Move `at` to the surface the head presses on, or cut a counterbore whose floor is at `at`.
+- **warning** `fastener.head_seat`: Screw head sits on nothing Nothing is under the head of `bolt_b2`; it cannot clamp the parts.
+  - Fix: Move `at` to the surface the head presses on, or cut a counterbore whose floor is at `at`.
+- **warning** `fastener.head_seat`: Screw head sits on nothing Nothing is under the head of `bolt_t3`; it cannot clamp the parts.
+  - Fix: Move `at` to the surface the head presses on, or cut a counterbore whose floor is at `at`.
+- **warning** `fastener.head_seat`: Screw head sits on nothing Nothing is under the head of `bolt_b3`; it cannot clamp the parts.
+  - Fix: Move `at` to the surface the head presses on, or cut a counterbore whose floor is at `at`.
+- **warning** `fastener.head_seat`: Screw head sits on nothing Nothing is under the head of `bolt_t4`; it cannot clamp the parts.
+  - Fix: Move `at` to the surface the head presses on, or cut a counterbore whose floor is at `at`.
+- **warning** `fastener.head_seat`: Screw head sits on nothing Nothing is under the head of `bolt_b4`; it cannot clamp the parts.
+  - Fix: Move `at` to the surface the head presses on, or cut a counterbore whose floor is at `at`.
+- **warning** `fastener.head_seat`: Screw head sits on nothing Nothing is under the head of `bolt_t5`; it cannot clamp the parts.
+  - Fix: Move `at` to the surface the head presses on, or cut a counterbore whose floor is at `at`.
+- **warning** `fastener.head_seat`: Screw head sits on nothing Nothing is under the head of `bolt_b5`; it cannot clamp the parts.
+  - Fix: Move `at` to the surface the head presses on, or cut a counterbore whose floor is at `at`.
+- **pass** `fastener.drive`: Screws have drives, nuts are hexagons 18 screw heads carry a hex socket, 1 nuts are chamfered hexagons with a bore.
+- **pass** `power.battery`: Battery covers peak current Peak 4.0 A within the 8.1 A rating.
+- **pass** `power.runtime`: Battery lasts the fight 180 mAh x 80% usable lasts about 6.2 min of fighting (per 3 min fight: drive 65 mAh, weapon spin-ups and hold 0 mAh, electronics 5 mAh = 70 mAh).
+- **pass** `mfg.walls`: Walls are thick enough to make 10 made parts checked for minimum wall and bed size.
+- **warning** `spinner.wire_exposed`: Wire runs outside the armour Wire `w_sw_esc` has a clear line to open air at this point; a hit or the weapon can cut it.
+  - Fix: Route it through the chassis interior or add a wall on the open side.
+- **warning** `spinner.wire_exposed`: Wire runs outside the armour Wire `w_esc_rx` has a clear line to open air at this point; a hit or the weapon can cut it.
+  - Fix: Route it through the chassis interior or add a wall on the open side.
+- **pass** `kin.motion_inferred`: Motion groups wheel_fr about joint of `wheel_fr`; wheel_fl about joint of `wheel_fl`; wheel_rr about joint of `wheel_rr`; wheel_rl about joint of `wheel_rl`; fork_0+fork_1+fork_2 about joint of `fork_2` (19 parts declare motion explicitly, the rest is inferred).
+- **pass** `kin.balance_static`: Limited-range joint not spin-balanced fork_0+fork_1+fork_2 turns through a limited joint range, not a full spin; spinner balance does not apply.
+- **pass** `kin.fastener_boundary`: No screw ties a rotating part to a static one Every screw stays inside one motion group, or runs on the spin axis as an axle.
+- **pass** `kin.fastener_undeclared`: Screws only pass through declared parts No screw's shank passes through a rotating part it does not list in `through`/`threads_into`.
+- **pass** `kin.motor_face`: Screws into motors land on the matching face Static parts screw to the stator face and rotating parts to the bell.
+- **pass** `kin.motion_declared`: Declared motion groups match the mechanism Every `rotates_with` / `fixed` declaration agrees with the joints and joins.
+- **pass** `kin.spin_joint`: Spinning parts are on revolute joints Every weapon, wheel and pulley turns about a declared joint, motor shaft or axle.
+- **pass** `kin.joint_kind`: Spinner joints are revolute Spinning parts use revolute joints.
+- **pass** `kin.joint_axis_zero`: Joint axes are defined Every joint has a non-zero axis.
+- **pass** `kin.joint_child_static`: Nothing static hangs off a spinning joint No structure or electronics is a child of a spinning joint.
+- **pass** `kin.parent_mismatch`: Rotating groups move with their joint Every part rigidly joined to a jointed group is also its child, so sweeps move it.
+- **pass** `kin.group_axes_conflict`: One axis per rotating group No rotating group has two different joint axes.
+- **pass** `kin.rigid_mix`: No rotating group is rigidly tied to the structure No chain of screws, press fits, glue or pins joins a spinning part to a static one.
+- **pass** `kin.rotating_electronics`: No electronics spin No battery, ESC, receiver or switch is in a rotating group.
+- **pass** `kin.bearing_races`: Bearings sit between a rotating and a static part Every bearing has one race on a rotating group and the other on the structure.
+- **pass** `kin.bearing_seat`: Bearings are seated Each bearing touches the parts its races are joined to.
+- **pass** `kin.joint_axis_bearing`: Bearing bores are on the spin axis Every bearing bore is within 0.1 mm / 0.5 deg of the axis it carries.
+- **pass** `kin.shaft_through_bearings`: Something runs in every bearing bore Each bearing's bore holds a shaft.
+- **pass** `kin.joint_axis_shaft`: Shafts lie on the spin axis Every shaft in a rotating group is within 0.1 mm / 0.5 deg of its axis.
+- **pass** `kin.bearing_count`: Weapons are carried by two supports Every weapon group rests on two bearings, or a motor bearing plus one bearing.
+- **pass** `kin.motor_mount`: Motor stators are fixed to the structure Every motor's stator is held by a static part.
+- **pass** `kin.joint_axis_motor`: Motor shafts are coaxial with what they drive Direct-drive motor axes match their rotating group within 0.1 mm / 0.5 deg.
+- **pass** `kin.shaft_through_stator`: No shaft passes through a motor No shaft or pin part intersects a motor body.
+- **pass** `kin.double_bearing`: One bearing system per axis No rotating group is carried both by its own bearings and by a rigidly coupled motor's bearings.
+- **pass** `kin.torque_path`: Every weapon is driven A motor rotor reaches every weapon group directly or through a belt.
+- **pass** `kin.torque_friction`: Weapon drive is keyed Torque reaches the weapon through keys, pins, screws or flats.
+- **pass** `drive.coverage`: Every wheel is driven Each wheel reaches a motor through shafts, rigid hubs or belts on rotating pulleys.
+- **pass** `kin.pulley_coaxial`: Pulleys are coaxial with their wheels Each pulley's axis matches its rotating group's axis.
+- **pass** `kin.bore_fit`: Bores fit their shafts Parts on a shaft have bores within 0.15 mm of the shaft (press/key fit) or run on bearings.
+- **pass** `kin.axial_retention`: Rotating parts are held axially both ways Every rotating group on bearings or an axle is located by a shoulder, clip, collar or nut both ways.
+- **pass** `kin.balance_static`: Rotating groups are balanced Mass centres sit on the spin axis.
+- **pass** `kin.balance_dynamic`: Weapon spins about a principal axis The weapon's principal axis matches its spin axis.
+- **pass** `kin.spin_stability`: Weapon spins about its major axis Disc/bar weapons have their largest inertia about the spin axis.
+- **pass** `kin.fastener_imbalance`: Screws on the weapon are balanced Screws carried by the weapon form a balanced pattern.
+- **pass** `kin.sweep_static`: Nothing static is in a swept volume No static part lies inside the volume a rotating group sweeps.
+- **pass** `kin.sweep_fastener`: No screw head or nut in a swept volume No static screw protrudes into a rotating group's sweep.
+- **pass** `kin.rub_gap`: Rotating parts clear the structure Every rotating group clears static parts by its class gap (weapon 1.0 mm, wheel 0.5 mm, pulley 0.3 mm, other 0.5 mm).
+- **pass** `kin.outrunner_bell_rub`: Outrunner bells run clear Nothing static touches a spinning outrunner bell.
+- **pass** `kin.lock_engages`: Locking bar stops the weapon The declared locking bar enters the weapon's swept volume.
+- **pass** `kin.sweep_rotating`: Rotating groups clear each other No rotating group reaches into another's swept volume.
+- **pass** `kin.wheel_axes_parallel`: Wheel axles are parallel All wheel axes within 0.5 deg.
+- **pass** `kin.wheel_camber`: Wheels stand upright Wheel axes are horizontal within 1 deg.
+- **pass** `kin.wheel_toe`: Wheels point forward Wheel axes are square to the direction of travel within 1 deg.
+- **pass** `kin.wheel_track`: Wheels on a side track together Same-side wheel mid-planes within 1 mm.
+- **pass** `kin.wheel_height`: Wheels reach the same floor Lowest wheel points within 0.5 mm.
+- **pass** `kin.wheel_motor_coaxial`: Wheels sit on their motor shafts Wheel axes on the motor shaft within 0.2 mm / 1 deg.
+- **pass** `kin.shaft_engagement`: Hubs grip enough shaft Each driven hub covers at least 3 mm of motor shaft.
+- **pass** `kin.wire_to_rotor`: No wire ends on a rotating part Every wire ends on static parts or motor terminals.
+- **pass** `shape.tall`: Low profile Body height 22.0 mm over width 111.0 mm = 0.20.
+- **pass** `shape.aspect`: Length to width is reasonable L/W = 1.11.
+- **warning** `shape.weapon_leads`: Wedge robot has no wedge `robot_type` is wedge but no part has kind `wedge` or `fork`.
+- **pass** `shape.armour_coverage`: Internals are covered top 100%, front 100%, back 100%, left 100%, right 100% of the view is armour or structure.
+- **pass** `dynamics.tip_angle`: Stable against tipping Centre of mass 10.5 mm up; static tip angles back 77°, front 82°, left 79°, right 79°.
+- **pass** `dynamics.traction`: Weight is on the driven wheels About 100% of the weight is on the driven wheels (rest on `base_plate`, `skirt_r`, `skirt_l`, `skirt_rear`).
+- **pass** `dynamics.invertible`: Drives upside down Every wheel stands proud of the top, so it drives inverted.
+- **pass** `strength.shaft`: No spinning weapon shaft No spinning weapon, so shaft and bearing loads are not computed.
+- **warning** `strength.bolt_pullout`: Bolt can pull out of the plastic `bolt_t0` (M2x8) holds by 0.0 mm of thread in `tub` in nylon: 0 mm² x 15 MPa = 0 N, against 24 N (design impact 146 N (100 g on 149 g) over 6 bolts) with 1.5x margin.
+  - Fix: Use a longer insert or bolt, more bolts, or a through-bolt with a nut.
+- **warning** `strength.bolt_pullout`: Bolt can pull out of the plastic `bolt_t1` (M2x8) holds by 0.0 mm of thread in `tub` in nylon: 0 mm² x 15 MPa = 0 N, against 24 N (design impact 146 N (100 g on 149 g) over 6 bolts) with 1.5x margin.
+  - Fix: Use a longer insert or bolt, more bolts, or a through-bolt with a nut.
+- **warning** `strength.bolt_pullout`: Bolt can pull out of the plastic `bolt_t2` (M2x8) holds by 0.0 mm of thread in `tub` in nylon: 0 mm² x 15 MPa = 0 N, against 24 N (design impact 146 N (100 g on 149 g) over 6 bolts) with 1.5x margin.
+  - Fix: Use a longer insert or bolt, more bolts, or a through-bolt with a nut.
+- **warning** `strength.bolt_pullout`: Bolt can pull out of the plastic `bolt_t3` (M2x8) holds by 0.0 mm of thread in `tub` in nylon: 0 mm² x 15 MPa = 0 N, against 24 N (design impact 146 N (100 g on 149 g) over 6 bolts) with 1.5x margin.
+  - Fix: Use a longer insert or bolt, more bolts, or a through-bolt with a nut.
+- **warning** `strength.bolt_pullout`: Bolt can pull out of the plastic `bolt_t4` (M2x8) holds by 0.0 mm of thread in `tub` in nylon: 0 mm² x 15 MPa = 0 N, against 24 N (design impact 146 N (100 g on 149 g) over 6 bolts) with 1.5x margin.
+  - Fix: Use a longer insert or bolt, more bolts, or a through-bolt with a nut.
+- **warning** `strength.bolt_pullout`: Bolt can pull out of the plastic `bolt_t5` (M2x8) holds by 0.0 mm of thread in `tub` in nylon: 0 mm² x 15 MPa = 0 N, against 24 N (design impact 146 N (100 g on 149 g) over 6 bolts) with 1.5x margin.
+  - Fix: Use a longer insert or bolt, more bolts, or a through-bolt with a nut.
+- **warning** `strength.bolt_pullout`: Bolt can pull out of the plastic `bolt_b0` (M2x8) holds by 0.0 mm of thread in `tub` in nylon: 0 mm² x 15 MPa = 0 N, against 24 N (design impact 146 N (100 g on 149 g) over 6 bolts) with 1.5x margin.
+  - Fix: Use a longer insert or bolt, more bolts, or a through-bolt with a nut.
+- **warning** `strength.bolt_pullout`: Bolt can pull out of the plastic `bolt_b1` (M2x8) holds by 0.0 mm of thread in `tub` in nylon: 0 mm² x 15 MPa = 0 N, against 24 N (design impact 146 N (100 g on 149 g) over 6 bolts) with 1.5x margin.
+  - Fix: Use a longer insert or bolt, more bolts, or a through-bolt with a nut.
+- **warning** `strength.bolt_pullout`: Bolt can pull out of the plastic `bolt_b2` (M2x8) holds by 0.0 mm of thread in `tub` in nylon: 0 mm² x 15 MPa = 0 N, against 24 N (design impact 146 N (100 g on 149 g) over 6 bolts) with 1.5x margin.
+  - Fix: Use a longer insert or bolt, more bolts, or a through-bolt with a nut.
+- **warning** `strength.bolt_pullout`: Bolt can pull out of the plastic `bolt_b3` (M2x8) holds by 0.0 mm of thread in `tub` in nylon: 0 mm² x 15 MPa = 0 N, against 24 N (design impact 146 N (100 g on 149 g) over 6 bolts) with 1.5x margin.
+  - Fix: Use a longer insert or bolt, more bolts, or a through-bolt with a nut.
+- **warning** `strength.bolt_pullout`: Bolt can pull out of the plastic `bolt_b4` (M2x8) holds by 0.0 mm of thread in `tub` in nylon: 0 mm² x 15 MPa = 0 N, against 24 N (design impact 146 N (100 g on 149 g) over 6 bolts) with 1.5x margin.
+  - Fix: Use a longer insert or bolt, more bolts, or a through-bolt with a nut.
+- **warning** `strength.bolt_pullout`: Bolt can pull out of the plastic `bolt_b5` (M2x8) holds by 0.0 mm of thread in `tub` in nylon: 0 mm² x 15 MPa = 0 N, against 24 N (design impact 146 N (100 g on 149 g) over 6 bolts) with 1.5x margin.
+  - Fix: Use a longer insert or bolt, more bolts, or a through-bolt with a nut.
+- **warning** `strength.bolt_pullout`: Bolt can pull out of the plastic `skirt_r0` (M2x6) holds by 0.0 mm of thread in `tub` in nylon: 0 mm² x 15 MPa = 0 N, against 73 N (design impact 146 N (100 g on 149 g) over 2 bolts) with 1.5x margin.
+  - Fix: Use a longer insert or bolt, more bolts, or a through-bolt with a nut.
+- **warning** `strength.bolt_pullout`: Bolt can pull out of the plastic `skirt_r1` (M2x6) holds by 0.0 mm of thread in `tub` in nylon: 0 mm² x 15 MPa = 0 N, against 73 N (design impact 146 N (100 g on 149 g) over 2 bolts) with 1.5x margin.
+  - Fix: Use a longer insert or bolt, more bolts, or a through-bolt with a nut.
+- **warning** `strength.bolt_pullout`: Bolt can pull out of the plastic `skirt_l0` (M2x6) holds by 0.0 mm of thread in `tub` in nylon: 0 mm² x 15 MPa = 0 N, against 73 N (design impact 146 N (100 g on 149 g) over 2 bolts) with 1.5x margin.
+  - Fix: Use a longer insert or bolt, more bolts, or a through-bolt with a nut.
+- **warning** `strength.bolt_pullout`: Bolt can pull out of the plastic `skirt_l1` (M2x6) holds by 0.0 mm of thread in `tub` in nylon: 0 mm² x 15 MPa = 0 N, against 73 N (design impact 146 N (100 g on 149 g) over 2 bolts) with 1.5x margin.
+  - Fix: Use a longer insert or bolt, more bolts, or a through-bolt with a nut.
+- **warning** `strength.bolt_pullout`: Bolt can pull out of the plastic `skirt_rear0` (M2x6) holds by 0.0 mm of thread in `tub` in nylon: 0 mm² x 15 MPa = 0 N, against 73 N (design impact 146 N (100 g on 149 g) over 2 bolts) with 1.5x margin.
+  - Fix: Use a longer insert or bolt, more bolts, or a through-bolt with a nut.
+- **warning** `strength.bolt_pullout`: Bolt can pull out of the plastic `skirt_rear1` (M2x6) holds by 0.0 mm of thread in `tub` in nylon: 0 mm² x 15 MPa = 0 N, against 73 N (design impact 146 N (100 g on 149 g) over 2 bolts) with 1.5x margin.
+  - Fix: Use a longer insert or bolt, more bolts, or a through-bolt with a nut.
+- **warning** `printability.overhang`: Needs support to print `tub`: best print orientation is build-up -z, which still leaves 694 mm² of overhang steeper than 45° or bridge longer than 15 mm.
+  - Fix: Chamfer overhangs to 45°, split the part, or accept support material.
+- **warning** `printability.bridge`: Bridge too long `tub` printed build-up -z has a 27.1 mm bridge (limit 15 mm); it sags.
+- **warning** `printability.min_hole`: Hole too small to print `tub` has 12 hole(s) down to Ø1.60 mm; FDM closes holes under 1.8 mm.
+  - Fix: Print a pilot and drill it, or enlarge the hole.
+- **pass** `process.ok`: Geometry matches the process 10 part(s) are makeable as declared.
+- **pass** `archetype.declared`: Archetype wedge Held to the `wedge` layout rules (15 rules).
+- **warning** `archetype.wedge_floor_gap`: Not checked: Wedge lip near the floor Could not evaluate (no wedge).
+  - Fix: Add the missing part or data so this rule can be measured.
+- **warning** `archetype.wedge_angle`: Not checked: Wedge angle Could not evaluate (no wedge).
+  - Fix: Add the missing part or data so this rule can be measured.
+- **warning** `archetype.wedge_width`: Not checked: Wedge covers the front Could not evaluate (no wedge).
+  - Fix: Add the missing part or data so this rule can be measured.
+- **pass** `archetype.drive_config`: Drive layout 4 wheels, 4 driven (4WD).
+- **pass** `archetype.invertible`: Drives upside down `can_run_inverted` is declared (the ground group proves it).
+- **pass** `archetype.pods_enclose_wheels`: Side pods wrap the wheels Every wheel has a side pod or wall outboard of it.
+- **pass** `archetype.floor_ribs`: Printed floor is stiffened Floor is 9.6 mm solid (no ribs needed above 2.5 mm).
+- **warning** `archetype.lid_inserts`: Lid screws go into inserts Removable lid screws bite straight into print (no insert or nut): `skirt_r0`, `skirt_l0`, `skirt_r1`, `skirt_l1`, `skirt_rear0`, `skirt_rear1`.
+  - Fix: Fit heat-set inserts (or captive nuts) where removable lid screws go into print.
+- **warning** `archetype.switch_access`: Switch reachable from the side The switch is reachable only from the top; the archetype puts it on a side wall.
+  - Fix: Put the switch in a side-wall slot with nothing outboard of it.
+- **pass** `archetype.axle_height`: Axle height on target Axle centre above the floor: no target declared.
+- **pass** `archetype.disc_thickness`: Disc thickness on target Disc thickness: no target declared.
+- **pass** `archetype.disc_diameter`: Disc diameter on target Disc diameter (incl. tooth): no target declared.
+- **pass** `archetype.tub_height`: Tub height on target Chassis tub height: no target declared.
+- **pass** `archetype.wheel_dia`: Wheel size on target Largest wheel diameter: no target declared.
+- **pass** `archetype.wheel_count`: Wheel count on target Number of wheels: no target declared.
+- **pass** `arch.tpu_structural`: No structure in elastomer No structural part is TPU or rubber.
+- **pass** `arch.tpu_threaded`: No screws in elastomers No fastener threads into TPU or rubber.
+- **pass** `arch.fastener_spans_joint`: No screw locks a joint 0 fastener/joint pairs checked.
+- **pass** `arch.weapon_supports`: No spinning weapon No spinning weapon: fork and shaft checks do not apply.
+- **pass** `arch.motor_face_bolts`: No screws into motors No fastener threads into a motor.
+- **pass** `arch.motor_face_static`: No screws into motors No fastener threads into a weapon motor.
+- **pass** `arch.motor_mount`: Motor is screwed or clamped `motor_fr`: 0 fasteners, 1 clamps, sandwiched between nothing.
+- **warning** `arch.motor_clamp`: Motor not captured `motor_fr`: structure on both sides along ['Y']; 0 screws in its face. Sides: +x face x=41.00: open (needs structure at x=41.80, within 0.8 mm); -x face x=8.00: open (needs structure at x=7.20, within 0.8 mm); +y face y=32.00: held by `tub`; -y face y=20.00: held by `tub`; +z face z=16.00: open (needs structure at z=16.80, within 0.8 mm); -z face z=6.00: open (needs structure at z=5.20, within 0.8 mm). Rule: structure on both sides along 2 axes, or 1 axis + 2 screws into it, or 2 screws. Cheapest: or 2 more screw(s) threading into the motor (catalogue mount holes) with >= 1 axis held.
+  - Fix: Box the motor between walls on two axes, or screw its face.
+- **pass** `arch.motor_antirotation`: Motor cannot turn in its mount `motor_fr`: 0 face screws, keyed False, flats held True.
+- **pass** `arch.motor_mount`: Motor is screwed or clamped `motor_fl`: 0 fasteners, 1 clamps, sandwiched between nothing.
+- **warning** `arch.motor_clamp`: Motor not captured `motor_fl`: structure on both sides along ['Y']; 0 screws in its face. Sides: +x face x=-8.00: open (needs structure at x=-7.20, within 0.8 mm); -x face x=-41.00: open (needs structure at x=-41.80, within 0.8 mm); +y face y=32.00: held by `tub`; -y face y=20.00: held by `tub`; +z face z=16.00: open (needs structure at z=16.80, within 0.8 mm); -z face z=6.00: open (needs structure at z=5.20, within 0.8 mm). Rule: structure on both sides along 2 axes, or 1 axis + 2 screws into it, or 2 screws. Cheapest: or 2 more screw(s) threading into the motor (catalogue mount holes) with >= 1 axis held.
+  - Fix: Box the motor between walls on two axes, or screw its face.
+- **pass** `arch.motor_antirotation`: Motor cannot turn in its mount `motor_fl`: 0 face screws, keyed False, flats held True.
+- **pass** `arch.motor_mount`: Motor is screwed or clamped `motor_rr`: 0 fasteners, 1 clamps, sandwiched between nothing.
+- **warning** `arch.motor_clamp`: Motor not captured `motor_rr`: structure on both sides along ['Y']; 0 screws in its face. Sides: +x face x=41.00: open (needs structure at x=41.80, within 0.8 mm); -x face x=8.00: open (needs structure at x=7.20, within 0.8 mm); +y face y=-20.00: held by `tub`; -y face y=-32.00: held by `tub`; +z face z=16.00: open (needs structure at z=16.80, within 0.8 mm); -z face z=6.00: open (needs structure at z=5.20, within 0.8 mm). Rule: structure on both sides along 2 axes, or 1 axis + 2 screws into it, or 2 screws. Cheapest: or 2 more screw(s) threading into the motor (catalogue mount holes) with >= 1 axis held.
+  - Fix: Box the motor between walls on two axes, or screw its face.
+- **pass** `arch.motor_antirotation`: Motor cannot turn in its mount `motor_rr`: 0 face screws, keyed False, flats held True.
+- **pass** `arch.motor_mount`: Motor is screwed or clamped `motor_rl`: 0 fasteners, 1 clamps, sandwiched between nothing.
+- **warning** `arch.motor_clamp`: Motor not captured `motor_rl`: structure on both sides along ['Y']; 0 screws in its face. Sides: +x face x=-8.00: open (needs structure at x=-7.20, within 0.8 mm); -x face x=-41.00: open (needs structure at x=-41.80, within 0.8 mm); +y face y=-20.00: held by `tub`; -y face y=-32.00: held by `tub`; +z face z=16.00: open (needs structure at z=16.80, within 0.8 mm); -z face z=6.00: open (needs structure at z=5.20, within 0.8 mm). Rule: structure on both sides along 2 axes, or 1 axis + 2 screws into it, or 2 screws. Cheapest: or 2 more screw(s) threading into the motor (catalogue mount holes) with >= 1 axis held.
+  - Fix: Box the motor between walls on two axes, or screw its face.
+- **pass** `arch.motor_antirotation`: Motor cannot turn in its mount `motor_rl`: 0 face screws, keyed False, flats held True.
+- **pass** `arch.bolt_shear`: Bolt groups have shear margin 5 bolt groups have SF ≥ 2.0 in shear.
+- **pass** `arch.bolt_bearing`: Bolt holes bear their load No printed hole is crushed by its bolt.
+- **pass** `arch.bolt_bending`: No bolt bridges a gap No shank spans more than its diameter of air.
+- **pass** `arch.bolt_washer`: Screw heads have bearing area Every head on plastic has enough area.
+- **pass** `arch.layer_tension`: No load-path screw pulls layers apart Load-path screws lie in the layer plane.
+- **pass** `arch.hole_spacing`: Hole spacing ok Parallel holes are ≥ 3d apart.
+- **pass** `arch.insert_coaxial`: Inserts line up with screws Every insert is coaxial with its screw in a printed host.
+- **pass** `arch.insert_host`: Inserts sit in printed bosses Every heat-set insert is surrounded by a printed part.
+- **pass** `arch.cantilever_fastener`: No part levered off its screws 3 lightly-bolted parts checked.
+- **pass** `arch.holder_group`: Parts held by matching structure 0 parent/retainer links checked.
+- **pass** `arch.armor_span`: Top armour well supported `top_plate` (carbon_fibre, ~1.4 mm) has an unsupported span of 35 mm: 300 N in the middle deflects 0.6 mm.
+- **pass** `arch.electronics_isolated`: Electronics off the load path `battery` touches no weapon support.
+- **pass** `arch.battery_restraint`: Battery is boxed in `battery`: walls on both sides along ['X', 'Z'], 5/6 sides; strap/clamp: False.
+- **pass** `arch.electronics_isolated`: Electronics off the load path `esc` touches no weapon support.
+- **pass** `arch.electronics_isolated`: Electronics off the load path `rx` touches no weapon support.
+- **pass** `arch.electronics_isolated`: Electronics off the load path `switch` touches no weapon support.
+- **pass** `arch.wheel_bore`: Wheel runs on a bearing `wheel_fr` on `motor_fr`.
+- **pass** `arch.wheel_bore`: Wheel runs on a bearing `wheel_fl` on `motor_fl`.
+- **pass** `arch.wheel_bore`: Wheel runs on a bearing `wheel_rr` on `motor_rr`.
+- **pass** `arch.wheel_bore`: Wheel runs on a bearing `wheel_rl` on `motor_rl`.
+- **pass** `arch.symmetry`: Mirrored parts match 5 left/right pairs within 0.5 mm.
+- **pass** `arch.symmetry_fasteners`: Mirrored screws match 2 screw pairs mirror within 0.5 mm.
+- **pass** `arch.com_support`: Centre of mass over the footprint Centre of mass (-0.8, 0.7) is inside the floor contact polygon by 30.0 mm.
+- **pass** `arch.com_height`: Centre of mass low 10.5 mm up, 30.0 mm from the nearest tipping edge.
+- **pass** `electrical.drive_motor_voltage`: Drive motors suit the pack voltage Pack 7.4 V nominal is within 1.5x of every drive motor's rating (worst 1.23x).
+- **pass** `electrical.weapon_motor_voltage`: Weapon motor suits the pack voltage No weapon motor.
+- **pass** `electrical.esc_voltage`: ESCs rated for the pack voltage 2S pack; ESC ratings: `esc` 4S.
+- **pass** `electrical.esc_drive_current`: Drive ESC covers motor stall `esc` burst 4.0 A vs stall 1.0 A per channel.
+- **pass** `electrical.esc_weapon_current`: Weapon ESC covers motor current No ESC drives a weapon motor.
+- **pass** `electrical.wire_ampacity`: Wire gauge carries the current All 7 wires within their gauge's continuous rating.
+- **pass** `electrical.connector_rating`: Battery connector rating Battery connector `jst_rcy` rated 5 A; peak load 4.2 A.
+- **warning** `electrical.switch_rating`: Not checked: Switch rating Could not evaluate (switch `switch` has no current rating (add `ratings.current_a`)).
+  - Fix: Add the rating to the catalog entry or a `ratings` table on the part.
+- **pass** `electrical.receiver_supply`: Receiver is powered Receiver `rx` is powered (wired to an ESC/BEC or integrated).
+- **pass** `electrical.failsafe`: Failsafe covers every ESC Failsafe declared and every ESC takes its signal from the receiver.
+- **warning** `electrical.indicator`: Power light visible No power indicator LED (a part with `led` in its id/label or `electronics.indicator`).
+  - Fix: Add an LED that shows power, visible from outside.
+- **pass** `electrical.battery_weapon_gap`: Battery clear of the weapon No spinning weapon.
+- **pass** `electrical.battery_shielded`: Wall between battery and weapon No spinning weapon.
+- **pass** `electrical.battery_floor`: Battery protected from below Battery underside is 3.5 mm above the floor and is covered by structure below.
+- **pass** `electrical.battery_removable`: Battery comes out without the weapon Battery comes out up past `top_plate`; no weapon part in the way.
+- **warning** `electrical.wire_bend_radius`: Wire bend radius Tight bends: `w_bat_sw` 2.6 mm radius (min 3.2); `w_sw_esc` 2.9 mm radius (min 3.2); `w_esc_rx` 2.3 mm radius (min 2.6); `w_m1_fr` 1.7 mm radius (min 2.6); `w_m1_fl` 1.9 mm radius (min 2.6); `w_m2_rr` 2.1 mm radius (min 2.6); `w_m2_rl` 1.7 mm radius (min 2.6).
+  - Fix: Give the wires room to bend (>= 2x diameter).
+- **pass** `electrical.wire_rotating_clearance`: Wires clear of rotating parts Every routed wire stays >= 2 mm from rotating parts.
+- **pass** `electrical.strain_relief`: Strain relief at ESC and battery Wires at the ESC/battery have slack and the parts are retained.
+- **pass** `electrical.cells_consistent`: Cell count consistent Cell counts: battery 2S, electronics.cells 2S.
+- **pass** `electrical.switch_in_series`: Switch cuts all power Every ESC is powered through the switch.
+- **pass** `electrical.power_path`: Power path complete Every ESC has battery power and every motor is wired to an ESC.
+- **pass** `electrical.battery_c_rating`: Battery continuous rating Continuous load 4.2 A against 8.1 A (capacity x C).
+- **pass** `electrical.runtime`: Runtime covers a match Estimated runtime 6.6 min at match duty (need >= 3 min).
+- **pass** `electrical.wire_gauge_declared`: Wire gauges declared Every power and motor wire declares its gauge.
+- **pass** `electrical.parts_retained`: Electronics retained Battery, ESCs and receiver declare how they are held.
+- **pass** `electrical.weapon_disable`: Weapon can be disabled remotely No active weapon.
+- **warning** `combat.R001`: Front edge sits on the floor Median edge gap across the front is 7.50 mm (limit 1 mm).
+  - Fix: Lower the front skirt/wedge lip to 0.3-1 mm.
+- **warning** `combat.R002`: Front edge covered by a low skirt Share of the front edge with a skirt within 1.5 mm of the floor is 9% (needs 80%).
+  - Fix: Run the wedge/skirt across the whole front at 0.3-1 mm.
+- **pass** `combat.R003`: Left side has a low skirt Share of the left (+X) side edge within 3 mm of the floor is 96% (needs 60%).
+- **pass** `combat.R004`: Right side has a low skirt Share of the right (-X) side edge within 3 mm of the floor is 96% (needs 60%).
+- **pass** `combat.R005`: Rear edge is guarded Share of the rear edge within 3 mm of the floor is 100% (needs 50%).
+- **warning** `combat.R006`: Front-left corner closed Highest edge gap at the FL corner is 10.49 mm (limit 5 mm).
+  - Fix: Wrap the skirt round the corner or chamfer it down to the floor.
+- **warning** `combat.R007`: Front-right corner closed Highest edge gap at the FR corner is 9.93 mm (limit 5 mm).
+  - Fix: Wrap the skirt round the corner or chamfer it down to the floor.
+- **warning** `combat.R008`: Rear-right corner closed Highest edge gap at the RR corner is 99.00 mm (limit 5 mm).
+  - Fix: Wrap the skirt round the corner or chamfer it down to the floor.
+- **warning** `combat.R009`: Rear-left corner closed Highest edge gap at the RL corner is 99.00 mm (limit 5 mm).
+  - Fix: Wrap the skirt round the corner or chamfer it down to the floor.
+- **pass** `combat.R010`: Perimeter mostly skirted Share of the whole perimeter within 3 mm of the floor is 76% (needs 60%).
+- **pass** `combat.R011`: No wide open arc Longest arc of the perimeter with nothing within 5 mm of the floor is 22.00 deg (limit 45 deg).
+- **warning** `combat.R012`: No open door anywhere Highest edge gap anywhere on the perimeter is 99.00 mm (limit 12 mm).
+  - Fix: Nothing on the outline should leave more than 12 mm under it.
+- **warning** `combat.R013`: Gets under a typical wedge Front lip gap (20th percentile) against a typical 0.5 mm opponent wedge is 4.09 mm (limit 0.6 mm).
+  - Fix: Lip at or below 0.5 mm wins the who-gets-under contest.
+- **pass** `combat.R014`: Sides resist a T-bone Median side edge gap (worse side) when T-boned by a wedge is 1.11 mm (limit 2 mm).
+- **warning** `combat.R015`: No fork-sized gap in the front edge Widest stretch of the front edge with no skirt within 1.5 mm of the floor is 11.01 mm (limit 8 mm).
+  - Fix: Close gaps in the front skirt wider than 8 mm (opponent forks slip in).
+- **warning** `combat.R016`: Front edge level Spread of the edge gap across the front is 11.84 mm (limit 3 mm).
+  - Fix: Make the front edge height even across the width.
+- **warning** `combat.R020`: Lip clears the floor No wedge, fork or skirt reaches the front of the robot.
+  - Fix: Raise the lip to >= 0.2 mm so it does not drag or catch seams.
+- **warning** `combat.R021`: Lip is low enough No wedge, fork or skirt reaches the front of the robot.
+  - Fix: Lower a fixed lip to <= 1.0 mm (or hinge it to rest on the floor).
+- **warning** `combat.R022`: Ramp angle No wedge, fork or skirt reaches the front of the robot.
+  - Fix: Set the wedge face between 10 and 35 deg (wedges) / 45 deg (others).
+- **warning** `combat.R024`: Sharp lip No wedge, fork or skirt reaches the front of the robot.
+  - Fix: Bevel the lip to <= 1.2 mm thick 1 mm back (or use 1 mm sheet).
+- **warning** `combat.R025`: Thin lip No wedge, fork or skirt reaches the front of the robot.
+  - Fix: Keep the lip <= 2.5 mm thick 3 mm behind the edge.
+- **warning** `combat.R026`: No blunt nose No wedge, fork or skirt reaches the front of the robot.
+  - Fix: Remove the vertical face at the lip (> 0.6 mm stops it sliding under).
+- **warning** `combat.R027`: Hard lip No wedge, fork or skirt reaches the front of the robot.
+  - Fix: Make the lip from steel/titanium/aluminium/laminate, or face it with metal.
+- **warning** `combat.R028`: Skirt spans the front No wedge, fork or skirt reaches the front of the robot.
+  - Fix: Widen the front skirt.
+- **warning** `combat.R029`: Skirt is the front-most part No wedge, fork or skirt reaches the front of the robot.
+  - Fix: Bring the skirt lip forward of every other body part.
+- **warning** `combat.R030`: Tip does not dig in No wedge, fork or skirt reaches the front of the robot.
+  - Fix: Make the lip the lowest point; raise the underside behind it.
+- **warning** `combat.R031`: Lip parallel to the floor No wedge, fork or skirt reaches the front of the robot.
+  - Fix: Level the lip across its width (<= 0.5 mm variation).
+- **warning** `combat.R032`: Skirt stiff under push No wedge, fork or skirt reaches the front of the robot.
+  - Fix: Thicken, shorten or support the skirt so it bends <= 1 mm under 50 N.
+- **warning** `combat.R033`: Skirt thick enough No wedge, fork or skirt reaches the front of the robot.
+  - Fix: Metal skirts >= 0.8 mm, printed or plastic >= 2 mm at mid-overhang.
+- **warning** `combat.R034`: Skirt overhang short No wedge, fork or skirt reaches the front of the robot.
+  - Fix: Support the skirt within 45 mm of its tip.
+- **pass** `combat.R037`: Skirt clears the wheels `skirt_r`: Skirt clearance to the nearest wheel minus its load deflection is 7.99 mm (needs 1 mm).; `skirt_l`: Skirt clearance to the nearest wheel minus its load deflection is 7.99 mm (needs 1 mm).; `skirt_rear`: Skirt clearance to the nearest wheel minus its load deflection is 8.00 mm (needs 1 mm).
+- **pass** `combat.R038`: Skirt bolted down `skirt_r`: Fasteners holding the skirt is 2.00  (needs 2 ).; `skirt_l`: Fasteners holding the skirt is 2.00  (needs 2 ).; `skirt_rear`: Fasteners holding the skirt is 2.00  (needs 2 ).
+- **pass** `combat.R060`: Weight on the driven wheels Weight on the driven wheels is 100% (needs 70%).
+- **pass** `combat.R061`: Skirt is not carrying the robot Weight resting on the skirt or skids is 0% (limit 15%).
+- **pass** `combat.R062`: Low centre of mass (track) Centre-of-mass height over track is 0.13  (limit 0.5 ).
+- **pass** `combat.R063`: Low centre of mass (wheelbase) Centre-of-mass height over wheelbase is 0.13  (limit 0.6 ).
+- **warning** `combat.R064`: Not top-heavy Centre-of-mass height as a share of body height is 51% (limit 50%).
+  - Fix: Keep the centre of mass in the lower half of the body.
+- **pass** `combat.R065`: Centred sideways Sideways centre-of-mass offset over track is 1% (limit 5%).
+- **pass** `combat.R066`: Centre of mass inside the wheelbase Centre of mass inside the wheelbase (share of wheelbase from the nearer end) is 41% (needs 10%).
+- **pass** `combat.R067`: Grippy tyres Tyre materials: silicone, silicone, silicone, silicone.
+- **pass** `combat.R068`: Wheels roll over seams Smallest wheel diameter (10x a 2 mm seam) is 22.00 mm (needs 20 mm).
+- **pass** `combat.R069`: Wide enough tyres Narrowest wheel width is 10.70 mm (needs 6 mm).
+- **pass** `combat.R070`: Wheels on both sides Sides of the robot with a wheel is 2.00  (needs 2 ).
+- **pass** `combat.R071`: 4WD turns 4WD wheelbase over track (turning scrub) is 0.64  (limit 1 ).
+- **pass** `combat.R072`: Wide track Track over body width is 75% (needs 50%).
+- **warning** `combat.R073`: Drive can spin the wheels (not measured) Motor torque, wheel size, mass or tyre grip not known.
+  - Fix: Supply the missing data (mass, material, catalog motor).
+- **warning** `combat.R074`: Drive speed Top speed at nominal voltage is 1.15 m/s (range 1.5 to 8 m/s).
+  - Fix: Pick a gear/wheel size for 1.5-8 m/s (1.2 for spinners).
+- **pass** `combat.R080`: Only wheels touch the floor Only the wheels touch the floor.
+- **pass** `combat.R081`: Wheels coplanar Height difference between wheel contacts is 0.00 mm (limit 0.3 mm).
+- **warning** `combat.R082`: Belly clears the floor Lowest point of the chassis (skirts and wheels excluded) is 0.30 mm (needs 1 mm).
+  - Fix: Raise the chassis underside to >= 1 mm.
+- **pass** `combat.R083`: No high-centring Underside clearance away from the edges (high-centring on a seam) is 1.50 mm (needs 1.5 mm).
+- **pass** `combat.R084`: No flat dragging belly Flat chassis underside within 0.5 mm of the floor is 0.00 mm2 (limit 50 mm2).
+- **pass** `combat.R085`: Screw heads off the floor Lowest screw head above the floor is 1.50 mm (needs 0.5 mm).
+- **pass** `combat.R086`: Switch off the floor Switch above the floor is 3.30 mm (needs 2 mm).
+- **pass** `combat.R090`: Invertible or self-righting Body above the wheel tops (upside down the wheels must still reach the floor) is 0.00 mm (limit 0.5 mm).
+- **warning** `combat.R091`: Ground game upside down Upside down, share of the front edge within 3 mm of the floor is 0% (needs 50%).
+  - Fix: Give the top side a skirt/wedge edge too (double-sided wedge).
+- **pass** `combat.R092`: No drag upside down Upside down, lowest non-wheel edge above the floor is 1.50 mm (needs 0.2 mm).
+- **pass** `combat.R094`: Body fits inside the wheels Body height for an invertible robot (wheel diameter - 1 mm) is 20.50 mm (limit 21 mm).
+- **pass** `combat.R100`: Low profile Body height without wheels and weapon is 20.50 mm (limit 45 mm).
+- **warning** `combat.R101`: Front armour sloped Vertical share of the front-facing outer surface is 57% (limit 50%).
+  - Fix: Slope the front faces (<= 50% vertical).
+- **pass** `combat.R102`: Side armour angled Vertical share of the side-facing outer surface is 79% (limit 90%).
+- **pass** `combat.R110`: No wheel at the front edge Share of front bearings where a wheel is the outermost part is 0% (limit 0%).
+- **pass** `combat.R111`: Wheels shielded at the sides Share of the worse side where a wheel is the outermost part is 4% (limit 25%).
+- **pass** `combat.R112`: Wheels shielded at the rear Share of rear bearings where a wheel is the outermost part is 0% (limit 25%).
+- **pass** `combat.R113`: Wheels not the spinner target Share of the whole perimeter where a wheel is the outermost part (horizontal spinner target) is 3% (limit 10%).
+- **pass** `combat.R114`: Body ahead of the wheels Body ahead of the front-most wheel is 39.70 mm (needs 5 mm).
+- **pass** `combat.R115`: Side wall outboard of wheels Side wall outboard of the wheels is 8.50 mm (needs 0 mm).
+- **pass** `combat.R120`: Battery away from the front Battery behind the front outline is 60.55 mm (needs 10 mm).
+- **pass** `combat.R121`: Battery away from the sides Battery inside the side outline is 25.83 mm (needs 5 mm).
+- **pass** `physics.runtime`: Runtime ok ~370 s.
+- **pass** `physics.c_rating`: C rating ok 4.0 / 8.1 A.
+- **warning** `physics.drive_speed`: Drive speed out of range ~0.9 m/s top speed; want 1.5 to 6.0 m/s for control in a 1.2 m arena.
+- **pass** `physics.invert`: Drives inverted or self-rights Robot can fight upside down or right itself.
+- **pass** `thermal.ok`: Pack voltage holds at peak current 7.0 V loaded (3.50 V/cell) at 4.0 A (power group metric).
+- **warning** `clearance.squash`: Body scrapes the floor once the tyres squash `fork_0` clears 0.30 mm as built, but the tyres squash 0.22 mm under the robot's weight and only 0.08 mm is left (want >= 1.0 mm); it rides on the floor at rest.
+  - Fix: Raise the chassis, use bigger wheels, or firmer tyres (a printed rim squashes less than a soft one).
+- **warning** `service.wheel_pull`: Wheel cannot be pulled out straight `wheel_fr, wheel_fl, wheel_rr, wheel_rl` has no straight extraction path: every direction is blocked by another part, so the swap needs other parts removed first.
+  - Fix: Give it an open hatch or slot on one face so it slides out without disassembly; between-fight swaps must be quick.
+- **warning** `service.battery_pull`: Battery cannot be pulled out straight `battery` has no straight extraction path: every direction is blocked by another part, so the swap needs other parts removed first.
+  - Fix: Give the battery an open hatch or slot on one face so it slides out without disassembly; a pack swap between fights must take seconds, not minutes.
+- **pass** `assembly.order`: Everything can be assembled Every part slides in along a clear straight path. Assembly order: battery, nut_front, switch, rx, esc, pivot_pin, fork_2, fork_1, fork_0, wheel_rl, wheel_rr, wheel_fl, wheel_fr, motor_rl, motor_rr, motor_fl, motor_fr, skirt_rear, skirt_l, skirt_r, base_plate, top_plate, skirt_rear1, skirt_rear0, skirt_l1, skirt_r1, skirt_l0, skirt_r0, bolt_b5, bolt_t5, bolt_b4, bolt_t4, bolt_b3, bolt_t3, bolt_b2, bolt_t2, bolt_b1, bolt_t1, bolt_b0, bolt_t0.
+- **warning** `joint.no_locator`: Joint has no locating feature `top_plate` on `tub` is held in place only by friction and the screws' shear (`bolt_t0`, `bolt_t1`, `bolt_t2`, `bolt_t3`, `bolt_t4`, `bolt_t5`); no lip, step, pin or spigot locates it.
+  - Fix: Add a lip, step or dowel so the parts register before the screws go in; screws clamp, features locate.
+- **warning** `joint.no_locator`: Joint has no locating feature `base_plate` on `tub` is held in place only by friction and the screws' shear (`bolt_b0`, `bolt_b1`, `bolt_b2`, `bolt_b3`, `bolt_b4`, `bolt_b5`); no lip, step, pin or spigot locates it.
+  - Fix: Add a lip, step or dowel so the parts register before the screws go in; screws clamp, features locate.
+- **warning** `joint.no_locator`: Joint has no locating feature `skirt_r` on `tub` is held in place only by friction and the screws' shear (`skirt_r0`, `skirt_r1`); no lip, step, pin or spigot locates it.
+  - Fix: Add a lip, step or dowel so the parts register before the screws go in; screws clamp, features locate.
+- **warning** `joint.no_locator`: Joint has no locating feature `skirt_l` on `tub` is held in place only by friction and the screws' shear (`skirt_l0`, `skirt_l1`); no lip, step, pin or spigot locates it.
+  - Fix: Add a lip, step or dowel so the parts register before the screws go in; screws clamp, features locate.
+- **warning** `joint.no_locator`: Joint has no locating feature `skirt_rear` on `tub` is held in place only by friction and the screws' shear (`skirt_rear0`, `skirt_rear1`); no lip, step, pin or spigot locates it.
+  - Fix: Add a lip, step or dowel so the parts register before the screws go in; screws clamp, features locate.
+- **warning** `joint.selftap_removable`: Removable screw self-taps into plastic `bolt_t0` threads straight into printed `tub` but is removable; printed threads wear out after a few cycles.
+  - Fix: Add a heat-set insert (`heatset_m2`) in `tub` and thread into that.
+- **warning** `joint.layer_tension`: Screw pulls printed layers apart `bolt_t0` self-taps into `tub` along its print direction (+z); the pull-out load is across layer lines (about half strength).
+  - Fix: Use a heat-set insert, a captive nut, or turn the screw (or the print) so the thread runs along the layers.
+- **warning** `joint.thin_wall`: Screw taps into a thin wall Only 33% of a 6.0 mm boss around `bolt_t0` is material in `tub`; the wall will split.
+  - Fix: Give the hole a boss >= 6.0 mm OD (wall >= d).
+- **warning** `joint.selftap_removable`: Removable screw self-taps into plastic `bolt_b0` threads straight into printed `tub` but is removable; printed threads wear out after a few cycles.
+  - Fix: Add a heat-set insert (`heatset_m2`) in `tub` and thread into that.
+- **warning** `joint.layer_tension`: Screw pulls printed layers apart `bolt_b0` self-taps into `tub` along its print direction (+z); the pull-out load is across layer lines (about half strength).
+  - Fix: Use a heat-set insert, a captive nut, or turn the screw (or the print) so the thread runs along the layers.
+- **warning** `joint.thin_wall`: Screw taps into a thin wall Only 33% of a 6.0 mm boss around `bolt_b0` is material in `tub`; the wall will split.
+  - Fix: Give the hole a boss >= 6.0 mm OD (wall >= d).
+- **warning** `joint.selftap_removable`: Removable screw self-taps into plastic `bolt_t1` threads straight into printed `tub` but is removable; printed threads wear out after a few cycles.
+  - Fix: Add a heat-set insert (`heatset_m2`) in `tub` and thread into that.
+- **warning** `joint.layer_tension`: Screw pulls printed layers apart `bolt_t1` self-taps into `tub` along its print direction (+z); the pull-out load is across layer lines (about half strength).
+  - Fix: Use a heat-set insert, a captive nut, or turn the screw (or the print) so the thread runs along the layers.
+- **warning** `joint.thin_wall`: Screw taps into a thin wall Only 33% of a 6.0 mm boss around `bolt_t1` is material in `tub`; the wall will split.
+  - Fix: Give the hole a boss >= 6.0 mm OD (wall >= d).
+- **warning** `joint.selftap_removable`: Removable screw self-taps into plastic `bolt_b1` threads straight into printed `tub` but is removable; printed threads wear out after a few cycles.
+  - Fix: Add a heat-set insert (`heatset_m2`) in `tub` and thread into that.
+- **warning** `joint.layer_tension`: Screw pulls printed layers apart `bolt_b1` self-taps into `tub` along its print direction (+z); the pull-out load is across layer lines (about half strength).
+  - Fix: Use a heat-set insert, a captive nut, or turn the screw (or the print) so the thread runs along the layers.
+- **warning** `joint.thin_wall`: Screw taps into a thin wall Only 33% of a 6.0 mm boss around `bolt_b1` is material in `tub`; the wall will split.
+  - Fix: Give the hole a boss >= 6.0 mm OD (wall >= d).
+- **warning** `joint.selftap_removable`: Removable screw self-taps into plastic `bolt_t2` threads straight into printed `tub` but is removable; printed threads wear out after a few cycles.
+  - Fix: Add a heat-set insert (`heatset_m2`) in `tub` and thread into that.
+- **warning** `joint.layer_tension`: Screw pulls printed layers apart `bolt_t2` self-taps into `tub` along its print direction (+z); the pull-out load is across layer lines (about half strength).
+  - Fix: Use a heat-set insert, a captive nut, or turn the screw (or the print) so the thread runs along the layers.
+- **warning** `joint.thin_wall`: Screw taps into a thin wall Only 33% of a 6.0 mm boss around `bolt_t2` is material in `tub`; the wall will split.
+  - Fix: Give the hole a boss >= 6.0 mm OD (wall >= d).
+- **warning** `joint.selftap_removable`: Removable screw self-taps into plastic `bolt_b2` threads straight into printed `tub` but is removable; printed threads wear out after a few cycles.
+  - Fix: Add a heat-set insert (`heatset_m2`) in `tub` and thread into that.
+- **warning** `joint.layer_tension`: Screw pulls printed layers apart `bolt_b2` self-taps into `tub` along its print direction (+z); the pull-out load is across layer lines (about half strength).
+  - Fix: Use a heat-set insert, a captive nut, or turn the screw (or the print) so the thread runs along the layers.
+- **warning** `joint.thin_wall`: Screw taps into a thin wall Only 33% of a 6.0 mm boss around `bolt_b2` is material in `tub`; the wall will split.
+  - Fix: Give the hole a boss >= 6.0 mm OD (wall >= d).
+- **warning** `joint.selftap_removable`: Removable screw self-taps into plastic `bolt_t3` threads straight into printed `tub` but is removable; printed threads wear out after a few cycles.
+  - Fix: Add a heat-set insert (`heatset_m2`) in `tub` and thread into that.
+- **warning** `joint.layer_tension`: Screw pulls printed layers apart `bolt_t3` self-taps into `tub` along its print direction (+z); the pull-out load is across layer lines (about half strength).
+  - Fix: Use a heat-set insert, a captive nut, or turn the screw (or the print) so the thread runs along the layers.
+- **warning** `joint.thin_wall`: Screw taps into a thin wall Only 33% of a 6.0 mm boss around `bolt_t3` is material in `tub`; the wall will split.
+  - Fix: Give the hole a boss >= 6.0 mm OD (wall >= d).
+- **warning** `joint.selftap_removable`: Removable screw self-taps into plastic `bolt_b3` threads straight into printed `tub` but is removable; printed threads wear out after a few cycles.
+  - Fix: Add a heat-set insert (`heatset_m2`) in `tub` and thread into that.
+- **warning** `joint.layer_tension`: Screw pulls printed layers apart `bolt_b3` self-taps into `tub` along its print direction (+z); the pull-out load is across layer lines (about half strength).
+  - Fix: Use a heat-set insert, a captive nut, or turn the screw (or the print) so the thread runs along the layers.
+- **warning** `joint.thin_wall`: Screw taps into a thin wall Only 33% of a 6.0 mm boss around `bolt_b3` is material in `tub`; the wall will split.
+  - Fix: Give the hole a boss >= 6.0 mm OD (wall >= d).
+- **warning** `joint.selftap_removable`: Removable screw self-taps into plastic `bolt_t4` threads straight into printed `tub` but is removable; printed threads wear out after a few cycles.
+  - Fix: Add a heat-set insert (`heatset_m2`) in `tub` and thread into that.
+- **warning** `joint.layer_tension`: Screw pulls printed layers apart `bolt_t4` self-taps into `tub` along its print direction (+z); the pull-out load is across layer lines (about half strength).
+  - Fix: Use a heat-set insert, a captive nut, or turn the screw (or the print) so the thread runs along the layers.
+- **warning** `joint.thin_wall`: Screw taps into a thin wall Only 25% of a 6.0 mm boss around `bolt_t4` is material in `tub`; the wall will split.
+  - Fix: Give the hole a boss >= 6.0 mm OD (wall >= d).
+- **warning** `joint.selftap_removable`: Removable screw self-taps into plastic `bolt_b4` threads straight into printed `tub` but is removable; printed threads wear out after a few cycles.
+  - Fix: Add a heat-set insert (`heatset_m2`) in `tub` and thread into that.
+- **warning** `joint.layer_tension`: Screw pulls printed layers apart `bolt_b4` self-taps into `tub` along its print direction (+z); the pull-out load is across layer lines (about half strength).
+  - Fix: Use a heat-set insert, a captive nut, or turn the screw (or the print) so the thread runs along the layers.
+- **warning** `joint.thin_wall`: Screw taps into a thin wall Only 25% of a 6.0 mm boss around `bolt_b4` is material in `tub`; the wall will split.
+  - Fix: Give the hole a boss >= 6.0 mm OD (wall >= d).
+- **warning** `joint.selftap_removable`: Removable screw self-taps into plastic `bolt_t5` threads straight into printed `tub` but is removable; printed threads wear out after a few cycles.
+  - Fix: Add a heat-set insert (`heatset_m2`) in `tub` and thread into that.
+- **warning** `joint.layer_tension`: Screw pulls printed layers apart `bolt_t5` self-taps into `tub` along its print direction (+z); the pull-out load is across layer lines (about half strength).
+  - Fix: Use a heat-set insert, a captive nut, or turn the screw (or the print) so the thread runs along the layers.
+- **warning** `joint.thin_wall`: Screw taps into a thin wall Only 25% of a 6.0 mm boss around `bolt_t5` is material in `tub`; the wall will split.
+  - Fix: Give the hole a boss >= 6.0 mm OD (wall >= d).
+- **warning** `joint.selftap_removable`: Removable screw self-taps into plastic `bolt_b5` threads straight into printed `tub` but is removable; printed threads wear out after a few cycles.
+  - Fix: Add a heat-set insert (`heatset_m2`) in `tub` and thread into that.
+- **warning** `joint.layer_tension`: Screw pulls printed layers apart `bolt_b5` self-taps into `tub` along its print direction (+z); the pull-out load is across layer lines (about half strength).
+  - Fix: Use a heat-set insert, a captive nut, or turn the screw (or the print) so the thread runs along the layers.
+- **warning** `joint.thin_wall`: Screw taps into a thin wall Only 25% of a 6.0 mm boss around `bolt_b5` is material in `tub`; the wall will split.
+  - Fix: Give the hole a boss >= 6.0 mm OD (wall >= d).
+- **warning** `joint.selftap_removable`: Removable screw self-taps into plastic `skirt_r0` threads straight into printed `tub` but is removable; printed threads wear out after a few cycles.
+  - Fix: Add a heat-set insert (`heatset_m2`) in `tub` and thread into that.
+- **warning** `joint.head_proud`: Screw head proud on an outer surface The head of `skirt_r0` stands 2.0 mm proud of `skirt_r` on the outside; hits shear heads and opponents catch on them.
+  - Fix: Counterbore the head flush or use a countersunk (`head: countersunk`) screw.
+- **warning** `joint.selftap_removable`: Removable screw self-taps into plastic `skirt_l0` threads straight into printed `tub` but is removable; printed threads wear out after a few cycles.
+  - Fix: Add a heat-set insert (`heatset_m2`) in `tub` and thread into that.
+- **warning** `joint.head_proud`: Screw head proud on an outer surface The head of `skirt_l0` stands 2.0 mm proud of `skirt_l` on the outside; hits shear heads and opponents catch on them.
+  - Fix: Counterbore the head flush or use a countersunk (`head: countersunk`) screw.
+- **warning** `joint.selftap_removable`: Removable screw self-taps into plastic `skirt_r1` threads straight into printed `tub` but is removable; printed threads wear out after a few cycles.
+  - Fix: Add a heat-set insert (`heatset_m2`) in `tub` and thread into that.
+- **warning** `joint.head_proud`: Screw head proud on an outer surface The head of `skirt_r1` stands 2.0 mm proud of `skirt_r` on the outside; hits shear heads and opponents catch on them.
+  - Fix: Counterbore the head flush or use a countersunk (`head: countersunk`) screw.
+- **warning** `joint.selftap_removable`: Removable screw self-taps into plastic `skirt_l1` threads straight into printed `tub` but is removable; printed threads wear out after a few cycles.
+  - Fix: Add a heat-set insert (`heatset_m2`) in `tub` and thread into that.
+- **warning** `joint.head_proud`: Screw head proud on an outer surface The head of `skirt_l1` stands 2.0 mm proud of `skirt_l` on the outside; hits shear heads and opponents catch on them.
+  - Fix: Counterbore the head flush or use a countersunk (`head: countersunk`) screw.
+- **warning** `joint.selftap_removable`: Removable screw self-taps into plastic `skirt_rear0` threads straight into printed `tub` but is removable; printed threads wear out after a few cycles.
+  - Fix: Add a heat-set insert (`heatset_m2`) in `tub` and thread into that.
+- **warning** `joint.head_proud`: Screw head proud on an outer surface The head of `skirt_rear0` stands 2.0 mm proud of `skirt_rear` on the outside; hits shear heads and opponents catch on them.
+  - Fix: Counterbore the head flush or use a countersunk (`head: countersunk`) screw.
+- **warning** `joint.selftap_removable`: Removable screw self-taps into plastic `skirt_rear1` threads straight into printed `tub` but is removable; printed threads wear out after a few cycles.
+  - Fix: Add a heat-set insert (`heatset_m2`) in `tub` and thread into that.
+- **warning** `joint.head_proud`: Screw head proud on an outer surface The head of `skirt_rear1` stands 2.0 mm proud of `skirt_rear` on the outside; hits shear heads and opponents catch on them.
+  - Fix: Counterbore the head flush or use a countersunk (`head: countersunk`) screw.
+- **warning** `material.thick_wall`: Wall much thicker than design wall `tub`: away from fasteners the walls reach 7.5 mm (p99) against a 2.0 mm design wall.
+  - Fix: Thin non-load walls to the design wall; thicken only along load paths.
+- **pass** `material.saving`: Mass that could be pocketed `tub`: about 1.36 g saveable by shelling to 2.0 mm walls outside the bosses (25% kept as ribs).
+- **pass** `plausibility.density`: Mass fits the envelope `motor_fr` (motor): 8.0 g in 2.54 cm3 = 3.15 g/cm3 (plausible 1.2-7.0).
+- **pass** `plausibility.density`: Mass fits the envelope `motor_fl` (motor): 8.0 g in 2.54 cm3 = 3.15 g/cm3 (plausible 1.2-7.0).
+- **pass** `plausibility.density`: Mass fits the envelope `motor_rr` (motor): 8.0 g in 2.54 cm3 = 3.15 g/cm3 (plausible 1.2-7.0).
+- **pass** `plausibility.density`: Mass fits the envelope `motor_rl` (motor): 8.0 g in 2.54 cm3 = 3.15 g/cm3 (plausible 1.2-7.0).
+- **pass** `plausibility.density`: Mass fits the envelope `battery` (battery): 13.3 g in 7.09 cm3 = 1.88 g/cm3 (plausible 1.0-2.6).
+- **pass** `plausibility.density`: Mass fits the envelope `esc` (esc): 7.0 g in 2.41 cm3 = 2.91 g/cm3 (plausible 0.4-4.0).
+- **warning** `plausibility.density`: Mass does not fit the modelled envelope `rx` (receiver): 4.5 g in 1.12 cm3 = 4.02 g/cm3 (plausible 0.3-3.0).
+  - Fix: Check the datasheet: the envelope (fit, packaging) or the mass (budget) is wrong.
+- **pass** `plausibility.density`: Mass fits the envelope `switch` (switch): 2.1 g in 0.98 cm3 = 2.20 g/cm3 (plausible 0.3-4.0).
+- **pass** `cots.listed`: Bought-in parts are listed sizes 27 COTS parts and screws match catalog or standard sizes.
+- **warning** `fit.tight`: Pocket too tight for the process `motor_fr` has only 0.00 mm total clearance along y: 0.00 mm to `tub`, 0.00 mm to `tub`; the printed fit band needs at least 0.1 mm per side.
+  - Fix: Open the pocket so print tolerance cannot make it an interference fit.
+- **warning** `fit.loose`: Component rattles in its pocket `motor_fr` has 6.00 mm total play along z: 3.00 mm to `base_plate`, 3.00 mm to `top_plate`; the machined fit band is 0.05-0.3 mm per side.
+  - Fix: Close the pocket to the band, add a crush rib, or declare `retained` foam/tape with `fit: none`.
+- **warning** `fit.tight`: Pocket too tight for the process `motor_fl` has only 0.00 mm total clearance along y: 0.00 mm to `tub`, 0.00 mm to `tub`; the printed fit band needs at least 0.1 mm per side.
+  - Fix: Open the pocket so print tolerance cannot make it an interference fit.
+- **warning** `fit.loose`: Component rattles in its pocket `motor_fl` has 6.00 mm total play along z: 3.00 mm to `base_plate`, 3.00 mm to `top_plate`; the machined fit band is 0.05-0.3 mm per side.
+  - Fix: Close the pocket to the band, add a crush rib, or declare `retained` foam/tape with `fit: none`.
+- **warning** `fit.tight`: Pocket too tight for the process `motor_rr` has only 0.00 mm total clearance along y: 0.00 mm to `tub`, 0.00 mm to `tub`; the printed fit band needs at least 0.1 mm per side.
+  - Fix: Open the pocket so print tolerance cannot make it an interference fit.
+- **warning** `fit.loose`: Component rattles in its pocket `motor_rr` has 6.00 mm total play along z: 3.00 mm to `base_plate`, 3.00 mm to `top_plate`; the machined fit band is 0.05-0.3 mm per side.
+  - Fix: Close the pocket to the band, add a crush rib, or declare `retained` foam/tape with `fit: none`.
+- **warning** `fit.tight`: Pocket too tight for the process `motor_rl` has only 0.00 mm total clearance along y: 0.00 mm to `tub`, 0.00 mm to `tub`; the printed fit band needs at least 0.1 mm per side.
+  - Fix: Open the pocket so print tolerance cannot make it an interference fit.
+- **warning** `fit.loose`: Component rattles in its pocket `motor_rl` has 6.00 mm total play along z: 3.00 mm to `base_plate`, 3.00 mm to `top_plate`; the machined fit band is 0.05-0.3 mm per side.
+  - Fix: Close the pocket to the band, add a crush rib, or declare `retained` foam/tape with `fit: none`.
+- **warning** `fit.loose`: Component rattles in its pocket `esc` has 2.10 mm total play along z: 0.00 mm to `tub`, 2.10 mm to `top_plate`; the printed fit band is 0.1-0.5 mm per side.
+  - Fix: Close the pocket to the band, add a crush rib, or declare `retained` foam/tape with `fit: none`.
+- **warning** `fit.loose`: Component rattles in its pocket `rx` has 4.95 mm total play along y: 2.45 mm to `tub`, 2.50 mm to `tub`; the printed fit band is 0.1-0.5 mm per side.
+  - Fix: Close the pocket to the band, add a crush rib, or declare `retained` foam/tape with `fit: none`.
+- **warning** `fit.loose`: Component rattles in its pocket `rx` has 3.00 mm total play along z: 0.10 mm to `base_plate`, 2.90 mm to `tub`; the machined fit band is 0.05-0.3 mm per side.
+  - Fix: Close the pocket to the band, add a crush rib, or declare `retained` foam/tape with `fit: none`.
+- **warning** `fit.loose`: Component rattles in its pocket `switch` has 0.65 mm total play along z: 0.30 mm to `base_plate`, 0.35 mm to `tub`; the machined fit band is 0.05-0.3 mm per side.
+  - Fix: Close the pocket to the band, add a crush rib, or declare `retained` foam/tape with `fit: none`.
+- **pass** `contain.electronics`: Electronics are inside the armour Every battery, ESC, receiver and motor sits inside the chassis envelope.
+- **pass** `contain.wheels`: Wheels protrude as declared Wheels reach 1.0 mm below the body and 1.5 mm above it.
+- **pass** `contain.wires`: Wires stay inside the chassis 7 routes checked against the chassis envelope.
+- **pass** `contain.switch_access`: Switch reachable from outside `switch` has a clear 1.6 mm tool line out along -z.
+- **pass** `contain.line_of_sight`: Electronics and wires are shielded No battery, ESC, receiver or wire run is in straight view from outside.
+- **pass** `disasm.graph`: Disassembly graph is acyclic and serviceable 41 nodes; every screw is reachable; serviceable parts within 8 removals (skirt_r:2, skirt_l:2, skirt_rear:2, wheel_fr:0, wheel_fl:0, wheel_rr:0, wheel_rl:0, battery:0).
+- **warning** `coverage.uncovered`: Parts or contacts no specific check covers 3 gap(s): part `fork_0` (other): rotates but no balance/clearance check knows its kind; part `fork_1` (other): rotates but no balance/clearance check knows its kind; part `fork_2` (other): rotates but no balance/clearance check knows its kind
+  - Fix: Declare the relation (fastener, `connections`, `allow_overlap`, `retained`) or the material/process, so a check can verify it.
+- **pass** `spec.waiver_schema`: Waiver keys known Every waiver/deviation key is one a check reads.
+- **warning** `electrical.switch_direction`: Switch OFF direction not declared `switch` does not say which way is OFF; the build guide's rule (e.g. pulled outward = off) cannot be checked.
+  - Fix: Set `off_dir` (world vector the slider moves to switch off).
+- **warning** `threat.CF-VS01`: Bite-edge exposure to vertical spinner Weak point: Tallest exposed bite step is 20.0 mm at `tub` (attack bearing 0 deg, elevation 30 deg); a 6 mm tooth bite catches steps >= 3.0 mm. WHY: A tooth needs a horizontal-ish edge or step to catch; any step >= tooth bite depth lets it transfer full energy instead of glancing. FIX: Remove vertical steps, chamfer edges >= bite depth, slope front faces back >= 35 deg, hide screw heads below surface. (extends R101,R102)
+  - Fix: Remove vertical steps, chamfer edges >= bite depth, slope front faces back >= 35 deg, hide screw heads below surface.
+- **warning** `threat.CF-VS04`: Launch arm: CG height vs contact point Weak point: Predicted launch apex 115 mm (contact 4.1 mm vs CG 10.5 mm above the floor, mass 149 g). WHY: Hit below CG flips/launches robot; impulse J = sqrt(2*m_opp_weapon_I*E)/r. Rotational launch more likely when contact far below CG. FIX: Lower CG, use full-floor lip so contact is low and glancing. (extends R062,R064)
+  - Fix: Lower CG, use full-floor lip so contact is low and glancing.
+- **warning** `threat.CF-VS05`: Top edge catch for drum Weak point: 43% of the front at drum height (15-45 mm) is a vertical catch face. WHY: Drums hit the top front edge of tall robots; vertical face above the lip is a catch. FIX: Make front a continuous slope from lip to top; reduce height. (extends R100,R101)
+  - Fix: Make front a continuous slope from lip to top; reduce height.
+- **warning** `threat.CF-HS01`: Side armour bite by horizontal spinner Weak point: 97% of the perimeter shows a vertical wall to a horizontal blade at 2-15 mm. WHY: Undercutters hit 0-15 mm high at the side; vertical side walls give full bite. FIX: Add angled side skirts or wedgelets, flexible acetate skirts. (extends R003,R004,R102)
+  - Fix: Add angled side skirts or wedgelets, flexible acetate skirts.
+- **warning** `threat.CF-HS02`: Wheel exposure to horizontal blade Weak point: A wheel is hit first at wheel-centre height from 59 bearings (e.g. 5, 10, 15, 20, 25, 30 deg; 90 = front). WHY: A wheel touched by an undercutter is torn off or stalls the drive. FIX: Recess wheels inside body walls; add guard plates outboard. (extends R111,R113)
+  - Fix: Recess wheels inside body walls; add guard plates outboard.
+- **pass** `threat.CF-HS03`: Overcutter top exposure No switch, receiver, belt, ESC or battery in the top 5 mm.
+- **pass** `threat.CF-HS04`: Being launched sideways (recoil spin-out) Predicted spin after a 25 J side hit: 36.6 rev/s (wider track and low CG reduce it).
+- **pass** `threat.CF-HS05`: Skirt edge lift into undercutter Skirt lips stay down under a 2 N lift.
+- **warning** `threat.CF-HA01`: Top plate penetration by axe Weak point: Weakest top cell over electronics/motors holds 0.5 J (`top_plate`); a 5 J axe blow. WHY: Pointed axe tip punches printed top plates; damage lands on internals underneath. FIX: Thicker top over electronics, 0.5 mm Ti or polycarbonate lid, ribs to cut span.
+  - Fix: Thicker top over electronics, 0.5 mm Ti or polycarbonate lid, ribs to cut span.
+- **warning** `threat.CF-HA02`: Critical part directly under thin top Weak point: `battery` 5.9 mm under `top_plate` (2.76 J); `battery` 5.9 mm under `top_plate` (3.01 J); `battery` 5.9 mm under `top_plate` (3.08 J); `battery` 5.9 mm under `top_plate` (3.22 J). WHY: Damage path from top: what is within 10 mm below a thin region. FIX: Move electronics under ribs or add standoff.
+  - Fix: Move electronics under ribs or add standoff.
+- **warning** `threat.CF-HA03`: Hammer-saw / top saw abrasion of wires Weak point: Wire `w_m1_fr` passes 0.3 mm under the top surface. WHY: Saw dwells on top; any wire within top 3 mm cut. FIX: Route wires along floor, sleeve. (extends wiring.route)
+  - Fix: Route wires along floor, sleeve.
+- **warning** `threat.CF-WL01`: Get-under margin vs reference opponents Weak point: Front edge beats a 0.3 mm reference lip on 0% of bearings. WHY: Whoever is lower wins; compare edge gap distribution to reference opponents from taxonomy. FIX: Lower lip, metal edge, hinged skirt. (extends R001,R013)
+  - Fix: Lower lip, metal edge, hinged skirt.
+- **warning** `threat.CF-WL02`: Lift torque needed (resistance to being lifted) Weak point: CG sits 62% of the length back from the front; lifting the nose 45 deg takes 0.04 J. WHY: A lifter must raise CG; heavy front & low CG increase required lift work. FIX: Move mass forward, keep CG low. (extends R063)
+  - Fix: Move mass forward, keep CG low.
+- **warning** `threat.CF-WL03`: Grab points for grabbers/crushers Weak point: Deepest concave pocket in the top outline is 10.9 mm. WHY: Grabbers need a gripable section; overhangs and narrow waists help them. FIX: Smooth convex profile. (extends R104)
+  - Fix: Smooth convex profile.
+- **warning** `threat.CF-WL04`: Crusher clamp load on shell Weak point: `top_plate` deflects 6.03 mm under 200 N; the battery is 5.9 mm below. WHY: Clamp crushes printed shell onto battery. FIX: Add internal pillars around battery. (extends R088)
+  - Fix: Add internal pillars around battery.
+- **pass** `threat.CF-WL05`: Flip landing recovery Can fight or recover upside down.
+- **pass** `threat.CF-WL06`: Wedge-on-wedge stalemate push Push 1.61 N = 1.08 N per 100 g.
+- **pass** `threat.CF-WL07`: Side approach / T-bone get-under Side median edge gap 1.1 mm vs front 7.5 mm.
+- **pass** `threat.CF-AR01`: Wall pinning The body meets a wall before any wheel.
+- **pass** `threat.CF-AR02`: Pit/out-of-arena drift Top speed about 1.2 m/s: a fast robot drifts into pits; check combat.R122.
+- **warning** `threat.CF-AR03`: Stuck on the side Weak point: Stable rest pose(s) with no wheel on the floor and no self-right: left side, right side, tail. WHY: Robot resting on side cannot recover. FIX: Rounded sides, tall wheels, srimech. (extends R097)
+  - Fix: Rounded sides, tall wheels, srimech.
+- **pass** `threat.CF-LD01`: Landing impact on printed chassis Weakest corner `base_plate` (1.2 mm wall) absorbs 1.99 J.
+- **pass** `threat.CF-LD02`: Landing on wheels/shaft `wheel_fr` shaft (d 3.0 mm, overhang 0.0 mm) SF 127.08 at a 20 g landing.
+- **warning** `threat.CF-LD03`: Component ejection on landing Weak point: `esc` free toward +x/-x/+y/-y/+z; `switch` free toward +x/+z. WHY: Loose battery/receiver moves and rips connectors. FIX: Add pockets, foam, zip-ties. (extends internal.no_contact)
+  - Fix: Add pockets, foam, zip-ties.
+- **pass** `threat.CF-DB01`: Wheel-to-guard gap jam band No wheel-to-structure gap in the 1.5-15 mm debris band.
+- **pass** `threat.CF-DB03`: Belt/pulley pinch point exposure Belts and pulleys are enclosed.
+- **pass** `threat.CF-DB04`: Open vents/holes admitting debris Nothing electronic is open from above.
+- **pass** `threat.CF-DB05`: Exposed gearbox/motor shaft Motors and gearboxes are shrouded.
+- **pass** `threat.CF-DB06`: Tyre debris trap (treads) Smooth tyres.
+- **pass** `threat.CF-ST01`: Layer-direction weakness at hit points `tub` front/side wall SF 2.63 (layer knockdown 0.4).
+- **warning** `threat.CF-ST02`: Thin wall at hit point Weak point: Thin exposed walls (10th percentile): `skirt_l` 0.38 mm (needs 0.8); `skirt_r` 0.38 mm (needs 0.8); `skirt_rear` 0.38 mm (needs 0.8); `tub` 1.88 mm (needs 2.5). WHY: Wall thickness < 2 mm fails on any spinner hit. FIX: Thicken. (extends R105)
+  - Fix: Thicken.
+- **warning** `threat.CF-ST03`: Stress concentration at sharp internal corners Weak point: Sharp concave edges (dihedral < 120 deg, unfilleted): `tub` 1654 mm. WHY: Sharp internal corners crack. FIX: Fillet.
+  - Fix: Fillet.
+- **warning** `threat.CF-ST04`: Bolt boss pull-out under hit Weak point: Fastener `bolt_b0` pull-out SF 0.00 at dynamic factor 3. WHY: Bosses in PLA tear out. FIX: Heat-set inserts, through-bolts. (extends strength.bolt_pullout)
+  - Fix: Heat-set inserts, through-bolts.
+- **warning** `threat.CF-ST05`: Brittle material on impact face Weak point: Brittle material on the impact faces: base_plate, top_plate. WHY: PLA shatters; TPU/PETG/Nylon absorb. FIX: PETG/Nylon/TPU. (extends R105)
+  - Fix: PETG/Nylon/TPU.
+- **pass** `threat.CF-ST06`: Global frame torsion / split `tub` weakest side-side section at -28.9 mm: SF 1.18.
+- **pass** `threat.CF-GD01`: Chunk-removal survivability Drive survives 100% of 81 front/side hits.
+- **warning** `threat.CF-GD02`: Single-point-of-failure wire Weak point: Main lead `w_sw_esc` passes 0.3 mm from the outer skin. WHY: One wire supplying everything near the skin. FIX: Route main leads centrally. (extends wiring.route)
+  - Fix: Route main leads centrally.
+- **warning** `threat.CF-GD03`: Battery near impact face Weak point: `battery` sits 5.6 mm inside the outer skin. WHY: LiPo puncture -> fire / disqualification. FIX: Centre battery; cage. (extends R120,R121)
+  - Fix: Centre battery; cage.
+- **pass** `threat.CF-GD04`: Receiver/antenna exposure Receiver `rx` is 12.1 mm inside the skin.
+- **pass** `threat.CF-GD05`: Drive redundancy Drive motors per side: 2 left, 2 right.
+- **pass** `threat.CF-GD06`: Switch/link accessibility and protection Switch `switch` is enclosed.
+- **pass** `threat.CF-GD07`: Connector strain relief Every wire has >= 5 mm slack.
+- **pass** `threat.CF-GD09`: ESC thermal/mechanical isolation ESCs are isolated.
+- **pass** `threat.CF-AS05`: Snag on arena screws/hazard plates Side skirt bottom edges are chamfered.
+- **pass** `threat.CF-OW05`: Power-on after inversion (battery shift) Battery held upward (stays put inverted).
+- **pass** `threat.CFX-SWITCH`: Switch flicked off or ripped by spinner, wedge or floor when inverted Switch is shielded from the side and from the floor when inverted.
+- **warning** `threat.CFX-FRICTION`: Friction-fit pins / tyres unseat under shock Weak point: Held only by friction/press fit: pivot_pin/tub. WHY: Shock loads of 50-200 g walk friction fits out; tyres roll off rims. FIX: Add a key, grub screw, glue, retaining lip or fastener.
+  - Fix: Add a key, grub screw, glue, retaining lip or fastener.
+- **warning** `threat.CFX-TAPE`: Taped electronics loosen Weak point: Held only by tape/velcro: battery, rx. WHY: Tape and velcro creep and peel under repeated impacts; parts then rattle and rip wires. FIX: Pocket the part in the frame, strap it, or screw it down; tape only as a secondary hold.
+  - Fix: Pocket the part in the frame, strap it, or screw it down; tape only as a secondary hold.
+- **warning** `threat.CFX-STATE`: Degraded-state answers (state x threat) Weak point: No answer when: on its side / against a wall (trapped rest pose). WHY: Fights are lost in degraded states (inverted, one side dead, weapon dead, failsafe, walled), not in the nominal one. FIX: Add invertibility/self-right, 4WD, a ground-game lip, failsafe and rounded sides as reported.
+  - Fix: Add invertibility/self-right, 4WD, a ground-game lip, failsafe and rounded sides as reported.
+- **pass** `fastener_seat.ok`: Screw heads and threads fit their holes 18 fasteners probed.
+- **warning** `cots.fidelity`: Bought part has no identifying features `motor_fr` (bbb_n10_1000rpm) has no feature table, so its model is not checked against the real part.
+  - Fix: Add the catalog id to cots_fidelity.FEATURES or give the part `features`.
+- **warning** `cots.fidelity`: Bought part has no identifying features `motor_fl` (bbb_n10_1000rpm) has no feature table, so its model is not checked against the real part.
+  - Fix: Add the catalog id to cots_fidelity.FEATURES or give the part `features`.
+- **warning** `cots.fidelity`: Bought part has no identifying features `motor_rr` (bbb_n10_1000rpm) has no feature table, so its model is not checked against the real part.
+  - Fix: Add the catalog id to cots_fidelity.FEATURES or give the part `features`.
+- **warning** `cots.fidelity`: Bought part has no identifying features `motor_rl` (bbb_n10_1000rpm) has no feature table, so its model is not checked against the real part.
+  - Fix: Add the catalog id to cots_fidelity.FEATURES or give the part `features`.
+- **pass** `wire.render_wires`: Every robot render shows the wiring 4 robot render(s) draw all 7 wires.
+- **pass** `wire.rotor_clearance`: Wires clear every rotor 7 wires keep >= 2 mm from 5 rotor(s) (closest 4.9 mm).
+- **pass** `wire.render_count`: Render wire count matches 4 render record(s) list all 7 spec wires.
+- **pass** `fastener.hole_record`: Fasteners recorded 18 fasteners have hole records and enough thread.
+- **pass** `fastener.drive_recess`: Screw heads carry a tool recess 18 screw head(s) have a drive pocket.
+- **warning** `print.orientation_declared`: Declared print orientation needs support `tub` printed build-up +z (as declared) leaves 708 mm² of overhang steeper than 45° and a 54.4 mm bridge; build-up -z would leave 694 mm².
+  - Fix: Chamfer the overhangs for the declared orientation, or change `print_orientation`.
+- **pass** `retention.declared`: Axial holds taken on declaration (not checked geometrically) `wheel_fr` (declared `press_fit`: D-bore press fit (0.05 mm interference) on the 3 mm motor shaft: the flat carries the torque and the fit holds axially); `wheel_fl` (declared `press_fit`: D-bore press fit (0.05 mm interference) on the 3 mm motor shaft: the flat carries the torque and the fit holds axially); `wheel_rr` (declared `press_fit`: D-bore press fit (0.05 mm interference) on the 3 mm motor shaft: the flat carries the torque and the fit holds axially); `wheel_rl` (declared `press_fit`: D-bore press fit (0.05 mm interference) on the 3 mm motor shaft: the flat carries the torque and the fit holds axially); `fork_0` (declared `shaft` to `pivot_pin`: the fork eye rides on the M3 pivot pin: free to swing about it, captured axially by the nyloc in the cheek boss); `fork_1` (declared `shaft` to `pivot_pin`: the fork eye rides on the M3 pivot pin: free to swing about it, captured axially by the nyloc in the cheek boss); `fork_2` (declared `shaft` to `pivot_pin`: the fork eye rides on the M3 pivot pin: free to swing about it, captured axially by the nyloc in the cheek boss)
+- **pass** `retention.axial`: Rotating parts held both ways 7 rotating parts each captured (head one way, thread/nut/hold the other).
+- **pass** `mfg.sharp_internal_corner`: Sharp corners accepted `tub` opts out: the flagged concave corners are where the lead slots and tap drills break through the rib / pad faces: knife edges between two cuts in an open cavity, not load-bearing notches; every structural wall is the full WALL 2.0 mm
+- **pass** `visual.lead`: Every lead ends a wire 11 lead / terminal port(s) all end a declared wire whose route starts at the lead.
+- **pass** `visual.ligament.scan`: Bore walls scanned 1 printed part(s) scanned for bore walls on all three axes.
+- **pass** `visual.terminal`: Terminals modelled 4 terminal / lead port(s) sit on their part's tab or lead.
+- **pass** `practice.symmetry`: Two-sided geometry comes from one code path No hand-built +/- pairs.
+- **warning** `practice.point_table`: Coordinate tables in the build code 1 table(s) of measured points instead of dims + relations: drive.py:15 `QUADRANTS` (4 points)
+  - Fix: Draw the outline as a sketch with dims and relations (or tag `# param: organic <why>`).
+- **warning** `practice.blend_consistency`: Blends run the whole edge `tub`: stops at [-34.2, -11.52, 19.0]: sharp for 22 sample(s) inside an R0.75 run; stops at [-34.2, -4.47, 3.0]: sharp for 11 sample(s) inside an R0.75 run; stops at [28.21, 20.0, 5.7]: sharp for 1 sample(s) inside an R0.50 run; stops at [7.9, 10.33, 10.9]: sharp for 4 sample(s) inside an R0.45 run; stops at [7.9, -10.23, 10.0]: sharp for 4 sample(s) inside an R0.45 run; stops at [8.0, 34.2, 18.27]: sharp for 7 sample(s) inside an R2.21 run; stops at [-8.0, -34.2, 18.27]: sharp for 7 sample(s) inside an R2.21 run; radius at [23.8, 50.87, 7.53]: R4.10..R4.34 on one run; stops at [19.0, 51.5, 11.0]: sharp for 1 sample(s) inside an R0.87 run; stops at [18.32, -5.85, 10.0]: sharp for 1 sample(s) inside an R0.45 run ... (12)
+  - Fix: Select the whole tangent edge chain for a blend (not edges by length) and give it one radius.
+- **warning** `practice.radius_palette`: Blend radii from a small palette `tub`: R2.1 on 5 sample(s) (e.g. [-5.7, -36.5, 19.05]) next to the part's common R2.24 (389)
+  - Fix: Use the part's common radius, or name the odd one as its own param with the reason.
+- **warning** `practice.chamfer_corners`: Chamfers turn their corners `tub`: square corner at [22.0, 44.43, 7.5] beside a chamfer ending at [21.4, 45.17, 7.5]; square corner at [19.0, 45.88, 7.5] beside a chamfer ending at [20.2, 45.17, 7.5]
+  - Fix: Run the chamfer round the corner (chamfer the whole loop, or the corner edge too).
+- **warning** `practice.symmetry`: Symmetric part is symmetric `top_plate`: 17.94 mm2 up to 0.597 mm off its mirror at [7.89, -36.5, 19.52] (Z = 19.75 plane, part 99% symmetric); 16.31 mm2 up to 0.599 mm off its mirror at [-45.29, -0.06, 19.51] (Z = 19.75 plane, part 99% symmetric); 15.88 mm2 up to 0.599 mm off its mirror at [45.38, 0.06, 19.51] (Z = 19.75 plane, part 99% symmetric); 15.94 mm2 up to 0.595 mm off its mirror at [-7.94, 36.66, 19.49] (Z = 19.75 plane, part 99% symmetric); 14.94 mm2 up to 0.598 mm off its mirror at [-7.98, -36.57, 19.52] (Z = 19.75 plane, part 99% symmetric); 15.06 mm2 up to 0.593 mm off its mirror at [7.98, 36.4, 19.48] (Z = 19.75 plane, part 99% symmetric)
+  - Fix: Build one side and mirror() it; a one-sided leftover means the two copies were built separately.
+- **warning** `practice.mirror_consistency`: Mirrored copies carry the same blends `top_plate`: 2 edge sample(s) near [-33.04, -38.95, 20.5]: R0.85 here vs R1.48 at the mirror image
+  - Fix: Blend the seed, then mirror / pattern the blended body so every copy carries the same fillets and chamfers.
+- **warning** `practice.blend_consistency`: Blends run the whole edge `top_plate`: radius at [48.9, 0.0, 20.5]: R0.75..R0.89 on one run
+  - Fix: Select the whole tangent edge chain for a blend (not edges by length) and give it one radius.
+- **warning** `practice.radius_palette`: Blend radii from a small palette `top_plate`: R2.0 on 1 sample(s) (e.g. [13.5, -10.5, 19.5]) next to the part's common R2.25 (56); R2.9 on 1 sample(s) (e.g. [14.95, -10.88, 19.5]) next to the part's common R3.4 (26)
+  - Fix: Use the part's common radius, or name the odd one as its own param with the reason.
+- **pass** `practice.chamfer_corners`: Chamfers turn their corners `top_plate`: none.
+- **warning** `practice.symmetry`: Symmetric part is symmetric `base_plate`: 16.06 mm2 up to 0.596 mm off its mirror at [45.4, -0.03, 2.47] (Z = 2.25 plane, part 99% symmetric); 15.5 mm2 up to 0.599 mm off its mirror at [8.0, 36.39, 2.5] (Z = 2.25 plane, part 99% symmetric); 15.06 mm2 up to 0.598 mm off its mirror at [-45.44, 0.03, 2.51] (Z = 2.25 plane, part 99% symmetric); 15.06 mm2 up to 0.595 mm off its mirror at [-7.84, 36.58, 2.47] (Z = 2.25 plane, part 99% symmetric); 14.19 mm2 up to 0.598 mm off its mirror at [-8.01, -36.52, 2.46] (Z = 2.25 plane, part 99% symmetric); 14.0 mm2 up to 0.598 mm off its mirror at [7.81, -36.48, 2.45] (Z = 2.25 plane, part 99% symmetric)
+  - Fix: Build one side and mirror() it; a one-sided leftover means the two copies were built separately.
+- **warning** `practice.mirror_consistency`: Mirrored copies carry the same blends `base_plate`: 2 edge sample(s) near [33.04, -38.95, 1.5]: R0.85 here vs R1.48 at the mirror image; 1 edge sample(s) near [-32.99, 38.89, 1.5]: R0.91 here vs R1.48 at the mirror image
+  - Fix: Blend the seed, then mirror / pattern the blended body so every copy carries the same fillets and chamfers.
+- **warning** `practice.blend_consistency`: Blends run the whole edge `base_plate`: radius at [-48.9, 0.0, 1.5]: R0.75..R0.89 on one run; radius at [37.21, -40.0, 3.0]: R0.75..R0.95 on one run
+  - Fix: Select the whole tangent edge chain for a blend (not edges by length) and give it one radius.
+- **warning** `practice.radius_palette`: Blend radii from a small palette `base_plate`: R2.0 on 1 sample(s) (e.g. [14.24, -10.82, 2.5]) next to the part's common R2.25 (17); R2.4 on 2 sample(s) (e.g. [-44.99, 1.46, 2.03]) next to the part's common R2.25 (17); R2.98 on 2 sample(s) (e.g. [15.12, -10.61, 2.5]) next to the part's common R3.4 (20); R3.18 on 6 sample(s) (e.g. [18.72, -9.32, 2.5]) next to the part's common R3.4 (20)
+  - Fix: Use the part's common radius, or name the odd one as its own param with the reason.
+- **pass** `practice.chamfer_corners`: Chamfers turn their corners `base_plate`: none.
+- **pass** `practice.symmetry`: Symmetric part is symmetric `skirt_r`: none.
+- **pass** `practice.mirror_consistency`: Mirrored copies carry the same blends `skirt_r`: none.
+- **pass** `practice.blend_consistency`: Blends run the whole edge `skirt_r`: none.
+- **pass** `practice.radius_palette`: Blend radii from a small palette `skirt_r`: none.
+- **pass** `practice.chamfer_corners`: Chamfers turn their corners `skirt_r`: none.
+- **pass** `practice.symmetry`: Symmetric part is symmetric `skirt_l`: none.
+- **pass** `practice.mirror_consistency`: Mirrored copies carry the same blends `skirt_l`: none.
+- **pass** `practice.blend_consistency`: Blends run the whole edge `skirt_l`: none.
+- **pass** `practice.radius_palette`: Blend radii from a small palette `skirt_l`: none.
+- **pass** `practice.chamfer_corners`: Chamfers turn their corners `skirt_l`: none.
+- **pass** `practice.symmetry`: Symmetric part is symmetric `skirt_rear`: none.
+- **pass** `practice.mirror_consistency`: Mirrored copies carry the same blends `skirt_rear`: none.
+- **pass** `practice.blend_consistency`: Blends run the whole edge `skirt_rear`: none.
+- **pass** `practice.radius_palette`: Blend radii from a small palette `skirt_rear`: none.
+- **pass** `practice.chamfer_corners`: Chamfers turn their corners `skirt_rear`: none.
+- **pass** `practice.symmetry`: Symmetric part is symmetric `fork_0`: none.
+- **pass** `practice.mirror_consistency`: Mirrored copies carry the same blends `fork_0`: none.
+- **pass** `practice.blend_consistency`: Blends run the whole edge `fork_0`: none.
+- **pass** `practice.radius_palette`: Blend radii from a small palette `fork_0`: none.
+- **pass** `practice.chamfer_corners`: Chamfers turn their corners `fork_0`: none.
+- **pass** `practice.symmetry`: Symmetric part is symmetric `fork_1`: none.
+- **pass** `practice.mirror_consistency`: Mirrored copies carry the same blends `fork_1`: none.
+- **pass** `practice.blend_consistency`: Blends run the whole edge `fork_1`: none.
+- **pass** `practice.radius_palette`: Blend radii from a small palette `fork_1`: none.
+- **pass** `practice.chamfer_corners`: Chamfers turn their corners `fork_1`: none.
+- **pass** `practice.symmetry`: Symmetric part is symmetric `fork_2`: none.
+- **pass** `practice.mirror_consistency`: Mirrored copies carry the same blends `fork_2`: none.
+- **pass** `practice.blend_consistency`: Blends run the whole edge `fork_2`: none.
+- **pass** `practice.radius_palette`: Blend radii from a small palette `fork_2`: none.
+- **pass** `practice.chamfer_corners`: Chamfers turn their corners `fork_2`: none.
+- **pass** `param.literals`: Build code is parametric build_undertow.py: no function over 3 raw literals.
+- **pass** `param.literals`: Build code is parametric __init__.py: no function over 3 raw literals.
+- **pass** `param.literals`: Build code is parametric assembly.py: no function over 3 raw literals.
+- **warning** `param.pattern`: Literal coordinates form a regular pattern drive.py:15: 4 literal points lie on a grid.
+  - Fix: Generate them with GridLocations from a named pitch/radius/count.
+- **pass** `param.literals`: Build code is parametric drive.py: no function over 3 raw literals.
+- **pass** `param.literals`: Build code is parametric front_forks.py: no function over 3 raw literals.
+- **pass** `param.literals`: Build code is parametric front_mount.py: no function over 3 raw literals.
+- **pass** `param.literals`: Build code is parametric front_plough.py: no function over 3 raw literals.
+- **pass** `param.literals`: Build code is parametric hw.py: no function over 3 raw literals.
+- **warning** `param.unlinked`: Unlinked duplicate of a param panels.py: literal 1.5 (lines 23) equals `WHEEL_PROUD`.
+  - Fix: Write the relation (`WHEEL_PROUD`) instead of retyping its value.
+- **pass** `param.literals`: Build code is parametric panels.py: no function over 3 raw literals.
+- **pass** `param.literals`: Build code is parametric params.py: no function over 3 raw literals.
+- **pass** `param.literals`: Build code is parametric settings.py: no function over 3 raw literals.
+- **pass** `param.literals`: Build code is parametric skirts.py: no function over 3 raw literals.
+- **warning** `param.duplicate`: Repeated raw number tub.py: 0.2 appears 7× (lines 77, 125, 154, 154, 162, 175, 190).
+  - Fix: Make it one named param (or derive it from one).
+- **warning** `param.duplicate`: Repeated raw number tub.py: 0.1 appears 4× (lines 76, 123, 162, 175).
+  - Fix: Make it one named param (or derive it from one).
+- **warning** `param.unlinked`: Unlinked duplicate of a param tub.py: literal 12.0 (lines 94) equals `MOTOR_CAN_W`.
+  - Fix: Write the relation (`MOTOR_CAN_W`) instead of retyping its value.
+- **warning** `param.unlinked`: Unlinked duplicate of a param tub.py: literal 1.5 (lines 207, 212) equals `WHEEL_PROUD`.
+  - Fix: Write the relation (`WHEEL_PROUD`) instead of retyping its value.
+- **pass** `param.literals`: Build code is parametric tub.py: no function over 3 raw literals.
+- **warning** `param.copied`: Param is a copied raw decimal params.py: 67 constants are bare decimals, not built from other params: L22 CUBE_V43=101.6, L32 MASS_MARGIN_G=5, L58 WHEEL_PROUD=1.5, L60 WHEELBASE=52, L61 SPINE_HALF=8, L69 MOTOR_CAN_W=12, L70 MOTOR_CAN_H=10, L73 BULKHEAD_T=1.5, L83 CORNER_R=3.5, L84 PLATE_T=1.5, L110 BAT_AT[0]=-18.7, L110 BAT_AT[1]=-1.98 ...
+  - Fix: Derive it from the masters (relation), or tag `# param: datasheet <source>` / `# param: organic <why>`.
+- **pass** `param.budget`: Within the reference dimension budget 3 build functions checked
+- **pass** `waiver.inventory`: Waiver inventory total=42; allow_overlap=28; retained_reason=13; sharp_corners_ok=1
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=parts[0].sharp_corners_ok kind=sharp_corners_ok owner=tub key=sharp_corners_ok expires=missing
+  - Fix: At `parts[0].sharp_corners_ok` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=parts[6].retained_reason kind=retained_reason owner=motor_fr key=clamp expires=missing
+  - Fix: At `parts[6].retained_reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=parts[7].retained_reason kind=retained_reason owner=motor_fl key=clamp expires=missing
+  - Fix: At `parts[7].retained_reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=parts[8].retained_reason kind=retained_reason owner=motor_rr key=clamp expires=missing
+  - Fix: At `parts[8].retained_reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=parts[9].retained_reason kind=retained_reason owner=motor_rl key=clamp expires=missing
+  - Fix: At `parts[9].retained_reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=parts[10].retained_reason kind=retained_reason owner=wheel_fr key=press_fit expires=missing
+  - Fix: At `parts[10].retained_reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=parts[11].retained_reason kind=retained_reason owner=wheel_fl key=press_fit expires=missing
+  - Fix: At `parts[11].retained_reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=parts[12].retained_reason kind=retained_reason owner=wheel_rr key=press_fit expires=missing
+  - Fix: At `parts[12].retained_reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=parts[13].retained_reason kind=retained_reason owner=wheel_rl key=press_fit expires=missing
+  - Fix: At `parts[13].retained_reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=parts[17].retained_reason kind=retained_reason owner=pivot_pin key=nut expires=missing
+  - Fix: At `parts[17].retained_reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=parts[18].retained_reason kind=retained_reason owner=battery key=strap expires=missing
+  - Fix: At `parts[18].retained_reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=parts[19].retained_reason kind=retained_reason owner=esc key=clamp expires=missing
+  - Fix: At `parts[19].retained_reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=parts[20].retained_reason kind=retained_reason owner=rx key=adhesive expires=missing
+  - Fix: At `parts[20].retained_reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=parts[21].retained_reason kind=retained_reason owner=switch key=clamp expires=missing
+  - Fix: At `parts[21].retained_reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=allow_overlap[0].reason kind=allow_overlap owner=wheel_fr key=wheel_fr|motor_fr expires=missing
+  - Fix: At `allow_overlap[0].reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=allow_overlap[1].reason kind=allow_overlap owner=wheel_fl key=wheel_fl|motor_fl expires=missing
+  - Fix: At `allow_overlap[1].reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=allow_overlap[2].reason kind=allow_overlap owner=wheel_rr key=wheel_rr|motor_rr expires=missing
+  - Fix: At `allow_overlap[2].reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=allow_overlap[3].reason kind=allow_overlap owner=wheel_rl key=wheel_rl|motor_rl expires=missing
+  - Fix: At `allow_overlap[3].reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=allow_overlap[4].reason kind=allow_overlap owner=fork_0 key=fork_0|pivot_pin expires=missing
+  - Fix: At `allow_overlap[4].reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=allow_overlap[5].reason kind=allow_overlap owner=fork_1 key=fork_1|pivot_pin expires=missing
+  - Fix: At `allow_overlap[5].reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=allow_overlap[6].reason kind=allow_overlap owner=fork_2 key=fork_2|pivot_pin expires=missing
+  - Fix: At `allow_overlap[6].reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=allow_overlap[7].reason kind=allow_overlap owner=fork_0 key=fork_0|tub expires=missing
+  - Fix: At `allow_overlap[7].reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=allow_overlap[8].reason kind=allow_overlap owner=fork_1 key=fork_1|tub expires=missing
+  - Fix: At `allow_overlap[8].reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=allow_overlap[9].reason kind=allow_overlap owner=fork_2 key=fork_2|tub expires=missing
+  - Fix: At `allow_overlap[9].reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=allow_overlap[10].reason kind=allow_overlap owner=fork_0 key=fork_0|top_plate expires=missing
+  - Fix: At `allow_overlap[10].reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=allow_overlap[11].reason kind=allow_overlap owner=fork_0 key=fork_0|base_plate expires=missing
+  - Fix: At `allow_overlap[11].reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=allow_overlap[12].reason kind=allow_overlap owner=fork_1 key=fork_1|top_plate expires=missing
+  - Fix: At `allow_overlap[12].reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=allow_overlap[13].reason kind=allow_overlap owner=fork_1 key=fork_1|base_plate expires=missing
+  - Fix: At `allow_overlap[13].reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=allow_overlap[14].reason kind=allow_overlap owner=fork_2 key=fork_2|top_plate expires=missing
+  - Fix: At `allow_overlap[14].reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=allow_overlap[15].reason kind=allow_overlap owner=fork_2 key=fork_2|base_plate expires=missing
+  - Fix: At `allow_overlap[15].reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=allow_overlap[16].reason kind=allow_overlap owner=fork_0 key=fork_0|motor_fr expires=missing
+  - Fix: At `allow_overlap[16].reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=allow_overlap[17].reason kind=allow_overlap owner=fork_0 key=fork_0|motor_fl expires=missing
+  - Fix: At `allow_overlap[17].reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=allow_overlap[18].reason kind=allow_overlap owner=fork_0 key=fork_0|motor_rr expires=missing
+  - Fix: At `allow_overlap[18].reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=allow_overlap[19].reason kind=allow_overlap owner=fork_0 key=fork_0|motor_rl expires=missing
+  - Fix: At `allow_overlap[19].reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=allow_overlap[20].reason kind=allow_overlap owner=fork_1 key=fork_1|motor_fr expires=missing
+  - Fix: At `allow_overlap[20].reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=allow_overlap[21].reason kind=allow_overlap owner=fork_1 key=fork_1|motor_fl expires=missing
+  - Fix: At `allow_overlap[21].reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=allow_overlap[22].reason kind=allow_overlap owner=fork_1 key=fork_1|motor_rr expires=missing
+  - Fix: At `allow_overlap[22].reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=allow_overlap[23].reason kind=allow_overlap owner=fork_1 key=fork_1|motor_rl expires=missing
+  - Fix: At `allow_overlap[23].reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=allow_overlap[24].reason kind=allow_overlap owner=fork_2 key=fork_2|motor_fr expires=missing
+  - Fix: At `allow_overlap[24].reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=allow_overlap[25].reason kind=allow_overlap owner=fork_2 key=fork_2|motor_fl expires=missing
+  - Fix: At `allow_overlap[25].reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=allow_overlap[26].reason kind=allow_overlap owner=fork_2 key=fork_2|motor_rr expires=missing
+  - Fix: At `allow_overlap[26].reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.no_expiry`: Waiver has no expiry date path=allow_overlap[27].reason kind=allow_overlap owner=fork_2 key=fork_2|motor_rl expires=missing
+  - Fix: At `allow_overlap[27].reason` end the reason string with ` [expires YYYY-MM-DD]` (or, where the value is an object, add "expires": "YYYY-MM-DD"), a date by which the waiver is re-argued or removed.
+- **warning** `waiver.budget`: Too many waivers path=review.waiver_audit.max total=42; allow_overlap=28; retained_reason=13; sharp_corners_ok=1; max=25; top_owners=fork_0:8,fork_1:8,fork_2:8,wheel_fr:2,wheel_fl:2
+  - Fix: Fix the designs the oldest waivers cover and delete them; raise `review.waiver_audit.max` only with a written reason.
+- **warning** `waiver.budget`: Too many waivers on one owner owner=fork_0 count=8; max_per_part=4; allow_overlap=8; paths=allow_overlap[4].reason,allow_overlap[7].reason,allow_overlap[10].reason,allow_overlap[11].reason,allow_overlap[16].reason,allow_overlap[17].reason,allow_overlap[18].reason,allow_overlap[19].reason
+  - Fix: `fork_0` is waived 8 times: redesign it so the checks pass, and delete the waivers that no longer apply.
+- **warning** `waiver.budget`: Too many waivers on one owner owner=fork_1 count=8; max_per_part=4; allow_overlap=8; paths=allow_overlap[5].reason,allow_overlap[8].reason,allow_overlap[12].reason,allow_overlap[13].reason,allow_overlap[20].reason,allow_overlap[21].reason,allow_overlap[22].reason,allow_overlap[23].reason
+  - Fix: `fork_1` is waived 8 times: redesign it so the checks pass, and delete the waivers that no longer apply.
+- **warning** `waiver.budget`: Too many waivers on one owner owner=fork_2 count=8; max_per_part=4; allow_overlap=8; paths=allow_overlap[6].reason,allow_overlap[9].reason,allow_overlap[14].reason,allow_overlap[15].reason,allow_overlap[24].reason,allow_overlap[25].reason,allow_overlap[26].reason,allow_overlap[27].reason
+  - Fix: `fork_2` is waived 8 times: redesign it so the checks pass, and delete the waivers that no longer apply.
+- **pass** `waiver.blanket`: Every waiver names one check total=42
+- **warning** `waiver.duplicate_reason`: Same reason pasted on many waivers count=4 min=4 reason='d-bore press fit (0.05 mm interference) on the 3 mm motor shaft: the flat carrie'; paths=parts[10].retained_reason,parts[11].retained_reason,parts[12].retained_reason,parts[13].retained_reason
+  - Fix: Write for each waiver why THAT place is acceptable (what was measured, which reference part shows it), or fix the shared cause once and delete them.
+- **warning** `waiver.duplicate_reason`: Same reason pasted on many waivers count=12 min=4 reason='the fork swings in its own x-plane (0.8 mm thick at x -17/0/+17) while the motor'; paths=allow_overlap[16].reason,allow_overlap[17].reason,allow_overlap[18].reason,allow_overlap[19].reason,allow_overlap[20].reason,allow_overlap[21].reason,allow_overlap[22].reason,allow_overlap[23].reason,allow_overlap[24].reason,allow_overlap[25].reason,allow_overlap[26].reason,allow_overlap[27].reason
+  - Fix: Write for each waiver why THAT place is acceptable (what was measured, which reference part shows it), or fix the shared cause once and delete them.
+- **warning** `waiver.duplicate_reason`: Same reason pasted on many waivers count=6 min=4 reason='the fork swings through the arc slots cut for it; the 1.0 mm plates inside the s'; paths=allow_overlap[10].reason,allow_overlap[11].reason,allow_overlap[12].reason,allow_overlap[13].reason,allow_overlap[14].reason,allow_overlap[15].reason
+  - Fix: Write for each waiver why THAT place is acceptable (what was measured, which reference part shows it), or fix the shared cause once and delete them.
+- **warning** `waiver.duplicate_reason`: Same reason pasted on many waivers count=4 min=4 reason='the wheel is fused to its motor (d-bore press fit on the 3 mm shaft, d-flat keys'; paths=allow_overlap[0].reason,allow_overlap[1].reason,allow_overlap[2].reason,allow_overlap[3].reason
+  - Fix: Write for each waiver why THAT place is acceptable (what was measured, which reference part shows it), or fix the shared cause once and delete them.
+- **warning** `waiver.duplicate_reason`: Same reason pasted on many waivers count=4 min=4 reason="the wheel's d-bore is a press fit on the motor shaft and clamps the gearbox face"; paths=parts[6].retained_reason,parts[7].retained_reason,parts[8].retained_reason,parts[9].retained_reason
+  - Fix: Write for each waiver why THAT place is acceptable (what was measured, which reference part shows it), or fix the shared cause once and delete them.
+- **warning** `geom.near_coplanar_step`: Faces almost flush, not quite `tub`: 15 pair(s) of parallel faces stepped by less than 0.1 mm. World mm: [45.4, -0.0, 19.1] step 0.1000 mm; [-8.0, -36.5, 19.1] step 0.1000 mm; [-8.0, -36.5, 19.1] step 0.1000 mm; [8.0, -36.5, 19.1] step 0.1000 mm; [8.0, -36.5, 19.1] step 0.1000 mm (+10 more).
+  - Fix: The two faces were meant to be one plane. Build both features from the same datum (extrude `until` the existing face, or reuse its parameter) instead of two offsets that differ by the step; if the step is intended, make it >= the threshold or list it in the part's `geom_ok`.
+- **pass** `geom.tiny_edge`: No tiny edges 10 made part(s) judged and clean.
+- **pass** `geom.sliver_face`: No sliver faces 10 made part(s) judged and clean.
+- **pass** `geom.near_coplanar_step`: No near-flush steps 9 made part(s) judged and clean.
+- **pass** `geom.near_miss_hole`: Coaxial holes are concentric 10 made part(s) judged and clean.
+- **pass** `geom.off_axis_face`: No slightly skewed faces 10 made part(s) judged and clean.
+- **pass** `geom.zero_thickness`: Parts have real thickness and volume 10 made part(s) judged and clean.
+- **pass** `dfm.bed_contact`: Enough flat area on the bed 1 of 1 judged item(s) pass.
+- **pass** `dfm.tall_thin`: Not tall and thin on the bed 1 of 1 judged item(s) pass.
+- **pass** `dfm.horizontal_hole`: No large round hole printed on its side 1 of 1 judged item(s) pass.
+- **pass** `dfm.sheet_tab_width`: Outline has no tab or neck under one thickness 5 of 5 judged item(s) pass.
+- **pass** `harness.off`: Harness not judged The spec does not enable the wiring harness group.
+- **pass** `engagement.ok`: Screws span their stacks and bite enough 18 fasteners: every shank is longer than its clamped stack, minimum thread engagement 250% of one diameter.
+- **pass** `tool_access.ok`: Every fastener is reachable by its tool 18 fasteners: undeclared-tool screws have a clear driver path, every nut has wrench clearance.
+- **warning** `wire_care.bend`: Wire bends tighter than its fatigue limit `w_sw_esc` turns a 1.0 mm radius bend at via [9.5, -16.31, 6.475]; 2 x its 1.6 mm diameter is the floor.
+  - Fix: Move the via so the bend opens up, or add a waypoint: a tight kink work-hardens the strands and the lead fails at the connector.
+- **warning** `wire_care.bend`: Wire bends tighter than its fatigue limit `w_esc_rx` turns a 2.3 mm radius bend at via [20.5, -6.0, 13.9]; 2 x its 1.3 mm diameter is the floor.
+  - Fix: Move the via so the bend opens up, or add a waypoint: a tight kink work-hardens the strands and the lead fails at the connector.
+- **warning** `rf.noise_proximity`: Receiver sits on a noise source `rx` is 10.5 mm from `esc` (esc, motor noise); under 20 mm the PWM switching noise swamps 2.4 GHz.
+  - Fix: Move the receiver to the far corner of the chassis from the motors/ESCs, or shield and twist the motor wires.
+- **warning** `rf.antenna_blocked`: Antenna exit path blocked by conductive material `top_plate` (conductive: carbon_fibre) sits over `rx`'s top face within 15 mm - the antenna radiates from there and 2.4 GHz does not pass through metal or carbon.
+  - Fix: Cut a window in the plate, use plastic there, or stand the antenna out through a tube before the plate.
+- **pass** `traction.ok`: Centre of mass sits over the drive contact patch COM is 31.5 mm inside the driven-wheel contact patch (half-extent 32.2 mm); pushing keeps the load on the driven wheels.
+- **warning** `robust.sweep`: Robustness sweep had no baseline spec generation failed (rc 1): AttributeError: module 'undertow.params' has no attribute 'Z_TOP_START'
+- **pass** `claim.holds`: Claim matches the model "weighs 150 g or less" (mass_total_g <= 150)
+- **pass** `claim.holds`: Claim matches the model "fits the 150 mm square" (footprint_mm <= 150)
+
+## Mass budget
+
+| Part | Grams | Plus/minus | Source |
+|---|---|---|---|
+| tub | 24.90 | 4.98 | computed |
+| top_plate | 14.47 | 0.58 | computed |
+| base_plate | 14.47 | 0.58 | computed |
+| skirt_r | 2.81 | 0.11 | computed |
+| skirt_l | 2.81 | 0.11 | computed |
+| skirt_rear | 3.52 | 0.14 | computed |
+| motor_fr | 8.00 | 0.24 | catalog |
+| motor_fl | 8.00 | 0.24 | catalog |
+| motor_rr | 8.00 | 0.24 | catalog |
+| motor_rl | 8.00 | 0.24 | catalog |
+| wheel_fr | 3.50 | 0.10 | catalog |
+| wheel_fl | 3.50 | 0.10 | catalog |
+| wheel_rr | 3.50 | 0.10 | catalog |
+| wheel_rl | 3.50 | 0.10 | catalog |
+| fork_0 | 0.82 | 0.03 | computed |
+| fork_1 | 0.82 | 0.03 | computed |
+| fork_2 | 0.82 | 0.03 | computed |
+| pivot_pin | 3.36 | 0.13 | computed |
+| battery | 13.30 | 0.40 | catalog |
+| esc | 7.00 | 0.21 | catalog |
+| rx | 4.50 | 0.67 | catalog |
+| switch | 2.15 | 0.06 | catalog |
+| nut_front | 0.25 | 0.01 | catalog |
+| bolt_t0 | 0.24 | 0.01 | fastener |
+| bolt_b0 | 0.24 | 0.01 | fastener |
+| bolt_t1 | 0.24 | 0.01 | fastener |
+| bolt_b1 | 0.24 | 0.01 | fastener |
+| bolt_t2 | 0.24 | 0.01 | fastener |
+| bolt_b2 | 0.24 | 0.01 | fastener |
+| bolt_t3 | 0.24 | 0.01 | fastener |
+| bolt_b3 | 0.24 | 0.01 | fastener |
+| bolt_t4 | 0.24 | 0.01 | fastener |
+| bolt_b4 | 0.24 | 0.01 | fastener |
+| bolt_t5 | 0.24 | 0.01 | fastener |
+| bolt_b5 | 0.24 | 0.01 | fastener |
+| skirt_r0 | 0.23 | 0.01 | fastener |
+| skirt_l0 | 0.23 | 0.01 | fastener |
+| skirt_r1 | 0.23 | 0.01 | fastener |
+| skirt_l1 | 0.23 | 0.01 | fastener |
+| skirt_rear0 | 0.23 | 0.01 | fastener |
+| skirt_rear1 | 0.23 | 0.01 | fastener |
+| wires | 1.37 | 0.41 | wire |
+| allowance | 1.20 | 0.60 | declared |
+
+## Wire routes
+
+| Wire | AWG | Diameter mm | Length mm |
+|---|---|---|---|
+| w_bat_sw | 24 | 1.6 | 60 |
+| w_sw_esc | 24 | 1.6 | 78 |
+| w_esc_rx | 26 | 1.3 | 68 |
+| w_m1_fr | 26 | 1.3 | 71 |
+| w_m1_fl | 26 | 1.3 | 75 |
+| w_m2_rr | 26 | 1.3 | 130 |
+| w_m2_rl | 26 | 1.3 | 67 |
+
+## NOT CHECKED
+
+The verifier did not judge these. A clean report says nothing about them.
+
+- Strength: arm, fork and shell bending under impact (no stress or stiffness model; load path is not traced)
+- Battery access and field service: swap time, number of fasteners to reach the battery or change a wheel
+- Wire tether in assembly order: soldered wires between parts are not part of the disassembly sweep
+- Heat-set insert iron clearance and soldering-iron access
+- Gyro, spin-up time and ESC current limits of the weapon
+- Thermal limits and glue or tape strength (declared only)
+- Switch `switch` recess: no surrounding surface found next to it
+- Process: single-profile neck width (web inside one outline) and fdm overhangs per declared orientation are not checked here
+- Archetype rule `wedge_floor_gap`: no wedge
+- Archetype rule `wedge_angle`: no wedge
+- Archetype rule `wedge_width`: no wedge
+- Electrical `switch_rating`: switch `switch` has no current rating (add `ratings.current_a`)
+- combat.R073 Drive can spin the wheels: Motor torque, wheel size, mass or tyre grip not known.
+- combat.R017: Arena seam crossing at speed (dynamic bounce over a 1-2 mm step)
+- combat.R018: Skirt wear and lip rounding over a fight
+- combat.R039: Countersunk skirt screws flush with the ramp (head protrusion above the ramp face)
+- combat.R044: Fork tine stiffness under a 50 N side load
+- combat.R045: Fork tip shape (pointed vs square) against opponent wedge lips
+- combat.R055: Vertical weapon spin direction (checked by kin.spin_dir)
+- combat.R056: Weapon hit reaction: hop and recoil wheelie of the robot
+- combat.R057: Gyroscopic lift/walk of a vertical spinner while turning (see dynamics gyro)
+- combat.R058: Horizontal spinner recoil spin-out after a hit
+- combat.R059: Weapon spin-up time vs closing distance
+- combat.R075: Acceleration and closing time across the arena
+- combat.R076: Tyre hardness (Shore) and dust pickup
+- combat.R077: Tyre compression under load lowering the skirt
+- combat.R078: Drive current limit while pushing (ESC/BEC)
+- combat.R079: Driver control: steering response and drive mixing
+- combat.R087: Ground effect of wires and loose tape under the robot
+- combat.R088: Battery puncture risk from floor impacts
+- combat.R095: Self-righting mechanism actually rights the robot
+- combat.R096: Inverted controls (remote mixing flip)
+- combat.R097: Behaviour on its side (rolls back onto wheels)
+- combat.R103: Top armour protrusions that a lifter can hook
+- combat.R104: Overhangs on the outline that trap an opponent's wedge
+- combat.R105: Armour material per face vs the expected weapon
+- combat.R117: Wheel hubs survive a side hit (hub/axle strength)
+- combat.R118: Wheel guards stiff enough to stop a spinner
+- combat.R122: Pit and arena edge: rear overhang falling into the pit
+- combat.R123: Arena wall: skirt catching the wall bottom rail
+- combat.R124: Pushing match outcome vs a heavier opponent (mass + grip)
+- combat.R125: Lifter/flipper arm stays below the skirt line when lowered
+- physics weapon: power group gave no weapon_rpm / weapon_energy_j
+- physics.esc_margin `esc`: no ESC rating or load
+- physics.push: motor stall torque unknown
+- Impact/gyro: no weapon energy + rpm + mass (run the power and mass groups first)
+- Rest pose: no weapon body with a spin axis, the dead-pose sweep is not judged
+- Clearance at rest: no wedge parts, tip deflection is not judged
+- threat.CFX-ANTENNA Antenna shear: No antenna modelled: route it internally or model it as a part.
+- reference.unmapped_part: no reference parts index (reference_cad.dir)
+- wire.render_present: no `renders` dir declared, rendered wiring not checked
+- harness.*: the wiring harness is not planned (set `harness.enabled` in the spec)
+- Requirements: the spec declares no requirements block
+- Builder: the spec declares no `builder` profile; machine fit, shelf materials, tools, budget and skill not judged
+- robust: baseline failed: spec generation failed (rc 1): AttributeError: module 'undertow.params' has no attribute 'Z_TOP_START'

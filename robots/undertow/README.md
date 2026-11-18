@@ -2,7 +2,10 @@
 
 ![Undertow (4WD invertible wedge / control bot)](renders/iso.png)
 
-Verifier (`aws2025`): has blockers. 26 blockers, 230 warnings, 340 checks passed. 55 items NOT CHECKED (see REPORT.md).
+Verifier (`aws2025`): ok=True — 0 blockers, 291 warnings, 367 checks passed. Mass 148.8 g (limit 150 g).
+
+Switch note: the archetype prefers a side-reachable switch; Undertow's switch is reachable from the top
+(sky hole in both plates) only, so `switch_access` stays a warning, not a blocker.
 
 Mass 140.4 g (range 129.8 to 151.0 g).
 
