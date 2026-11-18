@@ -2,7 +2,7 @@
  "name": "failure to launch",
  "profile": "aws2025",
  "robot_type": "flipper",
- "locomotion": "wheels",
+ "locomotion": "roller",
  "kit_draft": true,
  "parts": [
   {
@@ -326,20 +326,8 @@
  "connections": [],
  "reference": [
   {
-   "image": "reference/failure_to_launch.aws63.webp",
-   "mask": "reference/failure_to_launch.aws63_mask.png",
-   "view": "iso",
-   "approximate": true
-  },
-  {
    "image": "reference/ftl.webp",
    "mask": "reference/ftl_mask.png",
-   "view": "iso",
-   "approximate": true
-  },
-  {
-   "image": "reference/ftl_original.webp",
-   "mask": "reference/ftl_original_mask.png",
    "view": "iso",
    "approximate": true
   }

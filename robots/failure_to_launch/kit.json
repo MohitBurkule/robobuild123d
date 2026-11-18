@@ -78,8 +78,10 @@
   }
  ],
  "textured": [
+  1
+ ],
+ "skip_photos": [
   0,
-  1,
   2
  ],
  "name": "failure to launch",

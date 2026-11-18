@@ -6,13 +6,9 @@
   "axis": "x"
  },
  "photos": [
-  "failure_to_launch.aws63.webp",
-  "ftl.webp",
-  "ftl_original.webp"
+  "ftl.webp"
  ],
  "mask_mode": {
-  "failure_to_launch.aws63.webp": "textured",
-  "ftl.webp": "textured",
-  "ftl_original.webp": "textured"
+  "ftl.webp": "textured"
  }
 }
