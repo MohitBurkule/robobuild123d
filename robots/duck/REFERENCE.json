@@ -15,11 +15,11 @@
  "view": {
   "duck_ling_.aws67.webp": "front_left_iso",
   "duck_ling_.aws71.webp": "front_left_iso",
-  "duck_ling_.aws72.webp": "front_left_iso"
+  "duck_ling_.aws72.webp": "front_right_iso"
  },
- "elevation": {
-  "duck_ling_.aws67.webp": 45,
-  "duck_ling_.aws71.webp": 45,
-  "duck_ling_.aws72.webp": 45
+ "view_source": {
+  "duck_ling_.aws72.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label",
+  "duck_ling_.aws71.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label",
+  "duck_ling_.aws67.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label"
  }
 }

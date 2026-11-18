@@ -1,19 +1,19 @@
-BLOCKERS: 15
-  [cached] integrity 0.00s
+BLOCKERS: 14
+  [cached] integrity 0.01s
   [cached] mass 0.00s
-  [proxy] interference 0.12s
+  [proxy] interference 0.42s
   [cached] connections 0.00s
   [cached] legal 0.00s
   [cached] fasteners 0.00s
   [cached] power 0.00s
-  [cached] tension 0.00s
+  [cached] tension 0.01s
   [cached] targets 0.00s
   [cached] fight 0.00s
   [cached] shape 0.00s
   [cached] dynamics 0.00s
-  [cached] strength 0.00s
+  [cached] strength 0.01s
   [cached] printability 0.00s
-  [cached] process 0.01s
+  [cached] process 0.00s
   [cached] electrical 0.00s
   [cached] combat 0.00s
   [cached] physics 0.00s
@@ -21,17 +21,17 @@ BLOCKERS: 15
   [cached] cots 0.00s
   [cached] fit 0.00s
   [cached] bom 0.00s
-  [cached] wire_review 0.00s
+  [cached] wire_review 0.01s
   [cached] fastener_record 0.00s
-  [cached] likeness 0.00s
+  [ran] likeness 15.12s
   [cached] drive_recess 0.00s
   [cached] belt_wrap 0.00s
   [cached] retention 0.00s
-  [cached] waiver_audit 0.00s
+  [cached] waiver_audit 0.01s
   [cached] geom 0.00s
   [cached] dfm 0.00s
   [cached] realworld 0.00s
-duck: ok=False 15 blockers in 15 root causes, mass 160.6/150 g
+duck: ok=False 14 blockers in 14 root causes, mass 160.6/150 g
 1. [mass.over] 160.6 g (range 130.4 to 190.7 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
 2. [power.weapon_motor] `flipper` names motor None; it must be a catalog brushless motor so speed can be computed.
@@ -89,7 +89,7 @@ duck: ok=False 15 blockers in 15 root causes, mass 160.6/150 g
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 12. [likeness.silhouette] `reference/duck_ling_.aws71.webp`: best silhouette IoU 0.66 at camera front_left_iso (elevation 45, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `vspin_drisk` at 0.78). Regions (photo frame, left third first) 0.42 / 0.78 / 0.65: worst = front third. Height/length 0.80 model vs 0.70 photo (too tall: lower it or lengthen it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
-... 3 more root causes (fix these first, then re-run)
+... 2 more root causes (fix these first, then re-run)
 MASS BUDGET:
   mass 160.6 g of 150 g (-10.6 g margin)
     chassis                    80.05 g  fills 21% of its box
@@ -109,4 +109,4 @@ MASS BUDGET:
     el_switch                   0.50 g  fills 100% of its box
     mass.over: 160.6 g (range 130.4 to 190.7 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: group 31 hit / 0 miss, min_gap 55 hit / 0 miss, overlap 188 hit / 0 miss, part_geom 15 hit / 0 miss
+cache: group 30 hit / 1 miss, inside 10 hit / 0 miss, likeness 0 hit / 3 miss, min_gap 55 hit / 0 miss, overlap 188 hit / 0 miss, part_geom 15 hit / 0 miss
