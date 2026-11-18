@@ -1,61 +1,62 @@
-BLOCKERS: unknown (outside rebuilt after this run; round 4 to be re-run)
-  [cached] integrity 0.00s
-  [cached] mass 0.00s
-  [proxy] interference 0.27s
-  [cached] connections 0.00s
-  [cached] legal 0.00s
-  [cached] fasteners 0.00s
-  [cached] power 0.00s
-  [cached] tension 0.00s
-  [cached] targets 0.00s
-  [cached] fight 0.00s
-  [cached] shape 0.00s
-  [cached] dynamics 0.00s
-  [cached] strength 0.00s
-  [cached] printability 0.00s
-  [cached] process 0.00s
-  [cached] electrical 0.00s
-  [cached] combat 0.00s
-  [cached] physics 0.00s
-  [cached] plausibility 0.00s
-  [cached] cots 0.00s
-  [cached] fit 0.00s
-  [cached] bom 0.00s
-  [cached] wire_review 0.00s
-  [cached] fastener_record 0.00s
-  [cached] likeness 0.00s
-  [cached] drive_recess 0.00s
-  [cached] belt_wrap 0.00s
-  [cached] retention 0.00s
-  [cached] waiver_audit 0.00s
-  [cached] geom 0.00s
-  [cached] dfm 0.00s
-  [cached] realworld 0.00s
-verty big secret: ok=False 9 blockers in 8 root causes, mass 197.8/150 g
+BLOCKERS: 9
+building 10 changed part solids on 4 processes
+  [ran] integrity 0.10s
+  [ran] mass 0.00s
+  [proxy] interference 15.87s
+  [ran] connections 0.21s
+  [ran] legal 0.02s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.02s
+  [ran] shape 0.54s
+  [ran] dynamics 0.00s
+  [ran] strength 0.11s
+  [ran] printability 1.24s
+  [ran] process 0.01s
+  [ran] electrical 0.01s
+  [ran] combat 0.15s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.10s
+  [ran] bom 0.00s
+  [ran] wire_review 0.02s
+  [ran] fastener_record 0.00s
+  [ran] likeness 5.66s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.20s
+  [ran] dfm 0.10s
+  [ran] realworld 0.18s
+verty big secret: ok=False 9 blockers in 8 root causes, mass 200.7/150 g
 1. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `chassis`. (+1 consequences)
    | weapon: x -2.00..2.00  y 0.93..51.06  z 8.00..60.01  size 4.00 x 50.13 x 52.01 mm
    |   centre (0.00, 26.00, 34.01), volume 7926.5 mm3
    |   joint revolute axis [1, 0, 0] pivot [0.0, 26.0, 34.0] range 0..360 default 0
    |   overlap allowed `lock_pin` 0.28 mm (allowed 1000.00)
    |   gap to `chassis` 0.00 mm (touching)
-2. [mass.over] 197.8 g (range 172.9 to 222.8 g) against the 150 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+2. [mass.over] 200.7 g (range 175.1 to 226.2 g) against the 150 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
-3. [wire.render_wires] 17 of 17 robot render(s) do not draw all 7 wires: renders/diff_verty_big_secret.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_verty_big_secret.aws74.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_verty_big_secret.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/iso.png: rendered without wires (checks off or no routes); renders/likeness_verty_big_secret.aws72_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_verty_big_secret.aws74_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_verty_big_secret.aws76_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_verty_big_secret.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn...
+3. [wire.render_wires] 2 of 2 robot render(s) do not draw all 7 wires: renders/iso.png: wire `w_bat_sw` not drawn (+1); renders/top.png: wire `w_bat_sw` not drawn (+1)
    fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
-4. [likeness.silhouette] `reference/verty_big_secret.aws72.webp`: best silhouette IoU 0.60 at camera front_right_iso (elevation 45, azimuth 30) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.65). Regions (photo frame, left third first) 0.58 / 0.70 / 0.39: worst = rear third. Height/length 0.77 model vs 0.73 photo (proportions ok).
+4. [wire.render_count] iso.png: 5 routes vs 7 spec wires (missing ['w_bat_sw', 'w_sw_esc']); top.png: 5 routes vs 7 spec wires (missing ['w_bat_sw', 'w_sw_esc'])
+   fix: Re-render: the render record must list exactly the spec's wires.
+5. [likeness.silhouette] `reference/verty_big_secret.aws72.webp`: best silhouette IoU 0.63 at camera front_left_iso (elevation 25, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.62). Regions (photo frame, left third first) 0.29 / 0.77 / 0.71: worst = front third. Height/length 0.77 model vs 0.73 photo (proportions ok).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
-5. [likeness.view] `reference/verty_big_secret.aws74.webp` is declared `front_right_iso` (IoU 0.45 there) but the model matches it better from front_right_iso (elevation 25, azimuth 30) (IoU 0.65).
-   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
-6. [likeness.silhouette] `reference/verty_big_secret.aws74.webp`: best silhouette IoU 0.45 at camera front_right_iso (elevation 45, azimuth 30) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.57). Regions (photo frame, left third first) 0.27 / 0.64 / 0.33: worst = front third. Height/length 0.77 model vs 0.70 photo (too tall: lower it or lengthen it).
+6. [likeness.silhouette] `reference/verty_big_secret.aws74.webp`: best silhouette IoU 0.65 at camera front_right_iso (elevation 25, azimuth 30) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.59). Regions (photo frame, left third first) 0.75 / 0.78 / 0.33: worst = rear third. Height/length 0.64 model vs 0.70 photo (too flat: raise it or shorten it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
-7. [likeness.view] `reference/verty_big_secret.aws76.webp` is declared `front_left_iso` (IoU 0.51 there) but the model matches it better from front_right_iso (elevation 25, azimuth 30) (IoU 0.65).
+7. [likeness.view] `reference/verty_big_secret.aws76.webp` is declared `front_left_iso` (IoU 0.60 there) but the model matches it better from rear_right_iso (elevation 25, azimuth 300) (IoU 0.68).
    fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
-8. [likeness.silhouette] `reference/verty_big_secret.aws76.webp`: best silhouette IoU 0.51 at camera front_left_iso (elevation 45, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.64). Regions (photo frame, left third first) 0.15 / 0.72 / 0.47: worst = front third. Height/length 0.77 model vs 0.82 photo (too flat: raise it or shorten it).
+8. [likeness.silhouette] `reference/verty_big_secret.aws76.webp`: best silhouette IoU 0.60 at camera front_left_iso (elevation 45, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.64). Regions (photo frame, left third first) 0.41 / 0.77 / 0.46: worst = front third. Height/length 0.73 model vs 0.82 photo (too flat: raise it or shorten it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
-  mass 197.8 g of 150 g (-47.8 g margin)
+  mass 200.7 g of 150 g (-50.7 g margin)
     weapon                     62.62 g  fills 76% of its box  <- solid block? a tub should be a shell
-    chassis                    46.11 g  fills 46% of its box
+    chassis                    44.81 g  fills 45% of its box
     el_battery                 21.50 g  fills 100% of its box  <- solid block? a tub should be a shell
     dm_wheel_l0                 9.50 g  fills 63% of its box
     dm_wheel_r0                 9.50 g  fills 63% of its box
@@ -63,20 +64,24 @@ MASS BUDGET:
     wheel_l0                    5.62 g  fills 66% of its box
     wheel_r0                    5.62 g  fills 66% of its box
     el_wesc                     5.00 g  fills 94% of its box
-    upright_l                   3.48 g  fills 60% of its box
-    upright_r                   2.57 g  fills 44% of its box
-    fork_l                      2.41 g  fills 23% of its box
-    fork_r                      2.41 g  fills 23% of its box
+    upright_l                   3.45 g  fills 59% of its box
+    rear_guard                  2.99 g  fills 62% of its box
+    upright_r                   2.51 g  fills 43% of its box
     el_esc                      2.30 g  fills 99% of its box
+    fork_l                      2.09 g  fills 50% of its box
+    fork_r                      2.09 g  fills 50% of its box
     dt_hub_wheel_l0             1.68 g  fills 76% of its box
     dt_hub_wheel_r0             1.68 g  fills 76% of its box
+    motor_can                   1.56 g  fills 33% of its box
     dt_shaft_weapon             1.39 g  fills 79% of its box
-    dt_mount_fork_l             1.20 g  fills 100% of its box
-    dt_mount_fork_r             0.88 g  fills 73% of its box
+    dt_mount_fork_l             0.96 g  fills 100% of its box
+    dt_mount_fork_r             0.72 g  fills 75% of its box
     el_switch                   0.50 g  fills 100% of its box
     lock_pin                    0.37 g  fills 79% of its box
+    side_spike_r                0.37 g  fills 37% of its box
+    side_spike_l                0.37 g  fills 37% of its box
     hook_r                      0.36 g  fills 29% of its box
     hook_l                      0.36 g  fills 40% of its box
-    mass.over: 197.8 g (range 172.9 to 222.8 g) against the 150 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.over: 200.7 g (range 175.1 to 226.2 g) against the 150 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: distance 8 hit / 0 miss, group 31 hit / 0 miss, min_gap 16 hit / 0 miss, overlap 301 hit / 0 miss, part_geom 23 hit / 0 miss
+cache: distance 8 hit / 5 miss, group 0 hit / 31 miss, inside 10 hit / 12 miss, likeness 3 hit / 0 miss, min_gap 2 hit / 16 miss, overlap 77 hit / 290 miss, part_check 7 hit / 11 miss, part_geom 27 hit / 0 miss, ray 13 hit / 202 miss
