@@ -9,3 +9,8 @@
 Decisions: type wedge; body box rect 80x100x26 mm, ramp 0; wheels 2 r12 inboard; weapon none; 6 forks 14 mm; extra parts: face.
 
 Likeness: aws72 0.82 (ok), aws74 0.81 (ok), aws76 0.80 (ok).
+
+## Round 2 (looks)
+Decisions: type wedge; body box rect 80x100x26 mm, ramp 0; wheels 2 r12 inboard; weapon none; 6 forks 14 mm; extra parts: face.
+
+Likeness: aws72 0.82 (ok), aws74 0.81 (ok), aws76 0.80 (ok).
