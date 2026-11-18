@@ -11,7 +11,7 @@
  "view": {
   "hot_flip.aws71.webp": "front_right_iso"
  },
- "elevation": {
-  "hot_flip.aws71.webp": 45
+ "view_source": {
+  "hot_flip.aws71.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label"
  }
 }
