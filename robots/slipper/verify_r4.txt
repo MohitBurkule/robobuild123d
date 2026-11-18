@@ -1,12 +1,12 @@
 BLOCKERS: 13
-  [cached] integrity 0.00s
+  [cached] integrity 0.01s
   [cached] mass 0.00s
-  [proxy] interference 0.17s
+  [proxy] interference 0.45s
   [cached] connections 0.00s
-  [cached] legal 0.00s
+  [cached] legal 0.01s
   [cached] fasteners 0.00s
   [cached] power 0.00s
-  [cached] tension 0.01s
+  [cached] tension 0.00s
   [cached] targets 0.00s
   [cached] fight 0.00s
   [cached] shape 0.00s
@@ -18,7 +18,7 @@ BLOCKERS: 13
   [cached] combat 0.00s
   [cached] physics 0.00s
   [cached] plausibility 0.00s
-  [cached] cots 0.00s
+  [cached] cots 0.01s
   [cached] fit 0.00s
   [cached] bom 0.00s
   [cached] wire_review 0.00s
