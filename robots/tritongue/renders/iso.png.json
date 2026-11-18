@@ -1,13 +1,20 @@
 {
  "spec": "/tmp/work10_tritongue/robots/tritongue/spec.json",
- "rendered_at": 1795023469.5946887,
+ "rendered_at": 1795036568.6092052,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
   "roller",
   "claw_l",
-  "claw_r"
+  "claw_r",
+  "dt_hub_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_esc",
+  "el_switch"
  ],
  "wires": {}
 }
