@@ -1,0 +1,17 @@
+{
+ "spec": "/tmp/work10_pingu/robots/pingu/spec.json",
+ "rendered_at": 1795022553.3338122,
+ "bodies": [
+  "chassis",
+  "tread_l",
+  "tread_r",
+  "fork_0",
+  "fork_1",
+  "fork_2",
+  "fork_3",
+  "fork_4",
+  "fork_5",
+  "lid"
+ ],
+ "wires": {}
+}
