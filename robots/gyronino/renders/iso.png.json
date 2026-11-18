@@ -1,18 +1,24 @@
 {
  "spec": "/tmp/work10_gyronino/robots/gyronino/spec.json",
- "rendered_at": 1795023503.5973132,
+ "rendered_at": 1795035258.3453777,
  "bodies": [
   "chassis",
   "weapon",
   "tail_cap",
   "gyro_block",
   "gyro_ring",
+  "spoke_h",
+  "spoke_v",
   "bevel_gear",
+  "bevel_hub",
   "nose_hub",
   "foot_l",
-  "strut_l",
   "foot_r",
-  "strut_r"
+  "tail_skid",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3"
  ],
  "wires": {}
 }

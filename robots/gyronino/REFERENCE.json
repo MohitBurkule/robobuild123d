@@ -2,8 +2,7 @@
  "robot_type": "vertical_spinner",
  "weapon": {
   "kind": "bar",
-  "axis": "y",
-  "position": "front"
+  "axis": "y"
  },
  "photos": [
   "gyronino.aws72.webp",

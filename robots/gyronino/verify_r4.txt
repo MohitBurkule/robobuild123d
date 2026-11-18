@@ -1,0 +1,126 @@
+BLOCKERS: 28
+  [cached] integrity 0.00s
+  [cached] mass 0.00s
+  [proxy] interference 0.30s
+  [cached] connections 0.00s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.00s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.00s
+  [cached] physics 0.00s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [cached] likeness 0.00s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.00s
+  [cached] waiver_audit 0.00s
+  [cached] geom 0.00s
+  [cached] dfm 0.00s
+  [cached] realworld 0.00s
+gyronino: ok=False 28 blockers in 25 root causes, mass 260.2/225 g
+1. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `nose_hub`. (+1 consequences)
+   | weapon: x -52.77..52.77  y 19.07..73.66  z -54.51..105.67  size 105.53 x 54.60 x 160.18 mm
+   |   centre (0.00, 46.36, 25.58), volume 9394.4 mm3
+   |   joint revolute axis [0, 0.9511, 0.309] pivot [0, 46.3648, 25.5794] range 0..360 default 0
+   |   OVERLAP `foot_l` 0.66 mm (allowed 0.08)
+   |   overlap allowed `lock_pin` 0.27 mm (allowed 1000.00)
+2. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `foot_l`. (+1 consequences)
+   | weapon: x -52.77..52.77  y 19.07..73.66  z -54.51..105.67  size 105.53 x 54.60 x 160.18 mm
+   |   centre (0.00, 46.36, 25.58), volume 9394.4 mm3
+   |   joint revolute axis [0, 0.9511, 0.309] pivot [0, 46.3648, 25.5794] range 0..360 default 0
+   |   OVERLAP `foot_l` 0.66 mm (allowed 0.08)
+   |   overlap allowed `lock_pin` 0.27 mm (allowed 1000.00)
+3. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `foot_r`. (+1 consequences)
+   | weapon: x -52.77..52.77  y 19.07..73.66  z -54.51..105.67  size 105.53 x 54.60 x 160.18 mm
+   |   centre (0.00, 46.36, 25.58), volume 9394.4 mm3
+   |   joint revolute axis [0, 0.9511, 0.309] pivot [0, 46.3648, 25.5794] range 0..360 default 0
+   |   OVERLAP `foot_l` 0.66 mm (allowed 0.08)
+   |   overlap allowed `lock_pin` 0.27 mm (allowed 1000.00)
+4. [mass.over] 260.2 g (range 231.4 to 289.0 g) against the 225 g limit; 4.4 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+5. [proxy.interference] `weapon` and `foot_l` overlap by 0.66 mm (allowed 0.08).
+   | weapon: x -52.77..52.77  y 19.07..73.66  z -54.51..105.67  size 105.53 x 54.60 x 160.18 mm
+   |   centre (0.00, 46.36, 25.58), volume 9394.4 mm3
+   |   joint revolute axis [0, 0.9511, 0.309] pivot [0, 46.3648, 25.5794] range 0..360 default 0
+   |   OVERLAP `foot_l` 0.66 mm (allowed 0.08)
+   |   overlap allowed `lock_pin` 0.27 mm (allowed 1000.00)
+6. [proxy.interference] `weapon_motor` and `lock_pin` overlap by 1.33 mm (allowed 0.08).
+   | weapon_motor: x -8.50..7.50  y 19.65..37.84  z 7.77..25.97  size 16.00 x 18.19 x 18.20 mm
+   |   centre (-0.50, 28.75, 16.87), volume 2797.1 mm3
+   |   port phases: (-7.50, 19.75, 16.87)
+   |   OVERLAP `lock_pin` 1.33 mm (allowed 0.08)
+   |   gap to `gyro_block` 0.23 mm
+7. [proxy.sweep] weapon `weapon`: `weapon` turning a full revolution may reach `chassis`.
+   | weapon: x -52.77..52.77  y 19.07..73.66  z -54.51..105.67  size 105.53 x 54.60 x 160.18 mm
+   |   centre (0.00, 46.36, 25.58), volume 9394.4 mm3
+   |   joint revolute axis [0, 0.9511, 0.309] pivot [0, 46.3648, 25.5794] range 0..360 default 0
+   |   OVERLAP `foot_l` 0.66 mm (allowed 0.08)
+   |   overlap allowed `lock_pin` 0.27 mm (allowed 1000.00)
+8. [proxy.sweep] weapon `weapon`: `weapon` turning a full revolution may reach `tail_cap`.
+   | weapon: x -52.77..52.77  y 19.07..73.66  z -54.51..105.67  size 105.53 x 54.60 x 160.18 mm
+   |   centre (0.00, 46.36, 25.58), volume 9394.4 mm3
+   |   joint revolute axis [0, 0.9511, 0.309] pivot [0, 46.3648, 25.5794] range 0..360 default 0
+   |   OVERLAP `foot_l` 0.66 mm (allowed 0.08)
+   |   overlap allowed `lock_pin` 0.27 mm (allowed 1000.00)
+9. [connection.floating] `nose_hub` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `weapon`, 1.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | nose_hub: x -7.00..7.00  y 47.06..58.99  z 19.85..35.63  size 14.00 x 11.93 x 15.78 mm
+   |   centre (0.00, 53.02, 27.74), volume 1231.5 mm3
+   |   gap to `weapon` 1.50 mm
+   | weapon: x -52.77..52.77  y 19.07..73.66  z -54.51..105.67  size 105.53 x 54.60 x 160.18 mm
+   |   centre (0.00, 46.36, 25.58), volume 9394.4 mm3
+10. [connection.cover_fasteners] `tail_cap` is an armour / cover panel held by 0 fastener(s); it needs >= 2 real screws. Snap, press-fit or tape retention alone lets it peel off on the first hit.
+   fix: Bolt it with >= 2 screws into inserts, nuts or tapped bosses and declare them in `fasteners`.
+   | tail_cap: x -21.00..21.00  y -72.75..-56.01  z -25.82..6.52  size 42.00 x 16.74 x 32.34 mm
+   |   centre (-0.00, -64.38, -9.65), volume 4861.7 mm3
+   |   overlap allowed `chassis` 0.96 mm (allowed inf)
+11. [power.tip_speed] 31920 rpm at 165 mm diameter gives 618 mph at the tip; the limit is 600 mph.
+   fix: Add a reduction (`weapon.reduction` above 1), fit a lower kV motor, use fewer cells or a smaller disc.
+   | weapon: x -52.77..52.77  y 19.07..73.66  z -54.51..105.67  size 105.53 x 54.60 x 160.18 mm
+   |   centre (0.00, 46.36, 25.58), volume 9394.4 mm3
+   |   joint revolute axis [0, 0.9511, 0.309] pivot [0, 46.3648, 25.5794] range 0..360 default 0
+   |   OVERLAP `foot_l` 0.66 mm (allowed 0.08)
+   |   overlap allowed `lock_pin` 0.27 mm (allowed 1000.00)
+12. [power.runtime] 350 mAh x 80% usable lasts about 0.8 min of fighting (per 3 min fight: drive 0 mAh, weapon spin-ups and hold 1056 mAh, electronics 5 mAh = 1061 mAh). A fight is 3 min and the pack must cover it with 25% margin.
+   fix: Fit a pack of at least 1658 mAh, or lower the load (smaller weapon, lower kV).
+   | el_battery: x -18.50..17.50  y -45.75..-28.75  z -14.63..-3.63  size 36.00 x 17.00 x 11.00 mm
+   |   centre (-0.50, -37.25, -9.13), volume 6732.0 mm3
+   |   port xt30: (-0.50, -26.75, -9.13)
+   |   gap to `chassis` 0.25 mm
+... 13 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 260.2 g of 225 g (-35.2 g margin)
+    weapon                     74.22 g  fills 1% of its box
+    gyro_ring                  47.32 g  fills 3% of its box
+    chassis                    45.16 g  fills 25% of its box
+    gyro_block                 26.30 g  fills 26% of its box
+    el_battery                 21.50 g  fills 100% of its box  <- solid block? a tub should be a shell
+    weapon_motor                8.60 g  fills 53% of its box
+    bevel_gear                  5.87 g  fills 16% of its box
+    el_wesc                     5.00 g  fills 94% of its box
+    foot_l                      4.69 g  fills 21% of its box
+    tail_cap                    4.63 g  fills 21% of its box
+    foot_r                      3.57 g  fills 16% of its box
+    strut_r                     2.53 g  fills 35% of its box
+    lock_pin                    2.52 g  fills 14% of its box
+    el_esc                      2.30 g  fills 99% of its box
+    strut_l                     2.22 g  fills 31% of its box
+    nose_hub                    1.17 g  fills 47% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    mass.over: 260.2 g (range 231.4 to 289.0 g) against the 225 g limit; 4.4 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 2 hit / 0 miss, group 31 hit / 0 miss, min_gap 80 hit / 0 miss, overlap 365 hit / 0 miss, part_geom 17 hit / 0 miss

@@ -13,48 +13,40 @@
    "shape": {
     "type": "place",
     "shape": {
-     "type": "place",
-     "shape": {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        42,
-        74,
-        34
-       ]
-      },
-      "at": [
-       0,
-       -25,
-       10
+     "type": "prism",
+     "points": [
+      [
+       -30.0,
+       0.0
       ],
-      "rot": [
-       0,
-       0,
-       0
+      [
+       30.0,
+       0.0
+      ],
+      [
+       30.0,
+       1.5
+      ],
+      [
+       30.0,
+       44.0
+      ],
+      [
+       -30.0,
+       44.0
       ]
-     },
-     "at": [
-      0,
-      0,
-      0
      ],
-     "rot": [
-      0,
-      0,
-      0
-     ]
+     "height": 44.0
     },
     "at": [
-     0,
-     0,
-     0
+     0.0,
+     0.0,
+     -2.0
     ],
     "rot": [
-     18,
-     0,
-     0
+     90.0,
+     0.0,
+     90.0
     ]
    },
    "at": [
@@ -67,7 +59,8 @@
     0,
     0
    ],
-   "color": "#dfeee6"
+   "color": "#e9efe6",
+   "print_orientation": "+z"
   },
   {
    "id": "weapon",
@@ -79,135 +72,52 @@
     "shape": {
      "type": "place",
      "shape": {
-      "type": "place",
-      "shape": {
-       "type": "union",
-       "items": [
-        {
-         "type": "place",
-         "shape": {
-          "type": "prism",
-          "points": [
-           [
-            -76.0,
-            -23.0
-           ],
-           [
-            -38.0,
-            -7.0
-           ],
-           [
-            38.0,
-            -7.0
-           ],
-           [
-            76.0,
-            9.0
-           ],
-           [
-            76.0,
-            23.0
-           ],
-           [
-            38.0,
-            7.0
-           ],
-           [
-            -38.0,
-            7.0
-           ],
-           [
-            -76.0,
-            -9.0
-           ]
-          ],
-          "height": 3.0
-         },
-         "at": [
-          0,
-          0,
-          0
-         ],
-         "rot": [
-          0,
-          0,
-          0
-         ]
-        },
-        {
-         "type": "prism",
-         "points": [
-          [
-           52,
-           0
-          ],
-          [
-           68,
-           30
-          ],
-          [
-           84,
-           26
-          ],
-          [
-           78,
-           2
-          ],
-          [
-           72,
-           -14
-          ]
-         ],
-         "height": 3
-        },
-        {
-         "type": "prism",
-         "points": [
-          [
-           -52,
-           0
-          ],
-          [
-           -68,
-           -30
-          ],
-          [
-           -84,
-           -26
-          ],
-          [
-           -78,
-           -2
-          ],
-          [
-           -72,
-           14
-          ]
-         ],
-         "height": 3
-        }
+      "type": "prism",
+      "points": [
+       [
+        -62.0,
+        -13.0
+       ],
+       [
+        -31.0,
+        -7.0
+       ],
+       [
+        31.0,
+        -7.0
+       ],
+       [
+        62.0,
+        -1.0
+       ],
+       [
+        62.0,
+        13.0
+       ],
+       [
+        31.0,
+        7.0
+       ],
+       [
+        -31.0,
+        7.0
+       ],
+       [
+        -62.0,
+        1.0
        ]
-      },
-      "at": [
-       0,
-       0,
-       0
       ],
-      "rot": [
-       0,
-       0,
-       55
-      ]
+      "height": 4.0
      },
      "at": [
       0,
-      52,
-      10
+      0,
+      0
      ],
      "rot": [
-      -90.0,
-      0.0,
-      0.0
+      0,
+      0,
+      0
      ]
     },
     "at": [
@@ -216,22 +126,22 @@
      0
     ],
     "rot": [
-     18,
      0,
-     0
+     0,
+     0.0
     ]
    },
    "at": [
-    0,
-    0,
-    0
+    0.0,
+    64.0,
+    20.0
    ],
    "rot": [
-    0,
+    -90,
     0,
     0
    ],
-   "color": "#1f3f9a",
+   "color": "#1f3fa8",
    "weapon": {
     "kind": "bar",
     "spin_axis": [
@@ -247,13 +157,13 @@
     "kind": "revolute",
     "axis": [
      0,
-     0.9511,
-     0.309
+     1,
+     0
     ],
     "pivot": [
-     0,
-     46.3648,
-     25.5794
+     0.0,
+     64.0,
+     20.0
     ],
     "min": 0,
     "max": 360,
@@ -262,66 +172,26 @@
   },
   {
    "id": "tail_cap",
-   "kind": "armor",
+   "kind": "other",
    "material": "nylon",
    "process": "fdm",
    "shape": {
     "type": "place",
     "shape": {
-     "type": "place",
-     "shape": {
-      "type": "place",
-      "shape": {
-       "type": "prism",
-       "points": [
-        [
-         -62,
-         -7
-        ],
-        [
-         -62,
-         27
-        ],
-        [
-         -70,
-         20
-        ],
-        [
-         -72,
-         0
-        ]
-       ],
-       "height": 42
-      },
-      "at": [
-       0.0,
-       0.0,
-       0.0
-      ],
-      "rot": [
-       90.0,
-       0.0,
-       90.0
-      ]
-     },
-     "at": [
-      0,
-      0,
-      0
-     ],
-     "rot": [
-      0,
-      0,
-      0
+     "type": "box",
+     "size": [
+      44,
+      5,
+      44
      ]
     },
     "at": [
      0,
-     0,
-     0
+     -32,
+     20.0
     ],
     "rot": [
-     18,
+     0,
      0,
      0
     ]
@@ -336,70 +206,30 @@
     0,
     0
    ],
-   "color": "#f08a5a"
+   "color": "#e0703a"
   },
   {
    "id": "gyro_block",
-   "kind": "structure",
+   "kind": "other",
    "material": "nylon",
    "process": "fdm",
    "shape": {
     "type": "place",
     "shape": {
-     "type": "place",
-     "shape": {
-      "type": "place",
-      "shape": {
-       "type": "prism",
-       "points": [
-        [
-         -30,
-         14
-        ],
-        [
-         30,
-         14
-        ],
-        [
-         26,
-         34
-        ],
-        [
-         -26,
-         34
-        ]
-       ],
-       "height": 48
-      },
-      "at": [
-       0,
-       0,
-       10.0
-      ],
-      "rot": [
-       0,
-       0,
-       0
-      ]
-     },
-     "at": [
-      0,
-      0,
-      0
-     ],
-     "rot": [
-      0,
-      0,
-      0
+     "type": "box",
+     "size": [
+      32,
+      14,
+      32
      ]
     },
     "at": [
      0,
-     0,
-     0
+     36,
+     20.0
     ],
     "rot": [
-     18,
+     0,
      0,
      0
     ]
@@ -414,76 +244,37 @@
     0,
     0
    ],
-   "color": "#f0703a"
+   "color": "#e0703a"
   },
   {
    "id": "gyro_ring",
    "kind": "other",
-   "material": "steel",
-   "process": "laser",
+   "material": "nylon",
+   "process": "fdm",
    "shape": {
     "type": "place",
     "shape": {
-     "type": "place",
-     "shape": {
-      "type": "place",
-      "shape": {
-       "type": "union",
-       "items": [
-        {
-         "type": "subtract",
-         "base": {
-          "type": "cylinder",
-          "radius": 41,
-          "height": 4
-         },
-         "cut": [
-          {
-           "type": "cylinder",
-           "radius": 36,
-           "height": 6
-          }
-         ]
-        },
-        {
-         "type": "box",
-         "size": [
-          80,
-          4,
-          4
-         ]
-        }
-       ]
-      },
-      "at": [
-       0,
-       12,
-       10
-      ],
-      "rot": [
-       -90.0,
-       0.0,
-       0.0
-      ]
+     "type": "subtract",
+     "base": {
+      "type": "cylinder",
+      "radius": 41,
+      "height": 5
      },
-     "at": [
-      0,
-      0,
-      0
-     ],
-     "rot": [
-      0,
-      0,
-      0
+     "cut": [
+      {
+       "type": "cylinder",
+       "radius": 37,
+       "height": 7
+      }
      ]
     },
     "at": [
      0,
-     0,
-     0
+     40,
+     20.0
     ],
     "rot": [
-     18,
+     -90,
      0,
      0
     ]
@@ -498,7 +289,83 @@
     0,
     0
    ],
-   "color": "#e8663a"
+   "color": "#e0703a"
+  },
+  {
+   "id": "spoke_h",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      76,
+      3,
+      4
+     ]
+    },
+    "at": [
+     0,
+     40,
+     20.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#3a3d44"
+  },
+  {
+   "id": "spoke_v",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      4,
+      3,
+      76
+     ]
+    },
+    "at": [
+     0,
+     40,
+     20.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#3a3d44"
   },
   {
    "id": "bevel_gear",
@@ -508,63 +375,17 @@
    "shape": {
     "type": "place",
     "shape": {
-     "type": "place",
-     "shape": {
-      "type": "place",
-      "shape": {
-       "type": "revolve",
-       "profile": [
-        [
-         0,
-         0
-        ],
-        [
-         22,
-         0
-        ],
-        [
-         22,
-         3
-        ],
-        [
-         9,
-         12
-        ],
-        [
-         0,
-         12
-        ]
-       ]
-      },
-      "at": [
-       0,
-       34,
-       10
-      ],
-      "rot": [
-       -90.0,
-       0.0,
-       0.0
-      ]
-     },
-     "at": [
-      0,
-      0,
-      0
-     ],
-     "rot": [
-      0,
-      0,
-      0
-     ]
+     "type": "cylinder",
+     "radius": 21,
+     "height": 9
     },
     "at": [
      0,
-     0,
-     0
+     50,
+     20.0
     ],
     "rot": [
-     18,
+     -90,
      0,
      0
     ]
@@ -579,7 +400,42 @@
     0,
     0
    ],
-   "color": "#1b1b1d"
+   "color": "#1c1d20"
+  },
+  {
+   "id": "bevel_hub",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 12,
+     "height": 8
+    },
+    "at": [
+     0,
+     58,
+     20.0
+    ],
+    "rot": [
+     -90,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#1c1d20"
   },
   {
    "id": "nose_hub",
@@ -589,43 +445,17 @@
    "shape": {
     "type": "place",
     "shape": {
-     "type": "place",
-     "shape": {
-      "type": "place",
-      "shape": {
-       "type": "cylinder",
-       "radius": 7,
-       "height": 10
-      },
-      "at": [
-       0,
-       58,
-       10
-      ],
-      "rot": [
-       -90.0,
-       0.0,
-       0.0
-      ]
-     },
-     "at": [
-      0,
-      0,
-      0
-     ],
-     "rot": [
-      0,
-      0,
-      0
-     ]
+     "type": "cylinder",
+     "radius": 6,
+     "height": 10
     },
     "at": [
      0,
-     0,
-     0
+     70,
+     20.0
     ],
     "rot": [
-     18,
+     -90,
      0,
      0
     ]
@@ -640,7 +470,7 @@
     0,
     0
    ],
-   "color": "#bfeedd"
+   "color": "#bfe8d6"
   },
   {
    "id": "foot_l",
@@ -650,62 +480,36 @@
    "shape": {
     "type": "place",
     "shape": {
-     "type": "place",
-     "shape": {
-      "type": "place",
-      "shape": {
-       "type": "prism",
-       "points": [
-        [
-         8,
-         -7
-        ],
-        [
-         30,
-         -7
-        ],
-        [
-         70,
-         -52
-        ],
-        [
-         58,
-         -50
-        ]
-       ],
-       "height": 10
-      },
-      "at": [
-       14.0,
-       0.0,
-       0.0
+     "type": "prism",
+     "points": [
+      [
+       34,
+       2.0
       ],
-      "rot": [
-       90.0,
-       0.0,
-       90.0
+      [
+       42,
+       4.0
+      ],
+      [
+       92,
+       -9.5
+      ],
+      [
+       86,
+       -9.5
       ]
-     },
-     "at": [
-      0,
-      0,
-      0
      ],
-     "rot": [
-      0,
-      0,
-      0
-     ]
+     "height": 6
     },
     "at": [
-     0,
+     16.0,
      0,
      0
     ],
     "rot": [
-     18,
+     90,
      0,
-     0
+     90
     ]
    },
    "at": [
@@ -718,85 +522,7 @@
     0,
     0
    ],
-   "color": "#1f3f9a"
-  },
-  {
-   "id": "strut_l",
-   "kind": "structure",
-   "material": "nylon",
-   "process": "fdm",
-   "shape": {
-    "type": "place",
-    "shape": {
-     "type": "place",
-     "shape": {
-      "type": "place",
-      "shape": {
-       "type": "prism",
-       "points": [
-        [
-         -22,
-         0
-        ],
-        [
-         -22,
-         22
-        ],
-        [
-         16,
-         16
-        ],
-        [
-         16,
-         5
-        ]
-       ],
-       "height": 5
-      },
-      "at": [
-       23.5,
-       0.0,
-       0.0
-      ],
-      "rot": [
-       90.0,
-       0.0,
-       90.0
-      ]
-     },
-     "at": [
-      0,
-      0,
-      0
-     ],
-     "rot": [
-      0,
-      0,
-      0
-     ]
-    },
-    "at": [
-     0,
-     0,
-     0
-    ],
-    "rot": [
-     18,
-     0,
-     0
-    ]
-   },
-   "at": [
-    0,
-    0,
-    0
-   ],
-   "rot": [
-    0,
-    0,
-    0
-   ],
-   "color": "#dfeee6"
+   "color": "#1f3fa8"
   },
   {
    "id": "foot_r",
@@ -806,62 +532,36 @@
    "shape": {
     "type": "place",
     "shape": {
-     "type": "place",
-     "shape": {
-      "type": "place",
-      "shape": {
-       "type": "prism",
-       "points": [
-        [
-         8,
-         -7
-        ],
-        [
-         30,
-         -7
-        ],
-        [
-         70,
-         -52
-        ],
-        [
-         58,
-         -50
-        ]
-       ],
-       "height": 10
-      },
-      "at": [
-       -14.0,
-       0.0,
-       0.0
+     "type": "prism",
+     "points": [
+      [
+       34,
+       2.0
       ],
-      "rot": [
-       90.0,
-       0.0,
-       90.0
+      [
+       42,
+       4.0
+      ],
+      [
+       92,
+       -9.5
+      ],
+      [
+       86,
+       -9.5
       ]
-     },
-     "at": [
-      0,
-      0,
-      0
      ],
-     "rot": [
-      0,
-      0,
-      0
-     ]
+     "height": 6
     },
     "at": [
-     0,
+     -16.0,
      0,
      0
     ],
     "rot": [
-     18,
+     90,
      0,
-     0
+     90
     ]
    },
    "at": [
@@ -874,70 +574,30 @@
     0,
     0
    ],
-   "color": "#1f3f9a"
+   "color": "#1f3fa8"
   },
   {
-   "id": "strut_r",
-   "kind": "structure",
+   "id": "tail_skid",
+   "kind": "other",
    "material": "nylon",
    "process": "fdm",
    "shape": {
     "type": "place",
     "shape": {
-     "type": "place",
-     "shape": {
-      "type": "place",
-      "shape": {
-       "type": "prism",
-       "points": [
-        [
-         -22,
-         0
-        ],
-        [
-         -22,
-         22
-        ],
-        [
-         16,
-         16
-        ],
-        [
-         16,
-         5
-        ]
-       ],
-       "height": 5
-      },
-      "at": [
-       -23.5,
-       0.0,
-       0.0
-      ],
-      "rot": [
-       90.0,
-       0.0,
-       90.0
-      ]
-     },
-     "at": [
-      0,
-      0,
-      0
-     ],
-     "rot": [
-      0,
-      0,
-      0
+     "type": "box",
+     "size": [
+      24,
+      8,
+      8
      ]
     },
     "at": [
      0,
-     0,
-     0
+     -26,
+     -6.0
     ],
     "rot": [
-     18,
+     0,
      0,
      0
     ]
@@ -952,7 +612,7 @@
     0,
     0
    ],
-   "color": "#dfeee6"
+   "color": "#e9efe6"
   },
   {
    "id": "dt_screw_0",
@@ -967,9 +627,9 @@
      "height": 1.4
     },
     "at": [
-     -15.96,
-     -62.27,
-     8.64
+     -16.72,
+     -24.72,
+     42.3
     ],
     "rot": [
      0.0,
@@ -1002,9 +662,9 @@
      "height": 1.4
     },
     "at": [
-     15.96,
-     -62.27,
-     8.64
+     16.72,
+     -24.72,
+     42.3
     ],
     "rot": [
      0.0,
@@ -1037,9 +697,9 @@
      "height": 1.4
     },
     "at": [
-     -15.96,
-     8.54,
-     39.14
+     -16.72,
+     24.72,
+     42.3
     ],
     "rot": [
      0.0,
@@ -1072,9 +732,9 @@
      "height": 1.4
     },
     "at": [
-     15.96,
-     8.54,
-     39.14
+     16.72,
+     24.72,
+     42.3
     ],
     "rot": [
      0.0,
@@ -1131,12 +791,12 @@
   ],
   [
    "dt_screw_2",
-   "gyro_block",
+   "chassis",
    "screw"
   ],
   [
    "dt_screw_3",
-   "gyro_block",
+   "chassis",
    "screw"
   ]
  ]
