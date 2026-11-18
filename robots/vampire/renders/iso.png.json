@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_vampire/robots/vampire/spec.json",
- "rendered_at": 1795038100.4131696,
+ "rendered_at": 1795038825.3052068,
  "bodies": [
   "chassis",
   "weapon",
@@ -10,15 +10,89 @@
   "deck",
   "green_wall",
   "dt_hub_wheel_l0",
-  "dt_axle_wheel_l0",
-  "dt_nut_wheel_l0",
   "dt_hub_wheel_r0",
-  "dt_axle_wheel_r0",
-  "dt_nut_wheel_r0",
-  "dt_screw_0",
-  "dt_screw_1",
   "dt_shaft_weapon",
-  "dt_hubw_weapon"
+  "dt_hubw_weapon",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_rx_esc",
+  "el_wesc",
+  "el_switch",
+  "lock_pin"
  ],
- "wires": {}
+ "wires": {
+  "w_sw_wesc": {
+   "from": [
+    4.0,
+    -30.6,
+    -4.0
+   ],
+   "to": [
+    -11.987,
+    29.017000000000003,
+    -5.489
+   ]
+  },
+  "w_bat_sw": {
+   "from": [
+    0.013,
+    -5.9830000000000005,
+    -1.989
+   ],
+   "to": [
+    -4.0,
+    -30.6,
+    -4.0
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    4.0,
+    -30.6,
+    -4.0
+   ],
+   "to": [
+    -11.987,
+    12.017,
+    -4.989
+   ]
+  },
+  "w_m1": {
+   "from": [
+    11.013,
+    20.017,
+    -4.989
+   ],
+   "to": [
+    6.600000000000001,
+    0.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -11.987,
+    20.017,
+    -4.989
+   ],
+   "to": [
+    -6.600000000000001,
+    -1.7451216887849782e-15,
+    0.0
+   ]
+  },
+  "w_wesc_sig": {
+   "from": [
+    11.013,
+    12.017,
+    -4.989
+   ],
+   "to": [
+    -11.987,
+    35.017,
+    -5.489
+   ]
+  }
+ }
 }
