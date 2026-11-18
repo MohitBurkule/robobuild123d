@@ -1,7 +1,7 @@
-BLOCKERS: 13
-  [cached] integrity 0.00s
+BLOCKERS: 12
+  [cached] integrity 0.01s
   [cached] mass 0.00s
-  [proxy] interference 0.15s
+  [proxy] interference 0.44s
   [cached] connections 0.00s
   [cached] legal 0.00s
   [cached] fasteners 0.00s
@@ -13,7 +13,7 @@ BLOCKERS: 13
   [cached] dynamics 0.00s
   [cached] strength 0.00s
   [cached] printability 0.00s
-  [cached] process 0.00s
+  [cached] process 0.01s
   [cached] electrical 0.00s
   [cached] combat 0.00s
   [cached] physics 0.00s
@@ -21,17 +21,17 @@ BLOCKERS: 13
   [cached] cots 0.00s
   [cached] fit 0.00s
   [cached] bom 0.00s
-  [cached] wire_review 0.00s
+  [cached] wire_review 0.01s
   [cached] fastener_record 0.00s
-  [cached] likeness 0.00s
-  [cached] drive_recess 0.00s
+  [ran] likeness 7.66s
+  [cached] drive_recess 0.01s
   [cached] belt_wrap 0.00s
   [cached] retention 0.00s
-  [cached] waiver_audit 0.01s
-  [cached] geom 0.00s
+  [cached] waiver_audit 0.00s
+  [cached] geom 0.01s
   [cached] dfm 0.00s
   [cached] realworld 0.00s
-baby boomer: ok=False 13 blockers in 11 root causes, mass 147.6/150 g
+baby boomer: ok=False 12 blockers in 10 root causes, mass 147.6/150 g
 1. [wire.rotor_clearance] wire `w_m1` passes -0.7 mm from the volume swept by the `flipper` rotor (flipper) at [-13.8, -3.7, -2.7]. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
    fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
    | flipper: x -14.00..14.00  y -35.50..59.50  z 13.50..18.50  size 28.00 x 95.00 x 5.00 mm
@@ -82,9 +82,7 @@ baby boomer: ok=False 13 blockers in 11 root causes, mass 147.6/150 g
    |   centre (0.00, 12.00, 16.00), volume 13300.0 mm3
    |   joint revolute axis [1, 0, 0] pivot [0, -30, 15.0] range 0..80 default 0
    |   OVERLAP `chassis` 0.70 mm (allowed 0.08)
-10. [likeness.view] `reference/baby_boomer.aws72.webp` is declared `front` (IoU 0.60 there) but the model matches it better from front_right_iso (elevation 45, azimuth 60) (IoU 0.79).
-   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
-11. [likeness.silhouette] `reference/baby_boomer.aws72.webp`: best silhouette IoU 0.60 at camera front (elevation 25, azimuth 90) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.53). Regions (photo frame, left third first) 0.56 / 0.76 / 0.44: worst = rear third. Height/length 0.68 model vs 0.80 photo (too flat: raise it or shorten it).
+10. [likeness.silhouette] `reference/baby_boomer.aws72.webp`: best silhouette IoU 0.79 at camera front_right_iso (elevation 45, azimuth 60) (need 0.80: >= 0.8 and no worse than the closest stock template `vspin_drisk` at 0.70). Regions (photo frame, left third first) 0.81 / 0.85 / 0.64: worst = rear third. Height/length 0.84 model vs 0.80 photo (proportions ok).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
   mass 147.6 g of 150 g (+2.4 g margin)
@@ -109,4 +107,4 @@ MASS BUDGET:
     el_switch                   0.50 g  fills 100% of its box
     mass.may_be_over: 147.6 g (range 125.8 to 169.4 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: group 31 hit / 0 miss, min_gap 34 hit / 0 miss, overlap 296 hit / 0 miss, part_geom 19 hit / 0 miss
+cache: group 30 hit / 1 miss, inside 12 hit / 0 miss, likeness 0 hit / 1 miss, min_gap 34 hit / 0 miss, overlap 296 hit / 0 miss, part_geom 19 hit / 0 miss
