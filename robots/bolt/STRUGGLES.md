@@ -99,3 +99,9 @@ Scope: rough CAD attempt from the three AWS photos in `reference/`, about 20 min
 - Verify inner: 16 blockers / 13 root causes, mass 203.7 g over 150 g, footprint 169.5 mm over 150 mm, screws `bolt_c*` engage 0 mm in `insert_c*` (the insert sits 3 mm below the chassis top), idler overlap 0.70 mm with `chassis_bottom`, wiring routes stale (proxy.wiring) and two likeness overlays lack render records.
 - The generator has no wedge-ramp option tied to the fitted ramp (54 mm). The outline is still a box.
 - `fasteners --fill` added 8 hole records (`bolt_w*`, `insert_*`). The engagement issue was not fixed.
+
+## Round 9 (outer look only, per coordinator)
+- Outline reshaped to a chamfered rear (x +-42 at y -47, +-57 from y -10 to 60), y -47..60, zt 28. Rebuilt via gen + patch.py.
+- Likeness: aws63 PASS (0.82 vs 0.80), aws57 FAIL by rounding (0.83 vs hspin_bar 0.83; rear third 0.69 worst). 1 blocker.
+- Verify/fasteners not run this round (told to skip). Blocker count unknown.
+- Struggles: aws57 plateaus at 0.83 whatever the length/width; photo has open top and black bars the generator cannot express; likeness takes ~100 s per round.
