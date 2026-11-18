@@ -1,32 +1,34 @@
 {
  "robot_type": "horizontal_spinner",
+ "locomotion": "walker",
  "body": {
-  "length": 70,
-  "width": 80,
-  "height": 30,
+  "length": 75,
+  "width": 84,
+  "height": 34,
   "ramp": 0,
   "plan": "pentagon",
-  "front_width": 40,
-  "nose": 25
+  "front_width": 44,
+  "nose": 28,
+  "clearance": 6
  },
  "wheels": {
-  "n": 2,
-  "radius": 11,
+  "n": 0,
+  "radius": 14,
   "width": 8,
   "y": [
-   -10
-  ],
-  "outside": false
+   0
+  ]
  },
  "weapon": {
   "kind": "bar",
-  "radius": 34,
+  "radius": 46,
   "width": 3,
-  "y": 20,
+  "y": 24,
   "teeth": 2,
-  "x": 44,
+  "x": 40,
   "bar_width": 10,
-  "z": 4,
+  "tilt_deg": -22,
+  "z": 12,
   "axis": "z"
  },
  "colors": {
@@ -38,33 +40,61 @@
  "extras": [
   {
    "box": [
-    68,
+    92,
     10,
     3
    ],
    "at": [
-    -44,
-    20,
-    15
+    -40,
+    24,
+    12
    ],
+   "weapon": "bar",
    "id": "bar2",
-   "color": "#1c1c1f"
+   "color": "#1c1c1f",
+   "rot": [
+    0,
+    22,
+    0
+   ]
   },
   {
    "cyl": [
-    9,
-    14
+    10,
+    16
    ],
    "at": [
-    20,
-    36,
-    12
+    38,
+    24,
+    16
    ],
    "axis": "z",
    "mirror": true,
    "id": "motor",
    "color": "#2a7fb8"
+  },
+  {
+   "box": [
+    10,
+    10,
+    6
+   ],
+   "at": [
+    30,
+    -25,
+    3
+   ],
+   "mirror": true,
+   "id": "skid",
+   "color": "#8a8d92"
   }
  ],
+ "ref": {
+  "robot_type": "horizontal_spinner",
+  "weapon": {
+   "kind": "bar",
+   "axis": "z"
+  }
+ },
  "name": "rbmk"
 }
