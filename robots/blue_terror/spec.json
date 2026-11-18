@@ -1158,7 +1158,7 @@
   {
    "image": "reference/blue-terror.aws72.webp",
    "mask": "reference/blue-terror.aws72_mask.png",
-   "view": "iso",
+   "view": "front_right_iso",
    "approximate": true
   }
  ],
