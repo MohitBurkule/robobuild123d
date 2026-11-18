@@ -9,3 +9,8 @@
 Decisions: type lifter; body box pentagon 95x100x32 mm, ramp 48; wheels 2 r12 outboard; weapon none; extra parts: arm; photos skipped (cluttered): indices [0, 1].
 
 Likeness: aws67 0.81 (ok).
+
+## Round 2 (looks)
+Decisions: type lifter; body box pentagon 95x100x32 mm, ramp 48; wheels 2 r12 outboard; weapon none; extra parts: arm; photos skipped (cluttered): indices [0, 1].
+
+Likeness: aws67 0.81 (ok).
