@@ -7,5 +7,11 @@
  },
  "photos": [
   "the_golden_nugget.aws67.webp"
- ]
+ ],
+ "view": {
+  "the_golden_nugget.aws67.webp": "front_right_iso"
+ },
+ "elevation": {
+  "the_golden_nugget.aws67.webp": 45
+ }
 }

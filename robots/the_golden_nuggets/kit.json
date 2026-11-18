@@ -22,7 +22,11 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "name": "the golden nuggets",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "box": [
     38,
@@ -61,9 +65,5 @@
     0
    ]
   }
- ],
- "name": "the golden nuggets",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }
