@@ -25,3 +25,8 @@ Kit twin_pods has no rounded nose and no wheel windows; versions across years di
 
 ## Verdict
 Looks alike: **yes**. Renders: `renders/iso.png`, `renders/top.png`.
+
+## Round 2 (looks)
+Now a shuffler: wheels removed, leg cams poke through top windows, chamfered pods, wider slot with axle housing, longer skirts, side fins, switch.
+
+Likeness: aws72 0.74 (FAIL), aws74 0.80 (ok), aws76 0.68 (FAIL).

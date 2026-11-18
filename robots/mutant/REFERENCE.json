@@ -1,6 +1,5 @@
 {
  "robot_type": "vertical_spinner",
- "wheels": 2,
  "weapon": {
   "kind": "disc",
   "axis": "x",

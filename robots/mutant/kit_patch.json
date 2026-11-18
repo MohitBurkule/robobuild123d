@@ -1,10 +1,20 @@
 {
  "note": "ids added on top of `robot kit` output; replaced shapes are in spec.json",
  "added": [
+  "fin_l",
+  "fin_r",
   "front_plate_l",
   "front_plate_r",
+  "leg_cam_l0",
+  "leg_cam_l1",
+  "leg_cam_r0",
+  "leg_cam_r1",
   "skirt_l",
-  "skirt_r"
+  "skirt_r",
+  "switch"
  ],
- "removed": []
+ "removed": [
+  "wheel_l0",
+  "wheel_r0"
+ ]
 }
