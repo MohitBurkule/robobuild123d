@@ -14,13 +14,6 @@
    -24
   ]
  },
- "forks": {
-  "n": 2,
-  "length": 48,
-  "width": 6,
-  "spread": 74,
-  "tilt_deg": 10
- },
  "colors": {
   "body": "#e8a83a",
   "wheel": "#e8c84a",
@@ -70,6 +63,49 @@
    ],
    "id": "arm",
    "color": "#22262a"
+  },
+  {
+   "top": [
+    [
+     24,
+     30
+    ],
+    [
+     34,
+     30
+    ],
+    [
+     58,
+     88
+    ],
+    [
+     52,
+     90
+    ]
+   ],
+   "z": [
+    0,
+    6
+   ],
+   "color": "#e8a83a",
+   "mirror": true,
+   "kind": "wedge",
+   "id": "fork"
+  },
+  {
+   "box": [
+    3,
+    3,
+    30
+   ],
+   "at": [
+    14,
+    40,
+    40
+   ],
+   "mirror": true,
+   "id": "post",
+   "color": "#8a8d92"
   }
  ],
  "name": "vector",

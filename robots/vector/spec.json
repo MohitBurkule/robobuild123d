@@ -2,7 +2,7 @@
  "name": "vector",
  "profile": "aws2025",
  "robot_type": "lifter",
- "locomotion": "wheels",
+ "locomotion": "roller",
  "kit_draft": true,
  "parts": [
   {
@@ -133,82 +133,6 @@
    "color": "#e8c84a"
   },
   {
-   "id": "fork_0",
-   "kind": "wedge",
-   "material": "titanium",
-   "process": "laser",
-   "shape": {
-    "type": "place",
-    "shape": {
-     "type": "box",
-     "size": [
-      6.0,
-      48.0,
-      1.5
-     ]
-    },
-    "at": [
-     -37.0,
-     58.0,
-     -11.03244373599367
-    ],
-    "rot": [
-     -10.0,
-     0,
-     0
-    ]
-   },
-   "at": [
-    0,
-    0,
-    0
-   ],
-   "rot": [
-    0,
-    0,
-    0
-   ],
-   "color": "#e8a83a"
-  },
-  {
-   "id": "fork_1",
-   "kind": "wedge",
-   "material": "titanium",
-   "process": "laser",
-   "shape": {
-    "type": "place",
-    "shape": {
-     "type": "box",
-     "size": [
-      6.0,
-      48.0,
-      1.5
-     ]
-    },
-    "at": [
-     37.0,
-     58.0,
-     -11.03244373599367
-    ],
-    "rot": [
-     -10.0,
-     0,
-     0
-    ]
-   },
-   "at": [
-    0,
-    0,
-    0
-   ],
-   "rot": [
-    0,
-    0,
-    0
-   ],
-   "color": "#e8a83a"
-  },
-  {
    "id": "arm",
    "kind": "weapon",
    "material": "nylon",
@@ -290,6 +214,186 @@
     "max": 80,
     "default": 0
    }
+  },
+  {
+   "id": "fork_l",
+   "kind": "wedge",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       24,
+       30
+      ],
+      [
+       34,
+       30
+      ],
+      [
+       58,
+       88
+      ],
+      [
+       52,
+       90
+      ]
+     ],
+     "height": 6
+    },
+    "at": [
+     0,
+     0,
+     -13.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e8a83a"
+  },
+  {
+   "id": "fork_r",
+   "kind": "wedge",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -52,
+       90
+      ],
+      [
+       -58,
+       88
+      ],
+      [
+       -34,
+       30
+      ],
+      [
+       -24,
+       30
+      ]
+     ],
+     "height": 6
+    },
+    "at": [
+     0,
+     0,
+     -13.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e8a83a"
+  },
+  {
+   "id": "post_l",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      3,
+      3,
+      30
+     ]
+    },
+    "at": [
+     14,
+     40,
+     24.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#8a8d92"
+  },
+  {
+   "id": "post_r",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      3,
+      3,
+      30
+     ]
+    },
+    "at": [
+     -14,
+     40,
+     24.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#8a8d92"
   }
  ],
  "fasteners": [],
