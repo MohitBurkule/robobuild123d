@@ -1,0 +1,11 @@
+{
+ "robot_type": "other",
+ "wheels": 2,
+ "weapon": {
+  "kind": "axe",
+  "axis": "x"
+ },
+ "photos": [
+  "dantomthor.aws72.webp"
+ ]
+}

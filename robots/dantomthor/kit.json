@@ -1,0 +1,112 @@
+{
+ "robot_type": "other",
+ "body": {
+  "length": 100,
+  "width": 92,
+  "height": 42,
+  "ramp": 40,
+  "plan": "pentagon",
+  "front_width": 70,
+  "nose": 30,
+  "side": [
+   [
+    -45,
+    2
+   ],
+   [
+    55,
+    2
+   ],
+   [
+    55,
+    14
+   ],
+   [
+    35,
+    20
+   ],
+   [
+    20,
+    38
+   ],
+   [
+    -20,
+    42
+   ],
+   [
+    -45,
+    24
+   ]
+  ]
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 11,
+  "width": 8,
+  "y": [
+   -20
+  ],
+  "outside": false
+ },
+ "colors": {
+  "body": "#c8283a",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "side": [
+    [
+     -5,
+     30
+    ],
+    [
+     5,
+     26
+    ],
+    [
+     -38,
+     74
+    ],
+    [
+     -44,
+     70
+    ]
+   ],
+   "x": [
+    -4,
+    4
+   ],
+   "weapon": "axe",
+   "pivot": [
+    0,
+    30
+   ],
+   "id": "hammer_arm",
+   "color": "#8a8d94"
+  },
+  {
+   "box": [
+    14,
+    4,
+    16
+   ],
+   "at": [
+    0,
+    -42,
+    78
+   ],
+   "id": "hammer_head",
+   "color": "#b9bdc2"
+  }
+ ],
+ "skip_photos": [
+  0,
+  1
+ ],
+ "name": "dantomthor",
+ "weapon": {
+  "kind": "none"
+ }
+}
