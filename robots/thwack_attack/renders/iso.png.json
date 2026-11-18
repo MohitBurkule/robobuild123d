@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_thwack_attack/robots/thwack_attack/spec.json",
- "rendered_at": 1795024523.0709305,
+ "rendered_at": 1795036583.0182376,
  "bodies": [
   "chassis",
   "weapon",
@@ -12,7 +12,24 @@
   "fork_1",
   "side_pod_l",
   "side_pod_r",
-  "tail_arm"
+  "tail_arm",
+  "dt_hub_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_hub_wheel_l1",
+  "dt_axle_wheel_l1",
+  "dt_hub_wheel_r1",
+  "dt_axle_wheel_r1",
+  "dt_shaft_weapon",
+  "dt_mount_fork_0",
+  "dt_mount_fork_1",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_esc",
+  "el_wesc",
+  "el_switch",
+  "weapon_motor",
+  "lock_pin"
  ],
  "wires": {}
 }

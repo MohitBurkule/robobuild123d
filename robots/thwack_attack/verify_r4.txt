@@ -1,8 +1,8 @@
 BLOCKERS: 36
   [cached] integrity 0.00s
   [cached] mass 0.00s
-  [proxy] interference 0.28s
-  [cached] connections 0.00s
+  [proxy] interference 0.94s
+  [cached] connections 0.01s
   [cached] legal 0.00s
   [cached] fasteners 0.00s
   [cached] power 0.00s
@@ -15,18 +15,18 @@ BLOCKERS: 36
   [cached] printability 0.00s
   [cached] process 0.00s
   [cached] electrical 0.00s
-  [cached] combat 0.00s
+  [cached] combat 0.01s
   [cached] physics 0.00s
   [cached] plausibility 0.00s
   [cached] cots 0.00s
   [cached] fit 0.00s
   [cached] bom 0.00s
-  [cached] wire_review 0.00s
+  [cached] wire_review 0.01s
   [cached] fastener_record 0.00s
   [cached] likeness 0.00s
   [cached] drive_recess 0.00s
   [cached] belt_wrap 0.00s
-  [cached] retention 0.00s
+  [cached] retention 0.01s
   [cached] waiver_audit 0.00s
   [cached] geom 0.00s
   [cached] dfm 0.00s
