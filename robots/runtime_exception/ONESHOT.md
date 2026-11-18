@@ -11,3 +11,8 @@
 Decisions: type wedge; body box pentagon 80x92x22 mm, ramp 0; wheels 2 r13 inboard; weapon none; extra parts: scoop, spine; photos skipped (cluttered): indices [0].
 
 Likeness: aws72 0.79 (FAIL), aws74 0.80 (FAIL).
+
+## Round 2 (looks)
+Decisions: type wedge; body box pentagon 80x92x22 mm, ramp 0; wheels 2 r13 inboard; weapon none; extra parts: scoop, spine; photos skipped (cluttered): indices [0].
+
+Likeness: aws72 0.79 (FAIL), aws74 0.80 (FAIL).
