@@ -19,3 +19,9 @@ Likeness: aws63 0.34 (FAIL).
 Decisions: type lifter; body box rect 34x60x30 mm, ramp 0; wheels 2 r17 outboard; weapon none; extra parts: plate; clusterbot, one of 2 modelled (count read from photos, unsure); photos skipped (cluttered): indices [0]; textured masks for indices [1].
 
 Likeness: aws63 0.34 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type lifter; body box rect 34x60x30 mm, ramp 0; wheels 2 r15 outboard; weapon none; extra parts: plate; clusterbot, one of 2 modelled (count read from photos, unsure); photos skipped (cluttered): indices [0]; textured masks for indices [1].
+
+Likeness: aws63 0.17 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/tip_pit.aws63.webp` is declared `front` (IoU 0.17 there) but the model matches it better from rear_right_iso (elevation 45, azi

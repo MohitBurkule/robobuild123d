@@ -9,10 +9,10 @@
  },
  "wheels": {
   "n": 2,
-  "radius": 17,
+  "radius": 15,
   "width": 12,
   "y": [
-   0
+   -4
   ]
  },
  "colors": {
@@ -21,32 +21,6 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
-  {
-   "box": [
-    50,
-    55,
-    2
-   ],
-   "at": [
-    0,
-    25,
-    24
-   ],
-   "weapon": "lifter",
-   "pivot": [
-    0,
-    28
-   ],
-   "id": "plate",
-   "color": "#b9bdc2",
-   "rot": [
-    -15,
-    0,
-    0
-   ]
-  }
- ],
  "skip_photos": [
   0
  ],
@@ -56,5 +30,31 @@
  "name": "tip and pit",
  "weapon": {
   "kind": "none"
- }
+ },
+ "macros": [
+  {
+   "box": [
+    44,
+    38,
+    2
+   ],
+   "at": [
+    0,
+    8,
+    31
+   ],
+   "weapon": "lifter",
+   "pivot": [
+    0,
+    28
+   ],
+   "id": "plate",
+   "color": "#b9bdc2",
+   "rot": [
+    -18,
+    0,
+    0
+   ]
+  }
+ ]
 }
