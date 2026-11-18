@@ -7,5 +7,11 @@
  },
  "photos": [
   "vanquish.aws76.webp"
- ]
+ ],
+ "view": {
+  "vanquish.aws76.webp": "front_right_iso"
+ },
+ "elevation": {
+  "vanquish.aws76.webp": 45
+ }
 }

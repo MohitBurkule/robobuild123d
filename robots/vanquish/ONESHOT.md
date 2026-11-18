@@ -13,3 +13,8 @@ Likeness: aws76 0.52 (FAIL).
 Decisions: type vertical_spinner; body box rect 90x40x24 mm, ramp 0; wheels 2 r11 inboard; weapon bar r44 axis x teeth 2; extra parts: motor, upright, fork.
 
 Likeness: aws76 0.45 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type vertical_spinner; body box rect 90x40x24 mm, ramp 0; wheels 2 r11 inboard; weapon bar r52 axis x teeth 2; extra parts: motor, upright, fork.
+
+Likeness: aws76 0.38 (FAIL).

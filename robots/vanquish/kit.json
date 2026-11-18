@@ -17,14 +17,14 @@
  },
  "weapon": {
   "kind": "bar",
-  "radius": 44,
+  "radius": 52,
   "width": 4,
   "y": 26,
   "teeth": 2,
   "x": -14,
-  "bar_width": 22,
-  "curve": 10,
-  "z": 46,
+  "bar_width": 13,
+  "curve": 8,
+  "z": 54,
   "axis": "x"
  },
  "colors": {
@@ -33,7 +33,8 @@
   "weapon": "#b9bdc2",
   "fork": "#dfeee6"
  },
- "extras": [
+ "name": "vanquish",
+ "macros": [
   {
    "cyl": [
     10,
@@ -90,6 +91,5 @@
    "kind": "wedge",
    "id": "fork"
   }
- ],
- "name": "vanquish"
+ ]
 }
