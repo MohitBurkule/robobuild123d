@@ -129,6 +129,8 @@ def make_plan(h, user=None) -> tuple:
     plan.extra["wheel_r"] = h.wheel_dia / 2
     if (user or {}).get("teeth"):  # weapon tooth count from the photo (vspin_drisk single disc)
         plan.extra["teeth"] = int(user["teeth"])
+    if (user or {}).get("drum_width"):  # vspin_drisk as a drum: same mount, rotor this wide along the axis
+        plan.extra["drum_w"] = float(user["drum_width"])
     if g.belt and h.front == "wedgelets":
         plan.extra["axle_out"] = WEDGELET_T / 2  # the standoff end enters the wedgelet's bore (takes the shear); the
         # screw along its axis clamps the wedgelet to the end face (Revron RV17/18)
