@@ -1,0 +1,15 @@
+{
+ "spec": "/tmp/work10_elevron_red/robots/elevron_red/spec.json",
+ "rendered_at": 1795022022.0617843,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "fork_0",
+  "fork_1",
+  "lift_arm",
+  "pod_l",
+  "pod_r"
+ ],
+ "wires": {}
+}
