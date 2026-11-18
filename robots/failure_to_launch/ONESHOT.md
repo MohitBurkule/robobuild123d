@@ -64,3 +64,8 @@ Left (one line each):
 - combat.R051 x1: weapon sweep reaches the floor in the kit pose (look)
 - wire.render_wires x1: toolchain/process: the photo-match, diff and likeness sheets are written without a render record of the wire routes
 - likeness.silhouette x1: looks (not part of this pass; outside shape kept as round 3)
+
+## Round 3c (user angle picks applied; shape fixed per user remarks)
+Decisions: type flipper; body box rect 50x60x26 mm, ramp 0; wheels 2 r12 outboard; weapon none; extra parts: flip_arm, top_arm; photos skipped (cluttered): indices [0, 2]; textured masks for indices [1].
+
+Likeness: ftl 0.68 (FAIL).

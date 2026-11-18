@@ -1,38 +1,38 @@
-BLOCKERS: 51
-  [ran] integrity 0.03s
-  [proxy] wiring 0.00s
-  [ran] mass 0.00s
-  [proxy] interference 2.65s
-  [ran] connections 0.55s
-  [ran] legal 0.00s
-  [ran] fasteners 0.00s
-  [ran] power 0.00s
-  [ran] tension 0.00s
+BLOCKERS: 47
+  [ran] integrity 0.27s
+  [proxy] wiring 0.01s
+  [ran] mass 0.02s
+  [proxy] interference 0.69s
+  [ran] connections 0.25s
+  [ran] legal 0.02s
+  [ran] fasteners 0.01s
+  [ran] power 0.03s
+  [ran] tension 0.04s
   [ran] targets 0.00s
   [ran] fight 0.01s
-  [ran] shape 0.22s
-  [ran] dynamics 0.00s
+  [ran] shape 0.36s
+  [ran] dynamics 0.02s
   [ran] strength 0.00s
-  [ran] printability 0.39s
+  [ran] printability 2.13s
   [ran] process 0.00s
-  [ran] electrical 0.00s
-  [ran] combat 0.04s
-  [ran] physics 0.00s
-  [ran] plausibility 0.00s
+  [ran] electrical 0.01s
+  [ran] combat 0.20s
+  [ran] physics 0.02s
+  [ran] plausibility 0.01s
   [ran] cots 0.00s
   [ran] fit 0.00s
   [ran] bom 0.00s
-  [ran] wire_review 0.00s
-  [ran] fastener_record 0.00s
-  [ran] likeness 1.18s
-  [ran] drive_recess 0.00s
+  [ran] wire_review 0.01s
+  [ran] fastener_record 0.01s
+  [ran] likeness 7.80s
+  [ran] drive_recess 0.01s
   [ran] belt_wrap 0.00s
-  [ran] retention 0.00s
+  [ran] retention 0.02s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.03s
-  [ran] dfm 0.00s
-  [ran] realworld 0.00s
-failure to launch: ok=False 51 blockers in 42 root causes, mass 142.8/150 g
+  [ran] geom 0.23s
+  [ran] dfm 0.01s
+  [ran] realworld 0.01s
+failure to launch: ok=False 47 blockers in 38 root causes, mass 144.1/150 g
 1. [proxy.interference] `chassis` and `dt_screw_0` overlap by 0.19 mm (allowed 0.08). Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
    | chassis: x -30.00..30.00  y -25.00..25.00  z -10.00..16.00  size 60.00 x 50.00 x 26.00 mm
    |   centre (-0.00, 0.00, 3.00), volume 78000.0 mm3
@@ -77,7 +77,7 @@ failure to launch: ok=False 51 blockers in 42 root causes, mass 142.8/150 g
    |   OVERLAP `flip_arm_l` 7.38 mm (allowed 0.08)
    |   OVERLAP `flip_arm_r` 7.38 mm (allowed 0.08)
    |   OVERLAP `dt_axle_wheel_l0` 1.26 mm (allowed 0.08)
-8. [proxy.interference] `chassis` and `dt_strut_top_arm` overlap by 1.25 mm (allowed 0.08).
+8. [proxy.interference] `chassis` and `dt_strut_top_arm` overlap by 1.23 mm (allowed 0.08).
    | chassis: x -30.00..30.00  y -25.00..25.00  z -10.00..16.00  size 60.00 x 50.00 x 26.00 mm
    |   centre (-0.00, 0.00, 3.00), volume 78000.0 mm3
    |   OVERLAP `flip_arm_l` 7.38 mm (allowed 0.08)
@@ -107,26 +107,26 @@ failure to launch: ok=False 51 blockers in 42 root causes, mass 142.8/150 g
    |   OVERLAP `dt_hub_wheel_r0` 4.38 mm (allowed 0.08)
    |   OVERLAP `dt_axle_wheel_r0` 1.26 mm (allowed 0.08)
    |   gap to `chassis` 0.50 mm
-... 30 more root causes (fix these first, then re-run)
+... 26 more root causes (fix these first, then re-run)
 MASS BUDGET:
-  mass 142.8 g of 150 g (+7.2 g margin)
+  mass 144.1 g of 150 g (+5.9 g margin)
     chassis                    74.26 g  fills 100% of its box  <- solid block? a tub should be a shell
     flip_arm_l                 23.67 g  fills 55% of its box  <- solid block? a tub should be a shell
     flip_arm_r                 23.67 g  fills 55% of its box  <- solid block? a tub should be a shell
-    top_arm                     5.14 g  fills 17% of its box
+    top_arm                     6.68 g  fills 14% of its box
     wheel_l0                    4.15 g  fills 79% of its box
     wheel_r0                    4.15 g  fills 79% of its box
     dt_hub_wheel_r0             1.19 g  fills 79% of its box
     dt_hub_wheel_l0             1.19 g  fills 79% of its box
     dt_axle_wheel_r0            1.09 g  fills 79% of its box
     dt_axle_wheel_l0            1.09 g  fills 79% of its box
-    dt_strut_top_arm            0.99 g  fills 22% of its box
+    dt_strut_top_arm            0.67 g  fills 24% of its box
     dt_nut_wheel_l0             0.27 g  fills 79% of its box
     dt_nut_wheel_r0             0.27 g  fills 79% of its box
     dt_screw_0                  0.13 g  fills 79% of its box
     dt_screw_1                  0.13 g  fills 79% of its box
     dt_screw_2                  0.13 g  fills 79% of its box
     dt_screw_3                  0.13 g  fills 79% of its box
-    mass.may_be_over: 142.8 g (range 114.6 to 171.1 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.may_be_over: 144.1 g (range 115.5 to 172.6 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: group 0 hit / 31 miss, inside 6 hit / 11 miss, likeness 1 hit / 0 miss, min_gap 29 hit / 58 miss, overlap 146 hit / 223 miss, part_check 1 hit / 0 miss, part_geom 17 hit / 0 miss, ray 0 hit / 85 miss
+cache: group 0 hit / 31 miss, inside 15 hit / 2 miss, likeness 1 hit / 0 miss, min_gap 74 hit / 9 miss, overlap 301 hit / 24 miss, part_check 1 hit / 0 miss, part_geom 17 hit / 0 miss, ray 60 hit / 25 miss

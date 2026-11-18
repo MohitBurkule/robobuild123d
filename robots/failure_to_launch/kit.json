@@ -60,31 +60,31 @@
     30
    ],
    "mirror": true,
-   "weapon": "flipper",
-   "pivot": [
-    10,
-    20
-   ],
    "id": "flip_arm",
    "color": "#f2d21c"
   },
   {
    "box": [
     30,
-    60,
+    78,
     3
    ],
    "at": [
     0,
     40,
-    30
+    40
    ],
    "id": "top_arm",
    "color": "#22252a",
    "rot": [
-    -15,
+    14,
     0,
     0
+   ],
+   "weapon": "flipper",
+   "pivot": [
+    2,
+    30
    ]
   }
  ]
