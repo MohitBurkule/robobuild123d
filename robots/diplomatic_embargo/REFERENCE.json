@@ -9,11 +9,11 @@
   "diplomatic_embargo.aws76.webp"
  ],
  "view": {
-  "diplomatic_embargo.aws72.webp": "front_left_iso",
+  "diplomatic_embargo.aws72.webp": "front_right_iso",
   "diplomatic_embargo.aws76.webp": "front_left_iso"
  },
- "elevation": {
-  "diplomatic_embargo.aws72.webp": 25,
-  "diplomatic_embargo.aws76.webp": 45
+ "view_source": {
+  "diplomatic_embargo.aws72.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label",
+  "diplomatic_embargo.aws76.webp": "user camera pick (azimuth 135, elevation 35); replaces the automatic label"
  }
 }
