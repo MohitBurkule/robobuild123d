@@ -10,5 +10,13 @@
  "photos": [
   "ant_ratchet.aws72.webp",
   "ant_ratchet.aws76.webp"
- ]
+ ],
+ "view": {
+  "ant_ratchet.aws72.webp": "front_left_iso",
+  "ant_ratchet.aws76.webp": "front_right_iso"
+ },
+ "elevation": {
+  "ant_ratchet.aws72.webp": 45,
+  "ant_ratchet.aws76.webp": 45
+ }
 }

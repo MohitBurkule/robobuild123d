@@ -37,3 +37,9 @@ Likeness: aws72 0.82 (FAIL), aws76 0.84 (ok).
 Decisions: type lifter; body box rect 100x84x32 mm, ramp 45; wheels 2 r16 outboard; weapon none; 2 forks 22 mm.
 
 Likeness: aws72 0.82 (FAIL), aws76 0.84 (ok).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type lifter; body box rect 100x84x32 mm, ramp 45; wheels 2 r16 outboard; weapon none; 2 forks 22 mm.
+
+Likeness: aws72 0.78 (FAIL), aws76 0.62 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/ant_ratchet.aws76.webp` is declared `front_right_iso` (IoU 0.62 there) but the model matches it better from rear_left_iso (elev
