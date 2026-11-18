@@ -1,0 +1,85 @@
+{
+ "spec": "/tmp/work9_rammstein/robots/rammstein/spec.json",
+ "rendered_at": 1795019869.4196703,
+ "bodies": [
+  "chassis_bottom",
+  "chassis_top",
+  "motor_l",
+  "wheel_l",
+  "motor_r",
+  "wheel_r",
+  "insert_c0",
+  "insert_c1",
+  "insert_c2",
+  "insert_c3",
+  "battery",
+  "esc",
+  "rx",
+  "power_switch",
+  "wedge",
+  "insert_w0",
+  "insert_w1",
+  "insert_w2",
+  "insert_w3",
+  "wheel_fl",
+  "wheel_fr",
+  "bolt_c0",
+  "bolt_c1",
+  "bolt_c2",
+  "bolt_c3",
+  "bolt_w0",
+  "bolt_w1",
+  "bolt_w2",
+  "bolt_w3"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    5.0,
+    2.000000000000001,
+    -0.9
+   ],
+   "to": [
+    -27.0,
+    5.0,
+    -0.5
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    -19.0,
+    5.0,
+    -0.5
+   ],
+   "to": [
+    -1.0,
+    -2.0000000000000004,
+    3.0
+   ]
+  },
+  "w_esc_mr": {
+   "from": [
+    -7.000000000000001,
+    -10.0,
+    3.0
+   ],
+   "to": [
+    -5.549999999999997,
+    -24.0,
+    0.0
+   ]
+  },
+  "w_rx_esc": {
+   "from": [
+    -9.0,
+    25.8,
+    0.0
+   ],
+   "to": [
+    -13.0,
+    -1.9999999999999996,
+    3.0
+   ]
+  }
+ }
+}
