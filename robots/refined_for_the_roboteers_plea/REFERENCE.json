@@ -1,0 +1,14 @@
+{
+ "robot_type": "other",
+ "wheels": 2,
+ "weapon": {
+  "kind": "disc",
+  "axis": "x",
+  "position": "middle",
+  "teeth": 6
+ },
+ "photos": [
+  "refined_for_the_roboteers_pleasure.aws74.webp",
+  "refined_for_the_roboteers_pleasure.aws76.webp"
+ ]
+}

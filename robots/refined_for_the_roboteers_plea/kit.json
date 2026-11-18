@@ -1,0 +1,28 @@
+{
+ "name": "refined for the roboteers plea",
+ "robot_type": "other",
+ "body": {
+  "length": 75,
+  "width": 70,
+  "height": 22,
+  "ramp": 0,
+  "clearance": 2
+ },
+ "weapon": {
+  "kind": "disc",
+  "radius": 11,
+  "width": 2,
+  "y": -6,
+  "z": 97,
+  "axis": "x",
+  "teeth": 6
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 13,
+  "width": 10,
+  "y": [
+   -35
+  ]
+ }
+}

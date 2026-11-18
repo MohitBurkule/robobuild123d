@@ -1,0 +1,15 @@
+{
+ "spec": "/tmp/work10_refined_for_the_roboteers_plea/robots/refined_for_the_roboteers_plea/spec.json",
+ "rendered_at": 1795020902.619456,
+ "bodies": [
+  "chassis",
+  "weapon",
+  "wheel_l0",
+  "wheel_r0",
+  "plough",
+  "gear",
+  "arm",
+  "gear_mount"
+ ],
+ "wires": {}
+}

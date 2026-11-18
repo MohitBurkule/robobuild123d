@@ -1,0 +1,579 @@
+{
+ "name": "refined for the roboteers plea",
+ "profile": "aws2025",
+ "robot_type": "other",
+ "locomotion": "wheels",
+ "kit_draft": true,
+ "parts": [
+  {
+   "id": "chassis",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      70,
+      75,
+      22
+     ]
+    },
+    "at": [
+     0,
+     -12.5,
+     0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#1b1c1f",
+   "print_orientation": "+z"
+  },
+  {
+   "id": "weapon",
+   "kind": "weapon",
+   "material": "steel",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "spline_prism",
+     "points": [
+      [
+       11.0,
+       0.0
+      ],
+      [
+       10.673,
+       1.405
+      ],
+      [
+       10.171,
+       2.725
+      ],
+      [
+       9.511,
+       3.939
+      ],
+      [
+       8.711,
+       5.029
+      ],
+      [
+       7.794,
+       5.98
+      ],
+      [
+       6.78,
+       6.78
+      ],
+      [
+       5.885,
+       7.669
+      ],
+      [
+       5.5,
+       9.526
+      ],
+      [
+       4.119,
+       9.945
+      ],
+      [
+       2.725,
+       10.171
+      ],
+      [
+       1.344,
+       10.206
+      ],
+      [
+       0.0,
+       10.059
+      ],
+      [
+       -1.282,
+       9.739
+      ],
+      [
+       -2.482,
+       9.262
+      ],
+      [
+       -3.699,
+       8.931
+      ],
+      [
+       -5.5,
+       9.526
+      ],
+      [
+       -6.553,
+       8.54
+      ],
+      [
+       -7.445,
+       7.445
+      ],
+      [
+       -8.167,
+       6.267
+      ],
+      [
+       -8.711,
+       5.029
+      ],
+      [
+       -9.076,
+       3.759
+      ],
+      [
+       -9.262,
+       2.482
+      ],
+      [
+       -9.584,
+       1.262
+      ],
+      [
+       -11.0,
+       0.0
+      ],
+      [
+       -10.673,
+       -1.405
+      ],
+      [
+       -10.171,
+       -2.725
+      ],
+      [
+       -9.511,
+       -3.939
+      ],
+      [
+       -8.711,
+       -5.029
+      ],
+      [
+       -7.794,
+       -5.98
+      ],
+      [
+       -6.78,
+       -6.78
+      ],
+      [
+       -5.885,
+       -7.669
+      ],
+      [
+       -5.5,
+       -9.526
+      ],
+      [
+       -4.119,
+       -9.945
+      ],
+      [
+       -2.725,
+       -10.171
+      ],
+      [
+       -1.344,
+       -10.206
+      ],
+      [
+       -0.0,
+       -10.059
+      ],
+      [
+       1.282,
+       -9.739
+      ],
+      [
+       2.482,
+       -9.262
+      ],
+      [
+       3.699,
+       -8.931
+      ],
+      [
+       5.5,
+       -9.526
+      ],
+      [
+       6.553,
+       -8.54
+      ],
+      [
+       7.445,
+       -7.445
+      ],
+      [
+       8.167,
+       -6.267
+      ],
+      [
+       8.711,
+       -5.029
+      ],
+      [
+       9.076,
+       -3.759
+      ],
+      [
+       9.262,
+       -2.482
+      ],
+      [
+       9.584,
+       -1.262
+      ]
+     ],
+     "height": 2.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    5,
+    -6.0,
+    97.0
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "color": "#d9dde2",
+   "weapon": {
+    "kind": "disc",
+    "spin_axis": [
+     0,
+     0,
+     1
+    ],
+    "teeth": 6,
+    "cells": 2,
+    "reduction": 1.0
+   },
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "pivot": [
+     5,
+     -6.0,
+     97.0
+    ],
+    "min": 0,
+    "max": 360,
+    "default": 0
+   }
+  },
+  {
+   "id": "wheel_l0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 13.0,
+     "height": 10.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    40.5,
+    -35.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "wheel_r0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 13.0,
+     "height": 10.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -40.5,
+    -35.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "plough",
+   "kind": "armor",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       18,
+       -12
+      ],
+      [
+       62,
+       -12.5
+      ],
+      [
+       62,
+       -11
+      ],
+      [
+       42,
+       11
+      ],
+      [
+       18,
+       14
+      ]
+     ],
+     "height": 112
+    },
+    "at": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rot": [
+     90.0,
+     0.0,
+     90.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e8502f"
+  },
+  {
+   "id": "gear",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 15,
+     "height": 10
+    },
+    "at": [
+     0,
+     5,
+     14
+    ],
+    "rot": [
+     0.0,
+     90.0,
+     0.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#f1f1ec"
+  },
+  {
+   "id": "arm",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -2,
+       12
+      ],
+      [
+       10,
+       14
+      ],
+      [
+       0,
+       60
+      ],
+      [
+       -2,
+       99
+      ],
+      [
+       -10,
+       97
+      ],
+      [
+       -9,
+       60
+      ]
+     ],
+     "height": 6
+    },
+    "at": [
+     0.0,
+     0.0,
+     0.0
+    ],
+    "rot": [
+     90.0,
+     0.0,
+     90.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#f1f1ec"
+  },
+  {
+   "id": "gear_mount",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      16,
+      30,
+      8
+     ]
+    },
+    "at": [
+     0,
+     5,
+     13
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#1b1c1f"
+  }
+ ],
+ "fasteners": [],
+ "wires": [],
+ "connections": [],
+ "reference": [
+  {
+   "image": "reference/refined_for_the_roboteers_pleasure.aws74.webp",
+   "mask": "reference/refined_for_the_roboteers_pleasure.aws74_mask.png",
+   "view": "iso",
+   "approximate": true
+  },
+  {
+   "image": "reference/refined_for_the_roboteers_pleasure.aws76.webp",
+   "mask": "reference/refined_for_the_roboteers_pleasure.aws76_mask.png",
+   "view": "iso",
+   "approximate": true
+  }
+ ]
+}
