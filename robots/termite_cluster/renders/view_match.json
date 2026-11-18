@@ -1,0 +1,14 @@
+{
+ "termite_cluster.aws68.webp": {
+  "view": "top",
+  "azimuth": 0,
+  "elevation": 90,
+  "iou": 0.652
+ },
+ "termite_cluster.aws69.webp": {
+  "view": "top",
+  "azimuth": 270,
+  "elevation": 90,
+  "iou": 0.614
+ }
+}

@@ -19,3 +19,9 @@ Likeness: aws68 0.62 (FAIL), aws69 0.81 (FAIL).
 Decisions: type wedge; body box rect 70x72x18 mm, ramp 0; wheels 4 r9 outboard as treads; weapon none; extra parts: scoop, lid; clusterbot, one of 3 modelled (count read from photos, unsure); photos skipped (cluttered): indices [0].
 
 Likeness: aws68 0.62 (FAIL), aws69 0.81 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type wedge; body box rect 66x70x16 mm, ramp 0; wheels 4 r9 outboard; weapon none; extra parts: scoop, lid; clusterbot, one of 3 modelled (count read from photos, unsure); photos skipped (cluttered): indices [0].
+
+Likeness: aws68 0.61 (FAIL), aws69 0.61 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/termite_cluster.aws69.webp` is declared `top` (IoU 0.61 there) but the model matches it better from rear (elevation 45, azimuth

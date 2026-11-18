@@ -2,9 +2,9 @@
  "robot_type": "wedge",
  "cluster": 3,
  "body": {
-  "length": 70,
-  "width": 72,
-  "height": 18,
+  "length": 66,
+  "width": 70,
+  "height": 16,
   "ramp": 0
  },
  "wheels": {
@@ -14,8 +14,7 @@
   "y": [
    -24,
    22
-  ],
-  "tread": true
+  ]
  },
  "colors": {
   "body": "#2a2c30",
@@ -23,7 +22,28 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "skip_photos": [
+  0
+ ],
+ "crop": {
+  "1": [
+   0,
+   0,
+   0.5,
+   1
+  ],
+  "2": [
+   0,
+   0,
+   0.5,
+   1
+  ]
+ },
+ "name": "termite cluster",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "box": [
     76,
@@ -58,26 +78,5 @@
    "id": "lid",
    "color": "#eeeeea"
   }
- ],
- "skip_photos": [
-  0
- ],
- "crop": {
-  "1": [
-   0,
-   0,
-   0.5,
-   1
-  ],
-  "2": [
-   0,
-   0,
-   0.5,
-   1
-  ]
- },
- "name": "termite cluster",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }

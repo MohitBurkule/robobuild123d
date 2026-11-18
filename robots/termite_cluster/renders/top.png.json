@@ -1,12 +1,31 @@
 {
  "spec": "/tmp/work10_termite_cluster/robots/termite_cluster/spec.json",
- "rendered_at": 1795023236.3503559,
+ "rendered_at": 1795026175.4639115,
  "bodies": [
   "chassis",
-  "tread_l",
-  "tread_r",
+  "wheel_l0",
+  "wheel_r0",
+  "wheel_l1",
+  "wheel_r1",
   "scoop",
-  "lid"
+  "lid",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_nut_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_nut_wheel_r0",
+  "dt_hub_wheel_l1",
+  "dt_axle_wheel_l1",
+  "dt_nut_wheel_l1",
+  "dt_hub_wheel_r1",
+  "dt_axle_wheel_r1",
+  "dt_nut_wheel_r1",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3",
+  "dt_strut_lid"
  ],
  "wires": {}
 }
