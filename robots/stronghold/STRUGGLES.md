@@ -35,3 +35,8 @@ Scope: rough build from the three AWS photos (aws72, aws74, aws76). Not optimise
 - Built from `gen --hypothesis wedge` + intent (y0/y1/zt/axle_y), extra_parts (2 spring-steel forks, 2 TPU arches), post.py (replaces full ramp by 2 corner shovels; intent cannot shape the wedge).
 - Likeness: FAIL, best IoU about 0.72-0.75 per photo (need 0.80). Verify/fasteners NOT run (blockers unknown).
 - Stuck: `no wireable layout` when body is shortened or zt lowered (error does not say which limit); the wedge cannot be resized/removed from the intent; `robot mask` and likeness only work from repo root (subdir run gives a misleading "invalid choice: mask"); gen --intent writes out/wedge.json ignoring intent name; likeness takes 30-160 s.
+
+## Round 2 (kit.json)
+- Rebuilt with `robot kit` (box 64x82x34, ramp 14, 2 inside wheels, 2 forks). Likeness FAIL: IoU 0.70 / 0.76 / 0.77 (need 0.80), better than gen+patch (0.66-0.75 noisy).
+- Remaining differences: kit forks are flat boxes at floor level (real ones slope down from the front plate); no top TPU arches, no corner shovels, no raised rear gearbox; photo views are perspective so a plain box plateaus near 0.77. Wanted in kit: sloped forks, arch/bridge parts, corner wedgelets.
+- diff-photo has no API key here; compared the sheets by eye.
