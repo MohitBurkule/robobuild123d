@@ -1,4 +1,4 @@
 {"name":"recycler","robot_type":"drum",
- "body":{"length":46,"width":84,"height":30,"ramp":0,"style":"box","clearance":4},
- "weapon":{"kind":"drum","radius":16,"width":82,"y":34,"z":2,"axis":"x","teeth":0},
- "wheels":{"n":2,"radius":17,"width":12,"y":[-20],"outside":true}}
+ "body":{"length":50,"width":84,"height":20,"ramp":0,"style":"box","clearance":4},
+ "weapon":{"kind":"drum","radius":15,"width":82,"y":36,"z":1,"axis":"x","teeth":0},
+ "wheels":{"n":2,"radius":14,"width":11,"y":[-24],"outside":true}}

@@ -1,11 +1,14 @@
 {
  "spec": "/tmp/work9_recycler/robots/recycler/spec.json",
- "rendered_at": 1795020319.9854088,
+ "rendered_at": 1795020554.8349104,
  "bodies": [
   "chassis",
   "weapon",
   "wheel_l0",
-  "wheel_r0"
+  "wheel_r0",
+  "servo",
+  "label_plate",
+  "axle_stub"
  ],
  "wires": {}
 }

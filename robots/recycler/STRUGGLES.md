@@ -9,3 +9,6 @@
 ## Round 2
 - Rebuilt with `robot kit` (kit.json); weapon-axis check now passes. Silhouette IoU stuck ~0.78 (best camera is a rear view, mirrored). Remaining differences: no ring bands, no servo/top plate, rear wheels in photo sit higher and further back, drum end plates/shaft missing. Likeness FAIL (1 blocker: silhouette).
 - Kit hint: no ring-band/extra detail part and the matcher choosing a rear camera for a front-facing photo is confusing.
+
+## Round 3
+- Lowered drum, smaller wheels, added servo block, label plate, axle stub. IoU 0.74 (worse than r2 0.78 which had a taller body); mirroring y did not help (matcher picks mirrored rear view either way). Likeness FAIL (silhouette). Still missing: ring bands, pink wheels, caster, stepped top.
