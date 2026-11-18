@@ -1,7 +1,7 @@
 BLOCKERS: 11
-  [cached] integrity 0.00s
-  [cached] mass 0.00s
-  [proxy] interference 0.07s
+  [cached] integrity 0.01s
+  [cached] mass 0.01s
+  [proxy] interference 0.41s
   [cached] connections 0.00s
   [cached] legal 0.00s
   [cached] fasteners 0.00s
@@ -9,7 +9,7 @@ BLOCKERS: 11
   [cached] tension 0.00s
   [cached] targets 0.00s
   [cached] fight 0.00s
-  [cached] shape 0.00s
+  [cached] shape 0.01s
   [cached] dynamics 0.00s
   [cached] strength 0.00s
   [cached] printability 0.00s
@@ -23,14 +23,14 @@ BLOCKERS: 11
   [cached] bom 0.00s
   [cached] wire_review 0.00s
   [cached] fastener_record 0.00s
-  [cached] likeness 0.00s
+  [cached] likeness 0.02s
   [cached] drive_recess 0.00s
   [cached] belt_wrap 0.00s
   [cached] retention 0.00s
-  [cached] waiver_audit 0.00s
-  [cached] geom 0.00s
+  [cached] waiver_audit 0.01s
+  [cached] geom 0.01s
   [cached] dfm 0.00s
-  [cached] realworld 0.00s
+  [cached] realworld 0.01s
 stack overflow: ok=False 11 blockers in 11 root causes, mass 127.9/150 g
 1. [proxy.sweep] joint `arm`: `arm` hits `chassis` 0.20 mm deep at 7.3 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint arm` lists the closest approach to every part.
    | arm: x -7.00..7.00  y -25.00..50.00  z -8.00..28.00  size 14.00 x 75.00 x 36.00 mm

@@ -1,11 +1,18 @@
 {
  "spec": "/tmp/work10_stack_overflow/robots/stack_overflow/spec.json",
- "rendered_at": 1795023404.3007681,
+ "rendered_at": 1795036456.5211778,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
-  "arm"
+  "arm",
+  "dt_hub_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_esc",
+  "el_switch"
  ],
  "wires": {}
 }
