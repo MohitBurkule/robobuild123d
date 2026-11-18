@@ -35,7 +35,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-COL = {"body": "#3a3d44", "weapon": "#d9dde2", "wheel": "#202226", "fork": "#c9cdd3"}
+_COL0 = {"body": "#3a3d44", "weapon": "#d9dde2", "wheel": "#202226", "fork": "#c9cdd3"}
 
 
 def _ramp_body(x0, x1, y0, y1, zb, h, ramp):
@@ -81,11 +81,14 @@ def _clip(shape, outline, zb, H):
 
 
 def build(k: dict) -> dict:
+    COL = {**_COL0, **(k.get("colors") or {})}
     b = k.get("body") or {}
     L, W, H = float(b.get("length", 100)), float(b.get("width", 90)), float(b.get("height", 30))
     ramp = float(b.get("ramp", 25))
     wh = k.get("wheels") or {}
-    R = float(wh.get("radius", 14))
+    radii = wh.get("radius", 14)
+    radii = [float(v) for v in radii] if isinstance(radii, list) else None
+    R = max(radii) if radii else float(wh.get("radius", 14))
     zb = -R + float(b.get("clearance", 2.0))
     y0, y1 = -L / 2, L / 2
     parts = []
@@ -153,6 +156,25 @@ def build(k: dict) -> dict:
              weapon={"kind": kind, "spin_axis": [0, 0, 1], "teeth": nt, "cells": 2, "reduction": 1.0},
              joint={"kind": "revolute", "axis": axis, "pivot": [0.0, yw, zw], "min": 0, "max": 360, "default": 0})
         parts[-1]["at"], parts[-1]["rot"] = [0.0, yw, zw], rot
+    elif kind in ("flipper", "lifter", "axe", "hammer"):
+        import math
+        ln = float(wp.get("length", L * 0.6 if kind in ("flipper", "lifter") else L * 0.7))
+        wd = float(wp.get("width", W * 0.7 if kind in ("flipper", "lifter") else 10))
+        th = float(wp.get("thick", 2 if kind in ("flipper", "lifter") else 4))
+        py = float(wp.get("y", y0 + L * 0.3 if kind in ("flipper", "lifter") else y0 + 10))
+        pz = float(wp.get("z", zb + H if kind in ("axe", "hammer") else zb + H * 0.4))
+        ang = float(wp.get("angle_deg", -math.degrees(math.atan2(pz - (-R + 1), max(1.0, y1 - py)))
+                                        if kind in ("flipper", "lifter") else 10.0))
+        items = [{"type": "place", "shape": {"type": "box", "size": [wd, ln, th]}, "at": [0, ln / 2, 0], "rot": [0, 0, 0]}]
+        hd = wp.get("head") or ([24, 8, 16] if kind == "hammer" else [4, 14, 20] if kind == "axe" else None)
+        if hd:
+            items.append({"type": "place", "shape": {"type": "box", "size": [float(v) for v in hd]},
+                          "at": [0, ln - float(hd[1]) / 2, -float(hd[2]) / 2 + th / 2], "rot": [0, 0, 0]})
+        part("weapon", "weapon", {"type": "place", "shape": {"type": "union", "items": items}, "at": [0, 0, 0],
+                                  "rot": [0, 0, 0]}, "titanium" if kind in ("flipper", "lifter") else "aluminium",
+             "laser", color=COL["weapon"], weapon={"kind": kind},
+             joint={"kind": "revolute", "axis": [1, 0, 0], "pivot": [0.0, py, pz], "min": -10, "max": 90, "default": 0})
+        parts[-1]["at"], parts[-1]["rot"] = [0.0, py, pz], [ang, 0.0, 0.0]
 
     lg = k.get("legs") or {}
     if lg:  # walker / shuffler: legs with foot pads instead of wheels (AWS walkers get the non-roller mass limit)
@@ -171,7 +193,7 @@ def build(k: dict) -> dict:
     n = int(wh.get("n", 2))
     ww = float(wh.get("width", 10))
     ys = [] if n == 0 else (wh.get("y") or ([-L / 4] if n == 2 else [-L / 4, L / 4]))
-    xw = xo + ww / 2 + 0.5 if wh.get("outside", True) else xo - ww / 2 - 0.5
+    xw = float(wh["x"]) if wh.get("x") is not None else (xo + ww / 2 + 0.5 if wh.get("outside", True) else xo - ww / 2 - 0.5)
     i = 0
     if wh.get("tread"):
         import math
@@ -185,10 +207,11 @@ def build(k: dict) -> dict:
                  color=COL["wheel"])
         ys = []
     for yy in ys:
+        Ri = radii[min(i, len(radii) - 1)] if radii else R
         for sgn, side in ((1, "l"), (-1, "r")):
-            part(f"wheel_{side}{i}", "wheel", {"type": "place", "shape": {"type": "cylinder", "radius": R, "height": ww},
+            part(f"wheel_{side}{i}", "wheel", {"type": "place", "shape": {"type": "cylinder", "radius": Ri, "height": ww},
                                                "at": [0, 0, 0], "rot": [0, 90, 0]}, "tpu", "fdm", color=COL["wheel"])
-            parts[-1]["at"] = [sgn * xw, float(yy), 0.0]
+            parts[-1]["at"] = [sgn * xw, float(yy), Ri - R]  # all wheels touch the floor
         i += 1
 
     fk = k.get("forks") or {}
@@ -222,6 +245,29 @@ def build(k: dict) -> dict:
                [[sy + (r2 - th) * math.cos(a), sz + (r2 - th) * math.sin(a)] for a in reversed(aa)])
         sw = float(sh.get("width", W))
         part("shield", "armor", _yz_prism(pts, -sw / 2, sw / 2), "tpu", "fdm", color=COL["body"])
+    sc = k.get("scoop") or {}
+    if sc:
+        import math
+        sw, sl = float(sc.get("width", W)), float(sc.get("length", 30))
+        a, th, cv = math.radians(float(sc.get("angle", 20))), float(sc.get("thick", 1.5)), float(sc.get("curve", 0))
+        ty = float(sc.get("y", y1 + sl * math.cos(a) - 2))  # nose tip y
+        tz = float(sc.get("z", -R + 0.5))
+        n = 12
+        top = []
+        for i in range(n + 1):  # from the tip back up the slope, bowed down by `curve` in the middle
+            t = i / n
+            top.append([ty - t * sl * math.cos(a), tz + th + t * sl * math.sin(a) - cv * 4 * t * (1 - t)])
+        bot = [[y, z - th] for y, z in reversed(top)]
+        part("scoop", "wedge", _yz_prism(top + bot, -sw / 2, sw / 2), "titanium", "laser", color=COL["fork"])
+    for e in k.get("extras") or []:
+        e = dict(e)
+        e.setdefault("kind", "structure")
+        e.setdefault("material", "nylon")
+        e.setdefault("process", "fdm")
+        e.setdefault("at", [0, 0, 0])
+        e.setdefault("rot", [0, 0, 0])
+        e.setdefault("color", COL["body"])
+        parts.append(e)
     return {"name": k.get("name", "kit robot"), "profile": "aws2025", "robot_type": k.get("robot_type", "other"),
             "locomotion": k.get("locomotion") or ("walker" if lg else "roller"), "kit_draft": True, "parts": parts, "fasteners": [], "wires": [], "connections": [],
             **({"reference": k["reference"]} if k.get("reference") else {})}
