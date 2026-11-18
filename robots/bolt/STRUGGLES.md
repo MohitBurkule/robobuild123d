@@ -60,3 +60,24 @@ Scope: rough CAD attempt from the three AWS photos in `reference/`, about 20 min
 - Name the closest stock template in the likeness error and the margin needed, so you know whether to reshape or move away from it.
 - A per-photo mask preview (or a warning when the mask touches the image border) would catch floor-included masks before the gate runs.
 - Allow idler wheels in the spec (for example `"idler": true` on wheel parts) so the wheel-count check and drive checks agree.
+
+## Bolt from-scratch rebuild (Bolt robot, 35 min cap, `robot gen` intent)
+
+### Result
+- Likeness: FAIL (2 blockers). Wheel count (4) and reference wiring now pass. aws57: IoU 0.82 vs 0.83 needed (beats `hspin_bar` 0.83 is required). aws63: IoU 0.77 vs 0.80 needed; worst third is the front (0.54), where the mask includes floor.
+- Inner verify: 15 root causes, of which 12 are shown (overlaps of idler wheels with chassis, inserts and bolts, all 0.2 to 1.7 mm against 0.08 allowed). The 3 hidden causes were not inspected; the mass check reports 143.9 g with a range up to 170.8 g (`mass.may_be_over`).
+- Renders: `robots/bolt/renders/iso.png`, `robots/bolt/renders/top.png`.
+- Spec: `robot gen build --hypothesis wedge` with `zb -10, zt 16`, then patched by `out/patch_bolt.py` (not committed): 2 idler wheel parts plus `pin` connections, and `reference` entries for aws57 and aws63.
+
+### Where I got stuck
+1. The coordinator update (gate changed to an absolute 0.80 IoU floor, `likeness.weapon` added, idlers counted in the wheel total) came in mid-run. After merging `origin/dev` the first likeness run failed on wheel count and on missing `reference`. Idlers are not a generator option, so I added them by hand to the generated spec.
+2. The generator's `wedge` hypothesis has no idler option, so idler wheels had to be hand-written as copies of `wheel_l` with a `pin` connection. The verifier gives no direction on where an idler can go without overlapping the chassis walls.
+3. Photo masks: `robot mask` at default threshold includes floor on aws63 (left edge), which limits IoU on the front third. I did not tune `--thr`.
+4. The body outline is still the generator's box. I did not get to reshape it to the plow silhouette; only height was raised.
+5. Likeness takes about 20 to 60 s; it was the most useful loop. Verify inner took about 30 s.
+
+### Final blocker count
+- Verify inner: 15 root causes (12 shown). Likeness: 2 blockers.
+
+### Likeness
+- FAIL.
