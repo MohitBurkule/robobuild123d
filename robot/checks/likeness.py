@@ -183,6 +183,11 @@ def cam_name(i):
     return ["side", "front", "top"][k - 24] + (" (mirrored)" if mir else "")
 
 
+def _jaxis(j):
+    """Joint axis whether the joint is a spec Obj (attribute) or a raw dict."""
+    return j.get("axis") if isinstance(j, dict) else getattr(j, "axis", None)
+
+
 def photos(ctx):
     from . import reference as ref
     from ..mask import photo_mask
@@ -382,8 +387,8 @@ def weapon_facts(ctx, want):
         if spinner:
             sa = spin_axis(w, r, i)
             a = None if sa is None else sa[1]
-        elif p.joint and p.joint.get("axis") is not None:
-            a = np.asarray(p.joint["axis"], float)
+        elif p.joint is not None and _jaxis(p.joint) is not None:
+            a = np.asarray(_jaxis(p.joint), float)
         if a is None:
             out.append(fail("likeness.weapon", G, BLOCKER, "Weapon axis unknown",
                             f"`{p.id}` has no spin axis / joint axis; photos show a {kind} turning about {ax}.").on(p.id))
