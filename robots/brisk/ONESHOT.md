@@ -24,7 +24,7 @@ Likeness: aws76 0.58 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/brisk.aws76.webp` is declared `front_left_iso` (IoU 0.58 there) but the model matches it better from front_right_iso (elevation
 
 ## Round 4 (verification, helper 2)
-Blockers r3 56 -> r4 7 (`verify --tier inner`).
+Blockers r3 56 -> r4 8 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -33,20 +33,19 @@ Fixed / changed (inside only, outside kept):
 - one print with the chassis (same material, `fused_with`): `lid`
 - 4 wires declared (battery - switch - ESC - motors)
 - print orientation on every printed part, failsafe / weapon disable declared, design volumes declared where this pass changed a part on purpose
+- power switch on the floor of the body, slider facing down to a 7 x 3 mm slot in the underside (no slot on the top or sides; hollow cavities stay closed behind a wall at every outside face)
 - flipper sweeps through chassis at 41 poses: not carved (would change the outside)
 - flipper sweeps through lid at 41 poses: not carved (would change the outside)
 - rod dt_axle_wheel_l0: 2.2 mm stub clear of ['dm_wheel_l0'] printed as the wheel's hub boss
 - rod dt_axle_wheel_r0: 2.2 mm stub clear of ['dm_wheel_r0'] printed as the wheel's hub boss
-- wheel_l0: one cut dropped (split the part into 2 solids)
-- wheel_r0: one cut dropped (split the part into 2 solids)
-- hollowed chassis (wall 2.5, form 0): 294.4 -> 93.9 cm3
+- hollowed chassis (wall 2.5, form 0): 294.4 -> 94.4 cm3
 
 Left (and why):
 - proxy.sweep x1: joint `flipper`: `flipper` hits `chassis` 0.23 mm deep at 7.3 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint flipper` lists the closest approach to every part.
 - power.weapon_motor x1: toolchain: lifters/flippers are servo or gear driven; the check wants a brushless kV for every weapon.
 - process.weapon_printed x1: toolchain: a printed lifter/flipper arm is judged like a spinner (needs hardened teeth); adding metal teeth changes the look.
 - wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
-- wire.rotor_clearance x1: toolchain: same full-revolution assumption; wires cannot leave a cylinder that covers the chassis.
+- wire.rotor_clearance x2: toolchain: same full-revolution assumption; wires cannot leave a cylinder that covers the chassis.
 - likeness.view x1: looks, not in scope for this pass.
 - likeness.silhouette x1: looks, not in scope for this pass.
 

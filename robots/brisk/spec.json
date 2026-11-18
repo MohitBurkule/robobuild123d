@@ -129,68 +129,6 @@
        "shape": {
         "type": "place",
         "shape": {
-         "type": "cylinder",
-         "radius": 1.5,
-         "height": 18.6
-        },
-        "at": [
-         41.8,
-         -30.0,
-         0.0
-        ],
-        "rot": [
-         0.0,
-         90.0,
-         0.0
-        ]
-       },
-       "at": [
-        0.0,
-        0.0,
-        0.0
-       ],
-       "rot": [
-        0.0,
-        -0.0,
-        0.0
-       ]
-      },
-      {
-       "type": "place",
-       "shape": {
-        "type": "place",
-        "shape": {
-         "type": "cylinder",
-         "radius": 1.5,
-         "height": 18.6
-        },
-        "at": [
-         -41.8,
-         -30.0,
-         0.0
-        ],
-        "rot": [
-         0.0,
-         90.0,
-         180.0
-        ]
-       },
-       "at": [
-        0.0,
-        0.0,
-        0.0
-       ],
-       "rot": [
-        0.0,
-        -0.0,
-        0.0
-       ]
-      },
-      {
-       "type": "place",
-       "shape": {
-        "type": "place",
-        "shape": {
          "type": "box",
          "size": [
           36.0,
@@ -346,12 +284,12 @@
         ]
        },
        "at": [
-        10.5,
+        0.5,
         -15.5,
-        29.5
+        -5.5
        ],
        "rot": [
-        0.0,
+        180.0,
         -0.0,
         0.0
        ]
@@ -361,15 +299,15 @@
        "shape": {
         "type": "box",
         "size": [
-         12.4,
-         4.4,
-         3.5
+         7.0,
+         3.0,
+         4.0
         ]
        },
        "at": [
-        10.5,
+        0.5,
         -15.5,
-        32.75
+        -9.0
        ],
        "rot": [
         0.0,
@@ -775,68 +713,6 @@
         "shape": {
          "type": "place",
          "shape": {
-          "type": "cylinder",
-          "radius": 4.0,
-          "height": 23.6
-         },
-         "at": [
-          41.8,
-          -30.0,
-          0.0
-         ],
-         "rot": [
-          0.0,
-          90.0,
-          0.0
-         ]
-        },
-        "at": [
-         0.0,
-         0.0,
-         0.0
-        ],
-        "rot": [
-         0.0,
-         -0.0,
-         0.0
-        ]
-       },
-       {
-        "type": "place",
-        "shape": {
-         "type": "place",
-         "shape": {
-          "type": "cylinder",
-          "radius": 4.0,
-          "height": 23.6
-         },
-         "at": [
-          -41.8,
-          -30.0,
-          0.0
-         ],
-         "rot": [
-          0.0,
-          90.0,
-          180.0
-         ]
-        },
-        "at": [
-         0.0,
-         0.0,
-         0.0
-        ],
-        "rot": [
-         0.0,
-         -0.0,
-         0.0
-        ]
-       },
-       {
-        "type": "place",
-        "shape": {
-         "type": "place",
-         "shape": {
           "type": "box",
           "size": [
            41.0,
@@ -992,12 +868,12 @@
          ]
         },
         "at": [
-         10.5,
+         0.5,
          -15.5,
-         29.5
+         -5.5
         ],
         "rot": [
-         0.0,
+         180.0,
          -0.0,
          0.0
         ]
@@ -1007,15 +883,15 @@
         "shape": {
          "type": "box",
          "size": [
-          17.4,
-          9.4,
-          8.5
+          12.0,
+          8.0,
+          9.0
          ]
         },
         "at": [
-         10.5,
+         0.5,
          -15.5,
-         32.75
+         -9.0
         ],
         "rot": [
          0.0,
@@ -1060,7 +936,7 @@
    ],
    "color": "#e8873a",
    "print_orientation": "+z",
-   "volume_mm3": 93889.0
+   "volume_mm3": 94351.0
   },
   {
    "id": "wheel_l0",
@@ -1886,61 +1762,6 @@
        -0.0,
        0.0
       ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "place",
-       "shape": {
-        "type": "box",
-        "size": [
-         12.3,
-         4.3,
-         4.5
-        ]
-       },
-       "at": [
-        0.0,
-        0.0,
-        0.0
-       ],
-       "rot": [
-        0.0,
-        0.0,
-        0.0
-       ]
-      },
-      "at": [
-       10.5,
-       -15.5,
-       29.5
-      ],
-      "rot": [
-       0.0,
-       -0.0,
-       0.0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.4,
-        4.4,
-        3.5
-       ]
-      },
-      "at": [
-       10.5,
-       -15.5,
-       32.75
-      ],
-      "rot": [
-       0.0,
-       -0.0,
-       0.0
-      ]
      }
     ]
    },
@@ -1957,7 +1778,7 @@
    "color": "#3a7fc0",
    "fused_with": "chassis",
    "print_orientation": "+z",
-   "volume_mm3": 6912.0
+   "volume_mm3": 7075.0
   },
   {
    "id": "flipper",
@@ -2061,8 +1882,8 @@
     90.0
    ],
    "catalog": "lipo_2s_180",
-   "retained": "velcro",
-   "retained_reason": "velcro strap round the pack onto the pocket floor; the closed pocket walls stop it shifting under hits"
+   "retained": "strap",
+   "retained_reason": "hook-and-loop strap round the pack and the pocket floor; the closed pocket walls stop it shifting under hits"
   },
   {
    "id": "el_esc",
@@ -2083,19 +1904,19 @@
    "id": "el_switch",
    "kind": "switch",
    "at": [
-    10.5,
+    0.5,
     -15.5,
-    29.5
+    -5.5
    ],
    "rot": [
-    0.0,
+    180.0,
     0.0,
     0.0
    ],
    "catalog": "switch_slide_12x4",
    "tool_free": true,
    "marked": true,
-   "label": "ON / OFF (slide across, marked on the lid)",
+   "label": "ON / OFF (slide across with a fingernail, marked on the underside)",
    "actuation": [
     1,
     0,
@@ -2167,7 +1988,7 @@
    "a": "el_switch",
    "b": "chassis",
    "method": "interlock",
-   "reason": "switch body is pressed into a snug printed slot that captures it on five sides; the slider reaches up through the lid slot"
+   "reason": "switch body is pressed into a snug printed slot that captures it on five sides; the slider faces down to a 7 x 3 mm slot in the underside"
   },
   {
    "a": "dm_wheel_l0",
