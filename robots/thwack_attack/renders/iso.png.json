@@ -1,6 +1,6 @@
 {
- "spec": "/tmp/work10_thwack_attack/robots/thwack_attack/spec.json",
- "rendered_at": 1795036583.0182376,
+ "spec": "/home/antigravity/MohitBurkule/robobuild123d/robots/thwack_attack/spec.json",
+ "rendered_at": 1795042925.8072584,
  "bodies": [
   "chassis",
   "weapon",
