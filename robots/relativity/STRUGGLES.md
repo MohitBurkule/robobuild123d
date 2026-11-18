@@ -8,3 +8,4 @@
 ## Round 2
 - Merged dev. kit.py only does box/ramp bodies, no pointed plan outline, so I kept the hand-edited gen spec. Likeness still FAIL (3 silhouette blockers).
 - diff-photo (read by hand, no key): top lid looks missing/open tray in the model (chassis_top intersect clip likely the cause), blade too small and lacks crescent tips, nose not rounded, rear side walls/wheel pods missing, floating bolts.
+- Round 2 fixes: replaced chassis with one solid ruled loft (pointed rounded nose, spline:false is essential, default loft splines into a blob), restored lid, crescent blade under nose, removed bolts/inserts. Scores: aws76 0.81 PASS, aws72 0.67, aws74 0.67 FAIL. Still: rear third, photo has stepped open rear pods.
