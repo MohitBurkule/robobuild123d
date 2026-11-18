@@ -20,6 +20,7 @@ from .params import (HALF_W_TUB, HALF_L_TUB, CORNER_R, Z_TUB0, TUB_H, WALL, WALL
                      ESC, ESC_AT, ESC_Z, SWITCH, SWITCH_AT,
                      SW_POCKET_FIT, SW_POCKET_T, SW_POCKET_Z1, SW_POCKET_MERGE,
                      ESC_SHELF_T, ESC_SHELF_X0, ESC_SHELF_X_OVER, ESC_SHELF_Y_OVER, ESC_SHELF_MERGE,
+                     ESC_CAP_SOUTH_X1,
                      ESC_CAP_FIT, ESC_CAP_T, ESC_CAP_RISE, ESC_CAP_SINK,
                      CUT_OVER, NOTCH_GAP, FIN_TIP_BACK)
 
@@ -53,7 +54,11 @@ def _esc_shelf():
     wz0, wz1 = z1 - ESC_CAP_SINK, ESC_Z + ESC["h"] / 2 + ESC_CAP_RISE
     wy = bd.Pos((X_MOTOR_BACK + ESC_AT[0] + ESC["l"] / 2) / 2, ESC_AT[1] + ESC["w"] / 2 + ESC_CAP_FIT + ESC_CAP_T / 2,
                 (wz0 + wz1) / 2) * bd.Box(ESC_AT[0] + ESC["l"] / 2 - X_MOTOR_BACK, ESC_CAP_T, wz1 - wz0)
-    return plate + wy + wy.mirror(bd.Plane.XZ)
+    # the -y wall runs past the ESC's +x face, over the battery's east arm: a fin that walls the arm's 45-deg
+    # up-sight rays off the switch access hole (ray band crosses y -5.5 in free air otherwise)
+    wy_s = bd.Pos((X_MOTOR_BACK + ESC_CAP_SOUTH_X1) / 2, -(ESC_AT[1] + ESC["w"] / 2 + ESC_CAP_FIT + ESC_CAP_T / 2),
+                  (wz0 + wz1) / 2) * bd.Box(ESC_CAP_SOUTH_X1 - X_MOTOR_BACK, ESC_CAP_T, wz1 - wz0)
+    return plate + wy + wy_s
 
 
 def outline(half_w=None, half_l=None, corner=None):

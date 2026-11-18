@@ -9,7 +9,7 @@ from robot.cad.holes import hole_tool
 
 from . import tub
 from .params import (Z_BASE, Z_TOP, PLATE_T, PLATE_HALF_W, PLATE_HALF_L, WELL, BOLT_SITES, PLATE_SCREW,
-                     PLATE_HEAD, switch_hole_xy)
+                     PLATE_HEAD, switch_hole_xy, switch_sky_xy, switch_sky_pins)
 
 
 def _sheet(t):
@@ -25,7 +25,10 @@ def _sheet(t):
     win = win + win.mirror(bd.Plane.XZ) + win.mirror(bd.Plane.XZ).mirror(bd.Plane.YZ)
     face = face - win
     hx, hy, hr = switch_hole_xy()
-    face = face - bd.Pos(hx, hy) * bd.Circle(hr)
+    sx, sy, sr = switch_sky_xy()
+    face = face - bd.Pos(hx, hy) * bd.Circle(hr) - bd.Pos(sx, sy) * bd.Circle(sr)
+    for px, py, pr in switch_sky_pins():
+        face = face - bd.Pos(px, py) * bd.Circle(pr)
     return bd.extrude(face, t)
 
 

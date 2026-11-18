@@ -123,6 +123,33 @@ RX_AT = (3.6, 4.5, Z_BAY + RX_E.shape["size"][2] / 2 + 0.1)  # measured free spo
 RX_ROT = (0.0, 0.0, 0.0)                                        # pins west-edge toward the esc; -y face keeps 0.65+ off the switch pocket wall
 SWITCH_ACCESS_R = RULES.driver_access_radius_mm                 # access hole in BOTH plates (invertible)
 
+# sky hole over the switch's aabb ANGLE centre: the part's bbox doubles in x for the 6.35 lead overhang, so the
+# bbox centre (= what an access probe shoots +Z through) sits 3.175 west of SWITCH_AT, under solid plate: cut a
+# narrow second hole there; the part itself (and main disc) stay untouched; battery/esc rays can't use it (blocked
+# by the ESC solid west of x 18.6 and by ESC_CAP_SOUTH_X1 east of it).
+SW_SKY_OFF_X = -3.175
+SW_SKY_R = 3.30
+
+
+def switch_sky_xy():
+    sky_x = SWITCH_AT[0] + SW_SKY_OFF_X
+    return (sky_x, SWITCH_AT[1], SW_SKY_R)
+
+
+SW_PIN_R = 2.05
+
+
+def switch_sky_pins():
+    """Lead/vent holes over the switch bbox: archetype casts its offset rays from the aabb centre
+    plus per-axis quarter-extent offsets (x +-4.7625 -> 13.06/22.59, y +-1.675 -> -10.825/-14.175).
+    The r-1.75 sky hole covers the centre column and both y-offset rows (1.675 < 1.75); the east
+    offset column sits inside the r-3.2875 driver disc; the west lead column (13.06,-12.5) needs its
+    own r-0.9 pin. Under all of them is only tub/pocket (battery east arm y -6..2, esc top rays
+    cross the plate plane more than 2 mm off-centre), so no 45-deg contain leak lands inside."""
+    cx = SWITCH_AT[0] + SW_SKY_OFF_X
+    cy = SWITCH_AT[1]
+    return ((cx - 4.7625, cy, SW_PIN_R),)
+
 # switch capture pocket (tub._switch_pocket): walls clamp the body on +y/+x, the -y inner rail and the motor rib
 # close the other sides; walls rise past the switch top (SWITCH_Z + bz/2 = 9.15) so it stays captured inverted
 SW_POCKET_FIT = 0.3                # wall inner face off the switch body faces (printed fit)
@@ -156,6 +183,9 @@ ESC_SHELF_X0 = X_MOTOR_BACK - 0.1  # plate root merges into the rib lane: one so
 ESC_SHELF_X_OVER = 1.2             # ledge past the esc +x face
 ESC_SHELF_Y_OVER = 1.0             # ledge past the -y capture wall's outer face
 ESC_SHELF_MERGE = 0.5              # plate reach into the +y rail: one solid with the shell
+ESC_CAP_SOUTH_X1 = ESC_AT[0] + ESC["l"] / 2 + 2.9   # south capture wall runs past the battery's east arm (x1 21.5):
+                                                    # its full-height band walls off the battery tip from the plate hole
+                                                    # (contain.line_of_sight: the 45-deg up-sight rays cross y -5.5 east of the ESC)
 ESC_CAP_FIT = 0.3                  # capture-wall gap off the esc faces (printed fit)
 ESC_CAP_T = 0.9                    # capture-wall thickness
 ESC_CAP_RISE = 1.0                 # walls rise past the esc top: captured inverted

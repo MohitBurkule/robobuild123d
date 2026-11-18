@@ -195,13 +195,15 @@ for j, sx in enumerate((1, -1)):
 wires = [
     {"id": "w_bat_sw", "from": f"battery.{BAT_PORT}", "to": "switch.in",
      "awg": 24, "kind": "power", "slack_mm": 8.0, "via": _v(
-         P_BAT, (P_BAT[0], P_BAT[1], HIGH_Z), (P_BAT[0], -12.0, HIGH_Z), (4.5, -12.0, HIGH_Z),
-         (4.5, P_SW_IN[1], P_SW_IN[2]), P_SW_IN)},
+         P_BAT, (P_BAT[0], P_BAT[1], HIGH_Z), (2.0, P_BAT[1], HIGH_Z), (2.0, -12.0, HIGH_Z),
+         P_SW_IN)},
     {"id": "w_sw_esc", "from": "switch.out", "to": "esc.bat", "awg": 24, "kind": "power", "slack_mm": 8.0, "via": _v(
-         P_SW_OUT, (9.5, P_SW_OUT[1], P_SW_OUT[2]), (9.5, P_SW_OUT[1], HIGH_Z), (26.0, P_SW_OUT[1], HIGH_Z),
-         (26.0, -8.0, HIGH_Z), (26.0, 6.0, P_ESC_BAT[2]), P_ESC_BAT)},
+         P_SW_OUT, (9.5, P_SW_OUT[1], P_SW_OUT[2]), (9.5, -17.4, P_SW_OUT[2] + 1.0),
+         (9.5, -17.4, HIGH_Z), (29.5, -17.4, HIGH_Z), (29.5, 6.0, HIGH_Z), (26.0, 6.0, 16.0),
+         (26.0, 6.0, P_ESC_BAT[2]), P_ESC_BAT)},
     {"id": "w_esc_rx", "from": "esc.rx", "to": "rx.esc", "awg": 26, "kind": "signal", "slack_mm": 8.0, "via": _v(
-         P_ESC_RX, (20.5, -6.0, P_ESC_RX[2]), (20.5, -6.0, HIGH_Z),
+         P_ESC_RX, (20.5, -6.0, P_ESC_RX[2]), (20.5, -6.0, HIGH_Z), (24.0, -6.0, HIGH_Z),
+         (24.0, P_RX_ESC[1], HIGH_Z),
          (P_RX_ESC[0] + 0.3, P_RX_ESC[1], HIGH_Z),
          (P_RX_ESC[0] + 0.3, P_RX_ESC[1], P_RX_ESC[2]), P_RX_ESC)},
     {"id": "w_m1_fr", "from": "esc.m1", "to": "motor_fr.terminals", "awg": 26, "kind": "power", "slack_mm": 8.0, "via": _v(
@@ -211,11 +213,12 @@ wires = [
          P_ESC_M1, (8.2, 12.5, P_ESC_M1[2]), (8.2, 12.5, HIGH_Z), (-4.5, 12.5, HIGH_Z),
          (-4.5, TERM["fl"][1], HIGH_Z), (-4.5, TERM["fl"][1], TERM["fl"][2]), TERM["fl"])},
     {"id": "w_m2_rr", "from": "esc.m2", "to": "motor_rr.terminals", "awg": 26, "kind": "power", "slack_mm": 8.0, "via": _v(
-         P_ESC_M2, (17.9, 17.0, P_ESC_M2[2]), (17.9, 17.0, HIGH_Z), (17.9, -8.0, HIGH_Z),
-         (4.0, -8.0, HIGH_Z), (4.0, TERM["rr"][1], HIGH_Z), (4.0, TERM["rr"][1], TERM["rr"][2]), TERM["rr"])},
+         P_ESC_M2, (17.9, 17.0, P_ESC_M2[2]), (17.9, 17.0, HIGH_Z), (26.5, 17.0, HIGH_Z),
+         (26.5, -8.0, HIGH_Z), (4.0, -8.0, HIGH_Z), (4.0, TERM["rr"][1], HIGH_Z),
+         (4.0, TERM["rr"][1], TERM["rr"][2]), TERM["rr"])},
     {"id": "w_m2_rl", "from": "esc.m2", "to": "motor_rl.terminals", "awg": 26, "kind": "power", "slack_mm": 8.0, "via": _v(
-         P_ESC_M2, (17.2, 17.0, P_ESC_M2[2]), (17.2, 17.0, HIGH_Z), (17.2, 9.0, HIGH_Z),
-         (-3.0, 9.0, HIGH_Z), (-3.0, TERM["rl"][1], HIGH_Z), (-3.0, TERM["rl"][1], TERM["rl"][2]), TERM["rl"])},
+         P_ESC_M2, (-6.0, 6.0, HIGH_Z), (-3.0, 9.0, HIGH_Z),
+         (-3.0, TERM["rl"][1], HIGH_Z), (-3.0, TERM["rl"][1], TERM["rl"][2]), TERM["rl"])},
 ]
 
 # ------------------------------------------------------------------------------------------------ connections
