@@ -1,0 +1,102 @@
+BLOCKERS: 20
+  [ran] integrity 0.02s
+  [proxy] wiring 0.00s
+  [ran] mass 0.01s
+  [proxy] interference 0.16s
+  [ran] connections 0.01s
+  [ran] legal 0.00s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.01s
+  [ran] shape 0.03s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.83s
+  [ran] process 0.00s
+  [ran] electrical 0.01s
+  [ran] combat 0.15s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 5.05s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.02s
+  [ran] dfm 0.00s
+  [ran] realworld 0.00s
+antomic: ok=False 20 blockers in 20 root causes, mass 358.1/150 g
+1. [mass.over] 358.1 g (range 286.1 to 430.1 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+2. [proxy.interference] `chassis` and `wheel_l0` overlap by 3.88 mm (allowed 0.08).
+   | chassis: x -40.00..40.00  y -42.50..42.50  z -10.00..30.00  size 80.00 x 85.00 x 40.00 mm
+   |   centre (-0.00, -0.00, 10.00), volume 272000.0 mm3
+   |   OVERLAP `wheel_l0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `scoop` 2.12 mm (allowed 0.08)
+3. [proxy.interference] `chassis` and `wheel_r0` overlap by 3.88 mm (allowed 0.08).
+   | chassis: x -40.00..40.00  y -42.50..42.50  z -10.00..30.00  size 80.00 x 85.00 x 40.00 mm
+   |   centre (-0.00, -0.00, 10.00), volume 272000.0 mm3
+   |   OVERLAP `wheel_l0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `scoop` 2.12 mm (allowed 0.08)
+4. [proxy.interference] `chassis` and `scoop` overlap by 2.12 mm (allowed 0.08).
+   | chassis: x -40.00..40.00  y -42.50..42.50  z -10.00..30.00  size 80.00 x 85.00 x 40.00 mm
+   |   centre (-0.00, -0.00, 10.00), volume 272000.0 mm3
+   |   OVERLAP `wheel_l0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `scoop` 2.12 mm (allowed 0.08)
+5. [connection.floating] `scoop` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | scoop: x -45.00..45.00  y 38.00..75.00  z -12.00..32.00  size 90.00 x 37.00 x 44.00 mm
+   |   centre (0.00, 56.50, 10.00), volume 83160.0 mm3
+   |   OVERLAP `chassis` 2.12 mm (allowed 0.08)
+   | chassis: x -40.00..40.00  y -42.50..42.50  z -10.00..30.00  size 80.00 x 85.00 x 40.00 mm
+   |   centre (-0.00, -0.00, 10.00), volume 272000.0 mm3
+6. [connection.floating] `frame` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | frame: x -25.00..25.00  y -25.00..35.00  z 30.00..34.00  size 50.00 x 60.00 x 4.00 mm
+   |   centre (0.00, 5.00, 32.00), volume 12000.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -25, 30.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+   | chassis: x -40.00..40.00  y -42.50..42.50  z -10.00..30.00  size 80.00 x 85.00 x 40.00 mm
+7. [legal.switch] Rule 4a needs an externally accessible way to shut down that works without tools and is clearly marked on/off.
+   fix: Add a `switch` part (or removable link) with `tool_free: true` and `marked: true` and a visible ON/OFF `label`.
+8. [legal.failsafe] Rule 4d: the robot must stop all motion when the transmitter is off.
+   fix: Set `electronics.failsafe` to true and configure the receiver and ESC failsafe.
+9. [legal.weapon_disable] Rule 4c: all weaponry must be deactivatable by remote control.
+   fix: Set `electronics.weapon_remote_disable` and put the weapon on its own receiver channel.
+10. [power.weapon_motor] `frame` names motor None; it must be a catalog brushless motor so speed can be computed.
+   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
+   | frame: x -25.00..25.00  y -25.00..35.00  z 30.00..34.00  size 50.00 x 60.00 x 4.00 mm
+   |   centre (0.00, 5.00, 32.00), volume 12000.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -25, 30.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+11. [process.print_orientation] `wheel_l0` (fdm) has no `print_orientation`.
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_l0: x 31.50..39.50  y -32.00..-8.00  z -12.00..12.00  size 8.00 x 23.99 x 24.00 mm
+   |   centre (35.50, -20.00, 0.00), volume 3619.1 mm3
+   |   OVERLAP `chassis` 3.88 mm (allowed 0.08)
+12. [process.print_orientation] `wheel_r0` (fdm) has no `print_orientation`.
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_r0: x -39.50..-31.50  y -32.00..-8.00  z -12.00..12.00  size 8.00 x 23.99 x 24.00 mm
+   |   centre (-35.50, -20.00, 0.00), volume 3619.1 mm3
+   |   OVERLAP `chassis` 3.88 mm (allowed 0.08)
+... 8 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 358.1 g of 150 g (-208.1 g margin)
+    chassis                   258.94 g  fills 100% of its box  <- solid block? a tub should be a shell
+    scoop                      79.17 g  fills 57% of its box  <- solid block? a tub should be a shell
+    frame                      11.42 g  fills 100% of its box
+    wheel_l0                    3.69 g  fills 79% of its box
+    wheel_r0                    3.69 g  fills 79% of its box
+    mass.over: 358.1 g (range 286.1 to 430.1 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 1 hit / 0 miss, group 0 hit / 31 miss, inside 5 hit / 0 miss, likeness 1 hit / 0 miss, min_gap 19 hit / 0 miss, overlap 61 hit / 0 miss, part_check 1 hit / 0 miss, part_geom 5 hit / 0 miss, ray 25 hit / 0 miss
