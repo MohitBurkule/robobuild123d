@@ -143,8 +143,8 @@ below IoU 0.80 or worse than the closest stock template (`likeness.silhouette`).
 build --hypothesis` that matches the weapon, `robot mask reference/<p> reference/<p>_mask.png` per photo, add the
 `reference` entries (view iso, approximate true), then reshape until `likeness` passes. Never edit the masks by hand.
 REFERENCE.json (collector only): {robot_type, wheels, weapon: {kind disc|drum|bar|lifter|flipper|wedge, axis x|y|z,
-position front|middle|rear, width_frac, teeth}, photos: [usable files], mask_thr: {file: thr}}. Use `robot mask ... --thr` the
-file gives.
+position front|middle|rear, width_frac, teeth}, photos: [usable files], mask_thr: {file: thr}, crop: {file: [x0,y0,x1,y1] 0..1}}. Use the
+`robot mask ... --thr T --crop x0,y0,x1,y1` the file gives.
 FAST SHAPE LOOP: `robot likeness spec.json` (~10 s) runs only this gate, names the best camera, the closest template,
 the worst third and height/length vs the photo, and writes overlays to renders/likeness_*.png (red = model only, blue =
 photo only). Run `robot` from the repo you installed (`pip install -e .` in it), or another checkout's code may run.
