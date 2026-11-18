@@ -29,3 +29,11 @@ Looks alike: **partly**. Renders: `renders/iso.png`, `renders/top.png`.
 Corner notches expose the wheels, beater bar with square windows replaces the round drum, body lower and longer, sensor windows on a clear lid.
 
 Likeness: aws71 0.74 (FAIL), aws74 0.79 (FAIL).
+
+## Tools I wanted
+- `robot looks SPEC` (build + iso/top + likeness + diff sheets in one pass, batchable). Did instead: four CLI calls per robot, ~3-4 min wall each.
+
+## Round 2 (looks)
+Decisions: type drum; body box rect 75x104x20 mm, ramp 0; wheels 2 r13 inboard; weapon drum r8 axis x teeth 2.
+
+Likeness: aws71 0.74 (FAIL), aws74 0.79 (FAIL).
