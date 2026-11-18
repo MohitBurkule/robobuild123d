@@ -46,7 +46,7 @@ Likeness: aws72 0.66 (FAIL), aws74 0.43 (FAIL), aws76 0.56 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/dragoon.aws74.webp` is declared `front` (IoU 0.43 there) but the model matches it better from rear_right_iso (elevation 45, azi; [FAIL] likeness.view: `reference/dragoon.aws76.webp` is declared `front_left_iso` (IoU 0.56 there) but the model matches it better from front_right_iso (elevati
 
 ## Round 4 (verification, helper 2)
-Blockers r3 142 -> r4 33 (`verify --tier inner`).
+Blockers r3 142 -> r4 38 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -58,6 +58,8 @@ Fixed / changed (inside only, outside kept):
 - power switch on the floor of the body, slider facing down to a 7 x 3 mm slot in the underside (no slot on the top or sides; hollow cavities stay closed behind a wall at every outside face)
 - weapon drive: motor not coaxial, belt drive implied
 - weapon: running-clearance well in chassis not carved (it would open 225 mm2 of outside face)
+- chassis: a cut was not made (it would open 32 mm2 of outside face; the overlap stays as a finding)
+- chassis: a cut was not made (it would open 22 mm2 of outside face; the overlap stays as a finding)
 - weapon: running-clearance well in fork_1 not carved (it would open 107 mm2 of outside face)
 - weapon: running-clearance well in fork_block_r not carved (it would open 110 mm2 of outside face)
 - weapon: running-clearance well in dt_mount_fork_1 not carved (it would open 64 mm2 of outside face)
@@ -65,9 +67,9 @@ Fixed / changed (inside only, outside kept):
 - no screw line found for side_plate_r
 - rod dt_axle_wheel_l0: 2.8 mm stub clear of ['dm_wheel_l0'] printed as the wheel's hub boss
 - rod dt_axle_wheel_r0: 2.8 mm stub clear of ['dm_wheel_r0'] printed as the wheel's hub boss
-- mass estimate 289 g over 150: walls 2 mm -> 278 g
-- mass estimate 278 g over 150: walls 1.6 mm -> 268 g
-- hollowed chassis (wall 1.6, form 0): 220.1 -> 76.4 cm3
+- mass estimate 296 g over 150: walls 2 mm -> 285 g
+- mass estimate 285 g over 150: walls 1.6 mm -> 275 g
+- hollowed chassis (wall 1.6, form 0): 220.1 -> 83.6 cm3
 - hollowed fork_0 (wall 1.6, form 0): 2.6 -> 1.8 cm3
 - hollowed fork_1 (wall 1.6, form 0): 2.6 -> 1.8 cm3
 - hollowed fork_2 (wall 1.6, form 0): 2.6 -> 1.8 cm3
@@ -82,19 +84,22 @@ Fixed / changed (inside only, outside kept):
 - side_plate_r: no screw line and no slot, left undeclared (needs a real mount)
 
 Left (and why):
+- integrity.solids x1: `chassis` has 0 closed solid(s) and 1 open/invalid shell(s), expected 1 (82902 mm3). A boolean or fillet probably collapsed the build.
 - mass.over x1: the photo-sized outside (steel weapon / big printed shell) is heavier than 150 g even hollowed; only a smaller outside would fix it.
-- proxy.interference x3: `chassis` and `weapon` overlap by 1.39 mm (allowed 0.08).
+- proxy.interference x5: `chassis` and `weapon` overlap by 1.39 mm (allowed 0.08).
 - proxy.sweep x8: joint `weapon`: `weapon` turning a full revolution may reach `chassis`.
 - connection.fused_mismatch x2: `fork_1` is fused to `chassis` but they share 0.83 mm3 (need >= 1 mm3); faces that only touch print as two pieces or a paper-thin seam.
 - connection.floating x4: `fork_1` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
-- dynamics.balance x1: `weapon` mass centre is 4.835 mm off the spin axis: grade G9781.5 at 19320 rpm, a 1293 N rotating load on the bearings and frame. That is 486.9x the robot's weight. It will shake the robot and the bea
+- dynamics.balance x1: `weapon` mass centre is 4.835 mm off the spin axis: grade G9781.5 at 19320 rpm, a 1293 N rotating load on the bearings and frame. That is 476.5x the robot's weight. It will shake the robot and the bea
 - process.geometry x2: `weapon` (laser): 6 sharp internal corner(s): radius 0 < kerf 0.1 mm (add a fillet >= kerf or the mating part will not seat).
 - mfg.layer_load x1: `motor_pod` carries the `weapon` axle but is printed with build direction +z (world [0.0, 0.0, 1.0]), not along the spin axis [1.0, 0.0, 0.0]: impact load peels layers apart.
 - combat.R051 x1: `weapon`: Weapon sweep above the floor is -10.50 mm (needs 0.3 mm).
 - physics.runtime x1: ~160 s at ~6.3 A average from 350 mAh; a fight is 180 s.
+- fit.interference x2: `dm_wheel_l0` overlaps wall `chassis` by 4.88 mm: it will not go in. No side has 5.08 mm free (free room per side {'-x': 2.0, '+x': 0.0, '-y': 2.74, '+y': 2.74, '-z': 2.75, '+z': 2.75}): grow the pock
 - wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
 - wire.rotor_clearance x3: toolchain: same full-revolution assumption; wires cannot leave a cylinder that covers the chassis.
+- wire.render_count x1: iso.png: 5 routes vs 7 spec wires (missing ['w_bat_sw', 'w_sw_wesc']); top.png: 5 routes vs 7 spec wires (missing ['w_bat_sw', 'w_sw_wesc'])
 - likeness.silhouette x3: looks, not in scope for this pass.
-- likeness.view x2: looks, not in scope for this pass.
+- likeness.view x1: looks, not in scope for this pass.
 
-Likeness (best silhouette IoU per photo, r3 -> r4): dragoon.aws72.webp 0.66 -> 0.66; dragoon.aws74.webp 0.43 -> 0.43; dragoon.aws76.webp 0.56 -> 0.56
+Likeness (best silhouette IoU per photo, r3 -> r4): dragoon.aws72.webp 0.66 -> 0.66; dragoon.aws74.webp 0.67 -> 0.67; dragoon.aws76.webp 0.73 -> 0.73

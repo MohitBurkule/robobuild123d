@@ -1,37 +1,38 @@
-BLOCKERS: 32
-  [cached] integrity 0.00s
-  [cached] mass 0.00s
-  [proxy] interference 0.57s
-  [cached] connections 0.00s
-  [cached] legal 0.00s
-  [cached] fasteners 0.00s
-  [cached] power 0.00s
-  [cached] tension 0.00s
-  [cached] targets 0.01s
-  [cached] fight 0.00s
-  [cached] shape 0.00s
-  [cached] dynamics 0.00s
-  [cached] strength 0.00s
-  [cached] printability 0.00s
-  [cached] process 0.00s
-  [cached] electrical 0.00s
-  [cached] combat 0.00s
-  [cached] physics 0.00s
-  [cached] plausibility 0.00s
-  [cached] cots 0.00s
-  [cached] fit 0.00s
-  [cached] bom 0.00s
-  [cached] wire_review 0.00s
-  [cached] fastener_record 0.00s
-  [ran] likeness 15.87s
-  [cached] drive_recess 0.00s
-  [cached] belt_wrap 0.00s
-  [cached] retention 0.00s
-  [cached] waiver_audit 0.01s
-  [cached] geom 0.00s
-  [cached] dfm 0.00s
-  [cached] realworld 0.00s
-dragoon: ok=False 32 blockers in 27 root causes, mass 270.6/150 g
+BLOCKERS: 38
+building 2 changed part solids on 2 processes
+  [ran] integrity 0.09s
+  [ran] mass 0.00s
+  [proxy] interference 12.74s
+  [ran] connections 0.87s
+  [ran] legal 0.03s
+  [ran] fasteners 0.00s
+  [ran] power 0.01s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.03s
+  [ran] shape 0.38s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 2.15s
+  [ran] process 0.01s
+  [ran] electrical 0.02s
+  [ran] combat 0.33s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.14s
+  [ran] bom 0.00s
+  [ran] wire_review 0.04s
+  [ran] fastener_record 0.00s
+  [ran] likeness 8.42s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.29s
+  [ran] dfm 0.12s
+  [ran] realworld 0.16s
+dragoon: ok=False 38 blockers in 33 root causes, mass 276.5/150 g
 1. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `chassis`. (+1 consequences)
    | weapon: x -15.50..-12.50  y -30.00..50.00  z -23.00..67.00  size 3.00 x 80.00 x 90.00 mm
    |   centre (-14.00, 10.00, 22.00), volume 8267.8 mm3
@@ -63,51 +64,49 @@ dragoon: ok=False 32 blockers in 27 root causes, mass 270.6/150 g
    |   joint revolute axis [1, 0, 0] pivot [-14, 10.0, 27.0] range 0..360 default 0
    |   OVERLAP `chassis` 1.39 mm (allowed 0.08)
    |   OVERLAP `dt_mount_fork_1` 1.39 mm (allowed 0.08)
-6. [mass.over] 270.6 g (range 234.4 to 306.9 g) against the 150 g limit; 7.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
-   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
-7. [proxy.interference] `chassis` and `weapon` overlap by 1.39 mm (allowed 0.08).
+6. [integrity.solids] `chassis` has 0 closed solid(s) and 1 open/invalid shell(s), expected 1 (82902 mm3). A boolean or fillet probably collapsed the build.
+   fix: Check the last CAD op (fillet/cut order); or declare `solids` with `solids_reason`.
    | chassis: x -54.00..54.00  y -46.00..38.00  z -13.00..15.00  size 108.00 x 84.00 x 28.00 mm
-   |   centre (0.00, -4.00, 1.00), volume 76354.0 mm3
+   |   centre (0.00, -4.00, 1.00), volume 82901.6 mm3
+   |   OVERLAP `dm_wheel_l0` 4.88 mm (allowed 0.08)
+   |   OVERLAP `dm_wheel_r0` 4.88 mm (allowed 0.08)
    |   overlap allowed `dt_mount_fork_0` 3.88 mm (allowed inf)
-   |   overlap allowed `dt_mount_fork_3` 3.88 mm (allowed inf)
-   |   overlap allowed `dt_mount_fork_block_l` 3.88 mm (allowed inf)
-8. [proxy.interference] `weapon` and `fork_block_r` overlap by 0.70 mm (allowed 0.08).
+7. [mass.over] 276.5 g (range 239.1 to 313.9 g) against the 150 g limit; 7.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+8. [proxy.interference] `chassis` and `weapon` overlap by 1.39 mm (allowed 0.08).
+   | chassis: x -54.00..54.00  y -46.00..38.00  z -13.00..15.00  size 108.00 x 84.00 x 28.00 mm
+   |   centre (0.00, -4.00, 1.00), volume 82901.6 mm3
+   |   OVERLAP `dm_wheel_l0` 4.88 mm (allowed 0.08)
+   |   OVERLAP `dm_wheel_r0` 4.88 mm (allowed 0.08)
+   |   overlap allowed `dt_mount_fork_0` 3.88 mm (allowed inf)
+9. [proxy.interference] `chassis` and `dm_wheel_l0` overlap by 4.88 mm (allowed 0.08).
+   | chassis: x -54.00..54.00  y -46.00..38.00  z -13.00..15.00  size 108.00 x 84.00 x 28.00 mm
+   |   centre (0.00, -4.00, 1.00), volume 82901.6 mm3
+   |   OVERLAP `dm_wheel_l0` 4.88 mm (allowed 0.08)
+   |   OVERLAP `dm_wheel_r0` 4.88 mm (allowed 0.08)
+   |   overlap allowed `dt_mount_fork_0` 3.88 mm (allowed inf)
+10. [proxy.interference] `chassis` and `dm_wheel_r0` overlap by 4.88 mm (allowed 0.08).
+   | chassis: x -54.00..54.00  y -46.00..38.00  z -13.00..15.00  size 108.00 x 84.00 x 28.00 mm
+   |   centre (0.00, -4.00, 1.00), volume 82901.6 mm3
+   |   OVERLAP `dm_wheel_l0` 4.88 mm (allowed 0.08)
+   |   OVERLAP `dm_wheel_r0` 4.88 mm (allowed 0.08)
+   |   overlap allowed `dt_mount_fork_0` 3.88 mm (allowed inf)
+11. [proxy.interference] `weapon` and `fork_block_r` overlap by 0.70 mm (allowed 0.08).
    | weapon: x -15.50..-12.50  y -30.00..50.00  z -23.00..67.00  size 3.00 x 80.00 x 90.00 mm
    |   centre (-14.00, 10.00, 22.00), volume 8267.8 mm3
    |   joint revolute axis [1, 0, 0] pivot [-14, 10.0, 27.0] range 0..360 default 0
    |   OVERLAP `chassis` 1.39 mm (allowed 0.08)
    |   OVERLAP `dt_mount_fork_1` 1.39 mm (allowed 0.08)
-9. [proxy.interference] `weapon` and `dt_mount_fork_1` overlap by 1.39 mm (allowed 0.08).
+12. [proxy.interference] `weapon` and `dt_mount_fork_1` overlap by 1.39 mm (allowed 0.08).
    | weapon: x -15.50..-12.50  y -30.00..50.00  z -23.00..67.00  size 3.00 x 80.00 x 90.00 mm
    |   centre (-14.00, 10.00, 22.00), volume 8267.8 mm3
    |   joint revolute axis [1, 0, 0] pivot [-14, 10.0, 27.0] range 0..360 default 0
    |   OVERLAP `chassis` 1.39 mm (allowed 0.08)
    |   OVERLAP `dt_mount_fork_1` 1.39 mm (allowed 0.08)
-10. [connection.fused_mismatch] `fork_1` is fused to `chassis` but they share 0.83 mm3 (need >= 1 mm3); faces that only touch print as two pieces or a paper-thin seam.
-   fix: Overlap the two bodies by at least a wall thickness so they print as one solid, or bolt them.
-   | fork_1: x -18.33..-10.33  y 35.50..90.00  z -15.00..-3.00  size 8.00 x 54.50 x 12.00 mm
-   |   centre (-14.33, 62.75, -9.00), volume 1788.8 mm3
-   |   overlap allowed `chassis` 0.15 mm (allowed inf)
-   |   gap to `fork_block_r` 0.00 mm (touching)
-   |   gap to `dt_mount_fork_1` 0.00 mm (touching)
-11. [connection.fused_mismatch] `motor_pod` is fused to `chassis` but they share 0.00 mm3 (need >= 1 mm3); faces that only touch print as two pieces or a paper-thin seam.
-   fix: Overlap the two bodies by at least a wall thickness so they print as one solid, or bolt them.
-   | motor_pod: x -8.00..24.00  y -6.00..26.00  z 17.67..43.00  size 32.00 x 31.99 x 25.33 mm
-   |   centre (8.00, 10.00, 30.34), volume 6678.8 mm3
-   |   gap to `pod_base` 0.00 mm (touching)
-   |   gap to `dt_shaft_weapon` 0.00 mm (touching)
-   |   gap to `el_wesc` 2.50 mm
-12. [connection.floating] `fork_1` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
-   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
-   | fork_1: x -18.33..-10.33  y 35.50..90.00  z -15.00..-3.00  size 8.00 x 54.50 x 12.00 mm
-   |   centre (-14.33, 62.75, -9.00), volume 1788.8 mm3
-   |   overlap allowed `chassis` 0.15 mm (allowed inf)
-   |   gap to `fork_block_r` 0.00 mm (touching)
-   |   gap to `dt_mount_fork_1` 0.00 mm (touching)
-... 15 more root causes (fix these first, then re-run)
+... 21 more root causes (fix these first, then re-run)
 MASS BUDGET:
-  mass 270.6 g of 150 g (-120.6 g margin)
-    chassis                    72.69 g  fills 30% of its box
+  mass 276.5 g of 150 g (-126.5 g margin)
+    chassis                    78.92 g  fills 33% of its box
     weapon                     65.32 g  fills 38% of its box
     weapon_motor               23.00 g  fills 61% of its box  <- solid block? a tub should be a shell
     el_battery                 21.50 g  fills 100% of its box  <- solid block? a tub should be a shell
@@ -115,8 +114,8 @@ MASS BUDGET:
     dm_wheel_r0                 9.50 g  fills 63% of its box
     wheel_l0                    8.28 g  fills 65% of its box
     wheel_r0                    8.28 g  fills 65% of its box
-    pod_base                    6.68 g  fills 60% of its box
     motor_pod                   6.36 g  fills 26% of its box
+    pod_base                    6.33 g  fills 57% of its box
     el_wesc                     5.00 g  fills 94% of its box
     fork_block_l                3.22 g  fills 60% of its box
     fork_block_r                3.22 g  fills 60% of its box
@@ -138,6 +137,6 @@ MASS BUDGET:
     dt_mount_fork_3             0.82 g  fills 100% of its box
     el_switch                   0.50 g  fills 100% of its box
     lock_pin                    0.37 g  fills 79% of its box
-    mass.over: 270.6 g (range 234.4 to 306.9 g) against the 150 g limit; 7.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.over: 276.5 g (range 239.1 to 313.9 g) against the 150 g limit; 7.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: distance 8 hit / 0 miss, group 30 hit / 1 miss, inside 24 hit / 0 miss, likeness 0 hit / 3 miss, min_gap 131 hit / 0 miss, overlap 427 hit / 0 miss, part_geom 31 hit / 0 miss
+cache: distance 20 hit / 4 miss, group 0 hit / 31 miss, inside 23 hit / 3 miss, likeness 3 hit / 0 miss, min_gap 176 hit / 26 miss, overlap 305 hit / 143 miss, part_check 20 hit / 2 miss, part_geom 31 hit / 0 miss, ray 156 hit / 60 miss
