@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_refined_for_the_roboteers_plea/robots/refined_for_the_roboteers_plea/spec.json",
- "rendered_at": 1795036681.2631419,
+ "rendered_at": 1795039902.2011647,
  "bodies": [
   "chassis",
   "weapon",
@@ -20,8 +20,68 @@
   "el_esc",
   "el_wesc",
   "el_switch",
-  "weapon_motor",
-  "lock_pin"
+  "weapon_motor"
  ],
- "wires": {}
+ "wires": {
+  "w_sw_wesc": {
+   "from": [
+    3.5,
+    -31.5,
+    -3.5999999999999996
+   ],
+   "to": [
+    -12.0,
+    -25.5,
+    -2.1
+   ]
+  },
+  "w_wm": {
+   "from": [
+    11.0,
+    -25.5,
+    0.9
+   ],
+   "to": [
+    5.5,
+    4.5,
+    6.9
+   ]
+  },
+  "w_bat_sw": {
+   "from": [
+    -0.5,
+    -2.0,
+    -3.1
+   ],
+   "to": [
+    -4.5,
+    -31.5,
+    -3.5999999999999996
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    3.5,
+    -31.5,
+    -3.5999999999999996
+   ],
+   "to": [
+    -16.5,
+    -18.5,
+    5.9
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -16.5,
+    -6.5,
+    5.9
+   ],
+   "to": [
+    -8.5,
+    -36.0,
+    0.0
+   ]
+  }
+ }
 }

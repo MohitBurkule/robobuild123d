@@ -1,65 +1,76 @@
-BLOCKERS: 8
-  [cached] integrity 0.00s
-  [cached] mass 0.00s
-  [proxy] interference 0.47s
-  [cached] connections 0.01s
-  [cached] legal 0.00s
-  [cached] fasteners 0.00s
-  [cached] power 0.00s
-  [cached] tension 0.00s
-  [cached] targets 0.00s
-  [cached] fight 0.00s
-  [cached] shape 0.00s
-  [cached] dynamics 0.00s
-  [cached] strength 0.00s
-  [cached] printability 0.00s
-  [cached] process 0.01s
-  [cached] electrical 0.00s
-  [cached] combat 0.00s
-  [cached] physics 0.01s
-  [cached] plausibility 0.00s
-  [cached] cots 0.00s
-  [cached] fit 0.00s
-  [cached] bom 0.00s
-  [cached] wire_review 0.00s
-  [cached] fastener_record 0.00s
-  [cached] likeness 0.01s
-  [cached] drive_recess 0.00s
-  [cached] belt_wrap 0.00s
-  [cached] retention 0.02s
-  [cached] waiver_audit 0.00s
-  [cached] geom 0.00s
-  [cached] dfm 0.00s
-  [cached] realworld 0.00s
-refined for the roboteers plea: ok=False 8 blockers in 8 root causes, mass 167.5/150 g
-1. [mass.over] 167.5 g (range 140.1 to 194.9 g) against the 150 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+BLOCKERS: 10
+  [ran] integrity 0.37s
+  [proxy] wiring 0.71s
+  [ran] mass 0.00s
+  [proxy] interference 40.63s
+  [ran] connections 1.26s
+  [ran] legal 0.02s
+  [ran] fasteners 0.00s
+  [ran] power 0.04s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.06s
+  [ran] shape 0.49s
+  [ran] dynamics 0.01s
+  [ran] strength 0.01s
+  [ran] printability 4.30s
+  [ran] process 0.02s
+  [ran] electrical 0.01s
+  [ran] combat 0.40s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.23s
+  [ran] bom 0.00s
+  [ran] wire_review 0.05s
+  [ran] fastener_record 0.00s
+  [ran] likeness 16.16s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.01s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.38s
+  [ran] dfm 0.16s
+  [ran] realworld 0.28s
+refined for the roboteers plea: ok=False 10 blockers in 10 root causes, mass 161.0/150 g
+1. [proxy.wiring] Wire `w_sw_esc` (`el_switch.out` to `el_esc.bat`): the baseline route is now blocked by `chassis` (5 samples).
+   fix: Run the full `wiring` group to re-route it.
+   | chassis: x -35.00..35.00  y -50.00..25.00  z -11.00..9.00  size 70.00 x 75.00 x 20.00 mm
+   |   centre (0.00, -12.50, -1.00), volume 49673.6 mm3
+   |   overlap allowed `gear` 3.38 mm (allowed inf)
+   |   overlap allowed `plough` 1.89 mm (allowed inf)
+   |   overlap allowed `gear_mount` 0.46 mm (allowed inf)
+2. [proxy.wiring] Wire `w_m1` (`el_esc.m1` to `dm_wheel_l0.terminals`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+3. [proxy.wiring] Wire `w_sig_wesc` (`el_esc.wpn` to `el_wesc.rx`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+4. [mass.over] 161.0 g (range 134.1 to 187.9 g) against the 150 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
-2. [proxy.interference] `weapon_motor` and `lock_pin` overlap by 1.26 mm (allowed 0.08).
-   | weapon_motor: x -3.60..14.60  y 4.40..22.60  z -8.10..7.90  size 18.20 x 18.19 x 16.00 mm
-   |   centre (5.50, 13.50, -0.10), volume 2797.1 mm3
-   |   port phases: (5.50, 4.50, 6.90)
-   |   OVERLAP `lock_pin` 1.26 mm (allowed 0.08)
-   |   gap to `gear_mount` 0.10 mm
-3. [connection.cover_fasteners] `plough` is an armour / cover panel held by 0 fastener(s); it needs >= 2 real screws. Snap, press-fit or tape retention alone lets it peel off on the first hit.
+5. [connection.cover_fasteners] `plough` is an armour / cover panel held by 0 fastener(s); it needs >= 2 real screws. Snap, press-fit or tape retention alone lets it peel off on the first hit.
    fix: Bolt it with >= 2 screws into inserts, nuts or tapped bosses and declare them in `fasteners`.
    | plough: x -50.00..50.00  y 14.00..62.00  z -12.60..12.00  size 100.00 x 48.00 x 24.60 mm
    |   centre (0.00, 38.00, -0.30), volume 20848.6 mm3
    |   overlap allowed `chassis` 1.89 mm (allowed inf)
    |   overlap allowed `gear` 0.04 mm (allowed 0.08)
    |   gap to `gear_mount` 0.00 mm (touching)
-4. [wire.render_wires] 11 of 11 robot render(s) do not draw all 7 wires: renders/diff_refined_for_the_roboteers_pleasure.aws74.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_refined_for_the_roboteers_pleasure.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_refined_for_the_roboteers_pleasure.aws74_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_refined_for_the_roboteers_pleasure.aws76_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_refined_for_the_roboteers_pleasure.aws74.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_refined_for_the_roboteers_pleasure.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/pick_refined_for_the_roboteers_pleasure.aws74.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/pick_refined_for_the_roboteers_pleasure.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn...
+6. [legal.locking_bar] Rule 5f: every spinner needs a locking bar that physically stops the weapon from turning.
+   fix: Add a `locking_bar` part (a pin through the weapon into the frame), name it in `weapon.locking_bar`, give it a contrasting colour and `tethered: true`.
+   | weapon: x 5.00..7.00  y 3.78..24.22  z 92.99..115.04  size 2.00 x 20.44 x 22.04 mm
+   |   centre (6.00, 14.00, 104.01), volume 627.1 mm3
+   |   joint revolute axis [1, 0, 0] pivot [6, 14.0, 104.0] range 0..360 default 0
+   |   gap to `dt_shaft_weapon` 0.00 mm (touching)
+   |   gap to `arm` 1.00 mm
+7. [wire.render_wires] 2 of 2 robot render(s) do not draw all 7 wires: renders/iso.png: wire `w_m1` not drawn (+1); renders/top.png: wire `w_m1` not drawn (+1)
    fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
-5. [likeness.view] `reference/refined_for_the_roboteers_pleasure.aws74.webp` is declared `front_left_iso` (IoU 0.55 there) but the model matches it better from rear (elevation 25, azimuth 270) (IoU 0.70).
-   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
-6. [likeness.silhouette] `reference/refined_for_the_roboteers_pleasure.aws74.webp`: best silhouette IoU 0.55 at camera front_left_iso (elevation 25, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.58). Regions (photo frame, left third first) 0.55 / 0.54 / 0.55: worst = middle third. Height/length 1.02 model vs 1.22 photo (too flat: raise it or shorten it).
+8. [wire.render_count] iso.png: 5 routes vs 7 spec wires (missing ['w_m1', 'w_sig_wesc']); top.png: 5 routes vs 7 spec wires (missing ['w_m1', 'w_sig_wesc'])
+   fix: Re-render: the render record must list exactly the spec's wires.
+9. [likeness.silhouette] `reference/refined_for_the_roboteers_pleasure.aws74.webp`: best silhouette IoU 0.69 at camera left (elevation 25, azimuth 180) (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.72). Regions (photo frame, left third first) 0.85 / 0.65 / 0.62: worst = rear third. Height/length 1.25 model vs 1.22 photo (proportions ok).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
-7. [likeness.view] `reference/refined_for_the_roboteers_pleasure.aws76.webp` is declared `front_left_iso` (IoU 0.50 there) but the model matches it better from front_left_iso (elevation 25, azimuth 120) (IoU 0.65).
-   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
-8. [likeness.silhouette] `reference/refined_for_the_roboteers_pleasure.aws76.webp`: best silhouette IoU 0.50 at camera front_left_iso (elevation 45, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.64). Regions (photo frame, left third first) 0.46 / 0.55 / 0.45: worst = rear third. Height/length 0.99 model vs 1.00 photo (proportions ok).
+10. [likeness.silhouette] `reference/refined_for_the_roboteers_pleasure.aws76.webp`: best silhouette IoU 0.66 at camera front_left_iso (elevation 25, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.72). Regions (photo frame, left third first) 0.62 / 0.64 / 0.77: worst = front third. Height/length 1.05 model vs 1.00 photo (too tall: lower it or lengthen it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
-  mass 167.5 g of 150 g (-17.5 g margin)
-    chassis                    48.68 g  fills 49% of its box
+  mass 161.0 g of 150 g (-11.0 g margin)
+    chassis                    47.29 g  fills 47% of its box
     el_battery                 21.50 g  fills 100% of its box  <- solid block? a tub should be a shell
     plough                     19.85 g  fills 18% of its box
     dm_wheel_l0                 9.50 g  fills 63% of its box
@@ -68,17 +79,16 @@ MASS BUDGET:
     arm                         5.93 g  fills 39% of its box
     wheel_r0                    5.37 g  fills 67% of its box
     wheel_l0                    5.37 g  fills 67% of its box
-    lock_pin                    5.06 g  fills 79% of its box
     el_wesc                     5.00 g  fills 94% of its box
     weapon                      4.95 g  fills 70% of its box
     gear                        4.53 g  fills 41% of its box
-    gear_mount                  2.62 g  fills 57% of its box
+    gear_mount                  2.51 g  fills 55% of its box
     el_esc                      2.30 g  fills 99% of its box
     servo_saddle                1.82 g  fills 52% of its box
     dt_hub_wheel_l0             1.58 g  fills 76% of its box
     dt_hub_wheel_r0             1.58 g  fills 76% of its box
     dt_shaft_weapon             1.19 g  fills 79% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.over: 167.5 g (range 140.1 to 194.9 g) against the 150 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.over: 161.0 g (range 134.1 to 187.9 g) against the 150 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: distance 8 hit / 0 miss, group 31 hit / 0 miss, min_gap 12 hit / 0 miss, overlap 260 hit / 0 miss, part_geom 20 hit / 0 miss
+cache: distance 8 hit / 8 miss, group 0 hit / 31 miss, inside 10 hit / 11 miss, likeness 2 hit / 0 miss, min_gap 0 hit / 16 miss, overlap 127 hit / 119 miss, part_check 8 hit / 3 miss, part_geom 19 hit / 0 miss, ray 95 hit / 66 miss
