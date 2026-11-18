@@ -2,7 +2,7 @@
  "name": "thwack attack",
  "profile": "aws2025",
  "robot_type": "vertical_spinner",
- "locomotion": "wheels",
+ "locomotion": "roller",
  "kit_draft": true,
  "parts": [
   {

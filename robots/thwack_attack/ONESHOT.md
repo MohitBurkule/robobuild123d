@@ -10,3 +10,9 @@ Decisions: type vertical_spinner; body box rect 80x80x22 mm, ramp 0; wheels 4 r1
 
 Likeness: aws74 0.68 (FAIL), aws76 0.69 (FAIL), aws77 0.69 (FAIL).
 Other likeness findings: [FAIL] likeness.weapon: Photos show a disc; `tail_arm` is a `axe` (`weapon.kind`).; [FAIL] likeness.weapon: Photos: disc turns about x; `tail_arm` turns about z (axis [0.0, 0.0, 1.0]). x = across the robot (horizontal drum/vertical disc), z = u; [FAIL] likeness.weapon: Photos show 2 teeth; `tail_arm` declares None (`weapon.teeth`; shape.weapon_profile measures it).
+
+## Round 2 (looks)
+Decisions: type vertical_spinner; body box rect 80x80x22 mm, ramp 0; wheels 4 r11 outboard; weapon disc r15 axis x teeth 2; 2 forks 62 mm; extra parts: tail_arm, side_pod.
+
+Likeness: aws74 0.68 (FAIL), aws76 0.69 (FAIL), aws77 0.69 (FAIL).
+Other likeness findings: [FAIL] likeness.weapon: Photos show a disc; `tail_arm` is a `axe` (`weapon.kind`).; [FAIL] likeness.weapon: Photos: disc turns about x; `tail_arm` turns about z (axis [0.0, 0.0, 1.0]). x = across the robot (horizontal drum/vertical disc), z = u; [FAIL] likeness.weapon: Photos show 2 teeth; `tail_arm` declares None (`weapon.teeth`; shape.weapon_profile measures it).
