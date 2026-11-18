@@ -30,3 +30,11 @@ Looks alike: **partly**. Renders: `renders/iso.png`, `renders/top.png`.
 Arched shield (side profile intersected with a front arch), barbed arrow spikes, bigger spoked-hub wheels further outboard, top block.
 
 Likeness: aws69 0.73 (FAIL), aws71 0.73 (FAIL), aws72 0.75 (FAIL).
+
+## Tools I wanted
+- `robot looks SPEC` (build + iso/top + likeness + diff sheets in one pass, batchable). Did instead: four CLI calls per robot, ~3-4 min wall each.
+
+## Round 2 (looks)
+Decisions: type wedge; body box rect 85x64x26 mm, ramp 0; wheels 4 r15 outboard; weapon none; 4 forks 38 mm.
+
+Likeness: aws69 0.73 (FAIL), aws71 0.73 (FAIL), aws72 0.75 (FAIL).
