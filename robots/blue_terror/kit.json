@@ -1,0 +1,53 @@
+{
+ "robot_type": "wedge",
+ "body": {
+  "length": 95,
+  "width": 54,
+  "height": 26,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 12,
+  "width": 9,
+  "y": [
+   -32,
+   0,
+   32
+  ]
+ },
+ "colors": {
+  "body": "#2f8fe8",
+  "wheel": "#16181a",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "box": [
+    86,
+    36,
+    2
+   ],
+   "at": [
+    0,
+    58,
+    12
+   ],
+   "kind": "wedge",
+   "material": "polycarbonate",
+   "process": "laser",
+   "id": "scoop",
+   "color": "#bfe6c8",
+   "rot": [
+    -35,
+    0,
+    0
+   ]
+  }
+ ],
+ "name": "blue terror",
+ "weapon": {
+  "kind": "none"
+ }
+}

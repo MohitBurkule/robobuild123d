@@ -1,0 +1,15 @@
+{
+ "spec": "/tmp/work10_blue_terror/robots/blue_terror/spec.json",
+ "rendered_at": 1795022254.3776715,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "wheel_l1",
+  "wheel_r1",
+  "wheel_l2",
+  "wheel_r2",
+  "scoop"
+ ],
+ "wires": {}
+}
