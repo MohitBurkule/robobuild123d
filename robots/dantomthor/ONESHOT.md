@@ -11,3 +11,8 @@
 Decisions: type other; body box pentagon 100x92x42 mm, ramp 40; wheels 2 r11 inboard; weapon none; extra parts: hammer_arm, hammer_head; photos skipped (cluttered): indices [0, 1].
 
 Likeness: aws72 0.84 (ok).
+
+## Round 2 (looks)
+Decisions: type other; body box pentagon 100x92x42 mm, ramp 40; wheels 2 r11 inboard; weapon none; extra parts: hammer_arm, hammer_head; photos skipped (cluttered): indices [0, 1].
+
+Likeness: aws72 0.84 (ok).
