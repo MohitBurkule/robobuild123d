@@ -1,5 +1,148 @@
-{"name":"Bolt","robot_type":"wedge",
- "body":{"length":104,"width":100,"height":26,"ramp":44,"style":"box","clearance":2},
- "weapon":{"kind":"none"},
- "wheels":{"n":4,"radius":11,"width":9,"y":[-40,28],"outside":false},
- "forks":{"n":2,"length":20,"width":30,"spread":56}}
+{
+ "robot_type": "lifter",
+ "body": {
+  "length": 104,
+  "width": 92,
+  "height": 24,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 12,
+  "width": 9,
+  "y": [
+   -40,
+   -14
+  ],
+  "outside": false,
+  "notch": true
+ },
+ "colors": {
+  "body": "#35b8c8",
+  "wheel": "#202226",
+  "weapon": "#dfe8ee",
+  "fork": "#dfe8ee"
+ },
+ "macros": [
+  {
+   "side": [
+    [
+     50,
+     2
+    ],
+    [
+     94,
+     0.5
+    ],
+    [
+     94,
+     2.5
+    ],
+    [
+     54,
+     22
+    ],
+    [
+     50,
+     22
+    ]
+   ],
+   "x": [
+    -34,
+    34
+   ],
+   "kind": "wedge",
+   "id": "front_flap",
+   "material": "polycarbonate",
+   "process": "laser",
+   "color": "#dfe8ee"
+  },
+  {
+   "side": [
+    [
+     20,
+     2
+    ],
+    [
+     84,
+     2
+    ],
+    [
+     52,
+     26
+    ],
+    [
+     20,
+     26
+    ]
+   ],
+   "x": [
+    40,
+    46
+   ],
+   "id": "cheek",
+   "mirror": true,
+   "color": "#35b8c8"
+  },
+  {
+   "box": [
+    8,
+    98,
+    5
+   ],
+   "at": [
+    -28,
+    -2,
+    28.5
+   ],
+   "id": "rail_a",
+   "color": "#1c1d20"
+  },
+  {
+   "box": [
+    8,
+    98,
+    5
+   ],
+   "at": [
+    0,
+    -2,
+    28.5
+   ],
+   "id": "rail_b",
+   "color": "#1c1d20"
+  },
+  {
+   "box": [
+    8,
+    98,
+    5
+   ],
+   "at": [
+    28,
+    -2,
+    28.5
+   ],
+   "id": "rail_c",
+   "color": "#1c1d20"
+  },
+  {
+   "box": [
+    70,
+    6,
+    6
+   ],
+   "at": [
+    0,
+    -48,
+    29
+   ],
+   "id": "rear_bar",
+   "color": "#1c1d20"
+  }
+ ],
+ "name": "bolt",
+ "weapon": {
+  "kind": "none"
+ }
+}

@@ -33,3 +33,8 @@ Left (and why):
 - likeness.silhouette x1: looks, not in scope for this pass.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): bolt.aws57.webp 0.81 -> 0.81; bolt.aws63.webp 0.81 -> 0.8
+
+## Round 3b (rebuilt by eye from the photos: parts moved to where the photo shows them, camera set per photo)
+Decisions: type lifter; body box rect 104x92x24 mm, ramp 0; wheels 4 r12 inboard; weapon none; extra parts: front_flap, cheek, rail_a, rail_b, rail_c, rear_bar.
+
+Likeness: aws57 0.67 (FAIL), aws60 0.77 (FAIL), aws63 0.72 (FAIL).
