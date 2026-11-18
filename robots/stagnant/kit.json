@@ -21,7 +21,14 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "textured": [
+  0
+ ],
+ "name": "stagnant",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "box": [
     130,
@@ -44,12 +51,5 @@
     0
    ]
   }
- ],
- "textured": [
-  0
- ],
- "name": "stagnant",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }

@@ -17,3 +17,9 @@ Likeness: aws62 0.87 (ok), aws67 0.82 (ok).
 Decisions: type wedge; body box rect 62x130x30 mm, ramp 22; wheels 2 r13 inboard; weapon none; extra parts: front_plate; textured masks for indices [0].
 
 Likeness: aws62 0.87 (ok), aws67 0.82 (ok).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type wedge; body box rect 62x130x30 mm, ramp 22; wheels 2 r13 inboard; weapon none; extra parts: front_plate; textured masks for indices [0].
+
+Likeness: aws62 0.53 (FAIL), aws67 0.66 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/stagnant.aws62.webp` is declared `front` (IoU 0.53 there) but the model matches it better from front_right_iso (elevation 45, a; [FAIL] likeness.view: `reference/stagnant.aws67.webp` is declared `front` (IoU 0.66 there) but the model matches it better from front_left_iso (elevation 25, az

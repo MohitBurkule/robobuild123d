@@ -1,11 +1,23 @@
 {
  "spec": "/tmp/work10_stagnant/robots/stagnant/spec.json",
- "rendered_at": 1795023141.001092,
+ "rendered_at": 1795026088.8677483,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
-  "front_plate"
+  "front_plate",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_nut_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_nut_wheel_r0",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3",
+  "dt_screw_4",
+  "dt_screw_5"
  ],
  "wires": {}
 }
