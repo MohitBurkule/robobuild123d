@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_bolt/robots/bolt/spec.json",
- "rendered_at": 1795032631.7383652,
+ "rendered_at": 1795037809.8688533,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -16,20 +16,64 @@
   "rear_bar",
   "dt_hub_wheel_l0",
   "dt_axle_wheel_l0",
-  "dt_nut_wheel_l0",
   "dt_hub_wheel_r0",
   "dt_axle_wheel_r0",
-  "dt_nut_wheel_r0",
   "dt_hub_wheel_l1",
-  "dt_axle_wheel_l1",
-  "dt_nut_wheel_l1",
   "dt_hub_wheel_r1",
-  "dt_axle_wheel_r1",
-  "dt_nut_wheel_r1",
-  "dt_screw_0",
-  "dt_screw_1",
-  "dt_screw_2",
-  "dt_screw_3"
+  "dm_wheel_l1",
+  "dm_wheel_r1",
+  "el_battery",
+  "el_esc",
+  "el_switch"
  ],
- "wires": {}
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    -0.5,
+    13.5,
+    -2.0
+   ],
+   "to": [
+    -4.5,
+    -15.5,
+    -2.5
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    3.5,
+    -15.5,
+    -2.5
+   ],
+   "to": [
+    -16.5,
+    -4.5,
+    7.0
+   ]
+  },
+  "w_m1": {
+   "from": [
+    15.5,
+    7.5,
+    7.0
+   ],
+   "to": [
+    8.5,
+    -14.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -16.5,
+    7.5,
+    7.0
+   ],
+   "to": [
+    -8.5,
+    -14.000000000000002,
+    0.0
+   ]
+  }
+ }
 }

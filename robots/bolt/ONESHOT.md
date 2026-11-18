@@ -13,7 +13,7 @@ Decisions: type lifter; body box rect 104x92x24 mm, ramp 0; wheels 4 r12 inboard
 Likeness: aws57 0.67 (FAIL), aws60 0.77 (FAIL), aws63 0.72 (FAIL).
 
 ## Round 4 (verification, helper 2)
-Blockers r3 69 -> r4 9 (`verify --tier inner`).
+Blockers r3 69 -> r4 14 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -24,11 +24,13 @@ Fixed / changed (inside only, outside kept):
 - print orientation on every printed part, failsafe / weapon disable declared, design volumes declared where this pass changed a part on purpose
 - power switch on the floor of the body, slider facing down to a 7 x 3 mm slot in the underside (no slot on the top or sides; hollow cavities stay closed behind a wall at every outside face)
 - front_flap: polycarbonate laser is not a flat plate -> printed nylon
+- chassis: a cut was not made (it would open 111 mm2 of outside face; the overlap stays as a finding)
+- chassis: a cut was not made (it would open 116 mm2 of outside face; the overlap stays as a finding)
 - rod dt_axle_wheel_l1: 2.8 mm stub clear of ['dm_wheel_l1'] printed as the wheel's hub boss
 - rod dt_axle_wheel_r1: 2.8 mm stub clear of ['dm_wheel_r1'] printed as the wheel's hub boss
-- mass estimate 182 g over 150: walls 2 mm -> 167 g
-- mass estimate 167 g over 150: walls 1.6 mm -> 152 g
-- hollowed chassis (wall 1.6, form 0): 201.9 -> 67.6 cm3
+- mass estimate 189 g over 150: walls 2 mm -> 173 g
+- mass estimate 173 g over 150: walls 1.6 mm -> 159 g
+- hollowed chassis (wall 1.6, form 0): 201.9 -> 74.6 cm3
 - hollowed front_flap (wall 1.6, form 0): 35.6 -> 12.4 cm3
 - hollowed cheek_l (wall 1.6, form 0): 6.9 -> 4.3 cm3
 - hollowed cheek_r (wall 1.6, form 0): 6.9 -> 4.3 cm3
@@ -40,7 +42,9 @@ Fixed / changed (inside only, outside kept):
 Left (and why):
 - proxy.wiring x4: Wire `w_bat_sw` (`el_battery.xt30` to `el_switch.in`): its ports moved 51.39 mm since the baseline route.
 - mass.over x1: the photo-sized outside (steel weapon / big printed shell) is heavier than 150 g even hollowed; only a smaller outside would fix it.
-- wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
+- proxy.interference x2: `chassis` and `dm_wheel_l1` overlap by 4.88 mm (allowed 0.08).
+- fit.interference x2: `dm_wheel_l1` overlaps wall `chassis` by 4.88 mm: it will not go in. No side has 5.08 mm free (free room per side {'-x': 1.2, '+x': 0.0, '-y': 0.01, '+y': 0.01, '-z': 0.91, '+z': 0.91}): grow the pock
+- likeness.view x2: looks, not in scope for this pass.
 - likeness.silhouette x3: looks, not in scope for this pass.
 
-Likeness (best silhouette IoU per photo, r3 -> r4): bolt.aws57.webp 0.67 -> 0.68; bolt.aws60.webp 0.77 -> 0.77; bolt.aws63.webp 0.72 -> 0.72
+Likeness (best silhouette IoU per photo, r3 -> r4): bolt.aws57.webp 0.66 -> 0.66; bolt.aws60.webp 0.62 -> 0.62; bolt.aws63.webp 0.72 -> 0.72
