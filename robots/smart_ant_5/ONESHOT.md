@@ -26,7 +26,7 @@ Decisions: type wedge; body box trapezoid 92x78x44 mm, ramp 82; wheels 2 r14 out
 Likeness: aws61 0.83 (ok).
 
 ## Round 4 (verification, helper 2)
-Blockers r3 39 -> r4 5 (`verify --tier inner`).
+Blockers r3 39 -> r4 3 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -36,8 +36,8 @@ Fixed / changed (inside only, outside kept):
 - print orientation on every printed part, failsafe / weapon disable declared, design volumes declared where this pass changed a part on purpose
 - power switch on the floor of the body, slider facing down to a 7 x 3 mm slot in the underside (no slot on the top or sides; hollow cavities stay closed behind a wall at every outside face)
 - no free space for ['el_battery']
-- chassis: a cut was not made (it would open 82 mm2 of outside face; the overlap stays as a finding)
-- chassis: a cut was not made (it would open 88 mm2 of outside face; the overlap stays as a finding)
+- chassis: dm_wheel_l0 pocketed to its own outline (0.3 mm clear); only its shaft bore passes the wall to wheel_l0
+- chassis: dm_wheel_r0 pocketed to its own outline (0.3 mm clear); only its shaft bore passes the wall to wheel_r0
 - no screw line found for lip
 - rod dt_axle_wheel_l0: 2.8 mm stub clear of ['dm_wheel_l0'] printed as the wheel's hub boss
 - rod dt_axle_wheel_r0: 2.8 mm stub clear of ['dm_wheel_r0'] printed as the wheel's hub boss
@@ -45,8 +45,7 @@ Fixed / changed (inside only, outside kept):
 - hollowed battery_pack (wall 2.5, form 0): 5.2 -> 4.2 cm3
 
 Left (and why):
-- proxy.interference x2: `chassis` and `dm_wheel_l0` overlap by 2.03 mm (allowed 0.08).
+- retention.loose x2: `dm_wheel_l0` can move more than 0.5 mm toward -x without touching anything (captive means at most 0.5 mm of play in every direction); in a hit it will fall out or rattle.
 - electrical.receiver_supply x1: Receiver `el_esc` has no wire to an ESC/BEC or battery.
-- fit.interference x2: `dm_wheel_l0` overlaps wall `chassis` by 2.03 mm: it will not go in. Measured fix: move `dm_wheel_l0` -2.23 mm along x (>= 3.0 mm free that side), or grow the pocket 2.03 mm.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): smart_ant_5_.aws61.webp 0.83 -> 0.82
