@@ -10,3 +10,8 @@
 Decisions: type flipper; body box rect 110x100x52 mm, ramp 95; wheels 2 r11 inboard; weapon none; extra parts: flipper.
 
 Likeness: aws71 0.80 (FAIL).
+
+## Round 2 (looks)
+Decisions: type flipper; body box rect 110x100x52 mm, ramp 95; wheels 2 r11 inboard; weapon none; extra parts: flipper.
+
+Likeness: aws71 0.80 (FAIL).
