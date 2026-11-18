@@ -14,3 +14,9 @@ Likeness: aws76 0.66 (FAIL).
 Decisions: type lifter; body box rect 72x80x24 mm, ramp 0; wheels 2 r13 outboard; weapon none; extra parts: wedge, lift_plate.
 
 Likeness: aws76 0.66 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type lifter; body box rect 72x80x24 mm, ramp 0; wheels 2 r13 outboard; weapon none; extra parts: wedge, lift_plate.
+
+Likeness: aws76 0.37 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/liftoff.aws76.webp` is declared `front` (IoU 0.37 there) but the model matches it better from front_left_iso (elevation 25, azi

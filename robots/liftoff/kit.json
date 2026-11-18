@@ -20,7 +20,11 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "name": "liftoff",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "side": [
     [
@@ -74,9 +78,5 @@
    "id": "lift_plate",
    "color": "#16181a"
   }
- ],
- "name": "liftoff",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }
