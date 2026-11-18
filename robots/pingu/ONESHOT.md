@@ -8,3 +8,8 @@
 Decisions: type wedge; body box rect 80x84x30 mm, ramp 32; wheels 4 r10 outboard as treads; weapon none; 6 forks 36 mm; extra parts: lid.
 
 Likeness: aws72 0.69 (FAIL).
+
+## Round 2 (looks)
+Decisions: type wedge; body box rect 80x84x30 mm, ramp 32; wheels 4 r10 outboard as treads; weapon none; 6 forks 46 mm; extra parts: lid.
+
+Likeness: aws72 0.66 (FAIL).
