@@ -1,23 +1,67 @@
 {
  "spec": "/tmp/work10_stagnant/robots/stagnant/spec.json",
- "rendered_at": 1795026088.8677483,
+ "rendered_at": 1795041815.2464101,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
   "front_plate",
   "dt_hub_wheel_l0",
-  "dt_axle_wheel_l0",
-  "dt_nut_wheel_l0",
   "dt_hub_wheel_r0",
-  "dt_axle_wheel_r0",
-  "dt_nut_wheel_r0",
-  "dt_screw_0",
-  "dt_screw_1",
-  "dt_screw_2",
-  "dt_screw_3",
-  "dt_screw_4",
-  "dt_screw_5"
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_rx_esc",
+  "el_switch"
  ],
- "wires": {}
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    0.012999999999998652,
+    -10.983,
+    -3.989
+   ],
+   "to": [
+    -4.0,
+    -18.6,
+    -5.0
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    4.0,
+    -18.6,
+    -5.0
+   ],
+   "to": [
+    -42.986999999999995,
+    4.0169999999999995,
+    -3.489
+   ]
+  },
+  "w_m1": {
+   "from": [
+    -19.987,
+    12.017,
+    -3.489
+   ],
+   "to": [
+    27.6,
+    -12.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -42.986999999999995,
+    12.017,
+    -3.489
+   ],
+   "to": [
+    -27.6,
+    -12.000000000000002,
+    0.0
+   ]
+  }
+ }
 }
