@@ -62,10 +62,10 @@
   }
  ],
  "skip_photos": [
-  0
+  0,
+  1
  ],
  "textured": [
-  1,
   2
  ],
  "name": "jiggy sawdust",

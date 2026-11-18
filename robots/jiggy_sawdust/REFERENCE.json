@@ -6,11 +6,7 @@
   "axis": "x"
  },
  "photos": [
-  "jiggy_sawdust.aws62.webp",
   "jiggy_sawdust.aws63.webp"
  ],
- "mask_mode": {
-  "jiggy_sawdust.aws62.webp": "textured",
-  "jiggy_sawdust.aws63.webp": "textured"
- }
+ "mask_mode": {}
 }

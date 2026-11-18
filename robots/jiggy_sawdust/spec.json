@@ -2,7 +2,7 @@
  "name": "jiggy sawdust",
  "profile": "aws2025",
  "robot_type": "other",
- "locomotion": "wheels",
+ "locomotion": "roller",
  "kit_draft": true,
  "parts": [
   {
@@ -232,12 +232,6 @@
  "wires": [],
  "connections": [],
  "reference": [
-  {
-   "image": "reference/jiggy_sawdust.aws62.webp",
-   "mask": "reference/jiggy_sawdust.aws62_mask.png",
-   "view": "iso",
-   "approximate": true
-  },
   {
    "image": "reference/jiggy_sawdust.aws63.webp",
    "mask": "reference/jiggy_sawdust.aws63_mask.png",
