@@ -1,0 +1,230 @@
+{
+ "name": "goobers",
+ "profile": "aws2025",
+ "robot_type": "wedge",
+ "locomotion": "wheels",
+ "kit_draft": true,
+ "parts": [
+  {
+   "id": "chassis",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -31.0,
+       0.0
+      ],
+      [
+       31.0,
+       0.0
+      ],
+      [
+       31.0,
+       1.5
+      ],
+      [
+       -21.0,
+       28.0
+      ],
+      [
+       -31.0,
+       28.0
+      ]
+     ],
+     "height": 62.0
+    },
+    "at": [
+     0.0,
+     0.0,
+     -10.0
+    ],
+    "rot": [
+     90.0,
+     0.0,
+     90.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e8455a",
+   "print_orientation": "+z"
+  },
+  {
+   "id": "wheel_l0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 12.0,
+     "height": 6.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    34.5,
+    -18.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#5a3a2a"
+  },
+  {
+   "id": "wheel_r0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 12.0,
+     "height": 6.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -34.5,
+    -18.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#5a3a2a"
+  },
+  {
+   "id": "ear_l",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      10,
+      6,
+      8
+     ]
+    },
+    "at": [
+     18,
+     -22,
+     18.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e8455a"
+  },
+  {
+   "id": "ear_r",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      10,
+      6,
+      8
+     ]
+    },
+    "at": [
+     -18,
+     -22,
+     18.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e8455a"
+  }
+ ],
+ "fasteners": [],
+ "wires": [],
+ "connections": [],
+ "cluster": 4,
+ "reference": [
+  {
+   "image": "reference/goobers.aws71.webp",
+   "mask": "reference/goobers.aws71_mask.png",
+   "view": "iso",
+   "approximate": true
+  },
+  {
+   "image": "reference/goobers.aws72.webp",
+   "mask": "reference/goobers.aws72_mask.png",
+   "view": "iso",
+   "approximate": true
+  }
+ ]
+}
