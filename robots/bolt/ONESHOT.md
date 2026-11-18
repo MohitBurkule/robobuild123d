@@ -13,7 +13,7 @@ Decisions: type lifter; body box rect 104x92x24 mm, ramp 0; wheels 4 r12 inboard
 Likeness: aws57 0.67 (FAIL), aws60 0.77 (FAIL), aws63 0.72 (FAIL).
 
 ## Round 4 (verification, helper 2)
-Blockers r3 69 -> r4 14 (`verify --tier inner`).
+Blockers r3 69 -> r4 10 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -40,7 +40,6 @@ Fixed / changed (inside only, outside kept):
 - hollowed rear_bar (wall 1.6, form 0): 2.5 -> 2.0 cm3
 
 Left (and why):
-- proxy.wiring x4: Wire `w_bat_sw` (`el_battery.xt30` to `el_switch.in`): its ports moved 51.39 mm since the baseline route.
 - mass.over x1: the photo-sized outside (steel weapon / big printed shell) is heavier than 150 g even hollowed; only a smaller outside would fix it.
 - proxy.interference x2: `chassis` and `dm_wheel_l1` overlap by 4.88 mm (allowed 0.08).
 - fit.interference x2: `dm_wheel_l1` overlaps wall `chassis` by 4.88 mm: it will not go in. No side has 5.08 mm free (free room per side {'-x': 1.2, '+x': 0.0, '-y': 0.01, '+y': 0.01, '-z': 0.91, '+z': 0.91}): grow the pock
