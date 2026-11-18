@@ -67,3 +67,8 @@ Left (one line each):
 - wire.render_wires x1: toolchain/process: the photo-match, diff and likeness sheets are written without a render record of the wire routes
 - likeness.weapon x1: looks (not part of this pass)
 - likeness.silhouette x1: looks (not part of this pass; outside shape kept as round 3)
+
+## Round 3c (user angle picks applied; shape fixed per user remarks)
+Decisions: type other; body box rect 46x112x22 mm, ramp 0; wheels 2 r12 inboard; weapon none; 4 forks 60 mm; extra parts: endcap, boss_in, boss_out, servo_house, arm_a, arm_b, arm_pivot_pin, head_block, auger_motor, auger_bit; photos skipped (cluttered): indices [0, 2].
+
+Likeness: aws72 0.61 (FAIL).
