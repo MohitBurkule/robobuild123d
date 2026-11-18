@@ -10,3 +10,8 @@
 Decisions: type lifter; body box round_nose 95x104x28 mm, ramp 0; wheels 4 r9 inboard; weapon none; extra parts: arm, scoop; photos skipped (cluttered): indices [0, 1].
 
 Likeness: aws67 0.82 (ok).
+
+## Round 2 (looks)
+Decisions: type lifter; body box round_nose 95x104x28 mm, ramp 0; wheels 4 r11 inboard; weapon none; extra parts: arm, scoop; photos skipped (cluttered): indices [0, 1].
+
+Likeness: aws67 0.82 (ok).

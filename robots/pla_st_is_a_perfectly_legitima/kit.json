@@ -10,13 +10,15 @@
  },
  "wheels": {
   "n": 4,
-  "radius": 9,
-  "width": 8,
+  "radius": 11,
+  "width": 12,
   "y": [
-   -28,
-   10
+   -26,
+   14
   ],
-  "outside": false
+  "outside": false,
+  "x": 38,
+  "omni": true
  },
  "colors": {
   "body": "#3a4a44",
