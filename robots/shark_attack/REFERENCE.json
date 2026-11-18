@@ -16,8 +16,10 @@
   "shark_attack.aws76.webp": "front_right_iso"
  },
  "elevation": {
-  "shark_attack.aws72.webp": 45,
   "shark_attack.aws74.webp": 45,
   "shark_attack.aws76.webp": 45
+ },
+ "view_source": {
+  "shark_attack.aws72.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label"
  }
 }

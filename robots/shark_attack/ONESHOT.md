@@ -54,3 +54,9 @@ Left (and why):
 - likeness.view x1: looks, not in scope for this pass.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): shark_attack.aws72.webp 0.77 -> 0.77; shark_attack.aws74.webp 0.69 -> 0.69; shark_attack.aws76.webp 0.68 -> 0.68
+
+## Round 3d (user camera picks batch 2 + shape remarks applied; round 4 to be re-run on the new outside)
+Decisions: type other; body box rect 85x100x30 mm, ramp 25; wheels 2 r12 inboard; weapon none; 4 forks 28 mm; extra parts: hump, fin, hammer_tip, hinge_block.
+
+Likeness: aws72 0.77 (FAIL), aws74 0.69 (FAIL), aws76 0.68 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/shark_attack.aws76.webp` is declared `front_right_iso` (IoU 0.68 there) but the model matches it better from front_right_iso (e
