@@ -6,9 +6,9 @@
   "iou": 0.714
  },
  "elevron_red.aws74.webp": {
-  "view": "20,25",
-  "azimuth": 30.0,
-  "elevation": 33.0,
-  "iou": 0.659
+  "view": "20,40~",
+  "azimuth": 20.0,
+  "elevation": 40.0,
+  "iou": 0.664
  }
 }
