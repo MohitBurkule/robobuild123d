@@ -1,0 +1,95 @@
+{
+ "spec": "/tmp/work_baphomet/robots/baphomet/spec.json",
+ "rendered_at": 1795012969.5788834,
+ "bodies": [
+  "chassis_bottom",
+  "chassis_top",
+  "wedge",
+  "motor_l",
+  "motor_r",
+  "wheel_l",
+  "wheel_r",
+  "battery",
+  "esc",
+  "rx",
+  "power_switch",
+  "insert_wl",
+  "insert_wr",
+  "insert_wor",
+  "insert_wol",
+  "insert_fl",
+  "insert_fr",
+  "insert_rl",
+  "insert_rr",
+  "bolt_wl",
+  "bolt_wr",
+  "bolt_wor",
+  "bolt_wol",
+  "bolt_fl",
+  "bolt_fr",
+  "bolt_rl",
+  "bolt_rr"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    0.0,
+    19.0,
+    0.0
+   ],
+   "to": [
+    -22.0,
+    -34.0,
+    4.3
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    -14.0,
+    -34.0,
+    4.3
+   ],
+   "to": [
+    0.0,
+    -37.5,
+    1.0
+   ]
+  },
+  "w_esc_ml": {
+   "from": [
+    8.0,
+    -31.5,
+    1.0
+   ],
+   "to": [
+    5.549999999999997,
+    -16.0,
+    0.0
+   ]
+  },
+  "w_esc_mr": {
+   "from": [
+    -8.0,
+    -31.5,
+    1.0
+   ],
+   "to": [
+    -5.549999999999997,
+    -16.0,
+    0.0
+   ]
+  },
+  "w_rx_esc": {
+   "from": [
+    0.0,
+    32.8,
+    0.0
+   ],
+   "to": [
+    0.0,
+    -25.5,
+    1.0
+   ]
+  }
+ }
+}
