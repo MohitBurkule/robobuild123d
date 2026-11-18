@@ -1,0 +1,85 @@
+{
+ "spec": "/tmp/work5_pantherk/robots/pantherk/spec.json",
+ "rendered_at": 1795017559.3735921,
+ "bodies": [
+  "chassis_bottom",
+  "chassis_top",
+  "motor_l",
+  "wheel_l",
+  "idler_l",
+  "motor_r",
+  "wheel_r",
+  "idler_r",
+  "insert_c0",
+  "insert_c1",
+  "insert_c2",
+  "insert_c3",
+  "battery",
+  "esc",
+  "rx",
+  "power_switch",
+  "wedge",
+  "insert_w0",
+  "insert_w1",
+  "insert_w2",
+  "insert_w3",
+  "bolt_c0",
+  "bolt_c1",
+  "bolt_c2",
+  "bolt_c3",
+  "bolt_w0",
+  "bolt_w1",
+  "bolt_w2",
+  "bolt_w3"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    -3.0,
+    9.999999999999998,
+    0.0
+   ],
+   "to": [
+    28.0,
+    8.0,
+    3.5
+   ]
+  },
+  "w_esc_ml": {
+   "from": [
+    19.0,
+    22.0,
+    3.0
+   ],
+   "to": [
+    5.549999999999997,
+    -16.0,
+    0.0
+   ]
+  },
+  "w_esc_mr": {
+   "from": [
+    3.0,
+    22.0,
+    3.0
+   ],
+   "to": [
+    -5.549999999999997,
+    -16.0,
+    0.0
+   ]
+  },
+  "w_rx_esc": {
+   "from": [
+    11.0,
+    9.8,
+    0.0
+   ],
+   "to": [
+    11.0,
+    28.0,
+    3.0
+   ]
+  }
+ }
+}

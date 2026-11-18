@@ -28,3 +28,28 @@
 
 ## Guesses
 - I assumed the `ref/pantherk` side of the merge conflicts was a stale copy of the toolchain, so the dev side is correct. I did not compare the two beyond line counts.
+
+## Rebuild from scratch (ref/pantherk, after coordinator gate update)
+
+Built with the chassis generator (`gen build --intent`), not the template. Intent: `hypothesis: wedge`, shape box.
+Spec: `robots/pantherk/spec.json`. Intent: `robots/pantherk/intent.json`. Renders: `robots/pantherk/renders/iso.png`, `top.png`.
+
+### Where stuck / confusing
+- No `robot likeness` CLI subcommand exists (brief says it does). The gate is `robot verify SPEC --only likeness`. Overlays are only written by calling `robot.checks.likeness.cli_main(spec, out_dir=...)` directly. Running `python3 -m robot.checks.likeness` rewrites the shipped `robot/templates/likeness_data.npz` in the repo; I restored it with git checkout.
+- The `wedge` hypotheses are all 2WD. `--hypothesis "weapon=wedge,drive_layout=4WD"` lists 14448 valid slugs, but `gen build` refuses it: `no assembler for wedge-...-4WD ... yet (buildable: hspin_bar, lifter, none_pusher, vspin_drisk, wedge)`. Workaround: build 2WD and add 2 idler wheels by hand.
+- Idler wheels need the same chassis clearance cuts as the driven wheels. There is no generator option for them. I copied every chassis node positioned at the driven wheel (x +-34.4, y -16) to y +14 by script. Interference with chassis_bottom went away after that.
+- The generated wedge baseline already contains 6 boxes with a non-positive size (`chassis_bottom`: 400x135x-4.5 and 48x32x-8 cut boxes). In the json verify run, `validity.load` reports this as a blocker (`box size must be a positive finite number, got -4.5`). The inner-tier run before it did not show that error, so I could not tell whether it is cache-dependent. This looks like a generator bug.
+- Inner tier after the idler edits: 33 blockers in 21 root causes. The categories are proxy.assembly (baseline teardown never removed insert_c0/insert_w0/bolt_c0/bolt_w0), proxy.wiring (wire ports moved 54-65 mm since baseline route), and proxy.interference (small overlaps). These are baseline proxies on the generated spec, not fixed.
+- `fasteners --fill` wrote 8 hole records with insert_d/insert_len/insert_depth. Not re-checked by a full verify.
+- mfg.sharp_internal_corner skipped per brief. Full tier not run (about 10 min).
+
+### Likeness (FAIL, 2 blockers; likeness.type now PASS)
+- likeness.type passes after the 4-wheel change (driven + idler counted as modelled wheels).
+- aws67 (iso): IoU 0.72 (floor 0.80). Model overhangs the front-left corner (red), photo has side wings and wheels outboard (blue).
+- aws66 (front): IoU 0.89 (need 0.90, must not be worse than stock wedge_2wd at 0.90). The model is essentially the stock wedge_2wd body.
+- Tried a `shape: round` outline variant: worse (0.69 and 0.85). Not kept.
+- Not fixed: the outline and wedge need hand reshaping (wedge prism, side wings, wheel outboard position) that the intent cannot express. I ran out of time budget.
+
+### Final blocker count
+- Inner tier: 33 blockers (21 root causes), plus 1 validity.load in the JSON run (negative box size, see above).
+- Likeness: 2 blockers (silhouette). Result: FAIL.
