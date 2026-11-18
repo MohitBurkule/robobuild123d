@@ -40,23 +40,198 @@
  },
  "macros": [
   {
-   "box": [
-    28,
-    95,
-    5
+   "side": [
+    [
+     -18,
+     26
+    ],
+    [
+     34,
+     26
+    ],
+    [
+     56,
+     6
+    ],
+    [
+     57,
+     8
+    ],
+    [
+     35,
+     30
+    ],
+    [
+     -18,
+     30.5
+    ]
    ],
-   "at": [
-    0,
-    12,
-    27
+   "x": [
+    -14,
+    14
    ],
    "weapon": "flipper",
    "pivot": [
-    -30,
-    26
+    -18,
+    27
    ],
    "id": "flipper",
    "color": "#d8e83a"
+  },
+  {
+   "side": [
+    [
+     54,
+     8
+    ],
+    [
+     68,
+     1
+    ],
+    [
+     68.5,
+     2.5
+    ],
+    [
+     55,
+     10
+    ]
+   ],
+   "x": [
+    -13,
+    13
+   ],
+   "id": "ramp_tip",
+   "material": "polycarbonate",
+   "process": "laser",
+   "color": "#dfe8ee"
+  },
+  {
+   "box": [
+    24,
+    70,
+    2
+   ],
+   "at": [
+    28,
+    0,
+    27
+   ],
+   "mirror": true,
+   "id": "top_plate",
+   "color": "#2fb82f"
+  },
+  {
+   "box": [
+    22,
+    10,
+    2.5
+   ],
+   "at": [
+    0,
+    -20,
+    31.5
+   ],
+   "id": "hinge_leaf",
+   "material": "brass",
+   "process": "cots",
+   "color": "#b89a4a"
+  },
+  {
+   "cyl": [
+    1.6,
+    22
+   ],
+   "at": [
+    0,
+    -20,
+    33.5
+   ],
+   "axis": "x",
+   "id": "hinge_pin",
+   "material": "brass",
+   "process": "cots",
+   "color": "#b89a4a"
+  },
+  {
+   "cyl": [
+    2.4,
+    1.4
+   ],
+   "at": [
+    -30,
+    -28,
+    28.7
+   ],
+   "axis": "z",
+   "id": "scr0",
+   "color": "#1c1d20",
+   "material": "steel",
+   "process": "cots"
+  },
+  {
+   "cyl": [
+    2.4,
+    1.4
+   ],
+   "at": [
+    30,
+    -28,
+    28.7
+   ],
+   "axis": "z",
+   "id": "scr1",
+   "color": "#1c1d20",
+   "material": "steel",
+   "process": "cots"
+  },
+  {
+   "cyl": [
+    2.4,
+    1.4
+   ],
+   "at": [
+    -30,
+    28,
+    28.7
+   ],
+   "axis": "z",
+   "id": "scr2",
+   "color": "#1c1d20",
+   "material": "steel",
+   "process": "cots"
+  },
+  {
+   "cyl": [
+    2.4,
+    1.4
+   ],
+   "at": [
+    30,
+    28,
+    28.7
+   ],
+   "axis": "z",
+   "id": "scr3",
+   "color": "#1c1d20",
+   "material": "steel",
+   "process": "cots"
+  },
+  {
+   "cyl": [
+    2.4,
+    1.4
+   ],
+   "at": [
+    0,
+    8,
+    30.9
+   ],
+   "axis": "z",
+   "id": "scr4",
+   "color": "#1c1d20",
+   "material": "steel",
+   "process": "cots"
   }
  ]
 }
