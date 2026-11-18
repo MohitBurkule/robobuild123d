@@ -22,4 +22,4 @@ def test_fill_measures_grip(tmp_path):
     assert fasten_fill.main(str(p), fill=True) == 0
     got = {f["id"]: f["hole"]["grip"] for f in json.loads(p.read_text())["fasteners"]}
     assert 2.0 < got["bolt_wl"] < 3.0      # 2.4 mm wedge lug
-    assert 12.0 < got["bolt_fl"] < 14.0    # both chassis halves down to the insert
+    assert 14.0 < got["bolt_fl"] < 16.0    # outer surface (2.2 cbore) down to the insert
