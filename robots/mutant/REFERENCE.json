@@ -1,0 +1,15 @@
+{
+ "robot_type": "vertical_spinner",
+ "wheels": 2,
+ "weapon": {
+  "kind": "disc",
+  "axis": "x",
+  "position": "middle",
+  "teeth": 2
+ },
+ "photos": [
+  "mutant.aws72.webp",
+  "mutant.aws74.webp",
+  "mutant.aws76.webp"
+ ]
+}

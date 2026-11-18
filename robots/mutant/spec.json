@@ -1,0 +1,690 @@
+{
+ "name": "mutant",
+ "profile": "aws2025",
+ "robot_type": "vertical_spinner",
+ "locomotion": "wheels",
+ "kit_draft": true,
+ "parts": [
+  {
+   "id": "pod_l",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -42,
+       -19
+      ],
+      [
+       30,
+       -19
+      ],
+      [
+       42,
+       -4
+      ],
+      [
+       42,
+       19
+      ],
+      [
+       -42,
+       19
+      ]
+     ],
+     "height": 61
+    },
+    "at": [
+     34.5,
+     0.0,
+     0.0
+    ],
+    "rot": [
+     90.0,
+     0.0,
+     90.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#1f7fc4",
+   "print_orientation": "+z"
+  },
+  {
+   "id": "pod_r",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -42,
+       -19
+      ],
+      [
+       30,
+       -19
+      ],
+      [
+       42,
+       -4
+      ],
+      [
+       42,
+       19
+      ],
+      [
+       -42,
+       19
+      ]
+     ],
+     "height": 61
+    },
+    "at": [
+     -34.5,
+     0.0,
+     0.0
+    ],
+    "rot": [
+     90.0,
+     0.0,
+     90.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#1f7fc4",
+   "print_orientation": "+z"
+  },
+  {
+   "id": "bridge",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      10,
+      30,
+      30
+     ]
+    },
+    "at": [
+     0,
+     -27,
+     0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#1f7fc4",
+   "print_orientation": "+z"
+  },
+  {
+   "id": "weapon",
+   "kind": "weapon",
+   "material": "steel",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "spline_prism",
+     "points": [
+      [
+       20.0,
+       0.0
+      ],
+      [
+       19.751,
+       2.6
+      ],
+      [
+       19.167,
+       5.136
+      ],
+      [
+       18.26,
+       7.564
+      ],
+      [
+       17.049,
+       9.843
+      ],
+      [
+       15.556,
+       11.936
+      ],
+      [
+       13.809,
+       13.809
+      ],
+      [
+       11.841,
+       15.432
+      ],
+      [
+       9.686,
+       16.777
+      ],
+      [
+       7.384,
+       17.825
+      ],
+      [
+       4.973,
+       18.561
+      ],
+      [
+       2.498,
+       18.974
+      ],
+      [
+       0.0,
+       19.059
+      ],
+      [
+       -2.477,
+       18.818
+      ],
+      [
+       -4.892,
+       18.258
+      ],
+      [
+       -7.203,
+       17.391
+      ],
+      [
+       -9.373,
+       16.234
+      ],
+      [
+       -11.364,
+       14.809
+      ],
+      [
+       -13.144,
+       13.144
+      ],
+      [
+       -14.685,
+       11.268
+      ],
+      [
+       -15.962,
+       9.216
+      ],
+      [
+       -17.246,
+       7.143
+      ],
+      [
+       -18.46,
+       4.946
+      ],
+      [
+       -19.388,
+       2.553
+      ],
+      [
+       -20.0,
+       0.0
+      ],
+      [
+       -19.751,
+       -2.6
+      ],
+      [
+       -19.167,
+       -5.136
+      ],
+      [
+       -18.26,
+       -7.564
+      ],
+      [
+       -17.049,
+       -9.843
+      ],
+      [
+       -15.556,
+       -11.936
+      ],
+      [
+       -13.809,
+       -13.809
+      ],
+      [
+       -11.841,
+       -15.432
+      ],
+      [
+       -9.686,
+       -16.777
+      ],
+      [
+       -7.384,
+       -17.825
+      ],
+      [
+       -4.973,
+       -18.561
+      ],
+      [
+       -2.498,
+       -18.974
+      ],
+      [
+       -0.0,
+       -19.059
+      ],
+      [
+       2.477,
+       -18.818
+      ],
+      [
+       4.892,
+       -18.258
+      ],
+      [
+       7.203,
+       -17.391
+      ],
+      [
+       9.373,
+       -16.234
+      ],
+      [
+       11.364,
+       -14.809
+      ],
+      [
+       13.144,
+       -13.144
+      ],
+      [
+       14.685,
+       -11.268
+      ],
+      [
+       15.962,
+       -9.216
+      ],
+      [
+       17.246,
+       -7.143
+      ],
+      [
+       18.46,
+       -4.946
+      ],
+      [
+       19.388,
+       -2.553
+      ]
+     ],
+     "height": 2.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0.0,
+    22.0,
+    1.0
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "color": "#d9dde2",
+   "weapon": {
+    "kind": "disc",
+    "spin_axis": [
+     0,
+     0,
+     1
+    ],
+    "teeth": 2,
+    "cells": 2,
+    "reduction": 1.0
+   },
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "pivot": [
+     0.0,
+     22.0,
+     1.0
+    ],
+    "min": 0,
+    "max": 360,
+    "default": 0
+   }
+  },
+  {
+   "id": "wheel_l0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 21.0,
+     "height": 18.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    34,
+    -5.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e8f4ee"
+  },
+  {
+   "id": "wheel_r0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 21.0,
+     "height": 18.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -34,
+    -5.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e8f4ee"
+  },
+  {
+   "id": "skirt_l",
+   "kind": "skirt",
+   "material": "polycarbonate",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       30,
+       -19
+      ],
+      [
+       64,
+       -21
+      ],
+      [
+       64,
+       -20
+      ],
+      [
+       34,
+       -12
+      ]
+     ],
+     "height": 57
+    },
+    "at": [
+     34.5,
+     0.0,
+     0.0
+    ],
+    "rot": [
+     90.0,
+     0.0,
+     90.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#cfe6e0"
+  },
+  {
+   "id": "front_plate_l",
+   "kind": "armor",
+   "material": "aluminium",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      57,
+      1.5,
+      22
+     ]
+    },
+    "at": [
+     34.5,
+     42.8,
+     8
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#8d9197"
+  },
+  {
+   "id": "skirt_r",
+   "kind": "skirt",
+   "material": "polycarbonate",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       30,
+       -19
+      ],
+      [
+       64,
+       -21
+      ],
+      [
+       64,
+       -20
+      ],
+      [
+       34,
+       -12
+      ]
+     ],
+     "height": 57
+    },
+    "at": [
+     -34.5,
+     0.0,
+     0.0
+    ],
+    "rot": [
+     90.0,
+     0.0,
+     90.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#cfe6e0"
+  },
+  {
+   "id": "front_plate_r",
+   "kind": "armor",
+   "material": "aluminium",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      57,
+      1.5,
+      22
+     ]
+    },
+    "at": [
+     -34.5,
+     42.8,
+     8
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#8d9197"
+  }
+ ],
+ "fasteners": [],
+ "wires": [],
+ "connections": [],
+ "reference": [
+  {
+   "image": "reference/mutant.aws72.webp",
+   "mask": "reference/mutant.aws72_mask.png",
+   "view": "iso",
+   "approximate": true
+  },
+  {
+   "image": "reference/mutant.aws74.webp",
+   "mask": "reference/mutant.aws74_mask.png",
+   "view": "iso",
+   "approximate": true
+  },
+  {
+   "image": "reference/mutant.aws76.webp",
+   "mask": "reference/mutant.aws76_mask.png",
+   "view": "iso",
+   "approximate": true
+  }
+ ]
+}

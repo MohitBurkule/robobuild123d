@@ -1,0 +1,31 @@
+{
+ "name": "mutant",
+ "robot_type": "vertical_spinner",
+ "body": {
+  "length": 84,
+  "width": 130,
+  "height": 38,
+  "ramp": 12,
+  "style": "twin_pods",
+  "slot": 8,
+  "clearance": 2
+ },
+ "weapon": {
+  "kind": "disc",
+  "radius": 20,
+  "width": 2,
+  "y": 22,
+  "z": 1,
+  "axis": "x",
+  "teeth": 2
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 21,
+  "width": 18,
+  "y": [
+   -5
+  ],
+  "outside": false
+ }
+}
