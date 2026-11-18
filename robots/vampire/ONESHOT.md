@@ -41,3 +41,9 @@ Left (one line each):
 - power.weapon_motor x1: no room for a brushless outrunner inside the print without changing the outside.
 - wire.render_wires x1: toolchain/process. The photo-match, diff and likeness sheets are written without a render record of the wire routes.
 - likeness.view / likeness.silhouette x6: looks; not part of this pass.
+
+## Round 3d (user camera picks batch 2 + shape remarks applied; round 4 to be re-run on the new outside)
+Decisions: type horizontal_spinner; body box rect 100x112x20 mm, ramp 0; wheels 2 r12 inboard; weapon bar r72 axis z teeth 2; extra parts: hub, deck, green_wall.
+
+Likeness: aws71 0.63 (FAIL), aws74 0.67 (FAIL), aws76 0.40 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/vampire.aws76.webp` is declared `left` (IoU 0.40 there) but the model matches it better from rear (elevation 25, azimuth 270) (

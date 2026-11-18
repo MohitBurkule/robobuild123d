@@ -1,20 +1,20 @@
 {
  "vampire.aws71.webp": {
-  "view": "60,55",
-  "azimuth": 70.0,
-  "elevation": 47.0,
-  "iou": 0.538
+  "view": "60,35!",
+  "azimuth": 60.0,
+  "elevation": 35.0,
+  "iou": 0.565
  },
  "vampire.aws74.webp": {
-  "view": "110,30",
-  "azimuth": 100.0,
-  "elevation": 38.0,
-  "iou": 0.691
+  "view": "120,35!",
+  "azimuth": 120.0,
+  "elevation": 35.0,
+  "iou": 0.643
  },
  "vampire.aws76.webp": {
   "view": "100,25",
-  "azimuth": 100.0,
-  "elevation": 25.0,
-  "iou": 0.607
+  "azimuth": 110.0,
+  "elevation": 17.0,
+  "iou": 0.615
  }
 }

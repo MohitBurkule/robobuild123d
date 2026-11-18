@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_vampire/robots/vampire/spec.json",
- "rendered_at": 1795032407.2892532,
+ "rendered_at": 1795038100.4131696,
  "bodies": [
   "chassis",
   "weapon",
@@ -8,6 +8,7 @@
   "wheel_r0",
   "hub",
   "deck",
+  "green_wall",
   "dt_hub_wheel_l0",
   "dt_axle_wheel_l0",
   "dt_nut_wheel_l0",
