@@ -1,0 +1,71 @@
+BLOCKERS: 7
+  [cached] integrity 0.00s
+  [cached] mass 0.00s
+  [proxy] interference 0.11s
+  [cached] connections 0.00s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.00s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.00s
+  [cached] physics 0.00s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [cached] likeness 0.00s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.00s
+  [cached] waiver_audit 0.00s
+  [cached] geom 0.01s
+  [cached] dfm 0.00s
+  [cached] realworld 0.00s
+stagnant: ok=False 7 blockers in 7 root causes, mass 132.0/150 g
+1. [proxy.interference] `chassis` and `front_plate` overlap by 1.38 mm (allowed 0.08).
+   | chassis: x -65.00..65.00  y -31.00..31.00  z -11.00..19.00  size 130.00 x 62.00 x 30.00 mm
+   |   centre (0.00, 0.00, 4.00), volume 75108.6 mm3
+   |   OVERLAP `front_plate` 1.38 mm (allowed 0.08)
+   |   gap to `el_switch` 0.10 mm
+   |   gap to `el_rx_esc` 0.25 mm
+2. [connection.cover_fasteners] `front_plate` is an armour / cover panel held by 0 fastener(s); it needs >= 2 real screws. Snap, press-fit or tape retention alone lets it peel off on the first hit.
+   fix: Bolt it with >= 2 screws into inserts, nuts or tapped bosses and declare them in `fasteners`.
+   | front_plate: x -65.00..65.00  y 19.46..32.54  z -11.61..17.61  size 130.00 x 13.08 x 29.22 mm
+   |   centre (0.00, 26.00, 3.00), volume 11700.0 mm3
+   |   OVERLAP `chassis` 1.38 mm (allowed 0.08)
+3. [wire.render_wires] 11 of 11 robot render(s) do not draw all 4 wires: renders/diff_stagnant.aws62.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_stagnant.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_stagnant.aws62_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_stagnant.aws67_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_stagnant.aws62.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_stagnant.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/pick_stagnant.aws62.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/pick_stagnant.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn...
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+4. [likeness.view] `reference/stagnant.aws62.webp` is declared `front` (IoU 0.53 there) but the model matches it better from front_right_iso (elevation 45, azimuth 60) (IoU 0.87).
+   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
+5. [likeness.silhouette] `reference/stagnant.aws62.webp`: best silhouette IoU 0.53 at camera front (elevation 45, azimuth 90) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.54). Regions (photo frame, left third first) 0.70 / 0.57 / 0.34: worst = rear third. Height/length 0.49 model vs 0.76 photo (too flat: raise it or shorten it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+6. [likeness.view] `reference/stagnant.aws67.webp` is declared `front` (IoU 0.66 there) but the model matches it better from front_left_iso (elevation 25, azimuth 120) (IoU 0.82).
+   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
+7. [likeness.silhouette] `reference/stagnant.aws67.webp`: best silhouette IoU 0.66 at camera front (elevation 25, azimuth 90) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.70). Regions (photo frame, left third first) 0.54 / 0.64 / 0.79: worst = front third. Height/length 0.40 model vs 0.57 photo (too flat: raise it or shorten it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+MASS BUDGET:
+  mass 132.0 g of 150 g (+18.0 g margin)
+    chassis                    71.50 g  fills 31% of its box
+    front_plate                14.04 g  fills 24% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    dm_wheel_l0                 9.70 g  fills 66% of its box
+    dm_wheel_r0                 9.70 g  fills 66% of its box
+    el_rx_esc                   3.50 g  fills 100% of its box
+    wheel_l0                    3.16 g  fills 57% of its box
+    wheel_r0                    3.16 g  fills 57% of its box
+    dt_hub_wheel_l0             1.22 g  fills 65% of its box
+    dt_hub_wheel_r0             1.22 g  fills 65% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    mass.may_be_over: 132.0 g (range 111.6 to 152.5 g) against the 150 g limit; 3.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 31 hit / 0 miss, min_gap 9 hit / 0 miss, overlap 154 hit / 0 miss, part_geom 11 hit / 0 miss
