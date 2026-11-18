@@ -8,7 +8,7 @@ Decisions: type wedge; body box rect 64x82x34 mm, ramp 0; wheels 2 r13 inboard; 
 Likeness: aws72 0.73 (FAIL), aws74 0.74 (FAIL), aws76 0.77 (FAIL).
 
 ## Round 4 (verification, helper 2)
-Blockers r3 76 -> r4 14 (`verify --tier inner`).
+Blockers r3 76 -> r4 10 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -31,7 +31,6 @@ Fixed / changed (inside only, outside kept):
 - foot_1: no screw line and no slot, left undeclared (needs a real mount)
 
 Left (and why):
-- proxy.wiring x4: Wire `w_bat_sw` (`el_battery.xt30` to `el_switch.in`): its ports moved 26.96 mm since the baseline route.
 - connection.floating x2: `foot_0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
 - connection.cover_fasteners x3: `arch_0` is an armour / cover panel held by 0 fastener(s); it needs >= 2 real screws. Snap, press-fit or tape retention alone lets it peel off on the first hit.
 - process.geometry x2: `fork_0` (laser): 1 sharp internal corner(s): radius 0 < kerf 0.1 mm (add a fillet >= kerf or the mating part will not seat).
