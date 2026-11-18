@@ -1,0 +1,11 @@
+{
+ "spec": "/tmp/work10_io/robots/io/spec.json",
+ "rendered_at": 1795022418.48833,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "flipper"
+ ],
+ "wires": {}
+}
