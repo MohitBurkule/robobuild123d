@@ -1,9 +1,9 @@
 {
  "look_what_you_ve_done_to_our_breakfast.aws71.webp": {
-  "view": "50,30",
+  "view": "60,35!",
   "azimuth": 60.0,
-  "elevation": 22.0,
-  "iou": 0.83
+  "elevation": 35.0,
+  "iou": 0.652
  },
  "look_what_you_ve_done_to_our_breakfast.aws74.webp": {
   "view": "130,30",
