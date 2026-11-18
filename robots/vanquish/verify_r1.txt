@@ -1,0 +1,100 @@
+  [ran] integrity 0.02s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 0.83s
+  [ran] connections 0.01s
+  [ran] legal 0.01s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.01s
+  [ran] shape 0.14s
+  [ran] dynamics 0.01s
+  [ran] strength 0.00s
+  [ran] printability 0.40s
+  [ran] process 0.03s
+  [ran] electrical 0.02s
+  [ran] combat 0.04s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.01s
+  [ran] fastener_record 0.00s
+  [ran] likeness 2.22s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.03s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.02s
+  [ran] dfm 0.01s
+  [ran] realworld 0.01s
+vanquish: ok=False 24 blockers in 22 root causes, mass 145.3/225 g
+1. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `chassis`. (+1 consequences)
+   | weapon: x -18.00..-14.00  y 14.00..30.00  z 2.00..86.00  size 4.00 x 16.00 x 84.00 mm
+   |   centre (-16.00, 22.00, 44.00), volume 5184.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [-16.0, 22.0, 44.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.88 mm (allowed 0.08)
+   |   gap to `motor` 2.00 mm
+2. [connection.floating] `fork_0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 5.5 mm away. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | fork_0: x -33.50..-28.50  y 35.70..97.30  z -10.94..-0.83  size 5.00 x 61.61 x 10.11 mm
+   |   centre (-31.00, 66.50, -5.89), volume 465.0 mm3
+   | chassis: x -23.00..23.00  y -37.50..37.50  z -9.00..15.00  size 46.00 x 75.00 x 24.00 mm
+   |   centre (-0.00, 0.00, 3.00), volume 82800.0 mm3
+   |   OVERLAP `wheel_l0` 3.88 mm (allowed 0.08)
+3. [proxy.interference] `chassis` and `weapon` overlap by 1.88 mm (allowed 0.08).
+   | chassis: x -23.00..23.00  y -37.50..37.50  z -9.00..15.00  size 46.00 x 75.00 x 24.00 mm
+   |   centre (-0.00, 0.00, 3.00), volume 82800.0 mm3
+   |   OVERLAP `wheel_l0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `upright` 2.88 mm (allowed 0.08)
+4. [proxy.interference] `chassis` and `wheel_l0` overlap by 3.88 mm (allowed 0.08).
+   | chassis: x -23.00..23.00  y -37.50..37.50  z -9.00..15.00  size 46.00 x 75.00 x 24.00 mm
+   |   centre (-0.00, 0.00, 3.00), volume 82800.0 mm3
+   |   OVERLAP `wheel_l0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `upright` 2.88 mm (allowed 0.08)
+5. [proxy.interference] `chassis` and `wheel_r0` overlap by 3.88 mm (allowed 0.08).
+   | chassis: x -23.00..23.00  y -37.50..37.50  z -9.00..15.00  size 46.00 x 75.00 x 24.00 mm
+   |   centre (-0.00, 0.00, 3.00), volume 82800.0 mm3
+   |   OVERLAP `wheel_l0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `upright` 2.88 mm (allowed 0.08)
+6. [proxy.interference] `chassis` and `upright` overlap by 2.88 mm (allowed 0.08).
+   | chassis: x -23.00..23.00  y -37.50..37.50  z -9.00..15.00  size 46.00 x 75.00 x 24.00 mm
+   |   centre (-0.00, 0.00, 3.00), volume 82800.0 mm3
+   |   OVERLAP `wheel_l0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `upright` 2.88 mm (allowed 0.08)
+7. [proxy.interference] `motor` and `upright` overlap by 2.88 mm (allowed 0.08).
+   | motor: x -12.00..12.00  y 12.00..32.00  z 23.00..43.00  size 24.00 x 19.99 x 20.00 mm
+   |   centre (0.00, 22.00, 33.00), volume 7539.8 mm3
+   |   OVERLAP `upright` 2.88 mm (allowed 0.08)
+   |   gap to `weapon` 2.00 mm
+   | upright: x -11.00..-5.00  y 7.00..37.00  z -7.00..33.00  size 6.00 x 30.00 x 40.00 mm
+8. [legal.switch] Rule 4a needs an externally accessible way to shut down that works without tools and is clearly marked on/off.
+   fix: Add a `switch` part (or removable link) with `tool_free: true` and `marked: true` and a visible ON/OFF `label`.
+9. [legal.failsafe] Rule 4d: the robot must stop all motion when the transmitter is off.
+   fix: Set `electronics.failsafe` to true and configure the receiver and ESC failsafe.
+10. [legal.weapon_disable] Rule 4c: all weaponry must be deactivatable by remote control.
+   fix: Set `electronics.weapon_remote_disable` and put the weapon on its own receiver channel.
+11. [legal.locking_bar] Rule 5f: every spinner needs a locking bar that physically stops the weapon from turning.
+   fix: Add a `locking_bar` part (a pin through the weapon into the frame), name it in `weapon.locking_bar`, give it a contrasting colour and `tethered: true`.
+   | weapon: x -18.00..-14.00  y 14.00..30.00  z 2.00..86.00  size 4.00 x 16.00 x 84.00 mm
+   |   centre (-16.00, 22.00, 44.00), volume 5184.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [-16.0, 22.0, 44.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.88 mm (allowed 0.08)
+   |   gap to `motor` 2.00 mm
+12. [power.weapon_motor] `weapon` names motor None; it must be a catalog brushless motor so speed can be computed.
+   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
+   | weapon: x -18.00..-14.00  y 14.00..30.00  z 2.00..86.00  size 4.00 x 16.00 x 84.00 mm
+   |   centre (-16.00, 22.00, 44.00), volume 5184.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [-16.0, 22.0, 44.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.88 mm (allowed 0.08)
+   |   gap to `motor` 2.00 mm
+... 10 more root causes (fix these first, then re-run)
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 0 hit / 2 miss, group 0 hit / 31 miss, inside 0 hit / 8 miss, likeness 1 hit / 0 miss, min_gap 7 hit / 16 miss, overlap 25 hit / 51 miss, part_check 0 hit / 4 miss, part_geom 8 hit / 0 miss, ray 0 hit / 40 miss

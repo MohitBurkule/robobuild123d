@@ -1,0 +1,391 @@
+{
+ "name": "vanquish",
+ "profile": "aws2025",
+ "robot_type": "vertical_spinner",
+ "locomotion": "wheels",
+ "kit_draft": true,
+ "parts": [
+  {
+   "id": "chassis",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -37.5,
+       0.0
+      ],
+      [
+       37.5,
+       0.0
+      ],
+      [
+       37.5,
+       1.5
+      ],
+      [
+       37.5,
+       24.0
+      ],
+      [
+       -37.5,
+       24.0
+      ]
+     ],
+     "height": 46.0
+    },
+    "at": [
+     0.0,
+     0.0,
+     -9.0
+    ],
+    "rot": [
+     90.0,
+     0.0,
+     90.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#1c1d20",
+   "print_orientation": "+z"
+  },
+  {
+   "id": "weapon",
+   "kind": "weapon",
+   "material": "steel",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -42.0,
+       -4.8
+      ],
+      [
+       -39.0,
+       -8.0
+      ],
+      [
+       36.0,
+       -8.0
+      ],
+      [
+       42.0,
+       -1.6
+      ],
+      [
+       42.0,
+       4.8
+      ],
+      [
+       39.0,
+       8.0
+      ],
+      [
+       -36.0,
+       8.0
+      ],
+      [
+       -42.0,
+       1.6
+      ]
+     ],
+     "height": 4.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    -16.0,
+    22.0,
+    44.0
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "color": "#b9bdc2",
+   "weapon": {
+    "kind": "bar",
+    "spin_axis": [
+     0,
+     0,
+     1
+    ],
+    "teeth": 2,
+    "cells": 2,
+    "reduction": 1.0
+   },
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "pivot": [
+     -16.0,
+     22.0,
+     44.0
+    ],
+    "min": 0,
+    "max": 360,
+    "default": 0
+   }
+  },
+  {
+   "id": "wheel_l0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 11.0,
+     "height": 8.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    18.5,
+    -25.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "wheel_r0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 11.0,
+     "height": 8.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -18.5,
+    -25.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "fork_0",
+   "kind": "wedge",
+   "material": "titanium",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      5.0,
+      62.0,
+      1.5
+     ]
+    },
+    "at": [
+     -31.0,
+     66.5,
+     -5.885633870237971
+    ],
+    "rot": [
+     -8.0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#dfeee6"
+  },
+  {
+   "id": "fork_1",
+   "kind": "wedge",
+   "material": "titanium",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      5.0,
+      62.0,
+      1.5
+     ]
+    },
+    "at": [
+     31.0,
+     66.5,
+     -5.885633870237971
+    ],
+    "rot": [
+     -8.0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#dfeee6"
+  },
+  {
+   "id": "motor",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 10,
+     "height": 24
+    },
+    "at": [
+     0,
+     22,
+     33.0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#2a2c30"
+  },
+  {
+   "id": "upright",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      6,
+      30,
+      40
+     ]
+    },
+    "at": [
+     -8,
+     22,
+     13.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#1c1d20"
+  }
+ ],
+ "fasteners": [],
+ "wires": [],
+ "connections": [],
+ "reference": [
+  {
+   "image": "reference/vanquish.aws76.webp",
+   "mask": "reference/vanquish.aws76_mask.png",
+   "view": "iso",
+   "approximate": true
+  }
+ ]
+}

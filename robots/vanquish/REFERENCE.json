@@ -1,0 +1,11 @@
+{
+ "robot_type": "vertical_spinner",
+ "wheels": 2,
+ "weapon": {
+  "kind": "bar",
+  "axis": "x"
+ },
+ "photos": [
+  "vanquish.aws76.webp"
+ ]
+}

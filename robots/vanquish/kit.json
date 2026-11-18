@@ -1,0 +1,73 @@
+{
+ "robot_type": "vertical_spinner",
+ "body": {
+  "length": 75,
+  "width": 46,
+  "height": 24,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 11,
+  "width": 8,
+  "y": [
+   -25
+  ],
+  "outside": false
+ },
+ "weapon": {
+  "kind": "bar",
+  "radius": 42,
+  "width": 4,
+  "y": 22,
+  "teeth": 2,
+  "x": -16,
+  "bar_width": 16,
+  "z": 44,
+  "axis": "x"
+ },
+ "forks": {
+  "n": 2,
+  "length": 62,
+  "width": 5,
+  "spread": 62,
+  "tilt_deg": 8
+ },
+ "colors": {
+  "body": "#1c1d20",
+  "wheel": "#202226",
+  "weapon": "#b9bdc2",
+  "fork": "#dfeee6"
+ },
+ "extras": [
+  {
+   "cyl": [
+    10,
+    24
+   ],
+   "at": [
+    0,
+    22,
+    44
+   ],
+   "axis": "x",
+   "id": "motor",
+   "color": "#2a2c30"
+  },
+  {
+   "box": [
+    6,
+    30,
+    40
+   ],
+   "at": [
+    -8,
+    22,
+    24
+   ],
+   "id": "upright",
+   "color": "#1c1d20"
+  }
+ ],
+ "name": "vanquish"
+}
