@@ -1,13 +1,25 @@
 {
  "spec": "/tmp/work10_orion/robots/orion/spec.json",
- "rendered_at": 1795023421.9160304,
+ "rendered_at": 1795026566.772612,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
   "flipper",
   "spring_l",
-  "spring_r"
+  "spring_r",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_nut_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_nut_wheel_r0",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3",
+  "dt_strut_spring_l",
+  "dt_strut_spring_r"
  ],
  "wires": {}
 }

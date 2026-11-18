@@ -23,7 +23,15 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "skip_photos": [
+  0,
+  1
+ ],
+ "name": "orion",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "box": [
     34,
@@ -63,13 +71,5 @@
    "id": "spring",
    "color": "#8a8d92"
   }
- ],
- "skip_photos": [
-  0,
-  1
- ],
- "name": "orion",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }

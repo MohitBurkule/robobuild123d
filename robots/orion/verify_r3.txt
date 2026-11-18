@@ -1,0 +1,129 @@
+BLOCKERS: 56
+  [ran] integrity 0.04s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 2.88s
+  [ran] connections 0.56s
+  [ran] legal 0.00s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.01s
+  [ran] shape 0.10s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.40s
+  [ran] process 0.00s
+  [ran] electrical 0.00s
+  [ran] combat 0.06s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 1.43s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.03s
+  [ran] dfm 0.00s
+  [ran] realworld 0.00s
+orion: ok=False 56 blockers in 48 root causes, mass 267.9/150 g
+1. [proxy.interference] `chassis` and `dt_screw_0` overlap by 0.19 mm (allowed 0.08). Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   | chassis: x -46.00..46.00  y -55.00..55.00  z -9.00..37.00  size 92.00 x 110.00 x 46.00 mm
+   |   centre (-0.00, 0.00, 14.00), volume 255496.5 mm3
+   |   OVERLAP `wheel_r0` 3.28 mm (allowed 0.08)
+   |   OVERLAP `wheel_l0` 3.21 mm (allowed 0.08)
+   |   OVERLAP `dt_hub_wheel_l0` 3.12 mm (allowed 0.08)
+2. [mfg.stock] `dt_screw_0`: bought part with free geometry and no catalog SKU or stock rod/bearing match. Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   fix: Use a catalog part, or size it to a stock rod/bearing and name it in `stock`.
+   | dt_screw_0: x -40.90..-37.10  y -49.90..-46.10  z 36.60..38.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (-39.00, -48.00, 37.30), volume 15.9 mm3
+   |   OVERLAP `chassis` 0.19 mm (allowed 0.08)
+   | dt_screw_1: x 37.10..40.90  y -49.90..-46.10  z 36.60..38.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (39.00, -48.00, 37.30), volume 15.9 mm3
+3. [connection.floating] `dt_screw_0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away. Same problem on all 3 parts of this pattern: fix the pattern once. (+2 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | dt_screw_0: x -40.90..-37.10  y -49.90..-46.10  z 36.60..38.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (-39.00, -48.00, 37.30), volume 15.9 mm3
+   |   OVERLAP `chassis` 0.19 mm (allowed 0.08)
+   | chassis: x -46.00..46.00  y -55.00..55.00  z -9.00..37.00  size 92.00 x 110.00 x 46.00 mm
+   |   centre (-0.00, 0.00, 14.00), volume 255496.5 mm3
+4. [mass.over] 267.9 g (range 214.7 to 321.1 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+5. [proxy.interference] `chassis` and `wheel_l0` overlap by 3.21 mm (allowed 0.08).
+   | chassis: x -46.00..46.00  y -55.00..55.00  z -9.00..37.00  size 92.00 x 110.00 x 46.00 mm
+   |   centre (-0.00, 0.00, 14.00), volume 255496.5 mm3
+   |   OVERLAP `wheel_r0` 3.28 mm (allowed 0.08)
+   |   OVERLAP `wheel_l0` 3.21 mm (allowed 0.08)
+   |   OVERLAP `dt_hub_wheel_l0` 3.12 mm (allowed 0.08)
+6. [proxy.interference] `chassis` and `wheel_r0` overlap by 3.28 mm (allowed 0.08).
+   | chassis: x -46.00..46.00  y -55.00..55.00  z -9.00..37.00  size 92.00 x 110.00 x 46.00 mm
+   |   centre (-0.00, 0.00, 14.00), volume 255496.5 mm3
+   |   OVERLAP `wheel_r0` 3.28 mm (allowed 0.08)
+   |   OVERLAP `wheel_l0` 3.21 mm (allowed 0.08)
+   |   OVERLAP `dt_hub_wheel_l0` 3.12 mm (allowed 0.08)
+7. [proxy.interference] `chassis` and `flipper` overlap by 1.44 mm (allowed 0.08).
+   | chassis: x -46.00..46.00  y -55.00..55.00  z -9.00..37.00  size 92.00 x 110.00 x 46.00 mm
+   |   centre (-0.00, 0.00, 14.00), volume 255496.5 mm3
+   |   OVERLAP `wheel_r0` 3.28 mm (allowed 0.08)
+   |   OVERLAP `wheel_l0` 3.21 mm (allowed 0.08)
+   |   OVERLAP `dt_hub_wheel_l0` 3.12 mm (allowed 0.08)
+8. [proxy.interference] `chassis` and `dt_hub_wheel_l0` overlap by 3.12 mm (allowed 0.08).
+   | chassis: x -46.00..46.00  y -55.00..55.00  z -9.00..37.00  size 92.00 x 110.00 x 46.00 mm
+   |   centre (-0.00, 0.00, 14.00), volume 255496.5 mm3
+   |   OVERLAP `wheel_r0` 3.28 mm (allowed 0.08)
+   |   OVERLAP `wheel_l0` 3.21 mm (allowed 0.08)
+   |   OVERLAP `dt_hub_wheel_l0` 3.12 mm (allowed 0.08)
+9. [proxy.interference] `chassis` and `dt_axle_wheel_l0` overlap by 1.26 mm (allowed 0.08).
+   | chassis: x -46.00..46.00  y -55.00..55.00  z -9.00..37.00  size 92.00 x 110.00 x 46.00 mm
+   |   centre (-0.00, 0.00, 14.00), volume 255496.5 mm3
+   |   OVERLAP `wheel_r0` 3.28 mm (allowed 0.08)
+   |   OVERLAP `wheel_l0` 3.21 mm (allowed 0.08)
+   |   OVERLAP `dt_hub_wheel_l0` 3.12 mm (allowed 0.08)
+10. [proxy.interference] `chassis` and `dt_hub_wheel_r0` overlap by 3.12 mm (allowed 0.08).
+   | chassis: x -46.00..46.00  y -55.00..55.00  z -9.00..37.00  size 92.00 x 110.00 x 46.00 mm
+   |   centre (-0.00, 0.00, 14.00), volume 255496.5 mm3
+   |   OVERLAP `wheel_r0` 3.28 mm (allowed 0.08)
+   |   OVERLAP `wheel_l0` 3.21 mm (allowed 0.08)
+   |   OVERLAP `dt_hub_wheel_l0` 3.12 mm (allowed 0.08)
+11. [proxy.interference] `chassis` and `dt_axle_wheel_r0` overlap by 1.26 mm (allowed 0.08).
+   | chassis: x -46.00..46.00  y -55.00..55.00  z -9.00..37.00  size 92.00 x 110.00 x 46.00 mm
+   |   centre (-0.00, 0.00, 14.00), volume 255496.5 mm3
+   |   OVERLAP `wheel_r0` 3.28 mm (allowed 0.08)
+   |   OVERLAP `wheel_l0` 3.21 mm (allowed 0.08)
+   |   OVERLAP `dt_hub_wheel_l0` 3.12 mm (allowed 0.08)
+12. [proxy.interference] `chassis` and `dt_strut_spring_l` overlap by 0.13 mm (allowed 0.08).
+   | chassis: x -46.00..46.00  y -55.00..55.00  z -9.00..37.00  size 92.00 x 110.00 x 46.00 mm
+   |   centre (-0.00, 0.00, 14.00), volume 255496.5 mm3
+   |   OVERLAP `wheel_r0` 3.28 mm (allowed 0.08)
+   |   OVERLAP `wheel_l0` 3.21 mm (allowed 0.08)
+   |   OVERLAP `dt_hub_wheel_l0` 3.12 mm (allowed 0.08)
+... 36 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 267.9 g of 150 g (-117.9 g margin)
+    chassis                   243.23 g  fills 55% of its box
+    flipper                     9.22 g  fills 7% of its box
+    wheel_l0                    3.10 g  fills 79% of its box
+    wheel_r0                    3.10 g  fills 79% of its box
+    dt_axle_wheel_l0            1.04 g  fills 79% of its box
+    dt_axle_wheel_r0            1.04 g  fills 79% of its box
+    dt_hub_wheel_l0             0.90 g  fills 79% of its box
+    dt_hub_wheel_r0             0.90 g  fills 79% of its box
+    spring_l                    0.88 g  fills 79% of its box
+    spring_r                    0.88 g  fills 79% of its box
+    dt_strut_spring_l           0.69 g  fills 34% of its box
+    dt_strut_spring_r           0.66 g  fills 36% of its box
+    dt_nut_wheel_l0             0.27 g  fills 79% of its box
+    dt_nut_wheel_r0             0.27 g  fills 79% of its box
+    dt_screw_3                  0.13 g  fills 79% of its box
+    dt_screw_0                  0.13 g  fills 79% of its box
+    dt_screw_1                  0.13 g  fills 79% of its box
+    dt_screw_2                  0.13 g  fills 79% of its box
+    mass.over: 267.9 g (range 214.7 to 321.1 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 0 hit / 31 miss, inside 6 hit / 12 miss, likeness 1 hit / 0 miss, min_gap 40 hit / 46 miss, overlap 148 hit / 280 miss, part_check 1 hit / 0 miss, part_geom 18 hit / 0 miss, ray 30 hit / 54 miss

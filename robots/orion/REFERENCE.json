@@ -7,5 +7,15 @@
  },
  "photos": [
   "orion.aws72.webp"
- ]
+ ],
+ "view": {
+  "orion.aws69.webp": "front",
+  "orion.aws70.webp": "front",
+  "orion.aws72.webp": "front_right_iso"
+ },
+ "elevation": {
+  "orion.aws69.webp": 45,
+  "orion.aws70.webp": 45,
+  "orion.aws72.webp": 45
+ }
 }

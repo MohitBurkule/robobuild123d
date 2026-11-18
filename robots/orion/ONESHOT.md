@@ -16,3 +16,9 @@ Likeness: aws72 0.74 (FAIL).
 Decisions: type flipper; body box trapezoid 110x92x46 mm, ramp 85; wheels 2 r11 inboard; weapon none; extra parts: flipper, spring; photos skipped (cluttered): indices [0, 1].
 
 Likeness: aws72 0.74 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type flipper; body box trapezoid 110x92x46 mm, ramp 85; wheels 2 r11 inboard; weapon none; extra parts: flipper, spring; photos skipped (cluttered): indices [0, 1].
+
+Likeness: aws72 0.57 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/orion.aws72.webp` is declared `front_right_iso` (IoU 0.57 there) but the model matches it better from front_left_iso (elevation
