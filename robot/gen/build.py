@@ -51,6 +51,12 @@ def frame_params(h, user: dict | None = None) -> dict:
     if h.weapon == "lifter":
         p.update(axle_y=-18.0, y0=-42.0, y1=30.0, zb=-11.8)
     p.update({k: v for k, v in user.items() if k in p})
+    lim = -R + 2.0  # body bottom must clear the floor (wheel bottom) by >= 2 mm, or the chassis cuts go negative
+    if p["zb"] < lim:
+        raise ValueError(f"intent zb {p['zb']:g} is below the floor: wheels are {h.wheel_dia:g} mm (floor at z = {-R:g}), "
+                         f"so zb must be >= {lim:g}. Raise zb, or pick bigger wheels (hypothesis wheel axis) for a taller body.")
+    if p["zt"] <= p["zb"] + 6.0:
+        raise ValueError(f"intent zt {p['zt']:g} must be > zb + 6 = {p['zb'] + 6:g} (room for the floor, lid and parts).")
     if "y0" not in user:  # room behind the wheels for the rear clamshell screws
         p["y0"] = min(p["y0"], p["axle_y"] - R - 16.5)
     return p
