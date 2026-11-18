@@ -7,5 +7,13 @@
  },
  "photos": [
   "brisk.aws76.webp"
- ]
+ ],
+ "view": {
+  "brisk.aws76.webp": "front_left_iso",
+  "brisk.aws78.webp": "front_left_iso"
+ },
+ "elevation": {
+  "brisk.aws76.webp": 45,
+  "brisk.aws78.webp": 45
+ }
 }

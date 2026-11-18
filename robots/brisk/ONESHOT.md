@@ -16,3 +16,9 @@ Likeness: aws76 0.77 (FAIL).
 Decisions: type flipper; body box rect 100x100x42 mm, ramp 62; wheels 2 r12 inboard; weapon none; extra parts: lid, flipper; photos skipped (cluttered): indices [1].
 
 Likeness: aws76 0.77 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type flipper; body box rect 100x100x42 mm, ramp 62; wheels 2 r12 inboard; weapon none; extra parts: lid, flipper; photos skipped (cluttered): indices [1].
+
+Likeness: aws76 0.58 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/brisk.aws76.webp` is declared `front_left_iso` (IoU 0.58 there) but the model matches it better from front_right_iso (elevation

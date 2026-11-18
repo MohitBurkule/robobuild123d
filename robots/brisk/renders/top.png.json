@@ -1,12 +1,26 @@
 {
  "spec": "/tmp/work10_brisk/robots/brisk/spec.json",
- "rendered_at": 1795023370.5439034,
+ "rendered_at": 1795026472.9987955,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
   "lid",
-  "flipper"
+  "flipper",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_nut_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_nut_wheel_r0",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3",
+  "dt_screw_4",
+  "dt_screw_5",
+  "dt_screw_6",
+  "dt_screw_7"
  ],
  "wires": {}
 }
