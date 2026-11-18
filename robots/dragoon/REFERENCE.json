@@ -14,12 +14,12 @@
  ],
  "view": {
   "dragoon.aws72.webp": "front_left_iso",
-  "dragoon.aws74.webp": "front",
-  "dragoon.aws76.webp": "front_left_iso"
+  "dragoon.aws74.webp": "front_left_iso",
+  "dragoon.aws76.webp": "front_right_iso"
  },
- "elevation": {
-  "dragoon.aws72.webp": 45,
-  "dragoon.aws74.webp": 45,
-  "dragoon.aws76.webp": 45
+ "view_source": {
+  "dragoon.aws74.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label",
+  "dragoon.aws76.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label",
+  "dragoon.aws72.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label"
  }
 }

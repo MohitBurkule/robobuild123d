@@ -1,13 +1,13 @@
-BLOCKERS: 33
+BLOCKERS: 32
   [cached] integrity 0.00s
   [cached] mass 0.00s
-  [proxy] interference 0.28s
+  [proxy] interference 0.57s
   [cached] connections 0.00s
   [cached] legal 0.00s
   [cached] fasteners 0.00s
   [cached] power 0.00s
   [cached] tension 0.00s
-  [cached] targets 0.00s
+  [cached] targets 0.01s
   [cached] fight 0.00s
   [cached] shape 0.00s
   [cached] dynamics 0.00s
@@ -23,15 +23,15 @@ BLOCKERS: 33
   [cached] bom 0.00s
   [cached] wire_review 0.00s
   [cached] fastener_record 0.00s
-  [cached] likeness 0.00s
+  [ran] likeness 15.87s
   [cached] drive_recess 0.00s
   [cached] belt_wrap 0.00s
   [cached] retention 0.00s
-  [cached] waiver_audit 0.00s
+  [cached] waiver_audit 0.01s
   [cached] geom 0.00s
   [cached] dfm 0.00s
   [cached] realworld 0.00s
-dragoon: ok=False 33 blockers in 28 root causes, mass 270.6/150 g
+dragoon: ok=False 32 blockers in 27 root causes, mass 270.6/150 g
 1. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `chassis`. (+1 consequences)
    | weapon: x -15.50..-12.50  y -30.00..50.00  z -23.00..67.00  size 3.00 x 80.00 x 90.00 mm
    |   centre (-14.00, 10.00, 22.00), volume 8267.8 mm3
@@ -104,7 +104,7 @@ dragoon: ok=False 33 blockers in 28 root causes, mass 270.6/150 g
    |   overlap allowed `chassis` 0.15 mm (allowed inf)
    |   gap to `fork_block_r` 0.00 mm (touching)
    |   gap to `dt_mount_fork_1` 0.00 mm (touching)
-... 16 more root causes (fix these first, then re-run)
+... 15 more root causes (fix these first, then re-run)
 MASS BUDGET:
   mass 270.6 g of 150 g (-120.6 g margin)
     chassis                    72.69 g  fills 30% of its box
@@ -140,4 +140,4 @@ MASS BUDGET:
     lock_pin                    0.37 g  fills 79% of its box
     mass.over: 270.6 g (range 234.4 to 306.9 g) against the 150 g limit; 7.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: distance 8 hit / 0 miss, group 31 hit / 0 miss, min_gap 131 hit / 0 miss, overlap 427 hit / 0 miss, part_geom 31 hit / 0 miss
+cache: distance 8 hit / 0 miss, group 30 hit / 1 miss, inside 24 hit / 0 miss, likeness 0 hit / 3 miss, min_gap 131 hit / 0 miss, overlap 427 hit / 0 miss, part_geom 31 hit / 0 miss
