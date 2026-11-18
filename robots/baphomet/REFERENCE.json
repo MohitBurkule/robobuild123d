@@ -1,6 +1,12 @@
 {
  "robot_type": "horizontal_spinner",
- "weapon": "horizontal drum spinner with spikes",
+ "weapon": {
+  "kind": "drum",
+  "axis": "x",
+  "position": "front",
+  "width_frac": 0.55,
+  "teeth": 4
+ },
  "wheels": 2,
  "source": "read from reference photos by Sonnet"
 }
