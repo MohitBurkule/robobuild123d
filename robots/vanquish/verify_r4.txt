@@ -1,7 +1,7 @@
-BLOCKERS: 8
+BLOCKERS: 17
   [cached] integrity 0.00s
   [cached] mass 0.00s
-  [proxy] interference 0.14s
+  [proxy] interference 0.20s
   [cached] connections 0.00s
   [cached] legal 0.00s
   [cached] fasteners 0.00s
@@ -31,63 +31,106 @@ BLOCKERS: 8
   [cached] geom 0.00s
   [cached] dfm 0.00s
   [cached] realworld 0.00s
-vanquish: ok=False 8 blockers in 8 root causes, mass 147.1/150 g
-1. [retention.loose] `dm_wheel_l0` can move more than 0.5 mm toward +x without touching anything (captive means at most 0.5 mm of play in every direction); in a hit it will fall out or rattle.
-   fix: Make the pocket snug on that side (0.2 to 0.5 mm gap), add a retaining rib or strap, or declare how it is held in `retained` (tape, adhesive, velcro, press_fit).
-   | dm_wheel_l0: x 18.60..51.60  y -31.00..-19.00  z -5.00..5.00  size 33.00 x 12.00 x 10.00 mm
-   |   centre (35.10, -25.00, 0.00), volume 2539.9 mm3
-   |   port terminals: (18.60, -25.00, 0.00)
-   |   gap to `wheel_l0` 0.00 mm (touching)
-   |   gap to `dt_axle_wheel_l0` 0.81 mm
-2. [retention.loose] `dm_wheel_r0` can move more than 0.5 mm toward -x without touching anything (captive means at most 0.5 mm of play in every direction); in a hit it will fall out or rattle.
-   fix: Make the pocket snug on that side (0.2 to 0.5 mm gap), add a retaining rib or strap, or declare how it is held in `retained` (tape, adhesive, velcro, press_fit).
-   | dm_wheel_r0: x -51.60..-18.60  y -31.00..-19.00  z -5.00..5.00  size 33.00 x 12.00 x 10.00 mm
-   |   centre (-35.10, -25.00, 0.00), volume 2539.9 mm3
-   |   port terminals: (-18.60, -25.00, 0.00)
-   |   gap to `wheel_r0` 0.00 mm (touching)
-   |   gap to `dt_axle_wheel_r0` 0.81 mm
-3. [legal.footprint] Smallest square that holds the robot is 156.0 mm; the limit is 150 mm with no overhang at any height.
-   fix: Shorten the wedge, narrow the wheels or move parts inward.
-4. [power.weapon_motor] `weapon` names motor None; it must be a catalog brushless motor so speed can be computed.
+vanquish: ok=False 17 blockers in 15 root causes, mass 148.1/150 g
+1. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `chassis`. (+1 consequences)
+   | weapon: x -16.00..-12.00  y 11.50..40.50  z 2.00..106.00  size 4.00 x 29.00 x 104.00 mm
+   |   centre (-14.00, 26.00, 54.00), volume 5357.7 mm3
+   |   joint revolute axis [1, 0, 0] pivot [-14.0, 26.0, 54.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.38 mm (allowed 0.08)
+   |   overlap allowed `lock_pin` 0.70 mm (allowed 1000.00)
+2. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `motor`. (+1 consequences)
+   | weapon: x -16.00..-12.00  y 11.50..40.50  z 2.00..106.00  size 4.00 x 29.00 x 104.00 mm
+   |   centre (-14.00, 26.00, 54.00), volume 5357.7 mm3
+   |   joint revolute axis [1, 0, 0] pivot [-14.0, 26.0, 54.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.38 mm (allowed 0.08)
+   |   overlap allowed `lock_pin` 0.70 mm (allowed 1000.00)
+3. [integrity.solids] `wheel_l0` has 2 closed solid(s) and 0 open/invalid shell(s), expected 1 (3052 mm3). A boolean or fillet probably collapsed the build.
+   fix: Check the last CAD op (fillet/cut order); or declare `solids` with `solids_reason`.
+   | wheel_l0: x 11.50..21.10  y -36.00..-14.00  z -11.00..11.00  size 9.60 x 21.99 x 22.00 mm
+   |   centre (16.30, -25.00, 0.00), volume 3051.9 mm3
+   |   overlap allowed `dt_hub_wheel_l0` 2.34 mm (allowed inf)
+   |   OVERLAP `dm_wheel_l0` 1.16 mm (allowed 0.08)
+   |   OVERLAP `dm_wheel_r0` 0.27 mm (allowed 0.08)
+4. [integrity.solids] `wheel_r0` has 2 closed solid(s) and 0 open/invalid shell(s), expected 1 (3052 mm3). A boolean or fillet probably collapsed the build.
+   fix: Check the last CAD op (fillet/cut order); or declare `solids` with `solids_reason`.
+   | wheel_r0: x -21.10..-11.50  y -36.00..-14.00  z -11.00..11.00  size 9.60 x 21.99 x 22.00 mm
+   |   centre (-16.30, -25.00, 0.00), volume 3051.7 mm3
+   |   overlap allowed `dt_hub_wheel_r0` 2.34 mm (allowed inf)
+   |   OVERLAP `dm_wheel_r0` 1.16 mm (allowed 0.08)
+   |   OVERLAP `dm_wheel_l0` 0.27 mm (allowed 0.08)
+5. [proxy.interference] `chassis` and `weapon` overlap by 1.38 mm (allowed 0.08).
+   | chassis: x -20.00..20.00  y -45.00..45.00  z -9.00..15.00  size 40.00 x 90.00 x 24.00 mm
+   |   centre (0.00, 0.00, 3.00), volume 39316.4 mm3
+   |   overlap allowed `dt_mount_fork_r` 2.79 mm (allowed inf)
+   |   overlap allowed `dt_mount_fork_l` 2.62 mm (allowed inf)
+   |   overlap allowed `upright` 1.64 mm (allowed inf)
+6. [proxy.interference] `wheel_l0` and `dm_wheel_l0` overlap by 1.16 mm (allowed 0.08).
+   | wheel_l0: x 11.50..21.10  y -36.00..-14.00  z -11.00..11.00  size 9.60 x 21.99 x 22.00 mm
+   |   centre (16.30, -25.00, 0.00), volume 3051.9 mm3
+   |   overlap allowed `dt_hub_wheel_l0` 2.34 mm (allowed inf)
+   |   OVERLAP `dm_wheel_l0` 1.16 mm (allowed 0.08)
+   |   OVERLAP `dm_wheel_r0` 0.27 mm (allowed 0.08)
+7. [proxy.interference] `wheel_l0` and `dm_wheel_r0` overlap by 0.27 mm (allowed 0.08).
+   | wheel_l0: x 11.50..21.10  y -36.00..-14.00  z -11.00..11.00  size 9.60 x 21.99 x 22.00 mm
+   |   centre (16.30, -25.00, 0.00), volume 3051.9 mm3
+   |   overlap allowed `dt_hub_wheel_l0` 2.34 mm (allowed inf)
+   |   OVERLAP `dm_wheel_l0` 1.16 mm (allowed 0.08)
+   |   OVERLAP `dm_wheel_r0` 0.27 mm (allowed 0.08)
+8. [proxy.interference] `wheel_r0` and `dm_wheel_l0` overlap by 0.27 mm (allowed 0.08).
+   | wheel_r0: x -21.10..-11.50  y -36.00..-14.00  z -11.00..11.00  size 9.60 x 21.99 x 22.00 mm
+   |   centre (-16.30, -25.00, 0.00), volume 3051.7 mm3
+   |   overlap allowed `dt_hub_wheel_r0` 2.34 mm (allowed inf)
+   |   OVERLAP `dm_wheel_r0` 1.16 mm (allowed 0.08)
+   |   OVERLAP `dm_wheel_l0` 0.27 mm (allowed 0.08)
+9. [proxy.interference] `wheel_r0` and `dm_wheel_r0` overlap by 1.16 mm (allowed 0.08).
+   | wheel_r0: x -21.10..-11.50  y -36.00..-14.00  z -11.00..11.00  size 9.60 x 21.99 x 22.00 mm
+   |   centre (-16.30, -25.00, 0.00), volume 3051.7 mm3
+   |   overlap allowed `dt_hub_wheel_r0` 2.34 mm (allowed inf)
+   |   OVERLAP `dm_wheel_r0` 1.16 mm (allowed 0.08)
+   |   OVERLAP `dm_wheel_l0` 0.27 mm (allowed 0.08)
+10. [proxy.interference] `dm_wheel_l0` and `dm_wheel_r0` overlap by 4.88 mm (allowed 0.08).
+   | dm_wheel_l0: x -13.70..19.30  y -31.00..-19.00  z -5.00..5.00  size 33.00 x 12.00 x 10.00 mm
+   |   centre (2.80, -25.00, 0.00), volume 2539.9 mm3
+   |   port terminals: (-13.70, -25.00, 0.00)
+   |   OVERLAP `dm_wheel_r0` 4.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_l0` 1.16 mm (allowed 0.08)
+11. [power.weapon_motor] `weapon` names motor None; it must be a catalog brushless motor so speed can be computed.
    fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
    | weapon: x -16.00..-12.00  y 11.50..40.50  z 2.00..106.00  size 4.00 x 29.00 x 104.00 mm
    |   centre (-14.00, 26.00, 54.00), volume 5357.7 mm3
    |   joint revolute axis [1, 0, 0] pivot [-14.0, 26.0, 54.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.38 mm (allowed 0.08)
    |   overlap allowed `lock_pin` 0.70 mm (allowed 1000.00)
-   |   gap to `dt_shaft_weapon` 0.00 mm (touching)
-5. [electrical.power_path] Not connected: ESC `el_wesc` has no power wire path to the battery.
+12. [electrical.power_path] Not connected: ESC `el_wesc` has no power wire path to the battery.
    fix: Wire every ESC to power and every motor to an ESC.
    | el_wesc: x 12.50..16.50  y -11.00..12.00  z -3.50..8.50  size 4.00 x 23.00 x 12.00 mm
    |   centre (14.50, 0.50, 2.50), volume 1040.0 mm3
    |   port bat: (14.50, -11.00, -0.50)
    |   port motor: (14.50, 12.00, 2.50)
    |   port rx: (14.50, -11.00, 5.50)
-6. [wire.render_wires] 5 of 5 robot render(s) do not draw all 4 wires: renders/diff_vanquish.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_vanquish.aws76_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_vanquish.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_vanquish.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn
-   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
-7. [likeness.view] `reference/vanquish.aws76.webp` is declared `front_right_iso` (IoU 0.36 there) but the model matches it better from rear_left_iso (elevation 45, azimuth 240) (IoU 0.53).
-   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
-8. [likeness.silhouette] `reference/vanquish.aws76.webp`: best silhouette IoU 0.36 at camera front_right_iso (elevation 45, azimuth 30) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.51). Regions (photo frame, left third first) 0.26 / 0.55 / 0.13: worst = rear third. Height/length 0.93 model vs 0.84 photo (too tall: lower it or lengthen it).
-   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+... 3 more root causes (fix these first, then re-run)
 MASS BUDGET:
-  mass 147.1 g of 150 g (+2.9 g margin)
+  mass 148.1 g of 150 g (+1.9 g margin)
     weapon                     42.33 g  fills 44% of its box
-    chassis                    36.19 g  fills 37% of its box
+    chassis                    37.43 g  fills 46% of its box
     el_battery                 21.50 g  fills 100% of its box  <- solid block? a tub should be a shell
     dm_wheel_l0                 8.00 g  fills 64% of its box
     dm_wheel_r0                 8.00 g  fills 64% of its box
     el_wesc                     5.00 g  fills 94% of its box
-    upright                     5.00 g  fills 73% of its box
-    wheel_r0                    3.16 g  fills 70% of its box
-    wheel_l0                    3.16 g  fills 70% of its box
-    motor                       2.72 g  fills 32% of its box
+    upright                     4.94 g  fills 72% of its box
+    wheel_l0                    3.11 g  fills 66% of its box
+    wheel_r0                    3.11 g  fills 66% of its box
+    motor                       2.64 g  fills 29% of its box
     el_esc                      2.30 g  fills 99% of its box
-    fork_l                      1.97 g  fills 15% of its box
-    fork_r                      1.97 g  fills 15% of its box
+    fork_l                      1.57 g  fills 12% of its box
+    fork_r                      1.57 g  fills 12% of its box
     dt_shaft_weapon             1.39 g  fills 79% of its box
-    dt_axle_wheel_l0            0.88 g  fills 79% of its box
-    dt_axle_wheel_r0            0.88 g  fills 79% of its box
+    dt_hub_wheel_l0             0.79 g  fills 64% of its box
+    dt_hub_wheel_r0             0.79 g  fills 64% of its box
+    dt_mount_fork_r             0.55 g  fills 77% of its box
+    dt_mount_fork_l             0.53 g  fills 74% of its box
     el_switch                   0.50 g  fills 100% of its box
     lock_pin                    0.37 g  fills 79% of its box
-    mass.may_be_over: 147.1 g (range 129.6 to 164.5 g) against the 150 g limit; 4.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.may_be_over: 148.1 g (range 130.2 to 166.1 g) against the 150 g limit; 4.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: distance 8 hit / 0 miss, group 31 hit / 0 miss, min_gap 12 hit / 0 miss, overlap 199 hit / 0 miss, part_geom 18 hit / 0 miss
+cache: distance 8 hit / 0 miss, group 31 hit / 0 miss, min_gap 93 hit / 0 miss, overlap 406 hit / 0 miss, part_geom 20 hit / 0 miss
