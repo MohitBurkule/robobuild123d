@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+</head>
+<body>
+<title>Antweight Camera Picker</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: workbench. Header bar, robot list rail, photo | 3D side by side, notes panel below. */
+:root {
+  --bg: #eef0f2; --panel: #ffffff; --line: #d3d8de; --fg: #1d2329; --muted: #5d6874;
+  --accent: #e2561b; --accent-fg: #ffffff; --sel: #2f6fd6; --ok: #2a8a4a; --warn: #b7791f; --bad: #c0392b;
+  --view: #dfe3e8; --chip: #e6eaee;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #15191d; --panel: #1d2227; --line: #323a42; --fg: #e3e7eb; --muted: #95a0ab;
+  --accent: #f0702f; --accent-fg: #15191d; --sel: #6b9cf0; --ok: #4cba6e; --warn: #e0a640; --bad: #e86a5c;
+  --view: #23292f; --chip: #2a3138; color-scheme: dark } }
+:root[data-theme="dark"] {
+  --bg: #15191d; --panel: #1d2227; --line: #323a42; --fg: #e3e7eb; --muted: #95a0ab;
+  --accent: #f0702f; --accent-fg: #15191d; --sel: #6b9cf0; --ok: #4cba6e; --warn: #e0a640; --bad: #e86a5c;
+  --view: #23292f; --chip: #2a3138; color-scheme: dark }
+[hidden] { display: none !important; }
+html, body { height: 100%; }
+body { background: var(--bg); color: var(--fg); font: 14px/1.4 var(--sans); margin: 0;
+  padding-left: max(12px, env(safe-area-inset-left, 0px)); padding-right: max(12px, env(safe-area-inset-right, 0px)); padding-block: 8px; box-sizing: border-box; }
+*, *::before, *::after { box-sizing: inherit; }
+button, select, input, textarea { font: inherit; color: inherit; }
+button { background: var(--chip); border: 1px solid var(--line); border-radius: 6px; padding: 5px 10px; cursor: pointer; white-space: nowrap; }
+button:hover { border-color: var(--muted); }
+button:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid var(--sel); outline-offset: 1px; }
+button.primary { background: var(--accent); color: var(--accent-fg); border-color: var(--accent); font-weight: 600; }
+button.on { background: var(--sel); color: #fff; border-color: var(--sel); }
+select, input[type=text], input[type=search], textarea { background: var(--panel); border: 1px solid var(--line); border-radius: 6px; padding: 5px 8px; }
+.mono { font-family: var(--mono); font-variant-numeric: tabular-nums; }
+.muted { color: var(--muted); }
+header { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding-bottom: 8px; }
+header h1 { font-size: 16px; margin: 0; font-weight: 600; letter-spacing: .01em; }
+header .grow { flex: 1 1 auto; }
+#robotName { font-family: var(--mono); font-weight: 600; font-size: 15px; }
+.app { display: grid; grid-template-columns: 210px minmax(0, 1fr) minmax(0, 1.25fr); grid-template-rows: minmax(0, 1fr) auto; gap: 10px; height: calc(100% - 52px); min-height: 560px; }
+.rail { grid-row: 1 / span 2; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; display: flex; flex-direction: column; min-height: 0; }
+.rail .head { padding: 8px; border-bottom: 1px solid var(--line); display: grid; gap: 6px; }
+.rail ul { list-style: none; margin: 0; padding: 4px; overflow: auto; flex: 1; min-height: 0; }
+.rail li button { width: 100%; text-align: left; background: none; border: 1px solid transparent; display: flex; gap: 6px; align-items: center; padding: 3px 6px; font-family: var(--mono); font-size: 12px; }
+.rail li button.cur { background: var(--chip); border-color: var(--line); }
+.mark { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid var(--muted); flex: none; }
+.mark.part { background: linear-gradient(90deg, var(--ok) 50%, transparent 50%); border-color: var(--ok); }
+.mark.done { background: var(--ok); border-color: var(--ok); }
+.rail li .n { margin-left: auto; color: var(--muted); }
+.rail li .slug { overflow: hidden; text-overflow: ellipsis; }
+.pane { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; display: flex; flex-direction: column; min-height: 0; min-width: 0; }
+.pane .bar { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+.pane .bar .label { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-right: 4px; }
+.stage { position: relative; flex: 1; min-height: 300px; background: var(--view); border-radius: 0 0 8px 8px; overflow: hidden; }
+#photoWrap { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; }
+#photoBox { position: relative; max-width: 100%; max-height: 100%; }
+#photo { display: block; max-width: 100%; max-height: 100%; object-fit: contain; user-select: none; -webkit-user-drag: none; }
+#photoWrap.pinning { cursor: crosshair; }
+.ppin { position: absolute; transform: translate(-50%, -100%); pointer-events: auto; cursor: pointer; }
+.ppin span { display: block; background: var(--accent); color: var(--accent-fg); font: 600 11px var(--mono); padding: 1px 5px; border-radius: 9px 9px 9px 0; border: 1.5px solid #fff; }
+.ppin.pending span { background: var(--sel); color: #fff; }
+#three { position: absolute; inset: 0; }
+#three canvas { display: block; touch-action: none; }
+#overlay { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; pointer-events: none; opacity: 0; }
+.hud { position: absolute; left: 8px; bottom: 8px; background: color-mix(in srgb, var(--panel) 85%, transparent); border: 1px solid var(--line); border-radius: 6px; padding: 4px 8px; font: 12px var(--mono); pointer-events: none; }
+.hud b { color: var(--accent); font-weight: 600; }
+#pickedPart { position: absolute; right: 8px; top: 8px; background: var(--sel); color: #fff; border-radius: 6px; padding: 3px 8px; font: 600 12px var(--mono); }
+#saveState { font: 12px var(--mono); }
+.notes { grid-column: 2 / span 2; background: var(--panel); border: 1px solid var(--line); border-radius: 8px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.2fr); gap: 0; max-height: 300px; min-height: 0; }
+.composer { padding: 8px 10px; display: grid; gap: 6px; border-right: 1px solid var(--line); align-content: start; }
+.composer .row { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.composer textarea { width: 100%; min-height: 64px; resize: vertical; }
+#target { font: 600 12px var(--mono); background: var(--chip); padding: 3px 8px; border-radius: 6px; }
+.list { overflow: auto; padding: 6px 10px; min-height: 0; }
+.list h3, .composer h3 { font-size: 11px; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin: 2px 0 4px; font-weight: 600; }
+.cm { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: 8px; align-items: start; padding: 5px 0; border-top: 1px solid var(--line); }
+.cm:first-of-type { border-top: 0; }
+.cm .who { font: 600 11px var(--mono); padding: 1px 6px; border-radius: 5px; background: var(--chip); cursor: pointer; white-space: nowrap; }
+.cm .txt { white-space: pre-wrap; overflow-wrap: anywhere; }
+.cm .del { padding: 0 7px; line-height: 1.5; }
+.tag { font: 600 10px var(--mono); text-transform: uppercase; padding: 0 5px; border-radius: 4px; margin-right: 6px; border: 1px solid currentColor; }
+.tag.ok { color: var(--ok); } .tag.wrong { color: var(--bad); } .tag.missing { color: var(--warn); }
+#toast { position: fixed; right: max(16px, env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px)); background: var(--fg); color: var(--bg); padding: 8px 12px; border-radius: 6px; opacity: 0; transition: opacity .2s; pointer-events: none; }
+#toast.show { opacity: 1; }
+#jsonDlg { position: fixed; inset: 10% max(16px, env(safe-area-inset-left, 0px)); background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px; display: grid; grid-template-rows: auto 1fr auto; gap: 8px; z-index: 20; }
+#jsonDlg textarea { width: 100%; height: 100%; font: 11px var(--mono); }
+kbd { font: 11px var(--mono); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 4px; }
+@media (max-width: 1000px) {
+  .app { grid-template-columns: minmax(0, 1fr); height: auto; }
+  .rail { grid-row: auto; max-height: 220px; }
+  .notes { grid-column: auto; grid-template-columns: minmax(0, 1fr); max-height: none; }
+  .composer { border-right: 0; border-bottom: 1px solid var(--line); }
+  .stage { min-height: 340px; }
+}
+@media (prefers-reduced-motion: reduce) { #toast { transition: none; } }
+</style>
+
+<header>
+  <h1>Antweight Camera Picker</h1>
+  <button id="prev" title="Previous robot (P)">&larr; Prev</button>
+  <span id="robotName">loading…</span>
+  <button id="next" title="Next robot (N)">Next &rarr;</button>
+  <span class="muted mono" id="progress"></span>
+  <span class="grow"></span>
+  <button id="dl" class="primary">Download results.json</button>
+  <button id="load">Load results.json</button>
+  <input type="file" id="loadFile" accept=".json,application/json" hidden>
+</header>
+
+<div class="app">
+  <nav class="rail" aria-label="Robots">
+    <div class="head">
+      <input type="search" id="filter" placeholder="Filter robots">
+      <label class="muted" style="font-size:12px"><input type="checkbox" id="onlyTodo"> Only unfinished</label>
+    </div>
+    <ul id="robotList"></ul>
+  </nav>
+
+  <section class="pane" aria-label="Reference photo">
+    <div class="bar">
+      <span class="label">Photo</span>
+      <span id="photoTabs" style="display:flex;gap:4px;flex-wrap:wrap"></span>
+      <span class="grow" style="flex:1"></span>
+      <button id="photoPinBtn" title="Click on the photo to drop a numbered pin">Pin on photo</button>
+    </div>
+    <div class="stage">
+      <div id="photoWrap"><div id="photoBox"><img id="photo" alt="Reference photo"><div id="ppins"></div></div></div>
+    </div>
+  </section>
+
+  <section class="pane" aria-label="3D model">
+    <div class="bar">
+      <button id="savePose" class="primary" title="Save this camera for the current photo (S)">Save view</button>
+      <button id="resetGuess" title="Camera back to the current best guess for this photo">Reset to default guess</button>
+      <button id="toSaved" title="Camera back to your saved view">Saved view</button>
+      <button id="rollL" title="Roll left (Q)">&#8634; roll</button>
+      <button id="rollR" title="Roll right (E)">roll &#8635;</button>
+      <button id="level" title="Remove roll, keep direction">Level</button>
+      <button id="pin3dBtn" title="Click on the model to drop a numbered pin">Pin on model</button>
+      <button id="axesBtn">Axes</button>
+      <button id="frontBtn" class="on">Front arrow</button>
+      <button id="edgesBtn" class="on">Edges</button>
+      <label class="muted" style="font-size:12px;display:flex;gap:4px;align-items:center">Photo overlay <input type="range" id="ovl" min="0" max="80" value="0" style="width:70px"></label>
+      <span id="saveState"></span>
+    </div>
+    <div class="stage" id="stage3">
+      <div id="three"></div>
+      <img id="overlay" alt="">
+      <div id="pickedPart" hidden></div>
+      <div class="hud" id="hud"></div>
+    </div>
+  </section>
+
+  <section class="notes" aria-label="Comments">
+    <div class="composer">
+      <h3>Comment</h3>
+      <div class="row">
+        <span id="target">Robot</span>
+        <button id="tRobot">Robot</button>
+        <button id="tPhoto">This photo</button>
+      </div>
+      <div class="row">
+        <select id="tag" aria-label="Tag"><option value="">no tag</option><option value="ok">ok</option><option value="wrong">wrong</option><option value="missing">missing</option></select>
+        <span class="muted" style="font-size:12px">Click a part to comment on it. <kbd>S</kbd> save, <kbd>Q</kbd>/<kbd>E</kbd> roll, <kbd>N</kbd>/<kbd>P</kbd> robot.</span>
+      </div>
+      <textarea id="ctext" placeholder="What is right or wrong here?"></textarea>
+      <div class="row"><button id="addC" class="primary">Add comment</button><button id="cancelC">Clear</button></div>
+    </div>
+    <div class="list">
+      <h3>Comments on this robot</h3>
+      <div id="clist"></div>
+    </div>
+  </section>
+</div>
+
+<div id="jsonDlg" hidden>
+  <div><b>results.json</b> <span class="muted">Your browser blocked the download. Copy the text below into a file.</span></div>
+  <textarea id="jsonText" readonly></textarea>
+  <div style="display:flex;gap:8px"><button id="copyJson" class="primary">Copy</button><button id="closeJson">Close</button></div>
+</div>
+<div id="toast" role="status"></div>
+
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"
+} }
+</script>
+<script type="module">
+import * as THREE from "three";
+import { TrackballControls } from "three/addons/controls/TrackballControls.js";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+
+const $ = (id) => document.getElementById(id);
+const DATA = "data/";
+const KEY = "antweight-camera-picker.v1";
+const FOV = 25;
+const D2R = Math.PI / 180, R2D = 180 / Math.PI;
+
+// ---------------- state ----------------
+let robots = [], ri = 0, pi = 0;
+let state = { picks: {}, comments: [], last: null };
+try { const s = JSON.parse(localStorage.getItem(KEY) || "null"); if (s && s.picks) state = Object.assign(state, s); } catch (e) {}
+function persist() { try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {} }
+const pkey = (slug, photo) => slug + "|" + photo;
+const R = () => robots[ri];
+const P = () => R()?.photos[pi];
+
+function toast(t) { const el = $("toast"); el.textContent = t; el.classList.add("show"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("show"), 1800); }
+
+// ---------------- three.js ----------------
+const host = $("three");
+const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+renderer.setPixelRatio(Math.min(2, window.devicePixelRatio || 1));
+host.appendChild(renderer.domElement);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(FOV, 1, 1, 5000);
+camera.up.set(0, 0, 1);
+scene.add(new THREE.HemisphereLight(0xffffff, 0x445566, 1.6));
+const key = new THREE.DirectionalLight(0xffffff, 1.6); key.position.set(0.5, 0.3, 1); camera.add(key); scene.add(camera);
+const controls = new TrackballControls(camera, renderer.domElement);
+controls.rotateSpeed = 3.0; controls.zoomSpeed = 1.4; controls.panSpeed = 0.6; controls.staticMoving = true;
+
+let model = null, meshes = [], helpers = new THREE.Group(), pins3d = new THREE.Group(), front = null, axes = null;
+let center = new THREE.Vector3(), radius = 60, selected = null, edgesOn = true;
+scene.add(helpers, pins3d);
+
+function resize() {
+  const r = host.getBoundingClientRect(); const w = Math.max(10, r.width), h = Math.max(10, r.height);
+  renderer.setSize(w, h, false); renderer.domElement.style.width = w + "px"; renderer.domElement.style.height = h + "px";
+  camera.aspect = w / h; camera.updateProjectionMatrix(); controls.handleResize();
+}
+new ResizeObserver(resize).observe(host);
+
+function label(text, color, scale) {
+  const c = document.createElement("canvas"); c.width = 256; c.height = 64; const g = c.getContext("2d");
+  g.font = "600 40px IBM Plex Mono, monospace"; g.textAlign = "center"; g.textBaseline = "middle";
+  g.lineWidth = 8; g.strokeStyle = "rgba(0,0,0,.55)"; g.strokeText(text, 128, 34); g.fillStyle = color; g.fillText(text, 128, 34);
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), depthTest: false, transparent: true }));
+  s.scale.set(scale, scale / 4, 1); s.renderOrder = 10; return s;
+}
+
+function buildHelpers(bb) {
+  helpers.clear();
+  const size = bb.getSize(new THREE.Vector3()); const L = Math.max(size.x, size.y) * 0.75 + 10;
+  front = new THREE.Group();
+  const o = new THREE.Vector3(center.x, center.y, bb.max.z + radius * 0.08);
+  const arrow = new THREE.ArrowHelper(new THREE.Vector3(0, 1, 0), o, L, 0xf0702f, L * 0.22, L * 0.12);
+  arrow.line.material.linewidth = 3; arrow.traverse(m => { if (m.material) { m.material.depthTest = false; m.renderOrder = 9; } });
+  front.add(arrow);
+  const fl = label("FRONT +y", "#f0702f", radius * 0.7); fl.position.copy(o).add(new THREE.Vector3(0, L * 1.12, 0)); front.add(fl);
+  const r = new THREE.ArrowHelper(new THREE.Vector3(1, 0, 0), o, L * 0.45, 0x9aa4ae, L * 0.12, L * 0.07);
+  r.traverse(m => { if (m.material) { m.material.depthTest = false; m.renderOrder = 9; } }); front.add(r);
+  const rl = label("right +x", "#c8d0d8", radius * 0.5); rl.position.copy(o).add(new THREE.Vector3(L * 0.62, 0, 0)); front.add(rl);
+  front.visible = $("frontBtn").classList.contains("on");
+  helpers.add(front);
+  axes = new THREE.Group();
+  const ax = new THREE.AxesHelper(radius * 1.1); ax.material.depthTest = false; ax.renderOrder = 8; axes.add(ax);
+  [["X", "#ff5555", [1, 0, 0]], ["Y", "#55dd55", [0, 1, 0]], ["Z", "#5599ff", [0, 0, 1]]].forEach(([t, c, d]) => {
+    const s = label(t, c, radius * 0.4); s.position.set(d[0] * radius * 1.2, d[1] * radius * 1.2, d[2] * radius * 1.2); axes.add(s); });
+  const grid = new THREE.GridHelper(radius * 3, 12, 0x888888, 0x888888); grid.rotation.x = Math.PI / 2; grid.position.set(center.x, center.y, bb.min.z);
+  grid.material.transparent = true; grid.material.opacity = 0.35; axes.add(grid);
+  axes.visible = $("axesBtn").classList.contains("on");
+  helpers.add(axes);
+}
+
+const loader = new GLTFLoader();
+let loadToken = 0;
+function loadModel(r) {
+  const tok = ++loadToken;
+  if (model) { scene.remove(model); model.traverse(o => { o.geometry?.dispose(); }); model = null; }
+  meshes = []; selected = null; $("pickedPart").hidden = true; helpers.clear(); pins3d.clear();
+  if (!r.model) { $("hud").textContent = "no model for this robot"; return Promise.resolve(); }
+  return new Promise((res) => loader.load(DATA + r.model, (g) => {
+    if (tok !== loadToken) return res();
+    model = g.scene;
+    const byName = {}; (r.parts || []).forEach(p => byName[THREE.PropertyBinding.sanitizeNodeName(p.id)] = p);
+    model.traverse(o => {
+      if (!o.isMesh) return;
+      const p = byName[o.name] || { id: o.name, kind: "" };
+      const col = o.material?.color ? o.material.color.clone() : new THREE.Color(0xb0b4ba);
+      o.material = new THREE.MeshStandardMaterial({ color: col, flatShading: true, side: THREE.DoubleSide, roughness: 0.75, metalness: 0.08 });
+      o.userData.part = p.id; o.userData.kind = p.kind;
+      const e = new THREE.LineSegments(new THREE.EdgesGeometry(o.geometry, 28), new THREE.LineBasicMaterial({ color: 0x111418, transparent: true, opacity: 0.45 }));
+      e.userData.edge = true; e.visible = edgesOn; e.raycast = () => {}; o.add(e);
+      meshes.push(o);
+    });
+    scene.add(model);
+    const bb = new THREE.Box3().setFromObject(model);
+    if (r.bbox) bb.set(new THREE.Vector3(...r.bbox[0]), new THREE.Vector3(...r.bbox[1]));
+    bb.getCenter(center); radius = bb.getSize(new THREE.Vector3()).length() / 2;
+    camera.near = radius / 50; camera.far = radius * 200; camera.updateProjectionMatrix();
+    buildHelpers(bb); drawPins3d(); res();
+  }, undefined, (err) => { $("hud").textContent = "model failed to load: " + (err?.message || err); res(); }));
+}
+
+// ---------------- camera convention ----------------
+// azimuth: of the camera position around the model, from +x (right, 0) toward +y (front, 90); elevation: above the XY plane.
+// roll: camera rotation about its viewing direction (camera -> target), right-handed; positive roll turns the model counter-clockwise on screen.
+function baseUp(az, el) {
+  if (Math.abs(el) < 89) return new THREE.Vector3(0, 0, 1);
+  const h = new THREE.Vector3(Math.cos(az * D2R), Math.sin(az * D2R), 0);
+  return el > 0 ? h.negate() : h;
+}
+function fitDistance() { return radius / Math.sin(FOV * D2R / 2) * 1.08; }
+function setCamera(az, el, roll, dist, target) {
+  const t = target ? new THREE.Vector3(...target) : center.clone();
+  const d = dist || fitDistance();
+  const dir = new THREE.Vector3(Math.cos(el * D2R) * Math.cos(az * D2R), Math.cos(el * D2R) * Math.sin(az * D2R), Math.sin(el * D2R));
+  camera.position.copy(t).addScaledVector(dir, d);
+  const f = dir.clone().negate();
+  const up = baseUp(az, el).projectOnPlane(f).normalize().applyAxisAngle(f, (roll || 0) * D2R);
+  camera.up.copy(up); controls.target.copy(t); camera.lookAt(t); controls.update();
+}
+function readCamera() {
+  const t = controls.target.clone(); const d = camera.position.clone().sub(t); const dist = d.length();
+  const az = ((Math.atan2(d.y, d.x) * R2D) % 360 + 360) % 360; const el = Math.asin(Math.max(-1, Math.min(1, d.z / dist))) * R2D;
+  const f = d.clone().negate().normalize();
+  const upCam = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion);
+  const u0 = baseUp(az, el).projectOnPlane(f).normalize();
+  let roll = Math.atan2(new THREE.Vector3().crossVectors(u0, upCam).dot(f), u0.dot(upCam)) * R2D;
+  const r1 = (x, n = 2) => Math.round(x * 10 ** n) / 10 ** n;
+  return { azimuth_deg: r1(az), elevation_deg: r1(el), roll_deg: r1(roll), distance: r1(dist),
+    camera_position: camera.position.toArray().map(x => r1(x, 3)), camera_quaternion: camera.quaternion.toArray().map(x => r1(x, 6)),
+    camera_up: upCam.toArray().map(x => r1(x, 5)), target: t.toArray().map(x => r1(x, 3)), fov_deg: FOV, projection: "perspective" };
+}
+function rollBy(deg) {
+  const f = controls.target.clone().sub(camera.position).normalize();
+  camera.up.applyAxisAngle(f, deg * D2R); camera.lookAt(controls.target); controls.update();
+}
+
+// ---------------- picking ----------------
+const ray = new THREE.Raycaster(); const ndc = new THREE.Vector2();
+let downAt = null, mode3d = "select", photoPinMode = false, pending = null; // pending: {kind:'pin3d'|'pinPhoto', point|pixel}
+renderer.domElement.addEventListener("pointerdown", (e) => { downAt = [e.clientX, e.clientY]; });
+renderer.domElement.addEventListener("pointerup", (e) => {
+  if (!downAt || Math.hypot(e.clientX - downAt[0], e.clientY - downAt[1]) > 4) return; downAt = null;
+  const r = renderer.domElement.getBoundingClientRect();
+  ndc.set(((e.clientX - r.left) / r.width) * 2 - 1, -((e.clientY - r.top) / r.height) * 2 + 1);
+  ray.setFromCamera(ndc, camera);
+  const hit = ray.intersectObjects(meshes, false)[0];
+  if (mode3d === "pin3d") {
+    if (!hit) return toast("Click on the model surface");
+    setTarget({ kind: "pin3d", part: hit.object.userData.part, point: hit.point.toArray().map(x => Math.round(x * 100) / 100) });
+    selectMesh(hit.object); drawPins3d(); $("ctext").focus();
+  } else {
+    if (!hit) { selectMesh(null); if (target.kind === "part") setTarget({ kind: "robot" }); return; }
+    selectMesh(hit.object); setTarget({ kind: "part", part: hit.object.userData.part });
+  }
+});
+function selectMesh(m) {
+  if (selected) selected.material.emissive.setHex(0x000000);
+  selected = m;
+  if (m) { m.material.emissive.setHex(0x2f6fd6); m.material.emissiveIntensity = 0.55; $("pickedPart").textContent = m.userData.part + (m.userData.kind ? "  · " + m.userData.kind : ""); $("pickedPart").hidden = false; }
+  else $("pickedPart").hidden = true;
+}
+function selectPart(id) { const m = meshes.find(x => x.userData.part === id); if (m) selectMesh(m); }
+
+function pinSprite(n, pending) {
+  const c = document.createElement("canvas"); c.width = c.height = 64; const g = c.getContext("2d");
+  g.fillStyle = pending ? "#2f6fd6" : "#e2561b"; g.beginPath(); g.arc(32, 32, 26, 0, 7); g.fill(); g.lineWidth = 5; g.strokeStyle = "#fff"; g.stroke();
+  g.fillStyle = "#fff"; g.font = "600 28px IBM Plex Mono, monospace"; g.textAlign = "center"; g.textBaseline = "middle"; g.fillText(String(n), 32, 34);
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(c), depthTest: false })); s.renderOrder = 11; return s;
+}
+function drawPins3d() {
+  pins3d.clear(); if (!R()) return;
+  const sz = radius * 0.09;
+  const add = (pt, n, pend) => {
+    const dot = new THREE.Mesh(new THREE.SphereGeometry(sz * 0.18, 12, 8), new THREE.MeshBasicMaterial({ color: pend ? 0x2f6fd6 : 0xe2561b, depthTest: false }));
+    dot.position.set(...pt); dot.renderOrder = 11; pins3d.add(dot);
+    const s = pinSprite(n, pend); s.scale.set(sz, sz, 1); s.position.set(pt[0], pt[1], pt[2] + sz * 0.7); pins3d.add(s);
+  };
+  state.comments.filter(c => c.slug === R().slug && c.kind === "pin3d").forEach(c => add(c.point, c.pin_no, false));
+  if (target.kind === "pin3d") add(target.point, nextPin("pin3d"), true);
+}
+function nextPin(kind) { return 1 + Math.max(0, ...state.comments.filter(c => c.slug === R().slug && c.kind === kind).map(c => c.pin_no || 0)); }
+
+// ---------------- photo ----------------
+const photoEl = $("photo");
+$("photoWrap").addEventListener("click", (e) => {
+  if (!photoPinMode || !P()) return;
+  const r = photoEl.getBoundingClientRect();
+  const u = (e.clientX - r.left) / r.width, v = (e.clientY - r.top) / r.height;
+  if (u < 0 || u > 1 || v < 0 || v > 1) return;
+  setTarget({ kind: "pinPhoto", photo: P().name, uv: [round4(u), round4(v)], pixel: [Math.round(u * P().w), Math.round(v * P().h)] });
+  $("ctext").focus();
+});
+const round4 = (x) => Math.round(x * 10000) / 10000;
+function drawPhotoPins() {
+  const box = $("ppins"); box.innerHTML = ""; if (!P()) return;
+  const add = (uv, n, pend, id) => {
+    const d = document.createElement("div"); d.className = "ppin" + (pend ? " pending" : ""); d.style.left = (uv[0] * 100) + "%"; d.style.top = (uv[1] * 100) + "%";
+    const s = document.createElement("span"); s.textContent = n; d.appendChild(s); if (id) d.title = (state.comments.find(c => c.id === id)?.text || ""); box.appendChild(d);
+  };
+  state.comments.filter(c => c.slug === R().slug && c.kind === "pinPhoto" && c.photo === P().name).forEach(c => add(c.uv, c.pin_no, false, c.id));
+  if (target.kind === "pinPhoto" && target.photo === P().name) add(target.uv, nextPin("pinPhoto"), true);
+}
+
+// ---------------- comment target ----------------
+let target = { kind: "robot" };
+function setTarget(t) {
+  target = t;
+  const txt = { robot: () => "Robot " + R().slug, photo: () => "Photo " + P().name, part: () => "Part " + t.part,
+    pin3d: () => `Model pin #${nextPin("pin3d")}` + (t.part ? " on " + t.part : ""), pinPhoto: () => `Photo pin #${nextPin("pinPhoto")}` }[t.kind]();
+  $("target").textContent = txt; drawPins3d(); drawPhotoPins();
+}
+$("tRobot").onclick = () => { selectMesh(null); setTarget({ kind: "robot" }); };
+$("tPhoto").onclick = () => { selectMesh(null); setTarget({ kind: "photo" }); };
+$("cancelC").onclick = () => { $("ctext").value = ""; $("tag").value = ""; setTarget({ kind: "robot" }); selectMesh(null); };
+$("addC").onclick = () => {
+  const text = $("ctext").value.trim(); const tag = $("tag").value;
+  if (!text && !tag) return toast("Write a comment or pick a tag");
+  const c = { id: "c" + Date.now().toString(36) + Math.random().toString(36).slice(2, 6), slug: R().slug, kind: target.kind,
+    photo: ["photo", "pinPhoto"].includes(target.kind) ? (target.photo || P()?.name) : (P()?.name || null),
+    part: target.part || null, tag: tag || null, text, created_at: new Date().toISOString() };
+  if (target.kind === "pin3d") { c.pin_no = nextPin("pin3d"); c.point = target.point; c.view = readCamera(); }
+  if (target.kind === "pinPhoto") { c.pin_no = nextPin("pinPhoto"); c.uv = target.uv; c.pixel = target.pixel; c.photo_size = [P().w, P().h]; }
+  if (["robot"].includes(target.kind)) c.photo_at_time = c.photo, c.photo = null;
+  state.comments.push(c); persist();
+  $("ctext").value = ""; $("tag").value = "";
+  setTarget(target.kind === "part" ? target : { kind: target.kind === "pinPhoto" || target.kind === "photo" ? "photo" : "robot" });
+  renderComments(); renderList(); toast("Comment added");
+};
+function renderComments() {
+  const box = $("clist"); box.innerHTML = "";
+  const mine = state.comments.filter(c => c.slug === R().slug);
+  if (!mine.length) { box.innerHTML = '<p class="muted" style="margin:4px 0">No comments yet. Click a part, drop a pin, or comment on the robot or photo.</p>'; return; }
+  mine.forEach(c => {
+    const row = document.createElement("div"); row.className = "cm";
+    const who = document.createElement("span"); who.className = "who";
+    who.textContent = { robot: "robot", photo: "photo " + shortPh(c.photo), part: c.part, pin3d: `model #${c.pin_no}`, pinPhoto: `photo #${c.pin_no} ${shortPh(c.photo)}` }[c.kind] || c.kind;
+    who.onclick = () => {
+      if (c.part) selectPart(c.part);
+      if (c.photo && c.kind !== "robot") { const k = R().photos.findIndex(p => p.name === c.photo); if (k >= 0 && k !== pi) showPhoto(k); }
+      if (c.kind === "pin3d" && c.view) setCamera(c.view.azimuth_deg, c.view.elevation_deg, c.view.roll_deg, c.view.distance, c.view.target);
+    };
+    const txt = document.createElement("div"); txt.className = "txt";
+    if (c.tag) { const t = document.createElement("span"); t.className = "tag " + c.tag; t.textContent = c.tag; txt.appendChild(t); }
+    txt.appendChild(document.createTextNode(c.text || ""));
+    const del = document.createElement("button"); del.className = "del"; del.textContent = "×"; del.title = "Delete comment"; del.setAttribute("aria-label", "Delete comment");
+    del.onclick = () => { state.comments = state.comments.filter(x => x.id !== c.id); persist(); renderComments(); drawPins3d(); drawPhotoPins(); renderList(); };
+    row.append(who, txt, del); box.appendChild(row);
+  });
+}
+const shortPh = (n) => (n || "").replace(R().slug, "").replace(/^[._]/, "") || n;
+
+// ---------------- robots / photos ----------------
+function status(r) {
+  const n = r.photos.length, k = r.photos.filter(p => state.picks[pkey(r.slug, p.name)]).length;
+  return { n, k, cls: k === 0 ? "" : k === n ? "done" : "part" };
+}
+function renderList() {
+  const ul = $("robotList"); ul.innerHTML = ""; const q = $("filter").value.trim().toLowerCase(); const todo = $("onlyTodo").checked;
+  let done = 0;
+  robots.forEach((r, i) => {
+    const s = status(r); if (s.cls === "done") done++;
+    if (q && !r.slug.includes(q)) return; if (todo && s.cls === "done" && i !== ri) return;
+    const li = document.createElement("li"); const b = document.createElement("button"); if (i === ri) b.className = "cur";
+    const m = document.createElement("span"); m.className = "mark " + s.cls;
+    const nm = document.createElement("span"); nm.className = "slug"; nm.textContent = r.slug;
+    const cnt = document.createElement("span"); cnt.className = "n"; const nc = state.comments.filter(c => c.slug === r.slug).length;
+    cnt.textContent = `${s.k}/${s.n}` + (nc ? ` · ${nc}✎` : "");
+    b.append(m, nm, cnt); b.onclick = () => showRobot(i); li.appendChild(b); ul.appendChild(li);
+  });
+  const tot = robots.reduce((a, r) => a + r.photos.length, 0), picked = robots.reduce((a, r) => a + status(r).k, 0);
+  $("progress").textContent = `${done}/${robots.length} robots · ${picked}/${tot} photos saved`;
+}
+$("filter").oninput = renderList; $("onlyTodo").onchange = renderList;
+
+async function showRobot(i, keepPhoto) {
+  ri = (i + robots.length) % robots.length; const r = R(); state.last = r.slug; persist();
+  $("robotName").textContent = r.slug; renderList();
+  const cur = $("robotList").querySelector(".cur"); cur?.scrollIntoView({ block: "nearest" });
+  target = { kind: "robot" };
+  await loadModel(r);
+  showPhoto(keepPhoto || 0); renderComments();
+}
+function showPhoto(k) {
+  const r = R(); pi = Math.max(0, Math.min(k, r.photos.length - 1)); const p = P();
+  const tabs = $("photoTabs"); tabs.innerHTML = "";
+  r.photos.forEach((ph, j) => {
+    const b = document.createElement("button"); b.textContent = shortPh(ph.name) + (state.picks[pkey(r.slug, ph.name)] ? " ✓" : "");
+    if (j === pi) b.className = "on"; b.onclick = () => showPhoto(j); tabs.appendChild(b);
+  });
+  if (!p) { photoEl.removeAttribute("src"); $("overlay").removeAttribute("src"); return; }
+  photoEl.src = DATA + p.src; $("overlay").src = DATA + p.src;
+  const saved = state.picks[pkey(r.slug, p.name)];
+  if (saved) setCamera(saved.azimuth_deg, saved.elevation_deg, saved.roll_deg, saved.distance, saved.target);
+  else resetGuess();
+  if (target.kind !== "part") setTarget(target.kind === "pinPhoto" ? { kind: "photo" } : target); else drawPhotoPins();
+  updateSaveState();
+}
+function resetGuess() { const g = P()?.default; if (!g) return setCamera(135, 35, 0); setCamera(g.azimuth_deg, g.elevation_deg, g.roll_deg || 0); }
+function updateSaveState() {
+  const s = state.picks[pkey(R().slug, P()?.name)]; const g = P()?.default;
+  $("saveState").innerHTML = "";
+  const t = document.createElement("span"); t.className = "muted";
+  t.textContent = s ? `saved ${s.azimuth_deg}°/${s.elevation_deg}°/${s.roll_deg}°` : "not saved";
+  if (s) t.style.color = "var(--ok)";
+  $("saveState").appendChild(t);
+  $("toSaved").disabled = !s;
+  $("saveState").title = g ? `default guess: az ${g.azimuth_deg}, el ${g.elevation_deg} (${g.source})` : "";
+}
+$("prev").onclick = () => showRobot(ri - 1); $("next").onclick = () => showRobot(ri + 1);
+$("resetGuess").onclick = () => { resetGuess(); toast("Camera at the default guess"); };
+$("toSaved").onclick = () => { const s = state.picks[pkey(R().slug, P().name)]; if (s) setCamera(s.azimuth_deg, s.elevation_deg, s.roll_deg, s.distance, s.target); };
+$("rollL").onclick = () => rollBy(-3); $("rollR").onclick = () => rollBy(3);
+$("level").onclick = () => { const c = readCamera(); setCamera(c.azimuth_deg, c.elevation_deg, 0, c.distance, c.target); };
+$("savePose").onclick = savePose;
+function savePose() {
+  const r = R(), p = P(); if (!p) return toast("This robot has no photo");
+  state.picks[pkey(r.slug, p.name)] = Object.assign({ slug: r.slug, photo: p.name, photo_file: p.orig, saved_at: new Date().toISOString() }, readCamera());
+  persist(); renderList(); showPhotoTabsOnly(); updateSaveState();
+  toast(`Saved ${p.name}`);
+}
+function showPhotoTabsOnly() { const r = R(); [...$("photoTabs").children].forEach((b, j) => b.textContent = shortPh(r.photos[j].name) + (state.picks[pkey(r.slug, r.photos[j].name)] ? " ✓" : "")); }
+const toggle = (id, fn) => { $(id).onclick = () => { const on = $(id).classList.toggle("on"); fn(on); }; };
+toggle("axesBtn", (on) => { if (axes) axes.visible = on; });
+toggle("frontBtn", (on) => { if (front) front.visible = on; });
+toggle("edgesBtn", (on) => { edgesOn = on; meshes.forEach(m => m.children.forEach(c => { if (c.userData.edge) c.visible = on; })); });
+$("pin3dBtn").onclick = () => { mode3d = mode3d === "pin3d" ? "select" : "pin3d"; $("pin3dBtn").classList.toggle("on", mode3d === "pin3d"); renderer.domElement.style.cursor = mode3d === "pin3d" ? "crosshair" : ""; };
+$("photoPinBtn").onclick = () => { photoPinMode = !photoPinMode; $("photoPinBtn").classList.toggle("on", photoPinMode); $("photoWrap").classList.toggle("pinning", photoPinMode); };
+$("ovl").oninput = () => { $("overlay").style.opacity = $("ovl").value / 100; };
+
+document.addEventListener("keydown", (e) => {
+  if (e.target.matches("input, textarea, select")) return; if (e.metaKey || e.ctrlKey || e.altKey) return;
+  const k = e.key.toLowerCase();
+  if (k === "s") { e.preventDefault(); savePose(); } else if (k === "q") rollBy(-2); else if (k === "e") rollBy(2);
+  else if (k === "n") showRobot(ri + 1); else if (k === "p") showRobot(ri - 1);
+});
+
+// ---------------- results.json ----------------
+function results() {
+  const photos = [];
+  robots.forEach(r => r.photos.forEach(p => {
+    const s = state.picks[pkey(r.slug, p.name)] || null;
+    photos.push({ slug: r.slug, photo: p.name, photo_file: p.orig, default_guess: p.default, pick: s });
+  }));
+  return { schema: "antweight-camera-picks/1", exported_at: new Date().toISOString(),
+    convention: { frame: "model coordinates, mm, Z up, front = +y, right = +x", azimuth_deg: "camera position around the model, 0 = +x (right), 90 = +y (front)",
+      elevation_deg: "camera position above the XY plane", roll_deg: "camera rotation about its viewing direction (camera to target), right-handed; positive turns the model counter-clockwise on screen; 0 = world Z up on screen",
+      camera: "three.js PerspectiveCamera, camera_quaternion [x,y,z,w] in model coordinates, looks along its -Z", pixel: "photo pins: pixel in the resized JPEG (photo_size) and uv in 0..1 from top-left" },
+    n_saved: photos.filter(x => x.pick).length, photos, comments: state.comments };
+}
+async function getDownloads() {
+  if (!window.claude?.use) return null;
+  return Promise.race([window.claude.use("downloads").catch(() => null), new Promise(r => setTimeout(() => r(null), 4000))]);
+}
+$("dl").onclick = async () => {
+  const text = JSON.stringify(results(), null, 1);
+  const dl = await getDownloads();
+  if (dl) { try { await dl.save({ filename: "results.json", data: text }); toast("Saved results.json"); return; } catch (e) { if (e?.code === "declined") return; } }
+  try {
+    const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([text], { type: "application/json" })); a.download = "results.json";
+    document.body.appendChild(a); a.click(); a.remove();
+    if (window.claude?.use) throw new Error("sandboxed");
+  } catch (e) { $("jsonText").value = text; $("jsonDlg").hidden = false; }
+};
+$("copyJson").onclick = () => { navigator.clipboard?.writeText($("jsonText").value).then(() => toast("Copied"), () => { $("jsonText").select(); }); };
+$("closeJson").onclick = () => { $("jsonDlg").hidden = true; };
+$("load").onclick = () => $("loadFile").click();
+$("loadFile").onchange = async (e) => {
+  const f = e.target.files[0]; if (!f) return;
+  try {
+    const j = JSON.parse(await f.text()); let np = 0, nc = 0;
+    (j.photos || []).forEach(x => { if (x.pick) { state.picks[pkey(x.slug, x.photo)] = x.pick; np++; } });
+    Object.values(j.picks || {}).forEach(x => { if (x && x.slug) { state.picks[pkey(x.slug, x.photo)] = x; np++; } });
+    const ids = new Set(state.comments.map(c => c.id));
+    (j.comments || []).forEach(c => { if (!ids.has(c.id)) { state.comments.push(c); nc++; } });
+    persist(); showRobot(ri, pi); toast(`Loaded ${np} views and ${nc} new comments`);
+  } catch (err) { toast("That file is not a results.json from this tool"); }
+  e.target.value = "";
+};
+
+// ---------------- boot ----------------
+(function loop() { requestAnimationFrame(loop); controls.update(); renderer.render(scene, camera);
+  if (R() && P()) { const c = readCamera(); $("hud").innerHTML = `az <b>${c.azimuth_deg.toFixed(1)}</b>° · el <b>${c.elevation_deg.toFixed(1)}</b>° · roll <b>${c.roll_deg.toFixed(1)}</b>° · d ${c.distance.toFixed(0)} mm`; } })();
+fetch(DATA + "robots.json").then(r => r.json()).then(j => {
+  robots = j.robots; const h = location.hash.slice(1);
+  const i = Math.max(0, robots.findIndex(r => r.slug === (h || state.last)));
+  resize(); showRobot(i);
+}).catch(e => { $("robotName").textContent = "could not load data/robots.json"; });
+window.addEventListener("hashchange", () => { const i = robots.findIndex(r => r.slug === location.hash.slice(1)); if (i >= 0 && i !== ri) showRobot(i); });
+</script>
+
+</body>
+</html>
