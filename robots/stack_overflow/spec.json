@@ -1,0 +1,278 @@
+{
+ "name": "stack overflow",
+ "profile": "aws2025",
+ "robot_type": "lifter",
+ "locomotion": "wheels",
+ "kit_draft": true,
+ "parts": [
+  {
+   "id": "chassis",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "intersect",
+    "items": [
+     {
+      "type": "place",
+      "shape": {
+       "type": "prism",
+       "points": [
+        [
+         -47.5,
+         0.0
+        ],
+        [
+         47.5,
+         0.0
+        ],
+        [
+         47.5,
+         1.5
+        ],
+        [
+         -0.5,
+         32.0
+        ],
+        [
+         -47.5,
+         32.0
+        ]
+       ],
+       "height": 100.0
+      },
+      "at": [
+       0.0,
+       0.0,
+       -10.0
+      ],
+      "rot": [
+       90.0,
+       0.0,
+       90.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "prism",
+       "points": [
+        [
+         -50.0,
+         -47.5
+        ],
+        [
+         50.0,
+         -47.5
+        ],
+        [
+         50.0,
+         7.5
+        ],
+        [
+         25.0,
+         47.5
+        ],
+        [
+         -25.0,
+         47.5
+        ],
+        [
+         -50.0,
+         7.5
+        ]
+       ],
+       "height": 52.0
+      },
+      "at": [
+       0.0,
+       0.0,
+       6.0
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ]
+     }
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#c9cdd3",
+   "print_orientation": "+z"
+  },
+  {
+   "id": "wheel_l0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 12.0,
+     "height": 8.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    54.5,
+    -30.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#22262a"
+  },
+  {
+   "id": "wheel_r0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 12.0,
+     "height": 8.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -54.5,
+    -30.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#22262a"
+  },
+  {
+   "id": "arm",
+   "kind": "weapon",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -25,
+       22.0
+      ],
+      [
+       -10,
+       28.0
+      ],
+      [
+       30,
+       12.0
+      ],
+      [
+       50,
+       -6.0
+      ],
+      [
+       44,
+       -8.0
+      ],
+      [
+       25,
+       6.0
+      ],
+      [
+       -25,
+       16.0
+      ]
+     ],
+     "height": 14
+    },
+    "at": [
+     0.0,
+     0,
+     0
+    ],
+    "rot": [
+     90,
+     0,
+     90
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#2a2c34",
+   "weapon": {
+    "kind": "lifter"
+   },
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "pivot": [
+     0,
+     -20,
+     20.0
+    ],
+    "min": 0,
+    "max": 80,
+    "default": 0
+   }
+  }
+ ],
+ "fasteners": [],
+ "wires": [],
+ "connections": [],
+ "reference": [
+  {
+   "image": "reference/stack_overflow.aws67.webp",
+   "mask": "reference/stack_overflow.aws67_mask.png",
+   "view": "iso",
+   "approximate": true
+  }
+ ]
+}

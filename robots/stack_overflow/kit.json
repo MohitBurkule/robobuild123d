@@ -1,0 +1,79 @@
+{
+ "robot_type": "lifter",
+ "body": {
+  "length": 95,
+  "width": 100,
+  "height": 32,
+  "ramp": 48,
+  "plan": "pentagon",
+  "front_width": 50,
+  "nose": 40
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 12,
+  "width": 8,
+  "y": [
+   -30
+  ]
+ },
+ "colors": {
+  "body": "#c9cdd3",
+  "wheel": "#22262a",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "side": [
+    [
+     -25,
+     34
+    ],
+    [
+     -10,
+     40
+    ],
+    [
+     30,
+     24
+    ],
+    [
+     50,
+     6
+    ],
+    [
+     44,
+     4
+    ],
+    [
+     25,
+     18
+    ],
+    [
+     -25,
+     28
+    ]
+   ],
+   "x": [
+    -7,
+    7
+   ],
+   "weapon": "lifter",
+   "pivot": [
+    -20,
+    32
+   ],
+   "id": "arm",
+   "color": "#2a2c34"
+  }
+ ],
+ "skip_photos": [
+  0,
+  1
+ ],
+ "name": "stack overflow",
+ "weapon": {
+  "kind": "none"
+ }
+}
