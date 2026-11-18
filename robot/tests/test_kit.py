@@ -30,3 +30,37 @@ def test_kit_walker_and_pod_nose():
     for p in s["parts"]:
         assert shapes.to_solid(p["shape"], ".").volume > 1, p["id"]
     assert kit.build({})["locomotion"] == "roller"
+
+
+def test_kit_wishlist_round1():
+    from robot import shapes
+    for kind in ("flipper", "lifter", "axe", "hammer"):
+        s = kit.build({"weapon": {"kind": kind}, "scoop": {"curve": 3}, "wheels": {"n": 4, "x": 50, "radius": [10, 14]},
+                       "colors": {"body": "#ff0000"},
+                       "extras": [{"id": "spine", "shape": {"type": "box", "size": [4, 60, 10]}, "at": [0, 0, 20]}]})
+        ids = {p["id"]: p for p in s["parts"]}
+        assert ids["weapon"]["weapon"]["kind"] == kind and ids["weapon"]["joint"]["axis"] == [1, 0, 0]
+        assert ids["chassis"]["color"] == "#ff0000" and "spine" in ids and "scoop" in ids
+        assert abs(ids["wheel_l0"]["at"][0] - 50) < 1e-9 and ids["wheel_l0"]["at"][2] == -4
+        for p in s["parts"]:
+            assert shapes.to_solid(p["shape"], ".").volume > 1, (kind, p["id"])
+    assert kit.build({})["parts"][0]["color"] == "#3a3d44"
+
+
+def test_kit_shared_parts():
+    from robot import kitparts, shapes, spec as spec_mod, world as world_mod
+    k = {"wheels": {"n": 0}, "use": [
+        {"part": "drive_pod", "id": "drive", "at": [45, -20, 0], "mirror": "x"},
+        {"part": "drive_pod", "id": "front", "at": [45, 25, 0], "mirror": "x", "omni": True},
+        {"part": "electronics", "id": "elec", "at": [0, 0, -4]},
+        {"part": "hinged_arm", "id": "flip", "at": [0, 10, 8], "length": 40}]}
+    s = kit.build(k)
+    ids = {p["id"]: p for p in s["parts"]}
+    assert ids["drive_l_motor"]["catalog"] and ids["drive_r_wheel"]["at"][0] == -45
+    assert ids["drive_l_motor"]["at"][0] < 45 and ids["drive_r_motor"]["at"][0] > -45  # motors inboard
+    assert ids["flip"]["joint"]["pivot"] == [0.0, 10.0, 8.0]
+    for p in s["parts"]:
+        if p.get("shape"):
+            assert shapes.to_solid(p["shape"], ".").volume > 1, p["id"]
+    world_mod.resolve(spec_mod.Spec(s), fast=True)
+    assert "drive_pod" in kitparts.describe()
