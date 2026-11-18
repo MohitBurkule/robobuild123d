@@ -1,0 +1,20 @@
+{
+ "baphomet.aws74.webp": {
+  "view": "125,30",
+  "azimuth": 115.0,
+  "elevation": 30.0,
+  "iou": 0.765
+ },
+ "baphomet.aws76.webp": {
+  "view": "165,65",
+  "azimuth": 165.0,
+  "elevation": 73.0,
+  "iou": 0.784
+ },
+ "baphomet.aws77.webp": {
+  "view": "50,40",
+  "azimuth": 50.0,
+  "elevation": 40.0,
+  "iou": 0.776
+ }
+}

@@ -1,12 +1,14 @@
 {
- "robot_type": "horizontal_spinner",
+ "robot_type": "drum",
+ "wheels": 2,
  "weapon": {
   "kind": "drum",
   "axis": "x",
-  "position": "front",
-  "width_frac": 0.55,
-  "teeth": 4
+  "teeth": 2
  },
- "wheels": 2,
- "source": "read from reference photos by Sonnet"
+ "photos": [
+  "baphomet.aws74.webp",
+  "baphomet.aws76.webp",
+  "baphomet.aws77.webp"
+ ]
 }

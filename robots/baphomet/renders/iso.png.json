@@ -1,0 +1,20 @@
+{
+ "spec": "/tmp/work10_baphomet/robots/baphomet/spec.json",
+ "rendered_at": 1795025206.630959,
+ "bodies": [
+  "chassis",
+  "weapon",
+  "wheel_l0",
+  "wheel_r0",
+  "fork_0",
+  "fork_1",
+  "weapon_arm_l",
+  "weapon_arm_r",
+  "weapon_shaft",
+  "drum_flange_l",
+  "drum_flange_r",
+  "top_plate",
+  "weapon_motor_can"
+ ],
+ "wires": {}
+}
