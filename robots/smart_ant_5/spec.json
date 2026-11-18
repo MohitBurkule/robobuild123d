@@ -205,68 +205,6 @@
        "shape": {
         "type": "place",
         "shape": {
-         "type": "cylinder",
-         "radius": 1.5,
-         "height": 18.6
-        },
-        "at": [
-         39.8,
-         -36.0,
-         0.0
-        ],
-        "rot": [
-         0.0,
-         90.0,
-         0.0
-        ]
-       },
-       "at": [
-        0.0,
-        0.0,
-        0.0
-       ],
-       "rot": [
-        0.0,
-        -0.0,
-        0.0
-       ]
-      },
-      {
-       "type": "place",
-       "shape": {
-        "type": "place",
-        "shape": {
-         "type": "cylinder",
-         "radius": 1.5,
-         "height": 18.6
-        },
-        "at": [
-         -39.8,
-         -36.0,
-         0.0
-        ],
-        "rot": [
-         0.0,
-         90.0,
-         180.0
-        ]
-       },
-       "at": [
-        0.0,
-        0.0,
-        0.0
-       ],
-       "rot": [
-        0.0,
-        -0.0,
-        0.0
-       ]
-      },
-      {
-       "type": "place",
-       "shape": {
-        "type": "place",
-        "shape": {
          "type": "box",
          "size": [
           36.0,
@@ -422,12 +360,12 @@
         ]
        },
        "at": [
-        -0.5,
-        -37.5,
-        28.122
+        0.5,
+        -12.5,
+        -7.878
        ],
        "rot": [
-        0.0,
+        180.0,
         -0.0,
         0.0
        ]
@@ -437,15 +375,15 @@
        "shape": {
         "type": "box",
         "size": [
-         12.4,
-         4.4,
-         3.378
+         7.0,
+         3.0,
+         5.0
         ]
        },
        "at": [
-        -0.5,
-        -37.5,
-        31.311
+        0.5,
+        -12.5,
+        -11.878
        ],
        "rot": [
         0.0,
@@ -1307,68 +1245,6 @@
         "shape": {
          "type": "place",
          "shape": {
-          "type": "cylinder",
-          "radius": 4.0,
-          "height": 23.6
-         },
-         "at": [
-          39.8,
-          -36.0,
-          0.0
-         ],
-         "rot": [
-          0.0,
-          90.0,
-          0.0
-         ]
-        },
-        "at": [
-         0.0,
-         0.0,
-         0.0
-        ],
-        "rot": [
-         0.0,
-         -0.0,
-         0.0
-        ]
-       },
-       {
-        "type": "place",
-        "shape": {
-         "type": "place",
-         "shape": {
-          "type": "cylinder",
-          "radius": 4.0,
-          "height": 23.6
-         },
-         "at": [
-          -39.8,
-          -36.0,
-          0.0
-         ],
-         "rot": [
-          0.0,
-          90.0,
-          180.0
-         ]
-        },
-        "at": [
-         0.0,
-         0.0,
-         0.0
-        ],
-        "rot": [
-         0.0,
-         -0.0,
-         0.0
-        ]
-       },
-       {
-        "type": "place",
-        "shape": {
-         "type": "place",
-         "shape": {
           "type": "box",
           "size": [
            41.0,
@@ -1524,12 +1400,12 @@
          ]
         },
         "at": [
-         -0.5,
-         -37.5,
-         28.122
+         0.5,
+         -12.5,
+         -7.878
         ],
         "rot": [
-         0.0,
+         180.0,
          -0.0,
          0.0
         ]
@@ -1539,15 +1415,15 @@
         "shape": {
          "type": "box",
          "size": [
-          17.4,
-          9.4,
-          8.378
+          12.0,
+          8.0,
+          10.0
          ]
         },
         "at": [
-         -0.5,
-         -37.5,
-         31.311
+         0.5,
+         -12.5,
+         -11.878
         ],
         "rot": [
          0.0,
@@ -1571,7 +1447,7 @@
    ],
    "color": "#f07a1c",
    "print_orientation": "+z",
-   "volume_mm3": 67236.0
+   "volume_mm3": 67210.0
   },
   {
    "id": "wheel_l0",
@@ -2417,8 +2293,8 @@
     0.0
    ],
    "catalog": "lipo_2s_180",
-   "retained": "velcro",
-   "retained_reason": "velcro strap round the pack onto the pocket floor; the closed pocket walls stop it shifting under hits"
+   "retained": "strap",
+   "retained_reason": "hook-and-loop strap round the pack and the pocket floor; the closed pocket walls stop it shifting under hits"
   },
   {
    "id": "el_esc",
@@ -2439,19 +2315,19 @@
    "id": "el_switch",
    "kind": "switch",
    "at": [
-    -0.5,
-    -37.5,
-    28.122
+    0.5,
+    -12.5,
+    -7.878
    ],
    "rot": [
-    0.0,
+    180.0,
     0.0,
     0.0
    ],
    "catalog": "switch_slide_12x4",
    "tool_free": true,
    "marked": true,
-   "label": "ON / OFF (slide across, marked on the lid)",
+   "label": "ON / OFF (slide across with a fingernail, marked on the underside)",
    "actuation": [
     1,
     0,
@@ -2523,7 +2399,7 @@
    "a": "el_switch",
    "b": "chassis",
    "method": "interlock",
-   "reason": "switch body is pressed into a snug printed slot that captures it on five sides; the slider reaches up through the lid slot"
+   "reason": "switch body is pressed into a snug printed slot that captures it on five sides; the slider faces down to a 7 x 3 mm slot in the underside"
   },
   {
    "a": "dm_wheel_l0",
