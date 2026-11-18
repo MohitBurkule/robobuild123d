@@ -1,0 +1,12 @@
+{
+ "spec": "/tmp/work10_unorthodox/robots/unorthodox/spec.json",
+ "rendered_at": 1795022150.744719,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "scoop",
+  "servo"
+ ],
+ "wires": {}
+}

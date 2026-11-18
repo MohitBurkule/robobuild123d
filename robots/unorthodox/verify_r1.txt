@@ -1,0 +1,96 @@
+  [ran] integrity 0.01s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 1.21s
+  [ran] connections 0.01s
+  [ran] legal 0.01s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.00s
+  [ran] shape 0.13s
+  [ran] dynamics 0.01s
+  [ran] strength 0.00s
+  [ran] printability 0.47s
+  [ran] process 0.01s
+  [ran] electrical 0.01s
+  [ran] combat 0.04s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.01s
+  [ran] fastener_record 0.00s
+  [ran] likeness 3.42s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.02s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.02s
+  [ran] dfm 0.01s
+  [ran] realworld 0.01s
+unorthodox: ok=False 20 blockers in 20 root causes, mass 138.5/225 g
+1. [proxy.interference] `chassis` and `wheel_l0` overlap by 3.88 mm (allowed 0.08).
+   | chassis: x -36.00..36.00  y -31.00..31.00  z -9.00..17.00  size 72.00 x 62.00 x 26.00 mm
+   |   centre (0.00, 0.00, 4.00), volume 116064.0 mm3
+   |   OVERLAP `wheel_l0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `scoop` 0.77 mm (allowed 0.08)
+2. [proxy.interference] `chassis` and `wheel_r0` overlap by 3.88 mm (allowed 0.08).
+   | chassis: x -36.00..36.00  y -31.00..31.00  z -9.00..17.00  size 72.00 x 62.00 x 26.00 mm
+   |   centre (0.00, 0.00, 4.00), volume 116064.0 mm3
+   |   OVERLAP `wheel_l0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `scoop` 0.77 mm (allowed 0.08)
+3. [proxy.interference] `chassis` and `scoop` overlap by 0.77 mm (allowed 0.08).
+   | chassis: x -36.00..36.00  y -31.00..31.00  z -9.00..17.00  size 72.00 x 62.00 x 26.00 mm
+   |   centre (0.00, 0.00, 4.00), volume 116064.0 mm3
+   |   OVERLAP `wheel_l0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 3.88 mm (allowed 0.08)
+   |   OVERLAP `scoop` 0.77 mm (allowed 0.08)
+4. [proxy.sweep] joint `scoop`: `scoop` hits `chassis` 0.77 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint scoop` lists the closest approach to every part.
+   | scoop: x -62.00..62.00  y 29.06..82.94  z -10.60..8.60  size 124.00 x 53.88 x 19.21 mm
+   |   centre (0.00, 56.00, -1.00), volume 13888.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 30, 7.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.77 mm (allowed 0.08)
+   | chassis: x -36.00..36.00  y -31.00..31.00  z -9.00..17.00  size 72.00 x 62.00 x 26.00 mm
+5. [connection.floating] `servo` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | servo: x -15.00..15.00  y -18.00..8.00  z 17.00..27.00  size 30.00 x 26.00 x 10.00 mm
+   |   centre (0.00, -5.00, 22.00), volume 7800.0 mm3
+   |   gap to `chassis` 0.00 mm (touching)
+   | chassis: x -36.00..36.00  y -31.00..31.00  z -9.00..17.00  size 72.00 x 62.00 x 26.00 mm
+   |   centre (0.00, 0.00, 4.00), volume 116064.0 mm3
+6. [legal.switch] Rule 4a needs an externally accessible way to shut down that works without tools and is clearly marked on/off.
+   fix: Add a `switch` part (or removable link) with `tool_free: true` and `marked: true` and a visible ON/OFF `label`.
+7. [legal.failsafe] Rule 4d: the robot must stop all motion when the transmitter is off.
+   fix: Set `electronics.failsafe` to true and configure the receiver and ESC failsafe.
+8. [legal.weapon_disable] Rule 4c: all weaponry must be deactivatable by remote control.
+   fix: Set `electronics.weapon_remote_disable` and put the weapon on its own receiver channel.
+9. [power.weapon_motor] `scoop` names motor None; it must be a catalog brushless motor so speed can be computed.
+   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
+   | scoop: x -62.00..62.00  y 29.06..82.94  z -10.60..8.60  size 124.00 x 53.88 x 19.21 mm
+   |   centre (0.00, 56.00, -1.00), volume 13888.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 30, 7.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.77 mm (allowed 0.08)
+10. [process.print_orientation] `wheel_l0` (fdm) has no `print_orientation`.
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_l0: x 27.50..35.50  y -26.00..-4.00  z -11.00..11.00  size 8.00 x 21.99 x 22.00 mm
+   |   centre (31.50, -15.00, 0.00), volume 3041.1 mm3
+   |   OVERLAP `chassis` 3.88 mm (allowed 0.08)
+11. [process.print_orientation] `wheel_r0` (fdm) has no `print_orientation`.
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_r0: x -35.50..-27.50  y -26.00..-4.00  z -11.00..11.00  size 8.00 x 21.99 x 22.00 mm
+   |   centre (-31.50, -15.00, 0.00), volume 3041.1 mm3
+   |   OVERLAP `chassis` 3.88 mm (allowed 0.08)
+12. [process.weapon_printed] Weapon `scoop` is fdm-printed with no hardened metal insert teeth.
+   fix: Make it metal (sheet_cut / turned / milled) or add hardened steel tooth parts (`parent` = the weapon).
+   | scoop: x -62.00..62.00  y 29.06..82.94  z -10.60..8.60  size 124.00 x 53.88 x 19.21 mm
+   |   centre (0.00, 56.00, -1.00), volume 13888.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 30, 7.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.77 mm (allowed 0.08)
+... 8 more root causes (fix these first, then re-run)
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 0 hit / 31 miss, inside 0 hit / 5 miss, likeness 2 hit / 0 miss, min_gap 4 hit / 6 miss, overlap 22 hit / 36 miss, part_check 0 hit / 1 miss, part_geom 5 hit / 0 miss, ray 0 hit / 25 miss
