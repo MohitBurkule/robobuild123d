@@ -57,3 +57,9 @@ Left (and why):
 - likeness.view x2: looks, not in scope for this pass.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): verty_big_secret.aws72.webp 0.59 -> 0.6; verty_big_secret.aws74.webp 0.45 -> 0.45; verty_big_secret.aws76.webp 0.51 -> 0.51
+
+## Round 3d (user camera picks batch 2 + shape remarks applied; round 4 to be re-run on the new outside)
+Decisions: type vertical_spinner; body box rect 80x66x20 mm, ramp 0; wheels 2 r14 outboard; weapon disc r26 axis x teeth 2; extra parts: upright, hook, fork, motor_can, side_spike, rear_guard.
+
+Likeness: aws72 0.63 (FAIL), aws74 0.65 (FAIL), aws76 0.60 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/verty_big_secret.aws76.webp` is declared `front_left_iso` (IoU 0.60 there) but the model matches it better from rear_right_iso 

@@ -12,13 +12,15 @@
   "verty_big_secret.aws76.webp"
  ],
  "view": {
-  "verty_big_secret.aws72.webp": "front_right_iso",
+  "verty_big_secret.aws72.webp": "front_left_iso",
   "verty_big_secret.aws74.webp": "front_right_iso",
   "verty_big_secret.aws76.webp": "front_left_iso"
  },
  "elevation": {
-  "verty_big_secret.aws72.webp": 45,
-  "verty_big_secret.aws74.webp": 45,
   "verty_big_secret.aws76.webp": 45
+ },
+ "view_source": {
+  "verty_big_secret.aws72.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label",
+  "verty_big_secret.aws74.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label"
  }
 }
