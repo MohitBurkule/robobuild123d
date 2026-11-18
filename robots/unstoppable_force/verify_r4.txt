@@ -1,0 +1,96 @@
+BLOCKERS: 10
+  [cached] integrity 0.00s
+  [cached] mass 0.00s
+  [proxy] interference 0.26s
+  [cached] connections 0.00s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.00s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.00s
+  [cached] physics 0.00s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [cached] likeness 0.00s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.00s
+  [cached] waiver_audit 0.00s
+  [cached] geom 0.00s
+  [cached] dfm 0.00s
+  [cached] realworld 0.00s
+unstoppable force: ok=False 10 blockers in 10 root causes, mass 236.9/150 g
+1. [mass.over] 236.9 g (range 204.3 to 269.5 g) against the 150 g limit; 7.8 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+2. [retention.loose] `weapon_motor` can move more than 0.5 mm toward +y, -y, +z, -z without touching anything (captive means at most 0.5 mm of play in every direction); in a hit it will fall out or rattle.
+   fix: Make the pocket snug on that side (0.2 to 0.5 mm gap), add a retaining rib or strap, or declare how it is held in `retained` (tape, adhesive, velcro, press_fit).
+   | weapon_motor: x -10.50..10.50  y 27.50..48.50  z -11.50..9.50  size 21.00 x 20.99 x 21.00 mm
+   |   centre (0.00, 38.00, -1.00), volume 4986.5 mm3
+   |   port phases: (-10.50, 38.00, -1.00)
+   |   gap to `weapon` 0.30 mm
+   |   gap to `dt_shaft_weapon` 0.30 mm
+3. [process.geometry] `weapon` (cnc): 3 face(s) unreachable along +-X/Y/Z: undercut.
+   fix: Add >= 1 mm radii in internal corners; remove undercuts or split the part.
+   | weapon: x -25.00..25.00  y 24.93..51.07  z -15.00..13.01  size 50.00 x 26.14 x 28.02 mm
+   |   centre (0.00, 38.00, -0.99), volume 18990.6 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 38.0, -1.0] range 0..360 default 0
+   |   gap to `dt_shaft_weapon` 0.00 mm (touching)
+   |   gap to `lock_pin` 0.10 mm
+4. [mfg.layer_load] `chassis` carries the `weapon` axle but is printed with build direction +z (world [0.0, 0.0, 1.0]), not along the spin axis [1.0, 0.0, 0.0]: impact load peels layers apart.
+   fix: Print it lying flat so the spin axis is the build direction, or make it a cut metal plate.
+   | chassis: x -50.00..50.00  y -50.00..50.00  z -15.00..15.00  size 100.00 x 100.00 x 30.00 mm
+   |   centre (-0.00, 0.00, 0.00), volume 83122.4 mm3
+   |   overlap allowed `drum_arm_l` 2.12 mm (allowed inf)
+   |   overlap allowed `drum_arm_r` 2.12 mm (allowed inf)
+   |   gap to `dt_shaft_weapon` 0.00 mm (touching)
+5. [wire.render_wires] 13 of 13 robot render(s) do not draw all 7 wires: renders/diff_unstoppable_force.aws69.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_unstoppable_force.aws71.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_unstoppable_force.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_unstoppable_force.aws69_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_unstoppable_force.aws71_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_unstoppable_force.aws72_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_unstoppable_force.aws69.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_unstoppable_force.aws71.png: no render record (`<png>.json`), so nothing says the wires were drawn...
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+6. [wire.rotor_clearance] wire `w_phases` passes -0.9 mm from the volume swept by the `rotor_weapon` rotor (weapon, dt_shaft_weapon) at [-6.4, 24.3, -2.9].
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | weapon: x -25.00..25.00  y 24.93..51.07  z -15.00..13.01  size 50.00 x 26.14 x 28.02 mm
+   |   centre (0.00, 38.00, -0.99), volume 18990.6 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 38.0, -1.0] range 0..360 default 0
+   |   gap to `dt_shaft_weapon` 0.00 mm (touching)
+   |   gap to `lock_pin` 0.10 mm
+7. [likeness.view] `reference/unstoppable_force.aws71.webp` is declared `front_left_iso` (IoU 0.71 there) but the model matches it better from front_left_iso (elevation 25, azimuth 120) (IoU 0.88).
+   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
+8. [likeness.silhouette] `reference/unstoppable_force.aws71.webp`: best silhouette IoU 0.71 at camera front_left_iso (elevation 45, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.73). Regions (photo frame, left third first) 0.71 / 0.71 / 0.72: worst = front third. Height/length 0.84 model vs 0.62 photo (too tall: lower it or lengthen it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+9. [likeness.view] `reference/unstoppable_force.aws72.webp` is declared `front_left_iso` (IoU 0.80 there) but the model matches it better from front_right_iso (elevation 25, azimuth 60) (IoU 0.88).
+   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
+10. [likeness.silhouette] `reference/unstoppable_force.aws72.webp`: best silhouette IoU 0.80 at camera front_left_iso (elevation 45, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.73). Regions (photo frame, left third first) 0.81 / 0.83 / 0.72: worst = rear third. Height/length 0.84 model vs 0.67 photo (too tall: lower it or lengthen it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+MASS BUDGET:
+  mass 236.9 g of 150 g (-86.9 g margin)
+    chassis                    79.13 g  fills 28% of its box
+    weapon                     51.27 g  fills 52% of its box
+    el_battery                 21.50 g  fills 100% of its box  <- solid block? a tub should be a shell
+    weapon_motor               17.50 g  fills 54% of its box
+    dm_wheel_l0                 9.70 g  fills 66% of its box
+    dm_wheel_r0                 9.70 g  fills 66% of its box
+    drum_arm_r                  6.86 g  fills 83% of its box
+    drum_arm_l                  6.82 g  fills 83% of its box
+    wheel_l0                    6.76 g  fills 57% of its box
+    wheel_r0                    6.76 g  fills 57% of its box
+    el_wesc                     5.00 g  fills 94% of its box
+    dt_shaft_weapon             3.81 g  fills 50% of its box
+    el_rx_esc                   3.50 g  fills 100% of its box
+    dt_hub_wheel_r0             2.58 g  fills 68% of its box
+    dt_hub_wheel_l0             2.58 g  fills 68% of its box
+    lock_pin                    0.78 g  fills 79% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    mass.over: 236.9 g (range 204.3 to 269.5 g) against the 150 g limit; 7.8 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 8 hit / 0 miss, group 31 hit / 0 miss, min_gap 40 hit / 0 miss, overlap 279 hit / 0 miss, part_geom 17 hit / 0 miss
