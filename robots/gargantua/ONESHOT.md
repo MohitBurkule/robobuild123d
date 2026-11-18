@@ -6,3 +6,14 @@ Built from `kit.json` (`robot kit`, plus the `extras`/`colors`/`ref` keys a smal
 Decisions: type horizontal_spinner; body box rect 70x72x26 mm, ramp 0; wheels 2 r14 outboard; weapon ring r58 axis z teeth 1; extra parts: lid, spoke, spoke2, tooth; photos skipped (cluttered): indices [0, 1].
 
 Likeness: aws67 0.80 (FAIL).
+
+## Tools I wanted
+- Free primitives in kit.json (`extras`). Did instead: private generator script that appends lid, spoke, spoke2, tooth to the kit spec. ~2 min per robot plus the script.
+- A mask tool for cluttered photos (rectangle-seeded grabcut, preview). Did instead: skipped photos / `--textured` / left-half crop, unchecked. ~2 min, and the IoU on those photos is not trustworthy.
+- Colours in kit.json and `--palette spec` by default. Did instead: generator recolours parts. ~1 min.
+- `robot looks SPEC` (build + iso/top + likeness + diff sheets in one pass, batchable). Did instead: four CLI calls per robot, ~3-4 min wall each.
+
+## Round 2 (looks)
+Decisions: type horizontal_spinner; body box rect 70x72x26 mm, ramp 0; wheels 2 r14 outboard; weapon ring r58 axis z teeth 1; extra parts: lid, spoke, spoke2, tooth; photos skipped (cluttered): indices [0, 1].
+
+Likeness: aws67 0.81 (ok).

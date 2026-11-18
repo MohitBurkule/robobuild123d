@@ -1,0 +1,103 @@
+  [ran] integrity 0.01s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 3.38s
+  [ran] connections 0.01s
+  [ran] legal 0.01s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.00s
+  [ran] shape 0.53s
+  [ran] dynamics 0.01s
+  [ran] strength 0.00s
+  [ran] printability 0.40s
+  [ran] process 0.03s
+  [ran] electrical 0.01s
+  [ran] combat 0.06s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.01s
+  [ran] fastener_record 0.00s
+  [ran] likeness 3.15s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.03s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.03s
+  [ran] dfm 0.03s
+  [ran] realworld 0.02s
+gargantua: ok=False 25 blockers in 22 root causes, mass 389.1/225 g
+1. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `chassis`. (+1 consequences)
+   | weapon: x -57.06..58.00  y -26.59..87.53  z 3.50..6.50  size 115.06 x 114.12 x 3.00 mm
+   |   centre (0.47, 30.47, 5.00), volume 30831.9 mm3
+   |   joint revolute axis [0, 0, 1] pivot [0.0, 30.0, 5.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.39 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 1.33 mm (allowed 0.08)
+2. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `wheel_l0`. (+1 consequences)
+   | weapon: x -57.06..58.00  y -26.59..87.53  z 3.50..6.50  size 115.06 x 114.12 x 3.00 mm
+   |   centre (0.47, 30.47, 5.00), volume 30831.9 mm3
+   |   joint revolute axis [0, 0, 1] pivot [0.0, 30.0, 5.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.39 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 1.33 mm (allowed 0.08)
+3. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `wheel_r0`. (+1 consequences)
+   | weapon: x -57.06..58.00  y -26.59..87.53  z 3.50..6.50  size 115.06 x 114.12 x 3.00 mm
+   |   centre (0.47, 30.47, 5.00), volume 30831.9 mm3
+   |   joint revolute axis [0, 0, 1] pivot [0.0, 30.0, 5.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.39 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 1.33 mm (allowed 0.08)
+4. [mass.over] 389.1 g (range 349.9 to 428.3 g) against the 225 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+5. [proxy.interference] `chassis` and `weapon` overlap by 1.39 mm (allowed 0.08).
+   | chassis: x -36.00..36.00  y -35.00..35.00  z -12.00..14.00  size 72.00 x 70.00 x 26.00 mm
+   |   centre (-0.00, -0.00, 1.00), volume 131040.0 mm3
+   |   OVERLAP `weapon` 1.39 mm (allowed 0.08)
+   |   gap to `lid` 0.00 mm (touching)
+   |   gap to `wheel_l0` 0.50 mm
+6. [proxy.interference] `weapon` and `wheel_l0` overlap by 1.20 mm (allowed 0.08).
+   | weapon: x -57.06..58.00  y -26.59..87.53  z 3.50..6.50  size 115.06 x 114.12 x 3.00 mm
+   |   centre (0.47, 30.47, 5.00), volume 30831.9 mm3
+   |   joint revolute axis [0, 0, 1] pivot [0.0, 30.0, 5.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.39 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 1.33 mm (allowed 0.08)
+7. [proxy.interference] `weapon` and `wheel_r0` overlap by 1.33 mm (allowed 0.08).
+   | weapon: x -57.06..58.00  y -26.59..87.53  z 3.50..6.50  size 115.06 x 114.12 x 3.00 mm
+   |   centre (0.47, 30.47, 5.00), volume 30831.9 mm3
+   |   joint revolute axis [0, 0, 1] pivot [0.0, 30.0, 5.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.39 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 1.33 mm (allowed 0.08)
+8. [connection.floating] `lid` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | lid: x -18.00..18.00  y -25.00..5.00  z 14.00..22.00  size 36.00 x 30.00 x 8.00 mm
+   |   centre (0.00, -10.00, 18.00), volume 8640.0 mm3
+   |   gap to `chassis` 0.00 mm (touching)
+   | chassis: x -36.00..36.00  y -35.00..35.00  z -12.00..14.00  size 72.00 x 70.00 x 26.00 mm
+   |   centre (-0.00, -0.00, 1.00), volume 131040.0 mm3
+9. [legal.switch] Rule 4a needs an externally accessible way to shut down that works without tools and is clearly marked on/off.
+   fix: Add a `switch` part (or removable link) with `tool_free: true` and `marked: true` and a visible ON/OFF `label`.
+10. [legal.failsafe] Rule 4d: the robot must stop all motion when the transmitter is off.
+   fix: Set `electronics.failsafe` to true and configure the receiver and ESC failsafe.
+11. [legal.weapon_disable] Rule 4c: all weaponry must be deactivatable by remote control.
+   fix: Set `electronics.weapon_remote_disable` and put the weapon on its own receiver channel.
+12. [legal.locking_bar] Rule 5f: every spinner needs a locking bar that physically stops the weapon from turning.
+   fix: Add a `locking_bar` part (a pin through the weapon into the frame), name it in `weapon.locking_bar`, give it a contrasting colour and `tethered: true`.
+   | weapon: x -57.06..58.00  y -26.59..87.53  z 3.50..6.50  size 115.06 x 114.12 x 3.00 mm
+   |   centre (0.47, 30.47, 5.00), volume 30831.9 mm3
+   |   joint revolute axis [0, 0, 1] pivot [0.0, 30.0, 5.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.39 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 1.33 mm (allowed 0.08)
+... 10 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 389.1 g of 225 g (-164.1 g margin)
+    weapon                    243.57 g  fills 78% of its box  <- solid block? a tub should be a shell
+    chassis                   124.75 g  fills 100% of its box  <- solid block? a tub should be a shell
+    lid                         8.23 g  fills 100% of its box
+    wheel_l0                    5.65 g  fills 79% of its box
+    wheel_r0                    5.65 g  fills 79% of its box
+    mass.over: 389.1 g (range 349.9 to 428.3 g) against the 225 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 1 hit / 1 miss, group 0 hit / 31 miss, inside 0 hit / 5 miss, likeness 1 hit / 0 miss, min_gap 8 hit / 10 miss, overlap 24 hit / 49 miss, part_check 0 hit / 2 miss, part_geom 5 hit / 0 miss, ray 0 hit / 25 miss
