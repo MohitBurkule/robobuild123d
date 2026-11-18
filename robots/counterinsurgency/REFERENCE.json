@@ -1,0 +1,10 @@
+{
+ "robot_type": "wedge",
+ "wheels": 2,
+ "weapon": {
+  "kind": "wedge"
+ },
+ "photos": [
+  "counterinsurgency.aws76.webp"
+ ]
+}
