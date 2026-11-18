@@ -1,0 +1,301 @@
+{
+ "name": "vampire",
+ "profile": "aws2025",
+ "robot_type": "horizontal_spinner",
+ "locomotion": "wheels",
+ "kit_draft": true,
+ "parts": [
+  {
+   "id": "chassis",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -56,
+       -25
+      ],
+      [
+       -30,
+       -50
+      ],
+      [
+       30,
+       -50
+      ],
+      [
+       56,
+       -25
+      ],
+      [
+       56,
+       25
+      ],
+      [
+       30,
+       50
+      ],
+      [
+       -30,
+       50
+      ],
+      [
+       -56,
+       25
+      ]
+     ],
+     "height": 22.0
+    },
+    "at": [
+     0,
+     0,
+     2.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#2f9f72",
+   "print_orientation": "+z"
+  },
+  {
+   "id": "weapon",
+   "kind": "weapon",
+   "material": "steel",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -64.0,
+       -4.2
+      ],
+      [
+       -61.0,
+       -7.0
+      ],
+      [
+       58.0,
+       -7.0
+      ],
+      [
+       64.0,
+       -1.4
+      ],
+      [
+       64.0,
+       4.2
+      ],
+      [
+       61.0,
+       7.0
+      ],
+      [
+       -58.0,
+       7.0
+      ],
+      [
+       -64.0,
+       1.4
+      ]
+     ],
+     "height": 3.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0.0,
+    0.0,
+    30.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "color": "#b9bdc2",
+   "weapon": {
+    "kind": "bar",
+    "spin_axis": [
+     0,
+     0,
+     1
+    ],
+    "teeth": 2,
+    "cells": 2,
+    "reduction": 1.0
+   },
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     0,
+     0,
+     1
+    ],
+    "pivot": [
+     0.0,
+     0.0,
+     30.0
+    ],
+    "min": 0,
+    "max": 360,
+    "default": 0
+   }
+  },
+  {
+   "id": "wheel_l0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 11.0,
+     "height": 9.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    51.0,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "wheel_r0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 11.0,
+     "height": 9.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -51.0,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "hub",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 14,
+     "height": 8
+    },
+    "at": [
+     0,
+     0,
+     13.0
+    ],
+    "rot": [
+     0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#1c1c1f"
+  }
+ ],
+ "fasteners": [],
+ "wires": [],
+ "connections": [],
+ "reference": [
+  {
+   "image": "reference/vampire.aws71.webp",
+   "mask": "reference/vampire.aws71_mask.png",
+   "view": "iso",
+   "approximate": true
+  },
+  {
+   "image": "reference/vampire.aws74.webp",
+   "mask": "reference/vampire.aws74_mask.png",
+   "view": "iso",
+   "approximate": true
+  },
+  {
+   "image": "reference/vampire.aws76.webp",
+   "mask": "reference/vampire.aws76_mask.png",
+   "view": "iso",
+   "approximate": true
+  }
+ ]
+}

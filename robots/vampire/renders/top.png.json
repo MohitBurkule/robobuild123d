@@ -1,0 +1,12 @@
+{
+ "spec": "/tmp/work10_vampire/robots/vampire/spec.json",
+ "rendered_at": 1795021796.0890043,
+ "bodies": [
+  "chassis",
+  "weapon",
+  "wheel_l0",
+  "wheel_r0",
+  "hub"
+ ],
+ "wires": {}
+}

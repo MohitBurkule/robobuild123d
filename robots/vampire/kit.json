@@ -1,0 +1,85 @@
+{
+ "robot_type": "horizontal_spinner",
+ "body": {
+  "length": 100,
+  "width": 112,
+  "height": 22,
+  "ramp": 0,
+  "top": [
+   [
+    -56,
+    -25
+   ],
+   [
+    -30,
+    -50
+   ],
+   [
+    30,
+    -50
+   ],
+   [
+    56,
+    -25
+   ],
+   [
+    56,
+    25
+   ],
+   [
+    30,
+    50
+   ],
+   [
+    -30,
+    50
+   ],
+   [
+    -56,
+    25
+   ]
+  ]
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 11,
+  "width": 9,
+  "y": [
+   0
+  ],
+  "outside": false
+ },
+ "weapon": {
+  "kind": "bar",
+  "radius": 64,
+  "width": 3,
+  "y": 0,
+  "teeth": 2,
+  "bar_width": 14,
+  "z": 30,
+  "axis": "z"
+ },
+ "colors": {
+  "body": "#2f9f72",
+  "wheel": "#202226",
+  "weapon": "#b9bdc2",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "cyl": [
+    14,
+    8
+   ],
+   "at": [
+    0,
+    0,
+    24
+   ],
+   "axis": "z",
+   "id": "hub",
+   "color": "#1c1c1f"
+  }
+ ],
+ "name": "vampire"
+}

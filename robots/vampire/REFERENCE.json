@@ -1,0 +1,13 @@
+{
+ "robot_type": "horizontal_spinner",
+ "wheels": 2,
+ "weapon": {
+  "kind": "bar",
+  "axis": "z"
+ },
+ "photos": [
+  "vampire.aws71.webp",
+  "vampire.aws74.webp",
+  "vampire.aws76.webp"
+ ]
+}
