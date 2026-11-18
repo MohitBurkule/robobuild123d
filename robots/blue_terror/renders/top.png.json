@@ -1,6 +1,6 @@
 {
- "spec": "/tmp/work10_blue_terror/robots/blue_terror/spec.json",
- "rendered_at": 1795026380.5095606,
+ "spec": "/home/antigravity/MohitBurkule/robobuild123d/robots/blue_terror/spec.json",
+ "rendered_at": 1795042841.1370256,
  "bodies": [
   "chassis",
   "wheel_l0",
