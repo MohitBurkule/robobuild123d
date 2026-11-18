@@ -1,0 +1,13 @@
+{
+ "robot_type": "vertical_spinner",
+ "weapon": {
+  "kind": "bar",
+  "axis": "y",
+  "position": "front"
+ },
+ "photos": [
+  "gyronino.aws72.webp",
+  "gyronino.aws74.webp",
+  "gyronino.aws76.webp"
+ ]
+}

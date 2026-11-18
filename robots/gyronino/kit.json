@@ -1,0 +1,29 @@
+{
+ "name": "gyronino",
+ "robot_type": "vertical_spinner",
+ "body": {
+  "length": 80,
+  "width": 44,
+  "height": 36,
+  "ramp": 0,
+  "clearance": 24
+ },
+ "weapon": {
+  "kind": "bar",
+  "radius": 62,
+  "width": 3,
+  "bar_width": 16,
+  "y": 50,
+  "z": 10,
+  "axis": "z",
+  "teeth": 2
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 32,
+  "width": 6,
+  "y": [
+   0
+  ]
+ }
+}

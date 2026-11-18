@@ -1,0 +1,17 @@
+{
+ "note": "ids added on top of `robot kit` output; replaced shapes are in spec.json",
+ "added": [
+  "bevel_gear",
+  "foot_l",
+  "foot_r",
+  "gyro_block",
+  "gyro_ring",
+  "strut_l",
+  "strut_r",
+  "tail_cap"
+ ],
+ "removed": [
+  "wheel_l0",
+  "wheel_r0"
+ ]
+}
