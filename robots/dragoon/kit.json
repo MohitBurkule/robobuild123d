@@ -1,0 +1,34 @@
+{
+ "name": "dragoon",
+ "robot_type": "vertical_spinner",
+ "body": {
+  "length": 70,
+  "width": 96,
+  "height": 28,
+  "ramp": 0,
+  "clearance": 2
+ },
+ "weapon": {
+  "kind": "disc",
+  "radius": 34,
+  "width": 3,
+  "y": 5,
+  "z": 22,
+  "axis": "x",
+  "teeth": 1
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 15,
+  "width": 8,
+  "y": [
+   -20
+  ]
+ },
+ "forks": {
+  "n": 4,
+  "length": 36,
+  "width": 8,
+  "spread": 80
+ }
+}
