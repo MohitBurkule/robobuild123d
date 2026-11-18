@@ -1,0 +1,13 @@
+{
+ "spec": "/tmp/work10_orion/robots/orion/spec.json",
+ "rendered_at": 1795022456.2055929,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "flipper",
+  "spring_l",
+  "spring_r"
+ ],
+ "wires": {}
+}
