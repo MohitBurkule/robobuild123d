@@ -1,0 +1,55 @@
+{
+ "robot_type": "wedge",
+ "body": {
+  "length": 62,
+  "width": 130,
+  "height": 30,
+  "ramp": 22
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 13,
+  "width": 8,
+  "y": [
+   -12
+  ],
+  "outside": false
+ },
+ "colors": {
+  "body": "#2a2e2c",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "extras": [
+  {
+   "box": [
+    130,
+    3,
+    30
+   ],
+   "at": [
+    0,
+    26,
+    16
+   ],
+   "kind": "armor",
+   "material": "polycarbonate",
+   "process": "laser",
+   "id": "front_plate",
+   "color": "#cfe0d8",
+   "rot": [
+    -20,
+    0,
+    0
+   ]
+  }
+ ],
+ "textured": [
+  0
+ ],
+ "name": "stagnant",
+ "weapon": {
+  "kind": "none"
+ }
+}

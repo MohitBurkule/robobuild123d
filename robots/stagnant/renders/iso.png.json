@@ -1,0 +1,11 @@
+{
+ "spec": "/tmp/work10_stagnant/robots/stagnant/spec.json",
+ "rendered_at": 1795021974.1091695,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "front_plate"
+ ],
+ "wires": {}
+}

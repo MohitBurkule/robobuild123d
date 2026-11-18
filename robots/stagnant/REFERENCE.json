@@ -1,0 +1,14 @@
+{
+ "robot_type": "wedge",
+ "wheels": 2,
+ "weapon": {
+  "kind": "wedge"
+ },
+ "photos": [
+  "stagnant.aws62.webp",
+  "stagnant.aws67.webp"
+ ],
+ "mask_mode": {
+  "stagnant.aws62.webp": "textured"
+ }
+}
