@@ -35,3 +35,9 @@ Left (and why):
 - likeness.silhouette x3: looks, not in scope for this pass.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): team_phyte_s_little_sytes.aws74.webp 0.62 -> 0.63; team_phyte_s_little_sytes.aws76.webp 0.41 -> 0.41; team_phyte_s_little_sytes.aws77.webp 0.66 -> 0.67
+
+## Round 3d (user camera picks batch 2 + shape remarks applied; round 4 to be re-run on the new outside)
+Decisions: type wedge; body box rect 96x112x30 mm, ramp 0; wheels 2 r10 inboard; weapon none; extra parts: fin, lip, electronics_tray, ear; clusterbot, one of 2 modelled (count read from photos, unsure).
+
+Likeness: aws74 0.59 (FAIL), aws76 0.40 (FAIL), aws77 0.64 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/team_phyte_s_little_sytes.aws76.webp` is declared `front_left_iso` (IoU 0.40 there) but the model matches it better from rear_r

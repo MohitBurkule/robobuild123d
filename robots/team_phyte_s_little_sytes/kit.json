@@ -111,6 +111,29 @@
    ],
    "id": "electronics_tray",
    "color": "#2a2c30"
+  },
+  {
+   "side": [
+    [
+     -44,
+     30
+    ],
+    [
+     -28,
+     30
+    ],
+    [
+     -40,
+     48
+    ]
+   ],
+   "x": [
+    50,
+    57
+   ],
+   "mirror": true,
+   "id": "ear",
+   "color": "#1f5a38"
   }
  ],
  "name": "team phyte s little sytes",
