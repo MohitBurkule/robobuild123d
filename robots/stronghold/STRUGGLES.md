@@ -40,3 +40,7 @@ Scope: rough build from the three AWS photos (aws72, aws74, aws76). Not optimise
 - Rebuilt with `robot kit` (box 64x82x34, ramp 14, 2 inside wheels, 2 forks). Likeness FAIL: IoU 0.70 / 0.76 / 0.77 (need 0.80), better than gen+patch (0.66-0.75 noisy).
 - Remaining differences: kit forks are flat boxes at floor level (real ones slope down from the front plate); no top TPU arches, no corner shovels, no raised rear gearbox; photo views are perspective so a plain box plateaus near 0.77. Wanted in kit: sloped forks, arch/bridge parts, corner wedgelets.
 - diff-photo has no API key here; compared the sheets by eye.
+
+## Round 3
+- Applied Haiku list via kitpost.py: vertical front plate (ramp 0), sloped tapered forks, 2 TPU arches, 2 corner feet, PCB strip. Likeness still FAIL: IoU 0.73 / 0.74 / 0.77.
+- Still different: rear blue/green end block (wheel cylinder still pokes out), grey plate/green frame colours, arch curvature, foot shape.
