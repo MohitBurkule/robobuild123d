@@ -4,7 +4,8 @@
   "arm",
   "gear",
   "gear_mount",
-  "plough"
+  "plough",
+  "servo_saddle"
  ],
  "removed": []
 }

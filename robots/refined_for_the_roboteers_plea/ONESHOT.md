@@ -24,3 +24,8 @@ No 'arm with tool at tip' weapon in the kit; robot_type list has no axe/saw type
 
 ## Verdict
 Looks alike: **partly**. Renders: `renders/iso.png`, `renders/top.png`.
+
+## Round 2 (looks)
+Toothed gear, thicker forward-leaning arm with servo saddle, longer plough with angled wings.
+
+Likeness: aws74 0.70 (FAIL), aws76 0.66 (FAIL).
