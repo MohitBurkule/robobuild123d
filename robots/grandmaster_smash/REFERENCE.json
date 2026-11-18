@@ -1,10 +1,21 @@
 {
- "robot_type": "other",
+ "robot_type": "drum",
  "wheels": 2,
  "weapon": {
-  "kind": "wedge"
+  "kind": "drum",
+  "axis": "x",
+  "teeth": 2
  },
  "photos": [
-  "grandmaster_smash.aws72.webp"
- ]
+  "grandmaster_smash.aws72.webp",
+  "grandmaster_smash.aws73.webp"
+ ],
+ "view": {
+  "grandmaster_smash.aws72.webp": "front_right_iso",
+  "grandmaster_smash.aws73.webp": "front_left_iso"
+ },
+ "elevation": {
+  "grandmaster_smash.aws72.webp": 45,
+  "grandmaster_smash.aws73.webp": 45
+ }
 }

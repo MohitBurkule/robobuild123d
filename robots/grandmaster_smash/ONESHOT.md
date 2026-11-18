@@ -18,3 +18,9 @@ Likeness: aws72 0.62 (FAIL).
 Decisions: type other; body box rect 120x34x22 mm, ramp 0; wheels 2 r19 outboard; weapon none; 2 forks 30 mm; extra parts: barrel, tail; photos skipped (cluttered): indices [0, 2].
 
 Likeness: aws72 0.62 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type drum; body box rect 44x124x18 mm, ramp 0; wheels 2 r16 inboard; weapon drum r20 axis x teeth 2; 2 forks 62 mm; extra parts: endcap, hub, flywheel, weapon_shaft, upright_a, upright_b, weapon_rail, end_wedge; photos skipped (cluttered): indices [0].
+
+Likeness: aws72 0.76 (FAIL), aws73 0.49 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/grandmaster_smash.aws73.webp` is declared `front_left_iso` (IoU 0.49 there) but the model matches it better from right (elevati

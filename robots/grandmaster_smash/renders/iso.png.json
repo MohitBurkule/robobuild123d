@@ -1,14 +1,24 @@
 {
  "spec": "/tmp/work10_grandmaster_smash/robots/grandmaster_smash/spec.json",
- "rendered_at": 1795023606.2611723,
+ "rendered_at": 1795025138.0762017,
  "bodies": [
   "chassis",
+  "weapon",
   "wheel_l0",
   "wheel_r0",
   "fork_0",
   "fork_1",
-  "barrel",
-  "tail"
+  "endcap_l",
+  "endcap_r",
+  "hub_l",
+  "hub_r",
+  "flywheel",
+  "weapon_shaft",
+  "upright_a",
+  "upright_b",
+  "weapon_rail",
+  "end_wedge_l",
+  "end_wedge_r"
  ],
  "wires": {}
 }
