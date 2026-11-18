@@ -44,3 +44,21 @@ def test_weapon_facts(tmp_path):
     (d / "REFERENCE.json").write_text(json.dumps({"robot_type": "vertical_spinner", "wheels": 2,
                                                   "weapon": {"kind": "disc", "axis": "x", "position": "front", "teeth": 2}}))
     assert not [f for f in _verify(d / "spec.json").findings if f.id == "likeness.weapon" and not f.passed]
+
+
+def test_textured_mask(tmp_path):
+    import numpy as np
+    from PIL import Image
+    from robot.mask import photo_mask
+    rng = np.random.default_rng(0)
+    H, W = 300, 400
+    x = np.mgrid[:H, :W][1]
+    a = np.stack([160 + 40 * np.sin(x / 6.0) + rng.normal(0, 15, (H, W))] * 3, -1) * [1, 0.75, 0.5]
+    a[100:200, 140:260] = [30, 30, 35]
+    a[0:40, 0:60] = [60, 40, 20]  # dark knot in the wood
+    p = tmp_path / "wood.png"
+    Image.fromarray(np.clip(a, 0, 255).astype(np.uint8)).save(p)
+    gt = np.zeros((H, W), bool)
+    gt[100:200, 140:260] = True
+    f = photo_mask(p, mode="textured")
+    assert (f & gt).sum() / (f | gt).sum() > 0.75
