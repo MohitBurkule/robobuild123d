@@ -1,0 +1,19 @@
+{
+ "spec": "/tmp/work10_ablation/robots/ablation/spec.json",
+ "rendered_at": 1795024116.351444,
+ "bodies": [
+  "chassis",
+  "weapon",
+  "wheel_l0",
+  "wheel_r0",
+  "wheel_l1",
+  "wheel_r1",
+  "fork_0",
+  "fork_1",
+  "fork_2",
+  "fork_3",
+  "arm",
+  "arm_base"
+ ],
+ "wires": {}
+}

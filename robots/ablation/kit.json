@@ -1,0 +1,97 @@
+{
+ "robot_type": "vertical_spinner",
+ "body": {
+  "length": 72,
+  "width": 92,
+  "height": 26,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 11,
+  "width": 8,
+  "y": [
+   -28,
+   -4
+  ]
+ },
+ "weapon": {
+  "kind": "disc",
+  "radius": 11,
+  "width": 3,
+  "y": -62,
+  "teeth": 2,
+  "z": 62,
+  "axis": "x"
+ },
+ "forks": {
+  "n": 4,
+  "length": 62,
+  "width": 3,
+  "spread": 62,
+  "tilt_deg": 5
+ },
+ "colors": {
+  "body": "#1c2420",
+  "wheel": "#c8d83a",
+  "weapon": "#c8d83a",
+  "fork": "#3a5a44"
+ },
+ "ref": {
+  "robot_type": "vertical_spinner",
+  "wheels": 4,
+  "weapon": {
+   "kind": "disc",
+   "axis": "x",
+   "position": "rear",
+   "teeth": 2
+  }
+ },
+ "name": "ablation",
+ "macros": [
+  {
+   "side": [
+    [
+     -5,
+     28
+    ],
+    [
+     5,
+     34
+    ],
+    [
+     -52,
+     62
+    ],
+    [
+     -60,
+     58
+    ],
+    [
+     -10,
+     30
+    ]
+   ],
+   "x": [
+    -4,
+    4
+   ],
+   "id": "arm",
+   "color": "#1c2420"
+  },
+  {
+   "box": [
+    20,
+    22,
+    8
+   ],
+   "at": [
+    0,
+    0,
+    32
+   ],
+   "id": "arm_base",
+   "color": "#1c2420"
+  }
+ ]
+}

@@ -1,0 +1,15 @@
+{
+ "robot_type": "vertical_spinner",
+ "wheels": 4,
+ "weapon": {
+  "kind": "disc",
+  "axis": "x",
+  "position": "rear",
+  "teeth": 2
+ },
+ "photos": [
+  "ablation.aws72.webp",
+  "ablation.aws74.webp",
+  "ablation.aws76.webp"
+ ]
+}
