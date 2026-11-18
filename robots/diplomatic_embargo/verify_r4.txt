@@ -1,0 +1,76 @@
+BLOCKERS: 6
+  [cached] integrity 0.00s
+  [cached] mass 0.00s
+  [proxy] interference 0.17s
+  [cached] connections 0.00s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.00s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.01s
+  [cached] physics 0.00s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [cached] likeness 0.00s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.00s
+  [cached] waiver_audit 0.00s
+  [cached] geom 0.00s
+  [cached] dfm 0.00s
+  [cached] realworld 0.01s
+diplomatic embargo: ok=False 6 blockers in 6 root causes, mass 150.9/150 g
+1. [mass.over] 150.9 g (range 129.0 to 172.7 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+2. [connection.cover_fasteners] `front_plate` is an armour / cover panel held by 0 fastener(s); it needs >= 2 real screws. Snap, press-fit or tape retention alone lets it peel off on the first hit.
+   fix: Bolt it with >= 2 screws into inserts, nuts or tapped bosses and declare them in `fasteners`.
+   | front_plate: x -43.00..43.00  y 44.83..53.17  z -9.03..17.03  size 86.00 x 8.34 x 26.06 mm
+   |   centre (0.00, 49.00, 4.00), volume 6600.6 mm3
+   |   overlap allowed `chassis` 1.11 mm (allowed inf)
+   |   gap to `fork_0` 0.00 mm (touching)
+   |   gap to `fork_1` 0.00 mm (touching)
+3. [wire.render_wires] 9 of 9 robot render(s) do not draw all 6 wires: renders/diff_diplomatic_embargo.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_diplomatic_embargo.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_diplomatic_embargo.aws72_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_diplomatic_embargo.aws76_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_diplomatic_embargo.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_diplomatic_embargo.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_diplomatic_embargo.aws72.png: no render record (`<png>.json`), so nothing says the wires were drawn...
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+4. [likeness.silhouette] `reference/diplomatic_embargo.aws72.webp`: best silhouette IoU 0.68 at camera front_left_iso (elevation 25, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.71). Regions (photo frame, left third first) 0.49 / 0.85 / 0.65: worst = front third. Height/length 0.67 model vs 0.68 photo (proportions ok).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+5. [likeness.view] `reference/diplomatic_embargo.aws76.webp` is declared `front_left_iso` (IoU 0.49 there) but the model matches it better from rear_left_iso (elevation 45, azimuth 240) (IoU 0.73).
+   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
+6. [likeness.silhouette] `reference/diplomatic_embargo.aws76.webp`: best silhouette IoU 0.49 at camera front_left_iso (elevation 45, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.63). Regions (photo frame, left third first) 0.18 / 0.62 / 0.53: worst = front third. Height/length 0.69 model vs 0.80 photo (too flat: raise it or shorten it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+MASS BUDGET:
+  mass 150.9 g of 150 g (-0.9 g margin)
+    chassis                    63.21 g  fills 42% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    dm_wheel_l0                 9.70 g  fills 66% of its box
+    dm_wheel_r0                 9.70 g  fills 66% of its box
+    dm_wheel_l1                 9.70 g  fills 66% of its box
+    dm_wheel_r1                 9.70 g  fills 66% of its box
+    front_plate                 6.28 g  fills 35% of its box
+    el_rx_esc                   3.50 g  fills 100% of its box
+    fork_0                      2.84 g  fills 18% of its box
+    fork_1                      2.84 g  fills 18% of its box
+    fork_2                      2.84 g  fills 18% of its box
+    wheel_l0                    2.83 g  fills 57% of its box
+    wheel_r0                    2.83 g  fills 57% of its box
+    wheel_l1                    2.83 g  fills 57% of its box
+    wheel_r1                    2.83 g  fills 57% of its box
+    dt_hub_wheel_l0             1.06 g  fills 67% of its box
+    dt_hub_wheel_r0             1.06 g  fills 67% of its box
+    dt_hub_wheel_r1             1.06 g  fills 67% of its box
+    dt_hub_wheel_l1             1.06 g  fills 67% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    mass.over: 150.9 g (range 129.0 to 172.7 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 31 hit / 0 miss, min_gap 3 hit / 0 miss, overlap 271 hit / 0 miss, part_geom 20 hit / 0 miss
