@@ -1,12 +1,96 @@
 {
  "spec": "/tmp/work10_look_what_you_ve_done_to_our_b/robots/look_what_you_ve_done_to_our_b/spec.json",
- "rendered_at": 1795023139.4452884,
+ "rendered_at": 1795041717.6371746,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
   "wheel_l1",
-  "wheel_r1"
+  "wheel_r1",
+  "dt_hub_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_hub_wheel_l1",
+  "dt_hub_wheel_r1",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "dm_wheel_l1",
+  "dm_wheel_r1",
+  "el_battery",
+  "el_rx_esc",
+  "el_switch"
  ],
- "wires": {}
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    0.013,
+    3.5170000000000003,
+    -4.989
+   ],
+   "to": [
+    -4.0,
+    -28.5,
+    -6.0
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    4.0,
+    -28.5,
+    -6.0
+   ],
+   "to": [
+    -11.987,
+    -6.4830000000000005,
+    9.511
+   ]
+  },
+  "w_m1": {
+   "from": [
+    11.013,
+    1.517,
+    9.511
+   ],
+   "to": [
+    10.600000000000001,
+    -28.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -11.987,
+    1.517,
+    9.511
+   ],
+   "to": [
+    -10.600000000000001,
+    -28.0,
+    0.0
+   ]
+  },
+  "w_m3": {
+   "from": [
+    11.013,
+    1.517,
+    9.511
+   ],
+   "to": [
+    10.600000000000001,
+    10.0,
+    0.0
+   ]
+  },
+  "w_m4": {
+   "from": [
+    -11.987,
+    1.517,
+    9.511
+   ],
+   "to": [
+    -10.600000000000001,
+    9.999999999999998,
+    0.0
+   ]
+  }
+ }
 }
