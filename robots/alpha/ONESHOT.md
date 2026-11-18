@@ -16,3 +16,9 @@ Likeness: aws72 0.84 (ok).
 Decisions: type lifter; body box rect 85x92x30 mm, ramp 0; wheels 2 r12 inboard; weapon none; extra parts: scoop, link.
 
 Likeness: aws72 0.84 (ok).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type lifter; body box rect 85x92x30 mm, ramp 0; wheels 2 r12 inboard; weapon none; extra parts: scoop, link.
+
+Likeness: aws72 0.28 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/alpha.aws72.webp` is declared `front` (IoU 0.28 there) but the model matches it better from rear (elevation 45, azimuth 270) (I

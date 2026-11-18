@@ -14,7 +14,8 @@
    -22
   ],
   "outside": false,
-  "x": 42
+  "x": 42,
+  "notch": true
  },
  "colors": {
   "body": "#1f4a38",
@@ -22,7 +23,11 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "name": "alpha",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "box": [
     92,
@@ -62,9 +67,5 @@
    "id": "link",
    "color": "#1f4a38"
   }
- ],
- "name": "alpha",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }
