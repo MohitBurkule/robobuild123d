@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_my_first_bot/robots/my_first_bot/spec.json",
- "rendered_at": 1795022989.23933,
+ "rendered_at": 1795036228.17717,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -8,7 +8,14 @@
   "eye_l",
   "eye_r",
   "post",
-  "post_top"
+  "post_top",
+  "dt_hub_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_rx_esc",
+  "el_switch"
  ],
  "wires": {}
 }

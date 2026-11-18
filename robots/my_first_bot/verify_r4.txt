@@ -1,9 +1,9 @@
-BLOCKERS: 10
+BLOCKERS: 9
   [cached] integrity 0.00s
   [cached] mass 0.00s
-  [proxy] interference 0.09s
+  [proxy] interference 0.26s
   [cached] connections 0.00s
-  [cached] legal 0.00s
+  [cached] legal 0.01s
   [cached] fasteners 0.00s
   [cached] power 0.00s
   [cached] tension 0.00s
@@ -14,24 +14,24 @@ BLOCKERS: 10
   [cached] strength 0.00s
   [cached] printability 0.00s
   [cached] process 0.00s
-  [cached] electrical 0.00s
+  [cached] electrical 0.01s
   [cached] combat 0.00s
   [cached] physics 0.00s
   [cached] plausibility 0.00s
   [cached] cots 0.00s
   [cached] fit 0.00s
-  [cached] bom 0.00s
+  [cached] bom 0.01s
   [cached] wire_review 0.00s
   [cached] fastener_record 0.00s
   [cached] likeness 0.00s
   [cached] drive_recess 0.00s
   [cached] belt_wrap 0.00s
-  [cached] retention 0.01s
-  [cached] waiver_audit 0.00s
+  [cached] retention 0.00s
+  [cached] waiver_audit 0.01s
   [cached] geom 0.00s
-  [cached] dfm 0.00s
+  [cached] dfm 0.01s
   [cached] realworld 0.00s
-my first bot: ok=False 10 blockers in 9 root causes, mass 132.7/150 g
+my first bot: ok=False 9 blockers in 8 root causes, mass 132.7/150 g
 1. [connection.floating] `post` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `post_top`, 0.0 mm away. (+1 consequences)
    fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
    | post: x -2.00..2.00  y -7.00..-3.00  z 17.00..67.00  size 4.00 x 4.00 x 50.00 mm
@@ -57,13 +57,11 @@ my first bot: ok=False 10 blockers in 9 root causes, mass 132.7/150 g
    | post_top: x -9.00..9.00  y -7.00..-3.00  z 66.00..70.00  size 18.00 x 4.00 x 4.00 mm
 5. [wire.render_wires] 10 of 10 robot render(s) do not draw all 4 wires: renders/diff_my_first_bot.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_my_first_bot.aws71.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/iso.png: rendered without wires (checks off or no routes); renders/likeness_my_first_bot.aws67_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_my_first_bot.aws71_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_my_first_bot.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_my_first_bot.aws71.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes)...
    fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
-6. [likeness.view] `reference/my_first_bot.aws67.webp` is declared `front_left_iso` (IoU 0.75 there) but the model matches it better from rear_right_iso (elevation 45, azimuth 330) (IoU 0.87).
-   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
-7. [likeness.silhouette] `reference/my_first_bot.aws67.webp`: best silhouette IoU 0.75 at camera front_left_iso (elevation 45, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.75). Regions (photo frame, left third first) 0.69 / 0.88 / 0.60: worst = rear third. Height/length 0.88 model vs 0.89 photo (proportions ok).
+6. [likeness.silhouette] `reference/my_first_bot.aws67.webp`: best silhouette IoU 0.80 at camera front_right_iso (elevation 45, azimuth 60) (need 0.82: >= 0.8 and no worse than the closest stock template `revron` at 0.82). Regions (photo frame, left third first) 0.77 / 0.84 / 0.72: worst = rear third. Height/length 0.90 model vs 0.89 photo (proportions ok).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
-8. [likeness.view] `reference/my_first_bot.aws71.webp` is declared `front` (IoU 0.46 there) but the model matches it better from rear_left_iso (elevation 45, azimuth 240) (IoU 0.84).
+7. [likeness.view] `reference/my_first_bot.aws71.webp` is declared `front` (IoU 0.46 there) but the model matches it better from rear_left_iso (elevation 45, azimuth 240) (IoU 0.84).
    fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
-9. [likeness.silhouette] `reference/my_first_bot.aws71.webp`: best silhouette IoU 0.46 at camera front (elevation 45, azimuth 90) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.52). Regions (photo frame, left third first) 0.32 / 0.71 / 0.34: worst = front third. Height/length 0.96 model vs 0.89 photo (too tall: lower it or lengthen it).
+8. [likeness.silhouette] `reference/my_first_bot.aws71.webp`: best silhouette IoU 0.46 at camera front (elevation 45, azimuth 90) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.52). Regions (photo frame, left third first) 0.32 / 0.71 / 0.34: worst = front third. Height/length 0.96 model vs 0.89 photo (too tall: lower it or lengthen it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
   mass 132.7 g of 150 g (+17.3 g margin)
