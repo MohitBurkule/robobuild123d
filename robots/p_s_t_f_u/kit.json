@@ -3,17 +3,19 @@
  "body": {
   "length": 80,
   "width": 112,
-  "height": 26,
-  "ramp": 28
+  "height": 20,
+  "ramp": 22
  },
  "wheels": {
-  "n": 2,
-  "radius": 10,
+  "n": 4,
+  "radius": 11,
   "width": 8,
   "y": [
-   -22
+   -26,
+   18
   ],
-  "outside": false
+  "outside": false,
+  "notch": true
  },
  "colors": {
   "body": "#d6d6d2",
@@ -21,7 +23,11 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "name": "p s t f u",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "box": [
     4,
@@ -35,10 +41,26 @@
    ],
    "id": "rail",
    "color": "#e8c020"
+  },
+  {
+   "box": [
+    112,
+    4,
+    16
+   ],
+   "at": [
+    0,
+    36,
+    12
+   ],
+   "kind": "armor",
+   "id": "front_plate",
+   "color": "#c9cdd3",
+   "rot": [
+    -30,
+    0,
+    0
+   ]
   }
- ],
- "name": "p s t f u",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }

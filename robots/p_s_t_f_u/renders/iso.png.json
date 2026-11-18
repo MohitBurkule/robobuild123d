@@ -1,11 +1,14 @@
 {
  "spec": "/tmp/work10_p_s_t_f_u/robots/p_s_t_f_u/spec.json",
- "rendered_at": 1795023157.5451188,
+ "rendered_at": 1795024311.2635229,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
-  "rail"
+  "wheel_l1",
+  "wheel_r1",
+  "rail",
+  "front_plate"
  ],
  "wires": {}
 }
