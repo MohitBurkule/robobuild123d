@@ -1,0 +1,17 @@
+{
+ "spec": "/tmp/work10_corsac/robots/corsac/spec.json",
+ "rendered_at": 1795022504.5204456,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "fork_0",
+  "fork_1",
+  "fork_2",
+  "fork_3",
+  "fork_4",
+  "fork_5",
+  "face"
+ ],
+ "wires": {}
+}

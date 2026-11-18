@@ -1,0 +1,87 @@
+{
+ "robot_type": "wedge",
+ "body": {
+  "length": 80,
+  "width": 100,
+  "height": 26,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 12,
+  "width": 10,
+  "y": [
+   -18
+  ],
+  "outside": false,
+  "x": 44
+ },
+ "forks": {
+  "n": 6,
+  "length": 14,
+  "width": 8,
+  "spread": 90,
+  "tilt_deg": 20
+ },
+ "colors": {
+  "body": "#1f4a38",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#2a2c30"
+ },
+ "extras": [
+  {
+   "front": [
+    [
+     -50,
+     4
+    ],
+    [
+     50,
+     4
+    ],
+    [
+     56,
+     30
+    ],
+    [
+     46,
+     56
+    ],
+    [
+     30,
+     40
+    ],
+    [
+     0,
+     34
+    ],
+    [
+     -30,
+     40
+    ],
+    [
+     -46,
+     56
+    ],
+    [
+     -56,
+     30
+    ]
+   ],
+   "y": [
+    40,
+    43
+   ],
+   "color": "#b9bdc2",
+   "kind": "armor",
+   "material": "aluminium",
+   "process": "laser",
+   "id": "face"
+  }
+ ],
+ "name": "corsac",
+ "weapon": {
+  "kind": "none"
+ }
+}
