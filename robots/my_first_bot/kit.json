@@ -21,7 +21,14 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "skip_photos": [
+  0
+ ],
+ "name": "my first bot",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "sphere": 11,
    "at": [
@@ -70,12 +77,5 @@
    "id": "post_top",
    "color": "#e8efe8"
   }
- ],
- "skip_photos": [
-  0
- ],
- "name": "my first bot",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }

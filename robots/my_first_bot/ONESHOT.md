@@ -17,3 +17,9 @@ Likeness: aws67 0.87 (ok), aws71 0.84 (ok).
 Decisions: type wedge; body box rect 105x100x36 mm, ramp 95; wheels 2 r10 inboard; weapon none; extra parts: eye_l, eye_r, post, post_top; photos skipped (cluttered): indices [0].
 
 Likeness: aws67 0.87 (ok), aws71 0.84 (ok).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type wedge; body box rect 105x100x36 mm, ramp 95; wheels 2 r10 inboard; weapon none; extra parts: eye_l, eye_r, post, post_top; photos skipped (cluttered): indices [0].
+
+Likeness: aws67 0.75 (FAIL), aws71 0.46 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/my_first_bot.aws67.webp` is declared `front_left_iso` (IoU 0.75 there) but the model matches it better from rear_right_iso (ele; [FAIL] likeness.view: `reference/my_first_bot.aws71.webp` is declared `front` (IoU 0.46 there) but the model matches it better from rear_left_iso (elevation 45,

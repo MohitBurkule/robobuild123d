@@ -7,5 +7,14 @@
  "photos": [
   "my_first_bot.aws67.webp",
   "my_first_bot.aws71.webp"
- ]
+ ],
+ "view": {
+  "my_first_bot.aws66.webp": "top",
+  "my_first_bot.aws67.webp": "front_left_iso",
+  "my_first_bot.aws71.webp": "front"
+ },
+ "elevation": {
+  "my_first_bot.aws67.webp": 45,
+  "my_first_bot.aws71.webp": 45
+ }
 }

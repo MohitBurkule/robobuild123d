@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_my_first_bot/robots/my_first_bot/spec.json",
- "rendered_at": 1795022991.6928432,
+ "rendered_at": 1795025905.701963,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -8,7 +8,21 @@
   "eye_l",
   "eye_r",
   "post",
-  "post_top"
+  "post_top",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_nut_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_nut_wheel_r0",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3",
+  "dt_screw_4",
+  "dt_screw_5",
+  "dt_screw_6",
+  "dt_screw_7"
  ],
  "wires": {}
 }
