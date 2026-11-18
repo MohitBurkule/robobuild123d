@@ -1,87 +1,93 @@
-BLOCKERS: unknown (outside rebuilt after this run; round 4 to be re-run)
-  [cached] integrity 0.00s
-  [cached] mass 0.00s
-  [proxy] interference 0.31s
-  [cached] connections 0.00s
-  [cached] legal 0.00s
-  [cached] fasteners 0.00s
-  [cached] power 0.00s
-  [cached] tension 0.00s
-  [cached] targets 0.00s
-  [cached] fight 0.00s
-  [cached] shape 0.00s
-  [cached] dynamics 0.00s
-  [cached] strength 0.00s
-  [cached] printability 0.00s
-  [cached] process 0.00s
-  [cached] electrical 0.00s
-  [cached] combat 0.00s
-  [cached] physics 0.00s
-  [cached] plausibility 0.00s
-  [cached] cots 0.00s
-  [cached] fit 0.00s
-  [cached] bom 0.00s
-  [cached] wire_review 0.00s
-  [cached] fastener_record 0.00s
-  [cached] likeness 0.00s
-  [cached] drive_recess 0.00s
-  [cached] belt_wrap 0.00s
-  [cached] retention 0.00s
-  [cached] waiver_audit 0.00s
-  [cached] geom 0.00s
-  [cached] dfm 0.00s
-  [cached] realworld 0.00s
-sawcon: ok=False 8 blockers in 7 root causes, mass 213.2/150 g
+BLOCKERS: 8
+  [ran] integrity 1.66s
+  [ran] mass 0.00s
+  [proxy] interference 245.77s
+  [ran] connections 51.68s
+  [ran] legal 0.32s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.43s
+  [ran] shape 13.38s
+  [ran] dynamics 0.05s
+  [ran] strength 0.05s
+  [ran] printability 13.09s
+  [ran] process 0.35s
+  [ran] electrical 0.07s
+  [ran] combat 1.73s
+  [ran] physics 0.03s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.98s
+  [ran] bom 0.04s
+  [ran] wire_review 0.98s
+  [ran] fastener_record 0.00s
+  [ran] likeness 131.60s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.01s
+  [ran] geom 1.74s
+  [ran] dfm 0.65s
+  [ran] realworld 0.84s
+sawcon: ok=False 8 blockers in 7 root causes, mass 208.8/150 g
 1. [connection.floating] `weapon` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `dt_shaft_weapon`, 0.0 mm away. (+1 consequences)
    fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
-   | weapon: x -1.50..1.50  y 16.94..51.06  z 66.99..101.06  size 3.00 x 34.12 x 34.07 mm
-   |   centre (0.00, 34.00, 84.03), volume 2382.4 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0.0, 34.0, 84.0] range 0..360 default 0
+   | weapon: x -1.50..1.50  y -25.06..9.06  z 54.99..89.06  size 3.00 x 34.12 x 34.07 mm
+   |   centre (0.00, -8.00, 72.03), volume 2382.4 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, -8.0, 72.0] range 0..360 default 0
    |   gap to `dt_shaft_weapon` 0.00 mm (touching)
    |   gap to `lock_pin` 0.10 mm
-2. [mass.over] 213.2 g (range 182.0 to 244.3 g) against the 150 g limit; 5.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+2. [mass.over] 208.8 g (range 178.6 to 239.1 g) against the 150 g limit; 5.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
 3. [connection.floating] `lock_pin` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `weapon`, 0.1 mm away.
    fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
-   | lock_pin: x -3.50..3.50  y 43.95..47.95  z 82.00..86.00  size 7.00 x 4.00 x 4.00 mm
-   |   centre (0.00, 45.95, 84.00), volume 88.0 mm3
+   | lock_pin: x -3.50..3.50  y 1.95..5.95  z 70.00..74.00  size 7.00 x 4.00 x 4.00 mm
+   |   centre (0.00, 3.95, 72.00), volume 88.0 mm3
    |   gap to `weapon` 0.10 mm
-   | weapon: x -1.50..1.50  y 16.94..51.06  z 66.99..101.06  size 3.00 x 34.12 x 34.07 mm
-   |   centre (0.00, 34.00, 84.03), volume 2382.4 mm3
+   | weapon: x -1.50..1.50  y -25.06..9.06  z 54.99..89.06  size 3.00 x 34.12 x 34.07 mm
+   |   centre (0.00, -8.00, 72.03), volume 2382.4 mm3
 4. [power.weapon_motor] `weapon` names motor None; it must be a catalog brushless motor so speed can be computed.
    fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
-   | weapon: x -1.50..1.50  y 16.94..51.06  z 66.99..101.06  size 3.00 x 34.12 x 34.07 mm
-   |   centre (0.00, 34.00, 84.03), volume 2382.4 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0.0, 34.0, 84.0] range 0..360 default 0
+   | weapon: x -1.50..1.50  y -25.06..9.06  z 54.99..89.06  size 3.00 x 34.12 x 34.07 mm
+   |   centre (0.00, -8.00, 72.03), volume 2382.4 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, -8.0, 72.0] range 0..360 default 0
    |   gap to `dt_shaft_weapon` 0.00 mm (touching)
    |   gap to `lock_pin` 0.10 mm
 5. [process.geometry] `weapon` (laser): thinnest web between cut features is 1.80 mm < 2.25 mm (0.75 x thickness 3.00 mm).
    fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
-   | weapon: x -1.50..1.50  y 16.94..51.06  z 66.99..101.06  size 3.00 x 34.12 x 34.07 mm
-   |   centre (0.00, 34.00, 84.03), volume 2382.4 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0.0, 34.0, 84.0] range 0..360 default 0
+   | weapon: x -1.50..1.50  y -25.06..9.06  z 54.99..89.06  size 3.00 x 34.12 x 34.07 mm
+   |   centre (0.00, -8.00, 72.03), volume 2382.4 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, -8.0, 72.0] range 0..360 default 0
    |   gap to `dt_shaft_weapon` 0.00 mm (touching)
    |   gap to `lock_pin` 0.10 mm
-6. [wire.render_wires] 6 of 6 robot render(s) do not draw all 8 wires: renders/diff_sawcon.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_sawcon.aws67_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_sawcon.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/pick_sawcon.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_sawcon.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn
-   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
-7. [likeness.silhouette] `reference/sawcon.aws67.webp`: best silhouette IoU 0.75 at camera front_left_iso (elevation 45, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.77). Regions (photo frame, left third first) 0.76 / 0.82 / 0.64: worst = rear third. Height/length 0.81 model vs 0.83 photo (proportions ok).
+6. [likeness.silhouette] `reference/sawcon.aws67.webp`: best silhouette IoU 0.76 at camera front_left_iso (elevation 45, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.77). Regions (photo frame, left third first) 0.78 / 0.82 / 0.63: worst = rear third. Height/length 0.85 model vs 0.83 photo (proportions ok).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+7. [geom.tiny_edge] `pod_l`: 15 edge(s) shorter than 0.05 mm, shortest 0.0002 mm. World mm: [17.31, 35.25, -1.0] 0.0002 mm; [17.31, -38.75, 0.1] 0.0013 mm; [28.62, -43.75, -3.4] 0.0025 mm; [16.26, 1.25, 3.03] 0.0029 mm; [14.89, 38.91, -7.08] 0.0051 mm (+10 more).
+   fix: Two feature boundaries miss each other by the edge length at each listed point. Drive both from ONE parameter or the same face / plane (not two numbers that should be equal), or extend the cutting / added body clear past the wall before the boolean, so the boundaries coincide or clearly cross.
+   | pod_l: x 8.00..48.00  y -45.00..45.00  z -9.00..13.00  size 40.00 x 90.00 x 22.00 mm
+   |   centre (28.00, 0.00, 2.00), volume 36017.2 mm3
+   |   overlap allowed `plow_face` 0.48 mm (allowed inf)
+   |   overlap allowed `arm_mount` 0.46 mm (allowed inf)
+   |   overlap allowed `bridge` 0.05 mm (allowed inf)
 MASS BUDGET:
-  mass 213.2 g of 150 g (-63.2 g margin)
-    pod_l                      39.09 g  fills 52% of its box
-    pod_r                      34.24 g  fills 45% of its box
+  mass 208.8 g of 150 g (-58.8 g margin)
+    pod_l                      34.29 g  fills 45% of its box
+    pod_r                      34.05 g  fills 45% of its box
     el_battery                 21.50 g  fills 100% of its box  <- solid block? a tub should be a shell
     weapon                     18.82 g  fills 68% of its box  <- solid block? a tub should be a shell
-    plow_face                  13.55 g  fills 34% of its box
+    plow_face                  13.06 g  fills 33% of its box
     dm_wheel_l0                 9.70 g  fills 66% of its box
     dm_wheel_r0                 9.70 g  fills 66% of its box
     dm_wheel_l1                 9.70 g  fills 66% of its box
     dm_wheel_r1                 9.70 g  fills 66% of its box
     plow                        9.00 g  fills 88% of its box
-    arm                         6.92 g  fills 17% of its box
+    arm                         5.81 g  fills 22% of its box
     el_wesc                     5.00 g  fills 94% of its box
-    bridge                      4.86 g  fills 57% of its box
+    bridge                      4.77 g  fills 56% of its box
     el_rx_esc                   3.50 g  fills 100% of its box
+    arm_mount                   2.36 g  fills 70% of its box
     wheel_l0                    2.26 g  fills 57% of its box
     wheel_r0                    2.26 g  fills 57% of its box
     wheel_l1                    2.26 g  fills 57% of its box
@@ -93,6 +99,6 @@ MASS BUDGET:
     dt_hub_wheel_l1             0.86 g  fills 64% of its box
     lock_pin                    0.69 g  fills 79% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.over: 213.2 g (range 182.0 to 244.3 g) against the 150 g limit; 5.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.over: 208.8 g (range 178.6 to 239.1 g) against the 150 g limit; 5.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: distance 8 hit / 0 miss, group 31 hit / 0 miss, min_gap 15 hit / 0 miss, overlap 292 hit / 0 miss, part_geom 25 hit / 0 miss
+cache: part_geom 0 hit / 26 miss
