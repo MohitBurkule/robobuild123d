@@ -18,11 +18,11 @@
  },
  "weapon": {
   "kind": "disc",
-  "radius": 44,
+  "radius": 40,
   "width": 4,
   "y": 2,
   "teeth": 2,
-  "z": 47,
+  "z": 44,
   "axis": "x"
  },
  "colors": {
@@ -31,7 +31,15 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "forks": {
+  "n": 2,
+  "length": 24,
+  "width": 10,
+  "spread": 80,
+  "tilt_deg": 8
+ },
+ "name": "pyro",
+ "macros": [
   {
    "cyl": [
     10,
@@ -61,13 +69,5 @@
    "id": "upright",
    "color": "#1f6a4a"
   }
- ],
- "forks": {
-  "n": 2,
-  "length": 24,
-  "width": 10,
-  "spread": 80,
-  "tilt_deg": 8
- },
- "name": "pyro"
+ ]
 }

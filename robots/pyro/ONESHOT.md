@@ -16,3 +16,9 @@ Likeness: aws71 0.76 (FAIL).
 Decisions: type vertical_spinner; body twin_pods rect 90x112x36 mm, ramp 35; wheels 2 r13 outboard; weapon disc r44 axis x teeth 2; 2 forks 24 mm; extra parts: motor, upright.
 
 Likeness: aws71 0.72 (FAIL).
+
+## Round 3 (looks: photo-matched views, attachment + detail pass: hubs, axles, shafts, bearing arms, fork mounts, screw heads; verify blockers rise because detail parts are not yet integral, fixed in round 4)
+Decisions: type vertical_spinner; body twin_pods rect 90x112x36 mm, ramp 35; wheels 2 r13 outboard; weapon disc r40 axis x teeth 2; 2 forks 24 mm; extra parts: motor, upright.
+
+Likeness: aws71 0.65 (FAIL).
+Other likeness findings: [FAIL] likeness.view: `reference/pyro.aws71.webp` is declared `front_right_iso` (IoU 0.65 there) but the model matches it better from front_right_iso (elevation

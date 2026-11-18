@@ -8,5 +8,11 @@
  },
  "photos": [
   "pyro.aws71.webp"
- ]
+ ],
+ "view": {
+  "pyro.aws71.webp": "front_right_iso"
+ },
+ "elevation": {
+  "pyro.aws71.webp": 45
+ }
 }
