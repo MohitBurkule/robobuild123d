@@ -1,37 +1,37 @@
-BLOCKERS: 13
-  [cached] integrity 0.02s
-  [cached] mass 0.00s
-  [proxy] interference 0.37s
-  [cached] connections 0.02s
-  [cached] legal 0.00s
-  [cached] fasteners 0.00s
-  [cached] power 0.00s
-  [cached] tension 0.00s
-  [cached] targets 0.00s
-  [cached] fight 0.00s
-  [cached] shape 0.00s
-  [cached] dynamics 0.00s
-  [cached] strength 0.00s
-  [cached] printability 0.00s
-  [cached] process 0.00s
-  [cached] electrical 0.00s
-  [cached] combat 0.01s
-  [cached] physics 0.00s
-  [cached] plausibility 0.00s
-  [cached] cots 0.00s
-  [cached] fit 0.01s
-  [cached] bom 0.00s
-  [cached] wire_review 0.01s
-  [cached] fastener_record 0.00s
-  [ran] likeness 13.14s
-  [cached] drive_recess 0.00s
-  [cached] belt_wrap 0.00s
-  [cached] retention 0.01s
-  [cached] waiver_audit 0.00s
-  [cached] geom 0.01s
-  [cached] dfm 0.00s
-  [cached] realworld 0.01s
-burning tiger: ok=False 13 blockers in 12 root causes, mass 151.2/150 g
+BLOCKERS: 12
+  [ran] integrity 0.09s
+  [ran] mass 0.00s
+  [proxy] interference 10.66s
+  [ran] connections 0.87s
+  [ran] legal 0.02s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.02s
+  [ran] shape 0.29s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 1.03s
+  [ran] process 0.02s
+  [ran] electrical 0.01s
+  [ran] combat 0.16s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.07s
+  [ran] bom 0.00s
+  [ran] wire_review 0.01s
+  [ran] fastener_record 0.00s
+  [ran] likeness 5.27s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.17s
+  [ran] dfm 0.07s
+  [ran] realworld 0.10s
+burning tiger: ok=False 12 blockers in 11 root causes, mass 150.6/150 g
 1. [process.geometry] `fork_0` (laser): 1 face(s) (17 mm2) are neither the two plate faces nor walls perpendicular to them: 3D features (bumps, drum surfaces, raised teeth) cannot be laser/waterjet cut. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
    fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
    | fork_0: x -54.00..-32.00  y 33.60..66.40  z -13.91..-1.98  size 22.00 x 32.80 x 11.93 mm
@@ -46,7 +46,7 @@ burning tiger: ok=False 13 blockers in 12 root causes, mass 151.2/150 g
    |   joint revolute axis [1, 0, 0] pivot [0, -25, 16.0] range 0..80 default 0
    |   gap to `chassis` 0.00 mm (touching)
    |   gap to `lid` 0.00 mm (touching)
-3. [mass.over] 151.2 g (range 125.3 to 177.2 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+3. [mass.over] 150.6 g (range 124.8 to 176.4 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
 4. [proxy.sweep] joint `arm`: `arm` hits `chassis` 1.12 mm deep at 7.3 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint arm` lists the closest approach to every part.
    | arm: x -9.00..9.00  y -30.00..42.00  z -2.00..22.00  size 18.00 x 72.00 x 24.00 mm
@@ -70,29 +70,27 @@ burning tiger: ok=False 13 blockers in 12 root causes, mass 151.2/150 g
    |   gap to `lid` 0.00 mm (touching)
 7. [electrical.battery_weapon_gap] Battery is -2.5 mm from the weapon's swept volume (need >= 3 mm plus a wall).
    fix: Move the battery >= 3 mm from the swept volume.
-8. [wire.render_wires] 9 of 9 robot render(s) do not draw all 4 wires: renders/diff_burning_tiger.aws74.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_burning_tiger.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_burning_tiger.aws74_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_burning_tiger.aws76_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_burning_tiger.aws74.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_burning_tiger.aws76.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_burning_tiger.aws74.png: no render record (`<png>.json`), so nothing says the wires were drawn...
-   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
-9. [wire.rotor_clearance] wire `w_bat_sw` passes -0.9 mm from the volume swept by the `arm` rotor (arm) at [-0.5, 10.5, -4.5].
+8. [wire.rotor_clearance] wire `w_bat_sw` passes -0.9 mm from the volume swept by the `arm` rotor (arm) at [-0.5, 10.5, -4.5].
    fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
    | arm: x -9.00..9.00  y -30.00..42.00  z -2.00..22.00  size 18.00 x 72.00 x 24.00 mm
    |   centre (-0.00, 6.00, 10.00), volume 7542.0 mm3
    |   joint revolute axis [1, 0, 0] pivot [0, -25, 16.0] range 0..80 default 0
    |   gap to `chassis` 0.00 mm (touching)
    |   gap to `lid` 0.00 mm (touching)
-10. [wire.rotor_clearance] wire `w_sw_esc` passes -0.9 mm from the volume swept by the `arm` rotor (arm) at [3.5, -13.5, -5.0].
+9. [wire.rotor_clearance] wire `w_sw_esc` passes -0.9 mm from the volume swept by the `arm` rotor (arm) at [3.5, -13.5, -5.0].
    fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
    | arm: x -9.00..9.00  y -30.00..42.00  z -2.00..22.00  size 18.00 x 72.00 x 24.00 mm
    |   centre (-0.00, 6.00, 10.00), volume 7542.0 mm3
    |   joint revolute axis [1, 0, 0] pivot [0, -25, 16.0] range 0..80 default 0
    |   gap to `chassis` 0.00 mm (touching)
    |   gap to `lid` 0.00 mm (touching)
-11. [likeness.silhouette] `reference/burning_tiger.aws74.webp`: best silhouette IoU 0.66 at camera front_left_iso (elevation 45, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.72). Regions (photo frame, left third first) 0.56 / 0.71 / 0.66: worst = front third. Height/length 0.80 model vs 0.73 photo (too tall: lower it or lengthen it).
+10. [likeness.silhouette] `reference/burning_tiger.aws74.webp`: best silhouette IoU 0.66 at camera front_left_iso (elevation 45, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.72). Regions (photo frame, left third first) 0.56 / 0.71 / 0.66: worst = front third. Height/length 0.80 model vs 0.73 photo (too tall: lower it or lengthen it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
-12. [likeness.silhouette] `reference/burning_tiger.aws76.webp`: best silhouette IoU 0.65 at camera front_right_iso (elevation 45, azimuth 60) (need 0.80: >= 0.8 and no worse than the closest stock template `wedge_2wd` at 0.69). Regions (photo frame, left third first) 0.74 / 0.70 / 0.45: worst = rear third. Height/length 0.80 model vs 0.73 photo (too tall: lower it or lengthen it).
+11. [likeness.silhouette] `reference/burning_tiger.aws76.webp`: best silhouette IoU 0.65 at camera front_right_iso (elevation 45, azimuth 60) (need 0.80: >= 0.8 and no worse than the closest stock template `wedge_2wd` at 0.69). Regions (photo frame, left third first) 0.74 / 0.70 / 0.45: worst = rear third. Height/length 0.80 model vs 0.73 photo (too tall: lower it or lengthen it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
-  mass 151.2 g of 150 g (-1.2 g margin)
-    chassis                    47.74 g  fills 37% of its box
+  mass 150.6 g of 150 g (-0.6 g margin)
+    chassis                    47.06 g  fills 37% of its box
     el_battery                 12.50 g  fills 100% of its box
     lid                        10.61 g  fills 97% of its box
     dm_wheel_l1                 9.50 g  fills 63% of its box
@@ -116,6 +114,6 @@ MASS BUDGET:
     dt_mount_fork_0             1.05 g  fills 59% of its box
     dt_mount_fork_2             1.05 g  fills 59% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.over: 151.2 g (range 125.3 to 177.2 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.over: 150.6 g (range 124.8 to 176.4 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: group 30 hit / 1 miss, inside 19 hit / 0 miss, likeness 0 hit / 2 miss, min_gap 61 hit / 0 miss, overlap 325 hit / 0 miss, part_geom 24 hit / 0 miss
+cache: distance 3 hit / 3 miss, group 0 hit / 31 miss, inside 20 hit / 2 miss, likeness 2 hit / 0 miss, min_gap 39 hit / 23 miss, overlap 251 hit / 89 miss, part_check 16 hit / 1 miss, part_geom 23 hit / 1 miss, ray 124 hit / 36 miss

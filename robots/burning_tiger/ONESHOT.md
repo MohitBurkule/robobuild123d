@@ -22,7 +22,7 @@ Likeness: aws74 0.55 (FAIL), aws76 0.62 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/burning_tiger.aws74.webp` is declared `front` (IoU 0.55 there) but the model matches it better from rear_left_iso (elevation 45
 
 ## Round 4 (verification, helper 2)
-Blockers r3 94 -> r4 14 (`verify --tier inner`).
+Blockers r3 94 -> r4 12 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -51,9 +51,7 @@ Left (and why):
 - process.geometry x2: `fork_0` (laser): 1 face(s) (17 mm2) are neither the two plate faces nor walls perpendicular to them: 3D features (bumps, drum surfaces, raised teeth) cannot be laser/waterjet cut.
 - process.weapon_printed x1: toolchain: a printed lifter/flipper arm is judged like a spinner (needs hardened teeth); adding metal teeth changes the look.
 - electrical.battery_weapon_gap x1: toolchain: a limited-range arm is judged as a full revolution about its pivot; that cylinder covers the whole chassis.
-- wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
 - wire.rotor_clearance x2: toolchain: same full-revolution assumption; wires cannot leave a cylinder that covers the chassis.
-- likeness.view x1: looks, not in scope for this pass.
 - likeness.silhouette x2: looks, not in scope for this pass.
 
-Likeness (best silhouette IoU per photo, r3 -> r4): burning_tiger.aws74.webp 0.55 -> 0.55; burning_tiger.aws76.webp 0.62 -> 0.62
+Likeness (best silhouette IoU per photo, r3 -> r4): burning_tiger.aws74.webp 0.66 -> 0.66; burning_tiger.aws76.webp 0.65 -> 0.65
