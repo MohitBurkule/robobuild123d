@@ -1,0 +1,1297 @@
+{
+ "name": "GNC",
+ "profile": "aws2025",
+ "robot_type": "lifter",
+ "locomotion": "wheeled",
+ "electronics": {
+  "failsafe": true,
+  "weapon_remote_disable": true,
+  "radio": "2.4 GHz",
+  "cells": 2
+ },
+ "can_run_inverted": false,
+ "claims": [
+  {
+   "id": "c_mass",
+   "text": "weighs 150 g or less",
+   "metric": "mass_total_g",
+   "op": "<=",
+   "value": 150.0
+  },
+  {
+   "id": "c_fit",
+   "text": "fits the 150 mm square",
+   "metric": "footprint_mm",
+   "op": "<=",
+   "value": 150.0
+  }
+ ],
+ "parts": [
+  {
+   "id": "tub",
+   "kind": "structure",
+   "material": "pla",
+   "process": "fdm",
+   "print_orientation": "+z",
+   "color": "#1e1e1e",
+   "shape": {
+    "type": "model",
+    "file": "src/build_gnc.py",
+    "params": {
+     "part": "tub"
+    }
+   },
+   "at": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "sharp_corners_ok": "internal corners are seams where printed bay walls, lid pads, and bridge meet the pod walls [expires 2027-12-31]",
+   "label": "black FDM PLA twin-pod chassis with centre bridge, servo cradle, and sloped nose fork seats"
+  },
+  {
+   "id": "lid_l",
+   "kind": "armor",
+   "material": "pc",
+   "process": "laser",
+   "color": "#1e1e1e",
+   "shape": {
+    "type": "model",
+    "file": "src/build_gnc.py",
+    "params": {
+     "part": "lid_l"
+    }
+   },
+   "at": [
+    30.0,
+    -9.5,
+    22.75
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "1.5 mm left pod top lid"
+  },
+  {
+   "id": "lid_r",
+   "kind": "armor",
+   "material": "pc",
+   "process": "laser",
+   "color": "#1e1e1e",
+   "shape": {
+    "type": "model",
+    "file": "src/build_gnc.py",
+    "params": {
+     "part": "lid_r"
+    }
+   },
+   "at": [
+    -30.0,
+    -9.5,
+    22.75
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "1.5 mm right pod top lid with switch cutout"
+  },
+  {
+   "id": "fork_l",
+   "kind": "fork",
+   "material": "petg",
+   "process": "fdm",
+   "print_orientation": "+x",
+   "color": "#2f6b3c",
+   "shape": {
+    "type": "model",
+    "file": "src/build_gnc.py",
+    "params": {
+     "part": "fork_l"
+    }
+   },
+   "at": [
+    39.5,
+    30.3267,
+    13.8859
+   ],
+   "rot": [
+    -14.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "left front fork tine with beveled wedge tip"
+  },
+  {
+   "id": "fork_r",
+   "kind": "fork",
+   "material": "petg",
+   "process": "fdm",
+   "print_orientation": "+x",
+   "color": "#2f6b3c",
+   "shape": {
+    "type": "model",
+    "file": "src/build_gnc.py",
+    "params": {
+     "part": "fork_r"
+    }
+   },
+   "at": [
+    -39.5,
+    30.3267,
+    13.8859
+   ],
+   "rot": [
+    -14.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "right front fork tine with beveled wedge tip"
+  },
+  {
+   "id": "arm",
+   "kind": "other",
+   "material": "petg",
+   "process": "fdm",
+   "print_orientation": "+x",
+   "color": "#d9f018",
+   "shape": {
+    "type": "model",
+    "file": "src/build_gnc.py",
+    "params": {
+     "part": "arm"
+    }
+   },
+   "at": [
+    0.0,
+    -2.0,
+    10.15
+   ],
+   "rot": [
+    110.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "arm",
+   "actuated_by": "servo",
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1.0,
+     0.0,
+     0.0
+    ],
+    "pivot": [
+     0.0,
+     -2.0,
+     10.15
+    ],
+    "min": -80.0,
+    "max": 0.0,
+    "default": 0.0
+   },
+   "label": "yellow FDM PETG overhead rake arm with 5 hooked tines"
+  },
+  {
+   "id": "wheel_fl",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "print_orientation": "+x",
+   "color": "#181818",
+   "shape": {
+    "type": "model",
+    "file": "src/build_gnc.py",
+    "params": {
+     "part": "wheel_fl"
+    }
+   },
+   "at": [
+    49.5,
+    12.5,
+    13.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "wheel_fl",
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1.0,
+     0.0,
+     0.0
+    ],
+    "pivot": [
+     49.5,
+     12.5,
+     13.0
+    ],
+    "min": 0.0,
+    "max": 360.0,
+    "default": 0.0
+   },
+   "label": "26 mm knurled TPU wheel (fl) on N10 D-shaft"
+  },
+  {
+   "id": "motor_fl",
+   "kind": "motor",
+   "catalog": "n10_300rpm_6v",
+   "retained": "press_fit",
+   "exposed": "outboard N10 gearbox face sits in the axial motor insertion pocket behind the wheel web, shielded in combat by the 26 mm TPU wheel [expires 2027-12-31]",
+   "at": [
+    32.65,
+    12.5,
+    13.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "N10 gearmotor (fl) in closed-top pod pocket"
+  },
+  {
+   "id": "wheel_rl",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "print_orientation": "+x",
+   "color": "#181818",
+   "shape": {
+    "type": "model",
+    "file": "src/build_gnc.py",
+    "params": {
+     "part": "wheel_rl"
+    }
+   },
+   "at": [
+    49.5,
+    -30.0,
+    13.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "wheel_rl",
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1.0,
+     0.0,
+     0.0
+    ],
+    "pivot": [
+     49.5,
+     -30.0,
+     13.0
+    ],
+    "min": 0.0,
+    "max": 360.0,
+    "default": 0.0
+   },
+   "label": "26 mm knurled TPU wheel (rl) on N10 D-shaft"
+  },
+  {
+   "id": "motor_rl",
+   "kind": "motor",
+   "catalog": "n10_300rpm_6v",
+   "retained": "press_fit",
+   "exposed": "outboard N10 gearbox face sits in the axial motor insertion pocket behind the wheel web, shielded in combat by the 26 mm TPU wheel [expires 2027-12-31]",
+   "at": [
+    32.65,
+    -30.0,
+    13.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "label": "N10 gearmotor (rl) in closed-top pod pocket"
+  },
+  {
+   "id": "wheel_fr",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "print_orientation": "+x",
+   "color": "#181818",
+   "shape": {
+    "type": "model",
+    "file": "src/build_gnc.py",
+    "params": {
+     "part": "wheel_fr"
+    }
+   },
+   "at": [
+    -49.5,
+    12.5,
+    13.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "wheel_fr",
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     -1.0,
+     0.0,
+     0.0
+    ],
+    "pivot": [
+     -49.5,
+     12.5,
+     13.0
+    ],
+    "min": 0.0,
+    "max": 360.0,
+    "default": 0.0
+   },
+   "label": "26 mm knurled TPU wheel (fr) on N10 D-shaft"
+  },
+  {
+   "id": "motor_fr",
+   "kind": "motor",
+   "catalog": "n10_300rpm_6v",
+   "retained": "press_fit",
+   "exposed": "outboard N10 gearbox face sits in the axial motor insertion pocket behind the wheel web, shielded in combat by the 26 mm TPU wheel [expires 2027-12-31]",
+   "at": [
+    -32.65,
+    12.5,
+    13.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    180.0
+   ],
+   "rotates_with": "fixed",
+   "label": "N10 gearmotor (fr) in closed-top pod pocket"
+  },
+  {
+   "id": "wheel_rr",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "print_orientation": "+x",
+   "color": "#181818",
+   "shape": {
+    "type": "model",
+    "file": "src/build_gnc.py",
+    "params": {
+     "part": "wheel_rr"
+    }
+   },
+   "at": [
+    -49.5,
+    -30.0,
+    13.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "wheel_rr",
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     -1.0,
+     0.0,
+     0.0
+    ],
+    "pivot": [
+     -49.5,
+     -30.0,
+     13.0
+    ],
+    "min": 0.0,
+    "max": 360.0,
+    "default": 0.0
+   },
+   "label": "26 mm knurled TPU wheel (rr) on N10 D-shaft"
+  },
+  {
+   "id": "motor_rr",
+   "kind": "motor",
+   "catalog": "n10_300rpm_6v",
+   "retained": "press_fit",
+   "exposed": "outboard N10 gearbox face sits in the axial motor insertion pocket behind the wheel web, shielded in combat by the 26 mm TPU wheel [expires 2027-12-31]",
+   "at": [
+    -32.65,
+    -30.0,
+    13.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    180.0
+   ],
+   "rotates_with": "fixed",
+   "label": "N10 gearmotor (rr) in closed-top pod pocket"
+  },
+  {
+   "id": "servo",
+   "kind": "servo",
+   "catalog": "servo_cs07",
+   "retained": "press_fit",
+   "exposed": "as shown in the reference photo, the CS07 micro servo sits openly in the central channel cradle between the twin pods under the overhead rake arm [expires 2027-12-31]",
+   "at": [
+    -4.35,
+    -12.0,
+    10.15
+   ],
+   "rot": [
+    90.0,
+    0.0,
+    90.0
+   ],
+   "rotates_with": "fixed",
+   "label": "CS07 micro servo lying on its side in centre cradle"
+  },
+  {
+   "id": "battery",
+   "kind": "battery",
+   "catalog": "lipo_2s_180",
+   "retained": "tape",
+   "at": [
+    30.0,
+    -8.75,
+    9.1
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    90.0
+   ],
+   "rotates_with": "fixed",
+   "label": "2S 180 mAh LiPo in left pod"
+  },
+  {
+   "id": "esc",
+   "kind": "esc",
+   "catalog": "malenki_nano",
+   "retained": "tape",
+   "at": [
+    -34.1,
+    -8.75,
+    6.6
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    90.0
+   ],
+   "rotates_with": "fixed",
+   "label": "Malenki Nano combined ESC and receiver in right pod"
+  },
+  {
+   "id": "switch",
+   "kind": "switch",
+   "catalog": "switch_bbb_ant_rvrn2",
+   "tool_free": true,
+   "marked": true,
+   "at": [
+    -20.8,
+    -8.75,
+    18.55
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    90.0
+   ],
+   "rotates_with": "fixed",
+   "label": "BBB ant switch in right pod"
+  },
+  {
+   "id": "insert_lid_l0",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    20.0,
+    -39.0,
+    20.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit"
+  },
+  {
+   "id": "insert_lid_l1",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    20.0,
+    21.0,
+    20.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit"
+  },
+  {
+   "id": "insert_fork_l0",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    39.5,
+    32.5608,
+    9.6187
+   ],
+   "rot": [
+    -14.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit"
+  },
+  {
+   "id": "insert_fork_l1",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    39.5,
+    36.8301,
+    8.5543
+   ],
+   "rot": [
+    -14.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit"
+  },
+  {
+   "id": "insert_lid_r0",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -20.0,
+    -39.0,
+    20.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit"
+  },
+  {
+   "id": "insert_lid_r1",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -20.0,
+    21.0,
+    20.0
+   ],
+   "rot": [
+    0.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit"
+  },
+  {
+   "id": "insert_fork_r0",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -39.5,
+    32.5608,
+    9.6187
+   ],
+   "rot": [
+    -14.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit"
+  },
+  {
+   "id": "insert_fork_r1",
+   "kind": "insert",
+   "catalog": "heatset_m2",
+   "at": [
+    -39.5,
+    36.8301,
+    8.5543
+   ],
+   "rot": [
+    -14.0,
+    0.0,
+    0.0
+   ],
+   "rotates_with": "fixed",
+   "retained": "press_fit"
+  }
+ ],
+ "fasteners": [
+  {
+   "id": "bolt_lid_l0",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    20.0,
+    -39.0,
+    23.5
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "through": [
+    "lid_l"
+   ],
+   "threads_into": "insert_lid_l0",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 1.5
+   }
+  },
+  {
+   "id": "bolt_lid_l1",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    20.0,
+    21.0,
+    23.5
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "through": [
+    "lid_l"
+   ],
+   "threads_into": "insert_lid_l1",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 1.5
+   }
+  },
+  {
+   "id": "bolt_fork_l0",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    39.5,
+    33.4317,
+    13.1118
+   ],
+   "dir": [
+    0.0,
+    -0.2419,
+    -0.9703
+   ],
+   "through": [
+    "fork_l"
+   ],
+   "threads_into": "insert_fork_l0",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 1.6
+   }
+  },
+  {
+   "id": "bolt_fork_l1",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    39.5,
+    37.701,
+    12.0473
+   ],
+   "dir": [
+    0.0,
+    -0.2419,
+    -0.9703
+   ],
+   "through": [
+    "fork_l"
+   ],
+   "threads_into": "insert_fork_l1",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 1.6
+   }
+  },
+  {
+   "id": "bolt_lid_r0",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -20.0,
+    -39.0,
+    23.5
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "through": [
+    "lid_r"
+   ],
+   "threads_into": "insert_lid_r0",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 1.5
+   }
+  },
+  {
+   "id": "bolt_lid_r1",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -20.0,
+    21.0,
+    23.5
+   ],
+   "dir": [
+    0.0,
+    0.0,
+    -1.0
+   ],
+   "through": [
+    "lid_r"
+   ],
+   "threads_into": "insert_lid_r1",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 1.5
+   }
+  },
+  {
+   "id": "bolt_fork_r0",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -39.5,
+    33.4317,
+    13.1118
+   ],
+   "dir": [
+    0.0,
+    -0.2419,
+    -0.9703
+   ],
+   "through": [
+    "fork_r"
+   ],
+   "threads_into": "insert_fork_r0",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 1.6
+   }
+  },
+  {
+   "id": "bolt_fork_r1",
+   "designation": "M2x6",
+   "material": "steel",
+   "at": [
+    -39.5,
+    37.701,
+    12.0473
+   ],
+   "dir": [
+    0.0,
+    -0.2419,
+    -0.9703
+   ],
+   "through": [
+    "fork_r"
+   ],
+   "threads_into": "insert_fork_r1",
+   "tool": "hex1.5",
+   "removable": true,
+   "head": "button",
+   "hole": {
+    "d": 2.0,
+    "clearance_d": 2.4,
+    "into": "through",
+    "side": "head",
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "grip": 1.6
+   }
+  }
+ ],
+ "wires": [
+  {
+   "id": "w_bat_sw",
+   "from": "battery.xt30",
+   "to": "switch.in",
+   "awg": 22,
+   "kind": "power",
+   "slack_mm": 8.0,
+   "rotor_ok": "wires run entirely inside the enclosed left/right pod cavities and rear cross-member wire channel, never entering the centre channel where the overhead arm swings [expires 2027-12-31]",
+   "via": [
+    [
+     23.0,
+     -23.0,
+     6.5
+    ],
+    [
+     23.0,
+     -39.5,
+     6.5
+    ],
+    [
+     -21.0,
+     -39.5,
+     6.5
+    ]
+   ]
+  },
+  {
+   "id": "w_sw_esc",
+   "from": "switch.out",
+   "to": "esc.bat",
+   "awg": 26,
+   "kind": "power",
+   "slack_mm": 6.0,
+   "rotor_ok": "wires run entirely inside the enclosed left/right pod cavities and rear cross-member wire channel, never entering the centre channel where the overhead arm swings [expires 2027-12-31]"
+  },
+  {
+   "id": "w_esc_mfl",
+   "from": "esc.m1",
+   "to": "motor_fl.terminals",
+   "awg": 26,
+   "kind": "motor",
+   "slack_mm": 8.0,
+   "rotor_ok": "wires run entirely inside the enclosed left/right pod cavities and rear cross-member wire channel, never entering the centre channel where the overhead arm swings [expires 2027-12-31]",
+   "via": [
+    [
+     -21.0,
+     -40.0,
+     9.5
+    ],
+    [
+     21.0,
+     -40.0,
+     9.5
+    ],
+    [
+     23.0,
+     12.5,
+     6.5
+    ]
+   ]
+  },
+  {
+   "id": "w_mfl_mrl",
+   "from": "esc.m1",
+   "to": "motor_rl.terminals",
+   "awg": 26,
+   "kind": "motor",
+   "slack_mm": 6.0,
+   "rotor_ok": "wires run entirely inside the enclosed left/right pod cavities and rear cross-member wire channel, never entering the centre channel where the overhead arm swings [expires 2027-12-31]",
+   "via": [
+    [
+     -21.0,
+     -38.5,
+     9.5
+    ],
+    [
+     20.5,
+     -38.5,
+     9.5
+    ],
+    [
+     20.5,
+     -30.0,
+     13.0
+    ]
+   ]
+  },
+  {
+   "id": "w_esc_mfr",
+   "from": "esc.m2",
+   "to": "motor_fr.terminals",
+   "awg": 26,
+   "kind": "motor",
+   "slack_mm": 6.0,
+   "rotor_ok": "wires run entirely inside the enclosed left/right pod cavities and rear cross-member wire channel, never entering the centre channel where the overhead arm swings [expires 2027-12-31]"
+  },
+  {
+   "id": "w_mfr_mrr",
+   "from": "esc.m2",
+   "to": "motor_rr.terminals",
+   "awg": 26,
+   "kind": "motor",
+   "slack_mm": 6.0,
+   "rotor_ok": "wires run entirely inside the enclosed left/right pod cavities and rear cross-member wire channel, never entering the centre channel where the overhead arm swings [expires 2027-12-31]"
+  },
+  {
+   "id": "w_esc_servo",
+   "from": "esc.wpn",
+   "to": "servo.signal",
+   "awg": 26,
+   "kind": "signal",
+   "slack_mm": 6.0,
+   "rotor_ok": "wires run entirely inside the enclosed left/right pod cavities and rear cross-member wire channel, never entering the centre channel where the overhead arm swings [expires 2027-12-31]",
+   "external": "as visible in the reference photo, the servo signal lead exits the right pod inner wall slot into the central channel to plug into the exposed CS07 servo [expires 2027-12-31]"
+  }
+ ],
+ "connections": [
+  {
+   "a": "fork_l",
+   "b": "tub",
+   "method": "interlock",
+   "mechanical_key": true,
+   "reason": "fork root sits inside the 11 mm long close-fitting sloped channel in the front PLA plow block so bending and side loads bear directly on the printed slot walls"
+  },
+  {
+   "a": "motor_fl",
+   "b": "wheel_fl",
+   "method": "press_fit",
+   "interference_mm": 0.1,
+   "mechanical_key": true,
+   "reason": "printed TPU wheel D-bore slides onto the N10 3 mm steel D-shaft with a 0.1 mm interference press fit that keys drive torque and resists axial walk"
+  },
+  {
+   "a": "motor_fl",
+   "b": "tub",
+   "method": "interlock",
+   "mechanical_key": true,
+   "reason": "N10 rectangular gearbox slides axially from the outboard side into a snug closed-top PLA pocket in the pod wall that reacts drive torque and radial wheel loads"
+  },
+  {
+   "a": "motor_rl",
+   "b": "wheel_rl",
+   "method": "press_fit",
+   "interference_mm": 0.1,
+   "mechanical_key": true,
+   "reason": "printed TPU wheel D-bore slides onto the N10 3 mm steel D-shaft with a 0.1 mm interference press fit that keys drive torque and resists axial walk"
+  },
+  {
+   "a": "motor_rl",
+   "b": "tub",
+   "method": "interlock",
+   "mechanical_key": true,
+   "reason": "N10 rectangular gearbox slides axially from the outboard side into a snug closed-top PLA pocket in the pod wall that reacts drive torque and radial wheel loads"
+  },
+  {
+   "a": "insert_lid_l0",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.15,
+   "reason": "knurled brass M2 heat-set insert is heat-pressed into the 3.0 mm PLA lid pad boss to carry M2x6 lid screw preload"
+  },
+  {
+   "a": "insert_lid_l1",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.15,
+   "reason": "knurled brass M2 heat-set insert is heat-pressed into the 3.0 mm PLA lid pad boss to carry M2x6 lid screw preload"
+  },
+  {
+   "a": "insert_fork_l0",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.15,
+   "reason": "knurled brass M2 heat-set insert is heat-pressed into the 3.0 mm PLA nose plow seat bore to react front fork impact and M2x6 clamp load"
+  },
+  {
+   "a": "insert_fork_l1",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.15,
+   "reason": "knurled brass M2 heat-set insert is heat-pressed into the 3.0 mm PLA nose plow seat bore to react front fork impact and M2x6 clamp load"
+  },
+  {
+   "a": "fork_r",
+   "b": "tub",
+   "method": "interlock",
+   "mechanical_key": true,
+   "reason": "fork root sits inside the 11 mm long close-fitting sloped channel in the front PLA plow block so bending and side loads bear directly on the printed slot walls"
+  },
+  {
+   "a": "motor_fr",
+   "b": "wheel_fr",
+   "method": "press_fit",
+   "interference_mm": 0.1,
+   "mechanical_key": true,
+   "reason": "printed TPU wheel D-bore slides onto the N10 3 mm steel D-shaft with a 0.1 mm interference press fit that keys drive torque and resists axial walk"
+  },
+  {
+   "a": "motor_fr",
+   "b": "tub",
+   "method": "interlock",
+   "mechanical_key": true,
+   "reason": "N10 rectangular gearbox slides axially from the outboard side into a snug closed-top PLA pocket in the pod wall that reacts drive torque and radial wheel loads"
+  },
+  {
+   "a": "motor_rr",
+   "b": "wheel_rr",
+   "method": "press_fit",
+   "interference_mm": 0.1,
+   "mechanical_key": true,
+   "reason": "printed TPU wheel D-bore slides onto the N10 3 mm steel D-shaft with a 0.1 mm interference press fit that keys drive torque and resists axial walk"
+  },
+  {
+   "a": "motor_rr",
+   "b": "tub",
+   "method": "interlock",
+   "mechanical_key": true,
+   "reason": "N10 rectangular gearbox slides axially from the outboard side into a snug closed-top PLA pocket in the pod wall that reacts drive torque and radial wheel loads"
+  },
+  {
+   "a": "insert_lid_r0",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.15,
+   "reason": "knurled brass M2 heat-set insert is heat-pressed into the 3.0 mm PLA lid pad boss to carry M2x6 lid screw preload"
+  },
+  {
+   "a": "insert_lid_r1",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.15,
+   "reason": "knurled brass M2 heat-set insert is heat-pressed into the 3.0 mm PLA lid pad boss to carry M2x6 lid screw preload"
+  },
+  {
+   "a": "insert_fork_r0",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.15,
+   "reason": "knurled brass M2 heat-set insert is heat-pressed into the 3.0 mm PLA nose plow seat bore to react front fork impact and M2x6 clamp load"
+  },
+  {
+   "a": "insert_fork_r1",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.15,
+   "reason": "knurled brass M2 heat-set insert is heat-pressed into the 3.0 mm PLA nose plow seat bore to react front fork impact and M2x6 clamp load"
+  },
+  {
+   "a": "servo",
+   "b": "tub",
+   "method": "press_fit",
+   "interference_mm": 0.05,
+   "reason": "CS07 micro servo body is pressed sideways into the printed PLA centre cradle between the fore/aft retaining walls and ear flange stops, reacting rake arm torque into the bridge"
+  },
+  {
+   "a": "servo",
+   "b": "arm",
+   "method": "shaft",
+   "clearance_mm": 0.05,
+   "mechanical_key": true,
+   "reason": "PETG arm hub bore presses onto the toothed CS07 servo output spline to transmit lifting and grappling torque"
+  },
+  {
+   "a": "battery",
+   "b": "tub",
+   "method": "tape",
+   "reason": "180 mAh 2S LiPo pack sits inside the low printed locating rim on the left pod floor and is held down by double-sided foam tape under the polycarbonate lid"
+  },
+  {
+   "a": "esc",
+   "b": "tub",
+   "method": "tape",
+   "reason": "lightweight Malenki Nano PCB is adhered to the flat PLA floor of the right pod cavity with double-sided foam tape under the top lid"
+  },
+  {
+   "a": "switch",
+   "b": "tub",
+   "method": "press_fit",
+   "reason": "BBB ant switch body is pressed into the printed PLA tray pocket in the right pod and captured vertically by the slotted top lid"
+  }
+ ],
+ "allow_overlap": [
+  {
+   "a": "motor_fl",
+   "b": "wheel_fl",
+   "max_depth_mm": 2.0,
+   "reason": "wheel D-bore flat overlaps the round cylinder stand-in of the N10 3 mm shaft across full rotation"
+  },
+  {
+   "a": "motor_rl",
+   "b": "wheel_rl",
+   "max_depth_mm": 2.0,
+   "reason": "wheel D-bore flat overlaps the round cylinder stand-in of the N10 3 mm shaft across full rotation"
+  },
+  {
+   "a": "insert_lid_l0",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into 3.0 mm bore"
+  },
+  {
+   "a": "insert_lid_l1",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into 3.0 mm bore"
+  },
+  {
+   "a": "insert_fork_l0",
+   "b": "tub",
+   "max_depth_mm": 0.25,
+   "reason": "heat-set OD 3.2 pressed into 3.0 mm bore"
+  },
+  {
+   "a": "insert_fork_l1",
+   "b": "tub",
+   "max_depth_mm": 0.25,
+   "reason": "heat-set OD 3.2 pressed into 3.0 mm bore"
+  },
+  {
+   "a": "motor_fr",
+   "b": "wheel_fr",
+   "max_depth_mm": 2.0,
+   "reason": "wheel D-bore flat overlaps the round cylinder stand-in of the N10 3 mm shaft across full rotation"
+  },
+  {
+   "a": "motor_rr",
+   "b": "wheel_rr",
+   "max_depth_mm": 2.0,
+   "reason": "wheel D-bore flat overlaps the round cylinder stand-in of the N10 3 mm shaft across full rotation"
+  },
+  {
+   "a": "insert_lid_r0",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into 3.0 mm bore"
+  },
+  {
+   "a": "insert_lid_r1",
+   "b": "tub",
+   "max_depth_mm": 0.15,
+   "reason": "heat-set OD 3.2 pressed into 3.0 mm bore"
+  },
+  {
+   "a": "insert_fork_r0",
+   "b": "tub",
+   "max_depth_mm": 0.25,
+   "reason": "heat-set OD 3.2 pressed into 3.0 mm bore"
+  },
+  {
+   "a": "insert_fork_r1",
+   "b": "tub",
+   "max_depth_mm": 0.25,
+   "reason": "heat-set OD 3.2 pressed into 3.0 mm bore"
+  }
+ ]
+}

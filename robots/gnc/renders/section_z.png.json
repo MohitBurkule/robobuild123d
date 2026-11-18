@@ -1,0 +1,126 @@
+{
+ "spec": "/home/antigravity/MohitBurkule/robobuild123d/robots/gnc/spec.json",
+ "rendered_at": 1794998180.5439563,
+ "bodies": [
+  "tub",
+  "lid_l",
+  "lid_r",
+  "fork_l",
+  "fork_r",
+  "arm",
+  "wheel_fl",
+  "motor_fl",
+  "wheel_rl",
+  "motor_rl",
+  "wheel_fr",
+  "motor_fr",
+  "wheel_rr",
+  "motor_rr",
+  "servo",
+  "battery",
+  "esc",
+  "switch",
+  "insert_lid_l0",
+  "insert_lid_l1",
+  "insert_fork_l0",
+  "insert_fork_l1",
+  "insert_lid_r0",
+  "insert_lid_r1",
+  "insert_fork_r0",
+  "insert_fork_r1",
+  "bolt_lid_l0",
+  "bolt_lid_l1",
+  "bolt_fork_l0",
+  "bolt_fork_l1",
+  "bolt_lid_r0",
+  "bolt_lid_r1",
+  "bolt_fork_r0",
+  "bolt_fork_r1"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    19.0,
+    -8.75,
+    9.1
+   ],
+   "to": [
+    -20.8,
+    -11.75,
+    13.05
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    -20.8,
+    -8.75,
+    13.05
+   ],
+   "to": [
+    -30.1,
+    -20.25,
+    6.6
+   ]
+  },
+  "w_esc_mfl": {
+   "from": [
+    -38.1,
+    2.75,
+    6.6
+   ],
+   "to": [
+    21.799999999999997,
+    12.5,
+    13.0
+   ]
+  },
+  "w_mfl_mrl": {
+   "from": [
+    -38.1,
+    2.75,
+    6.6
+   ],
+   "to": [
+    21.799999999999997,
+    -30.0,
+    13.0
+   ]
+  },
+  "w_esc_mfr": {
+   "from": [
+    -38.1,
+    -20.25,
+    6.6
+   ],
+   "to": [
+    -21.799999999999997,
+    12.499999999999998,
+    13.0
+   ]
+  },
+  "w_mfr_mrr": {
+   "from": [
+    -38.1,
+    -20.25,
+    6.6
+   ],
+   "to": [
+    -21.799999999999997,
+    -30.0,
+    13.0
+   ]
+  },
+  "w_esc_servo": {
+   "from": [
+    -30.1,
+    2.75,
+    6.6
+   ],
+   "to": [
+    -4.3500000000000005,
+    -23.5,
+    10.15
+   ]
+  }
+ }
+}
