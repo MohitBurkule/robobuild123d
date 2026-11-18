@@ -3689,7 +3689,21 @@
       "threads_into": "insert_wl",
       "tool": "hex1.5",
       "removable": true,
-      "head": "socket"
+      "head": "socket",
+      "hole": {
+        "d": 2.0,
+        "length": 6.0,
+        "head": "cap",
+        "head_std": "ISO 4762",
+        "head_dk": 3.8,
+        "head_k": 2.0,
+        "clearance_d": 2.4,
+        "into": "insert",
+        "side": "head",
+        "cbore_d": 4.2,
+        "cbore_depth": 0.0,
+        "grip": 2.4
+      }
     },
     {
       "id": "bolt_wr",
@@ -3710,7 +3724,21 @@
       "threads_into": "insert_wr",
       "tool": "hex1.5",
       "removable": true,
-      "head": "socket"
+      "head": "socket",
+      "hole": {
+        "d": 2.0,
+        "length": 6.0,
+        "head": "cap",
+        "head_std": "ISO 4762",
+        "head_dk": 3.8,
+        "head_k": 2.0,
+        "clearance_d": 2.4,
+        "into": "insert",
+        "side": "head",
+        "cbore_d": 4.2,
+        "cbore_depth": 0.0,
+        "grip": 2.4
+      }
     },
     {
       "id": "bolt_wor",
@@ -3731,7 +3759,21 @@
       "threads_into": "insert_wor",
       "tool": "hex1.5",
       "removable": true,
-      "head": "socket"
+      "head": "socket",
+      "hole": {
+        "d": 2.0,
+        "length": 6.0,
+        "head": "cap",
+        "head_std": "ISO 4762",
+        "head_dk": 3.8,
+        "head_k": 2.0,
+        "clearance_d": 2.4,
+        "into": "insert",
+        "side": "head",
+        "cbore_d": 4.2,
+        "cbore_depth": 0.0,
+        "grip": 2.4
+      }
     },
     {
       "id": "bolt_wol",
@@ -3752,7 +3794,21 @@
       "threads_into": "insert_wol",
       "tool": "hex1.5",
       "removable": true,
-      "head": "socket"
+      "head": "socket",
+      "hole": {
+        "d": 2.0,
+        "length": 6.0,
+        "head": "cap",
+        "head_std": "ISO 4762",
+        "head_dk": 3.8,
+        "head_k": 2.0,
+        "clearance_d": 2.4,
+        "into": "insert",
+        "side": "head",
+        "cbore_d": 4.2,
+        "cbore_depth": 0.0,
+        "grip": 2.4
+      }
     },
     {
       "id": "bolt_fl",
@@ -3774,7 +3830,21 @@
       "threads_into": "insert_fl",
       "tool": "hex1.5",
       "removable": true,
-      "head": "socket"
+      "head": "socket",
+      "hole": {
+        "d": 2.0,
+        "length": 16.0,
+        "head": "cap",
+        "head_std": "ISO 4762",
+        "head_dk": 3.8,
+        "head_k": 2.0,
+        "clearance_d": 2.4,
+        "into": "insert",
+        "side": "head",
+        "cbore_d": 4.2,
+        "cbore_depth": 0.0,
+        "grip": 13.0
+      }
     },
     {
       "id": "bolt_fr",
@@ -3796,7 +3866,21 @@
       "threads_into": "insert_fr",
       "tool": "hex1.5",
       "removable": true,
-      "head": "socket"
+      "head": "socket",
+      "hole": {
+        "d": 2.0,
+        "length": 16.0,
+        "head": "cap",
+        "head_std": "ISO 4762",
+        "head_dk": 3.8,
+        "head_k": 2.0,
+        "clearance_d": 2.4,
+        "into": "insert",
+        "side": "head",
+        "cbore_d": 4.2,
+        "cbore_depth": 0.0,
+        "grip": 13.0
+      }
     },
     {
       "id": "bolt_rl",
@@ -3818,7 +3902,21 @@
       "threads_into": "insert_rl",
       "tool": "hex1.5",
       "removable": true,
-      "head": "socket"
+      "head": "socket",
+      "hole": {
+        "d": 2.0,
+        "length": 16.0,
+        "head": "cap",
+        "head_std": "ISO 4762",
+        "head_dk": 3.8,
+        "head_k": 2.0,
+        "clearance_d": 2.4,
+        "into": "insert",
+        "side": "head",
+        "cbore_d": 4.2,
+        "cbore_depth": 0.0,
+        "grip": 13.0
+      }
     },
     {
       "id": "bolt_rr",
@@ -3840,7 +3938,21 @@
       "threads_into": "insert_rr",
       "tool": "hex1.5",
       "removable": true,
-      "head": "socket"
+      "head": "socket",
+      "hole": {
+        "d": 2.0,
+        "length": 16.0,
+        "head": "cap",
+        "head_std": "ISO 4762",
+        "head_dk": 3.8,
+        "head_k": 2.0,
+        "clearance_d": 2.4,
+        "into": "insert",
+        "side": "head",
+        "cbore_d": 4.2,
+        "cbore_depth": 0.0,
+        "grip": 13.0
+      }
     }
   ],
   "wires": [
