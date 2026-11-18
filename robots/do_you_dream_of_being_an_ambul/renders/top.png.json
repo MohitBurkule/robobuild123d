@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_do_you_dream_of_being_an_ambul/robots/do_you_dream_of_being_an_ambul/spec.json",
- "rendered_at": 1795023301.1768475,
+ "rendered_at": 1795026350.4692605,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -8,7 +8,23 @@
   "wheel_l1",
   "wheel_r1",
   "prong_l",
-  "prong_r"
+  "prong_r",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_nut_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_nut_wheel_r0",
+  "dt_hub_wheel_l1",
+  "dt_axle_wheel_l1",
+  "dt_nut_wheel_l1",
+  "dt_hub_wheel_r1",
+  "dt_axle_wheel_r1",
+  "dt_nut_wheel_r1",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3"
  ],
  "wires": {}
 }

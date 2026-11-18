@@ -21,7 +21,11 @@
   "weapon": "#c9cdd3",
   "fork": "#c9cdd3"
  },
- "extras": [
+ "name": "do you dream of being an ambul",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
   {
    "top": [
     [
@@ -54,9 +58,5 @@
    "kind": "wedge",
    "id": "prong"
   }
- ],
- "name": "do you dream of being an ambul",
- "weapon": {
-  "kind": "none"
- }
+ ]
 }

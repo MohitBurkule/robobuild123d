@@ -6,5 +6,11 @@
  },
  "photos": [
   "do_you_dream_of_being_an_ambulance.aws71.webp"
- ]
+ ],
+ "view": {
+  "do_you_dream_of_being_an_ambulance.aws71.webp": "front_left_iso"
+ },
+ "elevation": {
+  "do_you_dream_of_being_an_ambulance.aws71.webp": 45
+ }
 }
