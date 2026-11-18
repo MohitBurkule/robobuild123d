@@ -1,0 +1,418 @@
+{
+ "name": "divebomb",
+ "profile": "aws2025",
+ "robot_type": "other",
+ "locomotion": "wheels",
+ "kit_draft": true,
+ "parts": [
+  {
+   "id": "chassis",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -31.0,
+       0.0
+      ],
+      [
+       31.0,
+       0.0
+      ],
+      [
+       31.0,
+       1.5
+      ],
+      [
+       31.0,
+       14.0
+      ],
+      [
+       -31.0,
+       14.0
+      ]
+     ],
+     "height": 90.0
+    },
+    "at": [
+     0.0,
+     0.0,
+     -7.0
+    ],
+    "rot": [
+     90.0,
+     0.0,
+     90.0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#1f2226",
+   "print_orientation": "+z"
+  },
+  {
+   "id": "wheel_l0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 9.0,
+     "height": 7.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    49.0,
+    -22.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "wheel_r0",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 9.0,
+     "height": 7.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -49.0,
+    -22.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "wheel_l1",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 9.0,
+     "height": 7.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    49.0,
+    18.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "wheel_r1",
+   "kind": "wheel",
+   "material": "tpu",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "cylinder",
+     "radius": 9.0,
+     "height": 7.0
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     0,
+     90,
+     0
+    ]
+   },
+   "at": [
+    -49.0,
+    18.0,
+    0.0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226"
+  },
+  {
+   "id": "fork_0",
+   "kind": "wedge",
+   "material": "titanium",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      14.0,
+      48.0,
+      1.5
+     ]
+    },
+    "at": [
+     -35.0,
+     53.0,
+     -4.032443735993671
+    ],
+    "rot": [
+     -10.0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#2a2c30"
+  },
+  {
+   "id": "fork_1",
+   "kind": "wedge",
+   "material": "titanium",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      14.0,
+      48.0,
+      1.5
+     ]
+    },
+    "at": [
+     0.0,
+     53.0,
+     -4.032443735993671
+    ],
+    "rot": [
+     -10.0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#2a2c30"
+  },
+  {
+   "id": "fork_2",
+   "kind": "wedge",
+   "material": "titanium",
+   "process": "laser",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      14.0,
+      48.0,
+      1.5
+     ]
+    },
+    "at": [
+     35.0,
+     53.0,
+     -4.032443735993671
+    ],
+    "rot": [
+     -10.0,
+     0,
+     0
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#2a2c30"
+  },
+  {
+   "id": "arm",
+   "kind": "weapon",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       -10,
+       5.0
+      ],
+      [
+       4,
+       5.0
+      ],
+      [
+       8,
+       36.0
+      ],
+      [
+       -2,
+       61.0
+      ],
+      [
+       -14,
+       63.0
+      ],
+      [
+       -18,
+       51.0
+      ],
+      [
+       -8,
+       47.0
+      ],
+      [
+       -4,
+       35.0
+      ]
+     ],
+     "height": 10
+    },
+    "at": [
+     0.0,
+     0,
+     0
+    ],
+    "rot": [
+     90,
+     0,
+     90
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#1f2226",
+   "weapon": {
+    "kind": "axe"
+   },
+   "joint": {
+    "kind": "revolute",
+    "axis": [
+     1,
+     0,
+     0
+    ],
+    "pivot": [
+     0,
+     0,
+     7.0
+    ],
+    "min": 0,
+    "max": 80,
+    "default": 0
+   }
+  }
+ ],
+ "fasteners": [],
+ "wires": [],
+ "connections": [],
+ "reference": [
+  {
+   "image": "reference/divebomb.aws67.webp",
+   "mask": "reference/divebomb.aws67_mask.png",
+   "view": "iso",
+   "approximate": true
+  }
+ ]
+}

@@ -1,0 +1,84 @@
+{
+ "robot_type": "other",
+ "body": {
+  "length": 62,
+  "width": 90,
+  "height": 14,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 9,
+  "width": 7,
+  "y": [
+   -22,
+   18
+  ]
+ },
+ "forks": {
+  "n": 3,
+  "length": 48,
+  "width": 14,
+  "spread": 70,
+  "tilt_deg": 10
+ },
+ "colors": {
+  "body": "#1f2226",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#2a2c30"
+ },
+ "extras": [
+  {
+   "side": [
+    [
+     -10,
+     14
+    ],
+    [
+     4,
+     14
+    ],
+    [
+     8,
+     45
+    ],
+    [
+     -2,
+     70
+    ],
+    [
+     -14,
+     72
+    ],
+    [
+     -18,
+     60
+    ],
+    [
+     -8,
+     56
+    ],
+    [
+     -4,
+     44
+    ]
+   ],
+   "x": [
+    -5,
+    5
+   ],
+   "weapon": "axe",
+   "pivot": [
+    0,
+    16
+   ],
+   "id": "arm",
+   "color": "#1f2226"
+  }
+ ],
+ "name": "divebomb",
+ "weapon": {
+  "kind": "none"
+ }
+}

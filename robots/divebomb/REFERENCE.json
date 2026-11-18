@@ -1,0 +1,11 @@
+{
+ "robot_type": "other",
+ "wheels": 4,
+ "weapon": {
+  "kind": "axe",
+  "axis": "x"
+ },
+ "photos": [
+  "divebomb.aws67.webp"
+ ]
+}
