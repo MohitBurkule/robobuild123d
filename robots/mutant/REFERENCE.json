@@ -10,5 +10,15 @@
   "mutant.aws72.webp",
   "mutant.aws74.webp",
   "mutant.aws76.webp"
- ]
+ ],
+ "view": {
+  "mutant.aws72.webp": "front_right_iso",
+  "mutant.aws74.webp": "front_right_iso",
+  "mutant.aws76.webp": "front"
+ },
+ "elevation": {
+  "mutant.aws72.webp": 45,
+  "mutant.aws74.webp": 45,
+  "mutant.aws76.webp": 25
+ }
 }

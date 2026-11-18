@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_mutant/robots/mutant/spec.json",
- "rendered_at": 1795023543.653527,
+ "rendered_at": 1795026729.025194,
  "bodies": [
   "pod_l",
   "pod_r",
@@ -16,7 +16,12 @@
   "fin_r",
   "leg_cam_r0",
   "leg_cam_r1",
-  "switch"
+  "switch",
+  "dt_screw_0",
+  "dt_screw_1",
+  "dt_screw_2",
+  "dt_screw_3",
+  "dt_shaft_weapon"
  ],
  "wires": {}
 }
