@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_the_golden_nuggets/robots/the_golden_nuggets/spec.json",
- "rendered_at": 1795023412.4102936,
+ "rendered_at": 1795036481.6773694,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -10,7 +10,23 @@
   "wheel_l2",
   "wheel_r2",
   "lifter",
-  "lifter_nose"
+  "lifter_nose",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_hub_wheel_l1",
+  "dt_hub_wheel_r1",
+  "dt_hub_wheel_l2",
+  "dt_axle_wheel_l2",
+  "dt_hub_wheel_r2",
+  "dt_axle_wheel_r2",
+  "dt_strut_lifter_nose",
+  "dm_wheel_l1",
+  "dm_wheel_r1",
+  "el_battery",
+  "el_esc",
+  "el_switch"
  ],
  "wires": {}
 }

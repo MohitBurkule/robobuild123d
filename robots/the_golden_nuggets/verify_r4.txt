@@ -1,15 +1,15 @@
 BLOCKERS: 13
-  [cached] integrity 0.00s
+  [cached] integrity 0.01s
   [cached] mass 0.00s
-  [proxy] interference 0.13s
-  [cached] connections 0.00s
+  [proxy] interference 0.55s
+  [cached] connections 0.01s
   [cached] legal 0.00s
   [cached] fasteners 0.00s
   [cached] power 0.00s
   [cached] tension 0.00s
   [cached] targets 0.00s
   [cached] fight 0.00s
-  [cached] shape 0.00s
+  [cached] shape 0.01s
   [cached] dynamics 0.00s
   [cached] strength 0.00s
   [cached] printability 0.00s
@@ -26,8 +26,8 @@ BLOCKERS: 13
   [cached] likeness 0.00s
   [cached] drive_recess 0.00s
   [cached] belt_wrap 0.00s
-  [cached] retention 0.01s
-  [cached] waiver_audit 0.00s
+  [cached] retention 0.02s
+  [cached] waiver_audit 0.01s
   [cached] geom 0.00s
   [cached] dfm 0.00s
   [cached] realworld 0.00s
