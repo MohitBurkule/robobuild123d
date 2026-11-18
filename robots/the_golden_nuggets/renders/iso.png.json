@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_the_golden_nuggets/robots/the_golden_nuggets/spec.json",
- "rendered_at": 1795040698.9567819,
+ "rendered_at": 1795040844.6269393,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -62,6 +62,18 @@
    "to": [
     4.5,
     0.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -15.5,
+    -9.0,
+    7.5
+   ],
+   "to": [
+    -4.5,
+    -1.6532731788489269e-15,
     0.0
    ]
   }

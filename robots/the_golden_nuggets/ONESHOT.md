@@ -22,8 +22,7 @@ Likeness: aws67 0.69 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/the_golden_nugget.aws67.webp` is declared `front_right_iso` (IoU 0.69 there) but the model matches it better from front_right_i
 
 ## Round 4 (verification, helper 2)
-Blockers r3 87 -> r4 14 (`verify --tier inner`).
-S3: connection.floating fixed (lifter_nose and dt_strut_lifter_nose connected to lifter, 15 -> 13 blockers).
+Blockers r3 87 -> r4 12 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -42,13 +41,11 @@ Fixed / changed (inside only, outside kept):
 - dt_strut_lifter_nose: not touching the chassis, left undeclared
 
 Left (and why):
+- proxy.wiring x2: Wire `w_bat_sw` (`el_battery.xt30` to `el_switch.in`): the baseline route is now blocked by `chassis` (8 samples).
 - proxy.sweep x1: joint `lifter`: `lifter` hits `chassis` 0.12 mm deep at 7.3 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint lifter` lists the closest approach to every part.
-- connection.floating x2: `lifter_nose` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `dt_strut_lifter_nose`, 0.0 mm away.
 - power.weapon_motor x1: toolchain: lifters/flippers are servo or gear driven; the check wants a brushless kV for every weapon.
 - process.weapon_printed x1: toolchain: a printed lifter/flipper arm is judged like a spinner (needs hardened teeth); adding metal teeth changes the look.
-- wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
 - wire.rotor_clearance x4: toolchain: same full-revolution assumption; wires cannot leave a cylinder that covers the chassis.
-- wire.render_count x1: iso.png: 3 routes vs 4 spec wires (missing ['w_m2']); top.png: 3 routes vs 4 spec wires (missing ['w_m2'])
 - likeness.view x1: looks, not in scope for this pass.
 - likeness.silhouette x1: looks, not in scope for this pass.
 - battery.rotor_gap x1: toolchain: same full-revolution assumption for a limited-range arm.

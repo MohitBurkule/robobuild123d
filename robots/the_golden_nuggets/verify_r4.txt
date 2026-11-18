@@ -1,62 +1,72 @@
-BLOCKERS: 13
-  [ran] integrity 0.08s
-  [proxy] wiring 0.17s
+BLOCKERS: 12
+  [ran] integrity 0.13s
+  [proxy] wiring 0.41s
   [ran] mass 0.00s
-  [proxy] interference 25.79s
-  [ran] connections 0.26s
+  [proxy] interference 20.09s
+  [ran] connections 0.01s
   [ran] legal 0.02s
   [ran] fasteners 0.00s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
-  [ran] fight 0.04s
-  [ran] shape 1.09s
+  [ran] fight 0.05s
+  [ran] shape 0.43s
   [ran] dynamics 0.01s
   [ran] strength 0.00s
-  [ran] printability 1.76s
-  [ran] process 0.01s
+  [ran] printability 2.87s
+  [ran] process 0.00s
   [ran] electrical 0.01s
-  [ran] combat 0.21s
-  [ran] physics 0.00s
+  [ran] combat 0.26s
+  [ran] physics 0.01s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
   [ran] fit 0.16s
-  [ran] bom 0.01s
-  [ran] wire_review 0.02s
+  [ran] bom 0.00s
+  [ran] wire_review 0.04s
   [ran] fastener_record 0.00s
-  [ran] likeness 26.06s
+  [ran] likeness 18.70s
   [ran] drive_recess 0.00s
   [ran] belt_wrap 0.00s
-  [ran] retention 0.00s
+  [ran] retention 0.01s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.30s
-  [ran] dfm 0.17s
-  [ran] realworld 0.17s
-the golden nuggets: ok=False 13 blockers in 13 root causes, mass 138.3/150 g
-1. [proxy.wiring] Wire `w_m2` (`el_esc.m2` to `dm_wheel_r1.terminals`): no baseline route (run the full `wiring` group once and pass its report).
+  [ran] geom 0.27s
+  [ran] dfm 0.12s
+  [ran] realworld 0.13s
+the golden nuggets: ok=False 12 blockers in 12 root causes, mass 138.1/150 g
+1. [proxy.wiring] Wire `w_bat_sw` (`el_battery.xt30` to `el_switch.in`): the baseline route is now blocked by `chassis` (8 samples).
    fix: Run the full `wiring` group to re-route it.
-2. [proxy.sweep] joint `lifter`: `lifter` hits `chassis` 0.12 mm deep at 7.3 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint lifter` lists the closest approach to every part.
+   | chassis: x -33.00..33.00  y -47.50..47.50  z -10.00..14.00  size 66.00 x 95.00 x 24.00 mm
+   |   centre (0.00, 0.00, 2.00), volume 55505.8 mm3
+   |   gap to `lifter` 0.00 mm (touching)
+   |   gap to `dt_axle_wheel_l0` 0.00 mm (touching)
+   |   gap to `dt_axle_wheel_r0` 0.00 mm (touching)
+2. [proxy.wiring] Wire `w_m2` (`el_esc.m2` to `dm_wheel_r1.terminals`): the baseline route is now blocked by `chassis` (2 samples).
+   fix: Run the full `wiring` group to re-route it.
+   | chassis: x -33.00..33.00  y -47.50..47.50  z -10.00..14.00  size 66.00 x 95.00 x 24.00 mm
+   |   centre (0.00, 0.00, 2.00), volume 55505.8 mm3
+   |   gap to `lifter` 0.00 mm (touching)
+   |   gap to `dt_axle_wheel_l0` 0.00 mm (touching)
+   |   gap to `dt_axle_wheel_r0` 0.00 mm (touching)
+3. [proxy.sweep] joint `lifter`: `lifter` hits `chassis` 0.12 mm deep at 7.3 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint lifter` lists the closest approach to every part.
    | lifter: x -19.00..19.00  y -40.00..40.00  z 13.50..18.50  size 38.00 x 80.00 x 5.00 mm
    |   centre (0.00, 0.00, 16.00), volume 15200.0 mm3
    |   joint revolute axis [1, 0, 0] pivot [0, -38, 14.0] range 0..80 default 0
    |   gap to `chassis` 0.00 mm (touching)
    |   gap to `dt_strut_lifter_nose` 0.00 mm (touching)
-3. [power.weapon_motor] `lifter` names motor None; it must be a catalog brushless motor so speed can be computed.
+4. [power.weapon_motor] `lifter` names motor None; it must be a catalog brushless motor so speed can be computed.
    fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
    | lifter: x -19.00..19.00  y -40.00..40.00  z 13.50..18.50  size 38.00 x 80.00 x 5.00 mm
    |   centre (0.00, 0.00, 16.00), volume 15200.0 mm3
    |   joint revolute axis [1, 0, 0] pivot [0, -38, 14.0] range 0..80 default 0
    |   gap to `chassis` 0.00 mm (touching)
    |   gap to `dt_strut_lifter_nose` 0.00 mm (touching)
-4. [process.weapon_printed] Weapon `lifter` is fdm-printed with no hardened metal insert teeth.
+5. [process.weapon_printed] Weapon `lifter` is fdm-printed with no hardened metal insert teeth.
    fix: Make it metal (sheet_cut / turned / milled) or add hardened steel tooth parts (`parent` = the weapon).
    | lifter: x -19.00..19.00  y -40.00..40.00  z 13.50..18.50  size 38.00 x 80.00 x 5.00 mm
    |   centre (0.00, 0.00, 16.00), volume 15200.0 mm3
    |   joint revolute axis [1, 0, 0] pivot [0, -38, 14.0] range 0..80 default 0
    |   gap to `chassis` 0.00 mm (touching)
    |   gap to `dt_strut_lifter_nose` 0.00 mm (touching)
-5. [wire.render_wires] 2 of 2 robot render(s) do not draw all 4 wires: renders/iso.png: wire `w_m2` not drawn; renders/top.png: wire `w_m2` not drawn
-   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
 6. [wire.rotor_clearance] wire `w_bat_sw` passes -0.9 mm from the volume swept by the `lifter` rotor (lifter) at [-0.5, 27.0, -2.5].
    fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
    | lifter: x -19.00..19.00  y -40.00..40.00  z 13.50..18.50  size 38.00 x 80.00 x 5.00 mm
@@ -85,16 +95,20 @@ the golden nuggets: ok=False 13 blockers in 13 root causes, mass 138.3/150 g
    |   joint revolute axis [1, 0, 0] pivot [0, -38, 14.0] range 0..80 default 0
    |   gap to `chassis` 0.00 mm (touching)
    |   gap to `dt_strut_lifter_nose` 0.00 mm (touching)
-10. [wire.render_count] iso.png: 3 routes vs 4 spec wires (missing ['w_m2']); top.png: 3 routes vs 4 spec wires (missing ['w_m2'])
-   fix: Re-render: the render record must list exactly the spec's wires.
-11. [likeness.view] `reference/the_golden_nugget.aws67.webp` is declared `front_right_iso` (IoU 0.69 there) but the model matches it better from front_right_iso (elevation 25, azimuth 60) (IoU 0.79).
+10. [likeness.view] `reference/the_golden_nugget.aws67.webp` is declared `front_right_iso` (IoU 0.69 there) but the model matches it better from front_right_iso (elevation 25, azimuth 60) (IoU 0.79).
    fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
-12. [likeness.silhouette] `reference/the_golden_nugget.aws67.webp`: best silhouette IoU 0.69 at camera front_right_iso (elevation 45, azimuth 30) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.77). Regions (photo frame, left third first) 0.64 / 0.77 / 0.61: worst = rear third. Height/length 0.80 model vs 0.65 photo (too tall: lower it or lengthen it).
+11. [likeness.silhouette] `reference/the_golden_nugget.aws67.webp`: best silhouette IoU 0.69 at camera front_right_iso (elevation 45, azimuth 30) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.77). Regions (photo frame, left third first) 0.64 / 0.77 / 0.61: worst = rear third. Height/length 0.80 model vs 0.65 photo (too tall: lower it or lengthen it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
-... 1 more root causes (fix these first, then re-run)
+12. [battery.rotor_gap] `el_battery` is 0.0 mm from the volume swept by `lifter`.
+   fix: Move the battery or add a wall.
+   | el_battery: x -14.50..13.50  y 7.00..25.00  z -7.50..2.50  size 28.00 x 18.00 x 10.00 mm
+   |   centre (-0.50, 16.00, -2.50), volume 5040.0 mm3
+   |   port xt30: (-0.50, 27.00, -2.50)
+   |   gap to `chassis` 0.25 mm
+   |   gap to `dm_wheel_l1` 1.00 mm
 MASS BUDGET:
-  mass 138.3 g of 150 g (+11.7 g margin)
-    chassis                    53.07 g  fills 37% of its box
+  mass 138.1 g of 150 g (+11.9 g margin)
+    chassis                    52.84 g  fills 37% of its box
     lifter                     14.47 g  fills 100% of its box
     el_battery                 12.50 g  fills 100% of its box
     dm_wheel_l1                 9.50 g  fills 63% of its box
@@ -119,6 +133,6 @@ MASS BUDGET:
     dt_axle_wheel_l2            1.04 g  fills 79% of its box
     el_switch                   0.50 g  fills 100% of its box
     dt_strut_lifter_nose        0.09 g  fills 45% of its box
-    mass.may_be_over: 138.3 g (range 112.9 to 163.7 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.may_be_over: 138.1 g (range 112.7 to 163.4 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: part_geom 0 hit / 25 miss
+cache: distance 0 hit / 6 miss, group 0 hit / 31 miss, inside 20 hit / 8 miss, likeness 1 hit / 0 miss, min_gap 79 hit / 29 miss, overlap 243 hit / 152 miss, part_check 15 hit / 1 miss, part_geom 25 hit / 0 miss, ray 126 hit / 36 miss
