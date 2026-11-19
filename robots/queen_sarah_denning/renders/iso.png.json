@@ -1,12 +1,69 @@
 {
  "spec": "/tmp/work10_queen_sarah_denning/robots/queen_sarah_denning/spec.json",
- "rendered_at": 1795023054.9691691,
+ "rendered_at": 1795046587.7939007,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
   "flipper",
-  "scoop"
+  "scoop",
+  "dt_hub_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_rx_esc",
+  "el_servo_flipper",
+  "el_switch"
  ],
- "wires": {}
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    0.012999999999998652,
+    -10.983,
+    -2.989
+   ],
+   "to": [
+    -4.0,
+    -39.524,
+    -4.0
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    4.0,
+    -39.524,
+    -4.0
+   ],
+   "to": [
+    -11.987,
+    19.017,
+    -5.489
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -11.987,
+    27.017,
+    -5.489
+   ],
+   "to": [
+    -10.600000000000001,
+    -30.0,
+    0.0
+   ]
+  },
+  "w_sig_flipper": {
+   "from": [
+    11.013,
+    19.017,
+    -5.489
+   ],
+   "to": [
+    -11.487,
+    -41.483,
+    13.011
+   ]
+  }
+ }
 }
