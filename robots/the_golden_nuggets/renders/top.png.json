@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_the_golden_nuggets/robots/the_golden_nuggets/spec.json",
- "rendered_at": 1795059368.0352013,
+ "rendered_at": 1795086449.9933708,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -27,7 +27,11 @@
   "el_battery",
   "el_esc",
   "el_switch",
-  "wa_act"
+  "wa_act",
+  "fs_look_chassis_0",
+  "fs_look_chassis_1",
+  "fs_look_chassis_2",
+  "fs_look_chassis_3"
  ],
  "wires": {
   "w_bat_sw": {

@@ -1,0 +1,94 @@
+  [cached] integrity 0.00s
+  [proxy] wiring 3.32s
+  [cached] mass 0.00s
+  [proxy] interference 0.76s
+  [cached] connections 0.01s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.01s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.00s
+  [cached] physics 0.00s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [cached] likeness 0.00s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.02s
+  [cached] waiver_audit 0.00s
+  [cached] geom 0.00s
+  [cached] dfm 0.00s
+  [cached] realworld 0.00s
+the golden nuggets: ok=False 5 blockers in 5 root causes, mass 148.5/150 g
+1. [proxy.wiring] Wire `w_bat_sw` (`el_battery.xt30` to `el_switch.in`): the baseline route is now blocked by `chassis` (8 samples).
+   fix: Run the full `wiring` group to re-route it.
+   | chassis: x -41.50..41.50  y -47.50..55.00  z -10.00..14.00  size 83.00 x 102.50 x 24.00 mm
+   |   centre (0.00, 3.75, 2.00), volume 62175.5 mm3
+   |   overlap allowed `fs_look_chassis_2` 0.07 mm (allowed inf)
+   |   overlap allowed `fs_look_chassis_3` 0.07 mm (allowed inf)
+   |   overlap allowed `fs_look_chassis_0` 0.07 mm (allowed inf)
+2. [proxy.wiring] Wire `w_sw_esc` (`el_switch.out` to `el_esc.bat`): the baseline route is now blocked by `chassis` (3 samples).
+   fix: Run the full `wiring` group to re-route it.
+   | chassis: x -41.50..41.50  y -47.50..55.00  z -10.00..14.00  size 83.00 x 102.50 x 24.00 mm
+   |   centre (0.00, 3.75, 2.00), volume 62175.5 mm3
+   |   overlap allowed `fs_look_chassis_2` 0.07 mm (allowed inf)
+   |   overlap allowed `fs_look_chassis_3` 0.07 mm (allowed inf)
+   |   overlap allowed `fs_look_chassis_0` 0.07 mm (allowed inf)
+3. [proxy.wiring] Wire `w_m2` (`el_esc.m2` to `dm_wheel_r1.terminals`): the baseline route is now blocked by `chassis` (2 samples).
+   fix: Run the full `wiring` group to re-route it.
+   | chassis: x -41.50..41.50  y -47.50..55.00  z -10.00..14.00  size 83.00 x 102.50 x 24.00 mm
+   |   centre (0.00, 3.75, 2.00), volume 62175.5 mm3
+   |   overlap allowed `fs_look_chassis_2` 0.07 mm (allowed inf)
+   |   overlap allowed `fs_look_chassis_3` 0.07 mm (allowed inf)
+   |   overlap allowed `fs_look_chassis_0` 0.07 mm (allowed inf)
+4. [likeness.view] `reference/the_golden_nugget.aws67.webp` is declared `front_right_iso` (IoU 0.71 there) but the model matches it better from front_right_iso (elevation 25, azimuth 60) (IoU 0.80).
+   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
+5. [likeness.silhouette] `reference/the_golden_nugget.aws67.webp`: best silhouette IoU 0.71 at camera front_right_iso (elevation 45, azimuth 30) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.77). Regions (photo frame, left third first) 0.65 / 0.77 / 0.69: worst = front third. Height/length 0.79 model vs 0.65 photo (too tall: lower it or lengthen it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+MASS BUDGET:
+  mass 148.5 g of 150 g (+1.5 g margin)
+    chassis                    59.19 g  fills 30% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    lifter                      9.81 g  fills 100% of its box
+    dm_wheel_l1                 9.50 g  fills 63% of its box
+    dm_wheel_r1                 9.50 g  fills 63% of its box
+    wa_act                      7.50 g  fills 67% of its box
+    wheel_l1                    3.66 g  fills 65% of its box
+    wheel_r1                    3.66 g  fills 65% of its box
+    wheel_l0                    3.63 g  fills 77% of its box
+    wheel_r0                    3.63 g  fills 77% of its box
+    wheel_l2                    3.63 g  fills 77% of its box
+    wheel_r2                    3.63 g  fills 77% of its box
+    lifter_nose                 2.52 g  fills 25% of its box
+    el_esc                      2.30 g  fills 99% of its box
+    dt_hub_wheel_l1             1.10 g  fills 75% of its box
+    dt_hub_wheel_r1             1.10 g  fills 75% of its box
+    dt_hub_wheel_l0             1.08 g  fills 74% of its box
+    dt_hub_wheel_l2             1.08 g  fills 74% of its box
+    dt_hub_wheel_r0             1.08 g  fills 74% of its box
+    dt_hub_wheel_r2             1.08 g  fills 74% of its box
+    dt_axle_wheel_r0            1.04 g  fills 79% of its box
+    dt_axle_wheel_r2            1.04 g  fills 79% of its box
+    dt_axle_wheel_l0            1.04 g  fills 79% of its box
+    dt_axle_wheel_l2            1.04 g  fills 79% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    fs_look_chassis_0           0.21 g  fills 30% of its box
+    fs_look_chassis_1           0.21 g  fills 30% of its box
+    fs_look_chassis_2           0.21 g  fills 30% of its box
+    fs_look_chassis_3           0.21 g  fills 30% of its box
+    dt_strut_lifter_nose        0.01 g  fills 62% of its box
+    mass.may_be_over: 148.5 g (range 121.6 to 175.5 g) against the 150 g limit; 6.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 7 hit / 0 miss, group 31 hit / 0 miss, inside 7 hit / 0 miss, min_gap 75 hit / 0 miss, overlap 435 hit / 0 miss, part_geom 78 hit / 0 miss
