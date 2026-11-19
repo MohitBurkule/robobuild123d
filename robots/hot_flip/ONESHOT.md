@@ -22,7 +22,7 @@ Decisions: type flipper; body box rect 100x100x60 mm, ramp 80; wheels 2 r11 inbo
 Likeness: aws71 0.81 (ok).
 
 ## Round 4 (verification, helper 2)
-Blockers r3 44 -> r4 2 (`verify --tier inner`).
+Blockers r3 44 -> r4 0 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -37,7 +37,5 @@ Fixed / changed (inside only, outside kept):
 - hollowed chassis (wall 2.5, form 0): 356.3 -> 91.8 cm3
 
 Left (and why):
-- retention.loose x1: `wa_act` can move more than 0.5 mm toward -x, -y, -z without touching anything (captive means at most 0.5 mm of play in every direction); in a hit it will fall out or rattle.
-- wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): hot_flip.aws71.webp 0.81 -> 0.81
