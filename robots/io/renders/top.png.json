@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_io/robots/io/spec.json",
- "rendered_at": 1795053280.8612456,
+ "rendered_at": 1795062583.4294443,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -13,7 +13,11 @@
   "el_battery",
   "el_esc",
   "el_switch",
-  "wa_act"
+  "wa_act",
+  "fs_look_chassis_0",
+  "fs_look_chassis_1",
+  "fs_look_chassis_2",
+  "fs_look_chassis_3"
  ],
  "wires": {
   "w_bat_sw": {

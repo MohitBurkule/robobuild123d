@@ -1,46 +1,46 @@
 BLOCKERS: 2
-  [ran] integrity 0.04s
-  [proxy] wiring 1.28s
+  [ran] integrity 0.05s
+  [proxy] wiring 1.20s
   [ran] mass 0.00s
-  [proxy] interference 11.18s
-  [ran] connections 0.01s
-  [ran] legal 0.02s
-  [ran] fasteners 0.00s
+  [proxy] interference 11.34s
+  [ran] connections 0.00s
+  [ran] legal 0.01s
+  [ran] fasteners 0.04s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
   [ran] fight 0.02s
-  [ran] shape 0.31s
-  [ran] dynamics 0.01s
-  [ran] strength 0.00s
-  [ran] printability 1.29s
-  [ran] process 0.01s
-  [ran] electrical 2.84s
-  [ran] combat 0.12s
+  [ran] shape 0.26s
+  [ran] dynamics 0.00s
+  [ran] strength 0.05s
+  [ran] printability 1.26s
+  [ran] process 0.00s
+  [ran] electrical 2.86s
+  [ran] combat 0.11s
   [ran] physics 0.00s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
   [ran] fit 0.07s
-  [ran] bom 0.01s
-  [ran] wire_review 1.12s
+  [ran] bom 0.00s
+  [ran] wire_review 1.04s
   [ran] fastener_record 0.00s
-  [ran] likeness 5.18s
+  [ran] likeness 5.44s
   [ran] drive_recess 0.00s
   [ran] belt_wrap 0.00s
-  [ran] retention 0.03s
+  [ran] retention 0.00s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.11s
+  [ran] geom 0.13s
   [ran] dfm 0.05s
-  [ran] realworld 1.93s
-io: ok=False 2 blockers in 2 root causes, mass 150.6/150 g
-1. [mass.over] 150.6 g (range 122.4 to 178.8 g) against the 150 g limit; 6.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+  [ran] realworld 1.97s
+io: ok=False 2 blockers in 2 root causes, mass 151.8/150 g
+1. [mass.over] 151.8 g (range 123.5 to 180.1 g) against the 150 g limit; 6.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
 2. [likeness.silhouette] `reference/io.aws63.webp`: best silhouette IoU 0.63 at camera front (elevation 45, azimuth 90) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.65). Regions (photo frame, left third first) 0.61 / 0.78 / 0.51: worst = rear third. Height/length 0.97 model vs 1.10 photo (too flat: raise it or shorten it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
-  mass 150.6 g of 150 g (-0.6 g margin)
+  mass 151.8 g of 150 g (-1.8 g margin)
     flipper                    53.92 g  fills 13% of its box
-    chassis                    46.41 g  fills 34% of its box
+    chassis                    46.66 g  fills 34% of its box
     el_battery                 12.50 g  fills 100% of its box
     dm_wheel_l0                 9.50 g  fills 63% of its box
     dm_wheel_r0                 9.50 g  fills 63% of its box
@@ -51,6 +51,10 @@ MASS BUDGET:
     dt_hub_wheel_l0             0.75 g  fills 74% of its box
     dt_hub_wheel_r0             0.75 g  fills 74% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.over: 150.6 g (range 122.4 to 178.8 g) against the 150 g limit; 6.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    fs_look_chassis_0           0.23 g  fills 29% of its box
+    fs_look_chassis_1           0.23 g  fills 29% of its box
+    fs_look_chassis_2           0.23 g  fills 29% of its box
+    fs_look_chassis_3           0.23 g  fills 29% of its box
+    mass.over: 151.8 g (range 123.5 to 180.1 g) against the 150 g limit; 6.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: distance 0 hit / 6 miss, group 0 hit / 31 miss, inside 5 hit / 10 miss, likeness 1 hit / 0 miss, min_gap 0 hit / 1 miss, overlap 60 hit / 139 miss, part_check 4 hit / 2 miss, part_geom 12 hit / 0 miss, ray 47 hit / 55 miss
+cache: distance 1 hit / 5 miss, group 0 hit / 31 miss, inside 8 hit / 19 miss, likeness 1 hit / 0 miss, min_gap 0 hit / 1 miss, overlap 113 hit / 92 miss, part_check 5 hit / 1 miss, part_geom 64 hit / 0 miss, ray 58 hit / 64 miss
