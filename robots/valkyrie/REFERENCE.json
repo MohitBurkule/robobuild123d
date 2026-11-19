@@ -14,12 +14,14 @@
  ],
  "view": {
   "valkyrie.aws70.webp": "front_left_iso",
-  "valkyrie.aws71.webp": "left",
+  "valkyrie.aws71.webp": "front_right_iso",
   "valkyrie.aws74.webp": "front_left_iso"
  },
  "elevation": {
   "valkyrie.aws70.webp": 45,
-  "valkyrie.aws71.webp": 25,
   "valkyrie.aws74.webp": 45
+ },
+ "view_source": {
+  "valkyrie.aws71.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label"
  }
 }
