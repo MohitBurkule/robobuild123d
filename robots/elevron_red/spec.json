@@ -9,9 +9,12 @@
    "kind": "structure",
    "material": "nylon",
    "process": "fdm",
-   "model": "src/elevron_red/parts.py",
-   "params": {
-    "part": "chassis"
+   "shape": {
+    "type": "model",
+    "file": "src/elevron_red/parts.py",
+    "params": {
+     "part": "chassis"
+    }
    },
    "at": [
     0,
@@ -27,13 +30,41 @@
    "print_orientation": "+z"
   },
   {
+   "id": "lid",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "model",
+    "file": "src/elevron_red/parts.py",
+    "params": {
+     "part": "lid"
+    }
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#202226",
+   "print_orientation": "-z"
+  },
+  {
    "id": "housing",
    "kind": "structure",
    "material": "nylon",
    "process": "fdm",
-   "model": "src/elevron_red/parts.py",
-   "params": {
-    "part": "housing"
+   "shape": {
+    "type": "model",
+    "file": "src/elevron_red/parts.py",
+    "params": {
+     "part": "housing"
+    }
    },
    "at": [
     0,
@@ -47,16 +78,628 @@
    ],
    "color": "#e8453a",
    "print_orientation": "+z",
-   "fused_with": "chassis"
+   "fused_with": "lid"
+  },
+  {
+   "id": "cover",
+   "kind": "structure",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "subtract",
+    "base": {
+     "type": "model",
+     "file": "src/elevron_red/parts.py",
+     "params": {
+      "part": "cover"
+     }
+    },
+    "cut": [
+     {
+      "type": "place",
+      "shape": {
+       "type": "union",
+       "items": [
+        {
+         "type": "subtract",
+         "base": {
+          "type": "prism",
+          "points": [
+           [
+            -0.024,
+            0.144
+           ],
+           [
+            1.037,
+            0.014
+           ],
+           [
+            1.824,
+            -0.373
+           ],
+           [
+            2.109,
+            -0.658
+           ],
+           [
+            2.434,
+            -1.391
+           ],
+           [
+            2.475,
+            -1.839
+           ],
+           [
+            2.434,
+            -2.287
+           ],
+           [
+            2.109,
+            -3.022
+           ],
+           [
+            1.824,
+            -3.307
+           ],
+           [
+            1.037,
+            -3.695
+           ],
+           [
+            -0.024,
+            -3.824
+           ],
+           [
+            -1.087,
+            -3.695
+           ],
+           [
+            -1.875,
+            -3.307
+           ],
+           [
+            -2.159,
+            -3.022
+           ],
+           [
+            -2.485,
+            -2.287
+           ],
+           [
+            -2.525,
+            -1.839
+           ],
+           [
+            -2.485,
+            -1.391
+           ],
+           [
+            -2.159,
+            -0.658
+           ],
+           [
+            -1.875,
+            -0.373
+           ],
+           [
+            -1.087,
+            0.014
+           ]
+          ],
+          "height": 3.6
+         },
+         "cut": [
+          {
+           "type": "prism",
+           "points": [
+            [
+             -0.034,
+             -1.099
+            ],
+            [
+             -0.804,
+             -1.141
+            ],
+            [
+             -1.307,
+             -1.268
+            ],
+            [
+             -1.584,
+             -1.496
+            ],
+            [
+             -1.676,
+             -1.839
+            ],
+            [
+             -1.584,
+             -2.181
+            ],
+            [
+             -1.307,
+             -2.41
+            ],
+            [
+             -0.804,
+             -2.538
+            ],
+            [
+             -0.034,
+             -2.581
+            ],
+            [
+             0.745,
+             -2.538
+            ],
+            [
+             1.255,
+             -2.41
+            ],
+            [
+             1.535,
+             -2.181
+            ],
+            [
+             1.629,
+             -1.839
+            ],
+            [
+             1.535,
+             -1.498
+            ],
+            [
+             1.255,
+             -1.27
+            ],
+            [
+             0.745,
+             -1.142
+            ]
+           ],
+           "height": 5.6
+          }
+         ]
+        },
+        {
+         "type": "prism",
+         "points": [
+          [
+           1.522,
+           1.234
+          ],
+          [
+           1.522,
+           2.332
+          ],
+          [
+           -1.593,
+           2.332
+          ],
+          [
+           -1.36,
+           1.205
+          ],
+          [
+           -2.206,
+           1.205
+          ],
+          [
+           -2.439,
+           2.325
+          ],
+          [
+           -2.439,
+           3.506
+          ],
+          [
+           1.522,
+           3.506
+          ],
+          [
+           1.522,
+           4.604
+          ],
+          [
+           2.381,
+           4.604
+          ],
+          [
+           2.381,
+           1.234
+          ]
+         ],
+         "height": 3.6
+        }
+       ]
+      },
+      "at": [
+       14.025,
+       -14.39,
+       25.3
+      ],
+      "rot": [
+       0.0,
+       -0.0,
+       0.0
+      ]
+     }
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e8453a",
+   "print_orientation": "-z"
+  },
+  {
+   "id": "mark_01",
+   "kind": "other",
+   "shape": {
+    "type": "union",
+    "items": [
+     {
+      "type": "place",
+      "shape": {
+       "type": "union",
+       "items": [
+        {
+         "type": "subtract",
+         "base": {
+          "type": "prism",
+          "points": [
+           [
+            -0.024,
+            0.144
+           ],
+           [
+            1.037,
+            0.014
+           ],
+           [
+            1.824,
+            -0.373
+           ],
+           [
+            2.109,
+            -0.658
+           ],
+           [
+            2.434,
+            -1.391
+           ],
+           [
+            2.475,
+            -1.839
+           ],
+           [
+            2.434,
+            -2.287
+           ],
+           [
+            2.109,
+            -3.022
+           ],
+           [
+            1.824,
+            -3.307
+           ],
+           [
+            1.037,
+            -3.695
+           ],
+           [
+            -0.024,
+            -3.824
+           ],
+           [
+            -1.087,
+            -3.695
+           ],
+           [
+            -1.875,
+            -3.307
+           ],
+           [
+            -2.159,
+            -3.022
+           ],
+           [
+            -2.485,
+            -2.287
+           ],
+           [
+            -2.525,
+            -1.839
+           ],
+           [
+            -2.485,
+            -1.391
+           ],
+           [
+            -2.159,
+            -0.658
+           ],
+           [
+            -1.875,
+            -0.373
+           ],
+           [
+            -1.087,
+            0.014
+           ]
+          ],
+          "height": 0.85
+         },
+         "cut": [
+          {
+           "type": "prism",
+           "points": [
+            [
+             -0.034,
+             -1.099
+            ],
+            [
+             -0.804,
+             -1.141
+            ],
+            [
+             -1.307,
+             -1.268
+            ],
+            [
+             -1.584,
+             -1.496
+            ],
+            [
+             -1.676,
+             -1.839
+            ],
+            [
+             -1.584,
+             -2.181
+            ],
+            [
+             -1.307,
+             -2.41
+            ],
+            [
+             -0.804,
+             -2.538
+            ],
+            [
+             -0.034,
+             -2.581
+            ],
+            [
+             0.745,
+             -2.538
+            ],
+            [
+             1.255,
+             -2.41
+            ],
+            [
+             1.535,
+             -2.181
+            ],
+            [
+             1.629,
+             -1.839
+            ],
+            [
+             1.535,
+             -1.498
+            ],
+            [
+             1.255,
+             -1.27
+            ],
+            [
+             0.745,
+             -1.142
+            ]
+           ],
+           "height": 2.85
+          }
+         ]
+        },
+        {
+         "type": "prism",
+         "points": [
+          [
+           1.522,
+           1.234
+          ],
+          [
+           1.522,
+           2.332
+          ],
+          [
+           -1.593,
+           2.332
+          ],
+          [
+           -1.36,
+           1.205
+          ],
+          [
+           -2.206,
+           1.205
+          ],
+          [
+           -2.439,
+           2.325
+          ],
+          [
+           -2.439,
+           3.506
+          ],
+          [
+           1.522,
+           3.506
+          ],
+          [
+           1.522,
+           4.604
+          ],
+          [
+           2.381,
+           4.604
+          ],
+          [
+           2.381,
+           1.234
+          ]
+         ],
+         "height": 0.85
+        }
+       ]
+      },
+      "at": [
+       14.025,
+       -14.39,
+       23.675
+      ],
+      "rot": [
+       0.0,
+       -0.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "prism",
+       "points": [
+        [
+         -0.024,
+         -3.521
+        ],
+        [
+         -1.001,
+         -3.403
+        ],
+        [
+         -1.698,
+         -3.06
+        ],
+        [
+         -1.908,
+         -2.849
+        ],
+        [
+         -2.19,
+         -2.211
+        ],
+        [
+         -2.142,
+         3.277
+        ],
+        [
+         1.563,
+         4.304
+        ],
+        [
+         2.085,
+         4.304
+        ],
+        [
+         2.14,
+         -2.211
+        ],
+        [
+         1.857,
+         -2.849
+        ],
+        [
+         1.647,
+         -3.06
+        ],
+        [
+         0.95,
+         -3.403
+        ]
+       ],
+       "height": 0.75
+      },
+      "at": [
+       14.025,
+       -14.39,
+       23.025
+      ],
+      "rot": [
+       0.0,
+       -0.0,
+       0.0
+      ]
+     }
+    ]
+   },
+   "decal": {
+    "host": "cover",
+    "face": "+z",
+    "depth": 0.6
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "material": "nylon",
+   "process": "fdm",
+   "fused_with": "cover",
+   "print_orientation": "-z",
+   "color": "#202226"
+  },
+  {
+   "id": "pivot_cap",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "shape": {
+    "type": "model",
+    "file": "src/elevron_red/parts.py",
+    "params": {
+     "part": "pivot_cap"
+    }
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#e8453a",
+   "print_orientation": "+x"
   },
   {
    "id": "arm",
    "kind": "weapon",
    "material": "nylon",
    "process": "fdm",
-   "model": "src/elevron_red/parts.py",
-   "params": {
-    "part": "arm"
+   "shape": {
+    "type": "model",
+    "file": "src/elevron_red/parts.py",
+    "params": {
+     "part": "arm"
+    }
    },
    "at": [
     0,
@@ -96,9 +739,12 @@
    "kind": "other",
    "material": "nylon",
    "process": "fdm",
-   "model": "src/elevron_red/parts.py",
-   "params": {
-    "part": "arm_rail"
+   "shape": {
+    "type": "model",
+    "file": "src/elevron_red/parts.py",
+    "params": {
+     "part": "arm_rail"
+    }
    },
    "at": [
     0,
@@ -120,9 +766,12 @@
    "kind": "other",
    "material": "nylon",
    "process": "fdm",
-   "model": "src/elevron_red/parts.py",
-   "params": {
-    "part": "horn"
+   "shape": {
+    "type": "model",
+    "file": "src/elevron_red/parts.py",
+    "params": {
+     "part": "horn"
+    }
    },
    "at": [
     0,
@@ -142,9 +791,12 @@
    "kind": "wedge",
    "material": "tpu",
    "process": "fdm",
-   "model": "src/elevron_red/parts.py",
-   "params": {
-    "part": "side_l"
+   "shape": {
+    "type": "model",
+    "file": "src/elevron_red/parts.py",
+    "params": {
+     "part": "side_l"
+    }
    },
    "at": [
     0,
@@ -164,9 +816,12 @@
    "kind": "wedge",
    "material": "tpu",
    "process": "fdm",
-   "model": "src/elevron_red/parts.py",
-   "params": {
-    "part": "side_r"
+   "shape": {
+    "type": "model",
+    "file": "src/elevron_red/parts.py",
+    "params": {
+     "part": "side_r"
+    }
    },
    "at": [
     0,
@@ -186,11 +841,14 @@
    "kind": "wheel",
    "material": "tpu",
    "process": "fdm",
-   "model": "src/elevron_red/parts.py",
-   "params": {
-    "part": "tyre",
-    "sx": 1,
-    "sy": -1
+   "shape": {
+    "type": "model",
+    "file": "src/elevron_red/parts.py",
+    "params": {
+     "part": "tyre",
+     "sx": 1,
+     "sy": -1
+    }
    },
    "at": [
     0,
@@ -211,11 +869,14 @@
    "kind": "other",
    "material": "nylon",
    "process": "fdm",
-   "model": "src/elevron_red/parts.py",
-   "params": {
-    "part": "hub",
-    "sx": 1,
-    "sy": -1
+   "shape": {
+    "type": "model",
+    "file": "src/elevron_red/parts.py",
+    "params": {
+     "part": "hub",
+     "sx": 1,
+     "sy": -1
+    }
    },
    "at": [
     0,
@@ -245,18 +906,21 @@
     0
    ],
    "retained": "press_fit",
-   "retained_reason": "gearbox pressed into a 0.25 mm-per-side cradle in the chassis; the cradle closes round it on five faces"
+   "retained_reason": "drops into an open-top 0.25 mm-per-side cradle in the tub; the screwed lid's post clamps it from above"
   },
   {
    "id": "wheel_l1",
    "kind": "wheel",
    "material": "tpu",
    "process": "fdm",
-   "model": "src/elevron_red/parts.py",
-   "params": {
-    "part": "tyre",
-    "sx": 1,
-    "sy": 1
+   "shape": {
+    "type": "model",
+    "file": "src/elevron_red/parts.py",
+    "params": {
+     "part": "tyre",
+     "sx": 1,
+     "sy": 1
+    }
    },
    "at": [
     0,
@@ -277,11 +941,14 @@
    "kind": "other",
    "material": "nylon",
    "process": "fdm",
-   "model": "src/elevron_red/parts.py",
-   "params": {
-    "part": "hub",
-    "sx": 1,
-    "sy": 1
+   "shape": {
+    "type": "model",
+    "file": "src/elevron_red/parts.py",
+    "params": {
+     "part": "hub",
+     "sx": 1,
+     "sy": 1
+    }
    },
    "at": [
     0,
@@ -311,18 +978,21 @@
     0
    ],
    "retained": "press_fit",
-   "retained_reason": "gearbox pressed into a 0.25 mm-per-side cradle in the chassis; the cradle closes round it on five faces"
+   "retained_reason": "drops into an open-top 0.25 mm-per-side cradle in the tub; the screwed lid's post clamps it from above"
   },
   {
    "id": "wheel_r0",
    "kind": "wheel",
    "material": "tpu",
    "process": "fdm",
-   "model": "src/elevron_red/parts.py",
-   "params": {
-    "part": "tyre",
-    "sx": -1,
-    "sy": -1
+   "shape": {
+    "type": "model",
+    "file": "src/elevron_red/parts.py",
+    "params": {
+     "part": "tyre",
+     "sx": -1,
+     "sy": -1
+    }
    },
    "at": [
     0,
@@ -343,11 +1013,14 @@
    "kind": "other",
    "material": "nylon",
    "process": "fdm",
-   "model": "src/elevron_red/parts.py",
-   "params": {
-    "part": "hub",
-    "sx": -1,
-    "sy": -1
+   "shape": {
+    "type": "model",
+    "file": "src/elevron_red/parts.py",
+    "params": {
+     "part": "hub",
+     "sx": -1,
+     "sy": -1
+    }
    },
    "at": [
     0,
@@ -377,18 +1050,21 @@
     180
    ],
    "retained": "press_fit",
-   "retained_reason": "gearbox pressed into a 0.25 mm-per-side cradle in the chassis; the cradle closes round it on five faces"
+   "retained_reason": "drops into an open-top 0.25 mm-per-side cradle in the tub; the screwed lid's post clamps it from above"
   },
   {
    "id": "wheel_r1",
    "kind": "wheel",
    "material": "tpu",
    "process": "fdm",
-   "model": "src/elevron_red/parts.py",
-   "params": {
-    "part": "tyre",
-    "sx": -1,
-    "sy": 1
+   "shape": {
+    "type": "model",
+    "file": "src/elevron_red/parts.py",
+    "params": {
+     "part": "tyre",
+     "sx": -1,
+     "sy": 1
+    }
    },
    "at": [
     0,
@@ -409,11 +1085,14 @@
    "kind": "other",
    "material": "nylon",
    "process": "fdm",
-   "model": "src/elevron_red/parts.py",
-   "params": {
-    "part": "hub",
-    "sx": -1,
-    "sy": 1
+   "shape": {
+    "type": "model",
+    "file": "src/elevron_red/parts.py",
+    "params": {
+     "part": "hub",
+     "sx": -1,
+     "sy": 1
+    }
    },
    "at": [
     0,
@@ -443,7 +1122,7 @@
     180
    ],
    "retained": "press_fit",
-   "retained_reason": "gearbox pressed into a 0.25 mm-per-side cradle in the chassis; the cradle closes round it on five faces"
+   "retained_reason": "drops into an open-top 0.25 mm-per-side cradle in the tub; the screwed lid's post clamps it from above"
   },
   {
    "id": "servo",
@@ -460,14 +1139,14 @@
     -90
    ],
    "retained": "pocket",
-   "retained_reason": "servo body and ears sit in a closed 0.25 mm-per-side pocket in the housing printed on the chassis"
+   "retained_reason": "servo body and ears drop into a 0.25 mm-per-side pocket in the housing; the screwed cover closes it"
   },
   {
    "id": "el_battery",
    "kind": "battery",
    "catalog": "lipo_2s_180",
    "at": [
-    -19.4,
+    -17.2,
     0.0,
     -1.8
    ],
@@ -477,14 +1156,14 @@
     -90
    ],
    "retained": "pocket",
-   "retained_reason": "closed printed cradle, 0.25 mm per side, lead window on the inboard face"
+   "retained_reason": "printed cradle walls, 0.25 mm per side, lead window on the inboard face; two lid posts hold it down"
   },
   {
    "id": "el_rx_esc",
    "kind": "esc",
    "catalog": "malenki_nano",
    "at": [
-    18.4,
+    17.9,
     0.0,
     -4.3
    ],
@@ -493,8 +1172,8 @@
     0,
     90
    ],
-   "retained": "velcro",
-   "retained_reason": "velcro pad on the cavity floor"
+   "retained": "pocket",
+   "retained_reason": "printed side walls and corner stops, 0.25 mm per side, ends open for the leads; two lid posts hold it down"
   },
   {
    "id": "el_switch",
@@ -519,10 +1198,66 @@
     0
    ],
    "retained": "pocket",
-   "retained_reason": "closed 0.25 mm-per-side cradle on the floor; two lips under the body carry it over a belly slot the size of the body"
+   "retained_reason": "0.25 mm-per-side cradle on the floor; two lips under the body carry it over a belly slot, two lid posts hold its ends down"
+  },
+  {
+   "id": "pivot_nut",
+   "kind": "nut",
+   "catalog": "nut_m3_thin",
+   "rot": [
+    0,
+    90,
+    0
+   ],
+   "at": [
+    2.7,
+    -24.8,
+    30.0
+   ],
+   "retained": "pocket",
+   "retained_reason": "hex pocket in the lug's outer face; the pivot screw draws it in"
   }
  ],
- "fasteners": [],
+ "fasteners": [
+  {
+   "id": "fs_pivot",
+   "designation": "M3x25",
+   "at": [
+    -16.0,
+    -24.8,
+    30.0
+   ],
+   "dir": [
+    1,
+    0,
+    0
+   ],
+   "through": [
+    "pivot_cap",
+    "arm",
+    "cover"
+   ],
+   "threads_into": "pivot_nut",
+   "head": "button",
+   "tool": "hex2",
+   "removable": true,
+   "reason": "photo: red-capped M3 pivot screw through the arm boss and the housing lug; its threaded end and nut stand out past the lug"
+  }
+ ],
+ "teardown": [
+  {
+   "parts": [
+    "lid",
+    "housing"
+   ],
+   "dir": [
+    0,
+    0,
+    1
+   ],
+   "reason": "the red housing is printed on the black lid (two-colour print, `fused_with`): they lift off as one"
+  }
+ ],
  "wires": [
   {
    "id": "w_bat_sw",
@@ -587,7 +1322,7 @@
    "b": "chassis",
    "method": "press_fit",
    "interference_mm": 0.1,
-   "reason": "N10 gearbox pressed into its printed cradle; the cradle walls and the shaft wall hold it"
+   "reason": "N10 gearbox pressed into its open-top cradle; the screwed lid's post clamps it down"
   },
   {
    "a": "hub_l0",
@@ -608,7 +1343,7 @@
    "b": "chassis",
    "method": "press_fit",
    "interference_mm": 0.1,
-   "reason": "N10 gearbox pressed into its printed cradle; the cradle walls and the shaft wall hold it"
+   "reason": "N10 gearbox pressed into its open-top cradle; the screwed lid's post clamps it down"
   },
   {
    "a": "hub_l1",
@@ -629,7 +1364,7 @@
    "b": "chassis",
    "method": "press_fit",
    "interference_mm": 0.1,
-   "reason": "N10 gearbox pressed into its printed cradle; the cradle walls and the shaft wall hold it"
+   "reason": "N10 gearbox pressed into its open-top cradle; the screwed lid's post clamps it down"
   },
   {
    "a": "hub_r0",
@@ -650,7 +1385,7 @@
    "b": "chassis",
    "method": "press_fit",
    "interference_mm": 0.1,
-   "reason": "N10 gearbox pressed into its printed cradle; the cradle walls and the shaft wall hold it"
+   "reason": "N10 gearbox pressed into its open-top cradle; the screwed lid's post clamps it down"
   },
   {
    "a": "hub_r1",
@@ -667,40 +1402,55 @@
    "reason": "Scalextric-style tyre stretched over the hub, 0.1 mm interference"
   },
   {
+   "a": "lid",
+   "b": "chassis",
+   "method": "screw",
+   "mechanical_key": true,
+   "reason": "2 M2 screws down through the lid into the side-wall columns; the lid's posts sit inside the motor, battery, ESC and switch cradles, so it cannot slide"
+  },
+  {
+   "a": "cover",
+   "b": "housing",
+   "method": "screw",
+   "reason": "3 M2 screws down through the cover into housing columns"
+  },
+  {
    "a": "servo",
    "b": "housing",
    "method": "interlock",
-   "reason": "servo body and ear plate captured in a closed pocket in the housing"
+   "reason": "servo body and ear plate in a pocket in the housing, closed by the screwed cover"
   },
   {
    "a": "el_battery",
    "b": "chassis",
    "method": "interlock",
-   "reason": "closed printed cradle round the pack, 0.25 mm per side"
+   "reason": "printed cradle round the pack, 0.25 mm per side; lid posts on top"
   },
   {
    "a": "el_rx_esc",
    "b": "chassis",
-   "method": "velcro",
-   "reason": "velcro pad on the cavity floor"
+   "method": "interlock",
+   "reason": "printed side walls and corner stops, 0.25 mm per side; lid posts on top"
   },
   {
    "a": "el_switch",
    "b": "chassis",
    "method": "interlock",
-   "reason": "closed cradle with two lips under the body; slider worked through the belly slot"
+   "reason": "cradle with two lips under the body; lid posts on its ends; slider worked through the belly slot"
   },
   {
    "a": "side_l",
    "b": "chassis",
-   "method": "interlock",
-   "reason": "side panel web keyed into a slot in the chassis wall between the wheels"
+   "method": "screw",
+   "mechanical_key": true,
+   "reason": "web tongue keyed into the chassis flank slot; 2 M2 screws down through the web plate into the flank blocks"
   },
   {
    "a": "side_r",
    "b": "chassis",
-   "method": "interlock",
-   "reason": "side panel web keyed into a slot in the chassis wall between the wheels"
+   "method": "screw",
+   "mechanical_key": true,
+   "reason": "web tongue keyed into the chassis flank slot; 2 M2 screws down through the web plate into the flank blocks"
   },
   {
    "a": "horn",
@@ -711,9 +1461,9 @@
   },
   {
    "a": "arm",
-   "b": "housing",
+   "b": "cover",
    "method": "shaft",
-   "reason": "arm boss turns on the 3 mm steel hinge pin through the housing lug; the servo horn drives it through its link"
+   "reason": "arm boss turns on the M3 pivot screw through the cover lug; the servo horn drives it through its link"
   }
  ],
  "reference": [

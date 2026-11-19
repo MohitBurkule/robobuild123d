@@ -1,4 +1,4 @@
-"""Elevron Red masters (mm). z = 0 is the wheel axle, +y forward, +x is the robot's left.
+"""Elevron Red masters (mm). z = 0 is the wheel axle, +y forward, +x is the robot's right.
 
 Masters come from the Elevron 3.0 "Alt" reference assembly (chassis footprint, wheel stations, side panel
 reach, N10 drive stack) and from the two AWS photos (servo lifter module, rear pods, fork taper). Everything
@@ -43,10 +43,11 @@ FORK_TIP_H = 1.6         # blade thickness at the tip
 POD_SKIN = 1.6
 VENT_W, VENT_D = 1.6, 0.6  # pod vent grooves (width, depth)
 POD_NOSE = 14.0          # pod top runs on past the wheel before the fork rakes down
+KEY_TRIM = 2.0           # side panel tongue / flank slot stop this far short of the wheel wells
 TAB = 1.2                # side panel key depth into the chassis wall
 
 # --- lifter module (photos: servo housing left of a raked arm, pivot at the rear) ---
-MODULE_SIDE = -1         # lifter module built for +x housing, then mirrored: housing on +x when -1 (photo)
+MODULE_SIDE = -1         # lifter module built for +x housing, then mirrored: housing on +x (robot right) when -1 (photo)
 SERVO = "servo_cs07"
 SERVO_L, SERVO_W, SERVO_H = 23.0, 12.0, 22.7   # catalog body (output axis along SERVO_H)
 SERVO_EAR_L = 32.0
@@ -71,6 +72,30 @@ ARM_RAIL = 2.5                                   # red top rail depth
 ARM_BLADE = 14.0                                 # red blade tip length
 ARM_LIFT_DEG = 60.0
 CLEAR = 1.0                                      # arm above the chassis top at rest
+ARM_STEP = 2.5                                   # photo: the top edge steps down part way along the rake
+ARM_STEP_AT = 0.4                                # step position, fraction of the rake from the boss
+PIVOT_SCREW = "M3x25"                            # photo: red-capped M3 through the arm boss, stud + nut past the lug
+PIVOT_D, PIVOT_L = 3.0, 25.0
+CAP_R, CAP_T = 3.5, 1.0                          # red washer under the pivot screw head
+NUT = "nut_m3_thin"
+NUT_T = 1.8
+NUT_AF = 5.5                                     # nut across flats (hex pocket in the lug)
+
+# --- lid / cover split (photo: black top plate under a red screwed servo cover) ---
+LID_T = 1.6                                      # chassis top plate, screwed down; the housing is printed on it
+COL_R = 2.45                                     # lid screw column radius (merges with the motor cradle wall)
+COVER_COL_R = 2.7                                # cover screw columns: 1.5 mm round the 2.4 clearance hole
+LID_SCREWS = ((28.8, 0.0), (-28.8, 0.0))         # world (x, y): one in each side wall; the lid posts key it into the cradles
+LID_BOSS_R, LID_BOSS_H = 3.4, 1.0                # raised pads round the lid screw heads (the plate alone is too thin for the counterbore)
+SERVO_HOLD = 0.1                                 # cover pad clearance over the servo top
+PILOT_R, PILOT_PRE = 0.8, 1.5                    # M2 pilot pre-drilled into the screw columns from their seat face
+COVER_COLS = ((-19.5, 3.6), (-12.75, 3.6), (-6.0, 3.6))         # module (x, y): cover screws into columns in the housing, ahead of the servo
+COVER_Y1 = 7.5                                   # cover front edge (the housing keeps the sloped nose)
+SB_X1, SB_Y, SB_HALF, SB_Z0 = 39.0, 7.0, 2.5, -6.0   # side panel screw blocks on the chassis flank
+SIDE_SCREW_X = 36.5
+MARK_X, MARK_Y = -14.0, -14.0                    # module (x, y) of the "01" on the cover top
+WELL_R = 1.2                                     # wheel well inner corners rounded (no sharp notch at the lid joint)
+POD_ROUND = 3.0                                  # photo: pods rounded along the outer top edge
 
 # --- electronics (cavity layout) ---
 BATTERY = "lipo_2s_180"
@@ -192,12 +217,21 @@ def world_x(x):
 
 def bat_center():
     """battery turned lengthwise (rot z 90) against the right wall of the cavity, on the floor"""
-    return -(cavity_half_w() - BAT_W / 2 - 1), BAY_Y, floor_top() + BAT_H / 2 + 0.1
+    return -(cavity_half_w() - BAT_W / 2 - 3.2), BAY_Y, floor_top() + BAT_H / 2 + 0.1
 
 
 def esc_center():
     """ESC turned lengthwise (rot z 90) against the left wall, leads clear of the wall"""
-    return cavity_half_w() - ESC_W / 2 - 3, BAY_Y, floor_top() + ESC_H / 2 + 0.1
+    return cavity_half_w() - ESC_W / 2 - 3.5, BAY_Y, floor_top() + ESC_H / 2 + 0.1
+
+
+def z_split():
+    """housing / cover split: where the side chamfers start (just above the servo top plus its fit)"""
+    return max(housing_top() - HOUSING_CHAMFER, servo_center()[2] + servo_box()[2] / 2 + FIT)
+
+
+def lid_z0():
+    return ch_top() - LID_T
 
 
 def servo_lead():
