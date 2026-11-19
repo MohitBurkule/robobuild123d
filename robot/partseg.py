@@ -124,10 +124,33 @@ def check(segfile, write=True) -> dict:
            "overlap_frac": round(float((cnt > 1).sum() / max(1, union.sum())), 3), "issues": []}
     for s, r in zip(segs, ms):
         a = int(r.sum())
-        if a < 0.0005 * m.size:
+        if a < 0.0001 * m.size:
             rep["issues"].append(f"{s['id']} {s['label']}: tiny ({a} px) or bad polygon")
         elif (r & m).sum() < 0.7 * a:
             rep["issues"].append(f"{s['id']} {s['label']}: {1 - (r & m).sum() / a:.0%} outside the robot mask")
+    from scipy import ndimage as nd
+
+    def boxes(mask, min_frac):
+        lab, n = nd.label(mask)
+        out = []
+        for k, sl in enumerate(nd.find_objects(lab), 1):
+            a = int((lab[sl] == k).sum())
+            if a >= min_frac * m.sum():
+                out.append({"x": [round(sl[1].start / W, 2), round(sl[1].stop / W, 2)],
+                            "y": [round(sl[0].start / H, 2), round(sl[0].stop / H, 2)], "share_of_robot": round(a / m.sum(), 3)})
+        return sorted(out, key=lambda b: -b["share_of_robot"])[:8]
+
+    gaps = boxes(m & ~union, 0.004)
+    if gaps:  # box coordinates are fractions of the CROPPED frame; without a crop they are fractions of the photo
+        rep["uncovered_regions"] = gaps
+    clash = {}
+    for i in range(len(ms)):
+        for j in range(i + 1, len(ms)):
+            o = int((ms[i] & ms[j]).sum())
+            if o > 0.15 * min(ms[i].sum(), ms[j].sum()) and o > 20:
+                clash[f"{segs[i]['id']}~{segs[j]['id']}"] = round(float(o / max(1, min(ms[i].sum(), ms[j].sum()))), 2)
+    if clash:
+        rep["issues"].append(f"overlapping segments (share of the smaller one): {clash}")
     ids = [s["id"] for s in segs]
     if len(set(ids)) != len(ids):
         rep["issues"].append("duplicate segment ids")
