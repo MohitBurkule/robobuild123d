@@ -24,7 +24,7 @@ Likeness: aws76 0.58 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/brisk.aws76.webp` is declared `front_left_iso` (IoU 0.58 there) but the model matches it better from front_right_iso (elevation
 
 ## Round 4 (verification, helper 2)
-Blockers r3 56 -> r4 8 (`verify --tier inner`).
+Blockers r3 56 -> r4 3 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -41,11 +41,8 @@ Fixed / changed (inside only, outside kept):
 - hollowed chassis (wall 2.5, form 0): 294.4 -> 93.5 cm3
 
 Left (and why):
-- proxy.interference x1: `lid` and `flipper` overlap by 0.09 mm (allowed 0.08).
-- proxy.sweep x1: joint `flipper`: `flipper` hits `lid` 0.09 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint flipper` lists the closest approach to every part.
+- proxy.sweep x1: joint `flipper`: `flipper` hits `chassis` 0.23 mm deep at 7.3 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint flipper` lists the closest approach to every part.
 - power.weapon_motor x1: toolchain: lifters/flippers are servo or gear driven; the check wants a brushless kV for every weapon.
-- process.weapon_printed x1: toolchain: a printed lifter/flipper arm is judged like a spinner (needs hardened teeth); adding metal teeth changes the look.
-- wire.rotor_clearance x2: toolchain: same full-revolution assumption; wires cannot leave a cylinder that covers the chassis.
 - likeness.silhouette x1: looks, not in scope for this pass.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): brisk.aws76.webp 0.77 -> 0.77
