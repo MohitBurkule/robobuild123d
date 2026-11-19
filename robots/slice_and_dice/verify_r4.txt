@@ -1,37 +1,37 @@
 BLOCKERS: 12
-  [ran] integrity 0.34s
-  [proxy] wiring 4.97s
-  [ran] mass 0.02s
-  [proxy] interference 24.35s
-  [ran] connections 2.80s
+  [ran] integrity 0.12s
+  [proxy] wiring 2.59s
+  [ran] mass 0.00s
+  [proxy] interference 14.03s
+  [ran] connections 2.77s
   [ran] legal 0.03s
-  [ran] fasteners 0.00s
+  [ran] fasteners 0.01s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
   [ran] fight 0.03s
-  [ran] shape 0.40s
+  [ran] shape 0.42s
   [ran] dynamics 0.01s
   [ran] strength 0.00s
-  [ran] printability 0.72s
-  [ran] process 0.00s
-  [ran] electrical 0.65s
-  [ran] combat 0.15s
+  [ran] printability 0.89s
+  [ran] process 0.01s
+  [ran] electrical 1.57s
+  [ran] combat 0.11s
   [ran] physics 0.01s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
-  [ran] fit 0.11s
-  [ran] bom 0.02s
-  [ran] wire_review 0.39s
+  [ran] fit 0.21s
+  [ran] bom 0.01s
+  [ran] wire_review 0.35s
   [ran] fastener_record 0.00s
-  [ran] likeness 23.88s
-  [ran] drive_recess 0.00s
+  [ran] likeness 20.09s
+  [ran] drive_recess 0.01s
   [ran] belt_wrap 0.00s
-  [ran] retention 0.03s
+  [ran] retention 0.00s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.28s
-  [ran] dfm 0.16s
-  [ran] realworld 0.97s
+  [ran] geom 0.30s
+  [ran] dfm 0.15s
+  [ran] realworld 0.84s
 slice and dice: ok=False 12 blockers in 12 root causes, mass 103.0/75 g
 1. [integrity.solids] `eye_l` has 1 closed solid(s) and 2 open/invalid shell(s), expected 1 (268 mm3). A boolean or fillet probably collapsed the build.
    fix: Check the last CAD op (fillet/cut order); or declare `solids` with `solids_reason`.
