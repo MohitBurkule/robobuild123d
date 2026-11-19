@@ -8,6 +8,7 @@ import numpy as np
 
 from .. import catalog, geom, xform
 from ..finding import BLOCKER, WARNING, fail, ok
+from .arm_sweep import is_arm
 
 G = "power"
 
@@ -30,6 +31,43 @@ def rim_radius(body, origin, axis) -> float:
     return float(np.linalg.norm(perp, axis=1).max()) if len(q) else 0.0
 
 
+ARM_MIN_REDUCTION = 10.0  # a brushless motor drives an arm only through a gearbox at least this ratio
+
+
+def arm_actuator(r, rp):
+    """power.weapon_motor for a hinged weapon (lifter, flipper, axe, hammer): it needs an actuator that can hold and
+    push, not a kV. `weapon.motor` (else the part's `actuated_by`) must name a catalog servo, a geared DC motor, or a
+    brushless motor behind `weapon.reduction` >= ARM_MIN_REDUCTION. Returns (finding, stall amps | "unknown" | None)."""
+    pid, wd = rp.part.id, rp.part.weapon
+    aid = wd.motor or rp.part.actuated_by
+    act = next((m for m in r.parts if aid is not None and m.part.id == aid), None)
+    what = f"{wd.kind} `{pid}`"
+    fix = ("Add a catalog servo (e.g. `servo_cs07`) or geared motor and name it in `weapon.motor` (or `actuated_by`); "
+           "a brushless motor needs `weapon.reduction` >= " + f"{ARM_MIN_REDUCTION:g}.")
+    if act is None:
+        why = f"names actuator {aid!r}, which is not a part" if aid else "has no actuator (`weapon.motor` / `actuated_by`)"
+        return fail("power.weapon_motor", G, BLOCKER, "Hinged weapon has no actuator", f"{what} {why}.").on(pid).fix(fix), None
+    if act.cat is None:
+        return (fail("power.weapon_motor", G, BLOCKER, "Hinged weapon actuator is not a catalog part",
+                     f"{what} is driven by `{act.part.id}`, which has no catalog entry, so its torque and current are unknown.")
+                .on(pid, act.part.id).fix(fix), None)
+    props, kind = act.cat.props, act.cat.kind
+    red = float(wd.reduction if wd.reduction is not None else 1.0)
+    if kind == "servo" or (kind == "motor" and props.get("kv") is None):
+        sc = props.get("stall_current_a")
+        f = ok("power.weapon_motor", G, "Hinged weapon has a servo or gearmotor",
+               f"{what} is driven by `{act.part.id}` ({act.cat.id}, {kind}).").on(pid, act.part.id)
+        return f, (float(sc) if kind == "servo" and sc is not None else ("unknown" if sc is None else None))
+    if props.get("kv") is not None and red >= ARM_MIN_REDUCTION:
+        return ok("power.weapon_motor", G, "Hinged weapon has a geared motor",
+                  f"{what} is driven by `{act.part.id}` through a {red:g}:1 reduction.").on(pid, act.part.id), None
+    return (fail("power.weapon_motor", G, BLOCKER, "Hinged weapon needs a servo or gearmotor",
+                 f"{what} is driven by `{act.part.id}` ({act.cat.id}, {kind}"
+                 + (f", {red:g}:1" if props.get("kv") is not None else "") + "); a lifter or flipper needs a servo, a geared DC "
+                 f"motor or a brushless motor behind a >= {ARM_MIN_REDUCTION:g}:1 gearbox to hold and push.")
+            .on(pid, act.part.id).fix(fix), None)
+
+
 def run(ctx):
     r, w = ctx.r, ctx.world
     out = []
@@ -39,6 +77,7 @@ def run(ctx):
                       and rp.cat.props.get("cells") is not None), None)
     cells = float(cells if cells is not None else 2.0)
     weapon_current = 0.0
+    actuator_current = 0.0  # servos driving hinged weapons (gearmotors are counted with the drive motors below)
     spinups = []  # (part id, stored energy J at fighting speed, typical current A) per weapon, for the runtime estimate
     missing_current = []  # motors whose current draw is unknown: the peak is then a lower bound, never a pass
     for rp in r.parts:
@@ -48,6 +87,14 @@ def run(ctx):
         i = w.index(pid)
         if i is None:
             ctx.not_checked.append(f"Weapon `{pid}` tip speed and energy: it has no body in the world")
+            continue
+        if is_arm(wd):
+            f, amps = arm_actuator(r, rp)
+            out.append(f)
+            if amps == "unknown":
+                missing_current.append(f.parts[-1] if f.parts else pid)
+            elif amps:
+                actuator_current += amps
             continue
         motor = next((m for m in r.parts if wd.motor is not None and m.part.id == wd.motor), None)
         kv = motor.cat.props.get("kv") if motor is not None and motor.cat is not None else None
@@ -125,7 +172,7 @@ def run(ctx):
                 missing_current.append(rp.part.id)
             else:
                 drive += float(sc)
-        peak = drive + weapon_current
+        peak = drive + weapon_current + actuator_current
         ctx.metrics["peak_current_a"] = peak
         if missing_current:
             ids = ", ".join(f"`{x}`" for x in missing_current)
