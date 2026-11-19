@@ -1154,5 +1154,378 @@
     ]
    ]
   }
+ ],
+ "parts": [
+  {
+   "label": "left wheel",
+   "kind": "wheel",
+   "regions": [
+    8,
+    9,
+    12,
+    14,
+    121,
+    122,
+    155,
+    166,
+    167,
+    170
+   ]
+  },
+  {
+   "label": "left wheel bolt",
+   "kind": "fastener",
+   "regions": [
+    152
+   ]
+  },
+  {
+   "label": "right wheel",
+   "kind": "wheel",
+   "regions": [
+    15,
+    18,
+    31,
+    178,
+    179,
+    187
+   ]
+  },
+  {
+   "label": "right wheel bolt",
+   "kind": "fastener",
+   "regions": [
+    37,
+    153
+   ]
+  },
+  {
+   "label": "left side armor",
+   "kind": "armor",
+   "regions": [
+    32,
+    49,
+    55,
+    64,
+    66,
+    76,
+    85,
+    95,
+    136,
+    137,
+    139,
+    181,
+    189,
+    190
+   ]
+  },
+  {
+   "label": "left side frame",
+   "kind": "frame",
+   "regions": [
+    7,
+    16,
+    138,
+    140,
+    141,
+    142,
+    158,
+    159,
+    160,
+    164,
+    165,
+    171,
+    192
+   ]
+  },
+  {
+   "label": "right side armor",
+   "kind": "armor",
+   "regions": [
+    25,
+    44,
+    58,
+    60,
+    70,
+    188
+   ]
+  },
+  {
+   "label": "top frame",
+   "kind": "frame",
+   "regions": [
+    4,
+    5,
+    10,
+    11,
+    17,
+    145,
+    168,
+    169
+   ]
+  },
+  {
+   "label": "central post",
+   "kind": "frame",
+   "regions": [
+    1,
+    2,
+    6,
+    24,
+    119,
+    120,
+    143
+   ]
+  },
+  {
+   "label": "top axle pin",
+   "kind": "fastener",
+   "regions": [
+    144
+   ]
+  },
+  {
+   "label": "top screw",
+   "kind": "fastener",
+   "regions": [
+    150
+   ]
+  },
+  {
+   "label": "top right screw",
+   "kind": "fastener",
+   "regions": [
+    151
+   ]
+  },
+  {
+   "label": "top right screw 2",
+   "kind": "fastener",
+   "regions": [
+    154,
+    161,
+    193
+   ]
+  },
+  {
+   "label": "left upper arm plate",
+   "kind": "armor",
+   "regions": [
+    3,
+    13,
+    30,
+    162,
+    180
+   ]
+  },
+  {
+   "label": "center top plate",
+   "kind": "armor",
+   "regions": [
+    28,
+    163,
+    174,
+    176
+   ]
+  },
+  {
+   "label": "center right plate",
+   "kind": "armor",
+   "regions": [
+    20,
+    35,
+    41,
+    177
+   ]
+  },
+  {
+   "label": "right upper arm plate",
+   "kind": "armor",
+   "regions": [
+    175
+   ]
+  },
+  {
+   "label": "right inner bracket",
+   "kind": "frame",
+   "regions": [
+    26,
+    29
+   ]
+  },
+  {
+   "label": "right inner bracket bolt",
+   "kind": "fastener",
+   "regions": [
+    146
+   ]
+  },
+  {
+   "label": "red battery lead",
+   "kind": "electronics",
+   "regions": [
+    21,
+    23,
+    33,
+    124,
+    125,
+    126,
+    127,
+    128,
+    156,
+    172,
+    173
+   ]
+  },
+  {
+   "label": "wire bundle",
+   "kind": "electronics",
+   "regions": [
+    34,
+    36,
+    38,
+    39,
+    40,
+    43,
+    129,
+    130,
+    131,
+    134,
+    135,
+    147,
+    157,
+    182,
+    183,
+    184,
+    185,
+    186,
+    191
+   ]
+  },
+  {
+   "label": "white connector",
+   "kind": "electronics",
+   "regions": [
+    22,
+    42,
+    46,
+    123,
+    132,
+    133
+   ]
+  },
+  {
+   "label": "blue wire",
+   "kind": "electronics",
+   "regions": [
+    100
+   ]
+  },
+  {
+   "label": "left yellow U bumper",
+   "kind": "other",
+   "regions": [
+    54,
+    56,
+    61,
+    68,
+    80,
+    81,
+    86
+   ]
+  },
+  {
+   "label": "right yellow U bumper",
+   "kind": "other",
+   "regions": [
+    57,
+    67,
+    69,
+    75,
+    79,
+    83,
+    87,
+    90,
+    91,
+    94
+   ]
+  },
+  {
+   "label": "front plate",
+   "kind": "armor",
+   "regions": [
+    52,
+    53,
+    59,
+    62,
+    63,
+    65,
+    71,
+    72,
+    73,
+    74,
+    77,
+    78,
+    82,
+    84,
+    88,
+    89,
+    92,
+    93,
+    96,
+    97,
+    98,
+    99,
+    101
+   ]
+  },
+  {
+   "label": "front bottom lip",
+   "kind": "armor",
+   "regions": [
+    102,
+    103,
+    104,
+    105,
+    106,
+    107,
+    108,
+    109,
+    110,
+    111,
+    112,
+    113,
+    114,
+    115,
+    116,
+    117,
+    118
+   ]
+  },
+  {
+   "label": "front-left clamp",
+   "kind": "fastener",
+   "regions": [
+    45,
+    48,
+    148
+   ]
+  },
+  {
+   "label": "bent bracket",
+   "kind": "frame",
+   "regions": [
+    47,
+    50
+   ]
+  },
+  {
+   "label": "front-right bolt",
+   "kind": "fastener",
+   "regions": [
+    51,
+    149
+   ]
+  }
  ]
 }
