@@ -1,0 +1,278 @@
+{
+ "aggregate": {
+  "photos": 1,
+  "area_weighted_iou": 0.208,
+  "mean_iou": 0.089
+ },
+ "photos": [
+  {
+   "photo": "blue-terror.aws72.webp",
+   "camera": {
+    "azimuth": 60.0,
+    "elevation": 35.0
+   },
+   "silhouette_iou": 0.788,
+   "mean_iou": 0.089,
+   "area_weighted_iou": 0.208,
+   "f1_at_0.5": 0.038,
+   "segments": [
+    {
+     "id": "s18",
+     "label": "lid screw 4",
+     "area": 132,
+     "best_part": null,
+     "iou": 0.0
+    },
+    {
+     "id": "s15",
+     "label": "lid screw 1",
+     "area": 135,
+     "best_part": "chassis",
+     "iou": 0.003
+    },
+    {
+     "id": "s20",
+     "label": "rail screw 1",
+     "area": 130,
+     "best_part": "chassis",
+     "iou": 0.003
+    },
+    {
+     "id": "s07e",
+     "label": "clear blue top lid (piece 5)",
+     "area": 128,
+     "best_part": "chassis",
+     "iou": 0.003
+    },
+    {
+     "id": "s19",
+     "label": "lid screw 5",
+     "area": 126,
+     "best_part": "chassis",
+     "iou": 0.003
+    },
+    {
+     "id": "s16",
+     "label": "lid screw 2",
+     "area": 138,
+     "best_part": "chassis",
+     "iou": 0.004
+    },
+    {
+     "id": "s23",
+     "label": "rail screw 4",
+     "area": 126,
+     "best_part": "scoop",
+     "iou": 0.007
+    },
+    {
+     "id": "s21",
+     "label": "rail screw 2",
+     "area": 124,
+     "best_part": "scoop",
+     "iou": 0.007
+    },
+    {
+     "id": "s07a",
+     "label": "clear blue top lid (piece 1)",
+     "area": 370,
+     "best_part": "chassis",
+     "iou": 0.009
+    },
+    {
+     "id": "s07c",
+     "label": "clear blue top lid (piece 3)",
+     "area": 722,
+     "best_part": "chassis",
+     "iou": 0.018
+    },
+    {
+     "id": "s17",
+     "label": "lid screw 3",
+     "area": 136,
+     "best_part": "wheel_r0",
+     "iou": 0.018
+    },
+    {
+     "id": "s12b",
+     "label": "blue right rear post (piece 2)",
+     "area": 518,
+     "best_part": "scoop",
+     "iou": 0.02
+    },
+    {
+     "id": "s06a",
+     "label": "right wheel front (piece 1)",
+     "area": 471,
+     "best_part": "wheel_r2",
+     "iou": 0.023
+    },
+    {
+     "id": "s07h",
+     "label": "clear blue top lid (piece 8)",
+     "area": 1005,
+     "best_part": "chassis",
+     "iou": 0.026
+    },
+    {
+     "id": "s11c",
+     "label": "blue left front post (piece 3)",
+     "area": 1093,
+     "best_part": "scoop",
+     "iou": 0.032
+    },
+    {
+     "id": "s07d",
+     "label": "clear blue top lid (piece 4)",
+     "area": 1447,
+     "best_part": "chassis",
+     "iou": 0.037
+    },
+    {
+     "id": "s07g",
+     "label": "clear blue top lid (piece 7)",
+     "area": 1615,
+     "best_part": "chassis",
+     "iou": 0.041
+    },
+    {
+     "id": "s11b",
+     "label": "blue left front post (piece 2)",
+     "area": 1171,
+     "best_part": "dt_screw_3",
+     "iou": 0.041
+    },
+    {
+     "id": "s09",
+     "label": "red wires",
+     "area": 1905,
+     "best_part": "chassis",
+     "iou": 0.048
+    },
+    {
+     "id": "s10",
+     "label": "battery warning sticker",
+     "area": 2225,
+     "best_part": "chassis",
+     "iou": 0.056
+    },
+    {
+     "id": "s13",
+     "label": "blue lower body between posts",
+     "area": 3431,
+     "best_part": "chassis",
+     "iou": 0.06
+    },
+    {
+     "id": "s07f",
+     "label": "clear blue top lid (piece 6)",
+     "area": 4447,
+     "best_part": "wheel_r1",
+     "iou": 0.065
+    },
+    {
+     "id": "s22",
+     "label": "rail screw 3",
+     "area": 135,
+     "best_part": "wheel_r2",
+     "iou": 0.103
+    },
+    {
+     "id": "s24",
+     "label": "lower chassis plate under body",
+     "area": 2360,
+     "best_part": "scoop",
+     "iou": 0.106
+    },
+    {
+     "id": "s07b",
+     "label": "clear blue top lid (piece 2)",
+     "area": 4428,
+     "best_part": "chassis",
+     "iou": 0.111
+    },
+    {
+     "id": "s11a",
+     "label": "blue left front post (piece 1)",
+     "area": 782,
+     "best_part": "dt_screw_3",
+     "iou": 0.141
+    },
+    {
+     "id": "s06b",
+     "label": "right wheel front (piece 2)",
+     "area": 3548,
+     "best_part": "wheel_r2",
+     "iou": 0.148
+    },
+    {
+     "id": "s05",
+     "label": "right wheel middle",
+     "area": 2401,
+     "best_part": "wheel_r1",
+     "iou": 0.15
+    },
+    {
+     "id": "s08",
+     "label": "BLUE TERROR label card",
+     "area": 7640,
+     "best_part": "chassis",
+     "iou": 0.19
+    },
+    {
+     "id": "s02",
+     "label": "left wheel middle",
+     "area": 3958,
+     "best_part": "wheel_l1",
+     "iou": 0.197
+    },
+    {
+     "id": "s01",
+     "label": "left wheel back",
+     "area": 3784,
+     "best_part": "wheel_l0",
+     "iou": 0.197
+    },
+    {
+     "id": "s12a",
+     "label": "blue right rear post (piece 1)",
+     "area": 895,
+     "best_part": "wheel_r2",
+     "iou": 0.221
+    },
+    {
+     "id": "s04",
+     "label": "right wheel back",
+     "area": 2050,
+     "best_part": "wheel_r0",
+     "iou": 0.242
+    },
+    {
+     "id": "s03",
+     "label": "left wheel front",
+     "area": 5493,
+     "best_part": "wheel_l2",
+     "iou": 0.284
+    },
+    {
+     "id": "s14",
+     "label": "front green wedge plate",
+     "area": 14622,
+     "best_part": "scoop",
+     "iou": 0.506
+    }
+   ],
+   "unmatched_model_parts": [
+    "dt_hub_wheel_l0",
+    "dt_nut_wheel_l0",
+    "dt_hub_wheel_l1",
+    "dt_nut_wheel_l1",
+    "dt_hub_wheel_l2",
+    "dt_axle_wheel_l2",
+    "dt_nut_wheel_l2",
+    "dt_screw_2",
+    "dt_screw_5"
+   ]
+  }
+ ]
+}
