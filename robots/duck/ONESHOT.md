@@ -45,15 +45,18 @@ Decisions: type flipper; body box rect 120x110x31 mm, ramp 85; wheels 2 r12 inbo
 Likeness: aws67 0.80 (FAIL), aws71 0.66 (FAIL), aws72 0.64 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/duck_ling_.aws72.webp` is declared `front_left_iso` (IoU 0.64 there) but the model matches it better from front_right_iso (elev
 
+## Round 4 (verification, helper 1)
+S1: printed parts nylon -> abs (lighter) and flipper plate hollowed with a closed 50x62x2.2 mm void (mass 160.6 -> under 150 g); front_lip 1.2 -> 1.0 mm stock gauge, bottom face kept.
+
 ## Round 4 (verification, helper 2)
-Blockers r3 60 -> r4 14 (`verify --tier inner`).
+Blockers r3 60 -> r4 5 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
 - catalog parts added in free space inside the printed parts with 0.25 mm pockets: `dm_wheel_l0` (pololu_hpcb6v_50to1), `dm_wheel_r0` (pololu_hpcb6v_50to1), `el_battery` (lipo_2s_180), `el_esc` (bbb_malenki_nano), `el_switch` (switch_slide_12x4)
 - overlaps resolved by cuts that keep the union of the parts (pockets, bores, wheel and spinner running clearance)
 - one print with the chassis (same material, `fused_with`): `front_plate`, `hook_l`, `hook_r`, `dt_hub_wheel_l0`, `dt_hub_wheel_r0`
-- 4 wires declared (battery - switch - ESC - motors)
+- 5 wires declared (battery - switch - ESC - motors)
 - print orientation on every printed part, failsafe / weapon disable declared, design volumes declared where this pass changed a part on purpose
 - power switch on the floor of the body, slider facing down to a 7 x 3 mm slot in the underside (no slot on the top or sides; hollow cavities stay closed behind a wall at every outside face)
 - no screw line found for front_lip
@@ -67,17 +70,8 @@ Fixed / changed (inside only, outside kept):
 - hollowed hook_r (wall 1.6, form 0): 3.9 -> 2.2 cm3
 
 Left (and why):
+- proxy.wiring x1: Wire `w_sw_esc` (`el_switch.out` to `el_esc.bat`): the baseline route is now blocked by `chassis` (6 samples).
 - mass.over x1: the photo-sized outside (steel weapon / big printed shell) is heavier than 150 g even hollowed; only a smaller outside would fix it.
-- power.weapon_motor x1: toolchain: lifters/flippers are servo or gear driven; the check wants a brushless kV for every weapon.
-- process.weapon_printed x1: toolchain: a printed lifter/flipper arm is judged like a spinner (needs hardened teeth); adding metal teeth changes the look.
-- mfg.stock x1: `front_lip` (laser): thickness 1.20 mm is not a stock titanium gauge (0.5, 0.8, 0.9, 1, 1.5, 2, 3, 4, 5, 6, 8, 10); nearest 1 mm.
-- electrical.battery_weapon_gap x1: toolchain: a limited-range arm is judged as a full revolution about its pivot; that cylinder covers the whole chassis.
-- wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
-- wire.rotor_clearance x4: toolchain: same full-revolution assumption; wires cannot leave a cylinder that covers the chassis.
 - likeness.silhouette x3: looks, not in scope for this pass.
-- battery.rotor_gap x1: toolchain: same full-revolution assumption for a limited-range arm.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): duck_ling_.aws67.webp 0.8 -> 0.8; duck_ling_.aws71.webp 0.66 -> 0.66; duck_ling_.aws72.webp 0.76 -> 0.76
-
-## Round 4 (verification, helper 1)
-S1: printed parts nylon -> abs (lighter) and flipper plate hollowed with a closed 50x62x2.2 mm void (mass 160.6 -> under 150 g); front_lip 1.2 -> 1.0 mm stock gauge, bottom face kept.
