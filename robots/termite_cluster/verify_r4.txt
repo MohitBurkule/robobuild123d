@@ -1,42 +1,42 @@
 BLOCKERS: 7
-  [ran] integrity 0.09s
+  [ran] integrity 0.10s
   [ran] mass 0.00s
-  [proxy] interference 14.54s
-  [ran] connections 0.47s
-  [ran] legal 0.03s
-  [ran] fasteners 0.04s
+  [proxy] interference 16.27s
+  [ran] connections 0.34s
+  [ran] legal 0.02s
+  [ran] fasteners 0.03s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
-  [ran] fight 0.02s
-  [ran] shape 0.55s
-  [ran] dynamics 0.01s
-  [ran] strength 0.03s
-  [ran] printability 0.56s
-  [ran] process 0.01s
-  [ran] electrical 0.02s
+  [ran] fight 0.03s
+  [ran] shape 0.42s
+  [ran] dynamics 0.00s
+  [ran] strength 0.02s
+  [ran] printability 0.92s
+  [ran] process 0.00s
+  [ran] electrical 0.00s
   [ran] combat 0.11s
-  [ran] physics 0.01s
+  [ran] physics 0.00s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
-  [ran] fit 0.08s
+  [ran] fit 0.07s
   [ran] bom 0.01s
-  [ran] wire_review 0.03s
+  [ran] wire_review 0.02s
   [ran] fastener_record 0.00s
-  [ran] likeness 4.28s
+  [ran] likeness 5.13s
   [ran] drive_recess 0.00s
   [ran] belt_wrap 0.00s
-  [ran] retention 0.03s
-  [ran] waiver_audit 0.01s
-  [ran] geom 0.09s
-  [ran] dfm 0.05s
-  [ran] realworld 0.10s
-termite cluster: ok=False 7 blockers in 7 root causes, mass 111.3/50 g
-1. [mass.over] 111.3 g (range 96.2 to 126.4 g) against the 50 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.12s
+  [ran] dfm 0.06s
+  [ran] realworld 0.13s
+termite cluster: ok=False 7 blockers in 7 root causes, mass 108.5/50 g
+1. [mass.over] 108.5 g (range 93.9 to 123.0 g) against the 50 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
 2. [proxy.interference] `lid` and `dt_strut_lid` overlap by 0.93 mm (allowed 0.08).
    | lid: x -20.00..20.00  y -18.00..18.00  z 11.00..13.00  size 40.00 x 36.00 x 2.00 mm
-   |   centre (0.00, 0.00, 12.00), volume 2880.0 mm3
+   |   centre (0.00, 0.00, 12.00), volume 2131.5 mm3
    |   OVERLAP `dt_strut_lid` 0.93 mm (allowed 0.08)
    |   gap to `chassis` 2.00 mm
    |   gap to `top_plate` 2.00 mm
@@ -56,29 +56,29 @@ termite cluster: ok=False 7 blockers in 7 root causes, mass 111.3/50 g
 7. [likeness.silhouette] `reference/termite_cluster.aws69.webp`: best silhouette IoU 0.61 at camera top (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.65). Regions (photo frame, left third first) 0.48 / 0.71 / 0.63: worst = front third. Height/length 1.00 model vs 0.75 photo (too tall: lower it or lengthen it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
-  mass 111.3 g of 50 g (-61.3 g margin)
-    chassis                    31.67 g  fills 45% of its box
+  mass 108.5 g of 50 g (-58.5 g margin)
+    chassis                    30.77 g  fills 44% of its box
     el_battery                 12.50 g  fills 100% of its box
     dm_wheel_l0                 9.70 g  fills 66% of its box
     dm_wheel_r0                 9.70 g  fills 66% of its box
     dm_wheel_l1                 9.70 g  fills 66% of its box
     dm_wheel_r1                 9.70 g  fills 66% of its box
-    top_plate                   6.18 g  fills 99% of its box
+    top_plate                   4.84 g  fills 78% of its box
     scoop                       3.76 g  fills 21% of its box
     el_rx_esc                   3.50 g  fills 100% of its box
-    lid                         2.74 g  fills 100% of its box
+    lid                         2.03 g  fills 74% of its box
     wheel_l0                    1.51 g  fills 57% of its box
     wheel_r0                    1.51 g  fills 57% of its box
     wheel_l1                    1.51 g  fills 57% of its box
     wheel_r1                    1.51 g  fills 57% of its box
     dt_strut_lid                0.72 g  fills 32% of its box
-    dt_hub_wheel_l0             0.57 g  fills 63% of its box
-    dt_hub_wheel_l1             0.57 g  fills 63% of its box
-    dt_hub_wheel_r0             0.57 g  fills 63% of its box
-    dt_hub_wheel_r1             0.57 g  fills 63% of its box
+    dt_hub_wheel_l0             0.60 g  fills 67% of its box
+    dt_hub_wheel_l1             0.60 g  fills 67% of its box
+    dt_hub_wheel_r1             0.60 g  fills 67% of its box
+    dt_hub_wheel_r0             0.60 g  fills 67% of its box
     el_switch                   0.50 g  fills 100% of its box
     fs_look_top_plate_0         0.28 g  fills 27% of its box
     fs_look_top_plate_1         0.28 g  fills 27% of its box
-    mass.over: 111.3 g (range 96.2 to 126.4 g) against the 50 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.over: 108.5 g (range 93.9 to 123.0 g) against the 50 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
 cache: part_geom 0 hit / 22 miss

@@ -28,7 +28,7 @@ Other likeness findings: [FAIL] likeness.view: `reference/termite_cluster.aws69.
 
 ## Round 4 (verification, helper 1)
 Blockers r3 -> r4: **61 -> 7** (`verify --tier inner`, full output in verify_r4.txt).
-Likeness (best silhouette IoU per photo, r3 -> r4): termite_cluster.aws68.webp 0.611 -> 0.611, termite_cluster.aws69.webp 0.614 -> 0.614
+Likeness (best silhouette IoU per photo, r3 -> r4): termite_cluster.aws68.webp 0.611 -> 0.610, termite_cluster.aws69.webp 0.614 -> 0.614
 
 What was done (script r4_h1, outside shape kept):
 - fake screw/bolt heads removed; detail mounts/arms merged into the print part they sit on; axle nuts became printed hub caps
