@@ -33,7 +33,7 @@ Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
 - catalog parts added in free space inside the printed parts with 0.25 mm pockets: `dm_wheel_l0` (pololu_hpcb6v_50to1), `dm_wheel_r0` (pololu_hpcb6v_50to1), `el_battery` (lipo_2s_180), `el_esc` (bbb_malenki_nano), `el_switch` (switch_slide_12x4)
 - overlaps resolved by cuts that keep the union of the parts (pockets, bores, wheel and spinner running clearance)
-- one print with the chassis (same material, `fused_with`): `rear_wall`, `side_wall_l`, `side_wall_r`, `lid`, `horn_l`, `horn_r`, `dt_hub_wheel_l0`, `dt_hub_wheel_r0`, `dt_hub_wheel_l1`, `dt_hub_wheel_r1`
+- one print with the chassis (same material, `fused_with`): `rear_wall`, `side_wall_l`, `side_wall_r`, `lid`, `rr_sticker_legs`, `rr_sticker_head`, `rr_sticker_body`, `horn_l`, `horn_r`, `dt_hub_wheel_l0`, `dt_hub_wheel_r0`, `dt_hub_wheel_l1`, `dt_hub_wheel_r1`
 - real fasteners: `fs_look_lid_0` M2x8, `fs_look_lid_1` M2x8, `fs_look_lid_2` M2x8, `fs_look_lid_3` M2x8, `fs_look_lid_4` M2x8, `fs_look_lid_5` M2x8, `fs_look_chassis_6` M2x6, `fs_look_chassis_7` M2x6, `fs_look_chassis_8` M2x6, `fs_look_chassis_9` M2x6
 - 4 wires declared (battery - switch - ESC - motors)
 - print orientation on every printed part, failsafe / weapon disable declared, design volumes declared where this pass changed a part on purpose
@@ -49,11 +49,9 @@ Fixed / changed (inside only, outside kept):
 - front_screw3: not touching the chassis, left undeclared
 - front_screw0..3: the printed screw heads on the front face sat 0.5 mm off the chassis (floating); each got a hidden 1.2 mm shank behind the head, 1 mm into the chassis, and prints with the chassis (fused_with). Outside unchanged.
 - mass.over remains: the solid rebuilt nylon chassis is 159 g alone; hollowing fails on its wedge/openings and even a 1.2 mm shell cannot reach 150 g upper bound (needs owner: smaller/thinner outside)
+- photo graphics as fused colour-split decals (robot decal): the road-runner sticker on the lid (blue body, head, orange legs)
 
 Left (and why):
 - mass.over x1: the photo-sized outside (steel weapon / big printed shell) is heavier than 150 g even hollowed; only a smaller outside would fix it.
-- proxy.interference x1: `chassis` and `wheel_r1` overlap by 0.24 mm (allowed 0.08).
-- connection.fused_mismatch x1: `side_wall_r` is fused to `chassis` but they share 0.00 mm3 (need >= 1 mm3); faces that only touch print as two pieces or a paper-thin seam.
-- connection.floating x1: `side_wall_r` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): road_runner.aws67.webp 0.84 -> 0.83

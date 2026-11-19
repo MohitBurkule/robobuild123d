@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_road_runner/robots/road_runner/spec.json",
- "rendered_at": 1795066653.2792542,
+ "rendered_at": 1795077309.218719,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -11,6 +11,9 @@
   "side_wall_l",
   "side_wall_r",
   "lid",
+  "rr_sticker_legs",
+  "rr_sticker_head",
+  "rr_sticker_body",
   "horn_l",
   "horn_r",
   "dt_hub_wheel_l0",
