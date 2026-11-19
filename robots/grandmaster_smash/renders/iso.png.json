@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_grandmaster_smash/robots/grandmaster_smash/spec.json",
- "rendered_at": 1795036301.761191,
+ "rendered_at": 1795045111.4805949,
  "bodies": [
   "chassis",
   "weapon",
@@ -31,5 +31,30 @@
   "el_switch",
   "lock_pin"
  ],
- "wires": {}
+ "wires": {
+  "w_sw_wesc": {
+   "from": [
+    -16.4,
+    -16.788,
+    -8.0
+   ],
+   "to": [
+    -37.986999999999995,
+    -2.983,
+    -9.989
+   ]
+  },
+  "w_m1": {
+   "from": [
+    37.013000000000005,
+    4.017,
+    -9.489
+   ],
+   "to": [
+    16.6,
+    0.0,
+    0.0
+   ]
+  }
+ }
 }
