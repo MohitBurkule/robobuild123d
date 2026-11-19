@@ -55,3 +55,9 @@ Notes from the run:
 Left (one line each):
 - legal.footprint x1: see verify_r4.txt root causes
 - likeness.silhouette x1: looks (not part of this pass; outside shape kept as round 3)
+
+## Round 5 (user notes)
+- Removed the `deck` box on top (it read as a battery); the lid is the flat chassis top, as in the photo.
+- Forks: 3 printed nylon triangular forks (7 mm wide, 3 mm gaps), top edge at the lid height, sloping to a tip 0.5 mm off the floor 47 mm ahead of the body; one print with the chassis.
+- Side arms taper from body height to 4 mm at the tip (photo) and flare 4 mm less, so the 150 mm footprint passes.
+Blockers 3 -> 1 (likeness only), IoU 0.62 -> 0.64.
