@@ -144,7 +144,7 @@ def regions(base: Path, photo: str, n: int = 400, merge_thr: float = 14.0, max_p
     return lab
 
 
-def fuse(segfile, big=0.006, split_frac=0.25) -> dict:
+def fuse(segfile, big=0.006, split_frac=0.15) -> dict:
     """Let the rough brush polygons (`segments`) correct the auto regions, in place (round N of at most 3):
     - a region that two or more BIG brush polygons each cover >= `split_frac` of is split along those polygons;
     - a SMALL brush polygon (< `big` of the robot, e.g. a screw the auto cut swallowed) is carved out as its own region.
@@ -622,7 +622,8 @@ def add_cli(sub):
     r.set_defaults(func=lambda a: print(f"{regions(Path(a.spec_dir), a.photo, a.n, a.merge, method=a.method).max()} regions; view: {a.spec_dir}/reference/segments/{Path(a.photo).stem}.regions.view.png") or 0)
     f = ps.add_parser("fuse", help="round of brush polygons correcting the auto regions (split / carve), in place")
     f.add_argument("segfile")
-    f.set_defaults(func=lambda a: print(json.dumps(fuse(a.segfile), indent=1)) or 0)
+    f.add_argument("--split-frac", type=float, default=0.15, help="a region is split along a big brush polygon covering this share of it")
+    f.set_defaults(func=lambda a: print(json.dumps(fuse(a.segfile, split_frac=a.split_frac), indent=1)) or 0)
     c = ps.add_parser("check")
     c.add_argument("segfile")
     c.set_defaults(func=lambda a: print(json.dumps(check(a.segfile), indent=1)) or 0)
