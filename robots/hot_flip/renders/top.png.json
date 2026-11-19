@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_hot_flip/robots/hot_flip/spec.json",
- "rendered_at": 1795061007.8377848,
+ "rendered_at": 1795085555.5493407,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -13,9 +13,7 @@
   "el_battery",
   "el_esc",
   "el_switch",
-  "wa_act",
-  "fs_look_chassis_0",
-  "fs_look_chassis_1"
+  "wa_act"
  ],
  "wires": {
   "w_bat_sw": {
@@ -73,7 +71,7 @@
     20.5
    ],
    "to": [
-    -32.85,
+    -24.85,
     -24.5,
     41.5
    ]

@@ -40,3 +40,12 @@ Fixed / changed (inside only, outside kept):
 Left (and why):
 
 Likeness (best silhouette IoU per photo, r3 -> r4): hot_flip.aws71.webp 0.81 -> 0.81
+
+## Round 5 (photo + user note: sloped triangular sides, lifting front panel)
+- Body cross-section is now a trapezoid: vertical side plates to z = 22, then facets leaning in to a 68 mm top (each body/cavity intersect gets the same front-view prism, so the hollow shell keeps its wall).
+- The front panel (`flipper`) is a full-width trapezoid (92 mm at the lip, 62 mm at the hinge), set in a recess between the side rails. It is still hinged at its top edge (0-80 deg) and driven by `wa_act`.
+- The rear wall is taller (z 46), as the photo's height-to-length ratio needs.
+- The actuator and its wire channel moved 8 mm inboard, to stay inside the sloped facet.
+- The two side look-screws were removed (their bosses stood out of the new sloped faces).
+- Wall 2.5 -> 2.2 mm and panel 2 -> 1.7 mm, for mass.
+- Blockers 0 -> 0, IoU 0.81 -> 0.81, mass 149.5 -> 146.6 g. See DESCRIPTION.md.

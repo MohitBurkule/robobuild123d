@@ -1,0 +1,80 @@
+{
+ "spec": "/tmp/work10_hot_flip/robots/hot_flip/spec.json",
+ "rendered_at": 1795085548.1419806,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "flipper",
+  "dt_hub_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_esc",
+  "el_switch",
+  "wa_act"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    -0.5,
+    10.5,
+    -1.5
+   ],
+   "to": [
+    -3.5,
+    -15.5,
+    -2.0
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    4.5,
+    -15.5,
+    -2.0
+   ],
+   "to": [
+    -15.5,
+    -6.5,
+    20.5
+   ]
+  },
+  "w_m1": {
+   "from": [
+    16.5,
+    5.5,
+    20.5
+   ],
+   "to": [
+    12.5,
+    -30.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -15.5,
+    5.5,
+    20.5
+   ],
+   "to": [
+    -12.5,
+    -30.0,
+    0.0
+   ]
+  },
+  "w_wpn": {
+   "from": [
+    16.5,
+    -6.5,
+    20.5
+   ],
+   "to": [
+    -24.85,
+    -24.5,
+    41.5
+   ]
+  }
+ }
+}
