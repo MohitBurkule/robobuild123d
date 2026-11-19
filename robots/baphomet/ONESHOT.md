@@ -39,13 +39,10 @@ Fixed / changed (inside only, outside kept):
 - hollowed weapon_motor_can (wall 1.6, form 0): 5.1 -> 2.5 cm3
 
 Left (and why):
-- integrity.solids x1: `chassis` has 0 closed solid(s) and 1 open/invalid shell(s), expected 1 (63081 mm3). A boolean or fillet probably collapsed the build.
-- proxy.wiring x2: Wire `w_bat_sw` (`el_battery.xt30` to `el_switch.in`): no baseline route (run the full `wiring` group once and pass its report).
 - mass.over x1: the photo-sized outside (steel weapon / big printed shell) is heavier than 150 g even hollowed; only a smaller outside would fix it.
 - mfg.stock x2: `fork_0` (laser): thickness 2.50 mm is not a stock titanium gauge (0.5, 0.8, 0.9, 1, 1.5, 2, 3, 4, 5, 6, 8, 10); nearest 2 mm.
 - mfg.layer_load x2: `dt_arm_weapon_0` carries the `weapon` axle but is printed with build direction +z (world [0.0, 0.0, 1.0]), not along the spin axis [1.0, 0.0, 0.0]: impact load peels layers apart.
 - wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
-- wire.render_count x1: iso.png: 5 routes vs 7 spec wires (missing ['w_bat_sw', 'w_sw_esc']); top.png: 5 routes vs 7 spec wires (missing ['w_bat_sw', 'w_sw_esc'])
 - likeness.silhouette x3: looks, not in scope for this pass.
 - likeness.view x1: looks, not in scope for this pass.
 
