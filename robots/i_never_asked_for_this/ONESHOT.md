@@ -43,8 +43,9 @@ Fixed / changed (inside only, outside kept):
 - rod dt_axle_wheel_r1: 2.8 mm stub clear of ['dm_wheel_r1'] printed as the wheel's hub boss
 - hollowed chassis (wall 2.5, form 0): 176.6 -> 72.4 cm3
 - hollow skipped front_plate: solids 1 vol 1.00
+- side profile from the photo (robot outline --round): rounded top long edges (5 mm) and rounded rear top edge (8 mm), skin kept behind the cut
 
 Left (and why):
 - likeness.silhouette x1: looks, not in scope for this pass.
 
-Likeness (best silhouette IoU per photo, r3 -> r4): i_never_asked_for_this.aws71.webp 0.72 -> 0.72
+Likeness (best silhouette IoU per photo, r3 -> r4): i_never_asked_for_this.aws71.webp 0.72 -> 0.74
