@@ -1,45 +1,45 @@
 BLOCKERS: 12
-  [ran] integrity 0.11s
-  [proxy] wiring 2.75s
+  [ran] integrity 0.10s
+  [proxy] wiring 1.05s
   [ran] mass 0.00s
-  [proxy] interference 23.37s
-  [ran] connections 2.13s
-  [ran] legal 0.07s
+  [proxy] interference 15.49s
+  [ran] connections 1.27s
+  [ran] legal 0.02s
   [ran] fasteners 0.00s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
-  [ran] fight 0.10s
-  [ran] shape 1.24s
-  [ran] dynamics 0.01s
-  [ran] strength 0.01s
-  [ran] printability 2.29s
-  [ran] process 0.05s
-  [ran] electrical 1.70s
-  [ran] combat 0.15s
+  [ran] fight 0.03s
+  [ran] shape 0.46s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 1.12s
+  [ran] process 0.02s
+  [ran] electrical 1.13s
+  [ran] combat 0.13s
   [ran] physics 0.00s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
-  [ran] fit 0.32s
-  [ran] bom 0.01s
-  [ran] wire_review 2.81s
+  [ran] fit 0.10s
+  [ran] bom 0.00s
+  [ran] wire_review 0.76s
   [ran] fastener_record 0.00s
-  [ran] likeness 8.07s
+  [ran] likeness 6.27s
   [ran] drive_recess 0.00s
   [ran] belt_wrap 0.00s
-  [ran] retention 0.01s
+  [ran] retention 0.00s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.26s
-  [ran] dfm 0.16s
-  [ran] realworld 0.79s
-divebomb: ok=False 12 blockers in 12 root causes, mass 162.2/150 g
+  [ran] geom 0.35s
+  [ran] dfm 0.13s
+  [ran] realworld 1.51s
+divebomb: ok=False 12 blockers in 12 root causes, mass 164.2/150 g
 1. [proxy.wiring] Wire `w_sw_esc` (`el_switch.out` to `el_rx_esc.bat`): no baseline route (run the full `wiring` group once and pass its report).
    fix: Run the full `wiring` group to re-route it.
-2. [mass.over] 162.2 g (range 144.3 to 180.1 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+2. [mass.over] 164.2 g (range 145.9 to 182.4 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
 3. [proxy.interference] `chassis` and `arm` overlap by 0.93 mm (allowed 0.08).
    | chassis: x -49.33..49.33  y -31.00..31.00  z -7.00..7.00  size 98.66 x 62.00 x 14.00 mm
-   |   centre (0.00, 0.00, 0.00), volume 35001.7 mm3
+   |   centre (0.00, 0.00, 0.00), volume 37033.5 mm3
    |   OVERLAP `arm` 0.93 mm (allowed 0.08)
    |   gap to `fork_0` 0.00 mm (touching)
    |   gap to `fork_1` 0.00 mm (touching)
@@ -86,8 +86,8 @@ divebomb: ok=False 12 blockers in 12 root causes, mass 162.2/150 g
 12. [likeness.silhouette] `reference/divebomb.aws67.webp`: best silhouette IoU 0.63 at camera front_left_iso (elevation 45, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.61). Regions (photo frame, left third first) 0.54 / 0.61 / 0.71: worst = front third. Height/length 1.00 model vs 0.94 photo (too tall: lower it or lengthen it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
-  mass 162.2 g of 150 g (-12.2 g margin)
-    chassis                    33.32 g  fills 41% of its box
+  mass 164.2 g of 150 g (-14.2 g margin)
+    chassis                    35.26 g  fills 43% of its box
     arm                        16.59 g  fills 51% of its box
     fork_1                     15.80 g  fills 20% of its box
     fork_0                     15.80 g  fills 12% of its box
@@ -107,6 +107,6 @@ MASS BUDGET:
     dt_hub_wheel_r0             0.54 g  fills 65% of its box
     dt_hub_wheel_r1             0.54 g  fills 65% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.over: 162.2 g (range 144.3 to 180.1 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.over: 164.2 g (range 145.9 to 182.4 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
 cache: part_geom 0 hit / 20 miss
