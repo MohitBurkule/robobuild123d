@@ -873,7 +873,7 @@
     0,
     0
    ],
-   "color": "#eb5f65",
+   "color": "#5a3a2a",
    "tyre_of": "dt_hub_wheel_l0",
    "print_orientation": "+z",
    "volume_mm3": 4620.0
@@ -996,7 +996,7 @@
     0,
     0
    ],
-   "color": "#ff8a9b",
+   "color": "#5a3a2a",
    "tyre_of": "dt_hub_wheel_r0",
    "print_orientation": "+z",
    "volume_mm3": 4620.0
@@ -1354,8 +1354,7 @@
    ],
    "catalog": "lipo_2s_180",
    "retained": "velcro",
-   "retained_reason": "velcro pad on the pocket floor; the closed pocket (0.25 mm per side) stops it moving",
-   "color": "#ff7b8a"
+   "retained_reason": "velcro pad on the pocket floor; the closed pocket (0.25 mm per side) stops it moving"
   },
   {
    "id": "el_rx_esc",
