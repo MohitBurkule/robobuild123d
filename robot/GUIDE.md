@@ -105,6 +105,15 @@ robot's own motion or when inverted.
 - `robot window spec.json PART --over el_battery [--face +z] [--lip 2]` opens a see-through window over a battery, ESC
   or PCB where the photo shows the electronics, keeping a rim so the component stays captive. It refuses when anything
   but wires lies between the component and the outside.
+- `robot electronics spec.json [--kinds battery,esc,receiver] [--only el_battery] [--lip 2] [--dry]` does the window
+  for every battery / ESC / receiver at once, through *all* the static prints over it (a tub's deck and a `top_plate`
+  together): one box over the component's footprint less the rim. It skips a component with a screw, a moving or
+  bought part, or any other body in that box, so the real parts and their routed wires show and nothing is faked.
+- `robot brackets spec.json [--wheels wheel_l0,..] [--spokes 5]` puts a hub cap on each wheel's printed hub
+  (`tyre_of`): a ring on the hub's outer face, around the axle stub and inside the hub rim, never standing past the
+  stub (so the wheel's width and the footprint stay the same), with shallow lug pockets. It is part of the hub print,
+  so mass and BOM stay true. It refuses when the ring would touch the tyre or anything else. Outboard wheel brackets
+  change how the axle is carried: design those by hand.
 - Both change the outline on purpose: keep a change only if the likeness IoU does not drop, and re-run verify.
 
 ## Tips
