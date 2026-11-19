@@ -439,3 +439,79 @@ All in the frame of section 9.
 | 8 | Front pocket depth | 15 mm (aws69 top view of the cut) vs not visible (aws71) | 13 mm | aws69 is the only direct evidence; leave the drum 1.5-2 mm gap |
 | 9 | Wheel top vs plate | level (aws71) vs 1 mm below (aws69) | level, within 0.5 mm | needed to drive upside down |
 | 10 | Arm-screw count on the side wall | 2 holes (aws69) vs 1 visible (aws71/72) | 2 per side | the second one is hidden by the arm or the weapon in aws71/72 |
+
+---
+
+## 14. Why the designer did it (each part, several angles)
+
+- **Tub (open-top box, rear chamfers).**
+  - Fight: the 45 deg rear chamfers deflect spinners and make the robot harder to pin in a corner. Full-height side
+    walls hide the wheels from horizontal spinners. Low height (29 mm) keeps the centre of mass low and gives
+    opponents' wedges little face to get under.
+  - Construction: an open-top box prints flat with no supports, one print in 2-3 h. Walls of about 2 mm are the lightest
+    that survive ant hits in PLA or PETG.
+  - Repair: the electronics drop in from the top. The tub is cheap to reprint.
+  - Weight: a box of plain walls is the lightest way to enclose ~95 x 68 mm.
+- **Front pocket.**
+  - Fight: the drum sits partly inside the body, so the robot is shorter (better in a 150 mm box) and the drum is
+    shielded from side hits.
+  - Construction: just a missing wall section; costs nothing.
+- **Top plate (separate lid, 6 screws).**
+  - Fight: it stiffens the open tub into a closed box and takes top hits (vertical spinners). The flat top means the
+    robot works upside down.
+  - Construction and repair: it gives access for electronics and charging. It prints flat; carbon or G10 could be
+    laser cut. The wheel notches let the wheels be full height without a taller body.
+  - Weight: 1.5 mm is the thinnest that will not flex under the hits.
+- **Square window in the plate.**
+  - Practical: you can see the receiver LED (failsafe or bind state) without opening the lid **[G]**.
+- **Switch in the centre of the lid, taped.**
+  - Rules: the switch must be reachable without tools and away from the weapon; the centre top is the safest place.
+  - Tape: it stops debris getting in and the lever being knocked off by hits **[G]**.
+- **Weapon arms (thick separate uprights).**
+  - Fight: they take the full weapon reaction. Separate parts can be reprinted alone when bent, and 8 mm of plastic
+    gives stiffness so the drum does not rub. They stick out past the body to protect the drum ends from side hits.
+  - Construction: printed lying flat (layers parallel to the side face), so the axle load runs in the layer plane and
+    does not peel them. They bolt to the tub with side screws, so the tub stays a simple print.
+  - Rules: the axle sits in both arms, so the weapon is supported at both ends.
+- **Dead axle with a nyloc nut.**
+  - Construction: an off-the-shelf M5 bolt or rod plus a nyloc. The weapon and motor slide off for repair.
+  - Fight: a steel axle through both arms ties the arms together like a cross-member.
+- **Drum (aws69) or scoop (aws71/72).**
+  - Fight: a drum gives a vertical upward hit that flips opponents. Its compact energy store is safe on a small
+    robot. The scoop version gets under robots like a wedge while still spinning (a "beater"), and its window saves
+    weight. The sprung bar may be a tooth that pops out at speed **[G]**.
+  - Weight: tube or sheet metal is lighter than a solid drum.
+  - Cost: tape over a printed core (aws72) is the cheap spare.
+- **In-drum or end-mounted outrunner.**
+  - Fight: no belt to throw. Direct drive, and the motor is shielded by the drum.
+  - Construction: the motor is the bearing on one end, with fewer parts. The drum bonds to the bell.
+- **Wheels inside the walls, near the rear, tyres level with the top.**
+  - Fight: protected from spinners. Invertible. Near the rear for steering with the drum at the front. Grippy cast tyres.
+  - Construction: wells cut straight through the tub; the gearmotors push straight in.
+- **Small screws (M2) throughout.**
+  - Weight: light. Cost: one screw type and one driver. They thread into the printed walls without inserts **[G]**.
+
+## 15. Unseen and inner parts (guesses with confidence)
+
+Confidence: **H** = high, almost certainly there; **M** = medium, likely as described; **L** = low, a plausible
+design only.
+
+| Part | Guess | Size (mm) | Position (frame of section 9) | Conf. |
+|---|---|---|---|---|
+| Battery | 2S LiPo 180-300 mAh, in a flat pack | 36 x 20 x 10 | rear bay, centre (0, -37, -7.5), long side along x | M |
+| Receiver + drive ESC | Malenki-Nano (receiver with 2 brushed ESCs and 1 PWM out) | 32 x 19 x 2.5 | front bay floor, centre (0, 6, -11) | M |
+| Weapon ESC | small brushless ESC, heat-shrunk | 22 x 11 x 4 | rear bay beside the battery, (24, -37, -10.5) | M |
+| Power switch | slide switch with a flanged body, screwed or glued under the lid | 11 x 6 x 4 + flange 20 | under the lid at (0, -6, 11) | H (visible) |
+| Drive gearmotors | 2 x N10 or N20 gearmotors, 1000 rpm class | 12 x 10 x 24-34 | (+/-18.5, -18, 0), axis along x, shafts outward | H |
+| Motor cradles | printed saddles moulded into the tub floor, plus lid ribs pressing the motors down | 4 mm ribs, 16 wide | under each motor | M |
+| Bulkheads | 2 mm walls between the motor bay and each wheel well, with a shaft hole | 2 x 34 x 26 | \|x\| 30-32, y -35..-1 | H |
+| Weapon motor | 1404-1806 brushless outrunner, stator fixed to the right arm or axle | dia 18-23 x 12-15 | +x end of the drum, axis along x at (y 34, z 0) | M |
+| Weapon motor mount | printed boss or spacer on the right arm's inner face, M2 screws into the stator base | dia 11 x 2 | x 37-39 | L |
+| Far-end bearing | flanged ball bearing or plain bushing in the left arm or the drum end cap | 4-5 bore, 10-13 OD | -x end, in the arm or the drum end | M |
+| Drum end cap | aluminium or printed disc closing the drum's -x end, running on the axle | dia 22 x 3 | x -37..-34 | L |
+| Locking pin hole | a hole through the arm into the drum (rules need a weapon lock) | dia 2.5-3 | through the -x arm into the drum end | M |
+| Arm screws | 2 per side, M2 x 12, along x through the arm into tub columns | - | (+/-47 -> 33, y 4 and 15, z -5) | M |
+| Lid screw columns | printed columns or thickened wall tops under each lid screw | 6 x 6, full height | front corners, notch fronts, rear corners | M |
+| Wiring | battery -> switch -> both ESCs; Malenki -> drive motors between the cradles; Malenki PWM -> weapon ESC; weapon ESC -> motor phases through a channel in the right arm and a hole in the tub's front side wall | 22-28 AWG silicone | inside the tub above the floor, over the motors | M |
+| Velcro / tape | holds the battery and boards to the floor | - | under each part | M |
+| Ribs | none visible; the floor-to-lid columns and bulkheads do the stiffening | - | - | L |
