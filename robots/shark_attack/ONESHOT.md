@@ -63,4 +63,4 @@ Left (and why):
 - likeness.silhouette x3: looks, not in scope for this pass.
 - likeness.view x1: looks, not in scope for this pass.
 
-Likeness (best silhouette IoU per photo, r3 -> r4): shark_attack.aws72.webp 0.77 -> 0.77; shark_attack.aws74.webp 0.69 -> 0.69; shark_attack.aws76.webp 0.68 -> 0.68
+Likeness (best silhouette IoU per photo, r3 -> r4): shark_attack.aws72.webp 0.77 -> 0.77; shark_attack.aws74.webp 0.69 -> 0.7; shark_attack.aws76.webp 0.68 -> 0.68
