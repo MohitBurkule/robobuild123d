@@ -23,7 +23,7 @@ Decisions: type lifter; body box rect 80x70x32 mm, ramp 0; wheels 2 r16 outboard
 Likeness: aws71 0.68 (FAIL).
 
 ## Round 4 (verification, helper 2)
-Blockers r3 46 -> r4 6 (`verify --tier inner`).
+Blockers r3 46 -> r4 5 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -42,11 +42,9 @@ Fixed / changed (inside only, outside kept):
 - hollowed claw_r (wall 2, form 0): 4.8 -> 3.8 cm3
 
 Left (and why):
-- proxy.wiring x1: Wire `w_m1` (`el_esc.m1` to `dm_wheel_l0.terminals`): the baseline route is now blocked by `chassis` (1 samples).
+- proxy.wiring x2: Wire `w_sw_esc` (`el_switch.out` to `el_esc.bat`): the baseline route is now blocked by `chassis` (4 samples).
 - proxy.sweep x1: joint `roller`: `roller` hits `chassis` 0.12 mm deep at 7.3 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint roller` lists the closest approach to every part.
 - power.weapon_motor x1: toolchain: lifters/flippers are servo or gear driven; the check wants a brushless kV for every weapon.
-- process.weapon_printed x1: toolchain: a printed lifter/flipper arm is judged like a spinner (needs hardened teeth); adding metal teeth changes the look.
-- electrical.battery_weapon_gap x1: toolchain: a limited-range arm is judged as a full revolution about its pivot; that cylinder covers the whole chassis.
 - likeness.silhouette x1: looks, not in scope for this pass.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): tritongue.aws71.webp 0.66 -> 0.66
