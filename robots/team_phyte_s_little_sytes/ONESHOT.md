@@ -19,7 +19,7 @@ Likeness: aws74 0.59 (FAIL), aws76 0.40 (FAIL), aws77 0.64 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/team_phyte_s_little_sytes.aws76.webp` is declared `front_left_iso` (IoU 0.40 there) but the model matches it better from rear_r
 
 ## Round 4 (verification, helper 2)
-Blockers r3 57 -> r4 7 (`verify --tier inner`).
+Blockers r3 57 -> r4 6 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -32,10 +32,9 @@ Fixed / changed (inside only, outside kept):
 - no screw line found for lip
 - rod dt_axle_wheel_l0: 2.8 mm stub clear of ['dm_wheel_l0'] printed as the wheel's hub boss
 - rod dt_axle_wheel_r0: 2.8 mm stub clear of ['dm_wheel_r0'] printed as the wheel's hub boss
-- hollowed chassis (wall 2.5, form 0): 118.0 -> 71.5 cm3
+- hollowed chassis (wall 2.5, form 0): 118.0 -> 72.5 cm3
 
 Left (and why):
-- integrity.solids x1: `chassis` has 0 closed solid(s) and 1 open/invalid shell(s), expected 1 (70312 mm3). A boolean or fillet probably collapsed the build.
 - mass.over x1: the photo-sized outside (steel weapon / big printed shell) is heavier than 150 g even hollowed; only a smaller outside would fix it.
 - electrical.cells_consistent x1: Cell counts: battery 1S, electronics.cells 2S.
 - likeness.silhouette x3: looks, not in scope for this pass.
