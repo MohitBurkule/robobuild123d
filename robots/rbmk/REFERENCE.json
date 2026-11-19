@@ -10,13 +10,15 @@
   "rbmk.aws76.webp"
  ],
  "view": {
-  "rbmk.aws71.webp": "front",
+  "rbmk.aws71.webp": "front_right_iso",
   "rbmk.aws74.webp": "front",
   "rbmk.aws76.webp": "front_left_iso"
  },
  "elevation": {
-  "rbmk.aws71.webp": 45,
   "rbmk.aws74.webp": 25,
   "rbmk.aws76.webp": 45
+ },
+ "view_source": {
+  "rbmk.aws71.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label"
  }
 }
