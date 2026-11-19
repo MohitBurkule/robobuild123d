@@ -89,7 +89,7 @@ def raster_segments(segs, shape, crop=None):
     return out
 
 
-def regions(base: Path, photo: str, n: int = 400, merge_thr: float = 14.0, max_px: int = 900):
+def regions(base: Path, photo: str, n: int = 400, merge_thr: float = 14.0, max_px: int = 900, method: str = "edges"):
     """Exact-boundary over-segmentation of the robot in a photo (SLIC superpixels, then colour-similar neighbours merged).
     Returns (labels (H, W) int, 0 = background, 1..N regions) in the cropped, thumbnailed mask frame. Saves
     <stem>.regions.png (16 bit label map) and <stem>.regions.view.png (numbered) in reference/segments/."""
@@ -104,12 +104,16 @@ def regions(base: Path, photo: str, n: int = 400, merge_thr: float = 14.0, max_p
         im = im.crop((int(crop[0] * W0), int(crop[1] * H0), int(crop[2] * W0), int(crop[3] * H0)))
     im = im.resize((m.shape[1], m.shape[0]))
     a = np.asarray(im)
-    lab = segmentation.slic(a, n_segments=n, compactness=8, sigma=1, mask=m, start_label=1, channel_axis=-1)
-    g = graph.rag_mean_color(a, lab)
-    lab = graph.merge_hierarchical(lab, g, thresh=merge_thr, rag_copy=False, in_place_merge=True,
-                                   merge_func=lambda g_, s_, d_: None,
-                                   weight_func=lambda g_, s_, d_, n_: {"weight": float(np.linalg.norm(g_.nodes[d_]["mean color"] - g_.nodes[n_]["mean color"]))})
-    lab[~m] = 0
+    prim = None
+    if method == "edges":
+        lab, prim = edge_regions(a, m)
+    else:
+        lab = segmentation.slic(a, n_segments=n, compactness=8, sigma=1, mask=m, start_label=1, channel_axis=-1)
+        g = graph.rag_mean_color(a, lab)
+        lab = graph.merge_hierarchical(lab, g, thresh=merge_thr, rag_copy=False, in_place_merge=True,
+                                       merge_func=lambda g_, s_, d_: None,
+                                       weight_func=lambda g_, s_, d_, n_: {"weight": float(np.linalg.norm(g_.nodes[d_]["mean color"] - g_.nodes[n_]["mean color"]))})
+        lab[~m] = 0
     # drop tiny regions into their biggest neighbour
     ids, cnt = np.unique(lab[lab > 0], return_counts=True)
     for i, c in zip(ids, cnt):
@@ -230,6 +234,87 @@ def _view(base, photo, lab, m, crop):
         cy, cx = nd.center_of_mass(lab == k)
         dr.text((cx - 6, cy - 5), str(int(k)), fill=(255, 255, 0), stroke_width=1, stroke_fill=(0, 0, 0))
     img.save(base / "reference" / "segments" / f"{Path(photo).stem}.regions.view.png")
+
+
+def _ring_support(edge_near, x, y, r, k=90):
+    """Fraction of a circle's perimeter that lies on an image edge (rejects Hough circles that cross flat areas)."""
+    t = np.linspace(0, 2 * np.pi, k, endpoint=False)
+    xs, ys = np.round(x + r * np.cos(t)).astype(int), np.round(y + r * np.sin(t)).astype(int)
+    ok = (xs >= 0) & (xs < edge_near.shape[1]) & (ys >= 0) & (ys < edge_near.shape[0])
+    return float(edge_near[ys[ok], xs[ok]].sum() / max(1, k))
+
+
+def edge_regions(a, m, min_len=0.03, max_circles=40):
+    """Region label map from STRAIGHT and ROUND edges only: robot parts are mostly flat faces, discs and smooth curves, so
+    texture and grain must not cut regions. a = RGB image, m = robot mask. Edges used: Canny chains longer than `min_len`
+    of the image diagonal (smooth outlines), line segments (LSD) and circles (Hough). Regions = pieces of the mask the
+    edges separate; small pieces join their neighbour. Returns (labels, primitives) with primitives = {"lines","circles"}."""
+    import cv2
+    from scipy import ndimage as nd
+
+    H, W = m.shape
+    diag = float(np.hypot(H, W))
+    g = cv2.cvtColor(np.ascontiguousarray(a), cv2.COLOR_RGB2GRAY)
+    g = cv2.medianBlur(g, 5)
+    g = cv2.createCLAHE(clipLimit=3.0, tileGridSize=(6, 6)).apply(g)  # dark parts have faint edges; stretch local contrast
+    g = cv2.bilateralFilter(g, 7, 30, 7)
+    inside = nd.binary_erosion(m, iterations=3)
+    edges = cv2.Canny(g, 25, 70) > 0
+    edges &= inside
+    # keep only long, smooth edge pieces: cut the Canny network at junctions, keep pieces that are long and not squiggly
+    nb = nd.convolve(edges.astype(int), np.ones((3, 3), int), mode="constant") - 1
+    junction = edges & (nb > 2)
+    pieces = edges & ~junction
+    lab, n = nd.label(pieces, structure=np.ones((3, 3)))
+    keep = np.zeros_like(edges)
+    for k, sl in enumerate(nd.find_objects(lab), 1):
+        npx = int((lab[sl] == k).sum())
+        d = float(np.hypot(sl[0].stop - sl[0].start, sl[1].stop - sl[1].start))
+        if npx >= min_len * diag and npx <= 1.7 * d:
+            keep[sl] |= lab[sl] == k
+    keep = nd.binary_dilation(keep, iterations=2) & edges | keep  # take the junction pixels the kept pieces touch
+    B = keep.copy()
+    lines, circles = [], []
+    edge_near = nd.binary_dilation(cv2.Canny(g, 25, 70) > 0, iterations=2)
+    try:
+        lsd = cv2.createLineSegmentDetector(0)
+        det = lsd.detect(g)[0]
+        for x1, y1, x2, y2 in (det[:, 0, :] if det is not None else []):
+            if np.hypot(x2 - x1, y2 - y1) >= 0.04 * diag:
+                mid = (int((x1 + x2) / 2), int((y1 + y2) / 2))
+                if 0 <= mid[1] < H and 0 <= mid[0] < W and inside[mid[1], mid[0]]:
+                    cv2.line(B.view(np.uint8), (int(x1), int(y1)), (int(x2), int(y2)), 1, 1)
+                    lines.append([float(x1) / W, float(y1) / H, float(x2) / W, float(y2) / H])
+    except Exception:
+        pass
+    c = cv2.HoughCircles(cv2.GaussianBlur(g, (5, 5), 1.5), cv2.HOUGH_GRADIENT, dp=1.2, minDist=max(8, int(0.02 * diag)),
+                         param1=100, param2=30, minRadius=max(4, int(0.006 * diag)), maxRadius=int(0.06 * diag))
+    if c is not None:
+        for x, y, r in c[0][:max_circles]:
+            xi, yi = int(x), int(y)
+            if 0 <= yi < H and 0 <= xi < W and inside[yi, xi] and _ring_support(edge_near, x, y, r) >= 0.6:
+                cv2.circle(B.view(np.uint8), (xi, yi), int(r), 1, 1)
+                circles.append([float(x) / W, float(y) / H, float(r) / diag])
+    from skimage.feature import peak_local_max
+    from skimage.segmentation import watershed
+
+    B = nd.binary_dilation(B, iterations=1) | ~m
+    dist = nd.distance_transform_edt(~B)
+    pk = peak_local_max(dist, min_distance=max(4, int(0.03 * diag)), threshold_abs=max(3.0, 0.008 * diag), exclude_border=False)
+    mk = np.zeros(m.shape, int)
+    for i, (y, x) in enumerate(pk, 1):
+        mk[y, x] = i
+    if not len(pk):
+        return m.astype(int), {"lines": lines, "circles": circles}
+    full = watershed(-dist, mk, mask=m)  # cells grow from interior peaks and meet on the ridges between edges
+    # tiny cells join their biggest neighbour
+    ids, cnt = np.unique(full[full > 0], return_counts=True)
+    for i, c_ in zip(ids, cnt):
+        if c_ < 0.0006 * m.sum():
+            ring = nd.binary_dilation(full == i, iterations=2) & (full != i) & (full > 0)
+            if ring.any():
+                full[full == i] = np.bincount(full[ring]).argmax()
+    return full, {"lines": lines, "circles": circles}
 
 
 def load_regions(base: Path, photo: str):
@@ -532,8 +617,9 @@ def add_cli(sub):
     r.add_argument("spec_dir", help="robot folder (robots/<name>)")
     r.add_argument("photo", help="photo file name in reference/")
     r.add_argument("--n", type=int, default=400)
-    r.add_argument("--merge", type=float, default=14.0, help="colour distance below which neighbours merge (lower = more regions)")
-    r.set_defaults(func=lambda a: print(f"{regions(Path(a.spec_dir), a.photo, a.n, a.merge).max()} regions; view: {a.spec_dir}/reference/segments/{Path(a.photo).stem}.regions.view.png") or 0)
+    r.add_argument("--merge", type=float, default=14.0, help="slic only: colour distance below which neighbours merge")
+    r.add_argument("--method", choices=("edges", "slic"), default="edges", help="edges = straight lines, circles and long smooth edges only (default)")
+    r.set_defaults(func=lambda a: print(f"{regions(Path(a.spec_dir), a.photo, a.n, a.merge, method=a.method).max()} regions; view: {a.spec_dir}/reference/segments/{Path(a.photo).stem}.regions.view.png") or 0)
     f = ps.add_parser("fuse", help="round of brush polygons correcting the auto regions (split / carve), in place")
     f.add_argument("segfile")
     f.set_defaults(func=lambda a: print(json.dumps(fuse(a.segfile), indent=1)) or 0)
