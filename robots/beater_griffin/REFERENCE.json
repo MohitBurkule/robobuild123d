@@ -10,11 +10,13 @@
   "beater_griffin.aws67.webp"
  ],
  "view": {
-  "beater_griffin.aws67.webp": "front",
+  "beater_griffin.aws67.webp": "front_right_iso",
   "beater_griffin.aws70.webp": "front_left_iso"
  },
  "elevation": {
-  "beater_griffin.aws67.webp": 45,
   "beater_griffin.aws70.webp": 45
+ },
+ "view_source": {
+  "beater_griffin.aws67.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label"
  }
 }
