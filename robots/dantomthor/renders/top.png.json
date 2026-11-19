@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_dantomthor/robots/dantomthor/spec.json",
- "rendered_at": 1795026331.913336,
+ "rendered_at": 1795052546.5275016,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -9,18 +9,74 @@
   "hammer_head",
   "skirt",
   "dt_hub_wheel_l0",
-  "dt_axle_wheel_l0",
-  "dt_nut_wheel_l0",
   "dt_hub_wheel_r0",
-  "dt_axle_wheel_r0",
-  "dt_nut_wheel_r0",
-  "dt_screw_0",
-  "dt_screw_1",
-  "dt_screw_2",
-  "dt_screw_3",
-  "dt_screw_4",
-  "dt_screw_5",
-  "dt_screw_6"
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_rx_esc",
+  "el_servo_hammer_arm",
+  "el_switch"
  ],
- "wires": {}
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    12.013000000000002,
+    11.517,
+    -1.989
+   ],
+   "to": [
+    -19.0,
+    -37.75,
+    -3.0
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    -11.0,
+    -37.75,
+    -3.0
+   ],
+   "to": [
+    -37.986999999999995,
+    1.5170000000000003,
+    -4.489
+   ]
+  },
+  "w_m1": {
+   "from": [
+    -14.986999999999998,
+    9.517,
+    -4.489
+   ],
+   "to": [
+    8.600000000000001,
+    -20.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -37.986999999999995,
+    9.517,
+    -4.489
+   ],
+   "to": [
+    -8.600000000000001,
+    -20.0,
+    0.0
+   ]
+  },
+  "w_sig_hammer_arm": {
+   "from": [
+    -14.986999999999998,
+    1.5170000000000003,
+    -4.489
+   ],
+   "to": [
+    -12.987,
+    -6.983,
+    11.511
+   ]
+  }
+ }
 }
