@@ -113,10 +113,10 @@ function onNet(m) {
 }
 function start(c) {
   cfg = c; if (sim) { sim.data.delete(); sim.model.delete(); }
-  pitsOpen = false; sim = new Sim(mj, c.kinds.map(k => DOCS[k]), c.arena); toggled[0] = toggled[1] = false; over = false; lastSnap = null; guestIn = { l: 0, r: 0, w: 0 };
+  pitsOpen = false; sim = new Sim(mj, c.kinds.map(k => DOCS[k]), c.arena); sim.docs.forEach((d, i) => { toggled[i] = !!d.weapon && !d.lifter; wasDown[i] = false; }); over = false; lastSnap = null; guestIn = { l: 0, r: 0, w: 0 };
   buildScene(); cam.position.set(0, -1, 1.2);
   const ctlName = i => role === 'local' ? (c.ctl[i] === 'ai' ? 'AI' : 'Human') : i === 0 ? (role === 'guest' ? 'host' : 'you (host)') : (role === 'guest' ? 'you' : 'remote player');
-  for (const i of [0, 1]) { $('n' + i).textContent = `${DOCS[c.kinds[i]].name} (P${i + 1} · ${ctlName(i)})`; $('b' + i).style.background = i ? '#e5534b' : '#3b82f6'; }
+  for (const i of [0, 1]) { $('n' + i).textContent = `${DOCS[c.kinds[i]].name} (P${i + 1} · ${ctlName(i)})`; $('n' + i).dataset.w = ''; $('b' + i).style.background = i ? '#e5534b' : '#3b82f6'; }
   $('menu').style.display = 'none'; $('end').style.display = 'none'; running = true;
   $('help').textContent = role === 'local' ? [0, 1].map(i => c.ctl[i] === 'ai' ? `P${i + 1}: AI` : i === 0 ? 'P1: WASD + Space' : 'P2: arrows + Enter').join(' · ') + ' · R rematch · Esc menu' : 'WASD (or pad) drive · Space weapon · online';
 }
@@ -167,6 +167,7 @@ function applySnap(s) {
   if (!s.over && over) { over = false; $('end').style.display = 'none'; }
 }
 function hud() {
+  for (const i of [0, 1]) { const d = sim.docs[i]; if (d.weapon || d.lifter) $('n' + i).dataset.w = toggled[i] || sim.ctrl[i].w ? 'ON' : 'OFF'; }
   $('tm').textContent = Math.max(0, 90 - sim.t).toFixed(0);
   const mx = Math.max(1, ...sim.score);
   for (const i of [0, 1]) $('b' + i).style.width = Math.min(100, sim.score[i] / 3 * 100) + '%';
