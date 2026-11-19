@@ -199,7 +199,7 @@ Pantherk II is a **flat, square, four-wheel box rammer**. The body is a printed 
 - **Side blade SB (AWS66)**: y ∈ [−30, +72], z from 18 at the rear tapering linearly to 0 at y = +72 (z = 18 − 0.176·(y + 30)). The left blade is rotated about Z by +10° (front splayed out).
 - **Wheel tread**: r(φ) = 15 + 1.5·[sin(38φ) > 0]. Three hub holes, circles of r = 3.5 at radius 7.5 mm, angles 90°, 210° and 330°.
 - **Corner notches**: rectangles x ∈ [±28, ±40], y ∈ [+5, +39] (front) and [−39, −5] (rear), z full height.
-- **Wheel centres**: (±37, +22, 15) and (±37, −22, 15). Hmm: the notch centre is x = ±34, so take the wheel centre at **x = ±36.5** (a 9 mm-wide wheel inside a 12 mm notch, 1.5 mm clearance either side).
+- **Wheel centres**: (±36.5, +22, 15) and (±36.5, −22, 15) (a 9 mm-wide wheel inside a 12 mm notch, 1.5 mm clearance either side).
 
 ## 11. Pixel measurements
 Native sizes: AWS66 457 × 479, AWS67 1820 × 1524, AWS68 398 × 443.
