@@ -590,3 +590,82 @@ Frame: the one defined in section 0 (+x right, +y front, +z up, origin at the mi
 6. **Disc hub versus ring ID.** The photo suggests ID 28-30 with a 21 black hub. A real disc would bolt to the bell through a web, which conflicts with a pure ring. **Reconciled**: a disc with a web (hub r <= 17 plus 4 large windows r 17..23) looks like a ring with a dark centre from this camera. It is an acceptable stand-in.
 7. **Right lid extension versus rear beam.** The extension (x 1..13, y -30..-8) would overlap the disc sweep if it came forward of y -21.5 at x < -6.5. It does not: it stays at x >= 1, beside the bell, not in the disc plane. **Consistent.**
 8. **Height.** Pod height from wheel + 2 = 24 and from pixels = 22-24. **Use 23.5.**
+
+## 19. Why the designer did it (per part)
+- **Two separate pods with an open slot.**
+  - Fight: the disc sits low and central, so it is hard to reach from the sides, and the pods shield it from side hits.
+  - Fight: the open slot lets the disc bite low, close to the floor, without a front bridge getting in the way.
+  - Construction: each pod is a small, quick FDM print (about 1 h) that fits any bed, and the two are mirror-identical (one CAD file).
+  - Repair: a smashed pod is reprinted alone.
+  - Weight: no deck across the front saves about 5-8 g.
+- **Separate screwed top plates.**
+  - Assembly: the tub is open while you build, so motors, battery and wiring drop in from above. The lid closes it and also clamps the drive motors and battery.
+  - Printability: the tub prints open-side-up with no supports; the lid is a flat plate.
+  - Repair: 4 screws give access to everything.
+  - Fight: a thick top plate takes the disc-on-disc kickback.
+- **Right lid rear extension with a concave front.**
+  - Construction: it bridges toward the slot to stiffen the right pod, and it carries the battery-lead exit near the switch/link.
+  - Fight: the concave arc keeps the plate clear of the motor bell while still covering the gap behind it, so debris and opposing wedges cannot enter the motor area from above-rear.
+- **Wheel slots in the lids.**
+  - Assembly: the wheel can be fitted or inspected without removing the lid.
+  - Weight: removes material.
+  - Driving: the tyre tops sit near the lid plane, so the robot can still crawl a little when tipped onto its back **(guess; it is not truly invertible)**.
+- **Inboard wheels.**
+  - Fight: the wheels are protected by the pod walls (no separate guards needed), so a horizontal spinner cannot strip a tyre.
+  - Weight: no outboard brackets.
+  - Width: the full 150 mm can go to pod and slot.
+- **Direct-drive outrunner, stator on the right, bell carrying the disc.**
+  - Construction: no belt, pulleys or idlers. That means fewer parts, lower cost and simpler repair: the motor is one bolt pattern.
+  - Weight: the bell is the hub, so there is no separate weapon shaft assembly, bearings or blocks on that side.
+  - Fight: the disc's energy is close to the motor's; a short stiff path from the disc to the right pod.
+- **Black printed mount cup + plate.**
+  - Construction: the cup centres the stator (locating spigot) and the plate spreads the stator screws' load into the pod wall.
+  - Printability: the cup is printed axis-vertical so the stator seat is round.
+  - Repair: a cracked mount is a 20-minute reprint.
+- **Left upright with a bearing.**
+  - Fight: it supports the disc end of the shaft, so a hit does not bend the motor shaft (the main killer of direct-drive vertical spinners).
+  - Construction: a 683 bearing is cheap and light (0.7 g).
+- **Ring disc (large central hole).**
+  - Weight: the energy is in the rim; the hole saves about 30 % of the disc mass with only about 10 % less moment of inertia.
+  - Fight: 2 teeth give a bigger bite than many teeth.
+  - Cost: laser-cut from a sheet.
+  - Dark faces: hardened or black-oxide steel resists edge chipping **(guess)**.
+- **Hinged steel tines in clevis bars.**
+  - Fight: hinged forks always rest on the floor (the ground game), lift opponents into the disc and ride over seams.
+  - Fight: narrow tines leave a gap for the disc to reach between the pods.
+  - Construction: steel strip is cheap, and the printed clevis bar is a quick print.
+  - Repair: a bent tine slides out after removing one pin.
+  - Weight: tines about 2 g each.
+- **Exposed screws, not counterbored.**
+  - Construction: simple prints with no counterbore needed.
+  - Repair: a cross-head driver is always in the pit kit.
+- **Battery lead / red plug sticking out.**
+  - Rules: it acts as the removable power link (a tool-free switch). Pulling the plug kills the power.
+  - Construction: no switch pocket is needed.
+  - Fight: easy for marshals to reach **(guess)**.
+- **Matte black PLA/nylon.**
+  - Cost and printability.
+  - Looks: it matches the name "Boss Baby" (a suit).
+
+## 20. Unseen and inner parts (guesses with confidence)
+Confidence levels: H = high, M = medium, L = low.
+
+| Part | Guess | Size (mm) | Position (frame of section 0) | Confidence |
+|---|---|---|---|---|
+| Battery | 2S 300-350 mAh LiPo | 48 x 18 x 12 | left pod front half, lying along x, (-41, 13, -1.4) | M |
+| Drive ESC + receiver | Malenki-Nano class (receiver + 2 brushed ESC) | 32 x 19 x 2.5 | left pod, on top of the battery, (-41, 13, 6) | M |
+| Weapon ESC | BBB 20 A brushless, heat-shrunk | 23 x 12 x 4 | right pod front half, on the floor, (41, 16, -5.4) | M |
+| Power link / switch | red JST/XT plug link on the flying lead, OR a slide switch in the rear wall | link: 8 x 6 x 14 | lead exits at (8, -24, 14.5) | M (link) / L (switch) |
+| Drive motors | N10/N20 gearmotors, 1000-2200 rpm | 10 x 12 x 30 | (+/-44, -12, 0), shaft outboard | H |
+| Motor clamps | printed cradles in each tub plus lid rails pressing down | wall 1.6, up to z 12 | around each gearmotor | M |
+| Lid screw bosses | 5.5-6 mm square/round posts, full tub height | 6 x 6 x 19 | under each screw (section 6) | H |
+| Ribs | none beyond the cradles and bosses; the tub walls carry the load | - | - | L |
+| Weapon shaft | the motor's own 3 mm shaft lengthened to the left bearing (or a 3 mm Ti rod) | 3 dia x 17 | x -14.6..2 at (y 8, z 18) | M |
+| Bearing | 683ZZ (3 x 7 x 3) pressed into the left upright | 7 dia x 3 | (-12.5, 8, 18) | M |
+| Stator screws | 4 x M2.5/M3 x 8 caps through the right mount plate | - | on a 16 x 16 square about the axis | H |
+| Disc screws | 4 x M2.5 x 6 through the disc/hub into the bell face | - | 9-12 mm bolt circle | M |
+| Fork pins | M2 x 10 screws or 2 mm pins through each lug | 2 dia x 9 | lugs at x +/-34, +/-46, (y 36, z -2) | M |
+| Fork-bar screws | 2 x M2 x 8 per bar into heat-set inserts in the tub front wall | - | bar ends | M |
+| Wiring path | battery -> link lead -> right pod (through the rear joining beam) -> weapon ESC -> phases up through the right lid notch to the stator; battery -> drive ESC (left pod) -> left motor directly, right motor via the rear beam | 22-26 AWG | through the hollow rear beam y -28..-23 | M |
+| Rear joining beam | hollow printed beam, part of one or both tubs | 29 x 8.5 x 23.5 | (0, -25.75, 2.75) | M |
+| Hub on the bell | printed or alloy adaptor ring | 21 dia x 3 | (-5, 8, 18) | M |
