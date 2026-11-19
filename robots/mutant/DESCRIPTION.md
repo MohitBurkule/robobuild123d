@@ -303,3 +303,42 @@ faces and the front faces under the plates). +x = robot's right, +y = forward, +
    right lid near the front, modelled as a connector, not a weapon.
 5. **Cam count:** 3 discs per pod in every photo; the earlier model used 2 cam parts per side. Chosen: 3.
 6. **Weight class:** shuffler = AWS walker class (225 g in this toolchain via `locomotion: walker`).
+
+---
+
+## 16. Why the designer did it (per part)
+
+| Part | Fight benefit | Construction (print / assembly / cost / weight / repair) | Other |
+|------|---------------|-----------------------------------------------------------|-------|
+| Shuffle cams instead of wheels | walker class (higher weight limit) for a heavier, tougher body; cams are hard to stall on debris | printed discs with TPU pads, easy to replace | the novelty of a shuffler |
+| Twin pods with a centre slot | disc is shielded on both sides; pods are independent drive units | each pod prints without supports; one design printed twice | symmetric, self-righting not needed if cams reach both faces |
+| Rear-bottom chamfer | lets the robot tip back and recover; nothing to grab at the rear | removes mass from an unloaded corner | helps the cams find the floor when rocking |
+| Flat lids with windows | invertible: cams work both ways up | windows give access to the cams; lids screwed for service | - |
+| Side panels with fins | fins stop the robot lying flat on a side | panels unscrew to reach the internals | - |
+| Grey metal front plates | wedge-like face deflects and lifts; metal resists spinner bites | bent sheet, cheap; screwed on top edge | - |
+| Ribbed floor skirts | get under opponents (low leading edge); flexible so they hug the floor | ribbed print stiffens along x but flexes in y | the robot rests on them at the front between cam steps |
+| Thin hook disc in the slot | vertical-spinner bite upward, hooks catch and flip | small disc, low energy but cheap; slot protects it | weight saved goes into the walker body |
+| Disc guard hump | protects the disc and motor top from overhead hits; stops the disc touching the arena wall | printed as part of the lids | carries the lock-pin hole |
+| Charging port on top | charge without opening the robot | panel-mount JST, glued in a pocket | - |
+| Switch on the top | reachable for the rules, recessed against hits | - | - |
+| Black screws on the lids/panels | lids and panels are serviceable | M2 into heat-set inserts or self-tapped | - |
+
+## 17. Unseen and inner parts (guesses with confidence)
+
+| Part | Guess | Size (mm) | Position (frame of section 11) | Confidence |
+|------|-------|-----------|--------------------------------|------------|
+| Battery | 2S LiPo 300 mAh | 52 x 12 x 12 | in the left pod front half along y, (-36, 15, 12) | medium |
+| Drive ESC + receiver | Malenki-Nano class | 32 x 19 x 2.5 | right pod front half, (36, 15, 10) | medium |
+| Weapon ESC | small brushless ESC | 23 x 12 x 4 | bridge or right pod front, (20, 5, 10) | low |
+| Cam motors | 2 x N20 gearmotor (high-torque 100:1 or 150:1) | 12 x 10 x 24 | in each pod beside the cam stack, axis x, (±56, -18, 21) | medium |
+| Cam axles | 3-4 mm steel or the motor D-shaft extended | 3 dia x 30 | through each stack at (±40, -18, 21), outer end in a printed bearing boss | medium |
+| Cam bottom windows | same as the top windows | 28 x 22 | in each pod floor under the stacks | high (needed to walk) |
+| Weapon motor | 1105-1306 outrunner | 14-18 dia x 12 | in the slot behind/under the disc, stator on the bridge or one pod wall, (±7, 22, 22) | medium |
+| Disc fixing | 2-3 M2 screws into the bell | M2 x 4 | on the bell face | medium |
+| Lock pin | 2-3 mm pin through the hump hole and the disc | 3 x 30 | along x at (0, 18, 46) | low |
+| Lid screws | about 6 x M2 per lid into bosses in the pod walls | M2 x 8 | 4 corners + 2 mid-sides | high (visible heads) |
+| Side panel screws | 4 corners + 1 centre (green insert) per side | M2 x 6 | as section 4.3 | high |
+| Front plate screws | 2-3 on top flange + 2 at the outer side | M2 x 6 | top edge y 36, outer side z 10/30 | medium |
+| Skirt clamp | skirt rear strip clamped between plate lip and pod floor, 2 screws | - | y 40-46 | low |
+| Wiring | battery (left) -> switch (left top) -> through the bridge to the right pod ESC; ESC -> both cam motors (one through the bridge); weapon ESC -> motor phases in the slot; charge lead from the battery balance tap to the red port on the right lid | 20-28 AWG | across the bridge at z 25-35 | medium |
+| Internal ribs | a cross wall in each pod between the electronics bay (front) and the cam bay (rear) | 2 thick | y ≈ -5 | low |
