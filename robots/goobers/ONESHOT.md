@@ -27,7 +27,7 @@ Other likeness findings: [FAIL] likeness.view: `reference/goobers.aws72.webp` is
 
 ## Round 4 (verification, helper 1)
 Blockers r3 -> r4: **38 -> 9** (`verify --tier inner`, full output in verify_r4.txt).
-Likeness (best silhouette IoU per photo, r3 -> r4): goobers.aws71.webp 0.808 -> 0.802, goobers.aws72.webp 0.659 -> 0.656
+Likeness (best silhouette IoU per photo, r3 -> r4): goobers.aws71.webp 0.808 -> 0.803, goobers.aws72.webp 0.659 -> 0.654
 
 What was done (script r4_h1, outside shape kept):
 - fake screw/bolt heads removed; detail mounts/arms merged into the print part they sit on; axle nuts became printed hub caps

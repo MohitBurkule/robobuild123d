@@ -1,38 +1,38 @@
 BLOCKERS: 9
-  [ran] integrity 0.03s
+  [ran] integrity 0.05s
   [ran] mass 0.00s
-  [proxy] interference 7.67s
-  [ran] connections 0.65s
-  [ran] legal 0.03s
-  [ran] fasteners 0.01s
+  [proxy] interference 9.89s
+  [ran] connections 0.41s
+  [ran] legal 0.02s
+  [ran] fasteners 0.00s
   [ran] power 0.00s
   [ran] tension 0.00s
-  [ran] targets 0.01s
-  [ran] fight 0.02s
-  [ran] shape 0.39s
-  [ran] dynamics 0.01s
+  [ran] targets 0.00s
+  [ran] fight 0.06s
+  [ran] shape 0.25s
+  [ran] dynamics 0.00s
   [ran] strength 0.00s
-  [ran] printability 0.39s
-  [ran] process 0.01s
-  [ran] electrical 0.02s
-  [ran] combat 0.07s
+  [ran] printability 0.56s
+  [ran] process 0.00s
+  [ran] electrical 0.00s
+  [ran] combat 0.06s
   [ran] physics 0.00s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
   [ran] fit 0.08s
-  [ran] bom 0.01s
-  [ran] wire_review 0.03s
+  [ran] bom 0.00s
+  [ran] wire_review 0.02s
   [ran] fastener_record 0.00s
-  [ran] likeness 4.25s
+  [ran] likeness 5.44s
   [ran] drive_recess 0.00s
   [ran] belt_wrap 0.00s
-  [ran] retention 0.03s
+  [ran] retention 0.00s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.05s
+  [ran] geom 0.06s
   [ran] dfm 0.03s
-  [ran] realworld 0.07s
-goobers: ok=False 9 blockers in 9 root causes, mass 88.6/38 g
-1. [mass.over] 88.6 g (range 74.6 to 102.6 g) against the 38 g limit; 3.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+  [ran] realworld 0.06s
+goobers: ok=False 9 blockers in 9 root causes, mass 89.0/38 g
+1. [mass.over] 89.0 g (range 74.9 to 103.0 g) against the 38 g limit; 3.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
 2. [proxy.interference] `chassis` and `el_battery` overlap by 1.12 mm (allowed 0.08).
    | chassis: x -38.00..38.00  y -31.00..31.00  z -15.00..13.00  size 76.00 x 62.00 x 28.00 mm
@@ -56,9 +56,9 @@ goobers: ok=False 9 blockers in 9 root causes, mass 88.6/38 g
    |   OVERLAP `chassis` 1.12 mm (allowed 0.08)
 5. [wire.render_wires] 2 of 2 robot render(s) do not draw all 4 wires: renders/iso.png: rendered without wires (checks off or no routes); renders/top.png: rendered without wires (checks off or no routes)
    fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
-6. [likeness.view] `reference/goobers.aws72.webp` is declared `front` (IoU 0.66 there) but the model matches it better from front_right_iso (elevation 45, azimuth 60) (IoU 0.77).
+6. [likeness.view] `reference/goobers.aws72.webp` is declared `front` (IoU 0.65 there) but the model matches it better from front_right_iso (elevation 45, azimuth 60) (IoU 0.77).
    fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
-7. [likeness.silhouette] `reference/goobers.aws72.webp`: best silhouette IoU 0.66 at camera front (elevation 25, azimuth 90) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.68). Regions (photo frame, left third first) 0.61 / 0.78 / 0.56: worst = rear third. Height/length 0.54 model vs 0.75 photo (too flat: raise it or shorten it).
+7. [likeness.silhouette] `reference/goobers.aws72.webp`: best silhouette IoU 0.65 at camera front (elevation 25, azimuth 90) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.68). Regions (photo frame, left third first) 0.61 / 0.78 / 0.56: worst = rear third. Height/length 0.54 model vs 0.75 photo (too flat: raise it or shorten it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 8. [wire.outside] wire `w_bat_sw` (1.9 mm bundle): about 1.0 mm of its run has insulation outside the armour envelope or below the floor, worst 0.9 mm out at [-0.6, 6.9, -1.1].
    fix: Add / move `via` points inside the chassis (or open a channel), or declare `external: true` + `exposed_reason` for a deliberate outside lead.
@@ -70,7 +70,7 @@ goobers: ok=False 9 blockers in 9 root causes, mass 88.6/38 g
    |   OVERLAP `chassis` 1.12 mm (allowed 0.08)
    |   gap to `dm_wheel_l0` 1.00 mm
 MASS BUDGET:
-  mass 88.6 g of 38 g (-51.1 g margin)
+  mass 89.0 g of 38 g (-51.5 g margin)
     chassis                    36.91 g  fills 29% of its box
     el_battery                 12.50 g  fills 100% of its box
     dm_wheel_l0                 9.70 g  fills 66% of its box
@@ -78,11 +78,11 @@ MASS BUDGET:
     wheel_l0                    4.73 g  fills 57% of its box
     wheel_r0                    4.73 g  fills 57% of its box
     el_rx_esc                   3.50 g  fills 100% of its box
-    dt_hub_wheel_l0             1.88 g  fills 65% of its box
-    dt_hub_wheel_r0             1.88 g  fills 65% of its box
+    dt_hub_wheel_r0             2.07 g  fills 71% of its box
+    dt_hub_wheel_l0             2.07 g  fills 71% of its box
     el_switch                   0.50 g  fills 100% of its box
     ear_l                       0.46 g  fills 100% of its box
     ear_r                       0.46 g  fills 100% of its box
-    mass.over: 88.6 g (range 74.6 to 102.6 g) against the 38 g limit; 3.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.over: 89.0 g (range 74.9 to 103.0 g) against the 38 g limit; 3.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
 cache: part_geom 0 hit / 12 miss
