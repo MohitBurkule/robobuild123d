@@ -1,42 +1,42 @@
 BLOCKERS: 8
-  [cached] integrity 0.00s
-  [cached] mass 0.00s
-  [proxy] interference 0.10s
-  [cached] connections 0.00s
-  [cached] legal 0.00s
-  [cached] fasteners 0.00s
-  [cached] power 0.00s
-  [cached] tension 0.00s
-  [cached] targets 0.00s
-  [cached] fight 0.00s
-  [cached] shape 0.00s
-  [cached] dynamics 0.00s
-  [cached] strength 0.00s
-  [cached] printability 0.00s
-  [cached] process 0.00s
-  [cached] electrical 0.00s
-  [cached] combat 0.00s
-  [cached] physics 0.00s
-  [cached] plausibility 0.00s
-  [cached] cots 0.00s
-  [cached] fit 0.00s
-  [cached] bom 0.00s
-  [cached] wire_review 0.00s
-  [cached] fastener_record 0.00s
-  [cached] likeness 0.00s
-  [cached] drive_recess 0.00s
-  [cached] belt_wrap 0.00s
-  [cached] retention 0.00s
-  [cached] waiver_audit 0.00s
-  [cached] geom 0.00s
-  [cached] dfm 0.00s
-  [cached] realworld 0.00s
-jiggy sawdust: ok=False 8 blockers in 8 root causes, mass 181.8/150 g
-1. [mass.over] 181.8 g (range 153.3 to 210.3 g) against the 150 g limit; 7.8 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+  [ran] integrity 0.13s
+  [ran] mass 0.00s
+  [proxy] interference 13.05s
+  [ran] connections 0.62s
+  [ran] legal 0.07s
+  [ran] fasteners 0.13s
+  [ran] power 0.02s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.03s
+  [ran] shape 0.69s
+  [ran] dynamics 0.01s
+  [ran] strength 0.10s
+  [ran] printability 0.68s
+  [ran] process 0.02s
+  [ran] electrical 0.01s
+  [ran] combat 0.14s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.10s
+  [ran] bom 0.02s
+  [ran] wire_review 0.04s
+  [ran] fastener_record 0.00s
+  [ran] likeness 24.76s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.03s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.09s
+  [ran] dfm 0.06s
+  [ran] realworld 0.12s
+jiggy sawdust: ok=False 8 blockers in 8 root causes, mass 183.5/150 g
+1. [mass.over] 183.5 g (range 154.8 to 212.1 g) against the 150 g limit; 7.8 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
 2. [proxy.interference] `chassis` and `saw_blade` overlap by 0.93 mm (allowed 0.08).
    | chassis: x -35.00..35.00  y -35.00..35.00  z -12.00..43.00  size 70.00 x 70.00 x 55.00 mm
-   |   centre (-0.00, 0.00, 15.50), volume 82138.0 mm3
+   |   centre (-0.00, 0.00, 15.50), volume 71629.1 mm3
    |   overlap allowed `saw_body` 4.38 mm (allowed inf)
    |   overlap allowed `front_plate` 1.04 mm (allowed inf)
    |   OVERLAP `saw_blade` 0.93 mm (allowed 0.08)
@@ -52,7 +52,7 @@ jiggy sawdust: ok=False 8 blockers in 8 root causes, mass 181.8/150 g
    |   joint revolute axis [1, 0, 0] pivot [0, 30, 24.0] range 0..80 default 0
    |   OVERLAP `chassis` 0.93 mm (allowed 0.08)
    |   OVERLAP `saw_body` 0.93 mm (allowed 0.08)
-5. [wire.render_wires] 8 of 8 robot render(s) do not draw all 7 wires: renders/diff_jiggy_sawdust.aws62.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/diff_jiggy_sawdust.aws63.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/iso.png: rendered without wires (checks off or no routes); renders/likeness_jiggy_sawdust.aws63_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_jiggy_sawdust.aws63.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/pick_jiggy_sawdust.aws63.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_jiggy_sawdust.aws63.png: no render record (`<png>.json`), so nothing says the wires were drawn
+5. [wire.render_wires] 2 of 2 robot render(s) do not draw all 7 wires: renders/iso.png: rendered without wires (checks off or no routes); renders/top.png: rendered without wires (checks off or no routes)
    fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
 6. [wire.rotor_clearance] wire `w_m1` passes 1.7 mm from the volume swept by the `rotor_saw_blade` rotor (saw_blade, dt_shaft_saw_blade) at [6.6, -18.0, 0.0].
    fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
@@ -66,11 +66,12 @@ jiggy sawdust: ok=False 8 blockers in 8 root causes, mass 181.8/150 g
 8. [likeness.silhouette] `reference/jiggy_sawdust.aws63.webp`: best silhouette IoU 0.60 at camera front_right_iso (elevation 45, azimuth 60) (need 0.80: >= 0.8 and no worse than the closest stock template `wedge_2wd` at 0.60). Regions (photo frame, left third first) 0.59 / 0.73 / 0.47: worst = rear third. Height/length 1.02 model vs 0.85 photo (too tall: lower it or lengthen it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
-  mass 181.8 g of 150 g (-31.8 g margin)
-    chassis                    78.20 g  fills 30% of its box
+  mass 183.5 g of 150 g (-33.5 g margin)
+    chassis                    68.19 g  fills 27% of its box
     el_battery                 21.50 g  fills 100% of its box  <- solid block? a tub should be a shell
     weapon_motor               17.50 g  fills 54% of its box
     saw_blade                  11.05 g  fills 97% of its box
+    top_plate                  10.52 g  fills 99% of its box
     dm_wheel_l0                 9.70 g  fills 66% of its box
     dm_wheel_r0                 9.70 g  fills 66% of its box
     front_plate                 6.43 g  fills 16% of its box
@@ -84,6 +85,10 @@ MASS BUDGET:
     dt_shaft_saw_blade          1.19 g  fills 79% of its box
     el_switch                   0.50 g  fills 100% of its box
     lock_pin                    0.34 g  fills 79% of its box
-    mass.over: 181.8 g (range 153.3 to 210.3 g) against the 150 g limit; 7.8 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    fs_look_top_plate_0         0.28 g  fills 27% of its box
+    fs_look_top_plate_1         0.28 g  fills 27% of its box
+    fs_look_top_plate_2         0.28 g  fills 27% of its box
+    fs_look_top_plate_3         0.28 g  fills 27% of its box
+    mass.over: 183.5 g (range 154.8 to 212.1 g) against the 150 g limit; 7.8 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: group 31 hit / 0 miss, min_gap 36 hit / 0 miss, overlap 246 hit / 0 miss, part_geom 17 hit / 0 miss
+cache: part_geom 0 hit / 26 miss
