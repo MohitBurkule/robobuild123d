@@ -1,8 +1,8 @@
 {
  "aggregate": {
   "photos": 1,
-  "area_weighted_iou": 0.247,
-  "mean_iou": 0.174
+  "area_weighted_iou": 0.184,
+  "mean_iou": 0.113
  },
  "photos": [
   {
@@ -12,124 +12,146 @@
     "elevation": 35.0
    },
    "silhouette_iou": 0.788,
-   "mean_iou": 0.174,
-   "area_weighted_iou": 0.247,
+   "mean_iou": 0.113,
+   "area_weighted_iou": 0.184,
    "f1_at_0.5": 0.0,
    "segments": [
     {
      "id": "p06",
-     "label": "red wires",
-     "area": 1238,
-     "best_part": "chassis",
-     "iou": 0.031
-    },
-    {
-     "id": "p09",
-     "label": "fasteners",
-     "area": 1056,
-     "best_part": "wheel_r2",
-     "iou": 0.061
-    },
-    {
-     "id": "p15",
-     "label": "blue left front post",
-     "area": 3582,
-     "best_part": "scoop",
-     "iou": 0.068
-    },
-    {
-     "id": "p10",
-     "label": "battery warning sticker",
-     "area": 3536,
-     "best_part": "chassis",
-     "iou": 0.077
-    },
-    {
-     "id": "p14",
-     "label": "blue lower body between posts",
-     "area": 5385,
-     "best_part": "chassis",
-     "iou": 0.096
-    },
-    {
-     "id": "p07",
-     "label": "right wheel front",
-     "area": 3553,
-     "best_part": "wheel_r2",
-     "iou": 0.101
+     "label": "right front wheel",
+     "area": 1445,
+     "best_part": null,
+     "iou": 0.0
     },
     {
      "id": "p16",
-     "label": "lower chassis plate",
-     "area": 2259,
-     "best_part": "scoop",
-     "iou": 0.116
+     "label": "left rear corner bracket",
+     "area": 333,
+     "best_part": "chassis",
+     "iou": 0.008
+    },
+    {
+     "id": "p18",
+     "label": "lid screws",
+     "area": 653,
+     "best_part": "wheel_r0",
+     "iou": 0.011
+    },
+    {
+     "id": "p14",
+     "label": "blue left front post",
+     "area": 692,
+     "best_part": "chassis",
+     "iou": 0.017
     },
     {
      "id": "p05",
-     "label": "left wheel back",
-     "area": 3391,
-     "best_part": "wheel_l0",
-     "iou": 0.132
-    },
-    {
-     "id": "p13",
-     "label": "blue right rear post",
-     "area": 1201,
-     "best_part": "wheel_r2",
-     "iou": 0.158
-    },
-    {
-     "id": "p08",
-     "label": "left wheel middle",
-     "area": 3799,
-     "best_part": "wheel_l1",
-     "iou": 0.162
-    },
-    {
-     "id": "p03",
-     "label": "right wheel middle",
-     "area": 2103,
+     "label": "right middle wheel",
+     "area": 1504,
      "best_part": "wheel_r1",
-     "iou": 0.166
+     "iou": 0.023
     },
     {
-     "id": "p04",
-     "label": "dark top plate with label",
-     "area": 8233,
+     "id": "p09",
+     "label": "red wires",
+     "area": 1246,
      "best_part": "chassis",
-     "iou": 0.208
-    },
-    {
-     "id": "p01",
-     "label": "right wheel back",
-     "area": 1958,
-     "best_part": "wheel_r0",
-     "iou": 0.255
-    },
-    {
-     "id": "p02",
-     "label": "clear blue top lid",
-     "area": 13560,
-     "best_part": "chassis",
-     "iou": 0.301
+     "iou": 0.032
     },
     {
      "id": "p11",
-     "label": "left wheel front",
-     "area": 5611,
-     "best_part": "wheel_l2",
-     "iou": 0.356
+     "label": "blue battery box",
+     "area": 1500,
+     "best_part": "chassis",
+     "iou": 0.038
     },
     {
      "id": "p12",
-     "label": "front green wedge plate",
-     "area": 13222,
+     "label": "battery warning sticker",
+     "area": 1702,
+     "best_part": "chassis",
+     "iou": 0.043
+    },
+    {
+     "id": "p10",
+     "label": "inner electronics left of battery",
+     "area": 2811,
+     "best_part": "chassis",
+     "iou": 0.071
+    },
+    {
+     "id": "p19",
+     "label": "rail screws",
+     "area": 515,
+     "best_part": "wheel_r2",
+     "iou": 0.08
+    },
+    {
+     "id": "p08",
+     "label": "BLUE TERROR label card",
+     "area": 5646,
+     "best_part": "chassis",
+     "iou": 0.14
+    },
+    {
+     "id": "p01",
+     "label": "left back wheel",
+     "area": 3546,
+     "best_part": "wheel_l0",
+     "iou": 0.167
+    },
+    {
+     "id": "p13",
+     "label": "blue lower body front panel",
+     "area": 10228,
      "best_part": "scoop",
-     "iou": 0.493
+     "iou": 0.169
+    },
+    {
+     "id": "p02",
+     "label": "left middle wheel",
+     "area": 4149,
+     "best_part": "wheel_l1",
+     "iou": 0.173
+    },
+    {
+     "id": "p03",
+     "label": "left front wheel",
+     "area": 3869,
+     "best_part": "wheel_l1",
+     "iou": 0.173
+    },
+    {
+     "id": "p15",
+     "label": "blue right front post",
+     "area": 9453,
+     "best_part": "scoop",
+     "iou": 0.182
+    },
+    {
+     "id": "p07",
+     "label": "clear blue top lid",
+     "area": 11079,
+     "best_part": "chassis",
+     "iou": 0.229
+    },
+    {
+     "id": "p04",
+     "label": "right back wheel",
+     "area": 2069,
+     "best_part": "wheel_r0",
+     "iou": 0.247
+    },
+    {
+     "id": "p17",
+     "label": "front green wedge plate",
+     "area": 11247,
+     "best_part": "scoop",
+     "iou": 0.343
     }
    ],
    "unmatched_model_parts": [
+    "wheel_l2",
     "dt_hub_wheel_l0",
     "dt_nut_wheel_l0",
     "dt_hub_wheel_l1",
