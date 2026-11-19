@@ -3425,7 +3425,7 @@
    ],
    "color": "#f2e21c",
    "print_orientation": "+z",
-   "volume_mm3": 244396.0
+   "volume_mm3": 244375.0
   },
   {
    "id": "wheel_l0",
@@ -5318,7 +5318,14 @@
    "to": "el_switch.in",
    "awg": 22,
    "kind": "power",
-   "slack_mm": 15
+   "slack_mm": 15,
+   "via": [
+    [
+     -11.1,
+     -9.6,
+     -1.1
+    ]
+   ]
   },
   {
    "id": "w_sw_esc",
@@ -5326,7 +5333,19 @@
    "to": "el_esc.bat",
    "awg": 22,
    "kind": "power",
-   "slack_mm": 15
+   "slack_mm": 15,
+   "via": [
+    [
+     1.9,
+     -10.6,
+     4.9
+    ],
+    [
+     -7.1,
+     -6.6,
+     9.9
+    ]
+   ]
   },
   {
    "id": "w_m1",
@@ -5334,7 +5353,24 @@
    "to": "dm_wheel_l0.terminals",
    "awg": 26,
    "kind": "motor",
-   "slack_mm": 15
+   "slack_mm": 15,
+   "via": [
+    [
+     15.9,
+     -0.6,
+     4.9
+    ],
+    [
+     15.9,
+     -9.6,
+     4.9
+    ],
+    [
+     15.9,
+     -18.6,
+     4.9
+    ]
+   ]
   },
   {
    "id": "w_m2",
@@ -5342,7 +5378,24 @@
    "to": "dm_wheel_r0.terminals",
    "awg": 26,
    "kind": "motor",
-   "slack_mm": 15
+   "slack_mm": 15,
+   "via": [
+    [
+     -8.1,
+     5.4,
+     6.9
+    ],
+    [
+     -8.1,
+     -4.6,
+     4.9
+    ],
+    [
+     -8.1,
+     -13.6,
+     4.9
+    ]
+   ]
   }
  ],
  "connections": [

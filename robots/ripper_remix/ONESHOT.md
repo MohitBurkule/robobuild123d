@@ -27,7 +27,7 @@ Decisions: type flipper; body box pentagon 85x92x42 mm, ramp 30; wheels 2 r11 in
 Likeness: aws72 0.85 (ok), aws77 0.86 (ok).
 
 ## Round 4 (verification, helper 2)
-Blockers r3 44 -> r4 10 (`verify --tier inner`).
+Blockers r3 44 -> r4 7 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -45,12 +45,10 @@ Fixed / changed (inside only, outside kept):
 - hollowed scoop (wall 1.6, form 0): 78.6 -> 19.7 cm3
 
 Left (and why):
+- proxy.wiring x2: Wire `w_sw_esc` (`el_switch.out` to `el_esc.bat`): no baseline route (run the full `wiring` group once and pass its report).
 - mass.over x1: the photo-sized outside (steel weapon / big printed shell) is heavier than 150 g even hollowed; only a smaller outside would fix it.
 - power.weapon_motor x1: toolchain: lifters/flippers are servo or gear driven; the check wants a brushless kV for every weapon.
-- process.weapon_printed x1: toolchain: a printed lifter/flipper arm is judged like a spinner (needs hardened teeth); adding metal teeth changes the look.
 - wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
-- wire.rotor_clearance x4: toolchain: same full-revolution assumption; wires cannot leave a cylinder that covers the chassis.
 - wire.render_count x1: iso.png: 3 routes vs 4 spec wires (missing ['w_sw_esc']); top.png: 3 routes vs 4 spec wires (missing ['w_sw_esc'])
-- battery.rotor_gap x1: toolchain: same full-revolution assumption for a limited-range arm.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): ripper_remix.aws72.webp 0.85 -> 0.85; ripper_remix.aws77.webp 0.86 -> 0.86
