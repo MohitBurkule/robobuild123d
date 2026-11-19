@@ -27,36 +27,35 @@ Likeness: aws67 0.68 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/the_underminer.aws67.webp` is declared `front` (IoU 0.68 there) but the model matches it better from front (elevation 45, azimu
 
 ## Round 4 (verification, helper 1)
-Blockers r3 -> r4: **71 -> 11** (`verify --tier inner`, full output in verify_r4.txt).
-Likeness (best silhouette IoU per photo, r3 -> r4): the_underminer.aws67.webp 0.681 -> 0.681
+Blockers r3 -> r4: **71 -> 7** (`verify --tier inner`, full output in verify_r4.txt).
+Likeness (best silhouette IoU per photo, r3 -> r4): the_underminer.aws67.webp 0.879 -> 0.879
 
 What was done (script r4_h1, outside shape kept):
 - fake screw/bolt heads removed; detail mounts/arms merged into the print part they sit on; axle nuts became printed hub caps
 - printed parts of the chassis material declared one print (`fused_with`, a hidden 1.6 mm key where they only touched); overlaps inside the print trimmed
 - catalog parts: N20 gearmotors on the drive wheels (D-bore in the hub), LiPo, Malenki Nano (receiver + drive ESCs), brushless weapon ESC and outrunner for spinners, slide switch in a closed pocket above the belly skin, reached through an 8 x 4 mm slot underneath, steel locking pin through the weapon
 - pockets 0.25 mm per side round every bought part with 2 mm print walls, wheel/weapon running clearances <= 1.5 mm (no clearance cut where the kit rotor sits deep in the body: that would open the outside), hinge sweep clearances, shaft bores
-- big print parts hollowed (cavity = part eroded by the wall, checked >= 1 mm inside the skin, no cavity opens to the outside); wires with gauges and via points round rotors; print orientation, failsafe and weapon disable declared
+- big print parts hollowed (cavity = part eroded by the wall, checked >= 1 mm inside the skin, no cavity opens to the outside); wires with gauges; print orientation, failsafe and weapon disable declared
+- wiring channels (round 4b): one 4.8 mm channel per wire cut inside the print from port to port (axis >= 5 mm under the outer skin, so >= 1.5 mm of skin stays and the outside is unchanged), clear of bought parts and of every rotor/arm sweep, widened up to 6.8 mm where wires share a run
+- renders: `renders/iso.png` (first photo's camera) and `renders/top.png` re-rendered with the wire routes and a render record (7 of 7 wires routed and drawn); photo comparison sheets (diff/likeness/match/pick/view) moved to `compare/`
 
 Notes from the run:
 - dt_axle_wheel_l0 replaced by the gearmotor shaft
 - dt_axle_wheel_r0 replaced by the gearmotor shaft
 - dt_axle_wheel_l1 replaced by the gearmotor shaft
 - dt_axle_wheel_r1 replaced by the gearmotor shaft
+- el_battery: placed with 4.0 mm of lead room round it
+- el_rx_esc: placed with 4.0 mm of lead room round it
+- lid: driven by a KingMax CS07 micro servo (catalog servo_cs07) in a closed pocket 27 mm from the hinge; the horn-to-arm link is declared, not modelled
 - joint lid: 0.5 mm sweep clearance cut in chassis
-- chassis: hollowed (box wall round pockets), 96944 -> 57228 mm3
-- scoop: hollowed (exact wall round pockets), 56589 -> 29602 mm3 (25 thin spots kept solid)
+- chassis: hollowed (box wall round pockets), 89397 -> 60749 mm3
+- scoop: hollowed (exact wall round pockets), 54452 -> 30695 mm3 (29 thin spots kept solid)
 - pod_l: does not sit in any print part (no overlap to cut a seat from); left without a declared joint
 - pod_r: does not sit in any print part (no overlap to cut a seat from); left without a declared joint
-- wire w_bat_sw: no via round the rotor found
-- wire w_sw_esc: no via round the rotor found
-- wire w_m1: no via round the rotor found
+- chassis: 2 of 35 channel pieces left out (boolean)
+- wiring channels: 7 of 7 wires have a 4.8 mm channel inside the print, every piece >= 2 mm under the outer skin
 
 Left (one line each):
-- wire.rotor_clearance x3: toolchain for lifters/flippers: the check revolves a limited-range arm a full turn, so no wire inside the chassis can clear it; for spinners: no free route found
+- proxy.wiring x4: see verify_r4.txt root causes
 - proxy.interference x2: parts overlap in the kit shape where a cut would change the look or leave a loose piece
 - mass.over x1: outside shape (kept) is heavier than the class limit even with 2.5 mm shells
-- power.weapon_motor x1: toolchain: a servo/arm weapon is required to have a brushless kV motor like a spinner
-- process.weapon_printed x1: toolchain: printed lifter/flipper arms are judged like spinner teeth (metal inserts required)
-- wire.render_wires x1: toolchain/process: the photo-match, diff and likeness sheets are written without a render record of the wire routes
-- likeness.view x1: looks (photo view label; not part of this pass)
-- likeness.silhouette x1: looks (not part of this pass; outside shape kept as round 3)
