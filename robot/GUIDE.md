@@ -108,7 +108,8 @@ robot's own motion or when inverted.
 - `robot electronics spec.json [--kinds battery,esc,receiver] [--only el_battery] [--lip 2] [--dry]` does the window
   for every battery / ESC / receiver at once, through *all* the static prints over it (a tub's deck and a `top_plate`
   together): one box over the component's footprint less the rim. It skips a component with a screw, a moving or
-  bought part, or any other body in that box, so the real parts and their routed wires show and nothing is faked.
+  bought part, or any other body in that box, and it only opens shells (structure, plate, armor, a lid or cover),
+  never a weapon or arm; openings under 60 mm2 are skipped. The real parts and their routed wires show, nothing faked.
 - `robot brackets spec.json [--wheels wheel_l0,..] [--spokes 5]` puts a hub cap on each wheel's printed hub
   (`tyre_of`): a ring on the hub's outer face, around the axle stub and inside the hub rim, never standing past the
   stub (so the wheel's width and the footprint stay the same), with shallow lug pockets. It is part of the hub print,

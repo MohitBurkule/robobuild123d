@@ -22,6 +22,9 @@ import numpy as np
 
 KINDS = ("battery", "esc", "receiver")
 AX = {"x": 0, "y": 1, "z": 2}
+COVER_KINDS = ("structure", "plate", "armor")   # shells only: never a weapon, arm, pin or bracket
+COVER_WORDS = ("plate", "lid", "cover", "deck", "shell", "chassis")
+MIN_AREA = 60.0   # mm2: a smaller opening shows nothing from the iso view
 
 
 def covers(Bd, raw, comp, face="+z"):
@@ -53,7 +56,8 @@ def covers(Bd, raw, comp, face="+z"):
             dist[bid] = float(np.min((loc[:, k] - O[0, k]) * s))
     out = sorted(dist, key=dist.get)
     bad = [i for i in out if "catalog" in byid.get(i, {}) or "shape" not in byid.get(i, {})
-           or byid[i].get("joint") or byid[i].get("parent") or byid[i].get("rotates_with")]
+           or byid[i].get("joint") or byid[i].get("parent") or byid[i].get("rotates_with")
+           or not (byid[i].get("kind") in COVER_KINDS or any(w in i for w in COVER_WORDS))]
     return out, bad
 
 
@@ -71,6 +75,8 @@ def window_through(raw, Bd, comp, parts, face="+z", lip=2.0):
             hi[j] -= lip
     if np.any(np.delete(hi - lo, k) <= 1.0):
         return 0, f"too small for a {lip:g} mm rim"
+    if np.prod(np.delete(hi - lo, k)) < MIN_AREA:
+        return 0, f"only {np.prod(np.delete(hi - lo, k)):.0f} mm2 of opening (under {MIN_AREA:g})"
     far = max(Bd[q].aabb[1][k] for q in parts) + E if s > 0 else min(Bd[q].aabb[0][k] for q in parts) - E
     if s > 0:
         lo[k], hi[k] = chi[k] + 0.3, far
