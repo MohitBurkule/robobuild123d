@@ -10,7 +10,7 @@
  "view": {
   "i_never_asked_for_this.aws71.webp": "front_left_iso"
  },
- "elevation": {
-  "i_never_asked_for_this.aws71.webp": 45
+ "view_source": {
+  "i_never_asked_for_this.aws71.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label"
  }
 }
