@@ -1,42 +1,42 @@
 BLOCKERS: 8
-  [ran] integrity 0.13s
+  [ran] integrity 0.09s
   [ran] mass 0.00s
-  [proxy] interference 13.05s
-  [ran] connections 0.62s
-  [ran] legal 0.07s
-  [ran] fasteners 0.13s
-  [ran] power 0.02s
+  [proxy] interference 16.85s
+  [ran] connections 0.59s
+  [ran] legal 0.02s
+  [ran] fasteners 0.07s
+  [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
-  [ran] fight 0.03s
-  [ran] shape 0.69s
-  [ran] dynamics 0.01s
-  [ran] strength 0.10s
-  [ran] printability 0.68s
-  [ran] process 0.02s
+  [ran] fight 0.02s
+  [ran] shape 0.58s
+  [ran] dynamics 0.00s
+  [ran] strength 0.09s
+  [ran] printability 0.82s
+  [ran] process 0.01s
   [ran] electrical 0.01s
-  [ran] combat 0.14s
+  [ran] combat 0.13s
   [ran] physics 0.00s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
-  [ran] fit 0.10s
-  [ran] bom 0.02s
-  [ran] wire_review 0.04s
+  [ran] fit 0.07s
+  [ran] bom 0.01s
+  [ran] wire_review 0.02s
   [ran] fastener_record 0.00s
-  [ran] likeness 24.76s
+  [ran] likeness 21.67s
   [ran] drive_recess 0.00s
   [ran] belt_wrap 0.00s
-  [ran] retention 0.03s
+  [ran] retention 0.00s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.09s
+  [ran] geom 0.15s
   [ran] dfm 0.06s
   [ran] realworld 0.12s
-jiggy sawdust: ok=False 8 blockers in 8 root causes, mass 183.5/150 g
-1. [mass.over] 183.5 g (range 154.8 to 212.1 g) against the 150 g limit; 7.8 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+jiggy sawdust: ok=False 8 blockers in 8 root causes, mass 183.0/150 g
+1. [mass.over] 183.0 g (range 154.4 to 211.6 g) against the 150 g limit; 7.8 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
 2. [proxy.interference] `chassis` and `saw_blade` overlap by 0.93 mm (allowed 0.08).
    | chassis: x -35.00..35.00  y -35.00..35.00  z -12.00..43.00  size 70.00 x 70.00 x 55.00 mm
-   |   centre (-0.00, 0.00, 15.50), volume 71629.1 mm3
+   |   centre (-0.00, 0.00, 15.50), volume 71256.7 mm3
    |   overlap allowed `saw_body` 4.38 mm (allowed inf)
    |   overlap allowed `front_plate` 1.04 mm (allowed inf)
    |   OVERLAP `saw_blade` 0.93 mm (allowed 0.08)
@@ -66,12 +66,12 @@ jiggy sawdust: ok=False 8 blockers in 8 root causes, mass 183.5/150 g
 8. [likeness.silhouette] `reference/jiggy_sawdust.aws63.webp`: best silhouette IoU 0.60 at camera front_right_iso (elevation 45, azimuth 60) (need 0.80: >= 0.8 and no worse than the closest stock template `wedge_2wd` at 0.60). Regions (photo frame, left third first) 0.59 / 0.73 / 0.47: worst = rear third. Height/length 1.02 model vs 0.85 photo (too tall: lower it or lengthen it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
-  mass 183.5 g of 150 g (-33.5 g margin)
-    chassis                    68.19 g  fills 27% of its box
+  mass 183.0 g of 150 g (-33.0 g margin)
+    chassis                    67.84 g  fills 26% of its box
     el_battery                 21.50 g  fills 100% of its box  <- solid block? a tub should be a shell
     weapon_motor               17.50 g  fills 54% of its box
     saw_blade                  11.05 g  fills 97% of its box
-    top_plate                  10.52 g  fills 99% of its box
+    top_plate                  10.16 g  fills 96% of its box
     dm_wheel_l0                 9.70 g  fills 66% of its box
     dm_wheel_r0                 9.70 g  fills 66% of its box
     front_plate                 6.43 g  fills 16% of its box
@@ -80,8 +80,8 @@ MASS BUDGET:
     wheel_l0                    3.67 g  fills 57% of its box
     wheel_r0                    3.67 g  fills 57% of its box
     el_rx_esc                   3.50 g  fills 100% of its box
-    dt_hub_wheel_l0             1.42 g  fills 65% of its box
-    dt_hub_wheel_r0             1.42 g  fills 65% of its box
+    dt_hub_wheel_l0             1.55 g  fills 71% of its box
+    dt_hub_wheel_r0             1.55 g  fills 71% of its box
     dt_shaft_saw_blade          1.19 g  fills 79% of its box
     el_switch                   0.50 g  fills 100% of its box
     lock_pin                    0.34 g  fills 79% of its box
@@ -89,6 +89,6 @@ MASS BUDGET:
     fs_look_top_plate_1         0.28 g  fills 27% of its box
     fs_look_top_plate_2         0.28 g  fills 27% of its box
     fs_look_top_plate_3         0.28 g  fills 27% of its box
-    mass.over: 183.5 g (range 154.8 to 212.1 g) against the 150 g limit; 7.8 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.over: 183.0 g (range 154.4 to 211.6 g) against the 150 g limit; 7.8 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
 cache: part_geom 0 hit / 26 miss
