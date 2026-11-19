@@ -13,14 +13,15 @@
  ],
  "view": {
   "mutant.aws72.webp": "front_right_iso",
-  "mutant.aws74.webp": "rear_right_iso",
-  "mutant.aws76.webp": "front"
+  "mutant.aws74.webp": "front_left_iso",
+  "mutant.aws76.webp": "front_left_iso"
  },
  "elevation": {
   "mutant.aws74.webp": 45,
   "mutant.aws76.webp": 25
  },
  "view_source": {
-  "mutant.aws72.webp": "user camera pick (azimuth 30, elevation 35); replaces the automatic label"
+  "mutant.aws74.webp": "camera audit 2026-11: front_left_iso, el 45 (az about 120), read from the photo (see CAMERA_AUDIT.md), not from likeness score",
+  "mutant.aws76.webp": "camera audit 2026-11: front_left_iso, el 25 (az about 115-120), read from the photo (see CAMERA_AUDIT.md), not from likeness score"
  }
 }
