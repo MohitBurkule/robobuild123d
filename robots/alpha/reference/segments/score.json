@@ -1,8 +1,8 @@
 {
  "aggregate": {
   "photos": 1,
-  "area_weighted_iou": 0.227,
-  "mean_iou": 0.075
+  "area_weighted_iou": 0.373,
+  "mean_iou": 0.076
  },
  "photos": [
   {
@@ -12,222 +12,196 @@
     "elevation": 45.0
    },
    "silhouette_iou": 0.807,
-   "mean_iou": 0.075,
-   "area_weighted_iou": 0.227,
-   "f1_at_0.5": 0.0,
+   "mean_iou": 0.076,
+   "area_weighted_iou": 0.373,
+   "f1_at_0.5": 0.056,
    "segments": [
     {
-     "id": "p02",
-     "label": "left wheel bolt",
+     "id": "p18",
+     "label": "left wheel",
+     "area": 1381,
+     "best_part": null,
+     "iou": 0.0
+    },
+    {
+     "id": "p24",
+     "label": "screw left wheel block",
      "area": 172,
      "best_part": "chassis",
      "iou": 0.0
     },
     {
-     "id": "p10",
-     "label": "top axle pin",
+     "id": "p03",
+     "label": "right axle pin",
      "area": 123,
      "best_part": null,
      "iou": 0.0
     },
     {
-     "id": "p12",
-     "label": "top right screw",
+     "id": "p23",
+     "label": "screw center-right plate",
      "area": 180,
      "best_part": "chassis",
      "iou": 0.003
     },
     {
-     "id": "p13",
-     "label": "top right screw 2",
+     "id": "p21",
+     "label": "screw front-right (armor)",
+     "area": 176,
+     "best_part": "chassis",
+     "iou": 0.003
+    },
+    {
+     "id": "p26",
+     "label": "screw right arm plate",
      "area": 172,
      "best_part": "chassis",
      "iou": 0.003
     },
     {
-     "id": "p11",
-     "label": "top screw",
+     "id": "p02",
+     "label": "top shaft cap",
+     "area": 1385,
+     "best_part": "chassis",
+     "iou": 0.005
+    },
+    {
+     "id": "p15",
+     "label": "right wheel",
+     "area": 343,
+     "best_part": "chassis",
+     "iou": 0.006
+    },
+    {
+     "id": "p04",
+     "label": "top black frame bar",
+     "area": 576,
+     "best_part": "chassis",
+     "iou": 0.008
+    },
+    {
+     "id": "p22",
+     "label": "screw top bar (left arm)",
      "area": 180,
      "best_part": "link_l",
      "iou": 0.008
     },
     {
-     "id": "p29",
-     "label": "bent bracket",
-     "area": 560,
-     "best_part": "scoop",
-     "iou": 0.011
+     "id": "p25",
+     "label": "screw right side block",
+     "area": 183,
+     "best_part": "wheel_r0",
+     "iou": 0.014
     },
     {
-     "id": "p01",
-     "label": "left wheel",
-     "area": 2549,
-     "best_part": "wheel_l0",
-     "iou": 0.016
-    },
-    {
-     "id": "p06",
-     "label": "left side frame",
-     "area": 1504,
-     "best_part": "scoop",
-     "iou": 0.016
-    },
-    {
-     "id": "p30",
-     "label": "front-right bolt",
-     "area": 911,
+     "id": "p05",
+     "label": "central vertical post",
+     "area": 925,
      "best_part": "chassis",
      "iou": 0.017
     },
     {
-     "id": "p09",
-     "label": "central post",
-     "area": 2524,
-     "best_part": "chassis",
-     "iou": 0.018
-    },
-    {
-     "id": "p20",
+     "id": "p06",
      "label": "red battery lead",
-     "area": 1263,
+     "area": 1013,
      "best_part": "chassis",
-     "iou": 0.023
+     "iou": 0.019
     },
     {
-     "id": "p24",
-     "label": "left yellow U bumper",
-     "area": 2557,
-     "best_part": "scoop",
-     "iou": 0.026
-    },
-    {
-     "id": "p08",
-     "label": "top frame",
-     "area": 2411,
-     "best_part": "chassis",
-     "iou": 0.026
-    },
-    {
-     "id": "p23",
-     "label": "blue wire",
-     "area": 186,
-     "best_part": "scoop_eyes",
-     "iou": 0.027
-    },
-    {
-     "id": "p03",
-     "label": "right wheel",
-     "area": 2024,
+     "id": "p19",
+     "label": "left side frame",
+     "area": 10838,
      "best_part": "chassis",
      "iou": 0.032
     },
     {
-     "id": "p05",
-     "label": "left side armor",
-     "area": 13498,
-     "best_part": "chassis",
-     "iou": 0.056
-    },
-    {
-     "id": "p21",
-     "label": "wire bundle",
-     "area": 3259,
-     "best_part": "chassis",
-     "iou": 0.057
-    },
-    {
-     "id": "p28",
-     "label": "front-left clamp",
-     "area": 477,
+     "id": "p20",
+     "label": "screw front-left (armor)",
+     "area": 188,
      "best_part": "wa_act",
-     "iou": 0.065
+     "iou": 0.035
     },
     {
-     "id": "p22",
-     "label": "white connector",
-     "area": 704,
+     "id": "p09",
+     "label": "lower center housing",
+     "area": 645,
      "best_part": "el_esc",
-     "iou": 0.069
+     "iou": 0.058
     },
     {
-     "id": "p25",
-     "label": "right yellow U bumper",
-     "area": 3973,
-     "best_part": "scoop",
-     "iou": 0.074
+     "id": "p07",
+     "label": "center wire bundle base",
+     "area": 771,
+     "best_part": "el_esc",
+     "iou": 0.066
     },
     {
-     "id": "p19",
-     "label": "right inner bracket bolt",
+     "id": "p14",
+     "label": "right inner bracket",
      "area": 472,
      "best_part": "link_r",
      "iou": 0.079
     },
     {
-     "id": "p04",
-     "label": "right wheel bolt",
-     "area": 346,
+     "id": "p17",
+     "label": "right side armor below arm",
+     "area": 998,
      "best_part": "wheel_r0",
-     "iou": 0.083
+     "iou": 0.082
     },
     {
-     "id": "p18",
-     "label": "right inner bracket",
-     "area": 858,
-     "best_part": "link_r",
-     "iou": 0.089
+     "id": "p08",
+     "label": "black and white wires",
+     "area": 1893,
+     "best_part": "el_esc",
+     "iou": 0.087
+    },
+    {
+     "id": "p11",
+     "label": "center top plate",
+     "area": 5011,
+     "best_part": "link_l",
+     "iou": 0.139
     },
     {
      "id": "p16",
-     "label": "center right plate",
-     "area": 5708,
-     "best_part": "chassis",
-     "iou": 0.103
-    },
-    {
-     "id": "p15",
-     "label": "center top plate",
-     "area": 3627,
-     "best_part": "link_l",
-     "iou": 0.129
-    },
-    {
-     "id": "p27",
-     "label": "front bottom lip",
-     "area": 9800,
-     "best_part": "scoop",
-     "iou": 0.157
-    },
-    {
-     "id": "p07",
-     "label": "right side armor",
-     "area": 11198,
+     "label": "right side frame",
+     "area": 11564,
      "best_part": "wheel_r0",
+     "iou": 0.15
+    },
+    {
+     "id": "p10",
+     "label": "left upper arm plate",
+     "area": 8998,
+     "best_part": "link_l",
      "iou": 0.161
     },
     {
-     "id": "p14",
-     "label": "left upper arm plate",
-     "area": 9061,
-     "best_part": "link_l",
-     "iou": 0.171
+     "id": "p12",
+     "label": "center right plate",
+     "area": 10742,
+     "best_part": "chassis",
+     "iou": 0.162
     },
     {
-     "id": "p17",
+     "id": "p13",
      "label": "right upper arm plate",
-     "area": 2964,
+     "area": 5238,
      "best_part": "link_r",
-     "iou": 0.304
+     "iou": 0.242
     },
     {
-     "id": "p26",
-     "label": "front plate",
-     "area": 52601,
+     "id": "p01",
+     "label": "front armor plate (face)",
+     "area": 71695,
      "best_part": "scoop",
-     "iou": 0.422
+     "iou": 0.599
     }
    ],
    "unmatched_model_parts": [
+    "wheel_l0",
+    "scoop_eyes",
     "dt_hub_wheel_r0"
    ]
   }
