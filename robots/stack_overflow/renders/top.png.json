@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_stack_overflow/robots/stack_overflow/spec.json",
- "rendered_at": 1795059142.975223,
+ "rendered_at": 1795061635.271465,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -13,7 +13,9 @@
   "el_battery",
   "el_esc",
   "el_switch",
-  "wa_act"
+  "wa_act",
+  "fs_look_chassis_0",
+  "fs_look_chassis_1"
  ],
  "wires": {
   "w_bat_sw": {

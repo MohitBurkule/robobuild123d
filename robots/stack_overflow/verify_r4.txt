@@ -1,38 +1,38 @@
 BLOCKERS: 3
-  [ran] integrity 0.04s
-  [proxy] wiring 0.97s
+  [ran] integrity 0.05s
+  [proxy] wiring 0.90s
   [ran] mass 0.00s
-  [proxy] interference 12.92s
-  [ran] connections 0.01s
+  [proxy] interference 12.35s
+  [ran] connections 0.00s
   [ran] legal 0.01s
-  [ran] fasteners 0.00s
+  [ran] fasteners 0.02s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
   [ran] fight 0.02s
-  [ran] shape 0.35s
-  [ran] dynamics 0.01s
-  [ran] strength 0.00s
-  [ran] printability 1.37s
-  [ran] process 0.02s
-  [ran] electrical 1.85s
-  [ran] combat 0.10s
+  [ran] shape 0.27s
+  [ran] dynamics 0.00s
+  [ran] strength 0.03s
+  [ran] printability 1.48s
+  [ran] process 0.00s
+  [ran] electrical 1.79s
+  [ran] combat 0.11s
   [ran] physics 0.00s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
-  [ran] fit 0.07s
-  [ran] bom 0.01s
-  [ran] wire_review 0.96s
+  [ran] fit 0.12s
+  [ran] bom 0.00s
+  [ran] wire_review 0.99s
   [ran] fastener_record 0.00s
-  [ran] likeness 7.68s
+  [ran] likeness 10.55s
   [ran] drive_recess 0.00s
   [ran] belt_wrap 0.00s
-  [ran] retention 0.04s
-  [ran] waiver_audit 0.01s
-  [ran] geom 0.17s
-  [ran] dfm 0.07s
-  [ran] realworld 0.52s
-stack overflow: ok=False 3 blockers in 3 root causes, mass 136.0/150 g
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.15s
+  [ran] dfm 0.06s
+  [ran] realworld 0.47s
+stack overflow: ok=False 3 blockers in 3 root causes, mass 136.6/150 g
 1. [proxy.sweep] joint `arm`: `arm` hits `chassis` 0.20 mm deep at 7.3 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint arm` lists the closest approach to every part.
    | arm: x -7.00..7.00  y -25.00..50.00  z -8.00..28.00  size 14.00 x 75.00 x 36.00 mm
    |   centre (0.00, 12.50, 10.00), volume 10444.0 mm3
@@ -49,8 +49,8 @@ stack overflow: ok=False 3 blockers in 3 root causes, mass 136.0/150 g
 3. [likeness.silhouette] `reference/stack_overflow.aws67.webp`: best silhouette IoU 0.76 at camera front_right_iso (elevation 45, azimuth 60) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.70). Regions (photo frame, left third first) 0.74 / 0.96 / 0.58: worst = rear third. Height/length 0.90 model vs 0.82 photo (too tall: lower it or lengthen it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
-  mass 136.0 g of 150 g (+14.0 g margin)
-    chassis                    72.83 g  fills 25% of its box
+  mass 136.6 g of 150 g (+13.4 g margin)
+    chassis                    73.03 g  fills 25% of its box
     el_battery                 12.50 g  fills 100% of its box
     arm                         9.94 g  fills 28% of its box
     dm_wheel_l0                 9.50 g  fills 63% of its box
@@ -62,6 +62,8 @@ MASS BUDGET:
     dt_hub_wheel_l0             1.10 g  fills 75% of its box
     dt_hub_wheel_r0             1.10 g  fills 75% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.may_be_over: 136.0 g (range 110.7 to 161.3 g) against the 150 g limit; 6.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    fs_look_chassis_0           0.21 g  fills 30% of its box
+    fs_look_chassis_1           0.21 g  fills 30% of its box
+    mass.may_be_over: 136.6 g (range 111.3 to 161.9 g) against the 150 g limit; 6.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: distance 0 hit / 5 miss, group 0 hit / 31 miss, inside 5 hit / 7 miss, likeness 1 hit / 0 miss, min_gap 5 hit / 13 miss, overlap 89 hit / 82 miss, part_check 5 hit / 1 miss, part_geom 12 hit / 0 miss, ray 56 hit / 47 miss
+cache: distance 0 hit / 5 miss, group 0 hit / 31 miss, inside 5 hit / 13 miss, likeness 1 hit / 0 miss, min_gap 5 hit / 13 miss, overlap 89 hit / 84 miss, part_check 5 hit / 1 miss, part_geom 18 hit / 0 miss, ray 61 hit / 52 miss
