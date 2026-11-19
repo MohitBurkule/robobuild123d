@@ -1,49 +1,49 @@
 BLOCKERS: 8
-  [ran] integrity 0.04s
-  [proxy] wiring 0.69s
-  [ran] mass 0.01s
-  [proxy] interference 12.76s
-  [ran] connections 0.30s
-  [ran] legal 0.02s
-  [ran] fasteners 0.01s
+  [ran] integrity 0.06s
+  [proxy] wiring 1.84s
+  [ran] mass 0.00s
+  [proxy] interference 13.36s
+  [ran] connections 0.04s
+  [ran] legal 0.01s
+  [ran] fasteners 0.00s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
-  [ran] fight 0.03s
-  [ran] shape 0.20s
-  [ran] dynamics 0.01s
+  [ran] fight 0.01s
+  [ran] shape 0.18s
+  [ran] dynamics 0.00s
   [ran] strength 0.00s
-  [ran] printability 1.19s
-  [ran] process 0.02s
-  [ran] electrical 1.39s
+  [ran] printability 1.21s
+  [ran] process 0.00s
+  [ran] electrical 1.77s
   [ran] combat 0.12s
   [ran] physics 0.00s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
   [ran] fit 0.06s
   [ran] bom 0.00s
-  [ran] wire_review 0.61s
+  [ran] wire_review 0.98s
   [ran] fastener_record 0.00s
-  [ran] likeness 3.65s
+  [ran] likeness 3.70s
   [ran] drive_recess 0.00s
   [ran] belt_wrap 0.00s
   [ran] retention 0.00s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.14s
+  [ran] geom 0.15s
   [ran] dfm 0.06s
-  [ran] realworld 1.32s
-liftoff: ok=False 7 blockers in 7 root causes, mass 141.7/150 g
+  [ran] realworld 1.74s
+liftoff: ok=False 7 blockers in 7 root causes, mass 138.6/150 g
 1. [proxy.wiring] Wire `w_bat_sw` (`el_battery.xt30` to `el_switch.in`): the baseline route is now blocked by `chassis` (5 samples).
    fix: Run the full `wiring` group to re-route it.
    | chassis: x -40.00..40.00  y -36.00..36.00  z -11.00..13.00  size 80.00 x 72.00 x 24.00 mm
-   |   centre (-0.00, 0.00, 1.00), volume 63907.4 mm3
+   |   centre (-0.00, 0.00, 1.00), volume 60701.0 mm3
    |   overlap allowed `wedge_l` 1.61 mm (allowed inf)
    |   overlap allowed `wedge_r` 1.61 mm (allowed inf)
    |   gap to `lift_plate` 0.00 mm (touching)
 2. [proxy.wiring] Wire `w_sw_esc` (`el_switch.out` to `el_esc.bat`): the baseline route is now blocked by `chassis` (9 samples).
    fix: Run the full `wiring` group to re-route it.
    | chassis: x -40.00..40.00  y -36.00..36.00  z -11.00..13.00  size 80.00 x 72.00 x 24.00 mm
-   |   centre (-0.00, 0.00, 1.00), volume 63907.4 mm3
+   |   centre (-0.00, 0.00, 1.00), volume 60701.0 mm3
    |   overlap allowed `wedge_l` 1.61 mm (allowed inf)
    |   overlap allowed `wedge_r` 1.61 mm (allowed inf)
    |   gap to `lift_plate` 0.00 mm (touching)
@@ -62,8 +62,8 @@ liftoff: ok=False 7 blockers in 7 root causes, mass 141.7/150 g
 7. [likeness.silhouette] `reference/liftoff.aws76.webp`: best silhouette IoU 0.65 at camera front_left_iso (elevation 25, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.63). Regions (photo frame, left third first) 0.58 / 0.75 / 0.57: worst = rear third. Height/length 0.61 model vs 0.58 photo (proportions ok).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
-  mass 141.7 g of 150 g (+8.3 g margin)
-    chassis                    60.84 g  fills 46% of its box
+  mass 138.6 g of 150 g (+11.4 g margin)
+    chassis                    57.79 g  fills 44% of its box
     el_battery                 12.50 g  fills 100% of its box
     wedge_l                    10.31 g  fills 28% of its box
     wedge_r                    10.31 g  fills 28% of its box
@@ -77,9 +77,9 @@ MASS BUDGET:
     dt_hub_wheel_l0             1.30 g  fills 76% of its box
     dt_hub_wheel_r0             1.30 g  fills 76% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.may_be_over: 141.7 g (range 115.3 to 168.1 g) against the 150 g limit; 6.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.may_be_over: 138.6 g (range 112.9 to 164.4 g) against the 150 g limit; 6.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: distance 0 hit / 7 miss, group 0 hit / 31 miss, inside 8 hit / 7 miss, likeness 1 hit / 0 miss, min_gap 35 hit / 2 miss, overlap 89 hit / 87 miss, part_check 7 hit / 1 miss, part_geom 14 hit / 0 miss, ray 66 hit / 47 miss
+cache: distance 1 hit / 6 miss, group 0 hit / 31 miss, inside 9 hit / 6 miss, likeness 1 hit / 0 miss, min_gap 35 hit / 2 miss, overlap 102 hit / 74 miss, part_check 7 hit / 1 miss, part_geom 14 hit / 0 miss, ray 72 hit / 41 miss
 
 FULL WIRING GROUP (tier full, --only wiring): 1 blocker(s) counted in the total above
 [BLOCKER] wiring.route - Wire `w_wpn` (26 AWG, 1.3 mm thick) from `el_esc.wpn` to `wa_act.terminals` has no clear path; it gets within 6.8 mm of the end at (15.4, -6.5, 3.3) and `chassis` blocks it. parts: el_esc.wpn, wa_act.terminals at (15.4, -6.5, 3.3)
