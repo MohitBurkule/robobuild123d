@@ -47,3 +47,9 @@ Left (and why):
 - likeness.silhouette x1: looks, not in scope for this pass.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): brisk.aws76.webp 0.77 -> 0.77
+
+## Round 5 (user notes)
+- Front wedge is now its own printed plate (`wedge_plate`, 2.5 mm nylon), not part of the chassis: hexagonal outline (full-width foot, 30 mm chamfers to a 56 mm top edge) with a 14 x 28 mm slot open at the top.
+- The yellow arm (`flipper`) lies in that slot and shares the plate's top hinge pin; the plate `rotates_with` the arm, so the arm holds it down and lifts it (0..80 deg).
+- Chassis ramp face recedes 3.5 mm behind the plate (1 mm running gap); lid shortened 5 mm at the front so the hinge clears it; lid screws moved back with it.
+Blockers 3 -> 2 (flipper actuator, likeness; the flipper-vs-chassis sweep is gone), IoU 0.77 -> 0.77.
