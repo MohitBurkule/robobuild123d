@@ -27,7 +27,7 @@ Other likeness findings: [FAIL] likeness.view: `reference/time_for_crab_.aws67.w
 
 ## Round 4 (verification, helper 1)
 Blockers r3 -> r4: **58 -> 16** (`verify --tier inner`, full output in verify_r4.txt).
-Likeness (best silhouette IoU per photo, r3 -> r4): time_for_crab_.aws67.webp 0.567 -> 0.567, time_for_crab_.aws71.webp 0.381 -> 0.381
+Likeness (best silhouette IoU per photo, r3 -> r4): time_for_crab_.aws67.webp 0.567 -> 0.566, time_for_crab_.aws71.webp 0.381 -> 0.381
 
 What was done (script r4_h1, outside shape kept):
 - fake screw/bolt heads removed; detail mounts/arms merged into the print part they sit on; axle nuts became printed hub caps

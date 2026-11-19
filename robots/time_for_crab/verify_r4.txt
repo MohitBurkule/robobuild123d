@@ -1,51 +1,51 @@
 BLOCKERS: 16
-  [ran] integrity 0.07s
-  [proxy] wiring 1.67s
-  [ran] mass 0.00s
-  [proxy] interference 10.37s
-  [ran] connections 1.54s
+  [ran] integrity 0.11s
+  [proxy] wiring 2.25s
+  [ran] mass 0.01s
+  [proxy] interference 13.30s
+  [ran] connections 2.58s
   [ran] legal 0.03s
-  [ran] fasteners 0.00s
+  [ran] fasteners 0.10s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
-  [ran] fight 0.02s
-  [ran] shape 0.48s
+  [ran] fight 0.04s
+  [ran] shape 0.51s
   [ran] dynamics 0.00s
-  [ran] strength 0.00s
-  [ran] printability 0.81s
+  [ran] strength 0.11s
+  [ran] printability 0.99s
   [ran] process 0.00s
-  [ran] electrical 1.49s
+  [ran] electrical 1.50s
   [ran] combat 0.10s
   [ran] physics 0.00s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
   [ran] fit 0.09s
   [ran] bom 0.01s
-  [ran] wire_review 1.27s
-  [ran] fastener_record 0.00s
-  [ran] likeness 12.96s
+  [ran] wire_review 0.95s
+  [ran] fastener_record 0.01s
+  [ran] likeness 21.20s
   [ran] drive_recess 0.00s
   [ran] belt_wrap 0.00s
-  [ran] retention 0.00s
+  [ran] retention 0.01s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.22s
-  [ran] dfm 0.12s
-  [ran] realworld 1.30s
-time for crab: ok=False 16 blockers in 16 root causes, mass 165.6/150 g
+  [ran] geom 0.32s
+  [ran] dfm 0.19s
+  [ran] realworld 1.38s
+time for crab: ok=False 16 blockers in 16 root causes, mass 167.3/150 g
 1. [proxy.wiring] Wire `w_bat_sw` (`el_battery.xt30` to `el_switch.in`): no baseline route (run the full `wiring` group once and pass its report).
    fix: Run the full `wiring` group to re-route it.
-2. [mass.over] 165.6 g (range 136.7 to 194.5 g) against the 150 g limit; 5.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+2. [mass.over] 167.3 g (range 138.2 to 196.3 g) against the 150 g limit; 5.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
 3. [proxy.interference] `chassis` and `claw_l` overlap by 1.61 mm (allowed 0.08).
    | chassis: x -46.00..46.00  y -30.00..30.00  z -11.00..13.00  size 92.00 x 60.00 x 24.00 mm
-   |   centre (0.00, -0.00, 1.00), volume 55806.0 mm3
+   |   centre (0.00, -0.00, 1.00), volume 46041.9 mm3
    |   OVERLAP `claw_l` 1.61 mm (allowed 0.08)
    |   OVERLAP `claw_r` 1.61 mm (allowed 0.08)
    |   overlap allowed `shaft` 1.48 mm (allowed inf)
 4. [proxy.interference] `chassis` and `claw_r` overlap by 1.61 mm (allowed 0.08).
    | chassis: x -46.00..46.00  y -30.00..30.00  z -11.00..13.00  size 92.00 x 60.00 x 24.00 mm
-   |   centre (0.00, -0.00, 1.00), volume 55806.0 mm3
+   |   centre (0.00, -0.00, 1.00), volume 46041.9 mm3
    |   OVERLAP `claw_l` 1.61 mm (allowed 0.08)
    |   OVERLAP `claw_r` 1.61 mm (allowed 0.08)
    |   overlap allowed `shaft` 1.48 mm (allowed inf)
@@ -93,11 +93,12 @@ time for crab: ok=False 16 blockers in 16 root causes, mass 165.6/150 g
    fix: Re-render: the render record must list exactly the spec's wires.
 ... 4 more root causes (fix these first, then re-run)
 MASS BUDGET:
-  mass 165.6 g of 150 g (-15.6 g margin)
-    chassis                    53.13 g  fills 42% of its box
+  mass 167.3 g of 150 g (-17.3 g margin)
+    chassis                    43.83 g  fills 35% of its box
     claw_l                     25.59 g  fills 55% of its box  <- solid block? a tub should be a shell
     claw_r                     25.59 g  fills 55% of its box  <- solid block? a tub should be a shell
     el_battery                 12.50 g  fills 100% of its box
+    top_plate                   9.81 g  fills 99% of its box
     dm_wheel_l0                 9.70 g  fills 66% of its box
     dm_wheel_r0                 9.70 g  fills 66% of its box
     el_act_claw_l               7.50 g  fills 67% of its box
@@ -109,6 +110,10 @@ MASS BUDGET:
     dt_hub_wheel_l0             1.22 g  fills 65% of its box
     dt_hub_wheel_r0             1.22 g  fills 65% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.over: 165.6 g (range 136.7 to 194.5 g) against the 150 g limit; 5.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    fs_look_top_plate_0         0.28 g  fills 27% of its box
+    fs_look_top_plate_1         0.28 g  fills 27% of its box
+    fs_look_top_plate_2         0.28 g  fills 27% of its box
+    fs_look_top_plate_3         0.28 g  fills 27% of its box
+    mass.over: 167.3 g (range 138.2 to 196.3 g) against the 150 g limit; 5.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: part_geom 0 hit / 15 miss
+cache: part_geom 0 hit / 28 miss

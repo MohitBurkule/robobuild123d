@@ -1,8 +1,9 @@
 {
  "spec": "/tmp/work10_time_for_crab/robots/time_for_crab/spec.json",
- "rendered_at": 1795047083.7104383,
+ "rendered_at": 1795070515.368882,
  "bodies": [
   "chassis",
+  "top_plate",
   "wheel_l0",
   "wheel_r0",
   "claw_l",
@@ -16,7 +17,11 @@
   "el_rx_esc",
   "el_lesc",
   "el_act_claw_l",
-  "el_switch"
+  "el_switch",
+  "fs_look_top_plate_0",
+  "fs_look_top_plate_1",
+  "fs_look_top_plate_2",
+  "fs_look_top_plate_3"
  ],
  "wires": {
   "w_sw_esc": {
