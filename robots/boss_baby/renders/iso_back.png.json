@@ -1,0 +1,147 @@
+{
+ "spec": "/tmp/work10_boss_baby/robots/boss_baby/spec.json",
+ "rendered_at": 1795089975.7878034,
+ "bodies": [
+  "chassis",
+  "lid_r",
+  "lid_l",
+  "motor_r",
+  "motor_l",
+  "wheel_r",
+  "wheel_l",
+  "battery",
+  "esc",
+  "wesc",
+  "power_switch",
+  "weapon_motor",
+  "upright_r",
+  "upright_l",
+  "weapon",
+  "wshaft",
+  "wbearing",
+  "fork_r0",
+  "ins_r00",
+  "ins_r01",
+  "fork_r1",
+  "ins_r10",
+  "ins_r11",
+  "fork_l0",
+  "ins_l00",
+  "ins_l01",
+  "fork_l1",
+  "ins_l10",
+  "ins_l11",
+  "ins_upr0",
+  "ins_upr1",
+  "ins_upl0",
+  "ins_upl1",
+  "bolt_r00",
+  "bolt_r01",
+  "bolt_r10",
+  "bolt_r11",
+  "bolt_l00",
+  "bolt_l01",
+  "bolt_l10",
+  "bolt_l11",
+  "bolt_wm0",
+  "bolt_wm1",
+  "bolt_upr0",
+  "bolt_upr1",
+  "bolt_upl0",
+  "bolt_upl1",
+  "fs_look_lid_r_14",
+  "fs_look_lid_r_15",
+  "fs_look_lid_r_16",
+  "fs_look_lid_r_17",
+  "fs_look_lid_l_18",
+  "fs_look_lid_l_19",
+  "fs_look_lid_l_20",
+  "fs_look_lid_l_21"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    -34.0,
+    4.898587196589413e-16,
+    -1.5499999999999998
+   ],
+   "to": [
+    38.0,
+    -28.1,
+    -0.5
+   ]
+  },
+  "w_sw_wesc": {
+   "from": [
+    46.0,
+    -28.1,
+    -0.5
+   ],
+   "to": [
+    57.5,
+    24.0,
+    -5.55
+   ]
+  },
+  "w_wesc_m": {
+   "from": [
+    63.5,
+    24.0,
+    -5.55
+   ],
+   "to": [
+    8.0,
+    7.999999999999999,
+    11.0
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    46.0,
+    -28.1,
+    -0.5
+   ],
+   "to": [
+    20.0,
+    11.0,
+    -6.3
+   ]
+  },
+  "w_esc_ml": {
+   "from": [
+    20.0,
+    19.0,
+    -6.3
+   ],
+   "to": [
+    -34.15,
+    -12.000000000000002,
+    0.0
+   ]
+  },
+  "w_esc_mr": {
+   "from": [
+    52.0,
+    19.0,
+    -6.3
+   ],
+   "to": [
+    34.15,
+    -12.0,
+    0.0
+   ]
+  },
+  "w_rx_wesc": {
+   "from": [
+    52.0,
+    11.0,
+    -6.3
+   ],
+   "to": [
+    60.5,
+    1.0,
+    -5.55
+   ]
+  }
+ }
+}
