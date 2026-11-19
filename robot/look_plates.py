@@ -55,8 +55,10 @@ def _largest_rect(m):
     return out
 
 
-def find_face(mesh, axis, sign, level="largest", inset=1.0, min_area=150.0):
-    """Rectangle on the flat face: dict(level, lo (u, v), hi (u, v), area) in world mm, or None."""
+def find_face(mesh, axis, sign, level="largest", inset=1.0, min_area=150.0, others=()):
+    """Rectangle on the flat face: dict(level, lo (u, v), hi (u, v), area) in world mm, or None. Cells where another
+    body (`others`) reaches into the top 3 mm of the part or lies on the face are left out, so the plate never takes
+    over an overlap or a contact that belonged to the part."""
     a = axis
     u, v = [i for i in range(3) if i != a]
     lo, hi = mesh.bounds
@@ -83,6 +85,16 @@ def find_face(mesh, axis, sign, level="largest", inset=1.0, min_area=150.0):
     vals, cnt = vals[keep], cnt[keep]
     lev = (vals.max() if sign > 0 else vals.min()) if level == "outer" else vals[np.argmax(cnt)]
     flat = np.isfinite(Hm) & (np.abs(Hm - lev) <= 0.2)
+    if len(others) and flat.any():
+        Q = np.zeros((flat.sum(), 5, 3))
+        Q[..., u] = U[flat][:, None]
+        Q[..., v] = V[flat][:, None]
+        Q[..., a] = lev + sign * np.array([0.3, -0.5, -1.25, -2.0, -3.0])[None, :]
+        busy = np.zeros(len(Q), bool)
+        for o in others:
+            busy |= o.inside(Q.reshape(-1, 3)).reshape(len(Q), -1).any(1)
+        idx = np.argwhere(flat)
+        flat[idx[busy, 0], idx[busy, 1]] = False
     k = int(np.ceil(inset / STEP))
     if k:
         from scipy import ndimage as nd
@@ -239,7 +251,9 @@ def split(spec_path, part_id, face="+z", thick=1.5, new_id=None, material=None, 
     body = next((b for b in w.bodies if b.id == part_id), None)
     if body is None:
         return None, f"`{part_id}` did not build"
-    f = find_face(body.mesh, axis, sign, level, inset)
+    others = [b for b in w.bodies if b.id != part_id and not getattr(b, "is_wire", False)
+              and not getattr(b, "fastener", False)]
+    f = find_face(body.mesh, axis, sign, level, inset, others=others)
     if f is None:
         return None, f"no flat {face} face of 150 mm2 or more on `{part_id}`"
     at = np.asarray(part.get("at") or [0, 0, 0], float)
@@ -273,7 +287,6 @@ def split(spec_path, part_id, face="+z", thick=1.5, new_id=None, material=None, 
     old = part["shape"]
     cands = []
     if screws:
-        others = [b for b in w.bodies if b.id != part_id and not getattr(b, "is_wire", False)]
         cands = screw_spots(body, others, f, axis, sign, thick, 3 * screws)
     plate_shape = {"type": "intersect", "items": [old, box]}
     cut_shape = {"type": "subtract", "base": old, "cut": [box]}
@@ -337,6 +350,7 @@ def split(spec_path, part_id, face="+z", thick=1.5, new_id=None, material=None, 
 
 
 def main(a):
+    before = Path(a.spec).read_text()
     info, res = split(a.spec, a.part, a.face, a.thick, a.id, a.material, a.process, a.inset, a.level, a.dry, a.screws)
     if info is None:
         print(res)
@@ -348,6 +362,12 @@ def main(a):
         from . import look_screws
         spots, pid = res
         look_screws.main(a.spec, pid, a.face, "at", len(spots), 0.0, ";".join(f"{x},{y}" for x, y in spots))
+        raw = json.loads(Path(a.spec).read_text())
+        n = sum(1 for f in raw.get("fasteners") or [] if pid in (f.get("through") or []))
+        if n < 2:  # an unattached plate is worse than none: put the spec back
+            Path(a.spec).write_text(before)
+            print(f"only {n} screw(s) fixed `{pid}` on; spec restored, no plate")
+            return 1
         print("next: `robot colors` so the plate gets its photo colour, then `robot verify`")
     else:
         print("next: fix it on with screws (`robot screws`) or a connection, `robot fasteners --fill`, `robot colors`")

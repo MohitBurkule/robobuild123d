@@ -624,11 +624,12 @@ model is all grey". Fix them with these tools instead of reshaping, then re-run 
   only bosses that touch nothing else and add no tiny edge. The thickness (default: the first of 2, 2.5, 3 and 1.5 mm
   that fits) must not leave a skin under 0.9 mm on the chassis, so the plate is usually the whole deck. A metal or carbon plate weighs
   2-3 times as much as a printed one, so check `mass` first. Use `--face +y` for a front plate.
-- **Colours:** `robot colors spec.json [--dry] [--debug renders/]` samples each large visible part's colour from the
-  reference photos at the camera `likeness` picks, and writes `color`. No geometry changes. Run it last, after
-  `plate`, so each plate gets its own colour. It skips parts covering less than 3% of the photo by default (`--min-frac`), because
-  small parts are where a still-imperfect model and the photo disagree. Check the `--debug` sheet (photo with the
-  model's part outlines in red) when a colour looks wrong.
+- **Colours:** `robot colors spec.json [--dry] [--force] [--debug renders/]` samples each large made part's colour
+  from the reference photos at the camera `likeness` picks. It replaces only placeholder colours (none, or the
+  generators' plain mid grey) and only with a clearly different colour. No geometry changes. It skips photos whose
+  silhouette IoU is under 0.6, and skips bought parts and wheels, because a model that still differs from the photo
+  puts them on the wrong pixels. Clear or shiny parts sample as whatever is behind them, so check the `--debug`
+  sheet (photo with the model's part outlines in red) before using `--force`.
 
 ## Fixing collisions without hand maths (jiggle)
 

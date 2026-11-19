@@ -9,8 +9,12 @@ is mapped onto the photo by cropping both to their bounding boxes and stretching
 a model that is still a little too tall or short samples the right rows. For each part, the photo pixels that fall
 on it, inside the photo mask and at least 2 px from the part's edge, give a median RGB, lifted by 1/0.9 to undo the
 renderer's average shading. A part is sampled only when it covers at least --min-frac of the photo mask (default
-3 %) across all photos; fasteners and wires are never touched. A part keeps its colour when the photo shows the
-same colour lit differently (hue within 35 deg, lightness within 0.35); --force writes every sampled colour.
+3 %) across all photos, and only from photos whose silhouette IoU is at least 0.6. Only made body parts are sampled
+(structure, plates, armour, weapons...): bought parts, wheels, fasteners and wires keep their colours unless named
+with --parts, because where the model still differs from the photo they are the parts that land on the wrong pixels. Only placeholder colours are replaced (none, or a
+plain mid grey: the generators' default), and only when the photo shows a different colour, not the same colour lit
+differently (hue within 35 deg, lightness within 0.35). A colour someone chose is kept: clear and reflective parts
+sample as whatever is behind or reflected in them. --force writes every sampled colour.
 
 Only `color` fields change: no geometry, mass or check result moves (likeness compares masks, not colours). Re-run it
 after a big reshape. Use --dry to print the colours without writing.
@@ -24,6 +28,8 @@ from pathlib import Path
 import numpy as np
 
 SHADE = 0.9
+SKIP_KINDS = {"wheel", "tyre", "motor", "weapon_motor", "battery", "esc", "receiver", "servo", "switch"}
+MIN_IOU = 0.6  # below this the model is too far from the photo for per-part pixels to mean anything
 ERODE = 2
 
 
@@ -75,14 +81,18 @@ def sample(spec_path, min_frac=0.03, parts=None, debug=None):
     dirs = L._dirs()
     raw = json.loads(Path(spec_path).read_text())
     fast_ids = {f.get("id") for f in raw.get("fasteners") or []}
+    skip_ids = {q["id"] for q in raw.get("parts") or [] if q.get("catalog") or q.get("kind") in SKIP_KINDS}
     acc, notes, total = {}, [], 0
     for e in ref.entries(s):
         if not (e.get("mask") and e.get("image")):
             continue
         mask = ref.load_mask(base / e["mask"])
-        ci = L.best_match(sils, mask, L.allowed(*L.photo_view(L._refjson(s), e)))[2]
+        iou, _, ci = L.best_match(sils, mask, L.allowed(*L.photo_view(L._refjson(s), e)))
         if ci < 0:
             notes.append(f"{e['image']}: no allowed camera")
+            continue
+        if iou < MIN_IOU:
+            notes.append(f"{e['image']}: skipped, silhouette IoU {iou:.2f} < {MIN_IOU} (parts would land on the wrong pixels)")
             continue
         k, mir = divmod(ci, 2)
         d = np.asarray(dirs[k], float)
@@ -118,7 +128,7 @@ def sample(spec_path, min_frac=0.03, parts=None, debug=None):
             b = w.bodies[n - 1]
             if b.part_idx is None or b.fastener or b.id in fast_ids or str(b.id).startswith("wire:"):
                 continue
-            if parts and b.id not in parts:
+            if (parts and b.id not in parts) or (not parts and b.id in skip_ids):
                 continue
             sel = nd.binary_erosion(on == n, iterations=ERODE) & inside
             if sel.sum() < 30:
@@ -154,6 +164,18 @@ def different(old, new):
     return abs(la - lb) > 0.35
 
 
+def placeholder(c):
+    """True for no colour or a plain mid grey (the generators' default for printed parts): a colour nobody chose."""
+    import colorsys
+
+    from .world import parse_color
+    rgb = parse_color(c or "")
+    if rgb is None:
+        return True
+    _, lt, s = colorsys.rgb_to_hls(*[x / 255 for x in rgb])
+    return s < 0.1 and 0.2 < lt < 0.8
+
+
 def apply(spec_path, cols, force=False):
     p = Path(spec_path)
     txt = p.read_text()
@@ -161,7 +183,7 @@ def apply(spec_path, cols, force=False):
     changed = []
     for part in raw.get("parts") or []:
         if part.get("id") in cols and part.get("color") != cols[part["id"]][0] and (
-                force or different(part.get("color"), cols[part["id"]][0])):
+                force or (placeholder(part.get("color")) and different(part.get("color"), cols[part["id"]][0]))):
             changed.append((part["id"], part.get("color"), cols[part["id"]][0]))
             part["color"] = cols[part["id"]][0]
     ind = 1 if txt.startswith("{\n ") and not txt.startswith("{\n  ") else 2
