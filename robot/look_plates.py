@@ -16,7 +16,7 @@ so the union of the two is exactly the old part: the outside does not change and
 solids are built and refused if either is not one solid, if the part grows tiny edges (geom.tiny_edge), or if less
 than 85 % of the slab under the rectangle was solid (a pocket under the skin would make a lid with holes).
 
-Writes the new `plate` part (same at/rot as the part, `kind: plate`, a shade lighter than the part, material/process
+Writes the new plate part (same at/rot as the part, `kind: structure` so the wire router keeps routing under it, a shade lighter than the part, material/process
 from --material, else the part's own), the cut on the part, and fresh `volume_mm3` for both when the part had one. It does NOT fix the plate
 on: follow with real screws (`robot screws SPEC <id> --face +z --pattern corners`) or a connection, then
 `robot fasteners SPEC --fill`, then `robot colors SPEC` so the plate gets its own photo colour.
@@ -181,7 +181,7 @@ def screw_spots(body, others, f, axis, sign, thick, n, depth=8.5, edge=2.6, boss
     """Up to n spots on the plate for flush M2 screws, spread out from the plate's corners inwards:
     [((u, v), boss)] where boss is False when the part already has `depth` mm of solid under the plate around the
     pilot (1.6 mm ring), True when a printed boss (radius boss_r, `depth` long) can hang from the part's wall inside
-    its own closed cavity: at least 20 % of the boss already in the part, the rest enclosed by the part on every
+    its own closed cavity: at least 10 % of the boss already in the part, the rest enclosed by the part on every
     side but the plate, and nothing else within 0.3 mm."""
     u, v = f["u"], f["v"]
     gu = np.arange(f["lo"][0] + edge, f["hi"][0] - edge + 1e-6, 1.5)
@@ -207,7 +207,7 @@ def screw_spots(body, others, f, axis, sign, thick, n, depth=8.5, edge=2.6, boss
     m = PB.shape[1]
     inb = body.inside(PB.reshape(-1, 3)).reshape(len(C), m)
     frac = inb.mean(1)
-    cand = ~solid & (frac >= 0.2)
+    cand = ~solid & (frac >= 0.1)
     if cand.any():
         PC = np.concatenate([pts(r_, 24)[cand] for r_ in (1.0, 2.0, boss_r + 0.4)], 1)  # dense: no part may poke in
         hit = np.zeros(len(PC), bool)
@@ -418,7 +418,8 @@ def _split(spec_path, part_id, face="+z", thick=1.5, new_id=None, material=None,
         return info, None
     mat = material or part.get("material")
     proc = process or (PROCESS.get(mat) if material else None) or part.get("process")
-    plate = {"id": new_id, "kind": "plate", "material": mat, "process": proc, "shape": plate_shape,
+    plate = {"id": new_id, "kind": "structure",  # structure: the wire router routes inside the structure parts' box
+             "material": mat, "process": proc, "shape": plate_shape,
              "at": list(part.get("at") or [0, 0, 0]), "rot": [0, 0, 0],
              "color": _shade(part.get("color")), "print_orientation": part.get("print_orientation") or face}
     if part.get("volume_mm3"):

@@ -623,7 +623,8 @@ plates screwed on, model is one slab", "photo shows screw heads, model has none"
 model is all grey". Fix them with these tools instead of reshaping, then re-run `robot likeness` (it must not drop) and
 `robot verify`:
 - **Separate plates:** `robot plate spec.json --face +z --id top_plate --screws 4 [--material pc]`
-  splits the skin of the chassis's largest flat face off as its own `plate` part (a lid over the tub's pockets),
+  splits the skin of the chassis's largest flat face off as its own part (a lid over the tub's pockets; kind
+  `structure`, because the wire router only routes inside the structure parts' box),
   a shade lighter than the chassis so its outline reads. The
   union is unchanged, so the silhouette is too. It refuses splits that would break a part into two solids or add
   tiny edges, and splits whose skin is mostly pocket. `--screws N` also fixes the plate on with N flush M2 button
