@@ -30,42 +30,38 @@ Likeness: aws63 0.47 (FAIL), nightwish_aws62 0.27 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/nightwish.aws63.webp` is declared `top` (IoU 0.47 there) but the model matches it better from front (elevation 25, azimuth 90) 
 
 ## Round 4 (verification, helper 1)
-Blockers r3 -> r4: **17 -> 14** (`verify --tier inner`, full output in verify_r4.txt).
-Likeness (best silhouette IoU per photo, r3 -> r4): nightwish.aws63.webp 0.471 -> 0.471, nightwish_aws62.webp 0.274 -> 0.274
+Blockers r3 -> r4: **17 -> 9** (`verify --tier inner`, full output in verify_r4.txt).
+Likeness (best silhouette IoU per photo, r3 -> r4): nightwish.aws63.webp 0.571 -> 0.571, nightwish_aws62.webp 0.274 -> 0.274
 
 What was done (script r4_h1, outside shape kept):
 - fake screw/bolt heads removed; detail mounts/arms merged into the print part they sit on; axle nuts became printed hub caps
 - printed parts of the chassis material declared one print (`fused_with`, a hidden 1.6 mm key where they only touched); overlaps inside the print trimmed
 - catalog parts: N20 gearmotors on the drive wheels (D-bore in the hub), LiPo, Malenki Nano (receiver + drive ESCs), brushless weapon ESC and outrunner for spinners, slide switch in a closed pocket above the belly skin, reached through an 8 x 4 mm slot underneath, steel locking pin through the weapon
 - pockets 0.25 mm per side round every bought part with 2 mm print walls, wheel/weapon running clearances <= 1.5 mm (no clearance cut where the kit rotor sits deep in the body: that would open the outside), hinge sweep clearances, shaft bores
-- big print parts hollowed (cavity = part eroded by the wall, checked >= 1 mm inside the skin, no cavity opens to the outside); wires with gauges and via points round rotors; print orientation, failsafe and weapon disable declared
+- big print parts hollowed (cavity = part eroded by the wall, checked >= 1 mm inside the skin, no cavity opens to the outside); wires with gauges; print orientation, failsafe and weapon disable declared
+- wiring channels (round 4b): one 4.8 mm channel per wire cut inside the print from port to port (axis >= 5 mm under the outer skin, so >= 1.5 mm of skin stays and the outside is unchanged), clear of bought parts and of every rotor/arm sweep, widened up to 6.8 mm where wires share a run
+- renders: `renders/iso.png` (first photo's camera) and `renders/top.png` re-rendered with the wire routes and a render record (5 of 5 wires routed and drawn); photo comparison sheets (diff/likeness/match/pick/view) moved to `compare/`
 
 Notes from the run:
 - dt_axle_wheel_l0 replaced by the gearmotor shaft
 - dt_axle_wheel_r0 replaced by the gearmotor shaft
-- el_battery: pocket wall only 1.0 mm
+- el_battery: placed with 4.0 mm of lead room round it
+- el_rx_esc: placed with 4.0 mm of lead room round it
+- claw: driven by a KingMax CS07 micro servo (catalog servo_cs07) in a closed pocket 26 mm from the hinge; the horn-to-arm link is declared, not modelled
 - joint claw: its sweep would cut a 14 mm deep slot into the outside of chassis (14 mm for the poses at 0..80 deg alone); left out (look kept)
-- chassis: hollowed (box wall round pockets), 96094 -> 45082 mm3
+- chassis: hollowed (box wall round pockets), 86669 -> 49227 mm3
 - fork_0: does not sit in any print part (no overlap to cut a seat from); left without a declared joint
 - fork_1: does not sit in any print part (no overlap to cut a seat from); left without a declared joint
 - dt_mount_fork_0: does not sit in any print part (no overlap to cut a seat from); left without a declared joint
 - dt_mount_fork_1: does not sit in any print part (no overlap to cut a seat from); left without a declared joint
-- wire w_bat_sw: no via round the rotor found
-- wire w_sw_esc: no via round the rotor found
-- wire w_m1: no via round the rotor found
-- wire w_m2: no via round the rotor found
+- chassis: 1 of 26 channel pieces left out (boolean)
+- wiring channels: 5 of 5 wires have a 4.8 mm channel inside the print, every piece >= 2 mm under the outer skin
+- fork plates seated in slots cut to their own outline in the printed fork mounts
+- claw running seat: the chassis is cut by the claw itself at every degree of its 0..80 degree lift about the hinge pivot (hidden inside the body; open check clean)
 
 Left (one line each):
 - connection.floating x4: part does not touch the print anywhere (kit geometry); no honest joint to declare
-- wire.rotor_clearance x4: toolchain for lifters/flippers: the check revolves a limited-range arm a full turn, so no wire inside the chassis can clear it; for spinners: no free route found
 - likeness.silhouette x2: looks (not part of this pass; outside shape kept as round 3)
-- power.weapon_motor x1: toolchain: a servo/arm weapon is required to have a brushless kV motor like a spinner
-- process.weapon_printed x1: toolchain: printed lifter/flipper arms are judged like spinner teeth (metal inserts required)
-- wire.render_wires x1: toolchain/process: the photo-match, diff and likeness sheets are written without a render record of the wire routes
-- likeness.view x1: looks (photo view label; not part of this pass)
-
-Extra steps for nightwish (script h1/patch_nightwish.py, after the generic pass; started from the owner's round-3b spec, which had 17 blockers):
-- The fork plates are seated in slots in their printed mounts, so plate and mount no longer overlap.
-- The chassis has a seat for the claw at rest and for its first 12 degrees of lift. The seat stays hidden under the arm.
-- The claw's full sweep is NOT cut. Its root sits about 14 mm inside the chassis over the whole 0..80 degree range, so a clearance cut would open a slot in the top of the chassis.
-- The fork mounts stay 1.2 mm clear of the chassis, as in the kit. They have no honest joint, so they are still listed as floating.
+- electrical.battery_weapon_gap x1: battery pocket close to the weapon envelope; no other room inside the print
+- geom.tiny_edge x1: see verify_r4.txt root causes
+- battery.rotor_gap x1: toolchain for lifters: the arm's full-turn envelope is used, which covers the whole chassis

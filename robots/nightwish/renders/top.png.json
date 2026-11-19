@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_nightwish/robots/nightwish/spec.json",
- "rendered_at": 1795032609.2091696,
+ "rendered_at": 1795051575.569344,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -9,19 +9,76 @@
   "fork_1",
   "claw",
   "dt_hub_wheel_l0",
-  "dt_axle_wheel_l0",
-  "dt_nut_wheel_l0",
   "dt_hub_wheel_r0",
-  "dt_axle_wheel_r0",
-  "dt_nut_wheel_r0",
-  "dt_screw_0",
-  "dt_screw_1",
-  "dt_screw_2",
-  "dt_screw_3",
   "dt_mount_fork_0",
-  "dt_bolt_fork_0",
   "dt_mount_fork_1",
-  "dt_bolt_fork_1"
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_rx_esc",
+  "el_servo_claw",
+  "el_switch"
  ],
- "wires": {}
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    0.012999999999998652,
+    -10.983,
+    -2.989
+   ],
+   "to": [
+    -4.0,
+    -35.654,
+    -4.0
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    4.0,
+    -35.654,
+    -4.0
+   ],
+   "to": [
+    -11.987,
+    -27.983,
+    9.511
+   ]
+  },
+  "w_m1": {
+   "from": [
+    11.013,
+    -19.983,
+    9.511
+   ],
+   "to": [
+    2.6000000000000014,
+    -25.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -11.987,
+    -19.983,
+    9.511
+   ],
+   "to": [
+    -2.6000000000000014,
+    -25.0,
+    0.0
+   ]
+  },
+  "w_sig_claw": {
+   "from": [
+    11.013,
+    -27.983,
+    9.511
+   ],
+   "to": [
+    -21.987,
+    -12.483,
+    2.511
+   ]
+  }
+ }
 }
