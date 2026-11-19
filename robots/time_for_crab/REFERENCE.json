@@ -15,8 +15,10 @@
   "time_for_crab_.aws73.webp": "rear"
  },
  "elevation": {
-  "time_for_crab_.aws67.webp": 45,
   "time_for_crab_.aws71.webp": 45,
   "time_for_crab_.aws73.webp": 45
+ },
+ "view_source": {
+  "time_for_crab_.aws67.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label"
  }
 }
