@@ -1664,7 +1664,7 @@
     0,
     0
    ],
-   "color": "#ca3c57",
+   "color": "#8a8d94",
    "weapon": {
     "kind": "axe",
     "motor": "el_servo_hammer_arm"
