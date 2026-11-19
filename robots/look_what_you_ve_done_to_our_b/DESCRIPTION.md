@@ -450,3 +450,108 @@ M2: head dia 3.8-4, head height 1.3-1.6, length 8 (grip about 2.5, thread about 
 10. **Body height vs wheel height: body 28 tall from z = -12, tyre 28 tall from z = -14.**
     - The body sits 2 mm higher than the tyres (ground clearance), so its top is 2 mm above the tyre tops.
     - This is consistent with conflict 5.
+
+---
+
+## 16. Why the designer did it (per part, several angles)
+
+### 16.1 Two-way arrow body (double wedge, front-back symmetric)
+
+- **Fight.**
+  - The robot has no back: whichever end faces the opponent is a wedge, so it never needs to turn round. That saves time against spinners and pushers.
+  - A wedge at each end also means there is no weak flat rear to get pushed or lifted from.
+  - The plan chamfers deflect hits off the corners, and they stop the corners catching on arena walls and opponents' forks.
+- **Construction.**
+  - One print with no supports, printed flat: the ramps are 55 deg overhangs facing up, so they need no support.
+  - Symmetric CAD: the designer can draw one quarter and mirror it.
+  - One part means no joints to fail between the body and the wedges.
+- **Weight.** End blocks of shell construction give a long, low wedge for a few grams.
+- **Rules.** About 104 * 96 mm fits easily in the AWS 150 mm floor square; the designer used a compact size, probably from the older 4 in (101.6 mm) cube rule [inferred: the robot predates AWS 2025].
+
+### 16.2 Narrow waist with wheel notches
+
+- **Fight.**
+  - The wheels are inside the robot's outline (the end blocks are as wide as the tyres), so front and rear hits land on the body, not the tyres.
+  - The tyres still touch the side walls of the arena for wall-riding [guess].
+- **Construction.**
+  - The motors fit straight into the side walls, and the hub sits just outside the wall, so short motor shafts are enough. No outboard bearings or axles are needed.
+  - Wheels can be swapped from the side without opening the robot [inferred].
+
+### 16.3 Ramp angle about 55 deg and a sharp lip
+
+- **Fight.** A steep ramp is strong, being short in plan, and still gets under robots that have a ground-scraping front. The sharp 1.5 mm lip is the scoop edge.
+- **Construction.** 55 deg prints cleanly without support. The 1.5 mm printed lip is fragile, which is why it is covered by a ramp skin (16.4).
+
+### 16.4 Clear polycarbonate (earlier: tape) ramp skin
+
+- **Fight.** A hard, slick, replaceable leading edge. Polycarbonate does not chip like PLA, and it glides under opponents.
+- **Repair/cost.** It is cheap and easy to replace between fights. In aws68 tape was used before the designer upgraded to polycarbonate [inferred from the photo history].
+- **Weight.** About 1-2 g per skin.
+
+### 16.5 Separate lid with screws
+
+- **Construction / repair.** It gives access to all the electronics. The lid is a flat print, which is fast and supportless.
+- The screw count rose from 4 to about 11 [seen]. The lid probably flexed or popped off under hits, so the designer added screws along the edges [inferred]. The mixed black and silver screws show repairs with whatever was in the pit box [inferred].
+- **Weight.** A 2.5 mm lid of about 8-9 g is the main top armour.
+
+### 16.6 Switch slot in the lid (aws74)
+
+- **Rules.** AWS needs a power switch or link that can be reached without tools. A slot on top, near one end, lets a key or pen work the switch while the robot is on the arena floor [inferred].
+- **Construction.** The switch sits in its own pocket, so the slot is the only opening in the lid.
+
+### 16.7 Four-wheel drive with direct N20s
+
+- **Fight.** All four wheels grip, which gives more pushing power. Losing one wheel still leaves drive on that side.
+- **Construction.** N20s are cheap and light (about 10 g each), and the hub presses directly on the motor shaft. The wheel spacing is set by the length of the motors: the motors sit side by side along y, and each pair of wheels sits close together.
+- **Cost.** These are generic hobby parts [guess].
+
+### 16.8 Red 3-spoke hubs and black tyres
+
+- **Construction.** Off-the-shelf N20 wheels with a D-bore. No printing, true running, and grippy rubber tyres [guess].
+- **Fight.** A diameter of about the body height lets the robot run almost invertible.
+
+### 16.9 Blue PLA/PETG print colour
+
+- This is the designer's look. A bright colour helps the driver see the robot's orientation in the arena; for this symmetric robot the slot and screw pattern are the only orientation cues [inferred].
+
+---
+
+## 17. Unseen and inner parts (guesses, with confidence)
+
+Confidence levels:
+- **high:** almost certainly so for a robot like this.
+- **med:** likely.
+- **low:** a plausible guess.
+
+Positions are in the frame at the top, with the CAD y0 = -9 as the centre. Photo-true positions would be centred on y = 0.
+
+| Part | Size guess | Position guess | How held | Confidence | Why |
+|---|---|---|---|---|---|
+| Drive gearmotors (4) | N20 12 * 10 * 34 | axles at z = 0, v = 16-19; bodies across x 6..39 from each side | pressed into printed pockets in the side wall, clamped by the lid | high (type), med (fit) | wheel and hub style is N20 |
+| Motor shafts | 3 dia D, 10 long, protruding about 4 past the wall | x ±39..43 | part of the motor | high | hub centre shows a metal dot |
+| Bearings / outboard axles | none | - | - | high (none) | no outer support is visible; wheels are cantilevered |
+| Battery | 2S LiPo 180-300 mAh, 30 * 20 * 12, 12-18 g | centre, between the motor rows, low (z -11..+1) | pocket + velcro or foam | med | standard for 150 g ants; the low battery keeps the centre of gravity low |
+| Receiver + ESC | combined board (Malenki Nano class), 28 * 21 * 6, 3.5 g | above the battery under the lid (z +6..+12) | pocket, foam | med | the usual combined board; no separate ESC heat sinks are visible |
+| Separate receiver | none (combined) | - | - | med | - |
+| Power switch | slide switch 12 * 4 * 6, or a removable link | under the lid slot, v about 30 at the "front" end, z +8..+13 | pocket under the lid | med (aws74), low (older versions) | the slot is seen |
+| Wiring path | battery to switch: 22 AWG, about 40 mm, along the centreline; switch to ESC about 30 mm; ESC to each motor 26 AWG, 30-50 mm, across the top of the motors to the inner motor terminals at x about ±6 | inside the cavity, over the motors | loose, taped | med | the shortest routes in a closed box |
+| Lid screw bosses | dia 6, 8-9 tall, under each screw | (±33, ±30, 5-13.5) for the 4 corners; more along the edges in aws74 | part of the body print | med | self-tappers need about 6-8 mm of plastic |
+| Internal ribs / walls | 1.5-2 thick walls between the motor pockets and the battery bay; a cross rib at the centre | x = ±6 and y = 0 | part of the print | low | stiffens the thin shell against wedge hits |
+| Belly | 1.5-2 skin, flat, possibly with a switch access hole on older versions | z -12..-10 | part of the print | med | - |
+| End-block interior | hollow, or 15-30% infill | v 34..48 | - | low | weight |
+| Weight distribution | about 40% motors, 25% body, 12% battery, 15% wheels | - | - | med | typical |
+| Antenna | about 30 mm wire coiled under the lid | near the ESC | taped | low | not visible outside |
+| Fuses / LEDs | none or the ESC LED shows through the slot | - | - | low | - |
+
+Total-mass check with these guesses:
+- motors 4 * 9.7 = 39
+- wheels + hubs 4 * 7.7 = 31
+- battery 12.5
+- ESC 3.5
+- switch + wire 3
+- screws 1-3
+- body about 50
+- lid about 8
+- skins about 3
+
+This sums to about 150 g, at the AWS 150 g limit, which supports the guessed hollow shell construction (med).
