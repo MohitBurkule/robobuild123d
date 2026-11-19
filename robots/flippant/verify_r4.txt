@@ -1,84 +1,84 @@
 BLOCKERS: 7
-  [ran] integrity 0.06s
-  [proxy] wiring 1.25s
+  [ran] integrity 0.08s
+  [proxy] wiring 1.19s
   [ran] mass 0.00s
-  [proxy] interference 13.43s
-  [ran] connections 0.86s
-  [ran] legal 0.01s
+  [proxy] interference 16.84s
+  [ran] connections 1.41s
+  [ran] legal 0.02s
   [ran] fasteners 0.00s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
-  [ran] fight 0.02s
-  [ran] shape 0.57s
+  [ran] fight 0.03s
+  [ran] shape 0.60s
   [ran] dynamics 0.00s
-  [ran] strength 0.01s
-  [ran] printability 1.05s
-  [ran] process 0.00s
-  [ran] electrical 0.39s
-  [ran] combat 0.09s
+  [ran] strength 0.00s
+  [ran] printability 1.23s
+  [ran] process 0.01s
+  [ran] electrical 0.72s
+  [ran] combat 0.13s
   [ran] physics 0.00s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
-  [ran] fit 0.09s
-  [ran] bom 0.00s
-  [ran] wire_review 0.52s
+  [ran] fit 0.14s
+  [ran] bom 0.01s
+  [ran] wire_review 0.57s
   [ran] fastener_record 0.00s
-  [ran] likeness 20.75s
+  [ran] likeness 43.88s
   [ran] drive_recess 0.00s
   [ran] belt_wrap 0.00s
   [ran] retention 0.00s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.20s
-  [ran] dfm 0.11s
-  [ran] realworld 0.39s
-flippant: ok=False 7 blockers in 7 root causes, mass 157.1/150 g
+  [ran] geom 0.56s
+  [ran] dfm 0.30s
+  [ran] realworld 0.86s
+flippant: ok=False 7 blockers in 7 root causes, mass 154.1/150 g
 1. [proxy.wiring] Wire `w_sw_esc` (`el_switch.out` to `el_rx_esc.bat`): the baseline route is now blocked by `chassis` (5 samples).
    fix: Run the full `wiring` group to re-route it.
    | chassis: x -50.00..50.00  y -47.50..47.50  z -12.00..16.00  size 100.00 x 95.00 x 28.00 mm
-   |   centre (-0.00, -0.00, 2.00), volume 83435.2 mm3
+   |   centre (-0.00, 0.00, 2.00), volume 80643.1 mm3
    |   overlap allowed `lid` 0.93 mm (allowed inf)
    |   gap to `hoop_l` 0.00 mm (touching)
    |   gap to `hoop_r` 0.00 mm (touching)
 2. [proxy.wiring] Wire `w_sig_hoop_r` (`el_rx_esc.wpn` to `el_servo_hoop_r.signal`): no baseline route (run the full `wiring` group once and pass its report).
    fix: Run the full `wiring` group to re-route it.
-3. [mass.over] 157.1 g (range 132.4 to 181.9 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+3. [mass.over] 154.1 g (range 130.0 to 178.3 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
 4. [wire.render_wires] 2 of 2 robot render(s) do not draw all 6 wires: renders/iso.png: wire `w_sig_hoop_r` not drawn; renders/top.png: wire `w_sig_hoop_r` not drawn
    fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
 5. [wire.render_count] iso.png: 5 routes vs 6 spec wires (missing ['w_sig_hoop_r']); top.png: 5 routes vs 6 spec wires (missing ['w_sig_hoop_r'])
    fix: Re-render: the render record must list exactly the spec's wires.
-6. [geom.tiny_edge] `chassis`: 12 edge(s) shorter than 0.05 mm, shortest 0.0208 mm. World mm: [-16.0, -20.41, 15.99] 0.0208 mm; [-10.0, -20.41, 15.99] 0.0208 mm; [10.0, -20.41, 15.99] 0.0208 mm; [16.0, -20.41, 15.99] 0.0208 mm; [-10.0, -20.38, 16.0] 0.0384 mm (+7 more).
+6. [geom.tiny_edge] `chassis`: 12 edge(s) shorter than 0.05 mm, shortest 0.0208 mm. World mm: [-16.0, -20.41, 15.99] 0.0208 mm; [-10.0, -20.41, 15.99] 0.0208 mm; [16.0, -20.41, 15.99] 0.0208 mm; [10.0, -20.41, 15.99] 0.0208 mm; [-10.0, -20.38, 16.0] 0.0384 mm (+7 more).
    fix: Two feature boundaries miss each other by the edge length at each listed point. Drive both from ONE parameter or the same face / plane (not two numbers that should be equal), or extend the cutting / added body clear past the wall before the boolean, so the boundaries coincide or clearly cross.
    | chassis: x -50.00..50.00  y -47.50..47.50  z -12.00..16.00  size 100.00 x 95.00 x 28.00 mm
-   |   centre (-0.00, -0.00, 2.00), volume 83435.2 mm3
+   |   centre (-0.00, 0.00, 2.00), volume 80643.1 mm3
    |   overlap allowed `lid` 0.93 mm (allowed inf)
    |   gap to `hoop_l` 0.00 mm (touching)
    |   gap to `hoop_r` 0.00 mm (touching)
 7. [geom.tiny_edge] `lid`: 12 edge(s) shorter than 0.05 mm, shortest 0.0208 mm. World mm: [-16.0, -20.41, 15.99] 0.0208 mm; [-10.0, -20.41, 15.99] 0.0208 mm; [10.0, -20.41, 15.99] 0.0208 mm; [16.0, -20.41, 15.99] 0.0208 mm; [-16.0, -20.38, 16.0] 0.0384 mm (+7 more).
    fix: Two feature boundaries miss each other by the edge length at each listed point. Drive both from ONE parameter or the same face / plane (not two numbers that should be equal), or extend the cutting / added body clear past the wall before the boolean, so the boundaries coincide or clearly cross.
    | lid: x -35.00..35.00  y -25.00..15.00  z 14.00..16.00  size 70.00 x 40.00 x 2.00 mm
-   |   centre (0.00, -5.00, 15.00), volume 5427.4 mm3
+   |   centre (0.00, -5.00, 15.00), volume 4801.8 mm3
    |   overlap allowed `chassis` 0.93 mm (allowed inf)
    |   gap to `hoop_l` 0.00 mm (touching)
    |   gap to `hoop_r` 0.00 mm (touching)
 MASS BUDGET:
-  mass 157.1 g of 150 g (-7.1 g margin)
-    chassis                    79.43 g  fills 31% of its box
+  mass 154.1 g of 150 g (-4.1 g margin)
+    chassis                    76.77 g  fills 30% of its box
     el_battery                 12.50 g  fills 100% of its box
     dm_wheel_l0                 9.70 g  fills 66% of its box
     dm_wheel_r0                 9.70 g  fills 66% of its box
     el_servo_hoop_l             9.00 g  fills 75% of its box
     el_servo_hoop_r             9.00 g  fills 75% of its box
-    lid                         5.17 g  fills 97% of its box
     wheel_l0                    4.58 g  fills 57% of its box
     wheel_r0                    4.58 g  fills 57% of its box
+    lid                         4.57 g  fills 86% of its box
     el_rx_esc                   3.50 g  fills 100% of its box
+    dt_hub_wheel_l0             1.86 g  fills 72% of its box
+    dt_hub_wheel_r0             1.86 g  fills 72% of its box
     hoop_l                      1.85 g  fills 40% of its box
     hoop_r                      1.85 g  fills 40% of its box
-    dt_hub_wheel_l0             1.74 g  fills 67% of its box
-    dt_hub_wheel_r0             1.74 g  fills 67% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.over: 157.1 g (range 132.4 to 181.9 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.over: 154.1 g (range 130.0 to 178.3 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
 cache: part_geom 0 hit / 15 miss
