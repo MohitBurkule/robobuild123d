@@ -6,5 +6,4 @@ MuJoCo WASM + three.js, fully client-side. Robots are simplified primitive model
 - Online: one player picks "host a room", shares code; the other "join a room". Host runs physics, guest sends inputs (relay in server.js).
   LAN: friends open http://<host-ip>:8080. Internet: run server.js on any public host, or put its URL in the "server" field on the static page.
 
-Live: https://mohitburkule.github.io/robobuild123d/ (GitHub Pages; local + AI modes).
-<!-- redeploy -->
+Live: https://robobuild123d.pages.dev/ (Cloudflare Pages: branch dev, no build command, output dir `web/fight`) (GitHub Pages; local + AI modes).
