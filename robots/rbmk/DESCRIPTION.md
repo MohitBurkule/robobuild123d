@@ -506,3 +506,46 @@ All values are guesses fitted to the photos unless they are tagged (M) or (S).
 | 8 | Roller bottom vs wing tips | aws74 shows rollers about 3 mm higher in the image, but they are nearer the camera. | **Level**, both at floor contact. |
 | 9 | Motor position y | aws74 cannot show it; aws71 puts it about 40 % back from the box front (y about +8); aws76 about 30 % (y about +14). | **+12.** |
 | 10 | Box material | Photo: aluminium sheet. | Model: printed nylon tub coloured aluminium, so wiring and inserts can be checked. A known difference. |
+
+---
+
+## 14. Why the designer did it (per part, several angles)
+
+| Part | Fight benefit | Construction / cost / weight / repair | Other |
+|---|---|---|---|
+| Box P1 (aluminium tray) | Stiff, dent-tolerant shell that spreads hits; aluminium soaks up spinner hits better than brittle prints | Cut and folded from one cheap sheet; light; easy to straighten or replace | The low, flat box keeps the CoG low, which helps the gyro rocking gait |
+| Bevelled top edges | Glancing angles deflect horizontal spinners upward instead of taking a square hit | Free: just two extra folds in the same sheet | Gives the lid a seat between the folds |
+| Clear PC lid | PC is tough; flexes instead of cracking | Lets you see the battery and LEDs (failsafe checks) without opening; cheap; 4 screws for access | Inspection: judges can see the internals |
+| Folded wings | The tips are skids, so the ground contact points sit far apart: the body rocks on them when the gyro moments act, which is what makes it "walk" | One part with the base: no extra fasteners; motor mount and skid in one | Tilting the motors 10 deg makes the gyro moments act sideways on the body |
+| Rear plate | Rear wedge / ramp against pushers and spinners from behind; may also help it right itself if flipped onto its back (G) | Same sheet, one more fold | Visual "reactor shield" look (G: RBMK theme) |
+| Two separate spinners | Two independent weapons; if one dies the other still fights | 1806-class motors are cheap and swappable | The only way to move: differential speed (shuffler rules allow 225 g) |
+| Bars bolted directly to the bells | No shaft, bearing or bridge: the lightest, simplest hub | Uses the motor's own 4-hole prop mount: a bar swap takes 4 screws | The bell bearings take the load; a known weak point (an AWS-common trade-off) |
+| Asymmetric T / tail bar | T-head puts mass on one bite point (one tooth = deeper bite); long tail balances it | Laser-cut from one plate; slots cut weight and set the balance | The slots also give a lock-pin hole for rule 5f (G) |
+| Tilted bar planes | The outer ends dip low to hit wedges and floor-huggers; the inner ends clear the lid | Follows from the wing fold: no extra parts | Inner sweep above the lid protects the box top too |
+| Front roller block | Rolling nose contact reduces friction so the gyro gait can move the robot (G); or they are drive hubs (9.4) | Two mirrored L-brackets: easy to make by hand; 4-5 screws | D-plates protect the roller ends |
+| Blue rollers | Grippy PU tyre (G) | Off-the-shelf tyres / O-ring style | - |
+| Button / Torx screws | Low heads: few snag points | Standard M2 | - |
+
+---
+
+## 15. Guessed unseen and inner parts
+
+Confidence: **H** high, **M** medium, **L** low.
+
+| Part | Guess | Size (mm) | Position (frame of section 11) | Conf. |
+|---|---|---|---|---|
+| Battery | 2S LiPo 180-300 mAh, red / yellow wrap; red lead visible | 28-45 x 17-18 x 9-11 | flat on the floor, centre to rear: x 0, y -14, z 6..16 | M |
+| Weapon ESCs | 2 x small brushless ESCs (BBB antweight class), heat-shrunk | 22 x 11 x 4 each | one each side, along the side walls by the motors: x ±19, y +7, z 6..10 | M |
+| Receiver | Malenki-Nano or a small 2.4 GHz receiver | 20 x 14 x 4 | front centre: x 0, y +20, z 6..10 | M |
+| Power switch | Slide switch or BBB switch | 12 x 4 x 4 (lever 3) | not seen. Likely under the rear plate in the rear wall, or under the lid at the rear (G) | L |
+| Phase wires | 3 x 22-24 AWG per motor | - | out through a hole or notch in the side wall low down near each wing fold, to the motor base (dark blob, aws71) | M |
+| Motor mount | Stator bolted straight to the wing with 2-4 M2/M3 screws from below (an 1806 has a 12 / 16 mm pattern) | screw heads about 3.5 dia under the wing | on the wing, under each motor | M |
+| Motor shaft | The motor's own 3-5 mm shaft, with a circlip under the stator | - | on the motor axis | H |
+| Lid screw seats | Tapped aluminium angle tabs or nut-strips inside the corners | 6 x 6 x 6 | at the 4 lid-screw positions, just below the lid | L |
+| Base-to-box joint | The box floor and base sheet are one piece, or pop-riveted / screwed | - | box floor | L |
+| Front-plate nuts | M2 nuts inside the front wall, behind the 4 front-face screws | 4 across flats | y about 33, behind each screw | M |
+| Roller axle | 2-3 mm shaft, or the hub-motor shaft, held by the D-plate screws | 30 long | (y 43, z 6.5) | M |
+| Ribs or stiffeners | None: a folded sheet is stiff enough | - | - | M |
+| Bearings | Only the motor's own bearings; none for the bars | - | - | H |
+| Antenna | A short wire taped inside the lid, or poking out at the rear | 30 | inside the box | L |
+| Lock pin (rule 5f) | Pins through the bar slots into the wings, removed for the photos | 2 dia | through a bar slot, into the wing | L |
