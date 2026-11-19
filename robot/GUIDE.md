@@ -608,6 +608,28 @@ widen it or remove it. `dfm.undeclared_tolerance` (WARNING): a shaft/pin runs in
 connection nor either part declares `clearance_mm`/`interference_mm` — FDM holes come out 0.1-0.3 mm small, so declare
 the fit. Parts without a mesh or a valid `print_orientation` are NOT CHECKED, never a pass.
 
+## Photo details that keep the outline (`robot plate`, `robot colors`)
+
+The photo review (`robot diff-photo`, Haiku notes) most often reports details, not the outline: "photo has separate deck
+plates screwed on, model is one slab", "photo shows screw heads, model has none", "white plates on a yellow frame,
+model is all grey". Fix them with these tools instead of reshaping, then re-run `robot likeness` (it must not drop) and
+`robot verify`:
+- **Separate plates:** `robot plate spec.json --face +z --id top_plate --screws 4 [--material pc]`
+  splits the skin of the chassis's largest flat face off as its own `plate` part (a lid over the tub's pockets),
+  a shade lighter than the chassis so its outline reads. The
+  union is unchanged, so the silhouette is too. It refuses splits that would break a part into two solids or add
+  tiny edges, and splits whose skin is mostly pocket. `--screws N` also fixes the plate on with N flush M2 button
+  screws (`robot screws`, so the photo's screw heads come with it). It places them where the chassis has 8.5 mm of
+  material under the plate. Where it doesn't (a thin-walled tub), it fuses a 6 mm boss to the wall inside the closed cavity, keeping
+  only bosses that touch nothing else and add no tiny edge. The thickness (default: the first of 2, 2.5, 3 and 1.5 mm
+  that fits) must not leave a skin under 0.9 mm on the chassis, so the plate is usually the whole deck. A metal or carbon plate weighs
+  2-3 times as much as a printed one, so check `mass` first. Use `--face +y` for a front plate.
+- **Colours:** `robot colors spec.json [--dry] [--debug renders/]` samples each large visible part's colour from the
+  reference photos at the camera `likeness` picks, and writes `color`. No geometry changes. Run it last, after
+  `plate`, so each plate gets its own colour. It skips parts covering less than 3% of the photo by default (`--min-frac`), because
+  small parts are where a still-imperfect model and the photo disagree. Check the `--debug` sheet (photo with the
+  model's part outlines in red) when a colour looks wrong.
+
 ## Fixing collisions without hand maths (jiggle)
 
 - Read `ROOT CAUSES` first: one collision = one item; its consequences (fit, assembly.blocked, sweeps) go with it.
