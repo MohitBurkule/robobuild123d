@@ -289,3 +289,193 @@ These are approximate pixel positions in the 1875 x 1836 photo, so others can ch
 4. Two-tone mint (lit faces) and dark green (shaded faces), with no other colours.
 5. Thin rails framing the front plate.
 6. Hidden wheels: nothing round visible from the front three-quarter view.
+
+---
+
+## 12. Coordinate frame (used by every number below)
+
+- The origin is at the robot's centre in plan (x = 0, y = 0).
+- z = 0 is the wheel axle height. The floor is at z = -9 to -11, because the wheels are about 22-24 mm in diameter. [guess]
+- +y points forward (towards the lip), +x to the robot's right, +z up.
+- Angles are in degrees:
+  - pitch about x, measured from the floor (horizontal);
+  - lean measured from vertical.
+
+## 13. Every part in all dimensions (mm, with guesses marked)
+
+| Part | L (y) | W (x) | H (z) | Thickness | Radii | Angles | Key coordinates |
+|---|---|---|---|---|---|---|---|
+| P1 front panel | 88 along slope (62 in plan) | 94 at the lip, 64 at the hinge | 58 rise | 2.0-2.5 | corner radius about 0.5 (sharp print) | pitch 42 +- 4 at rest; lift range 0-80 | lip edge y = +50, z = -9; hinge edge y = -18, z = +49 |
+| P2 top panel | 18-22 | 64-68 | - | 2.5 | none | 0 (flat) | y = -18 to -40, z = +49 |
+| P3 side plate | 100 at the floor | - (plane at x = +-50) | 22-25 vertical part | 2.5 | none | 0 lean (vertical) | x = +-50, z = -9 to about +16 |
+| P4 sloped facet | 88 along the front edge (triangle) | 15-18 across the slope at the top | 33 | 2.5 | none | lean 30 +- 8 from vertical | from (x = +-50, z = +16) to (x = +-34, z = +49) |
+| P5 rear chamfer | 20-25 diagonal | - | 40-55 | 2.5 | none | 45 in plan | from (x = +-50, y = -25) to (x = +-36, y = -50) |
+| P6 rear wall | - | 72 | 55 | 2.5 | none | vertical | y = -50 |
+| P7 hinge pin | - | 66-70 | - | dia 3 | r 1.5 | axis x | y = -18, z = +47.5 |
+| P8 rails | 88 | 1.5-2 | 1.5 proud | - | none | follow P1 | along the P1 side edges |
+| Wheels (hidden) | - | 8 | - | - | r 11-12 | - | x = +-45, y = -30, z = 0 [guess] |
+
+## 14. Curves
+
+- There are no curved surfaces visible. Every face is planar and every edge a straight line segment. [seen]
+- Edge lines in the side view (x = const plane), with y in mm and z in mm:
+  - P1 top surface: z = -9 + (50 - y) * tan(42 deg) = -9 + 0.90 * (50 - y), for y in [-18, 50].
+  - P2: z = 49, for y in [-40, -18].
+  - Rear chamfer: runs from (y = -40, z = 49) to (y = -50, z = 44), slope 0.5, so z = 49 + 0.5 * (y + 40) for y in [-50, -40].
+  - Rear wall: y = -50, z in [-9, 44].
+- Front-view lean of the side (y = const plane): half-width h(z) = 50 for z <= 16, and h(z) = 50 - 16 * (z - 16) / 33 for z in [16, 49].
+- Plan outline: |x| <= 50 for y >= -25, and |x| <= 50 - 14 * (-25 - y) / 25 for y in [-50, -25].
+- The P1 panel half-width along its slope: w(s) = 47 - 15 * s / 88, where s is the distance from the lip along the slope, in [0, 88].
+
+## 15. Each dimension measured several independent ways
+
+| Quantity | (a) Photo pixels | (b) Ratio to another part | (c) Engineering / limit | (d) CAD coordinate | Reconciled |
+|---|---|---|---|---|---|
+| Overall width | lip 900 px vs panel length 1580 px | the lip is about 1.05 x the panel's plan length | an antweight must fit a 150 mm box, typical 100 | x = +-50 | 100 |
+| Hinge width | 780 px (far edge, about 1.25x foreshortened, gives 975 px equivalent) | 0.65-0.72 x the lip | must clear the 20 mm actuator either side of the centre | +-32 to +-34 | 66 |
+| Height | the silhouette height / length is 0.98 in the likeness camera | the rear wall is about 0.8 of the height | the wheel diameter is 22-24, so z_floor = -9 to -11 | z from -9 to 49 | 58 |
+| Panel pitch | the panel image length vs the lip, with the top foreshortening | the rise of 58 over a plan run of 62 to 68 | flippers are typically 35-45 degrees | 42 | 42 |
+| Top panel depth | 130-170 px vs 1420-1580 px for the panel | 0.18-0.2 x the panel | room for a hinge plus the actuator, at least 18 | y -18 to -40 | 20 |
+| Side-plate vertical height | rear edge 500 px of a total height of about 1100 px, so 0.45 | about 0.4-0.5 of the height | must clear the drive motors (box to z = +5) plus a 2.5 mm wall | z -9 to 16 | 25 (z0 = 16 to 22) |
+| Facet lean | facet image width 110 px at the top vs the side plate's 500 px rear edge | top width 0.68 x the lip | the actuator at x = -26 must stay inside the facet | 16 inward over 27-33 rise | 27-30 degrees |
+
+## 16. Consistency check
+
+1. **Top width ratio.**
+   - The photo ratio gives 0.65-0.72.
+   - The user note "triangular sloping sides" suggests a strong lean.
+   - The likeness check dropped to 0.75-0.77 when the top width was 0.6 (lean starting at z = 10). It recovered to 0.80-0.81 at 0.68 with the lean starting at z = 22.
+   - Reconciled: top half-width 34, lean starting at z = 22.
+2. **Height.**
+   - Pixel estimates suggested about 55. The likeness gives a height-to-length ratio of 0.98.
+   - A taller rear (rear wall to z = 46, chamfer to the top at y = -44) matches 0.99.
+   - Reconciled: a tall rear wall at z = 46, with the top at 49.
+3. **Where the hinge is.**
+   - The pin end is seen at the top front corner, so the hinge is at the panel's top edge.
+   - Engineering says a top hinge makes a "lifter" whose lip rises, which agrees with the user's note.
+   - No conflict.
+4. **Rails.**
+   - In the photo they could belong to either the panel or the body.
+   - The gap line is visible on the outer side of the rail, which suggests the body.
+   - Reconciled: the rails are on the body and the panel sits in a recess.
+   - In CAD: the panel recess sits inside a 4 mm side margin at the lip, widening to about 3 mm at the top.
+5. **Wheels.**
+   - None are seen.
+   - The CAD has wheels at x = +-45.5, partly outside the rear chamfer in plan, so they show slightly in the iso_back render.
+   - Accepted: the photo camera does not see the rear corners.
+
+---
+
+## 17. Why the designer did it (per part, from several angles)
+
+### P1 front panel (hinged wedge-lifter)
+
+**Fight**
+- The full-width lip on the floor gets under opponents from any approach angle.
+- The 40-45 degree slope turns rams into lift.
+- The top hinge lets the actuator raise the lip and tip the opponent onto its back or side, or at least take the weight off its wheels.
+- A wide, flat face gives no edges for spinners to catch. Hits glance off.
+
+**Construction**
+- A flat plate prints face-down with a perfect surface and no supports.
+- It is replaceable on its own (pull the hinge pin).
+- It is thin (2 mm), so it is light (about 10-12 g).
+- The trapezoid follows the body's narrowing top, so the hinge edge needs no overhangs.
+
+**Other**
+- Because the panel is the whole front, the robot looks "all weapon", a deliberate aesthetic of a clean gem.
+
+### P2 top panel
+
+**Fight**
+- Shields the hinge and actuator from hits from above (hammers, overhead flippers).
+
+**Construction**
+- Carries the hinge bosses.
+- Closes the body over the actuator pocket.
+- It is printed with the body, so there is no extra assembly.
+
+### P3 vertical side plates
+
+**Fight**
+- Vertical lower walls stop pushers getting under the side, since the wheels are hidden behind them.
+- They protect the wheels from horizontal spinners.
+
+**Construction**
+- They give a flat face for screws into the internal motor mounts: the two seen screws are the motor clamp or the axle support.
+- They print flat, and are easy to replace.
+
+### P4 triangular sloped facets
+
+**Fight**
+- Inward-leaning upper sides deflect hits upwards and away. They reduce the target profile from the front-side, and give no vertical face for spinner teeth to bite.
+- If the robot is pushed onto its side, the slope helps it roll back.
+
+**Construction**
+- They narrow the body only where the internals allow it: above the drive motors (z > 16-22), where only the actuator and wires live.
+- This saves material (less top area), so it saves weight.
+- They are printable without supports, since 30 degrees from vertical is under the 45-degree overhang limit.
+
+**Other**
+- The signature look: the "triangular sloping sides" the builder wanted.
+
+### P5 rear corner chamfers
+
+**Fight**
+- Remove the corners an opponent's wedge can hook. Present glancing faces to rear attacks.
+
+**Construction**
+- They save about 2 x 0.5 x 14 x 25 mm of footprint and material. They give clearance for the rear of the wheels to sit inside, or nearly inside, the outline.
+
+### P6 tall rear wall
+
+**Fight**
+- A tall rear means that, when flipped upside down, the robot rests on its rear edge and top. That is not invertible, but it gives a self-righting lever: the lifter, pushing on the floor, can rotate it back over.
+
+**Construction**
+- Hosts the power switch and the charging access.
+- Gives internal height for the actuator above the drive motors.
+
+### P7 hinge pin
+
+**Fight**
+- A steel pin survives impacts better than a printed one.
+
+**Construction**
+- Removable for maintenance. A 3 mm rod is cheap and standard.
+
+### P8 rails
+
+**Fight**
+- Protect the panel's side edges from being caught. Keep debris out of the gap.
+
+**Construction**
+- Hide the running gap and the panel's edge imperfections.
+- They also act as alignment guides when the panel closes.
+
+### Hidden wheels
+
+**Fight**
+- The wheels are invisible and unreachable. Nothing to snag, and wedges cannot drive onto them.
+
+**Construction**
+- Needs small wheels (22-24 mm), with the motors close to the floor.
+
+## 18. Unseen and inner parts (guesses with confidence)
+
+| Part | Guess | Size (mm) | Position (x, y, z) | Confidence | Reason |
+|---|---|---|---|---|---|
+| Battery | 2S LiPo, 180-300 mAh | 45 x 17 x 10 | (0, 0, -2), flat on the floor in the centre | medium | the largest flat free volume, under the panel; keeps the CoM low and central |
+| ESC | dual brushed plus mixing (Malenki nano or similar) | 30 x 17 x 3 | (0, 0, 20), on a shelf above the battery | medium | short wires to both motors and the actuator |
+| Receiver | built into the Malenki, or a 4-channel micro Rx | 20 x 12 x 5 | next to the ESC | low | |
+| Power switch | slide switch or removable link | 12 x 4 x 6 | rear wall, centre, z about -4 (or the floor at y = -15) | medium | AWS rules need an accessible switch; the rear is protected |
+| Drive motors (2) | N20 gearmotors, 50:1 to 100:1 | 10 x 12 x 25 (+ shaft 9) | (+-26, -30, 0), lying across, the shafts outward to the wheels | medium-high | the wheels must be at the rear under the high part, so the lip can touch the floor |
+| Wheels (2) | 22-24 mm printed hub + TPU or silicone tyre | dia 22-24 x 8 | (+-45, -30, 0) | medium | must sit inside the side plates, which are 100 wide |
+| Motor mounts | printed clamp blocks fused to the floor, with M2 screws through the side plates | 14 x 14 x 26 | around each motor | medium | the side screw seen at about (-50, -30... -10, about +2) lines up |
+| Lifter actuator | N20 or N10 high-torque gearmotor (300 rpm 6 V) or a micro servo with a crank | 24 x 12 x 10 | (about -14, -25, +41), across the body under the top panel | medium | the only free volume near the hinge |
+| Actuator coupling | a gear or crank on the hinge shaft; or the motor shaft directly as the hinge pin, with a D-flat | - | the hinge axis y = -18, z = +47 | low | |
+| Hinge knuckles | 3-4 printed knuckles alternating between the panel and the body | about 8 long x 6 dia each | along the hinge line | medium | |
+| Internal ribs | a floor ribbed lengthwise (2 x 1.2 mm ribs) | - | the floor | low | strength against flipping loads |
+| Wires | battery to switch to ESC, ESC to the 2 drive motors, ESC to the actuator | 22-26 AWG | along the floor and up the left side to the actuator | medium | |
+| Bearings | none (antweight): the motor shafts carry the wheels directly | - | - | high | |
+| Hidden screws | M2 x 6-8: 2 per side plate (seen), 2-4 under the top panel (guess) | - | - | medium | |
