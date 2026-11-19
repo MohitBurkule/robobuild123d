@@ -43,7 +43,7 @@ Fixed / changed (inside only, outside kept):
 - hollowed chassis (wall 2.5, form 0): 216.3 -> 76.0 cm3
 
 Left (and why):
-- integrity.solids x1: `chassis` has 0 closed solid(s) and 1 open/invalid shell(s), expected 1 (76509 mm3). A boolean or fillet probably collapsed the build.
+- integrity.solids x1: `chassis` has 0 closed solid(s) and 1 open/invalid shell(s), expected 1 (74547 mm3). A boolean or fillet probably collapsed the build.
 - proxy.wiring x1: Wire `w_wpn` (`el_esc.wpn` to `wa_act.terminals`): no baseline route (run the full `wiring` group once and pass its report).
 - proxy.interference x1: `chassis` and `scoop` overlap by 0.91 mm (allowed 0.08).
 - proxy.sweep x1: joint `scoop`: `scoop` hits `chassis` 0.91 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint scoop` lists the closest approach to every part.
