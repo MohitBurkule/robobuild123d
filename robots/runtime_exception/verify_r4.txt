@@ -1,38 +1,38 @@
 BLOCKERS: 4
-  [ran] integrity 0.07s
-  [proxy] wiring 0.92s
+  [ran] integrity 0.09s
+  [proxy] wiring 0.81s
   [ran] mass 0.00s
-  [proxy] interference 9.98s
-  [ran] connections 2.30s
+  [proxy] interference 11.95s
+  [ran] connections 1.91s
   [ran] legal 0.02s
   [ran] fasteners 0.08s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
-  [ran] fight 0.02s
-  [ran] shape 0.45s
-  [ran] dynamics 0.01s
-  [ran] strength 0.09s
-  [ran] printability 0.80s
+  [ran] fight 0.03s
+  [ran] shape 0.56s
+  [ran] dynamics 0.00s
+  [ran] strength 0.14s
+  [ran] printability 1.09s
   [ran] process 0.01s
-  [ran] electrical 0.00s
-  [ran] combat 0.11s
+  [ran] electrical 0.01s
+  [ran] combat 0.14s
   [ran] physics 0.00s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
-  [ran] fit 0.07s
+  [ran] fit 0.10s
   [ran] bom 0.01s
-  [ran] wire_review 0.01s
+  [ran] wire_review 0.02s
   [ran] fastener_record 0.00s
-  [ran] likeness 12.35s
+  [ran] likeness 14.79s
   [ran] drive_recess 0.00s
   [ran] belt_wrap 0.00s
   [ran] retention 0.00s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.15s
-  [ran] dfm 0.08s
-  [ran] realworld 0.08s
-runtime exception: ok=False 4 blockers in 4 root causes, mass 132.4/150 g
+  [ran] geom 0.21s
+  [ran] dfm 0.09s
+  [ran] realworld 0.09s
+runtime exception: ok=False 4 blockers in 4 root causes, mass 132.7/150 g
 1. [proxy.interference] `scoop` and `dt_strut_scoop` overlap by 1.20 mm (allowed 0.08).
    | scoop: x -58.00..58.00  y 44.00..47.00  z -15.00..11.00  size 116.00 x 3.00 x 26.00 mm
    |   centre (0.00, 45.50, -2.00), volume 8112.0 mm3
@@ -51,7 +51,7 @@ runtime exception: ok=False 4 blockers in 4 root causes, mass 132.4/150 g
 4. [likeness.silhouette] `reference/runtime_exception.aws74.webp`: best silhouette IoU 0.72 at camera front_right_iso (elevation 25, azimuth 30) (need 0.80: >= 0.8 and no worse than the closest stock template `wedge_2wd` at 0.80). Regions (photo frame, left third first) 0.67 / 0.85 / 0.57: worst = rear third. Height/length 0.63 model vs 0.66 photo (proportions ok).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
-  mass 132.4 g of 150 g (+17.6 g margin)
+  mass 132.7 g of 150 g (+17.3 g margin)
     chassis                    41.78 g  fills 27% of its box
     scoop                      21.90 g  fills 90% of its box  <- solid block? a tub should be a shell
     el_battery                 12.50 g  fills 100% of its box
@@ -62,14 +62,14 @@ MASS BUDGET:
     wheel_r0                    5.26 g  fills 57% of its box
     el_rx_esc                   3.50 g  fills 100% of its box
     spine                       3.43 g  fills 100% of its box
-    dt_hub_wheel_l0             2.00 g  fills 68% of its box
-    dt_hub_wheel_r0             2.00 g  fills 68% of its box
+    dt_hub_wheel_l0             2.15 g  fills 72% of its box
+    dt_hub_wheel_r0             2.15 g  fills 72% of its box
     dt_strut_scoop              0.92 g  fills 31% of its box
     el_switch                   0.50 g  fills 100% of its box
     fs_look_top_plate_0         0.28 g  fills 27% of its box
     fs_look_top_plate_1         0.28 g  fills 27% of its box
     fs_look_top_plate_2         0.28 g  fills 27% of its box
     fs_look_top_plate_3         0.28 g  fills 27% of its box
-    mass.may_be_over: 132.4 g (range 113.4 to 151.3 g) against the 150 g limit; 3.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.may_be_over: 132.7 g (range 113.6 to 151.7 g) against the 150 g limit; 3.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
 cache: part_geom 0 hit / 18 miss
