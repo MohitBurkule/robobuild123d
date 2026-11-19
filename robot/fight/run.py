@@ -13,6 +13,8 @@ from pathlib import Path
 
 import numpy as np
 
+os.environ.setdefault("MUJOCO_GL", "egl")  # before mujoco is imported anywhere (headless render)
+
 from .. import spec as spec_mod
 from ..sim.scene import Placement
 from . import brains, profile
@@ -38,8 +40,16 @@ def load_model(path, cache_dir=None):
     return m
 
 
+def _out(sim, n):
+    """Touched the floor outside the arena: COM below the platform (pit / drop-off), or past the walls of a closed box."""
+    c = sim.com(n)
+    if sim.arena is not None:
+        return bool(float(c[2]) < sim.arena.out_z)
+    return bool(max(abs(float(v)) for v in c[:2]) > sim.scene.arena_half + 0.03)
+
+
 def outcome(sim, names, t):
-    """Per robot: upside-down (and cannot drive inverted), parts lost, weapon speed."""
+    """Per robot: upside-down (and cannot drive inverted), parts lost, out of the arena."""
     out = {}
     for n in names:
         _, _, R = sim.frame(n)
@@ -47,12 +57,13 @@ def outcome(sim, names, t):
         lost = [w.part for w in sim.welds if w.robot == n and w.broken_at is not None]
         out[n] = {"inverted": bool(R[2, 2] < -0.3), "stuck_inverted": bool(R[2, 2] < -0.3 and not prof.can_run_inverted
                                                                           and not prof.lifter),
-                  "out_of_arena": bool(max(abs(float(v)) for v in sim.com(n)[:2]) > sim.scene.arena_half + 0.03),
+                  "out_of_arena": _out(sim, n),
                   "parts_lost": lost, "pos": [round(float(v), 3) for v in sim.com(n)]}
     return out
 
 
-def fight(spec_a, spec_b, seconds=20.0, out=None, fps=30, size=(640, 480), timestep=5e-5, seed=0, log=print, view="arena", follow=None):
+def fight(spec_a, spec_b, seconds=20.0, out=None, fps=30, size=(640, 480), timestep=5e-5, seed=0, log=print, view="arena", follow=None,
+          arena=None):
     sa, sb = spec_mod.load(spec_a), spec_mod.load(spec_b)
     ma, mb = load_model(spec_a), load_model(spec_b)
     pa, pb = profile.build(sa, ma), profile.build(sb, mb)
@@ -61,10 +72,11 @@ def fight(spec_a, spec_b, seconds=20.0, out=None, fps=30, size=(640, 480), times
     if na == nb:
         nb += "_2"
     rng = np.random.default_rng(seed)
-    sim = FightSim(timestep=timestep)
+    sim = FightSim(timestep=timestep, arena=arena)
     jit = rng.uniform(-10, 10, 2)
-    sim.add_fighter(ma, pa, Placement(na, (-0.3, -0.05), 0 + jit[0]))
-    sim.add_fighter(mb, pb, Placement(nb, (0.3, 0.05), 180 + jit[1]))
+    sx = sim.arena.spawn if sim.arena is not None else 0.3
+    sim.add_fighter(ma, pa, Placement(na, (-sx, -0.05), 0 + jit[0]))
+    sim.add_fighter(mb, pb, Placement(nb, (sx, 0.05), 180 + jit[1]))
     sim.compile()
     ba, bb = brains.make(pa.strategy, na, nb), brains.make(pb.strategy, nb, na)
     from .hazards import Hazards
@@ -106,10 +118,20 @@ def fight(spec_a, spec_b, seconds=20.0, out=None, fps=30, size=(640, 480), times
 
     next_ctrl = next_plant = next_frame = 0.0
     snap, fine_until = snapshot(), -1.0
+    out_t = None
     while d_.time < seconds:
         t = float(d_.time)
         if t >= next_ctrl:
             next_ctrl += CONTROL_DT
+            for nm in sim.open_pits(t):
+                sim.events.append((t, "pit_open", "", nm, 0))
+            if out_t is None:
+                for n in (na, nb):
+                    if _out(sim, n):  # touched the pit / outside floor: fight over (keep filming 0.5 s)
+                        out_t = t
+                        sim.events.append((t, "out", n, "arena", 0))
+            if out_t is not None and t > out_t + 0.5:
+                break
             for b in (ba, bb):
                 cmd = hz.delay(b.me, t, b.act(sim, t, CONTROL_DT))  # driver reaction delay + steering noise
                 if cmd is None or hz.dead[b.me]:
@@ -172,7 +194,7 @@ def fight(spec_a, spec_b, seconds=20.0, out=None, fps=30, size=(640, 480), times
     if writer is not None:
         writer.close()
         renderer.close()
-    res = {"robots": [na, nb], "seconds": seconds, "wall_s": round(time.time() - t0, 1),
+    res = {"robots": [na, nb], "seconds": seconds, "arena": sim.arena.name if sim.arena else "closed", "wall_s": round(time.time() - t0, 1),
            "events": [list(e) for e in sim.events], "hits": hits, "outcome": outcome(sim, (na, nb), seconds), "peak": peak,
            "welds": [{"robot": w.robot, "part": w.part, "break_N": round(w.break_n, 1), "peak_N": round(w.peak_n, 1),
                       "broken_at": w.broken_at} for w in sim.welds],
@@ -194,6 +216,9 @@ def judge(res):
     """Simple judging: a robot stuck upside down loses; else fewer parts lost and more damage dealt wins."""
     a, b = res["robots"]
     oa, ob = res["outcome"][a], res["outcome"][b]
+    first_out = next((e[2] for e in res.get("events", []) if e[1] == "out"), None)
+    if first_out in (a, b):  # pit / out of the arena first: immediate loss, even if the other follows it down
+        return b if first_out == a else a
     dz = res.get("hazards", {}).get("dead", {})
     if bool(dz.get(a)) != bool(dz.get(b)):  # switch knocked off / power wire cut: robot is dead
         return b if dz.get(a) else a
@@ -212,8 +237,9 @@ def _aim(cam, sim, view, me, other):
     looking forward (a driver's camera bolted to the robot)."""
     if view == "arena":
         mid = (sim.com(me) + sim.com(other)) / 2
-        cam.distance, cam.azimuth, cam.elevation = 0.75, 90, -58
-        cam.lookat[:] = [mid[0] * 0.8, mid[1] * 0.8, 0.0]
+        h = sim.scene.arena_half or 0.6
+        cam.distance, cam.azimuth, cam.elevation = 0.75 * max(1.0, h / 0.45), 90, -58
+        cam.lookat[:] = [mid[0] * 0.5, mid[1] * 0.5, 0.0]
         return
     c = sim.com(me)
     _, h, _ = sim.frame(me)
