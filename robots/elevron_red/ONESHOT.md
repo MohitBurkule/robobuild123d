@@ -64,3 +64,23 @@ Left (one line each):
 - proxy.sweep x1: moving part runs into the chassis more than a running clearance can take without changing the look
 - power.weapon_motor x1: toolchain: a servo/arm weapon is required to have a brushless kV motor like a spinner
 - geom.near_miss_hole x1: see verify_r4.txt root causes
+
+## Round 5 (rebuild from relations: Elevron 3.0 layout + photo lifter module)
+Source of truth is now `src/elevron_red/params.py` (masters + derived relations) and `src/elevron_red/parts.py`
+(build123d, one `build(part=...)` entry); `python3 make_spec.py` writes spec.json. kit.json and the kit-only sheets
+(match/pick/view) are gone; the chassis, side panels, lifter module, wheels and electronics bays were rewritten, not patched.
+
+Layout taken from the Elevron 3.0 "Alt" reference assembly (measured only; nothing from it is in the repo):
+65 x 75.8 x 17 mm chassis tub, Scalextric-size tyres (r 10.75, w 9.5) at x +-37 / y +-26 on N10 gearmotors,
+side panels reaching y 98.6 (long slim forks). From the photos: servo housing (red, chamfered, sloped nose) on the
++x half, raked arm (black layered side plates under a red top rail, red blade tip) pivoting on a lug at the rear top,
+white servo horn standing between them, rear and front pods outboard of the wheels with vent grooves, wheels proud.
+
+Blockers r4 -> r5: full tier **69 -> 20** (verify_r5_full.txt; r4 full run on its spec); inner tier 11 -> 11
+(verify_r5.txt: 9 of them are `proxy.assembly` teardown blockers that only show once a full run has left a baseline;
+r4's inner count had no assembly baseline). Mass 147.6 g. Left: assembly.blocked x9 + arch.motor_mount x4 +
+support.loose x3 (closed one-piece print: no lid, motor straps or side-panel screws yet), mfg.sharp_internal_corner x2
+(housing/chassis seam), likeness.silhouette x2.
+Likeness (best IoU, same REFERENCE.json camera picks as r4): aws72 0.702 -> 0.707, aws74 0.652 -> 0.652.
+Left: likeness.silhouette x2 (below 0.80; the camera grid has no azimuth-45 view matching aws74, and aws72 shows the
+short-wedgelet front, not the long forks).

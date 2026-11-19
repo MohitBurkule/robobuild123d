@@ -13,8 +13,8 @@
   "elevron_red.aws72.webp": "front_right_iso",
   "elevron_red.aws74.webp": "front_right_iso"
  },
- "elevation": {
-  "elevron_red.aws72.webp": 45,
-  "elevron_red.aws74.webp": 45
+ "view_source": {
+  "elevron_red.aws72.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label",
+  "elevron_red.aws74.webp": "user camera pick (azimuth 45, elevation 35); replaces the automatic label"
  }
 }
