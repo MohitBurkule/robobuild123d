@@ -1,6 +1,6 @@
 import * as THREE from './vendor/three.module.js';
 import load from './vendor/mujoco.js';
-import { Sim, ARENAS, aiInput } from './sim.js';
+import { Sim, ARENAS } from './sim.js';
 
 const $ = id => document.getElementById(id);
 const DOCS = {};
@@ -138,7 +138,8 @@ function start(c) {
   pitsOpen = false; sim = new Sim(mj, c.kinds.map(k => DOCS[k]), c.arena); sim.docs.forEach((d, i) => { toggled[i] = !!d.weapon && !d.lifter; wasDown[i] = false; }); over = false; lastSnap = null; guestIn = { l: 0, r: 0, w: 0 };
   buildScene(); cam.position.set(0, -1, 1.2);
   const ctlName = i => role === 'local' ? (c.ctl[i] === 'ai' ? 'AI' : 'Human') : i === 0 ? (role === 'guest' ? 'host' : 'you (host)') : (role === 'guest' ? 'you' : 'remote player');
-  for (const i of [0, 1]) { $('n' + i).textContent = `${DOCS[c.kinds[i]].name} (P${i + 1} · ${ctlName(i)})`; $('n' + i).dataset.w = ''; $('b' + i).style.background = i ? '#e5534b' : '#3b82f6'; }
+  for (const i of [0, 1]) { $('n' + i).textContent = `${DOCS[c.kinds[i]].name} (P${i + 1} · ${ctlName(i)})`; $('n' + i).dataset.w = ''; }
+  if (role !== 'guest') for (const i of [0, 1]) sim.setAI(i, role === 'local' && c.ctl[i] === 'ai');
   touchSlot = role === 'local' ? (c.ctl[0] === 'human' ? 0 : 1) : 0; document.body.classList.add('playing');
   $('menu').style.display = 'none'; $('end').style.display = 'none'; running = true;
   $('help').textContent = role === 'local' ? [0, 1].map(i => c.ctl[i] === 'ai' ? `P${i + 1}: AI` : i === 0 ? 'P1: WASD + Space' : 'P2: arrows + Enter').join(' · ') + ' · R rematch · Esc menu' : 'WASD (or pad) drive · Space weapon · online';
@@ -159,13 +160,13 @@ function frame(now) {
       if (lastSnap) applySnap(lastSnap);
     } else {
       if (!over) {
-        const in0 = cfg.ctl?.[0] === 'ai' && role === 'local' ? aiInput(sim, 0) : readInput(0, 0);
-        const in1 = role === 'host' ? guestIn : cfg.ctl[1] === 'ai' ? aiInput(sim, 1) : readInput(1, 1);
+        const in0 = readInput(0, 0);
+        const in1 = role === 'host' ? guestIn : readInput(1, 1);
         sim.setInput(0, in0); sim.setInput(1, in1);
         acc += dt; const ticks = Math.min(24, Math.floor(acc / 0.0008)); acc = Math.min(acc - ticks * 0.0008, 0.0008 * 24);
         // step in chunks so AI/inputs stay fresh
         for (let k = 0; k < ticks; k += 10) sim.step(Math.min(10, ticks - k));
-        const r = sim.result();
+        const r = sim.result(180);
         if (r) finish(r);
       }
       if (role === 'host' && net?.readyState === 1) { snapT += dt; if (snapT > 1 / 30) { snapT = 0; net.send(JSON.stringify({ t: 'snap', ...sim.snapshot(), over, res: over ? lastRes : null })); } }
@@ -183,17 +184,30 @@ function finish(r) {
 }
 function applySnap(s) {
   const d = sim.data, p = s.p;
-  for (let i = 0; i < sim.model.nbody; i++) { d.xpos.set(p.slice(i * 7, i * 7 + 3), i * 3); d.xquat.set(p.slice(i * 7 + 3, i * 7 + 7), i * 4); }
-  sim.t = s.st; sim.score = s.s;
+  for (let i = 0; i < sim.model.nbody; i++) { d.xpos.set(p.slice(i * 7, i * 7 + 3), i * 3); d.xipos.set(p.slice(i * 7, i * 7 + 3), i * 3); d.xquat.set(p.slice(i * 7 + 3, i * 7 + 7), i * 4); }
+  sim.t = s.st;
   if (s.g && !pitsOpen) { pitsOpen = true; for (const { mesh } of meshes) if (mesh.name.startsWith('cover')) mesh.visible = false; }
   if (s.over && !over) finish(s.res);
   if (!s.over && over) { over = false; $('end').style.display = 'none'; }
 }
+const bar = (lb, frac, val, col) => `<div class="row"><span class="lb">${lb}</span><span class="bar2"><i style="width:${Math.max(0, Math.min(100, frac * 100)).toFixed(0)}%;background:${col}"></i></span><span class="vv">${val}</span></div>`;
+const heat = (t) => t > 110 ? '#ff4d4d' : t > 80 ? '#ffb347' : '#56d364';
 function hud() {
-  for (const i of [0, 1]) { const d = sim.docs[i]; if (d.weapon || d.lifter) $('n' + i).dataset.w = toggled[i] || sim.ctrl[i].w ? 'ON' : 'OFF'; }
-  $('tm').textContent = Math.max(0, 90 - sim.t).toFixed(0);
-  const mx = Math.max(1, ...sim.score);
-  for (const i of [0, 1]) $('b' + i).style.width = Math.min(100, sim.score[i] / 3 * 100) + '%';
+  const tel = role === 'guest' ? lastSnap?.tel : sim.telemetry(), evs = role === 'guest' ? lastSnap?.ev : sim.events.slice(-6);
+  const tt = Math.max(0, 180 - sim.t); $('tm').textContent = `${Math.floor(tt / 60)}:${String(Math.floor(tt % 60)).padStart(2, '0')}`;
+  if (!tel) return;
+  tel.forEach((T, i) => {
+    let h = bar('Battery', T.soc / 100, `${T.v.toFixed(2)} V`, T.soc > 30 ? '#56d364' : '#ffb347') + bar('Draw', T.amps / 40, `${T.amps.toFixed(1)} A`, '#9aa7ff');
+    if (T.rpm !== null) h += bar('Weapon', T.rpm / (T.rpmMax || 1), `${(T.rpm / 1000).toFixed(1)}k rpm`, T.wDead ? '#ff4d4d' : '#e6e9ef') + bar('W temp', (T.wT - 25) / 105, `${T.wT} °C`, heat(T.wT));
+    h += bar('Drive T', (T.dT - 25) / 105, `${T.dT} °C`, heat(T.dT)) + bar('Armour', T.armour / 100, `${T.armour}%`, T.armour > 60 ? '#56d364' : T.armour > 30 ? '#ffb347' : '#ff4d4d') + bar('Tyres', 1 - T.tyre / 100, `${100 - T.tyre}%`, T.tyre < 40 ? '#56d364' : '#ffb347');
+    h += `<div class="row"><span class="lb">Dealt</span><span>${T.hits} hits</span><span class="vv">${T.dealt.toFixed(1)} J</span></div>`;
+    const st = T.dead ? `DEAD: ${T.dead}` : T.out ? 'OUT' : T.flip > 0 ? `Upside down ${T.flip.toFixed(1)}/10 s` : (T.dDead ? `${T.dDead}/${T.wheels} drive motors dead` : T.wDead ? 'Weapon motor dead' : T.lifter && !T.lifterOk ? 'Flipper dead' : 'OK');
+    h += `<div class="st ${st === 'OK' ? 'ok' : 'bad'}">${st}${T.cut.length ? ' · wires cut: ' + T.cut.join(', ') : ''}</div>`;
+    if (T.lost.length) h += `<div class="lost">Lost: ${T.lost.join(', ')}</div>`;
+    const d = sim.docs[i]; if ((d.weapon || d.lifter) && role !== 'guest') h = `<div class="row"><span class="lb">Weapon</span><span>${toggled[i] || sim.input[i].w || sim.brains[i] ? 'ON' : 'OFF'}</span><span></span></div>` + h;
+    $('m' + i).innerHTML = h;
+  });
+  if (evs) $('ev').innerHTML = evs.slice(-5).map(e => `<div>${e.t.toFixed(1)} s · ${e.text}</div>`).join('');
 }
 requestAnimationFrame(frame);
 window.__game = { get sim() { return sim; }, start, keys };
