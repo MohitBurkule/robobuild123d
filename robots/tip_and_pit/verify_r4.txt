@@ -1,43 +1,43 @@
 BLOCKERS: 17
-  [ran] integrity 0.05s
-  [proxy] wiring 0.82s
+  [ran] integrity 0.06s
+  [proxy] wiring 0.76s
   [ran] mass 0.00s
-  [proxy] interference 8.06s
-  [ran] connections 1.32s
+  [proxy] interference 8.25s
+  [ran] connections 1.47s
   [ran] legal 0.02s
   [ran] fasteners 0.00s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
   [ran] fight 0.02s
-  [ran] shape 0.24s
+  [ran] shape 0.48s
   [ran] dynamics 0.00s
   [ran] strength 0.00s
-  [ran] printability 0.53s
+  [ran] printability 0.58s
   [ran] process 0.00s
-  [ran] electrical 10.30s
-  [ran] combat 0.06s
+  [ran] electrical 11.88s
+  [ran] combat 0.07s
   [ran] physics 0.00s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
-  [ran] fit 0.09s
+  [ran] fit 0.11s
   [ran] bom 0.01s
-  [ran] wire_review 0.51s
+  [ran] wire_review 0.53s
   [ran] fastener_record 0.00s
-  [ran] likeness 12.17s
+  [ran] likeness 11.61s
   [ran] drive_recess 0.00s
   [ran] belt_wrap 0.00s
   [ran] retention 0.00s
-  [ran] waiver_audit 0.01s
-  [ran] geom 0.17s
-  [ran] dfm 0.08s
-  [ran] realworld 4.38s
-tip and pit: ok=False 17 blockers in 17 root causes, mass 89.3/75 g
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.16s
+  [ran] dfm 0.09s
+  [ran] realworld 4.03s
+tip and pit: ok=False 17 blockers in 17 root causes, mass 89.5/75 g
 1. [proxy.wiring] Wire `w_m1` (`el_rx_esc.m1` to `dm_wheel_l0.terminals`): no baseline route (run the full `wiring` group once and pass its report).
    fix: Run the full `wiring` group to re-route it.
 2. [proxy.wiring] Wire `w_m2` (`el_rx_esc.m2` to `dm_wheel_r0.terminals`): no baseline route (run the full `wiring` group once and pass its report).
    fix: Run the full `wiring` group to re-route it.
-3. [mass.over] 89.3 g (range 75.1 to 103.4 g) against the 75 g limit; 3.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+3. [mass.over] 89.5 g (range 75.4 to 103.7 g) against the 75 g limit; 3.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
 4. [proxy.interference] `chassis` and `plate` overlap by 0.91 mm (allowed 0.08).
    | chassis: x -30.00..30.00  y -17.00..17.00  z -13.00..17.00  size 60.00 x 34.00 x 30.00 mm
@@ -93,7 +93,7 @@ tip and pit: ok=False 17 blockers in 17 root causes, mass 89.3/75 g
    |   OVERLAP `dm_wheel_l0` 3.88 mm (allowed 0.08)
 ... 5 more root causes (fix these first, then re-run)
 MASS BUDGET:
-  mass 89.3 g of 75 g (-14.3 g margin)
+  mass 89.5 g of 75 g (-14.5 g margin)
     chassis                    28.39 g  fills 49% of its box
     el_battery                 12.50 g  fills 100% of its box
     dm_wheel_l0                 9.70 g  fills 66% of its box
@@ -102,9 +102,9 @@ MASS BUDGET:
     wheel_r0                    7.36 g  fills 57% of its box
     el_rx_esc                   3.50 g  fills 100% of its box
     plate                       3.18 g  fills 15% of its box
-    dt_hub_wheel_l0             2.73 g  fills 70% of its box
-    dt_hub_wheel_r0             2.73 g  fills 70% of its box
+    dt_hub_wheel_l0             2.87 g  fills 74% of its box
+    dt_hub_wheel_r0             2.87 g  fills 74% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.over: 89.3 g (range 75.1 to 103.4 g) against the 75 g limit; 3.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.over: 89.5 g (range 75.4 to 103.7 g) against the 75 g limit; 3.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
 cache: part_geom 0 hit / 11 miss
