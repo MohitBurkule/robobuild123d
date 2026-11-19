@@ -1,37 +1,37 @@
 BLOCKERS: 9
-  [ran] integrity 0.23s
-  [proxy] wiring 0.40s
+  [ran] integrity 0.07s
+  [proxy] wiring 0.16s
   [ran] mass 0.01s
-  [proxy] interference 24.67s
-  [ran] connections 2.52s
-  [ran] legal 0.02s
+  [proxy] interference 12.79s
+  [ran] connections 2.44s
+  [ran] legal 0.03s
   [ran] fasteners 0.00s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
-  [ran] fight 0.02s
-  [ran] shape 0.86s
-  [ran] dynamics 0.02s
-  [ran] strength 0.01s
-  [ran] printability 1.20s
+  [ran] fight 0.05s
+  [ran] shape 0.59s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.87s
   [ran] process 0.00s
-  [ran] electrical 0.02s
-  [ran] combat 0.18s
+  [ran] electrical 0.01s
+  [ran] combat 0.10s
   [ran] physics 0.00s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
-  [ran] fit 0.09s
+  [ran] fit 0.08s
   [ran] bom 0.01s
   [ran] wire_review 0.01s
   [ran] fastener_record 0.00s
-  [ran] likeness 6.07s
+  [ran] likeness 5.81s
   [ran] drive_recess 0.00s
   [ran] belt_wrap 0.00s
-  [ran] retention 0.04s
-  [ran] waiver_audit 0.01s
-  [ran] geom 0.32s
-  [ran] dfm 0.26s
-  [ran] realworld 0.15s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.24s
+  [ran] dfm 0.13s
+  [ran] realworld 0.12s
 do you dream of being an ambul: ok=False 9 blockers in 7 root causes, mass 122.7/150 g
 1. [proxy.wiring] Wire `w_m1` (`el_rx_esc.m1` to `dm_wheel_l0.terminals`): no baseline route (run the full `wiring` group once and pass its report). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
    fix: Run the full `wiring` group to re-route it.
