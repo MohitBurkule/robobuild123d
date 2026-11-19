@@ -149,7 +149,7 @@ def main(path, part, face="+z", pattern="corners", n_pts=4, inset=4.0, at="", pl
             host, h0, h1, thr = part, 0, endP, []
         else:
             thr = [part]
-        grip = tt[h0]
+        grip = tt[h0] if host == part else max(tt[h0], tt[max(endP - 1, 0)] + 0.1)   # threads start where PART ends
         Ls = [L for L in STD_L if L >= grip + MIN_THREAD and L <= tt[h1 - 1] - 0.3]
         boss = None
         if Ls:
