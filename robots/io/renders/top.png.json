@@ -1,11 +1,12 @@
 {
  "spec": "/tmp/work10_io/robots/io/spec.json",
- "rendered_at": 1795066246.9516165,
+ "rendered_at": 1795087234.1692638,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
   "flipper",
+  "flipper_bracket",
   "dt_hub_wheel_l0",
   "dt_hub_wheel_r0",
   "dm_wheel_l0",

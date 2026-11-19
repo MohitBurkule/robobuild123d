@@ -48,3 +48,11 @@ Left (and why):
 - likeness.silhouette x1: looks, not in scope for this pass.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): io.aws63.webp 0.62 -> 0.63
+
+## Round 5 (photo / DESCRIPTION.md)
+- The flipper is now a 3 mm plate (the photo's thin aluminium plate), not a 12 mm hollow slab: 53.9 -> about 19 g, which clears the mass blocker. `volume_mm3` is declared.
+- A white printed triangular bracket (`flipper_bracket`, fused with the flipper) runs from the hinge to the plate's underside, as in the photo.
+- Not done:
+  - 4 wheels: the photo shows 4, but REFERENCE.json says 2 (a collector file).
+  - White deck inside the yellow rim: a decal is refused, because the top face is cut by the flipper sweep.
+- Blockers 2 -> 1, IoU 0.63 -> 0.63, mass 151.0 -> 121.2 g.

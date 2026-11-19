@@ -5673,50 +5673,24 @@
    "material": "nylon",
    "process": "fdm",
    "shape": {
-    "type": "subtract",
-    "base": {
-     "type": "place",
-     "shape": {
-      "type": "box",
-      "size": [
-       60,
-       112,
-       12
-      ]
-     },
-     "at": [
-      0,
-      5,
-      38.0
-     ],
-     "rot": [
-      32,
-      0,
-      0
+    "type": "place",
+    "shape": {
+     "type": "box",
+     "size": [
+      60,
+      112,
+      3
      ]
     },
-    "cut": [
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        48,
-        100,
-        5
-       ]
-      },
-      "at": [
-       0,
-       5,
-       38.0
-      ],
-      "rot": [
-       32,
-       0,
-       0
-      ]
-     }
+    "at": [
+     0,
+     2.615,
+     41.816
+    ],
+    "rot": [
+     32,
+     0,
+     0
     ]
    },
    "at": [
@@ -5750,6 +5724,61 @@
     "max": 80,
     "default": 0
    },
+   "print_orientation": "+z",
+   "volume_mm3": 20160
+  },
+  {
+   "id": "flipper_bracket",
+   "kind": "other",
+   "material": "nylon",
+   "process": "fdm",
+   "fused_with": "flipper",
+   "shape": {
+    "type": "place",
+    "shape": {
+     "type": "prism",
+     "points": [
+      [
+       36,
+       12.2
+      ],
+      [
+       42,
+       12.2
+      ],
+      [
+       42,
+       65.04
+      ],
+      [
+       22,
+       52.54
+      ]
+     ],
+     "height": 8
+    },
+    "at": [
+     0,
+     0,
+     0
+    ],
+    "rot": [
+     90,
+     0,
+     90
+    ]
+   },
+   "at": [
+    0,
+    0,
+    0
+   ],
+   "rot": [
+    0,
+    0,
+    0
+   ],
+   "color": "#ece6d8",
    "print_orientation": "+z"
   },
   {
