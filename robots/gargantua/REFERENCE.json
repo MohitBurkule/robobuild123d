@@ -11,10 +11,12 @@
  "view": {
   "gargantua.aws65.webp": "top",
   "gargantua.aws66.webp": "front_right_iso",
-  "gargantua.aws67.webp": "front"
+  "gargantua.aws67.webp": "front_left_iso"
  },
  "elevation": {
-  "gargantua.aws66.webp": 45,
-  "gargantua.aws67.webp": 45
+  "gargantua.aws66.webp": 45
+ },
+ "view_source": {
+  "gargantua.aws67.webp": "user camera pick (azimuth 105, elevation 35); replaces the automatic label"
  }
 }
