@@ -10,7 +10,7 @@ button{cursor:pointer;background:#2d5bff;border:0;font-weight:600}button.alt{bac
 #hud{position:fixed;top:8px;left:0;right:0;display:flex;justify-content:space-between;padding:0 16px;pointer-events:none;font-weight:600;text-shadow:0 1px 3px #000}
 .bar{height:8px;background:#fff3;border-radius:4px;width:200px;margin-top:4px}.bar i{display:block;height:100%;border-radius:4px;transition:width .2s}
 #help{position:fixed;bottom:8px;left:0;right:0;text-align:center;opacity:.6;font-size:13px}
-small{opacity:.7}fieldset{border:1px solid #3a4560;border-radius:8px;display:flex;gap:6px}legend{opacity:.7}
+small{opacity:.7}#n0[data-w]:not([data-w=""])::after,#n1[data-w]:not([data-w=""])::after{content:" · weapon " attr(data-w);opacity:.8}fieldset{border:1px solid #3a4560;border-radius:8px;display:flex;gap:6px}legend{opacity:.7}
 </style></head><body>
 <canvas id="c"></canvas>
 <div id="hud"><div><span id="n0"></span><div class="bar"><i id="b0"></i></div></div><div id="tm" style="font-size:22px">90</div><div style="text-align:right"><span id="n1"></span><div class="bar"><i id="b1"></i></div></div></div>
