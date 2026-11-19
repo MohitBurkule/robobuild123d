@@ -48,7 +48,8 @@ function buildScene() {
 const _q = new THREE.Quaternion(), _q2 = new THREE.Quaternion(), _v = new THREE.Vector3(), _one = new THREE.Vector3(1, 1, 1);
 function syncScene() {
   const d = sim.data;
-  for (const { mesh, body, p, q } of meshes) {
+  for (const { mesh, g, body, p, q } of meshes) {
+    mesh.visible = !mesh.name.startsWith('cover') || !(pitsOpen || sim.pitsOpen); if (!sim.visible(g)) mesh.visible = false;
     const bx = d.xpos.slice(body * 3, body * 3 + 3), bq = d.xquat.slice(body * 4, body * 4 + 4);
     _q.set(bq[1], bq[2], bq[3], bq[0]); _v.set(p[0], p[1], p[2]).applyQuaternion(_q).add(new THREE.Vector3(bx[0], bx[1], bx[2]));
     _q2.set(q[1], q[2], q[3], q[0]); _q.multiply(_q2);
@@ -65,7 +66,8 @@ function camera(dt) {
 const keys = new Set();
 addEventListener('keydown', e => { if (e.repeat) return; keys.add(e.code); if (!['Enter'].includes(e.code) || sim) e.preventDefault?.(); if (e.code === 'KeyR' && sim) rematch(); if (e.code === 'Escape') toMenu(); });
 addEventListener('keyup', e => keys.delete(e.code));
-const KB = [{ f: 'KeyW', b: 'KeyS', l: 'KeyA', r: 'KeyD', w: 'Space' }, { f: 'ArrowUp', b: 'ArrowDown', l: 'ArrowLeft', r: 'ArrowRight', w: 'Enter' }];
+const KB = [{ f: 'KeyW', b: 'KeyS', l: 'KeyA', r: 'KeyD', w: 'Space', dn: 'KeyQ', up: 'KeyE' }, { f: 'ArrowUp', b: 'ArrowDown', l: 'ArrowLeft', r: 'ArrowRight', w: 'Enter', dn: 'BracketLeft', up: 'BracketRight' }];
+const wthr = [1, 1];  // weapon throttle per player, 0..1 of the robot's declared rpm
 const toggled = [false, false], wasDown = [false, false];
 function readInput(i, pad) {  // i = player slot 0/1; keyboard default, gamepad optional (pad index = i)
   const k = KB[i], K = c => keys.has(c) ? 1 : 0;
@@ -76,14 +78,19 @@ function readInput(i, pad) {  // i = player slot 0/1; keyboard default, gamepad 
     const ax = (n, dz = 0.25) => Math.abs(gp.axes[n] || 0) > dz ? gp.axes[n] : 0;
     const gt = -ax(1), gs = ax(0);
     if (gt || gs) { thr = gt; st = gs; }
-    wd = wd || gp.buttons[0]?.pressed || (gp.buttons[7]?.value > 0.4);
+    wd = wd || gp.buttons[0]?.pressed;
+    const rt = gp.buttons[7]?.value || 0;  // right trigger = analog weapon throttle
+    if (rt > 0.05) { wthr[i] = rt; toggled[i] = true; wasDown[i] = wd; }
+    if (gp.buttons[4]?.pressed) wthr[i] = Math.max(0, wthr[i] - 0.01); if (gp.buttons[5]?.pressed) wthr[i] = Math.min(1, wthr[i] + 0.01);
   }
+  wthr[i] = Math.max(0, Math.min(1, wthr[i] + 0.01 * (K(k.up) - K(k.dn))));
+  if (touchSlot === i && coarse && document.body.classList.contains('playing')) wthr[i] = +$('wthr').value / 100;
   if (touchSlot === i && touch.w) wd = true;
   if (sim.docs[i].lifter) toggled[i] = wd;
   else { if (wd && !wasDown[i]) toggled[i] = !toggled[i]; }
   wasDown[i] = wd;
   const n = Math.max(1, Math.abs(thr) + Math.abs(st));
-  return { l: (thr + st) / n * Math.min(1, n), r: (thr - st) / n * Math.min(1, n), w: toggled[i] ? 1 : 0 };
+  return { l: (thr + st) / n * Math.min(1, n), r: (thr - st) / n * Math.min(1, n), w: toggled[i] ? (sim.docs[i].lifter ? 1 : wthr[i]) : 0 };
 }
 
 // ---- touch (phone) controls: left stick drives, right button fires the weapon
@@ -135,14 +142,14 @@ function onNet(m) {
 }
 function start(c) {
   cfg = c; if (sim) { sim.data.delete(); sim.model.delete(); }
-  pitsOpen = false; sim = new Sim(mj, c.kinds.map(k => DOCS[k]), c.arena); sim.docs.forEach((d, i) => { toggled[i] = !!d.weapon && !d.lifter; wasDown[i] = false; }); over = false; lastSnap = null; guestIn = { l: 0, r: 0, w: 0 };
+  pitsOpen = false; sim = new Sim(mj, c.kinds.map(k => DOCS[k]), c.arena); sim.docs.forEach((d, i) => { toggled[i] = !!d.weapon && !d.lifter; wasDown[i] = false; wthr[i] = 1; }); try { $('wthr').value = 100; } catch {}; over = false; lastSnap = null; guestIn = { l: 0, r: 0, w: 0 };
   buildScene(); cam.position.set(0, -1, 1.2);
   const ctlName = i => role === 'local' ? (c.ctl[i] === 'ai' ? 'AI' : 'Human') : i === 0 ? (role === 'guest' ? 'host' : 'you (host)') : (role === 'guest' ? 'you' : 'remote player');
   for (const i of [0, 1]) { $('n' + i).textContent = `${DOCS[c.kinds[i]].name} (P${i + 1} · ${ctlName(i)})`; $('n' + i).dataset.w = ''; }
   if (role !== 'guest') for (const i of [0, 1]) sim.setAI(i, role === 'local' && c.ctl[i] === 'ai');
   touchSlot = role === 'local' ? (c.ctl[0] === 'human' ? 0 : 1) : 0; document.body.classList.add('playing');
   $('menu').style.display = 'none'; $('end').style.display = 'none'; running = true;
-  $('help').textContent = role === 'local' ? [0, 1].map(i => c.ctl[i] === 'ai' ? `P${i + 1}: AI` : i === 0 ? 'P1: WASD + Space' : 'P2: arrows + Enter').join(' · ') + ' · R rematch · Esc menu' : 'WASD (or pad) drive · Space weapon · online';
+  $('help').textContent = role === 'local' ? [0, 1].map(i => c.ctl[i] === 'ai' ? `P${i + 1}: AI` : i === 0 ? 'P1: WASD, Space weapon, Q/E throttle' : 'P2: arrows, Enter weapon, [ ] throttle').join(' · ') + ' · R rematch · Esc menu' : 'WASD (or pad) drive · Space weapon · online';
 }
 function toMenu() { document.body.classList.remove('playing'); running = false; sim = null; if (net) { net.onclose = null; net.close(); net = null; } $('menu').style.display = 'flex'; $('end').style.display = 'none'; }
 function rematch() { if (role === 'guest') return; if (net?.readyState === 1) net.send(JSON.stringify({ t: 'rematch' })); start(cfg); }
@@ -186,6 +193,7 @@ function applySnap(s) {
   const d = sim.data, p = s.p;
   for (let i = 0; i < sim.model.nbody; i++) { d.xpos.set(p.slice(i * 7, i * 7 + 3), i * 3); d.xipos.set(p.slice(i * 7, i * 7 + 3), i * 3); d.xquat.set(p.slice(i * 7 + 3, i * 7 + 7), i * 4); }
   sim.t = s.st;
+  if (s.br) s.br.forEach((a, r) => a.forEach((b, k) => { const L = sim.R[r].loose[k]; if (b && L.broken == null) L.broken = s.st; }));
   if (s.g && !pitsOpen) { pitsOpen = true; for (const { mesh } of meshes) if (mesh.name.startsWith('cover')) mesh.visible = false; }
   if (s.over && !over) finish(s.res);
   if (!s.over && over) { over = false; $('end').style.display = 'none'; }
@@ -204,7 +212,7 @@ function hud() {
     const st = T.dead ? `DEAD: ${T.dead}` : T.out ? 'OUT' : T.flip > 0 ? `Upside down ${T.flip.toFixed(1)}/10 s` : (T.dDead ? `${T.dDead}/${T.wheels} drive motors dead` : T.wDead ? 'Weapon motor dead' : T.lifter && !T.lifterOk ? 'Flipper dead' : 'OK');
     h += `<div class="st ${st === 'OK' ? 'ok' : 'bad'}">${st}${T.cut.length ? ' · wires cut: ' + T.cut.join(', ') : ''}</div>`;
     if (T.lost.length) h += `<div class="lost">Lost: ${T.lost.join(', ')}</div>`;
-    const d = sim.docs[i]; if ((d.weapon || d.lifter) && role !== 'guest') h = `<div class="row"><span class="lb">Weapon</span><span>${toggled[i] || sim.input[i].w || sim.brains[i] ? 'ON' : 'OFF'}</span><span></span></div>` + h;
+    const d = sim.docs[i]; if ((d.weapon || d.lifter) && role !== 'guest') h = `<div class="row"><span class="lb">Weapon</span><span>${sim.brains[i] ? 'ON (AI)' : toggled[i] ? 'ON' : 'OFF'}</span><span class="vv">${d.lifter || sim.brains[i] ? '' : Math.round(wthr[i] * 100) + '% thr'}</span></div>` + h;
     $('m' + i).innerHTML = h;
   });
   if (evs) $('ev').innerHTML = evs.slice(-5).map(e => `<div>${e.t.toFixed(1)} s · ${e.text}</div>`).join('');
