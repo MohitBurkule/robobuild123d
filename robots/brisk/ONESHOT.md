@@ -31,6 +31,7 @@ Fixed / changed (inside only, outside kept):
 - catalog parts added in free space inside the printed parts with 0.25 mm pockets: `dm_wheel_l0` (pololu_hpcb6v_50to1), `dm_wheel_r0` (pololu_hpcb6v_50to1), `el_battery` (lipo_2s_180), `el_esc` (bbb_malenki_nano), `el_switch` (switch_slide_12x4)
 - overlaps resolved by cuts that keep the union of the parts (pockets, bores, wheel and spinner running clearance)
 - one print with the chassis (same material, `fused_with`): `lid`, `dt_hub_wheel_l0`, `dt_hub_wheel_r0`
+- real fasteners: `fs_look_lid_0` M2x8, `fs_look_lid_1` M2x8, `fs_look_lid_2` M2x8, `fs_look_lid_3` M2x8
 - 4 wires declared (battery - switch - ESC - motors)
 - print orientation on every printed part, failsafe / weapon disable declared, design volumes declared where this pass changed a part on purpose
 - power switch on the floor of the body, slider facing down to a 7 x 3 mm slot in the underside (no slot on the top or sides; hollow cavities stay closed behind a wall at every outside face)
