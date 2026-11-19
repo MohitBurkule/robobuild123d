@@ -1,0 +1,134 @@
+BLOCKERS: 29
+/usr/local/lib/python3.13/site-packages/trimesh/triangles.py:302: RuntimeWarning: invalid value encountered in divide
+  center_mass = integrated[1:4] / volume
+  [ran] integrity 0.77s
+  [ran] mass 0.00s
+  [proxy] interference 20.75s
+  [ran] connections 2.89s
+  [ran] legal 0.16s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.23s
+  [ran] shape 1.77s
+  [ran] dynamics 0.09s
+  [ran] strength 0.00s
+  [ran] printability 3.77s
+  [ran] process 0.03s
+  [ran] electrical 0.02s
+  [ran] combat 0.36s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.11s
+  [ran] bom 0.01s
+  [ran] wire_review 0.03s
+  [ran] fastener_record 0.00s
+  [ran] likeness 132.29s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.01s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.64s
+  [ran] dfm 0.33s
+  [ran] realworld 0.21s
+pla st is a perfectly legitima: ok=False 29 blockers in 25 root causes, mass 242.0/150 g
+1. [integrity.solids] `wheel_l0` has 1 closed solid(s) and 22 open/invalid shell(s), expected 1 (2121 mm3). A boolean or fillet probably collapsed the build. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Check the last CAD op (fillet/cut order); or declare `solids` with `solids_reason`.
+   | wheel_l0: x 31.92..44.08  y -36.40..-15.00  z -11.00..11.00  size 12.16 x 21.39 x 22.00 mm
+   |   centre (38.00, -25.70, -0.00), volume 2121.1 mm3
+   |   gap to `dt_hub_wheel_l0` 0.00 mm (touching)
+   |   gap to `chassis` 1.21 mm
+   |   gap to `dm_wheel_l0` 1.94 mm
+2. [integrity.solids] `wheel_r0` has 1 closed solid(s) and 22 open/invalid shell(s), expected 1 (2121 mm3). A boolean or fillet probably collapsed the build. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Check the last CAD op (fillet/cut order); or declare `solids` with `solids_reason`.
+   | wheel_r0: x -44.08..-31.92  y -36.40..-15.00  z -11.00..11.00  size 12.16 x 21.39 x 22.00 mm
+   |   centre (-38.00, -25.70, -0.00), volume 2121.1 mm3
+   |   gap to `dt_hub_wheel_r0` 0.00 mm (touching)
+   |   gap to `chassis` 1.21 mm
+   |   gap to `dm_wheel_r0` 1.98 mm
+3. [wire.rotor_clearance] wire `w_m1` passes -0.7 mm from the volume swept by the `arm` rotor (arm) at [9.0, 19.2, -3.3]. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | arm: x -9.00..9.00  y -45.00..48.00  z -3.00..19.00  size 18.00 x 93.00 x 22.00 mm
+   |   centre (0.00, 1.50, 8.00), volume 9666.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -40, 17.0] range 0..80 default 0
+   |   OVERLAP `chassis` 1.18 mm (allowed 0.08)
+4. [wire.rotor_clearance] wire `w_m2` passes -0.7 mm from the volume swept by the `arm` rotor (arm) at [-9.0, 14.4, -3.0]. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | arm: x -9.00..9.00  y -45.00..48.00  z -3.00..19.00  size 18.00 x 93.00 x 22.00 mm
+   |   centre (0.00, 1.50, 8.00), volume 9666.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -40, 17.0] range 0..80 default 0
+   |   OVERLAP `chassis` 1.18 mm (allowed 0.08)
+5. [mass.over] 242.0 g (range 210.5 to 273.5 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+6. [proxy.interference] `chassis` and `arm` overlap by 1.18 mm (allowed 0.08).
+   | chassis: x -52.00..52.00  y -47.50..47.50  z -9.00..19.00  size 104.00 x 95.00 x 28.00 mm
+   |   centre (-0.00, 0.00, 5.00), volume 104471.6 mm3
+   |   OVERLAP `wedge` 1.29 mm (allowed 0.08)
+   |   OVERLAP `arm` 1.18 mm (allowed 0.08)
+   |   gap to `el_switch` 0.10 mm
+7. [proxy.interference] `chassis` and `wedge` overlap by 1.29 mm (allowed 0.08).
+   | chassis: x -52.00..52.00  y -47.50..47.50  z -9.00..19.00  size 104.00 x 95.00 x 28.00 mm
+   |   centre (-0.00, 0.00, 5.00), volume 104471.6 mm3
+   |   OVERLAP `wedge` 1.29 mm (allowed 0.08)
+   |   OVERLAP `arm` 1.18 mm (allowed 0.08)
+   |   gap to `el_switch` 0.10 mm
+8. [proxy.interference] `wedge` and `wedge_wing_l` overlap by 1.46 mm (allowed 0.08).
+   | wedge: x -50.00..50.00  y 40.00..80.00  z -10.50..19.00  size 100.00 x 40.00 x 29.50 mm
+   |   centre (0.00, 60.00, 4.25), volume 13625.0 mm3
+   |   OVERLAP `wedge_wing_l` 1.46 mm (allowed 0.08)
+   |   OVERLAP `wedge_wing_r` 1.46 mm (allowed 0.08)
+   |   OVERLAP `chassis` 1.29 mm (allowed 0.08)
+9. [proxy.interference] `wedge` and `wedge_wing_r` overlap by 1.46 mm (allowed 0.08).
+   | wedge: x -50.00..50.00  y 40.00..80.00  z -10.50..19.00  size 100.00 x 40.00 x 29.50 mm
+   |   centre (0.00, 60.00, 4.25), volume 13625.0 mm3
+   |   OVERLAP `wedge_wing_l` 1.46 mm (allowed 0.08)
+   |   OVERLAP `wedge_wing_r` 1.46 mm (allowed 0.08)
+   |   OVERLAP `chassis` 1.29 mm (allowed 0.08)
+10. [proxy.sweep] joint `arm`: `arm` hits `chassis` 1.18 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint arm` lists the closest approach to every part.
+   | arm: x -9.00..9.00  y -45.00..48.00  z -3.00..19.00  size 18.00 x 93.00 x 22.00 mm
+   |   centre (0.00, 1.50, 8.00), volume 9666.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -40, 17.0] range 0..80 default 0
+   |   OVERLAP `chassis` 1.18 mm (allowed 0.08)
+   | chassis: x -52.00..52.00  y -47.50..47.50  z -9.00..19.00  size 104.00 x 95.00 x 28.00 mm
+11. [connection.floating] `wedge_wing_l` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `wedge`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wedge_wing_l: x 43.29..72.71  y 18.12..69.88  z -22.60..30.60  size 29.42 x 51.76 x 53.21 mm
+   |   centre (58.00, 44.00, 4.00), volume 4692.0 mm3
+   |   OVERLAP `wedge` 1.46 mm (allowed 0.08)
+   | wedge: x -50.00..50.00  y 40.00..80.00  z -10.50..19.00  size 100.00 x 40.00 x 29.50 mm
+   |   centre (0.00, 60.00, 4.25), volume 13625.0 mm3
+12. [connection.floating] `wedge_wing_r` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `wedge`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wedge_wing_r: x -72.71..-43.29  y 18.12..69.88  z -22.60..30.60  size 29.42 x 51.76 x 53.21 mm
+   |   centre (-58.00, 44.00, 4.00), volume 4692.0 mm3
+   |   OVERLAP `wedge` 1.46 mm (allowed 0.08)
+   | wedge: x -50.00..50.00  y 40.00..80.00  z -10.50..19.00  size 100.00 x 40.00 x 29.50 mm
+   |   centre (0.00, 60.00, 4.25), volume 13625.0 mm3
+... 13 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 242.0 g of 150 g (-92.0 g margin)
+    chassis                    99.46 g  fills 38% of its box
+    wedge                      36.79 g  fills 12% of its box
+    wedge_wing_l               12.67 g  fills 6% of its box
+    wedge_wing_r               12.67 g  fills 6% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    dm_wheel_l0                 9.70 g  fills 66% of its box
+    dm_wheel_r0                 9.70 g  fills 66% of its box
+    dm_wheel_l1                 9.70 g  fills 66% of its box
+    dm_wheel_r1                 9.70 g  fills 66% of its box
+    arm                         9.20 g  fills 26% of its box
+    el_rx_esc                   3.50 g  fills 100% of its box
+    wheel_l0                    2.16 g  fills 37% of its box
+    wheel_r0                    2.16 g  fills 37% of its box
+    wheel_l1                    2.16 g  fills 37% of its box
+    wheel_r1                    2.16 g  fills 37% of its box
+    dt_hub_wheel_l0             1.27 g  fills 68% of its box
+    dt_hub_wheel_l1             1.27 g  fills 68% of its box
+    dt_hub_wheel_r0             1.27 g  fills 68% of its box
+    dt_hub_wheel_r1             1.27 g  fills 68% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    mass.over: 242.0 g (range 210.5 to 273.5 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: part_geom 0 hit / 20 miss

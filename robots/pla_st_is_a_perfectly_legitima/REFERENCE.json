@@ -9,9 +9,9 @@
   "pla-st_is_a_perfectly_legitimate_choice_of_material.aws67.webp"
  ],
  "view": {
-  "pla-st_is_a_perfectly_legitimate_choice_of_material.aws67.webp": "front_left_iso"
+  "pla-st_is_a_perfectly_legitimate_choice_of_material.aws67.webp": "front_right_iso"
  },
- "elevation": {
-  "pla-st_is_a_perfectly_legitimate_choice_of_material.aws67.webp": 45
+ "view_source": {
+  "pla-st_is_a_perfectly_legitimate_choice_of_material.aws67.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label"
  }
 }
