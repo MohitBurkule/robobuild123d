@@ -1,46 +1,46 @@
 BLOCKERS: 3
-  [ran] integrity 0.10s
-  [proxy] wiring 1.20s
+  [ran] integrity 0.12s
+  [proxy] wiring 1.51s
   [ran] mass 0.00s
-  [proxy] interference 13.99s
-  [ran] connections 1.91s
-  [ran] legal 0.02s
-  [ran] fasteners 0.07s
+  [proxy] interference 16.33s
+  [ran] connections 1.76s
+  [ran] legal 0.03s
+  [ran] fasteners 0.08s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
-  [ran] fight 0.03s
-  [ran] shape 0.56s
+  [ran] fight 0.04s
+  [ran] shape 0.63s
   [ran] dynamics 0.00s
-  [ran] strength 0.07s
-  [ran] printability 1.10s
+  [ran] strength 0.10s
+  [ran] printability 1.74s
   [ran] process 0.00s
   [ran] electrical 0.00s
-  [ran] combat 0.13s
-  [ran] physics 0.01s
+  [ran] combat 0.14s
+  [ran] physics 0.00s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
-  [ran] fit 1.61s
+  [ran] fit 1.81s
   [ran] bom 0.01s
   [ran] wire_review 0.02s
   [ran] fastener_record 0.00s
-  [ran] likeness 25.93s
+  [ran] likeness 33.21s
   [ran] drive_recess 0.00s
   [ran] belt_wrap 0.00s
   [ran] retention 0.00s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.23s
-  [ran] dfm 0.13s
-  [ran] realworld 0.15s
-look what you ve done to our b: ok=False 3 blockers in 3 root causes, mass 155.7/150 g
-1. [mass.over] 155.7 g (range 131.8 to 179.7 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+  [ran] geom 0.27s
+  [ran] dfm 0.46s
+  [ran] realworld 0.41s
+look what you ve done to our b: ok=False 3 blockers in 3 root causes, mass 156.2/150 g
+1. [mass.over] 156.2 g (range 132.2 to 180.3 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
 2. [likeness.view] `reference/look_what_you_ve_done_to_our_breakfast.aws74.webp` is declared `front_left_iso` (IoU 0.67 there) but the model matches it better from front_right_iso (elevation 25, azimuth 60) (IoU 0.84).
    fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
 3. [likeness.silhouette] `reference/look_what_you_ve_done_to_our_breakfast.aws74.webp`: best silhouette IoU 0.67 at camera front_left_iso (elevation 45, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.74). Regions (photo frame, left third first) 0.69 / 0.70 / 0.61: worst = rear third. Height/length 0.83 model vs 0.61 photo (too tall: lower it or lengthen it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
-  mass 155.7 g of 150 g (-5.7 g margin)
+  mass 156.2 g of 150 g (-6.2 g margin)
     chassis                    58.13 g  fills 29% of its box
     el_battery                 12.50 g  fills 100% of its box
     dm_wheel_l0                 9.70 g  fills 66% of its box
@@ -53,15 +53,15 @@ MASS BUDGET:
     wheel_l1                    5.50 g  fills 57% of its box
     wheel_r1                    5.50 g  fills 57% of its box
     el_rx_esc                   3.50 g  fills 100% of its box
-    dt_hub_wheel_l0             2.06 g  fills 69% of its box
-    dt_hub_wheel_l1             2.06 g  fills 69% of its box
-    dt_hub_wheel_r0             2.06 g  fills 69% of its box
-    dt_hub_wheel_r1             2.06 g  fills 69% of its box
+    dt_hub_wheel_l0             2.18 g  fills 73% of its box
+    dt_hub_wheel_l1             2.18 g  fills 73% of its box
+    dt_hub_wheel_r0             2.18 g  fills 73% of its box
+    dt_hub_wheel_r1             2.18 g  fills 73% of its box
     el_switch                   0.50 g  fills 100% of its box
     fs_look_top_plate_0         0.28 g  fills 27% of its box
     fs_look_top_plate_1         0.28 g  fills 27% of its box
     fs_look_top_plate_2         0.28 g  fills 27% of its box
     fs_look_top_plate_3         0.28 g  fills 27% of its box
-    mass.over: 155.7 g (range 131.8 to 179.7 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.over: 156.2 g (range 132.2 to 180.3 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
 cache: part_geom 0 hit / 21 miss
