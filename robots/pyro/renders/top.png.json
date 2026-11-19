@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_pyro/robots/pyro/spec.json",
- "rendered_at": 1795026128.862506,
+ "rendered_at": 1795078673.082415,
  "bodies": [
   "pod_l",
   "pod_r",
@@ -14,22 +14,16 @@
   "upright_l",
   "upright_r",
   "dt_hub_wheel_l0",
-  "dt_axle_wheel_l0",
-  "dt_nut_wheel_l0",
   "dt_hub_wheel_r0",
-  "dt_axle_wheel_r0",
-  "dt_nut_wheel_r0",
-  "dt_screw_0",
-  "dt_screw_1",
-  "dt_screw_2",
-  "dt_screw_3",
-  "dt_screw_4",
-  "dt_screw_5",
   "dt_shaft_weapon",
-  "dt_mount_fork_0",
-  "dt_bolt_fork_0",
-  "dt_mount_fork_1",
-  "dt_bolt_fork_1"
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "weapon_motor",
+  "el_battery",
+  "el_rx_esc",
+  "el_wesc",
+  "el_switch",
+  "lock_pin"
  ],
  "wires": {}
 }

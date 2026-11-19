@@ -12,7 +12,7 @@
  "view": {
   "pyro.aws71.webp": "front_right_iso"
  },
- "elevation": {
-  "pyro.aws71.webp": 45
+ "view_source": {
+  "pyro.aws71.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label"
  }
 }
