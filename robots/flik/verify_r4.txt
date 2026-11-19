@@ -1,46 +1,46 @@
 BLOCKERS: 12
-  [ran] integrity 0.05s
-  [proxy] wiring 1.93s
+  [ran] integrity 0.07s
+  [proxy] wiring 2.63s
   [ran] mass 0.00s
-  [proxy] interference 17.46s
-  [ran] connections 1.40s
+  [proxy] interference 19.19s
+  [ran] connections 1.20s
   [ran] legal 0.02s
-  [ran] fasteners 0.00s
+  [ran] fasteners 0.04s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
-  [ran] fight 0.02s
-  [ran] shape 0.59s
+  [ran] fight 0.03s
+  [ran] shape 0.60s
   [ran] dynamics 0.00s
-  [ran] strength 0.00s
-  [ran] printability 0.70s
-  [ran] process 0.02s
-  [ran] electrical 3.54s
-  [ran] combat 0.09s
+  [ran] strength 0.14s
+  [ran] printability 0.79s
+  [ran] process 0.09s
+  [ran] electrical 3.88s
+  [ran] combat 0.14s
   [ran] physics 0.00s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
-  [ran] fit 0.06s
-  [ran] bom 0.00s
-  [ran] wire_review 0.75s
+  [ran] fit 0.08s
+  [ran] bom 0.01s
+  [ran] wire_review 0.91s
   [ran] fastener_record 0.00s
-  [ran] likeness 28.69s
+  [ran] likeness 37.25s
   [ran] drive_recess 0.00s
   [ran] belt_wrap 0.00s
-  [ran] retention 0.00s
+  [ran] retention 0.01s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.17s
-  [ran] dfm 0.09s
-  [ran] realworld 2.36s
-flik: ok=False 12 blockers in 12 root causes, mass 188.9/150 g
+  [ran] geom 0.18s
+  [ran] dfm 0.11s
+  [ran] realworld 2.63s
+flik: ok=False 12 blockers in 12 root causes, mass 190.7/150 g
 1. [proxy.wiring] Wire `w_m1` (`el_rx_esc.m1` to `dm_wheel_l0.terminals`): the baseline route is now blocked by `chassis` (3 samples).
    fix: Run the full `wiring` group to re-route it.
    | chassis: x -38.00..38.00  y -35.00..45.00  z -9.00..29.00  size 76.00 x 80.00 x 38.00 mm
-   |   centre (-0.00, 5.00, 10.00), volume 106065.0 mm3
-   |   gap to `flipper` 0.00 mm (touching)
-   |   gap to `side_panel_l` 0.00 mm (touching)
-   |   gap to `side_panel_r` 0.00 mm (touching)
-2. [mass.over] 188.9 g (range 161.9 to 215.8 g) against the 150 g limit; 3.9 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   |   centre (-0.00, 5.00, 10.00), volume 106857.0 mm3
+   |   overlap allowed `fs_look_top_plate_0` 0.07 mm (allowed inf)
+   |   overlap allowed `fs_look_top_plate_1` 0.07 mm (allowed inf)
+   |   overlap allowed `fs_look_top_plate_2` 0.07 mm (allowed inf)
+2. [mass.over] 190.7 g (range 163.5 to 217.8 g) against the 150 g limit; 3.9 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
 3. [proxy.interference] `flipper` and `side_panel_l` overlap by 0.64 mm (allowed 0.08).
    | flipper: x -46.00..46.00  y 2.00..53.00  z -10.50..34.00  size 92.00 x 51.00 x 44.50 mm
@@ -72,40 +72,40 @@ flik: ok=False 12 blockers in 12 root causes, mass 188.9/150 g
    |   joint revolute axis [1, 0, 0] pivot [0, 3, 33.0] range 0..80 default 0
    |   OVERLAP `side_panel_l` 0.64 mm (allowed 0.08)
    |   OVERLAP `side_panel_r` 0.64 mm (allowed 0.08)
-8. [connection.floating] `top_plate` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
-   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+8. [process.geometry] `flipper` (laser): 2 oblique planar face(s): chamfer/bevel; declare `secondary_ops: ["chamfer"]` or remove.
+   fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
+   | flipper: x -46.00..46.00  y 2.00..53.00  z -10.50..34.00  size 92.00 x 51.00 x 44.50 mm
+   |   centre (0.00, 27.50, 11.75), volume 14674.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 3, 33.0] range 0..80 default 0
+   |   OVERLAP `side_panel_l` 0.64 mm (allowed 0.08)
+   |   OVERLAP `side_panel_r` 0.64 mm (allowed 0.08)
+9. [mfg.stock] `flipper` (laser): thickness 2.44 mm is not a stock polycarbonate gauge (0.5, 0.75, 1, 1.5, 2, 3, 4, 5, 6); nearest 2 mm.
+   fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
+   | flipper: x -46.00..46.00  y 2.00..53.00  z -10.50..34.00  size 92.00 x 51.00 x 44.50 mm
+   |   centre (0.00, 27.50, 11.75), volume 14674.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, 3, 33.0] range 0..80 default 0
+   |   OVERLAP `side_panel_l` 0.64 mm (allowed 0.08)
+   |   OVERLAP `side_panel_r` 0.64 mm (allowed 0.08)
+10. [process.geometry] `top_plate` (laser): 3 planar levels along the plate normal (0.00, 1.40, 2.00 mm): a blind pocket, step or a feature standing proud of the plate; a cut part has exactly two faces.
+   fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
    | top_plate: x -36.00..36.00  y -34.00..0.00  z 29.00..31.00  size 72.00 x 34.00 x 2.00 mm
-   |   centre (0.00, -17.00, 30.00), volume 4896.0 mm3
+   |   centre (0.00, -17.00, 30.00), volume 4818.2 mm3
    |   gap to `chassis` 0.00 mm (touching)
-   |   gap to `side_panel_l` 2.00 mm
-   |   gap to `side_panel_r` 2.00 mm
-9. [process.geometry] `flipper` (laser): 2 oblique planar face(s): chamfer/bevel; declare `secondary_ops: ["chamfer"]` or remove.
-   fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
-   | flipper: x -46.00..46.00  y 2.00..53.00  z -10.50..34.00  size 92.00 x 51.00 x 44.50 mm
-   |   centre (0.00, 27.50, 11.75), volume 14674.0 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0, 3, 33.0] range 0..80 default 0
-   |   OVERLAP `side_panel_l` 0.64 mm (allowed 0.08)
-   |   OVERLAP `side_panel_r` 0.64 mm (allowed 0.08)
-10. [mfg.stock] `flipper` (laser): thickness 2.44 mm is not a stock polycarbonate gauge (0.5, 0.75, 1, 1.5, 2, 3, 4, 5, 6); nearest 2 mm.
-   fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
-   | flipper: x -46.00..46.00  y 2.00..53.00  z -10.50..34.00  size 92.00 x 51.00 x 44.50 mm
-   |   centre (0.00, 27.50, 11.75), volume 14674.0 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0, 3, 33.0] range 0..80 default 0
-   |   OVERLAP `side_panel_l` 0.64 mm (allowed 0.08)
-   |   OVERLAP `side_panel_r` 0.64 mm (allowed 0.08)
+   |   gap to `fs_look_top_plate_0` 0.00 mm (touching)
+   |   gap to `fs_look_top_plate_1` 0.00 mm (touching)
 11. [likeness.silhouette] `reference/flik.aws70.webp`: best silhouette IoU 0.79 at camera front_left_iso (elevation 25, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.77). Regions (photo frame, left third first) 0.64 / 0.94 / 0.70: worst = front third. Height/length 0.72 model vs 0.71 photo (proportions ok).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 12. [likeness.silhouette] `reference/flik.aws74.webp`: best silhouette IoU 0.79 at camera front_right_iso (elevation 25, azimuth 60) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.76). Regions (photo frame, left third first) 0.74 / 0.84 / 0.76: worst = front third. Height/length 0.73 model vs 0.64 photo (too tall: lower it or lengthen it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
-  mass 188.9 g of 150 g (-38.9 g margin)
-    chassis                   100.97 g  fills 46% of its box
+  mass 190.7 g of 150 g (-40.7 g margin)
+    chassis                   101.73 g  fills 46% of its box
     flipper                    17.61 g  fills 7% of its box
     el_battery                 12.50 g  fills 100% of its box
     dm_wheel_l0                 9.70 g  fills 66% of its box
     dm_wheel_r0                 9.70 g  fills 66% of its box
     el_servo_flipper            9.00 g  fills 75% of its box
-    top_plate                   5.88 g  fills 100% of its box
+    top_plate                   5.78 g  fills 98% of its box
     side_panel_l                5.70 g  fills 76% of its box
     side_panel_r                5.70 g  fills 76% of its box
     el_rx_esc                   3.50 g  fills 100% of its box
@@ -114,6 +114,10 @@ MASS BUDGET:
     dt_hub_wheel_r0             0.86 g  fills 64% of its box
     dt_hub_wheel_l0             0.86 g  fills 64% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.over: 188.9 g (range 161.9 to 215.8 g) against the 150 g limit; 3.9 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    fs_look_top_plate_0         0.28 g  fills 27% of its box
+    fs_look_top_plate_1         0.28 g  fills 27% of its box
+    fs_look_top_plate_2         0.28 g  fills 27% of its box
+    fs_look_top_plate_3         0.28 g  fills 27% of its box
+    mass.over: 190.7 g (range 163.5 to 217.8 g) against the 150 g limit; 3.9 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: part_geom 0 hit / 15 miss
+cache: part_geom 0 hit / 23 miss

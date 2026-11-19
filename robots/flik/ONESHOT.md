@@ -56,10 +56,9 @@ Notes from the run:
 
 Left (one line each):
 - proxy.interference x4: parts overlap in the kit shape where a cut would change the look or leave a loose piece
+- process.geometry x2: kit weapon shape is not a pure 2D/3-axis profile for its process (look)
 - likeness.silhouette x2: looks (not part of this pass; outside shape kept as round 3)
 - proxy.wiring x1: see verify_r4.txt root causes
 - mass.over x1: outside shape (kept) is heavier than the class limit even with 2.5 mm shells
 - proxy.sweep x1: moving part runs into the chassis more than a running clearance can take without changing the look
-- connection.floating x1: part does not touch the print anywhere (kit geometry); no honest joint to declare
-- process.geometry x1: kit weapon shape is not a pure 2D/3-axis profile for its process (look)
 - mfg.stock x1: bought part with free geometry that is not a stock size

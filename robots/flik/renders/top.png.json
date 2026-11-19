@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_flik/robots/flik/spec.json",
- "rendered_at": 1795045219.697917,
+ "rendered_at": 1795073838.209874,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -16,7 +16,11 @@
   "el_battery",
   "el_rx_esc",
   "el_servo_flipper",
-  "el_switch"
+  "el_switch",
+  "fs_look_top_plate_0",
+  "fs_look_top_plate_1",
+  "fs_look_top_plate_2",
+  "fs_look_top_plate_3"
  ],
  "wires": {
   "w_bat_sw": {
