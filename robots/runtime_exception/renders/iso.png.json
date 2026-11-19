@@ -1,8 +1,9 @@
 {
  "spec": "/tmp/work10_runtime_exception/robots/runtime_exception/spec.json",
- "rendered_at": 1795041856.7611382,
+ "rendered_at": 1795068371.2308724,
  "bodies": [
   "chassis",
+  "top_plate",
   "wheel_l0",
   "wheel_r0",
   "spine",
@@ -14,7 +15,11 @@
   "dm_wheel_r0",
   "el_battery",
   "el_rx_esc",
-  "el_switch"
+  "el_switch",
+  "fs_look_top_plate_0",
+  "fs_look_top_plate_1",
+  "fs_look_top_plate_2",
+  "fs_look_top_plate_3"
  ],
  "wires": {
   "w_bat_sw": {
