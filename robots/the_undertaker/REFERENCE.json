@@ -15,7 +15,9 @@
  },
  "elevation": {
   "the_undertaker.aws65.webp": 45,
-  "the_undertaker.aws66.webp": 25,
-  "the_undertaker.aws67.webp": 25
+  "the_undertaker.aws66.webp": 25
+ },
+ "view_source": {
+  "the_undertaker.aws67.webp": "user camera pick (azimuth 90, elevation 35); replaces the automatic label"
  }
 }
