@@ -58,3 +58,9 @@ Left (and why):
 - likeness.silhouette x1: looks, not in scope for this pass.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): mini_e.aws72.webp 0.8 -> 0.8; mini_e.aws76.webp 0.66 -> 0.66
+
+## Round 5 (user notes)
+- Wheel guards: the wheel slots are now top windows (16.5 x 33 mm, 1.5 mm corner radius) with a 4 mm side wall outboard of each wheel, so the wheels sit inside the body as in the photo (the corner radius also closes the open mesh shell the square slots gave).
+- Front wedge: bumper raised to the deck (12 mm, top flush), two M2 countersunk screws at x = +-18 into 6 mm printed bosses (was 1 screw on a 0.09 mm web); skirt is longer (to y = 62) and flares to 118 mm with chamfered front corners: the triangular side facets.
+- Wiring: battery turned so its lead faces the switch; channels cut between the gearmotors and over them, all 4 wires route.
+Blockers 11 -> 2 (likeness on aws76 only); IoU aws72 0.804 -> 0.808, aws76 0.662 -> 0.700.
