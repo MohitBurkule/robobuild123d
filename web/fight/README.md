@@ -7,3 +7,6 @@ MuJoCo WASM + three.js, fully client-side. Robots are the real CAD exports (see 
   LAN: friends open http://<host-ip>:8080. Internet: run server.js on any public host, or put its URL in the "server" field on the static page.
 
 Live: https://robobuild123d.pages.dev/ (Cloudflare Pages: branch dev, no build command, output dir `web/fight`).
+
+## Real robots
+`web/fight/robots/*.json` are exported from the repo specs with `PYTHONPATH=src:. python -m robot.fight.webexport robots/<name>/spec.json` (true part hulls, masses, inertias, wheel/weapon hinges, drive + weapon motor data; total scaled to 150 g). The game builds MJCF from them (`sim.js`) and uses the arenas of `robot/fight/arenas.py`. Scythe and Ripsaw do not build yet, so they are not in the roster. Each slot is Human or AI.
