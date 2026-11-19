@@ -21,6 +21,7 @@ from __future__ import annotations
 import itertools
 import json
 import math
+from pathlib import Path
 
 import numpy as np
 
@@ -101,8 +102,9 @@ def _static(p):
 
 
 def main(path, part, face="+z", pattern="corners", n_pts=4, inset=4.0, at="", plug=False, dry=False):
-    from . import spec as spec_mod, world as world_mod
-    raw = json.load(open(path))
+    from . import spec as spec_mod
+    from . import world as world_mod
+    raw = json.loads(Path(path).read_text())
     byid = {p["id"]: p for p in raw["parts"]}
     if part not in byid:
         raise SystemExit(f"no part {part}")
@@ -205,11 +207,11 @@ def main(path, part, face="+z", pattern="corners", n_pts=4, inset=4.0, at="", pl
         print(f"{len(added)} screw(s){' (dry run)' if dry else ''}")
         return 0
     raw.setdefault("fasteners", []).extend(added)
-    json.dump(raw, open(path, "w"), indent=1)
+    Path(path).write_text(json.dumps(raw, indent=1))
     from .fasten_fill import main as fill
     fill(path, fill=True)
     # the hole record measures grip on the built geometry; if that leaves < 2.5 d of thread, take the next stock length
-    raw = json.load(open(path)); by = {p["id"]: p for p in raw["parts"]}; bumped = 0
+    raw = json.loads(Path(path).read_text()); by = {p["id"]: p for p in raw["parts"]}; bumped = 0
     for f in raw["fasteners"]:
         if f["id"] not in room or not f.get("hole"):
             continue
@@ -225,7 +227,7 @@ def main(path, part, face="+z", pattern="corners", n_pts=4, inset=4.0, at="", pl
         _add_cut(host, _cyl_cut(host, a_ + d_ * (L0 - 0.2), d_, PILOT_R, L1 - L0 + 0.6))
         f["designation"] = f"M2x{L1:g}"; f.pop("hole", None); bumped += 1
     if bumped:
-        json.dump(raw, open(path, "w"), indent=1)
+        Path(path).write_text(json.dumps(raw, indent=1))
         fill(path, fill=True)
         print(f"{bumped} screw(s) lengthened to keep >= 2.5 d of thread")
     print(f"{len(added)} screw(s) added to {path}")
