@@ -8,5 +8,21 @@
   "bolt.aws57.webp",
   "bolt.aws60.webp",
   "bolt.aws63.webp"
+ ],
+ "view": {
+  "bolt.aws57.webp": "right",
+  "bolt.aws63.webp": "front_right_iso",
+  "bolt.aws60.webp": "rear_left_iso"
+ },
+ "elevation": {
+  "bolt.aws63.webp": 45
+ },
+ "view_source": {
+  "bolt.aws57.webp": "user camera pick (azimuth 0, elevation 35); replaces the automatic label",
+  "bolt.aws63.webp": "user camera pick (azimuth 45, elevation 60); replaces the automatic label",
+  "bolt.aws60.webp": "user camera pick (azimuth 240, elevation 35); replaces the automatic label"
+ },
+ "rear_ok": [
+  "bolt.aws60.webp"
  ]
 }
