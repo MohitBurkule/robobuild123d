@@ -655,3 +655,12 @@ def test_cut_breakout_still_fails_at_a_free_edge():
             p["shape"] = sub(box(60, 60, 5, (0, 0, 2.5)), cyl(2, 12, (27.5, 0, 3.5), (0, 90, 0)), cyl(2, 12, (25, 0, 0), (0, 90, 0)))
     res, _ = run(d)
     assert failed(res, "arch.cut_breakout"), [(f.severity, f.message) for f in res.get("arch.cut_breakout", [])]
+
+
+def test_cut_breakout_ignores_a_bore_that_opens_into_the_mate_declared_slot():
+    d = _clamshell(spinner())
+    for p in d["parts"]:
+        if p["id"] == "tub":
+            p["shape"] = sub(box(60, 60, 5, (0, 0, -2.5)), cyl(2, 12, (25, 0, 0), (0, 90, 0)), box(12, 16, 5, (25, 0, -2.5)))
+    res, _ = run(d)
+    assert passed(res, "arch.cut_breakout"), [(f.severity, f.message) for f in res.get("arch.cut_breakout", [])]

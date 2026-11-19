@@ -23,7 +23,13 @@ from ..spec import Spec
 
 # Bumped whenever a check is added or changed. 7 = the Rust crate's revision; 8 adds belt/fork tension (python port); 9 adds
 # wheel running clearance, wheel exposure, targets, fused/key/tape/press-fit evidence, stall-current battery peak.
-CHECKS_REVISION = 30  # 30 makes cut_breakout seam-aware (a bore tangent to a clamshell split plane is judged against one half alone and read as a breakout; the ring at r + lim is now checked against mating structural solids, so a hole the mating half carries across the seam passes while a real edge breakout still fails); 29 refines intent first_contact to sub-step bisection (surface sampling could miss the last sub-millimetre and report the next 0.05 grid step); 26 adds rf (receiver/antenna placement, G6), traction (COM over the drive contact patch, G9) and builder (design vs the builder machine/shelf/tools/budget, E3); 25 merges batch B (engagement G3, tool_access G4, wire_care G5) and batch C (rest F3, clearance G8, service F6); 24 adds requirements; 23 adds thermal and impact; 21 adds waiver_audit, geom, dfm; 20 adds robust; 19 adds visual and wire.render_wires; 18 adds integrity; 17 merges fix-T; 15 adds param and sharp_corner; 14 adds the design-review groups; 13 adds intent; 12 adds threat; 10 adds internal; 11 adds bom and connection.cover_fasteners
+CHECKS_REVISION = 31  # 31 completes the seam-aware cut_breakout: the ring points the mating half does not carry as
+# material may fall into material one of its declared cuts removed (a split-plane shaft bore opening into the tyre
+# slot or the motor pocket was misread as a breakout); declared voids now carry the ring too, real free-edge breakouts
+# still fail
+# 30 made cut_breakout seam-aware (a bore tangent to a clamshell split plane is judged against one half alone and read
+# as a breakout; the ring at r + lim is checked against mating structural solids, so a hole the mating half carries
+# across the seam passes while a real edge breakout still fails); 29 refines intent first_contact to sub-step bisection (surface sampling could miss the last sub-millimetre and report the next 0.05 grid step); 26 adds rf (receiver/antenna placement, G6), traction (COM over the drive contact patch, G9) and builder (design vs the builder machine/shelf/tools/budget, E3); 25 merges batch B (engagement G3, tool_access G4, wire_care G5) and batch C (rest F3, clearance G8, service F6); 24 adds requirements; 23 adds thermal and impact; 21 adds waiver_audit, geom, dfm; 20 adds robust; 19 adds visual and wire.render_wires; 18 adds integrity; 17 merges fix-T; 15 adds param and sharp_corner; 14 adds the design-review groups; 13 adds intent; 12 adds threat; 10 adds internal; 11 adds bom and connection.cover_fasteners
 
 
 # Every group, its kind (design | parity) and tier (inner | full | nightly) live in registry.py; GROUPS is the old

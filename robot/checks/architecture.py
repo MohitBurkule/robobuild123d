@@ -2043,12 +2043,13 @@ def _base_of(shape):
     return shape
 
 
-def _seam_carries(mates, b, cc, ax, u, r, lim, piece):
-    """True when the material this piece lacks around the hole is supplied across an assembly seam by a mating structural part.
+def _seam_carries(mates, mate_voids, b, cc, ax, u, r, lim, piece):
+    """True when the material this piece lacks around the hole is supplied across the assembly.
 
     Samples the ring at radius r + lim (where web material is required): points inside this piece are fine; every point
-    outside it must land inside the part itself (another lobe) or a mating structural solid, else the hole genuinely
-    breaks out of the assembly.
+    outside it must land inside the part itself (another lobe), a mating structural solid, or material a declared cut
+    opened out of a mating part (the clamshell split-plane bore continues into the mating half's own bore, a pocket or
+    a slot - intentional openings, not breakouts). Otherwise the hole genuinely breaks out of the assembly.
     """
     v = np.cross(ax, u)
     ang = np.linspace(0, 2 * np.pi, 24, endpoint=False)
@@ -2069,6 +2070,10 @@ def _seam_carries(mates, b, cc, ax, u, r, lim, piece):
             skin = (rest[:, None, :] + o[None, :, :]).reshape(-1, 3)
             hit[np.flatnonzero(~hit)] = m.inside(skin).reshape(len(rest), -1).any(axis=1)
         pts3 = pts3[~hit]
+        if not len(pts3):
+            return True
+    for m, mb in mate_voids:
+        pts3 = pts3[~(mb.inside(pts3) & ~m.inside(pts3))]
         if not len(pts3):
             return True
     return False
@@ -2101,6 +2106,19 @@ def cut_breakout(a):
         # An elastomer (TPU) web stretches instead of cracking out: 1 mm holds a screw or a standoff bore (RVRN wedglet).
         lim = 1.0 if (mat is not None and mat.cls == "elastomer") else max(1.0, 1.5 * wall)
         mates = [s for s in a.solids if s is not b and s.kind in STRUCT and measure.aabb_overlap(s.aabb, b.aabb, 2.0)]
+        mate_voids = []
+        for m in mates:
+            mp = a.r.parts[m.part_idx] if m.part_idx is not None else None
+            if mp is None or not isinstance(mp.shape, dict):
+                continue
+            try:
+                mbg = geom_mod.geom_for(_base_of(mp.shape), a.spec.base_dir, geom_mod.FAST)
+            except Exception:  # noqa: BLE001
+                continue
+            mb = m.placed(m.M)
+            mb.geom = mbg
+            mb._mesh = None
+            mate_voids.append((m, mb))
         for Mc, r, hgt in cuts:
             W = b.M @ Mc
             c, ax = W[:3, 3], _unit(W[:3, 2])
@@ -2126,7 +2144,7 @@ def cut_breakout(a):
                     w = 0.0
                 else:
                     w = float(piece.boundary.distance(Point(0, 0))) - r
-                if w < lim and _seam_carries(mates, b, cc, ax, u, r, lim, piece):
+                if w < lim and _seam_carries(mates, mate_voids, b, cc, ax, u, r, lim, piece):
                     continue
                 web = min(web, w)
             if web >= 1e8:
