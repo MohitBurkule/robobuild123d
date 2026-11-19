@@ -21,6 +21,7 @@ import numpy as np
 
 from .. import catalog
 from ..finding import BLOCKER, fail, ok
+from .arm_sweep import is_arm
 from ..spec import ELECTRONIC
 
 G = "process"
@@ -577,7 +578,9 @@ def run(ctx):
             out.append(fail("process.unknown", G, BLOCKER, "Unknown process", f"`{p.id}`: process `{raw}` is unknown" + _did_you_mean(raw) + ".")
                        .on(p.id).fix("Use one of: " + ", ".join(sorted(set(catalog.PROCESS_ALIASES)))))
             continue
-        if p.kind == "weapon" and canon in ("fdm", "sla"):
+        # Printed teeth shatter at spinner tip speeds; a hinged lifter / flipper / axe arm is a printed lever by design
+        # (its loads are judged by the strength group), so the hardened-insert rule is for spinning weapons only.
+        if p.kind == "weapon" and canon in ("fdm", "sla") and not is_arm(p.weapon):
             teeth = [q.part.id for q in r.parts if q.part.id != p.id and (q.part.parent == p.id or q.part.fused_with == p.id)
                      and catalog.sheet_family(q.part.material) in catalog.HARD_SHEET]
             if not teeth:
