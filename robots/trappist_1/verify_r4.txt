@@ -1,37 +1,37 @@
 BLOCKERS: 8
-  [ran] integrity 0.10s
-  [proxy] wiring 1.34s
+  [ran] integrity 0.11s
+  [proxy] wiring 1.14s
   [ran] mass 0.00s
-  [proxy] interference 24.78s
-  [ran] connections 2.33s
-  [ran] legal 0.03s
+  [proxy] interference 17.84s
+  [ran] connections 2.44s
+  [ran] legal 0.02s
   [ran] fasteners 0.00s
   [ran] power 0.00s
   [ran] tension 0.00s
-  [ran] targets 0.01s
-  [ran] fight 0.04s
-  [ran] shape 0.60s
-  [ran] dynamics 0.01s
+  [ran] targets 0.00s
+  [ran] fight 0.03s
+  [ran] shape 0.51s
+  [ran] dynamics 0.00s
   [ran] strength 0.00s
-  [ran] printability 0.91s
-  [ran] process 0.00s
-  [ran] electrical 0.75s
-  [ran] combat 0.16s
-  [ran] physics 0.00s
+  [ran] printability 1.04s
+  [ran] process 0.01s
+  [ran] electrical 0.65s
+  [ran] combat 0.14s
+  [ran] physics 0.01s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
-  [ran] fit 0.13s
+  [ran] fit 0.12s
   [ran] bom 0.01s
   [ran] wire_review 0.29s
-  [ran] fastener_record 0.00s
-  [ran] likeness 15.49s
+  [ran] fastener_record 0.01s
+  [ran] likeness 14.04s
   [ran] drive_recess 0.00s
   [ran] belt_wrap 0.00s
-  [ran] retention 0.17s
-  [ran] waiver_audit 0.02s
-  [ran] geom 0.45s
-  [ran] dfm 0.36s
-  [ran] realworld 1.21s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.22s
+  [ran] dfm 0.15s
+  [ran] realworld 0.65s
 trappist 1: ok=False 8 blockers in 8 root causes, mass 148.1/150 g
 1. [proxy.interference] `wire_l` and `wire_x` overlap by 0.93 mm (allowed 0.08).
    | wire_l: x 13.00..15.00  y -85.00..-25.00  z 14.00..16.00  size 2.00 x 60.00 x 2.00 mm
