@@ -1,41 +1,41 @@
 BLOCKERS: 0
-  [ran] integrity 0.05s
-  [proxy] wiring 1.89s
+  [ran] integrity 0.06s
+  [proxy] wiring 1.67s
   [ran] mass 0.00s
-  [proxy] interference 12.89s
-  [ran] connections 0.01s
+  [proxy] interference 12.54s
+  [ran] connections 0.00s
   [ran] legal 0.01s
   [ran] fasteners 0.00s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
-  [ran] fight 0.01s
-  [ran] shape 0.39s
+  [ran] fight 0.02s
+  [ran] shape 0.54s
   [ran] dynamics 0.00s
-  [ran] strength 0.00s
-  [ran] printability 1.17s
+  [ran] strength 0.04s
+  [ran] printability 1.20s
   [ran] process 0.00s
-  [ran] electrical 8.79s
+  [ran] electrical 8.27s
   [ran] combat 0.09s
   [ran] physics 0.00s
-  [ran] plausibility 0.01s
+  [ran] plausibility 0.00s
   [ran] cots 0.00s
-  [ran] fit 0.08s
+  [ran] fit 0.07s
   [ran] bom 0.00s
-  [ran] wire_review 1.04s
+  [ran] wire_review 0.95s
   [ran] fastener_record 0.00s
-  [ran] likeness 31.86s
-  [ran] drive_recess 0.01s
+  [ran] likeness 38.44s
+  [ran] drive_recess 0.00s
   [ran] belt_wrap 0.00s
   [ran] retention 0.00s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.14s
+  [ran] geom 0.12s
   [ran] dfm 0.06s
-  [ran] realworld 4.08s
-hot flip: ok=True 0 blockers in 0 root causes, mass 148.8/150 g
+  [ran] realworld 3.90s
+hot flip: ok=True 0 blockers in 0 root causes, mass 149.5/150 g
 MASS BUDGET:
-  mass 148.8 g of 150 g (+1.2 g margin)
-    chassis                    87.70 g  fills 16% of its box
+  mass 149.5 g of 150 g (+0.5 g margin)
+    chassis                    87.89 g  fills 16% of its box
     el_battery                 12.50 g  fills 100% of its box
     dm_wheel_l0                 9.50 g  fills 63% of its box
     dm_wheel_r0                 9.50 g  fills 63% of its box
@@ -47,6 +47,8 @@ MASS BUDGET:
     dt_hub_wheel_r0             0.92 g  fills 75% of its box
     dt_hub_wheel_l0             0.92 g  fills 75% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.may_be_over: 148.8 g (range 121.0 to 176.7 g) against the 150 g limit; 6.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    fs_look_chassis_0           0.21 g  fills 30% of its box
+    fs_look_chassis_1           0.21 g  fills 30% of its box
+    mass.may_be_over: 149.5 g (range 121.5 to 177.4 g) against the 150 g limit; 6.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: distance 0 hit / 6 miss, group 0 hit / 31 miss, inside 6 hit / 8 miss, likeness 1 hit / 0 miss, min_gap 0 hit / 1 miss, overlap 100 hit / 89 miss, part_check 5 hit / 1 miss, part_geom 12 hit / 0 miss, ray 52 hit / 49 miss
+cache: distance 1 hit / 5 miss, group 0 hit / 31 miss, inside 11 hit / 9 miss, likeness 1 hit / 0 miss, min_gap 1 hit / 0 miss, overlap 100 hit / 89 miss, part_check 5 hit / 1 miss, part_geom 38 hit / 0 miss, ray 57 hit / 54 miss
