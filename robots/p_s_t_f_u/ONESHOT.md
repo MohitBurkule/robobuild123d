@@ -51,3 +51,8 @@ Notes from the run:
 
 Left (one line each):
 - likeness.silhouette x1: looks (not part of this pass; outside shape kept as round 3)
+
+## Round 5 (user note: metal wedge, yellow rails both sides)
+- Front: the printed tilted blade ("catcher") is now a 1.2 mm aluminium laser-cut wedge plate lying on a steeper chassis nose ramp (69 deg, ramp top y 33), full width over the rails (116 mm) with 8 mm chamfered bottom corners, top edge 3 mm proud of the deck, 3 M2 button heads normal to the face (clearance holes cut in the plate).
+- Yellow rails on both sides: `rail` (+x) and `rail_2` = its mirror about x = 0.
+- Blockers (`verify --tier inner`, fresh cache) 1 -> 1 (likeness.silhouette, below 0.80 at the forced elevation-45 camera). Likeness aws69 0.759 -> 0.774. Mass 138.4 -> 148.3 g.

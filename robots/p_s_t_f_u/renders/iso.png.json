@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_p_s_t_f_u/robots/p_s_t_f_u/spec.json",
- "rendered_at": 1795078552.5438647,
+ "rendered_at": 1795085739.514121,
  "bodies": [
   "chassis",
   "top_plate",
@@ -9,6 +9,7 @@
   "wheel_l1",
   "wheel_r1",
   "rail",
+  "rail_2",
   "front_plate",
   "dt_hub_wheel_l0",
   "dt_hub_wheel_r0",
