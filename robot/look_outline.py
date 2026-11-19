@@ -200,8 +200,11 @@ def outline(path, part, kind, edge, A, B=None, span=None, wall=1.6, force=False,
     incut = _inside_poly(G[:, [i1, i2]], poly)
     # skin: points within `wall` of the cut region (2-D distance by dilating the polygon test on offsets)
     near = np.zeros(len(G), bool)
-    for du, dv in itertools.product(np.linspace(-wall, wall, 5), repeat=2):
-        if du * du + dv * dv <= wall * wall + 1e-9:
+    # the refill reaches wall * 1.5 past the cut (see _grow below) and fills every pocket there, so a component
+    # sitting in a pocket within that reach (plus 0.3 mm clearance) must refuse the cut
+    rs = wall * 1.5 + 0.3
+    for du, dv in itertools.product(np.linspace(-rs, rs, 7), repeat=2):
+        if du * du + dv * dv <= rs * rs + 1e-9:
             near |= _inside_poly(G[:, [i1, i2]] + np.array([du, dv]), poly)
     skin = near & ~incut
     mine = Bd[part].inside(G)
