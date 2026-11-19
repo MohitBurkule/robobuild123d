@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_wendsleydale/robots/wendsleydale/spec.json",
- "rendered_at": 1795036674.5450869,
+ "rendered_at": 1795057772.1440232,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -18,7 +18,8 @@
   "dm_wheel_r0",
   "el_battery",
   "el_esc",
-  "el_switch"
+  "el_switch",
+  "wa_act"
  ],
  "wires": {}
 }
