@@ -1,8 +1,9 @@
 {
  "spec": "/tmp/work10_bzwroink/robots/bzwroink/spec.json",
- "rendered_at": 1795042982.9834137,
+ "rendered_at": 1795066613.5099177,
  "bodies": [
   "chassis",
+  "top_plate",
   "wheel_l0",
   "wheel_r0",
   "wheel_l1",
@@ -18,7 +19,11 @@
   "dm_wheel_r1",
   "el_battery",
   "el_rx_esc",
-  "el_switch"
+  "el_switch",
+  "fs_look_top_plate_0",
+  "fs_look_top_plate_1",
+  "fs_look_top_plate_2",
+  "fs_look_top_plate_3"
  ],
  "wires": {
   "w_bat_sw": {

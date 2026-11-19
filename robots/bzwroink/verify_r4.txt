@@ -1,39 +1,39 @@
 BLOCKERS: 1
-  [ran] integrity 0.09s
-  [proxy] wiring 2.62s
+  [ran] integrity 0.11s
+  [proxy] wiring 3.19s
   [ran] mass 0.01s
-  [proxy] interference 14.90s
-  [ran] connections 2.58s
-  [ran] legal 0.02s
-  [ran] fasteners 0.00s
+  [proxy] interference 15.49s
+  [ran] connections 2.36s
+  [ran] legal 0.03s
+  [ran] fasteners 0.17s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
-  [ran] fight 0.02s
-  [ran] shape 0.47s
+  [ran] fight 0.04s
+  [ran] shape 0.57s
   [ran] dynamics 0.00s
-  [ran] strength 0.00s
-  [ran] printability 0.79s
-  [ran] process 0.00s
+  [ran] strength 0.12s
+  [ran] printability 1.05s
+  [ran] process 0.01s
   [ran] electrical 0.00s
-  [ran] combat 0.09s
+  [ran] combat 0.12s
   [ran] physics 0.00s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
-  [ran] fit 0.09s
+  [ran] fit 0.14s
   [ran] bom 0.01s
-  [ran] wire_review 0.01s
+  [ran] wire_review 0.02s
   [ran] fastener_record 0.00s
-  [ran] likeness 22.35s
+  [ran] likeness 21.48s
   [ran] drive_recess 0.00s
   [ran] belt_wrap 0.00s
   [ran] retention 0.00s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.23s
+  [ran] geom 0.26s
   [ran] dfm 0.14s
-  [ran] realworld 0.12s
-bzwroink: ok=False 1 blockers in 1 root causes, mass 127.1/150 g
+  [ran] realworld 0.15s
+bzwroink: ok=False 1 blockers in 1 root causes, mass 128.8/150 g
 1. [likeness.silhouette] `reference/bzwroink.aws68.webp`: best silhouette IoU 0.46 at camera rear_right_iso (elevation 25, azimuth 300) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.49). Regions (photo frame, left third first) 0.04 / 0.65 / 0.68: worst = front third. Height/length 0.53 model vs 0.86 photo (too flat: raise it or shorten it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: part_geom 0 hit / 17 miss
+cache: part_geom 0 hit / 22 miss
