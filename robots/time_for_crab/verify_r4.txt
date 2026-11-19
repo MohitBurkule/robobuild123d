@@ -1,121 +1,114 @@
-BLOCKERS: 21
-  [cached] integrity 0.00s
-  [cached] mass 0.00s
-  [proxy] interference 0.09s
-  [cached] connections 0.00s
-  [cached] legal 0.00s
-  [cached] fasteners 0.00s
-  [cached] power 0.00s
-  [cached] tension 0.00s
-  [cached] targets 0.00s
-  [cached] fight 0.00s
-  [cached] shape 0.00s
-  [cached] dynamics 0.00s
-  [cached] strength 0.00s
-  [cached] printability 0.00s
-  [cached] process 0.00s
-  [cached] electrical 0.00s
-  [cached] combat 0.00s
-  [cached] physics 0.00s
-  [cached] plausibility 0.00s
-  [cached] cots 0.00s
-  [cached] fit 0.00s
-  [cached] bom 0.00s
-  [cached] wire_review 0.00s
-  [cached] fastener_record 0.00s
-  [cached] likeness 0.00s
-  [cached] drive_recess 0.00s
-  [cached] belt_wrap 0.00s
-  [cached] retention 0.00s
-  [cached] waiver_audit 0.00s
-  [cached] geom 0.00s
-  [cached] dfm 0.00s
-  [cached] realworld 0.00s
-time for crab: ok=False 21 blockers in 21 root causes, mass 155.1/150 g
-1. [mass.over] 155.1 g (range 127.8 to 182.4 g) against the 150 g limit; 3.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+BLOCKERS: 16
+  [ran] integrity 0.07s
+  [proxy] wiring 1.67s
+  [ran] mass 0.00s
+  [proxy] interference 10.37s
+  [ran] connections 1.54s
+  [ran] legal 0.03s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.02s
+  [ran] shape 0.48s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.81s
+  [ran] process 0.00s
+  [ran] electrical 1.49s
+  [ran] combat 0.10s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.09s
+  [ran] bom 0.01s
+  [ran] wire_review 1.27s
+  [ran] fastener_record 0.00s
+  [ran] likeness 12.96s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.22s
+  [ran] dfm 0.12s
+  [ran] realworld 1.30s
+time for crab: ok=False 16 blockers in 16 root causes, mass 165.6/150 g
+1. [proxy.wiring] Wire `w_bat_sw` (`el_battery.xt30` to `el_switch.in`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+2. [mass.over] 165.6 g (range 136.7 to 194.5 g) against the 150 g limit; 5.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
-2. [proxy.interference] `chassis` and `claw_l` overlap by 1.61 mm (allowed 0.08).
+3. [proxy.interference] `chassis` and `claw_l` overlap by 1.61 mm (allowed 0.08).
    | chassis: x -46.00..46.00  y -30.00..30.00  z -11.00..13.00  size 92.00 x 60.00 x 24.00 mm
-   |   centre (0.00, -0.00, 1.00), volume 56460.0 mm3
+   |   centre (0.00, -0.00, 1.00), volume 55806.0 mm3
    |   OVERLAP `claw_l` 1.61 mm (allowed 0.08)
    |   OVERLAP `claw_r` 1.61 mm (allowed 0.08)
-   |   overlap allowed `shaft` 1.16 mm (allowed inf)
-3. [proxy.interference] `chassis` and `claw_r` overlap by 1.61 mm (allowed 0.08).
+   |   overlap allowed `shaft` 1.48 mm (allowed inf)
+4. [proxy.interference] `chassis` and `claw_r` overlap by 1.61 mm (allowed 0.08).
    | chassis: x -46.00..46.00  y -30.00..30.00  z -11.00..13.00  size 92.00 x 60.00 x 24.00 mm
-   |   centre (0.00, -0.00, 1.00), volume 56460.0 mm3
+   |   centre (0.00, -0.00, 1.00), volume 55806.0 mm3
    |   OVERLAP `claw_l` 1.61 mm (allowed 0.08)
    |   OVERLAP `claw_r` 1.61 mm (allowed 0.08)
-   |   overlap allowed `shaft` 1.16 mm (allowed inf)
-4. [proxy.interference] `claw_l` and `shaft` overlap by 1.38 mm (allowed 0.08).
+   |   overlap allowed `shaft` 1.48 mm (allowed inf)
+5. [proxy.interference] `claw_l` and `shaft` overlap by 1.38 mm (allowed 0.08).
    | claw_l: x 14.00..46.00  y 25.00..86.00  z -12.00..13.00  size 32.00 x 61.00 x 25.00 mm
    |   centre (30.00, 55.50, 0.50), volume 26875.0 mm3
    |   joint revolute axis [1, 0, 0] pivot [0, 25, -1.0] range 0..80 default 0
    |   OVERLAP `chassis` 1.61 mm (allowed 0.08)
    |   OVERLAP `shaft` 1.38 mm (allowed 0.08)
-5. [proxy.interference] `claw_r` and `shaft` overlap by 1.38 mm (allowed 0.08).
+6. [proxy.interference] `claw_r` and `shaft` overlap by 1.38 mm (allowed 0.08).
    | claw_r: x -46.00..-14.00  y 25.00..86.00  z -12.00..13.00  size 32.00 x 61.00 x 25.00 mm
    |   centre (-30.00, 55.50, 0.50), volume 26875.0 mm3
    |   joint revolute axis [1, 0, 0] pivot [0, 25, -1.0] range 0..80 default 0
    |   OVERLAP `chassis` 1.61 mm (allowed 0.08)
    |   OVERLAP `shaft` 1.38 mm (allowed 0.08)
-6. [proxy.sweep] joint `claw_l`: `claw_l` hits `chassis` 1.61 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint claw_l` lists the closest approach to every part.
+7. [proxy.sweep] joint `claw_l`: `claw_l` hits `chassis` 1.61 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint claw_l` lists the closest approach to every part.
    | claw_l: x 14.00..46.00  y 25.00..86.00  z -12.00..13.00  size 32.00 x 61.00 x 25.00 mm
    |   centre (30.00, 55.50, 0.50), volume 26875.0 mm3
    |   joint revolute axis [1, 0, 0] pivot [0, 25, -1.0] range 0..80 default 0
    |   OVERLAP `chassis` 1.61 mm (allowed 0.08)
    |   OVERLAP `shaft` 1.38 mm (allowed 0.08)
-7. [proxy.sweep] joint `claw_r`: `claw_r` hits `chassis` 1.61 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint claw_r` lists the closest approach to every part.
+8. [proxy.sweep] joint `claw_r`: `claw_r` hits `chassis` 1.61 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint claw_r` lists the closest approach to every part.
    | claw_r: x -46.00..-14.00  y 25.00..86.00  z -12.00..13.00  size 32.00 x 61.00 x 25.00 mm
    |   centre (-30.00, 55.50, 0.50), volume 26875.0 mm3
    |   joint revolute axis [1, 0, 0] pivot [0, 25, -1.0] range 0..80 default 0
    |   OVERLAP `chassis` 1.61 mm (allowed 0.08)
    |   OVERLAP `shaft` 1.38 mm (allowed 0.08)
-8. [power.weapon_motor] `claw_l` names motor None; it must be a catalog brushless motor so speed can be computed.
-   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
-   | claw_l: x 14.00..46.00  y 25.00..86.00  z -12.00..13.00  size 32.00 x 61.00 x 25.00 mm
-   |   centre (30.00, 55.50, 0.50), volume 26875.0 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0, 25, -1.0] range 0..80 default 0
-   |   OVERLAP `chassis` 1.61 mm (allowed 0.08)
-   |   OVERLAP `shaft` 1.38 mm (allowed 0.08)
-9. [power.weapon_motor] `claw_r` names motor None; it must be a catalog brushless motor so speed can be computed.
-   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
+9. [retention.loose] `el_act_claw_l` can move more than 0.5 mm toward +x, -x, +y, -y, +z, -z without touching anything (captive means at most 0.5 mm of play in every direction); in a hit it will fall out or rattle.
+   fix: Make the pocket snug on that side (0.2 to 0.5 mm gap), add a retaining rib or strap, or declare how it is held in `retained` (tape, adhesive, velcro, press_fit).
+   | el_act_claw_l: x -15.54..14.56  y 16.02..26.02  z -8.99..3.01  size 30.10 x 10.00 x 12.00 mm
+   |   centre (-0.49, 21.02, -2.99), volume 2404.7 mm3
+   |   port terminals: (-15.84, 21.02, -2.99)
+   |   gap to `chassis` 0.50 mm
+   |   gap to `shaft` 0.50 mm
+10. [power.weapon_motor] lifter `claw_r` has no actuator (`weapon.motor` / `actuated_by`).
+   fix: Add a catalog servo (e.g. `servo_cs07`) or geared motor and name it in `weapon.motor` (or `actuated_by`); a brushless motor needs `weapon.reduction` >= 10.
    | claw_r: x -46.00..-14.00  y 25.00..86.00  z -12.00..13.00  size 32.00 x 61.00 x 25.00 mm
    |   centre (-30.00, 55.50, 0.50), volume 26875.0 mm3
    |   joint revolute axis [1, 0, 0] pivot [0, 25, -1.0] range 0..80 default 0
    |   OVERLAP `chassis` 1.61 mm (allowed 0.08)
    |   OVERLAP `shaft` 1.38 mm (allowed 0.08)
-10. [process.weapon_printed] Weapon `claw_l` is fdm-printed with no hardened metal insert teeth.
-   fix: Make it metal (sheet_cut / turned / milled) or add hardened steel tooth parts (`parent` = the weapon).
-   | claw_l: x 14.00..46.00  y 25.00..86.00  z -12.00..13.00  size 32.00 x 61.00 x 25.00 mm
-   |   centre (30.00, 55.50, 0.50), volume 26875.0 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0, 25, -1.0] range 0..80 default 0
-   |   OVERLAP `chassis` 1.61 mm (allowed 0.08)
-   |   OVERLAP `shaft` 1.38 mm (allowed 0.08)
-11. [process.weapon_printed] Weapon `claw_r` is fdm-printed with no hardened metal insert teeth.
-   fix: Make it metal (sheet_cut / turned / milled) or add hardened steel tooth parts (`parent` = the weapon).
-   | claw_r: x -46.00..-14.00  y 25.00..86.00  z -12.00..13.00  size 32.00 x 61.00 x 25.00 mm
-   |   centre (-30.00, 55.50, 0.50), volume 26875.0 mm3
-   |   joint revolute axis [1, 0, 0] pivot [0, 25, -1.0] range 0..80 default 0
-   |   OVERLAP `chassis` 1.61 mm (allowed 0.08)
-   |   OVERLAP `shaft` 1.38 mm (allowed 0.08)
-12. [electrical.battery_weapon_gap] Battery is -12.5 mm from the weapon's swept volume (need >= 3 mm plus a wall).
-   fix: Move the battery >= 3 mm from the swept volume.
-... 9 more root causes (fix these first, then re-run)
+11. [wire.render_wires] 2 of 2 robot render(s) do not draw all 7 wires: renders/iso.png: wire `w_bat_sw` not drawn; renders/top.png: wire `w_bat_sw` not drawn
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+12. [wire.render_count] iso.png: 6 routes vs 7 spec wires (missing ['w_bat_sw']); top.png: 6 routes vs 7 spec wires (missing ['w_bat_sw'])
+   fix: Re-render: the render record must list exactly the spec's wires.
+... 4 more root causes (fix these first, then re-run)
 MASS BUDGET:
-  mass 155.1 g of 150 g (-5.1 g margin)
-    chassis                    53.75 g  fills 43% of its box
+  mass 165.6 g of 150 g (-15.6 g margin)
+    chassis                    53.13 g  fills 42% of its box
     claw_l                     25.59 g  fills 55% of its box  <- solid block? a tub should be a shell
     claw_r                     25.59 g  fills 55% of its box  <- solid block? a tub should be a shell
     el_battery                 12.50 g  fills 100% of its box
     dm_wheel_l0                 9.70 g  fills 66% of its box
     dm_wheel_r0                 9.70 g  fills 66% of its box
-    shaft                       3.88 g  fills 58% of its box
+    el_act_claw_l               7.50 g  fills 67% of its box
+    shaft                       4.21 g  fills 63% of its box
     el_rx_esc                   3.50 g  fills 100% of its box
     wheel_l0                    3.16 g  fills 57% of its box
     wheel_r0                    3.16 g  fills 57% of its box
+    el_lesc                     3.00 g  fills 100% of its box
     dt_hub_wheel_l0             1.22 g  fills 65% of its box
     dt_hub_wheel_r0             1.22 g  fills 65% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.over: 155.1 g (range 127.8 to 182.4 g) against the 150 g limit; 3.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.over: 165.6 g (range 136.7 to 194.5 g) against the 150 g limit; 5.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: group 31 hit / 0 miss, min_gap 36 hit / 0 miss, overlap 237 hit / 0 miss, part_geom 13 hit / 0 miss
+cache: part_geom 0 hit / 15 miss
