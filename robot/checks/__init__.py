@@ -66,6 +66,7 @@ class Options:
     strict_catalog: bool = False  # estimated catalog masses count as unverified in the pass/fail decision
     fast: bool = False  # coarse tessellation and grids (quick iteration); verdicts near limits may move
     only: list | None = None  # run only these groups (debugging); wins over `tier`
+    skip_groups: list | None = None  # groups to leave out of the run, whoever asked for them
     tier: str | None = None  # inner | full | nightly (registry.py); None = every group, as before tiers existed
     parity: str = "both"  # "both" | "no" (skip parity groups) | "only" (run just the parity groups)
     combined: bool = False  # the old gate: parity blockers flip `ok` too
@@ -139,7 +140,7 @@ def verify_resolved(r, opts: Options) -> Report:
     rep.timings_s["validity"] = round(time.time() - t0, 3)
     ctx = None
     base_key = _base_key(r, opts) if cache.enabled() else None
-    sel = registry.select(opts.tier, opts.parity, effective_only(r.spec, opts.only), opts.deep)
+    sel = registry.select(opts.tier, opts.parity, effective_only(r.spec, opts.only), opts.deep, getattr(opts, "skip_groups", None))
     rep.tier, rep.gate = (None if opts.only else opts.tier), ("combined" if opts.combined else "design")
     owned = []  # (group, how it ran, its findings) for the per-group table
     # a group listed in GROUPS but not registered (a build without it) still runs fail-closed, as it always did

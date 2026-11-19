@@ -300,8 +300,8 @@
         "shape": {
          "type": "box",
          "size": [
-          17.5,
           36.5,
+          17.5,
           11.5
          ]
         },
@@ -327,9 +327,9 @@
          ]
         },
         "at": [
-         25.513,
+         30.5,
          0.017,
-         -9.489
+         -9.5
         ],
         "rot": [
          0.0,
@@ -348,9 +348,9 @@
          ]
         },
         "at": [
-         -26.487,
+         -30.5,
          0.017,
-         -9.989
+         -9.5
         ],
         "rot": [
          0.0,
@@ -2223,6 +2223,153 @@
        101.314,
        90.002
       ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        104.0,
+        32.0,
+        11.5
+       ]
+      },
+      "at": [
+       0.0,
+       0.0,
+       -6.25
+      ],
+      "rot": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        5.0,
+        5.0,
+        8.0
+       ]
+      },
+      "at": [
+       -20.4,
+       -14.5,
+       -8.5
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        4.0,
+        4.0,
+        12.0
+       ]
+      },
+      "at": [
+       18.1,
+       -4.0,
+       -4.5
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        4.0,
+        4.0,
+        12.0
+       ]
+      },
+      "at": [
+       18.1,
+       4.02,
+       -4.5
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        4.0,
+        4.0,
+        12.0
+       ]
+      },
+      "at": [
+       -18.1,
+       -4.0,
+       -4.5
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        4.0,
+        4.0,
+        12.0
+       ]
+      },
+      "at": [
+       -18.1,
+       4.02,
+       -4.5
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        6.0,
+        12.0,
+        6.0
+       ]
+      },
+      "at": [
+       -2.0,
+       17.0,
+       -4.5
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ]
      }
     ]
    },
@@ -2237,8 +2384,7 @@
     0
    ],
    "color": "#35c935",
-   "print_orientation": "+z",
-   "volume_mm3": 40707.0
+   "print_orientation": "+z"
   },
   {
    "id": "weapon",
@@ -2613,6 +2759,42 @@
        -90.0,
        0.0
       ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 16.5,
+       "height": 90.0
+      },
+      "at": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rot": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 13.5,
+       "height": 60.0
+      },
+      "at": [
+       0.0,
+       0.0,
+       0.0
+      ],
+      "rot": [
+       0.0,
+       90.0,
+       0.0
+      ]
      }
     ]
    },
@@ -2656,8 +2838,7 @@
     "max": 360,
     "default": 0
    },
-   "rotates_with": "rotor_weapon",
-   "volume_mm3": 39955.0
+   "rotates_with": "rotor_weapon"
   },
   {
    "id": "wheel_l0",
@@ -2779,8 +2960,7 @@
    ],
    "color": "#2a2c30",
    "tyre_of": "dt_hub_wheel_l0",
-   "print_orientation": "+z",
-   "volume_mm3": 5261.0
+   "print_orientation": "+z"
   },
   {
    "id": "wheel_r0",
@@ -2902,8 +3082,7 @@
    ],
    "color": "#2a2c30",
    "tyre_of": "dt_hub_wheel_r0",
-   "print_orientation": "+z",
-   "volume_mm3": 5261.0
+   "print_orientation": "+z"
   },
   {
    "id": "fork_0",
@@ -2911,51 +3090,100 @@
    "material": "titanium",
    "process": "laser",
    "shape": {
-    "type": "place",
-    "shape": {
+    "type": "subtract",
+    "base": {
      "type": "place",
      "shape": {
-      "type": "prism",
-      "points": [
-       [
-        -2.5,
-        0
+      "type": "place",
+      "shape": {
+       "type": "prism",
+       "points": [
+        [
+         -2.5,
+         0
+        ],
+        [
+         2.5,
+         0
+        ],
+        [
+         0.625,
+         62.0
+        ],
+        [
+         -0.625,
+         62.0
+        ]
        ],
-       [
-        2.5,
-        0
-       ],
-       [
-        0.625,
-        62.0
-       ],
-       [
-        -0.625,
-        62.0
-       ]
+       "height": 2.0
+      },
+      "at": [
+       0,
+       0,
+       0
       ],
-      "height": 2.0
+      "rot": [
+       -12.0,
+       0,
+       0
+      ]
      },
      "at": [
-      0,
-      0,
-      0
+      -36.0,
+      19.0,
+      -1.8094751692989206
      ],
      "rot": [
-      -12.0,
       0,
-      0
+      0,
+      0.0
+     ],
+     "cut": [
+      {
+       "type": "place",
+       "shape": {
+        "type": "box",
+        "size": [
+         6.0,
+         14.0,
+         44.0
+        ]
+       },
+       "at": [
+        -37.5,
+        38.0,
+        -4.0
+       ],
+       "rot": [
+        0.0,
+        0.0,
+        0.0
+       ]
+      }
      ]
     },
-    "at": [
-     -36.0,
-     19.0,
-     -1.8094751692989206
-    ],
-    "rot": [
-     0,
-     0,
-     0.0
+    "cut": [
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        6.0,
+        14.0,
+        44.0
+       ]
+      },
+      "at": [
+       -37.5,
+       38.0,
+       -4.0
+      ],
+      "rot": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
     ]
    },
    "at": [
@@ -2968,7 +3196,10 @@
     0,
     0
    ],
-   "color": "#9aa3a8"
+   "color": "#9aa3a8",
+   "secondary_ops": [
+    "chamfer"
+   ]
   },
   {
    "id": "fork_1",
@@ -2976,51 +3207,100 @@
    "material": "titanium",
    "process": "laser",
    "shape": {
-    "type": "place",
-    "shape": {
+    "type": "subtract",
+    "base": {
      "type": "place",
      "shape": {
-      "type": "prism",
-      "points": [
-       [
-        -2.5,
-        0
+      "type": "place",
+      "shape": {
+       "type": "prism",
+       "points": [
+        [
+         -2.5,
+         0
+        ],
+        [
+         2.5,
+         0
+        ],
+        [
+         0.625,
+         62.0
+        ],
+        [
+         -0.625,
+         62.0
+        ]
        ],
-       [
-        2.5,
-        0
-       ],
-       [
-        0.625,
-        62.0
-       ],
-       [
-        -0.625,
-        62.0
-       ]
+       "height": 2.0
+      },
+      "at": [
+       0,
+       0,
+       0
       ],
-      "height": 2.0
+      "rot": [
+       -12.0,
+       0,
+       0
+      ]
      },
      "at": [
-      0,
-      0,
-      0
+      36.0,
+      19.0,
+      -1.8094751692989206
      ],
      "rot": [
-      -12.0,
       0,
-      0
+      0,
+      -0.0
+     ],
+     "cut": [
+      {
+       "type": "place",
+       "shape": {
+        "type": "box",
+        "size": [
+         6.0,
+         14.0,
+         44.0
+        ]
+       },
+       "at": [
+        37.5,
+        38.0,
+        -4.0
+       ],
+       "rot": [
+        0.0,
+        0.0,
+        0.0
+       ]
+      }
      ]
     },
-    "at": [
-     36.0,
-     19.0,
-     -1.8094751692989206
-    ],
-    "rot": [
-     0,
-     0,
-     -0.0
+    "cut": [
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        6.0,
+        14.0,
+        60.0
+       ]
+      },
+      "at": [
+       37.5,
+       38.0,
+       -4.0
+      ],
+      "rot": [
+       0.0,
+       0.0,
+       0.0
+      ]
+     }
     ]
    },
    "at": [
@@ -3033,7 +3313,10 @@
     0,
     0
    ],
-   "color": "#9aa3a8"
+   "color": "#9aa3a8",
+   "secondary_ops": [
+    "chamfer"
+   ]
   },
   {
    "id": "endcap_l",
@@ -3096,8 +3379,7 @@
    ],
    "color": "#35c935",
    "fused_with": "end_wedge_l",
-   "print_orientation": "+z",
-   "volume_mm3": 4752.0
+   "print_orientation": "+z"
   },
   {
    "id": "endcap_r",
@@ -3160,79 +3442,6 @@
    ],
    "color": "#35c935",
    "fused_with": "end_wedge_r",
-   "print_orientation": "+z",
-   "volume_mm3": 4752.0
-  },
-  {
-   "id": "hub_l",
-   "kind": "other",
-   "material": "nylon",
-   "process": "fdm",
-   "shape": {
-    "type": "place",
-    "shape": {
-     "type": "cylinder",
-     "radius": 11,
-     "height": 10.5
-    },
-    "at": [
-     50,
-     0,
-     0.0
-    ],
-    "rot": [
-     0,
-     90,
-     0
-    ]
-   },
-   "at": [
-    0,
-    0,
-    0
-   ],
-   "rot": [
-    0,
-    0,
-    0
-   ],
-   "color": "#d8e23a",
-   "print_orientation": "+z"
-  },
-  {
-   "id": "hub_r",
-   "kind": "other",
-   "material": "nylon",
-   "process": "fdm",
-   "shape": {
-    "type": "place",
-    "shape": {
-     "type": "cylinder",
-     "radius": 11,
-     "height": 10.5
-    },
-    "at": [
-     -50,
-     0,
-     0.0
-    ],
-    "rot": [
-     0,
-     90,
-     0
-    ]
-   },
-   "at": [
-    0,
-    0,
-    0
-   ],
-   "rot": [
-    0,
-    0,
-    0
-   ],
-   "color": "#d8e23a",
    "print_orientation": "+z"
   },
   {
@@ -3249,8 +3458,8 @@
        "type": "place",
        "shape": {
         "type": "cylinder",
-        "radius": 22,
-        "height": 2
+        "radius": 10.0,
+        "height": 3.0
        },
        "at": [
         -17,
@@ -3261,54 +3470,6 @@
         0,
         90,
         0
-       ]
-      },
-      {
-       "type": "place",
-       "shape": {
-        "type": "place",
-        "shape": {
-         "type": "prism",
-         "points": [
-          [
-           16.000000000000004,
-           -5.9999999999999964
-          ],
-          [
-           45.0,
-           15.0
-          ],
-          [
-           45.0,
-           25.0
-          ],
-          [
-           16.000000000000004,
-           4.0000000000000036
-          ]
-         ],
-         "height": 3.0
-        },
-        "at": [
-         -16.5,
-         0.0,
-         0.0
-        ],
-        "rot": [
-         90.0,
-         0.0,
-         90.0
-        ]
-       },
-       "at": [
-        0.0,
-        0.0,
-        0.0
-       ],
-       "rot": [
-        0.0,
-        0.0,
-        0.0
        ]
       }
      ]
@@ -3358,43 +3519,6 @@
     0
    ],
    "color": "#b89a3a",
-   "print_orientation": "+z",
-   "volume_mm3": 3333.0
-  },
-  {
-   "id": "weapon_shaft",
-   "kind": "other",
-   "material": "steel",
-   "process": "fdm",
-   "shape": {
-    "type": "place",
-    "shape": {
-     "type": "cylinder",
-     "radius": 2,
-     "height": 84
-    },
-    "at": [
-     -2,
-     40,
-     4.0
-    ],
-    "rot": [
-     0,
-     90,
-     0
-    ]
-   },
-   "at": [
-    0,
-    0,
-    0
-   ],
-   "rot": [
-    0,
-    0,
-    0
-   ],
-   "color": "#9aa3a8",
    "print_orientation": "+z"
   },
   {
@@ -3562,8 +3686,7 @@
     0
    ],
    "color": "#cfe8e0",
-   "print_orientation": "+z",
-   "volume_mm3": 1825.0
+   "print_orientation": "+x"
   },
   {
    "id": "weapon_rail",
@@ -3769,8 +3892,7 @@
    ],
    "color": "#35c935",
    "fused_with": "chassis",
-   "print_orientation": "+z",
-   "volume_mm3": 2528.0
+   "print_orientation": "+z"
   },
   {
    "id": "end_wedge_l",
@@ -3843,8 +3965,7 @@
    ],
    "color": "#35c935",
    "fused_with": "chassis",
-   "print_orientation": "+z",
-   "volume_mm3": 1188.0
+   "print_orientation": "+z"
   },
   {
    "id": "end_wedge_r",
@@ -4002,8 +4123,7 @@
     0
    ],
    "color": "#9fa0a1",
-   "print_orientation": "+z",
-   "volume_mm3": 2173.0
+   "print_orientation": "+z"
   },
   {
    "id": "dt_hub_wheel_r0",
@@ -4111,8 +4231,7 @@
     0
    ],
    "color": "#9fa0a1",
-   "print_orientation": "+z",
-   "volume_mm3": 2173.0
+   "print_orientation": "+z"
   },
   {
    "id": "dt_shaft_weapon",
@@ -4295,32 +4414,37 @@
     0,
     0
    ],
-   "catalog": "bl_1806_2300kv"
+   "catalog": "bl_1806_2300kv",
+   "retained": "press_fit",
+   "retained_reason": "stator clamped between the drum end plate and the frame ring by M3 screws; bell is a shrink fit on the drum bore",
+   "scale_mass_g": 7.0
   },
   {
    "id": "el_battery",
    "kind": "battery",
    "at": [
-    -0.487,
+    -0.207,
     0.017,
     -6.489
    ],
    "rot": [
     0,
     0,
-    270
+    0
    ],
    "catalog": "lipo_2s_350",
    "retained": "velcro",
-   "retained_reason": "velcro pad on the pocket floor; the closed pocket (0.25 mm per side) stops it moving"
+   "retained_reason": "velcro pad on the pocket floor; the closed pocket (0.25 mm per side) stops it moving",
+   "_extra": {},
+   "scale_mass_g": 9.5
   },
   {
    "id": "el_rx_esc",
    "kind": "esc",
    "at": [
-    25.513,
+    30.5,
     0.017,
-    -9.489
+    -9.5
    ],
    "rot": [
     0,
@@ -4329,15 +4453,16 @@
    ],
    "catalog": "malenki_nano",
    "retained": "pocket",
-   "retained_reason": "captured on all six faces by its printed pocket (0.25 mm per side)"
+   "retained_reason": "captured on all six faces by its printed pocket (0.25 mm per side)",
+   "scale_mass_g": 1.5
   },
   {
    "id": "el_wesc",
    "kind": "esc",
    "at": [
-    -26.487,
+    -30.5,
     0.017,
-    -9.989
+    -9.5
    ],
    "rot": [
     0,
@@ -4346,7 +4471,8 @@
    ],
    "catalog": "bbb_brushless_esc_20a",
    "retained": "pocket",
-   "retained_reason": "captured on all six faces by its printed pocket (0.25 mm per side)"
+   "retained_reason": "captured on all six faces by its printed pocket (0.25 mm per side)",
+   "scale_mass_g": 2.0
   },
   {
    "id": "el_switch",
@@ -4371,7 +4497,8 @@
     0
    ],
    "retained": "pocket",
-   "retained_reason": "switch body sits in a 0.1 mm-per-side printed pocket above the belly skin; the pocket walls capture it"
+   "retained_reason": "switch body sits in a 0.1 mm-per-side printed pocket above the belly skin; the pocket walls capture it",
+   "scale_mass_g": 0.5
   },
   {
    "id": "lock_pin",
@@ -4395,8 +4522,7 @@
     90.0,
     0.0
    ],
-   "tethered": true,
-   "volume_mm3": 99.0
+   "tethered": true
   }
  ],
  "fasteners": [],
@@ -4568,6 +4694,12 @@
    "method": "press_fit",
    "reason": "live weapon shaft pressed into the weapon bore (0.05 mm interference) and turning with it",
    "interference_mm": 0.05
+  },
+  {
+   "a": "upright_a",
+   "b": "chassis",
+   "method": "screw",
+   "reason": "M3 button screws through the upright feet into pressed brass inserts in the bar top"
   }
  ],
  "reference": [
