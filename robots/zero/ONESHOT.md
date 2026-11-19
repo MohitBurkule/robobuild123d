@@ -46,7 +46,7 @@ Likeness: aws71 0.69 (FAIL), aws74 0.65 (FAIL), aws76 0.73 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/zero.aws71.webp` is declared `front_left_iso` (IoU 0.69 there) but the model matches it better from front_right_iso (elevation ; [FAIL] likeness.view: `reference/zero.aws74.webp` is declared `front_left_iso` (IoU 0.65 there) but the model matches it better from front_right_iso (elevation 
 
 ## Round 4 (verification, helper 2)
-Blockers r3 39 -> r4 9 (`verify --tier inner`).
+Blockers r3 39 -> r4 5 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -58,16 +58,14 @@ Fixed / changed (inside only, outside kept):
 - power switch on the floor of the body, slider facing down to a 7 x 3 mm slot in the underside (no slot on the top or sides; hollow cavities stay closed behind a wall at every outside face)
 - chassis: aluminium laser is not a flat plate -> printed nylon
 - scoop: aluminium laser is not a flat plate -> printed nylon
-- chassis: a cut was not made (it would open 6 mm2 of outside face; the overlap stays as a finding)
+- chassis: dm_wheel_l0 pocketed to its own outline (0.2 mm clear, so it stays captive); only its shaft bore passes the wall to wheel_l0
 - rod dt_axle_wheel_l0: 2.8 mm stub clear of ['dm_wheel_l0'] printed as the wheel's hub boss
 - rod dt_axle_wheel_r0: 2.8 mm stub clear of ['dm_wheel_r0'] printed as the wheel's hub boss
-- hollowed chassis (wall 2.5, form 0): 112.5 -> 49.8 cm3
+- hollowed chassis (wall 2.5, form 0): 112.5 -> 48.7 cm3
 - hollow skipped scoop: solids 1 vol 0.99
 
 Left (and why):
-- proxy.wiring x3: Wire `w_sw_esc` (`el_switch.out` to `el_esc.bat`): the baseline route is now blocked by `chassis` (3 samples).
-- proxy.interference x1: `chassis` and `dm_wheel_l0` overlap by 4.88 mm (allowed 0.08).
-- fit.interference x1: `dm_wheel_l0` overlaps wall `chassis` by 4.88 mm: it will not go in. No side has 5.08 mm free (free room per side {'-x': 1.5, '+x': 0.0, '-y': -0.0, '+y': -0.0, '-z': -0.0, '+z': -0.0}): grow the pock
+- proxy.wiring x1: Wire `w_sw_esc` (`el_switch.out` to `el_esc.bat`): the baseline route is now blocked by `chassis` (5 samples).
 - likeness.silhouette x3: looks, not in scope for this pass.
 - likeness.view x1: looks, not in scope for this pass.
 
