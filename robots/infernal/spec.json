@@ -217,6 +217,48 @@
         "shape": {
          "type": "box",
          "size": [
+          32.5,
+          23.2,
+          12.500000000000002
+         ]
+        },
+        "at": [
+         0.013,
+         -25.483,
+         13.011
+        ],
+        "rot": [
+         0.0,
+         0.0,
+         0.0
+        ]
+       },
+       {
+        "type": "place",
+        "shape": {
+         "type": "box",
+         "size": [
+          32.5,
+          23.2,
+          12.500000000000002
+         ]
+        },
+        "at": [
+         0.013,
+         -0.483,
+         9.011
+        ],
+        "rot": [
+         0.0,
+         0.0,
+         0.0
+        ]
+       },
+       {
+        "type": "place",
+        "shape": {
+         "type": "box",
+         "size": [
           12.0,
           4.0,
           4.2
@@ -702,6 +744,48 @@
          "shape": {
           "type": "box",
           "size": [
+           37.5,
+           28.2,
+           17.5
+          ]
+         },
+         "at": [
+          0.013,
+          -25.483,
+          13.011
+         ],
+         "rot": [
+          0.0,
+          0.0,
+          0.0
+         ]
+        },
+        {
+         "type": "place",
+         "shape": {
+          "type": "box",
+          "size": [
+           37.5,
+           28.2,
+           17.5
+          ]
+         },
+         "at": [
+          0.013,
+          -0.483,
+          9.011
+         ],
+         "rot": [
+          0.0,
+          0.0,
+          0.0
+         ]
+        },
+        {
+         "type": "place",
+         "shape": {
+          "type": "box",
+          "size": [
            17.0,
            9.0,
            9.2
@@ -1168,8 +1252,8 @@
       "type": "place",
       "shape": {
        "type": "cylinder",
-       "radius": 3.4829999999999997,
-       "height": 11.656
+       "radius": 3.413,
+       "height": 11.426
       },
       "at": [
        -4.974,
@@ -1177,9 +1261,9 @@
        0.02
       ],
       "rot": [
-       0.4,
-       90.37400000000001,
-       -90.28800000000001
+       0.0,
+       90.004,
+       -89.998
       ]
      },
      {
@@ -1199,6 +1283,186 @@
        90.399,
        -179.392
       ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 2.6390000000000002,
+       "height": 4.739552812808815
+      },
+      "at": [
+       -13.948,
+       15.978,
+       -6.212
+      ],
+      "rot": [
+       0.0,
+       75.976,
+       0.007
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 3.052,
+       "height": 33.90984360149872
+      },
+      "at": [
+       -12.935,
+       0.965,
+       -2.453
+      ],
+      "rot": [
+       0.0,
+       76.882,
+       -89.991
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 3.465,
+       "height": 12.47427190999916
+      },
+      "at": [
+       -8.922,
+       -14.048,
+       3.056
+      ],
+      "rot": [
+       0.0,
+       63.455,
+       0.011
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 2.4779999999999998,
+       "height": 18.555999999999997
+      },
+      "at": [
+       -4.909,
+       -22.061,
+       5.066
+      ],
+      "rot": [
+       0.0,
+       90.024,
+       -89.987
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 2.491,
+       "height": 8.582
+      },
+      "at": [
+       -7.896,
+       -30.074,
+       5.075
+      ],
+      "rot": [
+       0.0,
+       90.028,
+       180.015
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 2.413,
+       "height": 11.618388155425125
+      },
+      "at": [
+       -11.224,
+       -27.746,
+       9.02
+      ],
+      "rot": [
+       0.0,
+       29.512,
+       96.342
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 3.649,
+       "height": 19.59524862054151
+      },
+      "at": [
+       -13.948,
+       14.478,
+       1.538
+      ],
+      "rot": [
+       1.2000000000000002,
+       14.638,
+       -124.55300000000001
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 2.452,
+       "height": 5.503999999999999
+      },
+      "at": [
+       -16.435,
+       12.965,
+       9.047
+      ],
+      "rot": [
+       0.0,
+       90.016,
+       180.009
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 2.465,
+       "height": 15.530000000000001
+      },
+      "at": [
+       -17.922,
+       6.452,
+       9.056
+      ],
+      "rot": [
+       0.0,
+       90.02,
+       -89.989
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 2.4779999999999998,
+       "height": 9.075202405202662
+      },
+      "at": [
+       -14.659,
+       -0.311,
+       9.066
+      ],
+      "rot": [
+       0.0,
+       90.024,
+       -4.385
+      ]
      }
     ]
    },
@@ -1214,7 +1478,7 @@
    ],
    "color": "#1b1d20",
    "print_orientation": "+z",
-   "volume_mm3": 89663.0
+   "volume_mm3": 100402.0
   },
   {
    "id": "wheel_l0",
@@ -1669,6 +1933,114 @@
        0.0,
        90.024,
        -75.366
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 2.6390000000000002,
+       "height": 4.739552812808815
+      },
+      "at": [
+       -13.948,
+       15.978,
+       -6.212
+      ],
+      "rot": [
+       0.0,
+       75.976,
+       0.007
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 3.052,
+       "height": 33.90984360149872
+      },
+      "at": [
+       -12.935,
+       0.965,
+       -2.453
+      ],
+      "rot": [
+       0.0,
+       76.882,
+       -89.991
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 3.439,
+       "height": 18.90524862054151
+      },
+      "at": [
+       -13.948,
+       14.478,
+       1.538
+      ],
+      "rot": [
+       0.0,
+       13.528,
+       -123.683
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 2.452,
+       "height": 5.503999999999999
+      },
+      "at": [
+       -16.435,
+       12.965,
+       9.047
+      ],
+      "rot": [
+       0.0,
+       90.016,
+       180.009
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 2.465,
+       "height": 15.530000000000001
+      },
+      "at": [
+       -17.922,
+       6.452,
+       9.056
+      ],
+      "rot": [
+       0.0,
+       90.02,
+       -89.989
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 2.4779999999999998,
+       "height": 9.075202405202662
+      },
+      "at": [
+       -14.659,
+       -0.311,
+       9.066
+      ],
+      "rot": [
+       0.0,
+       90.024,
+       -4.385
       ]
      }
     ]
@@ -5801,6 +6173,150 @@
        90.399,
        -179.392
       ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 3.465,
+       "height": 12.47427190999916
+      },
+      "at": [
+       -8.922,
+       -14.048,
+       3.056
+      ],
+      "rot": [
+       0.0,
+       63.455,
+       0.011
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 2.4779999999999998,
+       "height": 18.555999999999997
+      },
+      "at": [
+       -4.909,
+       -22.061,
+       5.066
+      ],
+      "rot": [
+       0.0,
+       90.024,
+       -89.987
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 2.491,
+       "height": 8.582
+      },
+      "at": [
+       -7.896,
+       -30.074,
+       5.075
+      ],
+      "rot": [
+       0.0,
+       90.028,
+       180.015
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 2.413,
+       "height": 11.618388155425125
+      },
+      "at": [
+       -11.224,
+       -27.746,
+       9.02
+      ],
+      "rot": [
+       0.0,
+       29.512,
+       96.342
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 3.439,
+       "height": 18.90524862054151
+      },
+      "at": [
+       -13.948,
+       14.478,
+       1.538
+      ],
+      "rot": [
+       0.0,
+       13.528,
+       -123.683
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 2.452,
+       "height": 5.503999999999999
+      },
+      "at": [
+       -16.435,
+       12.965,
+       9.047
+      ],
+      "rot": [
+       0.0,
+       90.016,
+       180.009
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 2.465,
+       "height": 15.530000000000001
+      },
+      "at": [
+       -17.922,
+       6.452,
+       9.056
+      ],
+      "rot": [
+       0.0,
+       90.02,
+       -89.989
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 2.4779999999999998,
+       "height": 9.075202405202662
+      },
+      "at": [
+       -14.659,
+       -0.311,
+       9.066
+      ],
+      "rot": [
+       0.0,
+       90.024,
+       -4.385
+      ]
      }
     ]
    },
@@ -5875,7 +6391,8 @@
    ],
    "color": "#dfeee6",
    "weapon": {
-    "kind": "lifter"
+    "kind": "lifter",
+    "motor": "el_servo_horn_l"
    },
    "joint": {
     "kind": "revolute",
@@ -5951,7 +6468,8 @@
    ],
    "color": "#dfeee6",
    "weapon": {
-    "kind": "lifter"
+    "kind": "lifter",
+    "motor": "el_servo_horn_r"
    },
    "joint": {
     "kind": "revolute",
@@ -6264,6 +6782,40 @@
    "retained_reason": "captured on all six faces by its printed pocket (0.25 mm per side)"
   },
   {
+   "id": "el_servo_horn_l",
+   "kind": "servo",
+   "at": [
+    0.013,
+    -25.483,
+    13.011
+   ],
+   "rot": [
+    90,
+    0,
+    0
+   ],
+   "catalog": "servo_cs07",
+   "retained": "pocket",
+   "retained_reason": "servo body captured in a closed printed pocket (0.25 mm per side); its ears sit on the pocket ledge"
+  },
+  {
+   "id": "el_servo_horn_r",
+   "kind": "servo",
+   "at": [
+    0.013,
+    -0.483,
+    9.011
+   ],
+   "rot": [
+    90,
+    0,
+    0
+   ],
+   "catalog": "servo_cs07",
+   "retained": "pocket",
+   "retained_reason": "servo body captured in a closed printed pocket (0.25 mm per side); its ears sit on the pocket ledge"
+  },
+  {
    "id": "el_switch",
    "kind": "switch",
    "at": [
@@ -6322,6 +6874,22 @@
    "kind": "motor",
    "awg": 26,
    "slack_mm": 10
+  },
+  {
+   "id": "w_sig_horn_l",
+   "from": "el_rx_esc.wpn",
+   "to": "el_servo_horn_l.signal",
+   "kind": "signal",
+   "awg": 28,
+   "slack_mm": 10
+  },
+  {
+   "id": "w_sig_horn_r",
+   "from": "el_rx_esc.wpn",
+   "to": "el_servo_horn_r.signal",
+   "kind": "signal",
+   "awg": 28,
+   "slack_mm": 10
   }
  ],
  "connections": [
@@ -6350,6 +6918,18 @@
    "b": "chassis",
    "method": "interlock",
    "reason": "board captured in a closed printed pocket with 0.25 mm per side; the pocket walls stop it in every direction"
+  },
+  {
+   "a": "el_servo_horn_l",
+   "b": "chassis",
+   "method": "interlock",
+   "reason": "micro servo captured in a closed printed pocket (0.25 mm per side) in the chassis"
+  },
+  {
+   "a": "el_servo_horn_r",
+   "b": "chassis",
+   "method": "interlock",
+   "reason": "micro servo captured in a closed printed pocket (0.25 mm per side) in the chassis"
   },
   {
    "a": "el_switch",

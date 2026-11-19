@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_infernal/robots/infernal/spec.json",
- "rendered_at": 1795043092.724375,
+ "rendered_at": 1795046531.878777,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -15,6 +15,8 @@
   "dm_wheel_r0",
   "el_battery",
   "el_rx_esc",
+  "el_servo_horn_l",
+  "el_servo_horn_r",
   "el_switch"
  ],
  "wires": {
@@ -64,6 +66,30 @@
     -6.600000000000001,
     -22.0,
     0.0
+   ]
+  },
+  "w_sig_horn_l": {
+   "from": [
+    -14.986999999999998,
+    16.017,
+    -6.489
+   ],
+   "to": [
+    -11.487,
+    -25.483,
+    13.011
+   ]
+  },
+  "w_sig_horn_r": {
+   "from": [
+    -14.986999999999998,
+    16.017,
+    -6.489
+   ],
+   "to": [
+    -11.487,
+    -0.483,
+    9.011
    ]
   }
  }
