@@ -44,3 +44,10 @@ Left (and why):
 - likeness.silhouette x1: looks, not in scope for this pass.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): stack_overflow.aws67.webp 0.76 -> 0.76
+
+## Round 5 (photo / DESCRIPTION.md)
+- Arm: 8 mm wide (the photo's narrow finger), grey-blue #5a6478. The tail behind the pivot was shortened to within 4 mm of the axis, so the 0-80 degree sweep no longer cuts the chassis.
+- The `w_wpn` wire now keeps 2 mm from the arm's swept volume.
+- Blockers: 3 (r4) / 4 after the dev merge -> 2. The 2 left are likeness at the declared elevation 25: the photo matches the model at elevation 45 (IoU 0.81), so REFERENCE.json's elevation for aws67 looks wrong. That is a collector file, not edited.
+- IoU 0.76 (r4 checker) / 0.56 at the declared view -> 0.56.
+- Not done: aluminium wedge colour and black arm tip (decals are refused on sloped faces), clear box, green side plates.
