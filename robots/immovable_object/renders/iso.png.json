@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_immovable_object/robots/immovable_object/spec.json",
- "rendered_at": 1795040197.5650077,
+ "rendered_at": 1795062176.0848339,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -26,7 +26,11 @@
   "dm_wheel_r1",
   "el_battery",
   "el_esc",
-  "el_switch"
+  "el_switch",
+  "fs_look_chassis_0",
+  "fs_look_chassis_1",
+  "fs_look_chassis_2",
+  "fs_look_chassis_3"
  ],
  "wires": {
   "w_bat_sw": {

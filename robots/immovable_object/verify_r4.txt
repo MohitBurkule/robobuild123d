@@ -1,38 +1,38 @@
 BLOCKERS: 10
-  [ran] integrity 0.16s
-  [proxy] wiring 0.34s
+  [ran] integrity 0.10s
+  [proxy] wiring 0.20s
   [ran] mass 0.00s
-  [proxy] interference 24.00s
-  [ran] connections 0.53s
-  [ran] legal 0.03s
-  [ran] fasteners 0.00s
+  [proxy] interference 9.27s
+  [ran] connections 0.23s
+  [ran] legal 0.02s
+  [ran] fasteners 0.19s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
-  [ran] fight 0.05s
-  [ran] shape 0.41s
+  [ran] fight 0.03s
+  [ran] shape 0.34s
   [ran] dynamics 0.01s
-  [ran] strength 0.00s
-  [ran] printability 3.18s
-  [ran] process 0.01s
-  [ran] electrical 0.01s
-  [ran] combat 0.29s
+  [ran] strength 0.09s
+  [ran] printability 1.84s
+  [ran] process 0.00s
+  [ran] electrical 0.00s
+  [ran] combat 0.15s
   [ran] physics 0.00s
   [ran] plausibility 0.00s
-  [ran] cots 0.01s
-  [ran] fit 0.11s
-  [ran] bom 0.01s
-  [ran] wire_review 0.02s
+  [ran] cots 0.00s
+  [ran] fit 0.06s
+  [ran] bom 0.00s
+  [ran] wire_review 0.01s
   [ran] fastener_record 0.00s
-  [ran] likeness 16.12s
+  [ran] likeness 12.55s
   [ran] drive_recess 0.00s
   [ran] belt_wrap 0.00s
   [ran] retention 0.00s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.34s
-  [ran] dfm 0.10s
-  [ran] realworld 0.15s
-immovable object: ok=False 10 blockers in 7 root causes, mass 156.6/150 g
+  [ran] geom 0.21s
+  [ran] dfm 0.07s
+  [ran] realworld 0.10s
+immovable object: ok=False 10 blockers in 7 root causes, mass 158.0/150 g
 1. [process.geometry] `fork_0` (laser): 2 sharp internal corner(s): radius 0 < kerf 0.1 mm (add a fillet >= kerf or the mating part will not seat). Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
    fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
    | fork_0: x -47.00..-37.00  y 59.95..99.95  z -15.54..-11.25  size 10.00 x 40.01 x 4.29 mm
@@ -40,7 +40,7 @@ immovable object: ok=False 10 blockers in 7 root causes, mass 156.6/150 g
    |   gap to `shield` 0.00 mm (touching)
    |   gap to `dt_mount_fork_0` 0.00 mm (touching)
    | fork_1: x -19.00..-9.00  y 59.95..99.95  z -15.54..-11.25  size 10.00 x 40.01 x 4.29 mm
-2. [mass.over] 156.6 g (range 127.9 to 185.3 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+2. [mass.over] 158.0 g (range 129.2 to 186.8 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
 3. [connection.cover_fasteners] `shield` is an armour / cover panel held by 0 fastener(s); it needs >= 2 real screws. Snap, press-fit or tape retention alone lets it peel off on the first hit.
    fix: Bolt it with >= 2 screws into inserts, nuts or tapped bosses and declare them in `fasteners`.
@@ -58,8 +58,8 @@ immovable object: ok=False 10 blockers in 7 root causes, mass 156.6/150 g
 7. [likeness.silhouette] `reference/immovable_object.aws72.webp`: best silhouette IoU 0.71 at camera front_right_iso (elevation 45, azimuth 30) (need 0.80: >= 0.8 and no worse than the closest stock template `vspin_drisk` at 0.73). Regions (photo frame, left third first) 0.70 / 0.83 / 0.42: worst = rear third. Height/length 0.74 model vs 0.71 photo (proportions ok).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
-  mass 156.6 g of 150 g (-6.6 g margin)
-    chassis                    55.70 g  fills 38% of its box
+  mass 158.0 g of 150 g (-8.0 g margin)
+    chassis                    56.20 g  fills 38% of its box
     shield                     20.98 g  fills 21% of its box
     el_battery                 12.50 g  fills 100% of its box
     dm_wheel_l1                 9.50 g  fills 63% of its box
@@ -84,6 +84,10 @@ MASS BUDGET:
     dt_mount_fork_3             0.43 g  fills 99% of its box
     dt_mount_fork_1             0.43 g  fills 99% of its box
     dt_mount_fork_2             0.43 g  fills 99% of its box
-    mass.over: 156.6 g (range 127.9 to 185.3 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    fs_look_chassis_0           0.23 g  fills 29% of its box
+    fs_look_chassis_1           0.23 g  fills 29% of its box
+    fs_look_chassis_2           0.23 g  fills 29% of its box
+    fs_look_chassis_3           0.23 g  fills 29% of its box
+    mass.over: 158.0 g (range 129.2 to 186.8 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: distance 8 hit / 6 miss, group 0 hit / 31 miss, inside 20 hit / 8 miss, likeness 3 hit / 0 miss, min_gap 8 hit / 1 miss, overlap 134 hit / 56 miss, part_check 17 hit / 1 miss, part_geom 25 hit / 0 miss, ray 126 hit / 35 miss
+cache: distance 10 hit / 4 miss, group 0 hit / 31 miss, inside 22 hit / 18 miss, likeness 3 hit / 0 miss, min_gap 8 hit / 1 miss, overlap 134 hit / 56 miss, part_check 17 hit / 1 miss, part_geom 29 hit / 0 miss, ray 126 hit / 55 miss
