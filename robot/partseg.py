@@ -317,6 +317,130 @@ def edge_regions(a, m, min_len=0.03, max_circles=40):
     return full, {"lines": lines, "circles": circles}
 
 
+_SAM = {}
+
+
+def _sam():
+    """Segment Anything (ViT-B) from SAM_CKPT or /tmp/sam/sam_vit_b.pth (download: dl.fbaipublicfiles.com/segment_anything/sam_vit_b_01ec64.pth)."""
+    if "m" not in _SAM:
+        import os
+
+        import torch
+        from segment_anything import sam_model_registry
+
+        ck = os.environ.get("SAM_CKPT", "/tmp/sam/sam_vit_b.pth")
+        torch.set_num_threads(os.cpu_count() or 4)
+        _SAM["m"] = sam_model_registry["vit_b"](checkpoint=ck).eval()
+    return _SAM["m"]
+
+
+def sam(segfile, auto=None, points_per_side=24):
+    """SAM round. The labeller (a vision LLM) gives click prompts per part, SAM returns the exact masks:
+
+        "prompts": [{"label": "left front wheel", "kind": "wheel", "points": [[x, y], ...],   # fractions 0..1 of the photo
+                     "neg": [[x, y], ...],             # optional: points that are NOT the part
+                     "box": [x0, y0, x1, y1]}]         # optional, fractions
+
+    SAM-automatic masks give the base regions (everything the prompts do not name); every prompt mask is painted on top as
+    its own part. Result: <stem>.regions.png / .view.png and `parts` (prompt parts first, then one `auto_N` part per
+    leftover region for the labeller to name by adding a prompt). Needs torch + segment-anything."""
+    import torch
+    from PIL import Image
+    from scipy import ndimage as nd
+    from segment_anything import SamAutomaticMaskGenerator, SamPredictor
+
+    sf = Path(segfile)
+    base = sf.parents[2]
+    d = load_segments(sf)
+    photo = d["photo"]
+    m, crop = photo_mask_for(base, photo)
+    im = Image.open(base / "reference" / photo).convert("RGB")
+    if crop:
+        W0, H0 = im.size
+        im = im.crop((int(crop[0] * W0), int(crop[1] * H0), int(crop[2] * W0), int(crop[3] * H0)))
+    a = np.asarray(im.resize((m.shape[1], m.shape[0])))
+    H, W = m.shape
+    model = _sam()
+    lab = np.zeros(m.shape, int)
+    basep = base / "reference" / "segments" / f"{Path(photo).stem}.sam_auto.png"
+    if basep.exists() and auto is not True:
+        lab = np.asarray(Image.open(basep)).astype(int)
+        auto = False
+    if auto is None or auto:
+        gen = SamAutomaticMaskGenerator(model, points_per_side=points_per_side, pred_iou_thresh=0.86,
+                                        stability_score_thresh=0.9, min_mask_region_area=int(0.0004 * m.size))
+        ms = sorted(gen.generate(a), key=lambda r: -r["area"])
+        for i, r in enumerate(ms, 1):
+            seg = r["segmentation"] & m
+            if seg.any():
+                lab[seg] = i
+        if (lab == 0).any() and (lab > 0).any():
+            idx = nd.distance_transform_edt(lab == 0, return_distances=False, return_indices=True)
+            fill = lab[idx[0], idx[1]]
+            lab[m & (lab == 0)] = fill[m & (lab == 0)]
+        lab[~m] = 0
+        Image.fromarray(lab.astype(np.uint16)).save(basep)  # the SAM-automatic base; prompts are always painted on a fresh copy
+    pred = SamPredictor(model)
+    pred.set_image(a)
+    parts, nxt = [], int(lab.max()) + 1
+    x0, y0, x1, y1 = x0_, y0_, x1_, y1_ = crop or (0, 0, 1, 1)
+
+    def px(pt):
+        return [(pt[0] - x0) / (x1 - x0) * W, (pt[1] - y0) / (y1 - y0) * H]
+
+    prompts = d.get("prompts")
+    if not prompts:  # seed from the labeller's rough brush polygons: one click at the deepest interior point of each
+        prompts = []
+        for sg, r in zip([x for x in d.get("segments", []) if x.get("polygon")], raster_segments([x for x in d.get("segments", []) if x.get("polygon")], m.shape, crop)):
+            if r.sum() < 12:
+                continue
+            dist = nd.distance_transform_edt(r & m)
+            y, x = np.unravel_index(dist.argmax(), dist.shape)
+            prompts.append({"label": sg.get("label"), "kind": sg.get("kind", "other"),
+                            "points": [[x0_ + (x / W) * (x1_ - x0_), y0_ + (y / H) * (y1_ - y0_)]]})
+    for pr in prompts:
+        pts = [px(q) for q in pr.get("points", [])]
+        neg = [px(q) for q in pr.get("neg", [])]
+        box = None
+        if pr.get("box"):
+            b = pr["box"]
+            box = np.array(px(b[:2]) + px(b[2:]))
+        if not pts and box is None:
+            continue
+        coords = np.array(pts + neg) if (pts or neg) else None
+        labels = np.array([1] * len(pts) + [0] * len(neg)) if coords is not None else None
+        masks, scores, _ = pred.predict(point_coords=coords, point_labels=labels, box=box, multimask_output=True)
+        # prefer the mask that holds all positive points, not the whole robot, best score
+        good = [(sc, mk) for sc, mk in zip(scores, masks) if mk.sum() < 0.6 * m.sum()]
+        sc, mk = max(good, key=lambda t: t[0]) if good else (scores[0], masks[0])
+        mk = mk & m
+        if mk.sum() < 12:
+            continue
+        lab[mk] = nxt
+        parts.append({"label": pr.get("label", f"part{nxt}"), "kind": pr.get("kind", "other"), "regions": [nxt], "sam_score": round(float(sc), 3)})
+        nxt += 1
+    # leftover auto regions: one part each, for the labeller to name next round
+    alive = {int(k) for k in np.unique(lab[lab > 0])}
+    named = {r for p_ in parts for r in p_["regions"]}
+    for k in sorted(alive - named):
+        if (lab == k).sum() >= 0.0006 * m.sum():
+            parts.append({"label": f"auto_{k}", "kind": "unassigned", "regions": [k]})
+        else:  # speck: nearest named region absorbs it
+            lab[lab == k] = 0
+    if (lab == 0).any():
+        idx = nd.distance_transform_edt(lab == 0, return_distances=False, return_indices=True)
+        fill = lab[idx[0], idx[1]]
+        lab[m & (lab == 0)] = fill[m & (lab == 0)]
+    lab[~m] = 0
+    Image.fromarray(lab.astype(np.uint16)).save(sd_ := base / "reference" / "segments" / f"{Path(photo).stem}.regions.png")
+    _view(base, photo, lab, m, crop)
+    d["parts"] = parts
+    sf.write_text(json.dumps(d))
+    return {"regions": int(len(alive)), "prompt_parts": sum(1 for p_ in parts if p_["kind"] != "unassigned"),
+            "unassigned_parts": sum(1 for p_ in parts if p_["kind"] == "unassigned"),
+            "scores": {p_["label"]: p_.get("sam_score") for p_ in parts if "sam_score" in p_}}
+
+
 def load_regions(base: Path, photo: str):
     from PIL import Image
 
@@ -620,6 +744,10 @@ def add_cli(sub):
     r.add_argument("--merge", type=float, default=14.0, help="slic only: colour distance below which neighbours merge")
     r.add_argument("--method", choices=("edges", "slic"), default="edges", help="edges = straight lines, circles and long smooth edges only (default)")
     r.set_defaults(func=lambda a: print(f"{regions(Path(a.spec_dir), a.photo, a.n, a.merge, method=a.method).max()} regions; view: {a.spec_dir}/reference/segments/{Path(a.photo).stem}.regions.view.png") or 0)
+    sm = ps.add_parser("sam", help="SAM (Segment Anything) from Haiku click prompts: exact masks per named part")
+    sm.add_argument("segfile")
+    sm.add_argument("--redo-auto", action="store_true", help="recompute the SAM automatic base (slow, ~1 min); default: reuse <stem>.sam_auto.png if it exists")
+    sm.set_defaults(func=lambda a: print(json.dumps(sam(a.segfile, auto=True if a.redo_auto else None), indent=1)) or 0)
     f = ps.add_parser("fuse", help="round of brush polygons correcting the auto regions (split / carve), in place")
     f.add_argument("segfile")
     f.add_argument("--split-frac", type=float, default=0.15, help="a region is split along a big brush polygon covering this share of it")
