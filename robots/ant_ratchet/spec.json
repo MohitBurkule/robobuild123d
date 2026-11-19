@@ -6526,7 +6526,7 @@
     0,
     0
    ],
-   "color": "#151517",
+   "color": "#8e3c3f",
    "fused_with": "skirt_r",
    "print_orientation": "+z",
    "volume_mm3": 3300.0
@@ -6933,7 +6933,7 @@
     0,
     0
    ],
-   "color": "#151517",
+   "color": "#986257",
    "fused_with": "skirt_l",
    "print_orientation": "+z",
    "volume_mm3": 3300.0
@@ -7032,7 +7032,7 @@
     0,
     0
    ],
-   "color": "#f0d9d3"
+   "color": "#ac8993"
   },
   {
    "id": "skirt_l",
