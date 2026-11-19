@@ -206,6 +206,14 @@ GENERATOR INTENT KEEPS YOUR ADDITIONS: put `reference`, `robot_type`, and hand-m
 LOOKS FIRST: `robot kit kit.json spec.json` builds a shape draft from named numbers (body box / twin pods with a centre
 slot + front ramp, weapon disc/drum/bar size+position+axis+teeth, 2 or 4 wheels anywhere, forks); see `robot/kit.py` doc.
 Only `likeness` judges it; iterate kit numbers with `robot likeness` until the photos match, then do the full build.
+FORKS: do not hand-roll tines. Use the shared fork set (`robot/modules/forks.py`): kit.json `"forks": {"style": "plate"
+| "sheet", "n", "length", "width", "taper", "thick", "pitch" | "spread", "tilt_deg", "tab", "holes", "hole_d", "x",
+"mirror", "hinge": {"pin_d", "range": [min, max]}, "lift": {"servo"}}` (no `style` = the old plain tines), or
+`{"part": "fork_set", ...}` in `use` (robot/KITPARTS.md). plate = one laser plate per tine with its own screw tab;
+sheet = one comb. `hinge` adds a knuckle tube on a pin (`kind: pin`, the axle), static lugs + a screw tab, a joint
+limited to `range`; `lift` adds a catalog servo coaxial with the hinge and a horn link. `mirror` + `x` makes a pair
+either side of a centre disc. Hinged forks are kind `other` with no `weapon`, so `kin.*` sweeps only the joint range:
+never model hinged forks as `kind: weapon` on a spinner, the verifier then sweeps them a full turn (long forks block).
 WHAT TO CHANGE: `robot diff-photo spec.json` writes renders/diff_<photo>.png = photo | model from the matching camera |
 overlay, and (with ANTHROPIC_API_KEY) a Haiku-written list of concrete differences. Read the sheet every loop.
 CLUSTERBOTS: model ONE bot and set top-level `"cluster": N` in the spec: the mass limit becomes 150/N g per bot
