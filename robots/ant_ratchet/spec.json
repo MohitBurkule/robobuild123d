@@ -5345,6 +5345,78 @@
         ]
        }
       ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 1.95,
+       "height": 1.8
+      },
+      "at": [
+       -34.0,
+       -42.0,
+       17.5
+      ],
+      "rot": [
+       0.0,
+       180.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 0.8,
+       "height": 6.35
+      },
+      "at": [
+       -34.0,
+       -42.0,
+       13.475
+      ],
+      "rot": [
+       0.0,
+       180.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 1.95,
+       "height": 1.8
+      },
+      "at": [
+       34.0,
+       -42.0,
+       17.5
+      ],
+      "rot": [
+       0.0,
+       180.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 0.8,
+       "height": 6.35
+      },
+      "at": [
+       34.0,
+       -42.0,
+       13.475
+      ],
+      "rot": [
+       0.0,
+       180.0,
+       0.0
+      ]
      }
     ]
    },
@@ -8348,7 +8420,80 @@
    ]
   }
  ],
- "fasteners": [],
+ "fasteners": [
+  {
+   "id": "fs_look_chassis_0",
+   "designation": "M2x6",
+   "at": [
+    -34.0,
+    -42.0,
+    16.6
+   ],
+   "dir": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "through": [],
+   "threads_into": "chassis",
+   "head": "button",
+   "tool": "hex1.3",
+   "removable": true,
+   "reason": "M2 button-head screw where the photo shows a screw head, flush in a counterbore; threads into `chassis` (holds nothing else; plugs its hole)",
+   "hole": {
+    "d": 2.0,
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "tapped",
+    "side": "both",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 0.0,
+    "tap_d": 1.6,
+    "thread_depth": 6.5
+   }
+  },
+  {
+   "id": "fs_look_chassis_1",
+   "designation": "M2x6",
+   "at": [
+    34.0,
+    -42.0,
+    16.6
+   ],
+   "dir": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "through": [],
+   "threads_into": "chassis",
+   "head": "button",
+   "tool": "hex1.3",
+   "removable": true,
+   "reason": "M2 button-head screw where the photo shows a screw head, flush in a counterbore; threads into `chassis` (holds nothing else; plugs its hole)",
+   "hole": {
+    "d": 2.0,
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "tapped",
+    "side": "both",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 0.0,
+    "tap_d": 1.6,
+    "thread_depth": 6.5
+   }
+  }
+ ],
  "wires": [
   {
    "id": "w_bat_sw",
