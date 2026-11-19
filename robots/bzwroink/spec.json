@@ -452,20 +452,50 @@
             "shape": {
              "type": "place",
              "shape": {
-              "type": "box",
-              "size": [
-               70,
-               30,
-               2
-              ]
+              "type": "prism",
+              "points": [
+               [
+                -16.3,
+                -20.8
+               ],
+               [
+                16.3,
+                -20.8
+               ],
+               [
+                16.3,
+                -14.8
+               ],
+               [
+                30.3,
+                -8.8
+               ],
+               [
+                30.3,
+                20.8
+               ],
+               [
+                -30.3,
+                20.8
+               ],
+               [
+                -30.3,
+                -8.8
+               ],
+               [
+                -16.3,
+                -14.8
+               ]
+              ],
+              "height": 2.6
              },
              "at": [
               0,
-              48,
-              -5.0
+              48.38,
+              -1.365
              ],
              "rot": [
-              -22,
+              -32,
               0,
               0
              ]
@@ -3550,7 +3580,7 @@
     0,
     0
    ],
-   "color": "#f08ab8",
+   "color": "#f5b8d0",
    "tyre_of": "dt_hub_wheel_l0",
    "print_orientation": "+z",
    "volume_mm3": 3859.0
@@ -3673,7 +3703,7 @@
     0,
     0
    ],
-   "color": "#f08ab8",
+   "color": "#f5b8d0",
    "tyre_of": "dt_hub_wheel_r0",
    "print_orientation": "+z",
    "volume_mm3": 3859.0
@@ -3796,7 +3826,7 @@
     0,
     0
    ],
-   "color": "#f08ab8",
+   "color": "#f5b8d0",
    "tyre_of": "dt_hub_wheel_l1",
    "print_orientation": "+z",
    "volume_mm3": 3859.0
@@ -3919,7 +3949,7 @@
     0,
     0
    ],
-   "color": "#f08ab8",
+   "color": "#f5b8d0",
    "tyre_of": "dt_hub_wheel_r1",
    "print_orientation": "+z",
    "volume_mm3": 3859.0
@@ -3932,20 +3962,55 @@
    "shape": {
     "type": "place",
     "shape": {
-     "type": "box",
-     "size": [
-      70,
-      30,
-      2
-     ]
+     "type": "round_inside",
+     "shape": {
+      "type": "prism",
+      "points": [
+       [
+        -16,
+        -20.5
+       ],
+       [
+        16,
+        -20.5
+       ],
+       [
+        16,
+        -14.5
+       ],
+       [
+        30,
+        -8.5
+       ],
+       [
+        30,
+        20.5
+       ],
+       [
+        -30,
+        20.5
+       ],
+       [
+        -30,
+        -8.5
+       ],
+       [
+        -16,
+        -14.5
+       ]
+      ],
+      "height": 1.5
+     },
+     "radius": 1.0,
+     "axis": "z"
     },
     "at": [
      0,
-     48,
-     -5.0
+     48.38,
+     -1.365
     ],
     "rot": [
-     -22,
+     -32,
      0,
      0
     ]
@@ -3960,7 +4025,8 @@
     0,
     0
    ],
-   "color": "#e6d6e0"
+   "color": "#e6d6e0",
+   "volume_mm3": 3312.0
   },
   {
    "id": "dt_hub_wheel_l0",
@@ -4195,7 +4261,7 @@
     0,
     0
    ],
-   "color": "#844b65",
+   "color": "#e0408a",
    "print_orientation": "+z",
    "volume_mm3": 1674.0
   },
@@ -4432,7 +4498,7 @@
     0,
     0
    ],
-   "color": "#844b65",
+   "color": "#e0408a",
    "print_orientation": "+z",
    "volume_mm3": 1674.0
   },
@@ -4669,7 +4735,7 @@
     0,
     0
    ],
-   "color": "#844b65",
+   "color": "#e0408a",
    "print_orientation": "+z",
    "volume_mm3": 1674.0
   },
@@ -4906,7 +4972,7 @@
     0,
     0
    ],
-   "color": "#844b65",
+   "color": "#e0408a",
    "print_orientation": "+z",
    "volume_mm3": 1674.0
   },

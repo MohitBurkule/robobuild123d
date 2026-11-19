@@ -48,3 +48,8 @@ Notes from the run:
 
 Left (one line each):
 - likeness.silhouette x1: looks (not part of this pass; outside shape kept as round 3)
+
+## Round 5 (photo / DESCRIPTION.md)
+- The clear scoop now runs from just under the body's top front edge down to the floor at 32 degrees (aws61 / aws65), instead of a flat plate on the floor. Its narrow root (32 mm) is keyed in a slot between the front lid screws.
+- Wheels: pale-pink tyres with hot-pink hubs (aws61).
+- Blockers 1 (r4) / 2 after the dev merge (new `likeness.view`: REFERENCE.json declares aws68 front_left_iso, but the photo shows the robot from the rear-left; collector file, not edited) -> 2. IoU 0.33 -> 0.34.
