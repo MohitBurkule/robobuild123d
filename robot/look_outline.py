@@ -1,12 +1,22 @@
 """Outline details the reference photo shows, on one static printed part, without breaking the inside.
 
-`robot outline SPEC PART --edge EDGE (--chamfer A [B] | --step A [B]) [--span LO,HI] [--wall MM] [--force] [--dry]`
+`robot outline SPEC PART --edge EDGE (--chamfer A [B] | --step A [B] | --round A [B] | --stairs A B [--n N] |
+                                       --notch D W [--at C] | --vnotch D W [--at C] | --arc SAG [--along LO,HI])
+                                      [--span LO,HI] [--wall MM] [--force] [--dry]`
     EDGE names two faces of the part's box, e.g. `+y+z` (front-top edge), `+y+x` (front-right vertical edge, a plan
     taper), `-y+z` (rear-top). A is measured along the first face (from the edge, inward along the second face's
     normal), B along the second face (default B = A):
       `--edge +y+z --chamfer 6 10` -> the front face loses its top 6 mm, the top face its front 10 mm, on a straight bevel;
       `--edge +y+z --step 6 10`    -> a 6 mm deep, 10 mm long rectangular notch on that edge (a stepped deck or nose);
       `--chamfer 8 20` on both `--edge +y+x` and `--edge=+y-x` tapers the front in plan.
+      `--edge +y+z --round 8`      -> a rounded corner (quarter circle, or quarter ellipse with A B);
+      `--edge=-y+z --stairs 9 30 --n 3` -> three equal steps dropping inside the 9 x 30 corner (a stepped flank);
+    Face cuts (the first face of EDGE is cut, the second only names the axis the cut runs along, its sign is ignored):
+      `--edge +z+y --notch 5 12 --at 20` -> a 5 mm deep, 12 mm wide square slot in the top face centred at y = 20;
+      `--edge +z+x --vnotch 8 20`        -> a V slot (ears either side of a cat face, a slot for an arm);
+      `--edge +z+y --arc 6`              -> the top edge seen from the side becomes an arc, ends 6 mm lower (a
+                                            bowed shell); `--arc=-4` sinks the middle 4 mm (a concave side wall);
+                                            `--along=-30,40` limits the arc to that stretch.
     --span limits the cut along the edge (world mm), e.g. `--span=-20,20` for a centre-only step. A corner of the part's
     box that is already empty (a rounded or bevelled part) removes nothing: the command says so.
     If the part is hollow, a `--wall` (default 1.6 mm) skin is kept behind the new face (the cut is grown by the wall
@@ -68,14 +78,54 @@ def _local_place(p, shape, R_w, at_w):
     return {"type": "place", "shape": shape, "at": [round(float(v), 3) for v in at_l], "rot": _euler_for(Rp.T @ R_w)}
 
 
-def _polygon(kind, c1, c2, s1, s2, A, B):
-    """2-D cut region in (axis1, axis2) world coordinates for a corner at (c1, c2) pointing outward (s1, s2)."""
+def _polygon(kind, c1, c2, s1, s2, A, B, n=3, at=None, w_lo=None, w_hi=None):
+    """2-D cut region in (axis1, axis2) world coordinates for a corner at (c1, c2) pointing outward (s1, s2).
+    Corner kinds work in (u, v): u outward along axis1 from face 1, v outward along axis2 from face 2; the part is
+    u <= 0, v <= 0. Face kinds (notch, vnotch, arc) cut face 1 only and run along axis2 in world mm (w)."""
+    if kind in ("notch", "vnotch", "arc"):
+        def W(u, w):
+            return (c1 + s1 * u, w)
+        if kind == "notch":
+            c, h = at, B / 2
+            return [W(-A, c - h), W(E, c - h), W(E, c + h), W(-A, c + h)]
+        if kind == "vnotch":
+            c, h = at, B / 2 * (A + E) / A
+            return [W(-A, c), W(E, c - h), W(E, c + h)]
+        # arc: face 1 becomes a circular arc across w_lo..w_hi; A > 0 drops the ends by A (a bowed, convex edge),
+        # A < 0 sinks the middle by |A| (a concave, scooped edge)
+        S = abs(A)
+        half = (w_hi - w_lo) / 2
+        mid = (w_lo + w_hi) / 2
+        R = (half * half + S * S) / (2 * S)
+        ws = np.linspace(w_lo, w_hi, 25)
+        sag = R - np.sqrt(np.maximum(R * R - (ws - mid) ** 2, 0))
+        us = -sag if A > 0 else -S + sag
+        return [W(E, w_lo - E), W(us[0], w_lo - E)] + [W(u, w) for u, w in zip(us, ws)] + [W(us[-1], w_hi + E), W(E, w_hi + E)]
+
+    def C(u, v):
+        return (c1 + s1 * u, c2 + s2 * v)
     if kind == "step":
-        return [(c1 - s1 * B, c2 - s2 * A), (c1 + s1 * E, c2 - s2 * A), (c1 + s1 * E, c2 + s2 * E), (c1 - s1 * B, c2 + s2 * E)]
+        return [C(-B, -A), C(E, -A), C(E, E), C(-B, E)]
+    if kind == "stairs":   # n equal steps inside the A x B corner (n = 1 is a step)
+        pts = [C(E, -A)]
+        for i in range(1, n + 1):
+            pts += [C(-B * i / n, -A * (n - i + 1) / n), C(-B * i / n, -A * (n - i) / n)]
+        return pts + [C(-B, E), C(E, E)]
+    if kind == "round":    # quarter-ellipse fillet: legs A (along face 1) and B (along face 2)
+        ts = np.linspace(0, np.pi / 2, 13)
+        arc = [C(-B + B * np.cos(t), -A + A * np.sin(t)) for t in ts]
+        return [C(E, -A)] + arc + [C(-B, E), C(E, E)]
     k = E / max(A, B)
-    p0 = (c1 + s1 * B * k, c2 - s2 * A * (1 + k))          # on the bevel line, past the face
-    p1 = (c1 - s1 * B * (1 + k), c2 + s2 * A * k)
-    return [p0, (c1 + s1 * (B * k + E), c2 + s2 * (A * k + E)), p1]
+    p0 = C(B * k, -A * (1 + k))          # on the bevel line, past the face
+    p1 = C(-B * (1 + k), A * k)
+    return [p0, C(B * k + E, A * k + E), p1]
+
+
+def _grow(poly, d):
+    """The cut region grown by d (mitred), for the skin kept behind a hollow part's new face."""
+    from shapely.geometry import Polygon
+    g = Polygon(poly).buffer(d, join_style=2, mitre_limit=3.0)
+    return [tuple(p) for p in np.asarray(g.exterior.coords)[:-1]]
 
 
 def _inside_poly(P2, poly):
@@ -131,7 +181,7 @@ def _grid(lo, hi, h):
     return np.stack(np.meshgrid(*ax, indexing="ij"), -1).reshape(-1, 3)
 
 
-def outline(path, part, kind, edge, A, B=None, span=None, wall=1.6, force=False, dry=False):
+def outline(path, part, kind, edge, A, B=None, span=None, wall=1.6, force=False, dry=False, at=None, n=3, along=None):
     raw, byid, P, Bd = _load(path, part)
     B = A if B is None else B
     (i1, s1), (i2, s2) = _faces(edge)
@@ -140,15 +190,21 @@ def outline(path, part, kind, edge, A, B=None, span=None, wall=1.6, force=False,
     c1 = hi[i1] if s1 > 0 else lo[i1]
     c2 = hi[i2] if s2 > 0 else lo[i2]
     lo3, hi3 = (lo[i3] - E, hi[i3] + E) if not span else tuple(float(x) for x in span.split(","))
-    poly = _polygon(kind, c1, c2, s1, s2, A, B)
+    if kind in ("notch", "vnotch") and at is None:
+        at = (lo[i2] + hi[i2]) / 2
+    w_lo, w_hi = (lo[i2], hi[i2]) if not along else tuple(float(x) for x in along.split(","))
+    poly = _polygon(kind, c1, c2, s1, s2, A, B, n, at, w_lo, w_hi)
     # sample the cut region and the new skin behind it
     G = _grid(np.minimum(lo, hi) - 0.5, np.maximum(lo, hi) + 0.5, 0.7)
     G = G[(G[:, i3] >= lo3) & (G[:, i3] <= hi3)]
     incut = _inside_poly(G[:, [i1, i2]], poly)
     # skin: points within `wall` of the cut region (2-D distance by dilating the polygon test on offsets)
     near = np.zeros(len(G), bool)
-    for du, dv in itertools.product(np.linspace(-wall, wall, 5), repeat=2):
-        if du * du + dv * dv <= wall * wall + 1e-9:
+    # the refill reaches wall * 1.5 past the cut (see _grow below) and fills every pocket there, so a component
+    # sitting in a pocket within that reach (plus 0.3 mm clearance) must refuse the cut
+    rs = wall * 1.5 + 0.3
+    for du, dv in itertools.product(np.linspace(-rs, rs, 7), repeat=2):
+        if du * du + dv * dv <= rs * rs + 1e-9:
             near |= _inside_poly(G[:, [i1, i2]] + np.array([du, dv]), poly)
     skin = near & ~incut
     mine = Bd[part].inside(G)
@@ -171,7 +227,7 @@ def outline(path, part, kind, edge, A, B=None, span=None, wall=1.6, force=False,
         print(f"{part}: {kind} {edge} {A:g}x{B:g} would remove ~{vol:.0f} mm3" + (" and keep a skin behind it" if hollow else ""))
         return 0
     if hollow:
-        grown = _polygon(kind, c1, c2, s1, s2, A + wall * 1.5, B + wall * 1.5)
+        grown = _grow(poly, wall * 1.5)
         gshape, _, _ = _prism(grown, i1, i2, lo3, hi3)
         outer = _base_solid(P["shape"])
         skin_shape = {"type": "intersect", "items": [outer, {"type": "subtract", "base": _local_place(P, gshape, R, at), "cut": [cut]}]}
@@ -224,21 +280,33 @@ def window(path, part, over, face="+z", lip=2.0, dry=False):
 
 
 def add_cli(sub):
-    p = sub.add_parser("outline", help="chamfer / step / plan taper on one edge of a printed part, keeping a skin if hollow")
+    p = sub.add_parser("outline", help="chamfer / step / round / stairs / notch / arc on a printed part's edge, keeping a skin if hollow")
     p.add_argument("spec")
     p.add_argument("part")
     p.add_argument("--edge", required=True, help="two faces of the part's box, e.g. +y+z; write --edge=-y+x when it starts with -")
     g = p.add_mutually_exclusive_group(required=True)
     g.add_argument("--chamfer", nargs="+", type=float, metavar="MM", help="A [B]: bevel legs along the first and second face")
     g.add_argument("--step", nargs="+", type=float, metavar="MM", help="A [B]: notch depth and length")
+    g.add_argument("--round", nargs="+", type=float, metavar="MM", help="A [B]: rounded corner (quarter ellipse) legs")
+    g.add_argument("--stairs", nargs="+", type=float, metavar="MM", help="A [B]: --n equal steps inside the A x B corner")
+    g.add_argument("--notch", nargs=2, type=float, metavar="MM", help="DEPTH WIDTH: square slot into the first face, centred at --at along the second axis")
+    g.add_argument("--vnotch", nargs=2, type=float, metavar="MM", help="DEPTH WIDTH: V slot (apex DEPTH in), centred at --at")
+    g.add_argument("--arc", type=float, metavar="MM", help="SAG: the first face becomes an arc along the second axis; "
+                   "+SAG drops both ends (bowed), -SAG sinks the middle (scooped); write --arc=-4 when negative")
     p.add_argument("--span", help="LO,HI world mm along the edge (default: the whole edge)")
+    p.add_argument("--at", type=float, help="notch / vnotch centre, world mm along the second axis (default the middle)")
+    p.add_argument("--n", type=int, default=3, help="--stairs: number of steps")
+    p.add_argument("--along", help="--arc: LO,HI world mm along the second axis the arc spans (default the part)")
     p.add_argument("--wall", type=float, default=1.6, help="skin kept behind the new face when the part is hollow")
     p.add_argument("--force", action="store_true", help="cut even if another part overlaps the removed corner")
     p.add_argument("--dry", action="store_true")
 
     def _run(a):
-        kind, v = ("chamfer", a.chamfer) if a.chamfer else ("step", a.step)
-        return outline(a.spec, a.part, kind, a.edge, v[0], v[1] if len(v) > 1 else None, a.span, a.wall, a.force, a.dry)
+        kind = next(k for k in ("chamfer", "step", "round", "stairs", "notch", "vnotch", "arc") if getattr(a, k) is not None)
+        v = getattr(a, kind)
+        v = [v] if kind == "arc" else v
+        return outline(a.spec, a.part, kind, a.edge, v[0], v[1] if len(v) > 1 else None, a.span, a.wall, a.force,
+                       a.dry, a.at, a.n, a.along)
     p.set_defaults(func=_run)
     q = sub.add_parser("window", help="see-through opening over an internal component where the photo shows it")
     q.add_argument("spec")
