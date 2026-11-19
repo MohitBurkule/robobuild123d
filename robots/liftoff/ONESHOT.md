@@ -41,6 +41,7 @@ Fixed / changed (inside only, outside kept):
 - hollowed chassis (wall 2.5, form 0): 138.2 -> 64.9 cm3
 - hollowed wedge_l (wall 2.5, form 0): 21.7 -> 10.8 cm3
 - hollowed wedge_r (wall 2.5, form 0): 21.7 -> 10.8 cm3
+- side profile from the photo (robot outline --stairs): the front wedges drop in three steps toward the front, skin kept behind the cut
 
 Left (and why):
 - proxy.wiring x3: Wire `w_bat_sw` (`el_battery.xt30` to `el_switch.in`): the baseline route is now blocked by `chassis` (5 samples).
