@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_burning_tiger/robots/burning_tiger/spec.json",
- "rendered_at": 1795039917.2891645,
+ "rendered_at": 1795058738.418176,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -25,7 +25,8 @@
   "dm_wheel_r1",
   "el_battery",
   "el_esc",
-  "el_switch"
+  "el_switch",
+  "wa_act"
  ],
  "wires": {
   "w_bat_sw": {
@@ -74,6 +75,18 @@
     -14.5,
     20.0,
     0.0
+   ]
+  },
+  "w_wpn": {
+   "from": [
+    15.5,
+    -5.5,
+    4.5
+   ],
+   "to": [
+    -11.850000000000001,
+    -25.0,
+    4.0
    ]
   }
  }
