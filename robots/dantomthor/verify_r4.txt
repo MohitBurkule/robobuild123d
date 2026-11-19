@@ -1,39 +1,39 @@
 BLOCKERS: 5
-  [ran] integrity 0.07s
-  [proxy] wiring 1.84s
+  [ran] integrity 0.08s
+  [proxy] wiring 1.71s
   [ran] mass 0.00s
-  [proxy] interference 12.89s
-  [ran] connections 1.02s
-  [ran] legal 0.02s
+  [proxy] interference 13.62s
+  [ran] connections 1.25s
+  [ran] legal 0.03s
   [ran] fasteners 0.00s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
   [ran] fight 0.03s
-  [ran] shape 0.60s
+  [ran] shape 0.65s
   [ran] dynamics 0.00s
   [ran] strength 0.00s
-  [ran] printability 0.79s
+  [ran] printability 0.99s
   [ran] process 0.00s
-  [ran] electrical 0.85s
-  [ran] combat 0.18s
+  [ran] electrical 0.97s
+  [ran] combat 0.16s
   [ran] physics 0.00s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
-  [ran] fit 0.12s
+  [ran] fit 0.09s
   [ran] bom 0.01s
-  [ran] wire_review 0.65s
+  [ran] wire_review 0.58s
   [ran] fastener_record 0.00s
-  [ran] likeness 46.69s
+  [ran] likeness 63.94s
   [ran] drive_recess 0.00s
   [ran] belt_wrap 0.00s
   [ran] retention 0.00s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.22s
-  [ran] dfm 0.12s
-  [ran] realworld 0.73s
-dantomthor: ok=False 5 blockers in 5 root causes, mass 163.7/150 g
-1. [mass.over] 163.7 g (range 136.2 to 191.3 g) against the 150 g limit; 3.9 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+  [ran] geom 0.37s
+  [ran] dfm 0.24s
+  [ran] realworld 2.26s
+dantomthor: ok=False 5 blockers in 5 root causes, mass 163.9/150 g
+1. [mass.over] 163.9 g (range 136.3 to 191.4 g) against the 150 g limit; 3.9 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
 2. [proxy.interference] `chassis` and `hammer_arm` overlap by 1.12 mm (allowed 0.08).
    | chassis: x -46.00..46.00  y -45.00..55.00  z -9.00..31.00  size 92.00 x 100.00 x 40.00 mm
@@ -56,7 +56,7 @@ dantomthor: ok=False 5 blockers in 5 root causes, mass 163.7/150 g
 5. [likeness.silhouette] `reference/dantomthor.aws72.webp`: best silhouette IoU 0.72 at camera front_left_iso (elevation 45, azimuth 150) (need 0.80: >= 0.8 and no worse than the closest stock template `revron_ant` at 0.72). Regions (photo frame, left third first) 0.74 / 0.84 / 0.56: worst = rear third. Height/length 1.10 model vs 1.10 photo (proportions ok).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
-  mass 163.7 g of 150 g (-13.7 g margin)
+  mass 163.9 g of 150 g (-13.9 g margin)
     chassis                    83.39 g  fills 24% of its box
     skirt                      16.84 g  fills 37% of its box
     el_battery                 12.50 g  fills 100% of its box
@@ -68,9 +68,9 @@ MASS BUDGET:
     hammer_head                 2.72 g  fills 100% of its box
     wheel_l0                    2.26 g  fills 57% of its box
     wheel_r0                    2.26 g  fills 57% of its box
-    dt_hub_wheel_l0             0.86 g  fills 64% of its box
-    dt_hub_wheel_r0             0.86 g  fills 64% of its box
+    dt_hub_wheel_l0             0.93 g  fills 69% of its box
+    dt_hub_wheel_r0             0.93 g  fills 69% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.over: 163.7 g (range 136.2 to 191.3 g) against the 150 g limit; 3.9 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.over: 163.9 g (range 136.3 to 191.4 g) against the 150 g limit; 3.9 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
 cache: part_geom 0 hit / 14 miss
