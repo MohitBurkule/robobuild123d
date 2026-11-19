@@ -120,8 +120,8 @@ robot's own motion or when inverted.
   - How it is built: HOST gets a pocket `--depth` deep (default 0.8 mm), and the graphic fills the pocket, running
     0.25 mm deeper than the pocket floor.
   - On a printed HOST the graphic is `fused_with` HOST (a multi-colour print) and follows HOST's joint.
-  - On a sheet HOST the graphic is a sticker on a keyed glue joint. That sticker is refused on wedges, weapons, armour
-    and forks, because glue on them is a blocker.
+  - HOST must be printed. A pocket in a cut or machined plate is a blind feature (`process.geometry`), so give sheet
+    plates their photo colour with `robot colors` instead.
   - A graphic placed over an earlier one on the same face replaces the earlier one there and takes its depth. Build
     layers this way, for example an iris on an eye, or a head and beak on a disc.
   - Several pieces in one call (`--pair`, or the letters of a text) are joined into one solid by a hidden web inside

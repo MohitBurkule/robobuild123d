@@ -11,13 +11,13 @@ must be one plane (normals within 3 deg, points within 0.3 mm): a sloped front p
 On that plane
 
     HOST  = HOST subtract  footprint x [face - depth, outside]       (a pocket `depth` deep)
-    DECAL = footprint x [face - depth - 0.4, face]                   (fills the pocket, 0.4 mm deeper)
+    DECAL = footprint x [face - depth - 0.25, face]                  (fills the pocket, 0.25 mm deeper)
 
-DECAL is printed in HOST's material and declared `fused_with` HOST (a multi-colour print, the 0.4 mm overlap makes
+DECAL is printed in HOST's material and declared `fused_with` HOST (a multi-colour print, the 0.25 mm overlap makes
 them one solid). Its outer face is flush with HOST's, so the outline and `likeness` IoU do not change, and the
-render shows the graphic in the decal's colour. For a host that is not printed (aluminium, carbon), the decal is a
-`pc` sticker in the pocket on a keyed `glue` connection instead; refused on wedges, weapons, armour and forks, where
-glue is a blocker (`connection.glue_on_impact`). Refuses when the decal would not lie inside HOST's solid
+render shows the graphic in the decal's colour. HOST must be printed: a pocket in a cut or machined plate is a blind feature
+(`process.geometry`) and a glued sticker peels off impact parts (`connection.glue_on_impact`), so sheet plates get
+their photo colour from `robot colors` instead. Refuses when the decal would not lie inside HOST's solid
 (a wall thinner than depth + 0.4 under it) or the face is not flat.
 
 Footprint, in world mm on the two axes across the face (for +y/-y: x and z; +z/-z: x and y; +x/-x: y and z),
@@ -306,16 +306,16 @@ def decal(path, host, face="+y", shape="rect", size=(10.0,), at=None, pair=None,
     hidden = sorted({bd.id for bd in others if bd.inside(np.vstack([probe[:len(G)] + n * t for t in (0.6, 3.0)])).any()})
     from . import catalog
     printed = catalog.part_is_printed(P.get("process"), P.get("material"))
-    from .checks.connections import IMPACT
-    if not printed and P.get("kind") in IMPACT:
-        raise SystemExit(f"decal on {host}: a sticker can only be glued, and glue on a {P.get('kind')} peels on the "
-                         "first hit (connection.glue_on_impact); put the graphic on a printed part, or colour the plate")
+    if not printed:
+        raise SystemExit(f"decal on {host}: {P.get('material')}/{P.get('process')} is not printed. A pocket in a cut "
+                         "or machined plate is a blind feature (process.geometry), and a glued sticker on a wedge, weapon or "
+                         "armour peels (connection.glue_on_impact). Put the graphic on a printed part, or colour the plate.")
     pid = pid or f"{host}_decal" + ("" if f"{host}_decal" not in byid else f"_{len(byid)}")
     if pid in byid:
         raise SystemExit(f"part id {pid} exists")
     area = len(G) * 0.6 ** 2
     msg = (f"{pid}: {shape} graphic on {host} {face}, ~{area:.0f} mm2, {depth:g} mm deep, "
-           + ("fused (multi-colour print)" if printed else "pc sticker, glued into the pocket")
+           + "fused (multi-colour print)"
            + (f"; covered by {hidden} from outside" if hidden else ""))
     if dry:
         print(msg)
@@ -355,14 +355,9 @@ def decal(path, host, face="+y", shape="rect", size=(10.0,), at=None, pair=None,
             part.update(parent=host, at=[0, 0, 0], rot=[0, 0, 0])
         else:
             part.update(at=P.get("at", [0, 0, 0]), rot=P.get("rot", [0, 0, 0]))
-        if printed:
-            part.update(material=P.get("material"), process=P.get("process"), fused_with=host)
-            if "print_orientation" in P:
-                part["print_orientation"] = P["print_orientation"]
-        else:
-            part.update(material="pc", process="cnc")
-            raw.setdefault("connections", []).append({"a": gid, "b": host, "method": "glue", "mechanical_key": True,
-                                                      "reason": "sticker glued into a pocket that holds it on every side but the face"})
+        part.update(material=P.get("material"), process=P.get("process"), fused_with=host)
+        if "print_orientation" in P:
+            part["print_orientation"] = P["print_orientation"]
         if color:
             part["color"] = color
         i += 1
@@ -388,7 +383,7 @@ def add_cli(sub):
     p.add_argument("--points", nargs="*", default=[], help="poly: u,v points in world mm")
     p.add_argument("--text", default="")
     p.add_argument("--color", help="hex colour, e.g. #f0f0f0 (default: none, then `robot colors --parts ID --force`)")
-    p.add_argument("--depth", type=float, default=0.8, help="pocket depth in the host (the decal goes 0.4 mm deeper)")
+    p.add_argument("--depth", type=float, default=0.8, help="pocket depth in the host (the decal goes 0.25 mm deeper)")
     p.add_argument("--id")
     p.add_argument("--dry", action="store_true")
     p.set_defaults(func=lambda a: decal(a.spec, a.host, a.face, a.shape, a.size, a.at, a.pair, a.points, a.text,
