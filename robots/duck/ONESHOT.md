@@ -55,7 +55,7 @@ Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
 - catalog parts added in free space inside the printed parts with 0.25 mm pockets: `dm_wheel_l0` (pololu_hpcb6v_50to1), `dm_wheel_r0` (pololu_hpcb6v_50to1), `el_battery` (lipo_2s_180), `el_esc` (bbb_malenki_nano), `el_switch` (switch_slide_12x4)
 - overlaps resolved by cuts that keep the union of the parts (pockets, bores, wheel and spinner running clearance)
-- one print with the chassis (same material, `fused_with`): `front_plate`, `hook_l`, `hook_r`, `dt_hub_wheel_l0`, `dt_hub_wheel_r0`
+- one print with the chassis (same material, `fused_with`): `duckname_2`, `duckname_1`, `duckface_beak`, `duckface_head`, `duckface_bg`, `duckface_rim`, `front_plate`, `hook_l`, `hook_r`, `dt_hub_wheel_l0`, `dt_hub_wheel_r0`
 - 5 wires declared (battery - switch - ESC - motors)
 - print orientation on every printed part, failsafe / weapon disable declared, design volumes declared where this pass changed a part on purpose
 - power switch on the floor of the body, slider facing down to a 7 x 3 mm slot in the underside (no slot on the top or sides; hollow cavities stay closed behind a wall at every outside face)
@@ -68,6 +68,7 @@ Fixed / changed (inside only, outside kept):
 - hollowed front_plate (wall 1.6, form 0): 7.9 -> 7.1 cm3
 - hollowed hook_l (wall 1.6, form 0): 3.9 -> 2.2 cm3
 - hollowed hook_r (wall 1.6, form 0): 3.9 -> 2.2 cm3
+- photo graphics as fused colour-split decals (robot decal): duck face card (ring, blue disc, head, beak) and DUCK LING lettering on the flipper
 
 Left (and why):
 - proxy.wiring x1: Wire `w_sw_esc` (`el_switch.out` to `el_esc.bat`): the baseline route is now blocked by `chassis` (6 samples).

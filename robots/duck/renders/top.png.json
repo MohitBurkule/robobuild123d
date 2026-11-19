@@ -1,11 +1,17 @@
 {
  "spec": "/tmp/work10_duck/robots/duck/spec.json",
- "rendered_at": 1795066612.0207407,
+ "rendered_at": 1795076552.261924,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
   "flipper",
+  "duckname_2",
+  "duckname_1",
+  "duckface_beak",
+  "duckface_head",
+  "duckface_bg",
+  "duckface_rim",
   "front_plate",
   "front_lip",
   "hook_l",
