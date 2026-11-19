@@ -9,7 +9,7 @@ Segment file (one per photo): robots/<name>/reference/segments/<photo stem>.json
 Sub-commands
   grid PHOTO [OUT]      photo with a labelled 10 % grid so polygon corners can be read off
   check SEGFILE         rasterise: coverage of the photo mask, overlaps, tiny / outside-robot segments; writes
-                        <stem>.parts.png (coloured, numbered) next to the segment file
+                        <stem>.parts.png (coloured, numbered) next to the segment file. A segment may carry "holes": [[[x,y],...]] cut out of it
   score SPEC            per photo render the model parts (visible only, id buffer) from the photo's camera, align like the
                         silhouette gate (bbox crop, bottom-left) and report per-segment best IoU, area weighted mean IoU,
                         F1@0.5; writes reference/segments/score.json + <stem>.model.png / <stem>.compare.png
@@ -58,8 +58,13 @@ def raster_segments(segs, shape, crop=None):
     for s in segs:
         im = Image.new("L", (W, H), 0)
         pts = [((x - x0) / (x1 - x0) * W, (y - y0) / (y1 - y0) * H) for x, y in s["polygon"]]
+        d = ImageDraw.Draw(im)
         if len(pts) >= 3:
-            ImageDraw.Draw(im).polygon(pts, fill=255)
+            d.polygon(pts, fill=255)
+        for h in s.get("holes") or []:  # polygons cut out of this segment (a part around another part)
+            hp = [((x - x0) / (x1 - x0) * W, (y - y0) / (y1 - y0) * H) for x, y in h]
+            if len(hp) >= 3:
+                d.polygon(hp, fill=0)
         out.append(np.asarray(im) > 127)
     return out
 
@@ -254,7 +259,7 @@ def score_photo(world, base: Path, segfile: Path, cam=None):
         raise SystemExit(f"no camera for {photo}: run `robot likeness` first (writes renders/view_match.json) or pass --az/--el")
     pm, crop = photo_mask_for(base, photo)
     segs = merged(d)
-    rm = raster_segments([{"polygon": s["polygon"]} if "polygon" in s else {"polygon": []} for s in segs], pm.shape, crop)
+    rm = raster_segments([{"polygon": s.get("polygon", []), "holes": s.get("holes")} for s in segs], pm.shape, crop)
     for i, s in enumerate(segs):  # merged groups: union of member polygons
         if "polygons" in s:
             rm[i] = np.any(raster_segments([{"polygon": p} for p in s["polygons"]], pm.shape, crop), axis=0)
