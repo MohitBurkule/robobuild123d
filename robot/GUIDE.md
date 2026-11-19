@@ -105,6 +105,16 @@ robot's own motion or when inverted.
 - `robot window spec.json PART --over el_battery [--face +z] [--lip 2]` opens a see-through window over a battery, ESC
   or PCB where the photo shows the electronics, keeping a rim so the component stays captive. It refuses when anything
   but wires lies between the component and the outside.
+- `robot electronics spec.json [--kinds battery,esc,receiver] [--only el_battery] [--lip 2] [--dry]` does the window
+  for every battery / ESC / receiver at once, through *all* the static prints over it (a tub's deck and a `top_plate`
+  together): one box over the component's footprint less the rim. It skips a component with a screw, a moving or
+  bought part, or any other body in that box, and it only opens shells (structure, plate, armor, a lid or cover),
+  never a weapon or arm; openings under 60 mm2 are skipped. The real parts and their routed wires show, nothing faked.
+- `robot brackets spec.json [--wheels wheel_l0,..] [--spokes 5]` puts a hub cap on each wheel's printed hub
+  (`tyre_of`): a ring on the hub's outer face, around the axle stub and inside the hub rim, never standing past the
+  stub (so the wheel's width and the footprint stay the same), with shallow lug pockets. It is part of the hub print,
+  so mass and BOM stay true. It refuses when the ring would touch the tyre or anything else. Outboard wheel brackets
+  change how the axle is carried: design those by hand.
 - Both change the outline on purpose: keep a change only if the likeness IoU does not drop, and re-run verify.
 
 ## Tips
@@ -633,7 +643,8 @@ plates screwed on, model is one slab", "photo shows screw heads, model has none"
 model is all grey". Fix them with these tools instead of reshaping, then re-run `robot likeness` (it must not drop) and
 `robot verify`:
 - **Separate plates:** `robot plate spec.json --face +z --id top_plate --screws 4 [--material pc]`
-  splits the skin of the chassis's largest flat face off as its own `plate` part (a lid over the tub's pockets),
+  splits the skin of the chassis's largest flat face off as its own part (a lid over the tub's pockets; kind
+  `structure`, because the wire router only routes inside the structure parts' box),
   a shade lighter than the chassis so its outline reads. The
   union is unchanged, so the silhouette is too. It refuses splits that would break a part into two solids or add
   tiny edges, and splits whose skin is mostly pocket. `--screws N` also fixes the plate on with N flush M2 button
