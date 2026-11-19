@@ -3858,5 +3858,9 @@
    "max_depth_mm": 1.0,
    "reason": "the shaft is the motor's own shaft, extended; it runs through the motor"
   }
- ]
+ ],
+ "reference_copy": {
+  "robot": "Baphomet",
+  "source": "AWS wiki photos aws74-77 (robots/baphomet/REFERENCE.md)"
+ }
 }
