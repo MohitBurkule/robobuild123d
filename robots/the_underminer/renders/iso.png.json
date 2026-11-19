@@ -1,9 +1,11 @@
 {
  "spec": "/tmp/work10_the_underminer/robots/the_underminer/spec.json",
- "rendered_at": 1795065451.0933988,
+ "rendered_at": 1795076254.5653427,
  "bodies": [
   "chassis",
   "top_plate",
+  "name_miner",
+  "name_under",
   "wheel_l0",
   "wheel_r0",
   "wheel_l1",
