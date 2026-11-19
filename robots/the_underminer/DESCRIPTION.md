@@ -66,29 +66,29 @@ The Underminer is a **flat, rectangular, four-wheel servo lifter**. The body is 
 ### 2.2 Top deck (TD) and lids
 The deck (z ≈ 20) is divided into five zones (left half, channel, right half). Every lid edge is ringed by small black countersunk screws.
 
-- **LD-LR, left-rear lid**: a flat rectangular panel about **30 × 20 mm**, recessed about **1 mm** into the deck, at x ∈ [−36, −8], y ∈ [+14, +34]… positioned at the **left-rear corner** (image top-left in AWS67). Two screws: rear-left corner and front-left corner.
-- **SVW, servo window**: an open rectangular pocket about **32 × 18 mm** (X × Y), at x ∈ [−32, −4], y ∈ [−2, +14] (the left-middle). The servo lies in it with its **label face up**, flush with or 1 mm below the deck. A **white sliver** on the window's left edge (AWS67) is part of the servo case or a white spacer.
-- **Front-left panel**: a flat panel about **32 × 26 mm** at the left front, x ∈ [−36, −4], y ∈ [−34, −8]. It carries:
+- **LD-LR, left-rear lid**: a flat rectangular panel about **30 × 20 mm**, recessed about **1 mm** into the deck, at x ∈ [−36, −8], y ∈ [−34, −14], at the **left-rear corner** (image top-left in AWS67). Two screws: rear-left corner and front-left corner.
+- **SVW, servo window**: an open rectangular pocket about **32 × 18 mm** (X × Y), at x ∈ [−32, −4], y ∈ [−14, +2] (the left-middle). The servo lies in it with its **label face up**, flush with or 1 mm below the deck. A **white sliver** on the window's left edge (AWS67) is part of the servo case or a white spacer.
+- **Front-left panel**: a flat panel about **32 × 26 mm** at the left front, x ∈ [−36, −4], y ∈ [+8, +34]. It carries:
   - **HL-1 and HL-2**: two **round holes Ø ≈ 6 mm**, side by side about **14 mm apart**, near the panel's rear edge (just in front of the servo). Through the left one a dark interior is seen; through the right one something **red** (a red switch actuator, red wire, or LED) **(guess: switch access hole and LED hole)**.
   - **TXT**: **"Under" / "miner"** in two lines of **white bold rounded letters** about **7 mm tall**, painted or filled into engraved letters (AWS67, AWS66).
   - Screws at its front-left and rear-left corners.
-- **LD-R, right raised cover (AWS67)**: a **raised rounded-rectangle lid**, about **36 × 42 mm** (X × Y), standing about **3–4 mm above the deck** (z ≈ 23–24), with **corner radii about 3 mm** and a **notch** at its rear-left corner (the outline steps in by about 5 mm at the rear-left). It is held by **4–5 screws** (one at each corner, plus one at the left-rear step). It sits at x ∈ [+6, +40], y ∈ [−26, +16].
+- **LD-R, right raised cover (AWS67)**: a **raised rounded-rectangle lid**, about **36 × 42 mm** (X × Y), standing about **3–4 mm above the deck** (z ≈ 23–24), with **corner radii about 3 mm** and a **notch** at its rear-left corner (the outline steps in by about 5 mm at the rear-left). It is held by **4–5 screws** (one at each corner, plus one at the left-rear step). It sits at x ∈ [+6, +40], y ∈ [−16, +26].
   - **AWS64 version**: the right half of the deck is a **single long panel with raised lettering "UnderMiner"** (about 8 mm tall, silver/grey painted letters) running **along Y**, reading from the right side. This panel spans the whole right half (about 36 × 70 mm).
 - **LD-RR, right-rear recessed panel**: behind LD-R, about **34 × 20 mm**, recessed 1 mm, held by **2 screws** at its corners.
 - **Screws S-TD**: **small black countersunk/flat Phillips screws**, head Ø about **3.5 mm** (M2). AWS67 count: about **18** round the deck (front-left panel 3, left rear lid 2, servo window frame 2, centre channel 2, right cover 5, right rear panel 2, corners 2).
 
 ### 2.3 Central channel (CHN) and rear pivot blocks (PVB)
 - **CHN**: a slot through the deck along the centreline, **about 14 mm wide (X)**, running the **full chassis length** from y = −36 to y = +34. Its floor is at about z ≈ 8 **(guess)**. The arm lies in it.
-- **PVB**: at the rear end of the channel there are **two small raised black blocks**, about **8 × 8 × 6 mm**, one each side of the channel (x ≈ ±10, y ≈ +32), standing about **4 mm above the deck**. The left one in AWS67 has a **vertical slot/notch** and a small hole. These are the **pivot bearing blocks** for the arm's rear axle or the servo's far-side bearing **(guess)**.
+- **PVB**: at the rear end of the channel there are **two small raised black blocks**, about **8 × 8 × 6 mm**, one each side of the channel (x ≈ ±10, y ≈ −32), standing about **4 mm above the deck**. The left one in AWS67 has a **vertical slot/notch** and a small hole. These are the **pivot bearing blocks** for the arm's rear axle or the servo's far-side bearing **(guess)**.
 
 ### 2.4 Servo (SV), bracket (SVB) and horn (HN)
 - **SV**: **KST DS215MG V3.0**, a **slim metal-cased "wing" servo**. The case has a **red anodised aluminium cover with white text "KST" and "DS215MG V3.0"**, and **silver aluminium side frames**, with a **slot-shaped cooling vent/label line** across it.
-  - It lies **flat**, label up, in the servo window, its long side along X. The output spline is on its **right-hand end**, which faces the channel, so the **output axis is along X**, at about **y ≈ +8, z ≈ 12** **(guess, consistent with AWS64 where the white horn emerges at the servo's channel-side end)**.
+  - It lies **flat**, label up, in the servo window, its long side along X. The output spline is on its **right-hand end**, which faces the channel, so the **output axis is along X**, at about **y ≈ −8, z ≈ 12** **(guess, consistent with AWS64 where the white horn emerges at the servo's channel-side end)**.
 - **SVB/HN (AWS64)**: a **white plastic part** at the channel-side end of the servo, about **10 × 6 × 6 mm**. A second **white rectangular block** is at the rear end of the servo window. These are the **servo horn (white nylon)** and a **white spacer/bracket** that clamps the servo. The horn connects to the arm.
 - **Mount**: the servo is clamped in the window by the surrounding deck lips and screwed through its tabs (2 screws visible on the window frame at its corners) **(guess)**.
 
 ### 2.5 Lifter arm (AR) and slot (ARS)
-- **Shape**: a **flat black printed bar**, about **12 mm wide (X) × 6 mm thick (Z)**, running from the **rear pivot (y ≈ +30)** to the front attachment, about **72 mm long** within the chassis, plus about **10 mm** beyond the front edge where it turns down into the scoop mount.
+- **Shape**: a **flat black printed bar**, about **12 mm wide (X) × 6 mm thick (Z)**, running from the **rear pivot (y ≈ −30)** to the front attachment, about **72 mm long** within the chassis, plus about **10 mm** beyond the front edge where it turns down into the scoop mount.
 - **Top**: at deck level or **1–2 mm proud** of the deck (z ≈ 20–22) when lowered. AWS67 shows the arm top **flush with the deck** and its outline as a dark bar with layer-line sides.
 - **Slot ARS (AWS64)**: a **through slot about 4 × 22 mm** along the arm near its rear third, with **raised edges** and a broken/rough rim. It is probably a **guide slot for the servo horn pin** (a slot-and-pin drive: the horn's pin runs in the slot and lifts the arm) **(guess, medium)**.
 - **Front end**: the arm passes over the chassis front edge and **bends down** to the front attachment (hidden under the orange scoop in AWS67).
@@ -117,7 +117,7 @@ The deck (z ≈ 20) is divided into five zones (left half, channel, right half).
 ### 2.9 Wheels (WH-FL, WH-FR, WH-RL, WH-RR)
 - **Shape**: **Ø ≈ 22 mm × 10 mm wide**. **White hub** (Ø about 14 mm, with a small central hole) and a **ribbed tyre**: about **24–28 transverse ribs**, each about 1.2 mm tall. The ribs are wavy and soft, like printed TPU.
 - **Colour**: AWS67 **blue tyres** on white hubs (the white shows as a ring on the inner side). AWS64 **grey tyres at the rear, blue at the front**. AWS66 blue.
-- **Positions (centres)**: x = ±46, y = −26 (front) and +26 (rear)… In AWS67 the front wheels sit **just behind the side wedges**, and the rear wheels about 10 mm in from the rear corners. Use: **front y = −24**, **rear y = +24**? See note: the frame here has **+Y forward**, so: **WH-FL/FR at y = +24** and **WH-RL/RR at y = −24**, both at z = 11. Wheelbase 48 mm. Track (centres) 92 mm; outer faces at ±51.
+- **Positions (centres)**: **WH-FL/FR at (±46, +24, 11)** and **WH-RL/RR at (±46, −24, 11)**. In AWS67 the front wheels sit **just behind the side wedges** and the rear wheels about 12 mm in from the rear corners. Wheelbase 48 mm. Track (centres) 92 mm; outer faces at ±51.
 - **Height**: top at z = 22, about **2 mm above the deck** (z 20) and about level with the raised right cover (z 23–24). Bottom at z = 0, the chassis floor at z ≈ 2. So the robot can **drive inverted**, but only just: inverted, it rides on the wheels with the raised cover nearly touching the floor.
 - **Guards**: **none**. The wheels are fully exposed at the sides. Only the side wedges (AWS67) or the hex plate (AWS64) shield the front wheels from the front.
 
@@ -243,7 +243,7 @@ Origin on the floor at the centre of the chassis footprint; +X right, +Y forward
 
 **10.4 Brass plate FP-B (plan).** Hexagon with vertices (±30, 64), (±48, 46), (±48, 34), (±36, 24)… straight front edge y = 64 for |x| ≤ 30, 45° chamfers to the sides, sides at |x| = 48 from y 46 to 34, rear chamfers to (±36, 24).
 
-**10.5 Raised cover LD-R (plan).** Rounded rectangle x ∈ [6, 40], y ∈ [−26, 16], r = 3, minus the rear-left notch x ∈ [6, 11], y ∈ [10, 16]; top at z = 24.
+**10.5 Raised cover LD-R (plan).** Rounded rectangle x ∈ [6, 40], y ∈ [−16, 26], r = 3, minus the rear-left notch x ∈ [6, 11], y ∈ [−16, −10]; top at z = 24.
 
 **10.6 Wheel tread.** r(φ) = 10.0 + 1.2·[sin(26φ) > 0], extruded 10 mm.
 
@@ -270,7 +270,7 @@ Origin on the floor at the centre of the chassis footprint; +X right, +Y forward
 ## 13. Consistency check
 1. **Overall width** comes out at 106–108 by pixels, over the 101.6 mm cube. The front-facing camera is closer to the front wheels and wedges than to the servo, which inflates them. Rescaling by about 0.94 gives about **100–102**. The robot may also be measured diagonally in the cube. **Reconciled: 102 over the wheels**, chassis 80.
 2. **Wheel diameter**: 22 mm from the pixel ratio, and the AWS64 view where the wheel top stands just above the 18 mm chassis wall. **Consistent.**
-3. **Arm length vs pivot**: the arm starts at the rear pivot blocks (y ≈ +32 in image terms = rear) and reaches the scoop. Lever ≈ 70 mm. **Consistent** with a strong-enough servo for 150 g (the DS215MG gives about 5 kg·cm; at 7 cm that is about 0.7 kg at the tip, so it can lift the front of a 150 g robot comfortably).
+3. **Arm length vs pivot**: the arm starts at the rear pivot blocks (y ≈ −32, the top of the AWS67 image) and reaches the scoop. Lever ≈ 70 mm. **Consistent** with a strong-enough servo for 150 g (the DS215MG gives about 5 kg·cm; at 7 cm that is about 0.7 kg at the tip, so it can lift the front of a 150 g robot comfortably).
 4. **Servo orientation**: a flat-lying wing servo has its spline on a narrow face. AWS64 shows the white horn at the channel side of the servo, consistent with a spline axis along X. **Consistent.**
 5. **Side wedges fixed vs moving**: in AWS67 their tops are lower than the scoop's, and there is a gap between them and the scoop. If they moved with the arm they would need a cross-bar, which is not seen. **Reconciled: fixed.**
 
