@@ -33,7 +33,7 @@ Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
 - catalog parts added in free space inside the printed parts with 0.25 mm pockets: `dm_wheel_l0` (pololu_hpcb6v_50to1), `dm_wheel_r0` (pololu_hpcb6v_50to1), `el_battery` (lipo_2s_180), `el_esc` (bbb_malenki_nano), `el_switch` (switch_slide_12x4)
 - overlaps resolved by cuts that keep the union of the parts (pockets, bores, wheel and spinner running clearance)
-- one print with the chassis (same material, `fused_with`): `scoop`, `dt_hub_wheel_l0`, `dt_hub_wheel_r0`
+- one print with the chassis (same material, `fused_with`): `scoop`, `ripper_remix_name`, `ripper_name`, `dt_hub_wheel_l0`, `dt_hub_wheel_r0`
 - 4 wires declared (battery - switch - ESC - motors)
 - print orientation on every printed part, failsafe / weapon disable declared, design volumes declared where this pass changed a part on purpose
 - power switch on the floor of the body, slider facing down to a 7 x 3 mm slot in the underside (no slot on the top or sides; hollow cavities stay closed behind a wall at every outside face)
@@ -43,11 +43,13 @@ Fixed / changed (inside only, outside kept):
 - mass estimate 312 g over 150: walls 1.6 mm -> 308 g
 - hollow skipped chassis: solids 2 vol 0.30
 - hollowed scoop (wall 1.6, form 0): 78.6 -> 19.7 cm3
+- photo graphics as fused colour-split decals (robot decal): RIPPER / REMIX lettering on the flipper's front slope
 
 Left (and why):
-- proxy.wiring x3: Wire `w_sw_esc` (`el_switch.out` to `el_esc.bat`): no baseline route (run the full `wiring` group once and pass its report).
+- proxy.wiring x2: Wire `w_sw_esc` (`el_switch.out` to `el_esc.bat`): no baseline route (run the full `wiring` group once and pass its report).
 - mass.over x1: the photo-sized outside (steel weapon / big printed shell) is heavier than 150 g even hollowed; only a smaller outside would fix it.
+- power.weapon_motor x1: toolchain: lifters/flippers are servo or gear driven; the check wants a brushless kV for every weapon.
 - wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
-- wire.render_count x1: iso.png: 4 routes vs 5 spec wires (missing ['w_sw_esc']); top.png: 4 routes vs 5 spec wires (missing ['w_sw_esc'])
+- wire.render_count x1: iso.png: 3 routes vs 4 spec wires (missing ['w_sw_esc']); top.png: 3 routes vs 4 spec wires (missing ['w_sw_esc'])
 
 Likeness (best silhouette IoU per photo, r3 -> r4): ripper_remix.aws72.webp 0.85 -> 0.85; ripper_remix.aws77.webp 0.86 -> 0.86
