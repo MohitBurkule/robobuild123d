@@ -110,3 +110,33 @@ Limits / next
 - Collision = convex hulls per part (CoACD decomposition next for concave tubs).
 - Electronics damage (battery/ESC hit = robot dead), wire cuts, belt throws not modelled; no motor curves.
 - Ripsaw and Scythe specs currently fail to build (CAD errors), so they can't fight yet.
+
+## Arenas (`--arena`)
+
+Real UK antweight arenas are not all closed boxes. Many have a drop-off edge or a pit, which is how pushers and wedges
+win. Presets in `robot/fight/arenas.py`. In each one the platform top is at z=0, with a lower floor 100 mm down.
+If a robot's COM drops below -30 mm, it has touched the floor outside the arena. That is an immediate loss, even if it
+bounces back. The fight stops 0.5 s later. `judge` checks this before anything else: the first robot out loses.
+
+| preset | layout | source |
+|---|---|---|
+| `closed` (default) | 1.2 m box, walls + roof | old behaviour |
+| `aws2025` | 1.0 m square, 300 mm walls + lid, 400 mm drop-off slot on the east edge, 200 mm square pit | AWS 2025 rules: arena at least 750 mm (1 m recommended), at least one unwalled 200 mm gap for a pit/drop-off ([rules PDF](https://www.robotwars101.org/wp-content/uploads/2024/10/AWS-Rules-2025-211024.pdf), [AWS World Series 2025](https://bristolbotbuilders.com/wp-content/uploads/2025/06/Antweight-World-Series-Rules-2025-050625.pdf)) |
+| `aws_classic` | 762 mm platform, south and east edges open (50 % of the perimeter) | older AWS rules ([v2.3](https://robotwars101.org/ants/rules23.htm), [v4.2](https://robotwars101.org/ants/rules-42.htm)); [antweights wiki arena page with photos](http://www.antweights.co.uk/doku.php?id=antweight_arena) |
+| `beetle_champs` | 1.2 m walled box, 300 mm out-of-the-arena gap, 250 mm pit whose cover drops at 30 s | Bristol Bot Builders events: OOTA zone plus a pit switched on partway through; touching the pit floor = out ([programme](https://bristolbotbuilders.com/programme/)) |
+
+Other rule sets agree that touching the pit or outside floor loses: [CCRL](https://www.flsbattlebots.cz/en/rules/antweight), [SCAR](https://www.socalattackrobots.com/2025-ruleset.html), [NERC](http://www.nerc.us/rules2.htm).
+SCAR's exact pit wording was not found.
+
+Brains:
+- **Pusher (the default for wedges):** picks the hazard nearest the opponent (an open pit centre or a spot just past an
+  open edge span). It drives round to the far side of the opponent and pushes through towards that hazard.
+- **Every brain:** has an edge guard. If the front (or back, when reversing) edge of its own body would leave the
+  platform, it backs off.
+
+Simplifications:
+- Every preset has a lid at wall height, and the gaps are slots under it. Without the lid, spinner recoil threw robots over
+  the walls, which enclosed arenas prevent.
+- Pits are square holes and walls are thin boxes.
+- There are no arena hazards beyond pits and edges (no spikes or hammers).
+- The pit floor is a box; no padding is modelled.
