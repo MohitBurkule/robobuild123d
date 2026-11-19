@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_vector/robots/vector/spec.json",
- "rendered_at": 1795039244.3611696,
+ "rendered_at": 1795058857.5865138,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -20,7 +20,8 @@
   "dm_wheel_r0",
   "el_battery",
   "el_esc",
-  "el_switch"
+  "el_switch",
+  "wa_act"
  ],
  "wires": {
   "w_bat_sw": {
@@ -69,6 +70,18 @@
     -7.5,
     -24.0,
     0.0
+   ]
+  },
+  "w_wpn": {
+   "from": [
+    15.5,
+    -5.5,
+    2.5
+   ],
+   "to": [
+    0.14999999999999858,
+    17.0,
+    -5.0
    ]
   }
  }
