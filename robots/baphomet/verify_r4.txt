@@ -1,38 +1,38 @@
-BLOCKERS: 14
-  [ran] integrity 0.36s
-  [proxy] wiring 0.52s
-  [ran] mass 0.01s
-  [proxy] interference 46.71s
-  [ran] connections 1.18s
-  [ran] legal 0.04s
-  [ran] fasteners 0.01s
+BLOCKERS: 16
+  [ran] integrity 0.11s
+  [proxy] wiring 0.04s
+  [ran] mass 0.00s
+  [proxy] interference 0.48s
+  [ran] connections 0.71s
+  [ran] legal 0.01s
+  [ran] fasteners 0.00s
   [ran] power 0.01s
-  [ran] tension 0.01s
+  [ran] tension 0.00s
   [ran] targets 0.00s
-  [ran] fight 0.10s
-  [ran] shape 1.70s
+  [ran] fight 0.05s
+  [ran] shape 0.16s
   [ran] dynamics 0.01s
-  [ran] strength 0.01s
-  [ran] printability 3.76s
-  [ran] process 0.18s
+  [ran] strength 0.00s
+  [ran] printability 1.95s
+  [ran] process 0.02s
   [ran] electrical 0.02s
-  [ran] combat 0.47s
+  [ran] combat 0.22s
   [ran] physics 0.00s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
-  [ran] fit 0.83s
-  [ran] bom 0.01s
-  [ran] wire_review 0.15s
+  [ran] fit 0.02s
+  [ran] bom 0.00s
+  [ran] wire_review 0.02s
   [ran] fastener_record 0.00s
-  [ran] likeness 39.08s
+  [ran] likeness 4.47s
   [ran] drive_recess 0.00s
-  [ran] belt_wrap 0.01s
-  [ran] retention 0.03s
-  [ran] waiver_audit 0.01s
-  [ran] geom 0.38s
-  [ran] dfm 0.15s
-  [ran] realworld 0.18s
-baphomet: ok=False 14 blockers in 12 root causes, mass 222.0/150 g
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.01s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.28s
+  [ran] dfm 0.06s
+  [ran] realworld 0.14s
+baphomet: ok=False 14 blockers in 12 root causes, mass 222.1/150 g
 1. [mfg.stock] `fork_0` (laser): thickness 2.50 mm is not a stock titanium gauge (0.5, 0.8, 0.9, 1, 1.5, 2, 3, 4, 5, 6, 8, 10); nearest 2 mm. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
    fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
    | fork_0: x -45.50..-40.50  y 39.78..85.52  z -16.68..-6.23  size 5.00 x 45.74 x 10.45 mm
@@ -58,7 +58,7 @@ baphomet: ok=False 14 blockers in 12 root causes, mass 222.0/150 g
    fix: Run the full `wiring` group to re-route it.
 5. [proxy.wiring] Wire `w_sw_esc` (`el_switch.out` to `el_esc.bat`): no baseline route (run the full `wiring` group once and pass its report).
    fix: Run the full `wiring` group to re-route it.
-6. [mass.over] 222.0 g (range 190.2 to 253.8 g) against the 150 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+6. [mass.over] 222.1 g (range 190.3 to 254.0 g) against the 150 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
 7. [wire.render_wires] 2 of 2 robot render(s) do not draw all 7 wires: renders/iso.png: wire `w_bat_sw` not drawn (+1); renders/top.png: wire `w_bat_sw` not drawn (+1)
    fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
@@ -73,7 +73,7 @@ baphomet: ok=False 14 blockers in 12 root causes, mass 222.0/150 g
 12. [likeness.silhouette] `reference/baphomet.aws77.webp`: best silhouette IoU 0.76 at camera front_right_iso (elevation 45, azimuth 30) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.76). Regions (photo frame, left third first) 0.79 / 0.83 / 0.56: worst = rear third. Height/length 0.77 model vs 0.74 photo (proportions ok).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
-  mass 222.0 g of 150 g (-72.0 g margin)
+  mass 222.1 g of 150 g (-72.1 g margin)
     chassis                    60.05 g  fills 29% of its box
     weapon                     35.63 g  fills 71% of its box  <- solid block? a tub should be a shell
     el_battery                 21.50 g  fills 100% of its box  <- solid block? a tub should be a shell
@@ -82,7 +82,7 @@ MASS BUDGET:
     dm_wheel_l0                 9.50 g  fills 63% of its box
     dm_wheel_r0                 9.50 g  fills 63% of its box
     weapon_motor                8.60 g  fills 53% of its box
-    top_plate                   7.24 g  fills 55% of its box
+    top_plate                   6.97 g  fills 53% of its box
     weapon_shaft                6.95 g  fills 79% of its box
     dt_shaft_weapon             5.16 g  fills 79% of its box
     el_wesc                     5.00 g  fills 94% of its box
@@ -102,6 +102,12 @@ MASS BUDGET:
     dt_mount_fork_0             0.60 g  fills 97% of its box
     dt_mount_fork_1             0.60 g  fills 97% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.over: 222.0 g (range 190.2 to 253.8 g) against the 150 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    emblem_star                 0.20 g  fills 36% of its box
+    emblem_ring                 0.20 g  fills 19% of its box
+    mass.over: 222.1 g (range 190.3 to 254.0 g) against the 150 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: distance 0 hit / 20 miss, group 0 hit / 31 miss, inside 4 hit / 25 miss, likeness 3 hit / 0 miss, min_gap 13 hit / 12 miss, overlap 22 hit / 334 miss, part_check 2 hit / 16 miss, part_geom 28 hit / 0 miss, ray 4 hit / 190 miss
+cache: distance 19 hit / 1 miss, group 0 hit / 31 miss, inside 28 hit / 3 miss, likeness 3 hit / 0 miss, min_gap 27 hit / 0 miss, overlap 317 hit / 54 miss, part_check 17 hit / 3 miss, part_geom 30 hit / 0 miss, ray 186 hit / 18 miss
+
+FULL WIRING GROUP (tier full, --only wiring): 2 blocker(s) counted in the total above
+[BLOCKER] wiring.route - Wire `w_bat_sw` (22 AWG, 1.9 mm thick) from `el_battery.xt30` to `el_switch.in` has no clear path; it gets within 20.2 mm of the end at (-0.9, 7.5, -7.9) and `el_battery` blocks it. parts: el_battery.xt30, el_switch.in at (-0.9, 7.5, -7.9)
+[BLOCKER] wiring.route - Wire `w_sw_esc` (22 AWG, 1.9 mm thick) from `el_switch.out` to `el_esc.bat` has no clear path; it gets within 21.4 mm of the end at (2.1, -12.3, -7.3) and `chassis` blocks it. parts: el_switch.out, el_esc.bat at (2.1, -12.3, -7.3)

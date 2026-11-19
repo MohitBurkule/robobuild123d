@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_baphomet/robots/baphomet/spec.json",
- "rendered_at": 1795066713.3676522,
+ "rendered_at": 1795076059.5947883,
  "bodies": [
   "chassis",
   "weapon",
@@ -14,6 +14,8 @@
   "drum_flange_l",
   "drum_flange_r",
   "top_plate",
+  "emblem_star",
+  "emblem_ring",
   "weapon_motor_can",
   "dt_hub_wheel_l0",
   "dt_hub_wheel_r0",
