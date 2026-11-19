@@ -1,8 +1,8 @@
 {
  "aggregate": {
   "photos": 1,
-  "area_weighted_iou": 0.156,
-  "mean_iou": 0.113
+  "area_weighted_iou": 0.208,
+  "mean_iou": 0.07
  },
  "photos": [
   {
@@ -12,159 +12,203 @@
     "elevation": 35.0
    },
    "silhouette_iou": 0.465,
-   "mean_iou": 0.113,
-   "area_weighted_iou": 0.156,
-   "f1_at_0.5": 0.062,
+   "mean_iou": 0.07,
+   "area_weighted_iou": 0.208,
+   "f1_at_0.5": 0.053,
    "segments": [
     {
-     "id": "p17",
-     "label": "right arm (rear leg)",
-     "area": 3574,
-     "best_part": null,
-     "iou": 0.0
-    },
-    {
-     "id": "p08",
+     "id": "p02",
      "label": "top-right dome cap",
-     "area": 1503,
+     "area": 396,
      "best_part": null,
      "iou": 0.0
     },
     {
-     "id": "p20",
-     "label": "front prong B white tip",
-     "area": 710,
+     "id": "p22",
+     "label": "auto_8",
+     "area": 99,
      "best_part": null,
      "iou": 0.0
     },
     {
-     "id": "p06",
-     "label": "top centre screw",
-     "area": 130,
+     "id": "p25",
+     "label": "auto_11",
+     "area": 64,
      "best_part": null,
      "iou": 0.0
     },
     {
-     "id": "p07",
-     "label": "top right screw",
-     "area": 81,
-     "best_part": null,
+     "id": "p24",
+     "label": "auto_10",
+     "area": 56,
+     "best_part": "chassis",
      "iou": 0.0
-    },
-    {
-     "id": "p05",
-     "label": "top hub screw",
-     "area": 121,
-     "best_part": "chassis",
-     "iou": 0.006
-    },
-    {
-     "id": "p21",
-     "label": "front prong C (right, toothed)",
-     "area": 1531,
-     "best_part": "chassis",
-     "iou": 0.017
-    },
-    {
-     "id": "p19",
-     "label": "front prong B (middle, smooth)",
-     "area": 2210,
-     "best_part": "fork_0",
-     "iou": 0.039
-    },
-    {
-     "id": "p03",
-     "label": "top plate right",
-     "area": 4376,
-     "best_part": "chassis",
-     "iou": 0.064
-    },
-    {
-     "id": "p14",
-     "label": "central hinge / motor",
-     "area": 567,
-     "best_part": "fork_1",
-     "iou": 0.069
-    },
-    {
-     "id": "p10",
-     "label": "left arm joint block",
-     "area": 2971,
-     "best_part": "chassis",
-     "iou": 0.083
-    },
-    {
-     "id": "p09",
-     "label": "top-left roller knob",
-     "area": 1378,
-     "best_part": "wheel_l0",
-     "iou": 0.096
-    },
-    {
-     "id": "p11",
-     "label": "left arm lower joint block",
-     "area": 584,
-     "best_part": "wheel_l0",
-     "iou": 0.105
     },
     {
      "id": "p13",
-     "label": "left front wall / belly",
-     "area": 2739,
-     "best_part": "chassis",
-     "iou": 0.112
-    },
-    {
-     "id": "p04",
-     "label": "top hub ring",
-     "area": 2648,
-     "best_part": "wheel_r0",
-     "iou": 0.118
-    },
-    {
-     "id": "p12",
-     "label": "left arm joint screw",
-     "area": 234,
-     "best_part": "dm_wheel_l0",
-     "iou": 0.143
-    },
-    {
-     "id": "p01",
-     "label": "top plate left (textured lid)",
-     "area": 6159,
-     "best_part": "chassis",
-     "iou": 0.16
-    },
-    {
-     "id": "p02",
-     "label": "top plate centre",
-     "area": 4720,
-     "best_part": "chassis",
-     "iou": 0.165
+     "label": "screw top centre",
+     "area": 44,
+     "best_part": null,
+     "iou": 0.0
     },
     {
      "id": "p15",
-     "label": "dark side face beside front prong A",
-     "area": 661,
-     "best_part": "fork_0",
-     "iou": 0.203
+     "label": "screw top right",
+     "area": 43,
+     "best_part": null,
+     "iou": 0.0
+    },
+    {
+     "id": "p27",
+     "label": "auto_13",
+     "area": 24,
+     "best_part": null,
+     "iou": 0.0
+    },
+    {
+     "id": "p03",
+     "label": "top-left roller knob",
+     "area": 7,
+     "best_part": null,
+     "iou": 0.0
+    },
+    {
+     "id": "p04",
+     "label": "left arm joint block",
+     "area": 35,
+     "best_part": "chassis",
+     "iou": 0.001
+    },
+    {
+     "id": "p14",
+     "label": "screw top middle-right",
+     "area": 47,
+     "best_part": "chassis",
+     "iou": 0.002
     },
     {
      "id": "p18",
-     "label": "front prong A (left, toothed)",
-     "area": 1863,
-     "best_part": "fork_0",
-     "iou": 0.437
+     "label": "auto_4",
+     "area": 40,
+     "best_part": "side_arm_l",
+     "iou": 0.002
+    },
+    {
+     "id": "p23",
+     "label": "auto_9",
+     "area": 120,
+     "best_part": "chassis",
+     "iou": 0.005
+    },
+    {
+     "id": "p21",
+     "label": "auto_7",
+     "area": 376,
+     "best_part": "chassis",
+     "iou": 0.012
+    },
+    {
+     "id": "p19",
+     "label": "auto_5",
+     "area": 686,
+     "best_part": "chassis",
+     "iou": 0.02
+    },
+    {
+     "id": "p05",
+     "label": "left arm joint screw",
+     "area": 82,
+     "best_part": "dm_wheel_l0",
+     "iou": 0.022
+    },
+    {
+     "id": "p26",
+     "label": "auto_12",
+     "area": 246,
+     "best_part": "fork_1",
+     "iou": 0.028
+    },
+    {
+     "id": "p12",
+     "label": "front prong C (right)",
+     "area": 1806,
+     "best_part": "chassis",
+     "iou": 0.034
+    },
+    {
+     "id": "p07",
+     "label": "right arm (rear leg)",
+     "area": 5805,
+     "best_part": "chassis",
+     "iou": 0.035
+    },
+    {
+     "id": "p11",
+     "label": "front prong B (middle, white tip)",
+     "area": 2582,
+     "best_part": "chassis",
+     "iou": 0.043
+    },
+    {
+     "id": "p17",
+     "label": "auto_3",
+     "area": 384,
+     "best_part": "dm_wheel_l0",
+     "iou": 0.048
     },
     {
      "id": "p16",
+     "label": "auto_2",
+     "area": 1751,
+     "best_part": "chassis",
+     "iou": 0.069
+    },
+    {
+     "id": "p20",
+     "label": "auto_6",
+     "area": 870,
+     "best_part": "fork_0",
+     "iou": 0.111
+    },
+    {
+     "id": "p09",
+     "label": "central hinge / motor",
+     "area": 599,
+     "best_part": "fork_1",
+     "iou": 0.112
+    },
+    {
+     "id": "p08",
+     "label": "left front wall / belly",
+     "area": 2839,
+     "best_part": "chassis",
+     "iou": 0.127
+    },
+    {
+     "id": "p01",
+     "label": "top plate (textured lid)",
+     "area": 14496,
+     "best_part": "chassis",
+     "iou": 0.257
+    },
+    {
+     "id": "p06",
      "label": "left front leg (plow arm)",
-     "area": 4410,
+     "area": 7595,
      "best_part": "side_arm_l",
-     "iou": 0.562
+     "iou": 0.393
+    },
+    {
+     "id": "p10",
+     "label": "front prong A (left, dark)",
+     "area": 2078,
+     "best_part": "fork_0",
+     "iou": 0.579
     }
    ],
    "unmatched_model_parts": [
+    "wheel_l0",
+    "wheel_r0",
     "fork_2",
     "side_arm_r",
     "dt_hub_wheel_l0",
