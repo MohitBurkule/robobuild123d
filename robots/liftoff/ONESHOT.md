@@ -22,14 +22,14 @@ Likeness: aws76 0.37 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/liftoff.aws76.webp` is declared `front` (IoU 0.37 there) but the model matches it better from front_left_iso (elevation 25, azi
 
 ## Round 4 (verification, helper 2)
-Blockers r3 54 -> r4 9 (`verify --tier inner`).
+Blockers r3 54 -> r4 8 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
 - catalog parts added in free space inside the printed parts with 0.25 mm pockets: `dm_wheel_l0` (pololu_hpcb6v_50to1), `dm_wheel_r0` (pololu_hpcb6v_50to1), `el_battery` (lipo_2s_180), `el_esc` (bbb_malenki_nano), `el_switch` (switch_slide_12x4)
 - overlaps resolved by cuts that keep the union of the parts (pockets, bores, wheel and spinner running clearance)
 - one print with the chassis (same material, `fused_with`): `wedge_l`, `wedge_r`, `dt_hub_wheel_l0`, `dt_hub_wheel_r0`
-- 4 wires declared (battery - switch - ESC - motors)
+- 5 wires declared (battery - switch - ESC - motors)
 - print orientation on every printed part, failsafe / weapon disable declared, design volumes declared where this pass changed a part on purpose
 - power switch on the floor of the body, slider facing down to a 7 x 3 mm slot in the underside (no slot on the top or sides; hollow cavities stay closed behind a wall at every outside face)
 - wedge_l: polycarbonate laser is not a flat plate -> printed nylon
@@ -43,11 +43,10 @@ Fixed / changed (inside only, outside kept):
 - hollowed wedge_r (wall 2.5, form 0): 21.7 -> 10.8 cm3
 
 Left (and why):
+- proxy.wiring x3: Wire `w_bat_sw` (`el_battery.xt30` to `el_switch.in`): the baseline route is now blocked by `chassis` (5 samples).
 - proxy.sweep x1: joint `lift_plate`: `lift_plate` hits `chassis` 0.12 mm deep at 7.3 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint lift_plate` lists the closest approach to every part.
-- power.weapon_motor x1: toolchain: lifters/flippers are servo or gear driven; the check wants a brushless kV for every weapon.
-- process.weapon_printed x1: toolchain: a printed lifter/flipper arm is judged like a spinner (needs hardened teeth); adding metal teeth changes the look.
-- wire.rotor_clearance x4: toolchain: same full-revolution assumption; wires cannot leave a cylinder that covers the chassis.
+- wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
+- wire.render_count x1: iso.png: 4 routes vs 5 spec wires (missing ['w_wpn']); top.png: 4 routes vs 5 spec wires (missing ['w_wpn'])
 - likeness.silhouette x1: looks, not in scope for this pass.
-- battery.rotor_gap x1: toolchain: same full-revolution assumption for a limited-range arm.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): liftoff.aws76.webp 0.65 -> 0.65
