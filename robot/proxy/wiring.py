@@ -5,7 +5,8 @@ every SAMPLE_MM along its polyline and each sample must still clear every body b
 (less GRID_SLACK_MM, the router's own cell-centre leniency)
 (point-to-surface distance; the band around each route only meets bodies whose AABB it reaches), stay inside the
 structure envelope, and its ends must still sit on the wire's ports (PORT_MOVE_MM). Wheels, weapons, pulleys and belts
-count as their padded AABB, as in the router. A wire with no baseline route, a moved port or a blocked sample is
+count as their padded AABB, as in the router; a hinged weapon on a limited joint counts as the volume it sweeps over
+that range (arm_sweep), also as in the router. A wire with no baseline route, a moved port or a blocked sample is
 flagged `proxy.wiring` (the full router may still find another path: a false alarm, never a miss).
 """
 
@@ -37,8 +38,11 @@ def sample(points, step=SAMPLE_MM):
     return np.asarray(out)
 
 
-def blocked(world, P, r, ends):
-    """Per sample: (bool blocked, id of the body that blocks it or '')."""
+def blocked(world, P, r, ends, sweeps=None):
+    """Per sample: (bool blocked, id of the body that blocks it or ''). sweeps: {body id: arm_sweep.ArcSweep}; those
+    bodies (a hinged weapon on a limited joint) block the volume they sweep over the joint range, padded like the
+    router (one cell), instead of their box."""
+    sweeps = sweeps or {}
     near = np.zeros(len(P), bool)
     for e in ends:
         near |= np.linalg.norm(P - e, axis=1) < wr.PORT_ZONE
@@ -52,8 +56,17 @@ def blocked(world, P, r, ends):
         hit |= out
         who[out] = "outside the structure"
     reach = r + CLEAR_MARGIN_MM - GRID_SLACK_MM
+    for sw in {id(v): v for v in sweeps.values()}.values():
+        lo, hi = sw.box
+        m = np.all((P >= lo - BOX_PAD_MM - reach) & (P <= hi + BOX_PAD_MM + reach), axis=1) & ~near & ~hit
+        if not m.any():
+            continue
+        bad = sw.dist(P[m], cap=BOX_PAD_MM + max(reach, 0.0) + 1.0) < BOX_PAD_MM + max(reach, 0.0)
+        idx = np.flatnonzero(m)[bad]
+        hit[idx] = True
+        who[idx] = sw.bodies[0].id
     for b in world.bodies:
-        if b.is_wire:
+        if b.is_wire or b.id in sweeps:
             continue
         lo, hi = b.aabb
         pad = BOX_PAD_MM if b.kind in BOX_PAD_KINDS else 0.0
@@ -74,6 +87,9 @@ def run(ctx, routes, parts=None):
     """routes: baseline [{id, od_mm, points}] from a full report. parts: only wires with an end on these parts."""
     r, world = ctx.r, ctx.world
     base = {x["id"]: x for x in routes or []}
+    from ..checks.arm_sweep import arm_sweeps
+
+    sweeps = arm_sweeps(r.spec, world) if r.spec.wires else {}
     out, nok = [], 0
     for w in r.spec.wires:
         wf, wt = wr._from(w), w.to
@@ -94,7 +110,7 @@ def run(ctx, routes, parts=None):
                 why, at = f"its ports moved {moved:.2f} mm since the baseline route", a
             else:
                 S = sample(P)
-                hit, who = blocked(world, S, float(rt["od_mm"]) / 2, [a, b])
+                hit, who = blocked(world, S, float(rt["od_mm"]) / 2, [a, b], sweeps)
                 if hit.any():
                     k = int(np.flatnonzero(hit)[0])
                     why, at = f"the baseline route is now blocked by `{who[k]}` ({int(hit.sum())} samples)", S[k]
