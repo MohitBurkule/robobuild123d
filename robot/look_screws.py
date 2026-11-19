@@ -116,7 +116,7 @@ def main(path, part, face="+z", pattern="corners", n_pts=4, inset=4.0, at="", pl
     hosts_ok = {i for i, p in byid.items() if "catalog" not in p and "shape" in p and _static(p) and p.get("kind") not in ("wheel", "weapon")}
     ring = [np.zeros(3)] + [CLEAR_R * np.array(v) for v in ((1, 0, 0), (-1, 0, 0), (0, 1, 0), (0, -1, 0), (0, 0, 1), (0, 0, -1))]
     used = [f["id"] for f in raw.get("fasteners") or []]
-    added, report = [], []
+    added, report, room = [], [], {}
     for k, q0 in enumerate(starts):
         tag = f"{part}@{np.round(q0, 1).tolist()}"
         ts = np.arange(0.0, 60.0, 0.1)
@@ -161,7 +161,7 @@ def main(path, part, face="+z", pattern="corners", n_pts=4, inset=4.0, at="", pl
             L = next((L for L in STD_L if L >= grip + MIN_THREAD), None)
             if L is None:
                 report.append(f"{tag}: not {MIN_THREAD:g} mm of {host} material to thread into"); continue
-            b0, b1 = tt[h1 - 1], L + 0.8                       # boss from the wall's inner face to past the tip
+            b0, b1 = tt[h1 - 1], L + 2.8                       # boss from the wall's inner face to 2.8 mm past the tip (room for one length step)
             tl = np.arange(0.05, 150.0, 0.1)
             mh = B[host].inside(head_at[None] + np.outer(tl, d))
             back = int(np.argmax(mh[h1:])) + h1 if mh[h1:].any() else None   # the far wall of the cavity
@@ -197,6 +197,7 @@ def main(path, part, face="+z", pattern="corners", n_pts=4, inset=4.0, at="", pl
             else:
                 _add_cut(P, _cyl_cut(P, head_at - d * 0.05, d, PILOT_R, L + 0.35))
         added.append(rec)
+        room[fid] = (boss[1] - 0.3) if boss else tt[h1 - 1] - 0.3   # how long the screw may grow in the host material
         report.append(f"{tag}: {fid} M2x{L} " + (f"clamps {part} to {host}" if thr else f"into {part} (plug)") + (" with a 6 mm boss behind the wall" if boss else ""))
     for r in report:
         print(r)
@@ -207,6 +208,26 @@ def main(path, part, face="+z", pattern="corners", n_pts=4, inset=4.0, at="", pl
     json.dump(raw, open(path, "w"), indent=1)
     from .fasten_fill import main as fill
     fill(path, fill=True)
+    # the hole record measures grip on the built geometry; if that leaves < 2.5 d of thread, take the next stock length
+    raw = json.load(open(path)); by = {p["id"]: p for p in raw["parts"]}; bumped = 0
+    for f in raw["fasteners"]:
+        if f["id"] not in room or not f.get("hole"):
+            continue
+        L0 = float(f["designation"].split("x")[1]); g = float(f["hole"].get("grip") or 0.0)
+        if L0 - g >= MIN_THREAD - 0.4:
+            continue
+        L1 = next((L for L in STD_L if L - g >= MIN_THREAD - 0.4), None)
+        if L1 is None or L1 > room[f["id"]]:
+            print(f"{f['id']}: only {L0 - g:.1f} mm of thread and no room for a longer screw; remove it or move it")
+            continue
+        d_ = np.asarray(f["dir"], float); a_ = np.asarray(f["at"], float)
+        host = by[f["threads_into"]]
+        _add_cut(host, _cyl_cut(host, a_ + d_ * (L0 - 0.2), d_, PILOT_R, L1 - L0 + 0.6))
+        f["designation"] = f"M2x{L1:g}"; f.pop("hole", None); bumped += 1
+    if bumped:
+        json.dump(raw, open(path, "w"), indent=1)
+        fill(path, fill=True)
+        print(f"{bumped} screw(s) lengthened to keep >= 2.5 d of thread")
     print(f"{len(added)} screw(s) added to {path}")
     return 0
 
