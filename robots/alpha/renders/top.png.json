@@ -1,11 +1,12 @@
 {
  "spec": "/tmp/work10_alpha/robots/alpha/spec.json",
- "rendered_at": 1795066700.9693127,
+ "rendered_at": 1795075476.392312,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
   "scoop",
+  "scoop_eyes",
   "link_l",
   "link_r",
   "dt_hub_wheel_l0",

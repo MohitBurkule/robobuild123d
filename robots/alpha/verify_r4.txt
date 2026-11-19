@@ -1,38 +1,38 @@
 BLOCKERS: 9
-  [ran] integrity 0.05s
-  [proxy] wiring 2.36s
+  [ran] integrity 0.04s
+  [proxy] wiring 0.78s
   [ran] mass 0.00s
-  [proxy] interference 14.29s
-  [ran] connections 0.28s
+  [proxy] interference 0.05s
+  [ran] connections 0.07s
   [ran] legal 0.01s
   [ran] fasteners 0.00s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
   [ran] fight 0.01s
-  [ran] shape 0.31s
+  [ran] shape 0.04s
   [ran] dynamics 0.00s
   [ran] strength 0.00s
-  [ran] printability 1.18s
+  [ran] printability 1.24s
   [ran] process 0.00s
-  [ran] electrical 3.13s
+  [ran] electrical 1.45s
   [ran] combat 0.10s
   [ran] physics 0.00s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
-  [ran] fit 0.19s
+  [ran] fit 0.01s
   [ran] bom 0.00s
-  [ran] wire_review 1.09s
+  [ran] wire_review 0.79s
   [ran] fastener_record 0.00s
-  [ran] likeness 5.83s
+  [ran] likeness 1.78s
   [ran] drive_recess 0.00s
   [ran] belt_wrap 0.00s
   [ran] retention 0.00s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.12s
-  [ran] dfm 0.05s
-  [ran] realworld 2.30s
-alpha: ok=False 8 blockers in 8 root causes, mass 141.3/150 g
+  [ran] geom 0.18s
+  [ran] dfm 0.02s
+  [ran] realworld 1.46s
+alpha: ok=False 8 blockers in 8 root causes, mass 141.9/150 g
 1. [integrity.solids] `chassis` has 0 closed solid(s) and 1 open/invalid shell(s), expected 1 (74547 mm3). A boolean or fillet probably collapsed the build.
    fix: Check the last CAD op (fillet/cut order); or declare `solids` with `solids_reason`.
    | chassis: x -46.00..46.00  y -42.50..42.50  z -10.00..20.00  size 92.00 x 85.00 x 30.00 mm
@@ -50,10 +50,10 @@ alpha: ok=False 8 blockers in 8 root causes, mass 141.3/150 g
    |   overlap allowed `link_r` 0.46 mm (allowed inf)
 4. [proxy.sweep] joint `scoop`: `scoop` hits `chassis` 0.91 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint scoop` lists the closest approach to every part.
    | scoop: x -46.00..46.00  y 24.16..79.84  z -9.44..21.44  size 92.00 x 55.68 x 30.87 mm
-   |   centre (0.00, 52.00, 6.00), volume 11408.0 mm3
+   |   centre (0.00, 52.00, 6.00), volume 11136.4 mm3
    |   joint revolute axis [1, 0, 0] pivot [0, 20, 22.0] range 0..80 default 0
    |   OVERLAP `chassis` 0.91 mm (allowed 0.08)
-   |   gap to `link_l` 0.00 mm (touching)
+   |   overlap allowed `scoop_eyes` 0.43 mm (allowed inf)
 5. [wire.render_wires] 2 of 2 robot render(s) do not draw all 5 wires: renders/iso.png: wire `w_wpn` not drawn; renders/top.png: wire `w_wpn` not drawn
    fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
 6. [wire.render_count] iso.png: 4 routes vs 5 spec wires (missing ['w_wpn']); top.png: 4 routes vs 5 spec wires (missing ['w_wpn'])
@@ -63,10 +63,10 @@ alpha: ok=False 8 blockers in 8 root causes, mass 141.3/150 g
 8. [likeness.silhouette] `reference/alpha.aws72.webp`: best silhouette IoU 0.61 at camera front_left_iso (elevation 45, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `wedge_2wd` at 0.60). Regions (photo frame, left third first) 0.47 / 0.81 / 0.52: worst = front third. Height/length 0.91 model vs 1.04 photo (too flat: raise it or shorten it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
-  mass 141.3 g of 150 g (+8.7 g margin)
+  mass 141.9 g of 150 g (+8.1 g margin)
     chassis                    70.97 g  fills 32% of its box
     el_battery                 12.50 g  fills 100% of its box
-    scoop                      10.86 g  fills 7% of its box
+    scoop                      10.60 g  fills 7% of its box
     dm_wheel_l0                 9.50 g  fills 63% of its box
     dm_wheel_r0                 9.50 g  fills 63% of its box
     wa_act                      7.50 g  fills 67% of its box
@@ -77,10 +77,11 @@ MASS BUDGET:
     link_r                      2.02 g  fills 98% of its box
     dt_hub_wheel_l0             1.34 g  fills 75% of its box
     dt_hub_wheel_r0             1.34 g  fills 75% of its box
+    scoop_eyes                  0.87 g  fills 16% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.may_be_over: 141.3 g (range 115.0 to 167.6 g) against the 150 g limit; 6.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.may_be_over: 141.9 g (range 115.5 to 168.4 g) against the 150 g limit; 6.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: distance 2 hit / 4 miss, group 0 hit / 31 miss, inside 10 hit / 6 miss, likeness 1 hit / 0 miss, min_gap 36 hit / 1 miss, overlap 130 hit / 87 miss, part_check 7 hit / 1 miss, part_geom 14 hit / 0 miss, ray 57 hit / 58 miss
+cache: distance 6 hit / 0 miss, group 0 hit / 31 miss, inside 16 hit / 1 miss, likeness 1 hit / 0 miss, min_gap 37 hit / 0 miss, overlap 218 hit / 2 miss, part_check 8 hit / 1 miss, part_geom 15 hit / 0 miss, ray 115 hit / 5 miss
 
 FULL WIRING GROUP (tier full, --only wiring): 1 blocker(s) counted in the total above
 [BLOCKER] wiring.route - Wire `w_wpn` (26 AWG, 1.3 mm thick) from `el_esc.wpn` to `wa_act.terminals` has no clear path; it gets within 23.7 mm of the end at (18.1, -4.0, 6.7) and `chassis` blocks it. parts: el_esc.wpn, wa_act.terminals at (18.1, -4.0, 6.7)
