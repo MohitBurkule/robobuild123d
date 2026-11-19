@@ -340,3 +340,102 @@ the nyloc nut shows on the right arm only.
 4. Wheels inside the side walls, with the tyre tops level with the plate, and salmon tyres.
 5. A flat lid with 6 edge screws, the centre switch and a square window.
 6. A silver nyloc and washer on the right arm, and a black outrunner bell visible at the right end of the weapon.
+
+---
+
+## 9. Coordinate frame (the one frame used in this whole file)
+
+- Origin: the midpoint between the two wheel centres. +x = the robot's right, +y = forward (toward the weapon),
+  +z = up. Units are mm and angles are degrees.
+- Floor plane z = -15.5 (the wheel radius). The wheel axle line is y = -18, z = 0.
+- Photo pixel coordinates are (u, v) in the **original** image, u to the right and v down, origin at the top left.
+  Image sizes: aws69 1331 x 1206, aws71 1931 x 1231, aws72 1078 x 776.
+
+## 10. Every part in all dimensions (mm, with angles and radii)
+
+| Part | L (y) | W (x) | H (z) | Wall/thickness | Radii / angles | Extent in the frame |
+|---|---|---|---|---|---|---|
+| Tub outer | 68 | 94 | 27.5 | walls 2.0, floor 1.5 | rear chamfers 45 deg, legs 12; vertical edges sharp (r < 1) | x -47..47, y -50..18, z -14..13.5 |
+| Tub front pocket | 13 deep | 72 wide | open top | back wall 2.0 | square corners | x -36..36, y 5..18 **[G: depth 12-15]** |
+| Wheel well (each) | 34 | 12.5 | through | guard wall 2.5 outboard, bulkhead 2.0 inboard | square | \|x\| 32..44.5, y -35..-1 |
+| Top plate | 68 | 94 | 1.5 | 1.5 | same chamfers; notch corners square | z 13.5..15 |
+| Plate wheel notch | 36 | 15 | through | - | square | \|x\| 32..47, y -36..0 |
+| Plate square window | 6 | 7-8 | through | - | square | centre (-14, 6) |
+| Switch slot | 4 | 7.5 | through | - | square | centre (1.75, -6) |
+| Arm (each) | 22 | 8 | 34-36 | solid | stadium: ends r 11 about a vertical axis (or r 13.5 front lobe **[G]**), edge fillets ~1 | \|x\| 39..47, y ~12..47, z -14.5..+19 **[G]** |
+| Axle hole in arm | - | through | - | - | dia 5 (M5) | centre y 34, z 0 |
+| Nyloc + washer | - | 5 (proud) | - | washer 1 thick | nut 8 AF, washer dia 10-11 | on the right arm outer face, x 47..52 |
+| Drum (aws69) | dia 25 | 72-74 | dia 25 | tube wall 1-1.5 **[G]** | r 12.5 | x -37..37, centre (y 34, z 0) |
+| Scoop (aws71) | 35 developed | 65 | - | 1.5-2 sheet | bend r ~13 round the axle, tip curl r ~3, window corners r 5 | hangs from the axle down to z -14 |
+| Scoop window | 22 | 30 | - | - | corner r 5 | centred on the scoop face |
+| Sprung bar | dia 6 | 35 | - | - | - | inside the window, parallel to x |
+| Motor bell | dia 18-20 | 8-10 | - | - | r 9-10 | x ~ 27..37, on the axle |
+| Tyre (each) | dia 31 | 10 | dia 31 | section 4-5 | outer r 15.5, inner r ~10.5 | centre (+/-38, -18, 0) |
+| Hub (each) | dia 21 | 10 | - | - | r 10.5 | inside the tyre |
+| Lid screws | head dia 3.5-4 | - | head 1.3 | M2 | button head | listed in section 4.2 |
+| Arm screws | head dia 3.5-4 | - | - | M2-M3 | - | right wall, (x 47, y ~4 and ~14, z ~0) **[G]** |
+| Switch lever | 3 | 3 | 3 proud | - | - | in the slot, z 15..17 |
+
+## 11. Curves and outlines as math
+
+All in the frame of section 9.
+
+- **Tub plan outline** (closed polygon, counter-clockwise, x then y):
+  (-35,-50) -> (35,-50) -> (47,-38) -> (47,1) -> (39,1) -> (39,18) -> (-39,18) -> (-39,1) -> (-47,1) -> (-47,-38) -> back.
+  Right rear chamfer: the segment of the line **x - y = 85** for y in [-50, -38]. Left rear chamfer: **-x - y = 85**.
+  (The step at y = 1 from |x| = 47 to 39 is where the arms sit beside the narrow front of the tub. The photo shows the
+  arm flush with the side, so the outer silhouette is the full rectangle |x| <= 47 for y in [-38, 47].)
+- **Front pocket** (seen from above): a rectangle |x| <= 36, 5 <= y <= 18, open at y = 18 and at the top.
+- **Arm side profile** (in the y-z plane, extruded over |x| in [39, 47]): a stadium,
+  { (y,z) : 12 <= y <= 34, -13.5 <= z <= 13.5 } UNION { (y - 34)^2 + z^2 <= 13.5^2 }.
+  That is a rectangle with a semicircular front end, centre (34, 0), radius 13.5, spanning angles -90 to +90 deg
+  measured from +y. In the photos the top edge rises toward the rear to about z = +17 **[G]**; an alternative reading
+  is a vertical stadium of length 22 with end-circle centres at z = -3 and z = +6, radius 11 (see section 12).
+- **Drum** (aws69): the solid of revolution about the line (y, z) = (34, 0) along x:
+  (y - 34)^2 + z^2 <= 12.5^2 for |x| <= 37, hollow with bore radius 11 **[G]**.
+  Impact bars **[G]**: two blocks 4 mm wide (in y) and 2.5 mm high, at polar angles 90 deg and 270 deg, each along half
+  the length.
+- **Scoop cross-section** (aws71, in the y-z plane, about the axle (34, 0)):
+  1. an arc of radius 13 centred on (34, 0), from theta = 100 deg to 200 deg (theta from +y toward +z);
+  2. from the arc end at (34 + 13 cos 200, 13 sin 200) = (21.8, -4.4), a straight segment tangent to it, running down
+     and forward to the lip at (44, -13.5), a slope of about **z = -0.41 (y - 21.8) - 4.4**;
+  3. a tip curl of radius 3 turning up through 60 deg.
+  The window is a rounded rectangle in the developed sheet: |u| <= 15 (along x), |v| <= 11 (along the sheet), with
+  corner radius 5: { max(|u| - 10, 0)^2 + max(|v| - 6, 0)^2 <= 5^2 }.
+- **Wheel**: (y + 18)^2 + z^2 <= 15.5^2 for |x| in [33, 43]. Hub: radius 10.5 over the same x range.
+- **Plate wheel notch**: the rectangle |x| in [32, 47], y in [-36, 0].
+- **Plate window**: x in [-17.5, -10.5], y in [3, 9]. Switch slot: x in [-2, 5.5], y in [-8, -4].
+
+## 12. Each feature measured several independent ways
+
+| Feature | Way 1 (dimension) | Way 2 (ratio) | Way 3 (photo pixels) | Way 4 (frame coordinates) |
+|---|---|---|---|---|
+| Body width | 94 mm (assumed scale) | 1.00 W | aws72: rear-right corner to the left edge of the far wheel notch at about u 1030 -> 320 (heavily foreshortened) | x -47..47 |
+| Body length (no weapon) | 68 mm | 0.72 W | aws72 near wall: u 440 -> 1030 (590 px) vs the near arm height of 310 px | y -50..18 |
+| Body height incl. plate | 29 mm | 0.31 W | aws72 near wall at the front: v 500 -> 690 (190 px); aws71 near wall: v 540 -> 1010 (470 px) | z -14..15 |
+| Arm height | 34-36 mm | 1.2-1.6 x body height | aws71: v 500 -> 1100 (600 px, 1.28 x the wall's 470); aws72: v 410 -> 720 (310 px, 1.6 x 190) | z about -14.5..+19 |
+| Arm length | 22 mm | 0.23 W | aws71: u 830 -> 1100 (270 px) vs the wall's 470 px height, so about 0.57 x 29 = 17-22 mm | y about 12..34 (+ the 13.5 front lobe) |
+| Axle height in the arm | 40-53 % up from the arm bottom | - | aws71: nut v 780 in the arm's 500..1100 (53 %); aws72: nut v 600 in 410..720 (39 %) | z about 0 |
+| Weapon width | 70 mm | 0.74 W | aws69 drum u 140 -> 640 (500 px) vs near arm to far arm about 560 px | x -37..37 |
+| Drum diameter | 25 mm | 0.27 W, 0.86 x body height | aws69 drum v 470 -> 900 seen at a slant (end ellipse about 170 px vs the near wall's 300 px height, so 0.57 x 29 = 16-26) | r 12.5 |
+| Wheel diameter | 31 mm | 0.33 W, about 1.07 x body height | aws72 near wheel v 350 -> 500 in its notch (only the top half visible) | r 15.5 |
+| Wheel y position | 30-32 mm ahead of the rear | 0.45 of body length from the rear | aws72 near wheel centre u ~815, between the arm (u 440) and the rear corner (u 1030): 0.64 of the way back | y -18 |
+| Rear chamfer | legs 12 mm | 0.13 W | aws72 bottom right: chamfer about 120 px long vs the side wall's 590 px for 68 mm, so 14 mm | x - y = 85 |
+| Plate window | 7 x 6 mm | 0.075 W | aws72 u 370 -> 440 (70 px) | centre (-14, 6) |
+| Switch | 11 mm body | 0.12 W | aws72 silver tab about 75 px | centre (0, -6) |
+| Nyloc | M5, 8 AF | 0.09 W | aws71 nut about 110 px wide, 0.18 of the arm's 600 px height, so 6.5 mm (ok for M4-M5) | x 47..52, y 34, z 0 |
+
+## 13. Consistency check (conflicts and reconciled values)
+
+| # | Conflict | Values seen | Reconciled value | Why |
+|---|---|---|---|---|
+| 1 | Arm height vs body height | 1.28 x (aws71) vs 1.6 x (aws72) | 1.25 x, about 35 mm | aws72's arm is much nearer the camera than the wall it was compared with (perspective) |
+| 2 | Axle height in the arm | 53 % vs 39 % up | 45 %, z ~ 0 (axle at about wheel-axle height) | the nut sits low in aws72 because of the camera tilt; the drum must reach within ~1 mm of the floor |
+| 3 | Arm position: beside or in front of the tub corner | aws69 looks beside (plate screw right behind the arm top); aws72 looks in front (the arm's rear face against the wall's front edge) | the arm's rear part overlaps the tub's narrow front section (beside), flush with the side wall, and its front lobe projects ahead | satisfies both: from the front-right both readings show the same silhouette |
+| 4 | Weapon type | drum (aws69) vs plate scoop (aws71, aws72) | model the aws69 drum, with 2 impact bars | REFERENCE.json says drum; the drum is the weapon whose motor shows (in-drum outrunner) |
+| 5 | Weapon motor position | windings at the right end (aws69) vs black bell at the right end (aws71) | right (+x) end, stator on the arm side | both photos agree on the side |
+| 6 | Tyre colour | black (aws69) vs salmon (aws71/72) | salmon `#e07a6a` | 2 of 3 photos, and it is the newer build |
+| 7 | Body length | 68 mm (aws72 wall) vs about 75 mm (aws69 wall, more foreshortened) | 68 mm | aws72 is the most side-on view of the near wall |
+| 8 | Front pocket depth | 15 mm (aws69 top view of the cut) vs not visible (aws71) | 13 mm | aws69 is the only direct evidence; leave the drum 1.5-2 mm gap |
+| 9 | Wheel top vs plate | level (aws71) vs 1 mm below (aws69) | level, within 0.5 mm | needed to drive upside down |
+| 10 | Arm-screw count on the side wall | 2 holes (aws69) vs 1 visible (aws71/72) | 2 per side | the second one is hidden by the arm or the weapon in aws71/72 |
