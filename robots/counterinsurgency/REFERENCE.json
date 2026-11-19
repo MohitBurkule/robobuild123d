@@ -8,9 +8,9 @@
   "counterinsurgency.aws76.webp"
  ],
  "view": {
-  "counterinsurgency.aws76.webp": "front_left_iso"
+  "counterinsurgency.aws76.webp": "front_right_iso"
  },
- "elevation": {
-  "counterinsurgency.aws76.webp": 45
+ "view_source": {
+  "counterinsurgency.aws76.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label"
  }
 }
