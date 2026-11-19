@@ -14,12 +14,16 @@
  ],
  "view": {
   "valkyrie.aws70.webp": "front_left_iso",
-  "valkyrie.aws71.webp": "left",
-  "valkyrie.aws74.webp": "front_left_iso"
+  "valkyrie.aws71.webp": "front_right_iso",
+  "valkyrie.aws74.webp": "front_right_iso"
  },
  "elevation": {
   "valkyrie.aws70.webp": 45,
-  "valkyrie.aws71.webp": 25,
+  "valkyrie.aws71.webp": 45,
   "valkyrie.aws74.webp": 45
+ },
+ "view_source": {
+  "valkyrie.aws71.webp": "camera audit 2026-11: front_right_iso, el 45 (az about 60, el about 35-40), read from the photo (see CAMERA_AUDIT.md), not from likeness score",
+  "valkyrie.aws74.webp": "camera audit 2026-11: front_right_iso, el 45, read from the photo (see CAMERA_AUDIT.md), not from likeness score"
  }
 }
