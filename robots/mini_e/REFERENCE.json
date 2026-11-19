@@ -9,11 +9,13 @@
   "mini_e.aws76.webp"
  ],
  "view": {
-  "mini_e.aws72.webp": "front_left_iso",
+  "mini_e.aws72.webp": "front_right_iso",
   "mini_e.aws76.webp": "front_right_iso"
  },
  "elevation": {
-  "mini_e.aws72.webp": 45,
   "mini_e.aws76.webp": 45
+ },
+ "view_source": {
+  "mini_e.aws72.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label"
  }
 }
