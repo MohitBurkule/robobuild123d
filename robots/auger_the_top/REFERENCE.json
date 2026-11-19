@@ -11,7 +11,7 @@
  "view": {
   "auger_the_top.aws72.webp": "front_left_iso"
  },
- "elevation": {
-  "auger_the_top.aws72.webp": 45
+ "view_source": {
+  "auger_the_top.aws72.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label"
  }
 }
