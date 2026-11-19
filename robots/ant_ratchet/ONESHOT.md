@@ -45,14 +45,14 @@ Likeness: aws72 0.78 (FAIL), aws76 0.62 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/ant_ratchet.aws76.webp` is declared `front_right_iso` (IoU 0.62 there) but the model matches it better from rear_left_iso (elev
 
 ## Round 4 (verification, helper 2)
-Blockers r3 80 -> r4 13 (`verify --tier inner`).
+Blockers r3 80 -> r4 11 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
 - catalog parts added in free space inside the printed parts with 0.25 mm pockets: `dm_wheel_l0` (pololu_hpcb6v_50to1), `dm_wheel_r0` (pololu_hpcb6v_50to1), `el_battery` (lipo_2s_180), `el_esc` (bbb_malenki_nano), `el_switch` (switch_slide_12x4)
 - overlaps resolved by cuts that keep the union of the parts (pockets, bores, wheel and spinner running clearance)
 - one print with the chassis (same material, `fused_with`): `fork_0`, `fork_1`, `skirt_l`, `wheel_guard_l`, `skirt_r`, `wheel_guard_r`, `dt_hub_wheel_l0`, `dt_hub_wheel_r0`, `dt_mount_fork_0`, `dt_mount_fork_1`, `dt_strut_lifter`
-- 4 wires declared (battery - switch - ESC - motors)
+- 5 wires declared (battery - switch - ESC - motors)
 - print orientation on every printed part, failsafe / weapon disable declared, design volumes declared where this pass changed a part on purpose
 - power switch on the floor of the body, slider facing down to a 7 x 3 mm slot in the underside (no slot on the top or sides; hollow cavities stay closed behind a wall at every outside face)
 - wheel_guard_l: polycarbonate laser is not a flat plate -> printed nylon
@@ -68,14 +68,11 @@ Fixed / changed (inside only, outside kept):
 - hollowed fork_1 (wall 1.6, form 0): 6.2 -> 3.3 cm3
 
 Left (and why):
+- proxy.wiring x3: Wire `w_bat_sw` (`el_battery.xt30` to `el_switch.in`): no baseline route (run the full `wiring` group once and pass its report).
 - mass.over x1: the photo-sized outside (steel weapon / big printed shell) is heavier than 150 g even hollowed; only a smaller outside would fix it.
 - proxy.sweep x1: joint `lifter`: `lifter` hits `dt_strut_lifter` 0.14 mm deep at 7.0 (declared range 0..70; allowed 0.08). `robot probe spec.json --joint lifter` lists the closest approach to every part.
 - connection.cover_fasteners x2: `skirt_l` is an armour / cover panel held by 0 fastener(s); it needs >= 2 real screws. Snap, press-fit or tape retention alone lets it peel off on the first hit.
-- power.weapon_motor x1: toolchain: lifters/flippers are servo or gear driven; the check wants a brushless kV for every weapon.
-- electrical.battery_weapon_gap x1: toolchain: a limited-range arm is judged as a full revolution about its pivot; that cylinder covers the whole chassis.
 - wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
-- wire.rotor_clearance x4: toolchain: same full-revolution assumption; wires cannot leave a cylinder that covers the chassis.
-- wire.render_count x1: iso.png: 3 routes vs 4 spec wires (missing ['w_bat_sw']); top.png: 3 routes vs 4 spec wires (missing ['w_bat_sw'])
-- battery.rotor_gap x1: toolchain: same full-revolution assumption for a limited-range arm.
+- wire.render_count x1: iso.png: 3 routes vs 5 spec wires (missing ['w_bat_sw', 'w_wpn']); top.png: 3 routes vs 5 spec wires (missing ['w_bat_sw', 'w_wpn'])
 
 Likeness (best silhouette IoU per photo, r3 -> r4): ant_ratchet.aws72.webp 0.83 -> 0.83; ant_ratchet.aws76.webp 0.82 -> 0.82

@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_ant_ratchet/robots/ant_ratchet/spec.json",
- "rendered_at": 1795039303.040617,
+ "rendered_at": 1795058049.0984576,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -22,7 +22,8 @@
   "dm_wheel_r0",
   "el_battery",
   "el_esc",
-  "el_switch"
+  "el_switch",
+  "wa_act"
  ],
  "wires": {
   "w_sw_esc": {
