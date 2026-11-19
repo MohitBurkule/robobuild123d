@@ -1,0 +1,215 @@
+{
+ "aggregate": {
+  "photos": 1,
+  "area_weighted_iou": 0.385,
+  "mean_iou": 0.072
+ },
+ "photos": [
+  {
+   "photo": "alpha.aws72.webp",
+   "camera": {
+    "azimuth": 105.0,
+    "elevation": 45.0
+   },
+   "silhouette_iou": 0.807,
+   "mean_iou": 0.072,
+   "area_weighted_iou": 0.385,
+   "f1_at_0.5": 0.054,
+   "segments": [
+    {
+     "id": "s01",
+     "label": "left wheel",
+     "area": 1277,
+     "best_part": null,
+     "iou": 0.0
+    },
+    {
+     "id": "s09",
+     "label": "top shaft cap",
+     "area": 498,
+     "best_part": null,
+     "iou": 0.0
+    },
+    {
+     "id": "s25",
+     "label": "screw 5",
+     "area": 172,
+     "best_part": "chassis",
+     "iou": 0.0
+    },
+    {
+     "id": "s11",
+     "label": "right axle pin",
+     "area": 136,
+     "best_part": null,
+     "iou": 0.0
+    },
+    {
+     "id": "s24",
+     "label": "screw 4",
+     "area": 180,
+     "best_part": "chassis",
+     "iou": 0.003
+    },
+    {
+     "id": "s22",
+     "label": "screw 2",
+     "area": 176,
+     "best_part": "chassis",
+     "iou": 0.003
+    },
+    {
+     "id": "s27",
+     "label": "screw 7",
+     "area": 172,
+     "best_part": "chassis",
+     "iou": 0.003
+    },
+    {
+     "id": "s16",
+     "label": "top black frame bar",
+     "area": 651,
+     "best_part": "chassis",
+     "iou": 0.008
+    },
+    {
+     "id": "s23",
+     "label": "screw 3",
+     "area": 180,
+     "best_part": "link_l",
+     "iou": 0.008
+    },
+    {
+     "id": "s10",
+     "label": "central vertical post",
+     "area": 1045,
+     "best_part": "chassis",
+     "iou": 0.012
+    },
+    {
+     "id": "s26",
+     "label": "screw 6",
+     "area": 183,
+     "best_part": "wheel_r0",
+     "iou": 0.014
+    },
+    {
+     "id": "s12",
+     "label": "left side frame",
+     "area": 7789,
+     "best_part": "scoop",
+     "iou": 0.02
+    },
+    {
+     "id": "s15",
+     "label": "lower center housing",
+     "area": 1278,
+     "best_part": "chassis",
+     "iou": 0.023
+    },
+    {
+     "id": "s02",
+     "label": "right wheel",
+     "area": 1421,
+     "best_part": "chassis",
+     "iou": 0.027
+    },
+    {
+     "id": "s07",
+     "label": "red battery lead",
+     "area": 1777,
+     "best_part": "chassis",
+     "iou": 0.032
+    },
+    {
+     "id": "s08",
+     "label": "black and white wires",
+     "area": 1485,
+     "best_part": "el_esc",
+     "iou": 0.035
+    },
+    {
+     "id": "s21",
+     "label": "screw 1",
+     "area": 188,
+     "best_part": "wa_act",
+     "iou": 0.035
+    },
+    {
+     "id": "s19",
+     "label": "center wire bundle base",
+     "area": 771,
+     "best_part": "el_esc",
+     "iou": 0.066
+    },
+    {
+     "id": "s18",
+     "label": "right inner bracket",
+     "area": 479,
+     "best_part": "link_r",
+     "iou": 0.079
+    },
+    {
+     "id": "s17",
+     "label": "left inner dark bracket",
+     "area": 1908,
+     "best_part": "link_l",
+     "iou": 0.088
+    },
+    {
+     "id": "s20",
+     "label": "right side armor below arm",
+     "area": 1027,
+     "best_part": "wheel_r0",
+     "iou": 0.088
+    },
+    {
+     "id": "s06",
+     "label": "center right plate",
+     "area": 6541,
+     "best_part": "chassis",
+     "iou": 0.119
+    },
+    {
+     "id": "s05",
+     "label": "center top plate",
+     "area": 6290,
+     "best_part": "link_l",
+     "iou": 0.121
+    },
+    {
+     "id": "s03",
+     "label": "left upper arm plate",
+     "area": 4483,
+     "best_part": "wheel_l0",
+     "iou": 0.134
+    },
+    {
+     "id": "s13",
+     "label": "right side frame",
+     "area": 9707,
+     "best_part": "wheel_r0",
+     "iou": 0.167
+    },
+    {
+     "id": "s04",
+     "label": "right upper arm plate",
+     "area": 4568,
+     "best_part": "link_r",
+     "iou": 0.268
+    },
+    {
+     "id": "s14",
+     "label": "front armor plate",
+     "area": 74675,
+     "best_part": "scoop",
+     "iou": 0.589
+    }
+   ],
+   "unmatched_model_parts": [
+    "scoop_eyes",
+    "dt_hub_wheel_r0"
+   ]
+  }
+ ]
+}
