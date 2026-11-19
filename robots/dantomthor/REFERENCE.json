@@ -15,7 +15,9 @@
  },
  "elevation": {
   "dantomthor.aws65.webp": 70,
-  "dantomthor.aws70.webp": 25,
-  "dantomthor.aws72.webp": 45
+  "dantomthor.aws70.webp": 25
+ },
+ "view_source": {
+  "dantomthor.aws72.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label"
  }
 }
