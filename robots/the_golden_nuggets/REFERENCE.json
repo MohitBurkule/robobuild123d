@@ -9,9 +9,12 @@
   "the_golden_nugget.aws67.webp"
  ],
  "view": {
-  "the_golden_nugget.aws67.webp": "front_right_iso"
+  "the_golden_nugget.aws67.webp": "front_left_iso"
  },
  "elevation": {
   "the_golden_nugget.aws67.webp": 45
+ },
+ "view_source": {
+  "the_golden_nugget.aws67.webp": "camera audit 2026-11: front_left_iso, el 45 (az about 115-120), read from the photo (see CAMERA_AUDIT.md), not from likeness score"
  }
 }
