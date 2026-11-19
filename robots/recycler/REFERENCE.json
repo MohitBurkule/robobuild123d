@@ -13,11 +13,14 @@
  "view": {
   "recycler.aws65.webp": "front",
   "recycler.aws66.webp": "front",
-  "recycler.aws67.webp": "front_left_iso"
+  "recycler.aws67.webp": "front"
  },
  "elevation": {
   "recycler.aws65.webp": 45,
   "recycler.aws66.webp": 45,
-  "recycler.aws67.webp": 45
+  "recycler.aws67.webp": 25
+ },
+ "view_source": {
+  "recycler.aws67.webp": "user camera pick (azimuth 80, elevation 20); replaces the automatic label"
  }
 }
