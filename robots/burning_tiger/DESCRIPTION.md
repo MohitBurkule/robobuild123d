@@ -363,3 +363,68 @@ Native image sizes: AWS74 = 1323 × 978 px, AWS76 = 1713 × 1249 px. Coordinates
 5. **Fork position**: the forks sit at the chassis corners (x ±33) with their bosses on the front wall corners. Consistent.
 6. **Rear hump height**: the AWS76 hump top is about 0.35 of the body length above the plates in projection, which gives about 15 mm. **Reconciled: hump top z = 38.**
 7. **Pivot location**: the pin at the hump (both photos) vs the threaded bolt at the front tube (AWS76). The front bolt's position at the chassis front edge would make the scoop go **down**, not up, when the arm rotates, and LK attaches at the rear. **Reconciled: pivot = rear pin PV at (y −36, z 32).** The front bolt is just the CT-F clamp.
+
+---
+
+## 14. Why the designer did it (per part, from several angles)
+
+Common lens: **adversarial**. For each part: what attacks can reach it (spinner hits, enemy wedges, flips, wall slams, inversion), how it survives, and how it helps win (getting under the opponent). Then construction reasons: printability, assembly, cost, weight, repair.
+
+- **CH: flat yellow box, 21 mm tall**
+  - Fight: a low height leaves a vertical spinner less face to bite, and gives a low centre of gravity against flips. The flat floor and full-width front wall present no gaps for wedges to catch except the front prongs. Translucent PETG/glitter filament is tough and flexes rather than shattering under hits **(guess on material)**.
+  - Weak points: square corners can be bitten by horizontal spinners, and the 21 mm wall is a target for wedges at the front if the prongs are lifted.
+  - Construction: a single print with no supports (open top). Glitter filament is cosmetic ("Burning Tiger" = orange/yellow flame colours).
+- **SP side pods**
+  - Fight: they keep the wheels spaced from the body and shield the motor gearboxes from side impacts.
+  - Construction: carry the motor clamps and keep the wheel bores at the same height **(guess)**.
+- **TP red top plates (two halves)**
+  - Fight: the top is reachable by overhead weapons and the enemy wedge rides over it. 2 mm printed plates are sacrificial and replaceable.
+  - Construction: splitting into two halves leaves the **central channel open for the arm**. Removable plates give access to the electronics with 4–5 screws each. Red contrasts with yellow for the "tiger" look.
+- **Arm on top, rails 8 mm tall**
+  - Fight: keeping the arm in a top channel means the robot stays low. The rails stick up only 2–4 mm (15 at the hump), so they are a small target. Two rails with spacer tubes form a stiff box frame that resists twisting when lifting off-centre. When **inverted**, the hump and the wheels (Ø 32 > 23) keep the robot on its wheels. The hump is lower than the wheels' top reach? About 38 vs 32 mm, so when inverted the robot may rest on the hump, and the arm moving could act as a **self-righting lever** **(guess)**.
+  - Construction: printed red, matching the plates. The rails clamp yellow tubes, so the arm is held with 2 bolts and is easy to swap.
+- **Rear pivot (PV at the rear)**
+  - Fight: the longest possible lever from pivot to scoop (about 75 mm) gives the biggest scoop lift for a small servo, and the scoop tip travels in an arc that tips opponents backward over the scoop.
+  - Construction: a steel pin through printed parts is cheap and replaceable.
+- **Servo + 4-bar (HN, LK)**
+  - Fight: the link attaches near the pivot, so the mechanical advantage is low (a weak lift) but the motion is fast and large. A servo is enough for 150 g opponents. Through the window, the horn is protected by the rails on both sides.
+  - Weak points: the plastic link and horn can snap under a direct hit on the scoop. A servo gearbox can strip on shock **(fragile; shielded by being inside the channel)**.
+- **SC scoop + SCP plate**
+  - Fight: this is **the** feature that gets under the opponent. A thin plate (1.5 mm) with its edge on the floor, angled 24–30°, gets under opponents and the arm then lifts. **Tape** over the plate makes it slick so opponents slide up, and protects the plate's face. Brown fibre or tufnol (AWS74) is stiffer and harder than PLA, giving a thinner, sharper edge.
+  - Weak points: a spinner tooth can bite the 4-screw joint. The scoop sits 1–2 mm from the wall and could jam if bent back.
+  - Construction: the screwed-on plate is replaceable after damage.
+- **WG outer wedges (AWS74)**
+  - Fight: they protect the front wheels and the front corners from enemy wedges. With three front prongs, an opponent arriving at an angle meets a wedge. The taped faces slide opponents up. They give the robot a full-width front ramp, with the gaps letting the scoop move independently.
+  - Weak points: printed edges are blunt (they cannot get as low as the scoop plate). The tape overhang gives a sharper edge.
+  - Construction: printed integral with the chassis; quick and cheap.
+- **FK forks (AWS76)**
+  - Fight: long, thin, floor-touching tips get under opponents sooner than wedges (forks win wedge-vs-wedge), and they reach 38 mm ahead. The barb catches or holds the opponent's edge. Hinging (guess) lets them follow the floor and drop over arena seams. Narrow forks present little for a spinner to hit and deflect it downward. FR4/aluminium is stiff for the weight.
+  - Weak points: thin and long, so they bend under heavy hits. They are sacrificial, replaced via one screw.
+- **Bosses BS**
+  - Construction: a strong round lug for a single pivot screw. Printed integral to avoid extra parts.
+- **Wheels WH, Ø 32 gear tread**
+  - Fight: the gear-tooth tread grips arena floors for pushing. Being taller than the body gives invertible driving, so being flipped does not lose the fight. **Exposed outer faces** are the main weak point (a spinner can hit the tyre or shaft). There is no guard, to save weight. Four-wheel drive keeps traction when the front is lifted by an opponent's wedge.
+  - Construction: printed TPU or off-the-shelf gear wheels; cheap and replaceable.
+- **Front-wall screws S-FW**
+  - Construction: likely fix the internal servo mount or floor to the front wall. Large M3 screws take impacts at the front.
+- **Black screws on the plates**
+  - Construction: small M2 into plastic. Light, quick maintenance.
+
+## 15. Unseen / inner parts (guesses with confidence)
+
+| Part | Guess | Size (mm) | Position (centre, mm) | Confidence |
+|---|---|---|---|---|
+| Lifter servo | 9 g micro servo (e.g. MG90-class with metal gears) | 23 × 12 × 23 | x 0, y +2, z 12; output shaft along X at z ≈ 18 under the window | medium |
+| Drive motors | 4 × N20 gearmotors (6 V, about 300–600 rpm) | 12 × 10 × 25 (+ 9 mm shaft) | lying across the body with shafts out the sides at z 15; y −28 and +14, x ±22 | medium (2 motors with coupled wheels is possible: low) |
+| Motor clamps | printed U-straps or slots in the floor, with 2 × M2 each | 14 × 12 × 4 | over each motor | low |
+| Battery | 2S 7.4 V LiPo, 180–300 mAh | 40 × 18 × 10 | rear centre, x 0, y −22, z 8, under the hump | medium |
+| ESC | 2 × dual brushed ESC (e.g. DasMikro / mini-ESC) or 1 × 4-channel | 25 × 15 × 5 each | left and right of the servo, x ±18, y +5, z 6 | low |
+| Receiver | small 2.4 GHz receiver | 20 × 12 × 5 | front-centre, x 0, y +25, z 6 | low |
+| Power switch / link | slide switch or removable link | 10 × 5 × 5 | rear wall, x 10, y −40, z 12 | low |
+| Wiring | servo lead from RX to SV (about 50 mm). Motor leads run along the side walls to the ESCs. Battery leads go via the switch to the ESCs, all below z = 18 so the top plates clear them. | — | — | medium |
+| Internal ribs / posts | 4–6 corner posts Ø 5 mm with M2 holes for the plate screws; a central rib pair holding the servo | Ø 5 × 19 | at the corners and under the plate screw positions | medium |
+| Axle bearings | none; the motor shaft carries the wheel directly (D-shaft) | — | — | medium |
+| Pivot bracket internal | the rear bracket BR is a printed part screwed into the top plate or a post | 10 × 6 × 15 | x ±14, y −34 | low |
+| Hidden screws | M2 screws from below through the floor into the walls (likely); the 2 front M3s pass into a front internal cross-rib | — | — | low |
+
+**Wiring path summary (guess)**: battery at the rear goes to the switch at the rear wall, then to the ESCs in the mid-sides, then the motors at the four wheel positions. The receiver is at the front, with the servo lead running up to the servo under the window. Everything is under the top plates, so it is **shielded from hits**. Only the servo horn and link are exposed, in the channel.
