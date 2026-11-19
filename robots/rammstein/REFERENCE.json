@@ -8,5 +8,15 @@
   "teeth": 0
  },
  "wheels": 4,
- "source": "read from photos"
+ "source": "read from photos",
+ "view": {
+  "rammstein.aws70.webp": "front_left_iso",
+  "rammstein.aws71.webp": "front",
+  "rammstein.aws72.webp": "front_left_iso"
+ },
+ "view_source": {
+  "rammstein.aws70.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label",
+  "rammstein.aws71.webp": "user camera pick (azimuth 100, elevation 45); replaces the automatic label",
+  "rammstein.aws72.webp": "user camera pick (azimuth 135, elevation 35); replaces the automatic label"
+ }
 }
