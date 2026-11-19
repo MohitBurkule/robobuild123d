@@ -19,7 +19,7 @@ Likeness: aws74 0.59 (FAIL), aws76 0.40 (FAIL), aws77 0.64 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/team_phyte_s_little_sytes.aws76.webp` is declared `front_left_iso` (IoU 0.40 there) but the model matches it better from rear_r
 
 ## Round 4 (verification, helper 2)
-Blockers r3 57 -> r4 6 (`verify --tier inner`).
+Blockers r3 57 -> r4 5 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
@@ -36,7 +36,6 @@ Fixed / changed (inside only, outside kept):
 
 Left (and why):
 - mass.over x1: the photo-sized outside (steel weapon / big printed shell) is heavier than 150 g even hollowed; only a smaller outside would fix it.
-- electrical.cells_consistent x1: Cell counts: battery 1S, electronics.cells 2S.
 - likeness.silhouette x3: looks, not in scope for this pass.
 - likeness.view x1: looks, not in scope for this pass.
 

@@ -6244,6 +6244,6 @@
   "failsafe": true,
   "weapon_remote_disable": false,
   "radio": "2.4 GHz",
-  "cells": 2
+  "cells": 1
  }
 }
