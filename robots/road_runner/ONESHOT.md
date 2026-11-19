@@ -52,5 +52,8 @@ Fixed / changed (inside only, outside kept):
 
 Left (and why):
 - mass.over x1: the photo-sized outside (steel weapon / big printed shell) is heavier than 150 g even hollowed; only a smaller outside would fix it.
+- proxy.interference x1: `chassis` and `wheel_r1` overlap by 0.24 mm (allowed 0.08).
+- connection.fused_mismatch x1: `side_wall_r` is fused to `chassis` but they share 0.00 mm3 (need >= 1 mm3); faces that only touch print as two pieces or a paper-thin seam.
+- connection.floating x1: `side_wall_r` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): road_runner.aws67.webp 0.84 -> 0.83
