@@ -1,46 +1,47 @@
 BLOCKERS: 1
   [ran] integrity 0.10s
+  [proxy] wiring 0.18s
   [ran] mass 0.00s
-  [proxy] interference 9.89s
-  [ran] connections 0.74s
-  [ran] legal 0.06s
-  [ran] fasteners 0.00s
+  [proxy] interference 7.11s
+  [ran] connections 0.39s
+  [ran] legal 0.01s
+  [ran] fasteners 0.01s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
   [ran] fight 0.03s
-  [ran] shape 0.33s
-  [ran] dynamics 0.01s
-  [ran] strength 0.00s
-  [ran] printability 1.35s
+  [ran] shape 0.29s
+  [ran] dynamics 0.00s
+  [ran] strength 0.09s
+  [ran] printability 1.71s
   [ran] process 0.00s
   [ran] electrical 0.00s
-  [ran] combat 0.16s
+  [ran] combat 0.20s
   [ran] physics 0.00s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
-  [ran] fit 0.14s
+  [ran] fit 0.06s
   [ran] bom 0.00s
-  [ran] wire_review 0.03s
+  [ran] wire_review 0.01s
   [ran] fastener_record 0.00s
-  [ran] likeness 17.69s
+  [ran] likeness 13.70s
   [ran] drive_recess 0.00s
   [ran] belt_wrap 0.00s
   [ran] retention 0.00s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.31s
-  [ran] dfm 0.10s
-  [ran] realworld 0.10s
-pingu: ok=False 1 blockers in 1 root causes, mass 140.6/150 g
+  [ran] geom 0.18s
+  [ran] dfm 0.07s
+  [ran] realworld 0.09s
+pingu: ok=False 1 blockers in 1 root causes, mass 142.2/150 g
 1. [likeness.silhouette] `reference/pingu.aws72.webp`: best silhouette IoU 0.64 at camera front_left_iso (elevation 25, azimuth 120) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.67). Regions (photo frame, left third first) 0.58 / 0.72 / 0.59: worst = front third. Height/length 0.65 model vs 0.82 photo (too flat: raise it or shorten it).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
-  mass 140.6 g of 150 g (+9.4 g margin)
-    chassis                    57.51 g  fills 30% of its box
+  mass 142.2 g of 150 g (+7.8 g margin)
+    chassis                    58.06 g  fills 30% of its box
     el_battery                 12.50 g  fills 100% of its box
     dm_wheel_l1                 9.50 g  fills 63% of its box
     dm_wheel_r1                 9.50 g  fills 63% of its box
-    lid                         4.70 g  fills 55% of its box
+    lid                         4.63 g  fills 54% of its box
     wheel_l1                    4.12 g  fills 66% of its box
     wheel_r1                    4.12 g  fills 66% of its box
     wheel_l0                    4.09 g  fills 77% of its box
@@ -65,6 +66,10 @@ MASS BUDGET:
     dt_mount_fork_2             0.91 g  fills 98% of its box
     dt_mount_fork_3             0.91 g  fills 98% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.may_be_over: 140.6 g (range 116.6 to 164.6 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    fs_look_lid_0               0.28 g  fills 27% of its box
+    fs_look_lid_1               0.28 g  fills 27% of its box
+    fs_look_lid_2               0.28 g  fills 27% of its box
+    fs_look_lid_3               0.28 g  fills 27% of its box
+    mass.may_be_over: 142.2 g (range 118.0 to 166.3 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: distance 6 hit / 6 miss, group 0 hit / 31 miss, inside 24 hit / 2 miss, likeness 1 hit / 0 miss, min_gap 0 hit / 1 miss, overlap 121 hit / 95 miss, part_check 21 hit / 1 miss, part_geom 28 hit / 1 miss, ray 146 hit / 35 miss
+cache: distance 6 hit / 10 miss, group 0 hit / 31 miss, inside 32 hit / 10 miss, likeness 1 hit / 0 miss, min_gap 0 hit / 1 miss, overlap 121 hit / 123 miss, part_check 21 hit / 1 miss, part_geom 33 hit / 0 miss, ray 146 hit / 55 miss

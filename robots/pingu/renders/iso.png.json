@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_pingu/robots/pingu/spec.json",
- "rendered_at": 1795039427.205178,
+ "rendered_at": 1795061968.6198068,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -30,7 +30,11 @@
   "dm_wheel_r1",
   "el_battery",
   "el_esc",
-  "el_switch"
+  "el_switch",
+  "fs_look_lid_0",
+  "fs_look_lid_1",
+  "fs_look_lid_2",
+  "fs_look_lid_3"
  ],
  "wires": {
   "w_bat_sw": {
