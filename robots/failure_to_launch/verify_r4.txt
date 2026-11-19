@@ -1,42 +1,42 @@
 BLOCKERS: 5
-  [ran] integrity 0.07s
-  [proxy] wiring 1.79s
-  [ran] mass 0.00s
-  [proxy] interference 16.38s
-  [ran] connections 1.09s
+  [ran] integrity 0.12s
+  [proxy] wiring 2.96s
+  [ran] mass 0.01s
+  [proxy] interference 20.29s
+  [ran] connections 2.67s
   [ran] legal 0.02s
-  [ran] fasteners 0.01s
+  [ran] fasteners 0.00s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
-  [ran] fight 0.03s
-  [ran] shape 0.34s
+  [ran] fight 0.02s
+  [ran] shape 0.64s
   [ran] dynamics 0.00s
-  [ran] strength 0.00s
-  [ran] printability 0.67s
+  [ran] strength 0.01s
+  [ran] printability 1.52s
   [ran] process 0.00s
-  [ran] electrical 1.32s
-  [ran] combat 0.09s
+  [ran] electrical 5.85s
+  [ran] combat 0.13s
   [ran] physics 0.00s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
   [ran] fit 0.11s
   [ran] bom 0.01s
-  [ran] wire_review 0.65s
+  [ran] wire_review 1.42s
   [ran] fastener_record 0.00s
-  [ran] likeness 14.31s
-  [ran] drive_recess 0.01s
+  [ran] likeness 28.40s
+  [ran] drive_recess 0.00s
   [ran] belt_wrap 0.00s
   [ran] retention 0.00s
-  [ran] waiver_audit 0.00s
-  [ran] geom 0.42s
-  [ran] dfm 0.24s
-  [ran] realworld 1.69s
-failure to launch: ok=False 5 blockers in 5 root causes, mass 126.3/150 g
+  [ran] waiver_audit 0.01s
+  [ran] geom 0.66s
+  [ran] dfm 0.35s
+  [ran] realworld 2.61s
+failure to launch: ok=False 5 blockers in 5 root causes, mass 126.1/150 g
 1. [proxy.wiring] Wire `w_lesc_bat` (`el_switch.out` to `el_lesc.bat`): the baseline route is now blocked by `chassis` (12 samples).
    fix: Run the full `wiring` group to re-route it.
    | chassis: x -30.00..30.00  y -25.00..25.00  z -10.00..16.00  size 60.00 x 50.00 x 26.00 mm
-   |   centre (-0.00, 0.00, 3.00), volume 34809.1 mm3
+   |   centre (-0.00, 0.00, 3.00), volume 34565.5 mm3
    |   overlap allowed `flip_arm_l` 1.92 mm (allowed inf)
    |   overlap allowed `flip_arm_r` 1.64 mm (allowed inf)
    |   overlap allowed `dt_strut_top_arm` 0.02 mm (allowed 0.08)
