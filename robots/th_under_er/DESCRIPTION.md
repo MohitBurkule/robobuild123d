@@ -24,7 +24,8 @@ Ratios are against **W = overall width across the pods ≈ 100 mm**.
 - **Origin O** = floor point (z = 0) under the **weapon axis**.
 - **+X** = robot right, **+Y** = forward (the straight edge, where the blade reaches out), **+Z** = up. mm.
 - In photo 71, robot right is the **image right pod** (lower right), because the camera is at the front-right. In 72, robot right is the image upper-right pod.
-- Extents (reconciled §12):
+- **Note**: §13.2 gives the final pod and wheel position (pods y ∈ [−48, −12], wheels (±38, −30, 13), apex y −70), and this overrides the first readings below and in §9.
+- Extents (first reading):
   - front bar x ∈ [−50, +50], y ∈ [−12, +8];
   - pentagon body x ∈ [−34, +34], y ∈ [−12, −78], rear apex at (0, −78);
   - top z = 16 (plate top), body bottom z = 6;
