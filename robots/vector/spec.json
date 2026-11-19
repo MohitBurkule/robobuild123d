@@ -6940,7 +6940,7 @@
     0,
     0
    ],
-   "color": "#e8c84a",
+   "color": "#1e1e1e",
    "print_orientation": "+z",
    "volume_mm3": 7175.0
   },
@@ -7285,7 +7285,7 @@
     0,
     0
    ],
-   "color": "#e8c84a",
+   "color": "#1e1e1e",
    "print_orientation": "+z",
    "volume_mm3": 7175.0
   },
@@ -7300,8 +7300,8 @@
      "type": "prism",
      "points": [
       [
-       -10,
-       10.0
+       -6,
+       11.0
       ],
       [
        5,
@@ -7324,11 +7324,11 @@
        18.0
       ],
       [
-       -10,
+       -6,
        18.0
       ]
      ],
-     "height": 22
+     "height": 18
     },
     "at": [
      0.0,
@@ -7539,33 +7539,33 @@
       "type": "prism",
       "points": [
        [
-        24,
-        30
+        30,
+        -16
        ],
        [
-        36,
-        30
+        86,
+        -16
        ],
        [
-        40,
-        92
+        86,
+        -15
        ],
        [
-        32,
-        94
+        30,
+        9
        ]
       ],
-      "height": 7
+      "height": 8
      },
      "at": [
-      0,
-      0,
-      -12.5
-     ],
-     "rot": [
-      0,
+      32,
       0,
       0
+     ],
+     "rot": [
+      90,
+      0,
+      90
      ]
     },
     "cut": [
@@ -7617,8 +7617,7 @@
    ],
    "color": "#e8a83a",
    "fused_with": "chassis",
-   "print_orientation": "+z",
-   "volume_mm3": 4362.0
+   "print_orientation": "+z"
   },
   {
    "id": "fork_r",
@@ -7633,33 +7632,33 @@
       "type": "prism",
       "points": [
        [
-        -32,
-        94
+        30,
+        -16
        ],
        [
-        -40,
-        92
+        86,
+        -16
        ],
        [
-        -36,
-        30
+        86,
+        -15
        ],
        [
-        -24,
-        30
+        30,
+        9
        ]
       ],
-      "height": 7
+      "height": 8
      },
      "at": [
-      0,
-      0,
-      -12.5
-     ],
-     "rot": [
-      0,
+      -32,
       0,
       0
+     ],
+     "rot": [
+      90,
+      0,
+      90
      ]
     },
     "cut": [
@@ -7711,8 +7710,7 @@
    ],
    "color": "#e8a83a",
    "fused_with": "chassis",
-   "print_orientation": "+z",
-   "volume_mm3": 4362.0
+   "print_orientation": "+z"
   },
   {
    "id": "dt_hub_wheel_l0",
@@ -8032,7 +8030,7 @@
     0,
     0
    ],
-   "color": "#7f6e28",
+   "color": "#e8b040",
    "fused_with": "wheel_l0",
    "print_orientation": "+z",
    "volume_mm3": 2159.0
@@ -8355,7 +8353,7 @@
     0,
     0
    ],
-   "color": "#7f6e28",
+   "color": "#e8b040",
    "fused_with": "wheel_r0",
    "print_orientation": "+z",
    "volume_mm3": 2159.0
