@@ -16,6 +16,7 @@ import numpy as np
 
 from .. import measure
 from ..finding import BLOCKER, WARNING, fail, ok
+from .arm_sweep import is_arm
 from .power import rim_radius, spin_axis
 
 G = "electrical"
@@ -206,14 +207,14 @@ def r_indicator(F):
 def r_battery_weapon_gap(F):
     v = F.get("battery_weapon_gap_mm")
     if v is None:
-        return True if F.get("no_weapon") else None, "No spinning weapon." if F.get("no_weapon") else "battery or weapon not modelled"
+        return True if F.get("no_weapon") else None, "No weapon." if F.get("no_weapon") else "battery or weapon not modelled"
     return v >= 3.0, f"Battery is {v:.1f} mm from the weapon's swept volume (need >= 3 mm plus a wall)."
 
 
 def r_battery_shielded(F):
     v = F.get("battery_shielded")
     if v is None:
-        return True if F.get("no_weapon") else None, "No spinning weapon." if F.get("no_weapon") else "battery or weapon not modelled"
+        return True if F.get("no_weapon") else None, "No weapon." if F.get("no_weapon") else "battery or weapon not modelled"
     return v, "A structural wall " + ("sits" if v else "does NOT sit") + " between the battery and the weapon."
 
 
@@ -545,10 +546,19 @@ def _visible(r, w, b):
     return False
 
 
+def _arm_sweeps(ctx):
+    """[(ArcSweep)] of every hinged weapon on a limited joint (arm_sweep): what the battery must keep clear of."""
+    from .wire_review import rotor_sweeps
+
+    return [sw for _g, _p, _a, _ids, sw in rotor_sweeps(ctx.r.spec, ctx.world) if hasattr(sw, "angles")]
+
+
 def _weapon(ctx):
+    """The first spinning weapon as a revolved disc (body, slab centre, axis, rim radius, half thickness), else None.
+    A hinged weapon is not a disc about its local Z: `_arm_sweeps` covers it."""
     w, r = ctx.world, ctx.r
     for i, b in enumerate(w.bodies):
-        if b.part_idx is not None and b.kind == "weapon":
+        if b.part_idx is not None and b.kind == "weapon" and not (r is not None and is_arm(r.parts[b.part_idx].part.weapon)):
             sa = spin_axis(w, r, i)
             if sa is not None:
                 o, a = sa
@@ -563,7 +573,8 @@ def _weapon(ctx):
 def _battery_geom(ctx, F, bat):
     w, r = ctx.world, ctx.r
     wp = _weapon(ctx)
-    if wp is None:
+    arms = _arm_sweeps(ctx)
+    if wp is None and not arms:
         F["no_weapon"] = True
     if bat is None:
         return
@@ -571,6 +582,18 @@ def _battery_geom(ctx, F, bat):
     if bb is None:
         return
     lo, hi = bb.aabb
+    if arms:
+        # hinged weapon: the gap is to the volume it sweeps over its declared joint range, not a full disc
+        P = np.vstack([bb.surface(0.5)[0], bb.mesh.vertices])
+        best = min((sw.nearest(P) for sw in arms), key=lambda t: t[0])
+        F["battery_weapon_gap_mm"] = best[0]
+        walls = [b for b in w.bodies if b.kind in ("structure", "armor", "plate", "fork") and not b.fastener
+                 and all(b.id not in {x.id for x in sw.bodies} for sw in arms)]
+        if best[1] is not None:
+            dvec = best[1] - bb.center
+            L = float(np.linalg.norm(dvec))
+            dist, _ = measure.Scene(walls).first_hit(bb.center[None], (dvec / max(L, 1e-9))[None])
+            F["battery_shielded"] = bool(dist[0] < L)
     if wp is not None:
         wb, o, a, R, half = wp
         P = bb.surface(1.0)[0]
@@ -579,13 +602,13 @@ def _battery_geom(ctx, F, bat):
         rad = np.linalg.norm(q - np.outer(q @ a, a), axis=1)
         dr, da = rad - R, ax - half
         d = np.where((dr > 0) & (da > 0), np.hypot(dr, da), np.maximum(dr, da))
-        F["battery_weapon_gap_mm"] = float(d.min())
+        F["battery_weapon_gap_mm"] = min(float(d.min()), F.get("battery_weapon_gap_mm", math.inf))
         walls = [b for b in w.bodies if b.kind in ("structure", "armor", "plate", "fork") and not b.fastener and b is not wb]
         sc = measure.Scene(walls)
         dvec = o - bb.center
         L = float(np.linalg.norm(dvec))
         dist, _ = sc.first_hit(bb.center[None], (dvec / max(L, 1e-9))[None])
-        F["battery_shielded"] = bool(dist[0] < max(L - R, 0.0))
+        F["battery_shielded"] = bool(dist[0] < max(L - R, 0.0)) and F.get("battery_shielded", True)
     floor = ctx.metrics.get("ground_z")
     if floor is None:
         zs = [float(b.aabb[0][2]) for b in w.bodies if not b.fastener and not b.is_wire]
