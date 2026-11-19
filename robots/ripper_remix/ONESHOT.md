@@ -45,10 +45,9 @@ Fixed / changed (inside only, outside kept):
 - hollowed scoop (wall 1.6, form 0): 78.6 -> 19.7 cm3
 
 Left (and why):
-- proxy.wiring x2: Wire `w_sw_esc` (`el_switch.out` to `el_esc.bat`): no baseline route (run the full `wiring` group once and pass its report).
+- proxy.wiring x3: Wire `w_sw_esc` (`el_switch.out` to `el_esc.bat`): no baseline route (run the full `wiring` group once and pass its report).
 - mass.over x1: the photo-sized outside (steel weapon / big printed shell) is heavier than 150 g even hollowed; only a smaller outside would fix it.
-- power.weapon_motor x1: toolchain: lifters/flippers are servo or gear driven; the check wants a brushless kV for every weapon.
 - wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
-- wire.render_count x1: iso.png: 3 routes vs 4 spec wires (missing ['w_sw_esc']); top.png: 3 routes vs 4 spec wires (missing ['w_sw_esc'])
+- wire.render_count x1: iso.png: 4 routes vs 5 spec wires (missing ['w_sw_esc']); top.png: 4 routes vs 5 spec wires (missing ['w_sw_esc'])
 
 Likeness (best silhouette IoU per photo, r3 -> r4): ripper_remix.aws72.webp 0.85 -> 0.85; ripper_remix.aws77.webp 0.86 -> 0.86
