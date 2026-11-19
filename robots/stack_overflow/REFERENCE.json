@@ -16,6 +16,9 @@
  "elevation": {
   "stack_overflow.aws65.webp": 45,
   "stack_overflow.aws66.webp": 45,
-  "stack_overflow.aws67.webp": 25
+  "stack_overflow.aws67.webp": 45
+ },
+ "view_source": {
+  "stack_overflow.aws67.webp": "camera audit 2026-11: front, el 45, read from the photo (see CAMERA_AUDIT.md), not from likeness score"
  }
 }
