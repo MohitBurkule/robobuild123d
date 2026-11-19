@@ -21,7 +21,7 @@ Likeness: aws67 0.63 (FAIL).
 
 ## Round 4 (verification, helper 1)
 Blockers r3 -> r4: **101 -> 12** (`verify --tier inner`, full output in verify_r4.txt).
-Likeness (best silhouette IoU per photo, r3 -> r4): divebomb.aws67.webp 0.626 -> 0.625
+Likeness (best silhouette IoU per photo, r3 -> r4): divebomb.aws67.webp 0.626 -> 0.626
 
 What was done (script r4_h1, outside shape kept):
 - fake screw/bolt heads removed; detail mounts/arms merged into the print part they sit on; axle nuts became printed hub caps
