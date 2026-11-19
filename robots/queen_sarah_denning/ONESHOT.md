@@ -56,3 +56,27 @@ Left (one line each):
 - wire.render_count x1: render record lists fewer routes than the spec has wires (a wire found no route)
 - likeness.view x1: looks (photo view label; not part of this pass)
 - likeness.silhouette x1: looks (not part of this pass; outside shape kept as round 3)
+
+## Round 4 (verification, helper 2)
+Blockers r3 65 -> r4 8 (`verify --tier inner`).
+
+Fixed / changed (inside only, outside kept):
+- detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
+- catalog parts added in free space inside the printed parts with 0.25 mm pockets: `dm_wheel_l0` (bbb_n20_600rpm), `dm_wheel_r0` (bbb_n20_600rpm), `el_battery` (lipo_2s_180), `el_rx_esc` (malenki_nano), `el_servo_flipper` (servo_cs07), `el_switch` (switch_slide_12x4)
+- overlaps resolved by cuts that keep the union of the parts (pockets, bores, wheel and spinner running clearance)
+- one print with the chassis (same material, `fused_with`): `eye_chassis`, `iris_chassis`, `eye_top_plate`, `iris_top_plate`, `scoop`
+- real fasteners: `fs_look_top_plate_0` M2x8, `fs_look_top_plate_1` M2x8, `fs_look_top_plate_2` M2x8, `fs_look_top_plate_3` M2x8
+- 5 wires declared (battery - switch - ESC - motors)
+- print orientation on every printed part, failsafe / weapon disable declared, design volumes declared where this pass changed a part on purpose
+- power switch on the floor of the body, slider facing down to a 7 x 3 mm slot in the underside (no slot on the top or sides; hollow cavities stay closed behind a wall at every outside face)
+- photo graphics as fused colour-split decals (robot decal): almond eyes with green irises on the top
+
+Left (and why):
+- proxy.wiring x2: Wire `w_m1` (`el_rx_esc.m1` to `dm_wheel_l0.terminals`): no baseline route (run the full `wiring` group once and pass its report).
+- mass.over x1: the photo-sized outside (steel weapon / big printed shell) is heavier than 150 g even hollowed; only a smaller outside would fix it.
+- wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
+- wire.render_count x1: iso.png: 4 routes vs 5 spec wires (missing ['w_m1']); top.png: 4 routes vs 5 spec wires (missing ['w_m1'])
+- likeness.view x1: looks, not in scope for this pass.
+- likeness.silhouette x1: looks, not in scope for this pass.
+
+Likeness (best silhouette IoU per photo, r3 -> r4): queen_sarah_denning.aws70.webp 0.68 -> 0.68; queen_sarah_denning.aws71.webp 0.89 -> 0.89

@@ -1,9 +1,13 @@
 {
  "spec": "/tmp/work10_queen_sarah_denning/robots/queen_sarah_denning/spec.json",
- "rendered_at": 1795071024.6096349,
+ "rendered_at": 1795075806.8302233,
  "bodies": [
   "chassis",
+  "eye_chassis",
+  "iris_chassis",
   "top_plate",
+  "eye_top_plate",
+  "iris_top_plate",
   "wheel_l0",
   "wheel_r0",
   "flipper",
