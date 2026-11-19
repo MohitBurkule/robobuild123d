@@ -1,12 +1,19 @@
 {
  "spec": "/tmp/work10_goobers/robots/goobers/spec.json",
- "rendered_at": 1795024685.1864629,
+ "rendered_at": 1795066566.0975559,
  "bodies": [
   "chassis",
   "wheel_l0",
   "wheel_r0",
   "ear_l",
-  "ear_r"
+  "ear_r",
+  "dt_hub_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "el_battery",
+  "el_rx_esc",
+  "el_switch"
  ],
  "wires": {}
 }
