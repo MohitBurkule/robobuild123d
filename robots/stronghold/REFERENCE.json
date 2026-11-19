@@ -8,5 +8,11 @@
   "teeth": 2
  },
  "wheels": 2,
- "source": "read from reference photos by Sonnet"
+ "source": "read from reference photos by Sonnet",
+ "view": {
+  "stronghold.aws72.webp": "front_left_iso"
+ },
+ "view_source": {
+  "stronghold.aws72.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label"
+ }
 }
