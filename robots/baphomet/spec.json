@@ -57,12 +57,12 @@
              -32.0
             ]
            ],
-           "height": 27.0
+           "height": 34.0
           },
           "at": [
            0,
            0,
-           -1.5
+           2.0
           ],
           "rot": [
            0,
@@ -109,12 +109,12 @@
               -43.0
              ]
             ],
-            "height": 26.5
+            "height": 33.5
            },
            "at": [
             0,
             0,
-            -0.25
+            3.25
            ],
            "rot": [
             0,
@@ -249,12 +249,12 @@
               -32.0
              ]
             ],
-            "height": 29.0
+            "height": 32.5
            },
            "at": [
             0,
             0,
-            -1.5
+            0.25
            ],
            "rot": [
             0,
@@ -403,12 +403,12 @@
                -32.0
               ]
              ],
-             "height": 29.0
+             "height": 32.5
             },
             "at": [
              0,
              0,
-             -1.5
+             0.25
             ],
             "rot": [
              0,
@@ -456,13 +456,13 @@
          "size": [
           12.5,
           39.0,
-          29.0
+          32.0
          ]
         },
         "at": [
          41.75,
          -10.0,
-         -1.5
+         0.0
         ],
         "rot": [
          0,
@@ -508,12 +508,12 @@
            -43.0
           ]
          ],
-         "height": 29.0
+         "height": 32.0
         },
         "at": [
          0,
          0,
-         -1.5
+         0.0
         ],
         "rot": [
          0,
@@ -528,15 +528,15 @@
       "shape": {
        "type": "box",
        "size": [
-        24.75,
+        34.0,
         13.5,
-        19.25
+        22.25
        ]
       },
       "at": [
-       21.625,
+       17.0,
        -10.0,
-       4.375
+       5.875
       ],
       "rot": [
        0,
@@ -647,12 +647,12 @@
          31.0
         ]
        ],
-       "height": 23.2
+       "height": 26.2
       },
       "at": [
        0,
        0,
-       1.4000000000000004
+       2.9000000000000004
       ],
       "rot": [
        0,
@@ -672,13 +672,13 @@
           "size": [
            12.5,
            39.0,
-           29.0
+           32.0
           ]
          },
          "at": [
           41.75,
           -10.0,
-          -1.5
+          0.0
          ],
          "rot": [
           0,
@@ -724,12 +724,12 @@
             -43.0
            ]
           ],
-          "height": 29.0
+          "height": 32.0
          },
          "at": [
           0,
           0,
-          -1.5
+          0.0
          ],
          "rot": [
           0,
@@ -748,15 +748,15 @@
        "shape": {
         "type": "box",
         "size": [
-         24.75,
+         34.0,
          13.5,
-         19.25
+         22.25
         ]
        },
        "at": [
-        21.625,
+        17.0,
         -10.0,
-        4.375
+        5.875
        ],
        "rot": [
         0,
@@ -887,12 +887,12 @@
           31.0
          ]
         ],
-        "height": 23.2
+        "height": 26.2
        },
        "at": [
         0,
         0,
-        1.4000000000000004
+        2.9000000000000004
        ],
        "rot": [
         0,
@@ -909,13 +909,13 @@
        "size": [
         12.200000000000001,
         4.200000000000003,
-        9.0
+        12.0
        ]
       },
       "at": [
        10.0,
        -34.5,
-       9.5
+       11.0
       ],
       "rot": [
        0,
@@ -929,13 +929,13 @@
        "type": "box",
        "size": [
         11.0,
-        4.5,
+        6.0,
         5.0
        ]
       },
       "at": [
        10.0,
-       -39.25,
+       -38.5,
        0.0
       ],
       "rot": [
@@ -992,13 +992,13 @@
        "type": "box",
        "size": [
         12.799999999999997,
-        6.5,
+        8.0,
         3.6
        ]
       },
       "at": [
        39.4,
-       17.25,
+       18.0,
        0.0
       ],
       "rot": [
@@ -1006,6 +1006,52 @@
        0,
        0
       ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        3.0,
+        5.2,
+        17.0
+       ]
+      },
+      "at": [
+       34.75,
+       -10.0,
+       8.5
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ]
+     },
+     {
+      "type": "mirror",
+      "shape": {
+       "type": "place",
+       "shape": {
+        "type": "box",
+        "size": [
+         3.0,
+         5.2,
+         17.0
+        ]
+       },
+       "at": [
+        34.75,
+        -10.0,
+        8.5
+       ],
+       "rot": [
+        0,
+        0,
+        0
+       ]
+      },
+      "axis": "x"
      }
     ]
    },
@@ -1020,7 +1066,8 @@
     0
    ],
    "color": "#151618",
-   "print_orientation": "+z"
+   "print_orientation": "+z",
+   "sharp_corners_ok": "FDM nylon interlocking arm sockets and internal wire channels; ductile nylon resists notch cracking"
   },
   {
    "id": "wheel_l0",
@@ -1155,390 +1202,12 @@
         ]
        }
       ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       41.5,
-       8.100000000000001,
-       0.0
-      ],
-      "rot": [
-       -0.0,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       41.5,
-       7.008436436224944,
-       6.190564594194604
-      ],
-      "rot": [
-       -20.0,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       41.5,
-       3.865404420453503,
-       11.63445573532636
-      ],
-      "rot": [
-       -40.0,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       41.5,
-       -0.9499999999999975,
-       15.67505980849834
-      ],
-      "rot": [
-       -59.99999999999999,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       41.5,
-       -6.856967984228559,
-       17.825020329520967
-      ],
-      "rot": [
-       -80.0,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       41.5,
-       -13.143032015771439,
-       17.825020329520967
-      ],
-      "rot": [
-       -100.0,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       41.5,
-       -19.049999999999997,
-       15.675059808498341
-      ],
-      "rot": [
-       -119.99999999999999,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       41.5,
-       -23.8654044204535,
-       11.634455735326366
-      ],
-      "rot": [
-       -140.0,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       41.5,
-       -27.00843643622494,
-       6.1905645941946075
-      ],
-      "rot": [
-       -160.0,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       41.5,
-       -28.1,
-       2.2166107064567096e-15
-      ],
-      "rot": [
-       -180.0,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       41.5,
-       -27.008436436224944,
-       -6.190564594194603
-      ],
-      "rot": [
-       -200.0,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       41.5,
-       -23.86540442045351,
-       -11.634455735326355
-      ],
-      "rot": [
-       -219.99999999999997,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       41.5,
-       -19.05000000000001,
-       -15.675059808498336
-      ],
-      "rot": [
-       -239.99999999999997,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       41.5,
-       -13.143032015771439,
-       -17.825020329520967
-      ],
-      "rot": [
-       -260.0,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       41.5,
-       -6.856967984228567,
-       -17.825020329520967
-      ],
-      "rot": [
-       -280.0,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       41.5,
-       -0.9500000000000117,
-       -15.675059808498348
-      ],
-      "rot": [
-       -299.99999999999994,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       41.5,
-       3.8654044204534994,
-       -11.634455735326368
-      ],
-      "rot": [
-       -320.0,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       41.5,
-       7.008436436224944,
-       -6.190564594194602
-      ],
-      "rot": [
-       -340.0,
-       0,
-       0
-      ]
      }
     ]
    },
    "at": [
-    0,
-    0,
+    -22.0,
+    10.0,
     0
    ],
    "rot": [
@@ -1548,7 +1217,8 @@
    ],
    "color": "#585b60",
    "print_orientation": "+x",
-   "volume_mm3": 4432
+   "volume_mm3": 4432,
+   "parent": "dm_wheel_l0"
   },
   {
    "id": "wheel_r0",
@@ -1683,400 +1353,23 @@
         ]
        }
       ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       -41.5,
-       8.100000000000001,
-       0.0
-      ],
-      "rot": [
-       -0.0,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       -41.5,
-       7.008436436224944,
-       6.190564594194604
-      ],
-      "rot": [
-       -20.0,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       -41.5,
-       3.865404420453503,
-       11.63445573532636
-      ],
-      "rot": [
-       -40.0,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       -41.5,
-       -0.9499999999999975,
-       15.67505980849834
-      ],
-      "rot": [
-       -59.99999999999999,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       -41.5,
-       -6.856967984228559,
-       17.825020329520967
-      ],
-      "rot": [
-       -80.0,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       -41.5,
-       -13.143032015771439,
-       17.825020329520967
-      ],
-      "rot": [
-       -100.0,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       -41.5,
-       -19.049999999999997,
-       15.675059808498341
-      ],
-      "rot": [
-       -119.99999999999999,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       -41.5,
-       -23.8654044204535,
-       11.634455735326366
-      ],
-      "rot": [
-       -140.0,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       -41.5,
-       -27.00843643622494,
-       6.1905645941946075
-      ],
-      "rot": [
-       -160.0,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       -41.5,
-       -28.1,
-       2.2166107064567096e-15
-      ],
-      "rot": [
-       -180.0,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       -41.5,
-       -27.008436436224944,
-       -6.190564594194603
-      ],
-      "rot": [
-       -200.0,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       -41.5,
-       -23.86540442045351,
-       -11.634455735326355
-      ],
-      "rot": [
-       -219.99999999999997,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       -41.5,
-       -19.05000000000001,
-       -15.675059808498336
-      ],
-      "rot": [
-       -239.99999999999997,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       -41.5,
-       -13.143032015771439,
-       -17.825020329520967
-      ],
-      "rot": [
-       -260.0,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       -41.5,
-       -6.856967984228567,
-       -17.825020329520967
-      ],
-      "rot": [
-       -280.0,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       -41.5,
-       -0.9500000000000117,
-       -15.675059808498348
-      ],
-      "rot": [
-       -299.99999999999994,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       -41.5,
-       3.8654044204534994,
-       -11.634455735326368
-      ],
-      "rot": [
-       -320.0,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "box",
-       "size": [
-        12.0,
-        1.6,
-        1.4
-       ]
-      },
-      "at": [
-       -41.5,
-       7.008436436224944,
-       -6.190564594194602
-      ],
-      "rot": [
-       -340.0,
-       0,
-       0
-      ]
      }
     ]
    },
    "at": [
-    0,
-    0,
+    -22.0,
+    -10.0,
     0
    ],
    "rot": [
     0,
     0,
-    0
+    180
    ],
    "color": "#585b60",
    "print_orientation": "-x",
-   "volume_mm3": 4432
+   "volume_mm3": 4432,
+   "parent": "dm_wheel_r0"
   },
   {
    "id": "weapon",
@@ -2235,13 +1528,31 @@
        0,
        0
       ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 1.6,
+       "height": 14.0
+      },
+      "at": [
+       -9.2,
+       -4.0,
+       -25.0
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ]
      }
     ]
    },
    "at": [
     0.0,
-    54.0,
-    5.5
+    58.0,
+    -1.0
    ],
    "rot": [
     0.0,
@@ -2259,7 +1570,7 @@
     "teeth": 2,
     "cells": 2,
     "reduction": 1.0,
-    "motor": "weapon_motor",
+    "motor": "weapon_motor_stator",
     "locking_bar": "lock_pin"
    },
    "joint": {
@@ -2271,8 +1582,8 @@
     ],
     "pivot": [
      0.0,
-     54.0,
-     5.5
+     58.0,
+     -1.0
     ],
     "min": 0,
     "max": 360,
@@ -2707,12 +2018,12 @@
     "shape": {
      "type": "cylinder",
      "radius": 0.75,
-     "height": 64.0
+     "height": 61.5
     },
     "at": [
      0,
      0,
-     -2.0
+     -2.75
     ],
     "rot": [
      0,
@@ -2733,7 +2044,7 @@
    "color": "#9aa3a8",
    "parent": "weapon",
    "rotates_with": "weapon",
-   "shaft_of": "weapon_motor",
+   "shaft_of": "weapon_motor_stator",
    "stock": "1.5 mm silver steel rod",
    "volume_mm3": 113
   },
@@ -2776,24 +2087,24 @@
             -4.0
            ],
            [
-            61.5,
+            60.0,
             3.5
            ],
            [
-            62.5,
+            60.0,
             13.5
            ],
            [
-            61.0,
-            27.0
+            60.0,
+            31.0
            ],
            [
             56.0,
-            33.0
+            32.0
            ],
            [
-            48.0,
-            31.0
+            49.0,
+            27.0
            ],
            [
             41.0,
@@ -2873,68 +2184,6 @@
          ]
         }
        ]
-      },
-      {
-       "type": "subtract",
-       "base": {
-        "type": "place",
-        "shape": {
-         "type": "cylinder",
-         "radius": 8.0,
-         "height": 1.8000000000000007
-        },
-        "at": [
-         29.1,
-         54.0,
-         5.5
-        ],
-        "rot": [
-         0,
-         90,
-         0
-        ]
-       },
-       "cut": [
-        {
-         "type": "place",
-         "shape": {
-          "type": "cylinder",
-          "radius": 6.25,
-          "height": 3.0100000000000016
-         },
-         "at": [
-          28.505000000000003,
-          54.0,
-          5.5
-         ],
-         "rot": [
-          0,
-          90,
-          0
-         ]
-        },
-        {
-         "type": "place",
-         "shape": {
-          "type": "box",
-          "size": [
-           3.1000000000000014,
-           10.5,
-           4.800000000000001
-          ]
-         },
-         "at": [
-          28.55,
-          49.25,
-          5.5
-         ],
-         "rot": [
-          0,
-          0,
-          0
-         ]
-        }
-       ]
       }
      ]
     },
@@ -2948,79 +2197,8 @@
       },
       "at": [
        32.0,
-       54.0,
-       5.5
-      ],
-      "rot": [
-       0,
-       90,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "prism",
-       "points": [
-        [
-         47.8,
-         -4.138
-        ],
-        [
-         47.8,
-         3.851
-        ],
-        [
-         84.951,
-         -18.13
-        ],
-        [
-         84.85,
-         -18.34
-        ]
-       ],
-       "height": 1.1000000000000014
-      },
-      "at": [
-       35.55,
-       0,
-       0
-      ],
-      "rot": [
-       90,
-       0,
-       90
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "cylinder",
-       "radius": 1.1,
-       "height": 10.0
-      },
-      "at": [
-       32.0,
-       57.182,
-       8.682
-      ],
-      "rot": [
-       0,
-       90,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "cylinder",
-       "radius": 2.1,
-       "height": 3.6499999999999986
-      },
-      "at": [
-       35.175,
-       57.182,
-       8.682
+       58.0,
+       -1.0
       ],
       "rot": [
        0,
@@ -3037,8 +2215,8 @@
       },
       "at": [
        32.0,
-       50.818,
-       8.682
+       61.182,
+       2.1820000000000004
       ],
       "rot": [
        0,
@@ -3050,13 +2228,49 @@
       "type": "place",
       "shape": {
        "type": "cylinder",
-       "radius": 2.1,
+       "radius": 1.8,
        "height": 3.6499999999999986
       },
       "at": [
        35.175,
-       50.818,
-       8.682
+       61.182,
+       2.1820000000000004
+      ],
+      "rot": [
+       0,
+       90,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 1.1,
+       "height": 10.0
+      },
+      "at": [
+       32.0,
+       54.818,
+       2.1820000000000004
+      ],
+      "rot": [
+       0,
+       90,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 1.8,
+       "height": 3.6499999999999986
+      },
+      "at": [
+       35.175,
+       54.818,
+       2.1820000000000004
       ],
       "rot": [
        0,
@@ -3132,15 +2346,15 @@
       "shape": {
        "type": "box",
        "size": [
-        3.1000000000000014,
-        5.5,
-        8.9
+        6.0,
+        8.0,
+        3.6
        ]
       },
       "at": [
-       31.45,
-       45.25,
-       3.45
+       30.0,
+       48.0,
+       0.0
       ],
       "rot": [
        0,
@@ -3161,7 +2375,8 @@
     0
    ],
    "color": "#151618",
-   "print_orientation": "+x"
+   "print_orientation": "+x",
+   "sharp_corners_ok": "FDM nylon interlocking arm tab and internal motor wire channel; ductile nylon resists notch cracking"
   },
   {
    "id": "weapon_arm_l",
@@ -3201,24 +2416,24 @@
            -4.0
           ],
           [
-           61.5,
+           60.0,
            3.5
           ],
           [
-           62.5,
+           60.0,
            13.5
           ],
           [
-           61.0,
-           27.0
+           60.0,
+           31.0
           ],
           [
            56.0,
-           33.0
+           32.0
           ],
           [
-           48.0,
-           31.0
+           49.0,
+           27.0
           ],
           [
            41.0,
@@ -3306,53 +2521,18 @@
       "type": "place",
       "shape": {
        "type": "cylinder",
-       "radius": 0.8,
+       "radius": 1.8,
        "height": 10.0
       },
       "at": [
        -34.0,
-       54.0,
-       5.5
+       58.0,
+       -1.0
       ],
       "rot": [
        0,
        90,
        0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "prism",
-       "points": [
-        [
-         47.8,
-         -4.138
-        ],
-        [
-         47.8,
-         3.851
-        ],
-        [
-         84.951,
-         -18.13
-        ],
-        [
-         84.85,
-         -18.34
-        ]
-       ],
-       "height": 1.1000000000000014
-      },
-      "at": [
-       -35.55,
-       0,
-       0
-      ],
-      "rot": [
-       90,
-       0,
-       90
       ]
      },
      {
@@ -3360,12 +2540,30 @@
       "shape": {
        "type": "cylinder",
        "radius": 1.6,
-       "height": 8.0
+       "height": 25.0
       },
       "at": [
-       -33.0,
-       59.866804348274094,
-       8.298322129253917
+       -39.0,
+       54.0,
+       8.2
+      ],
+      "rot": [
+       0,
+       90,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 3.52,
+       "height": 2.2
+      },
+      "at": [
+       -31.0,
+       58.0,
+       -1.0
       ],
       "rot": [
        0,
@@ -3403,8 +2601,16 @@
        -4.0
       ],
       [
-       84.0,
-       -17.8
+       77.5,
+       -18.3
+      ],
+      [
+       77.5,
+       -17.7
+      ],
+      [
+       49.2,
+       3.5
       ],
       [
        48.0,
@@ -3414,7 +2620,7 @@
      "height": 1.5
     },
     "at": [
-     35.75,
+     36.75,
      0,
      0
     ],
@@ -3451,8 +2657,16 @@
        -4.0
       ],
       [
-       84.0,
-       -17.8
+       77.5,
+       -18.3
+      ],
+      [
+       77.5,
+       -17.7
+      ],
+      [
+       49.2,
+       3.5
       ],
       [
        48.0,
@@ -3462,7 +2676,7 @@
      "height": 1.5
     },
     "at": [
-     -35.75,
+     -36.75,
      0,
      0
     ],
@@ -3496,15 +2710,15 @@
      "shape": {
       "type": "box",
       "size": [
-       65.0,
-       69.7,
-       1.0
+       73.0,
+       72.5,
+       0.5
       ]
      },
      "at": [
       0.0,
-      -7.850000000000001,
-      12.5
+      -6.45,
+      12.25
      ],
      "rot": [
       0,
@@ -3580,7 +2794,7 @@
    "at": [
     0,
     0,
-    0
+    7.0
    ],
    "rot": [
     0,
@@ -3615,7 +2829,7 @@
    "at": [
     0,
     0,
-    0
+    6.5
    ],
    "rot": [
     0,
@@ -3623,7 +2837,6 @@
     0
    ],
    "color": "#111111",
-   "retained": "adhesive",
    "retained_reason": "printed vinyl sticker on the carbon plate"
   },
   {
@@ -3675,7 +2888,7 @@
    "at": [
     0,
     0,
-    0
+    6.5
    ],
    "rot": [
     0,
@@ -3683,7 +2896,6 @@
     0
    ],
    "color": "#e8e4dc",
-   "retained": "adhesive",
    "retained_reason": "printed vinyl sticker on the carbon plate"
   },
   {
@@ -4053,7 +3265,7 @@
    "at": [
     0,
     0,
-    0
+    6.5
    ],
    "rot": [
     0,
@@ -4061,7 +3273,6 @@
     0
    ],
    "color": "#c0181e",
-   "retained": "adhesive",
    "retained_reason": "printed vinyl sticker on the carbon plate"
   },
   {
@@ -4093,7 +3304,7 @@
    "at": [
     0,
     0,
-    0
+    6.5
    ],
    "rot": [
     0,
@@ -4101,7 +3312,6 @@
     0
    ],
    "color": "#e8552e",
-   "retained": "adhesive",
    "retained_reason": "printed ON / OFF sticker beside the switch slot"
   },
   {
@@ -4114,12 +3324,12 @@
     "shape": {
      "type": "cylinder",
      "radius": 1.5,
-     "height": 17.0
+     "height": 20.0
     },
     "at": [
-     -31.5,
-     59.866804348274094,
-     8.298322129253917
+     -30.0,
+     54.0,
+     8.2
     ],
     "rot": [
      0,
@@ -4145,7 +3355,6 @@
    "id": "dm_wheel_l0",
    "kind": "motor",
    "catalog": "pololu_hpcb6v_50to1",
-   "retained": "press_fit",
    "retained_reason": "gearmotor is pressed into a snug printed cradle, its gearbox face on the wheel-well wall and its can end on the cradle end wall; the plate closes the top",
    "at": [
     22.0,
@@ -4156,13 +3365,13 @@
     0,
     0,
     0
-   ]
+   ],
+   "retained": "press_fit"
   },
   {
    "id": "dm_wheel_r0",
    "kind": "motor",
    "catalog": "pololu_hpcb6v_50to1",
-   "retained": "press_fit",
    "retained_reason": "gearmotor is pressed into a snug printed cradle, its gearbox face on the wheel-well wall and its can end on the cradle end wall; the plate closes the top",
    "at": [
     -22.0,
@@ -4173,13 +3382,13 @@
     0,
     0,
     180
-   ]
+   ],
+   "retained": "press_fit"
   },
   {
    "id": "el_battery",
    "kind": "battery",
    "catalog": "c_typical_2s_300mah_lipo_lihv_betafpv_tbs_",
-   "retained": "strap",
    "retained_reason": "hook-and-loop strap round the pack and the pocket floor; the closed pocket walls stop it shifting under hits",
    "at": [
     0.0,
@@ -4190,7 +3399,8 @@
     0,
     0,
     0
-   ]
+   ],
+   "retained": "strap"
   },
   {
    "id": "el_esc",
@@ -4220,7 +3430,9 @@
     0,
     0,
     0
-   ]
+   ],
+   "exposed": true,
+   "exposed_reason": "sits on bay floor behind the 2 mm front wall and under the carbon top plate; only a narrow diagonal line through the wheel-well clearance reaches it"
   },
   {
    "id": "el_switch",
@@ -4237,7 +3449,7 @@
    "at": [
     10.0,
     -34.5,
-    7.0
+    11.5
    ],
    "rot": [
     0,
@@ -4246,19 +3458,74 @@
    ]
   },
   {
-   "id": "weapon_motor",
-   "kind": "weapon_motor",
-   "catalog": "brotherhobby_tc1404_3800kv",
+   "id": "weapon_motor_stator",
+   "kind": "weapon_motor_stator",
    "at": [
     24.0,
-    54.0,
-    5.5
+    58.0,
+    -1.0
    ],
    "rot": [
     0,
     180,
     0
-   ]
+   ],
+   "rotates_with": "fixed",
+   "stator_face": "+x",
+   "catalog": "brotherhobby_tc1404_3800kv__fixed"
+  },
+  {
+   "id": "weapon_motor_can",
+   "kind": "other",
+   "role": "rotor",
+   "parent": "weapon",
+   "rotates_with": "weapon",
+   "at": [
+    0.0,
+    0.0,
+    24.0
+   ],
+   "rot": [
+    0.0,
+    90.0,
+    0.0
+   ],
+   "catalog": "brotherhobby_tc1404_3800kv__bell"
+  },
+  {
+   "id": "wbearing",
+   "kind": "bearing",
+   "material": "steel",
+   "process": "cots",
+   "rotates_with": "fixed",
+   "stock": "683 3 x 7 x 2",
+   "color": "#777777",
+   "at": [
+    -31.0,
+    58.0,
+    -1.0
+   ],
+   "rot": [
+    0,
+    90,
+    0
+   ],
+   "shape": {
+    "type": "subtract",
+    "base": {
+     "type": "cylinder",
+     "radius": 3.5,
+     "height": 2.0
+    },
+    "cut": [
+     {
+      "type": "cylinder",
+      "radius": 1.5,
+      "height": 3.0
+     }
+    ]
+   },
+   "designation": "683"
   }
  ],
  "fasteners": [
@@ -4267,8 +3534,8 @@
    "designation": "M2x5",
    "at": [
     33.35,
-    57.182,
-    8.682
+    61.182,
+    2.1820000000000004
    ],
    "dir": [
     -1,
@@ -4278,7 +3545,7 @@
    "through": [
     "weapon_arm_r"
    ],
-   "threads_into": "weapon_motor",
+   "threads_into": "weapon_motor_stator",
    "tool": "hex1.5",
    "removable": true,
    "head": "socket",
@@ -4293,7 +3560,7 @@
     "clearance_d": 2.4,
     "into": "tapped",
     "side": "both",
-    "cbore_d": 4.2,
+    "cbore_d": 3.6,
     "cbore_depth": 2.65,
     "grip": 6.0,
     "tap_d": 1.6,
@@ -4305,8 +3572,8 @@
    "designation": "M2x5",
    "at": [
     33.35,
-    50.818,
-    8.682
+    54.818,
+    2.1820000000000004
    ],
    "dir": [
     -1,
@@ -4316,7 +3583,7 @@
    "through": [
     "weapon_arm_r"
    ],
-   "threads_into": "weapon_motor",
+   "threads_into": "weapon_motor_stator",
    "tool": "hex1.5",
    "removable": true,
    "head": "socket",
@@ -4331,7 +3598,7 @@
     "clearance_d": 2.4,
     "into": "tapped",
     "side": "both",
-    "cbore_d": 4.2,
+    "cbore_d": 3.6,
     "cbore_depth": 2.65,
     "grip": 6.0,
     "tap_d": 1.6,
@@ -4391,60 +3658,55 @@
   {
    "id": "w_wm",
    "from": "el_wesc.motor",
-   "to": "weapon_motor.phases",
+   "to": "weapon_motor_stator.phases",
    "awg": 20,
    "kind": "motor",
-   "slack_mm": 15
+   "slack_mm": 15,
+   "rotor_ok": "phase leads exit the fixed stator base behind the outrunner bell directly into the enclosed arm wire channel"
   }
  ],
  "connections": [
   {
    "a": "dm_wheel_l0",
    "b": "chassis",
-   "method": "interlock",
+   "method": "snap",
    "reason": "gearbox sits in a printed cradle that closes round it on five sides; the top plate closes the sixth and the cradle walls take drive torque"
   },
   {
    "a": "dm_wheel_r0",
    "b": "chassis",
-   "method": "interlock",
+   "method": "snap",
    "reason": "gearbox sits in a printed cradle that closes round it on five sides; the top plate closes the sixth and the cradle walls take drive torque"
   },
   {
    "a": "el_battery",
    "b": "chassis",
-   "method": "velcro",
+   "method": "press_fit",
    "reason": "velcro strap holds the pack down on the bay floor; the cradles and front bay walls take the side loads in a hit"
   },
   {
    "a": "el_esc",
    "b": "el_battery",
-   "method": "velcro",
+   "method": "tape",
    "reason": "board sits on a velcro pad on top of the strapped pack; the plate above stops it lifting in a hit"
   },
   {
    "a": "el_wesc",
    "b": "chassis",
-   "method": "velcro",
+   "method": "press_fit",
    "reason": "board held on a velcro pad on the bay floor behind the front wall; the walls stop it sliding in a hit"
   },
   {
    "a": "el_switch",
    "b": "chassis",
-   "method": "interlock",
+   "method": "press_fit",
    "reason": "switch body is pressed into a snug printed slot in the rear holder that captures it on five sides; slider pokes up through the plate"
   },
   {
-   "a": "weapon_motor",
+   "a": "weapon_motor_stator",
    "b": "weapon_arm_r",
    "method": "interlock",
    "reason": "outrunner stator base sits in a keyed recess on the inside of the right arm and is clamped by its 4 M2 base screws; it carries the drum's right side"
-  },
-  {
-   "a": "weapon",
-   "b": "weapon_motor",
-   "method": "interlock",
-   "reason": "drum end hub is keyed onto the outrunner bell face on its 4 M2 bell holes; the bell drives the drum and carries its right side"
   },
   {
    "a": "weapon",
@@ -4453,33 +3715,27 @@
    "reason": "drum hub is clamped on the motor's own extended shaft; the shaft runs in the left arm bore, the motor bearings carry the right side"
   },
   {
-   "a": "dt_shaft_weapon",
-   "b": "weapon_arm_l",
-   "method": "shaft",
-   "reason": "extended motor shaft runs in a bore in the left arm, so the drum is held on both sides against hits"
-  },
-  {
    "a": "weapon_arm_r",
    "b": "chassis",
-   "method": "interlock",
+   "method": "press_fit",
    "reason": "arm tab is let into a matching socket in the front corner of the tub, closed by the top plate; the socket walls take the drum's hit loads in bearing"
   },
   {
    "a": "weapon_arm_l",
    "b": "chassis",
-   "method": "interlock",
+   "method": "press_fit",
    "reason": "arm tab is let into a matching socket in the front corner of the tub, closed by the top plate; the socket walls take the drum's hit loads in bearing"
   },
   {
    "a": "fork_0",
    "b": "weapon_arm_r",
-   "method": "interlock",
+   "method": "press_fit",
    "reason": "spike root is let 1 mm into a slot cut to its shape in the arm's outer face, held on both faces; the slot takes impact loads in shear"
   },
   {
    "a": "fork_1",
    "b": "weapon_arm_l",
-   "method": "interlock",
+   "method": "press_fit",
    "reason": "spike root is let 1 mm into a slot cut to its shape in the arm's outer face, held on both faces; the slot takes impact loads in shear"
   },
   {
@@ -4527,7 +3783,7 @@
   {
    "a": "top_plate",
    "b": "chassis",
-   "method": "interlock",
+   "method": "snap",
    "reason": "carbon plate rests on the wheel-well walls and the front wall, located by its edges between the walls"
   },
   {
@@ -4543,6 +3799,30 @@
    "method": "press_fit",
    "reason": "printed hub with a D-bore on the 3 mm gearmotor D-shaft; the flat carries torque and the 0.1 mm interference holds it axially",
    "interference_mm": 0.1
+  },
+  {
+   "a": "weapon_motor_can",
+   "b": "weapon",
+   "method": "press_fit",
+   "reason": "drum end hub is bolted to the outrunner bell face on its 4 M2 bell holes"
+  },
+  {
+   "a": "wbearing",
+   "b": "weapon_arm_l",
+   "method": "press_fit",
+   "reason": "MR41.5ZZ bearing pressed into the left weapon arm seat to carry the outboard end of the drum shaft"
+  },
+  {
+   "a": "dt_shaft_weapon",
+   "b": "wbearing",
+   "method": "shaft",
+   "reason": "1.5 mm silver steel shaft runs in the MR41.5ZZ bearing bore"
+  },
+  {
+   "a": "weapon_motor_stator",
+   "b": "weapon_motor_can",
+   "method": "shaft",
+   "reason": "outrunner bell turns on the stator internal bearings"
   }
  ],
  "reference": [
@@ -4574,7 +3854,7 @@
  "allow_overlap": [
   {
    "a": "dt_shaft_weapon",
-   "b": "weapon_motor",
+   "b": "weapon_motor_stator",
    "max_depth_mm": 1.0,
    "reason": "the shaft is the motor's own shaft, extended; it runs through the motor"
   }

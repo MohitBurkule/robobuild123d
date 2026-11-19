@@ -1,6 +1,6 @@
 {
- "spec": "/tmp/work10_baphomet/robots/baphomet/spec.json",
- "rendered_at": 1795088087.9973977,
+ "spec": "/home/antigravity/MohitBurkule/robobuild123d/robots/baphomet/spec.json",
+ "rendered_at": 1795113075.4184906,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -25,7 +25,9 @@
   "el_esc",
   "el_wesc",
   "el_switch",
-  "weapon_motor",
+  "weapon_motor_stator",
+  "weapon_motor_can",
+  "wbearing",
   "bolt_wm0",
   "bolt_wm1"
  ],
@@ -34,7 +36,7 @@
    "from": [
     14.0,
     -34.5,
-    4.5
+    9.0
    ],
    "to": [
     -11.5,
@@ -50,8 +52,8 @@
    ],
    "to": [
     29.0,
-    45.0,
-    5.500000000000001
+    49.0,
+    -0.9999999999999993
    ]
   },
   "w_bat_sw": {
@@ -63,14 +65,14 @@
    "to": [
     6.0,
     -34.5,
-    4.5
+    9.0
    ]
   },
   "w_sw_esc": {
    "from": [
     14.0,
     -34.5,
-    4.5
+    9.0
    ],
    "to": [
     -16.0,
