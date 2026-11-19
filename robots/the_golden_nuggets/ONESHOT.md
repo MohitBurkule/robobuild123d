@@ -46,4 +46,4 @@ Left (and why):
 - likeness.view x1: looks, not in scope for this pass.
 - likeness.silhouette x1: looks, not in scope for this pass.
 
-Likeness (best silhouette IoU per photo, r3 -> r4): the_golden_nugget.aws67.webp 0.69 -> 0.68
+Likeness (best silhouette IoU per photo, r3 -> r4): the_golden_nugget.aws67.webp 0.69 -> 0.69
