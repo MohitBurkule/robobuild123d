@@ -75,8 +75,7 @@ Fixed / changed (inside only, outside kept):
 - lock_pin removed: in the earlier round-4 push it spanned a 13.5 mm air gap outside the outline; the owner has to give the locking pin a place (legal.locking_bar)
 
 Left (and why):
-- integrity.solids x1: `chassis` has 0 closed solid(s) and 1 open/invalid shell(s), expected 1 (48317 mm3). A boolean or fillet probably collapsed the build.
-- proxy.wiring x3: Wire `w_bat_sw` (`el_battery.xt30` to `el_switch.in`): no baseline route (run the full `wiring` group once and pass its report).
+- proxy.wiring x7: Wire `w_bat_sw` (`el_battery.xt30` to `el_switch.in`): no baseline route (run the full `wiring` group once and pass its report).
 - mass.over x1: the photo-sized outside (steel weapon / big printed shell) is heavier than 150 g even hollowed; only a smaller outside would fix it.
 - proxy.interference x4: `weapon` and `hub_l` overlap by 1.39 mm (allowed 0.08).
 - proxy.sweep x4: joint `weapon`: `weapon` turning a full revolution may reach `hub_l`.
@@ -87,7 +86,7 @@ Left (and why):
 - mfg.layer_load x2: `dt_arm_weapon_0` carries the `weapon` axle but is printed with build direction +z (world [0.0, 0.0, 1.0]), not along the spin axis [1.0, 0.0, 0.0]: impact load peels layers apart.
 - combat.R051 x1: `weapon`: Weapon sweep above the floor is -0.66 mm (needs 0.3 mm).
 - wire.render_wires x1: toolchain: the likeness group writes diff/match/view PNGs into renders/ without a wire sidecar, so any robot with wires fails; likeness renders should write sidecars or be excluded.
-- wire.render_count x1: iso.png: 4 routes vs 7 spec wires (missing ['w_bat_sw', 'w_m2', 'w_sw_esc']); top.png: 4 routes vs 7 spec wires (missing ['w_bat_sw', 'w_m2', 'w_sw_esc'])
+- wire.render_count x1: iso.png: 1 routes vs 7 spec wires (missing ['w_bat_sw', 'w_m2', 'w_sig_wesc']); top.png: 1 routes vs 7 spec wires (missing ['w_bat_sw', 'w_m2', 'w_sig_wesc'])
 - likeness.silhouette x2: looks, not in scope for this pass.
 - likeness.view x1: looks, not in scope for this pass.
 
