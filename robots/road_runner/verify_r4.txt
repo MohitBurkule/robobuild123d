@@ -1,50 +1,50 @@
 BLOCKERS: 1
-building 4 changed part solids on 4 processes
-  [ran] integrity 0.24s
+  [ran] integrity 0.09s
+  [proxy] wiring 0.17s
   [ran] mass 0.00s
-  [proxy] interference 0.26s
-  [ran] connections 0.04s
-  [ran] legal 0.01s
-  [ran] fasteners 0.00s
+  [proxy] interference 10.83s
+  [ran] connections 0.48s
+  [ran] legal 0.02s
+  [ran] fasteners 0.06s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
-  [ran] fight 0.03s
-  [ran] shape 0.11s
+  [ran] fight 0.02s
+  [ran] shape 0.41s
   [ran] dynamics 0.00s
-  [ran] strength 0.00s
-  [ran] printability 1.98s
+  [ran] strength 0.17s
+  [ran] printability 1.51s
   [ran] process 0.00s
   [ran] electrical 0.00s
-  [ran] combat 0.14s
+  [ran] combat 0.12s
   [ran] physics 0.00s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
-  [ran] fit 0.01s
+  [ran] fit 0.05s
   [ran] bom 0.00s
   [ran] wire_review 0.01s
   [ran] fastener_record 0.00s
-  [ran] likeness 2.25s
-  [ran] drive_recess 0.00s
+  [ran] likeness 9.18s
+  [ran] drive_recess 0.03s
   [ran] belt_wrap 0.00s
   [ran] retention 0.00s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.15s
-  [ran] dfm 0.02s
+  [ran] geom 0.14s
+  [ran] dfm 0.05s
   [ran] realworld 0.07s
-road runner: ok=False 1 blockers in 1 root causes, mass 264.5/150 g
-1. [mass.over] 264.5 g (range 213.5 to 315.5 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+road runner: ok=False 1 blockers in 1 root causes, mass 266.5/150 g
+1. [mass.over] 266.5 g (range 215.5 to 317.5 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
 MASS BUDGET:
-  mass 264.5 g of 150 g (-114.5 g margin)
-    chassis                   158.78 g  fills 69% of its box  <- solid block? a tub should be a shell
+  mass 266.5 g of 150 g (-116.5 g margin)
+    chassis                   158.57 g  fills 69% of its box  <- solid block? a tub should be a shell
     el_battery                 12.50 g  fills 100% of its box
     rear_wall                   9.51 g  fills 69% of its box
     dm_wheel_l0                 9.50 g  fills 63% of its box
     dm_wheel_r0                 9.50 g  fills 63% of its box
     side_wall_r                 9.15 g  fills 68% of its box
     side_wall_l                 9.15 g  fills 68% of its box
-    lid                         9.14 g  fills 49% of its box
+    lid                         9.04 g  fills 49% of its box
     wheel_r0                    5.80 g  fills 67% of its box
     wheel_l0                    5.80 g  fills 67% of its box
     wheel_l1                    5.77 g  fills 78% of its box
@@ -57,18 +57,18 @@ MASS BUDGET:
     dt_axle_wheel_r1            1.15 g  fills 79% of its box
     dt_axle_wheel_l1            1.15 g  fills 79% of its box
     el_switch                   0.50 g  fills 100% of its box
+    fs_look_lid_0               0.28 g  fills 27% of its box
+    fs_look_lid_1               0.28 g  fills 27% of its box
+    fs_look_lid_2               0.28 g  fills 27% of its box
+    fs_look_lid_3               0.28 g  fills 27% of its box
+    fs_look_lid_4               0.28 g  fills 27% of its box
+    fs_look_lid_5               0.28 g  fills 27% of its box
+    fs_look_chassis_6           0.23 g  fills 29% of its box
+    fs_look_chassis_7           0.23 g  fills 29% of its box
+    fs_look_chassis_8           0.23 g  fills 29% of its box
+    fs_look_chassis_9           0.23 g  fills 29% of its box
     horn_l                      0.10 g  fills 79% of its box
     horn_r                      0.10 g  fills 79% of its box
-    front_screw0                0.03 g  fills 48% of its box
-    front_screw1                0.03 g  fills 48% of its box
-    front_screw2                0.03 g  fills 48% of its box
-    front_screw3                0.03 g  fills 48% of its box
-    lid_screw0                  0.03 g  fills 79% of its box
-    lid_screw2                  0.03 g  fills 79% of its box
-    lid_screw4                  0.03 g  fills 79% of its box
-    lid_screw5                  0.03 g  fills 79% of its box
-    lid_screw1                  0.03 g  fills 79% of its box
-    lid_screw3                  0.03 g  fills 79% of its box
-    mass.over: 264.5 g (range 213.5 to 315.5 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.over: 266.5 g (range 215.5 to 317.5 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: group 0 hit / 31 miss, inside 24 hit / 4 miss, likeness 1 hit / 0 miss, min_gap 1 hit / 0 miss, overlap 273 hit / 4 miss, part_check 21 hit / 4 miss, part_geom 32 hit / 0 miss, ray 177 hit / 20 miss
+cache: distance 2 hit / 4 miss, group 0 hit / 31 miss, inside 30 hit / 24 miss, likeness 1 hit / 0 miss, min_gap 0 hit / 1 miss, overlap 151 hit / 160 miss, part_check 14 hit / 1 miss, part_geom 32 hit / 0 miss, ray 130 hit / 67 miss

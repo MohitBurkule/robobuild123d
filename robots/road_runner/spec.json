@@ -3658,6 +3658,366 @@
         ]
        }
       ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 0.8,
+       "height": 6.05
+      },
+      "at": [
+       -28.0,
+       -44.0,
+       9.425
+      ],
+      "rot": [
+       0.0,
+       180.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 0.8,
+       "height": 6.05
+      },
+      "at": [
+       28.0,
+       -44.0,
+       9.425
+      ],
+      "rot": [
+       0.0,
+       180.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 0.8,
+       "height": 6.05
+      },
+      "at": [
+       -28.0,
+       42.0,
+       9.425
+      ],
+      "rot": [
+       0.0,
+       180.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 0.8,
+       "height": 6.05
+      },
+      "at": [
+       28.0,
+       42.0,
+       9.425
+      ],
+      "rot": [
+       0.0,
+       180.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 0.8,
+       "height": 6.05
+      },
+      "at": [
+       -28.0,
+       0.0,
+       9.425
+      ],
+      "rot": [
+       0.0,
+       180.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 0.8,
+       "height": 6.05
+      },
+      "at": [
+       28.0,
+       0.0,
+       9.425
+      ],
+      "rot": [
+       0.0,
+       180.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 0.8,
+       "height": 2.6
+      },
+      "at": [
+       -28.0,
+       -44.0,
+       5.6
+      ],
+      "rot": [
+       0.0,
+       180.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 0.8,
+       "height": 2.6
+      },
+      "at": [
+       28.0,
+       -44.0,
+       5.6
+      ],
+      "rot": [
+       0.0,
+       180.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 0.8,
+       "height": 2.6
+      },
+      "at": [
+       -28.0,
+       42.0,
+       5.6
+      ],
+      "rot": [
+       0.0,
+       180.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 0.8,
+       "height": 2.6
+      },
+      "at": [
+       28.0,
+       42.0,
+       5.6
+      ],
+      "rot": [
+       0.0,
+       180.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 0.8,
+       "height": 2.6
+      },
+      "at": [
+       -28.0,
+       0.0,
+       5.6
+      ],
+      "rot": [
+       0.0,
+       180.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 0.8,
+       "height": 2.6
+      },
+      "at": [
+       28.0,
+       0.0,
+       5.6
+      ],
+      "rot": [
+       0.0,
+       180.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 1.95,
+       "height": 1.8
+      },
+      "at": [
+       -30.0,
+       49.5,
+       6.5
+      ],
+      "rot": [
+       0.0,
+       90.0,
+       270.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 0.8,
+       "height": 6.35
+      },
+      "at": [
+       -30.0,
+       45.475,
+       6.5
+      ],
+      "rot": [
+       0.0,
+       90.0,
+       270.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 1.95,
+       "height": 1.8
+      },
+      "at": [
+       -10.0,
+       49.5,
+       6.5
+      ],
+      "rot": [
+       0.0,
+       90.0,
+       270.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 0.8,
+       "height": 6.35
+      },
+      "at": [
+       -10.0,
+       45.475,
+       6.5
+      ],
+      "rot": [
+       0.0,
+       90.0,
+       270.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 1.95,
+       "height": 1.8
+      },
+      "at": [
+       10.0,
+       49.5,
+       6.5
+      ],
+      "rot": [
+       0.0,
+       90.0,
+       270.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 0.8,
+       "height": 6.35
+      },
+      "at": [
+       10.0,
+       45.475,
+       6.5
+      ],
+      "rot": [
+       0.0,
+       90.0,
+       270.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 1.95,
+       "height": 1.8
+      },
+      "at": [
+       30.0,
+       49.5,
+       6.5
+      ],
+      "rot": [
+       0.0,
+       90.0,
+       270.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 0.8,
+       "height": 6.35
+      },
+      "at": [
+       30.0,
+       45.475,
+       6.5
+      ],
+      "rot": [
+       0.0,
+       90.0,
+       270.0
+      ]
      }
     ]
    },
@@ -4757,47 +5117,70 @@
    "material": "nylon",
    "process": "fdm",
    "shape": {
-    "type": "union",
-    "items": [
-     {
-      "type": "subtract",
-      "base": {
+    "type": "subtract",
+    "base": {
+     "type": "union",
+     "items": [
+      {
        "type": "subtract",
        "base": {
-        "type": "place",
-        "shape": {
-         "type": "box",
-         "size": [
-          64,
-          96,
-          1.6
+        "type": "subtract",
+        "base": {
+         "type": "place",
+         "shape": {
+          "type": "box",
+          "size": [
+           64,
+           96,
+           1.6
+          ]
+         },
+         "at": [
+          0,
+          -1,
+          13.3
+         ],
+         "rot": [
+          0,
+          0,
+          0
          ]
         },
-        "at": [
-         0,
-         -1,
-         13.3
-        ],
-        "rot": [
-         0,
-         0,
-         0
+        "cut": [
+         {
+          "type": "place",
+          "shape": {
+           "type": "box",
+           "size": [
+            12,
+            10,
+            6
+           ]
+          },
+          "at": [
+           10,
+           -6,
+           11.5
+          ],
+          "rot": [
+           0,
+           0,
+           0
+          ]
+         }
         ]
        },
        "cut": [
         {
          "type": "place",
          "shape": {
-          "type": "box",
-          "size": [
-           12,
-           10,
-           6
-          ]
+          "type": "cylinder",
+          "radius": 3,
+          "height": 6
          },
          "at": [
-          10,
-          -6,
+          4,
+          -22,
           11.5
          ],
          "rot": [
@@ -4808,58 +5191,256 @@
         }
        ]
       },
-      "cut": [
-       {
+      {
+       "type": "place",
+       "shape": {
         "type": "place",
         "shape": {
-         "type": "cylinder",
-         "radius": 3,
-         "height": 6
+         "type": "box",
+         "size": [
+          2.4,
+          2.4,
+          2.4
+         ]
         },
         "at": [
-         4,
-         -22,
-         11.5
+         7.559,
+         -21.398,
+         12.135
         ],
         "rot": [
-         0,
-         0,
-         0
+         0.0,
+         0.0,
+         0.0
         ]
-       }
+       },
+       "at": [
+        0.0,
+        0.0,
+        0.0
+       ],
+       "rot": [
+        0.0,
+        -0.0,
+        0.0
+       ]
+      }
+     ]
+    },
+    "cut": [
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 1.95,
+       "height": 1.8
+      },
+      "at": [
+       -28.0,
+       -44.0,
+       13.6
+      ],
+      "rot": [
+       0.0,
+       180.0,
+       0.0
       ]
      },
      {
       "type": "place",
       "shape": {
-       "type": "place",
-       "shape": {
-        "type": "box",
-        "size": [
-         2.4,
-         2.4,
-         2.4
-        ]
-       },
-       "at": [
-        7.559,
-        -21.398,
-        12.135
-       ],
-       "rot": [
-        0.0,
-        0.0,
-        0.0
-       ]
+       "type": "cylinder",
+       "radius": 1.2,
+       "height": 0.25
       },
       "at": [
-       0.0,
-       0.0,
-       0.0
+       -28.0,
+       -44.0,
+       12.625
       ],
       "rot": [
        0.0,
-       -0.0,
+       180.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 1.95,
+       "height": 1.8
+      },
+      "at": [
+       28.0,
+       -44.0,
+       13.6
+      ],
+      "rot": [
+       0.0,
+       180.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 1.2,
+       "height": 0.25
+      },
+      "at": [
+       28.0,
+       -44.0,
+       12.625
+      ],
+      "rot": [
+       0.0,
+       180.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 1.95,
+       "height": 1.8
+      },
+      "at": [
+       -28.0,
+       42.0,
+       13.6
+      ],
+      "rot": [
+       0.0,
+       180.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 1.2,
+       "height": 0.25
+      },
+      "at": [
+       -28.0,
+       42.0,
+       12.625
+      ],
+      "rot": [
+       0.0,
+       180.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 1.95,
+       "height": 1.8
+      },
+      "at": [
+       28.0,
+       42.0,
+       13.6
+      ],
+      "rot": [
+       0.0,
+       180.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 1.2,
+       "height": 0.25
+      },
+      "at": [
+       28.0,
+       42.0,
+       12.625
+      ],
+      "rot": [
+       0.0,
+       180.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 1.95,
+       "height": 1.8
+      },
+      "at": [
+       -28.0,
+       0.0,
+       13.6
+      ],
+      "rot": [
+       0.0,
+       180.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 1.2,
+       "height": 0.25
+      },
+      "at": [
+       -28.0,
+       0.0,
+       12.625
+      ],
+      "rot": [
+       0.0,
+       180.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 1.95,
+       "height": 1.8
+      },
+      "at": [
+       28.0,
+       0.0,
+       13.6
+      ],
+      "rot": [
+       0.0,
+       180.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 1.2,
+       "height": 0.25
+      },
+      "at": [
+       28.0,
+       0.0,
+       12.625
+      ],
+      "rot": [
+       0.0,
+       180.0,
        0.0
       ]
      }
@@ -4953,468 +5534,6 @@
    "color": "#a855e0",
    "fused_with": "chassis",
    "print_orientation": "+z"
-  },
-  {
-   "id": "lid_screw0",
-   "kind": "other",
-   "material": "nylon",
-   "process": "fdm",
-   "shape": {
-    "type": "place",
-    "shape": {
-     "type": "cylinder",
-     "radius": 2.6,
-     "height": 1.4
-    },
-    "at": [
-     -28,
-     -44,
-     14.7
-    ],
-    "rot": [
-     0,
-     0,
-     0
-    ]
-   },
-   "at": [
-    0,
-    0,
-    0
-   ],
-   "rot": [
-    0,
-    0,
-    0
-   ],
-   "color": "#1c1d20",
-   "fused_with": "lid",
-   "print_orientation": "+z"
-  },
-  {
-   "id": "lid_screw1",
-   "kind": "other",
-   "material": "nylon",
-   "process": "fdm",
-   "shape": {
-    "type": "place",
-    "shape": {
-     "type": "cylinder",
-     "radius": 2.6,
-     "height": 1.4
-    },
-    "at": [
-     28,
-     -44,
-     14.7
-    ],
-    "rot": [
-     0,
-     0,
-     0
-    ]
-   },
-   "at": [
-    0,
-    0,
-    0
-   ],
-   "rot": [
-    0,
-    0,
-    0
-   ],
-   "color": "#1c1d20",
-   "fused_with": "lid",
-   "print_orientation": "+z"
-  },
-  {
-   "id": "lid_screw2",
-   "kind": "other",
-   "material": "nylon",
-   "process": "fdm",
-   "shape": {
-    "type": "place",
-    "shape": {
-     "type": "cylinder",
-     "radius": 2.6,
-     "height": 1.4
-    },
-    "at": [
-     -28,
-     42,
-     14.7
-    ],
-    "rot": [
-     0,
-     0,
-     0
-    ]
-   },
-   "at": [
-    0,
-    0,
-    0
-   ],
-   "rot": [
-    0,
-    0,
-    0
-   ],
-   "color": "#1c1d20",
-   "fused_with": "lid",
-   "print_orientation": "+z"
-  },
-  {
-   "id": "lid_screw3",
-   "kind": "other",
-   "material": "nylon",
-   "process": "fdm",
-   "shape": {
-    "type": "place",
-    "shape": {
-     "type": "cylinder",
-     "radius": 2.6,
-     "height": 1.4
-    },
-    "at": [
-     28,
-     42,
-     14.7
-    ],
-    "rot": [
-     0,
-     0,
-     0
-    ]
-   },
-   "at": [
-    0,
-    0,
-    0
-   ],
-   "rot": [
-    0,
-    0,
-    0
-   ],
-   "color": "#1c1d20",
-   "fused_with": "lid",
-   "print_orientation": "+z"
-  },
-  {
-   "id": "lid_screw4",
-   "kind": "other",
-   "material": "nylon",
-   "process": "fdm",
-   "shape": {
-    "type": "place",
-    "shape": {
-     "type": "cylinder",
-     "radius": 2.6,
-     "height": 1.4
-    },
-    "at": [
-     -28,
-     0,
-     14.7
-    ],
-    "rot": [
-     0,
-     0,
-     0
-    ]
-   },
-   "at": [
-    0,
-    0,
-    0
-   ],
-   "rot": [
-    0,
-    0,
-    0
-   ],
-   "color": "#1c1d20",
-   "fused_with": "lid",
-   "print_orientation": "+z"
-  },
-  {
-   "id": "lid_screw5",
-   "kind": "other",
-   "material": "nylon",
-   "process": "fdm",
-   "shape": {
-    "type": "place",
-    "shape": {
-     "type": "cylinder",
-     "radius": 2.6,
-     "height": 1.4
-    },
-    "at": [
-     28,
-     0,
-     14.7
-    ],
-    "rot": [
-     0,
-     0,
-     0
-    ]
-   },
-   "at": [
-    0,
-    0,
-    0
-   ],
-   "rot": [
-    0,
-    0,
-    0
-   ],
-   "color": "#1c1d20",
-   "fused_with": "lid",
-   "print_orientation": "+z"
-  },
-  {
-   "id": "front_screw0",
-   "kind": "other",
-   "material": "nylon",
-   "process": "fdm",
-   "shape": {
-    "type": "union",
-    "items": [
-     {
-      "type": "place",
-      "shape": {
-       "type": "cylinder",
-       "radius": 2.4,
-       "height": 1.4
-      },
-      "at": [
-       -30,
-       51.2,
-       6.5
-      ],
-      "rot": [
-       -90,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "cylinder",
-       "radius": 1.2,
-       "height": 2.0
-      },
-      "at": [
-       -30.0,
-       50.0,
-       6.5
-      ],
-      "rot": [
-       -90,
-       0,
-       0
-      ]
-     }
-    ]
-   },
-   "at": [
-    0,
-    0,
-    0
-   ],
-   "rot": [
-    0,
-    0,
-    0
-   ],
-   "color": "#1c1d20",
-   "print_orientation": "+z",
-   "fused_with": "chassis"
-  },
-  {
-   "id": "front_screw1",
-   "kind": "other",
-   "material": "nylon",
-   "process": "fdm",
-   "shape": {
-    "type": "union",
-    "items": [
-     {
-      "type": "place",
-      "shape": {
-       "type": "cylinder",
-       "radius": 2.4,
-       "height": 1.4
-      },
-      "at": [
-       -10,
-       51.2,
-       6.5
-      ],
-      "rot": [
-       -90,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "cylinder",
-       "radius": 1.2,
-       "height": 2.0
-      },
-      "at": [
-       -10.0,
-       50.0,
-       6.5
-      ],
-      "rot": [
-       -90,
-       0,
-       0
-      ]
-     }
-    ]
-   },
-   "at": [
-    0,
-    0,
-    0
-   ],
-   "rot": [
-    0,
-    0,
-    0
-   ],
-   "color": "#1c1d20",
-   "print_orientation": "+z",
-   "fused_with": "chassis"
-  },
-  {
-   "id": "front_screw2",
-   "kind": "other",
-   "material": "nylon",
-   "process": "fdm",
-   "shape": {
-    "type": "union",
-    "items": [
-     {
-      "type": "place",
-      "shape": {
-       "type": "cylinder",
-       "radius": 2.4,
-       "height": 1.4
-      },
-      "at": [
-       10,
-       51.2,
-       6.5
-      ],
-      "rot": [
-       -90,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "cylinder",
-       "radius": 1.2,
-       "height": 2.0
-      },
-      "at": [
-       10.0,
-       50.0,
-       6.5
-      ],
-      "rot": [
-       -90,
-       0,
-       0
-      ]
-     }
-    ]
-   },
-   "at": [
-    0,
-    0,
-    0
-   ],
-   "rot": [
-    0,
-    0,
-    0
-   ],
-   "color": "#1c1d20",
-   "print_orientation": "+z",
-   "fused_with": "chassis"
-  },
-  {
-   "id": "front_screw3",
-   "kind": "other",
-   "material": "nylon",
-   "process": "fdm",
-   "shape": {
-    "type": "union",
-    "items": [
-     {
-      "type": "place",
-      "shape": {
-       "type": "cylinder",
-       "radius": 2.4,
-       "height": 1.4
-      },
-      "at": [
-       30,
-       51.2,
-       6.5
-      ],
-      "rot": [
-       -90,
-       0,
-       0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "cylinder",
-       "radius": 1.2,
-       "height": 2.0
-      },
-      "at": [
-       30.0,
-       50.0,
-       6.5
-      ],
-      "rot": [
-       -90,
-       0,
-       0
-      ]
-     }
-    ]
-   },
-   "at": [
-    0,
-    0,
-    0
-   ],
-   "rot": [
-    0,
-    0,
-    0
-   ],
-   "color": "#1c1d20",
-   "print_orientation": "+z",
-   "fused_with": "chassis"
   },
   {
    "id": "dt_hub_wheel_l0",
@@ -6366,7 +6485,380 @@
    ]
   }
  ],
- "fasteners": [],
+ "fasteners": [
+  {
+   "id": "fs_look_lid_0",
+   "designation": "M2x8",
+   "at": [
+    -28.0,
+    -44.0,
+    12.7
+   ],
+   "dir": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "through": [
+    "lid"
+   ],
+   "threads_into": "chassis",
+   "head": "button",
+   "tool": "hex1.3",
+   "removable": true,
+   "reason": "M2 button-head screw where the photo shows a screw head, flush in a counterbore; `lid` and `chassis` are one print, so it holds nothing else (plugs its hole)",
+   "hole": {
+    "d": 2.0,
+    "length": 8.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "tapped",
+    "side": "both",
+    "cbore_d": 3.9,
+    "cbore_depth": 1.4,
+    "grip": 1.6,
+    "tap_d": 1.6,
+    "thread_depth": 8.3
+   }
+  },
+  {
+   "id": "fs_look_lid_1",
+   "designation": "M2x8",
+   "at": [
+    28.0,
+    -44.0,
+    12.7
+   ],
+   "dir": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "through": [
+    "lid"
+   ],
+   "threads_into": "chassis",
+   "head": "button",
+   "tool": "hex1.3",
+   "removable": true,
+   "reason": "M2 button-head screw where the photo shows a screw head, flush in a counterbore; `lid` and `chassis` are one print, so it holds nothing else (plugs its hole)",
+   "hole": {
+    "d": 2.0,
+    "length": 8.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "tapped",
+    "side": "both",
+    "cbore_d": 3.9,
+    "cbore_depth": 1.4,
+    "grip": 1.6,
+    "tap_d": 1.6,
+    "thread_depth": 8.3
+   }
+  },
+  {
+   "id": "fs_look_lid_2",
+   "designation": "M2x8",
+   "at": [
+    -28.0,
+    42.0,
+    12.7
+   ],
+   "dir": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "through": [
+    "lid"
+   ],
+   "threads_into": "chassis",
+   "head": "button",
+   "tool": "hex1.3",
+   "removable": true,
+   "reason": "M2 button-head screw where the photo shows a screw head, flush in a counterbore; `lid` and `chassis` are one print, so it holds nothing else (plugs its hole)",
+   "hole": {
+    "d": 2.0,
+    "length": 8.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "tapped",
+    "side": "both",
+    "cbore_d": 3.9,
+    "cbore_depth": 1.4,
+    "grip": 1.6,
+    "tap_d": 1.6,
+    "thread_depth": 8.3
+   }
+  },
+  {
+   "id": "fs_look_lid_3",
+   "designation": "M2x8",
+   "at": [
+    28.0,
+    42.0,
+    12.7
+   ],
+   "dir": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "through": [
+    "lid"
+   ],
+   "threads_into": "chassis",
+   "head": "button",
+   "tool": "hex1.3",
+   "removable": true,
+   "reason": "M2 button-head screw where the photo shows a screw head, flush in a counterbore; `lid` and `chassis` are one print, so it holds nothing else (plugs its hole)",
+   "hole": {
+    "d": 2.0,
+    "length": 8.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "tapped",
+    "side": "both",
+    "cbore_d": 3.9,
+    "cbore_depth": 1.4,
+    "grip": 1.6,
+    "tap_d": 1.6,
+    "thread_depth": 8.3
+   }
+  },
+  {
+   "id": "fs_look_lid_4",
+   "designation": "M2x8",
+   "at": [
+    -28.0,
+    0.0,
+    12.7
+   ],
+   "dir": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "through": [
+    "lid"
+   ],
+   "threads_into": "chassis",
+   "head": "button",
+   "tool": "hex1.3",
+   "removable": true,
+   "reason": "M2 button-head screw where the photo shows a screw head, flush in a counterbore; `lid` and `chassis` are one print, so it holds nothing else (plugs its hole)",
+   "hole": {
+    "d": 2.0,
+    "length": 8.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "tapped",
+    "side": "both",
+    "cbore_d": 3.9,
+    "cbore_depth": 1.4,
+    "grip": 1.6,
+    "tap_d": 1.6,
+    "thread_depth": 8.3
+   }
+  },
+  {
+   "id": "fs_look_lid_5",
+   "designation": "M2x8",
+   "at": [
+    28.0,
+    0.0,
+    12.7
+   ],
+   "dir": [
+    -0.0,
+    -0.0,
+    -1.0
+   ],
+   "through": [
+    "lid"
+   ],
+   "threads_into": "chassis",
+   "head": "button",
+   "tool": "hex1.3",
+   "removable": true,
+   "reason": "M2 button-head screw where the photo shows a screw head, flush in a counterbore; `lid` and `chassis` are one print, so it holds nothing else (plugs its hole)",
+   "hole": {
+    "d": 2.0,
+    "length": 8.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "tapped",
+    "side": "both",
+    "cbore_d": 3.9,
+    "cbore_depth": 1.4,
+    "grip": 1.6,
+    "tap_d": 1.6,
+    "thread_depth": 8.3
+   }
+  },
+  {
+   "id": "fs_look_chassis_6",
+   "designation": "M2x6",
+   "at": [
+    -30.0,
+    48.6,
+    6.5
+   ],
+   "dir": [
+    -0.0,
+    -1.0,
+    -0.0
+   ],
+   "through": [],
+   "threads_into": "chassis",
+   "head": "button",
+   "tool": "hex1.3",
+   "removable": true,
+   "reason": "M2 button-head screw where the photo shows a screw head, flush in a counterbore; threads into `chassis` (holds nothing else; plugs its hole)",
+   "hole": {
+    "d": 2.0,
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "tapped",
+    "side": "both",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 0.0,
+    "tap_d": 1.6,
+    "thread_depth": 6.5
+   }
+  },
+  {
+   "id": "fs_look_chassis_7",
+   "designation": "M2x6",
+   "at": [
+    -10.0,
+    48.6,
+    6.5
+   ],
+   "dir": [
+    -0.0,
+    -1.0,
+    -0.0
+   ],
+   "through": [],
+   "threads_into": "chassis",
+   "head": "button",
+   "tool": "hex1.3",
+   "removable": true,
+   "reason": "M2 button-head screw where the photo shows a screw head, flush in a counterbore; threads into `chassis` (holds nothing else; plugs its hole)",
+   "hole": {
+    "d": 2.0,
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "tapped",
+    "side": "both",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 0.0,
+    "tap_d": 1.6,
+    "thread_depth": 6.5
+   }
+  },
+  {
+   "id": "fs_look_chassis_8",
+   "designation": "M2x6",
+   "at": [
+    10.0,
+    48.6,
+    6.5
+   ],
+   "dir": [
+    -0.0,
+    -1.0,
+    -0.0
+   ],
+   "through": [],
+   "threads_into": "chassis",
+   "head": "button",
+   "tool": "hex1.3",
+   "removable": true,
+   "reason": "M2 button-head screw where the photo shows a screw head, flush in a counterbore; threads into `chassis` (holds nothing else; plugs its hole)",
+   "hole": {
+    "d": 2.0,
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "tapped",
+    "side": "both",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 0.0,
+    "tap_d": 1.6,
+    "thread_depth": 6.5
+   }
+  },
+  {
+   "id": "fs_look_chassis_9",
+   "designation": "M2x6",
+   "at": [
+    30.0,
+    48.6,
+    6.5
+   ],
+   "dir": [
+    -0.0,
+    -1.0,
+    -0.0
+   ],
+   "through": [],
+   "threads_into": "chassis",
+   "head": "button",
+   "tool": "hex1.3",
+   "removable": true,
+   "reason": "M2 button-head screw where the photo shows a screw head, flush in a counterbore; threads into `chassis` (holds nothing else; plugs its hole)",
+   "hole": {
+    "d": 2.0,
+    "length": 6.0,
+    "head": "button",
+    "head_std": "ISO 7380-1",
+    "head_dk": 3.5,
+    "head_k": 1.3,
+    "clearance_d": 2.4,
+    "into": "tapped",
+    "side": "both",
+    "cbore_d": 3.9,
+    "cbore_depth": 0.0,
+    "grip": 0.0,
+    "tap_d": 1.6,
+    "thread_depth": 6.5
+   }
+  }
+ ],
  "wires": [
   {
    "id": "w_bat_sw",

@@ -33,7 +33,8 @@ Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
 - catalog parts added in free space inside the printed parts with 0.25 mm pockets: `dm_wheel_l0` (pololu_hpcb6v_50to1), `dm_wheel_r0` (pololu_hpcb6v_50to1), `el_battery` (lipo_2s_180), `el_esc` (bbb_malenki_nano), `el_switch` (switch_slide_12x4)
 - overlaps resolved by cuts that keep the union of the parts (pockets, bores, wheel and spinner running clearance)
-- one print with the chassis (same material, `fused_with`): `rear_wall`, `side_wall_l`, `side_wall_r`, `lid`, `horn_l`, `horn_r`, `lid_screw0`, `lid_screw1`, `lid_screw2`, `lid_screw3`, `lid_screw4`, `lid_screw5`, `front_screw0`, `front_screw1`, `front_screw2`, `front_screw3`, `dt_hub_wheel_l0`, `dt_hub_wheel_r0`, `dt_hub_wheel_l1`, `dt_hub_wheel_r1`
+- one print with the chassis (same material, `fused_with`): `rear_wall`, `side_wall_l`, `side_wall_r`, `lid`, `horn_l`, `horn_r`, `dt_hub_wheel_l0`, `dt_hub_wheel_r0`, `dt_hub_wheel_l1`, `dt_hub_wheel_r1`
+- real fasteners: `fs_look_lid_0` M2x8, `fs_look_lid_1` M2x8, `fs_look_lid_2` M2x8, `fs_look_lid_3` M2x8, `fs_look_lid_4` M2x8, `fs_look_lid_5` M2x8, `fs_look_chassis_6` M2x6, `fs_look_chassis_7` M2x6, `fs_look_chassis_8` M2x6, `fs_look_chassis_9` M2x6
 - 4 wires declared (battery - switch - ESC - motors)
 - print orientation on every printed part, failsafe / weapon disable declared, design volumes declared where this pass changed a part on purpose
 - power switch on the floor of the body, slider facing down to a 7 x 3 mm slot in the underside (no slot on the top or sides; hollow cavities stay closed behind a wall at every outside face)
@@ -52,4 +53,4 @@ Fixed / changed (inside only, outside kept):
 Left (and why):
 - mass.over x1: the photo-sized outside (steel weapon / big printed shell) is heavier than 150 g even hollowed; only a smaller outside would fix it.
 
-Likeness (best silhouette IoU per photo, r3 -> r4): road_runner.aws67.webp 0.84 -> 0.84
+Likeness (best silhouette IoU per photo, r3 -> r4): road_runner.aws67.webp 0.84 -> 0.83
