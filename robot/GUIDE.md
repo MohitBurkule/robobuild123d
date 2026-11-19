@@ -97,6 +97,16 @@ screw heads under overhangs; wires with no channel; wheel not touching the floor
 wheels; parts too thin to print (min wall about 0.9 mm FDM); brittle material for weapons; no locking bar; switch can be knocked by the
 robot's own motion or when inverted.
 
+## Outline details and windows from the photo (looks)
+- `robot outline spec.json PART --edge=+y-x --chamfer A [B]` (or `--step A [B]`, `--span=LO,HI`) bevels or notches one
+  edge of a static printed part's box: front corners in plan (`+y+x`, `+y-x`: a taper), top edges (`+z+x`), the nose
+  (`+y+z`). A hollow part keeps a `--wall` skin behind the new face, so the cavity never opens. It refuses when the cut
+  or the skin would meet another part. A corner that is already empty removes nothing.
+- `robot window spec.json PART --over el_battery [--face +z] [--lip 2]` opens a see-through window over a battery, ESC
+  or PCB where the photo shows the electronics, keeping a rim so the component stays captive. It refuses when anything
+  but wires lies between the component and the outside.
+- Both change the outline on purpose: keep a change only if the likeness IoU does not drop, and re-run verify.
+
 ## Tips
 - Keep a 0.2 to 0.5 mm gap around pockets (printing tolerance) but snug enough to capture parts.
 - Moving parts need at least 1 mm of running clearance. Wheels need walls cut away to slide on from outside.

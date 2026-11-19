@@ -200,7 +200,7 @@ def main(argv=None):
     v.add_argument("--proxy", action="store_true", help="fast proxies of the slow groups (robot/proxy); --only picks among them")
     v.add_argument("--parts", help="with --proxy: only check these part ids (comma separated)")
     v.add_argument("--baseline", help="with --proxy: a full report.json whose routes / assembly order the proxies replay")
-    for name in ("render", "export", "gen.cli", "cad.cli", "build_cmd", "evals.run", "solve.jiggle", "probe", "fasten_fill", "mask", "checks.likeness", "fit_photo", "kit", "diff_photo", "looks"):
+    for name in ("render", "export", "gen.cli", "cad.cli", "build_cmd", "evals.run", "solve.jiggle", "probe", "fasten_fill", "mask", "checks.likeness", "fit_photo", "kit", "diff_photo", "looks", "look_outline"):
         try:
             mod = __import__(f"robot.{name}", fromlist=["add_cli"])
             mod.add_cli(sub)
