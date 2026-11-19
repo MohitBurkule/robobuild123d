@@ -222,3 +222,36 @@ For Box Sake is a **low, wide, four-wheel wedge** shaped like a flat box with a 
 | Switch | slide switch / link (the white square may be its access) | 8 × 4 × 4 | (−12, +18, 24) | low |
 | Lip screws | two M3 screws through the UF holes into an inner bulkhead | — | (±19, +26, 17) | low |
 | Wiring | battery → switch → ESCs → four motors | — | — | medium |
+
+## 16. Mass budget (independent check of the size estimates)
+
+A pure wedge has the most weight to spare of any antweight, so the budget tells us how thick the shell can be and whether the reconciled sizes make sense.
+
+| Item | Estimate (g) | Basis |
+|---|---|---|
+| 4 × N20 gearmotors | 40 | 10 g each |
+| 4 × foam wheels Ø 26 × 18 with printed hubs | 16 | 4 g each |
+| Battery 2S 450 mAh | 25 | typical pack |
+| ESCs + receiver + switch + wiring | 15 | two dual brushed ESCs, micro RX |
+| Screws (4 button M3 + motor/lid screws) | 5 | — |
+| Packing tape (about 0.5 m² of 50 µm tape over all faces, several layers) | 8 | 0.05 mm × 1.0 g/cm³ × area |
+| Printed shell | 41 | the remainder up to 150 g |
+| **Total** | **150** | |
+
+The shell budget of about 41 g of PLA (1.24 g/cm³) is 33 cm³ of plastic. The box's outer surface (top 76 × 84, front facets, sides, rear, floor, lip) is about 230 cm²; at a 1 mm skin that uses 23 cm³, leaving about 10 cm³ for the internal triangular ribs, the motor pockets and the lip's extra thickness. That is consistent with the visible **thin translucent skin over a sparse rib lattice**, and confirms that the robot is about **100 × 84 × 26** rather than the spec's 150 mm dimension (a 150 mm body would need roughly 60 g for the shell alone, too heavy with four motors).
+
+## 17. Surface, wear and damage reading (what the scratches say about the fights)
+
+- **Lower lip**: the densest scratching is on the lip, in **all directions**, with the leading edge **chipped at both outer corners** (image left at (80, 740) and right at (1920, 760)). Multi-directional scratches mean the lip was driven under opponents from many angles and scraped along the floor; the chipped corners are where the lip met walls and opponents' corners. This is the **main contact surface**, as designed.
+- **Upper facet**: long **diagonal scratches** run from top-left to bottom-right across the facet (image (420–1100, 360–560)), the kind left by an opponent sliding **up and across** the front after being lifted: evidence that opponents climbed the lip and were deflected by the steeper face.
+- **Top face**: lighter, mostly straight scratches front-to-back, typical of opponents or arena hazards passing over the top after the robot was flipped, or of being driven over by a wedge; the domed screws show no damage, so nothing caught on them.
+- **Centre seam of the lip**: slightly lifted and creased (image (1000–1060, 640–760)), where the tape overlaps; it is the one place where an opponent's edge could start peeling the tape.
+- **Wheels**: the black tyres look intact and clean-edged, so the notches protected them: no side hits reached the tyres.
+- **Holes in the upper facet**: the left hole (robot right) is clean, the right hole (robot left) has a raised ring, perhaps a screw head sunk flush or a heat-set insert; both are below the slope surface so an opponent sliding up does not catch.
+
+## 18. Alternative interpretations considered
+
+1. **The front could be a hinged flap** (a "flail wedge" free to float on the floor). Against: the crease between the facets is crisp and continuous across the whole width, and the tape runs smoothly over it; no hinge knuckles or gaps are visible. **Rejected; fixed lip.**
+2. **The dark lines could be marker drawings or tape folds** rather than internal ribs. Against: they are straight, regularly spaced, meet at consistent angles, continue under the tape edges and appear on both the top and the front with the same pitch (about 25–30 mm). **Accepted as internal ribs.**
+3. **The robot could have only two driven wheels** with two idlers. The four wheels are identical and all sit in matching notches; a pusher benefits from 4WD. **4WD preferred (medium).**
+4. **The white square could be a light pipe** (an LED showing through the translucent print would make the whole robot glow). Possible; either reading fits a 4 mm square near the switch area.
