@@ -28,7 +28,7 @@ Other likeness findings: [FAIL] likeness.view: `reference/the_underminer.aws67.w
 
 ## Round 4 (verification, helper 1)
 Blockers r3 -> r4: **71 -> 7** (`verify --tier inner`, full output in verify_r4.txt).
-Likeness (best silhouette IoU per photo, r3 -> r4): the_underminer.aws67.webp 0.879 -> 0.879
+Likeness (best silhouette IoU per photo, r3 -> r4): the_underminer.aws67.webp 0.879 -> 0.880
 
 What was done (script r4_h1, outside shape kept):
 - fake screw/bolt heads removed; detail mounts/arms merged into the print part they sit on; axle nuts became printed hub caps
@@ -59,24 +59,3 @@ Left (one line each):
 - proxy.wiring x4: see verify_r4.txt root causes
 - proxy.interference x2: parts overlap in the kit shape where a cut would change the look or leave a loose piece
 - mass.over x1: outside shape (kept) is heavier than the class limit even with 2.5 mm shells
-
-## Round 4 (verification, helper 2)
-Blockers r3 71 -> r4 7 (`verify --tier inner`).
-
-Fixed / changed (inside only, outside kept):
-- detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
-- catalog parts added in free space inside the printed parts with 0.25 mm pockets: `dm_wheel_l0` (bbb_n20_600rpm), `dm_wheel_r0` (bbb_n20_600rpm), `dm_wheel_l1` (bbb_n20_600rpm), `dm_wheel_r1` (bbb_n20_600rpm), `el_battery` (lipo_2s_180), `el_rx_esc` (malenki_nano), `el_servo_lid` (servo_cs07), `el_switch` (switch_slide_12x4)
-- overlaps resolved by cuts that keep the union of the parts (pockets, bores, wheel and spinner running clearance)
-- one print with the chassis (same material, `fused_with`): `name_miner`, `name_under`, `scoop`
-- real fasteners: `fs_look_top_plate_0` M2x8, `fs_look_top_plate_1` M2x8, `fs_look_top_plate_2` M2x8, `fs_look_top_plate_3` M2x8
-- 7 wires declared (battery - switch - ESC - motors)
-- print orientation on every printed part, failsafe / weapon disable declared, design volumes declared where this pass changed a part on purpose
-- power switch on the floor of the body, slider facing down to a 7 x 3 mm slot in the underside (no slot on the top or sides; hollow cavities stay closed behind a wall at every outside face)
-- photo graphics as fused colour-split decals (robot decal): Under / miner lettering on the top plate
-
-Left (and why):
-- proxy.wiring x4: Wire `w_m1` (`el_rx_esc.m1` to `dm_wheel_l0.terminals`): the baseline route is now blocked by `outside the structure` (6 samples).
-- mass.over x1: the photo-sized outside (steel weapon / big printed shell) is heavier than 150 g even hollowed; only a smaller outside would fix it.
-- proxy.interference x2: `pod_l` and `dt_strut_pod_l` overlap by 1.24 mm (allowed 0.08).
-
-Likeness (best silhouette IoU per photo, r3 -> r4): the_underminer.aws67.webp 0.88 -> 0.88

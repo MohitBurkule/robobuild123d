@@ -1,43 +1,43 @@
 BLOCKERS: 7
-  [ran] integrity 0.17s
-  [proxy] wiring 3.73s
+  [ran] integrity 0.18s
+  [proxy] wiring 5.15s
   [ran] mass 0.00s
-  [proxy] interference 21.34s
-  [ran] connections 0.12s
-  [ran] legal 0.02s
-  [ran] fasteners 0.05s
+  [proxy] interference 28.46s
+  [ran] connections 1.79s
+  [ran] legal 0.06s
+  [ran] fasteners 0.10s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
-  [ran] fight 0.03s
-  [ran] shape 0.64s
-  [ran] dynamics 0.00s
-  [ran] strength 0.10s
-  [ran] printability 2.33s
+  [ran] fight 0.05s
+  [ran] shape 0.86s
+  [ran] dynamics 0.01s
+  [ran] strength 0.13s
+  [ran] printability 2.13s
   [ran] process 0.00s
-  [ran] electrical 0.70s
-  [ran] combat 0.20s
+  [ran] electrical 0.69s
+  [ran] combat 0.26s
   [ran] physics 0.00s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
-  [ran] fit 0.12s
+  [ran] fit 0.15s
   [ran] bom 0.01s
-  [ran] wire_review 0.65s
+  [ran] wire_review 1.25s
   [ran] fastener_record 0.00s
-  [ran] likeness 21.52s
+  [ran] likeness 26.94s
   [ran] drive_recess 0.00s
   [ran] belt_wrap 0.00s
   [ran] retention 0.00s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.57s
-  [ran] dfm 0.30s
-  [ran] realworld 0.74s
-the underminer: ok=False 7 blockers in 5 root causes, mass 200.6/150 g
+  [ran] geom 0.61s
+  [ran] dfm 0.31s
+  [ran] realworld 0.89s
+the underminer: ok=False 7 blockers in 5 root causes, mass 200.8/150 g
 1. [proxy.wiring] Wire `w_m1` (`el_rx_esc.m1` to `dm_wheel_l0.terminals`): the baseline route is now blocked by `outside the structure` (6 samples). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
    fix: Run the full `wiring` group to re-route it.
 2. [proxy.wiring] Wire `w_m2` (`el_rx_esc.m2` to `dm_wheel_r0.terminals`): the baseline route is now blocked by `outside the structure` (7 samples). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
    fix: Run the full `wiring` group to re-route it.
-3. [mass.over] 200.6 g (range 169.4 to 231.9 g) against the 150 g limit; 4.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+3. [mass.over] 200.8 g (range 169.5 to 232.1 g) against the 150 g limit; 4.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
 4. [proxy.interference] `pod_l` and `dt_strut_pod_l` overlap by 1.24 mm (allowed 0.08).
    | pod_l: x 33.00..55.00  y 42.00..70.00  z -9.00..15.00  size 22.00 x 28.00 x 24.00 mm
@@ -52,7 +52,7 @@ the underminer: ok=False 7 blockers in 5 root causes, mass 200.6/150 g
    |   gap to `chassis` 2.00 mm
    | dt_strut_pod_r: x -37.58..-31.84  y 36.90..45.00  z 9.78..15.02  size 5.75 x 8.11 x 5.23 mm
 MASS BUDGET:
-  mass 200.6 g of 150 g (-50.6 g margin)
+  mass 200.8 g of 150 g (-50.8 g margin)
     chassis                    45.40 g  fills 39% of its box
     scoop                      28.87 g  fills 52% of its box
     pod_l                      14.07 g  fills 100% of its box
@@ -70,12 +70,12 @@ MASS BUDGET:
     wheel_r0                    1.87 g  fills 57% of its box
     wheel_l1                    1.87 g  fills 57% of its box
     wheel_r1                    1.87 g  fills 57% of its box
+    dt_hub_wheel_l0             0.76 g  fills 68% of its box
+    dt_hub_wheel_l1             0.76 g  fills 68% of its box
+    dt_hub_wheel_r0             0.76 g  fills 68% of its box
+    dt_hub_wheel_r1             0.76 g  fills 68% of its box
     dt_strut_pod_l              0.72 g  fills 30% of its box
     dt_strut_pod_r              0.72 g  fills 37% of its box
-    dt_hub_wheel_l0             0.71 g  fills 64% of its box
-    dt_hub_wheel_l1             0.71 g  fills 64% of its box
-    dt_hub_wheel_r0             0.71 g  fills 64% of its box
-    dt_hub_wheel_r1             0.71 g  fills 64% of its box
     el_switch                   0.50 g  fills 100% of its box
     fs_look_top_plate_0         0.28 g  fills 27% of its box
     fs_look_top_plate_1         0.28 g  fills 27% of its box
@@ -83,6 +83,6 @@ MASS BUDGET:
     fs_look_top_plate_3         0.28 g  fills 27% of its box
     name_under                  0.20 g  fills 71% of its box
     name_miner                  0.18 g  fills 66% of its box
-    mass.over: 200.6 g (range 169.4 to 231.9 g) against the 150 g limit; 4.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    mass.over: 200.8 g (range 169.5 to 232.1 g) against the 150 g limit; 4.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: distance 3 hit / 21 miss, group 0 hit / 31 miss, inside 21 hit / 35 miss, likeness 1 hit / 0 miss, min_gap 12 hit / 3 miss, overlap 181 hit / 210 miss, part_check 11 hit / 5 miss, part_geom 78 hit / 0 miss, ray 97 hit / 118 miss
+cache: part_geom 0 hit / 78 miss
