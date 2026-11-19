@@ -1,9 +1,11 @@
 {
  "spec": "/tmp/work10_p_s_t_f_u/robots/p_s_t_f_u/spec.json",
- "rendered_at": 1795085747.1933672,
+ "rendered_at": 1795088650.6178,
  "bodies": [
   "chassis",
   "top_plate",
+  "deck_plate_lr",
+  "deck_plate_rf",
   "wheel_l0",
   "wheel_r0",
   "wheel_l1",
@@ -11,6 +13,8 @@
   "rail",
   "rail_2",
   "front_plate",
+  "wedge_cap_l",
+  "wedge_cap_r",
   "dt_hub_wheel_l0",
   "dt_hub_wheel_r0",
   "dt_hub_wheel_l1",
@@ -28,7 +32,15 @@
   "fs_look_top_plate_3",
   "fs_look_top_plate_4",
   "fs_look_top_plate_5",
-  "fs_look_top_plate_6"
+  "fs_look_top_plate_6",
+  "fs_wedge_cap_l_0",
+  "fs_wedge_cap_l_1",
+  "fs_wedge_cap_r_0",
+  "fs_wedge_cap_r_1",
+  "fs_deck_plate_lr_0",
+  "fs_deck_plate_lr_1",
+  "fs_deck_plate_rf_0",
+  "fs_deck_plate_rf_1"
  ],
  "wires": {
   "w_bat_sw": {
@@ -39,14 +51,14 @@
    ],
    "to": [
     -4.0,
-    -24.52,
+    -14.52,
     -3.0
    ]
   },
   "w_sw_esc": {
    "from": [
     4.0,
-    -24.52,
+    -14.52,
     -3.0
    ],
    "to": [
@@ -63,7 +75,7 @@
    ],
    "to": [
     18.6,
-    -26.0,
+    -16.0,
     0.0
    ]
   },
@@ -75,7 +87,7 @@
    ],
    "to": [
     -18.6,
-    -26.0,
+    -16.0,
     0.0
    ]
   },
