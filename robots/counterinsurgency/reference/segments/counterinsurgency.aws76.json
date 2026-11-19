@@ -965,5 +965,214 @@
     ]
    ]
   }
+ ],
+ "parts": [
+  {
+   "label": "top plate (textured lid)",
+   "kind": "frame",
+   "regions": [
+    6,
+    8,
+    16,
+    80
+   ]
+  },
+  {
+   "label": "front lip strip under top plate",
+   "kind": "frame",
+   "regions": [
+    25,
+    42,
+    45,
+    90,
+    91
+   ]
+  },
+  {
+   "label": "top-left roller knob",
+   "kind": "frame",
+   "regions": [
+    17,
+    22,
+    24,
+    26,
+    28,
+    29
+   ]
+  },
+  {
+   "label": "left arm joint block",
+   "kind": "frame",
+   "regions": [
+    18,
+    20,
+    35,
+    38
+   ]
+  },
+  {
+   "label": "left arm lower joint block",
+   "kind": "frame",
+   "regions": [
+    40,
+    46,
+    88,
+    89,
+    92
+   ]
+  },
+  {
+   "label": "left arm joint screw",
+   "kind": "fastener",
+   "regions": [
+    44
+   ]
+  },
+  {
+   "label": "left front wall / belly",
+   "kind": "frame",
+   "regions": [
+    49
+   ]
+  },
+  {
+   "label": "left front leg (plow arm)",
+   "kind": "armor",
+   "regions": [
+    33,
+    36,
+    48,
+    65,
+    73,
+    74,
+    75
+   ]
+  },
+  {
+   "label": "top-right dome cap",
+   "kind": "frame",
+   "regions": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    76,
+    77,
+    78,
+    79
+   ]
+  },
+  {
+   "label": "right arm (rear leg)",
+   "kind": "armor",
+   "regions": [
+    7,
+    9,
+    10,
+    13,
+    14,
+    15,
+    32,
+    41,
+    82,
+    83,
+    85
+   ]
+  },
+  {
+   "label": "screw top right",
+   "kind": "fastener",
+   "regions": [
+    11,
+    97,
+    98
+   ]
+  },
+  {
+   "label": "front-right top rail",
+   "kind": "frame",
+   "regions": [
+    12,
+    19,
+    21,
+    23,
+    81,
+    84,
+    86,
+    87
+   ]
+  },
+  {
+   "label": "front prong A (left, dark)",
+   "kind": "weapon",
+   "regions": [
+    30,
+    43,
+    47,
+    50,
+    51,
+    54,
+    55,
+    61,
+    62,
+    66,
+    68,
+    70,
+    72,
+    93,
+    94
+   ]
+  },
+  {
+   "label": "front prong B (middle)",
+   "kind": "weapon",
+   "regions": [
+    34,
+    39,
+    52,
+    57,
+    58
+   ]
+  },
+  {
+   "label": "front prong B white tip",
+   "kind": "weapon",
+   "regions": [
+    63,
+    67,
+    69,
+    71
+   ]
+  },
+  {
+   "label": "front prong C (right)",
+   "kind": "weapon",
+   "regions": [
+    27,
+    31,
+    37,
+    53,
+    56,
+    59,
+    60,
+    64,
+    99
+   ]
+  },
+  {
+   "label": "screw top centre",
+   "kind": "fastener",
+   "regions": [
+    95
+   ]
+  },
+  {
+   "label": "screw top middle-right",
+   "kind": "fastener",
+   "regions": [
+    96
+   ]
+  }
  ]
 }
