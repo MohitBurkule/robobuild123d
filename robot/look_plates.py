@@ -16,7 +16,7 @@ so the union of the two is exactly the old part: the outside does not change and
 solids are built and refused if either is not one solid, if the part grows tiny edges (geom.tiny_edge), or if less
 than 85 % of the slab under the rectangle was solid (a pocket under the skin would make a lid with holes).
 
-Writes the new `plate` part (same at/rot as the part, `kind: plate`, a shade lighter than the part, material/process
+Writes the new plate part (same at/rot as the part, `kind: structure` so the wire router keeps routing under it, a shade lighter than the part, material/process
 from --material, else the part's own), the cut on the part, and fresh `volume_mm3` for both when the part had one. It does NOT fix the plate
 on: follow with real screws (`robot screws SPEC <id> --face +z --pattern corners`) or a connection, then
 `robot fasteners SPEC --fill`, then `robot colors SPEC` so the plate gets its own photo colour.
@@ -25,6 +25,7 @@ Only parts at identity `rot` are supported (all generated chassis are).
 
 from __future__ import annotations
 
+import itertools
 import json
 from pathlib import Path
 
@@ -94,7 +95,10 @@ def find_face(mesh, axis, sign, level="largest", inset=1.0, min_area=150.0, othe
         for o in others:
             busy |= o.inside(Q.reshape(-1, 3)).reshape(len(Q), -1).any(1)
         idx = np.argwhere(flat)
-        flat[idx[busy, 0], idx[busy, 1]] = False
+        bm = np.zeros_like(flat)
+        bm[idx[busy, 0], idx[busy, 1]] = True
+        from scipy import ndimage as nd
+        flat &= ~nd.binary_dilation(bm, iterations=3)  # 2 mm clear of any contact or overlap
     k = int(np.ceil(inset / STEP))
     if k:
         from scipy import ndimage as nd
@@ -137,11 +141,47 @@ def _rot_for(axis):
     return [[0, 90, 0], [90, 0, 0], [0, 0, 0]][axis]
 
 
-def screw_spots(body, others, f, axis, sign, thick, n, depth=8.5, edge=2.6, boss_r=3.0):
+def route_points(spec_name):
+    """(N, 4) points (x, y, z, wire radius) along the wires the router last found for this robot (the proxy
+    baseline), every 0.5 mm, or an empty array. Bosses must stay off them or the wiring stops routing."""
+    from .proxy import baseline_path
+    try:
+        d = json.loads(baseline_path(spec_name).read_text())
+    except (OSError, ValueError):
+        return np.zeros((0, 4))
+    out = []
+    for rt in d.get("routes") or []:
+        P = np.asarray(rt.get("points") or [], float)
+        r = float(rt.get("od_mm") or 2.0) / 2
+        for a, b in itertools.pairwise(P):
+            k = max(2, int(np.linalg.norm(b - a) / 0.5) + 1)
+            for t in np.linspace(0, 1, k):
+                out.append([*(a + (b - a) * t), r])
+    return np.asarray(out) if out else np.zeros((0, 4))
+
+
+def sweeps_of(raw, w):
+    """[(pivot (3,), radius)] for every part with a joint: a sphere that holds everything it can sweep."""
+    out = []
+    byid = {b.id: b for b in w.bodies}
+    for q in raw.get("parts") or []:
+        j = q.get("joint")
+        if not j or q["id"] not in byid:
+            continue
+        b = byid[q["id"]]
+        piv = np.asarray(j.get("pivot") or b.center, float)
+        if q.get("parent"):
+            piv = np.asarray(b.center, float)  # pivot is in the parent's frame: fall back to the part centre
+        r = float(np.linalg.norm(b.mesh.vertices - piv[None, :], axis=1).max())
+        out.append((piv, r))
+    return out
+
+
+def screw_spots(body, others, f, axis, sign, thick, n, depth=8.5, edge=2.6, boss_r=3.0, routes=None, sweeps=None):
     """Up to n spots on the plate for flush M2 screws, spread out from the plate's corners inwards:
     [((u, v), boss)] where boss is False when the part already has `depth` mm of solid under the plate around the
     pilot (1.6 mm ring), True when a printed boss (radius boss_r, `depth` long) can hang from the part's wall inside
-    its own closed cavity: at least 20 % of the boss already in the part, the rest enclosed by the part on every
+    its own closed cavity: at least 10 % of the boss already in the part, the rest enclosed by the part on every
     side but the plate, and nothing else within 0.3 mm."""
     u, v = f["u"], f["v"]
     gu = np.arange(f["lo"][0] + edge, f["hi"][0] - edge + 1e-6, 1.5)
@@ -167,12 +207,20 @@ def screw_spots(body, others, f, axis, sign, thick, n, depth=8.5, edge=2.6, boss
     m = PB.shape[1]
     inb = body.inside(PB.reshape(-1, 3)).reshape(len(C), m)
     frac = inb.mean(1)
-    cand = ~solid & (frac >= 0.2)
+    cand = ~solid & (frac >= 0.1)
     if cand.any():
-        PC = pts(boss_r + 0.3)[cand]
+        PC = np.concatenate([pts(r_, 24)[cand] for r_ in (1.0, 2.0, boss_r + 0.4)], 1)  # dense: no part may poke in
         hit = np.zeros(len(PC), bool)
+        flat_pc = PC.reshape(-1, 3)
+        lo_pc, hi_pc = flat_pc.min(0) - 1, flat_pc.max(0) + 1
         for o in others:
-            hit |= o.inside(PC.reshape(-1, 3)).reshape(len(PC), -1).any(1)
+            olo, ohi = o.aabb
+            if np.any(olo > hi_pc) or np.any(ohi < lo_pc):
+                continue
+            hit |= o.inside(flat_pc).reshape(len(PC), -1).any(1)
+        for c, rr in sweeps or []:  # moving parts: stay out of the sphere they can sweep about their pivot
+            seg = PC[:, 0, :]
+            hit |= np.linalg.norm(seg - c[None, :], axis=1) < rr + boss_r + 1.5 + depth
         Q = PB[cand][~inb[cand]]
         idx = np.repeat(np.arange(cand.sum()), (~inb[cand]).sum(1))
         enc = np.ones(cand.sum(), bool)
@@ -182,6 +230,14 @@ def screw_spots(body, others, f, axis, sign, thick, n, depth=8.5, edge=2.6, boss
                 ok = body.mesh.ray.intersects_any(Q, np.tile(d, (len(Q), 1)))
                 bad = np.bincount(idx[~ok], minlength=cand.sum()) > 0
                 enc &= ~bad
+        if routes is not None and len(routes):  # keep 1.5 mm clear of the wire routes
+            ci = np.nonzero(cand)[0]
+            R = routes[(routes[:, axis] >= ds.min() - 2.5) & (routes[:, axis] <= ds.max() + 2.5)]
+            if len(R):
+                du = C[ci][:, None, 0] - R[None, :, u]
+                dv = C[ci][:, None, 1] - R[None, :, v]
+                near = (np.hypot(du, dv) < boss_r + R[None, :, 3] + 1.5).any(1)
+                hit[near] = True
         boss = np.zeros(len(C), bool)
         boss[np.nonzero(cand)[0][~hit & enc]] = True
     else:
@@ -224,7 +280,19 @@ def _boss(f, axis, sign, thick, uv, at, depth=8.5, boss_r=3.0):
 
 
 def split(spec_path, part_id, face="+z", thick=1.5, new_id=None, material=None, process=None, inset=1.0,
-          level="largest", dry=False, screws=0):
+          level="largest", dry=False, screws=0, _retry=2):
+    """Split, and when the kernel leaves a bad solid or mesh, retry with the plate 0.5 mm further inside the face
+    (a different cut usually tessellates cleanly)."""
+    info, res = _split(spec_path, part_id, face, thick, new_id, material, process, inset, level, dry, screws)
+    if info is None and _retry and str(res).startswith(("refused (meshes", "refused (would not", "refused (tiny")):
+        info2, res2 = split(spec_path, part_id, face, thick, new_id, material, process, inset + 0.5, level, dry, screws,
+                            _retry - 1)
+        return (info2, res2) if info2 is not None else (None, f"{res2} | first try: {res}")
+    return info, res
+
+
+def _split(spec_path, part_id, face="+z", thick=1.5, new_id=None, material=None, process=None, inset=1.0,
+           level="largest", dry=False, screws=0):
     from . import shapes
     from . import spec as spec_mod
     from . import world as world_mod
@@ -256,6 +324,10 @@ def split(spec_path, part_id, face="+z", thick=1.5, new_id=None, material=None, 
     f = find_face(body.mesh, axis, sign, level, inset, others=others)
     if f is None:
         return None, f"no flat {face} face of 150 mm2 or more on `{part_id}`"
+    side = min(f["hi"][0] - f["lo"][0], f["hi"][1] - f["lo"][1])
+    if side < 15.0 or f["area"] < 600.0:
+        return None, (f"the free flat {face} face is only {f['hi'][0] - f['lo'][0]:.1f} x {f['hi'][1] - f['lo'][1]:.1f}"
+                      " mm: too small to read as a plate (needs 15 mm sides and 600 mm2)")
     at = np.asarray(part.get("at") or [0, 0, 0], float)
     why = []
     tries = [thick] if thick > 0 else [2.0, 2.5, 3.0, 1.5]
@@ -287,7 +359,8 @@ def split(spec_path, part_id, face="+z", thick=1.5, new_id=None, material=None, 
     old = part["shape"]
     cands = []
     if screws:
-        cands = screw_spots(body, others, f, axis, sign, thick, 3 * screws)
+        cands = screw_spots(body, others, f, axis, sign, thick, 3 * screws, routes=route_points(s.name),
+                            sweeps=sweeps_of(raw, w))
     plate_shape = {"type": "intersect", "items": [old, box]}
     cut_shape = {"type": "subtract", "base": old, "cut": [box]}
     base = Path(spec_path).parent
@@ -323,8 +396,17 @@ def split(spec_path, part_id, face="+z", thick=1.5, new_id=None, material=None, 
     info = (f"{face} face at {f['level']:.2f} mm, plate {f['hi'][0] - f['lo'][0]:.1f} x {f['hi'][1] - f['lo'][1]:.1f}"
             f" x {thick} mm; solids plate {ns_p}, part {ns_c} (was {ns_o}); tiny edges plate {te_p}, part {te_c}"
             f" (was {te_o}); skin {solid_frac:.0%} solid")
-    if ns_p != 1 or ns_c != ns_o:
-        return None, "refused (would not stay one solid each): " + info
+    extra = float(sp.volume) + float(sc.volume) - float(so.volume)  # the bosses add at most pi r^2 h each
+    vol_ok = -0.01 * float(so.volume) <= extra <= 0.01 * float(so.volume) + 250.0 * sum(1 for _, bs in spots if bs)
+    if ns_p != 1 or ns_c != ns_o or not sp.is_valid or not sc.is_valid or not vol_ok:
+        return None, "refused (would not stay one valid solid each): " + info
+    from .checks.integrity import (
+        shells,  # the mesh the verifier sees (integrity.solids) must stay closed too
+    )
+    from .geom import geom_for
+    sh = [shells(geom_for(x, base).mesh) for x in (old, plate_shape, cut_shape)]
+    if sh[1] != (1, 0) or sh[2] != sh[0]:
+        return None, f"refused (meshes: plate {sh[1]}, part {sh[2]}, was {sh[0]} (closed, open)): " + info
     if te_c > max(10, te_o) or te_p > 10:
         return None, "refused (tiny edges): " + info
     if screws:
@@ -336,7 +418,8 @@ def split(spec_path, part_id, face="+z", thick=1.5, new_id=None, material=None, 
         return info, None
     mat = material or part.get("material")
     proc = process or (PROCESS.get(mat) if material else None) or part.get("process")
-    plate = {"id": new_id, "kind": "plate", "material": mat, "process": proc, "shape": plate_shape,
+    plate = {"id": new_id, "kind": "structure",  # structure: the wire router routes inside the structure parts' box
+             "material": mat, "process": proc, "shape": plate_shape,
              "at": list(part.get("at") or [0, 0, 0]), "rot": [0, 0, 0],
              "color": _shade(part.get("color")), "print_orientation": part.get("print_orientation") or face}
     if part.get("volume_mm3"):
