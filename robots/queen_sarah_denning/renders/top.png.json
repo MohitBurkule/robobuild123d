@@ -1,8 +1,9 @@
 {
  "spec": "/tmp/work10_queen_sarah_denning/robots/queen_sarah_denning/spec.json",
- "rendered_at": 1795046587.8011816,
+ "rendered_at": 1795071024.6173093,
  "bodies": [
   "chassis",
+  "top_plate",
   "wheel_l0",
   "wheel_r0",
   "flipper",
@@ -14,7 +15,11 @@
   "el_battery",
   "el_rx_esc",
   "el_servo_flipper",
-  "el_switch"
+  "el_switch",
+  "fs_look_top_plate_0",
+  "fs_look_top_plate_1",
+  "fs_look_top_plate_2",
+  "fs_look_top_plate_3"
  ],
  "wires": {
   "w_bat_sw": {
