@@ -5,7 +5,7 @@ the chosen outside face of PART (a static printed part) it casts a ray inward an
 - seats an M2 button-head screw (ISO 7380, head 3.5 x 1.3 mm) in a 0.2 mm-clear counterbore, so the head sits flush
   with the face (`joint.head_proud`) and the outline does not change;
 - clamps PART to the first static printed part under it: a 2.4 mm clearance hole through PART, a 1.6 mm tap/pilot
-  hole into the host, the shortest stock length giving >= 2d (4 mm) of thread in the host material;
+  hole into the host, the shortest stock length giving >= 2.5 d (5 mm, `fastener.hole_record`) of thread in the host material;
 - with --plug, when nothing lies under PART, threads into PART itself (the reason says it plugs its hole);
 - skips the spot if the driver line above the head is blocked, if the shank or pilot would touch any other part, or
   if there is not enough material to thread into. Each skip is printed with its reason.
@@ -26,7 +26,7 @@ import numpy as np
 
 HEAD_DK, HEAD_K, CLEAR_R, PILOT_R, CB_R = 3.5, 1.3, 1.2, 0.8, 1.95
 STD_L = (4, 5, 6, 8, 10, 12, 16, 20)
-MIN_THREAD = 4.0
+MIN_THREAD = 5.5   # plastic threads need >= 2.5 d (fastener.hole_record), plus 0.5 mm margin
 AX = {"x": 0, "y": 1, "z": 2}
 
 
@@ -125,11 +125,12 @@ def main(path, part, face="+z", pattern="corners", n_pts=4, inset=4.0, at="", pl
         if not inp.any():
             report.append(f"{tag}: the ray misses {part}"); continue
         s = line[int(np.argmax(inp))]                      # outside surface point
-        above = s[None] - np.outer(np.arange(0.3, 12.0, 0.3), d)
-        if any(o.inside(above).any() for i, o in B.items() if i != part):
+        above = s[None] - np.outer(np.arange(0.3, 15.0, 0.3), d)      # the driver: 2.3 mm wide, 14 mm straight out (fastener.access)
+        rim_ = [np.zeros(3)] + [1.2 * np.array(v) for v in itertools.product((-1, 0, 1), repeat=3) if any(v) and np.dot(v, np.abs(d)) == 0]
+        if any(o.inside(above + r).any() for o in B.values() for r in rim_):
             report.append(f"{tag}: driver line above the head is blocked"); continue
         head_at = s + d * HEAD_K                           # underside of the flush head
-        tt = np.arange(0.05, 30.0, 0.1)
+        tt = np.arange(0.05, 40.0, 0.1)
         L_ = head_at[None] + np.outer(tt, d)
         inP = B[part].inside(L_)
         endP = int(np.argmax(~inP)) if (~inP).any() else len(tt)
