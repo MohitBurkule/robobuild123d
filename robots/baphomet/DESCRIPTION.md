@@ -388,3 +388,51 @@ the wheel axle at z = 0; subtract 16.5 mm from every z below to convert.)
    centre, y = -12 in this frame.
 6. **Arm thickness:** 5 mm from aws76 vs up to 8 mm at the right arm root (aws77). Chosen 5 mm with a thicker root
    socket in the tub.
+
+---
+
+## 16. Why the designer did it (per part)
+
+| Part | Fight benefit | Construction (print / assembly / cost / weight / repair) | Other |
+|------|---------------|-----------------------------------------------------------|-------|
+| Octagonal tub | chamfered corners deflect spinner hits and do not catch on walls; no flat corner to grab | one print, no supports (vertical walls, open top); chamfers save mass at corners that carry no load | turns in tight spaces without snagging |
+| Open front bay | - | lighter; lets the drum module and wiring be reached from the front; the front rail stiffens the gap | leaves room for the drum's swept path |
+| Double side walls (skin + frame) | outer skin is a sacrificial wheel guard; damage is replaced without reprinting the tub | skins print flat (best layer strength); screws let them be swapped in the pits | covers the tyre so horizontal spinners cannot reach it |
+| Rear chamfer panels | glancing surface for rear hits | flat prints, two screws | - |
+| Front corner blocks | take the arm loads into both side wall and front rail | hollow boxes keep mass low while giving a deep screw grip for the arm | - |
+| Inner plate frame | stiffens the tub against crushing | gives four posts for the plate screws and a ledge for the plate edges | separates the wheel wells from the electronics bay |
+| Treaded TPU wheels | grip on the arena floor; tread bites on dusty plywood | printed in TPU with the hub, cheap, replaceable | tops above the wall allow driving inverted (partially) |
+| Wheels inside the walls | protected from horizontal spinners and from pinning against walls | - | narrower robot for the same width of tyre |
+| Carbon top plate | stiff, light lid that resists punctures from above (axes, top-hits) | flat laser/CNC-cut sheet, 4 screws, easy to lift for battery access | the red twill + pentagram give the robot its identity |
+| Nyloc nuts + caps on the plate | do not vibrate loose under weapon vibration | standard M2 hardware | - |
+| Switch under a plate hole | switch cannot be knocked off in a hit | no extra cut in the walls | rule: switch accessible without dismantling |
+| Curved arms | hold the drum ahead of the body so the drum meets the opponent first; curved shape presents a glancing face | separate prints laid flat (layers across the impact), quick to replace after damage (torn tops in the photos) | the 2 x 2 screw pattern spreads the root load |
+| Drum (printed body) | rotating mass at a moderate radius stores energy; hooks bite under opponents and kick them up | light printed body, cheap to reprint | - |
+| Steel/alu hook rings | concentrated bite at two points gives big impacts instead of grinding | thin flat plates, cut cheaply, slide over the drum ends | 180 deg phase keeps the drum balanced |
+| Outrunner as drum hub (bell on drum) | no belt to throw; full motor power to the drum | fewer parts (no pulleys, no separate shaft bearings on the right) | the bright bell is a visual feature |
+| Left bearing | supports the drum's free end so hits do not bend the motor shaft | standard flanged bearing pressed into the arm | - |
+| Spikes | get under opponents first, feed them into the drum; long reach wins the "who is lower" race | thin sheet, cheap, clamped by screws so bent ones are swapped | the needle look matches the robot's theme |
+
+## 17. Unseen and inner parts (guesses with confidence)
+
+Confidence: **high** = forced by what is visible; **medium** = typical for this layout; **low** = plausible only.
+
+| Part | Guess | Size (mm) | Position (frame of section 11) | Confidence |
+|------|-------|-----------|--------------------------------|------------|
+| Battery | 2S LiPo 300 mAh (Tattu/RDQ class), XT30 lead | 52 x 12 x 12 | lying along x under the plate, centre (0, 8, 9) | medium |
+| Drive ESC + receiver | Malenki-Nano class, kapton wrapped | 32 x 19 x 2.5 | on top of the battery, (0, 6, 16) | medium |
+| Weapon ESC | small brushless ESC 12-20 A | 23 x 12 x 4 | flat on the floor behind the front rail, (0, 22, 5) | medium |
+| Drive motors | 2 x N20 micro metal gearmotor 50:1 | 12 x 10 x 24 + 10 shaft | along x, (±22, -12, 17), gearbox at the wheel | high |
+| Motor cradles | printed boxes round each gearmotor on the tub floor, open on top | 26 x 17 x 20 | (±21, -12, 11) | medium |
+| Weapon motor | 1404 class outrunner, 3800 kV | 18.2 dia x 16 | (24, 50, 16), stator on the right arm | high |
+| Stator screws | 2-4 x M2 through the right arm into the stator base | M2 x 5 | on a 9 mm circle round (30, 50, 16) | medium |
+| Arm root screws | 4 x M2 button heads (right, visible), 4 hidden (left) into heat-set inserts in the corner blocks | M2 x 8 | 2 x 2 at 5.5 pitch, centre (±40, 28, 12) | medium |
+| Plate posts | 4 printed posts with M2 nuts/inserts | 6 dia | under the 4 plate fasteners | medium |
+| Drum shaft | motor shaft extension or a 3 mm steel stub into the left bearing | 1.5-3 dia | along x at (·, 50, 16) | medium |
+| Drum key to bell | 2-4 M2 screws through the drum end into the bell's tapped holes | M2 x 4 | 5 mm circle on the drum's right end | medium |
+| Hook ring keys | 2 dowels or a flat on the drum | 1.5 dia | at each ring | low |
+| Spike clamps | 2 screws through each spike root into the arm foot | M2 x 6 | (±35, 40 and 46, 8) | medium |
+| Lock pin | a 3 mm pin through the left arm into the drum (rules) | 3 x 17 | (-31, 56, 19) | low |
+| Wiring | battery -> switch at the right rear -> ESC board + weapon ESC; board -> both motors along the cradles; weapon ESC -> phase leads through a notch in the right front corner block into the right arm, along its inner face to the stator | 20-26 AWG | inside the tub, under the plate | medium |
+| Floor | 1.5 mm printed floor with cut-outs under the tyres | 1.5 | z 2 .. 3.5 | medium |
+| Ribs | none visible; the plate frame and cradles stiffen the tub | - | - | low |
