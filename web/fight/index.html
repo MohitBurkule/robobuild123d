@@ -10,16 +10,17 @@ button{cursor:pointer;background:#2d5bff;border:0;font-weight:600}button.alt{bac
 #hud{position:fixed;top:8px;left:0;right:0;display:flex;justify-content:space-between;padding:0 16px;pointer-events:none;font-weight:600;text-shadow:0 1px 3px #000}
 .bar{height:8px;background:#fff3;border-radius:4px;width:200px;margin-top:4px}.bar i{display:block;height:100%;border-radius:4px;transition:width .2s}
 #help{position:fixed;bottom:8px;left:0;right:0;text-align:center;opacity:.6;font-size:13px}
-small{opacity:.7}
+small{opacity:.7}fieldset{border:1px solid #3a4560;border-radius:8px;display:flex;gap:6px}legend{opacity:.7}
 </style></head><body>
 <canvas id="c"></canvas>
 <div id="hud"><div><span id="n0"></span><div class="bar"><i id="b0"></i></div></div><div id="tm" style="font-size:22px">90</div><div style="text-align:right"><span id="n1"></span><div class="bar"><i id="b1"></i></div></div></div>
 <div id="help"></div>
 <div id="end"><div id="endtxt"></div><div class="row"><button id="again">Rematch (R)</button><button class="alt" id="tomenu">Menu (Esc)</button></div></div>
 <div id="menu"><h1 style="margin:0">Antweight Arena</h1><small>MuJoCo physics running in your browser · 150 g class</small>
-<div class="row"><label>Mode <select id="mode"><option value="ai">1 player vs AI</option><option value="local">2 players, same machine</option><option value="host">Online: host a room</option><option value="join">Online: join a room</option></select></label>
+<div class="row"><label>Mode <select id="mode"><option value="local">Local (this machine)</option><option value="host">Online: host a room</option><option value="join">Online: join a room</option></select></label>
 <label>Arena <select id="arena"></select></label></div>
-<div class="row"><label>Player 1 robot <select id="r0"></select></label><label>Player 2 / AI robot <select id="r1"></select></label></div>
+<div class="row"><fieldset><legend>Player 1</legend><select id="r0"></select> <select id="c0"><option value="human">Human</option><option value="ai">AI</option></select></fieldset>
+<fieldset><legend>Player 2</legend><select id="r1"></select> <select id="c1"><option value="human">Human</option><option value="ai">AI</option></select></fieldset></div>
 <div class="row" id="joinrow" style="display:none"><input id="code" placeholder="room code" size="6"><input id="srv" placeholder="server (blank = this site)" size="26"></div>
 <div id="status" style="min-height:1.2em"></div>
 <button id="go">Fight!</button>
