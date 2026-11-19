@@ -211,6 +211,14 @@ Decide each joint like a mechanical engineer before placing screws. Off-default 
 - **Nuts** sit in hex traps (captive) or are replaced by inserts (`joint.loose_nut`).
 - **Outside surfaces:** no proud heads on armour or exterior (`joint.head_proud`), never on the ground plane
   (`joint.head_ground`): counterbore flush or countersink.
+- **Visible screws the photo shows** (looks): `robot screws spec.json PART --face +z --pattern corners|row|ring|at
+  [--n N] [--inset MM] [--at "u,v;u,v"] [--plug] [--dry]` puts real M2 button-head screws, flush in counterbores,
+  on that face of a static printed part. Each one clamps PART to the printed part under it (or, with `--plug`, threads
+  into PART itself when nothing is under it; one-print pairs are recorded as plugs). On a thin shell wall it grows a
+  6 mm boss behind the wall, inside the cavity only. It skips, and says why, any spot with a blocked driver line, no
+  material, or another part in the way, then fills the hole records. Use it instead of printed dots or cylinders;
+  `--dry` first, then re-run verify and likeness. Face coordinates: +-z (x, y), +-x (y, z), +-y (x, z). Thin plates
+  (wedges, blades under 4 mm with air behind) get no screw: they need a nut, which shows on the far side.
 - **Kit:** <= 3 thread sizes (`joint.screw_sizes`), <= 5 distinct screws (`joint.screw_variety`), stock ISO lengths
   (`joint.standard_length`).
 
