@@ -102,6 +102,38 @@ robot's own motion or when inverted.
   edge of a static printed part's box: front corners in plan (`+y+x`, `+y-x`: a taper), top edges (`+z+x`), the nose
   (`+y+z`). A hollow part keeps a `--wall` skin behind the new face, so the cavity never opens. It refuses when the cut
   or the skin would meet another part. A corner that is already empty removes nothing.
+- Side and plan profiles from 2-3 numbers, with the same skin and refusal rules:
+  - `--round A [B]`: a rounded corner (a quarter circle, or a quarter ellipse with B). Use it for a soft rear or a
+    rounded end cap.
+  - `--stairs A B --n 3`: equal steps inside the corner, for a stepped flank.
+  - Face cuts: the first face of `--edge` is cut, and the second face only names the axis the cut runs along.
+    - `--notch DEPTH WIDTH [--at C]`: a square slot or channel.
+    - `--vnotch DEPTH WIDTH`: a V slot, such as cat ears or a slot for an arm.
+    - `--arc SAG [--along=LO,HI]`: the edge becomes an arc. `+SAG` drops both ends for a bowed top. `--arc=-SAG` sinks
+      the middle for a concave side.
+  - These cut only static parts, never a jointed weapon. On a big hollow chassis a run takes 1-2 minutes.
+- **Photo graphics (eyes, stripes, emblems, the robot's name):** use
+  `robot decal spec.json HOST --face +z --shape circle|ellipse|almond|star|ring|rect|stripe|poly|text --size W [H]
+  [--at U,V] [--angle DEG] [--pair D] [--text STR] --color #hex`.
+  - Each graphic becomes its own coloured part, flush with HOST's face, so it shows in renders and the outline does
+    not change.
+  - How it is built: HOST gets a pocket `--depth` deep (default 0.8 mm), and the graphic fills the pocket, running
+    0.25 mm deeper than the pocket floor.
+  - On a printed HOST the graphic is `fused_with` HOST (a multi-colour print) and follows HOST's joint.
+  - HOST must be printed. A pocket in a cut or machined plate is a blind feature (`process.geometry`), so give sheet
+    plates their photo colour with `robot colors` instead.
+  - A graphic placed over an earlier one on the same face replaces the earlier one there and takes its depth. Build
+    layers this way, for example an iris on an eye, or a head and beak on a disc.
+  - Several pieces in one call (`--pair`, or the letters of a text) are joined into one solid by a hidden web inside
+    HOST.
+  - It refuses when:
+    - the face under the graphic is not one plane;
+    - the graphic would not lie inside HOST with 0.15 mm of HOST left under it.
+  - Text takes `--size H [W]`. On a top face, `--angle 180` makes it read from the front.
+  - To sample the colour from the photo instead, leave out `--color` and run
+    `robot colors spec.json --parts ID --force`.
+  - Check `robot verify` (groups `geom`, `integrity`, `interference`) after each robot. A pocket that clips a screw
+    hole can make HOST an invalid solid; move the graphic.
 - `robot window spec.json PART --over el_battery [--face +z] [--lip 2]` opens a see-through window over a battery, ESC
   or PCB where the photo shows the electronics, keeping a rim so the component stays captive. It refuses when anything
   but wires lies between the component and the outside.
