@@ -287,3 +287,79 @@ Burning Tiger is a **low, flat, four-wheel servo lifter**. The body is a **golde
 - Floor/underside, rear wall, switch location.
 - Scoop plate material (brown sheet vs red), fork material (FR4 vs aluminium), and whether the forks are hinged.
 - All mm values are scaled estimates (±15%).
+
+---
+
+## 9. Coordinate frame (restated, applies to everything above and below)
+- **Origin O** = the point on the floor (z = 0) directly under the centre of the yellow chassis footprint (mid-width, mid-length of CH).
+- **+X** = robot right, **+Y** = forward (toward the scoop), **+Z** = up. Units are mm. Angles are measured in degrees from the +Y axis in the YZ plane (side profiles) unless stated otherwise.
+- Chassis extents: x ∈ [−35, +35], y ∈ [−40, +40], z ∈ [2, 23] (floor clearance about 2 mm **(guess)**, top plates at z = 21–23).
+
+## 10. Profiles as math (for rebuilding curves)
+
+**10.1 Arm rail side profile (YZ plane, top edge of RL, x = ±8.5 to ±13.5).** Piecewise linear, with one arc at the front bend:
+- P1 = (y −42, z 30) rear bottom of the hump, rounded around CT-R: arc centre C_R = (−36, 32), r = 6, θ from 90° to 270° (rear half-circle).
+- P2 = (−36, 38) top of the hump.
+- P3 = (−24, 36) end of the hump top. Then a straight slope to P4.
+- P4 = (+34, 27), so the rail top line is z = 36 − 0.155·(y + 24) for y ∈ [−24, +34] (about 9° down toward the front).
+- Front bend: outer arc centre C_F = (+34, 22), r_outer = 5, r_inner = 0 to 1, θ from 90° (up) to 0° (forward); then the leg front face at y = +39, from z = 22 down to z = 4.
+- Rail bottom line: parallel to the top line, 8 mm below, from y = −24 to +30. Under the hump: the gusset leg is a vertical line at y = −28 from z = 30 to z = 23 (it meets the top plate).
+
+**10.2 Fork FK side profile (YZ plane at x = ±33).** Boss centre B = (y +37, z 14).
+- Hook: arc centre B, r = 4.5, from θ = 120° to θ = 300° (wrapping the rear of the boss).
+- Upper edge: line from (40, 18) to (55, 8). Barb: a vertical drop from (55, 8) to (55, 3). Then a line from (55, 3) to the tip T = (78, 0).
+- Lower edge: line from (38, 10) to T = (78, 0), i.e. z = 10 − 0.25·(y − 38).
+- Thickness (X) is 1.5 mm, so the part is the extrusion of this outline by 1.5 mm.
+
+**10.3 Outer wedge WG (YZ section, constant along X over its width of 23 mm).** A triangle with vertices (y +40, z 0), (+40, 21) and (+69, 0). The hypotenuse slope is atan(21/29) = 35.9°.
+
+**10.4 Scoop plate SCP (YZ section).** A line from (y +42, z 6) to (+62, 0): slope atan(6/20)… measured as 25–30° in the photos, so use the reconciled value from (+43, 9) to (+63, 0) (24.2°), with 1.5 mm thickness below the line.
+
+**10.5 Wheel tread (XZ-plane disc, in the wheel's own frame).** Root circle r_root = 15.0 mm. Teeth: N = 56 square teeth, each 1.0 mm tall, angular width 360°/(2N). As a parametric outline: r(φ) = 15.0 + 1.0·[sin(N·φ) > 0], φ ∈ [0, 2π). Hub cut-outs: 3 ellipses with centres at radius 7.5 mm, angles 90°, 210° and 330°, semi-axes 4.0 mm (radial) × 2.6 mm (tangential).
+
+**10.6 Cross-tubes CT-F/CT-R.** Circles of r = 4 mm extruded along X from −6 to +6. Centres: CT-F at (y +36, z 27), CT-R at (y −36, z 32).
+
+**10.7 Boss BS.** A circle of r = 4 at (y +37, z 14), extruded along X from ±31 to ±37.
+
+## 11. Pixel-based measurements (independent check)
+Native image sizes: AWS74 = 1323 × 978 px, AWS76 = 1713 × 1249 px. Coordinates are (x px, y px) from the top-left, read by eye, ±10 px.
+
+**AWS74 (front view, slightly from the right):**
+- Left outer wedge: x 60–395. Right outer wedge: x 820–1180. Centre scoop plate SCP: x 375–750 at its bottom edge.
+- Chassis front wall: visible from x ≈ 385 to ≈ 935, with its top edge at y ≈ 420–470 and its bottom at y ≈ 590–620 (≈ 150–170 px tall).
+- Front-wall Phillips screws: (465, 470) and (805, 545).
+- Scoop screws: (490, 575), (475, 610), (715, 630), (700, 665). The 2 × 2 spacing is ≈ 225 px horizontally × 35 px vertically.
+- Arm legs: left at x ≈ 505–550, right at x ≈ 745–790, so the outer width is ≈ 285 px.
+- Right-front wheel (WH-FR): x 1050–1140, y 360–490 (≈ 130 px tall visible). Rear-right wheel: x 1150–1250, y 185–330.
+- Rear hump top: y ≈ 45–80, x ≈ 740–990.
+- Scale from the front wall: about 550 px / 70 mm ≈ 7.9 px/mm (at the front-wall depth).
+
+**AWS76 (front-left iso):**
+- Front-left wheel: x 255–440, y 425–815 (≈ 390 px tall). Rear-left wheel: x 70–235, y 230–560 (≈ 330 px tall).
+- Left wall height near the front wheel: from y ≈ 460 (top plate) to ≈ 700 (bottom), ≈ 240 px.
+- Front wall: left corner x ≈ 455 to right corner x ≈ 1320 (≈ 865 px).
+- Left fork: from the boss at (700, 700) to the tip at (1010, 1180). Right fork: from the boss at (1290, 500) to the tip at (1640, 980).
+- Scoop plate: x 905–1420 at the bottom edge, top seam at y ≈ 770–840.
+- Rear hump: top-left corner at (430, 85), steel pin at (740, 60), threaded bolt end at (1010, 395).
+
+## 12. Several independent estimates of key sizes
+
+| Quantity | Method A (mm by scale) | Method B (ratio) | Method C (pixels) | Reconciled |
+|---|---|---|---|---|
+| Chassis width | 70 (spec draft) | — | AWS74: 550 px at 7.9 px/mm → 70 | **70** |
+| Chassis height | 21 (spec 24 incl. plates) | 0.30 W = 21 | AWS74: 150–170 px / 7.9 → 19–22 | **21 + 2 plate = 23** |
+| Wheel Ø | 30 | 0.40–0.43 W = 28–30 | AWS76: 390/240 × 21 = 34; AWS74: 130 px / 7.9 = 16 (partly hidden, farther away) | **32** |
+| Arm outer width | 22 | 0.31 W | AWS74: 285 px / 7.9 = 36?! (legs at front depth) | **26** (see conflict 3) |
+| Scoop width | 24 | 0.34 W | AWS74: SCP 375 px / 7.9 = 47 (plate nearer the camera, wider than the legs) | **30** |
+| Outer wedge width | 23 | 0.33 W | AWS74: 335–360 px / ~9.5 px/mm (nearer) = 35–38 | **26** |
+| Fork length | 45 | 0.64 W | AWS76: √(310² + 480²) = 571 px / 12.4 px/mm = 46 | **46** |
+| Wheelbase | 40 | — | AWS76: 185 + gap ≈ 520 px between wheel centres along an oblique → ~42 | **42** |
+
+## 13. Consistency check: conflicts and reconciliation
+1. **Wheel diameter**: 30 mm (ratio) vs 34 mm (AWS76 pixels) vs 16 mm (AWS74 pixels). AWS74 views from high and in front, so the lower part of the wheel is hidden behind the body; discard. AWS76 is the closer, unobstructed view, but perspective enlarges the near wheel. **Reconciled Ø 32 mm**, so the wheel sticks out about 4.5 mm above the top plate and about 4.5 mm below the floor.
+2. **Chassis height**: 24 mm (spec) vs 21 mm (photo). The spec likely includes the plates. **Reconciled: walls 21 mm + 2 mm plates = 23 mm.**
+3. **Arm/scoop width**: in AWS74 the legs and scoop are about 30% nearer the camera than the front-wall screws, which inflates the pixel width. The ratio estimate gives 22–24 mm, the pixel estimate about 36 mm. In AWS76 the scoop plate is about 515 px against a front wall of 865 px, giving 0.6 W = 42 mm (also near-camera). Look at the arm against the plates in the top region instead: the rails occupy about 1/3 of the top width. **Reconciled: arm outer width 26 mm, scoop 30 mm wide** (the scoop plate is slightly wider than the legs, as AWS74 shows).
+4. **Outer wedge width**: with the scoop at 30 and gaps of about 4 mm each side inside a 70 mm front, each wedge is (70 − 30 − 8)/2 = 16 mm. That conflicts with the photo impression that each wedge is about as wide as the scoop. The AWS74 wedges look **wider than the chassis**: the left wedge's outer side starts at x ≈ 60 px, well left of the front wall at 385 px. So **the wedges protrude beyond the chassis sides**, partly in front of the front wheels. **Reconciled: wedges 26 mm wide, centred at x = ±33, spanning x from ±20 to ±46** (outer edges in line with the wheel outer faces at ±46).
+5. **Fork position**: the forks sit at the chassis corners (x ±33) with their bosses on the front wall corners. Consistent.
+6. **Rear hump height**: the AWS76 hump top is about 0.35 of the body length above the plates in projection, which gives about 15 mm. **Reconciled: hump top z = 38.**
+7. **Pivot location**: the pin at the hump (both photos) vs the threaded bolt at the front tube (AWS76). The front bolt's position at the chassis front edge would make the scoop go **down**, not up, when the arm rotates, and LK attaches at the rear. **Reconciled: pivot = rear pin PV at (y −36, z 32).** The front bolt is just the CT-F clamp.
