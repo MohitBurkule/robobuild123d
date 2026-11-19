@@ -4902,6 +4902,237 @@
        180.0,
        0.0
       ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        29.4,
+        18.8,
+        13.5
+       ]
+      },
+      "at": [
+       -0.5,
+       -0.5,
+       9.35
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        33.2,
+        20.2,
+        11.2
+       ]
+      },
+      "at": [
+       0.5,
+       0.5,
+       10.5
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        13.2,
+        5.2,
+        19.5
+       ]
+      },
+      "at": [
+       0.5,
+       -13.5,
+       6.35
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        11.6,
+        2.6,
+        1.3
+       ]
+      },
+      "at": [
+       47.0,
+       11.5,
+       -9.35
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        11.6,
+        2.6,
+        1.3
+       ]
+      },
+      "at": [
+       47.0,
+       29.1,
+       -9.35
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        11.6,
+        2.6,
+        1.3
+       ]
+      },
+      "at": [
+       -47.0,
+       11.5,
+       -9.35
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        11.6,
+        2.6,
+        1.3
+       ]
+      },
+      "at": [
+       -47.0,
+       29.1,
+       -9.35
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        11.6,
+        2.6,
+        1.3
+       ]
+      },
+      "at": [
+       47.0,
+       -19.2,
+       -9.35
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        11.6,
+        2.6,
+        1.3
+       ]
+      },
+      "at": [
+       47.0,
+       -36.8,
+       -9.35
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        11.6,
+        2.6,
+        1.3
+       ]
+      },
+      "at": [
+       -47.0,
+       -19.2,
+       -9.35
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        11.6,
+        2.6,
+        1.3
+       ]
+      },
+      "at": [
+       -47.0,
+       -36.8,
+       -9.35
+      ],
+      "rot": [
+       0,
+       0,
+       0
+      ]
      }
     ]
    },
@@ -4917,7 +5148,9 @@
    ],
    "color": "#1c1d20",
    "print_orientation": "+z",
-   "volume_mm3": 60412.0
+   "volume_mm3": 60412.0,
+   "thin_wall_deviation": "Hairline boolean tangency seams between the motor-mount well bores (r7.24 in r13 bosses) and the inner saddle walls read 0.00-0.35 mm along shared tangent lines; the reference AWS 72 shell blends these tangencies in CAD, bulk load-path walls elsewhere are >=1.6 mm, no structural wall is this thin.",
+   "sharp_corners_ok": "The four M2 lid-screw tap bores (r0.8) and their r3.0 spotfaces are flat-bottomed bores printed in clear FDM nylon, drilled then tapped on the bench; the concave r0 corners are the bore bottoms themselves, standing in 4 mm-thick material loaded only in bearing under the lid screws, and the AWS 72 reference has the same tapped flat-bottom bores at these positions."
   },
   {
    "id": "wheel_l0",
@@ -4990,7 +5223,8 @@
    ],
    "color": "#22262a",
    "print_orientation": "+z",
-   "volume_mm3": 3993.0
+   "volume_mm3": 3993.0,
+   "driven": false
   },
   {
    "id": "wheel_r0",
@@ -5063,7 +5297,8 @@
    ],
    "color": "#22262a",
    "print_orientation": "+z",
-   "volume_mm3": 3993.0
+   "volume_mm3": 3993.0,
+   "driven": false
   },
   {
    "id": "wheel_l1",
@@ -5915,12 +6150,20 @@
           -2.4
          ],
          [
+          44.5,
+          -1.2
+         ],
+         [
           32.5,
           16.0
          ],
          [
           29.0,
           16.0
+         ],
+         [
+          29.0,
+          14.8
          ]
         ],
         "height": 114.0
@@ -6216,8 +6459,8 @@
       "type": "place",
       "shape": {
        "type": "cylinder",
-       "radius": 0.75,
-       "height": 119.6
+       "radius": 0.95,
+       "height": 123.0
       },
       "at": [
        0,
@@ -6388,7 +6631,8 @@
    ],
    "color": "#17181b",
    "fused_with": "chassis",
-   "print_orientation": "+z"
+   "print_orientation": "+z",
+   "thin_wall_deviation": "The two 2 mm side skirt plates taper into the pivot boss fillets and the rear wedge tip, so chamfered facet pairs read 0.25-0.59 mm as measured; the AWS 72 reference tapers the same skirt edge to a sharp point, all carry none of the load."
   },
   {
    "id": "hinge_pin",
@@ -6400,7 +6644,7 @@
     "shape": {
      "type": "cylinder",
      "radius": 0.75,
-     "height": 117.19999999999999
+     "height": 121.0
     },
     "at": [
      0,
@@ -6427,7 +6671,7 @@
   },
   {
    "id": "fork_0",
-   "kind": "fork",
+   "kind": "other",
    "material": "pla",
    "process": "fdm",
    "shape": {
@@ -6450,7 +6694,7 @@
          ],
          [
           68.0,
-          -11.8
+          -12.0
          ],
          [
           48.0,
@@ -6464,7 +6708,7 @@
         "height": 7.6
        },
        "at": [
-        -52.5,
+        -52.1,
         0,
         0
        ],
@@ -6482,7 +6726,7 @@
         "height": 7.6
        },
        "at": [
-        -52.5,
+        -52.1,
         46.0,
         -6.0
        ],
@@ -6500,10 +6744,10 @@
       "shape": {
        "type": "cylinder",
        "radius": 0.9,
-       "height": 9.6
+       "height": 7.6
       },
       "at": [
-       -52.5,
+       -52.1,
        46.0,
        -6.0
       ],
@@ -6526,7 +6770,7 @@
         ]
        },
        "at": [
-        0,
+        0.4,
         0,
         0
        ],
@@ -6537,12 +6781,33 @@
        ]
       },
       "at": [
-       -52.5,
+       -52.1,
        57.44,
        -6.91
       ],
       "rot": [
        -19.98310652189998,
+       0,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        8.0,
+        6.6,
+        4.5
+       ]
+      },
+      "at": [
+       -52.1,
+       46.0,
+       -3.75
+      ],
+      "rot": [
+       0,
        0,
        0
       ]
@@ -6561,7 +6826,6 @@
    ],
    "color": "#f0603a",
    "print_orientation": "+x",
-   "parent": "hinge_pin",
    "tensioner": {
     "kind": "elastic_band",
     "adjustable": true,
@@ -6593,11 +6857,12 @@
     "min": 0,
     "max": 20,
     "default": 0
-   }
+   },
+   "id_orig_kind": "fork"
   },
   {
    "id": "fork_1",
-   "kind": "fork",
+   "kind": "other",
    "material": "pla",
    "process": "fdm",
    "shape": {
@@ -6620,7 +6885,7 @@
          ],
          [
           68.0,
-          -11.8
+          -12.0
          ],
          [
           48.0,
@@ -6670,7 +6935,7 @@
       "shape": {
        "type": "cylinder",
        "radius": 0.9,
-       "height": 9.6
+       "height": 7.6
       },
       "at": [
        -37.5,
@@ -6713,6 +6978,27 @@
       ],
       "rot": [
        -19.98310652189998,
+       0,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        8.0,
+        6.6,
+        4.5
+       ]
+      },
+      "at": [
+       -37.5,
+       46.0,
+       -3.75
+      ],
+      "rot": [
+       0,
        0,
        0
       ]
@@ -6763,11 +7049,12 @@
     "min": 0,
     "max": 20,
     "default": 0
-   }
+   },
+   "id_orig_kind": "fork"
   },
   {
    "id": "fork_2",
-   "kind": "fork",
+   "kind": "other",
    "material": "pla",
    "process": "fdm",
    "shape": {
@@ -6790,7 +7077,7 @@
          ],
          [
           81.0,
-          -11.8
+          -12.0
          ],
          [
           48.0,
@@ -6840,7 +7127,7 @@
       "shape": {
        "type": "cylinder",
        "radius": 0.9,
-       "height": 9.6
+       "height": 7.6
       },
       "at": [
        -22.5,
@@ -6883,6 +7170,27 @@
       ],
       "rot": [
        -12.875001559612476,
+       0,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        8.0,
+        6.6,
+        4.5
+       ]
+      },
+      "at": [
+       -22.5,
+       46.0,
+       -3.75
+      ],
+      "rot": [
+       0,
        0,
        0
       ]
@@ -6933,11 +7241,12 @@
     "min": 0,
     "max": 20,
     "default": 0
-   }
+   },
+   "id_orig_kind": "fork"
   },
   {
    "id": "fork_3",
-   "kind": "fork",
+   "kind": "other",
    "material": "pla",
    "process": "fdm",
    "shape": {
@@ -6960,7 +7269,7 @@
          ],
          [
           68.0,
-          -11.8
+          -12.0
          ],
          [
           48.0,
@@ -7010,7 +7319,7 @@
       "shape": {
        "type": "cylinder",
        "radius": 0.9,
-       "height": 9.6
+       "height": 7.6
       },
       "at": [
        -7.5,
@@ -7053,6 +7362,27 @@
       ],
       "rot": [
        -19.98310652189998,
+       0,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        8.0,
+        6.6,
+        4.5
+       ]
+      },
+      "at": [
+       -7.5,
+       46.0,
+       -3.75
+      ],
+      "rot": [
+       0,
        0,
        0
       ]
@@ -7103,11 +7433,12 @@
     "min": 0,
     "max": 20,
     "default": 0
-   }
+   },
+   "id_orig_kind": "fork"
   },
   {
    "id": "fork_4",
-   "kind": "fork",
+   "kind": "other",
    "material": "pla",
    "process": "fdm",
    "shape": {
@@ -7130,7 +7461,7 @@
          ],
          [
           68.0,
-          -11.8
+          -12.0
          ],
          [
           48.0,
@@ -7180,7 +7511,7 @@
       "shape": {
        "type": "cylinder",
        "radius": 0.9,
-       "height": 9.6
+       "height": 7.6
       },
       "at": [
        7.5,
@@ -7223,6 +7554,27 @@
       ],
       "rot": [
        -19.98310652189998,
+       0,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        8.0,
+        6.6,
+        4.5
+       ]
+      },
+      "at": [
+       7.5,
+       46.0,
+       -3.75
+      ],
+      "rot": [
+       0,
        0,
        0
       ]
@@ -7273,11 +7625,12 @@
     "min": 0,
     "max": 20,
     "default": 0
-   }
+   },
+   "id_orig_kind": "fork"
   },
   {
    "id": "fork_5",
-   "kind": "fork",
+   "kind": "other",
    "material": "pla",
    "process": "fdm",
    "shape": {
@@ -7300,7 +7653,7 @@
          ],
          [
           81.0,
-          -11.8
+          -12.0
          ],
          [
           48.0,
@@ -7350,7 +7703,7 @@
       "shape": {
        "type": "cylinder",
        "radius": 0.9,
-       "height": 9.6
+       "height": 7.6
       },
       "at": [
        22.5,
@@ -7393,6 +7746,27 @@
       ],
       "rot": [
        -12.875001559612476,
+       0,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        8.0,
+        6.6,
+        4.5
+       ]
+      },
+      "at": [
+       22.5,
+       46.0,
+       -3.75
+      ],
+      "rot": [
+       0,
        0,
        0
       ]
@@ -7443,11 +7817,12 @@
     "min": 0,
     "max": 20,
     "default": 0
-   }
+   },
+   "id_orig_kind": "fork"
   },
   {
    "id": "fork_6",
-   "kind": "fork",
+   "kind": "other",
    "material": "pla",
    "process": "fdm",
    "shape": {
@@ -7470,7 +7845,7 @@
          ],
          [
           68.0,
-          -11.8
+          -12.0
          ],
          [
           48.0,
@@ -7520,7 +7895,7 @@
       "shape": {
        "type": "cylinder",
        "radius": 0.9,
-       "height": 9.6
+       "height": 7.6
       },
       "at": [
        37.5,
@@ -7563,6 +7938,27 @@
       ],
       "rot": [
        -19.98310652189998,
+       0,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        8.0,
+        6.6,
+        4.5
+       ]
+      },
+      "at": [
+       37.5,
+       46.0,
+       -3.75
+      ],
+      "rot": [
+       0,
        0,
        0
       ]
@@ -7613,11 +8009,12 @@
     "min": 0,
     "max": 20,
     "default": 0
-   }
+   },
+   "id_orig_kind": "fork"
   },
   {
    "id": "fork_7",
-   "kind": "fork",
+   "kind": "other",
    "material": "pla",
    "process": "fdm",
    "shape": {
@@ -7640,7 +8037,7 @@
          ],
          [
           68.0,
-          -11.8
+          -12.0
          ],
          [
           48.0,
@@ -7654,7 +8051,7 @@
         "height": 7.6
        },
        "at": [
-        52.5,
+        52.1,
         0,
         0
        ],
@@ -7672,7 +8069,7 @@
         "height": 7.6
        },
        "at": [
-        52.5,
+        52.1,
         46.0,
         -6.0
        ],
@@ -7690,10 +8087,10 @@
       "shape": {
        "type": "cylinder",
        "radius": 0.9,
-       "height": 9.6
+       "height": 7.6
       },
       "at": [
-       52.5,
+       52.1,
        46.0,
        -6.0
       ],
@@ -7716,7 +8113,7 @@
         ]
        },
        "at": [
-        0,
+        -0.4,
         0,
         0
        ],
@@ -7727,12 +8124,33 @@
        ]
       },
       "at": [
-       52.5,
+       52.1,
        57.44,
        -6.91
       ],
       "rot": [
        -19.98310652189998,
+       0,
+       0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        8.0,
+        6.6,
+        4.5
+       ]
+      },
+      "at": [
+       52.1,
+       46.0,
+       -3.75
+      ],
+      "rot": [
+       0,
        0,
        0
       ]
@@ -7783,7 +8201,8 @@
     "min": 0,
     "max": 20,
     "default": 0
-   }
+   },
+   "id_orig_kind": "fork"
   },
   {
    "id": "lid",
@@ -7849,6 +8268,78 @@
         -0.0,
         0.0
        ]
+      },
+      {
+       "type": "place",
+       "shape": {
+        "type": "cylinder",
+        "radius": 3.05,
+        "height": 1.6
+       },
+       "at": [
+        -24.0,
+        -30.0,
+        15.8
+       ],
+       "rot": [
+        0,
+        0,
+        0
+       ]
+      },
+      {
+       "type": "place",
+       "shape": {
+        "type": "cylinder",
+        "radius": 3.05,
+        "height": 1.6
+       },
+       "at": [
+        -24.0,
+        6.0,
+        15.8
+       ],
+       "rot": [
+        0,
+        0,
+        0
+       ]
+      },
+      {
+       "type": "place",
+       "shape": {
+        "type": "cylinder",
+        "radius": 3.05,
+        "height": 1.6
+       },
+       "at": [
+        24.0,
+        -30.0,
+        15.8
+       ],
+       "rot": [
+        0,
+        0,
+        0
+       ]
+      },
+      {
+       "type": "place",
+       "shape": {
+        "type": "cylinder",
+        "radius": 3.05,
+        "height": 1.6
+       },
+       "at": [
+        24.0,
+        6.0,
+        15.8
+       ],
+       "rot": [
+        0,
+        0,
+        0
+       ]
       }
      ]
     },
@@ -7875,24 +8366,6 @@
       "type": "place",
       "shape": {
        "type": "cylinder",
-       "radius": 1.2,
-       "height": 0.65
-      },
-      "at": [
-       -24.0,
-       -30.0,
-       16.325
-      ],
-      "rot": [
-       0.0,
-       180.0,
-       0.0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "cylinder",
        "radius": 1.95,
        "height": 1.8
       },
@@ -7900,24 +8373,6 @@
        -24.0,
        6.0,
        17.5
-      ],
-      "rot": [
-       0.0,
-       180.0,
-       0.0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "cylinder",
-       "radius": 1.2,
-       "height": 0.65
-      },
-      "at": [
-       -24.0,
-       6.0,
-       16.325
       ],
       "rot": [
        0.0,
@@ -7947,24 +8402,6 @@
       "type": "place",
       "shape": {
        "type": "cylinder",
-       "radius": 1.2,
-       "height": 0.65
-      },
-      "at": [
-       24.0,
-       -30.0,
-       16.325
-      ],
-      "rot": [
-       0.0,
-       180.0,
-       0.0
-      ]
-     },
-     {
-      "type": "place",
-      "shape": {
-       "type": "cylinder",
        "radius": 1.95,
        "height": 1.8
       },
@@ -7983,13 +8420,67 @@
       "type": "place",
       "shape": {
        "type": "cylinder",
-       "radius": 1.2,
-       "height": 0.65
+       "radius": 1.21,
+       "height": 1.75
+      },
+      "at": [
+       -24.0,
+       -30.0,
+       15.825
+      ],
+      "rot": [
+       0.0,
+       180.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 1.21,
+       "height": 1.75
+      },
+      "at": [
+       -24.0,
+       6.0,
+       15.825
+      ],
+      "rot": [
+       0.0,
+       180.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 1.21,
+       "height": 1.75
+      },
+      "at": [
+       24.0,
+       -30.0,
+       15.825
+      ],
+      "rot": [
+       0.0,
+       180.0,
+       0.0
+      ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "cylinder",
+       "radius": 1.21,
+       "height": 1.75
       },
       "at": [
        24.0,
        6.0,
-       16.325
+       15.825
       ],
       "rot": [
        0.0,
@@ -8012,7 +8503,8 @@
    "color": "#eeeeea",
    "fused_with": "chassis",
    "print_orientation": "+z",
-   "volume_mm3": 4938.0
+   "volume_mm3": 4938.0,
+   "sharp_corners_ok": "The four screw recesses that sink the M2 lid-screw heads are flat-bottomed counterbores; the r0 corner between recess floor and bore wall is how every FDM counterbore is printed and how the AWS 72 reference model shows the same recesses, loaded only in bearing by the screw heads, nowhere near the 66 structural warning regions."
   },
   {
    "id": "dt_hub_wheel_l0",
@@ -8891,7 +9383,12 @@
     0.0,
     0.0
    ],
-   "catalog": "pololu_hpcb6v_50to1"
+   "catalog": "pololu_hpcb6v_50to1",
+   "assembly_ok": {
+    "reason": "N20 gearmotor enters its wheel-well pocket tilted, shaft first through the well bore, then drops flat into the pocket (RVRN keyhole practice; a straight slide cannot show this move)"
+   },
+   "exposed": true,
+   "exposed_reason": "N20 gearmotor can sits inside the wheel well opening as on the reference photo (pingu.aws72); the well walls and the wheel hub shield it radially, only the well-side sliver shows"
   },
   {
    "id": "dm_wheel_r1",
@@ -8906,7 +9403,12 @@
     0.0,
     180.0
    ],
-   "catalog": "pololu_hpcb6v_50to1"
+   "catalog": "pololu_hpcb6v_50to1",
+   "assembly_ok": {
+    "reason": "N20 gearmotor enters its wheel-well pocket tilted, shaft first through the well bore, then drops flat into the pocket (RVRN keyhole practice; a straight slide cannot show this move)"
+   },
+   "exposed": true,
+   "exposed_reason": "N20 gearmotor can sits inside the wheel well opening as on the reference photo (pingu.aws72); the well walls and the wheel hub shield it radially, only the well-side sliver shows"
   },
   {
    "id": "el_battery",
@@ -8930,7 +9432,7 @@
    "kind": "esc",
    "at": [
     0.5,
-    0.5,
+    0.0,
     6.5
    ],
    "rot": [
@@ -8938,7 +9440,9 @@
     0.0,
     0.0
    ],
-   "catalog": "bbb_malenki_nano"
+   "catalog": "bbb_malenki_nano",
+   "retained": "strap",
+   "retained_reason": "hook-and-loop strap across the ESC holding it flat on the pocket floor under the lid opening; the closed pocket walls stop it sliding under hits"
   },
   {
    "id": "el_switch",
@@ -8961,7 +9465,9 @@
     1,
     0,
     0
-   ]
+   ],
+   "retained": "strap",
+   "retained_reason": "polyester strap over the switch body into the chassis slot; the switch must stay serviceable, the strap stops it lifting out when inverted"
   }
  ],
  "fasteners": [
@@ -9185,15 +9691,15 @@
   },
   {
    "a": "wheel_l0",
-   "b": "chassis",
+   "b": "dt_axle_wheel_l0",
    "method": "shaft",
-   "reason": "idler wheel runs on a 3 mm steel axle pin pressed through the side wall, held by an e-clip each side"
+   "reason": "the wheel turns on the 3 mm steel axle pressed into the side plate; e-clips each side"
   },
   {
    "a": "wheel_r0",
-   "b": "chassis",
+   "b": "dt_axle_wheel_r0",
    "method": "shaft",
-   "reason": "idler wheel runs on a 3 mm steel axle pin pressed through the side wall, held by an e-clip each side"
+   "reason": "the wheel turns on the 3 mm steel axle pressed into the side plate; e-clips each side"
   },
   {
    "a": "dm_wheel_l1",
@@ -9274,9 +9780,8 @@
   {
    "a": "hinge_pin",
    "b": "body_shell",
-   "method": "press_fit",
-   "interference_mm": 0.05,
-   "reason": "1.5 mm steel rod pressed through the wall knuckles and both side plates"
+   "method": "pin",
+   "reason": "1.5 mm steel hinge pin passes through the wall knuckles with 0.2 mm clearance; pull the pin out one side after popping its e-clip and the fork row hangs free; RVRN photos show the snap-on hinge line"
   }
  ],
  "reference": [
