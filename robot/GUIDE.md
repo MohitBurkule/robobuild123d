@@ -97,6 +97,58 @@ screw heads under overhangs; wires with no channel; wheel not touching the floor
 wheels; parts too thin to print (min wall about 0.9 mm FDM); brittle material for weapons; no locking bar; switch can be knocked by the
 robot's own motion or when inverted.
 
+## Outline details and windows from the photo (looks)
+- `robot outline spec.json PART --edge=+y-x --chamfer A [B]` (or `--step A [B]`, `--span=LO,HI`) bevels or notches one
+  edge of a static printed part's box: front corners in plan (`+y+x`, `+y-x`: a taper), top edges (`+z+x`), the nose
+  (`+y+z`). A hollow part keeps a `--wall` skin behind the new face, so the cavity never opens. It refuses when the cut
+  or the skin would meet another part. A corner that is already empty removes nothing.
+- Side and plan profiles from 2-3 numbers, with the same skin and refusal rules:
+  - `--round A [B]`: a rounded corner (a quarter circle, or a quarter ellipse with B). Use it for a soft rear or a
+    rounded end cap.
+  - `--stairs A B --n 3`: equal steps inside the corner, for a stepped flank.
+  - Face cuts: the first face of `--edge` is cut, and the second face only names the axis the cut runs along.
+    - `--notch DEPTH WIDTH [--at C]`: a square slot or channel.
+    - `--vnotch DEPTH WIDTH`: a V slot, such as cat ears or a slot for an arm.
+    - `--arc SAG [--along=LO,HI]`: the edge becomes an arc. `+SAG` drops both ends for a bowed top. `--arc=-SAG` sinks
+      the middle for a concave side.
+  - These cut only static parts, never a jointed weapon. On a big hollow chassis a run takes 1-2 minutes.
+- **Photo graphics (eyes, stripes, emblems, the robot's name):** use
+  `robot decal spec.json HOST --face +z --shape circle|ellipse|almond|star|ring|rect|stripe|poly|text --size W [H]
+  [--at U,V] [--angle DEG] [--pair D] [--text STR] --color #hex`.
+  - Each graphic becomes its own coloured part, flush with HOST's face, so it shows in renders and the outline does
+    not change.
+  - How it is built: HOST gets a pocket `--depth` deep (default 0.8 mm), and the graphic fills the pocket, running
+    0.25 mm deeper than the pocket floor.
+  - On a printed HOST the graphic is `fused_with` HOST (a multi-colour print) and follows HOST's joint.
+  - HOST must be printed. A pocket in a cut or machined plate is a blind feature (`process.geometry`), so give sheet
+    plates their photo colour with `robot colors` instead.
+  - A graphic placed over an earlier one on the same face replaces the earlier one there and takes its depth. Build
+    layers this way, for example an iris on an eye, or a head and beak on a disc.
+  - Several pieces in one call (`--pair`, or the letters of a text) are joined into one solid by a hidden web inside
+    HOST.
+  - It refuses when:
+    - the face under the graphic is not one plane;
+    - the graphic would not lie inside HOST with 0.15 mm of HOST left under it.
+  - Text takes `--size H [W]`. On a top face, `--angle 180` makes it read from the front.
+  - To sample the colour from the photo instead, leave out `--color` and run
+    `robot colors spec.json --parts ID --force`.
+  - Check `robot verify` (groups `geom`, `integrity`, `interference`) after each robot. A pocket that clips a screw
+    hole can make HOST an invalid solid; move the graphic.
+- `robot window spec.json PART --over el_battery [--face +z] [--lip 2]` opens a see-through window over a battery, ESC
+  or PCB where the photo shows the electronics, keeping a rim so the component stays captive. It refuses when anything
+  but wires lies between the component and the outside.
+- `robot electronics spec.json [--kinds battery,esc,receiver] [--only el_battery] [--lip 2] [--dry]` does the window
+  for every battery / ESC / receiver at once, through *all* the static prints over it (a tub's deck and a `top_plate`
+  together): one box over the component's footprint less the rim. It skips a component with a screw, a moving or
+  bought part, or any other body in that box, and it only opens shells (structure, plate, armor, a lid or cover),
+  never a weapon or arm; openings under 60 mm2 are skipped. The real parts and their routed wires show, nothing faked.
+- `robot brackets spec.json [--wheels wheel_l0,..] [--spokes 5]` puts a hub cap on each wheel's printed hub
+  (`tyre_of`): a ring on the hub's outer face, around the axle stub and inside the hub rim, never standing past the
+  stub (so the wheel's width and the footprint stay the same), with shallow lug pockets. It is part of the hub print,
+  so mass and BOM stay true. It refuses when the ring would touch the tyre or anything else. Outboard wheel brackets
+  change how the axle is carried: design those by hand.
+- Both change the outline on purpose: keep a change only if the likeness IoU does not drop, and re-run verify.
+
 ## Tips
 - Keep a 0.2 to 0.5 mm gap around pockets (printing tolerance) but snug enough to capture parts.
 - Moving parts need at least 1 mm of running clearance. Wheels need walls cut away to slide on from outside.
@@ -201,6 +253,14 @@ Decide each joint like a mechanical engineer before placing screws. Off-default 
 - **Nuts** sit in hex traps (captive) or are replaced by inserts (`joint.loose_nut`).
 - **Outside surfaces:** no proud heads on armour or exterior (`joint.head_proud`), never on the ground plane
   (`joint.head_ground`): counterbore flush or countersink.
+- **Visible screws the photo shows** (looks): `robot screws spec.json PART --face +z --pattern corners|row|ring|at
+  [--n N] [--inset MM] [--at "u,v;u,v"] [--plug] [--dry]` puts real M2 button-head screws, flush in counterbores,
+  on that face of a static printed part. Each one clamps PART to the printed part under it (or, with `--plug`, threads
+  into PART itself when nothing is under it; one-print pairs are recorded as plugs). On a thin shell wall it grows a
+  6 mm boss behind the wall, inside the cavity only. It skips, and says why, any spot with a blocked driver line, no
+  material, or another part in the way, then fills the hole records. Use it instead of printed dots or cylinders;
+  `--dry` first, then re-run verify and likeness. Face coordinates: +-z (x, y), +-x (y, z), +-y (x, z). Thin plates
+  (wedges, blades under 4 mm with air behind) get no screw: they need a nut, which shows on the far side.
 - **Kit:** <= 3 thread sizes (`joint.screw_sizes`), <= 5 distinct screws (`joint.screw_variety`), stock ISO lengths
   (`joint.standard_length`).
 
@@ -607,6 +667,30 @@ than `review.dfm.max_horizontal_hole_mm` (6 mm) lies in the layer plane — tear
 widen it or remove it. `dfm.undeclared_tolerance` (WARNING): a shaft/pin runs in a printed bore where neither the
 connection nor either part declares `clearance_mm`/`interference_mm` — FDM holes come out 0.1-0.3 mm small, so declare
 the fit. Parts without a mesh or a valid `print_orientation` are NOT CHECKED, never a pass.
+
+## Photo details that keep the outline (`robot plate`, `robot colors`)
+
+The photo review (`robot diff-photo`, Haiku notes) most often reports details, not the outline: "photo has separate deck
+plates screwed on, model is one slab", "photo shows screw heads, model has none", "white plates on a yellow frame,
+model is all grey". Fix them with these tools instead of reshaping, then re-run `robot likeness` (it must not drop) and
+`robot verify`:
+- **Separate plates:** `robot plate spec.json --face +z --id top_plate --screws 4 [--material pc]`
+  splits the skin of the chassis's largest flat face off as its own part (a lid over the tub's pockets; kind
+  `structure`, because the wire router only routes inside the structure parts' box),
+  a shade lighter than the chassis so its outline reads. The
+  union is unchanged, so the silhouette is too. It refuses splits that would break a part into two solids or add
+  tiny edges, and splits whose skin is mostly pocket. `--screws N` also fixes the plate on with N flush M2 button
+  screws (`robot screws`, so the photo's screw heads come with it). It places them where the chassis has 8.5 mm of
+  material under the plate. Where it doesn't (a thin-walled tub), it fuses a 6 mm boss to the wall inside the closed cavity, keeping
+  only bosses that touch nothing else and add no tiny edge. The thickness (default: the first of 2, 2.5, 3 and 1.5 mm
+  that fits) must not leave a skin under 0.9 mm on the chassis, so the plate is usually the whole deck. A metal or carbon plate weighs
+  2-3 times as much as a printed one, so check `mass` first. Use `--face +y` for a front plate.
+- **Colours:** `robot colors spec.json [--dry] [--force] [--debug renders/]` samples each large made part's colour
+  from the reference photos at the camera `likeness` picks. It replaces only placeholder colours (none, or the
+  generators' plain mid grey) and only with a clearly different colour. No geometry changes. It skips photos whose
+  silhouette IoU is under 0.6, and skips bought parts and wheels, because a model that still differs from the photo
+  puts them on the wrong pixels. Clear or shiny parts sample as whatever is behind them, so check the `--debug`
+  sheet (photo with the model's part outlines in red) before using `--force`.
 
 ## Fixing collisions without hand maths (jiggle)
 
