@@ -16,7 +16,7 @@ export const DT = 1e-4;           // physics step (python uses 5e-5; 1e-4 keeps 
 const SUB = 8;                    // steps per tick (0.8 ms)
 const CONTROL_DT = 0.004;         // brain / driver input rate (run.py)
 const PLANT_EVERY = 5;            // motor + battery update every 5 steps (run.py dtp = 5 * timestep)
-const DROP_Z = -0.1, OUT_Z = -0.03, FLOOR_MU = 0.05, CONTACT_TC = 3e-4, ARMATURE = 2e-5;
+const DROP_Z = -0.1, OUT_Z = -0.03, FLOOR_MU = 0.05, CONTACT_TC = 6e-4, ARMATURE = 2e-5;
 const T_AMB = 25, ALPHA_CU = 0.0039, COUNT_S = 10;
 const POWER_KINDS = ['battery', 'switch', 'esc', 'receiver', 'bec'];
 const KIND_RGBA = { wheel: '0.08 0.08 0.09 1', tyre: '0.08 0.08 0.09 1', weapon: '0.78 0.8 0.85 1', fork: '0.75 0.77 0.82 1', battery: '0.2 0.4 0.9 1',
@@ -98,30 +98,32 @@ function robotXml(P, doc, accent, place, yaw, info) {
   const tc = Math.max(CONTACT_TC, 2.5 * DT), lift = doc.lifter && doc.lifter.group;
   let assets = '', n = 0, acts = '', loose = '', eqs = '';
   const out = { wheels: [], weaponAct: null, weaponJoint: null, liftAct: null, hd, loose: [], groups: {} };
-  const geomsOf = (g, gi) => {
+  const geomsOf = (g, gi, tag = '') => {
     let x = '';
     for (const p of g.parts) {
       const nm = `${P}m${n}`;
       assets += `<mesh name="${nm}" vertex="${p.verts.map(v => +v.toFixed(5)).join(' ')}"/>`;
       const col = KIND_RGBA[p.kind] || (['armor', 'wedge', 'plate', 'structure'].includes(p.kind) || !p.kind ? accent : '0.4 0.42 0.46 1');
       const ptc = g.kind === 'weapon' ? Math.max(tc, doc.blade_tc || 4e-4) : tc;
-      const gname = `${P}g${gi}_${n}`;
-      info[gname] = { r: P === 'a_' ? 0 : 1, group: g.name, gkind: g.kind, part: p.part, kind: p.kind };
+      const gname = `${P}g${gi}_${n}${tag}`;
+      info[gname] = { r: P === 'a_' ? 0 : 1, group: g.name, gkind: g.kind, part: p.part, kind: p.kind, copy: tag === 'c', ghost: tag === 'x' };
       x += `<geom name="${gname}" type="mesh" mesh="${nm}" rgba="${col}" friction="${p.mu} 0.005 0.0001" solref="${ptc} ${dampRatio(p.e).toFixed(4)}" density="0"/>`;
       n++;
     }
     return x;
   };
   const inert = g => `<inertial pos="${fv(g.com)}" mass="${Math.max(g.mass, 1e-5)}" fullinertia="${fp(g.inertia.map((v, i) => i < 3 ? v + 1e-10 : v))}"/>`;
-  let kids = '', chassis = '';
+  let kids = '', chassis = '', lcopy = '';
   doc.groups.forEach((g, gi) => {
     out.groups[g.name] = g;
     if (g.kind === 'chassis') { chassis = inert(g) + geomsOf(g, gi); return; }
-    if (g.kind === 'loose') {  // breakable part: own free body welded to the chassis, snaps above break_N
+    if (g.kind === 'loose') {  // breakable part. Attached: rigid collision copy on the chassis (a gram-scale part on a soft weld
+      // jitters and tips the robot). Its mass rides on a non-colliding welded twin that takes over the instant the part breaks.
+      lcopy += geomsOf(g, gi, 'c');
       let I = g.inertia.slice(); const mI = g.mass * 0.002 ** 2 / 12 * 4; I[0] += mI; I[1] += mI; I[2] += mI;
       loose += `<body name="${P}${g.name}" pos="${fv(t)}" euler="${euler}"><freejoint name="${P}${g.name}_free"/>
-        <inertial pos="${fv(g.com)}" mass="${Math.max(g.mass, 1e-5)}" fullinertia="${fp(I.map((v, i) => i < 3 ? v + 1e-10 : v))}"/>${geomsOf(g, gi)}</body>`;
-      eqs += `<weld name="${P}${g.name}_weld" body1="${P}ch" body2="${P}${g.name}" solref="0.002 1"/>`;
+        <inertial pos="${fv(g.com)}" mass="${Math.max(g.mass, 1e-5)}" fullinertia="${fp(I.map((v, i) => i < 3 ? v + 1e-10 : v))}"/>${geomsOf(g, gi, 'x')}</body>`;
+      eqs += `<weld name="${P}${g.name}_weld" body1="${P}ch" body2="${P}${g.name}" solref="0.004 1"/>`;
       out.loose.push({ name: g.name, eq: `${P}${g.name}_weld`, body: `${P}${g.name}`, joint: `${P}${g.name}_free`, break_N: g.break_N || 150, mass: g.mass, broken: null, peak: 0, debris: false });
       return;
     }
@@ -151,7 +153,7 @@ function robotXml(P, doc, accent, place, yaw, info) {
       out.wheels.push({ name: g.name, act: `${P}${g.name}_a`, joint: jn, side: Math.sign(dot(left, rel)) || 1, roll });
     }
   });
-  out.xml = `<body name="${P}ch" pos="${fv(t)}" euler="${euler}"><freejoint name="${P}free"/>${chassis}${kids}</body>${loose}`;
+  out.xml = `<body name="${P}ch" pos="${fv(t)}" euler="${euler}"><freejoint name="${P}free"/>${chassis}${lcopy}${kids}</body>${loose}`;
   Object.assign(out, { assets, acts, eqs });
   return out;
 }
@@ -164,7 +166,7 @@ export class Sim {
     this.info = {};
     const sx = this.A.spawn;
     const R = this.R = ['a_', 'b_'].map((P, i) => robotXml(P, docs[i], accents[i], [i ? sx : -sx, i ? 0.05 : -0.05], i ? Math.PI : 0, this.info));
-    const xml = `<mujoco><option timestep="${DT}" gravity="0 0 -9.81" cone="elliptic" impratio="2"/>
+    const xml = `<mujoco><option timestep="${DT}" gravity="0 0 -9.81" cone="elliptic" impratio="2" integrator="implicitfast"/>
       <default><geom condim="4" solimp="0.95 0.99 0.001"/></default>
       <asset>${R[0].assets}${R[1].assets}</asset>
       <worldbody>${arenaXml(this.A)}${R[0].xml}${R[1].xml}</worldbody>
@@ -176,7 +178,7 @@ export class Sim {
     this.ginfo = this.gname.map(n => this.info[n] || null);
     for (let g = 0; g < m.ngeom; g++) {  // own-robot geoms never collide (hazards.setup_collision_bits)
       const gi = this.ginfo[g];
-      if (gi) { const b = gi.r ? 4 : 2; m.geom_contype[g] = b; m.geom_conaffinity[g] = 0xFFFF & ~b; } else { m.geom_contype[g] = 1; m.geom_conaffinity[g] = 0xFFFF; }
+      if (gi) { const b = gi.r ? 4 : 2; m.geom_contype[g] = gi.ghost ? 0 : b; m.geom_conaffinity[g] = gi.ghost ? 0 : 0xFFFF & ~b; } else { m.geom_contype[g] = 1; m.geom_conaffinity[g] = 0xFFFF; }
     }
     this.mu0 = Float64Array.from(m.geom_friction);
     this.act = {}; for (let i = 0; i < m.nu; i++) this.act[m.actuator(i).name] = i;
@@ -214,7 +216,7 @@ export class Sim {
       }
       if (rb.dead) { for (const k in rb.duty) rb.duty[k] = 0; continue; }
       for (const w of r.wheels) rb.duty[w.name] = Math.max(-1, Math.min(1, w.roll * (w.side > 0 ? c.l : c.r)));
-      if (r.weaponJoint) { const mo = rb.motors[r.weaponGroup]; rb.duty[r.weaponGroup] = c.w ? Math.max(-1, Math.min(1, doc.weapon.omega * mo.ke / rb.bat.ocv())) : 0; }
+      if (r.weaponJoint) { const mo = rb.motors[r.weaponGroup]; rb.duty[r.weaponGroup] = Math.max(-1, Math.min(1, Math.max(0, Math.min(1, +c.w || 0)) * doc.weapon.omega * mo.ke / rb.bat.ocv())); }  // throttle 0..1 of the declared rpm
       if (r.liftAct && rb.lifter) this.data.ctrl[this.act[r.liftAct]] = c.w ? doc.lifter.up_rad : doc.lifter.down_rad;
     }
   }
@@ -233,7 +235,7 @@ export class Sim {
       if (this.t >= this.nextCtrl) { this.nextCtrl += CONTROL_DT; this._control(); this._perControl(); }
       if (this.k % PLANT_EVERY === 0) this._plant(PLANT_EVERY * DT);
       mj.mj_step(m, d); this.k++; this.t += DT;
-      this._welds(); this._contacts();
+      this._contacts(); this._welds();
     }
   }
   _perControl() {
@@ -254,7 +256,7 @@ export class Sim {
         const rel = this.local(i, [d.xipos[L.bodyId * 3], d.xipos[L.bodyId * 3 + 1], d.xipos[L.bodyId * 3 + 2]]), [lo, hi] = this.docs[i].bounds;
         if (rel.every((v, k) => v > lo[k] - 0.002 && v < hi[k] + 0.002)) continue;
         L.debris = true; const m = this.model;
-        this.gname.forEach((nm, g) => { const gi = this.ginfo[g]; if (gi && gi.r === i && gi.group === L.name) { m.geom_contype[g] = 1 << 15; m.geom_conaffinity[g] = 0xFFFF; } });
+        this.gname.forEach((nm, g) => { const gi = this.ginfo[g]; if (gi && gi.r === i && gi.group === L.name && gi.ghost) { m.geom_contype[g] = 1 << 15; m.geom_conaffinity[g] = 0xFFFF; } });
       }
       // jams: commanded but stalled while debris touches it
       for (const [name, mo] of Object.entries(rb.motors)) {
@@ -269,15 +271,11 @@ export class Sim {
   }
   _openPits() { const m = this.model; this.gname.forEach((n, g) => { if (n.startsWith('cover')) { m.geom_contype[g] = 0; m.geom_conaffinity[g] = 0; m.geom_rgba[g * 4 + 3] = 0; } }); }
   _welds() {  // arena.py step_damage: weld force above the part's break force -> the part comes off
-    const d = this.data, nefc = d.nefc;
-    if (!nefc) return;
-    const typ = d.efc_type, id = d.efc_id, fr = d.efc_force, sum = new Map();
-    for (let i = 0; i < nefc; i++) if (typ[i] === 0) { const e = id[i]; let s = sum.get(e); if (!s) sum.set(e, s = [0, 0]); if (s[1] < 3) { s[0] += fr[i] * fr[i]; s[1]++; } }
+    const d = this.data;
     for (let r = 0; r < 2; r++) for (const L of this.R[r].loose) {
       if (L.broken !== null) continue;
-      const s = sum.get(L.eqId); if (!s) continue;
-      const fn = Math.sqrt(s[0]); L.peak = Math.max(L.peak, fn);
-      if (fn > L.break_N) { d.eq_active[L.eqId] = 0; L.broken = this.t; this.ev('break', r, `${this.docs[r].name} lost ${L.name} (${fn.toFixed(0)} N > ${L.break_N.toFixed(0)} N)`); }
+      const fn = this._load?.get(`${r}/${L.name}`) || 0; L.peak = Math.max(L.peak, fn);
+      if (fn > L.break_N) { this._detach(r, L); this.ev('break', r, `${this.docs[r].name} lost ${L.name} (${fn.toFixed(0)} N > ${L.break_N.toFixed(0)} N)`); }
     }
     for (let r = 0; r < 2; r++) for (const L of this.R[r].loose) if (L.broken !== null) {  // cap debris at speeds no real chunk reaches
       const q = d.qvel, a = L.qv, sv = Math.hypot(q[a], q[a + 1], q[a + 2]), so = Math.hypot(q[a + 3], q[a + 4], q[a + 5]);
@@ -285,10 +283,16 @@ export class Sim {
       if (so > 5000) for (let k = 3; k < 6; k++) q[a + k] *= 5000 / so;
     }
   }
+  _detach(r, L) {  // fasteners let go: hide the rigid copy, the welded twin (same pose + velocity) becomes the free part
+    const m = this.model, b = r ? 4 : 2; this.data.eq_active[L.eqId] = 0; L.broken = this.t;
+    this.ginfo.forEach((gi, g) => { if (!gi || gi.r !== r || gi.group !== L.name) return;
+      if (gi.copy) { m.geom_contype[g] = 0; m.geom_conaffinity[g] = 0; } else if (gi.ghost) { m.geom_contype[g] = b; m.geom_conaffinity[g] = 0xFFFF & ~b; } });
+  }
+  visible(g) { const gi = this.ginfo[g]; if (!gi || !(gi.copy || gi.ghost)) return true; const br = this.R[gi.r].loose.find(L => L.name === gi.group)?.broken != null; return gi.copy ? !br : br; }
   _contacts() {  // hazards.py tick: tyre cuts, switch knock-off, wire cuts, debris touch
     const d = this.data, nc = d.ncon;
     if (!nc) return;
-    const cs = d.contact, fr = d.efc_force;
+    const cs = d.contact, fr = d.efc_force; this._load = new Map();
     for (let i = 0; i < nc; i++) {
       const c = cs.get(i);
       const g1 = c.geom1, g2 = c.geom2, ea = c.efc_address, pos = c.pos ? [c.pos[0], c.pos[1], c.pos[2]] : null;
@@ -299,6 +303,7 @@ export class Sim {
       for (const [me, other] of [[oa, ob], [ob, oa]]) {
         if (!me) continue;
         const r = me.r, rb = this.rob[r];
+        if (me.copy) { const k = `${r}/${me.group}`; this._load.set(k, (this._load.get(k) || 0) + fn); }
         const otherDebris = other && this.R[other.r].loose.some(L => L.name === other.group && L.debris);
         if (otherDebris) this._debrisTouch?.add(`${r}/${me.group}`);
         if (!other || other.r === r || otherDebris) continue;
@@ -374,7 +379,7 @@ export class Sim {
   snapshot() {
     const o = [], d = this.data;
     for (let i = 0; i < this.model.nbody; i++) o.push(d.xpos[i * 3], d.xpos[i * 3 + 1], d.xpos[i * 3 + 2], d.xquat[i * 4], d.xquat[i * 4 + 1], d.xquat[i * 4 + 2], d.xquat[i * 4 + 3]);
-    return { st: this.t, p: o.map(v => +v.toFixed(5)), g: this.pitsOpen, tel: this.telemetry(), ev: this.events.slice(-8) };
+    return { st: this.t, br: this.R.map(r => r.loose.map(L => L.broken != null ? 1 : 0)), p: o.map(v => +v.toFixed(5)), g: this.pitsOpen, tel: this.telemetry(), ev: this.events.slice(-8) };
   }
 }
 function segDist(p, pts) {
