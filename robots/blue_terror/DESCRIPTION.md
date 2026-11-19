@@ -267,3 +267,10 @@ The budget closes at 150 g only with **small (N10-class or light N20) motors**; 
 1. **Scoop as a single straight slope** instead of two angles: possible; the fold line visible near the floor could be a tape edge. Either way the leading edge is on the floor at y ≈ +60.
 2. **Front brackets printed separately** and screwed to the tub: they show a slightly different surface texture from the tub walls; they could be separate parts, which would make scoop changes faster.
 3. **Black side cylinders as bearings/spacers** rather than motors: if only two motors drive the middle wheels, the cylinders would be bearing housings for idler shafts geared to the middle ones. No gear teeth are visible between the wheels, so belts or internal gears would be needed.
+
+## 20. Surface and wear reading
+
+- **Scoop**: the face is scuffed with fine horizontal scratches and its leading edge is whitened along the full width, the marks of driving under opponents and scraping the floor; the outer top corner of the right side flap (image lower left) is slightly bent outward, showing a side hit.
+- **Wheels**: the knurled treads are intact and the outer faces show only light dust: no wheel has been struck hard.
+- **Tub**: stress whitening around the bracket screws (the brackets take the push load); the lid is clear with few scratches, so the robot has rarely been driven over or flipped onto its lid.
+- **Label**: the black tape name strip is slightly crooked and lifting at one corner, a hand-applied identity mark rather than a printed decal.
