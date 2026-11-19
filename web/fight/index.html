@@ -1,7 +1,16 @@
-<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Antweight Arena</title>
+<!doctype html><html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><title>Antweight Arena</title>
 <style>
 html,body{margin:0;height:100%;background:#0b0e14;color:#e6e9ef;font:15px system-ui,sans-serif;overflow:hidden}
-canvas{display:block;width:100vw;height:100vh}
+canvas{display:block;width:100vw;height:100vh;touch-action:none}
+#menu{overflow:auto;justify-content:flex-start;padding:16px;box-sizing:border-box;text-align:center}#menu>*{flex:none}#menu h1{margin-top:auto!important}#go{margin-bottom:auto}
+#touch{display:none;position:fixed;inset:auto 0 0 0;height:42vh;pointer-events:none;touch-action:none}
+body.coarse.playing #touch{display:block}
+#joy{position:absolute;left:5vw;bottom:6vh;width:34vmin;height:34vmin;border-radius:50%;background:#ffffff18;border:2px solid #ffffff40;pointer-events:auto;touch-action:none}
+#knob{position:absolute;left:50%;top:50%;width:14vmin;height:14vmin;margin:-7vmin 0 0 -7vmin;border-radius:50%;background:#ffffff60}
+#wbtn{position:absolute;right:6vw;bottom:9vh;width:24vmin;height:24vmin;border-radius:50%;background:#e5534bcc;color:#fff;font-weight:700;display:flex;align-items:center;justify-content:center;pointer-events:auto;touch-action:none;user-select:none;font-size:3.4vmin}
+#wbtn.on{background:#3fb950cc}
+#pause{display:none;position:fixed;top:44px;right:8px;pointer-events:auto;padding:6px 10px;font-size:13px}body.coarse.playing #pause{display:block}
+@media (max-width:700px){fieldset select{max-width:52vw}#hud{font-size:12px}.bar{width:30vw}#help{display:none}}
 #menu,#end{position:fixed;inset:0;display:flex;flex-direction:column;gap:12px;align-items:center;justify-content:center;background:#0b0e14e8}
 #end{display:none;background:#0b0e14b0;font-size:28px}
 .row{display:flex;gap:16px;flex-wrap:wrap;justify-content:center}
@@ -10,11 +19,12 @@ button{cursor:pointer;background:#2d5bff;border:0;font-weight:600}button.alt{bac
 #hud{position:fixed;top:8px;left:0;right:0;display:flex;justify-content:space-between;padding:0 16px;pointer-events:none;font-weight:600;text-shadow:0 1px 3px #000}
 .bar{height:8px;background:#fff3;border-radius:4px;width:200px;margin-top:4px}.bar i{display:block;height:100%;border-radius:4px;transition:width .2s}
 #help{position:fixed;bottom:8px;left:0;right:0;text-align:center;opacity:.6;font-size:13px}
-small{opacity:.7}#n0[data-w]:not([data-w=""])::after,#n1[data-w]:not([data-w=""])::after{content:" · weapon " attr(data-w);opacity:.8}fieldset{border:1px solid #3a4560;border-radius:8px;display:flex;gap:6px}legend{opacity:.7}
+small{opacity:.7}#n0[data-w]:not([data-w=""])::after,#n1[data-w]:not([data-w=""])::after{content:" · weapon " attr(data-w);opacity:.8}fieldset{min-width:0;max-width:92vw;box-sizing:border-box;border:1px solid #3a4560;border-radius:8px;display:flex;gap:6px}legend{opacity:.7}
 </style></head><body>
 <canvas id="c"></canvas>
 <div id="hud"><div><span id="n0"></span><div class="bar"><i id="b0"></i></div></div><div id="tm" style="font-size:22px">90</div><div style="text-align:right"><span id="n1"></span><div class="bar"><i id="b1"></i></div></div></div>
 <div id="help"></div>
+<div id="touch"><div id="joy"><div id="knob"></div></div><div id="wbtn">WEAPON</div></div><button id="pause" class="alt">Menu</button>
 <div id="end"><div id="endtxt"></div><div class="row"><button id="again">Rematch (R)</button><button class="alt" id="tomenu">Menu (Esc)</button></div></div>
 <div id="menu"><h1 style="margin:0">Antweight Arena</h1><small>MuJoCo physics running in your browser · 150 g class</small>
 <div class="row"><label>Mode <select id="mode"><option value="local">Local (this machine)</option><option value="host">Online: host a room</option><option value="join">Online: join a room</option></select></label>

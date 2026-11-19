@@ -57,7 +57,7 @@ function syncScene() {
 }
 function camera(dt) {
   const a = sim.pos(0), b = sim.pos(1), cx = (a[0] + b[0]) / 2, cy = (a[1] + b[1]) / 2;
-  const span = Math.max(0.5, Math.hypot(a[0] - b[0], a[1] - b[1]) + 0.35, sim.A.half * 1.2);
+  const span = Math.max(0.5, Math.hypot(a[0] - b[0], a[1] - b[1]) + 0.35, sim.A.half * 1.2) * (cam.aspect < 1 ? 1.7 : 1);
   cam.position.lerp(_v.set(cx * 0.5, cy * 0.5 - span * 0.3, span * 1.3), 0.08); cam.lookAt(cx * 0.6, cy * 0.6, 0);
 }
 
@@ -70,6 +70,7 @@ const toggled = [false, false], wasDown = [false, false];
 function readInput(i, pad) {  // i = player slot 0/1; keyboard default, gamepad optional (pad index = i)
   const k = KB[i], K = c => keys.has(c) ? 1 : 0;
   let thr = K(k.f) - K(k.b), st = K(k.r) - K(k.l), wd = !!K(k.w);
+  if (touchSlot === i && (touch.thr || touch.st)) { thr = touch.thr; st = touch.st; }
   const gp = navigator.getGamepads?.()[pad ?? i];  // optional controller; keyboard is the default
   if (gp) {
     const ax = (n, dz = 0.25) => Math.abs(gp.axes[n] || 0) > dz ? gp.axes[n] : 0;
@@ -77,11 +78,32 @@ function readInput(i, pad) {  // i = player slot 0/1; keyboard default, gamepad 
     if (gt || gs) { thr = gt; st = gs; }
     wd = wd || gp.buttons[0]?.pressed || (gp.buttons[7]?.value > 0.4);
   }
+  if (touchSlot === i && touch.w) wd = true;
   if (sim.docs[i].lifter) toggled[i] = wd;
   else { if (wd && !wasDown[i]) toggled[i] = !toggled[i]; }
   wasDown[i] = wd;
   const n = Math.max(1, Math.abs(thr) + Math.abs(st));
   return { l: (thr + st) / n * Math.min(1, n), r: (thr - st) / n * Math.min(1, n), w: toggled[i] ? 1 : 0 };
+}
+
+// ---- touch (phone) controls: left stick drives, right button fires the weapon
+const coarse = matchMedia('(pointer: coarse)').matches || 'ontouchstart' in window;
+if (coarse) { document.body.classList.add('coarse'); $('c1').value = 'ai'; }
+const touch = { thr: 0, st: 0, w: false }; let touchSlot = 0;
+{
+  const joy = $('joy'), knob = $('knob'); let pid = null;
+  const move = e => { const r = joy.getBoundingClientRect(), R = r.width / 2;
+    let dx = (e.clientX - (r.left + R)) / R, dy = (e.clientY - (r.top + R)) / R; const m = Math.hypot(dx, dy); if (m > 1) { dx /= m; dy /= m; }
+    touch.st = Math.abs(dx) < 0.12 ? 0 : dx; touch.thr = Math.abs(dy) < 0.12 ? 0 : -dy; knob.style.transform = `translate(${dx * R * 0.8}px,${dy * R * 0.8}px)`; };
+  joy.addEventListener('pointerdown', e => { pid = e.pointerId; joy.setPointerCapture(pid); move(e); e.preventDefault(); });
+  joy.addEventListener('pointermove', e => { if (e.pointerId === pid) move(e); });
+  const end = e => { if (e.pointerId !== pid) return; pid = null; touch.thr = touch.st = 0; knob.style.transform = ''; };
+  joy.addEventListener('pointerup', end); joy.addEventListener('pointercancel', end);
+  const b = $('wbtn');
+  b.addEventListener('pointerdown', e => { touch.w = true; b.classList.add('on'); e.preventDefault(); });
+  const up = () => { touch.w = false; b.classList.remove('on'); };
+  b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up);
+  $('pause').onclick = () => toMenu();
 }
 
 // ---- game state / modes
@@ -117,10 +139,11 @@ function start(c) {
   buildScene(); cam.position.set(0, -1, 1.2);
   const ctlName = i => role === 'local' ? (c.ctl[i] === 'ai' ? 'AI' : 'Human') : i === 0 ? (role === 'guest' ? 'host' : 'you (host)') : (role === 'guest' ? 'you' : 'remote player');
   for (const i of [0, 1]) { $('n' + i).textContent = `${DOCS[c.kinds[i]].name} (P${i + 1} · ${ctlName(i)})`; $('n' + i).dataset.w = ''; $('b' + i).style.background = i ? '#e5534b' : '#3b82f6'; }
+  touchSlot = role === 'local' ? (c.ctl[0] === 'human' ? 0 : 1) : 0; document.body.classList.add('playing');
   $('menu').style.display = 'none'; $('end').style.display = 'none'; running = true;
   $('help').textContent = role === 'local' ? [0, 1].map(i => c.ctl[i] === 'ai' ? `P${i + 1}: AI` : i === 0 ? 'P1: WASD + Space' : 'P2: arrows + Enter').join(' · ') + ' · R rematch · Esc menu' : 'WASD (or pad) drive · Space weapon · online';
 }
-function toMenu() { running = false; sim = null; if (net) { net.onclose = null; net.close(); net = null; } $('menu').style.display = 'flex'; $('end').style.display = 'none'; }
+function toMenu() { document.body.classList.remove('playing'); running = false; sim = null; if (net) { net.onclose = null; net.close(); net = null; } $('menu').style.display = 'flex'; $('end').style.display = 'none'; }
 function rematch() { if (role === 'guest') return; if (net?.readyState === 1) net.send(JSON.stringify({ t: 'rematch' })); start(cfg); }
 $('again').onclick = rematch; $('tomenu').onclick = toMenu;
 
