@@ -49,3 +49,10 @@ Left (and why):
 - electrical.receiver_supply x1: Receiver `el_esc` has no wire to an ESC/BEC or battery.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): smart_ant_5_.aws61.webp 0.83 -> 0.82
+
+## Round 5 (user note: trap door shape)
+- Trap door is a trapezoid now, narrow at the rear hinge and wide at the lip: side flanks lean in from a 39 mm half-width (vertical to z -4) to 21 mm at the hinge, so the grille face tapers toward the hinge as in the photos.
+- Grille: 6 columns that fan toward the hinge x 4 rows, 2.6 mm ribs, 4 mm frame (replaces the 6 x 3 rectangular slot grid).
+- Hinge: 5 knuckles on the pin across the narrow top edge.
+- Inside: interior bay inset 3 mm from the leaning flanks; gearmotor pods keep the motors boxed in; ESC moved flat into a floor pocket; printed end stop between the gearmotor tails (fixes retention.loose x2).
+- Blockers (`verify --tier inner`, fresh cache) 3 -> 1 (electrical.receiver_supply: still no battery/wires; a wired try left 2 wires unroutable past the switch, so it was dropped). Likeness aws61 0.819 -> 0.820.
