@@ -8,5 +8,13 @@
   "teeth": 2
  },
  "wheels": 2,
- "source": "read from photos"
+ "source": "read from photos",
+ "view": {
+  "relativity.aws72.webp": "front_right_iso",
+  "relativity.aws76.webp": "front_left_iso"
+ },
+ "view_source": {
+  "relativity.aws72.webp": "user camera pick (azimuth 45, elevation 35); replaces the automatic label",
+  "relativity.aws76.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label"
+ }
 }
