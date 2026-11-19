@@ -16,9 +16,9 @@
   "unstoppable_force.aws71.webp": "front_left_iso",
   "unstoppable_force.aws72.webp": "front_left_iso"
  },
- "elevation": {
-  "unstoppable_force.aws69.webp": 45,
-  "unstoppable_force.aws71.webp": 45,
-  "unstoppable_force.aws72.webp": 45
+ "view_source": {
+  "unstoppable_force.aws69.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label",
+  "unstoppable_force.aws71.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label",
+  "unstoppable_force.aws72.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label"
  }
 }

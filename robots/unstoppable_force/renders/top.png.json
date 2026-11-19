@@ -1,24 +1,123 @@
 {
  "spec": "/tmp/work10_unstoppable_force/robots/unstoppable_force/spec.json",
- "rendered_at": 1795036274.353145,
+ "rendered_at": 1795089921.5082216,
  "bodies": [
   "chassis",
-  "weapon",
-  "wheel_l0",
-  "wheel_r0",
+  "top_plate",
   "drum_arm_l",
   "drum_arm_r",
-  "dt_hub_wheel_l0",
-  "dt_hub_wheel_r0",
-  "dt_shaft_weapon",
-  "dm_wheel_l0",
-  "dm_wheel_r0",
+  "weapon",
+  "drum_endcap",
+  "drum_shaft",
+  "lock_pin",
   "weapon_motor",
-  "el_battery",
-  "el_rx_esc",
-  "el_wesc",
-  "el_switch",
-  "lock_pin"
+  "wheel_l",
+  "hub_l",
+  "drive_l",
+  "wheel_r",
+  "hub_r",
+  "drive_r",
+  "battery",
+  "rx_esc",
+  "weapon_esc",
+  "switch",
+  "f_arm_l0",
+  "f_arm_l1",
+  "f_arm_r0",
+  "f_arm_r1",
+  "f_wmot0",
+  "f_wmot1",
+  "fs_look_top_plate_6",
+  "fs_look_top_plate_7",
+  "fs_look_top_plate_8",
+  "fs_look_top_plate_9",
+  "fs_look_top_plate_10",
+  "fs_look_top_plate_11"
  ],
- "wires": {}
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    0.0,
+    7.0,
+    -7.790000000000001
+   ],
+   "to": [
+    -3.0,
+    -6.0,
+    5.25
+   ]
+  },
+  "w_sw_wesc": {
+   "from": [
+    0.0,
+    -6.0,
+    5.25
+   ],
+   "to": [
+    19.5,
+    -6.0,
+    -11.790000000000001
+   ]
+  },
+  "w_sw_rx": {
+   "from": [
+    0.0,
+    -6.0,
+    5.25
+   ],
+   "to": [
+    -22.0,
+    0.0,
+    -12.540000000000001
+   ]
+  },
+  "w_phases": {
+   "from": [
+    16.5,
+    16.0,
+    -11.790000000000001
+   ],
+   "to": [
+    37.4,
+    25.0,
+    -1.102182119232618e-15
+   ]
+  },
+  "w_m1": {
+   "from": [
+    10.0,
+    12.0,
+    -12.540000000000001
+   ],
+   "to": [
+    5.73,
+    -17.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -22.0,
+    12.0,
+    -12.540000000000001
+   ],
+   "to": [
+    -5.73,
+    -17.0,
+    0.0
+   ]
+  },
+  "w_wsig": {
+   "from": [
+    10.0,
+    0.0,
+    -12.540000000000001
+   ],
+   "to": [
+    13.5,
+    -6.0,
+    -11.790000000000001
+   ]
+  }
+ }
 }
