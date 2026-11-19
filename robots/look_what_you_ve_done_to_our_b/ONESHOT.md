@@ -51,3 +51,10 @@ Left (one line each):
 - mass.over x1: outside shape (kept) is heavier than the class limit even with 2.5 mm shells
 - likeness.view x1: looks (photo view label; not part of this pass)
 - likeness.silhouette x1: looks (not part of this pass; outside shape kept as round 3)
+
+## Round 5 (user note: two-way arrow, forced symmetry)
+- Outer body built from ONE quarter (x >= 0, front half) and mirrored in x and in y about the wheel-pair midline y0 = -9 (`mirror` nodes in the spec); every copy of the outer (skin, hollowing copies, top-plate blank) uses it. Both ends: same ramp (top edge 31 mm from midline, lip at 48), full-width end blocks (half-width 52) past the wheels, arrow chamfers to a 36 mm half-width tip.
+- Top plate and its 4 screws centred on y0 (y -39 / +21, x +/-32.6); shell wall 2.0 -> 1.6 mm (mass).
+- REFERENCE.json: aws71 view front_right_iso (wedge at right, right side visible); aws74 elevation 45 -> 25 (photo is a low shot).
+- verify --tier inner: 5 -> 0 blockers (HEAD rerun with the current toolchain), mass 156.2 -> 149.6 g; likeness aws71 0.60 -> 0.81, aws74 0.67 -> 0.83.
+- DESCRIPTION.md: detailed description of the reference photos.

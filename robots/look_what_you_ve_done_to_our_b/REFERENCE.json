@@ -10,12 +10,14 @@
  ],
  "view": {
   "look_what_you_ve_done_to_our_breakfast.aws68.webp": "front",
-  "look_what_you_ve_done_to_our_breakfast.aws71.webp": "front_left_iso",
+  "look_what_you_ve_done_to_our_breakfast.aws71.webp": "front_right_iso",
   "look_what_you_ve_done_to_our_breakfast.aws74.webp": "front_left_iso"
  },
  "elevation": {
   "look_what_you_ve_done_to_our_breakfast.aws68.webp": 25,
-  "look_what_you_ve_done_to_our_breakfast.aws71.webp": 45,
-  "look_what_you_ve_done_to_our_breakfast.aws74.webp": 45
+  "look_what_you_ve_done_to_our_breakfast.aws74.webp": 25
+ },
+ "view_source": {
+  "look_what_you_ve_done_to_our_breakfast.aws71.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label"
  }
 }
