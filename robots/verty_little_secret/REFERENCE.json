@@ -10,5 +10,13 @@
   "verty_little_secret.aws72.webp",
   "verty_little_secret.aws74.webp",
   "verty_little_secret.aws76.webp"
- ]
+ ],
+ "view": {
+  "verty_little_secret.aws74.webp": "front_right_iso",
+  "verty_little_secret.aws72.webp": "front_left_iso"
+ },
+ "view_source": {
+  "verty_little_secret.aws74.webp": "user camera pick (azimuth 30, elevation 35); replaces the automatic label",
+  "verty_little_secret.aws72.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label"
+ }
 }
