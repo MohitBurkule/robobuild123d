@@ -6,6 +6,12 @@ Segment file (one per photo): robots/<name>/reference/segments/<photo stem>.json
      "segments": [{"id": "s01", "label": "left front wheel", "kind": "wheel",
                    "polygon": [[x, y], ...]}, ...]}      # x, y = fractions 0..1 of the FULL photo (0,0 = top-left)
 
+BETTER WAY (regions): `regions ROBOT_DIR PHOTO` cuts the robot into ~100 numbered regions with exact boundaries. The labeller
+then only groups them: <stem>.json = {"photo": ..., "parts": [{"label": "left front wheel", "kind": "wheel", "regions": [12, 14]}]}.
+A file may hold BOTH: `segments` (rough brush polygons, fast) and `parts` (region groups, exact). `fuse` lets the brush
+polygons split regions that straddle two of them and carve out small things the auto cut swallowed (screws), then the
+labeller regroups. At most 3 rounds per photo. check lists regions left out of every part (the gaps) and regions used twice.
+
 Sub-commands
   grid PHOTO [OUT]      photo with a labelled 10 % grid so polygon corners can be read off
   check SEGFILE         rasterise: coverage of the photo mask, overlaps, tiny / outside-robot segments; writes
@@ -48,6 +54,20 @@ def photo_mask_for(base: Path, photo: str, max_px: int = 900):
     return m, crop
 
 
+def raster_parts(d: dict, base: Path, shape, crop=None):
+    """Masks of the parts of a segment file: region based (`parts` [{label, kind, regions: [ids]}]) or polygon based
+    (`segments`). Returns (parts list, masks list)."""
+    if d.get("parts"):
+        lab = load_regions(base, d["photo"])
+        if lab is None or lab.shape != tuple(shape):
+            raise SystemExit("run `robot partseg regions` first (regions.png missing or from another mask)")
+        parts = d["parts"]
+        for i, p in enumerate(parts):
+            p.setdefault("id", f"p{i + 1:02d}")
+        return parts, [np.isin(lab, p["regions"]) for p in parts]
+    return d["segments"], raster_segments(d["segments"], shape, crop)
+
+
 def raster_segments(segs, shape, crop=None):
     """List of boolean masks (H, W) for polygons given as fractions of the full photo; `crop` [x0,y0,x1,y1] fractions."""
     from PIL import Image, ImageDraw
@@ -67,6 +87,156 @@ def raster_segments(segs, shape, crop=None):
                 d.polygon(hp, fill=0)
         out.append(np.asarray(im) > 127)
     return out
+
+
+def regions(base: Path, photo: str, n: int = 400, merge_thr: float = 14.0, max_px: int = 900):
+    """Exact-boundary over-segmentation of the robot in a photo (SLIC superpixels, then colour-similar neighbours merged).
+    Returns (labels (H, W) int, 0 = background, 1..N regions) in the cropped, thumbnailed mask frame. Saves
+    <stem>.regions.png (16 bit label map) and <stem>.regions.view.png (numbered) in reference/segments/."""
+    from PIL import Image, ImageDraw
+    from scipy import ndimage as nd
+    from skimage import color, graph, segmentation
+
+    m, crop = photo_mask_for(base, photo, max_px)
+    im = Image.open(base / "reference" / photo).convert("RGB")
+    if crop:
+        W0, H0 = im.size
+        im = im.crop((int(crop[0] * W0), int(crop[1] * H0), int(crop[2] * W0), int(crop[3] * H0)))
+    im = im.resize((m.shape[1], m.shape[0]))
+    a = np.asarray(im)
+    lab = segmentation.slic(a, n_segments=n, compactness=8, sigma=1, mask=m, start_label=1, channel_axis=-1)
+    g = graph.rag_mean_color(a, lab)
+    lab = graph.merge_hierarchical(lab, g, thresh=merge_thr, rag_copy=False, in_place_merge=True,
+                                   merge_func=lambda g_, s_, d_: None,
+                                   weight_func=lambda g_, s_, d_, n_: {"weight": float(np.linalg.norm(g_.nodes[d_]["mean color"] - g_.nodes[n_]["mean color"]))})
+    lab[~m] = 0
+    # drop tiny regions into their biggest neighbour
+    ids, cnt = np.unique(lab[lab > 0], return_counts=True)
+    for i, c in zip(ids, cnt):
+        if c < 0.0004 * m.sum():
+            ring = nd.binary_dilation(lab == i, iterations=2) & (lab != i) & (lab > 0)
+            if ring.any():
+                lab[lab == i] = np.bincount(lab[ring]).argmax()
+    _, lab = np.unique(lab, return_inverse=True)  # relabel 0..N (0 = background)
+    lab = lab.reshape(m.shape)
+    if not (lab == 0).any() or not m.any():
+        pass
+    sd = base / "reference" / "segments"
+    sd.mkdir(parents=True, exist_ok=True)
+    stem = Path(photo).stem
+    Image.fromarray(lab.astype(np.uint16)).save(sd / f"{stem}.regions.png")
+    b = segmentation.find_boundaries(lab, mode="inner")
+    v = a.copy()
+    v[~m] = 255
+    v[b] = (255, 0, 255)
+    img = Image.fromarray(v)
+    dr = ImageDraw.Draw(img)
+    for k in range(1, lab.max() + 1):
+        ys, xs = np.nonzero(lab == k)
+        if len(ys):
+            cy, cx = nd.center_of_mass(lab == k)
+            dr.text((cx - 6, cy - 5), str(k), fill=(255, 255, 0), stroke_width=1, stroke_fill=(0, 0, 0))
+    img.save(sd / f"{stem}.regions.view.png")
+    return lab
+
+
+def fuse(segfile, big=0.006, split_frac=0.25) -> dict:
+    """Let the rough brush polygons (`segments`) correct the auto regions, in place (round N of at most 3):
+    - a region that two or more BIG brush polygons each cover >= `split_frac` of is split along those polygons;
+    - a SMALL brush polygon (< `big` of the robot, e.g. a screw the auto cut swallowed) is carved out as its own region.
+    `parts` (region groups) are kept in step: pieces inherit the parent's part, carved regions leave their old part and
+    start unassigned. Writes the new regions.png / view and returns a report: what was split / carved, and for every
+    brush polygon the parts its pixels fall in (so labels from the two views can be reconciled)."""
+    from PIL import Image
+
+    sf = Path(segfile)
+    base = sf.parents[2]
+    d = load_segments(sf)
+    m, crop = photo_mask_for(base, d["photo"])
+    lab = load_regions(base, d["photo"])
+    if lab is None:
+        lab = regions(base, d["photo"])
+    brush = [s for s in d.get("segments", []) if s.get("polygon")]
+    bm = raster_segments(brush, m.shape, crop)
+    tot = m.sum()
+    nxt = int(lab.max()) + 1
+    parts = d.get("parts") or []
+    rep = {"split": [], "carved": [], "round_notes": "run `partseg regions`-view again, regroup the new region ids"}
+    inherit = {}  # new id -> parent id
+    isbig = [r.sum() >= big * tot for r in bm]
+    for k in [int(v) for v in np.unique(lab[lab > 0])]:
+        reg = lab == k
+        a = reg.sum()
+        cov = [i for i, r in enumerate(bm) if isbig[i] and (r & reg).sum() >= split_frac * a and (r & reg).sum() > 30]
+        if len(cov) >= 2:
+            left = reg.copy()
+            for i in cov:
+                piece = reg & bm[i] & left
+                if piece.sum() > 30 and piece.sum() < left.sum():
+                    lab[piece] = nxt
+                    inherit[nxt] = k
+                    rep["split"].append({"region": k, "into": nxt, "by": brush[i].get("label", brush[i].get("id"))})
+                    nxt += 1
+                    left &= ~piece
+    for i, r in enumerate(bm):
+        if isbig[i] or not r.any():
+            continue
+        carve = r & m
+        if carve.sum() < 12:
+            continue
+        mine = int(np.bincount(lab[carve]).argmax()) if (lab[carve] > 0).any() else 0
+        if mine and (carve & (lab == mine)).sum() >= 0.8 * (lab == mine).sum():
+            continue  # a region of its own already
+        lab[carve] = nxt
+        rep["carved"].append({"region": nxt, "from": int(mine), "by": brush[i].get("label", brush[i].get("id"))})
+        for p_ in parts:  # carved regions are unassigned
+            pass
+        nxt += 1
+    for p_ in parts:
+        extra = [n for n, par in inherit.items() if par in p_["regions"]]
+        p_["regions"] = sorted(set(p_["regions"]) | set(extra))
+    Image.fromarray(lab.astype(np.uint16)).save(base / "reference" / "segments" / f"{Path(d['photo']).stem}.regions.png")
+    _view(base, d["photo"], lab, m, crop)
+    # which parts each brush polygon falls in
+    owner = np.zeros(lab.shape, int)
+    for pi, p_ in enumerate(parts, 1):
+        owner[np.isin(lab, p_["regions"])] = pi
+    rep["brush_vs_parts"] = []
+    for s_, r in zip(brush, bm):
+        o = np.bincount(owner[r & m], minlength=len(parts) + 1)
+        tot_ = max(1, o.sum())
+        rep["brush_vs_parts"].append({"brush": s_.get("label"), "parts": {(parts[j - 1]["label"] if j else "unassigned"): round(float(o[j] / tot_), 2)
+                                                                           for j in np.argsort(-o)[:3] if o[j] / tot_ >= 0.1}})
+    sf.write_text(json.dumps(d))
+    rep["regions"] = int(lab.max())
+    return rep
+
+
+def _view(base, photo, lab, m, crop):
+    from PIL import Image, ImageDraw
+    from scipy import ndimage as nd
+    from skimage import segmentation
+
+    im = Image.open(base / "reference" / photo).convert("RGB")
+    if crop:
+        W0, H0 = im.size
+        im = im.crop((int(crop[0] * W0), int(crop[1] * H0), int(crop[2] * W0), int(crop[3] * H0)))
+    a = np.asarray(im.resize((m.shape[1], m.shape[0]))).copy()
+    a[~m] = 255
+    a[segmentation.find_boundaries(lab, mode="inner")] = (255, 0, 255)
+    img = Image.fromarray(a)
+    dr = ImageDraw.Draw(img)
+    for k in np.unique(lab[lab > 0]):
+        cy, cx = nd.center_of_mass(lab == k)
+        dr.text((cx - 6, cy - 5), str(int(k)), fill=(255, 255, 0), stroke_width=1, stroke_fill=(0, 0, 0))
+    img.save(base / "reference" / "segments" / f"{Path(photo).stem}.regions.view.png")
+
+
+def load_regions(base: Path, photo: str):
+    from PIL import Image
+
+    p = base / "reference" / "segments" / (Path(photo).stem + ".regions.png")
+    return np.asarray(Image.open(p)).astype(int) if p.exists() else None
 
 
 def load_segments(path) -> dict:
@@ -116,8 +286,15 @@ def check(segfile, write=True) -> dict:
     d = load_segments(sf)
     m, crop = photo_mask_for(base, d["photo"])
     H, W = m.shape
-    segs = [dict(s) for s in d["segments"]]
-    ms = raster_segments(segs, m.shape, crop)
+    segs, ms = raster_parts(d, base, m.shape, crop)
+    segs = [dict(s) for s in segs]
+    if d.get("parts"):  # region based: unassigned regions are the gaps
+        lab = load_regions(base, d["photo"])
+        used = {r for p_ in d["parts"] for r in p_["regions"]}
+        left = [int(k) for k in np.unique(lab[lab > 0]) if int(k) not in used]
+        dup = sorted(k for k in used if sum(k in p_["regions"] for p_ in d["parts"]) > 1)
+    else:
+        left, dup = [], []
     union = np.zeros_like(m)
     cnt = np.zeros(m.shape, int)
     for r in ms:
@@ -161,6 +338,10 @@ def check(segfile, write=True) -> dict:
         rep["issues"].append("duplicate segment ids")
     if rep["coverage"] < 0.9:
         rep["issues"].append(f"only {rep['coverage']:.0%} of the robot is covered, segment the rest")
+    if left:
+        rep["issues"].append(f"regions not in any part: {left}")
+    if dup:
+        rep["issues"].append(f"regions in more than one part: {dup}")
     if write:
         full = Image.open(Path(base) / "reference" / d["photo"]).convert("RGB")
         if crop:
@@ -258,11 +439,14 @@ def score_photo(world, base: Path, segfile: Path, cam=None):
     if cam is None:
         raise SystemExit(f"no camera for {photo}: run `robot likeness` first (writes renders/view_match.json) or pass --az/--el")
     pm, crop = photo_mask_for(base, photo)
-    segs = merged(d)
-    rm = raster_segments([{"polygon": s.get("polygon", []), "holes": s.get("holes")} for s in segs], pm.shape, crop)
-    for i, s in enumerate(segs):  # merged groups: union of member polygons
-        if "polygons" in s:
-            rm[i] = np.any(raster_segments([{"polygon": p} for p in s["polygons"]], pm.shape, crop), axis=0)
+    if d.get("parts"):
+        segs, rm = raster_parts(d, base, pm.shape, crop)
+    else:
+        segs = merged(d)
+        rm = raster_segments([{"polygon": s.get("polygon", []), "holes": s.get("holes")} for s in segs], pm.shape, crop)
+        for i, s in enumerate(segs):  # merged groups: union of member polygons
+            if "polygons" in s:
+                rm[i] = np.any(raster_segments([{"polygon": p} for p in s["polygons"]], pm.shape, crop), axis=0)
     ib, names = id_buffer(world, *cam)
     sil = ib >= 0
     from scipy import ndimage as nd
@@ -344,6 +528,15 @@ def add_cli(sub):
     g.add_argument("photo")
     g.add_argument("out", nargs="?")
     g.set_defaults(func=lambda a: print(grid(a.photo, a.out)) or 0)
+    r = ps.add_parser("regions", help="exact-boundary numbered regions of the photo (then group them into parts)")
+    r.add_argument("spec_dir", help="robot folder (robots/<name>)")
+    r.add_argument("photo", help="photo file name in reference/")
+    r.add_argument("--n", type=int, default=400)
+    r.add_argument("--merge", type=float, default=14.0, help="colour distance below which neighbours merge (lower = more regions)")
+    r.set_defaults(func=lambda a: print(f"{regions(Path(a.spec_dir), a.photo, a.n, a.merge).max()} regions; view: {a.spec_dir}/reference/segments/{Path(a.photo).stem}.regions.view.png") or 0)
+    f = ps.add_parser("fuse", help="round of brush polygons correcting the auto regions (split / carve), in place")
+    f.add_argument("segfile")
+    f.set_defaults(func=lambda a: print(json.dumps(fuse(a.segfile), indent=1)) or 0)
     c = ps.add_parser("check")
     c.add_argument("segfile")
     c.set_defaults(func=lambda a: print(json.dumps(check(a.segfile), indent=1)) or 0)
