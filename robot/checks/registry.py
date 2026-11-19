@@ -69,7 +69,6 @@ REGISTRY = [
     _g("archetype", DESIGN, FULL, 14.9),
     _g("architecture", DESIGN, FULL, 100.0),
     _g("electrical", DESIGN, INNER, 1.1),
-    _g("combat", DESIGN, INNER, 2.6),
     _g("physics", DESIGN, INNER, 0.0, note="closed-form weapon/drive/power physics (robot/checks/physics), UNTESTED"),
     _g("assembly", DESIGN, FULL, 145.3, deep_only=True, proxy="assembly", note="greedy take-apart search"),
     _g("joints", DESIGN, FULL, 44.9),
@@ -82,7 +81,6 @@ REGISTRY = [
     _g("fit", DESIGN, INNER, 1.7),
     _g("contain", DESIGN, FULL, 23.7),
     _g("disasm", DESIGN, FULL, 11.2),
-    _g("coverage", DESIGN, FULL, 5.0),
     _g("bom", DESIGN, INNER, 0.9, note="lock part, O-ring stock, wire cut, switch; its reference.* findings are parity"),
     _g("support", DESIGN, FULL, 5.0),  # gravity in all 6 orientations (robot/checks/support.py)
     _g("threat", DESIGN, FULL, 311.1),  # combat failure modes CF-* (robot/checks/threat)
