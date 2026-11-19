@@ -717,3 +717,11 @@ model is all grey". Fix them with these tools instead of reshaping, then re-run 
 - Part does not fit: `robot probe --place PART` for the free box, then `robot catalog --kind KIND --fits LxWxH`.
 - Overlap of a few tenths of a mm: the `fit.interference` message gives the measured move; apply it, don't guess.
 - Generate spec.json from the CAD masters (`make_spec.py`); never hand-patch coordinates that a master drives.
+
+## Copying a real robot (`reference_copy`)
+A copy must look and work like the original, so our own combat-effectiveness taste must not force it to change. Add
+`"reference_copy": {"robot": "Baphomet", "source": "AWS wiki photos aws74-77"}` to the spec: `spinner.reach` (rim must reach the
+floor, weapon must lead), `spinner.mass_share`, `shape.weapon_leads`, `archetype.blade_lead`, `archetype.wedgelets_flank` and the
+`combat`/`coverage` groups then drop from BLOCKER to WARNING and are listed under `copy_mode` in the report. Buildability
+(interference, assembly, mass, fit, fasteners, wiring) is never relaxed. Our own robots (no `reference_copy`) keep every rule.
+Code: `robot/checks/copymode.py`.

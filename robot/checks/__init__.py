@@ -216,6 +216,8 @@ def verify_resolved(r, opts: Options) -> Report:
     rep.findings = findings
     from . import waiver as _waiver
     waivers = _waiver.apply(r.spec, findings)
+    from . import copymode as _copymode
+    relaxed = _copymode.apply(r.spec, findings)
     rep.metrics = ctx.metrics if ctx else {}
     rep.checks_revision = CHECKS_REVISION
     rep.not_checked = not_checked(r, opts) + (ctx.not_checked if ctx else ["Every geometric check: the spec is not valid"])
@@ -231,6 +233,8 @@ def verify_resolved(r, opts: Options) -> Report:
         _store_baseline(r.spec.name, rep)
     if waivers:
         rep.summary["waivers"] = waivers
+    if relaxed:
+        rep.summary["copy_mode"] = {"copy_of": _copymode.declared(r.spec), "relaxed": relaxed}
     return rep
 
 
