@@ -13,12 +13,14 @@
  ],
  "view": {
   "refined_for_the_roboteers_pleasure.aws73.webp": "front_left_iso",
-  "refined_for_the_roboteers_pleasure.aws74.webp": "front_left_iso",
+  "refined_for_the_roboteers_pleasure.aws74.webp": "left",
   "refined_for_the_roboteers_pleasure.aws76.webp": "front_left_iso"
  },
  "elevation": {
-  "refined_for_the_roboteers_pleasure.aws73.webp": 45,
-  "refined_for_the_roboteers_pleasure.aws74.webp": 25,
-  "refined_for_the_roboteers_pleasure.aws76.webp": 45
+  "refined_for_the_roboteers_pleasure.aws73.webp": 45
+ },
+ "view_source": {
+  "refined_for_the_roboteers_pleasure.aws74.webp": "user camera pick (azimuth 180, elevation 35); replaces the automatic label",
+  "refined_for_the_roboteers_pleasure.aws76.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label"
  }
 }
