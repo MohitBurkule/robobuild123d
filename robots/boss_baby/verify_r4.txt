@@ -1,0 +1,110 @@
+BLOCKERS: 13
+  [ran] integrity 0.16s
+  [proxy] wiring 2.88s
+  [ran] mass 0.00s
+  [proxy] interference 16.15s
+  [ran] connections 2.95s
+  [ran] legal 0.03s
+  [ran] fasteners 0.00s
+  [ran] power 0.02s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.04s
+  [ran] shape 0.93s
+  [ran] dynamics 0.02s
+  [ran] strength 0.01s
+  [ran] printability 1.57s
+  [ran] process 0.08s
+  [ran] electrical 0.02s
+  [ran] combat 0.34s
+  [ran] physics 0.01s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.19s
+  [ran] bom 0.02s
+  [ran] wire_review 0.06s
+  [ran] fastener_record 0.00s
+  [ran] likeness 41.10s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.04s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.51s
+  [ran] dfm 0.32s
+  [ran] realworld 0.22s
+boss baby: ok=False 13 blockers in 11 root causes, mass 221.8/150 g
+1. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `bridge`. (+1 consequences)
+   | weapon: x -1.50..1.50  y -22.06..32.06  z 4.00..60.01  size 3.00 x 54.13 x 56.01 mm
+   |   centre (0.00, 5.00, 32.01), volume 6889.5 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 5.0, 32.0] range 0..360 default 0
+   |   OVERLAP `bridge` 1.39 mm (allowed 0.08)
+   |   OVERLAP `motor` 1.39 mm (allowed 0.08)
+2. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `motor`. (+1 consequences)
+   | weapon: x -1.50..1.50  y -22.06..32.06  z 4.00..60.01  size 3.00 x 54.13 x 56.01 mm
+   |   centre (0.00, 5.00, 32.01), volume 6889.5 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 5.0, 32.0] range 0..360 default 0
+   |   OVERLAP `bridge` 1.39 mm (allowed 0.08)
+   |   OVERLAP `motor` 1.39 mm (allowed 0.08)
+3. [proxy.wiring] Wire `w_sw_esc` (`el_switch.out` to `el_rx_esc.bat`): the baseline route is now blocked by `pod_r` (3 samples).
+   fix: Run the full `wiring` group to re-route it.
+   | pod_r: x -63.00..-11.50  y -30.00..30.00  z -9.00..15.00  size 51.50 x 60.00 x 24.00 mm
+   |   centre (-37.25, 0.00, 3.00), volume 32234.4 mm3
+   |   overlap allowed `bridge` 0.05 mm (allowed inf)
+   |   gap to `fork_0` 0.00 mm (touching)
+   |   gap to `fork_1` 0.00 mm (touching)
+4. [proxy.wiring] Wire `w_phases` (`el_wesc.motor` to `weapon_motor.phases`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+5. [mass.over] 221.8 g (range 194.1 to 249.5 g) against the 150 g limit; 7.8 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+6. [proxy.interference] `bridge` and `weapon` overlap by 1.39 mm (allowed 0.08).
+   | bridge: x -18.10..18.10  y -30.00..-5.00  z -9.00..15.00  size 36.20 x 25.00 x 24.00 mm
+   |   centre (-0.00, -17.50, 3.00), volume 12659.6 mm3
+   |   OVERLAP `weapon` 1.39 mm (allowed 0.08)
+   |   overlap allowed `pod_l` 0.05 mm (allowed inf)
+   |   overlap allowed `pod_r` 0.05 mm (allowed inf)
+7. [proxy.interference] `weapon` and `motor` overlap by 1.39 mm (allowed 0.08).
+   | weapon: x -1.50..1.50  y -22.06..32.06  z 4.00..60.01  size 3.00 x 54.13 x 56.01 mm
+   |   centre (0.00, 5.00, 32.01), volume 6889.5 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 5.0, 32.0] range 0..360 default 0
+   |   OVERLAP `bridge` 1.39 mm (allowed 0.08)
+   |   OVERLAP `motor` 1.39 mm (allowed 0.08)
+8. [wire.render_wires] 2 of 2 robot render(s) do not draw all 7 wires: renders/iso.png: wire `w_phases` not drawn; renders/top.png: wire `w_phases` not drawn
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+9. [wire.rotor_clearance] wire `w_m1` passes 1.9 mm from the volume swept by the `rotor_weapon` rotor (weapon, dt_shaft_weapon; full revolution) at [-2.0, -6.0, 3.6].
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | weapon: x -1.50..1.50  y -22.06..32.06  z 4.00..60.01  size 3.00 x 54.13 x 56.01 mm
+   |   centre (0.00, 5.00, 32.01), volume 6889.5 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 5.0, 32.0] range 0..360 default 0
+   |   OVERLAP `bridge` 1.39 mm (allowed 0.08)
+   |   OVERLAP `motor` 1.39 mm (allowed 0.08)
+10. [wire.render_count] iso.png: 6 routes vs 7 spec wires (missing ['w_phases']); top.png: 6 routes vs 7 spec wires (missing ['w_phases'])
+   fix: Re-render: the render record must list exactly the spec's wires.
+11. [likeness.silhouette] `reference/boss_baby.aws72.webp`: best silhouette IoU 0.57 at camera front_right_iso (elevation 45, azimuth 60) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.57). Regions (photo frame, left third first) 0.72 / 0.55 / 0.42: worst = rear third. Height/length 0.79 model vs 0.81 photo (proportions ok).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+MASS BUDGET:
+  mass 221.8 g of 150 g (-71.8 g margin)
+    weapon                     54.43 g  fills 76% of its box  <- solid block? a tub should be a shell
+    pod_r                      30.69 g  fills 43% of its box
+    pod_l                      28.66 g  fills 41% of its box
+    el_battery                 21.50 g  fills 100% of its box  <- solid block? a tub should be a shell
+    weapon_motor               17.50 g  fills 54% of its box
+    bridge                     12.05 g  fills 58% of its box
+    dm_wheel_l0                 9.70 g  fills 66% of its box
+    dm_wheel_r0                 9.70 g  fills 66% of its box
+    motor                       6.30 g  fills 79% of its box
+    el_wesc                     5.00 g  fills 94% of its box
+    el_rx_esc                   3.50 g  fills 100% of its box
+    fork_1                      2.84 g  fills 9% of its box
+    fork_3                      2.84 g  fills 4% of its box
+    fork_0                      2.84 g  fills 4% of its box
+    fork_2                      2.84 g  fills 9% of its box
+    wheel_l0                    2.26 g  fills 57% of its box
+    wheel_r0                    2.26 g  fills 57% of its box
+    dt_shaft_weapon             1.29 g  fills 79% of its box
+    dt_hub_wheel_l0             0.86 g  fills 64% of its box
+    dt_hub_wheel_r0             0.86 g  fills 64% of its box
+    lock_pin                    0.69 g  fills 79% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    mass.over: 221.8 g (range 194.1 to 249.5 g) against the 150 g limit; 7.8 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: part_geom 0 hit / 22 miss

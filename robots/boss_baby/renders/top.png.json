@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_boss_baby/robots/boss_baby/spec.json",
- "rendered_at": 1795026385.7590146,
+ "rendered_at": 1795053198.7172225,
  "bodies": [
   "pod_l",
   "pod_r",
@@ -14,24 +14,89 @@
   "fork_3",
   "motor",
   "dt_hub_wheel_l0",
-  "dt_axle_wheel_l0",
-  "dt_nut_wheel_l0",
   "dt_hub_wheel_r0",
-  "dt_axle_wheel_r0",
-  "dt_nut_wheel_r0",
-  "dt_screw_0",
-  "dt_screw_1",
-  "dt_screw_2",
-  "dt_screw_3",
   "dt_shaft_weapon",
-  "dt_mount_fork_0",
-  "dt_bolt_fork_0",
-  "dt_mount_fork_1",
-  "dt_bolt_fork_1",
-  "dt_mount_fork_2",
-  "dt_bolt_fork_2",
-  "dt_mount_fork_3",
-  "dt_bolt_fork_3"
+  "dm_wheel_l0",
+  "dm_wheel_r0",
+  "weapon_motor",
+  "el_battery",
+  "el_rx_esc",
+  "el_wesc",
+  "el_switch",
+  "lock_pin"
  ],
- "wires": {}
+ "wires": {
+  "w_sw_wesc": {
+   "from": [
+    44.5,
+    -24.0,
+    -3.0
+   ],
+   "to": [
+    -7.987,
+    -20.983,
+    -4.989
+   ]
+  },
+  "w_bat_sw": {
+   "from": [
+    -40.487,
+    2.5169999999999995,
+    -2.489
+   ],
+   "to": [
+    36.5,
+    -24.0,
+    -3.0
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    44.5,
+    -24.0,
+    -3.0
+   ],
+   "to": [
+    -47.987,
+    -3.983,
+    9.511
+   ]
+  },
+  "w_m1": {
+   "from": [
+    -47.987,
+    4.017,
+    9.511
+   ],
+   "to": [
+    25.6,
+    -12.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -47.987,
+    4.017,
+    9.511
+   ],
+   "to": [
+    -25.6,
+    -12.000000000000002,
+    0.0
+   ]
+  },
+  "w_wesc_sig": {
+   "from": [
+    -24.987000000000002,
+    -3.983,
+    9.511
+   ],
+   "to": [
+    -7.987,
+    -14.983,
+    -4.989
+   ]
+  }
+ }
 }
