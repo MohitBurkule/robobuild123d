@@ -186,8 +186,9 @@ def apply(spec_path, cols, force=False):
                 force or (placeholder(part.get("color")) and different(part.get("color"), cols[part["id"]][0]))):
             changed.append((part["id"], part.get("color"), cols[part["id"]][0]))
             part["color"] = cols[part["id"]][0]
-    ind = 1 if txt.startswith("{\n ") and not txt.startswith("{\n  ") else 2
-    p.write_text(json.dumps(raw, indent=ind) + "\n")
+    if changed:
+        ind = 1 if txt.startswith("{\n ") and not txt.startswith("{\n  ") else 2
+        p.write_text(json.dumps(raw, indent=ind) + "\n")
     return changed
 
 
