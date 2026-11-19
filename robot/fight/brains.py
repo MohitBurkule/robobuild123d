@@ -6,7 +6,9 @@ or lifter command. Behaviours come from the opponent's declared danger arcs, so 
 - spinner: spins up first, then faces the target and drives through it (a vertical/horizontal spinner wants a square hit);
 - lifter: drives its plate under the opponent and fires only when the opponent's centre of mass is over the plate and
   touching it; it also fires to self-right when upside down;
-- pusher: gets to the side/rear and shoves (towards the nearest wall).
+- pusher (wedges too): picks the arena hazard (open pit, unwalled edge) nearest the opponent, gets onto the far side of
+  the opponent from it and drives through, so the shove ends in the pit;
+- every brain keeps its own front edge on the platform (a driver does not drive itself into the pit).
 After `patience` seconds without reaching a safe bearing, any brain charges anyway (real drivers get impatient too).
 """
 
@@ -99,7 +101,23 @@ class Brain:
             l, r = self._steer(sim, self._orbit_point(sim, bearing, dist, safe), 1.0)
         else:
             l, r = self._steer(sim, op, 1.0)
-        return {"drive": (l, r)}
+        return {"drive": self._edge_guard(sim, t, (l, r))}
+
+    def _edge_guard(self, sim, t, cmd):
+        """If the edge of me I am driving towards would be off the platform, back off instead."""
+        ar = getattr(sim, "arena", None)
+        if ar is None:
+            return cmd
+        mp, mh, _ = sim.frame(self.me)
+        lo, hi = sim.robots[self.me].bounds()
+        reach = 0.5 * float(max(hi[0] - lo[0], hi[1] - lo[1])) + 0.015
+        s = 1.0 if cmd[0] + cmd[1] >= 0 else -1.0
+        f = np.array([math.cos(mh), math.sin(mh)])
+        ahead = mp + s * reach * f
+        if not ar.on_platform(ahead, t):
+            v = 0.6 * sim.profiles[self.me].drive_max
+            return (-s * v, -s * v)
+        return cmd
 
 
 class SpinnerBrain(Brain):
@@ -151,7 +169,33 @@ class LifterBrain(Brain):
 
 
 class PusherBrain(Brain):
-    pass
+    """Shove the opponent into the nearest pit / off the nearest open edge."""
+
+    def act(self, sim, t, dt):
+        ar = getattr(sim, "arena", None)
+        pts = ar.hazards(t) if ar is not None else []
+        if not pts:
+            return super().act(sim, t, dt)
+        op = sim.frame(self.opp)[0]
+        mp = sim.frame(self.me)[0]
+        hz = min(pts, key=lambda p: float(np.linalg.norm(p - op)))
+        u = (hz - op) / (np.linalg.norm(hz - op) or 1.0)  # push direction
+        to = op - mp
+        dist = float(np.linalg.norm(to))
+        cosang = float(to @ u) / (dist or 1.0)
+        bearing, _ = self._bearing_in_opp(sim)
+        if self._touching(sim) and cosang > 0.5 or cosang > 0.85:
+            l, r = self._steer(sim, op, 1.0)  # lined up: drive through it towards the hazard
+        else:
+            # get behind it (side away from the hazard), going round it outside its danger reach
+            back = op - 0.16 * u
+            side = np.array([-u[1], u[0]])
+            if float((mp - op) @ u) > -0.05:  # on the hazard side: swing wide round the opponent
+                back = op + 0.18 * side * (1 if float((mp - op) @ side) >= 0 else -1) - 0.05 * u
+            if self._danger(sim, bearing, dist) and dist < 0.2:
+                back = mp + 0.1 * (mp - op) / (dist or 1.0) + 0.1 * side
+            l, r = self._steer(sim, back, 1.0, reverse_ok=True)
+        return {"drive": self._edge_guard(sim, t, (l, r))}
 
 
 BRAINS = {"spinner": SpinnerBrain, "lifter": LifterBrain, "pusher": PusherBrain, "flanker": Brain}
