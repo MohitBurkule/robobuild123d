@@ -25,7 +25,7 @@ Other likeness findings: [FAIL] likeness.view: `reference/speed_demon.aws.71.web
 
 ## Round 4 (verification, helper 1)
 Blockers r3 -> r4: **95 -> 5** (`verify --tier inner`, full output in verify_r4.txt).
-Likeness (best silhouette IoU per photo, r3 -> r4): speed_demon.aws.71.webp 0.827 -> 0.827, speed_demon.aws72.webp 0.767 -> 0.767, speed_demon.aws74.webp 0.662 -> 0.662
+Likeness (best silhouette IoU per photo, r3 -> r4): speed_demon.aws.71.webp 0.827 -> 0.827, speed_demon.aws72.webp 0.767 -> 0.767, speed_demon.aws74.webp 0.662 -> 0.660
 
 What was done (script r4_h1, outside shape kept):
 - fake screw/bolt heads removed; detail mounts/arms merged into the print part they sit on; axle nuts became printed hub caps
