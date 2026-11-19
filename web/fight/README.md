@@ -7,3 +7,4 @@ MuJoCo WASM + three.js, fully client-side. Robots are simplified primitive model
   LAN: friends open http://<host-ip>:8080. Internet: run server.js on any public host, or put its URL in the "server" field on the static page.
 
 Live: https://mohitburkule.github.io/robobuild123d/ (GitHub Pages; local + AI modes).
+<!-- redeploy -->
