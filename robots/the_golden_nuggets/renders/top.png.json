@@ -1,6 +1,6 @@
 {
  "spec": "/tmp/work10_the_golden_nuggets/robots/the_golden_nuggets/spec.json",
- "rendered_at": 1795040845.0452151,
+ "rendered_at": 1795059368.0352013,
  "bodies": [
   "chassis",
   "wheel_l0",
@@ -26,7 +26,8 @@
   "dm_wheel_r1",
   "el_battery",
   "el_esc",
-  "el_switch"
+  "el_switch",
+  "wa_act"
  ],
  "wires": {
   "w_bat_sw": {
@@ -75,6 +76,18 @@
     -4.5,
     -1.6532731788489269e-15,
     0.0
+   ]
+  },
+  "w_wpn": {
+   "from": [
+    16.5,
+    -9.0,
+    -4.5
+   ],
+   "to": [
+    -1.8500000000000014,
+    -38.0,
+    4.0
    ]
   }
  }

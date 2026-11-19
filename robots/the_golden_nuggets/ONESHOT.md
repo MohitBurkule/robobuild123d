@@ -22,14 +22,14 @@ Likeness: aws67 0.69 (FAIL).
 Other likeness findings: [FAIL] likeness.view: `reference/the_golden_nugget.aws67.webp` is declared `front_right_iso` (IoU 0.69 there) but the model matches it better from front_right_i
 
 ## Round 4 (verification, helper 2)
-Blockers r3 87 -> r4 12 (`verify --tier inner`).
+Blockers r3 87 -> r4 6 (`verify --tier inner`).
 
 Fixed / changed (inside only, outside kept):
 - detail parts made integral (bosses into their part, fake screw heads removed, short axle stubs printed with the wheel hub)
 - catalog parts added in free space inside the printed parts with 0.25 mm pockets: `dm_wheel_l1` (pololu_hpcb6v_50to1), `dm_wheel_r1` (pololu_hpcb6v_50to1), `el_battery` (lipo_2s_180), `el_esc` (bbb_malenki_nano), `el_switch` (switch_slide_12x4)
 - overlaps resolved by cuts that keep the union of the parts (pockets, bores, wheel and spinner running clearance)
 - one print with the chassis (same material, `fused_with`): `dt_hub_wheel_l0`, `dt_hub_wheel_r0`, `dt_hub_wheel_l1`, `dt_hub_wheel_r1`, `dt_hub_wheel_l2`, `dt_hub_wheel_r2`
-- 4 wires declared (battery - switch - ESC - motors)
+- 5 wires declared (battery - switch - ESC - motors)
 - print orientation on every printed part, failsafe / weapon disable declared, design volumes declared where this pass changed a part on purpose
 - power switch on the floor of the body, slider facing down to a 7 x 3 mm slot in the underside (no slot on the top or sides; hollow cavities stay closed behind a wall at every outside face)
 - lifter sweeps through chassis at 41 poses: not carved (would change the outside)
@@ -41,13 +41,9 @@ Fixed / changed (inside only, outside kept):
 - dt_strut_lifter_nose: not touching the chassis, left undeclared
 
 Left (and why):
-- proxy.wiring x2: Wire `w_bat_sw` (`el_battery.xt30` to `el_switch.in`): the baseline route is now blocked by `chassis` (8 samples).
+- proxy.wiring x3: Wire `w_bat_sw` (`el_battery.xt30` to `el_switch.in`): the baseline route is now blocked by `chassis` (8 samples).
 - proxy.sweep x1: joint `lifter`: `lifter` hits `chassis` 0.12 mm deep at 7.3 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint lifter` lists the closest approach to every part.
-- power.weapon_motor x1: toolchain: lifters/flippers are servo or gear driven; the check wants a brushless kV for every weapon.
-- process.weapon_printed x1: toolchain: a printed lifter/flipper arm is judged like a spinner (needs hardened teeth); adding metal teeth changes the look.
-- wire.rotor_clearance x4: toolchain: same full-revolution assumption; wires cannot leave a cylinder that covers the chassis.
 - likeness.view x1: looks, not in scope for this pass.
 - likeness.silhouette x1: looks, not in scope for this pass.
-- battery.rotor_gap x1: toolchain: same full-revolution assumption for a limited-range arm.
 
 Likeness (best silhouette IoU per photo, r3 -> r4): the_golden_nugget.aws67.webp 0.69 -> 0.69
