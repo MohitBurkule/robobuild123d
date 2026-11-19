@@ -15,7 +15,9 @@
  },
  "elevation": {
   "the_underminer.aws64.webp": 45,
-  "the_underminer.aws66.webp": 25,
-  "the_underminer.aws67.webp": 25
+  "the_underminer.aws66.webp": 25
+ },
+ "view_source": {
+  "the_underminer.aws67.webp": "user camera pick (azimuth 90, elevation 35); replaces the automatic label"
  }
 }
