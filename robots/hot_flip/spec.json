@@ -1472,6 +1472,27 @@
         ]
        }
       ]
+     },
+     {
+      "type": "place",
+      "shape": {
+       "type": "box",
+       "size": [
+        21.5,
+        10.4,
+        12.4
+       ]
+      },
+      "at": [
+       12.0,
+       -23.0,
+       41.5
+      ],
+      "rot": [
+       90.0,
+       0.0,
+       0.0
+      ]
      }
     ]
    },
@@ -2217,7 +2238,8 @@
    ],
    "color": "#2fe0b8",
    "weapon": {
-    "kind": "flipper"
+    "kind": "flipper",
+    "motor": "wa_act"
    },
    "joint": {
     "kind": "revolute",
@@ -2967,6 +2989,21 @@
     0,
     0
    ]
+  },
+  {
+   "id": "wa_act",
+   "kind": "motor",
+   "catalog": "n10_300rpm_6v",
+   "at": [
+    12.0,
+    -23.0,
+    41.5
+   ],
+   "rot": [
+    90.0,
+    0.0,
+    0.0
+   ]
   }
  ],
  "fasteners": [],
@@ -2999,6 +3036,14 @@
    "id": "w_m2",
    "from": "el_esc.m2",
    "to": "dm_wheel_r0.terminals",
+   "awg": 26,
+   "kind": "motor",
+   "slack_mm": 15
+  },
+  {
+   "id": "w_wpn",
+   "from": "el_esc.wpn",
+   "to": "wa_act.terminals",
    "awg": 26,
    "kind": "motor",
    "slack_mm": 15
@@ -3054,6 +3099,12 @@
    "b": "chassis",
    "method": "pin",
    "reason": "arm pivots on a 3 mm steel hinge pin through printed lugs on the chassis, retained by e-clips"
+  },
+  {
+   "a": "wa_act",
+   "b": "chassis",
+   "method": "interlock",
+   "reason": "the n10_300rpm_6v gearmotor sits in a printed pocket 0.2 mm clear that closes round it; the pocket walls take the arm's reaction torque"
   }
  ],
  "reference": [
