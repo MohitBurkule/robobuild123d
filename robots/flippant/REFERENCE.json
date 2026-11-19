@@ -11,11 +11,13 @@
  "view": {
   "flippant.aws65.webp": "front_right_iso",
   "flippant.aws68.webp": "front",
-  "flippant.aws69.webp": "front_left_iso"
+  "flippant.aws69.webp": "front_right_iso"
  },
  "elevation": {
   "flippant.aws65.webp": 45,
-  "flippant.aws68.webp": 45,
-  "flippant.aws69.webp": 45
+  "flippant.aws68.webp": 45
+ },
+ "view_source": {
+  "flippant.aws69.webp": "user camera pick (azimuth 45, elevation 35); replaces the automatic label"
  }
 }
