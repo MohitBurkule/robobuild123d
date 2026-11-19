@@ -1,0 +1,9 @@
+{
+ "spec": "/home/antigravity/MohitBurkule/robobuild123d/robots/rbmk/kit_spec.json",
+ "rendered_at": 1795039900.4583173,
+ "bodies": [
+  "chassis",
+  "weapon"
+ ],
+ "wires": {}
+}
