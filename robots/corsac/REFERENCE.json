@@ -10,13 +10,13 @@
   "corsac.aws76.webp"
  ],
  "view": {
-  "corsac.aws72.webp": "front_left_iso",
-  "corsac.aws74.webp": "front_right_iso",
+  "corsac.aws72.webp": "front_right_iso",
+  "corsac.aws74.webp": "front_left_iso",
   "corsac.aws76.webp": "front_left_iso"
  },
- "elevation": {
-  "corsac.aws72.webp": 45,
-  "corsac.aws74.webp": 45,
-  "corsac.aws76.webp": 45
+ "view_source": {
+  "corsac.aws72.webp": "user camera pick (azimuth 60, elevation 35); replaces the automatic label",
+  "corsac.aws74.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label",
+  "corsac.aws76.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label"
  }
 }
