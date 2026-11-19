@@ -1,8 +1,9 @@
 {
  "spec": "/tmp/work10_p_s_t_f_u/robots/p_s_t_f_u/spec.json",
- "rendered_at": 1795042009.2091908,
+ "rendered_at": 1795065776.2586973,
  "bodies": [
   "chassis",
+  "top_plate",
   "wheel_l0",
   "wheel_r0",
   "wheel_l1",
@@ -22,7 +23,11 @@
   "el_switch",
   "fs_front_plate_0",
   "fs_front_plate_1",
-  "fs_front_plate_2"
+  "fs_front_plate_2",
+  "fs_look_top_plate_3",
+  "fs_look_top_plate_4",
+  "fs_look_top_plate_5",
+  "fs_look_top_plate_6"
  ],
  "wires": {
   "w_bat_sw": {
