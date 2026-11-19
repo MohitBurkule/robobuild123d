@@ -1,38 +1,38 @@
 BLOCKERS: 6
-  [ran] integrity 0.07s
-  [proxy] wiring 2.02s
+  [ran] integrity 0.08s
+  [proxy] wiring 2.11s
   [ran] mass 0.00s
-  [proxy] interference 12.80s
-  [ran] connections 1.85s
-  [ran] legal 0.04s
-  [ran] fasteners 0.00s
+  [proxy] interference 17.48s
+  [ran] connections 2.11s
+  [ran] legal 0.02s
+  [ran] fasteners 0.02s
   [ran] power 0.00s
   [ran] tension 0.00s
   [ran] targets 0.00s
   [ran] fight 0.03s
-  [ran] shape 0.62s
+  [ran] shape 0.83s
   [ran] dynamics 0.00s
-  [ran] strength 0.00s
-  [ran] printability 0.87s
-  [ran] process 0.00s
-  [ran] electrical 0.22s
-  [ran] combat 0.12s
+  [ran] strength 0.04s
+  [ran] printability 1.05s
+  [ran] process 0.01s
+  [ran] electrical 0.21s
+  [ran] combat 0.20s
   [ran] physics 0.00s
   [ran] plausibility 0.00s
   [ran] cots 0.00s
-  [ran] fit 0.10s
+  [ran] fit 0.11s
   [ran] bom 0.01s
   [ran] wire_review 0.23s
   [ran] fastener_record 0.00s
-  [ran] likeness 39.84s
+  [ran] likeness 41.47s
   [ran] drive_recess 0.00s
   [ran] belt_wrap 0.00s
   [ran] retention 0.00s
   [ran] waiver_audit 0.00s
-  [ran] geom 0.32s
-  [ran] dfm 0.15s
-  [ran] realworld 0.25s
-infernal: ok=False 6 blockers in 6 root causes, mass 184.3/150 g
+  [ran] geom 0.27s
+  [ran] dfm 0.17s
+  [ran] realworld 0.30s
+infernal: ok=False 6 blockers in 6 root causes, mass 185.2/150 g
 1. [proxy.wiring] Wire `w_m2` (`el_rx_esc.m2` to `dm_wheel_r0.terminals`): the baseline route is now blocked by `dm_wheel_r0` (6 samples).
    fix: Run the full `wiring` group to re-route it.
    | dm_wheel_r0: x -42.60..-6.60  y -28.00..-16.00  z -5.00..5.00  size 36.00 x 12.00 x 10.00 mm
@@ -40,7 +40,7 @@ infernal: ok=False 6 blockers in 6 root causes, mass 184.3/150 g
    |   port terminals: (-6.60, -22.00, 0.00)
    |   gap to `dt_hub_wheel_r0` 0.05 mm
    |   gap to `chassis` 0.25 mm
-2. [mass.over] 184.3 g (range 154.1 to 214.4 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+2. [mass.over] 185.2 g (range 154.9 to 215.4 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
    fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
 3. [proxy.sweep] joint `horn_l`: `horn_l` hits `chassis` 0.29 mm deep at 7.3 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint horn_l` lists the closest approach to every part.
    | horn_l: x 20.00..23.00  y -30.00..5.00  z 25.00..53.00  size 3.00 x 35.00 x 28.00 mm
@@ -64,15 +64,15 @@ infernal: ok=False 6 blockers in 6 root causes, mass 184.3/150 g
 6. [likeness.silhouette] `reference/infernal.aws71.webp`: best silhouette IoU 0.80 at camera front_right_iso (elevation 25, azimuth 30) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.77). Regions (photo frame, left third first) 0.68 / 0.89 / 0.78: worst = front third. Height/length 0.70 model vs 0.68 photo (proportions ok).
    fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
 MASS BUDGET:
-  mass 184.3 g of 150 g (-34.3 g margin)
-    chassis                    95.51 g  fills 28% of its box
+  mass 185.2 g of 150 g (-35.2 g margin)
+    chassis                    95.89 g  fills 28% of its box
     el_battery                 12.50 g  fills 100% of its box
     dm_wheel_l0                 9.70 g  fills 66% of its box
     dm_wheel_r0                 9.70 g  fills 66% of its box
     front_plate                 9.59 g  fills 13% of its box
     el_servo_horn_l             9.00 g  fills 75% of its box
     el_servo_horn_r             9.00 g  fills 75% of its box
-    top_plate                   5.83 g  fills 56% of its box
+    top_plate                   5.80 g  fills 55% of its box
     wheel_l0                    5.53 g  fills 57% of its box
     wheel_r0                    5.53 g  fills 57% of its box
     el_rx_esc                   3.50 g  fills 100% of its box
@@ -81,6 +81,8 @@ MASS BUDGET:
     horn_l                      0.98 g  fills 35% of its box
     horn_r                      0.98 g  fills 35% of its box
     el_switch                   0.50 g  fills 100% of its box
-    mass.over: 184.3 g (range 154.1 to 214.4 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+    fs_look_top_plate_0         0.28 g  fills 27% of its box
+    fs_look_top_plate_1         0.28 g  fills 27% of its box
+    mass.over: 185.2 g (range 154.9 to 215.4 g) against the 150 g limit; 4.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
 FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
-cache: part_geom 0 hit / 16 miss
+cache: part_geom 0 hit / 26 miss
