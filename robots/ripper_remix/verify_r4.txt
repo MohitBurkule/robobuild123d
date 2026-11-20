@@ -1,0 +1,79 @@
+BLOCKERS: 7
+  [ran] integrity 0.04s
+  [proxy] wiring 0.89s
+  [ran] mass 0.02s
+  [proxy] interference 0.75s
+  [ran] connections 0.03s
+  [ran] legal 0.01s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.01s
+  [ran] shape 0.11s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 1.09s
+  [ran] process 0.00s
+  [ran] electrical 1.76s
+  [ran] combat 0.14s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.01s
+  [ran] bom 0.00s
+  [ran] wire_review 0.98s
+  [ran] fastener_record 0.00s
+  [ran] likeness 2.86s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.26s
+  [ran] dfm 0.08s
+  [ran] realworld 1.66s
+ripper remix: ok=False 6 blockers in 6 root causes, mass 308.3/150 g
+1. [proxy.wiring] Wire `w_sw_esc` (`el_switch.out` to `el_esc.bat`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+2. [proxy.wiring] Wire `w_m2` (`el_esc.m2` to `dm_wheel_r0.terminals`): the baseline route is now blocked by `chassis` (6 samples).
+   fix: Run the full `wiring` group to re-route it.
+   | chassis: x -46.00..46.00  y -42.50..42.50  z -9.00..33.00  size 92.00 x 85.00 x 42.00 mm
+   |   centre (-0.00, 0.00, 12.00), volume 244372.1 mm3
+   |   overlap allowed `scoop` 0.74 mm (allowed inf)
+   |   gap to `flipper` 0.00 mm (touching)
+   |   gap to `dm_wheel_l0` 0.25 mm
+3. [mass.over] 308.3 g (range 248.2 to 368.4 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+4. [power.weapon_motor] flipper `flipper` has no actuator (`weapon.motor` / `actuated_by`).
+   fix: Add a catalog servo (e.g. `servo_cs07`) or geared motor and name it in `weapon.motor` (or `actuated_by`); a brushless motor needs `weapon.reduction` >= 10.
+   | flipper: x -22.00..22.00  y -40.00..40.00  z 14.00..36.50  size 44.00 x 80.00 x 22.50 mm
+   |   centre (0.00, 0.00, 25.25), volume 13244.6 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -40, 33.0] range 0..80 default 0
+   |   overlap allowed `ripper_name` 0.43 mm (allowed inf)
+   |   overlap allowed `ripper_remix_name` 0.43 mm (allowed inf)
+5. [wire.render_wires] 2 of 2 robot render(s) do not draw all 4 wires: renders/iso.png: wire `w_sw_esc` not drawn; renders/top.png: wire `w_sw_esc` not drawn
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+6. [wire.render_count] iso.png: 3 routes vs 4 spec wires (missing ['w_sw_esc']); top.png: 3 routes vs 4 spec wires (missing ['w_sw_esc'])
+   fix: Re-render: the render record must list exactly the spec's wires.
+MASS BUDGET:
+  mass 308.3 g of 150 g (-158.3 g margin)
+    chassis                   232.64 g  fills 74% of its box  <- solid block? a tub should be a shell
+    scoop                      18.72 g  fills 20% of its box
+    flipper                    12.61 g  fills 17% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    dm_wheel_l0                 9.50 g  fills 63% of its box
+    dm_wheel_r0                 9.50 g  fills 63% of its box
+    wheel_l0                    3.07 g  fills 65% of its box
+    wheel_r0                    3.07 g  fills 65% of its box
+    el_esc                      2.30 g  fills 99% of its box
+    dt_hub_wheel_l0             0.92 g  fills 75% of its box
+    dt_hub_wheel_r0             0.92 g  fills 75% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    ripper_name                 0.20 g  fills 20% of its box
+    ripper_remix_name           0.06 g  fills 29% of its box
+    mass.over: 308.3 g (range 248.2 to 368.4 g) against the 150 g limit; 5.5 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 6 hit / 0 miss, group 0 hit / 31 miss, inside 12 hit / 3 miss, likeness 2 hit / 0 miss, min_gap 13 hit / 3 miss, overlap 138 hit / 43 miss, part_check 6 hit / 3 miss, part_geom 14 hit / 0 miss, ray 89 hit / 16 miss
+
+FULL WIRING GROUP (tier full, --only wiring): 1 blocker(s) counted in the total above
+[BLOCKER] wiring.route - Wire `w_sw_esc` (22 AWG, 1.9 mm thick) from `el_switch.out` to `el_esc.bat` has no clear path; it gets within 7.6 mm of the end at (0.5, -6.4, 9.5) and `chassis` blocks it. parts: el_switch.out, el_esc.bat at (0.5, -6.4, 9.5)

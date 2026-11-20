@@ -1,0 +1,106 @@
+{
+ "robot_type": "flipper",
+ "body": {
+  "length": 85,
+  "width": 92,
+  "height": 42,
+  "ramp": 30,
+  "plan": "pentagon",
+  "front_width": 70,
+  "nose": 25
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 11,
+  "width": 8,
+  "y": [
+   -25
+  ],
+  "outside": false
+ },
+ "colors": {
+  "body": "#f2e21c",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "skip_photos": [
+  0
+ ],
+ "name": "ripper remix",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
+  {
+   "side": [
+    [
+     36,
+     0
+    ],
+    [
+     72,
+     0
+    ],
+    [
+     72,
+     3
+    ],
+    [
+     60,
+     22
+    ],
+    [
+     36,
+     24
+    ]
+   ],
+   "x": [
+    -56,
+    56
+   ],
+   "kind": "wedge",
+   "id": "scoop",
+   "color": "#f2e83a"
+  },
+  {
+   "side": [
+    [
+     -40,
+     44
+    ],
+    [
+     12,
+     44
+    ],
+    [
+     38,
+     25
+    ],
+    [
+     40,
+     27.5
+    ],
+    [
+     14,
+     47.5
+    ],
+    [
+     -40,
+     47.5
+    ]
+   ],
+   "x": [
+    -22,
+    22
+   ],
+   "weapon": "flipper",
+   "pivot": [
+    -40,
+    44
+   ],
+   "id": "flipper",
+   "color": "#e6d618"
+  }
+ ]
+}
