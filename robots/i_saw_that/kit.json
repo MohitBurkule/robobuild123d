@@ -1,0 +1,90 @@
+{
+ "robot_type": "vertical_spinner",
+ "body": {
+  "length": 62,
+  "width": 60,
+  "height": 28,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 13,
+  "width": 10,
+  "y": [
+   -18
+  ]
+ },
+ "weapon": {
+  "kind": "disc",
+  "radius": 34,
+  "width": 2,
+  "y": 0,
+  "teeth": 8,
+  "x": -8,
+  "z": 84,
+  "axis": "x"
+ },
+ "colors": {
+  "body": "#2a5fd0",
+  "wheel": "#202226",
+  "weapon": "#1c1d20",
+  "fork": "#1c1d20"
+ },
+ "name": "i saw that",
+ "macros": [
+  {
+   "side": [
+    [
+     -5,
+     30
+    ],
+    [
+     8,
+     30
+    ],
+    [
+     12,
+     84
+    ],
+    [
+     2,
+     86
+    ]
+   ],
+   "x": [
+    4,
+    9
+   ],
+   "id": "arm",
+   "color": "#1c1d20"
+  },
+  {
+   "top": [
+    [
+     4,
+     26
+    ],
+    [
+     32,
+     26
+    ],
+    [
+     46,
+     96
+    ],
+    [
+     30,
+     100
+    ]
+   ],
+   "z": [
+    0,
+    14
+   ],
+   "color": "#1c1d20",
+   "mirror": true,
+   "kind": "wedge",
+   "id": "jaw"
+  }
+ ]
+}
