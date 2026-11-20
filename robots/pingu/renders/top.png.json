@@ -1,0 +1,87 @@
+{
+ "spec": "/tmp/work10_pingu/robots/pingu/spec.json",
+ "rendered_at": 1795080635.7977734,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "wheel_l1",
+  "wheel_r1",
+  "body_shell",
+  "hinge_pin",
+  "fork_0",
+  "fork_1",
+  "fork_2",
+  "fork_3",
+  "fork_4",
+  "fork_5",
+  "fork_6",
+  "fork_7",
+  "lid",
+  "dt_hub_wheel_l0",
+  "dt_axle_wheel_l0",
+  "dt_hub_wheel_r0",
+  "dt_axle_wheel_r0",
+  "dt_hub_wheel_l1",
+  "dt_hub_wheel_r1",
+  "dm_wheel_l1",
+  "dm_wheel_r1",
+  "el_battery",
+  "el_esc",
+  "el_switch",
+  "fs_look_lid_0",
+  "fs_look_lid_1",
+  "fs_look_lid_2",
+  "fs_look_lid_3"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    -0.5,
+    10.5,
+    -2.5
+   ],
+   "to": [
+    -3.5,
+    -13.5,
+    -3.0
+   ]
+  },
+  "w_sw_esc": {
+   "from": [
+    4.5,
+    -13.5,
+    -3.0
+   ],
+   "to": [
+    -15.5,
+    -5.5,
+    6.5
+   ]
+  },
+  "w_m1": {
+   "from": [
+    16.5,
+    6.5,
+    6.5
+   ],
+   "to": [
+    14.5,
+    20.0,
+    0.0
+   ]
+  },
+  "w_m2": {
+   "from": [
+    -15.5,
+    6.5,
+    6.5
+   ],
+   "to": [
+    -14.5,
+    20.0,
+    0.0
+   ]
+  }
+ }
+}
