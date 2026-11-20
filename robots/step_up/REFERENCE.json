@@ -1,0 +1,26 @@
+{
+ "robot_type": "lifter",
+ "wheels": 4,
+ "weapon": {
+  "kind": "lifter",
+  "axis": "x"
+ },
+ "photos": [
+  "step_up.aws72.webp"
+ ],
+ "view": {
+  "step_up.aws64.webp": "front_right_iso",
+  "step_up.aws65.webp": "front",
+  "step_up.aws72.webp": "rear_right_iso"
+ },
+ "elevation": {
+  "step_up.aws64.webp": 45,
+  "step_up.aws65.webp": 45
+ },
+ "view_source": {
+  "step_up.aws72.webp": "user camera pick (azimuth 300, elevation 35); replaces the automatic label"
+ },
+ "rear_ok": [
+  "step_up.aws72.webp"
+ ]
+}

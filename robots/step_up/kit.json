@@ -1,0 +1,58 @@
+{
+ "robot_type": "lifter",
+ "body": {
+  "length": 80,
+  "width": 66,
+  "height": 22,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 14,
+  "width": 9,
+  "y": [
+   -27,
+   27
+  ]
+ },
+ "colors": {
+  "body": "#6fcf5f",
+  "wheel": "#1f3a1f",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "skip_photos": [
+  0,
+  1
+ ],
+ "name": "step up",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
+  {
+   "box": [
+    28,
+    2,
+    58
+   ],
+   "at": [
+    0,
+    44,
+    44
+   ],
+   "weapon": "lifter",
+   "pivot": [
+    38,
+    14
+   ],
+   "id": "lifter",
+   "color": "#dfe6df",
+   "rot": [
+    -12,
+    0,
+    0
+   ]
+  }
+ ]
+}
