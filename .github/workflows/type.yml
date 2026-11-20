@@ -1,6 +1,6 @@
 name: Run type checking
 
-on: [push, pull_request]
+on: [workflow_dispatch]  # fork: manual only
 
 permissions:
   contents: read
