@@ -1,0 +1,33 @@
+{
+ "robot_type": "wedge",
+ "wheels": 2,
+ "weapon": {
+  "kind": "wedge"
+ },
+ "photos": [
+  "goobers.aws71.webp",
+  "goobers.aws72.webp"
+ ],
+ "crop": {
+  "goobers.aws71.webp": [
+   0,
+   0,
+   0.5,
+   1
+  ],
+  "goobers.aws72.webp": [
+   0,
+   0,
+   0.5,
+   1
+  ]
+ },
+ "view": {
+  "goobers.aws71.webp": "front",
+  "goobers.aws72.webp": "front"
+ },
+ "elevation": {
+  "goobers.aws71.webp": 25,
+  "goobers.aws72.webp": 25
+ }
+}

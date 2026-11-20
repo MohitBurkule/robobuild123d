@@ -1,0 +1,60 @@
+{
+ "robot_type": "wedge",
+ "cluster": 4,
+ "body": {
+  "length": 62,
+  "width": 76,
+  "height": 28,
+  "ramp": 56
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 17,
+  "width": 7,
+  "y": [
+   -16
+  ],
+  "x": 43
+ },
+ "colors": {
+  "body": "#e8455a",
+  "wheel": "#5a3a2a",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "crop": {
+  "0": [
+   0,
+   0,
+   0.5,
+   1
+  ],
+  "1": [
+   0,
+   0,
+   0.5,
+   1
+  ]
+ },
+ "name": "goobers",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
+  {
+   "box": [
+    10,
+    6,
+    8
+   ],
+   "at": [
+    18,
+    -22,
+    30
+   ],
+   "mirror": true,
+   "id": "ear",
+   "color": "#e8455a"
+  }
+ ]
+}
