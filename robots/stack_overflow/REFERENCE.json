@@ -1,0 +1,24 @@
+{
+ "robot_type": "lifter",
+ "wheels": 2,
+ "weapon": {
+  "kind": "lifter",
+  "axis": "x"
+ },
+ "photos": [
+  "stack_overflow.aws67.webp"
+ ],
+ "view": {
+  "stack_overflow.aws65.webp": "rear_left_iso",
+  "stack_overflow.aws66.webp": "front",
+  "stack_overflow.aws67.webp": "front"
+ },
+ "elevation": {
+  "stack_overflow.aws65.webp": 45,
+  "stack_overflow.aws66.webp": 45,
+  "stack_overflow.aws67.webp": 45
+ },
+ "view_source": {
+  "stack_overflow.aws67.webp": "camera audit 2026-11: front, el 45, read from the photo (see CAMERA_AUDIT.md), not from likeness score"
+ }
+}
