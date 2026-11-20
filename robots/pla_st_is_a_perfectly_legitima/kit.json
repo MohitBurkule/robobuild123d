@@ -1,0 +1,134 @@
+{
+ "robot_type": "lifter",
+ "body": {
+  "length": 95,
+  "width": 104,
+  "height": 28,
+  "ramp": 0,
+  "plan": "round_nose",
+  "nose": 30
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 11,
+  "width": 12,
+  "y": [
+   -26,
+   14
+  ],
+  "outside": false,
+  "x": 38,
+  "omni": true
+ },
+ "colors": {
+  "body": "#3a4a44",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "skip_photos": [
+  0,
+  1
+ ],
+ "name": "pla st is a perfectly legitima",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
+  {
+   "side": [
+    [
+     -45,
+     30
+    ],
+    [
+     -35,
+     30
+    ],
+    [
+     40,
+     22
+    ],
+    [
+     48,
+     10
+    ],
+    [
+     44,
+     8
+    ],
+    [
+     36,
+     18
+    ],
+    [
+     -45,
+     24
+    ]
+   ],
+   "x": [
+    -9,
+    9
+   ],
+   "weapon": "lifter",
+   "pivot": [
+    -40,
+    28
+   ],
+   "id": "arm",
+   "color": "#6a6f78"
+  },
+  {
+   "side": [
+    [
+     40,
+     29
+    ],
+    [
+     43,
+     30
+    ],
+    [
+     80,
+     1.5
+    ],
+    [
+     76,
+     0.5
+    ]
+   ],
+   "x": [
+    -50,
+    50
+   ],
+   "kind": "wedge",
+   "material": "aluminium",
+   "process": "laser",
+   "id": "wedge",
+   "color": "#c9cdd3"
+  },
+  {
+   "box": [
+    3,
+    46,
+    34
+   ],
+   "at": [
+    58,
+    44,
+    15
+   ],
+   "rot": [
+    32,
+    0,
+    28
+   ],
+   "id": "wedge_wing",
+   "mirror": true,
+   "color": "#c9cdd3",
+   "kind": "wedge",
+   "material": "aluminium",
+   "process": "laser"
+  }
+ ]
+}

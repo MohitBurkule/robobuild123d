@@ -1,0 +1,124 @@
+BLOCKERS: 32
+/usr/local/lib/python3.13/site-packages/trimesh/triangles.py:302: RuntimeWarning: invalid value encountered in divide
+  center_mass = integrated[1:4] / volume
+  [ran] integrity 1.43s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 21.27s
+  [ran] connections 0.00s
+  [ran] legal 0.11s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.47s
+  [ran] shape 2.78s
+  [ran] dynamics 0.13s
+  [ran] strength 0.00s
+  [ran] printability 5.22s
+  [ran] process 0.02s
+  [ran] electrical 0.00s
+  [ran] combat 0.34s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 56.51s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.24s
+  [ran] dfm 0.01s
+  [ran] realworld 0.00s
+pla st is a perfectly legitima: ok=False 32 blockers in 24 root causes, mass 374.3/150 g
+1. [integrity.solids] `wheel_l0` has 1 closed solid(s) and 22 open/invalid shell(s), expected 1 (3350 mm3). A boolean or fillet probably collapsed the build. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Check the last CAD op (fillet/cut order); or declare `solids` with `solids_reason`.
+   | wheel_l0: x 31.92..44.08  y -36.40..-15.00  z -11.00..11.00  size 12.16 x 21.39 x 22.00 mm
+   |   centre (38.00, -25.70, -0.00), volume 3350.2 mm3
+   |   OVERLAP `chassis` 5.88 mm (allowed 0.08)
+   | wheel_l1: x 31.92..44.08  y 3.60..25.00  z -11.00..11.00  size 12.16 x 21.39 x 22.00 mm
+   |   centre (38.00, 14.30, -0.00), volume 3350.2 mm3
+2. [integrity.solids] `wheel_r0` has 1 closed solid(s) and 22 open/invalid shell(s), expected 1 (3350 mm3). A boolean or fillet probably collapsed the build. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Check the last CAD op (fillet/cut order); or declare `solids` with `solids_reason`.
+   | wheel_r0: x -44.08..-31.92  y -36.40..-15.00  z -11.00..11.00  size 12.16 x 21.39 x 22.00 mm
+   |   centre (-38.00, -25.70, -0.00), volume 3350.2 mm3
+   |   OVERLAP `chassis` 5.88 mm (allowed 0.08)
+   | wheel_r1: x -44.08..-31.92  y 3.60..25.00  z -11.00..11.00  size 12.16 x 21.39 x 22.00 mm
+   |   centre (-38.00, 14.30, -0.00), volume 3350.2 mm3
+3. [proxy.interference] `chassis` and `wheel_l0` overlap by 5.88 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | chassis: x -52.00..52.00  y -47.50..47.50  z -9.00..19.00  size 104.00 x 95.00 x 28.00 mm
+   |   centre (-0.00, -0.00, 5.00), volume 257452.4 mm3
+   |   OVERLAP `scoop` 13.73 mm (allowed 0.08)
+   |   OVERLAP `wheel_l0` 5.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 5.88 mm (allowed 0.08)
+4. [proxy.interference] `chassis` and `wheel_r0` overlap by 5.88 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | chassis: x -52.00..52.00  y -47.50..47.50  z -9.00..19.00  size 104.00 x 95.00 x 28.00 mm
+   |   centre (-0.00, -0.00, 5.00), volume 257452.4 mm3
+   |   OVERLAP `scoop` 13.73 mm (allowed 0.08)
+   |   OVERLAP `wheel_l0` 5.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 5.88 mm (allowed 0.08)
+5. [process.print_orientation] `wheel_l0` (fdm) has no `print_orientation`. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_l0: x 31.92..44.08  y -36.40..-15.00  z -11.00..11.00  size 12.16 x 21.39 x 22.00 mm
+   |   centre (38.00, -25.70, -0.00), volume 3350.2 mm3
+   |   OVERLAP `chassis` 5.88 mm (allowed 0.08)
+   | wheel_l1: x 31.92..44.08  y 3.60..25.00  z -11.00..11.00  size 12.16 x 21.39 x 22.00 mm
+   |   centre (38.00, 14.30, -0.00), volume 3350.2 mm3
+6. [process.print_orientation] `wheel_r0` (fdm) has no `print_orientation`. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | wheel_r0: x -44.08..-31.92  y -36.40..-15.00  z -11.00..11.00  size 12.16 x 21.39 x 22.00 mm
+   |   centre (-38.00, -25.70, -0.00), volume 3350.2 mm3
+   |   OVERLAP `chassis` 5.88 mm (allowed 0.08)
+   | wheel_r1: x -44.08..-31.92  y 3.60..25.00  z -11.00..11.00  size 12.16 x 21.39 x 22.00 mm
+   |   centre (-38.00, 14.30, -0.00), volume 3350.2 mm3
+7. [retention.axial] `wheel_l0` rotates but no fastener clamps or threads into it and it declares no reasoned press fit, pin, shaft or fuse hold. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Pass a screw through it into a thread or nut, or declare the hold that captures it with a `reason`.
+   | wheel_l0: x 31.92..44.08  y -36.40..-15.00  z -11.00..11.00  size 12.16 x 21.39 x 22.00 mm
+   |   centre (38.00, -25.70, -0.00), volume 3350.2 mm3
+   |   OVERLAP `chassis` 5.88 mm (allowed 0.08)
+   | wheel_l1: x 31.92..44.08  y 3.60..25.00  z -11.00..11.00  size 12.16 x 21.39 x 22.00 mm
+   |   centre (38.00, 14.30, -0.00), volume 3350.2 mm3
+8. [retention.axial] `wheel_r0` rotates but no fastener clamps or threads into it and it declares no reasoned press fit, pin, shaft or fuse hold. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Pass a screw through it into a thread or nut, or declare the hold that captures it with a `reason`.
+   | wheel_r0: x -44.08..-31.92  y -36.40..-15.00  z -11.00..11.00  size 12.16 x 21.39 x 22.00 mm
+   |   centre (-38.00, -25.70, -0.00), volume 3350.2 mm3
+   |   OVERLAP `chassis` 5.88 mm (allowed 0.08)
+   | wheel_r1: x -44.08..-31.92  y 3.60..25.00  z -11.00..11.00  size 12.16 x 21.39 x 22.00 mm
+   |   centre (-38.00, 14.30, -0.00), volume 3350.2 mm3
+9. [mass.over] 374.3 g (range 299.1 to 449.5 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+10. [proxy.interference] `chassis` and `arm` overlap by 3.38 mm (allowed 0.08).
+   | chassis: x -52.00..52.00  y -47.50..47.50  z -9.00..19.00  size 104.00 x 95.00 x 28.00 mm
+   |   centre (-0.00, -0.00, 5.00), volume 257452.4 mm3
+   |   OVERLAP `scoop` 13.73 mm (allowed 0.08)
+   |   OVERLAP `wheel_l0` 5.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 5.88 mm (allowed 0.08)
+11. [proxy.interference] `chassis` and `scoop` overlap by 13.73 mm (allowed 0.08).
+   | chassis: x -52.00..52.00  y -47.50..47.50  z -9.00..19.00  size 104.00 x 95.00 x 28.00 mm
+   |   centre (-0.00, -0.00, 5.00), volume 257452.4 mm3
+   |   OVERLAP `scoop` 13.73 mm (allowed 0.08)
+   |   OVERLAP `wheel_l0` 5.88 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 5.88 mm (allowed 0.08)
+12. [proxy.interference] `wheel_l1` and `scoop` overlap by 2.38 mm (allowed 0.08).
+   | wheel_l1: x 31.92..44.08  y 3.60..25.00  z -11.00..11.00  size 12.16 x 21.39 x 22.00 mm
+   |   centre (38.00, 14.30, -0.00), volume 3350.2 mm3
+   |   OVERLAP `chassis` 5.88 mm (allowed 0.08)
+   |   OVERLAP `scoop` 2.38 mm (allowed 0.08)
+   | scoop: x -58.00..58.00  y 20.00..60.00  z -10.00..19.00  size 116.00 x 40.00 x 29.00 mm
+... 12 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 374.3 g of 150 g (-224.3 g margin)
+    chassis                   245.09 g  fills 93% of its box  <- solid block? a tub should be a shell
+    scoop                     105.13 g  fills 82% of its box  <- solid block? a tub should be a shell
+    arm                         9.20 g  fills 26% of its box
+    wheel_l0                    3.42 g  fills 59% of its box
+    wheel_r0                    3.42 g  fills 59% of its box
+    wheel_l1                    3.42 g  fills 59% of its box
+    wheel_r1                    3.42 g  fills 59% of its box
+    mass.over: 374.3 g (range 299.1 to 449.5 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 0 hit / 1 miss, group 0 hit / 31 miss, inside 0 hit / 7 miss, likeness 1 hit / 0 miss, overlap 39 hit / 76 miss, part_check 0 hit / 1 miss, part_geom 7 hit / 0 miss, ray 0 hit / 35 miss
