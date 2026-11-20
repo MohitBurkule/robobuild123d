@@ -1,0 +1,119 @@
+BLOCKERS: 27
+  [ran] integrity 0.01s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 0.06s
+  [ran] connections 0.01s
+  [ran] legal 0.00s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.00s
+  [ran] shape 0.17s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.61s
+  [ran] process 0.00s
+  [ran] electrical 0.00s
+  [ran] combat 0.05s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 1.64s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.02s
+  [ran] dfm 0.00s
+  [ran] realworld 0.00s
+vector: ok=False 27 blockers in 27 root causes, mass 138.1/150 g
+1. [proxy.interference] `chassis` and `arm` overlap by 1.62 mm (allowed 0.08).
+   | chassis: x -35.00..35.00  y -36.00..36.00  z -14.00..10.00  size 70.00 x 72.00 x 24.00 mm
+   |   centre (-0.00, -0.00, -2.00), volume 106785.0 mm3
+   |   OVERLAP `fork_l` 1.88 mm (allowed 0.08)
+   |   OVERLAP `fork_r` 1.88 mm (allowed 0.08)
+   |   OVERLAP `arm` 1.62 mm (allowed 0.08)
+2. [proxy.interference] `chassis` and `fork_l` overlap by 1.88 mm (allowed 0.08).
+   | chassis: x -35.00..35.00  y -36.00..36.00  z -14.00..10.00  size 70.00 x 72.00 x 24.00 mm
+   |   centre (-0.00, -0.00, -2.00), volume 106785.0 mm3
+   |   OVERLAP `fork_l` 1.88 mm (allowed 0.08)
+   |   OVERLAP `fork_r` 1.88 mm (allowed 0.08)
+   |   OVERLAP `arm` 1.62 mm (allowed 0.08)
+3. [proxy.interference] `chassis` and `fork_r` overlap by 1.88 mm (allowed 0.08).
+   | chassis: x -35.00..35.00  y -36.00..36.00  z -14.00..10.00  size 70.00 x 72.00 x 24.00 mm
+   |   centre (-0.00, -0.00, -2.00), volume 106785.0 mm3
+   |   OVERLAP `fork_l` 1.88 mm (allowed 0.08)
+   |   OVERLAP `fork_r` 1.88 mm (allowed 0.08)
+   |   OVERLAP `arm` 1.62 mm (allowed 0.08)
+4. [proxy.sweep] joint `arm`: `arm` hits `chassis` 1.62 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint arm` lists the closest approach to every part.
+   | arm: x -11.00..11.00  y -10.00..56.00  z -0.00..18.00  size 22.00 x 66.00 x 18.00 mm
+   |   centre (0.00, 23.00, 9.00), volume 15026.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -5, 12.0] range 0..80 default 0
+   |   OVERLAP `chassis` 1.62 mm (allowed 0.08)
+   |   gap to `post_l` 1.50 mm
+5. [connection.floating] `wheel_l0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_l0: x 35.50..44.50  y -40.00..-8.00  z -16.00..16.00  size 9.00 x 31.99 x 32.00 mm
+   |   centre (40.00, -24.00, 0.00), volume 7238.2 mm3
+   |   gap to `chassis` 0.50 mm
+   | chassis: x -35.00..35.00  y -36.00..36.00  z -14.00..10.00  size 70.00 x 72.00 x 24.00 mm
+   |   centre (-0.00, -0.00, -2.00), volume 106785.0 mm3
+6. [connection.floating] `wheel_r0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | wheel_r0: x -44.50..-35.50  y -40.00..-8.00  z -16.00..16.00  size 9.00 x 31.99 x 32.00 mm
+   |   centre (-40.00, -24.00, 0.00), volume 7238.2 mm3
+   |   gap to `chassis` 0.50 mm
+   | chassis: x -35.00..35.00  y -36.00..36.00  z -14.00..10.00  size 70.00 x 72.00 x 24.00 mm
+   |   centre (-0.00, -0.00, -2.00), volume 106785.0 mm3
+7. [connection.floating] `fork_l` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | fork_l: x 24.00..58.00  y 30.00..90.00  z -16.00..-10.00  size 34.00 x 60.00 x 6.00 mm
+   |   centre (41.00, 60.00, -13.00), volume 2988.0 mm3
+   |   OVERLAP `chassis` 1.88 mm (allowed 0.08)
+   | chassis: x -35.00..35.00  y -36.00..36.00  z -14.00..10.00  size 70.00 x 72.00 x 24.00 mm
+   |   centre (-0.00, -0.00, -2.00), volume 106785.0 mm3
+8. [connection.floating] `fork_r` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | fork_r: x -58.00..-24.00  y 30.00..90.00  z -16.00..-10.00  size 34.00 x 60.00 x 6.00 mm
+   |   centre (-41.00, 60.00, -13.00), volume 2988.0 mm3
+   |   OVERLAP `chassis` 1.88 mm (allowed 0.08)
+   | chassis: x -35.00..35.00  y -36.00..36.00  z -14.00..10.00  size 70.00 x 72.00 x 24.00 mm
+   |   centre (-0.00, -0.00, -2.00), volume 106785.0 mm3
+9. [connection.floating] `post_l` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `arm`, 1.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | post_l: x 12.50..15.50  y 38.50..41.50  z 9.00..39.00  size 3.00 x 3.00 x 30.00 mm
+   |   centre (14.00, 40.00, 24.00), volume 270.0 mm3
+   |   gap to `arm` 1.50 mm
+   | arm: x -11.00..11.00  y -10.00..56.00  z -0.00..18.00  size 22.00 x 66.00 x 18.00 mm
+   |   centre (0.00, 23.00, 9.00), volume 15026.0 mm3
+10. [connection.floating] `post_r` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `arm`, 1.5 mm away.
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | post_r: x -15.50..-12.50  y 38.50..41.50  z 9.00..39.00  size 3.00 x 3.00 x 30.00 mm
+   |   centre (-14.00, 40.00, 24.00), volume 270.0 mm3
+   |   gap to `arm` 1.50 mm
+   | arm: x -11.00..11.00  y -10.00..56.00  z -0.00..18.00  size 22.00 x 66.00 x 18.00 mm
+   |   centre (0.00, 23.00, 9.00), volume 15026.0 mm3
+11. [legal.switch] Rule 4a needs an externally accessible way to shut down that works without tools and is clearly marked on/off.
+   fix: Add a `switch` part (or removable link) with `tool_free: true` and `marked: true` and a visible ON/OFF `label`.
+12. [legal.failsafe] Rule 4d: the robot must stop all motion when the transmitter is off.
+   fix: Set `electronics.failsafe` to true and configure the receiver and ESC failsafe.
+... 15 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 138.1 g of 150 g (+11.9 g margin)
+    chassis                   101.66 g  fills 88% of its box  <- solid block? a tub should be a shell
+    arm                        14.30 g  fills 57% of its box
+    wheel_l0                    7.38 g  fills 79% of its box
+    wheel_r0                    7.38 g  fills 79% of its box
+    fork_l                      2.84 g  fills 24% of its box
+    fork_r                      2.84 g  fills 24% of its box
+    post_l                      0.26 g  fills 100% of its box
+    post_r                      0.26 g  fills 100% of its box
+    mass.may_be_over: 138.1 g (range 110.1 to 166.1 g) against the 150 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 0 hit / 2 miss, group 0 hit / 31 miss, inside 4 hit / 4 miss, likeness 1 hit / 0 miss, min_gap 42 hit / 40 miss, overlap 39 hit / 6 miss, part_check 1 hit / 0 miss, part_geom 8 hit / 0 miss, ray 0 hit / 40 miss

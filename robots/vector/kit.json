@@ -1,0 +1,120 @@
+{
+ "robot_type": "lifter",
+ "body": {
+  "length": 72,
+  "width": 70,
+  "height": 24,
+  "ramp": 18
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 16,
+  "width": 9,
+  "y": [
+   -24
+  ]
+ },
+ "colors": {
+  "body": "#e8a83a",
+  "wheel": "#e8c84a",
+  "weapon": "#c9cdd3",
+  "fork": "#e8a83a"
+ },
+ "name": "vector",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
+  {
+   "side": [
+    [
+     -10,
+     26
+    ],
+    [
+     5,
+     26
+    ],
+    [
+     40,
+     16
+    ],
+    [
+     58,
+     22
+    ],
+    [
+     58,
+     38
+    ],
+    [
+     36,
+     34
+    ],
+    [
+     -10,
+     34
+    ]
+   ],
+   "x": [
+    -11,
+    11
+   ],
+   "weapon": "lifter",
+   "pivot": [
+    -5,
+    28
+   ],
+   "id": "arm",
+   "color": "#22262a"
+  },
+  {
+   "box": [
+    3,
+    3,
+    52
+   ],
+   "at": [
+    16,
+    40,
+    50
+   ],
+   "mirror": true,
+   "id": "post",
+   "color": "#8a8d92",
+   "rot": [
+    20,
+    0,
+    0
+   ]
+  },
+  {
+   "top": [
+    [
+     24,
+     30
+    ],
+    [
+     36,
+     30
+    ],
+    [
+     40,
+     92
+    ],
+    [
+     32,
+     94
+    ]
+   ],
+   "z": [
+    0,
+    7
+   ],
+   "color": "#e8a83a",
+   "mirror": true,
+   "kind": "wedge",
+   "id": "fork"
+  }
+ ]
+}
