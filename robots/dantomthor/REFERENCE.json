@@ -1,0 +1,23 @@
+{
+ "robot_type": "other",
+ "wheels": 2,
+ "weapon": {
+  "kind": "axe",
+  "axis": "x"
+ },
+ "photos": [
+  "dantomthor.aws72.webp"
+ ],
+ "view": {
+  "dantomthor.aws65.webp": "front",
+  "dantomthor.aws70.webp": "front",
+  "dantomthor.aws72.webp": "front_left_iso"
+ },
+ "elevation": {
+  "dantomthor.aws65.webp": 70,
+  "dantomthor.aws70.webp": 25
+ },
+ "view_source": {
+  "dantomthor.aws72.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label"
+ }
+}
