@@ -1,0 +1,64 @@
+{
+ "robot_type": "vertical_spinner",
+ "body": {
+  "length": 60,
+  "width": 126,
+  "height": 24,
+  "ramp": 0,
+  "style": "twin_pods",
+  "slot": 36
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 11,
+  "width": 8,
+  "y": [
+   -12
+  ],
+  "outside": false
+ },
+ "weapon": {
+  "kind": "disc",
+  "radius": 28,
+  "width": 3,
+  "y": 5,
+  "teeth": 2,
+  "z": 32,
+  "axis": "x"
+ },
+ "forks": {
+  "n": 4,
+  "length": 46,
+  "width": 5,
+  "spread": 96,
+  "tilt_deg": 14,
+  "splay_deg": 14,
+  "taper": true
+ },
+ "colors": {
+  "body": "#1f4a38",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "skip_photos": [
+  1
+ ],
+ "name": "boss baby",
+ "macros": [
+  {
+   "cyl": [
+    9,
+    26
+   ],
+   "at": [
+    0,
+    5,
+    32
+   ],
+   "axis": "x",
+   "id": "motor",
+   "color": "#d8324a"
+  }
+ ]
+}

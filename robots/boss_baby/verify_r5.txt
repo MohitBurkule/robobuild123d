@@ -1,0 +1,96 @@
+  [cached] integrity 0.00s
+  [proxy] wiring 0.14s
+  [cached] mass 0.00s
+  [proxy] interference 0.59s
+  [cached] connections 0.00s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.00s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.00s
+  [cached] physics 0.01s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [ran] likeness 18.20s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.00s
+  [cached] waiver_audit 0.00s
+  [cached] geom 0.00s
+  [cached] dfm 0.00s
+  [cached] realworld 0.00s
+boss baby: ok=False 1 blockers in 1 root causes, mass 144.8/150 g
+1. [likeness.silhouette] `reference/boss_baby.aws72.webp`: best silhouette IoU 0.65 at camera front (elevation 45, azimuth 90) (need 0.80: >= 0.8 and no worse than the closest stock template `revron` at 0.47). Regions (photo frame, left third first) 0.66 / 0.68 / 0.62: worst = rear third. Height/length 0.67 model vs 0.81 photo (too flat: raise it or shorten it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+MASS BUDGET:
+  mass 144.8 g of 150 g (+5.2 g margin)
+    chassis                    31.36 g  fills 14% of its box
+    weapon                     20.78 g  fills 56% of its box  <- solid block? a tub should be a shell
+    battery                    15.80 g  fills 100% of its box  <- solid block? a tub should be a shell
+    weapon_motor                8.60 g  fills 53% of its box
+    motor_r                     7.50 g  fills 67% of its box
+    motor_l                     7.50 g  fills 67% of its box
+    lid_l                       6.97 g  fills 23% of its box
+    lid_r                       6.17 g  fills 24% of its box
+    wesc                        5.00 g  fills 100% of its box
+    wheel_r                     3.15 g  fills 77% of its box
+    wheel_l                     3.15 g  fills 77% of its box
+    upright_l                   3.09 g  fills 93% of its box
+    upright_r                   2.47 g  fills 93% of its box
+    esc                         2.30 g  fills 100% of its box
+    fork_r0                     2.09 g  fills 38% of its box
+    fork_r1                     2.09 g  fills 38% of its box
+    fork_l0                     2.09 g  fills 38% of its box
+    fork_l1                     2.09 g  fills 38% of its box
+    wbearing                    0.74 g  fills 64% of its box
+    wshaft                      0.50 g  fills 79% of its box
+    power_switch                0.50 g  fills 100% of its box
+    bolt_r00                    0.36 g  fills 32% of its box
+    bolt_r01                    0.36 g  fills 32% of its box
+    bolt_r10                    0.36 g  fills 32% of its box
+    bolt_r11                    0.36 g  fills 32% of its box
+    bolt_l00                    0.36 g  fills 32% of its box
+    bolt_l01                    0.36 g  fills 32% of its box
+    bolt_l10                    0.36 g  fills 32% of its box
+    bolt_l11                    0.36 g  fills 32% of its box
+    bolt_wm0                    0.31 g  fills 34% of its box
+    bolt_wm1                    0.31 g  fills 34% of its box
+    bolt_upr0                   0.29 g  fills 36% of its box
+    bolt_upr1                   0.29 g  fills 36% of its box
+    bolt_upl0                   0.29 g  fills 36% of its box
+    bolt_upl1                   0.29 g  fills 36% of its box
+    fs_look_lid_r_14            0.28 g  fills 27% of its box
+    fs_look_lid_r_15            0.28 g  fills 27% of its box
+    fs_look_lid_r_16            0.28 g  fills 27% of its box
+    fs_look_lid_r_17            0.28 g  fills 27% of its box
+    fs_look_lid_l_18            0.28 g  fills 27% of its box
+    fs_look_lid_l_19            0.28 g  fills 27% of its box
+    fs_look_lid_l_20            0.28 g  fills 27% of its box
+    fs_look_lid_l_21            0.28 g  fills 27% of its box
+    ins_r00                     0.12 g  fills 41% of its box
+    ins_r01                     0.12 g  fills 41% of its box
+    ins_r10                     0.12 g  fills 41% of its box
+    ins_r11                     0.12 g  fills 41% of its box
+    ins_l00                     0.12 g  fills 41% of its box
+    ins_l01                     0.12 g  fills 41% of its box
+    ins_l10                     0.12 g  fills 41% of its box
+    ins_l11                     0.12 g  fills 41% of its box
+    ins_upr0                    0.12 g  fills 41% of its box
+    ins_upr1                    0.12 g  fills 41% of its box
+    ins_upl0                    0.12 g  fills 41% of its box
+    ins_upl1                    0.12 g  fills 41% of its box
+    mass.may_be_over: 144.8 g (range 124.7 to 164.9 g) against the 150 g limit; 6.9 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 19 hit / 0 miss, group 30 hit / 1 miss, inside 25 hit / 0 miss, likeness 1 hit / 0 miss, overlap 353 hit / 0 miss, part_geom 55 hit / 0 miss

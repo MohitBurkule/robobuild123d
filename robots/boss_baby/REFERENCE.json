@@ -1,0 +1,20 @@
+{
+ "robot_type": "vertical_spinner",
+ "wheels": 2,
+ "weapon": {
+  "kind": "disc",
+  "axis": "x",
+  "teeth": 2
+ },
+ "photos": [
+  "boss_baby.aws72.webp"
+ ],
+ "view": {
+  "boss_baby.aws72.webp": "front",
+  "boss_baby.aws73.webp": "front_right_iso"
+ },
+ "elevation": {
+  "boss_baby.aws72.webp": 45,
+  "boss_baby.aws73.webp": 45
+ }
+}
