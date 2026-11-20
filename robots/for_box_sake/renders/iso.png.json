@@ -1,0 +1,12 @@
+{
+ "spec": "/tmp/work10_for_box_sake/robots/for_box_sake/spec.json",
+ "rendered_at": 1795024306.4933205,
+ "bodies": [
+  "chassis",
+  "wheel_l0",
+  "wheel_r0",
+  "wheel_l1",
+  "wheel_r1"
+ ],
+ "wires": {}
+}

@@ -1,0 +1,30 @@
+{
+ "robot_type": "wedge",
+ "body": {
+  "length": 62,
+  "width": 150,
+  "height": 22,
+  "ramp": 10
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 14,
+  "width": 10,
+  "y": [
+   -18,
+   18
+  ],
+  "outside": false,
+  "notch": true
+ },
+ "colors": {
+  "body": "#dfe6e2",
+  "wheel": "#202226",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "name": "for box sake",
+ "weapon": {
+  "kind": "none"
+ }
+}
