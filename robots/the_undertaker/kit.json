@@ -1,0 +1,94 @@
+{
+ "robot_type": "horizontal_spinner",
+ "body": {
+  "length": 75,
+  "width": 95,
+  "height": 24,
+  "ramp": 0,
+  "plan": "trapezoid",
+  "front_width": 70
+ },
+ "wheels": {
+  "n": 2,
+  "radius": 15,
+  "width": 9,
+  "y": [
+   -22
+  ]
+ },
+ "weapon": {
+  "kind": "ring",
+  "radius": 46,
+  "width": 3,
+  "y": 44,
+  "teeth": 1,
+  "thick": 9,
+  "z": 6,
+  "axis": "z"
+ },
+ "colors": {
+  "body": "#3c4046",
+  "wheel": "#4fb8a8",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "skip_photos": [
+  0,
+  1
+ ],
+ "drop": [],
+ "ref": {
+  "robot_type": "horizontal_spinner",
+  "wheels": 2,
+  "weapon": {
+   "kind": "ring",
+   "axis": "z"
+  }
+ },
+ "name": "the undertaker",
+ "macros": [
+  {
+   "box": [
+    8,
+    30,
+    20
+   ],
+   "at": [
+    42,
+    38,
+    11
+   ],
+   "mirror": true,
+   "id": "leg",
+   "color": "#3c4046"
+  },
+  {
+   "box": [
+    8,
+    80,
+    3
+   ],
+   "at": [
+    0,
+    44,
+    6
+   ],
+   "id": "spoke",
+   "color": "#c9cdd3"
+  },
+  {
+   "box": [
+    14,
+    14,
+    3
+   ],
+   "at": [
+    40,
+    62,
+    6
+   ],
+   "id": "tooth",
+   "color": "#c9cdd3"
+  }
+ ]
+}

@@ -1,0 +1,23 @@
+{
+ "robot_type": "horizontal_spinner",
+ "wheels": 2,
+ "weapon": {
+  "kind": "ring",
+  "axis": "z"
+ },
+ "photos": [
+  "the_undertaker.aws67.webp"
+ ],
+ "view": {
+  "the_undertaker.aws65.webp": "front_left_iso",
+  "the_undertaker.aws66.webp": "front",
+  "the_undertaker.aws67.webp": "front"
+ },
+ "elevation": {
+  "the_undertaker.aws65.webp": 45,
+  "the_undertaker.aws66.webp": 25
+ },
+ "view_source": {
+  "the_undertaker.aws67.webp": "user camera pick (azimuth 90, elevation 35); replaces the automatic label"
+ }
+}
