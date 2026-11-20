@@ -1,0 +1,100 @@
+BLOCKERS: unknown (outside rebuilt after this run; round 4 to be re-run)
+  [cached] integrity 0.00s
+  [cached] mass 0.00s
+  [proxy] interference 0.14s
+  [cached] connections 0.00s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.00s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.00s
+  [cached] physics 0.00s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [cached] likeness 0.00s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.00s
+  [cached] waiver_audit 0.00s
+  [cached] geom 0.00s
+  [cached] dfm 0.00s
+  [cached] realworld 0.00s
+antomic: ok=False 13 blockers in 12 root causes, mass 167.4/150 g
+1. [wire.rotor_clearance] wire `w_m1` passes -0.7 mm from the volume swept by the `frame` rotor (frame) at [-8.9, 24.2, -4.6]. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | frame: x -25.00..25.00  y -25.00..35.00  z 30.00..34.00  size 50.00 x 60.00 x 4.00 mm
+   |   centre (0.00, 5.00, 32.00), volume 12000.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -25, 30.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+2. [mass.over] 167.4 g (range 137.5 to 197.2 g) against the 150 g limit; 3.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+3. [connection.tape_overload] `el_battery` weighs 12.5 g on 4.74 cm2 of contact (2.6 g/cm2); velcro holds at most 2 g/cm2 through a hit.
+   fix: Screw it down, capture it in a pocket, or give the tape a much larger flat contact face.
+   | el_battery: x -13.99..14.01  y 39.52..57.52  z -9.99..0.01  size 28.00 x 18.00 x 10.00 mm
+   |   centre (0.01, 48.52, -4.99), volume 5040.0 mm3
+   |   port xt30: (0.01, 59.52, -4.99)
+   |   gap to `chassis` 0.25 mm
+   |   gap to `scoop` 0.25 mm
+4. [power.weapon_motor] `frame` names motor None; it must be a catalog brushless motor so speed can be computed.
+   fix: Set `weapon.motor` to a `weapon_motor` part that uses a catalog entry with kV.
+   | frame: x -25.00..25.00  y -25.00..35.00  z 30.00..34.00  size 50.00 x 60.00 x 4.00 mm
+   |   centre (0.00, 5.00, 32.00), volume 12000.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -25, 30.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+5. [process.weapon_printed] Weapon `frame` is fdm-printed with no hardened metal insert teeth.
+   fix: Make it metal (sheet_cut / turned / milled) or add hardened steel tooth parts (`parent` = the weapon).
+   | frame: x -25.00..25.00  y -25.00..35.00  z 30.00..34.00  size 50.00 x 60.00 x 4.00 mm
+   |   centre (0.00, 5.00, 32.00), volume 12000.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -25, 30.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+6. [wire.render_wires] 6 of 6 robot render(s) do not draw all 4 wires: renders/diff_antomic.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/likeness_antomic.aws67_mask.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/match_antomic.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/pick_antomic.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn; renders/top.png: rendered without wires (checks off or no routes); renders/view_antomic.aws67.png: no render record (`<png>.json`), so nothing says the wires were drawn
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+7. [wire.rotor_clearance] wire `w_bat_sw` passes -0.9 mm from the volume swept by the `frame` rotor (frame) at [-1.5, 24.1, -4.6].
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | frame: x -25.00..25.00  y -25.00..35.00  z 30.00..34.00  size 50.00 x 60.00 x 4.00 mm
+   |   centre (0.00, 5.00, 32.00), volume 12000.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -25, 30.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+8. [wire.rotor_clearance] wire `w_sw_esc` passes -0.9 mm from the volume swept by the `frame` rotor (frame) at [4.0, -35.2, -4.0].
+   fix: Route the run away from the rotor (via points) or shield it; exempt with `rotor_ok`.
+   | frame: x -25.00..25.00  y -25.00..35.00  z 30.00..34.00  size 50.00 x 60.00 x 4.00 mm
+   |   centre (0.00, 5.00, 32.00), volume 12000.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -25, 30.0] range 0..80 default 0
+   |   gap to `chassis` 0.00 mm (touching)
+9. [wire.exterior_support] wire `w_bat_sw` runs 13.0 mm outside the chassis without a hole, channel or clip round it (material within 1.5 mm on both sides) (from [-0.2, 55.0, -4.9] to [-0.7, 42.6, -4.8]).
+   fix: Run it through a hole or channel, or clip it; declare `exposed_reason` if it must be free.
+10. [wire.exterior_support] wire `w_m2` runs 9.0 mm outside the chassis without a hole, channel or clip round it (material within 1.5 mm on both sides) (from [-38.3, 50.2, -7.4] to [-34.5, 42.7, -6.6]).
+   fix: Run it through a hole or channel, or clip it; declare `exposed_reason` if it must be free.
+11. [likeness.view] `reference/antomic.aws67.webp` is declared `front` (IoU 0.41 there) but the model matches it better from front (elevation 45, azimuth 90) (IoU 0.80).
+   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
+12. [likeness.silhouette] `reference/antomic.aws67.webp`: best silhouette IoU 0.41 at camera front (elevation 0, azimuth 90) (need 0.80: >= 0.8 and no worse than the closest stock template `hspin_bar` at 0.31). Regions (photo frame, left third first) 0.41 / 0.42 / 0.41: worst = rear third. Height/length 0.51 model vs 1.15 photo (too flat: raise it or shorten it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+MASS BUDGET:
+  mass 167.4 g of 150 g (-17.4 g margin)
+    chassis                    70.64 g  fills 27% of its box
+    scoop                      39.55 g  fills 28% of its box
+    el_battery                 12.50 g  fills 100% of its box
+    frame                      11.42 g  fills 100% of its box
+    dm_wheel_l0                 9.70 g  fills 66% of its box
+    dm_wheel_r0                 9.70 g  fills 66% of its box
+    el_rx_esc                   3.50 g  fills 100% of its box
+    wheel_l0                    2.69 g  fills 57% of its box
+    wheel_r0                    2.69 g  fills 57% of its box
+    dt_hub_wheel_r0             1.04 g  fills 65% of its box
+    dt_hub_wheel_l0             1.04 g  fills 65% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    mass.over: 167.4 g (range 137.5 to 197.2 g) against the 150 g limit; 3.7 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 31 hit / 0 miss, min_gap 13 hit / 0 miss, overlap 180 hit / 0 miss, part_geom 12 hit / 0 miss

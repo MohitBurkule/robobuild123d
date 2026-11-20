@@ -1,0 +1,17 @@
+{
+ "robot_type": "lifter",
+ "wheels": 2,
+ "weapon": {
+  "kind": "lifter",
+  "axis": "x"
+ },
+ "photos": [
+  "antomic.aws67.webp"
+ ],
+ "view": {
+  "antomic.aws67.webp": "front"
+ },
+ "view_source": {
+  "antomic.aws67.webp": "user camera pick (azimuth 80, elevation 35); replaces the automatic label"
+ }
+}
