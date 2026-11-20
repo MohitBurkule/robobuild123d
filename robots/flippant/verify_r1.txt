@@ -1,0 +1,106 @@
+  [ran] integrity 0.01s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 3.42s
+  [ran] connections 0.00s
+  [ran] legal 0.01s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.00s
+  [ran] shape 0.15s
+  [ran] dynamics 0.01s
+  [ran] strength 0.00s
+  [ran] printability 0.44s
+  [ran] process 0.01s
+  [ran] electrical 0.01s
+  [ran] combat 0.05s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.01s
+  [ran] fastener_record 0.00s
+  [ran] likeness 3.02s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.03s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.02s
+  [ran] dfm 0.02s
+  [ran] realworld 0.01s
+flippant: ok=False 26 blockers in 26 root causes, mass 231.9/225 g
+1. [mass.over] 231.9 g (range 185.1 to 278.6 g) against the 225 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+2. [proxy.interference] `chassis` and `wheel_l0` overlap by 4.38 mm (allowed 0.08).
+   | chassis: x -50.00..50.00  y -47.50..47.50  z -12.00..16.00  size 100.00 x 95.00 x 28.00 mm
+   |   centre (-0.00, -0.00, 2.00), volume 219625.0 mm3
+   |   OVERLAP `wheel_l0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `hoop_l` 0.93 mm (allowed 0.08)
+3. [proxy.interference] `chassis` and `wheel_r0` overlap by 4.38 mm (allowed 0.08).
+   | chassis: x -50.00..50.00  y -47.50..47.50  z -12.00..16.00  size 100.00 x 95.00 x 28.00 mm
+   |   centre (-0.00, -0.00, 2.00), volume 219625.0 mm3
+   |   OVERLAP `wheel_l0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `hoop_l` 0.93 mm (allowed 0.08)
+4. [proxy.interference] `chassis` and `hoop_l` overlap by 0.93 mm (allowed 0.08).
+   | chassis: x -50.00..50.00  y -47.50..47.50  z -12.00..16.00  size 100.00 x 95.00 x 28.00 mm
+   |   centre (-0.00, -0.00, 2.00), volume 219625.0 mm3
+   |   OVERLAP `wheel_l0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `hoop_l` 0.93 mm (allowed 0.08)
+5. [proxy.interference] `chassis` and `hoop_r` overlap by 0.93 mm (allowed 0.08).
+   | chassis: x -50.00..50.00  y -47.50..47.50  z -12.00..16.00  size 100.00 x 95.00 x 28.00 mm
+   |   centre (-0.00, -0.00, 2.00), volume 219625.0 mm3
+   |   OVERLAP `wheel_l0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `hoop_l` 0.93 mm (allowed 0.08)
+6. [proxy.interference] `chassis` and `lid` overlap by 0.93 mm (allowed 0.08).
+   | chassis: x -50.00..50.00  y -47.50..47.50  z -12.00..16.00  size 100.00 x 95.00 x 28.00 mm
+   |   centre (-0.00, -0.00, 2.00), volume 219625.0 mm3
+   |   OVERLAP `wheel_l0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `wheel_r0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `hoop_l` 0.93 mm (allowed 0.08)
+7. [proxy.interference] `hoop_l` and `lid` overlap by 0.93 mm (allowed 0.08).
+   | hoop_l: x 10.00..16.00  y -20.00..30.00  z 14.00..30.00  size 6.00 x 50.00 x 16.00 mm
+   |   centre (13.00, 5.00, 22.00), volume 1944.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -25, 14.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.93 mm (allowed 0.08)
+   |   OVERLAP `lid` 0.93 mm (allowed 0.08)
+8. [proxy.interference] `hoop_r` and `lid` overlap by 0.93 mm (allowed 0.08).
+   | hoop_r: x -16.00..-10.00  y -20.00..30.00  z 14.00..30.00  size 6.00 x 50.00 x 16.00 mm
+   |   centre (-13.00, 5.00, 22.00), volume 1944.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -25, 14.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.93 mm (allowed 0.08)
+   |   OVERLAP `lid` 0.93 mm (allowed 0.08)
+9. [proxy.sweep] joint `hoop_l`: `hoop_l` hits `chassis` 0.93 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint hoop_l` lists the closest approach to every part.
+   | hoop_l: x 10.00..16.00  y -20.00..30.00  z 14.00..30.00  size 6.00 x 50.00 x 16.00 mm
+   |   centre (13.00, 5.00, 22.00), volume 1944.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -25, 14.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.93 mm (allowed 0.08)
+   |   OVERLAP `lid` 0.93 mm (allowed 0.08)
+10. [proxy.sweep] joint `hoop_r`: `hoop_r` hits `chassis` 0.93 mm deep at 0.0 (declared range 0..80; allowed 0.08). `robot probe spec.json --joint hoop_r` lists the closest approach to every part.
+   | hoop_r: x -16.00..-10.00  y -20.00..30.00  z 14.00..30.00  size 6.00 x 50.00 x 16.00 mm
+   |   centre (-13.00, 5.00, 22.00), volume 1944.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0, -25, 14.0] range 0..80 default 0
+   |   OVERLAP `chassis` 0.93 mm (allowed 0.08)
+   |   OVERLAP `lid` 0.93 mm (allowed 0.08)
+11. [legal.switch] Rule 4a needs an externally accessible way to shut down that works without tools and is clearly marked on/off.
+   fix: Add a `switch` part (or removable link) with `tool_free: true` and `marked: true` and a visible ON/OFF `label`.
+12. [legal.failsafe] Rule 4d: the robot must stop all motion when the transmitter is off.
+   fix: Set `electronics.failsafe` to true and configure the receiver and ESC failsafe.
+... 14 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 231.9 g of 225 g (-6.9 g margin)
+    chassis                   209.08 g  fills 83% of its box  <- solid block? a tub should be a shell
+    wheel_l0                    6.28 g  fills 79% of its box
+    wheel_r0                    6.28 g  fills 79% of its box
+    lid                         5.33 g  fills 100% of its box
+    hoop_l                      1.85 g  fills 40% of its box
+    hoop_r                      1.85 g  fills 40% of its box
+    mass.over: 231.9 g (range 185.1 to 278.6 g) against the 225 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: group 0 hit / 31 miss, inside 0 hit / 6 miss, likeness 1 hit / 0 miss, overlap 46 hit / 77 miss, part_check 0 hit / 1 miss, part_geom 6 hit / 0 miss, ray 0 hit / 30 miss
