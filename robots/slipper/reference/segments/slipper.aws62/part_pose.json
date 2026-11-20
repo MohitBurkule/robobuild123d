@@ -1,0 +1,1521 @@
+{
+ "photo": "slipper.aws62.webp",
+ "camera_from": "slipper.aws62.pose.json",
+ "calibration": {
+  "a": 0.0011243833756285288,
+  "b": 0.0028337532978520335,
+  "r": 0.604,
+  "n": 25632
+ },
+ "body_centroid_robot_mm": [
+  5.8,
+  8.8,
+  0.4
+ ],
+ "parts": {
+  "top_black_lip": {
+   "label": "top black lip",
+   "n_px": 10566,
+   "median_z_mm": 271.3,
+   "centroid_robot_mm": [
+    1.6,
+    -16.2,
+    33.4
+   ],
+   "centroid_cam_mm": [
+    -0.4,
+    -36.8,
+    271.9
+   ],
+   "normal_robot": [
+    -0.05,
+    0.938,
+    -0.342
+   ],
+   "extent_mm": [
+    35.3,
+    10.0,
+    2.6
+   ],
+   "height_range_mm": [
+    25.6,
+    40.4
+   ],
+   "offset_from_body_mm": [
+    -4.2,
+    -25.0,
+    33.0
+   ]
+  },
+  "left_wedge_side": {
+   "label": "left wedge side",
+   "n_px": 299,
+   "median_z_mm": 263.8,
+   "centroid_robot_mm": [
+    21.3,
+    6.7,
+    11.8
+   ],
+   "centroid_cam_mm": [
+    -20.6,
+    -6.7,
+    263.9
+   ],
+   "normal_robot": [
+    0.747,
+    0.561,
+    0.357
+   ],
+   "extent_mm": [
+    84.6,
+    20.5,
+    7.0
+   ],
+   "height_range_mm": [
+    -34.5,
+    41.2
+   ],
+   "offset_from_body_mm": [
+    15.5,
+    -2.1,
+    11.4
+   ]
+  },
+  "left_wedge_upper_face": {
+   "label": "left wedge upper face",
+   "n_px": 42,
+   "median_z_mm": 264.7,
+   "centroid_robot_mm": [
+    16.8,
+    -7.1,
+    32.0
+   ],
+   "centroid_cam_mm": [
+    -15.4,
+    -31.0,
+    264.5
+   ],
+   "normal_robot": [
+    -0.089,
+    0.788,
+    0.609
+   ],
+   "extent_mm": [
+    37.8,
+    10.8,
+    1.7
+   ],
+   "height_range_mm": [
+    4.3,
+    41.3
+   ],
+   "offset_from_body_mm": [
+    11.0,
+    -15.9,
+    31.6
+   ]
+  },
+  "left_wedge_mid_face": {
+   "label": "left wedge mid face",
+   "n_px": 41,
+   "median_z_mm": 289.2,
+   "centroid_robot_mm": [
+    35.8,
+    6.2,
+    -32.6
+   ],
+   "centroid_cam_mm": [
+    -37.2,
+    29.5,
+    288.3
+   ],
+   "normal_robot": [
+    0.87,
+    0.417,
+    -0.263
+   ],
+   "extent_mm": [
+    36.8,
+    1.4,
+    0.1
+   ],
+   "height_range_mm": [
+    -41.9,
+    -25.5
+   ],
+   "offset_from_body_mm": [
+    30.0,
+    -2.6,
+    -33.0
+   ]
+  },
+  "left_wedge_edge_highlight": {
+   "label": "left wedge edge highlight",
+   "n_px": 47,
+   "median_z_mm": 290.2,
+   "centroid_robot_mm": [
+    37.2,
+    -1.4,
+    -8.1
+   ],
+   "centroid_cam_mm": [
+    -37.6,
+    4.9,
+    281.0
+   ],
+   "normal_robot": [
+    0.831,
+    0.525,
+    0.187
+   ],
+   "extent_mm": [
+    69.1,
+    23.3,
+    1.9
+   ],
+   "height_range_mm": [
+    -24.4,
+    10.3
+   ],
+   "offset_from_body_mm": [
+    31.4,
+    -10.2,
+    -8.5
+   ]
+  },
+  "right_wedge_side": {
+   "label": "right wedge side",
+   "n_px": 229,
+   "median_z_mm": 262.3,
+   "centroid_robot_mm": [
+    -38.2,
+    29.7,
+    -18.6
+   ],
+   "centroid_cam_mm": [
+    37.8,
+    33.0,
+    264.2
+   ],
+   "normal_robot": [
+    -0.109,
+    0.686,
+    0.719
+   ],
+   "extent_mm": [
+    43.3,
+    6.2,
+    1.8
+   ],
+   "height_range_mm": [
+    -34.9,
+    8.6
+   ],
+   "offset_from_body_mm": [
+    -44.0,
+    20.9,
+    -19.0
+   ]
+  },
+  "grille_plate": {
+   "label": "grille plate",
+   "n_px": 46447,
+   "median_z_mm": 265.3,
+   "centroid_robot_mm": [
+    -2.9,
+    11.9,
+    2.4
+   ],
+   "centroid_cam_mm": [
+    3.2,
+    4.7,
+    265.9
+   ],
+   "normal_robot": [
+    -0.075,
+    0.606,
+    0.792
+   ],
+   "extent_mm": [
+    42.0,
+    27.4,
+    4.5
+   ],
+   "height_range_mm": [
+    -18.1,
+    22.6
+   ],
+   "offset_from_body_mm": [
+    -8.7,
+    3.1,
+    2.0
+   ]
+  },
+  "grille_lower_bar": {
+   "label": "grille lower bar",
+   "n_px": 9643,
+   "median_z_mm": 253.7,
+   "centroid_robot_mm": [
+    -9.7,
+    44.2,
+    -25.1
+   ],
+   "centroid_cam_mm": [
+    9.3,
+    45.7,
+    254.5
+   ],
+   "normal_robot": [
+    -0.031,
+    0.914,
+    0.404
+   ],
+   "extent_mm": [
+    25.8,
+    9.0,
+    3.1
+   ],
+   "height_range_mm": [
+    -33.5,
+    -19.5
+   ],
+   "offset_from_body_mm": [
+    -15.5,
+    35.4,
+    -25.5
+   ]
+  },
+  "grille_left_frame_strip": {
+   "label": "grille left frame strip",
+   "n_px": 2956,
+   "median_z_mm": 257.0,
+   "centroid_robot_mm": [
+    21.6,
+    28.4,
+    -13.1
+   ],
+   "centroid_cam_mm": [
+    -21.6,
+    26.0,
+    259.7
+   ],
+   "normal_robot": [
+    0.866,
+    0.463,
+    0.189
+   ],
+   "extent_mm": [
+    55.6,
+    15.9,
+    4.1
+   ],
+   "height_range_mm": [
+    -33.2,
+    37.7
+   ],
+   "offset_from_body_mm": [
+    15.8,
+    19.6,
+    -13.5
+   ]
+  },
+  "grille_right_frame_strip": {
+   "label": "grille right frame strip",
+   "n_px": 10355,
+   "median_z_mm": 269.3,
+   "centroid_robot_mm": [
+    -34.2,
+    8.8,
+    4.1
+   ],
+   "centroid_cam_mm": [
+    34.5,
+    2.5,
+    268.9
+   ],
+   "normal_robot": [
+    -0.212,
+    0.678,
+    0.704
+   ],
+   "extent_mm": [
+    55.0,
+    6.7,
+    3.7
+   ],
+   "height_range_mm": [
+    -30.2,
+    35.2
+   ],
+   "offset_from_body_mm": [
+    -40.0,
+    -0.0,
+    3.7
+   ]
+  },
+  "screw_bottom_left": {
+   "label": "screw bottom left",
+   "n_px": 328,
+   "median_z_mm": 254.5,
+   "centroid_robot_mm": [
+    3.1,
+    42.2,
+    -23.0
+   ],
+   "centroid_cam_mm": [
+    -3.4,
+    42.4,
+    254.5
+   ],
+   "normal_robot": [
+    0.088,
+    0.874,
+    0.479
+   ],
+   "extent_mm": [
+    3.4,
+    2.0,
+    0.8
+   ],
+   "height_range_mm": [
+    -24.1,
+    -21.1
+   ],
+   "offset_from_body_mm": [
+    -2.7,
+    33.4,
+    -23.4
+   ]
+  },
+  "screw_bottom_right": {
+   "label": "screw bottom right",
+   "n_px": 304,
+   "median_z_mm": 256.5,
+   "centroid_robot_mm": [
+    -21.9,
+    41.9,
+    -24.0
+   ],
+   "centroid_cam_mm": [
+    21.5,
+    43.8,
+    256.3
+   ],
+   "normal_robot": [
+    0.017,
+    0.897,
+    0.441
+   ],
+   "extent_mm": [
+    3.3,
+    2.0,
+    0.8
+   ],
+   "height_range_mm": [
+    -25.2,
+    -22.2
+   ],
+   "offset_from_body_mm": [
+    -27.7,
+    33.1,
+    -24.4
+   ]
+  },
+  "red_inner_patch": {
+   "label": "red inner patch",
+   "n_px": 520,
+   "median_z_mm": 265.6,
+   "centroid_robot_mm": [
+    -22.0,
+    22.5,
+    -11.2
+   ],
+   "centroid_cam_mm": [
+    21.9,
+    22.4,
+    265.4
+   ],
+   "normal_robot": [
+    0.59,
+    0.754,
+    0.289
+   ],
+   "extent_mm": [
+    5.1,
+    2.7,
+    1.3
+   ],
+   "height_range_mm": [
+    -14.6,
+    -7.3
+   ],
+   "offset_from_body_mm": [
+    -27.8,
+    13.7,
+    -11.6
+   ]
+  },
+  "lower_left_wedge_body": {
+   "label": "lower left wedge body",
+   "n_px": 10021,
+   "median_z_mm": 294.1,
+   "centroid_robot_mm": [
+    46.0,
+    -3.3,
+    -31.4
+   ],
+   "centroid_cam_mm": [
+    -47.5,
+    23.0,
+    295.1
+   ],
+   "normal_robot": [
+    0.089,
+    0.41,
+    0.908
+   ],
+   "extent_mm": [
+    45.1,
+    23.0,
+    1.7
+   ],
+   "height_range_mm": [
+    -41.6,
+    -16.5
+   ],
+   "offset_from_body_mm": [
+    40.2,
+    -12.1,
+    -31.8
+   ]
+  },
+  "lower_right_wedge_foot": {
+   "label": "lower right wedge foot",
+   "n_px": 3822,
+   "median_z_mm": 266.0,
+   "centroid_robot_mm": [
+    -31.1,
+    13.0,
+    -1.0
+   ],
+   "centroid_cam_mm": [
+    31.2,
+    8.9,
+    268.1
+   ],
+   "normal_robot": [
+    0.32,
+    0.648,
+    0.691
+   ],
+   "extent_mm": [
+    46.8,
+    4.8,
+    1.7
+   ],
+   "height_range_mm": [
+    -24.7,
+    22.6
+   ],
+   "offset_from_body_mm": [
+    -36.9,
+    4.2,
+    -1.4
+   ]
+  },
+  "top_left_corner_body": {
+   "label": "top left corner body",
+   "n_px": 25146,
+   "median_z_mm": 267.2,
+   "centroid_robot_mm": [
+    35.6,
+    2.7,
+    6.7
+   ],
+   "centroid_cam_mm": [
+    -35.2,
+    -5.1,
+    269.5
+   ],
+   "normal_robot": [
+    0.808,
+    0.534,
+    0.25
+   ],
+   "extent_mm": [
+    42.9,
+    26.2,
+    6.2
+   ],
+   "height_range_mm": [
+    -20.7,
+    31.7
+   ],
+   "offset_from_body_mm": [
+    29.8,
+    -6.1,
+    6.3
+   ]
+  },
+  "auto_1": {
+   "label": "auto_1",
+   "n_px": 2805,
+   "median_z_mm": 266.3,
+   "centroid_robot_mm": [
+    -3.2,
+    7.1,
+    -3.9
+   ],
+   "centroid_cam_mm": [
+    3.1,
+    7.3,
+    273.4
+   ],
+   "normal_robot": [
+    0.259,
+    0.563,
+    0.785
+   ],
+   "extent_mm": [
+    81.3,
+    48.0,
+    23.1
+   ],
+   "height_range_mm": [
+    -32.7,
+    26.0
+   ],
+   "offset_from_body_mm": [
+    -9.0,
+    -1.7,
+    -4.3
+   ]
+  },
+  "auto_2": {
+   "label": "auto_2",
+   "n_px": 250,
+   "median_z_mm": 282.1,
+   "centroid_robot_mm": [
+    32.4,
+    12.8,
+    -33.3
+   ],
+   "centroid_cam_mm": [
+    -33.7,
+    33.9,
+    283.3
+   ],
+   "normal_robot": [
+    0.867,
+    0.408,
+    -0.286
+   ],
+   "extent_mm": [
+    46.8,
+    2.8,
+    0.2
+   ],
+   "height_range_mm": [
+    -40.7,
+    -22.5
+   ],
+   "offset_from_body_mm": [
+    26.6,
+    4.0,
+    -33.7
+   ]
+  },
+  "auto_3": {
+   "label": "auto_3",
+   "n_px": 643,
+   "median_z_mm": 327.9,
+   "centroid_robot_mm": [
+    -1.8,
+    -58.9,
+    18.1
+   ],
+   "centroid_cam_mm": [
+    1.5,
+    -47.7,
+    316.1
+   ],
+   "normal_robot": [
+    -0.038,
+    -0.279,
+    0.96
+   ],
+   "extent_mm": [
+    58.6,
+    44.6,
+    7.3
+   ],
+   "height_range_mm": [
+    8.6,
+    34.4
+   ],
+   "offset_from_body_mm": [
+    -7.6,
+    -67.7,
+    17.7
+   ]
+  }
+ },
+ "pairs": {
+  "top_black_lip->left_wedge_side": [
+   19.7,
+   22.9,
+   -21.6
+  ],
+  "top_black_lip->left_wedge_upper_face": [
+   15.2,
+   9.1,
+   -1.4
+  ],
+  "top_black_lip->left_wedge_mid_face": [
+   34.2,
+   22.4,
+   -66.0
+  ],
+  "top_black_lip->left_wedge_edge_highlight": [
+   35.6,
+   14.8,
+   -41.5
+  ],
+  "top_black_lip->right_wedge_side": [
+   -39.8,
+   45.9,
+   -52.0
+  ],
+  "top_black_lip->grille_plate": [
+   -4.5,
+   28.1,
+   -31.0
+  ],
+  "top_black_lip->grille_lower_bar": [
+   -11.3,
+   60.4,
+   -58.5
+  ],
+  "top_black_lip->grille_left_frame_strip": [
+   20.0,
+   44.6,
+   -46.5
+  ],
+  "top_black_lip->grille_right_frame_strip": [
+   -35.8,
+   25.0,
+   -29.3
+  ],
+  "top_black_lip->screw_bottom_left": [
+   1.5,
+   58.4,
+   -56.4
+  ],
+  "top_black_lip->screw_bottom_right": [
+   -23.5,
+   58.1,
+   -57.4
+  ],
+  "top_black_lip->red_inner_patch": [
+   -23.6,
+   38.7,
+   -44.6
+  ],
+  "top_black_lip->lower_left_wedge_body": [
+   44.4,
+   12.9,
+   -64.8
+  ],
+  "top_black_lip->lower_right_wedge_foot": [
+   -32.7,
+   29.2,
+   -34.4
+  ],
+  "top_black_lip->top_left_corner_body": [
+   34.0,
+   18.9,
+   -26.7
+  ],
+  "top_black_lip->auto_1": [
+   -4.8,
+   23.3,
+   -37.3
+  ],
+  "top_black_lip->auto_2": [
+   30.8,
+   29.0,
+   -66.7
+  ],
+  "top_black_lip->auto_3": [
+   -3.4,
+   -42.7,
+   -15.3
+  ],
+  "left_wedge_side->left_wedge_upper_face": [
+   -4.5,
+   -13.8,
+   20.2
+  ],
+  "left_wedge_side->left_wedge_mid_face": [
+   14.5,
+   -0.5,
+   -44.4
+  ],
+  "left_wedge_side->left_wedge_edge_highlight": [
+   15.9,
+   -8.1,
+   -19.9
+  ],
+  "left_wedge_side->right_wedge_side": [
+   -59.5,
+   23.0,
+   -30.4
+  ],
+  "left_wedge_side->grille_plate": [
+   -24.2,
+   5.2,
+   -9.4
+  ],
+  "left_wedge_side->grille_lower_bar": [
+   -31.0,
+   37.5,
+   -36.9
+  ],
+  "left_wedge_side->grille_left_frame_strip": [
+   0.3,
+   21.7,
+   -24.9
+  ],
+  "left_wedge_side->grille_right_frame_strip": [
+   -55.5,
+   2.1,
+   -7.7
+  ],
+  "left_wedge_side->screw_bottom_left": [
+   -18.2,
+   35.5,
+   -34.8
+  ],
+  "left_wedge_side->screw_bottom_right": [
+   -43.2,
+   35.2,
+   -35.8
+  ],
+  "left_wedge_side->red_inner_patch": [
+   -43.3,
+   15.8,
+   -23.0
+  ],
+  "left_wedge_side->lower_left_wedge_body": [
+   24.7,
+   -10.0,
+   -43.2
+  ],
+  "left_wedge_side->lower_right_wedge_foot": [
+   -52.4,
+   6.3,
+   -12.8
+  ],
+  "left_wedge_side->top_left_corner_body": [
+   14.3,
+   -4.0,
+   -5.1
+  ],
+  "left_wedge_side->auto_1": [
+   -24.5,
+   0.4,
+   -15.7
+  ],
+  "left_wedge_side->auto_2": [
+   11.1,
+   6.1,
+   -45.1
+  ],
+  "left_wedge_side->auto_3": [
+   -23.1,
+   -65.6,
+   6.3
+  ],
+  "left_wedge_upper_face->left_wedge_mid_face": [
+   19.0,
+   13.3,
+   -64.6
+  ],
+  "left_wedge_upper_face->left_wedge_edge_highlight": [
+   20.4,
+   5.7,
+   -40.1
+  ],
+  "left_wedge_upper_face->right_wedge_side": [
+   -55.0,
+   36.8,
+   -50.6
+  ],
+  "left_wedge_upper_face->grille_plate": [
+   -19.7,
+   19.0,
+   -29.6
+  ],
+  "left_wedge_upper_face->grille_lower_bar": [
+   -26.5,
+   51.3,
+   -57.1
+  ],
+  "left_wedge_upper_face->grille_left_frame_strip": [
+   4.8,
+   35.5,
+   -45.1
+  ],
+  "left_wedge_upper_face->grille_right_frame_strip": [
+   -51.0,
+   15.9,
+   -27.9
+  ],
+  "left_wedge_upper_face->screw_bottom_left": [
+   -13.7,
+   49.3,
+   -55.0
+  ],
+  "left_wedge_upper_face->screw_bottom_right": [
+   -38.7,
+   49.0,
+   -56.0
+  ],
+  "left_wedge_upper_face->red_inner_patch": [
+   -38.8,
+   29.6,
+   -43.2
+  ],
+  "left_wedge_upper_face->lower_left_wedge_body": [
+   29.2,
+   3.8,
+   -63.4
+  ],
+  "left_wedge_upper_face->lower_right_wedge_foot": [
+   -47.9,
+   20.1,
+   -33.0
+  ],
+  "left_wedge_upper_face->top_left_corner_body": [
+   18.8,
+   9.8,
+   -25.3
+  ],
+  "left_wedge_upper_face->auto_1": [
+   -20.0,
+   14.2,
+   -35.9
+  ],
+  "left_wedge_upper_face->auto_2": [
+   15.6,
+   19.9,
+   -65.3
+  ],
+  "left_wedge_upper_face->auto_3": [
+   -18.6,
+   -51.8,
+   -13.9
+  ],
+  "left_wedge_mid_face->left_wedge_edge_highlight": [
+   1.4,
+   -7.6,
+   24.5
+  ],
+  "left_wedge_mid_face->right_wedge_side": [
+   -74.0,
+   23.5,
+   14.0
+  ],
+  "left_wedge_mid_face->grille_plate": [
+   -38.7,
+   5.7,
+   35.0
+  ],
+  "left_wedge_mid_face->grille_lower_bar": [
+   -45.5,
+   38.0,
+   7.5
+  ],
+  "left_wedge_mid_face->grille_left_frame_strip": [
+   -14.2,
+   22.2,
+   19.5
+  ],
+  "left_wedge_mid_face->grille_right_frame_strip": [
+   -70.0,
+   2.6,
+   36.7
+  ],
+  "left_wedge_mid_face->screw_bottom_left": [
+   -32.7,
+   36.0,
+   9.6
+  ],
+  "left_wedge_mid_face->screw_bottom_right": [
+   -57.7,
+   35.7,
+   8.6
+  ],
+  "left_wedge_mid_face->red_inner_patch": [
+   -57.8,
+   16.3,
+   21.4
+  ],
+  "left_wedge_mid_face->lower_left_wedge_body": [
+   10.2,
+   -9.5,
+   1.2
+  ],
+  "left_wedge_mid_face->lower_right_wedge_foot": [
+   -66.9,
+   6.8,
+   31.6
+  ],
+  "left_wedge_mid_face->top_left_corner_body": [
+   -0.2,
+   -3.5,
+   39.3
+  ],
+  "left_wedge_mid_face->auto_1": [
+   -39.0,
+   0.9,
+   28.7
+  ],
+  "left_wedge_mid_face->auto_2": [
+   -3.4,
+   6.6,
+   -0.7
+  ],
+  "left_wedge_mid_face->auto_3": [
+   -37.6,
+   -65.1,
+   50.7
+  ],
+  "left_wedge_edge_highlight->right_wedge_side": [
+   -75.4,
+   31.1,
+   -10.5
+  ],
+  "left_wedge_edge_highlight->grille_plate": [
+   -40.1,
+   13.3,
+   10.5
+  ],
+  "left_wedge_edge_highlight->grille_lower_bar": [
+   -46.9,
+   45.6,
+   -17.0
+  ],
+  "left_wedge_edge_highlight->grille_left_frame_strip": [
+   -15.6,
+   29.8,
+   -5.0
+  ],
+  "left_wedge_edge_highlight->grille_right_frame_strip": [
+   -71.4,
+   10.2,
+   12.2
+  ],
+  "left_wedge_edge_highlight->screw_bottom_left": [
+   -34.1,
+   43.6,
+   -14.9
+  ],
+  "left_wedge_edge_highlight->screw_bottom_right": [
+   -59.1,
+   43.3,
+   -15.9
+  ],
+  "left_wedge_edge_highlight->red_inner_patch": [
+   -59.2,
+   23.9,
+   -3.1
+  ],
+  "left_wedge_edge_highlight->lower_left_wedge_body": [
+   8.8,
+   -1.9,
+   -23.3
+  ],
+  "left_wedge_edge_highlight->lower_right_wedge_foot": [
+   -68.3,
+   14.4,
+   7.1
+  ],
+  "left_wedge_edge_highlight->top_left_corner_body": [
+   -1.6,
+   4.1,
+   14.8
+  ],
+  "left_wedge_edge_highlight->auto_1": [
+   -40.4,
+   8.5,
+   4.2
+  ],
+  "left_wedge_edge_highlight->auto_2": [
+   -4.8,
+   14.2,
+   -25.2
+  ],
+  "left_wedge_edge_highlight->auto_3": [
+   -39.0,
+   -57.5,
+   26.2
+  ],
+  "right_wedge_side->grille_plate": [
+   35.3,
+   -17.8,
+   21.0
+  ],
+  "right_wedge_side->grille_lower_bar": [
+   28.5,
+   14.5,
+   -6.5
+  ],
+  "right_wedge_side->grille_left_frame_strip": [
+   59.8,
+   -1.3,
+   5.5
+  ],
+  "right_wedge_side->grille_right_frame_strip": [
+   4.0,
+   -20.9,
+   22.7
+  ],
+  "right_wedge_side->screw_bottom_left": [
+   41.3,
+   12.5,
+   -4.4
+  ],
+  "right_wedge_side->screw_bottom_right": [
+   16.3,
+   12.2,
+   -5.4
+  ],
+  "right_wedge_side->red_inner_patch": [
+   16.2,
+   -7.2,
+   7.4
+  ],
+  "right_wedge_side->lower_left_wedge_body": [
+   84.2,
+   -33.0,
+   -12.8
+  ],
+  "right_wedge_side->lower_right_wedge_foot": [
+   7.1,
+   -16.7,
+   17.6
+  ],
+  "right_wedge_side->top_left_corner_body": [
+   73.8,
+   -27.0,
+   25.3
+  ],
+  "right_wedge_side->auto_1": [
+   35.0,
+   -22.6,
+   14.7
+  ],
+  "right_wedge_side->auto_2": [
+   70.6,
+   -16.9,
+   -14.7
+  ],
+  "right_wedge_side->auto_3": [
+   36.4,
+   -88.6,
+   36.7
+  ],
+  "grille_plate->grille_lower_bar": [
+   -6.8,
+   32.3,
+   -27.5
+  ],
+  "grille_plate->grille_left_frame_strip": [
+   24.5,
+   16.5,
+   -15.5
+  ],
+  "grille_plate->grille_right_frame_strip": [
+   -31.3,
+   -3.1,
+   1.7
+  ],
+  "grille_plate->screw_bottom_left": [
+   6.0,
+   30.3,
+   -25.4
+  ],
+  "grille_plate->screw_bottom_right": [
+   -19.0,
+   30.0,
+   -26.4
+  ],
+  "grille_plate->red_inner_patch": [
+   -19.1,
+   10.6,
+   -13.6
+  ],
+  "grille_plate->lower_left_wedge_body": [
+   48.9,
+   -15.2,
+   -33.8
+  ],
+  "grille_plate->lower_right_wedge_foot": [
+   -28.2,
+   1.1,
+   -3.4
+  ],
+  "grille_plate->top_left_corner_body": [
+   38.5,
+   -9.2,
+   4.3
+  ],
+  "grille_plate->auto_1": [
+   -0.3,
+   -4.8,
+   -6.3
+  ],
+  "grille_plate->auto_2": [
+   35.3,
+   0.9,
+   -35.7
+  ],
+  "grille_plate->auto_3": [
+   1.1,
+   -70.8,
+   15.7
+  ],
+  "grille_lower_bar->grille_left_frame_strip": [
+   31.3,
+   -15.8,
+   12.0
+  ],
+  "grille_lower_bar->grille_right_frame_strip": [
+   -24.5,
+   -35.4,
+   29.2
+  ],
+  "grille_lower_bar->screw_bottom_left": [
+   12.8,
+   -2.0,
+   2.1
+  ],
+  "grille_lower_bar->screw_bottom_right": [
+   -12.2,
+   -2.3,
+   1.1
+  ],
+  "grille_lower_bar->red_inner_patch": [
+   -12.3,
+   -21.7,
+   13.9
+  ],
+  "grille_lower_bar->lower_left_wedge_body": [
+   55.7,
+   -47.5,
+   -6.3
+  ],
+  "grille_lower_bar->lower_right_wedge_foot": [
+   -21.4,
+   -31.2,
+   24.1
+  ],
+  "grille_lower_bar->top_left_corner_body": [
+   45.3,
+   -41.5,
+   31.8
+  ],
+  "grille_lower_bar->auto_1": [
+   6.5,
+   -37.1,
+   21.2
+  ],
+  "grille_lower_bar->auto_2": [
+   42.1,
+   -31.4,
+   -8.2
+  ],
+  "grille_lower_bar->auto_3": [
+   7.9,
+   -103.1,
+   43.2
+  ],
+  "grille_left_frame_strip->grille_right_frame_strip": [
+   -55.8,
+   -19.6,
+   17.2
+  ],
+  "grille_left_frame_strip->screw_bottom_left": [
+   -18.5,
+   13.8,
+   -9.9
+  ],
+  "grille_left_frame_strip->screw_bottom_right": [
+   -43.5,
+   13.5,
+   -10.9
+  ],
+  "grille_left_frame_strip->red_inner_patch": [
+   -43.6,
+   -5.9,
+   1.9
+  ],
+  "grille_left_frame_strip->lower_left_wedge_body": [
+   24.4,
+   -31.7,
+   -18.3
+  ],
+  "grille_left_frame_strip->lower_right_wedge_foot": [
+   -52.7,
+   -15.4,
+   12.1
+  ],
+  "grille_left_frame_strip->top_left_corner_body": [
+   14.0,
+   -25.7,
+   19.8
+  ],
+  "grille_left_frame_strip->auto_1": [
+   -24.8,
+   -21.3,
+   9.2
+  ],
+  "grille_left_frame_strip->auto_2": [
+   10.8,
+   -15.6,
+   -20.2
+  ],
+  "grille_left_frame_strip->auto_3": [
+   -23.4,
+   -87.3,
+   31.2
+  ],
+  "grille_right_frame_strip->screw_bottom_left": [
+   37.3,
+   33.4,
+   -27.1
+  ],
+  "grille_right_frame_strip->screw_bottom_right": [
+   12.3,
+   33.1,
+   -28.1
+  ],
+  "grille_right_frame_strip->red_inner_patch": [
+   12.2,
+   13.7,
+   -15.3
+  ],
+  "grille_right_frame_strip->lower_left_wedge_body": [
+   80.2,
+   -12.1,
+   -35.5
+  ],
+  "grille_right_frame_strip->lower_right_wedge_foot": [
+   3.1,
+   4.2,
+   -5.1
+  ],
+  "grille_right_frame_strip->top_left_corner_body": [
+   69.8,
+   -6.1,
+   2.6
+  ],
+  "grille_right_frame_strip->auto_1": [
+   31.0,
+   -1.7,
+   -8.0
+  ],
+  "grille_right_frame_strip->auto_2": [
+   66.6,
+   4.0,
+   -37.4
+  ],
+  "grille_right_frame_strip->auto_3": [
+   32.4,
+   -67.7,
+   14.0
+  ],
+  "screw_bottom_left->screw_bottom_right": [
+   -25.0,
+   -0.3,
+   -1.0
+  ],
+  "screw_bottom_left->red_inner_patch": [
+   -25.1,
+   -19.7,
+   11.8
+  ],
+  "screw_bottom_left->lower_left_wedge_body": [
+   42.9,
+   -45.5,
+   -8.4
+  ],
+  "screw_bottom_left->lower_right_wedge_foot": [
+   -34.2,
+   -29.2,
+   22.0
+  ],
+  "screw_bottom_left->top_left_corner_body": [
+   32.5,
+   -39.5,
+   29.7
+  ],
+  "screw_bottom_left->auto_1": [
+   -6.3,
+   -35.1,
+   19.1
+  ],
+  "screw_bottom_left->auto_2": [
+   29.3,
+   -29.4,
+   -10.3
+  ],
+  "screw_bottom_left->auto_3": [
+   -4.9,
+   -101.1,
+   41.1
+  ],
+  "screw_bottom_right->red_inner_patch": [
+   -0.1,
+   -19.4,
+   12.8
+  ],
+  "screw_bottom_right->lower_left_wedge_body": [
+   67.9,
+   -45.2,
+   -7.4
+  ],
+  "screw_bottom_right->lower_right_wedge_foot": [
+   -9.2,
+   -28.9,
+   23.0
+  ],
+  "screw_bottom_right->top_left_corner_body": [
+   57.5,
+   -39.2,
+   30.7
+  ],
+  "screw_bottom_right->auto_1": [
+   18.7,
+   -34.8,
+   20.1
+  ],
+  "screw_bottom_right->auto_2": [
+   54.3,
+   -29.1,
+   -9.3
+  ],
+  "screw_bottom_right->auto_3": [
+   20.1,
+   -100.8,
+   42.1
+  ],
+  "red_inner_patch->lower_left_wedge_body": [
+   68.0,
+   -25.8,
+   -20.2
+  ],
+  "red_inner_patch->lower_right_wedge_foot": [
+   -9.1,
+   -9.5,
+   10.2
+  ],
+  "red_inner_patch->top_left_corner_body": [
+   57.6,
+   -19.8,
+   17.9
+  ],
+  "red_inner_patch->auto_1": [
+   18.8,
+   -15.4,
+   7.3
+  ],
+  "red_inner_patch->auto_2": [
+   54.4,
+   -9.7,
+   -22.1
+  ],
+  "red_inner_patch->auto_3": [
+   20.2,
+   -81.4,
+   29.3
+  ],
+  "lower_left_wedge_body->lower_right_wedge_foot": [
+   -77.1,
+   16.3,
+   30.4
+  ],
+  "lower_left_wedge_body->top_left_corner_body": [
+   -10.4,
+   6.0,
+   38.1
+  ],
+  "lower_left_wedge_body->auto_1": [
+   -49.2,
+   10.4,
+   27.5
+  ],
+  "lower_left_wedge_body->auto_2": [
+   -13.6,
+   16.1,
+   -1.9
+  ],
+  "lower_left_wedge_body->auto_3": [
+   -47.8,
+   -55.6,
+   49.5
+  ],
+  "lower_right_wedge_foot->top_left_corner_body": [
+   66.7,
+   -10.3,
+   7.7
+  ],
+  "lower_right_wedge_foot->auto_1": [
+   27.9,
+   -5.9,
+   -2.9
+  ],
+  "lower_right_wedge_foot->auto_2": [
+   63.5,
+   -0.2,
+   -32.3
+  ],
+  "lower_right_wedge_foot->auto_3": [
+   29.3,
+   -71.9,
+   19.1
+  ],
+  "top_left_corner_body->auto_1": [
+   -38.8,
+   4.4,
+   -10.6
+  ],
+  "top_left_corner_body->auto_2": [
+   -3.2,
+   10.1,
+   -40.0
+  ],
+  "top_left_corner_body->auto_3": [
+   -37.4,
+   -61.6,
+   11.4
+  ],
+  "auto_1->auto_2": [
+   35.6,
+   5.7,
+   -29.4
+  ],
+  "auto_1->auto_3": [
+   1.4,
+   -66.0,
+   22.0
+  ],
+  "auto_2->auto_3": [
+   -34.2,
+   -71.7,
+   51.4
+  ]
+ },
+ "note": "metric depth = fit of photo disparity to the model's depth; trust only when pose.json confidence/iou are good and calibration.r is high"
+}
