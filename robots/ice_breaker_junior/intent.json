@@ -1,0 +1,45 @@
+{
+ "hypothesis": "vspin_drisk",
+ "name": "Ice Breaker Junior",
+ "teeth": 3,
+ "outline": [
+  [
+   -52,
+   -42
+  ],
+  [
+   52,
+   -42
+  ],
+  [
+   52,
+   34
+  ],
+  [
+   -52,
+   34
+  ]
+ ],
+ "robot_type": "vertical_spinner",
+ "reference": [
+  {
+   "image": "reference/ice_breaker_junior.aws74.webp",
+   "view": "iso",
+   "mask": "reference/ice_breaker_junior.aws74_mask.png",
+   "approximate": true
+  },
+  {
+   "image": "reference/ice_breaker_junior.aws76.webp",
+   "view": "iso",
+   "mask": "reference/ice_breaker_junior.aws76_mask.png",
+   "approximate": true
+  },
+  {
+   "image": "reference/ice_breaker_junior.aws77.webp",
+   "view": "iso",
+   "mask": "reference/ice_breaker_junior.aws77_mask.png",
+   "approximate": true
+  }
+ ],
+ "fixed": {}
+}

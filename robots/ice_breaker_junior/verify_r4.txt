@@ -1,0 +1,102 @@
+BLOCKERS: 21
+  [cached] integrity 0.00s
+  [proxy] wiring 0.01s
+  [cached] mass 0.00s
+  [proxy] interference 0.41s
+  [cached] connections 0.00s
+  [cached] legal 0.00s
+  [cached] fasteners 0.00s
+  [cached] power 0.00s
+  [cached] tension 0.00s
+  [cached] targets 0.00s
+  [cached] fight 0.00s
+  [cached] shape 0.00s
+  [cached] dynamics 0.00s
+  [cached] strength 0.00s
+  [cached] printability 0.00s
+  [cached] process 0.00s
+  [cached] electrical 0.00s
+  [cached] combat 0.01s
+  [cached] physics 0.00s
+  [cached] plausibility 0.00s
+  [cached] cots 0.00s
+  [cached] fit 0.00s
+  [cached] bom 0.00s
+  [cached] wire_review 0.00s
+  [cached] fastener_record 0.00s
+  [ran] likeness 6.44s
+  [cached] drive_recess 0.00s
+  [cached] belt_wrap 0.00s
+  [cached] retention 0.00s
+  [cached] waiver_audit 0.00s
+  [cached] geom 0.00s
+  [cached] dfm 0.00s
+  [cached] realworld 0.00s
+Ice Breaker Junior: ok=False 21 blockers in 19 root causes, mass 474.1/225 g
+1. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `chassis`. (+1 consequences)
+   | weapon: x -18.00..18.00  y -9.55..28.61  z -12.00..27.08  size 36.00 x 38.16 x 39.08 mm
+   |   centre (0.00, 9.53, 7.54), volume 41137.6 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 10.0, 8.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.22 mm (allowed 0.08)
+   |   overlap allowed `lock_pin` 0.70 mm (allowed 1000.00)
+2. [process.geometry] `weapon` (laser): 1 hole(s) of dia 4.00 mm < 36.00 mm (1 x thickness): cut holes that small distort or do not pierce; drill/ream them as a secondary op or enlarge. (+1 consequences)
+   fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
+   | weapon: x -18.00..18.00  y -9.55..28.61  z -12.00..27.08  size 36.00 x 38.16 x 39.08 mm
+   |   centre (0.00, 9.53, 7.54), volume 41137.6 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 10.0, 8.0] range 0..360 default 0
+   |   OVERLAP `chassis` 1.22 mm (allowed 0.08)
+   |   overlap allowed `lock_pin` 0.70 mm (allowed 1000.00)
+3. [proxy.wiring] Wire `w_bat_sw` (`el_battery.xt30` to `el_switch.in`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+4. [proxy.wiring] Wire `w_sw_esc` (`el_switch.out` to `el_esc.bat`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+5. [proxy.wiring] Wire `w_m1` (`el_esc.m1` to `dm_wheel_l0.terminals`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+6. [proxy.wiring] Wire `w_m2` (`el_esc.m2` to `dm_wheel_r0.terminals`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+7. [proxy.wiring] Wire `w_sw_wesc` (`el_switch.out` to `el_wesc.bat`): its ports moved 43.01 mm since the baseline route.
+   fix: Run the full `wiring` group to re-route it.
+8. [proxy.wiring] Wire `w_sig_wesc` (`el_esc.wpn` to `el_wesc.rx`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+9. [proxy.wiring] Wire `w_wm` (`el_wesc.motor` to `weapon_motor.phases`): no baseline route (run the full `wiring` group once and pass its report).
+   fix: Run the full `wiring` group to re-route it.
+10. [mass.over] 474.1 g (range 437.5 to 510.6 g) against the 225 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+11. [proxy.interference] `chassis` and `weapon` overlap by 1.22 mm (allowed 0.08).
+   | chassis: x -44.00..44.00  y -37.00..37.00  z -14.00..8.00  size 88.00 x 74.00 x 22.00 mm
+   |   centre (0.00, -0.00, -3.00), volume 50204.8 mm3
+   |   OVERLAP `weapon` 1.22 mm (allowed 0.08)
+   |   overlap allowed `dt_mount_fork_0` 1.05 mm (allowed inf)
+   |   overlap allowed `dt_mount_fork_1` 1.05 mm (allowed inf)
+12. [power.runtime] 350 mAh x 80% usable lasts about 2.4 min of fighting (per 3 min fight: drive 49 mAh, weapon spin-ups and hold 295 mAh, electronics 5 mAh = 349 mAh). A fight is 3 min and the pack must cover it with 25% margin.
+   fix: Fit a pack of at least 545 mAh, or lower the load (smaller weapon, lower kV).
+   | el_battery: x -18.00..18.00  y -29.00..-12.00  z -12.00..-1.00  size 36.00 x 17.00 x 11.00 mm
+   |   centre (0.00, -20.50, -6.50), volume 6732.0 mm3
+   |   port xt30: (0.00, -10.00, -6.50)
+   |   gap to `chassis` 0.25 mm
+   |   gap to `el_switch` 1.60 mm
+... 7 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 474.1 g of 225 g (-249.1 g margin)
+    weapon                    324.99 g  fills 77% of its box  <- solid block? a tub should be a shell
+    chassis                    47.79 g  fills 35% of its box
+    el_battery                 21.50 g  fills 100% of its box  <- solid block? a tub should be a shell
+    wheel_l0                   11.00 g  fills 69% of its box
+    wheel_r0                   11.00 g  fills 69% of its box
+    dm_wheel_l0                 9.50 g  fills 63% of its box
+    dm_wheel_r0                 9.50 g  fills 63% of its box
+    weapon_motor                8.60 g  fills 53% of its box
+    el_wesc                     5.00 g  fills 94% of its box
+    dt_shaft_weapon             4.57 g  fills 79% of its box
+    fork_0                      3.71 g  fills 5% of its box
+    fork_1                      3.71 g  fills 5% of its box
+    dt_hub_wheel_l0             3.11 g  fills 74% of its box
+    dt_hub_wheel_r0             3.11 g  fills 74% of its box
+    el_esc                      2.30 g  fills 99% of its box
+    dt_mount_fork_0             0.87 g  fills 98% of its box
+    dt_mount_fork_1             0.87 g  fills 98% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    lock_pin                    0.37 g  fills 79% of its box
+    mass.over: 474.1 g (range 437.5 to 510.6 g) against the 225 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 8 hit / 0 miss, group 30 hit / 1 miss, inside 12 hit / 0 miss, likeness 1 hit / 2 miss, min_gap 48 hit / 0 miss, overlap 190 hit / 0 miss, part_geom 19 hit / 0 miss

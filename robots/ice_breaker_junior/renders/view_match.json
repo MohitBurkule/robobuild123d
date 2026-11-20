@@ -1,0 +1,20 @@
+{
+ "ice_breaker_junior.aws74.webp": {
+  "view": "45,35!",
+  "azimuth": 45.0,
+  "elevation": 35.0,
+  "iou": 0.58
+ },
+ "ice_breaker_junior.aws76.webp": {
+  "view": "135,35!",
+  "azimuth": 135.0,
+  "elevation": 35.0,
+  "iou": 0.349
+ },
+ "ice_breaker_junior.aws77.webp": {
+  "view": "35,30",
+  "azimuth": 35.0,
+  "elevation": 30.0,
+  "iou": 0.673
+ }
+}
