@@ -1,0 +1,26 @@
+{
+ "robot_type": "wedge",
+ "wheels": 4,
+ "weapon": {
+  "kind": "wedge"
+ },
+ "photos": [
+  "bzwroink.aws68.webp"
+ ],
+ "mask_mode": {
+  "bzwroink.aws68.webp": "textured"
+ },
+ "view": {
+  "bzwroink..._and_li_llest_stoink_.aws65.webp": "left",
+  "bzwroink...aws61.webp": "left",
+  "bzwroink.aws68.webp": "rear_right_iso"
+ },
+ "elevation": {
+  "bzwroink..._and_li_llest_stoink_.aws65.webp": 25,
+  "bzwroink...aws61.webp": 25,
+  "bzwroink.aws68.webp": 45
+ },
+ "view_source": {
+  "bzwroink.aws68.webp": "camera audit 2026-11: rear_right_iso, el 45, read from the photo (see CAMERA_AUDIT.md), not from likeness score"
+ }
+}

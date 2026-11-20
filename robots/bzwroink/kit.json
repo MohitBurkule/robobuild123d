@@ -1,0 +1,59 @@
+{
+ "robot_type": "wedge",
+ "body": {
+  "length": 70,
+  "width": 56,
+  "height": 24,
+  "ramp": 0
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 13,
+  "width": 10,
+  "y": [
+   -22,
+   20
+  ]
+ },
+ "colors": {
+  "body": "#e85a9a",
+  "wheel": "#f08ab8",
+  "weapon": "#c9cdd3",
+  "fork": "#c9cdd3"
+ },
+ "skip_photos": [
+  0,
+  1
+ ],
+ "textured": [
+  2
+ ],
+ "name": "bzwroink",
+ "weapon": {
+  "kind": "none"
+ },
+ "macros": [
+  {
+   "box": [
+    70,
+    30,
+    2
+   ],
+   "at": [
+    0,
+    48,
+    8
+   ],
+   "kind": "wedge",
+   "material": "polycarbonate",
+   "process": "laser",
+   "id": "scoop",
+   "color": "#e6d6e0",
+   "rot": [
+    -22,
+    0,
+    0
+   ]
+  }
+ ]
+}
