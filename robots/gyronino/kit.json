@@ -1,0 +1,194 @@
+{
+ "robot_type": "vertical_spinner",
+ "locomotion": "walker",
+ "body": {
+  "length": 60,
+  "width": 44,
+  "height": 44,
+  "ramp": 0,
+  "clearance": 8
+ },
+ "wheels": {
+  "n": 0,
+  "radius": 10,
+  "width": 8,
+  "y": [
+   0
+  ]
+ },
+ "weapon": {
+  "kind": "bar",
+  "radius": 62,
+  "width": 4,
+  "y": 64,
+  "teeth": 2,
+  "bar_width": 14,
+  "curve": 6,
+  "z": 20,
+  "axis": "y"
+ },
+ "colors": {
+  "body": "#e9efe6",
+  "wheel": "#202226",
+  "weapon": "#1f3fa8",
+  "fork": "#1f3fa8"
+ },
+ "macros": [
+  {
+   "box": [
+    44,
+    5,
+    44
+   ],
+   "at": [
+    0,
+    -32,
+    30
+   ],
+   "id": "tail_cap",
+   "color": "#e0703a"
+  },
+  {
+   "box": [
+    32,
+    14,
+    32
+   ],
+   "at": [
+    0,
+    36,
+    30
+   ],
+   "id": "gyro_block",
+   "color": "#e0703a"
+  },
+  {
+   "ring": [
+    41,
+    37,
+    5
+   ],
+   "at": [
+    0,
+    40,
+    30
+   ],
+   "axis": "y",
+   "id": "gyro_ring",
+   "color": "#e0703a"
+  },
+  {
+   "box": [
+    76,
+    3,
+    4
+   ],
+   "at": [
+    0,
+    40,
+    30
+   ],
+   "id": "spoke_h",
+   "color": "#3a3d44"
+  },
+  {
+   "box": [
+    4,
+    3,
+    76
+   ],
+   "at": [
+    0,
+    40,
+    30
+   ],
+   "id": "spoke_v",
+   "color": "#3a3d44"
+  },
+  {
+   "cyl": [
+    21,
+    9
+   ],
+   "at": [
+    0,
+    50,
+    30
+   ],
+   "axis": "y",
+   "id": "bevel_gear",
+   "color": "#1c1d20"
+  },
+  {
+   "cyl": [
+    12,
+    8
+   ],
+   "at": [
+    0,
+    58,
+    30
+   ],
+   "axis": "y",
+   "id": "bevel_hub",
+   "color": "#1c1d20"
+  },
+  {
+   "cyl": [
+    6,
+    10
+   ],
+   "at": [
+    0,
+    70,
+    30
+   ],
+   "axis": "y",
+   "id": "nose_hub",
+   "color": "#bfe8d6"
+  },
+  {
+   "side": [
+    [
+     34,
+     12
+    ],
+    [
+     42,
+     14
+    ],
+    [
+     92,
+     0.5
+    ],
+    [
+     86,
+     0.5
+    ]
+   ],
+   "x": [
+    13,
+    19
+   ],
+   "kind": "wedge",
+   "id": "foot",
+   "mirror": true,
+   "color": "#1f3fa8"
+  },
+  {
+   "box": [
+    24,
+    8,
+    8
+   ],
+   "at": [
+    0,
+    -26,
+    4
+   ],
+   "id": "tail_skid",
+   "color": "#e9efe6"
+  }
+ ],
+ "name": "gyronino"
+}

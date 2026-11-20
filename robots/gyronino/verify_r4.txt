@@ -1,0 +1,92 @@
+BLOCKERS: 16
+building 11 changed part solids on 4 processes
+  [ran] integrity 0.06s
+  [ran] mass 0.00s
+  [proxy] interference 17.88s
+  [ran] connections 1.50s
+  [ran] legal 0.04s
+  [ran] fasteners 0.00s
+  [ran] power 0.01s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.01s
+  [ran] shape 0.63s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 1.47s
+  [ran] process 0.00s
+  [ran] electrical 0.01s
+  [ran] combat 0.18s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.11s
+  [ran] bom 0.00s
+  [ran] wire_review 0.02s
+  [ran] fastener_record 0.00s
+  [ran] likeness 13.12s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.19s
+  [ran] dfm 0.08s
+  [ran] realworld 0.10s
+gyronino: ok=False 16 blockers in 14 root causes, mass 197.3/225 g
+1. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `foot_l`. (+1 consequences)
+   | weapon: x -62.00..62.00  y 62.00..66.00  z 7.00..33.00  size 124.00 x 4.00 x 26.00 mm
+   |   centre (0.00, 64.00, 20.00), volume 6944.0 mm3
+   |   joint revolute axis [0, 1, 0] pivot [0.0, 64.0, 20.0] range 0..360 default 0
+   |   OVERLAP `nose_hub` 0.46 mm (allowed 0.08)
+   |   overlap allowed `lock_pin` 0.28 mm (allowed 1000.00)
+2. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `foot_r`. (+1 consequences)
+   | weapon: x -62.00..62.00  y 62.00..66.00  z 7.00..33.00  size 124.00 x 4.00 x 26.00 mm
+   |   centre (0.00, 64.00, 20.00), volume 6944.0 mm3
+   |   joint revolute axis [0, 1, 0] pivot [0.0, 64.0, 20.0] range 0..360 default 0
+   |   OVERLAP `nose_hub` 0.46 mm (allowed 0.08)
+   |   overlap allowed `lock_pin` 0.28 mm (allowed 1000.00)
+3. [proxy.interference] `weapon` and `nose_hub` overlap by 0.46 mm (allowed 0.08).
+   | weapon: x -62.00..62.00  y 62.00..66.00  z 7.00..33.00  size 124.00 x 4.00 x 26.00 mm
+   |   centre (0.00, 64.00, 20.00), volume 6944.0 mm3
+   |   joint revolute axis [0, 1, 0] pivot [0.0, 64.0, 20.0] range 0..360 default 0
+   |   OVERLAP `nose_hub` 0.46 mm (allowed 0.08)
+   |   overlap allowed `lock_pin` 0.28 mm (allowed 1000.00)
+4. [proxy.interference] `spoke_h` and `spoke_v` overlap by 0.35 mm (allowed 0.08).
+   | spoke_h: x -38.00..38.00  y 38.50..41.50  z 18.00..22.00  size 76.00 x 3.00 x 4.00 mm
+   |   centre (0.00, 40.00, 20.00), volume 714.0 mm3
+   |   overlap allowed `gyro_block` 1.39 mm (allowed inf)
+   |   overlap allowed `gyro_ring` 0.49 mm (allowed inf)
+   |   OVERLAP `spoke_v` 0.35 mm (allowed 0.08)
+5. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `nose_hub`.
+   | weapon: x -62.00..62.00  y 62.00..66.00  z 7.00..33.00  size 124.00 x 4.00 x 26.00 mm
+   |   centre (0.00, 64.00, 20.00), volume 6944.0 mm3
+   |   joint revolute axis [0, 1, 0] pivot [0.0, 64.0, 20.0] range 0..360 default 0
+   |   OVERLAP `nose_hub` 0.46 mm (allowed 0.08)
+   |   overlap allowed `lock_pin` 0.28 mm (allowed 1000.00)
+6. [mfg.layer_load] `nose_hub` carries the `weapon` axle but is printed with build direction +z (world [0.0, 0.0, 1.0]), not along the spin axis [0.0, 1.0, 0.0]: impact load peels layers apart.
+   fix: Print it lying flat so the spin axis is the build direction, or make it a cut metal plate.
+   | nose_hub: x -6.00..6.00  y 65.00..75.00  z 14.00..26.00  size 12.00 x 10.00 x 12.00 mm
+   |   centre (0.00, 70.00, 20.00), volume 1131.0 mm3
+   |   OVERLAP `weapon` 0.46 mm (allowed 0.08)
+   | weapon: x -62.00..62.00  y 62.00..66.00  z 7.00..33.00  size 124.00 x 4.00 x 26.00 mm
+   |   centre (0.00, 64.00, 20.00), volume 6944.0 mm3
+7. [combat.R051] `weapon`: Weapon sweep above the floor is -22.36 mm (needs 0.3 mm).
+   fix: Raise the weapon axle: the weapon would strike the floor.
+   | weapon: x -62.00..62.00  y 62.00..66.00  z 7.00..33.00  size 124.00 x 4.00 x 26.00 mm
+   |   centre (0.00, 64.00, 20.00), volume 6944.0 mm3
+   |   joint revolute axis [0, 1, 0] pivot [0.0, 64.0, 20.0] range 0..360 default 0
+   |   OVERLAP `nose_hub` 0.46 mm (allowed 0.08)
+   |   overlap allowed `lock_pin` 0.28 mm (allowed 1000.00)
+8. [wire.render_wires] 2 of 2 robot render(s) do not draw all 5 wires: renders/iso.png: wire `w_sw_esc` not drawn (+2); renders/top.png: wire `w_sw_esc` not drawn (+2)
+   fix: Re-render with checks on so routes are drawn (`python3 -m robot render spec.json iso out.png`), or exempt the file in `render_ok` with a reason.
+9. [wire.render_count] iso.png: 2 routes vs 5 spec wires (missing ['w_sig_wesc', 'w_sw_esc', 'w_wm']); top.png: 2 routes vs 5 spec wires (missing ['w_sig_wesc', 'w_sw_esc', 'w_wm'])
+   fix: Re-render: the render record must list exactly the spec's wires.
+10. [likeness.silhouette] `reference/gyronino.aws72.webp`: best silhouette IoU 0.62 at camera front_right_iso (elevation 25, azimuth 30) (need 0.80: >= 0.8 and no worse than the closest stock template `wedge_2wd` at 0.61). Regions (photo frame, left third first) 0.66 / 0.81 / 0.34: worst = rear third. Height/length 0.68 model vs 0.90 photo (too flat: raise it or shorten it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+11. [likeness.silhouette] `reference/gyronino.aws74.webp`: best silhouette IoU 0.60 at camera front_right_iso (elevation 25, azimuth 30) (need 0.80: >= 0.8 and no worse than the closest stock template `wedge_2wd` at 0.57). Regions (photo frame, left third first) 0.69 / 0.72 / 0.34: worst = rear third. Height/length 0.68 model vs 0.80 photo (too flat: raise it or shorten it).
+   fix: Reshape the outline (chassis plan, wedge/fork length, weapon size and height) toward the photo; `robot render spec.json iso out.png` and compare side by side.
+12. [likeness.view] `reference/gyronino.aws76.webp` is declared `front_right_iso` (IoU 0.34 there) but the model matches it better from rear_right_iso (elevation 25, azimuth 330) (IoU 0.65).
+   fix: Turn the model so its front is +y and its right is +x (weapon / wedge at the front), or correct the photo's `view` in REFERENCE.json if the declared view is wrong.
+... 2 more root causes (fix these first, then re-run)
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 2 hit / 9 miss, group 0 hit / 31 miss, inside 3 hit / 13 miss, likeness 3 hit / 0 miss, min_gap 17 hit / 19 miss, overlap 32 hit / 255 miss, part_check 1 hit / 12 miss, part_geom 19 hit / 0 miss, ray 15 hit / 116 miss

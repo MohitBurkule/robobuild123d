@@ -1,0 +1,133 @@
+BLOCKERS: 59
+  [ran] integrity 0.11s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 34.77s
+  [ran] connections 1.07s
+  [ran] legal 0.01s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.02s
+  [ran] shape 0.57s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.85s
+  [ran] process 0.02s
+  [ran] electrical 0.00s
+  [ran] combat 0.15s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.01s
+  [ran] fastener_record 0.00s
+  [ran] likeness 11.93s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.01s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.01s
+  [ran] geom 0.10s
+  [ran] dfm 0.01s
+  [ran] realworld 0.01s
+gyronino: ok=False 59 blockers in 46 root causes, mass 215.8/225 g
+1. [proxy.interference] `chassis` and `dt_screw_0` overlap by 0.19 mm (allowed 0.08). Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   | chassis: x -22.00..22.00  y -30.00..30.00  z -2.00..42.00  size 44.00 x 60.00 x 44.00 mm
+   |   centre (-0.00, -0.00, 20.00), volume 116160.0 mm3
+   |   OVERLAP `gyro_block` 0.46 mm (allowed 0.08)
+   |   OVERLAP `tail_cap` 0.23 mm (allowed 0.08)
+   |   OVERLAP `dt_screw_0` 0.19 mm (allowed 0.08)
+2. [connection.floating] `dt_screw_0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `chassis`, 0.0 mm away. Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | dt_screw_0: x -18.62..-14.82  y -26.62..-22.82  z 41.60..43.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (-16.72, -24.72, 42.30), volume 15.9 mm3
+   |   OVERLAP `chassis` 0.19 mm (allowed 0.08)
+   |   gap to `tail_cap` 2.88 mm
+   | chassis: x -22.00..22.00  y -30.00..30.00  z -2.00..42.00  size 44.00 x 60.00 x 44.00 mm
+3. [mfg.stock] `dt_screw_0`: bought part with free geometry and no catalog SKU or stock rod/bearing match. Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   fix: Use a catalog part, or size it to a stock rod/bearing and name it in `stock`.
+   | dt_screw_0: x -18.62..-14.82  y -26.62..-22.82  z 41.60..43.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (-16.72, -24.72, 42.30), volume 15.9 mm3
+   |   OVERLAP `chassis` 0.19 mm (allowed 0.08)
+   |   gap to `tail_cap` 2.88 mm
+   | dt_screw_1: x 14.82..18.62  y -26.62..-22.82  z 41.60..43.00  size 3.80 x 3.80 x 1.40 mm
+4. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `nose_hub`. (+1 consequences)
+   | weapon: x -62.00..62.00  y 62.00..66.00  z 7.00..33.00  size 124.00 x 4.00 x 26.00 mm
+   |   centre (0.00, 64.00, 20.00), volume 6944.0 mm3
+   |   joint revolute axis [0, 1, 0] pivot [0.0, 64.0, 20.0] range 0..360 default 0
+   |   OVERLAP `nose_hub` 0.46 mm (allowed 0.08)
+   |   gap to `bevel_hub` 0.00 mm (touching)
+5. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `foot_l`. (+1 consequences)
+   | weapon: x -62.00..62.00  y 62.00..66.00  z 7.00..33.00  size 124.00 x 4.00 x 26.00 mm
+   |   centre (0.00, 64.00, 20.00), volume 6944.0 mm3
+   |   joint revolute axis [0, 1, 0] pivot [0.0, 64.0, 20.0] range 0..360 default 0
+   |   OVERLAP `nose_hub` 0.46 mm (allowed 0.08)
+   |   gap to `bevel_hub` 0.00 mm (touching)
+6. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `foot_r`. (+1 consequences)
+   | weapon: x -62.00..62.00  y 62.00..66.00  z 7.00..33.00  size 124.00 x 4.00 x 26.00 mm
+   |   centre (0.00, 64.00, 20.00), volume 6944.0 mm3
+   |   joint revolute axis [0, 1, 0] pivot [0.0, 64.0, 20.0] range 0..360 default 0
+   |   OVERLAP `nose_hub` 0.46 mm (allowed 0.08)
+   |   gap to `bevel_hub` 0.00 mm (touching)
+7. [connection.floating] `weapon` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `bevel_hub`, 0.0 mm away. (+1 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | weapon: x -62.00..62.00  y 62.00..66.00  z 7.00..33.00  size 124.00 x 4.00 x 26.00 mm
+   |   centre (0.00, 64.00, 20.00), volume 6944.0 mm3
+   |   joint revolute axis [0, 1, 0] pivot [0.0, 64.0, 20.0] range 0..360 default 0
+   |   OVERLAP `nose_hub` 0.46 mm (allowed 0.08)
+   |   gap to `bevel_hub` 0.00 mm (touching)
+8. [integrity.volume] `foot_l` volume 831 mm3 vs previous 4928 (-83%)
+   fix: The solid lost most of its material: check the last boolean/fillet.
+   | foot_l: x 13.00..19.00  y 34.00..92.00  z -9.50..4.00  size 6.00 x 58.00 x 13.50 mm
+   |   centre (16.00, 63.00, -2.75), volume 831.0 mm3
+   |   gap to `gyro_block` 0.00 mm (touching)
+   |   gap to `bevel_gear` 0.36 mm
+9. [integrity.volume] `foot_r` volume 831 mm3 vs previous 3752 (-78%)
+   fix: The solid lost most of its material: check the last boolean/fillet.
+   | foot_r: x -19.00..-13.00  y 34.00..92.00  z -9.50..4.00  size 6.00 x 58.00 x 13.50 mm
+   |   centre (-16.00, 63.00, -2.75), volume 831.0 mm3
+   |   gap to `gyro_block` 0.00 mm (touching)
+   |   gap to `bevel_gear` 0.36 mm
+10. [proxy.interference] `chassis` and `tail_cap` overlap by 0.23 mm (allowed 0.08).
+   | chassis: x -22.00..22.00  y -30.00..30.00  z -2.00..42.00  size 44.00 x 60.00 x 44.00 mm
+   |   centre (-0.00, -0.00, 20.00), volume 116160.0 mm3
+   |   OVERLAP `gyro_block` 0.46 mm (allowed 0.08)
+   |   OVERLAP `tail_cap` 0.23 mm (allowed 0.08)
+   |   OVERLAP `dt_screw_0` 0.19 mm (allowed 0.08)
+11. [proxy.interference] `chassis` and `gyro_block` overlap by 0.46 mm (allowed 0.08).
+   | chassis: x -22.00..22.00  y -30.00..30.00  z -2.00..42.00  size 44.00 x 60.00 x 44.00 mm
+   |   centre (-0.00, -0.00, 20.00), volume 116160.0 mm3
+   |   OVERLAP `gyro_block` 0.46 mm (allowed 0.08)
+   |   OVERLAP `tail_cap` 0.23 mm (allowed 0.08)
+   |   OVERLAP `dt_screw_0` 0.19 mm (allowed 0.08)
+12. [proxy.interference] `weapon` and `nose_hub` overlap by 0.46 mm (allowed 0.08).
+   | weapon: x -62.00..62.00  y 62.00..66.00  z 7.00..33.00  size 124.00 x 4.00 x 26.00 mm
+   |   centre (0.00, 64.00, 20.00), volume 6944.0 mm3
+   |   joint revolute axis [0, 1, 0] pivot [0.0, 64.0, 20.0] range 0..360 default 0
+   |   OVERLAP `nose_hub` 0.46 mm (allowed 0.08)
+   |   gap to `bevel_hub` 0.00 mm (touching)
+... 34 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 215.8 g of 225 g (+9.2 g margin)
+    chassis                   110.58 g  fills 100% of its box  <- solid block? a tub should be a shell
+    weapon                     54.86 g  fills 54% of its box
+    gyro_block                 13.65 g  fills 100% of its box
+    bevel_gear                 11.87 g  fills 79% of its box
+    tail_cap                    9.22 g  fills 100% of its box
+    gyro_ring                   4.67 g  fills 15% of its box
+    bevel_hub                   3.45 g  fills 79% of its box
+    tail_skid                   1.46 g  fills 100% of its box
+    nose_hub                    1.08 g  fills 79% of its box
+    spoke_h                     0.87 g  fills 100% of its box
+    spoke_v                     0.87 g  fills 100% of its box
+    foot_l                      0.79 g  fills 18% of its box
+    foot_r                      0.79 g  fills 18% of its box
+    dt_screw_0                  0.13 g  fills 79% of its box
+    dt_screw_1                  0.13 g  fills 79% of its box
+    dt_screw_2                  0.13 g  fills 79% of its box
+    dt_screw_3                  0.13 g  fills 79% of its box
+    mass.may_be_over: 215.8 g (range 181.2 to 250.5 g) against the 225 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 1 hit / 7 miss, group 0 hit / 31 miss, inside 0 hit / 17 miss, likeness 3 hit / 0 miss, min_gap 26 hit / 124 miss, overlap 38 hit / 233 miss, part_check 0 hit / 2 miss, part_geom 17 hit / 0 miss, ray 0 hit / 69 miss

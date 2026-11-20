@@ -1,0 +1,39 @@
+{
+ "spec": "/home/antigravity/MohitBurkule/robobuild123d/robots/gyronino/spec.json",
+ "rendered_at": 1795043064.2707672,
+ "bodies": [
+  "chassis",
+  "weapon",
+  "tail_cap",
+  "gyro_block",
+  "gyro_ring",
+  "spoke_h",
+  "spoke_v",
+  "bevel_gear",
+  "bevel_hub",
+  "nose_hub",
+  "foot_l",
+  "foot_r",
+  "tail_skid",
+  "el_battery",
+  "el_esc",
+  "el_wesc",
+  "el_switch",
+  "weapon_motor",
+  "lock_pin"
+ ],
+ "wires": {
+  "w_bat_sw": {
+   "from": [
+    -0.5,
+    10.5,
+    5.615
+   ],
+   "to": [
+    -4.5,
+    -12.0,
+    5.115
+   ]
+  }
+ }
+}

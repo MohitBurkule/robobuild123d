@@ -1,0 +1,22 @@
+{
+ "robot_type": "vertical_spinner",
+ "weapon": {
+  "kind": "bar",
+  "axis": "y"
+ },
+ "photos": [
+  "gyronino.aws72.webp",
+  "gyronino.aws74.webp",
+  "gyronino.aws76.webp"
+ ],
+ "view": {
+  "gyronino.aws72.webp": "front_right_iso",
+  "gyronino.aws74.webp": "front_right_iso",
+  "gyronino.aws76.webp": "rear_right_iso"
+ },
+ "elevation": {
+  "gyronino.aws72.webp": 25,
+  "gyronino.aws74.webp": 25,
+  "gyronino.aws76.webp": 45
+ }
+}
