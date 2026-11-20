@@ -1,0 +1,136 @@
+{
+ "robot_type": "vertical_spinner",
+ "body": {
+  "length": 90,
+  "width": 96,
+  "height": 22,
+  "ramp": 0,
+  "style": "twin_pods",
+  "slot": 16
+ },
+ "wheels": {
+  "n": 4,
+  "radius": 11,
+  "width": 8,
+  "y": [
+   -30,
+   25
+  ]
+ },
+ "weapon": {
+  "kind": "disc",
+  "radius": 17,
+  "width": 3,
+  "y": -8,
+  "teeth": 8,
+  "z": 72,
+  "axis": "x"
+ },
+ "colors": {
+  "body": "#eeeeea",
+  "wheel": "#f07a2c",
+  "weapon": "#8a8d92",
+  "fork": "#c9cdd3"
+ },
+ "skip_photos": [
+  0,
+  2
+ ],
+ "name": "sawcon",
+ "macros": [
+  {
+   "top": [
+    [
+     -60,
+     45
+    ],
+    [
+     60,
+     45
+    ],
+    [
+     45,
+     75
+    ],
+    [
+     -45,
+     75
+    ]
+   ],
+   "z": [
+    0,
+    3
+   ],
+   "color": "#2a2c30",
+   "kind": "wedge",
+   "id": "plow"
+  },
+  {
+   "side": [
+    [
+     45,
+     0
+    ],
+    [
+     75,
+     0
+    ],
+    [
+     45,
+     20
+    ]
+   ],
+   "x": [
+    -45,
+    45
+   ],
+   "kind": "wedge",
+   "id": "plow_face",
+   "color": "#2a2c30"
+  },
+  {
+   "side": [
+    [
+     22,
+     22
+    ],
+    [
+     36,
+     22
+    ],
+    [
+     36,
+     30
+    ],
+    [
+     -2,
+     78
+    ],
+    [
+     -14,
+     70
+    ]
+   ],
+   "x": [
+    -5,
+    5
+   ],
+   "id": "arm",
+   "color": "#eeeeea"
+  },
+  {
+   "box": [
+    18,
+    14,
+    14
+   ],
+   "at": [
+    0,
+    30,
+    26
+   ],
+   "id": "arm_mount",
+   "color": "#f07a2c"
+  }
+ ]
+}

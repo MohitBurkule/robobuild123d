@@ -1,0 +1,18 @@
+{
+ "robot_type": "vertical_spinner",
+ "wheels": 4,
+ "weapon": {
+  "kind": "disc",
+  "axis": "x",
+  "teeth": 8
+ },
+ "photos": [
+  "sawcon.aws67.webp"
+ ],
+ "view": {
+  "sawcon.aws67.webp": "front_left_iso"
+ },
+ "view_source": {
+  "sawcon.aws67.webp": "user camera pick (azimuth 120, elevation 35); replaces the automatic label"
+ }
+}
