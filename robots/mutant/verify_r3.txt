@@ -1,0 +1,131 @@
+BLOCKERS: 62
+  [ran] integrity 0.04s
+  [proxy] wiring 0.00s
+  [ran] mass 0.00s
+  [proxy] interference 1.76s
+  [ran] connections 0.41s
+  [ran] legal 0.01s
+  [ran] fasteners 0.00s
+  [ran] power 0.00s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.01s
+  [ran] shape 0.07s
+  [ran] dynamics 0.00s
+  [ran] strength 0.00s
+  [ran] printability 0.48s
+  [ran] process 0.00s
+  [ran] electrical 0.00s
+  [ran] combat 0.10s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.00s
+  [ran] bom 0.00s
+  [ran] wire_review 0.00s
+  [ran] fastener_record 0.00s
+  [ran] likeness 3.21s
+  [ran] drive_recess 0.00s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.05s
+  [ran] dfm 0.01s
+  [ran] realworld 0.00s
+mutant: ok=False 62 blockers in 45 root causes, mass 420.6/225 g
+1. [proxy.interference] `pod_l` and `dt_screw_0` overlap by 0.19 mm (allowed 0.08). Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   | pod_l: x 6.00..67.00  y -38.00..38.00  z -19.00..19.00  size 61.00 x 76.00 x 38.00 mm
+   |   centre (36.50, 0.00, 0.00), volume 161309.5 mm3
+   |   OVERLAP `leg_cam_l0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `leg_cam_l1` 4.38 mm (allowed 0.08)
+   |   OVERLAP `bridge` 0.46 mm (allowed 0.08)
+2. [connection.floating] `dt_screw_0` has no screw, shared print, captive pocket, joint or declared connection leading back to the chassis. Nearest part is `pod_l`, 0.0 mm away. Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   fix: Add a fastener through it, or list it in `connections` with a method and a reason; use `none` with a reason only if it is meant to be loose.
+   | dt_screw_0: x 11.10..14.90  y -32.90..-29.10  z 18.60..20.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (13.00, -31.00, 19.30), volume 15.9 mm3
+   |   OVERLAP `pod_l` 0.19 mm (allowed 0.08)
+   | pod_l: x 6.00..67.00  y -38.00..38.00  z -19.00..19.00  size 61.00 x 76.00 x 38.00 mm
+   |   centre (36.50, 0.00, 0.00), volume 161309.5 mm3
+3. [mfg.stock] `dt_screw_0`: bought part with free geometry and no catalog SKU or stock rod/bearing match. Same problem on all 4 parts of this pattern: fix the pattern once. (+3 consequences)
+   fix: Use a catalog part, or size it to a stock rod/bearing and name it in `stock`.
+   | dt_screw_0: x 11.10..14.90  y -32.90..-29.10  z 18.60..20.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (13.00, -31.00, 19.30), volume 15.9 mm3
+   |   OVERLAP `pod_l` 0.19 mm (allowed 0.08)
+   | dt_screw_1: x 58.10..61.90  y -32.90..-29.10  z 18.60..20.00  size 3.80 x 3.80 x 1.40 mm
+   |   centre (60.00, -31.00, 19.30), volume 15.9 mm3
+4. [proxy.interference] `pod_l` and `leg_cam_l0` overlap by 4.38 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | pod_l: x 6.00..67.00  y -38.00..38.00  z -19.00..19.00  size 61.00 x 76.00 x 38.00 mm
+   |   centre (36.50, 0.00, 0.00), volume 161309.5 mm3
+   |   OVERLAP `leg_cam_l0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `leg_cam_l1` 4.38 mm (allowed 0.08)
+   |   OVERLAP `bridge` 0.46 mm (allowed 0.08)
+5. [proxy.interference] `pod_r` and `leg_cam_r0` overlap by 4.38 mm (allowed 0.08). Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | pod_r: x -67.00..-6.00  y -38.00..38.00  z -19.00..19.00  size 61.00 x 76.00 x 38.00 mm
+   |   centre (-36.50, -0.00, -0.00), volume 161309.5 mm3
+   |   OVERLAP `leg_cam_r0` 4.38 mm (allowed 0.08)
+   |   OVERLAP `leg_cam_r1` 4.38 mm (allowed 0.08)
+   |   OVERLAP `bridge` 0.46 mm (allowed 0.08)
+6. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `bridge`. (+1 consequences)
+   | weapon: x -1.00..1.00  y -0.07..40.06  z -19.00..23.01  size 2.00 x 40.13 x 42.01 mm
+   |   centre (0.00, 20.00, 2.01), volume 2561.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 20.0, 2.0] range 0..360 default 0
+   |   OVERLAP `dt_shaft_weapon` 0.93 mm (allowed 0.08)
+   |   OVERLAP `bridge` 0.49 mm (allowed 0.08)
+7. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `dt_shaft_weapon`. (+1 consequences)
+   | weapon: x -1.00..1.00  y -0.07..40.06  z -19.00..23.01  size 2.00 x 40.13 x 42.01 mm
+   |   centre (0.00, 20.00, 2.01), volume 2561.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 20.0, 2.0] range 0..360 default 0
+   |   OVERLAP `dt_shaft_weapon` 0.93 mm (allowed 0.08)
+   |   OVERLAP `bridge` 0.49 mm (allowed 0.08)
+8. [process.geometry] `skirt_l` (laser): 3 broad face(s) at an angle to the plate: an angled flange / bend, not a flat cut part; declare `process: sheet_bent` with cylindrical bends or split into flat parts. (+1 consequences)
+   fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
+   | skirt_l: x 7.00..66.00  y 26.00..60.00  z -21.00..-12.00  size 59.00 x 34.00 x 9.00 mm
+   |   centre (36.50, 43.00, -16.50), volume 8000.4 mm3
+   |   OVERLAP `pod_l` 0.23 mm (allowed 0.08)
+9. [process.print_orientation] `leg_cam_l0` (fdm) has no `print_orientation`. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | leg_cam_l0: x 26.50..35.50  y -29.59..10.39  z -15.00..25.00  size 9.00 x 39.99 x 40.00 mm
+   |   centre (31.00, -9.60, 5.00), volume 11309.7 mm3
+   |   OVERLAP `pod_l` 4.38 mm (allowed 0.08)
+   |   gap to `leg_cam_l1` 1.00 mm
+   | leg_cam_l1: x 36.50..45.50  y -27.99..15.99  z -17.00..27.00  size 9.00 x 43.99 x 44.00 mm
+10. [process.geometry] `skirt_r` (laser): 3 broad face(s) at an angle to the plate: an angled flange / bend, not a flat cut part; declare `process: sheet_bent` with cylindrical bends or split into flat parts. (+1 consequences)
+   fix: Make it one 2D profile extruded to one stock thickness (teeth part of the outline), or change `process`.
+   | skirt_r: x -66.00..-7.00  y 26.00..60.00  z -21.00..-12.00  size 59.00 x 34.00 x 9.00 mm
+   |   centre (-36.50, 43.00, -16.50), volume 8000.4 mm3
+   |   OVERLAP `pod_r` 0.23 mm (allowed 0.08)
+11. [process.print_orientation] `leg_cam_r0` (fdm) has no `print_orientation`. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   fix: Add `print_orientation`: the part-frame axis pointing up from the bed (+x/-x/+y/-y/+z/-z).
+   | leg_cam_r0: x -35.50..-26.50  y -29.59..10.39  z -15.00..25.00  size 9.00 x 39.99 x 40.00 mm
+   |   centre (-31.00, -9.60, 5.00), volume 11309.7 mm3
+   |   OVERLAP `pod_r` 4.38 mm (allowed 0.08)
+   |   gap to `leg_cam_r1` 1.00 mm
+   | leg_cam_r1: x -45.50..-36.50  y -27.99..15.99  z -17.00..27.00  size 9.00 x 43.99 x 44.00 mm
+12. [mass.over] 420.6 g (range 344.2 to 497.1 g) against the 225 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+... 33 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 420.6 g of 225 g (-195.6 g margin)
+    pod_l                     153.57 g  fills 92% of its box  <- solid block? a tub should be a shell
+    pod_r                     153.57 g  fills 92% of its box  <- solid block? a tub should be a shell
+    weapon                     20.23 g  fills 76% of its box  <- solid block? a tub should be a shell
+    bridge                     13.69 g  fills 88% of its box
+    leg_cam_l1                 13.03 g  fills 79% of its box
+    leg_cam_r1                 13.03 g  fills 79% of its box
+    leg_cam_l0                 10.77 g  fills 79% of its box
+    leg_cam_r0                 10.77 g  fills 79% of its box
+    skirt_l                     9.60 g  fills 44% of its box
+    skirt_r                     9.60 g  fills 44% of its box
+    front_plate_l               4.50 g  fills 100% of its box
+    front_plate_r               4.50 g  fills 100% of its box
+    dt_shaft_weapon             1.19 g  fills 79% of its box
+    fin_l                       0.40 g  fills 50% of its box
+    fin_r                       0.40 g  fills 50% of its box
+    dt_screw_0                  0.13 g  fills 79% of its box
+    dt_screw_1                  0.13 g  fills 79% of its box
+    dt_screw_2                  0.13 g  fills 79% of its box
+    dt_screw_3                  0.13 g  fills 79% of its box
+    switch                      0.11 g  fills 100% of its box
+    mass.over: 420.6 g (range 344.2 to 497.1 g) against the 225 g limit; 0.6 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 4 hit / 0 miss, group 0 hit / 31 miss, inside 15 hit / 5 miss, likeness 3 hit / 0 miss, min_gap 90 hit / 61 miss, overlap 118 hit / 61 miss, part_check 8 hit / 0 miss, part_geom 20 hit / 0 miss, ray 75 hit / 25 miss

@@ -1,0 +1,48 @@
+{
+ "spec": "/home/antigravity/MohitBurkule/robobuild123d/robots/mutant/spec.json",
+ "rendered_at": 1795043046.6234286,
+ "bodies": [
+  "pod_l",
+  "pod_r",
+  "bridge",
+  "weapon",
+  "skirt_l",
+  "front_plate_l",
+  "fin_l",
+  "leg_cam_l0",
+  "leg_cam_l1",
+  "skirt_r",
+  "front_plate_r",
+  "fin_r",
+  "leg_cam_r0",
+  "leg_cam_r1",
+  "switch",
+  "dt_shaft_weapon",
+  "cam_shaft_l",
+  "drive_l",
+  "cam_shaft_r",
+  "drive_r",
+  "el_battery",
+  "el_esc",
+  "el_wesc",
+  "el_switch",
+  "weapon_motor",
+  "lock_pin",
+  "fs_front_plate_l_0",
+  "fs_front_plate_r_0"
+ ],
+ "wires": {
+  "w_sw_wesc": {
+   "from": [
+    17.5,
+    -11.5,
+    -12.0
+   ],
+   "to": [
+    14.5,
+    2.5,
+    12.0
+   ]
+  }
+ }
+}

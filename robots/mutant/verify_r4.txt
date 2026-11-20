@@ -1,0 +1,139 @@
+BLOCKERS: 35
+building 3 changed part solids on 3 processes
+  [ran] integrity 0.13s
+  [ran] mass 0.00s
+  [proxy] interference 16.54s
+  [ran] connections 1.39s
+  [ran] legal 0.06s
+  [ran] fasteners 0.01s
+  [ran] power 0.01s
+  [ran] tension 0.00s
+  [ran] targets 0.00s
+  [ran] fight 0.03s
+  [ran] shape 0.81s
+  [ran] dynamics 0.00s
+  [ran] strength 0.03s
+  [ran] printability 1.63s
+  [ran] process 0.01s
+  [ran] electrical 0.01s
+  [ran] combat 0.30s
+  [ran] physics 0.00s
+  [ran] plausibility 0.00s
+  [ran] cots 0.00s
+  [ran] fit 0.27s
+  [ran] bom 0.00s
+  [ran] wire_review 0.03s
+  [ran] fastener_record 0.00s
+  [ran] likeness 42.70s
+  [ran] drive_recess 0.01s
+  [ran] belt_wrap 0.00s
+  [ran] retention 0.00s
+  [ran] waiver_audit 0.00s
+  [ran] geom 0.28s
+  [ran] dfm 0.17s
+  [ran] realworld 0.21s
+mutant: ok=False 35 blockers in 30 root causes, mass 252.4/225 g
+1. [proxy.sweep] joint `weapon`: `weapon` turning a full revolution may reach `bridge`. (+1 consequences)
+   | weapon: x -1.00..1.00  y -0.07..40.06  z -19.00..23.01  size 2.00 x 40.13 x 42.01 mm
+   |   centre (0.00, 20.00, 2.01), volume 2537.5 mm3
+   |   joint revolute axis [1, 0, 0] pivot [0.0, 20.0, 2.0] range 0..360 default 0
+   |   OVERLAP `bridge` 0.49 mm (allowed 0.08)
+   |   overlap allowed `lock_pin` 0.28 mm (allowed 1000.00)
+2. [proxy.sweep] joint `leg_cam_l0`: `leg_cam_l0` turning a full revolution may reach `pod_l`. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | leg_cam_l0: x 26.50..35.50  y -29.59..10.39  z -15.00..25.00  size 9.00 x 39.99 x 40.00 mm
+   |   centre (31.00, -9.60, 5.00), volume 10639.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [31, -8.0, 5.0] range 0..360 default 0
+   |   overlap allowed `pod_l` 0.01 mm (allowed 0.08)
+   |   gap to `cam_shaft_l` 0.00 mm (touching)
+3. [proxy.sweep] joint `leg_cam_l0`: `leg_cam_l0` turning a full revolution may reach `cam_shaft_l`. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | leg_cam_l0: x 26.50..35.50  y -29.59..10.39  z -15.00..25.00  size 9.00 x 39.99 x 40.00 mm
+   |   centre (31.00, -9.60, 5.00), volume 10639.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [31, -8.0, 5.0] range 0..360 default 0
+   |   overlap allowed `pod_l` 0.01 mm (allowed 0.08)
+   |   gap to `cam_shaft_l` 0.00 mm (touching)
+4. [proxy.sweep] joint `leg_cam_r0`: `leg_cam_r0` turning a full revolution may reach `pod_r`. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | leg_cam_r0: x -35.50..-26.50  y -29.59..10.39  z -15.00..25.00  size 9.00 x 39.99 x 40.00 mm
+   |   centre (-31.00, -9.60, 5.00), volume 10639.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [-31, -8.0, 5.0] range 0..360 default 0
+   |   overlap allowed `pod_r` 0.01 mm (allowed 0.08)
+   |   gap to `cam_shaft_r` 0.00 mm (touching)
+5. [proxy.sweep] joint `leg_cam_r0`: `leg_cam_r0` turning a full revolution may reach `cam_shaft_r`. Same problem on all 2 parts of this pattern: fix the pattern once. (+1 consequences)
+   | leg_cam_r0: x -35.50..-26.50  y -29.59..10.39  z -15.00..25.00  size 9.00 x 39.99 x 40.00 mm
+   |   centre (-31.00, -9.60, 5.00), volume 10639.0 mm3
+   |   joint revolute axis [1, 0, 0] pivot [-31, -8.0, 5.0] range 0..360 default 0
+   |   overlap allowed `pod_r` 0.01 mm (allowed 0.08)
+   |   gap to `cam_shaft_r` 0.00 mm (touching)
+6. [integrity.solids] `pod_l` has 0 closed solid(s) and 1 open/invalid shell(s), expected 1 (49729 mm3). A boolean or fillet probably collapsed the build.
+   fix: Check the last CAD op (fillet/cut order); or declare `solids` with `solids_reason`.
+   | pod_l: x 6.00..67.00  y -38.00..38.00  z -19.00..19.00  size 61.00 x 76.00 x 38.00 mm
+   |   centre (36.50, 0.00, 0.00), volume 49729.1 mm3
+   |   OVERLAP `drive_l` 4.88 mm (allowed 0.08)
+   |   overlap allowed `fs_front_plate_l_0` 0.84 mm (allowed inf)
+   |   overlap allowed `fin_l` 0.74 mm (allowed inf)
+7. [integrity.solids] `pod_r` has 0 closed solid(s) and 1 open/invalid shell(s), expected 1 (50663 mm3). A boolean or fillet probably collapsed the build.
+   fix: Check the last CAD op (fillet/cut order); or declare `solids` with `solids_reason`.
+   | pod_r: x -67.00..-6.00  y -38.00..38.00  z -19.00..19.00  size 61.00 x 76.00 x 38.00 mm
+   |   centre (-36.50, -0.00, -0.00), volume 50662.8 mm3
+   |   OVERLAP `drive_r` 4.88 mm (allowed 0.08)
+   |   overlap allowed `fs_front_plate_r_0` 0.84 mm (allowed inf)
+   |   overlap allowed `fin_r` 0.74 mm (allowed inf)
+8. [mass.over] 252.4 g (range 211.5 to 293.2 g) against the 225 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+   fix: Hollow structure, thin walls, smaller battery or motor; biggest masses are listed in the report.
+9. [proxy.interference] `pod_l` and `leg_cam_l1` overlap by 0.12 mm (allowed 0.08).
+   | pod_l: x 6.00..67.00  y -38.00..38.00  z -19.00..19.00  size 61.00 x 76.00 x 38.00 mm
+   |   centre (36.50, 0.00, 0.00), volume 49729.1 mm3
+   |   OVERLAP `drive_l` 4.88 mm (allowed 0.08)
+   |   overlap allowed `fs_front_plate_l_0` 0.84 mm (allowed inf)
+   |   overlap allowed `fin_l` 0.74 mm (allowed inf)
+10. [proxy.interference] `pod_l` and `drive_l` overlap by 4.88 mm (allowed 0.08).
+   | pod_l: x 6.00..67.00  y -38.00..38.00  z -19.00..19.00  size 61.00 x 76.00 x 38.00 mm
+   |   centre (36.50, 0.00, 0.00), volume 49729.1 mm3
+   |   OVERLAP `drive_l` 4.88 mm (allowed 0.08)
+   |   overlap allowed `fs_front_plate_l_0` 0.84 mm (allowed inf)
+   |   overlap allowed `fin_l` 0.74 mm (allowed inf)
+11. [proxy.interference] `pod_r` and `drive_r` overlap by 4.88 mm (allowed 0.08).
+   | pod_r: x -67.00..-6.00  y -38.00..38.00  z -19.00..19.00  size 61.00 x 76.00 x 38.00 mm
+   |   centre (-36.50, -0.00, -0.00), volume 50662.8 mm3
+   |   OVERLAP `drive_r` 4.88 mm (allowed 0.08)
+   |   overlap allowed `fs_front_plate_r_0` 0.84 mm (allowed inf)
+   |   overlap allowed `fin_r` 0.74 mm (allowed inf)
+12. [proxy.interference] `bridge` and `weapon` overlap by 0.49 mm (allowed 0.08).
+   | bridge: x -7.00..7.00  y -38.00..1.00  z -15.00..15.00  size 14.00 x 39.00 x 30.00 mm
+   |   centre (-0.00, -18.50, 0.00), volume 6456.8 mm3
+   |   OVERLAP `weapon` 0.49 mm (allowed 0.08)
+   |   overlap allowed `pod_l` 0.46 mm (allowed inf)
+   |   overlap allowed `pod_r` 0.46 mm (allowed inf)
+... 18 more root causes (fix these first, then re-run)
+MASS BUDGET:
+  mass 252.4 g of 225 g (-27.4 g margin)
+    pod_r                      48.23 g  fills 29% of its box
+    pod_l                      47.34 g  fills 28% of its box
+    el_battery                 21.50 g  fills 100% of its box  <- solid block? a tub should be a shell
+    weapon                     20.05 g  fills 75% of its box  <- solid block? a tub should be a shell
+    leg_cam_l1                 12.97 g  fills 78% of its box
+    leg_cam_r1                 12.97 g  fills 78% of its box
+    leg_cam_l0                 10.13 g  fills 74% of its box
+    leg_cam_r0                 10.13 g  fills 74% of its box
+    drive_l                     9.50 g  fills 63% of its box
+    drive_r                     9.50 g  fills 63% of its box
+    weapon_motor                8.60 g  fills 53% of its box
+    bridge                      6.15 g  fills 39% of its box
+    skirt_l                     5.42 g  fills 32% of its box
+    skirt_r                     5.42 g  fills 32% of its box
+    el_wesc                     5.00 g  fills 94% of its box
+    front_plate_l               4.48 g  fills 100% of its box
+    front_plate_r               4.48 g  fills 100% of its box
+    el_esc                      2.30 g  fills 99% of its box
+    dt_shaft_weapon             1.19 g  fills 79% of its box
+    cam_shaft_l                 1.05 g  fills 79% of its box
+    cam_shaft_r                 1.05 g  fills 79% of its box
+    lock_pin                    0.65 g  fills 79% of its box
+    el_switch                   0.50 g  fills 100% of its box
+    fin_r                       0.41 g  fills 38% of its box
+    fin_l                       0.41 g  fills 38% of its box
+    fs_front_plate_l_0          0.28 g  fills 27% of its box
+    fs_front_plate_r_0          0.28 g  fills 27% of its box
+    switch                      0.11 g  fills 100% of its box
+    mass.over: 252.4 g (range 211.5 to 293.2 g) against the 225 g limit; 7.2 g of the uncertainty is catalog estimates, weigh the real parts and set `scale_mass_g`.
+FACTS: robot/docs/FACTS.md: what the checks mean and the tools behind these numbers
+cache: distance 12 hit / 2 miss, group 0 hit / 31 miss, inside 18 hit / 7 miss, likeness 3 hit / 0 miss, min_gap 82 hit / 28 miss, overlap 227 hit / 191 miss, part_check 12 hit / 3 miss, part_geom 28 hit / 0 miss, ray 127 hit / 74 miss
