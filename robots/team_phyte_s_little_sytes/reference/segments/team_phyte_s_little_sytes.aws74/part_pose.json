@@ -1,0 +1,1521 @@
+{
+ "photo": "team_phyte_s_little_sytes.aws74.webp",
+ "camera_from": "team_phyte_s_little_sytes.aws74.pose.json",
+ "calibration": {
+  "a": 0.00038657648972487867,
+  "b": 0.002709730009716433,
+  "r": 0.427,
+  "n": 8843
+ },
+ "body_centroid_robot_mm": [
+  -4.1,
+  -2.0,
+  -8.3
+ ],
+ "parts": {
+  "left_view_wheel_top_left": {
+   "label": "left view wheel top left",
+   "n_px": 37,
+   "median_z_mm": 346.4,
+   "centroid_robot_mm": [
+    54.2,
+    3.2,
+    4.1
+   ],
+   "centroid_cam_mm": [
+    -52.4,
+    -5.4,
+    345.5
+   ],
+   "normal_robot": [
+    -0.191,
+    0.014,
+    0.981
+   ],
+   "extent_mm": [
+    16.2,
+    3.8,
+    1.6
+   ],
+   "height_range_mm": [
+    2.1,
+    5.8
+   ],
+   "offset_from_body_mm": [
+    58.3,
+    5.2,
+    12.4
+   ]
+  },
+  "left_view_wheel_top_middle": {
+   "label": "left view wheel top middle",
+   "n_px": 33,
+   "median_z_mm": 352.2,
+   "centroid_robot_mm": [
+    20.9,
+    -14.8,
+    11.0
+   ],
+   "centroid_cam_mm": [
+    -15.0,
+    -10.5,
+    352.9
+   ],
+   "normal_robot": [
+    -0.065,
+    0.209,
+    0.976
+   ],
+   "extent_mm": [
+    9.0,
+    4.2,
+    1.5
+   ],
+   "height_range_mm": [
+    9.2,
+    12.4
+   ],
+   "offset_from_body_mm": [
+    25.0,
+    -12.8,
+    19.3
+   ]
+  },
+  "left_view_dark_deck": {
+   "label": "left view dark deck",
+   "n_px": 1446,
+   "median_z_mm": 337.4,
+   "centroid_robot_mm": [
+    28.8,
+    2.3,
+    -0.6
+   ],
+   "centroid_cam_mm": [
+    -28.2,
+    -0.1,
+    338.4
+   ],
+   "normal_robot": [
+    -0.435,
+    0.834,
+    0.341
+   ],
+   "extent_mm": [
+    34.8,
+    18.5,
+    8.5
+   ],
+   "height_range_mm": [
+    -19.4,
+    9.4
+   ],
+   "offset_from_body_mm": [
+    32.9,
+    4.3,
+    7.7
+   ]
+  },
+  "left_view_green_lip": {
+   "label": "left view green lip",
+   "n_px": 134,
+   "median_z_mm": 331.6,
+   "centroid_robot_mm": [
+    18.1,
+    4.6,
+    -22.1
+   ],
+   "centroid_cam_mm": [
+    -19.5,
+    21.4,
+    331.7
+   ],
+   "normal_robot": [
+    -0.099,
+    0.573,
+    0.814
+   ],
+   "extent_mm": [
+    20.3,
+    1.3,
+    0.5
+   ],
+   "height_range_mm": [
+    -27.6,
+    -18.1
+   ],
+   "offset_from_body_mm": [
+    22.2,
+    6.6,
+    -13.8
+   ]
+  },
+  "left_view_upper_rail": {
+   "label": "left view upper rail",
+   "n_px": 64914,
+   "median_z_mm": 331.9,
+   "centroid_robot_mm": [
+    26.6,
+    7.5,
+    -9.7
+   ],
+   "centroid_cam_mm": [
+    -28.0,
+    8.6,
+    332.2
+   ],
+   "normal_robot": [
+    -0.429,
+    0.857,
+    0.287
+   ],
+   "extent_mm": [
+    29.4,
+    17.0,
+    3.7
+   ],
+   "height_range_mm": [
+    -23.2,
+    4.0
+   ],
+   "offset_from_body_mm": [
+    30.7,
+    9.5,
+    -1.4
+   ]
+  },
+  "left_view_screw_bottom": {
+   "label": "left view screw bottom",
+   "n_px": 269,
+   "median_z_mm": 324.6,
+   "centroid_robot_mm": [
+    42.3,
+    20.0,
+    -19.3
+   ],
+   "centroid_cam_mm": [
+    -47.1,
+    17.1,
+    324.6
+   ],
+   "normal_robot": [
+    -0.303,
+    0.899,
+    0.317
+   ],
+   "extent_mm": [
+    1.5,
+    1.3,
+    0.1
+   ],
+   "height_range_mm": [
+    -20.3,
+    -18.3
+   ],
+   "offset_from_body_mm": [
+    46.4,
+    22.0,
+    -11.0
+   ]
+  },
+  "left_view_screw_right": {
+   "label": "left view screw right",
+   "n_px": 197,
+   "median_z_mm": 336.7,
+   "centroid_robot_mm": [
+    5.0,
+    -4.1,
+    -8.2
+   ],
+   "centroid_cam_mm": [
+    -3.9,
+    8.4,
+    336.8
+   ],
+   "normal_robot": [
+    -0.559,
+    0.599,
+    0.573
+   ],
+   "extent_mm": [
+    1.6,
+    1.2,
+    0.2
+   ],
+   "height_range_mm": [
+    -9.1,
+    -7.4
+   ],
+   "offset_from_body_mm": [
+    9.1,
+    -2.1,
+    0.1
+   ]
+  },
+  "right_view_green_lip": {
+   "label": "right view green lip",
+   "n_px": 64508,
+   "median_z_mm": 330.0,
+   "centroid_robot_mm": [
+    -32.1,
+    -10.3,
+    -7.0
+   ],
+   "centroid_cam_mm": [
+    33.4,
+    8.3,
+    331.4
+   ],
+   "normal_robot": [
+    -0.101,
+    0.926,
+    0.365
+   ],
+   "extent_mm": [
+    36.4,
+    18.8,
+    8.1
+   ],
+   "height_range_mm": [
+    -22.1,
+    7.7
+   ],
+   "offset_from_body_mm": [
+    -28.0,
+    -8.3,
+    1.3
+   ]
+  },
+  "right_view_end_wedge": {
+   "label": "right view end wedge",
+   "n_px": 5259,
+   "median_z_mm": 332.0,
+   "centroid_robot_mm": [
+    -58.6,
+    -19.8,
+    -10.5
+   ],
+   "centroid_cam_mm": [
+    61.4,
+    12.9,
+    332.1
+   ],
+   "normal_robot": [
+    -0.865,
+    0.304,
+    -0.4
+   ],
+   "extent_mm": [
+    16.0,
+    5.8,
+    0.3
+   ],
+   "height_range_mm": [
+    -19.5,
+    -2.7
+   ],
+   "offset_from_body_mm": [
+    -54.5,
+    -17.8,
+    -2.2
+   ]
+  },
+  "right_view_screw_left": {
+   "label": "right view screw left",
+   "n_px": 169,
+   "median_z_mm": 342.1,
+   "centroid_robot_mm": [
+    -9.7,
+    -14.1,
+    -3.4
+   ],
+   "centroid_cam_mm": [
+    13.4,
+    4.4,
+    342.1
+   ],
+   "normal_robot": [
+    0.077,
+    0.865,
+    0.495
+   ],
+   "extent_mm": [
+    1.3,
+    1.2,
+    0.0
+   ],
+   "height_range_mm": [
+    -4.2,
+    -2.6
+   ],
+   "offset_from_body_mm": [
+    -5.6,
+    -12.1,
+    4.9
+   ]
+  },
+  "right_view_screw_bottom": {
+   "label": "right view screw bottom",
+   "n_px": 261,
+   "median_z_mm": 323.0,
+   "centroid_robot_mm": [
+    -47.9,
+    -7.2,
+    -18.1
+   ],
+   "centroid_cam_mm": [
+    47.1,
+    19.5,
+    323.0
+   ],
+   "normal_robot": [
+    -0.304,
+    0.951,
+    -0.052
+   ],
+   "extent_mm": [
+    1.5,
+    1.2,
+    0.0
+   ],
+   "height_range_mm": [
+    -19.1,
+    -17.2
+   ],
+   "offset_from_body_mm": [
+    -43.8,
+    -5.2,
+    -9.8
+   ]
+  },
+  "right_view_screw_top": {
+   "label": "right view screw top",
+   "n_px": 135,
+   "median_z_mm": 329.8,
+   "centroid_robot_mm": [
+    -43.4,
+    -11.7,
+    3.5
+   ],
+   "centroid_cam_mm": [
+    45.0,
+    -1.9,
+    329.8
+   ],
+   "normal_robot": [
+    -0.111,
+    0.678,
+    0.727
+   ],
+   "extent_mm": [
+    1.4,
+    1.0,
+    0.1
+   ],
+   "height_range_mm": [
+    2.8,
+    4.2
+   ],
+   "offset_from_body_mm": [
+    -39.3,
+    -9.7,
+    11.8
+   ]
+  },
+  "auto_1": {
+   "label": "auto_1",
+   "n_px": 237,
+   "median_z_mm": 334.9,
+   "centroid_robot_mm": [
+    9.6,
+    -3.8,
+    -16.3
+   ],
+   "centroid_cam_mm": [
+    -8.6,
+    16.3,
+    337.5
+   ],
+   "normal_robot": [
+    -0.195,
+    0.685,
+    0.702
+   ],
+   "extent_mm": [
+    66.9,
+    27.7,
+    6.2
+   ],
+   "height_range_mm": [
+    -28.6,
+    1.1
+   ],
+   "offset_from_body_mm": [
+    13.7,
+    -1.8,
+    -8.0
+   ]
+  },
+  "auto_2": {
+   "label": "auto_2",
+   "n_px": 966,
+   "median_z_mm": 335.9,
+   "centroid_robot_mm": [
+    35.7,
+    2.7,
+    2.0
+   ],
+   "centroid_cam_mm": [
+    -34.7,
+    -2.8,
+    340.2
+   ],
+   "normal_robot": [
+    -0.128,
+    0.363,
+    0.923
+   ],
+   "extent_mm": [
+    27.3,
+    14.1,
+    8.8
+   ],
+   "height_range_mm": [
+    -1.2,
+    7.9
+   ],
+   "offset_from_body_mm": [
+    39.8,
+    4.7,
+    10.3
+   ]
+  },
+  "auto_3": {
+   "label": "auto_3",
+   "n_px": 180,
+   "median_z_mm": 344.5,
+   "centroid_robot_mm": [
+    -35.9,
+    -22.2,
+    -4.0
+   ],
+   "centroid_cam_mm": [
+    40.8,
+    6.1,
+    341.7
+   ],
+   "normal_robot": [
+    -0.126,
+    0.779,
+    0.615
+   ],
+   "extent_mm": [
+    36.6,
+    28.9,
+    10.6
+   ],
+   "height_range_mm": [
+    -25.9,
+    13.8
+   ],
+   "offset_from_body_mm": [
+    -31.8,
+    -20.2,
+    4.3
+   ]
+  },
+  "auto_5": {
+   "label": "auto_5",
+   "n_px": 218,
+   "median_z_mm": 329.0,
+   "centroid_robot_mm": [
+    24.2,
+    7.5,
+    -23.7
+   ],
+   "centroid_cam_mm": [
+    -26.2,
+    22.7,
+    330.7
+   ],
+   "normal_robot": [
+    0.028,
+    0.407,
+    0.913
+   ],
+   "extent_mm": [
+    34.7,
+    2.6,
+    0.8
+   ],
+   "height_range_mm": [
+    -29.0,
+    -15.7
+   ],
+   "offset_from_body_mm": [
+    28.3,
+    9.5,
+    -15.4
+   ]
+  },
+  "auto_6": {
+   "label": "auto_6",
+   "n_px": 144,
+   "median_z_mm": 332.0,
+   "centroid_robot_mm": [
+    -26.5,
+    -11.0,
+    -20.6
+   ],
+   "centroid_cam_mm": [
+    27.8,
+    21.8,
+    333.0
+   ],
+   "normal_robot": [
+    -0.238,
+    0.446,
+    0.863
+   ],
+   "extent_mm": [
+    25.0,
+    0.8,
+    0.4
+   ],
+   "height_range_mm": [
+    -26.6,
+    -12.5
+   ],
+   "offset_from_body_mm": [
+    -22.4,
+    -9.0,
+    -12.3
+   ]
+  },
+  "auto_7": {
+   "label": "auto_7",
+   "n_px": 103,
+   "median_z_mm": 335.4,
+   "centroid_robot_mm": [
+    -58.2,
+    -24.2,
+    -13.0
+   ],
+   "centroid_cam_mm": [
+    62.2,
+    15.7,
+    336.3
+   ],
+   "normal_robot": [
+    -0.108,
+    0.62,
+    0.778
+   ],
+   "extent_mm": [
+    23.1,
+    2.6,
+    2.1
+   ],
+   "height_range_mm": [
+    -21.1,
+    -1.0
+   ],
+   "offset_from_body_mm": [
+    -54.1,
+    -22.2,
+    -4.7
+   ]
+  },
+  "auto_9": {
+   "label": "auto_9",
+   "n_px": 171,
+   "median_z_mm": 345.1,
+   "centroid_robot_mm": [
+    57.5,
+    5.5,
+    -8.4
+   ],
+   "centroid_cam_mm": [
+    -56.8,
+    6.9,
+    343.7
+   ],
+   "normal_robot": [
+    0.831,
+    0.523,
+    -0.192
+   ],
+   "extent_mm": [
+    16.9,
+    6.6,
+    0.7
+   ],
+   "height_range_mm": [
+    -20.2,
+    0.2
+   ],
+   "offset_from_body_mm": [
+    61.6,
+    7.5,
+    -0.1
+   ]
+  }
+ },
+ "pairs": {
+  "left_view_wheel_top_left->left_view_wheel_top_middle": [
+   -33.3,
+   -18.0,
+   6.9
+  ],
+  "left_view_wheel_top_left->left_view_dark_deck": [
+   -25.4,
+   -0.9,
+   -4.7
+  ],
+  "left_view_wheel_top_left->left_view_green_lip": [
+   -36.1,
+   1.4,
+   -26.2
+  ],
+  "left_view_wheel_top_left->left_view_upper_rail": [
+   -27.6,
+   4.3,
+   -13.8
+  ],
+  "left_view_wheel_top_left->left_view_screw_bottom": [
+   -11.9,
+   16.8,
+   -23.4
+  ],
+  "left_view_wheel_top_left->left_view_screw_right": [
+   -49.2,
+   -7.3,
+   -12.3
+  ],
+  "left_view_wheel_top_left->right_view_green_lip": [
+   -86.3,
+   -13.5,
+   -11.1
+  ],
+  "left_view_wheel_top_left->right_view_end_wedge": [
+   -112.8,
+   -23.0,
+   -14.6
+  ],
+  "left_view_wheel_top_left->right_view_screw_left": [
+   -63.9,
+   -17.3,
+   -7.5
+  ],
+  "left_view_wheel_top_left->right_view_screw_bottom": [
+   -102.1,
+   -10.4,
+   -22.2
+  ],
+  "left_view_wheel_top_left->right_view_screw_top": [
+   -97.6,
+   -14.9,
+   -0.6
+  ],
+  "left_view_wheel_top_left->auto_1": [
+   -44.6,
+   -7.0,
+   -20.4
+  ],
+  "left_view_wheel_top_left->auto_2": [
+   -18.5,
+   -0.5,
+   -2.1
+  ],
+  "left_view_wheel_top_left->auto_3": [
+   -90.1,
+   -25.4,
+   -8.1
+  ],
+  "left_view_wheel_top_left->auto_5": [
+   -30.0,
+   4.3,
+   -27.8
+  ],
+  "left_view_wheel_top_left->auto_6": [
+   -80.7,
+   -14.2,
+   -24.7
+  ],
+  "left_view_wheel_top_left->auto_7": [
+   -112.4,
+   -27.4,
+   -17.1
+  ],
+  "left_view_wheel_top_left->auto_9": [
+   3.3,
+   2.3,
+   -12.5
+  ],
+  "left_view_wheel_top_middle->left_view_dark_deck": [
+   7.9,
+   17.1,
+   -11.6
+  ],
+  "left_view_wheel_top_middle->left_view_green_lip": [
+   -2.8,
+   19.4,
+   -33.1
+  ],
+  "left_view_wheel_top_middle->left_view_upper_rail": [
+   5.7,
+   22.3,
+   -20.7
+  ],
+  "left_view_wheel_top_middle->left_view_screw_bottom": [
+   21.4,
+   34.8,
+   -30.3
+  ],
+  "left_view_wheel_top_middle->left_view_screw_right": [
+   -15.9,
+   10.7,
+   -19.2
+  ],
+  "left_view_wheel_top_middle->right_view_green_lip": [
+   -53.0,
+   4.5,
+   -18.0
+  ],
+  "left_view_wheel_top_middle->right_view_end_wedge": [
+   -79.5,
+   -5.0,
+   -21.5
+  ],
+  "left_view_wheel_top_middle->right_view_screw_left": [
+   -30.6,
+   0.7,
+   -14.4
+  ],
+  "left_view_wheel_top_middle->right_view_screw_bottom": [
+   -68.8,
+   7.6,
+   -29.1
+  ],
+  "left_view_wheel_top_middle->right_view_screw_top": [
+   -64.3,
+   3.1,
+   -7.5
+  ],
+  "left_view_wheel_top_middle->auto_1": [
+   -11.3,
+   11.0,
+   -27.3
+  ],
+  "left_view_wheel_top_middle->auto_2": [
+   14.8,
+   17.5,
+   -9.0
+  ],
+  "left_view_wheel_top_middle->auto_3": [
+   -56.8,
+   -7.4,
+   -15.0
+  ],
+  "left_view_wheel_top_middle->auto_5": [
+   3.3,
+   22.3,
+   -34.7
+  ],
+  "left_view_wheel_top_middle->auto_6": [
+   -47.4,
+   3.8,
+   -31.6
+  ],
+  "left_view_wheel_top_middle->auto_7": [
+   -79.1,
+   -9.4,
+   -24.0
+  ],
+  "left_view_wheel_top_middle->auto_9": [
+   36.6,
+   20.3,
+   -19.4
+  ],
+  "left_view_dark_deck->left_view_green_lip": [
+   -10.7,
+   2.3,
+   -21.5
+  ],
+  "left_view_dark_deck->left_view_upper_rail": [
+   -2.2,
+   5.2,
+   -9.1
+  ],
+  "left_view_dark_deck->left_view_screw_bottom": [
+   13.5,
+   17.7,
+   -18.7
+  ],
+  "left_view_dark_deck->left_view_screw_right": [
+   -23.8,
+   -6.4,
+   -7.6
+  ],
+  "left_view_dark_deck->right_view_green_lip": [
+   -60.9,
+   -12.6,
+   -6.4
+  ],
+  "left_view_dark_deck->right_view_end_wedge": [
+   -87.4,
+   -22.1,
+   -9.9
+  ],
+  "left_view_dark_deck->right_view_screw_left": [
+   -38.5,
+   -16.4,
+   -2.8
+  ],
+  "left_view_dark_deck->right_view_screw_bottom": [
+   -76.7,
+   -9.5,
+   -17.5
+  ],
+  "left_view_dark_deck->right_view_screw_top": [
+   -72.2,
+   -14.0,
+   4.1
+  ],
+  "left_view_dark_deck->auto_1": [
+   -19.2,
+   -6.1,
+   -15.7
+  ],
+  "left_view_dark_deck->auto_2": [
+   6.9,
+   0.4,
+   2.6
+  ],
+  "left_view_dark_deck->auto_3": [
+   -64.7,
+   -24.5,
+   -3.4
+  ],
+  "left_view_dark_deck->auto_5": [
+   -4.6,
+   5.2,
+   -23.1
+  ],
+  "left_view_dark_deck->auto_6": [
+   -55.3,
+   -13.3,
+   -20.0
+  ],
+  "left_view_dark_deck->auto_7": [
+   -87.0,
+   -26.5,
+   -12.4
+  ],
+  "left_view_dark_deck->auto_9": [
+   28.7,
+   3.2,
+   -7.8
+  ],
+  "left_view_green_lip->left_view_upper_rail": [
+   8.5,
+   2.9,
+   12.4
+  ],
+  "left_view_green_lip->left_view_screw_bottom": [
+   24.2,
+   15.4,
+   2.8
+  ],
+  "left_view_green_lip->left_view_screw_right": [
+   -13.1,
+   -8.7,
+   13.9
+  ],
+  "left_view_green_lip->right_view_green_lip": [
+   -50.2,
+   -14.9,
+   15.1
+  ],
+  "left_view_green_lip->right_view_end_wedge": [
+   -76.7,
+   -24.4,
+   11.6
+  ],
+  "left_view_green_lip->right_view_screw_left": [
+   -27.8,
+   -18.7,
+   18.7
+  ],
+  "left_view_green_lip->right_view_screw_bottom": [
+   -66.0,
+   -11.8,
+   4.0
+  ],
+  "left_view_green_lip->right_view_screw_top": [
+   -61.5,
+   -16.3,
+   25.6
+  ],
+  "left_view_green_lip->auto_1": [
+   -8.5,
+   -8.4,
+   5.8
+  ],
+  "left_view_green_lip->auto_2": [
+   17.6,
+   -1.9,
+   24.1
+  ],
+  "left_view_green_lip->auto_3": [
+   -54.0,
+   -26.8,
+   18.1
+  ],
+  "left_view_green_lip->auto_5": [
+   6.1,
+   2.9,
+   -1.6
+  ],
+  "left_view_green_lip->auto_6": [
+   -44.6,
+   -15.6,
+   1.5
+  ],
+  "left_view_green_lip->auto_7": [
+   -76.3,
+   -28.8,
+   9.1
+  ],
+  "left_view_green_lip->auto_9": [
+   39.4,
+   0.9,
+   13.7
+  ],
+  "left_view_upper_rail->left_view_screw_bottom": [
+   15.7,
+   12.5,
+   -9.6
+  ],
+  "left_view_upper_rail->left_view_screw_right": [
+   -21.6,
+   -11.6,
+   1.5
+  ],
+  "left_view_upper_rail->right_view_green_lip": [
+   -58.7,
+   -17.8,
+   2.7
+  ],
+  "left_view_upper_rail->right_view_end_wedge": [
+   -85.2,
+   -27.3,
+   -0.8
+  ],
+  "left_view_upper_rail->right_view_screw_left": [
+   -36.3,
+   -21.6,
+   6.3
+  ],
+  "left_view_upper_rail->right_view_screw_bottom": [
+   -74.5,
+   -14.7,
+   -8.4
+  ],
+  "left_view_upper_rail->right_view_screw_top": [
+   -70.0,
+   -19.2,
+   13.2
+  ],
+  "left_view_upper_rail->auto_1": [
+   -17.0,
+   -11.3,
+   -6.6
+  ],
+  "left_view_upper_rail->auto_2": [
+   9.1,
+   -4.8,
+   11.7
+  ],
+  "left_view_upper_rail->auto_3": [
+   -62.5,
+   -29.7,
+   5.7
+  ],
+  "left_view_upper_rail->auto_5": [
+   -2.4,
+   0.0,
+   -14.0
+  ],
+  "left_view_upper_rail->auto_6": [
+   -53.1,
+   -18.5,
+   -10.9
+  ],
+  "left_view_upper_rail->auto_7": [
+   -84.8,
+   -31.7,
+   -3.3
+  ],
+  "left_view_upper_rail->auto_9": [
+   30.9,
+   -2.0,
+   1.3
+  ],
+  "left_view_screw_bottom->left_view_screw_right": [
+   -37.3,
+   -24.1,
+   11.1
+  ],
+  "left_view_screw_bottom->right_view_green_lip": [
+   -74.4,
+   -30.3,
+   12.3
+  ],
+  "left_view_screw_bottom->right_view_end_wedge": [
+   -100.9,
+   -39.8,
+   8.8
+  ],
+  "left_view_screw_bottom->right_view_screw_left": [
+   -52.0,
+   -34.1,
+   15.9
+  ],
+  "left_view_screw_bottom->right_view_screw_bottom": [
+   -90.2,
+   -27.2,
+   1.2
+  ],
+  "left_view_screw_bottom->right_view_screw_top": [
+   -85.7,
+   -31.7,
+   22.8
+  ],
+  "left_view_screw_bottom->auto_1": [
+   -32.7,
+   -23.8,
+   3.0
+  ],
+  "left_view_screw_bottom->auto_2": [
+   -6.6,
+   -17.3,
+   21.3
+  ],
+  "left_view_screw_bottom->auto_3": [
+   -78.2,
+   -42.2,
+   15.3
+  ],
+  "left_view_screw_bottom->auto_5": [
+   -18.1,
+   -12.5,
+   -4.4
+  ],
+  "left_view_screw_bottom->auto_6": [
+   -68.8,
+   -31.0,
+   -1.3
+  ],
+  "left_view_screw_bottom->auto_7": [
+   -100.5,
+   -44.2,
+   6.3
+  ],
+  "left_view_screw_bottom->auto_9": [
+   15.2,
+   -14.5,
+   10.9
+  ],
+  "left_view_screw_right->right_view_green_lip": [
+   -37.1,
+   -6.2,
+   1.2
+  ],
+  "left_view_screw_right->right_view_end_wedge": [
+   -63.6,
+   -15.7,
+   -2.3
+  ],
+  "left_view_screw_right->right_view_screw_left": [
+   -14.7,
+   -10.0,
+   4.8
+  ],
+  "left_view_screw_right->right_view_screw_bottom": [
+   -52.9,
+   -3.1,
+   -9.9
+  ],
+  "left_view_screw_right->right_view_screw_top": [
+   -48.4,
+   -7.6,
+   11.7
+  ],
+  "left_view_screw_right->auto_1": [
+   4.6,
+   0.3,
+   -8.1
+  ],
+  "left_view_screw_right->auto_2": [
+   30.7,
+   6.8,
+   10.2
+  ],
+  "left_view_screw_right->auto_3": [
+   -40.9,
+   -18.1,
+   4.2
+  ],
+  "left_view_screw_right->auto_5": [
+   19.2,
+   11.6,
+   -15.5
+  ],
+  "left_view_screw_right->auto_6": [
+   -31.5,
+   -6.9,
+   -12.4
+  ],
+  "left_view_screw_right->auto_7": [
+   -63.2,
+   -20.1,
+   -4.8
+  ],
+  "left_view_screw_right->auto_9": [
+   52.5,
+   9.6,
+   -0.2
+  ],
+  "right_view_green_lip->right_view_end_wedge": [
+   -26.5,
+   -9.5,
+   -3.5
+  ],
+  "right_view_green_lip->right_view_screw_left": [
+   22.4,
+   -3.8,
+   3.6
+  ],
+  "right_view_green_lip->right_view_screw_bottom": [
+   -15.8,
+   3.1,
+   -11.1
+  ],
+  "right_view_green_lip->right_view_screw_top": [
+   -11.3,
+   -1.4,
+   10.5
+  ],
+  "right_view_green_lip->auto_1": [
+   41.7,
+   6.5,
+   -9.3
+  ],
+  "right_view_green_lip->auto_2": [
+   67.8,
+   13.0,
+   9.0
+  ],
+  "right_view_green_lip->auto_3": [
+   -3.8,
+   -11.9,
+   3.0
+  ],
+  "right_view_green_lip->auto_5": [
+   56.3,
+   17.8,
+   -16.7
+  ],
+  "right_view_green_lip->auto_6": [
+   5.6,
+   -0.7,
+   -13.6
+  ],
+  "right_view_green_lip->auto_7": [
+   -26.1,
+   -13.9,
+   -6.0
+  ],
+  "right_view_green_lip->auto_9": [
+   89.6,
+   15.8,
+   -1.4
+  ],
+  "right_view_end_wedge->right_view_screw_left": [
+   48.9,
+   5.7,
+   7.1
+  ],
+  "right_view_end_wedge->right_view_screw_bottom": [
+   10.7,
+   12.6,
+   -7.6
+  ],
+  "right_view_end_wedge->right_view_screw_top": [
+   15.2,
+   8.1,
+   14.0
+  ],
+  "right_view_end_wedge->auto_1": [
+   68.2,
+   16.0,
+   -5.8
+  ],
+  "right_view_end_wedge->auto_2": [
+   94.3,
+   22.5,
+   12.5
+  ],
+  "right_view_end_wedge->auto_3": [
+   22.7,
+   -2.4,
+   6.5
+  ],
+  "right_view_end_wedge->auto_5": [
+   82.8,
+   27.3,
+   -13.2
+  ],
+  "right_view_end_wedge->auto_6": [
+   32.1,
+   8.8,
+   -10.1
+  ],
+  "right_view_end_wedge->auto_7": [
+   0.4,
+   -4.4,
+   -2.5
+  ],
+  "right_view_end_wedge->auto_9": [
+   116.1,
+   25.3,
+   2.1
+  ],
+  "right_view_screw_left->right_view_screw_bottom": [
+   -38.2,
+   6.9,
+   -14.7
+  ],
+  "right_view_screw_left->right_view_screw_top": [
+   -33.7,
+   2.4,
+   6.9
+  ],
+  "right_view_screw_left->auto_1": [
+   19.3,
+   10.3,
+   -12.9
+  ],
+  "right_view_screw_left->auto_2": [
+   45.4,
+   16.8,
+   5.4
+  ],
+  "right_view_screw_left->auto_3": [
+   -26.2,
+   -8.1,
+   -0.6
+  ],
+  "right_view_screw_left->auto_5": [
+   33.9,
+   21.6,
+   -20.3
+  ],
+  "right_view_screw_left->auto_6": [
+   -16.8,
+   3.1,
+   -17.2
+  ],
+  "right_view_screw_left->auto_7": [
+   -48.5,
+   -10.1,
+   -9.6
+  ],
+  "right_view_screw_left->auto_9": [
+   67.2,
+   19.6,
+   -5.0
+  ],
+  "right_view_screw_bottom->right_view_screw_top": [
+   4.5,
+   -4.5,
+   21.6
+  ],
+  "right_view_screw_bottom->auto_1": [
+   57.5,
+   3.4,
+   1.8
+  ],
+  "right_view_screw_bottom->auto_2": [
+   83.6,
+   9.9,
+   20.1
+  ],
+  "right_view_screw_bottom->auto_3": [
+   12.0,
+   -15.0,
+   14.1
+  ],
+  "right_view_screw_bottom->auto_5": [
+   72.1,
+   14.7,
+   -5.6
+  ],
+  "right_view_screw_bottom->auto_6": [
+   21.4,
+   -3.8,
+   -2.5
+  ],
+  "right_view_screw_bottom->auto_7": [
+   -10.3,
+   -17.0,
+   5.1
+  ],
+  "right_view_screw_bottom->auto_9": [
+   105.4,
+   12.7,
+   9.7
+  ],
+  "right_view_screw_top->auto_1": [
+   53.0,
+   7.9,
+   -19.8
+  ],
+  "right_view_screw_top->auto_2": [
+   79.1,
+   14.4,
+   -1.5
+  ],
+  "right_view_screw_top->auto_3": [
+   7.5,
+   -10.5,
+   -7.5
+  ],
+  "right_view_screw_top->auto_5": [
+   67.6,
+   19.2,
+   -27.2
+  ],
+  "right_view_screw_top->auto_6": [
+   16.9,
+   0.7,
+   -24.1
+  ],
+  "right_view_screw_top->auto_7": [
+   -14.8,
+   -12.5,
+   -16.5
+  ],
+  "right_view_screw_top->auto_9": [
+   100.9,
+   17.2,
+   -11.9
+  ],
+  "auto_1->auto_2": [
+   26.1,
+   6.5,
+   18.3
+  ],
+  "auto_1->auto_3": [
+   -45.5,
+   -18.4,
+   12.3
+  ],
+  "auto_1->auto_5": [
+   14.6,
+   11.3,
+   -7.4
+  ],
+  "auto_1->auto_6": [
+   -36.1,
+   -7.2,
+   -4.3
+  ],
+  "auto_1->auto_7": [
+   -67.8,
+   -20.4,
+   3.3
+  ],
+  "auto_1->auto_9": [
+   47.9,
+   9.3,
+   7.9
+  ],
+  "auto_2->auto_3": [
+   -71.6,
+   -24.9,
+   -6.0
+  ],
+  "auto_2->auto_5": [
+   -11.5,
+   4.8,
+   -25.7
+  ],
+  "auto_2->auto_6": [
+   -62.2,
+   -13.7,
+   -22.6
+  ],
+  "auto_2->auto_7": [
+   -93.9,
+   -26.9,
+   -15.0
+  ],
+  "auto_2->auto_9": [
+   21.8,
+   2.8,
+   -10.4
+  ],
+  "auto_3->auto_5": [
+   60.1,
+   29.7,
+   -19.7
+  ],
+  "auto_3->auto_6": [
+   9.4,
+   11.2,
+   -16.6
+  ],
+  "auto_3->auto_7": [
+   -22.3,
+   -2.0,
+   -9.0
+  ],
+  "auto_3->auto_9": [
+   93.4,
+   27.7,
+   -4.4
+  ],
+  "auto_5->auto_6": [
+   -50.7,
+   -18.5,
+   3.1
+  ],
+  "auto_5->auto_7": [
+   -82.4,
+   -31.7,
+   10.7
+  ],
+  "auto_5->auto_9": [
+   33.3,
+   -2.0,
+   15.3
+  ],
+  "auto_6->auto_7": [
+   -31.7,
+   -13.2,
+   7.6
+  ],
+  "auto_6->auto_9": [
+   84.0,
+   16.5,
+   12.2
+  ],
+  "auto_7->auto_9": [
+   115.7,
+   29.7,
+   4.6
+  ]
+ },
+ "note": "metric depth = fit of photo disparity to the model's depth; trust only when pose.json confidence/iou are good and calibration.r is high"
+}
