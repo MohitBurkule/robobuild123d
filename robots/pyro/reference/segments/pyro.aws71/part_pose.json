@@ -1,0 +1,4827 @@
+{
+ "photo": "pyro.aws71.webp",
+ "camera_from": "pyro.aws71.pose.json",
+ "calibration": {
+  "a": 0.0003240250572737485,
+  "b": 0.003085549922279823,
+  "r": 0.411,
+  "n": 18523
+ },
+ "body_centroid_robot_mm": [
+  18.7,
+  2.0,
+  -16.0
+ ],
+ "parts": {
+  "spinning_disc_front": {
+   "label": "spinning disc front",
+   "n_px": 55609,
+   "median_z_mm": 300.5,
+   "centroid_robot_mm": [
+    0.7,
+    5.6,
+    1.4
+   ],
+   "centroid_cam_mm": [
+    2.4,
+    2.2,
+    301.1
+   ],
+   "normal_robot": [
+    0.898,
+    0.354,
+    0.261
+   ],
+   "extent_mm": [
+    33.4,
+    16.2,
+    5.7
+   ],
+   "height_range_mm": [
+    -21.1,
+    21.2
+   ],
+   "offset_from_body_mm": [
+    -18.0,
+    3.6,
+    17.4
+   ]
+  },
+  "disc_hub_shaft": {
+   "label": "disc hub shaft",
+   "n_px": 11870,
+   "median_z_mm": 301.3,
+   "centroid_robot_mm": [
+    17.3,
+    1.9,
+    -10.0
+   ],
+   "centroid_cam_mm": [
+    -16.0,
+    11.3,
+    301.5
+   ],
+   "normal_robot": [
+    0.726,
+    0.573,
+    0.38
+   ],
+   "extent_mm": [
+    11.2,
+    10.0,
+    0.9
+   ],
+   "height_range_mm": [
+    -18.1,
+    -1.8
+   ],
+   "offset_from_body_mm": [
+    -1.4,
+    -0.1,
+    6.0
+   ]
+  },
+  "motor_cylinder_right": {
+   "label": "motor cylinder right",
+   "n_px": 15703,
+   "median_z_mm": 298.2,
+   "centroid_robot_mm": [
+    -15.9,
+    14.7,
+    8.4
+   ],
+   "centroid_cam_mm": [
+    22.4,
+    -0.2,
+    299.6
+   ],
+   "normal_robot": [
+    -0.171,
+    0.708,
+    0.685
+   ],
+   "extent_mm": [
+    17.1,
+    10.5,
+    5.0
+   ],
+   "height_range_mm": [
+    -3.1,
+    16.8
+   ],
+   "offset_from_body_mm": [
+    -34.6,
+    12.7,
+    24.4
+   ]
+  },
+  "motor_end_cap": {
+   "label": "motor end cap",
+   "n_px": 1418,
+   "median_z_mm": 307.7,
+   "centroid_robot_mm": [
+    12.5,
+    2.2,
+    -16.1
+   ],
+   "centroid_cam_mm": [
+    -13.0,
+    15.8,
+    307.2
+   ],
+   "normal_robot": [
+    0.585,
+    0.557,
+    0.59
+   ],
+   "extent_mm": [
+    68.9,
+    51.9,
+    13.2
+   ],
+   "height_range_mm": [
+    -52.6,
+    20.8
+   ],
+   "offset_from_body_mm": [
+    -6.2,
+    0.2,
+    -0.1
+   ]
+  },
+  "blue_bracket_top": {
+   "label": "blue bracket top",
+   "n_px": 11648,
+   "median_z_mm": 306.8,
+   "centroid_robot_mm": [
+    18.3,
+    -19.8,
+    4.9
+   ],
+   "centroid_cam_mm": [
+    -24.0,
+    -13.1,
+    307.0
+   ],
+   "normal_robot": [
+    0.391,
+    0.614,
+    0.685
+   ],
+   "extent_mm": [
+    15.5,
+    6.3,
+    1.1
+   ],
+   "height_range_mm": [
+    -3.1,
+    12.9
+   ],
+   "offset_from_body_mm": [
+    -0.4,
+    -21.8,
+    20.9
+   ]
+  },
+  "green_body_top_left": {
+   "label": "green body top left",
+   "n_px": 33966,
+   "median_z_mm": 307.5,
+   "centroid_robot_mm": [
+    38.3,
+    -25.6,
+    -6.9
+   ],
+   "centroid_cam_mm": [
+    -46.4,
+    -4.5,
+    307.3
+   ],
+   "normal_robot": [
+    0.401,
+    0.283,
+    0.871
+   ],
+   "extent_mm": [
+    20.2,
+    16.8,
+    2.3
+   ],
+   "height_range_mm": [
+    -13.7,
+    2.3
+   ],
+   "offset_from_body_mm": [
+    19.6,
+    -27.6,
+    9.1
+   ]
+  },
+  "green_left_front_armour": {
+   "label": "green left front armour",
+   "n_px": 24953,
+   "median_z_mm": 307.2,
+   "centroid_robot_mm": [
+    59.8,
+    -25.7,
+    -27.3
+   ],
+   "centroid_cam_mm": [
+    -69.0,
+    14.6,
+    307.8
+   ],
+   "normal_robot": [
+    0.942,
+    0.28,
+    0.186
+   ],
+   "extent_mm": [
+    27.9,
+    14.3,
+    1.4
+   ],
+   "height_range_mm": [
+    -43.1,
+    -13.8
+   ],
+   "offset_from_body_mm": [
+    41.1,
+    -27.7,
+    -11.3
+   ]
+  },
+  "top_left_roller_wheel": {
+   "label": "top left roller wheel",
+   "n_px": 2445,
+   "median_z_mm": 307.9,
+   "centroid_robot_mm": [
+    59.2,
+    -39.9,
+    -10.6
+   ],
+   "centroid_cam_mm": [
+    -71.8,
+    -7.1,
+    308.2
+   ],
+   "normal_robot": [
+    0.317,
+    0.394,
+    0.863
+   ],
+   "extent_mm": [
+    6.4,
+    3.7,
+    2.1
+   ],
+   "height_range_mm": [
+    -13.5,
+    -8.4
+   ],
+   "offset_from_body_mm": [
+    40.5,
+    -41.9,
+    5.4
+   ]
+  },
+  "left_dark_armour_panel": {
+   "label": "left dark armour panel",
+   "n_px": 60163,
+   "median_z_mm": 301.3,
+   "centroid_robot_mm": [
+    40.3,
+    1.8,
+    -30.4
+   ],
+   "centroid_cam_mm": [
+    -40.0,
+    30.6,
+    301.4
+   ],
+   "normal_robot": [
+    0.385,
+    0.695,
+    0.608
+   ],
+   "extent_mm": [
+    26.7,
+    18.8,
+    0.6
+   ],
+   "height_range_mm": [
+    -47.6,
+    -14.4
+   ],
+   "offset_from_body_mm": [
+    21.6,
+    -0.2,
+    -14.4
+   ]
+  },
+  "right_dark_armour_panel": {
+   "label": "right dark armour panel",
+   "n_px": 25160,
+   "median_z_mm": 310.1,
+   "centroid_robot_mm": [
+    -29.4,
+    28.7,
+    -14.9
+   ],
+   "centroid_cam_mm": [
+    35.7,
+    24.9,
+    310.3
+   ],
+   "normal_robot": [
+    0.448,
+    0.577,
+    0.683
+   ],
+   "extent_mm": [
+    18.2,
+    12.8,
+    1.2
+   ],
+   "height_range_mm": [
+    -22.8,
+    -5.8
+   ],
+   "offset_from_body_mm": [
+    -48.1,
+    26.7,
+    1.1
+   ]
+  },
+  "front_tooth_bar_left": {
+   "label": "front tooth bar left",
+   "n_px": 13292,
+   "median_z_mm": 302.2,
+   "centroid_robot_mm": [
+    23.9,
+    22.3,
+    -40.5
+   ],
+   "centroid_cam_mm": [
+    -18.2,
+    48.6,
+    301.8
+   ],
+   "normal_robot": [
+    0.271,
+    0.505,
+    0.82
+   ],
+   "extent_mm": [
+    17.9,
+    11.5,
+    1.7
+   ],
+   "height_range_mm": [
+    -47.4,
+    -33.8
+   ],
+   "offset_from_body_mm": [
+    5.2,
+    20.3,
+    -24.5
+   ]
+  },
+  "front_tooth_bar_right": {
+   "label": "front tooth bar right",
+   "n_px": 8540,
+   "median_z_mm": 305.6,
+   "centroid_robot_mm": [
+    -16.5,
+    35.4,
+    -26.1
+   ],
+   "centroid_cam_mm": [
+    25.5,
+    39.5,
+    305.5
+   ],
+   "normal_robot": [
+    0.535,
+    0.452,
+    0.714
+   ],
+   "extent_mm": [
+    14.8,
+    10.6,
+    1.1
+   ],
+   "height_range_mm": [
+    -32.4,
+    -20.1
+   ],
+   "offset_from_body_mm": [
+    -35.2,
+    33.4,
+    -10.1
+   ]
+  },
+  "screw_left_top_1": {
+   "label": "screw left top 1",
+   "n_px": 348,
+   "median_z_mm": 307.5,
+   "centroid_robot_mm": [
+    50.5,
+    -32.5,
+    -10.1
+   ],
+   "centroid_cam_mm": [
+    -60.8,
+    -4.3,
+    307.4
+   ],
+   "normal_robot": [
+    0.425,
+    0.126,
+    0.896
+   ],
+   "extent_mm": [
+    2.2,
+    1.7,
+    0.2
+   ],
+   "height_range_mm": [
+    -10.8,
+    -9.5
+   ],
+   "offset_from_body_mm": [
+    31.8,
+    -34.5,
+    5.9
+   ]
+  },
+  "screw_left_top_2": {
+   "label": "screw left top 2",
+   "n_px": 318,
+   "median_z_mm": 310.1,
+   "centroid_robot_mm": [
+    43.8,
+    -33.2,
+    -8.0
+   ],
+   "centroid_cam_mm": [
+    -54.9,
+    -7.4,
+    310.1
+   ],
+   "normal_robot": [
+    0.325,
+    0.176,
+    0.929
+   ],
+   "extent_mm": [
+    1.9,
+    1.7,
+    0.1
+   ],
+   "height_range_mm": [
+    -8.5,
+    -7.4
+   ],
+   "offset_from_body_mm": [
+    25.1,
+    -35.2,
+    8.0
+   ]
+  },
+  "screw_left_top_3": {
+   "label": "screw left top 3",
+   "n_px": 240,
+   "median_z_mm": 312.2,
+   "centroid_robot_mm": [
+    30.3,
+    -29.7,
+    -3.6
+   ],
+   "centroid_cam_mm": [
+    -40.8,
+    -10.6,
+    312.2
+   ],
+   "normal_robot": [
+    0.329,
+    0.163,
+    0.93
+   ],
+   "extent_mm": [
+    1.7,
+    1.5,
+    0.1
+   ],
+   "height_range_mm": [
+    -4.0,
+    -3.0
+   ],
+   "offset_from_body_mm": [
+    11.6,
+    -31.7,
+    12.4
+   ]
+  },
+  "screw_bottom_left": {
+   "label": "screw bottom left",
+   "n_px": 678,
+   "median_z_mm": 299.3,
+   "centroid_robot_mm": [
+    50.2,
+    8.0,
+    -42.9
+   ],
+   "centroid_cam_mm": [
+    -48.1,
+    45.5,
+    299.3
+   ],
+   "normal_robot": [
+    0.416,
+    0.633,
+    0.653
+   ],
+   "extent_mm": [
+    2.3,
+    2.2,
+    0.1
+   ],
+   "height_range_mm": [
+    -44.3,
+    -41.6
+   ],
+   "offset_from_body_mm": [
+    31.5,
+    6.0,
+    -26.9
+   ]
+  },
+  "screw_right_side": {
+   "label": "screw right side",
+   "n_px": 455,
+   "median_z_mm": 311.1,
+   "centroid_robot_mm": [
+    -35.8,
+    28.7,
+    -10.7
+   ],
+   "centroid_cam_mm": [
+    42.0,
+    20.7,
+    311.1
+   ],
+   "normal_robot": [
+    0.485,
+    0.559,
+    0.672
+   ],
+   "extent_mm": [
+    2.1,
+    1.8,
+    0.0
+   ],
+   "height_range_mm": [
+    -12.0,
+    -9.6
+   ],
+   "offset_from_body_mm": [
+    -54.5,
+    26.7,
+    5.3
+   ]
+  },
+  "screw_left_edge": {
+   "label": "screw left edge",
+   "n_px": 251,
+   "median_z_mm": 316.0,
+   "centroid_robot_mm": [
+    63.0,
+    -30.4,
+    -39.2
+   ],
+   "centroid_cam_mm": [
+    -76.5,
+    21.8,
+    316.0
+   ],
+   "normal_robot": [
+    0.922,
+    0.383,
+    0.052
+   ],
+   "extent_mm": [
+    2.1,
+    1.8,
+    0.4
+   ],
+   "height_range_mm": [
+    -40.8,
+    -37.9
+   ],
+   "offset_from_body_mm": [
+    44.3,
+    -32.4,
+    -23.2
+   ]
+  },
+  "screw_left_lower": {
+   "label": "screw left lower",
+   "n_px": 322,
+   "median_z_mm": 304.8,
+   "centroid_robot_mm": [
+    56.2,
+    -2.3,
+    -46.4
+   ],
+   "centroid_cam_mm": [
+    -58.9,
+    43.1,
+    304.9
+   ],
+   "normal_robot": [
+    0.971,
+    0.24,
+    -0.001
+   ],
+   "extent_mm": [
+    2.7,
+    2.0,
+    0.2
+   ],
+   "height_range_mm": [
+    -48.5,
+    -44.4
+   ],
+   "offset_from_body_mm": [
+    37.5,
+    -4.3,
+    -30.4
+   ]
+  },
+  "yellow_tab_low_right": {
+   "label": "yellow tab low right",
+   "n_px": 4637,
+   "median_z_mm": 308.1,
+   "centroid_robot_mm": [
+    -11.3,
+    29.2,
+    -27.4
+   ],
+   "centroid_cam_mm": [
+    17.8,
+    37.5,
+    307.7
+   ],
+   "normal_robot": [
+    0.174,
+    0.662,
+    0.729
+   ],
+   "extent_mm": [
+    7.5,
+    5.8,
+    2.0
+   ],
+   "height_range_mm": [
+    -31.3,
+    -22.8
+   ],
+   "offset_from_body_mm": [
+    -30.0,
+    27.2,
+    -11.4
+   ]
+  },
+  "auto_1": {
+   "label": "auto_1",
+   "n_px": 689,
+   "median_z_mm": 314.3,
+   "centroid_robot_mm": [
+    16.1,
+    -13.1,
+    -12.7
+   ],
+   "centroid_cam_mm": [
+    -22.6,
+    4.6,
+    313.5
+   ],
+   "normal_robot": [
+    0.547,
+    0.59,
+    0.594
+   ],
+   "extent_mm": [
+    89.7,
+    51.1,
+    8.2
+   ],
+   "height_range_mm": [
+    -40.2,
+    20.3
+   ],
+   "offset_from_body_mm": [
+    -2.6,
+    -15.1,
+    3.3
+   ]
+  },
+  "auto_2": {
+   "label": "auto_2",
+   "n_px": 1211,
+   "median_z_mm": 305.4,
+   "centroid_robot_mm": [
+    31.7,
+    -20.0,
+    -6.2
+   ],
+   "centroid_cam_mm": [
+    -37.9,
+    -2.6,
+    306.5
+   ],
+   "normal_robot": [
+    0.466,
+    0.25,
+    0.848
+   ],
+   "extent_mm": [
+    26.0,
+    21.3,
+    4.6
+   ],
+   "height_range_mm": [
+    -16.6,
+    5.6
+   ],
+   "offset_from_body_mm": [
+    13.0,
+    -22.0,
+    9.8
+   ]
+  },
+  "auto_3": {
+   "label": "auto_3",
+   "n_px": 6665,
+   "median_z_mm": 303.1,
+   "centroid_robot_mm": [
+    16.3,
+    0.2,
+    -8.5
+   ],
+   "centroid_cam_mm": [
+    -15.6,
+    9.1,
+    302.3
+   ],
+   "normal_robot": [
+    0.707,
+    0.616,
+    0.348
+   ],
+   "extent_mm": [
+    16.1,
+    15.2,
+    2.5
+   ],
+   "height_range_mm": [
+    -22.5,
+    0.5
+   ],
+   "offset_from_body_mm": [
+    -2.4,
+    -1.8,
+    7.5
+   ]
+  },
+  "auto_4": {
+   "label": "auto_4",
+   "n_px": 914,
+   "median_z_mm": 300.3,
+   "centroid_robot_mm": [
+    45.8,
+    -10.2,
+    -21.3
+   ],
+   "centroid_cam_mm": [
+    -48.4,
+    17.1,
+    301.4
+   ],
+   "normal_robot": [
+    0.434,
+    0.74,
+    0.514
+   ],
+   "extent_mm": [
+    31.0,
+    12.1,
+    5.2
+   ],
+   "height_range_mm": [
+    -39.0,
+    -9.1
+   ],
+   "offset_from_body_mm": [
+    27.1,
+    -12.2,
+    -5.3
+   ]
+  },
+  "auto_5": {
+   "label": "auto_5",
+   "n_px": 817,
+   "median_z_mm": 307.3,
+   "centroid_robot_mm": [
+    18.6,
+    -20.3,
+    1.5
+   ],
+   "centroid_cam_mm": [
+    -25.2,
+    -10.6,
+    309.0
+   ],
+   "normal_robot": [
+    0.03,
+    0.524,
+    0.851
+   ],
+   "extent_mm": [
+    21.0,
+    10.8,
+    4.5
+   ],
+   "height_range_mm": [
+    -5.2,
+    11.6
+   ],
+   "offset_from_body_mm": [
+    -0.1,
+    -22.3,
+    17.5
+   ]
+  },
+  "auto_6": {
+   "label": "auto_6",
+   "n_px": 10062,
+   "median_z_mm": 305.2,
+   "centroid_robot_mm": [
+    17.5,
+    14.5,
+    -31.8
+   ],
+   "centroid_cam_mm": [
+    -14.7,
+    36.2,
+    305.3
+   ],
+   "normal_robot": [
+    0.326,
+    0.681,
+    0.655
+   ],
+   "extent_mm": [
+    15.1,
+    7.5,
+    0.7
+   ],
+   "height_range_mm": [
+    -41.3,
+    -24.3
+   ],
+   "offset_from_body_mm": [
+    -1.2,
+    12.5,
+    -15.8
+   ]
+  },
+  "auto_7": {
+   "label": "auto_7",
+   "n_px": 1442,
+   "median_z_mm": 301.8,
+   "centroid_robot_mm": [
+    29.7,
+    23.3,
+    -47.2
+   ],
+   "centroid_cam_mm": [
+    -24.2,
+    55.3,
+    302.0
+   ],
+   "normal_robot": [
+    0.433,
+    0.522,
+    0.735
+   ],
+   "extent_mm": [
+    12.8,
+    7.2,
+    1.7
+   ],
+   "height_range_mm": [
+    -50.9,
+    -40.1
+   ],
+   "offset_from_body_mm": [
+    11.0,
+    21.3,
+    -31.2
+   ]
+  },
+  "auto_8": {
+   "label": "auto_8",
+   "n_px": 849,
+   "median_z_mm": 308.5,
+   "centroid_robot_mm": [
+    -20.6,
+    7.3,
+    6.1
+   ],
+   "centroid_cam_mm": [
+    22.4,
+    -3.3,
+    308.2
+   ],
+   "normal_robot": [
+    -0.274,
+    0.489,
+    0.828
+   ],
+   "extent_mm": [
+    29.6,
+    13.5,
+    5.0
+   ],
+   "height_range_mm": [
+    -5.0,
+    17.1
+   ],
+   "offset_from_body_mm": [
+    -39.3,
+    5.3,
+    22.1
+   ]
+  },
+  "auto_9": {
+   "label": "auto_9",
+   "n_px": 219,
+   "median_z_mm": 307.1,
+   "centroid_robot_mm": [
+    -19.2,
+    36.9,
+    -26.9
+   ],
+   "centroid_cam_mm": [
+    28.3,
+    40.7,
+    306.3
+   ],
+   "normal_robot": [
+    0.53,
+    0.503,
+    0.683
+   ],
+   "extent_mm": [
+    18.4,
+    8.4,
+    2.6
+   ],
+   "height_range_mm": [
+    -32.4,
+    -18.7
+   ],
+   "offset_from_body_mm": [
+    -37.9,
+    34.9,
+    -10.9
+   ]
+  },
+  "auto_10": {
+   "label": "auto_10",
+   "n_px": 6502,
+   "median_z_mm": 298.5,
+   "centroid_robot_mm": [
+    48.5,
+    17.7,
+    -51.9
+   ],
+   "centroid_cam_mm": [
+    -43.8,
+    58.2,
+    298.8
+   ],
+   "normal_robot": [
+    0.326,
+    0.625,
+    0.709
+   ],
+   "extent_mm": [
+    11.5,
+    8.0,
+    1.5
+   ],
+   "height_range_mm": [
+    -57.5,
+    -45.5
+   ],
+   "offset_from_body_mm": [
+    29.8,
+    15.7,
+    -35.9
+   ]
+  },
+  "auto_11": {
+   "label": "auto_11",
+   "n_px": 494,
+   "median_z_mm": 298.5,
+   "centroid_robot_mm": [
+    7.0,
+    5.9,
+    -0.2
+   ],
+   "centroid_cam_mm": [
+    -3.1,
+    4.5,
+    298.6
+   ],
+   "normal_robot": [
+    0.774,
+    0.522,
+    0.359
+   ],
+   "extent_mm": [
+    4.5,
+    2.8,
+    0.3
+   ],
+   "height_range_mm": [
+    -3.5,
+    2.7
+   ],
+   "offset_from_body_mm": [
+    -11.7,
+    3.9,
+    15.8
+   ]
+  },
+  "auto_12": {
+   "label": "auto_12",
+   "n_px": 231,
+   "median_z_mm": 300.7,
+   "centroid_robot_mm": [
+    55.4,
+    -20.3,
+    -17.9
+   ],
+   "centroid_cam_mm": [
+    -60.7,
+    9.6,
+    301.3
+   ],
+   "normal_robot": [
+    0.95,
+    0.153,
+    0.272
+   ],
+   "extent_mm": [
+    12.0,
+    9.3,
+    1.1
+   ],
+   "height_range_mm": [
+    -24.7,
+    -12.8
+   ],
+   "offset_from_body_mm": [
+    36.7,
+    -22.3,
+    -1.9
+   ]
+  },
+  "auto_13": {
+   "label": "auto_13",
+   "n_px": 262,
+   "median_z_mm": 301.5,
+   "centroid_robot_mm": [
+    -10.4,
+    25.2,
+    -12.8
+   ],
+   "centroid_cam_mm": [
+    18.2,
+    23.6,
+    301.8
+   ],
+   "normal_robot": [
+    -0.602,
+    0.798,
+    -0.029
+   ],
+   "extent_mm": [
+    9.5,
+    8.0,
+    1.7
+   ],
+   "height_range_mm": [
+    -21.0,
+    -5.9
+   ],
+   "offset_from_body_mm": [
+    -29.1,
+    23.2,
+    3.2
+   ]
+  },
+  "auto_14": {
+   "label": "auto_14",
+   "n_px": 242,
+   "median_z_mm": 309.6,
+   "centroid_robot_mm": [
+    -37.3,
+    40.2,
+    -21.0
+   ],
+   "centroid_cam_mm": [
+    46.5,
+    35.5,
+    310.1
+   ],
+   "normal_robot": [
+    0.449,
+    0.42,
+    0.789
+   ],
+   "extent_mm": [
+    14.0,
+    8.1,
+    1.8
+   ],
+   "height_range_mm": [
+    -26.9,
+    -14.0
+   ],
+   "offset_from_body_mm": [
+    -56.0,
+    38.2,
+    -5.0
+   ]
+  },
+  "auto_15": {
+   "label": "auto_15",
+   "n_px": 2797,
+   "median_z_mm": 316.9,
+   "centroid_robot_mm": [
+    6.7,
+    -25.9,
+    5.4
+   ],
+   "centroid_cam_mm": [
+    -16.9,
+    -18.6,
+    316.6
+   ],
+   "normal_robot": [
+    0.724,
+    0.492,
+    0.484
+   ],
+   "extent_mm": [
+    7.7,
+    3.8,
+    1.9
+   ],
+   "height_range_mm": [
+    -0.4,
+    9.9
+   ],
+   "offset_from_body_mm": [
+    -12.0,
+    -27.9,
+    21.4
+   ]
+  },
+  "auto_16": {
+   "label": "auto_16",
+   "n_px": 2073,
+   "median_z_mm": 304.8,
+   "centroid_robot_mm": [
+    18.1,
+    19.2,
+    -37.0
+   ],
+   "centroid_cam_mm": [
+    -14.0,
+    43.2,
+    304.8
+   ],
+   "normal_robot": [
+    0.368,
+    0.659,
+    0.656
+   ],
+   "extent_mm": [
+    7.0,
+    3.7,
+    0.1
+   ],
+   "height_range_mm": [
+    -39.6,
+    -34.8
+   ],
+   "offset_from_body_mm": [
+    -0.6,
+    17.2,
+    -21.0
+   ]
+  },
+  "auto_21": {
+   "label": "auto_21",
+   "n_px": 4179,
+   "median_z_mm": 308.2,
+   "centroid_robot_mm": [
+    2.4,
+    17.8,
+    -27.2
+   ],
+   "centroid_cam_mm": [
+    0.8,
+    32.5,
+    308.2
+   ],
+   "normal_robot": [
+    0.895,
+    0.429,
+    0.126
+   ],
+   "extent_mm": [
+    13.1,
+    4.8,
+    0.7
+   ],
+   "height_range_mm": [
+    -31.8,
+    -23.1
+   ],
+   "offset_from_body_mm": [
+    -16.3,
+    15.8,
+    -11.2
+   ]
+  },
+  "auto_23": {
+   "label": "auto_23",
+   "n_px": 1476,
+   "median_z_mm": 304.7,
+   "centroid_robot_mm": [
+    -3.1,
+    27.6,
+    -27.7
+   ],
+   "centroid_cam_mm": [
+    10.0,
+    37.9,
+    304.8
+   ],
+   "normal_robot": [
+    0.712,
+    0.67,
+    0.209
+   ],
+   "extent_mm": [
+    6.4,
+    3.9,
+    1.3
+   ],
+   "height_range_mm": [
+    -33.1,
+    -23.3
+   ],
+   "offset_from_body_mm": [
+    -21.8,
+    25.6,
+    -11.7
+   ]
+  }
+ },
+ "pairs": {
+  "spinning_disc_front->disc_hub_shaft": [
+   16.6,
+   -3.7,
+   -11.4
+  ],
+  "spinning_disc_front->motor_cylinder_right": [
+   -16.6,
+   9.1,
+   7.0
+  ],
+  "spinning_disc_front->motor_end_cap": [
+   11.8,
+   -3.4,
+   -17.5
+  ],
+  "spinning_disc_front->blue_bracket_top": [
+   17.6,
+   -25.4,
+   3.5
+  ],
+  "spinning_disc_front->green_body_top_left": [
+   37.6,
+   -31.2,
+   -8.3
+  ],
+  "spinning_disc_front->green_left_front_armour": [
+   59.1,
+   -31.3,
+   -28.7
+  ],
+  "spinning_disc_front->top_left_roller_wheel": [
+   58.5,
+   -45.5,
+   -12.0
+  ],
+  "spinning_disc_front->left_dark_armour_panel": [
+   39.6,
+   -3.8,
+   -31.8
+  ],
+  "spinning_disc_front->right_dark_armour_panel": [
+   -30.1,
+   23.1,
+   -16.3
+  ],
+  "spinning_disc_front->front_tooth_bar_left": [
+   23.2,
+   16.7,
+   -41.9
+  ],
+  "spinning_disc_front->front_tooth_bar_right": [
+   -17.2,
+   29.8,
+   -27.5
+  ],
+  "spinning_disc_front->screw_left_top_1": [
+   49.8,
+   -38.1,
+   -11.5
+  ],
+  "spinning_disc_front->screw_left_top_2": [
+   43.1,
+   -38.8,
+   -9.4
+  ],
+  "spinning_disc_front->screw_left_top_3": [
+   29.6,
+   -35.3,
+   -5.0
+  ],
+  "spinning_disc_front->screw_bottom_left": [
+   49.5,
+   2.4,
+   -44.3
+  ],
+  "spinning_disc_front->screw_right_side": [
+   -36.5,
+   23.1,
+   -12.1
+  ],
+  "spinning_disc_front->screw_left_edge": [
+   62.3,
+   -36.0,
+   -40.6
+  ],
+  "spinning_disc_front->screw_left_lower": [
+   55.5,
+   -7.9,
+   -47.8
+  ],
+  "spinning_disc_front->yellow_tab_low_right": [
+   -12.0,
+   23.6,
+   -28.8
+  ],
+  "spinning_disc_front->auto_1": [
+   15.4,
+   -18.7,
+   -14.1
+  ],
+  "spinning_disc_front->auto_2": [
+   31.0,
+   -25.6,
+   -7.6
+  ],
+  "spinning_disc_front->auto_3": [
+   15.6,
+   -5.4,
+   -9.9
+  ],
+  "spinning_disc_front->auto_4": [
+   45.1,
+   -15.8,
+   -22.7
+  ],
+  "spinning_disc_front->auto_5": [
+   17.9,
+   -25.9,
+   0.1
+  ],
+  "spinning_disc_front->auto_6": [
+   16.8,
+   8.9,
+   -33.2
+  ],
+  "spinning_disc_front->auto_7": [
+   29.0,
+   17.7,
+   -48.6
+  ],
+  "spinning_disc_front->auto_8": [
+   -21.3,
+   1.7,
+   4.7
+  ],
+  "spinning_disc_front->auto_9": [
+   -19.9,
+   31.3,
+   -28.3
+  ],
+  "spinning_disc_front->auto_10": [
+   47.8,
+   12.1,
+   -53.3
+  ],
+  "spinning_disc_front->auto_11": [
+   6.3,
+   0.3,
+   -1.6
+  ],
+  "spinning_disc_front->auto_12": [
+   54.7,
+   -25.9,
+   -19.3
+  ],
+  "spinning_disc_front->auto_13": [
+   -11.1,
+   19.6,
+   -14.2
+  ],
+  "spinning_disc_front->auto_14": [
+   -38.0,
+   34.6,
+   -22.4
+  ],
+  "spinning_disc_front->auto_15": [
+   6.0,
+   -31.5,
+   4.0
+  ],
+  "spinning_disc_front->auto_16": [
+   17.4,
+   13.6,
+   -38.4
+  ],
+  "spinning_disc_front->auto_21": [
+   1.7,
+   12.2,
+   -28.6
+  ],
+  "spinning_disc_front->auto_23": [
+   -3.8,
+   22.0,
+   -29.1
+  ],
+  "disc_hub_shaft->motor_cylinder_right": [
+   -33.2,
+   12.8,
+   18.4
+  ],
+  "disc_hub_shaft->motor_end_cap": [
+   -4.8,
+   0.3,
+   -6.1
+  ],
+  "disc_hub_shaft->blue_bracket_top": [
+   1.0,
+   -21.7,
+   14.9
+  ],
+  "disc_hub_shaft->green_body_top_left": [
+   21.0,
+   -27.5,
+   3.1
+  ],
+  "disc_hub_shaft->green_left_front_armour": [
+   42.5,
+   -27.6,
+   -17.3
+  ],
+  "disc_hub_shaft->top_left_roller_wheel": [
+   41.9,
+   -41.8,
+   -0.6
+  ],
+  "disc_hub_shaft->left_dark_armour_panel": [
+   23.0,
+   -0.1,
+   -20.4
+  ],
+  "disc_hub_shaft->right_dark_armour_panel": [
+   -46.7,
+   26.8,
+   -4.9
+  ],
+  "disc_hub_shaft->front_tooth_bar_left": [
+   6.6,
+   20.4,
+   -30.5
+  ],
+  "disc_hub_shaft->front_tooth_bar_right": [
+   -33.8,
+   33.5,
+   -16.1
+  ],
+  "disc_hub_shaft->screw_left_top_1": [
+   33.2,
+   -34.4,
+   -0.1
+  ],
+  "disc_hub_shaft->screw_left_top_2": [
+   26.5,
+   -35.1,
+   2.0
+  ],
+  "disc_hub_shaft->screw_left_top_3": [
+   13.0,
+   -31.6,
+   6.4
+  ],
+  "disc_hub_shaft->screw_bottom_left": [
+   32.9,
+   6.1,
+   -32.9
+  ],
+  "disc_hub_shaft->screw_right_side": [
+   -53.1,
+   26.8,
+   -0.7
+  ],
+  "disc_hub_shaft->screw_left_edge": [
+   45.7,
+   -32.3,
+   -29.2
+  ],
+  "disc_hub_shaft->screw_left_lower": [
+   38.9,
+   -4.2,
+   -36.4
+  ],
+  "disc_hub_shaft->yellow_tab_low_right": [
+   -28.6,
+   27.3,
+   -17.4
+  ],
+  "disc_hub_shaft->auto_1": [
+   -1.2,
+   -15.0,
+   -2.7
+  ],
+  "disc_hub_shaft->auto_2": [
+   14.4,
+   -21.9,
+   3.8
+  ],
+  "disc_hub_shaft->auto_3": [
+   -1.0,
+   -1.7,
+   1.5
+  ],
+  "disc_hub_shaft->auto_4": [
+   28.5,
+   -12.1,
+   -11.3
+  ],
+  "disc_hub_shaft->auto_5": [
+   1.3,
+   -22.2,
+   11.5
+  ],
+  "disc_hub_shaft->auto_6": [
+   0.2,
+   12.6,
+   -21.8
+  ],
+  "disc_hub_shaft->auto_7": [
+   12.4,
+   21.4,
+   -37.2
+  ],
+  "disc_hub_shaft->auto_8": [
+   -37.9,
+   5.4,
+   16.1
+  ],
+  "disc_hub_shaft->auto_9": [
+   -36.5,
+   35.0,
+   -16.9
+  ],
+  "disc_hub_shaft->auto_10": [
+   31.2,
+   15.8,
+   -41.9
+  ],
+  "disc_hub_shaft->auto_11": [
+   -10.3,
+   4.0,
+   9.8
+  ],
+  "disc_hub_shaft->auto_12": [
+   38.1,
+   -22.2,
+   -7.9
+  ],
+  "disc_hub_shaft->auto_13": [
+   -27.7,
+   23.3,
+   -2.8
+  ],
+  "disc_hub_shaft->auto_14": [
+   -54.6,
+   38.3,
+   -11.0
+  ],
+  "disc_hub_shaft->auto_15": [
+   -10.6,
+   -27.8,
+   15.4
+  ],
+  "disc_hub_shaft->auto_16": [
+   0.8,
+   17.3,
+   -27.0
+  ],
+  "disc_hub_shaft->auto_21": [
+   -14.9,
+   15.9,
+   -17.2
+  ],
+  "disc_hub_shaft->auto_23": [
+   -20.4,
+   25.7,
+   -17.7
+  ],
+  "motor_cylinder_right->motor_end_cap": [
+   28.4,
+   -12.5,
+   -24.5
+  ],
+  "motor_cylinder_right->blue_bracket_top": [
+   34.2,
+   -34.5,
+   -3.5
+  ],
+  "motor_cylinder_right->green_body_top_left": [
+   54.2,
+   -40.3,
+   -15.3
+  ],
+  "motor_cylinder_right->green_left_front_armour": [
+   75.7,
+   -40.4,
+   -35.7
+  ],
+  "motor_cylinder_right->top_left_roller_wheel": [
+   75.1,
+   -54.6,
+   -19.0
+  ],
+  "motor_cylinder_right->left_dark_armour_panel": [
+   56.2,
+   -12.9,
+   -38.8
+  ],
+  "motor_cylinder_right->right_dark_armour_panel": [
+   -13.5,
+   14.0,
+   -23.3
+  ],
+  "motor_cylinder_right->front_tooth_bar_left": [
+   39.8,
+   7.6,
+   -48.9
+  ],
+  "motor_cylinder_right->front_tooth_bar_right": [
+   -0.6,
+   20.7,
+   -34.5
+  ],
+  "motor_cylinder_right->screw_left_top_1": [
+   66.4,
+   -47.2,
+   -18.5
+  ],
+  "motor_cylinder_right->screw_left_top_2": [
+   59.7,
+   -47.9,
+   -16.4
+  ],
+  "motor_cylinder_right->screw_left_top_3": [
+   46.2,
+   -44.4,
+   -12.0
+  ],
+  "motor_cylinder_right->screw_bottom_left": [
+   66.1,
+   -6.7,
+   -51.3
+  ],
+  "motor_cylinder_right->screw_right_side": [
+   -19.9,
+   14.0,
+   -19.1
+  ],
+  "motor_cylinder_right->screw_left_edge": [
+   78.9,
+   -45.1,
+   -47.6
+  ],
+  "motor_cylinder_right->screw_left_lower": [
+   72.1,
+   -17.0,
+   -54.8
+  ],
+  "motor_cylinder_right->yellow_tab_low_right": [
+   4.6,
+   14.5,
+   -35.8
+  ],
+  "motor_cylinder_right->auto_1": [
+   32.0,
+   -27.8,
+   -21.1
+  ],
+  "motor_cylinder_right->auto_2": [
+   47.6,
+   -34.7,
+   -14.6
+  ],
+  "motor_cylinder_right->auto_3": [
+   32.2,
+   -14.5,
+   -16.9
+  ],
+  "motor_cylinder_right->auto_4": [
+   61.7,
+   -24.9,
+   -29.7
+  ],
+  "motor_cylinder_right->auto_5": [
+   34.5,
+   -35.0,
+   -6.9
+  ],
+  "motor_cylinder_right->auto_6": [
+   33.4,
+   -0.2,
+   -40.2
+  ],
+  "motor_cylinder_right->auto_7": [
+   45.6,
+   8.6,
+   -55.6
+  ],
+  "motor_cylinder_right->auto_8": [
+   -4.7,
+   -7.4,
+   -2.3
+  ],
+  "motor_cylinder_right->auto_9": [
+   -3.3,
+   22.2,
+   -35.3
+  ],
+  "motor_cylinder_right->auto_10": [
+   64.4,
+   3.0,
+   -60.3
+  ],
+  "motor_cylinder_right->auto_11": [
+   22.9,
+   -8.8,
+   -8.6
+  ],
+  "motor_cylinder_right->auto_12": [
+   71.3,
+   -35.0,
+   -26.3
+  ],
+  "motor_cylinder_right->auto_13": [
+   5.5,
+   10.5,
+   -21.2
+  ],
+  "motor_cylinder_right->auto_14": [
+   -21.4,
+   25.5,
+   -29.4
+  ],
+  "motor_cylinder_right->auto_15": [
+   22.6,
+   -40.6,
+   -3.0
+  ],
+  "motor_cylinder_right->auto_16": [
+   34.0,
+   4.5,
+   -45.4
+  ],
+  "motor_cylinder_right->auto_21": [
+   18.3,
+   3.1,
+   -35.6
+  ],
+  "motor_cylinder_right->auto_23": [
+   12.8,
+   12.9,
+   -36.1
+  ],
+  "motor_end_cap->blue_bracket_top": [
+   5.8,
+   -22.0,
+   21.0
+  ],
+  "motor_end_cap->green_body_top_left": [
+   25.8,
+   -27.8,
+   9.2
+  ],
+  "motor_end_cap->green_left_front_armour": [
+   47.3,
+   -27.9,
+   -11.2
+  ],
+  "motor_end_cap->top_left_roller_wheel": [
+   46.7,
+   -42.1,
+   5.5
+  ],
+  "motor_end_cap->left_dark_armour_panel": [
+   27.8,
+   -0.4,
+   -14.3
+  ],
+  "motor_end_cap->right_dark_armour_panel": [
+   -41.9,
+   26.5,
+   1.2
+  ],
+  "motor_end_cap->front_tooth_bar_left": [
+   11.4,
+   20.1,
+   -24.4
+  ],
+  "motor_end_cap->front_tooth_bar_right": [
+   -29.0,
+   33.2,
+   -10.0
+  ],
+  "motor_end_cap->screw_left_top_1": [
+   38.0,
+   -34.7,
+   6.0
+  ],
+  "motor_end_cap->screw_left_top_2": [
+   31.3,
+   -35.4,
+   8.1
+  ],
+  "motor_end_cap->screw_left_top_3": [
+   17.8,
+   -31.9,
+   12.5
+  ],
+  "motor_end_cap->screw_bottom_left": [
+   37.7,
+   5.8,
+   -26.8
+  ],
+  "motor_end_cap->screw_right_side": [
+   -48.3,
+   26.5,
+   5.4
+  ],
+  "motor_end_cap->screw_left_edge": [
+   50.5,
+   -32.6,
+   -23.1
+  ],
+  "motor_end_cap->screw_left_lower": [
+   43.7,
+   -4.5,
+   -30.3
+  ],
+  "motor_end_cap->yellow_tab_low_right": [
+   -23.8,
+   27.0,
+   -11.3
+  ],
+  "motor_end_cap->auto_1": [
+   3.6,
+   -15.3,
+   3.4
+  ],
+  "motor_end_cap->auto_2": [
+   19.2,
+   -22.2,
+   9.9
+  ],
+  "motor_end_cap->auto_3": [
+   3.8,
+   -2.0,
+   7.6
+  ],
+  "motor_end_cap->auto_4": [
+   33.3,
+   -12.4,
+   -5.2
+  ],
+  "motor_end_cap->auto_5": [
+   6.1,
+   -22.5,
+   17.6
+  ],
+  "motor_end_cap->auto_6": [
+   5.0,
+   12.3,
+   -15.7
+  ],
+  "motor_end_cap->auto_7": [
+   17.2,
+   21.1,
+   -31.1
+  ],
+  "motor_end_cap->auto_8": [
+   -33.1,
+   5.1,
+   22.2
+  ],
+  "motor_end_cap->auto_9": [
+   -31.7,
+   34.7,
+   -10.8
+  ],
+  "motor_end_cap->auto_10": [
+   36.0,
+   15.5,
+   -35.8
+  ],
+  "motor_end_cap->auto_11": [
+   -5.5,
+   3.7,
+   15.9
+  ],
+  "motor_end_cap->auto_12": [
+   42.9,
+   -22.5,
+   -1.8
+  ],
+  "motor_end_cap->auto_13": [
+   -22.9,
+   23.0,
+   3.3
+  ],
+  "motor_end_cap->auto_14": [
+   -49.8,
+   38.0,
+   -4.9
+  ],
+  "motor_end_cap->auto_15": [
+   -5.8,
+   -28.1,
+   21.5
+  ],
+  "motor_end_cap->auto_16": [
+   5.6,
+   17.0,
+   -20.9
+  ],
+  "motor_end_cap->auto_21": [
+   -10.1,
+   15.6,
+   -11.1
+  ],
+  "motor_end_cap->auto_23": [
+   -15.6,
+   25.4,
+   -11.6
+  ],
+  "blue_bracket_top->green_body_top_left": [
+   20.0,
+   -5.8,
+   -11.8
+  ],
+  "blue_bracket_top->green_left_front_armour": [
+   41.5,
+   -5.9,
+   -32.2
+  ],
+  "blue_bracket_top->top_left_roller_wheel": [
+   40.9,
+   -20.1,
+   -15.5
+  ],
+  "blue_bracket_top->left_dark_armour_panel": [
+   22.0,
+   21.6,
+   -35.3
+  ],
+  "blue_bracket_top->right_dark_armour_panel": [
+   -47.7,
+   48.5,
+   -19.8
+  ],
+  "blue_bracket_top->front_tooth_bar_left": [
+   5.6,
+   42.1,
+   -45.4
+  ],
+  "blue_bracket_top->front_tooth_bar_right": [
+   -34.8,
+   55.2,
+   -31.0
+  ],
+  "blue_bracket_top->screw_left_top_1": [
+   32.2,
+   -12.7,
+   -15.0
+  ],
+  "blue_bracket_top->screw_left_top_2": [
+   25.5,
+   -13.4,
+   -12.9
+  ],
+  "blue_bracket_top->screw_left_top_3": [
+   12.0,
+   -9.9,
+   -8.5
+  ],
+  "blue_bracket_top->screw_bottom_left": [
+   31.9,
+   27.8,
+   -47.8
+  ],
+  "blue_bracket_top->screw_right_side": [
+   -54.1,
+   48.5,
+   -15.6
+  ],
+  "blue_bracket_top->screw_left_edge": [
+   44.7,
+   -10.6,
+   -44.1
+  ],
+  "blue_bracket_top->screw_left_lower": [
+   37.9,
+   17.5,
+   -51.3
+  ],
+  "blue_bracket_top->yellow_tab_low_right": [
+   -29.6,
+   49.0,
+   -32.3
+  ],
+  "blue_bracket_top->auto_1": [
+   -2.2,
+   6.7,
+   -17.6
+  ],
+  "blue_bracket_top->auto_2": [
+   13.4,
+   -0.2,
+   -11.1
+  ],
+  "blue_bracket_top->auto_3": [
+   -2.0,
+   20.0,
+   -13.4
+  ],
+  "blue_bracket_top->auto_4": [
+   27.5,
+   9.6,
+   -26.2
+  ],
+  "blue_bracket_top->auto_5": [
+   0.3,
+   -0.5,
+   -3.4
+  ],
+  "blue_bracket_top->auto_6": [
+   -0.8,
+   34.3,
+   -36.7
+  ],
+  "blue_bracket_top->auto_7": [
+   11.4,
+   43.1,
+   -52.1
+  ],
+  "blue_bracket_top->auto_8": [
+   -38.9,
+   27.1,
+   1.2
+  ],
+  "blue_bracket_top->auto_9": [
+   -37.5,
+   56.7,
+   -31.8
+  ],
+  "blue_bracket_top->auto_10": [
+   30.2,
+   37.5,
+   -56.8
+  ],
+  "blue_bracket_top->auto_11": [
+   -11.3,
+   25.7,
+   -5.1
+  ],
+  "blue_bracket_top->auto_12": [
+   37.1,
+   -0.5,
+   -22.8
+  ],
+  "blue_bracket_top->auto_13": [
+   -28.7,
+   45.0,
+   -17.7
+  ],
+  "blue_bracket_top->auto_14": [
+   -55.6,
+   60.0,
+   -25.9
+  ],
+  "blue_bracket_top->auto_15": [
+   -11.6,
+   -6.1,
+   0.5
+  ],
+  "blue_bracket_top->auto_16": [
+   -0.2,
+   39.0,
+   -41.9
+  ],
+  "blue_bracket_top->auto_21": [
+   -15.9,
+   37.6,
+   -32.1
+  ],
+  "blue_bracket_top->auto_23": [
+   -21.4,
+   47.4,
+   -32.6
+  ],
+  "green_body_top_left->green_left_front_armour": [
+   21.5,
+   -0.1,
+   -20.4
+  ],
+  "green_body_top_left->top_left_roller_wheel": [
+   20.9,
+   -14.3,
+   -3.7
+  ],
+  "green_body_top_left->left_dark_armour_panel": [
+   2.0,
+   27.4,
+   -23.5
+  ],
+  "green_body_top_left->right_dark_armour_panel": [
+   -67.7,
+   54.3,
+   -8.0
+  ],
+  "green_body_top_left->front_tooth_bar_left": [
+   -14.4,
+   47.9,
+   -33.6
+  ],
+  "green_body_top_left->front_tooth_bar_right": [
+   -54.8,
+   61.0,
+   -19.2
+  ],
+  "green_body_top_left->screw_left_top_1": [
+   12.2,
+   -6.9,
+   -3.2
+  ],
+  "green_body_top_left->screw_left_top_2": [
+   5.5,
+   -7.6,
+   -1.1
+  ],
+  "green_body_top_left->screw_left_top_3": [
+   -8.0,
+   -4.1,
+   3.3
+  ],
+  "green_body_top_left->screw_bottom_left": [
+   11.9,
+   33.6,
+   -36.0
+  ],
+  "green_body_top_left->screw_right_side": [
+   -74.1,
+   54.3,
+   -3.8
+  ],
+  "green_body_top_left->screw_left_edge": [
+   24.7,
+   -4.8,
+   -32.3
+  ],
+  "green_body_top_left->screw_left_lower": [
+   17.9,
+   23.3,
+   -39.5
+  ],
+  "green_body_top_left->yellow_tab_low_right": [
+   -49.6,
+   54.8,
+   -20.5
+  ],
+  "green_body_top_left->auto_1": [
+   -22.2,
+   12.5,
+   -5.8
+  ],
+  "green_body_top_left->auto_2": [
+   -6.6,
+   5.6,
+   0.7
+  ],
+  "green_body_top_left->auto_3": [
+   -22.0,
+   25.8,
+   -1.6
+  ],
+  "green_body_top_left->auto_4": [
+   7.5,
+   15.4,
+   -14.4
+  ],
+  "green_body_top_left->auto_5": [
+   -19.7,
+   5.3,
+   8.4
+  ],
+  "green_body_top_left->auto_6": [
+   -20.8,
+   40.1,
+   -24.9
+  ],
+  "green_body_top_left->auto_7": [
+   -8.6,
+   48.9,
+   -40.3
+  ],
+  "green_body_top_left->auto_8": [
+   -58.9,
+   32.9,
+   13.0
+  ],
+  "green_body_top_left->auto_9": [
+   -57.5,
+   62.5,
+   -20.0
+  ],
+  "green_body_top_left->auto_10": [
+   10.2,
+   43.3,
+   -45.0
+  ],
+  "green_body_top_left->auto_11": [
+   -31.3,
+   31.5,
+   6.7
+  ],
+  "green_body_top_left->auto_12": [
+   17.1,
+   5.3,
+   -11.0
+  ],
+  "green_body_top_left->auto_13": [
+   -48.7,
+   50.8,
+   -5.9
+  ],
+  "green_body_top_left->auto_14": [
+   -75.6,
+   65.8,
+   -14.1
+  ],
+  "green_body_top_left->auto_15": [
+   -31.6,
+   -0.3,
+   12.3
+  ],
+  "green_body_top_left->auto_16": [
+   -20.2,
+   44.8,
+   -30.1
+  ],
+  "green_body_top_left->auto_21": [
+   -35.9,
+   43.4,
+   -20.3
+  ],
+  "green_body_top_left->auto_23": [
+   -41.4,
+   53.2,
+   -20.8
+  ],
+  "green_left_front_armour->top_left_roller_wheel": [
+   -0.6,
+   -14.2,
+   16.7
+  ],
+  "green_left_front_armour->left_dark_armour_panel": [
+   -19.5,
+   27.5,
+   -3.1
+  ],
+  "green_left_front_armour->right_dark_armour_panel": [
+   -89.2,
+   54.4,
+   12.4
+  ],
+  "green_left_front_armour->front_tooth_bar_left": [
+   -35.9,
+   48.0,
+   -13.2
+  ],
+  "green_left_front_armour->front_tooth_bar_right": [
+   -76.3,
+   61.1,
+   1.2
+  ],
+  "green_left_front_armour->screw_left_top_1": [
+   -9.3,
+   -6.8,
+   17.2
+  ],
+  "green_left_front_armour->screw_left_top_2": [
+   -16.0,
+   -7.5,
+   19.3
+  ],
+  "green_left_front_armour->screw_left_top_3": [
+   -29.5,
+   -4.0,
+   23.7
+  ],
+  "green_left_front_armour->screw_bottom_left": [
+   -9.6,
+   33.7,
+   -15.6
+  ],
+  "green_left_front_armour->screw_right_side": [
+   -95.6,
+   54.4,
+   16.6
+  ],
+  "green_left_front_armour->screw_left_edge": [
+   3.2,
+   -4.7,
+   -11.9
+  ],
+  "green_left_front_armour->screw_left_lower": [
+   -3.6,
+   23.4,
+   -19.1
+  ],
+  "green_left_front_armour->yellow_tab_low_right": [
+   -71.1,
+   54.9,
+   -0.1
+  ],
+  "green_left_front_armour->auto_1": [
+   -43.7,
+   12.6,
+   14.6
+  ],
+  "green_left_front_armour->auto_2": [
+   -28.1,
+   5.7,
+   21.1
+  ],
+  "green_left_front_armour->auto_3": [
+   -43.5,
+   25.9,
+   18.8
+  ],
+  "green_left_front_armour->auto_4": [
+   -14.0,
+   15.5,
+   6.0
+  ],
+  "green_left_front_armour->auto_5": [
+   -41.2,
+   5.4,
+   28.8
+  ],
+  "green_left_front_armour->auto_6": [
+   -42.3,
+   40.2,
+   -4.5
+  ],
+  "green_left_front_armour->auto_7": [
+   -30.1,
+   49.0,
+   -19.9
+  ],
+  "green_left_front_armour->auto_8": [
+   -80.4,
+   33.0,
+   33.4
+  ],
+  "green_left_front_armour->auto_9": [
+   -79.0,
+   62.6,
+   0.4
+  ],
+  "green_left_front_armour->auto_10": [
+   -11.3,
+   43.4,
+   -24.6
+  ],
+  "green_left_front_armour->auto_11": [
+   -52.8,
+   31.6,
+   27.1
+  ],
+  "green_left_front_armour->auto_12": [
+   -4.4,
+   5.4,
+   9.4
+  ],
+  "green_left_front_armour->auto_13": [
+   -70.2,
+   50.9,
+   14.5
+  ],
+  "green_left_front_armour->auto_14": [
+   -97.1,
+   65.9,
+   6.3
+  ],
+  "green_left_front_armour->auto_15": [
+   -53.1,
+   -0.2,
+   32.7
+  ],
+  "green_left_front_armour->auto_16": [
+   -41.7,
+   44.9,
+   -9.7
+  ],
+  "green_left_front_armour->auto_21": [
+   -57.4,
+   43.5,
+   0.1
+  ],
+  "green_left_front_armour->auto_23": [
+   -62.9,
+   53.3,
+   -0.4
+  ],
+  "top_left_roller_wheel->left_dark_armour_panel": [
+   -18.9,
+   41.7,
+   -19.8
+  ],
+  "top_left_roller_wheel->right_dark_armour_panel": [
+   -88.6,
+   68.6,
+   -4.3
+  ],
+  "top_left_roller_wheel->front_tooth_bar_left": [
+   -35.3,
+   62.2,
+   -29.9
+  ],
+  "top_left_roller_wheel->front_tooth_bar_right": [
+   -75.7,
+   75.3,
+   -15.5
+  ],
+  "top_left_roller_wheel->screw_left_top_1": [
+   -8.7,
+   7.4,
+   0.5
+  ],
+  "top_left_roller_wheel->screw_left_top_2": [
+   -15.4,
+   6.7,
+   2.6
+  ],
+  "top_left_roller_wheel->screw_left_top_3": [
+   -28.9,
+   10.2,
+   7.0
+  ],
+  "top_left_roller_wheel->screw_bottom_left": [
+   -9.0,
+   47.9,
+   -32.3
+  ],
+  "top_left_roller_wheel->screw_right_side": [
+   -95.0,
+   68.6,
+   -0.1
+  ],
+  "top_left_roller_wheel->screw_left_edge": [
+   3.8,
+   9.5,
+   -28.6
+  ],
+  "top_left_roller_wheel->screw_left_lower": [
+   -3.0,
+   37.6,
+   -35.8
+  ],
+  "top_left_roller_wheel->yellow_tab_low_right": [
+   -70.5,
+   69.1,
+   -16.8
+  ],
+  "top_left_roller_wheel->auto_1": [
+   -43.1,
+   26.8,
+   -2.1
+  ],
+  "top_left_roller_wheel->auto_2": [
+   -27.5,
+   19.9,
+   4.4
+  ],
+  "top_left_roller_wheel->auto_3": [
+   -42.9,
+   40.1,
+   2.1
+  ],
+  "top_left_roller_wheel->auto_4": [
+   -13.4,
+   29.7,
+   -10.7
+  ],
+  "top_left_roller_wheel->auto_5": [
+   -40.6,
+   19.6,
+   12.1
+  ],
+  "top_left_roller_wheel->auto_6": [
+   -41.7,
+   54.4,
+   -21.2
+  ],
+  "top_left_roller_wheel->auto_7": [
+   -29.5,
+   63.2,
+   -36.6
+  ],
+  "top_left_roller_wheel->auto_8": [
+   -79.8,
+   47.2,
+   16.7
+  ],
+  "top_left_roller_wheel->auto_9": [
+   -78.4,
+   76.8,
+   -16.3
+  ],
+  "top_left_roller_wheel->auto_10": [
+   -10.7,
+   57.6,
+   -41.3
+  ],
+  "top_left_roller_wheel->auto_11": [
+   -52.2,
+   45.8,
+   10.4
+  ],
+  "top_left_roller_wheel->auto_12": [
+   -3.8,
+   19.6,
+   -7.3
+  ],
+  "top_left_roller_wheel->auto_13": [
+   -69.6,
+   65.1,
+   -2.2
+  ],
+  "top_left_roller_wheel->auto_14": [
+   -96.5,
+   80.1,
+   -10.4
+  ],
+  "top_left_roller_wheel->auto_15": [
+   -52.5,
+   14.0,
+   16.0
+  ],
+  "top_left_roller_wheel->auto_16": [
+   -41.1,
+   59.1,
+   -26.4
+  ],
+  "top_left_roller_wheel->auto_21": [
+   -56.8,
+   57.7,
+   -16.6
+  ],
+  "top_left_roller_wheel->auto_23": [
+   -62.3,
+   67.5,
+   -17.1
+  ],
+  "left_dark_armour_panel->right_dark_armour_panel": [
+   -69.7,
+   26.9,
+   15.5
+  ],
+  "left_dark_armour_panel->front_tooth_bar_left": [
+   -16.4,
+   20.5,
+   -10.1
+  ],
+  "left_dark_armour_panel->front_tooth_bar_right": [
+   -56.8,
+   33.6,
+   4.3
+  ],
+  "left_dark_armour_panel->screw_left_top_1": [
+   10.2,
+   -34.3,
+   20.3
+  ],
+  "left_dark_armour_panel->screw_left_top_2": [
+   3.5,
+   -35.0,
+   22.4
+  ],
+  "left_dark_armour_panel->screw_left_top_3": [
+   -10.0,
+   -31.5,
+   26.8
+  ],
+  "left_dark_armour_panel->screw_bottom_left": [
+   9.9,
+   6.2,
+   -12.5
+  ],
+  "left_dark_armour_panel->screw_right_side": [
+   -76.1,
+   26.9,
+   19.7
+  ],
+  "left_dark_armour_panel->screw_left_edge": [
+   22.7,
+   -32.2,
+   -8.8
+  ],
+  "left_dark_armour_panel->screw_left_lower": [
+   15.9,
+   -4.1,
+   -16.0
+  ],
+  "left_dark_armour_panel->yellow_tab_low_right": [
+   -51.6,
+   27.4,
+   3.0
+  ],
+  "left_dark_armour_panel->auto_1": [
+   -24.2,
+   -14.9,
+   17.7
+  ],
+  "left_dark_armour_panel->auto_2": [
+   -8.6,
+   -21.8,
+   24.2
+  ],
+  "left_dark_armour_panel->auto_3": [
+   -24.0,
+   -1.6,
+   21.9
+  ],
+  "left_dark_armour_panel->auto_4": [
+   5.5,
+   -12.0,
+   9.1
+  ],
+  "left_dark_armour_panel->auto_5": [
+   -21.7,
+   -22.1,
+   31.9
+  ],
+  "left_dark_armour_panel->auto_6": [
+   -22.8,
+   12.7,
+   -1.4
+  ],
+  "left_dark_armour_panel->auto_7": [
+   -10.6,
+   21.5,
+   -16.8
+  ],
+  "left_dark_armour_panel->auto_8": [
+   -60.9,
+   5.5,
+   36.5
+  ],
+  "left_dark_armour_panel->auto_9": [
+   -59.5,
+   35.1,
+   3.5
+  ],
+  "left_dark_armour_panel->auto_10": [
+   8.2,
+   15.9,
+   -21.5
+  ],
+  "left_dark_armour_panel->auto_11": [
+   -33.3,
+   4.1,
+   30.2
+  ],
+  "left_dark_armour_panel->auto_12": [
+   15.1,
+   -22.1,
+   12.5
+  ],
+  "left_dark_armour_panel->auto_13": [
+   -50.7,
+   23.4,
+   17.6
+  ],
+  "left_dark_armour_panel->auto_14": [
+   -77.6,
+   38.4,
+   9.4
+  ],
+  "left_dark_armour_panel->auto_15": [
+   -33.6,
+   -27.7,
+   35.8
+  ],
+  "left_dark_armour_panel->auto_16": [
+   -22.2,
+   17.4,
+   -6.6
+  ],
+  "left_dark_armour_panel->auto_21": [
+   -37.9,
+   16.0,
+   3.2
+  ],
+  "left_dark_armour_panel->auto_23": [
+   -43.4,
+   25.8,
+   2.7
+  ],
+  "right_dark_armour_panel->front_tooth_bar_left": [
+   53.3,
+   -6.4,
+   -25.6
+  ],
+  "right_dark_armour_panel->front_tooth_bar_right": [
+   12.9,
+   6.7,
+   -11.2
+  ],
+  "right_dark_armour_panel->screw_left_top_1": [
+   79.9,
+   -61.2,
+   4.8
+  ],
+  "right_dark_armour_panel->screw_left_top_2": [
+   73.2,
+   -61.9,
+   6.9
+  ],
+  "right_dark_armour_panel->screw_left_top_3": [
+   59.7,
+   -58.4,
+   11.3
+  ],
+  "right_dark_armour_panel->screw_bottom_left": [
+   79.6,
+   -20.7,
+   -28.0
+  ],
+  "right_dark_armour_panel->screw_right_side": [
+   -6.4,
+   0.0,
+   4.2
+  ],
+  "right_dark_armour_panel->screw_left_edge": [
+   92.4,
+   -59.1,
+   -24.3
+  ],
+  "right_dark_armour_panel->screw_left_lower": [
+   85.6,
+   -31.0,
+   -31.5
+  ],
+  "right_dark_armour_panel->yellow_tab_low_right": [
+   18.1,
+   0.5,
+   -12.5
+  ],
+  "right_dark_armour_panel->auto_1": [
+   45.5,
+   -41.8,
+   2.2
+  ],
+  "right_dark_armour_panel->auto_2": [
+   61.1,
+   -48.7,
+   8.7
+  ],
+  "right_dark_armour_panel->auto_3": [
+   45.7,
+   -28.5,
+   6.4
+  ],
+  "right_dark_armour_panel->auto_4": [
+   75.2,
+   -38.9,
+   -6.4
+  ],
+  "right_dark_armour_panel->auto_5": [
+   48.0,
+   -49.0,
+   16.4
+  ],
+  "right_dark_armour_panel->auto_6": [
+   46.9,
+   -14.2,
+   -16.9
+  ],
+  "right_dark_armour_panel->auto_7": [
+   59.1,
+   -5.4,
+   -32.3
+  ],
+  "right_dark_armour_panel->auto_8": [
+   8.8,
+   -21.4,
+   21.0
+  ],
+  "right_dark_armour_panel->auto_9": [
+   10.2,
+   8.2,
+   -12.0
+  ],
+  "right_dark_armour_panel->auto_10": [
+   77.9,
+   -11.0,
+   -37.0
+  ],
+  "right_dark_armour_panel->auto_11": [
+   36.4,
+   -22.8,
+   14.7
+  ],
+  "right_dark_armour_panel->auto_12": [
+   84.8,
+   -49.0,
+   -3.0
+  ],
+  "right_dark_armour_panel->auto_13": [
+   19.0,
+   -3.5,
+   2.1
+  ],
+  "right_dark_armour_panel->auto_14": [
+   -7.9,
+   11.5,
+   -6.1
+  ],
+  "right_dark_armour_panel->auto_15": [
+   36.1,
+   -54.6,
+   20.3
+  ],
+  "right_dark_armour_panel->auto_16": [
+   47.5,
+   -9.5,
+   -22.1
+  ],
+  "right_dark_armour_panel->auto_21": [
+   31.8,
+   -10.9,
+   -12.3
+  ],
+  "right_dark_armour_panel->auto_23": [
+   26.3,
+   -1.1,
+   -12.8
+  ],
+  "front_tooth_bar_left->front_tooth_bar_right": [
+   -40.4,
+   13.1,
+   14.4
+  ],
+  "front_tooth_bar_left->screw_left_top_1": [
+   26.6,
+   -54.8,
+   30.4
+  ],
+  "front_tooth_bar_left->screw_left_top_2": [
+   19.9,
+   -55.5,
+   32.5
+  ],
+  "front_tooth_bar_left->screw_left_top_3": [
+   6.4,
+   -52.0,
+   36.9
+  ],
+  "front_tooth_bar_left->screw_bottom_left": [
+   26.3,
+   -14.3,
+   -2.4
+  ],
+  "front_tooth_bar_left->screw_right_side": [
+   -59.7,
+   6.4,
+   29.8
+  ],
+  "front_tooth_bar_left->screw_left_edge": [
+   39.1,
+   -52.7,
+   1.3
+  ],
+  "front_tooth_bar_left->screw_left_lower": [
+   32.3,
+   -24.6,
+   -5.9
+  ],
+  "front_tooth_bar_left->yellow_tab_low_right": [
+   -35.2,
+   6.9,
+   13.1
+  ],
+  "front_tooth_bar_left->auto_1": [
+   -7.8,
+   -35.4,
+   27.8
+  ],
+  "front_tooth_bar_left->auto_2": [
+   7.8,
+   -42.3,
+   34.3
+  ],
+  "front_tooth_bar_left->auto_3": [
+   -7.6,
+   -22.1,
+   32.0
+  ],
+  "front_tooth_bar_left->auto_4": [
+   21.9,
+   -32.5,
+   19.2
+  ],
+  "front_tooth_bar_left->auto_5": [
+   -5.3,
+   -42.6,
+   42.0
+  ],
+  "front_tooth_bar_left->auto_6": [
+   -6.4,
+   -7.8,
+   8.7
+  ],
+  "front_tooth_bar_left->auto_7": [
+   5.8,
+   1.0,
+   -6.7
+  ],
+  "front_tooth_bar_left->auto_8": [
+   -44.5,
+   -15.0,
+   46.6
+  ],
+  "front_tooth_bar_left->auto_9": [
+   -43.1,
+   14.6,
+   13.6
+  ],
+  "front_tooth_bar_left->auto_10": [
+   24.6,
+   -4.6,
+   -11.4
+  ],
+  "front_tooth_bar_left->auto_11": [
+   -16.9,
+   -16.4,
+   40.3
+  ],
+  "front_tooth_bar_left->auto_12": [
+   31.5,
+   -42.6,
+   22.6
+  ],
+  "front_tooth_bar_left->auto_13": [
+   -34.3,
+   2.9,
+   27.7
+  ],
+  "front_tooth_bar_left->auto_14": [
+   -61.2,
+   17.9,
+   19.5
+  ],
+  "front_tooth_bar_left->auto_15": [
+   -17.2,
+   -48.2,
+   45.9
+  ],
+  "front_tooth_bar_left->auto_16": [
+   -5.8,
+   -3.1,
+   3.5
+  ],
+  "front_tooth_bar_left->auto_21": [
+   -21.5,
+   -4.5,
+   13.3
+  ],
+  "front_tooth_bar_left->auto_23": [
+   -27.0,
+   5.3,
+   12.8
+  ],
+  "front_tooth_bar_right->screw_left_top_1": [
+   67.0,
+   -67.9,
+   16.0
+  ],
+  "front_tooth_bar_right->screw_left_top_2": [
+   60.3,
+   -68.6,
+   18.1
+  ],
+  "front_tooth_bar_right->screw_left_top_3": [
+   46.8,
+   -65.1,
+   22.5
+  ],
+  "front_tooth_bar_right->screw_bottom_left": [
+   66.7,
+   -27.4,
+   -16.8
+  ],
+  "front_tooth_bar_right->screw_right_side": [
+   -19.3,
+   -6.7,
+   15.4
+  ],
+  "front_tooth_bar_right->screw_left_edge": [
+   79.5,
+   -65.8,
+   -13.1
+  ],
+  "front_tooth_bar_right->screw_left_lower": [
+   72.7,
+   -37.7,
+   -20.3
+  ],
+  "front_tooth_bar_right->yellow_tab_low_right": [
+   5.2,
+   -6.2,
+   -1.3
+  ],
+  "front_tooth_bar_right->auto_1": [
+   32.6,
+   -48.5,
+   13.4
+  ],
+  "front_tooth_bar_right->auto_2": [
+   48.2,
+   -55.4,
+   19.9
+  ],
+  "front_tooth_bar_right->auto_3": [
+   32.8,
+   -35.2,
+   17.6
+  ],
+  "front_tooth_bar_right->auto_4": [
+   62.3,
+   -45.6,
+   4.8
+  ],
+  "front_tooth_bar_right->auto_5": [
+   35.1,
+   -55.7,
+   27.6
+  ],
+  "front_tooth_bar_right->auto_6": [
+   34.0,
+   -20.9,
+   -5.7
+  ],
+  "front_tooth_bar_right->auto_7": [
+   46.2,
+   -12.1,
+   -21.1
+  ],
+  "front_tooth_bar_right->auto_8": [
+   -4.1,
+   -28.1,
+   32.2
+  ],
+  "front_tooth_bar_right->auto_9": [
+   -2.7,
+   1.5,
+   -0.8
+  ],
+  "front_tooth_bar_right->auto_10": [
+   65.0,
+   -17.7,
+   -25.8
+  ],
+  "front_tooth_bar_right->auto_11": [
+   23.5,
+   -29.5,
+   25.9
+  ],
+  "front_tooth_bar_right->auto_12": [
+   71.9,
+   -55.7,
+   8.2
+  ],
+  "front_tooth_bar_right->auto_13": [
+   6.1,
+   -10.2,
+   13.3
+  ],
+  "front_tooth_bar_right->auto_14": [
+   -20.8,
+   4.8,
+   5.1
+  ],
+  "front_tooth_bar_right->auto_15": [
+   23.2,
+   -61.3,
+   31.5
+  ],
+  "front_tooth_bar_right->auto_16": [
+   34.6,
+   -16.2,
+   -10.9
+  ],
+  "front_tooth_bar_right->auto_21": [
+   18.9,
+   -17.6,
+   -1.1
+  ],
+  "front_tooth_bar_right->auto_23": [
+   13.4,
+   -7.8,
+   -1.6
+  ],
+  "screw_left_top_1->screw_left_top_2": [
+   -6.7,
+   -0.7,
+   2.1
+  ],
+  "screw_left_top_1->screw_left_top_3": [
+   -20.2,
+   2.8,
+   6.5
+  ],
+  "screw_left_top_1->screw_bottom_left": [
+   -0.3,
+   40.5,
+   -32.8
+  ],
+  "screw_left_top_1->screw_right_side": [
+   -86.3,
+   61.2,
+   -0.6
+  ],
+  "screw_left_top_1->screw_left_edge": [
+   12.5,
+   2.1,
+   -29.1
+  ],
+  "screw_left_top_1->screw_left_lower": [
+   5.7,
+   30.2,
+   -36.3
+  ],
+  "screw_left_top_1->yellow_tab_low_right": [
+   -61.8,
+   61.7,
+   -17.3
+  ],
+  "screw_left_top_1->auto_1": [
+   -34.4,
+   19.4,
+   -2.6
+  ],
+  "screw_left_top_1->auto_2": [
+   -18.8,
+   12.5,
+   3.9
+  ],
+  "screw_left_top_1->auto_3": [
+   -34.2,
+   32.7,
+   1.6
+  ],
+  "screw_left_top_1->auto_4": [
+   -4.7,
+   22.3,
+   -11.2
+  ],
+  "screw_left_top_1->auto_5": [
+   -31.9,
+   12.2,
+   11.6
+  ],
+  "screw_left_top_1->auto_6": [
+   -33.0,
+   47.0,
+   -21.7
+  ],
+  "screw_left_top_1->auto_7": [
+   -20.8,
+   55.8,
+   -37.1
+  ],
+  "screw_left_top_1->auto_8": [
+   -71.1,
+   39.8,
+   16.2
+  ],
+  "screw_left_top_1->auto_9": [
+   -69.7,
+   69.4,
+   -16.8
+  ],
+  "screw_left_top_1->auto_10": [
+   -2.0,
+   50.2,
+   -41.8
+  ],
+  "screw_left_top_1->auto_11": [
+   -43.5,
+   38.4,
+   9.9
+  ],
+  "screw_left_top_1->auto_12": [
+   4.9,
+   12.2,
+   -7.8
+  ],
+  "screw_left_top_1->auto_13": [
+   -60.9,
+   57.7,
+   -2.7
+  ],
+  "screw_left_top_1->auto_14": [
+   -87.8,
+   72.7,
+   -10.9
+  ],
+  "screw_left_top_1->auto_15": [
+   -43.8,
+   6.6,
+   15.5
+  ],
+  "screw_left_top_1->auto_16": [
+   -32.4,
+   51.7,
+   -26.9
+  ],
+  "screw_left_top_1->auto_21": [
+   -48.1,
+   50.3,
+   -17.1
+  ],
+  "screw_left_top_1->auto_23": [
+   -53.6,
+   60.1,
+   -17.6
+  ],
+  "screw_left_top_2->screw_left_top_3": [
+   -13.5,
+   3.5,
+   4.4
+  ],
+  "screw_left_top_2->screw_bottom_left": [
+   6.4,
+   41.2,
+   -34.9
+  ],
+  "screw_left_top_2->screw_right_side": [
+   -79.6,
+   61.9,
+   -2.7
+  ],
+  "screw_left_top_2->screw_left_edge": [
+   19.2,
+   2.8,
+   -31.2
+  ],
+  "screw_left_top_2->screw_left_lower": [
+   12.4,
+   30.9,
+   -38.4
+  ],
+  "screw_left_top_2->yellow_tab_low_right": [
+   -55.1,
+   62.4,
+   -19.4
+  ],
+  "screw_left_top_2->auto_1": [
+   -27.7,
+   20.1,
+   -4.7
+  ],
+  "screw_left_top_2->auto_2": [
+   -12.1,
+   13.2,
+   1.8
+  ],
+  "screw_left_top_2->auto_3": [
+   -27.5,
+   33.4,
+   -0.5
+  ],
+  "screw_left_top_2->auto_4": [
+   2.0,
+   23.0,
+   -13.3
+  ],
+  "screw_left_top_2->auto_5": [
+   -25.2,
+   12.9,
+   9.5
+  ],
+  "screw_left_top_2->auto_6": [
+   -26.3,
+   47.7,
+   -23.8
+  ],
+  "screw_left_top_2->auto_7": [
+   -14.1,
+   56.5,
+   -39.2
+  ],
+  "screw_left_top_2->auto_8": [
+   -64.4,
+   40.5,
+   14.1
+  ],
+  "screw_left_top_2->auto_9": [
+   -63.0,
+   70.1,
+   -18.9
+  ],
+  "screw_left_top_2->auto_10": [
+   4.7,
+   50.9,
+   -43.9
+  ],
+  "screw_left_top_2->auto_11": [
+   -36.8,
+   39.1,
+   7.8
+  ],
+  "screw_left_top_2->auto_12": [
+   11.6,
+   12.9,
+   -9.9
+  ],
+  "screw_left_top_2->auto_13": [
+   -54.2,
+   58.4,
+   -4.8
+  ],
+  "screw_left_top_2->auto_14": [
+   -81.1,
+   73.4,
+   -13.0
+  ],
+  "screw_left_top_2->auto_15": [
+   -37.1,
+   7.3,
+   13.4
+  ],
+  "screw_left_top_2->auto_16": [
+   -25.7,
+   52.4,
+   -29.0
+  ],
+  "screw_left_top_2->auto_21": [
+   -41.4,
+   51.0,
+   -19.2
+  ],
+  "screw_left_top_2->auto_23": [
+   -46.9,
+   60.8,
+   -19.7
+  ],
+  "screw_left_top_3->screw_bottom_left": [
+   19.9,
+   37.7,
+   -39.3
+  ],
+  "screw_left_top_3->screw_right_side": [
+   -66.1,
+   58.4,
+   -7.1
+  ],
+  "screw_left_top_3->screw_left_edge": [
+   32.7,
+   -0.7,
+   -35.6
+  ],
+  "screw_left_top_3->screw_left_lower": [
+   25.9,
+   27.4,
+   -42.8
+  ],
+  "screw_left_top_3->yellow_tab_low_right": [
+   -41.6,
+   58.9,
+   -23.8
+  ],
+  "screw_left_top_3->auto_1": [
+   -14.2,
+   16.6,
+   -9.1
+  ],
+  "screw_left_top_3->auto_2": [
+   1.4,
+   9.7,
+   -2.6
+  ],
+  "screw_left_top_3->auto_3": [
+   -14.0,
+   29.9,
+   -4.9
+  ],
+  "screw_left_top_3->auto_4": [
+   15.5,
+   19.5,
+   -17.7
+  ],
+  "screw_left_top_3->auto_5": [
+   -11.7,
+   9.4,
+   5.1
+  ],
+  "screw_left_top_3->auto_6": [
+   -12.8,
+   44.2,
+   -28.2
+  ],
+  "screw_left_top_3->auto_7": [
+   -0.6,
+   53.0,
+   -43.6
+  ],
+  "screw_left_top_3->auto_8": [
+   -50.9,
+   37.0,
+   9.7
+  ],
+  "screw_left_top_3->auto_9": [
+   -49.5,
+   66.6,
+   -23.3
+  ],
+  "screw_left_top_3->auto_10": [
+   18.2,
+   47.4,
+   -48.3
+  ],
+  "screw_left_top_3->auto_11": [
+   -23.3,
+   35.6,
+   3.4
+  ],
+  "screw_left_top_3->auto_12": [
+   25.1,
+   9.4,
+   -14.3
+  ],
+  "screw_left_top_3->auto_13": [
+   -40.7,
+   54.9,
+   -9.2
+  ],
+  "screw_left_top_3->auto_14": [
+   -67.6,
+   69.9,
+   -17.4
+  ],
+  "screw_left_top_3->auto_15": [
+   -23.6,
+   3.8,
+   9.0
+  ],
+  "screw_left_top_3->auto_16": [
+   -12.2,
+   48.9,
+   -33.4
+  ],
+  "screw_left_top_3->auto_21": [
+   -27.9,
+   47.5,
+   -23.6
+  ],
+  "screw_left_top_3->auto_23": [
+   -33.4,
+   57.3,
+   -24.1
+  ],
+  "screw_bottom_left->screw_right_side": [
+   -86.0,
+   20.7,
+   32.2
+  ],
+  "screw_bottom_left->screw_left_edge": [
+   12.8,
+   -38.4,
+   3.7
+  ],
+  "screw_bottom_left->screw_left_lower": [
+   6.0,
+   -10.3,
+   -3.5
+  ],
+  "screw_bottom_left->yellow_tab_low_right": [
+   -61.5,
+   21.2,
+   15.5
+  ],
+  "screw_bottom_left->auto_1": [
+   -34.1,
+   -21.1,
+   30.2
+  ],
+  "screw_bottom_left->auto_2": [
+   -18.5,
+   -28.0,
+   36.7
+  ],
+  "screw_bottom_left->auto_3": [
+   -33.9,
+   -7.8,
+   34.4
+  ],
+  "screw_bottom_left->auto_4": [
+   -4.4,
+   -18.2,
+   21.6
+  ],
+  "screw_bottom_left->auto_5": [
+   -31.6,
+   -28.3,
+   44.4
+  ],
+  "screw_bottom_left->auto_6": [
+   -32.7,
+   6.5,
+   11.1
+  ],
+  "screw_bottom_left->auto_7": [
+   -20.5,
+   15.3,
+   -4.3
+  ],
+  "screw_bottom_left->auto_8": [
+   -70.8,
+   -0.7,
+   49.0
+  ],
+  "screw_bottom_left->auto_9": [
+   -69.4,
+   28.9,
+   16.0
+  ],
+  "screw_bottom_left->auto_10": [
+   -1.7,
+   9.7,
+   -9.0
+  ],
+  "screw_bottom_left->auto_11": [
+   -43.2,
+   -2.1,
+   42.7
+  ],
+  "screw_bottom_left->auto_12": [
+   5.2,
+   -28.3,
+   25.0
+  ],
+  "screw_bottom_left->auto_13": [
+   -60.6,
+   17.2,
+   30.1
+  ],
+  "screw_bottom_left->auto_14": [
+   -87.5,
+   32.2,
+   21.9
+  ],
+  "screw_bottom_left->auto_15": [
+   -43.5,
+   -33.9,
+   48.3
+  ],
+  "screw_bottom_left->auto_16": [
+   -32.1,
+   11.2,
+   5.9
+  ],
+  "screw_bottom_left->auto_21": [
+   -47.8,
+   9.8,
+   15.7
+  ],
+  "screw_bottom_left->auto_23": [
+   -53.3,
+   19.6,
+   15.2
+  ],
+  "screw_right_side->screw_left_edge": [
+   98.8,
+   -59.1,
+   -28.5
+  ],
+  "screw_right_side->screw_left_lower": [
+   92.0,
+   -31.0,
+   -35.7
+  ],
+  "screw_right_side->yellow_tab_low_right": [
+   24.5,
+   0.5,
+   -16.7
+  ],
+  "screw_right_side->auto_1": [
+   51.9,
+   -41.8,
+   -2.0
+  ],
+  "screw_right_side->auto_2": [
+   67.5,
+   -48.7,
+   4.5
+  ],
+  "screw_right_side->auto_3": [
+   52.1,
+   -28.5,
+   2.2
+  ],
+  "screw_right_side->auto_4": [
+   81.6,
+   -38.9,
+   -10.6
+  ],
+  "screw_right_side->auto_5": [
+   54.4,
+   -49.0,
+   12.2
+  ],
+  "screw_right_side->auto_6": [
+   53.3,
+   -14.2,
+   -21.1
+  ],
+  "screw_right_side->auto_7": [
+   65.5,
+   -5.4,
+   -36.5
+  ],
+  "screw_right_side->auto_8": [
+   15.2,
+   -21.4,
+   16.8
+  ],
+  "screw_right_side->auto_9": [
+   16.6,
+   8.2,
+   -16.2
+  ],
+  "screw_right_side->auto_10": [
+   84.3,
+   -11.0,
+   -41.2
+  ],
+  "screw_right_side->auto_11": [
+   42.8,
+   -22.8,
+   10.5
+  ],
+  "screw_right_side->auto_12": [
+   91.2,
+   -49.0,
+   -7.2
+  ],
+  "screw_right_side->auto_13": [
+   25.4,
+   -3.5,
+   -2.1
+  ],
+  "screw_right_side->auto_14": [
+   -1.5,
+   11.5,
+   -10.3
+  ],
+  "screw_right_side->auto_15": [
+   42.5,
+   -54.6,
+   16.1
+  ],
+  "screw_right_side->auto_16": [
+   53.9,
+   -9.5,
+   -26.3
+  ],
+  "screw_right_side->auto_21": [
+   38.2,
+   -10.9,
+   -16.5
+  ],
+  "screw_right_side->auto_23": [
+   32.7,
+   -1.1,
+   -17.0
+  ],
+  "screw_left_edge->screw_left_lower": [
+   -6.8,
+   28.1,
+   -7.2
+  ],
+  "screw_left_edge->yellow_tab_low_right": [
+   -74.3,
+   59.6,
+   11.8
+  ],
+  "screw_left_edge->auto_1": [
+   -46.9,
+   17.3,
+   26.5
+  ],
+  "screw_left_edge->auto_2": [
+   -31.3,
+   10.4,
+   33.0
+  ],
+  "screw_left_edge->auto_3": [
+   -46.7,
+   30.6,
+   30.7
+  ],
+  "screw_left_edge->auto_4": [
+   -17.2,
+   20.2,
+   17.9
+  ],
+  "screw_left_edge->auto_5": [
+   -44.4,
+   10.1,
+   40.7
+  ],
+  "screw_left_edge->auto_6": [
+   -45.5,
+   44.9,
+   7.4
+  ],
+  "screw_left_edge->auto_7": [
+   -33.3,
+   53.7,
+   -8.0
+  ],
+  "screw_left_edge->auto_8": [
+   -83.6,
+   37.7,
+   45.3
+  ],
+  "screw_left_edge->auto_9": [
+   -82.2,
+   67.3,
+   12.3
+  ],
+  "screw_left_edge->auto_10": [
+   -14.5,
+   48.1,
+   -12.7
+  ],
+  "screw_left_edge->auto_11": [
+   -56.0,
+   36.3,
+   39.0
+  ],
+  "screw_left_edge->auto_12": [
+   -7.6,
+   10.1,
+   21.3
+  ],
+  "screw_left_edge->auto_13": [
+   -73.4,
+   55.6,
+   26.4
+  ],
+  "screw_left_edge->auto_14": [
+   -100.3,
+   70.6,
+   18.2
+  ],
+  "screw_left_edge->auto_15": [
+   -56.3,
+   4.5,
+   44.6
+  ],
+  "screw_left_edge->auto_16": [
+   -44.9,
+   49.6,
+   2.2
+  ],
+  "screw_left_edge->auto_21": [
+   -60.6,
+   48.2,
+   12.0
+  ],
+  "screw_left_edge->auto_23": [
+   -66.1,
+   58.0,
+   11.5
+  ],
+  "screw_left_lower->yellow_tab_low_right": [
+   -67.5,
+   31.5,
+   19.0
+  ],
+  "screw_left_lower->auto_1": [
+   -40.1,
+   -10.8,
+   33.7
+  ],
+  "screw_left_lower->auto_2": [
+   -24.5,
+   -17.7,
+   40.2
+  ],
+  "screw_left_lower->auto_3": [
+   -39.9,
+   2.5,
+   37.9
+  ],
+  "screw_left_lower->auto_4": [
+   -10.4,
+   -7.9,
+   25.1
+  ],
+  "screw_left_lower->auto_5": [
+   -37.6,
+   -18.0,
+   47.9
+  ],
+  "screw_left_lower->auto_6": [
+   -38.7,
+   16.8,
+   14.6
+  ],
+  "screw_left_lower->auto_7": [
+   -26.5,
+   25.6,
+   -0.8
+  ],
+  "screw_left_lower->auto_8": [
+   -76.8,
+   9.6,
+   52.5
+  ],
+  "screw_left_lower->auto_9": [
+   -75.4,
+   39.2,
+   19.5
+  ],
+  "screw_left_lower->auto_10": [
+   -7.7,
+   20.0,
+   -5.5
+  ],
+  "screw_left_lower->auto_11": [
+   -49.2,
+   8.2,
+   46.2
+  ],
+  "screw_left_lower->auto_12": [
+   -0.8,
+   -18.0,
+   28.5
+  ],
+  "screw_left_lower->auto_13": [
+   -66.6,
+   27.5,
+   33.6
+  ],
+  "screw_left_lower->auto_14": [
+   -93.5,
+   42.5,
+   25.4
+  ],
+  "screw_left_lower->auto_15": [
+   -49.5,
+   -23.6,
+   51.8
+  ],
+  "screw_left_lower->auto_16": [
+   -38.1,
+   21.5,
+   9.4
+  ],
+  "screw_left_lower->auto_21": [
+   -53.8,
+   20.1,
+   19.2
+  ],
+  "screw_left_lower->auto_23": [
+   -59.3,
+   29.9,
+   18.7
+  ],
+  "yellow_tab_low_right->auto_1": [
+   27.4,
+   -42.3,
+   14.7
+  ],
+  "yellow_tab_low_right->auto_2": [
+   43.0,
+   -49.2,
+   21.2
+  ],
+  "yellow_tab_low_right->auto_3": [
+   27.6,
+   -29.0,
+   18.9
+  ],
+  "yellow_tab_low_right->auto_4": [
+   57.1,
+   -39.4,
+   6.1
+  ],
+  "yellow_tab_low_right->auto_5": [
+   29.9,
+   -49.5,
+   28.9
+  ],
+  "yellow_tab_low_right->auto_6": [
+   28.8,
+   -14.7,
+   -4.4
+  ],
+  "yellow_tab_low_right->auto_7": [
+   41.0,
+   -5.9,
+   -19.8
+  ],
+  "yellow_tab_low_right->auto_8": [
+   -9.3,
+   -21.9,
+   33.5
+  ],
+  "yellow_tab_low_right->auto_9": [
+   -7.9,
+   7.7,
+   0.5
+  ],
+  "yellow_tab_low_right->auto_10": [
+   59.8,
+   -11.5,
+   -24.5
+  ],
+  "yellow_tab_low_right->auto_11": [
+   18.3,
+   -23.3,
+   27.2
+  ],
+  "yellow_tab_low_right->auto_12": [
+   66.7,
+   -49.5,
+   9.5
+  ],
+  "yellow_tab_low_right->auto_13": [
+   0.9,
+   -4.0,
+   14.6
+  ],
+  "yellow_tab_low_right->auto_14": [
+   -26.0,
+   11.0,
+   6.4
+  ],
+  "yellow_tab_low_right->auto_15": [
+   18.0,
+   -55.1,
+   32.8
+  ],
+  "yellow_tab_low_right->auto_16": [
+   29.4,
+   -10.0,
+   -9.6
+  ],
+  "yellow_tab_low_right->auto_21": [
+   13.7,
+   -11.4,
+   0.2
+  ],
+  "yellow_tab_low_right->auto_23": [
+   8.2,
+   -1.6,
+   -0.3
+  ],
+  "auto_1->auto_2": [
+   15.6,
+   -6.9,
+   6.5
+  ],
+  "auto_1->auto_3": [
+   0.2,
+   13.3,
+   4.2
+  ],
+  "auto_1->auto_4": [
+   29.7,
+   2.9,
+   -8.6
+  ],
+  "auto_1->auto_5": [
+   2.5,
+   -7.2,
+   14.2
+  ],
+  "auto_1->auto_6": [
+   1.4,
+   27.6,
+   -19.1
+  ],
+  "auto_1->auto_7": [
+   13.6,
+   36.4,
+   -34.5
+  ],
+  "auto_1->auto_8": [
+   -36.7,
+   20.4,
+   18.8
+  ],
+  "auto_1->auto_9": [
+   -35.3,
+   50.0,
+   -14.2
+  ],
+  "auto_1->auto_10": [
+   32.4,
+   30.8,
+   -39.2
+  ],
+  "auto_1->auto_11": [
+   -9.1,
+   19.0,
+   12.5
+  ],
+  "auto_1->auto_12": [
+   39.3,
+   -7.2,
+   -5.2
+  ],
+  "auto_1->auto_13": [
+   -26.5,
+   38.3,
+   -0.1
+  ],
+  "auto_1->auto_14": [
+   -53.4,
+   53.3,
+   -8.3
+  ],
+  "auto_1->auto_15": [
+   -9.4,
+   -12.8,
+   18.1
+  ],
+  "auto_1->auto_16": [
+   2.0,
+   32.3,
+   -24.3
+  ],
+  "auto_1->auto_21": [
+   -13.7,
+   30.9,
+   -14.5
+  ],
+  "auto_1->auto_23": [
+   -19.2,
+   40.7,
+   -15.0
+  ],
+  "auto_2->auto_3": [
+   -15.4,
+   20.2,
+   -2.3
+  ],
+  "auto_2->auto_4": [
+   14.1,
+   9.8,
+   -15.1
+  ],
+  "auto_2->auto_5": [
+   -13.1,
+   -0.3,
+   7.7
+  ],
+  "auto_2->auto_6": [
+   -14.2,
+   34.5,
+   -25.6
+  ],
+  "auto_2->auto_7": [
+   -2.0,
+   43.3,
+   -41.0
+  ],
+  "auto_2->auto_8": [
+   -52.3,
+   27.3,
+   12.3
+  ],
+  "auto_2->auto_9": [
+   -50.9,
+   56.9,
+   -20.7
+  ],
+  "auto_2->auto_10": [
+   16.8,
+   37.7,
+   -45.7
+  ],
+  "auto_2->auto_11": [
+   -24.7,
+   25.9,
+   6.0
+  ],
+  "auto_2->auto_12": [
+   23.7,
+   -0.3,
+   -11.7
+  ],
+  "auto_2->auto_13": [
+   -42.1,
+   45.2,
+   -6.6
+  ],
+  "auto_2->auto_14": [
+   -69.0,
+   60.2,
+   -14.8
+  ],
+  "auto_2->auto_15": [
+   -25.0,
+   -5.9,
+   11.6
+  ],
+  "auto_2->auto_16": [
+   -13.6,
+   39.2,
+   -30.8
+  ],
+  "auto_2->auto_21": [
+   -29.3,
+   37.8,
+   -21.0
+  ],
+  "auto_2->auto_23": [
+   -34.8,
+   47.6,
+   -21.5
+  ],
+  "auto_3->auto_4": [
+   29.5,
+   -10.4,
+   -12.8
+  ],
+  "auto_3->auto_5": [
+   2.3,
+   -20.5,
+   10.0
+  ],
+  "auto_3->auto_6": [
+   1.2,
+   14.3,
+   -23.3
+  ],
+  "auto_3->auto_7": [
+   13.4,
+   23.1,
+   -38.7
+  ],
+  "auto_3->auto_8": [
+   -36.9,
+   7.1,
+   14.6
+  ],
+  "auto_3->auto_9": [
+   -35.5,
+   36.7,
+   -18.4
+  ],
+  "auto_3->auto_10": [
+   32.2,
+   17.5,
+   -43.4
+  ],
+  "auto_3->auto_11": [
+   -9.3,
+   5.7,
+   8.3
+  ],
+  "auto_3->auto_12": [
+   39.1,
+   -20.5,
+   -9.4
+  ],
+  "auto_3->auto_13": [
+   -26.7,
+   25.0,
+   -4.3
+  ],
+  "auto_3->auto_14": [
+   -53.6,
+   40.0,
+   -12.5
+  ],
+  "auto_3->auto_15": [
+   -9.6,
+   -26.1,
+   13.9
+  ],
+  "auto_3->auto_16": [
+   1.8,
+   19.0,
+   -28.5
+  ],
+  "auto_3->auto_21": [
+   -13.9,
+   17.6,
+   -18.7
+  ],
+  "auto_3->auto_23": [
+   -19.4,
+   27.4,
+   -19.2
+  ],
+  "auto_4->auto_5": [
+   -27.2,
+   -10.1,
+   22.8
+  ],
+  "auto_4->auto_6": [
+   -28.3,
+   24.7,
+   -10.5
+  ],
+  "auto_4->auto_7": [
+   -16.1,
+   33.5,
+   -25.9
+  ],
+  "auto_4->auto_8": [
+   -66.4,
+   17.5,
+   27.4
+  ],
+  "auto_4->auto_9": [
+   -65.0,
+   47.1,
+   -5.6
+  ],
+  "auto_4->auto_10": [
+   2.7,
+   27.9,
+   -30.6
+  ],
+  "auto_4->auto_11": [
+   -38.8,
+   16.1,
+   21.1
+  ],
+  "auto_4->auto_12": [
+   9.6,
+   -10.1,
+   3.4
+  ],
+  "auto_4->auto_13": [
+   -56.2,
+   35.4,
+   8.5
+  ],
+  "auto_4->auto_14": [
+   -83.1,
+   50.4,
+   0.3
+  ],
+  "auto_4->auto_15": [
+   -39.1,
+   -15.7,
+   26.7
+  ],
+  "auto_4->auto_16": [
+   -27.7,
+   29.4,
+   -15.7
+  ],
+  "auto_4->auto_21": [
+   -43.4,
+   28.0,
+   -5.9
+  ],
+  "auto_4->auto_23": [
+   -48.9,
+   37.8,
+   -6.4
+  ],
+  "auto_5->auto_6": [
+   -1.1,
+   34.8,
+   -33.3
+  ],
+  "auto_5->auto_7": [
+   11.1,
+   43.6,
+   -48.7
+  ],
+  "auto_5->auto_8": [
+   -39.2,
+   27.6,
+   4.6
+  ],
+  "auto_5->auto_9": [
+   -37.8,
+   57.2,
+   -28.4
+  ],
+  "auto_5->auto_10": [
+   29.9,
+   38.0,
+   -53.4
+  ],
+  "auto_5->auto_11": [
+   -11.6,
+   26.2,
+   -1.7
+  ],
+  "auto_5->auto_12": [
+   36.8,
+   0.0,
+   -19.4
+  ],
+  "auto_5->auto_13": [
+   -29.0,
+   45.5,
+   -14.3
+  ],
+  "auto_5->auto_14": [
+   -55.9,
+   60.5,
+   -22.5
+  ],
+  "auto_5->auto_15": [
+   -11.9,
+   -5.6,
+   3.9
+  ],
+  "auto_5->auto_16": [
+   -0.5,
+   39.5,
+   -38.5
+  ],
+  "auto_5->auto_21": [
+   -16.2,
+   38.1,
+   -28.7
+  ],
+  "auto_5->auto_23": [
+   -21.7,
+   47.9,
+   -29.2
+  ],
+  "auto_6->auto_7": [
+   12.2,
+   8.8,
+   -15.4
+  ],
+  "auto_6->auto_8": [
+   -38.1,
+   -7.2,
+   37.9
+  ],
+  "auto_6->auto_9": [
+   -36.7,
+   22.4,
+   4.9
+  ],
+  "auto_6->auto_10": [
+   31.0,
+   3.2,
+   -20.1
+  ],
+  "auto_6->auto_11": [
+   -10.5,
+   -8.6,
+   31.6
+  ],
+  "auto_6->auto_12": [
+   37.9,
+   -34.8,
+   13.9
+  ],
+  "auto_6->auto_13": [
+   -27.9,
+   10.7,
+   19.0
+  ],
+  "auto_6->auto_14": [
+   -54.8,
+   25.7,
+   10.8
+  ],
+  "auto_6->auto_15": [
+   -10.8,
+   -40.4,
+   37.2
+  ],
+  "auto_6->auto_16": [
+   0.6,
+   4.7,
+   -5.2
+  ],
+  "auto_6->auto_21": [
+   -15.1,
+   3.3,
+   4.6
+  ],
+  "auto_6->auto_23": [
+   -20.6,
+   13.1,
+   4.1
+  ],
+  "auto_7->auto_8": [
+   -50.3,
+   -16.0,
+   53.3
+  ],
+  "auto_7->auto_9": [
+   -48.9,
+   13.6,
+   20.3
+  ],
+  "auto_7->auto_10": [
+   18.8,
+   -5.6,
+   -4.7
+  ],
+  "auto_7->auto_11": [
+   -22.7,
+   -17.4,
+   47.0
+  ],
+  "auto_7->auto_12": [
+   25.7,
+   -43.6,
+   29.3
+  ],
+  "auto_7->auto_13": [
+   -40.1,
+   1.9,
+   34.4
+  ],
+  "auto_7->auto_14": [
+   -67.0,
+   16.9,
+   26.2
+  ],
+  "auto_7->auto_15": [
+   -23.0,
+   -49.2,
+   52.6
+  ],
+  "auto_7->auto_16": [
+   -11.6,
+   -4.1,
+   10.2
+  ],
+  "auto_7->auto_21": [
+   -27.3,
+   -5.5,
+   20.0
+  ],
+  "auto_7->auto_23": [
+   -32.8,
+   4.3,
+   19.5
+  ],
+  "auto_8->auto_9": [
+   1.4,
+   29.6,
+   -33.0
+  ],
+  "auto_8->auto_10": [
+   69.1,
+   10.4,
+   -58.0
+  ],
+  "auto_8->auto_11": [
+   27.6,
+   -1.4,
+   -6.3
+  ],
+  "auto_8->auto_12": [
+   76.0,
+   -27.6,
+   -24.0
+  ],
+  "auto_8->auto_13": [
+   10.2,
+   17.9,
+   -18.9
+  ],
+  "auto_8->auto_14": [
+   -16.7,
+   32.9,
+   -27.1
+  ],
+  "auto_8->auto_15": [
+   27.3,
+   -33.2,
+   -0.7
+  ],
+  "auto_8->auto_16": [
+   38.7,
+   11.9,
+   -43.1
+  ],
+  "auto_8->auto_21": [
+   23.0,
+   10.5,
+   -33.3
+  ],
+  "auto_8->auto_23": [
+   17.5,
+   20.3,
+   -33.8
+  ],
+  "auto_9->auto_10": [
+   67.7,
+   -19.2,
+   -25.0
+  ],
+  "auto_9->auto_11": [
+   26.2,
+   -31.0,
+   26.7
+  ],
+  "auto_9->auto_12": [
+   74.6,
+   -57.2,
+   9.0
+  ],
+  "auto_9->auto_13": [
+   8.8,
+   -11.7,
+   14.1
+  ],
+  "auto_9->auto_14": [
+   -18.1,
+   3.3,
+   5.9
+  ],
+  "auto_9->auto_15": [
+   25.9,
+   -62.8,
+   32.3
+  ],
+  "auto_9->auto_16": [
+   37.3,
+   -17.7,
+   -10.1
+  ],
+  "auto_9->auto_21": [
+   21.6,
+   -19.1,
+   -0.3
+  ],
+  "auto_9->auto_23": [
+   16.1,
+   -9.3,
+   -0.8
+  ],
+  "auto_10->auto_11": [
+   -41.5,
+   -11.8,
+   51.7
+  ],
+  "auto_10->auto_12": [
+   6.9,
+   -38.0,
+   34.0
+  ],
+  "auto_10->auto_13": [
+   -58.9,
+   7.5,
+   39.1
+  ],
+  "auto_10->auto_14": [
+   -85.8,
+   22.5,
+   30.9
+  ],
+  "auto_10->auto_15": [
+   -41.8,
+   -43.6,
+   57.3
+  ],
+  "auto_10->auto_16": [
+   -30.4,
+   1.5,
+   14.9
+  ],
+  "auto_10->auto_21": [
+   -46.1,
+   0.1,
+   24.7
+  ],
+  "auto_10->auto_23": [
+   -51.6,
+   9.9,
+   24.2
+  ],
+  "auto_11->auto_12": [
+   48.4,
+   -26.2,
+   -17.7
+  ],
+  "auto_11->auto_13": [
+   -17.4,
+   19.3,
+   -12.6
+  ],
+  "auto_11->auto_14": [
+   -44.3,
+   34.3,
+   -20.8
+  ],
+  "auto_11->auto_15": [
+   -0.3,
+   -31.8,
+   5.6
+  ],
+  "auto_11->auto_16": [
+   11.1,
+   13.3,
+   -36.8
+  ],
+  "auto_11->auto_21": [
+   -4.6,
+   11.9,
+   -27.0
+  ],
+  "auto_11->auto_23": [
+   -10.1,
+   21.7,
+   -27.5
+  ],
+  "auto_12->auto_13": [
+   -65.8,
+   45.5,
+   5.1
+  ],
+  "auto_12->auto_14": [
+   -92.7,
+   60.5,
+   -3.1
+  ],
+  "auto_12->auto_15": [
+   -48.7,
+   -5.6,
+   23.3
+  ],
+  "auto_12->auto_16": [
+   -37.3,
+   39.5,
+   -19.1
+  ],
+  "auto_12->auto_21": [
+   -53.0,
+   38.1,
+   -9.3
+  ],
+  "auto_12->auto_23": [
+   -58.5,
+   47.9,
+   -9.8
+  ],
+  "auto_13->auto_14": [
+   -26.9,
+   15.0,
+   -8.2
+  ],
+  "auto_13->auto_15": [
+   17.1,
+   -51.1,
+   18.2
+  ],
+  "auto_13->auto_16": [
+   28.5,
+   -6.0,
+   -24.2
+  ],
+  "auto_13->auto_21": [
+   12.8,
+   -7.4,
+   -14.4
+  ],
+  "auto_13->auto_23": [
+   7.3,
+   2.4,
+   -14.9
+  ],
+  "auto_14->auto_15": [
+   44.0,
+   -66.1,
+   26.4
+  ],
+  "auto_14->auto_16": [
+   55.4,
+   -21.0,
+   -16.0
+  ],
+  "auto_14->auto_21": [
+   39.7,
+   -22.4,
+   -6.2
+  ],
+  "auto_14->auto_23": [
+   34.2,
+   -12.6,
+   -6.7
+  ],
+  "auto_15->auto_16": [
+   11.4,
+   45.1,
+   -42.4
+  ],
+  "auto_15->auto_21": [
+   -4.3,
+   43.7,
+   -32.6
+  ],
+  "auto_15->auto_23": [
+   -9.8,
+   53.5,
+   -33.1
+  ],
+  "auto_16->auto_21": [
+   -15.7,
+   -1.4,
+   9.8
+  ],
+  "auto_16->auto_23": [
+   -21.2,
+   8.4,
+   9.3
+  ],
+  "auto_21->auto_23": [
+   -5.5,
+   9.8,
+   -0.5
+  ]
+ },
+ "note": "metric depth = fit of photo disparity to the model's depth; trust only when pose.json confidence/iou are good and calibration.r is high"
+}
